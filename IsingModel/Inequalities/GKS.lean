@@ -163,7 +163,20 @@ theorem hasNonnegCorrelations_mul {f : Config ι → ℝ}
     (hf : HasNonnegCorrelations f)
     {a b : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) (C : Finset ι) :
     HasNonnegCorrelations fun σ => f σ * (a + b * spinProduct C σ) := by
-  sorry
+  intro S
+  -- Expand: ∑ σ^S · f · (a + b·σ^C) = a · ∑ σ^S·f + b · ∑ σ^{SΔC}·f
+  have key : ∑ σ : Config ι, spinProduct S σ * (f σ * (a + b * spinProduct C σ)) =
+      a * ∑ σ : Config ι, spinProduct S σ * f σ +
+      b * ∑ σ : Config ι, spinProduct (symmDiff S C) σ * f σ := by
+    have : ∀ σ : Config ι, spinProduct S σ * (f σ * (a + b * spinProduct C σ)) =
+        a * (spinProduct S σ * f σ) + b * (spinProduct S σ * spinProduct C σ * f σ) :=
+      fun σ => by ring
+    simp_rw [this]
+    rw [Finset.sum_add_distrib, ← Finset.mul_sum, ← Finset.mul_sum]
+    congr 1
+    simp_rw [spinProduct_mul S C]
+  rw [key]
+  exact add_nonneg (mul_nonneg ha (hf S)) (mul_nonneg hb (hf (symmDiff S C)))
 
 /-- The numerator of `⟨σ_A⟩` is non-negative for ferromagnetic parameters.
 
