@@ -428,17 +428,16 @@ private theorem duplicateSum_eq_changed (G : SimpleGraph ι) [Fintype G.edgeSet]
     duplicateSum G p A B = duplicateSumChanged G p A B := by
   sorry
 
-/-- The modified weight has non-negative correlations for each fixed `t`,
-because each modified coupling `K_C(1 + t^C)` is non-negative
-(K_C ≥ 0 by ferromagneticity, and 1 + t^C ∈ {0, 2} ≥ 0). -/
-/-- The modified weight has non-negative correlations for each fixed `t`,
-because each modified coupling `K_C(1 + t^C)` is non-negative
-(K_C ≥ 0 by ferromagneticity, and 1 + t^C ∈ {0, 2} ≥ 0).
+/-- The modified weight has non-negative correlations for each fixed `t`.
 Same proof structure as `bwFactored_hasNonnegCorrelations` but with
-modified couplings. -/
+modified couplings `K_C(1 + t^C) ≥ 0`. -/
 private theorem modifiedWeight_nonneg_corr (G : SimpleGraph ι) [Fintype G.edgeSet]
     (p : IsingParams ℝ) (hf : Ferromagnetic p) (t : Config ι) :
     HasNonnegCorrelations (modifiedWeight G p t) := by
+  -- Same structure as bwFactored_hasNonnegCorrelations:
+  -- factor into (cosh + sinh · spin) terms with non-negative couplings
+  -- K'_e = βJ(1+t^e) ≥ 0, K'_i = βh(1+t_i) ≥ 0.
+  -- TODO: refactor to share code with bwFactored_hasNonnegCorrelations
   sorry
 
 private theorem duplicateSumChanged_nonneg (G : SimpleGraph ι) [Fintype G.edgeSet]
