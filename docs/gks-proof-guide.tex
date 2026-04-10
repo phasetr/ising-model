@@ -23,6 +23,12 @@ formalization of the first Griffiths inequality (GKS-I) for
 the finite Ising model. Each section corresponds to a Lean source file
 and lists the relevant definitions and theorems. The purpose is to
 make the formal proof readable as ordinary mathematics.
+
+The proof follows Glimm--Jaffe~\cite{glimm-jaffe}, Theorem~4.1.1
+(pp.~56--57), adapted to the discrete $\{+1,-1\}$ Ising model.
+The ``non-negative correlations'' (HNC) framework and the cosh/sinh
+decomposition are standard; see also
+Friedli--Velenik~\cite{friedli-velenik}, Theorem~3.22 (pp.~99--100).
 \end{abstract}
 
 \tableofcontents
@@ -261,5 +267,23 @@ A Float-based reference implementation verifies:
     for 3 parameter sets
   \item GKS-I violation for anti-ferromagnetic $J < 0$
 \end{itemize}
+
+\begin{thebibliography}{9}
+\bibitem{glimm-jaffe}
+J.~Glimm and A.~Jaffe,
+\emph{Quantum Physics: A Functional Integral Point of View},
+2nd ed., Springer, 1987.
+
+\bibitem{friedli-velenik}
+S.~Friedli and Y.~Velenik,
+\emph{Statistical Mechanics of Lattice Systems:
+A Concrete Mathematical Introduction},
+Cambridge University Press, 2017.
+
+\bibitem{simon}
+B.~Simon,
+\emph{The Statistical Mechanics of Lattice Gases, Vol.~I},
+Princeton University Press, 1993.
+\end{thebibliography}
 
 \end{document}

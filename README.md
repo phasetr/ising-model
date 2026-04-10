@@ -40,7 +40,10 @@ to the repository.
 - 江沢洋, 新井朝雄, 『場の量子論と統計力学』 — [日本評論社](https://www.nippyo.co.jp/shop/book/9014.html)
 - [YaelDillies/gibbs-measure](https://github.com/YaelDillies/gibbs-measure) — Lean 4 formalization project on Gibbs measures
 - [leanprover-community/physlib](https://github.com/leanprover-community/physlib) — A physics library in Lean 4
-- Friedli, S. and Velenik, Y., *Statistical Mechanics of Lattice Systems: A Concrete Mathematical Introduction* — [De Gruyter](https://www.degruyterbrill.com/document/doi/10.1515/9783110250329/html)
+- Friedli, S. and Velenik, Y., *Statistical Mechanics of Lattice Systems: A Concrete Mathematical Introduction* — [Cambridge UP](https://www.unige.ch/math/folks/velenik/smbook/)
+- Simon, B., *The Statistical Mechanics of Lattice Gases, Vol. I* — [Princeton UP](https://press.princeton.edu/books/hardcover/9780691636436/the-statistical-mechanics-of-lattice-gases-volume-i)
+- Ellis, R.S., *Entropy, Large Deviations, and Statistical Mechanics* — [Springer](https://link.springer.com/book/10.1007/3-540-29060-5)
+- Dembo, A. and Zeitouni, O., *Large Deviations Techniques and Applications* — [Springer](https://link.springer.com/book/10.1007/978-3-642-03311-7)
 
 ## Learning resources
 
