@@ -403,25 +403,42 @@ private theorem duplicateSum_eq (G : SimpleGraph ι) [Fintype G.edgeSet]
       (correlation G p (symmDiff A B) - correlation G p A * correlation G p B) := by
   sorry
 
+/-- The modified weight for the duplicate variable proof.
+For fixed `t : Config ι`, this is `exp(Σ_C K_C(1 + t^C) ω^C)` where
+the sum runs over edges (K = βJ, C = {i,j}) and sites (K = βh, C = {i}).
+The factor `(1 + t^C)` doubles or zeroes each coupling. -/
+private noncomputable def modifiedWeight (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (p : IsingParams ℝ) (t ω : Config ι) : ℝ :=
+  (∏ e ∈ G.edgeFinset, Real.exp (p.β * p.J * (1 + edgeSpin (K := ℝ) t e) *
+      edgeSpin (K := ℝ) ω e)) *
+  (∏ i : ι, Real.exp (p.β * p.h * (1 + Spin.sign ℝ (t i)) * Spin.sign ℝ (ω i)))
+
 /-- The variable-changed form of the duplicate sum.
-For each fixed `t : Config ι`, the inner sum over `ω` is a GKS-I expression
-with modified coupling constants `K_C(1 + t^C) ≥ 0`. -/
+`Σ_t (1 - t^B) · Σ_ω ω^{AΔB} · modifiedWeight(t, ω)` -/
 private noncomputable def duplicateSumChanged (G : SimpleGraph ι) [Fintype G.edgeSet]
     (p : IsingParams ℝ) (A B : Finset ι) : ℝ :=
   ∑ t : Config ι, (1 - spinProduct B t) *
-    ∑ ω : Config ι, spinProduct (symmDiff A B) ω *
-      boltzmannWeight G p ω
+    ∑ ω : Config ι, spinProduct (symmDiff A B) ω * modifiedWeight G p t ω
 
 /-- The duplicate sum equals its variable-changed form.
-Change of variables: ω' ↦ ω'' where ω''_i = ω_i · ω'_i.
-Then ω^A(ω^B - ω'^B) w(ω)w(ω') = ω^{AΔB}(1 - ω''^B) w(ω)w(ω·ω'').
-
-TODO: The inner Boltzmann weight should be w_modified(t,ω) not w(ω).
-This is a simplification that doesn't account for the coupling modification.
-The full proof needs `exp(Σ K_C(1+t^C)ω^C)` instead of `w(ω)`. -/
+Change of variables: ω' ↦ t where t_i = ω_i · ω'_i (Spin.mul).
+Reference: Friedli–Velenik, pp. 127–128. -/
 private theorem duplicateSum_eq_changed (G : SimpleGraph ι) [Fintype G.edgeSet]
     (p : IsingParams ℝ) (A B : Finset ι) :
     duplicateSum G p A B = duplicateSumChanged G p A B := by
+  sorry
+
+/-- The modified weight has non-negative correlations for each fixed `t`,
+because each modified coupling `K_C(1 + t^C)` is non-negative
+(K_C ≥ 0 by ferromagneticity, and 1 + t^C ∈ {0, 2} ≥ 0). -/
+/-- The modified weight has non-negative correlations for each fixed `t`,
+because each modified coupling `K_C(1 + t^C)` is non-negative
+(K_C ≥ 0 by ferromagneticity, and 1 + t^C ∈ {0, 2} ≥ 0).
+Same proof structure as `bwFactored_hasNonnegCorrelations` but with
+modified couplings. -/
+private theorem modifiedWeight_nonneg_corr (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (t : Config ι) :
+    HasNonnegCorrelations (modifiedWeight G p t) := by
   sorry
 
 private theorem duplicateSumChanged_nonneg (G : SimpleGraph ι) [Fintype G.edgeSet]
@@ -431,8 +448,7 @@ private theorem duplicateSumChanged_nonneg (G : SimpleGraph ι) [Fintype G.edgeS
   apply Finset.sum_nonneg
   intro t _
   apply mul_nonneg (one_sub_spinProduct_nonneg B t)
-  -- Inner sum: Σ_ω ω^{AΔB} w(ω) ≥ 0 by GKS-I
-  exact gks_numerator_nonneg G p hf (symmDiff A B)
+  exact modifiedWeight_nonneg_corr G p hf t (symmDiff A B)
 
 private theorem duplicateSum_nonneg (G : SimpleGraph ι) [Fintype G.edgeSet]
     (p : IsingParams ℝ) (hf : Ferromagnetic p) (A B : Finset ι) :
