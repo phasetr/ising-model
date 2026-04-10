@@ -4,7 +4,6 @@ import Mathlib.Tactic.DeriveFintype
 # Spin type
 
 Two-state spin values for the Ising model.
-See `.self-local/tex/0001-spin-type.tex` for the mathematical description.
 -/
 
 namespace IsingModel
