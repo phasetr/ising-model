@@ -53,6 +53,24 @@ theorem exp_sign_decomp (α : ℝ) (s : Spin) :
 
 /-! ## GKS-I: core non-negativity -/
 
+/-! ## Sum over configurations -/
+
+/-- The sum of `toSign(s)` over all spins is zero: `1 + (-1) = 0`. -/
+theorem sum_spin_toSign : ∑ s : Spin, (↑s.toSign : ℝ) = 0 := by
+  have : Fintype.elems (α := Spin) = {.up, .down} := by decide
+  simp [Finset.sum, Finset.univ, this, Spin.toSign]
+
+/-- The sum of `spinProduct A` over all configurations is zero when `A` is nonempty.
+This is because each site `i ∈ A` contributes a factor `∑_{s=±1} s = 0`. -/
+theorem sum_config_spinProduct_eq_zero (A : Finset ι) (hA : A.Nonempty) :
+    ∑ σ : Config ι, spinProduct A σ = 0 := by
+  sorry
+
+/-- The sum of `spinProduct ∅` over all configurations is `2^|ι|`. -/
+theorem sum_config_spinProduct_empty :
+    ∑ σ : Config ι, spinProduct ∅ σ = (Fintype.card (Config ι) : ℝ) := by
+  simp [spinProduct_empty]
+
 /-- The numerator of `⟨σ_A⟩` is non-negative for ferromagnetic parameters.
 
 This is the core of GKS-I. The proof uses the cosh/sinh decomposition of
