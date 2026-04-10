@@ -446,9 +446,29 @@ private theorem duplicateSum_eq (G : SimpleGraph ι) [Fintype G.edgeSet]
   rw [sq]
   have hZne := partitionFunction_ne_zero G p
   field_simp
-  -- After field_simp, goal is a sum equality without denominators.
-  -- LHS has double sums, RHS has products of single sums.
-  sorry
+  -- Expand double sum: Σ_ω Σ_{ω'} f(ω)(g(ω)-g(ω')) w(ω) w(ω')
+  -- = Σ_ω f(ω)g(ω)w(ω) · Σ_{ω'} w(ω') - Σ_ω f(ω)w(ω) · Σ_{ω'} g(ω')w(ω')
+  have step1 : ∀ ω : Config ι,
+      ∑ ω' : Config ι, spinProduct A ω * (spinProduct B ω - spinProduct B ω') *
+        boltzmannWeight G p ω * boltzmannWeight G p ω' =
+      spinProduct A ω * spinProduct B ω * boltzmannWeight G p ω *
+        ∑ ω', boltzmannWeight G p ω' -
+      spinProduct A ω * boltzmannWeight G p ω *
+        ∑ ω', spinProduct B ω' * boltzmannWeight G p ω' := by
+    intro ω
+    simp_rw [show ∀ ω' : Config ι,
+        spinProduct A ω * (spinProduct B ω - spinProduct B ω') *
+        boltzmannWeight G p ω * boltzmannWeight G p ω' =
+        spinProduct A ω * spinProduct B ω * boltzmannWeight G p ω *
+        boltzmannWeight G p ω' -
+        spinProduct A ω * boltzmannWeight G p ω *
+        (spinProduct B ω' * boltzmannWeight G p ω')
+      from fun ω' => by ring]
+    rw [Finset.sum_sub_distrib, ← Finset.mul_sum, ← Finset.mul_sum]
+  simp_rw [step1, Finset.sum_sub_distrib, hmul]
+  unfold partitionFunction
+  simp_rw [← Finset.sum_mul]
+  ring
 
 /-- The modified weight for the duplicate variable proof.
 For fixed `t : Config ι`, this is `exp(Σ_C K_C(1 + t^C) ω^C)` where
@@ -473,6 +493,11 @@ Reference: Friedli–Velenik, pp. 127–128. -/
 private theorem duplicateSum_eq_changed (G : SimpleGraph ι) [Fintype G.edgeSet]
     (p : IsingParams ℝ) (A B : Finset ι) :
     duplicateSum G p A B = duplicateSumChanged G p A B := by
+  -- Change of variables: for each fixed ω, substitute ω' ↦ t where t_i = Spin.mul (ω i) (ω' i)
+  -- This is a bijection on Config ι (Spin.mul a is an involution for each a).
+  -- After substitution:
+  --   σ^A(σ^B - σ'^B) w(ω) w(ω') = σ^{AΔB}(1 - t^B) w(ω) w(ω·t)
+  -- and w(ω)w(ω·t) = modifiedWeight(t, ω) (up to factoring)
   sorry
 
 /-- The modified weight has non-negative correlations for each fixed `t`.
