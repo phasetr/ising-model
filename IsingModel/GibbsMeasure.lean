@@ -67,4 +67,33 @@ noncomputable def correlation (G : SimpleGraph ι) [Fintype G.edgeSet]
     (p : IsingParams ℝ) (A : Finset ι) : ℝ :=
   gibbsExpectation G p (spinProduct A)
 
+/-! ## Spin product algebra -/
+
+omit [Fintype ι] [DecidableEq ι] in
+/-- The spin product over the empty set is `1`. -/
+@[simp]
+theorem spinProduct_empty (σ : Config ι) : spinProduct ∅ σ = 1 := by
+  simp [spinProduct]
+
+omit [Fintype ι] [DecidableEq ι] in
+/-- The spin product over a singleton is the spin sign at that site. -/
+@[simp]
+theorem spinProduct_singleton (i : ι) (σ : Config ι) :
+    spinProduct {i} σ = ↑(σ i).toSign := by
+  simp [spinProduct]
+
+omit [Fintype ι] in
+/-- The spin product over a disjoint union factors: `σ_{A ∪ B} = σ_A · σ_B`. -/
+theorem spinProduct_union {A B : Finset ι} (h : Disjoint A B) (σ : Config ι) :
+    spinProduct (A ∪ B) σ = spinProduct A σ * spinProduct B σ := by
+  simp [spinProduct, Finset.prod_union h]
+
+omit [Fintype ι] [DecidableEq ι] in
+/-- The square of any spin product is `1`, since each factor is `±1`. -/
+theorem spinProduct_sq (A : Finset ι) (σ : Config ι) :
+    spinProduct A σ ^ 2 = 1 := by
+  simp only [sq, spinProduct, ← Finset.prod_mul_distrib]
+  exact Finset.prod_eq_one fun i _ => by
+    simp [← sq, ← Int.cast_pow, Spin.toSign_sq]
+
 end IsingModel
