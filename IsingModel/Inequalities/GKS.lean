@@ -337,4 +337,56 @@ theorem gks_first (G : SimpleGraph ι) [Fintype G.edgeSet]
   unfold correlation
   exact gibbsExpectation_nonneg_of_numerator_nonneg G p _ (gks_numerator_nonneg G p hf A)
 
+/-! ## General coupling GKS-I -/
+
+/-- GKS-I for general non-negative coupling constants.
+Given a weight function `w(σ) = ∏_{C} exp(K_C · σ^C)` where all `K_C ≥ 0`,
+the function `w` has non-negative correlations.
+
+This generalizes `boltzmannWeight_hasNonnegCorrelations` from pair interactions
+to arbitrary multi-body couplings. It is needed for GKS-II where the doubled
+system has modified coupling constants.
+
+Reference: Friedli–Velenik, Theorem 3.49 (3.54), pp. 127–128. -/
+theorem hasNonnegCorrelations_general_coupling
+    (couplings : Finset (Finset ι))
+    (K : Finset ι → ℝ)
+    (hK : ∀ C ∈ couplings, 0 ≤ K C) :
+    HasNonnegCorrelations fun σ =>
+      ∏ C ∈ couplings, Real.exp (K C * spinProduct C σ) := by
+  apply hasNonnegCorrelations_finset_prod
+  intro C hC
+  -- spinProduct C σ ∈ {-1, 1}, so exp(K_C · spinProduct C σ) = cosh(K_C) + sinh(K_C) · σ^C
+  have hKC := hK C hC
+  refine ⟨Real.cosh (K C), Real.sinh (K C), C,
+    (Real.cosh_pos _).le, Real.sinh_nonneg_iff.mpr hKC, fun σ => ?_⟩
+  -- exp(K_C * spinProduct C σ) = cosh(K_C) + sinh(K_C) * spinProduct C σ
+  have hsq := spinProduct_sq C σ
+  have hpm : spinProduct C σ = 1 ∨ spinProduct C σ = -1 := by
+    have h0 : (spinProduct C σ - 1) * (spinProduct C σ + 1) = 0 := by nlinarith [hsq]
+    rcases mul_eq_zero.mp h0 with h | h
+    · left; linarith
+    · right; linarith
+  rcases hpm with h | h
+  · simp [h, Real.cosh_add_sinh]
+  · simp [h]; linarith [Real.cosh_add_sinh (-(K C)), Real.cosh_neg (K C), Real.sinh_neg (K C)]
+
+/-! ## GKS-II: second Griffiths inequality -/
+
+/-- **Second Griffiths inequality (GKS-II)**: For a ferromagnetic Ising model
+(`J ≥ 0`, `h ≥ 0`, `β > 0`), correlations are monotone:
+`⟨σ_A σ_B⟩ ≥ ⟨σ_A⟩⟨σ_B⟩` for any subsets `A, B`.
+
+Since `spinProduct A σ * spinProduct B σ = spinProduct (symmDiff A B) σ`,
+this is equivalent to `correlation G p (symmDiff A B) ≥ correlation G p A * correlation G p B`.
+
+Reference: Friedli–Velenik, Theorem 3.49 (3.55), pp. 127–128.
+Proof by the duplicate variable trick: introduce an independent copy χ,
+change variables to (ω, ω'') where ω''_i = ω_i χ_i, fix ω'', and
+apply GKS-I with modified coupling constants K_C(1 + ω''_C) ≥ 0. -/
+theorem gks_second (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (A B : Finset ι) :
+    correlation G p A * correlation G p B ≤ correlation G p (symmDiff A B) := by
+  sorry
+
 end IsingModel
