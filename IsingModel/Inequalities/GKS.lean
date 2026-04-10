@@ -387,12 +387,46 @@ theorem one_sub_spinProduct_nonneg (B : Finset ι) (σ : Config ι) :
   · linarith  -- spinProduct = 1, so 1 - 1 = 0 ≥ 0
   · linarith  -- spinProduct = -1, so 1 - (-1) = 2 ≥ 0
 
+/-- The duplicate variable sum: `Σ_{ω,ω'} ω^A(ω^B - ω'^B) w(ω)w(ω')`.
+Equals `Z² (⟨σ^{AΔB}⟩ - ⟨σ^A⟩⟨σ^B⟩)` after unfolding. -/
+private noncomputable def duplicateSum (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (p : IsingParams ℝ) (A B : Finset ι) : ℝ :=
+  ∑ ω : Config ι, ∑ ω' : Config ι,
+    spinProduct A ω * (spinProduct B ω - spinProduct B ω') *
+    boltzmannWeight G p ω * boltzmannWeight G p ω'
+
+/-- The duplicate sum equals `Z²(corr(AΔB) - corr(A)·corr(B))`. -/
+private theorem duplicateSum_eq (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (p : IsingParams ℝ) (A B : Finset ι) :
+    duplicateSum G p A B =
+    (partitionFunction G p) ^ 2 *
+      (correlation G p (symmDiff A B) - correlation G p A * correlation G p B) := by
+  sorry
+
+/-- The duplicate sum is non-negative for ferromagnetic parameters.
+Proved by the change of variables ω'' = ω·ω', fixing ω'', and applying
+`hasNonnegCorrelations_general_coupling` to the inner sum over ω. -/
+private theorem duplicateSum_nonneg (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (A B : Finset ι) :
+    0 ≤ duplicateSum G p A B := by
+  sorry
+
+/-- **Second Griffiths inequality (GKS-II)**: For a ferromagnetic Ising model
+(`J ≥ 0`, `h ≥ 0`, `β > 0`), correlations are monotone:
+`⟨σ_A σ_B⟩ ≥ ⟨σ_A⟩⟨σ_B⟩` for any subsets `A, B`.
+
+Reference: Friedli–Velenik, Theorem 3.49 (3.55), pp. 127–128. -/
 theorem gks_second (G : SimpleGraph ι) [Fintype G.edgeSet]
     (p : IsingParams ℝ) (hf : Ferromagnetic p) (A B : Finset ι) :
     correlation G p A * correlation G p B ≤ correlation G p (symmDiff A B) := by
-  -- The proof follows Friedli–Velenik, Theorem 3.49 (3.55), pp. 127–128.
-  -- Introduce duplicate variables, change to (ω, ω'') where ω''_i = ω_i χ_i,
-  -- fix ω'', and apply GKS-I with modified coupling constants.
-  sorry
+  have hZ := partitionFunction_pos G p
+  have hZ2 : (0 : ℝ) < partitionFunction G p ^ 2 := pow_pos hZ 2
+  have hdup := duplicateSum_nonneg G p hf A B
+  rw [duplicateSum_eq] at hdup
+  -- hdup : 0 ≤ Z² * (corr(AΔB) - corr(A)*corr(B))
+  -- Since Z² > 0, corr(AΔB) - corr(A)*corr(B) ≥ 0
+  have hsub : 0 ≤ correlation G p (symmDiff A B) - correlation G p A * correlation G p B :=
+    nonneg_of_mul_nonneg_right hdup hZ2
+  linarith
 
 end IsingModel
