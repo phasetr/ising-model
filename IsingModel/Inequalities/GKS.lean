@@ -431,6 +431,23 @@ private theorem duplicateSum_eq (G : SimpleGraph ι) [Fintype G.edgeSet]
     duplicateSum G p A B =
     (partitionFunction G p) ^ 2 *
       (correlation G p (symmDiff A B) - correlation G p A * correlation G p B) := by
+  have hZ := partitionFunction_ne_zero G p
+  unfold duplicateSum correlation gibbsExpectation
+  -- LHS = Σ_ω Σ_ω' σ^A(σ^B - σ'^B) w w'
+  --     = Σ_ω σ^A σ^B w · Z - Σ_ω σ^A w · Σ_ω' σ'^B w'
+  --     = Z · Σ σ^{AΔB} w - (Σ σ^A w)(Σ σ^B w)
+  -- RHS = Z² · (Z⁻¹ Σ σ^{AΔB} w - Z⁻¹ Σ σ^A w · Z⁻¹ Σ σ^B w)
+  --     = Z · Σ σ^{AΔB} w - (Σ σ^A w)(Σ σ^B w)
+  -- Rewrite σ^A · σ^B = σ^{AΔB} in the LHS
+  have hmul : ∀ ω : Config ι, spinProduct A ω * spinProduct B ω =
+      spinProduct (symmDiff A B) ω := fun ω => spinProduct_mul A B ω
+  -- Expand: LHS = Σ_ω (σ^{AΔB}_ω · Z - (Σ σ^A w)(σ^B_ω)) · w_ω ... complicated
+  -- Strategy: rewrite both sides to the same expression and use ring/field_simp
+  rw [sq]
+  have hZne := partitionFunction_ne_zero G p
+  field_simp
+  -- After field_simp, goal is a sum equality without denominators.
+  -- LHS has double sums, RHS has products of single sums.
   sorry
 
 /-- The modified weight for the duplicate variable proof.
