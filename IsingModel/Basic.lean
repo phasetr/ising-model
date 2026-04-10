@@ -1,5 +1,4 @@
 import Mathlib.Tactic.DeriveFintype
-import Mathlib.Combinatorics.SimpleGraph.Basic
 import Mathlib.Algebra.Field.Defs
 import Mathlib.Algebra.Order.Ring.Defs
 
