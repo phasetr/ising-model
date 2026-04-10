@@ -11,13 +11,18 @@
 		"hnum",
 		"hprod",
 		"hrest",
+		"hsite",
 		"Ising",
 		"Jaffe",
+		"lualatex",
 		"ninvolution",
+		"nlinarith",
+		"physlib",
 		"pointwise",
 		"println",
 		"Repr",
 		"rintro",
+		"simpa",
 		"symm"
 	]
 }
