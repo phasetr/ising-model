@@ -38,6 +38,17 @@ theorem Config.flip_flip {ι : Type*} (σ : Config ι) : σ.flip.flip = σ := by
 /-- The spin sign cast into the field `K`. -/
 def Spin.sign (K : Type*) [CommRing K] (s : Spin) : K := ↑s.toSign
 
+/-- The square of any spin sign is `1`: `(±1)² = 1`. -/
+@[simp]
+theorem Spin.toSign_sq (s : Spin) : s.toSign ^ 2 = 1 := by
+  cases s <;> simp [Spin.toSign]
+
+/-- The square of the spin sign in `K` is `1`: `(sign K s)² = 1`. -/
+@[simp]
+theorem Spin.sign_sq {K : Type*} [CommRing K] (s : Spin) :
+    Spin.sign K s ^ 2 = 1 := by
+  simp [Spin.sign, ← Int.cast_pow, Spin.toSign_sq]
+
 @[simp]
 theorem Spin.sign_flip {K : Type*} [CommRing K] (s : Spin) :
     Spin.sign K s.flip = -Spin.sign K s := by
@@ -50,6 +61,7 @@ def edgeSpin {ι K : Type*} [Field K] (σ : Config ι) : Sym2 ι → K :=
   Sym2.lift ⟨fun i j => Spin.sign K (σ i) * Spin.sign K (σ j),
     fun _ _ => mul_comm _ _⟩
 
+/-- The per-edge spin product is invariant under spin flip: `(-1)·(-1) = 1·1`. -/
 theorem edgeSpin_flip {ι K : Type*} [Field K] (σ : Config ι) (e : Sym2 ι) :
     edgeSpin (K := K) σ.flip e = edgeSpin σ e := by
   refine Sym2.ind (fun i j => ?_) e

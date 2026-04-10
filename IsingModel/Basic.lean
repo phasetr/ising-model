@@ -43,4 +43,16 @@ structure IsingParams (K : Type*) [Field K] [LinearOrder K] [IsStrictOrderedRing
   /-- Inverse temperature. -/
   β : K
 
+/-! ## Ferromagnetic condition -/
+
+/-- The ferromagnetic condition: non-negative coupling, non-negative field, positive temperature. -/
+structure Ferromagnetic {K : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRing K]
+    (p : IsingParams K) : Prop where
+  /-- Non-negative coupling constant. -/
+  hJ : 0 ≤ p.J
+  /-- Non-negative external field. -/
+  hh : 0 ≤ p.h
+  /-- Positive inverse temperature. -/
+  hβ : 0 < p.β
+
 end IsingModel
