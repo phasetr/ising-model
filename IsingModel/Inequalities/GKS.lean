@@ -493,12 +493,120 @@ Reference: Friedli–Velenik, pp. 127–128. -/
 private theorem duplicateSum_eq_changed (G : SimpleGraph ι) [Fintype G.edgeSet]
     (p : IsingParams ℝ) (A B : Finset ι) :
     duplicateSum G p A B = duplicateSumChanged G p A B := by
-  -- Change of variables: for each fixed ω, substitute ω' ↦ t where t_i = Spin.mul (ω i) (ω' i)
-  -- This is a bijection on Config ι (Spin.mul a is an involution for each a).
-  -- After substitution:
-  --   σ^A(σ^B - σ'^B) w(ω) w(ω') = σ^{AΔB}(1 - t^B) w(ω) w(ω·t)
-  -- and w(ω)w(ω·t) = modifiedWeight(t, ω) (up to factoring)
-  sorry
+  unfold duplicateSum duplicateSumChanged
+  -- For each fixed ω, define bijection on Config: ω' ↦ t where t_i = Spin.mul (ω i) (ω' i)
+  -- Step 1: Transform each inner sum and rewrite summand
+  have hinner : ∀ ω : Config ι,
+      ∑ ω', spinProduct A ω * (spinProduct B ω - spinProduct B ω') *
+        boltzmannWeight G p ω * boltzmannWeight G p ω' =
+      ∑ t, (1 - spinProduct B t) *
+        (spinProduct (symmDiff A B) ω * modifiedWeight G p t ω) := by
+    intro ω
+    -- Change variables: ω' ↦ t = fun i => Spin.mul (ω i) (ω' i)
+    let φ : Config ι → Config ι := fun ω' i => Spin.mul (ω i) (ω' i)
+    have hφ_inv : Function.Involutive φ := fun t => by ext i; simp [φ, Spin.mul_mul_cancel]
+    rw [(Fintype.sum_bijective φ hφ_inv.bijective _ _ fun t => rfl).symm]
+    apply Finset.sum_congr rfl; intro t _
+    -- spinProduct B (φ t) = spinProduct B ω * spinProduct B t
+    have hspB : spinProduct B (φ t) = spinProduct B ω * spinProduct B t := by
+      unfold spinProduct; simp_rw [show ∀ i, (↑((φ t i).toSign) : ℝ) = ↑(ω i).toSign * ↑(t i).toSign from
+        fun i => by simp [φ, Spin.toSign_mul]]; rw [Finset.prod_mul_distrib]
+    rw [hspB]
+    have hw : boltzmannWeight G p ω * boltzmannWeight G p (φ t) =
+        modifiedWeight G p t ω := by
+      -- w(ω) * w(φ t) = modifiedWeight(t, ω)
+      -- Both sides are exp(...). Show the exponents are equal.
+      unfold boltzmannWeight hamiltonian interactionEnergy externalFieldEnergy modifiedWeight
+      rw [← Real.exp_add]
+      congr 1
+      -- Use: edgeSpin(φ t, e) = edgeSpin(ω,e) * edgeSpin(t,e)
+      -- and: sign(φ t, i) = sign(ω i) * sign(t i)
+      have hes : ∀ e, edgeSpin (K := ℝ) (φ t) e =
+          edgeSpin (K := ℝ) ω e * edgeSpin (K := ℝ) t e := by
+        intro e; refine Sym2.ind (fun i j => ?_) e
+        simp [edgeSpin, Sym2.lift_mk, φ, Spin.sign, Spin.toSign_mul]; ring
+      have hss : ∀ i, Spin.sign ℝ ((φ t) i) = Spin.sign ℝ (ω i) * Spin.sign ℝ (t i) := by
+        intro i; simp [φ, Spin.sign, Spin.toSign_mul]
+      simp_rw [hes, hss]
+      -- After simp_rw: both sides have Σ_e and Σ_i with matching summands
+      -- LHS: -β(-J Σ ω^e - h Σ ω_i) + -β(-J Σ (ω^e · t^e) - h Σ (ω_i · t_i))
+      -- RHS: Σ_e βJ(1+t^e)ω^e + Σ_i βh(1+t_i)ω_i
+      -- These are equal: βJω^e + βJω^e·t^e = βJ(1+t^e)ω^e
+      -- Both sides are exp(something) or products of exp.
+      -- Convert RHS from ∏ exp to exp(Σ) and show exponents match.
+      rw [← Real.exp_sum, ← Real.exp_sum, ← Real.exp_add]
+      congr 1
+      -- Goal after simp_rw hes, hss and exp manipulations:
+      -- -(β * Σ_e -(J*ω^e)) - β * Σ_i -(h*ω_i) - β * Σ_e -(J*ω^e*t^e) - β * Σ_i -(h*ω_i*t_i)
+      -- = (Σ_e βJ*t^e*ω^e + βJ*ω^e) + (Σ_i βh*t_i*ω_i + βh*ω_i)
+      -- Use Finset.mul_sum to pull β*J inside sums, combine, then ring per term
+      simp only [Finset.mul_sum, Finset.sum_neg_distrib, neg_neg,
+        ← Finset.sum_add_distrib]
+      -- Both sides are exp(exponent). The exponents are equal.
+      -- LHS exponent (after congr): -β(H(ω)) + -β(H(φ t))
+      -- RHS exponent (after exp_add): Σ_e K'_e·ω^e + Σ_i K'_i·ω_i
+      -- where H = -JΣω^e - hΣω_i and K'_e = βJ(1+t^e), K'_i = βh(1+t_i)
+      -- The key identity: βJω^e + βJω^e·t^e = βJ(1+t^e)ω^e
+      -- Expand and combine sums
+      -- LHS: -β(-JΣω^e - hΣω_i) + -β(-JΣω^e·t^e - hΣω_i·t_i)
+      -- RHS: Σ βJ(1+t^e)ω^e + Σ βh(1+t_i)ω_i
+      -- = Σ(βJω^e + βJω^e·t^e) + Σ(βhω_i + βhω_i·t_i)
+      -- = βJΣω^e + βJΣω^e·t^e + βhΣω_i + βhΣω_i·t_i
+      -- = -β(-JΣω^e - hΣω_i - JΣω^e·t^e - hΣω_i·t_i)
+      -- = LHS
+      -- Use Finset.sum_add_distrib to combine the 4 sums into 2
+      -- Both sides are in ℝ. Rewrite to match.
+      have : -p.β * (∑ i ∈ G.edgeFinset, -p.J * edgeSpin (K := ℝ) ω i +
+          ∑ i, -p.h * Spin.sign ℝ (ω i)) +
+        -p.β * (∑ i ∈ G.edgeFinset, -p.J * (edgeSpin (K := ℝ) ω i * edgeSpin (K := ℝ) t i) +
+          ∑ i, -p.h * (Spin.sign ℝ (ω i) * Spin.sign ℝ (t i))) =
+        ∑ e ∈ G.edgeFinset, p.β * p.J * (1 + edgeSpin (K := ℝ) t e) * edgeSpin (K := ℝ) ω e +
+        ∑ i, p.β * p.h * (1 + Spin.sign ℝ (t i)) * Spin.sign ℝ (ω i) := by
+        simp only [mul_add, Finset.mul_sum, ← Finset.sum_add_distrib]
+        have h1 : ∀ e ∈ G.edgeFinset,
+            -p.β * (-p.J * edgeSpin (K := ℝ) ω e) +
+            -p.β * (-p.J * (edgeSpin (K := ℝ) ω e * edgeSpin (K := ℝ) t e)) =
+            p.β * p.J * (1 + edgeSpin (K := ℝ) t e) * edgeSpin (K := ℝ) ω e :=
+          fun _ _ => by ring
+        have h2 : ∀ i ∈ (Finset.univ : Finset ι),
+            -p.β * (-p.h * Spin.sign ℝ (ω i)) +
+            -p.β * (-p.h * (Spin.sign ℝ (ω i) * Spin.sign ℝ (t i))) =
+            p.β * p.h * (1 + Spin.sign ℝ (t i)) * Spin.sign ℝ (ω i) :=
+          fun _ _ => by ring
+        rw [show (∑ i ∈ G.edgeFinset, -p.β * (-p.J * edgeSpin (K := ℝ) ω i)) +
+            (∑ i, -p.β * (-p.h * Spin.sign ℝ (ω i))) +
+            ((∑ i ∈ G.edgeFinset, -p.β * (-p.J * (edgeSpin (K := ℝ) ω i * edgeSpin (K := ℝ) t i))) +
+            (∑ i, -p.β * (-p.h * (Spin.sign ℝ (ω i) * Spin.sign ℝ (t i))))) =
+          (∑ i ∈ G.edgeFinset, (-p.β * (-p.J * edgeSpin (K := ℝ) ω i) +
+            -p.β * (-p.J * (edgeSpin (K := ℝ) ω i * edgeSpin (K := ℝ) t i)))) +
+          (∑ i, (-p.β * (-p.h * Spin.sign ℝ (ω i)) +
+            -p.β * (-p.h * (Spin.sign ℝ (ω i) * Spin.sign ℝ (t i)))))
+          from by
+            have e1 : ∑ i ∈ G.edgeFinset, (-p.β * (-p.J * edgeSpin (K := ℝ) ω i) +
+                -p.β * (-p.J * (edgeSpin (K := ℝ) ω i * edgeSpin (K := ℝ) t i))) =
+              ∑ i ∈ G.edgeFinset, -p.β * (-p.J * edgeSpin (K := ℝ) ω i) +
+              ∑ i ∈ G.edgeFinset, -p.β * (-p.J * (edgeSpin (K := ℝ) ω i * edgeSpin (K := ℝ) t i)) :=
+              Finset.sum_add_distrib
+            have e2 : ∑ i : ι, (-p.β * (-p.h * Spin.sign ℝ (ω i)) +
+                -p.β * (-p.h * (Spin.sign ℝ (ω i) * Spin.sign ℝ (t i)))) =
+              ∑ i, -p.β * (-p.h * Spin.sign ℝ (ω i)) +
+              ∑ i, -p.β * (-p.h * (Spin.sign ℝ (ω i) * Spin.sign ℝ (t i))) :=
+              Finset.sum_add_distrib
+            linarith]
+        rw [Finset.sum_congr rfl h1, Finset.sum_congr rfl h2]
+        congr 1 <;> exact Finset.sum_congr rfl fun _ _ => by ring
+      exact this
+    rw [show spinProduct A ω * (spinProduct B ω - spinProduct B ω * spinProduct B t) *
+        boltzmannWeight G p ω * boltzmannWeight G p (φ t) =
+      spinProduct A ω * spinProduct B ω * (1 - spinProduct B t) *
+        (boltzmannWeight G p ω * boltzmannWeight G p (φ t)) from by ring,
+      hw, spinProduct_mul A B ω]; ring
+  simp_rw [hinner]
+  -- Step 2: Swap sums Σ_ω Σ_t → Σ_t Σ_ω
+  rw [Finset.sum_comm]
+  -- Step 3: Factor out (1 - t^B)
+  apply Finset.sum_congr rfl; intro t _
+  rw [← Finset.mul_sum]
 
 /-- The modified weight has non-negative correlations for each fixed `t`.
 Same proof structure as `bwFactored_hasNonnegCorrelations` but with
