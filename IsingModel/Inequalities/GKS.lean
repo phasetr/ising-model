@@ -60,11 +60,63 @@ theorem sum_spin_toSign : ∑ s : Spin, (↑s.toSign : ℝ) = 0 := by
   have : Fintype.elems (α := Spin) = {.up, .down} := by decide
   simp [Finset.sum, Finset.univ, this, Spin.toSign]
 
+/-- Flip a configuration at a single site `j`. -/
+def Config.flipAt {ι : Type*} [DecidableEq ι] (j : ι) (σ : Config ι) : Config ι :=
+  Function.update σ j (σ j).flip
+
+/-- `flipAt j` is an involution. -/
+@[simp]
+theorem Config.flipAt_flipAt {ι : Type*} [DecidableEq ι] (j : ι) (σ : Config ι) :
+    (σ.flipAt j).flipAt j = σ := by
+  ext i
+  simp [Config.flipAt, Function.update]
+  split <;> simp_all
+
+omit [Fintype ι] in
+/-- Flipping at `j ∈ A` negates the spin product.
+The factor at `j` changes sign; all other factors are unchanged. -/
+theorem spinProduct_flipAt_neg (A : Finset ι) (j : ι) (hj : j ∈ A)
+    (σ : Config ι) :
+    spinProduct A (σ.flipAt j) = -spinProduct A σ := by
+  unfold spinProduct
+  rw [← Finset.mul_prod_erase _ _ hj, ← Finset.mul_prod_erase _ _ hj]
+  have hj_flip : (↑((σ.flipAt j j).toSign) : ℝ) = -↑(σ j).toSign := by
+    simp [Config.flipAt, Function.update_self, Spin.toSign_flip]
+  have hrest : ∀ i ∈ A.erase j, (↑((σ.flipAt j i).toSign) : ℝ) = ↑(σ i).toSign := by
+    intro i hi
+    have hne : i ≠ j := Finset.ne_of_mem_erase hi
+    simp [Config.flipAt, Function.update_of_ne hne]
+  rw [hj_flip, Finset.prod_congr rfl hrest]
+  ring
+
+/-- A flipped spin is different from the original. -/
+theorem Spin.flip_ne (s : Spin) : s.flip ≠ s := by
+  cases s <;> simp [Spin.flip]
+
+omit [Fintype ι] in
+/-- Flipping at any site produces a different configuration. -/
+theorem Config.flipAt_ne (j : ι) (σ : Config ι) : σ.flipAt j ≠ σ := by
+  intro h
+  have h1 := congr_fun h j
+  simp only [Config.flipAt, Function.update_self] at h1
+  exact absurd h1 (Spin.flip_ne (σ j))
+
 /-- The sum of `spinProduct A` over all configurations is zero when `A` is nonempty.
-This is because each site `i ∈ A` contributes a factor `∑_{s=±1} s = 0`. -/
+Uses the involution `flipAt j` for some `j ∈ A`: each pair `(σ, flipAt j σ)`
+contributes `spinProduct A σ + spinProduct A (flipAt j σ) = 0`. -/
 theorem sum_config_spinProduct_eq_zero (A : Finset ι) (hA : A.Nonempty) :
     ∑ σ : Config ι, spinProduct A σ = 0 := by
-  sorry
+  obtain ⟨j, hj⟩ := hA
+  apply Finset.sum_ninvolution (Config.flipAt j)
+  · intro σ
+    rw [spinProduct_flipAt_neg A j hj σ]
+    ring
+  · intro σ _
+    exact fun h => Config.flipAt_ne j σ h
+  · intro _
+    exact Finset.mem_univ _
+  · intro σ
+    exact Config.flipAt_flipAt j σ
 
 /-- The sum of `spinProduct ∅` over all configurations is `2^|ι|`. -/
 theorem sum_config_spinProduct_empty :
