@@ -21,14 +21,17 @@ def Spin.flip : Spin → Spin
 /-- Flip all spins in a configuration. -/
 def Config.flip {ι : Type*} (σ : Config ι) : Config ι := fun i => (σ i).flip
 
+/-- Flipping a spin negates its sign: `toSign(flip s) = -toSign(s)`. -/
 @[simp]
 theorem Spin.toSign_flip (s : Spin) : s.flip.toSign = -s.toSign := by
   cases s <;> simp [Spin.flip, Spin.toSign]
 
+/-- Flipping twice is the identity. -/
 @[simp]
 theorem Spin.flip_flip (s : Spin) : s.flip.flip = s := by
   cases s <;> rfl
 
+/-- Flipping all spins twice recovers the original configuration. -/
 @[simp]
 theorem Config.flip_flip {ι : Type*} (σ : Config ι) : σ.flip.flip = σ := by
   ext i; exact Spin.flip_flip (σ i)
@@ -49,6 +52,7 @@ theorem Spin.sign_sq {K : Type*} [CommRing K] (s : Spin) :
     Spin.sign K s ^ 2 = 1 := by
   simp [Spin.sign, ← Int.cast_pow, Spin.toSign_sq]
 
+/-- Flipping a spin negates its sign in `K`: `sign K (flip s) = -sign K s`. -/
 @[simp]
 theorem Spin.sign_flip {K : Type*} [CommRing K] (s : Spin) :
     Spin.sign K s.flip = -Spin.sign K s := by
