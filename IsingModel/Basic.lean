@@ -5,7 +5,7 @@ import Mathlib.Algebra.Order.Ring.Defs
 /-!
 # Ising model: basic definitions
 
-Spin type, configuration space, and Ising parameters.
+Spin type, spin operations, configuration space, and Ising parameters.
 -/
 
 namespace IsingModel
@@ -25,12 +25,85 @@ def toSign : Spin → Int
   | up   =>  1
   | down => -1
 
+/-- Flip a spin: `up ↔ down`. -/
+def flip : Spin → Spin
+  | .up   => .down
+  | .down => .up
+
+/-- The spin sign cast into a commutative ring `K`. -/
+def sign (K : Type*) [CommRing K] (s : Spin) : K := ↑s.toSign
+
+/-- The square of any spin sign is `1`: `(±1)² = 1`. -/
+@[simp]
+theorem toSign_sq (s : Spin) : s.toSign ^ 2 = 1 := by
+  cases s <;> simp [toSign]
+
+/-- The square of the spin sign in `K` is `1`: `(sign K s)² = 1`. -/
+@[simp]
+theorem sign_sq {K : Type*} [CommRing K] (s : Spin) :
+    Spin.sign K s ^ 2 = 1 := by
+  cases s
+  · simp [sign, toSign]
+  · simp [sign, toSign, sq, neg_neg]
+
+/-- Flipping a spin negates its sign: `toSign(flip s) = -toSign(s)`. -/
+@[simp]
+theorem toSign_flip (s : Spin) : s.flip.toSign = -s.toSign := by
+  cases s <;> simp [flip, toSign]
+
+/-- Flipping a spin negates its sign in `K`: `sign K (flip s) = -sign K s`. -/
+@[simp]
+theorem sign_flip {K : Type*} [CommRing K] (s : Spin) :
+    Spin.sign K s.flip = -Spin.sign K s := by
+  cases s <;> simp [sign, flip, toSign]
+
+/-- Flipping twice is the identity. -/
+@[simp]
+theorem flip_flip (s : Spin) : s.flip.flip = s := by
+  cases s <;> rfl
+
+/-- A flipped spin is different from the original. -/
+theorem flip_ne (s : Spin) : s.flip ≠ s := by
+  cases s <;> simp [flip]
+
 end Spin
 
 /-! ## Configuration space -/
 
 /-- A spin configuration on sites of type `ι`. -/
 abbrev Config (ι : Type*) := ι → Spin
+
+namespace Config
+
+/-- Flip all spins in a configuration. -/
+def flip {ι : Type*} (σ : Config ι) : Config ι := fun i => (σ i).flip
+
+/-- Flipping all spins twice recovers the original configuration. -/
+@[simp]
+theorem flip_flip {ι : Type*} (σ : Config ι) : σ.flip.flip = σ := by
+  ext i; exact Spin.flip_flip (σ i)
+
+/-- Flip a configuration at a single site `j`. -/
+def flipAt {ι : Type*} [DecidableEq ι] (j : ι) (σ : Config ι) : Config ι :=
+  Function.update σ j (σ j).flip
+
+/-- `flipAt j` is an involution. -/
+@[simp]
+theorem flipAt_flipAt {ι : Type*} [DecidableEq ι] (j : ι) (σ : Config ι) :
+    (σ.flipAt j).flipAt j = σ := by
+  ext i
+  simp [flipAt, Function.update]
+  split <;> simp_all
+
+/-- Flipping at any site produces a different configuration. -/
+theorem flipAt_ne {ι : Type*} [DecidableEq ι] (j : ι) (σ : Config ι) :
+    σ.flipAt j ≠ σ := by
+  intro h
+  have h1 := congr_fun h j
+  simp only [flipAt, Function.update_self] at h1
+  exact absurd h1 (Spin.flip_ne (σ j))
+
+end Config
 
 /-! ## Ising parameters -/
 

@@ -29,6 +29,10 @@ make the formal proof readable as ordinary mathematics.
 
 \section{Basic definitions (\texttt{Basic.lean})}
 
+\texttt{Basic.lean} contains all fundamental types (Spin, Config,
+IsingParams, Ferromagnetic) as well as spin operations (flip,
+flipAt, sign, toSign) and their basic properties.
+
 \begin{definition}[Spin]
 $\mathrm{Spin} = \{\mathrm{up}, \mathrm{down}\}$ with sign function
 $s : \mathrm{Spin} \to \mathbb{Z}$, $s(\mathrm{up})=+1$,
@@ -66,10 +70,14 @@ For a simple graph $G$ on $\iota$,
 \noindent\textbf{Lean:} \texttt{interactionEnergy} $+$
 \texttt{externalFieldEnergy} $=$ \texttt{hamiltonian}
 
-Key auxiliary definitions:
+Key auxiliary definitions (in \texttt{Basic.lean}):
 \begin{itemize}
   \item \texttt{Spin.flip}: $\mathrm{up} \leftrightarrow \mathrm{down}$
   \item \texttt{Spin.sign $K$ $s$}: cast $s(\cdot)$ into the field $K$
+  \item \texttt{Config.flip}, \texttt{Config.flipAt}: global and single-site spin flip
+\end{itemize}
+Key auxiliary definitions (in \texttt{Hamiltonian.lean}):
+\begin{itemize}
   \item \texttt{edgeSpin}: $s(\sigma_i) \cdot s(\sigma_j)$ for an edge
     $\{i,j\}$, defined via \texttt{Sym2.lift}
 \end{itemize}

@@ -11,53 +11,6 @@ with interaction and external field terms.
 
 namespace IsingModel
 
-/-! ## Spin flip -/
-
-/-- Flip a spin: `up ↔ down`. -/
-def Spin.flip : Spin → Spin
-  | .up   => .down
-  | .down => .up
-
-/-- Flip all spins in a configuration. -/
-def Config.flip {ι : Type*} (σ : Config ι) : Config ι := fun i => (σ i).flip
-
-/-- Flipping a spin negates its sign: `toSign(flip s) = -toSign(s)`. -/
-@[simp]
-theorem Spin.toSign_flip (s : Spin) : s.flip.toSign = -s.toSign := by
-  cases s <;> simp [Spin.flip, Spin.toSign]
-
-/-- Flipping twice is the identity. -/
-@[simp]
-theorem Spin.flip_flip (s : Spin) : s.flip.flip = s := by
-  cases s <;> rfl
-
-/-- Flipping all spins twice recovers the original configuration. -/
-@[simp]
-theorem Config.flip_flip {ι : Type*} (σ : Config ι) : σ.flip.flip = σ := by
-  ext i; exact Spin.flip_flip (σ i)
-
-/-! ## Spin sign as field element -/
-
-/-- The spin sign cast into the field `K`. -/
-def Spin.sign (K : Type*) [CommRing K] (s : Spin) : K := ↑s.toSign
-
-/-- The square of any spin sign is `1`: `(±1)² = 1`. -/
-@[simp]
-theorem Spin.toSign_sq (s : Spin) : s.toSign ^ 2 = 1 := by
-  cases s <;> simp [Spin.toSign]
-
-/-- The square of the spin sign in `K` is `1`: `(sign K s)² = 1`. -/
-@[simp]
-theorem Spin.sign_sq {K : Type*} [CommRing K] (s : Spin) :
-    Spin.sign K s ^ 2 = 1 := by
-  simp [Spin.sign, ← Int.cast_pow, Spin.toSign_sq]
-
-/-- Flipping a spin negates its sign in `K`: `sign K (flip s) = -sign K s`. -/
-@[simp]
-theorem Spin.sign_flip {K : Type*} [CommRing K] (s : Spin) :
-    Spin.sign K s.flip = -Spin.sign K s := by
-  cases s <;> simp [Spin.sign, Spin.flip, Spin.toSign]
-
 /-! ## Per-edge interaction -/
 
 /-- Per-edge interaction: `s(σ_i) * s(σ_j)` for an edge `{i, j}`. -/

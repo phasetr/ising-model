@@ -59,30 +59,6 @@ theorem sum_spin_toSign : ∑ s : Spin, (↑s.toSign : ℝ) = 0 := by
   have : Fintype.elems (α := Spin) = {.up, .down} := by decide
   simp [Finset.sum, Finset.univ, this, Spin.toSign]
 
-/-- Flip a configuration at a single site `j`. -/
-def Config.flipAt {ι : Type*} [DecidableEq ι] (j : ι) (σ : Config ι) : Config ι :=
-  Function.update σ j (σ j).flip
-
-/-- `flipAt j` is an involution. -/
-@[simp]
-theorem Config.flipAt_flipAt {ι : Type*} [DecidableEq ι] (j : ι) (σ : Config ι) :
-    (σ.flipAt j).flipAt j = σ := by
-  ext i
-  simp [Config.flipAt, Function.update]
-  split <;> simp_all
-
-/-- A flipped spin is different from the original. -/
-theorem Spin.flip_ne (s : Spin) : s.flip ≠ s := by
-  cases s <;> simp [Spin.flip]
-
-omit [Fintype ι] in
-/-- Flipping at any site produces a different configuration. -/
-theorem Config.flipAt_ne (j : ι) (σ : Config ι) : σ.flipAt j ≠ σ := by
-  intro h
-  have h1 := congr_fun h j
-  simp only [Config.flipAt, Function.update_self] at h1
-  exact absurd h1 (Spin.flip_ne (σ j))
-
 omit [Fintype ι] in
 /-- Flipping at `j ∈ A` negates the spin product.
 The factor at `j` changes sign; all other factors are unchanged. -/
