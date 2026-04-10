@@ -235,11 +235,41 @@ theorem exp_edgeSpin_decomp (α : ℝ) (σ : Config ι) (e : Sym2 ι) :
   · simp [h, Real.cosh_add_sinh]
   · simp [h]; linarith [Real.cosh_add_sinh (-α), Real.cosh_neg α, Real.sinh_neg α]
 
-/-- The Boltzmann weight has non-negative correlations for ferromagnetic parameters.
-Proved by factoring `exp(-βH)` into `(cosh + sinh · σ)` factors and applying
-`hasNonnegCorrelations_finset_prod`. -/
+/-- A product of `exp(K_e · edgeSpin ω e)` over edges and `exp(K_i · sign(ω i))` over sites
+has non-negative correlations, provided all K_e, K_i ≥ 0.
+This is the common core of both GKS-I and GKS-II proofs. -/
+theorem hasNonnegCorrelations_edge_site_product
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (edgeK : Sym2 ι → ℝ) (siteK : ι → ℝ)
+    (hedgeK : ∀ e ∈ G.edgeFinset, 0 ≤ edgeK e)
+    (hsiteK : ∀ i, 0 ≤ siteK i) :
+    HasNonnegCorrelations fun σ =>
+      (∏ e ∈ G.edgeFinset, Real.exp (edgeK e * edgeSpin (K := ℝ) σ e)) *
+      (∏ i : ι, Real.exp (siteK i * Spin.sign ℝ (σ i))) := by
+  have hedge : HasNonnegCorrelations fun σ =>
+      ∏ e ∈ G.edgeFinset, Real.exp (edgeK e * edgeSpin (K := ℝ) σ e) := by
+    apply hasNonnegCorrelations_finset_prod
+    intro e he
+    obtain ⟨⟨i, j⟩, rfl⟩ := Quot.exists_rep e
+    have hne : i ≠ j := by
+      intro h; subst h
+      have hadj := SimpleGraph.mem_edgeFinset.mp he
+      rw [SimpleGraph.mem_edgeSet] at hadj
+      exact hadj.ne rfl
+    exact ⟨Real.cosh (edgeK (Quot.mk _ (i, j))),
+      Real.sinh (edgeK (Quot.mk _ (i, j))), {i, j},
+      (Real.cosh_pos _).le, Real.sinh_nonneg_iff.mpr (hedgeK _ he), fun σ => by
+        simp only [spinProduct, Finset.prod_pair hne, Spin.sign]
+        exact exp_edgeSpin_decomp (edgeK (Quot.mk _ (i, j))) σ (Quot.mk _ (i, j))⟩
+  exact hasNonnegCorrelations_mul_prod Finset.univ hedge
+    (fun i σ => Real.exp (siteK i * Spin.sign ℝ (σ i)))
+    (fun i _ => ⟨Real.cosh (siteK i), Real.sinh (siteK i), {i},
+      (Real.cosh_pos _).le, Real.sinh_nonneg_iff.mpr (hsiteK i), fun σ => by
+        simp only [Spin.sign, spinProduct, Finset.prod_singleton]
+        rw [exp_sign_decomp (siteK i) (σ i)]; ring⟩)
+
 -- The factored form of the Boltzmann weight as a product of (cosh + sinh · spin) terms.
--- This equals boltzmannWeight but is directly amenable to hasNonnegCorrelations_finset_prod.
+-- This equals boltzmannWeight but is directly amenable to hasNonnegCorrelations_edge_site_product.
 private noncomputable def bwFactored (G : SimpleGraph ι) [Fintype G.edgeSet]
     (p : IsingParams ℝ) (σ : Config ι) : ℝ :=
   (∏ e ∈ G.edgeFinset, (Real.cosh (p.β * p.J) +
@@ -434,11 +464,20 @@ modified couplings `K_C(1 + t^C) ≥ 0`. -/
 private theorem modifiedWeight_nonneg_corr (G : SimpleGraph ι) [Fintype G.edgeSet]
     (p : IsingParams ℝ) (hf : Ferromagnetic p) (t : Config ι) :
     HasNonnegCorrelations (modifiedWeight G p t) := by
-  -- Same structure as bwFactored_hasNonnegCorrelations:
-  -- factor into (cosh + sinh · spin) terms with non-negative couplings
-  -- K'_e = βJ(1+t^e) ≥ 0, K'_i = βh(1+t_i) ≥ 0.
-  -- TODO: refactor to share code with bwFactored_hasNonnegCorrelations
-  sorry
+  unfold modifiedWeight
+  exact hasNonnegCorrelations_edge_site_product G
+    (fun e => p.β * p.J * (1 + edgeSpin (K := ℝ) t e))
+    (fun i => p.β * p.h * (1 + Spin.sign ℝ (t i)))
+    (fun e _ => by
+      apply mul_nonneg (mul_nonneg hf.hβ.le hf.hJ)
+      have := edgeSpin_sq t e
+      have : (edgeSpin (K := ℝ) t e - 1) * (edgeSpin (K := ℝ) t e + 1) = 0 := by nlinarith
+      rcases mul_eq_zero.mp this with h | h <;> linarith)
+    (fun i => by
+      apply mul_nonneg (mul_nonneg hf.hβ.le hf.hh)
+      have := Spin.sign_sq (K := ℝ) (t i)
+      have : (Spin.sign ℝ (t i) - 1) * (Spin.sign ℝ (t i) + 1) = 0 := by nlinarith
+      rcases mul_eq_zero.mp this with h | h <;> linarith)
 
 private theorem duplicateSumChanged_nonneg (G : SimpleGraph ι) [Fintype G.edgeSet]
     (p : IsingParams ℝ) (hf : Ferromagnetic p) (A B : Finset ι) :
