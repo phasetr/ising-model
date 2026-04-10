@@ -124,15 +124,30 @@ theorem sum_config_spinProduct_empty :
 
 /-! ## Spin product multiplication (Fourier structure) -/
 
-omit [Fintype ι] in
+set_option linter.unusedFintypeInType false in
 /-- Multiplying spin products corresponds to symmetric difference of index sets.
 This follows from `s(σ_i)² = 1`: shared indices cancel.
 
-TODO: prove without sorry. The proof requires splitting products over
-`A \ C`, `A ∩ C`, `C \ A` and using `s(σ_i)² = 1` on the intersection. -/
+The proof converts each `spinProduct S σ` to `∏ i ∈ univ, if i ∈ S then s_i else 1`,
+multiplies pointwise using `prod_mul_distrib`, and checks each factor by cases on
+membership in `A` and `C`, using `s_i² = 1`. -/
 theorem spinProduct_mul (A C : Finset ι) (σ : Config ι) :
     spinProduct A σ * spinProduct C σ = spinProduct (symmDiff A C) σ := by
-  sorry
+  let s : ι → ℝ := fun i => ↑(σ i).toSign
+  have hsq : ∀ i, s i * s i = 1 :=
+    fun i => by simp [s, ← sq, ← Int.cast_pow, Spin.toSign_sq]
+  -- Rewrite spinProduct as ∏ over univ with indicator
+  have hprod : ∀ S : Finset ι, spinProduct S σ =
+      ∏ i ∈ Finset.univ, if i ∈ S then s i else 1 := by
+    intro S
+    simp only [spinProduct, s]
+    conv_lhs => rw [show S = Finset.univ.filter (· ∈ S) from by ext; simp]
+    rw [Finset.prod_filter]
+  rw [hprod A, hprod C, ← Finset.prod_mul_distrib, hprod]
+  apply Finset.prod_congr rfl
+  intro i _
+  simp only [Finset.mem_symmDiff]
+  by_cases hiA : i ∈ A <;> by_cases hiC : i ∈ C <;> simp_all [hsq i]
 
 /-! ## Preservation of non-negative correlations -/
 
