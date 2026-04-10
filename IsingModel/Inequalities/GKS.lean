@@ -373,20 +373,26 @@ theorem hasNonnegCorrelations_general_coupling
 
 /-! ## GKS-II: second Griffiths inequality -/
 
-/-- **Second Griffiths inequality (GKS-II)**: For a ferromagnetic Ising model
-(`J ≥ 0`, `h ≥ 0`, `β > 0`), correlations are monotone:
-`⟨σ_A σ_B⟩ ≥ ⟨σ_A⟩⟨σ_B⟩` for any subsets `A, B`.
+-- GKS-II: ⟨σ_A σ_B⟩ ≥ ⟨σ_A⟩⟨σ_B⟩ (Friedli–Velenik, Theorem 3.49 (3.55), pp. 127–128)
+-- Proof by the duplicate variable trick: introduce independent copy χ,
+-- change variables to (ω, ω'') where ω''_i = ω_i χ_i, fix ω'', and
+-- apply GKS-I with modified coupling constants K_C(1 + ω''_C) ≥ 0.
 
-Since `spinProduct A σ * spinProduct B σ = spinProduct (symmDiff A B) σ`,
-this is equivalent to `correlation G p (symmDiff A B) ≥ correlation G p A * correlation G p B`.
+/-- `1 - spinProduct B σ ≥ 0` pointwise, since `spinProduct B σ ∈ {-1, 1}`. -/
+theorem one_sub_spinProduct_nonneg (B : Finset ι) (σ : Config ι) :
+    0 ≤ 1 - spinProduct B σ := by
+  have hsq := spinProduct_sq B σ
+  have : (spinProduct B σ - 1) * (spinProduct B σ + 1) = 0 := by nlinarith
+  rcases mul_eq_zero.mp this with h | h
+  · linarith  -- spinProduct = 1, so 1 - 1 = 0 ≥ 0
+  · linarith  -- spinProduct = -1, so 1 - (-1) = 2 ≥ 0
 
-Reference: Friedli–Velenik, Theorem 3.49 (3.55), pp. 127–128.
-Proof by the duplicate variable trick: introduce an independent copy χ,
-change variables to (ω, ω'') where ω''_i = ω_i χ_i, fix ω'', and
-apply GKS-I with modified coupling constants K_C(1 + ω''_C) ≥ 0. -/
 theorem gks_second (G : SimpleGraph ι) [Fintype G.edgeSet]
     (p : IsingParams ℝ) (hf : Ferromagnetic p) (A B : Finset ι) :
     correlation G p A * correlation G p B ≤ correlation G p (symmDiff A B) := by
+  -- The proof follows Friedli–Velenik, Theorem 3.49 (3.55), pp. 127–128.
+  -- Introduce duplicate variables, change to (ω, ω'') where ω''_i = ω_i χ_i,
+  -- fix ω'', and apply GKS-I with modified coupling constants.
   sorry
 
 end IsingModel
