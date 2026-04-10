@@ -1,5 +1,6 @@
 import IsingModel.GibbsMeasure
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
+import Mathlib.Data.Finset.SymmDiff
 
 /-!
 # GKS (Griffiths) inequalities
@@ -51,8 +52,6 @@ theorem exp_sign_decomp (α : ℝ) (s : Spin) :
               Real.cosh_add_sinh (-α), Real.sinh_add_cosh (-α),
               Real.cosh_neg α, Real.sinh_neg α]
 
-/-! ## GKS-I: core non-negativity -/
-
 /-! ## Sum over configurations -/
 
 /-- The sum of `toSign(s)` over all spins is zero: `1 + (-1) = 0`. -/
@@ -72,6 +71,18 @@ theorem Config.flipAt_flipAt {ι : Type*} [DecidableEq ι] (j : ι) (σ : Config
   simp [Config.flipAt, Function.update]
   split <;> simp_all
 
+/-- A flipped spin is different from the original. -/
+theorem Spin.flip_ne (s : Spin) : s.flip ≠ s := by
+  cases s <;> simp [Spin.flip]
+
+omit [Fintype ι] in
+/-- Flipping at any site produces a different configuration. -/
+theorem Config.flipAt_ne (j : ι) (σ : Config ι) : σ.flipAt j ≠ σ := by
+  intro h
+  have h1 := congr_fun h j
+  simp only [Config.flipAt, Function.update_self] at h1
+  exact absurd h1 (Spin.flip_ne (σ j))
+
 omit [Fintype ι] in
 /-- Flipping at `j ∈ A` negates the spin product.
 The factor at `j` changes sign; all other factors are unchanged. -/
@@ -88,18 +99,6 @@ theorem spinProduct_flipAt_neg (A : Finset ι) (j : ι) (hj : j ∈ A)
     simp [Config.flipAt, Function.update_of_ne hne]
   rw [hj_flip, Finset.prod_congr rfl hrest]
   ring
-
-/-- A flipped spin is different from the original. -/
-theorem Spin.flip_ne (s : Spin) : s.flip ≠ s := by
-  cases s <;> simp [Spin.flip]
-
-omit [Fintype ι] in
-/-- Flipping at any site produces a different configuration. -/
-theorem Config.flipAt_ne (j : ι) (σ : Config ι) : σ.flipAt j ≠ σ := by
-  intro h
-  have h1 := congr_fun h j
-  simp only [Config.flipAt, Function.update_self] at h1
-  exact absurd h1 (Spin.flip_ne (σ j))
 
 /-- The sum of `spinProduct A` over all configurations is zero when `A` is nonempty.
 Uses the involution `flipAt j` for some `j ∈ A`: each pair `(σ, flipAt j σ)`
@@ -123,14 +122,58 @@ theorem sum_config_spinProduct_empty :
     ∑ σ : Config ι, spinProduct ∅ σ = (Fintype.card (Config ι) : ℝ) := by
   simp [spinProduct_empty]
 
+/-! ## Spin product multiplication (Fourier structure) -/
+
+omit [Fintype ι] in
+/-- Multiplying spin products corresponds to symmetric difference of index sets.
+This follows from `s(σ_i)² = 1`: shared indices cancel.
+
+TODO: prove without sorry. The proof requires splitting products over
+`A \ C`, `A ∩ C`, `C \ A` and using `s(σ_i)² = 1` on the intersection. -/
+theorem spinProduct_mul (A C : Finset ι) (σ : Config ι) :
+    spinProduct A σ * spinProduct C σ = spinProduct (symmDiff A C) σ := by
+  sorry
+
+/-! ## Preservation of non-negative correlations -/
+
+/-- A function `f` on configurations has **non-negative correlations** if
+`∑_σ σ^S · f(σ) ≥ 0` for every subset `S`. -/
+def HasNonnegCorrelations (f : Config ι → ℝ) : Prop :=
+  ∀ S : Finset ι, 0 ≤ ∑ σ : Config ι, spinProduct S σ * f σ
+
+/-- The constant function `1` has non-negative correlations.
+For `S = ∅`, the sum is `2^|ι|`. For `S ≠ ∅`, it is `0`. -/
+theorem hasNonnegCorrelations_one : HasNonnegCorrelations (ι := ι) (fun _ => 1) := by
+  intro S
+  simp only [mul_one]
+  by_cases hS : S.Nonempty
+  · rw [sum_config_spinProduct_eq_zero S hS]
+  · simp only [not_nonempty_iff_eq_empty] at hS
+    subst hS
+    exact Finset.sum_nonneg fun _ _ => by norm_num
+
+/-- If `f` has non-negative correlations, then so does `f · (a + b · σ^C)`
+when `a, b ≥ 0`. This is the key inductive step for GKS-I.
+
+The proof uses: `∑_σ σ^S f(σ)(a + b σ^C) = a ∑_σ σ^S f(σ) + b ∑_σ σ^{S Δ C} f(σ)`,
+where both terms are non-negative by hypothesis.
+
+TODO: prove without sorry. Requires spinProduct_mul and sum rearrangement. -/
+theorem hasNonnegCorrelations_mul {f : Config ι → ℝ}
+    (hf : HasNonnegCorrelations f)
+    {a b : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) (C : Finset ι) :
+    HasNonnegCorrelations fun σ => f σ * (a + b * spinProduct C σ) := by
+  sorry
+
 /-- The numerator of `⟨σ_A⟩` is non-negative for ferromagnetic parameters.
 
-This is the core of GKS-I. The proof uses the cosh/sinh decomposition of
-the Boltzmann weight and the fact that sums over `{±1}` configurations
-vanish for odd powers and are positive for even powers.
+Proof strategy: factor `exp(-βH)` using `exp_sign_decomp` into a product
+of terms `(cosh + sinh · σ^edge)` and `(cosh + sinh · σ^site)`, then
+apply `hasNonnegCorrelations_mul` inductively starting from
+`hasNonnegCorrelations_one`.
 
-TODO: complete the proof (currently `sorry`).
--/
+TODO: prove without sorry. Requires factoring exp(-βH) and applying
+the preservation lemma inductively over edges and sites. -/
 theorem gks_numerator_nonneg (G : SimpleGraph ι) [Fintype G.edgeSet]
     (p : IsingParams ℝ) (hf : Ferromagnetic p) (A : Finset ι) :
     0 ≤ numerator G p (spinProduct A) := by
