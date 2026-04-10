@@ -16,6 +16,23 @@ inequalities; the thermodynamic limit and related topics are out of scope for
 now. This project is not intended to interfere with the work of researchers in
 the field, and if any overlap arises I am happy to coordinate accordingly.
 
+## Documentation
+
+Mathematical documentation for the formalized proofs is in `docs/` as
+LaTeX source files. To compile:
+
+```sh
+cd docs
+latexmk -lualatex gks-proof-guide.tex
+```
+
+Requires a TeX Live installation with LuaLaTeX. PDFs are not committed
+to the repository.
+
+| File                       | Description                                 |
+|----------------------------|---------------------------------------------|
+| `docs/gks-proof-guide.tex` | Mathematical walkthrough of the GKS-I proof |
+
 ## Related projects and references
 
 - Glimm, J. and Jaffe, A., *Quantum Physics: A Functional Integral Point of View* — [Springer](https://link.springer.com/book/10.1007/978-1-4612-4728-9)

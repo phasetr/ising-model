@@ -1,0 +1,257 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{hyperref}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+
+\title{GKS-I Formal Proof: A Mathematical Guide to the Lean 4 Code}
+\author{ising-model project}
+\date{2026-04-10}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This document provides a mathematical walkthrough of the Lean~4
+formalization of the first Griffiths inequality (GKS-I) for
+the finite Ising model. Each section corresponds to a Lean source file
+and lists the relevant definitions and theorems. The purpose is to
+make the formal proof readable as ordinary mathematics.
+\end{abstract}
+
+\tableofcontents
+
+\section{Basic definitions (\texttt{Basic.lean})}
+
+\begin{definition}[Spin]
+$\mathrm{Spin} = \{\mathrm{up}, \mathrm{down}\}$ with sign function
+$s : \mathrm{Spin} \to \mathbb{Z}$, $s(\mathrm{up})=+1$,
+$s(\mathrm{down})=-1$.
+\end{definition}
+
+\noindent\textbf{Lean:} \texttt{inductive Spin}, \texttt{Spin.toSign}
+
+\begin{definition}[Configuration]
+A configuration on a type $\iota$ is a function
+$\sigma : \iota \to \mathrm{Spin}$.
+\end{definition}
+
+\noindent\textbf{Lean:} \texttt{abbrev Config ($\iota$) := $\iota$ $\to$ Spin}
+
+\begin{definition}[Ising parameters]
+Over an ordered field $K$: coupling $J : K$, external field $h : K$,
+inverse temperature $\beta : K$.
+Ferromagnetic condition: $J \geq 0$, $h \geq 0$, $\beta > 0$.
+\end{definition}
+
+\noindent\textbf{Lean:} \texttt{structure IsingParams},
+\texttt{structure Ferromagnetic}
+
+\section{Hamiltonian (\texttt{Hamiltonian.lean})}
+
+\begin{definition}[Ising Hamiltonian]
+For a simple graph $G$ on $\iota$,
+\[
+  H_G(\sigma) = -J \sum_{\{i,j\} \in E(G)} s(\sigma_i)\,s(\sigma_j)
+  - h \sum_{i \in \iota} s(\sigma_i).
+\]
+\end{definition}
+
+\noindent\textbf{Lean:} \texttt{interactionEnergy} $+$
+\texttt{externalFieldEnergy} $=$ \texttt{hamiltonian}
+
+Key auxiliary definitions:
+\begin{itemize}
+  \item \texttt{Spin.flip}: $\mathrm{up} \leftrightarrow \mathrm{down}$
+  \item \texttt{Spin.sign $K$ $s$}: cast $s(\cdot)$ into the field $K$
+  \item \texttt{edgeSpin}: $s(\sigma_i) \cdot s(\sigma_j)$ for an edge
+    $\{i,j\}$, defined via \texttt{Sym2.lift}
+\end{itemize}
+
+\begin{lemma}[Spin flip symmetry --- \texttt{hamiltonian\_flip\_eq}]
+If $h = 0$, then $H_G(\bar{\sigma}) = H_G(\sigma)$ where
+$\bar{\sigma}_i = \mathrm{flip}(\sigma_i)$.
+\end{lemma}
+
+\begin{proof}
+Each edge factor satisfies $(-s_i)(-s_j) = s_i s_j$
+(\texttt{edgeSpin\_flip}), and the field term vanishes since $h=0$.
+\end{proof}
+
+\section{Partition function and Gibbs measure (\texttt{GibbsMeasure.lean})}
+
+\begin{definition}[Partition function]
+$Z_G = \sum_{\sigma : \iota \to \mathrm{Spin}} \exp(-\beta\, H_G(\sigma))$.
+\end{definition}
+
+\begin{theorem}[$Z > 0$ --- \texttt{partitionFunction\_pos}]
+$Z_G > 0$.
+\end{theorem}
+
+\begin{proof}
+Each summand $\exp(\cdot) > 0$ (\texttt{Real.exp\_pos}), and the
+index set $\iota \to \mathrm{Spin}$ is nonempty
+(\texttt{Finset.univ\_nonempty}).
+Apply \texttt{Finset.sum\_pos}.
+\end{proof}
+
+\begin{definition}[Gibbs expectation, correlation]
+$\langle F \rangle = Z^{-1} \sum_\sigma F(\sigma)\,e^{-\beta H}$, \quad
+$\langle \sigma_A \rangle = \langle \prod_{i \in A} s(\sigma_i) \rangle$.
+\end{definition}
+
+\noindent\textbf{Lean:} \texttt{gibbsExpectation},
+\texttt{spinProduct}, \texttt{correlation}
+
+\subsection{Spin product algebra}
+
+\begin{lemma}[\texttt{spinProduct\_sq}]
+$(\sigma^A)^2 = 1$ for any $A$.
+\end{lemma}
+
+\begin{lemma}[\texttt{spinProduct\_mul}]
+$\sigma^A \cdot \sigma^C = \sigma^{A \bigtriangleup C}$.
+\end{lemma}
+
+\begin{proof}
+Write $\sigma^A = \prod_{i \in \iota}
+(\text{if } i \in A \text{ then } s_i \text{ else } 1)$
+(using \texttt{Finset.prod\_filter}).
+Multiply pointwise (\texttt{Finset.prod\_mul\_distrib}).
+At each site: if $i \in A \cap C$, $s_i \cdot s_i = 1$ (by
+\texttt{Spin.toSign\_sq}); otherwise the factor is $s_i$ or $1$,
+matching $A \bigtriangleup C$.
+\end{proof}
+
+\section{GKS-I proof (\texttt{Inequalities/GKS.lean})}
+
+\subsection{Reduction to non-negative correlations}
+
+\begin{theorem}[GKS-I --- \texttt{gks\_first}]
+For ferromagnetic parameters, $\langle \sigma_A \rangle \geq 0$
+for all $A$.
+\end{theorem}
+
+The proof factors as:
+\begin{enumerate}
+  \item Since $Z > 0$, it suffices to show the numerator
+    $\sum_\sigma \sigma^A e^{-\beta H} \geq 0$
+    (\texttt{gibbsExpectation\_nonneg\_of\_numerator\_nonneg}).
+  \item This follows from a property of $e^{-\beta H}$ called
+    \emph{non-negative correlations}
+    (\texttt{gks\_numerator\_nonneg}).
+\end{enumerate}
+
+\subsection{Non-negative correlations (HNC)}
+
+\begin{definition}[\texttt{HasNonnegCorrelations}]
+A function $f : (\iota \to \mathrm{Spin}) \to \mathbb{R}$ has
+\textbf{non-negative correlations} (HNC) if
+$\sum_\sigma \sigma^S \cdot f(\sigma) \geq 0$ for every
+$S \subseteq \iota$.
+\end{definition}
+
+\begin{lemma}[Base case --- \texttt{hasNonnegCorrelations\_one}]
+$f \equiv 1$ has HNC.
+\end{lemma}
+
+\begin{proof}
+For $S = \emptyset$: $\sum_\sigma 1 = 2^{|\iota|} > 0$.
+For $S \neq \emptyset$: $\sum_\sigma \sigma^S = 0$.
+
+The vanishing is proved via the involution
+$\mathrm{flipAt}(j)$ for any $j \in S$
+(\texttt{sum\_config\_spinProduct\_eq\_zero}).
+Each pair $(\sigma, \mathrm{flipAt}(j, \sigma))$ contributes
+$\sigma^S + (-\sigma^S) = 0$ because flipping at $j \in S$ negates
+the spin product (\texttt{spinProduct\_flipAt\_neg}).
+The involution is applied via \texttt{Finset.sum\_ninvolution}.
+\end{proof}
+
+\begin{lemma}[Preservation --- \texttt{hasNonnegCorrelations\_mul}]
+\label{lem:mul}
+If $f$ has HNC and $a, b \geq 0$, then
+$\sigma \mapsto f(\sigma)(a + b\,\sigma^C)$ has HNC.
+\end{lemma}
+
+\begin{proof}
+\[
+  \sum_\sigma \sigma^S f(\sigma)(a + b\,\sigma^C)
+  = a \underbrace{\sum_\sigma \sigma^S f(\sigma)}_{\geq 0}
+  + b \underbrace{\sum_\sigma \sigma^{S \bigtriangleup C} f(\sigma)}_{\geq 0}
+\]
+using $\sigma^S \sigma^C = \sigma^{S \bigtriangleup C}$
+(\texttt{spinProduct\_mul}).
+\end{proof}
+
+\begin{lemma}[Iterated product --- \texttt{hasNonnegCorrelations\_finset\_prod},
+\texttt{hasNonnegCorrelations\_mul\_prod}]
+A product of factors $(a_k + b_k \sigma^{C_k})$ with $a_k, b_k \geq 0$
+has HNC. More generally, multiplying an HNC function by such a product
+preserves HNC.
+\end{lemma}
+
+\begin{proof}
+By induction on the index set, applying Lemma~\ref{lem:mul} at each step.
+\end{proof}
+
+\subsection{Factoring the Boltzmann weight}
+
+\begin{lemma}[\texttt{exp\_sign\_decomp}, \texttt{exp\_edgeSpin\_decomp}]
+For $x \in \{+1, -1\}$ and $\alpha \geq 0$:
+$e^{\alpha x} = \cosh\alpha + x\,\sinh\alpha$,
+with $\cosh\alpha > 0$ and $\sinh\alpha \geq 0$.
+\end{lemma}
+
+\begin{lemma}[\texttt{bwFactored\_eq\_boltzmannWeight}]
+\[
+  e^{-\beta H_G(\sigma)}
+  = \prod_{\{i,j\} \in E(G)} (\cosh(\beta J) + \sinh(\beta J)\,s_i s_j)
+  \cdot \prod_{i \in \iota} (\cosh(\beta h) + \sinh(\beta h)\,s_i).
+\]
+\end{lemma}
+
+\begin{proof}
+$-\beta H = \beta J \sum_e s_i s_j + \beta h \sum_i s_i$.
+Apply $\exp(\text{sum}) = \prod\exp$ (\texttt{Real.exp\_sum}),
+then decompose each factor.
+\end{proof}
+
+\subsection{Conclusion}
+
+\begin{theorem}[\texttt{boltzmannWeight\_hasNonnegCorrelations}]
+$e^{-\beta H_G}$ has HNC for ferromagnetic parameters.
+\end{theorem}
+
+\begin{proof}
+The factored form is a product of $(a+b\,\sigma^C)$ terms with
+$a,b \geq 0$. Start from $f \equiv 1$ (HNC by base case),
+multiply by each edge factor, then by each site factor. HNC is
+preserved at each step by Lemma~\ref{lem:mul}.
+\end{proof}
+
+\noindent
+GKS-I follows: $\langle \sigma_A \rangle
+= Z^{-1}\sum_\sigma \sigma^A e^{-\beta H} \geq 0$
+since $Z > 0$ and the numerator $\geq 0$ by HNC.
+
+\section{Numerical tests (\texttt{test/IsingModel/GKSTest.lean})}
+
+A Float-based reference implementation verifies:
+\begin{itemize}
+  \item $Z > 0$ for 4 graph types
+  \item Spin flip symmetry ($h = 0$)
+  \item GKS-I for 6 parameter sets (2--4 sites, all subsets)
+  \item GKS-II ($\langle\sigma_A\sigma_B\rangle \geq
+    \langle\sigma_A\rangle\langle\sigma_B\rangle$)
+    for 3 parameter sets
+  \item GKS-I violation for anti-ferromagnetic $J < 0$
+\end{itemize}
+
+\end{document}

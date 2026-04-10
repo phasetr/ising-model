@@ -1,3 +1,28 @@
 {
-	"cSpell.words": ["congr", "Finset", "Fintype", "Ising", "Repr", "rintro"]
+	"cSpell.words": [
+		"congr",
+		"decomp",
+		"elems",
+		"Finset",
+		"Fintype",
+		"foldl",
+		"Glimm",
+		"Griffiths",
+		"hnum",
+		"hprod",
+		"hrest",
+		"hsite",
+		"Ising",
+		"Jaffe",
+		"lualatex",
+		"ninvolution",
+		"nlinarith",
+		"physlib",
+		"pointwise",
+		"println",
+		"Repr",
+		"rintro",
+		"simpa",
+		"symm"
+	]
 }
