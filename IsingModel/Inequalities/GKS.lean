@@ -194,6 +194,25 @@ theorem hasNonnegCorrelations_mul {f : Config ι → ℝ}
   exact add_nonneg (mul_nonneg ha (hf S)) (mul_nonneg hb (hf (symmDiff S C)))
 
 set_option linter.unusedDecidableInType false in
+/-- Multiplying a function with HNC by a product of `(a + b · σ^C)` factors preserves HNC. -/
+theorem hasNonnegCorrelations_mul_prod {α : Type*} [DecidableEq α]
+    (S : Finset α) {f : Config ι → ℝ} (hf : HasNonnegCorrelations f)
+    (g : α → Config ι → ℝ)
+    (hg : ∀ a ∈ S, ∃ c d : ℝ, ∃ C : Finset ι, 0 ≤ c ∧ 0 ≤ d ∧
+      ∀ σ, g a σ = c + d * spinProduct C σ) :
+    HasNonnegCorrelations fun σ => f σ * ∏ a ∈ S, g a σ := by
+  induction S using Finset.induction with
+  | empty => simpa using hf
+  | @insert x S' hx ih =>
+    rw [show (fun σ => f σ * ∏ a ∈ insert x S', g a σ) =
+        fun σ => (f σ * ∏ a ∈ S', g a σ) * g x σ from by
+      ext σ; rw [Finset.prod_insert hx]; ring]
+    obtain ⟨c, d, C, hc, hd, hg_eq⟩ := hg x (Finset.mem_insert_self x S')
+    simp_rw [hg_eq]
+    exact hasNonnegCorrelations_mul
+      (ih fun a ha' => hg a (Finset.mem_insert_of_mem ha')) hc hd C
+
+set_option linter.unusedDecidableInType false in
 /-- A product of `(a + b · σ^C)` factors over a finset has non-negative correlations,
 provided each `a, b ≥ 0`. Proved by induction on the finset, applying
 `hasNonnegCorrelations_mul` at each step. -/
@@ -263,27 +282,59 @@ private theorem bwFactored_hasNonnegCorrelations (G : SimpleGraph ι) [Fintype G
   have hsJ := Real.sinh_nonneg_iff.mpr (mul_nonneg hf.hβ.le hf.hJ)
   have hcH := Real.cosh_pos (p.β * p.h) |>.le
   have hsH := Real.sinh_nonneg_iff.mpr (mul_nonneg hf.hβ.le hf.hh)
+  -- Edge factors have HNC
   have hedge : HasNonnegCorrelations fun σ =>
       ∏ e ∈ G.edgeFinset, (Real.cosh (p.β * p.J) +
         Real.sinh (p.β * p.J) * edgeSpin (K := ℝ) σ e) := by
     apply hasNonnegCorrelations_finset_prod
-    intro e _
-    -- edgeSpin σ e is ±1, so it equals spinProduct for some C
-    sorry
-  have hsite : ∀ (f : Config ι → ℝ), HasNonnegCorrelations f →
-      HasNonnegCorrelations fun σ => f σ *
-        ∏ i : ι, (Real.cosh (p.β * p.h) +
-          Real.sinh (p.β * p.h) * Spin.sign ℝ (σ i)) := by
-    intro f hf
-    -- Induct over Finset.univ for sites
-    sorry
-  exact hsite _ hedge
+    intro e he
+    obtain ⟨⟨i, j⟩, rfl⟩ := Quot.exists_rep e
+    have hne : i ≠ j := by
+      intro h; subst h
+      have hadj := SimpleGraph.mem_edgeFinset.mp he
+      rw [SimpleGraph.mem_edgeSet] at hadj
+      exact hadj.ne rfl
+    exact ⟨_, _, {i, j}, hcJ, hsJ, fun σ => by
+      simp [edgeSpin, Sym2.lift_mk, spinProduct, Finset.prod_pair hne, Spin.sign]⟩
+  -- Multiply edge product by site factors
+  have hsite := hasNonnegCorrelations_mul_prod Finset.univ hedge
+      (fun i σ => Real.cosh (p.β * p.h) + Real.sinh (p.β * p.h) * Spin.sign ℝ (σ i))
+      (fun i _ => ⟨_, _, {i}, hcH, hsH, fun σ => by
+        simp [spinProduct, Spin.sign]⟩)
+  -- Combine: bwFactored = edge_prod * site_prod
+  convert hsite using 1
 
+set_option linter.unusedDecidableInType false in
+set_option linter.unusedSectionVars false in
 /-- The factored form equals the Boltzmann weight. -/
 private theorem bwFactored_eq_boltzmannWeight (G : SimpleGraph ι) [Fintype G.edgeSet]
     (p : IsingParams ℝ) (σ : Config ι) :
     bwFactored G p σ = boltzmannWeight G p σ := by
-  sorry
+  unfold bwFactored boltzmannWeight hamiltonian interactionEnergy externalFieldEnergy
+  -- RHS: exp(-β * (-J * ∑_e edgeSpin - h * ∑_i sign)) = exp(βJ * ∑_e edgeSpin + βh * ∑_i sign)
+  rw [show -p.β * (-(p.J) * ∑ e ∈ G.edgeFinset, edgeSpin σ e +
+      -(p.h) * ∑ i : ι, Spin.sign ℝ (σ i)) =
+      p.β * p.J * ∑ e ∈ G.edgeFinset, edgeSpin σ e +
+      p.β * p.h * ∑ i : ι, Spin.sign ℝ (σ i) from by ring]
+  rw [Real.exp_add]
+  -- exp(βJ * ∑ edgeSpin) = ∏ exp(βJ * edgeSpin e)
+  rw [show p.β * p.J * ∑ e ∈ G.edgeFinset, edgeSpin (K := ℝ) σ e =
+      ∑ e ∈ G.edgeFinset, p.β * p.J * edgeSpin (K := ℝ) σ e from by
+    rw [Finset.mul_sum]]
+  rw [Real.exp_sum]
+  -- exp(βh * ∑ sign) = ∏ exp(βh * sign(σ i))
+  rw [show p.β * p.h * ∑ i : ι, Spin.sign ℝ (σ i) =
+      ∑ i : ι, p.β * p.h * Spin.sign ℝ (σ i) from by
+    rw [Finset.mul_sum]]
+  rw [Real.exp_sum]
+  -- Each exp(βJ * edgeSpin) = cosh + sinh * edgeSpin
+  congr 1
+  · apply Finset.prod_congr rfl; intro e _
+    exact (exp_edgeSpin_decomp (p.β * p.J) σ e).symm
+  · apply Finset.prod_congr rfl; intro i _
+    simp only [Spin.sign]
+    rw [exp_sign_decomp (p.β * p.h) (σ i)]
+    ring
 
 theorem boltzmannWeight_hasNonnegCorrelations (G : SimpleGraph ι) [Fintype G.edgeSet]
     (p : IsingParams ℝ) (hf : Ferromagnetic p) :
