@@ -193,19 +193,30 @@ theorem hasNonnegCorrelations_mul {f : Config ι → ℝ}
   rw [key]
   exact add_nonneg (mul_nonneg ha (hf S)) (mul_nonneg hb (hf (symmDiff S C)))
 
-/-- The numerator of `⟨σ_A⟩` is non-negative for ferromagnetic parameters.
+/-- The Boltzmann weight has non-negative correlations for ferromagnetic parameters.
 
-Proof strategy: factor `exp(-βH)` using `exp_sign_decomp` into a product
-of terms `(cosh + sinh · σ^edge)` and `(cosh + sinh · σ^site)`, then
-apply `hasNonnegCorrelations_mul` inductively starting from
-`hasNonnegCorrelations_one`.
+This is the key technical lemma for GKS-I. The proof factors `exp(-βH)` as
+a product of terms `(cosh(βJ) + sinh(βJ) · σ^edge)` and
+`(cosh(βh) + sinh(βh) · σ^site)`, then applies `hasNonnegCorrelations_mul`
+inductively starting from `hasNonnegCorrelations_one`.
 
-TODO: prove without sorry. Requires factoring exp(-βH) and applying
-the preservation lemma inductively over edges and sites. -/
+TODO: prove without sorry. Requires:
+1. `exp(∑ f) = ∏ exp(f i)` (mathlib: `Real.exp_sum`)
+2. Decomposition of `hamiltonian` into edge and site sums
+3. `exp_sign_decomp` for each factor
+4. `edgeSpin σ e ∈ {-1, 1}` and `Spin.sign (σ i) ∈ {-1, 1}`
+5. Inductive application of `hasNonnegCorrelations_mul` over edges then sites
+-/
+theorem boltzmannWeight_hasNonnegCorrelations (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    HasNonnegCorrelations (boltzmannWeight G p) := by
+  sorry
+
+/-- The numerator of `⟨σ_A⟩` is non-negative for ferromagnetic parameters. -/
 theorem gks_numerator_nonneg (G : SimpleGraph ι) [Fintype G.edgeSet]
     (p : IsingParams ℝ) (hf : Ferromagnetic p) (A : Finset ι) :
-    0 ≤ numerator G p (spinProduct A) := by
-  sorry
+    0 ≤ numerator G p (spinProduct A) :=
+  boltzmannWeight_hasNonnegCorrelations G p hf A
 
 /-! ## GKS-I: main theorem -/
 
