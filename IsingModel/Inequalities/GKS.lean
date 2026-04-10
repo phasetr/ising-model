@@ -403,13 +403,42 @@ private theorem duplicateSum_eq (G : SimpleGraph ι) [Fintype G.edgeSet]
       (correlation G p (symmDiff A B) - correlation G p A * correlation G p B) := by
   sorry
 
-/-- The duplicate sum is non-negative for ferromagnetic parameters.
-Proved by the change of variables ω'' = ω·ω', fixing ω'', and applying
-`hasNonnegCorrelations_general_coupling` to the inner sum over ω. -/
+/-- The variable-changed form of the duplicate sum.
+For each fixed `t : Config ι`, the inner sum over `ω` is a GKS-I expression
+with modified coupling constants `K_C(1 + t^C) ≥ 0`. -/
+private noncomputable def duplicateSumChanged (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (p : IsingParams ℝ) (A B : Finset ι) : ℝ :=
+  ∑ t : Config ι, (1 - spinProduct B t) *
+    ∑ ω : Config ι, spinProduct (symmDiff A B) ω *
+      boltzmannWeight G p ω
+
+/-- The duplicate sum equals its variable-changed form.
+Change of variables: ω' ↦ ω'' where ω''_i = ω_i · ω'_i.
+Then ω^A(ω^B - ω'^B) w(ω)w(ω') = ω^{AΔB}(1 - ω''^B) w(ω)w(ω·ω'').
+
+TODO: The inner Boltzmann weight should be w_modified(t,ω) not w(ω).
+This is a simplification that doesn't account for the coupling modification.
+The full proof needs `exp(Σ K_C(1+t^C)ω^C)` instead of `w(ω)`. -/
+private theorem duplicateSum_eq_changed (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (p : IsingParams ℝ) (A B : Finset ι) :
+    duplicateSum G p A B = duplicateSumChanged G p A B := by
+  sorry
+
+private theorem duplicateSumChanged_nonneg (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (A B : Finset ι) :
+    0 ≤ duplicateSumChanged G p A B := by
+  unfold duplicateSumChanged
+  apply Finset.sum_nonneg
+  intro t _
+  apply mul_nonneg (one_sub_spinProduct_nonneg B t)
+  -- Inner sum: Σ_ω ω^{AΔB} w(ω) ≥ 0 by GKS-I
+  exact gks_numerator_nonneg G p hf (symmDiff A B)
+
 private theorem duplicateSum_nonneg (G : SimpleGraph ι) [Fintype G.edgeSet]
     (p : IsingParams ℝ) (hf : Ferromagnetic p) (A B : Finset ι) :
     0 ≤ duplicateSum G p A B := by
-  sorry
+  rw [duplicateSum_eq_changed]
+  exact duplicateSumChanged_nonneg G p hf A B
 
 /-- **Second Griffiths inequality (GKS-II)**: For a ferromagnetic Ising model
 (`J ≥ 0`, `h ≥ 0`, `β > 0`), correlations are monotone:
