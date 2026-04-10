@@ -116,42 +116,59 @@ def checkFlipSymmetry (label : String) (n : Nat) (edges : List (Nat × Nat))
     IO.println s!"  {label}: Spin flip symmetry (h=0) ✓"
   return ok
 
+-- Check that GKS-I is violated (expected for anti-ferromagnetic parameters)
+def checkGKS1Violation (label : String) (n : Nat) (edges : List (Nat × Nat))
+    (J h β : Float) : IO Bool := do
+  let subsets := allSubsets n
+  for A in subsets do
+    let c := testCorrelation n edges J h β A
+    if c < -1e-10 then
+      IO.println s!"  {label}: GKS-I violation confirmed (⟨σ_{A}⟩ = {c} < 0) ✓"
+      return true
+  IO.println s!"  FAIL: {label}: expected GKS-I violation but all correlations ≥ 0"
+  return false
+
 -- Main test runner
 
-def main : IO Unit := do
+def main : IO UInt32 := do
   IO.println "=== Ising Model Numerical Tests ==="
+  let mut allPassed := true
   IO.println ""
 
   IO.println "--- Z > 0 ---"
-  let _ ← checkZPos "2-chain J=1 h=0.5 β=1" 2 graph2 1.0 0.5 1.0
-  let _ ← checkZPos "3-chain J=2 h=0 β=0.5" 3 graph3 2.0 0.0 0.5
-  let _ ← checkZPos "triangle J=1 h=1 β=2" 3 triangle3 1.0 1.0 2.0
-  let _ ← checkZPos "square J=0.5 h=0.3 β=1" 4 square4 0.5 0.3 1.0
+  allPassed := allPassed && (← checkZPos "2-chain J=1 h=0.5 β=1" 2 graph2 1.0 0.5 1.0)
+  allPassed := allPassed && (← checkZPos "3-chain J=2 h=0 β=0.5" 3 graph3 2.0 0.0 0.5)
+  allPassed := allPassed && (← checkZPos "triangle J=1 h=1 β=2" 3 triangle3 1.0 1.0 2.0)
+  allPassed := allPassed && (← checkZPos "square J=0.5 h=0.3 β=1" 4 square4 0.5 0.3 1.0)
 
   IO.println ""
   IO.println "--- Spin flip symmetry (h=0) ---"
-  let _ ← checkFlipSymmetry "2-chain J=1" 2 graph2 1.0
-  let _ ← checkFlipSymmetry "triangle J=2" 3 triangle3 2.0
+  allPassed := allPassed && (← checkFlipSymmetry "2-chain J=1" 2 graph2 1.0)
+  allPassed := allPassed && (← checkFlipSymmetry "triangle J=2" 3 triangle3 2.0)
 
   IO.println ""
   IO.println "--- GKS-I: ⟨σ_A⟩ ≥ 0 (ferromagnetic) ---"
-  let _ ← checkGKS1 "2-chain J=1 h=0.5 β=1" 2 graph2 1.0 0.5 1.0
-  let _ ← checkGKS1 "2-chain J=1 h=0 β=1" 2 graph2 1.0 0.0 1.0
-  let _ ← checkGKS1 "3-chain J=2 h=0.3 β=0.5" 3 graph3 2.0 0.3 0.5
-  let _ ← checkGKS1 "triangle J=1 h=1 β=2" 3 triangle3 1.0 1.0 2.0
-  let _ ← checkGKS1 "square J=0.5 h=0.3 β=1" 4 square4 0.5 0.3 1.0
-  let _ ← checkGKS1 "square J=3 h=0 β=0.1" 4 square4 3.0 0.0 0.1
+  allPassed := allPassed && (← checkGKS1 "2-chain J=1 h=0.5 β=1" 2 graph2 1.0 0.5 1.0)
+  allPassed := allPassed && (← checkGKS1 "2-chain J=1 h=0 β=1" 2 graph2 1.0 0.0 1.0)
+  allPassed := allPassed && (← checkGKS1 "3-chain J=2 h=0.3 β=0.5" 3 graph3 2.0 0.3 0.5)
+  allPassed := allPassed && (← checkGKS1 "triangle J=1 h=1 β=2" 3 triangle3 1.0 1.0 2.0)
+  allPassed := allPassed && (← checkGKS1 "square J=0.5 h=0.3 β=1" 4 square4 0.5 0.3 1.0)
+  allPassed := allPassed && (← checkGKS1 "square J=3 h=0 β=0.1" 4 square4 3.0 0.0 0.1)
 
   IO.println ""
   IO.println "--- GKS-II: ⟨σ_Aσ_B⟩ ≥ ⟨σ_A⟩⟨σ_B⟩ (ferromagnetic) ---"
-  let _ ← checkGKS2 "2-chain J=1 h=0.5 β=1" 2 graph2 1.0 0.5 1.0
-  let _ ← checkGKS2 "3-chain J=2 h=0.3 β=0.5" 3 graph3 2.0 0.3 0.5
-  let _ ← checkGKS2 "triangle J=1 h=1 β=2" 3 triangle3 1.0 1.0 2.0
+  allPassed := allPassed && (← checkGKS2 "2-chain J=1 h=0.5 β=1" 2 graph2 1.0 0.5 1.0)
+  allPassed := allPassed && (← checkGKS2 "3-chain J=2 h=0.3 β=0.5" 3 graph3 2.0 0.3 0.5)
+  allPassed := allPassed && (← checkGKS2 "triangle J=1 h=1 β=2" 3 triangle3 1.0 1.0 2.0)
 
   IO.println ""
-  IO.println "--- GKS-I violation check (anti-ferromagnetic, J < 0) ---"
-  IO.println "  (GKS-I should NOT hold for J < 0)"
-  let _ ← checkGKS1 "2-chain J=-1 h=0 β=1" 2 graph2 (-1.0) 0.0 1.0
+  IO.println "--- GKS-I violation (anti-ferromagnetic, J < 0) ---"
+  allPassed := allPassed && (← checkGKS1Violation "2-chain J=-1 h=0 β=1" 2 graph2 (-1.0) 0.0 1.0)
 
   IO.println ""
-  IO.println "=== Done ==="
+  if allPassed then
+    IO.println "=== All tests passed ==="
+    return 0
+  else
+    IO.println "=== SOME TESTS FAILED ==="
+    return 1
