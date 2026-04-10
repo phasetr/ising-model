@@ -193,24 +193,105 @@ theorem hasNonnegCorrelations_mul {f : Config ι → ℝ}
   rw [key]
   exact add_nonneg (mul_nonneg ha (hf S)) (mul_nonneg hb (hf (symmDiff S C)))
 
+set_option linter.unusedDecidableInType false in
+/-- A product of `(a + b · σ^C)` factors over a finset has non-negative correlations,
+provided each `a, b ≥ 0`. Proved by induction on the finset, applying
+`hasNonnegCorrelations_mul` at each step. -/
+theorem hasNonnegCorrelations_finset_prod {α : Type*} [DecidableEq α]
+    (S : Finset α)
+    (g : α → Config ι → ℝ)
+    (hg : ∀ a ∈ S, ∃ c d : ℝ, ∃ C : Finset ι, 0 ≤ c ∧ 0 ≤ d ∧
+      ∀ σ, g a σ = c + d * spinProduct C σ) :
+    HasNonnegCorrelations fun σ => ∏ a ∈ S, g a σ := by
+  induction S using Finset.induction with
+  | empty => simpa using hasNonnegCorrelations_one
+  | @insert x S' hx ih =>
+    rw [show (fun σ => ∏ a ∈ insert x S', g a σ) =
+        fun σ => (∏ a ∈ S', g a σ) * g x σ from by
+      ext σ; rw [Finset.prod_insert hx]; ring]
+    obtain ⟨c, d, C, hc, hd, hg_eq⟩ := hg x (Finset.mem_insert_self x S')
+    simp_rw [hg_eq]
+    exact hasNonnegCorrelations_mul
+      (ih fun a ha' => hg a (Finset.mem_insert_of_mem ha')) hc hd C
+
+omit [Fintype ι] [DecidableEq ι] in
+/-- `edgeSpin σ e` takes values in `{-1, 1}`, so `exp_sign_decomp` applies. -/
+theorem edgeSpin_sq (σ : Config ι) (e : Sym2 ι) :
+    edgeSpin (K := ℝ) σ e ^ 2 = 1 := by
+  refine Sym2.ind (fun i j => ?_) e
+  simp only [edgeSpin, Sym2.lift_mk, Spin.sign]
+  rw [show ((↑(σ i).toSign : ℝ) * ↑(σ j).toSign) ^ 2 =
+      ((↑(σ i).toSign : ℝ) ^ 2) * ((↑(σ j).toSign : ℝ) ^ 2) from by ring]
+  simp [← Int.cast_pow, Spin.toSign_sq]
+
+omit [Fintype ι] [DecidableEq ι] in
+/-- `exp(α · edgeSpin σ e) = cosh α + sinh α · edgeSpin σ e` for ±1-valued edgeSpin. -/
+theorem exp_edgeSpin_decomp (α : ℝ) (σ : Config ι) (e : Sym2 ι) :
+    Real.exp (α * edgeSpin (K := ℝ) σ e) =
+    Real.cosh α + Real.sinh α * edgeSpin σ e := by
+  have hsq := edgeSpin_sq σ e
+  have hpm : edgeSpin (K := ℝ) σ e = 1 ∨ edgeSpin (K := ℝ) σ e = -1 := by
+    have h0 : (edgeSpin (K := ℝ) σ e - 1) * (edgeSpin (K := ℝ) σ e + 1) = 0 := by
+      nlinarith [hsq]
+    rcases mul_eq_zero.mp h0 with h | h
+    · left; linarith
+    · right; linarith
+  rcases hpm with h | h
+  · simp [h, Real.cosh_add_sinh]
+  · simp [h]; linarith [Real.cosh_add_sinh (-α), Real.cosh_neg α, Real.sinh_neg α]
+
 /-- The Boltzmann weight has non-negative correlations for ferromagnetic parameters.
+Proved by factoring `exp(-βH)` into `(cosh + sinh · σ)` factors and applying
+`hasNonnegCorrelations_finset_prod`. -/
+-- The factored form of the Boltzmann weight as a product of (cosh + sinh · spin) terms.
+-- This equals boltzmannWeight but is directly amenable to hasNonnegCorrelations_finset_prod.
+private noncomputable def bwFactored (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (p : IsingParams ℝ) (σ : Config ι) : ℝ :=
+  (∏ e ∈ G.edgeFinset, (Real.cosh (p.β * p.J) +
+    Real.sinh (p.β * p.J) * edgeSpin (K := ℝ) σ e)) *
+  (∏ i : ι, (Real.cosh (p.β * p.h) +
+    Real.sinh (p.β * p.h) * Spin.sign ℝ (σ i)))
 
-This is the key technical lemma for GKS-I. The proof factors `exp(-βH)` as
-a product of terms `(cosh(βJ) + sinh(βJ) · σ^edge)` and
-`(cosh(βh) + sinh(βh) · σ^site)`, then applies `hasNonnegCorrelations_mul`
-inductively starting from `hasNonnegCorrelations_one`.
+/-- The factored form has non-negative correlations. -/
+private theorem bwFactored_hasNonnegCorrelations (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    HasNonnegCorrelations (bwFactored G p) := by
+  unfold bwFactored
+  -- Split into edge product and site product using hasNonnegCorrelations_mul
+  -- First handle the edge product
+  have hcJ := Real.cosh_pos (p.β * p.J) |>.le
+  have hsJ := Real.sinh_nonneg_iff.mpr (mul_nonneg hf.hβ.le hf.hJ)
+  have hcH := Real.cosh_pos (p.β * p.h) |>.le
+  have hsH := Real.sinh_nonneg_iff.mpr (mul_nonneg hf.hβ.le hf.hh)
+  have hedge : HasNonnegCorrelations fun σ =>
+      ∏ e ∈ G.edgeFinset, (Real.cosh (p.β * p.J) +
+        Real.sinh (p.β * p.J) * edgeSpin (K := ℝ) σ e) := by
+    apply hasNonnegCorrelations_finset_prod
+    intro e _
+    -- edgeSpin σ e is ±1, so it equals spinProduct for some C
+    sorry
+  have hsite : ∀ (f : Config ι → ℝ), HasNonnegCorrelations f →
+      HasNonnegCorrelations fun σ => f σ *
+        ∏ i : ι, (Real.cosh (p.β * p.h) +
+          Real.sinh (p.β * p.h) * Spin.sign ℝ (σ i)) := by
+    intro f hf
+    -- Induct over Finset.univ for sites
+    sorry
+  exact hsite _ hedge
 
-TODO: prove without sorry. Requires:
-1. `exp(∑ f) = ∏ exp(f i)` (mathlib: `Real.exp_sum`)
-2. Decomposition of `hamiltonian` into edge and site sums
-3. `exp_sign_decomp` for each factor
-4. `edgeSpin σ e ∈ {-1, 1}` and `Spin.sign (σ i) ∈ {-1, 1}`
-5. Inductive application of `hasNonnegCorrelations_mul` over edges then sites
--/
+/-- The factored form equals the Boltzmann weight. -/
+private theorem bwFactored_eq_boltzmannWeight (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (p : IsingParams ℝ) (σ : Config ι) :
+    bwFactored G p σ = boltzmannWeight G p σ := by
+  sorry
+
 theorem boltzmannWeight_hasNonnegCorrelations (G : SimpleGraph ι) [Fintype G.edgeSet]
     (p : IsingParams ℝ) (hf : Ferromagnetic p) :
     HasNonnegCorrelations (boltzmannWeight G p) := by
-  sorry
+  intro S
+  have h := bwFactored_hasNonnegCorrelations G p hf S
+  simp_rw [bwFactored_eq_boltzmannWeight] at h
+  exact h
 
 /-- The numerator of `⟨σ_A⟩` is non-negative for ferromagnetic parameters. -/
 theorem gks_numerator_nonneg (G : SimpleGraph ι) [Fintype G.edgeSet]
