@@ -497,31 +497,37 @@ Reference: Friedli–Velenik, (3.63)--(3.65), pp. 122--123. -/
 noncomputable def isingEdgePoly (edges : List (ι × ι × ℝ)) : MultilinPoly ι :=
   fun X => (edges.map fun e => edgeWeight e.1 e.2.1 e.2.2 X).prod
 
-/-- **Lee-Yang circle theorem**: The Ising partition polynomial (defined by
-a list of edges with ferromagnetic couplings `t_e ∈ [0, 1)`) does not vanish
-on the open unit polydisk `{z : ‖z_i‖ < 1 ∀i}`.
+/-- The sum over all subsets of the product of selected elements equals the product of (1 + z_i).
+`∑_{X⊆ι} ∏_{i∈X} z_i = ∏_i (1 + z_i)`. -/
+private lemma eval_one_poly (z : ι → ℂ) :
+    MultilinPoly.eval (fun (_ : Finset ι) => (1 : ℂ)) z = ∏ k : ι, (1 + z k) := by
+  simp only [MultilinPoly.eval, one_mul]
+  sorry -- Σ_X ∏_{i∈X} z_i = ∏_i (1 + z_i): standard combinatorial identity
 
-Equivalently, all zeros of `Z(z)` (as a function of `z = e^{-2h}`) lie on `|z| = 1`.
+/-- The base case: `isingEdgePoly [] = 1` (constant polynomial). -/
+private lemma isingEdgePoly_nil : isingEdgePoly (ι := ι) [] = fun _ => 1 := by
+  ext X; simp [isingEdgePoly]
 
-Reference: Friedli–Velenik, Theorem 3.43, pp. 122–127.
-Proof by induction on the edge list using Asano contraction. -/
+/-- **Lee-Yang circle theorem**: The Ising partition polynomial does not vanish
+on the open unit polydisk. Reference: Friedli–Velenik, Theorem 3.43, pp. 122–127. -/
 theorem lee_yang_circle (edges : List (ι × ι × ℝ))
     (hne : ∀ e ∈ edges, e.1 ≠ e.2.1)
     (ht : ∀ e ∈ edges, 0 ≤ e.2.2 ∧ e.2.2 < 1)
     (z : ι → ℂ) (hz : ∀ k, ‖z k‖ < 1) :
     (isingEdgePoly edges).eval z ≠ 0 := by
-  -- Proof by induction on |edges|.
-  -- Base case: edges = [] → P(z) = Σ_X ∏_{i∈X} z_i = ∏_i (1+z_i) ≠ 0.
-  -- Inductive step: edges = e :: edges' →
-  --   P_{e::edges'} is the Asano contraction of P_{edges'} ⊗ P_e
-  --   (on expanded variable space with virtual vertex).
-  --   By ih, P_{edges'} doesn't vanish. By singleEdgePoly_nonvanishing,
-  --   P_e doesn't vanish. Their product doesn't vanish (nonzero × nonzero).
-  --   By asanoContract_nonvanishing, the contraction doesn't vanish.
-  -- All building blocks are proved:
-  -- • singleEdgePoly_nonvanishing, norm_tz_add_one_gt
-  -- • asanoContract_nonvanishing, bilinear_nonvanishing
-  -- Reference: Friedli–Velenik, Theorem 3.43, pp. 122–127.
-  sorry
+  induction edges with
+  | nil =>
+    -- P(z) = ∏_i (1 + z_i) ≠ 0 since each factor ≠ 0
+    rw [show isingEdgePoly (ι := ι) [] = fun _ => 1 from isingEdgePoly_nil]
+    sorry -- eval_one_poly + product nonzero
+  | cons e edges' ih =>
+    -- Inductive step: isingEdgePoly (e :: edges') relates to edges' via
+    -- Asano contraction on expanded variable space.
+    -- By ih (with weaker hypotheses), isingEdgePoly edges' doesn't vanish.
+    -- By singleEdgePoly_nonvanishing, the single-edge factor doesn't vanish.
+    -- Their product on expanded space doesn't vanish.
+    -- By asanoContract_nonvanishing, the contraction doesn't vanish.
+    -- Reference: Friedli–Velenik, Theorem 3.43, pp. 124–125.
+    sorry
 
 end IsingModel
