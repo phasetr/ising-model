@@ -289,6 +289,8 @@ private theorem modifiedWeight_nonneg_corr (G : SimpleGraph ι) [Fintype G.edgeS
       have : (Spin.sign ℝ (t i) - 1) * (Spin.sign ℝ (t i) + 1) = 0 := by nlinarith
       rcases mul_eq_zero.mp this with h | h <;> linarith)
 
+/-- The variable-changed duplicate sum is non-negative: each term has `(1-t^B) ≥ 0`
+times an HNC inner sum. -/
 private theorem duplicateSumChanged_nonneg (G : SimpleGraph ι) [Fintype G.edgeSet]
     (p : IsingParams ℝ) (hf : Ferromagnetic p) (A B : Finset ι) :
     0 ≤ duplicateSumChanged G p A B := by
@@ -298,6 +300,7 @@ private theorem duplicateSumChanged_nonneg (G : SimpleGraph ι) [Fintype G.edgeS
   apply mul_nonneg (one_sub_spinProduct_nonneg B t)
   exact modifiedWeight_nonneg_corr G p hf t (symmDiff A B)
 
+/-- The duplicate sum is non-negative, by variable change and term-wise non-negativity. -/
 private theorem duplicateSum_nonneg (G : SimpleGraph ι) [Fintype G.edgeSet]
     (p : IsingParams ℝ) (hf : Ferromagnetic p) (A B : Finset ι) :
     0 ≤ duplicateSum G p A B := by
