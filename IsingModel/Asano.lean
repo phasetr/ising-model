@@ -147,9 +147,13 @@ theorem singleEdgePoly_nonvanishing (i j : ι) (hij : i ≠ j)
     (t : ℝ) (ht0 : 0 ≤ t) (ht1 : t < 1)
     (z : ι → ℂ) (hz : ∀ k, ‖z k‖ < 1) :
     (singleEdgePoly i j t).eval z ≠ 0 := by
-  -- P(z) = z_i z_j + t(z_i + z_j) + 1 (plus zero terms for other subsets)
-  -- If P = 0 then z_i(z_j + t) = -(tz_j + 1), so z_i = -(tz_j+1)/(z_j+t)
-  -- But Möbius gives |z_i| > 1 while |z_i| < 1, contradiction
+  intro hp
+  -- From P = 0: z_i(z_j + t) = -(tz_j + 1)
+  -- ‖z_i‖ · ‖z_j + t‖ = ‖tz_j + 1‖ > ‖z_j + t‖ (by norm_tz_add_one_gt)
+  -- If ‖z_j + t‖ = 0: tz_j + 1 = -z_i · 0 = 0, but ‖tz_j+1‖ > 0, contradiction.
+  -- If ‖z_j + t‖ > 0: ‖z_i‖ > 1, contradicting hz i.
+  -- TODO: expand eval of singleEdgePoly to get the algebraic identity
+  have hgt := norm_tz_add_one_gt t ht0 ht1 (z j) (hz j)
   sorry
 
 /-! ## Lee-Yang circle theorem -/
