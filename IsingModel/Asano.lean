@@ -809,18 +809,35 @@ private lemma isingMatrix_cons (e : ι × ι × ℝ) (edges : List (ι × ι × 
     isingMatrix edges i j := by
   simp [isingMatrix, List.map_cons, List.prod_cons]
 
+/-- Pull a constant-condition `if` out of a `Finset.prod`. -/
+private lemma prod_ite_const_cond {α : Type*} {S : Finset α} {p : Prop} [Decidable p]
+    {f : α → ℂ} :
+    ∏ j ∈ S, (if p then f j else 1) = if p then ∏ j ∈ S, f j else 1 := by
+  split_ifs <;> simp_all
+
+set_option maxHeartbeats 400000 in
 /-- For a single edge `e`, the edge weight equals the product of the single-edge
-matrix entries over all cross-boundary pairs `(i,j)` with `i ∈ X, j ∉ X`. -/
+matrix entries over all cross-boundary pairs `(i,j)` with `i ∈ X, j ∉ X`.
+
+The proof factors the condition `(a=i ∧ b=j) ∨ (a=j ∧ b=i)` into two independent
+conditions (one for each endpoint), uses `Finset.prod_ite_eq` to collapse inner/outer
+products, then matches the result with `edgeWeight` by case analysis. -/
 private lemma edgeWeight_eq_prod (e : ι × ι × ℝ) (hne : e.1 ≠ e.2.1) (X : Finset ι) :
     edgeWeight e.1 e.2.1 e.2.2 X =
     ∏ i ∈ X, ∏ j ∈ Finset.univ \ X,
       (if (e.1 = i ∧ e.2.1 = j) ∨ (e.1 = j ∧ e.2.1 = i) then (e.2.2 : ℂ) else 1) := by
-  -- For each i, the inner product over j simplifies:
-  -- i = e.1: product = (if e.2.1 ∉ X then t else 1) [only j=e.2.1 matches]
-  -- i = e.2.1: product = (if e.1 ∉ X then t else 1) [only j=e.1 matches]
-  -- i ≠ both: product = 1 [no j matches]
-  -- Case analysis on whether endpoints are in X gives edgeWeight.
-  sorry
+  -- Factor: (a=i∧b=j)∨(a=j∧b=i) ↔ (a=i then b=j) × (b=i then a=j) [disjoint since a≠b]
+  have h_factor : ∀ (i j : ι),
+      (if (e.1 = i ∧ e.2.1 = j) ∨ (e.1 = j ∧ e.2.1 = i) then (e.2.2 : ℂ) else 1) =
+      (if e.1 = i then if e.2.1 = j then ↑e.2.2 else 1 else 1) *
+      (if e.2.1 = i then if e.1 = j then ↑e.2.2 else 1 else 1) := by
+    intro i j; by_cases h1 : e.1 = i <;> by_cases h2 : e.2.1 = i <;> simp_all
+  -- Simplify: factor products, pull constant conditions, apply prod_ite_eq
+  simp_rw [h_factor, Finset.prod_mul_distrib, prod_ite_const_cond, Finset.prod_ite_eq]
+  -- Result: (if a∈X then (if b∈univ\X then t else 1) else 1) * (...same with a,b swapped...)
+  -- = edgeWeight by case analysis
+  unfold edgeWeight
+  by_cases ha : e.1 ∈ X <;> by_cases hb : e.2.1 ∈ X <;> simp_all [Finset.mem_sdiff]
 
 private lemma isingEdgePoly_eq_leeYangCoeff (edges : List (ι × ι × ℝ))
     (hne : ∀ e ∈ edges, e.1 ≠ e.2.1) (X : Finset ι) :
