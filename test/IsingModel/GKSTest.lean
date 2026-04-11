@@ -143,6 +143,22 @@ def checkGKS2Violation (label : String) (n : Nat) (edges : List (Nat × Nat))
   IO.println s!"  FAIL: {label}: expected GKS-II violation but all pairs satisfied"
   return false
 
+-- FKG test: ⟨fg⟩ ≥ ⟨f⟩⟨g⟩ for monotone f, g
+-- f = magnetization (Σ σ_i), g = σ_0, both monotone nondecreasing
+def checkFKG (label : String) (n : Nat) (edges : List (Nat × Nat))
+    (J h β : Float) : IO Bool := do
+  let magnetization (σ : List Float) : Float := σ.foldl (· + ·) 0
+  let sigma0 (σ : List Float) : Float := σ.getD 0 0
+  let expect_fg := gibbsExpect n edges J h β (fun σ => magnetization σ * sigma0 σ)
+  let expect_f := gibbsExpect n edges J h β magnetization
+  let expect_g := gibbsExpect n edges J h β sigma0
+  if expect_fg - expect_f * expect_g >= -1e-10 then
+    IO.println s!"  {label}: FKG passed (⟨fg⟩-⟨f⟩⟨g⟩ = {expect_fg - expect_f * expect_g})"
+    return true
+  else
+    IO.println s!"  FAIL: {label}: FKG violated (⟨fg⟩-⟨f⟩⟨g⟩ = {expect_fg - expect_f * expect_g})"
+    return false
+
 -- Main test runner
 
 def main : IO UInt32 := do
@@ -178,6 +194,13 @@ def main : IO UInt32 := do
   allPassed := allPassed && (← checkGKS2 "triangle J=1 h=1 β=2" 3 triangle3 1.0 1.0 2.0)
   allPassed := allPassed && (← checkGKS2 "square J=0.5 h=0.3 β=1" 4 square4 0.5 0.3 1.0)
   allPassed := allPassed && (← checkGKS2 "square J=3 h=0 β=0.1" 4 square4 3.0 0.0 0.1)
+
+  IO.println ""
+  IO.println "--- FKG: ⟨fg⟩ ≥ ⟨f⟩⟨g⟩ for monotone f, g ---"
+  -- Test with f = magnetization = Σ σ_i, g = σ_0 (both monotone)
+  allPassed := allPassed && (← checkFKG "2-chain J=1 h=0.5 β=1" 2 graph2 1.0 0.5 1.0)
+  allPassed := allPassed && (← checkFKG "triangle J=1 h=1 β=2" 3 triangle3 1.0 1.0 2.0)
+  allPassed := allPassed && (← checkFKG "square J=0.5 h=0.3 β=1" 4 square4 0.5 0.3 1.0)
 
   IO.println ""
   IO.println "--- GKS-I violation (anti-ferromagnetic, J < 0) ---"
