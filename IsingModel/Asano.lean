@@ -66,18 +66,135 @@ def MultilinPoly.asanoContract (p : MultilinPoly ι) (i j : ι) (_hij : i ≠ j)
 
 /-! ## Asano contraction preserves non-vanishing -/
 
+/-- If an affine function `α * w + β` does not vanish on the open unit disk,
+then `‖α‖ ≤ ‖β‖`. Proof: if `‖α‖ > ‖β‖`, the zero `w = -β/α` lies inside the disk. -/
+private lemma affine_norm_le (α β : ℂ) (h : ∀ w : ℂ, ‖w‖ < 1 → α * w + β ≠ 0) :
+    ‖α‖ ≤ ‖β‖ := by
+  by_contra hlt
+  push_neg at hlt
+  have hα : α ≠ 0 := by
+    intro h0; simp [h0] at hlt; linarith [norm_nonneg β]
+  exact h (-β / α)
+    (by rwa [norm_div, norm_neg, div_lt_one (norm_pos_iff.mpr hα)])
+    (by have := mul_div_cancel₀ β hα; linear_combination -this)
+
+/-- Parallelogram law for `Complex.normSq`. -/
+private lemma normSq_parallelogram (x y : ℂ) :
+    normSq (x + y) + normSq (x - y) = 2 * (normSq x + normSq y) := by
+  simp only [normSq_apply, add_re, add_im, sub_re, sub_im]; ring
+
+/-- A linear function `s * x + t` that is `≥ 0` for all `x ∈ [0, 1)` satisfies `s + t ≥ 0`.
+Used to extract norm bounds from polydisk non-vanishing. -/
+private lemma linear_nonneg_on_Ico (s t : ℝ) (ht : 0 ≤ t)
+    (h : ∀ x : ℝ, 0 ≤ x → x < 1 → 0 ≤ s * x + t) :
+    0 ≤ s + t := by
+  by_contra hlt
+  push_neg at hlt
+  have hs : s < 0 := by nlinarith [h 0 le_rfl one_pos]
+  have h2s : (0 : ℝ) < 2 * -s := by linarith
+  have h2s_ne : (2 : ℝ) * -s ≠ 0 := ne_of_gt h2s
+  have hx_nn : (0 : ℝ) ≤ (-s + t) / (2 * -s) := div_nonneg (by linarith) (by linarith)
+  have hx_lt : (-s + t) / (2 * -s) < 1 := by rw [div_lt_one h2s]; linarith
+  have hval := h _ hx_nn hx_lt
+  have hdiv : (-s + t) / (2 * -s) * (2 * -s) = -s + t := div_mul_cancel₀ _ h2s_ne
+  nlinarith [hdiv]
+
 /-- Bilinear non-vanishing lemma: if `f(z,w) = azw + bw + cz + d` does not vanish
 on the open unit bidisk `|z|,|w| < 1`, then `az + d` does not vanish on `|z| < 1`.
 This is the algebraic core of Asano contraction.
 
-Proof sketch: if az₀ + d = 0 for |z₀| < 1, then f(z₀, w) = (az₀+b)w + cz₀+d
-is linear in w. Since f(z₀, w) ≠ 0 for |w| < 1, its zero w₀ satisfies |w₀| ≥ 1.
-But w₀ = -(cz₀+d)/(az₀+b), and using d = -az₀, one derives |w₀| < 1, contradiction. -/
+The proof shows `normSq d ≥ normSq a` by combining norm bounds from the z- and
+w-directions via the parallelogram law. Then `az₀ + d = 0` would require
+`‖z₀‖ = ‖d/a‖ ≥ 1`, contradicting `‖z₀‖ < 1`.
+
+Reference: Friedli–Velenik, Proposition 3.44 (algebraic core). -/
 theorem bilinear_nonvanishing (a b c d : ℂ)
     (hf : ∀ z w : ℂ, ‖z‖ < 1 → ‖w‖ < 1 → a * z * w + b * w + c * z + d ≠ 0)
     (z : ℂ) (hz : ‖z‖ < 1) :
     a * z + d ≠ 0 := by
-  sorry
+  have hd : d ≠ 0 := by intro hd; exact hf 0 0 (by simp) (by simp) (by simp [hd])
+  by_cases ha : a = 0; · simp [ha, hd]
+  -- Key claim: ‖a‖ ≤ ‖d‖ (then az+d=0 → ‖z‖=‖d/a‖≥1, contradiction)
+  suffices hda : ‖a‖ ≤ ‖d‖ by
+    intro heq
+    have h1 : a * z = -d := by linear_combination heq
+    have h2 : z = -d / a := by
+      rw [eq_div_iff ha]; rw [mul_comm]; exact h1
+    have h3 : ‖z‖ = ‖d‖ / ‖a‖ := by rw [h2, norm_div, norm_neg]
+    have ha_pos : (0 : ℝ) < ‖a‖ := norm_pos_iff.mpr ha
+    rw [h3] at hz
+    exact not_lt.mpr (le_div_iff₀ ha_pos |>.mpr (by linarith)) hz
+  -- Proof of ‖a‖ ≤ ‖d‖ via normSq a ≤ normSq d, then sqrt monotonicity.
+  -- Step A: normSq(az'+b) ≤ normSq(cz'+d) for |z'| < 1
+  have norm_to_normSq : ∀ x y : ℂ, ‖x‖ ≤ ‖y‖ → normSq x ≤ normSq y := by
+    intro x y h
+    have h2 := mul_self_le_mul_self (norm_nonneg x) h
+    rwa [show ‖x‖ * ‖x‖ = normSq x from by rw [Complex.normSq_eq_norm_sq]; ring,
+         show ‖y‖ * ‖y‖ = normSq y from by rw [Complex.normSq_eq_norm_sq]; ring] at h2
+  have hznsq : ∀ z' : ℂ, ‖z'‖ < 1 → normSq (a * z' + b) ≤ normSq (c * z' + d) := by
+    intro z' hz'
+    exact norm_to_normSq _ _ (affine_norm_le _ _ (fun w hw habs =>
+      hf z' w hz' hw (by linear_combination habs)))
+  -- Step B: normSq(aw+c) ≤ normSq(bw+d) for |w| < 1
+  have hwnsq : ∀ w : ℂ, ‖w‖ < 1 → normSq (a * w + c) ≤ normSq (b * w + d) := by
+    intro w hw
+    exact norm_to_normSq _ _ (affine_norm_le _ _ (fun z' hz' habs =>
+      hf z' w hz' hw (by linear_combination habs)))
+  -- Step C: Parallelogram identity for normSq
+  have para_id : ∀ (α β : ℂ) (r : ℝ),
+      normSq (α * ↑r + β) + normSq (α * ↑(-r) + β) =
+      2 * (normSq α * r ^ 2 + normSq β) := by
+    intro α β r
+    simp only [normSq_apply, mul_re, mul_im, add_re, add_im,
+      ofReal_re, ofReal_im, ofReal_neg, neg_re, neg_im,
+      mul_zero, sub_zero, zero_mul, add_zero, neg_zero, mul_neg, neg_mul]
+    ring
+  -- Step D: norm of real cast
+  have norm_real_lt : ∀ r : ℝ, 0 ≤ r → r < 1 → ‖(r : ℂ)‖ < 1 := by
+    intro r hr0 hr1
+    have : ‖(r : ℂ)‖ = r := by
+      rw [norm_real, Real.norm_of_nonneg hr0]
+    linarith
+  have norm_neg_real_lt : ∀ r : ℝ, 0 ≤ r → r < 1 → ‖((-r : ℝ) : ℂ)‖ < 1 := by
+    intro r hr0 hr1
+    rw [ofReal_neg, norm_neg]; exact norm_real_lt r hr0 hr1
+  -- Step E: Average z'=r, z'=-r: normSq a * r² + normSq b ≤ normSq c * r² + normSq d
+  have havg_z : ∀ r : ℝ, 0 ≤ r → r < 1 →
+      normSq a * r ^ 2 + normSq b ≤ normSq c * r ^ 2 + normSq d := by
+    intro r hr0 hr1
+    nlinarith [hznsq (↑r) (norm_real_lt r hr0 hr1), hznsq (↑(-r : ℝ)) (norm_neg_real_lt r hr0 hr1),
+      para_id a b r, para_id c d r]
+  -- Step F: Average w=r, w=-r: normSq a * r² + normSq c ≤ normSq b * r² + normSq d
+  have havg_w : ∀ r : ℝ, 0 ≤ r → r < 1 →
+      normSq a * r ^ 2 + normSq c ≤ normSq b * r ^ 2 + normSq d := by
+    intro r hr0 hr1
+    nlinarith [hwnsq (↑r) (norm_real_lt r hr0 hr1), hwnsq (↑(-r : ℝ)) (norm_neg_real_lt r hr0 hr1),
+      para_id a c r, para_id b d r]
+  -- Step G: Add havg_z + havg_w → combined inequality in r²
+  -- havg_z + havg_w gives:
+  -- (normSq b + normSq c - 2*normSq a)*r² + (2*normSq d - normSq b - normSq c) ≥ 0
+  have hcomb : ∀ r : ℝ, 0 ≤ r → r < 1 →
+      0 ≤ (normSq b + normSq c - 2 * normSq a) * r ^ 2 +
+      (2 * normSq d - normSq b - normSq c) := by
+    intro r hr0 hr1; nlinarith [havg_z r hr0 hr1, havg_w r hr0 hr1]
+  -- At r=0: 2*normSq d - normSq b - normSq c ≥ 0
+  have ht_nn : 0 ≤ 2 * normSq d - normSq b - normSq c := by
+    nlinarith [hcomb 0 le_rfl one_pos]
+  -- linear_nonneg_on_Ico with x = r²: for x ∈ [0,1), s*x + t ≥ 0
+  -- s + t = (normSq b + normSq c - 2*normSq a) + (2*normSq d - normSq b - normSq c)
+  --       = 2*(normSq d - normSq a)
+  have hlin := linear_nonneg_on_Ico _ _ ht_nn (fun x hx0 hx1 => by
+    have hsqrt_nn := Real.sqrt_nonneg x
+    have hsqrt_lt : Real.sqrt x < 1 := by
+      rw [← Real.sqrt_one]; exact Real.sqrt_lt_sqrt hx0 hx1
+    have := hcomb (Real.sqrt x) hsqrt_nn hsqrt_lt
+    rwa [Real.sq_sqrt hx0] at this)
+  -- hlin gives: normSq a ≤ normSq d. Convert to ‖a‖ ≤ ‖d‖.
+  have hnsq : ‖a‖ ^ 2 ≤ ‖d‖ ^ 2 := by
+    rw [← Complex.normSq_eq_norm_sq, ← Complex.normSq_eq_norm_sq]; nlinarith [hlin]
+  calc ‖a‖ = Real.sqrt (‖a‖ ^ 2) := (Real.sqrt_sq (norm_nonneg a)).symm
+    _ ≤ Real.sqrt (‖d‖ ^ 2) := Real.sqrt_le_sqrt hnsq
+    _ = ‖d‖ := Real.sqrt_sq (norm_nonneg d)
 
 /-- Key property: Asano contraction preserves non-vanishing on the open unit polydisk.
 
@@ -91,11 +208,38 @@ The hypothesis says this `w` must have `|w| ≥ 1`. But by algebraic manipulatio
 theorem MultilinPoly.asanoContract_nonvanishing (p : MultilinPoly ι) (i j : ι) (hij : i ≠ j)
     (hp : ∀ z : ι → ℂ, (∀ k, ‖z k‖ < 1) → p.eval z ≠ 0) :
     ∀ z : ι → ℂ, (∀ k, ‖z k‖ < 1) → (p.asanoContract i j hij).eval z ≠ 0 := by
-  -- The contraction Q(z) = P_{--}(z_rest) z_i + P_{++}(z_rest).
-  -- For fixed z_rest, P(z_rest, z_i, w) = (P_{--} z_i + P_{+-})w + (P_{-+} z_i + P_{++})
-  -- is bilinear in (z_i, w). Apply bilinear_nonvanishing.
-  -- TODO: decompose eval into bilinear form and apply the lemma.
-  sorry
+  intro z hz
+  -- Define the bilinear evaluation F(u,w) = p.eval(z[i→u, j→w])
+  -- Since p is multilinear, F(u,w) = a*u*w + b*w + c*u + d
+  -- and the contraction's eval Q(z) = a*(z i) + d.
+  -- Define the four coefficients:
+  let a := ∑ X : Finset ι, if i ∈ X ∧ j ∈ X then p X * ∏ k ∈ X.erase i |>.erase j, z k else 0
+  let b := ∑ X : Finset ι, if i ∉ X ∧ j ∈ X then p X * ∏ k ∈ X.erase j, z k else 0
+  let c := ∑ X : Finset ι, if i ∈ X ∧ j ∉ X then p X * ∏ k ∈ X.erase i, z k else 0
+  let d := ∑ X : Finset ι, if i ∉ X ∧ j ∉ X then p X * ∏ k ∈ X, z k else 0
+  -- Key identity 1: eval of contraction = a * z i + d
+  -- Proof: split the sum into 4 categories by i,j membership.
+  -- The j∈X terms vanish. The i∈X,j∉X terms match a*z_i via bijection Y→Y.erase j.
+  -- The i∉X,j∉X terms are d.
+  have hQ : (p.asanoContract i j hij).eval z = a * z i + d := by
+    sorry
+  -- Key identity 2: p.eval(z[i→u,j→w]) = a*u*w + b*w + c*u + d
+  have hF : ∀ u w : ℂ,
+      p.eval (Function.update (Function.update z j w) i u) =
+      a * u * w + b * w + c * u + d := by
+    sorry
+  -- Apply bilinear_nonvanishing
+  rw [hQ]
+  apply bilinear_nonvanishing a b c d
+  · intro u w hu hw
+    rw [← hF]
+    exact hp _ (fun k => by
+      simp only [Function.update]
+      split_ifs with hki hkj
+      · subst hki; exact hu
+      · subst hkj; exact hw
+      · exact hz k)
+  · exact hz i
 
 /-! ## Base case: single edge -/
 
@@ -168,15 +312,39 @@ theorem singleEdgePoly_nonvanishing (i j : ι) (hij : i ≠ j)
   -- Step 1: eval of singleEdgePoly = z_i * z_j + t*(z_i + z_j) + 1
   have heval : (singleEdgePoly i j t).eval z =
       z i * z j + ↑t * z i + ↑t * z j + 1 := by
-    unfold MultilinPoly.eval singleEdgePoly
-    -- All terms with X ∉ {∅, {i}, {j}, {i,j}} vanish
-    have hvan : ∀ X : Finset ι, X ∈ Finset.univ →
-        X ≠ ∅ → X ≠ {i} → X ≠ {j} → X ≠ {i, j} →
-        (if X = {i, j} then (1 : ℂ) else if X = {i} then ↑t
-         else if X = {j} then ↑t else if X = ∅ then 1 else 0) *
-        ∏ k ∈ X, z k = 0 := fun X _ h1 h2 h3 h4 => by simp [h1, h2, h3, h4]
-    -- Sum reduces to 4 terms
-    sorry
+    simp only [MultilinPoly.eval, singleEdgePoly]
+    -- Decompose coefficient: nested if → sum of 4 indicators
+    have hne_ij_i : ({i, j} : Finset ι) ≠ {i} := by
+      intro h
+      have : j ∈ ({i, j} : Finset ι) := by simp
+      rw [h, Finset.mem_singleton] at this
+      exact hij this.symm
+    have hne_ij_j : ({i, j} : Finset ι) ≠ {j} := by
+      intro h
+      have : i ∈ ({i, j} : Finset ι) := by simp
+      rw [h, Finset.mem_singleton] at this
+      exact hij this
+    have hne_i_j : ({i} : Finset ι) ≠ {j} := by
+      intro h
+      have : i ∈ ({i} : Finset ι) := by simp
+      rw [h, Finset.mem_singleton] at this
+      exact hij this
+    conv_lhs =>
+      arg 2; ext X
+      rw [show (if X = {i, j} then (1 : ℂ) else if X = {i} then ↑t
+           else if X = {j} then ↑t else if X = ∅ then 1 else 0) =
+          (if X = {i, j} then 1 else 0) + (if X = {i} then ↑t else 0) +
+          (if X = {j} then ↑t else 0) + (if X = ∅ then 1 else 0) from by
+        by_cases h1 : X = {i, j}
+        · subst h1; simp [hne_ij_i, hne_ij_j]
+        · by_cases h2 : X = {i}
+          · subst h2; simp [h1, hne_i_j]
+          · by_cases h3 : X = {j}
+            · subst h3; simp [h1, h2]
+            · simp [h1, h2, h3]]
+    simp only [add_mul, Finset.sum_add_distrib, ite_mul, zero_mul, one_mul,
+      Finset.sum_ite_eq', Finset.mem_univ, ite_true,
+      Finset.prod_pair hij, Finset.prod_singleton, Finset.prod_empty]
   -- Step 2: P = 0 → z_i * (z_j + t) = -(t * z_j + 1)
   rw [heval] at hp
   have halg : z i * (z j + ↑t) = -(↑t * z j + 1) := by
