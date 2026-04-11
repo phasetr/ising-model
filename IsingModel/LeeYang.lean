@@ -195,23 +195,26 @@ private lemma leeYangPoly_ratio_bound {m : ℕ}
       ext w; simp [Finset.sum_apply]
     rw [h]; exact Differentiable.sum (fun S _ =>
       (differentiable_const _).mul (diff_prod S))
-  -- The full proof applies the maximum modulus principle:
-  -- 1. Reparametrize: let w_i = z(castSucc i). Both α and β are polynomial in w.
-  -- 2. β(w) = f_B(a·w) is differentiable (diff_eval above).
-  --    α(w) is also polynomial in w (diff_eval).
-  -- 3. When |a_k| < 1: β ≠ 0 on closed polydisk (ih with |a_k·w_k| ≤ |a_k| < 1).
-  -- 4. DiffContOnCl for α/β: DifferentiableOn from entire/nonzero denominator,
-  --    ContinuousOn from closure_ball_subset_closedBall.
-  -- 5. Frontier bound: on torus |w_k| = 1:
-  --    α(w) = (∏ w_k) · conj(β(w)) by Hermitian (leeYangPoly_conj_eq_compl),
-  --    so |α/β| = |∏ w_k| = 1.
-  -- 6. Complex.norm_le_of_forall_mem_frontier_norm_le: |α/β| ≤ 1 on polydisk.
-  -- 7. Extend to |a_k| ≤ 1 by continuity.
-  --
-  -- Validated infrastructure:
-  -- - diff_eval (above): multilinear eval is Differentiable ℂ
-  -- - DiffContOnCl for ratio: DifferentiableAt.mul + DifferentiableAt.inv
-  -- - norm_le_of_forall_mem_frontier_norm_le: Nontrivial + isBounded_ball + subset_closure
+  let B := A.submatrix Fin.castSucc Fin.castSucc
+  -- α coefficient reparametrized to Fin m:
+  -- p_α(T) = leeYangPoly B T * ∏_{j∉T} A(last)(castSucc j)
+  let p_α : MultilinPoly (Fin m) := fun T =>
+    leeYangPoly B T * ∏ j ∈ Finset.univ \ T, A (Fin.last m) (Fin.castSucc j)
+  -- Both αfun and βfun are multilinear evals of w, hence differentiable
+  let αfun : (Fin m → ℂ) → ℂ := fun w => p_α.eval w
+  let βfun : (Fin m → ℂ) → ℂ := fun w =>
+    (leeYangPoly B).eval (fun i => A (Fin.castSucc i) (Fin.last m) * w i)
+  have hα_diff : Differentiable ℂ αfun := diff_eval p_α
+  -- βfun(w) = eval of (fun T => leeYangPoly B T) at (fun i => a_i * w_i)
+  -- This is a composition of multilinear eval with a linear map, hence differentiable.
+  -- The linear map w ↦ (fun i => a_i * w_i) is differentiable (componentwise linear).
+  have hβ_diff : Differentiable ℂ βfun := by
+    -- β(w) = Σ_T c_T * ∏_{i∈T} (a_i * w_i) where c_T = leeYangPoly B T
+    -- This is a multilinear polynomial in w (after expanding a_i * w_i)
+    -- Use diff_eval with appropriate coefficient adjustment
+    sorry
+  -- The remaining sorry: max modulus application
+  -- β ≠ 0 on closed polydisk, DiffContOnCl, torus bound, continuity extension
   sorry
 
 /-- **Harcos/Ruelle theorem**: For an `n × n` Hermitian matrix `A` with `|a_{ij}| ≤ 1`,
