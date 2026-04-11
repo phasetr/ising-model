@@ -259,7 +259,7 @@ theorem hasNonnegCorrelations_edge_site_product
     exact ⟨Real.cosh (edgeK (Quot.mk _ (i, j))),
       Real.sinh (edgeK (Quot.mk _ (i, j))), {i, j},
       (Real.cosh_pos _).le, Real.sinh_nonneg_iff.mpr (hedgeK _ he), fun σ => by
-        simp only [spinProduct, Finset.prod_pair hne, Spin.sign]
+        simp only [spinProduct, Finset.prod_pair hne]
         exact exp_edgeSpin_decomp (edgeK (Quot.mk _ (i, j))) σ (Quot.mk _ (i, j))⟩
   exact hasNonnegCorrelations_mul_prod Finset.univ hedge
     (fun i σ => Real.exp (siteK i * Spin.sign ℝ (σ i)))
@@ -408,6 +408,7 @@ theorem hasNonnegCorrelations_general_coupling
 -- change variables to (ω, ω'') where ω''_i = ω_i χ_i, fix ω'', and
 -- apply GKS-I with modified coupling constants K_C(1 + ω''_C) ≥ 0.
 
+omit [Fintype ι] [DecidableEq ι] in
 /-- `1 - spinProduct B σ ≥ 0` pointwise, since `spinProduct B σ ∈ {-1, 1}`. -/
 theorem one_sub_spinProduct_nonneg (B : Finset ι) (σ : Config ι) :
     0 ≤ 1 - spinProduct B σ := by
@@ -509,8 +510,10 @@ private theorem duplicateSum_eq_changed (G : SimpleGraph ι) [Fintype G.edgeSet]
     apply Finset.sum_congr rfl; intro t _
     -- spinProduct B (φ t) = spinProduct B ω * spinProduct B t
     have hspB : spinProduct B (φ t) = spinProduct B ω * spinProduct B t := by
-      unfold spinProduct; simp_rw [show ∀ i, (↑((φ t i).toSign) : ℝ) = ↑(ω i).toSign * ↑(t i).toSign from
-        fun i => by simp [φ, Spin.toSign_mul]]; rw [Finset.prod_mul_distrib]
+      unfold spinProduct
+      simp_rw [show ∀ i, (↑((φ t i).toSign) : ℝ) =
+        ↑(ω i).toSign * ↑(t i).toSign from fun i => by simp [φ, Spin.toSign_mul]]
+      rw [Finset.prod_mul_distrib]
     rw [hspB]
     have hw : boltzmannWeight G p ω * boltzmannWeight G p (φ t) =
         modifiedWeight G p t ω := by
@@ -518,7 +521,6 @@ private theorem duplicateSum_eq_changed (G : SimpleGraph ι) [Fintype G.edgeSet]
       -- Both sides are exp(...). Show the exponents are equal.
       unfold boltzmannWeight hamiltonian interactionEnergy externalFieldEnergy modifiedWeight
       rw [← Real.exp_add]
-      congr 1
       -- Use: edgeSpin(φ t, e) = edgeSpin(ω,e) * edgeSpin(t,e)
       -- and: sign(φ t, i) = sign(ω i) * sign(t i)
       have hes : ∀ e, edgeSpin (K := ℝ) (φ t) e =
@@ -540,29 +542,15 @@ private theorem duplicateSum_eq_changed (G : SimpleGraph ι) [Fintype G.edgeSet]
       -- -(β * Σ_e -(J*ω^e)) - β * Σ_i -(h*ω_i) - β * Σ_e -(J*ω^e*t^e) - β * Σ_i -(h*ω_i*t_i)
       -- = (Σ_e βJ*t^e*ω^e + βJ*ω^e) + (Σ_i βh*t_i*ω_i + βh*ω_i)
       -- Use Finset.mul_sum to pull β*J inside sums, combine, then ring per term
-      simp only [Finset.mul_sum, Finset.sum_neg_distrib, neg_neg,
-        ← Finset.sum_add_distrib]
-      -- Both sides are exp(exponent). The exponents are equal.
-      -- LHS exponent (after congr): -β(H(ω)) + -β(H(φ t))
-      -- RHS exponent (after exp_add): Σ_e K'_e·ω^e + Σ_i K'_i·ω_i
-      -- where H = -JΣω^e - hΣω_i and K'_e = βJ(1+t^e), K'_i = βh(1+t_i)
-      -- The key identity: βJω^e + βJω^e·t^e = βJ(1+t^e)ω^e
-      -- Expand and combine sums
-      -- LHS: -β(-JΣω^e - hΣω_i) + -β(-JΣω^e·t^e - hΣω_i·t_i)
-      -- RHS: Σ βJ(1+t^e)ω^e + Σ βh(1+t_i)ω_i
-      -- = Σ(βJω^e + βJω^e·t^e) + Σ(βhω_i + βhω_i·t_i)
-      -- = βJΣω^e + βJΣω^e·t^e + βhΣω_i + βhΣω_i·t_i
-      -- = -β(-JΣω^e - hΣω_i - JΣω^e·t^e - hΣω_i·t_i)
-      -- = LHS
-      -- Use Finset.sum_add_distrib to combine the 4 sums into 2
-      -- Both sides are in ℝ. Rewrite to match.
+      simp only [Finset.mul_sum]
+      -- Exponent identity: βJ·ω^e + βJ·ω^e·t^e = βJ(1+t^e)ω^e (per term)
       have : -p.β * (∑ i ∈ G.edgeFinset, -p.J * edgeSpin (K := ℝ) ω i +
           ∑ i, -p.h * Spin.sign ℝ (ω i)) +
         -p.β * (∑ i ∈ G.edgeFinset, -p.J * (edgeSpin (K := ℝ) ω i * edgeSpin (K := ℝ) t i) +
           ∑ i, -p.h * (Spin.sign ℝ (ω i) * Spin.sign ℝ (t i))) =
         ∑ e ∈ G.edgeFinset, p.β * p.J * (1 + edgeSpin (K := ℝ) t e) * edgeSpin (K := ℝ) ω e +
         ∑ i, p.β * p.h * (1 + Spin.sign ℝ (t i)) * Spin.sign ℝ (ω i) := by
-        simp only [mul_add, Finset.mul_sum, ← Finset.sum_add_distrib]
+        simp only [mul_add, Finset.mul_sum]
         have h1 : ∀ e ∈ G.edgeFinset,
             -p.β * (-p.J * edgeSpin (K := ℝ) ω e) +
             -p.β * (-p.J * (edgeSpin (K := ℝ) ω e * edgeSpin (K := ℝ) t e)) =
