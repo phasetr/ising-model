@@ -235,7 +235,40 @@ private lemma leeYangPoly_ratio_bound {m : ℕ}
   have hα_eq : ∑ S ∈ (Finset.univ : Finset (Finset (Fin (m + 1)))).filter
       (fun S => Fin.last m ∈ S), leeYangPoly A S * ∏ k ∈ S.erase (Fin.last m), z k =
       αfun w := by
-    sorry
+    symm
+    apply Finset.sum_nbij (fun T =>
+      insert (Fin.last m) (T.map ⟨Fin.castSucc, Fin.castSucc_injective m⟩))
+    · intro T _; simp [Finset.mem_filter, Finset.mem_insert]
+    · -- Injective
+      intro T₁ _ T₂ _ h
+      have h1 : Fin.last m ∉ T₁.map ⟨Fin.castSucc, Fin.castSucc_injective m⟩ := by
+        simp [Finset.mem_map, Fin.castSucc_ne_last]
+      have h2 : Fin.last m ∉ T₂.map ⟨Fin.castSucc, Fin.castSucc_injective m⟩ := by
+        simp [Finset.mem_map, Fin.castSucc_ne_last]
+      have := congr_arg (Finset.erase · (Fin.last m)) h
+      simp [h1, h2] at this; exact this
+    · -- Surjective
+      intro S hS
+      simp only [Finset.mem_coe, Finset.mem_filter, Finset.mem_univ, true_and] at hS
+      refine ⟨(S.erase (Fin.last m)).preimage Fin.castSucc
+        (Fin.castSucc_injective m |>.injOn),
+        Finset.mem_coe.mpr (Finset.mem_univ _), ?_⟩
+      ext j; simp only [Finset.mem_insert, Finset.mem_map, Finset.mem_preimage,
+        Finset.mem_erase, ne_eq, Function.Embedding.coeFn_mk]
+      constructor
+      · rintro (rfl | ⟨k, ⟨_, hk2⟩, rfl⟩)
+        · exact hS
+        · exact hk2
+      · intro hj; by_cases hje : j = Fin.last m
+        · left; exact hje
+        · right; induction j using Fin.lastCases with
+          | last => exact absurd rfl hje
+          | cast i => exact ⟨i, ⟨hje, hj⟩, rfl⟩
+    · -- Terms match
+      intro T _
+      rw [leeYangPoly_coeff_in]; congr 1
+      rw [Finset.erase_insert (by simp [Finset.mem_map, Fin.castSucc_ne_last])]
+      rw [Finset.prod_map]; rfl
   rw [hα_eq]
   -- Now need: ‖αfun w‖ ≤ ‖βfun w‖
   -- βfun ≠ 0 on closed polydisk when |a_k| < 1 (by ih)
