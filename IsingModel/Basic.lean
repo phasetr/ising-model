@@ -66,6 +66,21 @@ theorem flip_flip (s : Spin) : s.flip.flip = s := by
 theorem flip_ne (s : Spin) : s.flip ≠ s := by
   cases s <;> simp [flip]
 
+/-- Spin multiplication: `up` acts as identity, `down` acts as flip. -/
+def mul : Spin → Spin → Spin
+  | .up, s => s
+  | .down, s => s.flip
+
+/-- `toSign(mul a b) = toSign(a) * toSign(b)`. -/
+@[simp]
+theorem toSign_mul (a b : Spin) : (a.mul b).toSign = a.toSign * b.toSign := by
+  cases a <;> cases b <;> simp [mul, flip, toSign]
+
+/-- `mul a` is an involution (hence a bijection). -/
+@[simp]
+theorem mul_mul_cancel (a b : Spin) : a.mul (a.mul b) = b := by
+  cases a <;> simp [mul, flip_flip]
+
 end Spin
 
 /-! ## Configuration space -/

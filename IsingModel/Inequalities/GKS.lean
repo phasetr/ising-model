@@ -235,33 +235,19 @@ theorem exp_edgeSpin_decomp (α : ℝ) (σ : Config ι) (e : Sym2 ι) :
   · simp [h, Real.cosh_add_sinh]
   · simp [h]; linarith [Real.cosh_add_sinh (-α), Real.cosh_neg α, Real.sinh_neg α]
 
-/-- The Boltzmann weight has non-negative correlations for ferromagnetic parameters.
-Proved by factoring `exp(-βH)` into `(cosh + sinh · σ)` factors and applying
-`hasNonnegCorrelations_finset_prod`. -/
--- The factored form of the Boltzmann weight as a product of (cosh + sinh · spin) terms.
--- This equals boltzmannWeight but is directly amenable to hasNonnegCorrelations_finset_prod.
-private noncomputable def bwFactored (G : SimpleGraph ι) [Fintype G.edgeSet]
-    (p : IsingParams ℝ) (σ : Config ι) : ℝ :=
-  (∏ e ∈ G.edgeFinset, (Real.cosh (p.β * p.J) +
-    Real.sinh (p.β * p.J) * edgeSpin (K := ℝ) σ e)) *
-  (∏ i : ι, (Real.cosh (p.β * p.h) +
-    Real.sinh (p.β * p.h) * Spin.sign ℝ (σ i)))
-
-/-- The factored form has non-negative correlations. -/
-private theorem bwFactored_hasNonnegCorrelations (G : SimpleGraph ι) [Fintype G.edgeSet]
-    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
-    HasNonnegCorrelations (bwFactored G p) := by
-  unfold bwFactored
-  -- Split into edge product and site product using hasNonnegCorrelations_mul
-  -- First handle the edge product
-  have hcJ := Real.cosh_pos (p.β * p.J) |>.le
-  have hsJ := Real.sinh_nonneg_iff.mpr (mul_nonneg hf.hβ.le hf.hJ)
-  have hcH := Real.cosh_pos (p.β * p.h) |>.le
-  have hsH := Real.sinh_nonneg_iff.mpr (mul_nonneg hf.hβ.le hf.hh)
-  -- Edge factors have HNC
+/-- A product of `exp(K_e · edgeSpin ω e)` over edges and `exp(K_i · sign(ω i))` over sites
+has non-negative correlations, provided all K_e, K_i ≥ 0.
+This is the common core of both GKS-I and GKS-II proofs. -/
+theorem hasNonnegCorrelations_edge_site_product
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (edgeK : Sym2 ι → ℝ) (siteK : ι → ℝ)
+    (hedgeK : ∀ e ∈ G.edgeFinset, 0 ≤ edgeK e)
+    (hsiteK : ∀ i, 0 ≤ siteK i) :
+    HasNonnegCorrelations fun σ =>
+      (∏ e ∈ G.edgeFinset, Real.exp (edgeK e * edgeSpin (K := ℝ) σ e)) *
+      (∏ i : ι, Real.exp (siteK i * Spin.sign ℝ (σ i))) := by
   have hedge : HasNonnegCorrelations fun σ =>
-      ∏ e ∈ G.edgeFinset, (Real.cosh (p.β * p.J) +
-        Real.sinh (p.β * p.J) * edgeSpin (K := ℝ) σ e) := by
+      ∏ e ∈ G.edgeFinset, Real.exp (edgeK e * edgeSpin (K := ℝ) σ e) := by
     apply hasNonnegCorrelations_finset_prod
     intro e he
     obtain ⟨⟨i, j⟩, rfl⟩ := Quot.exists_rep e
@@ -270,54 +256,45 @@ private theorem bwFactored_hasNonnegCorrelations (G : SimpleGraph ι) [Fintype G
       have hadj := SimpleGraph.mem_edgeFinset.mp he
       rw [SimpleGraph.mem_edgeSet] at hadj
       exact hadj.ne rfl
-    exact ⟨_, _, {i, j}, hcJ, hsJ, fun σ => by
-      simp [edgeSpin, Sym2.lift_mk, spinProduct, Finset.prod_pair hne, Spin.sign]⟩
-  -- Multiply edge product by site factors
-  have hsite := hasNonnegCorrelations_mul_prod Finset.univ hedge
-      (fun i σ => Real.cosh (p.β * p.h) + Real.sinh (p.β * p.h) * Spin.sign ℝ (σ i))
-      (fun i _ => ⟨_, _, {i}, hcH, hsH, fun σ => by
-        simp [spinProduct, Spin.sign]⟩)
-  -- Combine: bwFactored = edge_prod * site_prod
-  convert hsite using 1
+    exact ⟨Real.cosh (edgeK (Quot.mk _ (i, j))),
+      Real.sinh (edgeK (Quot.mk _ (i, j))), {i, j},
+      (Real.cosh_pos _).le, Real.sinh_nonneg_iff.mpr (hedgeK _ he), fun σ => by
+        simp only [spinProduct, Finset.prod_pair hne]
+        exact exp_edgeSpin_decomp (edgeK (Quot.mk _ (i, j))) σ (Quot.mk _ (i, j))⟩
+  exact hasNonnegCorrelations_mul_prod Finset.univ hedge
+    (fun i σ => Real.exp (siteK i * Spin.sign ℝ (σ i)))
+    (fun i _ => ⟨Real.cosh (siteK i), Real.sinh (siteK i), {i},
+      (Real.cosh_pos _).le, Real.sinh_nonneg_iff.mpr (hsiteK i), fun σ => by
+        simp only [Spin.sign, spinProduct, Finset.prod_singleton]
+        rw [exp_sign_decomp (siteK i) (σ i)]; ring⟩)
 
-set_option linter.unusedDecidableInType false in
-set_option linter.unusedSectionVars false in
-/-- The factored form equals the Boltzmann weight. -/
-private theorem bwFactored_eq_boltzmannWeight (G : SimpleGraph ι) [Fintype G.edgeSet]
-    (p : IsingParams ℝ) (σ : Config ι) :
-    bwFactored G p σ = boltzmannWeight G p σ := by
-  unfold bwFactored boltzmannWeight hamiltonian interactionEnergy externalFieldEnergy
-  -- RHS: exp(-β * (-J * ∑_e edgeSpin - h * ∑_i sign)) = exp(βJ * ∑_e edgeSpin + βh * ∑_i sign)
-  rw [show -p.β * (-(p.J) * ∑ e ∈ G.edgeFinset, edgeSpin σ e +
-      -(p.h) * ∑ i : ι, Spin.sign ℝ (σ i)) =
-      p.β * p.J * ∑ e ∈ G.edgeFinset, edgeSpin σ e +
-      p.β * p.h * ∑ i : ι, Spin.sign ℝ (σ i) from by ring]
-  rw [Real.exp_add]
-  -- exp(βJ * ∑ edgeSpin) = ∏ exp(βJ * edgeSpin e)
-  rw [show p.β * p.J * ∑ e ∈ G.edgeFinset, edgeSpin (K := ℝ) σ e =
-      ∑ e ∈ G.edgeFinset, p.β * p.J * edgeSpin (K := ℝ) σ e from by
-    rw [Finset.mul_sum]]
-  rw [Real.exp_sum]
-  -- exp(βh * ∑ sign) = ∏ exp(βh * sign(σ i))
-  rw [show p.β * p.h * ∑ i : ι, Spin.sign ℝ (σ i) =
-      ∑ i : ι, p.β * p.h * Spin.sign ℝ (σ i) from by
-    rw [Finset.mul_sum]]
-  rw [Real.exp_sum]
-  -- Each exp(βJ * edgeSpin) = cosh + sinh * edgeSpin
-  congr 1
-  · apply Finset.prod_congr rfl; intro e _
-    exact (exp_edgeSpin_decomp (p.β * p.J) σ e).symm
-  · apply Finset.prod_congr rfl; intro i _
-    simp only [Spin.sign]
-    rw [exp_sign_decomp (p.β * p.h) (σ i)]
-    ring
-
+/-- The Boltzmann weight has non-negative correlations for ferromagnetic parameters.
+Proved by showing `boltzmannWeight = ∏ exp(K_e · edgeSpin) * ∏ exp(K_i · sign)`
+and applying `hasNonnegCorrelations_edge_site_product`. -/
 theorem boltzmannWeight_hasNonnegCorrelations (G : SimpleGraph ι) [Fintype G.edgeSet]
     (p : IsingParams ℝ) (hf : Ferromagnetic p) :
     HasNonnegCorrelations (boltzmannWeight G p) := by
+  -- boltzmannWeight = ∏_e exp(βJ edgeSpin) * ∏_i exp(βh sign)
+  -- Apply hasNonnegCorrelations_edge_site_product with K_e = βJ, K_i = βh
   intro S
-  have h := bwFactored_hasNonnegCorrelations G p hf S
-  simp_rw [bwFactored_eq_boltzmannWeight] at h
+  have h := hasNonnegCorrelations_edge_site_product G
+    (fun _ => p.β * p.J) (fun _ => p.β * p.h)
+    (fun _ _ => mul_nonneg hf.hβ.le hf.hJ)
+    (fun _ => mul_nonneg hf.hβ.le hf.hh) S
+  -- h : HNC for ∏ exp(βJ edgeSpin) * ∏ exp(βh sign)
+  -- Show this equals boltzmannWeight
+  have hbw : ∀ σ : Config ι, boltzmannWeight G p σ =
+      (∏ e ∈ G.edgeFinset, Real.exp (p.β * p.J * edgeSpin (K := ℝ) σ e)) *
+      (∏ i : ι, Real.exp (p.β * p.h * Spin.sign ℝ (σ i))) := by
+    intro σ
+    unfold boltzmannWeight hamiltonian interactionEnergy externalFieldEnergy
+    rw [show -p.β * (-(p.J) * ∑ e ∈ G.edgeFinset, edgeSpin (K := ℝ) σ e +
+        -(p.h) * ∑ i : ι, Spin.sign ℝ (σ i)) =
+      (∑ e ∈ G.edgeFinset, p.β * p.J * edgeSpin (K := ℝ) σ e) +
+      (∑ i : ι, p.β * p.h * Spin.sign ℝ (σ i)) from by
+        simp only [← Finset.mul_sum]; ring]
+    rw [Real.exp_add, Real.exp_sum, Real.exp_sum]
+  simp_rw [hbw]
   exact h
 
 /-- The numerator of `⟨σ_A⟩` is non-negative for ferromagnetic parameters. -/
@@ -336,5 +313,288 @@ theorem gks_first (G : SimpleGraph ι) [Fintype G.edgeSet]
     0 ≤ correlation G p A := by
   unfold correlation
   exact gibbsExpectation_nonneg_of_numerator_nonneg G p _ (gks_numerator_nonneg G p hf A)
+
+/-! ## General coupling GKS-I -/
+
+/-- GKS-I for general non-negative coupling constants.
+Given a weight function `w(σ) = ∏_{C} exp(K_C · σ^C)` where all `K_C ≥ 0`,
+the function `w` has non-negative correlations.
+
+This generalizes `boltzmannWeight_hasNonnegCorrelations` from pair interactions
+to arbitrary multi-body couplings. It is needed for GKS-II where the doubled
+system has modified coupling constants.
+
+Reference: Friedli–Velenik, Theorem 3.49 (3.54), pp. 127–128. -/
+theorem hasNonnegCorrelations_general_coupling
+    (couplings : Finset (Finset ι))
+    (K : Finset ι → ℝ)
+    (hK : ∀ C ∈ couplings, 0 ≤ K C) :
+    HasNonnegCorrelations fun σ =>
+      ∏ C ∈ couplings, Real.exp (K C * spinProduct C σ) := by
+  apply hasNonnegCorrelations_finset_prod
+  intro C hC
+  -- spinProduct C σ ∈ {-1, 1}, so exp(K_C · spinProduct C σ) = cosh(K_C) + sinh(K_C) · σ^C
+  have hKC := hK C hC
+  refine ⟨Real.cosh (K C), Real.sinh (K C), C,
+    (Real.cosh_pos _).le, Real.sinh_nonneg_iff.mpr hKC, fun σ => ?_⟩
+  -- exp(K_C * spinProduct C σ) = cosh(K_C) + sinh(K_C) * spinProduct C σ
+  have hsq := spinProduct_sq C σ
+  have hpm : spinProduct C σ = 1 ∨ spinProduct C σ = -1 := by
+    have h0 : (spinProduct C σ - 1) * (spinProduct C σ + 1) = 0 := by nlinarith [hsq]
+    rcases mul_eq_zero.mp h0 with h | h
+    · left; linarith
+    · right; linarith
+  rcases hpm with h | h
+  · simp [h, Real.cosh_add_sinh]
+  · simp [h]; linarith [Real.cosh_add_sinh (-(K C)), Real.cosh_neg (K C), Real.sinh_neg (K C)]
+
+/-! ## GKS-II: second Griffiths inequality -/
+
+-- GKS-II: ⟨σ_A σ_B⟩ ≥ ⟨σ_A⟩⟨σ_B⟩ (Friedli–Velenik, Theorem 3.49 (3.55), pp. 127–128)
+-- Proof by the duplicate variable trick: introduce independent copy χ,
+-- change variables to (ω, ω'') where ω''_i = ω_i χ_i, fix ω'', and
+-- apply GKS-I with modified coupling constants K_C(1 + ω''_C) ≥ 0.
+
+omit [Fintype ι] [DecidableEq ι] in
+/-- `1 - spinProduct B σ ≥ 0` pointwise, since `spinProduct B σ ∈ {-1, 1}`. -/
+theorem one_sub_spinProduct_nonneg (B : Finset ι) (σ : Config ι) :
+    0 ≤ 1 - spinProduct B σ := by
+  have hsq := spinProduct_sq B σ
+  have : (spinProduct B σ - 1) * (spinProduct B σ + 1) = 0 := by nlinarith
+  rcases mul_eq_zero.mp this with h | h
+  · linarith  -- spinProduct = 1, so 1 - 1 = 0 ≥ 0
+  · linarith  -- spinProduct = -1, so 1 - (-1) = 2 ≥ 0
+
+/-- The duplicate variable sum: `Σ_{ω,ω'} ω^A(ω^B - ω'^B) w(ω)w(ω')`.
+Equals `Z² (⟨σ^{AΔB}⟩ - ⟨σ^A⟩⟨σ^B⟩)` after unfolding. -/
+private noncomputable def duplicateSum (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (p : IsingParams ℝ) (A B : Finset ι) : ℝ :=
+  ∑ ω : Config ι, ∑ ω' : Config ι,
+    spinProduct A ω * (spinProduct B ω - spinProduct B ω') *
+    boltzmannWeight G p ω * boltzmannWeight G p ω'
+
+/-- The duplicate sum equals `Z²(corr(AΔB) - corr(A)·corr(B))`. -/
+private theorem duplicateSum_eq (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (p : IsingParams ℝ) (A B : Finset ι) :
+    duplicateSum G p A B =
+    (partitionFunction G p) ^ 2 *
+      (correlation G p (symmDiff A B) - correlation G p A * correlation G p B) := by
+  have hZ := partitionFunction_ne_zero G p
+  unfold duplicateSum correlation gibbsExpectation
+  -- LHS = Σ_ω Σ_ω' σ^A(σ^B - σ'^B) w w'
+  --     = Σ_ω σ^A σ^B w · Z - Σ_ω σ^A w · Σ_ω' σ'^B w'
+  --     = Z · Σ σ^{AΔB} w - (Σ σ^A w)(Σ σ^B w)
+  -- RHS = Z² · (Z⁻¹ Σ σ^{AΔB} w - Z⁻¹ Σ σ^A w · Z⁻¹ Σ σ^B w)
+  --     = Z · Σ σ^{AΔB} w - (Σ σ^A w)(Σ σ^B w)
+  -- Rewrite σ^A · σ^B = σ^{AΔB} in the LHS
+  have hmul : ∀ ω : Config ι, spinProduct A ω * spinProduct B ω =
+      spinProduct (symmDiff A B) ω := fun ω => spinProduct_mul A B ω
+  -- Expand: LHS = Σ_ω (σ^{AΔB}_ω · Z - (Σ σ^A w)(σ^B_ω)) · w_ω ... complicated
+  -- Strategy: rewrite both sides to the same expression and use ring/field_simp
+  rw [sq]
+  have hZne := partitionFunction_ne_zero G p
+  field_simp
+  -- Expand double sum: Σ_ω Σ_{ω'} f(ω)(g(ω)-g(ω')) w(ω) w(ω')
+  -- = Σ_ω f(ω)g(ω)w(ω) · Σ_{ω'} w(ω') - Σ_ω f(ω)w(ω) · Σ_{ω'} g(ω')w(ω')
+  have step1 : ∀ ω : Config ι,
+      ∑ ω' : Config ι, spinProduct A ω * (spinProduct B ω - spinProduct B ω') *
+        boltzmannWeight G p ω * boltzmannWeight G p ω' =
+      spinProduct A ω * spinProduct B ω * boltzmannWeight G p ω *
+        ∑ ω', boltzmannWeight G p ω' -
+      spinProduct A ω * boltzmannWeight G p ω *
+        ∑ ω', spinProduct B ω' * boltzmannWeight G p ω' := by
+    intro ω
+    simp_rw [show ∀ ω' : Config ι,
+        spinProduct A ω * (spinProduct B ω - spinProduct B ω') *
+        boltzmannWeight G p ω * boltzmannWeight G p ω' =
+        spinProduct A ω * spinProduct B ω * boltzmannWeight G p ω *
+        boltzmannWeight G p ω' -
+        spinProduct A ω * boltzmannWeight G p ω *
+        (spinProduct B ω' * boltzmannWeight G p ω')
+      from fun ω' => by ring]
+    rw [Finset.sum_sub_distrib, ← Finset.mul_sum, ← Finset.mul_sum]
+  simp_rw [step1, Finset.sum_sub_distrib, hmul]
+  unfold partitionFunction
+  simp_rw [← Finset.sum_mul]
+  ring
+
+/-- The modified weight for the duplicate variable proof.
+For fixed `t : Config ι`, this is `exp(Σ_C K_C(1 + t^C) ω^C)` where
+the sum runs over edges (K = βJ, C = {i,j}) and sites (K = βh, C = {i}).
+The factor `(1 + t^C)` doubles or zeroes each coupling. -/
+private noncomputable def modifiedWeight (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (p : IsingParams ℝ) (t ω : Config ι) : ℝ :=
+  (∏ e ∈ G.edgeFinset, Real.exp (p.β * p.J * (1 + edgeSpin (K := ℝ) t e) *
+      edgeSpin (K := ℝ) ω e)) *
+  (∏ i : ι, Real.exp (p.β * p.h * (1 + Spin.sign ℝ (t i)) * Spin.sign ℝ (ω i)))
+
+/-- The variable-changed form of the duplicate sum.
+`Σ_t (1 - t^B) · Σ_ω ω^{AΔB} · modifiedWeight(t, ω)` -/
+private noncomputable def duplicateSumChanged (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (p : IsingParams ℝ) (A B : Finset ι) : ℝ :=
+  ∑ t : Config ι, (1 - spinProduct B t) *
+    ∑ ω : Config ι, spinProduct (symmDiff A B) ω * modifiedWeight G p t ω
+
+/-- The duplicate sum equals its variable-changed form.
+Change of variables: ω' ↦ t where t_i = ω_i · ω'_i (Spin.mul).
+Reference: Friedli–Velenik, pp. 127–128. -/
+private theorem duplicateSum_eq_changed (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (p : IsingParams ℝ) (A B : Finset ι) :
+    duplicateSum G p A B = duplicateSumChanged G p A B := by
+  unfold duplicateSum duplicateSumChanged
+  -- For each fixed ω, define bijection on Config: ω' ↦ t where t_i = Spin.mul (ω i) (ω' i)
+  -- Step 1: Transform each inner sum and rewrite summand
+  have hinner : ∀ ω : Config ι,
+      ∑ ω', spinProduct A ω * (spinProduct B ω - spinProduct B ω') *
+        boltzmannWeight G p ω * boltzmannWeight G p ω' =
+      ∑ t, (1 - spinProduct B t) *
+        (spinProduct (symmDiff A B) ω * modifiedWeight G p t ω) := by
+    intro ω
+    -- Change variables: ω' ↦ t = fun i => Spin.mul (ω i) (ω' i)
+    let φ : Config ι → Config ι := fun ω' i => Spin.mul (ω i) (ω' i)
+    have hφ_inv : Function.Involutive φ := fun t => by ext i; simp [φ, Spin.mul_mul_cancel]
+    rw [(Fintype.sum_bijective φ hφ_inv.bijective _ _ fun t => rfl).symm]
+    apply Finset.sum_congr rfl; intro t _
+    -- spinProduct B (φ t) = spinProduct B ω * spinProduct B t
+    have hspB : spinProduct B (φ t) = spinProduct B ω * spinProduct B t := by
+      unfold spinProduct
+      simp_rw [show ∀ i, (↑((φ t i).toSign) : ℝ) =
+        ↑(ω i).toSign * ↑(t i).toSign from fun i => by simp [φ, Spin.toSign_mul]]
+      rw [Finset.prod_mul_distrib]
+    rw [hspB]
+    have hw : boltzmannWeight G p ω * boltzmannWeight G p (φ t) =
+        modifiedWeight G p t ω := by
+      -- w(ω) * w(φ t) = modifiedWeight(t, ω)
+      -- Both sides are exp(...). Show the exponents are equal.
+      unfold boltzmannWeight hamiltonian interactionEnergy externalFieldEnergy modifiedWeight
+      rw [← Real.exp_add]
+      -- Use: edgeSpin(φ t, e) = edgeSpin(ω,e) * edgeSpin(t,e)
+      -- and: sign(φ t, i) = sign(ω i) * sign(t i)
+      have hes : ∀ e, edgeSpin (K := ℝ) (φ t) e =
+          edgeSpin (K := ℝ) ω e * edgeSpin (K := ℝ) t e := by
+        intro e; refine Sym2.ind (fun i j => ?_) e
+        simp [edgeSpin, Sym2.lift_mk, φ, Spin.sign, Spin.toSign_mul]; ring
+      have hss : ∀ i, Spin.sign ℝ ((φ t) i) = Spin.sign ℝ (ω i) * Spin.sign ℝ (t i) := by
+        intro i; simp [φ, Spin.sign, Spin.toSign_mul]
+      simp_rw [hes, hss]
+      -- After simp_rw: both sides have Σ_e and Σ_i with matching summands
+      -- LHS: -β(-J Σ ω^e - h Σ ω_i) + -β(-J Σ (ω^e · t^e) - h Σ (ω_i · t_i))
+      -- RHS: Σ_e βJ(1+t^e)ω^e + Σ_i βh(1+t_i)ω_i
+      -- These are equal: βJω^e + βJω^e·t^e = βJ(1+t^e)ω^e
+      -- Both sides are exp(something) or products of exp.
+      -- Convert RHS from ∏ exp to exp(Σ) and show exponents match.
+      rw [← Real.exp_sum, ← Real.exp_sum, ← Real.exp_add]
+      congr 1
+      -- Goal after simp_rw hes, hss and exp manipulations:
+      -- -(β * Σ_e -(J*ω^e)) - β * Σ_i -(h*ω_i) - β * Σ_e -(J*ω^e*t^e) - β * Σ_i -(h*ω_i*t_i)
+      -- = (Σ_e βJ*t^e*ω^e + βJ*ω^e) + (Σ_i βh*t_i*ω_i + βh*ω_i)
+      -- Use Finset.mul_sum to pull β*J inside sums, combine, then ring per term
+      simp only [Finset.mul_sum]
+      -- Exponent identity: βJ·ω^e + βJ·ω^e·t^e = βJ(1+t^e)ω^e (per term)
+      have : -p.β * (∑ i ∈ G.edgeFinset, -p.J * edgeSpin (K := ℝ) ω i +
+          ∑ i, -p.h * Spin.sign ℝ (ω i)) +
+        -p.β * (∑ i ∈ G.edgeFinset, -p.J * (edgeSpin (K := ℝ) ω i * edgeSpin (K := ℝ) t i) +
+          ∑ i, -p.h * (Spin.sign ℝ (ω i) * Spin.sign ℝ (t i))) =
+        ∑ e ∈ G.edgeFinset, p.β * p.J * (1 + edgeSpin (K := ℝ) t e) * edgeSpin (K := ℝ) ω e +
+        ∑ i, p.β * p.h * (1 + Spin.sign ℝ (t i)) * Spin.sign ℝ (ω i) := by
+        simp only [mul_add, Finset.mul_sum]
+        have h1 : ∀ e ∈ G.edgeFinset,
+            -p.β * (-p.J * edgeSpin (K := ℝ) ω e) +
+            -p.β * (-p.J * (edgeSpin (K := ℝ) ω e * edgeSpin (K := ℝ) t e)) =
+            p.β * p.J * (1 + edgeSpin (K := ℝ) t e) * edgeSpin (K := ℝ) ω e :=
+          fun _ _ => by ring
+        have h2 : ∀ i ∈ (Finset.univ : Finset ι),
+            -p.β * (-p.h * Spin.sign ℝ (ω i)) +
+            -p.β * (-p.h * (Spin.sign ℝ (ω i) * Spin.sign ℝ (t i))) =
+            p.β * p.h * (1 + Spin.sign ℝ (t i)) * Spin.sign ℝ (ω i) :=
+          fun _ _ => by ring
+        rw [show (∑ i ∈ G.edgeFinset, -p.β * (-p.J * edgeSpin (K := ℝ) ω i)) +
+            (∑ i, -p.β * (-p.h * Spin.sign ℝ (ω i))) +
+            ((∑ i ∈ G.edgeFinset, -p.β * (-p.J * (edgeSpin (K := ℝ) ω i * edgeSpin (K := ℝ) t i))) +
+            (∑ i, -p.β * (-p.h * (Spin.sign ℝ (ω i) * Spin.sign ℝ (t i))))) =
+          (∑ i ∈ G.edgeFinset, (-p.β * (-p.J * edgeSpin (K := ℝ) ω i) +
+            -p.β * (-p.J * (edgeSpin (K := ℝ) ω i * edgeSpin (K := ℝ) t i)))) +
+          (∑ i, (-p.β * (-p.h * Spin.sign ℝ (ω i)) +
+            -p.β * (-p.h * (Spin.sign ℝ (ω i) * Spin.sign ℝ (t i)))))
+          from by
+            have e1 : ∑ i ∈ G.edgeFinset, (-p.β * (-p.J * edgeSpin (K := ℝ) ω i) +
+                -p.β * (-p.J * (edgeSpin (K := ℝ) ω i * edgeSpin (K := ℝ) t i))) =
+              ∑ i ∈ G.edgeFinset, -p.β * (-p.J * edgeSpin (K := ℝ) ω i) +
+              ∑ i ∈ G.edgeFinset, -p.β * (-p.J * (edgeSpin (K := ℝ) ω i * edgeSpin (K := ℝ) t i)) :=
+              Finset.sum_add_distrib
+            have e2 : ∑ i : ι, (-p.β * (-p.h * Spin.sign ℝ (ω i)) +
+                -p.β * (-p.h * (Spin.sign ℝ (ω i) * Spin.sign ℝ (t i)))) =
+              ∑ i, -p.β * (-p.h * Spin.sign ℝ (ω i)) +
+              ∑ i, -p.β * (-p.h * (Spin.sign ℝ (ω i) * Spin.sign ℝ (t i))) :=
+              Finset.sum_add_distrib
+            linarith]
+        rw [Finset.sum_congr rfl h1, Finset.sum_congr rfl h2]
+        congr 1 <;> exact Finset.sum_congr rfl fun _ _ => by ring
+      exact this
+    rw [show spinProduct A ω * (spinProduct B ω - spinProduct B ω * spinProduct B t) *
+        boltzmannWeight G p ω * boltzmannWeight G p (φ t) =
+      spinProduct A ω * spinProduct B ω * (1 - spinProduct B t) *
+        (boltzmannWeight G p ω * boltzmannWeight G p (φ t)) from by ring,
+      hw, spinProduct_mul A B ω]; ring
+  simp_rw [hinner]
+  -- Step 2: Swap sums Σ_ω Σ_t → Σ_t Σ_ω
+  rw [Finset.sum_comm]
+  -- Step 3: Factor out (1 - t^B)
+  apply Finset.sum_congr rfl; intro t _
+  rw [← Finset.mul_sum]
+
+/-- The modified weight has non-negative correlations for each fixed `t`.
+Same proof structure as `bwFactored_hasNonnegCorrelations` but with
+modified couplings `K_C(1 + t^C) ≥ 0`. -/
+private theorem modifiedWeight_nonneg_corr (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (t : Config ι) :
+    HasNonnegCorrelations (modifiedWeight G p t) := by
+  unfold modifiedWeight
+  exact hasNonnegCorrelations_edge_site_product G
+    (fun e => p.β * p.J * (1 + edgeSpin (K := ℝ) t e))
+    (fun i => p.β * p.h * (1 + Spin.sign ℝ (t i)))
+    (fun e _ => by
+      apply mul_nonneg (mul_nonneg hf.hβ.le hf.hJ)
+      have := edgeSpin_sq t e
+      have : (edgeSpin (K := ℝ) t e - 1) * (edgeSpin (K := ℝ) t e + 1) = 0 := by nlinarith
+      rcases mul_eq_zero.mp this with h | h <;> linarith)
+    (fun i => by
+      apply mul_nonneg (mul_nonneg hf.hβ.le hf.hh)
+      have := Spin.sign_sq (K := ℝ) (t i)
+      have : (Spin.sign ℝ (t i) - 1) * (Spin.sign ℝ (t i) + 1) = 0 := by nlinarith
+      rcases mul_eq_zero.mp this with h | h <;> linarith)
+
+private theorem duplicateSumChanged_nonneg (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (A B : Finset ι) :
+    0 ≤ duplicateSumChanged G p A B := by
+  unfold duplicateSumChanged
+  apply Finset.sum_nonneg
+  intro t _
+  apply mul_nonneg (one_sub_spinProduct_nonneg B t)
+  exact modifiedWeight_nonneg_corr G p hf t (symmDiff A B)
+
+private theorem duplicateSum_nonneg (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (A B : Finset ι) :
+    0 ≤ duplicateSum G p A B := by
+  rw [duplicateSum_eq_changed]
+  exact duplicateSumChanged_nonneg G p hf A B
+
+/-- **Second Griffiths inequality (GKS-II)**: For a ferromagnetic Ising model
+(`J ≥ 0`, `h ≥ 0`, `β > 0`), correlations are monotone:
+`⟨σ_A σ_B⟩ ≥ ⟨σ_A⟩⟨σ_B⟩` for any subsets `A, B`.
+
+Reference: Friedli–Velenik, Theorem 3.49 (3.55), pp. 127–128. -/
+theorem gks_second (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (A B : Finset ι) :
+    correlation G p A * correlation G p B ≤ correlation G p (symmDiff A B) := by
+  have hZ := partitionFunction_pos G p
+  have hZ2 : (0 : ℝ) < partitionFunction G p ^ 2 := pow_pos hZ 2
+  have hdup := duplicateSum_nonneg G p hf A B
+  rw [duplicateSum_eq] at hdup
+  -- hdup : 0 ≤ Z² * (corr(AΔB) - corr(A)*corr(B))
+  -- Since Z² > 0, corr(AΔB) - corr(A)*corr(B) ≥ 0
+  have hsub : 0 ≤ correlation G p (symmDiff A B) - correlation G p A * correlation G p B :=
+    nonneg_of_mul_nonneg_right hdup hZ2
+  linarith
 
 end IsingModel
