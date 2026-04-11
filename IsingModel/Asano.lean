@@ -493,6 +493,112 @@ noncomputable def leeYangPoly {n : ℕ} (A : Matrix (Fin n) (Fin n) ℂ) :
     MultilinPoly (Fin n) :=
   fun S => ∏ i ∈ S, ∏ j ∈ Finset.univ \ S, A i j
 
+/-- For a Hermitian matrix, `conj(A i j) = A j i`. -/
+private lemma hermitian_conj_entry {n : ℕ} (A : Matrix (Fin n) (Fin n) ℂ)
+    (hA : A.IsHermitian) (i j : Fin n) :
+    starRingEnd ℂ (A i j) = A j i := by
+  have h := congr_fun (congr_fun hA.eq j) i
+  simp only [Matrix.conjTranspose_apply, RCLike.star_def] at h
+  exact h
+
+/-- The complement of `T.map castSucc` in `Fin (m+1)` is
+`{last} ∪ (univ \ T).map castSucc`. -/
+private lemma complement_map_castSucc {m : ℕ} (T : Finset (Fin m)) :
+    Finset.univ \ T.map ⟨Fin.castSucc, Fin.castSucc_injective m⟩ =
+    insert (Fin.last m) ((Finset.univ \ T).map ⟨Fin.castSucc, Fin.castSucc_injective m⟩) := by
+  ext j
+  simp only [Finset.mem_sdiff, Finset.mem_univ, true_and, Finset.mem_map,
+    Finset.mem_insert, Function.Embedding.coeFn_mk]
+  constructor
+  · intro hj
+    induction j using Fin.lastCases with
+    | last => left; rfl
+    | cast i =>
+      right
+      exact ⟨i, fun hT => hj ⟨i, hT, rfl⟩, rfl⟩
+  · rintro (rfl | ⟨x, hx, rfl⟩)
+    · rintro ⟨y, _, hy⟩; exact absurd hy (Fin.castSucc_ne_last y)
+    · rintro ⟨y, hy, hc⟩
+      exact hx ((Fin.castSucc_injective m hc) ▸ hy)
+
+/-- The complement of `insert last (T.map castSucc)` in `Fin (m+1)` is
+`(univ \ T).map castSucc`. -/
+private lemma complement_insert_last_map_castSucc {m : ℕ} (T : Finset (Fin m)) :
+    Finset.univ \ insert (Fin.last m) (T.map ⟨Fin.castSucc, Fin.castSucc_injective m⟩) =
+    (Finset.univ \ T).map ⟨Fin.castSucc, Fin.castSucc_injective m⟩ := by
+  ext j
+  simp only [Finset.mem_sdiff, Finset.mem_univ, true_and, Finset.mem_insert,
+    Finset.mem_map, Function.Embedding.coeFn_mk]
+  constructor
+  · intro h
+    have hne : j ≠ Fin.last m := fun heq => h (Or.inl heq)
+    have hni : ¬∃ a ∈ T, a.castSucc = j := fun hex => h (Or.inr hex)
+    induction j using Fin.lastCases with
+    | last => exact absurd rfl hne
+    | cast i => exact ⟨i, fun hi => hni ⟨i, hi, rfl⟩, rfl⟩
+  · rintro ⟨x, hx, rfl⟩
+    intro h
+    rcases h with heq | ⟨y, hy, hc⟩
+    · exact absurd heq (Fin.castSucc_ne_last x)
+    · exact hx ((Fin.castSucc_injective m hc) ▸ hy)
+
+/-- Conjugation of Lee-Yang coefficients corresponds to taking the complement.
+For Hermitian `A`: `conj(leeYangPoly A T) = leeYangPoly A (univ \ T)`. -/
+private lemma leeYangPoly_conj_eq_compl {n : ℕ} (A : Matrix (Fin n) (Fin n) ℂ)
+    (hA : A.IsHermitian) (T : Finset (Fin n)) :
+    starRingEnd ℂ (leeYangPoly A T) = leeYangPoly A (Finset.univ \ T) := by
+  unfold leeYangPoly
+  simp only [map_prod]
+  simp_rw [hermitian_conj_entry A hA]
+  rw [Finset.prod_comm]
+  congr 1; ext j; congr 1
+  ext x; simp
+
+/-- Coefficient identity for `last ∉ S`: the Lee-Yang coefficient of `T.map castSucc`
+factors into the submatrix coefficient times the coupling to the last row.
+
+`leeYangPoly A (T.map cs) = leeYangPoly B T · ∏_{i∈T} A (cs i) last`
+
+where `B = A.submatrix castSucc castSucc`. -/
+private lemma leeYangPoly_coeff_notin {m : ℕ} (A : Matrix (Fin (m + 1)) (Fin (m + 1)) ℂ)
+    (T : Finset (Fin m)) (z : Fin (m + 1) → ℂ) :
+    leeYangPoly A (T.map ⟨Fin.castSucc, Fin.castSucc_injective m⟩) *
+      ∏ k ∈ T.map ⟨Fin.castSucc, Fin.castSucc_injective m⟩, z k =
+    leeYangPoly (A.submatrix Fin.castSucc Fin.castSucc) T *
+      ∏ i ∈ T, (A (Fin.castSucc i) (Fin.last m) * z (Fin.castSucc i)) := by
+  unfold leeYangPoly
+  rw [Finset.prod_map, Finset.prod_map]
+  rw [← Finset.prod_mul_distrib, ← Finset.prod_mul_distrib]
+  congr 1; ext i
+  rw [complement_map_castSucc T]
+  have hlast_nmem : Fin.last m ∉
+      (Finset.univ \ T).map ⟨Fin.castSucc, Fin.castSucc_injective m⟩ := by
+    simp [Finset.mem_map, Fin.castSucc_ne_last]
+  rw [Finset.prod_insert hlast_nmem, Finset.prod_map]
+  simp only [Matrix.submatrix_apply, Function.Embedding.coeFn_mk]
+  ring
+
+/-- Coefficient identity for `last ∈ S`: the Lee-Yang coefficient of
+`insert last (T.map castSucc)` factors into the submatrix coefficient times
+the coupling from the last column.
+
+`leeYangPoly A (insert last (T.map cs)) = leeYangPoly B T · ∏_{j∈univ\T} A last (cs j)` -/
+private lemma leeYangPoly_coeff_in {m : ℕ} (A : Matrix (Fin (m + 1)) (Fin (m + 1)) ℂ)
+    (T : Finset (Fin m)) :
+    leeYangPoly A (insert (Fin.last m) (T.map ⟨Fin.castSucc, Fin.castSucc_injective m⟩)) =
+    leeYangPoly (A.submatrix Fin.castSucc Fin.castSucc) T *
+      ∏ j ∈ (Finset.univ \ T), A (Fin.last m) (Fin.castSucc j) := by
+  unfold leeYangPoly
+  rw [complement_insert_last_map_castSucc]
+  have hlast_nmem : Fin.last m ∉
+      T.map ⟨Fin.castSucc, Fin.castSucc_injective m⟩ := by
+    simp [Finset.mem_map, Fin.castSucc_ne_last]
+  rw [Finset.prod_insert hlast_nmem]
+  rw [Finset.prod_map, Finset.prod_map]
+  simp_rw [Finset.prod_map]
+  simp only [Matrix.submatrix_apply, Function.Embedding.coeFn_mk]
+  ring
+
 /-- **Harcos/Ruelle theorem**: For an `n × n` Hermitian matrix `A` with `|a_{ij}| ≤ 1`,
 the Lee-Yang polynomial `f_A` does not vanish on the open unit polydisk.
 
@@ -538,19 +644,81 @@ theorem leeYangPoly_nonvanishing {n : ℕ} (A : Matrix (Fin n) (Fin n) ℂ)
         _ ≤ 1 * ‖z (Fin.castSucc k)‖ := by
             exact mul_le_mul_of_nonneg_right (hbound _ _) (norm_nonneg _)
         _ < 1 := by linarith [hz (Fin.castSucc k)]
-    -- Remaining: show f_A(z) ≠ 0 using h_first_nonzero.
-    -- Harcos decomposition: f_A(z) = P + Q where
-    --   P = f_B(a_{·,n} · z_{·})  (first term, ≠ 0 by h_first_nonzero)
-    --   Q = (∏ z_k) · conj(f_B(a_{·,n} / conj(z_{·})))  (second term)
-    -- Step 1: Algebraic identity f_A = P + Q (Finset sum splitting by Fin.last ∈ S)
-    -- Step 2: Show ‖Q‖ < ‖P‖ (then P + Q ≠ 0):
-    --   a) For |a_{i,n}| < 1 (strict): ratio Q/P is holomorphic in each z_k
-    --   b) On |z_k| = 1: conj(z_k) = 1/z_k, so |Q/P| = 1
-    --   c) Maximum modulus (Complex.norm_le_of_forall_mem_frontier_norm_le):
-    --      |Q/P| ≤ 1 on |z_k| < 1, with equality only if Q/P is constant
-    --   d) Since |z_k| < 1 (strict), |Q/P| < 1, so ‖Q‖ < ‖P‖
-    -- Step 3: Extend to |a_{i,n}| ≤ 1 by continuity
-    sorry
+    -- f_A is linear in z_last: f_A(z) = β + z_last · α
+    -- where β = firstTerm = f_B(a·z) and α is the z_last coefficient.
+    let β := (leeYangPoly B).eval
+        (fun i => A (Fin.castSucc i) (Fin.last m) * z (Fin.castSucc i))
+    -- α = ∑_{S : last ∈ S} coeff(S) · ∏_{k ∈ S \ {last}} z_k
+    let α := ∑ S ∈ (Finset.univ : Finset (Finset (Fin (m + 1)))).filter
+        (fun S => Fin.last m ∈ S),
+        leeYangPoly A S * ∏ k ∈ S.erase (Fin.last m), z k
+    -- Step 1: eval = β + z_last · α (sum splitting + factoring z_last from monomial)
+    have hdecomp : (leeYangPoly A).eval z = β + z (Fin.last m) * α := by
+      -- Split ∑_S into ∑_{last∉S} + ∑_{last∈S}, factor z_last from the second sum
+      change (∑ S : Finset (Fin (m + 1)), leeYangPoly A S * ∏ k ∈ S, z k) = β + _
+      rw [show (∑ S : Finset (Fin (m + 1)), leeYangPoly A S * ∏ k ∈ S, z k) =
+        ∑ S ∈ Finset.univ.filter (fun S => Fin.last m ∈ S),
+          leeYangPoly A S * ∏ k ∈ S, z k +
+        ∑ S ∈ Finset.univ.filter (fun S => Fin.last m ∉ S),
+          leeYangPoly A S * ∏ k ∈ S, z k from
+        (Finset.sum_filter_add_sum_filter_not _ _ _).symm]
+      rw [add_comm]; congr 1
+      · -- Σ_{last∉S} = β (bijection with Finset (Fin m))
+        symm
+        apply Finset.sum_nbij (fun T =>
+          T.map ⟨Fin.castSucc, Fin.castSucc_injective m⟩)
+        · intro T _
+          simp [Finset.mem_filter, Finset.mem_map, Fin.castSucc_ne_last]
+        · intro T₁ _ T₂ _ h
+          exact Finset.map_injective ⟨Fin.castSucc, Fin.castSucc_injective m⟩ h
+        · intro S hS
+          rw [Set.mem_image]
+          simp only [Finset.mem_coe, Finset.mem_filter, Finset.mem_univ, true_and] at hS
+          refine ⟨S.preimage Fin.castSucc
+            (Fin.castSucc_injective m |>.injOn),
+            Finset.mem_coe.mpr (Finset.mem_univ _), ?_⟩
+          ext j; simp only [Finset.mem_map, Finset.mem_preimage,
+            Function.Embedding.coeFn_mk]
+          constructor
+          · rintro ⟨k, hk, rfl⟩; exact hk
+          · intro hj
+            induction j using Fin.lastCases with
+            | last => exact absurd hj hS
+            | cast i => exact ⟨i, hj, rfl⟩
+        · intro T _; exact (leeYangPoly_coeff_notin A T z).symm
+      · -- Σ_{last∈S} factor: ∏_{k∈S} z_k = z_last * ∏_{k∈S\{last}} z_k
+        rw [Finset.mul_sum]
+        apply Finset.sum_congr rfl
+        intro S hS
+        rw [Finset.mem_filter] at hS
+        rw [← Finset.mul_prod_erase S z hS.2]
+        ring
+    -- Step 2: ‖α‖ ≤ ‖β‖ (maximum modulus principle + Hermitian structure)
+    -- On |z_k| = 1: α = (∏_{k<m} z_k) · conj(β), so |α| = |β|.
+    -- By max modulus (iterated 1-variable): |α/β| ≤ 1 on |z_k| < 1.
+    -- Uses: when |a_{k,n}| < 1, β ≠ 0 on closed polydisk (ih), so α/β holomorphic.
+    -- Extends to |a_{k,n}| ≤ 1 by continuity.
+    have hbound : ‖α‖ ≤ ‖β‖ := by
+      sorry -- Maximum modulus principle (Harcos, based on Ruelle 2010)
+    -- Step 3: Conclude f_A ≠ 0
+    rw [hdecomp]
+    intro h
+    -- β + z_last · α = 0 → β = -(z_last · α)
+    -- |β| = |z_last| · |α| ≤ |z_last| · |β|
+    -- If β ≠ 0: 1 ≤ |z_last| < 1, contradiction.
+    have hβ : β ≠ 0 := h_first_nonzero
+    have : ‖β‖ ≤ ‖z (Fin.last m)‖ * ‖β‖ := by
+      have heq : β = -(z (Fin.last m) * α) := by linear_combination h
+      calc ‖β‖ = ‖z (Fin.last m) * α‖ := by rw [heq, norm_neg]
+        _ = ‖z (Fin.last m)‖ * ‖α‖ := norm_mul _ _
+        _ ≤ ‖z (Fin.last m)‖ * ‖β‖ := by
+            exact mul_le_mul_of_nonneg_left hbound (norm_nonneg _)
+    have hβ_pos : 0 < ‖β‖ := norm_pos_iff.mpr hβ
+    have : 1 ≤ ‖z (Fin.last m)‖ := by
+      by_contra h
+      push Not at h
+      linarith [mul_lt_of_lt_one_left hβ_pos h]
+    linarith [hz (Fin.last m)]
 
 /-! ## Application to Ising model -/
 
