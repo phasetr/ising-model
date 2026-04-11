@@ -298,6 +298,28 @@ private lemma leeYangPoly_ratio_bound {m : ℕ}
     -- Step 3: On torus |v_k| = 1: α(v) = (∏v_k)·conj(β(v)) by Hermitian.
     -- Step 4: max modulus → ‖α/β‖ ≤ 1.
     -- Step 5: t → 1 continuity gives ‖α‖ ≤ ‖β‖ for |a_k| ≤ 1.
+    -- 1-variable max modulus step: for each variable v_k, replace it by a
+    -- value on the unit circle without increasing ‖g‖.
+    have one_var_max : ∀ (g : (Fin m → ℂ) → ℂ) (v : Fin m → ℂ) (k : Fin m),
+        Differentiable ℂ g → ‖v k‖ < 1 →
+        (∀ t : ℂ, ‖t‖ = 1 → ‖g (Function.update v k t)‖ ≤ 1) →
+        ‖g v‖ ≤ 1 := by
+      intro g v k hg hk hbd
+      let f : ℂ → ℂ := fun t => g (Function.update v k t)
+      have hupd : Differentiable ℂ (fun t : ℂ => Function.update v k t) := by
+        rw [show (fun t => Function.update v k t) =
+            (fun t i => if i = k then t else v i) from by
+          ext t i; simp [Function.update, eq_comm]]
+        rw [differentiable_pi]
+        intro i; split_ifs <;> [exact differentiable_id; exact differentiable_const _]
+      have hf_diff : Differentiable ℂ f := hg.comp hupd
+      have h := Complex.norm_le_of_forall_mem_frontier_norm_le Metric.isBounded_ball
+        ⟨hf_diff.differentiableOn, hf_diff.continuous.continuousOn⟩
+        (fun z hz => by
+          rw [frontier_ball (0 : ℂ) one_ne_zero] at hz
+          exact hbd z (by simpa [dist_zero_right] using hz))
+        (subset_closure (Metric.mem_ball.mpr (by rwa [dist_zero_right])))
+      rwa [show f (v k) = g v from by simp [f]] at h
     -- Iterated single-variable maximum modulus principle.
     -- For strict |a_k| < 1: β(v) ≠ 0 for all v with ‖v_k‖ ≤ 1 (by ih,
     -- since |a_k·v_k| ≤ |a_k| < 1). So g = α/β is holomorphic on
