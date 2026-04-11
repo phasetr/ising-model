@@ -26,7 +26,7 @@ LaTeX source files. To compile:
 
 ```sh
 cd tex
-latexmk -lualatex gks-proof-guide.tex
+latexmk -lualatex proof-guide.tex
 ```
 
 Requires a TeX Live installation with LuaLaTeX. PDFs are not committed
@@ -34,7 +34,7 @@ to the repository.
 
 | File                       | Description                                 |
 |----------------------------|---------------------------------------------|
-| `tex/gks-proof-guide.tex` | Mathematical walkthrough of the GKS-I proof |
+| `tex/proof-guide.tex`      | Mathematical walkthrough of the GKS-I proof |
 
 ## Related projects and references
 

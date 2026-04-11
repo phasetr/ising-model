@@ -1,0 +1,383 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{hyperref}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+
+\title{GKS-I Formal Proof: A Mathematical Guide to the Lean 4 Code}
+\author{ising-model project}
+\date{2026-04-10}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This document provides a mathematical walkthrough of the Lean~4
+formalization of the first Griffiths inequality (GKS-I) for
+the finite Ising model. Each section corresponds to a Lean source file
+and lists the relevant definitions and theorems. The purpose is to
+make the formal proof readable as ordinary mathematics.
+
+The proof follows Glimm--Jaffe~\cite{glimm-jaffe}, Theorem~4.1.1
+(pp.~56--57), adapted to the discrete $\{+1,-1\}$ Ising model.
+The ``non-negative correlations'' (HNC) framework and the cosh/sinh
+decomposition are standard; see also
+Friedli--Velenik~\cite{friedli-velenik}, Theorem~3.22 (pp.~99--100).
+\end{abstract}
+
+\tableofcontents
+
+\section{Basic definitions (\texttt{Basic.lean})}
+
+\texttt{Basic.lean} contains all fundamental types (Spin, Config,
+IsingParams, Ferromagnetic) as well as spin operations (flip,
+flipAt, sign, toSign) and their basic properties.
+
+\begin{definition}[Spin]
+$\mathrm{Spin} = \{\mathrm{up}, \mathrm{down}\}$ with sign function
+$s : \mathrm{Spin} \to \mathbb{Z}$, $s(\mathrm{up})=+1$,
+$s(\mathrm{down})=-1$.
+\end{definition}
+
+\noindent\textbf{Lean:} \texttt{inductive Spin}, \texttt{Spin.toSign}
+
+\begin{definition}[Configuration]
+A configuration on a type $\iota$ is a function
+$\sigma : \iota \to \mathrm{Spin}$.
+\end{definition}
+
+\noindent\textbf{Lean:} \texttt{abbrev Config ($\iota$) := $\iota$ $\to$ Spin}
+
+\begin{definition}[Ising parameters]
+Over an ordered field $K$: coupling $J : K$, external field $h : K$,
+inverse temperature $\beta : K$.
+Ferromagnetic condition: $J \geq 0$, $h \geq 0$, $\beta > 0$.
+\end{definition}
+
+\noindent\textbf{Lean:} \texttt{structure IsingParams},
+\texttt{structure Ferromagnetic}
+
+\section{Hamiltonian (\texttt{Hamiltonian.lean})}
+
+\begin{definition}[Ising Hamiltonian]
+For a simple graph $G$ on $\iota$,
+\[
+  H_G(\sigma) = -J \sum_{\{i,j\} \in E(G)} s(\sigma_i)\,s(\sigma_j)
+  - h \sum_{i \in \iota} s(\sigma_i).
+\]
+\end{definition}
+
+\noindent\textbf{Lean:} \texttt{interactionEnergy} $+$
+\texttt{externalFieldEnergy} $=$ \texttt{hamiltonian}
+
+Key auxiliary definitions (in \texttt{Basic.lean}):
+\begin{itemize}
+  \item \texttt{Spin.flip}: $\mathrm{up} \leftrightarrow \mathrm{down}$
+  \item \texttt{Spin.sign $K$ $s$}: cast $s(\cdot)$ into the field $K$
+  \item \texttt{Config.flip}, \texttt{Config.flipAt}: global and single-site spin flip
+\end{itemize}
+Key auxiliary definitions (in \texttt{Hamiltonian.lean}):
+\begin{itemize}
+  \item \texttt{edgeSpin}: $s(\sigma_i) \cdot s(\sigma_j)$ for an edge
+    $\{i,j\}$, defined via \texttt{Sym2.lift}
+\end{itemize}
+
+\begin{lemma}[Spin flip symmetry --- \texttt{hamiltonian\_flip\_eq}]
+If $h = 0$, then $H_G(\bar{\sigma}) = H_G(\sigma)$ where
+$\bar{\sigma}_i = \mathrm{flip}(\sigma_i)$.
+\end{lemma}
+
+\begin{proof}
+Each edge factor satisfies $(-s_i)(-s_j) = s_i s_j$
+(\texttt{edgeSpin\_flip}), and the field term vanishes since $h=0$.
+\end{proof}
+
+\section{Partition function and Gibbs measure (\texttt{GibbsMeasure.lean})}
+
+\begin{definition}[Partition function]
+$Z_G = \sum_{\sigma : \iota \to \mathrm{Spin}} \exp(-\beta\, H_G(\sigma))$.
+\end{definition}
+
+\begin{theorem}[$Z > 0$ --- \texttt{partitionFunction\_pos}]
+$Z_G > 0$.
+\end{theorem}
+
+\begin{proof}
+Each summand $\exp(\cdot) > 0$ (\texttt{Real.exp\_pos}), and the
+index set $\iota \to \mathrm{Spin}$ is nonempty
+(\texttt{Finset.univ\_nonempty}).
+Apply \texttt{Finset.sum\_pos}.
+\end{proof}
+
+\begin{definition}[Gibbs expectation, correlation]
+$\langle F \rangle = Z^{-1} \sum_\sigma F(\sigma)\,e^{-\beta H}$, \quad
+$\langle \sigma_A \rangle = \langle \prod_{i \in A} s(\sigma_i) \rangle$.
+\end{definition}
+
+\noindent\textbf{Lean:} \texttt{gibbsExpectation},
+\texttt{spinProduct}, \texttt{correlation}
+
+\subsection{Spin product algebra}
+
+\begin{lemma}[\texttt{spinProduct\_sq}]
+$(\sigma^A)^2 = 1$ for any $A$.
+\end{lemma}
+
+\begin{lemma}[\texttt{spinProduct\_mul}]
+$\sigma^A \cdot \sigma^C = \sigma^{A \bigtriangleup C}$.
+\end{lemma}
+
+\begin{proof}
+Write $\sigma^A = \prod_{i \in \iota}
+(\text{if } i \in A \text{ then } s_i \text{ else } 1)$
+(using \texttt{Finset.prod\_filter}).
+Multiply pointwise (\texttt{Finset.prod\_mul\_distrib}).
+At each site: if $i \in A \cap C$, $s_i \cdot s_i = 1$ (by
+\texttt{Spin.toSign\_sq}); otherwise the factor is $s_i$ or $1$,
+matching $A \bigtriangleup C$.
+\end{proof}
+
+\section{GKS-I proof (\texttt{Inequalities/GKS.lean})}
+
+\subsection{Reduction to non-negative correlations}
+
+\begin{theorem}[GKS-I --- \texttt{gks\_first}]
+For ferromagnetic parameters, $\langle \sigma_A \rangle \geq 0$
+for all $A$.
+\end{theorem}
+
+The proof factors as:
+\begin{enumerate}
+  \item Since $Z > 0$, it suffices to show the numerator
+    $\sum_\sigma \sigma^A e^{-\beta H} \geq 0$
+    (\texttt{gibbsExpectation\_nonneg\_of\_numerator\_nonneg}).
+  \item This follows from a property of $e^{-\beta H}$ called
+    \emph{non-negative correlations}
+    (\texttt{gks\_numerator\_nonneg}).
+\end{enumerate}
+
+\subsection{Non-negative correlations (HNC)}
+
+\begin{definition}[\texttt{HasNonnegCorrelations}]
+A function $f : (\iota \to \mathrm{Spin}) \to \mathbb{R}$ has
+\textbf{non-negative correlations} (HNC) if
+$\sum_\sigma \sigma^S \cdot f(\sigma) \geq 0$ for every
+$S \subseteq \iota$.
+\end{definition}
+
+\begin{lemma}[Base case --- \texttt{hasNonnegCorrelations\_one}]
+$f \equiv 1$ has HNC.
+\end{lemma}
+
+\begin{proof}
+For $S = \emptyset$: $\sum_\sigma 1 = 2^{|\iota|} > 0$.
+For $S \neq \emptyset$: $\sum_\sigma \sigma^S = 0$.
+
+The vanishing is proved via the involution
+$\mathrm{flipAt}(j)$ for any $j \in S$
+(\texttt{sum\_config\_spinProduct\_eq\_zero}).
+Each pair $(\sigma, \mathrm{flipAt}(j, \sigma))$ contributes
+$\sigma^S + (-\sigma^S) = 0$ because flipping at $j \in S$ negates
+the spin product (\texttt{spinProduct\_flipAt\_neg}).
+The involution is applied via \texttt{Finset.sum\_ninvolution}.
+\end{proof}
+
+\begin{lemma}[Preservation --- \texttt{hasNonnegCorrelations\_mul}]
+\label{lem:mul}
+If $f$ has HNC and $a, b \geq 0$, then
+$\sigma \mapsto f(\sigma)(a + b\,\sigma^C)$ has HNC.
+\end{lemma}
+
+\begin{proof}
+\[
+  \sum_\sigma \sigma^S f(\sigma)(a + b\,\sigma^C)
+  = a \underbrace{\sum_\sigma \sigma^S f(\sigma)}_{\geq 0}
+  + b \underbrace{\sum_\sigma \sigma^{S \bigtriangleup C} f(\sigma)}_{\geq 0}
+\]
+using $\sigma^S \sigma^C = \sigma^{S \bigtriangleup C}$
+(\texttt{spinProduct\_mul}).
+\end{proof}
+
+\begin{lemma}[Iterated product --- \texttt{hasNonnegCorrelations\_finset\_prod},
+\texttt{hasNonnegCorrelations\_mul\_prod}]
+A product of factors $(a_k + b_k \sigma^{C_k})$ with $a_k, b_k \geq 0$
+has HNC. More generally, multiplying an HNC function by such a product
+preserves HNC.
+\end{lemma}
+
+\begin{proof}
+By induction on the index set, applying Lemma~\ref{lem:mul} at each step.
+\end{proof}
+
+\subsection{Factoring the Boltzmann weight}
+
+\begin{lemma}[\texttt{exp\_sign\_decomp}, \texttt{exp\_edgeSpin\_decomp}]
+For $x \in \{+1, -1\}$ and $\alpha \geq 0$:
+$e^{\alpha x} = \cosh\alpha + x\,\sinh\alpha$,
+with $\cosh\alpha > 0$ and $\sinh\alpha \geq 0$.
+\end{lemma}
+
+\begin{lemma}[\texttt{bwFactored\_eq\_boltzmannWeight}]
+\[
+  e^{-\beta H_G(\sigma)}
+  = \prod_{\{i,j\} \in E(G)} (\cosh(\beta J) + \sinh(\beta J)\,s_i s_j)
+  \cdot \prod_{i \in \iota} (\cosh(\beta h) + \sinh(\beta h)\,s_i).
+\]
+\end{lemma}
+
+\begin{proof}
+$-\beta H = \beta J \sum_e s_i s_j + \beta h \sum_i s_i$.
+Apply $\exp(\text{sum}) = \prod\exp$ (\texttt{Real.exp\_sum}),
+then decompose each factor.
+\end{proof}
+
+\subsection{Conclusion}
+
+\begin{theorem}[\texttt{boltzmannWeight\_hasNonnegCorrelations}]
+$e^{-\beta H_G}$ has HNC for ferromagnetic parameters.
+\end{theorem}
+
+\begin{proof}
+The factored form is a product of $(a+b\,\sigma^C)$ terms with
+$a,b \geq 0$. Start from $f \equiv 1$ (HNC by base case),
+multiply by each edge factor, then by each site factor. HNC is
+preserved at each step by Lemma~\ref{lem:mul}.
+\end{proof}
+
+\noindent
+GKS-I follows: $\langle \sigma_A \rangle
+= Z^{-1}\sum_\sigma \sigma^A e^{-\beta H} \geq 0$
+since $Z > 0$ and the numerator $\geq 0$ by HNC.
+
+\section{GKS-II proof (\texttt{Inequalities/GKS.lean})}
+
+The second Griffiths inequality is proved by the duplicate variable trick,
+following Friedli--Velenik~\cite{friedli-velenik}, Theorem~3.49~(3.55),
+pp.~127--128.
+
+\begin{theorem}[GKS-II --- \texttt{gks\_second}]
+For ferromagnetic parameters,
+$\langle\sigma_A\sigma_B\rangle \geq \langle\sigma_A\rangle\langle\sigma_B\rangle$
+for all $A, B$.
+\end{theorem}
+
+\subsection{Proof outline}
+
+\begin{enumerate}
+\item Introduce an independent copy $\chi$ of $\sigma$. Then
+  \[
+    Z^2\bigl(\langle\sigma^{A\triangle B}\rangle
+      - \langle\sigma^A\rangle\langle\sigma^B\rangle\bigr)
+    = \sum_{\omega,\omega'} \omega^A(\omega^B - \omega'^B)\,w(\omega)\,w(\omega').
+  \]
+  (\texttt{duplicateSum\_eq})
+
+\item Change variables: $t_i = \omega_i \cdot \omega'_i$
+  (\texttt{Spin.mul}). For fixed $\omega$, this is a bijection on
+  $\mathrm{Config}\;\iota$. Under this substitution:
+  \begin{itemize}
+    \item $\omega^A(\omega^B - \omega'^B) = \omega^{A\triangle B}(1 - t^B)$
+    \item $w(\omega)\,w(\omega\cdot t) = \mathrm{modifiedWeight}(t, \omega)$
+      where each coupling $K_C$ is replaced by $K_C(1 + t^C) \geq 0$.
+  \end{itemize}
+  After swapping sums:
+  \[
+    \sum_t (1 - t^B) \sum_\omega \omega^{A\triangle B}\,
+      \mathrm{modifiedWeight}(t, \omega).
+  \]
+  (\texttt{duplicateSum\_eq\_changed})
+
+\item For each fixed $t$:
+  \begin{itemize}
+    \item $(1 - t^B) \geq 0$ since $t^B \in \{-1,+1\}$
+      (\texttt{one\_sub\_spinProduct\_nonneg}).
+    \item The inner sum $\geq 0$ by
+      \texttt{hasNonnegCorrelations\_edge\_site\_product} applied to
+      the modified couplings $K_C(1 + t^C)$
+      (\texttt{modifiedWeight\_nonneg\_corr}).
+  \end{itemize}
+
+\item Since $Z^2 > 0$ and the duplicate sum $\geq 0$, GKS-II follows.
+\end{enumerate}
+
+\subsection{Key new definitions}
+
+\begin{itemize}
+  \item \texttt{Spin.mul}: spin multiplication ($\mathrm{up}$ acts as
+    identity, $\mathrm{down}$ acts as flip).
+    $\mathrm{toSign}(a \cdot b) = \mathrm{toSign}(a) \cdot \mathrm{toSign}(b)$.
+  \item \texttt{modifiedWeight}: Boltzmann weight with couplings
+    $K_C(1 + t^C)$.
+  \item \texttt{hasNonnegCorrelations\_edge\_site\_product}: shared
+    lemma for GKS-I and GKS-II (product of $\exp(K \cdot \text{spin})$
+    factors with $K \geq 0$ has HNC).
+\end{itemize}
+
+\section{Numerical tests (\texttt{test/IsingModel/GKSTest.lean})}
+
+A Float-based reference implementation verifies:
+\begin{itemize}
+  \item $Z > 0$ for 4 graph types
+  \item Spin flip symmetry ($h = 0$)
+  \item GKS-I for 6 parameter sets (2--4 sites, all subsets)
+  \item GKS-II ($\langle\sigma_A\sigma_B\rangle \geq
+    \langle\sigma_A\rangle\langle\sigma_B\rangle$)
+    for 6 parameter sets (2--4 sites, all subset pairs)
+  \item GKS-I and GKS-II violation for anti-ferromagnetic $J < 0$
+\end{itemize}
+
+\section{FKG inequality (\texttt{Inequalities/FKG.lean})}
+
+The FKG inequality is proved by applying Mathlib's
+\texttt{Combinatorics.SetFamily.FourFunctions.fkg} to the Ising Boltzmann
+weight, following Friedli--Velenik~\cite{friedli-velenik}, Theorem~3.21
+(p.~98) and Theorem~3.50 (pp.~128--130).
+
+\begin{theorem}[\texttt{fkg\_ising}]
+For ferromagnetic parameters and monotone nondecreasing nonneg
+$f, g : \mathrm{Config}\;\iota \to \mathbb{R}$,
+$\langle fg \rangle \geq \langle f \rangle \langle g \rangle$.
+\end{theorem}
+
+\subsection{Proof outline}
+\begin{enumerate}
+\item Define a \texttt{LinearOrder} on \texttt{Spin}: $\mathrm{down} < \mathrm{up}$
+  ($-1 < +1$). The product order on $\mathrm{Config}\;\iota = \iota \to
+  \mathrm{Spin}$ makes it a \texttt{DistribLattice}.
+\item Prove log-supermodularity of the Boltzmann weight
+  (\texttt{boltzmannWeight\_log\_supermodular}):
+  $w(\sigma)w(\sigma') \leq w(\sigma \vee \sigma')w(\sigma \wedge \sigma')$.
+  This reduces to the edge inequality
+  $\sigma_i\sigma_j + \sigma'_i\sigma'_j \leq
+  (\sigma_i \vee \sigma'_i)(\sigma_j \vee \sigma'_j) +
+  (\sigma_i \wedge \sigma'_i)(\sigma_j \wedge \sigma'_j)$
+  (\texttt{spin\_edge\_supermodular}, verified by exhaustive case analysis).
+\item Apply Mathlib's \texttt{fkg} with $\mu = w$, then convert from
+  unnormalized sums to \texttt{gibbsExpectation} form.
+\end{enumerate}
+
+\begin{thebibliography}{9}
+\bibitem{glimm-jaffe}
+J.~Glimm and A.~Jaffe,
+\emph{Quantum Physics: A Functional Integral Point of View},
+2nd ed., Springer, 1987.
+
+\bibitem{friedli-velenik}
+S.~Friedli and Y.~Velenik,
+\emph{Statistical Mechanics of Lattice Systems:
+A Concrete Mathematical Introduction},
+Cambridge University Press, 2017.
+
+\bibitem{simon}
+B.~Simon,
+\emph{The Statistical Mechanics of Lattice Gases, Vol.~I},
+Princeton University Press, 1993.
+\end{thebibliography}
+
+\end{document}
