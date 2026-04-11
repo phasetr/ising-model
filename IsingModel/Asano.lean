@@ -93,11 +93,11 @@ def singleEdgePoly (i j : ι) (t : ℝ) : MultilinPoly ι :=
     else if X = ∅ then 1
     else 0
 
-/-- The Möbius transformation `z ↦ -(tz + 1)/(z + t)` maps the open unit disk
-to the complement of the closed unit disk when `0 ≤ t < 1`. -/
-theorem moebius_maps_disk_to_complement (t : ℝ) (ht0 : 0 ≤ t) (ht1 : t < 1)
+/-- `‖tz + 1‖ > ‖z + t‖` when `0 ≤ t < 1` and `‖z‖ < 1`.
+This is the norm inequality underlying the Möbius transformation property. -/
+theorem norm_tz_add_one_gt (t : ℝ) (ht0 : 0 ≤ t) (ht1 : t < 1)
     (z : ℂ) (hz : ‖z‖ < 1) :
-    1 < ‖-(↑t * z + 1) / (z + ↑t)‖ := by
+    ‖z + ↑t‖ < ‖↑t * z + 1‖ := by
   -- ‖-(tz+1)/(z+t)‖ = ‖tz+1‖/‖z+t‖
   -- Need: ‖tz+1‖ > ‖z+t‖
   -- ‖tz+1‖² - ‖z+t‖² = (t²|z|²+2t Re z+1) - (|z|²+2t Re z+t²)
@@ -107,9 +107,38 @@ theorem moebius_maps_disk_to_complement (t : ℝ) (ht0 : 0 ≤ t) (ht1 : t < 1)
   -- because normSq(tz+1) - normSq(z+t) = (1-t²)(1-normSq z) > 0
   -- normSq(tz+1) - normSq(z+t) = (1-t²)(1-normSq z) > 0
   -- Then ‖tz+1‖ > ‖z+t‖ → ‖-(tz+1)/(z+t)‖ > 1
-  -- normSq(tz+1) - normSq(z+t) = (1-t²)(1-normSq(z)) > 0
-  -- Then ‖tz+1‖/‖z+t‖ > 1
-  sorry
+  -- Show ‖z+t‖² < ‖tz+1‖², then convert to norm inequality.
+  -- normSq(tz+1) - normSq(z+t) = (1-t²)(1-normSq z) > 0
+  have hz_re_im : z.re ^ 2 + z.im ^ 2 < 1 := by
+    have h1 : Complex.normSq z = ‖z‖ ^ 2 := Complex.normSq_eq_norm_sq z
+    have h2 : Complex.normSq z = z.re * z.re + z.im * z.im := Complex.normSq_apply z
+    have h3 : ‖z‖ ^ 2 < 1 := by nlinarith [norm_nonneg z]
+    nlinarith [sq_nonneg z.re, sq_nonneg z.im]
+  -- normSq(z+t) < normSq(tz+1)
+  have hnsq : (z.re + t) ^ 2 + z.im ^ 2 < (t * z.re + 1) ^ 2 + (t * z.im) ^ 2 := by
+    -- (t*z.re+1)²+(t*z.im)² - (z.re+t)²-z.im² = (1-t²)(1-(z.re²+z.im²))
+    -- Difference = (1-t²)(1-(z.re²+z.im²)) > 0
+    have h_diff : (t * z.re + 1) ^ 2 + (t * z.im) ^ 2 - ((z.re + t) ^ 2 + z.im ^ 2) =
+        (1 - t ^ 2) * (1 - (z.re ^ 2 + z.im ^ 2)) := by ring
+    have : 0 < (1 - t ^ 2) := by nlinarith [sq_nonneg t]
+    have : 0 < (1 - (z.re ^ 2 + z.im ^ 2)) := by linarith
+    nlinarith [mul_pos ‹0 < 1 - t ^ 2› ‹0 < 1 - (z.re ^ 2 + z.im ^ 2)›]
+  -- Convert to norm: ‖z+t‖ < ‖tz+1‖
+  -- ‖z+t‖² < ‖tz+1‖² from hnsq + normSq connection
+  have hn1 : Complex.normSq (z + ↑t) = (z.re + t) ^ 2 + z.im ^ 2 := by
+    simp [Complex.normSq_apply, Complex.add_re, Complex.add_im,
+      Complex.ofReal_re, Complex.ofReal_im]; ring
+  have hn2 : Complex.normSq (↑t * z + 1) = (t * z.re + 1) ^ 2 + (t * z.im) ^ 2 := by
+    simp [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.mul_re,
+      Complex.mul_im, Complex.ofReal_re, Complex.ofReal_im,
+      Complex.one_re, Complex.one_im]; ring
+  have hnsq' : Complex.normSq (z + ↑t) < Complex.normSq (↑t * z + 1) := by
+    rw [hn1, hn2]; exact hnsq
+  -- normSq < → norm <
+  have h_sq : ‖z + ↑t‖ ^ 2 < ‖↑t * z + 1‖ ^ 2 := by
+    rwa [← Complex.normSq_eq_norm_sq, ← Complex.normSq_eq_norm_sq]
+  have := abs_lt_of_sq_lt_sq h_sq (norm_nonneg _)
+  rwa [abs_of_nonneg (norm_nonneg _)] at this
 
 /-- The single-edge polynomial does not vanish on the open unit polydisk.
 If `P(z_i, z_j) = 0`, then `z_i = -(tz_j+1)/(z_j+t)`, but the Möbius
