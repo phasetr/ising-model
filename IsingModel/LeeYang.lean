@@ -235,7 +235,7 @@ private lemma leeYangPoly_ratio_bound {m : ℕ}
   have hα_eq : ∑ S ∈ (Finset.univ : Finset (Finset (Fin (m + 1)))).filter
       (fun S => Fin.last m ∈ S), leeYangPoly A S * ∏ k ∈ S.erase (Fin.last m), z k =
       αfun w := by
-    sorry -- Sum bijection using leeYangPoly_coeff_in
+    sorry
   rw [hα_eq]
   -- Now need: ‖αfun w‖ ≤ ‖βfun w‖
   -- βfun ≠ 0 on closed polydisk when |a_k| < 1 (by ih)
