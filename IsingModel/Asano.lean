@@ -1,6 +1,9 @@
 import Mathlib.Analysis.Complex.Basic
 import Mathlib.Analysis.Complex.Norm
+import Mathlib.Analysis.Complex.AbsMax
 import Mathlib.Data.Finset.Powerset
+import Mathlib.Data.Matrix.Basic
+import Mathlib.LinearAlgebra.Matrix.Hermitian
 
 /-!
 # Multilinear polynomials and Asano contraction
@@ -476,7 +479,53 @@ theorem singleEdgePoly_nonvanishing (i j : ι) (hij : i ≠ j)
       linarith [hnorm]
     linarith [hz i]
 
-/-! ## Lee-Yang circle theorem -/
+/-! ## Lee-Yang circle theorem (Harcos/Ruelle approach) -/
+
+/-- The Lee-Yang polynomial for an `n × n` matrix `A`:
+`f_A(z) = Σ_{S⊆[n]} (∏_{i∈S, j∉S} a_{ij}) · (∏_{k∈S} z_k)`.
+
+When `A` is Hermitian with `|a_{ij}| ≤ 1`, this polynomial does not vanish on the
+open unit polydisk. This is the key object in the Harcos/Ruelle proof of the
+Lee-Yang circle theorem.
+
+Reference: Harcos, based on Ruelle, Ann. of Math. 171 (2010), 589–603. -/
+noncomputable def leeYangPoly {n : ℕ} (A : Matrix (Fin n) (Fin n) ℂ) :
+    MultilinPoly (Fin n) :=
+  fun S => ∏ i ∈ S, ∏ j ∈ Finset.univ \ S, A i j
+
+/-- **Harcos/Ruelle theorem**: For an `n × n` Hermitian matrix `A` with `|a_{ij}| ≤ 1`,
+the Lee-Yang polynomial `f_A` does not vanish on the open unit polydisk.
+
+Proof by induction on `n`:
+- `n = 0`: `f_A = 1 ≠ 0`
+- `n + 1`: Separate the last variable. Using `a_{ji} = conj(a_{ij})`, decompose
+  `f_A(z) = f_B(a·z) + (∏z_k) · conj(f_B(a/conj(z)))`.
+  First term ≠ 0 by induction. Ratio of second/first has modulus ≤ 1 by the
+  maximum modulus principle (on |z_k| = 1, the ratio is exactly 1).
+
+Reference: Harcos, "The Lee-Yang Circle Theorem",
+  based on Ruelle, Ann. of Math. 171 (2010), 589–603. -/
+theorem leeYangPoly_nonvanishing {n : ℕ} (A : Matrix (Fin n) (Fin n) ℂ)
+    (hA : A.IsHermitian)
+    (hbound : ∀ i j, ‖A i j‖ ≤ 1)
+    (z : Fin n → ℂ) (hz : ∀ k, ‖z k‖ < 1) :
+    (leeYangPoly A).eval z ≠ 0 := by
+  induction n with
+  | zero =>
+    -- f_A(z) = 1 ≠ 0 (Fin 0 is empty, only subset is ∅, all products are empty = 1)
+    unfold MultilinPoly.eval leeYangPoly
+    rw [Fintype.sum_eq_single (∅ : Finset (Fin 0)) (fun S hS => by
+      exfalso; exact hS (Finset.eq_empty_of_isEmpty S))]
+    simp
+  | succ m ih =>
+    -- Separate the contribution of S with (Fin.last m) ∉ S from S with (Fin.last m) ∈ S.
+    -- Decompose: f_A(z) = f_B(a·z) + (∏z) · conj(f_B(a/conj(z)))
+    -- where B is the upper m×m block.
+    -- By ih, f_B(a·z) ≠ 0. Then show |second term / first term| ≤ 1
+    -- using maximum modulus principle.
+    sorry
+
+/-! ## Application to Ising model -/
 
 /-- The edge weight factor for the Ising partition polynomial.
 For an edge `(i, j)` with coupling `t`, the weight of subset `X` is
