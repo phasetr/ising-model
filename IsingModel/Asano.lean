@@ -71,7 +71,7 @@ then `‖α‖ ≤ ‖β‖`. Proof: if `‖α‖ > ‖β‖`, the zero `w = -β
 private lemma affine_norm_le (α β : ℂ) (h : ∀ w : ℂ, ‖w‖ < 1 → α * w + β ≠ 0) :
     ‖α‖ ≤ ‖β‖ := by
   by_contra hlt
-  push_neg at hlt
+  push Not at hlt
   have hα : α ≠ 0 := by
     intro h0; simp [h0] at hlt; linarith [norm_nonneg β]
   exact h (-β / α)
@@ -89,7 +89,7 @@ private lemma linear_nonneg_on_Ico (s t : ℝ) (ht : 0 ≤ t)
     (h : ∀ x : ℝ, 0 ≤ x → x < 1 → 0 ≤ s * x + t) :
     0 ≤ s + t := by
   by_contra hlt
-  push_neg at hlt
+  push Not at hlt
   have hs : s < 0 := by nlinarith [h 0 le_rfl one_pos]
   have h2s : (0 : ℝ) < 2 * -s := by linarith
   have h2s_ne : (2 : ℝ) * -s ≠ 0 := ne_of_gt h2s
@@ -147,7 +147,7 @@ theorem bilinear_nonvanishing (a b c d : ℂ)
     intro α β r
     simp only [normSq_apply, mul_re, mul_im, add_re, add_im,
       ofReal_re, ofReal_im, ofReal_neg, neg_re, neg_im,
-      mul_zero, sub_zero, zero_mul, add_zero, neg_zero, mul_neg, neg_mul]
+      ]
     ring
   -- Step D: norm of real cast
   have norm_real_lt : ∀ r : ℝ, 0 ≤ r → r < 1 → ‖(r : ℂ)‖ < 1 := by
@@ -310,12 +310,12 @@ theorem MultilinPoly.asanoContract_nonvanishing (p : MultilinPoly ι) (i j : ι)
     congr 1
     · -- ∑ [if i∈X ∧ j∉X then p(insert j X)*∏ z else 0] = a * z i
       -- Reindex RHS via involution e
-      simp only [a, Finset.sum_mul, mul_ite, mul_zero]
+      simp only [a, Finset.sum_mul]
       let e : Finset ι ≃ Finset ι := ⟨
         fun X => if j ∈ X then X.erase j else insert j X,
         fun X => if j ∈ X then X.erase j else insert j X,
-        fun X => by by_cases h : j ∈ X <;> simp [h, Finset.insert_erase, Finset.erase_insert],
-        fun X => by by_cases h : j ∈ X <;> simp [h, Finset.insert_erase, Finset.erase_insert]⟩
+        fun X => by by_cases h : j ∈ X <;> simp [h, Finset.insert_erase],
+        fun X => by by_cases h : j ∈ X <;> simp [h, Finset.insert_erase]⟩
       symm
       apply Fintype.sum_equiv e
       intro Y
@@ -333,7 +333,7 @@ theorem MultilinPoly.asanoContract_nonvanishing (p : MultilinPoly ι) (i j : ι)
         · simp [show ¬(i ∈ Y.erase j) from mt Finset.mem_of_mem_erase hiY, hiY]
       · -- j ∉ Y: both sides are 0
         simp only [e, Equiv.coe_fn_mk, hjY, ite_false]
-        simp [Finset.mem_insert_self j Y, hjY]
+        simp [hjY]
   /- Old proof sketch for hQ/hF removed; see git history (commit 4c17a93) -/
   /-  intro X u w
     by_cases hi : i ∈ X <;> by_cases hj : j ∈ X <;> simp only [hi, hj, ite_true, ite_false,
@@ -431,7 +431,7 @@ theorem MultilinPoly.asanoContract_nonvanishing (p : MultilinPoly ι) (i j : ι)
           · simp [show ¬(i ∈ Y.erase j) from mt Finset.mem_of_mem_erase hi, hi]
         · -- j ∉ Y: both sides are 0
           simp [hj, show ¬(j ∈ insert j Y) = False from by simp]
-          intro hi; exact absurd (Finset.mem_insert_self j Y) (by push_neg; exact hj)
+          intro hi; exact absurd (Finset.mem_insert_self j Y) (by push Not; exact hj)
       · intro Y; rfl]
     -- Now show: ∑_Y [if i∈Y ∧ j∈Y then p Y * ∏_{Y.erase j} z else 0]
     --         = ∑_Y [if i∈Y ∧ j∈Y then p Y * ∏_{(Y.erase i).erase j} z * z i else 0]
@@ -581,7 +581,7 @@ theorem singleEdgePoly_nonvanishing (i j : ι) (hij : i ≠ j)
   · have hzt_pos : 0 < ‖z j + ↑t‖ := lt_of_le_of_ne (norm_nonneg _) (Ne.symm hzt)
     have hzi : 1 < ‖z i‖ := by
       by_contra h
-      push_neg at h
+      push Not at h
       -- ‖z_i‖ ≤ 1, ‖z_j+t‖ > 0
       -- ‖z_i‖ * ‖z_j+t‖ ≤ ‖z_j+t‖ < ‖tz_j+1‖ = ‖z_i‖ * ‖z_j+t‖, contradiction
       have := mul_le_mul_of_nonneg_right h (le_of_lt hzt_pos)

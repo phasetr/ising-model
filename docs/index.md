@@ -16,6 +16,7 @@ All theorems are formally proved with **zero `sorry`**.
 | **GKS-I** (First Griffiths inequality)   | `⟨σ_A⟩ ≥ 0` for ferromagnetic parameters                   | `Inequalities/GKS.lean` |
 | **GKS-II** (Second Griffiths inequality) | `⟨σ_A σ_B⟩ ≥ ⟨σ_A⟩⟨σ_B⟩` for ferromagnetic parameters      | `Inequalities/GKS.lean` |
 | **FKG** (Fortuin-Kasteleyn-Ginibre)      | `⟨fg⟩ ≥ ⟨f⟩⟨g⟩` for monotone nondecreasing f, g            | `Inequalities/FKG.lean` |
+| **Asano contraction**                    | Contraction preserves non-vanishing on the unit polydisk    | `Asano.lean`            |
 | Partition function positivity            | `Z > 0`                                                    | `GibbsMeasure.lean`     |
 | Spin flip symmetry                       | `H(flip σ) = H(σ)` when h = 0                              | `Hamiltonian.lean`      |
 
