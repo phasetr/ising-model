@@ -478,37 +478,49 @@ theorem singleEdgePoly_nonvanishing (i j : ι) (hij : i ≠ j)
 
 /-! ## Lee-Yang circle theorem -/
 
-/-- The Ising partition polynomial `P_E(z_V) = Σ_{X⊆V} a_E(X) ∏_{i∈X} z_i`
-with coefficients in `[0,1]` and `a(∅) = a(V) = 1`.
-This is the multilinear form of the partition function with `z = e^{-2h}`. -/
-structure IsingPartitionPoly (ι : Type*) [Fintype ι] [DecidableEq ι] where
-  /-- The underlying multilinear polynomial. -/
-  poly : MultilinPoly ι
-  /-- All coefficients are in `[0, 1]`. -/
-  coeff_nonneg : ∀ X, 0 ≤ (poly X).re ∧ (poly X).re ≤ 1 ∧ (poly X).im = 0
-  /-- Coefficient of the empty set is `1`. -/
-  coeff_empty : poly ∅ = 1
-  /-- Coefficient of the full set is `1`. -/
-  coeff_full : poly Finset.univ = 1
+/-- The edge weight factor for the Ising partition polynomial.
+For an edge `(i, j)` with coupling `t`, the weight of subset `X` is
+`t` if exactly one of `i, j` is in `X`, and `1` otherwise.
 
-/-- **Lee-Yang circle theorem**: The Ising partition polynomial does not vanish
+Reference: Friedli–Velenik, (3.63), p. 122. -/
+def edgeWeight (i j : ι) (t : ℝ) (X : Finset ι) : ℂ :=
+  if (i ∈ X) = (j ∈ X) then 1 else ↑t
+
+/-- The Ising partition polynomial for a list of edges with couplings.
+`P_E(z) = Σ_{X⊆V} (∏_e w_e(X)) ∏_{i∈X} z_i` where `w_e(X) = t_e` if
+exactly one endpoint of `e` is in `X`, and `1` otherwise.
+
+This captures the multilinear form of the Ising partition function with
+`z_i = e^{-2h_i}`, `t_e = e^{-2β J_e}`.
+
+Reference: Friedli–Velenik, (3.63)--(3.65), pp. 122--123. -/
+noncomputable def isingEdgePoly (edges : List (ι × ι × ℝ)) : MultilinPoly ι :=
+  fun X => (edges.map fun e => edgeWeight e.1 e.2.1 e.2.2 X).prod
+
+/-- **Lee-Yang circle theorem**: The Ising partition polynomial (defined by
+a list of edges with ferromagnetic couplings `t_e ∈ [0, 1)`) does not vanish
 on the open unit polydisk `{z : ‖z_i‖ < 1 ∀i}`.
 
 Equivalently, all zeros of `Z(z)` (as a function of `z = e^{-2h}`) lie on `|z| = 1`.
 
 Reference: Friedli–Velenik, Theorem 3.43, pp. 122–127.
-Proof by induction on the edge set using Asano contraction. -/
-theorem lee_yang_circle (p : IsingPartitionPoly ι)
+Proof by induction on the edge list using Asano contraction. -/
+theorem lee_yang_circle (edges : List (ι × ι × ℝ))
+    (hne : ∀ e ∈ edges, e.1 ≠ e.2.1)
+    (ht : ∀ e ∈ edges, 0 ≤ e.2.2 ∧ e.2.2 < 1)
     (z : ι → ℂ) (hz : ∀ k, ‖z k‖ < 1) :
-    p.poly.eval z ≠ 0 := by
-  -- TODO: Proof by induction on the edge set E = {X : |X|=2, 0 < a(X) < 1}.
+    (isingEdgePoly edges).eval z ≠ 0 := by
+  -- Proof by induction on |edges|.
+  -- Base case: edges = [] → P(z) = Σ_X ∏_{i∈X} z_i = ∏_i (1+z_i) ≠ 0.
+  -- Inductive step: edges = e :: edges' →
+  --   P_{e::edges'} is the Asano contraction of P_{edges'} ⊗ P_e
+  --   (on expanded variable space with virtual vertex).
+  --   By ih, P_{edges'} doesn't vanish. By singleEdgePoly_nonvanishing,
+  --   P_e doesn't vanish. Their product doesn't vanish (nonzero × nonzero).
+  --   By asanoContract_nonvanishing, the contraction doesn't vanish.
   -- All building blocks are proved:
-  -- • singleEdgePoly_nonvanishing: base case (single edge)
-  -- • asanoContract_nonvanishing: inductive step (Asano contraction)
-  -- • bilinear_nonvanishing: algebraic core
-  -- Remaining work: define the edge-induction framework, showing how the
-  -- Ising partition polynomial decomposes as a product of single-edge factors,
-  -- and how Asano contraction merges shared vertices.
+  -- • singleEdgePoly_nonvanishing, norm_tz_add_one_gt
+  -- • asanoContract_nonvanishing, bilinear_nonvanishing
   -- Reference: Friedli–Velenik, Theorem 3.43, pp. 122–127.
   sorry
 
