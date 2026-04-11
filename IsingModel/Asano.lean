@@ -791,8 +791,8 @@ noncomputable def isingMatrix (edges : List (ι × ι × ℝ)) (i j : ι) : ℂ 
   (edges.map fun e =>
     if (e.1 = i ∧ e.2.1 = j) ∨ (e.1 = j ∧ e.2.1 = i) then (e.2.2 : ℂ) else 1).prod
 
-/-- The Ising matrix is symmetric: `isingMatrix edges i j = isingMatrix edges j i`. -/
 omit [Fintype ι] in
+/-- The Ising matrix is symmetric: `isingMatrix edges i j = isingMatrix edges j i`. -/
 private lemma isingMatrix_symm (edges : List (ι × ι × ℝ)) (i j : ι) :
     isingMatrix edges i j = isingMatrix edges j i := by
   unfold isingMatrix
@@ -801,14 +801,43 @@ private lemma isingMatrix_symm (edges : List (ι × ι × ℝ)) (i j : ι) :
   intro e _
   simp only [or_comm]
 
-/-- The coefficient identity: `isingEdgePoly edges X = ∏_{i∈X,j∉X} isingMatrix edges i j`.
+omit [Fintype ι] in
+/-- Cons decomposition of the Ising matrix. -/
+private lemma isingMatrix_cons (e : ι × ι × ℝ) (edges : List (ι × ι × ℝ)) (i j : ι) :
+    isingMatrix (e :: edges) i j =
+    (if (e.1 = i ∧ e.2.1 = j) ∨ (e.1 = j ∧ e.2.1 = i) then (e.2.2 : ℂ) else 1) *
+    isingMatrix edges i j := by
+  simp [isingMatrix, List.map_cons, List.prod_cons]
 
-This shows that the Ising partition polynomial is a Lee-Yang polynomial for the
-Ising matrix. -/
-private lemma isingEdgePoly_eq_leeYangCoeff (edges : List (ι × ι × ℝ)) (X : Finset ι) :
+/-- For a single edge `e`, the edge weight equals the product of the single-edge
+matrix entries over all cross-boundary pairs `(i,j)` with `i ∈ X, j ∉ X`. -/
+private lemma edgeWeight_eq_prod (e : ι × ι × ℝ) (hne : e.1 ≠ e.2.1) (X : Finset ι) :
+    edgeWeight e.1 e.2.1 e.2.2 X =
+    ∏ i ∈ X, ∏ j ∈ Finset.univ \ X,
+      (if (e.1 = i ∧ e.2.1 = j) ∨ (e.1 = j ∧ e.2.1 = i) then (e.2.2 : ℂ) else 1) := by
+  sorry
+
+private lemma isingEdgePoly_eq_leeYangCoeff (edges : List (ι × ι × ℝ))
+    (hne : ∀ e ∈ edges, e.1 ≠ e.2.1) (X : Finset ι) :
     isingEdgePoly edges X =
     ∏ i ∈ X, ∏ j ∈ Finset.univ \ X, isingMatrix edges i j := by
-  sorry -- Product rearrangement: ∏_e edgeWeight(e,X) = ∏_{i∈X,j∉X} ∏_{e for (i,j)} t_e
+  induction edges with
+  | nil => simp [isingEdgePoly, isingMatrix]
+  | cons e edges' ih =>
+    have hne' := fun e' he' => hne e' (List.mem_cons_of_mem _ he')
+    -- isingEdgePoly (e::edges') X = edgeWeight · isingEdgePoly edges' X
+    have hcons : isingEdgePoly (e :: edges') X =
+        edgeWeight e.1 e.2.1 e.2.2 X * isingEdgePoly edges' X := by
+      simp [isingEdgePoly]
+    rw [hcons, ih hne']
+    -- Factor the RHS: isingMatrix(e::edges') = g(e) · isingMatrix(edges')
+    suffices h : ∏ i ∈ X, ∏ j ∈ Finset.univ \ X, isingMatrix (e :: edges') i j =
+        (∏ i ∈ X, ∏ j ∈ Finset.univ \ X,
+          (if (e.1 = i ∧ e.2.1 = j) ∨ (e.1 = j ∧ e.2.1 = i) then (e.2.2 : ℂ) else 1)) *
+        (∏ i ∈ X, ∏ j ∈ Finset.univ \ X, isingMatrix edges' i j) by
+      rw [h]; congr 1
+      exact edgeWeight_eq_prod e (hne e List.mem_cons_self) X
+    simp_rw [isingMatrix_cons, Finset.prod_mul_distrib]
 
 /-- The base case: `isingEdgePoly [] = 1` (constant polynomial). -/
 private lemma isingEdgePoly_nil : isingEdgePoly (ι := ι) [] = fun _ => 1 := by
@@ -833,7 +862,7 @@ theorem lee_yang_circle (edges : List (ι × ι × ℝ))
     -- Step 1: isingEdgePoly = leeYangPoly for the Ising matrix
     have hcoeff : ∀ X, isingEdgePoly (e :: edges') X =
         ∏ i ∈ X, ∏ j ∈ Finset.univ \ X, isingMatrix (e :: edges') i j :=
-      fun X => isingEdgePoly_eq_leeYangCoeff _ X
+      fun X => isingEdgePoly_eq_leeYangCoeff _ (fun e' he' => hne e' he') X
     -- Step 2: eval identity
     have heval : (isingEdgePoly (e :: edges')).eval z =
         MultilinPoly.eval (fun S => ∏ i ∈ S, ∏ j ∈ Finset.univ \ S,
