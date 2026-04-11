@@ -899,12 +899,41 @@ theorem lee_yang_circle (edges : List (ι × ι × ℝ))
     let A' : Matrix (Fin (Fintype.card ι)) (Fin (Fintype.card ι)) ℂ :=
       A.submatrix equiv.symm equiv.symm
     let z' : Fin (Fintype.card ι) → ℂ := z ∘ equiv.symm
-    -- A is Hermitian (real symmetric: conj = id for real entries, and isingMatrix_symm)
+    -- A is Hermitian: conj(A i j) = A j i
+    -- Proof: entries are real (conj = id) and symmetric (isingMatrix_symm)
     have hAH : A'.IsHermitian := by
-      sorry -- conj(isingMatrix i j) = isingMatrix j i via real + symmetric
+      ext i j
+      simp only [Matrix.conjTranspose_apply, RCLike.star_def, Matrix.submatrix_apply]
+      -- conj(isingMatrix i j) = isingMatrix i j (real entries)
+      have hreal : ∀ (edges : List (ι × ι × ℝ)) (a b : ι),
+          starRingEnd ℂ (isingMatrix edges a b) = isingMatrix edges a b := by
+        intro edges a b; unfold isingMatrix
+        induction edges with
+        | nil => simp
+        | cons e' l ih =>
+          simp only [List.map_cons, List.prod_cons, map_mul, ih]
+          congr 1; split_ifs <;> simp
+      change starRingEnd ℂ (isingMatrix _ _ _) = isingMatrix _ _ _
+      rw [hreal]; exact isingMatrix_symm _ _ _
     -- |A' i j| ≤ 1 (product of factors in [0,1])
     have hAB : ∀ i j, ‖A' i j‖ ≤ 1 := by
-      sorry -- each factor is ↑t with t ∈ [0,1) or 1
+      intro i j; change ‖isingMatrix _ _ _‖ ≤ 1
+      -- Show ‖isingMatrix edges a b‖ ≤ 1 by induction on edges
+      suffices h : ∀ (edges : List (ι × ι × ℝ)),
+          (∀ e' ∈ edges, 0 ≤ e'.2.2 ∧ e'.2.2 < 1) →
+          ∀ a b : ι, ‖isingMatrix edges a b‖ ≤ 1 from h _ ht _ _
+      intro edges ht' a b; unfold isingMatrix
+      induction edges with
+      | nil => simp
+      | cons e' l ih =>
+        simp only [List.map_cons, List.prod_cons, norm_mul]
+        exact mul_le_one₀
+          (by split_ifs
+              · rw [norm_real, Real.norm_of_nonneg (ht' e' List.mem_cons_self).1]
+                exact le_of_lt (ht' e' List.mem_cons_self).2
+              · simp)
+          (norm_nonneg _)
+          (ih (fun e'' he'' => ht' e'' (List.mem_cons_of_mem _ he'')))
     -- The eval under reindexing matches
     have hTransport : MultilinPoly.eval (fun S => ∏ i ∈ S, ∏ j ∈ Finset.univ \ S, A i j) z =
         (leeYangPoly A').eval z' := by
