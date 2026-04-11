@@ -498,9 +498,11 @@ theorem lee_yang_circle (edges : List (ι × ι × ℝ))
         · rintro ⟨y, hy, rfl⟩; intro ⟨w, hw, he⟩; exact hy (equiv.injective he ▸ hw)
       -- Monomial: ∏_{k∈S.map e} z'(k) = ∏_{k∈S} z(k)
       -- Coefficient: ∏_{i∈S.map e} ∏_{j∈compl} A'(i)(j) = ∏_{i∈S} ∏_{j∈univ\S} A(i)(j)
-      simp only [Finset.prod_map, hcompl, Function.Embedding.coeFn_mk, Function.comp,
-        Matrix.submatrix_apply, Equiv.symm_apply_apply]
-      exact sorry
+      show (fun S => ∏ i ∈ S, ∏ j ∈ Finset.univ \ S, A i j) S * ∏ k ∈ S, z k =
+        (∏ i ∈ S.map equiv.toEmbedding, ∏ j ∈ Finset.univ \ S.map equiv.toEmbedding,
+          A (equiv.symm i) (equiv.symm j)) *
+        ∏ k ∈ S.map equiv.toEmbedding, z (equiv.symm k)
+      simp only [Finset.prod_map, hcompl, Function.Embedding.coeFn_mk, Equiv.symm_apply_apply]
     rw [hTransport]
     exact leeYangPoly_nonvanishing A' hAH hAB z' (fun k => hz _)
 
