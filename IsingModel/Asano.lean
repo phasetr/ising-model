@@ -217,17 +217,127 @@ theorem MultilinPoly.asanoContract_nonvanishing (p : MultilinPoly ι) (i j : ι)
   let b := ∑ X : Finset ι, if i ∉ X ∧ j ∈ X then p X * ∏ k ∈ X.erase j, z k else 0
   let c := ∑ X : Finset ι, if i ∈ X ∧ j ∉ X then p X * ∏ k ∈ X.erase i, z k else 0
   let d := ∑ X : Finset ι, if i ∉ X ∧ j ∉ X then p X * ∏ k ∈ X, z k else 0
-  -- Key identity 1: eval of contraction = a * z i + d
-  -- Proof: split the sum into 4 categories by i,j membership.
-  -- The j∈X terms vanish. The i∈X,j∉X terms match a*z_i via bijection Y→Y.erase j.
-  -- The i∉X,j∉X terms are d.
-  have hQ : (p.asanoContract i j hij).eval z = a * z i + d := by
-    sorry
-  -- Key identity 2: p.eval(z[i→u,j→w]) = a*u*w + b*w + c*u + d
+  -- Key identities (Finset sum decomposition; proof sketch in doc comment above)
+  have hQ : (p.asanoContract i j hij).eval z = a * z i + d := by sorry
+  have hF : ∀ u w : ℂ,
+      p.eval (Function.update (Function.update z j w) i u) =
+      a * u * w + b * w + c * u + d := by sorry
+  /-  -- Helper: product decomposition for Function.update at i and j
+  have prod_upd : ∀ (X : Finset ι) (u w : ℂ),
+      ∏ k ∈ X, Function.update (Function.update z j w) i u k =
+      (if i ∈ X then u else 1) * (if j ∈ X then w else 1) *
+      ∏ k ∈ (X.erase i).erase j, z k := by
+    intro X u w
+    by_cases hi : i ∈ X <;> by_cases hj : j ∈ X <;> simp only [hi, hj, ite_true, ite_false,
+        one_mul, mul_one]
+    · -- i ∈ X, j ∈ X
+      rw [← Finset.mul_prod_erase X _ hi, Function.update_self]
+      congr 1
+      have hj' : j ∈ X.erase i := Finset.mem_erase.mpr ⟨hij.symm, hj⟩
+      rw [← Finset.mul_prod_erase _ _ hj', Function.update_of_ne hij.symm,
+        Function.update_self]
+      congr 1
+      exact Finset.prod_congr rfl (fun k hk => by
+        simp [Finset.mem_erase] at hk
+        rw [Function.update_of_ne hk.1.1.symm, Function.update_of_ne hk.1.2])
+    · -- i ∈ X, j ∉ X
+      rw [← Finset.mul_prod_erase X _ hi, Function.update_self]
+      congr 1
+      have : (X.erase i).erase j = X.erase i := by
+        rw [Finset.erase_eq_of_not_mem (mt Finset.mem_of_mem_erase hj)]
+      rw [this]
+      exact Finset.prod_congr rfl (fun k hk => by
+        have hki : k ≠ i := Finset.ne_of_mem_erase hk
+        have hkj : k ≠ j := fun h => hj (h ▸ Finset.mem_of_mem_erase hk)
+        rw [Function.update_of_ne hki.symm, Function.update_of_ne hkj])
+    · -- i ∉ X, j ∈ X
+      have : X.erase i = X := Finset.erase_eq_of_not_mem hi
+      rw [this, ← Finset.mul_prod_erase X _ hj]
+      congr 1
+      · rw [Function.update_of_ne (Ne.symm hij), Function.update_self]
+      · exact Finset.prod_congr rfl (fun k hk => by
+          have hkj : k ≠ j := Finset.ne_of_mem_erase hk
+          have hki : k ≠ i := fun h => hi (h ▸ Finset.mem_of_mem_erase hk)
+          rw [Function.update_of_ne hki.symm, Function.update_of_ne hkj])
+    · -- i ∉ X, j ∉ X
+      have h1 : X.erase i = X := Finset.erase_eq_of_not_mem hi
+      have h2 : (X.erase i).erase j = X := by rw [h1, Finset.erase_eq_of_not_mem hj]
+      rw [h2]
+      exact Finset.prod_congr rfl (fun k hk => by
+        have hki : k ≠ i := fun h => hi (h ▸ hk)
+        have hkj : k ≠ j := fun h => hj (h ▸ hk)
+        rw [Function.update_of_ne hki.symm, Function.update_of_ne hkj])
+  -- Key identity 2 (easier): p.eval(z[i→u,j→w]) = a*u*w + b*w + c*u + d
   have hF : ∀ u w : ℂ,
       p.eval (Function.update (Function.update z j w) i u) =
       a * u * w + b * w + c * u + d := by
-    sorry
+    intro u w
+    simp only [MultilinPoly.eval, prod_upd, a, b, c, d]
+    -- Each summand: p X * [if i∈X then u else 1] * [if j∈X then w else 1] * ∏ rest
+    -- Split into 4 parts by i,j membership, factor out u*w, w, u, 1
+    simp only [← Finset.sum_add_distrib]
+    have : ∀ X : Finset ι,
+        p X * ((if i ∈ X then u else 1) * (if j ∈ X then w else 1) *
+        ∏ k ∈ (X.erase i).erase j, z k) =
+        (if i ∈ X ∧ j ∈ X then p X * ∏ k ∈ (X.erase i).erase j, z k else 0) * (u * w) +
+        (if i ∉ X ∧ j ∈ X then p X * ∏ k ∈ X.erase j, z k else 0) * w +
+        (if i ∈ X ∧ j ∉ X then p X * ∏ k ∈ X.erase i, z k else 0) * u +
+        (if i ∉ X ∧ j ∉ X then p X * ∏ k ∈ X, z k else 0) := by
+      intro X
+      by_cases hi : i ∈ X <;> by_cases hj : j ∈ X <;>
+        simp [hi, hj, Finset.erase_eq_of_not_mem, *] <;> ring
+    simp_rw [this, Finset.sum_add_distrib, ← Finset.sum_mul]
+    ring
+  -- Key identity 1: eval of contraction = a * z i + d
+  -- Use the involution e(X) = if j∈X then X.erase j else insert j X
+  have hQ : (p.asanoContract i j hij).eval z = a * z i + d := by
+    -- Q(z) = ∑_X q(X) * ∏ z. Split: j∈X vanishes, rest = (i∈X,j∉X) + (i∉X,j∉X)
+    simp only [MultilinPoly.eval, MultilinPoly.asanoContract]
+    have split : ∀ X : Finset ι,
+        (if j ∈ X then (0:ℂ) else if i ∈ X then p (insert j X) else p X) * ∏ k ∈ X, z k =
+        (if i ∈ X ∧ j ∉ X then p (insert j X) * ∏ k ∈ X, z k else 0) +
+        (if i ∉ X ∧ j ∉ X then p X * ∏ k ∈ X, z k else 0) := by
+      intro X; by_cases hj : j ∈ X <;> by_cases hi : i ∈ X <;> simp [hi, hj]
+    simp_rw [split, Finset.sum_add_distrib]
+    congr 1
+    -- ∑_X [if i∈X ∧ j∉X then p(insert j X)*∏ z else 0] = a * z i
+    -- = ∑_Y [if i∈Y ∧ j∈Y then p Y * ∏_{(erase i)(erase j)} z else 0] * z i
+    simp only [a, Finset.mul_sum, mul_ite, mul_zero]
+    -- Use the involution to reindex the LHS
+    let e : Finset ι ≃ Finset ι := ⟨
+      fun X => if j ∈ X then X.erase j else insert j X,
+      fun X => if j ∈ X then X.erase j else insert j X,
+      fun X => by by_cases hj : j ∈ X <;> simp [hj, Finset.insert_erase, Finset.erase_insert],
+      fun X => by by_cases hj : j ∈ X <;> simp [hj, Finset.insert_erase, Finset.erase_insert]⟩
+    rw [show (∑ X : Finset ι, if i ∈ X ∧ j ∉ X then
+        p (insert j X) * ∏ k ∈ X, z k else 0) =
+      ∑ Y : Finset ι, if i ∈ Y ∧ j ∈ Y then
+        p Y * ∏ k ∈ Y.erase j, z k else 0 from by
+      rw [← Fintype.sum_equiv e]
+      · apply Finset.sum_congr rfl; intro Y _
+        by_cases hj : j ∈ Y <;> simp only [e, Equiv.coe_fn_mk, hj, ite_true, ite_false]
+        · -- j ∈ Y: e(Y) = Y.erase j. Target: if i∈(Y.erase j) ∧ j∉(Y.erase j) then ...
+          simp only [Finset.not_mem_erase, and_true]
+          by_cases hi : i ∈ Y
+          · simp [Finset.mem_erase.mpr ⟨hij, hi⟩, hi, Finset.insert_erase hj]
+          · simp [show ¬(i ∈ Y.erase j) from mt Finset.mem_of_mem_erase hi, hi]
+        · -- j ∉ Y: both sides are 0
+          simp [hj, show ¬(j ∈ insert j Y) = False from by simp]
+          intro hi; exact absurd (Finset.mem_insert_self j Y) (by push_neg; exact hj)
+      · intro Y; rfl]
+    -- Now show: ∑_Y [if i∈Y ∧ j∈Y then p Y * ∏_{Y.erase j} z else 0]
+    --         = ∑_Y [if i∈Y ∧ j∈Y then p Y * ∏_{(Y.erase i).erase j} z * z i else 0]
+    -- These are equal because ∏_{Y.erase j} z = z i * ∏_{(Y.erase j).erase i} z
+    -- and (Y.erase j).erase i = (Y.erase i).erase j
+    apply Finset.sum_congr rfl; intro Y _
+    split_ifs with h
+    · -- i ∈ Y, j ∈ Y
+      have hi_ej : i ∈ Y.erase j := Finset.mem_erase.mpr ⟨hij, h.1⟩
+      rw [← Finset.mul_prod_erase _ z hi_ej]
+      have : (Y.erase j).erase i = (Y.erase i).erase j := by
+        ext x; simp [Finset.mem_erase]; tauto
+      rw [this]; ring
+    · rfl  -/
   -- Apply bilinear_nonvanishing
   rw [hQ]
   apply bilinear_nonvanishing a b c d
