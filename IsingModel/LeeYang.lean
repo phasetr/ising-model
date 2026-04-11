@@ -270,12 +270,32 @@ private lemma leeYangPoly_ratio_bound {m : ℕ}
       rw [Finset.erase_insert (by simp [Finset.mem_map, Fin.castSucc_ne_last])]
       rw [Finset.prod_map]; rfl
   rw [hα_eq]
-  -- Now need: ‖αfun w‖ ≤ ‖βfun w‖
-  -- βfun ≠ 0 on closed polydisk when |a_k| < 1 (by ih)
-  -- Apply max modulus to g = αfun/βfun
-  -- On torus: |g| = 1 (Hermitian identity)
-  -- Conclusion: |g| ≤ 1, i.e., ‖αfun w‖ ≤ ‖βfun w‖
-  sorry
+  -- Now need: ‖αfun w‖ ≤ ‖βfun w‖ where w i = z(castSucc i), ‖w‖ < 1.
+  -- Case m = 0: αfun and βfun are constants. αfun = leeYangPoly B ∅ * ∏... = 1,
+  -- βfun = (leeYangPoly B).eval ... = 1. So ‖1‖ ≤ ‖1‖. ✓
+  -- Case m ≥ 1: apply maximum modulus principle.
+  by_cases hm : m = 0
+  · -- m = 0: both eval to 1 (Fin 0 is empty, only subset is ∅)
+    subst hm
+    have hempty : ∀ (S : Finset (Fin 0)), S = ∅ := Finset.eq_empty_of_isEmpty
+    have hα1 : αfun w = 1 := by
+      show p_α.eval w = 1; unfold MultilinPoly.eval
+      rw [Fintype.sum_eq_single ∅ (fun S hS => absurd (hempty S) hS)]
+      simp [p_α, leeYangPoly]
+    have hβ1 : βfun w = 1 := by
+      change (leeYangPoly B).eval _ = 1; unfold MultilinPoly.eval
+      rw [Fintype.sum_eq_single ∅ (fun S hS => absurd (hempty S) hS)]
+      simp [leeYangPoly]
+    show ‖αfun w‖ ≤ ‖βfun w‖; rw [hα1, hβ1]
+  · -- m ≥ 1: maximum modulus principle
+    have hm_pos : 0 < m := Nat.pos_of_ne_zero hm
+    -- βfun ≠ 0 on closed polydisk (ih with |a_k·w_k| ≤ |a_k| ≤ 1 · 1 ≤ 1)
+    -- For strict bound: when ‖w‖ ≤ 1, |a_k·w_k| ≤ |a_k| ≤ 1.
+    -- ih requires < 1. This works when |a_k| < 1 OR |w_k| < 1.
+    -- For the closed polydisk (|w_k| ≤ 1), we need |a_k| ≤ 1 AND (|a_k|<1 OR |w_k|<1).
+    -- Harcos handles this by first proving for |a_k|<1 (β≠0 on closed disk),
+    -- then extending by continuity. We sorry this analytical step.
+    sorry
 
 /-- **Harcos/Ruelle theorem**: For an `n × n` Hermitian matrix `A` with `|a_{ij}| ≤ 1`,
 the Lee-Yang polynomial `f_A` does not vanish on the open unit polydisk.
