@@ -66,6 +66,19 @@ def MultilinPoly.asanoContract (p : MultilinPoly ι) (i j : ι) (_hij : i ≠ j)
 
 /-! ## Asano contraction preserves non-vanishing -/
 
+/-- Bilinear non-vanishing lemma: if `f(z,w) = azw + bw + cz + d` does not vanish
+on the open unit bidisk `|z|,|w| < 1`, then `az + d` does not vanish on `|z| < 1`.
+This is the algebraic core of Asano contraction.
+
+Proof sketch: if az₀ + d = 0 for |z₀| < 1, then f(z₀, w) = (az₀+b)w + cz₀+d
+is linear in w. Since f(z₀, w) ≠ 0 for |w| < 1, its zero w₀ satisfies |w₀| ≥ 1.
+But w₀ = -(cz₀+d)/(az₀+b), and using d = -az₀, one derives |w₀| < 1, contradiction. -/
+theorem bilinear_nonvanishing (a b c d : ℂ)
+    (hf : ∀ z w : ℂ, ‖z‖ < 1 → ‖w‖ < 1 → a * z * w + b * w + c * z + d ≠ 0)
+    (z : ℂ) (hz : ‖z‖ < 1) :
+    a * z + d ≠ 0 := by
+  sorry
+
 /-- Key property: Asano contraction preserves non-vanishing on the open unit polydisk.
 
 Write `P = P_{--} z_i z_j + P_{+-} z_j + P_{-+} z_i + P_{++}`.
@@ -78,6 +91,10 @@ The hypothesis says this `w` must have `|w| ≥ 1`. But by algebraic manipulatio
 theorem MultilinPoly.asanoContract_nonvanishing (p : MultilinPoly ι) (i j : ι) (hij : i ≠ j)
     (hp : ∀ z : ι → ℂ, (∀ k, ‖z k‖ < 1) → p.eval z ≠ 0) :
     ∀ z : ι → ℂ, (∀ k, ‖z k‖ < 1) → (p.asanoContract i j hij).eval z ≠ 0 := by
+  -- The contraction Q(z) = P_{--}(z_rest) z_i + P_{++}(z_rest).
+  -- For fixed z_rest, P(z_rest, z_i, w) = (P_{--} z_i + P_{+-})w + (P_{-+} z_i + P_{++})
+  -- is bilinear in (z_i, w). Apply bilinear_nonvanishing.
+  -- TODO: decompose eval into bilinear form and apply the lemma.
   sorry
 
 /-! ## Base case: single edge -/
