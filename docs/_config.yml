@@ -1,0 +1,3 @@
+title: ising-model
+description: Lean 4 + mathlib formalization of the Ising model
+baseurl: /ising-model
