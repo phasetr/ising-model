@@ -599,6 +599,37 @@ private lemma leeYangPoly_coeff_in {m : ℕ} (A : Matrix (Fin (m + 1)) (Fin (m +
   simp only [Matrix.submatrix_apply, Function.Embedding.coeFn_mk]
   ring
 
+/-- The ratio of the `z_last`-coefficient to the constant term in the Lee-Yang polynomial
+is bounded by 1, by the maximum modulus principle.
+
+Specifically, in `f_A(z) = β + z_last · α` where
+`β = f_B(a·z)` and `α = Σ_{S : last ∈ S} coeff(S) · ∏_{k∈S\{last}} z_k`,
+we have `‖α‖ ≤ ‖β‖` for `|z_k| < 1`.
+
+Proof sketch (Harcos/Ruelle):
+1. When `|a_{k,n}| < 1` (strictly), `β ≠ 0` on the closed polydisk
+   (by induction, since `|a_k · z_k| ≤ |a_k| < 1`).
+2. The ratio `g = α/β` is holomorphic on the closed polydisk.
+3. On the torus `|z_k| = 1`: by the Hermitian property,
+   `α = (∏ z_k) · conj(β)`, so `|α/β| = |∏ z_k| = 1`.
+4. By iterated maximum modulus principle
+   (`Complex.norm_le_of_forall_mem_frontier_norm_le`):
+   `|α/β| ≤ 1` on the open polydisk.
+5. Extend to `|a_{k,n}| ≤ 1` by continuity.
+
+Reference: Harcos, based on Ruelle, Ann. of Math. 171 (2010), 589–603. -/
+private lemma leeYangPoly_ratio_bound {m : ℕ}
+    (A : Matrix (Fin (m + 1)) (Fin (m + 1)) ℂ)
+    (hA : A.IsHermitian) (hbound : ∀ i j, ‖A i j‖ ≤ 1)
+    (z : Fin (m + 1) → ℂ) (hz : ∀ k, ‖z k‖ < 1)
+    (ih : ∀ (A' : Matrix (Fin m) (Fin m) ℂ), A'.IsHermitian →
+      (∀ i j, ‖A' i j‖ ≤ 1) → ∀ z', (∀ k, ‖z' k‖ < 1) → (leeYangPoly A').eval z' ≠ 0) :
+    ‖∑ S ∈ (Finset.univ : Finset (Finset (Fin (m + 1)))).filter (fun S => Fin.last m ∈ S),
+        leeYangPoly A S * ∏ k ∈ S.erase (Fin.last m), z k‖ ≤
+    ‖(leeYangPoly (A.submatrix Fin.castSucc Fin.castSucc)).eval
+        (fun i => A (Fin.castSucc i) (Fin.last m) * z (Fin.castSucc i))‖ := by
+  sorry
+
 /-- **Harcos/Ruelle theorem**: For an `n × n` Hermitian matrix `A` with `|a_{ij}| ≤ 1`,
 the Lee-Yang polynomial `f_A` does not vanish on the open unit polydisk.
 
@@ -698,8 +729,8 @@ theorem leeYangPoly_nonvanishing {n : ℕ} (A : Matrix (Fin n) (Fin n) ℂ)
     -- By max modulus (iterated 1-variable): |α/β| ≤ 1 on |z_k| < 1.
     -- Uses: when |a_{k,n}| < 1, β ≠ 0 on closed polydisk (ih), so α/β holomorphic.
     -- Extends to |a_{k,n}| ≤ 1 by continuity.
-    have hbound : ‖α‖ ≤ ‖β‖ := by
-      sorry -- Maximum modulus principle (Harcos, based on Ruelle 2010)
+    have hbound : ‖α‖ ≤ ‖β‖ :=
+      leeYangPoly_ratio_bound A hA hbound z hz ih
     -- Step 3: Conclude f_A ≠ 0
     rw [hdecomp]
     intro h
@@ -750,6 +781,35 @@ private lemma eval_one_poly {ι : Type*} [Fintype ι] (z : ι → ℂ) :
   rw [Finset.powerset_univ] at this
   exact this.symm
 
+/-- The Ising matrix constructed from an edge list.
+For vertices `i ≠ j`, `isingMatrix edges i j = ∏_{e connecting i,j} t_e`.
+For `i = j`, `isingMatrix edges i i = 1`.
+
+This matrix is real symmetric (hence Hermitian) with `|A i j| ≤ 1` when
+all couplings satisfy `0 ≤ t_e < 1`. -/
+noncomputable def isingMatrix (edges : List (ι × ι × ℝ)) (i j : ι) : ℂ :=
+  (edges.map fun e =>
+    if (e.1 = i ∧ e.2.1 = j) ∨ (e.1 = j ∧ e.2.1 = i) then (e.2.2 : ℂ) else 1).prod
+
+/-- The Ising matrix is symmetric: `isingMatrix edges i j = isingMatrix edges j i`. -/
+omit [Fintype ι] in
+private lemma isingMatrix_symm (edges : List (ι × ι × ℝ)) (i j : ι) :
+    isingMatrix edges i j = isingMatrix edges j i := by
+  unfold isingMatrix
+  congr 1
+  apply List.map_congr_left
+  intro e _
+  simp only [or_comm]
+
+/-- The coefficient identity: `isingEdgePoly edges X = ∏_{i∈X,j∉X} isingMatrix edges i j`.
+
+This shows that the Ising partition polynomial is a Lee-Yang polynomial for the
+Ising matrix. -/
+private lemma isingEdgePoly_eq_leeYangCoeff (edges : List (ι × ι × ℝ)) (X : Finset ι) :
+    isingEdgePoly edges X =
+    ∏ i ∈ X, ∏ j ∈ Finset.univ \ X, isingMatrix edges i j := by
+  sorry -- Product rearrangement: ∏_e edgeWeight(e,X) = ∏_{i∈X,j∉X} ∏_{e for (i,j)} t_e
+
 /-- The base case: `isingEdgePoly [] = 1` (constant polynomial). -/
 private lemma isingEdgePoly_nil : isingEdgePoly (ι := ι) [] = fun _ => 1 := by
   ext X; simp [isingEdgePoly]
@@ -768,17 +828,24 @@ theorem lee_yang_circle (edges : List (ι × ι × ℝ))
     exact Finset.prod_ne_zero_iff.mpr (fun k _ h => by
       have : z k = -1 := by linear_combination h
       linarith [hz k, show ‖z k‖ = 1 from by rw [this, norm_neg, norm_one]])
-  | cons e edges' ih =>
-    -- The Friedli–Velenik approach (Asano contraction on expanded variable space)
-    -- has a formalization difficulty: the "polynomial product" P_Ē = P_{E'} · singleEdge
-    -- is a coefficient-wise product, NOT an eval product (shared vertex i₀ causes
-    -- z_{i₀}² terms in the eval product). See .self-local/work/0010-lee-yang-circle.md.
-    --
-    -- Alternative approach: Harcos/Ruelle (based on Ruelle, Ann. of Math. 171, 2010).
-    -- Uses n×n Hermitian matrix formulation, induction on n, and the maximum modulus
-    -- principle (available in Mathlib.Analysis.Complex.AbsMax). No Asano contraction
-    -- or expanded variable space needed.
-    -- Reference: https://users.renyi.hu/~gharcos/lee-yang.pdf
+  | cons e edges' _ =>
+    -- Use Harcos/Ruelle approach via the Ising matrix.
+    -- Step 1: isingEdgePoly = leeYangPoly for the Ising matrix
+    have hcoeff : ∀ X, isingEdgePoly (e :: edges') X =
+        ∏ i ∈ X, ∏ j ∈ Finset.univ \ X, isingMatrix (e :: edges') i j :=
+      fun X => isingEdgePoly_eq_leeYangCoeff _ X
+    -- Step 2: eval identity
+    have heval : (isingEdgePoly (e :: edges')).eval z =
+        MultilinPoly.eval (fun S => ∏ i ∈ S, ∏ j ∈ Finset.univ \ S,
+          isingMatrix (e :: edges') i j) z := by
+      unfold MultilinPoly.eval
+      congr 1; ext S; congr 1; exact hcoeff S
+    rw [heval]
+    -- Step 3: Apply leeYangPoly_nonvanishing (generalized to any Fintype)
+    -- The Ising matrix is Hermitian (real symmetric) with |A i j| ≤ 1
+    -- and the eval matches leeYangPoly, so nonvanishing follows.
+    -- Requires: generalization of leeYangPoly_nonvanishing from Fin n to any Fintype,
+    -- Hermiticity and bound proof for isingMatrix.
     sorry
 
 end IsingModel
