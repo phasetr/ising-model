@@ -289,13 +289,47 @@ private lemma leeYangPoly_ratio_bound {m : ℕ}
     show ‖αfun w‖ ≤ ‖βfun w‖; rw [hα1, hβ1]
   · -- m ≥ 1: maximum modulus principle
     have hm_pos : 0 < m := Nat.pos_of_ne_zero hm
-    -- βfun ≠ 0 on closed polydisk (ih with |a_k·w_k| ≤ |a_k| ≤ 1 · 1 ≤ 1)
-    -- For strict bound: when ‖w‖ ≤ 1, |a_k·w_k| ≤ |a_k| ≤ 1.
-    -- ih requires < 1. This works when |a_k| < 1 OR |w_k| < 1.
-    -- For the closed polydisk (|w_k| ≤ 1), we need |a_k| ≤ 1 AND (|a_k|<1 OR |w_k|<1).
-    -- Harcos handles this by first proving for |a_k|<1 (β≠0 on closed disk),
-    -- then extending by continuity. We sorry this analytical step.
-    sorry
+    -- g = αfun / βfun. Apply max modulus: ‖g w‖ ≤ sup_{frontier} ‖g‖.
+    -- The frontier bound: on frontier of ball 0 1, ‖αfun/βfun‖ ≤ 1.
+    -- This uses: (a) β ≠ 0 on closed ball when |a_k| < 1 (by ih)
+    --            (b) On torus: α = (∏w_k)·conj(β), so |α/β| = 1
+    --            (c) Continuity extension to |a_k| ≤ 1
+    -- We sorry this frontier bound and apply max modulus.
+    have hfrontier : ∀ v ∈ frontier (Metric.ball (0 : Fin m → ℂ) 1),
+        ‖αfun v‖ ≤ ‖βfun v‖ := by
+      sorry -- Hermitian torus identity + continuity
+    -- βfun ≠ 0 at w (by ih, since |a_k·w_k| ≤ |a_k|·|w_k| < 1)
+    have hβ_ne : βfun w ≠ 0 := by
+      change (leeYangPoly B).eval _ ≠ 0
+      exact ih B (hA.submatrix _) (fun i j => hbound _ _) _ (fun k => by
+        calc ‖A (Fin.castSucc k) (Fin.last m) * z (Fin.castSucc k)‖
+            = ‖A (Fin.castSucc k) (Fin.last m)‖ * ‖z (Fin.castSucc k)‖ := norm_mul _ _
+          _ ≤ 1 * ‖z (Fin.castSucc k)‖ :=
+              mul_le_mul_of_nonneg_right (hbound _ _) (norm_nonneg _)
+          _ < 1 := by linarith [hz (Fin.castSucc k)])
+    -- Need ‖w‖ < 1 for membership in ball
+    have hw_mem : ‖w‖ < 1 := by
+      rw [Pi.norm_def]; push_cast
+      rw [show (1 : ℝ) = ↑(1 : NNReal) from rfl, NNReal.coe_lt_coe,
+        Finset.sup_lt_iff (by positivity : (0 : NNReal) < 1)]
+      intro k _; exact_mod_cast hz (Fin.castSucc k)
+    -- Apply: if ‖αfun v / βfun v‖ ≤ 1 on frontier and g is DiffContOnCl
+    -- then ‖αfun w / βfun w‖ ≤ 1, i.e., ‖αfun w‖ ≤ ‖βfun w‖
+    -- DiffContOnCl: αfun/βfun as ratio of differentiable functions
+    show ‖αfun w‖ ≤ ‖βfun w‖
+    have hrw : ‖αfun w‖ = ‖αfun w / βfun w‖ * ‖βfun w‖ := by
+      rw [norm_div, div_mul_cancel₀ _ (norm_ne_zero_iff.mpr hβ_ne)]
+    rw [hrw]
+    exact mul_le_of_le_one_left (norm_nonneg _) (by
+      haveI : Nonempty (Fin m) := ⟨⟨0, hm_pos⟩⟩
+      haveI : Nontrivial (Fin m → ℂ) := Function.nontrivial
+      have hdiff : DiffContOnCl ℂ (fun v => αfun v / βfun v) (Metric.ball 0 1) := by
+        sorry -- DiffContOnCl from hα_diff, hβ_diff, and βfun ≠ 0 on closure
+      have hfrontier_div : ∀ v ∈ frontier (Metric.ball (0 : Fin m → ℂ) 1),
+          ‖αfun v / βfun v‖ ≤ 1 := by
+        sorry -- From hfrontier + βfun ≠ 0 on frontier
+      exact Complex.norm_le_of_forall_mem_frontier_norm_le Metric.isBounded_ball hdiff
+        hfrontier_div (subset_closure (Metric.mem_ball.mpr (by rwa [dist_zero_right]))))
 
 /-- **Harcos/Ruelle theorem**: For an `n × n` Hermitian matrix `A` with `|a_{ij}| ≤ 1`,
 the Lee-Yang polynomial `f_A` does not vanish on the open unit polydisk.
