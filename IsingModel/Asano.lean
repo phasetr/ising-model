@@ -525,14 +525,16 @@ theorem lee_yang_circle (edges : List (ι × ι × ℝ))
       have : z k = -1 := by linear_combination h
       linarith [hz k, show ‖z k‖ = 1 from by rw [this, norm_neg, norm_one]])
   | cons e edges' ih =>
-    -- Inductive step outline (Friedli–Velenik, pp. 124–125):
-    -- 1. Introduce virtual vertex j' (expanded type ι ⊕ Unit)
-    -- 2. Define R on ι ⊕ Unit: R(Y) = P_{edges'}(Y∩ι) · singleEdgeCoeff(i, j', t, Y)
-    -- 3. Show isingEdgePoly (e :: edges') = asanoContract(R, j, j')
-    -- 4. R.eval ≠ 0: P_{edges'}.eval ≠ 0 (by ih) and singleEdge ≠ 0 combine
-    --    because j' is fresh (P_{edges'} doesn't depend on j')
-    -- 5. By asanoContract_nonvanishing: contraction ≠ 0
-    -- This requires ι ⊕ Unit formalization, embedding, and contraction algebra.
+    -- The Friedli–Velenik approach (Asano contraction on expanded variable space)
+    -- has a formalization difficulty: the "polynomial product" P_Ē = P_{E'} · singleEdge
+    -- is a coefficient-wise product, NOT an eval product (shared vertex i₀ causes
+    -- z_{i₀}² terms in the eval product). See .self-local/work/0010-lee-yang-circle.md.
+    --
+    -- Alternative approach: Harcos/Ruelle (based on Ruelle, Ann. of Math. 171, 2010).
+    -- Uses n×n Hermitian matrix formulation, induction on n, and the maximum modulus
+    -- principle (available in Mathlib.Analysis.Complex.AbsMax). No Asano contraction
+    -- or expanded variable space needed.
+    -- Reference: https://users.renyi.hu/~gharcos/lee-yang.pdf
     sorry
 
 end IsingModel
