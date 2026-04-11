@@ -815,6 +815,11 @@ private lemma edgeWeight_eq_prod (e : ι × ι × ℝ) (hne : e.1 ≠ e.2.1) (X 
     edgeWeight e.1 e.2.1 e.2.2 X =
     ∏ i ∈ X, ∏ j ∈ Finset.univ \ X,
       (if (e.1 = i ∧ e.2.1 = j) ∨ (e.1 = j ∧ e.2.1 = i) then (e.2.2 : ℂ) else 1) := by
+  -- For each i, the inner product over j simplifies:
+  -- i = e.1: product = (if e.2.1 ∉ X then t else 1) [only j=e.2.1 matches]
+  -- i = e.2.1: product = (if e.1 ∉ X then t else 1) [only j=e.1 matches]
+  -- i ≠ both: product = 1 [no j matches]
+  -- Case analysis on whether endpoints are in X gives edgeWeight.
   sorry
 
 private lemma isingEdgePoly_eq_leeYangCoeff (edges : List (ι × ι × ℝ))
