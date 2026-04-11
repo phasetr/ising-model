@@ -323,8 +323,12 @@ private lemma leeYangPoly_ratio_bound {m : ℕ}
     exact mul_le_of_le_one_left (norm_nonneg _) (by
       haveI : Nonempty (Fin m) := ⟨⟨0, hm_pos⟩⟩
       haveI : Nontrivial (Fin m → ℂ) := Function.nontrivial
+      -- DiffContOnCl requires βfun ≠ 0 on closure(ball) = closed ball.
+      -- This holds when |a_k| < 1 strictly (ih gives β ≠ 0 for |a_k·v_k| ≤ |a_k| < 1).
+      -- For |a_k| = 1, the proof requires approximation (1-ε)·A → A.
+      -- Both the DiffContOnCl and frontier bound need the strict condition.
       have hdiff : DiffContOnCl ℂ (fun v => αfun v / βfun v) (Metric.ball 0 1) := by
-        sorry -- DiffContOnCl from hα_diff, hβ_diff, and βfun ≠ 0 on closure
+        sorry
       have hfrontier_div : ∀ v ∈ frontier (Metric.ball (0 : Fin m → ℂ) 1),
           ‖αfun v / βfun v‖ ≤ 1 := by
         sorry -- From hfrontier + βfun ≠ 0 on frontier
