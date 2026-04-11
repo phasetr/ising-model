@@ -148,13 +148,34 @@ theorem singleEdgePoly_nonvanishing (i j : ι) (hij : i ≠ j)
     (z : ι → ℂ) (hz : ∀ k, ‖z k‖ < 1) :
     (singleEdgePoly i j t).eval z ≠ 0 := by
   intro hp
-  -- From P = 0: z_i(z_j + t) = -(tz_j + 1)
-  -- ‖z_i‖ · ‖z_j + t‖ = ‖tz_j + 1‖ > ‖z_j + t‖ (by norm_tz_add_one_gt)
-  -- If ‖z_j + t‖ = 0: tz_j + 1 = -z_i · 0 = 0, but ‖tz_j+1‖ > 0, contradiction.
-  -- If ‖z_j + t‖ > 0: ‖z_i‖ > 1, contradicting hz i.
-  -- TODO: expand eval of singleEdgePoly to get the algebraic identity
+  -- Step 1: eval of singleEdgePoly = z_i * z_j + t*(z_i + z_j) + 1
+  have heval : (singleEdgePoly i j t).eval z =
+      z i * z j + ↑t * z i + ↑t * z j + 1 := by
+    sorry
+  -- Step 2: P = 0 → z_i * (z_j + t) = -(t * z_j + 1)
+  rw [heval] at hp
+  have halg : z i * (z j + ↑t) = -(↑t * z j + 1) := by
+    have h0 : z i * z j + ↑t * z i + ↑t * z j + 1 = 0 := hp
+    have h1 : z i * (z j + ↑t) + (↑t * z j + 1) = z i * z j + ↑t * z i + ↑t * z j + 1 := by ring
+    linear_combination h0
+  -- Step 3: take norms. ‖z_i‖ * ‖z_j + t‖ = ‖t*z_j + 1‖
+  have hnorm : ‖z i‖ * ‖z j + ↑t‖ = ‖↑t * z j + 1‖ := by
+    rw [← norm_mul, halg, norm_neg]
+  -- Step 4: ‖z_j + t‖ < ‖t*z_j + 1‖ by norm_tz_add_one_gt
   have hgt := norm_tz_add_one_gt t ht0 ht1 (z j) (hz j)
-  sorry
+  -- Step 5: if ‖z_j + t‖ = 0 then ‖t*z_j+1‖ = 0, contradicting hgt
+  -- if ‖z_j + t‖ > 0 then ‖z_i‖ > 1, contradicting hz i
+  by_cases hzt : ‖z j + ↑t‖ = 0
+  · linarith [hnorm.symm.trans (by rw [hzt, mul_zero])]
+  · have hzt_pos : 0 < ‖z j + ↑t‖ := lt_of_le_of_ne (norm_nonneg _) (Ne.symm hzt)
+    have hzi : 1 < ‖z i‖ := by
+      by_contra h
+      push_neg at h
+      -- ‖z_i‖ ≤ 1, ‖z_j+t‖ > 0
+      -- ‖z_i‖ * ‖z_j+t‖ ≤ ‖z_j+t‖ < ‖tz_j+1‖ = ‖z_i‖ * ‖z_j+t‖, contradiction
+      have := mul_le_mul_of_nonneg_right h (le_of_lt hzt_pos)
+      linarith [hnorm]
+    linarith [hz i]
 
 /-! ## Lee-Yang circle theorem -/
 
