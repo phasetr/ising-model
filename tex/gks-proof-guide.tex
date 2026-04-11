@@ -332,6 +332,36 @@ A Float-based reference implementation verifies:
   \item GKS-I and GKS-II violation for anti-ferromagnetic $J < 0$
 \end{itemize}
 
+\section{FKG inequality (\texttt{Inequalities/FKG.lean})}
+
+The FKG inequality is proved by applying Mathlib's
+\texttt{Combinatorics.SetFamily.FourFunctions.fkg} to the Ising Boltzmann
+weight, following Friedli--Velenik~\cite{friedli-velenik}, Theorem~3.21
+(p.~98) and Theorem~3.50 (pp.~128--130).
+
+\begin{theorem}[\texttt{fkg\_ising}]
+For ferromagnetic parameters and monotone nondecreasing nonneg
+$f, g : \mathrm{Config}\;\iota \to \mathbb{R}$,
+$\langle fg \rangle \geq \langle f \rangle \langle g \rangle$.
+\end{theorem}
+
+\subsection{Proof outline}
+\begin{enumerate}
+\item Define a \texttt{LinearOrder} on \texttt{Spin}: $\mathrm{down} < \mathrm{up}$
+  ($-1 < +1$). The product order on $\mathrm{Config}\;\iota = \iota \to
+  \mathrm{Spin}$ makes it a \texttt{DistribLattice}.
+\item Prove log-supermodularity of the Boltzmann weight
+  (\texttt{boltzmannWeight\_log\_supermodular}):
+  $w(\sigma)w(\sigma') \leq w(\sigma \vee \sigma')w(\sigma \wedge \sigma')$.
+  This reduces to the edge inequality
+  $\sigma_i\sigma_j + \sigma'_i\sigma'_j \leq
+  (\sigma_i \vee \sigma'_i)(\sigma_j \vee \sigma'_j) +
+  (\sigma_i \wedge \sigma'_i)(\sigma_j \wedge \sigma'_j)$
+  (\texttt{spin\_edge\_supermodular}, verified by exhaustive case analysis).
+\item Apply Mathlib's \texttt{fkg} with $\mu = w$, then convert from
+  unnormalized sums to \texttt{gibbsExpectation} form.
+\end{enumerate}
+
 \begin{thebibliography}{9}
 \bibitem{glimm-jaffe}
 J.~Glimm and A.~Jaffe,

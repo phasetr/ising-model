@@ -20,6 +20,37 @@ inductive Spin
 
 namespace Spin
 
+/-- Bijection Spin ≃ Bool: `down ↦ false`, `up ↦ true`. -/
+def toBool : Spin → Bool
+  | .down => false
+  | .up => true
+
+/-- Inverse of `toBool`. -/
+def ofBool : Bool → Spin
+  | false => .down
+  | true => .up
+
+/-- `toBool` is a bijection. -/
+@[simp] theorem ofBool_toBool (s : Spin) : ofBool (toBool s) = s := by cases s <;> rfl
+/-- `ofBool` is a bijection. -/
+@[simp] theorem toBool_ofBool (b : Bool) : toBool (ofBool b) = b := by cases b <;> rfl
+
+/-- Linear order on Spin: `down (-1) < up (+1)`. This induces the product order
+on `Config ι = ι → Spin`, which is the standard order for FKG inequalities. -/
+instance : LinearOrder Spin :=
+  LinearOrder.lift' toBool (fun a b h => by cases a <;> cases b <;> simp [toBool] at h <;> rfl)
+
+/-- `sup` on Spin: `max(down, up) = up`. -/
+@[simp] theorem sup_up_down : (Spin.up ⊔ Spin.down) = Spin.up := by decide
+@[simp] theorem sup_down_up : (Spin.down ⊔ Spin.up) = Spin.up := by decide
+@[simp] theorem sup_up_up : (Spin.up ⊔ Spin.up) = Spin.up := by decide
+@[simp] theorem sup_down_down : (Spin.down ⊔ Spin.down) = Spin.down := by decide
+/-- `inf` on Spin: `min(down, up) = down`. -/
+@[simp] theorem inf_up_down : (Spin.up ⊓ Spin.down) = Spin.down := by decide
+@[simp] theorem inf_down_up : (Spin.down ⊓ Spin.up) = Spin.down := by decide
+@[simp] theorem inf_up_up : (Spin.up ⊓ Spin.up) = Spin.up := by decide
+@[simp] theorem inf_down_down : (Spin.down ⊓ Spin.down) = Spin.down := by decide
+
 /-- Map a spin to its physical sign value: `up ↦ 1`, `down ↦ -1`. -/
 def toSign : Spin → Int
   | up   =>  1

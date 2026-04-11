@@ -20,6 +20,7 @@ name = "IsingModel"
 [[lean_lib]]
 name = "test"
 globs = ["test.+"]
+docGen = false
 
 [[lean_exe]]
 name = "GKSTest"
