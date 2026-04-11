@@ -227,6 +227,10 @@ Proof by induction on the edge set using Asano contraction. -/
 theorem lee_yang_circle (p : IsingPartitionPoly ι)
     (z : ι → ℂ) (hz : ∀ k, ‖z k‖ < 1) :
     p.poly.eval z ≠ 0 := by
+  -- Proof by induction on the edge set (the set of X with 0 < a(X) < 1
+  -- and |X| = 2). Base case: single edge (singleEdgePoly_nonvanishing).
+  -- Inductive step: add one edge using Asano contraction
+  -- (asanoContract_nonvanishing) or factorization (disjointMul).
   sorry
 
 end IsingModel
