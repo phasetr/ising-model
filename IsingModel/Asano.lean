@@ -518,11 +518,36 @@ theorem leeYangPoly_nonvanishing {n : ℕ} (A : Matrix (Fin n) (Fin n) ℂ)
       exfalso; exact hS (Finset.eq_empty_of_isEmpty S))]
     simp
   | succ m ih =>
-    -- Separate the contribution of S with (Fin.last m) ∉ S from S with (Fin.last m) ∈ S.
-    -- Decompose: f_A(z) = f_B(a·z) + (∏z) · conj(f_B(a/conj(z)))
-    -- where B is the upper m×m block.
-    -- By ih, f_B(a·z) ≠ 0. Then show |second term / first term| ≤ 1
-    -- using maximum modulus principle.
+    -- Let B = upper m×m block of A, last = Fin.last m, aᵢ = A i last
+    let B : Matrix (Fin m) (Fin m) ℂ := A.submatrix Fin.castSucc Fin.castSucc
+    -- B is Hermitian since A is
+    have hB : B.IsHermitian := hA.submatrix Fin.castSucc
+    -- |B i j| ≤ 1
+    have hBbound : ∀ i j, ‖B i j‖ ≤ 1 := fun i j => hbound _ _
+    -- Key decomposition (Harcos):
+    -- f_A(z) = f_B(a_{0,n}·z_0,...,a_{m-1,n}·z_{m-1})
+    --        + (z_0···z_n) · conj(f_B(a_{0,n}/conj(z_0),...))
+    -- where aᵢ = A (Fin.castSucc i) (Fin.last m)
+    -- First term ≠ 0 by ih (since |aᵢ·zᵢ| ≤ |aᵢ|·|zᵢ| < 1)
+    have h_first_nonzero : (leeYangPoly B).eval
+        (fun i => A (Fin.castSucc i) (Fin.last m) * z (Fin.castSucc i)) ≠ 0 := by
+      apply ih B hB hBbound
+      intro k
+      calc ‖A (Fin.castSucc k) (Fin.last m) * z (Fin.castSucc k)‖
+          = ‖A (Fin.castSucc k) (Fin.last m)‖ * ‖z (Fin.castSucc k)‖ := norm_mul _ _
+        _ ≤ 1 * ‖z (Fin.castSucc k)‖ := by
+            exact mul_le_mul_of_nonneg_right (hbound _ _) (norm_nonneg _)
+        _ < 1 := by linarith [hz (Fin.castSucc k)]
+    -- The decomposition identity and maximum modulus argument:
+    -- f_A(z) = first_term + (∏ z_k) · conj(second_arg)
+    -- where |ratio| ≤ 1 by maximum modulus principle.
+    -- On |z_k| = 1: conj(z_k) = 1/z_k, so the ratio is exactly ∏|z_k|² = 1.
+    --
+    -- This requires:
+    -- 1. The algebraic decomposition identity (Finset sum splitting)
+    -- 2. Holomorphy of the ratio in each z_k (polynomial → holomorphic)
+    -- 3. Maximum modulus principle (Mathlib.Analysis.Complex.AbsMax)
+    -- 4. Boundary evaluation (conj(z) = 1/z on |z|=1)
     sorry
 
 /-! ## Application to Ising model -/
