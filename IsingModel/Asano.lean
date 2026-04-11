@@ -499,7 +499,7 @@ noncomputable def isingEdgePoly (edges : List (ι × ι × ℝ)) : MultilinPoly 
 
 /-- The sum over all subsets of the product of selected elements equals the product of (1 + z_i).
 `∑_{X⊆ι} ∏_{i∈X} z_i = ∏_i (1 + z_i)`. -/
-private lemma eval_one_poly (z : ι → ℂ) :
+private lemma eval_one_poly {ι : Type*} [Fintype ι] (z : ι → ℂ) :
     MultilinPoly.eval (fun (_ : Finset ι) => (1 : ℂ)) z = ∏ k : ι, (1 + z k) := by
   simp only [MultilinPoly.eval, one_mul]
   have := @Finset.prod_one_add ι ℂ _ z Finset.univ
@@ -525,13 +525,14 @@ theorem lee_yang_circle (edges : List (ι × ι × ℝ))
       have : z k = -1 := by linear_combination h
       linarith [hz k, show ‖z k‖ = 1 from by rw [this, norm_neg, norm_one]])
   | cons e edges' ih =>
-    -- Inductive step: isingEdgePoly (e :: edges') relates to edges' via
-    -- Asano contraction on expanded variable space.
-    -- By ih (with weaker hypotheses), isingEdgePoly edges' doesn't vanish.
-    -- By singleEdgePoly_nonvanishing, the single-edge factor doesn't vanish.
-    -- Their product on expanded space doesn't vanish.
-    -- By asanoContract_nonvanishing, the contraction doesn't vanish.
-    -- Reference: Friedli–Velenik, Theorem 3.43, pp. 124–125.
+    -- Inductive step outline (Friedli–Velenik, pp. 124–125):
+    -- 1. Introduce virtual vertex j' (expanded type ι ⊕ Unit)
+    -- 2. Define R on ι ⊕ Unit: R(Y) = P_{edges'}(Y∩ι) · singleEdgeCoeff(i, j', t, Y)
+    -- 3. Show isingEdgePoly (e :: edges') = asanoContract(R, j, j')
+    -- 4. R.eval ≠ 0: P_{edges'}.eval ≠ 0 (by ih) and singleEdge ≠ 0 combine
+    --    because j' is fresh (P_{edges'} doesn't depend on j')
+    -- 5. By asanoContract_nonvanishing: contraction ≠ 0
+    -- This requires ι ⊕ Unit formalization, embedding, and contraction algebra.
     sorry
 
 end IsingModel
