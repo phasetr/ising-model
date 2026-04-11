@@ -227,8 +227,21 @@ private lemma leeYangPoly_ratio_bound {m : ℕ}
       ext w; simp [Finset.sum_apply]
     rw [h]; exact Differentiable.sum (fun S _ =>
       (differentiable_const _).mul (diff_scaled_prod _ S))
-  -- The remaining sorry: max modulus application
-  -- β ≠ 0 on closed polydisk, DiffContOnCl, torus bound, continuity extension
+  -- Key identity: the actual α and β equal αfun(w) and βfun(w) at w = z ∘ castSucc
+  let w : Fin m → ℂ := fun i => z (Fin.castSucc i)
+  -- β(z) = βfun(w) (by definition)
+  -- α(z) = αfun(w) requires the bijection S ↔ T (same as hdecomp's second sum)
+  -- For now, sorry the identity and the max modulus bound
+  have hα_eq : ∑ S ∈ (Finset.univ : Finset (Finset (Fin (m + 1)))).filter
+      (fun S => Fin.last m ∈ S), leeYangPoly A S * ∏ k ∈ S.erase (Fin.last m), z k =
+      αfun w := by
+    sorry -- Sum bijection using leeYangPoly_coeff_in
+  rw [hα_eq]
+  -- Now need: ‖αfun w‖ ≤ ‖βfun w‖
+  -- βfun ≠ 0 on closed polydisk when |a_k| < 1 (by ih)
+  -- Apply max modulus to g = αfun/βfun
+  -- On torus: |g| = 1 (Hermitian identity)
+  -- Conclusion: |g| ≤ 1, i.e., ‖αfun w‖ ≤ ‖βfun w‖
   sorry
 
 /-- **Harcos/Ruelle theorem**: For an `n × n` Hermitian matrix `A` with `|a_{ij}| ≤ 1`,
