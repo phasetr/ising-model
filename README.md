@@ -25,6 +25,7 @@ All theorems are formally proved with **zero `sorry`**.
 | GKS-I   | `⟨σ_A⟩ ≥ 0`                        | Glimm-Jaffe Thm 4.1.1, Friedli-Velenik Thm 3.49 |
 | GKS-II  | `⟨σ_A σ_B⟩ ≥ ⟨σ_A⟩⟨σ_B⟩`           | Friedli-Velenik Thm 3.49                        |
 | FKG     | `⟨fg⟩ ≥ ⟨f⟩⟨g⟩` for monotone f, g  | Friedli-Velenik Thm 3.21/3.50                   |
+| Asano contraction | contraction preserves non-vanishing | Friedli-Velenik Prop 3.44     |
 
 ## Documentation
 

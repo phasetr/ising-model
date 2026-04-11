@@ -362,6 +362,66 @@ $\langle fg \rangle \geq \langle f \rangle \langle g \rangle$.
   unnormalized sums to \texttt{gibbsExpectation} form.
 \end{enumerate}
 
+\section{Asano Contraction}
+
+The Asano contraction is the algebraic core of the Lee--Yang circle theorem.
+It merges two variables in a multilinear polynomial, keeping only the
+``both present'' and ``both absent'' parts
+\cite[pp.~123--124]{friedli-velenik}.
+
+\begin{definition}[Multilinear polynomial]
+A multilinear polynomial over $\mathbb{C}$ with variables indexed by a
+finite type $\iota$ is a function $p : \mathcal{P}(\iota) \to \mathbb{C}$,
+evaluated as $p(z) = \sum_{X \subseteq \iota} p(X) \prod_{i \in X} z_i$.
+In Lean: \texttt{Finset $\iota$ $\to$ $\mathbb{C}$}.
+\end{definition}
+
+\begin{definition}[Asano contraction]
+Given $p$ and distinct $i, j \in \iota$, the contraction of $j$ into $i$
+is $q(X) = p(X \cup \{j\})$ if $i \in X$ and $j \notin X$;
+$q(X) = p(X)$ if $i \notin X$ and $j \notin X$;
+$q(X) = 0$ if $j \in X$.
+\end{definition}
+
+\begin{theorem}[Asano contraction preserves non-vanishing]
+\label{thm:asano}
+If $p$ does not vanish on the open unit polydisk
+$\{z : |z_k| < 1\;\forall k\}$, then neither does its Asano contraction.
+Reference: \cite[Proposition~3.44]{friedli-velenik}.
+\end{theorem}
+
+The proof uses a bilinear non-vanishing lemma:
+
+\begin{lemma}[Bilinear non-vanishing]
+If $f(z,w) = azw + bw + cz + d \neq 0$ for all $|z|, |w| < 1$,
+then $az + d \neq 0$ for all $|z| < 1$.
+\end{lemma}
+
+\begin{proof}[Proof sketch]
+Show $\|a\| \leq \|d\|$ via the parallelogram law.
+For $|z'| < 1$, the affine function $w \mapsto (az'+b)w + (cz'+d)$
+has no zero with $|w| < 1$, giving $\|az'+b\| \leq \|cz'+d\|$.
+Squaring and averaging at $z' = \pm t$ (real) via the parallelogram law:
+$\mathrm{normSq}(a) \cdot t^2 + \mathrm{normSq}(b) \leq
+\mathrm{normSq}(c) \cdot t^2 + \mathrm{normSq}(d)$.
+Combining the $z$- and $w$-directions and applying a linear function argument
+on $[0,1)$ yields $\mathrm{normSq}(a) \leq \mathrm{normSq}(d)$,
+hence $\|a\| \leq \|d\|$. Then $az + d = 0$ would require
+$|z| = |d/a| \geq 1$, contradicting $|z| < 1$.
+\end{proof}
+
+The contraction theorem follows by decomposing the polynomial evaluation
+$p(z[i \to u, j \to w])$ as a bilinear form $auw + bw + cu + d$ in $(u, w)$,
+where the contraction's evaluation equals $a \cdot z_i + d$.
+The decomposition uses a product extraction lemma
+(\texttt{prod\_upd}) and a sum reindexing via the involution
+$X \mapsto X \triangle \{j\}$ (\texttt{Fintype.sum\_equiv}).
+
+\begin{remark}
+When Mathlib provides a native implementation of Asano contraction or
+multilinear polynomials, the definitions here should be replaced.
+\end{remark}
+
 \begin{thebibliography}{9}
 \bibitem{glimm-jaffe}
 J.~Glimm and A.~Jaffe,
