@@ -334,12 +334,8 @@ theorem MultilinPoly.asanoContract_nonvanishing (p : MultilinPoly ι) (i j : ι)
       · -- j ∉ Y: both sides are 0
         simp only [e, Equiv.coe_fn_mk, hjY, ite_false]
         simp [Finset.mem_insert_self j Y, hjY]
-  /-  -- Helper: product decomposition for Function.update at i and j
-  have prod_upd : ∀ (X : Finset ι) (u w : ℂ),
-      ∏ k ∈ X, Function.update (Function.update z j w) i u k =
-      (if i ∈ X then u else 1) * (if j ∈ X then w else 1) *
-      ∏ k ∈ (X.erase i).erase j, z k := by
-    intro X u w
+  /- Old proof sketch for hQ/hF removed; see git history (commit 4c17a93) -/
+  /-  intro X u w
     by_cases hi : i ∈ X <;> by_cases hj : j ∈ X <;> simp only [hi, hj, ite_true, ite_false,
         one_mul, mul_one]
     · -- i ∈ X, j ∈ X
@@ -617,10 +613,15 @@ Proof by induction on the edge set using Asano contraction. -/
 theorem lee_yang_circle (p : IsingPartitionPoly ι)
     (z : ι → ℂ) (hz : ∀ k, ‖z k‖ < 1) :
     p.poly.eval z ≠ 0 := by
-  -- Proof by induction on the edge set (the set of X with 0 < a(X) < 1
-  -- and |X| = 2). Base case: single edge (singleEdgePoly_nonvanishing).
-  -- Inductive step: add one edge using Asano contraction
-  -- (asanoContract_nonvanishing) or factorization (disjointMul).
+  -- TODO: Proof by induction on the edge set E = {X : |X|=2, 0 < a(X) < 1}.
+  -- All building blocks are proved:
+  -- • singleEdgePoly_nonvanishing: base case (single edge)
+  -- • asanoContract_nonvanishing: inductive step (Asano contraction)
+  -- • bilinear_nonvanishing: algebraic core
+  -- Remaining work: define the edge-induction framework, showing how the
+  -- Ising partition polynomial decomposes as a product of single-edge factors,
+  -- and how Asano contraction merges shared vertices.
+  -- Reference: Friedli–Velenik, Theorem 3.43, pp. 122–127.
   sorry
 
 end IsingModel
