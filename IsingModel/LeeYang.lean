@@ -208,11 +208,25 @@ private lemma leeYangPoly_ratio_bound {m : ℕ}
   -- βfun(w) = eval of (fun T => leeYangPoly B T) at (fun i => a_i * w_i)
   -- This is a composition of multilinear eval with a linear map, hence differentiable.
   -- The linear map w ↦ (fun i => a_i * w_i) is differentiable (componentwise linear).
+  have diff_scaled_prod : ∀ (c : Fin m → ℂ) (S : Finset (Fin m)),
+      Differentiable ℂ (fun (w : Fin m → ℂ) => Finset.prod S (fun k => c k * w k)) := by
+    intro c S; induction S using Finset.induction_on with
+    | empty => simp [differentiable_const]
+    | insert a s hna ih =>
+      have : (fun (w : Fin m → ℂ) => Finset.prod (insert a s) (fun k => c k * w k)) =
+          fun w => (c a * w a) * Finset.prod s (fun k => c k * w k) := by
+        ext w; exact Finset.prod_insert hna
+      rw [this]; exact ((differentiable_const _).mul (differentiable_apply _)).mul ih
   have hβ_diff : Differentiable ℂ βfun := by
-    -- β(w) = Σ_T c_T * ∏_{i∈T} (a_i * w_i) where c_T = leeYangPoly B T
-    -- This is a multilinear polynomial in w (after expanding a_i * w_i)
-    -- Use diff_eval with appropriate coefficient adjustment
-    sorry
+    show Differentiable ℂ (fun w => ∑ S : Finset (Fin m), _)
+    have h : (fun (w : Fin m → ℂ) => ∑ S : Finset (Fin m),
+        leeYangPoly B S * ∏ k ∈ S, (A (Fin.castSucc k) (Fin.last m) * w k)) =
+        ∑ S ∈ (Finset.univ : Finset (Finset (Fin m))),
+          (fun (w : Fin m → ℂ) =>
+            leeYangPoly B S * ∏ k ∈ S, (A (Fin.castSucc k) (Fin.last m) * w k)) := by
+      ext w; simp [Finset.sum_apply]
+    rw [h]; exact Differentiable.sum (fun S _ =>
+      (differentiable_const _).mul (diff_scaled_prod _ S))
   -- The remaining sorry: max modulus application
   -- β ≠ 0 on closed polydisk, DiffContOnCl, torus bound, continuity extension
   sorry
