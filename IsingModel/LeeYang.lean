@@ -175,6 +175,23 @@ private lemma leeYangPoly_ratio_bound {m : ℕ}
         leeYangPoly A S * ∏ k ∈ S.erase (Fin.last m), z k‖ ≤
     ‖(leeYangPoly (A.submatrix Fin.castSucc Fin.castSucc)).eval
         (fun i => A (Fin.castSucc i) (Fin.last m) * z (Fin.castSucc i))‖ := by
+  -- This is the analytical core of the Harcos/Ruelle proof.
+  -- It requires the maximum modulus principle applied to the polydisk.
+  --
+  -- Key steps (each is a substantial formalization task):
+  -- (a) Show α and β are polynomial functions of z (hence entire/differentiable)
+  -- (b) When |a_k| < 1 strictly: β ≠ 0 on closed polydisk (by ih)
+  -- (c) The ratio g = α/β is DiffContOnCl on the open polydisk
+  -- (d) On the torus |z_k| = 1: |g| = 1 (Hermitian property + complement identity)
+  -- (e) Apply Complex.norm_le_of_forall_mem_frontier_norm_le: |g| ≤ 1
+  -- (f) Extend from |a_k| < 1 to |a_k| ≤ 1 by continuity
+  --
+  -- Mathlib prerequisites:
+  -- - Complex.norm_le_of_forall_mem_frontier_norm_le (in AbsMax)
+  -- - DifferentiableOn for polynomial functions on Fin m → ℂ
+  -- - ContinuousOn.div for the ratio
+  -- - Frontier of the open polydisk = torus
+  -- - leeYangPoly_conj_eq_compl for the torus evaluation
   sorry
 
 /-- **Harcos/Ruelle theorem**: For an `n × n` Hermitian matrix `A` with `|a_{ij}| ≤ 1`,
