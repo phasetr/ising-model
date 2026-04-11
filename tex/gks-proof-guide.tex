@@ -255,6 +255,70 @@ GKS-I follows: $\langle \sigma_A \rangle
 = Z^{-1}\sum_\sigma \sigma^A e^{-\beta H} \geq 0$
 since $Z > 0$ and the numerator $\geq 0$ by HNC.
 
+\section{GKS-II proof (\texttt{Inequalities/GKS.lean})}
+
+The second Griffiths inequality is proved by the duplicate variable trick,
+following Friedli--Velenik~\cite{friedli-velenik}, Theorem~3.49~(3.55),
+pp.~127--128.
+
+\begin{theorem}[GKS-II --- \texttt{gks\_second}]
+For ferromagnetic parameters,
+$\langle\sigma_A\sigma_B\rangle \geq \langle\sigma_A\rangle\langle\sigma_B\rangle$
+for all $A, B$.
+\end{theorem}
+
+\subsection{Proof outline}
+
+\begin{enumerate}
+\item Introduce an independent copy $\chi$ of $\sigma$. Then
+  \[
+    Z^2\bigl(\langle\sigma^{A\triangle B}\rangle
+      - \langle\sigma^A\rangle\langle\sigma^B\rangle\bigr)
+    = \sum_{\omega,\omega'} \omega^A(\omega^B - \omega'^B)\,w(\omega)\,w(\omega').
+  \]
+  (\texttt{duplicateSum\_eq})
+
+\item Change variables: $t_i = \omega_i \cdot \omega'_i$
+  (\texttt{Spin.mul}). For fixed $\omega$, this is a bijection on
+  $\mathrm{Config}\;\iota$. Under this substitution:
+  \begin{itemize}
+    \item $\omega^A(\omega^B - \omega'^B) = \omega^{A\triangle B}(1 - t^B)$
+    \item $w(\omega)\,w(\omega\cdot t) = \mathrm{modifiedWeight}(t, \omega)$
+      where each coupling $K_C$ is replaced by $K_C(1 + t^C) \geq 0$.
+  \end{itemize}
+  After swapping sums:
+  \[
+    \sum_t (1 - t^B) \sum_\omega \omega^{A\triangle B}\,
+      \mathrm{modifiedWeight}(t, \omega).
+  \]
+  (\texttt{duplicateSum\_eq\_changed})
+
+\item For each fixed $t$:
+  \begin{itemize}
+    \item $(1 - t^B) \geq 0$ since $t^B \in \{-1,+1\}$
+      (\texttt{one\_sub\_spinProduct\_nonneg}).
+    \item The inner sum $\geq 0$ by
+      \texttt{hasNonnegCorrelations\_edge\_site\_product} applied to
+      the modified couplings $K_C(1 + t^C)$
+      (\texttt{modifiedWeight\_nonneg\_corr}).
+  \end{itemize}
+
+\item Since $Z^2 > 0$ and the duplicate sum $\geq 0$, GKS-II follows.
+\end{enumerate}
+
+\subsection{Key new definitions}
+
+\begin{itemize}
+  \item \texttt{Spin.mul}: spin multiplication ($\mathrm{up}$ acts as
+    identity, $\mathrm{down}$ acts as flip).
+    $\mathrm{toSign}(a \cdot b) = \mathrm{toSign}(a) \cdot \mathrm{toSign}(b)$.
+  \item \texttt{modifiedWeight}: Boltzmann weight with couplings
+    $K_C(1 + t^C)$.
+  \item \texttt{hasNonnegCorrelations\_edge\_site\_product}: shared
+    lemma for GKS-I and GKS-II (product of $\exp(K \cdot \text{spin})$
+    factors with $K \geq 0$ has HNC).
+\end{itemize}
+
 \section{Numerical tests (\texttt{test/IsingModel/GKSTest.lean})}
 
 A Float-based reference implementation verifies:
@@ -264,8 +328,8 @@ A Float-based reference implementation verifies:
   \item GKS-I for 6 parameter sets (2--4 sites, all subsets)
   \item GKS-II ($\langle\sigma_A\sigma_B\rangle \geq
     \langle\sigma_A\rangle\langle\sigma_B\rangle$)
-    for 3 parameter sets
-  \item GKS-I violation for anti-ferromagnetic $J < 0$
+    for 6 parameter sets (2--4 sites, all subset pairs)
+  \item GKS-I and GKS-II violation for anti-ferromagnetic $J < 0$
 \end{itemize}
 
 \begin{thebibliography}{9}
