@@ -65,11 +65,15 @@ def MultilinPoly.asanoContract (p : MultilinPoly ι) (i j : ι) (_hij : i ≠ j)
 
 /-! ## Asano contraction preserves non-vanishing -/
 
-/-- Key property: if `P(z)` does not vanish when all `|z_k| < 1`,
-and the contraction also does not vanish when all `|z_k| < 1`,
-then the original with `z_j` identified to `z_i` also does not vanish.
+/-- Key property: Asano contraction preserves non-vanishing on the open unit polydisk.
 
-This is the inductive step of the Lee-Yang proof. -/
+Write `P = P_{--} z_i z_j + P_{+-} z_j + P_{-+} z_i + P_{++}`.
+The contraction is `Q(z) = P_{--}(z) z_i + P_{++}(z)`.
+If `Q(z₀) = 0` for some `z₀` with `|z₀_k| < 1 ∀k`, then
+`z₀_i = -P_{++}/P_{--}`. But `P(z₀_with_j=w) = P_{--} z₀_i w + P_{+-} w + P_{-+} z₀_i + P_{++}`
+is linear in `w`, and vanishes at `w = -(P_{-+} z₀_i + P_{++})/(P_{--} z₀_i + P_{+-})`.
+The hypothesis says this `w` must have `|w| ≥ 1`. But by algebraic manipulation,
+`|w| < 1` leads to a contradiction. -/
 theorem MultilinPoly.asanoContract_nonvanishing (p : MultilinPoly ι) (i j : ι) (hij : i ≠ j)
     (hp : ∀ z : ι → ℂ, (∀ k, ‖z k‖ < 1) → p.eval z ≠ 0) :
     ∀ z : ι → ℂ, (∀ k, ‖z k‖ < 1) → (p.asanoContract i j hij).eval z ≠ 0 := by
@@ -93,13 +97,52 @@ to the complement of the closed unit disk when `0 ≤ t < 1`. -/
 theorem moebius_maps_disk_to_complement (t : ℝ) (ht0 : 0 ≤ t) (ht1 : t < 1)
     (z : ℂ) (hz : ‖z‖ < 1) :
     1 < ‖-(↑t * z + 1) / (z + ↑t)‖ := by
+  -- ‖-(tz+1)/(z+t)‖ = ‖tz+1‖/‖z+t‖
+  -- Need: ‖tz+1‖ > ‖z+t‖
+  -- ‖tz+1‖² - ‖z+t‖² = (t²|z|²+2t Re z+1) - (|z|²+2t Re z+t²)
+  --                    = (t²-1)|z|² + (1-t²) = (1-t²)(1-|z|²) > 0
+  -- Strategy: ‖-(tz+1)/(z+t)‖ = ‖tz+1‖/‖z+t‖ > 1
+  -- ⟺ ‖tz+1‖² > ‖z+t‖²
+  -- ‖tz+1‖² - ‖z+t‖² = (1-t²)(1-‖z‖²) > 0 since t < 1 and ‖z‖ < 1
   sorry
 
-/-- The single-edge polynomial does not vanish on the open unit polydisk. -/
+/-- The single-edge polynomial does not vanish on the open unit polydisk.
+If `P(z_i, z_j) = 0`, then `z_i = -(tz_j+1)/(z_j+t)`, but the Möbius
+transformation maps `|z_j| < 1` to `|z_i| > 1`, contradiction. -/
 theorem singleEdgePoly_nonvanishing (i j : ι) (hij : i ≠ j)
     (t : ℝ) (ht0 : 0 ≤ t) (ht1 : t < 1)
     (z : ι → ℂ) (hz : ∀ k, ‖z k‖ < 1) :
     (singleEdgePoly i j t).eval z ≠ 0 := by
+  -- P(z) = z_i z_j + t(z_i + z_j) + 1 (plus zero terms for other subsets)
+  -- If P = 0 then z_i(z_j + t) = -(tz_j + 1), so z_i = -(tz_j+1)/(z_j+t)
+  -- But Möbius gives |z_i| > 1 while |z_i| < 1, contradiction
+  sorry
+
+/-! ## Lee-Yang circle theorem -/
+
+/-- The Ising partition polynomial `P_E(z_V) = Σ_{X⊆V} a_E(X) ∏_{i∈X} z_i`
+with coefficients in `[0,1]` and `a(∅) = a(V) = 1`.
+This is the multilinear form of the partition function with `z = e^{-2h}`. -/
+structure IsingPartitionPoly (ι : Type*) [Fintype ι] [DecidableEq ι] where
+  /-- The underlying multilinear polynomial. -/
+  poly : MultilinPoly ι
+  /-- All coefficients are in `[0, 1]`. -/
+  coeff_nonneg : ∀ X, 0 ≤ (poly X).re ∧ (poly X).re ≤ 1 ∧ (poly X).im = 0
+  /-- Coefficient of the empty set is `1`. -/
+  coeff_empty : poly ∅ = 1
+  /-- Coefficient of the full set is `1`. -/
+  coeff_full : poly Finset.univ = 1
+
+/-- **Lee-Yang circle theorem**: The Ising partition polynomial does not vanish
+on the open unit polydisk `{z : ‖z_i‖ < 1 ∀i}`.
+
+Equivalently, all zeros of `Z(z)` (as a function of `z = e^{-2h}`) lie on `|z| = 1`.
+
+Reference: Friedli–Velenik, Theorem 3.43, pp. 122–127.
+Proof by induction on the edge set using Asano contraction. -/
+theorem lee_yang_circle (p : IsingPartitionPoly ι)
+    (z : ι → ℂ) (hz : ∀ k, ‖z k‖ < 1) :
+    p.poly.eval z ≠ 0 := by
   sorry
 
 end IsingModel
