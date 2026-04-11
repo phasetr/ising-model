@@ -1,4 +1,5 @@
 import Mathlib.Analysis.Complex.Basic
+import Mathlib.Analysis.Complex.Norm
 import Mathlib.Data.Finset.Powerset
 
 /-!
@@ -101,9 +102,13 @@ theorem moebius_maps_disk_to_complement (t : ℝ) (ht0 : 0 ≤ t) (ht1 : t < 1)
   -- Need: ‖tz+1‖ > ‖z+t‖
   -- ‖tz+1‖² - ‖z+t‖² = (t²|z|²+2t Re z+1) - (|z|²+2t Re z+t²)
   --                    = (t²-1)|z|² + (1-t²) = (1-t²)(1-|z|²) > 0
-  -- Strategy: ‖-(tz+1)/(z+t)‖ = ‖tz+1‖/‖z+t‖ > 1
-  -- ⟺ ‖tz+1‖² > ‖z+t‖²
-  -- ‖tz+1‖² - ‖z+t‖² = (1-t²)(1-‖z‖²) > 0 since t < 1 and ‖z‖ < 1
+  -- ‖-(tz+1)/(z+t)‖ = ‖tz+1‖/‖z+t‖ > 1 ⟺ ‖tz+1‖ > ‖z+t‖
+  -- Suffices: Complex.normSq(tz+1) > Complex.normSq(z+t)
+  -- because normSq(tz+1) - normSq(z+t) = (1-t²)(1-normSq z) > 0
+  -- normSq(tz+1) - normSq(z+t) = (1-t²)(1-normSq z) > 0
+  -- Then ‖tz+1‖ > ‖z+t‖ → ‖-(tz+1)/(z+t)‖ > 1
+  -- normSq(tz+1) - normSq(z+t) = (1-t²)(1-normSq(z)) > 0
+  -- Then ‖tz+1‖/‖z+t‖ > 1
   sorry
 
 /-- The single-edge polynomial does not vanish on the open unit polydisk.
