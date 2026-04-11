@@ -484,7 +484,23 @@ theorem lee_yang_circle (edges : List (ι × ι × ℝ))
     -- The eval under reindexing matches
     have hTransport : MultilinPoly.eval (fun S => ∏ i ∈ S, ∏ j ∈ Finset.univ \ S, A i j) z =
         (leeYangPoly A').eval z' := by
-      sorry -- Fintype.sum_equiv + Finset.prod_map + complement invariance
+      unfold MultilinPoly.eval leeYangPoly
+      apply Fintype.sum_equiv (Equiv.finsetCongr equiv)
+      intro S; simp only [Equiv.finsetCongr_apply]
+      -- S ↦ S.map equiv: show eval terms match
+      have hcompl : Finset.univ \ S.map equiv.toEmbedding =
+          (Finset.univ \ S).map equiv.toEmbedding := by
+        ext x; simp only [Finset.mem_sdiff, Finset.mem_univ, true_and,
+          Finset.mem_map, Function.Embedding.coeFn_mk]
+        constructor
+        · intro hx; exact ⟨equiv.symm x, fun h => hx ⟨_, h, equiv.apply_symm_apply x⟩,
+            equiv.apply_symm_apply x⟩
+        · rintro ⟨y, hy, rfl⟩; intro ⟨w, hw, he⟩; exact hy (equiv.injective he ▸ hw)
+      -- Monomial: ∏_{k∈S.map e} z'(k) = ∏_{k∈S} z(k)
+      -- Coefficient: ∏_{i∈S.map e} ∏_{j∈compl} A'(i)(j) = ∏_{i∈S} ∏_{j∈univ\S} A(i)(j)
+      simp only [Finset.prod_map, hcompl, Function.Embedding.coeFn_mk, Function.comp,
+        Matrix.submatrix_apply, Equiv.symm_apply_apply]
+      exact sorry
     rw [hTransport]
     exact leeYangPoly_nonvanishing A' hAH hAB z' (fun k => hz _)
 
