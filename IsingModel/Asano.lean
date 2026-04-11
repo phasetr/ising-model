@@ -217,11 +217,123 @@ theorem MultilinPoly.asanoContract_nonvanishing (p : MultilinPoly ι) (i j : ι)
   let b := ∑ X : Finset ι, if i ∉ X ∧ j ∈ X then p X * ∏ k ∈ X.erase j, z k else 0
   let c := ∑ X : Finset ι, if i ∈ X ∧ j ∉ X then p X * ∏ k ∈ X.erase i, z k else 0
   let d := ∑ X : Finset ι, if i ∉ X ∧ j ∉ X then p X * ∏ k ∈ X, z k else 0
-  -- Key identities (Finset sum decomposition; proof sketch in doc comment above)
-  have hQ : (p.asanoContract i j hij).eval z = a * z i + d := by sorry
+  -- Helper: product decomposition for Function.update at i and j
+  have prod_upd : ∀ (X : Finset ι) (u w : ℂ),
+      ∏ k ∈ X, Function.update (Function.update z j w) i u k =
+      (if i ∈ X then u else 1) * (if j ∈ X then w else 1) *
+      ∏ k ∈ (X.erase i).erase j, z k := by
+    intro X u w
+    have upd_rest : ∀ k, k ∈ (X.erase i).erase j →
+        Function.update (Function.update z j w) i u k = z k := by
+      intro k hk
+      rw [Function.update_of_ne (Finset.ne_of_mem_erase (Finset.mem_of_mem_erase hk)),
+          Function.update_of_ne (Finset.ne_of_mem_erase hk)]
+    have hp := Finset.prod_congr rfl upd_rest
+    by_cases hi : i ∈ X
+    · by_cases hj : j ∈ X
+      · simp only [hi, hj, ite_true]
+        rw [← Finset.mul_prod_erase X _ hi, Function.update_self,
+            ← Finset.mul_prod_erase _ _ (Finset.mem_erase.mpr ⟨hij.symm, hj⟩),
+            Function.update_of_ne hij.symm, Function.update_self, hp]; ring
+      · simp only [hi, hj, ite_true, ite_false, mul_one]
+        have hej : (X.erase i).erase j = X.erase i :=
+              Finset.erase_eq_self.mpr (mt Finset.mem_of_mem_erase hj)
+        rw [hej] at hp ⊢
+        rw [← Finset.mul_prod_erase X _ hi, Function.update_self, hp]
+    · by_cases hj : j ∈ X
+      · simp only [hi, hj, ite_true, ite_false, one_mul]
+        have hei : X.erase i = X := Finset.erase_eq_self.mpr hi
+        rw [hei] at hp ⊢
+        rw [← Finset.mul_prod_erase X _ hj,
+            Function.update_of_ne (Ne.symm hij), Function.update_self, hp]
+      · simp only [hi, hj, ite_false, one_mul]
+        have h12 : (X.erase i).erase j = X := by
+              rw [Finset.erase_eq_self.mpr hi, Finset.erase_eq_self.mpr hj]
+        rw [h12] at hp ⊢; exact hp
+  -- Key identity 2: p.eval(z[i→u,j→w]) = a*u*w + b*w + c*u + d
   have hF : ∀ u w : ℂ,
       p.eval (Function.update (Function.update z j w) i u) =
-      a * u * w + b * w + c * u + d := by sorry
+      a * u * w + b * w + c * u + d := by
+    intro u w
+    simp only [MultilinPoly.eval]
+    -- Rewrite each product using prod_upd
+    conv_lhs => arg 2; ext X; rw [prod_upd]
+    -- Now each summand: p X * (if i∈X then u else 1) * (if j∈X then w else 1) * ∏ rest
+    -- Split into 4 categories
+    have decomp : ∀ X : Finset ι,
+        p X * ((if i ∈ X then u else 1) * (if j ∈ X then w else 1) *
+        ∏ k ∈ (X.erase i).erase j, z k) =
+        (if i ∈ X ∧ j ∈ X then p X * ∏ k ∈ (X.erase i).erase j, z k else 0) * (u * w) +
+        (if i ∉ X ∧ j ∈ X then p X * ∏ k ∈ (X.erase i).erase j, z k else 0) * w +
+        (if i ∈ X ∧ j ∉ X then p X * ∏ k ∈ (X.erase i).erase j, z k else 0) * u +
+        (if i ∉ X ∧ j ∉ X then p X * ∏ k ∈ (X.erase i).erase j, z k else 0) := by
+      intro X; by_cases hi : i ∈ X <;> by_cases hj : j ∈ X <;> simp [hi, hj] <;> ring
+    simp_rw [decomp, Finset.sum_add_distrib, ← Finset.sum_mul]
+    -- Match with a, b, c, d definitions (they use erase differently for b, c, d cases)
+    -- b: i∉X, j∈X → (X.erase i).erase j = X.erase j (since erase i is no-op)
+    -- c: i∈X, j∉X → (X.erase i).erase j = X.erase i (since erase j is no-op)
+    -- d: i∉X, j∉X → (X.erase i).erase j = X (both no-ops)
+    have adj : ∀ X : Finset ι, i ∉ X → (X.erase i).erase j = X.erase j := by
+      intro X hi'; rw [Finset.erase_eq_self.mpr hi']
+    have adj2 : ∀ X : Finset ι, j ∉ X → (X.erase i).erase j = X.erase i := by
+      intro X hj'; exact Finset.erase_eq_self.mpr (mt Finset.mem_of_mem_erase hj')
+    have adj3 : ∀ X : Finset ι, i ∉ X → j ∉ X → (X.erase i).erase j = X := by
+      intro X hi' hj'; rw [Finset.erase_eq_self.mpr hi', Finset.erase_eq_self.mpr hj']
+    have hb_eq : (∑ X : Finset ι, if i ∉ X ∧ j ∈ X then
+        p X * ∏ k ∈ (X.erase i).erase j, z k else 0) = b := by
+      exact Finset.sum_congr rfl fun X _ => by
+        split_ifs with h
+        · rw [adj X h.1]
+        · rfl
+    have hc_eq : (∑ X : Finset ι, if i ∈ X ∧ j ∉ X then
+        p X * ∏ k ∈ (X.erase i).erase j, z k else 0) = c := by
+      exact Finset.sum_congr rfl fun X _ => by
+        split_ifs with h
+        · rw [adj2 X h.2]
+        · rfl
+    have hd_eq : (∑ X : Finset ι, if i ∉ X ∧ j ∉ X then
+        p X * ∏ k ∈ (X.erase i).erase j, z k else 0) = d := by
+      exact Finset.sum_congr rfl fun X _ => by
+        split_ifs with h
+        · rw [adj3 X h.1 h.2]
+        · rfl
+    rw [hb_eq, hc_eq, hd_eq]; ring
+  -- Key identity 1: eval of contraction = a * z i + d
+  have hQ : (p.asanoContract i j hij).eval z = a * z i + d := by
+    simp only [MultilinPoly.eval, MultilinPoly.asanoContract]
+    have lhs_split : ∀ X : Finset ι,
+        (if j ∈ X then (0:ℂ) else if i ∈ X then p (insert j X) else p X) * ∏ k ∈ X, z k =
+        (if i ∈ X ∧ j ∉ X then p (insert j X) * ∏ k ∈ X, z k else 0) +
+        (if i ∉ X ∧ j ∉ X then p X * ∏ k ∈ X, z k else 0) := by
+      intro X; by_cases hj : j ∈ X <;> by_cases hi : i ∈ X <;> simp [hi, hj]
+    simp_rw [lhs_split, Finset.sum_add_distrib]
+    congr 1
+    · -- ∑ [if i∈X ∧ j∉X then p(insert j X)*∏ z else 0] = a * z i
+      -- Reindex RHS via involution e
+      simp only [a, Finset.sum_mul, mul_ite, mul_zero]
+      let e : Finset ι ≃ Finset ι := ⟨
+        fun X => if j ∈ X then X.erase j else insert j X,
+        fun X => if j ∈ X then X.erase j else insert j X,
+        fun X => by by_cases h : j ∈ X <;> simp [h, Finset.insert_erase, Finset.erase_insert],
+        fun X => by by_cases h : j ∈ X <;> simp [h, Finset.insert_erase, Finset.erase_insert]⟩
+      symm
+      apply Fintype.sum_equiv e
+      intro Y
+      by_cases hjY : j ∈ Y
+      · -- j ∈ Y: e(Y) = Y.erase j
+        have hj_ej : j ∉ Y.erase j := fun h => absurd rfl (Finset.ne_of_mem_erase h)
+        simp only [e, Equiv.coe_fn_mk, hjY, ite_true, hj_ej, not_false_eq_true, and_true]
+        by_cases hiY : i ∈ Y
+        · have hi_ej := Finset.mem_erase.mpr ⟨hij, hiY⟩
+          simp only [hi_ej, ite_true, hiY, Finset.insert_erase hjY]
+          rw [← Finset.mul_prod_erase _ z hi_ej]
+          have : (Y.erase j).erase i = (Y.erase i).erase j := by
+            ext x; simp [Finset.mem_erase]; tauto
+          rw [this]; ring
+        · simp [show ¬(i ∈ Y.erase j) from mt Finset.mem_of_mem_erase hiY, hiY]
+      · -- j ∉ Y: both sides are 0
+        simp only [e, Equiv.coe_fn_mk, hjY, ite_false]
+        simp [Finset.mem_insert_self j Y, hjY]
   /-  -- Helper: product decomposition for Function.update at i and j
   have prod_upd : ∀ (X : Finset ι) (u w : ℂ),
       ∏ k ∈ X, Function.update (Function.update z j w) i u k =
