@@ -175,23 +175,21 @@ private lemma leeYangPoly_ratio_bound {m : ℕ}
         leeYangPoly A S * ∏ k ∈ S.erase (Fin.last m), z k‖ ≤
     ‖(leeYangPoly (A.submatrix Fin.castSucc Fin.castSucc)).eval
         (fun i => A (Fin.castSucc i) (Fin.last m) * z (Fin.castSucc i))‖ := by
-  -- This is the analytical core of the Harcos/Ruelle proof.
-  -- It requires the maximum modulus principle applied to the polydisk.
+  -- α and β as functions of w : Fin m → ℂ (independent of z(last m))
+  let B := A.submatrix Fin.castSucc Fin.castSucc
+  let a : Fin m → ℂ := fun i => A (Fin.castSucc i) (Fin.last m)
+  let w : Fin m → ℂ := fun i => z (Fin.castSucc i)
+  -- β(w) = f_B(a·w)
+  -- α(w) = Σ_{S : last∈S} coeff(S) · ∏_{k∈S\last} w_k (reparametrized)
+  -- The key bound: ‖α(w)‖ ≤ ‖β(w)‖ for ‖w_k‖ < 1
   --
-  -- Key steps (each is a substantial formalization task):
-  -- (a) Show α and β are polynomial functions of z (hence entire/differentiable)
-  -- (b) When |a_k| < 1 strictly: β ≠ 0 on closed polydisk (by ih)
-  -- (c) The ratio g = α/β is DiffContOnCl on the open polydisk
-  -- (d) On the torus |z_k| = 1: |g| = 1 (Hermitian property + complement identity)
-  -- (e) Apply Complex.norm_le_of_forall_mem_frontier_norm_le: |g| ≤ 1
-  -- (f) Extend from |a_k| < 1 to |a_k| ≤ 1 by continuity
-  --
-  -- Mathlib prerequisites:
-  -- - Complex.norm_le_of_forall_mem_frontier_norm_le (in AbsMax)
-  -- - DifferentiableOn for polynomial functions on Fin m → ℂ
-  -- - ContinuousOn.div for the ratio
-  -- - Frontier of the open polydisk = torus
-  -- - leeYangPoly_conj_eq_compl for the torus evaluation
+  -- Proof via maximum modulus principle (Harcos/Ruelle):
+  -- The polydisk {w | ‖w_k‖ < 1} = Metric.ball 0 1 in sup norm on Fin m → ℂ.
+  -- When |a_k| < 1: β ≠ 0 on closed polydisk (by ih, |a_k·w_k| ≤ |a_k| < 1).
+  -- g = α/β is holomorphic on the closed polydisk.
+  -- On torus |w_k| = 1: α(w) = (∏_k w_k) · conj(β(w)) (by Hermitian), so |g| = 1.
+  -- By Complex.norm_le_of_forall_mem_frontier_norm_le: |g| ≤ 1 on polydisk.
+  -- Extend to |a_k| ≤ 1 by continuity.
   sorry
 
 /-- **Harcos/Ruelle theorem**: For an `n × n` Hermitian matrix `A` with `|a_{ij}| ≤ 1`,
