@@ -175,14 +175,31 @@ private lemma leeYangPoly_ratio_bound {m : ℕ}
         leeYangPoly A S * ∏ k ∈ S.erase (Fin.last m), z k‖ ≤
     ‖(leeYangPoly (A.submatrix Fin.castSucc Fin.castSucc)).eval
         (fun i => A (Fin.castSucc i) (Fin.last m) * z (Fin.castSucc i))‖ := by
-  -- Maximum modulus principle (Harcos/Ruelle):
-  -- Define g = α/β as a function of the first m components of z.
-  -- The polydisk {w : Fin m → ℂ | ‖w_k‖ < 1} = Metric.ball 0 1 in sup norm.
-  -- When |a_k| < 1: β ≠ 0 on closed polydisk (ih: |a_k·w_k| ≤ |a_k| < 1).
-  -- g is DiffContOnCl on the polydisk (polynomial/rational, denominator ≠ 0).
+  -- Multilinear eval is differentiable (polynomial → entire)
+  have diff_prod : ∀ (S : Finset (Fin m)),
+      Differentiable ℂ (fun (w : Fin m → ℂ) => Finset.prod S (fun k => w k)) := by
+    intro S; induction S using Finset.induction_on with
+    | empty => simp [differentiable_const]
+    | insert a s hna ih =>
+      have : (fun (w : Fin m → ℂ) => Finset.prod (insert a s) (fun k => w k)) =
+          fun w => w a * Finset.prod s (fun k => w k) := by
+        ext w; exact Finset.prod_insert hna
+      rw [this]; exact (differentiable_apply _).mul ih
+  have diff_eval : ∀ (p : MultilinPoly (Fin m)),
+      Differentiable ℂ (fun (w : Fin m → ℂ) => p.eval w) := by
+    intro p; show Differentiable ℂ (fun w => ∑ S : Finset (Fin m), p S * _)
+    have h : (fun (w : Fin m → ℂ) => ∑ S : Finset (Fin m),
+        p S * Finset.prod S (fun k => w k)) =
+        ∑ S ∈ (Finset.univ : Finset (Finset (Fin m))),
+          (fun (w : Fin m → ℂ) => p S * Finset.prod S (fun k => w k)) := by
+      ext w; simp [Finset.sum_apply]
+    rw [h]; exact Differentiable.sum (fun S _ =>
+      (differentiable_const _).mul (diff_prod S))
+  -- Maximum modulus principle on the polydisk = Metric.ball 0 1:
+  -- α/β is DiffContOnCl (both differentiable, β ≠ 0 on closure).
   -- On torus |w_k| = 1: α = (∏w_k)·conj(β) (Hermitian + leeYangPoly_conj_eq_compl).
-  -- Apply Complex.norm_le_of_forall_mem_frontier_norm_le with C = 1.
-  -- Extend to |a_k| ≤ 1 by continuity (approximate with (1-ε)·A).
+  -- Complex.norm_le_of_forall_mem_frontier_norm_le gives |α/β| ≤ 1.
+  -- Extend to |a_k| ≤ 1 by continuity.
   sorry
 
 /-- **Harcos/Ruelle theorem**: For an `n × n` Hermitian matrix `A` with `|a_{ij}| ≤ 1`,
