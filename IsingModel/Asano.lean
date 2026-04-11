@@ -538,16 +538,18 @@ theorem leeYangPoly_nonvanishing {n : ℕ} (A : Matrix (Fin n) (Fin n) ℂ)
         _ ≤ 1 * ‖z (Fin.castSucc k)‖ := by
             exact mul_le_mul_of_nonneg_right (hbound _ _) (norm_nonneg _)
         _ < 1 := by linarith [hz (Fin.castSucc k)]
-    -- The decomposition identity and maximum modulus argument:
-    -- f_A(z) = first_term + (∏ z_k) · conj(second_arg)
-    -- where |ratio| ≤ 1 by maximum modulus principle.
-    -- On |z_k| = 1: conj(z_k) = 1/z_k, so the ratio is exactly ∏|z_k|² = 1.
-    --
-    -- This requires:
-    -- 1. The algebraic decomposition identity (Finset sum splitting)
-    -- 2. Holomorphy of the ratio in each z_k (polynomial → holomorphic)
-    -- 3. Maximum modulus principle (Mathlib.Analysis.Complex.AbsMax)
-    -- 4. Boundary evaluation (conj(z) = 1/z on |z|=1)
+    -- Remaining: show f_A(z) ≠ 0 using h_first_nonzero.
+    -- Harcos decomposition: f_A(z) = P + Q where
+    --   P = f_B(a_{·,n} · z_{·})  (first term, ≠ 0 by h_first_nonzero)
+    --   Q = (∏ z_k) · conj(f_B(a_{·,n} / conj(z_{·})))  (second term)
+    -- Step 1: Algebraic identity f_A = P + Q (Finset sum splitting by Fin.last ∈ S)
+    -- Step 2: Show ‖Q‖ < ‖P‖ (then P + Q ≠ 0):
+    --   a) For |a_{i,n}| < 1 (strict): ratio Q/P is holomorphic in each z_k
+    --   b) On |z_k| = 1: conj(z_k) = 1/z_k, so |Q/P| = 1
+    --   c) Maximum modulus (Complex.norm_le_of_forall_mem_frontier_norm_le):
+    --      |Q/P| ≤ 1 on |z_k| < 1, with equality only if Q/P is constant
+    --   d) Since |z_k| < 1 (strict), |Q/P| < 1, so ‖Q‖ < ‖P‖
+    -- Step 3: Extend to |a_{i,n}| ≤ 1 by continuity
     sorry
 
 /-! ## Application to Ising model -/
