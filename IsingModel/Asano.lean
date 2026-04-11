@@ -815,6 +815,7 @@ private lemma prod_ite_const_cond {α : Type*} {S : Finset α} {p : Prop} [Decid
     ∏ j ∈ S, (if p then f j else 1) = if p then ∏ j ∈ S, f j else 1 := by
   split_ifs <;> simp_all
 
+-- The factored condition involves 4 case splits, each with nested Finset.prod simplification
 set_option maxHeartbeats 400000 in
 /-- For a single edge `e`, the edge weight equals the product of the single-edge
 matrix entries over all cross-boundary pairs `(i,j)` with `i ∈ X, j ∉ X`.
@@ -892,11 +893,23 @@ theorem lee_yang_circle (edges : List (ι × ι × ℝ))
       unfold MultilinPoly.eval
       congr 1; ext S; congr 1; exact hcoeff S
     rw [heval]
-    -- Step 3: Apply leeYangPoly_nonvanishing (generalized to any Fintype)
-    -- The Ising matrix is Hermitian (real symmetric) with |A i j| ≤ 1
-    -- and the eval matches leeYangPoly, so nonvanishing follows.
-    -- Requires: generalization of leeYangPoly_nonvanishing from Fin n to any Fintype,
-    -- Hermiticity and bound proof for isingMatrix.
-    sorry
+    -- Step 3: Transport to Fin n via Fintype.equivFin and apply leeYangPoly_nonvanishing
+    let A : Matrix ι ι ℂ := isingMatrix (e :: edges')
+    let equiv := Fintype.equivFin ι
+    let A' : Matrix (Fin (Fintype.card ι)) (Fin (Fintype.card ι)) ℂ :=
+      A.submatrix equiv.symm equiv.symm
+    let z' : Fin (Fintype.card ι) → ℂ := z ∘ equiv.symm
+    -- A is Hermitian (real symmetric: conj = id for real entries, and isingMatrix_symm)
+    have hAH : A'.IsHermitian := by
+      sorry -- conj(isingMatrix i j) = isingMatrix j i via real + symmetric
+    -- |A' i j| ≤ 1 (product of factors in [0,1])
+    have hAB : ∀ i j, ‖A' i j‖ ≤ 1 := by
+      sorry -- each factor is ↑t with t ∈ [0,1) or 1
+    -- The eval under reindexing matches
+    have hTransport : MultilinPoly.eval (fun S => ∏ i ∈ S, ∏ j ∈ Finset.univ \ S, A i j) z =
+        (leeYangPoly A').eval z' := by
+      sorry -- Fintype.sum_equiv + Finset.prod_map + complement invariance
+    rw [hTransport]
+    exact leeYangPoly_nonvanishing A' hAH hAB z' (fun k => hz _)
 
 end IsingModel
