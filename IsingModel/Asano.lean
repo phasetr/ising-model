@@ -502,7 +502,9 @@ noncomputable def isingEdgePoly (edges : List (ι × ι × ℝ)) : MultilinPoly 
 private lemma eval_one_poly (z : ι → ℂ) :
     MultilinPoly.eval (fun (_ : Finset ι) => (1 : ℂ)) z = ∏ k : ι, (1 + z k) := by
   simp only [MultilinPoly.eval, one_mul]
-  sorry -- Σ_X ∏_{i∈X} z_i = ∏_i (1 + z_i): standard combinatorial identity
+  have := @Finset.prod_one_add ι ℂ _ z Finset.univ
+  rw [Finset.powerset_univ] at this
+  exact this.symm
 
 /-- The base case: `isingEdgePoly [] = 1` (constant polynomial). -/
 private lemma isingEdgePoly_nil : isingEdgePoly (ι := ι) [] = fun _ => 1 := by
@@ -517,9 +519,11 @@ theorem lee_yang_circle (edges : List (ι × ι × ℝ))
     (isingEdgePoly edges).eval z ≠ 0 := by
   induction edges with
   | nil =>
-    -- P(z) = ∏_i (1 + z_i) ≠ 0 since each factor ≠ 0
-    rw [show isingEdgePoly (ι := ι) [] = fun _ => 1 from isingEdgePoly_nil]
-    sorry -- eval_one_poly + product nonzero
+    -- P(z) = ∏_i (1 + z_i) ≠ 0 since each factor ≠ 0 for |z_i| < 1
+    rw [show isingEdgePoly (ι := ι) [] = fun _ => 1 from isingEdgePoly_nil, eval_one_poly]
+    exact Finset.prod_ne_zero_iff.mpr (fun k _ h => by
+      have : z k = -1 := by linear_combination h
+      linarith [hz k, show ‖z k‖ = 1 from by rw [this, norm_neg, norm_one]])
   | cons e edges' ih =>
     -- Inductive step: isingEdgePoly (e :: edges') relates to edges' via
     -- Asano contraction on expanded variable space.
