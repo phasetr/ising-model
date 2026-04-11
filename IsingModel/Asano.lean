@@ -151,6 +151,14 @@ theorem singleEdgePoly_nonvanishing (i j : ι) (hij : i ≠ j)
   -- Step 1: eval of singleEdgePoly = z_i * z_j + t*(z_i + z_j) + 1
   have heval : (singleEdgePoly i j t).eval z =
       z i * z j + ↑t * z i + ↑t * z j + 1 := by
+    unfold MultilinPoly.eval singleEdgePoly
+    -- All terms with X ∉ {∅, {i}, {j}, {i,j}} vanish
+    have hvan : ∀ X : Finset ι, X ∈ Finset.univ →
+        X ≠ ∅ → X ≠ {i} → X ≠ {j} → X ≠ {i, j} →
+        (if X = {i, j} then (1 : ℂ) else if X = {i} then ↑t
+         else if X = {j} then ↑t else if X = ∅ then 1 else 0) *
+        ∏ k ∈ X, z k = 0 := fun X _ h1 h2 h3 h4 => by simp [h1, h2, h3, h4]
+    -- Sum reduces to 4 terms
     sorry
   -- Step 2: P = 0 → z_i * (z_j + t) = -(t * z_j + 1)
   rw [heval] at hp
