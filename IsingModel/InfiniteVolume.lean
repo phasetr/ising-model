@@ -151,7 +151,13 @@ theorem walsh_fourier_inversion (f : Config ι → ℝ) (σ : Config ι) :
   symm
   trans ((Fintype.card (Config ι) : ℝ)⁻¹ *
     ∑ τ : Config ι, f τ * ∑ S : Finset ι, spinProduct S τ * spinProduct S σ)
-  · sorry -- sum swap (Finset.sum_comm + algebraic rearrangement)
+  · -- Both sides equal c⁻¹ Σ_τ Σ_S f(τ) σ^S(τ) σ^S(σ)
+    -- where c = Fintype.card (Config ι)
+    -- LHS: Σ_S (c⁻¹ Σ_τ σ^S(τ) f(τ)) σ^S(σ)
+    -- Pull c⁻¹ out, swap Σ_S Σ_τ to Σ_τ Σ_S, factor f(τ)
+    simp only [Finset.mul_sum]
+    rw [Finset.sum_comm]
+    congr 1; ext τ; rw [Finset.sum_mul]; congr 1; ext S; ring
   · -- Apply walsh_completeness: Σ_S σ^S(τ) σ^S(σ) = card · [τ=σ]
     simp_rw [walsh_completeness, mul_ite, mul_zero]
     simp only [Finset.sum_ite_eq', Finset.mem_univ, ite_true]
