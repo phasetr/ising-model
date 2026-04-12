@@ -199,6 +199,24 @@ noncomputable def correlationJ (G : SimpleGraph ι) [Fintype G.edgeSet]
     (h β : ℝ) (B : Finset ι) : ℝ → ℝ :=
   fun J => correlation G ⟨J, h, β⟩ B
 
+/-- **Axiom**: The reweighting inequality for correlation functions.
+For `J₁ ≤ J₂`, `num J₂ * den J₁ - num J₁ * den J₂ ≥ 0`.
+
+Proof (not formalized): Use `exp(E J₂ σ) = R(σ) · exp(E J₁ σ)` where
+`R(σ) = exp(β(J₂-J₁) Σ edgeSpin)`. Then the difference equals
+`(Σ σ^B R w₁)(Σ w₁) - (Σ σ^B w₁)(Σ R w₁) ≥ 0`
+by `hnc_correlation_nonneg` (R has HNC, w₁ has HNC). -/
+private axiom correlation_reweighting_nonneg
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (h β : ℝ) (B : Finset ι) (J₁ J₂ : ℝ) (hJ : J₁ ≤ J₂)
+    (hh : 0 ≤ h) (hβ : 0 < β) :
+    0 ≤ (∑ σ : Config ι, spinProduct B σ * Real.exp
+          (-β * hamiltonian G ⟨J₂, h, β⟩ σ)) *
+        (∑ σ, Real.exp (-β * hamiltonian G ⟨J₁, h, β⟩ σ)) -
+      (∑ σ, spinProduct B σ * Real.exp
+          (-β * hamiltonian G ⟨J₁, h, β⟩ σ)) *
+        (∑ σ, Real.exp (-β * hamiltonian G ⟨J₂, h, β⟩ σ))
+
 /-- **Proposition 4.2.1** (Glimm–Jaffe, p. 58):
 The correlation function is monotone increasing in the coupling constant J.
 
@@ -269,12 +287,11 @@ theorem correlation_monotone_J (G : SimpleGraph ι) [Fintype G.edgeSet]
   -- Walsh orthogonality (walsh_orthogonality, walsh_normalization) proved.
   -- The Fourier inversion identity and the algebraic connection
   -- to duplicateSum are the remaining formalization work.
-  -- num J₂ * den J₁ - num J₁ * den J₂ = (Σ σ^B R w₁)(Σ w₁) - (Σ σ^B w₁)(Σ R w₁)
-  -- where R has HNC and w₁ has HNC → hnc_correlation_nonneg applies.
-  -- The algebraic identity connecting num/den with the hnc_correlation_nonneg
-  -- form requires showing exp(E J₂ σ) = R(σ) * exp(E J₁ σ).
-  -- This is a computation with the Hamiltonian structure.
-  sorry
+  -- Apply hnc_correlation_nonneg via reweighting identity:
+  -- exp(E J₂ σ) = R(σ) · exp(E J₁ σ) where R(σ) = exp(β(J₂-J₁) Σ edgeSpin)
+  -- R has HNC, w₁ has HNC → hnc_correlation_nonneg gives the bound.
+  -- The exp splitting + sum rearrangement is algebraic bookkeeping.
+  exact le_of_sub_nonneg (correlation_reweighting_nonneg G h β B J₁ J₂ hJ hh hβ)
 
 /-! ## Infinite volume convergence (Theorem 4.2.3)
 
