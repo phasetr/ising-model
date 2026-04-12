@@ -1,8 +1,4 @@
 import IsingModel.Inequalities.GKS
-import Mathlib.Analysis.Calculus.Deriv.Add
-import Mathlib.Analysis.Calculus.Deriv.Mul
-import Mathlib.Analysis.Calculus.Deriv.Inv
-import Mathlib.Analysis.Calculus.MeanValue
 
 /-!
 # Infinite volume limit
@@ -248,25 +244,14 @@ theorem correlation_monotone_J (G : SimpleGraph ι) [Fintype G.edgeSet]
   -- Define the exponent as a function of J and σ
   let E : ℝ → Config ι → ℝ := fun J σ =>
     -β * hamiltonian G ⟨J, h, β⟩ σ
-  -- Each J ↦ exp(E J σ) is differentiable (E is affine in J)
-  have hE_diff : ∀ σ, Differentiable ℝ (fun J => Real.exp (E J σ)) := by
-    intro σ; apply Real.differentiable_exp.comp
-    -- E J σ = -β * (-J * Σ es - h * Σ s) = βJ Σ es + βh Σ s, affine in J
-    change Differentiable ℝ (fun J => -β * hamiltonian G ⟨J, h, β⟩ σ)
-    unfold hamiltonian interactionEnergy externalFieldEnergy
-    fun_prop
-  -- den(J) = Σ exp(E J σ) is differentiable and positive
+  -- den(J) = Σ exp(E J σ), positive
   let den : ℝ → ℝ := fun J => ∑ σ : Config ι, Real.exp (E J σ)
-  have hden_diff : Differentiable ℝ den :=
-    Differentiable.fun_sum (fun σ _ => hE_diff σ)
   have hden_pos : ∀ J, 0 < den J := fun J =>
     Finset.sum_pos (fun σ _ => Real.exp_pos _) Finset.univ_nonempty
   have hden_ne : ∀ J, den J ≠ 0 := fun J => ne_of_gt (hden_pos J)
   -- num(J) = Σ σ^B exp(E J σ) is differentiable
   let num : ℝ → ℝ := fun J =>
     ∑ σ : Config ι, spinProduct B σ * Real.exp (E J σ)
-  have hnum_diff : Differentiable ℝ num :=
-    Differentiable.fun_sum (fun σ _ => (differentiable_const _).mul (hE_diff σ))
   -- f = num / den is differentiable
   have hf_eq : correlationJ G h β B = num / den := by
     ext J; simp only [correlationJ, correlation, gibbsExpectation,
@@ -311,7 +296,7 @@ theorem requires defining the sequence of finite volumes and relating
 the correlation functions across different lattice sizes.
 This is deferred to a subsequent step. -/
 
--- TODO: Formalize lattice growth sequence and convergence theorem
--- Key mathlib lemma: tendsto_of_monotone_of_bddAbove
+-- Future work: formalize lattice growth sequence and convergence theorem
+-- (requires lattice embedding + tendsto_of_monotone + bddAbove from abs_correlation_le_one)
 
 end IsingModel

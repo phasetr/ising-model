@@ -492,7 +492,11 @@ $R(\sigma) = \exp(\beta\delta\sum_e \text{edgeSpin}(\sigma,e))$.
 Then $\langle\sigma^B\rangle_{J_2} = \langle\sigma^B R\rangle_{J_1}/\langle R\rangle_{J_1}$,
 and $\langle\sigma^B R\rangle \ge \langle\sigma^B\rangle\langle R\rangle$ by GKS-II
 applied to the Fourier expansion of $R$.
-This step has a sorry in the formalization.
+This step uses two axioms: \texttt{hnc\_correlation\_nonneg} (generalized
+GKS-II for arbitrary HNC weights) and \texttt{correlation\_reweighting\_nonneg}
+(the exp-splitting identity). Walsh orthogonality and Fourier inversion
+on $\{{\pm}1\}^n$ are fully proved (\texttt{walsh\_completeness},
+\texttt{walsh\_fourier\_inversion}).
 
 \begin{theorem}[Theorem 4.2.3, p.~59; not yet formalized]
 For $h \ge 0$, $\langle\sigma^B\rangle_\Lambda$ converges as $\Lambda \uparrow \mathbb{Z}^d$.

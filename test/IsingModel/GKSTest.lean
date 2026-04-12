@@ -64,7 +64,7 @@ def checkGKS1 (label : String) (n : Nat) (edges : List (Nat × Nat))
   for A in subsets do
     let c := testCorrelation n edges J h β A
     if c < -1e-10 then
-      IO.println s!"  FAIL: ⟨σ_{A}⟩ = {c} < 0"
+      IO.println s!"  FAIL: ⟨σ^A⟩ = {c} < 0"
       ok := false
   if ok then
     IO.println s!"  {label}: GKS-I passed for all {subsets.length} subsets"
@@ -82,7 +82,7 @@ def checkGKS2 (label : String) (n : Nat) (edges : List (Nat × Nat))
       let cA := testCorrelation n edges J h β A
       let cB := testCorrelation n edges J h β B
       if cAB - cA * cB < -1e-10 then
-        IO.println s!"  FAIL: ⟨σ_{A}σ_{B}⟩ - ⟨σ_{A}⟩⟨σ_{B}⟩ = {cAB - cA * cB} < 0"
+        IO.println s!"  FAIL: ⟨σ^Aσ^B⟩ - ⟨σ^A⟩⟨σ^B⟩ = {cAB - cA * cB} < 0"
         ok := false
   if ok then
     IO.println s!"  {label}: GKS-II passed for all subset pairs"
@@ -123,7 +123,7 @@ def checkGKS1Violation (label : String) (n : Nat) (edges : List (Nat × Nat))
   for A in subsets do
     let c := testCorrelation n edges J h β A
     if c < -1e-10 then
-      IO.println s!"  {label}: GKS-I violation confirmed (⟨σ_{A}⟩ = {c} < 0) ✓"
+      IO.println s!"  {label}: GKS-I violation confirmed (⟨σ^A⟩ = {c} < 0) ✓"
       return true
   IO.println s!"  FAIL: {label}: expected GKS-I violation but all correlations ≥ 0"
   return false

@@ -12,8 +12,7 @@ programmer, I started `ising-model` as a personal hobby project to become
 proficient in Lean 4 by formalizing results around the Ising model.
 
 The intended scope is limited to finite-volume results such as correlation
-inequalities; the thermodynamic limit and related topics are out of scope for
-now. This project is not intended to interfere with the work of researchers in
+inequalities and the infinite volume limit of correlation functions. This project is not intended to interfere with the work of researchers in
 the field, and if any overlap arises I am happy to coordinate accordingly.
 
 ## Formalized theorems
