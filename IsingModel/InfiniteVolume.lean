@@ -94,6 +94,49 @@ theorem walsh_normalization (S : Finset ι) :
   simp_rw [spinProduct_mul, symmDiff_self]
   exact sum_config_spinProduct_empty
 
+/-- Walsh completeness: `Σ_S σ^S(τ) · σ^S(σ) = card · [τ = σ]`.
+This is the dual of Walsh orthogonality: orthogonality sums over
+configurations, completeness sums over subsets. -/
+theorem walsh_completeness (σ τ : Config ι) :
+    ∑ S : Finset ι, spinProduct S σ * spinProduct S τ =
+    if σ = τ then (Fintype.card (Config ι) : ℝ) else 0 := by
+  -- Define ω = σ · τ (componentwise Spin.mul)
+  let ω : Config ι := fun i => Spin.mul (σ i) (τ i)
+  -- σ^S · τ^S = ω^S by spinProduct_mul-like identity
+  have hmul : ∀ S : Finset ι, spinProduct S σ * spinProduct S τ =
+      spinProduct S ω := by
+    intro S; simp only [spinProduct, ω]
+    rw [← Finset.prod_mul_distrib]
+    congr 1; ext i; simp [Spin.toSign_mul]
+  simp_rw [hmul]
+  -- Σ_S ω^S = ∏_i (1 + ω_i) by expanding the product over subsets
+  sorry -- Need Finset.prod_add_one and the evaluation
+
+/-- Fourier inversion on `{±1}^n`: any function `f : Config ι → ℝ` can be
+expanded as `f(σ) = Σ_S ĉ_S σ^S` where `ĉ_S = card⁻¹ Σ_τ σ^S(τ) f(τ)`.
+This follows from Walsh orthogonality. -/
+theorem walsh_fourier_inversion (f : Config ι → ℝ) (σ : Config ι) :
+    f σ = ∑ S : Finset ι,
+      ((Fintype.card (Config ι) : ℝ)⁻¹ * ∑ τ : Config ι, spinProduct S τ * f τ) *
+      spinProduct S σ := by
+  -- RHS = card⁻¹ Σ_S Σ_τ σ^S(τ) f(τ) σ^S(σ)
+  --     = card⁻¹ Σ_τ f(τ) Σ_S σ^S(τ) σ^S(σ)
+  -- By Walsh orthogonality: Σ_S σ^S(τ) σ^S(σ) = card · [τ = σ]
+  -- (since {σ^S} is a complete orthogonal system with norm² = card)
+  -- So RHS = card⁻¹ · f(σ) · card = f(σ).
+  -- This requires the completeness of the Walsh basis, which is
+  -- a standard fact for (ℤ/2)^n but needs explicit formalization.
+  sorry
+
+/-- Key consequence of Fourier inversion for HNC functions:
+`Σ_σ σ^B f(σ) g(σ) = Σ_S ĉ_f(S) Σ_σ σ^{B△S} g(σ)` where `ĉ_f(S) ≥ 0`.
+Used to show that the product of HNC functions correlates non-negatively. -/
+theorem hnc_correlation_nonneg (f g : Config ι → ℝ)
+    (hf : HasNonnegCorrelations f) (hg : HasNonnegCorrelations g) (B : Finset ι) :
+    0 ≤ (∑ σ, spinProduct B σ * f σ * g σ) * (∑ σ, g σ) -
+        (∑ σ, spinProduct B σ * g σ) * (∑ σ, f σ * g σ) := by
+  sorry
+
 /-! ## Monotonicity in coupling constant (Proposition 4.2.1)
 
 The correlation function `⟨σ^B⟩` is monotone increasing in the coupling
