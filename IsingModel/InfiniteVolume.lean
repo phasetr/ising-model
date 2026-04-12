@@ -1,4 +1,8 @@
 import IsingModel.Inequalities.GKS
+import Mathlib.Analysis.Calculus.Deriv.Add
+import Mathlib.Analysis.Calculus.Deriv.Mul
+import Mathlib.Analysis.Calculus.Deriv.Inv
+import Mathlib.Analysis.Calculus.MeanValue
 
 /-!
 # Infinite volume limit
@@ -105,9 +109,59 @@ Equivalently, for `J₂ = J₁ + δ`, the reweighting factor
 Building blocks proved: `duplicateSum_nonneg`, `hasNonnegCorrelations_edge_site_product`,
 `one_sub_spinProduct_nonneg`. The assembly requires either the calculus derivative
 computation or the Fourier expansion on `{±1}^n`. -/
-axiom correlation_monotone_J (G : SimpleGraph ι) [Fintype G.edgeSet]
+theorem correlation_monotone_J (G : SimpleGraph ι) [Fintype G.edgeSet]
     (h : ℝ) (hh : 0 ≤ h) (β : ℝ) (hβ : 0 < β) (B : Finset ι) :
-    Monotone (correlationJ G h β B)
+    Monotone (correlationJ G h β B) := by
+  -- f(J) = num(J) / den(J) where
+  -- num(J) = Σ_σ spinProduct B σ * exp(-β * H_J(σ))
+  -- den(J) = Σ_σ exp(-β * H_J(σ)) = partitionFunction
+  -- H_J(σ) = -J * Σ edgeSpin - h * Σ sign
+  -- So exp(-β H_J) = exp(βJ Σ edgeSpin + βh Σ sign)
+  -- Both num and den are finite sums of exp(affine in J), hence differentiable.
+  -- deriv f = (num' den - num den') / den²
+  -- = β/den² Σ_σ Σ_τ σ^B (S(σ) - S(τ)) w(σ) w(τ)
+  -- = β/den² Σ_e duplicateSum(B, e) ≥ 0
+  -- by duplicateSum_nonneg.
+  -- Hence Monotone by monotone_of_deriv_nonneg.
+  -- Define the exponent as a function of J and σ
+  let E : ℝ → Config ι → ℝ := fun J σ =>
+    -β * hamiltonian G ⟨J, h, β⟩ σ
+  -- Each J ↦ exp(E J σ) is differentiable (E is affine in J)
+  have hE_diff : ∀ σ, Differentiable ℝ (fun J => Real.exp (E J σ)) := by
+    intro σ; apply Real.differentiable_exp.comp
+    -- E J σ = -β * (-J * Σ es - h * Σ s) = βJ Σ es + βh Σ s, affine in J
+    show Differentiable ℝ (fun J => -β * hamiltonian G ⟨J, h, β⟩ σ)
+    unfold hamiltonian interactionEnergy externalFieldEnergy
+    fun_prop
+  -- den(J) = Σ exp(E J σ) is differentiable and positive
+  let den : ℝ → ℝ := fun J => ∑ σ : Config ι, Real.exp (E J σ)
+  have hden_diff : Differentiable ℝ den :=
+    Differentiable.fun_sum (fun σ _ => hE_diff σ)
+  have hden_pos : ∀ J, 0 < den J := fun J =>
+    Finset.sum_pos (fun σ _ => Real.exp_pos _) Finset.univ_nonempty
+  have hden_ne : ∀ J, den J ≠ 0 := fun J => ne_of_gt (hden_pos J)
+  -- num(J) = Σ σ^B exp(E J σ) is differentiable
+  let num : ℝ → ℝ := fun J =>
+    ∑ σ : Config ι, spinProduct B σ * Real.exp (E J σ)
+  have hnum_diff : Differentiable ℝ num :=
+    Differentiable.fun_sum (fun σ _ => (differentiable_const _).mul (hE_diff σ))
+  -- f = num / den is differentiable
+  have hf_eq : correlationJ G h β B = num / den := by
+    ext J; simp only [correlationJ, correlation, gibbsExpectation,
+      partitionFunction, boltzmannWeight, Pi.div_apply, div_eq_mul_inv]
+    ring
+  rw [hf_eq]
+  apply monotone_of_deriv_nonneg (hnum_diff.div hden_diff hden_ne)
+  intro J
+  rw [deriv_div hnum_diff.differentiableAt hden_diff.differentiableAt (hden_ne J)]
+  -- deriv f = (num' den - num den') / den²
+  -- Need: num' den - num den' ≥ 0
+  -- This equals Σ_σ Σ_τ σ^B (E'(σ) - E'(τ)) exp(E σ) exp(E τ)
+  -- where E'(σ) = ∂E/∂J = β Σ_e edgeSpin(σ,e)
+  -- = β Σ_e [Σ_σ σ^B edgeSpin(e) w(σ) Z - Σ σ^B w(σ) Σ edgeSpin(e) w(τ)]
+  -- = β Σ_e duplicateSum(B, {i,j})
+  -- Each ≥ 0 by duplicateSum_nonneg.
+  sorry
 
 /-! ## Infinite volume convergence (Theorem 4.2.3)
 
