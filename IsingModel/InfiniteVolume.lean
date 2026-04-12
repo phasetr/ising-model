@@ -94,14 +94,16 @@ noncomputable def correlationJ (G : SimpleGraph ι) [Fintype G.edgeSet]
 /-- **Proposition 4.2.1** (Glimm–Jaffe, p. 58):
 The correlation function is monotone increasing in the coupling constant J.
 
-Proof (not formalized): `d/dJ ⟨σ^B⟩ = β Σ_e [⟨σ^{e△B}⟩ - ⟨σ^e⟩⟨σ^B⟩] ≥ 0`
-where each term is non-negative by GKS-II (`gks_second`).
+Proof (not formalized): For `J₂ = J₁ + δ`, let `R(σ) = exp(βδ Σ_e edgeSpin)`.
+Then `⟨σ^B⟩_{J₂} = ⟨σ^B R⟩_{J₁} / ⟨R⟩_{J₁}`.
+The Fourier expansion `R = Σ_S ĉ_S σ^S` with `ĉ_S ≥ 0` (by HNC of R) gives:
+`Z² (⟨σ^B R⟩ - ⟨σ^B⟩⟨R⟩) = Σ_S ĉ_S · duplicateSum(S, B) ≥ 0`
+since each `ĉ_S ≥ 0` and `duplicateSum(S, B) ≥ 0` (by `duplicateSum_nonneg`).
 
-The formalization requires:
-1. Differentiability of `correlationJ` (finite sum of exp, quotient rule)
-2. Derivative = covariance form (standard calculus for Gibbs expectations)
-3. Each covariance term ≥ 0 by `gks_second`
-4. `Monotone.of_deriv_nonneg` or equivalent -/
+The formalization requires the Fourier expansion on `{±1}^n` and the
+connection between `HasNonnegCorrelations` and non-negative Fourier
+coefficients. The building blocks (`duplicateSum_nonneg`,
+`hasNonnegCorrelations_edge_site_product`) are already proved. -/
 theorem correlation_monotone_J (G : SimpleGraph ι) [Fintype G.edgeSet]
     (h : ℝ) (hh : 0 ≤ h) (β : ℝ) (hβ : 0 < β) (B : Finset ι) :
     Monotone (correlationJ G h β B) := by
