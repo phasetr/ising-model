@@ -113,21 +113,39 @@ theorem integral_odd_power_even_weight_eq_zero (P : ℝ → ℝ) (k : ℕ) :
   rw [hodd, neg_sq]
   ring
 
-/-- **Single-site non-negativity** (core of Theorem 4.3.1):
-For even `Q : ℝ⁴ → ℝ` and `c ≥ 0`, the integral
-`∫ α^k β^l γ^m δ^n exp(-Q + c·αβγδ) ≥ 0`.
+/-- The integral of a non-negative function is non-negative.
+Helper for the even-power case of `phi4_single_site_nonneg`. -/
+private theorem integral_nonneg_of_nonneg_ae (f : ℝ → ℝ)
+    (hf : ∀ x, 0 ≤ f x) :
+    0 ≤ ∫ x, f x ∂volume :=
+  integral_nonneg hf
 
-TODO: Full proof via power series expansion + `integral_odd_eq_zero`.
-The integrability is guaranteed by `integrableOn_rpow_mul_exp_neg_mul_rpow`. -/
-axiom phi4_single_site_nonneg
+/-- **Single-site non-negativity** (core of Theorem 4.3.1):
+For even `Q` and `c ≥ 0`, the monomial integral against `exp(-Q + c·αβγδ)` is ≥ 0.
+
+Proof sketch:
+- `exp(-Q + c·αβγδ) = exp(-Q) · Σ_j (c·αβγδ)^j / j!`
+- Each term: `∫ α^{k+j} β^{l+j} γ^{m+j} δ^{n+j} exp(-Q)`
+- If any exponent is odd, the integral vanishes by `integral_odd_eq_zero`
+  (Q is even in that variable, so the integrand is odd).
+- If all exponents are even, the integrand is ≥ 0, so the integral is ≥ 0.
+- The sum has coefficients c^j/j! ≥ 0, so the total is ≥ 0.
+
+The full proof requires Fubini (nested integrals), integrability estimates
+(`integrableOn_rpow_mul_exp_neg_mul_rpow`), and `integral_tsum` (swap sum/integral).
+These are available in mathlib but the assembly is deferred. -/
+theorem phi4_single_site_nonneg
     (Q : ℝ → ℝ → ℝ → ℝ → ℝ)
-    (hQ_even : ∀ α β γ δ, Q (-α) β γ δ = Q α β γ δ ∧
-      Q α (-β) γ δ = Q α β γ δ ∧ Q α β (-γ) δ = Q α β γ δ ∧
-      Q α β γ (-δ) = Q α β γ δ)
+    (hQ_even_α : ∀ α β γ δ, Q (-α) β γ δ = Q α β γ δ)
+    (hQ_even_β : ∀ α β γ δ, Q α (-β) γ δ = Q α β γ δ)
+    (hQ_even_γ : ∀ α β γ δ, Q α β (-γ) δ = Q α β γ δ)
+    (hQ_even_δ : ∀ α β γ δ, Q α β γ (-δ) = Q α β γ δ)
     (c : ℝ) (hc : 0 ≤ c)
     (k l m n : ℕ) :
     0 ≤ ∫ α, ∫ β, ∫ γ, ∫ δ,
       α ^ k * β ^ l * γ ^ m * δ ^ n *
-      Real.exp (-Q α β γ δ + c * (α * β * γ * δ)) ∂volume ∂volume ∂volume ∂volume
+      Real.exp (-Q α β γ δ + c * (α * β * γ * δ))
+      ∂volume ∂volume ∂volume ∂volume := by
+  sorry
 
 end IsingModel.ContinuousSpin
