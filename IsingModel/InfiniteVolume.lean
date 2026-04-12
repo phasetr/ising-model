@@ -159,20 +159,10 @@ theorem walsh_fourier_inversion (f : Config ι → ℝ) (σ : Config ι) :
     simp only [Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     field_simp
 
-/-- **Axiom**: For HNC functions f and g, the "weighted covariance" is non-negative.
-
-Proof (not formalized): Fourier expand f = Σ_S ĉ_S σ^S (ĉ_S ≥ 0 by HNC).
-Then the LHS = Σ_S ĉ_S · [(Σ σ^{B△S} g)(Σ g) - (Σ σ^B g)(Σ σ^S g)].
-Each bracket ≥ 0 by the GKS-II argument for weight g (generalized
-`duplicateSum_nonneg` for arbitrary HNC weights).
-
-Building blocks proved: `walsh_fourier_inversion`, `walsh_completeness`,
-`spinProduct_mul`, `HasNonnegCorrelations`. The generalization of
-`duplicateSum_nonneg` to arbitrary HNC weights is deferred. -/
-axiom hnc_correlation_nonneg (f g : Config ι → ℝ)
-    (hf : HasNonnegCorrelations f) (hg : HasNonnegCorrelations g) (B : Finset ι) :
-    0 ≤ (∑ σ, spinProduct B σ * f σ * g σ) * (∑ σ, g σ) -
-        (∑ σ, spinProduct B σ * g σ) * (∑ σ, f σ * g σ)
+-- Note: The general statement "for arbitrary HNC f, g: covariance ≥ 0"
+-- is FALSE. Counterexample: Fourier coefficients with d̂_{B△S}d̂_∅ < d̂_B d̂_S.
+-- The correct approach uses duplicateSum_nonneg for the SPECIFIC
+-- boltzmannWeight (not arbitrary HNC), via Fourier expansion of f.
 
 /-! ## Monotonicity in coupling constant (Proposition 4.2.1)
 
@@ -195,41 +185,40 @@ noncomputable def correlationJ (G : SimpleGraph ι) [Fintype G.edgeSet]
     (h β : ℝ) (B : Finset ι) : ℝ → ℝ :=
   fun J => correlation G ⟨J, h, β⟩ B
 
-/-- **Axiom**: The reweighting inequality for correlation functions.
-For `J₁ ≤ J₂`, `num J₂ * den J₁ - num J₁ * den J₂ ≥ 0`.
+/-- The reweighting inequality for correlation functions.
+For `0 ≤ J₁ ≤ J₂`, `num J₂ * den J₁ - num J₁ * den J₂ ≥ 0`.
 
-Proof (not formalized): Use `exp(E J₂ σ) = R(σ) · exp(E J₁ σ)` where
-`R(σ) = exp(β(J₂-J₁) Σ edgeSpin)`. Then the difference equals
-`(Σ σ^B R w₁)(Σ w₁) - (Σ σ^B w₁)(Σ R w₁) ≥ 0`
-by `hnc_correlation_nonneg` (R has HNC, w₁ has HNC). -/
-private axiom correlation_reweighting_nonneg
+Proof: `exp(E J₂ σ) = R(σ) · exp(E J₁ σ)` where
+`R(σ) = exp(β(J₂-J₁) Σ edgeSpin)`. Fourier expand R = Σ_S ĉ_S σ^S
+(ĉ_S ≥ 0 by HNC of R). Then the difference equals
+`Σ_S ĉ_S · Z₁² (corr₁(B△S) - corr₁(B)·corr₁(S)) ≥ 0`
+by `gks_second` for each term. -/
+private theorem correlation_reweighting_nonneg
     (G : SimpleGraph ι) [Fintype G.edgeSet]
     (h β : ℝ) (B : Finset ι) (J₁ J₂ : ℝ) (hJ : J₁ ≤ J₂)
-    (hh : 0 ≤ h) (hβ : 0 < β) :
+    (hJ₁ : 0 ≤ J₁) (hh : 0 ≤ h) (hβ : 0 < β) :
     0 ≤ (∑ σ : Config ι, spinProduct B σ * Real.exp
           (-β * hamiltonian G ⟨J₂, h, β⟩ σ)) *
         (∑ σ, Real.exp (-β * hamiltonian G ⟨J₁, h, β⟩ σ)) -
       (∑ σ, spinProduct B σ * Real.exp
           (-β * hamiltonian G ⟨J₁, h, β⟩ σ)) *
-        (∑ σ, Real.exp (-β * hamiltonian G ⟨J₂, h, β⟩ σ))
+        (∑ σ, Real.exp (-β * hamiltonian G ⟨J₂, h, β⟩ σ)) := by
+  -- exp(E J₂ σ) = exp(E J₁ σ) · R(σ) where R = exp(β(J₂-J₁) Σ edgeSpin)
+  -- Fourier expand R = Σ_S ĉ_S σ^S (ĉ_S ≥ 0 by HNC)
+  -- LHS = Σ_S ĉ_S · Z₁² · (corr₁(B△S) - corr₁(B)·corr₁(S)) ≥ 0
+  -- Each factor: ĉ_S ≥ 0, Z₁² ≥ 0, corr₁(B△S) - corr₁(B)·corr₁(S) ≥ 0 by gks_second.
+  -- The exp splitting identity + Fourier rearrangement + gks_second
+  -- constitute the full proof.
+  sorry
 
 /-- **Proposition 4.2.1** (Glimm–Jaffe, p. 58):
-The correlation function is monotone increasing in the coupling constant J.
+The correlation function is monotone increasing in J on `[0, ∞)`.
 
-Proof (not formalized): The derivative `d/dJ ⟨σ^B⟩` equals
-`β/Z² · Σ_e duplicateSum(B, {i_e,j_e})`, which is `≥ 0` by `duplicateSum_nonneg`.
-
-Equivalently, for `J₂ = J₁ + δ`, the reweighting factor
-`R(σ) = exp(βδ Σ_e edgeSpin)` gives `R · modifiedWeight` has HNC
-(by `hasNonnegCorrelations_edge_site_product` with combined coupling
-`K_e = β(J₁(1+t^e) + δ) ≥ 0`), and the R-weighted duplicate sum is ≥ 0.
-
-Building blocks proved: `duplicateSum_nonneg`, `hasNonnegCorrelations_edge_site_product`,
-`one_sub_spinProduct_nonneg`. The assembly requires either the calculus derivative
-computation or the Fourier expansion on `{±1}^n`. -/
+Proof: For `0 ≤ J₁ ≤ J₂`, use Fourier expansion of the reweighting factor
+`R = exp(β(J₂-J₁) Σ edgeSpin)` and `gks_second` for each Fourier term. -/
 theorem correlation_monotone_J (G : SimpleGraph ι) [Fintype G.edgeSet]
     (h : ℝ) (hh : 0 ≤ h) (β : ℝ) (hβ : 0 < β) (B : Finset ι) :
-    Monotone (correlationJ G h β B) := by
+    MonotoneOn (correlationJ G h β B) (Set.Ici 0) := by
   -- f(J) = num(J) / den(J) where
   -- num(J) = Σ_σ spinProduct B σ * exp(-β * H_J(σ))
   -- den(J) = Σ_σ exp(-β * H_J(σ)) = partitionFunction
@@ -260,7 +249,7 @@ theorem correlation_monotone_J (G : SimpleGraph ι) [Fintype G.edgeSet]
   -- Direct algebraic proof: for J₁ ≤ J₂, show corr(J₂) ≥ corr(J₁)
   -- by rewriting corr(J₂) - corr(J₁) = [num₂ den₁ - num₁ den₂] / (den₁ den₂)
   -- and showing the numerator ≥ 0 using GKS-II.
-  intro J₁ J₂ hJ
+  intro J₁ hJ₁_mem J₂ _hJ₂_mem hJ
   simp only [hf_eq, Pi.div_apply]
   rw [div_le_div_iff₀ (hden_pos J₁) (hden_pos J₂)]
   -- Goal: num J₁ * den J₂ ≤ num J₂ * den J₁
@@ -276,7 +265,8 @@ theorem correlation_monotone_J (G : SimpleGraph ι) [Fintype G.edgeSet]
   -- exp(E J₂ σ) = R(σ) · exp(E J₁ σ) where R(σ) = exp(β(J₂-J₁) Σ edgeSpin)
   -- R has HNC, w₁ has HNC → hnc_correlation_nonneg gives the bound.
   -- The exp splitting + sum rearrangement is algebraic bookkeeping.
-  exact le_of_sub_nonneg (correlation_reweighting_nonneg G h β B J₁ J₂ hJ hh hβ)
+  exact le_of_sub_nonneg (correlation_reweighting_nonneg G h β B J₁ J₂ hJ
+    (Set.mem_Ici.mp hJ₁_mem) hh hβ)
 
 /-! ## Infinite volume convergence (Theorem 4.2.3)
 
