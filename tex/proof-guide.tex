@@ -117,7 +117,7 @@ Apply \texttt{Finset.sum\_pos}.
 
 \begin{definition}[Gibbs expectation, correlation]
 $\langle F \rangle = Z^{-1} \sum_\sigma F(\sigma)\,e^{-\beta H}$, \quad
-$\langle \sigma_A \rangle = \langle \prod_{i \in A} s(\sigma_i) \rangle$.
+$\langle \sigma^A \rangle = \langle \prod_{i \in A} s(\sigma_i) \rangle$.
 \end{definition}
 
 \noindent\textbf{Lean:} \texttt{gibbsExpectation},
@@ -148,7 +148,7 @@ matching $A \bigtriangleup C$.
 \subsection{Reduction to non-negative correlations}
 
 \begin{theorem}[GKS-I --- \texttt{gks\_first}]
-For ferromagnetic parameters, $\langle \sigma_A \rangle \geq 0$
+For ferromagnetic parameters, $\langle \sigma^A \rangle \geq 0$
 for all $A$.
 \end{theorem}
 
@@ -251,7 +251,7 @@ preserved at each step by Lemma~\ref{lem:mul}.
 \end{proof}
 
 \noindent
-GKS-I follows: $\langle \sigma_A \rangle
+GKS-I follows: $\langle \sigma^A \rangle
 = Z^{-1}\sum_\sigma \sigma^A e^{-\beta H} \geq 0$
 since $Z > 0$ and the numerator $\geq 0$ by HNC.
 
@@ -263,7 +263,7 @@ pp.~127--128.
 
 \begin{theorem}[GKS-II --- \texttt{gks\_second}]
 For ferromagnetic parameters,
-$\langle\sigma_A\sigma_B\rangle \geq \langle\sigma_A\rangle\langle\sigma_B\rangle$
+$\langle\sigma^A\sigma^B\rangle \geq \langle\sigma^A\rangle\langle\sigma^B\rangle$
 for all $A, B$.
 \end{theorem}
 
@@ -326,8 +326,8 @@ A Float-based reference implementation verifies:
   \item $Z > 0$ for 4 graph types
   \item Spin flip symmetry ($h = 0$)
   \item GKS-I for 6 parameter sets (2--4 sites, all subsets)
-  \item GKS-II ($\langle\sigma_A\sigma_B\rangle \geq
-    \langle\sigma_A\rangle\langle\sigma_B\rangle$)
+  \item GKS-II ($\langle\sigma^A\sigma^B\rangle \geq
+    \langle\sigma^A\rangle\langle\sigma^B\rangle$)
     for 6 parameter sets (2--4 sites, all subset pairs)
   \item GKS-I and GKS-II violation for anti-ferromagnetic $J < 0$
 \end{itemize}

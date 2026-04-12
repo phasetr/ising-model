@@ -22,8 +22,8 @@ All theorems are formally proved with **zero `sorry`**.
 
 | Theorem | Statement                          | Reference                                       |
 |---------|------------------------------------|-------------------------------------------------|
-| GKS-I   | `⟨σ_A⟩ ≥ 0`                        | Glimm-Jaffe Thm 4.1.1, Friedli-Velenik Thm 3.49 |
-| GKS-II  | `⟨σ_A σ_B⟩ ≥ ⟨σ_A⟩⟨σ_B⟩`           | Friedli-Velenik Thm 3.49                        |
+| GKS-I   | `⟨σ^A⟩ ≥ 0`                        | Glimm-Jaffe Thm 4.1.1, Friedli-Velenik Thm 3.49 |
+| GKS-II  | `⟨σ^A σ^B⟩ ≥ ⟨σ^A⟩⟨σ^B⟩`           | Friedli-Velenik Thm 3.49                        |
 | FKG     | `⟨fg⟩ ≥ ⟨f⟩⟨g⟩` for monotone f, g  | Friedli-Velenik Thm 3.21/3.50                   |
 | Asano contraction | contraction preserves non-vanishing | Friedli-Velenik Prop 3.44     |
 | Lee-Yang circle   | Ising partition poly nonvanishing on polydisk | Ruelle, Ann. of Math. 171 (2010); Harcos notes |
@@ -44,9 +44,9 @@ latexmk -lualatex proof-guide.tex
 Requires a TeX Live installation with LuaLaTeX. PDFs are not committed
 to the repository.
 
-| File                       | Description                                 |
-|----------------------------|---------------------------------------------|
-| `tex/proof-guide.tex`      | Mathematical walkthrough of the GKS-I proof |
+| File                       | Description                                          |
+|----------------------------|------------------------------------------------------|
+| `tex/proof-guide.tex`      | Mathematical walkthrough of the formalized proofs    |
 
 ## Related projects and references
 

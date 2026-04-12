@@ -58,11 +58,11 @@ noncomputable def gibbsExpectation (G : SimpleGraph ι) [Fintype G.edgeSet]
 
 /-! ## Correlation function -/
 
-/-- The spin product `σ_A = ∏_{i ∈ A} toSign(σ_i)`, as a real number. -/
+/-- The spin product `σ^A = ∏_{i ∈ A} toSign(σ_i)`, as a real number. -/
 noncomputable def spinProduct (A : Finset ι) (σ : Config ι) : ℝ :=
   ∏ i ∈ A, (↑(σ i).toSign : ℝ)
 
-/-- The correlation function `⟨σ_A⟩ = ⟨∏_{i ∈ A} s(σ_i)⟩`. -/
+/-- The correlation function `⟨σ^A⟩ = ⟨∏_{i ∈ A} s(σ_i)⟩`. -/
 noncomputable def correlation (G : SimpleGraph ι) [Fintype G.edgeSet]
     (p : IsingParams ℝ) (A : Finset ι) : ℝ :=
   gibbsExpectation G p (spinProduct A)
@@ -83,7 +83,7 @@ theorem spinProduct_singleton (i : ι) (σ : Config ι) :
   simp [spinProduct]
 
 omit [Fintype ι] in
-/-- The spin product over a disjoint union factors: `σ_{A ∪ B} = σ_A · σ_B`. -/
+/-- The spin product over a disjoint union factors: `σ^{A ∪ B} = σ^A · σ^B`. -/
 theorem spinProduct_union {A B : Finset ι} (h : Disjoint A B) (σ : Config ι) :
     spinProduct (A ∪ B) σ = spinProduct A σ * spinProduct B σ := by
   simp [spinProduct, Finset.prod_union h]

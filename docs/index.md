@@ -13,8 +13,8 @@ All theorems are formally proved with **zero `sorry`**.
 
 | Theorem                                  | Statement                                                  | File                    |
 |------------------------------------------|------------------------------------------------------------|-------------------------|
-| **GKS-I** (First Griffiths inequality)   | `⟨σ_A⟩ ≥ 0` for ferromagnetic parameters                   | `Inequalities/GKS.lean` |
-| **GKS-II** (Second Griffiths inequality) | `⟨σ_A σ_B⟩ ≥ ⟨σ_A⟩⟨σ_B⟩` for ferromagnetic parameters      | `Inequalities/GKS.lean` |
+| **GKS-I** (First Griffiths inequality)   | `⟨σ^A⟩ ≥ 0` for ferromagnetic parameters                   | `Inequalities/GKS.lean` |
+| **GKS-II** (Second Griffiths inequality) | `⟨σ^A σ^B⟩ ≥ ⟨σ^A⟩⟨σ^B⟩` for ferromagnetic parameters      | `Inequalities/GKS.lean` |
 | **FKG** (Fortuin-Kasteleyn-Ginibre)      | `⟨fg⟩ ≥ ⟨f⟩⟨g⟩` for monotone nondecreasing f, g            | `Inequalities/FKG.lean` |
 | **Asano contraction**                    | Contraction preserves non-vanishing on the unit polydisk    | `Asano.lean`            |
 | **Lee-Yang circle theorem**              | Ising partition polynomial nonvanishing on the open polydisk | `LeeYang.lean`          |
