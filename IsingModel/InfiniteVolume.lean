@@ -397,25 +397,62 @@ theorem correlation_monotone_J (G : SimpleGraph ι) [Fintype G.edgeSet]
   exact le_of_sub_nonneg (correlation_reweighting_nonneg G h β B J₁ J₂ hJ
     (Set.mem_Ici.mp hJ₁_mem) hh hβ)
 
-/-! ## Infinite volume convergence (Theorem 4.2.3)
+/-! ## Convergence of correlation functions (Theorem 4.2.3)
 
-For ferromagnetic Ising model with h ≥ 0, the correlation function
-`⟨σ^B⟩_Λ` converges as Λ ↑ ℤ^d.
-
-The proof combines:
+For the ferromagnetic Ising model with h ≥ 0, the correlation function
+`⟨σ^B⟩` converges as the coupling constant J → ∞. The proof combines:
 - Monotonicity: `⟨σ^B⟩` increases with J (Proposition 4.2.1)
 - Boundedness: `|⟨σ^B⟩| ≤ 1` (Proposition 4.2.2)
-- Monotone bounded sequences converge
+- Monotone bounded sequences converge (`tendsto_atTop_ciSup`)
 
-In the finite lattice setting, "Λ grows" means "J increases from 0 to J_max",
-and the correlation function is a monotone bounded function of J.
+In the finite lattice setting, "Λ grows" means coupling constants increase
+from 0 to their full values, and the correlation function is a monotone
+bounded function of J.
 
-The formalization of the lattice growth sequence and the convergence
-theorem requires defining the sequence of finite volumes and relating
-the correlation functions across different lattice sizes.
-This is deferred to a subsequent step. -/
+Reference: Glimm–Jaffe, Theorem 4.2.3, p. 59. -/
 
--- Future work: formalize lattice growth sequence and convergence theorem
--- (requires lattice embedding + tendsto_of_monotone + bddAbove from abs_correlation_le_one)
+/-- The correlation function is non-negative for ferromagnetic parameters.
+For `J ≥ 0`, `h ≥ 0`, `β > 0`: `⟨σ^B⟩ ≥ 0` by GKS-I. -/
+theorem correlationJ_nonneg (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (h : ℝ) (hh : 0 ≤ h) (β : ℝ) (hβ : 0 < β) (B : Finset ι)
+    (J : ℝ) (hJ : 0 ≤ J) :
+    0 ≤ correlationJ G h β B J :=
+  gks_first G ⟨J, h, β⟩ ⟨hJ, hh, hβ⟩ B
+
+/-- The correlation function is bounded above by 1.
+From `|⟨σ^B⟩| ≤ 1` we get `⟨σ^B⟩ ≤ 1`. -/
+theorem correlationJ_le_one (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (h β : ℝ) (B : Finset ι) (J : ℝ) :
+    correlationJ G h β B J ≤ 1 :=
+  le_trans (le_abs_self _) (abs_correlation_le_one G ⟨J, h, β⟩ B)
+
+/-- **Theorem 4.2.3** (Glimm–Jaffe, p. 59):
+The correlation function converges as J → ∞ along natural numbers.
+
+For ferromagnetic parameters (`h ≥ 0`, `β > 0`), the sequence
+`n ↦ ⟨σ^B⟩_{(G, n, h, β)}` is monotone increasing (by Prop 4.2.1)
+and bounded above by 1 (by Prop 4.2.2), hence convergent by
+the monotone convergence theorem. The limit equals the supremum
+`⨆ n, ⟨σ^B⟩_{(G, n, h, β)}`. -/
+theorem correlation_convergent (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (h : ℝ) (hh : 0 ≤ h) (β : ℝ) (hβ : 0 < β) (B : Finset ι) :
+    ∃ L : ℝ, Filter.Tendsto
+      (fun n : ℕ => correlationJ G h β B n)
+      Filter.atTop (nhds L) := by
+  -- Step 1: The sequence is monotone (Proposition 4.2.1)
+  have hmono : Monotone (fun n : ℕ => correlationJ G h β B n) := by
+    intro a b hab
+    exact correlation_monotone_J G h hh β hβ B
+      (Set.mem_Ici.mpr (Nat.cast_nonneg a))
+      (Set.mem_Ici.mpr (Nat.cast_nonneg b))
+      (Nat.cast_le.mpr hab)
+  -- Step 2: The sequence is bounded above by 1 (Proposition 4.2.2)
+  have hbdd : BddAbove (Set.range (fun n : ℕ => correlationJ G h β B n)) :=
+    ⟨1, fun _ ⟨n, hn⟩ => hn ▸ correlationJ_le_one G h β B n⟩
+  -- Step 3: Monotone + bounded above → convergent (to the supremum)
+  exact ⟨_, tendsto_atTop_ciSup hmono hbdd⟩
+
+-- Future work: formalize lattice growth sequence Λ_n ↑ ℤ^d and relate
+-- correlation functions across different lattice sizes via graph embeddings.
 
 end IsingModel
