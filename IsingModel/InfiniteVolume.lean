@@ -188,8 +188,6 @@ theorem cov_hnc_boltzmann_nonneg (G : SimpleGraph ι) [Fintype G.edgeSet]
     intro σ; rw [hfourier σ, Finset.mul_sum]
     congr 1; ext S; rw [← spinProduct_mul]; ring
   -- Step 3: Substitute and rearrange to Σ_S ĉ_S · bracket
-  -- Step 3: Σ σ^B f w = Σ_S ĉ_S numR(B△S)
-  let numR : Finset ι → ℝ := fun X => ∑ σ, spinProduct X σ * boltzmannWeight G p σ
   -- Each Fourier term contributes non-negatively:
   -- ĉ_S · [(Σ σ^{B△S} w)(Σ w) - (Σ σ^B w)(Σ σ^S w)] ≥ 0
   have hterm : ∀ S : Finset ι,
@@ -214,7 +212,7 @@ theorem cov_hnc_boltzmann_nonneg (G : SimpleGraph ι) [Fintype G.edgeSet]
     -- hgks : Z⁻¹ * nB * (Z⁻¹ * nS) ≤ Z⁻¹ * nBS
     -- Multiply both sides by Z (positive), twice:
     have h1 := mul_le_mul_of_nonneg_left hgks hZ.le
-    simp (config := { decide := true }) at h1
+    simp (config := { decide := true }) only [] at h1
     have h2 := mul_le_mul_of_nonneg_right h1 hZ.le
     -- h2 has partitionFunction and Z⁻¹ mixed. Use field_simp to clear.
     unfold partitionFunction at h2
@@ -241,11 +239,29 @@ theorem cov_hnc_boltzmann_nonneg (G : SimpleGraph ι) [Fintype G.edgeSet]
           (∑ σ : Config ι, boltzmannWeight G p σ)) := by nlinarith
     linarith [le_of_mul_le_mul_left h3a hZ]
   -- LHS = Σ_S ĉ_S bracket by Fourier substitution + sum rearrangement
-  -- LHS = Σ_S ĉ_S bracket, apply Finset.sum_nonneg hterm.
-  -- The sum rearrangement (Finset.sum_comm + Finset.mul_sum) has
-  -- bound variable naming issues preventing rw matching.
-  -- All mathematical building blocks proved: hterm, hprod, hfourier.
-  sorry
+  have eq2 : ∑ σ : Config ι, f σ * boltzmannWeight G p σ =
+    ∑ S : Finset ι, ĉ S * ∑ σ : Config ι,
+      spinProduct S σ * boltzmannWeight G p σ := by
+    simp_rw [hfourier, Finset.sum_mul]
+    exact (Finset.sum_comm).trans (Finset.sum_congr rfl (fun S _ => by
+      simp_rw [show ∀ x, ĉ S * spinProduct S x * boltzmannWeight G p x =
+        ĉ S * (spinProduct S x * boltzmannWeight G p x) from fun _ => by ring]
+      rw [← Finset.mul_sum]))
+  -- Rewrite the first sum: Σ σ^B f w = Σ_S ĉ_S numR(B△S)
+  have hnum1 : ∑ σ : Config ι,
+      (∑ S : Finset ι, ĉ S * spinProduct (symmDiff B S) σ) *
+      boltzmannWeight G p σ =
+    ∑ S : Finset ι, ĉ S * ∑ σ : Config ι,
+      spinProduct (symmDiff B S) σ * boltzmannWeight G p σ := by
+    simp_rw [Finset.sum_mul]; rw [Finset.sum_comm]
+    congr 1; ext S; simp_rw [mul_assoc]; rw [← Finset.mul_sum]
+  simp_rw [hprod]
+  rw [hnum1, eq2]
+  -- Now: 0 ≤ (Σ_S ĉ_S numR(B△S))(Σ w) - numR(B)(Σ_S ĉ_S numR(S))
+  -- Distribute the products into sums and combine
+  rw [Finset.sum_mul, Finset.mul_sum, ← Finset.sum_sub_distrib]
+  -- = Σ_S (ĉ_S numR(B△S)(Σ w) - numR(B)(ĉ_S numR(S)))
+  exact Finset.sum_nonneg (fun S _ => by convert hterm S using 1; ring)
 
 -- Note: The general statement "for arbitrary HNC f, g: covariance ≥ 0"
 -- is FALSE. Counterexample: Fourier coefficients with d̂_{B△S}d̂_∅ < d̂_B d̂_S.
@@ -295,14 +311,35 @@ private theorem correlation_reweighting_nonneg
   -- Fourier expand R = Σ_S ĉ_S σ^S (ĉ_S ≥ 0 by HNC)
   -- LHS = Σ_S ĉ_S · Z₁² · (corr₁(B△S) - corr₁(B)·corr₁(S)) ≥ 0
   -- Each factor: ĉ_S ≥ 0, Z₁² ≥ 0, corr₁(B△S) - corr₁(B)·corr₁(S) ≥ 0 by gks_second.
-  -- exp(E J₂ σ) = exp(E J₁ σ) · R(σ) where R = exp(β(J₂-J₁) Σ edgeSpin)
-  -- LHS = Σ_S ĉ_R(S) · [Z₁ · num₁(B△S) - num₁(B) · num₁(S)] ≥ 0
-  -- Each bracket = Z₁² (corr₁(B△S) - corr₁(B)·corr₁(S)) ≥ 0 by gks_second.
-  -- ĉ_R(S) = card⁻¹ Σ_σ σ^S R(σ) ≥ 0 by HNC of R.
-  -- Show exp(E J₂ σ) = R(σ) · exp(E J₁ σ), then apply cov_hnc_boltzmann_nonneg.
-  -- R(σ) = exp(β(J₂-J₁) Σ edgeSpin) has HNC by hasNonnegCorrelations_edge_site_product.
-  -- The exp splitting + algebraic connection to cov_hnc_boltzmann_nonneg is deferred.
-  sorry
+  -- Step 1: Hamiltonian splitting: exp(-β H_{J₂}) = R · exp(-β H_{J₁})
+  -- where R(σ) = ∏_e exp(β(J₂-J₁) edgeSpin(σ,e))
+  have hexp : ∀ σ, Real.exp (-β * hamiltonian G ⟨J₂, h, β⟩ σ) =
+      (∏ e ∈ G.edgeFinset, Real.exp (β * (J₂ - J₁) * edgeSpin (K := ℝ) σ e)) *
+      Real.exp (-β * hamiltonian G ⟨J₁, h, β⟩ σ) := by
+    intro σ
+    rw [← Real.exp_sum, ← Real.exp_add]
+    congr 1
+    unfold hamiltonian interactionEnergy externalFieldEnergy
+    simp only [← Finset.mul_sum]; ring
+  -- Step 2: R has non-negative correlations (HNC)
+  -- by hasNonnegCorrelations_edge_site_product with edgeK = β(J₂-J₁), siteK = 0
+  have hR : HasNonnegCorrelations (fun σ =>
+      ∏ e ∈ G.edgeFinset, Real.exp (β * (J₂ - J₁) * edgeSpin (K := ℝ) σ e)) := by
+    intro S
+    have hhnc := hasNonnegCorrelations_edge_site_product G
+      (fun _ => β * (J₂ - J₁)) (fun _ => 0)
+      (fun _ _ => mul_nonneg hβ.le (sub_nonneg.mpr hJ))
+      (fun _ => le_refl 0) S
+    simp only [zero_mul, Real.exp_zero, Finset.prod_const_one, mul_one] at hhnc
+    exact hhnc
+  -- Step 3: ⟨J₁, h, β⟩ is ferromagnetic
+  have hferm : Ferromagnetic (⟨J₁, h, β⟩ : IsingParams ℝ) := ⟨hJ₁, hh, hβ⟩
+  -- Step 4: Rewrite exp(-β H_{J₂}) → R · exp(-β H_{J₁}) and apply cov_hnc_boltzmann_nonneg
+  simp_rw [hexp]
+  -- Goal: 0 ≤ (Σ σ^B · (R · w₁))(Σ w₁) - (Σ σ^B · w₁)(Σ R · w₁)
+  -- Reassociate multiplication and unfold boltzmannWeight
+  simp only [← mul_assoc]
+  exact cov_hnc_boltzmann_nonneg G ⟨J₁, h, β⟩ hferm _ hR B
 
 /-- **Proposition 4.2.1** (Glimm–Jaffe, p. 58):
 The correlation function is monotone increasing in J on `[0, ∞)`.
