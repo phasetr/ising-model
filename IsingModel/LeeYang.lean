@@ -195,15 +195,15 @@ private lemma leeYangPoly_ratio_bound {m : ℕ}
       ext w; simp [Finset.sum_apply]
     rw [h]; exact Differentiable.sum (fun S _ =>
       (differentiable_const _).mul (diff_prod S))
-  let B := A.submatrix Fin.castSucc Fin.castSucc
+  set B := A.submatrix Fin.castSucc Fin.castSucc with hB_def
   -- α coefficient reparametrized to Fin m:
   -- p_α(T) = leeYangPoly B T * ∏_{j∉T} A(last)(castSucc j)
-  let p_α : MultilinPoly (Fin m) := fun T =>
-    leeYangPoly B T * ∏ j ∈ Finset.univ \ T, A (Fin.last m) (Fin.castSucc j)
+  set p_α : MultilinPoly (Fin m) := fun T =>
+    leeYangPoly B T * ∏ j ∈ Finset.univ \ T, A (Fin.last m) (Fin.castSucc j) with hp_α_def
   -- Both αfun and βfun are multilinear evals of w, hence differentiable
-  let αfun : (Fin m → ℂ) → ℂ := fun w => p_α.eval w
-  let βfun : (Fin m → ℂ) → ℂ := fun w =>
-    (leeYangPoly B).eval (fun i => A (Fin.castSucc i) (Fin.last m) * w i)
+  set αfun : (Fin m → ℂ) → ℂ := fun w => p_α.eval w with hαfun_def
+  set βfun : (Fin m → ℂ) → ℂ := fun w =>
+    (leeYangPoly B).eval (fun i => A (Fin.castSucc i) (Fin.last m) * w i) with hβfun_def
   have hα_diff : Differentiable ℂ αfun := diff_eval p_α
   -- βfun(w) = eval of (fun T => leeYangPoly B T) at (fun i => a_i * w_i)
   -- This is a composition of multilinear eval with a linear map, hence differentiable.
@@ -343,19 +343,14 @@ private lemma leeYangPoly_ratio_bound {m : ℕ}
           (Finset.prod_sdiff (Finset.subset_univ T)).symm, mul_assoc,
           mul_inv_cancel₀ (Finset.prod_ne_zero_iff.mpr (fun k _ =>
             norm_ne_zero_iff.mp (by rw [hv k]; exact one_ne_zero))), mul_one]
-      -- Unfold lets to expose the Finset structure
-      change p_α.eval v = (∏ k, v k) * starRingEnd ℂ
-        ((leeYangPoly B).eval (fun i => A (Fin.castSucc i) (Fin.last m) * v i))
-      -- Both sides are ∑_T over Finset(Fin m). Distribute conj, use Hermitian, reindex.
-      unfold MultilinPoly.eval
-      simp only [map_sum, map_mul, map_prod, Finset.mul_sum]
-      simp_rw [leeYangPoly_conj_eq_compl B (hA.submatrix Fin.castSucc)]
-      -- After the simp_rw [leeYangPoly_conj_eq_compl], the goal should have
-      -- c_{univ\T} on the LHS. Now distribute further and reindex.
-      -- Due to the complexity of Finset algebra with let-bindings,
-      -- we sorry the remaining steps of this purely algebraic identity.
-      -- All building blocks (hermitian_conj_entry, hprod_sdiff, map_mul,
-      -- Finset.prod_mul_distrib) are available.
+      -- Unfold set definitions and distribute conj
+      rw [hαfun_def, hβfun_def]; unfold MultilinPoly.eval
+      simp only [map_sum, map_mul, map_prod, Finset.mul_sum,
+        leeYangPoly_conj_eq_compl B (hA.submatrix Fin.castSucc)]
+      -- Now RHS has ∏ conj(a·v). Distribute: conj(a·v) = conj(a)·conj(v)
+      -- and conj(a) = A(last)(cs) by Hermitian
+      -- RHS has ∏ conj(a·v). Use Hermitian + distribute + reindex.
+      -- All steps: purely algebraic Finset manipulation.
       sorry
     -- Iterated max modulus: for Differentiable g with ‖g v‖ ≤ 1 on torus,
     -- one_var_max gives ‖g v‖ ≤ 1 for all v with ‖v_k‖ ≤ 1.
