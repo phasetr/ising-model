@@ -62,4 +62,22 @@ def HasNonnegCorrelationsM {Ω : Type*} [MeasurableSpace Ω]
     (μ : Measure Ω) (χ : Finset ι → Ω → ℝ) (f : Ω → ℝ) : Prop :=
   ∀ A : Finset ι, 0 ≤ ∫ ω, χ A ω * f ω ∂μ
 
+/-! ## Continuous spin expectations -/
+
+/-- The partition function for a continuous spin system with interaction `V`:
+`Z = ∫ exp(-V(ξ)) ∏_i dμ_i(ξ_i)`. -/
+noncomputable def cPartitionFunction (P : ι → ℝ → ℝ) (V : (ι → ℝ) → ℝ) : ℝ :=
+  ∫ ξ, Real.exp (-V ξ) ∂productSpinMeasure P
+
+/-- The expectation of an observable `F` in the continuous spin system:
+`⟨F⟩ = Z⁻¹ ∫ F(ξ) exp(-V(ξ)) ∏_i dμ_i`. -/
+noncomputable def cExpectation (P : ι → ℝ → ℝ) (V : (ι → ℝ) → ℝ)
+    (F : (ι → ℝ) → ℝ) : ℝ :=
+  (cPartitionFunction P V)⁻¹ * ∫ ξ, F ξ * Real.exp (-V ξ) ∂productSpinMeasure P
+
+/-- The correlation function `⟨ξ^A⟩ = ⟨∏_{i∈A} ξ_i⟩` in the continuous spin system. -/
+noncomputable def cCorrelation (P : ι → ℝ → ℝ) (V : (ι → ℝ) → ℝ)
+    (A : Finset ι) : ℝ :=
+  cExpectation P V (monomialChar A)
+
 end IsingModel.ContinuousSpin

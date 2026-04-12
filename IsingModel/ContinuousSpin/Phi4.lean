@@ -104,4 +104,40 @@ to show that all contributions are non-negative.
 
 This part requires integrability estimates and is deferred. -/
 
+/-! ## Theorem 4.3.1: HNC for the four-fold measure
+
+For a φ⁴ single-spin distribution with `λ > 0`, the four-fold expectation
+`⟨α^A β^B γ^C δ^D⟩₄ ≥ 0` where the subscript ₄ denotes the four-fold
+product measure.
+
+The proof uses the quartic identity to decompose `P⊗4` as an even function
+minus a ferromagnetic coupling `c·αβγδ`, then power-series expansion of
+`exp(c·αβγδ)` with even-function cancellation. This requires measure theory
+(integrability, Fubini, integral of odd function = 0) and is deferred. -/
+
+/-- **Theorem 4.3.1** (Glimm–Jaffe, p. 59): For a φ⁴ single-spin distribution
+`dμ = exp(-λξ⁴ - σξ²) dξ` with `λ > 0` and a ferromagnetic pair interaction
+`V(ξ) = -Σ J_{ij} ξ_i ξ_j - Σ h_i ξ_i` with `J_{ij}, h_i ≥ 0`,
+the four-fold duplicate expectation satisfies
+`⟨α^A β^B γ^C δ^D⟩ ≥ 0` for all `A, B, C, D`.
+
+This is the continuous-spin generalization of GKS-I to four-fold
+duplicate variables. -/
+axiom phi4_hnc {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (lam sig : ℝ) (hlam : 0 < lam)
+    (J : ι → ι → ℝ) (hJ : ∀ i j, 0 ≤ J i j)
+    (h : ι → ℝ) (hh : ∀ i, 0 ≤ h i)
+    (A B C D : Finset ι) :
+    0 ≤ cExpectation (fun _ => fun ξ => lam * ξ ^ 4 + sig * ξ ^ 2)
+      (fun ξ => -∑ i, ∑ j, J i j * ξ i * ξ j - ∑ i, h i * ξ i)
+      (fun ξ => monomialChar A (fun i => phi4Alpha (ξ i) (ξ i) (ξ i) (ξ i)) *
+                monomialChar B (fun i => phi4Beta (ξ i) (ξ i) (ξ i) (ξ i)) *
+                monomialChar C (fun i => phi4Gamma (ξ i) (ξ i) (ξ i) (ξ i)) *
+                monomialChar D (fun i => phi4Delta (ξ i) (ξ i) (ξ i) (ξ i)))
+
+-- Note: The axiom statement above is a placeholder. The correct formulation
+-- requires the four-fold product configuration space (ι → ℝ)⁴ with
+-- the four-fold product measure. This will be refined when the full
+-- measure-theoretic proof is developed.
+
 end IsingModel.ContinuousSpin
