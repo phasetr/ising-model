@@ -41,16 +41,20 @@ def monomialChar (A : Finset ι) (ξ : ι → ℝ) : ℝ :=
   ∏ i ∈ A, ξ i
 
 omit [Fintype ι] [DecidableEq ι] in
+/-- The monomial character of the empty set is `1`: `∏_{i ∈ ∅} ξ_i = 1`. -/
 @[simp]
 theorem monomialChar_empty (ξ : ι → ℝ) : monomialChar (∅ : Finset ι) ξ = 1 :=
   Finset.prod_empty
 
 omit [Fintype ι] [DecidableEq ι] in
+/-- The monomial character of a singleton is the variable itself: `∏_{i ∈ {j}} ξ_i = ξ_j`. -/
 theorem monomialChar_singleton (i : ι) (ξ : ι → ℝ) :
     monomialChar {i} ξ = ξ i := by
   simp [monomialChar]
 
 omit [Fintype ι] in
+/-- The monomial character is multiplicative over disjoint unions:
+`χ(A ∪ B) = χ(A) · χ(B)` when `A ∩ B = ∅`. -/
 theorem monomialChar_mul (A B : Finset ι) (hAB : Disjoint A B) (ξ : ι → ℝ) :
     monomialChar (A ∪ B) ξ = monomialChar A ξ * monomialChar B ξ :=
   Finset.prod_union hAB

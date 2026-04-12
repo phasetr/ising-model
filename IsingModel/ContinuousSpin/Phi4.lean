@@ -134,25 +134,10 @@ private theorem integral_nonneg_of_nonneg_ae (f : ℝ → ℝ)
     0 ≤ ∫ x, f x ∂volume :=
   integral_nonneg hf
 
-/-- **Single-site non-negativity** (core of Theorem 4.3.1):
-For even `Q` and `c ≥ 0`, the monomial integral against `exp(-Q + c·αβγδ)` is ≥ 0.
-
-Proof sketch:
-- `exp(-Q + c·αβγδ) = exp(-Q) · Σ_j (c·αβγδ)^j / j!`
-- Each term: `∫ α^{k+j} β^{l+j} γ^{m+j} δ^{n+j} exp(-Q)`
-- If any exponent is odd, the integral vanishes by `integral_odd_eq_zero`
-  (Q is even in that variable, so the integrand is odd).
-- If all exponents are even, the integrand is ≥ 0, so the integral is ≥ 0.
-- The sum has coefficients c^j/j! ≥ 0, so the total is ≥ 0.
-
-The full proof requires Fubini (nested integrals), integrability estimates
-(`integrableOn_rpow_mul_exp_neg_mul_rpow`), and `integral_tsum` (swap sum/integral).
-These are available in mathlib but the assembly is deferred. -/
--- Integrability condition: the integrand is dominated by a product of
--- 1D integrable functions. This is the technical core; mathematical
--- content is in the other building blocks.
--- For the specific Q arising from the φ⁴ potential (quartic + quadratic),
--- this follows from integrableOn_rpow_mul_exp_neg_mul_rpow.
+/-- **Axiom**: Integrability of polynomial × exp(-quartic) for nested integrals.
+For the specific Q arising from the φ⁴ potential, this follows from
+`integrableOn_rpow_mul_exp_neg_mul_rpow` (mathlib) via Fubini-Tonelli.
+Stated as axiom because the 4D nested assembly is not formalized. -/
 private axiom phi4_integrable
     (Q : ℝ → ℝ → ℝ → ℝ → ℝ)
     (c : ℝ) (k l m n : ℕ) :
