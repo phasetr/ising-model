@@ -414,8 +414,66 @@ private lemma leeYangPoly_ratio_bound {m : ℕ}
     -- one_var_max gives ‖g v‖ ≤ 1 for all v with ‖v_k‖ ≤ 1.
     -- We apply this to g = αfun/βfun in the strict case, then continuity.
     -- For now, sorry the combined argument (torus_bound is the key input).
-    show ‖αfun w‖ ≤ ‖βfun w‖
-    sorry
+    -- ‖αfun w‖ ≤ ‖βfun w‖ by approximation + iterated max modulus.
+    -- Scale last column by t < 1, then β_t ≠ 0 on closed polydisk.
+    -- Torus identity gives ‖α_t‖ = ‖β_t‖ on the torus.
+    -- Iterated max modulus via DiffContOnCl gives ‖α_t w‖ ≤ ‖β_t w‖.
+    -- Pass to the limit t → 1.
+    change ‖αfun w‖ ≤ ‖βfun w‖
+    -- p_α matches the torus_identity form with a = A(cs ·)(last)
+    have hp_α_conj : ∀ T, p_α T = leeYangPoly B T *
+        ∏ j ∈ Finset.univ \ T,
+          starRingEnd ℂ (A (Fin.castSucc j) (Fin.last m)) := by
+      intro T; simp only [hp_α_def]; congr 1
+      exact Finset.prod_congr rfl (fun j _ => (hermitian_conj_entry A hA _ _).symm)
+    -- Scaled versions parameterized by t
+    let a : Fin m → ℂ := fun k => A (Fin.castSucc k) (Fin.last m)
+    let αt : ℝ → (Fin m → ℂ) → ℂ := fun t v =>
+      MultilinPoly.eval (fun T => leeYangPoly B T *
+        ∏ j ∈ Finset.univ \ T, starRingEnd ℂ ((t : ℂ) * a j)) v
+    let βt : ℝ → (Fin m → ℂ) → ℂ := fun t v =>
+      (leeYangPoly B).eval (fun k => (t : ℂ) * a k * v k)
+    -- At t = 1: αt 1 = αfun, βt 1 = βfun (on w)
+    have hα1 : αt 1 w = αfun w := by
+      show MultilinPoly.eval _ w = p_α.eval w
+      unfold MultilinPoly.eval; congr 1; ext T
+      simp only [hp_α_conj, Complex.ofReal_one, one_mul]; rfl
+    have hβ1 : βt 1 w = βfun w := by
+      change (leeYangPoly B).eval _ = (leeYangPoly B).eval _
+      congr 1; ext k; show (↑(1 : ℝ) * a k) * w k = _
+      rw [Complex.ofReal_one, one_mul]
+    -- β_t ≠ 0 on the closed polydisk when |t| < 1
+    have hβt_ne : ∀ (t : ℝ), |t| < 1 → ∀ u : Fin m → ℂ,
+        (∀ j, ‖u j‖ ≤ 1) → βt t u ≠ 0 := by
+      intro t ht u hu
+      apply ih B (hA.submatrix Fin.castSucc) (fun i j => hbound _ _)
+      intro k; show ‖(↑t * a k) * u k‖ < 1
+      calc ‖(↑t * a k) * u k‖
+          = ‖(↑t : ℂ)‖ * ‖a k‖ * ‖u k‖ := by rw [norm_mul, norm_mul]
+        _ ≤ |t| * 1 * 1 := by
+            rw [Complex.norm_real]
+            exact mul_le_mul (mul_le_mul_of_nonneg_left (hbound _ _) (abs_nonneg t))
+              (hu k) (norm_nonneg _) (by positivity)
+        _ < 1 := by linarith
+    -- For 0 ≤ t < 1: ‖αt t w‖ ≤ ‖βt t w‖ via iterated max modulus
+    have hle_t : ∀ (t : ℝ), 0 ≤ t → t < 1 → ‖αt t w‖ ≤ ‖βt t w‖ := by
+      intro t ht0 ht1
+      -- Torus bound for t-scaled: on ‖v k‖ = 1, ‖αt t v‖ = ‖βt t v‖
+      have htorus : ∀ v : Fin m → ℂ, (∀ k, ‖v k‖ = 1) →
+          ‖αt t v‖ = ‖βt t v‖ := by
+        intro v hv
+        have hid := torus_identity B (hA.submatrix Fin.castSucc)
+          (fun k => (t : ℂ) * a k) v hv
+        rw [show (fun k => (↑t * a k) * v k) = (fun k => ↑t * a k * v k)
+          from by ext; ring] at hid
+        -- αt t v = MultilinPoly.eval (...) v = (∏ v_k) * conj(βt t v)
+        show ‖MultilinPoly.eval _ v‖ = ‖(leeYangPoly B).eval _‖
+        rw [hid, norm_mul, Complex.norm_prod]
+        simp only [hv, Finset.prod_const_one, one_mul, RCLike.norm_conj]
+      sorry -- TODO: iterated max modulus for ratio
+    -- Pass to the limit: the set {t | ‖αt t w‖ ≤ ‖βt t w‖} is closed and contains [0,1)
+    rw [← hα1, ← hβ1]
+    sorry -- TODO: continuity + closed set argument
 
 /-- **Harcos/Ruelle theorem**: For an `n × n` Hermitian matrix `A` with `|a_{ij}| ≤ 1`,
 the Lee-Yang polynomial `f_A` does not vanish on the open unit polydisk.
