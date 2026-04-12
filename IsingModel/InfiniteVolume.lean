@@ -177,17 +177,15 @@ theorem correlation_monotone_J (G : SimpleGraph ι) [Fintype G.edgeSet]
   simp only [hf_eq, Pi.div_apply]
   rw [div_le_div_iff₀ (hden_pos J₁) (hden_pos J₂)]
   -- Goal: num J₁ * den J₂ ≤ num J₂ * den J₁
-  -- Expand as double sums and use w₂(σ) = w₁(σ) · R(σ):
-  -- num J₂ * den J₁ - num J₁ * den J₂
-  -- = Σ_σ Σ_τ σ^B w₁(σ) w₁(τ) [R(σ) - R(τ)]
-  -- where R(σ) = exp(β(J₂-J₁) Σ edgeSpin) has HNC.
-  -- The Fourier expansion R = Σ_S ĉ_S σ^S (ĉ_S ≥ 0 by HNC) gives:
-  -- = Σ_S ĉ_S · duplicateSum(⟨J₁,h,β⟩, B, S) ≥ 0
+  -- Use the reweighting R(σ) = exp(β(J₂-J₁) Σ edgeSpin) which has HNC,
+  -- and the Walsh/Fourier expansion R = Σ_S ĉ_S σ^S (ĉ_S ≥ 0 by HNC).
+  -- Then num J₂ * den J₁ - num J₁ * den J₂
+  --   = Σ_S ĉ_S · duplicateSum(⟨J₁,h,β⟩, B, S) ≥ 0
   -- by duplicateSum_nonneg.
-  -- Building blocks: duplicateSum_nonneg, hasNonnegCorrelations_edge_site_product.
-  -- The Fourier expansion on {±1}^n and the algebraic rearrangement
-  -- to duplicateSum are not yet formalized.
-  sorry
+  -- Walsh orthogonality (walsh_orthogonality, walsh_normalization) proved.
+  -- The Fourier inversion identity and the algebraic connection
+  -- to duplicateSum are the remaining formalization work.
+  linarith [show 0 ≤ num J₂ * den J₁ - num J₁ * den J₂ from by sorry]
 
 /-! ## Infinite volume convergence (Theorem 4.2.3)
 
