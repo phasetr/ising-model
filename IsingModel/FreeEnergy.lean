@@ -177,6 +177,118 @@ theorem freeEnergy_monotone_h
   exact Real.log_le_log (partitionFunction_pos G ⟨J, h₁, β⟩)
     (partitionFunction_monotone_h G J β hJ hβ h₁ h₂ (Set.mem_Ici.mp hh₁) hh)
 
+/-! ## Partition function and free energy monotonicity in J
+
+The same technique as h-monotonicity: reweight by
+`R(σ) = exp(β(J₂-J₁) Σ_e edgeSpin(σ,e))`, use `exp(x) ≥ 1+x`,
+and apply GKS-I (`⟨σ_iσ_j⟩ ≥ 0`) for each edge. -/
+
+/-- The reweighting identity for the partition function in `J`:
+`Z(J₂) = Σ_σ R(σ) · w₁(σ)` where `R = exp(β(J₂-J₁) Σ edgeSpin)`. -/
+private theorem partitionFunction_reweight_J
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (h β : ℝ) (J₁ J₂ : ℝ) :
+    partitionFunction G ⟨J₂, h, β⟩ =
+    ∑ σ : Config ι,
+      (∏ e ∈ G.edgeFinset, Real.exp (β * (J₂ - J₁) * edgeSpin (K := ℝ) σ e)) *
+      boltzmannWeight G ⟨J₁, h, β⟩ σ := by
+  unfold partitionFunction boltzmannWeight
+  congr 1; ext σ
+  rw [← Real.exp_sum, ← Real.exp_add]
+  congr 1
+  unfold hamiltonian interactionEnergy externalFieldEnergy
+  simp only [← Finset.mul_sum]; ring
+
+/-- The partition function is monotone increasing in `J` on `[0, ∞)`.
+
+For `0 ≤ J₁ ≤ J₂`, `h ≥ 0`, `β > 0`:
+`Z(J₁, h, β) ≤ Z(J₂, h, β)`.
+
+Proof: same as h-monotonicity. `R(σ) = exp(β(J₂-J₁) Σ edgeSpin)`,
+`exp(x) ≥ 1+x` gives `R ≥ 1 + β(J₂-J₁) Σ_e edgeSpin_e(σ)`,
+and GKS-I gives `⟨edgeSpin_e⟩ = ⟨σ_iσ_j⟩ ≥ 0`. -/
+theorem partitionFunction_monotone_J
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (h β : ℝ) (hh : 0 ≤ h) (hβ : 0 < β) (J₁ J₂ : ℝ)
+    (hJ₁ : 0 ≤ J₁) (hJ : J₁ ≤ J₂) :
+    partitionFunction G ⟨J₁, h, β⟩ ≤ partitionFunction G ⟨J₂, h, β⟩ := by
+  let K := β * (J₂ - J₁)
+  have hferm : Ferromagnetic (⟨J₁, h, β⟩ : IsingParams ℝ) := ⟨hJ₁, hh, hβ⟩
+  rw [partitionFunction_reweight_J G h β J₁ J₂]
+  -- R(σ) = ∏ exp(K edgeSpin) = exp(K Σ edgeSpin) ≥ 1 + K Σ edgeSpin
+  have hRexp : ∀ σ : Config ι,
+      (∏ e ∈ G.edgeFinset, Real.exp (K * edgeSpin (K := ℝ) σ e)) =
+      Real.exp (∑ e ∈ G.edgeFinset, K * edgeSpin (K := ℝ) σ e) := fun σ => by
+    rw [← Real.exp_sum]
+  have hexp_lb : ∀ σ : Config ι,
+      1 + K * ∑ e ∈ G.edgeFinset, edgeSpin (K := ℝ) σ e ≤
+        (∏ e ∈ G.edgeFinset, Real.exp (K * edgeSpin (K := ℝ) σ e)) := by
+    intro σ; rw [hRexp, ← Finset.mul_sum]
+    linarith [Real.add_one_le_exp (K * ∑ e ∈ G.edgeFinset, edgeSpin (K := ℝ) σ e)]
+  -- Σ R w₁ ≥ Σ (1 + K Σ edgeSpin) w₁
+  have hsum_lb : ∑ σ : Config ι,
+      (1 + K * ∑ e ∈ G.edgeFinset, edgeSpin (K := ℝ) σ e) *
+      boltzmannWeight G ⟨J₁, h, β⟩ σ ≤
+    ∑ σ : Config ι,
+      (∏ e ∈ G.edgeFinset, Real.exp (K * edgeSpin (K := ℝ) σ e)) *
+      boltzmannWeight G ⟨J₁, h, β⟩ σ := by
+    apply Finset.sum_le_sum; intro σ _
+    exact mul_le_mul_of_nonneg_right (hexp_lb σ) (boltzmannWeight_pos G _ σ).le
+  -- Σ (1 + K Σ edgeSpin) w₁ = Z₁ + K Σ_e num_e
+  have hexpand : ∑ σ : Config ι,
+      (1 + K * ∑ e ∈ G.edgeFinset, edgeSpin (K := ℝ) σ e) *
+      boltzmannWeight G ⟨J₁, h, β⟩ σ =
+    partitionFunction G ⟨J₁, h, β⟩ +
+    K * ∑ e ∈ G.edgeFinset, ∑ σ : Config ι,
+      edgeSpin (K := ℝ) σ e * boltzmannWeight G ⟨J₁, h, β⟩ σ := by
+    unfold partitionFunction
+    simp_rw [add_mul, one_mul, Finset.sum_add_distrib]
+    congr 1
+    simp_rw [Finset.mul_sum, Finset.sum_mul]
+    rw [Finset.sum_comm]
+    apply Finset.sum_congr rfl; intro e _
+    apply Finset.sum_congr rfl; intro σ _; ring
+  -- Each num_e = Σ edgeSpin_e w₁ ≥ 0 by GKS-I (⟨σ_iσ_j⟩ ≥ 0)
+  have hnum_nonneg : ∀ e ∈ G.edgeFinset,
+      0 ≤ ∑ σ : Config ι,
+        edgeSpin (K := ℝ) σ e * boltzmannWeight G ⟨J₁, h, β⟩ σ := by
+    intro e he
+    -- Extract endpoints: e = ⟦(i, j)⟧ with i ≠ j
+    obtain ⟨⟨i, j⟩, rfl⟩ := Quot.exists_rep e
+    have hij : i ≠ j := by
+      intro h; subst h
+      exact (SimpleGraph.mem_edgeFinset.mp he).ne rfl
+    -- edgeSpin σ ⟦(i,j)⟧ = sign(σ i) * sign(σ j) = spinProduct {i,j} σ
+    have hedge : ∀ σ : Config ι, edgeSpin (K := ℝ) σ (Quot.mk _ (i, j)) =
+        spinProduct {i, j} σ := by
+      intro σ; simp [edgeSpin, Sym2.lift, spinProduct, Finset.prod_pair hij, Spin.sign]
+    simp_rw [hedge]
+    exact (boltzmannWeight_hasNonnegCorrelations G ⟨J₁, h, β⟩ hferm) {i, j}
+  -- Combine: Z₁ + K · (non-negative) ≥ Z₁
+  calc partitionFunction G ⟨J₁, h, β⟩
+      ≤ partitionFunction G ⟨J₁, h, β⟩ +
+        K * ∑ e ∈ G.edgeFinset, ∑ σ : Config ι,
+          edgeSpin (K := ℝ) σ e * boltzmannWeight G ⟨J₁, h, β⟩ σ :=
+        le_add_of_nonneg_right (mul_nonneg (mul_nonneg hβ.le (sub_nonneg.mpr hJ))
+          (Finset.sum_nonneg (fun e he => hnum_nonneg e he)))
+    _ = ∑ σ : Config ι,
+        (1 + K * ∑ e ∈ G.edgeFinset, edgeSpin (K := ℝ) σ e) *
+        boltzmannWeight G ⟨J₁, h, β⟩ σ := hexpand.symm
+    _ ≤ _ := hsum_lb
+
+/-- The free energy is monotone increasing in `J` on `[0, ∞)`.
+Since `Z(J₂) ≥ Z(J₁) > 0`, `ln Z(J₂) ≥ ln Z(J₁)`,
+hence `f(J₂) ≥ f(J₁)`. -/
+theorem freeEnergy_monotone_J
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (h β : ℝ) (hh : 0 ≤ h) (hβ : 0 < β) :
+    MonotoneOn (freeEnergyJ G h β) (Set.Ici 0) := by
+  intro J₁ hJ₁ J₂ _ hJ
+  unfold freeEnergyJ freeEnergy
+  apply mul_le_mul_of_nonneg_left _ (inv_nonneg.mpr (Nat.cast_nonneg _))
+  exact Real.log_le_log (partitionFunction_pos G ⟨J₁, h, β⟩)
+    (partitionFunction_monotone_J G h β hh hβ J₁ J₂ (Set.mem_Ici.mp hJ₁) hJ)
+
 /-! ## Analyticity of the partition polynomial (Theorem 4.6.2, finite volume)
 
 The Lee-Yang circle theorem (`lee_yang_circle`) shows that the Ising
