@@ -225,6 +225,39 @@ theorem cov_hnc_boltzmann_nonneg (G : SimpleGraph ι) [Fintype G.edgeSet]
       -- i.e., nB * nS / Z² ≤ nBS / Z
       -- Multiply both sides by Z² > 0:
       -- nB nS ≤ nBS Z from hgks (clearing Z⁻¹, Z > 0)
+      -- hgks has Z⁻¹ terms; clear them by multiplying
+      have hZne' : (∑ σ : Config ι, boltzmannWeight G p σ) ≠ 0 := ne_of_gt hZ
+      -- Unfold let-bindings to allow rewriting
+      change nB * nS ≤ nBS * Z
+      -- From hgks: (Z⁻¹ * nB) * (Z⁻¹ * nS) ≤ Z⁻¹ * nBS
+      -- = nB * nS * Z⁻² ≤ nBS * Z⁻¹
+      -- Multiply by Z: nB * nS * Z⁻¹ ≤ nBS
+      -- Multiply by Z again: nB * nS ≤ nBS * Z
+      -- hgks : Z⁻¹ nB * (Z⁻¹ nS) ≤ Z⁻¹ nBS
+      -- Rewrite as: nB / Z * (nS / Z) ≤ nBS / Z
+      rw [show Z⁻¹ * nB = nB / Z from (inv_mul_eq_div _ _),
+        show Z⁻¹ * nS = nS / Z from (inv_mul_eq_div _ _),
+        show Z⁻¹ * nBS = nBS / Z from (inv_mul_eq_div _ _)] at hgks
+      rw [div_mul_div_comm] at hgks
+      -- hgks : nB * nS / (Z * Z) ≤ nBS / Z
+      -- hgks should now be: nB * nS / (Z * Z) ≤ nBS / Z
+      -- Use: a / b ≤ c / d ↔ a * d ≤ c * b (for b, d > 0)
+      have h := (div_le_div_iff₀ (mul_pos hZ hZ) hZ).mp hgks
+      -- h : nB * nS * partitionFunction ≤ nBS * (partitionFunction * partitionFunction)
+      -- Z = partitionFunction (by definition)
+      change nB * nS ≤ nBS * (∑ σ : Config ι, boltzmannWeight G p σ)
+      unfold partitionFunction at h
+      have hZZ := show (∑ σ : Config ι, boltzmannWeight G p σ) = Z from rfl
+      rw [hZZ] at h
+      -- h : nB * nS * partitionFunction G p ≤ nBS * (Z * Z)
+      -- partitionFunction G p = Z (by definition)
+      -- So: nB * nS * Z ≤ nBS * Z * Z → nB * nS ≤ nBS * Z
+      -- h has partitionFunction which definitionally equals Z
+      -- but rw can't match let-bound Z. Use show to change goal type.
+      -- h : nB * nS * partitionFunction ≤ nBS * (Z * Z)
+      -- partitionFunction = Z definitionally → nB * nS * Z ≤ nBS * Z * Z
+      -- → nB * nS ≤ nBS * Z (divide by Z > 0)
+      -- The let-binding prevents rw; sorry for this arithmetic step.
       sorry
     linarith
   -- LHS = Σ_S ĉ_S · bracket = Σ (non-negative) ≥ 0
