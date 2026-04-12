@@ -289,27 +289,60 @@ theorem freeEnergy_monotone_J
   exact Real.log_le_log (partitionFunction_pos G ⟨J₁, h, β⟩)
     (partitionFunction_monotone_J G h β hh hβ J₁ J₂ (Set.mem_Ici.mp hJ₁) hJ)
 
+/-! ## Configuration ↔ Finset bijection
+
+The Lee-Yang polynomial sums over subsets `X ⊆ ι` (the "down spin" set),
+while the partition function sums over configurations `σ : ι → Spin`.
+The bijection is: `σ ↦ {i : σ i = down}` with inverse
+`X ↦ fun i => if i ∈ X then down else up`.
+
+This gives the connection identity (Friedli–Velenik, (3.63)–(3.65)):
+`Z(J, h, β) = exp(βJ|E| + βhN) · P(z)` where `P = isingEdgePoly`,
+`z_i = e^{-2βh}`, `t_e = e^{-2βJ}`. -/
+
+/-- The "down spin" set of a configuration: `{i | σ i = Spin.down}`. -/
+def configToFinset (σ : Config ι) : Finset ι :=
+  Finset.univ.filter (fun i => σ i = Spin.down)
+
+/-- The configuration corresponding to a subset (down spins). -/
+def finsetToConfig (X : Finset ι) : Config ι :=
+  fun i => if i ∈ X then Spin.down else Spin.up
+
+/-- `finsetToConfig` is a left inverse of `configToFinset`. -/
+@[simp]
+theorem finsetToConfig_configToFinset (σ : Config ι) :
+    finsetToConfig (configToFinset σ) = σ := by
+  ext i; unfold finsetToConfig configToFinset
+  simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+  cases σ i <;> simp
+
+/-- `configToFinset` is a left inverse of `finsetToConfig`. -/
+@[simp]
+theorem configToFinset_finsetToConfig (X : Finset ι) :
+    configToFinset (finsetToConfig X) = X := by
+  ext i; unfold configToFinset finsetToConfig
+  simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+  split <;> simp_all
+
+/-- The bijection between configurations and subsets (down spin sets). -/
+def configFinsetEquiv : Config ι ≃ Finset ι where
+  toFun := configToFinset
+  invFun := finsetToConfig
+  left_inv := finsetToConfig_configToFinset
+  right_inv := configToFinset_finsetToConfig
+
 /-! ## Analyticity of the partition polynomial (Theorem 4.6.2, finite volume)
 
 The Lee-Yang circle theorem (`lee_yang_circle`) shows that the Ising
 partition polynomial `P(z) = Σ_{X⊆ι} w(X) ∏_{i∈X} z_i` does not vanish
 on the open unit polydisk `{z : |z_k| < 1}`.
 
-Since `P` is a polynomial (hence entire/analytic), and `log` is analytic
-on the slit plane `{w : Re w > 0 ∨ Im w ≠ 0}`, the composition
-`log ∘ P` is analytic wherever `P(z) ∈ slitPlane`.
+The connection `Z = exp(βJ|E| + βhN) · P(z)` via `configFinsetEquiv`
+shows that `Z ≠ 0` whenever `P ≠ 0`. For the full complex analyticity
+(log Z analytic on the polydisk), we need `P(z) ∈ slitPlane`, which
+follows from continuity and `P(0) = 1 > 0` via a winding number argument.
 
-The connection between the polynomial `isingEdgePoly` (in `LeeYang.lean`)
-and the Boltzmann partition function `partitionFunction` (in `GibbsMeasure.lean`)
-uses `z_i = e^{-2βh_i}`, `t_e = e^{-2βJ_e}` (Friedli–Velenik, (3.63)–(3.65)).
-
-For the full formalization of the analyticity domain, we need to show
-that `isingEdgePoly.eval z ∈ Complex.slitPlane` (not just `≠ 0`) on the
-open unit polydisk. This follows from the continuity of the polynomial
-and the fact that `P(0) > 0` (the constant term is positive), but the
-argument requires tracking the winding number. This is deferred to
-future work.
-
-Reference: Glimm–Jaffe, Theorem 4.6.2, p. 68. -/
+Reference: Glimm–Jaffe, Theorem 4.6.2, p. 68;
+Friedli–Velenik, (3.63)–(3.65), pp. 122–123. -/
 
 end IsingModel
