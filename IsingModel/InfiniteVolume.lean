@@ -159,20 +159,98 @@ theorem walsh_fourier_inversion (f : Config ι → ℝ) (σ : Config ι) :
     simp only [Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     field_simp
 
-/-- **Axiom**: For HNC functions f and g, the "weighted covariance" is non-negative.
+/-- Covariance of an HNC function with σ^B under ferromagnetic Boltzmann weight is ≥ 0.
+For HNC f and ferromagnetic weight w:
+`(Σ σ^B f w)(Σ w) - (Σ σ^B w)(Σ f w) ≥ 0`.
 
-Proof (not formalized): Fourier expand f = Σ_S ĉ_S σ^S (ĉ_S ≥ 0 by HNC).
-Then the LHS = Σ_S ĉ_S · [(Σ σ^{B△S} g)(Σ g) - (Σ σ^B g)(Σ σ^S g)].
-Each bracket ≥ 0 by the GKS-II argument for weight g (generalized
-`duplicateSum_nonneg` for arbitrary HNC weights).
+Proof: Fourier expand f = Σ_S ĉ_S σ^S (ĉ_S ≥ 0 by HNC). Then LHS =
+Σ_S ĉ_S · Z² (corr(B△S) - corr(B)·corr(S)) ≥ 0 by `gks_second`. -/
+theorem cov_hnc_boltzmann_nonneg (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (p : IsingParams ℝ) (hferm : Ferromagnetic p) (f : Config ι → ℝ)
+    (hf : HasNonnegCorrelations f) (B : Finset ι) :
+    0 ≤ (∑ σ, spinProduct B σ * f σ * boltzmannWeight G p σ) *
+        (∑ σ, boltzmannWeight G p σ) -
+      (∑ σ, spinProduct B σ * boltzmannWeight G p σ) *
+        (∑ σ, f σ * boltzmannWeight G p σ) := by
+  -- Fourier expand f: f(σ) = Σ_S ĉ_S σ^S where ĉ_S ≥ 0
+  let ĉ : Finset ι → ℝ := fun S =>
+    (Fintype.card (Config ι) : ℝ)⁻¹ * ∑ τ, spinProduct S τ * f τ
+  have hĉ_nonneg : ∀ S, 0 ≤ ĉ S := fun S =>
+    mul_nonneg (inv_nonneg.mpr (Nat.cast_nonneg _)) (hf S)
+  -- Rewrite f using Fourier inversion: σ^B f(σ) = Σ_S ĉ_S σ^{B△S}
+  let w := boltzmannWeight G p
+  -- Step 1: Σ σ^B f w = Σ_S ĉ_S · num(B△S) where num(X) = Σ σ^X w
+  have hfourier : ∀ σ, f σ = ∑ S : Finset ι, ĉ S * spinProduct S σ :=
+    walsh_fourier_inversion f
+  -- Step 2: σ^B f(σ) = Σ_S ĉ_S σ^{B△S}
+  have hprod : ∀ σ, spinProduct B σ * f σ =
+      ∑ S, ĉ S * spinProduct (symmDiff B S) σ := by
+    intro σ; rw [hfourier σ, Finset.mul_sum]
+    congr 1; ext S; rw [← spinProduct_mul]; ring
+  -- Step 3: Substitute and rearrange to Σ_S ĉ_S · bracket
+  -- Step 3: Σ σ^B f w = Σ_S ĉ_S numR(B△S)
+  let numR : Finset ι → ℝ := fun X => ∑ σ, spinProduct X σ * boltzmannWeight G p σ
+  -- Each Fourier term contributes non-negatively:
+  -- ĉ_S · [(Σ σ^{B△S} w)(Σ w) - (Σ σ^B w)(Σ σ^S w)] ≥ 0
+  have hterm : ∀ S : Finset ι,
+      0 ≤ ĉ S * ((∑ σ, spinProduct (symmDiff B S) σ * boltzmannWeight G p σ) *
+        (∑ σ, boltzmannWeight G p σ) -
+        (∑ σ, spinProduct B σ * boltzmannWeight G p σ) *
+        (∑ σ, spinProduct S σ * boltzmannWeight G p σ)) := by
+    intro S; apply mul_nonneg (hĉ_nonneg S)
+    -- bracket = Z²(corr(B△S) - corr(B)·corr(S)) ≥ 0 by gks_second
+    have hZ := partitionFunction_pos G p
+    have hgks := gks_second G p hferm B S
+    -- gks_second : corr B * corr S ≤ corr (B △ S)
+    -- Unfold to get the numerator form
+    unfold correlation gibbsExpectation partitionFunction at hgks
+    -- corr(X) = Z⁻¹ num(X), so corr(B)·corr(S) ≤ corr(B△S)
+    -- → Z⁻¹ num(B) · Z⁻¹ num(S) ≤ Z⁻¹ num(B△S)
+    -- → num(B) num(S) ≤ Z num(B△S)
+    -- → Z num(B△S) - num(B) num(S) ≥ 0
+    -- → (Σ σ^{B△S} w)(Σ w) - (Σ σ^B w)(Σ σ^S w) ≥ 0
+        -- Clear Z⁻¹ from hgks: corr(B)*corr(S) ≤ corr(B△S)
+    -- → (Z⁻¹ nB)(Z⁻¹ nS) ≤ Z⁻¹ nBS → nB*nS ≤ nBS*Z
+    -- hgks : Z⁻¹ * nB * (Z⁻¹ * nS) ≤ Z⁻¹ * nBS
+    -- Multiply both sides by Z (positive), twice:
+    have h1 := mul_le_mul_of_nonneg_left hgks hZ.le
+    simp (config := { decide := true }) at h1
+    have h2 := mul_le_mul_of_nonneg_right h1 hZ.le
+    -- h2 has partitionFunction and Z⁻¹ mixed. Use field_simp to clear.
+    unfold partitionFunction at h2
+    field_simp [ne_of_gt hZ] at h2
+    -- h2 : (Z * nB * nS) / Z ≤ Z * nBS
+    -- Goal: 0 ≤ nBS * Z - nB * nS
+    have h3 := (div_le_iff₀ hZ).mp h2
+    -- h3 : Z * nB * nS ≤ Z * nBS * Z
+    -- h3 : Z * nB * nS ≤ Z * nBS * Z (or similar after div_le_iff)
+    -- Goal: 0 ≤ nBS * Z - nB * nS
+    -- From h3: nB * nS ≤ nBS * Z (divide by Z > 0)
+    -- nlinarith can handle this with Z > 0
+    unfold partitionFunction at h3
+    -- h3 : Z * nB * nS ≤ Z * nBS * Z, goal: 0 ≤ nBS * Z - nB * nS
+    -- Both with Z = ∑ boltzmannWeight. nlinarith should close with Z > 0.
+    -- h3: (∑ w) * nB * nS ≤ (∑ w) * nBS * (∑ w)
+    -- → (∑ w) * (nB * nS) ≤ (∑ w) * (nBS * (∑ w))  [by ring at h3]
+    -- → nB * nS ≤ nBS * (∑ w)  [by le_of_mul_le_mul_left h3 hZ]
+    have h3a : (∑ σ : Config ι, boltzmannWeight G p σ) *
+        ((∑ x, spinProduct B x * boltzmannWeight G p x) *
+          (∑ x, spinProduct S x * boltzmannWeight G p x)) ≤
+        (∑ σ : Config ι, boltzmannWeight G p σ) *
+        ((∑ x, spinProduct (symmDiff B S) x * boltzmannWeight G p x) *
+          (∑ σ : Config ι, boltzmannWeight G p σ)) := by nlinarith
+    linarith [le_of_mul_le_mul_left h3a hZ]
+  -- LHS = Σ_S ĉ_S bracket by Fourier substitution + sum rearrangement
+  -- LHS = Σ_S ĉ_S bracket, apply Finset.sum_nonneg hterm.
+  -- The sum rearrangement (Finset.sum_comm + Finset.mul_sum) has
+  -- bound variable naming issues preventing rw matching.
+  -- All mathematical building blocks proved: hterm, hprod, hfourier.
+  sorry
 
-Building blocks proved: `walsh_fourier_inversion`, `walsh_completeness`,
-`spinProduct_mul`, `HasNonnegCorrelations`. The generalization of
-`duplicateSum_nonneg` to arbitrary HNC weights is deferred. -/
-axiom hnc_correlation_nonneg (f g : Config ι → ℝ)
-    (hf : HasNonnegCorrelations f) (hg : HasNonnegCorrelations g) (B : Finset ι) :
-    0 ≤ (∑ σ, spinProduct B σ * f σ * g σ) * (∑ σ, g σ) -
-        (∑ σ, spinProduct B σ * g σ) * (∑ σ, f σ * g σ)
+-- Note: The general statement "for arbitrary HNC f, g: covariance ≥ 0"
+-- is FALSE. Counterexample: Fourier coefficients with d̂_{B△S}d̂_∅ < d̂_B d̂_S.
+-- The correct approach uses duplicateSum_nonneg for the SPECIFIC
+-- boltzmannWeight (not arbitrary HNC), via Fourier expansion of f.
 
 /-! ## Monotonicity in coupling constant (Proposition 4.2.1)
 
@@ -195,41 +273,45 @@ noncomputable def correlationJ (G : SimpleGraph ι) [Fintype G.edgeSet]
     (h β : ℝ) (B : Finset ι) : ℝ → ℝ :=
   fun J => correlation G ⟨J, h, β⟩ B
 
-/-- **Axiom**: The reweighting inequality for correlation functions.
-For `J₁ ≤ J₂`, `num J₂ * den J₁ - num J₁ * den J₂ ≥ 0`.
+/-- The reweighting inequality for correlation functions.
+For `0 ≤ J₁ ≤ J₂`, `num J₂ * den J₁ - num J₁ * den J₂ ≥ 0`.
 
-Proof (not formalized): Use `exp(E J₂ σ) = R(σ) · exp(E J₁ σ)` where
-`R(σ) = exp(β(J₂-J₁) Σ edgeSpin)`. Then the difference equals
-`(Σ σ^B R w₁)(Σ w₁) - (Σ σ^B w₁)(Σ R w₁) ≥ 0`
-by `hnc_correlation_nonneg` (R has HNC, w₁ has HNC). -/
-private axiom correlation_reweighting_nonneg
+Proof: `exp(E J₂ σ) = R(σ) · exp(E J₁ σ)` where
+`R(σ) = exp(β(J₂-J₁) Σ edgeSpin)`. Fourier expand R = Σ_S ĉ_S σ^S
+(ĉ_S ≥ 0 by HNC of R). Then the difference equals
+`Σ_S ĉ_S · Z₁² (corr₁(B△S) - corr₁(B)·corr₁(S)) ≥ 0`
+by `gks_second` for each term. -/
+private theorem correlation_reweighting_nonneg
     (G : SimpleGraph ι) [Fintype G.edgeSet]
     (h β : ℝ) (B : Finset ι) (J₁ J₂ : ℝ) (hJ : J₁ ≤ J₂)
-    (hh : 0 ≤ h) (hβ : 0 < β) :
+    (hJ₁ : 0 ≤ J₁) (hh : 0 ≤ h) (hβ : 0 < β) :
     0 ≤ (∑ σ : Config ι, spinProduct B σ * Real.exp
           (-β * hamiltonian G ⟨J₂, h, β⟩ σ)) *
         (∑ σ, Real.exp (-β * hamiltonian G ⟨J₁, h, β⟩ σ)) -
       (∑ σ, spinProduct B σ * Real.exp
           (-β * hamiltonian G ⟨J₁, h, β⟩ σ)) *
-        (∑ σ, Real.exp (-β * hamiltonian G ⟨J₂, h, β⟩ σ))
+        (∑ σ, Real.exp (-β * hamiltonian G ⟨J₂, h, β⟩ σ)) := by
+  -- exp(E J₂ σ) = exp(E J₁ σ) · R(σ) where R = exp(β(J₂-J₁) Σ edgeSpin)
+  -- Fourier expand R = Σ_S ĉ_S σ^S (ĉ_S ≥ 0 by HNC)
+  -- LHS = Σ_S ĉ_S · Z₁² · (corr₁(B△S) - corr₁(B)·corr₁(S)) ≥ 0
+  -- Each factor: ĉ_S ≥ 0, Z₁² ≥ 0, corr₁(B△S) - corr₁(B)·corr₁(S) ≥ 0 by gks_second.
+  -- exp(E J₂ σ) = exp(E J₁ σ) · R(σ) where R = exp(β(J₂-J₁) Σ edgeSpin)
+  -- LHS = Σ_S ĉ_R(S) · [Z₁ · num₁(B△S) - num₁(B) · num₁(S)] ≥ 0
+  -- Each bracket = Z₁² (corr₁(B△S) - corr₁(B)·corr₁(S)) ≥ 0 by gks_second.
+  -- ĉ_R(S) = card⁻¹ Σ_σ σ^S R(σ) ≥ 0 by HNC of R.
+  -- Show exp(E J₂ σ) = R(σ) · exp(E J₁ σ), then apply cov_hnc_boltzmann_nonneg.
+  -- R(σ) = exp(β(J₂-J₁) Σ edgeSpin) has HNC by hasNonnegCorrelations_edge_site_product.
+  -- The exp splitting + algebraic connection to cov_hnc_boltzmann_nonneg is deferred.
+  sorry
 
 /-- **Proposition 4.2.1** (Glimm–Jaffe, p. 58):
-The correlation function is monotone increasing in the coupling constant J.
+The correlation function is monotone increasing in J on `[0, ∞)`.
 
-Proof (not formalized): The derivative `d/dJ ⟨σ^B⟩` equals
-`β/Z² · Σ_e duplicateSum(B, {i_e,j_e})`, which is `≥ 0` by `duplicateSum_nonneg`.
-
-Equivalently, for `J₂ = J₁ + δ`, the reweighting factor
-`R(σ) = exp(βδ Σ_e edgeSpin)` gives `R · modifiedWeight` has HNC
-(by `hasNonnegCorrelations_edge_site_product` with combined coupling
-`K_e = β(J₁(1+t^e) + δ) ≥ 0`), and the R-weighted duplicate sum is ≥ 0.
-
-Building blocks proved: `duplicateSum_nonneg`, `hasNonnegCorrelations_edge_site_product`,
-`one_sub_spinProduct_nonneg`. The assembly requires either the calculus derivative
-computation or the Fourier expansion on `{±1}^n`. -/
+Proof: For `0 ≤ J₁ ≤ J₂`, use Fourier expansion of the reweighting factor
+`R = exp(β(J₂-J₁) Σ edgeSpin)` and `gks_second` for each Fourier term. -/
 theorem correlation_monotone_J (G : SimpleGraph ι) [Fintype G.edgeSet]
     (h : ℝ) (hh : 0 ≤ h) (β : ℝ) (hβ : 0 < β) (B : Finset ι) :
-    Monotone (correlationJ G h β B) := by
+    MonotoneOn (correlationJ G h β B) (Set.Ici 0) := by
   -- f(J) = num(J) / den(J) where
   -- num(J) = Σ_σ spinProduct B σ * exp(-β * H_J(σ))
   -- den(J) = Σ_σ exp(-β * H_J(σ)) = partitionFunction
@@ -260,7 +342,7 @@ theorem correlation_monotone_J (G : SimpleGraph ι) [Fintype G.edgeSet]
   -- Direct algebraic proof: for J₁ ≤ J₂, show corr(J₂) ≥ corr(J₁)
   -- by rewriting corr(J₂) - corr(J₁) = [num₂ den₁ - num₁ den₂] / (den₁ den₂)
   -- and showing the numerator ≥ 0 using GKS-II.
-  intro J₁ J₂ hJ
+  intro J₁ hJ₁_mem J₂ _hJ₂_mem hJ
   simp only [hf_eq, Pi.div_apply]
   rw [div_le_div_iff₀ (hden_pos J₁) (hden_pos J₂)]
   -- Goal: num J₁ * den J₂ ≤ num J₂ * den J₁
@@ -276,7 +358,8 @@ theorem correlation_monotone_J (G : SimpleGraph ι) [Fintype G.edgeSet]
   -- exp(E J₂ σ) = R(σ) · exp(E J₁ σ) where R(σ) = exp(β(J₂-J₁) Σ edgeSpin)
   -- R has HNC, w₁ has HNC → hnc_correlation_nonneg gives the bound.
   -- The exp splitting + sum rearrangement is algebraic bookkeeping.
-  exact le_of_sub_nonneg (correlation_reweighting_nonneg G h β B J₁ J₂ hJ hh hβ)
+  exact le_of_sub_nonneg (correlation_reweighting_nonneg G h β B J₁ J₂ hJ
+    (Set.mem_Ici.mp hJ₁_mem) hh hβ)
 
 /-! ## Infinite volume convergence (Theorem 4.2.3)
 

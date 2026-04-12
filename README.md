@@ -43,8 +43,8 @@ but require heavy Lean measure theory assembly:
 These axioms are prerequisites for the Lebowitz inequality and truncated
 3-point correlation bound (Corollaries 4.3.2–4.3.4, to be formalized).
 
-- `hnc_correlation_nonneg`: HNC covariance inequality (Fourier expansion + generalized GKS-II)
-- `correlation_reweighting_nonneg`: exp splitting + hnc_correlation_nonneg application
+- `correlation_reweighting_nonneg` (sorry): reweighting inequality for monotonicity
+  (Fourier expansion of R + `gks_second` per term; building blocks proved)
 
 ## Documentation
 
