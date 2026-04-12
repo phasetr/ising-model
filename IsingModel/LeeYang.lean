@@ -344,11 +344,9 @@ private lemma leeYangPoly_ratio_bound {m : ℕ}
           mul_inv_cancel₀ (Finset.prod_ne_zero_iff.mpr (fun k _ =>
             norm_ne_zero_iff.mp (by rw [hv k]; exact one_ne_zero))), mul_one]
       -- Main identity: (∏v) · conj(βfun(v)) = αfun(v)
-      -- β(v) = Σ_T c_T · ∏_{i∈T} (a_i · v_i) = Σ_T c_T · (∏_{i∈T} a_i) · (∏_{i∈T} v_i)
-      -- conj(β) = Σ_T conj(c_T) · (∏_{i∈T} conj(a_i)) · (∏_{i∈T} conj(v_i))
-      -- (∏v)·conj(β) = Σ_T c_{univ\T} · (∏_{i∈T} conj(a_i)) · ∏_{k∉T} v_k [Hermitian + hprod_sdiff]
-      -- Reindex U = univ\T: = Σ_U c_U · (∏_{j∉U} conj(a_j)) · ∏_{i∈U} v_i = αfun(v)
-      -- where conj(a_j) = A(last)(cs j) by Hermitian.
+      -- This requires: conj distributes over sum/prod, leeYangPoly_conj_eq_compl,
+      -- hprod_sdiff, hermitian_conj_entry, and sum reindexing via complement.
+      -- Each step is individually proved; combining them is ~30 lines of Finset algebra.
       sorry
     -- Iterated max modulus: for Differentiable g with ‖g v‖ ≤ 1 on torus,
     -- one_var_max gives ‖g v‖ ≤ 1 for all v with ‖v_k‖ ≤ 1.
