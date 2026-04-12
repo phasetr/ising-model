@@ -469,6 +469,36 @@ The Ising application (\texttt{lee\_yang\_circle}) constructs a
 Hermitian matrix from the edge list and coupling constants, reducing
 the combinatorial Ising model to the matrix formulation.
 
+\section{\texorpdfstring{$\varphi^4$}{phi4} inequalities (\texttt{ContinuousSpin/Phi4.lean})}
+
+The $\varphi^4$ correlation inequalities
+\cite[{\S4.3, pp.~59--62}]{glimm-jaffe}
+provide Lebowitz-type bounds for continuous spin models with
+single-spin distribution $d\mu = e^{-\lambda\xi^4 - \sigma\xi^2}\,d\xi$.
+
+The formalization includes:
+\begin{itemize}
+\item The quartic identity for the orthogonal transformation
+  $(\xi,\chi,\xi',\chi') \mapsto (\alpha,\beta,\gamma,\delta)$
+  (\texttt{quartic\_identity}, proved by \texttt{ring}).
+\item Sum-of-squares, linear, and inner-product identities
+  (orthogonality of the transformation).
+\item The positivity lemma $t\cdot\sinh(ct) \ge 0$ for $c \ge 0$
+  (\texttt{mul\_sinh\_nonneg}).
+\item Odd-function integral vanishing (\texttt{integral\_odd\_eq\_zero}).
+\end{itemize}
+
+\paragraph{Axioms.}
+Two measure-theoretic properties are stated as axioms (mathematically
+proved but not formalized in Lean due to the heavy measure theory assembly):
+\begin{itemize}
+\item \texttt{phi4\_integrable}: integrability of $\text{polynomial}
+  \times e^{-\lambda\xi^4}$ for nested integrals.
+\item \texttt{phi4\_single\_site\_nonneg}: non-negativity of the
+  symmetrized 4D integral $\int \alpha^k\beta^l\gamma^m\delta^n
+  e^{-Q + c\alpha\beta\gamma\delta} \ge 0$ when $Q$ is even and $c \ge 0$.
+\end{itemize}
+
 \begin{thebibliography}{9}
 \bibitem{glimm-jaffe}
 J.~Glimm and A.~Jaffe,

@@ -29,6 +29,19 @@ All theorems are formally proved with **zero `sorry`**.
 | Lee-Yang circle   | Ising partition poly nonvanishing on polydisk | Ruelle, Ann. of Math. 171 (2010); Harcos notes |
 | Partition function positivity | `Z > 0` | — |
 | Spin flip symmetry | `H(flip σ) = H(σ)` when h = 0 | — |
+| φ⁴ algebraic identities | quartic/orthogonal transformation identities | Glimm-Jaffe §4.3 |
+
+### Axioms (measure-theoretic prerequisites, not formalized)
+
+The φ⁴ inequalities (`ContinuousSpin/Phi4.lean`) use two axioms for
+measure-theoretic properties whose proofs are mathematically complete
+but require heavy Lean measure theory assembly:
+
+- `phi4_integrable`: integrability of polynomial × exp(-quartic)
+- `phi4_single_site_nonneg`: non-negativity of the symmetrized 4D integral
+
+These axioms are prerequisites for the Lebowitz inequality and truncated
+3-point correlation bound (Corollaries 4.3.2–4.3.4, to be formalized).
 
 ## Documentation
 

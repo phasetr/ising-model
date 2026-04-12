@@ -18,8 +18,15 @@ All theorems are formally proved with **zero `sorry`**.
 | **FKG** (Fortuin-Kasteleyn-Ginibre)      | `⟨fg⟩ ≥ ⟨f⟩⟨g⟩` for monotone nondecreasing f, g            | `Inequalities/FKG.lean` |
 | **Asano contraction**                    | Contraction preserves non-vanishing on the unit polydisk    | `Asano.lean`            |
 | **Lee-Yang circle theorem**              | Ising partition polynomial nonvanishing on the open polydisk | `LeeYang.lean`          |
+| **φ⁴ algebraic identities**              | Quartic/orthogonal transformation identities (axiom: integrability) | `ContinuousSpin/Phi4.lean` |
 | Partition function positivity            | `Z > 0`                                                    | `GibbsMeasure.lean`     |
 | Spin flip symmetry                       | `H(flip σ) = H(σ)` when h = 0                              | `Hamiltonian.lean`      |
+
+## Axioms
+
+The φ⁴ module uses two measure-theoretic axioms (`phi4_integrable`,
+`phi4_single_site_nonneg`) whose proofs are mathematically complete
+but not formalized in Lean. See `ContinuousSpin/Phi4.lean` for details.
 
 ## References
 
