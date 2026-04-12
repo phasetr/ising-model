@@ -370,7 +370,6 @@ private lemma leeYangPoly_ratio_bound {m : ℕ}
   let w : Fin m → ℂ := fun i => z (Fin.castSucc i)
   -- β(z) = βfun(w) (by definition)
   -- α(z) = αfun(w) requires the bijection S ↔ T (same as hdecomp's second sum)
-  -- For now, sorry the identity and the max modulus bound
   have hα_eq : ∑ S ∈ (Finset.univ : Finset (Finset (Fin (m + 1)))).filter
       (fun S => Fin.last m ∈ S), leeYangPoly A S * ∏ k ∈ S.erase (Fin.last m), z k =
       αfun w := by
@@ -438,86 +437,9 @@ private lemma leeYangPoly_ratio_bound {m : ℕ}
     -- Step 3: On torus |v_k| = 1: α(v) = (∏v_k)·conj(β(v)) by Hermitian.
     -- Step 4: max modulus → ‖α/β‖ ≤ 1.
     -- Step 5: t → 1 continuity gives ‖α‖ ≤ ‖β‖ for |a_k| ≤ 1.
-    -- 1-variable max modulus step: for each variable v_k, replace it by a
-    -- value on the unit circle without increasing ‖g‖.
-    have one_var_max : ∀ (g : (Fin m → ℂ) → ℂ) (v : Fin m → ℂ) (k : Fin m),
-        Differentiable ℂ g → ‖v k‖ < 1 →
-        (∀ t : ℂ, ‖t‖ = 1 → ‖g (Function.update v k t)‖ ≤ 1) →
-        ‖g v‖ ≤ 1 := by
-      intro g v k hg hk hbd
-      let f : ℂ → ℂ := fun t => g (Function.update v k t)
-      have hupd : Differentiable ℂ (fun t : ℂ => Function.update v k t) := by
-        rw [show (fun t => Function.update v k t) =
-            (fun t i => if i = k then t else v i) from by
-          ext t i; simp [Function.update, eq_comm]]
-        rw [differentiable_pi]
-        intro i; split_ifs <;> [exact differentiable_id; exact differentiable_const _]
-      have hf_diff : Differentiable ℂ f := hg.comp hupd
-      have h := Complex.norm_le_of_forall_mem_frontier_norm_le Metric.isBounded_ball
-        ⟨hf_diff.differentiableOn, hf_diff.continuous.continuousOn⟩
-        (fun z hz => by
-          rw [frontier_ball (0 : ℂ) one_ne_zero] at hz
-          exact hbd z (by simpa [dist_zero_right] using hz))
-        (subset_closure (Metric.mem_ball.mpr (by rwa [dist_zero_right])))
-      rwa [show f (v k) = g v from by simp [f]] at h
-    -- Torus identity: on |v_k| = 1, αfun(v) = (∏v_k)·conj(βfun(v))
-    -- Hence |αfun/βfun| = |∏v_k| = 1 on the torus.
-    -- This follows from leeYangPoly_conj_eq_compl + Hermitian structure.
-    have torus_bound : ∀ v : Fin m → ℂ, (∀ k, ‖v k‖ = 1) → ‖αfun v‖ = ‖βfun v‖ := by
-      intro v hv
-      -- Key identity: αfun(v) = (∏ v_k) · conj(βfun(v))
-      -- Then ‖αfun v‖ = |∏v_k| · ‖βfun v‖ = 1 · ‖βfun v‖.
-      suffices hid : αfun v = (∏ k : Fin m, v k) * starRingEnd ℂ (βfun v) by
-        rw [hid, norm_mul, Complex.norm_prod]
-        simp only [hv, Finset.prod_const_one, one_mul]
-        rw [RCLike.norm_conj]
-      -- Helper: conj(z) = z⁻¹ when ‖z‖ = 1
-      have hconj_inv : ∀ z : ℂ, ‖z‖ = 1 → starRingEnd ℂ z = z⁻¹ := fun z hz =>
-        eq_comm.mp (inv_eq_of_mul_eq_one_right (by rw [@RCLike.mul_conj ℂ _ z, hz]; norm_num))
-      -- Helper: (∏v) · ∏_{T} conj(v) = ∏_{univ\T} v
-      have hprod_sdiff : ∀ T : Finset (Fin m),
-          (∏ k : Fin m, v k) * ∏ i ∈ T, starRingEnd ℂ (v i) = ∏ k ∈ Finset.univ \ T, v k := by
-        intro T
-        simp_rw [hconj_inv _ (hv _), Finset.prod_inv_distrib]
-        rw [show (∏ k : Fin m, v k) = (∏ k ∈ Finset.univ \ T, v k) * ∏ k ∈ T, v k from
-          (Finset.prod_sdiff (Finset.subset_univ T)).symm, mul_assoc,
-          mul_inv_cancel₀ (Finset.prod_ne_zero_iff.mpr (fun k _ =>
-            norm_ne_zero_iff.mp (by rw [hv k]; exact one_ne_zero))), mul_one]
-      -- Unfold set definitions and distribute conj
-      rw [hαfun_def, hβfun_def]; unfold MultilinPoly.eval
-      simp only [map_sum, map_mul, map_prod, Finset.mul_sum,
-        leeYangPoly_conj_eq_compl B (hA.submatrix Fin.castSucc)]
-      -- Now RHS has ∏ conj(a·v). Distribute: conj(a·v) = conj(a)·conj(v)
-      -- and conj(a) = A(last)(cs) by Hermitian
-      -- conj(a)·conj(v) already distributed by simp. Use Hermitian, split products.
-      simp_rw [hermitian_conj_entry A hA, Finset.prod_mul_distrib]
-      -- Rearrange: move (∏ v) next to ∏ conj(v) and apply hprod_sdiff
-      have hrearrange : ∀ S : Finset (Fin m),
-          (∏ k : Fin m, v k) *
-            (leeYangPoly B (Finset.univ \ S) *
-              ((∏ x ∈ S, A (Fin.last m) (Fin.castSucc x)) *
-                ∏ x ∈ S, (starRingEnd ℂ) (v x))) =
-          leeYangPoly B (Finset.univ \ S) * (∏ x ∈ S, A (Fin.last m) (Fin.castSucc x)) *
-            ((∏ k : Fin m, v k) * ∏ x ∈ S, (starRingEnd ℂ) (v x)) := fun S => by ring
-      simp_rw [hrearrange, hprod_sdiff]
-      -- Expand p_α, then reindex RHS by complement
-      simp_rw [hp_α_def]
-      let compl_equiv : Finset (Fin m) ≃ Finset (Fin m) :=
-        ⟨(Finset.univ \ ·), (Finset.univ \ ·),
-          fun S => by simp [sdiff_sdiff_right_self],
-          fun S => by simp [sdiff_sdiff_right_self]⟩
-      exact (Fintype.sum_equiv compl_equiv _ _ (fun T => by
-        simp only [compl_equiv, Equiv.coe_fn_mk, sdiff_sdiff_right_self,
-          inf_eq_inter, Finset.univ_inter])).symm
-    -- Iterated max modulus: for Differentiable g with ‖g v‖ ≤ 1 on torus,
-    -- one_var_max gives ‖g v‖ ≤ 1 for all v with ‖v_k‖ ≤ 1.
-    -- We apply this to g = αfun/βfun in the strict case, then continuity.
-    -- For now, sorry the combined argument (torus_bound is the key input).
-    -- ‖αfun w‖ ≤ ‖βfun w‖ by approximation + iterated max modulus.
-    -- Scale last column by t < 1, then β_t ≠ 0 on closed polydisk.
-    -- Torus identity gives ‖α_t‖ = ‖β_t‖ on the torus.
-    -- Iterated max modulus via DiffContOnCl gives ‖α_t w‖ ≤ ‖β_t w‖.
-    -- Pass to the limit t → 1.
+    -- ‖αfun w‖ ≤ ‖βfun w‖ by approximation (t < 1) + iterated max modulus + limit.
+    -- Uses standalone lemmas: torus_identity, one_var_max_ratio, iterated_ratio,
+    -- alphaT/betaT (private defs to avoid let-binding heartbeat timeout).
     change ‖αfun w‖ ≤ ‖βfun w‖
     -- Use alphaT / betaT (private defs) to avoid whnf timeout on let bindings
     let a : Fin m → ℂ := fun k => A (Fin.castSucc k) (Fin.last m)
