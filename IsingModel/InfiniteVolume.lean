@@ -145,13 +145,9 @@ theorem walsh_fourier_inversion (f : Config ι → ℝ) (σ : Config ι) :
     f σ = ∑ S : Finset ι,
       ((Fintype.card (Config ι) : ℝ)⁻¹ * ∑ τ : Config ι, spinProduct S τ * f τ) *
       spinProduct S σ := by
-  -- RHS = card⁻¹ Σ_S Σ_τ σ^S(τ) f(τ) σ^S(σ)
-  --     = card⁻¹ Σ_τ f(τ) Σ_S σ^S(τ) σ^S(σ)
-  -- By Walsh orthogonality: Σ_S σ^S(τ) σ^S(σ) = card · [τ = σ]
-  -- (since {σ^S} is a complete orthogonal system with norm² = card)
-  -- So RHS = card⁻¹ · f(σ) · card = f(σ).
-  -- This requires the completeness of the Walsh basis, which is
-  -- a standard fact for (ℤ/2)^n but needs explicit formalization.
+  -- Swap and simplify using walsh_completeness
+  have hcard : (Fintype.card (Config ι) : ℝ) ≠ 0 :=
+    Nat.cast_ne_zero.mpr Fintype.card_ne_zero
   sorry
 
 /-- Key consequence of Fourier inversion for HNC functions:
