@@ -18,7 +18,7 @@ All theorems are formally proved with **zero `sorry`**.
 | **FKG** (Fortuin-Kasteleyn-Ginibre)      | `⟨fg⟩ ≥ ⟨f⟩⟨g⟩` for monotone nondecreasing f, g            | `Inequalities/FKG.lean` |
 | **Asano contraction**                    | Contraction preserves non-vanishing on the unit polydisk    | `Asano.lean`            |
 | **Lee-Yang circle theorem**              | Ising partition polynomial nonvanishing on the open polydisk | `LeeYang.lean`          |
-| **φ⁴ algebraic identities**              | Quartic/orthogonal transformation identities (axiom: integrability) | `ContinuousSpin/Phi4.lean` |
+| **φ⁴ algebraic identities**              | Quartic/orthogonal transformation identities (axioms: `phi4_integrable`, `phi4_single_site_nonneg`) | `ContinuousSpin/Phi4.lean` |
 | **Correlation boundedness** (Prop 4.2.2) | `|⟨σ^A⟩| ≤ 1`                                              | `InfiniteVolume.lean`   |
 | **Correlation monotonicity** (Prop 4.2.1) | `⟨σ^B⟩` monotone in J on `[0,∞)`                            | `InfiniteVolume.lean`   |
 | **Covariance non-negativity**            | `Cov(σ^B, f) ≥ 0` for HNC f under Boltzmann weight          | `InfiniteVolume.lean`   |
