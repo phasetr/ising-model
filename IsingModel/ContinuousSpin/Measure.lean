@@ -1,6 +1,8 @@
 import Mathlib.MeasureTheory.Measure.MeasureSpace
 import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
+import Mathlib.MeasureTheory.Measure.Haar.Unique
 import Mathlib.MeasureTheory.Integral.Bochner.Basic
+import Mathlib.MeasureTheory.Group.Integral
 import Mathlib.MeasureTheory.Constructions.Pi
 import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 
@@ -61,6 +63,20 @@ w.r.t. a measure `μ` and character `χ`:
 def HasNonnegCorrelationsM {Ω : Type*} [MeasurableSpace Ω]
     (μ : Measure Ω) (χ : Finset ι → Ω → ℝ) (f : Ω → ℝ) : Prop :=
   ∀ A : Finset ι, 0 ≤ ∫ ω, χ A ω * f ω ∂μ
+
+/-! ## Symmetry: odd function integral vanishes -/
+
+/-- The integral of an odd function w.r.t. Lebesgue measure is zero.
+This is the key lemma for the φ⁴ proof: when the measure `exp(-Q)` is even,
+integrals of odd monomials vanish. -/
+theorem integral_odd_eq_zero (f : ℝ → ℝ)
+    (hodd : ∀ x, f (-x) = -f x) :
+    ∫ x, f x ∂volume = 0 := by
+  have h : ∫ x, f x ∂volume = ∫ x, f (-x) ∂volume :=
+    (integral_neg_eq_self f volume).symm
+  rw [show (fun x => f (-x)) = fun x => -f x from funext hodd] at h
+  have h2 : ∫ x, -f x ∂volume = -(∫ x, f x ∂volume) := integral_neg f
+  linarith
 
 /-! ## Continuous spin expectations -/
 
