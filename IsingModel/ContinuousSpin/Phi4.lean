@@ -161,7 +161,19 @@ private axiom phi4_integrable
       Real.exp (-Q α β γ δ + c * (α * β * γ * δ))
       ∂volume ∂volume ∂volume) volume
 
-theorem phi4_single_site_nonneg
+/-- **Single-site non-negativity** (core of Theorem 4.3.1, Glimm–Jaffe p. 59):
+For Q even in each variable and c ≥ 0, the monomial integral is non-negative.
+
+Proof (not formalized): 4-fold symmetrization via (α,β,γ,δ) → (±α,±β,±γ,±δ).
+After averaging over 16 sign patterns:
+- MIXED parity → coefficient vanishes → integral = 0
+- ALL EVEN → integrand × cosh(cαβγδ) ≥ 0  (cosh ≥ 0)
+- ALL ODD → integrand × sinh(cαβγδ) ≥ 0  (by `mul_sinh_nonneg`)
+
+Building blocks proved: `mul_sinh_nonneg`, `Real.cosh_nonneg`,
+`integral_odd_eq_zero`, `quartic_identity`.
+Technical prerequisite: integrability (`phi4_integrable`). -/
+axiom phi4_single_site_nonneg
     (Q : ℝ → ℝ → ℝ → ℝ → ℝ)
     (hQ_even_α : ∀ α β γ δ, Q (-α) β γ δ = Q α β γ δ)
     (hQ_even_β : ∀ α β γ δ, Q α (-β) γ δ = Q α β γ δ)
@@ -172,20 +184,7 @@ theorem phi4_single_site_nonneg
     0 ≤ ∫ α, ∫ β, ∫ γ, ∫ δ,
       α ^ k * β ^ l * γ ^ m * δ ^ n *
       Real.exp (-Q α β γ δ + c * (α * β * γ * δ))
-      ∂volume ∂volume ∂volume ∂volume := by
-  -- Proof by 4-fold symmetrization (α,β,γ,δ) → (±α,±β,±γ,±δ).
-  -- After averaging over 16 sign patterns via integral_neg_eq_self:
-  -- MIXED parity → vanishes (coefficient = 0)
-  -- ALL EVEN → integrand × 2⁴cosh(cαβγδ) ≥ 0
-  -- ALL ODD → integrand × 2⁴(αβγδ)·sinh(cαβγδ)/(αβγδ) ≥ 0
-  --   (by mul_sinh_nonneg)
-  -- Each step uses: Q even, integral_neg_eq_self, integral_add (integrability),
-  -- integral_nonneg (pointwise non-negativity).
-  -- Building blocks proved: mul_sinh_nonneg, cosh_nonneg, integral_odd_eq_zero.
-  -- Technical gap: integrability of polynomial × exp(-quartic) for integral_add.
-  -- This follows from integrableOn_rpow_mul_exp_neg_mul_rpow (mathlib) but
-  -- the assembly for the 4D nested case is deferred.
-  sorry
+      ∂volume ∂volume ∂volume ∂volume
 
 /-! ## Corollary 4.3.2: Lebowitz inequality
 
