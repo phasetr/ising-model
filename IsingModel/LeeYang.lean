@@ -241,6 +241,48 @@ private lemma one_var_max_ratio {m : ℕ}
     (subset_closure (Metric.mem_ball.mpr (by rwa [dist_zero_right])))
   rwa [show r (v k) = f v / g v from by simp [r]] at h
 
+/-- Iterated max modulus for a ratio of globally differentiable functions.
+If `‖f v‖ ≤ ‖g v��` on the torus and `g ≠ 0` on the closed polydisk,
+then `‖f w‖ ≤ ‖g w‖` inside the open polydisk. -/
+private lemma iterated_ratio {m : ℕ}
+    (f g : (Fin m → ℂ) → ℂ)
+    (hf : Differentiable ℂ f) (hg : Differentiable ℂ g)
+    (hgne : ∀ u : Fin m → ℂ, (∀ j, ‖u j‖ ≤ 1) → g u ≠ 0)
+    (htorus : ∀ v : Fin m → ℂ, (∀ k, ‖v k‖ = 1) → ‖f v‖ ≤ ‖g v‖)
+    (w : Fin m → ℂ) (hw : ∀ k, ‖w k‖ < 1) :
+    ‖f w‖ ≤ ‖g w‖ := by
+  -- Induction: move variables one at a time from the torus to the interior.
+  -- T tracks which variables are at w (inside the disk); others are on the torus.
+  suffices h : ∀ (T : Finset (Fin m)) (v : Fin m → ℂ),
+      (∀ k ∉ T, ‖v k‖ = 1) → (∀ k ∈ T, v k = w k) → ‖f v‖ ≤ ‖g v‖ from
+    h Finset.univ w (fun k hk => absurd (Finset.mem_univ k) hk) (fun _ _ => rfl)
+  intro T
+  induction T using Finset.induction_on with
+  | empty => intro v hv _; exact htorus v (fun k => hv k (by simp))
+  | @insert k₀ T' hk₀ ihT =>
+    intro v hv_out hv_in
+    -- All components of v have norm ≤ 1
+    have hv_le : ∀ j, ‖v j‖ ≤ 1 := fun j => by
+      by_cases hj : j ∈ insert k₀ T'
+      · exact hv_in j hj ▸ (hw j).le
+      · exact le_of_eq (hv_out j hj)
+    -- g(update v k₀ z) ≠ 0 for ‖z‖ ≤ 1
+    have hgne' : ∀ z : ℂ, ‖z‖ ≤ 1 → g (Function.update v k₀ z) ≠ 0 := by
+      intro z hz; apply hgne; intro j; by_cases hjk : j = k₀
+      · simp [Function.update, hjk, hz]
+      · simp [Function.update, hjk]; exact hv_le j
+    apply one_var_max_ratio f g v k₀ hf hg hgne'
+      (hv_in k₀ (Finset.mem_insert_self _ _) ▸ hw k₀)
+    intro t ht
+    apply ihT (Function.update v k₀ t)
+    · intro k hk; by_cases hkk : k = k₀
+      · simp [Function.update, hkk, ht]
+      · simp [Function.update, hkk]; exact hv_out k (by
+          rw [Finset.mem_insert]; push_neg; exact ⟨hkk, hk⟩)
+    · intro k hk
+      have hkk : k ≠ k₀ := ne_of_mem_of_not_mem hk hk₀
+      simp [Function.update, hkk]; exact hv_in k (Finset.mem_insert_of_mem hk)
+
 /-- The ratio of the `z_last`-coefficient to the constant term in the Lee-Yang polynomial
 is bounded by 1, by the maximum modulus principle.
 
