@@ -209,57 +209,37 @@ theorem cov_hnc_boltzmann_nonneg (G : SimpleGraph ι) [Fintype G.edgeSet]
     -- → num(B) num(S) ≤ Z num(B△S)
     -- → Z num(B△S) - num(B) num(S) ≥ 0
     -- → (Σ σ^{B△S} w)(Σ w) - (Σ σ^B w)(Σ σ^S w) ≥ 0
-    -- Clear inverses by multiplying by Z > 0
-    have hZne := ne_of_gt hZ
-    let Z := ∑ σ : Config ι, boltzmannWeight G p σ
-    let nB := ∑ σ, spinProduct B σ * boltzmannWeight G p σ
-    let nS := ∑ σ, spinProduct S σ * boltzmannWeight G p σ
-    let nBS := ∑ σ, spinProduct (symmDiff B S) σ * boltzmannWeight G p σ
-    -- hgks : Z⁻¹ nB * (Z⁻¹ nS) ≤ Z⁻¹ nBS
-    -- → nB * nS / Z² ≤ nBS / Z → nB * nS ≤ nBS * Z
-    have : nB * nS ≤ nBS * Z := by
-      have := mul_le_mul_of_nonneg_left hgks (show (0 : ℝ) ≤ Z ^ 2 from sq_nonneg Z)
-      simp only [sq] at this ⊢
-      -- nB * nS ≤ nBS * Z from gks_second (clearing Z⁻¹)
-      -- hgks: Z⁻¹ nB * (Z⁻¹ nS) ≤ Z⁻¹ nBS
-      -- i.e., nB * nS / Z² ≤ nBS / Z
-      -- Multiply both sides by Z² > 0:
-      -- nB nS ≤ nBS Z from hgks (clearing Z⁻¹, Z > 0)
-      -- hgks has Z⁻¹ terms; clear them by multiplying
-      have hZne' : (∑ σ : Config ι, boltzmannWeight G p σ) ≠ 0 := ne_of_gt hZ
-      -- Unfold let-bindings to allow rewriting
-      change nB * nS ≤ nBS * Z
-      -- From hgks: (Z⁻¹ * nB) * (Z⁻¹ * nS) ≤ Z⁻¹ * nBS
-      -- = nB * nS * Z⁻² ≤ nBS * Z⁻¹
-      -- Multiply by Z: nB * nS * Z⁻¹ ≤ nBS
-      -- Multiply by Z again: nB * nS ≤ nBS * Z
-      -- hgks : Z⁻¹ nB * (Z⁻¹ nS) ≤ Z⁻¹ nBS
-      -- Rewrite as: nB / Z * (nS / Z) ≤ nBS / Z
-      rw [show Z⁻¹ * nB = nB / Z from (inv_mul_eq_div _ _),
-        show Z⁻¹ * nS = nS / Z from (inv_mul_eq_div _ _),
-        show Z⁻¹ * nBS = nBS / Z from (inv_mul_eq_div _ _)] at hgks
-      rw [div_mul_div_comm] at hgks
-      -- hgks : nB * nS / (Z * Z) ≤ nBS / Z
-      -- hgks should now be: nB * nS / (Z * Z) ≤ nBS / Z
-      -- Use: a / b ≤ c / d ↔ a * d ≤ c * b (for b, d > 0)
-      have h := (div_le_div_iff₀ (mul_pos hZ hZ) hZ).mp hgks
-      -- h : nB * nS * partitionFunction ≤ nBS * (partitionFunction * partitionFunction)
-      -- Z = partitionFunction (by definition)
-      change nB * nS ≤ nBS * (∑ σ : Config ι, boltzmannWeight G p σ)
-      unfold partitionFunction at h
-      have hZZ := show (∑ σ : Config ι, boltzmannWeight G p σ) = Z from rfl
-      rw [hZZ] at h
-      -- h : nB * nS * partitionFunction G p ≤ nBS * (Z * Z)
-      -- partitionFunction G p = Z (by definition)
-      -- So: nB * nS * Z ≤ nBS * Z * Z → nB * nS ≤ nBS * Z
-      -- h has partitionFunction which definitionally equals Z
-      -- but rw can't match let-bound Z. Use show to change goal type.
-      -- h : nB * nS * partitionFunction ≤ nBS * (Z * Z)
-      -- partitionFunction = Z definitionally → nB * nS * Z ≤ nBS * Z * Z
-      -- → nB * nS ≤ nBS * Z (divide by Z > 0)
-      -- The let-binding prevents rw; sorry for this arithmetic step.
-      sorry
-    linarith
+        -- Clear Z⁻¹ from hgks: corr(B)*corr(S) ≤ corr(B△S)
+    -- → (Z⁻¹ nB)(Z⁻¹ nS) ≤ Z⁻¹ nBS → nB*nS ≤ nBS*Z
+    -- hgks : Z⁻¹ * nB * (Z⁻¹ * nS) ≤ Z⁻¹ * nBS
+    -- Multiply both sides by Z (positive), twice:
+    have h1 := mul_le_mul_of_nonneg_left hgks hZ.le
+    simp at h1
+    have h2 := mul_le_mul_of_nonneg_right h1 hZ.le
+    -- h2 has partitionFunction and Z⁻¹ mixed. Use field_simp to clear.
+    unfold partitionFunction at h2
+    field_simp [ne_of_gt hZ] at h2
+    -- h2 : (Z * nB * nS) / Z ≤ Z * nBS
+    -- Goal: 0 ≤ nBS * Z - nB * nS
+    have h3 := (div_le_iff₀ hZ).mp h2
+    -- h3 : Z * nB * nS ≤ Z * nBS * Z
+    -- h3 : Z * nB * nS ≤ Z * nBS * Z (or similar after div_le_iff)
+    -- Goal: 0 ≤ nBS * Z - nB * nS
+    -- From h3: nB * nS ≤ nBS * Z (divide by Z > 0)
+    -- nlinarith can handle this with Z > 0
+    unfold partitionFunction at h3
+    -- h3 : Z * nB * nS ≤ Z * nBS * Z, goal: 0 ≤ nBS * Z - nB * nS
+    -- Both with Z = ∑ boltzmannWeight. nlinarith should close with Z > 0.
+    -- h3: (∑ w) * nB * nS ≤ (∑ w) * nBS * (∑ w)
+    -- → (∑ w) * (nB * nS) ≤ (∑ w) * (nBS * (∑ w))  [by ring at h3]
+    -- → nB * nS ≤ nBS * (∑ w)  [by le_of_mul_le_mul_left h3 hZ]
+    have h3a : (∑ σ : Config ι, boltzmannWeight G p σ) *
+        ((∑ x, spinProduct B x * boltzmannWeight G p x) *
+          (∑ x, spinProduct S x * boltzmannWeight G p x)) ≤
+        (∑ σ : Config ι, boltzmannWeight G p σ) *
+        ((∑ x, spinProduct (symmDiff B S) x * boltzmannWeight G p x) *
+          (∑ σ : Config ι, boltzmannWeight G p σ)) := by nlinarith
+    linarith [le_of_mul_le_mul_left h3a hZ]
   -- LHS = Σ_S ĉ_S · bracket = Σ (non-negative) ≥ 0
   -- The algebraic identity LHS = Σ_S hterm(S) uses:
   -- walsh_fourier_inversion (f = Σ ĉ σ^S) + spinProduct_mul + sum_comm
