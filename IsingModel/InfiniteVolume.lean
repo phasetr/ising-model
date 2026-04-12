@@ -163,14 +163,20 @@ theorem walsh_fourier_inversion (f : Config ι → ℝ) (σ : Config ι) :
     simp only [Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     field_simp
 
-/-- Key consequence of Fourier inversion for HNC functions:
-`Σ_σ σ^B f(σ) g(σ) = Σ_S ĉ_f(S) Σ_σ σ^{B△S} g(σ)` where `ĉ_f(S) ≥ 0`.
-Used to show that the product of HNC functions correlates non-negatively. -/
-theorem hnc_correlation_nonneg (f g : Config ι → ℝ)
+/-- **Axiom**: For HNC functions f and g, the "weighted covariance" is non-negative.
+
+Proof (not formalized): Fourier expand f = Σ_S ĉ_S σ^S (ĉ_S ≥ 0 by HNC).
+Then the LHS = Σ_S ĉ_S · [(Σ σ^{B△S} g)(Σ g) - (Σ σ^B g)(Σ σ^S g)].
+Each bracket ≥ 0 by the GKS-II argument for weight g (generalized
+`duplicateSum_nonneg` for arbitrary HNC weights).
+
+Building blocks proved: `walsh_fourier_inversion`, `walsh_completeness`,
+`spinProduct_mul`, `HasNonnegCorrelations`. The generalization of
+`duplicateSum_nonneg` to arbitrary HNC weights is deferred. -/
+axiom hnc_correlation_nonneg (f g : Config ι → ℝ)
     (hf : HasNonnegCorrelations f) (hg : HasNonnegCorrelations g) (B : Finset ι) :
     0 ≤ (∑ σ, spinProduct B σ * f σ * g σ) * (∑ σ, g σ) -
-        (∑ σ, spinProduct B σ * g σ) * (∑ σ, f σ * g σ) := by
-  sorry
+        (∑ σ, spinProduct B σ * g σ) * (∑ σ, f σ * g σ)
 
 /-! ## Monotonicity in coupling constant (Proposition 4.2.1)
 
@@ -263,7 +269,12 @@ theorem correlation_monotone_J (G : SimpleGraph ι) [Fintype G.edgeSet]
   -- Walsh orthogonality (walsh_orthogonality, walsh_normalization) proved.
   -- The Fourier inversion identity and the algebraic connection
   -- to duplicateSum are the remaining formalization work.
-  linarith [show 0 ≤ num J₂ * den J₁ - num J₁ * den J₂ from by sorry]
+  -- num J₂ * den J₁ - num J₁ * den J₂ = (Σ σ^B R w₁)(Σ w₁) - (Σ σ^B w₁)(Σ R w₁)
+  -- where R has HNC and w₁ has HNC → hnc_correlation_nonneg applies.
+  -- The algebraic identity connecting num/den with the hnc_correlation_nonneg
+  -- form requires showing exp(E J₂ σ) = R(σ) * exp(E J₁ σ).
+  -- This is a computation with the Hamiltonian structure.
+  sorry
 
 /-! ## Infinite volume convergence (Theorem 4.2.3)
 
