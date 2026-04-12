@@ -187,6 +187,60 @@ private lemma torus_identity {m : ℕ}
     simp only [compl_equiv, Equiv.coe_fn_mk, sdiff_sdiff_right_self,
       inf_eq_inter, Finset.univ_inter])).symm
 
+/-- The scaled α-polynomial for the approximation argument.
+`alphaT B a t` is the multilinear polynomial with coefficients
+`leeYangPoly B T * ∏_{j∉T} conj(t * a_j)`. At `t = 1` this recovers the
+α-coefficient of the Lee-Yang decomposition. -/
+private noncomputable def alphaT {m : ℕ}
+    (B : Matrix (Fin m) (Fin m) ℂ) (a : Fin m → ℂ) (t : ℂ) :
+    MultilinPoly (Fin m) :=
+  fun T => leeYangPoly B T * ∏ j ∈ Finset.univ \ T, starRingEnd ℂ (t * a j)
+
+/-- The scaled β-evaluation for the approximation argument.
+`betaT B a t v = (leeYangPoly B).eval (fun k => t * a_k * v_k)`. -/
+private noncomputable def betaT {m : ℕ}
+    (B : Matrix (Fin m) (Fin m) ℂ) (a : Fin m → ℂ) (t : ℂ) :
+    (Fin m → ℂ) → ℂ :=
+  fun v => (leeYangPoly B).eval (fun k => t * a k * v k)
+
+/-- Single-variable max modulus for a ratio `f/g` where `g ≠ 0` on `closedBall 0 1`.
+Given globally differentiable `f` and `g`, if `‖f(update v k t)‖ ≤ ‖g(update v k t)‖`
+for `‖t‖ = 1`, then `‖f v‖ ≤ ‖g v‖` when `‖v k‖ < 1`. -/
+private lemma one_var_max_ratio {m : ℕ}
+    (f g : (Fin m → ℂ) → ℂ) (v : Fin m → ℂ) (k : Fin m)
+    (hf : Differentiable ℂ f) (hg : Differentiable ℂ g)
+    (hgne : ∀ z : ℂ, ‖z‖ ≤ 1 → g (Function.update v k z) ≠ 0)
+    (hk : ‖v k‖ < 1)
+    (hbd : ∀ t : ℂ, ‖t‖ = 1 →
+      ‖f (Function.update v k t)‖ ≤ ‖g (Function.update v k t)‖) :
+    ‖f v‖ ≤ ‖g v‖ := by
+  have hgv : g v ≠ 0 := by
+    have h := hgne (v k) (hk.le)
+    rwa [Function.update_eq_self] at h
+  rw [← div_le_one (norm_pos_iff.mpr hgv), ← norm_div]
+  have hupd : Differentiable ℂ (fun z : ℂ => Function.update v k z) := by
+    rw [show (fun z => Function.update v k z) =
+        (fun z i => if i = k then z else v i) from by
+      ext z i; simp [Function.update, eq_comm]]
+    rw [differentiable_pi]; intro i
+    split_ifs <;> [exact differentiable_id; exact differentiable_const _]
+  have hfd := hf.comp hupd
+  have hgd := hg.comp hupd
+  let r : ℂ → ℂ := fun z => f (Function.update v k z) / g (Function.update v k z)
+  have hdc : DiffContOnCl ℂ r (Metric.ball 0 1) :=
+    ⟨hfd.differentiableOn.div hgd.differentiableOn
+      (fun z hz => hgne z (by simpa [dist_zero_right] using (Metric.mem_ball.mp hz).le)),
+     by rw [closure_ball (0 : ℂ) one_ne_zero]
+        exact hfd.continuous.continuousOn.div hgd.continuous.continuousOn
+          (fun z hz => hgne z (by rwa [Metric.mem_closedBall, dist_zero_right] at hz))⟩
+  have h := Complex.norm_le_of_forall_mem_frontier_norm_le Metric.isBounded_ball hdc
+    (fun z hz => by
+      rw [frontier_ball (0 : ℂ) one_ne_zero, Metric.mem_sphere, dist_zero_right] at hz
+      show ‖r z‖ ≤ 1; simp only [r, norm_div]
+      exact (div_le_one (norm_pos_iff.mpr (hgne z (le_of_eq hz)))).mpr (hbd z hz))
+    (subset_closure (Metric.mem_ball.mpr (by rwa [dist_zero_right])))
+  rwa [show r (v k) = f v / g v from by simp [r]] at h
+
 /-- The ratio of the `z_last`-coefficient to the constant term in the Lee-Yang polynomial
 is bounded by 1, by the maximum modulus principle.
 
