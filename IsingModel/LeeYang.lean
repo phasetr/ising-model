@@ -325,11 +325,11 @@ private lemma leeYangPoly_ratio_bound {m : ℕ}
     -- This follows from leeYangPoly_conj_eq_compl + Hermitian structure.
     have torus_bound : ∀ v : Fin m → ℂ, (∀ k, ‖v k‖ = 1) → ‖αfun v‖ = ‖βfun v‖ := by
       sorry -- Hermitian torus identity
-    -- Strict case: when ‖A i j‖ ≤ 1 (including =1), we use approximation.
-    -- For t < 1: (t • A) has ‖t·A i j‖ = t·‖A i j‖ ≤ t < 1 strictly.
-    -- β_t(v) = f_B(t·a·v) with |t·a_k·v_k| ≤ t < 1, so β_t ≠ 0 on closed polydisk.
-    -- g_t = α_t/β_t is Differentiable. By iterated one_var_max: |g_t| ≤ 1.
-    -- Hence ‖α_t(w)‖ ≤ ‖β_t(w)‖. Taking t → 1: ‖α(w)‖ ≤ ‖β(w)‖.
+    -- Iterated max modulus: for Differentiable g with ‖g v‖ ≤ 1 on torus,
+    -- one_var_max gives ‖g v‖ ≤ 1 for all v with ‖v_k‖ ≤ 1.
+    -- We apply this to g = αfun/βfun in the strict case, then continuity.
+    -- For now, sorry the combined argument (torus_bound is the key input).
+    show ‖αfun w‖ ≤ ‖βfun w‖
     sorry
 
 /-- **Harcos/Ruelle theorem**: For an `n × n` Hermitian matrix `A` with `|a_{ij}| ≤ 1`,
