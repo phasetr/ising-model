@@ -109,8 +109,34 @@ theorem walsh_completeness (σ τ : Config ι) :
     rw [← Finset.prod_mul_distrib]
     congr 1; ext i; simp [Spin.toSign_mul]
   simp_rw [hmul]
-  -- Σ_S ω^S = ∏_i (1 + ω_i) by expanding the product over subsets
-  sorry -- Need Finset.prod_add_one and the evaluation
+  -- Σ_S ω^S = ∏_i (1 + ω_i) by Finset.prod_add_one
+  have hprod : ∑ S : Finset ι, spinProduct S ω =
+      ∏ i : ι, (1 + (↑(ω i).toSign : ℝ)) := by
+    rw [show (∑ S : Finset ι, spinProduct S ω) =
+        ∑ S ∈ Finset.univ.powerset, ∏ i ∈ S, (↑(ω i).toSign : ℝ) from by
+      rw [Finset.powerset_univ]; rfl]
+    rw [← Finset.prod_add_one]
+    congr 1; ext i; ring
+  rw [hprod]
+  -- Case split: σ = τ or σ ≠ τ
+  split
+  · -- σ = τ: each factor = 1 + 1 = 2
+    next h =>
+    have hfact : ∀ i, (1 : ℝ) + ↑(ω i).toSign = 2 := fun i => by
+      have : ω i = Spin.up := by
+        simp only [ω]; rw [h]; cases τ i <;> simp [Spin.mul, Spin.flip]
+      simp [this, Spin.toSign]; norm_num
+    simp_rw [hfact, Finset.prod_const, Finset.card_univ]
+    rw [show Fintype.card (Config ι) = 2 ^ Fintype.card ι from
+      Fintype.card_fun]; norm_cast
+  · -- σ ≠ τ: ∃ i, ω i = down, factor = 1+(-1) = 0
+    next hne =>
+    have ⟨i, hi⟩ : ∃ i, σ i ≠ τ i := Function.ne_iff.mp hne
+    apply Finset.prod_eq_zero (Finset.mem_univ i)
+    have : ω i = Spin.down := by
+      simp only [ω]; cases hσ : σ i <;> cases hτ : τ i <;>
+        simp_all [Spin.mul, Spin.flip]
+    simp [this, Spin.toSign]
 
 /-- Fourier inversion on `{±1}^n`: any function `f : Config ι → ℝ` can be
 expanded as `f(σ) = Σ_S ĉ_S σ^S` where `ĉ_S = card⁻¹ Σ_τ σ^S(τ) f(τ)`.
