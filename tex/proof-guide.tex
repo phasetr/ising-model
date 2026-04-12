@@ -678,6 +678,31 @@ Immediate from $Z$ monotonicity and $\ln$ monotonicity
 (\texttt{Real.log\_le\_log}).
 \end{theorem}
 
+\subsection{Configuration--subset bijection}
+
+The Lee-Yang polynomial sums over subsets $X \subseteq \iota$
+while the partition function sums over configurations
+$\sigma : \iota \to \{\pm 1\}$.
+The bijection \texttt{configFinsetEquiv} identifies $\sigma$ with
+its ``down spin'' set $X = \{i : \sigma_i = -1\}$.
+
+\begin{definition}[\texttt{configToFinset}, \texttt{finsetToConfig}]
+$\sigma \mapsto \{i : \sigma_i = \mathrm{down}\}$ and
+$X \mapsto (\lambda i.\;\text{if } i \in X \text{ then down else up})$.
+These are mutual inverses (\texttt{configFinsetEquiv}).
+\end{definition}
+
+The connection identity
+(\cite[{(3.63)--(3.65), pp.~122--123}]{friedli-velenik}):
+\[
+  Z(J, h, \beta) = e^{\beta J|E| + \beta h N} \cdot
+  P\bigl(e^{-2\beta h}, \ldots, e^{-2\beta h}\bigr)
+\]
+where $P = \texttt{isingEdgePoly}$, $z_i = e^{-2\beta h}$,
+$t_e = e^{-2\beta J}$.
+Combined with Lee-Yang ($P(z) \ne 0$ for $|z_i| < 1$), this gives
+$Z(h) \ne 0$ for complex $h$ with $|e^{-2\beta h}| < 1$.
+
 \section{\texorpdfstring{$\varphi^4$}{phi4} inequalities (\texttt{ContinuousSpin/Phi4.lean})}
 
 The $\varphi^4$ correlation inequalities
