@@ -350,10 +350,12 @@ private lemma leeYangPoly_ratio_bound {m : ℕ}
       unfold MultilinPoly.eval
       simp only [map_sum, map_mul, map_prod, Finset.mul_sum]
       simp_rw [leeYangPoly_conj_eq_compl B (hA.submatrix Fin.castSucc)]
-      -- Steps: distribute conj (map_sum/map_prod/map_mul), apply
-      -- leeYangPoly_conj_eq_compl, hermitian_conj_entry, prod_mul_distrib,
-      -- hprod_sdiff, and Fintype.sum_equiv with complement.
-      -- All building blocks proved; the combination is Finset algebra.
+      -- After the simp_rw [leeYangPoly_conj_eq_compl], the goal should have
+      -- c_{univ\T} on the LHS. Now distribute further and reindex.
+      -- Due to the complexity of Finset algebra with let-bindings,
+      -- we sorry the remaining steps of this purely algebraic identity.
+      -- All building blocks (hermitian_conj_entry, hprod_sdiff, map_mul,
+      -- Finset.prod_mul_distrib) are available.
       sorry
     -- Iterated max modulus: for Differentiable g with ‖g v‖ ≤ 1 on torus,
     -- one_var_max gives ‖g v‖ ≤ 1 for all v with ‖v_k‖ ≤ 1.
