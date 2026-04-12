@@ -658,10 +658,24 @@ $\langle\sigma_i\rangle_{h_1} \ge 0$ for each $i$, so
 $Z(h_2) \ge Z(h_1)$.
 \end{proof}
 
-\begin{theorem}[\texttt{freeEnergy\_monotone\_h}]
-The free energy $f(h) = |\iota|^{-1}\ln Z(h)$ is monotone increasing
-in $h$ on $[0,\infty)$. Immediate from $Z(h_2) \ge Z(h_1) > 0$ and
-the monotonicity of $\ln$ (\texttt{Real.log\_le\_log}).
+\begin{theorem}[\texttt{partitionFunction\_monotone\_J};
+  cf.\ \cite{glimm-jaffe}, {\S4.6, p.~67}]
+For $h \ge 0$, $\beta > 0$, $0 \le J_1 \le J_2$:
+$Z(J_1, h, \beta) \le Z(J_2, h, \beta)$.
+\end{theorem}
+
+\begin{proof}
+Same technique as $h$-monotonicity with
+$R(\sigma) = \exp(\beta(J_2-J_1)\sum_e \sigma_i\sigma_j)$.
+Using $\exp(x) \ge 1+x$ and GKS-I
+($\langle\sigma_i\sigma_j\rangle \ge 0$ for each edge).
+\end{proof}
+
+\begin{theorem}[\texttt{freeEnergy\_monotone\_h}, \texttt{freeEnergy\_monotone\_J}]
+The free energy $f = |\iota|^{-1}\ln Z$ is monotone increasing
+in $h$ on $[0,\infty)$ and in $J$ on $[0,\infty)$.
+Immediate from $Z$ monotonicity and $\ln$ monotonicity
+(\texttt{Real.log\_le\_log}).
 \end{theorem}
 
 \section{\texorpdfstring{$\varphi^4$}{phi4} inequalities (\texttt{ContinuousSpin/Phi4.lean})}
