@@ -7,17 +7,14 @@ The φ⁴ correlation inequalities from Glimm–Jaffe §4.3, pp. 59–62.
 For continuous spins with distribution `dμ = exp(-λξ⁴ - σξ²) dξ`,
 these give Lebowitz-type bounds on truncated correlations.
 
-## Strategy
+## Main results
 
-The proof proceeds at a single site first:
-1. Define the orthogonal transformation `(ξ, χ, ξ', χ') ↦ (α, β, γ, δ)`
-2. Prove the quartic identity:
-   `ξ⁴ + χ⁴ + ξ'⁴ + χ'⁴ = 4(α⁴+β⁴+γ⁴+δ⁴) + 12(α²β²+...) - 24αβγδ`
-3. Conclude that the four-fold measure is ferromagnetic in `(α, β, γ, δ)`
-4. Apply GKS-I type argument to get Theorem 4.3.1
-5. Derive Corollaries 4.3.2–4.3.4
+* `quartic_identity` — the key algebraic identity for the orthogonal transformation
+* `sum_sq_identity`, `inner_product_identity` — orthogonality identities
 
-Reference: Glimm–Jaffe, *Quantum Physics*, §4.3, pp. 59–62.
+## References
+
+* Glimm–Jaffe, *Quantum Physics*, §4.3, pp. 59–62.
 -/
 
 namespace IsingModel.ContinuousSpin
@@ -27,23 +24,27 @@ open Real
 /-! ## Single-site orthogonal transformation
 
 The transformation `(ξ, χ, ξ', χ') ↦ (α, β, γ, δ)` is defined by
-two stages of averaging: first `(ξ,χ) ↦ (t,q)` and `(ξ',χ') ↦ (t',q')`,
-then `(t,t') ↦ (α,β)` and `(q,q') ↦ (γ,δ)`. -/
+two stages of averaging with `/2` normalization (not `/√2`).
+This is an orthogonal transformation of `ℝ⁴` up to a factor of 2. -/
 
-/-- The `(α, β, γ, δ)` variables as functions of `(ξ, χ, ξ', χ')`.
-This is an orthogonal transformation of `ℝ⁴`. -/
+/-- The `α` variable: `α = (ξ + χ + ξ' + χ') / 2`. -/
 noncomputable def phi4Alpha (ξ χ ξ' χ' : ℝ) : ℝ := (ξ + χ + ξ' + χ') / 2
+
+/-- The `β` variable: `β = (ξ + χ - ξ' - χ') / 2`. -/
 noncomputable def phi4Beta (ξ χ ξ' χ' : ℝ) : ℝ := (ξ + χ - ξ' - χ') / 2
+
+/-- The `γ` variable: `γ = (ξ - χ + ξ' - χ') / 2`. -/
 noncomputable def phi4Gamma (ξ χ ξ' χ' : ℝ) : ℝ := (ξ - χ + ξ' - χ') / 2
+
+/-- The `δ` variable: `δ = (ξ - χ - ξ' + χ') / 2`. -/
 noncomputable def phi4Delta (ξ χ ξ' χ' : ℝ) : ℝ := (ξ - χ - ξ' + χ') / 2
 
-/-! ## Quartic identity -/
+/-! ## Algebraic identities -/
 
 /-- The quartic identity for the orthogonal transformation:
-`ξ⁴ + χ⁴ + ξ'⁴ + χ'⁴ = 4(α⁴+β⁴+γ⁴+δ⁴) + 12(α²β²+α²γ²+α²δ²+β²γ²+β²δ²+γ²δ²) - 24αβγδ`.
+`4(ξ⁴ + χ⁴ + ξ'⁴ + χ'⁴) = (α⁴+β⁴+γ⁴+δ⁴) + 6·Σα²β² + 24·αβγδ`.
 
-Equivalently: `2(ξ⁴+χ⁴+ξ'⁴+χ'⁴) = (α+β+γ-δ)⁴ + (α+β-γ+δ)⁴ + (α-β+γ+δ)⁴ + (-α+β+γ+δ)⁴`.
-
+The `+24αβγδ` term is the ferromagnetic coupling that drives Theorem 4.3.1.
 Reference: Glimm–Jaffe, §4.3, p. 61. -/
 theorem quartic_identity (ξ χ ξ' χ' : ℝ) :
     let α := phi4Alpha ξ χ ξ' χ'
@@ -58,9 +59,8 @@ theorem quartic_identity (ξ χ ξ' χ' : ℝ) :
   simp only [phi4Alpha, phi4Beta, phi4Gamma, phi4Delta]
   ring
 
-/-- The sum of squares identity:
-`ξ² + χ² + ξ'² + χ'² = α² + β² + γ² + δ²`.
-This follows from the orthogonality of the transformation. -/
+/-- The sum of squares identity (orthogonality):
+`ξ² + χ² + ξ'² + χ'² = α² + β² + γ² + δ²`. -/
 theorem sum_sq_identity (ξ χ ξ' χ' : ℝ) :
     let α := phi4Alpha ξ χ ξ' χ'
     let β := phi4Beta ξ χ ξ' χ'
@@ -70,15 +70,13 @@ theorem sum_sq_identity (ξ χ ξ' χ' : ℝ) :
   simp only [phi4Alpha, phi4Beta, phi4Gamma, phi4Delta]
   ring
 
-/-- The linear identity: `ξ + χ + ξ' + χ' = 2α`.
-This is used for the external field coupling. -/
+/-- The linear identity: `ξ + χ + ξ' + χ' = 2α` (external field coupling). -/
 theorem sum_linear_identity (ξ χ ξ' χ' : ℝ) :
     ξ + χ + ξ' + χ' = 2 * phi4Alpha ξ χ ξ' χ' := by
   simp only [phi4Alpha]; ring
 
-/-- The inner product identity:
-`ξ₁ξ₂ + χ₁χ₂ + ξ'₁ξ'₂ + χ'₁χ'₂ = α₁α₂ + β₁β₂ + γ₁γ₂ + δ₁δ₂`.
-This preserves the interaction term under the orthogonal transformation. -/
+/-- The inner product identity (interaction term preservation):
+`ξ₁ξ₂ + χ₁χ₂ + ξ'₁ξ'₂ + χ'₁χ'₂ = α₁α₂ + β₁β₂ + γ₁γ₂ + δ₁δ₂`. -/
 theorem inner_product_identity (ξ₁ χ₁ ξ'₁ χ'₁ ξ₂ χ₂ ξ'₂ χ'₂ : ℝ) :
     ξ₁ * ξ₂ + χ₁ * χ₂ + ξ'₁ * ξ'₂ + χ'₁ * χ'₂ =
     phi4Alpha ξ₁ χ₁ ξ'₁ χ'₁ * phi4Alpha ξ₂ χ₂ ξ'₂ χ'₂ +
@@ -87,5 +85,23 @@ theorem inner_product_identity (ξ₁ χ₁ ξ'₁ χ'₁ ξ₂ χ₂ ξ'₂ χ'
     phi4Delta ξ₁ χ₁ ξ'₁ χ'₁ * phi4Delta ξ₂ χ₂ ξ'₂ χ'₂ := by
   simp only [phi4Alpha, phi4Beta, phi4Gamma, phi4Delta]
   ring
+
+/-! ## Ferromagnetic decomposition
+
+The quartic identity shows that `P(ξ)+P(χ)+P(ξ')+P(χ')` decomposes as
+an even function `Q(α,β,γ,δ)` minus a ferromagnetic term `c·αβγδ`:
+
+  `λ(ξ⁴+χ⁴+ξ'⁴+χ'⁴) + σ(ξ²+χ²+ξ'²+χ'²)`
+  `= [λ/4·(Σα⁴ + 6Σα²β²) + σ(Σα²)] - [-6λ·αβγδ]`
+  `= Q(α,β,γ,δ) - c·αβγδ`
+
+where `Q` is even in each variable and `c = -6λ > 0` when `λ > 0`.
+This means `exp(c·αβγδ)` is the ferromagnetic factor.
+
+The measure-theoretic proof of Theorem 4.3.1 (that `⟨α^A β^B γ^C δ^D⟩ ≥ 0`)
+uses the power series expansion of `exp(c·αβγδ)` and the evenness of `Q`
+to show that all contributions are non-negative.
+
+This part requires integrability estimates and is deferred. -/
 
 end IsingModel.ContinuousSpin
