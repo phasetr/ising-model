@@ -1,5 +1,6 @@
 import IsingModel.ContinuousSpin.Measure
 import Mathlib.Analysis.SpecialFunctions.Gaussian.GaussianIntegral
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
 
 /-!
 # φ⁴ inequalities
@@ -113,6 +114,19 @@ theorem integral_odd_power_even_weight_eq_zero (P : ℝ → ℝ) (k : ℕ) :
   rw [hodd, neg_sq]
   ring
 
+/-- `t * sinh(c * t) ≥ 0` for `c ≥ 0`: both factors have the same sign.
+This is the key positivity lemma for the ALL-ODD case of `phi4_single_site_nonneg`. -/
+theorem mul_sinh_nonneg (c t : ℝ) (hc : 0 ≤ c) : 0 ≤ t * Real.sinh (c * t) := by
+  by_cases ht : 0 ≤ t
+  · exact mul_nonneg ht (Real.sinh_nonneg_iff.mpr (mul_nonneg hc ht))
+  · push Not at ht
+    -- t * sinh(ct) = (-t) * sinh(-(ct)) = (-t) * sinh(-ct), both ≥ 0
+    rw [show t * Real.sinh (c * t) = (-t) * Real.sinh (-(c * t)) from by
+      rw [Real.sinh_neg]; ring]
+    exact mul_nonneg (neg_nonneg.mpr ht.le)
+      (Real.sinh_nonneg_iff.mpr (by
+        rw [neg_nonneg]; exact mul_nonpos_of_nonneg_of_nonpos hc ht.le))
+
 /-- The integral of a non-negative function is non-negative.
 Helper for the even-power case of `phi4_single_site_nonneg`. -/
 private theorem integral_nonneg_of_nonneg_ae (f : ℝ → ℝ)
@@ -152,13 +166,16 @@ theorem phi4_single_site_nonneg
   -- All-even: integrand = (non-negative) × exp(something) > 0.
   -- All-odd: needs orthant decomposition (deferred).
   -- For now, use a symmetry argument on the α variable when k is odd.
-  -- If k is odd, the outermost integral vanishes by α → -α symmetry.
-  -- Q(-α,β,γ,δ) = Q(α,β,γ,δ), and (-α)^k = -α^k, c(-α)βγδ = -cαβγδ,
-  -- so the integrand f(-α) = -f(α) when combined. But wait, exp(-Q(-α,...) + c(-α)βγδ)
-  -- = exp(-Q + (-c)αβγδ) ≠ exp(-Q + cαβγδ) when c ≠ 0.
-  -- So the full function is NOT odd in α when c > 0!
-  -- The orthant decomposition / power series approach is needed.
-  -- Full proof deferred to measure-theory assembly.
+  -- Symmetrization: apply α → -α (integral_neg_eq_self) to get
+  -- 2∫F = ∫[F(α) + F(-α)]. Q(-α,...) = Q(α,...) gives:
+  -- F(α)+F(-α) = α^k β^l γ^m δ^n exp(-Q) [(1+(-1)^k)cosh(cαβγδ) + (1-(-1)^k)sinh(cαβγδ)]
+  -- Repeat for β,γ,δ. After full symmetrization (16 copies):
+  --   MIXED parity → coefficient 0 → integral = 0
+  --   ALL EVEN → 16 × ∫ ... exp(-Q) cosh(cαβγδ) ≥ 0  (cosh ≥ 0)
+  --   ALL ODD → 16 × ∫ ... exp(-Q) sinh(cαβγδ) ≥ 0
+  --     (because αβγδ·sinh(c·αβγδ) ≥ 0 and remaining powers are even)
+  -- Integrability: polynomial × exp(-quartic) by integrableOn_rpow_mul_exp_neg_mul_rpow.
+  -- Mathematical argument complete; Lean assembly deferred.
   sorry
 
 /-! ## Corollary 4.3.2: Lebowitz inequality
