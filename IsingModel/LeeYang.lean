@@ -573,7 +573,29 @@ private lemma leeYangPoly_ratio_bound {m : ℕ}
         htorus w (fun k => hz (Fin.castSucc k))
     -- Pass to the limit t → 1: both sides are continuous in t
     rw [← hα1, ← hβ1]
-    sorry -- TODO: continuity in t + tendsto_le_of_eventuallyLE
+    -- Both sides are continuous in t (polynomial expressions), so the bound
+    -- extends from [0,1) to t=1 via closure of the sub-level set.
+    have hα_cont : Continuous (fun t : ℝ => (alphaT B a ↑t).eval w) := by
+      unfold alphaT MultilinPoly.eval
+      apply continuous_finset_sum; intro T _
+      apply Continuous.mul
+      · apply Continuous.mul
+        · exact continuous_const
+        · apply continuous_finset_prod; intro j _
+          exact RCLike.continuous_conj.comp
+            (Complex.continuous_ofReal.mul continuous_const)
+      · exact continuous_const
+    have hβ_cont : Continuous (fun t : ℝ => betaT B a ↑t w) := by
+      unfold betaT MultilinPoly.eval
+      apply continuous_finset_sum; intro S _
+      apply Continuous.mul
+      · exact continuous_const
+      · apply continuous_finset_prod; intro k _
+        exact (Complex.continuous_ofReal.mul continuous_const).mul continuous_const
+    exact (isClosed_le (continuous_norm.comp hα_cont) (continuous_norm.comp hβ_cont)).closure_subset
+      (closure_mono (fun t (ht : t ∈ Set.Ico 0 1) => hle_t t ht.1 ht.2)
+        (by rw [closure_Ico (show (0 : ℝ) ≠ 1 from one_ne_zero.symm)]
+            exact Set.right_mem_Icc.mpr zero_le_one))
 
 /-- **Harcos/Ruelle theorem**: For an `n × n` Hermitian matrix `A` with `|a_{ij}| ≤ 1`,
 the Lee-Yang polynomial `f_A` does not vanish on the open unit polydisk.
