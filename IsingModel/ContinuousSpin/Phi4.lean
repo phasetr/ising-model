@@ -160,22 +160,31 @@ theorem phi4_single_site_nonneg
       α ^ k * β ^ l * γ ^ m * δ ^ n *
       Real.exp (-Q α β γ δ + c * (α * β * γ * δ))
       ∂volume ∂volume ∂volume ∂volume := by
-  -- Mixed parity: if k is odd, the δ-innermost integral is a function of (α,β,γ)
-  -- that, when multiplied by α^k (odd), gives an odd integrand in α.
-  -- Similarly for other odd exponents.
-  -- All-even: integrand = (non-negative) × exp(something) > 0.
-  -- All-odd: needs orthant decomposition (deferred).
-  -- For now, use a symmetry argument on the α variable when k is odd.
-  -- Symmetrization: apply α → -α (integral_neg_eq_self) to get
-  -- 2∫F = ∫[F(α) + F(-α)]. Q(-α,...) = Q(α,...) gives:
-  -- F(α)+F(-α) = α^k β^l γ^m δ^n exp(-Q) [(1+(-1)^k)cosh(cαβγδ) + (1-(-1)^k)sinh(cαβγδ)]
-  -- Repeat for β,γ,δ. After full symmetrization (16 copies):
-  --   MIXED parity → coefficient 0 → integral = 0
-  --   ALL EVEN → 16 × ∫ ... exp(-Q) cosh(cαβγδ) ≥ 0  (cosh ≥ 0)
-  --   ALL ODD → 16 × ∫ ... exp(-Q) sinh(cαβγδ) ≥ 0
-  --     (because αβγδ·sinh(c·αβγδ) ≥ 0 and remaining powers are even)
-  -- Integrability: polynomial × exp(-quartic) by integrableOn_rpow_mul_exp_neg_mul_rpow.
-  -- Mathematical argument complete; Lean assembly deferred.
+  -- Symmetrization via α → -α. Let f(α) = inner triple integral.
+  let f : ℝ → ℝ := fun α =>
+    ∫ β, ∫ γ, ∫ δ,
+      α ^ k * β ^ l * γ ^ m * δ ^ n *
+      Real.exp (-Q α β γ δ + c * (α * β * γ * δ))
+      ∂volume ∂volume ∂volume
+  -- ∫ f(α) = ∫ f(-α) by integral_neg_eq_self
+  have hsymm : ∫ α, f α ∂volume = ∫ α, f (-α) ∂volume :=
+    (integral_neg_eq_self f volume).symm
+  -- 2∫f = ∫(f + f∘neg), so it suffices to show f(α) + f(-α) ≥ 0 pointwise
+  suffices hpw : ∀ α, 0 ≤ f α + f (-α) by
+    have h2 : 2 * ∫ α, f α ∂volume =
+        ∫ α, f α ∂volume + ∫ α, f (-α) ∂volume := by rw [hsymm]; ring
+    -- ∫(f + f∘neg) ≥ 0 by integral_nonneg
+    -- But we need integrability to split the integral. Use sorry for now.
+    sorry
+  -- Pointwise: f(α) + f(-α). Use Q(-α,...) = Q(α,...) and parity of α^k.
+  -- f(-α) = ∫∫∫ (-α)^k β^l γ^m δ^n exp(-Q(-α,β,γ,δ) + c(-α)βγδ)
+  --       = (-1)^k ∫∫∫ α^k β^l γ^m δ^n exp(-Q(α,β,γ,δ) - cαβγδ)  [Q even in α]
+  -- So f(α) + f(-α) = ∫∫∫ α^k β^l γ^m δ^n exp(-Q) [exp(cαβγδ) + (-1)^k exp(-cαβγδ)]
+  -- If k even: [...] = 2 cosh(cαβγδ) ≥ 0
+  -- If k odd: [...] = 2 sinh(cαβγδ), sign depends on αβγδ — need further symmetrization
+  -- Full pointwise analysis requires nested symmetrization for all 4 variables.
+  -- Deferred pending integral linearity assembly.
+  intro α
   sorry
 
 /-! ## Corollary 4.3.2: Lebowitz inequality
