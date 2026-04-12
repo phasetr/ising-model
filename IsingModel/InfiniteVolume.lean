@@ -221,6 +221,10 @@ theorem cov_hnc_boltzmann_nonneg (G : SimpleGraph ι) [Fintype G.edgeSet]
       have := mul_le_mul_of_nonneg_left hgks (show (0 : ℝ) ≤ Z ^ 2 from sq_nonneg Z)
       simp only [sq] at this ⊢
       -- nB * nS ≤ nBS * Z from gks_second (clearing Z⁻¹)
+      -- hgks: Z⁻¹ nB * (Z⁻¹ nS) ≤ Z⁻¹ nBS
+      -- i.e., nB * nS / Z² ≤ nBS / Z
+      -- Multiply both sides by Z² > 0:
+      -- nB nS ≤ nBS Z from hgks (clearing Z⁻¹, Z > 0)
       sorry
     linarith
   -- LHS = Σ_S ĉ_S · bracket = Σ (non-negative) ≥ 0
