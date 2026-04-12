@@ -390,7 +390,7 @@ $q(X) = 0$ if $j \in X$.
 \label{thm:asano}
 If $p$ does not vanish on the open unit polydisk
 $\{z : |z_k| < 1\;\forall k\}$, then neither does its Asano contraction.
-Reference: \cite[Proposition~3.44]{friedli-velenik}.
+Reference: \cite[Proposition~3.44, pp.~123--124]{friedli-velenik}.
 \end{theorem}
 
 The proof uses a bilinear non-vanishing lemma:
@@ -625,6 +625,44 @@ this reduces to increasing coupling constants from $0$ to $J$.
 The formalization of graph embeddings and cross-lattice correlation
 is deferred to future work.
 \end{remark}
+
+\section{Free energy (\texttt{FreeEnergy.lean})}
+
+The free energy and its monotonicity properties.
+Reference: \cite[{\S4.6, pp.~67--70}]{glimm-jaffe}.
+
+\begin{definition}[\texttt{freeEnergy}, (4.6.1), p.~67]
+The free energy per site: $f = |\iota|^{-1} \ln Z$.
+Well-defined since $Z > 0$ (\texttt{partitionFunction\_pos}).
+\end{definition}
+
+\begin{theorem}[\texttt{partitionFunction\_monotone\_h};
+  cf.\ \cite{glimm-jaffe}, {\S4.6, p.~67}]
+For $J \ge 0$, $\beta > 0$, $0 \le h_1 \le h_2$:
+$Z(J, h_1, \beta) \le Z(J, h_2, \beta)$.
+\end{theorem}
+
+\begin{proof}
+Rewrite $Z(h_2) = \sum_\sigma R(\sigma) w_1(\sigma)$ where
+$R(\sigma) = \prod_i \exp(\beta(h_2-h_1)\,\text{sign}(\sigma_i))$ and
+$w_1 = e^{-\beta H_{h_1}}$.
+Using $\exp(x) \ge 1 + x$:
+\[
+  R(\sigma) = \exp\Bigl(\beta(h_2 - h_1)\sum_i \sigma_i\Bigr)
+  \ge 1 + \beta(h_2 - h_1)\sum_i \sigma_i.
+\]
+Multiply by $w_1(\sigma)$ and sum:
+$Z(h_2) \ge Z(h_1) + \beta(h_2-h_1)\sum_i Z(h_1)\langle\sigma_i\rangle_{h_1}$.
+By GKS-I (\texttt{boltzmannWeight\_hasNonnegCorrelations}):
+$\langle\sigma_i\rangle_{h_1} \ge 0$ for each $i$, so
+$Z(h_2) \ge Z(h_1)$.
+\end{proof}
+
+\begin{theorem}[\texttt{freeEnergy\_monotone\_h}]
+The free energy $f(h) = |\iota|^{-1}\ln Z(h)$ is monotone increasing
+in $h$ on $[0,\infty)$. Immediate from $Z(h_2) \ge Z(h_1) > 0$ and
+the monotonicity of $\ln$ (\texttt{Real.log\_le\_log}).
+\end{theorem}
 
 \section{\texorpdfstring{$\varphi^4$}{phi4} inequalities (\texttt{ContinuousSpin/Phi4.lean})}
 
