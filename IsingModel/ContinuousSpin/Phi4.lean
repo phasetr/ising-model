@@ -146,12 +146,12 @@ theorem phi4_single_site_nonneg
       α ^ k * β ^ l * γ ^ m * δ ^ n *
       Real.exp (-Q α β γ δ + c * (α * β * γ * δ))
       ∂volume ∂volume ∂volume ∂volume := by
-  -- The full proof requires:
-  -- 1. Power series expansion of exp(c·αβγδ) and integral_tsum
-  -- 2. For each term: if any exponent is odd, integral_odd_eq_zero kills it
-  -- 3. For all-even exponents: integrand ≥ 0, so integral ≥ 0
-  -- 4. Integrability via integrableOn_rpow_mul_exp_neg_mul_rpow
-  -- For now, deferred pending measure-theory assembly.
+  -- Strategy: reduce to c = 0 case, then handle the ferromagnetic term.
+  -- For c = 0: exp(-Q + 0) = exp(-Q).
+  -- If any exponent is odd: the integrand is odd in that variable → integral = 0 ≥ 0.
+  -- If all exponents are even: the integrand is non-negative → integral ≥ 0.
+  -- For c > 0: expand exp(c·αβγδ) as power series and reduce each term to c = 0.
+  -- The full assembly requires Fubini + integral_tsum + integrability.
   sorry
 
 end IsingModel.ContinuousSpin
