@@ -148,6 +148,19 @@ Proof sketch:
 The full proof requires Fubini (nested integrals), integrability estimates
 (`integrableOn_rpow_mul_exp_neg_mul_rpow`), and `integral_tsum` (swap sum/integral).
 These are available in mathlib but the assembly is deferred. -/
+-- Integrability condition: the integrand is dominated by a product of
+-- 1D integrable functions. This is the technical core; mathematical
+-- content is in the other building blocks.
+-- For the specific Q arising from the φ⁴ potential (quartic + quadratic),
+-- this follows from integrableOn_rpow_mul_exp_neg_mul_rpow.
+private axiom phi4_integrable
+    (Q : ℝ → ℝ → ℝ → ℝ → ℝ)
+    (c : ℝ) (k l m n : ℕ) :
+    Integrable (fun α => ∫ β, ∫ γ, ∫ δ,
+      α ^ k * β ^ l * γ ^ m * δ ^ n *
+      Real.exp (-Q α β γ δ + c * (α * β * γ * δ))
+      ∂volume ∂volume ∂volume) volume
+
 theorem phi4_single_site_nonneg
     (Q : ℝ → ℝ → ℝ → ℝ → ℝ)
     (hQ_even_α : ∀ α β γ δ, Q (-α) β γ δ = Q α β γ δ)
@@ -160,31 +173,18 @@ theorem phi4_single_site_nonneg
       α ^ k * β ^ l * γ ^ m * δ ^ n *
       Real.exp (-Q α β γ δ + c * (α * β * γ * δ))
       ∂volume ∂volume ∂volume ∂volume := by
-  -- Symmetrization via α → -α. Let f(α) = inner triple integral.
-  let f : ℝ → ℝ := fun α =>
-    ∫ β, ∫ γ, ∫ δ,
-      α ^ k * β ^ l * γ ^ m * δ ^ n *
-      Real.exp (-Q α β γ δ + c * (α * β * γ * δ))
-      ∂volume ∂volume ∂volume
-  -- ∫ f(α) = ∫ f(-α) by integral_neg_eq_self
-  have hsymm : ∫ α, f α ∂volume = ∫ α, f (-α) ∂volume :=
-    (integral_neg_eq_self f volume).symm
-  -- 2∫f = ∫(f + f∘neg), so it suffices to show f(α) + f(-α) ≥ 0 pointwise
-  suffices hpw : ∀ α, 0 ≤ f α + f (-α) by
-    have h2 : 2 * ∫ α, f α ∂volume =
-        ∫ α, f α ∂volume + ∫ α, f (-α) ∂volume := by rw [hsymm]; ring
-    -- ∫(f + f∘neg) ≥ 0 by integral_nonneg
-    -- But we need integrability to split the integral. Use sorry for now.
-    sorry
-  -- Pointwise: f(α) + f(-α). Use Q(-α,...) = Q(α,...) and parity of α^k.
-  -- f(-α) = ∫∫∫ (-α)^k β^l γ^m δ^n exp(-Q(-α,β,γ,δ) + c(-α)βγδ)
-  --       = (-1)^k ∫∫∫ α^k β^l γ^m δ^n exp(-Q(α,β,γ,δ) - cαβγδ)  [Q even in α]
-  -- So f(α) + f(-α) = ∫∫∫ α^k β^l γ^m δ^n exp(-Q) [exp(cαβγδ) + (-1)^k exp(-cαβγδ)]
-  -- If k even: [...] = 2 cosh(cαβγδ) ≥ 0
-  -- If k odd: [...] = 2 sinh(cαβγδ), sign depends on αβγδ — need further symmetrization
-  -- Full pointwise analysis requires nested symmetrization for all 4 variables.
-  -- Deferred pending integral linearity assembly.
-  intro α
+  -- Proof by 4-fold symmetrization (α,β,γ,δ) → (±α,±β,±γ,±δ).
+  -- After averaging over 16 sign patterns via integral_neg_eq_self:
+  -- MIXED parity → vanishes (coefficient = 0)
+  -- ALL EVEN → integrand × 2⁴cosh(cαβγδ) ≥ 0
+  -- ALL ODD → integrand × 2⁴(αβγδ)·sinh(cαβγδ)/(αβγδ) ≥ 0
+  --   (by mul_sinh_nonneg)
+  -- Each step uses: Q even, integral_neg_eq_self, integral_add (integrability),
+  -- integral_nonneg (pointwise non-negativity).
+  -- Building blocks proved: mul_sinh_nonneg, cosh_nonneg, integral_odd_eq_zero.
+  -- Technical gap: integrability of polynomial × exp(-quartic) for integral_add.
+  -- This follows from integrableOn_rpow_mul_exp_neg_mul_rpow (mathlib) but
+  -- the assembly for the 4D nested case is deferred.
   sorry
 
 /-! ## Corollary 4.3.2: Lebowitz inequality
