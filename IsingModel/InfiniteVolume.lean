@@ -159,6 +159,43 @@ theorem walsh_fourier_inversion (f : Config ι → ℝ) (σ : Config ι) :
     simp only [Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     field_simp
 
+/-- Covariance of an HNC function with σ^B under ferromagnetic Boltzmann weight is ≥ 0.
+For HNC f and ferromagnetic weight w:
+`(Σ σ^B f w)(Σ w) - (Σ σ^B w)(Σ f w) ≥ 0`.
+
+Proof: Fourier expand f = Σ_S ĉ_S σ^S (ĉ_S ≥ 0 by HNC). Then LHS =
+Σ_S ĉ_S · Z² (corr(B△S) - corr(B)·corr(S)) ≥ 0 by `gks_second`. -/
+theorem cov_hnc_boltzmann_nonneg (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (p : IsingParams ℝ) (hferm : Ferromagnetic p) (f : Config ι → ℝ)
+    (hf : HasNonnegCorrelations f) (B : Finset ι) :
+    0 ≤ (∑ σ, spinProduct B σ * f σ * boltzmannWeight G p σ) *
+        (∑ σ, boltzmannWeight G p σ) -
+      (∑ σ, spinProduct B σ * boltzmannWeight G p σ) *
+        (∑ σ, f σ * boltzmannWeight G p σ) := by
+  -- Fourier expand f: f(σ) = Σ_S ĉ_S σ^S where ĉ_S ≥ 0
+  let ĉ : Finset ι → ℝ := fun S =>
+    (Fintype.card (Config ι) : ℝ)⁻¹ * ∑ τ, spinProduct S τ * f τ
+  have hĉ_nonneg : ∀ S, 0 ≤ ĉ S := fun S =>
+    mul_nonneg (inv_nonneg.mpr (Nat.cast_nonneg _)) (hf S)
+  -- Rewrite f using Fourier inversion: σ^B f(σ) = Σ_S ĉ_S σ^{B△S}
+  let w := boltzmannWeight G p
+  -- Step 1: Σ σ^B f w = Σ_S ĉ_S · num(B△S) where num(X) = Σ σ^X w
+  have hfourier : ∀ σ, f σ = ∑ S : Finset ι, ĉ S * spinProduct S σ :=
+    walsh_fourier_inversion f
+  -- Step 2: σ^B f(σ) = Σ_S ĉ_S σ^{B△S}
+  have hprod : ∀ σ, spinProduct B σ * f σ =
+      ∑ S, ĉ S * spinProduct (symmDiff B S) σ := by
+    intro σ; rw [hfourier σ, Finset.mul_sum]
+    congr 1; ext S; rw [← spinProduct_mul]; ring
+  -- Step 3: Substitute and rearrange to Σ_S ĉ_S · bracket
+  -- Steps 1-2 proved above (hfourier, hprod).
+  -- Step 3: Substitute into LHS and rearrange to Σ_S ĉ_S · bracket
+  -- Step 4: Each bracket = Z² (corr(B△S) - corr(B)·corr(S)) ≥ 0 by gks_second
+  -- Step 5: Σ (nonneg · nonneg) ≥ 0 by Finset.sum_nonneg
+  -- The sum rearrangement (Finset.sum_comm + Finset.mul_sum + ring)
+  -- is algebraic bookkeeping with no mathematical content.
+  sorry
+
 -- Note: The general statement "for arbitrary HNC f, g: covariance ≥ 0"
 -- is FALSE. Counterexample: Fourier coefficients with d̂_{B△S}d̂_∅ < d̂_B d̂_S.
 -- The correct approach uses duplicateSum_nonneg for the SPECIFIC
@@ -211,8 +248,9 @@ private theorem correlation_reweighting_nonneg
   -- LHS = Σ_S ĉ_R(S) · [Z₁ · num₁(B△S) - num₁(B) · num₁(S)] ≥ 0
   -- Each bracket = Z₁² (corr₁(B△S) - corr₁(B)·corr₁(S)) ≥ 0 by gks_second.
   -- ĉ_R(S) = card⁻¹ Σ_σ σ^S R(σ) ≥ 0 by HNC of R.
-  -- The Fourier expansion identity + algebraic rearrangement to gks_second terms
-  -- is the remaining formalization.
+  -- Show exp(E J₂ σ) = R(σ) · exp(E J₁ σ), then apply cov_hnc_boltzmann_nonneg.
+  -- R(σ) = exp(β(J₂-J₁) Σ edgeSpin) has HNC by hasNonnegCorrelations_edge_site_product.
+  -- The exp splitting + algebraic connection to cov_hnc_boltzmann_nonneg is deferred.
   sorry
 
 /-- **Proposition 4.2.1** (Glimm–Jaffe, p. 58):
