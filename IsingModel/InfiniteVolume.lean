@@ -150,20 +150,20 @@ theorem correlation_monotone_J (G : SimpleGraph ι) [Fintype G.edgeSet]
     ext J; simp only [correlationJ, correlation, gibbsExpectation,
       partitionFunction, boltzmannWeight, Pi.div_apply, div_eq_mul_inv]
     ring
-  rw [hf_eq]
-  apply monotone_of_deriv_nonneg (hnum_diff.div hden_diff hden_ne)
-  intro J
-  rw [deriv_div hnum_diff.differentiableAt hden_diff.differentiableAt (hden_ne J)]
-  -- (num' den - num den') / den² ≥ 0 ← den² > 0 and num'den - num·den' ≥ 0
-  apply div_nonneg _ (sq_nonneg _)
-  -- Compute deriv E
-  let S : Config ι → ℝ := fun σ => β * ∑ e ∈ G.edgeFinset, edgeSpin (K := ℝ) σ e
-  -- E J σ = J * S(σ) + constant. So deriv_J E = S(σ).
-  -- deriv num J = Σ σ^B S(σ) exp(E J σ), deriv den J = Σ S(σ) exp(E J σ)
-  -- num' den - num den' = Σ_σ Σ_τ σ^B (S(σ)-S(τ)) exp(E σ) exp(E τ)
-  --   = Σ_σ Σ_τ σ^B S(σ) exp(E σ) exp(E τ) - Σ_σ σ^B exp(E σ) Σ_τ S(τ) exp(E τ)
-  -- which is non-negative by GKS-II (it's a sum of duplicateSum terms).
-  -- Full derivative computation deferred.
+  -- Direct algebraic proof: for J₁ ≤ J₂, show corr(J₂) ≥ corr(J₁)
+  -- by rewriting corr(J₂) - corr(J₁) = [num₂ den₁ - num₁ den₂] / (den₁ den₂)
+  -- and showing the numerator ≥ 0 using GKS-II.
+  intro J₁ J₂ hJ
+  simp only [hf_eq, Pi.div_apply]
+  rw [div_le_div_iff₀ (hden_pos J₁) (hden_pos J₂)]
+  -- Goal: num J₁ * den J₂ ≤ num J₂ * den J₁
+  -- i.e.: 0 ≤ num J₂ * den J₁ - num J₁ * den J₂
+  -- = Σ_σ Σ_τ σ^B [w₂(σ)w₁(τ) - w₁(σ)w₂(τ)]
+  -- = Σ_σ Σ_τ σ^B w₁(σ)w₁(τ) [R(σ) - R(τ)]
+  -- where R(σ) = exp(β(J₂-J₁) Σ edgeSpin)
+  -- This is the concordance / covariance expression.
+  -- It equals β(J₂-J₁) Σ_e duplicateSum(B, e) ≥ 0 after linearization.
+  -- Full algebraic proof deferred.
   sorry
 
 /-! ## Infinite volume convergence (Theorem 4.2.3)
