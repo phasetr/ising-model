@@ -241,7 +241,10 @@ theorem cov_hnc_boltzmann_nonneg (G : SimpleGraph ι) [Fintype G.edgeSet]
           (∑ σ : Config ι, boltzmannWeight G p σ)) := by nlinarith
     linarith [le_of_mul_le_mul_left h3a hZ]
   -- LHS = Σ_S ĉ_S bracket by Fourier substitution + sum rearrangement
-  -- Using hfourier, hprod, Finset.sum_comm, hterm, Finset.sum_nonneg
+  -- LHS = Σ_S ĉ_S bracket, apply Finset.sum_nonneg hterm.
+  -- The sum rearrangement (Finset.sum_comm + Finset.mul_sum) has
+  -- bound variable naming issues preventing rw matching.
+  -- All mathematical building blocks proved: hterm, hprod, hfourier.
   sorry
 
 -- Note: The general statement "for arbitrary HNC f, g: covariance ≥ 0"
