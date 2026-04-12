@@ -92,18 +92,16 @@ noncomputable def correlationJ (G : SimpleGraph ι) [Fintype G.edgeSet]
   fun J => correlation G ⟨J, h, β⟩ B
 
 /-- **Proposition 4.2.1** (Glimm–Jaffe, p. 58):
-The correlation function `⟨σ^B⟩` is monotone increasing in `J`.
+The correlation function is monotone increasing in the coupling constant J.
 
-Proof: `d/dJ ⟨σ^B⟩ = β Σ_e (⟨edgeSpin(e) · σ^B⟩ - ⟨edgeSpin(e)⟩⟨σ^B⟩) ≥ 0`
-by GKS-II applied to each edge term.
+Proof (not formalized): `d/dJ ⟨σ^B⟩ = β Σ_e [⟨σ^{e△B}⟩ - ⟨σ^e⟩⟨σ^B⟩] ≥ 0`
+where each term is non-negative by GKS-II (`gks_second`).
 
-The full formalization requires:
-1. Differentiability of correlationJ (finite sum of exp, quotient rule)
-2. Derivative computation (product rule + chain rule for exp)
-3. GKS-II applied to each edge term
-4. monotone_of_deriv_nonneg
-
-This is deferred pending the derivative computation. -/
+The formalization requires:
+1. Differentiability of `correlationJ` (finite sum of exp, quotient rule)
+2. Derivative = covariance form (standard calculus for Gibbs expectations)
+3. Each covariance term ≥ 0 by `gks_second`
+4. `Monotone.of_deriv_nonneg` or equivalent -/
 theorem correlation_monotone_J (G : SimpleGraph ι) [Fintype G.edgeSet]
     (h : ℝ) (hh : 0 ≤ h) (β : ℝ) (hβ : 0 < β) (B : Finset ι) :
     Monotone (correlationJ G h β B) := by

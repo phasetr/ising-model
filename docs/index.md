@@ -19,6 +19,8 @@ All theorems are formally proved with **zero `sorry`**.
 | **Asano contraction**                    | Contraction preserves non-vanishing on the unit polydisk    | `Asano.lean`            |
 | **Lee-Yang circle theorem**              | Ising partition polynomial nonvanishing on the open polydisk | `LeeYang.lean`          |
 | **φ⁴ algebraic identities**              | Quartic/orthogonal transformation identities (axiom: integrability) | `ContinuousSpin/Phi4.lean` |
+| **Correlation boundedness** (Prop 4.2.2) | `|⟨σ^A⟩| ≤ 1`                                              | `InfiniteVolume.lean`   |
+| Correlation monotonicity (Prop 4.2.1)   | `⟨σ^B⟩` monotone in J (sorry: derivative computation)       | `InfiniteVolume.lean`   |
 | Partition function positivity            | `Z > 0`                                                    | `GibbsMeasure.lean`     |
 | Spin flip symmetry                       | `H(flip σ) = H(σ)` when h = 0                              | `Hamiltonian.lean`      |
 

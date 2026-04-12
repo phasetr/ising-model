@@ -30,6 +30,7 @@ All theorems are formally proved with **zero `sorry`**.
 | Partition function positivity | `Z > 0` | — |
 | Spin flip symmetry | `H(flip σ) = H(σ)` when h = 0 | — |
 | φ⁴ algebraic identities | quartic/orthogonal transformation identities | Glimm-Jaffe §4.3 |
+| Correlation boundedness | `\|⟨σ^A⟩\| ≤ 1` (Prop 4.2.2) | Glimm-Jaffe §4.2 |
 
 ### Axioms (measure-theoretic prerequisites, not formalized)
 
