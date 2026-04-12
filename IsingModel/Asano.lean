@@ -8,23 +8,19 @@ import Mathlib.LinearAlgebra.Matrix.Hermitian
 /-!
 # Multilinear polynomials and Asano contraction
 
-This file defines multilinear polynomials over `ℂ` and the Asano contraction.
-
 ## Multilinear polynomials
 
 `MultilinPoly ι` is a function `Finset ι → ℂ` giving the coefficient of each
-monomial `∏_{i ∈ X} z_i`. This is used both here and in `LeeYang.lean`
-(which imports this file for `MultilinPoly` and `MultilinPoly.eval` only;
-the Asano contraction itself is not used in the Lee-Yang proof).
+monomial `∏_{i ∈ X} z_i`. Used here and in `LeeYang.lean`.
 
 ## Asano contraction
 
-The Asano contraction merges two variables by keeping only the "both present"
-and "both absent" parts. This was originally intended for the Lee-Yang proof
-via Friedli–Velenik's approach, but the final proof uses the Harcos/Ruelle
-approach instead. The contraction machinery is retained for potential future use.
+The Asano contraction merges two variables of a multilinear polynomial by
+keeping only the "both present" and "both absent" parts. The main result
+`asanoContraction_nonvanishing` shows that contraction preserves non-vanishing
+on the unit polydisk.
 
-Reference: Friedli–Velenik, §3.7, pp. 122–127.
+Reference: Friedli–Velenik, Proposition 3.44, §3.7, pp. 122–127.
 -/
 
 namespace IsingModel
@@ -42,18 +38,6 @@ abbrev MultilinPoly (ι : Type*) [Fintype ι] := Finset ι → ℂ
 /-- Evaluate a multilinear polynomial at `z : ι → ℂ`. -/
 noncomputable def MultilinPoly.eval (p : MultilinPoly ι) (z : ι → ℂ) : ℂ :=
   ∑ X : Finset ι, p X * ∏ i ∈ X, z i
-
-/-- The constant polynomial `1`. -/
-def MultilinPoly.one : MultilinPoly ι := fun X => if X = ∅ then 1 else 0
-
-/-- Multiply two multilinear polynomials on disjoint variable sets.
-Given `p : MultilinPoly ι₁` and `q : MultilinPoly ι₂`,
-the product is a polynomial on `ι₁ ⊕ ι₂`. -/
-noncomputable def MultilinPoly.disjointMul {ι₁ ι₂ : Type*}
-    [Fintype ι₁] [DecidableEq ι₁] [Fintype ι₂] [DecidableEq ι₂]
-    (p : MultilinPoly ι₁) (q : MultilinPoly ι₂) : MultilinPoly (ι₁ ⊕ ι₂) :=
-  fun X => p (X.preimage Sum.inl (by intro a b _ _ h; exact Sum.inl_injective h)) *
-           q (X.preimage Sum.inr (by intro a b _ _ h; exact Sum.inr_injective h))
 
 /-! ## Asano contraction -/
 
