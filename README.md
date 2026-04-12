@@ -44,9 +44,8 @@ but require heavy Lean measure theory assembly:
 These axioms are prerequisites for the Lebowitz inequality and truncated
 3-point correlation bound (Corollaries 4.3.2–4.3.4, to be formalized).
 
-- `correlation_monotone_J`: monotonicity of correlation in coupling constant J
-  (requires derivative computation or Fourier expansion on {±1}^n;
-  building blocks `duplicateSum_nonneg`, `hasNonnegCorrelations_edge_site_product` proved)
+- `hnc_correlation_nonneg`: HNC covariance inequality (Fourier expansion + generalized GKS-II)
+- `correlation_reweighting_nonneg`: exp splitting + hnc_correlation_nonneg application
 
 ## Documentation
 
