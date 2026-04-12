@@ -277,9 +277,9 @@ constant `J`. This follows from GKS-II:
 In the discrete setting, we show that for `J₁ ≤ J₂` (with all other
 parameters fixed), `⟨σ^B⟩_{J₁} ≤ ⟨σ^B⟩_{J₂}`.
 
-The full proof requires showing that the derivative of ⟨σ^B⟩ w.r.t. J
-equals the GKS-II expression. This is a calculus identity for the
-Gibbs expectation, and its formalization is deferred to a subsequent step.
+The proof uses the reweighting factor `R(σ) = ∏ exp(β(J₂-J₁) edgeSpin)`,
+which has HNC. The Hamiltonian splitting `exp(-β H_{J₂}) = R · exp(-β H_{J₁})`
+reduces to a covariance bound via `cov_hnc_boltzmann_nonneg`.
 
 Reference: Glimm–Jaffe, Proposition 4.2.1, p. 58. -/
 
@@ -393,8 +393,7 @@ theorem correlation_monotone_J (G : SimpleGraph ι) [Fintype G.edgeSet]
   -- to duplicateSum are the remaining formalization work.
   -- Apply hnc_correlation_nonneg via reweighting identity:
   -- exp(E J₂ σ) = R(σ) · exp(E J₁ σ) where R(σ) = exp(β(J₂-J₁) Σ edgeSpin)
-  -- R has HNC, w₁ has HNC → hnc_correlation_nonneg gives the bound.
-  -- The exp splitting + sum rearrangement is algebraic bookkeeping.
+  -- R has HNC → cov_hnc_boltzmann_nonneg gives the bound.
   exact le_of_sub_nonneg (correlation_reweighting_nonneg G h β B J₁ J₂ hJ
     (Set.mem_Ici.mp hJ₁_mem) hh hβ)
 

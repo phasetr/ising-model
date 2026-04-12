@@ -32,10 +32,8 @@ The φ⁴ module uses two measure-theoretic axioms (`phi4_integrable`,
 `phi4_single_site_nonneg`) whose proofs are mathematically complete
 but not formalized in Lean. See `ContinuousSpin/Phi4.lean` for details.
 
-The infinite volume module is fully proved with zero `sorry`.
-The false axiom `hnc_correlation_nonneg` has been removed, and the
-remaining sorry (`correlation_reweighting_nonneg`) has been resolved
-via Fourier expansion + `cov_hnc_boltzmann_nonneg` + `gks_second`.
+The infinite volume module (`InfiniteVolume.lean`) is fully proved
+with zero `sorry`.
 
 ## References
 

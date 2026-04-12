@@ -484,7 +484,8 @@ $|\sigma^A| = 1$ (since $\sigma_i = \pm 1$), so
 $|\langle\sigma^A\rangle| \le \langle|\sigma^A|\rangle = 1$.
 \end{proof}
 
-\begin{theorem}[\texttt{cov\_hnc\_boltzmann\_nonneg}]
+\begin{theorem}[\texttt{cov\_hnc\_boltzmann\_nonneg};
+  cf.\ \cite{glimm-jaffe}, {\S4.2, p.~58}]
 \label{thm:cov-hnc}
 For an HNC function $f$ and ferromagnetic Boltzmann weight $w$,
 \[
@@ -510,7 +511,8 @@ The covariance becomes $\sum_S \hat{c}_S \cdot \text{bracket}_S$ where
 \]
 Since $\hat{c}_S \ge 0$ and $\text{bracket}_S = Z^2(\langle\sigma^{B\triangle S}\rangle
 - \langle\sigma^B\rangle\langle\sigma^S\rangle) \ge 0$ by GKS-II
-(\texttt{gks\_second}), each term is non-negative.
+(\texttt{gks\_second}; \cite[Theorem~3.49, p.~127]{friedli-velenik}),
+each term is non-negative.
 \end{proof}
 
 \begin{proposition}[\texttt{correlation\_monotone\_J}, Proposition 4.2.1, p.~58]
