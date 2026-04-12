@@ -190,14 +190,42 @@ theorem cov_hnc_boltzmann_nonneg (G : SimpleGraph ι) [Fintype G.edgeSet]
   -- Step 3: Substitute and rearrange to Σ_S ĉ_S · bracket
   -- Step 3: Σ σ^B f w = Σ_S ĉ_S numR(B△S)
   let numR : Finset ι → ℝ := fun X => ∑ σ, spinProduct X σ * boltzmannWeight G p σ
-  -- Steps 3-7: algebraic rearrangement + gks_second per Fourier term.
-  -- Σ σ^B f w = Σ_S ĉ_S numR(B△S) [by hprod + sum_comm]
-  -- Σ f w = Σ_S ĉ_S numR(S) [by hfourier + sum_comm]
-  -- LHS = Σ_S ĉ_S [numR(B△S) Z - numR(B) numR(S)]
-  -- Each bracket ≥ 0 by gks_second: corr(B)·corr(S) ≤ corr(B△S)
-  -- Σ (nonneg · nonneg) ≥ 0 by Finset.sum_nonneg.
-  -- The sum rearrangement (sum_comm + Finset.mul_sum) has typing issues
-  -- with let-defined numR. All mathematical steps verified.
+  -- Each Fourier term contributes non-negatively:
+  -- ĉ_S · [(Σ σ^{B△S} w)(Σ w) - (Σ σ^B w)(Σ σ^S w)] ≥ 0
+  have hterm : ∀ S : Finset ι,
+      0 ≤ ĉ S * ((∑ σ, spinProduct (symmDiff B S) σ * boltzmannWeight G p σ) *
+        (∑ σ, boltzmannWeight G p σ) -
+        (∑ σ, spinProduct B σ * boltzmannWeight G p σ) *
+        (∑ σ, spinProduct S σ * boltzmannWeight G p σ)) := by
+    intro S; apply mul_nonneg (hĉ_nonneg S)
+    -- bracket = Z²(corr(B△S) - corr(B)·corr(S)) ≥ 0 by gks_second
+    have hZ := partitionFunction_pos G p
+    have hgks := gks_second G p hferm B S
+    -- gks_second : corr B * corr S ≤ corr (B △ S)
+    -- Unfold to get the numerator form
+    unfold correlation gibbsExpectation partitionFunction at hgks
+    -- corr(X) = Z⁻¹ num(X), so corr(B)·corr(S) ≤ corr(B△S)
+    -- → Z⁻¹ num(B) · Z⁻¹ num(S) ≤ Z⁻¹ num(B△S)
+    -- → num(B) num(S) ≤ Z num(B△S)
+    -- → Z num(B△S) - num(B) num(S) ≥ 0
+    -- → (Σ σ^{B△S} w)(Σ w) - (Σ σ^B w)(Σ σ^S w) ≥ 0
+    -- Clear inverses by multiplying by Z > 0
+    have hZne := ne_of_gt hZ
+    let Z := ∑ σ : Config ι, boltzmannWeight G p σ
+    let nB := ∑ σ, spinProduct B σ * boltzmannWeight G p σ
+    let nS := ∑ σ, spinProduct S σ * boltzmannWeight G p σ
+    let nBS := ∑ σ, spinProduct (symmDiff B S) σ * boltzmannWeight G p σ
+    -- hgks : Z⁻¹ nB * (Z⁻¹ nS) ≤ Z⁻¹ nBS
+    -- → nB * nS / Z² ≤ nBS / Z → nB * nS ≤ nBS * Z
+    have : nB * nS ≤ nBS * Z := by
+      have := mul_le_mul_of_nonneg_left hgks (show (0 : ℝ) ≤ Z ^ 2 from sq_nonneg Z)
+      simp only [sq] at this ⊢
+      -- nB * nS ≤ nBS * Z from gks_second (clearing Z⁻¹)
+      sorry
+    linarith
+  -- LHS = Σ_S ĉ_S · bracket = Σ (non-negative) ≥ 0
+  -- The algebraic identity LHS = Σ_S hterm(S) uses:
+  -- walsh_fourier_inversion (f = Σ ĉ σ^S) + spinProduct_mul + sum_comm
   sorry
 
 -- Note: The general statement "for arbitrary HNC f, g: covariance ≥ 0"
