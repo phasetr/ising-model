@@ -364,10 +364,12 @@ $\langle fg \rangle \geq \langle f \rangle \langle g \rangle$.
 
 \section{Asano Contraction}
 
-The Asano contraction is the algebraic core of the Lee--Yang circle theorem.
-It merges two variables in a multilinear polynomial, keeping only the
-``both present'' and ``both absent'' parts
-\cite[pp.~123--124]{friedli-velenik}.
+The Asano contraction merges two variables in a multilinear polynomial,
+keeping only the ``both present'' and ``both absent'' parts.
+It is an independent result in algebraic combinatorics; our Lee-Yang proof
+(Section~\ref{sec:lee-yang}) uses the Harcos/Ruelle approach instead.
+
+Reference: \cite[Proposition~3.44, pp.~123--124]{friedli-velenik}.
 
 \begin{definition}[Multilinear polynomial]
 A multilinear polynomial over $\mathbb{C}$ with variables indexed by a
@@ -423,6 +425,7 @@ multilinear polynomials, the definitions here should be replaced.
 \end{remark}
 
 \section{Lee-Yang circle theorem (\texttt{LeeYang.lean})}
+\label{sec:lee-yang}
 
 The Lee-Yang circle theorem states that the Ising partition polynomial
 has no zeros on the open unit polydisk. Our formalization follows the
