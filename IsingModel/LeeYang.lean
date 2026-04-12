@@ -386,8 +386,7 @@ private lemma leeYangPoly_ratio_bound {m : ℕ}
         simp [Finset.mem_map, Fin.castSucc_ne_last]
       have := congr_arg (Finset.erase · (Fin.last m)) h
       simp only [Finset.erase_insert h1, Finset.erase_insert h2] at this
-      exact (Finset.map_injOn (f := ⟨Fin.castSucc, Fin.castSucc_injective m⟩)
-        (Set.injOn_of_injective (Fin.castSucc_injective m))).eq_iff.mp this
+      exact Finset.map_injective ⟨Fin.castSucc, Fin.castSucc_injective m⟩ this
     · -- Surjective
       intro S hS
       simp only [Finset.mem_coe, Finset.mem_filter, Finset.mem_univ, true_and] at hS
@@ -809,6 +808,11 @@ private lemma edgeWeight_eq_prod (e : ι × ι × ℝ) (hne : e.1 ≠ e.2.1) (X 
   unfold edgeWeight
   by_cases ha : e.1 ∈ X <;> by_cases hb : e.2.1 ∈ X <;> simp_all [Finset.mem_sdiff]
 
+/-- The Ising edge polynomial coefficient equals the Lee-Yang polynomial coefficient
+constructed from the Ising matrix: `isingEdgePoly edges X = ∏_{i∈X} ∏_{j∉X} isingMatrix edges i j`.
+This bridges the combinatorial (edge-based) and matrix (entry-based) formulations.
+
+Reference: Friedli–Velenik, (3.63)--(3.65), pp. 122--123. -/
 private lemma isingEdgePoly_eq_leeYangCoeff (edges : List (ι × ι × ℝ))
     (hne : ∀ e ∈ edges, e.1 ≠ e.2.1) (X : Finset ι) :
     isingEdgePoly edges X =
