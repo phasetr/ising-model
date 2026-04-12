@@ -16,6 +16,7 @@ rev = "v4.29.0"
 
 [[lean_lib]]
 name = "IsingModel"
+globs = ["IsingModel", "IsingModel.+"]
 
 [[lean_lib]]
 name = "test"
