@@ -146,6 +146,47 @@ private lemma leeYangPoly_coeff_in {m : ℕ} (A : Matrix (Fin (m + 1)) (Fin (m +
   simp only [Matrix.submatrix_apply, Function.Embedding.coeFn_mk]
   ring
 
+/-- Torus identity for the multilinear evaluation.  For Hermitian `B` and any vector `a`,
+the α-polynomial `∑_T (lyp B T · ∏_{j∉T} conj a_j) ∏_{k∈T} v_k` equals
+`(∏ v_k) · conj(∑_S lyp B S · ∏_{k∈S} (a_k · v_k))` when `‖v_k‖ = 1`.
+This is the core algebraic identity in the Harcos/Ruelle proof. -/
+private lemma torus_identity {m : ℕ}
+    (B : Matrix (Fin m) (Fin m) ℂ) (hB : B.IsHermitian)
+    (a : Fin m → ℂ) (v : Fin m → ℂ) (hv : ∀ k, ‖v k‖ = 1) :
+    MultilinPoly.eval (fun T : Finset (Fin m) =>
+      leeYangPoly B T * ∏ j ∈ Finset.univ \ T, starRingEnd ℂ (a j)) v =
+    (∏ k : Fin m, v k) *
+      starRingEnd ℂ ((leeYangPoly B).eval (fun i => a i * v i)) := by
+  unfold MultilinPoly.eval
+  simp only [map_sum, map_mul, map_prod, Finset.mul_sum,
+    leeYangPoly_conj_eq_compl B hB]
+  simp_rw [Finset.prod_mul_distrib]
+  have hconj_inv : ∀ z : ℂ, ‖z‖ = 1 → starRingEnd ℂ z = z⁻¹ := fun z hz =>
+    eq_comm.mp (inv_eq_of_mul_eq_one_right (by rw [@RCLike.mul_conj ℂ _ z, hz]; norm_num))
+  have hprod_sdiff : ∀ T : Finset (Fin m),
+      (∏ k : Fin m, v k) * ∏ i ∈ T, starRingEnd ℂ (v i) = ∏ k ∈ Finset.univ \ T, v k := by
+    intro T
+    simp_rw [hconj_inv _ (hv _), Finset.prod_inv_distrib]
+    rw [show (∏ k : Fin m, v k) = (∏ k ∈ Finset.univ \ T, v k) * ∏ k ∈ T, v k from
+      (Finset.prod_sdiff (Finset.subset_univ T)).symm, mul_assoc,
+      mul_inv_cancel₀ (Finset.prod_ne_zero_iff.mpr (fun k _ =>
+        norm_ne_zero_iff.mp (by rw [hv k]; exact one_ne_zero))), mul_one]
+  have hrearrange : ∀ S : Finset (Fin m),
+      (∏ k : Fin m, v k) *
+        (leeYangPoly B (Finset.univ \ S) *
+          ((∏ x ∈ S, starRingEnd ℂ (a x)) *
+            ∏ x ∈ S, (starRingEnd ℂ) (v x))) =
+      leeYangPoly B (Finset.univ \ S) * (∏ x ∈ S, starRingEnd ℂ (a x)) *
+        ((∏ k : Fin m, v k) * ∏ x ∈ S, (starRingEnd ℂ) (v x)) := fun S => by ring
+  simp_rw [hrearrange, hprod_sdiff]
+  let compl_equiv : Finset (Fin m) ≃ Finset (Fin m) :=
+    ⟨(Finset.univ \ ·), (Finset.univ \ ·),
+      fun S => by simp [sdiff_sdiff_right_self],
+      fun S => by simp [sdiff_sdiff_right_self]⟩
+  exact (Fintype.sum_equiv compl_equiv _ _ (fun T => by
+    simp only [compl_equiv, Equiv.coe_fn_mk, sdiff_sdiff_right_self,
+      inf_eq_inter, Finset.univ_inter])).symm
+
 /-- The ratio of the `z_last`-coefficient to the constant term in the Lee-Yang polynomial
 is bounded by 1, by the maximum modulus principle.
 
