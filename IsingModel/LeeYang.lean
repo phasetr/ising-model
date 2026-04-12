@@ -343,10 +343,17 @@ private lemma leeYangPoly_ratio_bound {m : ℕ}
           (Finset.prod_sdiff (Finset.subset_univ T)).symm, mul_assoc,
           mul_inv_cancel₀ (Finset.prod_ne_zero_iff.mpr (fun k _ =>
             norm_ne_zero_iff.mp (by rw [hv k]; exact one_ne_zero))), mul_one]
-      -- This algebraic identity uses: conj distributes over sum/prod,
-      -- leeYangPoly_conj_eq_compl, hermitian_conj_entry, hprod_sdiff,
-      -- and sum reindexing via Finset complement.
-      -- All building blocks are proved; the combination is pure Finset algebra.
+      -- Unfold lets to expose the Finset structure
+      change p_α.eval v = (∏ k, v k) * starRingEnd ℂ
+        ((leeYangPoly B).eval (fun i => A (Fin.castSucc i) (Fin.last m) * v i))
+      -- Both sides are ∑_T over Finset(Fin m). Distribute conj, use Hermitian, reindex.
+      unfold MultilinPoly.eval
+      simp only [map_sum, map_mul, map_prod, Finset.mul_sum]
+      simp_rw [leeYangPoly_conj_eq_compl B (hA.submatrix Fin.castSucc)]
+      -- Steps: distribute conj (map_sum/map_prod/map_mul), apply
+      -- leeYangPoly_conj_eq_compl, hermitian_conj_entry, prod_mul_distrib,
+      -- hprod_sdiff, and Fintype.sum_equiv with complement.
+      -- All building blocks proved; the combination is Finset algebra.
       sorry
     -- Iterated max modulus: for Differentiable g with ‖g v‖ ≤ 1 on torus,
     -- one_var_max gives ‖g v‖ ≤ 1 for all v with ‖v_k‖ ≤ 1.
