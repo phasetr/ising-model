@@ -283,6 +283,8 @@ private lemma iterated_ratio {m : ℕ}
       have hkk : k ≠ k₀ := ne_of_mem_of_not_mem hk hk₀
       simp [Function.update, hkk]; exact hv_in k (Finset.mem_insert_of_mem hk)
 
+-- Iterated DiffContOnCl + approximation argument requires extra heartbeats
+set_option maxHeartbeats 800000 in
 /-- The ratio of the `z_last`-coefficient to the constant term in the Lee-Yang polynomial
 is bounded by 1, by the maximum modulus principle.
 
@@ -516,31 +518,23 @@ private lemma leeYangPoly_ratio_bound {m : ℕ}
     -- Iterated max modulus via DiffContOnCl gives ‖α_t w‖ ≤ ‖β_t w‖.
     -- Pass to the limit t → 1.
     change ‖αfun w‖ ≤ ‖βfun w‖
-    -- p_α matches the torus_identity form with a = A(cs ·)(last)
-    have hp_α_conj : ∀ T, p_α T = leeYangPoly B T *
-        ∏ j ∈ Finset.univ \ T,
-          starRingEnd ℂ (A (Fin.castSucc j) (Fin.last m)) := by
-      intro T; simp only [hp_α_def]; congr 1
-      exact Finset.prod_congr rfl (fun j _ => (hermitian_conj_entry A hA _ _).symm)
-    -- Scaled versions parameterized by t
+    -- Use alphaT / betaT (private defs) to avoid whnf timeout on let bindings
     let a : Fin m → ℂ := fun k => A (Fin.castSucc k) (Fin.last m)
-    let αt : ℝ → (Fin m → ℂ) → ℂ := fun t v =>
-      MultilinPoly.eval (fun T => leeYangPoly B T *
-        ∏ j ∈ Finset.univ \ T, starRingEnd ℂ ((t : ℂ) * a j)) v
-    let βt : ℝ → (Fin m → ℂ) → ℂ := fun t v =>
-      (leeYangPoly B).eval (fun k => (t : ℂ) * a k * v k)
-    -- At t = 1: αt 1 = αfun, βt 1 = βfun (on w)
-    have hα1 : αt 1 w = αfun w := by
+    -- At t = 1: alphaT/betaT recover αfun/βfun
+    have hα1 : (alphaT B a 1).eval w = αfun w := by
       show MultilinPoly.eval _ w = p_α.eval w
       unfold MultilinPoly.eval; congr 1; ext T
-      simp only [hp_α_conj, Complex.ofReal_one, one_mul]; rfl
-    have hβ1 : βt 1 w = βfun w := by
-      change (leeYangPoly B).eval _ = (leeYangPoly B).eval _
-      congr 1; ext k; show (↑(1 : ℝ) * a k) * w k = _
+      simp only [alphaT, hp_α_def, Complex.ofReal_one, one_mul]
+      simp_rw [show ∀ x : Fin m, a x = A (Fin.castSucc x) (Fin.last m) from fun _ => rfl,
+        hermitian_conj_entry A hA]
+    have hβ1 : betaT B a 1 w = βfun w := by
+      show (leeYangPoly B).eval _ = (leeYangPoly B).eval _
+      congr 1; ext k
+      show (↑(1 : ℝ) * a k) * w k = A (Fin.castSucc k) (Fin.last m) * w k
       rw [Complex.ofReal_one, one_mul]
     -- β_t ≠ 0 on the closed polydisk when |t| < 1
     have hβt_ne : ∀ (t : ℝ), |t| < 1 → ∀ u : Fin m → ℂ,
-        (∀ j, ‖u j‖ ≤ 1) → βt t u ≠ 0 := by
+        (∀ j, ‖u j‖ ≤ 1) → betaT B a (↑t) u ≠ 0 := by
       intro t ht u hu
       apply ih B (hA.submatrix Fin.castSucc) (fun i j => hbound _ _)
       intro k; show ‖(↑t * a k) * u k‖ < 1
@@ -551,25 +545,35 @@ private lemma leeYangPoly_ratio_bound {m : ℕ}
             exact mul_le_mul (mul_le_mul_of_nonneg_left (hbound _ _) (abs_nonneg t))
               (hu k) (norm_nonneg _) (by positivity)
         _ < 1 := by linarith
-    -- For 0 ≤ t < 1: ‖αt t w‖ ≤ ‖βt t w‖ via iterated max modulus
-    have hle_t : ∀ (t : ℝ), 0 ≤ t → t < 1 → ‖αt t w‖ ≤ ‖βt t w‖ := by
+    -- For 0 ≤ t < 1: ‖αt‖ ≤ ‖βt‖ via iterated_ratio
+    have hle_t : ∀ (t : ℝ), 0 ≤ t → t < 1 →
+        ‖(alphaT B a (↑t)).eval w‖ ≤ ‖betaT B a (↑t) w‖ := by
       intro t ht0 ht1
-      -- Torus bound for t-scaled: on ‖v k‖ = 1, ‖αt t v‖ = ‖βt t v‖
+      -- Torus norm equality for t-scaled
       have htorus : ∀ v : Fin m → ℂ, (∀ k, ‖v k‖ = 1) →
-          ‖αt t v‖ = ‖βt t v‖ := by
+          ‖(alphaT B a (↑t)).eval v‖ ≤ ‖betaT B a (↑t) v‖ := by
         intro v hv
         have hid := torus_identity B (hA.submatrix Fin.castSucc)
-          (fun k => (t : ℂ) * a k) v hv
+          (fun k => (↑t : ℂ) * a k) v hv
         rw [show (fun k => (↑t * a k) * v k) = (fun k => ↑t * a k * v k)
           from by ext; ring] at hid
-        -- αt t v = MultilinPoly.eval (...) v = (∏ v_k) * conj(βt t v)
-        show ‖MultilinPoly.eval _ v‖ = ‖(leeYangPoly B).eval _‖
+        apply le_of_eq; unfold alphaT betaT
+        rw [show (fun i => (↑t * a i) * v i) = (fun i => ↑t * a i * v i)
+          from by ext; ring] at hid
         rw [hid, norm_mul, Complex.norm_prod]
         simp only [hv, Finset.prod_const_one, one_mul, RCLike.norm_conj]
-      sorry -- TODO: iterated max modulus for ratio
-    -- Pass to the limit: the set {t | ‖αt t w‖ ≤ ‖βt t w‖} is closed and contains [0,1)
+      -- βt differentiable (via diff_scaled_prod)
+      have hβt_diff : Differentiable ℂ (betaT B a (↑t)) := by
+        unfold betaT; exact (diff_eval (leeYangPoly B)).comp
+          (differentiable_pi.mpr (fun k =>
+            (differentiable_const ((↑t : ℂ) * a k)).mul (differentiable_apply k)))
+      exact iterated_ratio ((alphaT B a (↑t)).eval) (betaT B a (↑t))
+        (diff_eval _) hβt_diff
+        (hβt_ne t (by rwa [abs_of_nonneg ht0]))
+        htorus w (fun k => hz (Fin.castSucc k))
+    -- Pass to the limit t → 1: both sides are continuous in t
     rw [← hα1, ← hβ1]
-    sorry -- TODO: continuity + closed set argument
+    sorry -- TODO: continuity in t + tendsto_le_of_eventuallyLE
 
 /-- **Harcos/Ruelle theorem**: For an `n × n` Hermitian matrix `A` with `|a_{ij}| ≤ 1`,
 the Lee-Yang polynomial `f_A` does not vanish on the open unit polydisk.
