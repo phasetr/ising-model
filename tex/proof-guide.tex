@@ -422,11 +422,64 @@ When Mathlib provides a native implementation of Asano contraction or
 multilinear polynomials, the definitions here should be replaced.
 \end{remark}
 
+\section{Lee-Yang circle theorem (\texttt{LeeYang.lean})}
+
+The Lee-Yang circle theorem states that the Ising partition polynomial
+has no zeros on the open unit polydisk. Our formalization follows the
+Harcos/Ruelle approach~\cite{harcos, ruelle}.
+
+\begin{definition}[Lee-Yang polynomial]
+For an $n\times n$ matrix $A$ over $\mathbb{C}$, define
+\[
+  f_A(z) = \sum_{S\subseteq [n]}
+    \Bigl(\prod_{i\in S}\prod_{j\notin S} a_{ij}\Bigr)\prod_{k\in S} z_k.
+\]
+\end{definition}
+
+\begin{theorem}[Harcos/Ruelle, \texttt{leeYangPoly\_nonvanishing}]
+If $A$ is Hermitian with $|a_{ij}|\le 1$, then $f_A(z)\ne 0$
+for all $z$ with $|z_k|<1$.
+\end{theorem}
+
+The proof is by induction on $n$. The inductive step decomposes
+$f_A(z)=\beta + z_n\cdot\alpha$ and shows $\|\alpha\|\le\|\beta\|$
+via:
+\begin{enumerate}
+\item \textbf{Torus identity} (\texttt{torus\_identity}):
+  On $|v_k|=1$,
+  $\alpha(v) = (\prod v_k)\cdot\overline{\beta(v)}$,
+  hence $\|\alpha\|=\|\beta\|$.
+\item \textbf{Approximation}: Scale the last column by $t<1$
+  so that $\beta_t\ne 0$ on the closed polydisk.
+\item \textbf{Iterated max modulus} (\texttt{iterated\_ratio}):
+  By single-variable maximum modulus
+  (\texttt{one\_var\_max\_ratio}, via \texttt{DiffContOnCl}),
+  iterate over each variable to get $\|\alpha_t/\beta_t\|\le 1$.
+\item \textbf{Limit $t\to 1$}: Both sides are continuous in $t$;
+  $\{t:\|\alpha_t\|\le\|\beta_t\|\}$ is closed and contains
+  $[0,1)$, hence contains~$1$.
+\end{enumerate}
+
+The Ising application (\texttt{lee\_yang\_circle}) constructs a
+Hermitian matrix from the edge list and coupling constants, reducing
+the combinatorial Ising model to the matrix formulation.
+
 \begin{thebibliography}{9}
 \bibitem{glimm-jaffe}
 J.~Glimm and A.~Jaffe,
 \emph{Quantum Physics: A Functional Integral Point of View},
 2nd ed., Springer, 1987.
+
+\bibitem{ruelle}
+D.~Ruelle,
+\emph{Characterization of Lee-Yang polynomials},
+Annals of Mathematics, 171(1):589--603, 2010.
+
+\bibitem{harcos}
+G.~Harcos,
+\emph{The Lee-Yang Circle Theorem},
+lecture notes based on Ruelle~\cite{ruelle},
+\url{https://users.renyi.hu/~gharcos/lee-yang.pdf}.
 
 \bibitem{friedli-velenik}
 S.~Friedli and Y.~Velenik,

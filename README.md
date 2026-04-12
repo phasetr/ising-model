@@ -26,6 +26,7 @@ All theorems are formally proved with **zero `sorry`**.
 | GKS-II  | `⟨σ_A σ_B⟩ ≥ ⟨σ_A⟩⟨σ_B⟩`           | Friedli-Velenik Thm 3.49                        |
 | FKG     | `⟨fg⟩ ≥ ⟨f⟩⟨g⟩` for monotone f, g  | Friedli-Velenik Thm 3.21/3.50                   |
 | Asano contraction | contraction preserves non-vanishing | Friedli-Velenik Prop 3.44     |
+| Lee-Yang circle   | Ising partition poly nonvanishing on polydisk | Ruelle, Ann. of Math. 171 (2010); Harcos notes |
 
 ## Documentation
 

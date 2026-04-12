@@ -236,7 +236,7 @@ private lemma one_var_max_ratio {m : ℕ}
   have h := Complex.norm_le_of_forall_mem_frontier_norm_le Metric.isBounded_ball hdc
     (fun z hz => by
       rw [frontier_ball (0 : ℂ) one_ne_zero, Metric.mem_sphere, dist_zero_right] at hz
-      show ‖r z‖ ≤ 1; simp only [r, norm_div]
+      change ‖r z‖ ≤ 1; simp only [r, norm_div]
       exact (div_le_one (norm_pos_iff.mpr (hgne z (le_of_eq hz)))).mpr (hbd z hz))
     (subset_closure (Metric.mem_ball.mpr (by rwa [dist_zero_right])))
   rwa [show r (v k) = f v / g v from by simp [r]] at h
@@ -269,22 +269,22 @@ private lemma iterated_ratio {m : ℕ}
     -- g(update v k₀ z) ≠ 0 for ‖z‖ ≤ 1
     have hgne' : ∀ z : ℂ, ‖z‖ ≤ 1 → g (Function.update v k₀ z) ≠ 0 := by
       intro z hz; apply hgne; intro j; by_cases hjk : j = k₀
-      · simp [Function.update, hjk, hz]
-      · simp [Function.update, hjk]; exact hv_le j
+      · subst hjk; simp only [Function.update_self]; exact hz
+      · rw [Function.update_of_ne hjk]; exact hv_le j
     apply one_var_max_ratio f g v k₀ hf hg hgne'
       (hv_in k₀ (Finset.mem_insert_self _ _) ▸ hw k₀)
     intro t ht
     apply ihT (Function.update v k₀ t)
     · intro k hk; by_cases hkk : k = k₀
-      · simp [Function.update, hkk, ht]
-      · simp [Function.update, hkk]; exact hv_out k (by
-          rw [Finset.mem_insert]; push_neg; exact ⟨hkk, hk⟩)
+      · subst hkk; simp only [Function.update_self]; exact ht
+      · rw [Function.update_of_ne hkk]; exact hv_out k (by
+          rw [Finset.mem_insert]; push Not; exact ⟨hkk, hk⟩)
     · intro k hk
       have hkk : k ≠ k₀ := ne_of_mem_of_not_mem hk hk₀
-      simp [Function.update, hkk]; exact hv_in k (Finset.mem_insert_of_mem hk)
+      rw [Function.update_of_ne hkk]; exact hv_in k (Finset.mem_insert_of_mem hk)
 
--- Iterated DiffContOnCl + approximation argument requires extra heartbeats
 set_option maxHeartbeats 800000 in
+-- Iterated DiffContOnCl + approximation argument requires extra heartbeats
 /-- The ratio of the `z_last`-coefficient to the constant term in the Lee-Yang polynomial
 is bounded by 1, by the maximum modulus principle.
 
@@ -326,7 +326,7 @@ private lemma leeYangPoly_ratio_bound {m : ℕ}
       rw [this]; exact (differentiable_apply _).mul ih
   have diff_eval : ∀ (p : MultilinPoly (Fin m)),
       Differentiable ℂ (fun (w : Fin m → ℂ) => p.eval w) := by
-    intro p; show Differentiable ℂ (fun w => ∑ S : Finset (Fin m), p S * _)
+    intro p; change Differentiable ℂ (fun w => ∑ S : Finset (Fin m), p S * _)
     have h : (fun (w : Fin m → ℂ) => ∑ S : Finset (Fin m),
         p S * Finset.prod S (fun k => w k)) =
         ∑ S ∈ (Finset.univ : Finset (Finset (Fin m))),
@@ -357,7 +357,7 @@ private lemma leeYangPoly_ratio_bound {m : ℕ}
         ext w; exact Finset.prod_insert hna
       rw [this]; exact ((differentiable_const _).mul (differentiable_apply _)).mul ih
   have hβ_diff : Differentiable ℂ βfun := by
-    show Differentiable ℂ (fun w => ∑ S : Finset (Fin m), _)
+    change Differentiable ℂ (fun w => ∑ S : Finset (Fin m), _)
     have h : (fun (w : Fin m → ℂ) => ∑ S : Finset (Fin m),
         leeYangPoly B S * ∏ k ∈ S, (A (Fin.castSucc k) (Fin.last m) * w k)) =
         ∑ S ∈ (Finset.univ : Finset (Finset (Fin m))),
@@ -385,7 +385,9 @@ private lemma leeYangPoly_ratio_bound {m : ℕ}
       have h2 : Fin.last m ∉ T₂.map ⟨Fin.castSucc, Fin.castSucc_injective m⟩ := by
         simp [Finset.mem_map, Fin.castSucc_ne_last]
       have := congr_arg (Finset.erase · (Fin.last m)) h
-      simp [h1, h2] at this; exact this
+      simp only [Finset.erase_insert h1, Finset.erase_insert h2] at this
+      exact (Finset.map_injOn (f := ⟨Fin.castSucc, Fin.castSucc_injective m⟩)
+        (Set.injOn_of_injective (Fin.castSucc_injective m))).eq_iff.mp this
     · -- Surjective
       intro S hS
       simp only [Finset.mem_coe, Finset.mem_filter, Finset.mem_univ, true_and] at hS
@@ -418,14 +420,14 @@ private lemma leeYangPoly_ratio_bound {m : ℕ}
     subst hm
     have hempty : ∀ (S : Finset (Fin 0)), S = ∅ := Finset.eq_empty_of_isEmpty
     have hα1 : αfun w = 1 := by
-      show p_α.eval w = 1; unfold MultilinPoly.eval
+      change p_α.eval w = 1; unfold MultilinPoly.eval
       rw [Fintype.sum_eq_single ∅ (fun S hS => absurd (hempty S) hS)]
       simp [p_α, leeYangPoly]
     have hβ1 : βfun w = 1 := by
       change (leeYangPoly B).eval _ = 1; unfold MultilinPoly.eval
       rw [Fintype.sum_eq_single ∅ (fun S hS => absurd (hempty S) hS)]
       simp [leeYangPoly]
-    show ‖αfun w‖ ≤ ‖βfun w‖; rw [hα1, hβ1]
+    change ‖αfun w‖ ≤ ‖βfun w‖; rw [hα1, hβ1]
   · -- m ≥ 1: maximum modulus principle
     have hm_pos : 0 < m := Nat.pos_of_ne_zero hm
     haveI : Nonempty (Fin m) := ⟨⟨0, hm_pos⟩⟩
@@ -522,15 +524,15 @@ private lemma leeYangPoly_ratio_bound {m : ℕ}
     let a : Fin m → ℂ := fun k => A (Fin.castSucc k) (Fin.last m)
     -- At t = 1: alphaT/betaT recover αfun/βfun
     have hα1 : (alphaT B a 1).eval w = αfun w := by
-      show MultilinPoly.eval _ w = p_α.eval w
+      change MultilinPoly.eval _ w = p_α.eval w
       unfold MultilinPoly.eval; congr 1; ext T
-      simp only [alphaT, hp_α_def, Complex.ofReal_one, one_mul]
+      simp only [alphaT, hp_α_def, one_mul]
       simp_rw [show ∀ x : Fin m, a x = A (Fin.castSucc x) (Fin.last m) from fun _ => rfl,
         hermitian_conj_entry A hA]
     have hβ1 : betaT B a 1 w = βfun w := by
-      show (leeYangPoly B).eval _ = (leeYangPoly B).eval _
+      change (leeYangPoly B).eval _ = (leeYangPoly B).eval _
       congr 1; ext k
-      show (↑(1 : ℝ) * a k) * w k = A (Fin.castSucc k) (Fin.last m) * w k
+      change (↑(1 : ℝ) * a k) * w k = A (Fin.castSucc k) (Fin.last m) * w k
       rw [Complex.ofReal_one, one_mul]
     -- β_t ≠ 0 on the closed polydisk when |t| < 1
     have hβt_ne : ∀ (t : ℝ), |t| < 1 → ∀ u : Fin m → ℂ,
@@ -782,8 +784,8 @@ private lemma prod_ite_const_cond {α : Type*} {S : Finset α} {p : Prop} [Decid
     ∏ j ∈ S, (if p then f j else 1) = if p then ∏ j ∈ S, f j else 1 := by
   split_ifs <;> simp_all
 
--- The factored condition involves 4 case splits, each with nested Finset.prod simplification
 set_option maxHeartbeats 400000 in
+-- edgeWeight_eq_prod: 4 case splits on (i∈X, j∈X), each with Finset.prod simplification
 /-- For a single edge `e`, the edge weight equals the product of the single-edge
 matrix entries over all cross-boundary pairs `(i,j)` with `i ∈ X, j ∉ X`.
 
@@ -918,7 +920,7 @@ theorem lee_yang_circle (edges : List (ι × ι × ℝ))
         · rintro ⟨y, hy, rfl⟩; intro ⟨w, hw, he⟩; exact hy (equiv.injective he ▸ hw)
       -- Monomial: ∏_{k∈S.map e} z'(k) = ∏_{k∈S} z(k)
       -- Coefficient: ∏_{i∈S.map e} ∏_{j∈compl} A'(i)(j) = ∏_{i∈S} ∏_{j∈univ\S} A(i)(j)
-      show (fun S => ∏ i ∈ S, ∏ j ∈ Finset.univ \ S, A i j) S * ∏ k ∈ S, z k =
+      change (fun S => ∏ i ∈ S, ∏ j ∈ Finset.univ \ S, A i j) S * ∏ k ∈ S, z k =
         (∏ i ∈ S.map equiv.toEmbedding, ∏ j ∈ Finset.univ \ S.map equiv.toEmbedding,
           A (equiv.symm i) (equiv.symm j)) *
         ∏ k ∈ S.map equiv.toEmbedding, z (equiv.symm k)
