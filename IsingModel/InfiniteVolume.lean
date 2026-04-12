@@ -207,8 +207,12 @@ private theorem correlation_reweighting_nonneg
   -- Fourier expand R = Σ_S ĉ_S σ^S (ĉ_S ≥ 0 by HNC)
   -- LHS = Σ_S ĉ_S · Z₁² · (corr₁(B△S) - corr₁(B)·corr₁(S)) ≥ 0
   -- Each factor: ĉ_S ≥ 0, Z₁² ≥ 0, corr₁(B△S) - corr₁(B)·corr₁(S) ≥ 0 by gks_second.
-  -- The exp splitting identity + Fourier rearrangement + gks_second
-  -- constitute the full proof.
+  -- exp(E J₂ σ) = exp(E J₁ σ) · R(σ) where R = exp(β(J₂-J₁) Σ edgeSpin)
+  -- LHS = Σ_S ĉ_R(S) · [Z₁ · num₁(B△S) - num₁(B) · num₁(S)] ≥ 0
+  -- Each bracket = Z₁² (corr₁(B△S) - corr₁(B)·corr₁(S)) ≥ 0 by gks_second.
+  -- ĉ_R(S) = card⁻¹ Σ_σ σ^S R(σ) ≥ 0 by HNC of R.
+  -- The Fourier expansion identity + algebraic rearrangement to gks_second terms
+  -- is the remaining formalization.
   sorry
 
 /-- **Proposition 4.2.1** (Glimm–Jaffe, p. 58):
