@@ -19,6 +19,9 @@ All theorems are formally proved with **zero `sorry`**.
 | **Asano contraction**                    | Contraction preserves non-vanishing on the unit polydisk    | `Asano.lean`            |
 | **Lee-Yang circle theorem**              | Ising partition polynomial nonvanishing on the open polydisk | `LeeYang.lean`          |
 | **φ⁴ algebraic identities**              | Quartic/orthogonal transformation identities (axiom: integrability) | `ContinuousSpin/Phi4.lean` |
+| **Correlation boundedness** (Prop 4.2.2) | `|⟨σ^A⟩| ≤ 1`                                              | `InfiniteVolume.lean`   |
+| **Correlation monotonicity** (Prop 4.2.1) | `⟨σ^B⟩` monotone in J (axiom: HNC covariance)                | `InfiniteVolume.lean`   |
+| **Walsh orthogonality/Fourier**         | Fourier inversion on `{±1}^n`                                | `InfiniteVolume.lean`   |
 | Partition function positivity            | `Z > 0`                                                    | `GibbsMeasure.lean`     |
 | Spin flip symmetry                       | `H(flip σ) = H(σ)` when h = 0                              | `Hamiltonian.lean`      |
 
@@ -27,6 +30,11 @@ All theorems are formally proved with **zero `sorry`**.
 The φ⁴ module uses two measure-theoretic axioms (`phi4_integrable`,
 `phi4_single_site_nonneg`) whose proofs are mathematically complete
 but not formalized in Lean. See `ContinuousSpin/Phi4.lean` for details.
+
+The infinite volume module uses two axioms (`hnc_correlation_nonneg`,
+`correlation_reweighting_nonneg`) for the generalized GKS-II covariance
+inequality. Walsh orthogonality and Fourier inversion on `{±1}^n` are
+fully proved. See `InfiniteVolume.lean` for details.
 
 ## References
 
