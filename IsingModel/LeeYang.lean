@@ -242,7 +242,7 @@ private lemma one_var_max_ratio {m : ℕ}
   rwa [show r (v k) = f v / g v from by simp [r]] at h
 
 /-- Iterated max modulus for a ratio of globally differentiable functions.
-If `‖f v‖ ≤ ‖g v��` on the torus and `g ≠ 0` on the closed polydisk,
+If `‖f v‖ ≤ ‖g v‖` on the torus and `g ≠ 0` on the closed polydisk,
 then `‖f w‖ ≤ ‖g w‖` inside the open polydisk. -/
 private lemma iterated_ratio {m : ℕ}
     (f g : (Fin m → ℂ) → ℂ)
