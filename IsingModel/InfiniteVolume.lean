@@ -154,13 +154,18 @@ theorem correlation_monotone_J (G : SimpleGraph ι) [Fintype G.edgeSet]
   apply monotone_of_deriv_nonneg (hnum_diff.div hden_diff hden_ne)
   intro J
   rw [deriv_div hnum_diff.differentiableAt hden_diff.differentiableAt (hden_ne J)]
-  -- deriv f = (num' den - num den') / den²
-  -- Need: num' den - num den' ≥ 0
-  -- This equals Σ_σ Σ_τ σ^B (E'(σ) - E'(τ)) exp(E σ) exp(E τ)
-  -- where E'(σ) = ∂E/∂J = β Σ_e edgeSpin(σ,e)
-  -- = β Σ_e [Σ_σ σ^B edgeSpin(e) w(σ) Z - Σ σ^B w(σ) Σ edgeSpin(e) w(τ)]
-  -- = β Σ_e duplicateSum(B, {i,j})
-  -- Each ≥ 0 by duplicateSum_nonneg.
+  -- (num' den - num den') / den² ≥ 0 ← den² > 0 and num'den - num·den' ≥ 0
+  apply div_nonneg _ (sq_nonneg _)
+  -- deriv of E J σ w.r.t. J:
+  -- E J σ = -β * (-J * Σ es - h * Σ s) = βJ * Σ es + βh Σ s
+  -- ∂E/∂J = β * Σ_e edgeSpin(σ,e)
+  -- deriv den J = Σ_σ (β Σ_e es(σ)) exp(E J σ)
+  -- deriv num J = Σ_σ σ^B (β Σ_e es(σ)) exp(E J σ)
+  -- num' den - num den'
+  --   = β Σ_σ Σ_τ σ^B (Σ_e es(σ) - Σ_e es(τ)) w(σ) w(τ)
+  --   = β Σ_e duplicateSum(B, {i_e,j_e}) ≥ 0  [by duplicateSum_nonneg]
+  -- The derivative computation itself (deriv_sum, chain rule for exp)
+  -- and the algebraic rearrangement are deferred.
   sorry
 
 /-! ## Infinite volume convergence (Theorem 4.2.3)
