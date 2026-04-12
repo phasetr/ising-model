@@ -107,6 +107,19 @@ coefficients. The building blocks (`duplicateSum_nonneg`,
 theorem correlation_monotone_J (G : SimpleGraph ι) [Fintype G.edgeSet]
     (h : ℝ) (hh : 0 ≤ h) (β : ℝ) (hβ : 0 < β) (B : Finset ι) :
     Monotone (correlationJ G h β B) := by
+  -- Proof: for J₁ ≤ J₂ with δ = J₂ - J₁ ≥ 0,
+  -- w₂(σ) = w₁(σ) · R(σ) where R = exp(βδ Σ edgeSpin).
+  -- corr₂(B) = ⟨σ^B R⟩₁ / ⟨R⟩₁ ≥ ⟨σ^B⟩₁ = corr₁(B)
+  -- because R·modifiedWeight has HNC (by hasNonnegCorrelations_edge_site_product
+  -- with combined coupling K_e = β(J₁(1+t^e) + δ) ≥ 0).
+  -- Then Σ_t (1-t^B) · [Σ_σ σ^B · R · modifiedWeight] ≥ 0
+  -- gives the concordance inequality.
+  --
+  -- The full proof requires the GKS-II duplicate variable infrastructure
+  -- adapted for the reweighting factor R, which is a substantial
+  -- generalization of the existing duplicateSum machinery.
+  -- All mathematical building blocks are proved; the assembly
+  -- (variable change + algebraic identity + HNC iteration) is deferred.
   sorry
 
 /-! ## Infinite volume convergence (Theorem 4.2.3)
