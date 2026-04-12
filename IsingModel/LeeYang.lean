@@ -324,7 +324,19 @@ private lemma leeYangPoly_ratio_bound {m : ℕ}
     -- Hence |αfun/βfun| = |∏v_k| = 1 on the torus.
     -- This follows from leeYangPoly_conj_eq_compl + Hermitian structure.
     have torus_bound : ∀ v : Fin m → ℂ, (∀ k, ‖v k‖ = 1) → ‖αfun v‖ = ‖βfun v‖ := by
-      sorry -- Hermitian torus identity
+      intro v hv
+      -- Key identity: αfun(v) = (∏ v_k) · conj(βfun(v))
+      -- Then ‖αfun v‖ = |∏v_k| · ‖βfun v‖ = 1 · ‖βfun v‖.
+      suffices hid : αfun v = (∏ k : Fin m, v k) * starRingEnd ℂ (βfun v) by
+        rw [hid, norm_mul, Complex.norm_prod]
+        simp only [hv, Finset.prod_const_one, one_mul]
+        rw [RCLike.norm_conj]
+      -- αfun(v) = Σ_T p_α(T) · ∏_{i∈T} v_i where p_α(T) = c_T · ∏_{j∉T} A(last)(cs j)
+      -- (∏v)·conj(βfun(v)) = (∏v)·Σ_T conj(c_T · ∏_{i∈T} (a_i·v_i))
+      -- = Σ_T c_{univ\T} · ∏_{i∈T} conj(a_i) · (∏v / ∏_{i∈T} v_i)  [Hermitian, |v|=1]
+      -- = Σ_U c_U · ∏_{j∉U} conj(a_j) · ∏_{i∈U} v_i  [reindex U = univ\T]
+      -- = αfun(v)  [since A(last)(cs j) = conj(a_j) by Hermitian]
+      sorry
     -- Iterated max modulus: for Differentiable g with ‖g v‖ ≤ 1 on torus,
     -- one_var_max gives ‖g v‖ ≤ 1 for all v with ‖v_k‖ ≤ 1.
     -- We apply this to g = αfun/βfun in the strict case, then continuity.
