@@ -214,7 +214,7 @@ theorem cov_hnc_boltzmann_nonneg (G : SimpleGraph ι) [Fintype G.edgeSet]
     -- hgks : Z⁻¹ * nB * (Z⁻¹ * nS) ≤ Z⁻¹ * nBS
     -- Multiply both sides by Z (positive), twice:
     have h1 := mul_le_mul_of_nonneg_left hgks hZ.le
-    simp at h1
+    simp (config := { decide := true }) at h1
     have h2 := mul_le_mul_of_nonneg_right h1 hZ.le
     -- h2 has partitionFunction and Z⁻¹ mixed. Use field_simp to clear.
     unfold partitionFunction at h2
