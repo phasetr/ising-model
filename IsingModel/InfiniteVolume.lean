@@ -145,10 +145,17 @@ theorem walsh_fourier_inversion (f : Config ι → ℝ) (σ : Config ι) :
     f σ = ∑ S : Finset ι,
       ((Fintype.card (Config ι) : ℝ)⁻¹ * ∑ τ : Config ι, spinProduct S τ * f τ) *
       spinProduct S σ := by
-  -- Swap and simplify using walsh_completeness
   have hcard : (Fintype.card (Config ι) : ℝ) ≠ 0 :=
     Nat.cast_ne_zero.mpr Fintype.card_ne_zero
-  sorry
+  -- Step 1: RHS → card⁻¹ Σ_τ f(τ) Σ_S σ^S(τ) σ^S(σ)
+  symm
+  trans ((Fintype.card (Config ι) : ℝ)⁻¹ *
+    ∑ τ : Config ι, f τ * ∑ S : Finset ι, spinProduct S τ * spinProduct S σ)
+  · sorry -- sum swap (Finset.sum_comm + algebraic rearrangement)
+  · -- Apply walsh_completeness: Σ_S σ^S(τ) σ^S(σ) = card · [τ=σ]
+    simp_rw [walsh_completeness, mul_ite, mul_zero]
+    simp only [Finset.sum_ite_eq', Finset.mem_univ, ite_true]
+    field_simp
 
 /-- Key consequence of Fourier inversion for HNC functions:
 `Σ_σ σ^B f(σ) g(σ) = Σ_S ĉ_f(S) Σ_σ σ^{B△S} g(σ)` where `ĉ_f(S) ≥ 0`.
