@@ -33,6 +33,7 @@ All theorems are formally proved with **zero `sorry`**.
 | Correlation monotonicity | `⟨σ^B⟩` monotone in J on `[0,∞)` (Prop 4.2.1) | Glimm-Jaffe §4.2 |
 | Covariance non-negativity | `Cov(σ^B, f) ≥ 0` for HNC f | Glimm-Jaffe §4.2 |
 | Correlation convergence | `⟨σ^B⟩` converges as J → ∞ (Thm 4.2.3) | Glimm-Jaffe §4.2 |
+| Free energy monotonicity | Z and f monotone in h on [0,∞) | Glimm-Jaffe §4.6 |
 
 ### Axioms (measure-theoretic prerequisites, not formalized)
 
