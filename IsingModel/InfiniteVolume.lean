@@ -130,7 +130,7 @@ theorem correlation_monotone_J (G : SimpleGraph ι) [Fintype G.edgeSet]
   have hE_diff : ∀ σ, Differentiable ℝ (fun J => Real.exp (E J σ)) := by
     intro σ; apply Real.differentiable_exp.comp
     -- E J σ = -β * (-J * Σ es - h * Σ s) = βJ Σ es + βh Σ s, affine in J
-    show Differentiable ℝ (fun J => -β * hamiltonian G ⟨J, h, β⟩ σ)
+    change Differentiable ℝ (fun J => -β * hamiltonian G ⟨J, h, β⟩ σ)
     unfold hamiltonian interactionEnergy externalFieldEnergy
     fun_prop
   -- den(J) = Σ exp(E J σ) is differentiable and positive
@@ -156,16 +156,13 @@ theorem correlation_monotone_J (G : SimpleGraph ι) [Fintype G.edgeSet]
   rw [deriv_div hnum_diff.differentiableAt hden_diff.differentiableAt (hden_ne J)]
   -- (num' den - num den') / den² ≥ 0 ← den² > 0 and num'den - num·den' ≥ 0
   apply div_nonneg _ (sq_nonneg _)
-  -- deriv of E J σ w.r.t. J:
-  -- E J σ = -β * (-J * Σ es - h * Σ s) = βJ * Σ es + βh Σ s
-  -- ∂E/∂J = β * Σ_e edgeSpin(σ,e)
-  -- deriv den J = Σ_σ (β Σ_e es(σ)) exp(E J σ)
-  -- deriv num J = Σ_σ σ^B (β Σ_e es(σ)) exp(E J σ)
-  -- num' den - num den'
-  --   = β Σ_σ Σ_τ σ^B (Σ_e es(σ) - Σ_e es(τ)) w(σ) w(τ)
-  --   = β Σ_e duplicateSum(B, {i_e,j_e}) ≥ 0  [by duplicateSum_nonneg]
-  -- The derivative computation itself (deriv_sum, chain rule for exp)
-  -- and the algebraic rearrangement are deferred.
+  -- The derivative computation and algebraic rearrangement to
+  -- β Σ_e duplicateSum(B, e) ≥ 0 is deferred. The proof structure is:
+  -- 1. Compute deriv(E J σ) w.r.t. J = β Σ_e edgeSpin(σ,e)
+  -- 2. deriv num = Σ_σ σ^B · (β Σ es) · exp(E J σ) [chain rule + sum]
+  -- 3. deriv den = Σ_σ (β Σ es) · exp(E J σ)
+  -- 4. num'·den - num·den' = β Σ_e [Z·num(B△e) - num(B)·num(e)]
+  --    = β Σ_e duplicateSum(B, e) ≥ 0 by duplicateSum_nonneg
   sorry
 
 /-! ## Infinite volume convergence (Theorem 4.2.3)
