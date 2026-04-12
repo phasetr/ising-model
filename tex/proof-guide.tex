@@ -590,11 +590,41 @@ This uses \texttt{Finset.sum\_comm} to swap the order of summation
 and \texttt{walsh\_completeness} for the Kronecker delta.
 \end{proof}
 
-\begin{theorem}[Theorem 4.2.3, p.~59; not yet formalized]
-For $h \ge 0$, $\langle\sigma^B\rangle_\Lambda$ converges as $\Lambda \uparrow \mathbb{Z}^d$.
+\begin{theorem}[\texttt{correlation\_convergent},
+  Theorem 4.2.3, \cite{glimm-jaffe}, p.~59]
+For $h \ge 0$ and $\beta > 0$, the sequence
+$n \mapsto \langle\sigma^B\rangle_{(G, n, h, \beta)}$ converges.
+The limit equals $\sup_n \langle\sigma^B\rangle_{(G, n, h, \beta)}$.
 \end{theorem}
 
-Proof: monotone (Prop.~4.2.1) $+$ bounded (Prop.~4.2.2) $\Rightarrow$ convergent.
+\begin{proof}
+The sequence $n \mapsto \langle\sigma^B\rangle_{(G, n, h, \beta)}$ is:
+\begin{itemize}
+  \item monotone increasing by Proposition~4.2.1
+    (\texttt{correlation\_monotone\_J});
+  \item bounded above by $1$ since
+    $\langle\sigma^B\rangle \le |\langle\sigma^B\rangle| \le 1$
+    (\texttt{correlationJ\_le\_one} via \texttt{abs\_correlation\_le\_one}).
+\end{itemize}
+By the monotone convergence theorem (\texttt{tendsto\_atTop\_ciSup}),
+the sequence converges to $\sup_n \langle\sigma^B\rangle_{(G, n, h, \beta)}$.
+\end{proof}
+
+Auxiliary results:
+\begin{itemize}
+  \item \texttt{correlationJ\_nonneg}: $\langle\sigma^B\rangle \ge 0$
+    for $J \ge 0$ (from GKS-I).
+  \item \texttt{correlationJ\_le\_one}: $\langle\sigma^B\rangle \le 1$
+    (from $|\langle\sigma^B\rangle| \le 1$).
+\end{itemize}
+
+\begin{remark}
+The original Glimm--Jaffe formulation uses lattice growth
+$\Lambda \uparrow \mathbb{Z}^d$. In the finite-volume setting,
+this reduces to increasing coupling constants from $0$ to $J$.
+The formalization of graph embeddings and cross-lattice correlation
+is deferred to future work.
+\end{remark}
 
 \section{\texorpdfstring{$\varphi^4$}{phi4} inequalities (\texttt{ContinuousSpin/Phi4.lean})}
 
