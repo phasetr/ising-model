@@ -30,6 +30,8 @@ All theorems are formally proved with **zero `sorry`**.
 | Spin flip symmetry | `H(flip σ) = H(σ)` when h = 0 | — |
 | φ⁴ algebraic identities | quartic/orthogonal transformation identities | Glimm-Jaffe §4.3 |
 | Correlation boundedness | `\|⟨σ^A⟩\| ≤ 1` (Prop 4.2.2) | Glimm-Jaffe §4.2 |
+| Correlation monotonicity | `⟨σ^B⟩` monotone in J on `[0,∞)` (Prop 4.2.1) | Glimm-Jaffe §4.2 |
+| Covariance non-negativity | `Cov(σ^B, f) ≥ 0` for HNC f | Glimm-Jaffe §4.2 |
 
 ### Axioms (measure-theoretic prerequisites, not formalized)
 
@@ -43,8 +45,6 @@ but require heavy Lean measure theory assembly:
 These axioms are prerequisites for the Lebowitz inequality and truncated
 3-point correlation bound (Corollaries 4.3.2–4.3.4, to be formalized).
 
-- `hnc_correlation_nonneg`: HNC covariance inequality (Fourier expansion + generalized GKS-II)
-- `correlation_reweighting_nonneg`: exp splitting + hnc_correlation_nonneg application
 
 ## Documentation
 
