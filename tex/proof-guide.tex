@@ -8,6 +8,7 @@
 \newtheorem{theorem}{Theorem}
 \newtheorem{lemma}[theorem]{Lemma}
 \newtheorem{definition}[theorem]{Definition}
+\newtheorem{proposition}[theorem]{Proposition}
 \newtheorem{remark}[theorem]{Remark}
 
 \title{Ising Model Formalization: A Mathematical Guide to the Lean 4 Code}
@@ -483,20 +484,111 @@ $|\sigma^A| = 1$ (since $\sigma_i = \pm 1$), so
 $|\langle\sigma^A\rangle| \le \langle|\sigma^A|\rangle = 1$.
 \end{proof}
 
-\begin{proposition}[Proposition 4.2.1, p.~58; proved with axiom for HNC covariance]
-$\langle\sigma^B\rangle$ is monotone increasing in $J$.
+\begin{theorem}[\texttt{cov\_hnc\_boltzmann\_nonneg};
+  cf.\ \cite{glimm-jaffe}, {\S4.2, p.~58}]
+\label{thm:cov-hnc}
+For an HNC function $f$ and ferromagnetic Boltzmann weight $w$,
+\[
+  \Bigl(\sum_\sigma \sigma^B f(\sigma) w(\sigma)\Bigr)
+  \Bigl(\sum_\sigma w(\sigma)\Bigr)
+  \ge
+  \Bigl(\sum_\sigma \sigma^B w(\sigma)\Bigr)
+  \Bigl(\sum_\sigma f(\sigma) w(\sigma)\Bigr).
+\]
+\end{theorem}
+
+\begin{proof}
+Fourier expand $f(\sigma) = \sum_S \hat{c}_S \sigma^S$ where
+$\hat{c}_S = |\iota|^{-1} \sum_\tau \sigma^S(\tau) f(\tau) \ge 0$
+by HNC (\texttt{walsh\_fourier\_inversion}).
+Then $\sigma^B f(\sigma) = \sum_S \hat{c}_S \sigma^{B \triangle S}$
+using $\sigma^B \sigma^S = \sigma^{B \triangle S}$ (\texttt{spinProduct\_mul}).
+The covariance becomes $\sum_S \hat{c}_S \cdot \text{bracket}_S$ where
+\[
+  \text{bracket}_S =
+  \Bigl(\sum_\sigma \sigma^{B\triangle S} w\Bigr)\Bigl(\sum_\sigma w\Bigr)
+  - \Bigl(\sum_\sigma \sigma^B w\Bigr)\Bigl(\sum_\sigma \sigma^S w\Bigr).
+\]
+Since $\hat{c}_S \ge 0$ and $\text{bracket}_S = Z^2(\langle\sigma^{B\triangle S}\rangle
+- \langle\sigma^B\rangle\langle\sigma^S\rangle) \ge 0$ by GKS-II
+(\texttt{gks\_second}; \cite[Theorem~3.49, p.~127]{friedli-velenik}),
+each term is non-negative.
+\end{proof}
+
+\begin{proposition}[\texttt{correlation\_monotone\_J}, Proposition 4.2.1, p.~58]
+$\langle\sigma^B\rangle$ is monotone increasing in $J$ on $[0,\infty)$.
 \end{proposition}
 
-The proof uses reweighting: for $J_2 = J_1 + \delta$, define
-$R(\sigma) = \exp(\beta\delta\sum_e \text{edgeSpin}(\sigma,e))$.
-Then $\langle\sigma^B\rangle_{J_2} = \langle\sigma^B R\rangle_{J_1}/\langle R\rangle_{J_1}$,
-and $\langle\sigma^B R\rangle \ge \langle\sigma^B\rangle\langle R\rangle$ by GKS-II
-applied to the Fourier expansion of $R$.
-This step uses two axioms: \texttt{hnc\_correlation\_nonneg} (generalized
-GKS-II for arbitrary HNC weights) and \texttt{correlation\_reweighting\_nonneg}
-(the exp-splitting identity). Walsh orthogonality and Fourier inversion
-on $\{{\pm}1\}^n$ are fully proved (\texttt{walsh\_completeness},
-\texttt{walsh\_fourier\_inversion}).
+\begin{proof}
+For $0 \le J_1 \le J_2$, define the reweighting factor
+$R(\sigma) = \prod_e \exp(\beta(J_2 - J_1)\,\text{edgeSpin}(\sigma,e))$.
+Then $\exp(-\beta H_{J_2}(\sigma)) = R(\sigma)\exp(-\beta H_{J_1}(\sigma))$
+(\texttt{correlation\_reweighting\_nonneg}), and $R$ has HNC by
+\texttt{hasNonnegCorrelations\_edge\_site\_product} since all edge
+coefficients $\beta(J_2 - J_1) \ge 0$.
+The algebraic identity
+$\langle\sigma^B\rangle_{J_2} - \langle\sigma^B\rangle_{J_1}
+= [\text{num}_2\,\text{den}_1 - \text{num}_1\,\text{den}_2]
+  / (\text{den}_1\,\text{den}_2)$
+reduces to a covariance of $R$ with $\sigma^B$ under the $J_1$ Boltzmann
+weight, which is $\ge 0$ by Theorem~\ref{thm:cov-hnc}.
+\end{proof}
+
+\subsection{Walsh orthogonality and Fourier inversion}
+
+The spin products $\{\sigma^S : S \subseteq \iota\}$ form an orthogonal
+basis for functions on $\mathrm{Config}\;\iota = \iota \to \{+1,-1\}$.
+
+\begin{lemma}[\texttt{walsh\_orthogonality}]
+For $S \ne T$, $\sum_\sigma \sigma^S \sigma^T = 0$.
+\end{lemma}
+
+\begin{proof}
+$\sigma^S \sigma^T = \sigma^{S \triangle T}$ by \texttt{spinProduct\_mul}.
+Since $S \ne T$, $S \triangle T \ne \emptyset$, so
+$\sum_\sigma \sigma^{S \triangle T} = 0$ by the flip involution
+(\texttt{sum\_config\_spinProduct\_eq\_zero}).
+\end{proof}
+
+\begin{lemma}[\texttt{walsh\_normalization}]
+$\sum_\sigma (\sigma^S)^2 = 2^{|\iota|}$.
+\end{lemma}
+
+\begin{proof}
+$(\sigma^S)^2 = \sigma^{S \triangle S} = \sigma^\emptyset = 1$.
+So $\sum_\sigma 1 = |\mathrm{Config}\;\iota| = 2^{|\iota|}$.
+\end{proof}
+
+\begin{theorem}[\texttt{walsh\_completeness}]
+$\sum_S \sigma^S(\tau) \cdot \sigma^S(\sigma) =
+\begin{cases} 2^{|\iota|} & \text{if } \sigma = \tau, \\
+0 & \text{if } \sigma \ne \tau. \end{cases}$
+\end{theorem}
+
+\begin{proof}
+Define $\omega_i = \sigma_i \cdot \tau_i$ (componentwise spin
+multiplication). Then $\sigma^S(\tau) \cdot \sigma^S(\sigma)
+= \omega^S$ by \texttt{Spin.toSign\_mul}. The sum
+$\sum_S \omega^S = \prod_i (1 + \omega_i)$ by
+\texttt{Finset.prod\_add\_one}. If $\sigma = \tau$ then each
+$\omega_i = +1$ so each factor is $2$; if $\sigma \ne \tau$
+then $\exists i$ with $\omega_i = -1$ so the product vanishes.
+\end{proof}
+
+\begin{theorem}[\texttt{walsh\_fourier\_inversion}]
+Any $f : \mathrm{Config}\;\iota \to \mathbb{R}$ has the expansion
+$f(\sigma) = \sum_S \hat{c}_S \sigma^S$ where
+$\hat{c}_S = 2^{-|\iota|} \sum_\tau \sigma^S(\tau) f(\tau)$.
+\end{theorem}
+
+\begin{proof}
+Substitute the expansion and apply Walsh completeness:
+$\sum_S \hat{c}_S \sigma^S(\sigma)
+= 2^{-|\iota|} \sum_\tau f(\tau) \underbrace{\sum_S \sigma^S(\tau) \sigma^S(\sigma)}_{\text{= } 2^{|\iota|} [\tau = \sigma]}
+= f(\sigma)$.
+This uses \texttt{Finset.sum\_comm} to swap the order of summation
+and \texttt{walsh\_completeness} for the Kronecker delta.
+\end{proof}
 
 \begin{theorem}[Theorem 4.2.3, p.~59; not yet formalized]
 For $h \ge 0$, $\langle\sigma^B\rangle_\Lambda$ converges as $\Lambda \uparrow \mathbb{Z}^d$.
