@@ -10,7 +10,7 @@
 \newtheorem{definition}[theorem]{Definition}
 \newtheorem{remark}[theorem]{Remark}
 
-\title{GKS-I Formal Proof: A Mathematical Guide to the Lean 4 Code}
+\title{Ising Model Formalization: A Mathematical Guide to the Lean 4 Code}
 \author{ising-model project}
 \date{2026-04-10}
 
@@ -19,16 +19,16 @@
 
 \begin{abstract}
 This document provides a mathematical walkthrough of the Lean~4
-formalization of the first Griffiths inequality (GKS-I) for
-the finite Ising model. Each section corresponds to a Lean source file
-and lists the relevant definitions and theorems. The purpose is to
-make the formal proof readable as ordinary mathematics.
+formalization of theorems about the finite Ising model.
+Each section corresponds to a Lean source file and lists the relevant
+definitions and theorems. The purpose is to make the formal proofs
+readable as ordinary mathematics.
 
-The proof follows Glimm--Jaffe~\cite{glimm-jaffe}, Theorem~4.1.1
-(pp.~56--57), adapted to the discrete $\{+1,-1\}$ Ising model.
-The ``non-negative correlations'' (HNC) framework and the cosh/sinh
-decomposition are standard; see also
-Friedli--Velenik~\cite{friedli-velenik}, Theorem~3.22 (pp.~99--100).
+The correlation inequalities (GKS-I/II, FKG) follow
+Glimm--Jaffe~\cite{glimm-jaffe}, Theorem~4.1.1 (pp.~56--57)
+and Friedli--Velenik~\cite{friedli-velenik}, Theorem~3.22 (pp.~99--100).
+The Lee-Yang circle theorem follows
+Ruelle~\cite{ruelle} and Harcos~\cite{harcos}.
 \end{abstract}
 
 \tableofcontents
@@ -117,7 +117,7 @@ Apply \texttt{Finset.sum\_pos}.
 
 \begin{definition}[Gibbs expectation, correlation]
 $\langle F \rangle = Z^{-1} \sum_\sigma F(\sigma)\,e^{-\beta H}$, \quad
-$\langle \sigma_A \rangle = \langle \prod_{i \in A} s(\sigma_i) \rangle$.
+$\langle \sigma^A \rangle = \langle \prod_{i \in A} s(\sigma_i) \rangle$.
 \end{definition}
 
 \noindent\textbf{Lean:} \texttt{gibbsExpectation},
@@ -148,7 +148,7 @@ matching $A \bigtriangleup C$.
 \subsection{Reduction to non-negative correlations}
 
 \begin{theorem}[GKS-I --- \texttt{gks\_first}]
-For ferromagnetic parameters, $\langle \sigma_A \rangle \geq 0$
+For ferromagnetic parameters, $\langle \sigma^A \rangle \geq 0$
 for all $A$.
 \end{theorem}
 
@@ -251,7 +251,7 @@ preserved at each step by Lemma~\ref{lem:mul}.
 \end{proof}
 
 \noindent
-GKS-I follows: $\langle \sigma_A \rangle
+GKS-I follows: $\langle \sigma^A \rangle
 = Z^{-1}\sum_\sigma \sigma^A e^{-\beta H} \geq 0$
 since $Z > 0$ and the numerator $\geq 0$ by HNC.
 
@@ -263,7 +263,7 @@ pp.~127--128.
 
 \begin{theorem}[GKS-II --- \texttt{gks\_second}]
 For ferromagnetic parameters,
-$\langle\sigma_A\sigma_B\rangle \geq \langle\sigma_A\rangle\langle\sigma_B\rangle$
+$\langle\sigma^A\sigma^B\rangle \geq \langle\sigma^A\rangle\langle\sigma^B\rangle$
 for all $A, B$.
 \end{theorem}
 
@@ -326,8 +326,8 @@ A Float-based reference implementation verifies:
   \item $Z > 0$ for 4 graph types
   \item Spin flip symmetry ($h = 0$)
   \item GKS-I for 6 parameter sets (2--4 sites, all subsets)
-  \item GKS-II ($\langle\sigma_A\sigma_B\rangle \geq
-    \langle\sigma_A\rangle\langle\sigma_B\rangle$)
+  \item GKS-II ($\langle\sigma^A\sigma^B\rangle \geq
+    \langle\sigma^A\rangle\langle\sigma^B\rangle$)
     for 6 parameter sets (2--4 sites, all subset pairs)
   \item GKS-I and GKS-II violation for anti-ferromagnetic $J < 0$
 \end{itemize}
@@ -422,11 +422,66 @@ When Mathlib provides a native implementation of Asano contraction or
 multilinear polynomials, the definitions here should be replaced.
 \end{remark}
 
+\section{Lee-Yang circle theorem (\texttt{LeeYang.lean})}
+
+The Lee-Yang circle theorem states that the Ising partition polynomial
+has no zeros on the open unit polydisk. Our formalization follows the
+Harcos/Ruelle approach~\cite{harcos, ruelle}.
+
+\begin{definition}[Lee-Yang polynomial]
+For an $n\times n$ matrix $A$ over $\mathbb{C}$, define
+\[
+  f_A(z) = \sum_{S\subseteq [n]}
+    \Bigl(\prod_{i\in S}\prod_{j\notin S} a_{ij}\Bigr)\prod_{k\in S} z_k.
+\]
+\end{definition}
+
+\begin{theorem}[Ruelle~{\cite[Theorem~1, p.~589]{ruelle}};
+  Harcos~{\cite[Theorem~3, p.~2]{harcos}};
+  \texttt{leeYangPoly\_nonvanishing}]
+If $A$ is Hermitian with $|a_{ij}|\le 1$, then $f_A(z)\ne 0$
+for all $z$ with $|z_k|<1$.
+\end{theorem}
+
+The proof is by induction on $n$. The inductive step decomposes
+$f_A(z)=\beta + z_n\cdot\alpha$ and shows $\|\alpha\|\le\|\beta\|$
+via:
+\begin{enumerate}
+\item \textbf{Torus identity} (\texttt{torus\_identity}):
+  On $|v_k|=1$,
+  $\alpha(v) = (\prod v_k)\cdot\overline{\beta(v)}$,
+  hence $\|\alpha\|=\|\beta\|$.
+\item \textbf{Approximation}: Scale the last column by $t<1$
+  so that $\beta_t\ne 0$ on the closed polydisk.
+\item \textbf{Iterated max modulus} (\texttt{iterated\_ratio}):
+  By single-variable maximum modulus
+  (\texttt{one\_var\_max\_ratio}, via \texttt{DiffContOnCl}),
+  iterate over each variable to get $\|\alpha_t/\beta_t\|\le 1$.
+\item \textbf{Limit $t\to 1$}: Both sides are continuous in $t$;
+  $\{t:\|\alpha_t\|\le\|\beta_t\|\}$ is closed and contains
+  $[0,1)$, hence contains~$1$.
+\end{enumerate}
+
+The Ising application (\texttt{lee\_yang\_circle}) constructs a
+Hermitian matrix from the edge list and coupling constants, reducing
+the combinatorial Ising model to the matrix formulation.
+
 \begin{thebibliography}{9}
 \bibitem{glimm-jaffe}
 J.~Glimm and A.~Jaffe,
 \emph{Quantum Physics: A Functional Integral Point of View},
 2nd ed., Springer, 1987.
+
+\bibitem{ruelle}
+D.~Ruelle,
+\emph{Characterization of Lee-Yang polynomials},
+Annals of Mathematics, 171(1):589--603, 2010.
+
+\bibitem{harcos}
+G.~Harcos,
+\emph{The Lee-Yang Circle Theorem},
+lecture notes based on Ruelle~\cite{ruelle},
+\url{https://users.renyi.hu/~gharcos/lee-yang.pdf}.
 
 \bibitem{friedli-velenik}
 S.~Friedli and Y.~Velenik,

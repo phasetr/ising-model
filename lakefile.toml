@@ -25,3 +25,7 @@ docGen = false
 [[lean_exe]]
 name = "GKSTest"
 root = "test.IsingModel.GKSTest"
+
+[[lean_exe]]
+name = "LeeYangTest"
+root = "test.IsingModel.LeeYangTest"

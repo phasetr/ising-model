@@ -178,7 +178,7 @@ def main : IO UInt32 := do
   allPassed := allPassed && (← checkFlipSymmetry "triangle J=2" 3 triangle3 2.0)
 
   IO.println ""
-  IO.println "--- GKS-I: ⟨σ_A⟩ ≥ 0 (ferromagnetic) ---"
+  IO.println "--- GKS-I: ⟨σ^A⟩ ≥ 0 (ferromagnetic) ---"
   allPassed := allPassed && (← checkGKS1 "2-chain J=1 h=0.5 β=1" 2 graph2 1.0 0.5 1.0)
   allPassed := allPassed && (← checkGKS1 "2-chain J=1 h=0 β=1" 2 graph2 1.0 0.0 1.0)
   allPassed := allPassed && (← checkGKS1 "3-chain J=2 h=0.3 β=0.5" 3 graph3 2.0 0.3 0.5)
@@ -187,7 +187,7 @@ def main : IO UInt32 := do
   allPassed := allPassed && (← checkGKS1 "square J=3 h=0 β=0.1" 4 square4 3.0 0.0 0.1)
 
   IO.println ""
-  IO.println "--- GKS-II: ⟨σ_Aσ_B⟩ ≥ ⟨σ_A⟩⟨σ_B⟩ (ferromagnetic) ---"
+  IO.println "--- GKS-II: ⟨σ^Aσ^B⟩ ≥ ⟨σ^A⟩⟨σ^B⟩ (ferromagnetic) ---"
   allPassed := allPassed && (← checkGKS2 "2-chain J=1 h=0.5 β=1" 2 graph2 1.0 0.5 1.0)
   allPassed := allPassed && (← checkGKS2 "2-chain J=1 h=0 β=1" 2 graph2 1.0 0.0 1.0)
   allPassed := allPassed && (← checkGKS2 "3-chain J=2 h=0.3 β=0.5" 3 graph3 2.0 0.3 0.5)

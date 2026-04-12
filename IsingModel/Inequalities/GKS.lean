@@ -69,7 +69,7 @@ theorem boltzmannWeight_hasNonnegCorrelations (G : SimpleGraph ι) [Fintype G.ed
   simp_rw [hbw]
   exact h
 
-/-- The numerator of `⟨σ_A⟩` is non-negative for ferromagnetic parameters. -/
+/-- The numerator of `⟨σ^A⟩` is non-negative for ferromagnetic parameters. -/
 theorem gks_numerator_nonneg (G : SimpleGraph ι) [Fintype G.edgeSet]
     (p : IsingParams ℝ) (hf : Ferromagnetic p) (A : Finset ι) :
     0 ≤ numerator G p (spinProduct A) :=
@@ -79,7 +79,7 @@ theorem gks_numerator_nonneg (G : SimpleGraph ι) [Fintype G.edgeSet]
 
 /-- **First Griffiths inequality (GKS-I)**: For a ferromagnetic Ising model
 (`J ≥ 0`, `h ≥ 0`, `β > 0`), all correlation functions are non-negative:
-`⟨σ_A⟩ ≥ 0` for any subset `A`. -/
+`⟨σ^A⟩ ≥ 0` for any subset `A`. -/
 theorem gks_first (G : SimpleGraph ι) [Fintype G.edgeSet]
     (p : IsingParams ℝ) (hf : Ferromagnetic p) (A : Finset ι) :
     0 ≤ correlation G p A := by
@@ -309,7 +309,7 @@ private theorem duplicateSum_nonneg (G : SimpleGraph ι) [Fintype G.edgeSet]
 
 /-- **Second Griffiths inequality (GKS-II)**: For a ferromagnetic Ising model
 (`J ≥ 0`, `h ≥ 0`, `β > 0`), correlations are monotone:
-`⟨σ_A σ_B⟩ ≥ ⟨σ_A⟩⟨σ_B⟩` for any subsets `A, B`.
+`⟨σ^A σ^B⟩ ≥ ⟨σ^A⟩⟨σ^B⟩` for any subsets `A, B`.
 
 Reference: Friedli–Velenik, Theorem 3.49 (3.55), pp. 127–128. -/
 theorem gks_second (G : SimpleGraph ι) [Fintype G.edgeSet]
