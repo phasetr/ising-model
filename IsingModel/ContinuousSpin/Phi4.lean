@@ -146,12 +146,56 @@ theorem phi4_single_site_nonneg
       α ^ k * β ^ l * γ ^ m * δ ^ n *
       Real.exp (-Q α β γ δ + c * (α * β * γ * δ))
       ∂volume ∂volume ∂volume ∂volume := by
-  -- Strategy: reduce to c = 0 case, then handle the ferromagnetic term.
-  -- For c = 0: exp(-Q + 0) = exp(-Q).
-  -- If any exponent is odd: the integrand is odd in that variable → integral = 0 ≥ 0.
-  -- If all exponents are even: the integrand is non-negative → integral ≥ 0.
-  -- For c > 0: expand exp(c·αβγδ) as power series and reduce each term to c = 0.
-  -- The full assembly requires Fubini + integral_tsum + integrability.
+  -- Case split on parity of k. If k is odd, the inner integral over α vanishes
+  -- by integral_odd_eq_zero (Q even in α, integrand odd in α).
+  -- Similarly for l, m, n.
+  -- If all k,l,m,n are even: integrand = (positive)⁴ × exp(...) > 0 → integral ≥ 0.
+  -- If all k,l,m,n are odd: requires orthant decomposition + sinh analysis.
+  -- Full proof deferred; the mathematical argument is:
+  --   orthant symmetrization gives ∫ = 16∫_{[0,∞)⁴} (sign_sum) × g
+  --   where g ≥ 0 and sign_sum = S+·cosh(ct) + S-·sinh(ct) with S+,S- ∈ {0,16}.
+  --   For all-even: S+=16, S-=0, cosh≥0. For all-odd: S+=0, S-=16, sinh≥0 (c,t≥0).
+  --   For mixed: S+=S-=0, integral=0.
   sorry
+
+/-! ## Corollary 4.3.2: Lebowitz inequality
+
+For continuous spins with φ⁴ distribution, the Lebowitz inequality states:
+1. `0 ≤ ⟨t^A t^B⟩ - ⟨t^A⟩⟨t^B⟩`  (= GKS-II for the duplicate system)
+2. `0 ≤ ⟨q^A q^B⟩ - ⟨q^A⟩⟨q^B⟩`
+3. `0 ≤ ⟨t^A⟩⟨q^B⟩ - ⟨t^A q^B⟩`  (the NEW inequality)
+
+where `t_i = (ξ_i + χ_i)/√2`, `q_i = (ξ_i - χ_i)/√2` are the duplicate variables.
+
+The proof of (3) uses Theorem 4.3.1:
+```
+⟨t^A⟩⟨q^B⟩ - ⟨t^A q^B⟩ = ⟨t^A (⟨q^B⟩ - q^B)⟩
+  = 2^{-(|A|+|B|)/2} ⟨(α+β)^A [(γ+δ)^B - (γ-δ)^B]⟩
+```
+Then `(α+β)^A [(γ+δ)^B - (γ-δ)^B]` is a sum of monomials α^a β^b γ^c δ^d
+with non-negative coefficients, and each `⟨α^a β^b γ^c δ^d⟩ ≥ 0` by
+Theorem 4.3.1.
+
+Reference: Glimm–Jaffe, Corollary 4.3.2, p. 60. -/
+
+-- The Lebowitz inequality requires the full multi-site theory with
+-- product measures, expectations, and the duplicate variable framework
+-- for continuous spins. This infrastructure builds on cExpectation
+-- and phi4_single_site_nonneg, and will be developed in subsequent work.
+
+/-! ## Corollary 4.3.4: truncated three-point correlation ≤ 0
+
+For continuous spins with φ⁴ distribution and `h_i ≥ 0`:
+```
+⟨ξ_i ξ_j ξ_k⟩ - ⟨ξ_i⟩⟨ξ_j ξ_k⟩ - ⟨ξ_j⟩⟨ξ_i ξ_k⟩
+  - ⟨ξ_k⟩⟨ξ_i ξ_j⟩ + 2⟨ξ_i⟩⟨ξ_j⟩⟨ξ_k⟩ ≤ 0
+```
+
+The proof uses Corollary 4.3.2(3) and GKS-II (`⟨ξ_i⟩ ≥ 0`).
+
+Reference: Glimm–Jaffe, Corollary 4.3.4, p. 62. -/
+
+-- This follows algebraically from Corollary 4.3.2(3) and GKS-I/II.
+-- The formalization requires the multi-site duplicate variable framework.
 
 end IsingModel.ContinuousSpin
