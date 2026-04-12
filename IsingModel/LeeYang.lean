@@ -349,9 +349,26 @@ private lemma leeYangPoly_ratio_bound {m : ℕ}
         leeYangPoly_conj_eq_compl B (hA.submatrix Fin.castSucc)]
       -- Now RHS has ∏ conj(a·v). Distribute: conj(a·v) = conj(a)·conj(v)
       -- and conj(a) = A(last)(cs) by Hermitian
-      -- RHS has ∏ conj(a·v). Use Hermitian + distribute + reindex.
-      -- All steps: purely algebraic Finset manipulation.
-      sorry
+      -- conj(a)·conj(v) already distributed by simp. Use Hermitian, split products.
+      simp_rw [hermitian_conj_entry A hA, Finset.prod_mul_distrib]
+      -- Rearrange: move (∏ v) next to ∏ conj(v) and apply hprod_sdiff
+      have hrearrange : ∀ S : Finset (Fin m),
+          (∏ k : Fin m, v k) *
+            (leeYangPoly B (Finset.univ \ S) *
+              ((∏ x ∈ S, A (Fin.last m) (Fin.castSucc x)) *
+                ∏ x ∈ S, (starRingEnd ℂ) (v x))) =
+          leeYangPoly B (Finset.univ \ S) * (∏ x ∈ S, A (Fin.last m) (Fin.castSucc x)) *
+            ((∏ k : Fin m, v k) * ∏ x ∈ S, (starRingEnd ℂ) (v x)) := fun S => by ring
+      simp_rw [hrearrange, hprod_sdiff]
+      -- Expand p_α, then reindex RHS by complement
+      simp_rw [hp_α_def]
+      let compl_equiv : Finset (Fin m) ≃ Finset (Fin m) :=
+        ⟨(Finset.univ \ ·), (Finset.univ \ ·),
+          fun S => by simp [sdiff_sdiff_right_self],
+          fun S => by simp [sdiff_sdiff_right_self]⟩
+      exact (Fintype.sum_equiv compl_equiv _ _ (fun T => by
+        simp only [compl_equiv, Equiv.coe_fn_mk, sdiff_sdiff_right_self,
+          inf_eq_inter, Finset.univ_inter])).symm
     -- Iterated max modulus: for Differentiable g with ‖g v‖ ≤ 1 on torus,
     -- one_var_max gives ‖g v‖ ≤ 1 for all v with ‖v_k‖ ≤ 1.
     -- We apply this to g = αfun/βfun in the strict case, then continuity.
