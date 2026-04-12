@@ -320,20 +320,16 @@ private lemma leeYangPoly_ratio_bound {m : ℕ}
           exact hbd z (by simpa [dist_zero_right] using hz))
         (subset_closure (Metric.mem_ball.mpr (by rwa [dist_zero_right])))
       rwa [show f (v k) = g v from by simp [f]] at h
-    -- Iterated single-variable maximum modulus principle.
-    -- For strict |a_k| < 1: β(v) ≠ 0 for all v with ‖v_k‖ ≤ 1 (by ih,
-    -- since |a_k·v_k| ≤ |a_k| < 1). So g = α/β is holomorphic on
-    -- the closed polydisk. On torus |v_k| = 1: α(v) = (∏v_k)·conj(β(v))
-    -- (Hermitian identity), so |g| = 1. Iterating 1-variable max modulus
-    -- gives |g| ≤ 1 on the open polydisk.
-    -- For |a_k| ≤ 1: approximate t·A → A (t < 1), closed inequality preserved.
-    --
-    -- This is the final remaining sorry in the Lee-Yang formalization.
-    -- The infrastructure (differentiability, max modulus application, Hermitian
-    -- conjugation identity) is fully validated. The remaining work is:
-    -- (1) Iterated 1-variable max modulus (~50 lines)
-    -- (2) Torus identity α = (∏v)·conj(β) (~30 lines)
-    -- (3) Continuity argument t·A → A (~30 lines)
+    -- Torus identity: on |v_k| = 1, αfun(v) = (∏v_k)·conj(βfun(v))
+    -- Hence |αfun/βfun| = |∏v_k| = 1 on the torus.
+    -- This follows from leeYangPoly_conj_eq_compl + Hermitian structure.
+    have torus_bound : ∀ v : Fin m → ℂ, (∀ k, ‖v k‖ = 1) → ‖αfun v‖ = ‖βfun v‖ := by
+      sorry -- Hermitian torus identity
+    -- Strict case: when ‖A i j‖ ≤ 1 (including =1), we use approximation.
+    -- For t < 1: (t • A) has ‖t·A i j‖ = t·‖A i j‖ ≤ t < 1 strictly.
+    -- β_t(v) = f_B(t·a·v) with |t·a_k·v_k| ≤ t < 1, so β_t ≠ 0 on closed polydisk.
+    -- g_t = α_t/β_t is Differentiable. By iterated one_var_max: |g_t| ≤ 1.
+    -- Hence ‖α_t(w)‖ ≤ ‖β_t(w)‖. Taking t → 1: ‖α(w)‖ ≤ ‖β(w)‖.
     sorry
 
 /-- **Harcos/Ruelle theorem**: For an `n × n` Hermitian matrix `A` with `|a_{ij}| ≤ 1`,
