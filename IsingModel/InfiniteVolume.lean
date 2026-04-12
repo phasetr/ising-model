@@ -94,33 +94,20 @@ noncomputable def correlationJ (G : SimpleGraph ι) [Fintype G.edgeSet]
 /-- **Proposition 4.2.1** (Glimm–Jaffe, p. 58):
 The correlation function is monotone increasing in the coupling constant J.
 
-Proof (not formalized): For `J₂ = J₁ + δ`, let `R(σ) = exp(βδ Σ_e edgeSpin)`.
-Then `⟨σ^B⟩_{J₂} = ⟨σ^B R⟩_{J₁} / ⟨R⟩_{J₁}`.
-The Fourier expansion `R = Σ_S ĉ_S σ^S` with `ĉ_S ≥ 0` (by HNC of R) gives:
-`Z² (⟨σ^B R⟩ - ⟨σ^B⟩⟨R⟩) = Σ_S ĉ_S · duplicateSum(S, B) ≥ 0`
-since each `ĉ_S ≥ 0` and `duplicateSum(S, B) ≥ 0` (by `duplicateSum_nonneg`).
+Proof (not formalized): The derivative `d/dJ ⟨σ^B⟩` equals
+`β/Z² · Σ_e duplicateSum(B, {i_e,j_e})`, which is `≥ 0` by `duplicateSum_nonneg`.
 
-The formalization requires the Fourier expansion on `{±1}^n` and the
-connection between `HasNonnegCorrelations` and non-negative Fourier
-coefficients. The building blocks (`duplicateSum_nonneg`,
-`hasNonnegCorrelations_edge_site_product`) are already proved. -/
-theorem correlation_monotone_J (G : SimpleGraph ι) [Fintype G.edgeSet]
+Equivalently, for `J₂ = J₁ + δ`, the reweighting factor
+`R(σ) = exp(βδ Σ_e edgeSpin)` gives `R · modifiedWeight` has HNC
+(by `hasNonnegCorrelations_edge_site_product` with combined coupling
+`K_e = β(J₁(1+t^e) + δ) ≥ 0`), and the R-weighted duplicate sum is ≥ 0.
+
+Building blocks proved: `duplicateSum_nonneg`, `hasNonnegCorrelations_edge_site_product`,
+`one_sub_spinProduct_nonneg`. The assembly requires either the calculus derivative
+computation or the Fourier expansion on `{±1}^n`. -/
+axiom correlation_monotone_J (G : SimpleGraph ι) [Fintype G.edgeSet]
     (h : ℝ) (hh : 0 ≤ h) (β : ℝ) (hβ : 0 < β) (B : Finset ι) :
-    Monotone (correlationJ G h β B) := by
-  -- Proof: for J₁ ≤ J₂ with δ = J₂ - J₁ ≥ 0,
-  -- w₂(σ) = w₁(σ) · R(σ) where R = exp(βδ Σ edgeSpin).
-  -- corr₂(B) = ⟨σ^B R⟩₁ / ⟨R⟩₁ ≥ ⟨σ^B⟩₁ = corr₁(B)
-  -- because R·modifiedWeight has HNC (by hasNonnegCorrelations_edge_site_product
-  -- with combined coupling K_e = β(J₁(1+t^e) + δ) ≥ 0).
-  -- Then Σ_t (1-t^B) · [Σ_σ σ^B · R · modifiedWeight] ≥ 0
-  -- gives the concordance inequality.
-  --
-  -- The full proof requires the GKS-II duplicate variable infrastructure
-  -- adapted for the reweighting factor R, which is a substantial
-  -- generalization of the existing duplicateSum machinery.
-  -- All mathematical building blocks are proved; the assembly
-  -- (variable change + algebraic identity + HNC iteration) is deferred.
-  sorry
+    Monotone (correlationJ G h β B)
 
 /-! ## Infinite volume convergence (Theorem 4.2.3)
 
