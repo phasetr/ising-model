@@ -240,9 +240,8 @@ theorem cov_hnc_boltzmann_nonneg (G : SimpleGraph ι) [Fintype G.edgeSet]
         ((∑ x, spinProduct (symmDiff B S) x * boltzmannWeight G p x) *
           (∑ σ : Config ι, boltzmannWeight G p σ)) := by nlinarith
     linarith [le_of_mul_le_mul_left h3a hZ]
-  -- LHS = Σ_S ĉ_S · bracket = Σ (non-negative) ≥ 0
-  -- The algebraic identity LHS = Σ_S hterm(S) uses:
-  -- walsh_fourier_inversion (f = Σ ĉ σ^S) + spinProduct_mul + sum_comm
+  -- LHS = Σ_S ĉ_S bracket by Fourier substitution + sum rearrangement
+  -- Using hfourier, hprod, Finset.sum_comm, hterm, Finset.sum_nonneg
   sorry
 
 -- Note: The general statement "for arbitrary HNC f, g: covariance ≥ 0"
