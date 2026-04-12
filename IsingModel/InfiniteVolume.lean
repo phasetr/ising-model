@@ -74,6 +74,26 @@ theorem abs_correlation_le_one (G : SimpleGraph ι) [Fintype G.edgeSet]
           _ = ∑ σ, boltzmannWeight G p σ := by simp
     _ = 1 := inv_mul_cancel₀ (ne_of_gt hZ)
 
+/-! ## Walsh orthogonality on {±1}^n
+
+The spin products `{σ^S : S ⊆ ι}` form an orthogonal basis for functions
+on `Config ι = ι → Spin`. The orthogonality relation is:
+`Σ_σ σ^S · σ^T = if S = T then 2^|ι| else 0`. -/
+
+/-- Walsh orthogonality: `Σ_σ σ^S · σ^T = 0` when `S ≠ T`.
+This follows from `spinProduct_mul` and `sum_config_spinProduct_eq_zero`. -/
+theorem walsh_orthogonality (S T : Finset ι) (hST : S ≠ T) :
+    ∑ σ : Config ι, spinProduct S σ * spinProduct T σ = 0 := by
+  simp_rw [spinProduct_mul]
+  exact sum_config_spinProduct_eq_zero _ (Finset.symmDiff_nonempty.mpr hST)
+
+/-- Walsh normalization: `Σ_σ (σ^S)² = 2^|ι|`. -/
+theorem walsh_normalization (S : Finset ι) :
+    ∑ σ : Config ι, spinProduct S σ * spinProduct S σ =
+    Fintype.card (Config ι) := by
+  simp_rw [spinProduct_mul, symmDiff_self]
+  exact sum_config_spinProduct_empty
+
 /-! ## Monotonicity in coupling constant (Proposition 4.2.1)
 
 The correlation function `⟨σ^B⟩` is monotone increasing in the coupling
@@ -157,13 +177,16 @@ theorem correlation_monotone_J (G : SimpleGraph ι) [Fintype G.edgeSet]
   simp only [hf_eq, Pi.div_apply]
   rw [div_le_div_iff₀ (hden_pos J₁) (hden_pos J₂)]
   -- Goal: num J₁ * den J₂ ≤ num J₂ * den J₁
-  -- i.e.: 0 ≤ num J₂ * den J₁ - num J₁ * den J₂
-  -- = Σ_σ Σ_τ σ^B [w₂(σ)w₁(τ) - w₁(σ)w₂(τ)]
-  -- = Σ_σ Σ_τ σ^B w₁(σ)w₁(τ) [R(σ) - R(τ)]
-  -- where R(σ) = exp(β(J₂-J₁) Σ edgeSpin)
-  -- This is the concordance / covariance expression.
-  -- It equals β(J₂-J₁) Σ_e duplicateSum(B, e) ≥ 0 after linearization.
-  -- Full algebraic proof deferred.
+  -- Expand as double sums and use w₂(σ) = w₁(σ) · R(σ):
+  -- num J₂ * den J₁ - num J₁ * den J₂
+  -- = Σ_σ Σ_τ σ^B w₁(σ) w₁(τ) [R(σ) - R(τ)]
+  -- where R(σ) = exp(β(J₂-J₁) Σ edgeSpin) has HNC.
+  -- The Fourier expansion R = Σ_S ĉ_S σ^S (ĉ_S ≥ 0 by HNC) gives:
+  -- = Σ_S ĉ_S · duplicateSum(⟨J₁,h,β⟩, B, S) ≥ 0
+  -- by duplicateSum_nonneg.
+  -- Building blocks: duplicateSum_nonneg, hasNonnegCorrelations_edge_site_product.
+  -- The Fourier expansion on {±1}^n and the algebraic rearrangement
+  -- to duplicateSum are not yet formalized.
   sorry
 
 /-! ## Infinite volume convergence (Theorem 4.2.3)
