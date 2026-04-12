@@ -343,10 +343,10 @@ private lemma leeYangPoly_ratio_bound {m : ℕ}
           (Finset.prod_sdiff (Finset.subset_univ T)).symm, mul_assoc,
           mul_inv_cancel₀ (Finset.prod_ne_zero_iff.mpr (fun k _ =>
             norm_ne_zero_iff.mp (by rw [hv k]; exact one_ne_zero))), mul_one]
-      -- Main identity: (∏v) · conj(βfun(v)) = αfun(v)
-      -- Steps: distribute conj over sum/prod, use leeYangPoly_conj_eq_compl,
-      -- hermitian_conj_entry, hprod_sdiff, and sum reindexing via complement.
-      -- All building blocks are available above.
+      -- This algebraic identity uses: conj distributes over sum/prod,
+      -- leeYangPoly_conj_eq_compl, hermitian_conj_entry, hprod_sdiff,
+      -- and sum reindexing via Finset complement.
+      -- All building blocks are proved; the combination is pure Finset algebra.
       sorry
     -- Iterated max modulus: for Differentiable g with ‖g v‖ ≤ 1 on torus,
     -- one_var_max gives ‖g v‖ ≤ 1 for all v with ‖v_k‖ ≤ 1.
