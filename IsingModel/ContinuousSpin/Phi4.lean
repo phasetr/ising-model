@@ -146,16 +146,19 @@ theorem phi4_single_site_nonneg
       α ^ k * β ^ l * γ ^ m * δ ^ n *
       Real.exp (-Q α β γ δ + c * (α * β * γ * δ))
       ∂volume ∂volume ∂volume ∂volume := by
-  -- Case split on parity of k. If k is odd, the inner integral over α vanishes
-  -- by integral_odd_eq_zero (Q even in α, integrand odd in α).
-  -- Similarly for l, m, n.
-  -- If all k,l,m,n are even: integrand = (positive)⁴ × exp(...) > 0 → integral ≥ 0.
-  -- If all k,l,m,n are odd: requires orthant decomposition + sinh analysis.
-  -- Full proof deferred; the mathematical argument is:
-  --   orthant symmetrization gives ∫ = 16∫_{[0,∞)⁴} (sign_sum) × g
-  --   where g ≥ 0 and sign_sum = S+·cosh(ct) + S-·sinh(ct) with S+,S- ∈ {0,16}.
-  --   For all-even: S+=16, S-=0, cosh≥0. For all-odd: S+=0, S-=16, sinh≥0 (c,t≥0).
-  --   For mixed: S+=S-=0, integral=0.
+  -- Mixed parity: if k is odd, the δ-innermost integral is a function of (α,β,γ)
+  -- that, when multiplied by α^k (odd), gives an odd integrand in α.
+  -- Similarly for other odd exponents.
+  -- All-even: integrand = (non-negative) × exp(something) > 0.
+  -- All-odd: needs orthant decomposition (deferred).
+  -- For now, use a symmetry argument on the α variable when k is odd.
+  -- If k is odd, the outermost integral vanishes by α → -α symmetry.
+  -- Q(-α,β,γ,δ) = Q(α,β,γ,δ), and (-α)^k = -α^k, c(-α)βγδ = -cαβγδ,
+  -- so the integrand f(-α) = -f(α) when combined. But wait, exp(-Q(-α,...) + c(-α)βγδ)
+  -- = exp(-Q + (-c)αβγδ) ≠ exp(-Q + cαβγδ) when c ≠ 0.
+  -- So the full function is NOT odd in α when c > 0!
+  -- The orthant decomposition / power series approach is needed.
+  -- Full proof deferred to measure-theory assembly.
   sorry
 
 /-! ## Corollary 4.3.2: Lebowitz inequality
