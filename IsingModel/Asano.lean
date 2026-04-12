@@ -1,15 +1,28 @@
 import Mathlib.Analysis.Complex.Basic
 import Mathlib.Analysis.Complex.Norm
+import Mathlib.Analysis.Complex.AbsMax
 import Mathlib.Data.Finset.Powerset
+import Mathlib.Data.Matrix.Basic
+import Mathlib.LinearAlgebra.Matrix.Hermitian
 
 /-!
 # Multilinear polynomials and Asano contraction
 
-A multilinear polynomial over `ℂ` with variables indexed by `ι` is
-a function `Finset ι → ℂ` giving the coefficient of each monomial `∏_{i ∈ X} z_i`.
+This file defines multilinear polynomials over `ℂ` and the Asano contraction.
+
+## Multilinear polynomials
+
+`MultilinPoly ι` is a function `Finset ι → ℂ` giving the coefficient of each
+monomial `∏_{i ∈ X} z_i`. This is used both here and in `LeeYang.lean`
+(which imports this file for `MultilinPoly` and `MultilinPoly.eval` only;
+the Asano contraction itself is not used in the Lee-Yang proof).
+
+## Asano contraction
 
 The Asano contraction merges two variables by keeping only the "both present"
-and "both absent" parts.
+and "both absent" parts. This was originally intended for the Lee-Yang proof
+via Friedli–Velenik's approach, but the final proof uses the Harcos/Ruelle
+approach instead. The contraction machinery is retained for potential future use.
 
 Reference: Friedli–Velenik, §3.7, pp. 122–127.
 -/
@@ -476,40 +489,5 @@ theorem singleEdgePoly_nonvanishing (i j : ι) (hij : i ≠ j)
       linarith [hnorm]
     linarith [hz i]
 
-/-! ## Lee-Yang circle theorem -/
-
-/-- The Ising partition polynomial `P_E(z_V) = Σ_{X⊆V} a_E(X) ∏_{i∈X} z_i`
-with coefficients in `[0,1]` and `a(∅) = a(V) = 1`.
-This is the multilinear form of the partition function with `z = e^{-2h}`. -/
-structure IsingPartitionPoly (ι : Type*) [Fintype ι] [DecidableEq ι] where
-  /-- The underlying multilinear polynomial. -/
-  poly : MultilinPoly ι
-  /-- All coefficients are in `[0, 1]`. -/
-  coeff_nonneg : ∀ X, 0 ≤ (poly X).re ∧ (poly X).re ≤ 1 ∧ (poly X).im = 0
-  /-- Coefficient of the empty set is `1`. -/
-  coeff_empty : poly ∅ = 1
-  /-- Coefficient of the full set is `1`. -/
-  coeff_full : poly Finset.univ = 1
-
-/-- **Lee-Yang circle theorem**: The Ising partition polynomial does not vanish
-on the open unit polydisk `{z : ‖z_i‖ < 1 ∀i}`.
-
-Equivalently, all zeros of `Z(z)` (as a function of `z = e^{-2h}`) lie on `|z| = 1`.
-
-Reference: Friedli–Velenik, Theorem 3.43, pp. 122–127.
-Proof by induction on the edge set using Asano contraction. -/
-theorem lee_yang_circle (p : IsingPartitionPoly ι)
-    (z : ι → ℂ) (hz : ∀ k, ‖z k‖ < 1) :
-    p.poly.eval z ≠ 0 := by
-  -- TODO: Proof by induction on the edge set E = {X : |X|=2, 0 < a(X) < 1}.
-  -- All building blocks are proved:
-  -- • singleEdgePoly_nonvanishing: base case (single edge)
-  -- • asanoContract_nonvanishing: inductive step (Asano contraction)
-  -- • bilinear_nonvanishing: algebraic core
-  -- Remaining work: define the edge-induction framework, showing how the
-  -- Ising partition polynomial decomposes as a product of single-edge factors,
-  -- and how Asano contraction merges shared vertices.
-  -- Reference: Friedli–Velenik, Theorem 3.43, pp. 122–127.
-  sorry
 
 end IsingModel
