@@ -10,7 +10,7 @@
 \newtheorem{definition}[theorem]{Definition}
 \newtheorem{remark}[theorem]{Remark}
 
-\title{GKS-I Formal Proof: A Mathematical Guide to the Lean 4 Code}
+\title{Ising Model Formalization: A Mathematical Guide to the Lean 4 Code}
 \author{ising-model project}
 \date{2026-04-10}
 
@@ -19,16 +19,16 @@
 
 \begin{abstract}
 This document provides a mathematical walkthrough of the Lean~4
-formalization of the first Griffiths inequality (GKS-I) for
-the finite Ising model. Each section corresponds to a Lean source file
-and lists the relevant definitions and theorems. The purpose is to
-make the formal proof readable as ordinary mathematics.
+formalization of theorems about the finite Ising model.
+Each section corresponds to a Lean source file and lists the relevant
+definitions and theorems. The purpose is to make the formal proofs
+readable as ordinary mathematics.
 
-The proof follows Glimm--Jaffe~\cite{glimm-jaffe}, Theorem~4.1.1
-(pp.~56--57), adapted to the discrete $\{+1,-1\}$ Ising model.
-The ``non-negative correlations'' (HNC) framework and the cosh/sinh
-decomposition are standard; see also
-Friedli--Velenik~\cite{friedli-velenik}, Theorem~3.22 (pp.~99--100).
+The correlation inequalities (GKS-I/II, FKG) follow
+Glimm--Jaffe~\cite{glimm-jaffe}, Theorem~4.1.1 (pp.~56--57)
+and Friedli--Velenik~\cite{friedli-velenik}, Theorem~3.22 (pp.~99--100).
+The Lee-Yang circle theorem follows
+Ruelle~\cite{ruelle} and Harcos~\cite{harcos}.
 \end{abstract}
 
 \tableofcontents

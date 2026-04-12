@@ -27,6 +27,8 @@ All theorems are formally proved with **zero `sorry`**.
 | FKG     | `⟨fg⟩ ≥ ⟨f⟩⟨g⟩` for monotone f, g  | Friedli-Velenik Thm 3.21/3.50                   |
 | Asano contraction | contraction preserves non-vanishing | Friedli-Velenik Prop 3.44     |
 | Lee-Yang circle   | Ising partition poly nonvanishing on polydisk | Ruelle, Ann. of Math. 171 (2010); Harcos notes |
+| Partition function positivity | `Z > 0` | — |
+| Spin flip symmetry | `H(flip σ) = H(σ)` when h = 0 | — |
 
 ## Documentation
 

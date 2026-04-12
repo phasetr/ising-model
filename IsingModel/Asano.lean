@@ -8,11 +8,21 @@ import Mathlib.LinearAlgebra.Matrix.Hermitian
 /-!
 # Multilinear polynomials and Asano contraction
 
-A multilinear polynomial over `ℂ` with variables indexed by `ι` is
-a function `Finset ι → ℂ` giving the coefficient of each monomial `∏_{i ∈ X} z_i`.
+This file defines multilinear polynomials over `ℂ` and the Asano contraction.
+
+## Multilinear polynomials
+
+`MultilinPoly ι` is a function `Finset ι → ℂ` giving the coefficient of each
+monomial `∏_{i ∈ X} z_i`. This is used both here and in `LeeYang.lean`
+(which imports this file for `MultilinPoly` and `MultilinPoly.eval` only;
+the Asano contraction itself is not used in the Lee-Yang proof).
+
+## Asano contraction
 
 The Asano contraction merges two variables by keeping only the "both present"
-and "both absent" parts.
+and "both absent" parts. This was originally intended for the Lee-Yang proof
+via Friedli–Velenik's approach, but the final proof uses the Harcos/Ruelle
+approach instead. The contraction machinery is retained for potential future use.
 
 Reference: Friedli–Velenik, §3.7, pp. 122–127.
 -/
