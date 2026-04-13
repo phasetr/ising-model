@@ -678,6 +678,31 @@ Immediate from $Z$ monotonicity and $\ln$ monotonicity
 (\texttt{Real.log\_le\_log}).
 \end{theorem}
 
+\subsection{Free energy analyticity (Theorem 4.6.2)}
+
+\begin{theorem}[\texttt{partitionFunctionH\_analyticAt}]
+The partition function $Z(h) = \sum_\sigma \exp(a(\sigma) + b(\sigma) h)$
+is real-analytic in $h$ at every point.  Each Boltzmann weight
+$\exp(a + bh)$ is real-analytic (exponential of affine),
+and a finite sum of real-analytic functions is real-analytic.
+\end{theorem}
+
+\begin{theorem}[\texttt{freeEnergyH\_analyticOn}; Thm~4.6.2, finite vol.]
+The free energy $f(h) = |\iota|^{-1} \ln Z(h)$ is real-analytic on $(0,\infty)$.
+Since $Z(h) > 0$ for all $h$ (\texttt{partitionFunction\_pos}), $\ln Z$
+is defined and real-analytic (\texttt{AnalyticAt.log}).
+\end{theorem}
+
+\begin{proof}
+$Z$ is a finite sum of exponentials of affine functions,
+hence real-analytic (\texttt{fun\_prop}).  Since $Z > 0$,
+$\ln Z$ is real-analytic.  Multiplication by the constant
+$|\iota|^{-1}$ preserves analyticity.
+\end{proof}
+
+The same argument gives $Z(J)$ and $f(J)$ real-analytic
+(\texttt{partitionFunctionJ\_analyticAt}, \texttt{freeEnergyJ\_analyticOn}).
+
 \subsection{Configuration--subset bijection}
 
 The Lee-Yang polynomial sums over subsets $X \subseteq \iota$
