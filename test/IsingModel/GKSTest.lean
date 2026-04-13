@@ -159,6 +159,156 @@ def checkFKG (label : String) (n : Nat) (edges : List (Nat × Nat))
     IO.println s!"  FAIL: {label}: FKG violated (⟨fg⟩-⟨f⟩⟨g⟩ = {expect_fg - expect_f * expect_g})"
     return false
 
+-- GHS inequality test: truncated3 ≤ 0
+
+def truncated3 (n : Nat) (edges : List (Nat × Nat)) (J h β : Float)
+    (i j k : Nat) : Float :=
+  let cijk := testCorrelation n edges J h β [i, j, k]
+  let ci := testCorrelation n edges J h β [i]
+  let cj := testCorrelation n edges J h β [j]
+  let ck := testCorrelation n edges J h β [k]
+  let cij := testCorrelation n edges J h β [i, j]
+  let cik := testCorrelation n edges J h β [i, k]
+  let cjk := testCorrelation n edges J h β [j, k]
+  cijk - ci * cjk - cj * cik - ck * cij + 2 * ci * cj * ck
+
+def checkGHS (label : String) (n : Nat) (edges : List (Nat × Nat))
+    (J h β : Float) : IO Bool := do
+  let sites := List.range n
+  let mut ok := true
+  for i in sites do
+    for j in sites do
+      for k in sites do
+        if i < j && j < k then
+          let t3 := truncated3 n edges J h β i j k
+          if t3 > 1e-10 then
+            IO.println s!"  FAIL: truncated3({i},{j},{k}) = {t3} > 0"
+            ok := false
+  if ok then
+    IO.println s!"  {label}: GHS (truncated3 ≤ 0) passed"
+  return ok
+
+-- Cor 4.3.3: truncated4 ≤ 0 for h = 0
+
+def truncated4 (n : Nat) (edges : List (Nat × Nat)) (J β : Float)
+    (i j k l : Nat) : Float :=
+  let cijkl := testCorrelation n edges J 0 β [i, j, k, l]
+  let cij := testCorrelation n edges J 0 β [i, j]
+  let ckl := testCorrelation n edges J 0 β [k, l]
+  let cik := testCorrelation n edges J 0 β [i, k]
+  let cjl := testCorrelation n edges J 0 β [j, l]
+  let cil := testCorrelation n edges J 0 β [i, l]
+  let cjk := testCorrelation n edges J 0 β [j, k]
+  cijkl - cij * ckl - cik * cjl - cil * cjk
+
+def checkCor433 (label : String) (n : Nat) (edges : List (Nat × Nat))
+    (J β : Float) : IO Bool := do
+  let sites := List.range n
+  let mut ok := true
+  for i in sites do
+    for j in sites do
+      for k in sites do
+        for l in sites do
+          if i < j && j < k && k < l then
+            let t4 := truncated4 n edges J β i j k l
+            if t4 > 1e-10 then
+              IO.println s!"  FAIL: truncated4({i},{j},{k},{l}) = {t4} > 0"
+              ok := false
+  if ok then
+    IO.println s!"  {label}: Cor 4.3.3 (truncated4 ≤ 0, h=0) passed"
+  return ok
+
+-- Odd correlation vanishing for h = 0
+
+def checkOddVanish (label : String) (n : Nat) (edges : List (Nat × Nat))
+    (J β : Float) : IO Bool := do
+  let mut ok := true
+  for A in allSubsets n do
+    if A.length % 2 == 1 then
+      let c := testCorrelation n edges J 0 β A
+      if c.abs > 1e-10 then
+        IO.println s!"  FAIL: ⟨σ^{A}⟩ = {c} ≠ 0 for odd |A| at h=0"
+        ok := false
+  if ok then
+    IO.println s!"  {label}: Odd correlation vanishing (h=0) passed"
+  return ok
+
+-- Susceptibility non-negative: χ(i) = Σ_j truncated2(i,j) ≥ 0
+
+def checkSusceptibility (label : String) (n : Nat) (edges : List (Nat × Nat))
+    (J h β : Float) : IO Bool := do
+  let mut ok := true
+  for i in List.range n do
+    let mut chi : Float := 0
+    for j in List.range n do
+      let cij := testCorrelation n edges J h β [i, j]
+      let ci := testCorrelation n edges J h β [i]
+      let cj := testCorrelation n edges J h β [j]
+      chi := chi + (cij - ci * cj)
+    if chi < -1e-10 then
+      IO.println s!"  FAIL: χ({i}) = {chi} < 0"
+      ok := false
+  if ok then
+    IO.println s!"  {label}: Susceptibility ≥ 0 passed"
+  return ok
+
+-- Magnetization monotone in h
+
+def checkMagnetizationMonotone (label : String) (n : Nat) (edges : List (Nat × Nat))
+    (J β : Float) (h1 h2 : Float) : IO Bool := do
+  let m1 := testCorrelation n edges J h1 β [0]
+  let m2 := testCorrelation n edges J h2 β [0]
+  if m1 - 1e-10 <= m2 then
+    IO.println s!"  {label}: M({h1})={m1} ≤ M({h2})={m2} ✓"
+    return true
+  else
+    IO.println s!"  FAIL: {label}: M({h1})={m1} > M({h2})={m2}"
+    return false
+
+-- Correlation monotonicity in J
+
+def checkCorrelationMonotoneJ (label : String) (n : Nat) (edges : List (Nat × Nat))
+    (h β J1 J2 : Float) : IO Bool := do
+  let c1 := testCorrelation n edges J1 h β [0, 1]
+  let c2 := testCorrelation n edges J2 h β [0, 1]
+  if c1 - 1e-10 <= c2 then
+    IO.println s!"  {label}: ⟨σ₀σ₁⟩(J={J1})={c1} ≤ ⟨σ₀σ₁⟩(J={J2})={c2} ✓"
+    return true
+  else
+    IO.println s!"  FAIL: {label}: monotonicity violated"
+    return false
+
+-- Z bounds: exp(-|β|(|J||E|+|h||ι|)) ≤ Z ≤ 2^|ι| exp(|β|(|J||E|+|h||ι|))
+
+def checkZBounds (label : String) (n : Nat) (edges : List (Nat × Nat))
+    (J h β : Float) : IO Bool := do
+  let Z := partitionFn n edges J h β
+  let numEdges := edges.length.toFloat
+  let bound := β.abs * (J.abs * numEdges + h.abs * n.toFloat)
+  let lower := Float.exp (-bound)
+  let upper := (2.0 ^ n.toFloat) * Float.exp bound
+  if lower - 1e-10 <= Z && Z <= upper + 1e-10 then
+    IO.println s!"  {label}: {lower} ≤ Z={Z} ≤ {upper} ✓"
+    return true
+  else
+    IO.println s!"  FAIL: {label}: Z={Z} out of bounds [{lower}, {upper}]"
+    return false
+
+-- Free energy monotonicity in h
+
+def checkFreeEnergyMonotoneH (label : String) (n : Nat) (edges : List (Nat × Nat))
+    (J β h1 h2 : Float) : IO Bool := do
+  let Z1 := partitionFn n edges J h1 β
+  let Z2 := partitionFn n edges J h2 β
+  let f1 := Float.log Z1 / n.toFloat
+  let f2 := Float.log Z2 / n.toFloat
+  if f1 - 1e-10 <= f2 then
+    IO.println s!"  {label}: f({h1})={f1} ≤ f({h2})={f2} ✓"
+    return true
+  else
+    IO.println s!"  FAIL: {label}: f({h1})={f1} > f({h2})={f2}"
+    return false
+
 -- Main test runner
 
 def main : IO UInt32 := do
@@ -209,6 +359,51 @@ def main : IO UInt32 := do
   IO.println ""
   IO.println "--- GKS-II violation (anti-ferromagnetic, J < 0) ---"
   allPassed := allPassed && (← checkGKS2Violation "2-chain J=-1 h=0 β=1" 2 graph2 (-1.0) 0.0 1.0)
+
+  IO.println ""
+  IO.println "--- GHS: truncated3 ≤ 0 (ferromagnetic, h ≥ 0) ---"
+  allPassed := allPassed && (← checkGHS "3-chain J=1 h=0.5 β=1" 3 graph3 1.0 0.5 1.0)
+  allPassed := allPassed && (← checkGHS "triangle J=1 h=1 β=2" 3 triangle3 1.0 1.0 2.0)
+  allPassed := allPassed && (← checkGHS "square J=0.5 h=0.3 β=1" 4 square4 0.5 0.3 1.0)
+
+  IO.println ""
+  IO.println "--- Cor 4.3.3: truncated4 ≤ 0 (h = 0) ---"
+  allPassed := allPassed && (← checkCor433 "square J=1 β=1" 4 square4 1.0 1.0)
+  allPassed := allPassed && (← checkCor433 "square J=0.5 β=2" 4 square4 0.5 2.0)
+
+  IO.println ""
+  IO.println "--- Odd correlation vanishing (h = 0) ---"
+  allPassed := allPassed && (← checkOddVanish "2-chain J=1 β=1" 2 graph2 1.0 1.0)
+  allPassed := allPassed && (← checkOddVanish "triangle J=2 β=0.5" 3 triangle3 2.0 0.5)
+  allPassed := allPassed && (← checkOddVanish "square J=1 β=1" 4 square4 1.0 1.0)
+
+  IO.println ""
+  IO.println "--- Susceptibility ≥ 0 ---"
+  allPassed := allPassed && (← checkSusceptibility "2-chain J=1 h=0.5 β=1" 2 graph2 1.0 0.5 1.0)
+  allPassed := allPassed && (← checkSusceptibility "triangle J=1 h=0 β=2" 3 triangle3 1.0 0.0 2.0)
+  allPassed := allPassed && (← checkSusceptibility "square J=0.5 h=0.3 β=1" 4 square4 0.5 0.3 1.0)
+
+  IO.println ""
+  IO.println "--- Magnetization monotone in h ---"
+  allPassed := allPassed && (← checkMagnetizationMonotone "2-chain J=1 β=1" 2 graph2 1.0 1.0 0.0 0.5)
+  allPassed := allPassed && (← checkMagnetizationMonotone "2-chain J=1 β=1" 2 graph2 1.0 1.0 0.5 1.0)
+  allPassed := allPassed && (← checkMagnetizationMonotone "triangle J=1 β=2" 3 triangle3 1.0 2.0 0.0 1.0)
+
+  IO.println ""
+  IO.println "--- Correlation monotone in J ---"
+  allPassed := allPassed && (← checkCorrelationMonotoneJ "2-chain h=0.5 β=1" 2 graph2 0.5 1.0 0.5 1.0)
+  allPassed := allPassed && (← checkCorrelationMonotoneJ "2-chain h=0.5 β=1" 2 graph2 0.5 1.0 1.0 2.0)
+
+  IO.println ""
+  IO.println "--- Z bounds ---"
+  allPassed := allPassed && (← checkZBounds "2-chain J=1 h=0.5 β=1" 2 graph2 1.0 0.5 1.0)
+  allPassed := allPassed && (← checkZBounds "triangle J=1 h=1 β=2" 3 triangle3 1.0 1.0 2.0)
+  allPassed := allPassed && (← checkZBounds "square J=0.5 h=0.3 β=1" 4 square4 0.5 0.3 1.0)
+
+  IO.println ""
+  IO.println "--- Free energy monotone in h ---"
+  allPassed := allPassed && (← checkFreeEnergyMonotoneH "2-chain J=1 β=1" 2 graph2 1.0 1.0 0.0 0.5)
+  allPassed := allPassed && (← checkFreeEnergyMonotoneH "2-chain J=1 β=1" 2 graph2 1.0 1.0 0.5 1.0)
 
   IO.println ""
   if allPassed then
