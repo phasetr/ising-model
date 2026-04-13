@@ -139,12 +139,32 @@ Ellis–Monroe, 1975; Ellis, Theorem V.3, p. 143):
 For ferromagnetic parameters, the truncated 3-point function is non-positive.
 `⟨σ_i; σ_j; σ_k⟩ ≤ 0`.
 
-The proof uses the quadrupled spin system and Lemma V.3.2 to show
-that the Lebowitz representation of `truncated3` is a sum of
-non-positive terms. -/
+The proof uses the quadrupled spin system `(ω, σ, ω', σ')` with the
+Hadamard-type orthogonal transformation `(α, β, γ, δ)`. The key steps:
+
+1. **Hamiltonian identity**: the interaction energy is preserved under the
+   orthogonal transformation (Ellis, (5.8)).
+
+2. **Single-site moment non-negativity** (Lemma V.3.2, Ellis, p. 145):
+   For each site, `Σ_{ω,σ,ω',σ'} α^k β^l γ^m δ^n · exp(2hα) ≥ 0`
+   by parity: mixed parity → 0, all even → ≥ 0, all odd → ≥ 0
+   (since `αβγδ` can be expressed using `ω²=σ²=1`).
+
+3. **Lebowitz identity** (1974): `truncated3(i,j,k)` equals a specific
+   moment in the quadrupled system that is non-positive.
+
+Reference: Ellis, §V.3, pp. 145–146. -/
 theorem ghs_inequality (G : SimpleGraph ι) [Fintype G.edgeSet]
     (p : IsingParams ℝ) (hf : Ferromagnetic p) (i j k : ι) :
     truncated3 G p i j k ≤ 0 := by
+  -- The proof requires the quadrupled spin system (Ellis-Monroe, 1975).
+  -- The full formalization involves:
+  -- (a) 4-fold product configuration space
+  -- (b) Hadamard orthogonal transformation (α,β,γ,δ)
+  -- (c) Hamiltonian identity under the transformation
+  -- (d) Single-site moment non-negativity (16-point finite check + parity)
+  -- (e) Lebowitz identity connecting truncated3 to 4th-order moments
+  -- This is estimated at 300+ lines and is deferred.
   sorry
 
 end IsingModel
