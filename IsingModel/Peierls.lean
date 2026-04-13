@@ -43,6 +43,7 @@ private def edgeDisagrees (σ : Config ι) (e : Sym2 ι) : Bool :=
   Sym2.lift ⟨fun i j => decide (σ i ≠ σ j), fun i j => by
     simp only [ne_comm]⟩ e
 
+/-- The phase boundary `∂σ`: the set of edges where adjacent spins disagree. -/
 def phaseBoundary (G : SimpleGraph ι) [DecidableRel G.Adj] [Fintype G.edgeSet]
     (σ : Config ι) : Finset (Sym2 ι) :=
   G.edgeFinset.filter (fun e => edgeDisagrees σ e)
