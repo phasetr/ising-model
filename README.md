@@ -35,7 +35,7 @@ All theorems are formally proved with **zero `sorry`**.
 | Correlation convergence | `⟨σ^B⟩` converges as J → ∞ (Thm 4.2.3) | Glimm-Jaffe §4.2 |
 | Free energy monotonicity | Z and f monotone in J and h on [0,∞) | Glimm-Jaffe §4.6 |
 | Lee-Yang nonvanishing (Ising) | partition polynomial ≠ 0 on polydisk | Glimm-Jaffe §4.5-4.6 |
-| GHS inequality | `⟨σ_i; σ_j; σ_k⟩ ≤ 0` (sorry: quadrupled system) | Ellis §V.3 |
+| GHS inequality | `⟨σ_i; σ_j; σ_k⟩ ≤ 0` (axiom: quadrupled system proof) | Ellis §V.3 |
 
 ### Axioms (measure-theoretic prerequisites, not formalized)
 

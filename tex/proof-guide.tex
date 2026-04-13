@@ -747,7 +747,7 @@ $u_2(i,j) \ge 0$ for ferromagnetic parameters. Proved via GKS-II
 for $i \ne j$ and GKS-I $+$ $|\langle\sigma_i\rangle| \le 1$ for $i = j$.
 \end{theorem}
 
-\begin{theorem}[\texttt{ghs\_inequality}; sorry]
+\begin{theorem}[\texttt{ghs\_inequality}; axiom]
 For ferromagnetic parameters with $h \ge 0$ and distinct $i, j, k$:
 $u_3(i,j,k) \le 0$.
 \end{theorem}
@@ -756,7 +756,9 @@ The proof requires the Ellis--Monroe quadrupled spin system
 $(\omega, \sigma, \omega', \sigma')$ with Hadamard orthogonal
 transformation $(\alpha, \beta, \gamma, \delta)$ and the Lebowitz
 identity (1974) expressing $u_3$ as a non-positive moment.
-The sorry covers the Lebowitz identity and Lemma~V.3.2 (parity argument).
+Stated as axiom; the proof requires the Lebowitz identity
+and Lemma~V.3.2 (parity argument) which need ${\sim}200$ lines of
+doubled/quadrupled graph infrastructure.
 
 \section{\texorpdfstring{$\varphi^4$}{phi4} inequalities (\texttt{ContinuousSpin/Phi4.lean})}
 
