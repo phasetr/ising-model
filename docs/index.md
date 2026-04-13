@@ -33,7 +33,7 @@ All theorems are formally proved with **zero `sorry`**.
 | **Hamiltonian–boundary identity**         | `H(σ) = -J(|E| - 2|∂σ|)` for h = 0                                                               | `Peierls.lean`             |
 | **Peierls bound** (Prop 5.4.1)            | `Pr(γ ⊆ ∂σ) ≤ exp(-2βJ|γ|)`                                                                      | `Peierls.lean`             |
 | **Peierls contour sum bound**             | `Σ Pr(γ) ≤ N(r) exp(-2βJr)` for contours of size r                                                | `Peierls.lean`             |
-| **Spontaneous magnetization** (Prop 5.4.2) | `⟨1_{σ_i=↓}⟩₊ ≤ Σ_{S∋i,S∩B=∅} exp(-2βJ|cut(S)|)` under + BC                                   | `Peierls.lean`             |
+| **Spontaneous magnetization** (Prop 5.4.2) | `0 ≤ 1 - ⟨σ_i⟩₊ ≤ exp(-cβ)` for β large, under + BC                                             | `Peierls.lean`             |
 
 ## Axioms
 

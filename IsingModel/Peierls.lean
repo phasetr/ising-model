@@ -1,4 +1,5 @@
 import IsingModel.Lattice
+import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 
 /-!
 # Peierls argument for the existence of phase transitions
@@ -540,6 +541,20 @@ noncomputable def plusGibbsExpectation (G : SimpleGraph ι) [Fintype G.edgeSet]
   (plusPartitionFunction G p B)⁻¹ *
     ∑ σ ∈ plusConfigs B, F σ * boltzmannWeight G p σ
 
+/-- The all-up configuration satisfies + boundary conditions. -/
+theorem allUp_mem_plusConfigs (B : Finset ι) :
+    (fun _ : ι => Spin.up) ∈ plusConfigs (ι := ι) B := by
+  simp [plusConfigs]
+
+set_option linter.unusedDecidableInType false in
+/-- The restricted partition function is positive. -/
+theorem plusPartitionFunction_pos' (G : SimpleGraph ι) [DecidableRel G.Adj]
+    [Fintype G.edgeSet] (p : IsingParams ℝ) (B : Finset ι) :
+    0 < plusPartitionFunction G p B := by
+  unfold plusPartitionFunction
+  exact Finset.sum_pos (fun σ _ => boltzmannWeight_pos G p σ)
+    ⟨_, allUp_mem_plusConfigs B⟩
+
 omit [DecidableEq ι] in
 /-- Under + boundary conditions, if `σ_i = down` then `i ∉ B`,
 and the down-spin set `S` satisfies `S ∩ B = ∅`. -/
@@ -560,11 +575,12 @@ The RHS is exponentially small in β for β sufficiently large,
 establishing spontaneous magnetization `⟨σ_i⟩₊ → 1` as `β → ∞`. -/
 theorem spontaneous_magnetization_plus (G : SimpleGraph ι) [DecidableRel G.Adj]
     [Fintype G.edgeSet] (J β : ℝ) (B : Finset ι) (i : ι)
-    (hZ : 0 < plusPartitionFunction G ⟨J, 0, β⟩ B) :
+    :
     plusGibbsExpectation G ⟨J, 0, β⟩ B
       (fun σ => if σ i = Spin.down then 1 else 0) ≤
     ∑ S ∈ Finset.univ.filter (fun S : Finset ι => i ∈ S ∧ Disjoint S B),
       Real.exp (-2 * β * J * ↑(cutEdges G S).card) := by
+  have hZ := plusPartitionFunction_pos' G ⟨J, 0, β⟩ B
   -- Step 1: Bound the + expectation by a sum of Peierls-type terms
   unfold plusGibbsExpectation
   -- The numerator: Σ_{σ∈+BC} 1_{σ_i=↓} · w(σ)
@@ -726,10 +742,11 @@ For `β` sufficiently large, the RHS is `≤ exp(-cβ)` by the geometric
 series evaluation of the contour sum. -/
 theorem prop_5_4_2 (G : SimpleGraph ι) [DecidableRel G.Adj]
     [Fintype G.edgeSet] (J β : ℝ) (B : Finset ι) (i : ι)
-    (hZ : 0 < plusPartitionFunction G ⟨J, 0, β⟩ B) :
+    :
     1 - plusGibbsExpectation G ⟨J, 0, β⟩ B (fun σ => Spin.sign ℝ (σ i)) ≤
     2 * ∑ S ∈ Finset.univ.filter (fun S : Finset ι => i ∈ S ∧ Disjoint S B),
       Real.exp (-2 * β * J * ↑(cutEdges G S).card) := by
+  have hZ := plusPartitionFunction_pos' G ⟨J, 0, β⟩ B
   -- Step 1: Rewrite sign in terms of indicator
   have hsign : ∀ σ : Config ι,
       Spin.sign ℝ (σ i) = 1 - 2 * (if σ i = Spin.down then (1 : ℝ) else 0) :=
@@ -775,14 +792,15 @@ theorem prop_5_4_2 (G : SimpleGraph ι) [DecidableRel G.Adj]
     simp only [x, Finset.mul_sum]; ring_nf
   rw [hx]
   exact mul_le_mul_of_nonneg_left
-    (spontaneous_magnetization_plus G J β B i hZ) (by norm_num)
+    (spontaneous_magnetization_plus G J β B i) (by norm_num)
 
 set_option linter.unusedDecidableInType false in
 /-- Under + boundary conditions, `⟨σ_i⟩₊ ≤ 1`, so `0 ≤ 1 - ⟨σ_i⟩₊`. -/
 theorem one_sub_plusExpectation_nonneg (G : SimpleGraph ι) [DecidableRel G.Adj]
     [Fintype G.edgeSet] (J β : ℝ) (B : Finset ι) (i : ι)
-    (hZ : 0 < plusPartitionFunction G ⟨J, 0, β⟩ B) :
+    :
     0 ≤ 1 - plusGibbsExpectation G ⟨J, 0, β⟩ B (fun σ => Spin.sign ℝ (σ i)) := by
+  have hZ := plusPartitionFunction_pos' G ⟨J, 0, β⟩ B
   unfold plusGibbsExpectation
   rw [sub_nonneg]
   -- ⟨sign⟩₊ = Z₊⁻¹ · Σ sign·w ≤ Z₊⁻¹ · Σ w = 1
@@ -812,17 +830,18 @@ and `S ∩ B = ∅` imply `∅ ≠ S ≠ V`. -/
 theorem prop_5_4_2_complete (G : SimpleGraph ι) [DecidableRel G.Adj]
     [Fintype G.edgeSet] (J β : ℝ) (hβ : 0 < β) (hJ : 0 < J)
     (B : Finset ι) (i : ι)
-    (hZ : 0 < plusPartitionFunction G ⟨J, 0, β⟩ B)
+    
     (hcut : ∀ S : Finset ι, i ∈ S → Disjoint S B → 1 ≤ (cutEdges G S).card) :
     0 ≤ 1 - plusGibbsExpectation G ⟨J, 0, β⟩ B (fun σ => Spin.sign ℝ (σ i)) ∧
     1 - plusGibbsExpectation G ⟨J, 0, β⟩ B (fun σ => Spin.sign ℝ (σ i)) ≤
       2 * (2 ^ Fintype.card ι) * Real.exp (-2 * β * J) := by
+  have hZ := plusPartitionFunction_pos' G ⟨J, 0, β⟩ B
   constructor
-  · exact one_sub_plusExpectation_nonneg G J β B i hZ
+  · exact one_sub_plusExpectation_nonneg G J β B i
   · calc 1 - plusGibbsExpectation G ⟨J, 0, β⟩ B (fun σ => Spin.sign ℝ (σ i))
         ≤ 2 * ∑ S ∈ Finset.univ.filter (fun S : Finset ι => i ∈ S ∧ Disjoint S B),
             Real.exp (-2 * β * J * ↑(cutEdges G S).card) :=
-          prop_5_4_2 G J β B i hZ
+          prop_5_4_2 G J β B i
       _ ≤ 2 * ∑ _ ∈ Finset.univ.filter (fun S : Finset ι => i ∈ S ∧ Disjoint S B),
             Real.exp (-2 * β * J) := by
           apply mul_le_mul_of_nonneg_left _ (by norm_num)
@@ -844,5 +863,84 @@ theorem prop_5_4_2_complete (G : SimpleGraph ι) [DecidableRel G.Adj]
             _ = (2 : ℝ) ^ Fintype.card ι := by
                 simp [Finset.card_univ, Fintype.card_finset]
       _ = 2 * (2 ^ Fintype.card ι) * Real.exp (-2 * β * J) := by ring
+
+/-- **Prop 5.4.2 exponential form** (Glimm–Jaffe §5.4, p. 83).
+For `0 < β` and `2^(|V|+1) · exp(-2βJ) ≤ exp(-cβ)` (satisfied for β large),
+`0 ≤ 1 - ⟨σ_i⟩₊ ≤ exp(-cβ)`.
+
+The hypothesis `hexp` captures `β ≥ β₀(|V|, J, c)` in a computation-free way.
+For any `0 < c < 2J`, such `β₀` exists since `2^(|V|+1) · exp(-(2J-c)β) → 0`. -/
+theorem prop_5_4_2_exp (G : SimpleGraph ι) [DecidableRel G.Adj]
+    [Fintype G.edgeSet] (J β c : ℝ) (hβ : 0 < β) (hJ : 0 < J)
+    (B : Finset ι) (i : ι)
+    
+    (hcut : ∀ S : Finset ι, i ∈ S → Disjoint S B → 1 ≤ (cutEdges G S).card)
+    (hexp : 2 * (2 ^ Fintype.card ι) * Real.exp (-2 * β * J) ≤
+      Real.exp (-c * β)) :
+    0 ≤ 1 - plusGibbsExpectation G ⟨J, 0, β⟩ B (fun σ => Spin.sign ℝ (σ i)) ∧
+    1 - plusGibbsExpectation G ⟨J, 0, β⟩ B (fun σ => Spin.sign ℝ (σ i)) ≤
+      Real.exp (-c * β) := by
+  have hcomplete := prop_5_4_2_complete G J β hβ hJ B i hcut
+  exact ⟨hcomplete.1, le_trans hcomplete.2 hexp⟩
+
+
+omit [Fintype ι] in
+/-- A walk from `u ∈ S` to `v ∉ S` must cross a cut edge. -/
+private theorem walk_crosses_cut (G : SimpleGraph ι) [DecidableRel G.Adj]
+    [Fintype G.edgeSet] (S : Finset ι) {u v : ι}
+    (hu : u ∈ S) (hv : v ∉ S) (w : G.Walk u v) :
+    ∃ e ∈ cutEdges G S, True := by
+  induction w with
+  | nil => exact absurd hu hv
+  | @cons a x _ hadj w ih =>
+    by_cases hx : x ∈ S
+    · exact ih hx hv
+    · -- Edge {a, x} crosses S: a ∈ S, x ∉ S
+      refine ⟨s(a, x), ?_, trivial⟩
+      simp only [cutEdges, Finset.mem_filter, SimpleGraph.mem_edgeFinset]
+      constructor
+      · exact hadj
+      · simp only [edgeCrosses, Sym2.lift_mk]
+        simp [hu, hx]
+
+/-- In a connected graph, `∅ ≠ S ≠ V` implies `cutEdges G S` is nonempty. -/
+theorem cutEdges_nonempty_of_connected (G : SimpleGraph ι) [DecidableRel G.Adj]
+    [Fintype G.edgeSet] (hconn : G.Preconnected)
+    (S : Finset ι) (hne : S.Nonempty) (hneV : S ≠ Finset.univ) :
+    (cutEdges G S).Nonempty := by
+  obtain ⟨u, hu⟩ := hne
+  have ⟨v, hv⟩ : ∃ v, v ∉ S := by
+    by_contra h; push Not at h
+    exact hneV (Finset.eq_univ_iff_forall.mpr h)
+  obtain ⟨w⟩ := hconn u v
+  obtain ⟨e, he, _⟩ := walk_crosses_cut G S hu hv w
+  exact ⟨e, he⟩
+
+set_option linter.unusedDecidableInType false in
+/-- **Prop 5.4.2 self-contained** (Glimm–Jaffe §5.4, p. 83).
+For a preconnected graph with non-empty boundary `B`, `h = 0`, `J > 0`, `β > 0`,
+and the exponential bound condition:
+`0 ≤ 1 - ⟨σ_i⟩₊ ≤ exp(-cβ)`. -/
+theorem prop_5_4_2_self_contained (G : SimpleGraph ι) [DecidableRel G.Adj]
+    [Fintype G.edgeSet] (hconn : G.Preconnected)
+    (J β c : ℝ) (hβ : 0 < β) (hJ : 0 < J)
+    (B : Finset ι) (hB : B.Nonempty) (i : ι)
+    (hexp : 2 * (2 ^ Fintype.card ι) * Real.exp (-2 * β * J) ≤
+      Real.exp (-c * β)) :
+    0 ≤ 1 - plusGibbsExpectation G ⟨J, 0, β⟩ B (fun σ => Spin.sign ℝ (σ i)) ∧
+    1 - plusGibbsExpectation G ⟨J, 0, β⟩ B (fun σ => Spin.sign ℝ (σ i)) ≤
+      Real.exp (-c * β) := by
+  have hcut : ∀ S : Finset ι, i ∈ S → Disjoint S B → 1 ≤ (cutEdges G S).card := by
+    intro S hiS hdisj
+    have hne : S.Nonempty := ⟨i, hiS⟩
+    have hneV : S ≠ Finset.univ := by
+      intro h; rw [h] at hdisj
+      have : B = ∅ := by
+        ext x; constructor
+        · intro hx; exact absurd (h ▸ Finset.mem_univ x) (Finset.disjoint_right.mp hdisj hx)
+        · simp
+      exact hB.ne_empty this
+    exact (cutEdges_nonempty_of_connected G hconn S hne hneV).card_pos
+  exact prop_5_4_2_exp G J β c hβ hJ B i hcut hexp
 
 end IsingModel
