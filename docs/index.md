@@ -40,6 +40,7 @@ All theorems are formally proved with **zero `sorry`**.
 | **Z monotone in β** (Cor 10.2.3)          | `partitionFunction_monotone_beta`: Z(β₁) ≤ Z(β₂)                                                  | `Conditioning.lean`        |
 | **Hamiltonian bound** (Cor 10.3.2)        | `hamiltonian_abs_le`: \|H\| ≤ \|J\|\|E\| + \|h\|\|ι\|                                             | `Conditioning.lean`        |
 | **Z bounds** (Cor 10.3.2)                 | `partitionFunction_upper`, `partitionFunction_lower`                                               | `Conditioning.lean`        |
+| **Reflection positivity** (§10.4)         | `ReflectionPositive` def; `discriminant_nonneg` (Schwarz core)                                     | `Conditioning.lean`        |
 | **Free energy analyticity** (Thm 4.6.2)   | `f(h)` real-analytic for h > 0; `Z(h)`, `Z(J)` real-analytic                                      | `FreeEnergy.lean`          |
 | **Walsh orthogonality/Fourier**           | Fourier inversion on `{±1}^n`                                                                      | `InfiniteVolume.lean`      |
 | Partition function positivity             | `Z > 0`                                                                                             | `GibbsMeasure.lean`        |
