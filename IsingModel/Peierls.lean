@@ -325,17 +325,24 @@ that we axiomatize. -/
 
 /-- **Contour counting axiom** (Glimm–Jaffe, §5.4, p. 83).
 For the `d`-dimensional box graph (`d ≥ 2`), there exist constants `a, b > 0`
-such that for any site `i`, the number of subsets `S` containing `i` with
-`|cut(S)| = r` is at most `a * b ^ r`.
+depending only on `d` such that for **any box size** `n`, any site `i`, and
+any `r`, the number of subsets `S` containing `i` with `|cut(S)| = r` is
+at most `a * b ^ r`.
 
-This is a combinatorial fact about self-avoiding surfaces in `ℤ^d` that
-requires lattice topology to prove. The key ingredients are:
-- Translational freedom: `γ` lies in a cube of side `r`, giving `≤ r^d` positions
-- Path enumeration: starting from any edge, `γ` can be extended in `≤ c(d)` ways
-Together: `N(r) ≤ r^d * c(d)^r ≤ a * b^r` for suitable `a, b`. -/
-axiom contourCountingBound (d : ℕ) (hd : 2 ≤ d) (n : ℕ) :
+This requires the locality of the ℤ^d lattice: a contour of size `r`
+is a connected edge-set, and the number of connected edge-sets of size `r`
+near a given site is bounded independently of the box size. The proof
+combines:
+1. **Self-avoiding surface enumeration**: connected edge-sets of size `r`
+   starting from a given edge number ≤ `c(d)^r` (tree-like counting
+   in the line graph, using max edge-degree `4d - 2`)
+2. **Locality**: a contour enclosing `i` has an edge within graph-distance
+   `r` of `i`, and there are ≤ `2d · (2r+1)^(d-1)` such starting edges
+3. **Cocycle–subset correspondence**: each cocycle determines ≤ 2 subsets `S`
+Together: `N(r) ≤ 2 · 2d · (2r+1)^(d-1) · c(d)^r ≤ a · b^r`. -/
+axiom contourCountingBound (d : ℕ) (hd : 2 ≤ d) :
     ∃ (a b : ℝ), 0 < a ∧ 0 < b ∧
-      ∀ (i : BoxSite d n) (r : ℕ),
+      ∀ (n : ℕ) (i : BoxSite d n) (r : ℕ),
         (Finset.univ.filter (fun S : Finset (BoxSite d n) =>
           i ∈ S ∧ (cutEdges (boxGraph d n) S).card = r)).card ≤ a * b ^ r
 
