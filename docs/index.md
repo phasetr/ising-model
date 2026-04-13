@@ -112,7 +112,7 @@ heavy Lean measure theory assembly:
 |---------|----------------------------------------|------------------|-----------------------------|---------------------------------------------|
 | §5.1   | Pure and mixed phases                  | **Done**         | `PhaseTransition.lean`      | truncated2 bounds, mixed-phase formula      |
 | §5.2   | Phase transitions (mean field)         | **Done**         | `PhaseTransition.lean`      | Mean field energy, symmetry, tanh equation  |
-| §5.3   | Symmetry breaking                      | **Done**         | `PhaseTransition.lean`      | Magnetization, susceptibility, Z₂ symmetry |
+| §5.3   | Symmetry breaking                      | **Done**         | `PhaseTransition.lean`      | Magnetization, susceptibility, Z₂ symmetry  |
 | §5.4   | Prop 5.4.1 (Peierls bound)             | **Done**         | `peierls_bound`             |                                             |
 | §5.4   | Prop 5.4.2 (spontaneous magnetization) | **Done**         | `prop_5_4_2_self_contained` |                                             |
 | §5.5   | An example (XY/rotator)                | **Out of scope** | —                          | XY model; Kosterlitz-Thouless               |
@@ -142,16 +142,16 @@ heavy Lean measure theory assembly:
 | Section | Result                               | Status   | Lean                   | Notes                                                    |
 |---------|--------------------------------------|----------|------------------------|----------------------------------------------------------|
 | §17.2  | Absence of even bound states         | **Done** | `GHS.lean`             | Uses Cor 4.3.3 (`cor_4_3_3`); transfer matrix deferred   |
-| §17.5  | Existence of the φ⁴ critical point | **Done** | `PhaseTransition.lean` | Correlation length concept; mass continuity deferred     |
-| §17.7  | Critical exponents                   | **Done** | `PhaseTransition.lean` | η ≥ 0 (`truncated2_nonneg`); ζ ≥ 0 (`cor_4_3_3`)     |
-| §17.8  | η ≤ 1                              | **Done** | `GHS.lean`             | Lattice proof uses Cor 4.3.3; exponential decay deferred |
+| §17.5  | Existence of the φ⁴ critical point  | **Done** | `PhaseTransition.lean` | Correlation length concept; mass continuity deferred     |
+| §17.7  | Critical exponents                   | **Done** | `PhaseTransition.lean` | η ≥ 0 (`truncated2_nonneg`); ζ ≥ 0 (`cor_4_3_3`)       |
+| §17.8  | η ≤ 1                               | **Done** | `GHS.lean`             | Lattice proof uses Cor 4.3.3; exponential decay deferred |
 
 ### Chapter 18: The Cluster Expansion
 
 | Section | Result                     | Status   | Lean                      | Notes                                             |
 |---------|----------------------------|----------|---------------------------|---------------------------------------------------|
 | §18.1  | Introduction               | **Done** | `Conditioning.lean`       | High-temp parameter t = tanh(βJ); \|t\| < 1      |
-| §18.2  | The cluster expansion      | **Done** | `NonnegCorrelations.lean` | exp(α·edgeSpin) = cosh α + sinh α · edgeSpin |
+| §18.2  | The cluster expansion      | **Done** | `NonnegCorrelations.lean` | exp(α·edgeSpin) = cosh α + sinh α · edgeSpin   |
 | §18.3  | Clustering and analyticity | **Done** | `Conditioning.lean`       | Lattice: exp decay from correlation bounds        |
 
 ### Chapter 20: Further Directions
