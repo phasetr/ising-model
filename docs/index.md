@@ -11,32 +11,32 @@ Lean 4 + mathlib formalization of theorems about the Ising model.
 
 All theorems are formally proved with **zero `sorry`**.
 
-| Theorem                                  | Statement                                                  | File                    |
-|------------------------------------------|------------------------------------------------------------|-------------------------|
-| **GKS-I** (First Griffiths inequality)   | `⟨σ^A⟩ ≥ 0` for ferromagnetic parameters                   | `Inequalities/GKS.lean` |
-| **GKS-II** (Second Griffiths inequality) | `⟨σ^A σ^B⟩ ≥ ⟨σ^A⟩⟨σ^B⟩` for ferromagnetic parameters      | `Inequalities/GKS.lean` |
-| **FKG** (Fortuin-Kasteleyn-Ginibre)      | `⟨fg⟩ ≥ ⟨f⟩⟨g⟩` for monotone nondecreasing f, g            | `Inequalities/FKG.lean` |
-| **Asano contraction**                    | Contraction preserves non-vanishing on the unit polydisk    | `Asano.lean`            |
-| **Lee-Yang circle theorem**              | Ising partition polynomial nonvanishing on the open polydisk | `LeeYang.lean`          |
-| **φ⁴ algebraic identities**              | Quartic/orthogonal transformation identities (axioms: `phi4_integrable`, `phi4_single_site_nonneg`) | `ContinuousSpin/Phi4.lean` |
-| **Correlation boundedness** (Prop 4.2.2) | `|⟨σ^A⟩| ≤ 1`                                              | `InfiniteVolume.lean`   |
-| **Correlation monotonicity** (Prop 4.2.1) | `⟨σ^B⟩` monotone in J on `[0,∞)`                            | `InfiniteVolume.lean`   |
-| **Covariance non-negativity**            | `Cov(σ^B, f) ≥ 0` for HNC f under Boltzmann weight          | `InfiniteVolume.lean`   |
-| **Correlation convergence** (Thm 4.2.3) | `⟨σ^B⟩` converges as J → ∞                                  | `InfiniteVolume.lean`   |
-| **Free energy** (§4.6)                  | `f = |ι|⁻¹ ln Z`, monotone in J and h                       | `FreeEnergy.lean`       |
-| **Lee-Yang nonvanishing (Ising)**       | Ising partition polynomial ≠ 0 on polydisk                  | `FreeEnergy.lean`       |
-| **Walsh orthogonality/Fourier**         | Fourier inversion on `{±1}^n`                                | `InfiniteVolume.lean`   |
-| Partition function positivity            | `Z > 0`                                                    | `GibbsMeasure.lean`     |
-| Spin flip symmetry                       | `H(flip σ) = H(σ)` when h = 0                              | `Hamiltonian.lean`      |
+| Theorem                                   | Statement                                                                                           | File                       |
+|-------------------------------------------|-----------------------------------------------------------------------------------------------------|----------------------------|
+| **GKS-I** (First Griffiths inequality)    | `⟨σ^A⟩ ≥ 0` for ferromagnetic parameters                                                          | `Inequalities/GKS.lean`    |
+| **GKS-II** (Second Griffiths inequality)  | `⟨σ^A σ^B⟩ ≥ ⟨σ^A⟩⟨σ^B⟩` for ferromagnetic parameters                                          | `Inequalities/GKS.lean`    |
+| **FKG** (Fortuin-Kasteleyn-Ginibre)       | `⟨fg⟩ ≥ ⟨f⟩⟨g⟩` for monotone nondecreasing f, g                                                    | `Inequalities/FKG.lean`    |
+| **Asano contraction**                     | Contraction preserves non-vanishing on the unit polydisk                                            | `Asano.lean`               |
+| **Lee-Yang circle theorem**               | Ising partition polynomial nonvanishing on the open polydisk                                        | `LeeYang.lean`             |
+| **φ⁴ algebraic identities**             | Quartic/orthogonal transformation identities (axioms: `phi4_integrable`, `phi4_single_site_nonneg`) | `ContinuousSpin/Phi4.lean` |
+| **Correlation boundedness** (Prop 4.2.2)  | `|⟨σ^A⟩| ≤ 1`                                                                                     | `InfiniteVolume.lean`      |
+| **Correlation monotonicity** (Prop 4.2.1) | `⟨σ^B⟩` monotone in J on `[0,∞)`                                                                  | `InfiniteVolume.lean`      |
+| **Covariance non-negativity**             | `Cov(σ^B, f) ≥ 0` for HNC f under Boltzmann weight                                                | `InfiniteVolume.lean`      |
+| **Correlation convergence** (Thm 4.2.3)   | `⟨σ^B⟩` converges as J → ∞                                                                       | `InfiniteVolume.lean`      |
+| **Free energy** (§4.6)                   | `f = |ι|⁻¹ ln Z`, monotone in J and h                                                             | `FreeEnergy.lean`          |
+| **Lee-Yang nonvanishing (Ising)**         | Ising partition polynomial ≠ 0 on polydisk                                                         | `FreeEnergy.lean`          |
+| **GHS inequality**                        | `⟨σ_i; σ_j; σ_k⟩ ≤ 0` (from Lebowitz third inequality)                                          | `Inequalities/GHS.lean`    |
+| **Walsh orthogonality/Fourier**           | Fourier inversion on `{±1}^n`                                                                      | `InfiniteVolume.lean`      |
+| Partition function positivity             | `Z > 0`                                                                                             | `GibbsMeasure.lean`        |
+| Spin flip symmetry                        | `H(flip σ) = H(σ)` when h = 0                                                                     | `Hamiltonian.lean`         |
 
 ## Axioms
 
-The φ⁴ module uses two measure-theoretic axioms (`phi4_integrable`,
-`phi4_single_site_nonneg`) whose proofs are mathematically complete
-but not formalized in Lean. See `ContinuousSpin/Phi4.lean` for details.
+Three measure-theoretic axioms whose proofs are mathematically complete
+but not formalized in Lean:
 
-The infinite volume module (`InfiniteVolume.lean`) is fully proved
-with zero `sorry`.
+- `phi4_integrable`, `phi4_single_site_nonneg` — φ⁴ measure theory (`ContinuousSpin/Phi4.lean`)
+- `lebowitz_third` — Lebowitz inequality for Ising via φ⁴ limit (`Inequalities/GHS.lean`)
 
 ## References
 

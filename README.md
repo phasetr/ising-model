@@ -35,18 +35,18 @@ All theorems are formally proved with **zero `sorry`**.
 | Correlation convergence | `⟨σ^B⟩` converges as J → ∞ (Thm 4.2.3) | Glimm-Jaffe §4.2 |
 | Free energy monotonicity | Z and f monotone in J and h on [0,∞) | Glimm-Jaffe §4.6 |
 | Lee-Yang nonvanishing (Ising) | partition polynomial ≠ 0 on polydisk | Glimm-Jaffe §4.5-4.6 |
+| GHS inequality | `⟨σ_i; σ_j; σ_k⟩ ≤ 0` | Ellis §V.3, Lebowitz (1974) |
 
 ### Axioms (measure-theoretic prerequisites, not formalized)
 
-The φ⁴ inequalities (`ContinuousSpin/Phi4.lean`) use two axioms for
-measure-theoretic properties whose proofs are mathematically complete
-but require heavy Lean measure theory assembly:
+The following axioms have mathematically complete proofs but require
+heavy Lean measure theory assembly:
 
-- `phi4_integrable`: integrability of polynomial × exp(-quartic)
-- `phi4_single_site_nonneg`: non-negativity of the symmetrized 4D integral
-
-These axioms are prerequisites for the Lebowitz inequality and truncated
-3-point correlation bound (Corollaries 4.3.2–4.3.4, to be formalized).
+- `phi4_integrable`: integrability of polynomial × exp(-quartic) (`ContinuousSpin/Phi4.lean`)
+- `phi4_single_site_nonneg`: non-negativity of the symmetrized 4D integral (`ContinuousSpin/Phi4.lean`)
+- `lebowitz_third`: Lebowitz third inequality for ferromagnetic Ising (`Inequalities/GHS.lean`)
+  — proved for continuous φ⁴ spins via `phi4_single_site_nonneg`, transferred to Ising
+  by the limit `exp(-λ(ξ²-1)²)dξ → ½(δ₊₁+δ₋₁)` as λ → ∞
 
 
 ## Documentation
