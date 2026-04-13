@@ -34,6 +34,7 @@ All theorems are formally proved with **zero `sorry`**.
 | Covariance non-negativity | `Cov(σ^B, f) ≥ 0` for HNC f | Glimm-Jaffe §4.2 |
 | Correlation convergence | `⟨σ^B⟩` converges as J → ∞ (Thm 4.2.3) | Glimm-Jaffe §4.2 |
 | Free energy monotonicity | Z and f monotone in J and h on [0,∞) | Glimm-Jaffe §4.6 |
+| Lee-Yang nonvanishing (Ising) | partition polynomial ≠ 0 on polydisk | Glimm-Jaffe §4.5-4.6 |
 
 ### Axioms (measure-theoretic prerequisites, not formalized)
 
