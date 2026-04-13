@@ -822,6 +822,84 @@ by \texttt{mul\_sinh\_nonneg}.
 Formalizing this requires the interchange of finite symmetrization sums with
 nested Bochner integrals.
 
+\section{Peierls argument (\texttt{Peierls.lean})}
+
+This section formalizes the Peierls argument for the existence of phase
+transitions in the Ising model (Glimm--Jaffe~\cite{glimm-jaffe}, \S5.4,
+pp.~80--84).
+
+\begin{definition}[Phase boundary]
+For a configuration $\sigma$ on a finite graph $G = (V, E)$, the phase
+boundary is the set of edges where neighboring spins disagree:
+$\partial\sigma = \{ \{i,j\} \in E : \sigma_i \ne \sigma_j \}$.
+\end{definition}
+
+\noindent\textbf{Lean:} \texttt{phaseBoundary}, \texttt{phaseBoundarySize}
+
+\begin{theorem}[Hamiltonian--boundary identity]
+For $h = 0$,
+\[
+  H(\sigma) = -J \bigl(|E| - 2|\partial\sigma|\bigr).
+\]
+\end{theorem}
+
+\noindent\textbf{Lean:} \texttt{hamiltonian\_boundary}
+
+\begin{definition}[Spin flip on a subset]
+For $S \subseteq V$, define $\sigma^S(i) = -\sigma(i)$ if $i \in S$,
+$\sigma^S(i) = \sigma(i)$ otherwise.
+\end{definition}
+
+\noindent\textbf{Lean:} \texttt{Config.flipSet}
+
+\begin{definition}[Cut edges]
+$\mathrm{cut}(S) = \{ \{i,j\} \in E : i \in S,\; j \notin S \}$.
+\end{definition}
+
+\noindent\textbf{Lean:} \texttt{cutEdges}
+
+\begin{lemma}[Symmetric difference]
+$\partial(\sigma^S) = \partial\sigma \mathbin{\triangle} \mathrm{cut}(S)$.
+When $\mathrm{cut}(S) \subseteq \partial\sigma$,
+$\partial(\sigma^S) = \partial\sigma \setminus \mathrm{cut}(S)$.
+\end{lemma}
+
+\noindent\textbf{Lean:} \texttt{edgeDisagrees\_flipSet\_eq},
+\texttt{phaseBoundary\_flipSet\_of\_subset}
+
+\begin{lemma}[Energy difference]
+If $\mathrm{cut}(S) \subseteq \partial\sigma$ and $h = 0$, then
+$H(\sigma) - H(\sigma^S) = 2J|\mathrm{cut}(S)|$.
+\end{lemma}
+
+\noindent\textbf{Lean:} \texttt{hamiltonian\_flipSet\_diff}
+
+\begin{proposition}[Peierls bound, Prop.~5.4.1]
+For any $S \subseteq V$ with $\gamma = \mathrm{cut}(S)$,
+\[
+  \Pr(\gamma \subseteq \partial\sigma)
+  = \frac{\sum_{\sigma:\,\gamma \subseteq \partial\sigma}
+          e^{-\beta H(\sigma)}}{Z}
+  \le e^{-2\beta J |\gamma|}.
+\]
+\end{proposition}
+
+\begin{proof}
+The map $\sigma \mapsto \sigma^S$ is an involution. For $\sigma$ with
+$\gamma \subseteq \partial\sigma$,
+$w(\sigma) = e^{-2\beta J|\gamma|} \cdot w(\sigma^S)$.
+Summing over such $\sigma$:
+\[
+  \sum_{\sigma:\,\gamma \subseteq \partial\sigma} w(\sigma)
+  = e^{-2\beta J|\gamma|}
+    \sum_{\sigma:\,\gamma \subseteq \partial\sigma} w(\sigma^S)
+  \le e^{-2\beta J|\gamma|} \cdot Z.
+\]
+Dividing by $Z$ gives the result.
+\end{proof}
+
+\noindent\textbf{Lean:} \texttt{peierls\_sum\_bound}, \texttt{peierls\_bound}
+
 \begin{thebibliography}{9}
 \bibitem{glimm-jaffe}
 J.~Glimm and A.~Jaffe,
