@@ -42,7 +42,6 @@ All theorems are formally proved with **zero `sorry`**.
 The following axioms have mathematically complete proofs but require
 heavy Lean measure theory assembly:
 
-- `phi4_integrable`: integrability of polynomial × exp(-quartic) (`ContinuousSpin/Phi4.lean`)
 - `phi4_single_site_nonneg`: non-negativity of the symmetrized 4D integral (`ContinuousSpin/Phi4.lean`)
 - `lebowitz_third`: Lebowitz third inequality for ferromagnetic Ising (`Inequalities/GHS.lean`)
   — proved for continuous φ⁴ spins via `phi4_single_site_nonneg`, transferred to Ising
