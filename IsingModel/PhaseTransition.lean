@@ -205,4 +205,45 @@ theorem magnetization_monotone_h (G : SimpleGraph ι) [Fintype G.edgeSet]
   unfold magnetization
   exact correlation_monotone_h G J hJ β hβ {i} hh₁ hh₂ hh
 
+/-! ## Critical exponents (§17.7)
+
+Glimm–Jaffe §17.7 (pp. 314–316) derives bounds on critical exponents
+from correlation inequalities. For single-component φ⁴/Ising models:
+
+- `η ≥ 0`: from `⟨σ_iσ_j⟩_T ≥ 0` (GKS-II, already `truncated2_nonneg`)
+- `ζ ≥ 0`: from `U₄ ≤ 0` (Cor 4.3.3, already `cor_4_3_3` for h = 0)
+- `γ ≥ 1`: from susceptibility bounds (χ monotone, requires more)
+- `ν ≥ ½`: from correlation length bounds (requires spectral theory)
+
+The Gaussian (mean field) values are: ν_cl = ½, γ_cl = 1, η_cl = 0, ζ_cl = 0.
+Theorem 17.7.1 states each exponent ≥ its classical value. -/
+
+/-- **η ≥ 0** (Glimm–Jaffe, Thm 17.7.1, lattice version).
+The critical exponent `η` measures the anomalous dimension:
+`⟨σ(0)σ(x)⟩ ~ |x|^{-(d-2+η)}` at the critical point.
+The bound `η ≥ 0` follows from `⟨σ_iσ_j⟩_T ≥ 0` (GKS-II).
+
+In finite volume, this is simply `truncated2_nonneg`. -/
+theorem eta_nonneg_finite_vol (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i j : ι) :
+    0 ≤ truncated2 G p i j :=
+  truncated2_nonneg G p hf i j
+
+/-! ## Correlation length (§17.5)
+
+The correlation length (inverse mass) for the Ising model is defined by
+`m(β)⁻¹ = -lim_{|x|→∞} ln⟨σ(0)σ(x)⟩ / |x|`.
+
+For finite volume on a graph G, we define a proxy: the susceptibility
+`χ = Σ_j ⟨σ_i; σ_j⟩` serves as a measure of the correlation range.
+When `χ → ∞`, the correlation length diverges (critical point).
+
+The monotonicity `χ(β₁) ≤ χ(β₂)` for `β₁ ≤ β₂` follows from:
+- `truncated2_nonneg` (each term ≥ 0)
+- monotonicity of each `truncated2` in β (from GKS-II + β-monotonicity)
+
+The full correlation length definition and the continuity theorem
+(Thm 17.5.1: m(σ) is continuous) require the infinite volume limit
+and spectral theory of the transfer matrix. -/
+
 end IsingModel

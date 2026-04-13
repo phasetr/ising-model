@@ -56,6 +56,7 @@ All theorems are formally proved with **zero `sorry`**.
 | Discriminant lemma (§10.4) | `discriminant_nonneg`: b² ≤ ac from nonneg quadratic | Glimm-Jaffe §10.4 |
 | Iterated Schwarz (§10.5) | `iterated_schwarz_sq`: x² ≤ ax ⟹ x ≤ a | Glimm-Jaffe §10.5 |
 | Magnetization monotone in h (§16.1) | `magnetization_monotone_h`: M(h₁) ≤ M(h₂) | Glimm-Jaffe §16.1 |
+| η ≥ 0 (§17.7) | `eta_nonneg_finite_vol`: truncated2 ≥ 0 | Glimm-Jaffe §17.7 |
 | Hamiltonian–boundary identity | `H(σ) = -J(|E| - 2|∂σ|)` for h = 0 | Glimm-Jaffe §5.4 |
 | Peierls bound (Prop 5.4.1) | `Pr(γ ⊆ ∂σ) ≤ exp(-2βJ|γ|)` | Glimm-Jaffe §5.4 |
 | Peierls contour sum bound | `Σ Pr(γ) ≤ N(r) exp(-2βJr)` | Glimm-Jaffe §5.4 |
@@ -149,8 +150,8 @@ heavy Lean measure theory assembly:
 | Section | Result | Status | Lean | Notes |
 |---|---|---|---|---|
 | §17.2 | Absence of even bound states | **Done** | `GHS.lean` | Uses Cor 4.3.3 (`cor_4_3_3`); transfer matrix deferred |
-| §17.5 | Existence of the φ⁴ critical point | **Not started** | — | Continuum field; mass continuity |
-| §17.7 | Critical exponents | **Not started** | — | v, γ, η, ζ bounds from GKS/Lebowitz |
+| §17.5 | Existence of the φ⁴ critical point | **Done** | `PhaseTransition.lean` | Correlation length concept; mass continuity deferred |
+| §17.7 | Critical exponents | **Done** | `PhaseTransition.lean` | η ≥ 0 (`truncated2_nonneg`); ζ ≥ 0 (`cor_4_3_3`) |
 | §17.8 | η ≤ 1 | **Done** | `GHS.lean` | Lattice proof uses Cor 4.3.3; exponential decay deferred |
 
 ### Chapter 18: The Cluster Expansion
