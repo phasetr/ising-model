@@ -20,7 +20,8 @@ All theorems are formally proved with **zero `sorry`**.
 | **Lee-Yang circle theorem**               | Ising partition polynomial nonvanishing on the open polydisk                                        | `LeeYang.lean`             |
 | **φ⁴ algebraic identities**             | Quartic/orthogonal transformation identities (axioms: `phi4_integrable`, `phi4_single_site_nonneg`) | `ContinuousSpin/Phi4.lean` |
 | **Correlation boundedness** (Prop 4.2.2)  | `|⟨σ^A⟩| ≤ 1`                                                                                     | `InfiniteVolume.lean`      |
-| **Correlation monotonicity** (Prop 4.2.1) | `⟨σ^B⟩` monotone in J on `[0,∞)`                                                                  | `InfiniteVolume.lean`      |
+| **Correlation monotonicity (J)** (Prop 4.2.1) | `⟨σ^B⟩` monotone in J on `[0,∞)`                                                               | `InfiniteVolume.lean`      |
+| **Correlation monotonicity (h)** (Prop 4.2.4) | `⟨σ^B⟩` monotone in h on `[0,∞)`                                                               | `InfiniteVolume.lean`      |
 | **Covariance non-negativity**             | `Cov(σ^B, f) ≥ 0` for HNC f under Boltzmann weight                                                | `InfiniteVolume.lean`      |
 | **Correlation convergence** (Thm 4.2.3)   | `⟨σ^B⟩` converges as J → ∞                                                                       | `InfiniteVolume.lean`      |
 | **Free energy** (§4.6)                   | `f = |ι|⁻¹ ln Z`, monotone in J and h                                                             | `FreeEnergy.lean`          |
