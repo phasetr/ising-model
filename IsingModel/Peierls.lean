@@ -1,4 +1,5 @@
 import IsingModel.Lattice
+import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 
 /-!
 # Peierls argument for the existence of phase transitions
@@ -877,5 +878,65 @@ theorem plusPartitionFunction_pos' (G : SimpleGraph ι) [DecidableRel G.Adj]
   unfold plusPartitionFunction
   exact Finset.sum_pos (fun σ _ => boltzmannWeight_pos G p σ)
     ⟨_, allUp_mem_plusConfigs B⟩
+
+omit [Fintype ι] in
+/-- A walk from `u ∈ S` to `v ∉ S` must cross a cut edge. -/
+private theorem walk_crosses_cut (G : SimpleGraph ι) [DecidableRel G.Adj]
+    [Fintype G.edgeSet] (S : Finset ι) {u v : ι}
+    (hu : u ∈ S) (hv : v ∉ S) (w : G.Walk u v) :
+    ∃ e ∈ cutEdges G S, True := by
+  induction w with
+  | nil => exact absurd hu hv
+  | @cons a x _ hadj w ih =>
+    by_cases hx : x ∈ S
+    · exact ih hx hv
+    · -- Edge {a, x} crosses S: a ∈ S, x ∉ S
+      refine ⟨s(a, x), ?_, trivial⟩
+      simp only [cutEdges, Finset.mem_filter, SimpleGraph.mem_edgeFinset]
+      constructor
+      · exact hadj
+      · simp only [edgeCrosses, Sym2.lift_mk]
+        simp [hu, hx]
+
+/-- In a connected graph, `∅ ≠ S ≠ V` implies `cutEdges G S` is nonempty. -/
+theorem cutEdges_nonempty_of_connected (G : SimpleGraph ι) [DecidableRel G.Adj]
+    [Fintype G.edgeSet] (hconn : G.Preconnected)
+    (S : Finset ι) (hne : S.Nonempty) (hneV : S ≠ Finset.univ) :
+    (cutEdges G S).Nonempty := by
+  obtain ⟨u, hu⟩ := hne
+  have ⟨v, hv⟩ : ∃ v, v ∉ S := by
+    by_contra h; push Not at h
+    exact hneV (Finset.eq_univ_iff_forall.mpr h)
+  obtain ⟨w⟩ := hconn u v
+  obtain ⟨e, he, _⟩ := walk_crosses_cut G S hu hv w
+  exact ⟨e, he⟩
+
+set_option linter.unusedDecidableInType false in
+/-- **Prop 5.4.2 self-contained** (Glimm–Jaffe §5.4, p. 83).
+For a preconnected graph with non-empty boundary `B`, `h = 0`, `J > 0`, `β > 0`,
+and the exponential bound condition:
+`0 ≤ 1 - ⟨σ_i⟩₊ ≤ exp(-cβ)`. -/
+theorem prop_5_4_2_self_contained (G : SimpleGraph ι) [DecidableRel G.Adj]
+    [Fintype G.edgeSet] (hconn : G.Preconnected)
+    (J β c : ℝ) (hβ : 0 < β) (hJ : 0 < J)
+    (B : Finset ι) (hB : B.Nonempty) (i : ι)
+    (hexp : 2 * (2 ^ Fintype.card ι) * Real.exp (-2 * β * J) ≤
+      Real.exp (-c * β)) :
+    0 ≤ 1 - plusGibbsExpectation G ⟨J, 0, β⟩ B (fun σ => Spin.sign ℝ (σ i)) ∧
+    1 - plusGibbsExpectation G ⟨J, 0, β⟩ B (fun σ => Spin.sign ℝ (σ i)) ≤
+      Real.exp (-c * β) := by
+  have hZ := plusPartitionFunction_pos' G ⟨J, 0, β⟩ B
+  have hcut : ∀ S : Finset ι, i ∈ S → Disjoint S B → 1 ≤ (cutEdges G S).card := by
+    intro S hiS hdisj
+    have hne : S.Nonempty := ⟨i, hiS⟩
+    have hneV : S ≠ Finset.univ := by
+      intro h; rw [h] at hdisj
+      have : B = ∅ := by
+        ext x; constructor
+        · intro hx; exact absurd (h ▸ Finset.mem_univ x) (Finset.disjoint_right.mp hdisj hx)
+        · simp
+      exact hB.ne_empty this
+    exact (cutEdges_nonempty_of_connected G hconn S hne hneV).card_pos
+  exact prop_5_4_2_exp G J β c hβ hJ B i hZ hcut hexp
 
 end IsingModel
