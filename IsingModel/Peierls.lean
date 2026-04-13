@@ -864,4 +864,18 @@ theorem prop_5_4_2_exp (G : SimpleGraph ι) [DecidableRel G.Adj]
   have hcomplete := prop_5_4_2_complete G J β hβ hJ B i hZ hcut
   exact ⟨hcomplete.1, le_trans hcomplete.2 hexp⟩
 
+/-- The all-up configuration satisfies + boundary conditions. -/
+theorem allUp_mem_plusConfigs (B : Finset ι) :
+    (fun _ : ι => Spin.up) ∈ plusConfigs (ι := ι) B := by
+  simp [plusConfigs]
+
+set_option linter.unusedDecidableInType false in
+/-- The restricted partition function is positive. -/
+theorem plusPartitionFunction_pos' (G : SimpleGraph ι) [DecidableRel G.Adj]
+    [Fintype G.edgeSet] (p : IsingParams ℝ) (B : Finset ι) :
+    0 < plusPartitionFunction G p B := by
+  unfold plusPartitionFunction
+  exact Finset.sum_pos (fun σ _ => boltzmannWeight_pos G p σ)
+    ⟨_, allUp_mem_plusConfigs B⟩
+
 end IsingModel
