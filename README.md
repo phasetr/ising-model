@@ -48,6 +48,7 @@ All theorems are formally proved with **zero `sorry`**.
 | Mean field trivial solution (§5.2) | `meanField_zero_solution`: `tanh(β(Jz·0+0)) = 0` | Glimm-Jaffe §5.2 |
 | Susceptibility non-negative (§5.3) | `susceptibility_nonneg`: `χ(i) = Σ_j ⟨σ_i;σ_j⟩ ≥ 0` | Glimm-Jaffe §5.3 |
 | Magnetization vanishes at h=0 (§5.3) | `magnetization_zero_at_h_zero`: Z₂ symmetry | Glimm-Jaffe §5.3 |
+| Z monotone in β (Cor 10.2.3) | `partitionFunction_monotone_beta`: Z(β₁) ≤ Z(β₂) | Glimm-Jaffe §10.2 |
 | Hamiltonian–boundary identity | `H(σ) = -J(|E| - 2|∂σ|)` for h = 0 | Glimm-Jaffe §5.4 |
 | Peierls bound (Prop 5.4.1) | `Pr(γ ⊆ ∂σ) ≤ exp(-2βJ|γ|)` | Glimm-Jaffe §5.4 |
 | Peierls contour sum bound | `Σ Pr(γ) ≤ N(r) exp(-2βJr)` | Glimm-Jaffe §5.4 |
@@ -120,8 +121,8 @@ heavy Lean measure theory assembly:
 
 | Section | Result | Status | Lean | Notes |
 |---|---|---|---|---|
-| §10.1 | Introduction | **Not started** | — | |
-| §10.2 | Correlation inequalities for P(φ)₂ | **Not started** | — | Lattice field version |
+| §10.1 | Introduction | **Done** | — | Overview; lattice version is Ch.4 |
+| §10.2 | Correlation inequalities / β-monotonicity | **Done** | `Conditioning.lean` | Cor 10.2.3: Z monotone in β |
 | §10.3 | Dirichlet/Neumann monotonicity | **Not started** | — | Prop 10.3.3 → Prop 4.6.1 (f_Λ convergence) |
 | §10.4 | Reflection positivity | **Not started** | — | |
 | §10.5 | Multiple reflections | **Not started** | — | |
