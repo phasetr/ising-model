@@ -724,6 +724,40 @@ coupling bounds from $0 \le t < 1$), and apply
 \texttt{lee\_yang\_circle}.
 \end{proof}
 
+\section{GHS inequality (\texttt{Inequalities/GHS.lean})}
+
+The Griffiths--Hurst--Sherman inequality for the Ising model.
+Reference: Ellis, \emph{Entropy, Large Deviations, and Statistical
+Mechanics}, \S V.3, pp.~143--146.
+
+\begin{definition}[\texttt{truncated2}, \texttt{truncated3}]
+The truncated 2-point and 3-point functions (Ursell functions):
+\begin{align*}
+  u_2(i,j) &= \langle\sigma_i\sigma_j\rangle - \langle\sigma_i\rangle\langle\sigma_j\rangle, \\
+  u_3(i,j,k) &= \langle\sigma_i\sigma_j\sigma_k\rangle
+    - \langle\sigma_i\rangle\langle\sigma_j\sigma_k\rangle
+    - \langle\sigma_j\rangle\langle\sigma_i\sigma_k\rangle
+    - \langle\sigma_k\rangle\langle\sigma_i\sigma_j\rangle
+    + 2\langle\sigma_i\rangle\langle\sigma_j\rangle\langle\sigma_k\rangle.
+\end{align*}
+\end{definition}
+
+\begin{theorem}[\texttt{truncated2\_nonneg}]
+$u_2(i,j) \ge 0$ for ferromagnetic parameters. Proved via GKS-II
+for $i \ne j$ and GKS-I $+$ $|\langle\sigma_i\rangle| \le 1$ for $i = j$.
+\end{theorem}
+
+\begin{theorem}[\texttt{ghs\_inequality}; sorry]
+For ferromagnetic parameters with $h \ge 0$ and distinct $i, j, k$:
+$u_3(i,j,k) \le 0$.
+\end{theorem}
+
+The proof requires the Ellis--Monroe quadrupled spin system
+$(\omega, \sigma, \omega', \sigma')$ with Hadamard orthogonal
+transformation $(\alpha, \beta, \gamma, \delta)$ and the Lebowitz
+identity (1974) expressing $u_3$ as a non-positive moment.
+The sorry covers the Lebowitz identity and Lemma~V.3.2 (parity argument).
+
 \section{\texorpdfstring{$\varphi^4$}{phi4} inequalities (\texttt{ContinuousSpin/Phi4.lean})}
 
 The $\varphi^4$ correlation inequalities
