@@ -134,18 +134,6 @@ private theorem integral_nonneg_of_nonneg_ae (f : ℝ → ℝ)
     0 ≤ ∫ x, f x ∂volume :=
   integral_nonneg hf
 
-/-- **Axiom**: Integrability of polynomial × exp(-quartic) for nested integrals.
-For the specific Q arising from the φ⁴ potential, this follows from
-`integrableOn_rpow_mul_exp_neg_mul_rpow` (mathlib) via Fubini-Tonelli.
-Stated as axiom because the 4D nested assembly is not formalized. -/
-private axiom phi4_integrable
-    (Q : ℝ → ℝ → ℝ → ℝ → ℝ)
-    (c : ℝ) (k l m n : ℕ) :
-    Integrable (fun α => ∫ β, ∫ γ, ∫ δ,
-      α ^ k * β ^ l * γ ^ m * δ ^ n *
-      Real.exp (-Q α β γ δ + c * (α * β * γ * δ))
-      ∂volume ∂volume ∂volume) volume
-
 /-- **Single-site non-negativity** (core of Theorem 4.3.1, Glimm–Jaffe p. 59):
 For Q even in each variable and c ≥ 0, the monomial integral is non-negative.
 
@@ -156,8 +144,7 @@ After averaging over 16 sign patterns:
 - ALL ODD → integrand × sinh(cαβγδ) ≥ 0  (by `mul_sinh_nonneg`)
 
 Building blocks proved: `mul_sinh_nonneg`, `Real.cosh_nonneg`,
-`integral_odd_eq_zero`, `quartic_identity`.
-Technical prerequisite: integrability (`phi4_integrable`). -/
+`integral_odd_eq_zero`, `quartic_identity`. -/
 axiom phi4_single_site_nonneg
     (Q : ℝ → ℝ → ℝ → ℝ → ℝ)
     (hQ_even_α : ∀ α β γ δ, Q (-α) β γ δ = Q α β γ δ)

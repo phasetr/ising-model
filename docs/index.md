@@ -32,10 +32,10 @@ All theorems are formally proved with **zero `sorry`**.
 
 ## Axioms
 
-Three measure-theoretic axioms whose proofs are mathematically complete
+Two measure-theoretic axioms whose proofs are mathematically complete
 but not formalized in Lean:
 
-- `phi4_integrable`, `phi4_single_site_nonneg` — φ⁴ measure theory (`ContinuousSpin/Phi4.lean`)
+- `phi4_single_site_nonneg` — φ⁴ single-site non-negativity (`ContinuousSpin/Phi4.lean`)
 - `lebowitz_third` — Lebowitz inequality for Ising via φ⁴ limit (`Inequalities/GHS.lean`)
 
 ## References
