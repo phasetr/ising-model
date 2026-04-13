@@ -102,12 +102,55 @@ heavy Lean measure theory assembly:
 
 | Section | Result | Status | Lean | Notes |
 |---|---|---|---|---|
-| §5.1 | Pure and mixed phases | **Out of scope** | — | Infinite volume; ergodic decomposition |
-| §5.2 | Phase transitions (mean field) | **Out of scope** | — | Infinite volume; qualitative |
-| §5.3 | Symmetry breaking | **Out of scope** | — | Infinite volume; qualitative |
+| §5.1 | Pure and mixed phases | **Not started** | — | Ergodic decomposition; cluster property |
+| §5.2 | Phase transitions (mean field) | **Not started** | — | Mean field picture |
+| §5.3 | Symmetry breaking | **Not started** | — | Spontaneous symmetry breaking |
 | §5.4 | Prop 5.4.1 (Peierls bound) | **Done** | `peierls_bound` | |
 | §5.4 | Prop 5.4.2 (spontaneous magnetization) | **Done** | `prop_5_4_2_self_contained` | |
-| §5.5 | An example (XY/rotator) | **Out of scope** | — | XY model; Kosterlitz-Thouless; infinite volume |
+| §5.5 | An example (XY/rotator) | **Out of scope** | — | XY model; Kosterlitz-Thouless |
+
+### Chapter 10: Conditioning and Correlation Inequalities
+
+| Section | Result | Status | Lean | Notes |
+|---|---|---|---|---|
+| §10.1 | Introduction | **Not started** | — | |
+| §10.2 | Correlation inequalities for P(φ)₂ | **Not started** | — | Lattice field version |
+| §10.3 | Dirichlet/Neumann monotonicity | **Not started** | — | Prop 10.3.3 → Prop 4.6.1 (f_Λ convergence) |
+| §10.4 | Reflection positivity | **Not started** | — | |
+| §10.5 | Multiple reflections | **Not started** | — | |
+| §10.6 | Nonsymmetric reflections | **Not started** | — | |
+
+### Chapter 16: Phase Transitions
+
+| Section | Result | Status | Lean | Notes |
+|---|---|---|---|---|
+| §16.1 | Introduction (phase decomposition) | **Not started** | — | Pure phases; free energy derivatives |
+| §16.2 | The two phase region | **Not started** | — | Ising model phase coexistence |
+| §16.3 | Symmetry unbroken, d = 2 | **Not started** | — | Mermin-Wagner for continuous spins |
+| §16.4 | Symmetry broken, d ≥ 3 | **Not started** | — | Ising model; d_cr = 2 |
+
+### Chapter 17: The φ⁴ Critical Point
+
+| Section | Result | Status | Lean | Notes |
+|---|---|---|---|---|
+| §17.2 | Absence of even bound states | **Not started** | — | φ⁴/Ising |
+| §17.5 | Existence of the φ⁴ critical point | **Not started** | — | Ising limit |
+| §17.7 | Critical exponents | **Not started** | — | Ising model |
+| §17.8 | φ⁴₁ | **Not started** | — | Ising model |
+
+### Chapter 18: The Cluster Expansion
+
+| Section | Result | Status | Lean | Notes |
+|---|---|---|---|---|
+| §18.1 | Introduction | **Not started** | — | Lattice models |
+| §18.2 | The cluster expansion | **Not started** | — | |
+| §18.3 | Clustering and analyticity | **Not started** | — | |
+
+### Chapter 20: Further Directions
+
+| Section | Result | Status | Lean | Notes |
+|---|---|---|---|---|
+| §20.5 | Low temperature expansions | **Not started** | — | Ising model; Peierls-type |
 
 ## Documentation
 
