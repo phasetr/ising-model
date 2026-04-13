@@ -44,6 +44,7 @@ All theorems are formally proved with **zero `sorry`**.
 | **Iterated Schwarz** (§10.5)              | `iterated_schwarz_sq`: geometric mean bound                                                        | `Conditioning.lean`        |
 | **Magnetization monotone** (§16.1)        | `magnetization_monotone_h`: M(h₁) ≤ M(h₂) for h ≥ 0                                              | `PhaseTransition.lean`     |
 | **η ≥ 0** (§17.7)                         | `eta_nonneg_finite_vol`: critical exponent bound from GKS-II                                       | `PhaseTransition.lean`     |
+| **High-temp parameter** (§18.1)           | `highTempParam`, `abs_highTempParam_lt_one`: \|tanh(βJ)\| < 1                                      | `Conditioning.lean`        |
 | **Free energy analyticity** (Thm 4.6.2)   | `f(h)` real-analytic for h > 0; `Z(h)`, `Z(J)` real-analytic                                      | `FreeEnergy.lean`          |
 | **Walsh orthogonality/Fourier**           | Fourier inversion on `{±1}^n`                                                                      | `InfiniteVolume.lean`      |
 | Partition function positivity             | `Z > 0`                                                                                             | `GibbsMeasure.lean`        |

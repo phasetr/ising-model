@@ -1085,6 +1085,25 @@ The correlation length definition (inverse mass, \S17.5)
 and the continuity theorem (Thm~17.5.1) require the infinite
 volume limit and transfer matrix spectral theory.
 
+\section{Cluster expansion (\S18.1--18.3)}
+
+The lattice Ising analogue of the cluster expansion is the
+\textbf{high-temperature expansion}, decomposing each Boltzmann factor:
+$\exp(\beta J \sigma_i\sigma_j) = \cosh(\beta J)(1 + \tanh(\beta J)\sigma_i\sigma_j)$.
+This is already proved as \texttt{exp\_edgeSpin\_decomp}.
+
+\begin{definition}[\texttt{highTempParam}]
+$t = \tanh(\beta J)$, the high-temperature expansion parameter.
+\end{definition}
+
+\begin{theorem}[\texttt{abs\_highTempParam\_lt\_one}]
+$|t| = |\tanh(\beta J)| < 1$ for all finite $\beta J$.
+\end{theorem}
+
+\begin{theorem}[\texttt{highTempParam\_lt\_one}]
+$t < 1$.
+\end{theorem}
+
 \section{Peierls argument (\texttt{Peierls.lean})}
 
 This section formalizes the Peierls argument for the existence of phase
