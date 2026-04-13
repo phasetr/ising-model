@@ -455,4 +455,45 @@ theorem indicator_spin_down_le_contour_sum (G : SimpleGraph ι)
     exact Finset.sum_nonneg fun S _ => by
       by_cases h : cutEdges G S ⊆ phaseBoundary G σ <;> simp [h]
 
+set_option linter.unusedDecidableInType false in
+/-- **Gibbs expectation monotonicity**: if `F σ ≤ G σ` pointwise, then `⟨F⟩ ≤ ⟨G⟩`. -/
+theorem gibbsExpectation_mono (G : SimpleGraph ι) [DecidableRel G.Adj]
+    [Fintype G.edgeSet] (p : IsingParams ℝ) (F₁ F₂ : Config ι → ℝ)
+    (h : ∀ σ, F₁ σ ≤ F₂ σ) :
+    gibbsExpectation G p F₁ ≤ gibbsExpectation G p F₂ := by
+  unfold gibbsExpectation
+  apply mul_le_mul_of_nonneg_left
+  · exact Finset.sum_le_sum fun σ _ =>
+      mul_le_mul_of_nonneg_right (h σ) (boltzmannWeight_pos G p σ).le
+  · exact inv_nonneg.mpr (partitionFunction_pos G p).le
+
+/-- **Probability of spin down bounded by contour sum** (Glimm–Jaffe §5.4).
+`⟨1_{σ_i = ↓}⟩ ≤ Σ_{S ∋ i} ⟨1_{cut(S) ⊆ ∂σ}⟩`.
+This is the Gibbs-expectation form of `indicator_spin_down_le_contour_sum`. -/
+theorem gibbs_spin_down_le_contour_sum (G : SimpleGraph ι) [DecidableRel G.Adj]
+    [Fintype G.edgeSet] (J β : ℝ) (i : ι) :
+    gibbsExpectation G ⟨J, 0, β⟩
+      (fun σ => if σ i = Spin.down then 1 else 0) ≤
+    ∑ S ∈ Finset.univ.filter (fun S : Finset ι => i ∈ S),
+      gibbsExpectation G ⟨J, 0, β⟩
+        (fun σ => if cutEdges G S ⊆ phaseBoundary G σ then 1 else 0) := by
+  -- Step 1: ⟨1_{↓}⟩ ≤ ⟨Σ_S 1_{cut(S)⊆∂σ}⟩ by monotonicity
+  calc gibbsExpectation G ⟨J, 0, β⟩ (fun σ => if σ i = Spin.down then 1 else 0)
+      ≤ gibbsExpectation G ⟨J, 0, β⟩
+          (fun σ => ∑ S ∈ Finset.univ.filter (fun S : Finset ι => i ∈ S),
+            if cutEdges G S ⊆ phaseBoundary G σ then 1 else 0) :=
+        gibbsExpectation_mono G ⟨J, 0, β⟩ _ _
+          (indicator_spin_down_le_contour_sum G · i)
+    -- Step 2: ⟨Σ_S f(S,σ)⟩ = Σ_S ⟨f(S,σ)⟩ by linearity
+    _ = ∑ S ∈ Finset.univ.filter (fun S : Finset ι => i ∈ S),
+          gibbsExpectation G ⟨J, 0, β⟩
+            (fun σ => if cutEdges G S ⊆ phaseBoundary G σ then 1 else 0) := by
+        -- Linearity of Gibbs expectation over finite sums
+        unfold gibbsExpectation
+        rw [← Finset.mul_sum]
+        congr 1
+        rw [Finset.sum_comm]
+        apply Finset.sum_congr rfl; intro σ _
+        rw [Finset.sum_mul]
+
 end IsingModel
