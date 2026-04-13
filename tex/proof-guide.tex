@@ -4,6 +4,12 @@
 \usepackage{amssymb}
 \usepackage{amsthm}
 \usepackage{hyperref}
+\usepackage[hmargin=2cm]{geometry}
+\usepackage{fvextra}  % for breakable verbatim
+\DefineVerbatimEnvironment{Verbatim}{Verbatim}{breaklines,fontsize=\small}
+\fvset{breaklines}
+
+\sloppy  % prevent overfull hboxes from long identifiers
 
 \newtheorem{theorem}{Theorem}
 \newtheorem{lemma}[theorem]{Lemma}
@@ -37,7 +43,7 @@ primary goal is to make the formal code accessible.
 
 Read the files in this order. Each file imports only the files above it.
 
-\begin{verbatim}
+\begin{Verbatim}
 Basic.lean                   Spin, Config, IsingParams
   |
 Hamiltonian.lean             H(sigma), edgeSpin, spin flip
@@ -64,7 +70,7 @@ GibbsMeasure.lean            Z, Gibbs expectation, correlation
   +-- Lattice.lean                lattice graph definitions
   |
   +-- ContinuousSpin/Phi4.lean    phi^4 identities (axioms)
-\end{verbatim}
+\end{Verbatim}
 
 \subsection{Recommended reading paths}
 
@@ -387,7 +393,7 @@ since $Z > 0$ and the numerator $\geq 0$ by HNC.
 
 \noindent\textbf{What to look for:} The proof introduces the
 \emph{doubled system} --- a product of two independent copies of the
-Ising model --- and a $45°$ rotation $(t, q) = (\sigma + \tau,
+Ising model --- and a $45^\circ$ rotation $(t, q) = (\sigma + \tau,
 \sigma - \tau)/\sqrt{2}$. The key step is showing that the doubled
 Boltzmann weight has the HNC property in the $(t, q)$ variables.
 
@@ -476,8 +482,9 @@ shows that the Gibbs measure satisfies the FKG lattice condition
 by reducing to GKS-II.
 
 The FKG inequality is proved by applying Mathlib's
-\texttt{Combinatorics.SetFamily.FourFunctions.fkg} to the Ising Boltzmann
-weight, following Friedli--Velenik~\cite{friedli-velenik}, Theorem~3.21
+\texttt{Combinatorics.SetFamily.\allowbreak FourFunctions.fkg}
+to the Ising Boltzmann weight, following
+Friedli--Velenik~\cite{friedli-velenik}, Theorem~3.21
 (p.~98) and Theorem~3.50 (pp.~128--130).
 
 \begin{theorem}[\texttt{fkg\_ising}]
