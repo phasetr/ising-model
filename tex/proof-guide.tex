@@ -724,6 +724,65 @@ coupling bounds from $0 \le t < 1$), and apply
 \texttt{lee\_yang\_circle}.
 \end{proof}
 
+\section{GHS inequality (\texttt{Inequalities/GHS.lean})}
+
+The Griffiths--Hurst--Sherman inequality for the Ising model.
+Reference: Ellis, \emph{Entropy, Large Deviations, and Statistical
+Mechanics}, \S V.3, pp.~143--146.
+
+\begin{definition}[\texttt{truncated2}, \texttt{truncated3}]
+The truncated 2-point and 3-point functions (Ursell functions):
+\begin{align*}
+  u_2(i,j) &= \langle\sigma_i\sigma_j\rangle - \langle\sigma_i\rangle\langle\sigma_j\rangle, \\
+  u_3(i,j,k) &= \langle\sigma_i\sigma_j\sigma_k\rangle
+    - \langle\sigma_i\rangle\langle\sigma_j\sigma_k\rangle
+    - \langle\sigma_j\rangle\langle\sigma_i\sigma_k\rangle
+    - \langle\sigma_k\rangle\langle\sigma_i\sigma_j\rangle
+    + 2\langle\sigma_i\rangle\langle\sigma_j\rangle\langle\sigma_k\rangle.
+\end{align*}
+\end{definition}
+
+\begin{theorem}[\texttt{truncated2\_nonneg}]
+$u_2(i,j) \ge 0$ for ferromagnetic parameters. Proved via GKS-II
+for $i \ne j$ and GKS-I $+$ $|\langle\sigma_i\rangle| \le 1$ for $i = j$.
+\end{theorem}
+
+\begin{theorem}[\texttt{lebowitz\_third}; axiom]
+For ferromagnetic parameters with $h \ge 0$ and distinct $i, j, k$:
+\[
+  \langle\sigma_i\sigma_j\sigma_k\rangle + \langle\sigma_i\rangle\langle\sigma_j\sigma_k\rangle
+  \le \langle\sigma_i\sigma_j\rangle\langle\sigma_k\rangle + \langle\sigma_i\sigma_k\rangle\langle\sigma_j\rangle.
+\]
+\end{theorem}
+
+The Lebowitz third inequality is proved for continuous $\varphi^4$ spins
+via \texttt{phi4\_single\_site\_nonneg} (Theorem~4.3.1 in Glimm--Jaffe),
+then transferred to Ising spins by the approximation
+$d\mu = e^{-\lambda(\xi^2-1)^2}\,d\xi \to \frac{1}{2}(\delta_{+1}+\delta_{-1})$
+as $\lambda \to \infty$.
+
+\textbf{Note:} The per-site factorization in Ellis \S V.3 (Lemma~V.3.2)
+does \emph{not} hold for discrete Ising spins---the all-odd parity case
+gives $\sum \alpha\beta\gamma\delta\, e^{2h\alpha} = -8\cosh(2h) < 0$.
+The continuous-spin route is essential.
+
+\begin{theorem}[\texttt{ghs\_inequality}; proved from \texttt{lebowitz\_third}]
+For ferromagnetic parameters with $h \ge 0$ and distinct $i, j, k$:
+$u_3(i,j,k) \le 0$.
+\end{theorem}
+
+\begin{proof}
+Substituting the Lebowitz bound into the definition of $u_3$:
+\[
+  u_3(i,j,k) \le -2\langle\sigma_i\rangle \cdot u_2(j,k) \le 0,
+\]
+where the last step uses GKS-I ($\langle\sigma_i\rangle \ge 0$) and
+\texttt{truncated2\_nonneg} ($u_2(j,k) \ge 0$).
+In Lean, \texttt{nlinarith} closes the goal from
+\texttt{lebowitz\_third}, \texttt{gks\_first}, and
+\texttt{truncated2\_nonneg}.
+\end{proof}
+
 \section{\texorpdfstring{$\varphi^4$}{phi4} inequalities (\texttt{ContinuousSpin/Phi4.lean})}
 
 The $\varphi^4$ correlation inequalities
