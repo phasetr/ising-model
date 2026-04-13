@@ -925,6 +925,30 @@ Combining the Peierls bound with the contour count:
 
 \noindent\textbf{Lean:} \texttt{peierls\_contour\_sum\_le}
 
+\begin{proposition}[Spontaneous magnetization, Prop.~5.4.2]
+Under $+$ boundary conditions (spins fixed to $+1$ on a boundary set
+$B \subseteq V$), for $h = 0$:
+\[
+  \langle \mathbf{1}_{\sigma_i = -1} \rangle_+
+  \le \sum_{\substack{S \ni i \\ S \cap B = \emptyset}}
+      e^{-2\beta J |\mathrm{cut}(S)|}.
+\]
+For $\beta$ sufficiently large, the RHS is exponentially small in~$\beta$,
+establishing $\langle \sigma_i \rangle_+ \to 1$ as $\beta \to \infty$.
+\end{proposition}
+
+\begin{proof}
+For each $+$BC configuration $\sigma$ with $\sigma_i = -1$, the set
+$S = \{j : \sigma_j = -1\}$ satisfies $i \in S$, $S \cap B = \emptyset$
+(boundary sites are $+1$), and $\mathrm{cut}(S) = \partial\sigma$.
+So $\mathbf{1}_{\sigma_i=-1} \le \sum_{S} \mathbf{1}_{\mathrm{cut}(S) \subseteq \partial\sigma}$.
+Taking expectations and applying the restricted Peierls bound (the
+flip map $\sigma \mapsto \sigma^S$ preserves $+$BC when $S \cap B = \emptyset$)
+gives the result.
+\end{proof}
+
+\noindent\textbf{Lean:} \texttt{spontaneous\_magnetization\_plus}
+
 \begin{thebibliography}{9}
 \bibitem{glimm-jaffe}
 J.~Glimm and A.~Jaffe,
