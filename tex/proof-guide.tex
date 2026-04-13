@@ -928,6 +928,29 @@ by \texttt{mul\_sinh\_nonneg}.
 Formalizing this requires the interchange of finite symmetrization sums with
 nested Bochner integrals.
 
+\section{Pure and mixed phases (\texttt{PhaseTransition.lean})}
+
+Formalization of Glimm--Jaffe, \S5.1 (pp.~72--74).
+
+\begin{theorem}[\texttt{truncated2\_le\_one}]
+For ferromagnetic parameters: $0 \le \langle\sigma_i;\sigma_j\rangle \le 1$.
+The lower bound is GKS-II. The upper bound: $\langle\sigma_i\sigma_j\rangle \le 1$
+and $\langle\sigma_i\rangle\langle\sigma_j\rangle \ge 0$ by GKS-I.
+\end{theorem}
+
+\begin{theorem}[\texttt{mixed\_phase\_truncated2}; eq.~(5.1.5)]
+$M^2 - (M(2\alpha - 1))^2 = 4\alpha(1-\alpha)M^2$.
+\end{theorem}
+
+\begin{theorem}[\texttt{mixed\_phase\_pure\_iff}]
+For $0 \le \alpha \le 1$ and $M \ne 0$:
+$4\alpha(1-\alpha)M^2 = 0$ iff $\alpha = 0$ or $\alpha = 1$.
+\end{theorem}
+
+These formalize the algebraic content of \S5.1: the truncated 2-point
+function measures the deviation from a pure phase, and
+its asymptotic value $4\alpha(1-\alpha)M^2$ vanishes iff the state is pure.
+
 \section{Peierls argument (\texttt{Peierls.lean})}
 
 This section formalizes the Peierls argument for the existence of phase
