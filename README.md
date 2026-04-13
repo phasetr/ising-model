@@ -37,6 +37,8 @@ All theorems are formally proved with **zero `sorry`**.
 | Free energy monotonicity | Z and f monotone in J and h on [0,∞) | Glimm-Jaffe §4.6 |
 | Lee-Yang nonvanishing (Ising) | partition polynomial ≠ 0 on polydisk | Glimm-Jaffe §4.5-4.6 |
 | GHS inequality | `⟨σ_i; σ_j; σ_k⟩ ≤ 0` | Ellis §V.3, Lebowitz (1974) |
+| Cor 4.3.3 (truncated 4-point ≤ 0) | `U₄(i,j,k,l) ≤ 0` for h = 0 | Glimm-Jaffe §4.3 |
+| Odd correlation vanishing | `⟨σ^A⟩ = 0` for odd \|A\| when h = 0 | Spin-flip symmetry |
 | Hamiltonian–boundary identity | `H(σ) = -J(|E| - 2|∂σ|)` for h = 0 | Glimm-Jaffe §5.4 |
 | Peierls bound (Prop 5.4.1) | `Pr(γ ⊆ ∂σ) ≤ exp(-2βJ|γ|)` | Glimm-Jaffe §5.4 |
 | Peierls contour sum bound | `Σ Pr(γ) ≤ N(r) exp(-2βJr)` | Glimm-Jaffe §5.4 |
@@ -48,9 +50,12 @@ The following axioms have mathematically complete proofs but require
 heavy Lean measure theory assembly:
 
 - `phi4_single_site_nonneg`: non-negativity of the symmetrized 4D integral (`ContinuousSpin/Phi4.lean`)
-- `lebowitz_third`: Lebowitz third inequality for ferromagnetic Ising (`Inequalities/GHS.lean`)
+- `lebowitz_third`: Lebowitz third inequality for 3 sites (`Inequalities/GHS.lean`)
   — proved for continuous φ⁴ spins via `phi4_single_site_nonneg`, transferred to Ising
   by the limit `exp(-λ(ξ²-1)²)dξ → ½(δ₊₁+δ₋₁)` as λ → ∞
+- `lebowitz_four`: Lebowitz inequality for 4 sites (`Inequalities/GHS.lean`) — same route
+- `lebowitz_inductive`: inductive Lebowitz bound for general Finsets (`Inequalities/GHS.lean`)
+  — Cor. 4.3.2 applied with `B = {j,k}`, key step for Cor. 4.3.5
 
 
 ## Glimm-Jaffe formalization progress
@@ -72,10 +77,12 @@ heavy Lean measure theory assembly:
 | §4.2 | Thm 4.2.3 (convergence) | **Done** | `correlation_convergent` | |
 | §4.2 | Prop 4.2.4 (h-monotonicity) | **Done** | `correlation_monotone_h` | |
 | §4.3 | Thm 4.3.1 (φ⁴ non-negativity) | **Axiom** | `phi4_single_site_nonneg` | Measure theory |
-| §4.3 | Cor 4.3.2 (Lebowitz) | **Axiom** | `lebowitz_third` | Via φ⁴ limit |
-| §4.3 | Cor 4.3.3 | **Not started** | — | |
-| §4.3 | Cor 4.3.4 | **Not started** | — | |
-| §4.3 | Cor 4.3.5 | **Not started** | — | |
+| §4.3 | Cor 4.3.2 (Lebowitz, 3-site) | **Axiom** | `lebowitz_third` | Via φ⁴ limit |
+| §4.3 | Cor 4.3.2 (Lebowitz, 4-site) | **Axiom** | `lebowitz_four` | Via φ⁴ limit |
+| §4.3 | Cor 4.3.2 (Lebowitz, inductive) | **Axiom** | `lebowitz_inductive` | Via φ⁴ limit |
+| §4.3 | Cor 4.3.3 (truncated 4-pt ≤ 0) | **Done** | `cor_4_3_3` | h = 0 |
+| §4.3 | Cor 4.3.4 (GHS) | **Done** | `ghs_inequality` | = GHS inequality |
+| §4.3 | Cor 4.3.5 (n-point bound) | **Done** | `cor_4_3_5_h0` | h = 0 specialization |
 | §4.4 | FKG inequality | **Done** | `fkg_ising` | |
 | §4.5 | Lee-Yang circle theorem | **Done** | `lee_yang_circle` | |
 | §4.6 | Ising nonvanishing (Thm 4.6.2) | **Done** | `isingEdgePoly_nonvanishing_of_graph` | |

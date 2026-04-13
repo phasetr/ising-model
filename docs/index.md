@@ -26,7 +26,10 @@ All theorems are formally proved with **zero `sorry`**.
 | **Correlation convergence** (Thm 4.2.3)   | `⟨σ^B⟩` converges as J → ∞                                                                       | `InfiniteVolume.lean`      |
 | **Free energy** (§4.6)                   | `f = |ι|⁻¹ ln Z`, monotone in J and h                                                             | `FreeEnergy.lean`          |
 | **Lee-Yang nonvanishing (Ising)**         | Ising partition polynomial ≠ 0 on polydisk                                                         | `FreeEnergy.lean`          |
-| **GHS inequality**                        | `⟨σ_i; σ_j; σ_k⟩ ≤ 0` (from Lebowitz third inequality)                                          | `Inequalities/GHS.lean`    |
+| **GHS inequality** (Cor 4.3.4)            | `⟨σ_i; σ_j; σ_k⟩ ≤ 0` (from Lebowitz third inequality)                                          | `Inequalities/GHS.lean`    |
+| **Cor 4.3.3** (truncated 4-point ≤ 0)     | `U₄(i,j,k,l) ≤ 0` for h = 0                                                                      | `Inequalities/GHS.lean`    |
+| **Cor 4.3.5** (n-point inductive bound)   | `⟨σ_{S∪{j,k}}⟩ ≤ ⟨σ_S⟩⟨σ_jσ_k⟩ + Σ_{T⊆S} ⟨σ_{T∪{j}}⟩⟨σ_{(S\T)∪{k}}⟩` | `Inequalities/GHS.lean`    |
+| **Odd correlation vanishing**              | `⟨σ^A⟩ = 0` for odd \|A\| when h = 0                                                              | `Inequalities/GHS.lean`    |
 | **Walsh orthogonality/Fourier**           | Fourier inversion on `{±1}^n`                                                                      | `InfiniteVolume.lean`      |
 | Partition function positivity             | `Z > 0`                                                                                             | `GibbsMeasure.lean`        |
 | Spin flip symmetry                        | `H(flip σ) = H(σ)` when h = 0                                                                     | `Hamiltonian.lean`         |
@@ -41,7 +44,9 @@ Two axioms whose proofs are mathematically complete but require
 measure-theoretic infrastructure not yet formalized in Lean:
 
 - `phi4_single_site_nonneg` — φ⁴ single-site non-negativity (`ContinuousSpin/Phi4.lean`)
-- `lebowitz_third` — Lebowitz inequality for Ising via φ⁴ limit (`Inequalities/GHS.lean`)
+- `lebowitz_third` — Lebowitz inequality for 3 sites via φ⁴ limit (`Inequalities/GHS.lean`)
+- `lebowitz_four` — Lebowitz inequality for 4 sites via φ⁴ limit (`Inequalities/GHS.lean`)
+- `lebowitz_inductive` — inductive Lebowitz bound for general Finsets (`Inequalities/GHS.lean`)
 
 ## References
 
