@@ -1058,6 +1058,20 @@ for multiple reflection bounds.
 \S10.6 extends the Schwarz inequality to nonsymmetric reflections,
 needed only for regularity of $P(\varphi)_2$ fields (not existence).
 
+\section{Phase transitions (\S16.1)}
+
+\begin{theorem}[\texttt{magnetization\_monotone\_h}; \S16.1, p.~283]
+The magnetization $M(i) = \langle\sigma_i\rangle$ is monotone increasing
+in $h$ on $[0, \infty)$ for ferromagnetic parameters.
+Follows from \texttt{correlation\_monotone\_h}.
+\end{theorem}
+
+In finite volume, $f(h)$ is real-analytic (\texttt{freeEnergyH\_analyticOn}),
+so $M(h)$ is smooth and no phase transitions occur.
+Phase transitions appear only in the infinite volume limit:
+a first-order transition at $h_0$ corresponds to a jump discontinuity
+of $M(h)$ at $h_0$ (\S16.1, p.~283).
+
 \section{Peierls argument (\texttt{Peierls.lean})}
 
 This section formalizes the Peierls argument for the existence of phase

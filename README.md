@@ -55,6 +55,7 @@ All theorems are formally proved with **zero `sorry`**.
 | Reflection positivity (§10.4) | `ReflectionPositive`: b(x,x) ≥ 0 | Glimm-Jaffe §10.4 |
 | Discriminant lemma (§10.4) | `discriminant_nonneg`: b² ≤ ac from nonneg quadratic | Glimm-Jaffe §10.4 |
 | Iterated Schwarz (§10.5) | `iterated_schwarz_sq`: x² ≤ ax ⟹ x ≤ a | Glimm-Jaffe §10.5 |
+| Magnetization monotone in h (§16.1) | `magnetization_monotone_h`: M(h₁) ≤ M(h₂) | Glimm-Jaffe §16.1 |
 | Hamiltonian–boundary identity | `H(σ) = -J(|E| - 2|∂σ|)` for h = 0 | Glimm-Jaffe §5.4 |
 | Peierls bound (Prop 5.4.1) | `Pr(γ ⊆ ∂σ) ≤ exp(-2βJ|γ|)` | Glimm-Jaffe §5.4 |
 | Peierls contour sum bound | `Σ Pr(γ) ≤ N(r) exp(-2βJr)` | Glimm-Jaffe §5.4 |
@@ -138,7 +139,7 @@ heavy Lean measure theory assembly:
 
 | Section | Result | Status | Lean | Notes |
 |---|---|---|---|---|
-| §16.1 | Introduction (phase decomposition) | **Not started** | — | Pure phases; free energy derivatives |
+| §16.1 | Introduction (phase decomposition) | **Done** | `PhaseTransition.lean` | Magnetization monotonicity; convexity via χ ≥ 0 |
 | §16.2 | The two phase region | **Not started** | — | Ising model phase coexistence |
 | §16.3 | Symmetry unbroken, d = 2 | **Not started** | — | Mermin-Wagner for continuous spins |
 | §16.4 | Symmetry broken, d ≥ 3 | **Not started** | — | Ising model; d_cr = 2 |

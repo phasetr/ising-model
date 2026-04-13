@@ -174,4 +174,35 @@ theorem magnetization_zero_at_h_zero (G : SimpleGraph ι) [Fintype G.edgeSet]
   unfold magnetization
   exact correlation_odd_vanish G J β {i} ⟨0, by simp⟩
 
+/-! ## Free energy convexity and phase transitions (§16.1)
+
+Glimm–Jaffe §16.1 (pp. 280–284) discusses the thermodynamic
+characterization of phase transitions.
+
+Key results for the Ising model:
+1. `da/dh = ⟨σ_i⟩ = M` (magnetization) — eq. (16.1.8)
+2. `d²a/dh² = Σ_j ⟨σ_i; σ_j⟩ = χ ≥ 0` (susceptibility) — eq. (16.1.9)
+3. `a(h)` is convex in `h` since `χ ≥ 0`
+4. A first-order phase transition occurs at `h₀` iff `M(h)` is
+   discontinuous at `h₀`
+
+For finite volume: `f(h)` is real-analytic (`freeEnergyH_analyticOn`),
+so there are no phase transitions. Phase transitions appear only in the
+infinite volume limit `Λ ↑ Zᵈ`.
+
+The convexity `χ ≥ 0` is already proved as `susceptibility_nonneg`.
+The monotonicity `M(h₁) ≤ M(h₂)` for `h₁ ≤ h₂` follows from
+`correlation_monotone_h`. -/
+
+/-- **Magnetization monotonicity** (Glimm–Jaffe, §16.1, p. 283).
+The magnetization `M(i) = ⟨σ_i⟩` is monotone increasing in `h` on `[0, ∞)`
+for ferromagnetic parameters. This is the lattice version of the fact
+that `da/dh` is monotone (since `d²a/dh² = χ ≥ 0`). -/
+theorem magnetization_monotone_h (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (i : ι) :
+    MonotoneOn (fun h => magnetization G ⟨J, h, β⟩ i) (Set.Ici 0) := by
+  intro h₁ hh₁ h₂ hh₂ hh
+  unfold magnetization
+  exact correlation_monotone_h G J hJ β hβ {i} hh₁ hh₂ hh
+
 end IsingModel
