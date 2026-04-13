@@ -52,6 +52,7 @@ def phaseBoundarySize (G : SimpleGraph ι) [DecidableRel G.Adj] [Fintype G.edgeS
     (σ : Config ι) : ℕ :=
   (phaseBoundary G σ).card
 
+omit [Fintype ι] [DecidableEq ι] in
 /-- An edge is in the phase boundary iff the spins at its endpoints disagree. -/
 theorem mem_phaseBoundary (G : SimpleGraph ι) [DecidableRel G.Adj] [Fintype G.edgeSet]
     (σ : Config ι) (e : Sym2 ι) :
@@ -66,13 +67,15 @@ can be expressed in terms of the phase boundary size:
   H(σ) = -J · (|E| - 2|∂σ|)
 where |E| is the total number of edges and |∂σ| is the phase boundary size. -/
 
-/-- The edge spin is +1 for agreeing spins and -1 for disagreeing spins. -/
-private theorem edgeSpin_eq_one_or_neg_one (σ : Config ι) (e : Sym2 ι) :
-    edgeSpin (K := ℝ) σ e = 1 ∨ edgeSpin (K := ℝ) σ e = -1 := by
+omit [Fintype ι] [DecidableEq ι] in
+/-- The edge spin equals -1 on disagreeing edges and +1 on agreeing edges. -/
+private theorem edgeSpin_ite_disagrees (σ : Config ι) (e : Sym2 ι) :
+    edgeSpin (K := ℝ) σ e = if edgeDisagrees σ e then -1 else 1 := by
   refine Sym2.ind (fun i j => ?_) e
-  simp only [edgeSpin, Sym2.lift_mk]
-  cases σ i <;> cases σ j <;> simp [Spin.sign, Spin.toSign]
+  simp only [edgeSpin, edgeDisagrees, Sym2.lift_mk, Spin.sign, decide_eq_true_eq]
+  cases σ i <;> cases σ j <;> simp [Spin.toSign]
 
+omit [DecidableEq ι] in
 /-- For h = 0, the Hamiltonian equals `-J * (|E| - 2|∂σ|)` where |∂σ| is
 the phase boundary size. Each agreeing edge contributes +1 to the edge sum
 and each disagreeing edge contributes -1, so the sum = |E| - 2|∂σ|. -/
@@ -81,7 +84,30 @@ theorem hamiltonian_boundary (G : SimpleGraph ι) [DecidableRel G.Adj]
     (J β : ℝ) (σ : Config ι) :
     hamiltonian G ⟨J, 0, β⟩ σ =
       -J * (↑G.edgeFinset.card - 2 * ↑(phaseBoundarySize G σ)) := by
-  sorry
+  simp only [hamiltonian, interactionEnergy, externalFieldEnergy, phaseBoundarySize]
+  simp only [neg_zero, zero_mul, add_zero]
+  congr 1
+  -- Rewrite each edgeSpin as ±1 depending on disagreement
+  have hedge : ∀ e ∈ G.edgeFinset, edgeSpin (K := ℝ) σ e =
+      if edgeDisagrees σ e = true then (-1 : ℝ) else 1 := fun e _ =>
+    edgeSpin_ite_disagrees σ e
+  rw [Finset.sum_congr rfl hedge]
+  -- Split: ∑ (if disagree then -1 else 1) = ∑_disagree (-1) + ∑_agree 1
+  rw [Finset.sum_ite, Finset.sum_const, Finset.sum_const, nsmul_eq_mul, nsmul_eq_mul]
+  -- The disagree filter is exactly phaseBoundary
+  have hfilt : G.edgeFinset.filter (fun e => edgeDisagrees σ e = true) =
+      phaseBoundary G σ := by
+    ext e; simp [phaseBoundary, Finset.mem_filter, and_comm]
+  rw [hfilt]
+  -- Use card identity: |filter p| + |filter ¬p| = |total|
+  have htotal := Finset.card_filter_add_card_filter_not
+    (s := G.edgeFinset) (fun e => edgeDisagrees σ e = true)
+  rw [hfilt] at htotal
+  -- Cast the card identity to ℝ for linarith
+  have htotalR : (↑(phaseBoundary G σ).card : ℝ) +
+      ↑(G.edgeFinset.filter (fun a => ¬(edgeDisagrees σ a = true))).card =
+      ↑G.edgeFinset.card := by exact_mod_cast htotal
+  linarith
 
 /-! ## Peierls bound (Proposition 5.4.1)
 
