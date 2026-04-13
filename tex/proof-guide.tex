@@ -783,6 +783,87 @@ In Lean, \texttt{nlinarith} closes the goal from
 \texttt{truncated2\_nonneg}.
 \end{proof}
 
+\subsection{Spin-flip symmetry and odd correlations}
+
+\begin{theorem}[\texttt{spinProduct\_flip}]
+For any set $A$ and configuration $\sigma$:
+$\sigma^A(\mathrm{flip}\;\sigma) = (-1)^{|A|} \cdot \sigma^A(\sigma)$.
+\end{theorem}
+
+\begin{theorem}[\texttt{correlation\_odd\_vanish}]
+For $h = 0$ and $|A|$ odd: $\langle\sigma^A\rangle = 0$.
+\end{theorem}
+
+\begin{proof}
+Set $S = \sum_\sigma \sigma^A(\sigma) \cdot w(\sigma)$.
+Since $H(\mathrm{flip}\;\sigma) = H(\sigma)$ when $h = 0$
+(\texttt{hamiltonian\_flip\_eq}), we have $w(\mathrm{flip}\;\sigma) = w(\sigma)$.
+The flip involution $\sigma \mapsto \mathrm{flip}\;\sigma$ is a bijection on
+configurations, so
+$S = \sum_\sigma \sigma^A(\mathrm{flip}\;\sigma) \cdot w(\mathrm{flip}\;\sigma)
+   = (-1)^{|A|} S = -S$,
+hence $S = 0$.
+\end{proof}
+
+\subsection{Cor.~4.3.3: truncated 4-point function}
+
+\begin{definition}[\texttt{truncated4}]
+The truncated (connected) 4-point function:
+\[
+  U_4(i,j,k,l) = \langle\sigma_i\sigma_j\sigma_k\sigma_l\rangle
+  - \langle\sigma_i\sigma_j\rangle\langle\sigma_k\sigma_l\rangle
+  - \langle\sigma_i\sigma_k\rangle\langle\sigma_j\sigma_l\rangle
+  - \langle\sigma_i\sigma_l\rangle\langle\sigma_j\sigma_k\rangle.
+\]
+\end{definition}
+
+\begin{theorem}[\texttt{lebowitz\_four}; axiom]
+For ferromagnetic parameters with $h \ge 0$ and four distinct sites $i,j,k,l$:
+\begin{multline*}
+  \langle\sigma_i\sigma_j\sigma_k\sigma_l\rangle
+  + \langle\sigma_i\sigma_j\rangle\langle\sigma_k\sigma_l\rangle \\
+  \le \langle\sigma_i\sigma_k\rangle\langle\sigma_j\sigma_l\rangle
+  + \langle\sigma_i\sigma_l\rangle\langle\sigma_j\sigma_k\rangle
+  + \langle\sigma_i\sigma_k\sigma_l\rangle\langle\sigma_j\rangle
+  + \langle\sigma_j\sigma_k\sigma_l\rangle\langle\sigma_i\rangle.
+\end{multline*}
+\end{theorem}
+
+\begin{theorem}[\texttt{cor\_4\_3\_3}; proved]
+For $h = 0$ and four distinct sites, $U_4(i,j,k,l) \le 0$.
+\end{theorem}
+
+\begin{proof}
+From \texttt{lebowitz\_four}, with $h = 0$ the odd-cardinality correlations
+vanish: $\langle\sigma_i\rangle = \langle\sigma_j\rangle = 0$ and
+$\langle\sigma_{ikl}\rangle = \langle\sigma_{jkl}\rangle = 0$.
+The Lebowitz bound reduces to
+$\langle\sigma_{ijkl}\rangle + \langle\sigma_{ij}\rangle\langle\sigma_{kl}\rangle
+\le \langle\sigma_{ik}\rangle\langle\sigma_{jl}\rangle
+  + \langle\sigma_{il}\rangle\langle\sigma_{jk}\rangle$.
+Since $\langle\sigma_{ij}\rangle, \langle\sigma_{kl}\rangle \ge 0$ by GKS-I,
+this gives $U_4 \le -2\langle\sigma_{ij}\rangle\langle\sigma_{kl}\rangle \le 0$.
+\end{proof}
+
+\subsection{Cor.~4.3.5: $n$-point inductive bound}
+
+\begin{theorem}[\texttt{lebowitz\_inductive}; axiom]
+For ferromagnetic $h \ge 0$, a set $S$ of sites, and two sites $j, k \notin S$
+with $j \ne k$:
+\[
+  \langle\sigma_{S \cup \{j,k\}}\rangle \le
+  \langle\sigma_S\rangle\langle\sigma_j\sigma_k\rangle
+  + \sum_{T \subseteq S}
+    \langle\sigma_{T \cup \{j\}}\rangle\langle\sigma_{(S\setminus T) \cup \{k\}}\rangle.
+\]
+\end{theorem}
+
+This follows from the general Lebowitz inequality (Cor.~4.3.2 in
+Glimm--Jaffe) applied with $A = S$, $B = \{j,k\}$, and dropping
+non-positive terms.  Iterating gives Cor.~4.3.5: the $n$-point function
+is bounded by $(n-1)!$ times the sum over partial matchings of products
+of 2-point and 1-point correlations.
+
 \section{\texorpdfstring{$\varphi^4$}{phi4} inequalities (\texttt{ContinuousSpin/Phi4.lean})}
 
 The $\varphi^4$ correlation inequalities
