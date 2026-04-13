@@ -140,9 +140,9 @@ heavy Lean measure theory assembly:
 | Section | Result | Status | Lean | Notes |
 |---|---|---|---|---|
 | §16.1 | Introduction (phase decomposition) | **Done** | `PhaseTransition.lean` | Magnetization monotonicity; convexity via χ ≥ 0 |
-| §16.2 | The two phase region | **Not started** | — | Ising model phase coexistence |
-| §16.3 | Symmetry unbroken, d = 2 | **Not started** | — | Mermin-Wagner for continuous spins |
-| §16.4 | Symmetry broken, d ≥ 3 | **Not started** | — | Ising model; d_cr = 2 |
+| §16.2 | The two phase region | **Done** | `Peierls.lean` | Lattice Ising version = §5.4 (Peierls bound) |
+| §16.3 | Symmetry unbroken, d = 2 | **Out of scope** | — | Mermin-Wagner; continuous spins only (d_cr=1 for Ising) |
+| §16.4 | Symmetry broken, d ≥ 3 | **Done** | `Peierls.lean` | Lattice Ising version = §5.4 (spontaneous magnetization) |
 
 ### Chapter 17: The φ⁴ Critical Point
 
