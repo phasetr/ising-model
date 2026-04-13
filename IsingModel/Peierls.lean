@@ -541,6 +541,20 @@ noncomputable def plusGibbsExpectation (G : SimpleGraph ι) [Fintype G.edgeSet]
   (plusPartitionFunction G p B)⁻¹ *
     ∑ σ ∈ plusConfigs B, F σ * boltzmannWeight G p σ
 
+/-- The all-up configuration satisfies + boundary conditions. -/
+theorem allUp_mem_plusConfigs (B : Finset ι) :
+    (fun _ : ι => Spin.up) ∈ plusConfigs (ι := ι) B := by
+  simp [plusConfigs]
+
+set_option linter.unusedDecidableInType false in
+/-- The restricted partition function is positive. -/
+theorem plusPartitionFunction_pos' (G : SimpleGraph ι) [DecidableRel G.Adj]
+    [Fintype G.edgeSet] (p : IsingParams ℝ) (B : Finset ι) :
+    0 < plusPartitionFunction G p B := by
+  unfold plusPartitionFunction
+  exact Finset.sum_pos (fun σ _ => boltzmannWeight_pos G p σ)
+    ⟨_, allUp_mem_plusConfigs B⟩
+
 omit [DecidableEq ι] in
 /-- Under + boundary conditions, if `σ_i = down` then `i ∉ B`,
 and the down-spin set `S` satisfies `S ∩ B = ∅`. -/
@@ -561,11 +575,12 @@ The RHS is exponentially small in β for β sufficiently large,
 establishing spontaneous magnetization `⟨σ_i⟩₊ → 1` as `β → ∞`. -/
 theorem spontaneous_magnetization_plus (G : SimpleGraph ι) [DecidableRel G.Adj]
     [Fintype G.edgeSet] (J β : ℝ) (B : Finset ι) (i : ι)
-    (hZ : 0 < plusPartitionFunction G ⟨J, 0, β⟩ B) :
+    :
     plusGibbsExpectation G ⟨J, 0, β⟩ B
       (fun σ => if σ i = Spin.down then 1 else 0) ≤
     ∑ S ∈ Finset.univ.filter (fun S : Finset ι => i ∈ S ∧ Disjoint S B),
       Real.exp (-2 * β * J * ↑(cutEdges G S).card) := by
+  have hZ := plusPartitionFunction_pos' G ⟨J, 0, β⟩ B
   -- Step 1: Bound the + expectation by a sum of Peierls-type terms
   unfold plusGibbsExpectation
   -- The numerator: Σ_{σ∈+BC} 1_{σ_i=↓} · w(σ)
@@ -727,10 +742,11 @@ For `β` sufficiently large, the RHS is `≤ exp(-cβ)` by the geometric
 series evaluation of the contour sum. -/
 theorem prop_5_4_2 (G : SimpleGraph ι) [DecidableRel G.Adj]
     [Fintype G.edgeSet] (J β : ℝ) (B : Finset ι) (i : ι)
-    (hZ : 0 < plusPartitionFunction G ⟨J, 0, β⟩ B) :
+    :
     1 - plusGibbsExpectation G ⟨J, 0, β⟩ B (fun σ => Spin.sign ℝ (σ i)) ≤
     2 * ∑ S ∈ Finset.univ.filter (fun S : Finset ι => i ∈ S ∧ Disjoint S B),
       Real.exp (-2 * β * J * ↑(cutEdges G S).card) := by
+  have hZ := plusPartitionFunction_pos' G ⟨J, 0, β⟩ B
   -- Step 1: Rewrite sign in terms of indicator
   have hsign : ∀ σ : Config ι,
       Spin.sign ℝ (σ i) = 1 - 2 * (if σ i = Spin.down then (1 : ℝ) else 0) :=
@@ -776,14 +792,15 @@ theorem prop_5_4_2 (G : SimpleGraph ι) [DecidableRel G.Adj]
     simp only [x, Finset.mul_sum]; ring_nf
   rw [hx]
   exact mul_le_mul_of_nonneg_left
-    (spontaneous_magnetization_plus G J β B i hZ) (by norm_num)
+    (spontaneous_magnetization_plus G J β B i) (by norm_num)
 
 set_option linter.unusedDecidableInType false in
 /-- Under + boundary conditions, `⟨σ_i⟩₊ ≤ 1`, so `0 ≤ 1 - ⟨σ_i⟩₊`. -/
 theorem one_sub_plusExpectation_nonneg (G : SimpleGraph ι) [DecidableRel G.Adj]
     [Fintype G.edgeSet] (J β : ℝ) (B : Finset ι) (i : ι)
-    (hZ : 0 < plusPartitionFunction G ⟨J, 0, β⟩ B) :
+    :
     0 ≤ 1 - plusGibbsExpectation G ⟨J, 0, β⟩ B (fun σ => Spin.sign ℝ (σ i)) := by
+  have hZ := plusPartitionFunction_pos' G ⟨J, 0, β⟩ B
   unfold plusGibbsExpectation
   rw [sub_nonneg]
   -- ⟨sign⟩₊ = Z₊⁻¹ · Σ sign·w ≤ Z₊⁻¹ · Σ w = 1
@@ -813,17 +830,18 @@ and `S ∩ B = ∅` imply `∅ ≠ S ≠ V`. -/
 theorem prop_5_4_2_complete (G : SimpleGraph ι) [DecidableRel G.Adj]
     [Fintype G.edgeSet] (J β : ℝ) (hβ : 0 < β) (hJ : 0 < J)
     (B : Finset ι) (i : ι)
-    (hZ : 0 < plusPartitionFunction G ⟨J, 0, β⟩ B)
+    
     (hcut : ∀ S : Finset ι, i ∈ S → Disjoint S B → 1 ≤ (cutEdges G S).card) :
     0 ≤ 1 - plusGibbsExpectation G ⟨J, 0, β⟩ B (fun σ => Spin.sign ℝ (σ i)) ∧
     1 - plusGibbsExpectation G ⟨J, 0, β⟩ B (fun σ => Spin.sign ℝ (σ i)) ≤
       2 * (2 ^ Fintype.card ι) * Real.exp (-2 * β * J) := by
+  have hZ := plusPartitionFunction_pos' G ⟨J, 0, β⟩ B
   constructor
-  · exact one_sub_plusExpectation_nonneg G J β B i hZ
+  · exact one_sub_plusExpectation_nonneg G J β B i
   · calc 1 - plusGibbsExpectation G ⟨J, 0, β⟩ B (fun σ => Spin.sign ℝ (σ i))
         ≤ 2 * ∑ S ∈ Finset.univ.filter (fun S : Finset ι => i ∈ S ∧ Disjoint S B),
             Real.exp (-2 * β * J * ↑(cutEdges G S).card) :=
-          prop_5_4_2 G J β B i hZ
+          prop_5_4_2 G J β B i
       _ ≤ 2 * ∑ _ ∈ Finset.univ.filter (fun S : Finset ι => i ∈ S ∧ Disjoint S B),
             Real.exp (-2 * β * J) := by
           apply mul_le_mul_of_nonneg_left _ (by norm_num)
@@ -855,29 +873,16 @@ For any `0 < c < 2J`, such `β₀` exists since `2^(|V|+1) · exp(-(2J-c)β) →
 theorem prop_5_4_2_exp (G : SimpleGraph ι) [DecidableRel G.Adj]
     [Fintype G.edgeSet] (J β c : ℝ) (hβ : 0 < β) (hJ : 0 < J)
     (B : Finset ι) (i : ι)
-    (hZ : 0 < plusPartitionFunction G ⟨J, 0, β⟩ B)
+    
     (hcut : ∀ S : Finset ι, i ∈ S → Disjoint S B → 1 ≤ (cutEdges G S).card)
     (hexp : 2 * (2 ^ Fintype.card ι) * Real.exp (-2 * β * J) ≤
       Real.exp (-c * β)) :
     0 ≤ 1 - plusGibbsExpectation G ⟨J, 0, β⟩ B (fun σ => Spin.sign ℝ (σ i)) ∧
     1 - plusGibbsExpectation G ⟨J, 0, β⟩ B (fun σ => Spin.sign ℝ (σ i)) ≤
       Real.exp (-c * β) := by
-  have hcomplete := prop_5_4_2_complete G J β hβ hJ B i hZ hcut
+  have hcomplete := prop_5_4_2_complete G J β hβ hJ B i hcut
   exact ⟨hcomplete.1, le_trans hcomplete.2 hexp⟩
 
-/-- The all-up configuration satisfies + boundary conditions. -/
-theorem allUp_mem_plusConfigs (B : Finset ι) :
-    (fun _ : ι => Spin.up) ∈ plusConfigs (ι := ι) B := by
-  simp [plusConfigs]
-
-set_option linter.unusedDecidableInType false in
-/-- The restricted partition function is positive. -/
-theorem plusPartitionFunction_pos' (G : SimpleGraph ι) [DecidableRel G.Adj]
-    [Fintype G.edgeSet] (p : IsingParams ℝ) (B : Finset ι) :
-    0 < plusPartitionFunction G p B := by
-  unfold plusPartitionFunction
-  exact Finset.sum_pos (fun σ _ => boltzmannWeight_pos G p σ)
-    ⟨_, allUp_mem_plusConfigs B⟩
 
 omit [Fintype ι] in
 /-- A walk from `u ∈ S` to `v ∉ S` must cross a cut edge. -/
@@ -925,7 +930,6 @@ theorem prop_5_4_2_self_contained (G : SimpleGraph ι) [DecidableRel G.Adj]
     0 ≤ 1 - plusGibbsExpectation G ⟨J, 0, β⟩ B (fun σ => Spin.sign ℝ (σ i)) ∧
     1 - plusGibbsExpectation G ⟨J, 0, β⟩ B (fun σ => Spin.sign ℝ (σ i)) ≤
       Real.exp (-c * β) := by
-  have hZ := plusPartitionFunction_pos' G ⟨J, 0, β⟩ B
   have hcut : ∀ S : Finset ι, i ∈ S → Disjoint S B → 1 ≤ (cutEdges G S).card := by
     intro S hiS hdisj
     have hne : S.Nonempty := ⟨i, hiS⟩
@@ -937,6 +941,6 @@ theorem prop_5_4_2_self_contained (G : SimpleGraph ι) [DecidableRel G.Adj]
         · simp
       exact hB.ne_empty this
     exact (cutEdges_nonempty_of_connected G hconn S hne hneV).card_pos
-  exact prop_5_4_2_exp G J β c hβ hJ B i hZ hcut hexp
+  exact prop_5_4_2_exp G J β c hβ hJ B i hcut hexp
 
 end IsingModel
