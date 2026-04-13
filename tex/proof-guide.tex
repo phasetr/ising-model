@@ -703,6 +703,27 @@ $t_e = e^{-2\beta J}$.
 Combined with Lee-Yang ($P(z) \ne 0$ for $|z_i| < 1$), this gives
 $Z(h) \ne 0$ for complex $h$ with $|e^{-2\beta h}| < 1$.
 
+\begin{definition}[\texttt{graphToEdgeList}]
+Converts a \texttt{SimpleGraph} with uniform coupling $t$ to the
+edge list format used by \texttt{lee\_yang\_circle}:
+each edge $e$ is represented as $(\texttt{Quot.out}\;e)$ with coupling $t$.
+\end{definition}
+
+\begin{theorem}[\texttt{isingEdgePoly\_nonvanishing\_of\_graph},
+  Theorem 4.6.2 {\cite[pp.~64--70]{glimm-jaffe}},
+  {\cite[Theorem~3.43, pp.~122--127]{friedli-velenik}}]
+For the Ising model on graph $G$ with coupling $t \in [0,1)$
+(i.e., $J > 0$), the partition polynomial does not vanish on the
+open unit polydisk: $P(z) \ne 0$ for all $|z_k| < 1$.
+\end{theorem}
+
+\begin{proof}
+Construct the edge list via \texttt{graphToEdgeList}, verify the
+conditions (distinct endpoints from \texttt{SimpleGraph.Adj.ne},
+coupling bounds from $0 \le t < 1$), and apply
+\texttt{lee\_yang\_circle}.
+\end{proof}
+
 \section{\texorpdfstring{$\varphi^4$}{phi4} inequalities (\texttt{ContinuousSpin/Phi4.lean})}
 
 The $\varphi^4$ correlation inequalities
