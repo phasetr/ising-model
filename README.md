@@ -33,7 +33,7 @@ LaTeX source files. To compile:
 
 ```sh
 cd tex
-latexmk -lualatex proof-guide.tex
+latexmk -lualatex -interaction=nonstopmode proof-guide.tex
 ```
 
 Requires a TeX Live installation with LuaLaTeX. PDFs are not committed
