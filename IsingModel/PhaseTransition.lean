@@ -123,4 +123,55 @@ if `m*` is a solution, so is `-m*`. -/
 theorem tanh_odd (x : ℝ) : Real.tanh (-x) = -Real.tanh x := by
   simp [Real.tanh_neg]
 
+/-! ## Symmetry breaking (§5.3)
+
+Glimm–Jaffe §5.3 discusses symmetry breaking in the context of phase
+transitions. The key formalizable content for finite volume:
+
+1. **Z₂ symmetry at h = 0**: already proved as `correlation_odd_vanish`
+   in `GHS.lean` — for `h = 0`, odd correlations vanish.
+
+2. **Magnetization as order parameter**: `M = ⟨σ_i⟩` (eq. 5.3.5).
+
+3. **Susceptibility**: `χ = Σ_j ⟨σ_i; σ_j⟩ ≥ 0` (finite-volume sum).
+   Non-negativity follows from `truncated2_nonneg`.
+
+4. **Concavity of M(h)**: `d²M/dh² ≤ 0` for `h ≥ 0` follows from
+   GHS inequality (Cor. 4.3.4). This is stated conceptually.
+
+References: Glimm–Jaffe, §5.3, pp. 77–80, esp. p. 80. -/
+
+/-- **Magnetization** (order parameter, eq. (5.3.5)):
+`M(i) = ⟨σ_i⟩ = correlation G p {i}`. -/
+noncomputable def magnetization (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (p : IsingParams ℝ) (i : ι) : ℝ :=
+  correlation G p {i}
+
+/-- **Susceptibility** (per site `i`):
+`χ(i) = Σ_j ⟨σ_i; σ_j⟩ = Σ_j truncated2(i, j)`.
+
+The susceptibility measures the response of the magnetization to the
+external field. It equals `dM/dh` in the thermodynamic limit. -/
+noncomputable def susceptibility (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (p : IsingParams ℝ) (i : ι) : ℝ :=
+  ∑ j : ι, truncated2 G p i j
+
+/-- The susceptibility is non-negative for ferromagnetic parameters.
+Follows from `truncated2_nonneg`: each term `⟨σ_i; σ_j⟩ ≥ 0`. -/
+theorem susceptibility_nonneg (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i : ι) :
+    0 ≤ susceptibility G p i := by
+  unfold susceptibility
+  exact Finset.sum_nonneg (fun j _ => truncated2_nonneg G p hf i j)
+
+/-- The magnetization vanishes at `h = 0` (Z₂ symmetry, finite volume).
+This is the finite-volume counterpart of the statement that the Z₂
+symmetry is unbroken in finite volume. Symmetry breaking occurs only
+in the infinite volume limit. -/
+theorem magnetization_zero_at_h_zero (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (i : ι) :
+    magnetization G ⟨J, 0, β⟩ i = 0 := by
+  unfold magnetization
+  exact correlation_odd_vanish G J β {i} ⟨0, by simp⟩
+
 end IsingModel
