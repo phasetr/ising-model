@@ -39,6 +39,8 @@ All theorems are formally proved with **zero `sorry`**.
 | GHS inequality | `⟨σ_i; σ_j; σ_k⟩ ≤ 0` | Ellis §V.3, Lebowitz (1974) |
 | Cor 4.3.3 (truncated 4-point ≤ 0) | `U₄(i,j,k,l) ≤ 0` for h = 0 | Glimm-Jaffe §4.3 |
 | Odd correlation vanishing | `⟨σ^A⟩ = 0` for odd \|A\| when h = 0 | Spin-flip symmetry |
+| Free energy analyticity (Thm 4.6.2) | `f(h)` real-analytic for h > 0 | Glimm-Jaffe §4.6 |
+| Partition function analyticity | `Z(h)`, `Z(J)` real-analytic | Glimm-Jaffe §4.6 |
 | Hamiltonian–boundary identity | `H(σ) = -J(|E| - 2|∂σ|)` for h = 0 | Glimm-Jaffe §5.4 |
 | Peierls bound (Prop 5.4.1) | `Pr(γ ⊆ ∂σ) ≤ exp(-2βJ|γ|)` | Glimm-Jaffe §5.4 |
 | Peierls contour sum bound | `Σ Pr(γ) ≤ N(r) exp(-2βJr)` | Glimm-Jaffe §5.4 |
@@ -88,7 +90,7 @@ heavy Lean measure theory assembly:
 | §4.6 | Ising nonvanishing (Thm 4.6.2) | **Done** | `isingEdgePoly_nonvanishing_of_graph` | |
 | §4.6 | Free energy monotonicity (h) | **Done** | `freeEnergy_monotone_h` | |
 | §4.6 | Free energy monotonicity (J) | **Done** | `freeEnergy_monotone_J` | |
-| §4.6 | Thm 4.6.2 (free energy analyticity) | **In progress** | `FreeEnergy.lean` | PR #43 |
+| §4.6 | Thm 4.6.2 (free energy analyticity) | **Done** | `freeEnergyH_analyticOn` | Real-analytic in h, J |
 | §4.7 | Thm 4.7.1 (two-component spins) | **Out of scope** | — | XY model; vector-valued spins |
 | §4.7 | Cor 4.7.2 | **Out of scope** | — | XY model |
 | GHS | GHS inequality | **Done** | `ghs_inequality` | Uses axiom `lebowitz_third` |

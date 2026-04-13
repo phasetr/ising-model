@@ -30,6 +30,7 @@ All theorems are formally proved with **zero `sorry`**.
 | **Cor 4.3.3** (truncated 4-point ≤ 0)     | `U₄(i,j,k,l) ≤ 0` for h = 0                                                                      | `Inequalities/GHS.lean`    |
 | **Cor 4.3.5** (n-point inductive bound)   | `⟨σ_{S∪{j,k}}⟩ ≤ ⟨σ_S⟩⟨σ_jσ_k⟩ + Σ_{T⊆S} ⟨σ_{T∪{j}}⟩⟨σ_{(S\T)∪{k}}⟩` | `Inequalities/GHS.lean`    |
 | **Odd correlation vanishing**              | `⟨σ^A⟩ = 0` for odd \|A\| when h = 0                                                              | `Inequalities/GHS.lean`    |
+| **Free energy analyticity** (Thm 4.6.2)   | `f(h)` real-analytic for h > 0; `Z(h)`, `Z(J)` real-analytic                                      | `FreeEnergy.lean`          |
 | **Walsh orthogonality/Fourier**           | Fourier inversion on `{±1}^n`                                                                      | `InfiniteVolume.lean`      |
 | Partition function positivity             | `Z > 0`                                                                                             | `GibbsMeasure.lean`        |
 | Spin flip symmetry                        | `H(flip σ) = H(σ)` when h = 0                                                                     | `Hamiltonian.lean`         |
