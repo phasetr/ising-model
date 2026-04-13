@@ -777,4 +777,72 @@ theorem prop_5_4_2 (G : SimpleGraph ι) [DecidableRel G.Adj]
   exact mul_le_mul_of_nonneg_left
     (spontaneous_magnetization_plus G J β B i hZ) (by norm_num)
 
+set_option linter.unusedDecidableInType false in
+/-- Under + boundary conditions, `⟨σ_i⟩₊ ≤ 1`, so `0 ≤ 1 - ⟨σ_i⟩₊`. -/
+theorem one_sub_plusExpectation_nonneg (G : SimpleGraph ι) [DecidableRel G.Adj]
+    [Fintype G.edgeSet] (J β : ℝ) (B : Finset ι) (i : ι)
+    (hZ : 0 < plusPartitionFunction G ⟨J, 0, β⟩ B) :
+    0 ≤ 1 - plusGibbsExpectation G ⟨J, 0, β⟩ B (fun σ => Spin.sign ℝ (σ i)) := by
+  unfold plusGibbsExpectation
+  rw [sub_nonneg]
+  -- ⟨sign⟩₊ = Z₊⁻¹ · Σ sign·w ≤ Z₊⁻¹ · Σ w = 1
+  calc (plusPartitionFunction G ⟨J, 0, β⟩ B)⁻¹ *
+        ∑ σ ∈ plusConfigs B,
+          Spin.sign ℝ (σ i) * boltzmannWeight G ⟨J, 0, β⟩ σ
+      ≤ (plusPartitionFunction G ⟨J, 0, β⟩ B)⁻¹ *
+          ∑ σ ∈ plusConfigs B, boltzmannWeight G ⟨J, 0, β⟩ σ := by
+        apply mul_le_mul_of_nonneg_left _ (inv_nonneg.mpr hZ.le)
+        apply Finset.sum_le_sum; intro σ _
+        have hsign : Spin.sign ℝ (σ i) ≤ 1 := by
+          cases σ i <;> simp [Spin.sign, Spin.toSign]
+        calc Spin.sign ℝ (σ i) * boltzmannWeight G ⟨J, 0, β⟩ σ
+            ≤ 1 * boltzmannWeight G ⟨J, 0, β⟩ σ :=
+              mul_le_mul_of_nonneg_right hsign (boltzmannWeight_pos G ⟨J, 0, β⟩ σ).le
+          _ = boltzmannWeight G ⟨J, 0, β⟩ σ := one_mul _
+    _ = 1 := inv_mul_cancel₀ hZ.ne'
+
+/-- **Prop 5.4.2 complete form** (Glimm–Jaffe §5.4, p. 83).
+Under + boundary conditions on a connected graph with `h = 0`, `J > 0`,
+`β > 0`, and non-empty boundary `B`:
+`0 ≤ 1 - ⟨σ_i⟩₊ ≤ 2 · (2^|V|) · exp(-2βJ)`.
+
+The hypothesis `hcut` states that every relevant subset S has `|cut(S)| ≥ 1`.
+This holds for connected graphs with non-empty boundary B, since `i ∈ S`
+and `S ∩ B = ∅` imply `∅ ≠ S ≠ V`. -/
+theorem prop_5_4_2_complete (G : SimpleGraph ι) [DecidableRel G.Adj]
+    [Fintype G.edgeSet] (J β : ℝ) (hβ : 0 < β) (hJ : 0 < J)
+    (B : Finset ι) (i : ι)
+    (hZ : 0 < plusPartitionFunction G ⟨J, 0, β⟩ B)
+    (hcut : ∀ S : Finset ι, i ∈ S → Disjoint S B → 1 ≤ (cutEdges G S).card) :
+    0 ≤ 1 - plusGibbsExpectation G ⟨J, 0, β⟩ B (fun σ => Spin.sign ℝ (σ i)) ∧
+    1 - plusGibbsExpectation G ⟨J, 0, β⟩ B (fun σ => Spin.sign ℝ (σ i)) ≤
+      2 * (2 ^ Fintype.card ι) * Real.exp (-2 * β * J) := by
+  constructor
+  · exact one_sub_plusExpectation_nonneg G J β B i hZ
+  · calc 1 - plusGibbsExpectation G ⟨J, 0, β⟩ B (fun σ => Spin.sign ℝ (σ i))
+        ≤ 2 * ∑ S ∈ Finset.univ.filter (fun S : Finset ι => i ∈ S ∧ Disjoint S B),
+            Real.exp (-2 * β * J * ↑(cutEdges G S).card) :=
+          prop_5_4_2 G J β B i hZ
+      _ ≤ 2 * ∑ _ ∈ Finset.univ.filter (fun S : Finset ι => i ∈ S ∧ Disjoint S B),
+            Real.exp (-2 * β * J) := by
+          apply mul_le_mul_of_nonneg_left _ (by norm_num)
+          apply Finset.sum_le_sum; intro S hS
+          simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hS
+          apply Real.exp_le_exp_of_le
+          have h1 : (1 : ℝ) ≤ ↑(cutEdges G S).card := by exact_mod_cast hcut S hS.1 hS.2
+          have hβJ : 0 < β * J := mul_pos hβ hJ
+          nlinarith [mul_le_mul_of_nonpos_left h1 (by linarith : -2 * β * J ≤ 0)]
+      _ = 2 * (↑(Finset.univ.filter (fun S : Finset ι => i ∈ S ∧ Disjoint S B)).card *
+            Real.exp (-2 * β * J)) := by
+          congr 1; rw [Finset.sum_const, nsmul_eq_mul]
+      _ ≤ 2 * (2 ^ Fintype.card ι * Real.exp (-2 * β * J)) := by
+          apply mul_le_mul_of_nonneg_left _ (by norm_num)
+          apply mul_le_mul_of_nonneg_right _ (Real.exp_nonneg _)
+          calc ↑(Finset.univ.filter (fun S : Finset ι => i ∈ S ∧ Disjoint S B)).card
+              ≤ ↑(Finset.univ (α := Finset ι)).card := by
+                exact_mod_cast Finset.card_filter_le _ _
+            _ = (2 : ℝ) ^ Fintype.card ι := by
+                simp [Finset.card_univ, Fintype.card_finset]
+      _ = 2 * (2 ^ Fintype.card ι) * Real.exp (-2 * β * J) := by ring
+
 end IsingModel
