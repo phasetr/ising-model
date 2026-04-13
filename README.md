@@ -30,7 +30,8 @@ All theorems are formally proved with **zero `sorry`**.
 | Spin flip symmetry | `H(flip σ) = H(σ)` when h = 0 | — |
 | φ⁴ algebraic identities | quartic/orthogonal transformation identities | Glimm-Jaffe §4.3 |
 | Correlation boundedness | `\|⟨σ^A⟩\| ≤ 1` (Prop 4.2.2) | Glimm-Jaffe §4.2 |
-| Correlation monotonicity | `⟨σ^B⟩` monotone in J on `[0,∞)` (Prop 4.2.1) | Glimm-Jaffe §4.2 |
+| Correlation monotonicity (J) | `⟨σ^B⟩` monotone in J on `[0,∞)` (Prop 4.2.1) | Glimm-Jaffe §4.2 |
+| Correlation monotonicity (h) | `⟨σ^B⟩` monotone in h on `[0,∞)` (Prop 4.2.4) | Glimm-Jaffe §4.2 |
 | Covariance non-negativity | `Cov(σ^B, f) ≥ 0` for HNC f | Glimm-Jaffe §4.2 |
 | Correlation convergence | `⟨σ^B⟩` converges as J → ∞ (Thm 4.2.3) | Glimm-Jaffe §4.2 |
 | Free energy monotonicity | Z and f monotone in J and h on [0,∞) | Glimm-Jaffe §4.6 |
