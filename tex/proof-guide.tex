@@ -1072,6 +1072,19 @@ Phase transitions appear only in the infinite volume limit:
 a first-order transition at $h_0$ corresponds to a jump discontinuity
 of $M(h)$ at $h_0$ (\S16.1, p.~283).
 
+\section{Critical exponents (\S17.5, \S17.7)}
+
+\begin{theorem}[\texttt{eta\_nonneg\_finite\_vol}; Thm~17.7.1]
+The critical exponent $\eta \ge 0$: in finite volume,
+$\langle\sigma_i;\sigma_j\rangle \ge 0$ by GKS-II
+(\texttt{truncated2\_nonneg}).
+\end{theorem}
+
+The bound $\zeta \ge 0$ follows from $U_4 \le 0$ (\texttt{cor\_4\_3\_3}).
+The correlation length definition (inverse mass, \S17.5)
+and the continuity theorem (Thm~17.5.1) require the infinite
+volume limit and transfer matrix spectral theory.
+
 \section{Peierls argument (\texttt{Peierls.lean})}
 
 This section formalizes the Peierls argument for the existence of phase

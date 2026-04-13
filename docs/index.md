@@ -43,6 +43,7 @@ All theorems are formally proved with **zero `sorry`**.
 | **Reflection positivity** (§10.4)         | `ReflectionPositive` def; `discriminant_nonneg` (Schwarz core)                                     | `Conditioning.lean`        |
 | **Iterated Schwarz** (§10.5)              | `iterated_schwarz_sq`: geometric mean bound                                                        | `Conditioning.lean`        |
 | **Magnetization monotone** (§16.1)        | `magnetization_monotone_h`: M(h₁) ≤ M(h₂) for h ≥ 0                                              | `PhaseTransition.lean`     |
+| **η ≥ 0** (§17.7)                         | `eta_nonneg_finite_vol`: critical exponent bound from GKS-II                                       | `PhaseTransition.lean`     |
 | **Free energy analyticity** (Thm 4.6.2)   | `f(h)` real-analytic for h > 0; `Z(h)`, `Z(J)` real-analytic                                      | `FreeEnergy.lean`          |
 | **Walsh orthogonality/Fourier**           | Fourier inversion on `{±1}^n`                                                                      | `InfiniteVolume.lean`      |
 | Partition function positivity             | `Z > 0`                                                                                             | `GibbsMeasure.lean`        |
