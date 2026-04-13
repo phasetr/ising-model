@@ -88,9 +88,9 @@ heavy Lean measure theory assembly:
 | §4.6 | Ising nonvanishing (Thm 4.6.2) | **Done** | `isingEdgePoly_nonvanishing_of_graph` | |
 | §4.6 | Free energy monotonicity (h) | **Done** | `freeEnergy_monotone_h` | |
 | §4.6 | Free energy monotonicity (J) | **Done** | `freeEnergy_monotone_J` | |
-| §4.6 | Free energy analyticity | **Not started** | — | |
-| §4.7 | Thm 4.7.1 (two-component spins) | **Not started** | — | Vector-valued spins |
-| §4.7 | Cor 4.7.2 | **Not started** | — | |
+| §4.6 | Thm 4.6.2 (free energy analyticity) | **In progress** | `FreeEnergy.lean` | PR #43 |
+| §4.7 | Thm 4.7.1 (two-component spins) | **Out of scope** | — | XY model; vector-valued spins |
+| §4.7 | Cor 4.7.2 | **Out of scope** | — | XY model |
 | GHS | GHS inequality | **Done** | `ghs_inequality` | Uses axiom `lebowitz_third` |
 
 ### Chapter 5: Phase Transitions and Critical Points
