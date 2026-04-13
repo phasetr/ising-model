@@ -50,8 +50,6 @@ heavy Lean measure theory assembly:
 - `lebowitz_third`: Lebowitz third inequality for ferromagnetic Ising (`Inequalities/GHS.lean`)
   — proved for continuous φ⁴ spins via `phi4_single_site_nonneg`, transferred to Ising
   by the limit `exp(-λ(ξ²-1)²)dξ → ½(δ₊₁+δ₋₁)` as λ → ∞
-- `contourCountingBound`: contour counting bound N(r) ≤ a·b^r for ℤ^d lattice (`Peierls.lean`)
-  — combinatorial fact about self-avoiding surfaces requiring lattice topology
 
 
 ## Documentation

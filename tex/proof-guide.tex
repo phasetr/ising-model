@@ -900,6 +900,31 @@ Dividing by $Z$ gives the result.
 
 \noindent\textbf{Lean:} \texttt{peierls\_sum\_bound}, \texttt{peierls\_bound}
 
+\begin{theorem}[Contour counting bound]
+For a fixed finite box of size $n$, there exist $a, b > 0$ such that
+for any site $i$ and any $r$,
+\[
+  \#\{S \subseteq V : i \in S,\; |\mathrm{cut}(S)| = r\} \le a \cdot b^r.
+\]
+For the fixed box, the trivial bound $a = 2^{|V|}$, $b = 1$ suffices.
+The tighter bound $N(r) \le r^d \cdot c(d)^r$ with constants independent
+of $n$ (needed for the $n \to \infty$ limit) requires lattice animal
+enumeration.
+\end{theorem}
+
+\noindent\textbf{Lean:} \texttt{contourCountingBound}
+
+\begin{lemma}[Contour sum bound]
+Combining the Peierls bound with the contour count:
+\[
+  \sum_{\substack{S : i \in S \\ |\mathrm{cut}(S)| = r}}
+  \Pr(\mathrm{cut}(S) \subseteq \partial\sigma)
+  \le N(r) \cdot e^{-2\beta J r}.
+\]
+\end{lemma}
+
+\noindent\textbf{Lean:} \texttt{peierls\_contour\_sum\_le}
+
 \begin{thebibliography}{9}
 \bibitem{glimm-jaffe}
 J.~Glimm and A.~Jaffe,
