@@ -53,6 +53,50 @@ heavy Lean measure theory assembly:
   by the limit `exp(-λ(ξ²-1)²)dξ → ½(δ₊₁+δ₋₁)` as λ → ∞
 
 
+## Glimm-Jaffe formalization progress
+
+### Chapter 2: Classical Statistical Mechanics
+
+| Section | Result | Status | Lean | Notes |
+|---|---|---|---|---|
+| §2.3 | Ising model definitions | **Done** | `Basic.lean`, `Hamiltonian.lean`, `GibbsMeasure.lean` | Spin, Config, Hamiltonian, Z, Gibbs expectation |
+
+### Chapter 4: Critical Phenomena
+
+| Section | Result | Status | Lean | Notes |
+|---|---|---|---|---|
+| §4.1 | Thm 4.1.1 GKS-I | **Done** | `gks_first` | |
+| §4.1 | Thm 4.1.1 GKS-II | **Done** | `gks_second` | |
+| §4.2 | Prop 4.2.1 (J-monotonicity) | **Done** | `correlation_monotone_J` | |
+| §4.2 | Prop 4.2.2 (boundedness) | **Done** | `abs_correlation_le_one` | |
+| §4.2 | Thm 4.2.3 (convergence) | **Done** | `correlation_convergent` | |
+| §4.2 | Prop 4.2.4 (h-monotonicity) | **Done** | `correlation_monotone_h` | |
+| §4.3 | Thm 4.3.1 (φ⁴ non-negativity) | **Axiom** | `phi4_single_site_nonneg` | Measure theory |
+| §4.3 | Cor 4.3.2 (Lebowitz) | **Axiom** | `lebowitz_third` | Via φ⁴ limit |
+| §4.3 | Cor 4.3.3 | **Not started** | — | |
+| §4.3 | Cor 4.3.4 | **Not started** | — | |
+| §4.3 | Cor 4.3.5 | **Not started** | — | |
+| §4.4 | FKG inequality | **Done** | `fkg_ising` | |
+| §4.5 | Lee-Yang circle theorem | **Done** | `lee_yang_circle` | |
+| §4.6 | Ising nonvanishing (Thm 4.6.2) | **Done** | `isingEdgePoly_nonvanishing_of_graph` | |
+| §4.6 | Free energy monotonicity (h) | **Done** | `freeEnergy_monotone_h` | |
+| §4.6 | Free energy monotonicity (J) | **Done** | `freeEnergy_monotone_J` | |
+| §4.6 | Free energy analyticity | **Not started** | — | |
+| §4.7 | Thm 4.7.1 (two-component spins) | **Not started** | — | Vector-valued spins |
+| §4.7 | Cor 4.7.2 | **Not started** | — | |
+| GHS | GHS inequality | **Done** | `ghs_inequality` | Uses axiom `lebowitz_third` |
+
+### Chapter 5: Phase Transitions and Critical Points
+
+| Section | Result | Status | Lean | Notes |
+|---|---|---|---|---|
+| §5.1 | Pure and mixed phases | **Not started** | — | Qualitative; ergodic decomposition |
+| §5.2 | Phase transitions | **Not started** | — | Qualitative discussion |
+| §5.3 | Symmetry breaking | **Not started** | — | Qualitative discussion |
+| §5.4 | Prop 5.4.1 (Peierls bound) | **Done** | `peierls_bound` | |
+| §5.4 | Prop 5.4.2 (spontaneous magnetization) | **Done** | `prop_5_4_2_self_contained` | |
+| §5.5 | An example | **Not started** | — | Specific computation |
+
 ## Documentation
 
 - Project page: [https://phasetr.github.io/ising-model/](https://phasetr.github.io/ising-model/)
