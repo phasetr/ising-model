@@ -32,14 +32,16 @@ All theorems are formally proved with **zero `sorry`**.
 | Spin flip symmetry                        | `H(flip σ) = H(σ)` when h = 0                                                                     | `Hamiltonian.lean`         |
 | **Hamiltonian–boundary identity**         | `H(σ) = -J(|E| - 2|∂σ|)` for h = 0                                                               | `Peierls.lean`             |
 | **Peierls bound** (Prop 5.4.1)            | `Pr(γ ⊆ ∂σ) ≤ exp(-2βJ|γ|)`                                                                      | `Peierls.lean`             |
+| **Peierls contour sum bound**             | `Σ Pr(γ) ≤ N(r) exp(-2βJr)` for contours of size r                                                | `Peierls.lean`             |
 
 ## Axioms
 
-Two measure-theoretic axioms whose proofs are mathematically complete
-but not formalized in Lean:
+Three axioms whose proofs are mathematically complete but require
+infrastructure not yet formalized in Lean:
 
 - `phi4_single_site_nonneg` — φ⁴ single-site non-negativity (`ContinuousSpin/Phi4.lean`)
 - `lebowitz_third` — Lebowitz inequality for Ising via φ⁴ limit (`Inequalities/GHS.lean`)
+- `contourCountingBound` — contour counting N(r) ≤ a·b^r for ℤ^d (`Peierls.lean`)
 
 ## References
 

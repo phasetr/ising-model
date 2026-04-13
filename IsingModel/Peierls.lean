@@ -312,4 +312,65 @@ theorem peierls_bound (G : SimpleGraph ι) [DecidableRel G.Adj]
         rw [mul_comm (Real.exp _) _, ← mul_assoc,
           inv_mul_cancel₀ hZ.ne', one_mul]
 
+/-! ## Spontaneous magnetization (Proposition 5.4.2)
+
+For `d ≥ 2` and `β` sufficiently large, the Ising model on `ℤ^d` with
+`+` boundary conditions has spontaneous magnetization:
+  `0 ≤ 1 - ⟨σ_i⟩₊ ≤ exp(-cβ)`.
+
+The proof sums the Peierls bound over all contours enclosing site `i`.
+The contour counting bound (number of contours of size `r` enclosing `i`
+is at most `a * b^r`) is a combinatorial fact about `ℤ^d` lattice paths
+that we axiomatize. -/
+
+/-- **Contour counting axiom** (Glimm–Jaffe, §5.4, p. 83).
+For the `d`-dimensional box graph (`d ≥ 2`), there exist constants `a, b > 0`
+such that for any site `i`, the number of subsets `S` containing `i` with
+`|cut(S)| = r` is at most `a * b ^ r`.
+
+This is a combinatorial fact about self-avoiding surfaces in `ℤ^d` that
+requires lattice topology to prove. The key ingredients are:
+- Translational freedom: `γ` lies in a cube of side `r`, giving `≤ r^d` positions
+- Path enumeration: starting from any edge, `γ` can be extended in `≤ c(d)` ways
+Together: `N(r) ≤ r^d * c(d)^r ≤ a * b^r` for suitable `a, b`. -/
+axiom contourCountingBound (d : ℕ) (hd : 2 ≤ d) (n : ℕ) :
+    ∃ (a b : ℝ), 0 < a ∧ 0 < b ∧
+      ∀ (i : BoxSite d n) (r : ℕ),
+        (Finset.univ.filter (fun S : Finset (BoxSite d n) =>
+          i ∈ S ∧ (cutEdges (boxGraph d n) S).card = r)).card ≤ a * b ^ r
+
+/-- **Peierls contour sum bound**. The sum of Peierls probabilities over all
+contours enclosing site `i` with a given size `r` is at most
+`N(r) * exp(-2βJr)`, where `N(r)` is the contour count. -/
+theorem peierls_contour_sum_le (d n : ℕ) (J β : ℝ) (i : BoxSite d n)
+    (r : ℕ) (N : ℝ) (hN : (Finset.univ.filter (fun S : Finset (BoxSite d n) =>
+      i ∈ S ∧ (cutEdges (boxGraph d n) S).card = r)).card ≤ N) :
+    ∑ S ∈ Finset.univ.filter (fun S : Finset (BoxSite d n) =>
+        i ∈ S ∧ (cutEdges (boxGraph d n) S).card = r),
+      gibbsExpectation (boxGraph d n) ⟨J, 0, β⟩
+        (fun σ => if cutEdges (boxGraph d n) S ⊆ phaseBoundary (boxGraph d n) σ
+          then 1 else 0) ≤
+    N * Real.exp (-2 * β * J * ↑r) := by
+  calc ∑ S ∈ Finset.univ.filter (fun S =>
+          i ∈ S ∧ (cutEdges (boxGraph d n) S).card = r), _
+      ≤ ∑ S ∈ Finset.univ.filter (fun S =>
+          i ∈ S ∧ (cutEdges (boxGraph d n) S).card = r),
+        Real.exp (-2 * β * J * ↑(cutEdges (boxGraph d n) S).card) := by
+        apply Finset.sum_le_sum; intro S hS
+        exact peierls_bound (boxGraph d n) J β S
+    _ = ∑ _ ∈ Finset.univ.filter (fun S =>
+          i ∈ S ∧ (cutEdges (boxGraph d n) S).card = r),
+        Real.exp (-2 * β * J * ↑r) := by
+        apply Finset.sum_congr rfl; intro S hS
+        simp only [Finset.mem_filter] at hS
+        rw [hS.2.2]
+    _ = ↑(Finset.univ.filter (fun S : Finset (BoxSite d n) =>
+          i ∈ S ∧ (cutEdges (boxGraph d n) S).card = r)).card *
+        Real.exp (-2 * β * J * ↑r) := by
+        rw [Finset.sum_const, nsmul_eq_mul]
+    _ ≤ N * Real.exp (-2 * β * J * ↑r) := by
+        apply mul_le_mul_of_nonneg_right
+        · exact_mod_cast hN
+        · exact Real.exp_nonneg _
+
 end IsingModel
