@@ -496,4 +496,27 @@ theorem gibbs_spin_down_le_contour_sum (G : SimpleGraph ι) [DecidableRel G.Adj]
         apply Finset.sum_congr rfl; intro σ _
         rw [Finset.sum_mul]
 
+/-- **Spontaneous magnetization bound** (Glimm–Jaffe, Prop. 5.4.2).
+The probability of spin down at site `i` is bounded by the sum of
+Peierls bounds over all subsets containing `i`:
+`⟨1_{σ_i = ↓}⟩ ≤ Σ_{S ∋ i} exp(-2βJ|cut(S)|)`.
+
+This is the main inequality driving the Peierls argument: for `β`
+sufficiently large, the RHS is exponentially small in `β`. -/
+theorem spontaneous_magnetization_bound (G : SimpleGraph ι) [DecidableRel G.Adj]
+    [Fintype G.edgeSet] (J β : ℝ) (i : ι) :
+    gibbsExpectation G ⟨J, 0, β⟩
+      (fun σ => if σ i = Spin.down then 1 else 0) ≤
+    ∑ S ∈ Finset.univ.filter (fun S : Finset ι => i ∈ S),
+      Real.exp (-2 * β * J * ↑(cutEdges G S).card) := by
+  calc gibbsExpectation G ⟨J, 0, β⟩
+        (fun σ => if σ i = Spin.down then 1 else 0)
+      ≤ ∑ S ∈ Finset.univ.filter (fun S : Finset ι => i ∈ S),
+          gibbsExpectation G ⟨J, 0, β⟩
+            (fun σ => if cutEdges G S ⊆ phaseBoundary G σ then 1 else 0) :=
+        gibbs_spin_down_le_contour_sum G J β i
+    _ ≤ ∑ S ∈ Finset.univ.filter (fun S : Finset ι => i ∈ S),
+          Real.exp (-2 * β * J * ↑(cutEdges G S).card) :=
+        Finset.sum_le_sum fun S _ => peierls_bound G J β S
+
 end IsingModel
