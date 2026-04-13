@@ -123,7 +123,7 @@ heavy Lean measure theory assembly:
 |---|---|---|---|---|
 | §10.1 | Introduction | **Done** | — | Overview; lattice version is Ch.4 |
 | §10.2 | Correlation inequalities / β-monotonicity | **Done** | `Conditioning.lean` | Cor 10.2.3: Z monotone in β |
-| §10.3 | Dirichlet/Neumann monotonicity | **Not started** | — | Prop 10.3.3 → Prop 4.6.1 (f_Λ convergence) |
+| §10.3 | Dirichlet/Neumann monotonicity | **Partial** | `Conditioning.lean` | Lattice: GKS-II; BC infrastructure deferred |
 | §10.4 | Reflection positivity | **Not started** | — | |
 | §10.5 | Multiple reflections | **Not started** | — | |
 | §10.6 | Nonsymmetric reflections | **Not started** | — | |
