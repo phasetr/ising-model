@@ -44,6 +44,8 @@ All theorems are formally proved with **zero `sorry`**.
 | Truncated 2-point bound (§5.1) | `truncated2_le_one`: `0 ≤ ⟨σ_i;σ_j⟩ ≤ 1` | Glimm-Jaffe §5.1 |
 | Mixed-phase formula (§5.1) | `mixed_phase_truncated2`: `M² - (M(2α-1))² = 4α(1-α)M²` | Glimm-Jaffe §5.1 |
 | Mixed-phase pure iff (§5.1) | `mixed_phase_pure_iff`: `4α(1-α)M² = 0 ↔ α ∈ {0,1}` | Glimm-Jaffe §5.1 |
+| Mean field energy symmetry (§5.2) | `meanFieldEnergy_neg`: `φ(-m) = φ(m)` at h = 0 | Glimm-Jaffe §5.2 |
+| Mean field trivial solution (§5.2) | `meanField_zero_solution`: `tanh(β(Jz·0+0)) = 0` | Glimm-Jaffe §5.2 |
 | Hamiltonian–boundary identity | `H(σ) = -J(|E| - 2|∂σ|)` for h = 0 | Glimm-Jaffe §5.4 |
 | Peierls bound (Prop 5.4.1) | `Pr(γ ⊆ ∂σ) ≤ exp(-2βJ|γ|)` | Glimm-Jaffe §5.4 |
 | Peierls contour sum bound | `Σ Pr(γ) ≤ N(r) exp(-2βJr)` | Glimm-Jaffe §5.4 |
@@ -106,7 +108,7 @@ heavy Lean measure theory assembly:
 | Section | Result | Status | Lean | Notes |
 |---|---|---|---|---|
 | §5.1 | Pure and mixed phases | **Done** | `PhaseTransition.lean` | truncated2 bounds, mixed-phase formula |
-| §5.2 | Phase transitions (mean field) | **Not started** | — | Mean field picture |
+| §5.2 | Phase transitions (mean field) | **Done** | `PhaseTransition.lean` | Mean field energy, symmetry, tanh equation |
 | §5.3 | Symmetry breaking | **Not started** | — | Spontaneous symmetry breaking |
 | §5.4 | Prop 5.4.1 (Peierls bound) | **Done** | `peierls_bound` | |
 | §5.4 | Prop 5.4.2 (spontaneous magnetization) | **Done** | `prop_5_4_2_self_contained` | |
