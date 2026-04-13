@@ -36,12 +36,11 @@ All theorems are formally proved with **zero `sorry`**.
 
 ## Axioms
 
-Three axioms whose proofs are mathematically complete but require
-infrastructure not yet formalized in Lean:
+Two axioms whose proofs are mathematically complete but require
+measure-theoretic infrastructure not yet formalized in Lean:
 
 - `phi4_single_site_nonneg` — φ⁴ single-site non-negativity (`ContinuousSpin/Phi4.lean`)
 - `lebowitz_third` — Lebowitz inequality for Ising via φ⁴ limit (`Inequalities/GHS.lean`)
-- `contourCountingBound` — contour counting N(r) ≤ a·b^r for ℤ^d (`Peierls.lean`)
 
 ## References
 
