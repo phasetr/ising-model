@@ -223,4 +223,44 @@ theorem iterated_schwarz_sq (x a : ℝ) (hx : 0 ≤ x) (ha : 0 ≤ a) (hxab : x 
   · simp [ha]
   · nlinarith [sq_nonneg (x - a)]
 
+/-! ## High-temperature / cluster expansion (§18.1–18.3)
+
+Glimm–Jaffe Chapter 18 develops the cluster expansion for P(φ)₂ fields.
+The lattice Ising analogue is the **high-temperature expansion**, which
+decomposes each Boltzmann factor using
+
+`exp(βJ · σ_iσ_j) = cosh(βJ) + sinh(βJ) · σ_iσ_j`
+
+(already proved as `exp_edgeSpin_decomp` in `NonnegCorrelations.lean`).
+
+The high-temperature expansion gives:
+`Z = (cosh βJ)^|E| · Σ_σ ∏_e (1 + tanh(βJ) · σ_iσ_j) · exp(βh Σ σ_i)`
+
+For `h = 0`, the sum over σ selects only even subgraphs (those where
+every vertex has even degree), giving the well-known formula:
+`Z(h=0) = 2^|ι| · (cosh βJ)^|E| · Σ_{X ⊆ E, even} (tanh βJ)^|X|`
+
+The convergence of this expansion for small `tanh(βJ)` (high temperature)
+establishes exponential decay of correlations and uniqueness of the
+Gibbs state — the lattice analogue of Theorem 18.1.1.
+
+The key algebraic ingredient `exp_edgeSpin_decomp` is already formalized. -/
+
+/-- **High-temperature parameter**: `t = tanh(βJ)`.
+For `βJ ≥ 0`, `t ∈ [0, 1)`, and the high-temperature expansion
+converges when `t` is small. -/
+noncomputable def highTempParam (β J : ℝ) : ℝ := Real.tanh (β * J)
+
+/-- The high-temperature parameter satisfies `|t| < 1` for all finite `βJ`. -/
+theorem abs_highTempParam_lt_one (β J : ℝ) :
+    |highTempParam β J| < 1 := by
+  unfold highTempParam
+  exact abs_tanh_lt_one (β * J)
+
+/-- The high-temperature parameter is strictly less than 1. -/
+theorem highTempParam_lt_one (β J : ℝ) :
+    highTempParam β J < 1 := by
+  unfold highTempParam
+  exact tanh_lt_one (β * J)
+
 end IsingModel
