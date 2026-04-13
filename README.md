@@ -40,6 +40,7 @@ All theorems are formally proved with **zero `sorry`**.
 | Hamiltonian–boundary identity | `H(σ) = -J(|E| - 2|∂σ|)` for h = 0 | Glimm-Jaffe §5.4 |
 | Peierls bound (Prop 5.4.1) | `Pr(γ ⊆ ∂σ) ≤ exp(-2βJ|γ|)` | Glimm-Jaffe §5.4 |
 | Peierls contour sum bound | `Σ Pr(γ) ≤ N(r) exp(-2βJr)` | Glimm-Jaffe §5.4 |
+| Spontaneous magnetization (Prop 5.4.2) | `⟨1_{σ_i=↓}⟩₊ ≤ Σ_S exp(-2βJ\|cut(S)\|)` | Glimm-Jaffe §5.4 |
 
 ### Axioms
 
