@@ -9,8 +9,8 @@
 \DefineVerbatimEnvironment{Verbatim}{Verbatim}{breaklines,fontsize=\small}
 \fvset{breaklines}
 
-\sloppy  % prevent overfull hboxes from long identifiers
-\emergencystretch=3em
+\usepackage{microtype}  % character protrusion and font expansion for better line breaks
+\emergencystretch=2em
 
 % Allow hyphenation in tt font
 \usepackage{hyphenat}
@@ -81,26 +81,29 @@ GibbsMeasure.lean            Z, Gibbs expectation, correlation
 \paragraph{Path 1: GKS inequalities (simplest).}
 \texttt{Basic.lean} $\to$ \texttt{Hamiltonian.lean} $\to$
 \texttt{GibbsMeasure.lean} $\to$ \texttt{NonnegCorrelations.lean} $\to$
-\texttt{GKS.lean}. \\
+\texttt{GKS.lean}.
 \emph{Key idea:} the Boltzmann weight factors as a product of
 $\cosh + \sinh \cdot \sigma_i\sigma_j$ terms, each with non-negative
 coefficients (HNC). Fourier--Walsh expansion then gives GKS-I/II.
 
 \paragraph{Path 2: Lee-Yang theorem.}
 \texttt{Asano.lean} $\to$ \texttt{LeeYang.lean} $\to$
-\texttt{FreeEnergy.lean}. \\
+\texttt{FreeEnergy.lean}.
+
 \emph{Key idea:} the partition polynomial is multilinear; Asano
 contraction reduces $n$ variables to $n-1$ while preserving
 nonvanishing on the polydisk. Induction on $n$.
 
 \paragraph{Path 3: GHS and truncated functions.}
-\texttt{GHS.lean} (imports \texttt{InfiniteVolume.lean}). \\
+\texttt{GHS.lean} (imports \texttt{InfiniteVolume.lean}).
+
 \emph{Key idea:} the Lebowitz inequality (axiom from $\varphi^4$ theory)
 bounds the 3-point function, giving $\langle\sigma_i;\sigma_j;\sigma_k\rangle \le 0$.
 Spin-flip symmetry at $h=0$ kills odd correlations.
 
 \paragraph{Path 4: Peierls argument.}
-\texttt{Peierls.lean}. \\
+\texttt{Peierls.lean}.
+
 \emph{Key idea:} the Hamiltonian--boundary identity
 $H = -J(|E| - 2|\partial\sigma|)$ rewrites the Boltzmann weight.
 Contour counting gives the Peierls bound.
@@ -148,9 +151,11 @@ Many proofs follow a common pattern:
 %======================================================================
 \section{Basic definitions (\texttt{Basic.lean})}
 
-\noindent\textbf{Prerequisites:} None (this is the root file). \\
+\par\noindent\textbf{Prerequisites:} None (this is the root file).
+
 \textbf{Role:} Defines the alphabet of the Ising model --- spin values,
-configurations, parameters. Everything else builds on these types. \\
+configurations, parameters. Everything else builds on these types.
+
 \textbf{What to look for:} the \texttt{Spin} type and its arithmetic
 (\texttt{toSign}, \texttt{flip}, \texttt{sign}), and the
 \texttt{Ferromagnetic} structure ($J \ge 0$, $h \ge 0$, $\beta > 0$).
@@ -181,9 +186,11 @@ Ferromagnetic condition: $J \geq 0$, $h \geq 0$, $\beta > 0$.
 
 \section{Hamiltonian (\texttt{Hamiltonian.lean})}
 
-\noindent\textbf{Prerequisites:} \texttt{Basic.lean}. \\
+\par\noindent\textbf{Prerequisites:} \texttt{Basic.lean}.
+
 \textbf{Role:} Defines the energy function $H(\sigma)$ and
-the edge spin product. The spin flip symmetry theorem lives here. \\
+the edge spin product. The spin flip symmetry theorem lives here.
+
 \textbf{What to look for:} \texttt{edgeSpin} (the $\pm 1$ product
 for an edge, defined via \texttt{Sym2.lift}) and
 \texttt{hamiltonian\_flip\_eq} (the $h=0$ symmetry).
@@ -223,11 +230,13 @@ Each edge factor satisfies $(-s_i)(-s_j) = s_i s_j$
 
 \section{Partition function and Gibbs measure (\texttt{GibbsMeasure.lean})}
 
-\noindent\textbf{Prerequisites:} \texttt{Hamiltonian.lean}. \\
+\par\noindent\textbf{Prerequisites:} \texttt{Hamiltonian.lean}.
+
 \textbf{Role:} Defines the three central objects: partition function $Z$,
 Gibbs expectation $\langle\cdot\rangle$, and correlation function
 $\langle\sigma^A\rangle$. Also contains the spin product algebra
-($\sigma^A \cdot \sigma^C = \sigma^{A \triangle C}$, $(\sigma^A)^2 = 1$). \\
+($\sigma^A \cdot \sigma^C = \sigma^{A \triangle C}$, $(\sigma^A)^2 = 1$).
+
 \textbf{What to look for:} \texttt{partitionFunction\_pos} ($Z > 0$)
 and \texttt{spinProduct\_mul} (the key algebraic identity for GKS proofs).
 
@@ -276,9 +285,11 @@ matching $A \bigtriangleup C$.
 
 \section{GKS-I proof (\texttt{Inequalities/GKS.lean})}
 
-\noindent\textbf{Prerequisites:} \texttt{GibbsMeasure.lean},
-\texttt{NonnegCorrelations.lean}. \\
-\textbf{Role:} Proves the first and second Griffiths inequalities. \\
+\par\noindent\textbf{Prerequisites:} \texttt{GibbsMeasure.lean},
+\texttt{NonnegCorrelations.lean}.
+
+\textbf{Role:} Proves the first and second Griffiths inequalities.
+
 \textbf{What to look for:} The proof reduces GKS to the HNC property
 of the Boltzmann weight (\texttt{boltzmannWeight\_hasNonnegCorrelations}).
 Once HNC is established, GKS-I is a one-liner.
@@ -478,15 +489,17 @@ A Float-based reference implementation verifies:
 
 \section{FKG inequality (\texttt{Inequalities/FKG.lean})}
 
-\noindent\textbf{Prerequisites:} \texttt{GKS.lean}. \\
+\par\noindent\textbf{Prerequisites:} \texttt{GKS.lean}.
+
 \textbf{Role:} Proves $\langle fg \rangle \ge \langle f \rangle\langle g \rangle$
-for monotone $f, g$. \\
+for monotone $f, g$.
+
 \textbf{What to look for:} The Holley criterion approach. The proof
 shows that the Gibbs measure satisfies the FKG lattice condition
 by reducing to GKS-II.
 
 The FKG inequality is proved by applying Mathlib's
-\texttt{Combinatorics.SetFamily.\allowbreak FourFunctions.fkg}
+\texttt{Combinatorics.\allowbreak SetFamily.\allowbreak FourFunctions.\allowbreak fkg}
 to the Ising Boltzmann weight, following
 Friedli--Velenik~\cite{friedli-velenik}, Theorem~3.21
 (p.~98) and Theorem~3.50 (pp.~128--130).
@@ -516,10 +529,12 @@ $\langle fg \rangle \geq \langle f \rangle \langle g \rangle$.
 
 \section{Asano Contraction (\texttt{Asano.lean})}
 
-\noindent\textbf{Prerequisites:} None (self-contained complex analysis). \\
+\par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
+
 \textbf{Role:} Defines \texttt{MultilinPoly} (multilinear polynomials
 over $\mathbb{C}$) and the Asano contraction operation. This is the
-algebraic engine behind the Lee-Yang theorem. \\
+algebraic engine behind the Lee-Yang theorem.
+
 \textbf{What to look for:} \texttt{MultilinPoly.eval} and
 \texttt{asanoContract}. The key theorem is that contraction
 preserves nonvanishing on the unit polydisk.
@@ -586,9 +601,11 @@ multilinear polynomials, the definitions here should be replaced.
 
 \section{Lee-Yang circle theorem (\texttt{LeeYang.lean})}
 
-\noindent\textbf{Prerequisites:} \texttt{Asano.lean}. \\
+\par\noindent\textbf{Prerequisites:} \texttt{Asano.lean}.
+
 \textbf{Role:} Proves that the Ising partition polynomial has no
-zeros on the open unit polydisk. \\
+zeros on the open unit polydisk.
+
 \textbf{What to look for:} The proof is by induction on the number
 of variables. Each step uses Asano contraction to merge two variables
 into one. The base case ($n=0$) is trivial ($P = 1$).
@@ -639,10 +656,12 @@ the combinatorial Ising model to the matrix formulation.
 
 \section{Infinite volume limit (\texttt{InfiniteVolume.lean})}
 
-\noindent\textbf{Prerequisites:} \texttt{GKS.lean}. \\
+\par\noindent\textbf{Prerequisites:} \texttt{GKS.lean}.
+
 \textbf{Role:} Proves boundedness ($|\langle\sigma^A\rangle| \le 1$),
 monotonicity in $J$ and $h$, and convergence of correlations.
-Also contains the Walsh--Fourier inversion theorem. \\
+Also contains the Walsh--Fourier inversion theorem.
+
 \textbf{What to look for:} \texttt{abs\_correlation\_le\_one} (used
 everywhere), \texttt{correlation\_monotone\_J/H} (used for free energy
 monotonicity), and the covariance non-negativity lemma
@@ -737,7 +756,8 @@ So $\sum_\sigma 1 = |\mathrm{Config}\;\iota| = 2^{|\iota|}$.
 
 \begin{theorem}[\texttt{walsh\_completeness}]
 $\sum_S \sigma^S(\tau) \cdot \sigma^S(\sigma) =
-\begin{cases} 2^{|\iota|} & \text{if } \sigma = \tau, \\
+\begin{cases} 2^{|\iota|} & \text{if } \sigma = \tau,
+
 0 & \text{if } \sigma \ne \tau. \end{cases}$
 \end{theorem}
 
@@ -927,11 +947,13 @@ coupling bounds from $0 \le t < 1$), and apply
 
 \section{GHS inequality (\texttt{Inequalities/GHS.lean})}
 
-\noindent\textbf{Prerequisites:} \texttt{InfiniteVolume.lean}. \\
+\par\noindent\textbf{Prerequisites:} \texttt{InfiniteVolume.lean}.
+
 \textbf{Role:} Defines truncated correlation functions ($u_2$, $u_3$,
 $u_4$) and proves the GHS inequality $u_3 \le 0$, Cor.~4.3.3
 ($U_4 \le 0$ for $h=0$), and Cor.~4.3.5 (inductive bound).
-Also contains \texttt{correlation\_odd\_vanish} ($h=0$, odd $|A|$). \\
+Also contains \texttt{correlation\_odd\_vanish} ($h=0$, odd $|A|$).
+
 \textbf{What to look for:} The Lebowitz axioms
 (\texttt{lebowitz\_third/four/inductive}) are the only axioms in the
 file. Everything else is proved. The spin-flip symmetry proof
@@ -945,7 +967,8 @@ Mechanics}, \S V.3, pp.~143--146.
 \begin{definition}[\texttt{truncated2}, \texttt{truncated3}]
 The truncated 2-point and 3-point functions (Ursell functions):
 \begin{align*}
-  u_2(i,j) &= \langle\sigma_i\sigma_j\rangle - \langle\sigma_i\rangle\langle\sigma_j\rangle, \\
+  u_2(i,j) &= \langle\sigma_i\sigma_j\rangle - \langle\sigma_i\rangle\langle\sigma_j\rangle,
+
   u_3(i,j,k) &= \langle\sigma_i\sigma_j\sigma_k\rangle
     - \langle\sigma_i\rangle\langle\sigma_j\sigma_k\rangle
     - \langle\sigma_j\rangle\langle\sigma_i\sigma_k\rangle
@@ -1033,7 +1056,8 @@ The truncated (connected) 4-point function:
 For ferromagnetic parameters with $h \ge 0$ and four distinct sites $i,j,k,l$:
 \begin{multline*}
   \langle\sigma_i\sigma_j\sigma_k\sigma_l\rangle
-  + \langle\sigma_i\sigma_j\rangle\langle\sigma_k\sigma_l\rangle \\
+  + \langle\sigma_i\sigma_j\rangle\langle\sigma_k\sigma_l\rangle
+
   \le \langle\sigma_i\sigma_k\rangle\langle\sigma_j\sigma_l\rangle
   + \langle\sigma_i\sigma_l\rangle\langle\sigma_j\sigma_k\rangle
   + \langle\sigma_i\sigma_k\sigma_l\rangle\langle\sigma_j\rangle
@@ -1293,10 +1317,12 @@ $t < 1$.
 
 \section{Peierls argument (\texttt{Peierls.lean})}
 
-\noindent\textbf{Prerequisites:} \texttt{GibbsMeasure.lean},
-\texttt{Lattice.lean}. \\
+\par\noindent\textbf{Prerequisites:} \texttt{GibbsMeasure.lean},
+\texttt{Lattice.lean}.
+
 \textbf{Role:} Proves the Peierls bound and spontaneous magnetization.
-This is the most ``combinatorial'' file in the project. \\
+This is the most ``combinatorial'' file in the project.
+
 \textbf{What to look for:}
 \begin{itemize}
   \item \texttt{phaseBoundary}: the set of ``disagreeing'' edges
