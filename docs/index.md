@@ -31,7 +31,8 @@ All theorems are formally proved with **zero `sorry`**.
 | **Cor 4.3.5** (n-point inductive bound)   | `⟨σ_{S∪{j,k}}⟩ ≤ ⟨σ_S⟩⟨σ_jσ_k⟩ + Σ_{T⊆S} ⟨σ_{T∪{j}}⟩⟨σ_{(S\T)∪{k}}⟩` | `Inequalities/GHS.lean`    |
 | **Odd correlation vanishing**              | `⟨σ^A⟩ = 0` for odd \|A\| when h = 0                                                              | `Inequalities/GHS.lean`    |
 | **Truncated 2-point bound** (§5.1)        | `0 ≤ ⟨σ_i;σ_j⟩ ≤ 1` for ferromagnetic                                                            | `PhaseTransition.lean`     |
-| **Mixed-phase formula** (§5.1)            | `M² - (M(2α-1))² = 4α(1-α)M²`; vanishes iff pure phase                                           | `PhaseTransition.lean`     |
+| **Mixed-phase formula** (§5.1)            | `mixed_phase_truncated2`: `M² - (M(2α-1))² = 4α(1-α)M²`                                          | `PhaseTransition.lean`     |
+| **Mixed-phase pure iff** (§5.1)           | `mixed_phase_pure_iff`: `4α(1-α)M² = 0 ↔ α ∈ {0,1}`                                              | `PhaseTransition.lean`     |
 | **Free energy analyticity** (Thm 4.6.2)   | `f(h)` real-analytic for h > 0; `Z(h)`, `Z(J)` real-analytic                                      | `FreeEnergy.lean`          |
 | **Walsh orthogonality/Fourier**           | Fourier inversion on `{±1}^n`                                                                      | `InfiniteVolume.lean`      |
 | Partition function positivity             | `Z > 0`                                                                                             | `GibbsMeasure.lean`        |
