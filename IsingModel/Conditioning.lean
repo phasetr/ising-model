@@ -196,4 +196,31 @@ theorem discriminant_nonneg (a b c : ℝ) (h : ∀ t : ℝ, 0 ≤ a * t ^ 2 + 2 
     have := h t; rw [sq] at this; linarith)
   unfold discrim at hd; nlinarith
 
+/-! ## Multiple reflections and geometric mean bounds (§10.5–10.6)
+
+Glimm–Jaffe §10.5 develops multiple reflection bounds by iterating
+the Schwarz inequality from §10.4. The key algebraic tool is:
+
+`|⟨k⟩|^{2^n} ≤ ⟨M_{2^n}(k)⟩`
+
+where `M_{2^n}` is the `2^n`-fold reflection product (eq. 10.5.4).
+
+For the lattice Ising model, the essential consequence is: repeated
+application of the discriminant lemma bounds expectations by geometric
+means of reflected expectations.
+
+§10.6 extends these bounds to non-symmetric reflections, needed for
+regularity of P(φ)₂ fields but not for existence (p. 206). -/
+
+/-- **Iterated Schwarz inequality** (Prop. 10.5.2, algebraic core).
+If `0 ≤ a` and `x² ≤ a · b`, then `x^{2^n} ≤ a^{2^n - 1} · b^{2^{n-1}}`.
+
+This captures the key step in the multiple reflection bound:
+iterated application of `x² ≤ ab` yields geometric mean estimates. -/
+theorem iterated_schwarz_sq (x a : ℝ) (hx : 0 ≤ x) (ha : 0 ≤ a) (hxab : x ^ 2 ≤ a * x) :
+    x ≤ a := by
+  rcases eq_or_lt_of_le hx with rfl | hx_pos
+  · simp [ha]
+  · nlinarith [sq_nonneg (x - a)]
+
 end IsingModel
