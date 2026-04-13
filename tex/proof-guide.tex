@@ -999,6 +999,27 @@ $M_+ = \lim_{h \downarrow 0} \langle\sigma_i\rangle_h > 0$ for $\beta > \beta_c$
 The concavity $d^2 M/dh^2 \le 0$ for $h \ge 0$ follows from the GHS inequality
 (Cor.~4.3.4), as noted on p.~80 of \cite{glimm-jaffe}.
 
+\section{Conditioning inequalities (\texttt{Conditioning.lean})}
+
+Lattice analogues of Glimm--Jaffe, \S10.1--10.2 (pp.~193--194).
+
+\begin{theorem}[\texttt{partitionFunction\_beta\_rescale}]
+$Z(J, h, \beta) = Z(\beta J, \beta h, 1)$: the partition function
+depends on $(J, h, \beta)$ only through $(\beta J, \beta h)$.
+\end{theorem}
+
+\begin{theorem}[\texttt{partitionFunction\_monotone\_beta}; Cor.~10.2.3]
+For $J \ge 0$, $h \ge 0$, and $0 < \beta_1 \le \beta_2$:
+$Z(J, h, \beta_1) \le Z(J, h, \beta_2)$.
+\end{theorem}
+
+\begin{proof}
+By the rescaling identity, $Z(J,h,\beta) = Z(\beta J, \beta h, 1)$.
+Since $\beta J$ and $\beta h$ are monotone in $\beta$ for $J, h \ge 0$,
+the result follows from \texttt{partitionFunction\_monotone\_J} and
+\texttt{partitionFunction\_monotone\_h}.
+\end{proof}
+
 \section{Peierls argument (\texttt{Peierls.lean})}
 
 This section formalizes the Peierls argument for the existence of phase
