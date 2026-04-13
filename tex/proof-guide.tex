@@ -1020,6 +1020,21 @@ the result follows from \texttt{partitionFunction\_monotone\_J} and
 \texttt{partitionFunction\_monotone\_h}.
 \end{proof}
 
+\subsection{Partition function bounds (Cor.~10.3.2)}
+
+\begin{theorem}[\texttt{hamiltonian\_abs\_le}]
+$|H(\sigma)| \le |J| \cdot |E| + |h| \cdot |\iota|$, since
+$|\text{edgeSpin}| \le 1$ and $|\text{sign}(\sigma_i)| \le 1$.
+\end{theorem}
+
+\begin{theorem}[\texttt{partitionFunction\_upper}]
+$Z \le 2^{|\iota|} \cdot \exp(|\beta|(|J| \cdot |E| + |h| \cdot |\iota|))$.
+\end{theorem}
+
+\begin{theorem}[\texttt{partitionFunction\_lower}]
+$\exp(-|\beta|(|J| \cdot |E| + |h| \cdot |\iota|)) \le Z$.
+\end{theorem}
+
 \section{Peierls argument (\texttt{Peierls.lean})}
 
 This section formalizes the Peierls argument for the existence of phase

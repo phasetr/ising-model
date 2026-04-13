@@ -38,6 +38,8 @@ All theorems are formally proved with **zero `sorry`**.
 | **Susceptibility non-negative** (§5.3)    | `susceptibility_nonneg`: `χ(i) = Σ_j ⟨σ_i;σ_j⟩ ≥ 0`                                              | `PhaseTransition.lean`     |
 | **Magnetization at h=0** (§5.3)           | `magnetization_zero_at_h_zero`: M = 0 (Z₂ symmetry)                                               | `PhaseTransition.lean`     |
 | **Z monotone in β** (Cor 10.2.3)          | `partitionFunction_monotone_beta`: Z(β₁) ≤ Z(β₂)                                                  | `Conditioning.lean`        |
+| **Hamiltonian bound** (Cor 10.3.2)        | `hamiltonian_abs_le`: \|H\| ≤ \|J\|\|E\| + \|h\|\|ι\|                                             | `Conditioning.lean`        |
+| **Z bounds** (Cor 10.3.2)                 | `partitionFunction_upper`, `partitionFunction_lower`                                               | `Conditioning.lean`        |
 | **Free energy analyticity** (Thm 4.6.2)   | `f(h)` real-analytic for h > 0; `Z(h)`, `Z(J)` real-analytic                                      | `FreeEnergy.lean`          |
 | **Walsh orthogonality/Fourier**           | Fourier inversion on `{±1}^n`                                                                      | `InfiniteVolume.lean`      |
 | Partition function positivity             | `Z > 0`                                                                                             | `GibbsMeasure.lean`        |

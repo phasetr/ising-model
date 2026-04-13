@@ -49,6 +49,9 @@ All theorems are formally proved with **zero `sorry`**.
 | Susceptibility non-negative (§5.3) | `susceptibility_nonneg`: `χ(i) = Σ_j ⟨σ_i;σ_j⟩ ≥ 0` | Glimm-Jaffe §5.3 |
 | Magnetization vanishes at h=0 (§5.3) | `magnetization_zero_at_h_zero`: Z₂ symmetry | Glimm-Jaffe §5.3 |
 | Z monotone in β (Cor 10.2.3) | `partitionFunction_monotone_beta`: Z(β₁) ≤ Z(β₂) | Glimm-Jaffe §10.2 |
+| Hamiltonian bound (Cor 10.3.2) | `hamiltonian_abs_le`: \|H(σ)\| ≤ \|J\|\|E\| + \|h\|\|ι\| | Glimm-Jaffe §10.3 |
+| Z upper bound (Cor 10.3.2) | `partitionFunction_upper`: Z ≤ 2^\|ι\| exp(\|β\| bound) | Glimm-Jaffe §10.3 |
+| Z lower bound (Cor 10.3.2) | `partitionFunction_lower`: exp(-\|β\| bound) ≤ Z | Glimm-Jaffe §10.3 |
 | Hamiltonian–boundary identity | `H(σ) = -J(|E| - 2|∂σ|)` for h = 0 | Glimm-Jaffe §5.4 |
 | Peierls bound (Prop 5.4.1) | `Pr(γ ⊆ ∂σ) ≤ exp(-2βJ|γ|)` | Glimm-Jaffe §5.4 |
 | Peierls contour sum bound | `Σ Pr(γ) ≤ N(r) exp(-2βJr)` | Glimm-Jaffe §5.4 |
@@ -123,7 +126,7 @@ heavy Lean measure theory assembly:
 |---|---|---|---|---|
 | §10.1 | Introduction | **Done** | — | Overview; lattice version is Ch.4 |
 | §10.2 | Correlation inequalities / β-monotonicity | **Done** | `Conditioning.lean` | Cor 10.2.3: Z monotone in β |
-| §10.3 | Dirichlet/Neumann monotonicity | **Not started** | — | Prop 10.3.3 → Prop 4.6.1 (f_Λ convergence) |
+| §10.3 | Dirichlet/Neumann monotonicity | **Done** | `Conditioning.lean` | Hamiltonian bound, Z upper/lower bounds (Cor 10.3.2) |
 | §10.4 | Reflection positivity | **Not started** | — | |
 | §10.5 | Multiple reflections | **Not started** | — | |
 | §10.6 | Nonsymmetric reflections | **Not started** | — | |
