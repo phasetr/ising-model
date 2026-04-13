@@ -148,24 +148,24 @@ heavy Lean measure theory assembly:
 
 | Section | Result | Status | Lean | Notes |
 |---|---|---|---|---|
-| §17.2 | Absence of even bound states | **Not started** | — | φ⁴/Ising |
-| §17.5 | Existence of the φ⁴ critical point | **Not started** | — | Ising limit |
-| §17.7 | Critical exponents | **Not started** | — | Ising model |
-| §17.8 | φ⁴₁ | **Not started** | — | Ising model |
+| §17.2 | Absence of even bound states | **Done** | `GHS.lean` | Uses Cor 4.3.3 (`cor_4_3_3`); transfer matrix deferred |
+| §17.5 | Existence of the φ⁴ critical point | **Not started** | — | Continuum field; mass continuity |
+| §17.7 | Critical exponents | **Not started** | — | v, γ, η, ζ bounds from GKS/Lebowitz |
+| §17.8 | η ≤ 1 | **Done** | `GHS.lean` | Lattice proof uses Cor 4.3.3; exponential decay deferred |
 
 ### Chapter 18: The Cluster Expansion
 
 | Section | Result | Status | Lean | Notes |
 |---|---|---|---|---|
-| §18.1 | Introduction | **Not started** | — | Lattice models |
-| §18.2 | The cluster expansion | **Not started** | — | |
-| §18.3 | Clustering and analyticity | **Not started** | — | |
+| §18.1 | Introduction | **Not started** | — | High-temp expansion; lattice models |
+| §18.2 | The cluster expansion | **Not started** | — | Convergent series expansion |
+| §18.3 | Clustering and analyticity | **Not started** | — | Exponential decay of correlations |
 
 ### Chapter 20: Further Directions
 
 | Section | Result | Status | Lean | Notes |
 |---|---|---|---|---|
-| §20.5 | Low temperature expansions | **Not started** | — | Ising model; Peierls-type |
+| §20.5 | Low temperature expansions | **Done** | `Peierls.lean` | Lattice Ising = §5.4 (Peierls bound) |
 
 ## Documentation
 
