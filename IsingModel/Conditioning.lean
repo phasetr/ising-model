@@ -161,4 +161,39 @@ theorem partitionFunction_lower (G : SimpleGraph ι) [Fintype G.edgeSet]
         Finset.single_le_sum (fun σ _ => le_of_lt (boltzmannWeight_pos G p σ))
           (Finset.mem_univ _)
 
+/-! ## Reflection positivity (§10.4)
+
+Reflection positivity (Glimm–Jaffe, §10.4, pp. 198–200) is a
+fundamental property of statistical mechanical systems with a
+reflection symmetry. A bilinear form `b(A, B)` is reflection-positive
+if `b(A, A) ≥ 0` for all `A`.
+
+The key consequence is the Schwarz inequality (10.4.2):
+`|b(A, B)| ≤ b(A, A)^{1/2} · b(B, B)^{1/2}`.
+
+For the Ising model on a lattice with a reflection symmetry `θ`,
+the bilinear form `b(A, B) = ⟨(θA) · B⟩` is reflection-positive.
+The proof uses the factorization of the Boltzmann weight across the
+reflection plane (Theorem 10.4.3). -/
+
+/-- A bilinear form is **reflection-positive** if `b(x, x) ≥ 0` for all `x`.
+This is the semi-inner product property (Glimm–Jaffe, §10.4, p. 198). -/
+def ReflectionPositive {α : Type*} (b : α → α → ℝ) : Prop :=
+  ∀ x, 0 ≤ b x x
+
+/-- **Discriminant lemma** (algebraic core of the Schwarz inequality).
+If `a t² + 2b t + c ≥ 0` for all `t ∈ ℝ`, then `b² ≤ a c`.
+This is the key step in deriving the Schwarz inequality (10.4.2)
+from reflection positivity.
+
+In the application: `a = b(y,y)`, `b = b(x,y)`, `c = b(x,x)`,
+and the quadratic comes from `0 ≤ b(x + ty, x + ty)`. -/
+theorem discriminant_nonneg (a b c : ℝ) (h : ∀ t : ℝ, 0 ≤ a * t ^ 2 + 2 * b * t + c) :
+    b ^ 2 ≤ a * c := by
+  -- Use mathlib's `discrim_le_zero`: if a·t² + (2b)·t + c ≥ 0 for all t,
+  -- then discrim(a, 2b, c) = (2b)² - 4ac ≤ 0, i.e., 4b² ≤ 4ac.
+  have hd := discrim_le_zero (a := a) (b := 2 * b) (c := c) (fun t => by
+    have := h t; rw [sq] at this; linarith)
+  unfold discrim at hd; nlinarith
+
 end IsingModel
