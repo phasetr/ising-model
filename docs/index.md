@@ -30,6 +30,8 @@ All theorems are formally proved with **zero `sorry`**.
 | **Walsh orthogonality/Fourier**           | Fourier inversion on `{±1}^n`                                                                      | `InfiniteVolume.lean`      |
 | Partition function positivity             | `Z > 0`                                                                                             | `GibbsMeasure.lean`        |
 | Spin flip symmetry                        | `H(flip σ) = H(σ)` when h = 0                                                                     | `Hamiltonian.lean`         |
+| **Hamiltonian–boundary identity**         | `H(σ) = -J(|E| - 2|∂σ|)` for h = 0                                                               | `Peierls.lean`             |
+| **Peierls bound** (Prop 5.4.1)            | `Pr(γ ⊆ ∂σ) ≤ exp(-2βJ|γ|)`                                                                      | `Peierls.lean`             |
 
 ## Axioms
 
