@@ -39,8 +39,9 @@ All theorems are formally proved with **zero `sorry`**.
 | GHS inequality | `⟨σ_i; σ_j; σ_k⟩ ≤ 0` | Ellis §V.3, Lebowitz (1974) |
 | Hamiltonian–boundary identity | `H(σ) = -J(|E| - 2|∂σ|)` for h = 0 | Glimm-Jaffe §5.4 |
 | Peierls bound (Prop 5.4.1) | `Pr(γ ⊆ ∂σ) ≤ exp(-2βJ|γ|)` | Glimm-Jaffe §5.4 |
+| Peierls contour sum bound | `Σ Pr(γ) ≤ N(r) exp(-2βJr)` | Glimm-Jaffe §5.4 |
 
-### Axioms (measure-theoretic prerequisites, not formalized)
+### Axioms
 
 The following axioms have mathematically complete proofs but require
 heavy Lean measure theory assembly:
