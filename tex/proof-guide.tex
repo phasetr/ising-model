@@ -747,18 +747,41 @@ $u_2(i,j) \ge 0$ for ferromagnetic parameters. Proved via GKS-II
 for $i \ne j$ and GKS-I $+$ $|\langle\sigma_i\rangle| \le 1$ for $i = j$.
 \end{theorem}
 
-\begin{theorem}[\texttt{ghs\_inequality}; axiom]
+\begin{theorem}[\texttt{lebowitz\_third}; axiom]
+For ferromagnetic parameters with $h \ge 0$ and distinct $i, j, k$:
+\[
+  \langle\sigma_i\sigma_j\sigma_k\rangle + \langle\sigma_i\rangle\langle\sigma_j\sigma_k\rangle
+  \le \langle\sigma_i\sigma_j\rangle\langle\sigma_k\rangle + \langle\sigma_i\sigma_k\rangle\langle\sigma_j\rangle.
+\]
+\end{theorem}
+
+The Lebowitz third inequality is proved for continuous $\varphi^4$ spins
+via \texttt{phi4\_single\_site\_nonneg} (Theorem~4.3.1 in Glimm--Jaffe),
+then transferred to Ising spins by the approximation
+$d\mu = e^{-\lambda(\xi^2-1)^2}\,d\xi \to \frac{1}{2}(\delta_{+1}+\delta_{-1})$
+as $\lambda \to \infty$.
+
+\textbf{Note:} The per-site factorization in Ellis \S V.3 (Lemma~V.3.2)
+does \emph{not} hold for discrete Ising spins---the all-odd parity case
+gives $\sum \alpha\beta\gamma\delta\, e^{2h\alpha} = -8\cosh(2h) < 0$.
+The continuous-spin route is essential.
+
+\begin{theorem}[\texttt{ghs\_inequality}; proved from \texttt{lebowitz\_third}]
 For ferromagnetic parameters with $h \ge 0$ and distinct $i, j, k$:
 $u_3(i,j,k) \le 0$.
 \end{theorem}
 
-The proof requires the Ellis--Monroe quadrupled spin system
-$(\omega, \sigma, \omega', \sigma')$ with Hadamard orthogonal
-transformation $(\alpha, \beta, \gamma, \delta)$ and the Lebowitz
-identity (1974) expressing $u_3$ as a non-positive moment.
-Stated as axiom; the proof requires the Lebowitz identity
-and Lemma~V.3.2 (parity argument) which need ${\sim}200$ lines of
-doubled/quadrupled graph infrastructure.
+\begin{proof}
+Substituting the Lebowitz bound into the definition of $u_3$:
+\[
+  u_3(i,j,k) \le -2\langle\sigma_i\rangle \cdot u_2(j,k) \le 0,
+\]
+where the last step uses GKS-I ($\langle\sigma_i\rangle \ge 0$) and
+\texttt{truncated2\_nonneg} ($u_2(j,k) \ge 0$).
+In Lean, \texttt{nlinarith} closes the goal from
+\texttt{lebowitz\_third}, \texttt{gks\_first}, and
+\texttt{truncated2\_nonneg}.
+\end{proof}
 
 \section{\texorpdfstring{$\varphi^4$}{phi4} inequalities (\texttt{ContinuousSpin/Phi4.lean})}
 

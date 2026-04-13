@@ -25,19 +25,18 @@ All theorems are formally proved with **zero `sorry`**.
 | **Correlation convergence** (Thm 4.2.3) | `⟨σ^B⟩` converges as J → ∞                                  | `InfiniteVolume.lean`   |
 | **Free energy** (§4.6)                  | `f = |ι|⁻¹ ln Z`, monotone in J and h                       | `FreeEnergy.lean`       |
 | **Lee-Yang nonvanishing (Ising)**       | Ising partition polynomial ≠ 0 on polydisk                  | `FreeEnergy.lean`       |
-| **GHS inequality**                      | `⟨σ_i; σ_j; σ_k⟩ ≤ 0` (axiom: quadrupled system proof)     | `Inequalities/GHS.lean` |
+| **GHS inequality**                      | `⟨σ_i; σ_j; σ_k⟩ ≤ 0` (from Lebowitz third inequality)     | `Inequalities/GHS.lean` |
 | **Walsh orthogonality/Fourier**         | Fourier inversion on `{±1}^n`                                | `InfiniteVolume.lean`   |
 | Partition function positivity            | `Z > 0`                                                    | `GibbsMeasure.lean`     |
 | Spin flip symmetry                       | `H(flip σ) = H(σ)` when h = 0                              | `Hamiltonian.lean`      |
 
 ## Axioms
 
-The φ⁴ module uses two measure-theoretic axioms (`phi4_integrable`,
-`phi4_single_site_nonneg`) whose proofs are mathematically complete
-but not formalized in Lean. See `ContinuousSpin/Phi4.lean` for details.
+Three measure-theoretic axioms whose proofs are mathematically complete
+but not formalized in Lean:
 
-The infinite volume module (`InfiniteVolume.lean`) is fully proved
-with zero `sorry`.
+- `phi4_integrable`, `phi4_single_site_nonneg` — φ⁴ measure theory (`ContinuousSpin/Phi4.lean`)
+- `lebowitz_third` — Lebowitz inequality for Ising via φ⁴ limit (`Inequalities/GHS.lean`)
 
 ## References
 
