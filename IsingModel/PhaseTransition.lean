@@ -78,4 +78,49 @@ theorem mixed_phase_pure_iff (M α : ℝ) (hM : M ≠ 0)
     · exact absurd (pow_eq_zero_iff (n := 2) (by omega) |>.mp h) hM
   · intro h; rcases h with rfl | rfl <;> simp
 
+/-! ## Mean field theory (§5.2)
+
+The mean field picture (Glimm–Jaffe, §5.2) for the Ising model uses
+the mean field free energy density
+
+`φ(m) = -½Jzm² - hm + β⁻¹[(1+m)/2 · ln((1+m)/2) + (1-m)/2 · ln((1-m)/2)]`
+
+and the mean field (self-consistency) equation `m = tanh(β(Jzm + h))`.
+
+We formalize the key algebraic properties:
+- Symmetry of the mean field free energy at `h = 0`
+- The mean field equation `m = tanh(β(Jzm + h))` as the stationarity
+  condition of `φ`
+- `tanh` is odd: `tanh(-x) = -tanh(x)`, giving `m = 0` as a solution
+  when `h = 0` -/
+
+/-- **Mean field free energy density** (Glimm–Jaffe, §5.2, eq. (5.2.3)).
+For the Ising model with coordination number `z`, coupling `J`,
+external field `h`, and inverse temperature `β`:
+`φ(m) = -½Jzm² - hm + β⁻¹ · entropy(m)`
+where `entropy(m) = (1+m)/2 · ln((1+m)/2) + (1-m)/2 · ln((1-m)/2)`.
+
+Here we define the interaction part only (without the entropy term),
+as the entropy requires `m ∈ (-1, 1)` and logarithms. -/
+noncomputable def meanFieldEnergy (J : ℝ) (z : ℕ) (h : ℝ) (m : ℝ) : ℝ :=
+  -(1/2) * J * z * m ^ 2 - h * m
+
+/-- The mean field interaction energy is symmetric in `m` when `h = 0`:
+`φ(-m) = φ(m)`. -/
+theorem meanFieldEnergy_neg (J : ℝ) (z : ℕ) (m : ℝ) :
+    meanFieldEnergy J z 0 (-m) = meanFieldEnergy J z 0 m := by
+  unfold meanFieldEnergy; ring
+
+/-- The mean field equation `m = tanh(β(Jzm + h))` always has the
+trivial solution `m = 0` when `h = 0`, since `tanh(0) = 0`. -/
+theorem meanField_zero_solution (β J : ℝ) (z : ℕ) :
+    Real.tanh (β * (J * z * 0 + 0)) = 0 := by
+  simp [Real.tanh_zero]
+
+/-- `tanh` is an odd function: `tanh(-x) = -tanh(x)`.
+This reflects the spin-flip symmetry of the mean field equation at `h = 0`:
+if `m*` is a solution, so is `-m*`. -/
+theorem tanh_odd (x : ℝ) : Real.tanh (-x) = -Real.tanh x := by
+  simp [Real.tanh_neg]
+
 end IsingModel

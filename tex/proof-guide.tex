@@ -951,6 +951,30 @@ These formalize the algebraic content of \S5.1: the truncated 2-point
 function measures the deviation from a pure phase, and
 its asymptotic value $4\alpha(1-\alpha)M^2$ vanishes iff the state is pure.
 
+\subsection{Mean field theory (\S5.2)}
+
+The mean field free energy density for the Ising model
+(Glimm--Jaffe, \S5.2, eq.~(5.2.3)) is
+$\varphi(m) = -\frac{1}{2}Jzm^2 - hm + \beta^{-1}\,\mathrm{entropy}(m)$.
+
+\begin{definition}[\texttt{meanFieldEnergy}]
+The interaction part: $-\frac{1}{2}Jzm^2 - hm$.
+\end{definition}
+
+\begin{theorem}[\texttt{meanFieldEnergy\_neg}]
+At $h = 0$: $\varphi(-m) = \varphi(m)$ (spin-flip symmetry).
+\end{theorem}
+
+\begin{theorem}[\texttt{meanField\_zero\_solution}]
+$m = 0$ is always a solution of the mean field equation
+$m = \tanh(\beta(Jzm + h))$ when $h = 0$, since $\tanh(0) = 0$.
+\end{theorem}
+
+\begin{theorem}[\texttt{tanh\_odd}]
+$\tanh(-x) = -\tanh(x)$: if $m^*$ solves the mean field equation
+at $h = 0$, so does $-m^*$.
+\end{theorem}
+
 \section{Peierls argument (\texttt{Peierls.lean})}
 
 This section formalizes the Peierls argument for the existence of phase
