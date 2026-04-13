@@ -10,7 +10,7 @@
 \fvset{breaklines}
 
 \usepackage{microtype}  % character protrusion and font expansion for better line breaks
-\emergencystretch=2em
+\emergencystretch=3em
 
 % Allow hyphenation in tt font
 \usepackage{hyphenat}
@@ -61,7 +61,7 @@ GibbsMeasure.lean            Z, Gibbs expectation, correlation
   |     GHS.lean                  truncated functions, GHS, Cor 4.3.3-5
   |
   +-- Asano.lean                  MultilinPoly, Asano contraction
-  |     LeeYang.lean              Lee-Yang circle theorem
+  |     LeeYang.lean              Lee-Yang (Harcos/Ruelle, uses MultilinPoly only)
   |
   +-- InfiniteVolume.lean         boundedness, monotonicity, convergence
   |     FreeEnergy.lean           free energy, analyticity, Lee-Yang (Ising)
@@ -87,12 +87,14 @@ $\cosh + \sinh \cdot \sigma_i\sigma_j$ terms, each with non-negative
 coefficients (HNC). Fourier--Walsh expansion then gives GKS-I/II.
 
 \paragraph{Path 2: Lee-Yang theorem.}
-\texttt{Asano.lean} $\to$ \texttt{LeeYang.lean} $\to$
-\texttt{FreeEnergy.lean}.
+\texttt{Asano.lean} (for \texttt{MultilinPoly} type) $\to$
+\texttt{LeeYang.lean} $\to$ \texttt{FreeEnergy.lean}.
 
-\emph{Key idea:} the partition polynomial is multilinear; Asano
-contraction reduces $n$ variables to $n-1$ while preserving
-nonvanishing on the polydisk. Induction on $n$.
+\emph{Key idea:} the Harcos/Ruelle approach defines a polynomial
+from a Hermitian matrix, uses a torus identity to relate complementary
+coefficients, and applies the maximum modulus principle.
+Induction on $n$ eliminates one variable at a time.
+Asano contraction is \emph{not} used.
 
 \paragraph{Path 3: GHS and truncated functions.}
 \texttt{GHS.lean} (imports \texttt{InfiniteVolume.lean}).
@@ -601,14 +603,18 @@ multilinear polynomials, the definitions here should be replaced.
 
 \section{Lee-Yang circle theorem (\texttt{LeeYang.lean})}
 
-\par\noindent\textbf{Prerequisites:} \texttt{Asano.lean}.
+\par\noindent\textbf{Prerequisites:} \texttt{Asano.lean} (for the
+\texttt{MultilinPoly} type only; Asano contraction is \emph{not} used).
 
 \textbf{Role:} Proves that the Ising partition polynomial has no
-zeros on the open unit polydisk.
+zeros on the open unit polydisk via the Harcos/Ruelle approach.
 
-\textbf{What to look for:} The proof is by induction on the number
-of variables. Each step uses Asano contraction to merge two variables
-into one. The base case ($n=0$) is trivial ($P = 1$).
+\textbf{What to look for:} The proof uses a Hermitian matrix formulation,
+induction on $n$, and the maximum modulus principle --- not Asano contraction.
+Key steps: (1) define \texttt{leeYangPoly} for Hermitian $A$ with
+$|a_{ij}| \le 1$; (2) torus identity relating $\alpha$ and
+$\overline{\beta}$; (3) induction eliminating the last variable;
+(4) maximum modulus to bound $|\beta/\alpha|$ on the polydisk.
 \texttt{lee\_yang\_circle} is the final theorem.
 \label{sec:lee-yang}
 
@@ -778,9 +784,12 @@ $\hat{c}_S = 2^{-|\iota|} \sum_\tau \sigma^S(\tau) f(\tau)$.
 
 \begin{proof}
 Substitute the expansion and apply Walsh completeness:
-$\sum_S \hat{c}_S \sigma^S(\sigma)
-= 2^{-|\iota|} \sum_\tau f(\tau) \underbrace{\sum_S \sigma^S(\tau) \sigma^S(\sigma)}_{\text{= } 2^{|\iota|} [\tau = \sigma]}
-= f(\sigma)$.
+\[
+  \sum_S \hat{c}_S \sigma^S(\sigma)
+  = 2^{-|\iota|} \sum_\tau f(\tau)
+    \underbrace{\sum_S \sigma^S(\tau) \sigma^S(\sigma)}_{= \, 2^{|\iota|} [\tau = \sigma]}
+  = f(\sigma).
+\]
 This uses \texttt{Finset.sum\_comm} to swap the order of summation
 and \texttt{walsh\_completeness} for the Kronecker delta.
 \end{proof}
@@ -1120,9 +1129,12 @@ The formalization includes:
 One measure-theoretic property is stated as axiom (mathematically
 proved but not formalized in Lean due to the heavy measure theory assembly):
 \begin{itemize}
-\item \texttt{phi4\_single\_site\_nonneg}: non-negativity of the
-  symmetrized 4D integral $\int \alpha^k\beta^l\gamma^m\delta^n
-  e^{-Q + c\alpha\beta\gamma\delta} \ge 0$ when $Q$ is even and $c \ge 0$.
+\item \texttt{phi4\_single\_\allowbreak site\_nonneg}: non-negativity of the
+  symmetrized 4D integral: for $Q$ even and $c \ge 0$,
+  \[
+    \int \alpha^k\beta^l\gamma^m\delta^n \,
+    e^{-Q + c\alpha\beta\gamma\delta} \ge 0.
+  \]
 \end{itemize}
 The proof strategy: write $e^x = \cosh(x) + \sinh(x)$ with $x = c\alpha\beta\gamma\delta$.
 The $\cosh$ term is even in each variable, so odd-power monomials integrate to zero
