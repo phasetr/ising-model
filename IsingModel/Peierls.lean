@@ -66,19 +66,21 @@ can be expressed in terms of the phase boundary size:
   H(σ) = -J · (|E| - 2|∂σ|)
 where |E| is the total number of edges and |∂σ| is the phase boundary size. -/
 
-/-- For h = 0 and each edge, the edge spin contribution is +J (agreeing)
-or -J (disagreeing). The Hamiltonian is -J·|E| + 2J·|∂σ|. -/
+/-- The edge spin is +1 for agreeing spins and -1 for disagreeing spins. -/
+private theorem edgeSpin_eq_one_or_neg_one (σ : Config ι) (e : Sym2 ι) :
+    edgeSpin (K := ℝ) σ e = 1 ∨ edgeSpin (K := ℝ) σ e = -1 := by
+  refine Sym2.ind (fun i j => ?_) e
+  simp only [edgeSpin, Sym2.lift_mk]
+  cases σ i <;> cases σ j <;> simp [Spin.sign, Spin.toSign]
+
+/-- For h = 0, the Hamiltonian equals `-J * (|E| - 2|∂σ|)` where |∂σ| is
+the phase boundary size. Each agreeing edge contributes +1 to the edge sum
+and each disagreeing edge contributes -1, so the sum = |E| - 2|∂σ|. -/
 theorem hamiltonian_boundary (G : SimpleGraph ι) [DecidableRel G.Adj]
     [Fintype G.edgeSet]
     (J β : ℝ) (σ : Config ι) :
     hamiltonian G ⟨J, 0, β⟩ σ =
       -J * (↑G.edgeFinset.card - 2 * ↑(phaseBoundarySize G σ)) := by
-  unfold hamiltonian interactionEnergy externalFieldEnergy phaseBoundarySize phaseBoundary
-  simp only [zero_mul, add_zero, neg_mul]
-  congr 1
-  -- edgeSpin sum = |E| - 2|∂σ|
-  -- Each agreeing edge contributes +1, each disagreeing contributes -1
-  -- So sum = (|E| - |∂σ|) · 1 + |∂σ| · (-1) = |E| - 2|∂σ|
   sorry
 
 /-! ## Peierls bound (Proposition 5.4.1)
