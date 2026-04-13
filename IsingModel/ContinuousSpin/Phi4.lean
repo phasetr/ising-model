@@ -137,11 +137,29 @@ private theorem integral_nonneg_of_nonneg_ae (f : ℝ → ℝ)
 /-- **Single-site non-negativity** (core of Theorem 4.3.1, Glimm–Jaffe p. 59):
 For Q even in each variable and c ≥ 0, the monomial integral is non-negative.
 
-Proof (not formalized): 4-fold symmetrization via (α,β,γ,δ) → (±α,±β,±γ,±δ).
-After averaging over 16 sign patterns:
-- MIXED parity → coefficient vanishes → integral = 0
-- ALL EVEN → integrand × cosh(cαβγδ) ≥ 0  (cosh ≥ 0)
-- ALL ODD → integrand × sinh(cαβγδ) ≥ 0  (by `mul_sinh_nonneg`)
+## Proof outline
+
+Write `exp(c·αβγδ) = cosh(c·αβγδ) + sinh(c·αβγδ)` and analyze each part:
+
+**cosh part**: `α^k β^l γ^m δ^n exp(-Q) cosh(c·αβγδ)` is even in each variable
+(since Q, cosh are even in each). If any exponent is odd, the integrand is odd
+in that variable → integral = 0 by `integral_odd_eq_zero`. If all exponents
+are even, the integrand is ≥ 0 pointwise → integral ≥ 0 by `integral_nonneg`.
+
+**sinh part**: `α^k β^l γ^m δ^n exp(-Q) sinh(c·αβγδ)` — sinh is odd in each
+variable. So the integrand is even in variable x iff the exponent of x is odd.
+If any exponent is even, the integrand is odd in that variable → integral = 0.
+If all exponents are odd, the integrand is
+`α^{k-1}β^{l-1}γ^{m-1}δ^{n-1} · (αβγδ · sinh(c·αβγδ)) · exp(-Q) ≥ 0`
+by `mul_sinh_nonneg` (with u = αβγδ, which requires the FULL 4-variable
+symmetrization — single-variable symmetrization fails when outer variables
+are negative).
+
+**Technical gap**: The cosh/sinh split requires `integral_add` (integrability).
+For the non-integrable case, the Bochner integral is 0 ≥ 0 trivially.
+For the integrable case, the split and parity analysis complete the proof.
+The integrability verification (nested 4D integrals with polynomial × exp decay)
+is the remaining formalization challenge.
 
 Building blocks proved: `mul_sinh_nonneg`, `Real.cosh_nonneg`,
 `integral_odd_eq_zero`, `quartic_identity`. -/
