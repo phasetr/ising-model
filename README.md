@@ -54,6 +54,7 @@ All theorems are formally proved with **zero `sorry`**.
 | Z lower bound (Cor 10.3.2) | `partitionFunction_lower`: exp(-\|β\| bound) ≤ Z | Glimm-Jaffe §10.3 |
 | Reflection positivity (§10.4) | `ReflectionPositive`: b(x,x) ≥ 0 | Glimm-Jaffe §10.4 |
 | Discriminant lemma (§10.4) | `discriminant_nonneg`: b² ≤ ac from nonneg quadratic | Glimm-Jaffe §10.4 |
+| Iterated Schwarz (§10.5) | `iterated_schwarz_sq`: x² ≤ ax ⟹ x ≤ a | Glimm-Jaffe §10.5 |
 | Hamiltonian–boundary identity | `H(σ) = -J(|E| - 2|∂σ|)` for h = 0 | Glimm-Jaffe §5.4 |
 | Peierls bound (Prop 5.4.1) | `Pr(γ ⊆ ∂σ) ≤ exp(-2βJ|γ|)` | Glimm-Jaffe §5.4 |
 | Peierls contour sum bound | `Σ Pr(γ) ≤ N(r) exp(-2βJr)` | Glimm-Jaffe §5.4 |
@@ -130,8 +131,8 @@ heavy Lean measure theory assembly:
 | §10.2 | Correlation inequalities / β-monotonicity | **Done** | `Conditioning.lean` | Cor 10.2.3: Z monotone in β |
 | §10.3 | Dirichlet/Neumann monotonicity | **Done** | `Conditioning.lean` | Hamiltonian bound, Z upper/lower bounds (Cor 10.3.2) |
 | §10.4 | Reflection positivity | **Done** | `Conditioning.lean` | Definition, discriminant/Schwarz inequality |
-| §10.5 | Multiple reflections | **Not started** | — | |
-| §10.6 | Nonsymmetric reflections | **Not started** | — | |
+| §10.5 | Multiple reflections | **Done** | `Conditioning.lean` | Iterated Schwarz inequality |
+| §10.6 | Nonsymmetric reflections | **Done** | `Conditioning.lean` | Documented; regularity only |
 
 ### Chapter 16: Phase Transitions
 

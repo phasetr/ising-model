@@ -1047,6 +1047,17 @@ This is the algebraic core of the Schwarz inequality (10.4.2).
 Proved using \texttt{discrim\_le\_zero} from Mathlib.
 \end{theorem}
 
+\subsection{Multiple reflections (\S10.5--10.6)}
+
+\begin{theorem}[\texttt{iterated\_schwarz\_sq}; Prop.~10.5.2 core]
+If $0 \le x$, $0 \le a$, and $x^2 \le ax$, then $x \le a$.
+This is the algebraic core of the iterated Schwarz inequality
+for multiple reflection bounds.
+\end{theorem}
+
+\S10.6 extends the Schwarz inequality to nonsymmetric reflections,
+needed only for regularity of $P(\varphi)_2$ fields (not existence).
+
 \section{Peierls argument (\texttt{Peierls.lean})}
 
 This section formalizes the Peierls argument for the existence of phase
