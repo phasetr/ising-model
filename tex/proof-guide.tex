@@ -802,16 +802,25 @@ The formalization includes:
 \item Odd-function integral vanishing (\texttt{integral\_odd\_eq\_zero}).
 \end{itemize}
 
-\paragraph{Axioms.}
-Two measure-theoretic properties are stated as axioms (mathematically
+\paragraph{Axiom.}
+One measure-theoretic property is stated as axiom (mathematically
 proved but not formalized in Lean due to the heavy measure theory assembly):
 \begin{itemize}
-\item \texttt{phi4\_integrable}: integrability of $\text{polynomial}
-  \times e^{-\lambda\xi^4}$ for nested integrals.
 \item \texttt{phi4\_single\_site\_nonneg}: non-negativity of the
   symmetrized 4D integral $\int \alpha^k\beta^l\gamma^m\delta^n
   e^{-Q + c\alpha\beta\gamma\delta} \ge 0$ when $Q$ is even and $c \ge 0$.
 \end{itemize}
+The proof strategy: write $e^x = \cosh(x) + \sinh(x)$ with $x = c\alpha\beta\gamma\delta$.
+The $\cosh$ term is even in each variable, so odd-power monomials integrate to zero
+(\texttt{integral\_odd\_eq\_zero}); for all-even $(k,l,m,n)$ the integrand is
+$\ge 0$ (even powers $\times$ $\cosh \ge 0$ $\times$ $e^{-Q} \ge 0$).
+The $\sinh$ term is odd in each variable, so even-power monomials integrate to zero;
+for all-odd $(k,l,m,n)$ the integrand is
+$\alpha^{k-1}\beta^{l-1}\gamma^{m-1}\delta^{n-1} \cdot
+(\alpha\beta\gamma\delta \cdot \sinh(c\alpha\beta\gamma\delta)) \cdot e^{-Q} \ge 0$
+by \texttt{mul\_sinh\_nonneg}.
+Formalizing this requires the interchange of finite symmetrization sums with
+nested Bochner integrals.
 
 \begin{thebibliography}{9}
 \bibitem{glimm-jaffe}
