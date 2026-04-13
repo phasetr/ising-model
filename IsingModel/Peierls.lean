@@ -845,4 +845,23 @@ theorem prop_5_4_2_complete (G : SimpleGraph ι) [DecidableRel G.Adj]
                 simp [Finset.card_univ, Fintype.card_finset]
       _ = 2 * (2 ^ Fintype.card ι) * Real.exp (-2 * β * J) := by ring
 
+/-- **Prop 5.4.2 exponential form** (Glimm–Jaffe §5.4, p. 83).
+For `0 < β` and `2^(|V|+1) · exp(-2βJ) ≤ exp(-cβ)` (satisfied for β large),
+`0 ≤ 1 - ⟨σ_i⟩₊ ≤ exp(-cβ)`.
+
+The hypothesis `hexp` captures `β ≥ β₀(|V|, J, c)` in a computation-free way.
+For any `0 < c < 2J`, such `β₀` exists since `2^(|V|+1) · exp(-(2J-c)β) → 0`. -/
+theorem prop_5_4_2_exp (G : SimpleGraph ι) [DecidableRel G.Adj]
+    [Fintype G.edgeSet] (J β c : ℝ) (hβ : 0 < β) (hJ : 0 < J)
+    (B : Finset ι) (i : ι)
+    (hZ : 0 < plusPartitionFunction G ⟨J, 0, β⟩ B)
+    (hcut : ∀ S : Finset ι, i ∈ S → Disjoint S B → 1 ≤ (cutEdges G S).card)
+    (hexp : 2 * (2 ^ Fintype.card ι) * Real.exp (-2 * β * J) ≤
+      Real.exp (-c * β)) :
+    0 ≤ 1 - plusGibbsExpectation G ⟨J, 0, β⟩ B (fun σ => Spin.sign ℝ (σ i)) ∧
+    1 - plusGibbsExpectation G ⟨J, 0, β⟩ B (fun σ => Spin.sign ℝ (σ i)) ≤
+      Real.exp (-c * β) := by
+  have hcomplete := prop_5_4_2_complete G J β hβ hJ B i hZ hcut
+  exact ⟨hcomplete.1, le_trans hcomplete.2 hexp⟩
+
 end IsingModel
