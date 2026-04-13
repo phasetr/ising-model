@@ -10,6 +10,10 @@
 \fvset{breaklines}
 
 \sloppy  % prevent overfull hboxes from long identifiers
+\emergencystretch=3em
+
+% Allow hyphenation in tt font
+\usepackage{hyphenat}
 
 \newtheorem{theorem}{Theorem}
 \newtheorem{lemma}[theorem]{Lemma}
@@ -114,8 +118,8 @@ Contour counting gives the Peierls bound.
   \item \textbf{Boltzmann weight.} $w(\sigma) = \exp(-\beta H(\sigma))$
     (\texttt{boltzmannWeight}).
   \item \textbf{Axioms.} Four axioms from $\varphi^4$ measure theory
-    are used: \texttt{phi4\_single\_site\_nonneg},
-    \texttt{lebowitz\_third/four/inductive}.
+    are used: \texttt{phi4\_single\_\allowbreak site\_nonneg},
+    \texttt{lebowitz\_\allowbreak third/\allowbreak four/\allowbreak inductive}.
     These have complete mathematical proofs but require measure-theoretic
     infrastructure not yet available in Lean/Mathlib.
   \item \textbf{Edge representation.} Edges are \texttt{Sym2 $\iota$}
@@ -1053,7 +1057,7 @@ Since $\langle\sigma_{ij}\rangle, \langle\sigma_{kl}\rangle \ge 0$ by GKS-I,
 this gives $U_4 \le -2\langle\sigma_{ij}\rangle\langle\sigma_{kl}\rangle \le 0$.
 \end{proof}
 
-\subsection{Cor.~4.3.5: $n$-point inductive bound}
+\subsection[Cor.~4.3.5: n-point inductive bound]{Cor.~4.3.5: $n$-point inductive bound}
 
 \begin{theorem}[\texttt{lebowitz\_inductive}; axiom]
 For ferromagnetic $h \ge 0$, a set $S$ of sites, and two sites $j, k \notin S$
