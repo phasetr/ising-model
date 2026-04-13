@@ -66,7 +66,19 @@ heavy Lean measure theory assembly:
 
 | Section | Result | Status | Lean | Notes |
 |---|---|---|---|---|
+| §2.1 | Introduction | **Out of scope** | — | Narrative; no theorems |
+| §2.2 | Classical ensembles | **Out of scope** | — | Continuous particle systems |
 | §2.3 | Ising model definitions | **Done** | `Basic.lean`, `Hamiltonian.lean`, `GibbsMeasure.lean` | Spin, Config, Hamiltonian, Z, Gibbs expectation |
+| §2.4 | Series expansion methods | **Out of scope** | — | Mayer expansion for gas dynamics |
+
+### Chapter 3: The Feynman-Kac Formula
+
+| Section | Result | Status | Lean | Notes |
+|---|---|---|---|---|
+| §3.1 | Wiener measure | **Out of scope** | — | Stochastic processes |
+| §3.2 | Feynman-Kac formula | **Out of scope** | — | Quantum mechanics |
+| §3.3 | Uniqueness of ground state | **Out of scope** | — | Quantum mechanics |
+| §3.4 | Renormalized Feynman-Kac | **Out of scope** | — | Quantum field theory |
 
 ### Chapter 4: Critical Phenomena
 
@@ -99,12 +111,12 @@ heavy Lean measure theory assembly:
 
 | Section | Result | Status | Lean | Notes |
 |---|---|---|---|---|
-| §5.1 | Pure and mixed phases | **Not started** | — | Qualitative; ergodic decomposition |
-| §5.2 | Phase transitions | **Not started** | — | Qualitative discussion |
-| §5.3 | Symmetry breaking | **Not started** | — | Qualitative discussion |
+| §5.1 | Pure and mixed phases | **Out of scope** | — | Infinite volume; ergodic decomposition |
+| §5.2 | Phase transitions (mean field) | **Out of scope** | — | Infinite volume; qualitative |
+| §5.3 | Symmetry breaking | **Out of scope** | — | Infinite volume; qualitative |
 | §5.4 | Prop 5.4.1 (Peierls bound) | **Done** | `peierls_bound` | |
 | §5.4 | Prop 5.4.2 (spontaneous magnetization) | **Done** | `prop_5_4_2_self_contained` | |
-| §5.5 | An example | **Not started** | — | Specific computation |
+| §5.5 | An example (XY/rotator) | **Out of scope** | — | XY model; Kosterlitz-Thouless; infinite volume |
 
 ## Documentation
 
