@@ -40,9 +40,13 @@ noncomputable def truncated2 (G : SimpleGraph ι) [Fintype G.edgeSet]
     (p : IsingParams ℝ) (i j : ι) : ℝ :=
   correlation G p {i, j} - correlation G p {i} * correlation G p {j}
 
-/-- The truncated 3-point function (Ursell function):
+/-- The truncated 3-point function (Ursell function) for distinct sites:
 `⟨σ_i; σ_j; σ_k⟩ = ⟨σ_iσ_jσ_k⟩ - ⟨σ_i⟩⟨σ_jσ_k⟩ - ⟨σ_j⟩⟨σ_iσ_k⟩
-  - ⟨σ_k⟩⟨σ_iσ_j⟩ + 2⟨σ_i⟩⟨σ_j⟩⟨σ_k⟩`. -/
+  - ⟨σ_k⟩⟨σ_iσ_j⟩ + 2⟨σ_i⟩⟨σ_j⟩⟨σ_k⟩`.
+
+Note: This uses Finset `{i, j, k}`, so `i`, `j`, `k` should be distinct
+for the formula to match the physics convention. When indices coincide,
+`σ_i² = 1` (Ising) gives different values than the Finset version. -/
 noncomputable def truncated3 (G : SimpleGraph ι) [Fintype G.edgeSet]
     (p : IsingParams ℝ) (i j k : ι) : ℝ :=
   correlation G p {i, j, k}
@@ -155,7 +159,8 @@ Hadamard-type orthogonal transformation `(α, β, γ, δ)`. The key steps:
 
 Reference: Ellis, §V.3, pp. 145–146. -/
 theorem ghs_inequality (G : SimpleGraph ι) [Fintype G.edgeSet]
-    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i j k : ι) :
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i j k : ι)
+    (hij : i ≠ j) (hjk : j ≠ k) (hik : i ≠ k) :
     truncated3 G p i j k ≤ 0 := by
   -- The proof requires the quadrupled spin system (Ellis-Monroe, 1975).
   -- The full formalization involves:
