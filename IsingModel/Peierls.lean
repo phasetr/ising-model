@@ -705,4 +705,76 @@ theorem spontaneous_magnetization_plus (G : SimpleGraph ι) [DecidableRel G.Adj]
           Real.exp (-2 * β * J * ↑(cutEdges G S).card) :=
         Finset.sum_le_sum hpeierls
 
+omit [Fintype ι] [DecidableEq ι] in
+/-- The spin sign at site `i` relates to the down-indicator:
+`Spin.sign ℝ (σ i) = 1 - 2 * 1_{σ_i = down}`. -/
+private theorem spin_sign_eq_indicator (σ : Config ι) (i : ι) :
+    Spin.sign ℝ (σ i) = 1 - 2 * (if σ i = Spin.down then (1 : ℝ) else 0) := by
+  cases σ i
+  · simp [Spin.sign, Spin.toSign]
+  · simp [Spin.sign, Spin.toSign]; ring
+
+/-- **Prop 5.4.2 in Glimm–Jaffe form** (complete statement).
+Under + boundary conditions with `h = 0`:
+`1 - ⟨σ_i⟩₊ ≤ 2 * Σ_{S: i∈S, S∩B=∅} exp(-2βJ|cut(S)|)`.
+
+Since `⟨σ_i⟩₊ = ⟨sign(σ_i)⟩₊ = 1 - 2⟨1_{σ_i=↓}⟩₊`, we have
+`1 - ⟨σ_i⟩₊ = 2⟨1_{σ_i=↓}⟩₊`, and the bound follows from
+`spontaneous_magnetization_plus`.
+
+For `β` sufficiently large, the RHS is `≤ exp(-cβ)` by the geometric
+series evaluation of the contour sum. -/
+theorem prop_5_4_2 (G : SimpleGraph ι) [DecidableRel G.Adj]
+    [Fintype G.edgeSet] (J β : ℝ) (B : Finset ι) (i : ι)
+    (hZ : 0 < plusPartitionFunction G ⟨J, 0, β⟩ B) :
+    1 - plusGibbsExpectation G ⟨J, 0, β⟩ B (fun σ => Spin.sign ℝ (σ i)) ≤
+    2 * ∑ S ∈ Finset.univ.filter (fun S : Finset ι => i ∈ S ∧ Disjoint S B),
+      Real.exp (-2 * β * J * ↑(cutEdges G S).card) := by
+  -- Step 1: Rewrite sign in terms of indicator
+  have hsign : ∀ σ : Config ι,
+      Spin.sign ℝ (σ i) = 1 - 2 * (if σ i = Spin.down then (1 : ℝ) else 0) :=
+    fun σ => spin_sign_eq_indicator σ i
+  -- Step 2: ⟨sign⟩₊ = ⟨1 - 2·1_{↓}⟩₊
+  have hexp : plusGibbsExpectation G ⟨J, 0, β⟩ B (fun σ => Spin.sign ℝ (σ i)) =
+      plusGibbsExpectation G ⟨J, 0, β⟩ B
+        (fun σ => 1 - 2 * (if σ i = Spin.down then (1 : ℝ) else 0)) := by
+    congr 1; ext σ; exact hsign σ
+  rw [hexp]
+  -- Step 3: 1 - ⟨1 - 2f⟩₊ = 2⟨f⟩₊
+  -- Use: plusGibbsExpectation is Z₊⁻¹ * Σ (...)
+  unfold plusGibbsExpectation at *
+  -- Simplify: (1 - 2·ind(σ)) · w(σ) = w(σ) - 2·ind(σ)·w(σ)
+  simp_rw [show ∀ σ : Config ι,
+      (1 - 2 * (if σ i = Spin.down then (1 : ℝ) else 0)) *
+        boltzmannWeight G ⟨J, 0, β⟩ σ =
+      boltzmannWeight G ⟨J, 0, β⟩ σ -
+        2 * ((if σ i = Spin.down then 1 else 0) *
+          boltzmannWeight G ⟨J, 0, β⟩ σ)
+    from fun σ => by ring]
+  rw [Finset.sum_sub_distrib, mul_sub]
+  -- Replace Z₊⁻¹ * Σ w with 1
+  have hone : (plusPartitionFunction G ⟨J, 0, β⟩ B)⁻¹ *
+      ∑ x ∈ plusConfigs B, boltzmannWeight G ⟨J, 0, β⟩ x = 1 :=
+    inv_mul_cancel₀ hZ.ne'
+  rw [hone]
+  -- Goal: 1 - (1 - Z₊⁻¹ * 2·Σ ind·w) ≤ 2 * Σ exp(...)
+  -- = Z₊⁻¹ * 2·Σ ind·w ≤ 2 * Σ exp(...)
+  -- Simplify: 1 - (1 - x) = x, where x = Z₊⁻¹ * Σ 2·ind·w = 2·⟨ind⟩₊
+  set x := (plusPartitionFunction G ⟨J, 0, β⟩ B)⁻¹ *
+      ∑ σ ∈ plusConfigs B,
+        2 * ((if σ i = Spin.down then (1 : ℝ) else 0) *
+          boltzmannWeight G ⟨J, 0, β⟩ σ)
+  -- Goal: 1 - (1 - x) ≤ 2 * Σ exp(...)
+  have h1x : 1 - (1 - x) = x := by ring
+  rw [h1x]
+  -- x = 2 * Z₊⁻¹ * Σ ind·w = 2 * ⟨ind⟩₊
+  have hx : x = 2 * ((plusPartitionFunction G ⟨J, 0, β⟩ B)⁻¹ *
+      ∑ σ ∈ plusConfigs B,
+        (if σ i = Spin.down then (1 : ℝ) else 0) *
+          boltzmannWeight G ⟨J, 0, β⟩ σ) := by
+    simp only [x, Finset.mul_sum]; ring_nf
+  rw [hx]
+  exact mul_le_mul_of_nonneg_left
+    (spontaneous_magnetization_plus G J β B i hZ) (by norm_num)
+
 end IsingModel
