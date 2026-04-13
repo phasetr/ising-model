@@ -37,6 +37,7 @@ All theorems are formally proved with **zero `sorry`**.
 | **Mean field trivial solution** (§5.2)    | `meanField_zero_solution`: `tanh(0) = 0`                                                          | `PhaseTransition.lean`     |
 | **Susceptibility non-negative** (§5.3)    | `susceptibility_nonneg`: `χ(i) = Σ_j ⟨σ_i;σ_j⟩ ≥ 0`                                              | `PhaseTransition.lean`     |
 | **Magnetization at h=0** (§5.3)           | `magnetization_zero_at_h_zero`: M = 0 (Z₂ symmetry)                                               | `PhaseTransition.lean`     |
+| **Z monotone in β** (Cor 10.2.3)          | `partitionFunction_monotone_beta`: Z(β₁) ≤ Z(β₂)                                                  | `Conditioning.lean`        |
 | **Free energy analyticity** (Thm 4.6.2)   | `f(h)` real-analytic for h > 0; `Z(h)`, `Z(J)` real-analytic                                      | `FreeEnergy.lean`          |
 | **Walsh orthogonality/Fourier**           | Fourier inversion on `{±1}^n`                                                                      | `InfiniteVolume.lean`      |
 | Partition function positivity             | `Z > 0`                                                                                             | `GibbsMeasure.lean`        |
