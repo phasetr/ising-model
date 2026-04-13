@@ -55,8 +55,8 @@ def boxEmbed (d : ℕ) (n : ℕ) (x : BoxSite d n) : Fin d → ℤ :=
 if their ℤ^d embeddings are nearest neighbors. -/
 def boxGraph (d : ℕ) (n : ℕ) : SimpleGraph (BoxSite d n) where
   Adj x y := (latticeGraph d).Adj (boxEmbed d n x) (boxEmbed d n y)
-  symm := fun {x y} h => (latticeGraph d).symm h
-  loopless := ⟨fun x h => (latticeGraph d).loopless.irrefl (boxEmbed d n x) h⟩
+  symm := fun {_ _} h => (latticeGraph d).symm h
+  loopless := ⟨fun v h => (latticeGraph d).loopless.irrefl (boxEmbed d n v) h⟩
 
 /-- Adjacency in the box graph is decidable. -/
 instance (d : ℕ) (n : ℕ) : DecidableRel (boxGraph d n).Adj :=

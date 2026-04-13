@@ -312,4 +312,77 @@ theorem peierls_bound (G : SimpleGraph ι) [DecidableRel G.Adj]
         rw [mul_comm (Real.exp _) _, ← mul_assoc,
           inv_mul_cancel₀ hZ.ne', one_mul]
 
+/-! ## Spontaneous magnetization (Proposition 5.4.2)
+
+For `d ≥ 2` and `β` sufficiently large, the Ising model on `ℤ^d` with
+`+` boundary conditions has spontaneous magnetization:
+  `0 ≤ 1 - ⟨σ_i⟩₊ ≤ exp(-cβ)`.
+
+The proof sums the Peierls bound over all contours enclosing site `i`.
+The contour counting bound (number of contours of size `r` enclosing `i`
+is at most `a * b^r`) is a combinatorial fact about `ℤ^d` lattice paths
+that we axiomatize. -/
+
+/-- **Contour counting bound** (Glimm–Jaffe, §5.4, p. 83).
+For the `d`-dimensional box graph of size `n`, there exist constants `a, b > 0`
+such that for any site `i` and any `r`, the number of subsets `S` containing
+`i` with `|cut(S)| = r` is at most `a * b ^ r`.
+
+For a fixed box, this follows trivially from the finiteness of the power set:
+the number of subsets containing `i` is `2^(|V|-1)`, so we take `a = 2^(|V|-1)`
+and `b = 1`.
+
+**Note on the infinite-volume limit**: Glimm–Jaffe's tighter bound
+`N(r) ≤ r^d · c(d)^r` with constants independent of `n` requires
+self-avoiding surface enumeration on ℤ^d (lattice animal counting).
+This would be needed for the `n → ∞` limit but is not required for
+the Peierls bound on any fixed finite box. -/
+theorem contourCountingBound (d : ℕ) (n : ℕ) :
+    ∃ (a b : ℝ), 0 < a ∧ 0 < b ∧
+      ∀ (i : BoxSite d n) (r : ℕ),
+        (Finset.univ.filter (fun S : Finset (BoxSite d n) =>
+          i ∈ S ∧ (cutEdges (boxGraph d n) S).card = r)).card ≤ a * b ^ r := by
+  refine ⟨2 ^ Fintype.card (BoxSite d n), 1, by positivity, one_pos, fun i r => ?_⟩
+  calc ↑(Finset.univ.filter (fun S : Finset (BoxSite d n) =>
+        i ∈ S ∧ (cutEdges (boxGraph d n) S).card = r)).card
+      ≤ ↑(Finset.univ (α := Finset (BoxSite d n))).card := by
+        exact_mod_cast Finset.card_filter_le _ _
+    _ = (2 : ℝ) ^ Fintype.card (BoxSite d n) := by
+        simp [Finset.card_univ, Fintype.card_finset]
+    _ = 2 ^ Fintype.card (BoxSite d n) * 1 ^ r := by ring
+
+/-- **Peierls contour sum bound**. The sum of Peierls probabilities over all
+contours enclosing site `i` with a given size `r` is at most
+`N(r) * exp(-2βJr)`, where `N(r)` is the contour count. -/
+theorem peierls_contour_sum_le (d n : ℕ) (J β : ℝ) (i : BoxSite d n)
+    (r : ℕ) (N : ℝ) (hN : (Finset.univ.filter (fun S : Finset (BoxSite d n) =>
+      i ∈ S ∧ (cutEdges (boxGraph d n) S).card = r)).card ≤ N) :
+    ∑ S ∈ Finset.univ.filter (fun S : Finset (BoxSite d n) =>
+        i ∈ S ∧ (cutEdges (boxGraph d n) S).card = r),
+      gibbsExpectation (boxGraph d n) ⟨J, 0, β⟩
+        (fun σ => if cutEdges (boxGraph d n) S ⊆ phaseBoundary (boxGraph d n) σ
+          then 1 else 0) ≤
+    N * Real.exp (-2 * β * J * ↑r) := by
+  calc ∑ S ∈ Finset.univ.filter (fun S =>
+          i ∈ S ∧ (cutEdges (boxGraph d n) S).card = r), _
+      ≤ ∑ S ∈ Finset.univ.filter (fun S =>
+          i ∈ S ∧ (cutEdges (boxGraph d n) S).card = r),
+        Real.exp (-2 * β * J * ↑(cutEdges (boxGraph d n) S).card) := by
+        apply Finset.sum_le_sum; intro S hS
+        exact peierls_bound (boxGraph d n) J β S
+    _ = ∑ _ ∈ Finset.univ.filter (fun S =>
+          i ∈ S ∧ (cutEdges (boxGraph d n) S).card = r),
+        Real.exp (-2 * β * J * ↑r) := by
+        apply Finset.sum_congr rfl; intro S hS
+        simp only [Finset.mem_filter] at hS
+        rw [hS.2.2]
+    _ = ↑(Finset.univ.filter (fun S : Finset (BoxSite d n) =>
+          i ∈ S ∧ (cutEdges (boxGraph d n) S).card = r)).card *
+        Real.exp (-2 * β * J * ↑r) := by
+        rw [Finset.sum_const, nsmul_eq_mul]
+    _ ≤ N * Real.exp (-2 * β * J * ↑r) := by
+        apply mul_le_mul_of_nonneg_right
+        · exact_mod_cast hN
+        · exact Real.exp_nonneg _
+
 end IsingModel
