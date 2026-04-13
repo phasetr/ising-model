@@ -975,6 +975,30 @@ $\tanh(-x) = -\tanh(x)$: if $m^*$ solves the mean field equation
 at $h = 0$, so does $-m^*$.
 \end{theorem}
 
+\subsection{Symmetry breaking (\S5.3)}
+
+\begin{definition}[\texttt{magnetization}]
+The order parameter: $M(i) = \langle\sigma_i\rangle$ (eq.~(5.3.5)).
+\end{definition}
+
+\begin{definition}[\texttt{susceptibility}]
+$\chi(i) = \sum_j \langle\sigma_i;\sigma_j\rangle = \sum_j \texttt{truncated2}(i,j)$.
+\end{definition}
+
+\begin{theorem}[\texttt{susceptibility\_nonneg}]
+$\chi(i) \ge 0$ for ferromagnetic parameters, by \texttt{truncated2\_nonneg}.
+\end{theorem}
+
+\begin{theorem}[\texttt{magnetization\_zero\_at\_h\_zero}]
+$M(i) = 0$ when $h = 0$: the $\mathbb{Z}_2$ symmetry is unbroken in finite
+volume. Uses \texttt{correlation\_odd\_vanish}.
+\end{theorem}
+
+Symmetry breaking occurs only in the infinite volume limit:
+$M_+ = \lim_{h \downarrow 0} \langle\sigma_i\rangle_h > 0$ for $\beta > \beta_c$.
+The concavity $d^2 M/dh^2 \le 0$ for $h \ge 0$ follows from the GHS inequality
+(Cor.~4.3.4), as noted on p.~80 of \cite{glimm-jaffe}.
+
 \section{Peierls argument (\texttt{Peierls.lean})}
 
 This section formalizes the Peierls argument for the existence of phase
