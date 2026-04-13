@@ -71,14 +71,6 @@ heavy Lean measure theory assembly:
 | §2.3 | Ising model definitions | **Done** | `Basic.lean`, `Hamiltonian.lean`, `GibbsMeasure.lean` | Spin, Config, Hamiltonian, Z, Gibbs expectation |
 | §2.4 | Series expansion methods | **Out of scope** | — | Mayer expansion for gas dynamics |
 
-### Chapter 3: The Feynman-Kac Formula
-
-| Section | Result | Status | Lean | Notes |
-|---|---|---|---|---|
-| §3.1 | Wiener measure | **Out of scope** | — | Stochastic processes |
-| §3.2 | Feynman-Kac formula | **Out of scope** | — | Quantum mechanics |
-| §3.3 | Uniqueness of ground state | **Out of scope** | — | Quantum mechanics |
-| §3.4 | Renormalized Feynman-Kac | **Out of scope** | — | Quantum field theory |
 
 ### Chapter 4: Critical Phenomena
 
