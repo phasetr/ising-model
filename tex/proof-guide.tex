@@ -4,6 +4,16 @@
 \usepackage{amssymb}
 \usepackage{amsthm}
 \usepackage{hyperref}
+\usepackage[hmargin=2cm]{geometry}
+\usepackage{fvextra}  % for breakable verbatim
+\DefineVerbatimEnvironment{Verbatim}{Verbatim}{breaklines,fontsize=\small}
+\fvset{breaklines}
+
+\usepackage{microtype}  % character protrusion and font expansion for better line breaks
+\emergencystretch=3em
+
+% Allow hyphenation in tt font
+\usepackage{hyphenat}
 
 \newtheorem{theorem}{Theorem}
 \newtheorem{lemma}[theorem]{Lemma}
@@ -19,26 +29,138 @@
 \maketitle
 
 \begin{abstract}
-This document provides a mathematical walkthrough of the Lean~4
-formalization of theorems about the finite Ising model.
-Each section corresponds to a Lean source file and lists the relevant
-definitions and theorems. The purpose is to make the formal proofs
-readable as ordinary mathematics.
-
-The correlation inequalities (GKS-I/II, FKG) follow
-Glimm--Jaffe~\cite{glimm-jaffe}, Theorem~4.1.1 (pp.~56--57)
-and Friedli--Velenik~\cite{friedli-velenik}, Theorem~3.22 (pp.~99--100).
-The Lee-Yang circle theorem follows
-Ruelle~\cite{ruelle} and Harcos~\cite{harcos}.
+This document is a guide to reading the Lean~4 source code of the
+\texttt{ising-model} project. Rather than reproducing full proofs,
+it explains \emph{how to navigate the codebase}: which files to read
+in which order, what each file's role is, and where the key ideas live.
+Mathematical statements are included to orient the reader, but the
+primary goal is to make the formal code accessible.
 \end{abstract}
 
 \tableofcontents
 
+%======================================================================
+\section{How to read this codebase}
+%======================================================================
+
+\subsection{File dependency graph}
+
+Read the files in this order. Each file imports only the files above it.
+
+\begin{Verbatim}
+Basic.lean                   Spin, Config, IsingParams
+  |
+Hamiltonian.lean             H(sigma), edgeSpin, spin flip
+  |
+GibbsMeasure.lean            Z, Gibbs expectation, correlation
+  |
+  +-- Inequalities/
+  |     NonnegCorrelations.lean   HNC property, exp decomposition
+  |     GKS.lean                  GKS-I, GKS-II
+  |     FKG.lean                  FKG inequality
+  |     GHS.lean                  truncated functions, GHS, Cor 4.3.3-5
+  |
+  +-- Asano.lean                  MultilinPoly, Asano contraction
+  |     LeeYang.lean              Lee-Yang (Harcos/Ruelle, uses MultilinPoly only)
+  |
+  +-- InfiniteVolume.lean         boundedness, monotonicity, convergence
+  |     FreeEnergy.lean           free energy, analyticity, Lee-Yang (Ising)
+  |     Conditioning.lean         beta-monotonicity, Z bounds, reflection pos.
+  |
+  +-- PhaseTransition.lean        phase decomposition, mean field, symmetry
+  |
+  +-- Peierls.lean                Peierls bound, spontaneous magnetization
+  |
+  +-- Lattice.lean                lattice graph definitions
+  |
+  +-- ContinuousSpin/Phi4.lean    phi^4 identities (axioms)
+\end{Verbatim}
+
+\subsection{Recommended reading paths}
+
+\paragraph{Path 1: GKS inequalities (simplest).}
+\texttt{Basic.lean} $\to$ \texttt{Hamiltonian.lean} $\to$
+\texttt{GibbsMeasure.lean} $\to$ \texttt{NonnegCorrelations.lean} $\to$
+\texttt{GKS.lean}.
+\emph{Key idea:} the Boltzmann weight factors as a product of
+$\cosh + \sinh \cdot \sigma_i\sigma_j$ terms, each with non-negative
+coefficients (HNC). Fourier--Walsh expansion then gives GKS-I/II.
+
+\paragraph{Path 2: Lee-Yang theorem.}
+\texttt{Asano.lean} (for \texttt{MultilinPoly} type) $\to$
+\texttt{LeeYang.lean} $\to$ \texttt{FreeEnergy.lean}.
+
+\emph{Key idea:} the Harcos/Ruelle approach defines a polynomial
+from a Hermitian matrix, uses a torus identity to relate complementary
+coefficients, and applies the maximum modulus principle.
+Induction on $n$ eliminates one variable at a time.
+Asano contraction is \emph{not} used.
+
+\paragraph{Path 3: GHS and truncated functions.}
+\texttt{GHS.lean} (imports \texttt{InfiniteVolume.lean}).
+
+\emph{Key idea:} the Lebowitz inequality (axiom from $\varphi^4$ theory)
+bounds the 3-point function, giving $\langle\sigma_i;\sigma_j;\sigma_k\rangle \le 0$.
+Spin-flip symmetry at $h=0$ kills odd correlations.
+
+\paragraph{Path 4: Peierls argument.}
+\texttt{Peierls.lean}.
+
+\emph{Key idea:} the Hamiltonian--boundary identity
+$H = -J(|E| - 2|\partial\sigma|)$ rewrites the Boltzmann weight.
+Contour counting gives the Peierls bound.
+
+\subsection{Conventions used throughout}
+
+\begin{itemize}
+  \item \textbf{Type variables.} $\iota$ is the site type
+    (\texttt{[Fintype $\iota$] [DecidableEq $\iota$]}), $G$ is a
+    \texttt{SimpleGraph $\iota$} with \texttt{[Fintype G.edgeSet]}.
+  \item \textbf{Field genericity.} Definitions use a generic ordered
+    field $K$; main theorems specialize to $\mathbb{R}$.
+  \item \textbf{Sign convention.} $H = -J\sum_e s_i s_j - h\sum_i s_i$
+    (negative coupling = ferromagnetic).
+  \item \textbf{Boltzmann weight.} $w(\sigma) = \exp(-\beta H(\sigma))$
+    (\texttt{boltzmannWeight}).
+  \item \textbf{Axioms.} Four axioms from $\varphi^4$ measure theory
+    are used: \texttt{phi4\_single\_\allowbreak site\_nonneg},
+    \texttt{lebowitz\_\allowbreak third/\allowbreak four/\allowbreak inductive}.
+    These have complete mathematical proofs but require measure-theoretic
+    infrastructure not yet available in Lean/Mathlib.
+  \item \textbf{Edge representation.} Edges are \texttt{Sym2 $\iota$}
+    (unordered pairs). The edge spin product
+    \texttt{edgeSpin $\sigma$ $e$} $= s(\sigma_i) \cdot s(\sigma_j)$
+    is defined via \texttt{Sym2.lift}.
+\end{itemize}
+
+\subsection{How the key proofs work in Lean}
+
+Many proofs follow a common pattern:
+\begin{enumerate}
+  \item \textbf{Unfold definitions} to expose the sum
+    $Z^{-1} \sum_\sigma (\cdots)$.
+  \item \textbf{Factor the Boltzmann weight} using
+    $\exp(\alpha s) = \cosh\alpha + s\sinh\alpha$
+    (\texttt{exp\_edgeSpin\_decomp}).
+  \item \textbf{Expand products} to get a polynomial in spin products
+    $\sigma^S$.
+  \item \textbf{Apply non-negativity} of each coefficient
+    (HNC, \texttt{hasNonnegCorrelations}).
+  \item \textbf{Close with} \texttt{nlinarith}, \texttt{linarith},
+    or \texttt{Finset.sum\_nonneg}.
+\end{enumerate}
+
+%======================================================================
 \section{Basic definitions (\texttt{Basic.lean})}
 
-\texttt{Basic.lean} contains all fundamental types (Spin, Config,
-IsingParams, Ferromagnetic) as well as spin operations (flip,
-flipAt, sign, toSign) and their basic properties.
+\par\noindent\textbf{Prerequisites:} None (this is the root file).
+
+\textbf{Role:} Defines the alphabet of the Ising model --- spin values,
+configurations, parameters. Everything else builds on these types.
+
+\textbf{What to look for:} the \texttt{Spin} type and its arithmetic
+(\texttt{toSign}, \texttt{flip}, \texttt{sign}), and the
+\texttt{Ferromagnetic} structure ($J \ge 0$, $h \ge 0$, $\beta > 0$).
 
 \begin{definition}[Spin]
 $\mathrm{Spin} = \{\mathrm{up}, \mathrm{down}\}$ with sign function
@@ -65,6 +187,15 @@ Ferromagnetic condition: $J \geq 0$, $h \geq 0$, $\beta > 0$.
 \texttt{structure Ferromagnetic}
 
 \section{Hamiltonian (\texttt{Hamiltonian.lean})}
+
+\par\noindent\textbf{Prerequisites:} \texttt{Basic.lean}.
+
+\textbf{Role:} Defines the energy function $H(\sigma)$ and
+the edge spin product. The spin flip symmetry theorem lives here.
+
+\textbf{What to look for:} \texttt{edgeSpin} (the $\pm 1$ product
+for an edge, defined via \texttt{Sym2.lift}) and
+\texttt{hamiltonian\_flip\_eq} (the $h=0$ symmetry).
 
 \begin{definition}[Ising Hamiltonian]
 For a simple graph $G$ on $\iota$,
@@ -100,6 +231,16 @@ Each edge factor satisfies $(-s_i)(-s_j) = s_i s_j$
 \end{proof}
 
 \section{Partition function and Gibbs measure (\texttt{GibbsMeasure.lean})}
+
+\par\noindent\textbf{Prerequisites:} \texttt{Hamiltonian.lean}.
+
+\textbf{Role:} Defines the three central objects: partition function $Z$,
+Gibbs expectation $\langle\cdot\rangle$, and correlation function
+$\langle\sigma^A\rangle$. Also contains the spin product algebra
+($\sigma^A \cdot \sigma^C = \sigma^{A \triangle C}$, $(\sigma^A)^2 = 1$).
+
+\textbf{What to look for:} \texttt{partitionFunction\_pos} ($Z > 0$)
+and \texttt{spinProduct\_mul} (the key algebraic identity for GKS proofs).
 
 \begin{definition}[Partition function]
 $Z_G = \sum_{\sigma : \iota \to \mathrm{Spin}} \exp(-\beta\, H_G(\sigma))$.
@@ -145,6 +286,15 @@ matching $A \bigtriangleup C$.
 \end{proof}
 
 \section{GKS-I proof (\texttt{Inequalities/GKS.lean})}
+
+\par\noindent\textbf{Prerequisites:} \texttt{GibbsMeasure.lean},
+\texttt{NonnegCorrelations.lean}.
+
+\textbf{Role:} Proves the first and second Griffiths inequalities.
+
+\textbf{What to look for:} The proof reduces GKS to the HNC property
+of the Boltzmann weight (\texttt{boltzmannWeight\_hasNonnegCorrelations}).
+Once HNC is established, GKS-I is a one-liner.
 
 \subsection{Reduction to non-negative correlations}
 
@@ -258,6 +408,12 @@ since $Z > 0$ and the numerator $\geq 0$ by HNC.
 
 \section{GKS-II proof (\texttt{Inequalities/GKS.lean})}
 
+\noindent\textbf{What to look for:} The proof introduces the
+\emph{doubled system} --- a product of two independent copies of the
+Ising model --- and a $45^\circ$ rotation $(t, q) = (\sigma + \tau,
+\sigma - \tau)/\sqrt{2}$. The key step is showing that the doubled
+Boltzmann weight has the HNC property in the $(t, q)$ variables.
+
 The second Griffiths inequality is proved by the duplicate variable trick,
 following Friedli--Velenik~\cite{friedli-velenik}, Theorem~3.49~(3.55),
 pp.~127--128.
@@ -335,9 +491,19 @@ A Float-based reference implementation verifies:
 
 \section{FKG inequality (\texttt{Inequalities/FKG.lean})}
 
+\par\noindent\textbf{Prerequisites:} \texttt{GKS.lean}.
+
+\textbf{Role:} Proves $\langle fg \rangle \ge \langle f \rangle\langle g \rangle$
+for monotone $f, g$.
+
+\textbf{What to look for:} The Holley criterion approach. The proof
+shows that the Gibbs measure satisfies the FKG lattice condition
+by reducing to GKS-II.
+
 The FKG inequality is proved by applying Mathlib's
-\texttt{Combinatorics.SetFamily.FourFunctions.fkg} to the Ising Boltzmann
-weight, following Friedli--Velenik~\cite{friedli-velenik}, Theorem~3.21
+\texttt{Combinatorics.\allowbreak SetFamily.\allowbreak FourFunctions.\allowbreak fkg}
+to the Ising Boltzmann weight, following
+Friedli--Velenik~\cite{friedli-velenik}, Theorem~3.21
 (p.~98) and Theorem~3.50 (pp.~128--130).
 
 \begin{theorem}[\texttt{fkg\_ising}]
@@ -363,7 +529,17 @@ $\langle fg \rangle \geq \langle f \rangle \langle g \rangle$.
   unnormalized sums to \texttt{gibbsExpectation} form.
 \end{enumerate}
 
-\section{Asano Contraction}
+\section{Asano Contraction (\texttt{Asano.lean})}
+
+\par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
+
+\textbf{Role:} Defines \texttt{MultilinPoly} (multilinear polynomials
+over $\mathbb{C}$) and the Asano contraction operation. This is the
+algebraic engine behind the Lee-Yang theorem.
+
+\textbf{What to look for:} \texttt{MultilinPoly.eval} and
+\texttt{asanoContract}. The key theorem is that contraction
+preserves nonvanishing on the unit polydisk.
 
 The Asano contraction merges two variables in a multilinear polynomial,
 keeping only the ``both present'' and ``both absent'' parts.
@@ -426,6 +602,20 @@ multilinear polynomials, the definitions here should be replaced.
 \end{remark}
 
 \section{Lee-Yang circle theorem (\texttt{LeeYang.lean})}
+
+\par\noindent\textbf{Prerequisites:} \texttt{Asano.lean} (for the
+\texttt{MultilinPoly} type only; Asano contraction is \emph{not} used).
+
+\textbf{Role:} Proves that the Ising partition polynomial has no
+zeros on the open unit polydisk via the Harcos/Ruelle approach.
+
+\textbf{What to look for:} The proof uses a Hermitian matrix formulation,
+induction on $n$, and the maximum modulus principle --- not Asano contraction.
+Key steps: (1) define \texttt{leeYangPoly} for Hermitian $A$ with
+$|a_{ij}| \le 1$; (2) torus identity relating $\alpha$ and
+$\overline{\beta}$; (3) induction eliminating the last variable;
+(4) maximum modulus to bound $|\beta/\alpha|$ on the polydisk.
+\texttt{lee\_yang\_circle} is the final theorem.
 \label{sec:lee-yang}
 
 The Lee-Yang circle theorem states that the Ising partition polynomial
@@ -471,6 +661,17 @@ Hermitian matrix from the edge list and coupling constants, reducing
 the combinatorial Ising model to the matrix formulation.
 
 \section{Infinite volume limit (\texttt{InfiniteVolume.lean})}
+
+\par\noindent\textbf{Prerequisites:} \texttt{GKS.lean}.
+
+\textbf{Role:} Proves boundedness ($|\langle\sigma^A\rangle| \le 1$),
+monotonicity in $J$ and $h$, and convergence of correlations.
+Also contains the Walsh--Fourier inversion theorem.
+
+\textbf{What to look for:} \texttt{abs\_correlation\_le\_one} (used
+everywhere), \texttt{correlation\_monotone\_J/H} (used for free energy
+monotonicity), and the covariance non-negativity lemma
+\texttt{cov\_hnc\_boltzmann\_nonneg}.
 
 The convergence of correlation functions as the lattice grows to infinity.
 Reference: \cite[{\S4.2, pp.~58--59}]{glimm-jaffe}.
@@ -583,9 +784,12 @@ $\hat{c}_S = 2^{-|\iota|} \sum_\tau \sigma^S(\tau) f(\tau)$.
 
 \begin{proof}
 Substitute the expansion and apply Walsh completeness:
-$\sum_S \hat{c}_S \sigma^S(\sigma)
-= 2^{-|\iota|} \sum_\tau f(\tau) \underbrace{\sum_S \sigma^S(\tau) \sigma^S(\sigma)}_{\text{= } 2^{|\iota|} [\tau = \sigma]}
-= f(\sigma)$.
+\[
+  \sum_S \hat{c}_S \sigma^S(\sigma)
+  = 2^{-|\iota|} \sum_\tau f(\tau)
+    \underbrace{\sum_S \sigma^S(\tau) \sigma^S(\sigma)}_{= \, 2^{|\iota|} [\tau = \sigma]}
+  = f(\sigma).
+\]
 This uses \texttt{Finset.sum\_comm} to swap the order of summation
 and \texttt{walsh\_completeness} for the Kronecker delta.
 \end{proof}
@@ -751,6 +955,19 @@ coupling bounds from $0 \le t < 1$), and apply
 
 \section{GHS inequality (\texttt{Inequalities/GHS.lean})}
 
+\par\noindent\textbf{Prerequisites:} \texttt{InfiniteVolume.lean}.
+
+\textbf{Role:} Defines truncated correlation functions ($u_2$, $u_3$,
+$u_4$) and proves the GHS inequality $u_3 \le 0$, Cor.~4.3.3
+($U_4 \le 0$ for $h=0$), and Cor.~4.3.5 (inductive bound).
+Also contains \texttt{correlation\_odd\_vanish} ($h=0$, odd $|A|$).
+
+\textbf{What to look for:} The Lebowitz axioms
+(\texttt{lebowitz\_third/four/inductive}) are the only axioms in the
+file. Everything else is proved. The spin-flip symmetry proof
+(\texttt{correlation\_odd\_vanish}) uses a bijection argument:
+pair $\sigma$ with $\mathrm{flip}(\sigma)$ to show $S = -S$.
+
 The Griffiths--Hurst--Sherman inequality for the Ising model.
 Reference: Ellis, \emph{Entropy, Large Deviations, and Statistical
 Mechanics}, \S V.3, pp.~143--146.
@@ -870,7 +1087,7 @@ Since $\langle\sigma_{ij}\rangle, \langle\sigma_{kl}\rangle \ge 0$ by GKS-I,
 this gives $U_4 \le -2\langle\sigma_{ij}\rangle\langle\sigma_{kl}\rangle \le 0$.
 \end{proof}
 
-\subsection{Cor.~4.3.5: $n$-point inductive bound}
+\subsection[Cor.~4.3.5: n-point inductive bound]{Cor.~4.3.5: $n$-point inductive bound}
 
 \begin{theorem}[\texttt{lebowitz\_inductive}; axiom]
 For ferromagnetic $h \ge 0$, a set $S$ of sites, and two sites $j, k \notin S$
@@ -912,9 +1129,12 @@ The formalization includes:
 One measure-theoretic property is stated as axiom (mathematically
 proved but not formalized in Lean due to the heavy measure theory assembly):
 \begin{itemize}
-\item \texttt{phi4\_single\_site\_nonneg}: non-negativity of the
-  symmetrized 4D integral $\int \alpha^k\beta^l\gamma^m\delta^n
-  e^{-Q + c\alpha\beta\gamma\delta} \ge 0$ when $Q$ is even and $c \ge 0$.
+\item \texttt{phi4\_single\_\allowbreak site\_nonneg}: non-negativity of the
+  symmetrized 4D integral: for $Q$ even and $c \ge 0$,
+  \[
+    \int \alpha^k\beta^l\gamma^m\delta^n \,
+    e^{-Q + c\alpha\beta\gamma\delta} \ge 0.
+  \]
 \end{itemize}
 The proof strategy: write $e^x = \cosh(x) + \sinh(x)$ with $x = c\alpha\beta\gamma\delta$.
 The $\cosh$ term is even in each variable, so odd-power monomials integrate to zero
@@ -1105,6 +1325,24 @@ $t < 1$.
 \end{theorem}
 
 \section{Peierls argument (\texttt{Peierls.lean})}
+
+\par\noindent\textbf{Prerequisites:} \texttt{GibbsMeasure.lean},
+\texttt{Lattice.lean}.
+
+\textbf{Role:} Proves the Peierls bound and spontaneous magnetization.
+This is the most ``combinatorial'' file in the project.
+
+\textbf{What to look for:}
+\begin{itemize}
+  \item \texttt{phaseBoundary}: the set of ``disagreeing'' edges
+    $\partial\sigma$.
+  \item \texttt{hamiltonian\_boundary}: the identity
+    $H = -J(|E| - 2|\partial\sigma|)$ that connects energy to contours.
+  \item \texttt{peierls\_bound}: the exponential bound on contour
+    probability.
+  \item \texttt{prop\_5\_4\_2\_self\_contained}: the final spontaneous
+    magnetization result $0 \le 1 - \langle\sigma_i\rangle_+ \le e^{-c\beta}$.
+\end{itemize}
 
 This section formalizes the Peierls argument for the existence of phase
 transitions in the Ising model (Glimm--Jaffe~\cite{glimm-jaffe}, \S5.4,
