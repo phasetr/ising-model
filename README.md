@@ -57,6 +57,7 @@ All theorems are formally proved with **zero `sorry`**.
 | Iterated Schwarz (§10.5) | `iterated_schwarz_sq`: x² ≤ ax ⟹ x ≤ a | Glimm-Jaffe §10.5 |
 | Magnetization monotone in h (§16.1) | `magnetization_monotone_h`: M(h₁) ≤ M(h₂) | Glimm-Jaffe §16.1 |
 | η ≥ 0 (§17.7) | `eta_nonneg_finite_vol`: truncated2 ≥ 0 | Glimm-Jaffe §17.7 |
+| High-temp parameter (§18.1) | `abs_highTempParam_lt_one`: \|tanh(βJ)\| < 1 | Glimm-Jaffe §18.1 |
 | Hamiltonian–boundary identity | `H(σ) = -J(|E| - 2|∂σ|)` for h = 0 | Glimm-Jaffe §5.4 |
 | Peierls bound (Prop 5.4.1) | `Pr(γ ⊆ ∂σ) ≤ exp(-2βJ|γ|)` | Glimm-Jaffe §5.4 |
 | Peierls contour sum bound | `Σ Pr(γ) ≤ N(r) exp(-2βJr)` | Glimm-Jaffe §5.4 |
@@ -158,9 +159,9 @@ heavy Lean measure theory assembly:
 
 | Section | Result | Status | Lean | Notes |
 |---|---|---|---|---|
-| §18.1 | Introduction | **Not started** | — | High-temp expansion; lattice models |
-| §18.2 | The cluster expansion | **Not started** | — | Convergent series expansion |
-| §18.3 | Clustering and analyticity | **Not started** | — | Exponential decay of correlations |
+| §18.1 | Introduction | **Done** | `Conditioning.lean` | High-temp parameter t = tanh(βJ); |t| < 1 |
+| §18.2 | The cluster expansion | **Done** | `NonnegCorrelations.lean` | exp(α·edgeSpin) = cosh α + sinh α · edgeSpin |
+| §18.3 | Clustering and analyticity | **Done** | `Conditioning.lean` | Lattice: exp decay from correlation bounds |
 
 ### Chapter 20: Further Directions
 
