@@ -1035,6 +1035,18 @@ $Z \le 2^{|\iota|} \cdot \exp(|\beta|(|J| \cdot |E| + |h| \cdot |\iota|))$.
 $\exp(-|\beta|(|J| \cdot |E| + |h| \cdot |\iota|)) \le Z$.
 \end{theorem}
 
+\subsection{Reflection positivity (\S10.4)}
+
+\begin{definition}[\texttt{ReflectionPositive}]
+A bilinear form $b$ is reflection-positive if $b(x, x) \ge 0$ for all $x$.
+\end{definition}
+
+\begin{theorem}[\texttt{discriminant\_nonneg}]
+If $a t^2 + 2bt + c \ge 0$ for all $t \in \mathbb{R}$, then $b^2 \le ac$.
+This is the algebraic core of the Schwarz inequality (10.4.2).
+Proved using \texttt{discrim\_le\_zero} from Mathlib.
+\end{theorem}
+
 \section{Peierls argument (\texttt{Peierls.lean})}
 
 This section formalizes the Peierls argument for the existence of phase
