@@ -39,8 +39,8 @@ All theorems are formally proved with **zero `sorry`**.
 | GHS inequality | `⟨σ_i; σ_j; σ_k⟩ ≤ 0` | Ellis §V.3, Lebowitz (1974) |
 | Cor 4.3.3 (truncated 4-point ≤ 0) | `U₄(i,j,k,l) ≤ 0` for h = 0 | Glimm-Jaffe §4.3 |
 | Odd correlation vanishing | `⟨σ^A⟩ = 0` for odd \|A\| when h = 0 | Spin-flip symmetry |
-| Free energy analyticity (Thm 4.6.2) | `f(h)` real-analytic for h > 0 | Glimm-Jaffe §4.6 |
-| Partition function analyticity | `Z(h)`, `Z(J)` real-analytic | Glimm-Jaffe §4.6 |
+| Free energy analyticity (Thm 4.6.2) | `freeEnergyH_analyticOn`: `f(h)` real-analytic for h > 0 | Glimm-Jaffe §4.6 |
+| Partition function analyticity | `partitionFunctionH_analyticAt`, `partitionFunctionJ_analyticAt` | Glimm-Jaffe §4.6 |
 | Hamiltonian–boundary identity | `H(σ) = -J(|E| - 2|∂σ|)` for h = 0 | Glimm-Jaffe §5.4 |
 | Peierls bound (Prop 5.4.1) | `Pr(γ ⊆ ∂σ) ≤ exp(-2βJ|γ|)` | Glimm-Jaffe §5.4 |
 | Peierls contour sum bound | `Σ Pr(γ) ≤ N(r) exp(-2βJr)` | Glimm-Jaffe §5.4 |
