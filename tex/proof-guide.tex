@@ -2325,4 +2325,33 @@ $\Lambda.\text{exhaust}$ を使った系:
 $\exists N, \exists h_N$ で上と同じ結論が得られる.
 \end{theorem}
 
+\subsection{Exhaustion-independence}
+
+\begin{lemma}[\texttt{correlationAlongExhaustion\_le\_correlationInfinite\_of\_other}]
+2 つの exhaustion $\Lambda, \Lambda'$ に対し任意の $n$ で
+\[
+\texttt{correlationAlongExhaustion}\,G\,\Lambda'\,p\,A\,n
+  \le \texttt{correlationInfinite}\,G\,\Lambda\,p\,A.
+\]
+\end{lemma}
+
+\begin{proof}
+$A \subseteq \Lambda'.\text{volume}\,n$ のとき,
+$\Lambda.\text{exhaust}(\Lambda'.\text{volume}\,n)$ で
+$m$ を取り $\Lambda'.\text{volume}\,n \subseteq \Lambda.\text{volume}\,m$.
+\texttt{correlationΛ\_monotone\_volume} (PR \#87) と
+\texttt{le\_ciSup} を連結.
+$A \not\subseteq \Lambda'.\text{volume}\,n$ のとき LHS $= 0$,
+\texttt{correlationInfinite\_nonneg} で RHS $\ge 0$.
+\end{proof}
+
+\begin{theorem}[\texttt{correlationInfinite\_indep\_exhaustion}]
+$\texttt{correlationInfinite}\,G\,\Lambda\,p\,A
+  = \texttt{correlationInfinite}\,G\,\Lambda'\,p\,A$.
+\end{theorem}
+
+\begin{proof}
+両向きに \texttt{ciSup\_le} と上の lemma.
+\end{proof}
+
 \end{document}

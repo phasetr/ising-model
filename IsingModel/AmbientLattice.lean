@@ -836,6 +836,18 @@ theorem correlationAlongExhaustion_le_one
   · simp only [correlationAlongExhaustion, hAn, dite_false]
     norm_num
 
+/-- **Range is bounded above by 1**: the range of the sequence
+`correlationAlongExhaustion G Λ p A` is bounded above. Witness `1`
+via `correlationAlongExhaustion_le_one`. -/
+theorem correlationAlongExhaustion_bddAbove
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (A : Finset V) :
+    BddAbove (Set.range (correlationAlongExhaustion G Λ p A)) := by
+  refine ⟨1, ?_⟩
+  rintro _ ⟨n, rfl⟩
+  exact correlationAlongExhaustion_le_one G Λ p A n
+
 /-- **Convergence of correlation along an exhaustion (explicit limit)**:
 for a ferromagnetic Ising model and any exhaustion `Λₙ ↑ V` of an
 ambient type `V`, the sequence `correlationAlongExhaustion` converges
@@ -856,10 +868,9 @@ theorem correlationAlongExhaustion_tendsto_ciSup
     (A : Finset V) :
     Filter.Tendsto (correlationAlongExhaustion G Λ p A)
       Filter.atTop (nhds (⨆ n, correlationAlongExhaustion G Λ p A n)) := by
-  refine tendsto_atTop_ciSup
-    (correlationAlongExhaustion_monotone G Λ p hf A) ⟨1, ?_⟩
-  rintro _ ⟨n, rfl⟩
-  exact correlationAlongExhaustion_le_one G Λ p A n
+  exact tendsto_atTop_ciSup
+    (correlationAlongExhaustion_monotone G Λ p hf A)
+    (correlationAlongExhaustion_bddAbove G Λ p A)
 
 /-- **Convergence of correlation along an exhaustion (existential form)**:
 thin wrapper around `correlationAlongExhaustion_tendsto_ciSup`. Use
@@ -933,11 +944,7 @@ theorem correlationInfinite_nonneg
   have hval : 0 ≤ correlationAlongExhaustion G Λ p A N := by
     simp only [correlationAlongExhaustion, hA, dite_true]
     exact correlationΛ_nonneg G (Λ.volume N) p hf _
-  have hbdd : BddAbove (Set.range (correlationAlongExhaustion G Λ p A)) := by
-    refine ⟨1, ?_⟩
-    rintro _ ⟨n, rfl⟩
-    exact correlationAlongExhaustion_le_one G Λ p A n
-  exact hval.trans (le_ciSup hbdd N)
+  exact hval.trans (le_ciSup (correlationAlongExhaustion_bddAbove G Λ p A) N)
 
 /-- **Tendsto of the lifted `correlationΛ` sequence (explicit form)**:
 given an explicit `N` and a hypothesis `hN : ∀ n ≥ N, A ⊆ Λ.volume n`,
@@ -987,6 +994,82 @@ theorem tendsto_correlationΛ_correlationInfinite
         Filter.atTop (nhds (correlationInfinite G Λ p A)) := by
   obtain ⟨N, hN⟩ := Λ.exhaust A
   exact ⟨N, hN, tendsto_correlationΛ_correlationInfinite_of_subset G Λ p hf hN⟩
+
+/-! ## Exhaustion-independence of `correlationInfinite`
+
+Although `correlationInfinite` is defined as a supremum tied to a
+specific `Λ`, the value does not depend on the choice of exhaustion:
+any two exhaustions yield the same thermodynamic-limit correlation. -/
+
+/-- **Key sandwich lemma**: every value of `correlationAlongExhaustion`
+along one exhaustion is bounded above by `correlationInfinite` along
+another exhaustion of the same ambient type.
+
+Proof sketch: if `A ⊆ Λ'.volume n`, apply `Λ.exhaust` to the finite
+set `Λ'.volume n` to get `m` with `Λ'.volume n ⊆ Λ.volume m`; then
+`correlationΛ_monotone_volume` sandwiches the two finite-volume
+correlations, and `le_ciSup` moves from `Λ.volume m` to the supremum.
+Otherwise `correlationAlongExhaustion Λ' n = 0 ≤ correlationInfinite Λ`
+via `correlationInfinite_nonneg`. -/
+theorem correlationAlongExhaustion_le_correlationInfinite_of_other
+    (G : SimpleGraph V) (Λ Λ' : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    [∀ n, Fintype (inducedGraph G (Λ'.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    (A : Finset V) (n : ℕ) :
+    correlationAlongExhaustion G Λ' p A n ≤ correlationInfinite G Λ p A := by
+  by_cases hAn : A ⊆ Λ'.volume n
+  · -- A ⊆ Λ'.volume n: use Λ.exhaust on Λ'.volume n
+    obtain ⟨m, hm⟩ := Λ.exhaust (Λ'.volume n)
+    have hsubset : Λ'.volume n ⊆ Λ.volume m := hm m le_rfl
+    have hAm : A ⊆ Λ.volume m := hAn.trans hsubset
+    have hmono :
+        correlationΛ G (Λ'.volume n) p (liftFinset A hAn) ≤
+          correlationΛ G (Λ.volume m) p (liftFinset A hAm) :=
+      correlationΛ_monotone_volume G hsubset p hf hAn
+    have hstep₁ :
+        correlationAlongExhaustion G Λ' p A n =
+          correlationΛ G (Λ'.volume n) p (liftFinset A hAn) := by
+      simp only [correlationAlongExhaustion, hAn, dite_true]
+    have hstep₂ :
+        correlationΛ G (Λ.volume m) p (liftFinset A hAm) =
+          correlationAlongExhaustion G Λ p A m := by
+      simp only [correlationAlongExhaustion, hAm, dite_true]
+    calc correlationAlongExhaustion G Λ' p A n
+        = correlationΛ G (Λ'.volume n) p (liftFinset A hAn) := hstep₁
+      _ ≤ correlationΛ G (Λ.volume m) p (liftFinset A hAm) := hmono
+      _ = correlationAlongExhaustion G Λ p A m := hstep₂
+      _ ≤ correlationInfinite G Λ p A :=
+          le_ciSup (correlationAlongExhaustion_bddAbove G Λ p A) m
+  · -- A ⊄ Λ'.volume n: LHS = 0 ≤ correlationInfinite (nonneg)
+    have hzero : correlationAlongExhaustion G Λ' p A n = 0 := by
+      simp only [correlationAlongExhaustion, hAn, dite_false]
+    rw [hzero]
+    exact correlationInfinite_nonneg G Λ p hf A
+
+/-- **Exhaustion-independence** of `correlationInfinite`: for any two
+exhaustions `Λ, Λ'` of the same ambient type `V`, the thermodynamic-limit
+correlation is the same:
+`correlationInfinite G Λ p A = correlationInfinite G Λ' p A`.
+
+Proof: both `≤` directions by `ciSup_le` applied to the sandwich
+lemma `correlationAlongExhaustion_le_correlationInfinite_of_other`. -/
+theorem correlationInfinite_indep_exhaustion
+    (G : SimpleGraph V) (Λ Λ' : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    [∀ n, Fintype (inducedGraph G (Λ'.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    (A : Finset V) :
+    correlationInfinite G Λ p A = correlationInfinite G Λ' p A := by
+  refine le_antisymm ?_ ?_
+  · refine ciSup_le ?_
+    intro n
+    exact correlationAlongExhaustion_le_correlationInfinite_of_other
+      G Λ' Λ p hf A n
+  · refine ciSup_le ?_
+    intro n
+    exact correlationAlongExhaustion_le_correlationInfinite_of_other
+      G Λ Λ' p hf A n
 
 end Ambient
 end IsingModel
