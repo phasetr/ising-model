@@ -380,14 +380,17 @@ equality for the Boltzmann-weight factoring. -/
 
 omit [DecidableEq V] in
 /-- Pointwise edge-spin preservation:
-`edgeSpin σ (Sym2.map (subtypeIncl h12) e) = edgeSpin (restrictConfig h12 σ) e`. -/
-theorem edgeSpin_subtypeIncl {Λ₁ Λ₂ : Finset V} (h12 : Λ₁ ⊆ Λ₂)
+`edgeSpin σ (Sym2.map (subtypeIncl h12) e) = edgeSpin (restrictConfig h12 σ) e`.
+
+Generic in the coefficient field `K`; the `ℝ`-specialization arises
+automatically when instantiated for the Ising Boltzmann weight. -/
+theorem edgeSpin_subtypeIncl {K : Type*} [Field K]
+    {Λ₁ Λ₂ : Finset V} (h12 : Λ₁ ⊆ Λ₂)
     (σ : (↑Λ₂ : Type _) → Spin) (e : Sym2 (↑Λ₁ : Type _)) :
-    edgeSpin (K := ℝ) σ (Sym2.map (subtypeIncl h12) e)
-      = edgeSpin (K := ℝ) (restrictConfig h12 σ) e := by
+    edgeSpin (K := K) σ (Sym2.map (subtypeIncl h12) e)
+      = edgeSpin (K := K) (restrictConfig h12 σ) e := by
   refine Sym2.ind (fun u v => ?_) e
-  simp only [Sym2.map_mk, edgeSpin, Sym2.lift_mk, restrictConfig,
-    Function.comp_apply]
+  simp [edgeSpin, restrictConfig, subtypeIncl]
 
 end Ambient
 end IsingModel

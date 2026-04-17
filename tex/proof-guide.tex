@@ -1955,4 +1955,20 @@ The first projection of \texttt{configEquivSubtypeProd} is
 \texttt{restrictConfig}.
 \end{theorem}
 
+\begin{theorem}[\texttt{edgeSpin\_subtypeIncl}]
+Pointwise edge-spin preservation under the subtype inclusion lift:
+for $e : \texttt{Sym2}\,(\uparrow\!\Lambda_1)$,
+\[
+\texttt{edgeSpin}\,\sigma\,(\texttt{Sym2.map}\,(\texttt{subtypeIncl}\,h_{12})\,e)
+  = \texttt{edgeSpin}\,(\texttt{restrictConfig}\,h_{12}\,\sigma)\,e.
+\]
+(Generic in the coefficient field~$K$.)
+\end{theorem}
+
+\begin{proof}
+\texttt{Sym2.ind} reduces to the concrete-pair case, then \texttt{simp}
+unfolds \texttt{edgeSpin}, \texttt{restrictConfig}, and \texttt{subtypeIncl}
+to the trivial pointwise identity.
+\end{proof}
+
 \end{document}
