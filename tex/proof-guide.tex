@@ -2217,32 +2217,59 @@ The shifted correlation sequence (monotone + bounded) converges to
 its supremum by \texttt{tendsto\_atTop\_ciSup}.
 \end{theorem}
 
-Connection to \texttt{correlationAlongExhaustion} via proof-irrelevance
-of \texttt{liftFinset} across volumes is the remaining work for
-the full infinite-volume convergence.
+An alternative approach bypasses the shifted-sequence / proof-irrelevance
+route and establishes global monotonicity of
+\texttt{correlationAlongExhaustion} directly.
 
-\begin{theorem}[\texttt{correlationAlongExhaustion\_convergent}]
+\begin{theorem}[\texttt{correlationAlongExhaustion\_monotone}]
+For a ferromagnetic Ising model and any exhaustion $\Lambda_\bullet$,
+the sequence $n \mapsto \texttt{correlationAlongExhaustion}\,G\,\Lambda\,p\,A\,n$
+is monotone.  Specifically, for $n \le m$:
+\begin{itemize}
+  \item $A \subseteq \Lambda.\text{volume}\,n$: then
+    $A \subseteq \Lambda.\text{volume}\,m$ follows from $\Lambda.\text{mono}$;
+    monotonicity follows from \texttt{correlationΛ\_monotone\_volume}.
+  \item $A \not\subseteq \Lambda.\text{volume}\,n$: LHS is 0;
+    RHS is either 0 (when $A \not\subseteq \Lambda.\text{volume}\,m$)
+    or $\ge 0$ by GKS-I (\texttt{correlationΛ\_nonneg}).
+\end{itemize}
+\end{theorem}
+
+\begin{theorem}[\texttt{correlationAlongExhaustion\_le\_one}]
+For every $n$, $\texttt{correlationAlongExhaustion}\,G\,\Lambda\,p\,A\,n \le 1$,
+either because the value is 0 or via \texttt{correlationΛ\_le\_one}.
+\end{theorem}
+
+\begin{theorem}[\texttt{correlationAlongExhaustion\_tendsto\_ciSup}]
 For a ferromagnetic Ising model and any exhaustion $\Lambda_n \uparrow V$
 of an ambient type $V$,
 \[
-\exists L,\ \text{Tendsto}\,(\text{correlationAlongExhaustion}\,G\,\Lambda\,p\,A)\,\text{atTop}\,(\text{nhds}\,L).
+\text{Tendsto}\,(\text{correlationAlongExhaustion}\,G\,\Lambda\,p\,A)\,\text{atTop}\,
+  \left(\text{nhds}\,\bigsqcup_n \text{correlationAlongExhaustion}\,G\,\Lambda\,p\,A\,n\right).
 \]
 \end{theorem}
 
 \begin{proof}
-\texttt{correlationAlongExhaustion} is globally monotone:
-\begin{itemize}
-  \item $n \le m$, $A \subseteq \Lambda.\text{volume}\,n$ implies
-    $A \subseteq \Lambda.\text{volume}\,m$ (from $\Lambda.\text{mono}$);
-    then \texttt{correlationΛ\_monotone\_volume}.
-  \item $A \not\subseteq \Lambda.\text{volume}\,n$: LHS is 0;
-    RHS is either 0 or $\ge 0$ by GKS-I (\texttt{correlationΛ\_nonneg}).
-\end{itemize}
-Bounded by $1$ via \texttt{correlationΛ\_le\_one} (when inclusion holds)
-or $0$.  \texttt{tendsto\_atTop\_ciSup}.
+Combine \texttt{correlationAlongExhaustion\_monotone} and
+\texttt{correlationAlongExhaustion\_le\_one} and apply
+\texttt{tendsto\_atTop\_ciSup}.  The proof uses only $\Lambda.\text{mono}$;
+$\Lambda.\text{exhaust}$ is not required for convergence alone.  Physical
+identification of the limit with the thermodynamic-limit correlation
+uses $\Lambda.\text{exhaust}$ (any $A : \texttt{Finset}~V$ eventually
+lies in some $\Lambda.\text{volume}~N$).
 \end{proof}
 
-This completes the genuine infinite-volume limit on the
+\begin{theorem}[\texttt{correlationAlongExhaustion\_convergent}]
+Thin wrapper: for a ferromagnetic Ising model and any exhaustion
+$\Lambda_n \uparrow V$,
+\[
+\exists L,\ \text{Tendsto}\,(\text{correlationAlongExhaustion}\,G\,\Lambda\,p\,A)\,\text{atTop}\,(\text{nhds}\,L).
+\]
+Use \texttt{correlationAlongExhaustion\_tendsto\_ciSup} directly when the
+identity of $L$ as a supremum is needed.
+\end{theorem}
+
+This completes the genuine infinite-volume convergence on the
 \texttt{AmbientLattice} framework.
 
 \end{document}
