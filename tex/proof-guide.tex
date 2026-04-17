@@ -2146,4 +2146,28 @@ into nested sums.  Each summand is rewritten via
 \texttt{Finset.sum\_mul\_sum} combines into the product.
 \end{proof}
 
+\begin{theorem}[\texttt{numerator\_extendGraph\_factor}]
+For $A \subseteq \Lambda_1$,
+$\texttt{numerator}_{G_1^\text{ext}}(\texttt{spinProduct}\,(\texttt{liftFinset}\,A\,\ldots))
+= \texttt{numerator}_{\texttt{inducedGraph}\,G\,\Lambda_1}(\texttt{spinProduct}\,(\texttt{liftFinset}\,A\,h_A)) \cdot F$.
+\end{theorem}
+
+\begin{proof}
+Same pattern as partition function factoring, with
+\texttt{spinProduct\_lift\_eq} additionally applied to rewrite the
+spinProduct through \texttt{restrictConfig}.
+\end{proof}
+
+\begin{theorem}[\texttt{correlationΛ\_extendGraph\_eq}]
+For $A \subseteq \Lambda_1$,
+$\langle\sigma^{A_2}\rangle_{G_1^\text{ext}}
+ = \langle\sigma^{A_1}\rangle_{\texttt{inducedGraph}\,G\,\Lambda_1}$.
+\end{theorem}
+
+\begin{proof}
+Express both correlations as $\texttt{numerator} / Z$ via
+\texttt{gibbsExpectation\_eq\_div}, apply the two factoring theorems,
+and cancel the common complement factor $F$ using \texttt{field\_simp}.
+\end{proof}
+
 \end{document}
