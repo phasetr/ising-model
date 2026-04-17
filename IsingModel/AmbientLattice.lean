@@ -311,13 +311,25 @@ def restrictConfig {Λ₁ Λ₂ : Finset V} (h12 : Λ₁ ⊆ Λ₂)
 
 omit [DecidableEq V] in
 /-- The equivalence `{x : ↑Λ₂ // x.val ∈ Λ₁} ≃ ↑Λ₁`
-when `Λ₁ ⊆ Λ₂`. -/
+when `Λ₁ ⊆ Λ₂`.  The inverse reuses `subtypeIncl`. -/
 def Λ₁subtypeEquiv {Λ₁ Λ₂ : Finset V} (h12 : Λ₁ ⊆ Λ₂) :
     {x : (↑Λ₂ : Type _) // x.val ∈ Λ₁} ≃ (↑Λ₁ : Type _) where
   toFun := fun x => ⟨x.val.val, x.property⟩
-  invFun := fun y => ⟨⟨y.val, h12 y.property⟩, y.property⟩
+  invFun := fun y => ⟨subtypeIncl h12 y, y.property⟩
   left_inv := fun _ => rfl
   right_inv := fun _ => rfl
+
+omit [DecidableEq V] in
+@[simp]
+theorem Λ₁subtypeEquiv_apply {Λ₁ Λ₂ : Finset V} (h12 : Λ₁ ⊆ Λ₂)
+    (x : {x : (↑Λ₂ : Type _) // x.val ∈ Λ₁}) :
+    (Λ₁subtypeEquiv h12 x : V) = x.val.val := rfl
+
+omit [DecidableEq V] in
+@[simp]
+theorem Λ₁subtypeEquiv_symm_apply {Λ₁ Λ₂ : Finset V} (h12 : Λ₁ ⊆ Λ₂)
+    (y : (↑Λ₁ : Type _)) :
+    ((Λ₁subtypeEquiv h12).symm y : (↑Λ₂ : Type _)) = subtypeIncl h12 y := rfl
 
 end Ambient
 end IsingModel
