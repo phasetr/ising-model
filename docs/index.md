@@ -153,6 +153,7 @@ ambient framework:
 | `sum_Λ₁_subtype_eq` | Reindex `Σ f(σ ↑v)` from `{x // x.val ∈ Λ₁}` to `↑Λ₁` with `restrictConfig` |
 | `siteSum_partition` | Specialized `Fintype.sum_subtype_add_sum_subtype` for `sign (σ v)` |
 | `siteSum_split` | Full split: site sum = Λ₁-part (restrictConfig) + complement-part |
+| `hamiltonian_extendGraph_factor` | Hamiltonian on extendGraph = Hamiltonian on G.induce Λ₁ (restrictConfig) + complement site term |
 
 ## Axioms
 

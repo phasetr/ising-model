@@ -503,5 +503,35 @@ theorem extendGraph_edgeSum_eq {K : Type*} [Field K]
       exact ⟨e', SimpleGraph.mem_edgeFinset.mpr he', heq⟩)
     (fun e' _ => (edgeSpin_subtypeIncl (K := K) h12 σ e').symm)).symm
 
+/-! ## Hamiltonian factoring on `extendGraphFromΛ₁`
+
+Combine `extendGraph_edgeSum_eq` and `siteSum_split` to decompose
+the Hamiltonian on `extendGraphFromΛ₁` into a `G.induce Λ₁`-part
+(with `restrictConfig`) plus a complement site contribution. -/
+
+/-- Hamiltonian factoring: the Hamiltonian on `extendGraphFromΛ₁`
+decomposes as the Hamiltonian on `inducedGraph G Λ₁` (with
+`restrictConfig`) plus the complement site term. -/
+theorem hamiltonian_extendGraph_factor
+    (G : SimpleGraph V) {Λ₁ Λ₂ : Finset V} (h12 : Λ₁ ⊆ Λ₂)
+    [Fintype (inducedGraph G Λ₁).edgeSet]
+    [Fintype (extendGraphFromΛ₁ G Λ₁ Λ₂).edgeSet]
+    (p : IsingParams ℝ) (σ : (↑Λ₂ : Type _) → Spin) :
+    hamiltonian (extendGraphFromΛ₁ G Λ₁ Λ₂) p σ
+      = hamiltonian (inducedGraph G Λ₁) p (restrictConfig h12 σ)
+        + (-p.h * ∑ v : {x : (↑Λ₂ : Type _) // ¬ (x.val ∈ Λ₁)},
+            Spin.sign ℝ (σ v.val)) := by
+  simp only [hamiltonian, interactionEnergy, externalFieldEnergy]
+  have hedge : ∑ e ∈ (extendGraphFromΛ₁ G Λ₁ Λ₂).edgeFinset, edgeSpin (K := ℝ) σ e
+      = ∑ e' ∈ (inducedGraph G Λ₁).edgeFinset,
+          edgeSpin (K := ℝ) (restrictConfig h12 σ) e' :=
+    extendGraph_edgeSum_eq G h12 σ
+  have hsite : ∑ i : (↑Λ₂ : Type _), Spin.sign ℝ (σ i)
+      = (∑ v : (↑Λ₁ : Type _), Spin.sign ℝ (restrictConfig h12 σ v))
+        + ∑ v : {x : (↑Λ₂ : Type _) // ¬ (x.val ∈ Λ₁)}, Spin.sign ℝ (σ v.val) :=
+    siteSum_split h12 σ
+  rw [hedge, hsite]
+  ring
+
 end Ambient
 end IsingModel
