@@ -836,6 +836,18 @@ theorem correlationAlongExhaustion_le_one
   · simp only [correlationAlongExhaustion, hAn, dite_false]
     norm_num
 
+/-- **Range is bounded above by 1**: the range of the sequence
+`correlationAlongExhaustion G Λ p A` is bounded above. Witness `1`
+via `correlationAlongExhaustion_le_one`. -/
+theorem correlationAlongExhaustion_bddAbove
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (A : Finset V) :
+    BddAbove (Set.range (correlationAlongExhaustion G Λ p A)) := by
+  refine ⟨1, ?_⟩
+  rintro _ ⟨n, rfl⟩
+  exact correlationAlongExhaustion_le_one G Λ p A n
+
 /-- **Convergence of correlation along an exhaustion (explicit limit)**:
 for a ferromagnetic Ising model and any exhaustion `Λₙ ↑ V` of an
 ambient type `V`, the sequence `correlationAlongExhaustion` converges
@@ -856,10 +868,9 @@ theorem correlationAlongExhaustion_tendsto_ciSup
     (A : Finset V) :
     Filter.Tendsto (correlationAlongExhaustion G Λ p A)
       Filter.atTop (nhds (⨆ n, correlationAlongExhaustion G Λ p A n)) := by
-  refine tendsto_atTop_ciSup
-    (correlationAlongExhaustion_monotone G Λ p hf A) ⟨1, ?_⟩
-  rintro _ ⟨n, rfl⟩
-  exact correlationAlongExhaustion_le_one G Λ p A n
+  exact tendsto_atTop_ciSup
+    (correlationAlongExhaustion_monotone G Λ p hf A)
+    (correlationAlongExhaustion_bddAbove G Λ p A)
 
 /-- **Convergence of correlation along an exhaustion (existential form)**:
 thin wrapper around `correlationAlongExhaustion_tendsto_ciSup`. Use
@@ -933,11 +944,7 @@ theorem correlationInfinite_nonneg
   have hval : 0 ≤ correlationAlongExhaustion G Λ p A N := by
     simp only [correlationAlongExhaustion, hA, dite_true]
     exact correlationΛ_nonneg G (Λ.volume N) p hf _
-  have hbdd : BddAbove (Set.range (correlationAlongExhaustion G Λ p A)) := by
-    refine ⟨1, ?_⟩
-    rintro _ ⟨n, rfl⟩
-    exact correlationAlongExhaustion_le_one G Λ p A n
-  exact hval.trans (le_ciSup hbdd N)
+  exact hval.trans (le_ciSup (correlationAlongExhaustion_bddAbove G Λ p A) N)
 
 /-- **Tendsto of the lifted `correlationΛ` sequence (explicit form)**:
 given an explicit `N` and a hypothesis `hN : ∀ n ≥ N, A ⊆ Λ.volume n`,
@@ -1028,16 +1035,12 @@ theorem correlationAlongExhaustion_le_correlationInfinite_of_other
         correlationΛ G (Λ.volume m) p (liftFinset A hAm) =
           correlationAlongExhaustion G Λ p A m := by
       simp only [correlationAlongExhaustion, hAm, dite_true]
-    have hbdd :
-        BddAbove (Set.range (correlationAlongExhaustion G Λ p A)) := by
-      refine ⟨1, ?_⟩
-      rintro _ ⟨k, rfl⟩
-      exact correlationAlongExhaustion_le_one G Λ p A k
     calc correlationAlongExhaustion G Λ' p A n
         = correlationΛ G (Λ'.volume n) p (liftFinset A hAn) := hstep₁
       _ ≤ correlationΛ G (Λ.volume m) p (liftFinset A hAm) := hmono
       _ = correlationAlongExhaustion G Λ p A m := hstep₂
-      _ ≤ correlationInfinite G Λ p A := le_ciSup hbdd m
+      _ ≤ correlationInfinite G Λ p A :=
+          le_ciSup (correlationAlongExhaustion_bddAbove G Λ p A) m
   · -- A ⊄ Λ'.volume n: LHS = 0 ≤ correlationInfinite (nonneg)
     have hzero : correlationAlongExhaustion G Λ' p A n = 0 := by
       simp only [correlationAlongExhaustion, hAn, dite_false]

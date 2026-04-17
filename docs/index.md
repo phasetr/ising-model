@@ -168,6 +168,7 @@ ambient framework:
 | `correlationΛ_shifted_tendsto` | Shifted correlation sequence converges to sup (Tendsto) |
 | `correlationAlongExhaustion_monotone` | `correlationAlongExhaustion` is globally monotone (covers `A ⊄ Λ.volume n` by GKS-I ≥ 0) |
 | `correlationAlongExhaustion_le_one` | `correlationAlongExhaustion n ≤ 1` for all `n` |
+| `correlationAlongExhaustion_bddAbove` | Range of `correlationAlongExhaustion` is bounded above by 1 (helper) |
 | **`correlationAlongExhaustion_tendsto_ciSup`** | **Convergence to explicit supremum**: `Tendsto … (nhds (⨆ n, …))` |
 | **`correlationAlongExhaustion_convergent`** | Thin wrapper `∃ L, Tendsto …` — genuine thermodynamic limit |
 | **`correlationInfinite`** | **Infinite-volume correlation** `:= ⨆ n, correlationAlongExhaustion …` |
