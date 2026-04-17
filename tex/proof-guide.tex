@@ -826,9 +826,108 @@ Auxiliary results:
 The original Glimm--Jaffe formulation uses lattice growth
 $\Lambda \uparrow \mathbb{Z}^d$. In the finite-volume setting,
 this reduces to increasing coupling constants from $0$ to $J$.
-The formalization of graph embeddings and cross-lattice correlation
-is deferred to future work.
+The lattice-growth version ($\Lambda \uparrow$) is formalized
+below via the subgraph order on a fixed ambient lattice.
 \end{remark}
+
+\subsection{Lattice-growth version of Theorem 4.2.3}
+
+The Glimm--Jaffe proof of Theorem~4.2.3 reads
+``increasing $\Lambda$ amounts to increasing certain $J_A$,
+and so $\langle\xi^B\rangle$ is monotone increasing in $\Lambda$''.
+We formalize this by taking a fixed ambient \texttt{Fintype} $\iota$
+and working with subgraphs $G_1 \le G_2$ of the interaction graph:
+new edges $e \in E(G_2) \setminus E(G_1)$ correspond exactly to the
+coupling $J_A$ going from $0$ to $\beta J$.
+
+\begin{theorem}[\texttt{correlation\_monotone\_subgraph},
+  Theorem 4.2.3 (lattice version), \cite{glimm-jaffe}, p.~59]
+For a ferromagnetic Ising model on the ambient lattice $\iota$
+and subgraphs $G_1 \le G_2$,
+$\langle \sigma^A\rangle_{G_1} \le \langle\sigma^A\rangle_{G_2}$.
+\end{theorem}
+
+\begin{proof}
+Let $R(\sigma) := \prod_{e \in E(G_2)\setminus E(G_1)} \exp(\beta J \sigma_i\sigma_j)$.
+\begin{itemize}
+  \item \textbf{Factorization.} Since $H_{G_2}(\sigma) - H_{G_1}(\sigma) = -J\sum_{E(G_2)\setminus E(G_1)} \sigma_i\sigma_j$,
+    we have $w_{G_2}(\sigma) = R(\sigma)\, w_{G_1}(\sigma)$
+    (\texttt{boltzmannWeight\_subgraph\_factor}).
+  \item \textbf{HNC.} Each factor decomposes as $\cosh(\beta J) + \sinh(\beta J)\,\sigma_i\sigma_j$
+    with both coefficients $\ge 0$; by
+    \texttt{hasNonnegCorrelations\_finset\_prod},
+    $R$ has non-negative correlations
+    (\texttt{hasNonnegCorrelations\_edge\_prod\_of\_finset}).
+  \item \textbf{Covariance.} Apply \texttt{cov\_hnc\_boltzmann\_nonneg}
+    with base graph $G_1$ and function $R$:
+    \[
+      \bigl(\textstyle\sum_\sigma \sigma^A R(\sigma) w_1\bigr)Z_{G_1}
+      \ge \bigl(\sum_\sigma \sigma^A w_1\bigr)\bigl(\sum_\sigma R(\sigma) w_1\bigr).
+    \]
+    Substituting $R w_1 = w_2$ yields $Z_{G_1} N_{G_2}(A) \ge Z_{G_2} N_{G_1}(A)$,
+    i.e., $\langle\sigma^A\rangle_{G_1} \le \langle\sigma^A\rangle_{G_2}$.
+\end{itemize}
+\end{proof}
+
+\begin{theorem}[\texttt{correlation\_convergent\_subgraph}]
+For any increasing sequence of subgraphs $G_1 \le G_2 \le \cdots$ of the ambient lattice,
+the correlation sequence $n \mapsto \langle\sigma^A\rangle_{G_n}$ converges.
+\end{theorem}
+
+\begin{proof}
+Monotone increasing by \texttt{correlation\_monotone\_subgraph},
+bounded above by $1$ via \texttt{correlation\_le\_one}, hence converges by
+\texttt{tendsto\_atTop\_ciSup}.
+\end{proof}
+
+Named specializations:
+\begin{itemize}
+  \item \texttt{magnetization\_convergent\_subgraph}: $\langle\sigma_i\rangle_{G_n}$
+        converges (case $A = \{i\}$).
+  \item \texttt{twoPoint\_convergent\_subgraph}: $\langle\sigma_i\sigma_j\rangle_{G_n}$
+        converges (case $A = \{i,j\}$).
+\end{itemize}
+
+\subsection{Free energy infinite volume convergence (Proposition 4.6.1)}
+
+GJ Proposition 4.6.1 (p.~68): for the ferromagnetic pair interaction
+$H = -J\sum_{\langle i,j\rangle}\sigma_i\sigma_j - h\sum_i\sigma_i$
+(strictly ferromagnetic), the free energy per site
+$f_\Lambda = |\Lambda|^{-1}\ln Z_\Lambda$ converges as $\Lambda\uparrow\mathbb{Z}^d$.
+The discretized (fixed ambient lattice $\iota$, growing subgraph) form:
+
+\begin{theorem}[\texttt{partitionFunction\_monotone\_subgraph}]
+For ferromagnetic $p$ and $G_1\le G_2$, $Z_{G_1}\le Z_{G_2}$.
+\end{theorem}
+
+\begin{proof}
+Factor $Z_{G_2} = \sum_\sigma R(\sigma) w_{G_1}(\sigma)$ with
+$R(\sigma)=\prod_{e\in E(G_2)\setminus E(G_1)}\exp(\beta J \sigma_i\sigma_j)$.
+Use $\exp(x)\ge 1+x$ to get
+$R(\sigma)\ge 1 + \beta J \sum_{e\in E(G_2)\setminus E(G_1)}\sigma_i\sigma_j$.
+Then $\sum_\sigma R w_{G_1} \ge Z_{G_1} + \beta J \sum_e \sum_\sigma \sigma_i\sigma_j w_{G_1}$,
+and each inner sum is $\ge 0$ by GKS-I (via \texttt{boltzmannWeight\_hasNonnegCorrelations})
+applied to the pair $\{i,j\}$. Hence $Z_{G_2}\ge Z_{G_1}$.
+\end{proof}
+
+\begin{theorem}[\texttt{freeEnergy\_monotone\_subgraph}]
+For ferromagnetic $p$ and $G_1\le G_2$, $f_{G_1}\le f_{G_2}$.
+\end{theorem}
+
+\begin{proof}
+$|\iota|$ is fixed; apply $\log$ (monotone) to $Z_{G_1}\le Z_{G_2}$.
+\end{proof}
+
+\begin{theorem}[\texttt{freeEnergy\_convergent\_subgraph}, = Prop 4.6.1]
+For any increasing subgraph sequence $G_n\uparrow$ on a fixed finite ambient
+lattice $\iota$ and ferromagnetic $p$, $n\mapsto f_{G_n}$ converges.
+\end{theorem}
+
+\begin{proof}
+Monotone by \texttt{freeEnergy\_monotone\_subgraph}.
+Bounded above by $f_{\top}$ (free energy on the complete graph $\top$)
+via \texttt{le\_top}. Converges by \texttt{tendsto\_atTop\_ciSup}.
+\end{proof}
 
 \section{Free energy (\texttt{FreeEnergy.lean})}
 
