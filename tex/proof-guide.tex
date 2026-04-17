@@ -2124,4 +2124,26 @@ On the complement subtype $v \in \{x : \uparrow\!\Lambda_2 \mid x.\text{val} \no
 selects the complement branch.
 \end{proof}
 
+\subsection{Partition function factoring}
+
+\begin{theorem}[\texttt{partitionFunction\_extendGraph\_factor}]
+\[
+Z_{\texttt{extendGraphFromΛ₁}\,G\,\Lambda_1\,\Lambda_2,\,p}
+  = Z_{\texttt{inducedGraph}\,G\,\Lambda_1,\,p} \cdot F,
+\]
+where $F := \sum_{\sigma_2 : C \to \texttt{Spin}}
+  \exp\bigl(\beta h \sum_v \texttt{Spin.sign}\,\mathbb{R}\,(\sigma_2\,v)\bigr)$
+is the \texttt{complementFactor}.
+\end{theorem}
+
+\begin{proof}
+\texttt{Fintype.sum\_equiv} with $(\texttt{configEquivSubtypeProd}\,h_{12}).\texttt{symm}$
+to reindex into a pair sum.  \texttt{Fintype.sum\_prod\_type} splits
+into nested sums.  Each summand is rewritten via
+\texttt{boltzmannWeight\_extendGraph\_factor},
+\texttt{restrictConfig\_configEquivSubtypeProd\_symm}, and
+\texttt{configEquivSubtypeProd\_symm\_apply\_compl}.  Finally
+\texttt{Finset.sum\_mul\_sum} combines into the product.
+\end{proof}
+
 \end{document}
