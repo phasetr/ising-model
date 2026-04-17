@@ -2272,4 +2272,57 @@ identity of $L$ as a supremum is needed.
 This completes the genuine infinite-volume convergence on the
 \texttt{AmbientLattice} framework.
 
+\subsection{Infinite-volume correlation function}
+
+\begin{definition}[\texttt{correlationInfinite}]
+\[
+\langle \sigma^A \rangle_V^{\mathrm{FM}} \;:=\;
+  \bigsqcup_{n \in \mathbb{N}} \texttt{correlationAlongExhaustion}\,G\,\Lambda\,p\,A\,n.
+\]
+\end{definition}
+
+\begin{theorem}[\texttt{tendsto\_correlationAlongExhaustion\_correlationInfinite}]
+$\text{Tendsto}\,\texttt{correlationAlongExhaustion}\,\text{atTop}\,
+  (\text{nhds}\,\langle \sigma^A \rangle_V^{\mathrm{FM}})$.
+\end{theorem}
+
+\begin{theorem}[\texttt{correlationInfinite\_le\_one}]
+$\langle \sigma^A \rangle_V^{\mathrm{FM}} \le 1$.
+\end{theorem}
+
+\begin{proof}
+\texttt{correlationAlongExhaustion\_le\_one} から sup の上界が 1.
+\end{proof}
+
+\begin{theorem}[\texttt{correlationInfinite\_nonneg}]
+強磁性下で $\langle \sigma^A \rangle_V^{\mathrm{FM}} \ge 0$.
+\end{theorem}
+
+\begin{proof}
+$\Lambda.\text{exhaust}$ で $A \subseteq \Lambda.\text{volume}\,N$
+を取り, GKS-I で $\texttt{correlationAlongExhaustion}\,N \ge 0$.
+単調増加列の sup も $\ge 0$.
+\end{proof}
+
+\begin{theorem}[\texttt{tendsto\_correlationΛ\_correlationInfinite\_of\_subset}]
+明示的 $N$ と $h_N : \forall n \ge N,\ A \subseteq \Lambda.\text{volume}\,n$
+を与えたとき,
+\[
+\text{Tendsto}\,\bigl(m \mapsto \texttt{correlationΛ}~G~\Lambda(m+N)~p~
+  (\texttt{liftFinset}~A~\ldots)\bigr)\,\text{atTop}\,
+  (\text{nhds}\,\langle \sigma^A \rangle_V^{\mathrm{FM}}).
+\]
+\end{theorem}
+
+\begin{proof}
+\texttt{tendsto\_add\_atTop\_nat} で \texttt{correlationAlongExhaustion}
+の shift 版が極限と一致. $n \ge N$ で \texttt{correlationAlongExhaustion}
+は dite の分岐を展開し \texttt{correlationΛ} に一致 (\texttt{Tendsto.congr}).
+\end{proof}
+
+\begin{theorem}[\texttt{tendsto\_correlationΛ\_correlationInfinite}]
+$\Lambda.\text{exhaust}$ を使った系:
+$\exists N, \exists h_N$ で上と同じ結論が得られる.
+\end{theorem}
+
 \end{document}
