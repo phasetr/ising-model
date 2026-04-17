@@ -5,3 +5,4 @@ import IsingModel.Inequalities.NonnegCorrelations
 import IsingModel.Inequalities.GKS
 import IsingModel.Inequalities.FKG
 import IsingModel.Asano
+import IsingModel.AmbientLattice
