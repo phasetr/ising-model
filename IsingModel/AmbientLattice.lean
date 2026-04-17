@@ -584,5 +584,24 @@ theorem spinProduct_lift_eq
       (fun _ _ _ _ heq => subtypeIncl_injective h12 heq)]
   rfl
 
+/-! ## Restriction of the config-equiv inverse
+
+If `(σ₁, σ₂) : (↑Λ₁ → Spin) × (complement → Spin)` and
+`σ := (configEquivSubtypeProd h12).symm (σ₁, σ₂)`, then
+`restrictConfig h12 σ = σ₁`.  This is the content-bearing identity
+that lets us split Boltzmann sums through the configuration
+decomposition. -/
+
+/-- The `restrictConfig` of the configEquiv-inverse of a pair recovers
+the first component. -/
+theorem restrictConfig_configEquivSubtypeProd_symm
+    {Λ₁ Λ₂ : Finset V} (h12 : Λ₁ ⊆ Λ₂)
+    (σ₁ : (↑Λ₁ : Type _) → Spin)
+    (σ₂ : {x : (↑Λ₂ : Type _) // x.val ∉ Λ₁} → Spin) :
+    restrictConfig h12 ((configEquivSubtypeProd h12).symm (σ₁, σ₂)) = σ₁ := by
+  ext v
+  simp [restrictConfig, subtypeIncl, configEquivSubtypeProd,
+    Equiv.piEquivPiSubtypeProd, Λ₁subtypeEquiv, v.property]
+
 end Ambient
 end IsingModel
