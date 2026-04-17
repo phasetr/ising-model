@@ -28,6 +28,9 @@ All theorems are formally proved with **zero `sorry`**.
 | **Correlation convergence (lattice)** (Thm 4.2.3, discretized) | `⟨σ^A⟩_{Gₙ}` converges for any increasing sequence of subgraphs | `InfiniteVolume.lean`      |
 | **Magnetization convergence (lattice)** | `⟨σᵢ⟩_{Gₙ}` converges for any increasing subgraph sequence                       | `InfiniteVolume.lean`      |
 | **Two-point convergence (lattice)**     | `⟨σᵢσⱼ⟩_{Gₙ}` converges for any increasing subgraph sequence                    | `InfiniteVolume.lean`      |
+| **Truncated 2-point convergence (lattice)** | `⟨σᵢ;σⱼ⟩_{Gₙ}` converges for any increasing subgraph sequence (§5.1)         | `PhaseTransition.lean`     |
+| **Susceptibility convergence (lattice)** | `χᵢ(Gₙ)` converges for any increasing subgraph sequence (§5.3)                  | `PhaseTransition.lean`     |
+| **Total magnetization convergence (lattice)** | `Σᵢ⟨σᵢ⟩_{Gₙ}` converges for any increasing subgraph sequence (§5.3)         | `PhaseTransition.lean`     |
 | **Partition function monotonicity (lattice)** | `Z_{G₁} ≤ Z_{G₂}` for subgraph ordering `G₁ ≤ G₂`                         | `FreeEnergy.lean`          |
 | **Free energy monotonicity (lattice)**  | `f_{G₁} ≤ f_{G₂}` for subgraph ordering `G₁ ≤ G₂`                              | `FreeEnergy.lean`          |
 | **Free energy convergence** (Prop 4.6.1) | `f_{Gₙ}` converges for any increasing subgraph sequence                         | `FreeEnergy.lean`          |
@@ -120,9 +123,9 @@ heavy Lean measure theory assembly:
 
 | Section | Result                                 | Status           | Lean                        | Notes                                       |
 |---------|----------------------------------------|------------------|-----------------------------|---------------------------------------------|
-| §5.1   | Pure and mixed phases                  | **Done**         | `PhaseTransition.lean`      | truncated2 bounds, mixed-phase formula      |
+| §5.1   | Pure and mixed phases                  | **Done**         | `PhaseTransition.lean`      | truncated2 bounds, mixed-phase formula, lattice convergence |
 | §5.2   | Phase transitions (mean field)         | **Done**         | `PhaseTransition.lean`      | Mean field energy, symmetry, tanh equation  |
-| §5.3   | Symmetry breaking                      | **Done**         | `PhaseTransition.lean`      | Magnetization, susceptibility, Z₂ symmetry  |
+| §5.3   | Symmetry breaking                      | **Done**         | `PhaseTransition.lean`      | Magnetization, susceptibility, Z₂ symmetry, lattice convergence |
 | §5.4   | Prop 5.4.1 (Peierls bound)             | **Done**         | `peierls_bound`             |                                             |
 | §5.4   | Prop 5.4.2 (spontaneous magnetization) | **Done**         | `prop_5_4_2_self_contained` |                                             |
 | §5.5   | An example (XY/rotator)                | **Out of scope** | —                          | XY model; Kosterlitz-Thouless               |
