@@ -146,6 +146,7 @@ ambient framework:
 | `Λ₁subtypeEquiv` | `{x : ↑Λ₂ // x.val ∈ Λ₁} ≃ ↑Λ₁` |
 | `configEquivSubtypeProd` | `(↑Λ₂ → Spin) ≃ (↑Λ₁ → Spin) × ({x // x.val ∉ Λ₁} → Spin)` |
 | `configEquivSubtypeProd_fst` | First projection = `restrictConfig` |
+| `edgeSpin_subtypeIncl` | `edgeSpin σ (Sym2.map subtypeIncl e) = edgeSpin (restrictConfig σ) e` |
 
 ## Axioms
 
