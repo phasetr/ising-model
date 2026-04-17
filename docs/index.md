@@ -154,6 +154,7 @@ ambient framework:
 | `siteSum_partition` | Specialized `Fintype.sum_subtype_add_sum_subtype` for `sign (σ v)` |
 | `siteSum_split` | Full split: site sum = Λ₁-part (restrictConfig) + complement-part |
 | `hamiltonian_extendGraph_factor` | Hamiltonian on extendGraph = Hamiltonian on G.induce Λ₁ (restrictConfig) + complement site term |
+| `boltzmannWeight_extendGraph_factor` | Boltzmann weight on extendGraph = weight on G.induce Λ₁ · exp(βh · complement sign sum) |
 
 ## Axioms
 
