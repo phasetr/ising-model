@@ -760,14 +760,7 @@ Past `N`, `correlationAlongExhaustion` equals this shifted sequence. -/
 /-- The shifted correlation sequence along an exhaustion: given
 `N : ℕ` with `A ⊆ Λ.volume n` for `n ≥ N`, the sequence
 `n ↦ correlationΛ G (Λ.volume (n + N)) p (liftFinset A ...)` is
-monotone and bounded.  This is the clean version (without the
-dite from `correlationAlongExhaustion`) suitable for monotone
-convergence.
-
-Convergence of `correlationAlongExhaustion` itself is PR #89
-(it requires connecting the dite-based definition to this
-clean shifted sequence, which involves subtype / proof-irrelevance
-handling). -/
+monotone and bounded. -/
 theorem correlationΛ_shifted_monotone_bounded
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
@@ -788,6 +781,22 @@ theorem correlationΛ_shifted_monotone_bounded
       (hN (n + N) (Nat.le_add_left N n))
   · intro n
     exact correlationΛ_le_one _ _ _ _
+
+/-- **Tendsto convergence of the shifted correlation sequence**:
+the shifted sequence (monotone and bounded by PR #88) converges
+to its supremum by `tendsto_atTop_ciSup`. -/
+theorem correlationΛ_shifted_tendsto
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    {A : Finset V} {N : ℕ}
+    (hN : ∀ n ≥ N, A ⊆ Λ.volume n) :
+    ∃ L : ℝ, Filter.Tendsto
+      (fun m : ℕ => correlationΛ G (Λ.volume (m + N)) p
+        (liftFinset A (hN (m + N) (Nat.le_add_left N m))))
+      Filter.atTop (nhds L) := by
+  obtain ⟨hmono, hbdd⟩ := correlationΛ_shifted_monotone_bounded G Λ p hf hN
+  exact ⟨_, tendsto_atTop_ciSup hmono ⟨1, fun _ ⟨m, hm⟩ => hm ▸ hbdd m⟩⟩
 
 end Ambient
 end IsingModel

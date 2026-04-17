@@ -2212,4 +2212,13 @@ The full Tendsto-convergence of \texttt{correlationAlongExhaustion}
 (connecting this clean shifted sequence to the dite-based definition)
 is deferred to a follow-up PR.
 
+\begin{theorem}[\texttt{correlationΛ\_shifted\_tendsto}]
+The shifted correlation sequence (monotone + bounded) converges to
+its supremum by \texttt{tendsto\_atTop\_ciSup}.
+\end{theorem}
+
+Connection to \texttt{correlationAlongExhaustion} via proof-irrelevance
+of \texttt{liftFinset} across volumes is the remaining work for
+the full infinite-volume convergence.
+
 \end{document}
