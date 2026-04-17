@@ -1071,5 +1071,49 @@ theorem correlationInfinite_indep_exhaustion
     exact correlationAlongExhaustion_le_correlationInfinite_of_other
       G Λ Λ' p hf A n
 
+/-! ## Ambient-subgraph monotonicity of infinite-volume correlation
+
+Finite-volume monotonicity in the ambient subgraph
+(`correlationΛ_monotone_ambient_subgraph`, PR #58) lifts to the
+thermodynamic-limit correlation: for ferromagnetic Ising on an
+ambient type `V` and exhaustion `Λ`, `G₁ ≤ G₂` implies
+`correlationInfinite G₁ Λ p A ≤ correlationInfinite G₂ Λ p A`. -/
+
+/-- **Ambient-subgraph monotonicity of `correlationAlongExhaustion`**:
+if `G₁ ≤ G₂` then the exhaustion sequence is pointwise monotone in
+the ambient subgraph. -/
+theorem correlationAlongExhaustion_monotone_ambient_subgraph
+    {G₁ G₂ : SimpleGraph V} (h : G₁ ≤ G₂) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G₁ (Λ.volume n)).edgeSet]
+    [∀ n, Fintype (inducedGraph G₂ (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    (A : Finset V) (n : ℕ) :
+    correlationAlongExhaustion G₁ Λ p A n
+      ≤ correlationAlongExhaustion G₂ Λ p A n := by
+  by_cases hAn : A ⊆ Λ.volume n
+  · simp only [correlationAlongExhaustion, hAn, dite_true]
+    exact correlationΛ_monotone_ambient_subgraph h (Λ.volume n) p hf _
+  · simp only [correlationAlongExhaustion, hAn, dite_false]
+    exact le_refl 0
+
+/-- **Ambient-subgraph monotonicity of `correlationInfinite`**:
+if `G₁ ≤ G₂` then
+`correlationInfinite G₁ Λ p A ≤ correlationInfinite G₂ Λ p A`.
+
+Proof: pointwise monotonicity of the exhaustion sequence
+(`correlationAlongExhaustion_monotone_ambient_subgraph`) combined
+with `le_ciSup` and `ciSup_le`. -/
+theorem correlationInfinite_monotone_ambient_subgraph
+    {G₁ G₂ : SimpleGraph V} (h : G₁ ≤ G₂) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G₁ (Λ.volume n)).edgeSet]
+    [∀ n, Fintype (inducedGraph G₂ (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    (A : Finset V) :
+    correlationInfinite G₁ Λ p A ≤ correlationInfinite G₂ Λ p A := by
+  refine ciSup_le ?_
+  intro n
+  exact (correlationAlongExhaustion_monotone_ambient_subgraph h Λ p hf A n).trans
+    (le_ciSup (correlationAlongExhaustion_bddAbove G₂ Λ p A) n)
+
 end Ambient
 end IsingModel
