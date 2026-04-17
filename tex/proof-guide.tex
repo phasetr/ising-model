@@ -2096,4 +2096,19 @@ lemma, apply \texttt{Finset.prod\_image} using
 definitional ($\sigma \circ \texttt{subtypeIncl} = \texttt{restrictConfig}\,\sigma$).
 \end{proof}
 
+\begin{theorem}[\texttt{restrictConfig\_configEquivSubtypeProd\_symm}]
+For $(\sigma_1, \sigma_2) \in (\uparrow\!\Lambda_1 \to \texttt{Spin})
+\times (C \to \texttt{Spin})$,
+\[
+\texttt{restrictConfig}\,h_{12}\,\bigl((\texttt{configEquivSubtypeProd}\,h_{12}).\texttt{symm}\,(\sigma_1, \sigma_2)\bigr) = \sigma_1.
+\]
+\end{theorem}
+
+\begin{proof}
+\texttt{ext v}, \texttt{simp} with \texttt{configEquivSubtypeProd},
+\texttt{Λ₁subtypeEquiv}, \texttt{piEquivPiSubtypeProd},
+\texttt{subtypeIncl}, and $v.\texttt{property}$
+(which selects the $\uparrow\!\Lambda_1$ branch).
+\end{proof}
+
 \end{document}
