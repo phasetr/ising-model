@@ -161,6 +161,8 @@ ambient framework:
 | `configEquivSubtypeProd_symm_apply_compl` | On complement: `(equivSymm (σ₁, σ₂)) v.val = σ₂ v` |
 | `complementFactor` | `F := Σ σ₂, exp(β·h · Σ sign σ₂)` — complement factor for partition function |
 | `partitionFunction_extendGraph_factor` | `Z_extend = Z_induceΛ₁ · F` (partition function factoring) |
+| `numerator_extendGraph_factor` | `num_extend(lift A) = num_induceΛ₁(lift A) · F` |
+| `correlationΛ_extendGraph_eq` | **Correlation equality**: `⟨σ^A⟩_extend = ⟨σ^A⟩_induceΛ₁` (F cancels) |
 
 ## Axioms
 
