@@ -798,5 +798,82 @@ theorem correlationΛ_shifted_tendsto
   obtain ⟨hmono, hbdd⟩ := correlationΛ_shifted_monotone_bounded G Λ p hf hN
   exact ⟨_, tendsto_atTop_ciSup hmono ⟨1, fun _ ⟨m, hm⟩ => hm ▸ hbdd m⟩⟩
 
+/-- **Global monotonicity of `correlationAlongExhaustion`**:
+because (1) for `n` where `A ⊆ Λ.volume n` fails, it equals 0;
+(2) when it holds, `correlationΛ ≥ 0` by GKS-I; and (3) when both
+endpoints satisfy the inclusion, `correlationΛ_monotone_volume`
+(PR #87) applies. -/
+theorem correlationAlongExhaustion_monotone
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    (A : Finset V) :
+    Monotone (correlationAlongExhaustion G Λ p A) := by
+  intro n m hnm
+  by_cases hAn : A ⊆ Λ.volume n
+  · by_cases hAm : A ⊆ Λ.volume m
+    · simp only [correlationAlongExhaustion, hAn, hAm, dite_true]
+      exact correlationΛ_monotone_volume G (Λ.mono hnm) p hf hAn
+    · exact absurd (hAn.trans (Λ.mono hnm)) hAm
+  · simp only [correlationAlongExhaustion, hAn, dite_false]
+    by_cases hAm : A ⊆ Λ.volume m
+    · simp only [hAm, dite_true]
+      exact correlationΛ_nonneg G (Λ.volume m) p hf _
+    · simp only [hAm, dite_false]
+      exact le_refl 0
+
+/-- **Global upper bound of `correlationAlongExhaustion` by 1**:
+either the value is 0 (when `A ⊄ Λ.volume n`) or it is bounded
+by `correlationΛ_le_one`. -/
+theorem correlationAlongExhaustion_le_one
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (A : Finset V) (n : ℕ) :
+    correlationAlongExhaustion G Λ p A n ≤ 1 := by
+  by_cases hAn : A ⊆ Λ.volume n
+  · simp only [correlationAlongExhaustion, hAn, dite_true]
+    exact correlationΛ_le_one _ _ _ _
+  · simp only [correlationAlongExhaustion, hAn, dite_false]
+    norm_num
+
+/-- **Convergence of correlation along an exhaustion (explicit limit)**:
+for a ferromagnetic Ising model and any exhaustion `Λₙ ↑ V` of an
+ambient type `V`, the sequence `correlationAlongExhaustion` converges
+to its supremum as `n → ∞`.
+
+The limit is `⨆ n, correlationAlongExhaustion G Λ p A n`; this
+exposes the limit's identity (as a supremum) so it can be related
+to the thermodynamic-limit correlation once `Λ.exhaust` is used to
+identify `A` with a subset of some `Λ.volume N`.
+
+Note: this theorem itself only uses `Λ.mono` (monotonicity of the
+exhaustion); `Λ.exhaust` is not required for convergence alone,
+but is needed in downstream physical identifications of `L`. -/
+theorem correlationAlongExhaustion_tendsto_ciSup
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    (A : Finset V) :
+    Filter.Tendsto (correlationAlongExhaustion G Λ p A)
+      Filter.atTop (nhds (⨆ n, correlationAlongExhaustion G Λ p A n)) := by
+  refine tendsto_atTop_ciSup
+    (correlationAlongExhaustion_monotone G Λ p hf A) ⟨1, ?_⟩
+  rintro _ ⟨n, rfl⟩
+  exact correlationAlongExhaustion_le_one G Λ p A n
+
+/-- **Convergence of correlation along an exhaustion (existential form)**:
+thin wrapper around `correlationAlongExhaustion_tendsto_ciSup`. Use
+the `_tendsto_ciSup` form when the identity of `L` as a supremum is
+needed (e.g. for physical identification with the thermodynamic limit). -/
+theorem correlationAlongExhaustion_convergent
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    (A : Finset V) :
+    ∃ L : ℝ, Filter.Tendsto
+      (correlationAlongExhaustion G Λ p A)
+      Filter.atTop (nhds L) :=
+  ⟨_, correlationAlongExhaustion_tendsto_ciSup G Λ p hf A⟩
+
 end Ambient
 end IsingModel

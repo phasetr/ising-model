@@ -166,6 +166,10 @@ ambient framework:
 | **`correlationΛ_monotone_volume`** | **Volume-direction monotonicity main theorem**: `Λ₁ ⊆ Λ₂ ⇒ ⟨σ^A⟩_{Λ₁} ≤ ⟨σ^A⟩_{Λ₂}` |
 | `correlationΛ_shifted_monotone_bounded` | Shifted correlation sequence along exhaustion is monotone and bounded by 1 |
 | `correlationΛ_shifted_tendsto` | Shifted correlation sequence converges to sup (Tendsto) |
+| `correlationAlongExhaustion_monotone` | `correlationAlongExhaustion` is globally monotone (covers `A ⊄ Λ.volume n` by GKS-I ≥ 0) |
+| `correlationAlongExhaustion_le_one` | `correlationAlongExhaustion n ≤ 1` for all `n` |
+| **`correlationAlongExhaustion_tendsto_ciSup`** | **Convergence to explicit supremum**: `Tendsto … (nhds (⨆ n, …))` |
+| **`correlationAlongExhaustion_convergent`** | Thin wrapper `∃ L, Tendsto …` — genuine thermodynamic limit |
 
 ## Axioms
 
