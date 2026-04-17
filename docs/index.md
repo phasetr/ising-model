@@ -150,6 +150,7 @@ ambient framework:
 | `mem_extendGraph_edgeSet_of_mem_induce` | Induce edge → extendGraph edge (under Sym2.map) |
 | `exists_induce_edge_of_extendGraph` | extendGraph edge ← unique induce edge |
 | `extendGraph_edgeSum_eq` | `Σ edgeSpin σ` over extendGraph = `Σ edgeSpin (restrictConfig σ)` over G.induce Λ₁ |
+| `sum_Λ₁_subtype_eq` | Reindex `Σ f(σ ↑v)` from `{x // x.val ∈ Λ₁}` to `↑Λ₁` with `restrictConfig` |
 
 ## Axioms
 
