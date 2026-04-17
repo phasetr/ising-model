@@ -442,15 +442,15 @@ final step (PR #78). -/
 
 omit [DecidableEq V] in
 /-- Edge-sum equality for the extendGraph via the Sym2.map-based
-bijection. -/
-theorem extendGraph_edgeSum_eq
+bijection.  Generic in the coefficient field `K`. -/
+theorem extendGraph_edgeSum_eq {K : Type*} [Field K]
     (G : SimpleGraph V) {Λ₁ Λ₂ : Finset V} (h12 : Λ₁ ⊆ Λ₂)
     [Fintype (inducedGraph G Λ₁).edgeSet]
     [Fintype (extendGraphFromΛ₁ G Λ₁ Λ₂).edgeSet]
     (σ : (↑Λ₂ : Type _) → Spin) :
-    ∑ e ∈ (extendGraphFromΛ₁ G Λ₁ Λ₂).edgeFinset, edgeSpin (K := ℝ) σ e
+    ∑ e ∈ (extendGraphFromΛ₁ G Λ₁ Λ₂).edgeFinset, edgeSpin (K := K) σ e
       = ∑ e' ∈ (inducedGraph G Λ₁).edgeFinset,
-          edgeSpin (K := ℝ) (restrictConfig h12 σ) e' :=
+          edgeSpin (K := K) (restrictConfig h12 σ) e' :=
   (Finset.sum_bij (fun e' _ => Sym2.map (subtypeIncl h12) e')
     (fun _ he' => by
       rw [SimpleGraph.mem_edgeFinset] at he' ⊢
@@ -461,7 +461,7 @@ theorem extendGraph_edgeSum_eq
       rw [SimpleGraph.mem_edgeFinset] at he
       obtain ⟨e', he', heq⟩ := exists_induce_edge_of_extendGraph G h12 he
       exact ⟨e', SimpleGraph.mem_edgeFinset.mpr he', heq⟩)
-    (fun e' _ => (edgeSpin_subtypeIncl h12 σ e').symm)).symm
+    (fun e' _ => (edgeSpin_subtypeIncl (K := K) h12 σ e').symm)).symm
 
 end Ambient
 end IsingModel
