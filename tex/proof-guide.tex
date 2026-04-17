@@ -2020,4 +2020,27 @@ pointwise equality follows by unfolding \texttt{restrictConfig}
 $= \sigma \circ \texttt{subtypeIncl}$.
 \end{proof}
 
+\begin{theorem}[\texttt{siteSum\_partition}]
+Specialized \texttt{Fintype.sum\_subtype\_add\_sum\_subtype}:
+\[
+\sum_{v : \uparrow\!\Lambda_2} \texttt{Spin.sign}\,K\,(\sigma\,v)
+  = \Bigl(\sum_{v : \{x \mid x.\text{val} \in \Lambda_1\}} \texttt{Spin.sign}\,K\,(\sigma\,v.\text{val})\Bigr)
+    + \sum_{v : \{x \mid \neg (x.\text{val} \in \Lambda_1)\}} \texttt{Spin.sign}\,K\,(\sigma\,v.\text{val}).
+\]
+\end{theorem}
+
+\begin{theorem}[\texttt{siteSum\_split}]
+Full splitting, with the $\Lambda_1$-part expressed via
+\texttt{restrictConfig}:
+\[
+\sum_{v : \uparrow\!\Lambda_2} \texttt{Spin.sign}\,K\,(\sigma\,v)
+  = \Bigl(\sum_{v : \uparrow\!\Lambda_1} \texttt{Spin.sign}\,K\,(\texttt{restrictConfig}\,h_{12}\,\sigma\,v)\Bigr)
+    + \sum_{v : \{x \mid \neg (x.\text{val} \in \Lambda_1)\}} \texttt{Spin.sign}\,K\,(\sigma\,v.\text{val}).
+\]
+\end{theorem}
+
+\begin{proof}
+\texttt{siteSum\_partition} + \texttt{sum\_Λ₁\_subtype\_eq}.
+\end{proof}
+
 \end{document}
