@@ -176,6 +176,8 @@ ambient framework:
 | `correlationInfinite_nonneg` | `0 ≤ correlationInfinite` (uses `Λ.exhaust` + GKS-I) |
 | `tendsto_correlationΛ_correlationInfinite_of_subset` | Explicit-hypothesis form: given `∀ n ≥ N, A ⊆ Λ.volume n`, `correlationΛ (Λ.volume (m+N)) …` → `correlationInfinite` |
 | **`tendsto_correlationΛ_correlationInfinite`** | **Physical identification** (via `Λ.exhaust`): `correlationΛ G (Λ.volume (m+N)) p (lift A) → correlationInfinite` |
+| `correlationAlongExhaustion_le_correlationInfinite_of_other` | Sandwich: `correlationAlongExhaustion Λ' n ≤ correlationInfinite Λ` via `Λ.exhaust` on `Λ'.volume n` |
+| **`correlationInfinite_indep_exhaustion`** | **Exhaustion-independence**: `correlationInfinite G Λ p A = correlationInfinite G Λ' p A` |
 
 ## Axioms
 
