@@ -545,9 +545,12 @@ For a fixed ambient finite lattice `ι` and ferromagnetic parameters `p`,
 if `G₁ ≤ G₂` (subgraph of the interaction graph), then the correlation
 function is monotone: `⟨σ^A⟩_{G₁} ≤ ⟨σ^A⟩_{G₂}`.
 
-This is the discrete formalization of GJ §4.2 Thm 4.2.3's statement
+This is the *discretized* formalization of GJ §4.2 Thm 4.2.3's statement
 "`Λ ↑ ℝᵈ`": increasing the lattice corresponds to turning on couplings
-`J_A : 0 → βJ` for new edges.
+`J_A : 0 → βJ` for new edges. The original GJ statement is over an
+infinite ambient lattice with finite-volume exhaustions; our version
+uses a fixed finite ambient lattice with growing subgraphs, preserving
+the proof mechanism (GKS-I + monotonicity + boundedness).
 
 Reference: Glimm–Jaffe, Theorem 4.2.3, p. 59. -/
 

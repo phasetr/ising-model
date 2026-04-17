@@ -486,10 +486,18 @@ the free energy `f_G = |ι|⁻¹ ln Z_G` is monotone along the subgraph
 order and bounded above (by `f_⊤` on the complete ambient graph),
 hence converges for any increasing sequence of subgraphs.
 
-This is the formalization of Glimm–Jaffe Proposition 4.6.1 (p. 68)
-in its lattice-growth discretization: "Let Z_Λ denote the partition
-function for a lattice field with nearest neighbor, translation-invariant,
-ferromagnetic pair interaction. As Λ ↑ ∞, f_Λ converges". -/
+This is a *discretized* formalization of Glimm–Jaffe Proposition 4.6.1
+(p. 68): "Let Z_Λ denote the partition function for a lattice field
+with nearest-neighbor, translation-invariant, ferromagnetic pair
+interaction; with single-spin distribution satisfying (4.1.4). As
+Λ ↑ ∞, f_Λ = |Λ|⁻¹ ln Z_Λ converges". The original statement is
+for an infinite ambient lattice with finite-volume exhaustions; our
+formalization uses a fixed finite ambient lattice with growing subgraphs.
+The proof mechanism (monotonicity + boundedness) is the same.
+
+Note: GJ's Prop 4.6.1 is a general lattice-spin result, not Ising-only;
+the Ising model is a special case where the single-spin distribution
+is the symmetric Bernoulli measure on `{±1}`. -/
 
 /-- The partition function is monotone in the subgraph order.
 For `G₁ ≤ G₂` and ferromagnetic `p`, `Z_{G₁} ≤ Z_{G₂}`.
