@@ -2194,4 +2194,22 @@ For ferromagnetic $p$ and $A \subseteq \Lambda_1 \subseteq \Lambda_2 : \text{Fin
 This completes the volume-direction monotonicity on the genuine
 infinite-volume (\texttt{AmbientLattice}) framework.
 
+\begin{theorem}[\texttt{correlationΛ\_shifted\_monotone\_bounded}]
+For ferromagnetic $p$, an exhaustion $\Lambda$, and $N$ such that
+$A \subseteq \Lambda.\text{volume}\,n$ for $n \ge N$, the sequence
+\[
+  n \mapsto \langle\sigma^A\rangle_{G, \Lambda.\text{volume}(n+N)}
+\]
+is monotone and bounded above by $1$.
+\end{theorem}
+
+\begin{proof}
+Monotonicity from \texttt{correlationΛ\_monotone\_volume} applied
+via $\Lambda.\text{mono}$; upper bound from \texttt{correlationΛ\_le\_one}.
+\end{proof}
+
+The full Tendsto-convergence of \texttt{correlationAlongExhaustion}
+(connecting this clean shifted sequence to the dite-based definition)
+is deferred to a follow-up PR.
+
 \end{document}
