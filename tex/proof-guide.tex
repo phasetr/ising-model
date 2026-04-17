@@ -2354,4 +2354,27 @@ $\texttt{correlationInfinite}\,G\,\Lambda\,p\,A
 両向きに \texttt{ciSup\_le} と上の lemma.
 \end{proof}
 
+\subsection{Ambient-subgraph monotonicity at infinite volume}
+
+\begin{lemma}[\texttt{correlationAlongExhaustion\_monotone\_ambient\_subgraph}]
+$G_1 \le G_2$ のとき, 任意の $n$ で
+$\texttt{correlationAlongExhaustion}\,G_1\,\Lambda\,p\,A\,n
+  \le \texttt{correlationAlongExhaustion}\,G_2\,\Lambda\,p\,A\,n$.
+\end{lemma}
+
+\begin{proof}
+$A \subseteq \Lambda.\text{volume}\,n$ のとき
+\texttt{correlationΛ\_monotone\_ambient\_subgraph} 適用; それ以外は両辺 $0$.
+\end{proof}
+
+\begin{theorem}[\texttt{correlationInfinite\_monotone\_ambient\_subgraph}]
+$G_1 \le G_2$ のとき
+$\texttt{correlationInfinite}\,G_1\,\Lambda\,p\,A
+  \le \texttt{correlationInfinite}\,G_2\,\Lambda\,p\,A$.
+\end{theorem}
+
+\begin{proof}
+Lemma + \texttt{le\_ciSup} + \texttt{ciSup\_le}.
+\end{proof}
+
 \end{document}
