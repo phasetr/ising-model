@@ -369,5 +369,28 @@ theorem configEquivSubtypeProd_fst {Λ₁ Λ₂ : Finset V} (h12 : Λ₁ ⊆ Λ�
   simp [configEquivSubtypeProd, restrictConfig, subtypeIncl,
     Equiv.piEquivPiSubtypeProd, Λ₁subtypeEquiv]
 
+/-! ## Edge-spin preservation under `Sym2.map subtypeIncl`
+
+For an edge `e : Sym2 (↑Λ₁)`, its image under `Sym2.map (subtypeIncl h12)`
+is an edge on `↑Λ₂` with the same endpoint values.  Hence the
+`edgeSpin` values coincide (with `restrictConfig` on the `↑Λ₁` side).
+
+This is the pointwise identity underlying the eventual edge-sum
+equality for the Boltzmann-weight factoring. -/
+
+omit [DecidableEq V] in
+/-- Pointwise edge-spin preservation:
+`edgeSpin σ (Sym2.map (subtypeIncl h12) e) = edgeSpin (restrictConfig h12 σ) e`.
+
+Generic in the coefficient field `K`; the `ℝ`-specialization arises
+automatically when instantiated for the Ising Boltzmann weight. -/
+theorem edgeSpin_subtypeIncl {K : Type*} [Field K]
+    {Λ₁ Λ₂ : Finset V} (h12 : Λ₁ ⊆ Λ₂)
+    (σ : (↑Λ₂ : Type _) → Spin) (e : Sym2 (↑Λ₁ : Type _)) :
+    edgeSpin (K := K) σ (Sym2.map (subtypeIncl h12) e)
+      = edgeSpin (K := K) (restrictConfig h12 σ) e := by
+  refine Sym2.ind (fun u v => ?_) e
+  simp [edgeSpin, restrictConfig, subtypeIncl]
+
 end Ambient
 end IsingModel
