@@ -440,6 +440,23 @@ The site-sum splitting follows from `Fintype.sum_equiv` on
 `configEquivSubtypeProd`, reducing the Boltzmann factoring to its
 final step (PR #78). -/
 
+/-- **Reindex helper for site sums**: for `Λ₁ ⊆ Λ₂`, the sum over the
+subtype `{x : ↑Λ₂ // x.val ∈ Λ₁}` of a function evaluated at `σ v.val`
+equals the sum over `↑Λ₁` of the same function with `restrictConfig`.
+
+This is the core ingredient for site-sum splitting (the full splitting
+along the `Λ₁ / complement` partition is completed in PR #79). -/
+theorem sum_Λ₁_subtype_eq {K : Type*} [Field K]
+    {Λ₁ Λ₂ : Finset V} (h12 : Λ₁ ⊆ Λ₂)
+    (σ : (↑Λ₂ : Type _) → Spin) :
+    ∑ v : {x : (↑Λ₂ : Type _) // x.val ∈ Λ₁}, Spin.sign K (σ v.val)
+      = ∑ v : (↑Λ₁ : Type _), Spin.sign K (restrictConfig h12 σ v) := by
+  refine Fintype.sum_equiv (Λ₁subtypeEquiv h12)
+    (fun x : {y : (↑Λ₂ : Type _) // y.val ∈ Λ₁} => Spin.sign K (σ x.val))
+    (fun v : (↑Λ₁ : Type _) => Spin.sign K (restrictConfig h12 σ v))
+    (fun x => ?_)
+  simp [restrictConfig, subtypeIncl, Λ₁subtypeEquiv]
+
 omit [DecidableEq V] in
 /-- Edge-sum equality for the extendGraph via the Sym2.map-based
 bijection.  Generic in the coefficient field `K`. -/
