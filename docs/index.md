@@ -151,6 +151,8 @@ ambient framework:
 | `exists_induce_edge_of_extendGraph` | extendGraph edge ← unique induce edge |
 | `extendGraph_edgeSum_eq` | `Σ edgeSpin σ` over extendGraph = `Σ edgeSpin (restrictConfig σ)` over G.induce Λ₁ |
 | `sum_Λ₁_subtype_eq` | Reindex `Σ f(σ ↑v)` from `{x // x.val ∈ Λ₁}` to `↑Λ₁` with `restrictConfig` |
+| `siteSum_partition` | Specialized `Fintype.sum_subtype_add_sum_subtype` for `sign (σ v)` |
+| `siteSum_split` | Full split: site sum = Λ₁-part (restrictConfig) + complement-part |
 
 ## Axioms
 
