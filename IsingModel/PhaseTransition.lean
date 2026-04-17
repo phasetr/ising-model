@@ -229,6 +229,81 @@ theorem eta_nonneg_finite_vol (G : SimpleGraph ι) [Fintype G.edgeSet]
     0 ≤ truncated2 G p i j :=
   truncated2_nonneg G p hf i j
 
+/-! ## Lattice-growth convergence of §5 quantities
+
+Named corollaries of `correlation_convergent_subgraph` (PR #64) for the
+derived quantities of §5: truncated 2-point function, susceptibility,
+and total magnetization.  These are all immediate consequences of the
+correlation convergence combined with standard mathlib limit operations
+(`Tendsto.sub`, `Tendsto.mul`, `tendsto_finset_sum`).
+
+These results are the *existence* of the infinite-volume limits (in our
+discretized fixed-finite-ambient subgraph setting); Glimm–Jaffe does not
+name these particular convergence results as standalone theorems, though
+the infinite-volume limits of the truncated function and susceptibility
+are standard objects in §5.1 (p. 73), §5.3 (pp. 77–80).
+
+Note on `magnetization_total_convergent_subgraph`: `Σᵢ⟨σᵢ⟩` is the
+*extensive* total, not the per-site density. In the true thermodynamic
+limit (infinite ambient lattice) the physically meaningful quantity is
+`|Λ|⁻¹ Σᵢ⟨σᵢ⟩`. Since our ambient `|ι|` is fixed and finite, the two
+differ only by a fixed multiplicative constant and convergence transfers
+trivially between them. -/
+
+-- Note: `magnetization_convergent_subgraph` already exists in
+-- `InfiniteVolume.lean` (PR #64), stated on `correlation G p {i}`.
+-- Since `magnetization G p i` is definitionally `correlation G p {i}`,
+-- that theorem applies directly to the magnetization.
+
+/-- The truncated 2-point function `⟨σᵢ;σⱼ⟩_{Gₙ}` converges along any
+increasing subgraph sequence.
+
+Proof: Each of `⟨σᵢσⱼ⟩_{Gₙ}`, `⟨σᵢ⟩_{Gₙ}`, `⟨σⱼ⟩_{Gₙ}` converges by
+`correlation_convergent_subgraph`; apply `Tendsto.sub` and `Tendsto.mul`. -/
+theorem truncated2_convergent_subgraph
+    (Gn : ℕ → SimpleGraph ι) [∀ n, Fintype (Gn n).edgeSet]
+    (hmono : Monotone Gn) (p : IsingParams ℝ) (hf : Ferromagnetic p) (i j : ι) :
+    ∃ L : ℝ, Filter.Tendsto
+      (fun n : ℕ => truncated2 (Gn n) p i j)
+      Filter.atTop (nhds L) := by
+  obtain ⟨Lij, hij⟩ := correlation_convergent_subgraph Gn hmono p hf {i, j}
+  obtain ⟨Li, hi⟩ := correlation_convergent_subgraph Gn hmono p hf {i}
+  obtain ⟨Lj, hj⟩ := correlation_convergent_subgraph Gn hmono p hf {j}
+  refine ⟨Lij - Li * Lj, ?_⟩
+  exact hij.sub (hi.mul hj)
+
+/-- The susceptibility `χᵢ(Gₙ) = Σⱼ ⟨σᵢ;σⱼ⟩_{Gₙ}` converges along any
+increasing subgraph sequence.
+
+Proof: Finite sum of convergent sequences, via `tendsto_finset_sum`. -/
+theorem susceptibility_convergent_subgraph
+    (Gn : ℕ → SimpleGraph ι) [∀ n, Fintype (Gn n).edgeSet]
+    (hmono : Monotone Gn) (p : IsingParams ℝ) (hf : Ferromagnetic p) (i : ι) :
+    ∃ L : ℝ, Filter.Tendsto
+      (fun n : ℕ => susceptibility (Gn n) p i)
+      Filter.atTop (nhds L) := by
+  choose Lj hLj using fun j =>
+    truncated2_convergent_subgraph Gn hmono p hf i j
+  refine ⟨∑ j : ι, Lj j, ?_⟩
+  unfold susceptibility
+  exact tendsto_finset_sum _ (fun j _ => hLj j)
+
+/-- The total magnetization `M_tot(Gₙ) = Σᵢ ⟨σᵢ⟩_{Gₙ}` converges along any
+increasing subgraph sequence.
+
+Proof: Finite sum of convergent sequences, via `tendsto_finset_sum`. -/
+theorem magnetization_total_convergent_subgraph
+    (Gn : ℕ → SimpleGraph ι) [∀ n, Fintype (Gn n).edgeSet]
+    (hmono : Monotone Gn) (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    ∃ L : ℝ, Filter.Tendsto
+      (fun n : ℕ => ∑ i : ι, magnetization (Gn n) p i)
+      Filter.atTop (nhds L) := by
+  choose Li hLi using fun i =>
+    correlation_convergent_subgraph Gn hmono p hf {i}
+  refine ⟨∑ i : ι, Li i, ?_⟩
+  simp only [magnetization]
+  exact tendsto_finset_sum _ (fun i _ => hLi i)
+
 /-! ## Correlation length (§17.5)
 
 The correlation length (inverse mass) for the Ising model is defined by

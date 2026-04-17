@@ -1318,6 +1318,32 @@ $M_+ = \lim_{h \downarrow 0} \langle\sigma_i\rangle_h > 0$ for $\beta > \beta_c$
 The concavity $d^2 M/dh^2 \le 0$ for $h \ge 0$ follows from the GHS inequality
 (Cor.~4.3.4), as noted on p.~80 of \cite{glimm-jaffe}.
 
+\subsection{Lattice-growth convergence of \S5 quantities}
+
+Named corollaries of \texttt{correlation\_convergent\_subgraph} (PR~\#64):
+
+\begin{theorem}[\texttt{truncated2\_convergent\_subgraph}]
+$\langle\sigma_i;\sigma_j\rangle_{G_n}$ converges for any increasing subgraph
+sequence $G_n$ with ferromagnetic parameters.
+\end{theorem}
+
+\begin{proof}
+Each of $\langle\sigma_i\sigma_j\rangle_{G_n}$, $\langle\sigma_i\rangle_{G_n}$,
+$\langle\sigma_j\rangle_{G_n}$ converges; apply \texttt{Tendsto.sub} and
+\texttt{Tendsto.mul}.
+\end{proof}
+
+\begin{theorem}[\texttt{susceptibility\_convergent\_subgraph}]
+$\chi_i(G_n) = \sum_j \langle\sigma_i;\sigma_j\rangle_{G_n}$ converges.
+\end{theorem}
+
+\begin{theorem}[\texttt{magnetization\_total\_convergent\_subgraph}]
+$\sum_i \langle\sigma_i\rangle_{G_n}$ converges.
+\end{theorem}
+
+Both follow from \texttt{tendsto\_finset\_sum} applied to the componentwise
+convergence.
+
 \section{Conditioning inequalities (\texttt{Conditioning.lean})}
 
 Lattice analogues of Glimm--Jaffe, \S10.1--10.2 (pp.~193--194).
