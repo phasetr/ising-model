@@ -22,6 +22,8 @@ All theorems are formally proved with **zero `sorry`**.
 | **Correlation boundedness** (Prop 4.2.2)      | `\|⟨σ^A⟩\| ≤ 1`                                                                | `InfiniteVolume.lean`      |
 | **Correlation monotonicity (J)** (Prop 4.2.1) | `⟨σ^B⟩` monotone in J on `[0,∞)`                                               | `InfiniteVolume.lean`      |
 | **Correlation monotonicity (h)** (Prop 4.2.4) | `⟨σ^B⟩` monotone in h on `[0,∞)`                                               | `InfiniteVolume.lean`      |
+| **Correlation monotonicity (β)**             | `⟨σ^A⟩` monotone in β on `(0,∞)` for ferromagnetic                            | `InfiniteVolume.lean`      |
+| **Correlation β → ∞ convergence**           | `⟨σ^A⟩_{(J,h,n+1)}` converges for ferromagnetic                                | `InfiniteVolume.lean`      |
 | **Covariance non-negativity**                 | `Cov(σ^B, f) ≥ 0` for HNC f under Boltzmann weight                             | `InfiniteVolume.lean`      |
 | **Correlation convergence** (Thm 4.2.3)       | `⟨σ^B⟩` converges as J → ∞                                                    | `InfiniteVolume.lean`      |
 | **Correlation monotonicity (lattice)** (Thm 4.2.3, discretized) | `⟨σ^A⟩_{G₁} ≤ ⟨σ^A⟩_{G₂}` for subgraph ordering `G₁ ≤ G₂` | `InfiniteVolume.lean`      |
@@ -135,7 +137,7 @@ heavy Lean measure theory assembly:
 | Section | Result                                     | Status   | Lean                | Notes                                                |
 |---------|--------------------------------------------|----------|---------------------|------------------------------------------------------|
 | §10.1  | Introduction                               | **Done** | —                  | Overview; lattice version is Ch.4                    |
-| §10.2  | Correlation inequalities / β-monotonicity | **Done** | `Conditioning.lean` | Cor 10.2.3: Z monotone in β                         |
+| §10.2  | Correlation inequalities / β-monotonicity | **Done** | `Conditioning.lean`, `InfiniteVolume.lean` | Cor 10.2.3: Z and ⟨σ^A⟩ monotone in β; ⟨σ^A⟩ β → ∞ convergence |
 | §10.3  | Dirichlet/Neumann monotonicity             | **Done** | `Conditioning.lean` | Hamiltonian bound, Z upper/lower bounds (Cor 10.3.2) |
 | §10.4  | Reflection positivity                      | **Done** | `Conditioning.lean` | Definition, discriminant/Schwarz inequality          |
 | §10.5  | Multiple reflections                       | **Done** | `Conditioning.lean` | Iterated Schwarz inequality                          |
