@@ -2111,4 +2111,17 @@ For $(\sigma_1, \sigma_2) \in (\uparrow\!\Lambda_1 \to \texttt{Spin})
 (which selects the $\uparrow\!\Lambda_1$ branch).
 \end{proof}
 
+\begin{theorem}[\texttt{configEquivSubtypeProd\_symm\_apply\_compl}]
+On the complement subtype $v \in \{x : \uparrow\!\Lambda_2 \mid x.\text{val} \notin \Lambda_1\}$,
+\[
+(\texttt{configEquivSubtypeProd}\,h_{12}).\texttt{symm}\,(\sigma_1, \sigma_2)\,v.\text{val}
+ = \sigma_2\,v.
+\]
+\end{theorem}
+
+\begin{proof}
+\texttt{simp} with the same unfoldings, now $v.\texttt{property}$
+selects the complement branch.
+\end{proof}
+
 \end{document}
