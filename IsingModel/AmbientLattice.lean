@@ -274,5 +274,62 @@ theorem extendGraphFromΛ₁_le_induce (G : SimpleGraph V)
   intro u v hadj
   exact hadj.2.2
 
+/-! ## Subtype / configuration helpers for volume-direction monotonicity
+
+Infrastructure for comparing configurations on `↑Λ₁` and `↑Λ₂`
+when `Λ₁ ⊆ Λ₂`:
+
+* `subtypeIncl h12` — the canonical injection `↑Λ₁ → ↑Λ₂`.
+* `restrictConfig h12 σ` — restriction of a `↑Λ₂`-configuration to `↑Λ₁`.
+* `Λ₁subtypeEquiv h12` — the equivalence
+  `{x : ↑Λ₂ // x.val ∈ Λ₁} ≃ ↑Λ₁`.
+
+These are used to transport between configuration spaces in the
+config-factorization proof of volume-direction monotonicity. -/
+
+omit [DecidableEq V] in
+/-- The canonical injection `↑Λ₁ → ↑Λ₂` when `Λ₁ ⊆ Λ₂`. -/
+def subtypeIncl {Λ₁ Λ₂ : Finset V} (h12 : Λ₁ ⊆ Λ₂) :
+    (↑Λ₁ : Type _) → (↑Λ₂ : Type _) :=
+  fun x => ⟨x.val, h12 x.property⟩
+
+omit [DecidableEq V] in
+/-- `subtypeIncl h12` is injective. -/
+theorem subtypeIncl_injective {Λ₁ Λ₂ : Finset V} (h12 : Λ₁ ⊆ Λ₂) :
+    Function.Injective (subtypeIncl h12) := by
+  intro x y h
+  have : x.val = y.val := by
+    have := congr_arg Subtype.val h
+    simpa [subtypeIncl] using this
+  exact Subtype.ext this
+
+omit [DecidableEq V] in
+/-- Restriction of a `↑Λ₂`-configuration to a `↑Λ₁`-configuration. -/
+def restrictConfig {Λ₁ Λ₂ : Finset V} (h12 : Λ₁ ⊆ Λ₂)
+    (σ : (↑Λ₂ : Type _) → Spin) : (↑Λ₁ : Type _) → Spin :=
+  σ ∘ subtypeIncl h12
+
+omit [DecidableEq V] in
+/-- The equivalence `{x : ↑Λ₂ // x.val ∈ Λ₁} ≃ ↑Λ₁`
+when `Λ₁ ⊆ Λ₂`.  The inverse reuses `subtypeIncl`. -/
+def Λ₁subtypeEquiv {Λ₁ Λ₂ : Finset V} (h12 : Λ₁ ⊆ Λ₂) :
+    {x : (↑Λ₂ : Type _) // x.val ∈ Λ₁} ≃ (↑Λ₁ : Type _) where
+  toFun := fun x => ⟨x.val.val, x.property⟩
+  invFun := fun y => ⟨subtypeIncl h12 y, y.property⟩
+  left_inv := fun _ => rfl
+  right_inv := fun _ => rfl
+
+omit [DecidableEq V] in
+@[simp]
+theorem Λ₁subtypeEquiv_apply {Λ₁ Λ₂ : Finset V} (h12 : Λ₁ ⊆ Λ₂)
+    (x : {x : (↑Λ₂ : Type _) // x.val ∈ Λ₁}) :
+    (Λ₁subtypeEquiv h12 x : V) = x.val.val := rfl
+
+omit [DecidableEq V] in
+@[simp]
+theorem Λ₁subtypeEquiv_symm_apply {Λ₁ Λ₂ : Finset V} (h12 : Λ₁ ⊆ Λ₂)
+    (y : (↑Λ₁ : Type _)) :
+    ((Λ₁subtypeEquiv h12).symm y : (↑Λ₂ : Type _)) = subtypeIncl h12 y := rfl
+
 end Ambient
 end IsingModel
