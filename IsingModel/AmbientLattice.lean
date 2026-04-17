@@ -188,5 +188,57 @@ theorem abs_correlationAlongExhaustion_eventually_le_one
   rw [heq]
   exact abs_correlationΛ_le_one G (Λ.volume n) p (liftFinset A hA)
 
+/-! ## Monotonicity in the ambient subgraph direction
+
+For a fixed finite volume `Λ : Finset V`, if `G₁ ≤ G₂` as
+`SimpleGraph V`, then the induced subgraphs satisfy
+`G₁.induce Λ ≤ G₂.induce Λ` as `SimpleGraph (↑Λ)`.  Applying the
+existing `partitionFunction_monotone_subgraph`,
+`correlation_monotone_subgraph`, and `freeEnergy_monotone_subgraph`
+on the finite `Fintype (↑Λ)` then gives monotonicity on `Λ` in the
+ambient subgraph direction. -/
+
+omit [DecidableEq V] in
+/-- The induced subgraph is monotone in the ambient graph. -/
+theorem inducedGraph_mono {G₁ G₂ : SimpleGraph V} (h : G₁ ≤ G₂)
+    (Λ : Finset V) : inducedGraph G₁ Λ ≤ inducedGraph G₂ Λ := by
+  intro u v hadj
+  exact h hadj
+
+/-- **Partition function ambient-subgraph monotonicity**:
+for `G₁ ≤ G₂` (ambient) and ferromagnetic `p`,
+`Z_{G₁,Λ} ≤ Z_{G₂,Λ}` on any finite volume `Λ`. -/
+theorem partitionFunctionΛ_monotone_ambient_subgraph
+    {G₁ G₂ : SimpleGraph V} (h : G₁ ≤ G₂) (Λ : Finset V)
+    [Fintype (inducedGraph G₁ Λ).edgeSet]
+    [Fintype (inducedGraph G₂ Λ).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    partitionFunctionΛ G₁ Λ p ≤ partitionFunctionΛ G₂ Λ p :=
+  IsingModel.partitionFunction_monotone_subgraph (inducedGraph_mono h Λ) p hf
+
+/-- **Correlation ambient-subgraph monotonicity**:
+for `G₁ ≤ G₂` (ambient) and ferromagnetic `p`,
+`⟨σ^A⟩_{G₁,Λ} ≤ ⟨σ^A⟩_{G₂,Λ}` on any finite volume `Λ` and
+`A : Finset (↑Λ)`. -/
+theorem correlationΛ_monotone_ambient_subgraph
+    {G₁ G₂ : SimpleGraph V} (h : G₁ ≤ G₂) (Λ : Finset V)
+    [Fintype (inducedGraph G₁ Λ).edgeSet]
+    [Fintype (inducedGraph G₂ Λ).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    (A : Finset (↑Λ : Type _)) :
+    correlationΛ G₁ Λ p A ≤ correlationΛ G₂ Λ p A :=
+  IsingModel.correlation_monotone_subgraph (inducedGraph_mono h Λ) p hf A
+
+/-- **Free energy ambient-subgraph monotonicity**:
+for `G₁ ≤ G₂` (ambient) and ferromagnetic `p`,
+`f_{G₁,Λ} ≤ f_{G₂,Λ}` on any finite volume `Λ`. -/
+theorem freeEnergyΛ_monotone_ambient_subgraph
+    {G₁ G₂ : SimpleGraph V} (h : G₁ ≤ G₂) (Λ : Finset V)
+    [Fintype (inducedGraph G₁ Λ).edgeSet]
+    [Fintype (inducedGraph G₂ Λ).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    freeEnergyΛ G₁ Λ p ≤ freeEnergyΛ G₂ Λ p :=
+  IsingModel.freeEnergy_monotone_subgraph (inducedGraph_mono h Λ) p hf
+
 end Ambient
 end IsingModel

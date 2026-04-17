@@ -134,6 +134,10 @@ ambient framework:
 | `Exhaustion V` | structure: monotone `Λₙ` covering any finite set eventually |
 | `correlationAlongExhaustion` | correlation along an exhaustion for fixed `A : Finset V` |
 | `abs_correlationAlongExhaustion_eventually_le_one` | eventual boundedness |
+| `inducedGraph_mono` | `G₁ ≤ G₂ ⇒ G₁.induce Λ ≤ G₂.induce Λ` |
+| `partitionFunctionΛ_monotone_ambient_subgraph` | `G₁ ≤ G₂ ⇒ Z_{G₁,Λ} ≤ Z_{G₂,Λ}` |
+| `correlationΛ_monotone_ambient_subgraph` | `G₁ ≤ G₂ ⇒ ⟨σ^A⟩_{G₁,Λ} ≤ ⟨σ^A⟩_{G₂,Λ}` |
+| `freeEnergyΛ_monotone_ambient_subgraph` | `G₁ ≤ G₂ ⇒ f_{G₁,Λ} ≤ f_{G₂,Λ}` |
 
 ## Axioms
 
