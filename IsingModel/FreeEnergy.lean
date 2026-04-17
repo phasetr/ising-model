@@ -479,4 +479,127 @@ theorem freeEnergyJ_analyticOn
     ((partitionFunctionJ_analyticAt G h β J₀).log
       (partitionFunction_pos G ⟨J₀, h, β⟩))).analyticWithinAt
 
+/-! ## Free energy infinite volume convergence (Proposition 4.6.1)
+
+For a ferromagnetic Ising model on a fixed ambient finite lattice `ι`,
+the free energy `f_G = |ι|⁻¹ ln Z_G` is monotone along the subgraph
+order and bounded above (by `f_⊤` on the complete ambient graph),
+hence converges for any increasing sequence of subgraphs.
+
+This is the formalization of Glimm–Jaffe Proposition 4.6.1 (p. 68)
+in its lattice-growth discretization: "Let Z_Λ denote the partition
+function for a lattice field with nearest neighbor, translation-invariant,
+ferromagnetic pair interaction. As Λ ↑ ∞, f_Λ converges". -/
+
+/-- The partition function is monotone in the subgraph order.
+For `G₁ ≤ G₂` and ferromagnetic `p`, `Z_{G₁} ≤ Z_{G₂}`.
+
+Proof: Factor `w_{G₂} = R · w_{G₁}` where
+`R(σ) = ∏_{e ∈ E(G₂)\E(G₁)} exp(βJ · edgeSpin σ e)`.
+Use `exp(x) ≥ 1 + x` and GKS-I (each `⟨σᵢσⱼ⟩_{G₁} ≥ 0`)
+to bound `∑ R · w_{G₁} ≥ Z_{G₁}`. -/
+theorem partitionFunction_monotone_subgraph
+    {G₁ G₂ : SimpleGraph ι} [Fintype G₁.edgeSet] [Fintype G₂.edgeSet]
+    (h₁₂ : G₁ ≤ G₂) (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    partitionFunction G₁ p ≤ partitionFunction G₂ p := by
+  have hfact : ∀ σ, boltzmannWeight G₂ p σ =
+      (∏ e ∈ G₂.edgeFinset \ G₁.edgeFinset,
+        Real.exp (p.β * p.J * edgeSpin (K := ℝ) σ e)) *
+      boltzmannWeight G₁ p σ :=
+    fun σ => boltzmannWeight_subgraph_factor h₁₂ p σ
+  have hZ : partitionFunction G₂ p =
+      ∑ σ : Config ι,
+        (∏ e ∈ G₂.edgeFinset \ G₁.edgeFinset,
+          Real.exp (p.β * p.J * edgeSpin (K := ℝ) σ e)) *
+        boltzmannWeight G₁ p σ := by
+    unfold partitionFunction
+    apply Finset.sum_congr rfl; intro σ _; exact hfact σ
+  rw [hZ]
+  have hR_lb : ∀ σ : Config ι,
+      1 + p.β * p.J * ∑ e ∈ G₂.edgeFinset \ G₁.edgeFinset,
+        edgeSpin (K := ℝ) σ e ≤
+      (∏ e ∈ G₂.edgeFinset \ G₁.edgeFinset,
+        Real.exp (p.β * p.J * edgeSpin (K := ℝ) σ e)) := by
+    intro σ
+    rw [← Real.exp_sum]
+    simp_rw [← Finset.mul_sum]
+    linarith [Real.add_one_le_exp (p.β * p.J *
+      ∑ e ∈ G₂.edgeFinset \ G₁.edgeFinset, edgeSpin (K := ℝ) σ e)]
+  have hsum_lb : ∑ σ : Config ι,
+      (1 + p.β * p.J * ∑ e ∈ G₂.edgeFinset \ G₁.edgeFinset,
+        edgeSpin (K := ℝ) σ e) *
+      boltzmannWeight G₁ p σ ≤
+    ∑ σ : Config ι,
+      (∏ e ∈ G₂.edgeFinset \ G₁.edgeFinset,
+        Real.exp (p.β * p.J * edgeSpin (K := ℝ) σ e)) *
+      boltzmannWeight G₁ p σ := by
+    apply Finset.sum_le_sum; intro σ _
+    exact mul_le_mul_of_nonneg_right (hR_lb σ) (boltzmannWeight_pos G₁ p σ).le
+  have hexpand : ∑ σ : Config ι,
+      (1 + p.β * p.J * ∑ e ∈ G₂.edgeFinset \ G₁.edgeFinset,
+        edgeSpin (K := ℝ) σ e) *
+      boltzmannWeight G₁ p σ =
+    partitionFunction G₁ p +
+    p.β * p.J * ∑ e ∈ G₂.edgeFinset \ G₁.edgeFinset,
+      ∑ σ : Config ι, edgeSpin (K := ℝ) σ e * boltzmannWeight G₁ p σ := by
+    unfold partitionFunction
+    simp_rw [add_mul, one_mul, Finset.sum_add_distrib]
+    congr 1
+    simp_rw [Finset.mul_sum, Finset.sum_mul]
+    rw [Finset.sum_comm]
+    apply Finset.sum_congr rfl; intro e _
+    apply Finset.sum_congr rfl; intro σ _; ring
+  have hnum_nonneg : ∀ e ∈ G₂.edgeFinset \ G₁.edgeFinset,
+      0 ≤ ∑ σ : Config ι,
+        edgeSpin (K := ℝ) σ e * boltzmannWeight G₁ p σ := by
+    intro e he
+    have he₂ : e ∈ G₂.edgeFinset := (Finset.mem_sdiff.mp he).1
+    obtain ⟨⟨i, j⟩, rfl⟩ := Quot.exists_rep e
+    have hij : i ≠ j := by
+      intro h; subst h
+      exact (SimpleGraph.mem_edgeFinset.mp he₂).ne rfl
+    have hedge : ∀ σ : Config ι, edgeSpin (K := ℝ) σ (Quot.mk _ (i, j)) =
+        spinProduct {i, j} σ := by
+      intro σ; simp [edgeSpin, Sym2.lift, spinProduct, Finset.prod_pair hij, Spin.sign]
+    simp_rw [hedge]
+    exact (boltzmannWeight_hasNonnegCorrelations G₁ p hf) {i, j}
+  calc partitionFunction G₁ p
+      ≤ partitionFunction G₁ p +
+        p.β * p.J * ∑ e ∈ G₂.edgeFinset \ G₁.edgeFinset,
+          ∑ σ : Config ι, edgeSpin (K := ℝ) σ e * boltzmannWeight G₁ p σ :=
+        le_add_of_nonneg_right (mul_nonneg (mul_nonneg hf.hβ.le hf.hJ)
+          (Finset.sum_nonneg (fun e he => hnum_nonneg e he)))
+    _ = _ := hexpand.symm
+    _ ≤ _ := hsum_lb
+
+/-- The free energy is monotone in the subgraph order.
+Follows from `partitionFunction_monotone_subgraph` and `Real.log_le_log`. -/
+theorem freeEnergy_monotone_subgraph
+    {G₁ G₂ : SimpleGraph ι} [Fintype G₁.edgeSet] [Fintype G₂.edgeSet]
+    (h₁₂ : G₁ ≤ G₂) (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    freeEnergy G₁ p ≤ freeEnergy G₂ p := by
+  unfold freeEnergy
+  apply mul_le_mul_of_nonneg_left _ (inv_nonneg.mpr (Nat.cast_nonneg _))
+  exact Real.log_le_log (partitionFunction_pos G₁ p)
+    (partitionFunction_monotone_subgraph h₁₂ p hf)
+
+/-- **Proposition 4.6.1** (Glimm–Jaffe, p. 68): The free energy converges
+along any increasing sequence of subgraphs on a fixed ambient finite lattice.
+
+The free energy `n ↦ f_{Gₙ}` is monotone (by `freeEnergy_monotone_subgraph`)
+and bounded above by `f_⊤` (free energy on the complete graph, via
+`le_top`), hence converges to its supremum by `tendsto_atTop_ciSup`. -/
+theorem freeEnergy_convergent_subgraph
+    (Gn : ℕ → SimpleGraph ι) [∀ n, Fintype (Gn n).edgeSet]
+    (hmono : Monotone Gn) (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    ∃ L : ℝ, Filter.Tendsto
+      (fun n : ℕ => freeEnergy (Gn n) p)
+      Filter.atTop (nhds L) := by
+  have h_mono : Monotone (fun n : ℕ => freeEnergy (Gn n) p) :=
+    fun a b hab => freeEnergy_monotone_subgraph (hmono hab) p hf
+  have h_bdd : BddAbove (Set.range (fun n : ℕ => freeEnergy (Gn n) p)) :=
+    ⟨freeEnergy (⊤ : SimpleGraph ι) p,
+     fun _ ⟨n, hn⟩ => hn ▸ freeEnergy_monotone_subgraph le_top p hf⟩
+  exact ⟨_, tendsto_atTop_ciSup h_mono h_bdd⟩
+
 end IsingModel

@@ -26,6 +26,11 @@ All theorems are formally proved with **zero `sorry`**.
 | **Correlation convergence** (Thm 4.2.3)       | `⟨σ^B⟩` converges as J → ∞                                                    | `InfiniteVolume.lean`      |
 | **Correlation monotonicity (lattice)** (Thm 4.2.3) | `⟨σ^A⟩_{G₁} ≤ ⟨σ^A⟩_{G₂}` for subgraph ordering `G₁ ≤ G₂`                | `InfiniteVolume.lean`      |
 | **Correlation convergence (lattice)** (Thm 4.2.3) | `⟨σ^A⟩_{Gₙ}` converges for any increasing sequence of subgraphs               | `InfiniteVolume.lean`      |
+| **Magnetization convergence (lattice)** | `⟨σᵢ⟩_{Gₙ}` converges for any increasing subgraph sequence                       | `InfiniteVolume.lean`      |
+| **Two-point convergence (lattice)**     | `⟨σᵢσⱼ⟩_{Gₙ}` converges for any increasing subgraph sequence                    | `InfiniteVolume.lean`      |
+| **Partition function monotonicity (lattice)** | `Z_{G₁} ≤ Z_{G₂}` for subgraph ordering `G₁ ≤ G₂`                         | `FreeEnergy.lean`          |
+| **Free energy monotonicity (lattice)**  | `f_{G₁} ≤ f_{G₂}` for subgraph ordering `G₁ ≤ G₂`                              | `FreeEnergy.lean`          |
+| **Free energy convergence** (Prop 4.6.1) | `f_{Gₙ}` converges for any increasing subgraph sequence                         | `FreeEnergy.lean`          |
 | **Free energy** (§4.6)                       | `f = \|ι\|⁻¹ ln Z`, monotone in J and h                                        | `FreeEnergy.lean`          |
 | **Lee-Yang nonvanishing (Ising)**             | Ising partition polynomial ≠ 0 on polydisk                                      | `FreeEnergy.lean`          |
 | **GHS inequality** (Cor 4.3.4)                | `⟨σ_i; σ_j; σ_k⟩ ≤ 0` (from Lebowitz third inequality)                       | `Inequalities/GHS.lean`    |
@@ -105,6 +110,7 @@ heavy Lean measure theory assembly:
 | §4.6   | Ising nonvanishing (Thm 4.6.2)      | **Done**         | `isingEdgePoly_nonvanishing_of_graph` |                               |
 | §4.6   | Free energy monotonicity (h)        | **Done**         | `freeEnergy_monotone_h`               |                               |
 | §4.6   | Free energy monotonicity (J)        | **Done**         | `freeEnergy_monotone_J`               |                               |
+| §4.6   | Prop 4.6.1 (f_Λ convergence)        | **Done**         | `freeEnergy_convergent_subgraph`      | Lattice version via subgraph  |
 | §4.6   | Thm 4.6.2 (free energy analyticity) | **Done**         | `freeEnergyH_analyticOn`              | Real-analytic in h, J         |
 | §4.7   | Thm 4.7.1 (two-component spins)     | **Out of scope** | —                                    | XY model; vector-valued spins |
 | §4.7   | Cor 4.7.2                           | **Out of scope** | —                                    | XY model                      |

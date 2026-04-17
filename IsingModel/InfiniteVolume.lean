@@ -573,7 +573,7 @@ private theorem hasNonnegCorrelations_edge_prod_of_finset
 /-- The Boltzmann weight on a larger graph factors through a reweighting
 `R(σ) = ∏_{e ∈ E(G₂)\E(G₁)} exp(βJ · edgeSpin σ e)`:
 `w_{G₂}(σ) = R(σ) · w_{G₁}(σ)`. -/
-private theorem boltzmannWeight_subgraph_factor
+theorem boltzmannWeight_subgraph_factor
     {G₁ G₂ : SimpleGraph ι} [Fintype G₁.edgeSet] [Fintype G₂.edgeSet]
     (h₁₂ : G₁ ≤ G₂) (p : IsingParams ℝ) (σ : Config ι) :
     boltzmannWeight G₂ p σ =
@@ -666,5 +666,36 @@ theorem correlation_convergent_subgraph
   have hbdd : BddAbove (Set.range (fun n : ℕ => correlation (Gn n) p A)) :=
     ⟨1, fun _ ⟨n, hn⟩ => hn ▸ correlation_le_one (Gn n) p A⟩
   exact ⟨_, tendsto_atTop_ciSup hcorr_mono hbdd⟩
+
+/-! ## Named corollaries of the lattice-growth convergence
+
+Direct specializations of `correlation_convergent_subgraph` at the most
+physically relevant subsets: single-site magnetization `⟨σᵢ⟩` and
+two-point correlation `⟨σᵢσⱼ⟩`.  Both are used downstream in §5
+(symmetry breaking, phase transitions). -/
+
+/-- **Magnetization convergence** (Glimm–Jaffe, §5.3 context):
+the single-site magnetization `⟨σᵢ⟩_{Gₙ}` converges along any increasing
+subgraph sequence. Direct specialization of `correlation_convergent_subgraph`
+to `A = {i}`. -/
+theorem magnetization_convergent_subgraph
+    (Gn : ℕ → SimpleGraph ι) [∀ n, Fintype (Gn n).edgeSet]
+    (hmono : Monotone Gn) (p : IsingParams ℝ) (hf : Ferromagnetic p) (i : ι) :
+    ∃ L : ℝ, Filter.Tendsto
+      (fun n : ℕ => correlation (Gn n) p {i})
+      Filter.atTop (nhds L) :=
+  correlation_convergent_subgraph Gn hmono p hf {i}
+
+/-- **Two-point correlation convergence** (Glimm–Jaffe, §5.1 context):
+the two-point correlation `⟨σᵢσⱼ⟩_{Gₙ}` converges along any increasing
+subgraph sequence. Direct specialization of `correlation_convergent_subgraph`
+to `A = {i, j}`. -/
+theorem twoPoint_convergent_subgraph
+    (Gn : ℕ → SimpleGraph ι) [∀ n, Fintype (Gn n).edgeSet]
+    (hmono : Monotone Gn) (p : IsingParams ℝ) (hf : Ferromagnetic p) (i j : ι) :
+    ∃ L : ℝ, Filter.Tendsto
+      (fun n : ℕ => correlation (Gn n) p {i, j})
+      Filter.atTop (nhds L) :=
+  correlation_convergent_subgraph Gn hmono p hf {i, j}
 
 end IsingModel

@@ -880,6 +880,55 @@ bounded above by $1$ via \texttt{correlation\_le\_one}, hence converges by
 \texttt{tendsto\_atTop\_ciSup}.
 \end{proof}
 
+Named specializations:
+\begin{itemize}
+  \item \texttt{magnetization\_convergent\_subgraph}: $\langle\sigma_i\rangle_{G_n}$
+        converges (case $A = \{i\}$).
+  \item \texttt{twoPoint\_convergent\_subgraph}: $\langle\sigma_i\sigma_j\rangle_{G_n}$
+        converges (case $A = \{i,j\}$).
+\end{itemize}
+
+\subsection{Free energy infinite volume convergence (Proposition 4.6.1)}
+
+GJ Proposition 4.6.1 (p.~68): for the ferromagnetic pair interaction
+$H = -J\sum_{\langle i,j\rangle}\sigma_i\sigma_j - h\sum_i\sigma_i$
+(strictly ferromagnetic), the free energy per site
+$f_\Lambda = |\Lambda|^{-1}\ln Z_\Lambda$ converges as $\Lambda\uparrow\mathbb{Z}^d$.
+The discretized (fixed ambient lattice $\iota$, growing subgraph) form:
+
+\begin{theorem}[\texttt{partitionFunction\_monotone\_subgraph}]
+For ferromagnetic $p$ and $G_1\le G_2$, $Z_{G_1}\le Z_{G_2}$.
+\end{theorem}
+
+\begin{proof}
+Factor $Z_{G_2} = \sum_\sigma R(\sigma) w_{G_1}(\sigma)$ with
+$R(\sigma)=\prod_{e\in E(G_2)\setminus E(G_1)}\exp(\beta J \sigma_i\sigma_j)$.
+Use $\exp(x)\ge 1+x$ to get
+$R(\sigma)\ge 1 + \beta J \sum_{e\in E(G_2)\setminus E(G_1)}\sigma_i\sigma_j$.
+Then $\sum_\sigma R w_{G_1} \ge Z_{G_1} + \beta J \sum_e \sum_\sigma \sigma_i\sigma_j w_{G_1}$,
+and each inner sum is $\ge 0$ by GKS-I (via \texttt{boltzmannWeight\_hasNonnegCorrelations})
+applied to the pair $\{i,j\}$. Hence $Z_{G_2}\ge Z_{G_1}$.
+\end{proof}
+
+\begin{theorem}[\texttt{freeEnergy\_monotone\_subgraph}]
+For ferromagnetic $p$ and $G_1\le G_2$, $f_{G_1}\le f_{G_2}$.
+\end{theorem}
+
+\begin{proof}
+$|\iota|$ is fixed; apply $\log$ (monotone) to $Z_{G_1}\le Z_{G_2}$.
+\end{proof}
+
+\begin{theorem}[\texttt{freeEnergy\_convergent\_subgraph}, = Prop 4.6.1]
+For any increasing subgraph sequence $G_n\uparrow$ on a fixed finite ambient
+lattice $\iota$ and ferromagnetic $p$, $n\mapsto f_{G_n}$ converges.
+\end{theorem}
+
+\begin{proof}
+Monotone by \texttt{freeEnergy\_monotone\_subgraph}.
+Bounded above by $f_{\top}$ (free energy on the complete graph $\top$)
+via \texttt{le\_top}. Converges by \texttt{tendsto\_atTop\_ciSup}.
+\end{proof}
+
 \section{Free energy (\texttt{FreeEnergy.lean})}
 
 The free energy and its monotonicity properties.
