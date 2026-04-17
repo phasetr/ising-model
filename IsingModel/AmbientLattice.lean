@@ -392,5 +392,45 @@ theorem edgeSpin_subtypeIncl {K : Type*} [Field K]
   refine Sym2.ind (fun u v => ?_) e
   simp [edgeSpin, restrictConfig, subtypeIncl]
 
+/-! ## Edge-set transfer between `G.induce Λ₁` and `extendGraphFromΛ₁`
+
+`Sym2.map (subtypeIncl h12)` gives an injection from
+`Sym2 (↑Λ₁)` to `Sym2 (↑Λ₂)` that restricts to a bijection between
+the edge sets of `G.induce Λ₁` and `extendGraphFromΛ₁ G Λ₁ Λ₂`.
+
+Combined with `Finset.sum_bij` (or `sum_map`) and
+`edgeSpin_subtypeIncl`, this yields the edge-sum equality underlying
+the Boltzmann factoring. -/
+
+omit [DecidableEq V] in
+/-- The image of an induced-graph edge under `Sym2.map (subtypeIncl h12)`
+is an edge of `extendGraphFromΛ₁`. -/
+theorem mem_extendGraph_edgeSet_of_mem_induce
+    (G : SimpleGraph V) {Λ₁ Λ₂ : Finset V} (h12 : Λ₁ ⊆ Λ₂)
+    {e : Sym2 (↑Λ₁ : Type _)} (he : e ∈ (G.induce (↑Λ₁ : Set V)).edgeSet) :
+    Sym2.map (subtypeIncl h12) e ∈ (extendGraphFromΛ₁ G Λ₁ Λ₂).edgeSet := by
+  refine Sym2.ind (fun u v he => ?_) e he
+  rw [Sym2.map_mk, SimpleGraph.mem_edgeSet]
+  rw [SimpleGraph.mem_edgeSet] at he
+  exact ⟨u.property, v.property, he⟩
+
+omit [DecidableEq V] in
+/-- Conversely, every `extendGraphFromΛ₁` edge comes from a unique
+induced-graph edge via `Sym2.map (subtypeIncl h12)`. -/
+theorem exists_induce_edge_of_extendGraph
+    (G : SimpleGraph V) {Λ₁ Λ₂ : Finset V} (h12 : Λ₁ ⊆ Λ₂)
+    {e : Sym2 (↑Λ₂ : Type _)}
+    (he : e ∈ (extendGraphFromΛ₁ G Λ₁ Λ₂).edgeSet) :
+    ∃ e' : Sym2 (↑Λ₁ : Type _),
+      e' ∈ (G.induce (↑Λ₁ : Set V)).edgeSet ∧ Sym2.map (subtypeIncl h12) e' = e := by
+  refine Sym2.ind (fun u v he => ?_) e he
+  rw [SimpleGraph.mem_edgeSet] at he
+  obtain ⟨hu, hv, hadj⟩ := he
+  refine ⟨s(⟨u.val, hu⟩, ⟨v.val, hv⟩), ?_, ?_⟩
+  · rw [SimpleGraph.mem_edgeSet]
+    exact hadj
+  · rw [Sym2.map_mk]
+    rfl
+
 end Ambient
 end IsingModel
