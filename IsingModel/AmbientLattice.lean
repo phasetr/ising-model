@@ -432,5 +432,36 @@ theorem exists_induce_edge_of_extendGraph
   · rw [Sym2.map_mk]
     rfl
 
+/-! ## Edge sum equality and site sum splitting
+
+Combine the edge-set bijection (PR #76) with `edgeSpin_subtypeIncl`
+(PR #75) via `Finset.sum_bij` to obtain the edge-sum equality.
+The site-sum splitting follows from `Fintype.sum_equiv` on
+`configEquivSubtypeProd`, reducing the Boltzmann factoring to its
+final step (PR #78). -/
+
+omit [DecidableEq V] in
+/-- Edge-sum equality for the extendGraph via the Sym2.map-based
+bijection. -/
+theorem extendGraph_edgeSum_eq
+    (G : SimpleGraph V) {Λ₁ Λ₂ : Finset V} (h12 : Λ₁ ⊆ Λ₂)
+    [Fintype (inducedGraph G Λ₁).edgeSet]
+    [Fintype (extendGraphFromΛ₁ G Λ₁ Λ₂).edgeSet]
+    (σ : (↑Λ₂ : Type _) → Spin) :
+    ∑ e ∈ (extendGraphFromΛ₁ G Λ₁ Λ₂).edgeFinset, edgeSpin (K := ℝ) σ e
+      = ∑ e' ∈ (inducedGraph G Λ₁).edgeFinset,
+          edgeSpin (K := ℝ) (restrictConfig h12 σ) e' :=
+  (Finset.sum_bij (fun e' _ => Sym2.map (subtypeIncl h12) e')
+    (fun _ he' => by
+      rw [SimpleGraph.mem_edgeFinset] at he' ⊢
+      exact mem_extendGraph_edgeSet_of_mem_induce G h12 he')
+    (fun _ _ _ _ heq =>
+      Sym2.map.injective (subtypeIncl_injective h12) heq)
+    (fun e he => by
+      rw [SimpleGraph.mem_edgeFinset] at he
+      obtain ⟨e', he', heq⟩ := exists_induce_edge_of_extendGraph G h12 he
+      exact ⟨e', SimpleGraph.mem_edgeFinset.mpr he', heq⟩)
+    (fun e' _ => (edgeSpin_subtypeIncl h12 σ e').symm)).symm
+
 end Ambient
 end IsingModel
