@@ -24,6 +24,8 @@ All theorems are formally proved with **zero `sorry`**.
 | **Correlation monotonicity (h)** (Prop 4.2.4) | `⟨σ^B⟩` monotone in h on `[0,∞)`                                               | `InfiniteVolume.lean`      |
 | **Covariance non-negativity**                 | `Cov(σ^B, f) ≥ 0` for HNC f under Boltzmann weight                             | `InfiniteVolume.lean`      |
 | **Correlation convergence** (Thm 4.2.3)       | `⟨σ^B⟩` converges as J → ∞                                                    | `InfiniteVolume.lean`      |
+| **Correlation monotonicity (lattice)** (Thm 4.2.3) | `⟨σ^A⟩_{G₁} ≤ ⟨σ^A⟩_{G₂}` for subgraph ordering `G₁ ≤ G₂`                | `InfiniteVolume.lean`      |
+| **Correlation convergence (lattice)** (Thm 4.2.3) | `⟨σ^A⟩_{Gₙ}` converges for any increasing sequence of subgraphs               | `InfiniteVolume.lean`      |
 | **Free energy** (§4.6)                       | `f = \|ι\|⁻¹ ln Z`, monotone in J and h                                        | `FreeEnergy.lean`          |
 | **Lee-Yang nonvanishing (Ising)**             | Ising partition polynomial ≠ 0 on polydisk                                      | `FreeEnergy.lean`          |
 | **GHS inequality** (Cor 4.3.4)                | `⟨σ_i; σ_j; σ_k⟩ ≤ 0` (from Lebowitz third inequality)                       | `Inequalities/GHS.lean`    |
@@ -87,7 +89,9 @@ heavy Lean measure theory assembly:
 | §4.1   | Thm 4.1.1 GKS-II                    | **Done**         | `gks_second`                          |                               |
 | §4.2   | Prop 4.2.1 (J-monotonicity)         | **Done**         | `correlation_monotone_J`              |                               |
 | §4.2   | Prop 4.2.2 (boundedness)            | **Done**         | `abs_correlation_le_one`              |                               |
-| §4.2   | Thm 4.2.3 (convergence)             | **Done**         | `correlation_convergent`              |                               |
+| §4.2   | Thm 4.2.3 (convergence, J → ∞)     | **Done**         | `correlation_convergent`              | Fixed graph                   |
+| §4.2   | Thm 4.2.3 (convergence, Λ ↑)       | **Done**         | `correlation_convergent_subgraph`     | Increasing subgraph sequence  |
+| §4.2   | Monotonicity in lattice             | **Done**         | `correlation_monotone_subgraph`       | `G₁ ≤ G₂ ⇒ corr₁ ≤ corr₂`    |
 | §4.2   | Prop 4.2.4 (h-monotonicity)         | **Done**         | `correlation_monotone_h`              |                               |
 | §4.3   | Thm 4.3.1 (φ⁴ non-negativity)     | **Axiom**        | `phi4_single_site_nonneg`             | Measure theory                |
 | §4.3   | Cor 4.3.2 (Lebowitz, 3-site)        | **Axiom**        | `lebowitz_third`                      | Via φ⁴ limit                |

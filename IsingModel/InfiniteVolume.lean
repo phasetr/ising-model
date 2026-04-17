@@ -530,7 +530,141 @@ theorem correlation_monotone_h (G : SimpleGraph ι) [Fintype G.edgeSet]
   exact le_of_sub_nonneg (correlation_reweighting_h_nonneg G J β B h₁ h₂ hh
     hJ (Set.mem_Ici.mp hh₁_mem) hβ)
 
--- Future work: formalize lattice growth sequence Λ_n ↑ ℤ^d and relate
--- correlation functions across different lattice sizes via graph embeddings.
+/-! ## Upper bound on the correlation (without absolute value) -/
+
+/-- The correlation function is bounded above by `1`.
+Extracted from `abs_correlation_le_one` via `a ≤ |a|`. -/
+theorem correlation_le_one (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (p : IsingParams ℝ) (A : Finset ι) :
+    correlation G p A ≤ 1 :=
+  le_trans (le_abs_self _) (abs_correlation_le_one G p A)
+
+/-! ## Monotonicity in the lattice (Theorem 4.2.3, lattice version)
+
+For a fixed ambient finite lattice `ι` and ferromagnetic parameters `p`,
+if `G₁ ≤ G₂` (subgraph of the interaction graph), then the correlation
+function is monotone: `⟨σ^A⟩_{G₁} ≤ ⟨σ^A⟩_{G₂}`.
+
+This is the discrete formalization of GJ §4.2 Thm 4.2.3's statement
+"`Λ ↑ ℝᵈ`": increasing the lattice corresponds to turning on couplings
+`J_A : 0 → βJ` for new edges.
+
+Reference: Glimm–Jaffe, Theorem 4.2.3, p. 59. -/
+
+/-- HNC of a product `∏_{e ∈ E} exp(K e · edgeSpin σ e)` over an arbitrary
+non-diagonal Finset `E` of `Sym2 ι`, with non-negative `K`.
+A graph-free variant of `hasNonnegCorrelations_edge_site_product`. -/
+private theorem hasNonnegCorrelations_edge_prod_of_finset
+    (E : Finset (Sym2 ι)) (hE : ∀ e ∈ E, ¬ e.IsDiag)
+    (K : Sym2 ι → ℝ) (hK : ∀ e ∈ E, 0 ≤ K e) :
+    HasNonnegCorrelations
+      (fun σ => ∏ e ∈ E, Real.exp (K e * edgeSpin (K := ℝ) σ e)) := by
+  apply hasNonnegCorrelations_finset_prod
+  intro e he
+  obtain ⟨⟨i, j⟩, rfl⟩ := Quot.exists_rep e
+  have hne : i ≠ j := fun hij => hE _ he (Sym2.mk_isDiag_iff.mpr hij)
+  refine ⟨Real.cosh (K (Quot.mk _ (i, j))),
+    Real.sinh (K (Quot.mk _ (i, j))), {i, j},
+    (Real.cosh_pos _).le,
+    Real.sinh_nonneg_iff.mpr (hK _ he), fun σ => ?_⟩
+  simp only [spinProduct, Finset.prod_pair hne]
+  exact exp_edgeSpin_decomp _ σ _
+
+/-- The Boltzmann weight on a larger graph factors through a reweighting
+`R(σ) = ∏_{e ∈ E(G₂)\E(G₁)} exp(βJ · edgeSpin σ e)`:
+`w_{G₂}(σ) = R(σ) · w_{G₁}(σ)`. -/
+private theorem boltzmannWeight_subgraph_factor
+    {G₁ G₂ : SimpleGraph ι} [Fintype G₁.edgeSet] [Fintype G₂.edgeSet]
+    (h₁₂ : G₁ ≤ G₂) (p : IsingParams ℝ) (σ : Config ι) :
+    boltzmannWeight G₂ p σ =
+    (∏ e ∈ G₂.edgeFinset \ G₁.edgeFinset,
+      Real.exp (p.β * p.J * edgeSpin (K := ℝ) σ e)) *
+    boltzmannWeight G₁ p σ := by
+  have hsub : G₁.edgeFinset ⊆ G₂.edgeFinset := SimpleGraph.edgeFinset_mono h₁₂
+  rw [← Real.exp_sum]
+  unfold boltzmannWeight
+  rw [← Real.exp_add]
+  congr 1
+  unfold hamiltonian interactionEnergy externalFieldEnergy
+  have hdis : ∑ e ∈ G₂.edgeFinset, edgeSpin (K := ℝ) σ e =
+      ∑ e ∈ G₂.edgeFinset \ G₁.edgeFinset, edgeSpin (K := ℝ) σ e +
+      ∑ e ∈ G₁.edgeFinset, edgeSpin (K := ℝ) σ e := by
+    rw [← Finset.sum_sdiff hsub, add_comm]
+  rw [show ∑ e ∈ G₂.edgeFinset \ G₁.edgeFinset, p.β * p.J * edgeSpin (K := ℝ) σ e =
+      p.β * p.J * ∑ e ∈ G₂.edgeFinset \ G₁.edgeFinset, edgeSpin (K := ℝ) σ e from by
+      rw [Finset.mul_sum]]
+  rw [hdis]
+  ring
+
+/-- **Theorem 4.2.3** (Glimm–Jaffe, p. 59; lattice version):
+For a ferromagnetic Ising model, the correlation function is monotone
+under the subgraph ordering: if `G₁ ≤ G₂` (as `SimpleGraph` on the
+ambient lattice `ι`), then `⟨σ^A⟩_{G₁} ≤ ⟨σ^A⟩_{G₂}`.
+
+Proof: Factor `w_{G₂} = R · w_{G₁}` where `R` has HNC (since it is a
+product of non-negative-coefficient exponentials of edge spins), then
+apply `cov_hnc_boltzmann_nonneg` on the base graph `G₁`. -/
+theorem correlation_monotone_subgraph
+    {G₁ G₂ : SimpleGraph ι} [Fintype G₁.edgeSet] [Fintype G₂.edgeSet]
+    (h₁₂ : G₁ ≤ G₂) (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    (A : Finset ι) :
+    correlation G₁ p A ≤ correlation G₂ p A := by
+  set R : Config ι → ℝ := fun σ =>
+    ∏ e ∈ G₂.edgeFinset \ G₁.edgeFinset,
+      Real.exp (p.β * p.J * edgeSpin (K := ℝ) σ e) with hR_def
+  have hR : HasNonnegCorrelations R :=
+    hasNonnegCorrelations_edge_prod_of_finset
+      (G₂.edgeFinset \ G₁.edgeFinset)
+      (fun e he =>
+        G₂.not_isDiag_of_mem_edgeFinset (Finset.mem_sdiff.mp he).1)
+      (fun _ => p.β * p.J)
+      (fun _ _ => mul_nonneg hf.hβ.le hf.hJ)
+  have hfact : ∀ σ, boltzmannWeight G₂ p σ = R σ * boltzmannWeight G₁ p σ :=
+    fun σ => boltzmannWeight_subgraph_factor h₁₂ p σ
+  have hcov := cov_hnc_boltzmann_nonneg G₁ p hf R hR A
+  have hnum : ∑ σ : Config ι, spinProduct A σ * R σ * boltzmannWeight G₁ p σ =
+      ∑ σ, spinProduct A σ * boltzmannWeight G₂ p σ := by
+    apply Finset.sum_congr rfl; intro σ _
+    rw [hfact σ]; ring
+  have hden : ∑ σ : Config ι, R σ * boltzmannWeight G₁ p σ =
+      ∑ σ, boltzmannWeight G₂ p σ := by
+    apply Finset.sum_congr rfl; intro σ _
+    exact (hfact σ).symm
+  rw [hnum, hden] at hcov
+  have hZ₁ := partitionFunction_pos G₁ p
+  have hZ₂ := partitionFunction_pos G₂ p
+  unfold correlation gibbsExpectation partitionFunction
+  unfold partitionFunction at hZ₁ hZ₂
+  rw [mul_comm ((∑ σ : Config ι, boltzmannWeight G₁ p σ)⁻¹)
+      (∑ σ, spinProduct A σ * boltzmannWeight G₁ p σ),
+      mul_comm ((∑ σ : Config ι, boltzmannWeight G₂ p σ)⁻¹)
+      (∑ σ, spinProduct A σ * boltzmannWeight G₂ p σ)]
+  rw [← div_eq_mul_inv, ← div_eq_mul_inv]
+  rw [div_le_div_iff₀ hZ₁ hZ₂]
+  linarith
+
+/-! ## Convergence along an increasing chain of subgraphs
+
+For an increasing sequence of subgraphs `Gn : ℕ → SimpleGraph ι` with
+ferromagnetic parameters, the correlation function `n ↦ ⟨σ^A⟩_{Gn n}`
+is monotone (by `correlation_monotone_subgraph`) and bounded above by
+`1` (by `correlation_le_one`), hence convergent by monotone-bounded. -/
+
+/-- **Theorem 4.2.3** (Glimm–Jaffe, p. 59; lattice version, convergence):
+For any increasing sequence of subgraphs `Gₙ ↑` on a fixed ambient finite
+lattice, with ferromagnetic parameters, the correlation function
+`n ↦ ⟨σ^A⟩_{Gₙ}` converges as `n → ∞`. -/
+theorem correlation_convergent_subgraph
+    (Gn : ℕ → SimpleGraph ι) [∀ n, Fintype (Gn n).edgeSet]
+    (hmono : Monotone Gn) (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    (A : Finset ι) :
+    ∃ L : ℝ, Filter.Tendsto
+      (fun n : ℕ => correlation (Gn n) p A)
+      Filter.atTop (nhds L) := by
+  have hcorr_mono : Monotone (fun n : ℕ => correlation (Gn n) p A) :=
+    fun a b hab => correlation_monotone_subgraph (hmono hab) p hf A
+  have hbdd : BddAbove (Set.range (fun n : ℕ => correlation (Gn n) p A)) :=
+    ⟨1, fun _ ⟨n, hn⟩ => hn ▸ correlation_le_one (Gn n) p A⟩
+  exact ⟨_, tendsto_atTop_ciSup hcorr_mono hbdd⟩
 
 end IsingModel
