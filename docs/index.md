@@ -168,6 +168,7 @@ ambient framework:
 | `correlationΛ_shifted_tendsto` | Shifted correlation sequence converges to sup (Tendsto) |
 | `correlationAlongExhaustion_monotone` | `correlationAlongExhaustion` is globally monotone (covers `A ⊄ Λ.volume n` by GKS-I ≥ 0) |
 | `correlationAlongExhaustion_le_one` | `correlationAlongExhaustion n ≤ 1` for all `n` |
+| `correlationAlongExhaustion_bddAbove` | Range of `correlationAlongExhaustion` is bounded above by 1 (helper) |
 | **`correlationAlongExhaustion_tendsto_ciSup`** | **Convergence to explicit supremum**: `Tendsto … (nhds (⨆ n, …))` |
 | **`correlationAlongExhaustion_convergent`** | Thin wrapper `∃ L, Tendsto …` — genuine thermodynamic limit |
 | **`correlationInfinite`** | **Infinite-volume correlation** `:= ⨆ n, correlationAlongExhaustion …` |
@@ -176,6 +177,8 @@ ambient framework:
 | `correlationInfinite_nonneg` | `0 ≤ correlationInfinite` (uses `Λ.exhaust` + GKS-I) |
 | `tendsto_correlationΛ_correlationInfinite_of_subset` | Explicit-hypothesis form: given `∀ n ≥ N, A ⊆ Λ.volume n`, `correlationΛ (Λ.volume (m+N)) …` → `correlationInfinite` |
 | **`tendsto_correlationΛ_correlationInfinite`** | **Physical identification** (via `Λ.exhaust`): `correlationΛ G (Λ.volume (m+N)) p (lift A) → correlationInfinite` |
+| `correlationAlongExhaustion_le_correlationInfinite_of_other` | Sandwich: `correlationAlongExhaustion Λ' n ≤ correlationInfinite Λ` via `Λ.exhaust` on `Λ'.volume n` |
+| **`correlationInfinite_indep_exhaustion`** | **Exhaustion-independence**: `correlationInfinite G Λ p A = correlationInfinite G Λ' p A` |
 
 ## Axioms
 
