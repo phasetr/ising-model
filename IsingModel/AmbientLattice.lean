@@ -653,15 +653,9 @@ theorem partitionFunction_extendGraph_factor
         * Real.exp (p.β * p.h *
             ∑ v : {x : (↑Λ₂ : Type _) // x.val ∉ Λ₁}, Spin.sign ℝ (σ₂ v)) := by
     intro σ₁ σ₂
-    rw [boltzmannWeight_extendGraph_factor G h12 p,
-      restrictConfig_configEquivSubtypeProd_symm]
-    have hsign : ∑ v : {x : (↑Λ₂ : Type _) // x.val ∉ Λ₁},
-          Spin.sign ℝ ((configEquivSubtypeProd h12).symm (σ₁, σ₂) v.val)
-        = ∑ v : {x : (↑Λ₂ : Type _) // x.val ∉ Λ₁}, Spin.sign ℝ (σ₂ v) := by
-      apply Finset.sum_congr rfl
-      intro v _
-      rw [configEquivSubtypeProd_symm_apply_compl]
-    rw [hsign]
+    simp_rw [boltzmannWeight_extendGraph_factor G h12 p,
+      restrictConfig_configEquivSubtypeProd_symm,
+      configEquivSubtypeProd_symm_apply_compl]
   simp_rw [hsum]
   rw [← Finset.sum_mul_sum]
 
