@@ -144,6 +144,8 @@ ambient framework:
 | `subtypeIncl_injective` | `subtypeIncl` is injective |
 | `restrictConfig` | Restrict `(↑Λ₂ → Spin)` to `(↑Λ₁ → Spin)` |
 | `Λ₁subtypeEquiv` | `{x : ↑Λ₂ // x.val ∈ Λ₁} ≃ ↑Λ₁` |
+| `configEquivSubtypeProd` | `(↑Λ₂ → Spin) ≃ (↑Λ₁ → Spin) × ({x // x.val ∉ Λ₁} → Spin)` |
+| `configEquivSubtypeProd_fst` | First projection = `restrictConfig` |
 
 ## Axioms
 
