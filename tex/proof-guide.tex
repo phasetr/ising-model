@@ -1908,7 +1908,35 @@ $\texttt{Config}\,(\uparrow\!\Lambda_2) \simeq
  \texttt{Config}\,(\uparrow\!\Lambda_1) \times
  \texttt{Config}\,(\uparrow\!(\Lambda_2\setminus\Lambda_1))$
 (using \texttt{Equiv.piEquivPiSubtypeProd}). The argument is
-$\sim 100$--$200$ lines of Lean and is deferred to a follow-up PR.
+staged across several follow-up PRs.
 \end{remark}
+
+\subsection{Configuration helpers for volume monotonicity}
+
+To prepare the factorization argument, we introduce the following
+helpers:
+
+\begin{definition}[\texttt{subtypeIncl}]
+For $\Lambda_1 \subseteq \Lambda_2$, the canonical injection
+$\uparrow\!\Lambda_1 \to \uparrow\!\Lambda_2$ sending
+$\langle v, v \in \Lambda_1\rangle$ to $\langle v, v \in \Lambda_2\rangle$.
+\end{definition}
+
+\begin{theorem}[\texttt{subtypeIncl\_injective}]
+$\texttt{subtypeIncl}\,h_{12}$ is injective.
+\end{theorem}
+
+\begin{definition}[\texttt{restrictConfig}]
+Given $\sigma : \uparrow\!\Lambda_2 \to \texttt{Spin}$ and $\Lambda_1 \subseteq \Lambda_2$,
+the restriction $\sigma \circ \texttt{subtypeIncl}\,h_{12}
+: \uparrow\!\Lambda_1 \to \texttt{Spin}$.
+\end{definition}
+
+\begin{definition}[\texttt{Λ₁subtypeEquiv}]
+The equivalence $\{x : \uparrow\!\Lambda_2 \;//\; x.\text{val} \in \Lambda_1\}
+\simeq \uparrow\!\Lambda_1$, which is how one bridges the subtype used
+by \texttt{piEquivPiSubtypeProd} with the natural
+$\uparrow\!\Lambda_1$ type.
+\end{definition}
 
 \end{document}
