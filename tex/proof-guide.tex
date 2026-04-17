@@ -1824,14 +1824,51 @@ Eventually $|\texttt{correlationAlongExhaustion}~G~\Lambda_\bullet~p~A~n|
 \le 1$, inherited from the finite-volume bound.
 \end{theorem}
 
+\subsection{Ambient subgraph monotonicity on $\Lambda$}
+
+For a fixed finite volume $\Lambda : \texttt{Finset}~V$ and
+ferromagnetic parameters, the finite-volume quantities are monotone
+in the ambient interaction graph.
+
+\begin{lemma}[\texttt{inducedGraph\_mono}]
+$G_1 \le G_2 \Rightarrow G_1.\texttt{induce}~\Lambda \le
+G_2.\texttt{induce}~\Lambda$.
+\end{lemma}
+
+\begin{proof}
+$\texttt{SimpleGraph.induce\_adj}$ reduces adjacency in the induced
+subgraph to ambient adjacency; the ambient inequality then transfers
+pointwise.
+\end{proof}
+
+\begin{theorem}
+The following are monotone in the ambient graph direction:
+\begin{itemize}
+  \item \texttt{partitionFunctionΛ\_monotone\_ambient\_subgraph}:
+    $Z_{G_1,\Lambda} \le Z_{G_2,\Lambda}$
+  \item \texttt{correlationΛ\_monotone\_ambient\_subgraph}:
+    $\langle\sigma^A\rangle_{G_1,\Lambda} \le
+     \langle\sigma^A\rangle_{G_2,\Lambda}$ for any
+    $A : \texttt{Finset}~(\uparrow\!\Lambda)$
+  \item \texttt{freeEnergyΛ\_monotone\_ambient\_subgraph}:
+    $f_{G_1,\Lambda} \le f_{G_2,\Lambda}$
+\end{itemize}
+\end{theorem}
+
+\begin{proof}
+\texttt{inducedGraph\_mono} gives a subgraph relation on
+$(\uparrow\!\Lambda)$; the existing \texttt{*\_monotone\_subgraph}
+theorems (on the Fintype $(\uparrow\!\Lambda)$) then apply directly.
+\end{proof}
+
 \begin{remark}
 Convergence of \texttt{correlationAlongExhaustion} (i.e., $\exists L,
 \texttt{Tendsto} \ldots \texttt{(nhds }L\texttt{)}$) is the natural
 next step, requiring a compatibility argument between
 \texttt{correlationΛ}~on $\Lambda_n$ and $\Lambda_{n+1}$ when
-$\Lambda_n \subseteq \Lambda_{n+1}$.  This generalizes the subgraph
-monotonicity from \texttt{InfiniteVolume.lean} to the
-changing-subtype setting; not yet formalized.
+$\Lambda_n \subseteq \Lambda_{n+1}$.  This is the \emph{volume}
+direction of monotonicity, which requires a configuration
+factorization and is left for a follow-up.
 \end{remark}
 
 \end{document}
