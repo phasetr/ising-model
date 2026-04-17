@@ -614,5 +614,56 @@ theorem configEquivSubtypeProd_symm_apply_compl
   simp [configEquivSubtypeProd, Equiv.piEquivPiSubtypeProd,
     Λ₁subtypeEquiv, v.property]
 
+/-! ## Partition function factoring via config-equiv
+
+Using Boltzmann factoring (PR #81) and config-equiv helpers
+(PRs #82-84), express `partitionFunction extendGraph` as a product
+of `partitionFunction inducedGraph Λ₁` and a complement factor. -/
+
+/-- The complement factor used in the partition function factoring:
+`F := ∑ σ₂ : (complement → Spin), exp(β·h · Σ_{v : C} sign(σ₂ v))`. -/
+noncomputable def complementFactor
+    {Λ₁ Λ₂ : Finset V} (_h12 : Λ₁ ⊆ Λ₂)
+    (p : IsingParams ℝ) : ℝ :=
+  ∑ σ₂ : {x : (↑Λ₂ : Type _) // x.val ∉ Λ₁} → Spin,
+    Real.exp (p.β * p.h *
+      ∑ v : {x : (↑Λ₂ : Type _) // x.val ∉ Λ₁}, Spin.sign ℝ (σ₂ v))
+
+/-- **Partition function factoring**:
+`Z_{extendGraphFromΛ₁} = Z_{inducedGraph Λ₁} · complementFactor`. -/
+theorem partitionFunction_extendGraph_factor
+    (G : SimpleGraph V) {Λ₁ Λ₂ : Finset V} (h12 : Λ₁ ⊆ Λ₂)
+    [Fintype (inducedGraph G Λ₁).edgeSet]
+    [Fintype (extendGraphFromΛ₁ G Λ₁ Λ₂).edgeSet]
+    (p : IsingParams ℝ) :
+    partitionFunction (extendGraphFromΛ₁ G Λ₁ Λ₂) p
+      = partitionFunction (inducedGraph G Λ₁) p * complementFactor h12 p := by
+  unfold partitionFunction complementFactor
+  -- Reindex via configEquivSubtypeProd
+  rw [← Fintype.sum_equiv (configEquivSubtypeProd h12).symm _
+    (fun σ => boltzmannWeight (extendGraphFromΛ₁ G Λ₁ Λ₂) p σ)
+    (fun x => rfl)]
+  rw [Fintype.sum_prod_type]
+  -- Rewrite summand using Boltzmann factoring and restrict identities
+  have hsum : ∀ (σ₁ : (↑Λ₁ : Type _) → Spin)
+      (σ₂ : {x : (↑Λ₂ : Type _) // x.val ∉ Λ₁} → Spin),
+      boltzmannWeight (extendGraphFromΛ₁ G Λ₁ Λ₂) p
+        ((configEquivSubtypeProd h12).symm (σ₁, σ₂))
+      = boltzmannWeight (inducedGraph G Λ₁) p σ₁
+        * Real.exp (p.β * p.h *
+            ∑ v : {x : (↑Λ₂ : Type _) // x.val ∉ Λ₁}, Spin.sign ℝ (σ₂ v)) := by
+    intro σ₁ σ₂
+    rw [boltzmannWeight_extendGraph_factor G h12 p,
+      restrictConfig_configEquivSubtypeProd_symm]
+    have hsign : ∑ v : {x : (↑Λ₂ : Type _) // x.val ∉ Λ₁},
+          Spin.sign ℝ ((configEquivSubtypeProd h12).symm (σ₁, σ₂) v.val)
+        = ∑ v : {x : (↑Λ₂ : Type _) // x.val ∉ Λ₁}, Spin.sign ℝ (σ₂ v) := by
+      apply Finset.sum_congr rfl
+      intro v _
+      rw [configEquivSubtypeProd_symm_apply_compl]
+    rw [hsign]
+  simp_rw [hsum]
+  rw [← Finset.sum_mul_sum]
+
 end Ambient
 end IsingModel
