@@ -147,6 +147,8 @@ ambient framework:
 | `configEquivSubtypeProd` | `(↑Λ₂ → Spin) ≃ (↑Λ₁ → Spin) × ({x // x.val ∉ Λ₁} → Spin)` |
 | `configEquivSubtypeProd_fst` | First projection = `restrictConfig` |
 | `edgeSpin_subtypeIncl` | `edgeSpin σ (Sym2.map subtypeIncl e) = edgeSpin (restrictConfig σ) e` |
+| `mem_extendGraph_edgeSet_of_mem_induce` | Induce edge → extendGraph edge (under Sym2.map) |
+| `exists_induce_edge_of_extendGraph` | extendGraph edge ← unique induce edge |
 
 ## Axioms
 

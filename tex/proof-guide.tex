@@ -1971,4 +1971,17 @@ unfolds \texttt{edgeSpin}, \texttt{restrictConfig}, and \texttt{subtypeIncl}
 to the trivial pointwise identity.
 \end{proof}
 
+\begin{theorem}[\texttt{mem\_extendGraph\_edgeSet\_of\_mem\_induce}]
+If $e \in (G.\texttt{induce}\,\Lambda_1).\texttt{edgeSet}$, then
+$\texttt{Sym2.map}\,(\texttt{subtypeIncl}\,h_{12})\,e \in (\texttt{extendGraphFromΛ₁}\,G\,\Lambda_1\,\Lambda_2).\texttt{edgeSet}$.
+\end{theorem}
+
+\begin{theorem}[\texttt{exists\_induce\_edge\_of\_extendGraph}]
+Every $e \in (\texttt{extendGraphFromΛ₁}\,G\,\Lambda_1\,\Lambda_2).\texttt{edgeSet}$ is the
+image of a unique $e' \in (G.\texttt{induce}\,\Lambda_1).\texttt{edgeSet}$ under
+$\texttt{Sym2.map}\,(\texttt{subtypeIncl}\,h_{12})$.
+\end{theorem}
+
+These two together with \texttt{Sym2.map.injective}\,(\texttt{subtypeIncl\_injective}) give a bijection between the edge sets.
+
 \end{document}
