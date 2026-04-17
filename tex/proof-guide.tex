@@ -1939,4 +1939,20 @@ by \texttt{piEquivPiSubtypeProd} with the natural
 $\uparrow\!\Lambda_1$ type.
 \end{definition}
 
+\begin{definition}[\texttt{configEquivSubtypeProd}]
+The configuration space factoring
+\[
+  (\uparrow\!\Lambda_2 \to \texttt{Spin}) \simeq
+  (\uparrow\!\Lambda_1 \to \texttt{Spin}) \times
+  (\{x : \uparrow\!\Lambda_2 \;//\; x.\text{val} \notin \Lambda_1\} \to \texttt{Spin}),
+\]
+obtained by composing \texttt{Equiv.piEquivPiSubtypeProd} with
+\texttt{Λ₁subtypeEquiv} on the first component.
+\end{definition}
+
+\begin{theorem}[\texttt{configEquivSubtypeProd\_fst}]
+The first projection of \texttt{configEquivSubtypeProd} is
+\texttt{restrictConfig}.
+\end{theorem}
+
 \end{document}

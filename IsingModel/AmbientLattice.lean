@@ -331,5 +331,41 @@ theorem Λ₁subtypeEquiv_symm_apply {Λ₁ Λ₂ : Finset V} (h12 : Λ₁ ⊆ �
     (y : (↑Λ₁ : Type _)) :
     ((Λ₁subtypeEquiv h12).symm y : (↑Λ₂ : Type _)) = subtypeIncl h12 y := rfl
 
+/-! ## Configuration factoring across `Λ₁ ⊆ Λ₂`
+
+A configuration `σ : (↑Λ₂) → Spin` can be uniquely split into:
+- its restriction to sites in `Λ₁` (via `Λ₁subtypeEquiv`), and
+- its values on sites in `Λ₂ \ Λ₁`.
+
+This decomposition is the key ingredient for the Boltzmann-weight
+factoring argument underlying volume-direction monotonicity.
+
+Uses `Equiv.piEquivPiSubtypeProd` (mathlib) on the predicate
+`x.val ∈ Λ₁` over `↑Λ₂`, then transports the first component via
+`Λ₁subtypeEquiv`. -/
+
+/-- The decomposition equivalence
+`((↑Λ₂) → Spin) ≃ ((↑Λ₁) → Spin) × ({x : ↑Λ₂ // x.val ∉ Λ₁} → Spin)`,
+for `Λ₁ ⊆ Λ₂`. -/
+noncomputable def configEquivSubtypeProd {Λ₁ Λ₂ : Finset V} (h12 : Λ₁ ⊆ Λ₂) :
+    ((↑Λ₂ : Type _) → Spin) ≃
+      (((↑Λ₁ : Type _) → Spin) ×
+        ({x : (↑Λ₂ : Type _) // x.val ∉ Λ₁} → Spin)) :=
+  haveI : DecidablePred fun x : (↑Λ₂ : Type _) => x.val ∈ Λ₁ :=
+    fun x => Finset.decidableMem x.val Λ₁
+  (Equiv.piEquivPiSubtypeProd (fun x : (↑Λ₂ : Type _) => x.val ∈ Λ₁)
+    (fun _ => Spin)).trans
+    ((Equiv.arrowCongr (Λ₁subtypeEquiv h12) (Equiv.refl Spin)).prodCongr
+      (Equiv.refl _))
+
+/-- The first component of `configEquivSubtypeProd h12 σ` is the
+restriction of `σ` to `↑Λ₁`. -/
+theorem configEquivSubtypeProd_fst {Λ₁ Λ₂ : Finset V} (h12 : Λ₁ ⊆ Λ₂)
+    (σ : (↑Λ₂ : Type _) → Spin) :
+    (configEquivSubtypeProd h12 σ).1 = restrictConfig h12 σ := by
+  ext v
+  simp [configEquivSubtypeProd, restrictConfig, subtypeIncl,
+    Equiv.piEquivPiSubtypeProd, Λ₁subtypeEquiv]
+
 end Ambient
 end IsingModel
