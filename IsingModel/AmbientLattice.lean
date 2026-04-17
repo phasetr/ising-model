@@ -875,5 +875,118 @@ theorem correlationAlongExhaustion_convergent
       Filter.atTop (nhds L) :=
   ⟨_, correlationAlongExhaustion_tendsto_ciSup G Λ p hf A⟩
 
+/-! ## Infinite-volume correlation function
+
+The supremum exposed by `correlationAlongExhaustion_tendsto_ciSup`
+is, by GKS-I and `Λ.exhaust`, the thermodynamic-limit correlation
+for ferromagnetic Ising models on an ambient `V`.  We package it as
+a `noncomputable def` and record its basic properties. -/
+
+/-- **Infinite-volume correlation function**: for a ferromagnetic
+Ising model on an ambient type `V` with an exhaustion `Λ` and a
+finite `A : Finset V`,
+`correlationInfinite G Λ p A := ⨆ n, correlationAlongExhaustion G Λ p A n`.
+This is the thermodynamic-limit correlation identified via
+`Λ.exhaust` (any finite `A` lies in some `Λ.volume N`). -/
+noncomputable def correlationInfinite
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (A : Finset V) : ℝ :=
+  ⨆ n, correlationAlongExhaustion G Λ p A n
+
+/-- **Tendsto to infinite-volume correlation** (primary form):
+`correlationAlongExhaustion` converges to `correlationInfinite`.
+Restatement of `correlationAlongExhaustion_tendsto_ciSup` in terms
+of the canonical `correlationInfinite` name. -/
+theorem tendsto_correlationAlongExhaustion_correlationInfinite
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    (A : Finset V) :
+    Filter.Tendsto (correlationAlongExhaustion G Λ p A)
+      Filter.atTop (nhds (correlationInfinite G Λ p A)) :=
+  correlationAlongExhaustion_tendsto_ciSup G Λ p hf A
+
+/-- **Upper bound**: `correlationInfinite ≤ 1`. Follows from
+`correlationAlongExhaustion_le_one` applied to the supremum. -/
+theorem correlationInfinite_le_one
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (A : Finset V) :
+    correlationInfinite G Λ p A ≤ 1 := by
+  refine ciSup_le ?_
+  intro n
+  exact correlationAlongExhaustion_le_one G Λ p A n
+
+/-- **Nonnegativity** (ferromagnetic): `correlationInfinite ≥ 0`.
+Uses `Λ.exhaust`: pick `N` with `A ⊆ Λ.volume N`; then
+`correlationAlongExhaustion G Λ p A N ≥ 0` by GKS-I, and this is
+a lower bound for the supremum (so the supremum is also `≥ 0`). -/
+theorem correlationInfinite_nonneg
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    (A : Finset V) :
+    0 ≤ correlationInfinite G Λ p A := by
+  obtain ⟨N, hN⟩ := Λ.exhaust A
+  have hA : A ⊆ Λ.volume N := hN N le_rfl
+  have hval : 0 ≤ correlationAlongExhaustion G Λ p A N := by
+    simp only [correlationAlongExhaustion, hA, dite_true]
+    exact correlationΛ_nonneg G (Λ.volume N) p hf _
+  have hbdd : BddAbove (Set.range (correlationAlongExhaustion G Λ p A)) := by
+    refine ⟨1, ?_⟩
+    rintro _ ⟨n, rfl⟩
+    exact correlationAlongExhaustion_le_one G Λ p A n
+  exact hval.trans (le_ciSup hbdd N)
+
+/-- **Tendsto of the lifted `correlationΛ` sequence (explicit form)**:
+given an explicit `N` and a hypothesis `hN : ∀ n ≥ N, A ⊆ Λ.volume n`,
+the sequence `m ↦ correlationΛ G (Λ.volume (m+N)) p (liftFinset A …)`
+converges to `correlationInfinite G Λ p A`.
+
+The shifted sequence coincides with `correlationAlongExhaustion` on
+indices `≥ N` (both branches of the dite agree since `A ⊆ Λ.volume (m+N)`),
+and the base sequence's limit is `correlationInfinite` by
+`tendsto_correlationAlongExhaustion_correlationInfinite`. -/
+theorem tendsto_correlationΛ_correlationInfinite_of_subset
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    {A : Finset V} {N : ℕ}
+    (hN : ∀ n ≥ N, A ⊆ Λ.volume n) :
+    Filter.Tendsto
+      (fun m : ℕ => correlationΛ G (Λ.volume (m + N)) p
+        (liftFinset A (hN (m + N) (Nat.le_add_left N m))))
+      Filter.atTop (nhds (correlationInfinite G Λ p A)) := by
+  have hbase := tendsto_correlationAlongExhaustion_correlationInfinite G Λ p hf A
+  have hshift :
+      Filter.Tendsto (fun m : ℕ => correlationAlongExhaustion G Λ p A (m + N))
+        Filter.atTop (nhds (correlationInfinite G Λ p A)) :=
+    hbase.comp (Filter.tendsto_add_atTop_nat N)
+  refine hshift.congr ?_
+  intro m
+  have hA : A ⊆ Λ.volume (m + N) := hN (m + N) (Nat.le_add_left N m)
+  simp only [correlationAlongExhaustion, hA, dite_true]
+
+/-- **Tendsto of the lifted `correlationΛ` sequence (corollary)**:
+using `Λ.exhaust` to produce an `N` with `A ⊆ Λ.volume n` for `n ≥ N`,
+the sequence `m ↦ correlationΛ G (Λ.volume (m+N)) p (liftFinset A …)`
+converges to `correlationInfinite G Λ p A`.
+
+This is the physical statement: as the volume grows, the finite-volume
+correlation converges to the thermodynamic-limit correlation. -/
+theorem tendsto_correlationΛ_correlationInfinite
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    (A : Finset V) :
+    ∃ N : ℕ, ∃ hN : ∀ n ≥ N, A ⊆ Λ.volume n,
+      Filter.Tendsto
+        (fun m : ℕ => correlationΛ G (Λ.volume (m + N)) p
+          (liftFinset A (hN (m + N) (Nat.le_add_left N m))))
+        Filter.atTop (nhds (correlationInfinite G Λ p A)) := by
+  obtain ⟨N, hN⟩ := Λ.exhaust A
+  exact ⟨N, hN, tendsto_correlationΛ_correlationInfinite_of_subset G Λ p hf hN⟩
+
 end Ambient
 end IsingModel
