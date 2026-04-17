@@ -2004,4 +2004,20 @@ surjectivity via \texttt{exists\_induce\_edge\_of\_extendGraph},
 pointwise equality via \texttt{edgeSpin\_subtypeIncl}.
 \end{proof}
 
+\begin{theorem}[\texttt{sum\_Λ₁\_subtype\_eq}]
+Site-sum reindex helper: for $\Lambda_1 \subseteq \Lambda_2$,
+\[
+\sum_{v : \{x : \uparrow\!\Lambda_2 \mid x.\text{val} \in \Lambda_1\}}
+  \texttt{Spin.sign}\,K\,(\sigma\,v.\text{val})
+= \sum_{v : \uparrow\!\Lambda_1}
+  \texttt{Spin.sign}\,K\,(\texttt{restrictConfig}\,h_{12}\,\sigma\,v).
+\]
+\end{theorem}
+
+\begin{proof}
+\texttt{Fintype.sum\_equiv} applied to \texttt{Λ₁subtypeEquiv};
+pointwise equality follows by unfolding \texttt{restrictConfig}
+$= \sigma \circ \texttt{subtypeIncl}$.
+\end{proof}
+
 \end{document}
