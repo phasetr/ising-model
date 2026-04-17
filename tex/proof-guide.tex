@@ -920,8 +920,15 @@ $|\iota|$ is fixed; apply $\log$ (monotone) to $Z_{G_1}\le Z_{G_2}$.
 
 \subsection{$\beta$-monotonicity and $\beta \to \infty$ convergence}
 
-Rescale identity (\texttt{correlation\_rescale\_beta}):
-$\langle\sigma^A\rangle_{(J,h,\beta)} = \langle\sigma^A\rangle_{(\beta J, \beta h, 1)}$.
+Rescale identities:
+\[
+  \langle\sigma^A\rangle_{(J,h,\beta)} = \langle\sigma^A\rangle_{(\beta J, \beta h, 1)}
+  \quad\text{(\texttt{correlation\_rescale\_beta})}
+\]
+\[
+  f(J,h,\beta) = f(\beta J, \beta h, 1)
+  \quad\text{(\texttt{freeEnergy\_rescale\_beta})}
+\]
 
 \begin{theorem}[\texttt{correlation\_monotone\_beta}]
 For $J, h \ge 0$, the correlation function is monotone increasing in
@@ -945,6 +952,26 @@ Monotone by \texttt{correlation\_monotone\_beta}, bounded above by
 $1$ via \texttt{correlation\_le\_one}. Converges by
 \texttt{tendsto\_atTop\_ciSup}.
 \end{proof}
+
+\begin{theorem}[\texttt{freeEnergy\_monotone\_beta}]
+For $J, h \ge 0$, the free energy $f(J,h,\beta)$ is monotone in $\beta$
+on $(0,\infty)$.
+\end{theorem}
+
+\begin{proof}
+Apply the rescale identity, then \texttt{freeEnergy\_monotone\_J} and
+\texttt{freeEnergy\_monotone\_h}.
+\end{proof}
+
+\begin{remark}
+The free energy does not converge as $\beta\to\infty$
+(it grows linearly in $\beta$, since $\log Z \sim \beta(J|E| + h|\iota|)$
+at low temperature).
+\end{remark}
+
+Specializations to magnetization:
+\texttt{magnetization\_monotone\_beta},
+\texttt{magnetization\_convergent\_beta} (both via $A = \{i\}$).
 
 \begin{theorem}[\texttt{freeEnergy\_convergent\_subgraph}, = Prop 4.6.1]
 For any increasing subgraph sequence $G_n\uparrow$ on a fixed finite ambient
