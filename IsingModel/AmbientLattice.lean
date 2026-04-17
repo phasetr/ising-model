@@ -522,15 +522,7 @@ theorem hamiltonian_extendGraph_factor
         + (-p.h * ∑ v : {x : (↑Λ₂ : Type _) // ¬ (x.val ∈ Λ₁)},
             Spin.sign ℝ (σ v.val)) := by
   simp only [hamiltonian, interactionEnergy, externalFieldEnergy]
-  have hedge : ∑ e ∈ (extendGraphFromΛ₁ G Λ₁ Λ₂).edgeFinset, edgeSpin (K := ℝ) σ e
-      = ∑ e' ∈ (inducedGraph G Λ₁).edgeFinset,
-          edgeSpin (K := ℝ) (restrictConfig h12 σ) e' :=
-    extendGraph_edgeSum_eq G h12 σ
-  have hsite : ∑ i : (↑Λ₂ : Type _), Spin.sign ℝ (σ i)
-      = (∑ v : (↑Λ₁ : Type _), Spin.sign ℝ (restrictConfig h12 σ v))
-        + ∑ v : {x : (↑Λ₂ : Type _) // ¬ (x.val ∈ Λ₁)}, Spin.sign ℝ (σ v.val) :=
-    siteSum_split h12 σ
-  rw [hedge, hsite]
+  rw [extendGraph_edgeSum_eq G h12 σ, siteSum_split h12 σ]
   ring
 
 end Ambient
