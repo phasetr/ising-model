@@ -2059,4 +2059,19 @@ Unfold \texttt{hamiltonian}, \texttt{interactionEnergy},
 \texttt{siteSum\_split}. \texttt{ring} closes.
 \end{proof}
 
+\begin{theorem}[\texttt{boltzmannWeight\_extendGraph\_factor}]
+The Boltzmann weight on \texttt{extendGraphFromΛ₁} factors as:
+\[
+w_{G_1^\text{ext},\,p}(\sigma)
+  = w_{\texttt{inducedGraph}\,G\,\Lambda_1,\,p}(\texttt{restrictConfig}\,h_{12}\,\sigma)
+    \cdot \exp\Bigl(\beta h \sum_{v : C} \texttt{Spin.sign}\,\mathbb{R}\,(\sigma\,v.\text{val})\Bigr).
+\]
+\end{theorem}
+
+\begin{proof}
+Unfold \texttt{boltzmannWeight}, apply
+\texttt{hamiltonian\_extendGraph\_factor}, and use
+\texttt{Real.exp\_add}. \texttt{ring} closes the exponent algebra.
+\end{proof}
+
 \end{document}

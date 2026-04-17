@@ -525,5 +525,24 @@ theorem hamiltonian_extendGraph_factor
   rw [extendGraph_edgeSum_eq G h12 σ, siteSum_split h12 σ]
   ring
 
+/-- Boltzmann weight factoring on `extendGraphFromΛ₁`: the weight on the
+extended graph equals the weight on `inducedGraph G Λ₁` (with
+`restrictConfig`) multiplied by an exponential factor over the
+complement sites. -/
+theorem boltzmannWeight_extendGraph_factor
+    (G : SimpleGraph V) {Λ₁ Λ₂ : Finset V} (h12 : Λ₁ ⊆ Λ₂)
+    [Fintype (inducedGraph G Λ₁).edgeSet]
+    [Fintype (extendGraphFromΛ₁ G Λ₁ Λ₂).edgeSet]
+    (p : IsingParams ℝ) (σ : (↑Λ₂ : Type _) → Spin) :
+    boltzmannWeight (extendGraphFromΛ₁ G Λ₁ Λ₂) p σ
+      = boltzmannWeight (inducedGraph G Λ₁) p (restrictConfig h12 σ)
+        * Real.exp (p.β * p.h *
+            ∑ v : {x : (↑Λ₂ : Type _) // ¬ (x.val ∈ Λ₁)},
+              Spin.sign ℝ (σ v.val)) := by
+  simp only [boltzmannWeight]
+  rw [hamiltonian_extendGraph_factor G h12 p σ, ← Real.exp_add]
+  congr 1
+  ring
+
 end Ambient
 end IsingModel
