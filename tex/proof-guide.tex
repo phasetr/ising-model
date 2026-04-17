@@ -23,7 +23,7 @@
 
 \title{Ising Model Formalization: A Mathematical Guide to the Lean 4 Code}
 \author{ising-model project}
-\date{2026-04-10}
+\date{2026-04-17}
 
 \begin{document}
 \maketitle
@@ -35,9 +35,60 @@ it explains \emph{how to navigate the codebase}: which files to read
 in which order, what each file's role is, and where the key ideas live.
 Mathematical statements are included to orient the reader, but the
 primary goal is to make the formal code accessible.
+
+The project covers Glimm--Jaffe, \emph{Quantum Physics: A Functional
+Integral Point of View} (2nd ed., 1987), with particular emphasis on
+the Ising-model discussions in \S4.1--4.6 (correlation inequalities,
+Lee--Yang, free energy), \S5.1--5.4 (phase transitions, Peierls
+argument), \S10.2--10.5 (conditioning), and the infinite-volume limit
+theorems in \S4.2 (Thm~4.2.3) and \S4.6 (Prop~4.6.1).
 \end{abstract}
 
 \tableofcontents
+
+%======================================================================
+\section{Formalization regimes}
+%======================================================================
+
+We distinguish three formalization regimes in this project.
+
+\subsection{Finite-volume}
+
+The Ising model on a fixed finite interaction graph
+$G : \texttt{SimpleGraph}~\iota$ with $[\texttt{Fintype}~\iota]$.
+Most of the project lives here: correlation inequalities (GKS, FKG,
+GHS), Lee--Yang, the partition-polynomial nonvanishing, the Peierls
+bound, and the real-analyticity of $f(h)$ for $h > 0$.
+
+\subsection{Discretized infinite-volume}
+
+A fixed finite ambient type $\iota$ (so $[\texttt{Fintype}~\iota]$)
+with a monotone increasing family of subgraphs $G_1 \le G_2 \le \cdots$.
+``Growing'' the lattice then corresponds to adding edges.  The
+GJ~\S4.2 Thm~4.2.3 and GJ~\S4.6 Prop~4.6.1 are formalized in this
+regime: the proof mechanism (GKS + monotonicity + boundedness) is
+identical to GJ, but the ambient lattice is finite.  Every
+\texttt{*\_monotone\_subgraph} / \texttt{*\_convergent\_subgraph}
+result in the codebase lives in this regime.
+
+\subsection{Genuine infinite-volume (\texttt{AmbientLattice.lean})}
+
+An ambient type $V : \texttt{Type}$ \emph{without} a
+$[\texttt{Fintype}~V]$ assumption, and finite volumes $\Lambda :
+\texttt{Finset}~V$.  Correlations on $\Lambda$ are defined by
+instantiating the existing framework on the Fintype $(\uparrow\!\Lambda)$
+using the induced subgraph $G.\texttt{induce}~(\uparrow\!\Lambda)$.
+An \emph{exhaustion} $\Lambda_n \uparrow V$ is a monotone sequence
+of finite volumes eventually containing any prescribed finite set;
+this is the setting for the true thermodynamic limit.
+
+At present \texttt{AmbientLattice.lean} establishes the types, the
+basic lemmas (positivity of $Z_\Lambda$, $|\langle\sigma^A\rangle_\Lambda|
+\le 1$, GKS-I on $\Lambda$), the \texttt{Exhaustion} structure, and
+the eventually-defined \texttt{correlationAlongExhaustion}.  The
+convergence theorem along an exhaustion is not yet proved in this
+regime (it would require a compatibility argument across different
+$\Lambda$'s).
 
 %======================================================================
 \section{How to read this codebase}
@@ -74,6 +125,8 @@ GibbsMeasure.lean            Z, Gibbs expectation, correlation
   +-- Lattice.lean                lattice graph definitions
   |
   +-- ContinuousSpin/Phi4.lean    phi^4 identities (axioms)
+  |
+  +-- AmbientLattice.lean         ambient V : Type*, Λ : Finset V, exhaustion
 \end{Verbatim}
 
 \subsection{Recommended reading paths}
@@ -1692,5 +1745,93 @@ B.~Simon,
 \emph{The Statistical Mechanics of Lattice Gases, Vol.~I},
 Princeton University Press, 1993.
 \end{thebibliography}
+
+\section{Ambient lattice framework (\texttt{AmbientLattice.lean})}
+
+\par\noindent\textbf{Prerequisites:} \texttt{InfiniteVolume.lean},
+\texttt{FreeEnergy.lean}.
+
+\textbf{Role:} Introduces the genuine infinite-volume framework on
+an ambient type $V : \texttt{Type}$ without a $[\texttt{Fintype}~V]$
+assumption.  Finite volumes are $\Lambda : \texttt{Finset}~V$;
+correlations on $\Lambda$ are defined by instantiating the existing
+\texttt{IsingModel} framework on the Fintype $(\uparrow\!\Lambda :
+\texttt{Type})$ (via \texttt{Finset.instFintypeCoe}) and the induced
+subgraph.
+
+\subsection{Configuration and induced subgraph}
+
+\begin{definition}[\texttt{ConfigOn}]
+For $\Lambda : \texttt{Finset}~V$, $\texttt{ConfigOn}~\Lambda :=
+(\uparrow\!\Lambda) \to \texttt{Spin}$, i.e., the type of
+configurations on the finite volume $\Lambda$.
+\end{definition}
+
+\begin{definition}[\texttt{inducedGraph}]
+For $G : \texttt{SimpleGraph}~V$ and $\Lambda : \texttt{Finset}~V$,
+$\texttt{inducedGraph}~G~\Lambda := G.\texttt{induce}~(\uparrow\!\Lambda
+: \texttt{Set}~V)$ is the induced subgraph of $G$ on $\Lambda$, as a
+$\texttt{SimpleGraph}~(\uparrow\!\Lambda : \texttt{Type})$.
+\end{definition}
+
+\subsection{Finite-volume observables}
+
+\begin{definition}[\texttt{partitionFunctionΛ}, \texttt{correlationΛ},
+  \texttt{freeEnergyΛ}]
+Each is the existing \texttt{IsingModel} counterpart applied to
+$\texttt{inducedGraph}~G~\Lambda$ (with $[\texttt{Fintype}~(\texttt{inducedGraph}~G~\Lambda).\texttt{edgeSet}]$).
+\end{definition}
+
+\begin{theorem}[basic properties]
+$\texttt{partitionFunctionΛ}_{\mathrm{pos}}$,
+$\texttt{abs\_correlationΛ}_{\mathrm{le\_one}}$,
+$\texttt{correlationΛ}_{\mathrm{le\_one}}$,
+$\texttt{correlationΛ}_{\mathrm{nonneg}}$ (GKS-I): all follow by
+direct forwarding from the corresponding existing theorems.
+\end{theorem}
+
+\subsection{Exhaustion and convergence along exhaustion}
+
+\begin{definition}[\texttt{Exhaustion V}]
+A structure capturing an increasing sequence
+$\Lambda : \mathbb{N} \to \texttt{Finset}~V$ with the ``covers any
+finite set eventually'' property: for any $A : \texttt{Finset}~V$
+there exists $N$ such that $A \subseteq \Lambda(n)$ for $n \ge N$.
+\end{definition}
+
+\begin{definition}[\texttt{liftFinset}]
+For $A \subseteq \Lambda$, the finite set
+$A.\texttt{attach}.\texttt{image}~(\lambda v \mapsto v \in \Lambda)$
+lifts $A$ to a $\texttt{Finset}~(\uparrow\!\Lambda)$.  This is the
+finite set on which \texttt{correlationΛ} is evaluated.
+\end{definition}
+
+\begin{definition}[\texttt{correlationAlongExhaustion}]
+For an \texttt{Exhaustion} $\Lambda_\bullet$ and a finite
+$A : \texttt{Finset}~V$, returns a sequence
+$\mathbb{N} \to \mathbb{R}$ that equals
+$\texttt{correlationΛ}~G~(\Lambda(n))~p~(\texttt{liftFinset}~A)$
+once $A \subseteq \Lambda(n)$, and $0$ otherwise.
+\end{definition}
+
+\begin{theorem}[\texttt{correlationAlongExhaustion\_eventually}]
+For any exhaustion and any $A : \texttt{Finset}~V$, the sequence
+coincides with the lifted correlation for all $n$ sufficiently large.
+\end{theorem}
+
+\begin{theorem}[\texttt{abs\_correlationAlongExhaustion\_eventually\_le\_one}]
+Eventually $|\texttt{correlationAlongExhaustion}~G~\Lambda_\bullet~p~A~n|
+\le 1$, inherited from the finite-volume bound.
+\end{theorem}
+
+\begin{remark}
+Convergence of \texttt{correlationAlongExhaustion} (i.e., $\exists L,
+\texttt{Tendsto} \ldots \texttt{(nhds }L\texttt{)}$) is the natural
+next step, requiring a compatibility argument between
+\texttt{correlationΛ}~on $\Lambda_n$ and $\Lambda_{n+1}$ when
+$\Lambda_n \subseteq \Lambda_{n+1}$.  This generalizes the subgraph
+monotonicity from \texttt{InfiniteVolume.lean} to the
+changing-subtype setting; not yet formalized.
+\end{remark}
 
 \end{document}
