@@ -1984,4 +1984,24 @@ $\texttt{Sym2.map}\,(\texttt{subtypeIncl}\,h_{12})$.
 
 These two together with \texttt{Sym2.map.injective}\,(\texttt{subtypeIncl\_injective}) give a bijection between the edge sets.
 
+\begin{theorem}[\texttt{extendGraph\_edgeSum\_eq}]
+\[
+\sum_{e \in (\texttt{extendGraphFromΛ₁}\,G\,\Lambda_1\,\Lambda_2).\texttt{edgeFinset}}
+  \texttt{edgeSpin}\,\sigma\,e
+= \sum_{e' \in (\texttt{inducedGraph}\,G\,\Lambda_1).\texttt{edgeFinset}}
+  \texttt{edgeSpin}\,(\texttt{restrictConfig}\,h_{12}\,\sigma)\,e'.
+\]
+\end{theorem}
+
+\begin{proof}
+\texttt{Finset.sum\_bij} with the map
+$\texttt{Sym2.map}\,(\texttt{subtypeIncl}\,h_{12})$:
+membership transfer via
+\texttt{mem\_extendGraph\_edgeSet\_of\_mem\_induce},
+injectivity via \texttt{Sym2.map.injective} +
+\texttt{subtypeIncl\_injective},
+surjectivity via \texttt{exists\_induce\_edge\_of\_extendGraph},
+pointwise equality via \texttt{edgeSpin\_subtypeIncl}.
+\end{proof}
+
 \end{document}
