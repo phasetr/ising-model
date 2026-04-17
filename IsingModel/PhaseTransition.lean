@@ -225,6 +225,16 @@ theorem magnetization_convergent_beta (G : SimpleGraph ι) [Fintype G.edgeSet]
       Filter.atTop (nhds L) :=
   correlation_convergent_beta G J hJ h hh {i}
 
+/-- **Magnetization h → ∞ convergence**: for `J ≥ 0`, `β > 0`, the sequence
+`n ↦ Mᵢ(J, n, β)` converges as `n → ∞`.
+Direct specialization of `correlation_convergent_h` at `A = {i}`. -/
+theorem magnetization_convergent_h (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J : ℝ) (hJ : 0 ≤ J) (β : ℝ) (hβ : 0 < β) (i : ι) :
+    ∃ L : ℝ, Filter.Tendsto
+      (fun n : ℕ => magnetization G ⟨J, (n : ℝ), β⟩ i)
+      Filter.atTop (nhds L) :=
+  correlation_convergent_h G J hJ β hβ {i}
+
 /-! ## Critical exponents (§17.7)
 
 Glimm–Jaffe §17.7 (pp. 314–316) derives bounds on critical exponents
