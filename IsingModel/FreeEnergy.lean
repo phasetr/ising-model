@@ -591,6 +591,52 @@ theorem freeEnergy_monotone_subgraph
   exact Real.log_le_log (partitionFunction_pos G₁ p)
     (partitionFunction_monotone_subgraph h₁₂ p hf)
 
+/-- The free energy rescaling identity in `β`:
+`f(J, h, β) = f(βJ, βh, 1)`. Follows from `partitionFunction_beta_rescale`
+(after taking `log` and multiplying by `|ι|⁻¹`). -/
+private theorem freeEnergy_rescale_beta
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h β : ℝ) :
+    freeEnergy G ⟨J, h, β⟩ = freeEnergy G ⟨β * J, β * h, 1⟩ := by
+  unfold freeEnergy
+  congr 1
+  have hw : ∀ σ : Config ι,
+      boltzmannWeight G ⟨J, h, β⟩ σ = boltzmannWeight G ⟨β * J, β * h, 1⟩ σ := by
+    intro σ
+    unfold boltzmannWeight hamiltonian interactionEnergy externalFieldEnergy
+    congr 1; ring
+  unfold partitionFunction
+  simp_rw [hw]
+
+/-- **Free energy β-monotonicity**: for `J, h ≥ 0`, the free energy per
+site is monotone increasing in the inverse temperature `β` on `(0, ∞)`.
+
+Proof: Apply the rescaling identity `freeEnergy_rescale_beta` and
+combine `freeEnergy_monotone_J` and `freeEnergy_monotone_h`. -/
+theorem freeEnergy_monotone_beta (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J : ℝ) (hJ : 0 ≤ J) (h : ℝ) (hh : 0 ≤ h) :
+    MonotoneOn (fun β : ℝ => freeEnergy G ⟨J, h, β⟩) (Set.Ioi 0) := by
+  intro β₁ hβ₁ β₂ _ hβ
+  change freeEnergy G ⟨J, h, β₁⟩ ≤ freeEnergy G ⟨J, h, β₂⟩
+  rw [freeEnergy_rescale_beta G J h β₁, freeEnergy_rescale_beta G J h β₂]
+  have hβ₁' : 0 < β₁ := hβ₁
+  have hβ₂' : 0 < β₂ := lt_of_lt_of_le hβ₁' hβ
+  have hβ₁J : 0 ≤ β₁ * J := mul_nonneg hβ₁'.le hJ
+  have hβ₂J : 0 ≤ β₂ * J := mul_nonneg hβ₂'.le hJ
+  have hβ₁h : 0 ≤ β₁ * h := mul_nonneg hβ₁'.le hh
+  have hβ₂h : 0 ≤ β₂ * h := mul_nonneg hβ₂'.le hh
+  calc freeEnergy G ⟨β₁ * J, β₁ * h, 1⟩
+      ≤ freeEnergy G ⟨β₂ * J, β₁ * h, 1⟩ := by
+        have := freeEnergy_monotone_J G (β₁ * h) 1 hβ₁h one_pos
+          (Set.mem_Ici.mpr hβ₁J) (Set.mem_Ici.mpr hβ₂J)
+          (mul_le_mul_of_nonneg_right hβ hJ)
+        exact this
+    _ ≤ freeEnergy G ⟨β₂ * J, β₂ * h, 1⟩ := by
+        have := freeEnergy_monotone_h G (β₂ * J) 1 hβ₂J one_pos
+          (Set.mem_Ici.mpr hβ₁h) (Set.mem_Ici.mpr hβ₂h)
+          (mul_le_mul_of_nonneg_right hβ hh)
+        exact this
+
 /-- **Proposition 4.6.1** (Glimm–Jaffe, p. 68): The free energy converges
 along any increasing sequence of subgraphs on a fixed ambient finite lattice.
 

@@ -205,6 +205,26 @@ theorem magnetization_monotone_h (G : SimpleGraph ι) [Fintype G.edgeSet]
   unfold magnetization
   exact correlation_monotone_h G J hJ β hβ {i} hh₁ hh₂ hh
 
+/-- **Magnetization β-monotonicity**: for `J, h ≥ 0`, the magnetization
+`Mᵢ = ⟨σᵢ⟩` is monotone increasing in `β` on `(0, ∞)`.
+Direct specialization of `correlation_monotone_beta` at `A = {i}`. -/
+theorem magnetization_monotone_beta (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J : ℝ) (hJ : 0 ≤ J) (h : ℝ) (hh : 0 ≤ h) (i : ι) :
+    MonotoneOn (fun β : ℝ => magnetization G ⟨J, h, β⟩ i) (Set.Ioi 0) := by
+  intro β₁ hβ₁ β₂ hβ₂ hβ
+  unfold magnetization
+  exact correlation_monotone_beta G J hJ h hh {i} hβ₁ hβ₂ hβ
+
+/-- **Magnetization β → ∞ convergence**: for `J, h ≥ 0`, the sequence
+`n ↦ Mᵢ(J, h, n+1)` converges as `n → ∞`.
+Direct specialization of `correlation_convergent_beta` at `A = {i}`. -/
+theorem magnetization_convergent_beta (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J : ℝ) (hJ : 0 ≤ J) (h : ℝ) (hh : 0 ≤ h) (i : ι) :
+    ∃ L : ℝ, Filter.Tendsto
+      (fun n : ℕ => magnetization G ⟨J, h, (n + 1 : ℝ)⟩ i)
+      Filter.atTop (nhds L) :=
+  correlation_convergent_beta G J hJ h hh {i}
+
 /-! ## Critical exponents (§17.7)
 
 Glimm–Jaffe §17.7 (pp. 314–316) derives bounds on critical exponents
