@@ -155,6 +155,8 @@ ambient framework:
 | `siteSum_split` | Full split: site sum = Λ₁-part (restrictConfig) + complement-part |
 | `hamiltonian_extendGraph_factor` | Hamiltonian on extendGraph = Hamiltonian on G.induce Λ₁ (restrictConfig) + complement site term |
 | `boltzmannWeight_extendGraph_factor` | Boltzmann weight on extendGraph = weight on G.induce Λ₁ · exp(βh · complement sign sum) |
+| `liftFinset_eq_image_subtypeIncl` | `liftFinset A (hA.trans h12) = (liftFinset A hA).image (subtypeIncl h12)` |
+| `spinProduct_lift_eq` | Spin product on ↑Λ₂-lift = spin product on ↑Λ₁-lift under restrictConfig |
 
 ## Axioms
 

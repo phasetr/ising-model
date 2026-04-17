@@ -544,5 +544,45 @@ theorem boltzmannWeight_extendGraph_factor
   congr 1
   ring
 
+/-! ## Spin product lift equality
+
+For `A ⊆ Λ₁ ⊆ Λ₂`, the spin product of the `↑Λ₂`-lifted `A` evaluated
+at a `↑Λ₂`-configuration equals the spin product of the `↑Λ₁`-lifted
+`A` evaluated at the restricted configuration.
+
+This is a key lemma for the correlation equality: the observable
+`σ^A` transported through the `↑Λ₁ ↪ ↑Λ₂` embedding agrees with
+the lifted one. -/
+
+/-- The `↑Λ₂`-lift of `A ⊆ Λ₁` equals the image of the `↑Λ₁`-lift
+under `subtypeIncl h12`. -/
+theorem liftFinset_eq_image_subtypeIncl
+    {Λ₁ Λ₂ : Finset V} (h12 : Λ₁ ⊆ Λ₂)
+    {A : Finset V} (hA : A ⊆ Λ₁) :
+    liftFinset A (hA.trans h12)
+      = (liftFinset A hA).image (subtypeIncl h12) := by
+  ext x
+  simp only [liftFinset, Finset.mem_image, Finset.mem_attach,
+    subtypeIncl, true_and]
+  constructor
+  · rintro ⟨⟨v, hv⟩, rfl⟩
+    exact ⟨⟨v, hA hv⟩, ⟨⟨v, hv⟩, rfl⟩, rfl⟩
+  · rintro ⟨y, ⟨⟨v, hv⟩, rfl⟩, rfl⟩
+    exact ⟨⟨v, hv⟩, rfl⟩
+
+/-- **Spin product lift equality**: for `A ⊆ Λ₁ ⊆ Λ₂`,
+`spinProduct (liftFinset A (hA.trans h12)) σ
+  = spinProduct (liftFinset A hA) (restrictConfig h12 σ)`. -/
+theorem spinProduct_lift_eq
+    {Λ₁ Λ₂ : Finset V} (h12 : Λ₁ ⊆ Λ₂)
+    {A : Finset V} (hA : A ⊆ Λ₁) (σ : (↑Λ₂ : Type _) → Spin) :
+    spinProduct (liftFinset A (hA.trans h12)) σ
+      = spinProduct (liftFinset A hA) (restrictConfig h12 σ) := by
+  unfold spinProduct
+  rw [liftFinset_eq_image_subtypeIncl h12 hA,
+    Finset.prod_image
+      (fun _ _ _ _ heq => subtypeIncl_injective h12 heq)]
+  rfl
+
 end Ambient
 end IsingModel
