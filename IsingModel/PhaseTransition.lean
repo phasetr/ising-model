@@ -351,4 +351,102 @@ The full correlation length definition and the continuity theorem
 (Thm 17.5.1: m(σ) is continuous) require the infinite volume limit
 and spectral theory of the transfer matrix. -/
 
+/-! ## Convergence matrix for §5 derived quantities
+
+Named specializations of `correlation_convergent_*` (J/h/β) and
+`Tendsto.sub`/`Tendsto.mul`/`tendsto_finset_sum` for the derived
+quantities of §5: magnetization (J), truncated 2-point (J/h/β),
+and susceptibility (J/h/β).  The lattice (subgraph) versions are
+already above.  These complete the "convergence matrix" for the
+physically meaningful §5 quantities. -/
+
+/-- **Magnetization J → ∞ convergence**: for `h ≥ 0`, `β > 0`, the
+sequence `n ↦ Mᵢ(n, h, β)` converges.  Specialization of
+`correlation_convergent` at `A = {i}`. -/
+theorem magnetization_convergent_J (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (h : ℝ) (hh : 0 ≤ h) (β : ℝ) (hβ : 0 < β) (i : ι) :
+    ∃ L : ℝ, Filter.Tendsto
+      (fun n : ℕ => magnetization G ⟨(n : ℝ), h, β⟩ i)
+      Filter.atTop (nhds L) :=
+  correlation_convergent G h hh β hβ {i}
+
+/-- **Truncated 2-point J → ∞ convergence**: for `h ≥ 0`, `β > 0`, the
+sequence `n ↦ ⟨σᵢ;σⱼ⟩_{(n,h,β)}` converges.
+
+Proof: Each of `⟨σᵢσⱼ⟩`, `⟨σᵢ⟩`, `⟨σⱼ⟩` converges by
+`correlation_convergent`; apply `Tendsto.sub` and `Tendsto.mul`. -/
+theorem truncated2_convergent_J (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (h : ℝ) (hh : 0 ≤ h) (β : ℝ) (hβ : 0 < β) (i j : ι) :
+    ∃ L : ℝ, Filter.Tendsto
+      (fun n : ℕ => truncated2 G ⟨(n : ℝ), h, β⟩ i j)
+      Filter.atTop (nhds L) := by
+  obtain ⟨Lij, hij⟩ := correlation_convergent G h hh β hβ {i, j}
+  obtain ⟨Li, hLi⟩ := correlation_convergent G h hh β hβ {i}
+  obtain ⟨Lj, hLj⟩ := correlation_convergent G h hh β hβ {j}
+  refine ⟨Lij - Li * Lj, ?_⟩
+  exact hij.sub (hLi.mul hLj)
+
+/-- **Truncated 2-point h → ∞ convergence**: for `J ≥ 0`, `β > 0`, the
+sequence `n ↦ ⟨σᵢ;σⱼ⟩_{(J,n,β)}` converges. -/
+theorem truncated2_convergent_h (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J : ℝ) (hJ : 0 ≤ J) (β : ℝ) (hβ : 0 < β) (i j : ι) :
+    ∃ L : ℝ, Filter.Tendsto
+      (fun n : ℕ => truncated2 G ⟨J, (n : ℝ), β⟩ i j)
+      Filter.atTop (nhds L) := by
+  obtain ⟨Lij, hij⟩ := correlation_convergent_h G J hJ β hβ {i, j}
+  obtain ⟨Li, hLi⟩ := correlation_convergent_h G J hJ β hβ {i}
+  obtain ⟨Lj, hLj⟩ := correlation_convergent_h G J hJ β hβ {j}
+  refine ⟨Lij - Li * Lj, ?_⟩
+  exact hij.sub (hLi.mul hLj)
+
+/-- **Truncated 2-point β → ∞ convergence**: for `J ≥ 0`, `h ≥ 0`, the
+sequence `n ↦ ⟨σᵢ;σⱼ⟩_{(J,h,n+1)}` converges. -/
+theorem truncated2_convergent_beta (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J : ℝ) (hJ : 0 ≤ J) (h : ℝ) (hh : 0 ≤ h) (i j : ι) :
+    ∃ L : ℝ, Filter.Tendsto
+      (fun n : ℕ => truncated2 G ⟨J, h, (n + 1 : ℝ)⟩ i j)
+      Filter.atTop (nhds L) := by
+  obtain ⟨Lij, hij⟩ := correlation_convergent_beta G J hJ h hh {i, j}
+  obtain ⟨Li, hLi⟩ := correlation_convergent_beta G J hJ h hh {i}
+  obtain ⟨Lj, hLj⟩ := correlation_convergent_beta G J hJ h hh {j}
+  refine ⟨Lij - Li * Lj, ?_⟩
+  exact hij.sub (hLi.mul hLj)
+
+/-- **Susceptibility J → ∞ convergence**: for `h ≥ 0`, `β > 0`, the
+sequence `n ↦ χᵢ(n, h, β)` converges.  Proof: finite sum of convergent
+via `tendsto_finset_sum`. -/
+theorem susceptibility_convergent_J (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (h : ℝ) (hh : 0 ≤ h) (β : ℝ) (hβ : 0 < β) (i : ι) :
+    ∃ L : ℝ, Filter.Tendsto
+      (fun n : ℕ => susceptibility G ⟨(n : ℝ), h, β⟩ i)
+      Filter.atTop (nhds L) := by
+  choose Lj hLj using fun j => truncated2_convergent_J G h hh β hβ i j
+  refine ⟨∑ j : ι, Lj j, ?_⟩
+  unfold susceptibility
+  exact tendsto_finset_sum _ (fun j _ => hLj j)
+
+/-- **Susceptibility h → ∞ convergence**: for `J ≥ 0`, `β > 0`, the
+sequence `n ↦ χᵢ(J, n, β)` converges. -/
+theorem susceptibility_convergent_h (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J : ℝ) (hJ : 0 ≤ J) (β : ℝ) (hβ : 0 < β) (i : ι) :
+    ∃ L : ℝ, Filter.Tendsto
+      (fun n : ℕ => susceptibility G ⟨J, (n : ℝ), β⟩ i)
+      Filter.atTop (nhds L) := by
+  choose Lj hLj using fun j => truncated2_convergent_h G J hJ β hβ i j
+  refine ⟨∑ j : ι, Lj j, ?_⟩
+  unfold susceptibility
+  exact tendsto_finset_sum _ (fun j _ => hLj j)
+
+/-- **Susceptibility β → ∞ convergence**: for `J ≥ 0`, `h ≥ 0`, the
+sequence `n ↦ χᵢ(J, h, n+1)` converges. -/
+theorem susceptibility_convergent_beta (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J : ℝ) (hJ : 0 ≤ J) (h : ℝ) (hh : 0 ≤ h) (i : ι) :
+    ∃ L : ℝ, Filter.Tendsto
+      (fun n : ℕ => susceptibility G ⟨J, h, (n + 1 : ℝ)⟩ i)
+      Filter.atTop (nhds L) := by
+  choose Lj hLj using fun j => truncated2_convergent_beta G J hJ h hh i j
+  refine ⟨∑ j : ι, Lj j, ?_⟩
+  unfold susceptibility
+  exact tendsto_finset_sum _ (fun j _ => hLj j)
+
 end IsingModel

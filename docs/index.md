@@ -29,6 +29,9 @@ All theorems are formally proved with **zero `sorry`**.
 | **Magnetization monotonicity (β)**           | `Mᵢ` monotone in β on `(0,∞)` for ferromagnetic                               | `PhaseTransition.lean`     |
 | **Magnetization β → ∞ convergence**         | `Mᵢ(J,h,n+1)` converges for ferromagnetic                                      | `PhaseTransition.lean`     |
 | **Magnetization h → ∞ convergence**         | `Mᵢ(J,n,β)` converges for ferromagnetic                                        | `PhaseTransition.lean`     |
+| **Magnetization J → ∞ convergence**         | `Mᵢ(n,h,β)` converges for ferromagnetic                                        | `PhaseTransition.lean`     |
+| **Truncated 2-pt J/h/β convergence**        | `⟨σᵢ;σⱼ⟩` converges along each parameter direction                             | `PhaseTransition.lean`     |
+| **Susceptibility J/h/β convergence**        | `χᵢ` converges along each parameter direction                                   | `PhaseTransition.lean`     |
 | **Covariance non-negativity**                 | `Cov(σ^B, f) ≥ 0` for HNC f under Boltzmann weight                             | `InfiniteVolume.lean`      |
 | **Correlation convergence** (Thm 4.2.3)       | `⟨σ^B⟩` converges as J → ∞                                                    | `InfiniteVolume.lean`      |
 | **Correlation monotonicity (lattice)** (Thm 4.2.3, discretized) | `⟨σ^A⟩_{G₁} ≤ ⟨σ^A⟩_{G₂}` for subgraph ordering `G₁ ≤ G₂` | `InfiniteVolume.lean`      |
