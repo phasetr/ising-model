@@ -445,7 +445,7 @@ subtype `{x : ↑Λ₂ // x.val ∈ Λ₁}` of a function evaluated at `σ v.val
 equals the sum over `↑Λ₁` of the same function with `restrictConfig`.
 
 This is the core ingredient for site-sum splitting. -/
-theorem sum_Λ₁_subtype_eq {K : Type*} [Field K]
+theorem sum_Λ₁_subtype_eq {K : Type*} [CommRing K]
     {Λ₁ Λ₂ : Finset V} (h12 : Λ₁ ⊆ Λ₂)
     (σ : (↑Λ₂ : Type _) → Spin) :
     ∑ v : {x : (↑Λ₂ : Type _) // x.val ∈ Λ₁}, Spin.sign K (σ v.val)
@@ -459,7 +459,7 @@ theorem sum_Λ₁_subtype_eq {K : Type*} [Field K]
 /-- **Site-sum partition** on `↑Λ₂` along the `Λ₁/complement` partition.
 Specialized form of `Fintype.sum_subtype_add_sum_subtype` for the
 Ising model site-sum. -/
-theorem siteSum_partition {K : Type*} [Field K]
+theorem siteSum_partition {K : Type*} [CommRing K]
     (Λ₁ Λ₂ : Finset V) (σ : (↑Λ₂ : Type _) → Spin) :
     ∑ v : (↑Λ₂ : Type _), Spin.sign K (σ v)
       = (∑ v : {x : (↑Λ₂ : Type _) // x.val ∈ Λ₁}, Spin.sign K (σ v.val))
@@ -472,7 +472,7 @@ theorem siteSum_partition {K : Type*} [Field K]
 /-- **Site-sum splitting** on `↑Λ₂` along the `Λ₁/complement` partition,
 with the Λ₁-part expressed via `restrictConfig` on `↑Λ₁`.
 Combines `siteSum_partition` with `sum_Λ₁_subtype_eq`. -/
-theorem siteSum_split {K : Type*} [Field K]
+theorem siteSum_split {K : Type*} [CommRing K]
     {Λ₁ Λ₂ : Finset V} (h12 : Λ₁ ⊆ Λ₂)
     (σ : (↑Λ₂ : Type _) → Spin) :
     ∑ v : (↑Λ₂ : Type _), Spin.sign K (σ v)
