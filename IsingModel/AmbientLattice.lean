@@ -346,7 +346,9 @@ Uses `Equiv.piEquivPiSubtypeProd` (mathlib) on the predicate
 
 /-- The decomposition equivalence
 `((↑Λ₂) → Spin) ≃ ((↑Λ₁) → Spin) × ({x : ↑Λ₂ // x.val ∉ Λ₁} → Spin)`,
-for `Λ₁ ⊆ Λ₂`. -/
+for `Λ₁ ⊆ Λ₂`.  Constructed by composing
+`Equiv.piEquivPiSubtypeProd` (on the predicate `x.val ∈ Λ₁`) with
+`Λ₁subtypeEquiv` on the first component. -/
 noncomputable def configEquivSubtypeProd {Λ₁ Λ₂ : Finset V} (h12 : Λ₁ ⊆ Λ₂) :
     ((↑Λ₂ : Type _) → Spin) ≃
       (((↑Λ₁ : Type _) → Spin) ×
