@@ -907,8 +907,8 @@ theorem tendsto_correlationAlongExhaustion_correlationInfinite
       Filter.atTop (nhds (correlationInfinite G Λ p A)) :=
   correlationAlongExhaustion_tendsto_ciSup G Λ p hf A
 
-/-- **Upper bound**: `correlationInfinite ≤ 1`. Follows from
-`correlationAlongExhaustion_le_one` applied to the supremum. -/
+/-- **Upper bound**: `correlationInfinite ≤ 1`. Pointwise bound from
+`correlationAlongExhaustion_le_one` + `ciSup_le`. -/
 theorem correlationInfinite_le_one
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
