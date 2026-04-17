@@ -2043,4 +2043,20 @@ Full splitting, with the $\Lambda_1$-part expressed via
 \texttt{siteSum\_partition} + \texttt{sum\_Λ₁\_subtype\_eq}.
 \end{proof}
 
+\begin{theorem}[\texttt{hamiltonian\_extendGraph\_factor}]
+The Hamiltonian on \texttt{extendGraphFromΛ₁} decomposes:
+\[
+H_{\texttt{extendGraphFromΛ₁}\,G\,\Lambda_1\,\Lambda_2,\,p}(\sigma)
+ = H_{\texttt{inducedGraph}\,G\,\Lambda_1,\,p}(\texttt{restrictConfig}\,h_{12}\,\sigma)
+ + \Bigl(-p.h \sum_{v : \{x \mid \neg(x.\text{val} \in \Lambda_1)\}} \texttt{Spin.sign}\,\mathbb{R}\,(\sigma\,v.\text{val})\Bigr).
+\]
+\end{theorem}
+
+\begin{proof}
+Unfold \texttt{hamiltonian}, \texttt{interactionEnergy},
+\texttt{externalFieldEnergy}. Rewrite the edge sum via
+\texttt{extendGraph\_edgeSum\_eq} and the site sum via
+\texttt{siteSum\_split}. \texttt{ring} closes.
+\end{proof}
+
 \end{document}
