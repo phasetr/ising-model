@@ -918,6 +918,34 @@ For ferromagnetic $p$ and $G_1\le G_2$, $f_{G_1}\le f_{G_2}$.
 $|\iota|$ is fixed; apply $\log$ (monotone) to $Z_{G_1}\le Z_{G_2}$.
 \end{proof}
 
+\subsection{$\beta$-monotonicity and $\beta \to \infty$ convergence}
+
+Rescale identity (\texttt{correlation\_rescale\_beta}):
+$\langle\sigma^A\rangle_{(J,h,\beta)} = \langle\sigma^A\rangle_{(\beta J, \beta h, 1)}$.
+
+\begin{theorem}[\texttt{correlation\_monotone\_beta}]
+For $J, h \ge 0$, the correlation function is monotone increasing in
+$\beta$ on $(0, \infty)$.
+\end{theorem}
+
+\begin{proof}
+Apply the rescale identity; then $\beta_1 \le \beta_2$ gives
+$\beta_1 J \le \beta_2 J$ and $\beta_1 h \le \beta_2 h$ at both
+endpoints.  Apply \texttt{correlation\_monotone\_J} and
+\texttt{correlation\_monotone\_h}.
+\end{proof}
+
+\begin{theorem}[\texttt{correlation\_convergent\_beta}]
+For $J, h \ge 0$ and any finite set $A$, the sequence
+$\langle\sigma^A\rangle_{(J,h,n+1)}$ converges as $n \to \infty$.
+\end{theorem}
+
+\begin{proof}
+Monotone by \texttt{correlation\_monotone\_beta}, bounded above by
+$1$ via \texttt{correlation\_le\_one}. Converges by
+\texttt{tendsto\_atTop\_ciSup}.
+\end{proof}
+
 \begin{theorem}[\texttt{freeEnergy\_convergent\_subgraph}, = Prop 4.6.1]
 For any increasing subgraph sequence $G_n\uparrow$ on a fixed finite ambient
 lattice $\iota$ and ferromagnetic $p$, $n\mapsto f_{G_n}$ converges.
