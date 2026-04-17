@@ -407,7 +407,7 @@ omit [DecidableEq V] in
 is an edge of `extendGraphFromΛ₁`. -/
 theorem mem_extendGraph_edgeSet_of_mem_induce
     (G : SimpleGraph V) {Λ₁ Λ₂ : Finset V} (h12 : Λ₁ ⊆ Λ₂)
-    {e : Sym2 (↑Λ₁ : Type _)} (he : e ∈ (G.induce (↑Λ₁ : Set V)).edgeSet) :
+    {e : Sym2 (↑Λ₁ : Type _)} (he : e ∈ (inducedGraph G Λ₁).edgeSet) :
     Sym2.map (subtypeIncl h12) e ∈ (extendGraphFromΛ₁ G Λ₁ Λ₂).edgeSet := by
   refine Sym2.ind (fun u v he => ?_) e he
   rw [Sym2.map_mk, SimpleGraph.mem_edgeSet]
@@ -422,7 +422,7 @@ theorem exists_induce_edge_of_extendGraph
     {e : Sym2 (↑Λ₂ : Type _)}
     (he : e ∈ (extendGraphFromΛ₁ G Λ₁ Λ₂).edgeSet) :
     ∃ e' : Sym2 (↑Λ₁ : Type _),
-      e' ∈ (G.induce (↑Λ₁ : Set V)).edgeSet ∧ Sym2.map (subtypeIncl h12) e' = e := by
+      e' ∈ (inducedGraph G Λ₁).edgeSet ∧ Sym2.map (subtypeIncl h12) e' = e := by
   refine Sym2.ind (fun u v he => ?_) e he
   rw [SimpleGraph.mem_edgeSet] at he
   obtain ⟨hu, hv, hadj⟩ := he
