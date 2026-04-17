@@ -603,5 +603,16 @@ theorem restrictConfig_configEquivSubtypeProd_symm
   simp [restrictConfig, subtypeIncl, configEquivSubtypeProd,
     Equiv.piEquivPiSubtypeProd, Λ₁subtypeEquiv, v.property]
 
+/-- On the complement subtype, the configEquiv-inverse applied to a pair
+gives the second component. -/
+theorem configEquivSubtypeProd_symm_apply_compl
+    {Λ₁ Λ₂ : Finset V} (h12 : Λ₁ ⊆ Λ₂)
+    (σ₁ : (↑Λ₁ : Type _) → Spin)
+    (σ₂ : {x : (↑Λ₂ : Type _) // x.val ∉ Λ₁} → Spin)
+    (v : {x : (↑Λ₂ : Type _) // x.val ∉ Λ₁}) :
+    (configEquivSubtypeProd h12).symm (σ₁, σ₂) v.val = σ₂ v := by
+  simp [configEquivSubtypeProd, Equiv.piEquivPiSubtypeProd,
+    Λ₁subtypeEquiv, v.property]
+
 end Ambient
 end IsingModel

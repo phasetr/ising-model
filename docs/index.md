@@ -158,6 +158,7 @@ ambient framework:
 | `liftFinset_eq_image_subtypeIncl` | `liftFinset A (hA.trans h12) = (liftFinset A hA).image (subtypeIncl h12)` |
 | `spinProduct_lift_eq` | Spin product on ↑Λ₂-lift = spin product on ↑Λ₁-lift under restrictConfig |
 | `restrictConfig_configEquivSubtypeProd_symm` | `restrictConfig (equivSymm (σ₁, σ₂)) = σ₁` (content-bearing config factoring identity) |
+| `configEquivSubtypeProd_symm_apply_compl` | On complement: `(equivSymm (σ₁, σ₂)) v.val = σ₂ v` |
 
 ## Axioms
 
