@@ -749,5 +749,45 @@ theorem correlationΛ_monotone_volume
   exact correlation_monotone_subgraph
     (extendGraphFromΛ₁_le_induce G Λ₁ Λ₂) p hf _
 
+/-! ## Convergence along an exhaustion
+
+Apply `correlationΛ_monotone_volume` to show that the correlations
+along an exhaustion converge. We use a shifted sequence
+`n ↦ correlationΛ G (Λ.volume (n + N)) p (liftFinset A ...)` where
+`N` is chosen so that `A ⊆ Λ.volume N` (from `Exhaustion.exhaust`).
+Past `N`, `correlationAlongExhaustion` equals this shifted sequence. -/
+
+/-- The shifted correlation sequence along an exhaustion: given
+`N : ℕ` with `A ⊆ Λ.volume n` for `n ≥ N`, the sequence
+`n ↦ correlationΛ G (Λ.volume (n + N)) p (liftFinset A ...)` is
+monotone and bounded.  This is the clean version (without the
+dite from `correlationAlongExhaustion`) suitable for monotone
+convergence.
+
+Convergence of `correlationAlongExhaustion` itself is PR #89
+(it requires connecting the dite-based definition to this
+clean shifted sequence, which involves subtype / proof-irrelevance
+handling). -/
+theorem correlationΛ_shifted_monotone_bounded
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    {A : Finset V} {N : ℕ}
+    (hN : ∀ n ≥ N, A ⊆ Λ.volume n) :
+    Monotone (fun n : ℕ =>
+      correlationΛ G (Λ.volume (n + N)) p
+        (liftFinset A (hN (n + N) (Nat.le_add_left N n))))
+    ∧ ∀ n : ℕ,
+      correlationΛ G (Λ.volume (n + N)) p
+        (liftFinset A (hN (n + N) (Nat.le_add_left N n))) ≤ 1 := by
+  refine ⟨?_, ?_⟩
+  · intro n m hnm
+    have hΛmono : Λ.volume (n + N) ⊆ Λ.volume (m + N) :=
+      Λ.mono (Nat.add_le_add_right hnm N)
+    exact correlationΛ_monotone_volume G hΛmono p hf
+      (hN (n + N) (Nat.le_add_left N n))
+  · intro n
+    exact correlationΛ_le_one _ _ _ _
+
 end Ambient
 end IsingModel

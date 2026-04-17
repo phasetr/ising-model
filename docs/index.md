@@ -164,6 +164,7 @@ ambient framework:
 | `numerator_extendGraph_factor` | `num_extend(lift A) = num_induceΛ₁(lift A) · F` |
 | `correlationΛ_extendGraph_eq` | **Correlation equality**: `⟨σ^A⟩_extend = ⟨σ^A⟩_induceΛ₁` (F cancels) |
 | **`correlationΛ_monotone_volume`** | **Volume-direction monotonicity main theorem**: `Λ₁ ⊆ Λ₂ ⇒ ⟨σ^A⟩_{Λ₁} ≤ ⟨σ^A⟩_{Λ₂}` |
+| `correlationΛ_shifted_monotone_bounded` | Shifted correlation sequence along exhaustion is monotone and bounded by 1 |
 
 ## Axioms
 
