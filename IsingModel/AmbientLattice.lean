@@ -444,9 +444,8 @@ final step (PR #78). -/
 subtype `{x : ↑Λ₂ // x.val ∈ Λ₁}` of a function evaluated at `σ v.val`
 equals the sum over `↑Λ₁` of the same function with `restrictConfig`.
 
-This is the core ingredient for site-sum splitting (the full splitting
-along the `Λ₁ / complement` partition is completed in PR #79). -/
-theorem sum_Λ₁_subtype_eq {K : Type*} [Field K]
+This is the core ingredient for site-sum splitting. -/
+theorem sum_Λ₁_subtype_eq {K : Type*} [CommRing K]
     {Λ₁ Λ₂ : Finset V} (h12 : Λ₁ ⊆ Λ₂)
     (σ : (↑Λ₂ : Type _) → Spin) :
     ∑ v : {x : (↑Λ₂ : Type _) // x.val ∈ Λ₁}, Spin.sign K (σ v.val)
@@ -456,6 +455,30 @@ theorem sum_Λ₁_subtype_eq {K : Type*} [Field K]
     (fun v : (↑Λ₁ : Type _) => Spin.sign K (restrictConfig h12 σ v))
     (fun x => ?_)
   simp [restrictConfig, subtypeIncl, Λ₁subtypeEquiv]
+
+/-- **Site-sum partition** on `↑Λ₂` along the `Λ₁/complement` partition.
+Specialized form of `Fintype.sum_subtype_add_sum_subtype` for the
+Ising model site-sum. -/
+theorem siteSum_partition {K : Type*} [CommRing K]
+    (Λ₁ Λ₂ : Finset V) (σ : (↑Λ₂ : Type _) → Spin) :
+    ∑ v : (↑Λ₂ : Type _), Spin.sign K (σ v)
+      = (∑ v : {x : (↑Λ₂ : Type _) // x.val ∈ Λ₁}, Spin.sign K (σ v.val))
+        + ∑ v : {x : (↑Λ₂ : Type _) // ¬ (x.val ∈ Λ₁)}, Spin.sign K (σ v.val) := by
+  classical
+  exact (Fintype.sum_subtype_add_sum_subtype
+    (fun x : (↑Λ₂ : Type _) => x.val ∈ Λ₁)
+    (fun v => Spin.sign K (σ v))).symm
+
+/-- **Site-sum splitting** on `↑Λ₂` along the `Λ₁/complement` partition,
+with the Λ₁-part expressed via `restrictConfig` on `↑Λ₁`.
+Combines `siteSum_partition` with `sum_Λ₁_subtype_eq`. -/
+theorem siteSum_split {K : Type*} [CommRing K]
+    {Λ₁ Λ₂ : Finset V} (h12 : Λ₁ ⊆ Λ₂)
+    (σ : (↑Λ₂ : Type _) → Spin) :
+    ∑ v : (↑Λ₂ : Type _), Spin.sign K (σ v)
+      = (∑ v : (↑Λ₁ : Type _), Spin.sign K (restrictConfig h12 σ v))
+        + ∑ v : {x : (↑Λ₂ : Type _) // ¬ (x.val ∈ Λ₁)}, Spin.sign K (σ v.val) := by
+  rw [siteSum_partition Λ₁ Λ₂ σ, sum_Λ₁_subtype_eq h12 σ]
 
 omit [DecidableEq V] in
 /-- Edge-sum equality for the extendGraph via the Sym2.map-based
