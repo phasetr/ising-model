@@ -2170,4 +2170,28 @@ Express both correlations as $\texttt{numerator} / Z$ via
 and cancel the common complement factor $F$ using \texttt{field\_simp}.
 \end{proof}
 
+\subsection{Volume-direction monotonicity main theorem}
+
+\begin{theorem}[\texttt{correlationΛ\_monotone\_volume}]
+For ferromagnetic $p$ and $A \subseteq \Lambda_1 \subseteq \Lambda_2 : \text{Finset}\,V$,
+\[
+\langle\sigma^A\rangle_{G, \Lambda_1} \le \langle\sigma^A\rangle_{G, \Lambda_2}.
+\]
+\end{theorem}
+
+\begin{proof}
+\begin{align*}
+\langle\sigma^A\rangle_{G, \Lambda_1}
+&= \langle\sigma^{A_1}\rangle_{\texttt{inducedGraph}\,G\,\Lambda_1} && \text{(def)}\\
+&= \langle\sigma^{A_2}\rangle_{\texttt{extendGraphFromΛ₁}\,G\,\Lambda_1\,\Lambda_2}
+   && \text{(\texttt{correlationΛ\_extendGraph\_eq})}\\
+&\le \langle\sigma^{A_2}\rangle_{\texttt{inducedGraph}\,G\,\Lambda_2}
+   && \text{(\texttt{correlation\_monotone\_subgraph} + \texttt{extendGraphFromΛ₁\_le\_induce})}\\
+&= \langle\sigma^A\rangle_{G, \Lambda_2}. && \text{(def)}
+\end{align*}
+\end{proof}
+
+This completes the volume-direction monotonicity on the genuine
+infinite-volume (\texttt{AmbientLattice}) framework.
+
 \end{document}
