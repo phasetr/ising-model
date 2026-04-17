@@ -138,6 +138,8 @@ ambient framework:
 | `partitionFunctionΛ_monotone_ambient_subgraph` | `G₁ ≤ G₂ ⇒ Z_{G₁,Λ} ≤ Z_{G₂,Λ}` |
 | `correlationΛ_monotone_ambient_subgraph` | `G₁ ≤ G₂ ⇒ ⟨σ^A⟩_{G₁,Λ} ≤ ⟨σ^A⟩_{G₂,Λ}` |
 | `freeEnergyΛ_monotone_ambient_subgraph` | `G₁ ≤ G₂ ⇒ f_{G₁,Λ} ≤ f_{G₂,Λ}` |
+| `extendGraphFromΛ₁` | For `Λ₁ ⊆ Λ₂`, graph on `↑Λ₂` with edges only within `Λ₁` |
+| `extendGraphFromΛ₁_le_induce` | `extendGraphFromΛ₁ G Λ₁ Λ₂ ≤ inducedGraph G Λ₂` |
 
 ## Axioms
 
