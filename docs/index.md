@@ -140,6 +140,10 @@ ambient framework:
 | `freeEnergyΛ_monotone_ambient_subgraph` | `G₁ ≤ G₂ ⇒ f_{G₁,Λ} ≤ f_{G₂,Λ}` |
 | `extendGraphFromΛ₁` | For `Λ₁ ⊆ Λ₂`, graph on `↑Λ₂` with edges only within `Λ₁` |
 | `extendGraphFromΛ₁_le_induce` | `extendGraphFromΛ₁ G Λ₁ Λ₂ ≤ inducedGraph G Λ₂` |
+| `subtypeIncl` | Canonical injection `↑Λ₁ → ↑Λ₂` when `Λ₁ ⊆ Λ₂` |
+| `subtypeIncl_injective` | `subtypeIncl` is injective |
+| `restrictConfig` | Restrict `(↑Λ₂ → Spin)` to `(↑Λ₁ → Spin)` |
+| `Λ₁subtypeEquiv` | `{x : ↑Λ₂ // x.val ∈ Λ₁} ≃ ↑Λ₁` |
 
 ## Axioms
 
