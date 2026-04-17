@@ -2074,4 +2074,26 @@ Unfold \texttt{boltzmannWeight}, apply
 \texttt{Real.exp\_add}. \texttt{ring} closes the exponent algebra.
 \end{proof}
 
+\begin{lemma}[\texttt{liftFinset\_eq\_image\_subtypeIncl}]
+For $A \subseteq \Lambda_1 \subseteq \Lambda_2$,
+$\texttt{liftFinset}\,A\,(h_A \circ h_{12})
+ = (\texttt{liftFinset}\,A\,h_A).\texttt{image}\,(\texttt{subtypeIncl}\,h_{12})$.
+\end{lemma}
+
+\begin{theorem}[\texttt{spinProduct\_lift\_eq}]
+For $A \subseteq \Lambda_1 \subseteq \Lambda_2$,
+$\sigma : \uparrow\!\Lambda_2 \to \texttt{Spin}$:
+\[
+\texttt{spinProduct}\,(\texttt{liftFinset}\,A\,(h_A \circ h_{12}))\,\sigma
+  = \texttt{spinProduct}\,(\texttt{liftFinset}\,A\,h_A)\,(\texttt{restrictConfig}\,h_{12}\,\sigma).
+\]
+\end{theorem}
+
+\begin{proof}
+Unfold \texttt{spinProduct}, rewrite the Finset via the preceding
+lemma, apply \texttt{Finset.prod\_image} using
+\texttt{subtypeIncl\_injective}. The remaining equality is
+definitional ($\sigma \circ \texttt{subtypeIncl} = \texttt{restrictConfig}\,\sigma$).
+\end{proof}
+
 \end{document}
