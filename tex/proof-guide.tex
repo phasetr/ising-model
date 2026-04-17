@@ -973,6 +973,21 @@ Specializations to magnetization:
 \texttt{magnetization\_monotone\_beta},
 \texttt{magnetization\_convergent\_beta} (both via $A = \{i\}$).
 
+\subsection{Convergence as $h \to \infty$}
+
+\begin{theorem}[\texttt{correlation\_convergent\_h}]
+For $J \ge 0$, $\beta > 0$, the sequence
+$n \mapsto \langle\sigma^A\rangle_{(J,n,\beta)}$ converges.
+\end{theorem}
+
+\begin{proof}
+Monotone by \texttt{correlation\_monotone\_h} (Prop.~4.2.4),
+bounded above by $1$ via \texttt{correlation\_le\_one}.
+Apply \texttt{tendsto\_atTop\_ciSup}.
+\end{proof}
+
+Specialization: \texttt{magnetization\_convergent\_h} via $A = \{i\}$.
+
 \begin{theorem}[\texttt{freeEnergy\_convergent\_subgraph}, = Prop 4.6.1]
 For any increasing subgraph sequence $G_n\uparrow$ on a fixed finite ambient
 lattice $\iota$ and ferromagnetic $p$, $n\mapsto f_{G_n}$ converges.

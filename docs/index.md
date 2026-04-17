@@ -24,9 +24,11 @@ All theorems are formally proved with **zero `sorry`**.
 | **Correlation monotonicity (h)** (Prop 4.2.4) | `⟨σ^B⟩` monotone in h on `[0,∞)`                                               | `InfiniteVolume.lean`      |
 | **Correlation monotonicity (β)**             | `⟨σ^A⟩` monotone in β on `(0,∞)` for ferromagnetic                            | `InfiniteVolume.lean`      |
 | **Correlation β → ∞ convergence**           | `⟨σ^A⟩_{(J,h,n+1)}` converges for ferromagnetic                                | `InfiniteVolume.lean`      |
+| **Correlation h → ∞ convergence**           | `⟨σ^A⟩_{(J,n,β)}` converges for ferromagnetic                                  | `InfiniteVolume.lean`      |
 | **Free energy monotonicity (β)**             | `f(J,h,β)` monotone in β on `(0,∞)` for ferromagnetic                         | `FreeEnergy.lean`          |
 | **Magnetization monotonicity (β)**           | `Mᵢ` monotone in β on `(0,∞)` for ferromagnetic                               | `PhaseTransition.lean`     |
 | **Magnetization β → ∞ convergence**         | `Mᵢ(J,h,n+1)` converges for ferromagnetic                                      | `PhaseTransition.lean`     |
+| **Magnetization h → ∞ convergence**         | `Mᵢ(J,n,β)` converges for ferromagnetic                                        | `PhaseTransition.lean`     |
 | **Covariance non-negativity**                 | `Cov(σ^B, f) ≥ 0` for HNC f under Boltzmann weight                             | `InfiniteVolume.lean`      |
 | **Correlation convergence** (Thm 4.2.3)       | `⟨σ^B⟩` converges as J → ∞                                                    | `InfiniteVolume.lean`      |
 | **Correlation monotonicity (lattice)** (Thm 4.2.3, discretized) | `⟨σ^A⟩_{G₁} ≤ ⟨σ^A⟩_{G₂}` for subgraph ordering `G₁ ≤ G₂` | `InfiniteVolume.lean`      |

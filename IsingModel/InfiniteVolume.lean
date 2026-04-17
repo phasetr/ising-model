@@ -786,4 +786,34 @@ theorem correlation_convergent_beta (G : SimpleGraph ι) [Fintype G.edgeSet]
     ⟨1, fun _ ⟨n, hn⟩ => hn ▸ correlation_le_one G ⟨J, h, (n + 1 : ℝ)⟩ A⟩
   exact ⟨_, tendsto_atTop_ciSup h_mono h_bdd⟩
 
+/-! ## Convergence as h → ∞
+
+Filling the monotonicity/convergence matrix: we had `J → ∞`
+(`correlation_convergent`) and `β → ∞` (`correlation_convergent_beta`);
+this section adds `h → ∞` by the same monotone-bounded argument using
+`correlation_monotone_h` (Prop 4.2.4). -/
+
+/-- **Correlation h → ∞ convergence**: for ferromagnetic parameters
+(`J ≥ 0`, `β > 0`), the sequence `n ↦ ⟨σ^A⟩_{(J, n, β)}` converges as
+`n → ∞`.
+
+Proof: Monotone increasing by `correlation_monotone_h` (Prop 4.2.4),
+bounded above by `1` via `correlation_le_one`, hence converges by
+`tendsto_atTop_ciSup`. -/
+theorem correlation_convergent_h (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J : ℝ) (hJ : 0 ≤ J) (β : ℝ) (hβ : 0 < β) (A : Finset ι) :
+    ∃ L : ℝ, Filter.Tendsto
+      (fun n : ℕ => correlation G ⟨J, (n : ℝ), β⟩ A)
+      Filter.atTop (nhds L) := by
+  have h_mono : Monotone (fun n : ℕ => correlation G ⟨J, (n : ℝ), β⟩ A) := by
+    intro a b hab
+    have ha : (0 : ℝ) ≤ (a : ℝ) := Nat.cast_nonneg a
+    have hb : (0 : ℝ) ≤ (b : ℝ) := Nat.cast_nonneg b
+    exact correlation_monotone_h G J hJ β hβ A
+      (Set.mem_Ici.mpr ha) (Set.mem_Ici.mpr hb) (by exact_mod_cast hab)
+  have h_bdd : BddAbove (Set.range
+      (fun n : ℕ => correlation G ⟨J, (n : ℝ), β⟩ A)) :=
+    ⟨1, fun _ ⟨n, hn⟩ => hn ▸ correlation_le_one G ⟨J, (n : ℝ), β⟩ A⟩
+  exact ⟨_, tendsto_atTop_ciSup h_mono h_bdd⟩
+
 end IsingModel
