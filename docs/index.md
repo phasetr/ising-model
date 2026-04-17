@@ -181,6 +181,11 @@ ambient framework:
 | **`correlationInfinite_indep_exhaustion`** | **Exhaustion-independence**: `correlationInfinite G Λ p A = correlationInfinite G Λ' p A` |
 | `correlationAlongExhaustion_monotone_ambient_subgraph` | `G₁ ≤ G₂` ⇒ pointwise monotonicity of `correlationAlongExhaustion` in ambient subgraph |
 | **`correlationInfinite_monotone_ambient_subgraph`** | **Ambient-subgraph monotonicity at infinite volume**: `G₁ ≤ G₂` ⇒ `correlationInfinite G₁ Λ ≤ correlationInfinite G₂ Λ` |
+| `mem_liftFinset` | membership characterization: `x ∈ liftFinset A hA ↔ x.val ∈ A` |
+| `liftFinset_symmDiff` | `liftFinset` commutes with `∆`: `liftFinset A ∆ liftFinset B = liftFinset (A ∆ B)` |
+| `correlationAlongExhaustion_nonneg` | `0 ≤ correlationAlongExhaustion G Λ p A n` (ferromagnetic) |
+| `correlationΛ_gks_second` | **GKS-II at finite volume**, lifted form: `correlationΛ (lift A) · correlationΛ (lift B) ≤ correlationΛ (lift (A ∆ B))` |
+| **`correlationInfinite_gks_second`** | **GKS-II at infinite volume** (Glimm–Jaffe §4.2 Thm 4.2.3): `correlationInfinite A · correlationInfinite B ≤ correlationInfinite (A ∆ B)` |
 
 ## Axioms
 
