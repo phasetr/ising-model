@@ -1871,4 +1871,44 @@ direction of monotonicity, which requires a configuration
 factorization and is left for a follow-up.
 \end{remark}
 
+\subsection{Extension of a $\Lambda_1$-graph to $\Lambda_2$
+  (foundations for volume monotonicity)}
+
+For $\Lambda_1 \subseteq \Lambda_2 : \texttt{Finset}\,V$,
+we construct a graph on $(\uparrow\!\Lambda_2)$ whose edges are
+exactly the edges of $G.\texttt{induce}\,\Lambda_1$ embedded via
+the inclusion $\uparrow\!\Lambda_1 \hookrightarrow \uparrow\!\Lambda_2$.
+
+\begin{definition}[\texttt{extendGraphFromΛ₁}]
+$(\texttt{extendGraphFromΛ₁}\,G\,\Lambda_1\,\Lambda_2).\texttt{Adj}\,u\,v
+\;\Leftrightarrow\; u.val \in \Lambda_1 \wedge v.val \in \Lambda_1 \wedge
+G.\texttt{Adj}\,u.val\,v.val$, for $u, v : \uparrow\!\Lambda_2$.
+\end{definition}
+
+\begin{theorem}[\texttt{extendGraphFromΛ₁\_le\_induce}]
+$\texttt{extendGraphFromΛ₁}\,G\,\Lambda_1\,\Lambda_2 \le
+\texttt{inducedGraph}\,G\,\Lambda_2$.
+\end{theorem}
+
+\begin{proof}
+Immediate from the definition: the third conjunct in the \texttt{Adj}
+of the extension graph is exactly the adjacency in
+\texttt{inducedGraph}.
+\end{proof}
+
+\begin{remark}[volume direction, follow-up]
+The full volume-direction monotonicity
+$\langle\sigma^A\rangle_{G,\Lambda_1} \le \langle\sigma^A\rangle_{G,\Lambda_2}$
+requires in addition the correlation equality on the extended graph:
+$$\langle\sigma^A\rangle_{\texttt{extendGraph}\,G\,\Lambda_1\,\Lambda_2,\Lambda_2}
+  = \langle\sigma^A\rangle_{\texttt{inducedGraph}\,G\,\Lambda_1,\Lambda_1}.$$
+This is obtained by factoring the Boltzmann weight along the
+configuration decomposition
+$\texttt{Config}\,(\uparrow\!\Lambda_2) \simeq
+ \texttt{Config}\,(\uparrow\!\Lambda_1) \times
+ \texttt{Config}\,(\uparrow\!(\Lambda_2\setminus\Lambda_1))$
+(using \texttt{Equiv.piEquivPiSubtypeProd}). The argument is
+$\sim 100$--$200$ lines of Lean and is deferred to a follow-up PR.
+\end{remark}
+
 \end{document}

@@ -240,5 +240,39 @@ theorem freeEnergyΛ_monotone_ambient_subgraph
     freeEnergyΛ G₁ Λ p ≤ freeEnergyΛ G₂ Λ p :=
   IsingModel.freeEnergy_monotone_subgraph (inducedGraph_mono h Λ) p hf
 
+/-! ## Extension of a Λ₁-graph to Λ₂ (for volume-direction monotonicity)
+
+For `Λ₁ ⊆ Λ₂` and `G : SimpleGraph V`, we construct a graph on
+`(↑Λ₂)` whose edges are exactly the edges of `G.induce Λ₁`
+embedded via the inclusion `↑Λ₁ ↪ ↑Λ₂`.  This graph is a subgraph
+of `inducedGraph G Λ₂`, and will be used in the volume-direction
+monotonicity argument to reduce to subgraph monotonicity on the
+Fintype `(↑Λ₂)`.
+
+The full volume-direction correlation monotonicity requires in
+addition a configuration-factorization argument (the Boltzmann weight
+on `extendGraphFromΛ₁` decouples between `↑Λ₁` and `↑(Λ₂\Λ₁)` sites,
+giving an equality of correlations on the extended graph with those
+on `inducedGraph G Λ₁`).  This PR establishes the extension graph
+and its subgraph relation, which are the first technical ingredients. -/
+
+omit [DecidableEq V] in
+/-- The extension of `G.induce Λ₁` to `SimpleGraph (↑Λ₂)`:
+edges are pairs `u, v : ↑Λ₂` with both endpoints in `Λ₁` and
+adjacent in the ambient `G`. -/
+noncomputable def extendGraphFromΛ₁ (G : SimpleGraph V)
+    (Λ₁ Λ₂ : Finset V) : SimpleGraph (↑Λ₂ : Type _) where
+  Adj u v := u.val ∈ Λ₁ ∧ v.val ∈ Λ₁ ∧ G.Adj u.val v.val
+  symm := fun _ _ ⟨hu, hv, hadj⟩ => ⟨hv, hu, hadj.symm⟩
+  loopless := ⟨fun _ ⟨_, _, hadj⟩ => hadj.ne rfl⟩
+
+omit [DecidableEq V] in
+/-- The extended Λ₁-graph is a subgraph of `inducedGraph G Λ₂`. -/
+theorem extendGraphFromΛ₁_le_induce (G : SimpleGraph V)
+    (Λ₁ Λ₂ : Finset V) :
+    extendGraphFromΛ₁ G Λ₁ Λ₂ ≤ inducedGraph G Λ₂ := by
+  intro u v hadj
+  exact hadj.2.2
+
 end Ambient
 end IsingModel
