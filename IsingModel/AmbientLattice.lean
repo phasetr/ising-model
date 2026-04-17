@@ -798,5 +798,47 @@ theorem correlationΛ_shifted_tendsto
   obtain ⟨hmono, hbdd⟩ := correlationΛ_shifted_monotone_bounded G Λ p hf hN
   exact ⟨_, tendsto_atTop_ciSup hmono ⟨1, fun _ ⟨m, hm⟩ => hm ▸ hbdd m⟩⟩
 
+/-- **Convergence of correlation along an exhaustion**: for a
+ferromagnetic Ising model and any exhaustion `Λₙ ↑ V` of an
+ambient type `V`, the sequence `correlationAlongExhaustion`
+converges as `n → ∞`.
+
+Proof: `correlationAlongExhaustion` is globally monotone
+because (1) for `n` where `A ⊆ Λ.volume n` fails, it equals 0;
+(2) when it holds, `correlationΛ ≥ 0` by GKS-I; and (3) when both
+endpoints satisfy the inclusion, `correlationΛ_monotone_volume`
+(PR #87) applies. Bounded by 1 (0 or `correlationΛ_le_one`).
+`tendsto_atTop_ciSup`. -/
+theorem correlationAlongExhaustion_convergent
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    (A : Finset V) :
+    ∃ L : ℝ, Filter.Tendsto
+      (correlationAlongExhaustion G Λ p A)
+      Filter.atTop (nhds L) := by
+  have hmono : Monotone (correlationAlongExhaustion G Λ p A) := by
+    intro n m hnm
+    by_cases hAn : A ⊆ Λ.volume n
+    · by_cases hAm : A ⊆ Λ.volume m
+      · simp only [correlationAlongExhaustion, hAn, hAm, dite_true]
+        exact correlationΛ_monotone_volume G (Λ.mono hnm) p hf hAn
+      · exact absurd (hAn.trans (Λ.mono hnm)) hAm
+    · simp only [correlationAlongExhaustion, hAn, dite_false]
+      by_cases hAm : A ⊆ Λ.volume m
+      · simp only [hAm, dite_true]
+        exact correlationΛ_nonneg G (Λ.volume m) p hf _
+      · simp only [hAm, dite_false]
+        exact le_refl 0
+  have hbdd : BddAbove (Set.range (correlationAlongExhaustion G Λ p A)) := by
+    refine ⟨1, ?_⟩
+    rintro _ ⟨n, rfl⟩
+    by_cases hAn : A ⊆ Λ.volume n
+    · simp only [correlationAlongExhaustion, hAn, dite_true]
+      exact correlationΛ_le_one _ _ _ _
+    · simp only [correlationAlongExhaustion, hAn, dite_false]
+      norm_num
+  exact ⟨_, tendsto_atTop_ciSup hmono hbdd⟩
+
 end Ambient
 end IsingModel

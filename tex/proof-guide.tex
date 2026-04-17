@@ -2221,4 +2221,28 @@ Connection to \texttt{correlationAlongExhaustion} via proof-irrelevance
 of \texttt{liftFinset} across volumes is the remaining work for
 the full infinite-volume convergence.
 
+\begin{theorem}[\texttt{correlationAlongExhaustion\_convergent}]
+For a ferromagnetic Ising model and any exhaustion $\Lambda_n \uparrow V$
+of an ambient type $V$,
+\[
+\exists L,\ \text{Tendsto}\,(\text{correlationAlongExhaustion}\,G\,\Lambda\,p\,A)\,\text{atTop}\,(\text{nhds}\,L).
+\]
+\end{theorem}
+
+\begin{proof}
+\texttt{correlationAlongExhaustion} is globally monotone:
+\begin{itemize}
+  \item $n \le m$, $A \subseteq \Lambda.\text{volume}\,n$ implies
+    $A \subseteq \Lambda.\text{volume}\,m$ (from $\Lambda.\text{mono}$);
+    then \texttt{correlationΛ\_monotone\_volume}.
+  \item $A \not\subseteq \Lambda.\text{volume}\,n$: LHS is 0;
+    RHS is either 0 or $\ge 0$ by GKS-I (\texttt{correlationΛ\_nonneg}).
+\end{itemize}
+Bounded by $1$ via \texttt{correlationΛ\_le\_one} (when inclusion holds)
+or $0$.  \texttt{tendsto\_atTop\_ciSup}.
+\end{proof}
+
+This completes the genuine infinite-volume limit on the
+\texttt{AmbientLattice} framework.
+
 \end{document}
