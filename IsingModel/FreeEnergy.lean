@@ -646,6 +646,53 @@ theorem log_partitionFunction_nonneg_of_ferromagnetic
     0 ≤ Real.log (partitionFunction G p) :=
   Real.log_nonneg (partitionFunction_ge_one_of_ferromagnetic G p hf)
 
+/-- **Unconditional `⊥`-graph bound `Z_⊥ ≥ 2^|ι|`.**
+
+From `partitionFunction_bot = (2 · cosh(βh))^|ι|` and
+`Real.one_le_cosh`, hence `2 ≤ 2 · cosh(βh)`, hence
+`2^|ι| ≤ (2 · cosh(βh))^|ι|`. No ferromagnetic hypothesis
+required. -/
+theorem partitionFunction_bot_ge_two_pow_card (p : IsingParams ℝ) :
+    (2 : ℝ) ^ Fintype.card ι ≤ partitionFunction (⊥ : SimpleGraph ι) p := by
+  have h_cosh_ge : (2 : ℝ) ≤ 2 * Real.cosh (p.β * p.h) := by
+    have : 1 ≤ Real.cosh (p.β * p.h) := Real.one_le_cosh _
+    linarith
+  have h_pow : (2 : ℝ) ^ Fintype.card ι
+      ≤ (2 * Real.cosh (p.β * p.h)) ^ Fintype.card ι :=
+    pow_le_pow_left₀ (by norm_num) h_cosh_ge _
+  rw [partitionFunction_bot]
+  exact h_pow
+
+/-- **Strong ferromagnetic lower bound `Z_G ≥ 2^|ι|`.**
+
+Combines `partitionFunction_bot_ge_two_pow_card` with
+`partitionFunction_monotone_subgraph`: `2^|ι| ≤ Z_⊥ ≤ Z_G`.
+Strictly sharper than `partitionFunction_ge_one_of_ferromagnetic`
+when `|ι| ≥ 1`. Used to derive `log Z_G ≥ |ι| · log 2` (the
+sharp version of `≥ 0`). -/
+theorem partitionFunction_ge_two_pow_card_of_ferromagnetic
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    (2 : ℝ) ^ Fintype.card ι ≤ partitionFunction G p :=
+  (partitionFunction_bot_ge_two_pow_card p).trans
+    (partitionFunction_monotone_subgraph bot_le p hf)
+
+/-- Logarithmic form: `log Z_G ≥ |ι| · log 2` for ferromagnetic.
+
+Immediate from `partitionFunction_ge_two_pow_card_of_ferromagnetic`
+via `Real.log_pow` + `Real.log_le_log`. -/
+theorem log_partitionFunction_ge_card_mul_log_two_of_ferromagnetic
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    (Fintype.card ι : ℝ) * Real.log 2 ≤ Real.log (partitionFunction G p) := by
+  have h_two_pow_pos : (0 : ℝ) < (2 : ℝ) ^ Fintype.card ι :=
+    pow_pos (by norm_num) _
+  have h_log :=
+    Real.log_le_log h_two_pow_pos
+      (partitionFunction_ge_two_pow_card_of_ferromagnetic G p hf)
+  rw [Real.log_pow] at h_log
+  exact h_log
+
 /-- The free energy rescaling identity in `β`:
 `f(J, h, β) = f(βJ, βh, 1)`. Follows from `partitionFunction_beta_rescale`
 (after taking `log` and multiplying by `|ι|⁻¹`). -/
