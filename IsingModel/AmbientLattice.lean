@@ -3081,6 +3081,19 @@ theorem freeEnergyAlongExhaustion_le_uniform_upper_bound
     _ ≤ Real.log 2 + |p.β| * (|p.J| * c + |p.h|) := by
           gcongr
 
+/-! ## Free-spin identity for induced subgraph -/
+
+omit [DecidableEq V] in
+/-- **Induced subgraph of the empty graph is empty**:
+`inducedGraph (⊥ : SimpleGraph V) Λ = ⊥`.
+
+`inducedGraph = induce = comap` and `SimpleGraph.comap_bot`.
+Useful rewrite when the ambient graph is `⊥` (free-spin limit). -/
+@[simp]
+theorem inducedGraph_bot (Λ : Finset V) :
+    inducedGraph (⊥ : SimpleGraph V) Λ = (⊥ : SimpleGraph (↑Λ : Type _)) :=
+  SimpleGraph.comap_bot _
+
 /-! ## h-symmetry / `|h|`-monotonicity along exhaustion
 
 Specializations of `IsingModel.freeEnergy_neg_h`, `freeEnergy_eq_abs_h`,

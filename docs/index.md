@@ -232,6 +232,7 @@ ambient framework:
 | `freeEnergy_eq_abs_h` (FreeEnergy.lean) | `f(J, h, β) = f(J, |h|, β)` (case split + h-symmetry) |
 | `freeEnergy_monotone_abs_h` (FreeEnergy.lean) | **Ferromagnetic |h|-monotonicity**: `|h₁| ≤ |h₂| → f(J, h₁, β) ≤ f(J, h₂, β)` |
 | `freeEnergyAlongExhaustion_neg_h` / `_eq_abs_h` / `_monotone_abs_h` | Along-exhaustion specializations of h-symmetry + |h|-monotonicity |
+| `inducedGraph_bot` (AmbientLattice.lean) | `inducedGraph (⊥ : SimpleGraph V) Λ = ⊥` (simp) |
 | `correlationAlongExhaustion_nonneg` | `0 ≤ correlationAlongExhaustion G Λ p A n` (ferromagnetic) |
 | `correlationΛ_gks_second` | **GKS-II at finite volume**, lifted form: `correlationΛ (lift A) · correlationΛ (lift B) ≤ correlationΛ (lift (A ∆ B))` |
 | **`correlationInfinite_gks_second`** | **GKS-II at infinite volume** (Glimm–Jaffe §4.2 Thm 4.2.3): `correlationInfinite A · correlationInfinite B ≤ correlationInfinite (A ∆ B)` |
