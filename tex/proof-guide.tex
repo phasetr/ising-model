@@ -2780,6 +2780,14 @@ GKS-II は HNC / Boltzmann weight log-supermodularity で証明される
 \]
 \end{definition}
 
+\begin{definition}[\texttt{partitionFunctionAlongExhaustion}]
+\[
+\texttt{partitionFunctionAlongExhaustion}\,G\,\Lambda\,p\,n
+  \;:=\; \texttt{partitionFunctionΛ}\,G\,(\Lambda.\text{volume}\,n)\,p.
+\]
+$0 <$ positivity trivial from \texttt{partitionFunctionΛ\_pos}.
+\end{definition}
+
 本 PR は scaffold. 完全 convergence 証明 (subadditivity + Fekete) は
 deferred.
 
