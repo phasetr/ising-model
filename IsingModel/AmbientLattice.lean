@@ -2956,6 +2956,32 @@ theorem partitionFunctionAlongExhaustion_ge_zero_params
     partitionFunctionAlongExhaustion_monotone_J G Λ h β hh hβ le_rfl hJ n
   exact h1.trans h2
 
+/-- **Uniform lower bound** `freeEnergyAlongExhaustion ≥ log 2` for
+ferromagnetic parameters on a nonempty volume.
+
+Combines the zero-params comparison
+(`freeEnergyAlongExhaustion_ge_zero_params`, PR #117) with the
+explicit value at zero parameters (`freeEnergy_zero_params = log 2`,
+PR #120) via `IsingModel.freeEnergy` definitional unfolding.
+
+This is half of the data needed for Glimm–Jaffe §4.6 Proposition 4.6.1
+(convergence): the sequence is bounded below by `log 2`. -/
+theorem freeEnergyAlongExhaustion_ge_log_two
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {J h β : ℝ} (hJ : 0 ≤ J) (hh : 0 ≤ h) (hβ : 0 < β)
+    (n : ℕ) (hne : (Λ.volume n).Nonempty) :
+    Real.log 2 ≤ freeEnergyAlongExhaustion G Λ ⟨J, h, β⟩ n := by
+  have hcard : 0 < Fintype.card (↑(Λ.volume n) : Type _) := by
+    rw [Fintype.card_coe]; exact Finset.card_pos.mpr hne
+  have h_zero : freeEnergyAlongExhaustion G Λ ⟨0, 0, β⟩ n = Real.log 2 := by
+    change freeEnergyΛ G (Λ.volume n) (⟨0, 0, β⟩ : IsingParams ℝ) = Real.log 2
+    exact IsingModel.freeEnergy_zero_params _ β hcard
+  calc Real.log 2
+      = freeEnergyAlongExhaustion G Λ ⟨0, 0, β⟩ n := h_zero.symm
+    _ ≤ freeEnergyAlongExhaustion G Λ ⟨J, h, β⟩ n :=
+        freeEnergyAlongExhaustion_ge_zero_params G Λ hJ hh hβ n
+
 end Ambient
 end IsingModel
 
