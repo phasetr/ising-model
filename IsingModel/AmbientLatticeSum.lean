@@ -668,6 +668,26 @@ theorem freeEnergyInfinite_J_zero_of_eventually_nonempty
   filter_upwards [hne] with n hn using
     freeEnergyAlongExhaustion_J_zero G Λ h β n hn
 
+/-- **Infinite-volume J=0 graph-independence**:
+`freeEnergyInfinite G Λ ⟨0, h, β⟩ = freeEnergyInfinite ⊥ Λ ⟨0, h, β⟩`
+for any ambient graph `G, Λ`, any `h, β`.
+
+Lift of `freeEnergyAlongExhaustion_eq_bot_at_J_zero` (PR #176): the
+stagewise graph independence propagates through `Filter.limsup` since
+the two sequences are pointwise equal. -/
+theorem freeEnergyInfinite_eq_bot_at_J_zero
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    [∀ n, Fintype (inducedGraph (⊥ : SimpleGraph V) (Λ.volume n)).edgeSet]
+    (h β : ℝ) :
+    freeEnergyInfinite G Λ (⟨0, h, β⟩ : IsingParams ℝ)
+      = freeEnergyInfinite (⊥ : SimpleGraph V) Λ
+          (⟨0, h, β⟩ : IsingParams ℝ) := by
+  unfold freeEnergyInfinite
+  congr 1
+  funext n
+  exact freeEnergyAlongExhaustion_eq_bot_at_J_zero G Λ h β n
+
 /-- **Uniform lower bound on `freeEnergyInfinite` under ferromagnetic**:
 the per-n sharp lower bound of PR #125 lifts to `limsup`:
 `log(2·cosh(β·h)) ≤ freeEnergyInfinite G Λ p`.
