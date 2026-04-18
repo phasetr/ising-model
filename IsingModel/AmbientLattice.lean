@@ -2374,5 +2374,81 @@ theorem truncated4Infinite_indep_exhaustion
       correlationInfinite_indep_exhaustion G Λ Λ' p hf {i, l},
       correlationInfinite_indep_exhaustion G Λ Λ' p hf {j, k}]
 
+/-! ## Parameter monotonicity of `spontaneous*`
+
+Combine the parameter-direction monotonicity of `correlationInfinite`
+(PR #95–#97) with the infimum definition of `spontaneousCorrelation`
+to obtain monotonicity of the spontaneous correlation function in
+`J` and `β`.  The `h`-direction is already collapsed by the infimum
+over `h > 0`, so only `J` and `β` remain as free parameters. -/
+
+/-- **J-direction monotonicity of `spontaneousCorrelation`**: for
+fixed `β > 0`, $\langle \sigma^A \rangle^*(J, \beta)$ is monotone in
+$J \in \mathrm{Ici}\,0$.
+
+Since `correlationInfinite_monotone_J` gives pointwise monotonicity
+for each `h ∈ Ioi 0`, the iInf over `h > 0` is also monotone in `J`.
+Proof via `ciInf_mono` + `correlationInfinite_bddBelow_on_Ioi`. -/
+theorem spontaneousCorrelation_monotone_J
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {β : ℝ} (hβ : 0 < β) (A : Finset V) :
+    MonotoneOn
+      (fun J : ℝ => spontaneousCorrelation G Λ J β A)
+      (Set.Ici 0) := by
+  intro J₁ hJ₁ J₂ _ hJ₁₂
+  unfold spontaneousCorrelation
+  refine ciInf_mono
+    (correlationInfinite_bddBelow_on_Ioi G Λ hJ₁ hβ A) ?_
+  intro h
+  exact correlationInfinite_monotone_J G Λ h.property.le hβ A
+    hJ₁ (hJ₁.trans hJ₁₂) hJ₁₂
+
+/-- **β-direction monotonicity of `spontaneousCorrelation`**: for
+fixed `J ≥ 0`, the map `β ↦ spontaneousCorrelation G Λ J β A` is
+monotone on `Set.Ioi 0`.
+
+Companion to `spontaneousCorrelation_monotone_J`.  Since
+`correlationInfinite_monotone_beta` gives pointwise monotonicity in
+`β` for each `h ∈ Ioi 0` (with the remaining parameters bounded
+below by `0`), the iInf over `h > 0` is also monotone in `β`.
+Proof via `ciInf_mono` + `correlationInfinite_bddBelow_on_Ioi`. -/
+theorem spontaneousCorrelation_monotone_beta
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {J : ℝ} (hJ : 0 ≤ J) (A : Finset V) :
+    MonotoneOn
+      (fun β : ℝ => spontaneousCorrelation G Λ J β A)
+      (Set.Ioi 0) := by
+  intro β₁ hβ₁ β₂ _ hβ₁₂
+  unfold spontaneousCorrelation
+  refine ciInf_mono
+    (correlationInfinite_bddBelow_on_Ioi G Λ hJ hβ₁ A) ?_
+  intro h
+  exact correlationInfinite_monotone_beta G Λ hJ h.property.le A
+    hβ₁ (lt_of_lt_of_le hβ₁ hβ₁₂) hβ₁₂
+
+/-- **J-direction monotonicity of `spontaneousMagnetization`**:
+specialization of `spontaneousCorrelation_monotone_J` at `A = {i}`. -/
+theorem spontaneousMagnetization_monotone_J
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {β : ℝ} (hβ : 0 < β) (i : V) :
+    MonotoneOn
+      (fun J : ℝ => spontaneousMagnetization G Λ J β i)
+      (Set.Ici 0) :=
+  spontaneousCorrelation_monotone_J G Λ hβ {i}
+
+/-- **β-direction monotonicity of `spontaneousMagnetization`**:
+specialization of `spontaneousCorrelation_monotone_beta` at `A = {i}`. -/
+theorem spontaneousMagnetization_monotone_beta
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {J : ℝ} (hJ : 0 ≤ J) (i : V) :
+    MonotoneOn
+      (fun β : ℝ => spontaneousMagnetization G Λ J β i)
+      (Set.Ioi 0) :=
+  spontaneousCorrelation_monotone_beta G Λ hJ {i}
+
 end Ambient
 end IsingModel
