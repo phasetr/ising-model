@@ -27,10 +27,13 @@ the canonical `Sum.inl` / `Sum.inr` embeddings.
   `Function.Embedding.inr`.
 * `SimpleGraph.edgeSet_sum` — edge-set decomposition as a union of
   `Sym2`-level images.
-* `SimpleGraph.disjoint_inl_inr_edgeSet` — the two images are disjoint.
+* `SimpleGraph.disjoint_inl_inr_edgeSet` — the two Set-level images are
+  disjoint.
 * `SimpleGraph.edgeSet_sum_finite` / `fintypeEdgeSetSum` — finiteness
   of the sum edge set from finiteness of the summands' edge sets.
 * `SimpleGraph.edgeFinset_sum` — `Finset`-level decomposition.
+* `SimpleGraph.disjoint_inl_inr_edgeFinset` — `Finset`-level disjointness
+  of the two images.
 * `SimpleGraph.card_edgeFinset_sum` — cardinality identity.
 -/
 
@@ -108,29 +111,28 @@ theorem edgeFinset_sum [DecidableEq V] [DecidableEq W]
   rw [Finset.coe_union, coe_edgeFinset, Finset.coe_map, Finset.coe_map,
       coe_edgeFinset, coe_edgeFinset, edgeSet_sum]
 
+/-- Finset-level disjointness: the two image finsets in `edgeFinset_sum`
+are disjoint. Derived from the Set-level `disjoint_inl_inr_edgeSet`
+by pushing disjointness through `Finset.coe`. -/
+theorem disjoint_inl_inr_edgeFinset [Fintype G.edgeSet] [Fintype H.edgeSet] :
+    Disjoint
+      (G.edgeFinset.map (Function.Embedding.inl : V ↪ V ⊕ W).sym2Map)
+      (H.edgeFinset.map (Function.Embedding.inr : W ↪ V ⊕ W).sym2Map) := by
+  rw [← Finset.disjoint_coe, Finset.coe_map, Finset.coe_map,
+      coe_edgeFinset, coe_edgeFinset]
+  exact disjoint_inl_inr_edgeSet G H
+
 /-- Cardinality identity:
 `(G ⊕g H).edgeFinset.card = G.edgeFinset.card + H.edgeFinset.card`.
 
 Classical decidability of `V` and `W` is introduced in the proof to
-invoke `edgeFinset_sum`; these instances do not appear in the type. -/
+invoke `edgeFinset_sum` and `disjoint_inl_inr_edgeFinset`; these
+instances do not appear in the type. -/
 theorem card_edgeFinset_sum [Fintype G.edgeSet] [Fintype H.edgeSet] :
     (G.sum H).edgeFinset.card = G.edgeFinset.card + H.edgeFinset.card := by
   classical
-  have hDisj :
-      Disjoint
-        (G.edgeFinset.map (Function.Embedding.inl : V ↪ V ⊕ W).sym2Map)
-        (H.edgeFinset.map (Function.Embedding.inr : W ↪ V ⊕ W).sym2Map) := by
-    rw [Finset.disjoint_left]
-    intro e heG heH
-    rw [Finset.mem_map] at heG heH
-    obtain ⟨eG, _, rfl⟩ := heG
-    obtain ⟨eH, _, hEq⟩ := heH
-    refine Sym2.inductionOn₂ eG eH
-      (fun v₁ v₂ w₁ w₂ (hEq : Sym2.map _ s(w₁, w₂) = Sym2.map _ s(v₁, v₂)) => ?_) hEq
-    simp only [Sym2.map_mk, Function.Embedding.inl_apply, Function.Embedding.inr_apply,
-               Sym2.eq_iff] at hEq
-    rcases hEq with ⟨h, _⟩ | ⟨h, _⟩ <;> exact nomatch h
-  rw [edgeFinset_sum, Finset.card_union_of_disjoint hDisj,
+  rw [edgeFinset_sum,
+      Finset.card_union_of_disjoint (disjoint_inl_inr_edgeFinset G H),
       Finset.card_map, Finset.card_map]
 
 end SimpleGraph

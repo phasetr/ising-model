@@ -85,6 +85,7 @@ Named specializations at `A = {i}`:
 | `isingEdgePoly_nonvanishing_of_graph` | Lee–Yang for Ising partition polynomial | `FreeEnergy.lean` | Finite |
 | `sum_eq_map_sup` (§4.6 super-add. prep) | `G ⊕g H = G.map Sum.inl ⊔ H.map Sum.inr` | `SumGraph.lean` | Disjoint-sum lemma |
 | `edgeSet_sum` | Edge-set decomposition of `G ⊕g H` | `SumGraph.lean` | Disjoint-sum lemma |
+| `disjoint_inl_inr_edgeSet` / `disjoint_inl_inr_edgeFinset` | Set / Finset disjointness of the two images | `SumGraph.lean` | Disjoint-sum lemma |
 | `card_edgeFinset_sum` | `#(G ⊕g H).edgeFinset = #G.edgeFinset + #H.edgeFinset` | `SumGraph.lean` | Disjoint-sum lemma |
 
 **Not yet formalized**: the infinite-volume analyticity of `f(h)` via
