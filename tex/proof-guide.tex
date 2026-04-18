@@ -1688,6 +1688,21 @@ along-exhaustion / $\infty$-vol lift (eventually nonempty) も同 PR.
 zero-parameter closed form.
 \end{theorem}
 
+\begin{theorem}[\texttt{\_eq\_bot\_at\_J\_zero} along-exhaustion / $\infty$-vol lift; PR \#176]
+base 層の $\bot$-equivalence identities (PR \#175) を
+along-exhaustion / $\infty$-vol まで延長:
+\[
+  \texttt{freeEnergyAlongExhaustion}\,G\,\Lambda\,\langle 0,h,\beta\rangle\,n
+    = \texttt{freeEnergyAlongExhaustion}\,\bot\,\Lambda\,\langle 0,h,\beta\rangle\,n,
+\]
+\[
+  \texttt{freeEnergyInfinite}\,G\,\Lambda\,\langle 0,h,\beta\rangle
+    = \texttt{freeEnergyInfinite}\,\bot\,\Lambda\,\langle 0,h,\beta\rangle.
+\]
+Along-exhaustion 版は \texttt{change} + \texttt{freeEnergy\_eq\_bot\_at\_J\_zero}
+適用, $\infty$-vol 版は \texttt{Filter.limsup} の関数性.
+\end{theorem}
+
 \begin{theorem}[$\bot$-equivalence core identities at $J=0$; PR \#175]
 PR \#174 の各層で独立した ``$\bot$ への reduction'' を単一の
 基底恒等式に集約 refactor:
