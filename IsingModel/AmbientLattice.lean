@@ -2502,6 +2502,194 @@ theorem spontaneousMagnetization_monotone_beta
       (Set.Ioi 0) :=
   spontaneousCorrelation_monotone_beta G Λ hJ {i}
 
+/-! ## Cor 4.3.5 (inductive n-point at h=0) at infinite volume
+
+Lift `IsingModel.cor_4_3_5_h0` to the thermodynamic limit using the
+liftFinset infrastructure from PR #107 and `Finset.sum_bij` to reindex
+the powerset sum.
+
+Reference: Glimm–Jaffe §4.3 Corollary 4.3.5, p. 62. -/
+
+/-- **Cor 4.3.5 lifted to infinite volume**: the inductive (n+2)-point
+bound holds for `correlationInfinite` at `h = 0`.  For ferromagnetic
+Ising at zero external field, any finite set `S`, and distinct sites
+`j, k ∉ S`, the infinite-volume correlation satisfies the same
+inductive bound as the finite-volume version. -/
+theorem correlationInfinite_cor_4_3_5_h0
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (hf : Ferromagnetic ⟨J, (0 : ℝ), β⟩)
+    (S : Finset V) {j k : V} (hj : j ∉ S) (hk : k ∉ S) (hjk : j ≠ k) :
+    correlationInfinite G Λ ⟨J, 0, β⟩ (insert j (insert k S)) ≤
+      correlationInfinite G Λ ⟨J, 0, β⟩ S *
+        correlationInfinite G Λ ⟨J, 0, β⟩ {j, k} +
+      ∑ T ∈ S.powerset,
+        correlationInfinite G Λ ⟨J, 0, β⟩ (insert j T) *
+          correlationInfinite G Λ ⟨J, 0, β⟩ (insert k (S \ T)) := by
+  set p := (⟨J, 0, β⟩ : IsingParams ℝ)
+  have hlhs_tendsto := tendsto_correlationAlongExhaustion_correlationInfinite
+    G Λ p hf (insert j (insert k S))
+  have hrhs_main :=
+    (tendsto_correlationAlongExhaustion_correlationInfinite G Λ p hf S).mul
+      (tendsto_correlationAlongExhaustion_correlationInfinite G Λ p hf {j, k})
+  have hrhs_sum : Filter.Tendsto
+      (fun n => ∑ T ∈ S.powerset,
+        correlationAlongExhaustion G Λ p (insert j T) n *
+          correlationAlongExhaustion G Λ p (insert k (S \ T)) n)
+      Filter.atTop
+      (nhds (∑ T ∈ S.powerset,
+        correlationInfinite G Λ p (insert j T) *
+          correlationInfinite G Λ p (insert k (S \ T)))) := by
+    refine tendsto_finset_sum _ (fun T _ => ?_)
+    exact (tendsto_correlationAlongExhaustion_correlationInfinite G Λ p hf _).mul
+      (tendsto_correlationAlongExhaustion_correlationInfinite G Λ p hf _)
+  have hrhs_tendsto := hrhs_main.add hrhs_sum
+  refine le_of_tendsto_of_tendsto' hlhs_tendsto hrhs_tendsto ?_
+  intro n
+  by_cases hall : (insert j (insert k S) : Finset V) ⊆ Λ.volume n
+  · have hj_vol : j ∈ Λ.volume n := hall (Finset.mem_insert_self _ _)
+    have hk_vol : k ∈ Λ.volume n :=
+      hall (Finset.mem_insert_of_mem (Finset.mem_insert_self _ _))
+    have hS_vol : S ⊆ Λ.volume n := fun x hx =>
+      hall (Finset.mem_insert_of_mem (Finset.mem_insert_of_mem hx))
+    have hjk_vol : ({j, k} : Finset V) ⊆ Λ.volume n := by
+      intro x hx
+      simp only [Finset.mem_insert, Finset.mem_singleton] at hx
+      rcases hx with rfl | rfl
+      · exact hj_vol
+      · exact hk_vol
+    let j' : (↑(Λ.volume n) : Type _) := ⟨j, hj_vol⟩
+    let k' : (↑(Λ.volume n) : Type _) := ⟨k, hk_vol⟩
+    let S' : Finset (↑(Λ.volume n) : Type _) := liftFinset S hS_vol
+    have hj'_notin : j' ∉ S' := fun h => hj ((mem_liftFinset _ _).mp h)
+    have hk'_notin : k' ∉ S' := fun h => hk ((mem_liftFinset _ _).mp h)
+    have hjk' : j' ≠ k' := fun h => hjk (Subtype.mk.inj h)
+    have hfin := IsingModel.cor_4_3_5_h0
+      (inducedGraph G (Λ.volume n)) J β hf S' j' k' hj'_notin hk'_notin hjk'
+    rw [correlationAlongExhaustion_of_subset G Λ p hall,
+        correlationAlongExhaustion_of_subset G Λ p hS_vol,
+        correlationAlongExhaustion_of_subset G Λ p hjk_vol]
+    have hlift_jkS :
+        liftFinset (insert j (insert k S)) hall = insert j' (insert k' S') := by
+      rw [← liftFinset_insert hj_vol (fun x hx =>
+        hall (Finset.mem_insert_of_mem hx))]
+      simp only [S', k']
+      rw [← liftFinset_insert hk_vol hS_vol]
+    have hlift_jk :
+        liftFinset ({j, k} : Finset V) hjk_vol = ({j', k'} : Finset _) := by
+      ext x
+      simp only [mem_liftFinset, Finset.mem_insert, Finset.mem_singleton, j', k']
+      constructor
+      · rintro (rfl | rfl)
+        · exact Or.inl (by rfl)
+        · exact Or.inr (by rfl)
+      · rintro (h | h)
+        · exact Or.inl (congrArg Subtype.val h)
+        · exact Or.inr (congrArg Subtype.val h)
+    rw [hlift_jkS, hlift_jk]
+    have hsum_eq :
+        ∑ T ∈ S.powerset,
+          correlationAlongExhaustion G Λ p (insert j T) n *
+            correlationAlongExhaustion G Λ p (insert k (S \ T)) n
+        = ∑ T' ∈ S'.powerset,
+          correlationΛ G (Λ.volume n) p (insert j' T') *
+            correlationΛ G (Λ.volume n) p (insert k' (S' \ T')) := by
+      refine Finset.sum_bij
+        (fun T hT => liftFinset T
+          (fun x hx => hS_vol ((Finset.mem_powerset.mp hT) hx)))
+        ?_ ?_ ?_ ?_
+      · intro T hT
+        simp only [S', Finset.mem_powerset]
+        intro x hx
+        simp only [mem_liftFinset] at hx ⊢
+        exact (Finset.mem_powerset.mp hT) hx
+      · intro T₁ hT₁ T₂ hT₂ heq
+        have h₁ := Finset.mem_powerset.mp hT₁
+        have h₂ := Finset.mem_powerset.mp hT₂
+        -- Beta-reduce heq to pure liftFinset equality
+        have heq' : liftFinset T₁ (fun x hx => hS_vol (h₁ hx))
+            = liftFinset T₂ (fun x hx => hS_vol (h₂ hx)) := heq
+        ext x
+        by_cases hx_vol : x ∈ Λ.volume n
+        · constructor
+          · intro hxT₁
+            have hlift : (⟨x, hx_vol⟩ : ↑(Λ.volume n))
+                ∈ liftFinset T₁ (fun y hy => hS_vol (h₁ hy)) :=
+              (mem_liftFinset _ _).mpr hxT₁
+            rw [heq'] at hlift
+            exact (mem_liftFinset _ _).mp hlift
+          · intro hxT₂
+            have hlift : (⟨x, hx_vol⟩ : ↑(Λ.volume n))
+                ∈ liftFinset T₂ (fun y hy => hS_vol (h₂ hy)) :=
+              (mem_liftFinset _ _).mpr hxT₂
+            rw [← heq'] at hlift
+            exact (mem_liftFinset _ _).mp hlift
+        · exact ⟨fun h => absurd (hS_vol (h₁ h)) hx_vol,
+                fun h => absurd (hS_vol (h₂ h)) hx_vol⟩
+      · intro T' hT'
+        simp only [S', Finset.mem_powerset] at hT'
+        refine ⟨T'.image (fun x => x.val), ?_, ?_⟩
+        · simp only [Finset.mem_powerset]
+          intro x hx
+          simp only [Finset.mem_image] at hx
+          obtain ⟨y, hyT', rfl⟩ := hx
+          have := hT' hyT'
+          simpa only [mem_liftFinset] using this
+        · ext x
+          simp only [mem_liftFinset, Finset.mem_image]
+          refine ⟨?_, ?_⟩
+          · rintro ⟨y, hyT', hyx⟩
+            have : y = x := Subtype.ext hyx
+            exact this ▸ hyT'
+          · intro h
+            exact ⟨x, h, rfl⟩
+      · intro T hT
+        have hT_sub := Finset.mem_powerset.mp hT
+        have hjT_vol : (insert j T : Finset V) ⊆ Λ.volume n := fun x hx => by
+          simp only [Finset.mem_insert] at hx
+          rcases hx with rfl | hx
+          · exact hj_vol
+          · exact hS_vol (hT_sub hx)
+        have hkST_vol : (insert k (S \ T) : Finset V) ⊆ Λ.volume n :=
+          fun x hx => by
+            simp only [Finset.mem_insert, Finset.mem_sdiff] at hx
+            rcases hx with rfl | ⟨hxS, _⟩
+            · exact hk_vol
+            · exact hS_vol hxS
+        rw [correlationAlongExhaustion_of_subset G Λ p hjT_vol,
+            correlationAlongExhaustion_of_subset G Λ p hkST_vol]
+        have h_liftFinset_jT :
+            liftFinset (insert j T) hjT_vol
+            = insert j' (liftFinset T (fun x hx => hS_vol (hT_sub hx))) := by
+          rw [← liftFinset_insert hj_vol (fun x hx => hS_vol (hT_sub hx))]
+        have h_liftFinset_kST :
+            liftFinset (insert k (S \ T)) hkST_vol
+            = insert k' (S' \ liftFinset T (fun x hx => hS_vol (hT_sub hx))) := by
+          rw [← liftFinset_insert hk_vol (fun x hx => hS_vol
+            ((Finset.mem_sdiff.mp hx).1))]
+          congr 1
+          simp only [S']
+          exact (liftFinset_sdiff hS_vol (fun x hx => hS_vol (hT_sub hx))).symm
+        rw [h_liftFinset_jT, h_liftFinset_kST]
+    rw [hsum_eq]
+    unfold correlationΛ
+    exact hfin
+  · rw [correlationAlongExhaustion_of_not_subset G Λ p hall]
+    have h_main :
+        0 ≤ correlationAlongExhaustion G Λ p S n *
+          correlationAlongExhaustion G Λ p {j, k} n :=
+      mul_nonneg
+        (correlationAlongExhaustion_nonneg G Λ p hf _ n)
+        (correlationAlongExhaustion_nonneg G Λ p hf _ n)
+    have h_sum : 0 ≤ ∑ T ∈ S.powerset,
+        correlationAlongExhaustion G Λ p (insert j T) n *
+          correlationAlongExhaustion G Λ p (insert k (S \ T)) n := by
+      refine Finset.sum_nonneg fun T _ => ?_
+      exact mul_nonneg
+        (correlationAlongExhaustion_nonneg G Λ p hf _ n)
+        (correlationAlongExhaustion_nonneg G Λ p hf _ n)
+    linarith
+
 end Ambient
 end IsingModel
 

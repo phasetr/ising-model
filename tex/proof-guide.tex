@@ -2744,4 +2744,35 @@ $\texttt{MonotoneOn}\,(\beta \mapsto \langle \sigma^A \rangle^*)\,(\mathrm{Ioi}\
 単サイト $A = \{i\}$ specialization of \texttt{spontaneousCorrelation\_monotone\_beta}.
 \end{theorem}
 
+\subsection{Cor 4.3.5 (inductive n-point at $h = 0$) at infinite volume}
+
+参考: Glimm--Jaffe, \textit{Quantum Physics}, 2nd ed.\ (1987),
+\S 4.3 Corollary 4.3.5, p.\ 62.
+
+\begin{theorem}[\texttt{correlationInfinite\_cor\_4\_3\_5\_h0}]
+強磁性系 $(J \ge 0, \beta > 0)$, $h = 0$, $S : \texttt{Finset}\,V$,
+$j, k : V$, $j \notin S$, $k \notin S$, $j \ne k$ のとき
+\[
+\langle \sigma^{\{j, k\} \cup S} \rangle_\infty
+  \le \langle \sigma^S \rangle_\infty \langle \sigma^{\{j, k\}} \rangle_\infty
+  + \sum_{T \in \mathcal{P}(S)}
+    \langle \sigma^{\{j\} \cup T} \rangle_\infty
+    \langle \sigma^{\{k\} \cup (S \setminus T)} \rangle_\infty.
+\]
+\end{theorem}
+
+\begin{proof}
+Along-exhaustion lhs/rhs 列 $\to$ \texttt{Tendsto}
+(\texttt{tendsto\_finset\_sum} + \texttt{Tendsto.mul/add}).
+各 $n$ で $\{j, k\} \cup S \subseteq \Lambda.\text{volume}\,n$
+が成立する場合, 有限体積 \texttt{cor\_4\_3\_5\_h0} を
+\texttt{inducedGraph}\,$G\,\Lambda(n)$ に適用.
+\texttt{liftFinset\_insert}, \texttt{liftFinset\_sdiff} (PR \#107) で
+compound set identifications.
+\texttt{Finset.sum\_bij} で $S.powerset \leftrightarrow S'.powerset$ reindex
+($S' := \texttt{liftFinset}\,S$).
+それ以外の $n$: lhs $= 0 \le$ rhs (各項 $\ge 0$).
+\texttt{le\_of\_tendsto\_of\_tendsto'} で結論.
+\end{proof}
+
 \end{document}
