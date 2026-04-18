@@ -2689,4 +2689,33 @@ $h = 0$ かつ pairwise distinct で $U_3 = 0$.
 $\Lambda$ 非依存 (7 箇所 correlationInfinite\_indep\_exhaustion).
 \end{theorem}
 
+\subsection{Truncated 4-point correlation + $U_4 \le 0$ at $h = 0$}
+
+参考: Glimm--Jaffe, \textit{Quantum Physics}, 2nd ed.\ (1987),
+\S 4.3 Corollary 4.3.3, pp.\ 68ff.
+
+\begin{definition}[\texttt{truncated4Infinite}]
+\begin{align*}
+U_4 &:= \langle \sigma^{\{i,j,k,l\}} \rangle_\infty
+  - \langle \sigma^{\{i,j\}} \rangle_\infty \langle \sigma^{\{k,l\}} \rangle_\infty \\
+  &\quad - \langle \sigma^{\{i,k\}} \rangle_\infty \langle \sigma^{\{j,l\}} \rangle_\infty
+  - \langle \sigma^{\{i,l\}} \rangle_\infty \langle \sigma^{\{j,k\}} \rangle_\infty.
+\end{align*}
+\end{definition}
+
+\begin{theorem}[\texttt{truncated4Infinite\_nonpos\_h\_zero}]
+$h = 0$ + 強磁性 + 4 sites pairwise distinct で $U_4 \le 0$.
+\end{theorem}
+
+\begin{proof}
+有限体積 \texttt{cor\_4\_3\_3} を eventually 適用 (4 sites $\subseteq$
+$\Lambda.\text{volume}\,n$). Tendsto.sub/mul で
+$\texttt{truncated4AlongExhaustion} \to \texttt{truncated4Infinite}$.
+\texttt{le\_of\_tendsto} で極限 $\le 0$.
+\end{proof}
+
+\begin{theorem}[\texttt{truncated4Infinite\_indep\_exhaustion}]
+$\Lambda$ 非依存 (7 箇所).
+\end{theorem}
+
 \end{document}

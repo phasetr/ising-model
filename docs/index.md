@@ -233,6 +233,9 @@ ambient framework:
 | **`truncated3Infinite_nonpos`** | **GHS at infinite volume** (Glimm–Jaffe §4.3 Cor 4.3.4 pp. 68ff): pairwise distinct ⇒ `U_3 ≤ 0` |
 | `truncated3Infinite_h_zero_of_distinct` | `h = 0` + distinct ⇒ `U_3 = 0` (Z₂ symmetry consequence) |
 | `truncated3Infinite_indep_exhaustion` | Λ-independence |
+| **`truncated4Infinite`** | **Truncated 4-point correlation** `U_4(i,j,k,l) := ⟨σ^{i,j,k,l}⟩_∞ - ⟨σ^{i,j}⟩⟨σ^{k,l}⟩ - ⟨σ^{i,k}⟩⟨σ^{j,l}⟩ - ⟨σ^{i,l}⟩⟨σ^{j,k}⟩` |
+| **`truncated4Infinite_nonpos_h_zero`** | **Lebowitz/U_4 ≤ 0 at infinite volume** (Glimm–Jaffe §4.3 Cor 4.3.3 pp. 68ff): `h = 0` + pairwise distinct ⇒ `U_4 ≤ 0` |
+| `truncated4Infinite_indep_exhaustion` | Λ-independence |
 
 ## Axioms
 
@@ -271,7 +274,7 @@ inventory (2026-04-17).
 | §4.2 | Prop 4.2.4 (h-monotonicity) | **Done (finite + infinite)** | Three parameters: `correlationInfinite_monotone_{J,h,beta}` |
 | §4.3 | Thm 4.3.1 (φ⁴) | **Done (axiom)** | `phi4_single_site_nonneg` |
 | §4.3 | Cor 4.3.2 (Lebowitz) | **Done (axiom)** | 3 axioms |
-| §4.3 | Cor 4.3.3 (`U₄ ≤ 0` at h=0) | **Done (finite)** | Uses axioms |
+| §4.3 | Cor 4.3.3 (`U₄ ≤ 0` at h=0) | **Done (finite + infinite)** | Finite: `cor_4_3_3` (axioms); Infinite: `truncated4Infinite_nonpos_h_zero` |
 | §4.3 | Cor 4.3.4 (GHS, `U₃ ≤ 0`) | **Done (finite + infinite)** | Finite: `ghs_inequality` (axioms); Infinite: `truncated3Infinite_nonpos`, `_h_zero_of_distinct` |
 | §4.3 | Cor 4.3.5 (inductive n-point at h=0) | **Done (finite)** | Uses axioms |
 | §4.4 | FKG inequality | **Done** | `fkg_ising` |
