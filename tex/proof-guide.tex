@@ -1608,6 +1608,25 @@ $\texttt{freeEnergyInfinite}\,G\,\Lambda\,\langle 0, 0, \beta \rangle = \log 2$.
 最大エントロピー値を $J = h = 0$ (Hamiltonian 恒等零) から得る pair.
 \end{theorem}
 
+\begin{theorem}[\texttt{partitionFunctionAlongExhaustion\_zero\_params}; PR \#163]
+任意の $n$ で
+\[
+  \texttt{partitionFunctionAlongExhaustion}\,G\,\Lambda\,\langle 0, 0, \beta \rangle\,n
+    = 2^{|\Lambda_n|}.
+\]
+\texttt{IsingModel.partitionFunction\_zero\_params} 直接 specialize +
+\texttt{card\_config\_eq\_two\_pow} + \texttt{Fintype.card\_coe}.
+\end{theorem}
+
+\begin{theorem}[\texttt{log\_partitionFunctionAlongExhaustion\_zero\_params}; PR \#163]
+任意の $n$ で
+\[
+  \log \texttt{partitionFunctionAlongExhaustion}\,G\,\Lambda\,\langle 0, 0, \beta \rangle\,n
+    = |\Lambda_n| \cdot \log 2.
+\]
+上記と \texttt{Real.log\_pow} の合成.
+\end{theorem}
+
 \begin{theorem}[\texttt{inducedGraph\_bot}; PR \#129]
 $\texttt{inducedGraph}\,(\bot : \texttt{SimpleGraph}\,V)\,\Lambda
   = (\bot : \texttt{SimpleGraph}\,\uparrow\Lambda)$.
