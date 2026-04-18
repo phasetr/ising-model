@@ -2573,4 +2573,28 @@ $\texttt{correlationInfinite}\,G\,\Lambda\,\langle J,0,\beta\rangle\,A = 0$.
 $h = 0$ で $M^{\mathrm{FM}} = 0$ (単サイト $|\{i\}| = 1$ は奇数).
 \end{theorem}
 
+\subsection{Spontaneous magnetization at infinite volume}
+
+参考: Glimm--Jaffe, \textit{Quantum Physics}, 2nd ed.\ (1987), \S 5.1 p.\ 77:
+$m^*(J, \beta) := \lim_{h \to 0^+} M(J, h, \beta)$.
+Friedli--Velenik \S 3.10 (self-consistent magnetization).
+
+\begin{definition}[\texttt{spontaneousMagnetization}]
+\[
+m^*(G, \Lambda; J, \beta; i)
+  \;:=\; \inf_{h > 0} \texttt{magnetizationInfinite}\,G\,\Lambda\,\langle J,h,\beta\rangle\,i.
+\]
+\end{definition}
+
+\begin{theorem}[\texttt{spontaneousMagnetization}の基本性質]
+強磁性下で:
+\begin{itemize}
+\item \texttt{\_nonneg}: $m^* \ge 0$,
+\item \texttt{\_le\_one}: $m^* \le 1$,
+\item \texttt{\_le\_magnetizationInfinite}: $h > 0$ で $m^* \le M(h)$.
+\end{itemize}
+$\texttt{magnetizationInfinite}$ は $h$ に対して monotone on $\mathrm{Ici}\,0$
+(PR \#95) かつ $0 \le \cdot \le 1$ なので, $\inf_{h > 0}$ は well-defined.
+\end{theorem}
+
 \end{document}

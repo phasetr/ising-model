@@ -210,6 +210,10 @@ ambient framework:
 | `correlationAlongExhaustion_h_zero` | Pointwise `= 0` at `h = 0` for odd-cardinality `A` |
 | `correlationInfinite_h_zero` | `correlationInfinite ⟨J, 0, β⟩ A = 0` for `Odd A.card` (sup of zero sequence) |
 | **`magnetizationInfinite_zero_at_h_zero`** | **Z₂ symmetry**: `magnetizationInfinite G Λ ⟨J, 0, β⟩ i = 0` at zero external field |
+| **`spontaneousMagnetization`** | **Spontaneous magnetization** `m* := ⨅ h : Set.Ioi 0, magnetizationInfinite ⟨J, h, β⟩ i` (Glimm–Jaffe §5.1 p. 77) |
+| `spontaneousMagnetization_nonneg` | `0 ≤ m*` (ferromagnetic) |
+| `spontaneousMagnetization_le_one` | `m* ≤ 1` |
+| `spontaneousMagnetization_le_magnetizationInfinite` | `m* ≤ M(h)` for any `h > 0` (infimum characterization) |
 
 ## Axioms
 
