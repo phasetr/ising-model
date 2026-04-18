@@ -488,6 +488,28 @@ theorem freeEnergyInfinite_ge_log_two_cosh
     exact freeEnergyAlongExhaustion_le_uniform_upper_bound G Λ p hc n hne
   exact Filter.le_limsup_of_frequently_le hlower.frequently hbdd_above
 
+/-- **Corollary**: `log 2 ≤ freeEnergyInfinite G Λ p` under the same
+hypotheses as `freeEnergyInfinite_ge_log_two_cosh`.
+
+Follows from `cosh (β h) ≥ cosh 0 = 1` (`Real.one_le_cosh`), which
+gives `2 · cosh (β h) ≥ 2` and hence
+`log (2 · cosh (β h)) ≥ log 2`. -/
+theorem freeEnergyInfinite_ge_log_two
+    [Nonempty V] (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) {c : ℝ}
+    (hc : ∀ n, (Λ.volume n).Nonempty →
+      ((inducedGraph G (Λ.volume n)).edgeFinset.card : ℝ) ≤
+        c * Fintype.card (↑(Λ.volume n) : Type _)) :
+    Real.log 2 ≤ freeEnergyInfinite G Λ p := by
+  have h_cosh_ge_one : (1 : ℝ) ≤ Real.cosh (p.β * p.h) :=
+    Real.one_le_cosh _
+  have h_le : Real.log 2 ≤ Real.log (2 * Real.cosh (p.β * p.h)) := by
+    apply Real.log_le_log (by norm_num : (0 : ℝ) < 2)
+    linarith
+  exact h_le.trans
+    (freeEnergyInfinite_ge_log_two_cosh G Λ p hf hc)
+
 end Ambient
 
 end IsingModel
