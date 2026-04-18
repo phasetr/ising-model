@@ -214,6 +214,7 @@ ambient framework:
 | `card_spin` (GibbsMeasure.lean) | `Fintype.card Spin = 2` |
 | `card_config_eq_two_pow` (GibbsMeasure.lean) | `Fintype.card (Config ι) = 2 ^ Fintype.card ι` |
 | `freeEnergy_zero_params` (FreeEnergy.lean) | `freeEnergy G ⟨0, 0, β⟩ = log 2` (for nonempty ι) |
+| **`freeEnergyAlongExhaustion_ge_log_two`** | **Uniform lower bound**: `log 2 ≤ freeEnergyAlongExhaustion G Λ ⟨J, h, β⟩ n` for ferromagnetic + nonempty `Λ.volume n` |
 | `correlationAlongExhaustion_nonneg` | `0 ≤ correlationAlongExhaustion G Λ p A n` (ferromagnetic) |
 | `correlationΛ_gks_second` | **GKS-II at finite volume**, lifted form: `correlationΛ (lift A) · correlationΛ (lift B) ≤ correlationΛ (lift (A ∆ B))` |
 | **`correlationInfinite_gks_second`** | **GKS-II at infinite volume** (Glimm–Jaffe §4.2 Thm 4.2.3): `correlationInfinite A · correlationInfinite B ≤ correlationInfinite (A ∆ B)` |
