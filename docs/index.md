@@ -271,7 +271,9 @@ inventory (2026-04-17).
 | §4.2 | Prop 4.2.4 (h-monotonicity) | **Done (finite + infinite)** | Three parameters: `correlationInfinite_monotone_{J,h,beta}` |
 | §4.3 | Thm 4.3.1 (φ⁴) | **Done (axiom)** | `phi4_single_site_nonneg` |
 | §4.3 | Cor 4.3.2 (Lebowitz) | **Done (axiom)** | 3 axioms |
-| §4.3 | Cor 4.3.3, 4.3.4, 4.3.5 | **Done** | Uses axioms |
+| §4.3 | Cor 4.3.3 (`U₄ ≤ 0` at h=0) | **Done (finite)** | Uses axioms |
+| §4.3 | Cor 4.3.4 (GHS, `U₃ ≤ 0`) | **Done (finite + infinite)** | Finite: `ghs_inequality` (axioms); Infinite: `truncated3Infinite_nonpos`, `_h_zero_of_distinct` |
+| §4.3 | Cor 4.3.5 (inductive n-point at h=0) | **Done (finite)** | Uses axioms |
 | §4.4 | FKG inequality | **Done** | `fkg_ising` |
 | §4.5 | Lee–Yang circle theorem | **Done** | `lee_yang_circle` |
 | §4.6 | **Prop 4.6.1 (`f_Λ` convergence)** | **Done (discretized)** | Discretized Λ↑ |
