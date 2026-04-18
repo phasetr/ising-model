@@ -216,15 +216,16 @@ theorem freeEnergyΛ_ge_log_two
     (inducedGraph G Λ) _ ⟨hJ, hh, hβ⟩ hcard
 
 /-- **`freeEnergyΛ ≥ 0`** for ferromagnetic on nonempty `Λ`.
-Follows from `freeEnergyΛ_ge_log_two` and `log 2 > 0`. -/
+Thin wrapper of base-layer
+`IsingModel.freeEnergy_nonneg_of_ferromagnetic`. -/
 theorem freeEnergyΛ_nonneg_of_ferromagnetic
     (G : SimpleGraph V) {Λ : Finset V} (hne : Λ.Nonempty)
     [Fintype (inducedGraph G Λ).edgeSet]
     (p : IsingParams ℝ) (hf : Ferromagnetic p) :
     0 ≤ freeEnergyΛ G Λ p := by
-  obtain ⟨J, h, β⟩ := p
-  exact (Real.log_pos (by norm_num : (1 : ℝ) < 2)).le.trans
-    (freeEnergyΛ_ge_log_two G hne hf.hJ hf.hh hf.hβ)
+  have hcard : 0 < Fintype.card (↑Λ : Type _) := by
+    rw [Fintype.card_coe]; exact Finset.card_pos.mpr hne
+  exact IsingModel.freeEnergy_nonneg_of_ferromagnetic (inducedGraph G Λ) p hf hcard
 
 /-- **`partitionFunctionΛ ≥ 1`** for ferromagnetic parameters:
 lifts PR #141 `partitionFunction_ge_one_of_ferromagnetic` to the

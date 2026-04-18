@@ -925,4 +925,15 @@ theorem freeEnergy_ge_log_two_of_ferromagnetic
     linarith
   exact h_log.trans (freeEnergy_ge_log_two_cosh G hf.hJ hf.hh hf.hβ hne)
 
+/-- **Nonnegativity `0 ≤ f_G(p)` for ferromagnetic parameters** on
+nonempty `ι`. Immediate from
+`freeEnergy_ge_log_two_of_ferromagnetic` and `Real.log_pos`
+(`0 < log 2`). -/
+theorem freeEnergy_nonneg_of_ferromagnetic
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (hne : 0 < Fintype.card ι) :
+    0 ≤ freeEnergy G p :=
+  (Real.log_pos (by norm_num : (1 : ℝ) < 2)).le.trans
+    (freeEnergy_ge_log_two_of_ferromagnetic G p hf hne)
+
 end IsingModel

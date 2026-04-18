@@ -1655,6 +1655,16 @@ $0 < |\iota|$, 強磁性 $p$ で
 (PR \#125) は本 PR で base 恒等への薄い wrapper に refactor.
 \end{theorem}
 
+\begin{theorem}[\texttt{freeEnergy\_nonneg\_of\_ferromagnetic}; PR \#169]
+$0 < |\iota|$, 強磁性 $p$ で
+\[
+  0 \;\le\; f_G(p).
+\]
+PR \#168 と \texttt{Real.log\_pos} ($0 < \log 2$) の推移.
+既存 $\Lambda$ 版 \texttt{freeEnergyΛ\_nonneg\_of\_ferromagnetic}
+(PR \#125) は本 PR で base への薄い wrapper に refactor.
+\end{theorem}
+
 \begin{theorem}[\texttt{card\_mul\_freeEnergy\_eq\_log\_partitionFunction}; PR \#167]
 $|\iota| > 0$ で
 \[
