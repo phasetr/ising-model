@@ -1689,5 +1689,47 @@ theorem spontaneousMagnetization_indep_exhaustion
   exact magnetizationInfinite_indep_exhaustion G Λ Λ' ⟨J, h.val, β⟩
     ⟨hJ, le_of_lt h.property, hβ⟩ i
 
+/-- **Right-limit Tendsto**: for ferromagnetic Ising, the
+`magnetizationInfinite` function tends to `spontaneousMagnetization`
+as `h → 0⁺`.
+
+Combines:
+- `magnetizationInfinite_monotone_h` (PR #95), restricted to `Set.Ioi 0`.
+- Bounded-below-by-0 (ferromagnetic).
+- `MonotoneOn.tendsto_nhdsGT` (Mathlib).
+- Conversion between `sInf (f '' Ioi 0)` and the subtype-indexed iInf
+  via `sInf_image` / `iInf_subtype`. -/
+theorem tendsto_magnetizationInfinite_spontaneousMagnetization_nhdsGT
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) (i : V) :
+    Filter.Tendsto
+      (fun h : ℝ => magnetizationInfinite G Λ ⟨J, h, β⟩ i)
+      (nhdsWithin (0 : ℝ) (Set.Ioi 0))
+      (nhds (spontaneousMagnetization G Λ J β i)) := by
+  set f : ℝ → ℝ := fun h => magnetizationInfinite G Λ ⟨J, h, β⟩ i with hf_def
+  -- Step 1: MonotoneOn f (Ioi 0)
+  have hmono : MonotoneOn f (Set.Ioi 0) := by
+    have hmono_Ici : MonotoneOn f (Set.Ici 0) :=
+      magnetizationInfinite_monotone_h G Λ hJ hβ i
+    exact hmono_Ici.mono Set.Ioi_subset_Ici_self
+  -- Step 2: BddBelow (f '' Ioi 0)
+  have hbdd : BddBelow (f '' Set.Ioi 0) := by
+    refine ⟨0, ?_⟩
+    rintro _ ⟨h, hh, rfl⟩
+    exact magnetizationInfinite_nonneg G Λ ⟨J, h, β⟩
+      ⟨hJ, le_of_lt hh, hβ⟩ i
+  -- Step 3: Apply MonotoneOn.tendsto_nhdsGT
+  have htendsto := hmono.tendsto_nhdsGT hbdd
+  -- Step 4: Identify sInf (f '' Ioi 0) with spontaneousMagnetization
+  have hsInf : sInf (f '' Set.Ioi 0) = spontaneousMagnetization G Λ J β i := by
+    unfold spontaneousMagnetization
+    rw [← sInf_range, ← Set.image_univ]
+    congr 1
+    ext y
+    simp [hf_def, Set.image_univ, Set.mem_image, Set.mem_Ioi, Subtype.exists]
+  rw [← hsInf]
+  exact htendsto
+
 end Ambient
 end IsingModel

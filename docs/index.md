@@ -215,6 +215,7 @@ ambient framework:
 | `spontaneousMagnetization_le_one` | `m* ≤ 1` |
 | `spontaneousMagnetization_le_magnetizationInfinite` | `m* ≤ M(h)` for any `h > 0` (infimum characterization) |
 | `spontaneousMagnetization_indep_exhaustion` | `m*` does not depend on the choice of exhaustion |
+| **`tendsto_magnetizationInfinite_spontaneousMagnetization_nhdsGT`** | **Right-limit**: `Tendsto M(h) (𝓝[>] 0) (𝓝 m*)` — realizes `m*` as the physical right limit of `magnetizationInfinite` |
 
 ## Axioms
 
@@ -266,7 +267,7 @@ inventory (2026-04-17).
 | Section | Result | Status | Notes |
 |---|---|---|---|
 | §5.1 | Pure/mixed phase criteria | **Done (algebraic)** | `mixed_phase_truncated2`, `mixed_phase_pure_iff`, `truncated2_le_one` |
-| §5.1 | Spontaneous magnetization `m*` (p. 77) | **Done (infimum form)** | `spontaneousMagnetization` + nonneg/≤1/≤M(h). Tendsto (nhdsGT 0) form: follow-up |
+| §5.1 | Spontaneous magnetization `m*` (p. 77) | **Done (complete)** | `spontaneousMagnetization` (infimum form) + `tendsto_…_nhdsGT` (right-limit `m* = lim_{h→0+} M(h)`) + nonneg/≤1/≤M(h)/indep_exhaustion |
 | §5.2 | Mean field picture | **Done (algebraic)** | `meanFieldEnergy_neg`, `meanField_zero_solution`, `tanh_odd` |
 | §5.3 | Symmetry breaking (Z₂ at `h = 0`) | **Done (finite + infinite)** | Finite: `magnetization_zero_at_h_zero`, `susceptibility_nonneg`; Infinite: `magnetizationInfinite_zero_at_h_zero`, `correlationInfinite_h_zero` |
 | §5.4 | Prop 5.4.1 (Peierls) | **Done** | `peierls_bound` |
