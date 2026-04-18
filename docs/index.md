@@ -223,6 +223,12 @@ ambient framework:
 | `spontaneousCorrelation_indep_exhaustion` | Λ-independence |
 | `tendsto_correlationInfinite_spontaneousCorrelation_nhdsGT` | Right-limit Tendsto: `⟨σ^A⟩(h) → ⟨σ^A⟩*` as `h → 0+` |
 | `spontaneousCorrelation_singleton_eq_spontaneousMagnetization` | `spontaneousCorrelation ... {i} = spontaneousMagnetization ... i` (definitional) |
+| **`truncated2Infinite`** | **Truncated 2-point correlation** `U_2(i,j) := ⟨σᵢσⱼ⟩_∞ - ⟨σᵢ⟩_∞⟨σⱼ⟩_∞` |
+| `truncated2Infinite_symm` | `U_2(i,j) = U_2(j,i)` |
+| `truncated2Infinite_nonneg_of_ne` | `i ≠ j ⇒ 0 ≤ U_2(i,j)` (direct GKS-II corollary) |
+| `truncated2Infinite_nonneg_of_eq` | `0 ≤ U_2(i,i) = M(i)(1-M(i))` |
+| **`truncated2Infinite_nonneg`** | **General nonneg**: `0 ≤ U_2(i,j)` for all `i, j` |
+| `truncated2Infinite_indep_exhaustion` | Λ-independence |
 
 ## Axioms
 
