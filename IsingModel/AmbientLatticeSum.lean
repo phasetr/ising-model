@@ -649,6 +649,25 @@ theorem freeEnergyInfinite_zero_params_of_eventually_nonempty
   filter_upwards [hne] with n hn using
     freeEnergyAlongExhaustion_zero_params G Λ β n hn
 
+/-- **J=0 infinite-volume closed form (graph-independent)**:
+`∀ᶠ n in atTop, (Λ.volume n).Nonempty ⇒
+ freeEnergyInfinite G Λ ⟨0, h, β⟩ = log (2·cosh(β·h))`.
+
+Graph independence: since the interaction term vanishes at `J = 0`,
+the `freeEnergy` agrees with that of the `⊥` graph at each stage.
+Direct application of `freeEnergyInfinite_of_eventually_const` with
+the stagewise `freeEnergyAlongExhaustion_J_zero`. -/
+theorem freeEnergyInfinite_J_zero_of_eventually_nonempty
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (h β : ℝ)
+    (hne : ∀ᶠ n in Filter.atTop, (Λ.volume n).Nonempty) :
+    freeEnergyInfinite G Λ (⟨0, h, β⟩ : IsingParams ℝ)
+      = Real.log (2 * Real.cosh (β * h)) := by
+  apply freeEnergyInfinite_of_eventually_const G Λ
+  filter_upwards [hne] with n hn using
+    freeEnergyAlongExhaustion_J_zero G Λ h β n hn
+
 /-- **Uniform lower bound on `freeEnergyInfinite` under ferromagnetic**:
 the per-n sharp lower bound of PR #125 lifts to `limsup`:
 `log(2·cosh(β·h)) ≤ freeEnergyInfinite G Λ p`.

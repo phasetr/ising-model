@@ -912,6 +912,22 @@ theorem freeEnergy_bot_h_zero (J β : ℝ) (hne : 0 < Fintype.card ι) :
   rw [freeEnergy_bot _ hne]
   simp [Real.cosh_zero]
 
+/-- **Free energy at `J = 0`** (graph-independent): for nonempty `ι`,
+any `h, β : ℝ`, and any ambient graph `G`,
+`freeEnergy G ⟨0, h, β⟩ = log (2·cosh(β·h))`.
+
+Since the interaction term vanishes at `J = 0`, `Z_G = Z_⊥` and the
+`⊥` closed form from `freeEnergy_bot` applies uniformly. -/
+theorem freeEnergy_J_zero (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (h β : ℝ) (hne : 0 < Fintype.card ι) :
+    freeEnergy G (⟨0, h, β⟩ : IsingParams ℝ)
+      = Real.log (2 * Real.cosh (β * h)) := by
+  unfold freeEnergy
+  rw [partitionFunction_J_zero, Real.log_pow]
+  have hcard : (Fintype.card ι : ℝ) ≠ 0 := by
+    exact_mod_cast hne.ne'
+  field_simp
+
 /-- **Sharp ferromagnetic lower bound**: for any graph `G` with
 `|ι| > 0` and ferromagnetic parameters, `log(2·cosh(β·h)) ≤ freeEnergy G p`.
 

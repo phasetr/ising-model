@@ -1675,6 +1675,19 @@ $\Rightarrow$ Tendsto, PR \#170 で limsup = limit.
 の一般化.
 \end{theorem}
 
+\begin{theorem}[\texttt{freeEnergy\_J\_zero} 系; PR \#174]
+$J = 0$ で interaction 項 $= 0$ で $Z_G = Z_\bot$ グラフ非依存.
+$|\iota| > 0$, 任意の $h, \beta$ で
+\[
+  Z_G(\langle 0, h, \beta\rangle) = (2 \cosh(\beta h))^{|\iota|},
+  \quad
+  f_G(\langle 0, h, \beta\rangle) = \log(2 \cosh(\beta h)).
+\]
+along-exhaustion / $\infty$-vol lift (eventually nonempty) も同 PR.
+既存の $\beta = 0$ / $J = h = 0$ / $\bot$-graph 系列の 4 本目の
+zero-parameter closed form.
+\end{theorem}
+
 \begin{theorem}[\texttt{freeEnergyInfinite\_\{beta\_zero,zero\_params\}\_of\_eventually\_nonempty}; PR \#172]
 仮定 $\forall^\infty n, \Lambda_n$ nonempty のもと
 \[

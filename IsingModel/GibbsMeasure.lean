@@ -172,6 +172,17 @@ theorem hamiltonian_bot (p : IsingParams ℝ) (σ : Config ι) :
   unfold hamiltonian interactionEnergy externalFieldEnergy
   rw [SimpleGraph.edgeFinset_bot, Finset.sum_empty, mul_zero, zero_add]
 
+omit [DecidableEq ι] in
+/-- **Hamiltonian at `J = 0`** (graph-independent): the interaction
+energy has prefactor `-J = 0`, so `H_G ⟨0, h, β⟩ σ` reduces to the
+external field term alone for any ambient graph `G`. -/
+theorem hamiltonian_J_zero (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (h β : ℝ) (σ : Config ι) :
+    hamiltonian G (⟨0, h, β⟩ : IsingParams ℝ) σ
+      = -h * ∑ i : ι, Spin.sign ℝ (σ i) := by
+  unfold hamiltonian interactionEnergy externalFieldEnergy
+  simp
+
 /-- **Sum over `Spin`**: `∑ s : Spin, f s = f Spin.up + f Spin.down`.
 Spin is a 2-element Fintype `{up, down}`, so the universal sum splits
 into these two terms. -/
@@ -238,6 +249,24 @@ theorem partitionFunction_bot (p : IsingParams ℝ) :
         intros i _; exact sum_exp_spin_sign p.β p.h
     _ = (2 * Real.cosh (p.β * p.h)) ^ Fintype.card ι := by
         rw [Finset.prod_const, Finset.card_univ]
+
+/-- **Partition function at `J = 0`** (graph-independent):
+`Z_G ⟨0, h, β⟩ = (2 · cosh(β·h))^|ι|` for any ambient graph `G`.
+
+Since `J = 0` makes the interaction energy vanish, the Hamiltonian
+coincides with that of the empty graph, and the closed form of
+`partitionFunction_bot` carries over unchanged. -/
+theorem partitionFunction_J_zero (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (h β : ℝ) :
+    partitionFunction G (⟨0, h, β⟩ : IsingParams ℝ)
+      = (2 * Real.cosh (β * h)) ^ Fintype.card ι := by
+  have h_eq : partitionFunction G (⟨0, h, β⟩ : IsingParams ℝ)
+      = partitionFunction (⊥ : SimpleGraph ι) (⟨0, h, β⟩ : IsingParams ℝ) := by
+    unfold partitionFunction boltzmannWeight
+    refine Finset.sum_congr rfl ?_
+    intro σ _
+    rw [hamiltonian_J_zero, hamiltonian_bot]
+  rw [h_eq, partitionFunction_bot]
 
 /-! ## h-symmetry: `Z(-h) = Z(h)` via spin flip
 
