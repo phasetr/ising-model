@@ -238,7 +238,8 @@ ambient framework:
 | `truncated4Infinite_indep_exhaustion` | Λ-independence |
 | `spontaneousCorrelation_monotone_J` | `MonotoneOn (J ↦ spontaneousCorrelation G Λ J β A) (Ici 0)` |
 | `spontaneousCorrelation_monotone_beta` | `MonotoneOn (β ↦ spontaneousCorrelation G Λ J β A) (Ioi 0)` |
-| `spontaneousMagnetization_monotone_{J,beta}` | Singleton specializations |
+| `spontaneousMagnetization_monotone_J` | Singleton specialization at `A = {i}` |
+| `spontaneousMagnetization_monotone_beta` | Singleton specialization at `A = {i}` |
 
 ## Axioms
 

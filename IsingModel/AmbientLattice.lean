@@ -2406,7 +2406,13 @@ theorem spontaneousCorrelation_monotone_J
 
 /-- **β-direction monotonicity of `spontaneousCorrelation`**: for
 fixed `J ≥ 0`, the map `β ↦ spontaneousCorrelation G Λ J β A` is
-monotone on `Set.Ioi 0`. -/
+monotone on `Set.Ioi 0`.
+
+Companion to `spontaneousCorrelation_monotone_J`.  Since
+`correlationInfinite_monotone_beta` gives pointwise monotonicity in
+`β` for each `h ∈ Ioi 0` (with the remaining parameters bounded
+below by `0`), the iInf over `h > 0` is also monotone in `β`.
+Proof via `ciInf_mono` + `correlationInfinite_bddBelow_on_Ioi`. -/
 theorem spontaneousCorrelation_monotone_beta
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
