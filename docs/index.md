@@ -87,6 +87,9 @@ Named specializations at `A = {i}`:
 | `edgeSet_sum` | Edge-set decomposition of `G ⊕g H` | `SumGraph.lean` | Disjoint-sum lemma |
 | `disjoint_inl_inr_edgeSet` / `disjoint_inl_inr_edgeFinset` | Set / Finset disjointness of the two images | `SumGraph.lean` | Disjoint-sum lemma |
 | `card_edgeFinset_sum` | `#(G ⊕g H).edgeFinset = #G.edgeFinset + #H.edgeFinset` | `SumGraph.lean` | Disjoint-sum lemma |
+| `Config.sumEquiv` | `Config (ι ⊕ ι') ≃ Config ι × Config ι'` | `SumModel.lean` | Ising on sum graph |
+| `interactionEnergy_sum` / `externalFieldEnergy_sum` | Per-summand additivity of the Hamiltonian's interaction / field contributions on `G ⊕g H` | `SumModel.lean` | Ising on sum graph |
+| `hamiltonian_sum` (§4.6 super-add. Step 2-3) | `hamiltonian (G ⊕g H) p (Sum.elim σ₁ σ₂) = hamiltonian G p σ₁ + hamiltonian H p σ₂` | `SumModel.lean` | Ising on sum graph |
 
 **Not yet formalized**: the infinite-volume analyticity of `f(h)` via
 Vitali convergence (GJ Thm 4.6.2 full statement).
