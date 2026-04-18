@@ -329,24 +329,20 @@ theorem log_partitionFunctionΛ_disjUnion_super_additive
     G hd p hf
 
 /-- Identity `|Λ| · freeEnergyΛ G Λ p = log (partitionFunctionΛ G Λ p)`
-for nonempty `Λ`. Unfolds `freeEnergy = |ι|⁻¹ · log Z` and cancels
-`(Λ.card : ℝ) > 0` against its inverse via `field_simp`. The
-`Nonempty` hypothesis is needed at the proof level to rule out the
-`|Λ| = 0` degenerate case (where the identity still holds but the
-cancellation step does not apply uniformly). -/
+for nonempty `Λ`. Thin wrapper of the base-layer
+`IsingModel.card_mul_freeEnergy_eq_log_partitionFunction` via
+`Fintype.card_coe` (`|↑Λ| = |Λ|`). -/
 theorem card_mul_freeEnergyΛ_eq_log_partitionFunctionΛ_of_nonempty
     (G : SimpleGraph V) {Λ : Finset V} (hne : Λ.Nonempty)
     [Fintype (inducedGraph G Λ).edgeSet]
     (p : IsingParams ℝ) :
     (Λ.card : ℝ) * freeEnergyΛ G Λ p
       = Real.log (partitionFunctionΛ G Λ p) := by
-  unfold freeEnergyΛ IsingModel.freeEnergy
-  rw [Fintype.card_coe]
-  have hne_card : (Λ.card : ℝ) ≠ 0 :=
-    Nat.cast_ne_zero.mpr (Finset.card_ne_zero.mpr hne)
-  -- Clear `(Λ.card : ℝ)⁻¹` against the outer `Λ.card` using `hne_card`.
-  field_simp
-  rfl
+  have hcard : 0 < Fintype.card (↑Λ : Type _) := by
+    rw [Fintype.card_coe]; exact Finset.card_pos.mpr hne
+  have h := IsingModel.card_mul_freeEnergy_eq_log_partitionFunction
+    (inducedGraph G Λ) p hcard
+  rwa [Fintype.card_coe] at h
 
 /-- **Weighted super-additivity of the free energy density** on
 disjoint Finset unions (nonempty case):
