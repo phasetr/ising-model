@@ -695,4 +695,21 @@ theorem freeEnergy_bot (p : IsingParams ℝ) (hne : 0 < Fintype.card ι) :
     exact_mod_cast hne.ne'
   field_simp
 
+/-- **Sharp ferromagnetic lower bound**: for any graph `G` with
+`|ι| > 0` and ferromagnetic parameters, `log(2·cosh(β·h)) ≤ freeEnergy G p`.
+
+Obtained from `freeEnergy_bot` (free-spin closed form) and
+`freeEnergy_monotone_subgraph` (ferromagnetic, `⊥ ≤ G` via `bot_le`).
+Sharpens `log 2` (since `cosh(β h) ≥ 1`, with equality at `h = 0`). -/
+theorem freeEnergy_ge_log_two_cosh (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {J h β : ℝ} (hJ : 0 ≤ J) (hh : 0 ≤ h) (hβ : 0 < β)
+    (hne : 0 < Fintype.card ι) :
+    Real.log (2 * Real.cosh (β * h)) ≤ freeEnergy G ⟨J, h, β⟩ := by
+  have hferm : Ferromagnetic (⟨J, h, β⟩ : IsingParams ℝ) := ⟨hJ, hh, hβ⟩
+  calc Real.log (2 * Real.cosh (β * h))
+      = freeEnergy (⊥ : SimpleGraph ι) (⟨J, h, β⟩ : IsingParams ℝ) := by
+        rw [freeEnergy_bot _ hne]
+    _ ≤ freeEnergy G (⟨J, h, β⟩ : IsingParams ℝ) :=
+        freeEnergy_monotone_subgraph bot_le _ hferm
+
 end IsingModel
