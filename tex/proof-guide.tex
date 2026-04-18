@@ -3028,4 +3028,72 @@ compound set identifications.
 \texttt{le\_of\_tendsto\_of\_tendsto'} で結論.
 \end{proof}
 
+\subsection{Edge-set decomposition for disjoint sum graphs (\texttt{SumGraph.lean})}
+
+The file \texttt{IsingModel/SumGraph.lean} records the combinatorial
+identities for \texttt{SimpleGraph.sum} ($G \oplus_g H$) that underlie
+the super-additivity argument of Glimm--Jaffe \S 4.6 (pp.\ 70ff.):
+the free-energy density on a disjoint union of lattices decomposes
+additively into the two factor contributions, which in turn rests on
+a disjoint splitting of the edge set.
+
+\begin{lemma}[\texttt{SimpleGraph.sum\_eq\_map\_sup}]
+For $G : \mathrm{SimpleGraph}\,V$ and $H : \mathrm{SimpleGraph}\,W$,
+\[
+  G \oplus_g H
+    = G.\mathrm{map}(\mathrm{inl}_{V,W})
+      \sqcup H.\mathrm{map}(\mathrm{inr}_{V,W}),
+\]
+where $\mathrm{inl}_{V,W} : V \hookrightarrow V \oplus W$ and
+$\mathrm{inr}_{V,W} : W \hookrightarrow V \oplus W$ are the canonical
+embeddings.
+\end{lemma}
+
+\begin{proof}
+Case analysis on $a, b \in V \oplus W$: both sides evaluate
+identically on \texttt{Adj}.
+\end{proof}
+
+\begin{lemma}[\texttt{SimpleGraph.edgeSet\_sum}]
+\[
+  (G \oplus_g H).E
+    = \mathrm{inl}_*(G.E) \,\cup\, \mathrm{inr}_*(H.E),
+\]
+where $\mathrm{inl}_*, \mathrm{inr}_*$ denote the induced maps on
+$\mathrm{Sym}^2$. The two summands are disjoint
+(\texttt{disjoint\_sumInlEmb\_sumInrEmb\_edgeSet}).
+\end{lemma}
+
+\begin{proof}
+Apply \texttt{edgeSet\_sup} and \texttt{edgeSet\_map} to the previous
+lemma. Disjointness follows from $\mathrm{inl}\,v \ne \mathrm{inr}\,w$.
+\end{proof}
+
+\begin{proposition}[\texttt{SimpleGraph.card\_edgeFinset\_sum}]
+If $V, W$ are finite and $G, H$ have decidable adjacency, then
+\[
+  \#(G \oplus_g H).\mathrm{edgeFinset}
+    = \#G.\mathrm{edgeFinset} + \#H.\mathrm{edgeFinset}.
+\]
+\end{proposition}
+
+\begin{proof}
+Disjoint union of Finset images. The Finset identity
+\texttt{edgeFinset\_sum} is derived from the set-level
+\texttt{edgeSet\_sum} by \texttt{Finset.coe\_injective}. Cardinality
+then follows from \texttt{Finset.card\_union\_of\_disjoint} combined
+with \texttt{Finset.card\_map} applied to the injective
+$\mathrm{Embedding.sym2Map}$.
+\end{proof}
+
+\paragraph{Context.} This file is the combinatorial Step~1 toward the
+Glimm--Jaffe \S 4.6 super-additivity proof of thermodynamic-limit
+convergence of the free-energy density. Subsequent steps
+(\texttt{Config}-product equivalence, Hamiltonian splitting,
+partition-function multiplicativity, and $\log Z$ super-additivity)
+will consume the present lemmas to lift the Fekete-type convergence
+of $f_{\Lambda}$ from the current \emph{discretized} subgraph
+setting (\texttt{freeEnergy\_convergent\_subgraph}) to the genuine
+infinite-volume exhaustion of the ambient lattice framework.
+
 \end{document}
