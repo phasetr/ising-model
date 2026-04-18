@@ -197,6 +197,7 @@ ambient framework:
 | `correlationAlongExhaustion_nonneg` | `0 ≤ correlationAlongExhaustion G Λ p A n` (ferromagnetic) |
 | `correlationΛ_gks_second` | **GKS-II at finite volume**, lifted form: `correlationΛ (lift A) · correlationΛ (lift B) ≤ correlationΛ (lift (A ∆ B))` |
 | **`correlationInfinite_gks_second`** | **GKS-II at infinite volume** (Glimm–Jaffe §4.2 Thm 4.2.3): `correlationInfinite A · correlationInfinite B ≤ correlationInfinite (A ∆ B)` |
+| `correlationInfinite_fkg_spinProduct` | **FKG for spinProducts at ∞-vol** (Glimm–Jaffe §4.4 p. 67): named alias of GKS-II for the FKG nomenclature |
 | `correlationΛ_monotone_h` | `MonotoneOn (h ↦ correlationΛ G Λ ⟨J, h, β⟩ A) (Ici 0)` |
 | `correlationAlongExhaustion_monotone_h` | Pointwise h-monotonicity of the exhaustion sequence |
 | **`correlationInfinite_monotone_h`** | **h-direction monotonicity at infinite volume** (Glimm–Jaffe Prop 4.2.4): `MonotoneOn (h ↦ correlationInfinite G Λ ⟨J, h, β⟩ A) (Ici 0)` |
@@ -287,7 +288,7 @@ inventory (2026-04-17).
 | §4.3 | Cor 4.3.3 (`U₄ ≤ 0` at h=0) | **Done (finite + infinite)** | Finite: `cor_4_3_3` (axioms); Infinite: `truncated4Infinite_nonpos_h_zero` |
 | §4.3 | Cor 4.3.4 (GHS, `U₃ ≤ 0`) | **Done (finite + infinite)** | Finite: `ghs_inequality` (axioms); Infinite: `truncated3Infinite_nonpos`, `_h_zero_of_distinct` |
 | §4.3 | Cor 4.3.5 (inductive n-point at h=0) | **Done (finite + infinite)** | Finite: `cor_4_3_5_h0` (axioms); Infinite: `correlationInfinite_cor_4_3_5_h0` |
-| §4.4 | FKG inequality | **Done** | `fkg_ising` |
+| §4.4 | FKG inequality (spinProduct case) | **Done (finite + infinite)** | Finite: `fkg_ising`; ∞-vol spinProduct: `correlationInfinite_fkg_spinProduct` (≡ GKS-II). General monotone fn at ∞-vol: out of scope |
 | §4.5 | Lee–Yang circle theorem | **Done** | `lee_yang_circle` |
 | §4.6 | **Prop 4.6.1 (`f_Λ` convergence)** | **Done (discretized)** | Discretized Λ↑ |
 | §4.6 | **Thm 4.6.2 (analyticity)** | **Done (finite/real)** | Full infinite-volume complex analyticity: not yet |

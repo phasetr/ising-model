@@ -1307,6 +1307,43 @@ theorem correlationInfinite_gks_second
     rw [correlationAlongExhaustion_of_not_subset G Λ p hAn, zero_mul]
     exact correlationAlongExhaustion_nonneg G Λ p hf (A ∆ B) n
 
+/-- **Named alias for the FKG-form correlation inequality at infinite volume**.
+
+For ferromagnetic Ising, the infinite-volume correlations satisfy
+$\langle \sigma^A \rangle_\infty \langle \sigma^B \rangle_\infty
+  \le \langle \sigma^{A \triangle B} \rangle_\infty$, which is the
+numerical inequality one would obtain from the FKG inequality if one
+naively applied it to $f = \sigma^A, g = \sigma^B$ together with the
+spin-flip product identity $\sigma^A \cdot \sigma^B
+  = \sigma^{A \triangle B}$.
+
+**Important caveat**: spinProduct observables are **not** generally
+monotone (e.g., flipping two spins increases a cardinality-2 product
+from $+1$ to $+1$ but intermediate configurations have the product
+equal to $-1$), so the general FKG inequality (Glimm–Jaffe §4.4 p. 67,
+requiring monotone $f, g$) does not directly apply to arbitrary
+spinProducts.  This theorem gives the same numerical conclusion via a
+different route — it is literally the GKS-II theorem
+(`correlationInfinite_gks_second`, PR #94), proved through the HNC /
+log-supermodularity of Boltzmann weights rather than FKG's lattice
+condition argument.
+
+Provided for nomenclature/searchability and to document the §4.4
+coverage (the full FKG inequality for general monotone observables at
+infinite volume requires a monotone-function framework on infinite
+configs, which is out of scope).
+
+Reference: Glimm–Jaffe §4.4 p. 67 (FKG inequality general);
+Friedli–Velenik §3.2.2 (FKG lattice condition). -/
+theorem correlationInfinite_fkg_spinProduct
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    (A B : Finset V) :
+    correlationInfinite G Λ p A * correlationInfinite G Λ p B
+      ≤ correlationInfinite G Λ p (A ∆ B) :=
+  correlationInfinite_gks_second G Λ p hf A B
+
 /-! ## h-direction monotonicity at infinite volume
 
 Lift `IsingModel.correlation_monotone_h` (finite volume, external

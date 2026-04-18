@@ -2744,6 +2744,30 @@ $\texttt{MonotoneOn}\,(\beta \mapsto \langle \sigma^A \rangle^*)\,(\mathrm{Ioi}\
 単サイト $A = \{i\}$ specialization of \texttt{spontaneousCorrelation\_monotone\_beta}.
 \end{theorem}
 
+\subsection{FKG-form correlation inequality at infinite volume (\S 4.4 名目)}
+
+参考: Glimm--Jaffe \S 4.4 p.\ 67 (FKG inequality general, 要 monotone).
+
+重要な但し書き: spinProduct 観測量は一般には monotone でない
+(例: $|A| = 2$ の場合, 両 spin flip で $\sigma^A$ は $+1 \to +1$ だが
+中間 config で $-1$ になる). よって FKG 一般形は spinProducts に
+直接適用不可.
+
+以下は同じ数値不等式 (GKS-II) を FKG 名称で提供する alias theorem
+(searchability + \S 4.4 coverage).
+
+\begin{theorem}[\texttt{correlationInfinite\_fkg\_spinProduct}]
+強磁性系で
+$\langle \sigma^A \rangle_\infty \langle \sigma^B \rangle_\infty
+  \le \langle \sigma^{A \triangle B} \rangle_\infty$.
+\end{theorem}
+
+\begin{proof}
+\texttt{correlationInfinite\_gks\_second} (PR \#94) そのもの.
+GKS-II は HNC / Boltzmann weight log-supermodularity で証明される
+(FKG の lattice condition argument ではなく別経路).
+\end{proof}
+
 \subsection{freeEnergyAlongExhaustion (§4.6 Prop 4.6.1 scaffold)}
 
 参考: Glimm--Jaffe \S 4.6 Proposition 4.6.1, pp.\ 78ff
