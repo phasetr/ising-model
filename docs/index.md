@@ -104,7 +104,7 @@ Named specializations at `A = {i}`:
 | `Ambient.freeEnergyInfinite_{le_uniform_upper_bound,ge_log_two_cosh,ge_log_two,pos,nonneg}` | `0 < log 2 ≤ log(2·cosh(β·h)) ≤ freeEnergyInfinite G Λ p ≤ log 2 + |β|·(|J|·c + |h|)` (ferromagnetic + BoundedEdgeDensity + `[Nonempty V]`) | `AmbientLatticeSum.lean` | `limsup` two-sided bounds + positivity |
 | `Ambient.freeEnergyInfinite_monotone_ambient_subgraph` | `G₁ ≤ G₂ ⇒ freeEnergyInfinite G₁ Λ p ≤ freeEnergyInfinite G₂ Λ p` (ferromagnetic + BoundedEdgeDensity + `[Nonempty V]`) | `AmbientLatticeSum.lean` | `limsup` ambient subgraph monotonicity |
 | `Ambient.freeEnergyInfinite_neg_h` / `freeEnergyInfinite_eq_abs_h` | `h`-evenness: `freeEnergyInfinite G Λ ⟨J, -h, β⟩ = freeEnergyInfinite G Λ ⟨J, h, β⟩ = freeEnergyInfinite G Λ ⟨J, |h|, β⟩` | `AmbientLatticeSum.lean` | `limsup` h-symmetry |
-| `Ambient.freeEnergyInfinite_monotone_J` | `MonotoneOn (J ↦ freeEnergyInfinite G Λ ⟨J, h, β⟩) (Set.Ici 0)` (ferromagnetic-style + BoundedEdgeDensity + Nonempty V) | `AmbientLatticeSum.lean` | `limsup` J-monotonicity |
+| `Ambient.freeEnergyInfinite_monotone_{J,h,beta}` | `MonotoneOn (X ↦ freeEnergyInfinite ...) (Set.Ici 0 / Set.Ioi 0)` in each parameter (ferromagnetic-style + BoundedEdgeDensity + Nonempty V) | `AmbientLatticeSum.lean` | `limsup` three-parameter monotonicity |
 
 **Not yet formalized**: the infinite-volume analyticity of `f(h)` via
 Vitali convergence (GJ Thm 4.6.2 full statement).
