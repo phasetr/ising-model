@@ -1581,6 +1581,12 @@ PR \#120 \texttt{freeEnergy\_zero\_params} の $\beta$-direction 版.
 \texttt{partitionFunction\_beta\_zero} + \texttt{Real.log\_pow} + $|\iota|^{-1}$ cancel.
 \end{theorem}
 
+\begin{theorem}[\texttt{freeEnergyAlongExhaustion\_beta\_zero}; PR \#132]
+Nonempty $\Lambda.\text{volume}\,n$ で
+$\texttt{freeEnergyAlongExhaustion}\,G\,\Lambda\,\langle J, h, 0 \rangle\,n = \log 2$.
+\texttt{change} + definitional unfolding で specialize.
+\end{theorem}
+
 \begin{theorem}[\texttt{inducedGraph\_bot}; PR \#129]
 $\texttt{inducedGraph}\,(\bot : \texttt{SimpleGraph}\,V)\,\Lambda
   = (\bot : \texttt{SimpleGraph}\,\uparrow\Lambda)$.
