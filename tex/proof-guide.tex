@@ -2613,4 +2613,31 @@ $\text{Tendsto}\,M\,(\mathcal{N}[>]\,0)\,(\mathcal{N}\,(\inf(M''\mathrm{Ioi}\,0)
 $\inf(M''\mathrm{Ioi}\,0) = m^*$ を $\texttt{sInf\_image}$/$\texttt{iInf\_subtype}$ で結びつける.
 \end{proof}
 
+\subsection{Spontaneous correlation function (general \texorpdfstring{$A$}{A})}
+
+参考: Glimm--Jaffe \S 4.2 p.\ 57ff, \S 5.1 p.\ 77.
+PR \#99+\#100 を一般 $A : \texttt{Finset}\,V$ に汎化.
+
+\begin{definition}[\texttt{spontaneousCorrelation}]
+\[
+\langle \sigma^A \rangle^*_{G, \Lambda}(J, \beta)
+  \;:=\; \inf_{h > 0} \texttt{correlationInfinite}\,G\,\Lambda\,\langle J,h,\beta\rangle\,A.
+\]
+\end{definition}
+
+\begin{theorem}[\texttt{spontaneousCorrelation}の基本性質]
+強磁性下で 5 properties (全て \texttt{correlationInfinite\_*} の specialize):
+\texttt{\_nonneg},
+\texttt{\_le\_one},
+\texttt{\_le\_correlationInfinite},
+\texttt{\_indep\_exhaustion},
+\texttt{tendsto\_\ldots\_nhdsGT}.
+\end{theorem}
+
+\begin{theorem}[\texttt{spontaneousCorrelation\_singleton\_eq\_spontaneousMagnetization}]
+$\texttt{spontaneousCorrelation}\,G\,\Lambda\,J\,\beta\,\{i\}
+  = \texttt{spontaneousMagnetization}\,G\,\Lambda\,J\,\beta\,i$
+(定義展開で rfl).
+\end{theorem}
+
 \end{document}

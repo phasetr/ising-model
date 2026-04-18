@@ -216,6 +216,13 @@ ambient framework:
 | `spontaneousMagnetization_le_magnetizationInfinite` | `m* ≤ M(h)` for any `h > 0` (infimum characterization) |
 | `spontaneousMagnetization_indep_exhaustion` | `m*` does not depend on the choice of exhaustion |
 | **`tendsto_magnetizationInfinite_spontaneousMagnetization_nhdsGT`** | **Right-limit**: `Tendsto M(h) (𝓝[>] 0) (𝓝 m*)` — realizes `m*` as the physical right limit of `magnetizationInfinite` |
+| **`spontaneousCorrelation`** | **General-A spontaneous correlation** `:= ⨅ h : Set.Ioi 0, correlationInfinite ⟨J, h, β⟩ A` — generalization of `spontaneousMagnetization` |
+| `spontaneousCorrelation_nonneg` | `0 ≤ ⟨σ^A⟩*` (ferromagnetic) |
+| `spontaneousCorrelation_le_one` | `⟨σ^A⟩* ≤ 1` |
+| `spontaneousCorrelation_le_correlationInfinite` | `⟨σ^A⟩* ≤ ⟨σ^A⟩(h)` for `h > 0` |
+| `spontaneousCorrelation_indep_exhaustion` | Λ-independence |
+| `tendsto_correlationInfinite_spontaneousCorrelation_nhdsGT` | Right-limit Tendsto: `⟨σ^A⟩(h) → ⟨σ^A⟩*` as `h → 0+` |
+| `spontaneousCorrelation_singleton_eq_spontaneousMagnetization` | `spontaneousCorrelation ... {i} = spontaneousMagnetization ... i` (definitional) |
 
 ## Axioms
 
