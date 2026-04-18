@@ -1645,6 +1645,17 @@ $\beta = 0$ で Boltzmann weight $\exp(-\beta H) = 1$ を経由.
 \]
 \end{theorem}
 
+\begin{theorem}[\texttt{card\_mul\_freeEnergy\_eq\_log\_partitionFunction}; PR \#167]
+$|\iota| > 0$ で
+\[
+  |\iota| \cdot f_G(p) = \log Z_G(p).
+\]
+\texttt{freeEnergy = |\iota|\textsuperscript{-1}\,\textperiodcentered \log Z}
+定義展開 + \texttt{field\_simp} で $|\iota|$ 消去. 既存 $\Lambda$ 版
+\texttt{card\_mul\_freeEnergyΛ\_eq\_log\_partitionFunctionΛ\_of\_nonempty}
+(PR \#119) の base layer; 同 $\Lambda$ 版は本 PR で薄い wrapper に refactor.
+\end{theorem}
+
 \begin{theorem}[\texttt{partitionFunction\_ge\_two\_pow\_card\_of\_ferromagnetic} 系; PR \#165]
 強磁性 $p$ で
 \[

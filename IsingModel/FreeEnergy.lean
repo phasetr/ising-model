@@ -646,6 +646,25 @@ theorem log_partitionFunction_nonneg_of_ferromagnetic
     0 ≤ Real.log (partitionFunction G p) :=
   Real.log_nonneg (partitionFunction_ge_one_of_ferromagnetic G p hf)
 
+/-- **Basic identity** `|ι| · freeEnergy G p = log (partitionFunction G p)`
+for `0 < |ι|`.
+
+Unfolds the definition `freeEnergy = |ι|⁻¹ · log Z` and cancels the
+`|ι|⁻¹` prefactor against the outer `|ι|` via `field_simp`.
+The nonempty hypothesis rules out the `|ι| = 0` degenerate case.
+
+Base-layer analog of PR #119's
+`card_mul_freeEnergyΛ_eq_log_partitionFunctionΛ_of_nonempty`. -/
+theorem card_mul_freeEnergy_eq_log_partitionFunction
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (p : IsingParams ℝ) (hne : 0 < Fintype.card ι) :
+    (Fintype.card ι : ℝ) * freeEnergy G p
+      = Real.log (partitionFunction G p) := by
+  unfold freeEnergy
+  have hne_card : (Fintype.card ι : ℝ) ≠ 0 :=
+    Nat.cast_ne_zero.mpr hne.ne'
+  field_simp
+
 /-- **Unconditional `⊥`-graph bound `Z_⊥ ≥ 2^|ι|`.**
 
 From `partitionFunction_bot = (2 · cosh(βh))^|ι|` and
