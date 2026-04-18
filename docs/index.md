@@ -207,6 +207,7 @@ ambient framework:
 | `partitionFunctionAlongExhaustion_monotone_h` | Pointwise h-monotone (J ≥ 0, β > 0, 0 ≤ h₁ ≤ h₂) |
 | `partitionFunctionAlongExhaustion_monotone_beta` | Pointwise β-monotone (J ≥ 0, h ≥ 0, 0 < β₁ ≤ β₂) |
 | `freeEnergyInfinite` | `limsup freeEnergyAlongExhaustion` — API anchor for §4.6 Prop 4.6.1 (convergence pending) |
+| `freeEnergyAlongExhaustion_ge_zero_params` | Zero-params comparison: `f(0,0,β) ≤ f(J,h,β)` for ferromagnetic |
 | `correlationAlongExhaustion_nonneg` | `0 ≤ correlationAlongExhaustion G Λ p A n` (ferromagnetic) |
 | `correlationΛ_gks_second` | **GKS-II at finite volume**, lifted form: `correlationΛ (lift A) · correlationΛ (lift B) ≤ correlationΛ (lift (A ∆ B))` |
 | **`correlationInfinite_gks_second`** | **GKS-II at infinite volume** (Glimm–Jaffe §4.2 Thm 4.2.3): `correlationInfinite A · correlationInfinite B ≤ correlationInfinite (A ∆ B)` |
