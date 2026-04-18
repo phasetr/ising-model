@@ -174,6 +174,33 @@ theorem liftFinset_symmDiff {Λ : Finset V} {A B : Finset V}
   ext x
   simp only [Finset.mem_symmDiff, mem_liftFinset]
 
+/-- `liftFinset` commutes with `insert`: if `a ∈ Λ` and `A ⊆ Λ` then
+`insert ⟨a, ha⟩ (liftFinset A hA) = liftFinset (insert a A) h_insert`. -/
+theorem liftFinset_insert {Λ : Finset V} {A : Finset V} {a : V}
+    (ha : a ∈ Λ) (hA : A ⊆ Λ) :
+    insert (⟨a, ha⟩ : (↑Λ : Type _)) (liftFinset A hA)
+      = liftFinset (insert a A)
+          (fun _ hx => (Finset.mem_insert.mp hx).elim
+            (fun h => h ▸ ha) (fun h => hA h)) := by
+  ext x
+  simp only [Finset.mem_insert, mem_liftFinset]
+  constructor
+  · rintro (rfl | hx)
+    · exact Or.inl rfl
+    · exact Or.inr hx
+  · rintro (rfl | hx)
+    · exact Or.inl (Subtype.ext rfl)
+    · exact Or.inr hx
+
+/-- `liftFinset` commutes with `sdiff` (set difference): if `A, B ⊆ Λ` then
+`liftFinset A hA \ liftFinset B hB = liftFinset (A \ B) h_sdiff`. -/
+theorem liftFinset_sdiff {Λ : Finset V} {A B : Finset V}
+    (hA : A ⊆ Λ) (hB : B ⊆ Λ) :
+    liftFinset A hA \ liftFinset B hB
+      = liftFinset (A \ B) (fun _ hx => hA (Finset.mem_sdiff.mp hx).1) := by
+  ext x
+  simp only [Finset.mem_sdiff, mem_liftFinset]
+
 /-- The correlation along an exhaustion, evaluated eventually (from the
 first `n` with `A ⊆ volume n`). Returns a function `ℕ → ℝ` which equals
 `correlationΛ G (volume n) p (liftFinset A _)` once `A ⊆ volume n`, and
@@ -2477,3 +2504,4 @@ theorem spontaneousMagnetization_monotone_beta
 
 end Ambient
 end IsingModel
+
