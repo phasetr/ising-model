@@ -68,7 +68,9 @@ Formalized in three regimes:
 | `Ambient.correlationInfinite` | `correlationInfinite := ⨆ n, correlationAlongExhaustion G Λ p A n` | `AmbientLattice.lean` | **Genuine ∞-vol (full)**: convergence, Λ-independence, GKS-I/II, J/h/β monotonicity |
 
 Named specializations at `A = {i}`:
-`magnetization_convergent_{J,h,beta,subgraph}`.
+- Finite / Discretized: `magnetization_convergent_{J,h,beta,subgraph}`
+- Genuine ∞-vol: `Ambient.magnetizationInfinite`
+  (nonneg / le_one / indep_exhaustion / monotone_{J,h,beta} inherited from `correlationInfinite`)
 
 ### §4.6: Free energy analyticity and thermodynamic limit
 
@@ -199,6 +201,15 @@ ambient framework:
 | `correlationΛ_monotone_J` | `MonotoneOn (J ↦ correlationΛ G Λ ⟨J, h, β⟩ A) (Ici 0)` |
 | `correlationAlongExhaustion_monotone_J` | Pointwise J-monotonicity of the exhaustion sequence |
 | **`correlationInfinite_monotone_J`** | **J-direction monotonicity at infinite volume** (Glimm–Jaffe Prop 4.2.4): `MonotoneOn (J ↦ correlationInfinite G Λ ⟨J, h, β⟩ A) (Ici 0)` — three-parameter symmetry complete |
+| **`magnetizationInfinite`** | **Infinite-volume single-site magnetization** `:= correlationInfinite G Λ p {i}` |
+| `magnetizationInfinite_nonneg` | `0 ≤ magnetizationInfinite G Λ p i` (ferromagnetic) |
+| `magnetizationInfinite_le_one` | `magnetizationInfinite G Λ p i ≤ 1` |
+| `magnetizationInfinite_indep_exhaustion` | Λ-independence |
+| `magnetizationInfinite_monotone_{J,h,beta}` | three-parameter monotonicity (specializations of correlationInfinite versions) |
+| `correlationΛ_odd_vanish_h_zero` | At `h = 0`, `correlationΛ ⟨J, 0, β⟩ A = 0` for `Odd A.card` (lifted from `correlation_odd_vanish`) |
+| `correlationAlongExhaustion_h_zero` | Pointwise `= 0` at `h = 0` for odd-cardinality `A` |
+| `correlationInfinite_h_zero` | `correlationInfinite ⟨J, 0, β⟩ A = 0` for `Odd A.card` (sup of zero sequence) |
+| **`magnetizationInfinite_zero_at_h_zero`** | **Z₂ symmetry**: `magnetizationInfinite G Λ ⟨J, 0, β⟩ i = 0` at zero external field |
 
 ## Axioms
 

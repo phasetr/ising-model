@@ -2528,4 +2528,49 @@ $\texttt{MonotoneOn}\,(J \mapsto \texttt{correlationInfinite}\,G\,\Lambda\,\lang
 点毎 $\le$ + \texttt{ciSup\_le}, \texttt{le\_ciSup}.
 \end{proof}
 
+\subsection{Infinite-volume single-site magnetization}
+
+参考: Glimm--Jaffe \S 4.2 (pp.\ 57ff), \S 5.1 (p.\ 77 の $m^* := \lim_{h \to 0^+} M$);
+Friedli--Velenik \S 3.2 Theorem 3.16.
+
+\begin{definition}[\texttt{magnetizationInfinite}]
+\[
+M^{\mathrm{FM}}_{G,\Lambda}(J, h, \beta; i)
+  \;:=\; \texttt{correlationInfinite}\,G\,\Lambda\,\langle J,h,\beta\rangle\,\{i\}.
+\]
+\end{definition}
+
+\begin{theorem}[\texttt{magnetizationInfinite} 基本性質]
+以下すべて $\texttt{correlationInfinite\_*}$ を $A := \{i\}$ に specialize
+して直ちに従う:
+\begin{itemize}
+\item \texttt{magnetizationInfinite\_nonneg} (強磁性),
+\item \texttt{magnetizationInfinite\_le\_one},
+\item \texttt{magnetizationInfinite\_indep\_exhaustion},
+\item \texttt{magnetizationInfinite\_monotone\_\{J,h,beta\}} (3 パラメータ monotonicity).
+\end{itemize}
+\end{theorem}
+
+\subsection*{Z₂ spin-flip symmetry at $h = 0$}
+
+参考: Glimm--Jaffe \S 5.1 p.\ 77 (自発磁化 $m^*$ は $h \to 0^+$ の極限で
+boundary condition に依存 — $h = 0$ 自体ではなく). 有限体積の元は
+\texttt{IsingModel.correlation\_odd\_vanish} (\texttt{Inequalities/GHS.lean}).
+
+\begin{theorem}[\texttt{correlationInfinite\_h\_zero}]
+$h = 0$ かつ $|A|$ が奇数のとき
+$\texttt{correlationInfinite}\,G\,\Lambda\,\langle J,0,\beta\rangle\,A = 0$.
+\end{theorem}
+
+\begin{proof}
+有限体積で \texttt{correlation\_odd\_vanish} を \texttt{inducedGraph} に適用
+(\texttt{correlationΛ\_odd\_vanish\_h\_zero}). 各 $n$ で
+\texttt{correlationAlongExhaustion} は 0 (dite の両分岐共).
+\texttt{ciSup} of zero sequence $= 0$.
+\end{proof}
+
+\begin{theorem}[\texttt{magnetizationInfinite\_zero\_at\_h\_zero}]
+$h = 0$ で $M^{\mathrm{FM}} = 0$ (単サイト $|\{i\}| = 1$ は奇数).
+\end{theorem}
+
 \end{document}
