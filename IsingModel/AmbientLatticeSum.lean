@@ -203,17 +203,17 @@ theorem freeEnergyΛ_ge_log_two_cosh
   exact IsingModel.freeEnergy_ge_log_two_cosh _ hJ hh hβ hcard
 
 /-- **`freeEnergyΛ ≥ log 2`** for ferromagnetic on nonempty `Λ`.
-Follows from `freeEnergyΛ_ge_log_two_cosh` and `cosh ≥ 1`. -/
+Thin wrapper of base-layer
+`IsingModel.freeEnergy_ge_log_two_of_ferromagnetic`. -/
 theorem freeEnergyΛ_ge_log_two
     (G : SimpleGraph V) {Λ : Finset V} (hne : Λ.Nonempty)
     [Fintype (inducedGraph G Λ).edgeSet]
     {J h β : ℝ} (hJ : 0 ≤ J) (hh : 0 ≤ h) (hβ : 0 < β) :
     Real.log 2 ≤ freeEnergyΛ G Λ (⟨J, h, β⟩ : IsingParams ℝ) := by
-  have h_cosh : 1 ≤ Real.cosh (β * h) := Real.one_le_cosh _
-  have h_log : Real.log 2 ≤ Real.log (2 * Real.cosh (β * h)) := by
-    apply Real.log_le_log (by norm_num : (0 : ℝ) < 2)
-    linarith
-  exact h_log.trans (freeEnergyΛ_ge_log_two_cosh G hne hJ hh hβ)
+  have hcard : 0 < Fintype.card (↑Λ : Type _) := by
+    rw [Fintype.card_coe]; exact Finset.card_pos.mpr hne
+  exact IsingModel.freeEnergy_ge_log_two_of_ferromagnetic
+    (inducedGraph G Λ) _ ⟨hJ, hh, hβ⟩ hcard
 
 /-- **`freeEnergyΛ ≥ 0`** for ferromagnetic on nonempty `Λ`.
 Follows from `freeEnergyΛ_ge_log_two` and `log 2 > 0`. -/
