@@ -228,6 +228,7 @@ ambient framework:
 | `partitionFunction_beta_zero` (GibbsMeasure.lean) | `Z G ⟨J, h, 0⟩ = |Config ι|` (all weights collapse to `exp 0 = 1`) |
 | `freeEnergy_beta_zero` (FreeEnergy.lean) | β=0 direction: `freeEnergy G ⟨J, h, 0⟩ = log 2` for nonempty ι, any J, h, G |
 | `freeEnergyAlongExhaustion_beta_zero` | Along-exhaustion specialization: `f_n(J, h, 0) = log 2` per nonempty stage |
+| `freeEnergyInfinite_beta_zero` | **∞-volume lift**: `freeEnergyInfinite G Λ ⟨J, h, 0⟩ = log 2` (all stages nonempty) |
 | `freeEnergy_ge_log_two_cosh` (FreeEnergy.lean) | **Sharp ferromagnetic lower bound**: `log(2 cosh(β h)) ≤ freeEnergy G p` (via `freeEnergy_bot` + `freeEnergy_monotone_subgraph`) |
 | `freeEnergyAlongExhaustion_ge_log_two_cosh` | Along-exhaustion specialization of the sharp ferromagnetic lower bound |
 | `hamiltonian_neg_h` (Hamiltonian.lean) | `H_G(σ; J, -h, β) = H_G(σ.flip; J, h, β)` (spin-flip / h-sign identity) |
