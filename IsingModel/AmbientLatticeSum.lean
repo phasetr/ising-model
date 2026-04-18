@@ -24,6 +24,15 @@ Finset disjoint union `Λ₁ ∪ Λ₂` of the ambient lattice `V`.
   — the log form
   `log Z_{inducedGraph G Λ₁} + log Z_{inducedGraph G Λ₂}
     ≤ log Z_{inducedGraph G (Λ₁ ∪ Λ₂)}` for ferromagnetic `p`.
+* `IsingModel.Ambient.partitionFunctionΛ_disjUnion_super_multiplicative` /
+  `IsingModel.Ambient.log_partitionFunctionΛ_disjUnion_super_additive` —
+  wrappers expressed in the `partitionFunctionΛ` / log form.
+* `IsingModel.Ambient.card_mul_freeEnergyΛ_eq_log_partitionFunctionΛ_of_nonempty`
+  — the identity `|Λ| · freeEnergyΛ Λ = log Z_Λ` for nonempty `Λ`.
+* `IsingModel.Ambient.freeEnergyΛ_weighted_super_additive_of_nonempty`
+  — weighted super-additivity
+  `|Λ₁| · f_{Λ₁} + |Λ₂| · f_{Λ₂} ≤ |Λ₁ ∪ Λ₂| · f_{Λ₁ ∪ Λ₂}`
+  for disjoint nonempty `Λ₁, Λ₂`.
 -/
 
 namespace IsingModel
@@ -133,5 +142,86 @@ theorem log_partitionFunction_inducedGraph_disjUnion_super_additive
     _ ≤ Real.log (partitionFunction (inducedGraph G (Λ₁ ∪ Λ₂)) p) :=
         log_partitionFunction_monotone_subgraph
           (inducedGraph_sum_map_le_union G hd) p hf
+
+namespace Ambient
+
+variable {V : Type*} [DecidableEq V]
+
+/-- Wrapper of `partitionFunction_inducedGraph_disjUnion_super_multiplicative`
+at the `partitionFunctionΛ` API level. -/
+theorem partitionFunctionΛ_disjUnion_super_multiplicative
+    (G : SimpleGraph V) {Λ₁ Λ₂ : Finset V} (hd : Disjoint Λ₁ Λ₂)
+    [Fintype (inducedGraph G Λ₁).edgeSet]
+    [Fintype (inducedGraph G Λ₂).edgeSet]
+    [Fintype (inducedGraph G (Λ₁ ∪ Λ₂)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    partitionFunctionΛ G Λ₁ p * partitionFunctionΛ G Λ₂ p
+      ≤ partitionFunctionΛ G (Λ₁ ∪ Λ₂) p :=
+  IsingModel.partitionFunction_inducedGraph_disjUnion_super_multiplicative
+    G hd p hf
+
+/-- Wrapper of
+`log_partitionFunction_inducedGraph_disjUnion_super_additive` at the
+`partitionFunctionΛ` API level. -/
+theorem log_partitionFunctionΛ_disjUnion_super_additive
+    (G : SimpleGraph V) {Λ₁ Λ₂ : Finset V} (hd : Disjoint Λ₁ Λ₂)
+    [Fintype (inducedGraph G Λ₁).edgeSet]
+    [Fintype (inducedGraph G Λ₂).edgeSet]
+    [Fintype (inducedGraph G (Λ₁ ∪ Λ₂)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    Real.log (partitionFunctionΛ G Λ₁ p)
+      + Real.log (partitionFunctionΛ G Λ₂ p)
+    ≤ Real.log (partitionFunctionΛ G (Λ₁ ∪ Λ₂) p) :=
+  IsingModel.log_partitionFunction_inducedGraph_disjUnion_super_additive
+    G hd p hf
+
+/-- Identity `|Λ| · freeEnergyΛ G Λ p = log (partitionFunctionΛ G Λ p)`
+for nonempty `Λ`. Unfolds `freeEnergy = |ι|⁻¹ · log Z` and cancels
+`(Λ.card : ℝ) > 0` against its inverse via `field_simp`. The
+`Nonempty` hypothesis is needed at the proof level to rule out the
+`|Λ| = 0` degenerate case (where the identity still holds but the
+cancellation step does not apply uniformly). -/
+theorem card_mul_freeEnergyΛ_eq_log_partitionFunctionΛ_of_nonempty
+    (G : SimpleGraph V) {Λ : Finset V} (hne : Λ.Nonempty)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (p : IsingParams ℝ) :
+    (Λ.card : ℝ) * freeEnergyΛ G Λ p
+      = Real.log (partitionFunctionΛ G Λ p) := by
+  unfold freeEnergyΛ IsingModel.freeEnergy
+  rw [Fintype.card_coe]
+  have hne_card : (Λ.card : ℝ) ≠ 0 :=
+    Nat.cast_ne_zero.mpr (Finset.card_ne_zero.mpr hne)
+  -- Clear `(Λ.card : ℝ)⁻¹` against the outer `Λ.card` using `hne_card`.
+  field_simp
+  rfl
+
+/-- **Weighted super-additivity of the free energy density** on
+disjoint Finset unions (nonempty case):
+```
+|Λ₁| · freeEnergyΛ G Λ₁ p + |Λ₂| · freeEnergyΛ G Λ₂ p
+  ≤ |Λ₁ ∪ Λ₂| · freeEnergyΛ G (Λ₁ ∪ Λ₂) p
+```
+for disjoint nonempty `Λ₁, Λ₂` and ferromagnetic `p`.
+
+This is the Finset-weighted form of the Step 5 super-additivity
+inequality, suitable as input for a Fekete-style convergence
+argument. -/
+theorem freeEnergyΛ_weighted_super_additive_of_nonempty
+    (G : SimpleGraph V) {Λ₁ Λ₂ : Finset V}
+    (hne₁ : Λ₁.Nonempty) (hne₂ : Λ₂.Nonempty) (hd : Disjoint Λ₁ Λ₂)
+    [Fintype (inducedGraph G Λ₁).edgeSet]
+    [Fintype (inducedGraph G Λ₂).edgeSet]
+    [Fintype (inducedGraph G (Λ₁ ∪ Λ₂)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    (Λ₁.card : ℝ) * freeEnergyΛ G Λ₁ p
+      + (Λ₂.card : ℝ) * freeEnergyΛ G Λ₂ p
+    ≤ ((Λ₁ ∪ Λ₂).card : ℝ) * freeEnergyΛ G (Λ₁ ∪ Λ₂) p := by
+  have hne_union : (Λ₁ ∪ Λ₂).Nonempty := hne₁.mono Finset.subset_union_left
+  rw [card_mul_freeEnergyΛ_eq_log_partitionFunctionΛ_of_nonempty G hne₁,
+      card_mul_freeEnergyΛ_eq_log_partitionFunctionΛ_of_nonempty G hne₂,
+      card_mul_freeEnergyΛ_eq_log_partitionFunctionΛ_of_nonempty G hne_union]
+  exact log_partitionFunctionΛ_disjUnion_super_additive G hd p hf
+
+end Ambient
 
 end IsingModel
