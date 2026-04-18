@@ -2898,6 +2898,20 @@ theorem correlationInfinite_cor_4_3_5_h0
         (correlationAlongExhaustion_nonneg G Λ p hf _ n)
     linarith
 
+/-- **Infinite-volume free energy density** (limsup form).
+
+Defined as the `Filter.limsup` of `freeEnergyAlongExhaustion`, which
+is always well-defined for real sequences (even non-convergent ones).
+Glimm–Jaffe Proposition 4.6.1 asserts that this limsup equals the
+liminf (i.e., the sequence converges); the convergence theorem itself
+is deferred pending partition function super-additivity + Fekete's
+lemma machinery. -/
+noncomputable def freeEnergyInfinite
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) : ℝ :=
+  Filter.limsup (freeEnergyAlongExhaustion G Λ p) Filter.atTop
+
 end Ambient
 end IsingModel
 
