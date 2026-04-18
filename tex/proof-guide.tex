@@ -1593,6 +1593,21 @@ $\texttt{freeEnergyInfinite}\,G\,\Lambda\,\langle J, h, 0 \rangle = \log 2$.
 Constant 列に書き直して \texttt{Filter.limsup\_const} で閉.
 \end{theorem}
 
+\begin{theorem}[\texttt{freeEnergyAlongExhaustion\_zero\_params}; PR \#162]
+Nonempty $\Lambda.\text{volume}\,n$ で
+$\texttt{freeEnergyAlongExhaustion}\,G\,\Lambda\,\langle 0, 0, \beta \rangle\,n = \log 2$.
+\texttt{change} + definitional unfolding で
+\texttt{IsingModel.freeEnergy\_zero\_params} に specialize.
+\end{theorem}
+
+\begin{theorem}[\texttt{freeEnergyInfinite\_zero\_params}; PR \#162]
+$\forall n, \Lambda.\text{volume}\,n$ nonempty を仮定:
+$\texttt{freeEnergyInfinite}\,G\,\Lambda\,\langle 0, 0, \beta \rangle = \log 2$.
+\texttt{freeEnergyInfinite\_beta\_zero} の構造を
+\texttt{freeEnergyAlongExhaustion\_zero\_params} 経由で再利用.
+最大エントロピー値を $J = h = 0$ (Hamiltonian 恒等零) から得る pair.
+\end{theorem}
+
 \begin{theorem}[\texttt{inducedGraph\_bot}; PR \#129]
 $\texttt{inducedGraph}\,(\bot : \texttt{SimpleGraph}\,V)\,\Lambda
   = (\bot : \texttt{SimpleGraph}\,\uparrow\Lambda)$.
