@@ -2274,6 +2274,10 @@ This completes the genuine infinite-volume convergence on the
 
 \subsection{Infinite-volume correlation function}
 
+参考: Glimm--Jaffe \textit{Quantum Physics} 2nd ed.\ (1987),
+\S 4.2 Theorem 4.2.3, pp.\ 58--59 (ferromagnetic Ising の熱力学極限相関).
+Friedli--Velenik \S 3.2.
+
 \begin{definition}[\texttt{correlationInfinite}]
 \[
 \langle \sigma^A \rangle_V^{\mathrm{FM}} \;:=\;
@@ -2327,6 +2331,9 @@ $\exists N, \exists h_N$ で上と同じ結論が得られる.
 
 \subsection{Exhaustion-independence}
 
+参考: Glimm--Jaffe \S 4.2, pp.\ 58--59 (無限体積極限は exhaustion の
+選び方に依存しない). Friedli--Velenik \S 3.2 (Infinite-volume Gibbs states).
+
 \begin{lemma}[\texttt{correlationAlongExhaustion\_le\_correlationInfinite\_of\_other}]
 2 つの exhaustion $\Lambda, \Lambda'$ に対し任意の $n$ で
 \[
@@ -2356,6 +2363,9 @@ $\texttt{correlationInfinite}\,G\,\Lambda\,p\,A
 
 \subsection{Ambient-subgraph monotonicity at infinite volume}
 
+参考: Glimm--Jaffe \S 4.2, pp.\ 58--59 (熱力学極限は有限体積の
+monotonicity を保持する). Friedli--Velenik \S 3.6.
+
 \begin{lemma}[\texttt{correlationAlongExhaustion\_monotone\_ambient\_subgraph}]
 $G_1 \le G_2$ のとき, 任意の $n$ で
 $\texttt{correlationAlongExhaustion}\,G_1\,\Lambda\,p\,A\,n
@@ -2379,8 +2389,11 @@ Lemma + \texttt{le\_ciSup} + \texttt{ciSup\_le}.
 
 \subsection{GKS-II at infinite volume}
 
-Glimm--Jaffe \S 4.2 Theorem 4.2.3: the second Griffiths inequality
-holds in the thermodynamic limit.
+Glimm--Jaffe, \textit{Quantum Physics}, 2nd ed.\ (1987),
+\S 4.2 Theorem 4.2.3, pp.\ 58--59: the second Griffiths inequality
+holds in the thermodynamic limit. 有限体積版は Friedli--Velenik
+\textit{Statistical Mechanics of Lattice Systems}, Theorem 3.49
+(eq.~3.55), pp.\ 127--128.
 
 \begin{lemma}[\texttt{liftFinset\_symmDiff}]
 $A, B \subseteq \Lambda$ のとき
@@ -2424,7 +2437,8 @@ LHS $= 0 \le$ RHS (\texttt{correlationAlongExhaustion\_nonneg})
 
 \subsection{h-direction monotonicity at infinite volume}
 
-Glimm--Jaffe Proposition 4.2.4 の無限体積版.
+Glimm--Jaffe, \textit{Quantum Physics}, 2nd ed.\ (1987), \S 4.2
+Proposition 4.2.4 (Exercise), p.\ 58 の h-方向無限体積版.
 
 \begin{lemma}[\texttt{correlationΛ\_monotone\_h}]
 $J \ge 0$, $\beta > 0$, $\Lambda \subseteq V$ finite で
@@ -2455,7 +2469,8 @@ $\texttt{MonotoneOn}\,(h \mapsto \texttt{correlationInfinite}\,G\,\Lambda\,\lang
 
 \subsection{β-direction monotonicity at infinite volume}
 
-Glimm--Jaffe Proposition 4.2.4 の β-方向.
+Glimm--Jaffe, \textit{Quantum Physics}, 2nd ed.\ (1987), \S 4.2
+Proposition 4.2.4 (Exercise), p.\ 58 の β-方向無限体積版.
 
 \begin{lemma}[\texttt{correlationΛ\_monotone\_beta}]
 $J \ge 0, h \ge 0$ で
