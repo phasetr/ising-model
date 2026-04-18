@@ -2939,6 +2939,23 @@ theorem freeEnergyAlongExhaustion_ge_zero_params
       (Set.self_mem_Ici) hJ hJ
   exact h1.trans h2
 
+/-- **Zero-params lower-bound comparison for `partitionFunctionAlongExhaustion`**
+(partition function analog of `freeEnergyAlongExhaustion_ge_zero_params`).
+For ferromagnetic, `Z(0, 0, β) ≤ Z(J, h, β)`. -/
+theorem partitionFunctionAlongExhaustion_ge_zero_params
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {J h β : ℝ} (hJ : 0 ≤ J) (hh : 0 ≤ h) (hβ : 0 < β) (n : ℕ) :
+    partitionFunctionAlongExhaustion G Λ ⟨0, 0, β⟩ n
+      ≤ partitionFunctionAlongExhaustion G Λ ⟨J, h, β⟩ n := by
+  have h1 : partitionFunctionAlongExhaustion G Λ ⟨0, 0, β⟩ n
+      ≤ partitionFunctionAlongExhaustion G Λ ⟨0, h, β⟩ n :=
+    partitionFunctionAlongExhaustion_monotone_h G Λ 0 β le_rfl hβ le_rfl hh n
+  have h2 : partitionFunctionAlongExhaustion G Λ ⟨0, h, β⟩ n
+      ≤ partitionFunctionAlongExhaustion G Λ ⟨J, h, β⟩ n :=
+    partitionFunctionAlongExhaustion_monotone_J G Λ h β hh hβ le_rfl hJ n
+  exact h1.trans h2
+
 end Ambient
 end IsingModel
 
