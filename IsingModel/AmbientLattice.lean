@@ -3161,6 +3161,51 @@ theorem freeEnergyInfinite_beta_zero
   rw [hconst]
   exact Filter.limsup_const (Real.log 2)
 
+/-! ## J = h = 0 closed form along exhaustion -/
+
+/-- **Along-exhaustion J=h=0 closed form**:
+for nonempty `Λ.volume n` and any ambient graph `G, Λ` and any `β`,
+`freeEnergyAlongExhaustion G Λ ⟨0, 0, β⟩ n = log 2`.
+
+Specialization of `IsingModel.freeEnergy_zero_params` via `change` +
+definitional unfolding of `freeEnergyAlongExhaustion` through
+`freeEnergyΛ` to `IsingModel.freeEnergy (inducedGraph …)`. -/
+theorem freeEnergyAlongExhaustion_zero_params
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (β : ℝ) (n : ℕ) (hne : (Λ.volume n).Nonempty) :
+    freeEnergyAlongExhaustion G Λ (⟨0, 0, β⟩ : IsingParams ℝ) n
+      = Real.log 2 := by
+  have hcard : 0 < Fintype.card (↑(Λ.volume n) : Type _) := by
+    rw [Fintype.card_coe]; exact Finset.card_pos.mpr hne
+  change IsingModel.freeEnergy (inducedGraph G (Λ.volume n))
+      (⟨0, 0, β⟩ : IsingParams ℝ) = Real.log 2
+  exact IsingModel.freeEnergy_zero_params _ β hcard
+
+/-- **Infinite-volume J=h=0 closed form**:
+under `∀ n, (Λ.volume n).Nonempty`, `freeEnergyInfinite G Λ ⟨0, 0, β⟩ = log 2`
+for any `β, G, Λ`.
+
+The sequence `n ↦ freeEnergyAlongExhaustion G Λ ⟨0, 0, β⟩ n` is constantly
+`log 2` by `freeEnergyAlongExhaustion_zero_params`, so its `limsup` on
+`atTop` is `log 2` by `Filter.limsup_const`.
+
+Companion to `freeEnergyInfinite_beta_zero`: both give the
+maximum-entropy value `log 2` from orthogonal degeneracies
+(β=0 vs. H ≡ 0). -/
+theorem freeEnergyInfinite_zero_params
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (β : ℝ) (hne : ∀ n, (Λ.volume n).Nonempty) :
+    freeEnergyInfinite G Λ (⟨0, 0, β⟩ : IsingParams ℝ) = Real.log 2 := by
+  unfold freeEnergyInfinite
+  have hconst : freeEnergyAlongExhaustion G Λ (⟨0, 0, β⟩ : IsingParams ℝ)
+      = fun _ : ℕ => Real.log 2 := by
+    funext n
+    exact freeEnergyAlongExhaustion_zero_params G Λ β n (hne n)
+  rw [hconst]
+  exact Filter.limsup_const (Real.log 2)
+
 /-! ## Free-spin identity for induced subgraph -/
 
 omit [DecidableEq V] in
