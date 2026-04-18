@@ -706,6 +706,37 @@ theorem freeEnergy_neg_h (G : SimpleGraph ι) [Fintype G.edgeSet]
   unfold freeEnergy
   rw [partitionFunction_neg_h]
 
+/-- **Free energy equals its value at `|h|`**:
+`freeEnergy G ⟨J, h, β⟩ = freeEnergy G ⟨J, |h|, β⟩`.
+
+Case-split on `|h| = h ∨ |h| = -h` and apply `freeEnergy_neg_h` when
+needed. -/
+theorem freeEnergy_eq_abs_h (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h β : ℝ) :
+    freeEnergy G (⟨J, h, β⟩ : IsingParams ℝ)
+      = freeEnergy G (⟨J, |h|, β⟩ : IsingParams ℝ) := by
+  rcases abs_choice h with habs | habs
+  · rw [habs]
+  · rw [habs, freeEnergy_neg_h]
+
+/-- **Free energy is monotone in `|h|`** for ferromagnetic parameters:
+`|h₁| ≤ |h₂| → freeEnergy G ⟨J, h₁, β⟩ ≤ freeEnergy G ⟨J, h₂, β⟩`.
+
+Combines `freeEnergy_eq_abs_h` (h-even) with `freeEnergy_monotone_h`
+on `[0, ∞)`: rewrite both sides as `freeEnergy G ⟨J, |hᵢ|, β⟩` and
+apply the `Ici 0` monotonicity using `abs_nonneg`. -/
+theorem freeEnergy_monotone_abs_h
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β)
+    {h₁ h₂ : ℝ} (hh : |h₁| ≤ |h₂|) :
+    freeEnergy G (⟨J, h₁, β⟩ : IsingParams ℝ)
+      ≤ freeEnergy G (⟨J, h₂, β⟩ : IsingParams ℝ) := by
+  rw [freeEnergy_eq_abs_h G J h₁ β, freeEnergy_eq_abs_h G J h₂ β]
+  have := freeEnergy_monotone_h G J β hJ hβ
+    (Set.mem_Ici.mpr (abs_nonneg h₁))
+    (Set.mem_Ici.mpr (abs_nonneg h₂)) hh
+  exact this
+
 /-- **Sharp ferromagnetic lower bound**: for any graph `G` with
 `|ι| > 0` and ferromagnetic parameters, `log(2·cosh(β·h)) ≤ freeEnergy G p`.
 

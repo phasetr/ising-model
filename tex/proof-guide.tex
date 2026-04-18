@@ -1594,6 +1594,19 @@ $f(J, -h, \beta) = f(J, h, \beta)$.
 自由エネルギー密度は $h$ の偶関数.
 \end{theorem}
 
+\subsection{$|h|$-monotonicity (PR \#127)}
+
+\begin{theorem}[\texttt{freeEnergy\_eq\_abs\_h}]
+$f(J, h, \beta) = f(J, |h|, \beta)$.
+$|h| = h$ or $|h| = -h$ の場合分けと \texttt{freeEnergy\_neg\_h}.
+\end{theorem}
+
+\begin{theorem}[\texttt{freeEnergy\_monotone\_abs\_h}]
+強磁性系で $|h_1| \le |h_2| \Rightarrow f(J, h_1, \beta) \le f(J, h_2, \beta)$.
+両辺を \texttt{freeEnergy\_eq\_abs\_h} で $|h_i|$ に書き換え,
+$|h_i| \ge 0$ から \texttt{freeEnergy\_monotone\_h} (Ici 0 上 monotone) を適用.
+\end{theorem}
+
 \subsection{Reflection positivity (\S10.4)}
 
 \begin{definition}[\texttt{ReflectionPositive}]
