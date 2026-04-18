@@ -215,6 +215,7 @@ ambient framework:
 | `spontaneousMagnetization_le_one` | `m* ≤ 1` |
 | `spontaneousMagnetization_le_magnetizationInfinite` | `m* ≤ M(h)` for any `h > 0` (infimum characterization) |
 | `spontaneousMagnetization_indep_exhaustion` | `m*` does not depend on the choice of exhaustion |
+| **`tendsto_magnetizationInfinite_spontaneousMagnetization_nhdsGT`** | **Right-limit**: `Tendsto M(h) (𝓝[>] 0) (𝓝 m*)` — realizes `m*` as the physical right limit of `magnetizationInfinite` |
 
 ## Axioms
 
