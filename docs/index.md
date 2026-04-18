@@ -224,6 +224,7 @@ ambient framework:
 | `sum_spin` / `sum_exp_spin_sign` | Spin-sum lemmas: `Σ_s f(s) = f(up) + f(down)`; `Σ_s exp(β h sign(s)) = 2 cosh(β h)` |
 | `partitionFunction_bot` (GibbsMeasure.lean) | `Z_⊥(p) = (2 cosh(β h))^\|ι\|` (free-spin product formula) |
 | `freeEnergy_bot` (FreeEnergy.lean) | **Free-spin closed form**: `freeEnergy ⊥ p = log(2 cosh(β h))` (for nonempty ι) |
+| `freeEnergy_bot_h_zero` (FreeEnergy.lean) | Corollary at `h = 0`: `freeEnergy ⊥ ⟨J, 0, β⟩ = log 2` for any J, β |
 | `freeEnergy_ge_log_two_cosh` (FreeEnergy.lean) | **Sharp ferromagnetic lower bound**: `log(2 cosh(β h)) ≤ freeEnergy G p` (via `freeEnergy_bot` + `freeEnergy_monotone_subgraph`) |
 | `freeEnergyAlongExhaustion_ge_log_two_cosh` | Along-exhaustion specialization of the sharp ferromagnetic lower bound |
 | `hamiltonian_neg_h` (Hamiltonian.lean) | `H_G(σ; J, -h, β) = H_G(σ.flip; J, h, β)` (spin-flip / h-sign identity) |
