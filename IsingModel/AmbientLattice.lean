@@ -414,6 +414,43 @@ theorem freeEnergyAlongExhaustion_eq_log_div_card
     partitionFunctionAlongExhaustion_apply, freeEnergyΛ,
     partitionFunctionΛ, IsingModel.freeEnergy]
 
+/-- **J-direction monotonicity of `freeEnergyAlongExhaustion`**: for
+fixed `h ≥ 0`, `β > 0`, and any `n`, the free energy along the
+exhaustion is monotone in `J ∈ Set.Ici 0`.  Direct specialization of
+`IsingModel.freeEnergy_monotone_J`. -/
+theorem freeEnergyAlongExhaustion_monotone_J
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {h : ℝ} (hh : 0 ≤ h) {β : ℝ} (hβ : 0 < β) (n : ℕ) :
+    MonotoneOn
+      (fun J : ℝ => freeEnergyAlongExhaustion G Λ ⟨J, h, β⟩ n)
+      (Set.Ici 0) :=
+  IsingModel.freeEnergy_monotone_J (inducedGraph G (Λ.volume n)) h β hh hβ
+
+/-- **h-direction monotonicity of `freeEnergyAlongExhaustion`**: for
+fixed `J ≥ 0`, `β > 0`, and any `n`, the free energy along the
+exhaustion is monotone in `h ∈ Set.Ici 0`. -/
+theorem freeEnergyAlongExhaustion_monotone_h
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) (n : ℕ) :
+    MonotoneOn
+      (fun h : ℝ => freeEnergyAlongExhaustion G Λ ⟨J, h, β⟩ n)
+      (Set.Ici 0) :=
+  IsingModel.freeEnergy_monotone_h (inducedGraph G (Λ.volume n)) J β hJ hβ
+
+/-- **β-direction monotonicity of `freeEnergyAlongExhaustion`**: for
+fixed `J ≥ 0`, `h ≥ 0`, and any `n`, the free energy along the
+exhaustion is monotone in `β ∈ Set.Ioi 0`. -/
+theorem freeEnergyAlongExhaustion_monotone_beta
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {J : ℝ} (hJ : 0 ≤ J) {h : ℝ} (hh : 0 ≤ h) (n : ℕ) :
+    MonotoneOn
+      (fun β : ℝ => freeEnergyAlongExhaustion G Λ ⟨J, h, β⟩ n)
+      (Set.Ioi 0) :=
+  IsingModel.freeEnergy_monotone_beta (inducedGraph G (Λ.volume n)) J hJ h hh
+
 /-! ## Extension of a Λ₁-graph to Λ₂ (for volume-direction monotonicity)
 
 For `Λ₁ ⊆ Λ₂` and `G : SimpleGraph V`, we construct a graph on
