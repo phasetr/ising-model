@@ -552,6 +552,27 @@ theorem freeEnergyInfinite_le_uniform_upper_bound
       (J := p.J) (h := p.h) (β := p.β) G Λ hf.hJ hf.hh hf.hβ n hne
   exact Filter.limsup_le_of_le hbdd_below.isCoboundedUnder_le hbound
 
+/-- **`freeEnergyInfinite` is the limit when `freeEnergyAlongExhaustion`
+converges**: if the sequence `n ↦ freeEnergyAlongExhaustion G Λ p n`
+has a limit `L`, then `freeEnergyInfinite G Λ p = L`.
+
+Follows from `freeEnergyInfinite := Filter.limsup …` and
+`Filter.Tendsto.limsup_eq` (convergent sequence's `limsup` equals its
+limit).
+
+Infrastructure for the pending §4.6 Prop 4.6.1 Fekete convergence:
+once convergence is established, this gives the value equation for
+`freeEnergyInfinite`. -/
+theorem freeEnergyInfinite_eq_of_tendsto
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) {L : ℝ}
+    (h : Filter.Tendsto (freeEnergyAlongExhaustion G Λ p)
+      Filter.atTop (nhds L)) :
+    freeEnergyInfinite G Λ p = L := by
+  unfold freeEnergyInfinite
+  exact h.limsup_eq
+
 /-- **Uniform lower bound on `freeEnergyInfinite` under ferromagnetic**:
 the per-n sharp lower bound of PR #125 lifts to `limsup`:
 `log(2·cosh(β·h)) ≤ freeEnergyInfinite G Λ p`.
