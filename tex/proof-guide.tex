@@ -1645,6 +1645,19 @@ $\beta = 0$ で Boltzmann weight $\exp(-\beta H) = 1$ を経由.
 \]
 \end{theorem}
 
+\begin{theorem}[\texttt{partitionFunction\_ge\_two\_pow\_card\_of\_ferromagnetic} 系; PR \#165]
+強磁性 $p$ で
+\[
+  2^{|\iota|} \;\le\; Z_G(p).
+\]
+\texttt{partitionFunction\_bot\_ge\_two\_pow\_card}
+($\bot$-graph + $\cosh \ge 1$) と
+\texttt{partitionFunction\_monotone\_subgraph} の合成.
+log 形 \texttt{log\_partitionFunction\_ge\_card\_mul\_log\_two\_of\_ferromagnetic}
+は $|\iota| \cdot \log 2 \le \log Z_G$, $\Lambda$ / along-exhaustion lifts
+も同 PR で提供.
+\end{theorem}
+
 \begin{theorem}[\texttt{inducedGraph\_bot}; PR \#129]
 $\texttt{inducedGraph}\,(\bot : \texttt{SimpleGraph}\,V)\,\Lambda
   = (\bot : \texttt{SimpleGraph}\,\uparrow\Lambda)$.
