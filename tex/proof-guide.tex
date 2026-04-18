@@ -1655,6 +1655,17 @@ $0 < |\iota|$, 強磁性 $p$ で
 (PR \#125) は本 PR で base 恒等への薄い wrapper に refactor.
 \end{theorem}
 
+\begin{theorem}[\texttt{freeEnergyInfinite\_eq\_of\_tendsto}; PR \#170]
+$\texttt{Tendsto}\,(\texttt{freeEnergyAlongExhaustion}\,G\,\Lambda\,p)\,
+\texttt{atTop}\,(\mathcal N (L))$ のもと
+\[
+  \texttt{freeEnergyInfinite}\,G\,\Lambda\,p \;=\; L.
+\]
+\texttt{freeEnergyInfinite := Filter.limsup} 定義と
+\texttt{Filter.Tendsto.limsup\_eq} の合成. Fekete 収束成立時に
+\texttt{freeEnergyInfinite} の値を与える infrastructure.
+\end{theorem}
+
 \begin{theorem}[\texttt{freeEnergy\_nonneg\_of\_ferromagnetic}; PR \#169]
 $0 < |\iota|$, 強磁性 $p$ で
 \[
