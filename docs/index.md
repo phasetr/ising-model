@@ -229,6 +229,7 @@ ambient framework:
 | `truncated2Infinite_nonneg_of_eq` | `0 ≤ U_2(i,i) = M(i)(1-M(i))` |
 | **`truncated2Infinite_nonneg`** | **General nonneg**: `0 ≤ U_2(i,j)` for all `i, j` |
 | `truncated2Infinite_indep_exhaustion` | Λ-independence |
+| `truncated2Infinite_h_zero` | `h = 0` ⇒ `U_2 = ⟨σᵢσⱼ⟩_∞` (general; Z₂ collapses singletons) |
 | **`truncated3Infinite`** | **Truncated 3-point correlation** `U_3(i,j,k) := ⟨σ^{i,j,k}⟩_∞ - ⟨σ_i⟩_∞⟨σ^{j,k}⟩_∞ - ⟨σ_j⟩_∞⟨σ^{i,k}⟩_∞ - ⟨σ_k⟩_∞⟨σ^{i,j}⟩_∞ + 2⟨σ_i⟩_∞⟨σ_j⟩_∞⟨σ_k⟩_∞` |
 | **`truncated3Infinite_nonpos`** | **GHS at infinite volume** (Glimm–Jaffe §4.3 Cor 4.3.4 pp. 68ff): pairwise distinct ⇒ `U_3 ≤ 0` |
 | `truncated3Infinite_h_zero_of_distinct` | `h = 0` + distinct ⇒ `U_3 = 0` (Z₂ symmetry consequence) |

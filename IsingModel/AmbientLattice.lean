@@ -1904,6 +1904,31 @@ theorem truncated2Infinite_indep_exhaustion
       correlationInfinite_indep_exhaustion G Λ Λ' p hf {i},
       correlationInfinite_indep_exhaustion G Λ Λ' p hf {j}]
 
+/-- **`truncated2Infinite` at `h = 0`**: since
+$\langle \sigma_i \rangle_\infty = \langle \sigma_j \rangle_\infty = 0$
+at $h = 0$ (singletons have odd cardinality 1, so
+`correlationInfinite_h_zero` applies), the truncated 2-point function
+reduces to the raw 2-point correlation:
+$U_2(i, j; \langle J, 0, \beta \rangle) = \langle \sigma_i \sigma_j \rangle_\infty$.
+
+Holds for all `i, j : V` (no distinctness needed): if `i = j`, both
+sides equal `correlationInfinite G Λ ⟨J, 0, β⟩ {i}` which is `0` by
+the same Z₂ argument.  Useful as a closed-form expression for the
+truncated correlation at zero external field (connects to
+susceptibility/fluctuation analysis). -/
+theorem truncated2Infinite_h_zero
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (i j : V) :
+    truncated2Infinite G Λ ⟨J, 0, β⟩ i j
+      = correlationInfinite G Λ ⟨J, 0, β⟩ {i, j} := by
+  unfold truncated2Infinite
+  have h_i : Odd ({i} : Finset V).card := by simp
+  have h_j : Odd ({j} : Finset V).card := by simp
+  rw [correlationInfinite_h_zero G Λ J β _ h_i,
+      correlationInfinite_h_zero G Λ J β _ h_j]
+  ring
+
 /-! ## Truncated 3-point correlation + GHS at infinite volume
 
 Lift the finite-volume GHS inequality (`ghs_inequality`,
