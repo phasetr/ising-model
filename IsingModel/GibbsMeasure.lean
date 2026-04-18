@@ -218,4 +218,36 @@ theorem partitionFunction_bot (p : IsingParams ℝ) :
     _ = (2 * Real.cosh (p.β * p.h)) ^ Fintype.card ι := by
         rw [Finset.prod_const, Finset.card_univ]
 
+/-! ## h-symmetry: `Z(-h) = Z(h)` via spin flip
+
+From `hamiltonian_neg_h` (`H(σ; -h) = H(σ.flip; h)`) and the fact that
+`σ ↦ σ.flip` is an involution of `Config ι`, the partition function is
+invariant under `h ↦ -h`. -/
+
+/-- **Partition function h-symmetry**: `Z(J, -h, β) = Z(J, h, β)`.
+
+Proof: `exp(-β · H(σ; -h)) = exp(-β · H(σ.flip; h))` (`hamiltonian_neg_h`),
+then reindex the Config-sum via the self-inverse `flipEquiv`. -/
+theorem partitionFunction_neg_h (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h β : ℝ) :
+    partitionFunction G (⟨J, -h, β⟩ : IsingParams ℝ)
+      = partitionFunction G (⟨J, h, β⟩ : IsingParams ℝ) := by
+  unfold partitionFunction boltzmannWeight
+  let flipEquiv : Equiv.Perm (Config ι) :=
+    ⟨Config.flip, Config.flip, Config.flip_flip, Config.flip_flip⟩
+  calc ∑ σ : Config ι,
+        Real.exp (-(⟨J, -h, β⟩ : IsingParams ℝ).β *
+          hamiltonian G (⟨J, -h, β⟩ : IsingParams ℝ) σ)
+      = ∑ σ : Config ι,
+          Real.exp (-(⟨J, h, β⟩ : IsingParams ℝ).β *
+            hamiltonian G (⟨J, h, β⟩ : IsingParams ℝ) σ.flip) := by
+        refine Finset.sum_congr rfl ?_
+        intros σ _
+        rw [hamiltonian_neg_h]
+    _ = ∑ σ : Config ι,
+          Real.exp (-(⟨J, h, β⟩ : IsingParams ℝ).β *
+            hamiltonian G (⟨J, h, β⟩ : IsingParams ℝ) σ) :=
+        (Fintype.sum_equiv flipEquiv _ _
+          (fun σ => by dsimp [flipEquiv]; simp [Config.flip_flip])).symm
+
 end IsingModel
