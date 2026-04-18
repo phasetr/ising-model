@@ -143,6 +143,49 @@ theorem log_partitionFunction_inducedGraph_disjUnion_super_additive
         log_partitionFunction_monotone_subgraph
           (inducedGraph_sum_map_le_union G hd) p hf
 
+set_option linter.unusedFintypeInType false in
+/-- **Monotonicity step `log Z_Λ₁ ≤ log Z_{Λ₁ ∪ Λ₂}`** for disjoint
+`Λ₁, Λ₂` under ferromagnetic parameters.
+
+Proof: `log Z_Λ₁ ≤ log Z_Λ₁ + log Z_Λ₂` (since `log Z_Λ₂ ≥ 0` by
+`log_partitionFunction_nonneg_of_ferromagnetic`), and the right-hand
+side is `≤ log Z_{Λ₁ ∪ Λ₂}` by the Step 5 super-additivity
+(`log_partitionFunction_inducedGraph_disjUnion_super_additive`). The
+`[Fintype (inducedGraph G Λ₂).edgeSet]` instance is used internally
+via the super-additivity lemma even though it does not appear in the
+conclusion. -/
+theorem log_partitionFunction_inducedGraph_le_of_disjoint_union
+    (G : SimpleGraph V) {Λ₁ Λ₂ : Finset V} (hd : Disjoint Λ₁ Λ₂)
+    [Fintype (inducedGraph G Λ₁).edgeSet]
+    [Fintype (inducedGraph G Λ₂).edgeSet]
+    [Fintype (inducedGraph G (Λ₁ ∪ Λ₂)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    Real.log (partitionFunction (inducedGraph G Λ₁) p)
+      ≤ Real.log (partitionFunction (inducedGraph G (Λ₁ ∪ Λ₂)) p) := by
+  calc Real.log (partitionFunction (inducedGraph G Λ₁) p)
+      ≤ Real.log (partitionFunction (inducedGraph G Λ₁) p)
+          + Real.log (partitionFunction (inducedGraph G Λ₂) p) :=
+        le_add_of_nonneg_right
+          (log_partitionFunction_nonneg_of_ferromagnetic _ p hf)
+    _ ≤ Real.log (partitionFunction (inducedGraph G (Λ₁ ∪ Λ₂)) p) :=
+        log_partitionFunction_inducedGraph_disjUnion_super_additive
+          G hd p hf
+
+set_option linter.unusedFintypeInType false in
+/-- Multiplicative form: `Z_{Λ₁} ≤ Z_{Λ₁ ∪ Λ₂}` for disjoint
+`Λ₁, Λ₂` under ferromagnetic parameters. -/
+theorem partitionFunction_inducedGraph_le_of_disjoint_union
+    (G : SimpleGraph V) {Λ₁ Λ₂ : Finset V} (hd : Disjoint Λ₁ Λ₂)
+    [Fintype (inducedGraph G Λ₁).edgeSet]
+    [Fintype (inducedGraph G Λ₂).edgeSet]
+    [Fintype (inducedGraph G (Λ₁ ∪ Λ₂)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    partitionFunction (inducedGraph G Λ₁) p
+      ≤ partitionFunction (inducedGraph G (Λ₁ ∪ Λ₂)) p :=
+  (Real.log_le_log_iff (partitionFunction_pos _ _)
+    (partitionFunction_pos _ _)).mp
+    (log_partitionFunction_inducedGraph_le_of_disjoint_union G hd p hf)
+
 namespace Ambient
 
 variable {V : Type*} [DecidableEq V]
@@ -221,6 +264,35 @@ theorem freeEnergyΛ_weighted_super_additive_of_nonempty
       card_mul_freeEnergyΛ_eq_log_partitionFunctionΛ_of_nonempty G hne₂,
       card_mul_freeEnergyΛ_eq_log_partitionFunctionΛ_of_nonempty G hne_union]
   exact log_partitionFunctionΛ_disjUnion_super_additive G hd p hf
+
+set_option linter.unusedFintypeInType false in
+/-- Wrapper at the `partitionFunctionΛ` API level:
+for disjoint `Λ₁, Λ₂`, `log Z_{Λ₁} ≤ log Z_{Λ₁ ∪ Λ₂}` under
+ferromagnetic parameters. -/
+theorem log_partitionFunctionΛ_le_of_disjoint_union
+    (G : SimpleGraph V) {Λ₁ Λ₂ : Finset V} (hd : Disjoint Λ₁ Λ₂)
+    [Fintype (inducedGraph G Λ₁).edgeSet]
+    [Fintype (inducedGraph G Λ₂).edgeSet]
+    [Fintype (inducedGraph G (Λ₁ ∪ Λ₂)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    Real.log (partitionFunctionΛ G Λ₁ p)
+      ≤ Real.log (partitionFunctionΛ G (Λ₁ ∪ Λ₂) p) :=
+  IsingModel.log_partitionFunction_inducedGraph_le_of_disjoint_union
+    G hd p hf
+
+set_option linter.unusedFintypeInType false in
+/-- Multiplicative form at the `partitionFunctionΛ` API level:
+for disjoint `Λ₁, Λ₂`, `Z_{Λ₁} ≤ Z_{Λ₁ ∪ Λ₂}` under ferromagnetic
+parameters. -/
+theorem partitionFunctionΛ_le_of_disjoint_union
+    (G : SimpleGraph V) {Λ₁ Λ₂ : Finset V} (hd : Disjoint Λ₁ Λ₂)
+    [Fintype (inducedGraph G Λ₁).edgeSet]
+    [Fintype (inducedGraph G Λ₂).edgeSet]
+    [Fintype (inducedGraph G (Λ₁ ∪ Λ₂)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    partitionFunctionΛ G Λ₁ p ≤ partitionFunctionΛ G (Λ₁ ∪ Λ₂) p :=
+  IsingModel.partitionFunction_inducedGraph_le_of_disjoint_union
+    G hd p hf
 
 end Ambient
 
