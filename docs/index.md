@@ -239,6 +239,7 @@ ambient framework:
 | `freeEnergy_zero_params` (FreeEnergy.lean) | `freeEnergy G ⟨0, 0, β⟩ = log 2` (for nonempty ι) |
 | `freeEnergyAlongExhaustion_zero_params` | Along-exhaustion specialization: `f_n(0, 0, β) = log 2` per nonempty stage |
 | `freeEnergyInfinite_zero_params` | **∞-volume lift**: `freeEnergyInfinite G Λ ⟨0, 0, β⟩ = log 2` (all stages nonempty) |
+| `partitionFunctionAlongExhaustion_zero_params` / `log_partitionFunctionAlongExhaustion_zero_params` | Partition-function side: `Z = 2^|Λ.volume n|`, `log Z = |Λ.volume n| · log 2` at `⟨0, 0, β⟩` |
 | **`freeEnergyAlongExhaustion_ge_log_two`** | **Uniform lower bound**: `log 2 ≤ freeEnergyAlongExhaustion G Λ ⟨J, h, β⟩ n` for ferromagnetic + nonempty `Λ.volume n` |
 | `freeEnergy_upper_bound` (Conditioning.lean) | **Explicit upper bound** (Cor. 10.3.2 / \|ι\|): `freeEnergy G p ≤ log 2 + \|β\|·(\|J\|·\|E\| + \|h\|·\|ι\|)/\|ι\|` for nonempty ι |
 | `freeEnergyAlongExhaustion_upper_bound` | Along-exhaustion specialization of `freeEnergy_upper_bound` |
