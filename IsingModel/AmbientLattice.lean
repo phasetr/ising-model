@@ -1933,7 +1933,12 @@ noncomputable def truncated3Infinite
     + 2 * correlationInfinite G Λ p {i} * correlationInfinite G Λ p {j}
       * correlationInfinite G Λ p {k}
 
-/-- Finite-volume truncated 3-point along an exhaustion (local abbreviation). -/
+/-- **Truncated 3-point along an exhaustion** (local helper): evaluates
+the `truncated3`-style algebraic expression at the `n`-th volume of
+the exhaustion, using `correlationAlongExhaustion` instead of the
+limit `correlationInfinite`.  Bridges the finite-volume
+`ghs_inequality` and the infinite-volume `truncated3Infinite_nonpos`
+via `le_of_tendsto`. -/
 private noncomputable def truncated3AlongExhaustion
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
@@ -1949,11 +1954,14 @@ private noncomputable def truncated3AlongExhaustion
       * correlationAlongExhaustion G Λ p {j} n
       * correlationAlongExhaustion G Λ p {k} n
 
-/-- **Tendsto for the truncated 3-point sequence**: the `truncated3`
-along an exhaustion converges to `truncated3Infinite`.
+/-- **Tendsto for the truncated 3-point sequence**: the pointwise
+`truncated3AlongExhaustion` converges to `truncated3Infinite`.
 
-Proof: apply `Tendsto.sub`, `Tendsto.add`, `Tendsto.mul` to the
-five `correlationInfinite` convergences from
+Key technical step establishing that the thermodynamic limit of
+the finite-volume truncated 3-point correlation exists and equals
+the infinite-volume definition.  Proof: apply `Tendsto.sub`,
+`Tendsto.add`, and `Tendsto.mul` to the seven `correlationInfinite`
+convergences from
 `tendsto_correlationAlongExhaustion_correlationInfinite`. -/
 private theorem tendsto_truncated3AlongExhaustion_truncated3Infinite
     (G : SimpleGraph V) (Λ : Exhaustion V)
@@ -2184,7 +2192,13 @@ noncomputable def truncated4Infinite
     - correlationInfinite G Λ p {i, k} * correlationInfinite G Λ p {j, l}
     - correlationInfinite G Λ p {i, l} * correlationInfinite G Λ p {j, k}
 
-/-- Finite-volume truncated 4-point along an exhaustion (local helper). -/
+/-- **Truncated 4-point along an exhaustion** (local helper): evaluates
+the `truncated4`-style algebraic expression at the `n`-th volume of
+the exhaustion, using `correlationAlongExhaustion` instead of the
+limit `correlationInfinite`.  This is the pointwise sequence whose
+limit as `n → ∞` is `truncated4Infinite`; established separately so
+that the `le_of_tendsto`-based `_nonpos_h_zero` proof can apply the
+finite-volume `cor_4_3_3` to each term of the sequence. -/
 private noncomputable def truncated4AlongExhaustion
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
@@ -2197,9 +2211,14 @@ private noncomputable def truncated4AlongExhaustion
     - correlationAlongExhaustion G Λ p {i, l} n
       * correlationAlongExhaustion G Λ p {j, k} n
 
-/-- The `truncated4` along an exhaustion converges to `truncated4Infinite`
-via `Tendsto.sub` / `Tendsto.mul` on the 7 `correlationInfinite`
-convergences. -/
+/-- **Tendsto for the truncated 4-point sequence**: the pointwise
+`truncated4AlongExhaustion` converges to `truncated4Infinite`.
+
+This is the key technical step establishing that the thermodynamic
+limit of the finite-volume truncated 4-point correlation exists and
+equals the infinite-volume definition.  Proof: apply `Tendsto.sub`
+and `Tendsto.mul` to the 7 `correlationInfinite` convergences from
+`tendsto_correlationAlongExhaustion_correlationInfinite`. -/
 private theorem tendsto_truncated4AlongExhaustion_truncated4Infinite
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
@@ -2255,37 +2274,18 @@ theorem truncated4Infinite_nonpos_h_zero
   have mem_j : j ∈ Λ.volume n := habcd (by simp)
   have mem_k : k ∈ Λ.volume n := habcd (by simp)
   have mem_l : l ∈ Λ.volume n := habcd (by simp)
-  -- Pair subsets
-  have hab : ({i, j} : Finset V) ⊆ Λ.volume n := by
-    intro x hx; simp only [Finset.mem_insert, Finset.mem_singleton] at hx
-    rcases hx with rfl | rfl
-    · exact mem_i
-    · exact mem_j
-  have hcd : ({k, l} : Finset V) ⊆ Λ.volume n := by
-    intro x hx; simp only [Finset.mem_insert, Finset.mem_singleton] at hx
-    rcases hx with rfl | rfl
-    · exact mem_k
-    · exact mem_l
-  have hac : ({i, k} : Finset V) ⊆ Λ.volume n := by
-    intro x hx; simp only [Finset.mem_insert, Finset.mem_singleton] at hx
-    rcases hx with rfl | rfl
-    · exact mem_i
-    · exact mem_k
-  have hbd : ({j, l} : Finset V) ⊆ Λ.volume n := by
-    intro x hx; simp only [Finset.mem_insert, Finset.mem_singleton] at hx
-    rcases hx with rfl | rfl
-    · exact mem_j
-    · exact mem_l
-  have had : ({i, l} : Finset V) ⊆ Λ.volume n := by
-    intro x hx; simp only [Finset.mem_insert, Finset.mem_singleton] at hx
-    rcases hx with rfl | rfl
-    · exact mem_i
-    · exact mem_l
-  have hbc : ({j, k} : Finset V) ⊆ Λ.volume n := by
-    intro x hx; simp only [Finset.mem_insert, Finset.mem_singleton] at hx
-    rcases hx with rfl | rfl
-    · exact mem_j
-    · exact mem_k
+  -- Pair subsets via a reusable helper
+  have pair_sub : ∀ {a b : V}, a ∈ Λ.volume n → b ∈ Λ.volume n →
+      ({a, b} : Finset V) ⊆ Λ.volume n := by
+    intro a b ha hb x hx
+    simp only [Finset.mem_insert, Finset.mem_singleton] at hx
+    rcases hx with rfl | rfl <;> assumption
+  have hab : ({i, j} : Finset V) ⊆ Λ.volume n := pair_sub mem_i mem_j
+  have hcd : ({k, l} : Finset V) ⊆ Λ.volume n := pair_sub mem_k mem_l
+  have hac : ({i, k} : Finset V) ⊆ Λ.volume n := pair_sub mem_i mem_k
+  have hbd : ({j, l} : Finset V) ⊆ Λ.volume n := pair_sub mem_j mem_l
+  have had : ({i, l} : Finset V) ⊆ Λ.volume n := pair_sub mem_i mem_l
+  have hbc : ({j, k} : Finset V) ⊆ Λ.volume n := pair_sub mem_j mem_k
   change truncated4AlongExhaustion G Λ ⟨J, 0, β⟩ i j k l n ≤ 0
   unfold truncated4AlongExhaustion
   rw [correlationAlongExhaustion_of_subset G Λ ⟨J, 0, β⟩ habcd,
