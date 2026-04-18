@@ -350,7 +350,7 @@ inventory (2026-04-17).
 | §4.3 | Cor 4.3.5 (inductive n-point at h=0) | **Done (finite + infinite)** | Finite: `cor_4_3_5_h0` (axioms); Infinite: `correlationInfinite_cor_4_3_5_h0` |
 | §4.4 | FKG inequality (spinProduct case) | **Done (finite + infinite)** | Finite: `fkg_ising`; ∞-vol spinProduct: `correlationInfinite_fkg_spinProduct` (≡ GKS-II). General monotone fn at ∞-vol: out of scope |
 | §4.5 | Lee–Yang circle theorem | **Done** | `lee_yang_circle` |
-| §4.6 | **Prop 4.6.1 (`f_Λ` convergence)** | **Done (discretized)** | Discretized Λ↑ |
+| §4.6 | **Prop 4.6.1 (`f_Λ` convergence)** | **Partial (disjoint-union super-additivity + upper bound; Fekete pending)** | Discretized Λ↑: `freeEnergy_convergent_subgraph`. Disjoint-union super-additivity on ambient lattice: `log_partitionFunction_inducedGraph_disjUnion_super_additive`, `log_partitionFunctionΛ_le_of_disjoint_union`, `card_mul_freeEnergyΛ_le_of_disjoint_union`. Companion bounds: `partitionFunction_ge_one_of_ferromagnetic`, `freeEnergy_upper_bound`, `BddAbove_freeEnergyAlongExhaustion_range`. Iso-invariance infra: `partitionFunction_map_equiv`. Fekete convergence of `freeEnergyAlongExhaustion` pending. |
 | §4.6 | **Thm 4.6.2 (analyticity)** | **Done (finite/real)** | Full infinite-volume complex analyticity: not yet |
 | §4.6 | Lee–Yang nonvanishing (Ising) | **Done** | `isingEdgePoly_nonvanishing_of_graph` |
 | §4.7 | Two-component spins | Out of scope | XY model |
@@ -430,7 +430,14 @@ formalized**, per the full inventory above:
    `correlationAlongExhaustion`; the convergence theorem itself (i.e.,
    that `correlationAlongExhaustion` is Cauchy / tends to a limit) is
    not yet proved in this setting.
-2. **Thm 4.6.2 (full form)**: complex analyticity of the
+2. **Prop 4.6.1 (free energy convergence) Fekete completion**:
+   the disjoint-union super-additivity of `log Z_Λ`, the uniform
+   upper bound on `freeEnergyΛ`, and the lower bound
+   `Z_G ≥ 1` (ferromagnetic) are all formalized
+   (`SumModel.lean`, `AmbientLatticeSum.lean`, `FreeEnergy.lean`,
+   and the PRs #134–#143), but the Fekete-style convergence of
+   `freeEnergyAlongExhaustion` remains.
+3. **Thm 4.6.2 (full form)**: complex analyticity of the
    infinite-volume free energy via Vitali convergence.
 3. **Prop 5.4.2 infinite-volume version**: `0 ≤ 1 − ⟨σᵢ⟩₊∞ ≤ exp(-cβ)`
    in the genuine `+` boundary-condition infinite-volume measure.
