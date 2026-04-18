@@ -263,4 +263,53 @@ theorem highTempParam_lt_one (β J : ℝ) :
   unfold highTempParam
   exact tanh_lt_one (β * J)
 
+/-! ## Free energy upper bound (Corollary 10.3.2, divided by `|ι|`) -/
+
+/-- **Free energy upper bound** (Glimm–Jaffe, Cor. 10.3.2 divided by `|ι|`):
+for nonempty `ι`,
+`f(G, p) ≤ log 2 + |β|·(|J|·|E| + |h|·|ι|) / |ι|`.
+
+Obtained from `partitionFunction_upper` by taking the logarithm
+(`Z ≤ 2^|ι| · exp(|β|·(|J|·|E| + |h|·|ι|))` implies
+`log Z ≤ |ι|·log 2 + |β|·(|J|·|E| + |h|·|ι|)`) and dividing by `|ι|`. -/
+theorem freeEnergy_upper_bound (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (p : IsingParams ℝ) (hne : 0 < Fintype.card ι) :
+    freeEnergy G p ≤ Real.log 2 +
+      |p.β| * (|p.J| * G.edgeFinset.card + |p.h| * Fintype.card ι)
+        / Fintype.card ι := by
+  have hcard_pos : (0 : ℝ) < (Fintype.card ι : ℝ) := by exact_mod_cast hne
+  have hcard_ne : (Fintype.card ι : ℝ) ≠ 0 := hcard_pos.ne'
+  have hZ_pos := partitionFunction_pos G p
+  have hUp := partitionFunction_upper G p
+  have h_exp_pos : (0 : ℝ) <
+      Real.exp (|p.β| *
+        (|p.J| * G.edgeFinset.card + |p.h| * Fintype.card ι)) :=
+    Real.exp_pos _
+  have h_config_pos : (0 : ℝ) < (Fintype.card (Config ι) : ℝ) := by
+    rw [card_config_eq_two_pow]; positivity
+  have hlog : Real.log (partitionFunction G p) ≤
+      (Fintype.card ι : ℝ) * Real.log 2 +
+      |p.β| * (|p.J| * G.edgeFinset.card + |p.h| * Fintype.card ι) := by
+    calc Real.log (partitionFunction G p)
+        ≤ Real.log ((Fintype.card (Config ι) : ℝ) *
+            Real.exp (|p.β| *
+              (|p.J| * G.edgeFinset.card + |p.h| * Fintype.card ι))) :=
+          (Real.log_le_log_iff hZ_pos (mul_pos h_config_pos h_exp_pos)).mpr hUp
+      _ = Real.log (Fintype.card (Config ι) : ℝ) +
+          |p.β| * (|p.J| * G.edgeFinset.card + |p.h| * Fintype.card ι) := by
+          rw [Real.log_mul h_config_pos.ne' h_exp_pos.ne', Real.log_exp]
+      _ = (Fintype.card ι : ℝ) * Real.log 2 +
+          |p.β| * (|p.J| * G.edgeFinset.card + |p.h| * Fintype.card ι) := by
+          rw [card_config_eq_two_pow]; push_cast; rw [Real.log_pow]
+  unfold freeEnergy
+  rw [show (Real.log 2 +
+        |p.β| * (|p.J| * G.edgeFinset.card + |p.h| * Fintype.card ι) /
+          (Fintype.card ι : ℝ))
+      = (Fintype.card ι : ℝ)⁻¹ *
+          ((Fintype.card ι : ℝ) * Real.log 2 +
+            |p.β| *
+              (|p.J| * G.edgeFinset.card + |p.h| * Fintype.card ι)) from by
+    field_simp]
+  exact mul_le_mul_of_nonneg_left hlog (inv_nonneg.mpr hcard_pos.le)
+
 end IsingModel
