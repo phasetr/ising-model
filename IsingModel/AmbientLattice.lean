@@ -2982,6 +2982,26 @@ theorem freeEnergyAlongExhaustion_ge_log_two
     _ ≤ freeEnergyAlongExhaustion G Λ ⟨J, h, β⟩ n :=
         freeEnergyAlongExhaustion_ge_zero_params G Λ hJ hh hβ n
 
+/-- **Sharp along-exhaustion lower bound**:
+for ferromagnetic parameters and nonempty stage,
+`log(2·cosh(β·h)) ≤ freeEnergyAlongExhaustion G Λ ⟨J, h, β⟩ n`.
+
+Specialization of `IsingModel.freeEnergy_ge_log_two_cosh` (FreeEnergy.lean)
+at the induced subgraph on `Λ.volume n`. Sharpens the `log 2` uniform
+lower bound (`freeEnergyAlongExhaustion_ge_log_two`). -/
+theorem freeEnergyAlongExhaustion_ge_log_two_cosh
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {J h β : ℝ} (hJ : 0 ≤ J) (hh : 0 ≤ h) (hβ : 0 < β)
+    (n : ℕ) (hne : (Λ.volume n).Nonempty) :
+    Real.log (2 * Real.cosh (β * h))
+      ≤ freeEnergyAlongExhaustion G Λ ⟨J, h, β⟩ n := by
+  have hcard : 0 < Fintype.card (↑(Λ.volume n) : Type _) := by
+    rw [Fintype.card_coe]; exact Finset.card_pos.mpr hne
+  change Real.log (2 * Real.cosh (β * h))
+      ≤ IsingModel.freeEnergy (inducedGraph G (Λ.volume n)) ⟨J, h, β⟩
+  exact IsingModel.freeEnergy_ge_log_two_cosh _ hJ hh hβ hcard
+
 /-- **Along-exhaustion upper bound for the free energy**:
 for nonempty `Λ.volume n`,
 `freeEnergyAlongExhaustion G Λ p n ≤
