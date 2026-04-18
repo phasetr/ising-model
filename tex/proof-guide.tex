@@ -2497,4 +2497,35 @@ $\texttt{MonotoneOn}\,(\beta \mapsto \texttt{correlationInfinite}\,G\,\Lambda\,\
 点毎 $\le$ + \texttt{ciSup\_le}, \texttt{le\_ciSup}.
 \end{proof}
 
+\subsection{J-direction monotonicity at infinite volume}
+
+Glimm--Jaffe, \textit{Quantum Physics}, 2nd ed.\ (1987), \S 4.2
+Proposition 4.2.4 (Exercise), p.\ 58 の J-方向無限体積版.
+三パラメータ (J, h, $\beta$) monotonicity の対称性完成.
+
+\begin{lemma}[\texttt{correlationΛ\_monotone\_J}]
+$h \ge 0, \beta > 0$ で
+$\texttt{MonotoneOn}\,(J \mapsto \texttt{correlationΛ}\,G\,\Lambda\,\langle J,h,\beta\rangle\,A)\,(\mathrm{Ici}\,0)$.
+\end{lemma}
+
+\begin{proof}
+\texttt{correlation\_monotone\_J} を \texttt{inducedGraph}\,$G\,\Lambda$ に適用.
+\end{proof}
+
+\begin{lemma}[\texttt{correlationAlongExhaustion\_monotone\_J}]
+$0 \le J_1 \le J_2$ で任意の $n$ に pointwise monotone.
+\end{lemma}
+
+\begin{proof}
+case split + correlationΛ\_monotone\_J; それ以外は両辺 $0$.
+\end{proof}
+
+\begin{theorem}[\texttt{correlationInfinite\_monotone\_J}]
+$\texttt{MonotoneOn}\,(J \mapsto \texttt{correlationInfinite}\,G\,\Lambda\,\langle J,h,\beta\rangle\,A)\,(\mathrm{Ici}\,0)$.
+\end{theorem}
+
+\begin{proof}
+点毎 $\le$ + \texttt{ciSup\_le}, \texttt{le\_ciSup}.
+\end{proof}
+
 \end{document}
