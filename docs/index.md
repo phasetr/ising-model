@@ -191,6 +191,7 @@ ambient framework:
 | `liftFinset_symmDiff` | `liftFinset` commutes with `∆`: `liftFinset A ∆ liftFinset B = liftFinset (A ∆ B)` |
 | `liftFinset_insert` | `insert ⟨a, ha⟩ (liftFinset A) = liftFinset (insert a A)` |
 | `liftFinset_sdiff` | `liftFinset A \ liftFinset B = liftFinset (A \ B)` |
+| **`correlationInfinite_cor_4_3_5_h0`** | **Cor 4.3.5 at infinite volume** (Glimm–Jaffe §4.3 Cor 4.3.5 p. 62): inductive (n+2)-point bound at `h = 0` |
 | `correlationAlongExhaustion_nonneg` | `0 ≤ correlationAlongExhaustion G Λ p A n` (ferromagnetic) |
 | `correlationΛ_gks_second` | **GKS-II at finite volume**, lifted form: `correlationΛ (lift A) · correlationΛ (lift B) ≤ correlationΛ (lift (A ∆ B))` |
 | **`correlationInfinite_gks_second`** | **GKS-II at infinite volume** (Glimm–Jaffe §4.2 Thm 4.2.3): `correlationInfinite A · correlationInfinite B ≤ correlationInfinite (A ∆ B)` |
@@ -283,7 +284,7 @@ inventory (2026-04-17).
 | §4.3 | Cor 4.3.2 (Lebowitz) | **Done (axiom)** | 3 axioms |
 | §4.3 | Cor 4.3.3 (`U₄ ≤ 0` at h=0) | **Done (finite + infinite)** | Finite: `cor_4_3_3` (axioms); Infinite: `truncated4Infinite_nonpos_h_zero` |
 | §4.3 | Cor 4.3.4 (GHS, `U₃ ≤ 0`) | **Done (finite + infinite)** | Finite: `ghs_inequality` (axioms); Infinite: `truncated3Infinite_nonpos`, `_h_zero_of_distinct` |
-| §4.3 | Cor 4.3.5 (inductive n-point at h=0) | **Done (finite)** | Uses axioms |
+| §4.3 | Cor 4.3.5 (inductive n-point at h=0) | **Done (finite + infinite)** | Finite: `cor_4_3_5_h0` (axioms); Infinite: `correlationInfinite_cor_4_3_5_h0` |
 | §4.4 | FKG inequality | **Done** | `fkg_ising` |
 | §4.5 | Lee–Yang circle theorem | **Done** | `lee_yang_circle` |
 | §4.6 | **Prop 4.6.1 (`f_Λ` convergence)** | **Done (discretized)** | Discretized Λ↑ |
