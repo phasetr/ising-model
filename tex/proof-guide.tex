@@ -2655,4 +2655,38 @@ U_2(G, \Lambda; p; i, j)
 \end{itemize}
 \end{theorem}
 
+\subsection{Truncated 3-point correlation + GHS at infinite volume}
+
+参考: Glimm--Jaffe, \textit{Quantum Physics}, 2nd ed.\ (1987),
+\S 4.3 Corollary 4.3.4 GHS, pp.\ 68ff.
+Friedli--Velenik \S 3.6.4 (higher truncated functions).
+
+\begin{definition}[\texttt{truncated3Infinite}]
+$U_3 := \langle \sigma^{\{i,j,k\}} \rangle_\infty
+  - \langle \sigma_i \rangle_\infty \langle \sigma^{\{j,k\}} \rangle_\infty
+  - \langle \sigma_j \rangle_\infty \langle \sigma^{\{i,k\}} \rangle_\infty
+  - \langle \sigma_k \rangle_\infty \langle \sigma^{\{i,j\}} \rangle_\infty
+  + 2 \langle \sigma_i \rangle_\infty \langle \sigma_j \rangle_\infty \langle \sigma_k \rangle_\infty$.
+\end{definition}
+
+\begin{theorem}[\texttt{truncated3Infinite\_nonpos} — GHS at infinite volume]
+強磁性系 + pairwise distinct $i, j, k$ で $U_3 \le 0$.
+\end{theorem}
+
+\begin{proof}
+有限体積 \texttt{ghs\_inequality} を eventually 適用 (n ≥ N で
+$\{i,j,k\} \subseteq \Lambda.\text{volume}\,n$). $U_3$ の 5 correlation
+terms は全て $\texttt{correlationAlongExhaustion} \to \texttt{correlationInfinite}$
+(Tendsto) で合成され, \texttt{le\_of\_tendsto} で極限で $\le 0$.
+\end{proof}
+
+\begin{theorem}[\texttt{truncated3Infinite\_h\_zero\_of\_distinct}]
+$h = 0$ かつ pairwise distinct で $U_3 = 0$.
+全 singletons 奇数 + $\{i, j, k\}$ (distinct) 奇数 → 全項 0.
+\end{theorem}
+
+\begin{theorem}[\texttt{truncated3Infinite\_indep\_exhaustion}]
+$\Lambda$ 非依存 (7 箇所 correlationInfinite\_indep\_exhaustion).
+\end{theorem}
+
 \end{document}
