@@ -750,6 +750,26 @@ theorem freeEnergyInfinite_monotone_beta
     exact freeEnergyAlongExhaustion_le_uniform_upper_bound G Λ _ hc n hne
   exact Filter.limsup_le_limsup hle hbdd_below_β₁.isCoboundedUnder_le hbdd_above_β₂
 
+set_option linter.unusedFintypeInType false in
+/-- **`|h|`-monotonicity of `freeEnergyInfinite`**: for fixed
+`J ≥ 0`, `β > 0`, `freeEnergyInfinite` is monotone in `|h|`.
+Composition of `freeEnergyInfinite_eq_abs_h` and
+`freeEnergyInfinite_monotone_h` on `Set.Ici 0`. -/
+theorem freeEnergyInfinite_monotone_abs_h
+    [Nonempty V] (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {J β : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β) {c : ℝ}
+    (hc : ∀ n, (Λ.volume n).Nonempty →
+      ((inducedGraph G (Λ.volume n)).edgeFinset.card : ℝ) ≤
+        c * Fintype.card (↑(Λ.volume n) : Type _))
+    {h₁ h₂ : ℝ} (hh : |h₁| ≤ |h₂|) :
+    freeEnergyInfinite G Λ (⟨J, h₁, β⟩ : IsingParams ℝ)
+      ≤ freeEnergyInfinite G Λ (⟨J, h₂, β⟩ : IsingParams ℝ) := by
+  rw [freeEnergyInfinite_eq_abs_h G Λ J h₁ β,
+      freeEnergyInfinite_eq_abs_h G Λ J h₂ β]
+  exact freeEnergyInfinite_monotone_h G Λ hJ hβ hc
+    (Set.mem_Ici.mpr (abs_nonneg h₁)) (Set.mem_Ici.mpr (abs_nonneg h₂)) hh
+
 end Ambient
 
 end IsingModel
