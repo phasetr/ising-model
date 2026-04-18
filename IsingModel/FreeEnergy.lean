@@ -737,6 +737,23 @@ theorem freeEnergy_monotone_abs_h
     (Set.mem_Ici.mpr (abs_nonneg h₂)) hh
   exact this
 
+/-- **Free energy at `β = 0`**: for nonempty `ι` and any `J, h : ℝ`,
+`freeEnergy G ⟨J, h, 0⟩ = log 2`.
+
+Corollary of `partitionFunction_beta_zero` (`Z = |Config ι| = 2^|ι|`),
+taking `log` and dividing by `|ι|`. β-direction analogue of
+`freeEnergy_zero_params` (`J = h = 0`), holds for any ambient `G`. -/
+theorem freeEnergy_beta_zero (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h : ℝ) (hne : 0 < Fintype.card ι) :
+    freeEnergy G (⟨J, h, 0⟩ : IsingParams ℝ) = Real.log 2 := by
+  unfold freeEnergy
+  rw [partitionFunction_beta_zero, card_config_eq_two_pow]
+  push_cast
+  rw [Real.log_pow]
+  have hcard : (Fintype.card ι : ℝ) ≠ 0 := by
+    exact_mod_cast hne.ne'
+  field_simp
+
 /-- **Free energy on the empty graph at zero field**: for nonempty `ι`
 and any `J, β : ℝ`,
 `freeEnergy (⊥ : SimpleGraph ι) ⟨J, 0, β⟩ = log 2`.
