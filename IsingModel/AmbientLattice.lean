@@ -3214,6 +3214,26 @@ theorem freeEnergyInfinite_zero_params
   rw [hconst]
   exact Filter.limsup_const (Real.log 2)
 
+/-! ## J = 0 closed form along exhaustion (graph-independent) -/
+
+/-- **Along-exhaustion J=0 closed form (graph-independent)**:
+for nonempty `Λ.volume n` and any ambient graph `G, Λ` and any `h, β`,
+`freeEnergyAlongExhaustion G Λ ⟨0, h, β⟩ n = log (2·cosh(β·h))`.
+
+Specialization of `IsingModel.freeEnergy_J_zero` via `change` +
+definitional unfolding. -/
+theorem freeEnergyAlongExhaustion_J_zero
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (h β : ℝ) (n : ℕ) (hne : (Λ.volume n).Nonempty) :
+    freeEnergyAlongExhaustion G Λ (⟨0, h, β⟩ : IsingParams ℝ) n
+      = Real.log (2 * Real.cosh (β * h)) := by
+  have hcard : 0 < Fintype.card (↑(Λ.volume n) : Type _) := by
+    rw [Fintype.card_coe]; exact Finset.card_pos.mpr hne
+  change IsingModel.freeEnergy (inducedGraph G (Λ.volume n))
+      (⟨0, h, β⟩ : IsingParams ℝ) = _
+  exact IsingModel.freeEnergy_J_zero _ h β hcard
+
 /-! ## β = 0 closed form for `partitionFunctionAlongExhaustion` -/
 
 /-- **Along-exhaustion β=0 partition function closed form**:
