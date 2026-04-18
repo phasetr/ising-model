@@ -2573,50 +2573,16 @@ $\texttt{correlationInfinite}\,G\,\Lambda\,\langle J,0,\beta\rangle\,A = 0$.
 $h = 0$ で $M^{\mathrm{FM}} = 0$ (単サイト $|\{i\}| = 1$ は奇数).
 \end{theorem}
 
-\subsection{Spontaneous magnetization at infinite volume}
-
-参考: Glimm--Jaffe, \textit{Quantum Physics}, 2nd ed.\ (1987), \S 5.1 p.\ 77:
-$m^*(J, \beta) := \lim_{h \to 0^+} M(J, h, \beta)$.
-Friedli--Velenik \S 3.10 (self-consistent magnetization).
-
-\begin{definition}[\texttt{spontaneousMagnetization}]
-\[
-m^*(G, \Lambda; J, \beta; i)
-  \;:=\; \inf_{h > 0} \texttt{magnetizationInfinite}\,G\,\Lambda\,\langle J,h,\beta\rangle\,i.
-\]
-\end{definition}
-
-\begin{theorem}[\texttt{spontaneousMagnetization}の基本性質]
-強磁性下で:
-\begin{itemize}
-\item \texttt{\_nonneg}: $m^* \ge 0$,
-\item \texttt{\_le\_one}: $m^* \le 1$,
-\item \texttt{\_le\_magnetizationInfinite}: $h > 0$ で $m^* \le M(h)$,
-\item \texttt{\_indep\_exhaustion}: $m^*$ は $\Lambda$ の選び方に非依存.
-\end{itemize}
-$\texttt{magnetizationInfinite}$ は $h$ に対して monotone on $\mathrm{Ici}\,0$
-(PR \#95) かつ $0 \le \cdot \le 1$ なので, $\inf_{h > 0}$ は well-defined.
-\end{theorem}
-
-\begin{theorem}[\texttt{tendsto\_magnetizationInfinite\_spontaneousMagnetization\_nhdsGT}]
-強磁性系 ($J \ge 0, \beta > 0$) で
-\[
-\text{Tendsto}\,\bigl(h \mapsto M(h)\bigr)\,
-  (\mathcal{N}[>]\,0)\,(\mathcal{N}\,m^*).
-\]
-すなわち $m^* = \lim_{h \to 0^+} M(h)$ が形式化される.
-\end{theorem}
-
-\begin{proof}
-\texttt{MonotoneOn.tendsto\_nhdsGT} (Mathlib) で
-$\text{Tendsto}\,M\,(\mathcal{N}[>]\,0)\,(\mathcal{N}\,(\inf(M''\mathrm{Ioi}\,0)))$.
-$\inf(M''\mathrm{Ioi}\,0) = m^*$ を $\texttt{sInf\_image}$/$\texttt{iInf\_subtype}$ で結びつける.
-\end{proof}
-
 \subsection{Spontaneous correlation function (general \texorpdfstring{$A$}{A})}
 
-参考: Glimm--Jaffe \S 4.2 p.\ 57ff, \S 5.1 p.\ 77.
-PR \#99+\#100 を一般 $A : \texttt{Finset}\,V$ に汎化.
+参考: Glimm--Jaffe, \textit{Quantum Physics}, 2nd ed.\ (1987),
+\S 4.2 p.\ 57ff, \S 5.1 p.\ 77:
+$m^*(J, \beta) := \lim_{h \to 0^+} M(J, h, \beta)$.
+Friedli--Velenik \S 3.10.
+
+無限体積相関関数 $\langle \sigma^A \rangle$ の $h \to 0^+$ 極限を
+**一般 $A : \texttt{Finset}\,V$** に対して定義し, 基本性質を揃える.
+単サイト $A = \{i\}$ の場合が自発磁化 $m^*$ (Glimm--Jaffe §5.1 p.\ 77).
 
 \begin{definition}[\texttt{spontaneousCorrelation}]
 \[
@@ -2634,10 +2600,32 @@ PR \#99+\#100 を一般 $A : \texttt{Finset}\,V$ に汎化.
 \texttt{tendsto\_\ldots\_nhdsGT}.
 \end{theorem}
 
+\subsection*{Spontaneous magnetization (single-site specialization)}
+
+自発磁化 $m^*$ は \texttt{spontaneousCorrelation} の $A = \{i\}$ 特殊化:
+
+\begin{definition}[\texttt{spontaneousMagnetization}]
+\[
+\texttt{spontaneousMagnetization}\,G\,\Lambda\,J\,\beta\,i
+  \;:=\; \texttt{spontaneousCorrelation}\,G\,\Lambda\,J\,\beta\,\{i\}.
+\]
+\end{definition}
+
 \begin{theorem}[\texttt{spontaneousCorrelation\_singleton\_eq\_spontaneousMagnetization}]
-$\texttt{spontaneousCorrelation}\,G\,\Lambda\,J\,\beta\,\{i\}
-  = \texttt{spontaneousMagnetization}\,G\,\Lambda\,J\,\beta\,i$
-(定義展開で rfl).
+上記定義より \texttt{rfl} で等価.
+\end{theorem}
+
+\begin{theorem}[\texttt{spontaneousMagnetization}の基本性質]
+全て \texttt{spontaneousCorrelation\_*} の $A := \{i\}$ specialization
+(1-line specialization):
+\begin{itemize}
+\item \texttt{\_nonneg}: $m^* \ge 0$,
+\item \texttt{\_le\_one}: $m^* \le 1$,
+\item \texttt{\_le\_magnetizationInfinite}: $h > 0$ で $m^* \le M(h)$,
+\item \texttt{\_indep\_exhaustion}: $\Lambda$ 非依存,
+\item \texttt{tendsto\_magnetizationInfinite\_spontaneousMagnetization\_nhdsGT}:
+      $m^* = \lim_{h \to 0^+} M(h)$.
+\end{itemize}
 \end{theorem}
 
 \end{document}
