@@ -133,6 +133,8 @@ ambient framework:
 | `partitionFunctionΛ_pos`, `abs_correlationΛ_le_one`, `correlationΛ_le_one`, `correlationΛ_nonneg` | basic properties |
 | `Exhaustion V` | structure: monotone `Λₙ` covering any finite set eventually |
 | `correlationAlongExhaustion` | correlation along an exhaustion for fixed `A : Finset V` |
+| `correlationAlongExhaustion_of_subset` | Unfolding helper: `A ⊆ Λ.volume n ⇒ correlationAlongExhaustion n = correlationΛ (Λ.volume n) (liftFinset A)` |
+| `correlationAlongExhaustion_of_not_subset` | Unfolding helper: `A ⊄ Λ.volume n ⇒ correlationAlongExhaustion n = 0` |
 | `abs_correlationAlongExhaustion_eventually_le_one` | eventual boundedness |
 | `inducedGraph_mono` | `G₁ ≤ G₂ ⇒ G₁.induce Λ ≤ G₂.induce Λ` |
 | `partitionFunctionΛ_monotone_ambient_subgraph` | `G₁ ≤ G₂ ⇒ Z_{G₁,Λ} ≤ Z_{G₂,Λ}` |
