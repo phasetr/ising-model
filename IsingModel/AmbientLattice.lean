@@ -385,6 +385,35 @@ theorem freeEnergyAlongExhaustion_monotone_ambient_subgraph
       ≤ freeEnergyAlongExhaustion G₂ Λ p n :=
   freeEnergyΛ_monotone_ambient_subgraph h (Λ.volume n) p hf
 
+/-- **Subgraph monotonicity of `partitionFunctionAlongExhaustion`**:
+for `G₁ ≤ G₂` and ferromagnetic parameters, the partition function
+along the exhaustion is pointwise monotone in the ambient subgraph.
+Direct specialization of `partitionFunctionΛ_monotone_ambient_subgraph`
+at each `Λ.volume n`. -/
+theorem partitionFunctionAlongExhaustion_monotone_ambient_subgraph
+    {G₁ G₂ : SimpleGraph V} (h : G₁ ≤ G₂) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G₁ (Λ.volume n)).edgeSet]
+    [∀ n, Fintype (inducedGraph G₂ (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (n : ℕ) :
+    partitionFunctionAlongExhaustion G₁ Λ p n
+      ≤ partitionFunctionAlongExhaustion G₂ Λ p n :=
+  partitionFunctionΛ_monotone_ambient_subgraph h (Λ.volume n) p hf
+
+/-- **Log-bridge identity**: the `freeEnergyAlongExhaustion` sequence
+is the log of the `partitionFunctionAlongExhaustion` sequence divided
+by the cardinality of the volume.  Direct unfolding of the underlying
+`IsingModel.freeEnergy` definition (log-partition function per site). -/
+theorem freeEnergyAlongExhaustion_eq_log_div_card
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (n : ℕ) :
+    freeEnergyAlongExhaustion G Λ p n =
+      (Fintype.card (↑(Λ.volume n) : Type _) : ℝ)⁻¹ *
+        Real.log (partitionFunctionAlongExhaustion G Λ p n) := by
+  simp only [freeEnergyAlongExhaustion_apply,
+    partitionFunctionAlongExhaustion_apply, freeEnergyΛ,
+    partitionFunctionΛ, IsingModel.freeEnergy]
+
 /-! ## Extension of a Λ₁-graph to Λ₂ (for volume-direction monotonicity)
 
 For `Λ₁ ⊆ Λ₂` and `G : SimpleGraph V`, we construct a graph on
