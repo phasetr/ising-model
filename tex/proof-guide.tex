@@ -1607,6 +1607,20 @@ $|h| = h$ or $|h| = -h$ の場合分けと \texttt{freeEnergy\_neg\_h}.
 $|h_i| \ge 0$ から \texttt{freeEnergy\_monotone\_h} (Ici 0 上 monotone) を適用.
 \end{theorem}
 
+\subsubsection{Along-exhaustion specializations (PR \#128)}
+
+\begin{theorem}[\texttt{freeEnergyAlongExhaustion\_neg\_h} /
+\texttt{\_eq\_abs\_h} / \texttt{\_monotone\_abs\_h}]
+各 $n$ で finite-volume 版をそのまま specialize:
+\begin{itemize}
+  \item $f_n(J, -h, \beta) = f_n(J, h, \beta)$.
+  \item $f_n(J, h, \beta) = f_n(J, |h|, \beta)$.
+  \item 強磁性系 $J \ge 0, \beta > 0$ で $|h_1| \le |h_2| \Rightarrow f_n(h_1) \le f_n(h_2)$.
+\end{itemize}
+いずれも \texttt{change} + definitional unfolding で \texttt{IsingModel.freeEnergy\_*}
+を適用.
+\end{theorem}
+
 \subsection{Reflection positivity (\S10.4)}
 
 \begin{definition}[\texttt{ReflectionPositive}]
