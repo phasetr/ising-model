@@ -510,6 +510,35 @@ theorem freeEnergyInfinite_ge_log_two
   exact h_le.trans
     (freeEnergyInfinite_ge_log_two_cosh G Λ p hf hc)
 
+/-- **Strict positivity** of `freeEnergyInfinite` under the standard
+ferromagnetic + `BoundedEdgeDensity` + `[Nonempty V]` setup:
+`0 < freeEnergyInfinite G Λ p`.
+
+Follows from `freeEnergyInfinite_ge_log_two` together with
+`Real.log_pos` at `2 > 1`. -/
+theorem freeEnergyInfinite_pos
+    [Nonempty V] (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) {c : ℝ}
+    (hc : ∀ n, (Λ.volume n).Nonempty →
+      ((inducedGraph G (Λ.volume n)).edgeFinset.card : ℝ) ≤
+        c * Fintype.card (↑(Λ.volume n) : Type _)) :
+    0 < freeEnergyInfinite G Λ p :=
+  (Real.log_pos (by norm_num : (1 : ℝ) < 2)).trans_le
+    (freeEnergyInfinite_ge_log_two G Λ p hf hc)
+
+/-- **Nonnegativity** of `freeEnergyInfinite` under the standard
+hypotheses. Immediate from strict positivity. -/
+theorem freeEnergyInfinite_nonneg
+    [Nonempty V] (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) {c : ℝ}
+    (hc : ∀ n, (Λ.volume n).Nonempty →
+      ((inducedGraph G (Λ.volume n)).edgeFinset.card : ℝ) ≤
+        c * Fintype.card (↑(Λ.volume n) : Type _)) :
+    0 ≤ freeEnergyInfinite G Λ p :=
+  (freeEnergyInfinite_pos G Λ p hf hc).le
+
 end Ambient
 
 end IsingModel
