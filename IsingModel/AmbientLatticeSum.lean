@@ -429,11 +429,8 @@ theorem freeEnergyInfinite_le_uniform_upper_bound
         c * Fintype.card (↑(Λ.volume n) : Type _)) :
     freeEnergyInfinite G Λ p ≤ Real.log 2 + |p.β| * (|p.J| * c + |p.h|) := by
   -- Eventual nonemptiness from exhaust.
-  obtain ⟨v⟩ := ‹Nonempty V›
-  obtain ⟨N, hN⟩ := Λ.exhaust {v}
-  have heventually : ∀ᶠ n in Filter.atTop, (Λ.volume n).Nonempty := by
-    filter_upwards [Filter.eventually_ge_atTop N] with n hn
-    exact ⟨v, hN n hn (Finset.mem_singleton_self v)⟩
+  have heventually : ∀ᶠ n in Filter.atTop, (Λ.volume n).Nonempty :=
+    Λ.eventually_volume_nonempty
   have hbound : ∀ᶠ n in Filter.atTop,
       freeEnergyAlongExhaustion G Λ p n
         ≤ Real.log 2 + |p.β| * (|p.J| * c + |p.h|) := by
@@ -469,11 +466,8 @@ theorem freeEnergyInfinite_ge_log_two_cosh
         c * Fintype.card (↑(Λ.volume n) : Type _)) :
     Real.log (2 * Real.cosh (p.β * p.h))
       ≤ freeEnergyInfinite G Λ p := by
-  obtain ⟨v⟩ := ‹Nonempty V›
-  obtain ⟨N, hN⟩ := Λ.exhaust {v}
-  have heventually : ∀ᶠ n in Filter.atTop, (Λ.volume n).Nonempty := by
-    filter_upwards [Filter.eventually_ge_atTop N] with n hn
-    exact ⟨v, hN n hn (Finset.mem_singleton_self v)⟩
+  have heventually : ∀ᶠ n in Filter.atTop, (Λ.volume n).Nonempty :=
+    Λ.eventually_volume_nonempty
   have hlower : ∀ᶠ n in Filter.atTop,
       Real.log (2 * Real.cosh (p.β * p.h))
         ≤ freeEnergyAlongExhaustion G Λ p n := by
@@ -562,11 +556,8 @@ theorem freeEnergyInfinite_monotone_ambient_subgraph
       ((inducedGraph G₂ (Λ.volume n)).edgeFinset.card : ℝ) ≤
         c * Fintype.card (↑(Λ.volume n) : Type _)) :
     freeEnergyInfinite G₁ Λ p ≤ freeEnergyInfinite G₂ Λ p := by
-  obtain ⟨v⟩ := ‹Nonempty V›
-  obtain ⟨N, hN⟩ := Λ.exhaust {v}
-  have heventually : ∀ᶠ n in Filter.atTop, (Λ.volume n).Nonempty := by
-    filter_upwards [Filter.eventually_ge_atTop N] with n hn
-    exact ⟨v, hN n hn (Finset.mem_singleton_self v)⟩
+  have heventually : ∀ᶠ n in Filter.atTop, (Λ.volume n).Nonempty :=
+    Λ.eventually_volume_nonempty
   have hle : ∀ᶠ n in Filter.atTop,
       freeEnergyAlongExhaustion G₁ Λ p n
         ≤ freeEnergyAlongExhaustion G₂ Λ p n := by
@@ -636,11 +627,8 @@ theorem freeEnergyInfinite_monotone_J
       (fun J : ℝ => freeEnergyInfinite G Λ (⟨J, h, β⟩ : IsingParams ℝ))
       (Set.Ici 0) := by
   intro J₁ hJ₁ J₂ _ hJle
-  obtain ⟨v⟩ := ‹Nonempty V›
-  obtain ⟨N, hN⟩ := Λ.exhaust {v}
-  have heventually : ∀ᶠ n in Filter.atTop, (Λ.volume n).Nonempty := by
-    filter_upwards [Filter.eventually_ge_atTop N] with n hn
-    exact ⟨v, hN n hn (Finset.mem_singleton_self v)⟩
+  have heventually : ∀ᶠ n in Filter.atTop, (Λ.volume n).Nonempty :=
+    Λ.eventually_volume_nonempty
   have hJ₁nn : (0 : ℝ) ≤ J₁ := hJ₁
   have hJ₂nn : (0 : ℝ) ≤ J₂ := hJ₁nn.trans hJle
   have hle : ∀ᶠ n in Filter.atTop,
@@ -679,11 +667,8 @@ theorem freeEnergyInfinite_monotone_h
       (fun h : ℝ => freeEnergyInfinite G Λ (⟨J, h, β⟩ : IsingParams ℝ))
       (Set.Ici 0) := by
   intro h₁ hh₁ h₂ _ hhle
-  obtain ⟨v⟩ := ‹Nonempty V›
-  obtain ⟨N, hN⟩ := Λ.exhaust {v}
-  have heventually : ∀ᶠ n in Filter.atTop, (Λ.volume n).Nonempty := by
-    filter_upwards [Filter.eventually_ge_atTop N] with n hn
-    exact ⟨v, hN n hn (Finset.mem_singleton_self v)⟩
+  have heventually : ∀ᶠ n in Filter.atTop, (Λ.volume n).Nonempty :=
+    Λ.eventually_volume_nonempty
   have hh₁nn : (0 : ℝ) ≤ h₁ := hh₁
   have hh₂nn : (0 : ℝ) ≤ h₂ := hh₁nn.trans hhle
   have hle : ∀ᶠ n in Filter.atTop,
@@ -722,11 +707,8 @@ theorem freeEnergyInfinite_monotone_beta
       (fun β : ℝ => freeEnergyInfinite G Λ (⟨J, h, β⟩ : IsingParams ℝ))
       (Set.Ioi 0) := by
   intro β₁ hβ₁ β₂ _ hβle
-  obtain ⟨v⟩ := ‹Nonempty V›
-  obtain ⟨N, hN⟩ := Λ.exhaust {v}
-  have heventually : ∀ᶠ n in Filter.atTop, (Λ.volume n).Nonempty := by
-    filter_upwards [Filter.eventually_ge_atTop N] with n hn
-    exact ⟨v, hN n hn (Finset.mem_singleton_self v)⟩
+  have heventually : ∀ᶠ n in Filter.atTop, (Λ.volume n).Nonempty :=
+    Λ.eventually_volume_nonempty
   have hβ₁pos : (0 : ℝ) < β₁ := hβ₁
   have hβ₂pos : (0 : ℝ) < β₂ := hβ₁pos.trans_le hβle
   have hle : ∀ᶠ n in Filter.atTop,
