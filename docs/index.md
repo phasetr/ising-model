@@ -100,6 +100,7 @@ Named specializations at `A = {i}`:
 | `{log_,}partitionFunction{,Λ}_inducedGraph_le_of_disjoint_union` | `Disjoint Λ₁ Λ₂ ⇒ Z_{Λ₁} ≤ Z_{Λ₁∪Λ₂}` (ferromagnetic), log / multiplicative and generic / `Λ`-wrapped forms | `AmbientLatticeSum.lean` | Monotonicity step toward Fekete |
 | `Ambient.card_mul_freeEnergyΛ_le_of_disjoint_union` | `Λ₁.Nonempty, Disjoint Λ₁ Λ₂ ⇒ |Λ₁|·f_{Λ₁} ≤ |Λ₁∪Λ₂|·f_{Λ₁∪Λ₂}` (ferromagnetic) | `AmbientLatticeSum.lean` | `freeEnergyΛ` weighted monotonicity |
 | `Ambient.partitionFunctionAlongExhaustion_monotone_volume` / `log_partitionFunctionAlongExhaustion_monotone_volume` | `Z_{Λ.volume n} ≤ Z_{Λ.volume (n+1)}` (ferromagnetic) along Exhaustion, log form | `AmbientLatticeSum.lean` | Fekete input |
+| `Ambient.partitionFunctionAlongExhaustion_monotone` / `log_partitionFunctionAlongExhaustion_monotone` | `Monotone` predicate form (for mathlib convergence lemmas) | `AmbientLatticeSum.lean` | Fekete input wrapper |
 
 **Not yet formalized**: the infinite-volume analyticity of `f(h)` via
 Vitali convergence (GJ Thm 4.6.2 full statement).

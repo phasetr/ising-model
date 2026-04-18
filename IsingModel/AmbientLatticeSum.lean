@@ -358,6 +358,32 @@ theorem log_partitionFunctionAlongExhaustion_monotone_volume
     (partitionFunctionAlongExhaustion_monotone_volume G Λ p hf n)
 
 set_option linter.unusedFintypeInType false in
+/-- **`partitionFunctionAlongExhaustion` is `Monotone`** along any
+Exhaustion for ferromagnetic parameters. Packages the step-wise
+`partitionFunctionAlongExhaustion_monotone_volume` as a
+`Monotone` predicate, ready for use with mathlib convergence
+lemmas (`Monotone.tendsto_atTop_of_bddAbove`, etc.). -/
+theorem partitionFunctionAlongExhaustion_monotone
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ m, Fintype (inducedGraph G (Λ.volume m)).edgeSet]
+    [∀ n, Fintype (inducedGraph G (Λ.volume (n + 1) \ Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    Monotone (partitionFunctionAlongExhaustion G Λ p) :=
+  monotone_nat_of_le_succ fun n =>
+    partitionFunctionAlongExhaustion_monotone_volume G Λ p hf n
+
+set_option linter.unusedFintypeInType false in
+/-- `Monotone` form for `log Z` along an Exhaustion. -/
+theorem log_partitionFunctionAlongExhaustion_monotone
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ m, Fintype (inducedGraph G (Λ.volume m)).edgeSet]
+    [∀ n, Fintype (inducedGraph G (Λ.volume (n + 1) \ Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    Monotone (fun n => Real.log (partitionFunctionAlongExhaustion G Λ p n)) :=
+  monotone_nat_of_le_succ fun n =>
+    log_partitionFunctionAlongExhaustion_monotone_volume G Λ p hf n
+
+set_option linter.unusedFintypeInType false in
 /-- `freeEnergyΛ` weighted form of the disjoint-union monotonicity:
 for nonempty `Λ₁` disjoint from `Λ₂`,
 `|Λ₁| · freeEnergyΛ Λ₁ ≤ |Λ₁ ∪ Λ₂| · freeEnergyΛ (Λ₁ ∪ Λ₂)`
