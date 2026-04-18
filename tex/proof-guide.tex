@@ -2827,6 +2827,34 @@ f_n = |\Lambda.\text{volume}\,n|^{-1} \cdot \log Z_n.
 本 PR は scaffold. 完全 convergence 証明 (subadditivity + Fekete) は
 deferred.
 
+\subsubsection{Bounded edge density と一様上界 (PR \#123)}
+
+\begin{definition}[\texttt{BoundedEdgeDensity}]
+\[
+  \exists c \in \mathbb R,\ \forall n,\
+    \Lambda.\text{volume}\,n \neq \emptyset \implies
+    |E(G[\Lambda_n])| \le c \cdot |\Lambda_n|.
+\]
+Bounded-degree 環境 ($\max\deg = \Delta$) で $c = \Delta/2$.
+\end{definition}
+
+\begin{theorem}[\texttt{freeEnergyAlongExhaustion\_le\_uniform\_upper\_bound}]
+\texttt{BoundedEdgeDensity} 定数 $c$ のもと, 任意の $n$ かつ
+$\Lambda_n \neq \emptyset$ で
+\[
+  f_n \le \log 2 + |\beta| \bigl(|J| \cdot c + |h|\bigr).
+\]
+\texttt{freeEnergyAlongExhaustion\_upper\_bound} (PR \#122) に
+$|E_n|/|\Lambda_n| \le c$ を代入.
+\end{theorem}
+
+\begin{theorem}[\texttt{BddAbove\_freeEnergyAlongExhaustion\_range}]
+\texttt{BoundedEdgeDensity} のもと,
+$\operatorname{BddAbove}(\operatorname{range}(\texttt{freeEnergyAlongExhaustion}\,G\,\Lambda\,p))$.
+空 $\Lambda_n$ では $f_n = 0$ (definitional) なので $\max\{0, \log 2 + |\beta|(|J|c+|h|)\}$
+が一様上界.
+\end{theorem}
+
 \subsection{Cor 4.3.5 (inductive n-point at $h = 0$) at infinite volume}
 
 参考: Glimm--Jaffe, \textit{Quantum Physics}, 2nd ed.\ (1987),
