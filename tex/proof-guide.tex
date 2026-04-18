@@ -2744,6 +2744,21 @@ $\texttt{MonotoneOn}\,(\beta \mapsto \langle \sigma^A \rangle^*)\,(\mathrm{Ioi}\
 単サイト $A = \{i\}$ specialization of \texttt{spontaneousCorrelation\_monotone\_beta}.
 \end{theorem}
 
+\subsection{freeEnergyAlongExhaustion (§4.6 Prop 4.6.1 scaffold)}
+
+参考: Glimm--Jaffe \S 4.6 Proposition 4.6.1, pp.\ 78ff
+(volume 方向 free energy 収束).
+
+\begin{definition}[\texttt{freeEnergyAlongExhaustion}]
+\[
+\texttt{freeEnergyAlongExhaustion}\,G\,\Lambda\,p\,n
+  \;:=\; \texttt{freeEnergyΛ}\,G\,(\Lambda.\text{volume}\,n)\,p.
+\]
+\end{definition}
+
+本 PR は scaffold. 完全 convergence 証明 (subadditivity + Fekete) は
+deferred.
+
 \subsection{Cor 4.3.5 (inductive n-point at $h = 0$) at infinite volume}
 
 参考: Glimm--Jaffe, \textit{Quantum Physics}, 2nd ed.\ (1987),

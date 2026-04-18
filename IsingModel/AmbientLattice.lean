@@ -214,6 +214,31 @@ noncomputable def correlationAlongExhaustion
       correlationΛ G (Λ.volume n) p (liftFinset A h)
     else 0
 
+/-- **Free energy along an exhaustion**: the volume-direction free
+energy density sequence $f_n := f_{\Lambda_n}$ whose convergence
+Glimm–Jaffe §4.6 Proposition 4.6.1 (pp. 78ff) asserts.
+
+This is the scaffold object; the full convergence theorem (volume
+direction, genuine `Λ ↑ V`) requires subadditivity of `log Z`
+combined with Fekete's lemma and is deferred to a follow-up PR. -/
+noncomputable def freeEnergyAlongExhaustion
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) : ℕ → ℝ :=
+  fun n => freeEnergyΛ G (Λ.volume n) p
+
+/-- **Unfolding of `freeEnergyAlongExhaustion`**: by construction, equal
+to `freeEnergyΛ` at the `n`-th volume of the exhaustion.  Marked `@[simp]`
+(unconditional `rfl`-proved unfolding) for ergonomic downstream use in
+the Fekete/subadditivity follow-up. -/
+@[simp]
+theorem freeEnergyAlongExhaustion_apply
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (n : ℕ) :
+    freeEnergyAlongExhaustion G Λ p n = freeEnergyΛ G (Λ.volume n) p :=
+  rfl
+
 /-- Unfold `correlationAlongExhaustion` when `A ⊆ Λ.volume n`:
 it equals the lifted finite-volume correlation. -/
 theorem correlationAlongExhaustion_of_subset
