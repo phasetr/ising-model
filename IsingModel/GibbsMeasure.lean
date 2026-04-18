@@ -125,6 +125,27 @@ theorem partitionFunction_zero_params (G : SimpleGraph ι) [Fintype G.edgeSet]
     _ = (Fintype.card (Config ι) : ℝ) := by
         rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul, mul_one]
 
+/-- **Partition function at `β = 0`**: the prefactor `-β` in the
+Boltzmann weight vanishes, so every weight collapses to
+`exp 0 = 1` regardless of `J` and `h`, and
+`Z_G(⟨J, h, 0⟩) = Fintype.card (Config ι)` for every ambient graph. -/
+theorem partitionFunction_beta_zero (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h : ℝ) :
+    partitionFunction G (⟨J, h, 0⟩ : IsingParams ℝ)
+      = (Fintype.card (Config ι) : ℝ) := by
+  unfold partitionFunction boltzmannWeight
+  calc ∑ σ : Config ι,
+        Real.exp (-(⟨J, h, 0⟩ : IsingParams ℝ).β *
+          hamiltonian G (⟨J, h, 0⟩ : IsingParams ℝ) σ)
+      = ∑ _σ : Config ι, (1 : ℝ) := by
+        refine Finset.sum_congr rfl ?_
+        intros σ _
+        change Real.exp (-(0 : ℝ) *
+          hamiltonian G (⟨J, h, 0⟩ : IsingParams ℝ) σ) = 1
+        rw [neg_zero, zero_mul, Real.exp_zero]
+    _ = (Fintype.card (Config ι) : ℝ) := by
+        rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul, mul_one]
+
 /-- **Cardinality of `Spin` is 2**. -/
 theorem card_spin : Fintype.card Spin = 2 := rfl
 
