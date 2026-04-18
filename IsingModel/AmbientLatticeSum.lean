@@ -294,6 +294,29 @@ theorem partitionFunctionΛ_le_of_disjoint_union
   IsingModel.partitionFunction_inducedGraph_le_of_disjoint_union
     G hd p hf
 
+set_option linter.unusedFintypeInType false in
+/-- `freeEnergyΛ` weighted form of the disjoint-union monotonicity:
+for nonempty `Λ₁` disjoint from `Λ₂`,
+`|Λ₁| · freeEnergyΛ Λ₁ ≤ |Λ₁ ∪ Λ₂| · freeEnergyΛ (Λ₁ ∪ Λ₂)`
+under ferromagnetic parameters.
+
+Derived from `card_mul_freeEnergyΛ_eq_log_partitionFunctionΛ_of_nonempty`
+(PR #140) together with `log_partitionFunctionΛ_le_of_disjoint_union`
+(PR #142). -/
+theorem card_mul_freeEnergyΛ_le_of_disjoint_union
+    (G : SimpleGraph V) {Λ₁ Λ₂ : Finset V}
+    (hne₁ : Λ₁.Nonempty) (hd : Disjoint Λ₁ Λ₂)
+    [Fintype (inducedGraph G Λ₁).edgeSet]
+    [Fintype (inducedGraph G Λ₂).edgeSet]
+    [Fintype (inducedGraph G (Λ₁ ∪ Λ₂)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    (Λ₁.card : ℝ) * freeEnergyΛ G Λ₁ p
+      ≤ ((Λ₁ ∪ Λ₂).card : ℝ) * freeEnergyΛ G (Λ₁ ∪ Λ₂) p := by
+  have hne_union : (Λ₁ ∪ Λ₂).Nonempty := hne₁.mono Finset.subset_union_left
+  rw [card_mul_freeEnergyΛ_eq_log_partitionFunctionΛ_of_nonempty G hne₁,
+      card_mul_freeEnergyΛ_eq_log_partitionFunctionΛ_of_nonempty G hne_union]
+  exact log_partitionFunctionΛ_le_of_disjoint_union G hd p hf
+
 end Ambient
 
 end IsingModel
