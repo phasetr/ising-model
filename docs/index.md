@@ -189,6 +189,8 @@ ambient framework:
 | **`correlationInfinite_monotone_ambient_subgraph`** | **Ambient-subgraph monotonicity at infinite volume**: `G₁ ≤ G₂` ⇒ `correlationInfinite G₁ Λ ≤ correlationInfinite G₂ Λ` |
 | `mem_liftFinset` | membership characterization: `x ∈ liftFinset A hA ↔ x.val ∈ A` |
 | `liftFinset_symmDiff` | `liftFinset` commutes with `∆`: `liftFinset A ∆ liftFinset B = liftFinset (A ∆ B)` |
+| `liftFinset_insert` | `insert ⟨a, ha⟩ (liftFinset A) = liftFinset (insert a A)` |
+| `liftFinset_sdiff` | `liftFinset A \ liftFinset B = liftFinset (A \ B)` |
 | `correlationAlongExhaustion_nonneg` | `0 ≤ correlationAlongExhaustion G Λ p A n` (ferromagnetic) |
 | `correlationΛ_gks_second` | **GKS-II at finite volume**, lifted form: `correlationΛ (lift A) · correlationΛ (lift B) ≤ correlationΛ (lift (A ∆ B))` |
 | **`correlationInfinite_gks_second`** | **GKS-II at infinite volume** (Glimm–Jaffe §4.2 Thm 4.2.3): `correlationInfinite A · correlationInfinite B ≤ correlationInfinite (A ∆ B)` |
