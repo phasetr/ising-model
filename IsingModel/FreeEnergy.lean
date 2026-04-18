@@ -603,6 +603,49 @@ theorem freeEnergy_monotone_subgraph
     (log_partitionFunction_monotone_subgraph h₁₂ p hf)
     (inv_nonneg.mpr (Nat.cast_nonneg _))
 
+/-- **Unconditional lower bound `Z_⊥ ≥ 1` on the empty graph.**
+
+Since `partitionFunction_bot` gives `Z_⊥ = (2·cosh(β h))^|ι|` and
+`Real.one_le_cosh` is unconditional, we have `2·cosh(β h) ≥ 2 ≥ 1`,
+and `(...)^|ι| ≥ 1`. No ferromagnetic hypothesis required. -/
+theorem partitionFunction_bot_ge_one (p : IsingParams ℝ) :
+    (1 : ℝ) ≤ partitionFunction (⊥ : SimpleGraph ι) p := by
+  have h_cosh_ge : 1 ≤ 2 * Real.cosh (p.β * p.h) := by
+    have : 1 ≤ Real.cosh (p.β * p.h) := Real.one_le_cosh _
+    linarith
+  have h_pow : 1 ≤ (2 * Real.cosh (p.β * p.h)) ^ Fintype.card ι :=
+    one_le_pow₀ h_cosh_ge
+  rw [partitionFunction_bot]
+  exact h_pow
+
+/-- **Lower bound `Z_G ≥ 1` for ferromagnetic parameters.**
+
+The ferromagnetic hypothesis is used only to transport the
+unconditional `⊥`-graph bound to `G` via
+`partitionFunction_monotone_subgraph`:
+`Z_G ≥ Z_⊥ ≥ 1`. Used downstream as the companion to the §4.6
+super-additivity inequality: because `log Z_G ≥ 0` (ferromagnetic),
+the disjoint-sum chain
+`log Z_{Λ₁} + log Z_{Δ} ≤ log Z_{Λ₁ ∪ Δ}` upgrades to subset-wise
+monotonicity `log Z_{Λ₁} ≤ log Z_{Λ₁ ∪ Δ}` for any `Δ` disjoint
+from `Λ₁`. -/
+theorem partitionFunction_ge_one_of_ferromagnetic
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    1 ≤ partitionFunction G p :=
+  (partitionFunction_bot_ge_one p).trans
+    (partitionFunction_monotone_subgraph bot_le p hf)
+
+/-- Logarithmic form: `log Z_G ≥ 0` for ferromagnetic parameters.
+
+Immediate from `partitionFunction_ge_one_of_ferromagnetic` and
+`Real.log_nonneg`. -/
+theorem log_partitionFunction_nonneg_of_ferromagnetic
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    0 ≤ Real.log (partitionFunction G p) :=
+  Real.log_nonneg (partitionFunction_ge_one_of_ferromagnetic G p hf)
+
 /-- The free energy rescaling identity in `β`:
 `f(J, h, β) = f(βJ, βh, 1)`. Follows from `partitionFunction_beta_rescale`
 (after taking `log` and multiplying by `|ι|⁻¹`). -/
