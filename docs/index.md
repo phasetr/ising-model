@@ -40,11 +40,13 @@ specifies which of the three above apply.
 | **GKS-I** (Thm 4.1.1) | `⟨σ^A⟩ ≥ 0` for ferromagnetic `p` | `Inequalities/GKS.lean` | Finite |
 | **GKS-II** (Thm 4.1.1) | `⟨σ^A σ^B⟩ ≥ ⟨σ^A⟩⟨σ^B⟩` | `Inequalities/GKS.lean` | Finite |
 | **FKG** (§4.4) | `⟨fg⟩ ≥ ⟨f⟩⟨g⟩` for `f, g` monotone | `Inequalities/FKG.lean` | Finite |
-| **Boundedness** (Prop 4.2.2) | `|⟨σ^A⟩| ≤ 1` | `InfiniteVolume.lean` | Finite |
-| **J-monotonicity** (Prop 4.2.1) | `⟨σ^A⟩` monotone in `J ≥ 0` | `InfiniteVolume.lean` | Finite |
-| **h-monotonicity** (Prop 4.2.4) | `⟨σ^A⟩` monotone in `h ≥ 0` | `InfiniteVolume.lean` | Finite |
-| **β-monotonicity** | `⟨σ^A⟩` monotone in `β > 0` | `InfiniteVolume.lean` | Finite |
-| **Subgraph monotonicity** | `G₁ ≤ G₂ ⇒ ⟨σ^A⟩_{G₁} ≤ ⟨σ^A⟩_{G₂}` | `InfiniteVolume.lean` | Discretized Λ↑ |
+| **Boundedness** (Prop 4.2.2) | `|⟨σ^A⟩| ≤ 1` | `InfiniteVolume.lean` / `AmbientLattice.lean` | Finite + genuine ∞-vol |
+| **J-monotonicity** (Prop 4.2.1) | `⟨σ^A⟩` monotone in `J ≥ 0` | `InfiniteVolume.lean` / `AmbientLattice.lean` | Finite + genuine ∞-vol |
+| **h-monotonicity** (Prop 4.2.4) | `⟨σ^A⟩` monotone in `h ≥ 0` | `InfiniteVolume.lean` / `AmbientLattice.lean` | Finite + genuine ∞-vol |
+| **β-monotonicity** | `⟨σ^A⟩` monotone in `β > 0` | `InfiniteVolume.lean` / `AmbientLattice.lean` | Finite + genuine ∞-vol |
+| **Subgraph monotonicity** | `G₁ ≤ G₂ ⇒ ⟨σ^A⟩_{G₁} ≤ ⟨σ^A⟩_{G₂}` | `InfiniteVolume.lean` / `AmbientLattice.lean` | Finite + Discretized Λ↑ + genuine ∞-vol |
+| **GKS-II at ∞-vol** (Thm 4.2.3) | `⟨σ^A⟩ · ⟨σ^B⟩ ≤ ⟨σ^{A∆B}⟩` | `AmbientLattice.lean` | Genuine ∞-vol (ferromagnetic) |
+| **Exhaustion-independence** | `correlationInfinite G Λ = correlationInfinite G Λ'` | `AmbientLattice.lean` | Genuine ∞-vol |
 | **Lee–Yang circle theorem** (§4.5) | Ising partition polynomial nonvanishing on polydisk | `LeeYang.lean` | Finite |
 | **Lee–Yang (graph form)** | Z ≠ 0 on polydisk for ferromagnetic graph | `FreeEnergy.lean` | Finite |
 | **φ⁴ Lebowitz** (Cor 4.3.2) | `lebowitz_third/four/inductive` | `Inequalities/GHS.lean` | Finite, axiom |
@@ -63,7 +65,7 @@ Formalized in three regimes:
 | `correlation_convergent_h` | `⟨σ^A⟩_{(J,n,β)}` converges as `h = n → ∞` | `InfiniteVolume.lean` | Finite |
 | `correlation_convergent_beta` | `⟨σ^A⟩_{(J,h,n+1)}` converges as `β = n+1 → ∞` | `InfiniteVolume.lean` | Finite |
 | `correlation_convergent_subgraph` | `⟨σ^A⟩_{Gₙ}` converges for `Gₙ ↑` | `InfiniteVolume.lean` | Discretized Λ↑ |
-| `Ambient.correlationAlongExhaustion` | correlation along an exhaustion `Λₙ ↑ V` | `AmbientLattice.lean` | Genuine ∞-vol (framework) |
+| `Ambient.correlationInfinite` | `correlationInfinite := ⨆ n, correlationAlongExhaustion G Λ p A n` | `AmbientLattice.lean` | **Genuine ∞-vol (full)**: convergence, Λ-independence, GKS-I/II, J/h/β monotonicity |
 
 Named specializations at `A = {i}`:
 `magnetization_convergent_{J,h,beta,subgraph}`.
@@ -194,6 +196,9 @@ ambient framework:
 | `correlationΛ_monotone_beta` | `MonotoneOn (β ↦ correlationΛ G Λ ⟨J, h, β⟩ A) (Ioi 0)` |
 | `correlationAlongExhaustion_monotone_beta` | Pointwise β-monotonicity of the exhaustion sequence |
 | **`correlationInfinite_monotone_beta`** | **β-direction monotonicity at infinite volume** (Glimm–Jaffe Prop 4.2.4): `MonotoneOn (β ↦ correlationInfinite G Λ ⟨J, h, β⟩ A) (Ioi 0)` |
+| `correlationΛ_monotone_J` | `MonotoneOn (J ↦ correlationΛ G Λ ⟨J, h, β⟩ A) (Ici 0)` |
+| `correlationAlongExhaustion_monotone_J` | Pointwise J-monotonicity of the exhaustion sequence |
+| **`correlationInfinite_monotone_J`** | **J-direction monotonicity at infinite volume** (Glimm–Jaffe Prop 4.2.4): `MonotoneOn (J ↦ correlationInfinite G Λ ⟨J, h, β⟩ A) (Ici 0)` — three-parameter symmetry complete |
 
 ## Axioms
 
@@ -226,10 +231,10 @@ inventory (2026-04-17).
 | Section | Result | Status | Notes |
 |---|---|---|---|
 | §4.1 | Thm 4.1.1 GKS-I/II | **Done** | `gks_first`, `gks_second` |
-| §4.2 | Prop 4.2.1 (J-monotonicity) | **Done** | Finite |
-| §4.2 | Prop 4.2.2 (boundedness) | **Done** | Finite |
-| §4.2 | **Thm 4.2.3 (thermodynamic limit)** | **Done (discretized)** | Fixed finite ambient + subgraph |
-| §4.2 | Prop 4.2.4 (h-monotonicity) | **Done** | Finite |
+| §4.2 | Prop 4.2.1 (J-monotonicity) | **Done (finite + infinite)** | Finite: `correlation_monotone_J`; Infinite: `correlationInfinite_monotone_J` |
+| §4.2 | Prop 4.2.2 (boundedness) | **Done (finite + infinite)** | Finite: `abs_correlation_le_one`; Infinite: `correlationInfinite_le_one` |
+| §4.2 | **Thm 4.2.3 (thermodynamic limit)** | **Done (genuine ∞-vol)** | `correlationInfinite_gks_second` (GKS-II), `correlationInfinite_indep_exhaustion`, ambient-subgraph monotonicity |
+| §4.2 | Prop 4.2.4 (h-monotonicity) | **Done (finite + infinite)** | Three parameters: `correlationInfinite_monotone_{J,h,beta}` |
 | §4.3 | Thm 4.3.1 (φ⁴) | **Done (axiom)** | `phi4_single_site_nonneg` |
 | §4.3 | Cor 4.3.2 (Lebowitz) | **Done (axiom)** | 3 axioms |
 | §4.3 | Cor 4.3.3, 4.3.4, 4.3.5 | **Done** | Uses axioms |
