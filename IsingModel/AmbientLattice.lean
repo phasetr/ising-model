@@ -3004,6 +3004,91 @@ theorem freeEnergyAlongExhaustion_upper_bound
   change IsingModel.freeEnergy (inducedGraph G (Λ.volume n)) p ≤ _
   exact IsingModel.freeEnergy_upper_bound _ p hcard
 
+/-! ## Uniform upper bound under bounded edge density
+
+The per-stage upper bound `freeEnergyAlongExhaustion_upper_bound` depends
+on `|E_n| / |Λ_n|`; this ratio can diverge for an arbitrary exhaustion.
+Under the natural hypothesis `BoundedEdgeDensity`, the sequence is
+uniformly bounded above — a step toward Glimm–Jaffe §4.6 Prop 4.6.1
+convergence (which still needs super-additivity + Fekete). -/
+
+/-- **Bounded edge density along an exhaustion**: there is `c : ℝ` such
+that for every `n` with `Λ.volume n` nonempty,
+`|E(G[Λ_n])| ≤ c · |Λ_n|`.
+
+Example: bounded-degree ambient graphs with max degree `Δ` satisfy
+this with `c = Δ / 2`. -/
+def BoundedEdgeDensity (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet] : Prop :=
+  ∃ c : ℝ, ∀ n, (Λ.volume n).Nonempty →
+    ((inducedGraph G (Λ.volume n)).edgeFinset.card : ℝ) ≤
+      c * Fintype.card (↑(Λ.volume n) : Type _)
+
+/-- **Uniform upper bound on `freeEnergyAlongExhaustion` under bounded
+edge density**: if `BoundedEdgeDensity G Λ` with constant `c`, then for
+every `n` with `Λ.volume n` nonempty and any Ising parameters `p`,
+`freeEnergyAlongExhaustion G Λ p n ≤ log 2 + |β|·(|J|·c + |h|)`.
+
+Direct consequence of `freeEnergyAlongExhaustion_upper_bound` (PR #122)
+and the edge-density bound `|E_n|/|Λ_n| ≤ c`. -/
+theorem freeEnergyAlongExhaustion_le_uniform_upper_bound
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) {c : ℝ}
+    (hc : ∀ n, (Λ.volume n).Nonempty →
+      ((inducedGraph G (Λ.volume n)).edgeFinset.card : ℝ) ≤
+        c * Fintype.card (↑(Λ.volume n) : Type _))
+    (n : ℕ) (hne : (Λ.volume n).Nonempty) :
+    freeEnergyAlongExhaustion G Λ p n ≤
+      Real.log 2 + |p.β| * (|p.J| * c + |p.h|) := by
+  have hcard_pos : (0 : ℝ) < Fintype.card (↑(Λ.volume n) : Type _) := by
+    rw [Fintype.card_coe]; exact_mod_cast Finset.card_pos.mpr hne
+  have hratio :
+      ((inducedGraph G (Λ.volume n)).edgeFinset.card : ℝ) /
+        Fintype.card (↑(Λ.volume n) : Type _) ≤ c :=
+    (div_le_iff₀ hcard_pos).mpr (hc n hne)
+  calc freeEnergyAlongExhaustion G Λ p n
+      ≤ Real.log 2 +
+          |p.β| * (|p.J| * (inducedGraph G (Λ.volume n)).edgeFinset.card +
+              |p.h| * Fintype.card (↑(Λ.volume n) : Type _))
+            / Fintype.card (↑(Λ.volume n) : Type _) :=
+        freeEnergyAlongExhaustion_upper_bound G Λ p n hne
+    _ = Real.log 2 +
+          |p.β| * (|p.J| *
+              ((inducedGraph G (Λ.volume n)).edgeFinset.card /
+                Fintype.card (↑(Λ.volume n) : Type _)) + |p.h|) := by
+          field_simp
+    _ ≤ Real.log 2 + |p.β| * (|p.J| * c + |p.h|) := by
+          gcongr
+
+/-- **BddAbove for `freeEnergyAlongExhaustion` under bounded edge density**:
+assuming `BoundedEdgeDensity G Λ`, the range of the exhaustion free energy
+is bounded above.
+
+For nonempty stages the bound is `log 2 + |β|·(|J|·c + |h|)` by the
+uniform upper bound above; for empty stages the value is
+`(Fintype.card ∅)⁻¹ · log 1 = 0`, which is at most the same constant
+(after taking its `max` with `0`). -/
+theorem BddAbove_freeEnergyAlongExhaustion_range
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hBED : BoundedEdgeDensity G Λ) :
+    BddAbove (Set.range (freeEnergyAlongExhaustion G Λ p)) := by
+  obtain ⟨c, hc⟩ := hBED
+  refine ⟨max 0 (Real.log 2 + |p.β| * (|p.J| * c + |p.h|)), ?_⟩
+  rintro y ⟨n, rfl⟩
+  by_cases hne : (Λ.volume n).Nonempty
+  · exact le_max_of_le_right
+      (freeEnergyAlongExhaustion_le_uniform_upper_bound G Λ p hc n hne)
+  · rw [Finset.not_nonempty_iff_eq_empty] at hne
+    have hcard : Fintype.card (↑(Λ.volume n) : Type _) = 0 := by
+      rw [Fintype.card_coe, hne]; rfl
+    have hfe : freeEnergyAlongExhaustion G Λ p n = 0 := by
+      change IsingModel.freeEnergy (inducedGraph G (Λ.volume n)) p = 0
+      unfold IsingModel.freeEnergy
+      rw [hcard, Nat.cast_zero, inv_zero, zero_mul]
+    rw [hfe]; exact le_max_left _ _
+
 end Ambient
 end IsingModel
 
