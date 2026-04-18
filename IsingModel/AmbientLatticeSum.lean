@@ -593,6 +593,39 @@ theorem freeEnergyInfinite_of_eventually_const
   refine freeEnergyInfinite_eq_of_tendsto G Λ p ?_
   exact tendsto_const_nhds.congr' (h.mono (fun _ hn => hn.symm))
 
+/-- **β=0 infinite-volume closed form, weakened eventual form**:
+`∀ᶠ n in atTop, (Λ.volume n).Nonempty ⇒ freeEnergyInfinite G Λ ⟨J, h, 0⟩ = log 2`.
+
+Weakening of `freeEnergyInfinite_beta_zero` (`∀ n` → `∀ᶠ n`).
+The eventual hypothesis is automatic under `[Infinite V]` via
+`Exhaustion.eventually_volume_nonempty`.
+
+Uses `freeEnergyInfinite_of_eventually_const` with the per-stage
+`freeEnergyAlongExhaustion_beta_zero`. -/
+theorem freeEnergyInfinite_beta_zero_of_eventually_nonempty
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J h : ℝ)
+    (hne : ∀ᶠ n in Filter.atTop, (Λ.volume n).Nonempty) :
+    freeEnergyInfinite G Λ (⟨J, h, 0⟩ : IsingParams ℝ) = Real.log 2 := by
+  apply freeEnergyInfinite_of_eventually_const G Λ
+  filter_upwards [hne] with n hn using
+    freeEnergyAlongExhaustion_beta_zero G Λ J h n hn
+
+/-- **J=h=0 infinite-volume closed form, weakened eventual form**:
+`∀ᶠ n in atTop, (Λ.volume n).Nonempty ⇒ freeEnergyInfinite G Λ ⟨0, 0, β⟩ = log 2`.
+
+Weakening of `freeEnergyInfinite_zero_params` (`∀ n` → `∀ᶠ n`). -/
+theorem freeEnergyInfinite_zero_params_of_eventually_nonempty
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (β : ℝ)
+    (hne : ∀ᶠ n in Filter.atTop, (Λ.volume n).Nonempty) :
+    freeEnergyInfinite G Λ (⟨0, 0, β⟩ : IsingParams ℝ) = Real.log 2 := by
+  apply freeEnergyInfinite_of_eventually_const G Λ
+  filter_upwards [hne] with n hn using
+    freeEnergyAlongExhaustion_zero_params G Λ β n hn
+
 /-- **Uniform lower bound on `freeEnergyInfinite` under ferromagnetic**:
 the per-n sharp lower bound of PR #125 lifts to `limsup`:
 `log(2·cosh(β·h)) ≤ freeEnergyInfinite G Λ p`.
