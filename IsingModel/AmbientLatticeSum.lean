@@ -573,6 +573,26 @@ theorem freeEnergyInfinite_eq_of_tendsto
   unfold freeEnergyInfinite
   exact h.limsup_eq
 
+/-- **Eventually constant ⇒ `freeEnergyInfinite` equals the constant.**
+
+If `∀ᶠ n in atTop, freeEnergyAlongExhaustion G Λ p n = c`, then
+`freeEnergyInfinite G Λ p = c`. Direct corollary of
+`freeEnergyInfinite_eq_of_tendsto`: an eventually-constant sequence
+tends to that constant (`Filter.tendsto_const_nhds` via
+`Filter.Tendsto.congr'`).
+
+Generalization of the argument in `freeEnergyInfinite_beta_zero` /
+`_zero_params` which handle the always-constant (all-stages-nonempty)
+case. -/
+theorem freeEnergyInfinite_of_eventually_const
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) {c : ℝ}
+    (h : ∀ᶠ n in Filter.atTop, freeEnergyAlongExhaustion G Λ p n = c) :
+    freeEnergyInfinite G Λ p = c := by
+  refine freeEnergyInfinite_eq_of_tendsto G Λ p ?_
+  exact tendsto_const_nhds.congr' (h.mono (fun _ hn => hn.symm))
+
 /-- **Uniform lower bound on `freeEnergyInfinite` under ferromagnetic**:
 the per-n sharp lower bound of PR #125 lifts to `limsup`:
 `log(2·cosh(β·h)) ≤ freeEnergyInfinite G Λ p`.

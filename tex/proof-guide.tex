@@ -1666,6 +1666,15 @@ $\texttt{Tendsto}\,(\texttt{freeEnergyAlongExhaustion}\,G\,\Lambda\,p)\,
 \texttt{freeEnergyInfinite} の値を与える infrastructure.
 \end{theorem}
 
+\begin{theorem}[\texttt{freeEnergyInfinite\_of\_eventually\_const}; PR \#171]
+$\forall^\infty n, f_n = c$ のとき
+$\texttt{freeEnergyInfinite}\,G\,\Lambda\,p = c$.
+\texttt{tendsto\_const\_nhds.congr'} で eventually const
+$\Rightarrow$ Tendsto, PR \#170 で limsup = limit.
+既存 \texttt{\_beta\_zero} / \texttt{\_zero\_params} (全 $n$ nonempty 仮定下)
+の一般化.
+\end{theorem}
+
 \begin{theorem}[\texttt{freeEnergy\_nonneg\_of\_ferromagnetic}; PR \#169]
 $0 < |\iota|$, 強磁性 $p$ で
 \[
