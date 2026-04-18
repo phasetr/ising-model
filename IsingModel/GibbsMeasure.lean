@@ -1,5 +1,6 @@
 import IsingModel.Hamiltonian
 import Mathlib.Analysis.Complex.Exponential
+import Mathlib.Analysis.Complex.Trigonometric
 
 /-!
 # Gibbs measure, partition function, and expectations
@@ -132,5 +133,89 @@ is finite of size `2^(Fintype.card ι)`. -/
 theorem card_config_eq_two_pow :
     Fintype.card (Config ι) = 2 ^ Fintype.card ι := by
   simp [Config, card_spin]
+
+/-! ## Empty graph: free-spin / one-body limit
+
+For the empty graph `⊥` (no edges), the `J`-term of the Hamiltonian is
+the empty sum and hence vanishes, leaving only the external field term.
+The partition function then factorizes over sites as
+`(2 · cosh(β·h))^|ι|`. -/
+
+omit [DecidableEq ι] in
+/-- **Hamiltonian on the empty graph**: at `G = ⊥`, the interaction
+energy is the empty edge sum and vanishes, leaving only the
+external field term `-h · Σ sign(σ_i)`. -/
+theorem hamiltonian_bot (p : IsingParams ℝ) (σ : Config ι) :
+    hamiltonian (⊥ : SimpleGraph ι) p σ
+      = -p.h * ∑ i : ι, Spin.sign ℝ (σ i) := by
+  unfold hamiltonian interactionEnergy externalFieldEnergy
+  rw [SimpleGraph.edgeFinset_bot, Finset.sum_empty, mul_zero, zero_add]
+
+/-- **Sum over `Spin`**: `∑ s : Spin, f s = f Spin.up + f Spin.down`.
+Spin is a 2-element Fintype `{up, down}`, so the universal sum splits
+into these two terms. -/
+theorem sum_spin {α : Type*} [AddCommMonoid α] (f : Spin → α) :
+    ∑ s : Spin, f s = f Spin.up + f Spin.down := by
+  have huniv : (Finset.univ : Finset Spin) = {Spin.up, Spin.down} := by
+    ext s; cases s <;> simp
+  rw [huniv, Finset.sum_pair (fun h => Spin.noConfusion h)]
+
+/-- **Single-site sum at the empty-graph site**:
+`∑_{s ∈ Spin} exp(β·h · sign s) = 2 · cosh(β·h)`.
+
+The two-element sum over `{up, down}` evaluates to `exp(β·h) + exp(-β·h)`,
+which is `2 · cosh(β·h)` by `Real.cosh_eq`. -/
+theorem sum_exp_spin_sign (β h : ℝ) :
+    ∑ s : Spin, Real.exp (β * h * Spin.sign ℝ s)
+      = 2 * Real.cosh (β * h) := by
+  rw [sum_spin]
+  have hup : Spin.sign ℝ Spin.up = (1 : ℝ) := by
+    simp [Spin.sign, Spin.toSign]
+  have hdown : Spin.sign ℝ Spin.down = (-1 : ℝ) := by
+    simp [Spin.sign, Spin.toSign]
+  rw [hup, hdown]
+  simp only [mul_one, mul_neg_one, Real.cosh_eq]
+  ring
+
+/-- **Partition function on the empty graph**: at `G = ⊥`,
+`Z = (2 · cosh(β·h))^|ι|`.
+
+Proof: use `hamiltonian_bot` to drop the `J`-term, rewrite the exponential
+of a sum as a product of exponentials, then apply the finite-distributivity
+`Finset.sum_prod_piFinset` (equivalent to
+`∑_σ ∏_i f(σ i) = ∏_i ∑_s f(s)` when `σ : ι → Spin`), and finally evaluate
+the single-site sum via `sum_exp_spin_sign`. -/
+theorem partitionFunction_bot (p : IsingParams ℝ) :
+    partitionFunction (⊥ : SimpleGraph ι) p
+      = (2 * Real.cosh (p.β * p.h)) ^ Fintype.card ι := by
+  unfold partitionFunction boltzmannWeight
+  have hprod : ∀ σ : Config ι,
+      Real.exp (-p.β * hamiltonian (⊥ : SimpleGraph ι) p σ)
+        = ∏ i : ι, Real.exp (p.β * p.h * Spin.sign ℝ (σ i)) := by
+    intro σ
+    rw [hamiltonian_bot]
+    have hsum : -p.β * (-p.h * ∑ i : ι, Spin.sign ℝ (σ i))
+        = ∑ i : ι, p.β * p.h * Spin.sign ℝ (σ i) := by
+      rw [Finset.mul_sum, Finset.mul_sum]
+      refine Finset.sum_congr rfl fun i _ => ?_
+      ring
+    rw [hsum, Real.exp_sum]
+  calc ∑ σ : Config ι,
+        Real.exp (-p.β * hamiltonian (⊥ : SimpleGraph ι) p σ)
+      = ∑ σ : Config ι, ∏ i : ι,
+          Real.exp (p.β * p.h * Spin.sign ℝ (σ i)) := by
+        refine Finset.sum_congr rfl ?_
+        intros σ _; exact hprod σ
+    _ = ∑ σ ∈ Fintype.piFinset (fun _ : ι => (Finset.univ : Finset Spin)),
+          ∏ i : ι, Real.exp (p.β * p.h * Spin.sign ℝ (σ i)) := by
+        rw [Fintype.piFinset_univ]
+    _ = ∏ i : ι, ∑ s : Spin, Real.exp (p.β * p.h * Spin.sign ℝ s) :=
+        Finset.sum_prod_piFinset (Finset.univ : Finset Spin)
+          (fun _ s => Real.exp (p.β * p.h * Spin.sign ℝ s))
+    _ = ∏ _ : ι, 2 * Real.cosh (p.β * p.h) := by
+        refine Finset.prod_congr rfl ?_
+        intros i _; exact sum_exp_spin_sign p.β p.h
+    _ = (2 * Real.cosh (p.β * p.h)) ^ Fintype.card ι := by
+        rw [Finset.prod_const, Finset.card_univ]
 
 end IsingModel

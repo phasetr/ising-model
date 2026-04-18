@@ -674,4 +674,25 @@ theorem freeEnergy_zero_params (G : SimpleGraph ι) [Fintype G.edgeSet]
     exact_mod_cast hne.ne'
   field_simp
 
+/-- **Free energy on the empty graph** (free-spin / one-body limit):
+for nonempty `ι`,
+`freeEnergy (⊥ : SimpleGraph ι) p = log (2 · cosh(β · h))`.
+
+Combines `partitionFunction_bot` (`Z = (2 cosh(β h))^|ι|`) with
+`Real.log_pow` (`log(a^n) = n · log a`, valid here since
+`2 cosh(β h) > 0`); the `|ι|⁻¹` prefix then cancels to give
+`log (2 cosh(β h))`.
+
+Complements `freeEnergy_zero_params` (the `J = h = 0` point, where
+`cosh 0 = 1` recovers `log 2`) by extending to arbitrary `h` on the
+J-less graph. -/
+theorem freeEnergy_bot (p : IsingParams ℝ) (hne : 0 < Fintype.card ι) :
+    freeEnergy (⊥ : SimpleGraph ι) p
+      = Real.log (2 * Real.cosh (p.β * p.h)) := by
+  unfold freeEnergy
+  rw [partitionFunction_bot, Real.log_pow]
+  have hcard : (Fintype.card ι : ℝ) ≠ 0 := by
+    exact_mod_cast hne.ne'
+  field_simp
+
 end IsingModel
