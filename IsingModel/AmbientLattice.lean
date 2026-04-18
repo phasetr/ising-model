@@ -1,6 +1,7 @@
 import IsingModel.InfiniteVolume
 import IsingModel.FreeEnergy
 import IsingModel.Inequalities.GHS
+import IsingModel.Conditioning
 
 /-!
 # Genuine infinite-volume framework: ambient lattice
@@ -450,6 +451,40 @@ theorem freeEnergyAlongExhaustion_monotone_beta
       (fun β : ℝ => freeEnergyAlongExhaustion G Λ ⟨J, h, β⟩ n)
       (Set.Ioi 0) :=
   IsingModel.freeEnergy_monotone_beta (inducedGraph G (Λ.volume n)) J hJ h hh
+
+/-- **J-direction monotonicity of `partitionFunctionAlongExhaustion`**
+(pointwise form matching finite-volume `partitionFunction_monotone_J`). -/
+theorem partitionFunctionAlongExhaustion_monotone_J
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (h β : ℝ) (hh : 0 ≤ h) (hβ : 0 < β) {J₁ J₂ : ℝ}
+    (hJ₁ : 0 ≤ J₁) (hJ : J₁ ≤ J₂) (n : ℕ) :
+    partitionFunctionAlongExhaustion G Λ ⟨J₁, h, β⟩ n
+      ≤ partitionFunctionAlongExhaustion G Λ ⟨J₂, h, β⟩ n :=
+  IsingModel.partitionFunction_monotone_J
+    (inducedGraph G (Λ.volume n)) h β hh hβ J₁ J₂ hJ₁ hJ
+
+/-- **h-direction monotonicity of `partitionFunctionAlongExhaustion`**. -/
+theorem partitionFunctionAlongExhaustion_monotone_h
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) {h₁ h₂ : ℝ}
+    (hh₁ : 0 ≤ h₁) (hh : h₁ ≤ h₂) (n : ℕ) :
+    partitionFunctionAlongExhaustion G Λ ⟨J, h₁, β⟩ n
+      ≤ partitionFunctionAlongExhaustion G Λ ⟨J, h₂, β⟩ n :=
+  IsingModel.partitionFunction_monotone_h
+    (inducedGraph G (Λ.volume n)) J β hJ hβ h₁ h₂ hh₁ hh
+
+/-- **β-direction monotonicity of `partitionFunctionAlongExhaustion`**. -/
+theorem partitionFunctionAlongExhaustion_monotone_beta
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J h : ℝ) (hJ : 0 ≤ J) (hh : 0 ≤ h) {β₁ β₂ : ℝ}
+    (hβ₁ : 0 < β₁) (hβ : β₁ ≤ β₂) (n : ℕ) :
+    partitionFunctionAlongExhaustion G Λ ⟨J, h, β₁⟩ n
+      ≤ partitionFunctionAlongExhaustion G Λ ⟨J, h, β₂⟩ n :=
+  IsingModel.partitionFunction_monotone_beta
+    (inducedGraph G (Λ.volume n)) J h hJ hh β₁ β₂ hβ₁ hβ
 
 /-! ## Extension of a Λ₁-graph to Λ₂ (for volume-direction monotonicity)
 

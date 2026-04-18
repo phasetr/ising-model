@@ -203,6 +203,9 @@ ambient framework:
 | `freeEnergyAlongExhaustion_monotone_J` | MonotoneOn (Ici 0) for fixed h ≥ 0, β > 0 |
 | `freeEnergyAlongExhaustion_monotone_h` | MonotoneOn (Ici 0) for fixed J ≥ 0, β > 0 |
 | `freeEnergyAlongExhaustion_monotone_beta` | MonotoneOn (Ioi 0) for fixed J ≥ 0, h ≥ 0 |
+| `partitionFunctionAlongExhaustion_monotone_J` | Pointwise J-monotone (h ≥ 0, β > 0, 0 ≤ J₁ ≤ J₂) |
+| `partitionFunctionAlongExhaustion_monotone_h` | Pointwise h-monotone (J ≥ 0, β > 0, 0 ≤ h₁ ≤ h₂) |
+| `partitionFunctionAlongExhaustion_monotone_beta` | Pointwise β-monotone (J ≥ 0, h ≥ 0, 0 < β₁ ≤ β₂) |
 | `correlationAlongExhaustion_nonneg` | `0 ≤ correlationAlongExhaustion G Λ p A n` (ferromagnetic) |
 | `correlationΛ_gks_second` | **GKS-II at finite volume**, lifted form: `correlationΛ (lift A) · correlationΛ (lift B) ≤ correlationΛ (lift (A ∆ B))` |
 | **`correlationInfinite_gks_second`** | **GKS-II at infinite volume** (Glimm–Jaffe §4.2 Thm 4.2.3): `correlationInfinite A · correlationInfinite B ≤ correlationInfinite (A ∆ B)` |
