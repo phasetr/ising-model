@@ -905,4 +905,24 @@ theorem freeEnergy_ge_log_two_cosh (G : SimpleGraph ι) [Fintype G.edgeSet]
     _ ≤ freeEnergy G (⟨J, h, β⟩ : IsingParams ℝ) :=
         freeEnergy_monotone_subgraph bot_le _ hferm
 
+/-- **Free energy lower bound `log 2 ≤ f_G(p)` for ferromagnetic.**
+
+Weaker than `freeEnergy_ge_log_two_cosh` (which uses the sharp
+`log (2 · cosh(β h))` bound) but doesn't depend on the specific form of
+`p`; takes a `Ferromagnetic p` hypothesis uniformly.
+
+Via `Real.one_le_cosh`, `2 · cosh(β h) ≥ 2`, so
+`log 2 ≤ log (2 · cosh(β h))` by log-monotonicity; then compose with
+`freeEnergy_ge_log_two_cosh`. -/
+theorem freeEnergy_ge_log_two_of_ferromagnetic
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (hne : 0 < Fintype.card ι) :
+    Real.log 2 ≤ freeEnergy G p := by
+  obtain ⟨J, h, β⟩ := p
+  have h_cosh : 1 ≤ Real.cosh (β * h) := Real.one_le_cosh _
+  have h_log : Real.log 2 ≤ Real.log (2 * Real.cosh (β * h)) := by
+    apply Real.log_le_log (by norm_num : (0 : ℝ) < 2)
+    linarith
+  exact h_log.trans (freeEnergy_ge_log_two_cosh G hf.hJ hf.hh hf.hβ hne)
+
 end IsingModel
