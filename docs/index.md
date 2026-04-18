@@ -214,6 +214,7 @@ ambient framework:
 | `spontaneousMagnetization_nonneg` | `0 ≤ m*` (ferromagnetic) |
 | `spontaneousMagnetization_le_one` | `m* ≤ 1` |
 | `spontaneousMagnetization_le_magnetizationInfinite` | `m* ≤ M(h)` for any `h > 0` (infimum characterization) |
+| `spontaneousMagnetization_indep_exhaustion` | `m*` does not depend on the choice of exhaustion |
 
 ## Axioms
 

@@ -1670,5 +1670,24 @@ theorem spontaneousMagnetization_le_magnetizationInfinite
     (magnetizationInfinite_bddBelow_on_Ioi G Λ hJ hβ i)
     ⟨h, hh⟩
 
+/-- **Exhaustion-independence of `spontaneousMagnetization`**:
+the value does not depend on the choice of exhaustion.  For every
+`h : Set.Ioi 0`, we build `Ferromagnetic ⟨J, h.val, β⟩` from `hJ`,
+`h.property`, and `hβ`, apply
+`magnetizationInfinite_indep_exhaustion` pointwise, then conclude by
+extensional agreement of the iInf-ed function. -/
+theorem spontaneousMagnetization_indep_exhaustion
+    (G : SimpleGraph V) (Λ Λ' : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    [∀ n, Fintype (inducedGraph G (Λ'.volume n)).edgeSet]
+    {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) (i : V) :
+    spontaneousMagnetization G Λ J β i
+      = spontaneousMagnetization G Λ' J β i := by
+  unfold spontaneousMagnetization
+  congr 1
+  funext h
+  exact magnetizationInfinite_indep_exhaustion G Λ Λ' ⟨J, h.val, β⟩
+    ⟨hJ, le_of_lt h.property, hβ⟩ i
+
 end Ambient
 end IsingModel
