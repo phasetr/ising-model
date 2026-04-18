@@ -3273,4 +3273,47 @@ type $\uparrow\Lambda_1 \oplus \uparrow\Lambda_2$
 super-additivity inequality of the previous step applies to
 actual finite-volume exhaustions.
 
+\subsection{Super-additivity on Finset disjoint union
+(\texttt{AmbientLatticeSum.lean})}
+
+\begin{theorem}[\texttt{IsingModel.log\_partitionFunction\_inducedGraph\_disjUnion\_super\_additive}]
+For $G \colon \mathrm{SimpleGraph}\,V$, disjoint
+$\Lambda_1, \Lambda_2 : \mathrm{Finset}\,V$, and ferromagnetic $p$,
+\[
+  \log Z_{\mathrm{inducedGraph}\,G\,\Lambda_1}(p)
+  + \log Z_{\mathrm{inducedGraph}\,G\,\Lambda_2}(p)
+  \le \log Z_{\mathrm{inducedGraph}\,G\,(\Lambda_1 \cup \Lambda_2)}(p).
+\]
+\end{theorem}
+
+\begin{proof}
+Let $e = \mathrm{Equiv.Finset.union}\,\Lambda_1\,\Lambda_2\,\mathrm{hd}
+  \colon \uparrow\!\Lambda_1 \oplus \uparrow\!\Lambda_2
+     \simeq \uparrow\!(\Lambda_1 \cup \Lambda_2)$.
+\begin{align*}
+  \log Z_{\mathrm{inducedGraph}\,\Lambda_1}
+  + \log Z_{\mathrm{inducedGraph}\,\Lambda_2}
+  &= \log Z_{\mathrm{inducedGraph}\,\Lambda_1
+      \oplus_g \mathrm{inducedGraph}\,\Lambda_2}
+     & \text{(\S 0101 \texttt{log\_partitionFunction\_sum})} \\
+  &= \log Z_{(\mathrm{inducedGraph}\,\Lambda_1
+      \oplus_g \mathrm{inducedGraph}\,\Lambda_2).\mathrm{map}\,e}
+     & \text{(\S 0103 \texttt{log\_partitionFunction\_map\_equiv})} \\
+  &\le \log Z_{\mathrm{inducedGraph}\,(\Lambda_1 \cup \Lambda_2)}
+     & \text{(ferromagnetic subgraph monotonicity,}
+\end{align*}
+using the key subgraph relation \texttt{inducedGraph\_sum\_map\_le\_union}:
+every edge of $(\mathrm{inducedGraph}\,\Lambda_1
+\oplus_g \mathrm{inducedGraph}\,\Lambda_2)\,.\mathrm{map}\,e$ is
+either an $\mathrm{inl}$-image edge (both endpoints in $\Lambda_1$)
+or an $\mathrm{inr}$-image edge (both in $\Lambda_2$), and in either
+case it is an edge of $\mathrm{inducedGraph}\,G\,(\Lambda_1 \cup \Lambda_2)$.
+\end{proof}
+
+\paragraph{Closing Prop 4.6.1.} Combined with the uniform upper
+bound (PR \#122, \#123), Fekete's lemma now yields
+convergence of $f_\Lambda = (\log Z_\Lambda)/|\Lambda|$ along
+arbitrary exhaustions of the ambient lattice; this is the
+Prop 4.6.1 body in the next PR.
+
 \end{document}
