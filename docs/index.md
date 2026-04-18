@@ -229,6 +229,8 @@ ambient framework:
 | `hamiltonian_neg_h` (Hamiltonian.lean) | `H_G(σ; J, -h, β) = H_G(σ.flip; J, h, β)` (spin-flip / h-sign identity) |
 | `partitionFunction_neg_h` (GibbsMeasure.lean) | **Z h-symmetry**: `Z(J, -h, β) = Z(J, h, β)` via flip involution |
 | `freeEnergy_neg_h` (FreeEnergy.lean) | **freeEnergy is even in h**: `f(J, -h, β) = f(J, h, β)` |
+| `freeEnergy_eq_abs_h` (FreeEnergy.lean) | `f(J, h, β) = f(J, |h|, β)` (case split + h-symmetry) |
+| `freeEnergy_monotone_abs_h` (FreeEnergy.lean) | **Ferromagnetic |h|-monotonicity**: `|h₁| ≤ |h₂| → f(J, h₁, β) ≤ f(J, h₂, β)` |
 | `correlationAlongExhaustion_nonneg` | `0 ≤ correlationAlongExhaustion G Λ p A n` (ferromagnetic) |
 | `correlationΛ_gks_second` | **GKS-II at finite volume**, lifted form: `correlationΛ (lift A) · correlationΛ (lift B) ≤ correlationΛ (lift (A ∆ B))` |
 | **`correlationInfinite_gks_second`** | **GKS-II at infinite volume** (Glimm–Jaffe §4.2 Thm 4.2.3): `correlationInfinite A · correlationInfinite B ≤ correlationInfinite (A ∆ B)` |
