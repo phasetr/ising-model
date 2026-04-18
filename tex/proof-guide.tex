@@ -3096,4 +3096,79 @@ of $f_{\Lambda}$ from the current \emph{discretized} subgraph
 setting (\texttt{freeEnergy\_convergent\_subgraph}) to the genuine
 infinite-volume exhaustion of the ambient lattice framework.
 
+\subsection{Hamiltonian additivity on the disjoint sum graph (\texttt{SumModel.lean})}
+
+With the combinatorial edge-set decomposition from \texttt{SumGraph.lean}
+in hand (\S 0099), the Ising Hamiltonian on the disjoint sum graph
+splits additively with respect to the \texttt{Sum.elim} decomposition
+of configurations.
+
+\begin{lemma}[\texttt{IsingModel.Config.sumEquiv}]
+$\mathrm{Config}(\iota \oplus \iota')
+  \simeq \mathrm{Config}\,\iota \times \mathrm{Config}\,\iota'$,
+given by \texttt{Equiv.sumArrowEquivProdArrow}.
+\end{lemma}
+
+\begin{lemma}[\texttt{externalFieldEnergy\_sum}]
+\[
+  \sum_{i \in \iota \oplus \iota'}
+    \mathrm{sign}(\mathrm{Sum.elim}\,\sigma_1\,\sigma_2\,i)
+  = \sum_{i \in \iota} \mathrm{sign}(\sigma_1\,i)
+    + \sum_{i \in \iota'} \mathrm{sign}(\sigma_2\,i),
+\]
+proved by \texttt{Fintype.sum\_sum\_type} together with the evaluation
+of \texttt{Sum.elim} on \texttt{inl}/\texttt{inr}.
+\end{lemma}
+
+\begin{lemma}[\texttt{edgeSpin\_sumInl\_sym2Map} /
+\texttt{edgeSpin\_sumInr\_sym2Map}]
+For any $e \in \mathrm{Sym}^2\,\iota$,
+\[
+  \mathrm{edgeSpin}(\mathrm{Sum.elim}\,\sigma_1\,\sigma_2)
+    (\mathrm{Sym}^2.\mathrm{map}\,\mathrm{Sum.inl}\,e)
+  = \mathrm{edgeSpin}\,\sigma_1\,e,
+\]
+and analogously for \texttt{Sum.inr}.
+\end{lemma}
+
+\begin{proposition}[\texttt{interactionEnergy\_sum}]
+For $G, H$ with finite edge sets, $J \in K$, and
+$\sigma_1, \sigma_2$ configurations,
+\[
+  \mathrm{interactionEnergy}(G \oplus_g H)\,J\,(\mathrm{Sum.elim}\,\sigma_1\,\sigma_2)
+  = \mathrm{interactionEnergy}\,G\,J\,\sigma_1
+    + \mathrm{interactionEnergy}\,H\,J\,\sigma_2.
+\]
+\end{proposition}
+
+\begin{proof}
+Combine the edge-finset decomposition \texttt{edgeFinset\_sum} (PR \#134)
+with \texttt{Finset.sum\_union} (using
+\texttt{disjoint\_inl\_inr\_edgeFinset} for the disjointness side
+condition), then \texttt{Finset.sum\_map} and the per-edge pullbacks
+\texttt{edgeSpin\_sumInl\_sym2Map} / \texttt{edgeSpin\_sumInr\_sym2Map}.
+\end{proof}
+
+\begin{theorem}[\texttt{hamiltonian\_sum}]
+For $G, H$ with finite edge sets, and parameters $p = (J, h, \beta)$,
+\[
+  \mathcal{H}_{G \oplus_g H}(p)(\mathrm{Sum.elim}\,\sigma_1\,\sigma_2)
+  = \mathcal{H}_G(p)(\sigma_1) + \mathcal{H}_H(p)(\sigma_2).
+\]
+\end{theorem}
+
+\begin{proof}
+By additivity of each summand in
+$\mathcal{H} = \mathrm{interactionEnergy} + \mathrm{externalFieldEnergy}$
+(previous proposition and lemma).
+\end{proof}
+
+\paragraph{Next steps.} Step~4 of the super-additivity route will
+establish partition-function multiplicativity,
+$Z_{G \oplus_g H}(p) = Z_G(p) \cdot Z_H(p)$, by summing the
+exponential of the Hamiltonian over the product equivalence
+\texttt{Config.sumEquiv}; Step~5 will combine this with the already
+established upper bound (PR \#122, \#123) and Fekete's lemma to
+produce convergence of $f_\Lambda$ along arbitrary exhaustions.
+
 \end{document}
