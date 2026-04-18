@@ -2982,6 +2982,28 @@ theorem freeEnergyAlongExhaustion_ge_log_two
     _ ≤ freeEnergyAlongExhaustion G Λ ⟨J, h, β⟩ n :=
         freeEnergyAlongExhaustion_ge_zero_params G Λ hJ hh hβ n
 
+/-- **Along-exhaustion upper bound for the free energy**:
+for nonempty `Λ.volume n`,
+`freeEnergyAlongExhaustion G Λ p n ≤
+  log 2 + |β|·(|J|·|E_n| + |h|·|Λ_n|) / |Λ_n|`,
+where `E_n` is the edge count of the induced subgraph on `Λ.volume n`
+and `|Λ_n|` is its cardinality.
+
+Specialization of `IsingModel.freeEnergy_upper_bound` (Conditioning.lean,
+Cor. 10.3.2 divided by `|ι|`) to the exhaustion setting. -/
+theorem freeEnergyAlongExhaustion_upper_bound
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (n : ℕ) (hne : (Λ.volume n).Nonempty) :
+    freeEnergyAlongExhaustion G Λ p n ≤ Real.log 2 +
+      |p.β| * (|p.J| * (inducedGraph G (Λ.volume n)).edgeFinset.card +
+          |p.h| * Fintype.card (↑(Λ.volume n) : Type _))
+        / Fintype.card (↑(Λ.volume n) : Type _) := by
+  have hcard : 0 < Fintype.card (↑(Λ.volume n) : Type _) := by
+    rw [Fintype.card_coe]; exact Finset.card_pos.mpr hne
+  change IsingModel.freeEnergy (inducedGraph G (Λ.volume n)) p ≤ _
+  exact IsingModel.freeEnergy_upper_bound _ p hcard
+
 end Ambient
 end IsingModel
 

@@ -1503,6 +1503,25 @@ $Z \le 2^{|\iota|} \cdot \exp(|\beta|(|J| \cdot |E| + |h| \cdot |\iota|))$.
 $\exp(-|\beta|(|J| \cdot |E| + |h| \cdot |\iota|)) \le Z$.
 \end{theorem}
 
+\begin{theorem}[\texttt{freeEnergy\_upper\_bound}]
+For $|\iota| > 0$,
+\[
+\texttt{freeEnergy}\,G\,p \;\le\; \log 2
+  + \frac{|\beta|(|J| \cdot |E| + |h| \cdot |\iota|)}{|\iota|}.
+\]
+Take $\log$ of \texttt{partitionFunction\_upper} and use
+$|\text{Config}| = 2^{|\iota|}$, then divide by $|\iota|$.
+\end{theorem}
+
+\begin{theorem}[\texttt{freeEnergyAlongExhaustion\_upper\_bound}]
+For nonempty $\Lambda.\text{volume}\,n$,
+\[
+\texttt{freeEnergyAlongExhaustion}\,G\,\Lambda\,p\,n \;\le\; \log 2
+  + \frac{|\beta|(|J| \cdot |E_n| + |h| \cdot |\Lambda_n|)}{|\Lambda_n|},
+\]
+specialization of \texttt{freeEnergy\_upper\_bound} at each stage.
+\end{theorem}
+
 \subsection{Reflection positivity (\S10.4)}
 
 \begin{definition}[\texttt{ReflectionPositive}]
