@@ -190,6 +190,34 @@ namespace Ambient
 
 variable {V : Type*} [DecidableEq V]
 
+/-- **`partitionFunctionΛ ≥ 1`** for ferromagnetic parameters:
+lifts PR #141 `partitionFunction_ge_one_of_ferromagnetic` to the
+`partitionFunctionΛ` API level. -/
+theorem partitionFunctionΛ_ge_one_of_ferromagnetic
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    1 ≤ partitionFunctionΛ G Λ p :=
+  IsingModel.partitionFunction_ge_one_of_ferromagnetic _ p hf
+
+/-- **`partitionFunctionAlongExhaustion ≥ 1`** for ferromagnetic
+parameters: pointwise lift of PR #141
+`partitionFunction_ge_one_of_ferromagnetic`. -/
+theorem partitionFunctionAlongExhaustion_ge_one_of_ferromagnetic
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (n : ℕ) :
+    1 ≤ partitionFunctionAlongExhaustion G Λ p n :=
+  partitionFunctionΛ_ge_one_of_ferromagnetic G (Λ.volume n) p hf
+
+/-- Log form: `log Z ≥ 0` along any exhaustion under ferromagnetic `p`. -/
+theorem log_partitionFunctionAlongExhaustion_nonneg_of_ferromagnetic
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (n : ℕ) :
+    0 ≤ Real.log (partitionFunctionAlongExhaustion G Λ p n) :=
+  IsingModel.log_partitionFunction_nonneg_of_ferromagnetic _ p hf
+
 /-- Wrapper of `partitionFunction_inducedGraph_disjUnion_super_multiplicative`
 at the `partitionFunctionΛ` API level. -/
 theorem partitionFunctionΛ_disjUnion_super_multiplicative
