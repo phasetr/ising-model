@@ -3102,6 +3102,29 @@ theorem freeEnergyAlongExhaustion_beta_zero
       (⟨J, h, 0⟩ : IsingParams ℝ) = Real.log 2
   exact IsingModel.freeEnergy_beta_zero _ J h hcard
 
+/-- **Infinite-volume β=0 closed form**:
+under `∀ n, (Λ.volume n).Nonempty`, `freeEnergyInfinite G Λ ⟨J, h, 0⟩ = log 2`
+for any `J, h, G, Λ`.
+
+The sequence `n ↦ freeEnergyAlongExhaustion G Λ ⟨J, h, 0⟩ n` is constantly
+`log 2` by `freeEnergyAlongExhaustion_beta_zero`, so its `limsup` on
+`atTop` is `log 2` by `Filter.limsup_const`.
+
+Sanity check: the β = 0 slice of the §4.6 Prop 4.6.1 infinite-volume
+free energy is trivially the maximum-entropy value. -/
+theorem freeEnergyInfinite_beta_zero
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J h : ℝ) (hne : ∀ n, (Λ.volume n).Nonempty) :
+    freeEnergyInfinite G Λ (⟨J, h, 0⟩ : IsingParams ℝ) = Real.log 2 := by
+  unfold freeEnergyInfinite
+  have hconst : freeEnergyAlongExhaustion G Λ (⟨J, h, 0⟩ : IsingParams ℝ)
+      = fun _ : ℕ => Real.log 2 := by
+    funext n
+    exact freeEnergyAlongExhaustion_beta_zero G Λ J h n (hne n)
+  rw [hconst]
+  exact Filter.limsup_const (Real.log 2)
+
 /-! ## Free-spin identity for induced subgraph -/
 
 omit [DecidableEq V] in

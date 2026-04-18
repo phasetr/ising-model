@@ -1587,6 +1587,12 @@ $\texttt{freeEnergyAlongExhaustion}\,G\,\Lambda\,\langle J, h, 0 \rangle\,n = \l
 \texttt{change} + definitional unfolding で specialize.
 \end{theorem}
 
+\begin{theorem}[\texttt{freeEnergyInfinite\_beta\_zero}; PR \#133]
+$\forall n, \Lambda.\text{volume}\,n$ nonempty を仮定:
+$\texttt{freeEnergyInfinite}\,G\,\Lambda\,\langle J, h, 0 \rangle = \log 2$.
+Constant 列に書き直して \texttt{Filter.limsup\_const} で閉.
+\end{theorem}
+
 \begin{theorem}[\texttt{inducedGraph\_bot}; PR \#129]
 $\texttt{inducedGraph}\,(\bot : \texttt{SimpleGraph}\,V)\,\Lambda
   = (\bot : \texttt{SimpleGraph}\,\uparrow\Lambda)$.
