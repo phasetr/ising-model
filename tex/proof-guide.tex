@@ -2794,6 +2794,17 @@ $G_1 \le G_2$ のとき任意の $n$ で pointwise monotone.
 で specialize.
 \end{theorem}
 
+\begin{theorem}[\texttt{partitionFunctionAlongExhaustion\_monotone\_ambient\_subgraph}]
+$G_1 \le G_2$ のとき任意の $n$ で $Z_{G_1}(\Lambda_n) \le Z_{G_2}(\Lambda_n)$.
+\end{theorem}
+
+\begin{theorem}[\texttt{freeEnergyAlongExhaustion\_eq\_log\_div\_card}]
+\[
+f_n = |\Lambda.\text{volume}\,n|^{-1} \cdot \log Z_n.
+\]
+\texttt{IsingModel.freeEnergy} 定義の展開.
+\end{theorem}
+
 本 PR は scaffold. 完全 convergence 証明 (subadditivity + Fekete) は
 deferred.
 
