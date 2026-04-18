@@ -3043,30 +3043,22 @@ theorem freeEnergyAlongExhaustion_le_uniform_upper_bound
       Real.log 2 + |p.β| * (|p.J| * c + |p.h|) := by
   have hcard_pos : (0 : ℝ) < Fintype.card (↑(Λ.volume n) : Type _) := by
     rw [Fintype.card_coe]; exact_mod_cast Finset.card_pos.mpr hne
-  have hcard_ne : (Fintype.card (↑(Λ.volume n) : Type _) : ℝ) ≠ 0 :=
-    hcard_pos.ne'
-  have hE := hc n hne
-  have hupper := freeEnergyAlongExhaustion_upper_bound G Λ p n hne
+  have hratio :
+      ((inducedGraph G (Λ.volume n)).edgeFinset.card : ℝ) /
+        Fintype.card (↑(Λ.volume n) : Type _) ≤ c :=
+    (div_le_iff₀ hcard_pos).mpr (hc n hne)
   calc freeEnergyAlongExhaustion G Λ p n
       ≤ Real.log 2 +
           |p.β| * (|p.J| * (inducedGraph G (Λ.volume n)).edgeFinset.card +
               |p.h| * Fintype.card (↑(Λ.volume n) : Type _))
-            / Fintype.card (↑(Λ.volume n) : Type _) := hupper
+            / Fintype.card (↑(Λ.volume n) : Type _) :=
+        freeEnergyAlongExhaustion_upper_bound G Λ p n hne
     _ = Real.log 2 +
           |p.β| * (|p.J| *
               ((inducedGraph G (Λ.volume n)).edgeFinset.card /
                 Fintype.card (↑(Λ.volume n) : Type _)) + |p.h|) := by
           field_simp
     _ ≤ Real.log 2 + |p.β| * (|p.J| * c + |p.h|) := by
-          have hratio :
-              ((inducedGraph G (Λ.volume n)).edgeFinset.card : ℝ) /
-                Fintype.card (↑(Λ.volume n) : Type _) ≤ c :=
-            (div_le_iff₀ hcard_pos).mpr hE
-          have : |p.J| *
-              (((inducedGraph G (Λ.volume n)).edgeFinset.card : ℝ) /
-                Fintype.card (↑(Λ.volume n) : Type _))
-              ≤ |p.J| * c :=
-            mul_le_mul_of_nonneg_left hratio (abs_nonneg _)
           gcongr
 
 /-- **BddAbove for `freeEnergyAlongExhaustion` under bounded edge density**:
