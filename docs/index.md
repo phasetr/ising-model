@@ -101,7 +101,7 @@ Named specializations at `A = {i}`:
 | `Ambient.card_mul_freeEnergyΛ_le_of_disjoint_union` | `Λ₁.Nonempty, Disjoint Λ₁ Λ₂ ⇒ |Λ₁|·f_{Λ₁} ≤ |Λ₁∪Λ₂|·f_{Λ₁∪Λ₂}` (ferromagnetic) | `AmbientLatticeSum.lean` | `freeEnergyΛ` weighted monotonicity |
 | `Ambient.partitionFunctionAlongExhaustion_monotone_volume` / `log_partitionFunctionAlongExhaustion_monotone_volume` | `Z_{Λ.volume n} ≤ Z_{Λ.volume (n+1)}` (ferromagnetic) along Exhaustion, log form | `AmbientLatticeSum.lean` | Fekete input |
 | `Ambient.partitionFunctionAlongExhaustion_monotone` / `log_partitionFunctionAlongExhaustion_monotone` | `Monotone` predicate form (for mathlib convergence lemmas) | `AmbientLatticeSum.lean` | Fekete input wrapper |
-| `Ambient.freeEnergyInfinite_le_uniform_upper_bound` | `freeEnergyInfinite G Λ p ≤ log 2 + |β|·(|J|·c + |h|)` (ferromagnetic + BoundedEdgeDensity + `[Nonempty V]`) | `AmbientLatticeSum.lean` | `limsup` upper bound |
+| `Ambient.freeEnergyInfinite_le_uniform_upper_bound` / `freeEnergyInfinite_ge_log_two_cosh` | `log(2·cosh(β·h)) ≤ freeEnergyInfinite G Λ p ≤ log 2 + |β|·(|J|·c + |h|)` (ferromagnetic + BoundedEdgeDensity + `[Nonempty V]`) | `AmbientLatticeSum.lean` | `limsup` two-sided bounds |
 
 **Not yet formalized**: the infinite-volume analyticity of `f(h)` via
 Vitali convergence (GJ Thm 4.6.2 full statement).

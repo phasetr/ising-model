@@ -448,6 +448,46 @@ theorem freeEnergyInfinite_le_uniform_upper_bound
       (J := p.J) (h := p.h) (β := p.β) G Λ hf.hJ hf.hh hf.hβ n hne
   exact Filter.limsup_le_of_le hbdd_below.isCoboundedUnder_le hbound
 
+/-- **Uniform lower bound on `freeEnergyInfinite` under ferromagnetic**:
+the per-n sharp lower bound of PR #125 lifts to `limsup`:
+`log(2·cosh(β·h)) ≤ freeEnergyInfinite G Λ p`.
+
+Proof outline:
+1. `Λ.exhaust {v}` gives eventual `(Λ.volume n).Nonempty`.
+2. The ferromagnetic per-n lower bound
+   `freeEnergyAlongExhaustion_ge_log_two_cosh` provides the
+   `∀ᶠ`-form of the lower bound.
+3. The `BoundedEdgeDensity`-based upper bound of PR #123 provides
+   `IsBoundedUnder (· ≤ ·)` (needed by `le_limsup_of_frequently_le`).
+4. `Filter.le_limsup_of_frequently_le` concludes. -/
+theorem freeEnergyInfinite_ge_log_two_cosh
+    [Nonempty V] (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) {c : ℝ}
+    (hc : ∀ n, (Λ.volume n).Nonempty →
+      ((inducedGraph G (Λ.volume n)).edgeFinset.card : ℝ) ≤
+        c * Fintype.card (↑(Λ.volume n) : Type _)) :
+    Real.log (2 * Real.cosh (p.β * p.h))
+      ≤ freeEnergyInfinite G Λ p := by
+  obtain ⟨v⟩ := ‹Nonempty V›
+  obtain ⟨N, hN⟩ := Λ.exhaust {v}
+  have heventually : ∀ᶠ n in Filter.atTop, (Λ.volume n).Nonempty := by
+    filter_upwards [Filter.eventually_ge_atTop N] with n hn
+    exact ⟨v, hN n hn (Finset.mem_singleton_self v)⟩
+  have hlower : ∀ᶠ n in Filter.atTop,
+      Real.log (2 * Real.cosh (p.β * p.h))
+        ≤ freeEnergyAlongExhaustion G Λ p n := by
+    filter_upwards [heventually] with n hne
+    exact freeEnergyAlongExhaustion_ge_log_two_cosh
+      (J := p.J) (h := p.h) (β := p.β) G Λ hf.hJ hf.hh hf.hβ n hne
+  have hbdd_above : Filter.IsBoundedUnder (· ≤ ·) Filter.atTop
+      (freeEnergyAlongExhaustion G Λ p) := by
+    refine ⟨Real.log 2 + |p.β| * (|p.J| * c + |p.h|), ?_⟩
+    rw [Filter.eventually_map]
+    filter_upwards [heventually] with n hne
+    exact freeEnergyAlongExhaustion_le_uniform_upper_bound G Λ p hc n hne
+  exact Filter.le_limsup_of_frequently_le hlower.frequently hbdd_above
+
 end Ambient
 
 end IsingModel
