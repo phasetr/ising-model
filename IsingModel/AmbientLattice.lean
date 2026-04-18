@@ -1601,136 +1601,6 @@ equals this infimum.
 Reference: Glimm–Jaffe §5.1 p. 77. Friedli–Velenik §3.10 (self-consistent
 magnetization). -/
 
-/-- **Spontaneous magnetization at infinite volume** (*infimum form*):
-for ferromagnetic Ising on an ambient type `V`, exhaustion `Λ`, and
-fixed `J, β`,
-`spontaneousMagnetization G Λ J β i`
-  `:= ⨅ h : ↥(Set.Ioi 0), magnetizationInfinite G Λ ⟨J, h.val, β⟩ i`.
-
-This is the order parameter $m^*$ distinguishing ordered/disordered
-phases.  Since `magnetizationInfinite` is monotone in `h` on
-`Set.Ici 0` (`magnetizationInfinite_monotone_h`) and bounded in
-`[0, 1]`, this infimum coincides with $\lim_{h \to 0^+} M(h)$ —
-however the explicit `Tendsto` / `nhdsGT 0` statement is not formalized
-here and is deferred to a follow-up PR. -/
-noncomputable def spontaneousMagnetization
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (i : V) : ℝ :=
-  ⨅ h : ↥(Set.Ioi (0 : ℝ)), magnetizationInfinite G Λ ⟨J, h.val, β⟩ i
-
-/-- **Bounded-below witness**: the family
-`h ↦ magnetizationInfinite G Λ ⟨J, h, β⟩ i` over `Set.Ioi 0` is bounded
-below by `0` (ferromagnetic). -/
-private theorem magnetizationInfinite_bddBelow_on_Ioi
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) (i : V) :
-    BddBelow (Set.range
-      (fun h : ↥(Set.Ioi (0 : ℝ)) =>
-        magnetizationInfinite G Λ ⟨J, h.val, β⟩ i)) := by
-  refine ⟨0, ?_⟩
-  rintro _ ⟨h, rfl⟩
-  exact magnetizationInfinite_nonneg G Λ ⟨J, h.val, β⟩
-    ⟨hJ, le_of_lt h.property, hβ⟩ i
-
-/-- **Nonnegativity of `spontaneousMagnetization`**: for ferromagnetic
-Ising ($J \ge 0$, $\beta > 0$), $m^* \ge 0$. -/
-theorem spontaneousMagnetization_nonneg
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) (i : V) :
-    0 ≤ spontaneousMagnetization G Λ J β i := by
-  refine le_ciInf ?_
-  rintro h
-  exact magnetizationInfinite_nonneg G Λ ⟨J, h.val, β⟩
-    ⟨hJ, le_of_lt h.property, hβ⟩ i
-
-/-- **Upper bound**: $m^* \le 1$. -/
-theorem spontaneousMagnetization_le_one
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) (i : V) :
-    spontaneousMagnetization G Λ J β i ≤ 1 := by
-  refine ciInf_le_of_le
-    (magnetizationInfinite_bddBelow_on_Ioi G Λ hJ hβ i)
-    ⟨1, by norm_num⟩ ?_
-  exact magnetizationInfinite_le_one G Λ ⟨J, 1, β⟩ i
-
-/-- **Lower bound for `magnetizationInfinite` at positive `h`**:
-$m^* \le M(h)$ for $h > 0$.  Direct from the definition of `iInf`. -/
-theorem spontaneousMagnetization_le_magnetizationInfinite
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β)
-    {h : ℝ} (hh : 0 < h) (i : V) :
-    spontaneousMagnetization G Λ J β i
-      ≤ magnetizationInfinite G Λ ⟨J, h, β⟩ i :=
-  ciInf_le
-    (magnetizationInfinite_bddBelow_on_Ioi G Λ hJ hβ i)
-    ⟨h, hh⟩
-
-/-- **Exhaustion-independence of `spontaneousMagnetization`**:
-the value does not depend on the choice of exhaustion.  For every
-`h : Set.Ioi 0`, we build `Ferromagnetic ⟨J, h.val, β⟩` from `hJ`,
-`h.property`, and `hβ`, apply
-`magnetizationInfinite_indep_exhaustion` pointwise, then conclude by
-extensional agreement of the iInf-ed function. -/
-theorem spontaneousMagnetization_indep_exhaustion
-    (G : SimpleGraph V) (Λ Λ' : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    [∀ n, Fintype (inducedGraph G (Λ'.volume n)).edgeSet]
-    {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) (i : V) :
-    spontaneousMagnetization G Λ J β i
-      = spontaneousMagnetization G Λ' J β i := by
-  unfold spontaneousMagnetization
-  congr 1
-  funext h
-  exact magnetizationInfinite_indep_exhaustion G Λ Λ' ⟨J, h.val, β⟩
-    ⟨hJ, le_of_lt h.property, hβ⟩ i
-
-/-- **Right-limit Tendsto**: for ferromagnetic Ising, the
-`magnetizationInfinite` function tends to `spontaneousMagnetization`
-as `h → 0⁺`.
-
-Combines:
-- `magnetizationInfinite_monotone_h` (PR #95), restricted to `Set.Ioi 0`.
-- Bounded-below-by-0 (ferromagnetic).
-- `MonotoneOn.tendsto_nhdsGT` (Mathlib).
-- Conversion between `sInf (f '' Ioi 0)` and the subtype-indexed iInf
-  via `sInf_image` / `iInf_subtype`. -/
-theorem tendsto_magnetizationInfinite_spontaneousMagnetization_nhdsGT
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) (i : V) :
-    Filter.Tendsto
-      (fun h : ℝ => magnetizationInfinite G Λ ⟨J, h, β⟩ i)
-      (nhdsWithin (0 : ℝ) (Set.Ioi 0))
-      (nhds (spontaneousMagnetization G Λ J β i)) := by
-  set f : ℝ → ℝ := fun h => magnetizationInfinite G Λ ⟨J, h, β⟩ i with hf_def
-  -- Step 1: MonotoneOn f (Ioi 0)
-  have hmono : MonotoneOn f (Set.Ioi 0) := by
-    have hmono_Ici : MonotoneOn f (Set.Ici 0) :=
-      magnetizationInfinite_monotone_h G Λ hJ hβ i
-    exact hmono_Ici.mono Set.Ioi_subset_Ici_self
-  -- Step 2: BddBelow (f '' Ioi 0)
-  have hbdd : BddBelow (f '' Set.Ioi 0) := by
-    refine ⟨0, ?_⟩
-    rintro _ ⟨h, hh, rfl⟩
-    exact magnetizationInfinite_nonneg G Λ ⟨J, h, β⟩
-      ⟨hJ, le_of_lt hh, hβ⟩ i
-  -- Step 3: Apply MonotoneOn.tendsto_nhdsGT
-  have htendsto := hmono.tendsto_nhdsGT hbdd
-  -- Step 4: Identify sInf (f '' Ioi 0) with spontaneousMagnetization
-  have hsInf : sInf (f '' Set.Ioi 0) = spontaneousMagnetization G Λ J β i := by
-    unfold spontaneousMagnetization
-    rw [← sInf_range, ← Set.image_univ]
-    congr 1
-    ext y
-    simp [hf_def, Set.image_univ, Set.mem_image, Set.mem_Ioi, Subtype.exists]
-  rw [← hsInf]
-  exact htendsto
-
 /-! ## Spontaneous correlation function (general `A`)
 
 Generalize `spontaneousMagnetization` (single-site, `A = {i}`) to an
@@ -1845,8 +1715,32 @@ theorem tendsto_correlationInfinite_spontaneousCorrelation_nhdsGT
   rw [← hsInf]
   exact htendsto
 
+/-! ## Spontaneous magnetization (single-site specialization)
+
+`spontaneousMagnetization` is the single-site case `A = {i}` of
+`spontaneousCorrelation`.  All basic properties are one-line
+specializations.
+
+Reference: Glimm–Jaffe §5.1 p. 77 (the order parameter $m^*$
+distinguishing ordered/disordered phases). -/
+
+/-- **Spontaneous magnetization at infinite volume** (*infimum form*):
+for ferromagnetic Ising on an ambient type `V`, exhaustion `Λ`, and
+fixed `J, β`,
+`spontaneousMagnetization G Λ J β i := spontaneousCorrelation G Λ J β {i}`.
+
+This is the order parameter $m^*$.  Since `magnetizationInfinite` is
+monotone in `h` on `Set.Ici 0` and bounded in `[0, 1]`, this infimum
+coincides with $\lim_{h \to 0^+} M(h)$
+(`tendsto_magnetizationInfinite_spontaneousMagnetization_nhdsGT`). -/
+noncomputable def spontaneousMagnetization
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (i : V) : ℝ :=
+  spontaneousCorrelation G Λ J β {i}
+
 /-- **Agreement at singletons**: `spontaneousCorrelation` on `{i}`
-equals `spontaneousMagnetization` by definition unfolding. -/
+equals `spontaneousMagnetization`. Holds by definition. -/
 theorem spontaneousCorrelation_singleton_eq_spontaneousMagnetization
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
@@ -1854,6 +1748,65 @@ theorem spontaneousCorrelation_singleton_eq_spontaneousMagnetization
     spontaneousCorrelation G Λ J β {i}
       = spontaneousMagnetization G Λ J β i :=
   rfl
+
+/-- **Nonnegativity of `spontaneousMagnetization`** (ferromagnetic):
+$m^* \ge 0$.  Specialization of `spontaneousCorrelation_nonneg` at
+`A = {i}`. -/
+theorem spontaneousMagnetization_nonneg
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) (i : V) :
+    0 ≤ spontaneousMagnetization G Λ J β i :=
+  spontaneousCorrelation_nonneg G Λ hJ hβ {i}
+
+/-- **Upper bound**: $m^* \le 1$.  Specialization of
+`spontaneousCorrelation_le_one` at `A = {i}`. -/
+theorem spontaneousMagnetization_le_one
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) (i : V) :
+    spontaneousMagnetization G Λ J β i ≤ 1 :=
+  spontaneousCorrelation_le_one G Λ hJ hβ {i}
+
+/-- **Lower bound for `magnetizationInfinite` at positive `h`**:
+$m^* \le M(h)$ for $h > 0$. Specialization of
+`spontaneousCorrelation_le_correlationInfinite` at `A = {i}` (noting
+`magnetizationInfinite = correlationInfinite ... {i}`). -/
+theorem spontaneousMagnetization_le_magnetizationInfinite
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β)
+    {h : ℝ} (hh : 0 < h) (i : V) :
+    spontaneousMagnetization G Λ J β i
+      ≤ magnetizationInfinite G Λ ⟨J, h, β⟩ i :=
+  spontaneousCorrelation_le_correlationInfinite G Λ hJ hβ hh {i}
+
+/-- **Exhaustion-independence of `spontaneousMagnetization`**:
+the value does not depend on the choice of exhaustion.  Specialization
+of `spontaneousCorrelation_indep_exhaustion` at `A = {i}`. -/
+theorem spontaneousMagnetization_indep_exhaustion
+    (G : SimpleGraph V) (Λ Λ' : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    [∀ n, Fintype (inducedGraph G (Λ'.volume n)).edgeSet]
+    {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) (i : V) :
+    spontaneousMagnetization G Λ J β i
+      = spontaneousMagnetization G Λ' J β i :=
+  spontaneousCorrelation_indep_exhaustion G Λ Λ' hJ hβ {i}
+
+/-- **Right-limit Tendsto**: for ferromagnetic Ising,
+`magnetizationInfinite` tends to `spontaneousMagnetization` as
+`h → 0⁺`.  Specialization of
+`tendsto_correlationInfinite_spontaneousCorrelation_nhdsGT` at
+`A = {i}` (noting `magnetizationInfinite = correlationInfinite ... {i}`). -/
+theorem tendsto_magnetizationInfinite_spontaneousMagnetization_nhdsGT
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) (i : V) :
+    Filter.Tendsto
+      (fun h : ℝ => magnetizationInfinite G Λ ⟨J, h, β⟩ i)
+      (nhdsWithin (0 : ℝ) (Set.Ioi 0))
+      (nhds (spontaneousMagnetization G Λ J β i)) :=
+  tendsto_correlationInfinite_spontaneousCorrelation_nhdsGT G Λ hJ hβ {i}
 
 end Ambient
 end IsingModel
