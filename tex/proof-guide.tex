@@ -1522,6 +1522,41 @@ For nonempty $\Lambda.\text{volume}\,n$,
 specialization of \texttt{freeEnergy\_upper\_bound} at each stage.
 \end{theorem}
 
+\subsection{Free-spin / one-body limit $(G = \bot)$}
+
+参考: Glimm--Jaffe, \S 4 chapter 冒頭 (free spin).
+$J$ に関わらず ambient graph が $\bot$ (辺なし) なら相互作用項は消える.
+
+\begin{theorem}[\texttt{hamiltonian\_bot}]
+$H_{\bot, p}(\sigma) = -h \sum_{i \in \iota} \operatorname{sign}(\sigma_i)$.
+\texttt{edgeFinset\_bot}: $(\bot).\text{edgeFinset} = \emptyset$ で
+$J$ 項は空和, 0 になる.
+\end{theorem}
+
+\begin{theorem}[\texttt{sum\_exp\_spin\_sign}]
+$\sum_{s \in \{\pm 1\}} \exp(\beta h \cdot s) = 2 \cosh(\beta h)$.
+\end{theorem}
+
+\begin{theorem}[\texttt{partitionFunction\_bot}]
+$Z_{\bot, p} = (2 \cosh(\beta h))^{|\iota|}$.
+\end{theorem}
+
+\begin{proof}
+\texttt{hamiltonian\_bot} + $\exp(-\beta H) = \prod_i \exp(\beta h \cdot \operatorname{sign}(\sigma_i))$.
+finite 分配則 \texttt{Finset.sum\_prod\_piFinset} で
+$\sum_\sigma \prod_i f(\sigma_i) = \prod_i \sum_s f(s)$.
+単サイト和を \texttt{sum\_exp\_spin\_sign} で閉じる.
+\end{proof}
+
+\begin{theorem}[\texttt{freeEnergy\_bot}]
+$|\iota| > 0$ で
+\[
+  f(\bot, p) = \log(2 \cosh(\beta h)).
+\]
+\texttt{partitionFunction\_bot} に \texttt{Real.log\_pow} を適用し
+$|\iota|$ で割る.
+\end{theorem}
+
 \subsection{Reflection positivity (\S10.4)}
 
 \begin{definition}[\texttt{ReflectionPositive}]

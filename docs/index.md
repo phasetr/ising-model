@@ -220,6 +220,10 @@ ambient framework:
 | `BoundedEdgeDensity` | Hypothesis `∃ c, ∀ n (nonempty), \|E_n\| ≤ c·\|Λ_n\|` (e.g. bounded-degree ambient graphs) |
 | `freeEnergyAlongExhaustion_le_uniform_upper_bound` | **Uniform upper bound** under `BoundedEdgeDensity`: `f_n ≤ log 2 + \|β\|·(\|J\|·c + \|h\|)` |
 | `BddAbove_freeEnergyAlongExhaustion_range` | `BddAbove (Set.range (freeEnergyAlongExhaustion G Λ p))` under `BoundedEdgeDensity` |
+| `hamiltonian_bot` (GibbsMeasure.lean) | `H_⊥(σ) = -h · Σ sign(σ_i)` (interaction term vanishes on empty graph) |
+| `sum_spin` / `sum_exp_spin_sign` | Spin-sum lemmas: `Σ_s f(s) = f(up) + f(down)`; `Σ_s exp(β h sign(s)) = 2 cosh(β h)` |
+| `partitionFunction_bot` (GibbsMeasure.lean) | `Z_⊥(p) = (2 cosh(β h))^\|ι\|` (free-spin product formula) |
+| `freeEnergy_bot` (FreeEnergy.lean) | **Free-spin closed form**: `freeEnergy ⊥ p = log(2 cosh(β h))` (for nonempty ι) |
 | `correlationAlongExhaustion_nonneg` | `0 ≤ correlationAlongExhaustion G Λ p A n` (ferromagnetic) |
 | `correlationΛ_gks_second` | **GKS-II at finite volume**, lifted form: `correlationΛ (lift A) · correlationΛ (lift B) ≤ correlationΛ (lift (A ∆ B))` |
 | **`correlationInfinite_gks_second`** | **GKS-II at infinite volume** (Glimm–Jaffe §4.2 Thm 4.2.3): `correlationInfinite A · correlationInfinite B ≤ correlationInfinite (A ∆ B)` |
