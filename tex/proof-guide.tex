@@ -1557,6 +1557,21 @@ $|\iota| > 0$ で
 $|\iota|$ で割る.
 \end{theorem}
 
+\begin{theorem}[\texttt{freeEnergy\_ge\_log\_two\_cosh}]
+強磁性系 $J \ge 0, h \ge 0, \beta > 0$, $|\iota| > 0$ で
+\[
+  \log(2 \cosh(\beta h)) \le \texttt{freeEnergy}\,G\,p.
+\]
+\texttt{freeEnergy\_bot} で LHS $= f(\bot, p)$,
+\texttt{freeEnergy\_monotone\_subgraph} を \texttt{bot\_le} に適用.
+PR \#121 の uniform $\log 2$ 下界を $\cosh \ge 1$ で sharpen.
+\end{theorem}
+
+\begin{theorem}[\texttt{freeEnergyAlongExhaustion\_ge\_log\_two\_cosh}]
+各 nonempty stage で同じ下界.
+Specialization via \texttt{change} + definitional unfolding.
+\end{theorem>
+
 \subsection{Reflection positivity (\S10.4)}
 
 \begin{definition}[\texttt{ReflectionPositive}]
