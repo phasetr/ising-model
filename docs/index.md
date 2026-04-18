@@ -188,6 +188,9 @@ ambient framework:
 | `correlationAlongExhaustion_nonneg` | `0 ≤ correlationAlongExhaustion G Λ p A n` (ferromagnetic) |
 | `correlationΛ_gks_second` | **GKS-II at finite volume**, lifted form: `correlationΛ (lift A) · correlationΛ (lift B) ≤ correlationΛ (lift (A ∆ B))` |
 | **`correlationInfinite_gks_second`** | **GKS-II at infinite volume** (Glimm–Jaffe §4.2 Thm 4.2.3): `correlationInfinite A · correlationInfinite B ≤ correlationInfinite (A ∆ B)` |
+| `correlationΛ_monotone_h` | `MonotoneOn (h ↦ correlationΛ G Λ ⟨J, h, β⟩ A) (Ici 0)` |
+| `correlationAlongExhaustion_monotone_h` | Pointwise h-monotonicity of the exhaustion sequence |
+| **`correlationInfinite_monotone_h`** | **h-direction monotonicity at infinite volume** (Glimm–Jaffe Prop 4.2.4): `MonotoneOn (h ↦ correlationInfinite G Λ ⟨J, h, β⟩ A) (Ici 0)` |
 
 ## Axioms
 

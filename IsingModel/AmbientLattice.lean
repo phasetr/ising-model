@@ -1254,5 +1254,66 @@ theorem correlationInfinite_gks_second
     rw [correlationAlongExhaustion_of_not_subset G Λ p hAn, zero_mul]
     exact correlationAlongExhaustion_nonneg G Λ p hf (A ∆ B) n
 
+/-! ## h-direction monotonicity at infinite volume
+
+Lift `IsingModel.correlation_monotone_h` (finite volume, external
+field direction) to the thermodynamic limit.  For fixed `J ≥ 0`,
+`β > 0`, the map `h ↦ correlationInfinite G Λ ⟨J, h, β⟩ A` is
+monotone on `Set.Ici 0`.
+
+Reference: Glimm–Jaffe, Proposition 4.2.4. -/
+
+/-- **h-direction monotonicity of `correlationΛ`**: for fixed
+`J ≥ 0`, `β > 0`, the correlation on `Λ : Finset V` is monotone in
+the external field `h ∈ Set.Ici 0`. -/
+theorem correlationΛ_monotone_h
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β)
+    (A : Finset (↑Λ : Type _)) :
+    MonotoneOn
+      (fun h : ℝ => correlationΛ G Λ ⟨J, h, β⟩ A)
+      (Set.Ici 0) :=
+  IsingModel.correlation_monotone_h (inducedGraph G Λ) J hJ β hβ A
+
+/-- **h-direction monotonicity of `correlationAlongExhaustion`**:
+pointwise on the exhaustion sequence.  For `0 ≤ h₁ ≤ h₂`,
+`correlationAlongExhaustion G Λ ⟨J, h₁, β⟩ A n
+  ≤ correlationAlongExhaustion G Λ ⟨J, h₂, β⟩ A n`
+for every `n`. -/
+theorem correlationAlongExhaustion_monotone_h
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β)
+    (A : Finset V) {h₁ h₂ : ℝ}
+    (hh₁ : 0 ≤ h₁) (hh₁₂ : h₁ ≤ h₂) (n : ℕ) :
+    correlationAlongExhaustion G Λ ⟨J, h₁, β⟩ A n
+      ≤ correlationAlongExhaustion G Λ ⟨J, h₂, β⟩ A n := by
+  by_cases hAn : A ⊆ Λ.volume n
+  · rw [correlationAlongExhaustion_of_subset G Λ ⟨J, h₁, β⟩ hAn,
+        correlationAlongExhaustion_of_subset G Λ ⟨J, h₂, β⟩ hAn]
+    exact correlationΛ_monotone_h G (Λ.volume n) hJ hβ _ hh₁ (hh₁.trans hh₁₂) hh₁₂
+  · rw [correlationAlongExhaustion_of_not_subset G Λ ⟨J, h₁, β⟩ hAn,
+        correlationAlongExhaustion_of_not_subset G Λ ⟨J, h₂, β⟩ hAn]
+
+/-- **h-direction monotonicity of `correlationInfinite`**: for fixed
+`J ≥ 0`, `β > 0`, the thermodynamic-limit correlation is monotone in
+the external field `h ∈ Set.Ici 0`.
+
+Glimm–Jaffe, Proposition 4.2.4 at infinite volume. -/
+theorem correlationInfinite_monotone_h
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β)
+    (A : Finset V) :
+    MonotoneOn
+      (fun h : ℝ => correlationInfinite G Λ ⟨J, h, β⟩ A)
+      (Set.Ici 0) := by
+  intro h₁ hh₁ h₂ _ hh₁₂
+  refine ciSup_le ?_
+  intro n
+  exact (correlationAlongExhaustion_monotone_h G Λ hJ hβ A hh₁ hh₁₂ n).trans
+    (le_ciSup (correlationAlongExhaustion_bddAbove G Λ ⟨J, h₂, β⟩ A) n)
+
 end Ambient
 end IsingModel
