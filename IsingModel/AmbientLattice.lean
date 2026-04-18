@@ -371,6 +371,20 @@ theorem freeEnergyΛ_monotone_ambient_subgraph
     freeEnergyΛ G₁ Λ p ≤ freeEnergyΛ G₂ Λ p :=
   IsingModel.freeEnergy_monotone_subgraph (inducedGraph_mono h Λ) p hf
 
+/-- **Subgraph monotonicity of `freeEnergyAlongExhaustion`**: for
+`G₁ ≤ G₂` and ferromagnetic parameters, the free energy along the
+exhaustion is pointwise monotone in the ambient subgraph. Direct
+specialization of `freeEnergyΛ_monotone_ambient_subgraph` at each
+`Λ.volume n`. -/
+theorem freeEnergyAlongExhaustion_monotone_ambient_subgraph
+    {G₁ G₂ : SimpleGraph V} (h : G₁ ≤ G₂) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G₁ (Λ.volume n)).edgeSet]
+    [∀ n, Fintype (inducedGraph G₂ (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (n : ℕ) :
+    freeEnergyAlongExhaustion G₁ Λ p n
+      ≤ freeEnergyAlongExhaustion G₂ Λ p n :=
+  freeEnergyΛ_monotone_ambient_subgraph h (Λ.volume n) p hf
+
 /-! ## Extension of a Λ₁-graph to Λ₂ (for volume-direction monotonicity)
 
 For `Λ₁ ⊆ Λ₂` and `G : SimpleGraph V`, we construct a graph on
