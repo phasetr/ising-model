@@ -3081,6 +3081,27 @@ theorem freeEnergyAlongExhaustion_le_uniform_upper_bound
     _ ≤ Real.log 2 + |p.β| * (|p.J| * c + |p.h|) := by
           gcongr
 
+/-! ## β = 0 closed form along exhaustion -/
+
+/-- **Along-exhaustion β=0 closed form**:
+for nonempty `Λ.volume n` and any ambient graph `G, Λ, J, h`,
+`freeEnergyAlongExhaustion G Λ ⟨J, h, 0⟩ n = log 2`.
+
+Specialization of `IsingModel.freeEnergy_beta_zero` (PR #131) via
+`change` + definitional unfolding of `freeEnergyAlongExhaustion`
+through `freeEnergyΛ` to `IsingModel.freeEnergy (inducedGraph …)`. -/
+theorem freeEnergyAlongExhaustion_beta_zero
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J h : ℝ) (n : ℕ) (hne : (Λ.volume n).Nonempty) :
+    freeEnergyAlongExhaustion G Λ (⟨J, h, 0⟩ : IsingParams ℝ) n
+      = Real.log 2 := by
+  have hcard : 0 < Fintype.card (↑(Λ.volume n) : Type _) := by
+    rw [Fintype.card_coe]; exact Finset.card_pos.mpr hne
+  change IsingModel.freeEnergy (inducedGraph G (Λ.volume n))
+      (⟨J, h, 0⟩ : IsingParams ℝ) = Real.log 2
+  exact IsingModel.freeEnergy_beta_zero _ J h hcard
+
 /-! ## Free-spin identity for induced subgraph -/
 
 omit [DecidableEq V] in
