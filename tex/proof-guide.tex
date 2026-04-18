@@ -3240,4 +3240,37 @@ $\Lambda_1 \cup \Lambda_2$ with a supergraph of
 $\mathrm{inducedGraph}\,G\,\Lambda_1 \oplus_g \mathrm{inducedGraph}\,G\,\Lambda_2$,
 which is the subject of a subsequent PR.
 
+\subsection{Partition function invariance under graph isomorphism
+(\texttt{PartitionFunctionIso.lean})}
+
+\begin{proposition}[\texttt{IsingModel.partitionFunction\_map\_equiv}]
+Let $e \colon V \simeq W$ be a type equivalence and
+$G \colon \mathrm{SimpleGraph}\,V$. Then the pushforward
+$G.\mathrm{map}\,e.\mathrm{toEmbedding}$ has the same partition function:
+\[
+  Z_{G.\mathrm{map}\,e}(p) = Z_G(p).
+\]
+\end{proposition}
+
+\begin{proof}
+Reindex $\sum_{\tau : W \to \mathrm{Spin}} \exp(-\beta \mathcal{H}_{G.\mathrm{map}\,e}(\tau))$ via
+\texttt{Equiv.arrowCongr}\,$e$\,\texttt{Equiv.refl}, which puts it in
+bijection with $\sum_{\sigma : V \to \mathrm{Spin}} \exp(-\beta \mathcal{H}_G(\sigma))$
+using Hamiltonian invariance
+\texttt{hamiltonian\_map\_equiv}: for $\sigma = \tau \circ e$,
+$\mathcal{H}_{G.\mathrm{map}\,e}(\tau) = \mathcal{H}_G(\sigma)$. The
+Hamiltonian invariance itself splits into invariance of the
+interaction energy (via \texttt{edgeFinset\_map} + per-edge
+spin pullback along $\mathrm{Sym}^2$-map) and invariance of the
+external-field energy (\texttt{Fintype.sum\_equiv}).
+\end{proof}
+
+\paragraph{Purpose.} This is infrastructure for transporting an
+\texttt{inducedGraph} on a disjoint Finset union
+$\Lambda_1 \cup \Lambda_2$ back to a graph on the disjoint sum
+type $\uparrow\Lambda_1 \oplus \uparrow\Lambda_2$
+(via \texttt{Equiv.Finset.disjUnionEquiv}), so that the
+super-additivity inequality of the previous step applies to
+actual finite-volume exhaustions.
+
 \end{document}
