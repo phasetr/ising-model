@@ -816,6 +816,63 @@ theorem freeEnergyInfinite_monotone_abs_h
   exact freeEnergyInfinite_monotone_h G Λ hJ hβ hc
     (Set.mem_Ici.mpr (abs_nonneg h₁)) (Set.mem_Ici.mpr (abs_nonneg h₂)) hh
 
+/-- **`log Z` tends to `∞` along any exhaustion of an infinite ambient
+type**, under ferromagnetic parameters.
+
+Proof: eventually `Λ.volume n` is nonempty
+(`Exhaustion.eventually_volume_nonempty`), and on those stages the
+existing API gives `|Λ.volume n| · log 2 ≤ |Λ.volume n| · freeEnergyΛ
+= log Z_n` via `freeEnergyΛ_ge_log_two` and
+`card_mul_freeEnergyΛ_eq_log_partitionFunctionΛ_of_nonempty`.
+Since `|Λ.volume n| → ∞` (`Exhaustion.tendsto_card_atTop`) and
+`log 2 > 0`, the lower bound tends to `∞`. -/
+theorem log_partitionFunctionAlongExhaustion_tendsto_atTop
+    [Infinite V] (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    Filter.Tendsto
+      (fun n => Real.log (partitionFunctionAlongExhaustion G Λ p n))
+      Filter.atTop Filter.atTop := by
+  obtain ⟨J, h, β⟩ := p
+  have hlog2_pos : (0 : ℝ) < Real.log 2 :=
+    Real.log_pos (by norm_num : (1 : ℝ) < 2)
+  have hbound : ∀ᶠ n in Filter.atTop,
+      ((Λ.volume n).card : ℝ) * Real.log 2
+        ≤ Real.log (partitionFunctionAlongExhaustion G Λ ⟨J, h, β⟩ n) := by
+    filter_upwards [Λ.eventually_volume_nonempty] with n hne
+    have h_flog2 : Real.log 2 ≤ freeEnergyΛ G (Λ.volume n) ⟨J, h, β⟩ :=
+      freeEnergyΛ_ge_log_two G hne hf.hJ hf.hh hf.hβ
+    have h_card_nn : (0 : ℝ) ≤ ((Λ.volume n).card : ℝ) := Nat.cast_nonneg _
+    calc ((Λ.volume n).card : ℝ) * Real.log 2
+        ≤ ((Λ.volume n).card : ℝ) * freeEnergyΛ G (Λ.volume n) ⟨J, h, β⟩ :=
+          mul_le_mul_of_nonneg_left h_flog2 h_card_nn
+      _ = Real.log (partitionFunctionAlongExhaustion G Λ ⟨J, h, β⟩ n) :=
+          card_mul_freeEnergyΛ_eq_log_partitionFunctionΛ_of_nonempty G hne _
+  have h_card_tendsto :
+      Filter.Tendsto (fun n => ((Λ.volume n).card : ℝ) * Real.log 2)
+        Filter.atTop Filter.atTop := by
+    have h1 : Filter.Tendsto (fun n => ((Λ.volume n).card : ℝ))
+        Filter.atTop Filter.atTop :=
+      tendsto_natCast_atTop_atTop.comp Λ.tendsto_card_atTop
+    exact h1.atTop_mul_const hlog2_pos
+  exact Filter.tendsto_atTop_mono' _ hbound h_card_tendsto
+
+/-- **`Z` tends to `∞` along any exhaustion of an infinite ambient
+type**, under ferromagnetic parameters. Follows from
+`log_partitionFunctionAlongExhaustion_tendsto_atTop` via
+`Real.tendsto_exp_atTop`. -/
+theorem partitionFunctionAlongExhaustion_tendsto_atTop
+    [Infinite V] (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    Filter.Tendsto (partitionFunctionAlongExhaustion G Λ p)
+      Filter.atTop Filter.atTop := by
+  have h_log := log_partitionFunctionAlongExhaustion_tendsto_atTop G Λ p hf
+  have h_comp := Real.tendsto_exp_atTop.comp h_log
+  refine (Filter.tendsto_congr ?_).mp h_comp
+  intro n
+  exact Real.exp_log (IsingModel.partitionFunction_pos _ _)
+
 end Ambient
 
 end IsingModel
