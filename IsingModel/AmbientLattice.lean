@@ -3206,6 +3206,40 @@ theorem freeEnergyInfinite_zero_params
   rw [hconst]
   exact Filter.limsup_const (Real.log 2)
 
+/-! ## β = 0 closed form for `partitionFunctionAlongExhaustion` -/
+
+/-- **Along-exhaustion β=0 partition function closed form**:
+`partitionFunctionAlongExhaustion G Λ ⟨J, h, 0⟩ n = 2 ^ |Λ.volume n|`
+for any `J, h` and any ambient graph `G, Λ`.
+
+Specialization of `IsingModel.partitionFunction_beta_zero` (every
+Boltzmann weight collapses to `exp 0 = 1`) with
+`card_config_eq_two_pow` and `Fintype.card_coe`. -/
+theorem partitionFunctionAlongExhaustion_beta_zero
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J h : ℝ) (n : ℕ) :
+    partitionFunctionAlongExhaustion G Λ (⟨J, h, 0⟩ : IsingParams ℝ) n
+      = (2 : ℝ) ^ (Λ.volume n).card := by
+  change partitionFunction (inducedGraph G (Λ.volume n))
+      (⟨J, h, 0⟩ : IsingParams ℝ) = (2 : ℝ) ^ (Λ.volume n).card
+  rw [IsingModel.partitionFunction_beta_zero, IsingModel.card_config_eq_two_pow,
+      Fintype.card_coe]
+  push_cast
+  rfl
+
+/-- **Log form**: `log (partitionFunctionAlongExhaustion G Λ ⟨J, h, 0⟩ n)
+= |Λ.volume n| · log 2`. Follows from
+`partitionFunctionAlongExhaustion_beta_zero` via `Real.log_pow`. -/
+theorem log_partitionFunctionAlongExhaustion_beta_zero
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J h : ℝ) (n : ℕ) :
+    Real.log (partitionFunctionAlongExhaustion G Λ
+        (⟨J, h, 0⟩ : IsingParams ℝ) n)
+      = ((Λ.volume n).card : ℝ) * Real.log 2 := by
+  rw [partitionFunctionAlongExhaustion_beta_zero, Real.log_pow]
+
 /-! ## J = h = 0 closed form for `partitionFunctionAlongExhaustion` -/
 
 /-- **Along-exhaustion J=h=0 partition function closed form**:
