@@ -194,6 +194,9 @@ ambient framework:
 | `correlationΛ_monotone_beta` | `MonotoneOn (β ↦ correlationΛ G Λ ⟨J, h, β⟩ A) (Ioi 0)` |
 | `correlationAlongExhaustion_monotone_beta` | Pointwise β-monotonicity of the exhaustion sequence |
 | **`correlationInfinite_monotone_beta`** | **β-direction monotonicity at infinite volume** (Glimm–Jaffe Prop 4.2.4): `MonotoneOn (β ↦ correlationInfinite G Λ ⟨J, h, β⟩ A) (Ioi 0)` |
+| `correlationΛ_monotone_J` | `MonotoneOn (J ↦ correlationΛ G Λ ⟨J, h, β⟩ A) (Ici 0)` |
+| `correlationAlongExhaustion_monotone_J` | Pointwise J-monotonicity of the exhaustion sequence |
+| **`correlationInfinite_monotone_J`** | **J-direction monotonicity at infinite volume** (Glimm–Jaffe Prop 4.2.4): `MonotoneOn (J ↦ correlationInfinite G Λ ⟨J, h, β⟩ A) (Ici 0)` — three-parameter symmetry complete |
 
 ## Axioms
 
