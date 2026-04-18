@@ -239,6 +239,37 @@ theorem freeEnergyAlongExhaustion_apply
     freeEnergyAlongExhaustion G Λ p n = freeEnergyΛ G (Λ.volume n) p :=
   rfl
 
+/-- **Partition function along an exhaustion**: the volume-direction
+partition function sequence $Z_n := Z_{\Lambda_n}$.  Companion to
+`freeEnergyAlongExhaustion` (Glimm–Jaffe §4.6); useful for Prop 4.6.1
+∞-vol proofs that decompose `freeEnergy = log Z / |Λ|`. -/
+noncomputable def partitionFunctionAlongExhaustion
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) : ℕ → ℝ :=
+  fun n => partitionFunctionΛ G (Λ.volume n) p
+
+/-- **Unfolding of `partitionFunctionAlongExhaustion`**: by construction
+equal to `partitionFunctionΛ` at the `n`-th volume.  Unconditional
+`rfl`-proof, marked `@[simp]`. -/
+@[simp]
+theorem partitionFunctionAlongExhaustion_apply
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (n : ℕ) :
+    partitionFunctionAlongExhaustion G Λ p n
+      = partitionFunctionΛ G (Λ.volume n) p :=
+  rfl
+
+/-- **Positivity along an exhaustion**:
+`0 < partitionFunctionAlongExhaustion G Λ p n` for every `n`. -/
+theorem partitionFunctionAlongExhaustion_pos
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (n : ℕ) :
+    0 < partitionFunctionAlongExhaustion G Λ p n :=
+  partitionFunctionΛ_pos G (Λ.volume n) p
+
 /-- Unfold `correlationAlongExhaustion` when `A ⊆ Λ.volume n`:
 it equals the lifted finite-volume correlation. -/
 theorem correlationAlongExhaustion_of_subset
