@@ -143,6 +143,22 @@ structure Exhaustion (V : Type*) where
   `N` with `A ⊆ volume n` for all `n ≥ N`. -/
   exhaust : ∀ A : Finset V, ∃ N, ∀ n ≥ N, A ⊆ volume n
 
+omit [DecidableEq V] in
+/-- For a nonempty ambient type `V`, any exhaustion eventually has
+nonempty volumes (`∀ᶠ n in atTop, (Λ.volume n).Nonempty`).
+
+Follows from `Exhaustion.exhaust` applied to a singleton of any
+element of `V`. This is the standard hypothesis needed to lift
+per-stage statements about `freeEnergyAlongExhaustion` or
+`partitionFunctionAlongExhaustion` to `limsup` via filter lemmas. -/
+theorem Exhaustion.eventually_volume_nonempty [Nonempty V]
+    (Λ : Exhaustion V) :
+    ∀ᶠ n in Filter.atTop, (Λ.volume n).Nonempty := by
+  obtain ⟨v⟩ := ‹Nonempty V›
+  obtain ⟨N, hN⟩ := Λ.exhaust {v}
+  filter_upwards [Filter.eventually_ge_atTop N] with n hn
+  exact ⟨v, hN n hn (Finset.mem_singleton_self v)⟩
+
 /-- Lift a finite set `A ⊆ V` to a finite set in `↑Λ` when `A ⊆ Λ`. -/
 noncomputable def liftFinset {Λ : Finset V} (A : Finset V) (hA : A ⊆ Λ) :
     Finset (↑Λ : Type _) :=
