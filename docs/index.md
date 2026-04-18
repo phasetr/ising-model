@@ -259,6 +259,7 @@ ambient framework:
 | `freeEnergyAlongExhaustion_beta_zero` | Along-exhaustion specialization: `f_n(J, h, 0) = log 2` per nonempty stage |
 | `freeEnergyInfinite_beta_zero` | **∞-volume lift**: `freeEnergyInfinite G Λ ⟨J, h, 0⟩ = log 2` (all stages nonempty) |
 | `freeEnergy_ge_log_two_cosh` (FreeEnergy.lean) | **Sharp ferromagnetic lower bound**: `log(2 cosh(β h)) ≤ freeEnergy G p` (via `freeEnergy_bot` + `freeEnergy_monotone_subgraph`) |
+| `freeEnergy_ge_log_two_of_ferromagnetic` (FreeEnergy.lean) | **Unconditional lower bound**: `log 2 ≤ freeEnergy G p` for ferromagnetic + `0 < |ι|` (weakening of `_cosh` via `Real.one_le_cosh`) |
 | `freeEnergyAlongExhaustion_ge_log_two_cosh` | Along-exhaustion specialization of the sharp ferromagnetic lower bound |
 | `hamiltonian_neg_h` (Hamiltonian.lean) | `H_G(σ; J, -h, β) = H_G(σ.flip; J, h, β)` (spin-flip / h-sign identity) |
 | `partitionFunction_neg_h` (GibbsMeasure.lean) | **Z h-symmetry**: `Z(J, -h, β) = Z(J, h, β)` via flip involution |

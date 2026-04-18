@@ -1645,6 +1645,16 @@ $\beta = 0$ で Boltzmann weight $\exp(-\beta H) = 1$ を経由.
 \]
 \end{theorem}
 
+\begin{theorem}[\texttt{freeEnergy\_ge\_log\_two\_of\_ferromagnetic}; PR \#168]
+$0 < |\iota|$, 強磁性 $p$ で
+\[
+  \log 2 \;\le\; f_G(p).
+\]
+\texttt{freeEnergy\_ge\_log\_two\_cosh} + \texttt{Real.one\_le\_cosh}
++ log 単調. 既存 $\Lambda$ 版 \texttt{freeEnergyΛ\_ge\_log\_two}
+(PR \#125) は本 PR で base 恒等への薄い wrapper に refactor.
+\end{theorem}
+
 \begin{theorem}[\texttt{card\_mul\_freeEnergy\_eq\_log\_partitionFunction}; PR \#167]
 $|\iota| > 0$ で
 \[
