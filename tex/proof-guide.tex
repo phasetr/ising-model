@@ -3163,12 +3163,47 @@ $\mathcal{H} = \mathrm{interactionEnergy} + \mathrm{externalFieldEnergy}$
 (previous proposition and lemma).
 \end{proof}
 
-\paragraph{Next steps.} Step~4 of the super-additivity route will
-establish partition-function multiplicativity,
-$Z_{G \oplus_g H}(p) = Z_G(p) \cdot Z_H(p)$, by summing the
-exponential of the Hamiltonian over the product equivalence
-\texttt{Config.sumEquiv}; Step~5 will combine this with the already
-established upper bound (PR \#122, \#123) and Fekete's lemma to
-produce convergence of $f_\Lambda$ along arbitrary exhaustions.
+\paragraph{Step 4: partition function multiplicativity.}
+
+\begin{proposition}[\texttt{IsingModel.partitionFunction\_sum}]
+For finite lattices $G, H$ and parameters $p = (J, h, \beta)$ over $\mathbb{R}$,
+\[
+  Z_{G \oplus_g H}(p) = Z_G(p) \cdot Z_H(p).
+\]
+\end{proposition}
+
+\begin{proof}
+Unfolding $Z = \sum_\sigma e^{-\beta \mathcal{H}}$,
+\begin{align*}
+  Z_{G \oplus_g H}(p)
+  &= \sum_{\sigma : \iota \oplus \iota' \to \mathrm{Spin}}
+       e^{-\beta \mathcal{H}_{G \oplus_g H}(\sigma)}
+     && \text{(\texttt{Equiv.sum\_comp}\,\texttt{Config.sumEquiv.symm})} \\
+  &= \sum_{\sigma_1, \sigma_2}
+       e^{-\beta (\mathcal{H}_G(\sigma_1) + \mathcal{H}_H(\sigma_2))}
+     && \text{(\texttt{Fintype.sum\_prod\_type}, \texttt{hamiltonian\_sum})} \\
+  &= \sum_{\sigma_1, \sigma_2}
+       e^{-\beta \mathcal{H}_G(\sigma_1)}
+       \cdot e^{-\beta \mathcal{H}_H(\sigma_2)}
+     && \text{(\texttt{mul\_add}, \texttt{Real.exp\_add})} \\
+  &= Z_G(p) \cdot Z_H(p)
+     && \text{(\texttt{Finset.sum\_mul\_sum}).}
+\end{align*}
+\end{proof}
+
+\begin{corollary}[\texttt{IsingModel.log\_partitionFunction\_sum}]
+\[
+  \log Z_{G \oplus_g H}(p) = \log Z_G(p) + \log Z_H(p).
+\]
+Immediate from the proposition and
+\texttt{partitionFunction\_pos} / \texttt{Real.log\_mul}.
+\end{corollary}
+
+\paragraph{Next step.} Step~5 combines the log-additivity above with
+the uniform upper bound (PR \#122, \#123) and Fekete's lemma to
+produce convergence of
+$f_\Lambda = (\log Z_\Lambda)/|\Lambda|$ along arbitrary
+exhaustions of the ambient lattice. This completes the proof of
+Glimm--Jaffe \S 4.6 Prop 4.6.1.
 
 \end{document}

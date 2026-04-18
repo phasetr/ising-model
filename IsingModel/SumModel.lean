@@ -1,5 +1,8 @@
+import IsingModel.GibbsMeasure
 import IsingModel.Hamiltonian
 import IsingModel.SumGraph
+import Mathlib.Algebra.BigOperators.Ring.Finset
+import Mathlib.Analysis.SpecialFunctions.Log.Basic
 import Mathlib.Data.Fintype.BigOperators
 import Mathlib.Logic.Equiv.Prod
 
@@ -13,10 +16,17 @@ Hamiltonian splits additively,
 `hamiltonian (G ⊕g H) p (Sum.elim σ₁ σ₂)
   = hamiltonian G p σ₁ + hamiltonian H p σ₂`.
 
-This is Step 2–3 of the Glimm–Jaffe §4.6 (pp. 70ff) super-additivity
-route toward convergence of the thermodynamic-limit free-energy
-density (Prop 4.6.1). Step 4 (partition-function multiplicativity)
-and Step 5 (`log Z` super-additivity + Fekete) follow in subsequent PRs.
+This file now covers Steps 2–4 of the Glimm–Jaffe §4.6 (pp. 70ff)
+super-additivity route toward convergence of the thermodynamic-limit
+free-energy density (Prop 4.6.1):
+
+* Step 2 — `Config.sumEquiv` (configuration product equivalence).
+* Step 3 — `hamiltonian_sum` (Hamiltonian additivity).
+* Step 4 — `partitionFunction_sum` / `log_partitionFunction_sum`
+  (partition function multiplicativity, hence `log Z` additivity).
+
+Step 5 (Fekete-style convergence from `log Z` super-additivity and
+the uniform upper bound of PRs #122, #123) follows in a subsequent PR.
 
 ## Main declarations
 
@@ -27,6 +37,11 @@ and Step 5 (`log Z` super-additivity + Fekete) follow in subsequent PRs.
 * `IsingModel.externalFieldEnergy_sum` — additivity of the field term.
 * `IsingModel.interactionEnergy_sum` — additivity of the interaction term.
 * `IsingModel.hamiltonian_sum` — Hamiltonian additivity on `G ⊕g H`.
+* `IsingModel.partitionFunction_sum` —
+  `Z_{G ⊕g H}(p) = Z_G(p) · Z_H(p)` on the disjoint sum graph
+  (Glimm–Jaffe §4.6 super-additivity Step 4).
+* `IsingModel.log_partitionFunction_sum` — the logarithmic form
+  `log Z_{G ⊕g H} = log Z_G + log Z_H`.
 -/
 
 namespace IsingModel
@@ -128,5 +143,48 @@ theorem hamiltonian_sum [LinearOrder K] [IsStrictOrderedRing K]
   unfold hamiltonian
   rw [interactionEnergy_sum, externalFieldEnergy_sum]
   ring
+
+/-- **Partition function multiplicativity on the disjoint sum graph**
+(Glimm–Jaffe §4.6 super-additivity Step 4, pp. 70ff):
+`Z_{G ⊕g H}(p) = Z_G(p) · Z_H(p)`.
+
+Proof sketch. By `Equiv.sum_comp` applied to `Config.sumEquiv.symm`,
+the sum over `Config (ι ⊕ ι')` becomes a sum over
+`Config ι × Config ι'` (`Sum.elim`-assembled). `Fintype.sum_prod_type`
+splits it into a double sum. The Hamiltonian additivity of the
+previous theorem (`hamiltonian_sum`) and `Real.exp_add` turn
+`exp(-β (H_G + H_H))` into the product `exp(-β H_G) · exp(-β H_H)`.
+Finally `Finset.sum_mul_sum` collapses the double sum back into the
+product of two partition functions. -/
+theorem partitionFunction_sum
+    [Fintype ι] [Fintype ι'] [DecidableEq ι] [DecidableEq ι']
+    (G : SimpleGraph ι) (H : SimpleGraph ι')
+    [Fintype G.edgeSet] [Fintype H.edgeSet]
+    (p : IsingParams ℝ) :
+    partitionFunction (G.sum H) p
+      = partitionFunction G p * partitionFunction H p := by
+  unfold partitionFunction boltzmannWeight
+  rw [← Equiv.sum_comp Config.sumEquiv.symm
+        (fun σ => Real.exp (-p.β * hamiltonian (G.sum H) p σ))]
+  rw [Fintype.sum_prod_type]
+  simp only [Config.sumEquiv_symm, hamiltonian_sum, mul_add, Real.exp_add]
+  rw [← Finset.sum_mul_sum]
+
+/-- **Log-partition additivity on the disjoint sum graph**:
+`log Z_{G ⊕g H}(p) = log Z_G(p) + log Z_H(p)`.
+
+Immediate consequence of `partitionFunction_sum` combined with
+`Real.log_mul`, whose side conditions are discharged by
+nonvanishing (`partitionFunction_ne_zero`). -/
+theorem log_partitionFunction_sum
+    [Fintype ι] [Fintype ι'] [DecidableEq ι] [DecidableEq ι']
+    (G : SimpleGraph ι) (H : SimpleGraph ι')
+    [Fintype G.edgeSet] [Fintype H.edgeSet]
+    (p : IsingParams ℝ) :
+    Real.log (partitionFunction (G.sum H) p)
+      = Real.log (partitionFunction G p)
+        + Real.log (partitionFunction H p) := by
+  rw [partitionFunction_sum,
+      Real.log_mul (partitionFunction_ne_zero G p) (partitionFunction_ne_zero H p)]
 
 end IsingModel
