@@ -35,6 +35,7 @@ namespace IsingModel
 namespace Ambient
 
 open Finset Real
+open scoped symmDiff
 
 variable {V : Type*} [DecidableEq V]
 
@@ -145,6 +146,33 @@ noncomputable def liftFinset {Λ : Finset V} (A : Finset V) (hA : A ⊆ Λ) :
     Finset (↑Λ : Type _) :=
   A.attach.image (fun ⟨v, hv⟩ => ⟨v, hA hv⟩)
 
+/-- Membership characterization for `liftFinset`: a subtype element
+`x : ↑Λ` lies in `liftFinset A hA` iff its underlying value `x.val`
+lies in `A`. -/
+theorem mem_liftFinset {Λ : Finset V} {A : Finset V} (hA : A ⊆ Λ)
+    (x : (↑Λ : Type _)) :
+    x ∈ liftFinset A hA ↔ x.val ∈ A := by
+  simp only [liftFinset, Finset.mem_image, Finset.mem_attach, true_and]
+  refine ⟨?_, ?_⟩
+  · rintro ⟨⟨v, hv⟩, hxv⟩
+    simpa [← hxv]
+  · intro hx
+    exact ⟨⟨x.val, hx⟩, Subtype.ext rfl⟩
+
+/-- `liftFinset` commutes with `symmDiff`: if `A, B ⊆ Λ` then
+`liftFinset A hA Δ liftFinset B hB = liftFinset (A Δ B) hAB`
+(where the subset `A Δ B ⊆ Λ` follows since `A Δ B ⊆ A ∪ B`).
+
+Proof by extensional equality using `mem_liftFinset`. -/
+theorem liftFinset_symmDiff {Λ : Finset V} {A B : Finset V}
+    (hA : A ⊆ Λ) (hB : B ⊆ Λ) :
+    liftFinset A hA ∆ liftFinset B hB =
+      liftFinset (A ∆ B)
+        (fun _ hx => (Finset.mem_symmDiff.mp hx).elim
+          (fun h => hA h.1) (fun h => hB h.1)) := by
+  ext x
+  simp only [Finset.mem_symmDiff, mem_liftFinset]
+
 /-- The correlation along an exhaustion, evaluated eventually (from the
 first `n` with `A ⊆ volume n`). Returns a function `ℕ → ℝ` which equals
 `correlationΛ G (volume n) p (liftFinset A _)` once `A ⊆ volume n`, and
@@ -157,6 +185,25 @@ noncomputable def correlationAlongExhaustion
     if h : A ⊆ Λ.volume n then
       correlationΛ G (Λ.volume n) p (liftFinset A h)
     else 0
+
+/-- Unfold `correlationAlongExhaustion` when `A ⊆ Λ.volume n`:
+it equals the lifted finite-volume correlation. -/
+theorem correlationAlongExhaustion_of_subset
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) {A : Finset V} {n : ℕ} (hA : A ⊆ Λ.volume n) :
+    correlationAlongExhaustion G Λ p A n
+      = correlationΛ G (Λ.volume n) p (liftFinset A hA) := by
+  simp only [correlationAlongExhaustion, hA, dite_true]
+
+/-- Unfold `correlationAlongExhaustion` when `A ⊄ Λ.volume n`:
+it equals `0`. -/
+theorem correlationAlongExhaustion_of_not_subset
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) {A : Finset V} {n : ℕ} (hA : ¬ A ⊆ Λ.volume n) :
+    correlationAlongExhaustion G Λ p A n = 0 := by
+  simp only [correlationAlongExhaustion, hA, dite_false]
 
 /-- For any finite `A`, the correlation along an exhaustion is
 eventually equal to the lifted correlation. -/
@@ -812,15 +859,15 @@ theorem correlationAlongExhaustion_monotone
   intro n m hnm
   by_cases hAn : A ⊆ Λ.volume n
   · by_cases hAm : A ⊆ Λ.volume m
-    · simp only [correlationAlongExhaustion, hAn, hAm, dite_true]
+    · rw [correlationAlongExhaustion_of_subset G Λ p hAn,
+          correlationAlongExhaustion_of_subset G Λ p hAm]
       exact correlationΛ_monotone_volume G (Λ.mono hnm) p hf hAn
     · exact absurd (hAn.trans (Λ.mono hnm)) hAm
-  · simp only [correlationAlongExhaustion, hAn, dite_false]
+  · rw [correlationAlongExhaustion_of_not_subset G Λ p hAn]
     by_cases hAm : A ⊆ Λ.volume m
-    · simp only [hAm, dite_true]
+    · rw [correlationAlongExhaustion_of_subset G Λ p hAm]
       exact correlationΛ_nonneg G (Λ.volume m) p hf _
-    · simp only [hAm, dite_false]
-      exact le_refl 0
+    · rw [correlationAlongExhaustion_of_not_subset G Λ p hAm]
 
 /-- **Global upper bound of `correlationAlongExhaustion` by 1**:
 either the value is 0 (when `A ⊄ Λ.volume n`) or it is bounded
@@ -831,9 +878,9 @@ theorem correlationAlongExhaustion_le_one
     (p : IsingParams ℝ) (A : Finset V) (n : ℕ) :
     correlationAlongExhaustion G Λ p A n ≤ 1 := by
   by_cases hAn : A ⊆ Λ.volume n
-  · simp only [correlationAlongExhaustion, hAn, dite_true]
+  · rw [correlationAlongExhaustion_of_subset G Λ p hAn]
     exact correlationΛ_le_one _ _ _ _
-  · simp only [correlationAlongExhaustion, hAn, dite_false]
+  · rw [correlationAlongExhaustion_of_not_subset G Λ p hAn]
     norm_num
 
 /-- **Range is bounded above by 1**: the range of the sequence
@@ -942,7 +989,7 @@ theorem correlationInfinite_nonneg
   obtain ⟨N, hN⟩ := Λ.exhaust A
   have hA : A ⊆ Λ.volume N := hN N le_rfl
   have hval : 0 ≤ correlationAlongExhaustion G Λ p A N := by
-    simp only [correlationAlongExhaustion, hA, dite_true]
+    rw [correlationAlongExhaustion_of_subset G Λ p hA]
     exact correlationΛ_nonneg G (Λ.volume N) p hf _
   exact hval.trans (le_ciSup (correlationAlongExhaustion_bddAbove G Λ p A) N)
 
@@ -973,7 +1020,7 @@ theorem tendsto_correlationΛ_correlationInfinite_of_subset
   refine hshift.congr ?_
   intro m
   have hA : A ⊆ Λ.volume (m + N) := hN (m + N) (Nat.le_add_left N m)
-  simp only [correlationAlongExhaustion, hA, dite_true]
+  exact correlationAlongExhaustion_of_subset G Λ p hA
 
 /-- **Tendsto of the lifted `correlationΛ` sequence (corollary)**:
 using `Λ.exhaust` to produce an `N` with `A ⊆ Λ.volume n` for `n ≥ N`,
@@ -1027,24 +1074,16 @@ theorem correlationAlongExhaustion_le_correlationInfinite_of_other
         correlationΛ G (Λ'.volume n) p (liftFinset A hAn) ≤
           correlationΛ G (Λ.volume m) p (liftFinset A hAm) :=
       correlationΛ_monotone_volume G hsubset p hf hAn
-    have hstep₁ :
-        correlationAlongExhaustion G Λ' p A n =
-          correlationΛ G (Λ'.volume n) p (liftFinset A hAn) := by
-      simp only [correlationAlongExhaustion, hAn, dite_true]
-    have hstep₂ :
-        correlationΛ G (Λ.volume m) p (liftFinset A hAm) =
-          correlationAlongExhaustion G Λ p A m := by
-      simp only [correlationAlongExhaustion, hAm, dite_true]
     calc correlationAlongExhaustion G Λ' p A n
-        = correlationΛ G (Λ'.volume n) p (liftFinset A hAn) := hstep₁
+        = correlationΛ G (Λ'.volume n) p (liftFinset A hAn) :=
+          correlationAlongExhaustion_of_subset G Λ' p hAn
       _ ≤ correlationΛ G (Λ.volume m) p (liftFinset A hAm) := hmono
-      _ = correlationAlongExhaustion G Λ p A m := hstep₂
+      _ = correlationAlongExhaustion G Λ p A m :=
+          (correlationAlongExhaustion_of_subset G Λ p hAm).symm
       _ ≤ correlationInfinite G Λ p A :=
           le_ciSup (correlationAlongExhaustion_bddAbove G Λ p A) m
   · -- A ⊄ Λ'.volume n: LHS = 0 ≤ correlationInfinite (nonneg)
-    have hzero : correlationAlongExhaustion G Λ' p A n = 0 := by
-      simp only [correlationAlongExhaustion, hAn, dite_false]
-    rw [hzero]
+    rw [correlationAlongExhaustion_of_not_subset G Λ' p hAn]
     exact correlationInfinite_nonneg G Λ p hf A
 
 /-- **Exhaustion-independence** of `correlationInfinite`: for any two
@@ -1091,10 +1130,11 @@ theorem correlationAlongExhaustion_monotone_ambient_subgraph
     correlationAlongExhaustion G₁ Λ p A n
       ≤ correlationAlongExhaustion G₂ Λ p A n := by
   by_cases hAn : A ⊆ Λ.volume n
-  · simp only [correlationAlongExhaustion, hAn, dite_true]
+  · rw [correlationAlongExhaustion_of_subset G₁ Λ p hAn,
+        correlationAlongExhaustion_of_subset G₂ Λ p hAn]
     exact correlationΛ_monotone_ambient_subgraph h (Λ.volume n) p hf _
-  · simp only [correlationAlongExhaustion, hAn, dite_false]
-    exact le_refl 0
+  · rw [correlationAlongExhaustion_of_not_subset G₁ Λ p hAn,
+        correlationAlongExhaustion_of_not_subset G₂ Λ p hAn]
 
 /-- **Ambient-subgraph monotonicity of `correlationInfinite`**:
 if `G₁ ≤ G₂` then
@@ -1114,6 +1154,105 @@ theorem correlationInfinite_monotone_ambient_subgraph
   intro n
   exact (correlationAlongExhaustion_monotone_ambient_subgraph h Λ p hf A n).trans
     (le_ciSup (correlationAlongExhaustion_bddAbove G₂ Λ p A) n)
+
+/-! ## GKS-II (second Griffiths inequality) at infinite volume
+
+Lift the finite-volume second Griffiths inequality (`gks_second`,
+`Inequalities/GKS.lean`) to the thermodynamic limit. For ferromagnetic
+Ising and any two finite subsets `A, B`,
+`correlationInfinite A * correlationInfinite B ≤ correlationInfinite (A ∆ B)`.
+
+Reference: Glimm-Jaffe, *Quantum Physics* §4.2 Theorem 4.2.3 (GKS-II
+for the infinite-volume limit).  Friedli-Velenik Thm 3.49 for the
+finite-volume version. -/
+
+/-- Helper: if `A ⊆ Λ` and `B ⊆ Λ` then `A ∆ B ⊆ Λ`. -/
+private theorem symmDiff_subset_of_subset
+    {A B Λ : Finset V} (hA : A ⊆ Λ) (hB : B ⊆ Λ) :
+    A ∆ B ⊆ Λ :=
+  fun _ hx => (Finset.mem_symmDiff.mp hx).elim (fun h => hA h.1) (fun h => hB h.1)
+
+/-- `correlationAlongExhaustion` is always `≥ 0` for a ferromagnetic
+Ising model: either the value is `0` (when `A ⊄ Λ.volume n`) or it is
+`correlationΛ ≥ 0` by GKS-I (`correlationΛ_nonneg`). -/
+theorem correlationAlongExhaustion_nonneg
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    (A : Finset V) (n : ℕ) :
+    0 ≤ correlationAlongExhaustion G Λ p A n := by
+  by_cases hA : A ⊆ Λ.volume n
+  · rw [correlationAlongExhaustion_of_subset G Λ p hA]
+    exact correlationΛ_nonneg G (Λ.volume n) p hf _
+  · rw [correlationAlongExhaustion_of_not_subset G Λ p hA]
+
+/-- **GKS-II at finite volume** (Λ-lifted form): for a ferromagnetic
+Ising model and `A, B ⊆ Λ`,
+`correlationΛ G Λ p (lift A) * correlationΛ G Λ p (lift B)
+  ≤ correlationΛ G Λ p (lift (A ∆ B))`.
+
+Obtained by applying `IsingModel.gks_second` at the induced graph
+on `↑Λ` and rewriting the RHS via `liftFinset_symmDiff`. -/
+theorem correlationΛ_gks_second
+    (G : SimpleGraph V) {Λ : Finset V}
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    {A B : Finset V} (hA : A ⊆ Λ) (hB : B ⊆ Λ) :
+    correlationΛ G Λ p (liftFinset A hA) * correlationΛ G Λ p (liftFinset B hB)
+      ≤ correlationΛ G Λ p (liftFinset (A ∆ B) (symmDiff_subset_of_subset hA hB)) := by
+  have hgks : IsingModel.correlation (inducedGraph G Λ) p (liftFinset A hA)
+      * IsingModel.correlation (inducedGraph G Λ) p (liftFinset B hB)
+      ≤ IsingModel.correlation (inducedGraph G Λ) p
+          (liftFinset A hA ∆ liftFinset B hB) :=
+    IsingModel.gks_second (inducedGraph G Λ) p hf _ _
+  rw [liftFinset_symmDiff hA hB] at hgks
+  exact hgks
+
+/-- **GKS-II at infinite volume**: for a ferromagnetic Ising model on
+an ambient type `V` with an exhaustion `Λ`,
+`correlationInfinite G Λ p A * correlationInfinite G Λ p B
+  ≤ correlationInfinite G Λ p (A ∆ B)`.
+
+Proof: pick `N` via `Λ.exhaust (A ∪ B)` so that for `n ≥ N` both
+`A, B ⊆ Λ.volume n` (hence `A ∆ B ⊆ Λ.volume n`).  Eventually the
+finite-volume `correlationΛ_gks_second` gives the product inequality
+for the three `correlationAlongExhaustion` sequences.  Pass to the
+limit using `Tendsto.mul` +
+`tendsto_correlationAlongExhaustion_correlationInfinite` and
+`le_of_tendsto_of_tendsto'` to preserve the inequality. -/
+theorem correlationInfinite_gks_second
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    (A B : Finset V) :
+    correlationInfinite G Λ p A * correlationInfinite G Λ p B
+      ≤ correlationInfinite G Λ p (A ∆ B) := by
+  have hlhs :
+      Filter.Tendsto
+        (fun n => correlationAlongExhaustion G Λ p A n
+          * correlationAlongExhaustion G Λ p B n)
+        Filter.atTop
+        (nhds (correlationInfinite G Λ p A * correlationInfinite G Λ p B)) :=
+    (tendsto_correlationAlongExhaustion_correlationInfinite G Λ p hf A).mul
+      (tendsto_correlationAlongExhaustion_correlationInfinite G Λ p hf B)
+  have hrhs :=
+    tendsto_correlationAlongExhaustion_correlationInfinite G Λ p hf (A ∆ B)
+  refine le_of_tendsto_of_tendsto' hlhs hrhs ?_
+  intro n
+  by_cases hAn : A ⊆ Λ.volume n
+  · by_cases hBn : B ⊆ Λ.volume n
+    · -- Both in: use finite-volume gks_second
+      have hAΔB : A ∆ B ⊆ Λ.volume n := symmDiff_subset_of_subset hAn hBn
+      rw [correlationAlongExhaustion_of_subset G Λ p hAn,
+          correlationAlongExhaustion_of_subset G Λ p hBn,
+          correlationAlongExhaustion_of_subset G Λ p hAΔB]
+      exact correlationΛ_gks_second G p hf hAn hBn
+    · -- B ⊄: LHS = 0, RHS ≥ 0
+      rw [correlationAlongExhaustion_of_not_subset G Λ p hBn, mul_zero]
+      exact correlationAlongExhaustion_nonneg G Λ p hf (A ∆ B) n
+  · -- A ⊄: LHS = 0, RHS ≥ 0
+    rw [correlationAlongExhaustion_of_not_subset G Λ p hAn, zero_mul]
+    exact correlationAlongExhaustion_nonneg G Λ p hf (A ∆ B) n
 
 end Ambient
 end IsingModel

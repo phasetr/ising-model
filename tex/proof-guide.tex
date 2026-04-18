@@ -2377,4 +2377,49 @@ $\texttt{correlationInfinite}\,G_1\,\Lambda\,p\,A
 Lemma + \texttt{le\_ciSup} + \texttt{ciSup\_le}.
 \end{proof}
 
+\subsection{GKS-II at infinite volume}
+
+Glimm--Jaffe \S 4.2 Theorem 4.2.3: the second Griffiths inequality
+holds in the thermodynamic limit.
+
+\begin{lemma}[\texttt{liftFinset\_symmDiff}]
+$A, B \subseteq \Lambda$ のとき
+$\texttt{liftFinset}\,A\,h_A \triangle \texttt{liftFinset}\,B\,h_B
+  = \texttt{liftFinset}\,(A \triangle B)\,h_{A \triangle B}$.
+\end{lemma}
+
+\begin{proof}
+拡張等式 (ext) と \texttt{mem\_liftFinset} による.
+\end{proof}
+
+\begin{lemma}[\texttt{correlationΛ\_gks\_second}]
+$A, B \subseteq \Lambda$ のとき
+$\texttt{correlationΛ}\,G\,\Lambda\,p\,(\text{lift}\,A)
+  \cdot \texttt{correlationΛ}\,G\,\Lambda\,p\,(\text{lift}\,B)
+  \le \texttt{correlationΛ}\,G\,\Lambda\,p\,(\text{lift}\,(A \triangle B))$.
+\end{lemma}
+
+\begin{proof}
+\texttt{IsingModel.gks\_second} を \texttt{inducedGraph}\,$G\,\Lambda$ で
+適用し, \texttt{liftFinset\_symmDiff} で整形.
+\end{proof}
+
+\begin{theorem}[\texttt{correlationInfinite\_gks\_second}]
+\[
+\texttt{correlationInfinite}\,G\,\Lambda\,p\,A
+  \cdot \texttt{correlationInfinite}\,G\,\Lambda\,p\,B
+  \le \texttt{correlationInfinite}\,G\,\Lambda\,p\,(A \triangle B).
+\]
+\end{theorem}
+
+\begin{proof}
+\texttt{Tendsto.mul} で LHS の列が
+$\texttt{correlationInfinite}\,A \cdot \texttt{correlationInfinite}\,B$
+に収束, RHS の列が $\texttt{correlationInfinite}\,(A \triangle B)$
+に収束. 各 $n$ について
+\texttt{correlationΛ\_gks\_second} (両者 $\subseteq$ 時) または
+LHS $= 0 \le$ RHS (\texttt{correlationAlongExhaustion\_nonneg})
+で点毎不等式が成立. \texttt{le\_of\_tendsto\_of\_tendsto'} で結論.
+\end{proof}
+
 \end{document}
