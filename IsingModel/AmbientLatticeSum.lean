@@ -616,6 +616,54 @@ theorem freeEnergyInfinite_eq_abs_h
   funext n
   exact freeEnergyAlongExhaustion_eq_abs_h G Λ J h β n
 
+set_option linter.unusedFintypeInType false in
+/-- **J-direction monotonicity of `freeEnergyInfinite`**: for fixed
+`h ≥ 0`, `β > 0`, the limsup free energy is monotone in
+`J ∈ Set.Ici 0`.
+
+Lifts `freeEnergyAlongExhaustion_monotone_J` pointwise via
+`Filter.limsup_le_limsup`, using the ferromagnetic lower bound and
+`BoundedEdgeDensity` upper bound to control the required
+`IsCoboundedUnder` / `IsBoundedUnder` hypotheses. -/
+theorem freeEnergyInfinite_monotone_J
+    [Nonempty V] (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {h : ℝ} (hh : 0 ≤ h) {β : ℝ} (hβ : 0 < β) {c : ℝ}
+    (hc : ∀ n, (Λ.volume n).Nonempty →
+      ((inducedGraph G (Λ.volume n)).edgeFinset.card : ℝ) ≤
+        c * Fintype.card (↑(Λ.volume n) : Type _)) :
+    MonotoneOn
+      (fun J : ℝ => freeEnergyInfinite G Λ (⟨J, h, β⟩ : IsingParams ℝ))
+      (Set.Ici 0) := by
+  intro J₁ hJ₁ J₂ _ hJle
+  obtain ⟨v⟩ := ‹Nonempty V›
+  obtain ⟨N, hN⟩ := Λ.exhaust {v}
+  have heventually : ∀ᶠ n in Filter.atTop, (Λ.volume n).Nonempty := by
+    filter_upwards [Filter.eventually_ge_atTop N] with n hn
+    exact ⟨v, hN n hn (Finset.mem_singleton_self v)⟩
+  have hJ₁nn : (0 : ℝ) ≤ J₁ := hJ₁
+  have hJ₂nn : (0 : ℝ) ≤ J₂ := hJ₁nn.trans hJle
+  have hle : ∀ᶠ n in Filter.atTop,
+      freeEnergyAlongExhaustion G Λ (⟨J₁, h, β⟩ : IsingParams ℝ) n
+        ≤ freeEnergyAlongExhaustion G Λ (⟨J₂, h, β⟩ : IsingParams ℝ) n := by
+    apply Filter.Eventually.of_forall
+    intro n
+    exact freeEnergyAlongExhaustion_monotone_J G Λ hh hβ n hJ₁nn hJ₂nn hJle
+  have hbdd_below_J₁ : Filter.IsBoundedUnder (· ≥ ·) Filter.atTop
+      (freeEnergyAlongExhaustion G Λ (⟨J₁, h, β⟩ : IsingParams ℝ)) := by
+    refine ⟨Real.log (2 * Real.cosh (β * h)), ?_⟩
+    rw [Filter.eventually_map]
+    filter_upwards [heventually] with n hne
+    exact freeEnergyAlongExhaustion_ge_log_two_cosh
+      G Λ hJ₁nn hh hβ n hne
+  have hbdd_above_J₂ : Filter.IsBoundedUnder (· ≤ ·) Filter.atTop
+      (freeEnergyAlongExhaustion G Λ (⟨J₂, h, β⟩ : IsingParams ℝ)) := by
+    refine ⟨Real.log 2 + |β| * (|J₂| * c + |h|), ?_⟩
+    rw [Filter.eventually_map]
+    filter_upwards [heventually] with n hne
+    exact freeEnergyAlongExhaustion_le_uniform_upper_bound G Λ _ hc n hne
+  exact Filter.limsup_le_limsup hle hbdd_below_J₁.isCoboundedUnder_le hbdd_above_J₂
+
 end Ambient
 
 end IsingModel
