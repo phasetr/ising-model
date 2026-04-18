@@ -159,6 +159,26 @@ theorem Exhaustion.eventually_volume_nonempty [Nonempty V]
   filter_upwards [Filter.eventually_ge_atTop N] with n hn
   exact ⟨v, hN n hn (Finset.mem_singleton_self v)⟩
 
+omit [DecidableEq V] in
+/-- For an `Infinite` ambient type `V`, the volume cardinality
+`|Λ.volume n|` tends to infinity as `n → ∞`.
+
+Follows from `Exhaustion.exhaust`: any finite set is eventually
+contained in some `Λ.volume n`, so `|Λ.volume n|` dominates the
+sizes of arbitrarily-large finite subsets (and infinite `V` provides
+such subsets of any desired cardinality). -/
+theorem Exhaustion.tendsto_card_atTop [Infinite V]
+    (Λ : Exhaustion V) :
+    Filter.Tendsto (fun n => (Λ.volume n).card) Filter.atTop Filter.atTop := by
+  rw [Filter.tendsto_atTop_atTop]
+  intro M
+  obtain ⟨A, hA⟩ := Infinite.exists_subset_card_eq V M
+  obtain ⟨N, hN⟩ := Λ.exhaust A
+  refine ⟨N, fun n hn => ?_⟩
+  have : A ⊆ Λ.volume n := hN n hn
+  calc M = A.card := hA.symm
+    _ ≤ (Λ.volume n).card := Finset.card_le_card this
+
 /-- Lift a finite set `A ⊆ V` to a finite set in `↑Λ` when `A ⊆ Λ`. -/
 noncomputable def liftFinset {Λ : Finset V} (A : Finset V) (hA : A ⊆ Λ) :
     Finset (↑Λ : Type _) :=
