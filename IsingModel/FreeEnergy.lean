@@ -580,16 +580,28 @@ theorem partitionFunction_monotone_subgraph
     _ = _ := hexpand.symm
     _ ≤ _ := hsum_lb
 
+/-- The logarithm of the partition function is monotone in the subgraph
+order: for `G₁ ≤ G₂` and ferromagnetic `p`,
+`log Z_{G₁} p ≤ log Z_{G₂} p`. Consolidates the
+`Real.log_le_log ∘ partitionFunction_monotone_subgraph` pattern. -/
+theorem log_partitionFunction_monotone_subgraph
+    {G₁ G₂ : SimpleGraph ι} [Fintype G₁.edgeSet] [Fintype G₂.edgeSet]
+    (h₁₂ : G₁ ≤ G₂) (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    Real.log (partitionFunction G₁ p) ≤ Real.log (partitionFunction G₂ p) :=
+  Real.log_le_log (partitionFunction_pos G₁ p)
+    (partitionFunction_monotone_subgraph h₁₂ p hf)
+
 /-- The free energy is monotone in the subgraph order.
-Follows from `partitionFunction_monotone_subgraph` and `Real.log_le_log`. -/
+Follows from `log_partitionFunction_monotone_subgraph` after multiplying
+by `|ι|⁻¹ ≥ 0`. -/
 theorem freeEnergy_monotone_subgraph
     {G₁ G₂ : SimpleGraph ι} [Fintype G₁.edgeSet] [Fintype G₂.edgeSet]
     (h₁₂ : G₁ ≤ G₂) (p : IsingParams ℝ) (hf : Ferromagnetic p) :
     freeEnergy G₁ p ≤ freeEnergy G₂ p := by
   unfold freeEnergy
-  apply mul_le_mul_of_nonneg_left _ (inv_nonneg.mpr (Nat.cast_nonneg _))
-  exact Real.log_le_log (partitionFunction_pos G₁ p)
-    (partitionFunction_monotone_subgraph h₁₂ p hf)
+  exact mul_le_mul_of_nonneg_left
+    (log_partitionFunction_monotone_subgraph h₁₂ p hf)
+    (inv_nonneg.mpr (Nat.cast_nonneg _))
 
 /-- The free energy rescaling identity in `β`:
 `f(J, h, β) = f(βJ, βh, 1)`. Follows from `partitionFunction_beta_rescale`

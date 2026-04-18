@@ -1,3 +1,4 @@
+import IsingModel.FreeEnergy
 import IsingModel.GibbsMeasure
 import IsingModel.Hamiltonian
 import IsingModel.SumGraph
@@ -42,6 +43,12 @@ the uniform upper bound of PRs #122, #123) follows in a subsequent PR.
   (Glimm–Jaffe §4.6 super-additivity Step 4).
 * `IsingModel.log_partitionFunction_sum` — the logarithmic form
   `log Z_{G ⊕g H} = log Z_G + log Z_H`.
+* `IsingModel.partitionFunction_mul_le_of_sum_le` /
+  `IsingModel.log_partitionFunction_add_le_of_sum_le` — the
+  super-additivity inequalities `Z_G · Z_H ≤ Z_{G'}` and
+  `log Z_G + log Z_H ≤ log Z_{G'}` when `G ⊕g H ≤ G'` under
+  ferromagnetic parameters (combining Step 4 with the existing
+  subgraph monotonicity of `Z`).
 -/
 
 namespace IsingModel
@@ -186,5 +193,47 @@ theorem log_partitionFunction_sum
         + Real.log (partitionFunction H p) := by
   rw [partitionFunction_sum,
       Real.log_mul (partitionFunction_ne_zero G p) (partitionFunction_ne_zero H p)]
+
+/-- **Super-additivity inequality of the partition function**:
+for ferromagnetic parameters, any `G'` containing the disjoint sum
+`G ⊕g H` as a subgraph satisfies
+`Z_G(p) · Z_H(p) ≤ Z_{G'}(p)`.
+
+Proof: by Step 4 the left-hand side equals `Z_{G ⊕g H}(p)`; the
+existing `partitionFunction_monotone_subgraph` (from
+`FreeEnergy.lean`) upgrades the subgraph inequality
+`G ⊕g H ≤ G'` to `Z_{G ⊕g H}(p) ≤ Z_{G'}(p)` under ferromagnetic
+parameters. -/
+theorem partitionFunction_mul_le_of_sum_le
+    [Fintype ι] [Fintype ι'] [DecidableEq ι] [DecidableEq ι']
+    (G : SimpleGraph ι) (H : SimpleGraph ι')
+    [Fintype G.edgeSet] [Fintype H.edgeSet]
+    {G' : SimpleGraph (ι ⊕ ι')} [Fintype G'.edgeSet]
+    (hle : G.sum H ≤ G')
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    partitionFunction G p * partitionFunction H p
+      ≤ partitionFunction G' p := by
+  rw [← partitionFunction_sum G H p]
+  exact partitionFunction_monotone_subgraph hle p hf
+
+/-- **Log form of super-additivity**:
+`log Z_G(p) + log Z_H(p) ≤ log Z_{G'}(p)` under the same assumptions.
+
+Proof: rewrite the left-hand side via `log_partitionFunction_sum`
+(Step 4) and apply the subgraph monotonicity
+`log_partitionFunction_monotone_subgraph` to `G.sum H ≤ G'`.
+This is the form used by the Fekete-style convergence argument of
+Glimm–Jaffe §4.6 (Step 5). -/
+theorem log_partitionFunction_add_le_of_sum_le
+    [Fintype ι] [Fintype ι'] [DecidableEq ι] [DecidableEq ι']
+    (G : SimpleGraph ι) (H : SimpleGraph ι')
+    [Fintype G.edgeSet] [Fintype H.edgeSet]
+    {G' : SimpleGraph (ι ⊕ ι')} [Fintype G'.edgeSet]
+    (hle : G.sum H ≤ G')
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    Real.log (partitionFunction G p) + Real.log (partitionFunction H p)
+      ≤ Real.log (partitionFunction G' p) := by
+  rw [← log_partitionFunction_sum]
+  exact log_partitionFunction_monotone_subgraph hle p hf
 
 end IsingModel
