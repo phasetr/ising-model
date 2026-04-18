@@ -294,6 +294,69 @@ theorem partitionFunctionΛ_le_of_disjoint_union
   IsingModel.partitionFunction_inducedGraph_le_of_disjoint_union
     G hd p hf
 
+/-- `partitionFunctionΛ` respects Finset equality.
+Proved by substituting the equation away and using subsingleton
+uniqueness of the Fintype instance on the (now-equal) edge set. -/
+theorem partitionFunctionΛ_congr_finset
+    (G : SimpleGraph V) {Λ₁ Λ₂ : Finset V} (h : Λ₁ = Λ₂)
+    [Fintype (inducedGraph G Λ₁).edgeSet]
+    [Fintype (inducedGraph G Λ₂).edgeSet]
+    (p : IsingParams ℝ) :
+    partitionFunctionΛ G Λ₁ p = partitionFunctionΛ G Λ₂ p := by
+  subst h
+  congr
+  exact Subsingleton.elim _ _
+
+set_option linter.unusedFintypeInType false in
+/-- **`partitionFunctionAlongExhaustion` is monotone in `n`**
+along any `Exhaustion Λ` under ferromagnetic parameters.
+
+Proof chain:
+1. `Λ.mono` gives `Λ.volume n ⊆ Λ.volume (n + 1)`;
+2. Split `Λ.volume (n + 1) = Λ.volume n ⊔ (Λ.volume (n + 1) \ Λ.volume n)`
+   using `Finset.union_sdiff_of_subset`;
+3. Apply PR #142 `partitionFunctionΛ_le_of_disjoint_union` to the
+   disjoint split;
+4. Transport the resulting RHS back via
+   `partitionFunctionΛ_congr_finset`. -/
+theorem partitionFunctionAlongExhaustion_monotone_volume
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ m, Fintype (inducedGraph G (Λ.volume m)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (n : ℕ)
+    [Fintype (inducedGraph G (Λ.volume (n + 1) \ Λ.volume n)).edgeSet] :
+    partitionFunctionAlongExhaustion G Λ p n
+      ≤ partitionFunctionAlongExhaustion G Λ p (n + 1) := by
+  have hsub : Λ.volume n ⊆ Λ.volume (n + 1) := Λ.mono (Nat.le_succ n)
+  have hd : Disjoint (Λ.volume n) (Λ.volume (n + 1) \ Λ.volume n) :=
+    Finset.disjoint_sdiff
+  have hunion : Λ.volume n ∪ (Λ.volume (n + 1) \ Λ.volume n)
+      = Λ.volume (n + 1) := Finset.union_sdiff_of_subset hsub
+  haveI : Fintype (inducedGraph G (Λ.volume n ∪
+      (Λ.volume (n + 1) \ Λ.volume n))).edgeSet := by
+    rw [hunion]; infer_instance
+  have key := partitionFunctionΛ_le_of_disjoint_union G hd p hf
+  have heq := partitionFunctionΛ_congr_finset G hunion p
+  -- Rewrite `partitionFunctionAlongExhaustion` to `partitionFunctionΛ`
+  -- (definitional), then chain.
+  change partitionFunctionΛ G (Λ.volume n) p
+    ≤ partitionFunctionΛ G (Λ.volume (n + 1)) p
+  calc partitionFunctionΛ G (Λ.volume n) p
+      ≤ partitionFunctionΛ G (Λ.volume n ∪
+          (Λ.volume (n + 1) \ Λ.volume n)) p := key
+    _ = partitionFunctionΛ G (Λ.volume (n + 1)) p := heq
+
+set_option linter.unusedFintypeInType false in
+/-- Log form of `partitionFunctionAlongExhaustion_monotone_volume`. -/
+theorem log_partitionFunctionAlongExhaustion_monotone_volume
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ m, Fintype (inducedGraph G (Λ.volume m)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (n : ℕ)
+    [Fintype (inducedGraph G (Λ.volume (n + 1) \ Λ.volume n)).edgeSet] :
+    Real.log (partitionFunctionAlongExhaustion G Λ p n)
+      ≤ Real.log (partitionFunctionAlongExhaustion G Λ p (n + 1)) :=
+  Real.log_le_log (partitionFunctionΛ_pos G (Λ.volume n) p)
+    (partitionFunctionAlongExhaustion_monotone_volume G Λ p hf n)
+
 set_option linter.unusedFintypeInType false in
 /-- `freeEnergyΛ` weighted form of the disjoint-union monotonicity:
 for nonempty `Λ₁` disjoint from `Λ₂`,
