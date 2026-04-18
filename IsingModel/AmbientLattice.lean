@@ -1,5 +1,6 @@
 import IsingModel.InfiniteVolume
 import IsingModel.FreeEnergy
+import IsingModel.Inequalities.GHS
 
 /-!
 # Genuine infinite-volume framework: ambient lattice
@@ -1437,6 +1438,156 @@ theorem correlationInfinite_monotone_J
   intro n
   exact (correlationAlongExhaustion_monotone_J G Λ hh hβ A hJ₁ hJ₁₂ n).trans
     (le_ciSup (correlationAlongExhaustion_bddAbove G Λ ⟨J₂, h, β⟩ A) n)
+
+/-! ## Infinite-volume single-site magnetization
+
+Specialize `correlationInfinite` to single sites `A = {i}` to obtain
+the formal thermodynamic-limit magnetization `magnetizationInfinite`.
+All basic properties follow directly from the general
+`correlationInfinite` API (PR #91–#97).
+
+Reference: Glimm–Jaffe §4.2 (pp. 57ff) / §5.1 (p. 77, $m^* := \lim_{h \to 0^+} M$). -/
+
+/-- **Infinite-volume single-site magnetization**: for a ferromagnetic
+Ising model on an ambient type `V`, exhaustion `Λ`, and site `i : V`,
+`magnetizationInfinite G Λ p i := correlationInfinite G Λ p {i}`.
+
+This is the formal thermodynamic-limit magnetization
+$\langle \sigma_i \rangle_\infty^{\mathrm{FM}}$. -/
+noncomputable def magnetizationInfinite
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (i : V) : ℝ :=
+  correlationInfinite G Λ p {i}
+
+/-- **Nonnegativity of `magnetizationInfinite`** (ferromagnetic):
+`0 ≤ magnetizationInfinite G Λ p i`.  Specialization of
+`correlationInfinite_nonneg` at `A = {i}`. -/
+theorem magnetizationInfinite_nonneg
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i : V) :
+    0 ≤ magnetizationInfinite G Λ p i :=
+  correlationInfinite_nonneg G Λ p hf {i}
+
+/-- **Upper bound**: `magnetizationInfinite G Λ p i ≤ 1`. Specialization
+of `correlationInfinite_le_one`. -/
+theorem magnetizationInfinite_le_one
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (i : V) :
+    magnetizationInfinite G Λ p i ≤ 1 :=
+  correlationInfinite_le_one G Λ p {i}
+
+/-- **Exhaustion-independence of `magnetizationInfinite`**:
+the value does not depend on the choice of exhaustion.  Specialization
+of `correlationInfinite_indep_exhaustion`. -/
+theorem magnetizationInfinite_indep_exhaustion
+    (G : SimpleGraph V) (Λ Λ' : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    [∀ n, Fintype (inducedGraph G (Λ'.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i : V) :
+    magnetizationInfinite G Λ p i = magnetizationInfinite G Λ' p i :=
+  correlationInfinite_indep_exhaustion G Λ Λ' p hf {i}
+
+/-- **J-direction monotonicity of `magnetizationInfinite`** (for
+fixed `h ≥ 0, β > 0`).  Specialization of
+`correlationInfinite_monotone_J`. -/
+theorem magnetizationInfinite_monotone_J
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {h : ℝ} (hh : 0 ≤ h) {β : ℝ} (hβ : 0 < β)
+    (i : V) :
+    MonotoneOn
+      (fun J : ℝ => magnetizationInfinite G Λ ⟨J, h, β⟩ i)
+      (Set.Ici 0) :=
+  correlationInfinite_monotone_J G Λ hh hβ {i}
+
+/-- **h-direction monotonicity of `magnetizationInfinite`** (for
+fixed `J ≥ 0, β > 0`).  Specialization of
+`correlationInfinite_monotone_h`. -/
+theorem magnetizationInfinite_monotone_h
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β)
+    (i : V) :
+    MonotoneOn
+      (fun h : ℝ => magnetizationInfinite G Λ ⟨J, h, β⟩ i)
+      (Set.Ici 0) :=
+  correlationInfinite_monotone_h G Λ hJ hβ {i}
+
+/-- **β-direction monotonicity of `magnetizationInfinite`** (for
+fixed `J ≥ 0, h ≥ 0`).  Specialization of
+`correlationInfinite_monotone_beta`. -/
+theorem magnetizationInfinite_monotone_beta
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {J : ℝ} (hJ : 0 ≤ J) {h : ℝ} (hh : 0 ≤ h)
+    (i : V) :
+    MonotoneOn
+      (fun β : ℝ => magnetizationInfinite G Λ ⟨J, h, β⟩ i)
+      (Set.Ioi 0) :=
+  correlationInfinite_monotone_beta G Λ hJ hh {i}
+
+/-- **Z₂ symmetry at `h = 0` for `correlationΛ`**: at vanishing external
+field, the correlation on `Λ` of an odd-cardinality set is zero.
+Lift of `IsingModel.correlation_odd_vanish` (GHS.lean). -/
+theorem correlationΛ_odd_vanish_h_zero
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (A : Finset (↑Λ : Type _)) (hodd : Odd A.card) :
+    correlationΛ G Λ ⟨J, 0, β⟩ A = 0 :=
+  IsingModel.correlation_odd_vanish (inducedGraph G Λ) J β A hodd
+
+/-- **Z₂ symmetry at `h = 0` for `correlationAlongExhaustion`**:
+pointwise zero at every `n`.  Either `A ⊄ Λ.volume n` (both branches
+of the dite give `0`) or `A ⊆ Λ.volume n` and the lifted correlation
+vanishes by `correlationΛ_odd_vanish_h_zero`. -/
+theorem correlationAlongExhaustion_h_zero
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (A : Finset V) (hodd : Odd A.card) (n : ℕ) :
+    correlationAlongExhaustion G Λ ⟨J, 0, β⟩ A n = 0 := by
+  by_cases hAn : A ⊆ Λ.volume n
+  · rw [correlationAlongExhaustion_of_subset G Λ ⟨J, 0, β⟩ hAn]
+    refine correlationΛ_odd_vanish_h_zero G (Λ.volume n) J β _ ?_
+    -- liftFinset preserves cardinality (attach.image of an injection)
+    have hinj : Function.Injective
+        (fun (x : { v // v ∈ A }) => (⟨x.val, hAn x.property⟩ : (↑(Λ.volume n) : Type _))) := by
+      intro x y heq
+      apply Subtype.ext
+      exact Subtype.mk.inj heq
+    have hcard : (liftFinset A hAn).card = A.card := by
+      simp only [liftFinset, Finset.card_image_of_injective _ hinj, Finset.card_attach]
+    rw [hcard]
+    exact hodd
+  · exact correlationAlongExhaustion_of_not_subset G Λ ⟨J, 0, β⟩ hAn
+
+/-- **Z₂ symmetry at `h = 0` for `correlationInfinite`**: vanishes
+for odd-cardinality sets.  Supremum of a constantly-zero sequence. -/
+theorem correlationInfinite_h_zero
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (A : Finset V) (hodd : Odd A.card) :
+    correlationInfinite G Λ ⟨J, 0, β⟩ A = 0 := by
+  simp only [correlationInfinite,
+    correlationAlongExhaustion_h_zero G Λ J β A hodd, ciSup_const]
+
+/-- **`magnetizationInfinite` at `h = 0` vanishes**: the Z₂ spin-flip
+symmetry at zero external field forces the single-site thermodynamic
+magnetization to be zero.
+
+This gives the zero-field **symmetric** value, which is distinct from
+the *spontaneous magnetization* $m^* := \lim_{h \to 0^+} M(h)$ studied
+in Glimm–Jaffe §5.1 (p. 77): symmetry breaking is detected by the
+one-sided limit $h \to 0^+$ (or boundary-condition selection), not by
+evaluating at $h = 0$. -/
+theorem magnetizationInfinite_zero_at_h_zero
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (i : V) :
+    magnetizationInfinite G Λ ⟨J, 0, β⟩ i = 0 :=
+  correlationInfinite_h_zero G Λ J β {i} (by simp)
 
 end Ambient
 end IsingModel
