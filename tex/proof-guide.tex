@@ -1688,6 +1688,22 @@ along-exhaustion / $\infty$-vol lift (eventually nonempty) も同 PR.
 zero-parameter closed form.
 \end{theorem}
 
+\begin{theorem}[$\bot$-equivalence core identities at $J=0$; PR \#175]
+PR \#174 の各層で独立した ``$\bot$ への reduction'' を単一の
+基底恒等式に集約 refactor:
+\begin{align*}
+  H_G(\langle 0, h, \beta\rangle, \sigma) &= H_\bot(\langle 0, h, \beta\rangle, \sigma), \\
+  Z_G(\langle 0, h, \beta\rangle) &= Z_\bot(\langle 0, h, \beta\rangle), \\
+  f_G(\langle 0, h, \beta\rangle) &= f_\bot(\langle 0, h, \beta\rangle).
+\end{align*}
+(\texttt{hamiltonian\_eq\_bot\_at\_J\_zero} /
+\texttt{partitionFunction\_eq\_bot\_at\_J\_zero} /
+\texttt{freeEnergy\_eq\_bot\_at\_J\_zero}, 命名サフィックス
+\texttt{\_eq\_bot\_at\_J\_zero} で統一).
+\texttt{\_J\_zero} 本体は上記恒等 + \texttt{partitionFunction\_bot} /
+\texttt{freeEnergy\_bot} の \texttt{.trans} 合成に簡約.
+\end{theorem}
+
 \begin{theorem}[\texttt{freeEnergyInfinite\_\{beta\_zero,zero\_params\}\_of\_eventually\_nonempty}; PR \#172]
 仮定 $\forall^\infty n, \Lambda_n$ nonempty のもと
 \[
