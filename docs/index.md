@@ -50,8 +50,8 @@ specifies which of the three above apply.
 | **Lee–Yang circle theorem** (§4.5) | Ising partition polynomial nonvanishing on polydisk | `LeeYang.lean` | Finite |
 | **Lee–Yang (graph form)** | Z ≠ 0 on polydisk for ferromagnetic graph | `FreeEnergy.lean` | Finite |
 | **φ⁴ Lebowitz** (Cor 4.3.2) | `lebowitz_third/four/inductive` | `Inequalities/GHS.lean` | Finite, axiom |
-| **Cor 4.3.3** | `U₄ ≤ 0` for `h = 0` | `Inequalities/GHS.lean` | Finite |
-| **GHS** (Cor 4.3.4) | `⟨σᵢ;σⱼ;σₖ⟩ ≤ 0` | `Inequalities/GHS.lean` | Finite |
+| **Cor 4.3.3** | `U₄ ≤ 0` for `h = 0` | `Inequalities/GHS.lean` / `AmbientLattice.lean` | Finite + genuine ∞-vol (`truncated4Infinite_nonpos_h_zero`) |
+| **GHS** (Cor 4.3.4) | `⟨σᵢ;σⱼ;σₖ⟩ ≤ 0` | `Inequalities/GHS.lean` / `AmbientLattice.lean` | Finite + genuine ∞-vol (`truncated3Infinite_nonpos`) |
 | **Cor 4.3.5** | inductive `n`-point bound (`h = 0`) | `Inequalities/GHS.lean` | Finite |
 
 ### §4.2: Thermodynamic limit of correlations (Thm 4.2.3)
@@ -229,10 +229,13 @@ ambient framework:
 | `truncated2Infinite_nonneg_of_eq` | `0 ≤ U_2(i,i) = M(i)(1-M(i))` |
 | **`truncated2Infinite_nonneg`** | **General nonneg**: `0 ≤ U_2(i,j)` for all `i, j` |
 | `truncated2Infinite_indep_exhaustion` | Λ-independence |
-| **`truncated3Infinite`** | **Truncated 3-point correlation** `U_3(i,j,k) := ⟨σ^{i,j,k}⟩_∞ - ⟨σ_i⟩⟨σ^{j,k}⟩ - ⟨σ_j⟩⟨σ^{i,k}⟩ - ⟨σ_k⟩⟨σ^{i,j}⟩ + 2⟨σ_i⟩⟨σ_j⟩⟨σ_k⟩` |
+| **`truncated3Infinite`** | **Truncated 3-point correlation** `U_3(i,j,k) := ⟨σ^{i,j,k}⟩_∞ - ⟨σ_i⟩_∞⟨σ^{j,k}⟩_∞ - ⟨σ_j⟩_∞⟨σ^{i,k}⟩_∞ - ⟨σ_k⟩_∞⟨σ^{i,j}⟩_∞ + 2⟨σ_i⟩_∞⟨σ_j⟩_∞⟨σ_k⟩_∞` |
 | **`truncated3Infinite_nonpos`** | **GHS at infinite volume** (Glimm–Jaffe §4.3 Cor 4.3.4 pp. 68ff): pairwise distinct ⇒ `U_3 ≤ 0` |
 | `truncated3Infinite_h_zero_of_distinct` | `h = 0` + distinct ⇒ `U_3 = 0` (Z₂ symmetry consequence) |
 | `truncated3Infinite_indep_exhaustion` | Λ-independence |
+| **`truncated4Infinite`** | **Truncated 4-point correlation** `U_4(i,j,k,l) := ⟨σ^{i,j,k,l}⟩_∞ - ⟨σ^{i,j}⟩_∞⟨σ^{k,l}⟩_∞ - ⟨σ^{i,k}⟩_∞⟨σ^{j,l}⟩_∞ - ⟨σ^{i,l}⟩_∞⟨σ^{j,k}⟩_∞` |
+| **`truncated4Infinite_nonpos_h_zero`** | **Lebowitz/U_4 ≤ 0 at infinite volume** (Glimm–Jaffe §4.3 Cor 4.3.3 pp. 68ff): `h = 0` + pairwise distinct ⇒ `U_4 ≤ 0` |
+| `truncated4Infinite_indep_exhaustion` | Λ-independence |
 
 ## Axioms
 
@@ -271,7 +274,7 @@ inventory (2026-04-17).
 | §4.2 | Prop 4.2.4 (h-monotonicity) | **Done (finite + infinite)** | Three parameters: `correlationInfinite_monotone_{J,h,beta}` |
 | §4.3 | Thm 4.3.1 (φ⁴) | **Done (axiom)** | `phi4_single_site_nonneg` |
 | §4.3 | Cor 4.3.2 (Lebowitz) | **Done (axiom)** | 3 axioms |
-| §4.3 | Cor 4.3.3 (`U₄ ≤ 0` at h=0) | **Done (finite)** | Uses axioms |
+| §4.3 | Cor 4.3.3 (`U₄ ≤ 0` at h=0) | **Done (finite + infinite)** | Finite: `cor_4_3_3` (axioms); Infinite: `truncated4Infinite_nonpos_h_zero` |
 | §4.3 | Cor 4.3.4 (GHS, `U₃ ≤ 0`) | **Done (finite + infinite)** | Finite: `ghs_inequality` (axioms); Infinite: `truncated3Infinite_nonpos`, `_h_zero_of_distinct` |
 | §4.3 | Cor 4.3.5 (inductive n-point at h=0) | **Done (finite)** | Uses axioms |
 | §4.4 | FKG inequality | **Done** | `fkg_ising` |
