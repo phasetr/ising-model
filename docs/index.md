@@ -194,6 +194,9 @@ ambient framework:
 | **`correlationInfinite_cor_4_3_5_h0`** | **Cor 4.3.5 at infinite volume** (Glimm–Jaffe §4.3 Cor 4.3.5 p. 62): inductive (n+2)-point bound at `h = 0` |
 | `freeEnergyAlongExhaustion` | Free energy density sequence `n ↦ freeEnergyΛ G (Λ.volume n) p` (scaffold for §4.6 Prop 4.6.1 ∞-vol lift) |
 | `freeEnergyAlongExhaustion_apply` | Definitional unfolding (simp): `= freeEnergyΛ G (Λ.volume n) p` |
+| `partitionFunctionAlongExhaustion` | Partition function sequence `n ↦ partitionFunctionΛ G (Λ.volume n) p` (§4.6 Prop 4.6.1 scaffold #2) |
+| `partitionFunctionAlongExhaustion_apply` | Definitional unfolding (simp) |
+| `partitionFunctionAlongExhaustion_pos` | `0 < partitionFunctionAlongExhaustion` for every `n` |
 | `correlationAlongExhaustion_nonneg` | `0 ≤ correlationAlongExhaustion G Λ p A n` (ferromagnetic) |
 | `correlationΛ_gks_second` | **GKS-II at finite volume**, lifted form: `correlationΛ (lift A) · correlationΛ (lift B) ≤ correlationΛ (lift (A ∆ B))` |
 | **`correlationInfinite_gks_second`** | **GKS-II at infinite volume** (Glimm–Jaffe §4.2 Thm 4.2.3): `correlationInfinite A · correlationInfinite B ≤ correlationInfinite (A ∆ B)` |
