@@ -816,6 +816,77 @@ theorem freeEnergyInfinite_monotone_abs_h
   exact freeEnergyInfinite_monotone_h G Λ hJ hβ hc
     (Set.mem_Ici.mpr (abs_nonneg h₁)) (Set.mem_Ici.mpr (abs_nonneg h₂)) hh
 
+/-- **`log Z` tends to `∞` along any exhaustion of an infinite ambient
+type**, under ferromagnetic parameters.
+
+Proof: the bot-graph lower bound gives
+`log Z_{Λ.volume n} ≥ |Λ.volume n| · log(2·cosh(β·h)) ≥ |Λ.volume n| · log 2`
+(the latter inequality via `cosh ≥ 1`). Since `|Λ.volume n| → ∞`
+for infinite `V` (`Exhaustion.tendsto_card_atTop`) and `log 2 > 0`,
+the right-hand side tends to `∞`. -/
+theorem log_partitionFunctionAlongExhaustion_tendsto_atTop
+    [Infinite V] (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    Filter.Tendsto
+      (fun n => Real.log (partitionFunctionAlongExhaustion G Λ p n))
+      Filter.atTop Filter.atTop := by
+  have hlog2_pos : (0 : ℝ) < Real.log 2 :=
+    Real.log_pos (by norm_num : (1 : ℝ) < 2)
+  -- Pointwise lower bound: log Z_{Λ.volume n} ≥ |Λ.volume n| · log 2.
+  have hbound : ∀ n, ((Λ.volume n).card : ℝ) * Real.log 2
+      ≤ Real.log (partitionFunctionAlongExhaustion G Λ p n) := by
+    intro n
+    have h_bot : partitionFunction (⊥ : SimpleGraph (↑(Λ.volume n) : Type _)) p
+        = (2 * Real.cosh (p.β * p.h)) ^ Fintype.card (↑(Λ.volume n) : Type _) :=
+      IsingModel.partitionFunction_bot p
+    have h_cosh_ge : (2 : ℝ) ≤ 2 * Real.cosh (p.β * p.h) := by
+      have := Real.one_le_cosh (p.β * p.h); linarith
+    have h_pow : (2 : ℝ) ^ Fintype.card (↑(Λ.volume n) : Type _)
+        ≤ (2 * Real.cosh (p.β * p.h)) ^ Fintype.card (↑(Λ.volume n) : Type _) :=
+      pow_le_pow_left₀ (by norm_num) h_cosh_ge _
+    have h_ge_bot : (2 : ℝ) ^ Fintype.card (↑(Λ.volume n) : Type _)
+        ≤ partitionFunctionAlongExhaustion G Λ p n := by
+      change (2 : ℝ) ^ _ ≤ partitionFunction (inducedGraph G (Λ.volume n)) p
+      calc (2 : ℝ) ^ Fintype.card (↑(Λ.volume n) : Type _)
+          ≤ (2 * Real.cosh (p.β * p.h)) ^ Fintype.card (↑(Λ.volume n) : Type _) := h_pow
+        _ = partitionFunction (⊥ : SimpleGraph (↑(Λ.volume n) : Type _)) p :=
+            h_bot.symm
+        _ ≤ partitionFunction (inducedGraph G (Λ.volume n)) p :=
+            IsingModel.partitionFunction_monotone_subgraph bot_le p hf
+    have h_two_pow_pos : (0 : ℝ) < (2 : ℝ) ^ Fintype.card (↑(Λ.volume n) : Type _) :=
+      pow_pos (by norm_num) _
+    have h_log_ge :
+        Real.log ((2 : ℝ) ^ Fintype.card (↑(Λ.volume n) : Type _))
+          ≤ Real.log (partitionFunctionAlongExhaustion G Λ p n) :=
+      Real.log_le_log h_two_pow_pos h_ge_bot
+    rw [Real.log_pow, Fintype.card_coe] at h_log_ge
+    exact h_log_ge
+  have h_card_tendsto :
+      Filter.Tendsto (fun n => ((Λ.volume n).card : ℝ) * Real.log 2)
+        Filter.atTop Filter.atTop := by
+    have h1 : Filter.Tendsto (fun n => ((Λ.volume n).card : ℝ))
+        Filter.atTop Filter.atTop :=
+      tendsto_natCast_atTop_atTop.comp Λ.tendsto_card_atTop
+    exact h1.atTop_mul_const hlog2_pos
+  exact Filter.tendsto_atTop_mono hbound h_card_tendsto
+
+/-- **`Z` tends to `∞` along any exhaustion of an infinite ambient
+type**, under ferromagnetic parameters. Follows from
+`log_partitionFunctionAlongExhaustion_tendsto_atTop` via
+`Real.tendsto_exp_atTop`. -/
+theorem partitionFunctionAlongExhaustion_tendsto_atTop
+    [Infinite V] (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    Filter.Tendsto (partitionFunctionAlongExhaustion G Λ p)
+      Filter.atTop Filter.atTop := by
+  have h_log := log_partitionFunctionAlongExhaustion_tendsto_atTop G Λ p hf
+  have h_comp := Real.tendsto_exp_atTop.comp h_log
+  refine (Filter.tendsto_congr ?_).mp h_comp
+  intro n
+  exact Real.exp_log (IsingModel.partitionFunction_pos _ _)
+
 end Ambient
 
 end IsingModel
