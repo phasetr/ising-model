@@ -217,6 +217,9 @@ ambient framework:
 | **`freeEnergyAlongExhaustion_ge_log_two`** | **Uniform lower bound**: `log 2 ≤ freeEnergyAlongExhaustion G Λ ⟨J, h, β⟩ n` for ferromagnetic + nonempty `Λ.volume n` |
 | `freeEnergy_upper_bound` (Conditioning.lean) | **Explicit upper bound** (Cor. 10.3.2 / \|ι\|): `freeEnergy G p ≤ log 2 + \|β\|·(\|J\|·\|E\| + \|h\|·\|ι\|)/\|ι\|` for nonempty ι |
 | `freeEnergyAlongExhaustion_upper_bound` | Along-exhaustion specialization of `freeEnergy_upper_bound` |
+| `BoundedEdgeDensity` | Hypothesis `∃ c, ∀ n (nonempty), \|E_n\| ≤ c·\|Λ_n\|` (e.g. bounded-degree ambient graphs) |
+| `freeEnergyAlongExhaustion_le_uniform_upper_bound` | **Uniform upper bound** under `BoundedEdgeDensity`: `f_n ≤ log 2 + \|β\|·(\|J\|·c + \|h\|)` |
+| `BddAbove_freeEnergyAlongExhaustion_range` | `BddAbove (Set.range (freeEnergyAlongExhaustion G Λ p))` under `BoundedEdgeDensity` |
 | `correlationAlongExhaustion_nonneg` | `0 ≤ correlationAlongExhaustion G Λ p A n` (ferromagnetic) |
 | `correlationΛ_gks_second` | **GKS-II at finite volume**, lifted form: `correlationΛ (lift A) · correlationΛ (lift B) ≤ correlationΛ (lift (A ∆ B))` |
 | **`correlationInfinite_gks_second`** | **GKS-II at infinite volume** (Glimm–Jaffe §4.2 Thm 4.2.3): `correlationInfinite A · correlationInfinite B ≤ correlationInfinite (A ∆ B)` |
