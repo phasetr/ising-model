@@ -96,4 +96,32 @@ theorem spinProduct_sq (A : Finset ι) (σ : Config ι) :
   exact Finset.prod_eq_one fun i _ => by
     simp [← sq, ← Int.cast_pow, Spin.toSign_sq]
 
+omit [DecidableEq ι] in
+/-- **Hamiltonian vanishes at zero parameters**: with `J = 0` and `h = 0`,
+the Hamiltonian is identically zero (no coupling, no field). -/
+theorem hamiltonian_zero_params (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (β : ℝ) (σ : Config ι) :
+    hamiltonian G (⟨0, 0, β⟩ : IsingParams ℝ) σ = 0 := by
+  unfold hamiltonian interactionEnergy externalFieldEnergy
+  simp
+
+/-- **Partition function at zero parameters**: with `J = 0` and `h = 0`,
+the Hamiltonian is identically zero, so every Boltzmann weight equals 1
+and the partition function counts the configurations:
+`Z_G(⟨0, 0, β⟩) = Fintype.card (Config ι)`. -/
+theorem partitionFunction_zero_params (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (β : ℝ) :
+    partitionFunction G (⟨0, 0, β⟩ : IsingParams ℝ)
+      = (Fintype.card (Config ι) : ℝ) := by
+  unfold partitionFunction boltzmannWeight
+  calc ∑ σ : Config ι,
+        Real.exp (-(⟨0, 0, β⟩ : IsingParams ℝ).β *
+          hamiltonian G (⟨0, 0, β⟩ : IsingParams ℝ) σ)
+      = ∑ _σ : Config ι, (1 : ℝ) := by
+        refine Finset.sum_congr rfl ?_
+        intro σ _
+        rw [hamiltonian_zero_params, mul_zero, Real.exp_zero]
+    _ = (Fintype.card (Config ι) : ℝ) := by
+        rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul, mul_one]
+
 end IsingModel

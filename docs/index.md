@@ -209,6 +209,8 @@ ambient framework:
 | `freeEnergyInfinite` | `limsup freeEnergyAlongExhaustion` — API anchor for §4.6 Prop 4.6.1 (convergence pending) |
 | `freeEnergyAlongExhaustion_ge_zero_params` | Zero-params comparison: `f(0,0,β) ≤ f(J,h,β)` for ferromagnetic |
 | `partitionFunctionAlongExhaustion_ge_zero_params` | Zero-params comparison: `Z(0,0,β) ≤ Z(J,h,β)` for ferromagnetic |
+| `hamiltonian_zero_params` (GibbsMeasure.lean) | `hamiltonian G ⟨0, 0, β⟩ σ = 0` identically |
+| `partitionFunction_zero_params` (GibbsMeasure.lean) | `Z G ⟨0, 0, β⟩ = Fintype.card (Config ι)` |
 | `correlationAlongExhaustion_nonneg` | `0 ≤ correlationAlongExhaustion G Λ p A n` (ferromagnetic) |
 | `correlationΛ_gks_second` | **GKS-II at finite volume**, lifted form: `correlationΛ (lift A) · correlationΛ (lift B) ≤ correlationΛ (lift (A ∆ B))` |
 | **`correlationInfinite_gks_second`** | **GKS-II at infinite volume** (Glimm–Jaffe §4.2 Thm 4.2.3): `correlationInfinite A · correlationInfinite B ≤ correlationInfinite (A ∆ B)` |
