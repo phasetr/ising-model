@@ -712,6 +712,30 @@ theorem log_partitionFunction_ge_card_mul_log_two_of_ferromagnetic
   rw [Real.log_pow] at h_log
   exact h_log
 
+/-- **Sharp ferromagnetic log-Z lower bound**:
+`|ι| · log(2·cosh(βh)) ≤ log Z_G(p)`.
+
+Sharpening of `log_partitionFunction_ge_card_mul_log_two_of_ferromagnetic`
+via `Z_⊥ = (2·cosh(βh))^|ι|` (from `partitionFunction_bot`) and
+`Z_⊥ ≤ Z_G` (ferromagnetic `partitionFunction_monotone_subgraph`);
+take `log` + `Real.log_pow`. -/
+theorem log_partitionFunction_ge_card_mul_log_two_cosh_of_ferromagnetic
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    (Fintype.card ι : ℝ) * Real.log (2 * Real.cosh (p.β * p.h))
+      ≤ Real.log (partitionFunction G p) := by
+  have h_cosh_pos : (0 : ℝ) < 2 * Real.cosh (p.β * p.h) := by
+    have := Real.one_le_cosh (p.β * p.h); linarith
+  have h_pow_pos : (0 : ℝ) < (2 * Real.cosh (p.β * p.h)) ^ Fintype.card ι :=
+    pow_pos h_cosh_pos _
+  have h_ge : (2 * Real.cosh (p.β * p.h)) ^ Fintype.card ι
+      ≤ partitionFunction G p := by
+    rw [← partitionFunction_bot (p := p)]
+    exact partitionFunction_monotone_subgraph bot_le p hf
+  have h_log := Real.log_le_log h_pow_pos h_ge
+  rw [Real.log_pow] at h_log
+  exact h_log
+
 /-- The free energy rescaling identity in `β`:
 `f(J, h, β) = f(βJ, βh, 1)`. Follows from `partitionFunction_beta_rescale`
 (after taking `log` and multiplying by `|ι|⁻¹`). -/
