@@ -539,6 +539,55 @@ theorem freeEnergyInfinite_nonneg
     0 ≤ freeEnergyInfinite G Λ p :=
   (freeEnergyInfinite_pos G Λ p hf hc).le
 
+set_option linter.unusedFintypeInType false in
+/-- **`freeEnergyInfinite` is monotone in the ambient subgraph**:
+for `G₁ ≤ G₂` and ferromagnetic `p`,
+`freeEnergyInfinite G₁ Λ p ≤ freeEnergyInfinite G₂ Λ p`
+(under suitable boundedness hypotheses used internally to control
+the `limsup`).
+
+Proof: apply `Filter.limsup_le_limsup` to the per-n
+`freeEnergyAlongExhaustion_monotone_ambient_subgraph`. The
+`IsCoboundedUnder` side is discharged via the ferromagnetic lower
+bound `freeEnergyAlongExhaustion_ge_log_two_cosh`; the
+`IsBoundedUnder` side via the `BoundedEdgeDensity`-driven upper
+bound `freeEnergyAlongExhaustion_le_uniform_upper_bound`. -/
+theorem freeEnergyInfinite_monotone_ambient_subgraph
+    [Nonempty V] {G₁ G₂ : SimpleGraph V} (h : G₁ ≤ G₂)
+    (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G₁ (Λ.volume n)).edgeSet]
+    [∀ n, Fintype (inducedGraph G₂ (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) {c : ℝ}
+    (hc : ∀ n, (Λ.volume n).Nonempty →
+      ((inducedGraph G₂ (Λ.volume n)).edgeFinset.card : ℝ) ≤
+        c * Fintype.card (↑(Λ.volume n) : Type _)) :
+    freeEnergyInfinite G₁ Λ p ≤ freeEnergyInfinite G₂ Λ p := by
+  obtain ⟨v⟩ := ‹Nonempty V›
+  obtain ⟨N, hN⟩ := Λ.exhaust {v}
+  have heventually : ∀ᶠ n in Filter.atTop, (Λ.volume n).Nonempty := by
+    filter_upwards [Filter.eventually_ge_atTop N] with n hn
+    exact ⟨v, hN n hn (Finset.mem_singleton_self v)⟩
+  have hle : ∀ᶠ n in Filter.atTop,
+      freeEnergyAlongExhaustion G₁ Λ p n
+        ≤ freeEnergyAlongExhaustion G₂ Λ p n := by
+    apply Filter.Eventually.of_forall
+    intro n
+    exact freeEnergyAlongExhaustion_monotone_ambient_subgraph h Λ p hf n
+  have hbdd_below_G₁ : Filter.IsBoundedUnder (· ≥ ·) Filter.atTop
+      (freeEnergyAlongExhaustion G₁ Λ p) := by
+    refine ⟨Real.log (2 * Real.cosh (p.β * p.h)), ?_⟩
+    rw [Filter.eventually_map]
+    filter_upwards [heventually] with n hne
+    exact freeEnergyAlongExhaustion_ge_log_two_cosh
+      (J := p.J) (h := p.h) (β := p.β) G₁ Λ hf.hJ hf.hh hf.hβ n hne
+  have hbdd_above_G₂ : Filter.IsBoundedUnder (· ≤ ·) Filter.atTop
+      (freeEnergyAlongExhaustion G₂ Λ p) := by
+    refine ⟨Real.log 2 + |p.β| * (|p.J| * c + |p.h|), ?_⟩
+    rw [Filter.eventually_map]
+    filter_upwards [heventually] with n hne
+    exact freeEnergyAlongExhaustion_le_uniform_upper_bound G₂ Λ p hc n hne
+  exact Filter.limsup_le_limsup hle hbdd_below_G₁.isCoboundedUnder_le hbdd_above_G₂
+
 end Ambient
 
 end IsingModel
