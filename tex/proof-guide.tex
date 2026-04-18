@@ -1675,6 +1675,19 @@ $\Rightarrow$ Tendsto, PR \#170 で limsup = limit.
 の一般化.
 \end{theorem}
 
+\begin{theorem}[\texttt{freeEnergyInfinite\_\{beta\_zero,zero\_params\}\_of\_eventually\_nonempty}; PR \#172]
+仮定 $\forall^\infty n, \Lambda_n$ nonempty のもと
+\[
+  \texttt{freeEnergyInfinite}\,G\,\Lambda\,\langle J, h, 0\rangle
+    \;=\; \texttt{freeEnergyInfinite}\,G\,\Lambda\,\langle 0, 0, \beta\rangle
+    \;=\; \log 2.
+\]
+PR \#171 \texttt{\_of\_eventually\_const} に finite 版
+\texttt{freeEnergyAlongExhaustion\_\{beta\_zero,zero\_params\}}
+を \texttt{filter\_upwards} で流し込む. \texttt{[Nonempty V]} のもと
+\texttt{Exhaustion.eventually\_volume\_nonempty} で自動成立.
+\end{theorem}
+
 \begin{theorem}[\texttt{freeEnergy\_nonneg\_of\_ferromagnetic}; PR \#169]
 $0 < |\iota|$, 強磁性 $p$ で
 \[

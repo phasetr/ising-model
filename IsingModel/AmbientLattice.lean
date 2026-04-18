@@ -3147,7 +3147,11 @@ The sequence `n ↦ freeEnergyAlongExhaustion G Λ ⟨J, h, 0⟩ n` is constantl
 `atTop` is `log 2` by `Filter.limsup_const`.
 
 Sanity check: the β = 0 slice of the §4.6 Prop 4.6.1 infinite-volume
-free energy is trivially the maximum-entropy value. -/
+free energy is trivially the maximum-entropy value.
+
+A weakened version requiring only `∀ᶠ n in atTop, (Λ.volume n).Nonempty`
+is provided as `freeEnergyInfinite_beta_zero_of_eventually_nonempty`
+in `AmbientLatticeSum.lean`. -/
 theorem freeEnergyInfinite_beta_zero
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
@@ -3192,7 +3196,11 @@ The sequence `n ↦ freeEnergyAlongExhaustion G Λ ⟨0, 0, β⟩ n` is constant
 
 Companion to `freeEnergyInfinite_beta_zero`: both give the
 maximum-entropy value `log 2` from orthogonal degeneracies
-(β=0 vs. H ≡ 0). -/
+(β=0 vs. H ≡ 0).
+
+A weakened version requiring only `∀ᶠ n in atTop, (Λ.volume n).Nonempty`
+is provided as `freeEnergyInfinite_zero_params_of_eventually_nonempty`
+in `AmbientLatticeSum.lean`. -/
 theorem freeEnergyInfinite_zero_params
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
