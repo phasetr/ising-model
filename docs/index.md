@@ -210,6 +210,11 @@ ambient framework:
 | `correlationAlongExhaustion_h_zero` | Pointwise `= 0` at `h = 0` for odd-cardinality `A` |
 | `correlationInfinite_h_zero` | `correlationInfinite ⟨J, 0, β⟩ A = 0` for `Odd A.card` (sup of zero sequence) |
 | **`magnetizationInfinite_zero_at_h_zero`** | **Z₂ symmetry**: `magnetizationInfinite G Λ ⟨J, 0, β⟩ i = 0` at zero external field |
+| **`spontaneousMagnetization`** | **Spontaneous magnetization** `m* := ⨅ h : Set.Ioi 0, magnetizationInfinite ⟨J, h, β⟩ i` (Glimm–Jaffe §5.1 p. 77) |
+| `spontaneousMagnetization_nonneg` | `0 ≤ m*` (ferromagnetic) |
+| `spontaneousMagnetization_le_one` | `m* ≤ 1` |
+| `spontaneousMagnetization_le_magnetizationInfinite` | `m* ≤ M(h)` for any `h > 0` (infimum characterization) |
+| `spontaneousMagnetization_indep_exhaustion` | `m*` does not depend on the choice of exhaustion |
 
 ## Axioms
 
@@ -261,6 +266,7 @@ inventory (2026-04-17).
 | Section | Result | Status | Notes |
 |---|---|---|---|
 | §5.1 | Pure/mixed phase criteria | **Done (algebraic)** | `mixed_phase_truncated2`, `mixed_phase_pure_iff`, `truncated2_le_one` |
+| §5.1 | Spontaneous magnetization `m*` (p. 77) | **Done (infimum form)** | `spontaneousMagnetization` + nonneg/≤1/≤M(h). Tendsto (nhdsGT 0) form: follow-up |
 | §5.2 | Mean field picture | **Done (algebraic)** | `meanFieldEnergy_neg`, `meanField_zero_solution`, `tanh_odd` |
 | §5.3 | Symmetry breaking (Z₂ at `h = 0`) | **Done (finite + infinite)** | Finite: `magnetization_zero_at_h_zero`, `susceptibility_nonneg`; Infinite: `magnetizationInfinite_zero_at_h_zero`, `correlationInfinite_h_zero` |
 | §5.4 | Prop 5.4.1 (Peierls) | **Done** | `peierls_bound` |

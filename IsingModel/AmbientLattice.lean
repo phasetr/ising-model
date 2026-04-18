@@ -1589,5 +1589,105 @@ theorem magnetizationInfinite_zero_at_h_zero
     magnetizationInfinite G Λ ⟨J, 0, β⟩ i = 0 :=
   correlationInfinite_h_zero G Λ J β {i} (by simp)
 
+/-! ## Spontaneous magnetization
+
+Define the spontaneous magnetization
+$m^*(G, \Lambda; J, \beta; i) := \lim_{h \to 0^+} M^{\mathrm{FM}}(J, h, \beta; i)$
+as the infimum over `h > 0` of `magnetizationInfinite`.  Since
+`magnetizationInfinite` is monotone in `h` on `Set.Ici 0` (PR #95) and
+bounded below by `0` (ferromagnetic, PR #98), the right-limit at `h = 0`
+equals this infimum.
+
+Reference: Glimm–Jaffe §5.1 p. 77. Friedli–Velenik §3.10 (self-consistent
+magnetization). -/
+
+/-- **Spontaneous magnetization at infinite volume** (*infimum form*):
+for ferromagnetic Ising on an ambient type `V`, exhaustion `Λ`, and
+fixed `J, β`,
+`spontaneousMagnetization G Λ J β i`
+  `:= ⨅ h : ↥(Set.Ioi 0), magnetizationInfinite G Λ ⟨J, h.val, β⟩ i`.
+
+This is the order parameter $m^*$ distinguishing ordered/disordered
+phases.  Since `magnetizationInfinite` is monotone in `h` on
+`Set.Ici 0` (`magnetizationInfinite_monotone_h`) and bounded in
+`[0, 1]`, this infimum coincides with $\lim_{h \to 0^+} M(h)$ —
+however the explicit `Tendsto` / `nhdsGT 0` statement is not formalized
+here and is deferred to a follow-up PR. -/
+noncomputable def spontaneousMagnetization
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (i : V) : ℝ :=
+  ⨅ h : ↥(Set.Ioi (0 : ℝ)), magnetizationInfinite G Λ ⟨J, h.val, β⟩ i
+
+/-- **Bounded-below witness**: the family
+`h ↦ magnetizationInfinite G Λ ⟨J, h, β⟩ i` over `Set.Ioi 0` is bounded
+below by `0` (ferromagnetic). -/
+private theorem magnetizationInfinite_bddBelow_on_Ioi
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) (i : V) :
+    BddBelow (Set.range
+      (fun h : ↥(Set.Ioi (0 : ℝ)) =>
+        magnetizationInfinite G Λ ⟨J, h.val, β⟩ i)) := by
+  refine ⟨0, ?_⟩
+  rintro _ ⟨h, rfl⟩
+  exact magnetizationInfinite_nonneg G Λ ⟨J, h.val, β⟩
+    ⟨hJ, le_of_lt h.property, hβ⟩ i
+
+/-- **Nonnegativity of `spontaneousMagnetization`**: for ferromagnetic
+Ising ($J \ge 0$, $\beta > 0$), $m^* \ge 0$. -/
+theorem spontaneousMagnetization_nonneg
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) (i : V) :
+    0 ≤ spontaneousMagnetization G Λ J β i := by
+  refine le_ciInf ?_
+  rintro h
+  exact magnetizationInfinite_nonneg G Λ ⟨J, h.val, β⟩
+    ⟨hJ, le_of_lt h.property, hβ⟩ i
+
+/-- **Upper bound**: $m^* \le 1$. -/
+theorem spontaneousMagnetization_le_one
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) (i : V) :
+    spontaneousMagnetization G Λ J β i ≤ 1 := by
+  refine ciInf_le_of_le
+    (magnetizationInfinite_bddBelow_on_Ioi G Λ hJ hβ i)
+    ⟨1, by norm_num⟩ ?_
+  exact magnetizationInfinite_le_one G Λ ⟨J, 1, β⟩ i
+
+/-- **Lower bound for `magnetizationInfinite` at positive `h`**:
+$m^* \le M(h)$ for $h > 0$.  Direct from the definition of `iInf`. -/
+theorem spontaneousMagnetization_le_magnetizationInfinite
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β)
+    {h : ℝ} (hh : 0 < h) (i : V) :
+    spontaneousMagnetization G Λ J β i
+      ≤ magnetizationInfinite G Λ ⟨J, h, β⟩ i :=
+  ciInf_le
+    (magnetizationInfinite_bddBelow_on_Ioi G Λ hJ hβ i)
+    ⟨h, hh⟩
+
+/-- **Exhaustion-independence of `spontaneousMagnetization`**:
+the value does not depend on the choice of exhaustion.  For every
+`h : Set.Ioi 0`, we build `Ferromagnetic ⟨J, h.val, β⟩` from `hJ`,
+`h.property`, and `hβ`, apply
+`magnetizationInfinite_indep_exhaustion` pointwise, then conclude by
+extensional agreement of the iInf-ed function. -/
+theorem spontaneousMagnetization_indep_exhaustion
+    (G : SimpleGraph V) (Λ Λ' : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    [∀ n, Fintype (inducedGraph G (Λ'.volume n)).edgeSet]
+    {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) (i : V) :
+    spontaneousMagnetization G Λ J β i
+      = spontaneousMagnetization G Λ' J β i := by
+  unfold spontaneousMagnetization
+  congr 1
+  funext h
+  exact magnetizationInfinite_indep_exhaustion G Λ Λ' ⟨J, h.val, β⟩
+    ⟨hJ, le_of_lt h.property, hβ⟩ i
+
 end Ambient
 end IsingModel
