@@ -406,6 +406,48 @@ theorem card_mul_freeEnergyΛ_le_of_disjoint_union
       card_mul_freeEnergyΛ_eq_log_partitionFunctionΛ_of_nonempty G hne_union]
   exact log_partitionFunctionΛ_le_of_disjoint_union G hd p hf
 
+/-- **Uniform upper bound on `freeEnergyInfinite` under bounded edge density**:
+the per-n bound of PR #123 lifts to `limsup`:
+`freeEnergyInfinite G Λ p ≤ log 2 + |β|·(|J|·c + |h|)` for ferromagnetic `p`.
+
+Proof outline.
+1. By `Exhaustion.exhaust`, any vertex of a nonempty `V` is
+   eventually in `Λ.volume n`, so `(Λ.volume n).Nonempty` holds
+   eventually (atTop).
+2. Apply the per-n upper bound
+   `freeEnergyAlongExhaustion_le_uniform_upper_bound` under the
+   eventual hypothesis — this gives the `∀ᶠ`-form of the bound.
+3. For `Filter.IsCoboundedUnder (· ≤ ·)`, use the (ferromagnetic)
+   lower bound `freeEnergyAlongExhaustion_ge_log_two_cosh`.
+4. `Filter.limsup_le_of_le` concludes. -/
+theorem freeEnergyInfinite_le_uniform_upper_bound
+    [Nonempty V] (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) {c : ℝ}
+    (hc : ∀ n, (Λ.volume n).Nonempty →
+      ((inducedGraph G (Λ.volume n)).edgeFinset.card : ℝ) ≤
+        c * Fintype.card (↑(Λ.volume n) : Type _)) :
+    freeEnergyInfinite G Λ p ≤ Real.log 2 + |p.β| * (|p.J| * c + |p.h|) := by
+  -- Eventual nonemptiness from exhaust.
+  obtain ⟨v⟩ := ‹Nonempty V›
+  obtain ⟨N, hN⟩ := Λ.exhaust {v}
+  have heventually : ∀ᶠ n in Filter.atTop, (Λ.volume n).Nonempty := by
+    filter_upwards [Filter.eventually_ge_atTop N] with n hn
+    exact ⟨v, hN n hn (Finset.mem_singleton_self v)⟩
+  have hbound : ∀ᶠ n in Filter.atTop,
+      freeEnergyAlongExhaustion G Λ p n
+        ≤ Real.log 2 + |p.β| * (|p.J| * c + |p.h|) := by
+    filter_upwards [heventually] with n hne
+    exact freeEnergyAlongExhaustion_le_uniform_upper_bound G Λ p hc n hne
+  have hbdd_below : Filter.IsBoundedUnder (· ≥ ·) Filter.atTop
+      (freeEnergyAlongExhaustion G Λ p) := by
+    refine ⟨Real.log (2 * Real.cosh (p.β * p.h)), ?_⟩
+    rw [Filter.eventually_map]
+    filter_upwards [heventually] with n hne
+    exact freeEnergyAlongExhaustion_ge_log_two_cosh
+      (J := p.J) (h := p.h) (β := p.β) G Λ hf.hJ hf.hh hf.hβ n hne
+  exact Filter.limsup_le_of_le hbdd_below.isCoboundedUnder_le hbound
+
 end Ambient
 
 end IsingModel
