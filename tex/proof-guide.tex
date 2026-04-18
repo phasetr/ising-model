@@ -1570,7 +1570,29 @@ PR \#121 の uniform $\log 2$ 下界を $\cosh \ge 1$ で sharpen.
 \begin{theorem}[\texttt{freeEnergyAlongExhaustion\_ge\_log\_two\_cosh}]
 各 nonempty stage で同じ下界.
 Specialization via \texttt{change} + definitional unfolding.
-\end{theorem>
+\end{theorem}
+
+\subsection{Spin flip symmetry / $h$-even (PR \#126)}
+
+\begin{theorem}[\texttt{hamiltonian\_neg\_h}]
+\[
+  H_{G, (J, -h, \beta)}(\sigma)
+    = H_{G, (J, h, \beta)}(\sigma.\text{flip}).
+\]
+$J$ 項は \texttt{interactionEnergy\_flip} で不変, 外部磁場は
+$-(-h) \sum \text{sign}(\sigma_i) = h \sum \text{sign}(\sigma_i)
+  = -h \sum \text{sign}(\sigma.\text{flip}_i)$.
+\end{theorem}
+
+\begin{theorem}[\texttt{partitionFunction\_neg\_h}]
+$Z(J, -h, \beta) = Z(J, h, \beta)$.
+\texttt{hamiltonian\_neg\_h} + \texttt{flipEquiv} 双射での reindex.
+\end{theorem}
+
+\begin{theorem}[\texttt{freeEnergy\_neg\_h}]
+$f(J, -h, \beta) = f(J, h, \beta)$.
+自由エネルギー密度は $h$ の偶関数.
+\end{theorem}
 
 \subsection{Reflection positivity (\S10.4)}
 

@@ -71,4 +71,24 @@ theorem hamiltonian_flip_eq (G : SimpleGraph ι) [Fintype G.edgeSet]
   unfold externalFieldEnergy Config.flip
   simp [hp]
 
+omit [DecidableEq ι] in
+/-- **Hamiltonian under `h ↦ -h` and spin flip**:
+`H_G(σ; J, -h, β) = H_G(σ.flip; J, h, β)`.
+
+The `J`-term is invariant under spin flip (`interactionEnergy_flip`),
+while the external field contributes
+`-(-h)·Σ sign(σ_i) = h·Σ sign(σ_i)
+  = -h·Σ sign(σ.flip_i)`, matching the `h` term evaluated at `σ.flip`. -/
+theorem hamiltonian_neg_h (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h β : K) (σ : Config ι) :
+    hamiltonian G (⟨J, -h, β⟩ : IsingParams K) σ
+      = hamiltonian G (⟨J, h, β⟩ : IsingParams K) σ.flip := by
+  unfold hamiltonian
+  rw [interactionEnergy_flip]
+  congr 1
+  unfold externalFieldEnergy Config.flip
+  simp only [Spin.sign_flip]
+  rw [Finset.sum_neg_distrib]
+  ring
+
 end IsingModel

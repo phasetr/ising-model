@@ -695,6 +695,17 @@ theorem freeEnergy_bot (p : IsingParams ℝ) (hne : 0 < Fintype.card ι) :
     exact_mod_cast hne.ne'
   field_simp
 
+/-- **Free energy h-symmetry**: `freeEnergy G ⟨J, -h, β⟩ = freeEnergy G ⟨J, h, β⟩`.
+
+Immediate from `partitionFunction_neg_h` (spin-flip reindexing) by
+taking `log` and dividing by `|ι|`. -/
+theorem freeEnergy_neg_h (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h β : ℝ) :
+    freeEnergy G (⟨J, -h, β⟩ : IsingParams ℝ)
+      = freeEnergy G (⟨J, h, β⟩ : IsingParams ℝ) := by
+  unfold freeEnergy
+  rw [partitionFunction_neg_h]
+
 /-- **Sharp ferromagnetic lower bound**: for any graph `G` with
 `|ι| > 0` and ferromagnetic parameters, `log(2·cosh(β·h)) ≤ freeEnergy G p`.
 

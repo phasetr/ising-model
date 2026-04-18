@@ -226,6 +226,9 @@ ambient framework:
 | `freeEnergy_bot` (FreeEnergy.lean) | **Free-spin closed form**: `freeEnergy ⊥ p = log(2 cosh(β h))` (for nonempty ι) |
 | `freeEnergy_ge_log_two_cosh` (FreeEnergy.lean) | **Sharp ferromagnetic lower bound**: `log(2 cosh(β h)) ≤ freeEnergy G p` (via `freeEnergy_bot` + `freeEnergy_monotone_subgraph`) |
 | `freeEnergyAlongExhaustion_ge_log_two_cosh` | Along-exhaustion specialization of the sharp ferromagnetic lower bound |
+| `hamiltonian_neg_h` (Hamiltonian.lean) | `H_G(σ; J, -h, β) = H_G(σ.flip; J, h, β)` (spin-flip / h-sign identity) |
+| `partitionFunction_neg_h` (GibbsMeasure.lean) | **Z h-symmetry**: `Z(J, -h, β) = Z(J, h, β)` via flip involution |
+| `freeEnergy_neg_h` (FreeEnergy.lean) | **freeEnergy is even in h**: `f(J, -h, β) = f(J, h, β)` |
 | `correlationAlongExhaustion_nonneg` | `0 ≤ correlationAlongExhaustion G Λ p A n` (ferromagnetic) |
 | `correlationΛ_gks_second` | **GKS-II at finite volume**, lifted form: `correlationΛ (lift A) · correlationΛ (lift B) ≤ correlationΛ (lift (A ∆ B))` |
 | **`correlationInfinite_gks_second`** | **GKS-II at infinite volume** (Glimm–Jaffe §4.2 Thm 4.2.3): `correlationInfinite A · correlationInfinite B ≤ correlationInfinite (A ∆ B)` |
