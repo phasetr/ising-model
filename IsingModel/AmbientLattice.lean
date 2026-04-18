@@ -1808,5 +1808,101 @@ theorem tendsto_magnetizationInfinite_spontaneousMagnetization_nhdsGT
       (nhds (spontaneousMagnetization G Λ J β i)) :=
   tendsto_correlationInfinite_spontaneousCorrelation_nhdsGT G Λ hJ hβ {i}
 
+/-! ## Truncated 2-point correlation at infinite volume
+
+Specialize `correlationInfinite_gks_second` (PR #94) to the
+two-point case, obtaining the truncated 2-point correlation function
+$U_2(i, j) := \langle \sigma_i \sigma_j \rangle_\infty
+  - \langle \sigma_i \rangle_\infty \langle \sigma_j \rangle_\infty$
+and the nonnegativity $U_2 \ge 0$ for $i \ne j$.
+
+Reference: Glimm–Jaffe §4.2 p. 57ff, Friedli–Velenik §3.6.3. -/
+
+/-- **Truncated 2-point correlation at infinite volume**:
+$U_2(i, j) := \langle \sigma_i \sigma_j \rangle_\infty
+  - \langle \sigma_i \rangle_\infty \langle \sigma_j \rangle_\infty$. -/
+noncomputable def truncated2Infinite
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (i j : V) : ℝ :=
+  correlationInfinite G Λ p {i, j}
+    - correlationInfinite G Λ p {i} * correlationInfinite G Λ p {j}
+
+/-- **Symmetry in the two arguments**: $U_2(i, j) = U_2(j, i)$. -/
+theorem truncated2Infinite_symm
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (i j : V) :
+    truncated2Infinite G Λ p i j = truncated2Infinite G Λ p j i := by
+  unfold truncated2Infinite
+  rw [Finset.pair_comm, mul_comm]
+
+/-- **Nonnegativity for distinct sites**: $U_2(i, j) \ge 0$ for
+$i \ne j$.  Direct corollary of `correlationInfinite_gks_second`:
+$\{i, j\} = \{i\} \,\triangle\, \{j\}$ when $i \ne j$. -/
+theorem truncated2Infinite_nonneg_of_ne
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    {i j : V} (hij : i ≠ j) :
+    0 ≤ truncated2Infinite G Λ p i j := by
+  unfold truncated2Infinite
+  have hset : ({i, j} : Finset V) = ({i} : Finset V) ∆ ({j} : Finset V) := by
+    ext x
+    simp only [Finset.mem_symmDiff, Finset.mem_insert, Finset.mem_singleton]
+    constructor
+    · rintro (rfl | rfl)
+      · exact Or.inl ⟨rfl, hij⟩
+      · exact Or.inr ⟨rfl, hij.symm⟩
+    · rintro (⟨rfl, _⟩ | ⟨rfl, _⟩)
+      · exact Or.inl rfl
+      · exact Or.inr rfl
+  rw [hset]
+  linarith [correlationInfinite_gks_second G Λ p hf {i} {j}]
+
+/-- **Nonnegativity for coincident sites**: $U_2(i, i) \ge 0$.
+On the diagonal `{i, i} = {i}` so $U_2(i, i) = M(i) - M(i)^2
+  = M(i)(1 - M(i)) \ge 0$ since $M(i) \in [0, 1]$. -/
+theorem truncated2Infinite_nonneg_of_eq
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i : V) :
+    0 ≤ truncated2Infinite G Λ p i i := by
+  unfold truncated2Infinite
+  have hset : ({i, i} : Finset V) = {i} := by simp
+  rw [hset]
+  have h0 : 0 ≤ correlationInfinite G Λ p {i} :=
+    correlationInfinite_nonneg G Λ p hf {i}
+  have h1 : correlationInfinite G Λ p {i} ≤ 1 :=
+    correlationInfinite_le_one G Λ p {i}
+  nlinarith
+
+/-- **Nonnegativity of `truncated2Infinite`** (general): $U_2(i, j) \ge 0$
+for all `i, j : V`, combining the `_of_ne` and `_of_eq` cases. -/
+theorem truncated2Infinite_nonneg
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i j : V) :
+    0 ≤ truncated2Infinite G Λ p i j := by
+  by_cases hij : i = j
+  · subst hij
+    exact truncated2Infinite_nonneg_of_eq G Λ p hf i
+  · exact truncated2Infinite_nonneg_of_ne G Λ p hf hij
+
+/-- **Exhaustion-independence of `truncated2Infinite`**: the value
+does not depend on the choice of exhaustion.  Follows from
+`correlationInfinite_indep_exhaustion` applied to each of the three
+`correlationInfinite` occurrences in the definition. -/
+theorem truncated2Infinite_indep_exhaustion
+    (G : SimpleGraph V) (Λ Λ' : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    [∀ n, Fintype (inducedGraph G (Λ'.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i j : V) :
+    truncated2Infinite G Λ p i j = truncated2Infinite G Λ' p i j := by
+  unfold truncated2Infinite
+  rw [correlationInfinite_indep_exhaustion G Λ Λ' p hf {i, j},
+      correlationInfinite_indep_exhaustion G Λ Λ' p hf {i},
+      correlationInfinite_indep_exhaustion G Λ Λ' p hf {j}]
+
 end Ambient
 end IsingModel

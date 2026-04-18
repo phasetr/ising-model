@@ -2628,4 +2628,31 @@ Friedli--Velenik \S 3.10.
 \end{itemize}
 \end{theorem}
 
+\subsection{Truncated 2-point correlation at infinite volume}
+
+参考: Glimm--Jaffe, \textit{Quantum Physics}, 2nd ed.\ (1987),
+\S 4.2 p.\ 57ff (GKS-II); Friedli--Velenik \S 3.6.3.
+
+PR \#94 の \texttt{correlationInfinite\_gks\_second} を 2 点ケースに specialize.
+
+\begin{definition}[\texttt{truncated2Infinite}]
+\[
+U_2(G, \Lambda; p; i, j)
+  \;:=\; \langle \sigma_i \sigma_j \rangle_\infty
+    - \langle \sigma_i \rangle_\infty \langle \sigma_j \rangle_\infty.
+\]
+\end{definition}
+
+\begin{theorem}[\texttt{truncated2Infinite}の基本性質]
+\begin{itemize}
+\item \texttt{\_symm}: $U_2(i, j) = U_2(j, i)$ (\texttt{Finset.pair\_comm}).
+\item \texttt{\_nonneg\_of\_ne}: $i \ne j \Rightarrow U_2 \ge 0$
+      (\texttt{correlationInfinite\_gks\_second} 経由, $\{i,j\} = \{i\} \triangle \{j\}$).
+\item \texttt{\_nonneg\_of\_eq}: $U_2(i, i) = M(i)(1 - M(i)) \ge 0$
+      ($\{i, i\} = \{i\}$, $M \in [0, 1]$).
+\item \texttt{\_nonneg}: 任意の $i, j$ で $0 \le U_2(i, j)$ (上 2 つの統合).
+\item \texttt{\_indep\_exhaustion}: $\Lambda$ 非依存.
+\end{itemize}
+\end{theorem}
+
 \end{document}
