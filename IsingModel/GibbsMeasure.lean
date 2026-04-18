@@ -124,4 +124,13 @@ theorem partitionFunction_zero_params (G : SimpleGraph ι) [Fintype G.edgeSet]
     _ = (Fintype.card (Config ι) : ℝ) := by
         rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul, mul_one]
 
+/-- **Cardinality of `Spin` is 2**. -/
+theorem card_spin : Fintype.card Spin = 2 := rfl
+
+/-- **Cardinality of the configuration space**: `Config ι = ι → Spin`
+is finite of size `2^(Fintype.card ι)`. -/
+theorem card_config_eq_two_pow :
+    Fintype.card (Config ι) = 2 ^ Fintype.card ι := by
+  simp [Config, card_spin]
+
 end IsingModel
