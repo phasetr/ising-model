@@ -97,6 +97,7 @@ Named specializations at `A = {i}`:
 | `log_partitionFunction_inducedGraph_disjUnion_super_additive` (§4.6 Prop 4.6.1 Step 5 body) | `Disjoint Λ₁ Λ₂ ⇒ log Z_{inducedGraph Λ₁} + log Z_{inducedGraph Λ₂} ≤ log Z_{inducedGraph (Λ₁ ∪ Λ₂)}` (ferromagnetic) | `AmbientLatticeSum.lean` | Step 5 body |
 | `Ambient.freeEnergyΛ_weighted_super_additive_of_nonempty` | `|Λ₁|·f_{Λ₁} + |Λ₂|·f_{Λ₂} ≤ |Λ₁∪Λ₂|·f_{Λ₁∪Λ₂}` (disjoint nonempty, ferromagnetic) | `AmbientLatticeSum.lean` | `freeEnergyΛ` wrapper |
 | `partitionFunction_ge_one_of_ferromagnetic` / `log_partitionFunction_nonneg_of_ferromagnetic` | `Z_G ≥ 1` (ferromagnetic), log form | `FreeEnergy.lean` | Step 5/Fekete infra |
+| `{log_,}partitionFunction{,Λ}_inducedGraph_le_of_disjoint_union` | `Disjoint Λ₁ Λ₂ ⇒ Z_{Λ₁} ≤ Z_{Λ₁∪Λ₂}` (ferromagnetic), log / multiplicative and generic / `Λ`-wrapped forms | `AmbientLatticeSum.lean` | Monotonicity step toward Fekete |
 
 **Not yet formalized**: the infinite-volume analyticity of `f(h)` via
 Vitali convergence (GJ Thm 4.6.2 full statement).
