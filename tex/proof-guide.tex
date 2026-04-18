@@ -1627,6 +1627,24 @@ $\texttt{freeEnergyInfinite}\,G\,\Lambda\,\langle 0, 0, \beta \rangle = \log 2$.
 上記と \texttt{Real.log\_pow} の合成.
 \end{theorem}
 
+\begin{theorem}[\texttt{partitionFunctionAlongExhaustion\_beta\_zero}; PR \#164]
+任意の $n$ および任意の $J, h \in \mathbb R$ で
+\[
+  \texttt{partitionFunctionAlongExhaustion}\,G\,\Lambda\,\langle J, h, 0 \rangle\,n
+    = 2^{|\Lambda_n|}.
+\]
+\texttt{IsingModel.partitionFunction\_beta\_zero} を specialize.
+$\beta = 0$ で Boltzmann weight $\exp(-\beta H) = 1$ を経由.
+\end{theorem}
+
+\begin{theorem}[\texttt{log\_partitionFunctionAlongExhaustion\_beta\_zero}; PR \#164]
+同条件で
+\[
+  \log \texttt{partitionFunctionAlongExhaustion}\,G\,\Lambda\,\langle J, h, 0 \rangle\,n
+    = |\Lambda_n| \cdot \log 2.
+\]
+\end{theorem}
+
 \begin{theorem}[\texttt{inducedGraph\_bot}; PR \#129]
 $\texttt{inducedGraph}\,(\bot : \texttt{SimpleGraph}\,V)\,\Lambda
   = (\bot : \texttt{SimpleGraph}\,\uparrow\Lambda)$.
