@@ -2718,4 +2718,28 @@ $\texttt{truncated4AlongExhaustion} \to \texttt{truncated4Infinite}$.
 $\Lambda$ 非依存 (7 箇所).
 \end{theorem}
 
+\subsection{Parameter monotonicity of spontaneous*}
+
+参考: Glimm--Jaffe \S 5.1 p.\ 77.
+PR \#95-\#97 (correlationInfinite J/h/$\beta$) + PR \#99/\#101 (spontaneous).
+
+\begin{theorem}[\texttt{spontaneousCorrelation\_monotone\_J}]
+$\beta > 0$ 固定で
+$\texttt{MonotoneOn}\,(J \mapsto \langle \sigma^A \rangle^*)\,(\mathrm{Ici}\,0)$.
+各 $h > 0$ で $\texttt{correlationInfinite\_monotone\_J}$, \texttt{ciInf\_mono}.
+\end{theorem}
+
+\begin{theorem}[\texttt{spontaneousCorrelation\_monotone\_beta}]
+$J \ge 0$ 固定で
+$\texttt{MonotoneOn}\,(\beta \mapsto \langle \sigma^A \rangle^*)\,(\mathrm{Ioi}\,0)$.
+\end{theorem}
+
+\begin{theorem}[\texttt{spontaneousMagnetization\_monotone\_J}]
+単サイト $A = \{i\}$ specialization of \texttt{spontaneousCorrelation\_monotone\_J}.
+\end{theorem}
+
+\begin{theorem}[\texttt{spontaneousMagnetization\_monotone\_beta}]
+単サイト $A = \{i\}$ specialization of \texttt{spontaneousCorrelation\_monotone\_beta}.
+\end{theorem}
+
 \end{document}

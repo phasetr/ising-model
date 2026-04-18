@@ -236,6 +236,10 @@ ambient framework:
 | **`truncated4Infinite`** | **Truncated 4-point correlation** `U_4(i,j,k,l) := ⟨σ^{i,j,k,l}⟩_∞ - ⟨σ^{i,j}⟩_∞⟨σ^{k,l}⟩_∞ - ⟨σ^{i,k}⟩_∞⟨σ^{j,l}⟩_∞ - ⟨σ^{i,l}⟩_∞⟨σ^{j,k}⟩_∞` |
 | **`truncated4Infinite_nonpos_h_zero`** | **Lebowitz/U_4 ≤ 0 at infinite volume** (Glimm–Jaffe §4.3 Cor 4.3.3 pp. 68ff): `h = 0` + pairwise distinct ⇒ `U_4 ≤ 0` |
 | `truncated4Infinite_indep_exhaustion` | Λ-independence |
+| `spontaneousCorrelation_monotone_J` | `MonotoneOn (J ↦ spontaneousCorrelation G Λ J β A) (Ici 0)` |
+| `spontaneousCorrelation_monotone_beta` | `MonotoneOn (β ↦ spontaneousCorrelation G Λ J β A) (Ioi 0)` |
+| `spontaneousMagnetization_monotone_J` | Singleton specialization at `A = {i}` |
+| `spontaneousMagnetization_monotone_beta` | Singleton specialization at `A = {i}` |
 
 ## Axioms
 
