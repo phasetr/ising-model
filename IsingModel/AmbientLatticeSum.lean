@@ -588,6 +588,34 @@ theorem freeEnergyInfinite_monotone_ambient_subgraph
     exact freeEnergyAlongExhaustion_le_uniform_upper_bound G₂ Λ p hc n hne
   exact Filter.limsup_le_limsup hle hbdd_below_G₁.isCoboundedUnder_le hbdd_above_G₂
 
+/-- **Along-exhaustion h-evenness at limsup**:
+`freeEnergyInfinite G Λ ⟨J, -h, β⟩ = freeEnergyInfinite G Λ ⟨J, h, β⟩`.
+Lifts `freeEnergyAlongExhaustion_neg_h` pointwise to `limsup`. -/
+theorem freeEnergyInfinite_neg_h
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J h β : ℝ) :
+    freeEnergyInfinite G Λ (⟨J, -h, β⟩ : IsingParams ℝ)
+      = freeEnergyInfinite G Λ (⟨J, h, β⟩ : IsingParams ℝ) := by
+  unfold freeEnergyInfinite
+  congr 1
+  funext n
+  exact freeEnergyAlongExhaustion_neg_h G Λ J h β n
+
+/-- **`|h|`-form at limsup**:
+`freeEnergyInfinite G Λ ⟨J, h, β⟩ = freeEnergyInfinite G Λ ⟨J, |h|, β⟩`.
+Lifts `freeEnergyAlongExhaustion_eq_abs_h` pointwise to `limsup`. -/
+theorem freeEnergyInfinite_eq_abs_h
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J h β : ℝ) :
+    freeEnergyInfinite G Λ (⟨J, h, β⟩ : IsingParams ℝ)
+      = freeEnergyInfinite G Λ (⟨J, |h|, β⟩ : IsingParams ℝ) := by
+  unfold freeEnergyInfinite
+  congr 1
+  funext n
+  exact freeEnergyAlongExhaustion_eq_abs_h G Λ J h β n
+
 end Ambient
 
 end IsingModel
