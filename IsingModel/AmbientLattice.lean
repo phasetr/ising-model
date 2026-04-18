@@ -1933,7 +1933,12 @@ noncomputable def truncated3Infinite
     + 2 * correlationInfinite G Λ p {i} * correlationInfinite G Λ p {j}
       * correlationInfinite G Λ p {k}
 
-/-- Finite-volume truncated 3-point along an exhaustion (local abbreviation). -/
+/-- **Truncated 3-point along an exhaustion** (local helper): evaluates
+the `truncated3`-style algebraic expression at the `n`-th volume of
+the exhaustion, using `correlationAlongExhaustion` instead of the
+limit `correlationInfinite`.  Bridges the finite-volume
+`ghs_inequality` and the infinite-volume `truncated3Infinite_nonpos`
+via `le_of_tendsto`. -/
 private noncomputable def truncated3AlongExhaustion
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
@@ -1949,11 +1954,14 @@ private noncomputable def truncated3AlongExhaustion
       * correlationAlongExhaustion G Λ p {j} n
       * correlationAlongExhaustion G Λ p {k} n
 
-/-- **Tendsto for the truncated 3-point sequence**: the `truncated3`
-along an exhaustion converges to `truncated3Infinite`.
+/-- **Tendsto for the truncated 3-point sequence**: the pointwise
+`truncated3AlongExhaustion` converges to `truncated3Infinite`.
 
-Proof: apply `Tendsto.sub`, `Tendsto.add`, `Tendsto.mul` to the
-five `correlationInfinite` convergences from
+Key technical step establishing that the thermodynamic limit of
+the finite-volume truncated 3-point correlation exists and equals
+the infinite-volume definition.  Proof: apply `Tendsto.sub`,
+`Tendsto.add`, and `Tendsto.mul` to the seven `correlationInfinite`
+convergences from
 `tendsto_correlationAlongExhaustion_correlationInfinite`. -/
 private theorem tendsto_truncated3AlongExhaustion_truncated3Infinite
     (G : SimpleGraph V) (Λ : Exhaustion V)
@@ -2159,6 +2167,211 @@ theorem truncated3Infinite_indep_exhaustion
       correlationInfinite_indep_exhaustion G Λ Λ' p hf {k},
       correlationInfinite_indep_exhaustion G Λ Λ' p hf {i, j},
       correlationInfinite_indep_exhaustion G Λ Λ' p hf {i, k},
+      correlationInfinite_indep_exhaustion G Λ Λ' p hf {j, k}]
+
+/-! ## Truncated 4-point correlation + `U_4 ≤ 0` at `h = 0`
+
+Lift `IsingModel.cor_4_3_3` (finite-volume `U_4 ≤ 0` at $h = 0$) to
+the thermodynamic limit. For ferromagnetic Ising at $h = 0$ and
+four pairwise-distinct sites:
+$U_4(i, j, k, l) := \langle \sigma^{\{i,j,k,l\}} \rangle_\infty
+  - \sum_\text{pairings} \langle \sigma^{\{·,·\}} \rangle_\infty
+    \langle \sigma^{\{·,·\}} \rangle_\infty \le 0$.
+
+Reference: Glimm–Jaffe §4.3 Corollary 4.3.3, pp. 68ff;
+Friedli–Velenik §3.6.4. -/
+
+/-- **Truncated 4-point correlation at infinite volume**:
+the thermodynamic-limit analog of `IsingModel.truncated4`. -/
+noncomputable def truncated4Infinite
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (i j k l : V) : ℝ :=
+  correlationInfinite G Λ p {i, j, k, l}
+    - correlationInfinite G Λ p {i, j} * correlationInfinite G Λ p {k, l}
+    - correlationInfinite G Λ p {i, k} * correlationInfinite G Λ p {j, l}
+    - correlationInfinite G Λ p {i, l} * correlationInfinite G Λ p {j, k}
+
+/-- **Truncated 4-point along an exhaustion** (local helper): evaluates
+the `truncated4`-style algebraic expression at the `n`-th volume of
+the exhaustion, using `correlationAlongExhaustion` instead of the
+limit `correlationInfinite`.  This is the pointwise sequence whose
+limit as `n → ∞` is `truncated4Infinite`; established separately so
+that the `le_of_tendsto`-based `_nonpos_h_zero` proof can apply the
+finite-volume `cor_4_3_3` to each term of the sequence. -/
+private noncomputable def truncated4AlongExhaustion
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (i j k l : V) (n : ℕ) : ℝ :=
+  correlationAlongExhaustion G Λ p {i, j, k, l} n
+    - correlationAlongExhaustion G Λ p {i, j} n
+      * correlationAlongExhaustion G Λ p {k, l} n
+    - correlationAlongExhaustion G Λ p {i, k} n
+      * correlationAlongExhaustion G Λ p {j, l} n
+    - correlationAlongExhaustion G Λ p {i, l} n
+      * correlationAlongExhaustion G Λ p {j, k} n
+
+/-- **Tendsto for the truncated 4-point sequence**: the pointwise
+`truncated4AlongExhaustion` converges to `truncated4Infinite`.
+
+This is the key technical step establishing that the thermodynamic
+limit of the finite-volume truncated 4-point correlation exists and
+equals the infinite-volume definition.  Proof: apply `Tendsto.sub`
+and `Tendsto.mul` to the 7 `correlationInfinite` convergences from
+`tendsto_correlationAlongExhaustion_correlationInfinite`. -/
+private theorem tendsto_truncated4AlongExhaustion_truncated4Infinite
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i j k l : V) :
+    Filter.Tendsto
+      (truncated4AlongExhaustion G Λ p i j k l)
+      Filter.atTop
+      (nhds (truncated4Infinite G Λ p i j k l)) := by
+  unfold truncated4AlongExhaustion truncated4Infinite
+  have h_ijkl := tendsto_correlationAlongExhaustion_correlationInfinite
+    G Λ p hf {i,j,k,l}
+  have h_ij := tendsto_correlationAlongExhaustion_correlationInfinite
+    G Λ p hf {i,j}
+  have h_kl := tendsto_correlationAlongExhaustion_correlationInfinite
+    G Λ p hf {k,l}
+  have h_ik := tendsto_correlationAlongExhaustion_correlationInfinite
+    G Λ p hf {i,k}
+  have h_jl := tendsto_correlationAlongExhaustion_correlationInfinite
+    G Λ p hf {j,l}
+  have h_il := tendsto_correlationAlongExhaustion_correlationInfinite
+    G Λ p hf {i,l}
+  have h_jk := tendsto_correlationAlongExhaustion_correlationInfinite
+    G Λ p hf {j,k}
+  exact ((h_ijkl.sub (h_ij.mul h_kl)).sub (h_ik.mul h_jl)).sub
+    (h_il.mul h_jk)
+
+/-- **`U_4 ≤ 0` at `h = 0`** at infinite volume: for a ferromagnetic
+Ising model at vanishing external field and four pairwise-distinct
+sites, $U_4 \le 0$.
+
+Proof: at each `n` with `{i, j, k, l} ⊆ Λ.volume n`, the
+finite-volume `cor_4_3_3` gives `truncated4AlongExhaustion n ≤ 0`
+after identifying `liftFinset` patterns with the required subtype
+Finsets.  Pass to the limit using
+`tendsto_truncated4AlongExhaustion_truncated4Infinite` and
+`le_of_tendsto`. -/
+theorem truncated4Infinite_nonpos_h_zero
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (hf : Ferromagnetic ⟨J, (0 : ℝ), β⟩)
+    {i j k l : V}
+    (hij : i ≠ j) (hik : i ≠ k) (hil : i ≠ l)
+    (hjk : j ≠ k) (hjl : j ≠ l) (hkl : k ≠ l) :
+    truncated4Infinite G Λ ⟨J, 0, β⟩ i j k l ≤ 0 := by
+  refine le_of_tendsto
+    (tendsto_truncated4AlongExhaustion_truncated4Infinite G Λ _ hf i j k l) ?_
+  obtain ⟨N, hN⟩ := Λ.exhaust ({i, j, k, l} : Finset V)
+  rw [Filter.eventually_atTop]
+  refine ⟨N, fun n hn => ?_⟩
+  have habcd : ({i, j, k, l} : Finset V) ⊆ Λ.volume n := hN n hn
+  -- Site memberships
+  have mem_i : i ∈ Λ.volume n := habcd (by simp)
+  have mem_j : j ∈ Λ.volume n := habcd (by simp)
+  have mem_k : k ∈ Λ.volume n := habcd (by simp)
+  have mem_l : l ∈ Λ.volume n := habcd (by simp)
+  -- Pair subsets via a reusable helper
+  have pair_sub : ∀ {a b : V}, a ∈ Λ.volume n → b ∈ Λ.volume n →
+      ({a, b} : Finset V) ⊆ Λ.volume n := by
+    intro a b ha hb x hx
+    simp only [Finset.mem_insert, Finset.mem_singleton] at hx
+    rcases hx with rfl | rfl <;> assumption
+  have hab : ({i, j} : Finset V) ⊆ Λ.volume n := pair_sub mem_i mem_j
+  have hcd : ({k, l} : Finset V) ⊆ Λ.volume n := pair_sub mem_k mem_l
+  have hac : ({i, k} : Finset V) ⊆ Λ.volume n := pair_sub mem_i mem_k
+  have hbd : ({j, l} : Finset V) ⊆ Λ.volume n := pair_sub mem_j mem_l
+  have had : ({i, l} : Finset V) ⊆ Λ.volume n := pair_sub mem_i mem_l
+  have hbc : ({j, k} : Finset V) ⊆ Λ.volume n := pair_sub mem_j mem_k
+  change truncated4AlongExhaustion G Λ ⟨J, 0, β⟩ i j k l n ≤ 0
+  unfold truncated4AlongExhaustion
+  rw [correlationAlongExhaustion_of_subset G Λ ⟨J, 0, β⟩ habcd,
+      correlationAlongExhaustion_of_subset G Λ ⟨J, 0, β⟩ hab,
+      correlationAlongExhaustion_of_subset G Λ ⟨J, 0, β⟩ hcd,
+      correlationAlongExhaustion_of_subset G Λ ⟨J, 0, β⟩ hac,
+      correlationAlongExhaustion_of_subset G Λ ⟨J, 0, β⟩ hbd,
+      correlationAlongExhaustion_of_subset G Λ ⟨J, 0, β⟩ had,
+      correlationAlongExhaustion_of_subset G Λ ⟨J, 0, β⟩ hbc]
+  -- Apply finite-volume cor_4_3_3
+  have hfin := IsingModel.cor_4_3_3 (inducedGraph G (Λ.volume n)) J β hf
+    ⟨i, mem_i⟩ ⟨j, mem_j⟩ ⟨k, mem_k⟩ ⟨l, mem_l⟩
+    (by intro h; apply hij; exact Subtype.mk.inj h)
+    (by intro h; apply hik; exact Subtype.mk.inj h)
+    (by intro h; apply hil; exact Subtype.mk.inj h)
+    (by intro h; apply hjk; exact Subtype.mk.inj h)
+    (by intro h; apply hjl; exact Subtype.mk.inj h)
+    (by intro h; apply hkl; exact Subtype.mk.inj h)
+  unfold IsingModel.truncated4 at hfin
+  -- Identify liftFinset patterns
+  have hlift_ijkl : liftFinset ({i, j, k, l} : Finset V) habcd
+      = ({⟨i, mem_i⟩, ⟨j, mem_j⟩, ⟨k, mem_k⟩, ⟨l, mem_l⟩} :
+          Finset (↑(Λ.volume n) : Type _)) := by
+    ext x
+    simp only [mem_liftFinset, Finset.mem_insert, Finset.mem_singleton]
+    refine ⟨?_, ?_⟩
+    · intro hx; rcases hx with rfl | rfl | rfl | rfl
+      · exact Or.inl rfl
+      · exact Or.inr (Or.inl rfl)
+      · exact Or.inr (Or.inr (Or.inl rfl))
+      · exact Or.inr (Or.inr (Or.inr rfl))
+    · rintro (rfl | rfl | rfl | rfl) <;> simp
+  have hlift_ij : liftFinset ({i, j} : Finset V) hab
+      = ({⟨i, mem_i⟩, ⟨j, mem_j⟩} : Finset (↑(Λ.volume n) : Type _)) := by
+    ext x; simp only [mem_liftFinset, Finset.mem_insert, Finset.mem_singleton]
+    refine ⟨?_, ?_⟩
+    · intro hx; rcases hx with rfl | rfl; exacts [Or.inl rfl, Or.inr rfl]
+    · rintro (rfl | rfl) <;> simp
+  have hlift_kl : liftFinset ({k, l} : Finset V) hcd
+      = ({⟨k, mem_k⟩, ⟨l, mem_l⟩} : Finset (↑(Λ.volume n) : Type _)) := by
+    ext x; simp only [mem_liftFinset, Finset.mem_insert, Finset.mem_singleton]
+    refine ⟨?_, ?_⟩
+    · intro hx; rcases hx with rfl | rfl; exacts [Or.inl rfl, Or.inr rfl]
+    · rintro (rfl | rfl) <;> simp
+  have hlift_ik : liftFinset ({i, k} : Finset V) hac
+      = ({⟨i, mem_i⟩, ⟨k, mem_k⟩} : Finset (↑(Λ.volume n) : Type _)) := by
+    ext x; simp only [mem_liftFinset, Finset.mem_insert, Finset.mem_singleton]
+    refine ⟨?_, ?_⟩
+    · intro hx; rcases hx with rfl | rfl; exacts [Or.inl rfl, Or.inr rfl]
+    · rintro (rfl | rfl) <;> simp
+  have hlift_jl : liftFinset ({j, l} : Finset V) hbd
+      = ({⟨j, mem_j⟩, ⟨l, mem_l⟩} : Finset (↑(Λ.volume n) : Type _)) := by
+    ext x; simp only [mem_liftFinset, Finset.mem_insert, Finset.mem_singleton]
+    refine ⟨?_, ?_⟩
+    · intro hx; rcases hx with rfl | rfl; exacts [Or.inl rfl, Or.inr rfl]
+    · rintro (rfl | rfl) <;> simp
+  have hlift_il : liftFinset ({i, l} : Finset V) had
+      = ({⟨i, mem_i⟩, ⟨l, mem_l⟩} : Finset (↑(Λ.volume n) : Type _)) := by
+    ext x; simp only [mem_liftFinset, Finset.mem_insert, Finset.mem_singleton]
+    refine ⟨?_, ?_⟩
+    · intro hx; rcases hx with rfl | rfl; exacts [Or.inl rfl, Or.inr rfl]
+    · rintro (rfl | rfl) <;> simp
+  have hlift_jk : liftFinset ({j, k} : Finset V) hbc
+      = ({⟨j, mem_j⟩, ⟨k, mem_k⟩} : Finset (↑(Λ.volume n) : Type _)) := by
+    ext x; simp only [mem_liftFinset, Finset.mem_insert, Finset.mem_singleton]
+    refine ⟨?_, ?_⟩
+    · intro hx; rcases hx with rfl | rfl; exacts [Or.inl rfl, Or.inr rfl]
+    · rintro (rfl | rfl) <;> simp
+  simp only [correlationΛ, hlift_ijkl, hlift_ij, hlift_kl, hlift_ik,
+    hlift_jl, hlift_il, hlift_jk]
+  linarith [hfin]
+
+/-- **Exhaustion-independence of `truncated4Infinite`**. -/
+theorem truncated4Infinite_indep_exhaustion
+    (G : SimpleGraph V) (Λ Λ' : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    [∀ n, Fintype (inducedGraph G (Λ'.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i j k l : V) :
+    truncated4Infinite G Λ p i j k l = truncated4Infinite G Λ' p i j k l := by
+  unfold truncated4Infinite
+  rw [correlationInfinite_indep_exhaustion G Λ Λ' p hf {i, j, k, l},
+      correlationInfinite_indep_exhaustion G Λ Λ' p hf {i, j},
+      correlationInfinite_indep_exhaustion G Λ Λ' p hf {k, l},
+      correlationInfinite_indep_exhaustion G Λ Λ' p hf {i, k},
+      correlationInfinite_indep_exhaustion G Λ Λ' p hf {j, l},
+      correlationInfinite_indep_exhaustion G Λ Λ' p hf {i, l},
       correlationInfinite_indep_exhaustion G Λ Λ' p hf {j, k}]
 
 end Ambient
