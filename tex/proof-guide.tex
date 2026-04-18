@@ -2422,4 +2422,35 @@ LHS $= 0 \le$ RHS (\texttt{correlationAlongExhaustion\_nonneg})
 で点毎不等式が成立. \texttt{le\_of\_tendsto\_of\_tendsto'} で結論.
 \end{proof}
 
+\subsection{h-direction monotonicity at infinite volume}
+
+Glimm--Jaffe Proposition 4.2.4 の無限体積版.
+
+\begin{lemma}[\texttt{correlationΛ\_monotone\_h}]
+$J \ge 0$, $\beta > 0$, $\Lambda \subseteq V$ finite で
+$\texttt{MonotoneOn}\,(h \mapsto \texttt{correlationΛ}\,G\,\Lambda\,\langle J,h,\beta\rangle\,A)\,(\mathrm{Ici}\,0)$.
+\end{lemma}
+
+\begin{proof}
+\texttt{correlation\_monotone\_h} を \texttt{inducedGraph}\,$G\,\Lambda$ に直接適用.
+\end{proof}
+
+\begin{lemma}[\texttt{correlationAlongExhaustion\_monotone\_h}]
+$0 \le h_1 \le h_2$ ならば任意の $n$ で
+$\texttt{correlationAlongExhaustion}\,G\,\Lambda\,\langle J,h_1,\beta\rangle\,A\,n
+  \le \texttt{correlationAlongExhaustion}\,G\,\Lambda\,\langle J,h_2,\beta\rangle\,A\,n$.
+\end{lemma}
+
+\begin{proof}
+$A \subseteq \Lambda.\text{volume}\,n$ で上 Lemma を適用; それ以外は両辺 $0$.
+\end{proof}
+
+\begin{theorem}[\texttt{correlationInfinite\_monotone\_h}]
+$\texttt{MonotoneOn}\,(h \mapsto \texttt{correlationInfinite}\,G\,\Lambda\,\langle J,h,\beta\rangle\,A)\,(\mathrm{Ici}\,0)$.
+\end{theorem}
+
+\begin{proof}
+点毎 $\le$ と \texttt{ciSup\_le}, \texttt{le\_ciSup}.
+\end{proof}
+
 \end{document}
