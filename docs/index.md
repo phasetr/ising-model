@@ -93,6 +93,7 @@ Named specializations at `A = {i}`:
 | `partitionFunction_sum` (§4.6 super-add. Step 4) | `Z_{G ⊕g H}(p) = Z_G(p) · Z_H(p)` | `SumModel.lean` | Ising on sum graph |
 | `log_partitionFunction_sum` | `log Z_{G ⊕g H}(p) = log Z_G(p) + log Z_H(p)` | `SumModel.lean` | Ising on sum graph |
 | `partitionFunction_mul_le_of_sum_le` / `log_partitionFunction_add_le_of_sum_le` (§4.6 super-add. Step 5 prep) | `G ⊕g H ≤ G' ⇒ Z_G · Z_H ≤ Z_{G'}` (ferromagnetic), log form | `SumModel.lean` | Ising on sum graph |
+| `partitionFunction_map_equiv` / `log_partitionFunction_map_equiv` | `e : V ≃ W ⇒ Z_{G.map e} = Z_G` (iso invariance) | `PartitionFunctionIso.lean` | Step 5 infra |
 
 **Not yet formalized**: the infinite-volume analyticity of `f(h)` via
 Vitali convergence (GJ Thm 4.6.2 full statement).

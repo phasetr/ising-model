@@ -1,6 +1,7 @@
 import IsingModel.Basic
 import IsingModel.Hamiltonian
 import IsingModel.GibbsMeasure
+import IsingModel.PartitionFunctionIso
 import IsingModel.SumGraph
 import IsingModel.SumModel
 import IsingModel.Inequalities.NonnegCorrelations

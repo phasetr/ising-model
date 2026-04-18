@@ -1,6 +1,7 @@
 import IsingModel.FreeEnergy
 import IsingModel.GibbsMeasure
 import IsingModel.Hamiltonian
+import IsingModel.PartitionFunctionIso
 import IsingModel.SumGraph
 import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
@@ -83,25 +84,25 @@ theorem Config.sumEquiv_symm (σ₁ : Config ι) (σ₂ : Config ι') :
 
 /-- Per-edge spin pullback through `Sum.inl`: the edge product on a
 `Sum.inl`-image edge in the sum graph equals the edge product on the
-corresponding edge of the first component. -/
+corresponding edge of the first component. Specialization of the
+general iso transport `edgeSpin_map_equiv_sym2Map`. -/
 theorem edgeSpin_sumInl_sym2Map (σ₁ : Config ι) (σ₂ : Config ι')
-    (e : Sym2 ι) :
+    (s : Sym2 ι) :
     edgeSpin (K := K) (Sum.elim σ₁ σ₂)
-        ((Function.Embedding.inl : ι ↪ ι ⊕ ι').sym2Map e)
-      = edgeSpin σ₁ e := by
-  refine e.ind (fun i j => ?_)
-  simp [edgeSpin, Function.Embedding.sym2Map_apply, Sym2.map_mk,
-        Function.Embedding.inl_apply]
+        ((Function.Embedding.inl : ι ↪ ι ⊕ ι').sym2Map s)
+      = edgeSpin σ₁ s := by
+  rw [edgeSpin_map_equiv_sym2Map]
+  rfl
 
-/-- Per-edge spin pullback through `Sum.inr`. -/
+/-- Per-edge spin pullback through `Sum.inr`. Specialization of
+`edgeSpin_map_equiv_sym2Map`. -/
 theorem edgeSpin_sumInr_sym2Map (σ₁ : Config ι) (σ₂ : Config ι')
-    (e : Sym2 ι') :
+    (s : Sym2 ι') :
     edgeSpin (K := K) (Sum.elim σ₁ σ₂)
-        ((Function.Embedding.inr : ι' ↪ ι ⊕ ι').sym2Map e)
-      = edgeSpin σ₂ e := by
-  refine e.ind (fun i j => ?_)
-  simp [edgeSpin, Function.Embedding.sym2Map_apply, Sym2.map_mk,
-        Function.Embedding.inr_apply]
+        ((Function.Embedding.inr : ι' ↪ ι ⊕ ι').sym2Map s)
+      = edgeSpin σ₂ s := by
+  rw [edgeSpin_map_equiv_sym2Map]
+  rfl
 
 /-- Additivity of the external field energy on disjoint-sum
 configurations: the energy of a `Sum.elim` splits additively by
