@@ -198,6 +198,8 @@ ambient framework:
 | `partitionFunctionAlongExhaustion_apply` | Definitional unfolding (simp) |
 | `partitionFunctionAlongExhaustion_pos` | `0 < partitionFunctionAlongExhaustion` for every `n` |
 | `freeEnergyAlongExhaustion_monotone_ambient_subgraph` | `G₁ ≤ G₂` ⇒ pointwise `freeEnergyAlongExhaustion G₁ Λ p n ≤ freeEnergyAlongExhaustion G₂ Λ p n` |
+| `partitionFunctionAlongExhaustion_monotone_ambient_subgraph` | Partition-function analog of above |
+| `freeEnergyAlongExhaustion_eq_log_div_card` | Log-bridge: `freeEnergyAlongExhaustion = log(partitionFunctionAlongExhaustion) / |Λ.volume n|` |
 | `correlationAlongExhaustion_nonneg` | `0 ≤ correlationAlongExhaustion G Λ p A n` (ferromagnetic) |
 | `correlationΛ_gks_second` | **GKS-II at finite volume**, lifted form: `correlationΛ (lift A) · correlationΛ (lift B) ≤ correlationΛ (lift (A ∆ B))` |
 | **`correlationInfinite_gks_second`** | **GKS-II at infinite volume** (Glimm–Jaffe §4.2 Thm 4.2.3): `correlationInfinite A · correlationInfinite B ≤ correlationInfinite (A ∆ B)` |
