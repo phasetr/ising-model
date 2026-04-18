@@ -1904,5 +1904,262 @@ theorem truncated2Infinite_indep_exhaustion
       correlationInfinite_indep_exhaustion G Λ Λ' p hf {i},
       correlationInfinite_indep_exhaustion G Λ Λ' p hf {j}]
 
+/-! ## Truncated 3-point correlation + GHS at infinite volume
+
+Lift the finite-volume GHS inequality (`ghs_inequality`,
+`Inequalities/GHS.lean`) to the thermodynamic limit.
+For ferromagnetic Ising and pairwise distinct sites,
+$U_3(i, j, k) \le 0$ at infinite volume.
+
+Reference: Glimm–Jaffe §4.3 Corollary 4.3.4, pp. 68ff;
+Friedli–Velenik §3.6.4. -/
+
+/-- **Truncated 3-point correlation at infinite volume**:
+the thermodynamic-limit analog of `IsingModel.truncated3`:
+$U_3 := \langle \sigma^{\{i,j,k\}} \rangle_\infty
+  - \langle \sigma^{\{i\}} \rangle_\infty \langle \sigma^{\{j,k\}} \rangle_\infty
+  - \langle \sigma^{\{j\}} \rangle_\infty \langle \sigma^{\{i,k\}} \rangle_\infty
+  - \langle \sigma^{\{k\}} \rangle_\infty \langle \sigma^{\{i,j\}} \rangle_\infty
+  + 2 \langle \sigma^{\{i\}} \rangle_\infty \langle \sigma^{\{j\}} \rangle_\infty
+    \langle \sigma^{\{k\}} \rangle_\infty$. -/
+noncomputable def truncated3Infinite
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (i j k : V) : ℝ :=
+  correlationInfinite G Λ p {i, j, k}
+    - correlationInfinite G Λ p {i} * correlationInfinite G Λ p {j, k}
+    - correlationInfinite G Λ p {j} * correlationInfinite G Λ p {i, k}
+    - correlationInfinite G Λ p {k} * correlationInfinite G Λ p {i, j}
+    + 2 * correlationInfinite G Λ p {i} * correlationInfinite G Λ p {j}
+      * correlationInfinite G Λ p {k}
+
+/-- Finite-volume truncated 3-point along an exhaustion (local abbreviation). -/
+private noncomputable def truncated3AlongExhaustion
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (i j k : V) (n : ℕ) : ℝ :=
+  correlationAlongExhaustion G Λ p {i, j, k} n
+    - correlationAlongExhaustion G Λ p {i} n
+      * correlationAlongExhaustion G Λ p {j, k} n
+    - correlationAlongExhaustion G Λ p {j} n
+      * correlationAlongExhaustion G Λ p {i, k} n
+    - correlationAlongExhaustion G Λ p {k} n
+      * correlationAlongExhaustion G Λ p {i, j} n
+    + 2 * correlationAlongExhaustion G Λ p {i} n
+      * correlationAlongExhaustion G Λ p {j} n
+      * correlationAlongExhaustion G Λ p {k} n
+
+/-- **Tendsto for the truncated 3-point sequence**: the `truncated3`
+along an exhaustion converges to `truncated3Infinite`.
+
+Proof: apply `Tendsto.sub`, `Tendsto.add`, `Tendsto.mul` to the
+five `correlationInfinite` convergences from
+`tendsto_correlationAlongExhaustion_correlationInfinite`. -/
+private theorem tendsto_truncated3AlongExhaustion_truncated3Infinite
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i j k : V) :
+    Filter.Tendsto
+      (truncated3AlongExhaustion G Λ p i j k)
+      Filter.atTop
+      (nhds (truncated3Infinite G Λ p i j k)) := by
+  unfold truncated3AlongExhaustion truncated3Infinite
+  have h_ijk := tendsto_correlationAlongExhaustion_correlationInfinite G Λ p hf {i,j,k}
+  have h_jk := tendsto_correlationAlongExhaustion_correlationInfinite G Λ p hf {j,k}
+  have h_ik := tendsto_correlationAlongExhaustion_correlationInfinite G Λ p hf {i,k}
+  have h_ij := tendsto_correlationAlongExhaustion_correlationInfinite G Λ p hf {i,j}
+  have h_i := tendsto_correlationAlongExhaustion_correlationInfinite G Λ p hf {i}
+  have h_j := tendsto_correlationAlongExhaustion_correlationInfinite G Λ p hf {j}
+  have h_k := tendsto_correlationAlongExhaustion_correlationInfinite G Λ p hf {k}
+  exact ((((h_ijk.sub (h_i.mul h_jk)).sub (h_j.mul h_ik)).sub
+    (h_k.mul h_ij)).add
+    (((tendsto_const_nhds (x := (2 : ℝ))).mul h_i).mul h_j |>.mul h_k))
+
+/-- **GHS at infinite volume**: for a ferromagnetic Ising model and
+pairwise distinct sites `i, j, k`, $U_3(i, j, k) \le 0$.
+
+Proof: at each `n` with `{i, j, k} ⊆ Λ.volume n`, the finite-volume
+`ghs_inequality` gives `truncated3AlongExhaustion n ≤ 0` after
+identifying the along-exhaustion sequence with the lifted
+finite-volume `truncated3`.  Pass to the limit using
+`tendsto_truncated3AlongExhaustion_truncated3Infinite` and
+`le_of_tendsto`. -/
+theorem truncated3Infinite_nonpos
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    {i j k : V} (hij : i ≠ j) (hjk : j ≠ k) (hik : i ≠ k) :
+    truncated3Infinite G Λ p i j k ≤ 0 := by
+  refine le_of_tendsto
+    (tendsto_truncated3AlongExhaustion_truncated3Infinite G Λ p hf i j k) ?_
+  -- Eventually at atTop: truncated3AlongExhaustion n ≤ 0
+  obtain ⟨N, hN⟩ := Λ.exhaust ({i, j, k} : Finset V)
+  rw [Filter.eventually_atTop]
+  refine ⟨N, fun n hn => ?_⟩
+  have habc : ({i, j, k} : Finset V) ⊆ Λ.volume n := hN n hn
+  have ha : ({i} : Finset V) ⊆ Λ.volume n := fun x hx => by
+    simp only [Finset.mem_singleton] at hx; subst hx
+    exact habc (by simp)
+  have hb : ({j} : Finset V) ⊆ Λ.volume n := fun x hx => by
+    simp only [Finset.mem_singleton] at hx; subst hx
+    exact habc (by simp)
+  have hc : ({k} : Finset V) ⊆ Λ.volume n := fun x hx => by
+    simp only [Finset.mem_singleton] at hx; subst hx
+    exact habc (by simp)
+  have hab : ({i, j} : Finset V) ⊆ Λ.volume n := by
+    intro x hx
+    simp only [Finset.mem_insert, Finset.mem_singleton] at hx
+    rcases hx with rfl | rfl
+    · exact habc (by simp)
+    · exact habc (by simp)
+  have hac : ({i, k} : Finset V) ⊆ Λ.volume n := by
+    intro x hx
+    simp only [Finset.mem_insert, Finset.mem_singleton] at hx
+    rcases hx with rfl | rfl
+    · exact habc (by simp)
+    · exact habc (by simp)
+  have hbc : ({j, k} : Finset V) ⊆ Λ.volume n := by
+    intro x hx
+    simp only [Finset.mem_insert, Finset.mem_singleton] at hx
+    rcases hx with rfl | rfl
+    · exact habc (by simp)
+    · exact habc (by simp)
+  -- Rewrite truncated3AlongExhaustion using correlationAlongExhaustion_of_subset
+  change truncated3AlongExhaustion G Λ p i j k n ≤ 0
+  unfold truncated3AlongExhaustion
+  rw [correlationAlongExhaustion_of_subset G Λ p habc,
+      correlationAlongExhaustion_of_subset G Λ p ha,
+      correlationAlongExhaustion_of_subset G Λ p hb,
+      correlationAlongExhaustion_of_subset G Λ p hc,
+      correlationAlongExhaustion_of_subset G Λ p hab,
+      correlationAlongExhaustion_of_subset G Λ p hac,
+      correlationAlongExhaustion_of_subset G Λ p hbc]
+  -- Convert to finite-volume ghs_inequality on inducedGraph
+  -- Build the lifted indices via subtype coercion
+  have := IsingModel.ghs_inequality (inducedGraph G (Λ.volume n)) p hf
+    ⟨i, ha (by simp)⟩ ⟨j, hb (by simp)⟩ ⟨k, hc (by simp)⟩
+    (by intro h; apply hij; exact Subtype.mk.inj h)
+    (by intro h; apply hjk; exact Subtype.mk.inj h)
+    (by intro h; apply hik; exact Subtype.mk.inj h)
+  unfold IsingModel.truncated3 at this
+  -- Show liftFinset {...} equals { ⟨·, ...⟩, ... }
+  -- Instead, rewrite the goal to match ghs_inequality
+  -- The finite-volume ghs_inequality uses {i', j', k'} : Finset ↑(Λ.volume n)
+  -- where i' = ⟨i, _⟩ etc. This coincides with liftFinset {i,j,k} etc.
+  have hlift_ijk : liftFinset ({i, j, k} : Finset V) habc
+      = ({⟨i, ha (by simp)⟩, ⟨j, hb (by simp)⟩, ⟨k, hc (by simp)⟩} :
+        Finset (↑(Λ.volume n) : Type _)) := by
+    ext x
+    simp only [mem_liftFinset, Finset.mem_insert, Finset.mem_singleton]
+    refine ⟨?_, ?_⟩
+    · intro hx
+      rcases hx with rfl | rfl | rfl
+      · exact Or.inl (by rfl)
+      · exact Or.inr (Or.inl (by rfl))
+      · exact Or.inr (Or.inr (by rfl))
+    · rintro (rfl | rfl | rfl) <;> simp
+  have hlift_i : liftFinset ({i} : Finset V) ha
+      = ({⟨i, ha (by simp)⟩} : Finset (↑(Λ.volume n) : Type _)) := by
+    ext x
+    simp only [mem_liftFinset, Finset.mem_singleton]
+    refine ⟨?_, ?_⟩
+    · intro hx; subst hx; rfl
+    · rintro rfl; rfl
+  have hlift_j : liftFinset ({j} : Finset V) hb
+      = ({⟨j, hb (by simp)⟩} : Finset (↑(Λ.volume n) : Type _)) := by
+    ext x
+    simp only [mem_liftFinset, Finset.mem_singleton]
+    refine ⟨?_, ?_⟩
+    · intro hx; subst hx; rfl
+    · rintro rfl; rfl
+  have hlift_k : liftFinset ({k} : Finset V) hc
+      = ({⟨k, hc (by simp)⟩} : Finset (↑(Λ.volume n) : Type _)) := by
+    ext x
+    simp only [mem_liftFinset, Finset.mem_singleton]
+    refine ⟨?_, ?_⟩
+    · intro hx; subst hx; rfl
+    · rintro rfl; rfl
+  have hlift_ij : liftFinset ({i, j} : Finset V) hab
+      = ({⟨i, ha (by simp)⟩, ⟨j, hb (by simp)⟩} :
+        Finset (↑(Λ.volume n) : Type _)) := by
+    ext x
+    simp only [mem_liftFinset, Finset.mem_insert, Finset.mem_singleton]
+    refine ⟨?_, ?_⟩
+    · intro hx; rcases hx with rfl | rfl
+      · exact Or.inl (by rfl)
+      · exact Or.inr (by rfl)
+    · rintro (rfl | rfl) <;> simp
+  have hlift_ik : liftFinset ({i, k} : Finset V) hac
+      = ({⟨i, ha (by simp)⟩, ⟨k, hc (by simp)⟩} :
+        Finset (↑(Λ.volume n) : Type _)) := by
+    ext x
+    simp only [mem_liftFinset, Finset.mem_insert, Finset.mem_singleton]
+    refine ⟨?_, ?_⟩
+    · intro hx; rcases hx with rfl | rfl
+      · exact Or.inl (by rfl)
+      · exact Or.inr (by rfl)
+    · rintro (rfl | rfl) <;> simp
+  have hlift_jk : liftFinset ({j, k} : Finset V) hbc
+      = ({⟨j, hb (by simp)⟩, ⟨k, hc (by simp)⟩} :
+        Finset (↑(Λ.volume n) : Type _)) := by
+    ext x
+    simp only [mem_liftFinset, Finset.mem_insert, Finset.mem_singleton]
+    refine ⟨?_, ?_⟩
+    · intro hx; rcases hx with rfl | rfl
+      · exact Or.inl (by rfl)
+      · exact Or.inr (by rfl)
+    · rintro (rfl | rfl) <;> simp
+  simp only [correlationΛ, hlift_ijk, hlift_i, hlift_j, hlift_k,
+    hlift_ij, hlift_ik, hlift_jk]
+  linarith [this]
+
+/-- **`truncated3Infinite` at `h = 0`**: for pairwise distinct sites,
+$U_3 = 0$ at vanishing external field.
+
+All singletons $\{i\}, \{j\}, \{k\}$ have odd cardinality, so their
+`correlationInfinite` at $h = 0$ vanishes (`correlationInfinite_h_zero`),
+making the three product terms and the triple product vanish.  With
+distinct sites, $\{i, j, k\}$ also has odd cardinality (= 3), so the
+first term vanishes too.  All five terms are zero. -/
+theorem truncated3Infinite_h_zero_of_distinct
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) {i j k : V} (hij : i ≠ j) (hjk : j ≠ k) (hik : i ≠ k) :
+    truncated3Infinite G Λ ⟨J, 0, β⟩ i j k = 0 := by
+  unfold truncated3Infinite
+  have h_ijk : Odd ({i, j, k} : Finset V).card := by
+    rw [show ({i, j, k} : Finset V).card = 3 from ?_]
+    · exact ⟨1, by norm_num⟩
+    · rw [Finset.card_insert_of_notMem (by
+        simp [Finset.mem_insert, Finset.mem_singleton, hij, hik])]
+      rw [Finset.card_insert_of_notMem (by
+        simp [Finset.mem_singleton, hjk])]
+      simp
+  have h_i : Odd ({i} : Finset V).card := by simp
+  have h_j : Odd ({j} : Finset V).card := by simp
+  have h_k : Odd ({k} : Finset V).card := by simp
+  rw [correlationInfinite_h_zero G Λ J β _ h_ijk,
+      correlationInfinite_h_zero G Λ J β _ h_i,
+      correlationInfinite_h_zero G Λ J β _ h_j,
+      correlationInfinite_h_zero G Λ J β _ h_k]
+  ring
+
+/-- **Exhaustion-independence of `truncated3Infinite`**: the value
+does not depend on the choice of exhaustion. -/
+theorem truncated3Infinite_indep_exhaustion
+    (G : SimpleGraph V) (Λ Λ' : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    [∀ n, Fintype (inducedGraph G (Λ'.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i j k : V) :
+    truncated3Infinite G Λ p i j k = truncated3Infinite G Λ' p i j k := by
+  unfold truncated3Infinite
+  rw [correlationInfinite_indep_exhaustion G Λ Λ' p hf {i, j, k},
+      correlationInfinite_indep_exhaustion G Λ Λ' p hf {i},
+      correlationInfinite_indep_exhaustion G Λ Λ' p hf {j},
+      correlationInfinite_indep_exhaustion G Λ Λ' p hf {k},
+      correlationInfinite_indep_exhaustion G Λ Λ' p hf {i, j},
+      correlationInfinite_indep_exhaustion G Λ Λ' p hf {i, k},
+      correlationInfinite_indep_exhaustion G Λ Λ' p hf {j, k}]
+
 end Ambient
 end IsingModel
