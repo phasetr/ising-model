@@ -2966,8 +2966,42 @@ f_n = |\Lambda.\text{volume}\,n|^{-1} \cdot \log Z_n.
 \texttt{IsingModel.freeEnergy} 定義の展開.
 \end{theorem}
 
-本 PR は scaffold. 完全 convergence 証明 (subadditivity + Fekete) は
-deferred.
+\begin{theorem}[\texttt{log\_partitionFunctionAlongExhaustion\_tendsto\_atTop} / \texttt{partitionFunctionAlongExhaustion\_tendsto\_atTop}]
+無限格子 $V$ (型クラス \texttt{[Infinite V]}) 上の任意の exhaustion
+$\Lambda$ と強磁性パラメタ $p = \langle J, h, \beta \rangle$
+($J, h \ge 0$, $\beta > 0$) について, それぞれ
+\[
+  \lim_{n \to \infty} \log Z_{\Lambda_n} \;=\; +\infty
+\]
+と
+\[
+  \lim_{n \to \infty} Z_{\Lambda_n} \;=\; +\infty.
+\]
+\end{theorem}
+
+\begin{proof}
+\texttt{Exhaustion.eventually\_volume\_nonempty} により, 十分大きい
+$n$ で $\Lambda_n \neq \emptyset$ が成り立つ. その範囲では既存 API
+\[
+  \log 2 \le \texttt{freeEnergyΛ}\,G\,\Lambda_n\,p
+  \qquad\text{(\texttt{freeEnergyΛ\_ge\_log\_two})}
+\]
+\[
+  |\Lambda_n| \cdot \texttt{freeEnergyΛ}\,G\,\Lambda_n\,p
+    = \log Z_{\Lambda_n}
+  \qquad\text{(\texttt{card\_mul\_freeEnergyΛ\_eq\_log\_partitionFunctionΛ\_of\_nonempty})}
+\]
+から
+$|\Lambda_n| \cdot \log 2 \le \log Z_{\Lambda_n}$ が従う.
+\texttt{Exhaustion.tendsto\_card\_atTop} (PR \#160) より
+$|\Lambda_n| \to \infty$, $\log 2 > 0$ で LHS $\to \infty$,
+\texttt{Filter.tendsto\_atTop\_mono'} で $\log Z_{\Lambda_n} \to \infty$.
+$Z_{\Lambda_n} \to \infty$ は \texttt{Real.tendsto\_exp\_atTop.comp} +
+\texttt{Real.exp\_log} ($Z_{\Lambda_n} > 0$) で転送.
+\end{proof}
+
+Fekete 版の free energy density 収束 (subadditivity に基づく具体値への
+収束) は translation invariance を要するため別扱い.
 
 \subsubsection{Bounded edge density と一様上界 (PR \#123)}
 
