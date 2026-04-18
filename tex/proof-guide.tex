@@ -1567,6 +1567,20 @@ $\bot$ で $J$ 項が空和になるため. PR \#120 \texttt{freeEnergy\_zero\_p
 ($J = h = 0$) の $J$-arbitrary 拡張.
 \end{theorem}
 
+\begin{theorem}[\texttt{partitionFunction\_beta\_zero}]
+$Z_G(\langle J, h, 0 \rangle) = |\text{Config}\,\iota|$.
+$-\beta = 0$ で Boltzmann weight $= \exp 0 = 1$.
+\end{theorem}
+
+\begin{theorem}[\texttt{freeEnergy\_beta\_zero}]
+$|\iota| > 0$, 任意の $J, h, G$ で
+\[
+  f(G, \langle J, h, 0 \rangle) = \log 2.
+\]
+PR \#120 \texttt{freeEnergy\_zero\_params} の $\beta$-direction 版.
+\texttt{partitionFunction\_beta\_zero} + \texttt{Real.log\_pow} + $|\iota|^{-1}$ cancel.
+\end{theorem}
+
 \begin{theorem}[\texttt{inducedGraph\_bot}; PR \#129]
 $\texttt{inducedGraph}\,(\bot : \texttt{SimpleGraph}\,V)\,\Lambda
   = (\bot : \texttt{SimpleGraph}\,\uparrow\Lambda)$.
