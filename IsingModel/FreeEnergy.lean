@@ -737,6 +737,19 @@ theorem freeEnergy_monotone_abs_h
     (Set.mem_Ici.mpr (abs_nonneg h₂)) hh
   exact this
 
+/-- **Free energy on the empty graph at zero field**: for nonempty `ι`
+and any `J, β : ℝ`,
+`freeEnergy (⊥ : SimpleGraph ι) ⟨J, 0, β⟩ = log 2`.
+
+Corollary of `freeEnergy_bot` at `h = 0` (`cosh 0 = 1`, `log(2·1) = log 2`).
+Consistent with `freeEnergy_zero_params` (`J = h = 0`) and shows that on
+the J-less graph the coupling `J` is dormant. -/
+theorem freeEnergy_bot_h_zero (J β : ℝ) (hne : 0 < Fintype.card ι) :
+    freeEnergy (⊥ : SimpleGraph ι) (⟨J, 0, β⟩ : IsingParams ℝ)
+      = Real.log 2 := by
+  rw [freeEnergy_bot _ hne]
+  simp [Real.cosh_zero]
+
 /-- **Sharp ferromagnetic lower bound**: for any graph `G` with
 `|ι| > 0` and ferromagnetic parameters, `log(2·cosh(β·h)) ≤ freeEnergy G p`.
 

@@ -1557,6 +1557,23 @@ $|\iota| > 0$ で
 $|\iota|$ で割る.
 \end{theorem}
 
+\begin{theorem}[\texttt{freeEnergy\_bot\_h\_zero}]
+$|\iota| > 0$ と任意の $J, \beta \in \mathbb R$ で
+\[
+  f(\bot, \langle J, 0, \beta \rangle) = \log 2.
+\]
+$\cosh 0 = 1$ で \texttt{freeEnergy\_bot} から即座. J 任意なのは
+$\bot$ で $J$ 項が空和になるため. PR \#120 \texttt{freeEnergy\_zero\_params}
+($J = h = 0$) の $J$-arbitrary 拡張.
+\end{theorem}
+
+\begin{theorem}[\texttt{inducedGraph\_bot}; PR \#129]
+$\texttt{inducedGraph}\,(\bot : \texttt{SimpleGraph}\,V)\,\Lambda
+  = (\bot : \texttt{SimpleGraph}\,\uparrow\Lambda)$.
+\texttt{induce = comap} + \texttt{SimpleGraph.comap\_bot}.
+\texttt{@[simp]} 付与.
+\end{theorem}
+
 \begin{theorem}[\texttt{freeEnergy\_ge\_log\_two\_cosh}]
 強磁性系 $J \ge 0, h \ge 0, \beta > 0$, $|\iota| > 0$ で
 \[
