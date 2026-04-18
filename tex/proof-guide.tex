@@ -2453,4 +2453,33 @@ $\texttt{MonotoneOn}\,(h \mapsto \texttt{correlationInfinite}\,G\,\Lambda\,\lang
 点毎 $\le$ と \texttt{ciSup\_le}, \texttt{le\_ciSup}.
 \end{proof}
 
+\subsection{β-direction monotonicity at infinite volume}
+
+Glimm--Jaffe Proposition 4.2.4 の β-方向.
+
+\begin{lemma}[\texttt{correlationΛ\_monotone\_beta}]
+$J \ge 0, h \ge 0$ で
+$\texttt{MonotoneOn}\,(\beta \mapsto \texttt{correlationΛ}\,G\,\Lambda\,\langle J,h,\beta\rangle\,A)\,(\mathrm{Ioi}\,0)$.
+\end{lemma}
+
+\begin{proof}
+\texttt{correlation\_monotone\_beta} を \texttt{inducedGraph}\,$G\,\Lambda$ に適用.
+\end{proof}
+
+\begin{lemma}[\texttt{correlationAlongExhaustion\_monotone\_beta}]
+$0 < \beta_1 \le \beta_2$ で任意の $n$ で pointwise monotone.
+\end{lemma}
+
+\begin{proof}
+case split + correlationΛ\_monotone\_beta; それ以外は両辺 $0$.
+\end{proof}
+
+\begin{theorem}[\texttt{correlationInfinite\_monotone\_beta}]
+$\texttt{MonotoneOn}\,(\beta \mapsto \texttt{correlationInfinite}\,G\,\Lambda\,\langle J,h,\beta\rangle\,A)\,(\mathrm{Ioi}\,0)$.
+\end{theorem}
+
+\begin{proof}
+点毎 $\le$ + \texttt{ciSup\_le}, \texttt{le\_ciSup}.
+\end{proof}
+
 \end{document}
