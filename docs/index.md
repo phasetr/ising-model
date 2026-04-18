@@ -90,6 +90,8 @@ Named specializations at `A = {i}`:
 | `Config.sumEquiv` | `Config (ι ⊕ ι') ≃ Config ι × Config ι'` | `SumModel.lean` | Ising on sum graph |
 | `interactionEnergy_sum` / `externalFieldEnergy_sum` | Per-summand additivity of the Hamiltonian's interaction / field contributions on `G ⊕g H` | `SumModel.lean` | Ising on sum graph |
 | `hamiltonian_sum` (§4.6 super-add. Step 2-3) | `hamiltonian (G ⊕g H) p (Sum.elim σ₁ σ₂) = hamiltonian G p σ₁ + hamiltonian H p σ₂` | `SumModel.lean` | Ising on sum graph |
+| `partitionFunction_sum` (§4.6 super-add. Step 4) | `Z_{G ⊕g H}(p) = Z_G(p) · Z_H(p)` | `SumModel.lean` | Ising on sum graph |
+| `log_partitionFunction_sum` | `log Z_{G ⊕g H}(p) = log Z_G(p) + log Z_H(p)` | `SumModel.lean` | Ising on sum graph |
 
 **Not yet formalized**: the infinite-volume analyticity of `f(h)` via
 Vitali convergence (GJ Thm 4.6.2 full statement).
