@@ -656,4 +656,22 @@ theorem freeEnergy_convergent_subgraph
      fun _ ⟨n, hn⟩ => hn ▸ freeEnergy_monotone_subgraph le_top p hf⟩
   exact ⟨_, tendsto_atTop_ciSup h_mono h_bdd⟩
 
+/-- **Free energy at zero parameters**: for nonempty lattice `ι` with
+`0 < Fintype.card ι`, `freeEnergy G ⟨0, 0, β⟩ = log 2`.
+
+Combines `partitionFunction_zero_params` (Z = |Config ι|) with
+`card_config_eq_two_pow` (|Config ι| = 2^|ι|) and
+`Real.log_pow` (log(2^|ι|) = |ι| · log 2); the `|ι|⁻¹` prefix then
+cancels to give `log 2`. -/
+theorem freeEnergy_zero_params (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (β : ℝ) (hne : 0 < Fintype.card ι) :
+    freeEnergy G (⟨0, 0, β⟩ : IsingParams ℝ) = Real.log 2 := by
+  unfold freeEnergy
+  rw [partitionFunction_zero_params, card_config_eq_two_pow]
+  push_cast
+  rw [Real.log_pow]
+  have hcard : (Fintype.card ι : ℝ) ≠ 0 := by
+    exact_mod_cast hne.ne'
+  field_simp
+
 end IsingModel
