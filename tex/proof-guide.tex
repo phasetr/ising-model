@@ -1709,6 +1709,16 @@ $|\iota| > 0$ で
 (PR \#119) の base layer; 同 $\Lambda$ 版は本 PR で薄い wrapper に refactor.
 \end{theorem}
 
+\begin{theorem}[\texttt{log\_partitionFunction\_ge\_card\_mul\_log\_two\_cosh\_of\_ferromagnetic} 系; PR \#173]
+強磁性 $p$ で
+\[
+  |\iota| \cdot \log(2 \cosh(\beta h)) \;\le\; \log Z_G(p).
+\]
+PR \#165 \texttt{\_ge\_card\_mul\_log\_two} の sharpening. 3 層 lift
+(base / $\Lambda$ / along-exhaustion). 証明: $Z_G \ge Z_\bot = (2 \cosh(\beta h))^{|\iota|}$
+から $\log$ + \texttt{Real.log\_pow}.
+\end{theorem}
+
 \begin{theorem}[\texttt{partitionFunction\_ge\_two\_pow\_card\_of\_ferromagnetic} 系; PR \#165]
 強磁性 $p$ で
 \[
