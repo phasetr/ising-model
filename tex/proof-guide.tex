@@ -3199,11 +3199,45 @@ Immediate from the proposition and
 \texttt{partitionFunction\_pos} / \texttt{Real.log\_mul}.
 \end{corollary}
 
-\paragraph{Next step.} Step~5 combines the log-additivity above with
-the uniform upper bound (PR \#122, \#123) and Fekete's lemma to
-produce convergence of
+\paragraph{Step 5 preparation: super-additivity inequality.}
+
+\begin{proposition}[\texttt{IsingModel.partitionFunction\_mul\_le\_of\_sum\_le}]
+Let $G'$ be any finite simple graph on $\iota \oplus \iota'$
+satisfying $G \oplus_g H \le G'$. Then for ferromagnetic parameters
+$p$,
+\[
+  Z_G(p) \cdot Z_H(p) \le Z_{G'}(p).
+\]
+\end{proposition}
+
+\begin{proof}
+By Step 4, $Z_{G \oplus_g H}(p) = Z_G(p) \cdot Z_H(p)$. The
+existing \texttt{partitionFunction\_monotone\_subgraph} (proved in
+\texttt{FreeEnergy.lean} via GKS-I) gives
+$Z_{G \oplus_g H}(p) \le Z_{G'}(p)$ under ferromagnetic parameters.
+\end{proof}
+
+\begin{corollary}[\texttt{IsingModel.log\_partitionFunction\_add\_le\_of\_sum\_le}]
+Under the same assumptions,
+\[
+  \log Z_G(p) + \log Z_H(p) \le \log Z_{G'}(p).
+\]
+\end{corollary}
+
+\begin{proof}
+Positivity of partition functions and \texttt{Real.log\_mul} /
+\texttt{Real.log\_le\_log}.
+\end{proof}
+
+\paragraph{Closing Step 5.} Combining this super-additivity with the
+uniform upper bound (PR \#122, \#123) and Fekete's lemma produces
+convergence of
 $f_\Lambda = (\log Z_\Lambda)/|\Lambda|$ along arbitrary
-exhaustions of the ambient lattice. This completes the proof of
-Glimm--Jaffe \S 4.6 Prop 4.6.1.
+exhaustions of the ambient lattice, completing the proof of
+Glimm--Jaffe \S 4.6 Prop 4.6.1. The remaining technical piece is
+the type-level identification of an induced graph on
+$\Lambda_1 \cup \Lambda_2$ with a supergraph of
+$\mathrm{inducedGraph}\,G\,\Lambda_1 \oplus_g \mathrm{inducedGraph}\,G\,\Lambda_2$,
+which is the subject of a subsequent PR.
 
 \end{document}
