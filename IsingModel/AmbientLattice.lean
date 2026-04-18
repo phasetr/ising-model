@@ -2912,6 +2912,33 @@ noncomputable def freeEnergyInfinite
     (p : IsingParams ℝ) : ℝ :=
   Filter.limsup (freeEnergyAlongExhaustion G Λ p) Filter.atTop
 
+/-- **Zero-params lower-bound comparison for `freeEnergyAlongExhaustion`**.
+
+For ferromagnetic Ising parameters (`J ≥ 0`, `h ≥ 0`, `β > 0`), the
+free energy along the exhaustion dominates the value at zero coupling
+and zero external field:
+`freeEnergyAlongExhaustion G Λ ⟨0, 0, β⟩ n
+  ≤ freeEnergyAlongExhaustion G Λ ⟨J, h, β⟩ n`.
+
+Proof: transitive composition of `_monotone_h` at `J = 0` (giving
+`f(0, 0, β) ≤ f(0, h, β)`) with `_monotone_J` at fixed `h`
+(giving `f(0, h, β) ≤ f(J, h, β)`). -/
+theorem freeEnergyAlongExhaustion_ge_zero_params
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {J h β : ℝ} (hJ : 0 ≤ J) (hh : 0 ≤ h) (hβ : 0 < β) (n : ℕ) :
+    freeEnergyAlongExhaustion G Λ ⟨0, 0, β⟩ n
+      ≤ freeEnergyAlongExhaustion G Λ ⟨J, h, β⟩ n := by
+  have h1 : freeEnergyAlongExhaustion G Λ ⟨0, 0, β⟩ n
+      ≤ freeEnergyAlongExhaustion G Λ ⟨0, h, β⟩ n :=
+    freeEnergyAlongExhaustion_monotone_h G Λ le_rfl hβ n
+      (Set.self_mem_Ici) hh hh
+  have h2 : freeEnergyAlongExhaustion G Λ ⟨0, h, β⟩ n
+      ≤ freeEnergyAlongExhaustion G Λ ⟨J, h, β⟩ n :=
+    freeEnergyAlongExhaustion_monotone_J G Λ hh hβ n
+      (Set.self_mem_Ici) hJ hJ
+  exact h1.trans h2
+
 end Ambient
 end IsingModel
 
