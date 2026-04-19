@@ -1218,6 +1218,16 @@ theorem vitali_bridge {U : Set ℂ} (hU : IsOpen U)
     DifferentiableOn ℂ f U :=
   hconv.differentiableOn (Filter.Eventually.of_forall hF) hU
 
+/-- Specialisation of `vitali_bridge` to `U = leeYangDomain`: any limit
+of a locally-uniform sequence of functions that are holomorphic on
+`leeYangDomain` is itself holomorphic on `leeYangDomain`. -/
+theorem vitali_bridge_leeYangDomain
+    {F : ℕ → ℂ → ℂ} {f : ℂ → ℂ}
+    (hF : ∀ n, DifferentiableOn ℂ (F n) leeYangDomain)
+    (hconv : TendstoLocallyUniformlyOn F f Filter.atTop leeYangDomain) :
+    DifferentiableOn ℂ f leeYangDomain :=
+  vitali_bridge isOpen_leeYangDomain hF hconv
+
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
 `leeYangDomain`. For each point `h₀`, the local branch `f` from
