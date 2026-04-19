@@ -1781,7 +1781,7 @@ theorem convex_leeYangSubdomain' (β : ℝ) (N : ℕ) :
             · exact add_lt_add (mul_lt_mul_of_pos_left hx2 ha_pos)
                 (mul_lt_mul_of_pos_left hy2 hb_pos)
       _ = Real.pi / 2 := by linear_combination hab * (Real.pi / 2)
-  · push_neg at hβ
+  · push Not at hβ
     -- β < 0: β·|·|·N ≤ 0 < π/2.
     have : β * |a * x.im + b * y.im| * (N : ℝ) ≤ 0 := by
       have : β * (N : ℝ) ≤ 0 := mul_nonpos_of_nonpos_of_nonneg hβ.le
