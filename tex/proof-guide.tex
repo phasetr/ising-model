@@ -4001,6 +4001,34 @@ with $f_\infty = \limsup f_{\Lambda_n}$ via
 Glimm--Jaffe \cite{glimm-jaffe} \S 4.6 Prop 4.6.1, p.~64.
 \end{proof}
 
+\begin{theorem}[GJ \S 4.6 Prop 4.6.1, log-linear-card builder and
+$\beta = 0$ instance; PR \#206]
+(i) If $\log Z_\Lambda = |\Lambda| \cdot c$ for all stages, then the
+super-additivity field of
+\texttt{DisjointTowerHypotheses} is automatic under
+\texttt{hcard\_add} — this is the generic builder
+\texttt{DisjointTowerHypotheses.of\_log\_linear\_card}.
+
+(ii) At $\beta = 0$ one has $Z_\Lambda = 2^{|\Lambda|}$, hence
+$\log Z_\Lambda = |\Lambda| \cdot \log 2$, fitting the
+log-linear pattern. So
+\texttt{DisjointTowerHypotheses.of\_beta\_zero} and the Fekete
+corollary
+\texttt{freeEnergyAlongExhaustion\_beta\_zero\_tendsto\_of\_hcard\_add}
+follow immediately, parallel to the $J = 0$ case.
+\end{theorem}
+
+\begin{proof}
+(i) Super-additivity reduces to
+$(|\Lambda_m| + |\Lambda_n|) \cdot c \le |\Lambda_{m+n}| \cdot c$;
+under \texttt{hcard\_add} the two sides are equal.
+(ii) \texttt{IsingModel.partitionFunction\_beta\_zero} +
+\texttt{card\_config\_eq\_two\_pow} + \texttt{Real.log\_pow} give
+$\log Z_\Lambda = |\Lambda| \cdot \log 2$. The rest is
+\texttt{of\_log\_linear\_card} applied with $c = \log 2$.
+Reference: Glimm--Jaffe \cite{glimm-jaffe} \S 4.6 Prop 4.6.1, p.~64.
+\end{proof}
+
 \begin{theorem}[GJ \S 4.6 Prop 4.6.1, concrete $J = 0$ instance; PR \#205]
 At $J = 0$, with bounded edge density along $\Lambda$, a
 cardinality-additive exhaustion
