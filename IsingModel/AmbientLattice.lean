@@ -1855,6 +1855,44 @@ theorem correlationInfinite_h_zero
   simp only [correlationInfinite,
     correlationAlongExhaustion_h_zero G Λ J β A hodd, ciSup_const]
 
+/-- **β=0 correlation vanishes on `Λ`**: at `β = 0` every nonempty
+`A : Finset (↑Λ)` gives `correlationΛ = 0`. Lift of PR #182
+`correlation_beta_zero_vanish_of_nonempty_A`
+(`Inequalities/NonnegCorrelations.lean`). -/
+theorem correlationΛ_beta_zero_vanish_of_nonempty
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J h : ℝ) (A : Finset (↑Λ : Type _)) (hA : A.Nonempty) :
+    correlationΛ G Λ (⟨J, h, 0⟩ : IsingParams ℝ) A = 0 :=
+  IsingModel.correlation_beta_zero_vanish_of_nonempty_A
+    (inducedGraph G Λ) J h A hA
+
+/-- **β=0 correlation vanishes along exhaustion**: pointwise zero
+at every `n` for nonempty `A : Finset V`. Either `A ⊄ Λ.volume n`
+(dite gives 0) or `A ⊆ Λ.volume n` and the lifted correlation
+vanishes via `correlationΛ_beta_zero_vanish_of_nonempty`. -/
+theorem correlationAlongExhaustion_beta_zero_vanish
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J h : ℝ) (A : Finset V) (hA : A.Nonempty) (n : ℕ) :
+    correlationAlongExhaustion G Λ (⟨J, h, 0⟩ : IsingParams ℝ) A n = 0 := by
+  by_cases hAn : A ⊆ Λ.volume n
+  · rw [correlationAlongExhaustion_of_subset G Λ (⟨J, h, 0⟩ : IsingParams ℝ) hAn]
+    refine correlationΛ_beta_zero_vanish_of_nonempty G (Λ.volume n) J h _ ?_
+    obtain ⟨a, haA⟩ := hA
+    exact ⟨⟨a, hAn haA⟩, by simp [liftFinset, haA]⟩
+  · exact correlationAlongExhaustion_of_not_subset G Λ (⟨J, h, 0⟩ : IsingParams ℝ) hAn
+
+/-- **β=0 correlation vanishes at infinite volume**: the stagewise
+zero sequence has supremum zero. -/
+theorem correlationInfinite_beta_zero_vanish
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J h : ℝ) (A : Finset V) (hA : A.Nonempty) :
+    correlationInfinite G Λ (⟨J, h, 0⟩ : IsingParams ℝ) A = 0 := by
+  simp only [correlationInfinite,
+    correlationAlongExhaustion_beta_zero_vanish G Λ J h A hA, ciSup_const]
+
 /-- **`magnetizationInfinite` at `h = 0` vanishes**: the Z₂ spin-flip
 symmetry at zero external field forces the single-site thermodynamic
 magnetization to be zero.
