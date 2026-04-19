@@ -2138,6 +2138,21 @@ theorem partitionFunctionComplex_analyticOn_leeYangDomain
     AnalyticOn ℂ (fun h => partitionFunctionComplex G J h β) leeYangDomain :=
   (partitionFunctionComplex_analyticOnNhd_leeYangDomain G J β).analyticOn
 
+/-- `leeYangFugacity β` is continuous (everywhere on `ℂ`). Restatement
+of `continuous_leeYangFugacity`. -/
+theorem continuous_leeYangFugacity' (β : ℂ) :
+    Continuous (leeYangFugacity β) := continuous_leeYangFugacity β
+
+/-- `leeYangFugacity β` is `AnalyticOn` on any set. -/
+theorem leeYangFugacity_analyticOn (β : ℂ) (U : Set ℂ) :
+    AnalyticOn ℂ (leeYangFugacity β) U :=
+  (analyticOnNhd_leeYangFugacity β).mono (Set.subset_univ U) |>.analyticOn
+
+/-- `leeYangFugacity β` is `DifferentiableOn` on any set. -/
+theorem leeYangFugacity_differentiableOn (β : ℂ) (U : Set ℂ) :
+    DifferentiableOn ℂ (leeYangFugacity β) U :=
+  ((analyticOnNhd_leeYangFugacity β).mono (Set.subset_univ U)).differentiableOn
+
 
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
