@@ -7,6 +7,7 @@ import Mathlib.Analysis.SpecialFunctions.Complex.Analytic
 import Mathlib.Analysis.SpecialFunctions.Complex.Log
 import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 import Mathlib.Analysis.Complex.HasPrimitives
+import Mathlib.Analysis.Complex.LocallyUniformLimit
 
 /-!
 # Complex analyticity of the Ising partition function (finite volume)
@@ -1200,6 +1201,22 @@ theorem exists_freeEnergyComplex_analyticAt_branch_of_leeYangDomain
                 = g h₀ := by field_simp
     rw [hmul]; exact hg_exp
   · unfold freeEnergyComplex; simp [hg_base]
+
+/-- **Vitali bridge**: if a sequence `F_n : ℂ → ℂ` of holomorphic
+functions converges locally uniformly on an open set `U` to a function
+`f`, then `f` is holomorphic on `U`. Direct application of mathlib's
+`TendstoLocallyUniformlyOn.differentiableOn`. This is the abstract
+ingredient for the ∞-vol Vitali lift of GJ §4.6 Thm 4.6.2 — to apply
+it we must supply locally uniform convergence of the finite-volume
+log branches, which in turn follows from `TendstoLocallyUniformlyOn`
+and uniform-boundedness (Montel) + pointwise convergence on the real
+axis (Fekete). -/
+theorem vitali_bridge {U : Set ℂ} (hU : IsOpen U)
+    {F : ℕ → ℂ → ℂ} {f : ℂ → ℂ}
+    (hF : ∀ n, DifferentiableOn ℂ (F n) U)
+    (hconv : TendstoLocallyUniformlyOn F f Filter.atTop U) :
+    DifferentiableOn ℂ f U :=
+  hconv.differentiableOn (Filter.Eventually.of_forall hF) hU
 
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
