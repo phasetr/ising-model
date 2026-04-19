@@ -2096,6 +2096,17 @@ theorem convex_leeYangSubdomain_alt (β : ℝ) (N : ℕ) :
     Convex ℝ (leeYangSubdomain β N) :=
   convex_leeYangSubdomain' β N
 
+/-- Combined: on the Lee-Yang subdomain, `Re Z > 0` and thus
+`Z ∈ slitPlane`, and `f_complex` is therefore analytic. Packaged
+`AnalyticOnNhd` form of the finite-volume analyticity on the
+Lee-Yang subdomain. -/
+theorem freeEnergyComplex_analyticOnNhd_of_leeYangSubdomain
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β : ℝ} (hβ : 0 < β) (J : ℝ) :
+    AnalyticOnNhd ℂ (fun h => freeEnergyComplex G (J : ℂ) h (β : ℂ))
+      (leeYangSubdomain β (Fintype.card ι)) :=
+  freeEnergyComplex_analyticOnNhd_leeYangSubdomain G hβ J
+
 
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
