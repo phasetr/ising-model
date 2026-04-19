@@ -4001,6 +4001,25 @@ with $f_\infty = \limsup f_{\Lambda_n}$ via
 Glimm--Jaffe \cite{glimm-jaffe} \S 4.6 Prop 4.6.1, p.~64.
 \end{proof}
 
+\begin{theorem}[Finite-volume magnetization at $J = 0$
+$= \tanh(\beta h)$; PR \#219]
+For any graph $G$ with finite $\iota$, any $h, \beta \in \mathbb{R}$,
+and any site $i$, the finite-volume magnetization satisfies
+$M^{\langle 0, h, \beta\rangle}_G(i) = \tanh(\beta h)$.
+\end{theorem}
+
+\begin{proof}
+$\mathrm{magnetization}(p; i) := \mathrm{correlation}(p; \{i\})$.
+Apply the finite-volume closed form
+$\mathrm{correlation}(\langle 0, h, \beta\rangle; A)
+= \tanh(\beta h)^{|A|}$ (\texttt{correlation\_J\_zero}) with
+$A = \{i\}$: $|A| = 1$, so the power reduces to
+$\tanh(\beta h)$.
+Reference: Glimm--Jaffe \cite{glimm-jaffe} \S 4.1
+(non-interacting $J = 0$ slice); \S 5.1 pp.~76--77
+(magnetization).
+\end{proof}
+
 \begin{theorem}[$\infty$-vol magnetization at $J = 0$
 ferromagnetic = $\tanh(\beta h)$; PR \#218]
 For a ferromagnetic parameter $\langle 0, h, \beta \rangle$ and
