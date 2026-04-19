@@ -284,6 +284,25 @@ fugacity is `z_k = e^{-2β h_k}`. For uniform `h`, all `z_k` coincide.
 Lee-Yang nonvanishing requires `|z_k| < 1`, i.e., `|e^{-2β h}| < 1`. -/
 noncomputable def leeYangFugacity (β h : ℂ) : ℂ := Complex.exp (-2 * β * h)
 
+/-- **Fugacity norm formula**: `‖e^{-2β h}‖ = e^{-2 β · Re h}` for real `β`.
+Used in Lee-Yang nonvanishing arguments: the left-hand side is the
+input to `isingEdgePoly_nonvanishing_of_graph`, and this formula lets
+us read off `< 1` or `≤ 1` bounds from `Re h`. -/
+theorem norm_leeYangFugacity_eq (β : ℝ) (h : ℂ) :
+    ‖leeYangFugacity (β : ℂ) h‖ = Real.exp (-2 * β * h.re) := by
+  unfold leeYangFugacity
+  rw [Complex.norm_exp]
+  congr 1
+  simp [Complex.mul_re, Complex.mul_im]
+
+/-- **`leeYangFugacity β` is continuous in `h`** for any fixed `β`.
+`leeYangFugacity β h = exp (-2 β h)` is the composition of the linear
+map `h ↦ -2β h` with the entire exponential, hence continuous. -/
+theorem continuous_leeYangFugacity (β : ℂ) :
+    Continuous (leeYangFugacity β) := by
+  unfold leeYangFugacity
+  exact Complex.continuous_exp.comp (by fun_prop)
+
 /-- **Fugacity in the open unit disk on the Lee-Yang domain**:
 for real `β > 0` and `h ∈ leeYangDomain` (i.e., `|Im h| < Re h`),
 the fugacity `e^{-2β h}` has absolute value less than 1.
