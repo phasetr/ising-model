@@ -1700,6 +1700,22 @@ Prop 4.6.1 の Fekete 段を完結 (既存の disjoint-union super-additivity,
 upper bound, 発散infra と合わせて対象 exhaustion クラス上で Done).
 \end{theorem}
 
+\begin{theorem}[GJ \S 4.6 Thm 4.6.2 に向けた support: finite-volume complex $Z$ analyticity; PR \#193]
+GJ Thm 4.6.2 の前段支援: 有限体積分配関数
+$Z_G(J, h, \beta)$ を $(J, h, \beta) \in \mathbb C^3$ に
+拡張すると, 各パラメタ個別に entire:
+\[
+  Z_G^{\mathbb C}(J, h, \beta) = \sum_\sigma \exp(-\beta \cdot H^{\mathbb C}_G(J, h; \sigma)),
+\]
+$H^{\mathbb C}_G$ は $(J, h)$ について affine. したがって各 Boltzmann
+weight は $\exp \circ$(affine) で entire, 有限和 $Z$ も entire.
+\texttt{partitionFunctionComplex\_analyticAt\_\{h,J,beta\}}.
+本 PR は $Z$ の個別-パラメタ analyticity までで, GJ Thm 4.6.2 本文
+(free energy の complex analyticity on $|\mathrm{Im}\,h| < \mathrm{Re}\,h$,
+joint analyticity, $\log Z$ (slit-plane 経由), $\infty$-vol Vitali)
+は後続 PR. `Complex.log` は mathlib では slitPlane 上でのみ analytic な点に注意.
+\end{theorem}
+
 \begin{theorem}[\texttt{freeEnergyInfinite\_of\_eventually\_const}; PR \#171]
 $\forall^\infty n, f_n = c$ のとき
 $\texttt{freeEnergyInfinite}\,G\,\Lambda\,p = c$.
