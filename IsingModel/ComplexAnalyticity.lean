@@ -2375,7 +2375,7 @@ theorem freeEnergyComplex_exists_analyticBranch
     (G : SimpleGraph ι) [Fintype G.edgeSet]
     {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J) [Nonempty ι] :
     ∀ h ∈ leeYangDomain, ∃ f : ℂ → ℂ, AnalyticAt ℂ f h :=
-  fun h hh =>
+  fun _ hh =>
     let ⟨f, hfa, _, _⟩ :=
       exists_freeEnergyComplex_analyticAt_branch_of_leeYangDomain G hβ hJ hh
     ⟨f, hfa⟩
