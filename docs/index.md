@@ -489,17 +489,18 @@ formalized**, per the full inventory above:
 
 1. **Prop 4.6.1 (free energy convergence) Fekete completion**:
    Fekete-style convergence of `freeEnergyAlongExhaustion` is now
-   available in two forms:
+   available through three API entry points (all in
+   `AmbientLatticeSum.lean`):
    `freeEnergyAlongExhaustion_tendsto_of_superadditive` (base, 4
-   bundled hypotheses) and
+   bundled hypotheses);
    `freeEnergyAlongExhaustion_tendsto_of_disjoint_tower` (relaxed,
    `BoundedEdgeDensity` replaces the explicit `BddAbove`
-   hypothesis), both in `AmbientLatticeSum.lean`. A
-   `DisjointTowerHypotheses` bundle + wrapper
+   hypothesis); and
    `freeEnergyAlongExhaustion_tendsto_of_disjointTowerHypotheses`
-   are also provided. Dropping the remaining disjoint-tower
-   hypotheses (`hcard_add`, `hsuper`, `hcard_one`) requires
-   translation invariance and is a follow-up step.
+   (bundled form taking a `DisjointTowerHypotheses` record).
+   Dropping the remaining disjoint-tower hypotheses (`hcard_add`,
+   `hsuper`, `hcard_one`) requires translation invariance and is
+   a follow-up step.
    *(The `correlationAlongExhaustion` convergence side, originally
    listed here as "not yet proved", is in fact discharged by
    `correlationAlongExhaustion_tendsto_ciSup` +
