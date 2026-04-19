@@ -703,17 +703,18 @@ theorem partitionFunctionComplex_ne_zero_on_leeYangDomain
   exact leeYangNormalization_mul_isingEdgePoly_eval_ne_zero
     G ht₀ ht₁ (J : ℂ) hβ hh _ _
 
-/-- **`freeEnergyComplex` is analytic in `h` at real parameters**.
+/-- **`freeEnergyComplex` is analytic in `h` at real parameters**
+(real-slice corollary; preliminary to GJ Thm 4.6.2).
 
-For real `J, h₀, β`, the complex free energy is analytic in `h` at
-`(h₀ : ℂ)`. This combines
+For arbitrary real `J, h₀, β`, the complex free energy is analytic in `h`
+at `(h₀ : ℂ)`. This combines
 `partitionFunctionComplex_mem_slitPlane_of_real` (Z is a positive real
-number at real parameters, hence in slitPlane) with the existing
+number at real parameters, hence in slitPlane) with
 `freeEnergyComplex_analyticAt_h` (analyticity given slitPlane membership).
-
-This is the real-basepoint case of Glimm–Jaffe Thm 4.6.2. Extension to
-the full complex Lee-Yang domain `|Im h| < Re h` requires a continuous
-branch selection (deferred). -/
+There is no Lee-Yang-domain argument and no ferromagnetic hypothesis
+here; this is just a real-slice slitPlane corollary, not GJ Thm 4.6.2
+itself. Extending to the full complex Lee-Yang domain `|Im h| < Re h`
+requires a continuous branch selection (deferred). -/
 theorem freeEnergyComplex_analyticAt_h_ofReal
     (G : SimpleGraph ι) [Fintype G.edgeSet]
     (J h₀ β : ℝ) :
