@@ -1737,6 +1737,59 @@ The remaining step (locally uniform convergence of finite-volume
 branches to an infinite-volume branch) requires a Montel-style
 subsequence argument; this is the last ingredient of GJ Thm 4.6.2. -/
 
+/-- **`freeEnergyComplex` is analytic at `h₀` whenever `Z(h₀) ∈ slitPlane`**,
+restated with explicit analytic-at formulation for downstream use. -/
+theorem analyticAt_freeEnergyComplex_of_slitPlane_h
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℂ) {h₀ : ℂ}
+    (hZ : partitionFunctionComplex G J h₀ β ∈ Complex.slitPlane) :
+    AnalyticAt ℂ (fun h => freeEnergyComplex G J h β) h₀ :=
+  freeEnergyComplex_analyticAt_h G J β h₀ hZ
+
+/-- `{h : ℂ | h ∈ leeYangSubdomain β N}` is convex — immediate since
+`leeYangSubdomain` is open and convex (intersection of Lee-Yang +
+strip). Formulated as `Convex ℝ`. -/
+theorem convex_leeYangSubdomain' (β : ℝ) (N : ℕ) :
+    Convex ℝ (leeYangSubdomain β N) := by
+  intro x hx y hy a b ha hb hab
+  refine ⟨convex_leeYangDomain hx.1 hy.1 ha hb hab, ?_⟩
+  have hx2 : β * |x.im| * (N : ℝ) < Real.pi / 2 := hx.2
+  have hy2 : β * |y.im| * (N : ℝ) < Real.pi / 2 := hy.2
+  change β * |((a : ℝ) • x + (b : ℝ) • y).im| * (N : ℝ) < Real.pi / 2
+  simp only [Complex.add_im, Complex.smul_im]
+  have habs : |a * x.im + b * y.im| ≤ a * |x.im| + b * |y.im| := by
+    calc |a * x.im + b * y.im|
+        ≤ |a * x.im| + |b * y.im| := abs_add_le _ _
+      _ = a * |x.im| + b * |y.im| := by
+          rw [abs_mul, abs_mul, abs_of_nonneg ha, abs_of_nonneg hb]
+  -- β · |sum| · N ≤ ?; handle sign of β separately.
+  by_cases hβ : 0 ≤ β
+  · have : β * |a * x.im + b * y.im| * (N : ℝ)
+            ≤ β * (a * |x.im| + b * |y.im|) * (N : ℝ) := by
+      have hβN : 0 ≤ β * (N : ℝ) := by positivity
+      nlinarith
+    calc β * |a * x.im + b * y.im| * (N : ℝ)
+        ≤ β * (a * |x.im| + b * |y.im|) * (N : ℝ) := this
+      _ = a * (β * |x.im| * (N : ℝ)) + b * (β * |y.im| * (N : ℝ)) := by ring
+      _ < a * (Real.pi / 2) + b * (Real.pi / 2) := by
+          rcases eq_or_lt_of_le ha with rfl | ha_pos
+          · rcases eq_or_lt_of_le hb with rfl | hb_pos
+            · simp at hab
+            · simpa using mul_lt_mul_of_pos_left hy2 hb_pos
+          · rcases eq_or_lt_of_le hb with rfl | hb_pos
+            · simpa using mul_lt_mul_of_pos_left hx2 ha_pos
+            · exact add_lt_add (mul_lt_mul_of_pos_left hx2 ha_pos)
+                (mul_lt_mul_of_pos_left hy2 hb_pos)
+      _ = Real.pi / 2 := by linear_combination hab * (Real.pi / 2)
+  · push_neg at hβ
+    -- β < 0: β·|·|·N ≤ 0 < π/2.
+    have : β * |a * x.im + b * y.im| * (N : ℝ) ≤ 0 := by
+      have : β * (N : ℝ) ≤ 0 := mul_nonpos_of_nonpos_of_nonneg hβ.le
+        (Nat.cast_nonneg _)
+      nlinarith [abs_nonneg (a * x.im + b * y.im)]
+    calc β * |a * x.im + b * y.im| * (N : ℝ) ≤ 0 := this
+      _ < Real.pi / 2 := by positivity
+
 
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
