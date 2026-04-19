@@ -2022,6 +2022,16 @@ theorem exists_freeEnergyComplex_differentiableOn_ball
     exists_freeEnergyComplex_analyticOnNhd_ball G hβ hJ hr hsub
   exact ⟨f, hf_ana.differentiableOn, hf_exp⟩
 
+/-- `leeYangDomain` is the preimage of `(0, ∞)` under the continuous
+map `h ↦ Re h - |Im h|`. -/
+theorem leeYangDomain_eq_preimage :
+    leeYangDomain = (fun h : ℂ => h.re - |h.im|) ⁻¹' Set.Ioi 0 := by
+  ext h
+  simp only [leeYangDomain, Set.mem_setOf_eq, Set.mem_preimage, Set.mem_Ioi]
+  constructor
+  · intro hlt; linarith
+  · intro hlt; change |h.im| < h.re; linarith
+
 
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
