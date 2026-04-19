@@ -2562,6 +2562,22 @@ theorem partitionFunctionComplex_restrict_joint_real_eq
   funext p
   exact (partitionFunction_ofReal_eq_partitionFunctionComplex G p).symm
 
+/-- `freeEnergyComplex` restricted to `IsingParams ℝ`-points. -/
+theorem freeEnergyComplex_restrict_joint_real_eq
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    (fun p : IsingParams ℝ =>
+        freeEnergyComplex G (p.J : ℂ) (p.h : ℂ) (p.β : ℂ))
+      = fun p : IsingParams ℝ => ((freeEnergy G p : ℝ) : ℂ) := by
+  funext p
+  exact freeEnergyComplex_ofReal_eq_freeEnergy G p
+
+/-- `partitionFunctionComplex` norm (modulus) at real parameters. -/
+theorem norm_partitionFunctionComplex_eq_partitionFunction_at_real
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (p : IsingParams ℝ) :
+    ‖partitionFunctionComplex G (p.J : ℂ) (p.h : ℂ) (p.β : ℂ)‖
+      = partitionFunction G p :=
+  norm_partitionFunctionComplex_at_real G p
+
 
 
 
