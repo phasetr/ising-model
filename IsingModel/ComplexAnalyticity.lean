@@ -2274,6 +2274,19 @@ theorem leeYangNormalization_norm_pos
     0 < ‖leeYangNormalization β J h edgeCount siteCount‖ :=
   norm_pos_iff.mpr (leeYangNormalization_ne_zero β J h edgeCount siteCount)
 
+/-- `real_pos_mem_leeYangDomain` specialized: any positive real is
+in Lee-Yang. -/
+theorem real_pos_mem_leeYangDomain' (h₀ : ℝ) (hpos : 0 < h₀) :
+    (h₀ : ℂ) ∈ leeYangDomain :=
+  real_pos_mem_leeYangDomain hpos
+
+/-- All positive reals contained in Lee-Yang: formulated as a subset
+statement. -/
+theorem real_positives_subset_leeYangDomain :
+    ((fun h₀ : ℝ => (h₀ : ℂ)) '' Set.Ioi 0) ⊆ leeYangDomain := by
+  rintro h ⟨h₀, hpos, rfl⟩
+  exact real_pos_mem_leeYangDomain hpos
+
 
 
 
