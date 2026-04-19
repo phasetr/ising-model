@@ -2007,6 +2007,21 @@ theorem exists_freeEnergyComplex_analyticOnNhd_ball
     rw [hmul]
     exact hg_exp z hz
 
+/-- **DifferentiableOn form** of the local freeEnergyComplex branch. -/
+theorem exists_freeEnergyComplex_differentiableOn_ball
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J) [Nonempty ι]
+    {h₀ : ℂ} {r : ℝ} (hr : 0 < r)
+    (hsub : Metric.ball h₀ r ⊆ leeYangDomain) :
+    ∃ f : ℂ → ℂ,
+        DifferentiableOn ℂ f (Metric.ball h₀ r)
+      ∧ ∀ z ∈ Metric.ball h₀ r,
+          Complex.exp ((Fintype.card ι : ℂ) * f z)
+            = partitionFunctionComplex G (J : ℂ) z (β : ℂ) := by
+  obtain ⟨f, hf_ana, hf_exp⟩ :=
+    exists_freeEnergyComplex_analyticOnNhd_ball G hβ hJ hr hsub
+  exact ⟨f, hf_ana.differentiableOn, hf_exp⟩
+
 
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
