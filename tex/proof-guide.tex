@@ -4001,6 +4001,42 @@ with $f_\infty = \limsup f_{\Lambda_n}$ via
 Glimm--Jaffe \cite{glimm-jaffe} \S 4.6 Prop 4.6.1, p.~64.
 \end{proof}
 
+\begin{theorem}[$\infty$-vol $J = 0$ correlation closed form and
+truncated-2 vanishing; PR \#210]
+For a ferromagnetic parameter $\langle 0, h, \beta \rangle$
+(i.e. $h \ge 0$, $\beta \ge 0$), any graph $G :
+\mathrm{SimpleGraph}\, V$ and exhaustion $\Lambda :
+\mathrm{Exhaustion}\, V$, and any finite $A \subseteq V$,
+\[
+  \langle \sigma^A \rangle_\infty^{G,\Lambda,\langle 0,h,\beta\rangle}
+  = \tanh(\beta h)^{|A|}.
+\]
+For distinct $i \neq j$ the infinite-volume truncated 2-point
+function vanishes:
+$\langle \sigma_i; \sigma_j \rangle_\infty^{G,\Lambda,\langle 0,h,\beta\rangle}
+= 0$.
+\end{theorem}
+
+\begin{proof}
+By the finite-volume closed form $\langle \sigma^A
+\rangle_\Lambda^{\langle 0,h,\beta\rangle} = \tanh(\beta h)^{|A|}$
+(see \texttt{correlation\_J\_zero}), when $A \subseteq \Lambda.volume\,n$
+we have
+$\text{correlationAlongExhaustion}\,G\,\Lambda\,\langle 0,h,\beta\rangle\,A\,n
+= \tanh(\beta h)^{|A|}$
+(the Finset lift preserves cardinality). By $\Lambda.\mathrm{exhaust}$,
+this holds for all sufficiently large $n$, so the sequence is
+eventually constant at $\tanh(\beta h)^{|A|}$. On the other hand,
+by \texttt{correlationAlongExhaustion\_tendsto\_ciSup}
+(ferromagnetic, monotone + bounded), the sequence also tends to
+$\mathrm{correlationInfinite}\,G\,\Lambda\,\langle 0,h,\beta\rangle\,A$.
+Uniqueness of limits gives the claimed closed form.
+The truncated-2 vanishing is immediate by substitution at
+$\{i,j\}, \{i\}, \{j\}$ and the cardinalities $2, 1, 1$.
+Reference: Glimm--Jaffe \cite{glimm-jaffe} \S 5.1 pp.~72--74
+(cluster property context); \S 4.1 (infinite-temperature slice).
+\end{proof}
+
 \begin{theorem}[Trivial-slice vanishing of the truncated 3-point
 (Ursell) function; PR \#209]
 For any ambient graph $G$, any $h, \beta \in \mathbb{R}$, and
