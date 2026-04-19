@@ -1833,6 +1833,22 @@ theorem partitionFunctionComplex_im_zero_at_real
   rw [← partitionFunction_ofReal_eq_partitionFunctionComplex G p]
   simp
 
+/-- **`Complex.log(Z)` at real parameters is real**. -/
+theorem log_partitionFunctionComplex_im_zero_at_real
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (p : IsingParams ℝ) :
+    (Complex.log (partitionFunctionComplex G (p.J : ℂ) (p.h : ℂ)
+                    (p.β : ℂ))).im = 0 := by
+  rw [← partitionFunction_ofReal_eq_partitionFunctionComplex G p,
+    Complex.ofReal_log (partitionFunction_pos G p).le]
+  simp
+
+/-- `freeEnergyComplex` at real parameters is real (its im part is 0). -/
+theorem freeEnergyComplex_im_zero_at_real
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (p : IsingParams ℝ) :
+    (freeEnergyComplex G (p.J : ℂ) (p.h : ℂ) (p.β : ℂ)).im = 0 := by
+  rw [freeEnergyComplex_at_real]
+  simp
+
 
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
