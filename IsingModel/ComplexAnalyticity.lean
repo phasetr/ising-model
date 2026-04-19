@@ -1,5 +1,6 @@
 import IsingModel.GibbsMeasure
 import IsingModel.FreeEnergy
+import IsingModel.LeeYang
 import Mathlib.Analysis.Analytic.Constructions
 import Mathlib.Analysis.Analytic.Linear
 import Mathlib.Analysis.SpecialFunctions.Complex.Analytic
@@ -364,5 +365,27 @@ theorem leeYangFugacityVec_norm_lt_one
     {β : ℝ} (hβ : 0 < β) {h : ℂ} (hh : h ∈ leeYangDomain) (k : ι) :
     ‖(leeYangFugacityVec (β : ℂ) h : ι → ℂ) k‖ < 1 := by
   exact norm_leeYangFugacity_lt_one hβ hh
+
+/-- **Lee-Yang nonvanishing of the Ising partition polynomial on the
+Lee-Yang domain** (uniform field, real ferromagnetic coupling).
+
+For a graph `G`, a coupling parameter `t ∈ [0, 1)`, real `β > 0`,
+and `h ∈ leeYangDomain`, the Ising partition polynomial
+`P_E(z)` does not vanish at the uniform fugacity
+`z_k = e^{-2β h}`:
+  `(isingEdgePoly (graphToEdgeList G t)).eval (leeYangFugacityVec β h) ≠ 0`.
+
+Direct consequence of `isingEdgePoly_nonvanishing_of_graph`
+(FreeEnergy.lean, which wraps the Lee-Yang circle theorem) together
+with the unit-disk bound `leeYangFugacityVec_norm_lt_one`. -/
+theorem isingEdgePoly_eval_leeYangFugacityVec_ne_zero
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {t : ℝ} (ht₀ : 0 ≤ t) (ht₁ : t < 1)
+    {β : ℝ} (hβ : 0 < β) {h : ℂ} (hh : h ∈ leeYangDomain) :
+    (isingEdgePoly (graphToEdgeList G t)).eval
+        (leeYangFugacityVec (β : ℂ) h) ≠ 0 :=
+  isingEdgePoly_nonvanishing_of_graph G t ht₀ ht₁
+    (leeYangFugacityVec (β : ℂ) h)
+    (fun k => leeYangFugacityVec_norm_lt_one hβ hh k)
 
 end IsingModel
