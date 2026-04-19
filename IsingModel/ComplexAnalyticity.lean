@@ -2073,7 +2073,7 @@ theorem leeYangSubdomain_subset_slitPlane_locus
     {β : ℝ} (hβ : 0 < β) (J : ℝ) :
     (leeYangSubdomain β (Fintype.card ι))
       ⊆ {h : ℂ | partitionFunctionComplex G (J : ℂ) h (β : ℂ)
-                  ∈ Complex.slitPlane} := fun h hh =>
+                  ∈ Complex.slitPlane} := fun _ hh =>
   partitionFunctionComplex_mem_slitPlane_of_leeYangSubdomain G hβ J hh.2
 
 /-- Every point of `leeYangSubdomain` has `Z` in `slitPlane`. -/
