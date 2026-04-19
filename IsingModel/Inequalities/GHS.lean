@@ -107,6 +107,83 @@ theorem truncated2_beta_zero (G : SimpleGraph ι) [Fintype G.edgeSet]
         (Finset.singleton_nonempty j)]
   ring
 
+/-- **Non-interacting (`J = 0`) vanishing of the truncated 3-point
+function (Ursell)**: for pairwise distinct sites `i ≠ j`, `j ≠ k`,
+`i ≠ k`, any `h, β ∈ ℝ`, and any ambient graph `G`,
+`truncated3 G ⟨0, h, β⟩ i j k = 0`.
+
+At `J = 0` the sites are non-interacting, and `correlation_J_zero`
+gives `⟨σ^A⟩ = tanh(β·h)^|A|`. With `t := tanh(β·h)` and the
+Ursell combination
+`⟨σ^{i,j,k}⟩ - ⟨σ^{i}⟩⟨σ^{j,k}⟩ - ⟨σ^{j}⟩⟨σ^{i,k}⟩
+ - ⟨σ^{k}⟩⟨σ^{i,j}⟩ + 2⟨σ^{i}⟩⟨σ^{j}⟩⟨σ^{k}⟩`,
+the cardinalities are `3, 1+2, 1+2, 1+2, 1+1+1`, all giving `t^3`;
+the algebraic combination is `t³ - 3·t³ + 2·t³ = 0`.
+
+Pairwise distinctness is needed so that `{i,j,k}.card = 3` and
+the three 2-point subsets each have card `2`. Companion to
+`truncated2_J_zero_of_ne`. Reference: Glimm–Jaffe *Quantum Physics*
+2nd ed., §5.1 pp. 72–74 (cluster property context); §4.3 (Ursell
+functions / GHS inequalities). -/
+theorem truncated3_J_zero_of_pairwise_distinct
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (h β : ℝ) {i j k : ι}
+    (hij : i ≠ j) (hjk : j ≠ k) (hik : i ≠ k) :
+    truncated3 G (⟨0, h, β⟩ : IsingParams ℝ) i j k = 0 := by
+  unfold truncated3
+  rw [correlation_J_zero, correlation_J_zero, correlation_J_zero,
+      correlation_J_zero, correlation_J_zero, correlation_J_zero,
+      correlation_J_zero]
+  have hcard_i : ({i} : Finset ι).card = 1 := Finset.card_singleton i
+  have hcard_j : ({j} : Finset ι).card = 1 := Finset.card_singleton j
+  have hcard_k : ({k} : Finset ι).card = 1 := Finset.card_singleton k
+  have hcard_ij : ({i, j} : Finset ι).card = 2 := Finset.card_pair hij
+  have hcard_jk : ({j, k} : Finset ι).card = 2 := Finset.card_pair hjk
+  have hcard_ik : ({i, k} : Finset ι).card = 2 := Finset.card_pair hik
+  have hi_nin_jk : i ∉ ({j, k} : Finset ι) := by
+    simp [hij, hik]
+  have hcard_ijk : ({i, j, k} : Finset ι).card = 3 := by
+    rw [show ({i, j, k} : Finset ι) = insert i ({j, k} : Finset ι) from rfl,
+        Finset.card_insert_of_notMem hi_nin_jk, hcard_jk]
+  rw [hcard_i, hcard_j, hcard_k, hcard_ij, hcard_jk, hcard_ik, hcard_ijk]
+  ring
+
+/-- **Infinite-temperature (`β = 0`) vanishing of the truncated
+3-point function (Ursell)**: for any ambient graph `G`, any
+`J, h ∈ ℝ`, and any sites `i, j, k : ι` (distinct or not),
+`truncated3 G ⟨J, h, 0⟩ i j k = 0`.
+
+At `β = 0`, `correlation_beta_zero_vanish_of_nonempty_A` makes each
+Finset correlation in the Ursell combination zero (all subsets
+`{i,j,k}`, `{i}`, `{j}`, `{k}`, `{j,k}`, `{i,k}`, `{i,j}` are
+nonempty), so the whole linear combination vanishes trivially.
+
+Companion to `truncated2_beta_zero` and
+`truncated3_J_zero_of_pairwise_distinct`. No distinctness
+hypotheses are needed at `β = 0`. Reference: Glimm–Jaffe
+*Quantum Physics* 2nd ed., §5.1 pp. 72–74 (cluster property
+context); §4.1 infinite-temperature slice of the correlation
+function. -/
+theorem truncated3_beta_zero (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h : ℝ) (i j k : ι) :
+    truncated3 G (⟨J, h, 0⟩ : IsingParams ℝ) i j k = 0 := by
+  unfold truncated3
+  rw [correlation_beta_zero_vanish_of_nonempty_A G J h {i, j, k}
+        ⟨i, by simp⟩,
+      correlation_beta_zero_vanish_of_nonempty_A G J h {i}
+        (Finset.singleton_nonempty i),
+      correlation_beta_zero_vanish_of_nonempty_A G J h {j}
+        (Finset.singleton_nonempty j),
+      correlation_beta_zero_vanish_of_nonempty_A G J h {k}
+        (Finset.singleton_nonempty k),
+      correlation_beta_zero_vanish_of_nonempty_A G J h {j, k}
+        ⟨j, by simp⟩,
+      correlation_beta_zero_vanish_of_nonempty_A G J h {i, k}
+        ⟨i, by simp⟩,
+      correlation_beta_zero_vanish_of_nonempty_A G J h {i, j}
+        ⟨i, by simp⟩]
+  ring
+
 /-- The truncated 2-point function is non-negative by GKS-II. -/
 theorem truncated2_nonneg (G : SimpleGraph ι) [Fintype G.edgeSet]
     (p : IsingParams ℝ) (hf : Ferromagnetic p) (i j : ι) :
