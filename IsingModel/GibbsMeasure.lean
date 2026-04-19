@@ -97,6 +97,21 @@ theorem spinProduct_sq (A : Finset ι) (σ : Config ι) :
   exact Finset.prod_eq_one fun i _ => by
     simp [← sq, ← Int.cast_pow, Spin.toSign_sq]
 
+/-- **Correlation of the empty set is `1`**: the normalization of the
+Gibbs measure. `spinProduct ∅ σ = 1` gives
+`∑_σ 1 · weight = Z`, so `Z⁻¹ · Z = 1`. -/
+@[simp]
+theorem correlation_empty (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (p : IsingParams ℝ) :
+    correlation G p ∅ = 1 := by
+  unfold correlation gibbsExpectation
+  have h1 : ∀ σ : Config ι,
+      spinProduct ∅ σ * boltzmannWeight G p σ = boltzmannWeight G p σ := by
+    intro σ; rw [spinProduct_empty, one_mul]
+  rw [Finset.sum_congr rfl (fun σ _ => h1 σ)]
+  change (partitionFunction G p)⁻¹ * partitionFunction G p = 1
+  exact inv_mul_cancel₀ (partitionFunction_ne_zero G p)
+
 omit [DecidableEq ι] in
 /-- **Hamiltonian vanishes at zero parameters**: with `J = 0` and `h = 0`,
 the Hamiltonian is identically zero (no coupling, no field). -/

@@ -1855,6 +1855,39 @@ theorem correlationInfinite_h_zero
   simp only [correlationInfinite,
     correlationAlongExhaustion_h_zero G Λ J β A hodd, ciSup_const]
 
+/-- **Empty-set correlation on `Λ` is `1`** (normalization). -/
+@[simp]
+theorem correlationΛ_empty (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (p : IsingParams ℝ) :
+    correlationΛ G Λ p ∅ = 1 :=
+  IsingModel.correlation_empty (inducedGraph G Λ) p
+
+/-- **Empty-set correlation along exhaustion is `1`** for every `n`.
+Empty set is always a subset of `Λ.volume n`, so the `dite` branch
+always returns `correlationΛ G (Λ.volume n) p (liftFinset ∅ _) = 1`. -/
+@[simp]
+theorem correlationAlongExhaustion_empty
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (n : ℕ) :
+    correlationAlongExhaustion G Λ p ∅ n = 1 := by
+  unfold correlationAlongExhaustion
+  have hsub : (∅ : Finset V) ⊆ Λ.volume n := Finset.empty_subset _
+  rw [dif_pos hsub]
+  have hlift : liftFinset (∅ : Finset V) hsub = (∅ : Finset (↑(Λ.volume n) : Type _)) := by
+    simp [liftFinset]
+  rw [hlift, correlationΛ_empty]
+
+/-- **Infinite-volume empty-set correlation is `1`**:
+`ciSup` of the constantly-one sequence. -/
+@[simp]
+theorem correlationInfinite_empty
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) :
+    correlationInfinite G Λ p ∅ = 1 := by
+  simp only [correlationInfinite, correlationAlongExhaustion_empty, ciSup_const]
+
 /-- **β=0 correlation vanishes on `Λ`**: at `β = 0` every nonempty
 `A : Finset (↑Λ)` gives `correlationΛ = 0`. Lift of PR #182
 `correlation_beta_zero_vanish_of_nonempty_A`
