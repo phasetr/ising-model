@@ -1877,6 +1877,18 @@ theorem partitionFunctionComplex_is_pos_real_at_real
   ⟨partitionFunction G p, partitionFunction_pos G p,
     (partitionFunction_ofReal_eq_partitionFunctionComplex G p).symm⟩
 
+/-- **Real-slice agreement of local-log branch**: at the real-positive
+basepoint `h₀ > 0`, the local branch `g` satisfies
+`g(h₀) = Real.log(Z(h₀))` as a complex number (cast of the real log),
+since `Z(h₀)` is real positive. This is useful for identifying the
+local branch with the real `freeEnergy` on the real axis. -/
+theorem logZ_branch_at_real_basepoint
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (p : IsingParams ℝ) :
+    Complex.log (partitionFunctionComplex G (p.J : ℂ) (p.h : ℂ) (p.β : ℂ))
+      = ((Real.log (partitionFunction G p)) : ℂ) := by
+  rw [← partitionFunction_ofReal_eq_partitionFunctionComplex G p,
+    ← Complex.ofReal_log (partitionFunction_pos G p).le]
+
 
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
