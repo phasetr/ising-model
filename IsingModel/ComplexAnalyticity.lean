@@ -344,4 +344,10 @@ theorem leeYangFugacity_mapsTo_ball
   rw [Metric.mem_ball, dist_zero_right]
   exact norm_leeYangFugacity_lt_one hβ hh
 
+/-- `leeYangFugacity β h ≠ 0`: the fugacity `e^{-2β h}` is never zero
+(as the complex exponential is always non-vanishing). -/
+theorem leeYangFugacity_ne_zero (β h : ℂ) : leeYangFugacity β h ≠ 0 := by
+  unfold leeYangFugacity
+  exact Complex.exp_ne_zero _
+
 end IsingModel
