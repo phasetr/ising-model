@@ -1716,6 +1716,19 @@ joint analyticity, $\log Z$ (slit-plane 経由), $\infty$-vol Vitali)
 は後続 PR. `Complex.log` は mathlib では slitPlane 上でのみ analytic な点に注意.
 \end{theorem}
 
+\begin{theorem}[GJ \S 4.6 Thm 4.6.2 continuation: joint analyticity in $(J,h,\beta)$; PR \#195]
+\texttt{partitionFunctionComplex\_analyticAt\_joint}:
+$(J, h, \beta) \in \mathbb C^3 \mapsto Z_G^{\mathbb C}$ は entire.
+\texttt{freeEnergyComplex\_analyticAt\_joint}: $Z \in$ \texttt{slitPlane}
+の点で $f_G^{\mathbb C}$ も joint analytic.
+証明: 定義 $H_J = -J \cdot \text{edgeSum}$, $H_h = -h \cdot \text{siteSum}$
+より exponent $-\beta(H_J + H_h) = \beta \cdot (J \cdot \text{edgeSum} + h \cdot \text{siteSum})$
+は $(J, h, \beta)$ に関して多項式. \texttt{analyticAt\_fst}/\texttt{analyticAt\_snd}
+で projections を analytic とし, \texttt{add}/\texttt{mul}/\texttt{neg} で合成,
+\texttt{AnalyticAt.cexp'} + \texttt{Finset.analyticAt\_fun\_sum} で $Z$ entire.
+\texttt{AnalyticAt.clog} + \texttt{analyticAt\_const.mul} で $f$.
+\end{theorem}
+
 \begin{theorem}[GJ \S 4.6 Thm 4.6.2 continuation: \texttt{freeEnergyComplex} analyticity via slitPlane; PR \#194]
 PR \#193 の各パラメタ entire な $Z$ に続き,
 $Z(J, h_0, \beta) \in \texttt{Complex.slitPlane}$ の点で

@@ -1,5 +1,6 @@
 import IsingModel.Hamiltonian
 import Mathlib.Analysis.Analytic.Constructions
+import Mathlib.Analysis.Analytic.Linear
 import Mathlib.Analysis.SpecialFunctions.Complex.Analytic
 import Mathlib.Analysis.SpecialFunctions.Complex.Log
 import Mathlib.Analysis.SpecialFunctions.ExpDeriv
@@ -120,5 +121,41 @@ theorem freeEnergyComplex_analyticAt_beta
   unfold freeEnergyComplex
   exact analyticAt_const.mul
     ((partitionFunctionComplex_analyticAt_beta G J h β₀).clog hZ)
+
+/-- `partitionFunctionComplex` is jointly entire in `(J, h, β)`. -/
+theorem partitionFunctionComplex_analyticAt_joint
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (z₀ : ℂ × ℂ × ℂ) :
+    AnalyticAt ℂ (fun z : ℂ × ℂ × ℂ =>
+      partitionFunctionComplex G z.1 z.2.1 z.2.2) z₀ := by
+  unfold partitionFunctionComplex hamiltonianComplex externalFieldEnergyComplex
+    interactionEnergyComplex
+  refine Finset.analyticAt_fun_sum _ (fun σ _ => ?_)
+  refine AnalyticAt.cexp' ?_
+  have hJ : AnalyticAt ℂ (fun z : ℂ × ℂ × ℂ => z.1) z₀ := analyticAt_fst
+  have hhβ : AnalyticAt ℂ (fun z : ℂ × ℂ × ℂ => z.2) z₀ := analyticAt_snd
+  have hh : AnalyticAt ℂ (fun z : ℂ × ℂ × ℂ => z.2.1) z₀ :=
+    analyticAt_fst.comp hhβ
+  have hβ : AnalyticAt ℂ (fun z : ℂ × ℂ × ℂ => z.2.2) z₀ :=
+    analyticAt_snd.comp hhβ
+  have hJsum : AnalyticAt ℂ (fun z : ℂ × ℂ × ℂ =>
+      -z.1 * ∑ e ∈ G.edgeFinset, edgeSpinComplex σ e) z₀ :=
+    (hJ.neg).mul analyticAt_const
+  have hhsum : AnalyticAt ℂ (fun z : ℂ × ℂ × ℂ =>
+      -z.2.1 * ∑ i : ι, Spin.sign ℂ (σ i)) z₀ :=
+    (hh.neg).mul analyticAt_const
+  exact (hβ.neg).mul (hJsum.add hhsum)
+
+/-- `freeEnergyComplex` is jointly analytic in `(J, h, β)` at points where
+`Z ∈ Complex.slitPlane`. -/
+theorem freeEnergyComplex_analyticAt_joint
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (z₀ : ℂ × ℂ × ℂ)
+    (hZ : partitionFunctionComplex G z₀.1 z₀.2.1 z₀.2.2 ∈ Complex.slitPlane) :
+    AnalyticAt ℂ (fun z : ℂ × ℂ × ℂ =>
+      freeEnergyComplex G z.1 z.2.1 z.2.2) z₀ := by
+  unfold freeEnergyComplex
+  exact analyticAt_const.mul
+    ((partitionFunctionComplex_analyticAt_joint G z₀).clog hZ)
 
 end IsingModel
