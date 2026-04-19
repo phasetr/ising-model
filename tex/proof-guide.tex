@@ -1763,6 +1763,18 @@ PR \#165 \texttt{\_ge\_card\_mul\_log\_two} の sharpening. 3 層 lift
 から $\log$ + \texttt{Real.log\_pow}.
 \end{theorem}
 
+\begin{theorem}[\texttt{freeEnergyAlongExhaustion\_J\_zero\_tendsto\_of\_eventually\_nonempty}; PR \#178]
+CLAUDE.local.md 更新 (無限系スコープ内) 後の初の非自明 $\infty$-vol
+\texttt{Tendsto} 収束. $\forall^\infty n, \Lambda_n$ nonempty のもと
+\[
+  \texttt{Tendsto}\,(\texttt{freeEnergyAlongExhaustion}\,G\,\Lambda\,\langle 0, h, \beta\rangle)\,
+    \texttt{atTop}\,(\mathcal N(\log(2 \cosh(\beta h)))).
+\]
+$J = 0$ slice は stagewise constant $\log(2 \cosh(\beta h))$ なので
+translation invariance を要さず Fekete sidestep.
+\texttt{tendsto\_const\_nhds.congr'} で transport.
+\end{theorem}
+
 \begin{theorem}[\texttt{partitionFunction\_ge\_two\_cosh\_pow\_card\_of\_ferromagnetic} 系; PR \#177]
 強磁性 $p$ で non-log 形
 \[
