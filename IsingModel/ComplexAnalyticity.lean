@@ -277,4 +277,34 @@ theorem real_pos_mem_leeYangDomain {h₀ : ℝ} (hpos : 0 < h₀) :
   change |(h₀ : ℂ).im| < (h₀ : ℂ).re
   simp [hpos]
 
+/-- Lee-Yang fugacity map: `h ↦ e^{-2β h}`.
+
+For the Ising partition polynomial `P(z)` (see `LeeYang.lean`), the site
+fugacity is `z_k = e^{-2β h_k}`. For uniform `h`, all `z_k` coincide.
+Lee-Yang nonvanishing requires `|z_k| < 1`, i.e., `|e^{-2β h}| < 1`. -/
+noncomputable def leeYangFugacity (β h : ℂ) : ℂ := Complex.exp (-2 * β * h)
+
+/-- **Fugacity in the open unit disk on the Lee-Yang domain**:
+for real `β > 0` and `h ∈ leeYangDomain` (i.e., `|Im h| < Re h`),
+the fugacity `e^{-2β h}` has absolute value less than 1.
+
+Proof: `‖e^{-2β h}‖ = e^{Re(-2β h)} = e^{-2β · Re h}`, and `Re h > 0`
+on the Lee-Yang domain (from `leeYangDomain_subset_slitPlane`). -/
+theorem norm_leeYangFugacity_lt_one
+    {β : ℝ} (hβ : 0 < β) {h : ℂ} (hh : h ∈ leeYangDomain) :
+    ‖leeYangFugacity (β : ℂ) h‖ < 1 := by
+  have hreh : 0 < h.re := by
+    have hlt : |h.im| < h.re := hh
+    have hnn : (0 : ℝ) ≤ |h.im| := abs_nonneg _
+    linarith
+  unfold leeYangFugacity
+  rw [Complex.norm_exp]
+  have hre : (-2 * (β : ℂ) * h).re = -2 * β * h.re := by
+    simp [Complex.mul_re, Complex.mul_im]
+  rw [hre]
+  -- want: exp(-2β Re h) < 1, i.e., -2β Re h < 0
+  refine Real.exp_lt_one_iff.mpr ?_
+  have : 0 < 2 * β * h.re := by positivity
+  linarith
+
 end IsingModel
