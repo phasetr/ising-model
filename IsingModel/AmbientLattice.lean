@@ -2064,9 +2064,9 @@ Complements `magnetizationInfinite_beta_zero` (β=0: vanishes) and
 `magnetizationInfinite_zero_at_h_zero` (h=0: vanishes).
 
 Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §4.1
-(non-interacting `J = 0` slice; note `β` is unrestricted here, so
-this is not the infinite-temperature slice); §5.1 pp. 76–77
-(magnetization). -/
+(non-interacting `J = 0` slice; `β` is constrained only by
+`Ferromagnetic.hβ : 0 < β`, not by the infinite-temperature
+limit `β → 0`); §5.1 pp. 76–77 (magnetization). -/
 theorem magnetizationInfinite_J_zero
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
