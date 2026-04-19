@@ -723,4 +723,33 @@ theorem freeEnergyComplex_analyticAt_h_ofReal
   freeEnergyComplex_analyticAt_h G (J : ℂ) (β : ℂ) (h₀ : ℂ)
     (partitionFunctionComplex_mem_slitPlane_of_real G ⟨J, h₀, β⟩)
 
+/-! ### slitPlane via `Re Z > 0` on a Lee-Yang subdomain (PR #200 in progress)
+
+Toward GJ §4.6 Thm 4.6.2 finite-volume analyticity on the Lee-Yang
+domain: we establish `partitionFunctionComplex ∈ Complex.slitPlane`
+by the stronger `Re Z > 0` condition, which holds on the subdomain
+`{h | |Im h| < Re h ∧ β · |Im h| · |ι| < π/2}`.
+
+The bound `β · |Im h| · |ι| < π/2` ensures that for any configuration
+`σ` with spin sum `s ∈ [-|ι|, |ι|]`, `|β · Im h · s| < π/2`, hence
+`cos(β · Im h · s) > 0`. The real part of each Boltzmann weight is
+then `exp(β·J·(edge sum) + β·Re h · s) · cos(β · Im h · s) > 0`, and
+summing over `σ` gives `Re Z > 0`.
+
+This is a strictly weaker statement than the full Lee-Yang analyticity,
+but it is a concrete subdomain where the finite-volume complex
+analyticity of `freeEnergyComplex` holds without a separate branch
+construction.
+
+Full Lee-Yang extension requires a continuous branch argument on the
+simply-connected domain (classical complex analysis; not directly
+available as a mathlib lemma at present). -/
+
+/-- The restricted Lee-Yang subdomain on which we prove `Re Z > 0`:
+`{h | |Im h| < Re h ∧ β · |Im h| · |ι| < π/2}`. This domain shrinks
+as `β · |ι|` grows, so it does not lift to the infinite-volume limit;
+the full Lee-Yang domain requires a branch argument. -/
+def leeYangSubdomain (β : ℝ) (N : ℕ) : Set ℂ :=
+  {h : ℂ | |h.im| < h.re ∧ β * |h.im| * (N : ℝ) < Real.pi / 2}
+
 end IsingModel
