@@ -1323,8 +1323,7 @@ ratio uniform), this gives a uniform-on-compacts bound needed for the
 ∞-vol Vitali lift. -/
 theorem norm_freeEnergyComplex_le_trivial_bound
     (G : SimpleGraph ι) [Fintype G.edgeSet] [Nonempty ι]
-    (β J : ℝ) (h : ℂ)
-    (hZ : partitionFunctionComplex G (J : ℂ) h (β : ℂ) ≠ 0) :
+    (β J : ℝ) (h : ℂ) :
     ‖freeEnergyComplex G (J : ℂ) h (β : ℂ)‖
       ≤ |Real.log ‖partitionFunctionComplex G (J : ℂ) h (β : ℂ)‖|
           / (Fintype.card ι : ℝ) + Real.pi / (Fintype.card ι : ℝ) := by
@@ -1339,7 +1338,7 @@ theorem norm_freeEnergyComplex_le_trivial_bound
     norm_complex_log_le _
   have hN_pos : (0 : ℝ) < Fintype.card ι := by exact_mod_cast hNℕ
   have hNorm : ‖((Fintype.card ι : ℂ) : ℂ)‖ = (Fintype.card ι : ℝ) := by
-    simp [Complex.norm_natCast]
+    simp
   rw [hNorm]
   have := mul_le_mul_of_nonneg_left h_log
     (show (0 : ℝ) ≤ (Fintype.card ι : ℝ)⁻¹ from inv_nonneg.mpr hN_pos.le)
