@@ -399,6 +399,21 @@ theorem leeYangNormalization_analyticAt_joint
     analyticAt_snd.comp hhβ
   exact (hβ.mul hJ |>.mul analyticAt_const).add (hβ.mul hh |>.mul analyticAt_const)
 
+/-- At real parameters, `leeYangNormalization` is a positive real number.
+This matches the `exp(β J |E| + β h |ι|)` prefactor of the real-valued
+partition function, which is always strictly positive. -/
+theorem leeYangNormalization_ofReal_pos
+    (β J h : ℝ) (edgeCount siteCount : ℕ) :
+    0 < (leeYangNormalization (β : ℂ) (J : ℂ) (h : ℂ)
+            edgeCount siteCount).re := by
+  unfold leeYangNormalization
+  have heq : (β : ℂ) * (J : ℂ) * (edgeCount : ℂ)
+              + (β : ℂ) * (h : ℂ) * (siteCount : ℂ)
+            = ((β * J * edgeCount + β * h * siteCount : ℝ) : ℂ) := by
+    push_cast; ring
+  rw [heq, ← Complex.ofReal_exp, Complex.ofReal_re]
+  exact Real.exp_pos _
+
 /-- **Lee-Yang nonvanishing of the Ising partition polynomial on the
 Lee-Yang domain** (uniform field, real ferromagnetic coupling).
 
