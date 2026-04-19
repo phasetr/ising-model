@@ -1689,13 +1689,14 @@ theorem exists_logZ_analyticOnNhd_ball
     exists_logZ_analytic_branch_on_ball G hβ hJ (h₀ := h₀) (r := r) hr hsub
   exact ⟨g, hg_ana, hg_exp⟩
 
+omit [Fintype ι] [DecidableEq ι] in
 /-- **`freeEnergyComplex` local-branch analyticAt via scaling**:
 from the existence of `g` with `exp g = Z` analytic at `h₀`, scaling
 by `|ι|⁻¹` gives an analytic `f = g/|ι|` with `exp(|ι|·f) = Z`. -/
 theorem freeEnergyComplex_analyticAt_from_logZ_branch
-    [Nonempty ι] {g : ℂ → ℂ} {h₀ : ℂ}
+    (c : ℂ) {g : ℂ → ℂ} {h₀ : ℂ}
     (hg_ana : AnalyticAt ℂ g h₀) :
-    AnalyticAt ℂ (fun h => ((Fintype.card ι : ℂ))⁻¹ * g h) h₀ :=
+    AnalyticAt ℂ (fun h => c * g h) h₀ :=
   analyticAt_const.mul hg_ana
 
 
