@@ -2368,6 +2368,18 @@ theorem leeYangDomain_subset_branch_locus
     exists_freeEnergyComplex_analyticAt_branch_of_leeYangDomain G hβ hJ hh
   exact ⟨f, hf_ana, hf_exp⟩
 
+/-- Headline: `freeEnergyComplex` has an analytic local branch at every
+point of the Lee-Yang domain (restatement without the equality at the
+basepoint). -/
+theorem freeEnergyComplex_exists_analyticBranch
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J) [Nonempty ι] :
+    ∀ h ∈ leeYangDomain, ∃ f : ℂ → ℂ, AnalyticAt ℂ f h :=
+  fun h hh =>
+    let ⟨f, hfa, _, _⟩ :=
+      exists_freeEnergyComplex_analyticAt_branch_of_leeYangDomain G hβ hJ hh
+    ⟨f, hfa⟩
+
 
 
 
