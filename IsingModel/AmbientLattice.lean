@@ -1943,6 +1943,45 @@ theorem correlationInfinite_J_zero
     tendsto_nhds_unique h_tendsto_ciSup h_tendsto_const
   simp only [correlationInfinite, h_unique]
 
+/-- **∞-volume correlation vanishes at `β = 0`** for any
+`IsingParams ⟨J, h, 0⟩` and any nonempty test set `A`.
+
+At `β = 0` the finite-volume `correlation_beta_zero_vanish_of_nonempty_A`
+makes the correlation zero on any nonempty subset, so
+`correlationAlongExhaustion G Λ ⟨J, h, 0⟩ A` is pointwise zero
+(`A ⊆ Λ.volume n`: lifted subset is still nonempty via
+`liftFinset_card`; `A ⊄ Λ.volume n`: `correlationAlongExhaustion`
+is `0` by definition). Hence `correlationInfinite = ⨆ n, 0 = 0`.
+
+Unlike `correlationInfinite_J_zero`, no ferromagnetic hypothesis
+is needed here (the sequence is constantly zero, no monotonicity
+argument required).
+
+Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §4.1
+(infinite-temperature slice); §5.1 pp. 72–74 (cluster property
+context). -/
+theorem correlationInfinite_beta_zero_vanish_of_nonempty_A
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J h : ℝ) (A : Finset V) (hA : A.Nonempty) :
+    correlationInfinite G Λ (⟨J, h, 0⟩ : IsingParams ℝ) A = 0 := by
+  have hpointwise :
+      ∀ n, correlationAlongExhaustion G Λ
+          (⟨J, h, 0⟩ : IsingParams ℝ) A n = 0 := by
+    intro n
+    by_cases hAn : A ⊆ Λ.volume n
+    · rw [correlationAlongExhaustion_of_subset G Λ
+          (⟨J, h, 0⟩ : IsingParams ℝ) hAn]
+      change IsingModel.correlation (inducedGraph G (Λ.volume n))
+        (⟨J, h, 0⟩ : IsingParams ℝ) (liftFinset A hAn) = 0
+      refine IsingModel.correlation_beta_zero_vanish_of_nonempty_A
+        _ J h _ ?_
+      rw [← Finset.card_pos, liftFinset_card hAn]
+      exact Finset.card_pos.mpr hA
+    · exact correlationAlongExhaustion_of_not_subset G Λ
+        (⟨J, h, 0⟩ : IsingParams ℝ) hAn
+  simp only [correlationInfinite, hpointwise, ciSup_const]
+
 /-- **Empty-set correlation on `Λ` is `1`** (normalization). -/
 @[simp]
 theorem correlationΛ_empty (G : SimpleGraph V) (Λ : Finset V)
@@ -2394,6 +2433,33 @@ theorem truncated2Infinite_J_zero_of_ne
   have hcard_i : ({i} : Finset V).card = 1 := Finset.card_singleton i
   have hcard_j : ({j} : Finset V).card = 1 := Finset.card_singleton j
   rw [hcard_pair, hcard_i, hcard_j]
+  ring
+
+/-- **∞-volume truncated 2-point function vanishes at `β = 0`**
+for any `J, h` and any sites `i, j : V` (distinct or not).
+
+Infinite-volume counterpart of `truncated2_beta_zero` (finite
+volume, PR #208 in `Inequalities/GHS.lean`). Uses
+`correlationInfinite_beta_zero_vanish_of_nonempty_A` on each of
+`{i, j}`, `{i}`, `{j}` (all nonempty). No distinctness hypothesis
+is required: when `i = j`, `{i, j}` collapses to `{i}` at the
+Finset level inside `truncated2Infinite`, and the same vanishing
+applies.
+
+Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §5.1 pp. 72–74
+(cluster property context); §4.1 infinite-temperature slice. -/
+theorem truncated2Infinite_beta_zero
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J h : ℝ) (i j : V) :
+    truncated2Infinite G Λ (⟨J, h, 0⟩ : IsingParams ℝ) i j = 0 := by
+  unfold truncated2Infinite
+  rw [correlationInfinite_beta_zero_vanish_of_nonempty_A G Λ J h
+        {i, j} ⟨i, by simp⟩,
+      correlationInfinite_beta_zero_vanish_of_nonempty_A G Λ J h
+        {i} (Finset.singleton_nonempty i),
+      correlationInfinite_beta_zero_vanish_of_nonempty_A G Λ J h
+        {j} (Finset.singleton_nonempty j)]
   ring
 
 /-- **Nonnegativity of `truncated2Infinite`** (general): $U_2(i, j) \ge 0$
