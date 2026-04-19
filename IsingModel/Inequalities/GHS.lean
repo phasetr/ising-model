@@ -81,12 +81,16 @@ any sites `i, j : ι` (not necessarily distinct),
 At `β = 0` the Boltzmann weight is identically `1`, so
 `correlation G ⟨J, h, 0⟩` is the uniform spin average; by
 `correlation_beta_zero_vanish_of_nonempty_A`, this vanishes on
-any nonempty subset. Hence both `⟨σ_i σ_j⟩ = 0` and
-`⟨σ_i⟩ = ⟨σ_j⟩ = 0`, so the difference is `0`.
+any nonempty subset. Hence each of `correlation G ⟨J, h, 0⟩ {i, j}`,
+`correlation G ⟨J, h, 0⟩ {i}`, and `correlation G ⟨J, h, 0⟩ {j}`
+is `0`, so the difference is `0`.
 
 Companion to `truncated2_J_zero_of_ne`. Unlike the `J = 0` case,
-this statement needs no `i ≠ j` hypothesis: at `β = 0` even the
-diagonal truncated value vanishes because `⟨σ_i⟩ = 0`.
+this statement needs no `i ≠ j` hypothesis. When `i = j` the
+`truncated2` definition uses the Finset `{i, j} = {i}`, so the
+first term is `correlation G ⟨J, h, 0⟩ {i}`, not the physics
+product `⟨σ_i σ_i⟩ = 1`; this finset-level first term also
+vanishes at `β = 0`.
 
 Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §5.1 pp. 72–74
 (cluster property context); §4.1 infinite-temperature slice of
