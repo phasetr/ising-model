@@ -1910,9 +1910,13 @@ $\|\log z\|\le|\log\|z\||+\pi$, and the derived
 $\|f_{\text{complex}}\|\le(|\log\|Z\||+\pi)/|\iota|$.
 Still not formalised (future PRs): Montel-style locally uniform
 convergence of $f_\Lambda$ on Lee-Yang (mathlib lacks Montel;
-self-implementation required), followed by
-\texttt{vitali\_bridge\_leeYangDomain} application, and a global
-branch patched from the local pieces via simple connectivity.
+self-implementation required). Note that
+\texttt{vitali\_bridge\_leeYangDomain} itself \emph{is} already in
+\texttt{main}; what remains is the locally uniform convergence
+\emph{input} to the bridge, after which the bridge immediately
+yields analyticity of the infinite-volume limit $f_\infty$ on
+Lee-Yang. Separately, a global branch patched from the local
+pieces via simple connectivity is also not yet formalised.
 The principal-branch \texttt{Complex.log} of $Z$ may itself be
 discontinuous where $Z$ crosses the negative real axis; the
 local-branch statement is the mathematically correct form of GJ
