@@ -2415,6 +2415,24 @@ theorem isOpen_freeEnergy_analyticity_locus_joint
   exact (continuous_partitionFunctionComplex_joint G).isOpen_preimage _
     Complex.isOpen_slitPlane
 
+/-- For real parameters `p : IsingParams ℝ`, the joint-analyticity point
+`((p.J : ℂ), (p.h : ℂ), (p.β : ℂ))` is in the slitPlane locus. -/
+theorem real_params_in_analyticity_locus_joint
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (p : IsingParams ℝ) :
+    ((p.J : ℂ), (p.h : ℂ), (p.β : ℂ)) ∈
+      {z : ℂ × ℂ × ℂ | partitionFunctionComplex G z.1 z.2.1 z.2.2
+                        ∈ Complex.slitPlane} :=
+  partitionFunctionComplex_mem_slitPlane_of_real G p
+
+/-- The real parameter slice is in the analyticity locus. -/
+theorem real_params_analyticAt_joint
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (p : IsingParams ℝ) :
+    AnalyticAt ℂ
+      (fun z : ℂ × ℂ × ℂ => freeEnergyComplex G z.1 z.2.1 z.2.2)
+      ((p.J : ℂ), (p.h : ℂ), (p.β : ℂ)) :=
+  freeEnergyComplex_analyticAt_joint G _
+    (partitionFunctionComplex_mem_slitPlane_of_real G p)
+
 
 
 
