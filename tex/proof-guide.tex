@@ -1716,6 +1716,14 @@ joint analyticity, $\log Z$ (slit-plane 経由), $\infty$-vol Vitali)
 は後続 PR. `Complex.log` は mathlib では slitPlane 上でのみ analytic な点に注意.
 \end{theorem}
 
+\begin{theorem}[GJ \S 4.6 Thm 4.6.2 continuation: \texttt{freeEnergy} real-complex compat; PR \#197]
+\texttt{freeEnergy\_ofReal\_eq\_freeEnergyComplex}:
+実パラメタ $p$ で
+$((\texttt{freeEnergy}\,G\,p : \mathbb R) : \mathbb C) = \texttt{freeEnergyComplex}\,G\,(J:\mathbb C)\,(h:\mathbb C)\,(\beta:\mathbb C)$.
+証明: PR \#196 の $Z$ 整合性 + \texttt{partitionFunction\_pos}
+($Z > 0$) で \texttt{Complex.ofReal\_log} 適用.
+\end{theorem}
+
 \begin{theorem}[GJ \S 4.6 Thm 4.6.2 continuation: real-complex compatibility; PR \#196]
 \texttt{partitionFunction\_ofReal\_eq\_partitionFunctionComplex}:
 実パラメタ $p = \langle J, h, \beta\rangle$ で

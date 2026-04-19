@@ -1,4 +1,5 @@
 import IsingModel.GibbsMeasure
+import IsingModel.FreeEnergy
 import Mathlib.Analysis.Analytic.Constructions
 import Mathlib.Analysis.Analytic.Linear
 import Mathlib.Analysis.SpecialFunctions.Complex.Analytic
@@ -191,5 +192,20 @@ theorem partitionFunction_ofReal_eq_partitionFunctionComplex
     edgeSpin_ofReal_eq_edgeSpinComplex σ
   push_cast [← hspin, ← hedge]
   ring
+
+/-- `Complex.ofReal (freeEnergy G p) = freeEnergyComplex G p.J p.h p.β`.
+
+Combines `partitionFunction_ofReal_eq_partitionFunctionComplex` (PR #196)
+with positivity of `partitionFunction` and mathlib `Complex.ofReal_log`. -/
+theorem freeEnergy_ofReal_eq_freeEnergyComplex
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (p : IsingParams ℝ) :
+    ((freeEnergy G p : ℝ) : ℂ)
+      = freeEnergyComplex G (p.J : ℂ) (p.h : ℂ) (p.β : ℂ) := by
+  unfold freeEnergy freeEnergyComplex
+  have hZpos : 0 ≤ partitionFunction G p :=
+    (partitionFunction_pos G p).le
+  rw [Complex.ofReal_mul, Complex.ofReal_inv, Complex.ofReal_natCast,
+    Complex.ofReal_log hZpos,
+    partitionFunction_ofReal_eq_partitionFunctionComplex G p]
 
 end IsingModel
