@@ -2444,6 +2444,25 @@ theorem real_params_image_subset_analyticity_locus_joint
   rintro z ⟨p, _, rfl⟩
   exact partitionFunctionComplex_mem_slitPlane_of_real G p
 
+/-- **Continuity of `freeEnergyComplex` jointly on the analyticity
+locus**. -/
+theorem freeEnergyComplex_continuousOn_slitPlane_locus_joint
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    ContinuousOn
+      (fun z : ℂ × ℂ × ℂ => freeEnergyComplex G z.1 z.2.1 z.2.2)
+      {z : ℂ × ℂ × ℂ | partitionFunctionComplex G z.1 z.2.1 z.2.2
+                        ∈ Complex.slitPlane} := fun z hmem =>
+  ((freeEnergyComplex_analyticAt_joint G z hmem).continuousAt).continuousWithinAt
+
+/-- `DifferentiableOn` form of the above. -/
+theorem freeEnergyComplex_differentiableOn_slitPlane_locus_joint
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    DifferentiableOn ℂ
+      (fun z : ℂ × ℂ × ℂ => freeEnergyComplex G z.1 z.2.1 z.2.2)
+      {z : ℂ × ℂ × ℂ | partitionFunctionComplex G z.1 z.2.1 z.2.2
+                        ∈ Complex.slitPlane} := fun z hmem =>
+  (freeEnergyComplex_analyticAt_joint G z hmem).differentiableAt.differentiableWithinAt
+
 
 
 
