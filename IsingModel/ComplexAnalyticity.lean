@@ -2173,6 +2173,15 @@ theorem leeYangFugacity_deriv (β h : ℂ) :
     deriv (leeYangFugacity β) h = -2 * β * Complex.exp (-2 * β * h) :=
   (leeYangFugacity_hasDerivAt β h).deriv
 
+/-- Logarithmic derivative of `leeYangFugacity β`: `(d/dh log z(h))
+  = -2β`. In particular, the relative change in the fugacity is
+constant. -/
+theorem leeYangFugacity_logDeriv (β h : ℂ) :
+    deriv (leeYangFugacity β) h / leeYangFugacity β h = -2 * β := by
+  rw [leeYangFugacity_deriv]
+  unfold leeYangFugacity
+  field_simp
+
 
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
