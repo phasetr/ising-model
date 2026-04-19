@@ -2233,7 +2233,6 @@ theorem norm_leeYangNormalization_real_beta
   unfold leeYangNormalization
   rw [Complex.norm_exp]
   congr 1
-  push_cast
   ring_nf
 
 
