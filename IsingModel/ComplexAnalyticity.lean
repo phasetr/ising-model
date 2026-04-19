@@ -1930,6 +1930,15 @@ theorem freeEnergyComplex_continuousAt_real_pos_h
       (h₀ : ℂ) :=
   (freeEnergyComplex_analyticAt_h_ofReal G J h₀ β).continuousAt
 
+/-- `freeEnergyComplex` continuous on `{h | Z(h) ∈ slitPlane}`. -/
+theorem freeEnergyComplex_continuousOn_slitPlane_locus
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℂ) :
+    ContinuousOn (fun h => freeEnergyComplex G J h β)
+      {h : ℂ | partitionFunctionComplex G J h β ∈ Complex.slitPlane} := by
+  intro h hmem
+  exact ((freeEnergyComplex_analyticAt_h G J β h hmem).continuousAt).continuousWithinAt
+
 
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
