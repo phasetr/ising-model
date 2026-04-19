@@ -4277,6 +4277,29 @@ p.~64. This is an API-site convenience wrapper; no new
 mathematical content.
 \end{proof}
 
+\begin{theorem}[Direct $\limsup$ corollary of GJ \S 5.4 Prop 5.4.2
+along an exhaustion; PR \#213]
+Under the same per-stage hypotheses as PR \#202, the
+$\limsup_n (1 - \langle \sigma_{i_n} \rangle_{+}^{G_n, B_n})$ along
+\texttt{atTop} is bounded above by $\exp(-c\beta)$.
+\end{theorem}
+
+\begin{proof}
+From the per-stage bound of PR \#202
+($\texttt{prop\_5\_4\_2\_along\_exhaustion}$): at every $n$,
+$0 \le 1 - \langle \sigma_{i_n} \rangle_{+}^{G_n, B_n} \le
+\exp(-c\beta)$. Apply mathlib's
+\texttt{Filter.limsup\_le\_of\_le}: the eventually-uniform upper
+bound $\exp(-c\beta)$ holds pointwise, and the
+\texttt{IsCoboundedUnder (\cdot \le \cdot)} side condition is
+satisfied by the pointwise lower bound $0$
+(\texttt{isCoboundedUnder\_le\_of\_eventually\_le} with $x = 0$).
+Reference: Glimm--Jaffe \cite{glimm-jaffe} \S 5.4 Prop 5.4.2,
+p.~83. This is a direct $\limsup$ corollary; strengthening to a
+genuine infinite-volume $+$-BC expectation \emph{inequality}
+remains follow-up work.
+\end{proof}
+
 \begin{theorem}[Corollary/wrapper of GJ \S 5.4 Prop 5.4.2 along an
 exhaustion (per-stage); PR \#202]
 For a graph $G : \mathrm{SimpleGraph}\, V$ with an exhaustion
