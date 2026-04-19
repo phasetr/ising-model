@@ -1939,6 +1939,21 @@ theorem freeEnergyComplex_continuousOn_slitPlane_locus
   intro h hmem
   exact ((freeEnergyComplex_analyticAt_h G J β h hmem).continuousAt).continuousWithinAt
 
+/-- **DifferentiableOn version on the slitPlane locus**. -/
+theorem freeEnergyComplex_differentiableOn_slitPlane_locus
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J β : ℂ) :
+    DifferentiableOn ℂ (fun h => freeEnergyComplex G J h β)
+      {h : ℂ | partitionFunctionComplex G J h β ∈ Complex.slitPlane} := fun h hmem =>
+  (freeEnergyComplex_analyticAt_h G J β h hmem).differentiableAt.differentiableWithinAt
+
+/-- `freeEnergyComplex` is `AnalyticOn` (not just `AnalyticOnNhd`) on
+the slitPlane locus. -/
+theorem freeEnergyComplex_analyticOn_slitPlane_locus
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J β : ℂ) :
+    AnalyticOn ℂ (fun h => freeEnergyComplex G J h β)
+      {h : ℂ | partitionFunctionComplex G J h β ∈ Complex.slitPlane} :=
+  (freeEnergyComplex_analyticOnNhd_slitPlane_locus G J β).analyticOn
+
 
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
