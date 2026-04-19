@@ -2107,6 +2107,23 @@ theorem freeEnergyComplex_analyticOnNhd_of_leeYangSubdomain
       (leeYangSubdomain β (Fintype.card ι)) :=
   freeEnergyComplex_analyticOnNhd_leeYangSubdomain G hβ J
 
+/-- `freeEnergyComplex_analyticOnNhd_leeYangSubdomain` restated as
+`AnalyticOn`. -/
+theorem freeEnergyComplex_analyticOn_leeYangSubdomain
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β : ℝ} (hβ : 0 < β) (J : ℝ) :
+    AnalyticOn ℂ (fun h => freeEnergyComplex G (J : ℂ) h (β : ℂ))
+      (leeYangSubdomain β (Fintype.card ι)) :=
+  (freeEnergyComplex_analyticOnNhd_leeYangSubdomain G hβ J).analyticOn
+
+/-- `freeEnergyComplex` is continuous on `leeYangSubdomain`. -/
+theorem freeEnergyComplex_continuousOn_leeYangSubdomain
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β : ℝ} (hβ : 0 < β) (J : ℝ) :
+    ContinuousOn (fun h => freeEnergyComplex G (J : ℂ) h (β : ℂ))
+      (leeYangSubdomain β (Fintype.card ι)) :=
+  (freeEnergyComplex_differentiableOn_leeYangSubdomain G hβ J).continuousOn
+
 
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
