@@ -1171,4 +1171,34 @@ theorem exists_logZ_analyticAt_of_leeYangDomain
   refine ⟨g, hg_ana h₀ (Metric.mem_ball_self hr_pos),
     hg_exp h₀ (Metric.mem_ball_self hr_pos), hg_base⟩
 
+/-- **GJ §4.6 Thm 4.6.2 finite-volume (local-branch form)**: at every
+`h₀ ∈ leeYangDomain` (real ferromagnetic `β > 0`, `J > 0`), the
+free energy admits a local analytic representation. Concretely:
+there exists `f : ℂ → ℂ` analytic at `h₀` with `exp(|ι| · f(h₀)) = Z(h₀)`
+and `f(h₀) = freeEnergyComplex G (J : ℂ) h₀ (β : ℂ)`.
+
+This is the finite-volume content of Thm 4.6.2 in the branch-adapted
+sense. The principal-branch `freeEnergyComplex` may be discontinuous at
+points where `Z` crosses the negative real axis; the local branch `f`
+is analytic across such crossings. -/
+theorem exists_freeEnergyComplex_analyticAt_branch_of_leeYangDomain
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J) [Nonempty ι]
+    {h₀ : ℂ} (hmem : h₀ ∈ leeYangDomain) :
+    ∃ f : ℂ → ℂ,
+        AnalyticAt ℂ f h₀
+      ∧ Complex.exp ((Fintype.card ι : ℂ) * f h₀)
+          = partitionFunctionComplex G (J : ℂ) h₀ (β : ℂ)
+      ∧ f h₀ = freeEnergyComplex G (J : ℂ) h₀ (β : ℂ) := by
+  obtain ⟨g, hg_ana, hg_exp, hg_base⟩ :=
+    exists_logZ_analyticAt_of_leeYangDomain G hβ hJ hmem
+  refine ⟨fun z => ((Fintype.card ι : ℂ))⁻¹ * g z, ?_, ?_, ?_⟩
+  · exact analyticAt_const.mul hg_ana
+  · have hNℕ : 0 < Fintype.card ι := Fintype.card_pos
+    have hN : (Fintype.card ι : ℂ) ≠ 0 := by exact_mod_cast hNℕ.ne'
+    have hmul : (Fintype.card ι : ℂ) * ((Fintype.card ι : ℂ)⁻¹ * g h₀)
+                = g h₀ := by field_simp
+    rw [hmul]; exact hg_exp
+  · unfold freeEnergyComplex; simp [hg_base]
+
 end IsingModel
