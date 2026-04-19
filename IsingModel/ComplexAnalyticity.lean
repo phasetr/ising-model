@@ -2549,7 +2549,8 @@ theorem partitionFunctionComplex_restrict_real_axis_eq
         partitionFunctionComplex G (J : ℂ) (h : ℂ) (β : ℂ))
       = fun h : ℝ => ((partitionFunction G ⟨J, h, β⟩ : ℝ) : ℂ) := by
   funext h
-  exact partitionFunctionComplex_at_real G J β h
+  exact (partitionFunction_ofReal_eq_partitionFunctionComplex
+    G ⟨J, h, β⟩).symm
 
 
 
