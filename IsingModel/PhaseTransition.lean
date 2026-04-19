@@ -189,6 +189,29 @@ theorem magnetization_beta_zero (G : SimpleGraph ι) [Fintype G.edgeSet]
   unfold magnetization
   exact correlation_beta_zero_vanish_of_nonempty_A G J h {i} ⟨i, by simp⟩
 
+/-- The magnetization at `J = 0` (non-interacting model) has the
+closed form `M(i) = tanh(β·h)`.
+
+At `J = 0` the Hamiltonian has no inter-site coupling and the sites
+are independent; single-site expectation `⟨σ_i⟩` under an external
+field `h` at inverse temperature `β` is the mean of a `±1`-valued
+random variable with `P(+1) ∝ exp(βh)` and `P(-1) ∝ exp(-βh)`,
+giving `tanh(βh)`.
+
+Specialization of `correlation_J_zero`
+(`⟨σ^A⟩ = tanh(βh)^|A|`) at the singleton `{i}`. Finite-volume
+companion to `magnetizationInfinite_J_zero` (PR #218). Completes
+the three trivial slices of `magnetization`:
+`J = 0` (`tanh(βh)`), `β = 0` (`0`), `h = 0` (`0`).
+
+Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §4.1
+(non-interacting `J = 0` slice); §5.1 pp. 76–77 (magnetization). -/
+theorem magnetization_J_zero (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (h β : ℝ) (i : ι) :
+    magnetization G (⟨0, h, β⟩ : IsingParams ℝ) i = Real.tanh (β * h) := by
+  unfold magnetization
+  rw [correlation_J_zero, Finset.card_singleton, pow_one]
+
 /-! ## Free energy convexity and phase transitions (§16.1)
 
 Glimm–Jaffe §16.1 (pp. 280–284) discusses the thermodynamic
