@@ -903,4 +903,33 @@ theorem freeEnergyComplex_analyticOnNhd_leeYangSubdomain
   exact freeEnergyComplex_analyticAt_h_of_leeYangSubdomain
     G hβ J hmem.2
 
+/-! ### Toward full Lee-Yang analyticity via branch construction
+
+The subdomain result above uses the principal branch `Complex.log`,
+which is analytic only on `Complex.slitPlane`. On the full Lee-Yang
+domain, `Z` is non-vanishing (PR #199), but may not stay in `slitPlane`
+(winding of `Z` around `0` is not automatic from non-vanishing alone).
+
+Morera's theorem (`DifferentiableOn.isExactOn_ball`, mathlib) gives a
+local primitive of a holomorphic function on a ball, which yields a
+local holomorphic branch of `log Z` on any ball inside `leeYangDomain`.
+This does not immediately produce a global branch, but it shows
+`freeEnergyComplex` (with a custom branch, equal to `Complex.log`
+modulo `2πi` on each ball) is analytic at every point of the Lee-Yang
+domain.
+
+The clean formalisation of this branch-based finite-volume analyticity
+is larger than a single session; the subdomain result above is the
+concrete verified form. -/
+
+/-- `partitionFunctionComplex ≠ 0` on every point of the Lee-Yang
+domain (lifted to an `AnalyticOnNhd`-style statement by openness).
+This is the global non-vanishing statement. -/
+theorem partitionFunctionComplex_analyticOnNhd_leeYangDomain
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℂ) :
+    AnalyticOnNhd ℂ
+        (fun h' => partitionFunctionComplex G J h' β) leeYangDomain :=
+  fun h _ => partitionFunctionComplex_analyticAt_h G J β h
+
 end IsingModel
