@@ -469,13 +469,12 @@ theorem exp_beta_h_sign_eq (β : ℝ) (h : ℂ) (σ : Config ι) (i : ι) :
   cases hσ : σ i with
   | up =>
     simp only [Spin.sign, Spin.toSign, Int.cast_one, mul_one]
-    rw [if_neg (by simp [hσ])]
-    ring
+    rw [if_neg (by simp), mul_one]
   | down =>
     simp only [Spin.sign, Spin.toSign, Int.cast_neg, Int.cast_one]
-    rw [if_pos (by simp [hσ])]
+    rw [if_pos (by simp)]
     rw [mul_neg_one, ← Complex.exp_add]
-    congr 1; push_cast; ring
+    congr 1; ring
 
 /-- Per-edge factorisation of the interaction exponential.
 For `σ : Config ι` with down-spin set `X = configToFinset σ`, at each
@@ -495,20 +494,19 @@ theorem exp_beta_J_sign_mul_sign_eq
   | up =>
     cases hj : σ j with
     | up =>
-      simp only [Spin.sign, Spin.toSign, Int.cast_one, mul_one, one_mul,
-        if_true]
+      simp [Spin.sign, Spin.toSign]
     | down =>
-      rw [if_neg (by simp [hj])]
+      rw [if_neg (by simp)]
       rw [show ((Real.exp (-2 * β * J)) : ℂ)
             = Complex.exp ((-2 * β * J : ℝ) : ℂ) from
         Complex.ofReal_exp _, ← Complex.exp_add]
-      simp only [Spin.sign, Spin.toSign, Int.cast_one, Int.cast_neg, one_mul,
+      simp only [Spin.sign, Spin.toSign, Int.cast_one, Int.cast_neg,
         mul_neg_one]
       congr 1; push_cast; ring
   | down =>
     cases hj : σ j with
     | up =>
-      rw [if_neg (by simp [hi])]
+      rw [if_neg (by simp)]
       rw [show ((Real.exp (-2 * β * J)) : ℂ)
             = Complex.exp ((-2 * β * J : ℝ) : ℂ) from
         Complex.ofReal_exp _, ← Complex.exp_add]
@@ -520,6 +518,7 @@ theorem exp_beta_J_sign_mul_sign_eq
         neg_mul_neg, one_mul]
       rw [if_pos (by simp)]; ring
 
+omit [DecidableEq ι] in
 /-- Product over sites of the external-field exponential factorises as
 `exp(β·h·|ι|) · z^|X|` where `X = configToFinset σ` and `z = leeYangFugacity β h`. -/
 theorem prod_exp_beta_h_sign_eq
@@ -527,6 +526,7 @@ theorem prod_exp_beta_h_sign_eq
     ∏ i : ι, Complex.exp ((β : ℂ) * h * Spin.sign ℂ (σ i))
       = Complex.exp ((β : ℂ) * h * (Fintype.card ι : ℂ))
           * ∏ _i ∈ configToFinset σ, leeYangFugacity (β : ℂ) h := by
+  classical
   rw [show (∏ i : ι, Complex.exp ((β : ℂ) * h * Spin.sign ℂ (σ i)))
           = ∏ i : ι, (Complex.exp ((β : ℂ) * h)
               * (if i ∈ configToFinset σ then
@@ -643,11 +643,7 @@ uniform external field `h ∈ ℂ`:
 coupling `t = e^{-2βJ}`.
 
 Reference: Friedli–Velenik (3.63)–(3.65), pp. 122–123;
-Glimm–Jaffe Thm 4.6.2, p. 68.
-
-TODO: Fill in the proof via the `configFinsetEquiv` bijection and
-term-by-term factorisation
-`exp(-β · H(σ)) = leeYangNormalization · (∏_e edgeWeight) · (∏_{i∈X} z)`. -/
+Glimm–Jaffe Thm 4.6.2, p. 68. -/
 theorem partitionFunctionComplex_eq_normalization_mul_isingEdgePoly
     (G : SimpleGraph ι) [Fintype G.edgeSet]
     (β J : ℝ) (h : ℂ) :
@@ -656,7 +652,26 @@ theorem partitionFunctionComplex_eq_normalization_mul_isingEdgePoly
           G.edgeFinset.card (Fintype.card ι)
         * (isingEdgePoly (graphToEdgeList G (Real.exp (-2 * β * J)))).eval
             (leeYangFugacityVec (β : ℂ) h) := by
-  sorry
+  unfold partitionFunctionComplex MultilinPoly.eval
+  have hterm : ∀ σ : Config ι,
+      Complex.exp (-(β : ℂ) * hamiltonianComplex G (J : ℂ) h σ)
+        = leeYangNormalization (β : ℂ) (J : ℂ) h
+            G.edgeFinset.card (Fintype.card ι)
+          * (isingEdgePoly (graphToEdgeList G (Real.exp (-2 * β * J)))
+              (configToFinset σ)
+            * ∏ i ∈ configToFinset σ, leeYangFugacityVec (β : ℂ) h i) := by
+    intro σ
+    rw [exp_neg_beta_hamiltonian_eq G β J h σ]; ring
+  rw [Finset.sum_congr rfl (fun σ _ => hterm σ)]
+  rw [← Finset.mul_sum]
+  congr 1
+  exact Fintype.sum_equiv configFinsetEquiv
+    (fun σ => isingEdgePoly (graphToEdgeList G (Real.exp (-2 * β * J)))
+        (configToFinset σ)
+      * ∏ i ∈ configToFinset σ, leeYangFugacityVec (β : ℂ) h i)
+    (fun X => isingEdgePoly (graphToEdgeList G (Real.exp (-2 * β * J))) X
+      * ∏ i ∈ X, leeYangFugacityVec (β : ℂ) h i)
+    (fun σ => by simp [configFinsetEquiv])
 
 /-- **`partitionFunctionComplex` is non-zero on the Lee-Yang domain**
 (uniform field, real ferromagnetic coupling `J > 0`, real `β > 0`).
