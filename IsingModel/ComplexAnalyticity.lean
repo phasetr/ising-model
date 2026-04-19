@@ -2190,6 +2190,22 @@ theorem leeYangNormalization_analyticAt_h
   refine AnalyticAt.cexp' ?_
   fun_prop
 
+/-- `leeYangNormalization` analytic in `β`. -/
+theorem leeYangNormalization_analyticAt_beta
+    (β₀ J h : ℂ) (edgeCount siteCount : ℕ) :
+    AnalyticAt ℂ (fun β => leeYangNormalization β J h edgeCount siteCount) β₀ := by
+  unfold leeYangNormalization
+  refine AnalyticAt.cexp' ?_
+  fun_prop
+
+/-- `leeYangNormalization` analytic in `J`. -/
+theorem leeYangNormalization_analyticAt_J
+    (β : ℂ) (J₀ : ℂ) (h : ℂ) (edgeCount siteCount : ℕ) :
+    AnalyticAt ℂ (fun J => leeYangNormalization β J h edgeCount siteCount) J₀ := by
+  unfold leeYangNormalization
+  refine AnalyticAt.cexp' ?_
+  fun_prop
+
 
 
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
