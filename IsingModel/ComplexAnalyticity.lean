@@ -2306,6 +2306,23 @@ theorem leeYangDomain_mem_nhds {h : ℂ} (hmem : h ∈ leeYangDomain) :
     leeYangDomain ∈ nhds h :=
   isOpen_leeYangDomain.mem_nhds hmem
 
+/-- `leeYangSubdomain` is in the neighbourhoods of any of its points. -/
+theorem leeYangSubdomain_mem_nhds (β : ℝ) (N : ℕ) {h : ℂ}
+    (hmem : h ∈ leeYangSubdomain β N) :
+    leeYangSubdomain β N ∈ nhds h :=
+  (isOpen_leeYangSubdomain β N).mem_nhds hmem
+
+/-- Any member of `leeYangDomain` has positive real part. -/
+theorem re_pos_of_mem_leeYangDomain {h : ℂ} (hh : h ∈ leeYangDomain) :
+    0 < h.re := by
+  have h1 : |h.im| < h.re := hh
+  linarith [abs_nonneg h.im]
+
+/-- Any member of `leeYangSubdomain` has positive real part. -/
+theorem re_pos_of_mem_leeYangSubdomain (β : ℝ) (N : ℕ) {h : ℂ}
+    (hh : h ∈ leeYangSubdomain β N) : 0 < h.re :=
+  re_pos_of_mem_leeYangDomain hh.1
+
 
 
 
