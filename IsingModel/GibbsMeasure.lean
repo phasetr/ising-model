@@ -239,6 +239,25 @@ theorem sum_exp_spin_sign (β h : ℝ) :
   simp only [mul_one, mul_neg_one, Real.cosh_eq]
   ring
 
+/-- **Single-site signed sum at the empty-graph site**:
+`∑_{s ∈ Spin} sign(s) · exp(β·h · sign(s)) = 2 · sinh(β·h)`.
+
+The two-element sum over `{up, down}` evaluates to
+`exp(β·h) - exp(-β·h)`, which is `2 · sinh(β·h)` by `Real.sinh_eq`.
+Companion to `sum_exp_spin_sign` (unsigned, gives `2 cosh`); the signed
+version powers the `⊥`-graph closed form of the correlation function. -/
+theorem sum_spin_sign_exp_sign (β h : ℝ) :
+    ∑ s : Spin, Spin.sign ℝ s * Real.exp (β * h * Spin.sign ℝ s)
+      = 2 * Real.sinh (β * h) := by
+  rw [sum_spin]
+  have hup : Spin.sign ℝ Spin.up = (1 : ℝ) := by
+    simp [Spin.sign, Spin.toSign]
+  have hdown : Spin.sign ℝ Spin.down = (-1 : ℝ) := by
+    simp [Spin.sign, Spin.toSign]
+  rw [hup, hdown]
+  simp only [one_mul, neg_mul, mul_one, mul_neg_one, Real.sinh_eq]
+  ring
+
 /-- **Partition function on the empty graph**: at `G = ⊥`,
 `Z = (2 · cosh(β·h))^|ι|`.
 
@@ -325,6 +344,131 @@ theorem correlation_eq_bot_at_J_zero (G : SimpleGraph ι) [Fintype G.edgeSet]
   refine Finset.sum_congr rfl ?_
   intro σ _
   rw [hamiltonian_eq_bot_at_J_zero]
+
+/-- **Correlation function on the empty graph** (closed form):
+`⟨σ^A⟩_⊥ = tanh(β·h)^|A|` for any subset `A`.
+
+Proof: at `G = ⊥` the Boltzmann weight factorises by site into
+`∏ i, exp(β·h · sign(σ_i))` (`hamiltonian_bot`). The spin product
+`∏_{i∈A} sign(σ_i)` becomes `∏_{i∈ι} (if i ∈ A then sign(σ_i) else 1)`
+by `Finset.prod_filter` on `univ.filter (· ∈ A) = A`. The combined
+per-site integrand has sum `2·sinh(β·h)` (if `i ∈ A`,
+`sum_spin_sign_exp_sign`) or `2·cosh(β·h)` (else, `sum_exp_spin_sign`).
+`Fintype.sum_prod_piFinset` swaps `∑_σ ∏_i` to `∏_i ∑_s`, and dividing
+by `Z_⊥ = (2·cosh(β·h))^|ι|` (`partitionFunction_bot`) gives
+`∏_{i∈ι} (if i ∈ A then tanh(β·h) else 1) = tanh(β·h)^|A|`. -/
+theorem correlation_bot_closed (p : IsingParams ℝ) (A : Finset ι) :
+    correlation (⊥ : SimpleGraph ι) p A = Real.tanh (p.β * p.h) ^ A.card := by
+  have hcosh_pos : (0 : ℝ) < Real.cosh (p.β * p.h) := Real.cosh_pos _
+  have h2cosh_pos : (0 : ℝ) < 2 * Real.cosh (p.β * p.h) := by linarith
+  have h2cosh_ne : (2 * Real.cosh (p.β * p.h)) ≠ 0 := h2cosh_pos.ne'
+  -- Boltzmann weight at ⊥ factorises over sites
+  have hw : ∀ σ : Config ι,
+      boltzmannWeight (⊥ : SimpleGraph ι) p σ
+        = ∏ i : ι, Real.exp (p.β * p.h * Spin.sign ℝ (σ i)) := by
+    intro σ
+    unfold boltzmannWeight
+    rw [hamiltonian_bot]
+    have hsum : -p.β * (-p.h * ∑ i : ι, Spin.sign ℝ (σ i))
+        = ∑ i : ι, p.β * p.h * Spin.sign ℝ (σ i) := by
+      rw [Finset.mul_sum, Finset.mul_sum]
+      refine Finset.sum_congr rfl fun i _ => ?_; ring
+    rw [hsum, Real.exp_sum]
+  -- spinProduct A factorises over univ with an indicator
+  have hsp : ∀ σ : Config ι,
+      spinProduct A σ
+        = ∏ i : ι, if i ∈ A then Spin.sign ℝ (σ i) else (1 : ℝ) := by
+    intro σ
+    change (∏ i ∈ A, (↑(σ i).toSign : ℝ)) = _
+    have hA : A = (Finset.univ : Finset ι).filter (· ∈ A) := by ext; simp
+    conv_lhs => rw [hA]
+    rw [Finset.prod_filter]
+    refine Finset.prod_congr rfl ?_
+    intro i _
+    rfl
+  -- per-configuration integrand = ∏ i, g i (σ i)
+  have hint : ∀ σ : Config ι,
+      spinProduct A σ * boltzmannWeight (⊥ : SimpleGraph ι) p σ
+        = ∏ i : ι,
+            (if i ∈ A then Spin.sign ℝ (σ i) else 1)
+              * Real.exp (p.β * p.h * Spin.sign ℝ (σ i)) := by
+    intro σ
+    rw [hsp σ, hw σ, ← Finset.prod_mul_distrib]
+  -- numerator: ∑_σ ∏_i (…) = ∏_i ∑_s (…) by Fintype.sum_prod_piFinset
+  have hnum : ∑ σ : Config ι,
+        spinProduct A σ * boltzmannWeight (⊥ : SimpleGraph ι) p σ
+      = ∏ i : ι, ∑ s : Spin,
+          (if i ∈ A then Spin.sign ℝ s else 1)
+            * Real.exp (p.β * p.h * Spin.sign ℝ s) := by
+    calc ∑ σ : Config ι,
+            spinProduct A σ * boltzmannWeight (⊥ : SimpleGraph ι) p σ
+        = ∑ σ : Config ι, ∏ i : ι,
+              (if i ∈ A then Spin.sign ℝ (σ i) else 1)
+                * Real.exp (p.β * p.h * Spin.sign ℝ (σ i)) :=
+              Finset.sum_congr rfl fun σ _ => hint σ
+      _ = ∑ σ ∈ Fintype.piFinset fun _ : ι => (Finset.univ : Finset Spin),
+              ∏ i : ι, (if i ∈ A then Spin.sign ℝ (σ i) else 1)
+                * Real.exp (p.β * p.h * Spin.sign ℝ (σ i)) := by
+              rw [Fintype.piFinset_univ]
+      _ = ∏ i : ι, ∑ s : Spin,
+              (if i ∈ A then Spin.sign ℝ s else 1)
+                * Real.exp (p.β * p.h * Spin.sign ℝ s) :=
+              Finset.sum_prod_piFinset (Finset.univ : Finset Spin)
+                (fun i s => (if i ∈ A then Spin.sign ℝ s else 1)
+                  * Real.exp (p.β * p.h * Spin.sign ℝ s))
+  -- per-site sum evaluates to 2·sinh or 2·cosh
+  have hsite : ∀ i : ι,
+      (∑ s : Spin, (if i ∈ A then Spin.sign ℝ s else 1)
+          * Real.exp (p.β * p.h * Spin.sign ℝ s))
+        = if i ∈ A then 2 * Real.sinh (p.β * p.h)
+                    else 2 * Real.cosh (p.β * p.h) := by
+    intro i
+    by_cases hi : i ∈ A
+    · simp only [if_pos hi]
+      simpa using sum_spin_sign_exp_sign p.β p.h
+    · simp only [if_neg hi, one_mul]
+      exact sum_exp_spin_sign p.β p.h
+  -- assemble the correlation
+  unfold correlation gibbsExpectation
+  rw [hnum, partitionFunction_bot]
+  rw [show (∏ i : ι, ∑ s : Spin,
+            (if i ∈ A then Spin.sign ℝ s else 1)
+              * Real.exp (p.β * p.h * Spin.sign ℝ s))
+        = ∏ _i : ι, (if _i ∈ A
+                      then 2 * Real.sinh (p.β * p.h)
+                      else 2 * Real.cosh (p.β * p.h))
+      from Finset.prod_congr rfl fun i _ => hsite i]
+  rw [show ((2 * Real.cosh (p.β * p.h)) ^ Fintype.card ι : ℝ)⁻¹
+        = ∏ _ : ι, (2 * Real.cosh (p.β * p.h))⁻¹
+      from by rw [Finset.prod_const, Finset.card_univ, inv_pow]]
+  rw [← Finset.prod_mul_distrib]
+  rw [show (fun i : ι => (2 * Real.cosh (p.β * p.h))⁻¹
+              * (if i ∈ A then 2 * Real.sinh (p.β * p.h)
+                           else 2 * Real.cosh (p.β * p.h)))
+        = fun i : ι => if i ∈ A then Real.tanh (p.β * p.h) else 1
+      from ?_]
+  · rw [← Finset.prod_filter]
+    rw [show (Finset.univ : Finset ι).filter (· ∈ A) = A from by ext; simp]
+    rw [Finset.prod_const]
+  · funext i
+    by_cases hi : i ∈ A
+    · simp only [if_pos hi, Real.tanh_eq_sinh_div_cosh]
+      field_simp
+    · simp only [if_neg hi]
+      exact inv_mul_cancel₀ h2cosh_ne
+
+/-- **Correlation at `J = 0`** (graph-independent closed form):
+`⟨σ^A⟩_{G, ⟨0, h, β⟩} = tanh(β·h)^|A|` for any ambient graph `G` and any
+subset `A`.
+
+Composition of `correlation_eq_bot_at_J_zero` (graph-independence of
+correlation at `J = 0`) with `correlation_bot_closed` (`⊥`-graph closed
+form). Correlation-layer counterpart to `partitionFunction_J_zero`
+(`Z = (2·cosh(β·h))^|ι|`) and `freeEnergy_J_zero` (`f = log(2·cosh(β·h))`). -/
+theorem correlation_J_zero (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (h β : ℝ) (A : Finset ι) :
+    correlation G (⟨0, h, β⟩ : IsingParams ℝ) A = Real.tanh (β * h) ^ A.card :=
+  (correlation_eq_bot_at_J_zero G h β A).trans (correlation_bot_closed _ A)
 
 /-! ## h-symmetry: `Z(-h) = Z(h)` via spin flip
 

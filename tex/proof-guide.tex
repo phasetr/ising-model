@@ -1717,6 +1717,30 @@ PR \#175 の $\bot$-equivalence 恒等式鎖を相関関数層に拡張:
 比で graph-independent.
 \end{theorem}
 
+\begin{theorem}[\texttt{correlation\_bot\_closed} / \texttt{correlation\_J\_zero}; PR \#191]
+$\bot$-graph 上の相関関数閉形式と, その $J=0$ 一般 graph への
+持ち上げ. 任意の $p, A$ で
+\[
+  \texttt{correlation}\,\bot\,p\,A = \tanh(p.\beta \cdot p.h)^{|A|},
+\]
+さらに PR \#190 と合成して任意の $G, A, h, \beta$ で
+\[
+  \texttt{correlation}\,G\,\langle 0, h, \beta\rangle\,A
+    = \tanh(\beta h)^{|A|}.
+\]
+証明: $\bot$ では Boltzmann weight $=\prod_i \exp(\beta h\,\mathrm{sign}(\sigma_i))$
+と site-wise factor 化. \texttt{spinProduct} 側は
+\texttt{Finset.prod\_filter} で
+$\prod_{i \in \iota}\, (\mathrm{if}\ i \in A\ \mathrm{then}\ \mathrm{sign}(\sigma_i)\ \mathrm{else}\ 1)$
+に書き直す. \texttt{Fintype.sum\_prod\_piFinset} で
+$\sum_\sigma \prod_i \to \prod_i \sum_s$ に swap. Site sum は
+$i \in A$ で $2\sinh$ (\texttt{sum\_spin\_sign\_exp\_sign}),
+$i \notin A$ で $2\cosh$ (\texttt{sum\_exp\_spin\_sign}).
+$Z = (2\cosh)^{|\iota|}$ で割って
+$\prod_i (\mathrm{if}\ i \in A\ \mathrm{then}\ \tanh\ \mathrm{else}\ 1) = \tanh^{|A|}$.
+PR \#175 の $Z$/freeEnergy 対 5 本目の zero-parameter closed form.
+\end{theorem}
+
 \begin{theorem}[$\bot$-equivalence core identities at $J=0$; PR \#175]
 PR \#174 の各層で独立した ``$\bot$ への reduction'' を単一の
 基底恒等式に集約 refactor:
