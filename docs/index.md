@@ -248,6 +248,7 @@ ambient framework:
 | `partitionFunctionAlongExhaustion_beta_zero` / `log_partitionFunctionAlongExhaustion_beta_zero` | β=0 companion: `Z = 2^|Λ.volume n|`, `log Z = |Λ.volume n| · log 2` at `⟨J, h, 0⟩` (any J, h) |
 | `partitionFunction{,Λ,AlongExhaustion}_ge_two_pow_card_of_ferromagnetic` | Strong ferromagnetic lower bound: `2^|ι| ≤ Z_G(p)` (via `⊥` + `cosh ≥ 1` + monotone); log form `|ι| · log 2 ≤ log Z` |
 | `log_partitionFunction{,Λ,AlongExhaustion}_ge_card_mul_log_two_cosh_of_ferromagnetic` | **Sharp log-Z lower bound**: `|ι| · log(2·cosh(βh)) ≤ log Z_G(p)` (via `Z ≥ Z_⊥ = (2 cosh(βh))^|ι|` + `Real.log_pow`) |
+| `partitionFunction{,Λ,AlongExhaustion}_ge_two_cosh_pow_card_of_ferromagnetic` | **Sharp Z lower bound (non-log)**: `(2·cosh(βh))^|ι| ≤ Z_G(p)` (direct from `partitionFunction_bot` + `monotone_subgraph`); exp-image of the log form |
 | **`freeEnergyAlongExhaustion_ge_log_two`** | **Uniform lower bound**: `log 2 ≤ freeEnergyAlongExhaustion G Λ ⟨J, h, β⟩ n` for ferromagnetic + nonempty `Λ.volume n` |
 | `freeEnergy_upper_bound` (Conditioning.lean) | **Explicit upper bound** (Cor. 10.3.2 / \|ι\|): `freeEnergy G p ≤ log 2 + \|β\|·(\|J\|·\|E\| + \|h\|·\|ι\|)/\|ι\|` for nonempty ι |
 | `freeEnergyAlongExhaustion_upper_bound` | Along-exhaustion specialization of `freeEnergy_upper_bound` |

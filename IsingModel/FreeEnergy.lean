@@ -696,6 +696,22 @@ theorem partitionFunction_ge_two_pow_card_of_ferromagnetic
   (partitionFunction_bot_ge_two_pow_card p).trans
     (partitionFunction_monotone_subgraph bot_le p hf)
 
+/-- **Sharp ferromagnetic lower bound (non-log form)**:
+`(2·cosh(βh))^|ι| ≤ Z_G(p)`.
+
+Direct from `partitionFunction_bot` (`Z_⊥ = (2·cosh(βh))^|ι|`) and
+`partitionFunction_monotone_subgraph` (`bot ≤ G`, ferromagnetic).
+Sharpening of `partitionFunction_ge_two_pow_card_of_ferromagnetic`
+(since `cosh ≥ 1`); the exp-image of PR #173
+`log_partitionFunction_ge_card_mul_log_two_cosh_of_ferromagnetic`. -/
+theorem partitionFunction_ge_two_cosh_pow_card_of_ferromagnetic
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    (2 * Real.cosh (p.β * p.h)) ^ Fintype.card ι ≤ partitionFunction G p := by
+  calc (2 * Real.cosh (p.β * p.h)) ^ Fintype.card ι
+      = partitionFunction (⊥ : SimpleGraph ι) p := (partitionFunction_bot p).symm
+    _ ≤ partitionFunction G p := partitionFunction_monotone_subgraph bot_le p hf
+
 /-- Logarithmic form: `log Z_G ≥ |ι| · log 2` for ferromagnetic.
 
 Immediate from `partitionFunction_ge_two_pow_card_of_ferromagnetic`

@@ -290,6 +290,29 @@ theorem partitionFunctionAlongExhaustion_ge_two_pow_card_of_ferromagnetic
     (2 : ℝ) ^ (Λ.volume n).card ≤ partitionFunctionAlongExhaustion G Λ p n :=
   partitionFunctionΛ_ge_two_pow_card_of_ferromagnetic G (Λ.volume n) p hf
 
+/-- **Sharp form at `Λ` level**: `(2·cosh(βh))^|Λ| ≤ partitionFunctionΛ G Λ p`
+for ferromagnetic. Thin wrapper of
+`IsingModel.partitionFunction_ge_two_cosh_pow_card_of_ferromagnetic`. -/
+theorem partitionFunctionΛ_ge_two_cosh_pow_card_of_ferromagnetic
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    (2 * Real.cosh (p.β * p.h)) ^ Λ.card ≤ partitionFunctionΛ G Λ p := by
+  have h := IsingModel.partitionFunction_ge_two_cosh_pow_card_of_ferromagnetic
+    (inducedGraph G Λ) p hf
+  rwa [Fintype.card_coe] at h
+
+/-- **Sharp form along exhaustion**:
+`(2·cosh(βh))^|Λ.volume n| ≤ partitionFunctionAlongExhaustion G Λ p n`
+for ferromagnetic. Pointwise lift. -/
+theorem partitionFunctionAlongExhaustion_ge_two_cosh_pow_card_of_ferromagnetic
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (n : ℕ) :
+    (2 * Real.cosh (p.β * p.h)) ^ (Λ.volume n).card
+      ≤ partitionFunctionAlongExhaustion G Λ p n :=
+  partitionFunctionΛ_ge_two_cosh_pow_card_of_ferromagnetic G (Λ.volume n) p hf
+
 /-- Log form along exhaustion: `|Λ.volume n| · log 2 ≤ log Z_n`. -/
 theorem log_partitionFunctionAlongExhaustion_ge_card_mul_log_two_of_ferromagnetic
     (G : SimpleGraph V) (Λ : Exhaustion V)
