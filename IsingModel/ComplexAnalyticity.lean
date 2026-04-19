@@ -1430,8 +1430,9 @@ theorem real_pos_mem_leeYangSubdomain
     (h₀ : ℂ) ∈ leeYangSubdomain β N := by
   refine ⟨?_, ?_⟩
   · simp [hpos]
-  · have : (h₀ : ℂ).im = 0 := by simp
-    simp [this]; positivity
+  · have him : (h₀ : ℂ).im = 0 := by simp
+    rw [him, abs_zero, mul_zero, zero_mul]
+    positivity
 
 /-- The Lee-Yang domain is convex (hence connected). -/
 theorem convex_leeYangDomain : Convex ℝ leeYangDomain := by
@@ -1453,6 +1454,10 @@ theorem convex_leeYangDomain : Convex ℝ leeYangDomain := by
           · simpa using mul_lt_mul_of_pos_left hx ha_pos
           · exact add_lt_add (mul_lt_mul_of_pos_left hx ha_pos)
               (mul_lt_mul_of_pos_left hy hb_pos)
+
+/-- The Lee-Yang domain is preconnected (via convex ⇒ connected). -/
+theorem isPreconnected_leeYangDomain : IsPreconnected leeYangDomain :=
+  convex_leeYangDomain.isPreconnected
 
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
