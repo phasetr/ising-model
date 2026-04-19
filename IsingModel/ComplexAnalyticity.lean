@@ -1849,6 +1849,14 @@ theorem freeEnergyComplex_im_zero_at_real
   rw [freeEnergyComplex_at_real]
   simp
 
+/-- `freeEnergyComplex.re` at real parameters equals `freeEnergy`. -/
+theorem freeEnergyComplex_re_eq_freeEnergy_at_real
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (p : IsingParams ℝ) :
+    (freeEnergyComplex G (p.J : ℂ) (p.h : ℂ) (p.β : ℂ)).re
+      = freeEnergy G p := by
+  rw [freeEnergyComplex_at_real]
+  simp
+
 
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
