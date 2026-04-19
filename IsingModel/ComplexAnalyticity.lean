@@ -1373,6 +1373,31 @@ theorem vitali_bridge_leeYangSubdomain
     DifferentiableOn ℂ f (leeYangSubdomain β N) :=
   vitali_bridge (isOpen_leeYangSubdomain β N) hF hconv
 
+/-- **Vitali bridge via `AnalyticOnNhd` / `Filter.Eventually`**.
+A more flexible version of `vitali_bridge` allowing the holomorphicity
+hypothesis to hold only eventually along the filter. Needed for
+sequences of finite-volume free energies indexed by an exhaustion
+`Λ : ℕ → Finset V` — the `DifferentiableOn` hypothesis on `F n`
+holds for all `n`, so the eventually-version is a trivial
+generalisation that matches mathlib's signature directly. -/
+theorem vitali_bridge_eventually {U : Set ℂ} (hU : IsOpen U)
+    {F : ℕ → ℂ → ℂ} {f : ℂ → ℂ}
+    (hF : ∀ᶠ n in Filter.atTop, DifferentiableOn ℂ (F n) U)
+    (hconv : TendstoLocallyUniformlyOn F f Filter.atTop U) :
+    DifferentiableOn ℂ f U :=
+  hconv.differentiableOn hF hU
+
+/-- **`freeEnergyComplex` coincides with real `freeEnergy` on `ℝ`**
+(cast to `ℂ`). Rewrite of `freeEnergy_ofReal_eq_freeEnergyComplex`
+in the form most useful for Vitali (pointwise convergence on the
+real axis via Fekete's theorem). -/
+theorem freeEnergyComplex_ofReal_eq_freeEnergy
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (p : IsingParams ℝ) :
+    freeEnergyComplex G (p.J : ℂ) (p.h : ℂ) (p.β : ℂ)
+      = ((freeEnergy G p : ℝ) : ℂ) :=
+  (freeEnergy_ofReal_eq_freeEnergyComplex G p).symm
+
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
 `leeYangDomain`. For each point `h₀`, the local branch `f` from
