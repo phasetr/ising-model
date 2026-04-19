@@ -1889,6 +1889,30 @@ theorem logZ_branch_at_real_basepoint
   rw [← partitionFunction_ofReal_eq_partitionFunctionComplex G p,
     ← Complex.ofReal_log (partitionFunction_pos G p).le]
 
+/-- At `h₀ > 0` real, `exp (freeEnergyComplex * |ι|)` equals the real
+partition function `Z(p)` (cast to `ℂ`). A concrete application of the
+local-branch construction's `exp(g) = Z` relation at the basepoint. -/
+theorem exp_card_mul_freeEnergyComplex_at_real
+    (G : SimpleGraph ι) [Fintype G.edgeSet] [Nonempty ι]
+    (p : IsingParams ℝ) :
+    Complex.exp ((Fintype.card ι : ℂ) * freeEnergyComplex G (p.J : ℂ)
+                    (p.h : ℂ) (p.β : ℂ))
+      = (partitionFunction G p : ℂ) := by
+  unfold freeEnergyComplex
+  have hN : (Fintype.card ι : ℂ) ≠ 0 := by
+    exact_mod_cast (Fintype.card_pos (α := ι)).ne'
+  have hmul : (Fintype.card ι : ℂ)
+              * ((Fintype.card ι : ℂ)⁻¹ *
+                Complex.log (partitionFunctionComplex G (p.J : ℂ) (p.h : ℂ)
+                              (p.β : ℂ)))
+              = Complex.log (partitionFunctionComplex G (p.J : ℂ) (p.h : ℂ)
+                              (p.β : ℂ)) := by field_simp
+  rw [hmul, ← partitionFunction_ofReal_eq_partitionFunctionComplex G p,
+    ← Complex.ofReal_log (partitionFunction_pos G p).le]
+  rw [Complex.ofReal_log (partitionFunction_pos G p).le]
+  exact Complex.exp_log
+    (by exact_mod_cast (partitionFunction_pos G p).ne')
+
 
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
