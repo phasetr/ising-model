@@ -932,4 +932,26 @@ theorem partitionFunctionComplex_analyticOnNhd_leeYangDomain
         (fun h' => partitionFunctionComplex G J h' β) leeYangDomain :=
   fun h _ => partitionFunctionComplex_analyticAt_h G J β h
 
+/-- **The logarithmic derivative `Z'/Z` is analytic on the Lee-Yang
+domain** (real ferromagnetic `J > 0`, real `β > 0`). `Z` is entire and
+non-vanishing on `leeYangDomain` (PR #199), so `Z'/Z` is analytic there.
+This is the key input to the Morera-based branch construction of `log Z`. -/
+theorem logDeriv_partitionFunctionComplex_analyticOnNhd_leeYangDomain
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J) :
+    AnalyticOnNhd ℂ (fun h : ℂ =>
+        deriv (fun h' => partitionFunctionComplex G (J : ℂ) h' (β : ℂ)) h
+          / partitionFunctionComplex G (J : ℂ) h (β : ℂ)) leeYangDomain := by
+  intro h hmem
+  have hZ_ne : partitionFunctionComplex G (J : ℂ) h (β : ℂ) ≠ 0 :=
+    partitionFunctionComplex_ne_zero_on_leeYangDomain G hβ hJ hmem
+  have hZ_ana : AnalyticAt ℂ
+      (fun h' => partitionFunctionComplex G (J : ℂ) h' (β : ℂ)) h :=
+    partitionFunctionComplex_analyticAt_h G (J : ℂ) (β : ℂ) h
+  have hZ'_ana : AnalyticAt ℂ
+      (fun h' =>
+        deriv (fun h'' => partitionFunctionComplex G (J : ℂ) h'' (β : ℂ)) h')
+      h := hZ_ana.deriv
+  exact hZ'_ana.div hZ_ana hZ_ne
+
 end IsingModel
