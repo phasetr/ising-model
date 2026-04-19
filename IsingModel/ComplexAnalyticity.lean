@@ -1647,6 +1647,18 @@ theorem continuous_leeYangFugacityVec_h (β : ℂ) (i : ι) :
   continuous_iff_continuousAt.mpr fun h =>
     (leeYangFugacityVec_analyticAt_h β h i).continuousAt
 
+/-- Product-form rewrite of `isingEdgePoly` evaluation at the uniform
+fugacity vector: `P_E(z(h))` as a specific function of `h`. -/
+theorem isingEdgePoly_eval_leeYangFugacityVec_eq
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (t : ℝ) (β h : ℂ) :
+    (isingEdgePoly (graphToEdgeList G t)).eval (leeYangFugacityVec β h) =
+      ∑ X : Finset ι,
+        ((graphToEdgeList G t).map fun e => edgeWeight e.1 e.2.1 e.2.2 X).prod *
+          ∏ _i ∈ X, leeYangFugacity β h := by
+  unfold MultilinPoly.eval isingEdgePoly leeYangFugacityVec
+  refine Finset.sum_congr rfl (fun X _ => ?_)
+  rfl
+
 
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
