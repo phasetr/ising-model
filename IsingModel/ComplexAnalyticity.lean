@@ -1014,4 +1014,106 @@ theorem exists_normalised_logZ_branch_on_ball
     simpa using this.add_const (Complex.log
       (partitionFunctionComplex G (J : ℂ) h₀ (β : ℂ)))
 
+/-- **Local holomorphic branch of `log Z` on an open ball inside
+Lee-Yang** (real ferromagnetic `β > 0`, `J > 0`). On the open ball of
+radius `r > 0` around `h₀` (assumed contained in `leeYangDomain`),
+there is a holomorphic function `g` with `exp(g(z)) = Z(z)` pointwise
+and `g(h₀) = Complex.log(Z(h₀))`.
+
+Proof: combine the normalised primitive `g` of `Z'/Z` (from
+`exists_normalised_logZ_branch_on_ball`) with the constancy argument
+for `F(z) = exp(g(z))/Z(z)`: on the convex ball `F' = 0` (chain + quotient
+rules), so `F` is constant; `F(h₀) = exp(log Z(h₀))/Z(h₀) = 1`. -/
+theorem exists_logZ_holomorphic_branch_on_ball
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J)
+    {h₀ : ℂ} {r : ℝ} (hr : 0 < r)
+    (hsub : Metric.ball h₀ r ⊆ leeYangDomain) :
+    ∃ g : ℂ → ℂ,
+        (∀ z ∈ Metric.ball h₀ r,
+          Complex.exp (g z)
+            = partitionFunctionComplex G (J : ℂ) z (β : ℂ))
+      ∧ g h₀ = Complex.log
+          (partitionFunctionComplex G (J : ℂ) h₀ (β : ℂ)) := by
+  obtain ⟨g, hg_base, hg_deriv⟩ :=
+    exists_normalised_logZ_branch_on_ball G hβ hJ (h₀ := h₀) (r := r) hsub
+  refine ⟨g, ?_, hg_base⟩
+  -- `F z = exp(g z) / Z(z)` has derivative zero on the ball.
+  set F : ℂ → ℂ := fun z => Complex.exp (g z)
+      / partitionFunctionComplex G (J : ℂ) z (β : ℂ) with hF_def
+  have hZ_ne : ∀ z ∈ Metric.ball h₀ r,
+      partitionFunctionComplex G (J : ℂ) z (β : ℂ) ≠ 0 := fun z hz =>
+    partitionFunctionComplex_ne_zero_on_leeYangDomain G hβ hJ (hsub hz)
+  have hh₀_mem : h₀ ∈ Metric.ball h₀ r := Metric.mem_ball_self hr
+  have hF_deriv : ∀ z ∈ Metric.ball h₀ r, HasDerivAt F 0 z := by
+    intro z hz
+    have hgz := hg_deriv z hz
+    have hZz_ne := hZ_ne z hz
+    have hZ_diff : DifferentiableAt ℂ
+        (fun w => partitionFunctionComplex G (J : ℂ) w (β : ℂ)) z :=
+      (partitionFunctionComplex_analyticAt_h G (J : ℂ) (β : ℂ) z).differentiableAt
+    have hZ_deriv : HasDerivAt
+        (fun w => partitionFunctionComplex G (J : ℂ) w (β : ℂ))
+        (deriv (fun w => partitionFunctionComplex G (J : ℂ) w (β : ℂ)) z)
+        z := hZ_diff.hasDerivAt
+    have hexp_deriv : HasDerivAt (fun w => Complex.exp (g w))
+        (Complex.exp (g z)
+          * (deriv (fun w =>
+              partitionFunctionComplex G (J : ℂ) w (β : ℂ)) z
+            / partitionFunctionComplex G (J : ℂ) z (β : ℂ))) z := hgz.cexp
+    have h_quot := hexp_deriv.div hZ_deriv hZz_ne
+    -- Numerator evaluates to zero: cexp(g z) · (Z'/Z) · Z − cexp(g z) · Z' = 0.
+    have hnum_zero :
+        Complex.exp (g z)
+          * (deriv (fun w =>
+              partitionFunctionComplex G (J : ℂ) w (β : ℂ)) z
+            / partitionFunctionComplex G (J : ℂ) z (β : ℂ))
+          * partitionFunctionComplex G (J : ℂ) z (β : ℂ)
+          - Complex.exp (g z)
+            * deriv (fun w =>
+                partitionFunctionComplex G (J : ℂ) w (β : ℂ)) z = 0 := by
+      field_simp; ring
+    have h_quot' := h_quot
+    rw [show
+        (Complex.exp (g z)
+              * (deriv (fun w =>
+                  partitionFunctionComplex G (J : ℂ) w (β : ℂ)) z
+                / partitionFunctionComplex G (J : ℂ) z (β : ℂ))
+            * partitionFunctionComplex G (J : ℂ) z (β : ℂ)
+          - Complex.exp (g z)
+              * deriv (fun w =>
+                  partitionFunctionComplex G (J : ℂ) w (β : ℂ)) z)
+          / partitionFunctionComplex G (J : ℂ) z (β : ℂ) ^ 2 = 0 from by
+        rw [hnum_zero]; simp] at h_quot'
+    exact h_quot'
+  -- Convexity of the ball + zero fderivWithin ⇒ F is constant.
+  have hconvex : Convex ℝ (Metric.ball h₀ r) := convex_ball _ _
+  have hopen : IsOpen (Metric.ball h₀ r) := Metric.isOpen_ball
+  have hdiffOn : DifferentiableOn ℂ F (Metric.ball h₀ r) := fun w hw =>
+    (hF_deriv w hw).differentiableAt.differentiableWithinAt
+  have hfderiv_zero : ∀ w ∈ Metric.ball h₀ r,
+      fderivWithin ℂ F (Metric.ball h₀ r) w = 0 := by
+    intro w hw
+    have h1 : HasFDerivWithinAt F
+        (ContinuousLinearMap.smulRight (1 : ℂ →L[ℂ] ℂ) 0)
+        (Metric.ball h₀ r) w :=
+      ((hF_deriv w hw).hasFDerivAt).hasFDerivWithinAt
+    have huniq : UniqueDiffWithinAt ℂ (Metric.ball h₀ r) w :=
+      hopen.uniqueDiffOn w hw
+    rw [h1.fderivWithin huniq]; simp
+  have hF_const : ∀ z ∈ Metric.ball h₀ r, F z = F h₀ := fun z hz =>
+    hconvex.is_const_of_fderivWithin_eq_zero hdiffOn hfderiv_zero hz hh₀_mem
+  -- F(h₀) = exp(log Z(h₀)) / Z(h₀) = 1.
+  have hF_h₀ : F h₀ = 1 := by
+    simp only [hF_def, hg_base]
+    rw [Complex.exp_log (hZ_ne h₀ hh₀_mem)]
+    exact div_self (hZ_ne h₀ hh₀_mem)
+  intro z hz
+  have hconst : F z = 1 := (hF_const z hz).trans hF_h₀
+  have hZz_ne := hZ_ne z hz
+  have hquot : Complex.exp (g z)
+        / partitionFunctionComplex G (J : ℂ) z (β : ℂ) = 1 := hconst
+  field_simp at hquot
+  exact hquot
+
 end IsingModel
