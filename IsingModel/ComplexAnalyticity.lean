@@ -1411,6 +1411,28 @@ theorem norm_partitionFunctionComplex_le_of_re_bound
   refine (norm_partitionFunctionComplex_le_trivial_bound G β J h).trans ?_
   gcongr
 
+/-- `partitionFunctionComplex` is non-zero at every point of
+`leeYangSubdomain` (which is contained in `leeYangDomain` where
+non-vanishing is already established). -/
+theorem partitionFunctionComplex_ne_zero_on_leeYangSubdomain
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J) {h : ℂ}
+    (hh : h ∈ leeYangSubdomain β (Fintype.card ι)) :
+    partitionFunctionComplex G (J : ℂ) h (β : ℂ) ≠ 0 :=
+  partitionFunctionComplex_ne_zero_on_leeYangDomain G hβ hJ
+    (leeYangSubdomain_subset_leeYangDomain β (Fintype.card ι) hh)
+
+/-- Specialisation to the real-positive basepoint: the point `(h₀ : ℂ)`
+for real `h₀ > 0` is in `leeYangSubdomain β N` for any `β, N` (since
+`|Im| = 0` makes both conjuncts trivial). -/
+theorem real_pos_mem_leeYangSubdomain
+    (β : ℝ) (N : ℕ) {h₀ : ℝ} (hpos : 0 < h₀) :
+    (h₀ : ℂ) ∈ leeYangSubdomain β N := by
+  refine ⟨?_, ?_⟩
+  · simp [hpos]
+  · have : (h₀ : ℂ).im = 0 := by simp
+    simp [this]; positivity
+
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
 `leeYangDomain`. For each point `h₀`, the local branch `f` from
