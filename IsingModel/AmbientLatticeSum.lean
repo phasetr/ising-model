@@ -691,6 +691,19 @@ theorem freeEnergyInfinite_J_zero_of_eventually_nonempty
   filter_upwards [hne] with n hn using
     freeEnergyAlongExhaustion_J_zero G Λ h β n hn
 
+/-- **Generic Tendsto helper**: if the stagewise `freeEnergyAlongExhaustion`
+sequence is eventually equal to `c`, then it tends to `c`. Factors the
+`tendsto_const_nhds.congr'` + `filter_upwards` pattern out of the
+specific `_J_zero` / `_beta_zero` / `_zero_params` Tendsto lemmas. -/
+theorem freeEnergyAlongExhaustion_tendsto_of_eventually_const
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) {c : ℝ}
+    (h : ∀ᶠ n in Filter.atTop, freeEnergyAlongExhaustion G Λ p n = c) :
+    Filter.Tendsto (freeEnergyAlongExhaustion G Λ p)
+      Filter.atTop (nhds c) :=
+  tendsto_const_nhds.congr' (h.mono (fun _ hn => hn.symm))
+
 /-- **`freeEnergyAlongExhaustion` at J=0 converges (Tendsto form)**:
 assuming eventually `(Λ.volume n).Nonempty`, the sequence
 `n ↦ freeEnergyAlongExhaustion G Λ ⟨0, h, β⟩ n` tends to
@@ -700,8 +713,8 @@ First non-trivial ∞-volume convergence under the scope update
 (CLAUDE.local.md: 無限系も対象). The J=0 slice sidesteps the
 translation-invariance issue of the general Fekete program because
 the stagewise sequence is eventually constant (PR #174
-`freeEnergyAlongExhaustion_J_zero`); then
-`tendsto_const_nhds.congr'` transports to Tendsto. -/
+`freeEnergyAlongExhaustion_J_zero`); then via
+`freeEnergyAlongExhaustion_tendsto_of_eventually_const`. -/
 theorem freeEnergyAlongExhaustion_J_zero_tendsto_of_eventually_nonempty
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
@@ -710,9 +723,45 @@ theorem freeEnergyAlongExhaustion_J_zero_tendsto_of_eventually_nonempty
     Filter.Tendsto (freeEnergyAlongExhaustion G Λ
         (⟨0, h, β⟩ : IsingParams ℝ))
       Filter.atTop (nhds (Real.log (2 * Real.cosh (β * h)))) := by
-  refine tendsto_const_nhds.congr' ?_
-  filter_upwards [hne] with n hn
-  exact (freeEnergyAlongExhaustion_J_zero G Λ h β n hn).symm
+  apply freeEnergyAlongExhaustion_tendsto_of_eventually_const G Λ
+  filter_upwards [hne] with n hn using
+    freeEnergyAlongExhaustion_J_zero G Λ h β n hn
+
+/-- **β=0 slice ∞-vol Tendsto**: `∀ᶠ n, (Λ.volume n).Nonempty ⇒
+Tendsto (freeEnergyAlongExhaustion G Λ ⟨J, h, 0⟩) atTop (𝓝 (log 2))`.
+
+Companion to `_J_zero_tendsto_of_eventually_nonempty` (PR #178):
+at β=0 the stagewise sequence is eventually constantly `log 2`
+(PR #132 `freeEnergyAlongExhaustion_beta_zero`). -/
+theorem freeEnergyAlongExhaustion_beta_zero_tendsto_of_eventually_nonempty
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J h : ℝ)
+    (hne : ∀ᶠ n in Filter.atTop, (Λ.volume n).Nonempty) :
+    Filter.Tendsto (freeEnergyAlongExhaustion G Λ
+        (⟨J, h, 0⟩ : IsingParams ℝ))
+      Filter.atTop (nhds (Real.log 2)) := by
+  apply freeEnergyAlongExhaustion_tendsto_of_eventually_const G Λ
+  filter_upwards [hne] with n hn using
+    freeEnergyAlongExhaustion_beta_zero G Λ J h n hn
+
+/-- **J=h=0 slice ∞-vol Tendsto**: `∀ᶠ n, (Λ.volume n).Nonempty ⇒
+Tendsto (freeEnergyAlongExhaustion G Λ ⟨0, 0, β⟩) atTop (𝓝 (log 2))`.
+
+Companion to `_J_zero_tendsto_of_eventually_nonempty` (PR #178):
+at J=h=0 the stagewise sequence is eventually constantly `log 2`
+(`freeEnergyAlongExhaustion_zero_params`). -/
+theorem freeEnergyAlongExhaustion_zero_params_tendsto_of_eventually_nonempty
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (β : ℝ)
+    (hne : ∀ᶠ n in Filter.atTop, (Λ.volume n).Nonempty) :
+    Filter.Tendsto (freeEnergyAlongExhaustion G Λ
+        (⟨0, 0, β⟩ : IsingParams ℝ))
+      Filter.atTop (nhds (Real.log 2)) := by
+  apply freeEnergyAlongExhaustion_tendsto_of_eventually_const G Λ
+  filter_upwards [hne] with n hn using
+    freeEnergyAlongExhaustion_zero_params G Λ β n hn
 
 /-- **Infinite-volume J=0 graph-independence**:
 `freeEnergyInfinite G Λ ⟨0, h, β⟩ = freeEnergyInfinite ⊥ Λ ⟨0, h, β⟩`
