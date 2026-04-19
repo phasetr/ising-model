@@ -2624,6 +2624,21 @@ theorem partitionFunctionComplex_entire_beta
     Differentiable ℂ (fun β => partitionFunctionComplex G J h β) := fun β =>
   (partitionFunctionComplex_analyticAt_beta G J h β).differentiableAt
 
+/-- `partitionFunctionComplex` is jointly Differentiable on ℂ³. -/
+theorem partitionFunctionComplex_entire_joint
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    Differentiable ℂ
+      (fun z : ℂ × ℂ × ℂ => partitionFunctionComplex G z.1 z.2.1 z.2.2) :=
+    fun z => (partitionFunctionComplex_analyticAt_joint G z).differentiableAt
+
+/-- `partitionFunctionComplex` is `AnalyticOnNhd` on all of ℂ³. -/
+theorem partitionFunctionComplex_analyticOnNhd_univ_joint'
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    AnalyticOnNhd ℂ
+      (fun z : ℂ × ℂ × ℂ => partitionFunctionComplex G z.1 z.2.1 z.2.2)
+      Set.univ := fun z _ =>
+  partitionFunctionComplex_analyticAt_joint G z
+
 
 
 
