@@ -1471,6 +1471,12 @@ theorem isConnected_leeYangDomain : IsConnected leeYangDomain :=
 theorem starConvex_leeYangDomain : StarConvex ℝ (1 : ℂ) leeYangDomain :=
   convex_leeYangDomain.starConvex (real_pos_mem_leeYangDomain (by norm_num))
 
+/-- `leeYangDomain` contains an open ball around each of its points
+(direct restatement of `isOpen_leeYangDomain`). -/
+theorem leeYangDomain_ball_subset {h₀ : ℂ} (hmem : h₀ ∈ leeYangDomain) :
+    ∃ r : ℝ, 0 < r ∧ Metric.ball h₀ r ⊆ leeYangDomain :=
+  Metric.isOpen_iff.mp isOpen_leeYangDomain h₀ hmem
+
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
 `leeYangDomain`. For each point `h₀`, the local branch `f` from
