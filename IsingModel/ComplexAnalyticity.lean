@@ -1983,6 +1983,30 @@ theorem exists_logZ_differentiableOn_ball
     exists_logZ_analyticOnNhd_ball G hβ hJ hr hsub
   exact ⟨g, hg_ana.differentiableOn, hg_exp⟩
 
+/-- **Free-energy local-branch `AnalyticOnNhd ball`**: the local
+`f = g/|ι|` branch is analytic on the ball. -/
+theorem exists_freeEnergyComplex_analyticOnNhd_ball
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J) [Nonempty ι]
+    {h₀ : ℂ} {r : ℝ} (hr : 0 < r)
+    (hsub : Metric.ball h₀ r ⊆ leeYangDomain) :
+    ∃ f : ℂ → ℂ,
+        AnalyticOnNhd ℂ f (Metric.ball h₀ r)
+      ∧ ∀ z ∈ Metric.ball h₀ r,
+          Complex.exp ((Fintype.card ι : ℂ) * f z)
+            = partitionFunctionComplex G (J : ℂ) z (β : ℂ) := by
+  obtain ⟨g, hg_ana, hg_exp⟩ :=
+    exists_logZ_analyticOnNhd_ball G hβ hJ hr hsub
+  refine ⟨fun z => ((Fintype.card ι : ℂ))⁻¹ * g z, ?_, ?_⟩
+  · exact analyticOnNhd_const.mul hg_ana
+  · intro z hz
+    have hNℕ : 0 < Fintype.card ι := Fintype.card_pos
+    have hN : (Fintype.card ι : ℂ) ≠ 0 := by exact_mod_cast hNℕ.ne'
+    have hmul : (Fintype.card ι : ℂ) * ((Fintype.card ι : ℂ)⁻¹ * g z) = g z := by
+      field_simp
+    rw [hmul]
+    exact hg_exp z hz
+
 
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
