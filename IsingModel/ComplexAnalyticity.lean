@@ -436,4 +436,20 @@ theorem isingEdgePoly_eval_leeYangFugacityVec_ne_zero
     (leeYangFugacityVec (β : ℂ) h)
     (fun k => leeYangFugacityVec_norm_lt_one hβ hh k)
 
+/-- **Product of Lee-Yang prefactor and polynomial is non-zero on the
+Lee-Yang domain**. This is the final form that matches the
+Friedli–Velenik identity `Z = leeYangNormalization · P(z)`:
+the RHS is non-zero, hence so is `Z` (once the identity is formally
+established). -/
+theorem leeYangNormalization_mul_isingEdgePoly_eval_ne_zero
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {t : ℝ} (ht₀ : 0 ≤ t) (ht₁ : t < 1)
+    (J : ℂ) {β : ℝ} (hβ : 0 < β) {h : ℂ} (hh : h ∈ leeYangDomain)
+    (edgeCount siteCount : ℕ) :
+    leeYangNormalization (β : ℂ) J h edgeCount siteCount
+        * (isingEdgePoly (graphToEdgeList G t)).eval
+            (leeYangFugacityVec (β : ℂ) h) ≠ 0 :=
+  mul_ne_zero (leeYangNormalization_ne_zero _ _ _ _ _)
+    (isingEdgePoly_eval_leeYangFugacityVec_ne_zero G ht₀ ht₁ hβ hh)
+
 end IsingModel
