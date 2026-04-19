@@ -959,7 +959,10 @@ theorem logDeriv_partitionFunctionComplex_analyticOnNhd_leeYangDomain
 For any `h₀ ∈ leeYangDomain` and any `r > 0` with `ball h₀ r ⊆ leeYangDomain`,
 there exists a holomorphic function `G : ℂ → ℂ` such that on the ball,
 `G' = Z'/Z`. This `G` is a local holomorphic branch of `log Z`
-(up to an additive complex constant). -/
+(up to an additive complex constant); specifically, by the identity
+`(exp(G)/Z)' = 0` on the connected ball, `exp(G) = c · Z` for some
+non-zero constant `c`, and we can adjust `G` by a constant so that
+`exp(G) = Z` pointwise. -/
 theorem exists_logZ_branch_on_ball_of_leeYangDomain
     (G : SimpleGraph ι) [Fintype G.edgeSet]
     {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J)
