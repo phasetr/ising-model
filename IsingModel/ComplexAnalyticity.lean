@@ -350,4 +350,19 @@ theorem leeYangFugacity_ne_zero (β h : ℂ) : leeYangFugacity β h ≠ 0 := by
   unfold leeYangFugacity
   exact Complex.exp_ne_zero _
 
+/-- Constant (uniform) fugacity vector at site level: `fun _ : ι => leeYangFugacity β h`.
+This is the input to `isingEdgePoly_nonvanishing_of_graph` for a uniform
+external field `h`. -/
+noncomputable def leeYangFugacityVec (β h : ℂ) : ι → ℂ :=
+  fun _ => leeYangFugacity β h
+
+omit [Fintype ι] [DecidableEq ι] in
+/-- On the Lee-Yang domain with real β > 0, every entry of the uniform
+fugacity vector is in the open unit disk — the exact condition
+`∀ k, ‖z k‖ < 1` required by `isingEdgePoly_nonvanishing_of_graph`. -/
+theorem leeYangFugacityVec_norm_lt_one
+    {β : ℝ} (hβ : 0 < β) {h : ℂ} (hh : h ∈ leeYangDomain) (k : ι) :
+    ‖(leeYangFugacityVec (β : ℂ) h : ι → ℂ) k‖ < 1 := by
+  exact norm_leeYangFugacity_lt_one hβ hh
+
 end IsingModel
