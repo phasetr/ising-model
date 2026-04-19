@@ -452,4 +452,66 @@ theorem leeYangNormalization_mul_isingEdgePoly_eval_ne_zero
   mul_ne_zero (leeYangNormalization_ne_zero _ _ _ _ _)
     (isingEdgePoly_eval_leeYangFugacityVec_ne_zero G ht₀ ht₁ hβ hh)
 
+/-! ### Friedli–Velenik factorisation of the partition function
+
+The Friedli–Velenik identity (Friedli–Velenik, *Statistical Mechanics of
+Lattice Systems*, (3.63)–(3.65), pp. 122–123; Glimm–Jaffe,
+*Quantum Physics*, §4.6, pp. 67–68):
+`Z(J, h, β) = exp(βJ|E| + βh|ι|) · P_E(z)`
+with `z_i = e^{-2βh}` (uniform field), `t_e = e^{-2βJ}` (uniform coupling).
+
+On the Lee-Yang domain the RHS is a product of a non-vanishing normalisation
+and a non-vanishing polynomial evaluation (cf.
+`leeYangNormalization_mul_isingEdgePoly_eval_ne_zero` above), hence `Z ≠ 0`.
+The identity itself is scaffolded here and proved step by step in a
+forthcoming commit. -/
+
+/-- **Friedli–Velenik factorisation** of the complex partition function
+at real ferromagnetic coupling `J > 0`, real inverse temperature `β > 0`,
+uniform external field `h ∈ ℂ`:
+`Z(J, h, β) = exp(βJ|E| + βh|ι|) · P_E(z)` where `z_k = e^{-2βh}` and
+`P_E` is the Ising partition polynomial associated to `G` with uniform
+coupling `t = e^{-2βJ}`.
+
+Reference: Friedli–Velenik (3.63)–(3.65), pp. 122–123;
+Glimm–Jaffe Thm 4.6.2, p. 68.
+
+TODO: Fill in the proof via the `configFinsetEquiv` bijection and
+term-by-term factorisation
+`exp(-β · H(σ)) = leeYangNormalization · (∏_e edgeWeight) · (∏_{i∈X} z)`. -/
+theorem partitionFunctionComplex_eq_normalization_mul_isingEdgePoly
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (β J : ℝ) (h : ℂ) :
+    partitionFunctionComplex G (J : ℂ) h (β : ℂ)
+      = leeYangNormalization (β : ℂ) (J : ℂ) h
+          G.edgeFinset.card (Fintype.card ι)
+        * (isingEdgePoly (graphToEdgeList G (Real.exp (-2 * β * J)))).eval
+            (leeYangFugacityVec (β : ℂ) h) := by
+  sorry
+
+/-- **`partitionFunctionComplex` is non-zero on the Lee-Yang domain**
+(uniform field, real ferromagnetic coupling `J > 0`, real `β > 0`).
+
+This is the key nonvanishing statement underlying Glimm–Jaffe Thm 4.6.2:
+on `|Im h| < Re h`, the finite-volume complex partition function has no
+zeros, so `log Z` is well-defined and analytic.
+
+Proof: combine
+`partitionFunctionComplex_eq_normalization_mul_isingEdgePoly`
+(Friedli–Velenik factorisation) with
+`leeYangNormalization_mul_isingEdgePoly_eval_ne_zero`. -/
+theorem partitionFunctionComplex_ne_zero_on_leeYangDomain
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J) {h : ℂ} (hh : h ∈ leeYangDomain) :
+    partitionFunctionComplex G (J : ℂ) h (β : ℂ) ≠ 0 := by
+  rw [partitionFunctionComplex_eq_normalization_mul_isingEdgePoly G β J h]
+  set t : ℝ := Real.exp (-2 * β * J)
+  have ht₀ : 0 ≤ t := (Real.exp_pos _).le
+  have ht₁ : t < 1 := by
+    refine Real.exp_lt_one_iff.mpr ?_
+    have : 0 < 2 * β * J := by positivity
+    linarith
+  exact leeYangNormalization_mul_isingEdgePoly_eval_ne_zero
+    G ht₀ ht₁ (J : ℂ) hβ hh _ _
+
 end IsingModel
