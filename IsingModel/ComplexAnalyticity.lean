@@ -1839,7 +1839,7 @@ theorem log_partitionFunctionComplex_im_zero_at_real
     (Complex.log (partitionFunctionComplex G (p.J : ℂ) (p.h : ℂ)
                     (p.β : ℂ))).im = 0 := by
   rw [← partitionFunction_ofReal_eq_partitionFunctionComplex G p,
-    Complex.ofReal_log (partitionFunction_pos G p).le]
+    ← Complex.ofReal_log (partitionFunction_pos G p).le]
   simp
 
 /-- `freeEnergyComplex` at real parameters is real (its im part is 0). -/
