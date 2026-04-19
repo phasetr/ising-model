@@ -2153,6 +2153,20 @@ theorem leeYangFugacity_differentiableOn (β : ℂ) (U : Set ℂ) :
     DifferentiableOn ℂ (leeYangFugacity β) U :=
   ((analyticOnNhd_leeYangFugacity β).mono (Set.subset_univ U)).differentiableOn
 
+/-- `leeYangFugacity β` is `Differentiable` on all of `ℂ`. -/
+theorem leeYangFugacity_differentiable (β : ℂ) :
+    Differentiable ℂ (leeYangFugacity β) :=
+  differentiableOn_univ.mp (leeYangFugacity_differentiableOn β Set.univ)
+
+/-- `leeYangFugacity β` is `HasDerivAt` at every point. -/
+theorem leeYangFugacity_hasDerivAt (β : ℂ) (h : ℂ) :
+    HasDerivAt (leeYangFugacity β)
+      (-2 * β * Complex.exp (-2 * β * h)) h := by
+  unfold leeYangFugacity
+  have h1 : HasDerivAt (fun z : ℂ => -2 * β * z) (-2 * β) h := by
+    simpa using ((hasDerivAt_id h).const_mul (-2 * β))
+  exact h1.cexp.congr_deriv (by ring)
+
 
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
