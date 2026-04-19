@@ -4001,6 +4001,39 @@ with $f_\infty = \limsup f_{\Lambda_n}$ via
 Glimm--Jaffe \cite{glimm-jaffe} \S 4.6 Prop 4.6.1, p.~64.
 \end{proof}
 
+\begin{theorem}[$\infty$-vol $\beta = 0$ correlation vanishing and
+truncated-2 zero; PR \#211]
+For any ambient graph $G$, any exhaustion $\Lambda :
+\mathrm{Exhaustion}\,V$, any $J, h \in \mathbb{R}$, and any
+nonempty $A \subseteq V$,
+\[
+  \langle \sigma^A \rangle_\infty^{G,\Lambda,\langle J,h,0\rangle}
+  = 0.
+\]
+In particular, for any sites $i, j : V$ (distinct or not),
+$\langle \sigma_i; \sigma_j \rangle_\infty^{G,\Lambda,\langle
+J,h,0\rangle} = 0$.
+No ferromagnetic hypothesis is required.
+\end{theorem}
+
+\begin{proof}
+At $\beta = 0$ every Boltzmann weight equals $1$, so
+\texttt{correlation\_beta\_zero\_vanish\_of\_nonempty\_A} gives
+finite-volume vanishing on any nonempty Finset. Pulling this to
+the along-exhaustion sequence: when $A \subseteq \Lambda.volume\,n$
+the lifted subset is still nonempty (via \texttt{liftFinset\_card})
+and the finite-volume lemma applies; when
+$A \not\subseteq \Lambda.volume\,n$ the
+$\mathrm{correlationAlongExhaustion}$ is $0$ by definition. Hence
+the sequence is pointwise zero, so
+$\mathrm{correlationInfinite} = \bigsqcup_n 0 = 0$.
+The truncated-2 vanishing follows by substitution at
+$\{i,j\}, \{i\}, \{j\}$ — all three are nonempty, and $i = j$ is
+handled by the Finset collapse $\{i,j\} = \{i\}$.
+Reference: Glimm--Jaffe \cite{glimm-jaffe} \S 5.1 pp.~72--74
+(cluster context); \S 4.1 (infinite-temperature slice).
+\end{proof}
+
 \begin{theorem}[$\infty$-vol $J = 0$ correlation closed form and
 truncated-2 vanishing; PR \#210]
 For a ferromagnetic parameter $\langle 0, h, \beta \rangle$
