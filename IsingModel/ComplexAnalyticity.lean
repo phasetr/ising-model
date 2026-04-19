@@ -1826,6 +1826,13 @@ theorem partitionFunctionComplex_re_pos_at_real
   rw [← partitionFunction_ofReal_eq_partitionFunctionComplex G p]
   simpa using partitionFunction_pos G p
 
+/-- **`partitionFunctionComplex` im = 0 at real parameters**. -/
+theorem partitionFunctionComplex_im_zero_at_real
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (p : IsingParams ℝ) :
+    (partitionFunctionComplex G (p.J : ℂ) (p.h : ℂ) (p.β : ℂ)).im = 0 := by
+  rw [← partitionFunction_ofReal_eq_partitionFunctionComplex G p]
+  simp
+
 
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
