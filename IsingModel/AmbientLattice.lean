@@ -1926,6 +1926,19 @@ theorem correlationInfinite_beta_zero_vanish
   simp only [correlationInfinite,
     correlationAlongExhaustion_beta_zero_vanish G Λ J h A hA, ciSup_const]
 
+/-- **β=0 infinite-volume magnetization vanishes**: at infinite
+temperature (`β = 0`), spins are uniformly distributed and decoupled,
+so the thermodynamic magnetization is `0` at every site.
+
+Specialization of `correlationInfinite_beta_zero_vanish` at the
+singleton `{i}` (automatically nonempty). -/
+theorem magnetizationInfinite_beta_zero
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J h : ℝ) (i : V) :
+    magnetizationInfinite G Λ (⟨J, h, 0⟩ : IsingParams ℝ) i = 0 :=
+  correlationInfinite_beta_zero_vanish G Λ J h {i} (by simp)
+
 /-- **`magnetizationInfinite` at `h = 0` vanishes**: the Z₂ spin-flip
 symmetry at zero external field forces the single-site thermodynamic
 magnetization to be zero.
