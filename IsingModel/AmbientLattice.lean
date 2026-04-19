@@ -1943,45 +1943,6 @@ theorem correlationInfinite_J_zero
     tendsto_nhds_unique h_tendsto_ciSup h_tendsto_const
   simp only [correlationInfinite, h_unique]
 
-/-- **∞-volume correlation vanishes at `β = 0`** for any
-`IsingParams ⟨J, h, 0⟩` and any nonempty test set `A`.
-
-At `β = 0` the finite-volume `correlation_beta_zero_vanish_of_nonempty_A`
-makes the correlation zero on any nonempty subset, so
-`correlationAlongExhaustion G Λ ⟨J, h, 0⟩ A` is pointwise zero
-(`A ⊆ Λ.volume n`: lifted subset is still nonempty via
-`liftFinset_card`; `A ⊄ Λ.volume n`: `correlationAlongExhaustion`
-is `0` by definition). Hence `correlationInfinite = ⨆ n, 0 = 0`.
-
-Unlike `correlationInfinite_J_zero`, no ferromagnetic hypothesis
-is needed here (the sequence is constantly zero, no monotonicity
-argument required).
-
-Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §4.1
-(infinite-temperature slice); §5.1 pp. 72–74 (cluster property
-context). -/
-theorem correlationInfinite_beta_zero_vanish_of_nonempty_A
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J h : ℝ) (A : Finset V) (hA : A.Nonempty) :
-    correlationInfinite G Λ (⟨J, h, 0⟩ : IsingParams ℝ) A = 0 := by
-  have hpointwise :
-      ∀ n, correlationAlongExhaustion G Λ
-          (⟨J, h, 0⟩ : IsingParams ℝ) A n = 0 := by
-    intro n
-    by_cases hAn : A ⊆ Λ.volume n
-    · rw [correlationAlongExhaustion_of_subset G Λ
-          (⟨J, h, 0⟩ : IsingParams ℝ) hAn]
-      change IsingModel.correlation (inducedGraph G (Λ.volume n))
-        (⟨J, h, 0⟩ : IsingParams ℝ) (liftFinset A hAn) = 0
-      refine IsingModel.correlation_beta_zero_vanish_of_nonempty_A
-        _ J h _ ?_
-      rw [← Finset.card_pos, liftFinset_card hAn]
-      exact Finset.card_pos.mpr hA
-    · exact correlationAlongExhaustion_of_not_subset G Λ
-        (⟨J, h, 0⟩ : IsingParams ℝ) hAn
-  simp only [correlationInfinite, hpointwise, ciSup_const]
-
 /-- **Empty-set correlation on `Λ` is `1`** (normalization). -/
 @[simp]
 theorem correlationΛ_empty (G : SimpleGraph V) (Λ : Finset V)
@@ -2440,7 +2401,7 @@ for any `J, h` and any sites `i, j : V` (distinct or not).
 
 Infinite-volume counterpart of `truncated2_beta_zero` (finite
 volume, PR #208 in `Inequalities/GHS.lean`). Uses
-`correlationInfinite_beta_zero_vanish_of_nonempty_A` on each of
+`correlationInfinite_beta_zero_vanish` on each of
 `{i, j}`, `{i}`, `{j}` (all nonempty). No distinctness hypothesis
 is required: when `i = j`, `{i, j}` collapses to `{i}` at the
 Finset level inside `truncated2Infinite`, and the same vanishing
@@ -2454,11 +2415,11 @@ theorem truncated2Infinite_beta_zero
     (J h : ℝ) (i j : V) :
     truncated2Infinite G Λ (⟨J, h, 0⟩ : IsingParams ℝ) i j = 0 := by
   unfold truncated2Infinite
-  rw [correlationInfinite_beta_zero_vanish_of_nonempty_A G Λ J h
+  rw [correlationInfinite_beta_zero_vanish G Λ J h
         {i, j} ⟨i, by simp⟩,
-      correlationInfinite_beta_zero_vanish_of_nonempty_A G Λ J h
+      correlationInfinite_beta_zero_vanish G Λ J h
         {i} (Finset.singleton_nonempty i),
-      correlationInfinite_beta_zero_vanish_of_nonempty_A G Λ J h
+      correlationInfinite_beta_zero_vanish G Λ J h
         {j} (Finset.singleton_nonempty j)]
   ring
 
@@ -2823,7 +2784,7 @@ theorem truncated3Infinite_J_zero_of_pairwise_distinct
 Infinite-volume counterpart of `truncated3_beta_zero` (finite
 volume, PR #209). Every correlation in the Ursell combination is
 over a nonempty Finset, so
-`correlationInfinite_beta_zero_vanish_of_nonempty_A` makes each
+`correlationInfinite_beta_zero_vanish` makes each
 term zero — the linear combination vanishes trivially. No
 distinctness hypotheses are needed at `β = 0`.
 
@@ -2835,19 +2796,19 @@ theorem truncated3Infinite_beta_zero
     (J h : ℝ) (i j k : V) :
     truncated3Infinite G Λ (⟨J, h, 0⟩ : IsingParams ℝ) i j k = 0 := by
   unfold truncated3Infinite
-  rw [correlationInfinite_beta_zero_vanish_of_nonempty_A G Λ J h
+  rw [correlationInfinite_beta_zero_vanish G Λ J h
         {i, j, k} ⟨i, by simp⟩,
-      correlationInfinite_beta_zero_vanish_of_nonempty_A G Λ J h
+      correlationInfinite_beta_zero_vanish G Λ J h
         {i} (Finset.singleton_nonempty i),
-      correlationInfinite_beta_zero_vanish_of_nonempty_A G Λ J h
+      correlationInfinite_beta_zero_vanish G Λ J h
         {j} (Finset.singleton_nonempty j),
-      correlationInfinite_beta_zero_vanish_of_nonempty_A G Λ J h
+      correlationInfinite_beta_zero_vanish G Λ J h
         {k} (Finset.singleton_nonempty k),
-      correlationInfinite_beta_zero_vanish_of_nonempty_A G Λ J h
+      correlationInfinite_beta_zero_vanish G Λ J h
         {j, k} ⟨j, by simp⟩,
-      correlationInfinite_beta_zero_vanish_of_nonempty_A G Λ J h
+      correlationInfinite_beta_zero_vanish G Λ J h
         {i, k} ⟨i, by simp⟩,
-      correlationInfinite_beta_zero_vanish_of_nonempty_A G Λ J h
+      correlationInfinite_beta_zero_vanish G Λ J h
         {i, j} ⟨i, by simp⟩]
   ring
 
@@ -3064,7 +3025,7 @@ theorem truncated4Infinite_indep_exhaustion
 Each of the seven Finset correlations in the Lebowitz combination
 is over a nonempty Finset (every subset contains at least one of
 the supplied sites), so
-`correlationInfinite_beta_zero_vanish_of_nonempty_A` makes every
+`correlationInfinite_beta_zero_vanish` makes every
 term zero and the linear combination vanishes.
 
 Unlike the `β = 0` case, `truncated4Infinite` at `J = 0` is
@@ -3080,19 +3041,19 @@ theorem truncated4Infinite_beta_zero
     (J h : ℝ) (i j k l : V) :
     truncated4Infinite G Λ (⟨J, h, 0⟩ : IsingParams ℝ) i j k l = 0 := by
   unfold truncated4Infinite
-  rw [correlationInfinite_beta_zero_vanish_of_nonempty_A G Λ J h
+  rw [correlationInfinite_beta_zero_vanish G Λ J h
         {i, j, k, l} ⟨i, by simp⟩,
-      correlationInfinite_beta_zero_vanish_of_nonempty_A G Λ J h
+      correlationInfinite_beta_zero_vanish G Λ J h
         {i, j} ⟨i, by simp⟩,
-      correlationInfinite_beta_zero_vanish_of_nonempty_A G Λ J h
+      correlationInfinite_beta_zero_vanish G Λ J h
         {k, l} ⟨k, by simp⟩,
-      correlationInfinite_beta_zero_vanish_of_nonempty_A G Λ J h
+      correlationInfinite_beta_zero_vanish G Λ J h
         {i, k} ⟨i, by simp⟩,
-      correlationInfinite_beta_zero_vanish_of_nonempty_A G Λ J h
+      correlationInfinite_beta_zero_vanish G Λ J h
         {j, l} ⟨j, by simp⟩,
-      correlationInfinite_beta_zero_vanish_of_nonempty_A G Λ J h
+      correlationInfinite_beta_zero_vanish G Λ J h
         {i, l} ⟨i, by simp⟩,
-      correlationInfinite_beta_zero_vanish_of_nonempty_A G Λ J h
+      correlationInfinite_beta_zero_vanish G Λ J h
         {j, k} ⟨j, by simp⟩]
   ring
 
