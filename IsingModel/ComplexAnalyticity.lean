@@ -2348,6 +2348,26 @@ theorem one_mem_leeYangSubdomain' (β : ℝ) (N : ℕ) :
     (1 : ℂ) ∈ leeYangSubdomain β N :=
   one_mem_leeYangSubdomain β N
 
+/-- The positive real axis embedded into ℂ is a subset of leeYangDomain. -/
+theorem real_pos_axis_subset_leeYangDomain :
+    Set.range (fun x : Set.Ioi (0 : ℝ) => (x.1 : ℂ)) ⊆ leeYangDomain := by
+  rintro h ⟨⟨x, hx⟩, rfl⟩
+  exact real_pos_mem_leeYangDomain hx
+
+/-- For fixed real `β > 0`, the Lee-Yang domain is a subset of the
+analyticity locus of `freeEnergyComplex` via branches. (Symbolic form.)
+-/
+theorem leeYangDomain_subset_branch_locus
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J) [Nonempty ι] :
+    ∀ h ∈ leeYangDomain,
+      ∃ f : ℂ → ℂ, AnalyticAt ℂ f h ∧
+        Complex.exp ((Fintype.card ι : ℂ) * f h)
+          = partitionFunctionComplex G (J : ℂ) h (β : ℂ) := fun h hh => by
+  obtain ⟨f, hf_ana, hf_exp, _⟩ :=
+    exists_freeEnergyComplex_analyticAt_branch_of_leeYangDomain G hβ hJ hh
+  exact ⟨f, hf_ana, hf_exp⟩
+
 
 
 
