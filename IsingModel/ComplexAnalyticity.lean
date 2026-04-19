@@ -1598,6 +1598,18 @@ theorem inter_leeYangDomain_leeYangSubdomain (β : ℝ) (N : ℕ) :
     leeYangDomain ∩ leeYangSubdomain β N = leeYangSubdomain β N :=
   Set.inter_eq_right.mpr (leeYangSubdomain_subset_leeYangDomain β N)
 
+/-- `leeYangSubdomain β 0 = leeYangDomain` since `β · |Im h| · 0 = 0 < π/2`
+is automatic. -/
+theorem leeYangSubdomain_zero (β : ℝ) :
+    leeYangSubdomain β 0 = leeYangDomain := by
+  ext h
+  constructor
+  · exact fun hh => hh.1
+  · intro hh
+    refine ⟨hh, ?_⟩
+    simp
+    positivity
+
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
 `leeYangDomain`. For each point `h₀`, the local branch `f` from
