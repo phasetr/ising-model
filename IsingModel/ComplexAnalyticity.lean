@@ -6,6 +6,7 @@ import Mathlib.Analysis.Analytic.Linear
 import Mathlib.Analysis.SpecialFunctions.Complex.Analytic
 import Mathlib.Analysis.SpecialFunctions.Complex.Log
 import Mathlib.Analysis.SpecialFunctions.ExpDeriv
+import Mathlib.Analysis.Complex.HasPrimitives
 
 /-!
 # Complex analyticity of the Ising partition function (finite volume)
@@ -953,5 +954,30 @@ theorem logDeriv_partitionFunctionComplex_analyticOnNhd_leeYangDomain
         deriv (fun h'' => partitionFunctionComplex G (J : ℂ) h'' (β : ℂ)) h')
       h := hZ_ana.deriv
   exact hZ'_ana.div hZ_ana hZ_ne
+
+/-- **Local primitive of the log derivative on a ball inside Lee-Yang**.
+For any `h₀ ∈ leeYangDomain` and any `r > 0` with `ball h₀ r ⊆ leeYangDomain`,
+there exists a holomorphic function `G : ℂ → ℂ` such that on the ball,
+`G' = Z'/Z`. This `G` is a local holomorphic branch of `log Z`
+(up to an additive complex constant). -/
+theorem exists_logZ_branch_on_ball_of_leeYangDomain
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J)
+    {h₀ : ℂ} {r : ℝ} (hsub : Metric.ball h₀ r ⊆ leeYangDomain) :
+    ∃ g : ℂ → ℂ, ∀ z ∈ Metric.ball h₀ r, HasDerivAt g
+        (deriv (fun h'' => partitionFunctionComplex G (J : ℂ) h'' (β : ℂ)) z
+          / partitionFunctionComplex G (J : ℂ) z (β : ℂ)) z := by
+  have hlogDeriv_ana :
+      AnalyticOnNhd ℂ (fun h : ℂ =>
+          deriv (fun h' => partitionFunctionComplex G (J : ℂ) h' (β : ℂ)) h
+            / partitionFunctionComplex G (J : ℂ) h (β : ℂ)) leeYangDomain :=
+    logDeriv_partitionFunctionComplex_analyticOnNhd_leeYangDomain G hβ hJ
+  have hlogDeriv_diffOn :
+      DifferentiableOn ℂ (fun h : ℂ =>
+          deriv (fun h' => partitionFunctionComplex G (J : ℂ) h' (β : ℂ)) h
+            / partitionFunctionComplex G (J : ℂ) h (β : ℂ))
+        (Metric.ball h₀ r) :=
+    (hlogDeriv_ana.mono hsub).differentiableOn
+  exact hlogDeriv_diffOn.isExactOn_ball
 
 end IsingModel
