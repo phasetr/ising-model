@@ -2323,6 +2323,21 @@ theorem re_pos_of_mem_leeYangSubdomain (β : ℝ) (N : ℕ) {h : ℂ}
     (hh : h ∈ leeYangSubdomain β N) : 0 < h.re :=
   re_pos_of_mem_leeYangDomain hh.1
 
+/-- Any member of `leeYangDomain` is non-zero. -/
+theorem ne_zero_of_mem_leeYangDomain {h : ℂ} (hh : h ∈ leeYangDomain) :
+    h ≠ 0 := by
+  intro hz
+  rw [hz, Complex.zero_re] at hh
+  have : |h.im| < 0 := by
+    rw [hz] at hh
+    exact hh
+  linarith [abs_nonneg h.im]
+
+/-- Any member of `leeYangSubdomain` is non-zero. -/
+theorem ne_zero_of_mem_leeYangSubdomain (β : ℝ) (N : ℕ) {h : ℂ}
+    (hh : h ∈ leeYangSubdomain β N) : h ≠ 0 :=
+  ne_zero_of_mem_leeYangDomain hh.1
+
 
 
 
