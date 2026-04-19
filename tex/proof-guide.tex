@@ -4001,6 +4001,41 @@ with $f_\infty = \limsup f_{\Lambda_n}$ via
 Glimm--Jaffe \cite{glimm-jaffe} \S 4.6 Prop 4.6.1, p.~64.
 \end{proof}
 
+\begin{theorem}[GJ \S 5.1 cluster property --- $J = 0$ instance;
+PR \#207]
+For any ambient graph $G : \mathrm{SimpleGraph}\, \iota$ with
+$\iota$ finite, any $h, \beta \in \mathbb{R}$, and any distinct
+sites $i \neq j$ in $\iota$,
+\[
+  \langle \sigma_i; \sigma_j \rangle_{G,\langle 0,h,\beta\rangle}
+  = \langle \sigma_i \sigma_j \rangle - \langle \sigma_i\rangle
+  \langle \sigma_j \rangle = 0.
+\]
+The factorisation is \emph{exact at every separation}, not just
+asymptotic.
+\end{theorem}
+
+\begin{proof}
+By \texttt{correlation\_J\_zero}
+(Glimm--Jaffe \cite{glimm-jaffe} style, essentially the
+non-interacting free-spin model), for any subset
+$A \subseteq \iota$,
+$\langle \sigma^A \rangle_{G,\langle 0,h,\beta\rangle} =
+\tanh(\beta h)^{|A|}$.
+With $i \neq j$ one has $|\{i,j\}| = 2$ and $|\{i\}| = |\{j\}| = 1$,
+so
+\[
+  \langle \sigma^{\{i,j\}} \rangle = \tanh(\beta h)^{2}, \qquad
+  \langle \sigma^{\{i\}} \rangle\langle \sigma^{\{j\}}\rangle
+  = \tanh(\beta h)^{1} \cdot \tanh(\beta h)^{1}
+  = \tanh(\beta h)^{2},
+\]
+and the difference vanishes.
+Reference: Glimm--Jaffe \cite{glimm-jaffe} \S 5.1, pp.~76--77. This
+is the trivial non-interacting instance of the cluster property;
+non-zero-$J$ decay at large separation remains follow-up work.
+\end{proof}
+
 \begin{theorem}[GJ \S 4.6 Prop 4.6.1, log-linear-card builder and
 $\beta = 0$ instance; PR \#206]
 (i) If $\log Z_\Lambda = |\Lambda| \cdot c$ for all stages, then the
