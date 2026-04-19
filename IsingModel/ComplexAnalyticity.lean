@@ -2262,6 +2262,18 @@ theorem norm_leeYangNormalization_ofReal (β J h : ℝ) (edgeCount siteCount : �
   rw [leeYangNormalization_ofReal_eq, Complex.norm_real]
   exact abs_of_pos (Real.exp_pos _)
 
+/-- `leeYangNormalization β J h E ι ≠ 0` (restated as membership). -/
+theorem leeYangNormalization_ne_zero'
+    (β J h : ℂ) (edgeCount siteCount : ℕ) :
+    leeYangNormalization β J h edgeCount siteCount ≠ 0 :=
+  leeYangNormalization_ne_zero β J h edgeCount siteCount
+
+/-- Norm positivity of `leeYangNormalization`. -/
+theorem leeYangNormalization_norm_pos
+    (β J h : ℂ) (edgeCount siteCount : ℕ) :
+    0 < ‖leeYangNormalization β J h edgeCount siteCount‖ :=
+  norm_pos_iff.mpr (leeYangNormalization_ne_zero β J h edgeCount siteCount)
+
 
 
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
