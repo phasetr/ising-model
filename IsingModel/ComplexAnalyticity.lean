@@ -1,4 +1,4 @@
-import IsingModel.Hamiltonian
+import IsingModel.GibbsMeasure
 import Mathlib.Analysis.Analytic.Constructions
 import Mathlib.Analysis.Analytic.Linear
 import Mathlib.Analysis.SpecialFunctions.Complex.Analytic
@@ -157,5 +157,39 @@ theorem freeEnergyComplex_analyticAt_joint
   unfold freeEnergyComplex
   exact analyticAt_const.mul
     ((partitionFunctionComplex_analyticAt_joint G z₀).clog hZ)
+
+/-! ## Real-complex compatibility
+
+Bridge at the `partitionFunction` level: at real parameters, the complex
+and real partition functions agree up to `Complex.ofReal`. A corresponding
+bridge for `freeEnergy` would additionally require a real-vs-complex
+`log` compatibility on positive reals (out of scope for this PR). -/
+
+omit [Fintype ι] [DecidableEq ι] in
+/-- `Complex.ofReal (edgeSpin σ e) = edgeSpinComplex σ e`. -/
+theorem edgeSpin_ofReal_eq_edgeSpinComplex (σ : Config ι) (e : Sym2 ι) :
+    ((edgeSpin (K := ℝ) σ e : ℝ) : ℂ) = edgeSpinComplex σ e := by
+  induction e with
+  | h i j =>
+    simp [edgeSpin, edgeSpinComplex, Spin.sign]
+
+/-- `Complex.ofReal (partitionFunction G p) = partitionFunctionComplex G p.J p.h p.β`. -/
+theorem partitionFunction_ofReal_eq_partitionFunctionComplex
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (p : IsingParams ℝ) :
+    ((partitionFunction G p : ℝ) : ℂ)
+      = partitionFunctionComplex G (p.J : ℂ) (p.h : ℂ) (p.β : ℂ) := by
+  unfold partitionFunction boltzmannWeight partitionFunctionComplex
+    hamiltonianComplex externalFieldEnergyComplex interactionEnergyComplex
+    hamiltonian interactionEnergy externalFieldEnergy
+  push_cast
+  refine Finset.sum_congr rfl fun σ _ => ?_
+  congr 1
+  have hspin : ∀ i : ι, ((Spin.sign ℝ (σ i) : ℝ) : ℂ) = Spin.sign ℂ (σ i) := by
+    intro i; simp [Spin.sign]
+  have hedge : ∀ e : Sym2 ι,
+      ((edgeSpin (K := ℝ) σ e : ℝ) : ℂ) = edgeSpinComplex σ e :=
+    edgeSpin_ofReal_eq_edgeSpinComplex σ
+  push_cast [← hspin, ← hedge]
+  ring
 
 end IsingModel
