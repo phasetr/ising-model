@@ -2541,6 +2541,16 @@ theorem freeEnergyComplex_restrict_real_axis_eq_freeEnergy
   funext h
   exact freeEnergyComplex_at_real G J h β
 
+/-- `partitionFunctionComplex` restricted to the real axis equals the
+cast of the real `partitionFunction`. -/
+theorem partitionFunctionComplex_restrict_real_axis_eq
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J β : ℝ) :
+    (fun h : ℝ =>
+        partitionFunctionComplex G (J : ℂ) (h : ℂ) (β : ℂ))
+      = fun h : ℝ => ((partitionFunction G ⟨J, h, β⟩ : ℝ) : ℂ) := by
+  funext h
+  exact partitionFunctionComplex_at_real G J β h
+
 
 
 
