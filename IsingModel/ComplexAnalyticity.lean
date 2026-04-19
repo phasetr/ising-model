@@ -1582,6 +1582,20 @@ theorem partitionFunctionComplex_mapsTo_ne_zero_leeYangDomain
       leeYangDomain {z : ℂ | z ≠ 0} := fun _ hh =>
   partitionFunctionComplex_ne_zero_on_leeYangDomain G hβ hJ hh
 
+/-- `leeYangFugacity` (uniform fugacity) maps the Lee-Yang domain
+into the open unit disk (already proved for the scalar case;
+restatement as `Set.MapsTo`). -/
+theorem leeYangFugacity_mapsTo_leeYangDomain {β : ℝ} (hβ : 0 < β) :
+    Set.MapsTo (leeYangFugacity (β : ℂ)) leeYangDomain
+      (Metric.ball (0 : ℂ) 1) :=
+  fun _ hh => norm_leeYangFugacity_lt_one hβ hh
+
+/-- Intersection of `leeYangDomain` and `leeYangSubdomain` is just
+`leeYangSubdomain` (which is a subset of the former). -/
+theorem inter_leeYangDomain_leeYangSubdomain (β : ℝ) (N : ℕ) :
+    leeYangDomain ∩ leeYangSubdomain β N = leeYangSubdomain β N :=
+  Set.inter_eq_right.mpr (leeYangSubdomain_subset_leeYangDomain β N)
+
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
 `leeYangDomain`. For each point `h₀`, the local branch `f` from
