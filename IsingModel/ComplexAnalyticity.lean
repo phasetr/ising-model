@@ -1673,6 +1673,22 @@ theorem leeYangNormalization_nonzero_on_univ (edgeCount siteCount : ℕ)
     leeYangNormalization β J h edgeCount siteCount ∈ ({z : ℂ | z ≠ 0}) :=
   leeYangNormalization_ne_zero β J h edgeCount siteCount
 
+/-- **AnalyticOnNhd form of the local log branch** on any ball
+contained in `leeYangDomain`. Packages
+`exists_logZ_analytic_branch_on_ball` as an `AnalyticOnNhd ℂ g (ball h₀ r)`
+statement. -/
+theorem exists_logZ_analyticOnNhd_ball
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J)
+    {h₀ : ℂ} {r : ℝ} (hr : 0 < r)
+    (hsub : Metric.ball h₀ r ⊆ leeYangDomain) :
+    ∃ g : ℂ → ℂ, AnalyticOnNhd ℂ g (Metric.ball h₀ r)
+      ∧ ∀ z ∈ Metric.ball h₀ r,
+          Complex.exp (g z) = partitionFunctionComplex G (J : ℂ) z (β : ℂ) := by
+  obtain ⟨g, hg_exp, _hg_base, hg_ana⟩ :=
+    exists_logZ_analytic_branch_on_ball G hβ hJ (h₀ := h₀) (r := r) hr hsub
+  exact ⟨g, hg_ana, hg_exp⟩
+
 
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
