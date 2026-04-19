@@ -3959,12 +3959,13 @@ convergence of $f_\Lambda = (\log Z_\Lambda)/|\Lambda|$ along
 arbitrary exhaustions of the ambient lattice; this is the
 Prop 4.6.1 body in the next PR.
 
-\begin{theorem}[GJ \S 5.4 Prop 5.4.2 along an exhaustion (per-stage);
-PR \#202]
+\begin{theorem}[Corollary/wrapper of GJ \S 5.4 Prop 5.4.2 along an
+exhaustion (per-stage); PR \#202]
 For a graph $G : \mathrm{SimpleGraph}\, V$ with an exhaustion
 $\Lambda : \mathrm{Ambient.Exhaustion}\, V$, suppose that for every
 stage $n$ the induced graph $G_n := \mathrm{Ambient.inducedGraph}\,G\,(\Lambda_n)$
-is preconnected, $B_n \subseteq \Lambda_n$ is a non-empty boundary,
+is preconnected, $B_n \subseteq \Lambda_n$ is a non-empty set of
+$+$-boundary-condition sites,
 $i_n \in \Lambda_n$, and the common exponential bound
 \[
   2 \cdot 2^{\#\Lambda_n} \exp(-2\beta J) \le \exp(-c\beta)

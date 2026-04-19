@@ -44,8 +44,9 @@ form). For a graph `G : SimpleGraph V` with an exhaustion
 * each induced graph `Ambient.inducedGraph G (Λ.volume n)` is preconnected
   and has a decidable adjacency and a `Fintype` edge set;
 * `J, β > 0`;
-* a per-stage non-empty boundary `B n : Finset ↑(Λ.volume n)` and
-  basepoint `i n : ↑(Λ.volume n)` are supplied;
+* a per-stage non-empty set `B n : Finset ↑(Λ.volume n)` of
+  `+`-boundary-condition sites, together with a basepoint
+  `i n : ↑(Λ.volume n)`, is supplied;
 * the exponential bound condition holds uniformly with a common
   constant `c`,
 
