@@ -349,6 +349,46 @@ noncomputable def truncated4 (G : SimpleGraph ι) [Fintype G.edgeSet]
   - correlation G p {i, k} * correlation G p {j, l}
   - correlation G p {i, l} * correlation G p {j, k}
 
+/-- **Infinite-temperature (`β = 0`) vanishing of the Lebowitz
+4-point (truncated) function**: for any ambient graph `G`, any
+`J, h ∈ ℝ`, and any sites `i, j, k, l : ι`,
+`truncated4 G ⟨J, h, 0⟩ i j k l = 0`.
+
+At `β = 0`, each of the seven Finset correlations in the Lebowitz
+combination is over a nonempty subset (every subset contains at
+least one of the supplied sites), so
+`correlation_beta_zero_vanish_of_nonempty_A` makes every term zero
+and the linear combination vanishes.
+
+Companion to `truncated2_beta_zero` / `truncated3_beta_zero`. No
+distinctness hypotheses are needed at `β = 0`. Note: unlike the
+`β = 0` case, `truncated4` does *not* vanish at `J = 0` in
+general — the Lebowitz 4-point is `-2·t⁴` where `t = tanh(β·h)`
+for pairwise distinct sites, which is non-zero when `β·h ≠ 0`.
+So this PR adds only the `β = 0` slice.
+
+Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §5.1 pp. 72–74
+(cluster property context); §4.3 Cor. 4.3.3 / Lebowitz. -/
+theorem truncated4_beta_zero (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h : ℝ) (i j k l : ι) :
+    truncated4 G (⟨J, h, 0⟩ : IsingParams ℝ) i j k l = 0 := by
+  unfold truncated4
+  rw [correlation_beta_zero_vanish_of_nonempty_A G J h {i, j, k, l}
+        ⟨i, by simp⟩,
+      correlation_beta_zero_vanish_of_nonempty_A G J h {i, j}
+        ⟨i, by simp⟩,
+      correlation_beta_zero_vanish_of_nonempty_A G J h {k, l}
+        ⟨k, by simp⟩,
+      correlation_beta_zero_vanish_of_nonempty_A G J h {i, k}
+        ⟨i, by simp⟩,
+      correlation_beta_zero_vanish_of_nonempty_A G J h {j, l}
+        ⟨j, by simp⟩,
+      correlation_beta_zero_vanish_of_nonempty_A G J h {i, l}
+        ⟨i, by simp⟩,
+      correlation_beta_zero_vanish_of_nonempty_A G J h {j, k}
+        ⟨j, by simp⟩]
+  ring
+
 /-- **Lebowitz 4-site inequality** (Glimm–Jaffe, Cor. 4.3.2 for |A|=|B|=2).
 For ferromagnetic Ising with `h ≥ 0` and four distinct sites,
 `⟨σ_iσ_jσ_kσ_l⟩ + ⟨σ_iσ_j⟩⟨σ_kσ_l⟩

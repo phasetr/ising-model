@@ -4001,6 +4001,42 @@ with $f_\infty = \limsup f_{\Lambda_n}$ via
 Glimm--Jaffe \cite{glimm-jaffe} \S 4.6 Prop 4.6.1, p.~64.
 \end{proof}
 
+\begin{theorem}[Lebowitz 4-point $\beta = 0$ vanishing (finite and
+$\infty$-volume); PR \#214]
+For any ambient graph $G$, any $J, h \in \mathbb{R}$, any sites
+$i, j, k, l$:
+$U_4^{\text{Lebowitz}}(G, \langle J,h,0\rangle; i,j,k,l) = 0$
+in finite volume, and
+$U_4^{\text{Lebowitz}}(\infty; i,j,k,l) = 0$ at infinite volume
+along any exhaustion.
+\end{theorem}
+
+\begin{proof}
+At $\beta = 0$ every Boltzmann weight is $1$, so
+$\langle \sigma^A \rangle = 0$ for any nonempty Finset
+$A \subseteq \iota$
+(\texttt{correlation\_beta\_zero\_vanish\_of\_nonempty\_A}). The
+Lebowitz 4-point
+$U_4 = \langle \sigma^{\{i,j,k,l\}}\rangle
+- \langle\sigma^{\{i,j\}}\rangle\langle\sigma^{\{k,l\}}\rangle
+- \langle\sigma^{\{i,k\}}\rangle\langle\sigma^{\{j,l\}}\rangle
+- \langle\sigma^{\{i,l\}}\rangle\langle\sigma^{\{j,k\}}\rangle$
+has all seven Finset correlations over nonempty subsets (each
+contains at least one supplied site), so every term is $0$ and
+$U_4 = 0$.
+
+$\infty$-volume version is identical with
+\texttt{correlationInfinite\_beta\_zero\_vanish\_of\_nonempty\_A}
+in place of the finite-volume lemma.
+
+Note: at $J = 0$ the Lebowitz 4-point is $-2\,t^4$ where
+$t = \tanh(\beta h)$ for pairwise-distinct sites, which is
+non-zero when $\beta h \neq 0$, so the $J = 0$ slice does
+\emph{not} vanish.
+Reference: Glimm--Jaffe \cite{glimm-jaffe} \S 5.1 pp.~72--74
+(cluster context); \S 4.3 Cor. 4.3.3 / Lebowitz.
+\end{proof}
+
 \begin{theorem}[$\infty$-vol truncated-3 trivial slices; PR \#212]
 For a ferromagnetic $\langle 0, h, \beta\rangle$ and pairwise
 distinct $i, j, k$, the $\infty$-vol Ursell 3-point function
