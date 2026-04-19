@@ -1349,6 +1349,17 @@ theorem norm_freeEnergyComplex_le_trivial_bound
             + Real.pi) := this
     _ = _ := by field_simp
 
+/-- **`freeEnergyComplex` is DifferentiableOn on `leeYangSubdomain`**
+(consequence of subdomain analyticity). Useful as input to Vitali for
+restricted subdomains. -/
+theorem freeEnergyComplex_differentiableOn_leeYangSubdomain
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β : ℝ} (hβ : 0 < β) (J : ℝ) :
+    DifferentiableOn ℂ (fun h' => freeEnergyComplex G (J : ℂ) h' (β : ℂ))
+        (leeYangSubdomain β (Fintype.card ι)) := fun _ hmem =>
+  (freeEnergyComplex_analyticAt_h_of_leeYangSubdomain
+      G hβ J hmem.2).differentiableAt.differentiableWithinAt
+
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
 `leeYangDomain`. For each point `h₀`, the local branch `f` from
