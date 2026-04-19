@@ -198,9 +198,7 @@ theorem freeEnergyΛ_ge_log_two_cosh
     {J h β : ℝ} (hJ : 0 ≤ J) (hh : 0 ≤ h) (hβ : 0 < β) :
     Real.log (2 * Real.cosh (β * h))
       ≤ freeEnergyΛ G Λ (⟨J, h, β⟩ : IsingParams ℝ) := by
-  have hcard : 0 < Fintype.card (↑Λ : Type _) := by
-    rw [Fintype.card_coe]; exact Finset.card_pos.mpr hne
-  exact IsingModel.freeEnergy_ge_log_two_cosh _ hJ hh hβ hcard
+  exact IsingModel.freeEnergy_ge_log_two_cosh _ hJ hh hβ hne.fintype_card_coe_pos
 
 /-- **`freeEnergyΛ ≥ log 2`** for ferromagnetic on nonempty `Λ`.
 Thin wrapper of base-layer
@@ -209,11 +207,9 @@ theorem freeEnergyΛ_ge_log_two
     (G : SimpleGraph V) {Λ : Finset V} (hne : Λ.Nonempty)
     [Fintype (inducedGraph G Λ).edgeSet]
     {J h β : ℝ} (hJ : 0 ≤ J) (hh : 0 ≤ h) (hβ : 0 < β) :
-    Real.log 2 ≤ freeEnergyΛ G Λ (⟨J, h, β⟩ : IsingParams ℝ) := by
-  have hcard : 0 < Fintype.card (↑Λ : Type _) := by
-    rw [Fintype.card_coe]; exact Finset.card_pos.mpr hne
-  exact IsingModel.freeEnergy_ge_log_two_of_ferromagnetic
-    (inducedGraph G Λ) _ ⟨hJ, hh, hβ⟩ hcard
+    Real.log 2 ≤ freeEnergyΛ G Λ (⟨J, h, β⟩ : IsingParams ℝ) :=
+  IsingModel.freeEnergy_ge_log_two_of_ferromagnetic
+    (inducedGraph G Λ) _ ⟨hJ, hh, hβ⟩ hne.fintype_card_coe_pos
 
 /-- **`freeEnergyΛ ≥ 0`** for ferromagnetic on nonempty `Λ`.
 Thin wrapper of base-layer
@@ -222,10 +218,9 @@ theorem freeEnergyΛ_nonneg_of_ferromagnetic
     (G : SimpleGraph V) {Λ : Finset V} (hne : Λ.Nonempty)
     [Fintype (inducedGraph G Λ).edgeSet]
     (p : IsingParams ℝ) (hf : Ferromagnetic p) :
-    0 ≤ freeEnergyΛ G Λ p := by
-  have hcard : 0 < Fintype.card (↑Λ : Type _) := by
-    rw [Fintype.card_coe]; exact Finset.card_pos.mpr hne
-  exact IsingModel.freeEnergy_nonneg_of_ferromagnetic (inducedGraph G Λ) p hf hcard
+    0 ≤ freeEnergyΛ G Λ p :=
+  IsingModel.freeEnergy_nonneg_of_ferromagnetic
+    (inducedGraph G Λ) p hf hne.fintype_card_coe_pos
 
 /-- **`partitionFunctionΛ ≥ 1`** for ferromagnetic parameters:
 lifts PR #141 `partitionFunction_ge_one_of_ferromagnetic` to the
@@ -385,10 +380,8 @@ theorem card_mul_freeEnergyΛ_eq_log_partitionFunctionΛ_of_nonempty
     (p : IsingParams ℝ) :
     (Λ.card : ℝ) * freeEnergyΛ G Λ p
       = Real.log (partitionFunctionΛ G Λ p) := by
-  have hcard : 0 < Fintype.card (↑Λ : Type _) := by
-    rw [Fintype.card_coe]; exact Finset.card_pos.mpr hne
   have h := IsingModel.card_mul_freeEnergy_eq_log_partitionFunction
-    (inducedGraph G Λ) p hcard
+    (inducedGraph G Λ) p hne.fintype_card_coe_pos
   rwa [Fintype.card_coe] at h
 
 /-- **Weighted super-additivity of the free energy density** on
