@@ -752,6 +752,21 @@ the full Lee-Yang domain requires a branch argument. -/
 def leeYangSubdomain (β : ℝ) (N : ℕ) : Set ℂ :=
   {h : ℂ | |h.im| < h.re ∧ β * |h.im| * (N : ℝ) < Real.pi / 2}
 
+/-- `leeYangSubdomain ⊆ leeYangDomain` by the first conjunct. -/
+theorem leeYangSubdomain_subset_leeYangDomain (β : ℝ) (N : ℕ) :
+    leeYangSubdomain β N ⊆ leeYangDomain := fun _ hh => hh.1
+
+/-- The Lee-Yang subdomain is open: intersection of two open sets defined
+by strict inequalities on continuous functions. -/
+theorem isOpen_leeYangSubdomain (β : ℝ) (N : ℕ) :
+    IsOpen (leeYangSubdomain β N) := by
+  have h₁ : IsOpen {h : ℂ | |h.im| < h.re} := isOpen_leeYangDomain
+  have h₂ : IsOpen {h : ℂ | β * |h.im| * (N : ℝ) < Real.pi / 2} := by
+    have hcont : Continuous (fun h : ℂ => β * |h.im| * (N : ℝ)) := by
+      fun_prop
+    exact hcont.isOpen_preimage _ isOpen_Iio
+  exact h₁.inter h₂
+
 omit [DecidableEq ι] in
 /-- The spin sum `∑ σ_i` has absolute value at most `|ι|`, since each
 `σ_i ∈ {-1, 1}`. -/
@@ -874,5 +889,18 @@ theorem freeEnergyComplex_analyticAt_h_of_leeYangSubdomain
     AnalyticAt ℂ (fun h' => freeEnergyComplex G (J : ℂ) h' (β : ℂ)) h :=
   freeEnergyComplex_analyticAt_h G (J : ℂ) (β : ℂ) h
     (partitionFunctionComplex_mem_slitPlane_of_leeYangSubdomain G hβ J himπ)
+
+/-- **`freeEnergyComplex` is analytic on the entire Lee-Yang subdomain**
+(not just at a point). Since analyticity is local and
+`leeYangSubdomain` is open, membership at each point lifts to
+`AnalyticOnNhd` on the whole set. -/
+theorem freeEnergyComplex_analyticOnNhd_leeYangSubdomain
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β : ℝ} (hβ : 0 < β) (J : ℝ) :
+    AnalyticOnNhd ℂ (fun h' => freeEnergyComplex G (J : ℂ) h' (β : ℂ))
+        (leeYangSubdomain β (Fintype.card ι)) := by
+  intro h hmem
+  exact freeEnergyComplex_analyticAt_h_of_leeYangSubdomain
+    G hβ J hmem.2
 
 end IsingModel
