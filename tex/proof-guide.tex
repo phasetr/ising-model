@@ -1765,6 +1765,70 @@ $Z(J, h_0, \beta) \in \texttt{Complex.slitPlane}$ の点で
 定数乗との合成.
 \end{theorem}
 
+\begin{theorem}[Lee-Yang domain infrastructure (support toward GJ \S 4.6 Thm 4.6.2); PR \#199]
+GJ \S 4.6 Thm 4.6.2 (pp.~67--70) を将来完結させるための support lemmas.
+以下はいずれも GJ 本体の命題ではなく, 独立した補助結果:
+\begin{itemize}
+\item \texttt{leeYangDomain} $= \{h \in \mathbb C : |\mathrm{Im}\,h| < \mathrm{Re}\,h\}$
+ は開集合, \texttt{slitPlane} の部分集合, 実正軸を含む.
+\item \texttt{leeYangFugacity}$(\beta, h) := e^{-2\beta h}$ は
+ entire ($\beta, h \in \mathbb C$), Lee-Yang 領域 × $\beta > 0$ で
+ $\|\cdot\| < 1$ (つまり open unit ball への写像).
+\item \texttt{leeYangNormalization}$(\beta, J, h, |E|, |\iota|)
+ := \exp(\beta J |E| + \beta h |\iota|)$ は entire, 非零,
+ 実パラメタで $\mathrm{Re} > 0$.
+\end{itemize}
+\end{theorem}
+
+\begin{theorem}[Friedli--Velenik factorisation; PR \#199]
+\label{thm:friedli-velenik}
+実 $\beta, J$, 複素 uniform field $h \in \mathbb C$ で,
+有限グラフ $G$, $|\iota| = \texttt{Fintype.card}\,\iota$,
+$|E| = G.\texttt{edgeFinset.card}$:
+\[
+  Z(J, h, \beta)
+    = \exp(\beta J |E| + \beta h |\iota|) \cdot P_E(z),
+\]
+ただし $z_k = e^{-2\beta h}$ (uniform fugacity vector) であり
+$P_E$ は Ising partition polynomial \texttt{isingEdgePoly}
+(\texttt{LeeYang.lean}, \texttt{graphToEdgeList}\,$G$\,$(e^{-2\beta J})$
+を係数として).
+証明: $\sigma \mapsto X := \{i : \sigma_i = \mathrm{down}\}$
+(\texttt{configFinsetEquiv}) bijection を通し,
+各 $\sigma$ について per-site + per-edge で $\exp(-\beta H(\sigma))$
+を展開して係数比較.
+Lean 定理名: \texttt{partitionFunctionComplex\_eq\_normalization\_mul\_isingEdgePoly}.
+参照: Friedli--Velenik (3.63)--(3.65), pp.~122--123.
+\end{theorem}
+
+\begin{theorem}[GJ Thm 4.6.2 non-vanishing half on Lee-Yang domain; PR \#199]
+強磁性 $J > 0$, $\beta > 0$ 実, $h \in \texttt{leeYangDomain}$ で
+$\texttt{partitionFunctionComplex}\,G\,(J:\mathbb C)\,h\,(\beta:\mathbb C)
+\ne 0$.
+Friedli--Velenik 恒等式 (\ref{thm:friedli-velenik}) で
+$Z = \text{非零 normalization} \cdot P_E(z)$, Lee-Yang 円定理
+(\texttt{lee\_yang\_circle} / \texttt{isingEdgePoly\_nonvanishing\_of\_graph})
+で $P_E$ 部分も非零.
+Lean 定理名: \texttt{partitionFunctionComplex\_ne\_zero\_on\_leeYangDomain}.
+
+Note: 非零性は $Z \in \texttt{slitPlane}$ を直接与えない.
+連続 branch 選択で slitPlane 属を確立し,
+\texttt{freeEnergyComplex} の analyticity を完結するのは後続 session.
+\end{theorem}
+
+\begin{theorem}[Real-slice slitPlane corollary (preliminary to GJ Thm 4.6.2); PR \#199]
+任意の実 $J, h_0, \beta$ で
+$\texttt{AnalyticAt}\,\mathbb C\,
+  (h \mapsto \texttt{freeEnergyComplex}\,G\,(J:\mathbb C)\,h\,(\beta:\mathbb C))\,
+  (h_0:\mathbb C)$.
+これは GJ Thm 4.6.2 本文ではなく, 既存の
+\texttt{partitionFunctionComplex\_mem\_slitPlane\_of\_real}
+(実パラメタで $Z > 0$ 実, よって slitPlane 属) と
+\texttt{freeEnergyComplex\_analyticAt\_h} の単純な合成.
+$J > 0$, $\beta > 0$ や Lee-Yang 領域の仮定は不要.
+Lean 定理名: \texttt{freeEnergyComplex\_analyticAt\_h\_ofReal}.
+\end{theorem}
+
 \begin{theorem}[\texttt{freeEnergyInfinite\_of\_eventually\_const}; PR \#171]
 $\forall^\infty n, f_n = c$ のとき
 $\texttt{freeEnergyInfinite}\,G\,\Lambda\,p = c$.
