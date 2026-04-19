@@ -1790,6 +1790,16 @@ theorem convex_leeYangSubdomain' (β : ℝ) (N : ℕ) :
     calc β * |a * x.im + b * y.im| * (N : ℝ) ≤ 0 := this
       _ < Real.pi / 2 := by positivity
 
+/-- The Lee-Yang subdomain is preconnected (from convexity). -/
+theorem isPreconnected_leeYangSubdomain (β : ℝ) (N : ℕ) :
+    IsPreconnected (leeYangSubdomain β N) :=
+  (convex_leeYangSubdomain' β N).isPreconnected
+
+/-- The Lee-Yang subdomain is connected (nonempty + preconnected). -/
+theorem isConnected_leeYangSubdomain (β : ℝ) (N : ℕ) :
+    IsConnected (leeYangSubdomain β N) :=
+  ⟨leeYangSubdomain_nonempty β N, isPreconnected_leeYangSubdomain β N⟩
+
 
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
