@@ -1,11 +1,14 @@
 import IsingModel.GibbsMeasure
 import IsingModel.FreeEnergy
 import IsingModel.LeeYang
+import IsingModel.Conditioning
 import Mathlib.Analysis.Analytic.Constructions
 import Mathlib.Analysis.Analytic.Linear
 import Mathlib.Analysis.SpecialFunctions.Complex.Analytic
 import Mathlib.Analysis.SpecialFunctions.Complex.Log
 import Mathlib.Analysis.SpecialFunctions.ExpDeriv
+import Mathlib.Analysis.Complex.HasPrimitives
+import Mathlib.Analysis.Complex.LocallyUniformLimit
 
 /-!
 # Complex analyticity of the Ising partition function (finite volume)
@@ -722,5 +725,1938 @@ theorem freeEnergyComplex_analyticAt_h_ofReal
         (h₀ : ℂ) :=
   freeEnergyComplex_analyticAt_h G (J : ℂ) (β : ℂ) (h₀ : ℂ)
     (partitionFunctionComplex_mem_slitPlane_of_real G ⟨J, h₀, β⟩)
+
+/-! ### slitPlane via `Re Z > 0` on a Lee-Yang subdomain (PR #200 in progress)
+
+Toward GJ §4.6 Thm 4.6.2 finite-volume analyticity on the Lee-Yang
+domain: we establish `partitionFunctionComplex ∈ Complex.slitPlane`
+by the stronger `Re Z > 0` condition, which holds on the subdomain
+`{h | |Im h| < Re h ∧ β · |Im h| · |ι| < π/2}`.
+
+The bound `β · |Im h| · |ι| < π/2` ensures that for any configuration
+`σ` with spin sum `s ∈ [-|ι|, |ι|]`, `|β · Im h · s| < π/2`, hence
+`cos(β · Im h · s) > 0`. The real part of each Boltzmann weight is
+then `exp(β·J·(edge sum) + β·Re h · s) · cos(β · Im h · s) > 0`, and
+summing over `σ` gives `Re Z > 0`.
+
+This is a strictly weaker statement than the full Lee-Yang analyticity,
+but it is a concrete subdomain where the finite-volume complex
+analyticity of `freeEnergyComplex` holds without a separate branch
+construction.
+
+Full Lee-Yang extension requires a continuous branch argument on the
+simply-connected domain (classical complex analysis; not directly
+available as a mathlib lemma at present). -/
+
+/-- The restricted Lee-Yang subdomain on which we prove `Re Z > 0`:
+`{h | |Im h| < Re h ∧ β · |Im h| · |ι| < π/2}`. This domain shrinks
+as `β · |ι|` grows, so it does not lift to the infinite-volume limit;
+the full Lee-Yang domain requires a branch argument. -/
+def leeYangSubdomain (β : ℝ) (N : ℕ) : Set ℂ :=
+  {h : ℂ | |h.im| < h.re ∧ β * |h.im| * (N : ℝ) < Real.pi / 2}
+
+/-- `leeYangSubdomain ⊆ leeYangDomain` by the first conjunct. -/
+theorem leeYangSubdomain_subset_leeYangDomain (β : ℝ) (N : ℕ) :
+    leeYangSubdomain β N ⊆ leeYangDomain := fun _ hh => hh.1
+
+/-- The Lee-Yang subdomain is open: intersection of two open sets defined
+by strict inequalities on continuous functions. -/
+theorem isOpen_leeYangSubdomain (β : ℝ) (N : ℕ) :
+    IsOpen (leeYangSubdomain β N) := by
+  have h₁ : IsOpen {h : ℂ | |h.im| < h.re} := isOpen_leeYangDomain
+  have h₂ : IsOpen {h : ℂ | β * |h.im| * (N : ℝ) < Real.pi / 2} := by
+    have hcont : Continuous (fun h : ℂ => β * |h.im| * (N : ℝ)) := by
+      fun_prop
+    exact hcont.isOpen_preimage _ isOpen_Iio
+  exact h₁.inter h₂
+
+omit [DecidableEq ι] in
+/-- The spin sum `∑ σ_i` has absolute value at most `|ι|`, since each
+`σ_i ∈ {-1, 1}`. -/
+theorem abs_spinSum_le (σ : Config ι) :
+    |∑ i : ι, (Spin.sign ℝ (σ i) : ℝ)| ≤ (Fintype.card ι : ℝ) := by
+  classical
+  have h₁ : |∑ i : ι, Spin.sign ℝ (σ i)|
+              ≤ ∑ i : ι, |Spin.sign ℝ (σ i)| :=
+    Finset.abs_sum_le_sum_abs _ _
+  have h₂ : ∀ i : ι, |Spin.sign ℝ (σ i)| ≤ 1 := by
+    intro i; cases σ i <;> simp [Spin.sign, Spin.toSign]
+  have h₃ : ∑ i : ι, |Spin.sign ℝ (σ i)| ≤ ∑ _i : ι, (1 : ℝ) :=
+    Finset.sum_le_sum (fun i _ => h₂ i)
+  simpa [Finset.sum_const, Finset.card_univ] using h₁.trans h₃
+
+omit [DecidableEq ι] in
+/-- **Per-configuration Boltzmann weight has positive real part** on
+`leeYangSubdomain`. Real parameters `β > 0`, real `J`; complex uniform
+field `h` with `β · |Im h| · |ι| < π/2`. The exponential factors as
+`exp(β·J·(edge sum) + β·Re h · s) · (cos(β·Im h · s) + i sin(β·Im h · s))`
+with `s = spin sum`, and `|β·Im h · s| ≤ β · |Im h| · |ι| < π/2`
+forces `cos > 0`. -/
+theorem exp_neg_beta_hamiltonian_re_pos
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β : ℝ} (hβ : 0 < β) (J : ℝ) {h : ℂ}
+    (himπ : β * |h.im| * (Fintype.card ι : ℝ) < Real.pi / 2)
+    (σ : Config ι) :
+    0 < (Complex.exp (-(β : ℂ) * hamiltonianComplex G (J : ℂ) h σ)).re := by
+  classical
+  -- Reduce to an explicit real-imag decomposition.
+  unfold hamiltonianComplex interactionEnergyComplex externalFieldEnergyComplex
+  set e : ℝ := ∑ ed ∈ G.edgeFinset,
+      (Spin.sign ℝ (σ (Quot.out ed).1) * Spin.sign ℝ (σ (Quot.out ed).2))
+    with he_def
+  set s : ℝ := ∑ i : ι, (Spin.sign ℝ (σ i) : ℝ) with hs_def
+  have hedgeCast : (∑ ed ∈ G.edgeFinset, edgeSpinComplex σ ed) = (e : ℂ) := by
+    simp only [he_def, Complex.ofReal_sum]
+    refine Finset.sum_congr rfl (fun ed _ => ?_)
+    rw [edgeSpinComplex_eq_quotOut σ ed]
+    cases σ (Quot.out ed).1 <;> cases σ (Quot.out ed).2 <;>
+      simp [Spin.sign, Spin.toSign]
+  have hsumCast : (∑ i : ι, Spin.sign ℂ (σ i)) = (s : ℂ) := by
+    simp only [hs_def, Complex.ofReal_sum]
+    refine Finset.sum_congr rfl (fun i _ => ?_)
+    cases σ i <;> simp [Spin.sign, Spin.toSign]
+  rw [hedgeCast, hsumCast]
+  -- The exponent is (β·J·e + β·Re h · s) + i·β·Im h · s (as a complex).
+  set a : ℝ := β * J * e + β * h.re * s with ha_def
+  set b : ℝ := β * h.im * s with hb_def
+  have hexpCast : -(β : ℂ) * (-(J : ℂ) * (e : ℂ) + -h * (s : ℂ))
+                  = (a : ℂ) + (b : ℂ) * Complex.I := by
+    simp only [ha_def, hb_def]
+    have hhre : (h.re : ℂ) + h.im * Complex.I = h := by
+      exact (Complex.re_add_im h)
+    have : -(β : ℂ) * (-(J : ℂ) * (e : ℂ) + -h * (s : ℂ))
+             = ((β : ℂ) * (J : ℂ) * (e : ℂ)
+                + (β : ℂ) * ((h.re : ℂ) + h.im * Complex.I) * (s : ℂ)) := by
+      rw [hhre]; ring
+    rw [this]; push_cast; ring
+  rw [hexpCast]
+  -- Now Re(exp(a + ib)) = exp(a) · cos(b) > 0 since cos(b) > 0 for |b|<π/2.
+  rw [show (a : ℂ) + (b : ℂ) * Complex.I = ((⟨a, b⟩ : ℂ)) from by
+    apply Complex.ext <;> simp]
+  have hbRe : (⟨a, b⟩ : ℂ).re = a := rfl
+  have hbIm : (⟨a, b⟩ : ℂ).im = b := rfl
+  rw [Complex.exp_re, hbRe, hbIm]
+  -- Need: exp(a) · cos(b) > 0.
+  have habs : |b| ≤ β * |h.im| * (Fintype.card ι : ℝ) := by
+    have : |b| = β * |h.im| * |s| := by
+      simp only [hb_def]
+      rw [abs_mul, abs_mul, abs_of_pos hβ]
+    rw [this]
+    have hsle : |s| ≤ (Fintype.card ι : ℝ) := abs_spinSum_le σ
+    have hmul_nn : 0 ≤ β * |h.im| := mul_nonneg hβ.le (abs_nonneg _)
+    exact (mul_le_mul_of_nonneg_left hsle hmul_nn)
+  have hb_lt : |b| < Real.pi / 2 := lt_of_le_of_lt habs himπ
+  have hcos_pos : 0 < Real.cos b := by
+    rcases abs_lt.mp hb_lt with ⟨h₁, h₂⟩
+    exact Real.cos_pos_of_mem_Ioo ⟨by linarith, h₂⟩
+  have hexp_pos : 0 < Real.exp a := Real.exp_pos _
+  exact mul_pos hexp_pos hcos_pos
+
+/-- **`Re(partitionFunctionComplex) > 0` on the Lee-Yang subdomain**.
+Sum of per-σ positive-real-part Boltzmann weights. -/
+theorem partitionFunctionComplex_re_pos_of_leeYangSubdomain
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β : ℝ} (hβ : 0 < β) (J : ℝ) {h : ℂ}
+    (himπ : β * |h.im| * (Fintype.card ι : ℝ) < Real.pi / 2) :
+    0 < (partitionFunctionComplex G (J : ℂ) h (β : ℂ)).re := by
+  classical
+  unfold partitionFunctionComplex
+  rw [show ((∑ σ : Config ι,
+            Complex.exp (-(β : ℂ) * hamiltonianComplex G (J : ℂ) h σ))).re
+          = ∑ σ : Config ι,
+            (Complex.exp (-(β : ℂ) * hamiltonianComplex G (J : ℂ) h σ)).re
+          from by rw [Complex.re_sum]]
+  refine Finset.sum_pos (fun σ _ =>
+    exp_neg_beta_hamiltonian_re_pos G hβ J himπ σ) ?_
+  exact ⟨Classical.arbitrary (Config ι), Finset.mem_univ _⟩
+
+/-- **`partitionFunctionComplex ∈ Complex.slitPlane` on the Lee-Yang
+subdomain**: `Re Z > 0` implies slitPlane. -/
+theorem partitionFunctionComplex_mem_slitPlane_of_leeYangSubdomain
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β : ℝ} (hβ : 0 < β) (J : ℝ) {h : ℂ}
+    (himπ : β * |h.im| * (Fintype.card ι : ℝ) < Real.pi / 2) :
+    partitionFunctionComplex G (J : ℂ) h (β : ℂ) ∈ Complex.slitPlane :=
+  Or.inl (partitionFunctionComplex_re_pos_of_leeYangSubdomain G hβ J himπ)
+
+/-- **`freeEnergyComplex` is analytic in `h` on the Lee-Yang subdomain**
+(finite-volume `freeEnergyComplex` analyticity; GJ §4.6 Thm 4.6.2
+partial — subdomain where `β · |Im h| · |ι| < π/2`, which collapses as
+`|ι| → ∞`). Combines
+`partitionFunctionComplex_mem_slitPlane_of_leeYangSubdomain` with
+`freeEnergyComplex_analyticAt_h`. -/
+theorem freeEnergyComplex_analyticAt_h_of_leeYangSubdomain
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β : ℝ} (hβ : 0 < β) (J : ℝ) {h : ℂ}
+    (himπ : β * |h.im| * (Fintype.card ι : ℝ) < Real.pi / 2) :
+    AnalyticAt ℂ (fun h' => freeEnergyComplex G (J : ℂ) h' (β : ℂ)) h :=
+  freeEnergyComplex_analyticAt_h G (J : ℂ) (β : ℂ) h
+    (partitionFunctionComplex_mem_slitPlane_of_leeYangSubdomain G hβ J himπ)
+
+/-- **`freeEnergyComplex` is analytic on the entire Lee-Yang subdomain**
+(not just at a point). Since analyticity is local and
+`leeYangSubdomain` is open, membership at each point lifts to
+`AnalyticOnNhd` on the whole set. -/
+theorem freeEnergyComplex_analyticOnNhd_leeYangSubdomain
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β : ℝ} (hβ : 0 < β) (J : ℝ) :
+    AnalyticOnNhd ℂ (fun h' => freeEnergyComplex G (J : ℂ) h' (β : ℂ))
+        (leeYangSubdomain β (Fintype.card ι)) := by
+  intro h hmem
+  exact freeEnergyComplex_analyticAt_h_of_leeYangSubdomain
+    G hβ J hmem.2
+
+/-! ### Toward full Lee-Yang analyticity via branch construction
+
+The subdomain result above uses the principal branch `Complex.log`,
+which is analytic only on `Complex.slitPlane`. On the full Lee-Yang
+domain, `Z` is non-vanishing (PR #199), but may not stay in `slitPlane`
+(winding of `Z` around `0` is not automatic from non-vanishing alone).
+
+Morera's theorem (`DifferentiableOn.isExactOn_ball`, mathlib) gives a
+local primitive of a holomorphic function on a ball, which yields a
+local holomorphic branch of `log Z` on any ball inside `leeYangDomain`.
+This does not immediately produce a global branch, but it shows
+`freeEnergyComplex` (with a custom branch, equal to `Complex.log`
+modulo `2πi` on each ball) is analytic at every point of the Lee-Yang
+domain.
+
+The clean formalisation of this branch-based finite-volume analyticity
+is larger than a single session; the subdomain result above is the
+concrete verified form. -/
+
+/-- `partitionFunctionComplex ≠ 0` on every point of the Lee-Yang
+domain (lifted to an `AnalyticOnNhd`-style statement by openness).
+This is the global non-vanishing statement. -/
+theorem partitionFunctionComplex_analyticOnNhd_leeYangDomain
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℂ) :
+    AnalyticOnNhd ℂ
+        (fun h' => partitionFunctionComplex G J h' β) leeYangDomain :=
+  fun h _ => partitionFunctionComplex_analyticAt_h G J β h
+
+/-- **The logarithmic derivative `Z'/Z` is analytic on the Lee-Yang
+domain** (real ferromagnetic `J > 0`, real `β > 0`). `Z` is entire and
+non-vanishing on `leeYangDomain` (PR #199), so `Z'/Z` is analytic there.
+This is the key input to the Morera-based branch construction of `log Z`. -/
+theorem logDeriv_partitionFunctionComplex_analyticOnNhd_leeYangDomain
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J) :
+    AnalyticOnNhd ℂ (fun h : ℂ =>
+        deriv (fun h' => partitionFunctionComplex G (J : ℂ) h' (β : ℂ)) h
+          / partitionFunctionComplex G (J : ℂ) h (β : ℂ)) leeYangDomain := by
+  intro h hmem
+  have hZ_ne : partitionFunctionComplex G (J : ℂ) h (β : ℂ) ≠ 0 :=
+    partitionFunctionComplex_ne_zero_on_leeYangDomain G hβ hJ hmem
+  have hZ_ana : AnalyticAt ℂ
+      (fun h' => partitionFunctionComplex G (J : ℂ) h' (β : ℂ)) h :=
+    partitionFunctionComplex_analyticAt_h G (J : ℂ) (β : ℂ) h
+  have hZ'_ana : AnalyticAt ℂ
+      (fun h' =>
+        deriv (fun h'' => partitionFunctionComplex G (J : ℂ) h'' (β : ℂ)) h')
+      h := hZ_ana.deriv
+  exact hZ'_ana.div hZ_ana hZ_ne
+
+/-- **Local primitive of the log derivative on a ball inside Lee-Yang**.
+For any `h₀ ∈ leeYangDomain` and any `r > 0` with `ball h₀ r ⊆ leeYangDomain`,
+there exists a holomorphic function `G : ℂ → ℂ` such that on the ball,
+`G' = Z'/Z`. This `G` is a local holomorphic branch of `log Z`
+(up to an additive complex constant); specifically, by the identity
+`(exp(G)/Z)' = 0` on the connected ball, `exp(G) = c · Z` for some
+non-zero constant `c`, and we can adjust `G` by a constant so that
+`exp(G) = Z` pointwise. -/
+theorem exists_logZ_branch_on_ball_of_leeYangDomain
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J)
+    {h₀ : ℂ} {r : ℝ} (hsub : Metric.ball h₀ r ⊆ leeYangDomain) :
+    ∃ g : ℂ → ℂ, ∀ z ∈ Metric.ball h₀ r, HasDerivAt g
+        (deriv (fun h'' => partitionFunctionComplex G (J : ℂ) h'' (β : ℂ)) z
+          / partitionFunctionComplex G (J : ℂ) z (β : ℂ)) z := by
+  have hlogDeriv_ana :
+      AnalyticOnNhd ℂ (fun h : ℂ =>
+          deriv (fun h' => partitionFunctionComplex G (J : ℂ) h' (β : ℂ)) h
+            / partitionFunctionComplex G (J : ℂ) h (β : ℂ)) leeYangDomain :=
+    logDeriv_partitionFunctionComplex_analyticOnNhd_leeYangDomain G hβ hJ
+  have hlogDeriv_diffOn :
+      DifferentiableOn ℂ (fun h : ℂ =>
+          deriv (fun h' => partitionFunctionComplex G (J : ℂ) h' (β : ℂ)) h
+            / partitionFunctionComplex G (J : ℂ) h (β : ℂ))
+        (Metric.ball h₀ r) :=
+    (hlogDeriv_ana.mono hsub).differentiableOn
+  exact hlogDeriv_diffOn.isExactOn_ball
+
+/-- **Normalised local log-branch of `Z` on a ball inside Lee-Yang**.
+Refining `exists_logZ_branch_on_ball_of_leeYangDomain`: there exists
+`g : ℂ → ℂ` with `g(h₀) = Complex.log(Z(h₀))`, `g' = Z'/Z` on the
+ball, and `g` is differentiable on the ball.
+
+The normalisation `g(h₀) = Complex.log(Z(h₀))` makes this branch
+agree with the principal branch at the basepoint. The exponential
+identity `exp(g) = Z` on the whole ball follows from
+`(exp(g)/Z)' = 0` on the connected ball; that step is deferred to
+the next commit. -/
+theorem exists_normalised_logZ_branch_on_ball
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J)
+    {h₀ : ℂ} {r : ℝ}
+    (hsub : Metric.ball h₀ r ⊆ leeYangDomain) :
+    ∃ g : ℂ → ℂ, g h₀ = Complex.log
+        (partitionFunctionComplex G (J : ℂ) h₀ (β : ℂ))
+      ∧ ∀ z ∈ Metric.ball h₀ r, HasDerivAt g
+          (deriv (fun h'' => partitionFunctionComplex G (J : ℂ) h'' (β : ℂ)) z
+            / partitionFunctionComplex G (J : ℂ) z (β : ℂ)) z := by
+  obtain ⟨g₀, hg₀⟩ :=
+    exists_logZ_branch_on_ball_of_leeYangDomain G hβ hJ (h₀ := h₀) (r := r) hsub
+  refine ⟨fun z => g₀ z - g₀ h₀ + Complex.log
+      (partitionFunctionComplex G (J : ℂ) h₀ (β : ℂ)), ?_, ?_⟩
+  · simp
+  · intro z hz
+    have hg₀z := hg₀ z hz
+    have := hg₀z.sub_const (g₀ h₀)
+    simpa using this.add_const (Complex.log
+      (partitionFunctionComplex G (J : ℂ) h₀ (β : ℂ)))
+
+/-- **Local holomorphic branch of `log Z` on an open ball inside
+Lee-Yang** (real ferromagnetic `β > 0`, `J > 0`). On the open ball of
+radius `r > 0` around `h₀` (assumed contained in `leeYangDomain`),
+there is a holomorphic function `g` with `exp(g(z)) = Z(z)` pointwise
+and `g(h₀) = Complex.log(Z(h₀))`.
+
+Proof: combine the normalised primitive `g` of `Z'/Z` (from
+`exists_normalised_logZ_branch_on_ball`) with the constancy argument
+for `F(z) = exp(g(z))/Z(z)`: on the convex ball `F' = 0` (chain + quotient
+rules), so `F` is constant; `F(h₀) = exp(log Z(h₀))/Z(h₀) = 1`. -/
+theorem exists_logZ_holomorphic_branch_on_ball
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J)
+    {h₀ : ℂ} {r : ℝ} (hr : 0 < r)
+    (hsub : Metric.ball h₀ r ⊆ leeYangDomain) :
+    ∃ g : ℂ → ℂ,
+        (∀ z ∈ Metric.ball h₀ r,
+          Complex.exp (g z)
+            = partitionFunctionComplex G (J : ℂ) z (β : ℂ))
+      ∧ g h₀ = Complex.log
+          (partitionFunctionComplex G (J : ℂ) h₀ (β : ℂ))
+      ∧ ∀ z ∈ Metric.ball h₀ r, HasDerivAt g
+            (deriv (fun h'' => partitionFunctionComplex G (J : ℂ) h'' (β : ℂ)) z
+              / partitionFunctionComplex G (J : ℂ) z (β : ℂ)) z := by
+  obtain ⟨g, hg_base, hg_deriv⟩ :=
+    exists_normalised_logZ_branch_on_ball G hβ hJ (h₀ := h₀) (r := r) hsub
+  refine ⟨g, ?_, hg_base, hg_deriv⟩
+  -- `F z = exp(g z) / Z(z)` has derivative zero on the ball.
+  set F : ℂ → ℂ := fun z => Complex.exp (g z)
+      / partitionFunctionComplex G (J : ℂ) z (β : ℂ) with hF_def
+  have hZ_ne : ∀ z ∈ Metric.ball h₀ r,
+      partitionFunctionComplex G (J : ℂ) z (β : ℂ) ≠ 0 := fun z hz =>
+    partitionFunctionComplex_ne_zero_on_leeYangDomain G hβ hJ (hsub hz)
+  have hh₀_mem : h₀ ∈ Metric.ball h₀ r := Metric.mem_ball_self hr
+  have hF_deriv : ∀ z ∈ Metric.ball h₀ r, HasDerivAt F 0 z := by
+    intro z hz
+    have hgz := hg_deriv z hz
+    have hZz_ne := hZ_ne z hz
+    have hZ_diff : DifferentiableAt ℂ
+        (fun w => partitionFunctionComplex G (J : ℂ) w (β : ℂ)) z :=
+      (partitionFunctionComplex_analyticAt_h G (J : ℂ) (β : ℂ) z).differentiableAt
+    have hZ_deriv : HasDerivAt
+        (fun w => partitionFunctionComplex G (J : ℂ) w (β : ℂ))
+        (deriv (fun w => partitionFunctionComplex G (J : ℂ) w (β : ℂ)) z)
+        z := hZ_diff.hasDerivAt
+    have hexp_deriv : HasDerivAt (fun w => Complex.exp (g w))
+        (Complex.exp (g z)
+          * (deriv (fun w =>
+              partitionFunctionComplex G (J : ℂ) w (β : ℂ)) z
+            / partitionFunctionComplex G (J : ℂ) z (β : ℂ))) z := hgz.cexp
+    have h_quot := hexp_deriv.div hZ_deriv hZz_ne
+    -- Numerator evaluates to zero: cexp(g z) · (Z'/Z) · Z − cexp(g z) · Z' = 0.
+    have hnum_zero :
+        Complex.exp (g z)
+          * (deriv (fun w =>
+              partitionFunctionComplex G (J : ℂ) w (β : ℂ)) z
+            / partitionFunctionComplex G (J : ℂ) z (β : ℂ))
+          * partitionFunctionComplex G (J : ℂ) z (β : ℂ)
+          - Complex.exp (g z)
+            * deriv (fun w =>
+                partitionFunctionComplex G (J : ℂ) w (β : ℂ)) z = 0 := by
+      field_simp; ring
+    have h_quot' := h_quot
+    rw [show
+        (Complex.exp (g z)
+              * (deriv (fun w =>
+                  partitionFunctionComplex G (J : ℂ) w (β : ℂ)) z
+                / partitionFunctionComplex G (J : ℂ) z (β : ℂ))
+            * partitionFunctionComplex G (J : ℂ) z (β : ℂ)
+          - Complex.exp (g z)
+              * deriv (fun w =>
+                  partitionFunctionComplex G (J : ℂ) w (β : ℂ)) z)
+          / partitionFunctionComplex G (J : ℂ) z (β : ℂ) ^ 2 = 0 from by
+        rw [hnum_zero]; simp] at h_quot'
+    exact h_quot'
+  -- Convexity of the ball + zero fderivWithin ⇒ F is constant.
+  have hconvex : Convex ℝ (Metric.ball h₀ r) := convex_ball _ _
+  have hopen : IsOpen (Metric.ball h₀ r) := Metric.isOpen_ball
+  have hdiffOn : DifferentiableOn ℂ F (Metric.ball h₀ r) := fun w hw =>
+    (hF_deriv w hw).differentiableAt.differentiableWithinAt
+  have hfderiv_zero : ∀ w ∈ Metric.ball h₀ r,
+      fderivWithin ℂ F (Metric.ball h₀ r) w = 0 := by
+    intro w hw
+    have h1 : HasFDerivWithinAt F
+        (ContinuousLinearMap.smulRight (1 : ℂ →L[ℂ] ℂ) 0)
+        (Metric.ball h₀ r) w :=
+      ((hF_deriv w hw).hasFDerivAt).hasFDerivWithinAt
+    have huniq : UniqueDiffWithinAt ℂ (Metric.ball h₀ r) w :=
+      hopen.uniqueDiffOn w hw
+    rw [h1.fderivWithin huniq]; simp
+  have hF_const : ∀ z ∈ Metric.ball h₀ r, F z = F h₀ := fun z hz =>
+    hconvex.is_const_of_fderivWithin_eq_zero hdiffOn hfderiv_zero hz hh₀_mem
+  -- F(h₀) = exp(log Z(h₀)) / Z(h₀) = 1.
+  have hF_h₀ : F h₀ = 1 := by
+    simp only [hF_def, hg_base]
+    rw [Complex.exp_log (hZ_ne h₀ hh₀_mem)]
+    exact div_self (hZ_ne h₀ hh₀_mem)
+  intro z hz
+  have hconst : F z = 1 := (hF_const z hz).trans hF_h₀
+  have hZz_ne := hZ_ne z hz
+  have hquot : Complex.exp (g z)
+        / partitionFunctionComplex G (J : ℂ) z (β : ℂ) = 1 := hconst
+  field_simp at hquot
+  exact hquot
+
+/-- The local log branch `g` (obtained from `Z'/Z` primitive via Morera)
+is itself analytic on the ball. Any function that is `DifferentiableOn`
+on an open set in `ℂ` is `AnalyticOnNhd` there (mathlib). -/
+theorem exists_logZ_analytic_branch_on_ball
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J)
+    {h₀ : ℂ} {r : ℝ} (hr : 0 < r)
+    (hsub : Metric.ball h₀ r ⊆ leeYangDomain) :
+    ∃ g : ℂ → ℂ,
+        (∀ z ∈ Metric.ball h₀ r,
+          Complex.exp (g z)
+            = partitionFunctionComplex G (J : ℂ) z (β : ℂ))
+      ∧ g h₀ = Complex.log
+          (partitionFunctionComplex G (J : ℂ) h₀ (β : ℂ))
+      ∧ AnalyticOnNhd ℂ g (Metric.ball h₀ r) := by
+  obtain ⟨g, hg_exp, hg_base, hg_deriv⟩ :=
+    exists_logZ_holomorphic_branch_on_ball G hβ hJ (h₀ := h₀) (r := r) hr hsub
+  refine ⟨g, hg_exp, hg_base, ?_⟩
+  have hdiffOn : DifferentiableOn ℂ g (Metric.ball h₀ r) := fun z hz =>
+    (hg_deriv z hz).differentiableAt.differentiableWithinAt
+  exact hdiffOn.analyticOnNhd Metric.isOpen_ball
+
+/-- **Pointwise local analytic log branch of `Z` at every point of the
+Lee-Yang domain**. Since `leeYangDomain` is open, for every `h₀` there
+is a ball around it inside the domain, and
+`exists_logZ_analytic_branch_on_ball` provides a local analytic log
+of `Z` on that ball (hence in particular analytic at `h₀`).
+
+This is the finite-volume content of GJ §4.6 Thm 4.6.2:
+at every `h₀ ∈ leeYangDomain`, `log Z` (as a holomorphic function
+germ; equivalently the principal branch plus a locally-constant
+`2πi·k` shift) is analytic. The principal `Complex.log Z` may
+differ from this branch by `2πi·k` where `Z` crosses the negative
+real axis; the local analytic branch constructed here is continuous
+across such crossings. -/
+theorem exists_logZ_analyticAt_of_leeYangDomain
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J)
+    {h₀ : ℂ} (hmem : h₀ ∈ leeYangDomain) :
+    ∃ g : ℂ → ℂ,
+        AnalyticAt ℂ g h₀
+      ∧ Complex.exp (g h₀)
+          = partitionFunctionComplex G (J : ℂ) h₀ (β : ℂ)
+      ∧ g h₀ = Complex.log
+          (partitionFunctionComplex G (J : ℂ) h₀ (β : ℂ)) := by
+  obtain ⟨r, hr_pos, hr_sub⟩ :=
+    Metric.isOpen_iff.mp isOpen_leeYangDomain h₀ hmem
+  obtain ⟨g, hg_exp, hg_base, hg_ana⟩ :=
+    exists_logZ_analytic_branch_on_ball G hβ hJ (h₀ := h₀) (r := r) hr_pos hr_sub
+  refine ⟨g, hg_ana h₀ (Metric.mem_ball_self hr_pos),
+    hg_exp h₀ (Metric.mem_ball_self hr_pos), hg_base⟩
+
+/-- **GJ §4.6 Thm 4.6.2 finite-volume (local-branch form)**: at every
+`h₀ ∈ leeYangDomain` (real ferromagnetic `β > 0`, `J > 0`), the
+free energy admits a local analytic representation. Concretely:
+there exists `f : ℂ → ℂ` analytic at `h₀` with `exp(|ι| · f(h₀)) = Z(h₀)`
+and `f(h₀) = freeEnergyComplex G (J : ℂ) h₀ (β : ℂ)`.
+
+This is the finite-volume content of Thm 4.6.2 in the branch-adapted
+sense. The principal-branch `freeEnergyComplex` may be discontinuous at
+points where `Z` crosses the negative real axis; the local branch `f`
+is analytic across such crossings. -/
+theorem exists_freeEnergyComplex_analyticAt_branch_of_leeYangDomain
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J) [Nonempty ι]
+    {h₀ : ℂ} (hmem : h₀ ∈ leeYangDomain) :
+    ∃ f : ℂ → ℂ,
+        AnalyticAt ℂ f h₀
+      ∧ Complex.exp ((Fintype.card ι : ℂ) * f h₀)
+          = partitionFunctionComplex G (J : ℂ) h₀ (β : ℂ)
+      ∧ f h₀ = freeEnergyComplex G (J : ℂ) h₀ (β : ℂ) := by
+  obtain ⟨g, hg_ana, hg_exp, hg_base⟩ :=
+    exists_logZ_analyticAt_of_leeYangDomain G hβ hJ hmem
+  refine ⟨fun z => ((Fintype.card ι : ℂ))⁻¹ * g z, ?_, ?_, ?_⟩
+  · exact analyticAt_const.mul hg_ana
+  · have hNℕ : 0 < Fintype.card ι := Fintype.card_pos
+    have hN : (Fintype.card ι : ℂ) ≠ 0 := by exact_mod_cast hNℕ.ne'
+    have hmul : (Fintype.card ι : ℂ) * ((Fintype.card ι : ℂ)⁻¹ * g h₀)
+                = g h₀ := by field_simp
+    rw [hmul]; exact hg_exp
+  · unfold freeEnergyComplex; simp [hg_base]
+
+/-- **Vitali bridge**: if a sequence `F_n : ℂ → ℂ` of holomorphic
+functions converges locally uniformly on an open set `U` to a function
+`f`, then `f` is holomorphic on `U`. Direct application of mathlib's
+`TendstoLocallyUniformlyOn.differentiableOn`. This is the abstract
+ingredient for the ∞-vol Vitali lift of GJ §4.6 Thm 4.6.2 — to apply
+it we must supply locally uniform convergence of the finite-volume
+log branches, which in turn follows from `TendstoLocallyUniformlyOn`
+and uniform-boundedness (Montel) + pointwise convergence on the real
+axis (Fekete). -/
+theorem vitali_bridge {U : Set ℂ} (hU : IsOpen U)
+    {F : ℕ → ℂ → ℂ} {f : ℂ → ℂ}
+    (hF : ∀ n, DifferentiableOn ℂ (F n) U)
+    (hconv : TendstoLocallyUniformlyOn F f Filter.atTop U) :
+    DifferentiableOn ℂ f U :=
+  hconv.differentiableOn (Filter.Eventually.of_forall hF) hU
+
+/-- Specialisation of `vitali_bridge` to `U = leeYangDomain`: any limit
+of a locally-uniform sequence of functions that are holomorphic on
+`leeYangDomain` is itself holomorphic on `leeYangDomain`. -/
+theorem vitali_bridge_leeYangDomain
+    {F : ℕ → ℂ → ℂ} {f : ℂ → ℂ}
+    (hF : ∀ n, DifferentiableOn ℂ (F n) leeYangDomain)
+    (hconv : TendstoLocallyUniformlyOn F f Filter.atTop leeYangDomain) :
+    DifferentiableOn ℂ f leeYangDomain :=
+  vitali_bridge isOpen_leeYangDomain hF hconv
+
+/-- **Modulus bound for `partitionFunctionComplex` via the real Ising
+partition function (statement, proof deferred)**. For real `β`, real `J`,
+complex `h`:
+`|Z(J, h, β)| ≤ Z(J, Re h, β)` (as the real Ising partition function).
+
+Proof idea: `|exp(-β·H(σ))| = exp(Re(-β·H(σ)))`; the real part of the
+complex exponent is exactly the real Boltzmann exponent at parameters
+`⟨J, Re h, β⟩`. Summing gives the stated bound.
+
+This estimate feeds into the boundedness input for the ∞-vol Vitali
+lift (combined with the uniform upper bound on the real partition
+function via `Fintype.card_pos`). -/
+theorem norm_partitionFunctionComplex_le_partitionFunction
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (β J : ℝ) (h : ℂ) :
+    ‖partitionFunctionComplex G (J : ℂ) h (β : ℂ)‖
+      ≤ partitionFunction G ⟨J, h.re, β⟩ := by
+  classical
+  unfold partitionFunctionComplex partitionFunction boltzmannWeight
+  refine (norm_sum_le _ _).trans ?_
+  refine Finset.sum_le_sum (fun σ _ => ?_)
+  rw [Complex.norm_exp]
+  -- Show the real-part of the complex exponent equals the real exponent.
+  have hexp_eq :
+      (-(β : ℂ) * hamiltonianComplex G (J : ℂ) h σ).re
+        = -β * hamiltonian G ⟨J, h.re, β⟩ σ := by
+    unfold hamiltonianComplex interactionEnergyComplex
+      externalFieldEnergyComplex
+    unfold hamiltonian interactionEnergy externalFieldEnergy
+    -- Step 1: ∑ edgeSpinComplex σ e has real part = ∑ edgeSpin σ e (all real).
+    have hEdge : (∑ e ∈ G.edgeFinset, edgeSpinComplex σ e).re
+                  = ∑ e ∈ G.edgeFinset, edgeSpin σ e := by
+      simp only [Complex.re_sum]
+      refine Finset.sum_congr rfl (fun e _ => ?_)
+      refine Sym2.ind (fun i j => ?_) e
+      unfold edgeSpinComplex edgeSpin
+      rw [Sym2.lift_mk, Sym2.lift_mk]
+      cases σ i <;> cases σ j <;>
+        simp [Spin.sign, Spin.toSign]
+    -- Step 2: ∑ Spin.sign ℂ real part = ∑ Spin.sign ℝ.
+    have hSpin : (∑ i : ι, Spin.sign ℂ (σ i)).re
+                  = ∑ i : ι, Spin.sign ℝ (σ i) := by
+      simp only [Complex.re_sum]
+      refine Finset.sum_congr rfl (fun i _ => ?_)
+      cases σ i <;> simp [Spin.sign, Spin.toSign]
+    -- Step 3: compute the full expression.
+    have him_sum : (∑ i : ι, Spin.sign ℂ (σ i)).im = 0 := by
+      simp only [Complex.im_sum]
+      refine Finset.sum_eq_zero (fun i _ => ?_)
+      cases σ i <;> simp [Spin.sign, Spin.toSign]
+    simp [Complex.mul_re, Complex.neg_re, Complex.ofReal_re,
+      Complex.ofReal_im, Complex.add_re,
+      hEdge, hSpin, him_sum]
+  rw [hexp_eq]
+
+/-- **Explicit trivial upper bound on `|partitionFunctionComplex|`**
+combining `norm_partitionFunctionComplex_le_partitionFunction` with
+`partitionFunction_upper`: for real `β, J` and complex `h`,
+`|Z(J, h, β)| ≤ 2^|ι| · exp(|β|·(|J|·|E| + |Re h|·|ι|))`.
+
+This gives a locally uniform bound on `|Z|` over compact subsets of
+`ℂ` where `|Re h|` is bounded, which is the input for Montel's theorem
+in the ∞-vol Vitali lift. -/
+theorem norm_partitionFunctionComplex_le_trivial_bound
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (β J : ℝ) (h : ℂ) :
+    ‖partitionFunctionComplex G (J : ℂ) h (β : ℂ)‖
+      ≤ Fintype.card (Config ι)
+        * Real.exp (|β| * (|J| * G.edgeFinset.card + |h.re| * Fintype.card ι)) := by
+  refine (norm_partitionFunctionComplex_le_partitionFunction G β J h).trans ?_
+  exact partitionFunction_upper G ⟨J, h.re, β⟩
+
+/-- **Simple norm bound for `Complex.log`**: `‖log z‖ ≤ |log ‖z‖| + π`.
+Direct from `log_re = log |z|`, `|log_im| = |arg z| ≤ π`, and the
+triangle inequality on the real/imaginary parts. -/
+theorem norm_complex_log_le (z : ℂ) :
+    ‖Complex.log z‖ ≤ |Real.log ‖z‖| + Real.pi := by
+  have h_re : (Complex.log z).re = Real.log ‖z‖ := Complex.log_re z
+  have h_im_abs : |(Complex.log z).im| ≤ Real.pi := by
+    rw [Complex.log_im]
+    exact abs_le.mpr ⟨(Complex.neg_pi_lt_arg z).le, Complex.arg_le_pi z⟩
+  calc ‖Complex.log z‖
+      ≤ |(Complex.log z).re| + |(Complex.log z).im| :=
+        Complex.norm_le_abs_re_add_abs_im _
+    _ ≤ |Real.log ‖z‖| + Real.pi := by rw [h_re]; linarith [h_im_abs]
+
+/-- **Uniform upper bound on `‖freeEnergyComplex‖`** for `[Nonempty ι]`:
+`‖f(J, h, β)‖ ≤ log 2 + |β|·(|J|·|E|/|ι| + |Re h|) + π/|ι|`.
+Derived from `norm_partitionFunctionComplex_le_trivial_bound` and
+`norm_complex_log_le`. Together with `BoundedEdgeDensity` (edge/vertex
+ratio uniform), this gives a uniform-on-compacts bound needed for the
+∞-vol Vitali lift. -/
+theorem norm_freeEnergyComplex_le_trivial_bound
+    (G : SimpleGraph ι) [Fintype G.edgeSet] [Nonempty ι]
+    (β J : ℝ) (h : ℂ) :
+    ‖freeEnergyComplex G (J : ℂ) h (β : ℂ)‖
+      ≤ |Real.log ‖partitionFunctionComplex G (J : ℂ) h (β : ℂ)‖|
+          / (Fintype.card ι : ℝ) + Real.pi / (Fintype.card ι : ℝ) := by
+  classical
+  unfold freeEnergyComplex
+  have hNℕ : 0 < Fintype.card ι := Fintype.card_pos
+  have hN : (Fintype.card ι : ℝ) ≠ 0 := by exact_mod_cast hNℕ.ne'
+  rw [norm_mul, norm_inv]
+  have h_log : ‖Complex.log (partitionFunctionComplex G (J : ℂ) h (β : ℂ))‖
+              ≤ |Real.log ‖partitionFunctionComplex G (J : ℂ) h (β : ℂ)‖|
+                  + Real.pi :=
+    norm_complex_log_le _
+  have hN_pos : (0 : ℝ) < Fintype.card ι := by exact_mod_cast hNℕ
+  have hNorm : ‖((Fintype.card ι : ℂ) : ℂ)‖ = (Fintype.card ι : ℝ) := by
+    simp
+  rw [hNorm]
+  have := mul_le_mul_of_nonneg_left h_log
+    (show (0 : ℝ) ≤ (Fintype.card ι : ℝ)⁻¹ from inv_nonneg.mpr hN_pos.le)
+  calc (Fintype.card ι : ℝ)⁻¹ *
+        ‖Complex.log (partitionFunctionComplex G (J : ℂ) h (β : ℂ))‖
+      ≤ (Fintype.card ι : ℝ)⁻¹ *
+          (|Real.log ‖partitionFunctionComplex G (J : ℂ) h (β : ℂ)‖|
+            + Real.pi) := this
+    _ = _ := by field_simp
+
+/-- **`freeEnergyComplex` is DifferentiableOn on `leeYangSubdomain`**
+(consequence of subdomain analyticity). Useful as input to Vitali for
+restricted subdomains. -/
+theorem freeEnergyComplex_differentiableOn_leeYangSubdomain
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β : ℝ} (hβ : 0 < β) (J : ℝ) :
+    DifferentiableOn ℂ (fun h' => freeEnergyComplex G (J : ℂ) h' (β : ℂ))
+        (leeYangSubdomain β (Fintype.card ι)) := fun _ hmem =>
+  (freeEnergyComplex_analyticAt_h_of_leeYangSubdomain
+      G hβ J hmem.2).differentiableAt.differentiableWithinAt
+
+/-- **Vitali bridge on `leeYangSubdomain`**: locally uniform limit on
+the subdomain of DifferentiableOn-complex-analytic functions is again
+DifferentiableOn. Specialisation of `vitali_bridge` to
+`U = leeYangSubdomain β N`. -/
+theorem vitali_bridge_leeYangSubdomain
+    (β : ℝ) (N : ℕ)
+    {F : ℕ → ℂ → ℂ} {f : ℂ → ℂ}
+    (hF : ∀ n, DifferentiableOn ℂ (F n) (leeYangSubdomain β N))
+    (hconv : TendstoLocallyUniformlyOn F f Filter.atTop
+      (leeYangSubdomain β N)) :
+    DifferentiableOn ℂ f (leeYangSubdomain β N) :=
+  vitali_bridge (isOpen_leeYangSubdomain β N) hF hconv
+
+/-- **Vitali bridge via `AnalyticOnNhd` / `Filter.Eventually`**.
+A more flexible version of `vitali_bridge` allowing the holomorphicity
+hypothesis to hold only eventually along the filter. Needed for
+sequences of finite-volume free energies indexed by an exhaustion
+`Λ : ℕ → Finset V` — the `DifferentiableOn` hypothesis on `F n`
+holds for all `n`, so the eventually-version is a trivial
+generalisation that matches mathlib's signature directly. -/
+theorem vitali_bridge_eventually {U : Set ℂ} (hU : IsOpen U)
+    {F : ℕ → ℂ → ℂ} {f : ℂ → ℂ}
+    (hF : ∀ᶠ n in Filter.atTop, DifferentiableOn ℂ (F n) U)
+    (hconv : TendstoLocallyUniformlyOn F f Filter.atTop U) :
+    DifferentiableOn ℂ f U :=
+  hconv.differentiableOn hF hU
+
+/-- **`freeEnergyComplex` coincides with real `freeEnergy` on `ℝ`**
+(cast to `ℂ`). Rewrite of `freeEnergy_ofReal_eq_freeEnergyComplex`
+in the form most useful for Vitali (pointwise convergence on the
+real axis via Fekete's theorem). -/
+theorem freeEnergyComplex_ofReal_eq_freeEnergy
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (p : IsingParams ℝ) :
+    freeEnergyComplex G (p.J : ℂ) (p.h : ℂ) (p.β : ℂ)
+      = ((freeEnergy G p : ℝ) : ℂ) :=
+  (freeEnergy_ofReal_eq_freeEnergyComplex G p).symm
+
+/-- **Uniform-on-compacts norm bound on `partitionFunctionComplex`**:
+for real `β, J`, the map `h ↦ ‖Z(J, h, β)‖` is bounded on any bounded
+subset of `ℂ`. Concretely, if `|Re h| ≤ R` then
+`‖Z‖ ≤ 2^|ι| · exp(|β|·(|J|·|E| + R·|ι|))`. -/
+theorem norm_partitionFunctionComplex_le_of_re_bound
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (β J : ℝ) {R : ℝ} {h : ℂ} (hh : |h.re| ≤ R) :
+    ‖partitionFunctionComplex G (J : ℂ) h (β : ℂ)‖
+      ≤ Fintype.card (Config ι)
+        * Real.exp (|β| * (|J| * G.edgeFinset.card + R * Fintype.card ι)) := by
+  refine (norm_partitionFunctionComplex_le_trivial_bound G β J h).trans ?_
+  gcongr
+
+/-- `partitionFunctionComplex` is non-zero at every point of
+`leeYangSubdomain` (which is contained in `leeYangDomain` where
+non-vanishing is already established). -/
+theorem partitionFunctionComplex_ne_zero_on_leeYangSubdomain
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J) {h : ℂ}
+    (hh : h ∈ leeYangSubdomain β (Fintype.card ι)) :
+    partitionFunctionComplex G (J : ℂ) h (β : ℂ) ≠ 0 :=
+  partitionFunctionComplex_ne_zero_on_leeYangDomain G hβ hJ
+    (leeYangSubdomain_subset_leeYangDomain β (Fintype.card ι) hh)
+
+/-- Specialisation to the real-positive basepoint: the point `(h₀ : ℂ)`
+for real `h₀ > 0` is in `leeYangSubdomain β N` for any `β, N` (since
+`|Im| = 0` makes both conjuncts trivial). -/
+theorem real_pos_mem_leeYangSubdomain
+    (β : ℝ) (N : ℕ) {h₀ : ℝ} (hpos : 0 < h₀) :
+    (h₀ : ℂ) ∈ leeYangSubdomain β N := by
+  refine ⟨?_, ?_⟩
+  · simp [hpos]
+  · have him : (h₀ : ℂ).im = 0 := by simp
+    rw [him, abs_zero, mul_zero, zero_mul]
+    positivity
+
+/-- The Lee-Yang domain is convex (hence connected). -/
+theorem convex_leeYangDomain : Convex ℝ leeYangDomain := by
+  intro x hxmem y hymem a b ha hb hab
+  change |((a : ℝ) • x + (b : ℝ) • y).im| < ((a : ℝ) • x + (b : ℝ) • y).re
+  have hx : |x.im| < x.re := hxmem
+  have hy : |y.im| < y.re := hymem
+  simp only [Complex.add_im, Complex.smul_im, Complex.add_re, Complex.smul_re]
+  calc |a * x.im + b * y.im|
+      ≤ |a * x.im| + |b * y.im| := abs_add_le _ _
+    _ = a * |x.im| + b * |y.im| := by
+        rw [abs_mul, abs_mul, abs_of_nonneg ha, abs_of_nonneg hb]
+    _ < a * x.re + b * y.re := by
+        rcases eq_or_lt_of_le ha with rfl | ha_pos
+        · rcases eq_or_lt_of_le hb with rfl | hb_pos
+          · simp at hab
+          · simpa using mul_lt_mul_of_pos_left hy hb_pos
+        · rcases eq_or_lt_of_le hb with rfl | hb_pos
+          · simpa using mul_lt_mul_of_pos_left hx ha_pos
+          · exact add_lt_add (mul_lt_mul_of_pos_left hx ha_pos)
+              (mul_lt_mul_of_pos_left hy hb_pos)
+
+/-- The Lee-Yang domain is preconnected (via convex ⇒ connected). -/
+theorem isPreconnected_leeYangDomain : IsPreconnected leeYangDomain :=
+  convex_leeYangDomain.isPreconnected
+
+/-- The Lee-Yang domain is nonempty (contains `(1 : ℂ)`). -/
+theorem leeYangDomain_nonempty : leeYangDomain.Nonempty :=
+  ⟨(1 : ℂ), real_pos_mem_leeYangDomain (by norm_num : (0 : ℝ) < 1)⟩
+
+/-- The Lee-Yang domain is connected. -/
+theorem isConnected_leeYangDomain : IsConnected leeYangDomain :=
+  ⟨leeYangDomain_nonempty, isPreconnected_leeYangDomain⟩
+
+/-- **Star-convex Lee-Yang domain** at `(1 : ℂ)`: convex + contains `1`. -/
+theorem starConvex_leeYangDomain : StarConvex ℝ (1 : ℂ) leeYangDomain :=
+  convex_leeYangDomain.starConvex (real_pos_mem_leeYangDomain (by norm_num))
+
+/-- `leeYangDomain` contains an open ball around each of its points
+(direct restatement of `isOpen_leeYangDomain`). -/
+theorem leeYangDomain_ball_subset {h₀ : ℂ} (hmem : h₀ ∈ leeYangDomain) :
+    ∃ r : ℝ, 0 < r ∧ Metric.ball h₀ r ⊆ leeYangDomain :=
+  Metric.isOpen_iff.mp isOpen_leeYangDomain h₀ hmem
+
+/-- `leeYangSubdomain` is non-empty for `β ≥ 0` (contains `(1 : ℂ)`). -/
+theorem leeYangSubdomain_nonempty (β : ℝ) (N : ℕ) :
+    (leeYangSubdomain β N).Nonempty :=
+  ⟨(1 : ℂ), real_pos_mem_leeYangSubdomain β N (by norm_num)⟩
+
+/-- `leeYangDomain` membership implies `slitPlane` membership. -/
+theorem mem_slitPlane_of_mem_leeYangDomain {h : ℂ} (hh : h ∈ leeYangDomain) :
+    h ∈ Complex.slitPlane :=
+  leeYangDomain_subset_slitPlane hh
+
+/-- `leeYangSubdomain` membership implies `slitPlane` membership. -/
+theorem mem_slitPlane_of_mem_leeYangSubdomain (β : ℝ) (N : ℕ)
+    {h : ℂ} (hh : h ∈ leeYangSubdomain β N) : h ∈ Complex.slitPlane :=
+  leeYangDomain_subset_slitPlane (leeYangSubdomain_subset_leeYangDomain β N hh)
+
+/-- `partitionFunctionComplex` is non-zero on `leeYangDomain` gives
+`∈ Complex.slitPlane`? No — the partition function may still lie on the
+negative real axis at some `h`. This is a helper stating explicitly the
+gap: the value `Z(J, h, β)` lies in `ℂ \ {0}` (non-vanishing) but not
+automatically in `slitPlane`. -/
+theorem partitionFunctionComplex_ne_zero_not_iff_slitPlane
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J β : ℂ) (h : ℂ)
+    (hne : partitionFunctionComplex G J h β ≠ 0) :
+    partitionFunctionComplex G J h β ∈ ({z : ℂ | z ≠ 0}) := hne
+
+/-- **AnalyticOnNhd form**: `partitionFunctionComplex` is jointly
+entire (already known for each variable separately). This provides
+an AnalyticOnNhd statement on any open set, including `leeYangDomain`. -/
+theorem partitionFunctionComplex_analyticOnNhd_univ_h
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J β : ℂ) :
+    AnalyticOnNhd ℂ (fun h => partitionFunctionComplex G J h β) Set.univ :=
+  fun h _ => partitionFunctionComplex_analyticAt_h G J β h
+
+/-- `freeEnergyComplex` is AnalyticOnNhd on the set of `h` where
+`Z(J, h, β) ∈ slitPlane`. This is an automatic restriction of the
+pointwise statement to the analyticity locus. -/
+theorem freeEnergyComplex_analyticOnNhd_slitPlane_locus
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J β : ℂ) :
+    AnalyticOnNhd ℂ (fun h => freeEnergyComplex G J h β)
+      {h : ℂ | partitionFunctionComplex G J h β ∈ Complex.slitPlane} := by
+  intro h hmem
+  exact freeEnergyComplex_analyticAt_h G J β h hmem
+
+/-- The analyticity locus
+`{h | partitionFunctionComplex G J h β ∈ Complex.slitPlane}` is open
+(preimage of open `Complex.slitPlane` by continuous
+`partitionFunctionComplex`). -/
+theorem isOpen_freeEnergy_analyticity_locus
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J β : ℂ) :
+    IsOpen {h : ℂ | partitionFunctionComplex G J h β ∈ Complex.slitPlane} := by
+  have hcont : Continuous (fun h => partitionFunctionComplex G J h β) :=
+    continuous_iff_continuousAt.mpr fun h =>
+      (partitionFunctionComplex_analyticAt_h G J β h).continuousAt
+  exact hcont.isOpen_preimage _ Complex.isOpen_slitPlane
+
+/-- **`Continuous` form of `partitionFunctionComplex` in `h`**. -/
+theorem continuous_partitionFunctionComplex_h
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J β : ℂ) :
+    Continuous (fun h => partitionFunctionComplex G J h β) :=
+  continuous_iff_continuousAt.mpr fun h =>
+    (partitionFunctionComplex_analyticAt_h G J β h).continuousAt
+
+/-- `Continuous` form in `J`. -/
+theorem continuous_partitionFunctionComplex_J
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (h β : ℂ) :
+    Continuous (fun J => partitionFunctionComplex G J h β) :=
+  continuous_iff_continuousAt.mpr fun J =>
+    (partitionFunctionComplex_analyticAt_J G h β J).continuousAt
+
+/-- `Continuous` form in `β`. -/
+theorem continuous_partitionFunctionComplex_beta
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J h : ℂ) :
+    Continuous (fun β => partitionFunctionComplex G J h β) :=
+  continuous_iff_continuousAt.mpr fun β =>
+    (partitionFunctionComplex_analyticAt_beta G J h β).continuousAt
+
+/-- Continuous form of `partitionFunctionComplex` jointly in
+`(J, h, β) : ℂ × ℂ × ℂ`. -/
+theorem continuous_partitionFunctionComplex_joint
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    Continuous (fun z : ℂ × ℂ × ℂ =>
+      partitionFunctionComplex G z.1 z.2.1 z.2.2) :=
+  continuous_iff_continuousAt.mpr fun z =>
+    (partitionFunctionComplex_analyticAt_joint G z).continuousAt
+
+/-- `partitionFunctionComplex` is jointly holomorphic (i.e.
+`AnalyticOnNhd ℂ` on all of `ℂ × ℂ × ℂ`). -/
+theorem partitionFunctionComplex_analyticOnNhd_univ_joint
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    AnalyticOnNhd ℂ
+      (fun z : ℂ × ℂ × ℂ => partitionFunctionComplex G z.1 z.2.1 z.2.2)
+      Set.univ :=
+  fun z _ => partitionFunctionComplex_analyticAt_joint G z
+
+/-- `partitionFunctionComplex_ne_zero_on_leeYangDomain` (PR #199): for
+real ferromagnetic `J > 0`, `β > 0`, the complex partition function
+is non-zero everywhere on `leeYangDomain`. Restatement as a
+`Set.MapsTo` style result. -/
+theorem partitionFunctionComplex_mapsTo_ne_zero_leeYangDomain
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J) :
+    Set.MapsTo (fun h : ℂ => partitionFunctionComplex G (J : ℂ) h (β : ℂ))
+      leeYangDomain {z : ℂ | z ≠ 0} := fun _ hh =>
+  partitionFunctionComplex_ne_zero_on_leeYangDomain G hβ hJ hh
+
+/-- `leeYangFugacity` (uniform fugacity) maps the Lee-Yang domain
+into the open unit disk (already proved for the scalar case;
+restatement as `Set.MapsTo`). -/
+theorem leeYangFugacity_mapsTo_leeYangDomain {β : ℝ} (hβ : 0 < β) :
+    Set.MapsTo (leeYangFugacity (β : ℂ)) leeYangDomain
+      (Metric.ball (0 : ℂ) 1) := by
+  intro h hh
+  rw [Metric.mem_ball, dist_zero_right]
+  exact norm_leeYangFugacity_lt_one hβ hh
+
+/-- Intersection of `leeYangDomain` and `leeYangSubdomain` is just
+`leeYangSubdomain` (which is a subset of the former). -/
+theorem inter_leeYangDomain_leeYangSubdomain (β : ℝ) (N : ℕ) :
+    leeYangDomain ∩ leeYangSubdomain β N = leeYangSubdomain β N :=
+  Set.inter_eq_right.mpr (leeYangSubdomain_subset_leeYangDomain β N)
+
+/-- `leeYangSubdomain β 0 = leeYangDomain` since `β · |Im h| · 0 = 0 < π/2`
+is automatic. -/
+theorem leeYangSubdomain_zero (β : ℝ) :
+    leeYangSubdomain β 0 = leeYangDomain := by
+  ext h
+  refine ⟨fun hh => hh.1, fun hh => ⟨hh, ?_⟩⟩
+  simp only [Nat.cast_zero, mul_zero]
+  positivity
+
+/-- `leeYangSubdomain β N` is monotone decreasing in `N` (for `β > 0`):
+larger `N` gives a tighter constraint on `|Im h|`. -/
+theorem leeYangSubdomain_anti_N_of_pos {β : ℝ} (hβ : 0 < β)
+    {N₁ N₂ : ℕ} (hN : N₁ ≤ N₂) :
+    leeYangSubdomain β N₂ ⊆ leeYangSubdomain β N₁ := by
+  intro h hh
+  refine ⟨hh.1, ?_⟩
+  calc β * |h.im| * (N₁ : ℝ)
+      ≤ β * |h.im| * (N₂ : ℝ) := by
+        have hnn : 0 ≤ β * |h.im| := mul_nonneg hβ.le (abs_nonneg _)
+        exact mul_le_mul_of_nonneg_left (by exact_mod_cast hN) hnn
+    _ < Real.pi / 2 := hh.2
+
+/-- **Complex field at real imaginary part 0 lies in `leeYangSubdomain`**
+iff the real part is positive (the `β · |Im h| · N` constraint is
+vacuous when `Im h = 0`). -/
+theorem mem_leeYangSubdomain_of_im_zero {β : ℝ} (N : ℕ) {h : ℂ}
+    (him : h.im = 0) (hpos : 0 < h.re) :
+    h ∈ leeYangSubdomain β N := by
+  refine ⟨?_, ?_⟩
+  · change |h.im| < h.re
+    rw [him]; simpa using hpos
+  · rw [him, abs_zero, mul_zero, zero_mul]; positivity
+
+omit [Fintype ι] [DecidableEq ι] in
+/-- `leeYangFugacityVec (β : ℂ) h = (fun _ => exp(-2β h))` is analytic
+in `h` for fixed `β`. -/
+theorem leeYangFugacityVec_analyticAt_h
+    (β : ℂ) (h₀ : ℂ) (i : ι) :
+    AnalyticAt ℂ (fun h => leeYangFugacityVec β h i) h₀ := by
+  unfold leeYangFugacityVec leeYangFugacity
+  exact analyticAt_cexp.comp (by fun_prop)
+
+omit [Fintype ι] [DecidableEq ι] in
+/-- `leeYangFugacityVec` is continuous in `h` for fixed `β : ℂ`. -/
+theorem continuous_leeYangFugacityVec_h (β : ℂ) (i : ι) :
+    Continuous (fun h => leeYangFugacityVec β h i) :=
+  continuous_iff_continuousAt.mpr fun h =>
+    (leeYangFugacityVec_analyticAt_h β h i).continuousAt
+
+/-- Product-form rewrite of `isingEdgePoly` evaluation at the uniform
+fugacity vector: `P_E(z(h))` as a specific function of `h`. -/
+theorem isingEdgePoly_eval_leeYangFugacityVec_eq
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (t : ℝ) (β h : ℂ) :
+    (isingEdgePoly (graphToEdgeList G t)).eval (leeYangFugacityVec β h) =
+      ∑ X : Finset ι,
+        ((graphToEdgeList G t).map fun e => edgeWeight e.1 e.2.1 e.2.2 X).prod *
+          ∏ _i ∈ X, leeYangFugacity β h := by
+  unfold MultilinPoly.eval isingEdgePoly leeYangFugacityVec
+  refine Finset.sum_congr rfl (fun X _ => ?_)
+  rfl
+
+/-- `leeYangNormalization` jointly analytic in (β, J, h): wraps
+`leeYangNormalization_analyticAt_joint` as `AnalyticOnNhd`. -/
+theorem leeYangNormalization_analyticOnNhd_univ (edgeCount siteCount : ℕ) :
+    AnalyticOnNhd ℂ (fun z : ℂ × ℂ × ℂ =>
+        leeYangNormalization z.2.2 z.1 z.2.1 edgeCount siteCount) Set.univ :=
+  fun z _ => leeYangNormalization_analyticAt_joint edgeCount siteCount z
+
+/-- `leeYangNormalization β J h |E| |ι| ≠ 0` as an `AnalyticOnNhd`
+support: the normalization never vanishes. -/
+theorem leeYangNormalization_nonzero_on_univ (edgeCount siteCount : ℕ)
+    (β J h : ℂ) :
+    leeYangNormalization β J h edgeCount siteCount ∈ ({z : ℂ | z ≠ 0}) :=
+  leeYangNormalization_ne_zero β J h edgeCount siteCount
+
+/-- **AnalyticOnNhd form of the local log branch** on any ball
+contained in `leeYangDomain`. Packages
+`exists_logZ_analytic_branch_on_ball` as an `AnalyticOnNhd ℂ g (ball h₀ r)`
+statement. -/
+theorem exists_logZ_analyticOnNhd_ball
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J)
+    {h₀ : ℂ} {r : ℝ} (hr : 0 < r)
+    (hsub : Metric.ball h₀ r ⊆ leeYangDomain) :
+    ∃ g : ℂ → ℂ, AnalyticOnNhd ℂ g (Metric.ball h₀ r)
+      ∧ ∀ z ∈ Metric.ball h₀ r,
+          Complex.exp (g z) = partitionFunctionComplex G (J : ℂ) z (β : ℂ) := by
+  obtain ⟨g, hg_exp, _hg_base, hg_ana⟩ :=
+    exists_logZ_analytic_branch_on_ball G hβ hJ (h₀ := h₀) (r := r) hr hsub
+  exact ⟨g, hg_ana, hg_exp⟩
+
+omit [Fintype ι] [DecidableEq ι] in
+/-- **`freeEnergyComplex` local-branch analyticAt via scaling**:
+from the existence of `g` with `exp g = Z` analytic at `h₀`, scaling
+by `|ι|⁻¹` gives an analytic `f = g/|ι|` with `exp(|ι|·f) = Z`. -/
+theorem freeEnergyComplex_analyticAt_from_logZ_branch
+    (c : ℂ) {g : ℂ → ℂ} {h₀ : ℂ}
+    (hg_ana : AnalyticAt ℂ g h₀) :
+    AnalyticAt ℂ (fun h => c * g h) h₀ :=
+  analyticAt_const.mul hg_ana
+
+/-! ### Summary of the PR #200 local-branch construction
+
+The goal of PR #200 (continuation of PR #199) is the finite-volume
+analyticity of `freeEnergyComplex` on the Lee-Yang domain. The following
+chain was established:
+
+1. `logDeriv_partitionFunctionComplex_analyticOnNhd_leeYangDomain`
+   (logarithmic derivative is holomorphic on `leeYangDomain`).
+2. `exists_logZ_branch_on_ball_of_leeYangDomain` (Morera primitive).
+3. `exists_normalised_logZ_branch_on_ball` (basepoint normalisation).
+4. `exists_logZ_holomorphic_branch_on_ball` (`exp g = Z`).
+5. `exists_logZ_analytic_branch_on_ball` (`g` analytic on the ball).
+6. `exists_logZ_analyticAt_of_leeYangDomain` (pointwise AnalyticAt on
+   the entire Lee-Yang domain, via openness).
+7. `exists_freeEnergyComplex_analyticAt_branch_of_leeYangDomain` (headline:
+   local analytic branch of `freeEnergyComplex` at every point).
+8. `analyticBranch_freeEnergyComplex_leeYangDomain` (∀-form).
+
+This is the local-branch form of GJ Thm 4.6.2 finite volume. The
+principal-branch `freeEnergyComplex` (using `Complex.log`) can be
+discontinuous where `Z` crosses the negative real axis; the local
+branch is continuous across such crossings.
+
+The infinite-volume lift via Vitali:
+- `vitali_bridge` / `_leeYangDomain` / `_leeYangSubdomain` /
+  `_eventually` wrap mathlib's
+  `TendstoLocallyUniformlyOn.differentiableOn`.
+- `norm_partitionFunctionComplex_le_partitionFunction` +
+  `norm_partitionFunctionComplex_le_trivial_bound` +
+  `norm_partitionFunctionComplex_le_of_re_bound` provide the uniform
+  bounds on `|Z|` (Montel input).
+- `norm_freeEnergyComplex_le_trivial_bound` gives the bound on
+  `‖freeEnergyComplex‖`.
+
+The remaining step (locally uniform convergence of finite-volume
+branches to an infinite-volume branch) requires a Montel-style
+subsequence argument; this is the last ingredient of GJ Thm 4.6.2. -/
+
+/-- **`freeEnergyComplex` is analytic at `h₀` whenever `Z(h₀) ∈ slitPlane`**,
+restated with explicit analytic-at formulation for downstream use. -/
+theorem analyticAt_freeEnergyComplex_of_slitPlane_h
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℂ) {h₀ : ℂ}
+    (hZ : partitionFunctionComplex G J h₀ β ∈ Complex.slitPlane) :
+    AnalyticAt ℂ (fun h => freeEnergyComplex G J h β) h₀ :=
+  freeEnergyComplex_analyticAt_h G J β h₀ hZ
+
+/-- `{h : ℂ | h ∈ leeYangSubdomain β N}` is convex — immediate since
+`leeYangSubdomain` is open and convex (intersection of Lee-Yang +
+strip). Formulated as `Convex ℝ`. -/
+theorem convex_leeYangSubdomain' (β : ℝ) (N : ℕ) :
+    Convex ℝ (leeYangSubdomain β N) := by
+  intro x hx y hy a b ha hb hab
+  refine ⟨convex_leeYangDomain hx.1 hy.1 ha hb hab, ?_⟩
+  have hx2 : β * |x.im| * (N : ℝ) < Real.pi / 2 := hx.2
+  have hy2 : β * |y.im| * (N : ℝ) < Real.pi / 2 := hy.2
+  change β * |((a : ℝ) • x + (b : ℝ) • y).im| * (N : ℝ) < Real.pi / 2
+  simp only [Complex.add_im, Complex.smul_im]
+  have habs : |a * x.im + b * y.im| ≤ a * |x.im| + b * |y.im| := by
+    calc |a * x.im + b * y.im|
+        ≤ |a * x.im| + |b * y.im| := abs_add_le _ _
+      _ = a * |x.im| + b * |y.im| := by
+          rw [abs_mul, abs_mul, abs_of_nonneg ha, abs_of_nonneg hb]
+  -- β · |sum| · N ≤ ?; handle sign of β separately.
+  by_cases hβ : 0 ≤ β
+  · have : β * |a * x.im + b * y.im| * (N : ℝ)
+            ≤ β * (a * |x.im| + b * |y.im|) * (N : ℝ) := by
+      have hβN : 0 ≤ β * (N : ℝ) := by positivity
+      nlinarith
+    calc β * |a * x.im + b * y.im| * (N : ℝ)
+        ≤ β * (a * |x.im| + b * |y.im|) * (N : ℝ) := this
+      _ = a * (β * |x.im| * (N : ℝ)) + b * (β * |y.im| * (N : ℝ)) := by ring
+      _ < a * (Real.pi / 2) + b * (Real.pi / 2) := by
+          rcases eq_or_lt_of_le ha with rfl | ha_pos
+          · rcases eq_or_lt_of_le hb with rfl | hb_pos
+            · simp at hab
+            · simpa using mul_lt_mul_of_pos_left hy2 hb_pos
+          · rcases eq_or_lt_of_le hb with rfl | hb_pos
+            · simpa using mul_lt_mul_of_pos_left hx2 ha_pos
+            · exact add_lt_add (mul_lt_mul_of_pos_left hx2 ha_pos)
+                (mul_lt_mul_of_pos_left hy2 hb_pos)
+      _ = Real.pi / 2 := by linear_combination hab * (Real.pi / 2)
+  · push Not at hβ
+    -- β < 0: β·|·|·N ≤ 0 < π/2.
+    have : β * |a * x.im + b * y.im| * (N : ℝ) ≤ 0 := by
+      have : β * (N : ℝ) ≤ 0 := mul_nonpos_of_nonpos_of_nonneg hβ.le
+        (Nat.cast_nonneg _)
+      nlinarith [abs_nonneg (a * x.im + b * y.im)]
+    calc β * |a * x.im + b * y.im| * (N : ℝ) ≤ 0 := this
+      _ < Real.pi / 2 := by positivity
+
+/-- The Lee-Yang subdomain is preconnected (from convexity). -/
+theorem isPreconnected_leeYangSubdomain (β : ℝ) (N : ℕ) :
+    IsPreconnected (leeYangSubdomain β N) :=
+  (convex_leeYangSubdomain' β N).isPreconnected
+
+/-- The Lee-Yang subdomain is connected (nonempty + preconnected). -/
+theorem isConnected_leeYangSubdomain (β : ℝ) (N : ℕ) :
+    IsConnected (leeYangSubdomain β N) :=
+  ⟨leeYangSubdomain_nonempty β N, isPreconnected_leeYangSubdomain β N⟩
+
+/-- At `h = (h₀ : ℂ)` with `h₀ > 0` real, the partition function equals
+its real-parameter value (which is `partitionFunction G ⟨J, h₀, β⟩`). -/
+theorem partitionFunctionComplex_at_real_pos
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (h₀ : ℝ) :
+    partitionFunctionComplex G (J : ℂ) (h₀ : ℂ) (β : ℂ)
+      = ((partitionFunction G ⟨J, h₀, β⟩ : ℝ) : ℂ) :=
+  (partitionFunction_ofReal_eq_partitionFunctionComplex G ⟨J, h₀, β⟩).symm
+
+/-- `freeEnergyComplex` at real parameters equals its real-parameter
+value. Restatement for convenience. -/
+theorem freeEnergyComplex_at_real
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h β : ℝ) :
+    freeEnergyComplex G (J : ℂ) (h : ℂ) (β : ℂ)
+      = ((freeEnergy G ⟨J, h, β⟩ : ℝ) : ℂ) :=
+  freeEnergyComplex_ofReal_eq_freeEnergy G ⟨J, h, β⟩
+
+/-- **Positivity of `Re Z` at real positive `h`**: at real parameters
+`Z > 0` (real), so `Re Z > 0` in particular. -/
+theorem partitionFunctionComplex_re_pos_at_real
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (p : IsingParams ℝ) :
+    0 < (partitionFunctionComplex G (p.J : ℂ) (p.h : ℂ) (p.β : ℂ)).re := by
+  rw [← partitionFunction_ofReal_eq_partitionFunctionComplex G p]
+  simpa using partitionFunction_pos G p
+
+/-- **`partitionFunctionComplex` im = 0 at real parameters**. -/
+theorem partitionFunctionComplex_im_zero_at_real
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (p : IsingParams ℝ) :
+    (partitionFunctionComplex G (p.J : ℂ) (p.h : ℂ) (p.β : ℂ)).im = 0 := by
+  rw [← partitionFunction_ofReal_eq_partitionFunctionComplex G p]
+  simp
+
+/-- **`Complex.log(Z)` at real parameters is real**. -/
+theorem log_partitionFunctionComplex_im_zero_at_real
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (p : IsingParams ℝ) :
+    (Complex.log (partitionFunctionComplex G (p.J : ℂ) (p.h : ℂ)
+                    (p.β : ℂ))).im = 0 := by
+  rw [← partitionFunction_ofReal_eq_partitionFunctionComplex G p,
+    ← Complex.ofReal_log (partitionFunction_pos G p).le]
+  simp
+
+/-- `freeEnergyComplex` at real parameters is real (its im part is 0). -/
+theorem freeEnergyComplex_im_zero_at_real
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (p : IsingParams ℝ) :
+    (freeEnergyComplex G (p.J : ℂ) (p.h : ℂ) (p.β : ℂ)).im = 0 := by
+  rw [freeEnergyComplex_at_real]
+  simp
+
+/-- `freeEnergyComplex.re` at real parameters equals `freeEnergy`. -/
+theorem freeEnergyComplex_re_eq_freeEnergy_at_real
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (p : IsingParams ℝ) :
+    (freeEnergyComplex G (p.J : ℂ) (p.h : ℂ) (p.β : ℂ)).re
+      = freeEnergy G p := by
+  rw [freeEnergyComplex_at_real]
+  simp
+
+/-- `partitionFunctionComplex` norm equals the real partition function
+at real parameters. -/
+theorem norm_partitionFunctionComplex_at_real
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (p : IsingParams ℝ) :
+    ‖partitionFunctionComplex G (p.J : ℂ) (p.h : ℂ) (p.β : ℂ)‖
+      = partitionFunction G p := by
+  rw [← partitionFunction_ofReal_eq_partitionFunctionComplex G p,
+    Complex.norm_real]
+  exact abs_of_pos (partitionFunction_pos G p)
+
+/-- `partitionFunctionComplex` is nonnegative-real-valued at real
+parameters; combined with positivity, it lies in the positive reals
+`(0, ∞)`. -/
+theorem partitionFunctionComplex_is_pos_real_at_real
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (p : IsingParams ℝ) :
+    ∃ x : ℝ, 0 < x ∧ partitionFunctionComplex G (p.J : ℂ) (p.h : ℂ) (p.β : ℂ)
+              = (x : ℂ) :=
+  ⟨partitionFunction G p, partitionFunction_pos G p,
+    (partitionFunction_ofReal_eq_partitionFunctionComplex G p).symm⟩
+
+/-- **Real-slice agreement of local-log branch**: at the real-positive
+basepoint `h₀ > 0`, the local branch `g` satisfies
+`g(h₀) = Real.log(Z(h₀))` as a complex number (cast of the real log),
+since `Z(h₀)` is real positive. This is useful for identifying the
+local branch with the real `freeEnergy` on the real axis. -/
+theorem logZ_branch_at_real_basepoint
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (p : IsingParams ℝ) :
+    Complex.log (partitionFunctionComplex G (p.J : ℂ) (p.h : ℂ) (p.β : ℂ))
+      = ((Real.log (partitionFunction G p)) : ℂ) := by
+  rw [← partitionFunction_ofReal_eq_partitionFunctionComplex G p,
+    ← Complex.ofReal_log (partitionFunction_pos G p).le]
+
+/-- At `h₀ > 0` real, `exp (freeEnergyComplex * |ι|)` equals the real
+partition function `Z(p)` (cast to `ℂ`). A concrete application of the
+local-branch construction's `exp(g) = Z` relation at the basepoint. -/
+theorem exp_card_mul_freeEnergyComplex_at_real
+    (G : SimpleGraph ι) [Fintype G.edgeSet] [Nonempty ι]
+    (p : IsingParams ℝ) :
+    Complex.exp ((Fintype.card ι : ℂ) * freeEnergyComplex G (p.J : ℂ)
+                    (p.h : ℂ) (p.β : ℂ))
+      = (partitionFunction G p : ℂ) := by
+  unfold freeEnergyComplex
+  have hN : (Fintype.card ι : ℂ) ≠ 0 := by
+    exact_mod_cast (Fintype.card_pos (α := ι)).ne'
+  have hmul : (Fintype.card ι : ℂ)
+              * ((Fintype.card ι : ℂ)⁻¹ *
+                Complex.log (partitionFunctionComplex G (p.J : ℂ) (p.h : ℂ)
+                              (p.β : ℂ)))
+              = Complex.log (partitionFunctionComplex G (p.J : ℂ) (p.h : ℂ)
+                              (p.β : ℂ)) := by field_simp
+  rw [hmul, ← partitionFunction_ofReal_eq_partitionFunctionComplex G p,
+    ← Complex.ofReal_log (partitionFunction_pos G p).le]
+  rw [Complex.ofReal_log (partitionFunction_pos G p).le]
+  exact Complex.exp_log
+    (by exact_mod_cast (partitionFunction_pos G p).ne')
+
+/-- **`partitionFunctionComplex` is continuous in `h`** restated at
+real parameters (h₀ real, approached from complex side). -/
+theorem partitionFunctionComplex_continuousAt_real_h
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (h₀ : ℝ) :
+    ContinuousAt (fun h : ℂ => partitionFunctionComplex G (J : ℂ) h (β : ℂ))
+      (h₀ : ℂ) :=
+  (continuous_partitionFunctionComplex_h G (J : ℂ) (β : ℂ)).continuousAt
+
+/-- `freeEnergyComplex` continuous at real positive `h₀`. -/
+theorem freeEnergyComplex_continuousAt_real_pos_h
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (h₀ : ℝ) :
+    ContinuousAt (fun h : ℂ => freeEnergyComplex G (J : ℂ) h (β : ℂ))
+      (h₀ : ℂ) :=
+  (freeEnergyComplex_analyticAt_h_ofReal G J h₀ β).continuousAt
+
+/-- `freeEnergyComplex` continuous on `{h | Z(h) ∈ slitPlane}`. -/
+theorem freeEnergyComplex_continuousOn_slitPlane_locus
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℂ) :
+    ContinuousOn (fun h => freeEnergyComplex G J h β)
+      {h : ℂ | partitionFunctionComplex G J h β ∈ Complex.slitPlane} := by
+  intro h hmem
+  exact ((freeEnergyComplex_analyticAt_h G J β h hmem).continuousAt).continuousWithinAt
+
+/-- **DifferentiableOn version on the slitPlane locus**. -/
+theorem freeEnergyComplex_differentiableOn_slitPlane_locus
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J β : ℂ) :
+    DifferentiableOn ℂ (fun h => freeEnergyComplex G J h β)
+      {h : ℂ | partitionFunctionComplex G J h β ∈ Complex.slitPlane} := fun h hmem =>
+  (freeEnergyComplex_analyticAt_h G J β h hmem).differentiableAt.differentiableWithinAt
+
+/-- `freeEnergyComplex` is `AnalyticOn` (not just `AnalyticOnNhd`) on
+the slitPlane locus. -/
+theorem freeEnergyComplex_analyticOn_slitPlane_locus
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J β : ℂ) :
+    AnalyticOn ℂ (fun h => freeEnergyComplex G J h β)
+      {h : ℂ | partitionFunctionComplex G J h β ∈ Complex.slitPlane} :=
+  (freeEnergyComplex_analyticOnNhd_slitPlane_locus G J β).analyticOn
+
+/-- **Local branch of `log Z` is continuous** on the ball inside
+Lee-Yang. Immediate from analyticity. -/
+theorem continuous_logZ_branch_on_ball
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J)
+    {h₀ : ℂ} {r : ℝ} (hr : 0 < r)
+    (hsub : Metric.ball h₀ r ⊆ leeYangDomain) :
+    ∃ g : ℂ → ℂ, ContinuousOn g (Metric.ball h₀ r) ∧
+        ∀ z ∈ Metric.ball h₀ r,
+          Complex.exp (g z) = partitionFunctionComplex G (J : ℂ) z (β : ℂ) := by
+  obtain ⟨g, hg_ana, hg_exp⟩ :=
+    exists_logZ_analyticOnNhd_ball G hβ hJ hr hsub
+  exact ⟨g, hg_ana.continuousOn, hg_exp⟩
+
+/-- **DifferentiableOn form** of the local logZ branch: the branch
+`g` from `exists_logZ_analytic_branch_on_ball` is differentiable on
+the ball. -/
+theorem exists_logZ_differentiableOn_ball
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J)
+    {h₀ : ℂ} {r : ℝ} (hr : 0 < r)
+    (hsub : Metric.ball h₀ r ⊆ leeYangDomain) :
+    ∃ g : ℂ → ℂ, DifferentiableOn ℂ g (Metric.ball h₀ r) ∧
+        ∀ z ∈ Metric.ball h₀ r,
+          Complex.exp (g z) = partitionFunctionComplex G (J : ℂ) z (β : ℂ) := by
+  obtain ⟨g, hg_ana, hg_exp⟩ :=
+    exists_logZ_analyticOnNhd_ball G hβ hJ hr hsub
+  exact ⟨g, hg_ana.differentiableOn, hg_exp⟩
+
+/-- **Free-energy local-branch `AnalyticOnNhd ball`**: the local
+`f = g/|ι|` branch is analytic on the ball. -/
+theorem exists_freeEnergyComplex_analyticOnNhd_ball
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J) [Nonempty ι]
+    {h₀ : ℂ} {r : ℝ} (hr : 0 < r)
+    (hsub : Metric.ball h₀ r ⊆ leeYangDomain) :
+    ∃ f : ℂ → ℂ,
+        AnalyticOnNhd ℂ f (Metric.ball h₀ r)
+      ∧ ∀ z ∈ Metric.ball h₀ r,
+          Complex.exp ((Fintype.card ι : ℂ) * f z)
+            = partitionFunctionComplex G (J : ℂ) z (β : ℂ) := by
+  obtain ⟨g, hg_ana, hg_exp⟩ :=
+    exists_logZ_analyticOnNhd_ball G hβ hJ hr hsub
+  refine ⟨fun z => ((Fintype.card ι : ℂ))⁻¹ * g z, ?_, ?_⟩
+  · exact analyticOnNhd_const.mul hg_ana
+  · intro z hz
+    have hNℕ : 0 < Fintype.card ι := Fintype.card_pos
+    have hN : (Fintype.card ι : ℂ) ≠ 0 := by exact_mod_cast hNℕ.ne'
+    have hmul : (Fintype.card ι : ℂ) * ((Fintype.card ι : ℂ)⁻¹ * g z) = g z := by
+      field_simp
+    rw [hmul]
+    exact hg_exp z hz
+
+/-- **DifferentiableOn form** of the local freeEnergyComplex branch. -/
+theorem exists_freeEnergyComplex_differentiableOn_ball
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J) [Nonempty ι]
+    {h₀ : ℂ} {r : ℝ} (hr : 0 < r)
+    (hsub : Metric.ball h₀ r ⊆ leeYangDomain) :
+    ∃ f : ℂ → ℂ,
+        DifferentiableOn ℂ f (Metric.ball h₀ r)
+      ∧ ∀ z ∈ Metric.ball h₀ r,
+          Complex.exp ((Fintype.card ι : ℂ) * f z)
+            = partitionFunctionComplex G (J : ℂ) z (β : ℂ) := by
+  obtain ⟨f, hf_ana, hf_exp⟩ :=
+    exists_freeEnergyComplex_analyticOnNhd_ball G hβ hJ hr hsub
+  exact ⟨f, hf_ana.differentiableOn, hf_exp⟩
+
+/-- `leeYangDomain` is the preimage of `(0, ∞)` under the continuous
+map `h ↦ Re h - |Im h|`. -/
+theorem leeYangDomain_eq_preimage :
+    leeYangDomain = (fun h : ℂ => h.re - |h.im|) ⁻¹' Set.Ioi 0 := by
+  ext h
+  simp only [leeYangDomain, Set.mem_setOf_eq, Set.mem_preimage, Set.mem_Ioi]
+  constructor
+  · intro hlt; linarith
+  · intro hlt; change |h.im| < h.re; linarith
+
+/-- `leeYangSubdomain` characterized as an intersection of preimages. -/
+theorem leeYangSubdomain_eq_inter_preimage (β : ℝ) (N : ℕ) :
+    leeYangSubdomain β N = leeYangDomain ∩
+      (fun h : ℂ => β * |h.im| * (N : ℝ)) ⁻¹' Set.Iio (Real.pi / 2) := by
+  ext h
+  rfl
+
+/-- Explicit element of `leeYangSubdomain`: `(1 : ℂ)` works for any
+`β, N`. Convenient for downstream arguments needing a basepoint. -/
+theorem one_mem_leeYangSubdomain (β : ℝ) (N : ℕ) :
+    (1 : ℂ) ∈ leeYangSubdomain β N :=
+  real_pos_mem_leeYangSubdomain β N (by norm_num : (0 : ℝ) < 1)
+
+/-- `(1 : ℂ) ∈ leeYangDomain` as a convenience. -/
+theorem one_mem_leeYangDomain : (1 : ℂ) ∈ leeYangDomain :=
+  real_pos_mem_leeYangDomain (by norm_num : (0 : ℝ) < 1)
+
+/-- `leeYangSubdomain β 1` (single-site case): vacuously close to full
+Lee-Yang, constrained by `β · |Im h| < π/2`. -/
+theorem leeYangSubdomain_one_eq (β : ℝ) :
+    leeYangSubdomain β 1 =
+      {h : ℂ | |h.im| < h.re ∧ β * |h.im| < Real.pi / 2} := by
+  ext h
+  simp [leeYangSubdomain]
+
+/-- When `β = 0`, `leeYangSubdomain 0 N = leeYangDomain` for any `N`
+(the strip constraint is vacuously `0 < π/2`). -/
+theorem leeYangSubdomain_beta_zero (N : ℕ) :
+    leeYangSubdomain (0 : ℝ) N = leeYangDomain := by
+  ext h
+  refine ⟨fun hh => hh.1, fun hh => ⟨hh, ?_⟩⟩
+  simp only [zero_mul]
+  positivity
+
+/-- `slitPlane` locus for `partitionFunctionComplex` contains
+`leeYangSubdomain`. -/
+theorem leeYangSubdomain_subset_slitPlane_locus
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β : ℝ} (hβ : 0 < β) (J : ℝ) :
+    (leeYangSubdomain β (Fintype.card ι))
+      ⊆ {h : ℂ | partitionFunctionComplex G (J : ℂ) h (β : ℂ)
+                  ∈ Complex.slitPlane} := fun _ hh =>
+  partitionFunctionComplex_mem_slitPlane_of_leeYangSubdomain G hβ J hh.2
+
+/-- Every point of `leeYangSubdomain` has `Z` in `slitPlane`. -/
+theorem mem_slitPlane_locus_of_mem_leeYangSubdomain
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β : ℝ} (hβ : 0 < β) (J : ℝ) {h : ℂ}
+    (hh : h ∈ leeYangSubdomain β (Fintype.card ι)) :
+    partitionFunctionComplex G (J : ℂ) h (β : ℂ) ∈ Complex.slitPlane :=
+  partitionFunctionComplex_mem_slitPlane_of_leeYangSubdomain G hβ J hh.2
+
+/-- `leeYangSubdomain β N` is open. Restatement of
+`isOpen_leeYangSubdomain`. -/
+theorem isOpen_leeYangSubdomain' (β : ℝ) (N : ℕ) :
+    IsOpen (leeYangSubdomain β N) :=
+  isOpen_leeYangSubdomain β N
+
+/-- `leeYangSubdomain β N` is convex. Restatement of
+`convex_leeYangSubdomain'`. -/
+theorem convex_leeYangSubdomain_alt (β : ℝ) (N : ℕ) :
+    Convex ℝ (leeYangSubdomain β N) :=
+  convex_leeYangSubdomain' β N
+
+/-- Combined: on the Lee-Yang subdomain, `Re Z > 0` and thus
+`Z ∈ slitPlane`, and `f_complex` is therefore analytic. Packaged
+`AnalyticOnNhd` form of the finite-volume analyticity on the
+Lee-Yang subdomain. -/
+theorem freeEnergyComplex_analyticOnNhd_of_leeYangSubdomain
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β : ℝ} (hβ : 0 < β) (J : ℝ) :
+    AnalyticOnNhd ℂ (fun h => freeEnergyComplex G (J : ℂ) h (β : ℂ))
+      (leeYangSubdomain β (Fintype.card ι)) :=
+  freeEnergyComplex_analyticOnNhd_leeYangSubdomain G hβ J
+
+/-- `freeEnergyComplex_analyticOnNhd_leeYangSubdomain` restated as
+`AnalyticOn`. -/
+theorem freeEnergyComplex_analyticOn_leeYangSubdomain
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β : ℝ} (hβ : 0 < β) (J : ℝ) :
+    AnalyticOn ℂ (fun h => freeEnergyComplex G (J : ℂ) h (β : ℂ))
+      (leeYangSubdomain β (Fintype.card ι)) :=
+  (freeEnergyComplex_analyticOnNhd_leeYangSubdomain G hβ J).analyticOn
+
+/-- `freeEnergyComplex` is continuous on `leeYangSubdomain`. -/
+theorem freeEnergyComplex_continuousOn_leeYangSubdomain
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β : ℝ} (hβ : 0 < β) (J : ℝ) :
+    ContinuousOn (fun h => freeEnergyComplex G (J : ℂ) h (β : ℂ))
+      (leeYangSubdomain β (Fintype.card ι)) :=
+  (freeEnergyComplex_differentiableOn_leeYangSubdomain G hβ J).continuousOn
+
+/-- `partitionFunctionComplex` is continuous on `leeYangDomain`
+(restriction of entire continuity). -/
+theorem partitionFunctionComplex_continuousOn_leeYangDomain
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J β : ℂ) :
+    ContinuousOn (fun h => partitionFunctionComplex G J h β) leeYangDomain :=
+  (continuous_partitionFunctionComplex_h G J β).continuousOn
+
+/-- `partitionFunctionComplex` is AnalyticOn on `leeYangDomain`
+(restriction of entire analyticity). -/
+theorem partitionFunctionComplex_analyticOn_leeYangDomain
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J β : ℂ) :
+    AnalyticOn ℂ (fun h => partitionFunctionComplex G J h β) leeYangDomain :=
+  (partitionFunctionComplex_analyticOnNhd_leeYangDomain G J β).analyticOn
+
+/-- `leeYangFugacity β` is continuous (everywhere on `ℂ`). Restatement
+of `continuous_leeYangFugacity`. -/
+theorem continuous_leeYangFugacity' (β : ℂ) :
+    Continuous (leeYangFugacity β) := continuous_leeYangFugacity β
+
+/-- `leeYangFugacity β` is `AnalyticOn` on any set. -/
+theorem leeYangFugacity_analyticOn (β : ℂ) (U : Set ℂ) :
+    AnalyticOn ℂ (leeYangFugacity β) U :=
+  (analyticOnNhd_leeYangFugacity β).mono (Set.subset_univ U) |>.analyticOn
+
+/-- `leeYangFugacity β` is `DifferentiableOn` on any set. -/
+theorem leeYangFugacity_differentiableOn (β : ℂ) (U : Set ℂ) :
+    DifferentiableOn ℂ (leeYangFugacity β) U :=
+  ((analyticOnNhd_leeYangFugacity β).mono (Set.subset_univ U)).differentiableOn
+
+/-- `leeYangFugacity β` is `Differentiable` on all of `ℂ`. -/
+theorem leeYangFugacity_differentiable (β : ℂ) :
+    Differentiable ℂ (leeYangFugacity β) :=
+  differentiableOn_univ.mp (leeYangFugacity_differentiableOn β Set.univ)
+
+/-- `leeYangFugacity β` is `HasDerivAt` at every point. -/
+theorem leeYangFugacity_hasDerivAt (β : ℂ) (h : ℂ) :
+    HasDerivAt (leeYangFugacity β)
+      (-2 * β * Complex.exp (-2 * β * h)) h := by
+  unfold leeYangFugacity
+  have h1 : HasDerivAt (fun z : ℂ => -2 * β * z) (-2 * β) h := by
+    simpa using ((hasDerivAt_id h).const_mul (-2 * β))
+  exact h1.cexp.congr_deriv (by ring)
+
+/-- `leeYangFugacity_deriv`: `deriv (leeYangFugacity β) h
+  = -2·β·exp(-2·β·h)`. -/
+theorem leeYangFugacity_deriv (β h : ℂ) :
+    deriv (leeYangFugacity β) h = -2 * β * Complex.exp (-2 * β * h) :=
+  (leeYangFugacity_hasDerivAt β h).deriv
+
+/-- Logarithmic derivative of `leeYangFugacity β`: `(d/dh log z(h))
+  = -2β`. In particular, the relative change in the fugacity is
+constant. -/
+theorem leeYangFugacity_logDeriv (β h : ℂ) :
+    deriv (leeYangFugacity β) h / leeYangFugacity β h = -2 * β := by
+  rw [leeYangFugacity_deriv]
+  unfold leeYangFugacity
+  field_simp
+
+/-- `leeYangNormalization` has entire analyticity in `h` (for any β, J). -/
+theorem leeYangNormalization_analyticAt_h
+    (β J : ℂ) (h₀ : ℂ) (edgeCount siteCount : ℕ) :
+    AnalyticAt ℂ (fun h => leeYangNormalization β J h edgeCount siteCount) h₀ := by
+  unfold leeYangNormalization
+  refine AnalyticAt.cexp' ?_
+  fun_prop
+
+/-- `leeYangNormalization` analytic in `β`. -/
+theorem leeYangNormalization_analyticAt_beta
+    (β₀ J h : ℂ) (edgeCount siteCount : ℕ) :
+    AnalyticAt ℂ (fun β => leeYangNormalization β J h edgeCount siteCount) β₀ := by
+  unfold leeYangNormalization
+  refine AnalyticAt.cexp' ?_
+  fun_prop
+
+/-- `leeYangNormalization` analytic in `J`. -/
+theorem leeYangNormalization_analyticAt_J
+    (β : ℂ) (J₀ : ℂ) (h : ℂ) (edgeCount siteCount : ℕ) :
+    AnalyticAt ℂ (fun J => leeYangNormalization β J h edgeCount siteCount) J₀ := by
+  unfold leeYangNormalization
+  refine AnalyticAt.cexp' ?_
+  fun_prop
+
+/-- `leeYangNormalization β J h 0 0 = exp(0) = 1`. -/
+theorem leeYangNormalization_zero_zero (β J h : ℂ) :
+    leeYangNormalization β J h 0 0 = 1 := by
+  unfold leeYangNormalization
+  simp
+
+/-- `leeYangNormalization β 0 0 |E| |ι| = exp(0) = 1` (at J = h = 0). -/
+theorem leeYangNormalization_zero_params (β : ℂ) (edgeCount siteCount : ℕ) :
+    leeYangNormalization β 0 0 edgeCount siteCount = 1 := by
+  unfold leeYangNormalization
+  simp
+
+/-- `leeYangNormalization 0 J h |E| |ι| = exp(0) = 1` (at β = 0). -/
+theorem leeYangNormalization_beta_zero (J h : ℂ) (edgeCount siteCount : ℕ) :
+    leeYangNormalization 0 J h edgeCount siteCount = 1 := by
+  unfold leeYangNormalization
+  simp
+
+/-- `‖leeYangNormalization (β:ℝ) J h |E| |ι|‖ = exp(β·Re(J·|E| + h·|ι|))`
+at real `β`. -/
+theorem norm_leeYangNormalization_real_beta
+    (β : ℝ) (J h : ℂ) (edgeCount siteCount : ℕ) :
+    ‖leeYangNormalization (β : ℂ) J h edgeCount siteCount‖
+      = Real.exp (β * (J * (edgeCount : ℂ) + h * (siteCount : ℂ))).re := by
+  unfold leeYangNormalization
+  rw [Complex.norm_exp]
+  congr 1
+  ring_nf
+
+/-- At real `β, J, h`, `leeYangNormalization` is a positive real number
+(cast). -/
+theorem leeYangNormalization_ofReal_eq (β J h : ℝ) (edgeCount siteCount : ℕ) :
+    leeYangNormalization (β : ℂ) (J : ℂ) (h : ℂ) edgeCount siteCount
+      = ((Real.exp (β * J * edgeCount + β * h * siteCount) : ℝ) : ℂ) := by
+  unfold leeYangNormalization
+  rw [show ((β : ℂ) * (J : ℂ) * (edgeCount : ℂ) + (β : ℂ) * (h : ℂ) *
+            (siteCount : ℂ))
+          = ((β * J * edgeCount + β * h * siteCount : ℝ) : ℂ) from by
+    push_cast; ring]
+  rw [Complex.ofReal_exp]
+
+/-- `leeYangNormalization` at real params is always a positive real. -/
+theorem leeYangNormalization_real_pos (β J h : ℝ) (edgeCount siteCount : ℕ) :
+    ∃ x : ℝ, 0 < x ∧
+      leeYangNormalization (β : ℂ) (J : ℂ) (h : ℂ) edgeCount siteCount
+        = (x : ℂ) :=
+  ⟨Real.exp (β * J * edgeCount + β * h * siteCount), Real.exp_pos _,
+    leeYangNormalization_ofReal_eq β J h edgeCount siteCount⟩
+
+/-- `leeYangNormalization` norm at real parameters. -/
+theorem norm_leeYangNormalization_ofReal (β J h : ℝ) (edgeCount siteCount : ℕ) :
+    ‖leeYangNormalization (β : ℂ) (J : ℂ) (h : ℂ) edgeCount siteCount‖
+      = Real.exp (β * J * edgeCount + β * h * siteCount) := by
+  rw [leeYangNormalization_ofReal_eq, Complex.norm_real]
+  exact abs_of_pos (Real.exp_pos _)
+
+/-- `leeYangNormalization β J h E ι ≠ 0` (restated as membership). -/
+theorem leeYangNormalization_ne_zero'
+    (β J h : ℂ) (edgeCount siteCount : ℕ) :
+    leeYangNormalization β J h edgeCount siteCount ≠ 0 :=
+  leeYangNormalization_ne_zero β J h edgeCount siteCount
+
+/-- Norm positivity of `leeYangNormalization`. -/
+theorem leeYangNormalization_norm_pos
+    (β J h : ℂ) (edgeCount siteCount : ℕ) :
+    0 < ‖leeYangNormalization β J h edgeCount siteCount‖ :=
+  norm_pos_iff.mpr (leeYangNormalization_ne_zero β J h edgeCount siteCount)
+
+/-- `real_pos_mem_leeYangDomain` specialized: any positive real is
+in Lee-Yang. -/
+theorem real_pos_mem_leeYangDomain' (h₀ : ℝ) (hpos : 0 < h₀) :
+    (h₀ : ℂ) ∈ leeYangDomain :=
+  real_pos_mem_leeYangDomain hpos
+
+/-- All positive reals contained in Lee-Yang: formulated as a subset
+statement. -/
+theorem real_positives_subset_leeYangDomain :
+    ((fun h₀ : ℝ => (h₀ : ℂ)) '' Set.Ioi 0) ⊆ leeYangDomain := by
+  rintro h ⟨h₀, hpos, rfl⟩
+  exact real_pos_mem_leeYangDomain hpos
+
+/-- All positive reals contained in Lee-Yang subdomain. -/
+theorem real_positives_subset_leeYangSubdomain (β : ℝ) (N : ℕ) :
+    ((fun h₀ : ℝ => (h₀ : ℂ)) '' Set.Ioi 0) ⊆ leeYangSubdomain β N := by
+  rintro h ⟨h₀, hpos, rfl⟩
+  exact real_pos_mem_leeYangSubdomain β N hpos
+
+/-- `leeYangDomain` contains all points with `Re h > 0 ∧ Im h = 0`. -/
+theorem real_axis_pos_subset_leeYangDomain :
+    {h : ℂ | 0 < h.re ∧ h.im = 0} ⊆ leeYangDomain := by
+  intro h ⟨hre, him⟩
+  change |h.im| < h.re
+  rw [him, abs_zero]
+  exact hre
+
+/-- `leeYangDomain` is `IsOpen`; use for nhd calculations. -/
+theorem leeYangDomain_mem_nhds {h : ℂ} (hmem : h ∈ leeYangDomain) :
+    leeYangDomain ∈ nhds h :=
+  isOpen_leeYangDomain.mem_nhds hmem
+
+/-- `leeYangSubdomain` is in the neighbourhoods of any of its points. -/
+theorem leeYangSubdomain_mem_nhds (β : ℝ) (N : ℕ) {h : ℂ}
+    (hmem : h ∈ leeYangSubdomain β N) :
+    leeYangSubdomain β N ∈ nhds h :=
+  (isOpen_leeYangSubdomain β N).mem_nhds hmem
+
+/-- Any member of `leeYangDomain` has positive real part. -/
+theorem re_pos_of_mem_leeYangDomain {h : ℂ} (hh : h ∈ leeYangDomain) :
+    0 < h.re := by
+  have h1 : |h.im| < h.re := hh
+  linarith [abs_nonneg h.im]
+
+/-- Any member of `leeYangSubdomain` has positive real part. -/
+theorem re_pos_of_mem_leeYangSubdomain (β : ℝ) (N : ℕ) {h : ℂ}
+    (hh : h ∈ leeYangSubdomain β N) : 0 < h.re :=
+  re_pos_of_mem_leeYangDomain hh.1
+
+/-- Any member of `leeYangDomain` is non-zero. -/
+theorem ne_zero_of_mem_leeYangDomain {h : ℂ} (hh : h ∈ leeYangDomain) :
+    h ≠ 0 := by
+  intro hz
+  have hre_pos : 0 < h.re := re_pos_of_mem_leeYangDomain hh
+  rw [hz] at hre_pos
+  simp at hre_pos
+
+/-- Any member of `leeYangSubdomain` is non-zero. -/
+theorem ne_zero_of_mem_leeYangSubdomain (β : ℝ) (N : ℕ) {h : ℂ}
+    (hh : h ∈ leeYangSubdomain β N) : h ≠ 0 :=
+  ne_zero_of_mem_leeYangDomain hh.1
+
+/-- `Set.Ioi 0 ⊆ Set.image ofReal⁻¹ leeYangDomain`: the positive real
+axis is contained in the Lee-Yang domain's real preimage. -/
+theorem Ioi_subset_leeYangDomain_real_preimage :
+    Set.Ioi (0 : ℝ) ⊆ (fun x : ℝ => (x : ℂ)) ⁻¹' leeYangDomain := by
+  intro x hx
+  exact real_pos_mem_leeYangDomain hx
+
+/-- The complex unit `(1 : ℂ)` lies in every `leeYangSubdomain β N`. -/
+theorem one_mem_leeYangSubdomain' (β : ℝ) (N : ℕ) :
+    (1 : ℂ) ∈ leeYangSubdomain β N :=
+  one_mem_leeYangSubdomain β N
+
+/-- The positive real axis embedded into ℂ is a subset of leeYangDomain. -/
+theorem real_pos_axis_subset_leeYangDomain :
+    Set.range (fun x : Set.Ioi (0 : ℝ) => (x.1 : ℂ)) ⊆ leeYangDomain := by
+  rintro h ⟨⟨x, hx⟩, rfl⟩
+  exact real_pos_mem_leeYangDomain hx
+
+/-- For fixed real `β > 0`, the Lee-Yang domain is a subset of the
+analyticity locus of `freeEnergyComplex` via branches. (Symbolic form.)
+-/
+theorem leeYangDomain_subset_branch_locus
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J) [Nonempty ι] :
+    ∀ h ∈ leeYangDomain,
+      ∃ f : ℂ → ℂ, AnalyticAt ℂ f h ∧
+        Complex.exp ((Fintype.card ι : ℂ) * f h)
+          = partitionFunctionComplex G (J : ℂ) h (β : ℂ) := fun h hh => by
+  obtain ⟨f, hf_ana, hf_exp, _⟩ :=
+    exists_freeEnergyComplex_analyticAt_branch_of_leeYangDomain G hβ hJ hh
+  exact ⟨f, hf_ana, hf_exp⟩
+
+/-- Headline: `freeEnergyComplex` has an analytic local branch at every
+point of the Lee-Yang domain (restatement without the equality at the
+basepoint). -/
+theorem freeEnergyComplex_exists_analyticBranch
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J) [Nonempty ι] :
+    ∀ h ∈ leeYangDomain, ∃ f : ℂ → ℂ, AnalyticAt ℂ f h ∧
+        Complex.exp ((Fintype.card ι : ℂ) * f h)
+          = partitionFunctionComplex G (J : ℂ) h (β : ℂ) :=
+  fun _ hh =>
+    let ⟨f, hfa, hfexp, _⟩ :=
+      exists_freeEnergyComplex_analyticAt_branch_of_leeYangDomain G hβ hJ hh
+    ⟨f, hfa, hfexp⟩
+
+/-- **Strong form**: existence of `f` with (a) AnalyticAt, (b)
+`exp(|ι|·f) = Z`, (c) `f` equals the principal-branch freeEnergyComplex
+at the basepoint. Pointwise statement over all of leeYangDomain. -/
+theorem freeEnergyComplex_exists_analyticBranch_strong
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J) [Nonempty ι] :
+    ∀ h ∈ leeYangDomain, ∃ f : ℂ → ℂ,
+        AnalyticAt ℂ f h
+      ∧ Complex.exp ((Fintype.card ι : ℂ) * f h)
+          = partitionFunctionComplex G (J : ℂ) h (β : ℂ)
+      ∧ f h = freeEnergyComplex G (J : ℂ) h (β : ℂ) := fun _ hh =>
+  exists_freeEnergyComplex_analyticAt_branch_of_leeYangDomain G hβ hJ hh
+
+/-- `freeEnergyComplex G J h β` is an entire function of `(J, h, β)`
+restricted to the slitPlane locus. Packaged joint version. -/
+theorem freeEnergyComplex_analyticOnNhd_slitPlane_locus_joint
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    AnalyticOnNhd ℂ
+      (fun z : ℂ × ℂ × ℂ => freeEnergyComplex G z.1 z.2.1 z.2.2)
+      {z : ℂ × ℂ × ℂ | partitionFunctionComplex G z.1 z.2.1 z.2.2
+                        ∈ Complex.slitPlane} := by
+  intro z hmem
+  exact freeEnergyComplex_analyticAt_joint G z hmem
+
+/-- The joint slitPlane locus is open. -/
+theorem isOpen_freeEnergy_analyticity_locus_joint
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    IsOpen {z : ℂ × ℂ × ℂ |
+              partitionFunctionComplex G z.1 z.2.1 z.2.2
+                ∈ Complex.slitPlane} := by
+  exact (continuous_partitionFunctionComplex_joint G).isOpen_preimage _
+    Complex.isOpen_slitPlane
+
+/-- For real parameters `p : IsingParams ℝ`, the joint-analyticity point
+`((p.J : ℂ), (p.h : ℂ), (p.β : ℂ))` is in the slitPlane locus. -/
+theorem real_params_in_analyticity_locus_joint
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (p : IsingParams ℝ) :
+    ((p.J : ℂ), (p.h : ℂ), (p.β : ℂ)) ∈
+      {z : ℂ × ℂ × ℂ | partitionFunctionComplex G z.1 z.2.1 z.2.2
+                        ∈ Complex.slitPlane} :=
+  partitionFunctionComplex_mem_slitPlane_of_real G p
+
+/-- The real parameter slice is in the analyticity locus. -/
+theorem real_params_analyticAt_joint
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (p : IsingParams ℝ) :
+    AnalyticAt ℂ
+      (fun z : ℂ × ℂ × ℂ => freeEnergyComplex G z.1 z.2.1 z.2.2)
+      ((p.J : ℂ), (p.h : ℂ), (p.β : ℂ)) :=
+  freeEnergyComplex_analyticAt_joint G _
+    (partitionFunctionComplex_mem_slitPlane_of_real G p)
+
+/-- **Image of `IsingParams ℝ` under cast**: `(J, h, β) ↦ ((J:ℂ), (h:ℂ), (β:ℂ))`
+sends every real-parameter point into the joint analyticity locus. -/
+theorem real_params_image_subset_analyticity_locus_joint
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    (fun p : IsingParams ℝ => ((p.J : ℂ), (p.h : ℂ), (p.β : ℂ)))
+      '' Set.univ ⊆
+      {z : ℂ × ℂ × ℂ | partitionFunctionComplex G z.1 z.2.1 z.2.2
+                        ∈ Complex.slitPlane} := by
+  rintro z ⟨p, _, rfl⟩
+  exact partitionFunctionComplex_mem_slitPlane_of_real G p
+
+/-- **Continuity of `freeEnergyComplex` jointly on the analyticity
+locus**. -/
+theorem freeEnergyComplex_continuousOn_slitPlane_locus_joint
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    ContinuousOn
+      (fun z : ℂ × ℂ × ℂ => freeEnergyComplex G z.1 z.2.1 z.2.2)
+      {z : ℂ × ℂ × ℂ | partitionFunctionComplex G z.1 z.2.1 z.2.2
+                        ∈ Complex.slitPlane} := fun z hmem =>
+  ((freeEnergyComplex_analyticAt_joint G z hmem).continuousAt).continuousWithinAt
+
+/-- `DifferentiableOn` form of the above. -/
+theorem freeEnergyComplex_differentiableOn_slitPlane_locus_joint
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    DifferentiableOn ℂ
+      (fun z : ℂ × ℂ × ℂ => freeEnergyComplex G z.1 z.2.1 z.2.2)
+      {z : ℂ × ℂ × ℂ | partitionFunctionComplex G z.1 z.2.1 z.2.2
+                        ∈ Complex.slitPlane} := fun z hmem =>
+  (freeEnergyComplex_analyticAt_joint G z hmem).differentiableAt.differentiableWithinAt
+
+/-- **log Z analyticity locus is open**. -/
+theorem isOpen_logZ_slitPlane_locus
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J β : ℂ) :
+    IsOpen {h : ℂ | partitionFunctionComplex G J h β ∈ Complex.slitPlane} :=
+  isOpen_freeEnergy_analyticity_locus G J β
+
+/-- Jointly in (h, β) at fixed real `J > 0`, the slitPlane locus is open. -/
+theorem isOpen_slitPlane_locus_h_beta
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J : ℂ) :
+    IsOpen {z : ℂ × ℂ |
+              partitionFunctionComplex G J z.1 z.2 ∈ Complex.slitPlane} := by
+  have hcont : Continuous
+      (fun z : ℂ × ℂ => partitionFunctionComplex G J z.1 z.2) := by
+    refine continuous_iff_continuousAt.mpr fun z => ?_
+    -- Joint entireness implies continuity.
+    have := continuous_partitionFunctionComplex_joint G
+    have hp : ContinuousAt
+        (fun z : ℂ × ℂ × ℂ =>
+          partitionFunctionComplex G z.1 z.2.1 z.2.2) (J, z.1, z.2) :=
+      this.continuousAt
+    exact hp.comp ((continuous_const (y := J)).prodMk continuous_id).continuousAt
+  exact hcont.isOpen_preimage _ Complex.isOpen_slitPlane
+
+/-- The analyticity locus contains every `(h₀ : ℂ)` at real `h₀` (cast). -/
+theorem real_coe_mem_slitPlane_locus_h
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J β : ℝ) (h₀ : ℝ) :
+    (h₀ : ℂ) ∈
+      {h : ℂ | partitionFunctionComplex G (J : ℂ) h (β : ℂ) ∈ Complex.slitPlane} :=
+  partitionFunctionComplex_mem_slitPlane_of_real G ⟨J, h₀, β⟩
+
+/-- **The positive real axis (cast) sits in the h-slitPlane locus**:
+for every `h₀ > 0` real, `Z(↑J, ↑h₀, ↑β) ∈ slitPlane` (at real
+parameters). -/
+theorem real_axis_in_slitPlane_locus_h
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J β : ℝ) :
+    ((fun h₀ : ℝ => (h₀ : ℂ)) '' Set.univ) ⊆
+      {h : ℂ | partitionFunctionComplex G (J : ℂ) h (β : ℂ) ∈ Complex.slitPlane} := by
+  rintro h ⟨h₀, _, rfl⟩
+  exact real_coe_mem_slitPlane_locus_h G J β h₀
+
+/-- `freeEnergyComplex` `AnalyticAt` at every real (cast to complex) `h₀`. -/
+theorem freeEnergyComplex_analyticAt_h_real_coe
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J β : ℝ) (h₀ : ℝ) :
+    AnalyticAt ℂ
+      (fun h => freeEnergyComplex G (J : ℂ) h (β : ℂ)) (h₀ : ℂ) :=
+  freeEnergyComplex_analyticAt_h_ofReal G J h₀ β
+
+/-- **Finite-volume `freeEnergy` is Differentiable at every real h₀**
+(in the complex sense). -/
+theorem freeEnergyComplex_differentiableAt_h_real_coe
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J β : ℝ) (h₀ : ℝ) :
+    DifferentiableAt ℂ
+      (fun h => freeEnergyComplex G (J : ℂ) h (β : ℂ)) (h₀ : ℂ) :=
+  (freeEnergyComplex_analyticAt_h_real_coe G J β h₀).differentiableAt
+
+/-- **Finite-volume `freeEnergy` is Continuous at every real h₀**. -/
+theorem freeEnergyComplex_continuousAt_h_real_coe
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J β : ℝ) (h₀ : ℝ) :
+    ContinuousAt
+      (fun h => freeEnergyComplex G (J : ℂ) h (β : ℂ)) (h₀ : ℂ) :=
+  (freeEnergyComplex_analyticAt_h_real_coe G J β h₀).continuousAt
+
+/-- The image of the positive real axis lies inside `leeYangDomain`. -/
+theorem range_real_axis_subset_leeYangDomain :
+    Set.range (fun x : {x : ℝ // 0 < x} => (x.1 : ℂ)) ⊆ leeYangDomain := by
+  rintro h ⟨⟨x, hx⟩, rfl⟩
+  exact real_pos_mem_leeYangDomain hx
+
+/-- **Restriction of `freeEnergyComplex` to the real axis equals
+`freeEnergy`**: an explicit function-extending statement. -/
+theorem freeEnergyComplex_restrict_real_axis_eq_freeEnergy
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J β : ℝ) :
+    (fun h : ℝ =>
+        freeEnergyComplex G (J : ℂ) (h : ℂ) (β : ℂ))
+      = fun h : ℝ => ((freeEnergy G ⟨J, h, β⟩ : ℝ) : ℂ) := by
+  funext h
+  exact freeEnergyComplex_at_real G J h β
+
+/-- `partitionFunctionComplex` restricted to the real axis equals the
+cast of the real `partitionFunction`. -/
+theorem partitionFunctionComplex_restrict_real_axis_eq
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J β : ℝ) :
+    (fun h : ℝ =>
+        partitionFunctionComplex G (J : ℂ) (h : ℂ) (β : ℂ))
+      = fun h : ℝ => ((partitionFunction G ⟨J, h, β⟩ : ℝ) : ℂ) := by
+  funext h
+  exact (partitionFunction_ofReal_eq_partitionFunctionComplex
+    G ⟨J, h, β⟩).symm
+
+/-- The joint complex partition function equals the real cast on
+`IsingParams ℝ`-points. -/
+theorem partitionFunctionComplex_restrict_joint_real_eq
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    (fun p : IsingParams ℝ =>
+        partitionFunctionComplex G (p.J : ℂ) (p.h : ℂ) (p.β : ℂ))
+      = fun p : IsingParams ℝ => ((partitionFunction G p : ℝ) : ℂ) := by
+  funext p
+  exact (partitionFunction_ofReal_eq_partitionFunctionComplex G p).symm
+
+/-- `freeEnergyComplex` restricted to `IsingParams ℝ`-points. -/
+theorem freeEnergyComplex_restrict_joint_real_eq
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    (fun p : IsingParams ℝ =>
+        freeEnergyComplex G (p.J : ℂ) (p.h : ℂ) (p.β : ℂ))
+      = fun p : IsingParams ℝ => ((freeEnergy G p : ℝ) : ℂ) := by
+  funext p
+  exact freeEnergyComplex_ofReal_eq_freeEnergy G p
+
+/-- `partitionFunctionComplex` norm (modulus) at real parameters. -/
+theorem norm_partitionFunctionComplex_eq_partitionFunction_at_real
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (p : IsingParams ℝ) :
+    ‖partitionFunctionComplex G (p.J : ℂ) (p.h : ℂ) (p.β : ℂ)‖
+      = partitionFunction G p :=
+  norm_partitionFunctionComplex_at_real G p
+
+/-- `freeEnergyComplex` jointly continuous on its slitPlane locus
+(including the real slice). -/
+theorem continuous_freeEnergyComplex_on_locus
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    ContinuousOn
+      (fun z : ℂ × ℂ × ℂ => freeEnergyComplex G z.1 z.2.1 z.2.2)
+      {z : ℂ × ℂ × ℂ | partitionFunctionComplex G z.1 z.2.1 z.2.2
+                        ∈ Complex.slitPlane} :=
+  freeEnergyComplex_continuousOn_slitPlane_locus_joint G
+
+/-- At `(J, h, β)` all real, the joint `freeEnergyComplex` is
+continuous. -/
+theorem continuousAt_freeEnergyComplex_at_real_joint
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (p : IsingParams ℝ) :
+    ContinuousAt
+      (fun z : ℂ × ℂ × ℂ => freeEnergyComplex G z.1 z.2.1 z.2.2)
+      ((p.J : ℂ), (p.h : ℂ), (p.β : ℂ)) :=
+  (real_params_analyticAt_joint G p).continuousAt
+
+/-- `differentiableAt` joint form at real parameters. -/
+theorem differentiableAt_freeEnergyComplex_at_real_joint
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (p : IsingParams ℝ) :
+    DifferentiableAt ℂ
+      (fun z : ℂ × ℂ × ℂ => freeEnergyComplex G z.1 z.2.1 z.2.2)
+      ((p.J : ℂ), (p.h : ℂ), (p.β : ℂ)) :=
+  (real_params_analyticAt_joint G p).differentiableAt
+
+/-- `partitionFunctionComplex` is entire in each parameter: alias
+re-packaged for convenience. -/
+theorem partitionFunctionComplex_entire_h
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J β : ℂ) :
+    Differentiable ℂ (fun h => partitionFunctionComplex G J h β) := fun h =>
+  (partitionFunctionComplex_analyticAt_h G J β h).differentiableAt
+
+/-- `partitionFunctionComplex` is entire in `J`. -/
+theorem partitionFunctionComplex_entire_J
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (h β : ℂ) :
+    Differentiable ℂ (fun J => partitionFunctionComplex G J h β) := fun J =>
+  (partitionFunctionComplex_analyticAt_J G h β J).differentiableAt
+
+/-- `partitionFunctionComplex` is entire in `β`. -/
+theorem partitionFunctionComplex_entire_beta
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J h : ℂ) :
+    Differentiable ℂ (fun β => partitionFunctionComplex G J h β) := fun β =>
+  (partitionFunctionComplex_analyticAt_beta G J h β).differentiableAt
+
+/-- `partitionFunctionComplex` is jointly Differentiable on ℂ³. -/
+theorem partitionFunctionComplex_entire_joint
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    Differentiable ℂ
+      (fun z : ℂ × ℂ × ℂ => partitionFunctionComplex G z.1 z.2.1 z.2.2) :=
+    fun z => (partitionFunctionComplex_analyticAt_joint G z).differentiableAt
+
+/-- `partitionFunctionComplex` is `AnalyticOnNhd` on all of ℂ³. -/
+theorem partitionFunctionComplex_analyticOnNhd_univ_joint'
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    AnalyticOnNhd ℂ
+      (fun z : ℂ × ℂ × ℂ => partitionFunctionComplex G z.1 z.2.1 z.2.2)
+      Set.univ := fun z _ =>
+  partitionFunctionComplex_analyticAt_joint G z
+
+
+
+
+
+/-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
+an analytic family of local log-branches of `Z` covering all of
+`leeYangDomain`. For each point `h₀`, the local branch `f` from
+`exists_freeEnergyComplex_analyticAt_branch_of_leeYangDomain` is
+analytic at `h₀` and satisfies `exp(|ι|·f) = Z` near `h₀`. -/
+theorem analyticBranch_freeEnergyComplex_leeYangDomain
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J) [Nonempty ι] :
+    ∀ h₀ ∈ leeYangDomain,
+      ∃ f : ℂ → ℂ,
+          AnalyticAt ℂ f h₀
+        ∧ Complex.exp ((Fintype.card ι : ℂ) * f h₀)
+            = partitionFunctionComplex G (J : ℂ) h₀ (β : ℂ)
+        ∧ f h₀ = freeEnergyComplex G (J : ℂ) h₀ (β : ℂ) := fun _ hmem =>
+  exists_freeEnergyComplex_analyticAt_branch_of_leeYangDomain G hβ hJ hmem
 
 end IsingModel
