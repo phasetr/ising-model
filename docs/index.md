@@ -413,7 +413,7 @@ inventory (2026-04-17).
 | §4.3 | Cor 4.3.5 (inductive n-point at h=0) | **Done (finite + infinite)** | Finite: `cor_4_3_5_h0` (axioms); Infinite: `correlationInfinite_cor_4_3_5_h0` |
 | §4.4 | FKG inequality (spinProduct case) | **Done (finite + infinite)** | Finite: `fkg_ising`; ∞-vol spinProduct: `correlationInfinite_fkg_spinProduct` (≡ GKS-II). General monotone fn at ∞-vol: out of scope |
 | §4.5 | Lee–Yang circle theorem | **Done** | `lee_yang_circle` |
-| §4.6 | **Prop 4.6.1 (`f_Λ` convergence)** | **Done (under disjoint-tower hypotheses)** | Fekete convergence `freeEnergyAlongExhaustion_tendsto_of_superadditive`: under bundled hypotheses `(Λ.volume (m+n)).card = (Λ.volume m).card + (Λ.volume n).card`, super-additivity of `log Z` along the exhaustion, upper bound `BddAbove (range freeEnergyAlongExhaustion)`, and `(Λ.volume 1).card ≠ 0`, the sequence converges to `freeEnergyInfinite`. Proof: apply mathlib `Subadditive.tendsto_lim` to `u_n := -log Z_{Λ_n}`, translate via `card_n = n · card_1` to `freeEnergyAlongExhaustion`. The super-additivity input is provided by `log_partitionFunctionΛ_disjUnion_super_additive`; the upper-bound hypothesis can be discharged via `freeEnergyInfinite_le_uniform_upper_bound` or ambient bounded edge density. Supporting: `freeEnergy_convergent_subgraph`, `freeEnergyInfinite_eq_of_tendsto`. |
+| §4.6 | **Prop 4.6.1 (`f_Λ` convergence)** | **Done (disjoint-tower + `BoundedEdgeDensity`)** | Base form: `freeEnergyAlongExhaustion_tendsto_of_superadditive` (4 bundled hypotheses — `hcard_add`, `hsuper`, `hbdd`, `hcard_one`). Relaxed form: `freeEnergyAlongExhaustion_tendsto_of_disjoint_tower` (3 hypotheses: `hcard_add`, `hsuper`, `hcard_one` + the structural `BoundedEdgeDensity G Λ`). The explicit `hbdd` is discharged automatically via `BddAbove_freeEnergyAlongExhaustion_range`. Proof: apply mathlib `Subadditive.tendsto_lim` to `u_n := -log Z_{Λ_n}`, translate via `card_n = n · card_1` to `freeEnergyAlongExhaustion`. The super-additivity input is provided by `log_partitionFunctionΛ_disjUnion_super_additive`. Supporting: `freeEnergy_convergent_subgraph`, `freeEnergyInfinite_eq_of_tendsto`. |
 | §4.6 | **Thm 4.6.2 (analyticity)** | **Partial (merged through PR #200, `52ea2f1`): finite-real + real-basepoint finite-complex + Friedli-Velenik factorisation + Z ≠ 0 on Lee-Yang domain + local analytic log-Z branch pointwise on Lee-Yang + Lee-Yang subdomain slitPlane + Vitali bridge + modulus bounds. ∞-vol locally uniform convergence TODO (no Montel in mathlib)** | Finite-real free energy analyticity: `freeEnergyH_analyticOn` etc. Finite-complex support: `partitionFunctionComplex_analyticAt_{h,J,beta}` (Z entire in each parameter) + `freeEnergyComplex_analyticAt_{h,J,beta}` under `Z ∈ Complex.slitPlane` (log via mathlib `AnalyticAt.clog`). Joint analyticity: `partitionFunctionComplex_analyticAt_joint` / `freeEnergyComplex_analyticAt_joint` (3-variable `(J,h,β) ∈ ℂ³`, slitPlane hypothesis for `f`). Real-complex compat: `partitionFunction_ofReal_eq_partitionFunctionComplex` + `freeEnergy_ofReal_eq_freeEnergyComplex`. Real-slice slitPlane: `partitionFunctionComplex_mem_slitPlane_of_real`; real-slice corollary `freeEnergyComplex_analyticAt_h_ofReal` (analyticity of `freeEnergyComplex` at any real basepoint `(h₀:ℂ)`, via slitPlane membership; no Lee-Yang or ferromagnetic hypothesis). Lee-Yang domain infrastructure: `leeYangDomain` (open, `⊆ slitPlane`, contains positive real axis), `leeYangFugacity(Vec)` (entire, maps domain into unit ball), `leeYangNormalization` (entire, non-vanishing, `ofReal_pos`). **Friedli-Velenik factorisation**: `partitionFunctionComplex_eq_normalization_mul_isingEdgePoly` — `Z(J, h, β) = exp(βJ|E| + βh|ι|) · P_E(z)` (FV (3.63)–(3.65) pp. 122–123). **Z ≠ 0 on Lee-Yang domain** (Thm 4.6.2 non-vanishing half): `partitionFunctionComplex_ne_zero_on_leeYangDomain`. (All in `ComplexAnalyticity.lean`.) **Not yet**: slitPlane-membership on the full complex Lee-Yang domain (needs branch-selection / winding-number argument from real-positive basepoint), infinite-volume Vitali lift. |
 | §4.6 | Lee–Yang nonvanishing (Ising) | **Done** | `isingEdgePoly_nonvanishing_of_graph` |
 | §4.7 | Two-component spins | Out of scope | XY model |
@@ -494,12 +494,16 @@ formalized**, per the full inventory above:
    that `correlationAlongExhaustion` is Cauchy / tends to a limit) is
    not yet proved in this setting.
 2. **Prop 4.6.1 (free energy convergence) Fekete completion**:
-   the disjoint-union super-additivity of `log Z_Λ`, the uniform
-   upper bound on `freeEnergyΛ`, and the lower bound
-   `Z_G ≥ 1` (ferromagnetic) are all formalized
-   (`SumModel.lean`, `AmbientLatticeSum.lean`, `FreeEnergy.lean`,
-   and the PRs #134–#143), but the Fekete-style convergence of
-   `freeEnergyAlongExhaustion` remains.
+   Fekete-style convergence of `freeEnergyAlongExhaustion` is now
+   available in two forms:
+   `freeEnergyAlongExhaustion_tendsto_of_superadditive` (base, 4
+   bundled hypotheses) and
+   `freeEnergyAlongExhaustion_tendsto_of_disjoint_tower` (relaxed,
+   `BoundedEdgeDensity` replaces the explicit `BddAbove`
+   hypothesis), both in `AmbientLatticeSum.lean`. Dropping the
+   remaining disjoint-tower hypotheses (`hcard_add`, `hsuper`,
+   `hcard_one`) requires translation invariance and is a
+   follow-up step.
 3. **Thm 4.6.2 (full form)**: complex analyticity of the
    infinite-volume free energy via Vitali convergence.
 3. **Prop 5.4.2 infinite-volume version**: `0 ≤ 1 − ⟨σᵢ⟩₊∞ ≤ exp(-cβ)`
