@@ -78,6 +78,27 @@ theorem sum_config_spinProduct_empty :
     ∑ σ : Config ι, spinProduct ∅ σ = (Fintype.card (Config ι) : ℝ) := by
   simp [spinProduct_empty]
 
+/-- **β=0 correlation vanishes for nonempty A**:
+`correlation G ⟨J, h, 0⟩ A = 0` for any `A.Nonempty`.
+
+At β=0, every Boltzmann weight collapses to `exp(0) = 1`, so the
+correlation numerator reduces to `∑_σ spinProduct A σ`, which
+vanishes for nonempty `A` by `sum_config_spinProduct_eq_zero`.
+GJ §4.1 infinite-temperature slice of the correlation function. -/
+theorem correlation_beta_zero_vanish_of_nonempty_A
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h : ℝ) (A : Finset ι) (hA : A.Nonempty) :
+    correlation G (⟨J, h, 0⟩ : IsingParams ℝ) A = 0 := by
+  unfold correlation gibbsExpectation
+  have hweight : ∀ σ : Config ι,
+      spinProduct A σ * boltzmannWeight G (⟨J, h, 0⟩ : IsingParams ℝ) σ
+        = spinProduct A σ := by
+    intro σ
+    unfold boltzmannWeight
+    simp
+  rw [Finset.sum_congr rfl (fun σ _ => hweight σ),
+      sum_config_spinProduct_eq_zero A hA, mul_zero]
+
 /-! ## Spin product multiplication (Fourier structure) -/
 
 set_option linter.unusedFintypeInType false in
