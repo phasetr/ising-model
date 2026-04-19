@@ -1829,6 +1829,24 @@ $J > 0$, $\beta > 0$ や Lee-Yang 領域の仮定は不要.
 Lean 定理名: \texttt{freeEnergyComplex\_analyticAt\_h\_ofReal}.
 \end{theorem}
 
+\begin{theorem}[Subdomain of Lee-Yang で \texttt{freeEnergyComplex} analytic; PR \#200]
+実 $\beta > 0$, 実 $J$, 複素 $h$ で
+$\beta \cdot |\mathrm{Im}\,h| \cdot |\iota| < \pi / 2$ (Lee-Yang 下位領域) のとき,
+\[
+  \mathrm{Re}\,(\texttt{partitionFunctionComplex}\,G\,(J:\mathbb C)\,h\,(\beta:\mathbb C)) > 0,
+\]
+従って slitPlane 属, 従って $\texttt{freeEnergyComplex}$ は
+$h$ について解析的.
+証明: 各 $\sigma$ で $\exp(-\beta H(\sigma))$ の real part $= \exp(a) \cos(b)$
+($a$ は実部, $b = \beta \cdot \mathrm{Im}\,h \cdot \sum_i \sigma_i$,
+$|b| \le \beta |\mathrm{Im}\,h| |\iota| < \pi/2$), $\cos > 0$ なので正.
+$\sigma$ 和で real part 正. Lean 定理名:
+\texttt{freeEnergyComplex\_analyticAt\_h\_of\_leeYangSubdomain}.
+
+注: 下位領域は $\beta |\iota|$ 増加で縮むため, $\infty$-vol では直接使えない.
+full Lee-Yang への拡張は branch 選択が必要で本 PR の TODO.
+\end{theorem}
+
 \begin{theorem}[\texttt{freeEnergyInfinite\_of\_eventually\_const}; PR \#171]
 $\forall^\infty n, f_n = c$ のとき
 $\texttt{freeEnergyInfinite}\,G\,\Lambda\,p = c$.
