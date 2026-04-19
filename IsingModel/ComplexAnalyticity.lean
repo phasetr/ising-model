@@ -2218,6 +2218,24 @@ theorem leeYangNormalization_zero_params (β : ℂ) (edgeCount siteCount : ℕ) 
   unfold leeYangNormalization
   simp
 
+/-- `leeYangNormalization 0 J h |E| |ι| = exp(0) = 1` (at β = 0). -/
+theorem leeYangNormalization_beta_zero (J h : ℂ) (edgeCount siteCount : ℕ) :
+    leeYangNormalization 0 J h edgeCount siteCount = 1 := by
+  unfold leeYangNormalization
+  simp
+
+/-- `‖leeYangNormalization (β:ℝ) J h |E| |ι|‖ = exp(β·Re(J·|E| + h·|ι|))`
+at real `β`. -/
+theorem norm_leeYangNormalization_real_beta
+    (β : ℝ) (J h : ℂ) (edgeCount siteCount : ℕ) :
+    ‖leeYangNormalization (β : ℂ) J h edgeCount siteCount‖
+      = Real.exp (β * (J * (edgeCount : ℂ) + h * (siteCount : ℂ))).re := by
+  unfold leeYangNormalization
+  rw [Complex.norm_exp]
+  congr 1
+  push_cast
+  ring_nf
+
 
 
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
