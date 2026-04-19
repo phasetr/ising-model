@@ -307,6 +307,25 @@ theorem partitionFunction_J_zero (G : SimpleGraph ι) [Fintype G.edgeSet]
       = (2 * Real.cosh (β * h)) ^ Fintype.card ι :=
   (partitionFunction_eq_bot_at_J_zero G h β).trans (partitionFunction_bot _)
 
+/-- **Correlation at `J = 0` is graph-independent**:
+`⟨σ^A⟩_{G, ⟨0,h,β⟩} = ⟨σ^A⟩_{⊥, ⟨0,h,β⟩}` for any ambient graph `G`.
+
+Extends the `_eq_bot_at_J_zero` identity chain
+(`hamiltonian_eq_bot_at_J_zero`, `partitionFunction_eq_bot_at_J_zero`,
+`freeEnergy_eq_bot_at_J_zero`) to the correlation layer. Both the
+Boltzmann weight in the numerator and the partition function in the
+denominator are graph-independent at `J = 0`, so the ratio is. -/
+theorem correlation_eq_bot_at_J_zero (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (h β : ℝ) (A : Finset ι) :
+    correlation G (⟨0, h, β⟩ : IsingParams ℝ) A
+      = correlation (⊥ : SimpleGraph ι) (⟨0, h, β⟩ : IsingParams ℝ) A := by
+  unfold correlation gibbsExpectation boltzmannWeight
+  rw [partitionFunction_eq_bot_at_J_zero]
+  congr 1
+  refine Finset.sum_congr rfl ?_
+  intro σ _
+  rw [hamiltonian_eq_bot_at_J_zero]
+
 /-! ## h-symmetry: `Z(-h) = Z(h)` via spin flip
 
 From `hamiltonian_neg_h` (`H(σ; -h) = H(σ.flip; h)`) and the fact that
