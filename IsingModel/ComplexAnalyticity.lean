@@ -537,6 +537,51 @@ theorem prod_exp_beta_h_sign_eq
     Finset.card_univ, ← Complex.exp_nat_mul, Finset.prod_const]
   ring_nf
 
+omit [Fintype ι] [DecidableEq ι] in
+/-- `edgeSpinComplex` evaluated at the canonical representative
+`s((Quot.out e).1, (Quot.out e).2) = e`. -/
+theorem edgeSpinComplex_eq_quotOut (σ : Config ι) (e : Sym2 ι) :
+    edgeSpinComplex σ e
+      = Spin.sign ℂ (σ (Quot.out e).1) * Spin.sign ℂ (σ (Quot.out e).2) := by
+  conv_lhs => rw [show e = s((Quot.out e).1, (Quot.out e).2) from by
+    conv_lhs => rw [← Quot.out_eq e]]
+  rfl
+
+/-- Product over edges of the interaction exponential factorises as
+`exp(β·J·|E|) · ∏_e edgeWeight (Quot.out e).1 (Quot.out e).2 t X`
+where `X = configToFinset σ` and `t = exp(-2βJ)`. -/
+theorem prod_exp_beta_J_edgeSpin_eq
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (β J : ℝ) (σ : Config ι) :
+    ∏ e ∈ G.edgeFinset,
+        Complex.exp ((β : ℂ) * (J : ℂ) * edgeSpinComplex σ e)
+      = Complex.exp ((β : ℂ) * (J : ℂ) * (G.edgeFinset.card : ℂ))
+          * ∏ e ∈ G.edgeFinset, edgeWeight (Quot.out e).1 (Quot.out e).2
+              (Real.exp (-2 * β * J)) (configToFinset σ) := by
+  rw [show (∏ e ∈ G.edgeFinset,
+            Complex.exp ((β : ℂ) * (J : ℂ) * edgeSpinComplex σ e))
+          = ∏ e ∈ G.edgeFinset, (Complex.exp ((β : ℂ) * (J : ℂ))
+              * edgeWeight (Quot.out e).1 (Quot.out e).2
+                  (Real.exp (-2 * β * J)) (configToFinset σ))
+          from Finset.prod_congr rfl fun e _ => by
+        rw [edgeSpinComplex_eq_quotOut σ e,
+          exp_beta_J_sign_mul_sign_eq β J σ (Quot.out e).1 (Quot.out e).2]]
+  rw [Finset.prod_mul_distrib, Finset.prod_const,
+    ← Complex.exp_nat_mul]
+  ring_nf
+
+/-- The Lee-Yang polynomial value at the down-spin set of `σ` equals the
+product over edges `e ∈ G.edgeFinset` of `edgeWeight` at the canonical
+representative of `e`. -/
+theorem isingEdgePoly_apply_configToFinset
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (t : ℝ) (σ : Config ι) :
+    isingEdgePoly (graphToEdgeList G t) (configToFinset σ)
+      = ∏ e ∈ G.edgeFinset, edgeWeight (Quot.out e).1 (Quot.out e).2 t
+          (configToFinset σ) := by
+  unfold isingEdgePoly graphToEdgeList
+  rw [List.map_map]
+  exact Finset.prod_map_toList G.edgeFinset _
+
 /-! ### Friedli–Velenik factorisation of the partition function
 
 The Friedli–Velenik identity (Friedli–Velenik, *Statistical Mechanics of
