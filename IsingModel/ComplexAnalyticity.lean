@@ -1553,6 +1553,15 @@ theorem continuous_partitionFunctionComplex_beta
   continuous_iff_continuousAt.mpr fun β =>
     (partitionFunctionComplex_analyticAt_beta G J h β).continuousAt
 
+/-- Continuous form of `partitionFunctionComplex` jointly in
+`(J, h, β) : ℂ × ℂ × ℂ`. -/
+theorem continuous_partitionFunctionComplex_joint
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    Continuous (fun z : ℂ × ℂ × ℂ =>
+      partitionFunctionComplex G z.1 z.2.1 z.2.2) :=
+  continuous_iff_continuousAt.mpr fun z =>
+    (partitionFunctionComplex_analyticAt_joint G z).continuousAt
+
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
 `leeYangDomain`. For each point `h₀`, the local branch `f` from
