@@ -1926,6 +1926,42 @@ theorem correlationInfinite_beta_zero_vanish
   simp only [correlationInfinite,
     correlationAlongExhaustion_beta_zero_vanish G Λ J h A hA, ciSup_const]
 
+/-- **J=h=0 correlation vanishes on `Λ`**: at zero parameters every
+nonempty `A : Finset (↑Λ)` gives `correlationΛ = 0`. Lift of PR #188
+`correlation_zero_params_vanish_of_nonempty_A`. -/
+theorem correlationΛ_zero_params_vanish_of_nonempty
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (β : ℝ) (A : Finset (↑Λ : Type _)) (hA : A.Nonempty) :
+    correlationΛ G Λ (⟨0, 0, β⟩ : IsingParams ℝ) A = 0 :=
+  IsingModel.correlation_zero_params_vanish_of_nonempty_A
+    (inducedGraph G Λ) β A hA
+
+/-- **J=h=0 correlation vanishes along exhaustion**: pointwise zero
+at every `n` for nonempty `A`. `dite` branches reduce to either 0
+(off branch) or the Λ lift with nonempty `liftFinset`. -/
+theorem correlationAlongExhaustion_zero_params_vanish
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (β : ℝ) (A : Finset V) (hA : A.Nonempty) (n : ℕ) :
+    correlationAlongExhaustion G Λ (⟨0, 0, β⟩ : IsingParams ℝ) A n = 0 := by
+  by_cases hAn : A ⊆ Λ.volume n
+  · rw [correlationAlongExhaustion_of_subset G Λ (⟨0, 0, β⟩ : IsingParams ℝ) hAn]
+    refine correlationΛ_zero_params_vanish_of_nonempty G (Λ.volume n) β _ ?_
+    obtain ⟨a, haA⟩ := hA
+    exact ⟨⟨a, hAn haA⟩, by simp [liftFinset, haA]⟩
+  · exact correlationAlongExhaustion_of_not_subset G Λ (⟨0, 0, β⟩ : IsingParams ℝ) hAn
+
+/-- **J=h=0 correlation vanishes at infinite volume**: `ciSup` of
+the constantly-zero sequence. -/
+theorem correlationInfinite_zero_params_vanish
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (β : ℝ) (A : Finset V) (hA : A.Nonempty) :
+    correlationInfinite G Λ (⟨0, 0, β⟩ : IsingParams ℝ) A = 0 := by
+  simp only [correlationInfinite,
+    correlationAlongExhaustion_zero_params_vanish G Λ β A hA, ciSup_const]
+
 /-- **β=0 infinite-volume magnetization vanishes**: at infinite
 temperature (`β = 0`), spins are uniformly distributed and decoupled,
 so the thermodynamic magnetization is `0` at every site.
