@@ -2486,6 +2486,13 @@ theorem isOpen_slitPlane_locus_h_beta
     exact hp.comp ((continuous_const (y := J)).prodMk continuous_id).continuousAt
   exact hcont.isOpen_preimage _ Complex.isOpen_slitPlane
 
+/-- The analyticity locus contains every `(h₀ : ℂ)` at real `h₀` (cast). -/
+theorem real_coe_mem_slitPlane_locus_h
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J β : ℝ) (h₀ : ℝ) :
+    (h₀ : ℂ) ∈
+      {h : ℂ | partitionFunctionComplex G (J : ℂ) h (β : ℂ) ∈ Complex.slitPlane} :=
+  partitionFunctionComplex_mem_slitPlane_of_real G ⟨J, h₀, β⟩
+
 
 
 
