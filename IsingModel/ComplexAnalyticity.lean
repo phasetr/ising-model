@@ -225,4 +225,27 @@ theorem freeEnergy_ofReal_eq_freeEnergyComplex
     Complex.ofReal_log hZpos,
     partitionFunction_ofReal_eq_partitionFunctionComplex G p]
 
+/-! ## Lee-Yang domain (GJ §4.6 Thm 4.6.2, PR #199)
+
+The Lee-Yang domain for the external field is `{h ∈ ℂ | |Im h| < Re h}`.
+GJ §4.6 Thm 4.6.2 states that the free energy is analytic on this domain.
+The proof uses Lee-Yang nonvanishing of the Ising polynomial (existing
+`lee_yang_circle`) plus a branch-selection argument.
+
+Session-spanning infrastructure (PR #199 work file 0164):
+defining the domain here; the nonvanishing and analyticity results are
+added in subsequent sessions on the same branch. -/
+
+/-- The Lee-Yang domain: complex external fields with `|Im h| < Re h`. -/
+def leeYangDomain : Set ℂ := {h : ℂ | |h.im| < h.re}
+
+/-- The Lee-Yang domain is a subset of `Complex.slitPlane` (the right
+half-plane `Re h > |Im h|` is contained in `Re h > 0 ∨ Im h ≠ 0`). -/
+theorem leeYangDomain_subset_slitPlane : leeYangDomain ⊆ Complex.slitPlane := by
+  intro h hmem
+  refine Or.inl ?_
+  have hlt : |h.im| < h.re := hmem
+  have hnn : (0 : ℝ) ≤ |h.im| := abs_nonneg _
+  linarith
+
 end IsingModel
