@@ -3959,6 +3959,48 @@ convergence of $f_\Lambda = (\log Z_\Lambda)/|\Lambda|$ along
 arbitrary exhaustions of the ambient lattice; this is the
 Prop 4.6.1 body in the next PR.
 
+\begin{theorem}[GJ \S 4.6 Prop 4.6.1, disjoint-tower \(+\)
+\texttt{BoundedEdgeDensity} form; PR \#203]
+For a graph $G : \mathrm{SimpleGraph}\, V$ with an exhaustion
+$\Lambda : \mathrm{Exhaustion}\, V$, Ising parameters $p$ with
+bounded edge density along $\Lambda$, and the disjoint-tower
+hypotheses
+\[
+  |\Lambda_{m+n}| = |\Lambda_m| + |\Lambda_n|, \quad
+  \log Z_{\Lambda_m} + \log Z_{\Lambda_n}
+    \le \log Z_{\Lambda_{m+n}}, \quad
+  |\Lambda_1| \neq 0,
+\]
+the exhaustion free-energy density $f_{\Lambda_n}
+= (\log Z_{\Lambda_n})/|\Lambda_n|$ converges to the
+infinite-volume free energy $f_\infty$:
+\[
+  \lim_{n\to\infty} f_{\Lambda_n}(p) = f_\infty(p).
+\]
+\end{theorem}
+
+\begin{proof}
+This is a strict relaxation of the base theorem
+\texttt{freeEnergyAlongExhaustion\_tendsto\_of\_superadditive}
+(which requires in addition the explicit hypothesis
+$\mathrm{BddAbove}\,(\mathrm{range}\,(f_\Lambda))$).
+The \texttt{BoundedEdgeDensity} hypothesis yields that
+$\mathrm{BddAbove}$ bound via
+\texttt{BddAbove\_freeEnergyAlongExhaustion\_range}: if every
+$\Lambda_n$ has at most $c\,|\Lambda_n|$ edges, then each
+$f_{\Lambda_n}$ is bounded by
+$\log 2 + |\beta|(|J|c + |h|)$ (for nonempty stages, combined with
+$0$ on empty stages via the $\max$ with $0$).
+The remaining proof steps are as in the base theorem: apply
+mathlib's \texttt{Subadditive.tendsto\_lim} to
+$u_n := -\log Z_{\Lambda_n}$, translate via $|\Lambda_n| =
+n\cdot|\Lambda_1|$ (from \texttt{hcard\_add}) to obtain
+$f_{\Lambda_n} = -u_n/(n\,|\Lambda_1|)$, and identify the limit
+with $f_\infty = \limsup f_{\Lambda_n}$ via
+\texttt{freeEnergyInfinite\_eq\_of\_tendsto}. Reference:
+Glimm--Jaffe \cite{glimm-jaffe} \S 4.6 Prop 4.6.1, p.~64.
+\end{proof}
+
 \begin{theorem}[Corollary/wrapper of GJ \S 5.4 Prop 5.4.2 along an
 exhaustion (per-stage); PR \#202]
 For a graph $G : \mathrm{SimpleGraph}\, V$ with an exhaustion
