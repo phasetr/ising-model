@@ -770,24 +770,23 @@ theorem freeEnergyAlongExhaustion_tendsto_of_superadditive
 
 /-- **GJ §4.6 Prop 4.6.1, disjoint-tower + `BoundedEdgeDensity` form**:
 under a super-additivity hypothesis on `log Z` along a disjoint-tower
-exhaustion (`hcard_add`, `hsuper`, `hcard_one`), bounded edge density
-(replacing the explicit `BddAbove` hypothesis), and ferromagnetic
-parameters, `freeEnergyAlongExhaustion G Λ p` converges to
-`freeEnergyInfinite G Λ p`.
+exhaustion (`hcard_add`, `hsuper`, `hcard_one`) and bounded edge
+density along the exhaustion, `freeEnergyAlongExhaustion G Λ p`
+converges to `freeEnergyInfinite G Λ p`.
 
 This is a strict relaxation of
 `freeEnergyAlongExhaustion_tendsto_of_superadditive`: the explicit
 `hbdd : BddAbove (Set.range (freeEnergyAlongExhaustion G Λ p))`
 hypothesis is discharged automatically via
 `BddAbove_freeEnergyAlongExhaustion_range` under
-`BoundedEdgeDensity`.  No other hypothesis is added (the ferromagnetic
-hypothesis is already implicit in many uses of Fekete convergence on
-Ising systems, and `BoundedEdgeDensity` is the natural structural
-condition on the ambient lattice; the result does not depend on
-`Ferromagnetic p` other than through `BddAbove`).
+`BoundedEdgeDensity`.  No other hypothesis is added; in particular
+neither this theorem nor `BddAbove_freeEnergyAlongExhaustion_range`
+needs `Ferromagnetic p`.
 
 Reference: Glimm–Jaffe, *Quantum Physics*, 2nd ed., Springer 1987,
-§4.6 Prop 4.6.1, p. 64. -/
+§4.6 Prop 4.6.1, p. 64. This is a formal weaker variant of the
+proposition as stated in GJ: the bundled hypotheses replace the
+translation-invariance framework that GJ uses implicitly. -/
 theorem freeEnergyAlongExhaustion_tendsto_of_disjoint_tower
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
