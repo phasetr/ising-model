@@ -1913,6 +1913,23 @@ theorem exp_card_mul_freeEnergyComplex_at_real
   exact Complex.exp_log
     (by exact_mod_cast (partitionFunction_pos G p).ne')
 
+/-- **`partitionFunctionComplex` is continuous in `h`** restated at
+real parameters (h₀ real, approached from complex side). -/
+theorem partitionFunctionComplex_continuousAt_real_h
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (h₀ : ℝ) :
+    ContinuousAt (fun h : ℂ => partitionFunctionComplex G (J : ℂ) h (β : ℂ))
+      (h₀ : ℂ) :=
+  (continuous_partitionFunctionComplex_h G (J : ℂ) (β : ℂ)).continuousAt
+
+/-- `freeEnergyComplex` continuous at real positive `h₀`. -/
+theorem freeEnergyComplex_continuousAt_real_pos_h
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (h₀ : ℝ) :
+    ContinuousAt (fun h : ℂ => freeEnergyComplex G (J : ℂ) h (β : ℂ))
+      (h₀ : ℂ) :=
+  (freeEnergyComplex_analyticAt_h_ofReal G J h₀ β).continuousAt
+
 
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
