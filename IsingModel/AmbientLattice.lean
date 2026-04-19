@@ -2053,6 +2053,29 @@ theorem magnetizationInfinite_beta_zero
     magnetizationInfinite G Λ (⟨J, h, 0⟩ : IsingParams ℝ) i = 0 :=
   correlationInfinite_beta_zero_vanish G Λ J h {i} (by simp)
 
+/-- **`magnetizationInfinite` closed form at `J = 0`** (ferromagnetic):
+`magnetizationInfinite G Λ ⟨0, h, β⟩ i = tanh(β·h)`.
+
+Specialization of `correlationInfinite_J_zero`
+(`⟨σ^A⟩_∞ = tanh(β·h)^|A|`, PR #210) at the singleton `{i}`
+(`A.card = 1`, so the power reduces to `tanh(β·h)`).
+
+Complements `magnetizationInfinite_beta_zero` (β=0: vanishes) and
+`magnetizationInfinite_zero_at_h_zero` (h=0: vanishes).
+
+Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §4.1
+(infinite-temperature slice); §5.1 pp. 76–77 (magnetization). -/
+theorem magnetizationInfinite_J_zero
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (h β : ℝ)
+    (hf : Ferromagnetic (⟨(0 : ℝ), h, β⟩ : IsingParams ℝ))
+    (i : V) :
+    magnetizationInfinite G Λ (⟨0, h, β⟩ : IsingParams ℝ) i
+      = Real.tanh (β * h) := by
+  unfold magnetizationInfinite
+  rw [correlationInfinite_J_zero G Λ h β hf, Finset.card_singleton, pow_one]
+
 /-- **`magnetizationInfinite` at `h = 0` vanishes**: the Z₂ spin-flip
 symmetry at zero external field forces the single-site thermodynamic
 magnetization to be zero.
