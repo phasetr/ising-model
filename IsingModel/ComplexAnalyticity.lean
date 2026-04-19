@@ -2039,6 +2039,16 @@ theorem leeYangSubdomain_eq_inter_preimage (β : ℝ) (N : ℕ) :
   ext h
   rfl
 
+/-- Explicit element of `leeYangSubdomain`: `(1 : ℂ)` works for any
+`β, N`. Convenient for downstream arguments needing a basepoint. -/
+theorem one_mem_leeYangSubdomain (β : ℝ) (N : ℕ) :
+    (1 : ℂ) ∈ leeYangSubdomain β N :=
+  real_pos_mem_leeYangSubdomain β N (by norm_num : (0 : ℝ) < 1)
+
+/-- `(1 : ℂ) ∈ leeYangDomain` as a convenience. -/
+theorem one_mem_leeYangDomain : (1 : ℂ) ∈ leeYangDomain :=
+  real_pos_mem_leeYangDomain (by norm_num : (0 : ℝ) < 1)
+
 
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
