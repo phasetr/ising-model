@@ -1034,10 +1034,13 @@ theorem exists_logZ_holomorphic_branch_on_ball
           Complex.exp (g z)
             = partitionFunctionComplex G (J : ℂ) z (β : ℂ))
       ∧ g h₀ = Complex.log
-          (partitionFunctionComplex G (J : ℂ) h₀ (β : ℂ)) := by
+          (partitionFunctionComplex G (J : ℂ) h₀ (β : ℂ))
+      ∧ ∀ z ∈ Metric.ball h₀ r, HasDerivAt g
+            (deriv (fun h'' => partitionFunctionComplex G (J : ℂ) h'' (β : ℂ)) z
+              / partitionFunctionComplex G (J : ℂ) z (β : ℂ)) z := by
   obtain ⟨g, hg_base, hg_deriv⟩ :=
     exists_normalised_logZ_branch_on_ball G hβ hJ (h₀ := h₀) (r := r) hsub
-  refine ⟨g, ?_, hg_base⟩
+  refine ⟨g, ?_, hg_base, hg_deriv⟩
   -- `F z = exp(g z) / Z(z)` has derivative zero on the ball.
   set F : ℂ → ℂ := fun z => Complex.exp (g z)
       / partitionFunctionComplex G (J : ℂ) z (β : ℂ) with hF_def
@@ -1115,5 +1118,27 @@ theorem exists_logZ_holomorphic_branch_on_ball
         / partitionFunctionComplex G (J : ℂ) z (β : ℂ) = 1 := hconst
   field_simp at hquot
   exact hquot
+
+/-- The local log branch `g` (obtained from `Z'/Z` primitive via Morera)
+is itself analytic on the ball. Any function that is `DifferentiableOn`
+on an open set in `ℂ` is `AnalyticOnNhd` there (mathlib). -/
+theorem exists_logZ_analytic_branch_on_ball
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J)
+    {h₀ : ℂ} {r : ℝ} (hr : 0 < r)
+    (hsub : Metric.ball h₀ r ⊆ leeYangDomain) :
+    ∃ g : ℂ → ℂ,
+        (∀ z ∈ Metric.ball h₀ r,
+          Complex.exp (g z)
+            = partitionFunctionComplex G (J : ℂ) z (β : ℂ))
+      ∧ g h₀ = Complex.log
+          (partitionFunctionComplex G (J : ℂ) h₀ (β : ℂ))
+      ∧ AnalyticOnNhd ℂ g (Metric.ball h₀ r) := by
+  obtain ⟨g, hg_exp, hg_base, hg_deriv⟩ :=
+    exists_logZ_holomorphic_branch_on_ball G hβ hJ (h₀ := h₀) (r := r) hr hsub
+  refine ⟨g, hg_exp, hg_base, ?_⟩
+  have hdiffOn : DifferentiableOn ℂ g (Metric.ball h₀ r) := fun z hz =>
+    (hg_deriv z hz).differentiableAt.differentiableWithinAt
+  exact hdiffOn.analyticOnNhd Metric.isOpen_ball
 
 end IsingModel
