@@ -1659,6 +1659,13 @@ theorem isingEdgePoly_eval_leeYangFugacityVec_eq
   refine Finset.sum_congr rfl (fun X _ => ?_)
   rfl
 
+/-- `leeYangNormalization` jointly analytic in (β, J, h): wraps
+`leeYangNormalization_analyticAt_joint` as `AnalyticOnNhd`. -/
+theorem leeYangNormalization_analyticOnNhd_univ (edgeCount siteCount : ℕ) :
+    AnalyticOnNhd ℂ (fun z : ℂ × ℂ × ℂ =>
+        leeYangNormalization z.2.2 z.1 z.2.1 edgeCount siteCount) Set.univ :=
+  fun z _ => leeYangNormalization_analyticAt_joint edgeCount siteCount z
+
 
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
