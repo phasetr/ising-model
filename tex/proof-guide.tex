@@ -4007,8 +4007,10 @@ For any ambient graph $G$, any $h, \beta \in \mathbb{R}$, and
 pairwise distinct sites $i, j, k$,
 $\langle \sigma_i; \sigma_j; \sigma_k
 \rangle_{G,\langle 0,h,\beta\rangle} = 0$.
-For any $J, h \in \mathbb{R}$ and any sites $i, j, k$ (distinct or
-not),
+For any $J, h \in \mathbb{R}$ and any sites $i, j, k$ — distinctness
+is not required, since repeated indices collapse at the Finset
+level inside the Lean definition of \texttt{truncated3}, paralleling
+\texttt{truncated2\_beta\_zero} —
 $\langle \sigma_i; \sigma_j; \sigma_k
 \rangle_{G,\langle J,h,0\rangle} = 0$.
 \end{theorem}
