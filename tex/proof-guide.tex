@@ -4001,6 +4001,26 @@ with $f_\infty = \limsup f_{\Lambda_n}$ via
 Glimm--Jaffe \cite{glimm-jaffe} \S 4.6 Prop 4.6.1, p.~64.
 \end{proof}
 
+\begin{theorem}[GJ \S 4.6 Prop 4.6.1,
+\texttt{DisjointTowerHypotheses} bundle; PR \#204]
+The three structural hypotheses $|\Lambda_{m+n}| = |\Lambda_m|
++ |\Lambda_n|$, $\log Z_{\Lambda_m} + \log Z_{\Lambda_n} \le
+\log Z_{\Lambda_{m+n}}$, and $|\Lambda_1| \neq 0$ are packaged
+as a single \texttt{DisjointTowerHypotheses} record. Given
+\texttt{BoundedEdgeDensity}$\,G\,\Lambda$ and such a record,
+$f_{\Lambda_n}(p) \to f_\infty(p)$.
+\end{theorem}
+
+\begin{proof}
+Definitional unpack of the
+\texttt{DisjointTowerHypotheses} record into the three
+hypotheses of
+\texttt{freeEnergyAlongExhaustion\_tendsto\_of\_disjoint\_tower}.
+Reference: Glimm--Jaffe \cite{glimm-jaffe} \S 4.6 Prop 4.6.1,
+p.~64. This is an API-site convenience wrapper; no new
+mathematical content.
+\end{proof}
+
 \begin{theorem}[Corollary/wrapper of GJ \S 5.4 Prop 5.4.2 along an
 exhaustion (per-stage); PR \#202]
 For a graph $G : \mathrm{SimpleGraph}\, V$ with an exhaustion
