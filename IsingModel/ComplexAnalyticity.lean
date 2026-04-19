@@ -2336,6 +2336,18 @@ theorem ne_zero_of_mem_leeYangSubdomain (β : ℝ) (N : ℕ) {h : ℂ}
     (hh : h ∈ leeYangSubdomain β N) : h ≠ 0 :=
   ne_zero_of_mem_leeYangDomain hh.1
 
+/-- `Set.Ioi 0 ⊆ Set.image ofReal⁻¹ leeYangDomain`: the positive real
+axis is contained in the Lee-Yang domain's real preimage. -/
+theorem Ioi_subset_leeYangDomain_real_preimage :
+    Set.Ioi (0 : ℝ) ⊆ (fun x : ℝ => (x : ℂ)) ⁻¹' leeYangDomain := by
+  intro x hx
+  exact real_pos_mem_leeYangDomain hx
+
+/-- The complex unit `(1 : ℂ)` lies in every `leeYangSubdomain β N`. -/
+theorem one_mem_leeYangSubdomain' (β : ℝ) (N : ℕ) :
+    (1 : ℂ) ∈ leeYangSubdomain β N :=
+  one_mem_leeYangSubdomain β N
+
 
 
 
