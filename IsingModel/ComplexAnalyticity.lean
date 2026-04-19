@@ -2182,6 +2182,14 @@ theorem leeYangFugacity_logDeriv (β h : ℂ) :
   unfold leeYangFugacity
   field_simp
 
+/-- `leeYangNormalization` has entire analyticity in `h` (for any β, J). -/
+theorem leeYangNormalization_analyticAt_h
+    (β J : ℂ) (h₀ : ℂ) (edgeCount siteCount : ℕ) :
+    AnalyticAt ℂ (fun h => leeYangNormalization β J h edgeCount siteCount) h₀ := by
+  unfold leeYangNormalization
+  refine AnalyticAt.cexp' ?_
+  fun_prop
+
 
 
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
