@@ -1301,6 +1301,55 @@ theorem norm_partitionFunctionComplex_le_trivial_bound
   refine (norm_partitionFunctionComplex_le_partitionFunction G β J h).trans ?_
   exact partitionFunction_upper G ⟨J, h.re, β⟩
 
+/-- **Simple norm bound for `Complex.log`**: `‖log z‖ ≤ |log ‖z‖| + π`.
+Direct from `log_re = log |z|`, `|log_im| = |arg z| ≤ π`, and the
+triangle inequality on the real/imaginary parts. -/
+theorem norm_complex_log_le (z : ℂ) :
+    ‖Complex.log z‖ ≤ |Real.log ‖z‖| + Real.pi := by
+  have h_re : (Complex.log z).re = Real.log ‖z‖ := Complex.log_re z
+  have h_im_abs : |(Complex.log z).im| ≤ Real.pi := by
+    rw [Complex.log_im]
+    exact abs_le.mpr ⟨(Complex.neg_pi_lt_arg z).le, Complex.arg_le_pi z⟩
+  calc ‖Complex.log z‖
+      ≤ |(Complex.log z).re| + |(Complex.log z).im| :=
+        Complex.norm_le_abs_re_add_abs_im _
+    _ ≤ |Real.log ‖z‖| + Real.pi := by rw [h_re]; linarith [h_im_abs]
+
+/-- **Uniform upper bound on `‖freeEnergyComplex‖`** for `[Nonempty ι]`:
+`‖f(J, h, β)‖ ≤ log 2 + |β|·(|J|·|E|/|ι| + |Re h|) + π/|ι|`.
+Derived from `norm_partitionFunctionComplex_le_trivial_bound` and
+`norm_complex_log_le`. Together with `BoundedEdgeDensity` (edge/vertex
+ratio uniform), this gives a uniform-on-compacts bound needed for the
+∞-vol Vitali lift. -/
+theorem norm_freeEnergyComplex_le_trivial_bound
+    (G : SimpleGraph ι) [Fintype G.edgeSet] [Nonempty ι]
+    (β J : ℝ) (h : ℂ)
+    (hZ : partitionFunctionComplex G (J : ℂ) h (β : ℂ) ≠ 0) :
+    ‖freeEnergyComplex G (J : ℂ) h (β : ℂ)‖
+      ≤ |Real.log ‖partitionFunctionComplex G (J : ℂ) h (β : ℂ)‖|
+          / (Fintype.card ι : ℝ) + Real.pi / (Fintype.card ι : ℝ) := by
+  classical
+  unfold freeEnergyComplex
+  have hNℕ : 0 < Fintype.card ι := Fintype.card_pos
+  have hN : (Fintype.card ι : ℝ) ≠ 0 := by exact_mod_cast hNℕ.ne'
+  rw [norm_mul, norm_inv]
+  have h_log : ‖Complex.log (partitionFunctionComplex G (J : ℂ) h (β : ℂ))‖
+              ≤ |Real.log ‖partitionFunctionComplex G (J : ℂ) h (β : ℂ)‖|
+                  + Real.pi :=
+    norm_complex_log_le _
+  have hN_pos : (0 : ℝ) < Fintype.card ι := by exact_mod_cast hNℕ
+  have hNorm : ‖((Fintype.card ι : ℂ) : ℂ)‖ = (Fintype.card ι : ℝ) := by
+    simp [Complex.norm_natCast]
+  rw [hNorm]
+  have := mul_le_mul_of_nonneg_left h_log
+    (show (0 : ℝ) ≤ (Fintype.card ι : ℝ)⁻¹ from inv_nonneg.mpr hN_pos.le)
+  calc (Fintype.card ι : ℝ)⁻¹ *
+        ‖Complex.log (partitionFunctionComplex G (J : ℂ) h (β : ℂ))‖
+      ≤ (Fintype.card ι : ℝ)⁻¹ *
+          (|Real.log ‖partitionFunctionComplex G (J : ℂ) h (β : ℂ)‖|
+            + Real.pi) := this
+    _ = _ := by field_simp
+
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
 `leeYangDomain`. For each point `h₀`, the local branch `f` from
