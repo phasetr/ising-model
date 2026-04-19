@@ -2247,6 +2247,21 @@ theorem leeYangNormalization_ofReal_eq (β J h : ℝ) (edgeCount siteCount : ℕ
     push_cast; ring]
   rw [Complex.ofReal_exp]
 
+/-- `leeYangNormalization` at real params is always a positive real. -/
+theorem leeYangNormalization_real_pos (β J h : ℝ) (edgeCount siteCount : ℕ) :
+    ∃ x : ℝ, 0 < x ∧
+      leeYangNormalization (β : ℂ) (J : ℂ) (h : ℂ) edgeCount siteCount
+        = (x : ℂ) :=
+  ⟨Real.exp (β * J * edgeCount + β * h * siteCount), Real.exp_pos _,
+    leeYangNormalization_ofReal_eq β J h edgeCount siteCount⟩
+
+/-- `leeYangNormalization` norm at real parameters. -/
+theorem norm_leeYangNormalization_ofReal (β J h : ℝ) (edgeCount siteCount : ℕ) :
+    ‖leeYangNormalization (β : ℂ) (J : ℂ) (h : ℂ) edgeCount siteCount‖
+      = Real.exp (β * J * edgeCount + β * h * siteCount) := by
+  rw [leeYangNormalization_ofReal_eq, Complex.norm_real]
+  exact abs_of_pos (Real.exp_pos _)
+
 
 
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
