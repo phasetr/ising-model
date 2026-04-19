@@ -208,6 +208,22 @@ theorem mem_liftFinset {Λ : Finset V} {A : Finset V} (hA : A ⊆ Λ)
   · intro hx
     exact ⟨⟨x.val, hx⟩, Subtype.ext rfl⟩
 
+/-- **`liftFinset` preserves cardinality**: `(liftFinset A hA).card = A.card`.
+
+`liftFinset` is defined as `A.attach.image` of an explicit subtype
+coercion; the coercion is injective, so card is preserved. -/
+@[simp]
+theorem liftFinset_card {Λ : Finset V} {A : Finset V} (hA : A ⊆ Λ) :
+    (liftFinset A hA).card = A.card := by
+  have hinj : Function.Injective
+      (fun (x : { v // v ∈ A }) =>
+        (⟨x.val, hA x.property⟩ : (↑Λ : Type _))) := by
+    intro x y heq
+    apply Subtype.ext
+    exact Subtype.mk.inj heq
+  simp only [liftFinset, Finset.card_image_of_injective _ hinj,
+    Finset.card_attach]
+
 /-- `liftFinset` commutes with `symmDiff`: if `A, B ⊆ Λ` then
 `liftFinset A hA Δ liftFinset B hB = liftFinset (A Δ B) hAB`
 (where the subset `A Δ B ⊆ Λ` follows since `A Δ B ⊆ A ∪ B`).
@@ -1833,15 +1849,7 @@ theorem correlationAlongExhaustion_h_zero
   by_cases hAn : A ⊆ Λ.volume n
   · rw [correlationAlongExhaustion_of_subset G Λ ⟨J, 0, β⟩ hAn]
     refine correlationΛ_odd_vanish_h_zero G (Λ.volume n) J β _ ?_
-    -- liftFinset preserves cardinality (attach.image of an injection)
-    have hinj : Function.Injective
-        (fun (x : { v // v ∈ A }) => (⟨x.val, hAn x.property⟩ : (↑(Λ.volume n) : Type _))) := by
-      intro x y heq
-      apply Subtype.ext
-      exact Subtype.mk.inj heq
-    have hcard : (liftFinset A hAn).card = A.card := by
-      simp only [liftFinset, Finset.card_image_of_injective _ hinj, Finset.card_attach]
-    rw [hcard]
+    rw [liftFinset_card hAn]
     exact hodd
   · exact correlationAlongExhaustion_of_not_subset G Λ ⟨J, 0, β⟩ hAn
 
@@ -1854,24 +1862,6 @@ theorem correlationInfinite_h_zero
     correlationInfinite G Λ ⟨J, 0, β⟩ A = 0 := by
   simp only [correlationInfinite,
     correlationAlongExhaustion_h_zero G Λ J β A hodd, ciSup_const]
-
-/-- **`liftFinset` preserves cardinality**: `(liftFinset A hA).card = A.card`.
-
-`liftFinset` is defined as `A.attach.image` of an explicit subtype
-coercion; the coercion is injective, so card is preserved. Extracted
-as a reusable helper from the inline proof in
-`correlationAlongExhaustion_h_zero`. -/
-@[simp]
-theorem liftFinset_card {Λ : Finset V} {A : Finset V} (hA : A ⊆ Λ) :
-    (liftFinset A hA).card = A.card := by
-  have hinj : Function.Injective
-      (fun (x : { v // v ∈ A }) =>
-        (⟨x.val, hA x.property⟩ : (↑Λ : Type _))) := by
-    intro x y heq
-    apply Subtype.ext
-    exact Subtype.mk.inj heq
-  simp only [liftFinset, Finset.card_image_of_injective _ hinj,
-    Finset.card_attach]
 
 /-- **`correlationAlongExhaustion` at `J = 0` (on-stage closed form)**:
 whenever the test set `A` is contained in `Λ.volume n`,
