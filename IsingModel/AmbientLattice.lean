@@ -1910,7 +1910,8 @@ theorem correlationAlongExhaustion_J_zero_eventually_eq
   exact correlationAlongExhaustion_J_zero_of_subset G Λ h β (hN n hn)
 
 /-- **∞-volume correlation at `J = 0`** (ferromagnetic): for
-`⟨0, h, β⟩` ferromagnetic (i.e. `h ≥ 0`, `β ≥ 0`),
+`⟨0, h, β⟩` ferromagnetic (i.e. `h ≥ 0`, `0 < β`; the strict-`β`
+condition comes from `Ferromagnetic.hβ`),
 `correlationInfinite G Λ ⟨0, h, β⟩ A = tanh(β·h)^A.card`.
 
 Proof: `correlationAlongExhaustion` at `J = 0` is eventually
