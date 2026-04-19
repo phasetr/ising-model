@@ -1968,6 +1968,21 @@ theorem continuous_logZ_branch_on_ball
     exists_logZ_analyticOnNhd_ball G hβ hJ hr hsub
   exact ⟨g, hg_ana.continuousOn, hg_exp⟩
 
+/-- **DifferentiableOn form** of the local logZ branch: the branch
+`g` from `exists_logZ_analytic_branch_on_ball` is differentiable on
+the ball. -/
+theorem exists_logZ_differentiableOn_ball
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J)
+    {h₀ : ℂ} {r : ℝ} (hr : 0 < r)
+    (hsub : Metric.ball h₀ r ⊆ leeYangDomain) :
+    ∃ g : ℂ → ℂ, DifferentiableOn ℂ g (Metric.ball h₀ r) ∧
+        ∀ z ∈ Metric.ball h₀ r,
+          Complex.exp (g z) = partitionFunctionComplex G (J : ℂ) z (β : ℂ) := by
+  obtain ⟨g, hg_ana, hg_exp⟩ :=
+    exists_logZ_analyticOnNhd_ball G hβ hJ hr hsub
+  exact ⟨g, hg_ana.differentiableOn, hg_exp⟩
+
 
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
