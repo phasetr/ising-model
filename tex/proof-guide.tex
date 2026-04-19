@@ -4001,6 +4001,37 @@ with $f_\infty = \limsup f_{\Lambda_n}$ via
 Glimm--Jaffe \cite{glimm-jaffe} \S 4.6 Prop 4.6.1, p.~64.
 \end{proof}
 
+\begin{theorem}[Lebowitz 4-point $J = 0$ closed form
+$-2\,t^4$ (finite and $\infty$-volume); PR \#215]
+For any ambient graph $G$, any $h, \beta \in \mathbb{R}$, and
+pairwise distinct sites $i, j, k, l$,
+\[
+  U_4^{\text{Lebowitz}}(G, \langle 0,h,\beta\rangle; i,j,k,l)
+  = -2\,\tanh(\beta h)^4.
+\]
+The same formula holds for the infinite-volume Lebowitz 4-point
+under a ferromagnetic hypothesis.
+\end{theorem}
+
+\begin{proof}
+At $J = 0$,
+$\langle\sigma^A\rangle_{\langle 0,h,\beta\rangle}
+= \tanh(\beta h)^{|A|}$
+by \texttt{correlation\_J\_zero} (finite volume) or
+\texttt{correlationInfinite\_J\_zero} (ferromagnetic
+infinite volume, PR \#210). With pairwise distinct
+$i, j, k, l$ the seven Finset cardinals are
+$4$ (once) and $2$ (six times), so
+\[
+  U_4 = t^4 - 3(t^2 \cdot t^2) = t^4 - 3\,t^4 = -2\,t^4,
+  \quad t := \tanh(\beta h).
+\]
+Note $-2\,t^4 \le 0$ unconditionally, consistent with
+$U_4 \le 0$ (Glimm--Jaffe Cor. 4.3.3).
+Reference: Glimm--Jaffe \cite{glimm-jaffe} \S 5.1 pp.~72--74
+(cluster context); \S 4.3 Cor. 4.3.3 / Lebowitz.
+\end{proof}
+
 \begin{theorem}[Lebowitz 4-point $\beta = 0$ vanishing (finite and
 $\infty$-volume); PR \#214]
 For any ambient graph $G$, any $J, h \in \mathbb{R}$, any sites
