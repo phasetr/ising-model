@@ -2552,6 +2552,16 @@ theorem partitionFunctionComplex_restrict_real_axis_eq
   exact (partitionFunction_ofReal_eq_partitionFunctionComplex
     G ⟨J, h, β⟩).symm
 
+/-- The joint complex partition function equals the real cast on
+`IsingParams ℝ`-points. -/
+theorem partitionFunctionComplex_restrict_joint_real_eq
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    (fun p : IsingParams ℝ =>
+        partitionFunctionComplex G (p.J : ℂ) (p.h : ℂ) (p.β : ℂ))
+      = fun p : IsingParams ℝ => ((partitionFunction G p : ℝ) : ℂ) := by
+  funext p
+  exact (partitionFunction_ofReal_eq_partitionFunctionComplex G p).symm
+
 
 
 
