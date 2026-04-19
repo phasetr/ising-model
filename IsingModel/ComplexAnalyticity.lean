@@ -2206,6 +2206,18 @@ theorem leeYangNormalization_analyticAt_J
   refine AnalyticAt.cexp' ?_
   fun_prop
 
+/-- `leeYangNormalization β J h 0 0 = exp(0) = 1`. -/
+theorem leeYangNormalization_zero_zero (β J h : ℂ) :
+    leeYangNormalization β J h 0 0 = 1 := by
+  unfold leeYangNormalization
+  simp
+
+/-- `leeYangNormalization β 0 0 |E| |ι| = exp(0) = 1` (at J = h = 0). -/
+theorem leeYangNormalization_zero_params (β : ℂ) (edgeCount siteCount : ℕ) :
+    leeYangNormalization β 0 0 edgeCount siteCount = 1 := by
+  unfold leeYangNormalization
+  simp
+
 
 
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
