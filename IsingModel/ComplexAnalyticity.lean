@@ -2578,6 +2578,25 @@ theorem norm_partitionFunctionComplex_eq_partitionFunction_at_real
       = partitionFunction G p :=
   norm_partitionFunctionComplex_at_real G p
 
+/-- `freeEnergyComplex` jointly continuous on its slitPlane locus
+(including the real slice). -/
+theorem continuous_freeEnergyComplex_on_locus
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    ContinuousOn
+      (fun z : ℂ × ℂ × ℂ => freeEnergyComplex G z.1 z.2.1 z.2.2)
+      {z : ℂ × ℂ × ℂ | partitionFunctionComplex G z.1 z.2.1 z.2.2
+                        ∈ Complex.slitPlane} :=
+  freeEnergyComplex_continuousOn_slitPlane_locus_joint G
+
+/-- At `(J, h, β)` all real, the joint `freeEnergyComplex` is
+continuous. -/
+theorem continuousAt_freeEnergyComplex_at_real_joint
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (p : IsingParams ℝ) :
+    ContinuousAt
+      (fun z : ℂ × ℂ × ℂ => freeEnergyComplex G z.1 z.2.1 z.2.2)
+      ((p.J : ℂ), (p.h : ℂ), (p.β : ℂ)) :=
+  (real_params_analyticAt_joint G p).continuousAt
+
 
 
 
