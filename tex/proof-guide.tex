@@ -1854,6 +1854,26 @@ local branch $f$ はそうした点でも連続に分岐. GJ Thm 4.6.2 本文が
 ``log $Z$ is analytic'' は local branch 解釈が正確.
 \end{theorem}
 
+\begin{theorem}[$\infty$-vol Vitali lift の準備 — 材料群; PR \#200]
+\begin{itemize}
+\item \texttt{vitali\_bridge}: mathlib
+  \texttt{TendstoLocallyUniformlyOn.differentiableOn} の直接ラップ.
+  開集合上局所一様収束する正則関数列の極限は正則.
+\item \texttt{norm\_partitionFunctionComplex\_le\_partitionFunction}:
+  $|Z(J, h, \beta)| \le Z(J, \mathrm{Re}\,h, \beta)$ (実 Ising 分配関数).
+\item \texttt{norm\_partitionFunctionComplex\_le\_trivial\_bound}:
+  既存 \texttt{partitionFunction\_upper} と合成して
+  $|Z| \le 2^{|\iota|} \exp(|\beta|(|J||E| + |\mathrm{Re}\,h| \cdot |\iota|))$.
+\item \texttt{norm\_complex\_log\_le}:
+  $\|{\rm log}\,z\| \le |\log\|z\|| + \pi$.
+\item \texttt{norm\_freeEnergyComplex\_le\_trivial\_bound}:
+  $\|f_{\rm complex}\| \le (|\log\|Z\|| + \pi)/|\iota|$.
+\end{itemize}
+これらは Montel 引数 (局所一様有界 + 実軸上 Fekete 収束) による
+局所一様収束を導く材料. 次段階: 局所一様収束の明示,
+\texttt{vitali\_bridge\_leeYangDomain} 適用で $f_\infty$ 解析性.
+\end{theorem}
+
 \begin{theorem}[Subdomain of Lee-Yang で \texttt{freeEnergyComplex} analytic; PR \#200]
 実 $\beta > 0$, 実 $J$, 複素 $h$ で
 $\beta \cdot |\mathrm{Im}\,h| \cdot |\iota| < \pi / 2$ (Lee-Yang 下位領域) のとき,
