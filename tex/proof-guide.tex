@@ -3959,4 +3959,36 @@ convergence of $f_\Lambda = (\log Z_\Lambda)/|\Lambda|$ along
 arbitrary exhaustions of the ambient lattice; this is the
 Prop 4.6.1 body in the next PR.
 
+\begin{theorem}[Corollary/wrapper of GJ \S 5.4 Prop 5.4.2 along an
+exhaustion (per-stage); PR \#202]
+For a graph $G : \mathrm{SimpleGraph}\, V$ with an exhaustion
+$\Lambda : \mathrm{Ambient.Exhaustion}\, V$, suppose that for every
+stage $n$ the induced graph $G_n := \mathrm{Ambient.inducedGraph}\,G\,(\Lambda_n)$
+is preconnected, $B_n \subseteq \Lambda_n$ is a non-empty set of
+$+$-boundary-condition sites,
+$i_n \in \Lambda_n$, and the common exponential bound
+\[
+  2 \cdot 2^{\#\Lambda_n} \exp(-2\beta J) \le \exp(-c\beta)
+\]
+holds uniformly in $n$. Then, for $J, \beta > 0$ and $h = 0$, the
+Peierls bound
+\[
+  0 \;\le\; 1 - \langle \sigma_{i_n} \rangle_{+}^{G_n, B_n}
+  \;\le\; \exp(-c\beta)
+\]
+holds at every $n$.
+\end{theorem}
+
+\begin{proof}
+Direct application of \texttt{prop\_5\_4\_2\_self\_contained}
+(Glimm--Jaffe \cite{glimm-jaffe} \S 5.4 p.~83) at each stage $n$;
+the hypotheses at stage $n$ are the finite-volume hypotheses of
+that theorem specialised to $G_n$, $B_n$, $i_n$. This is a
+scaffolding step: subsequent PRs on the same branch will pick a
+canonical $(B_n, i_n)$ from the ambient geometry and take the
+$\limsup$ / $\liminf$ to recover the genuine infinite-volume
+bound $0 \le 1 - \langle\sigma_i\rangle_+^\infty \le \exp(-c\beta)$
+(Glimm--Jaffe \cite{glimm-jaffe} \S 5.4 p.~83).
+\end{proof}
+
 \end{document}
