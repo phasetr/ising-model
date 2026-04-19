@@ -99,6 +99,32 @@ theorem correlation_beta_zero_vanish_of_nonempty_A
   rw [Finset.sum_congr rfl (fun σ _ => hweight σ),
       sum_config_spinProduct_eq_zero A hA, mul_zero]
 
+/-- **J=h=0 correlation vanishes for nonempty A**:
+`correlation G ⟨0, 0, β⟩ A = 0` for any `A.Nonempty` and any `β`.
+
+At `J = h = 0`, the Hamiltonian is identically zero
+(`hamiltonian_zero_params`), so every Boltzmann weight equals
+`exp(0) = 1` and the correlation numerator reduces to
+`∑_σ spinProduct A σ`, vanishing for nonempty `A` by
+`sum_config_spinProduct_eq_zero`.
+
+Companion to `correlation_beta_zero_vanish_of_nonempty_A`: both
+J=h=0 and β=0 give Hamiltonian-independent weights, so both yield
+zero correlation on nonempty `A`. -/
+theorem correlation_zero_params_vanish_of_nonempty_A
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (β : ℝ) (A : Finset ι) (hA : A.Nonempty) :
+    correlation G (⟨0, 0, β⟩ : IsingParams ℝ) A = 0 := by
+  unfold correlation gibbsExpectation
+  have hweight : ∀ σ : Config ι,
+      spinProduct A σ * boltzmannWeight G (⟨0, 0, β⟩ : IsingParams ℝ) σ
+        = spinProduct A σ := by
+    intro σ
+    unfold boltzmannWeight
+    rw [hamiltonian_zero_params, mul_zero, Real.exp_zero, mul_one]
+  rw [Finset.sum_congr rfl (fun σ _ => hweight σ),
+      sum_config_spinProduct_eq_zero A hA, mul_zero]
+
 /-! ## Spin product multiplication (Fourier structure) -/
 
 set_option linter.unusedFintypeInType false in
