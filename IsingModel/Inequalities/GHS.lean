@@ -73,6 +73,36 @@ theorem truncated2_J_zero_of_ne (G : SimpleGraph ι) [Fintype G.edgeSet]
   rw [hcard_pair, hcard_i, hcard_j]
   ring
 
+/-- **Infinite-temperature (`β = 0`) vanishing of the truncated
+2-point function**: for any ambient graph `G`, any `J, h ∈ ℝ`, and
+any sites `i, j : ι` (not necessarily distinct),
+`truncated2 G ⟨J, h, 0⟩ i j = 0`.
+
+At `β = 0` the Boltzmann weight is identically `1`, so
+`correlation G ⟨J, h, 0⟩` is the uniform spin average; by
+`correlation_beta_zero_vanish_of_nonempty_A`, this vanishes on
+any nonempty subset. Hence both `⟨σ_i σ_j⟩ = 0` and
+`⟨σ_i⟩ = ⟨σ_j⟩ = 0`, so the difference is `0`.
+
+Companion to `truncated2_J_zero_of_ne`. Unlike the `J = 0` case,
+this statement needs no `i ≠ j` hypothesis: at `β = 0` even the
+diagonal truncated value vanishes because `⟨σ_i⟩ = 0`.
+
+Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §5.1 pp. 72–74
+(cluster property context); §4.1 infinite-temperature slice of
+the correlation function. -/
+theorem truncated2_beta_zero (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h : ℝ) (i j : ι) :
+    truncated2 G (⟨J, h, 0⟩ : IsingParams ℝ) i j = 0 := by
+  unfold truncated2
+  rw [correlation_beta_zero_vanish_of_nonempty_A G J h {i, j}
+        ⟨i, by simp⟩,
+      correlation_beta_zero_vanish_of_nonempty_A G J h {i}
+        (Finset.singleton_nonempty i),
+      correlation_beta_zero_vanish_of_nonempty_A G J h {j}
+        (Finset.singleton_nonempty j)]
+  ring
+
 /-- The truncated 2-point function is non-negative by GKS-II. -/
 theorem truncated2_nonneg (G : SimpleGraph ι) [Fintype G.edgeSet]
     (p : IsingParams ℝ) (hf : Ferromagnetic p) (i j : ι) :

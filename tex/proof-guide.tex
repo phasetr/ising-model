@@ -4001,6 +4001,29 @@ with $f_\infty = \limsup f_{\Lambda_n}$ via
 Glimm--Jaffe \cite{glimm-jaffe} \S 4.6 Prop 4.6.1, p.~64.
 \end{proof}
 
+\begin{theorem}[Infinite-temperature ($\beta=0$) vanishing of the
+truncated 2-point function; PR \#208]
+For any ambient graph $G$, any $J, h \in \mathbb{R}$, and any sites
+$i, j : \iota$ (distinct or not),
+\[
+  \langle \sigma_i; \sigma_j \rangle_{G,\langle J,h,0\rangle} = 0.
+\]
+\end{theorem}
+
+\begin{proof}
+At $\beta = 0$, the Boltzmann weight $\exp(-\beta H) \equiv 1$, so
+$\langle \sigma^A \rangle_{G,\langle J,h,0\rangle}$ is the uniform
+spin average. By
+\texttt{correlation\_beta\_zero\_vanish\_of\_nonempty\_A}, this
+vanishes on any nonempty $A$. Hence
+$\langle\sigma_i\sigma_j\rangle = 0$ and
+$\langle\sigma_i\rangle = \langle\sigma_j\rangle = 0$, so the
+truncated value is $0 - 0 \cdot 0 = 0$.
+Note that unlike the $J = 0$ slice, here no $i \neq j$ hypothesis
+is required. Reference: Glimm--Jaffe \cite{glimm-jaffe} \S 5.1,
+pp.~72--74 (cluster property context).
+\end{proof}
+
 \begin{theorem}[Non-interacting ($J=0$) factorisation of the
 truncated 2-point function; PR \#207]
 For any ambient graph $G : \mathrm{SimpleGraph}\, \iota$ with
