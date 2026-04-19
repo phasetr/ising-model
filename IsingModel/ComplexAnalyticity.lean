@@ -2525,6 +2525,22 @@ theorem freeEnergyComplex_continuousAt_h_real_coe
       (fun h => freeEnergyComplex G (J : ℂ) h (β : ℂ)) (h₀ : ℂ) :=
   (freeEnergyComplex_analyticAt_h_real_coe G J β h₀).continuousAt
 
+/-- The image of the positive real axis lies inside `leeYangDomain`. -/
+theorem range_real_axis_subset_leeYangDomain :
+    Set.range (fun x : {x : ℝ // 0 < x} => (x.1 : ℂ)) ⊆ leeYangDomain := by
+  rintro h ⟨⟨x, hx⟩, rfl⟩
+  exact real_pos_mem_leeYangDomain hx
+
+/-- **Restriction of `freeEnergyComplex` to the real axis equals
+`freeEnergy`**: an explicit function-extending statement. -/
+theorem freeEnergyComplex_restrict_real_axis_eq_freeEnergy
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J β : ℝ) :
+    (fun h : ℝ =>
+        freeEnergyComplex G (J : ℂ) (h : ℂ) (β : ℂ))
+      = fun h : ℝ => ((freeEnergy G ⟨J, h, β⟩ : ℝ) : ℂ) := by
+  funext h
+  exact freeEnergyComplex_at_real G J h β
+
 
 
 
