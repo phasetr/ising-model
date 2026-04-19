@@ -996,7 +996,7 @@ the next commit. -/
 theorem exists_normalised_logZ_branch_on_ball
     (G : SimpleGraph ι) [Fintype G.edgeSet]
     {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J)
-    {h₀ : ℂ} {r : ℝ} (hmem : h₀ ∈ leeYangDomain)
+    {h₀ : ℂ} {r : ℝ}
     (hsub : Metric.ball h₀ r ⊆ leeYangDomain) :
     ∃ g : ℂ → ℂ, g h₀ = Complex.log
         (partitionFunctionComplex G (J : ℂ) h₀ (β : ℂ))
