@@ -2395,6 +2395,22 @@ theorem freeEnergyComplex_exists_analyticBranch_strong
       ∧ f h = freeEnergyComplex G (J : ℂ) h (β : ℂ) := fun _ hh =>
   exists_freeEnergyComplex_analyticAt_branch_of_leeYangDomain G hβ hJ hh
 
+/-- **Composition of two local branches**: at `h₀` where two local
+branches `f₁, f₂` of `log Z` agree (same basepoint value), they agree
+as functions locally (by uniqueness of holomorphic log modulo `2πi·ℤ`
+combined with continuity). Outline only — deferred. -/
+
+/-- `freeEnergyComplex G J h β` is an entire function of `(J, h, β)`
+restricted to the slitPlane locus. Packaged joint version. -/
+theorem freeEnergyComplex_analyticOnNhd_slitPlane_locus_joint
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    AnalyticOnNhd ℂ
+      (fun z : ℂ × ℂ × ℂ => freeEnergyComplex G z.1 z.2.1 z.2.2)
+      {z : ℂ × ℂ × ℂ | partitionFunctionComplex G z.1 z.2.1 z.2.2
+                        ∈ Complex.slitPlane} := by
+  intro z hmem
+  exact freeEnergyComplex_analyticAt_joint G z hmem
+
 
 
 
