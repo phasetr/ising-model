@@ -2287,6 +2287,12 @@ theorem real_positives_subset_leeYangDomain :
   rintro h ⟨h₀, hpos, rfl⟩
   exact real_pos_mem_leeYangDomain hpos
 
+/-- All positive reals contained in Lee-Yang subdomain. -/
+theorem real_positives_subset_leeYangSubdomain (β : ℝ) (N : ℕ) :
+    ((fun h₀ : ℝ => (h₀ : ℂ)) '' Set.Ioi 0) ⊆ leeYangSubdomain β N := by
+  rintro h ⟨h₀, hpos, rfl⟩
+  exact real_pos_mem_leeYangSubdomain β N hpos
+
 
 
 
