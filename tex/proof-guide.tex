@@ -1716,6 +1716,15 @@ joint analyticity, $\log Z$ (slit-plane 経由), $\infty$-vol Vitali)
 は後続 PR. `Complex.log` は mathlib では slitPlane 上でのみ analytic な点に注意.
 \end{theorem}
 
+\begin{theorem}[GJ \S 4.6 Thm 4.6.2 continuation: real-complex compatibility; PR \#196]
+\texttt{partitionFunction\_ofReal\_eq\_partitionFunctionComplex}:
+実パラメタ $p = \langle J, h, \beta\rangle$ で
+$(\texttt{partitionFunction}\,G\,p : \mathbb R)$ を $\mathbb C$ に昇格すると
+$\texttt{partitionFunctionComplex}\,G\,(J:\mathbb C)\,(h:\mathbb C)\,(\beta:\mathbb C)$.
+証明: \texttt{Complex.ofReal} は環準同型なので有限和/exp/各 site の
+spin sign と可換.
+\end{theorem}
+
 \begin{theorem}[GJ \S 4.6 Thm 4.6.2 continuation: joint analyticity in $(J,h,\beta)$; PR \#195]
 \texttt{partitionFunctionComplex\_analyticAt\_joint}:
 $(J, h, \beta) \in \mathbb C^3 \mapsto Z_G^{\mathbb C}$ は entire.
