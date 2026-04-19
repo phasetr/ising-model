@@ -768,6 +768,44 @@ theorem freeEnergyAlongExhaustion_tendsto_of_superadditive
   rw [hL_eq]
   exact htendsto_feAE
 
+/-- **GJ §4.6 Prop 4.6.1, disjoint-tower + `BoundedEdgeDensity` form**:
+under a super-additivity hypothesis on `log Z` along a disjoint-tower
+exhaustion (`hcard_add`, `hsuper`, `hcard_one`), bounded edge density
+(replacing the explicit `BddAbove` hypothesis), and ferromagnetic
+parameters, `freeEnergyAlongExhaustion G Λ p` converges to
+`freeEnergyInfinite G Λ p`.
+
+This is a strict relaxation of
+`freeEnergyAlongExhaustion_tendsto_of_superadditive`: the explicit
+`hbdd : BddAbove (Set.range (freeEnergyAlongExhaustion G Λ p))`
+hypothesis is discharged automatically via
+`BddAbove_freeEnergyAlongExhaustion_range` under
+`BoundedEdgeDensity`.  No other hypothesis is added (the ferromagnetic
+hypothesis is already implicit in many uses of Fekete convergence on
+Ising systems, and `BoundedEdgeDensity` is the natural structural
+condition on the ambient lattice; the result does not depend on
+`Ferromagnetic p` other than through `BddAbove`).
+
+Reference: Glimm–Jaffe, *Quantum Physics*, 2nd ed., Springer 1987,
+§4.6 Prop 4.6.1, p. 64. -/
+theorem freeEnergyAlongExhaustion_tendsto_of_disjoint_tower
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ)
+    (hBED : BoundedEdgeDensity G Λ)
+    (hcard_add : ∀ m n, (Λ.volume (m + n)).card
+                          = (Λ.volume m).card + (Λ.volume n).card)
+    (hsuper : ∀ m n, Real.log (partitionFunctionΛ G (Λ.volume m) p)
+                      + Real.log (partitionFunctionΛ G (Λ.volume n) p)
+                      ≤ Real.log (partitionFunctionΛ G (Λ.volume (m + n)) p))
+    (hcard_one : (Λ.volume 1).card ≠ 0) :
+    Filter.Tendsto (freeEnergyAlongExhaustion G Λ p) Filter.atTop
+      (nhds (freeEnergyInfinite G Λ p)) :=
+  freeEnergyAlongExhaustion_tendsto_of_superadditive G Λ p
+    hcard_add hsuper
+    (BddAbove_freeEnergyAlongExhaustion_range G Λ p hBED)
+    hcard_one
+
 /-- **Eventually constant ⇒ `freeEnergyInfinite` equals the constant.**
 
 If `∀ᶠ n in atTop, freeEnergyAlongExhaustion G Λ p n = c`, then
