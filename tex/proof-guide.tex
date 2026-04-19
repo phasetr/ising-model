@@ -1763,6 +1763,13 @@ PR \#165 \texttt{\_ge\_card\_mul\_log\_two} の sharpening. 3 層 lift
 から $\log$ + \texttt{Real.log\_pow}.
 \end{theorem}
 
+\begin{theorem}[\texttt{magnetization\_beta\_zero}; PR \#187]
+有限体積 $\beta = 0$ 磁化消失:
+$\texttt{magnetization}\,G\,\langle J, h, 0\rangle\,i = 0$.
+PR \#182 を singleton で specialize. PR \#186 (\texttt{magnetizationInfinite\_beta\_zero})
+の finite-volume companion.
+\end{theorem}
+
 \begin{theorem}[\texttt{magnetizationInfinite\_beta\_zero}; PR \#186]
 $\beta = 0$ で $\infty$-vol magnetization 消失:
 $\texttt{magnetizationInfinite}\,G\,\Lambda\,\langle J, h, 0\rangle\,i = 0$.

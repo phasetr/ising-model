@@ -174,6 +174,21 @@ theorem magnetization_zero_at_h_zero (G : SimpleGraph ι) [Fintype G.edgeSet]
   unfold magnetization
   exact correlation_odd_vanish G J β {i} ⟨0, by simp⟩
 
+/-- The magnetization vanishes at `β = 0` (infinite temperature,
+finite volume). At `β = 0` the Gibbs measure is uniform and spins
+are independent with zero mean (`±1` symmetric distribution), so
+every single-site expectation is `0`.
+
+Specialization of `correlation_beta_zero_vanish_of_nonempty_A`
+(Inequalities/NonnegCorrelations.lean) at the singleton `{i}`
+(automatically nonempty). Finite-volume companion to
+`magnetizationInfinite_beta_zero`. -/
+theorem magnetization_beta_zero (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h : ℝ) (i : ι) :
+    magnetization G ⟨J, h, 0⟩ i = 0 := by
+  unfold magnetization
+  exact correlation_beta_zero_vanish_of_nonempty_A G J h {i} ⟨i, by simp⟩
+
 /-! ## Free energy convexity and phase transitions (§16.1)
 
 Glimm–Jaffe §16.1 (pp. 280–284) discusses the thermodynamic
