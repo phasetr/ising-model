@@ -676,9 +676,14 @@ theorem partitionFunctionComplex_eq_normalization_mul_isingEdgePoly
 /-- **`partitionFunctionComplex` is non-zero on the Lee-Yang domain**
 (uniform field, real ferromagnetic coupling `J > 0`, real `β > 0`).
 
-This is the key nonvanishing statement underlying Glimm–Jaffe Thm 4.6.2:
+This is the Lee-Yang nonvanishing half of Glimm–Jaffe Thm 4.6.2:
 on `|Im h| < Re h`, the finite-volume complex partition function has no
-zeros, so `log Z` is well-defined and analytic.
+zeros.
+
+Nonvanishing alone is not yet sufficient for principal-branch `Complex.log`
+analyticity; to combine with `freeEnergyComplex_analyticAt_h`, one further
+needs `Z ∈ Complex.slitPlane`, which requires a continuous branch argument
+from a real-positive basepoint (deferred to a subsequent session).
 
 Proof: combine
 `partitionFunctionComplex_eq_normalization_mul_isingEdgePoly`
