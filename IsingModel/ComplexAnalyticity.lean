@@ -1141,4 +1141,34 @@ theorem exists_logZ_analytic_branch_on_ball
     (hg_deriv z hz).differentiableAt.differentiableWithinAt
   exact hdiffOn.analyticOnNhd Metric.isOpen_ball
 
+/-- **Pointwise local analytic log branch of `Z` at every point of the
+Lee-Yang domain**. Since `leeYangDomain` is open, for every `h₀` there
+is a ball around it inside the domain, and
+`exists_logZ_analytic_branch_on_ball` provides a local analytic log
+of `Z` on that ball (hence in particular analytic at `h₀`).
+
+This is the finite-volume content of GJ §4.6 Thm 4.6.2:
+at every `h₀ ∈ leeYangDomain`, `log Z` (as a holomorphic function
+germ; equivalently the principal branch plus a locally-constant
+`2πi·k` shift) is analytic. The principal `Complex.log Z` may
+differ from this branch by `2πi·k` where `Z` crosses the negative
+real axis; the local analytic branch constructed here is continuous
+across such crossings. -/
+theorem exists_logZ_analyticAt_of_leeYangDomain
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J)
+    {h₀ : ℂ} (hmem : h₀ ∈ leeYangDomain) :
+    ∃ g : ℂ → ℂ,
+        AnalyticAt ℂ g h₀
+      ∧ Complex.exp (g h₀)
+          = partitionFunctionComplex G (J : ℂ) h₀ (β : ℂ)
+      ∧ g h₀ = Complex.log
+          (partitionFunctionComplex G (J : ℂ) h₀ (β : ℂ)) := by
+  obtain ⟨r, hr_pos, hr_sub⟩ :=
+    Metric.isOpen_iff.mp isOpen_leeYangDomain h₀ hmem
+  obtain ⟨g, hg_exp, hg_base, hg_ana⟩ :=
+    exists_logZ_analytic_branch_on_ball G hβ hJ (h₀ := h₀) (r := r) hr_pos hr_sub
+  refine ⟨g, hg_ana h₀ (Metric.mem_ball_self hr_pos),
+    hg_exp h₀ (Metric.mem_ball_self hr_pos), hg_base⟩
+
 end IsingModel
