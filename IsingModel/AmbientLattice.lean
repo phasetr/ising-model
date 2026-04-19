@@ -2779,6 +2779,78 @@ theorem truncated3Infinite_indep_exhaustion
       correlationInfinite_indep_exhaustion G Λ Λ' p hf {i, k},
       correlationInfinite_indep_exhaustion G Λ Λ' p hf {j, k}]
 
+/-- **∞-volume Ursell 3-point vanishes at `J = 0`** (ferromagnetic,
+pairwise distinct sites): infinite-volume counterpart of
+`truncated3_J_zero_of_pairwise_distinct` (finite volume, PR #209).
+
+For pairwise distinct `i, j, k` and `⟨0, h, β⟩` ferromagnetic,
+`correlationInfinite G Λ ⟨0, h, β⟩ A = tanh(β·h)^|A|` gives
+cardinalities `3, 1+2, 1+2, 1+2, 1+1+1`, and the Ursell
+combination becomes `t³ - 3·t³ + 2·t³ = 0` where `t = tanh(β·h)`.
+
+Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §5.1 pp. 72–74
+(cluster property context); §4.1 / §4.3. -/
+theorem truncated3Infinite_J_zero_of_pairwise_distinct
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (h β : ℝ)
+    (hf : Ferromagnetic (⟨(0 : ℝ), h, β⟩ : IsingParams ℝ))
+    {i j k : V} (hij : i ≠ j) (hjk : j ≠ k) (hik : i ≠ k) :
+    truncated3Infinite G Λ (⟨0, h, β⟩ : IsingParams ℝ) i j k = 0 := by
+  unfold truncated3Infinite
+  rw [correlationInfinite_J_zero G Λ h β hf,
+      correlationInfinite_J_zero G Λ h β hf,
+      correlationInfinite_J_zero G Λ h β hf,
+      correlationInfinite_J_zero G Λ h β hf,
+      correlationInfinite_J_zero G Λ h β hf,
+      correlationInfinite_J_zero G Λ h β hf,
+      correlationInfinite_J_zero G Λ h β hf]
+  have hcard_i : ({i} : Finset V).card = 1 := Finset.card_singleton i
+  have hcard_j : ({j} : Finset V).card = 1 := Finset.card_singleton j
+  have hcard_k : ({k} : Finset V).card = 1 := Finset.card_singleton k
+  have hcard_ij : ({i, j} : Finset V).card = 2 := Finset.card_pair hij
+  have hcard_jk : ({j, k} : Finset V).card = 2 := Finset.card_pair hjk
+  have hcard_ik : ({i, k} : Finset V).card = 2 := Finset.card_pair hik
+  have hi_nin_jk : i ∉ ({j, k} : Finset V) := by simp [hij, hik]
+  have hcard_ijk : ({i, j, k} : Finset V).card = 3 := by
+    rw [show ({i, j, k} : Finset V) = insert i ({j, k} : Finset V) from rfl,
+        Finset.card_insert_of_notMem hi_nin_jk, hcard_jk]
+  rw [hcard_i, hcard_j, hcard_k, hcard_ij, hcard_jk, hcard_ik, hcard_ijk]
+  ring
+
+/-- **∞-volume Ursell 3-point vanishes at `β = 0`** for any sites.
+
+Infinite-volume counterpart of `truncated3_beta_zero` (finite
+volume, PR #209). Every correlation in the Ursell combination is
+over a nonempty Finset, so
+`correlationInfinite_beta_zero_vanish_of_nonempty_A` makes each
+term zero — the linear combination vanishes trivially. No
+distinctness hypotheses are needed at `β = 0`.
+
+Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §5.1 pp. 72–74
+(cluster property context); §4.1 infinite-temperature slice. -/
+theorem truncated3Infinite_beta_zero
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J h : ℝ) (i j k : V) :
+    truncated3Infinite G Λ (⟨J, h, 0⟩ : IsingParams ℝ) i j k = 0 := by
+  unfold truncated3Infinite
+  rw [correlationInfinite_beta_zero_vanish_of_nonempty_A G Λ J h
+        {i, j, k} ⟨i, by simp⟩,
+      correlationInfinite_beta_zero_vanish_of_nonempty_A G Λ J h
+        {i} (Finset.singleton_nonempty i),
+      correlationInfinite_beta_zero_vanish_of_nonempty_A G Λ J h
+        {j} (Finset.singleton_nonempty j),
+      correlationInfinite_beta_zero_vanish_of_nonempty_A G Λ J h
+        {k} (Finset.singleton_nonempty k),
+      correlationInfinite_beta_zero_vanish_of_nonempty_A G Λ J h
+        {j, k} ⟨j, by simp⟩,
+      correlationInfinite_beta_zero_vanish_of_nonempty_A G Λ J h
+        {i, k} ⟨i, by simp⟩,
+      correlationInfinite_beta_zero_vanish_of_nonempty_A G Λ J h
+        {i, j} ⟨i, by simp⟩]
+  ring
+
 /-! ## Truncated 4-point correlation + `U_4 ≤ 0` at `h = 0`
 
 Lift `IsingModel.cor_4_3_3` (finite-volume `U_4 ≤ 0` at $h = 0$) to
