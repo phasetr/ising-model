@@ -983,4 +983,35 @@ theorem exists_logZ_branch_on_ball_of_leeYangDomain
     (hlogDeriv_ana.mono hsub).differentiableOn
   exact hlogDeriv_diffOn.isExactOn_ball
 
+/-- **Normalised local log-branch of `Z` on a ball inside Lee-Yang**.
+Refining `exists_logZ_branch_on_ball_of_leeYangDomain`: there exists
+`g : ℂ → ℂ` with `g(h₀) = Complex.log(Z(h₀))`, `g' = Z'/Z` on the
+ball, and `g` is differentiable on the ball.
+
+The normalisation `g(h₀) = Complex.log(Z(h₀))` makes this branch
+agree with the principal branch at the basepoint. The exponential
+identity `exp(g) = Z` on the whole ball follows from
+`(exp(g)/Z)' = 0` on the connected ball; that step is deferred to
+the next commit. -/
+theorem exists_normalised_logZ_branch_on_ball
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J)
+    {h₀ : ℂ} {r : ℝ} (hmem : h₀ ∈ leeYangDomain)
+    (hsub : Metric.ball h₀ r ⊆ leeYangDomain) :
+    ∃ g : ℂ → ℂ, g h₀ = Complex.log
+        (partitionFunctionComplex G (J : ℂ) h₀ (β : ℂ))
+      ∧ ∀ z ∈ Metric.ball h₀ r, HasDerivAt g
+          (deriv (fun h'' => partitionFunctionComplex G (J : ℂ) h'' (β : ℂ)) z
+            / partitionFunctionComplex G (J : ℂ) z (β : ℂ)) z := by
+  obtain ⟨g₀, hg₀⟩ :=
+    exists_logZ_branch_on_ball_of_leeYangDomain G hβ hJ (h₀ := h₀) (r := r) hsub
+  refine ⟨fun z => g₀ z - g₀ h₀ + Complex.log
+      (partitionFunctionComplex G (J : ℂ) h₀ (β : ℂ)), ?_, ?_⟩
+  · simp
+  · intro z hz
+    have hg₀z := hg₀ z hz
+    have := hg₀z.sub_const (g₀ h₀)
+    simpa using this.add_const (Complex.log
+      (partitionFunctionComplex G (J : ℂ) h₀ (β : ℂ)))
+
 end IsingModel
