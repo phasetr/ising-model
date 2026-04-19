@@ -2609,29 +2609,20 @@ theorem differentiableAt_freeEnergyComplex_at_real_joint
 re-packaged for convenience. -/
 theorem partitionFunctionComplex_entire_h
     (G : SimpleGraph ι) [Fintype G.edgeSet] (J β : ℂ) :
-    Differentiable ℂ (fun h => partitionFunctionComplex G J h β) := by
-  refine differentiableOn_univ.mp ?_
-  intro h _
-  exact (partitionFunctionComplex_analyticAt_h G J β h)
-    .differentiableAt.differentiableWithinAt
+    Differentiable ℂ (fun h => partitionFunctionComplex G J h β) := fun h =>
+  (partitionFunctionComplex_analyticAt_h G J β h).differentiableAt
 
 /-- `partitionFunctionComplex` is entire in `J`. -/
 theorem partitionFunctionComplex_entire_J
     (G : SimpleGraph ι) [Fintype G.edgeSet] (h β : ℂ) :
-    Differentiable ℂ (fun J => partitionFunctionComplex G J h β) := by
-  refine differentiableOn_univ.mp ?_
-  intro J _
-  exact (partitionFunctionComplex_analyticAt_J G h β J)
-    .differentiableAt.differentiableWithinAt
+    Differentiable ℂ (fun J => partitionFunctionComplex G J h β) := fun J =>
+  (partitionFunctionComplex_analyticAt_J G h β J).differentiableAt
 
 /-- `partitionFunctionComplex` is entire in `β`. -/
 theorem partitionFunctionComplex_entire_beta
     (G : SimpleGraph ι) [Fintype G.edgeSet] (J h : ℂ) :
-    Differentiable ℂ (fun β => partitionFunctionComplex G J h β) := by
-  refine differentiableOn_univ.mp ?_
-  intro β _
-  exact (partitionFunctionComplex_analyticAt_beta G J h β)
-    .differentiableAt.differentiableWithinAt
+    Differentiable ℂ (fun β => partitionFunctionComplex G J h β) := fun β =>
+  (partitionFunctionComplex_analyticAt_beta G J h β).differentiableAt
 
 
 
