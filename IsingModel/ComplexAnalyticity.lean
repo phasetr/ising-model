@@ -193,6 +193,23 @@ theorem partitionFunction_ofReal_eq_partitionFunctionComplex
   push_cast [← hspin, ← hedge]
   ring
 
+/-- **`partitionFunctionComplex` is in `Complex.slitPlane` on the real slice.**
+
+At real parameters `p : IsingParams ℝ`, `partitionFunctionComplex G ↑p.J ↑p.h ↑p.β`
+equals `↑(partitionFunction G p)` (by `partitionFunction_ofReal_eq_partitionFunctionComplex`),
+which has real part `partitionFunction G p > 0` and imaginary part `0`.
+Hence it lies in `Complex.slitPlane = {z | 0 < z.re ∨ z.im ≠ 0}`.
+
+This upgrades the per-parameter / joint `freeEnergyComplex_analyticAt` theorems
+to statements that are directly applicable at real points. -/
+theorem partitionFunctionComplex_mem_slitPlane_of_real
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (p : IsingParams ℝ) :
+    partitionFunctionComplex G (p.J : ℂ) (p.h : ℂ) (p.β : ℂ) ∈ Complex.slitPlane := by
+  rw [← partitionFunction_ofReal_eq_partitionFunctionComplex G p]
+  refine Or.inl ?_
+  have hpos : 0 < partitionFunction G p := partitionFunction_pos G p
+  simpa using hpos
+
 /-- `Complex.ofReal (freeEnergy G p) = freeEnergyComplex G p.J p.h p.β`.
 
 Combines `partitionFunction_ofReal_eq_partitionFunctionComplex` (PR #196)
