@@ -248,4 +248,33 @@ theorem leeYangDomain_subset_slitPlane : leeYangDomain ⊆ Complex.slitPlane := 
   have hnn : (0 : ℝ) ≤ |h.im| := abs_nonneg _
   linarith
 
+/-- The Lee-Yang domain is open in `ℂ`. The defining inequality
+`|Im h| < Re h` uses continuous functions (`Complex.im`, `abs`,
+`Complex.re`), so the preimage of `(0, ∞)` under the continuous
+`h ↦ Re h - |Im h|` is open. -/
+theorem isOpen_leeYangDomain : IsOpen leeYangDomain := by
+  have hcont : Continuous (fun h : ℂ => h.re - |h.im|) := by
+    exact Complex.continuous_re.sub Complex.continuous_im.abs
+  have heq : leeYangDomain = (fun h : ℂ => h.re - |h.im|) ⁻¹' Set.Ioi 0 := by
+    ext h
+    constructor
+    · intro hlt
+      have : |h.im| < h.re := hlt
+      change h.re - |h.im| ∈ Set.Ioi 0
+      simp [Set.mem_Ioi]; linarith
+    · intro hlt
+      have : h.re - |h.im| > 0 := hlt
+      change |h.im| < h.re
+      linarith
+  rw [heq]
+  exact hcont.isOpen_preimage _ isOpen_Ioi
+
+/-- The positive real axis is contained in `leeYangDomain`: if `h = h₀ > 0`
+is real, then `Im h = 0 < h₀ = Re h`. This provides a canonical basepoint
+from which to continue the Lee-Yang nonvanishing into the complex domain. -/
+theorem real_pos_mem_leeYangDomain {h₀ : ℝ} (hpos : 0 < h₀) :
+    (h₀ : ℂ) ∈ leeYangDomain := by
+  change |(h₀ : ℂ).im| < (h₀ : ℂ).re
+  simp [hpos]
+
 end IsingModel
