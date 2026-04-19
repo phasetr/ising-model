@@ -1640,6 +1640,13 @@ theorem leeYangFugacityVec_analyticAt_h
   unfold leeYangFugacityVec leeYangFugacity
   exact analyticAt_cexp.comp (by fun_prop)
 
+omit [Fintype ι] [DecidableEq ι] in
+/-- `leeYangFugacityVec` is continuous in `h` for fixed `β : ℂ`. -/
+theorem continuous_leeYangFugacityVec_h (β : ℂ) (i : ι) :
+    Continuous (fun h => leeYangFugacityVec β h i) :=
+  continuous_iff_continuousAt.mpr fun h =>
+    (leeYangFugacityVec_analyticAt_h β h i).continuousAt
+
 
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
