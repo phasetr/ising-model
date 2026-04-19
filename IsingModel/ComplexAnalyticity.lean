@@ -1562,6 +1562,15 @@ theorem continuous_partitionFunctionComplex_joint
   continuous_iff_continuousAt.mpr fun z =>
     (partitionFunctionComplex_analyticAt_joint G z).continuousAt
 
+/-- `partitionFunctionComplex` is jointly holomorphic (i.e.
+`AnalyticOnNhd ℂ` on all of `ℂ × ℂ × ℂ`). -/
+theorem partitionFunctionComplex_analyticOnNhd_univ_joint
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    AnalyticOnNhd ℂ
+      (fun z : ℂ × ℂ × ℂ => partitionFunctionComplex G z.1 z.2.1 z.2.2)
+      Set.univ :=
+  fun z _ => partitionFunctionComplex_analyticAt_joint G z
+
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
 `leeYangDomain`. For each point `h₀`, the local branch `f` from
