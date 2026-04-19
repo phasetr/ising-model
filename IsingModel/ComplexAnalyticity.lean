@@ -1666,6 +1666,13 @@ theorem leeYangNormalization_analyticOnNhd_univ (edgeCount siteCount : ℕ) :
         leeYangNormalization z.2.2 z.1 z.2.1 edgeCount siteCount) Set.univ :=
   fun z _ => leeYangNormalization_analyticAt_joint edgeCount siteCount z
 
+/-- `leeYangNormalization β J h |E| |ι| ≠ 0` as an `AnalyticOnNhd`
+support: the normalization never vanishes. -/
+theorem leeYangNormalization_nonzero_on_univ (edgeCount siteCount : ℕ)
+    (β J h : ℂ) :
+    leeYangNormalization β J h edgeCount siteCount ∈ ({z : ℂ | z ≠ 0}) :=
+  leeYangNormalization_ne_zero β J h edgeCount siteCount
+
 
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
