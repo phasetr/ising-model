@@ -2235,6 +2235,18 @@ theorem norm_leeYangNormalization_real_beta
   congr 1
   ring_nf
 
+/-- At real `β, J, h`, `leeYangNormalization` is a positive real number
+(cast). -/
+theorem leeYangNormalization_ofReal_eq (β J h : ℝ) (edgeCount siteCount : ℕ) :
+    leeYangNormalization (β : ℂ) (J : ℂ) (h : ℂ) edgeCount siteCount
+      = ((Real.exp (β * J * edgeCount + β * h * siteCount) : ℝ) : ℂ) := by
+  unfold leeYangNormalization
+  rw [show ((β : ℂ) * (J : ℂ) * (edgeCount : ℂ) + (β : ℂ) * (h : ℂ) *
+            (siteCount : ℂ))
+          = ((β * J * edgeCount + β * h * siteCount : ℝ) : ℂ) from by
+    push_cast; ring]
+  rw [Complex.ofReal_exp]
+
 
 
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
