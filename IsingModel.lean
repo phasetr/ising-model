@@ -11,3 +11,4 @@ import IsingModel.Asano
 import IsingModel.AmbientLattice
 import IsingModel.AmbientLatticeSum
 import IsingModel.ComplexAnalyticity
+import IsingModel.PeierlsInfinite

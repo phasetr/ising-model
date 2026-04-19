@@ -177,6 +177,7 @@ gives, at every `h₀ ∈ leeYangDomain`, an analytic function `f` with
 | `peierls_bound` (Prop 5.4.1) | `Pr(γ ⊆ ∂σ) ≤ exp(-2βJ|γ|)` | `Peierls.lean` | Finite |
 | `peierls_contour_sum_bound` | `Σ Pr(γ) ≤ N(r) exp(-2βJ r)` | `Peierls.lean` | Finite |
 | `prop_5_4_2_self_contained` (Prop 5.4.2) | `0 ≤ 1 − ⟨σᵢ⟩₊ ≤ exp(-cβ)` | `Peierls.lean` | Finite (+ BC) |
+| `prop_5_4_2_along_exhaustion` | **Per-stage Peierls bound along an exhaustion** `Λ : Ambient.Exhaustion V`: uniformly `0 ≤ 1 − ⟨σᵢₙ⟩₊^{Λₙ,Bₙ} ≤ exp(-cβ)` for every `n`, given per-stage preconnectedness, non-empty boundaries, and the common exponential-bound hypothesis. Direct application of `prop_5_4_2_self_contained` at each `Λ.volume n`. Scaffolding toward the genuine infinite-volume lift. | `PeierlsInfinite.lean` | Exhaustion (+ BC) |
 | `eta_nonneg_finite_vol` (§17.7) | `η ≥ 0` | `PhaseTransition.lean` | Finite |
 
 **Not yet formalized**: infinite-volume lift of Prop 5.4.2 (requires
