@@ -2124,6 +2124,20 @@ theorem freeEnergyComplex_continuousOn_leeYangSubdomain
       (leeYangSubdomain β (Fintype.card ι)) :=
   (freeEnergyComplex_differentiableOn_leeYangSubdomain G hβ J).continuousOn
 
+/-- `partitionFunctionComplex` is continuous on `leeYangDomain`
+(restriction of entire continuity). -/
+theorem partitionFunctionComplex_continuousOn_leeYangDomain
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J β : ℂ) :
+    ContinuousOn (fun h => partitionFunctionComplex G J h β) leeYangDomain :=
+  (continuous_partitionFunctionComplex_h G J β).continuousOn
+
+/-- `partitionFunctionComplex` is AnalyticOn on `leeYangDomain`
+(restriction of entire analyticity). -/
+theorem partitionFunctionComplex_analyticOn_leeYangDomain
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J β : ℂ) :
+    AnalyticOn ℂ (fun h => partitionFunctionComplex G J h β) leeYangDomain :=
+  (partitionFunctionComplex_analyticOnNhd_leeYangDomain G J β).analyticOn
+
 
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
