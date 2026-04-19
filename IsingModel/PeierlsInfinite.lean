@@ -86,17 +86,17 @@ theorem prop_5_4_2_along_exhaustion
     J β c hβ hJ (B n) (hB n) (i n) (hexp n)
 
 set_option linter.unusedDecidableInType false in
-/-- **Prop 5.4.2 along an exhaustion — limsup form** (GJ §5.4,
-p. 83). Under the same per-stage hypotheses as
-`prop_5_4_2_along_exhaustion`, the `Filter.limsup` at `atTop` of
-`n ↦ 1 − plusGibbsExpectation (Gₙ) ⟨J, 0, β⟩ (Bₙ) (σ ↦ sign (σ iₙ))`
-is bounded above by `exp (-c · β)`.
+/-- **Corollary of GJ §5.4 Prop 5.4.2 along an exhaustion —
+`limsup` form** (GJ p. 83). Under the same per-stage hypotheses
+as `prop_5_4_2_along_exhaustion`, the `Filter.limsup` at `atTop`
+of `n ↦ 1 − plusGibbsExpectation (Gₙ) ⟨J, 0, β⟩ (Bₙ)
+(σ ↦ sign (σ iₙ))` is bounded above by `exp (-c · β)`.
 
-This is the minimum ∞-vol lift obtainable from the per-stage bound
-alone: the per-stage inequality holds at every `n`, so the
-`limsup` is at most the common upper bound `exp (-c · β)`. It does
-not require constructing a canonical ∞-vol `+`-boundary-condition
-expectation — only packaging of the eventually-uniform bound.
+This is a direct `limsup` corollary of the per-stage bound: the
+per-stage inequality holds at every `n`, so the `limsup` is at
+most the common upper bound `exp (-c · β)`. It does not require
+constructing a canonical ∞-vol `+`-boundary-condition expectation
+— only packaging of the eventually-uniform bound.
 
 Proof: `Filter.limsup_le_of_le` takes an eventually-uniform upper
 bound; we use `Filter.Eventually.of_forall` with
@@ -105,8 +105,8 @@ bound; we use `Filter.Eventually.of_forall` with
 term is nonneg (hence bounded below by `0`).
 
 Subsequent PRs may define a canonical ∞-vol `+`-BC expectation
-and strengthen this `limsup` statement to a genuine equality
-`1 − ⟨σᵢ⟩₊^∞ ≤ exp (-c · β)`. -/
+and strengthen this `limsup` inequality to a genuine
+infinite-volume statement `1 − ⟨σᵢ⟩₊^∞ ≤ exp (-c · β)`. -/
 theorem prop_5_4_2_limsup_le
     (G : SimpleGraph V) (Λ : Ambient.Exhaustion V)
     [∀ n, DecidableRel (Ambient.inducedGraph G (Λ.volume n)).Adj]
