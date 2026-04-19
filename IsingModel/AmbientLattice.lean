@@ -60,6 +60,17 @@ noncomputable def inducedGraph (G : SimpleGraph V) (Λ : Finset V) :
     SimpleGraph (↑Λ : Type _) :=
   G.induce (↑Λ : Set V)
 
+omit [DecidableEq V] in
+/-- **Helper**: if `Λ : Finset V` is nonempty then the induced subtype
+`↑Λ : Type _` has positive `Fintype.card`. Used throughout the Λ- and
+along-exhaustion wrappers of base-layer `freeEnergy` / `freeEnergyΛ`
+theorems that require `0 < Fintype.card ι`. Factors out the common
+`rw [Fintype.card_coe]; exact Finset.card_pos.mpr hne` chain. -/
+theorem Finset.Nonempty.fintype_card_coe_pos {Λ : Finset V}
+    (hne : Λ.Nonempty) : 0 < Fintype.card (↑Λ : Type _) := by
+  rw [Fintype.card_coe]
+  exact Finset.card_pos.mpr hne
+
 /-! ## Partition function and correlation on `Λ`
 
 Forward the existing `partitionFunction`, `correlation`, `freeEnergy`
@@ -3008,11 +3019,9 @@ theorem freeEnergyAlongExhaustion_ge_log_two
     {J h β : ℝ} (hJ : 0 ≤ J) (hh : 0 ≤ h) (hβ : 0 < β)
     (n : ℕ) (hne : (Λ.volume n).Nonempty) :
     Real.log 2 ≤ freeEnergyAlongExhaustion G Λ ⟨J, h, β⟩ n := by
-  have hcard : 0 < Fintype.card (↑(Λ.volume n) : Type _) := by
-    rw [Fintype.card_coe]; exact Finset.card_pos.mpr hne
   have h_zero : freeEnergyAlongExhaustion G Λ ⟨0, 0, β⟩ n = Real.log 2 := by
     change freeEnergyΛ G (Λ.volume n) (⟨0, 0, β⟩ : IsingParams ℝ) = Real.log 2
-    exact IsingModel.freeEnergy_zero_params _ β hcard
+    exact IsingModel.freeEnergy_zero_params _ β (Finset.Nonempty.fintype_card_coe_pos hne)
   calc Real.log 2
       = freeEnergyAlongExhaustion G Λ ⟨0, 0, β⟩ n := h_zero.symm
     _ ≤ freeEnergyAlongExhaustion G Λ ⟨J, h, β⟩ n :=
@@ -3032,11 +3041,9 @@ theorem freeEnergyAlongExhaustion_ge_log_two_cosh
     (n : ℕ) (hne : (Λ.volume n).Nonempty) :
     Real.log (2 * Real.cosh (β * h))
       ≤ freeEnergyAlongExhaustion G Λ ⟨J, h, β⟩ n := by
-  have hcard : 0 < Fintype.card (↑(Λ.volume n) : Type _) := by
-    rw [Fintype.card_coe]; exact Finset.card_pos.mpr hne
   change Real.log (2 * Real.cosh (β * h))
       ≤ IsingModel.freeEnergy (inducedGraph G (Λ.volume n)) ⟨J, h, β⟩
-  exact IsingModel.freeEnergy_ge_log_two_cosh _ hJ hh hβ hcard
+  exact IsingModel.freeEnergy_ge_log_two_cosh _ hJ hh hβ (Finset.Nonempty.fintype_card_coe_pos hne)
 
 /-- **Along-exhaustion upper bound for the free energy**:
 for nonempty `Λ.volume n`,
@@ -3055,10 +3062,8 @@ theorem freeEnergyAlongExhaustion_upper_bound
       |p.β| * (|p.J| * (inducedGraph G (Λ.volume n)).edgeFinset.card +
           |p.h| * Fintype.card (↑(Λ.volume n) : Type _))
         / Fintype.card (↑(Λ.volume n) : Type _) := by
-  have hcard : 0 < Fintype.card (↑(Λ.volume n) : Type _) := by
-    rw [Fintype.card_coe]; exact Finset.card_pos.mpr hne
   change IsingModel.freeEnergy (inducedGraph G (Λ.volume n)) p ≤ _
-  exact IsingModel.freeEnergy_upper_bound _ p hcard
+  exact IsingModel.freeEnergy_upper_bound _ p (Finset.Nonempty.fintype_card_coe_pos hne)
 
 /-! ## Uniform upper bound under bounded edge density
 
@@ -3132,11 +3137,9 @@ theorem freeEnergyAlongExhaustion_beta_zero
     (J h : ℝ) (n : ℕ) (hne : (Λ.volume n).Nonempty) :
     freeEnergyAlongExhaustion G Λ (⟨J, h, 0⟩ : IsingParams ℝ) n
       = Real.log 2 := by
-  have hcard : 0 < Fintype.card (↑(Λ.volume n) : Type _) := by
-    rw [Fintype.card_coe]; exact Finset.card_pos.mpr hne
   change IsingModel.freeEnergy (inducedGraph G (Λ.volume n))
       (⟨J, h, 0⟩ : IsingParams ℝ) = Real.log 2
-  exact IsingModel.freeEnergy_beta_zero _ J h hcard
+  exact IsingModel.freeEnergy_beta_zero _ J h (Finset.Nonempty.fintype_card_coe_pos hne)
 
 /-- **Infinite-volume β=0 closed form**:
 under `∀ n, (Λ.volume n).Nonempty`, `freeEnergyInfinite G Λ ⟨J, h, 0⟩ = log 2`
@@ -3180,11 +3183,9 @@ theorem freeEnergyAlongExhaustion_zero_params
     (β : ℝ) (n : ℕ) (hne : (Λ.volume n).Nonempty) :
     freeEnergyAlongExhaustion G Λ (⟨0, 0, β⟩ : IsingParams ℝ) n
       = Real.log 2 := by
-  have hcard : 0 < Fintype.card (↑(Λ.volume n) : Type _) := by
-    rw [Fintype.card_coe]; exact Finset.card_pos.mpr hne
   change IsingModel.freeEnergy (inducedGraph G (Λ.volume n))
       (⟨0, 0, β⟩ : IsingParams ℝ) = Real.log 2
-  exact IsingModel.freeEnergy_zero_params _ β hcard
+  exact IsingModel.freeEnergy_zero_params _ β (Finset.Nonempty.fintype_card_coe_pos hne)
 
 /-- **Infinite-volume J=h=0 closed form**:
 under `∀ n, (Λ.volume n).Nonempty`, `freeEnergyInfinite G Λ ⟨0, 0, β⟩ = log 2`
@@ -3254,11 +3255,9 @@ theorem freeEnergyAlongExhaustion_J_zero
     (h β : ℝ) (n : ℕ) (hne : (Λ.volume n).Nonempty) :
     freeEnergyAlongExhaustion G Λ (⟨0, h, β⟩ : IsingParams ℝ) n
       = Real.log (2 * Real.cosh (β * h)) := by
-  have hcard : 0 < Fintype.card (↑(Λ.volume n) : Type _) := by
-    rw [Fintype.card_coe]; exact Finset.card_pos.mpr hne
   change IsingModel.freeEnergy (inducedGraph G (Λ.volume n))
       (⟨0, h, β⟩ : IsingParams ℝ) = _
-  exact IsingModel.freeEnergy_J_zero _ h β hcard
+  exact IsingModel.freeEnergy_J_zero _ h β (Finset.Nonempty.fintype_card_coe_pos hne)
 
 /-! ## β = 0 closed form for `partitionFunctionAlongExhaustion` -/
 
