@@ -520,6 +520,23 @@ theorem exp_beta_J_sign_mul_sign_eq
         neg_mul_neg, one_mul]
       rw [if_pos (by simp)]; ring
 
+/-- Product over sites of the external-field exponential factorises as
+`exp(β·h·|ι|) · z^|X|` where `X = configToFinset σ` and `z = leeYangFugacity β h`. -/
+theorem prod_exp_beta_h_sign_eq
+    (β : ℝ) (h : ℂ) (σ : Config ι) :
+    ∏ i : ι, Complex.exp ((β : ℂ) * h * Spin.sign ℂ (σ i))
+      = Complex.exp ((β : ℂ) * h * (Fintype.card ι : ℂ))
+          * ∏ _i ∈ configToFinset σ, leeYangFugacity (β : ℂ) h := by
+  rw [show (∏ i : ι, Complex.exp ((β : ℂ) * h * Spin.sign ℂ (σ i)))
+          = ∏ i : ι, (Complex.exp ((β : ℂ) * h)
+              * (if i ∈ configToFinset σ then
+                  leeYangFugacity (β : ℂ) h else 1))
+          from Finset.prod_congr rfl fun i _ => exp_beta_h_sign_eq β h σ i]
+  rw [Finset.prod_mul_distrib, Finset.prod_const,
+    Finset.prod_ite_mem, Finset.univ_inter,
+    Finset.card_univ, ← Complex.exp_nat_mul, Finset.prod_const]
+  ring_nf
+
 /-! ### Friedli–Velenik factorisation of the partition function
 
 The Friedli–Velenik identity (Friedli–Velenik, *Statistical Mechanics of
