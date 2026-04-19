@@ -1800,6 +1800,24 @@ theorem isConnected_leeYangSubdomain (β : ℝ) (N : ℕ) :
     IsConnected (leeYangSubdomain β N) :=
   ⟨leeYangSubdomain_nonempty β N, isPreconnected_leeYangSubdomain β N⟩
 
+/-- At `h = (h₀ : ℂ)` with `h₀ > 0` real, the partition function equals
+its real-parameter value (which is `partitionFunction G ⟨J, h₀, β⟩`). -/
+theorem partitionFunctionComplex_at_real_pos
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (h₀ : ℝ) :
+    partitionFunctionComplex G (J : ℂ) (h₀ : ℂ) (β : ℂ)
+      = ((partitionFunction G ⟨J, h₀, β⟩ : ℝ) : ℂ) :=
+  (partitionFunction_ofReal_eq_partitionFunctionComplex G ⟨J, h₀, β⟩).symm
+
+/-- `freeEnergyComplex` at real parameters equals its real-parameter
+value. Restatement for convenience. -/
+theorem freeEnergyComplex_at_real
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h β : ℝ) :
+    freeEnergyComplex G (J : ℂ) (h : ℂ) (β : ℂ)
+      = ((freeEnergy G ⟨J, h, β⟩ : ℝ) : ℂ) :=
+  freeEnergyComplex_ofReal_eq_freeEnergy G ⟨J, h, β⟩
+
 
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
