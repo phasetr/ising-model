@@ -2049,6 +2049,23 @@ theorem one_mem_leeYangSubdomain (β : ℝ) (N : ℕ) :
 theorem one_mem_leeYangDomain : (1 : ℂ) ∈ leeYangDomain :=
   real_pos_mem_leeYangDomain (by norm_num : (0 : ℝ) < 1)
 
+/-- `leeYangSubdomain β 1` (single-site case): vacuously close to full
+Lee-Yang, constrained by `β · |Im h| < π/2`. -/
+theorem leeYangSubdomain_one_eq (β : ℝ) :
+    leeYangSubdomain β 1 =
+      {h : ℂ | |h.im| < h.re ∧ β * |h.im| < Real.pi / 2} := by
+  ext h
+  simp [leeYangSubdomain]
+
+/-- When `β = 0`, `leeYangSubdomain 0 N = leeYangDomain` for any `N`
+(the strip constraint is vacuously `0 < π/2`). -/
+theorem leeYangSubdomain_beta_zero (N : ℕ) :
+    leeYangSubdomain (0 : ℝ) N = leeYangDomain := by
+  ext h
+  refine ⟨fun hh => hh.1, fun hh => ⟨hh, ?_⟩⟩
+  simp only [zero_mul]
+  positivity
+
 
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
