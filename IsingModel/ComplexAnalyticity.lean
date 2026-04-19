@@ -1502,6 +1502,24 @@ theorem partitionFunctionComplex_ne_zero_not_iff_slitPlane
     (hne : partitionFunctionComplex G J h β ≠ 0) :
     partitionFunctionComplex G J h β ∈ ({z : ℂ | z ≠ 0}) := hne
 
+/-- **AnalyticOnNhd form**: `partitionFunctionComplex` is jointly
+entire (already known for each variable separately). This provides
+an AnalyticOnNhd statement on any open set, including `leeYangDomain`. -/
+theorem partitionFunctionComplex_analyticOnNhd_univ_h
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J β : ℂ) :
+    AnalyticOnNhd ℂ (fun h => partitionFunctionComplex G J h β) Set.univ :=
+  fun h _ => partitionFunctionComplex_analyticAt_h G J β h
+
+/-- `freeEnergyComplex` is AnalyticOnNhd on the set of `h` where
+`Z(J, h, β) ∈ slitPlane`. This is an automatic restriction of the
+pointwise statement to the analyticity locus. -/
+theorem freeEnergyComplex_analyticOnNhd_slitPlane_locus
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J β : ℂ) :
+    AnalyticOnNhd ℂ (fun h => freeEnergyComplex G J h β)
+      {h : ℂ | partitionFunctionComplex G J h β ∈ Complex.slitPlane} := by
+  intro h hmem
+  exact freeEnergyComplex_analyticAt_h G J β h hmem
+
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
 `leeYangDomain`. For each point `h₀`, the local branch `f` from
