@@ -1896,11 +1896,11 @@ apply \texttt{vitali\_bridge\_leeYangDomain} to obtain analyticity of
 the infinite-volume limit $f_\infty$.
 \end{theorem}
 
-\begin{remark}[Status of PR \#200 — 2026-04-20]
-PR \#200 is \emph{deferred} at draft state on branch
-\texttt{feat/thm-4-6-2-slitPlane-on-leeYangDomain} (137 commits, clean
-build, no sorry). Completed in this PR: Morera-based pointwise local
-analytic log-$Z$ branch on the Lee-Yang domain (headline
+\begin{remark}[Status of PR \#200 — merged 2026-04-19, \texttt{52ea2f1}]
+PR \#200 was squash-merged into \texttt{main} on 2026-04-19 as
+commit \texttt{52ea2f1}. Items now present in \texttt{main}:
+Morera-based pointwise local analytic log-$Z$ branch on the Lee-Yang
+domain (headline
 \texttt{exists\_freeEnergyComplex\_analyticAt\_branch\_of\_leeYangDomain}),
 the subdomain result in \texttt{leeYangSubdomain}, the Vitali bridge
 wrapping mathlib's
@@ -1908,10 +1908,11 @@ wrapping mathlib's
 $|Z(J,h,\beta)|\le Z(J,\mathrm{Re}\,h,\beta)$, trivial upper bound,
 $\|\log z\|\le|\log\|z\||+\pi$, and the derived
 $\|f_{\text{complex}}\|\le(|\log\|Z\||+\pi)/|\iota|$.
-Remaining: Montel-style locally uniform convergence of $f_\Lambda$ on
-Lee-Yang (mathlib lacks Montel; self-implementation required),
-followed by \texttt{vitali\_bridge\_leeYangDomain} application, and a
-global branch patched from the local pieces via simple connectivity.
+Still not formalised (future PRs): Montel-style locally uniform
+convergence of $f_\Lambda$ on Lee-Yang (mathlib lacks Montel;
+self-implementation required), followed by
+\texttt{vitali\_bridge\_leeYangDomain} application, and a global
+branch patched from the local pieces via simple connectivity.
 The principal-branch \texttt{Complex.log} of $Z$ may itself be
 discontinuous where $Z$ crosses the negative real axis; the
 local-branch statement is the mathematically correct form of GJ
