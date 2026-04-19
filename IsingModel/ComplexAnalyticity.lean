@@ -1228,6 +1228,25 @@ theorem vitali_bridge_leeYangDomain
     DifferentiableOn ℂ f leeYangDomain :=
   vitali_bridge isOpen_leeYangDomain hF hconv
 
+/-- **Modulus bound for `partitionFunctionComplex` via the real Ising
+partition function (statement, proof deferred)**. For real `β`, real `J`,
+complex `h`:
+`|Z(J, h, β)| ≤ Z(J, Re h, β)` (as the real Ising partition function).
+
+Proof idea: `|exp(-β·H(σ))| = exp(Re(-β·H(σ)))`; the real part of the
+complex exponent is exactly the real Boltzmann exponent at parameters
+`⟨J, Re h, β⟩`. Summing gives the stated bound.
+
+This estimate feeds into the boundedness input for the ∞-vol Vitali
+lift (combined with the uniform upper bound on the real partition
+function via `Fintype.card_pos`). -/
+theorem norm_partitionFunctionComplex_le_partitionFunction
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (β J : ℝ) (h : ℂ) :
+    ‖partitionFunctionComplex G (J : ℂ) h (β : ℂ)‖
+      ≤ partitionFunction G ⟨J, h.re, β⟩ := by
+  sorry
+
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
 `leeYangDomain`. For each point `h₀`, the local branch `f` from
