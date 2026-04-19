@@ -10,3 +10,4 @@ import IsingModel.Inequalities.FKG
 import IsingModel.Asano
 import IsingModel.AmbientLattice
 import IsingModel.AmbientLatticeSum
+import IsingModel.ComplexAnalyticity
