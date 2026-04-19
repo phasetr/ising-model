@@ -366,6 +366,24 @@ theorem leeYangFugacityVec_norm_lt_one
     ‖(leeYangFugacityVec (β : ℂ) h : ι → ℂ) k‖ < 1 := by
   exact norm_leeYangFugacity_lt_one hβ hh
 
+/-- **Lee-Yang normalization factor**: `exp(β·J·|E| + β·h·|ι|)`.
+
+The Ising partition function factorises (Friedli–Velenik (3.63)) as
+`Z = exp(β·J·|E| + β·h·|ι|) · P(z)` with `z_k = e^{-2β h_k}`.
+This is the scalar prefactor, used in the Lee-Yang nonvanishing bridge
+from the polynomial nonvanishing (`isingEdgePoly_eval_leeYangFugacityVec_ne_zero`)
+to `partitionFunctionComplex ≠ 0`. -/
+noncomputable def leeYangNormalization (β J h : ℂ) (edgeCount siteCount : ℕ) : ℂ :=
+  Complex.exp (β * J * (edgeCount : ℂ) + β * h * (siteCount : ℂ))
+
+/-- The Lee-Yang normalization factor is never zero (product of complex
+exponentials, hence non-vanishing). -/
+theorem leeYangNormalization_ne_zero
+    (β J h : ℂ) (edgeCount siteCount : ℕ) :
+    leeYangNormalization β J h edgeCount siteCount ≠ 0 := by
+  unfold leeYangNormalization
+  exact Complex.exp_ne_zero _
+
 /-- **Lee-Yang nonvanishing of the Ising partition polynomial on the
 Lee-Yang domain** (uniform field, real ferromagnetic coupling).
 
