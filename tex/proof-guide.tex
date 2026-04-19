@@ -4001,6 +4001,32 @@ with $f_\infty = \limsup f_{\Lambda_n}$ via
 Glimm--Jaffe \cite{glimm-jaffe} \S 4.6 Prop 4.6.1, p.~64.
 \end{proof}
 
+\begin{theorem}[$\infty$-vol truncated-3 trivial slices; PR \#212]
+For a ferromagnetic $\langle 0, h, \beta\rangle$ and pairwise
+distinct $i, j, k$, the $\infty$-vol Ursell 3-point function
+$\langle \sigma_i; \sigma_j; \sigma_k \rangle_\infty^{\langle
+0,h,\beta\rangle}$ vanishes. For $\langle J, h, 0\rangle$ and any
+sites, the $\infty$-vol Ursell 3-point function also vanishes.
+\end{theorem}
+
+\begin{proof}
+$J = 0$: Substitute
+$\langle \sigma^A \rangle_\infty = \tanh(\beta h)^{|A|}$ (the PR #210
+closed form) into each of the seven Finset correlations, use
+$|\{i,j,k\}| = 3, |\{i\}|=|\{j\}|=|\{k\}|=1,
+|\{i,j\}|=|\{j,k\}|=|\{i,k\}|=2$, and reduce the Ursell
+combination to $t^3 - 3\cdot t^3 + 2\cdot t^3 = 0$ with
+$t := \tanh(\beta h)$.
+
+$\beta = 0$: Every Finset correlation in the Ursell expression is
+over a nonempty Finset, so the PR #211 vanishing
+$\langle \sigma^A \rangle_\infty^{\langle J,h,0\rangle} = 0$
+forces each term to zero.
+
+Reference: Glimm--Jaffe \cite{glimm-jaffe} \S 5.1 pp.~72--74
+(cluster context); \S 4.3 (Ursell / GHS).
+\end{proof}
+
 \begin{theorem}[$\infty$-vol $\beta = 0$ correlation vanishing and
 truncated-2 zero; PR \#211]
 For any ambient graph $G$, any exhaustion $\Lambda :
