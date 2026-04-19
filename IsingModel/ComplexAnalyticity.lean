@@ -2382,6 +2382,19 @@ theorem freeEnergyComplex_exists_analyticBranch
       exists_freeEnergyComplex_analyticAt_branch_of_leeYangDomain G hβ hJ hh
     ⟨f, hfa, hfexp⟩
 
+/-- **Strong form**: existence of `f` with (a) AnalyticAt, (b)
+`exp(|ι|·f) = Z`, (c) `f` equals the principal-branch freeEnergyComplex
+at the basepoint. Pointwise statement over all of leeYangDomain. -/
+theorem freeEnergyComplex_exists_analyticBranch_strong
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J) [Nonempty ι] :
+    ∀ h ∈ leeYangDomain, ∃ f : ℂ → ℂ,
+        AnalyticAt ℂ f h
+      ∧ Complex.exp ((Fintype.card ι : ℂ) * f h)
+          = partitionFunctionComplex G (J : ℂ) h (β : ℂ)
+      ∧ f h = freeEnergyComplex G (J : ℂ) h (β : ℂ) := fun _ hh =>
+  exists_freeEnergyComplex_analyticAt_branch_of_leeYangDomain G hβ hJ hh
+
 
 
 
