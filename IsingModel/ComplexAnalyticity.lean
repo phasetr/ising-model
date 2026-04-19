@@ -452,6 +452,74 @@ theorem leeYangNormalization_mul_isingEdgePoly_eval_ne_zero
   mul_ne_zero (leeYangNormalization_ne_zero _ _ _ _ _)
     (isingEdgePoly_eval_leeYangFugacityVec_ne_zero G ht₀ ht₁ hβ hh)
 
+/-- Per-site factorisation of the external-field exponential.
+For `σ : Config ι` with down-spin set `X = configToFinset σ`, at each site `i`:
+`exp(β·h·σ_i) = exp(β·h) · (i ∈ X ? leeYangFugacity β h : 1)`.
+
+Case split on `σ i`: if `σ i = up` (so `i ∉ X`) then `σ_i = 1` and
+the RHS is `exp(β·h)·1 = exp(β·h)`; if `σ i = down` (so `i ∈ X`) then
+`σ_i = -1` and the RHS is `exp(β·h) · exp(-2β·h) = exp(-β·h)`. -/
+theorem exp_beta_h_sign_eq (β : ℝ) (h : ℂ) (σ : Config ι) (i : ι) :
+    Complex.exp ((β : ℂ) * h * Spin.sign ℂ (σ i))
+      = Complex.exp ((β : ℂ) * h)
+          * (if i ∈ configToFinset σ then
+              leeYangFugacity (β : ℂ) h else 1) := by
+  unfold leeYangFugacity configToFinset
+  simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+  cases hσ : σ i with
+  | up =>
+    simp only [Spin.sign, Spin.toSign, Int.cast_one, mul_one]
+    rw [if_neg (by simp [hσ])]
+    ring
+  | down =>
+    simp only [Spin.sign, Spin.toSign, Int.cast_neg, Int.cast_one]
+    rw [if_pos (by simp [hσ])]
+    rw [mul_neg_one, ← Complex.exp_add]
+    congr 1; push_cast; ring
+
+/-- Per-edge factorisation of the interaction exponential.
+For `σ : Config ι` with down-spin set `X = configToFinset σ`, at each
+pair `(i, j)` with `i ≠ j`:
+`exp(β·J·σ_i·σ_j) = exp(β·J) · edgeWeight i j (exp(-2βJ)) X`.
+
+Case split on whether `(σ i = σ j)` (equivalently `(i∈X) = (j∈X)`). -/
+theorem exp_beta_J_sign_mul_sign_eq
+    (β J : ℝ) (σ : Config ι) (i j : ι) :
+    Complex.exp ((β : ℂ) * (J : ℂ)
+        * (Spin.sign ℂ (σ i) * Spin.sign ℂ (σ j)))
+      = Complex.exp ((β : ℂ) * (J : ℂ))
+          * edgeWeight i j (Real.exp (-2 * β * J)) (configToFinset σ) := by
+  unfold edgeWeight configToFinset
+  simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+  cases hi : σ i with
+  | up =>
+    cases hj : σ j with
+    | up =>
+      simp only [Spin.sign, Spin.toSign, Int.cast_one, mul_one, one_mul,
+        if_true]
+    | down =>
+      rw [if_neg (by simp [hj])]
+      rw [show ((Real.exp (-2 * β * J)) : ℂ)
+            = Complex.exp ((-2 * β * J : ℝ) : ℂ) from
+        Complex.ofReal_exp _, ← Complex.exp_add]
+      simp only [Spin.sign, Spin.toSign, Int.cast_one, Int.cast_neg, one_mul,
+        mul_neg_one]
+      congr 1; push_cast; ring
+  | down =>
+    cases hj : σ j with
+    | up =>
+      rw [if_neg (by simp [hi])]
+      rw [show ((Real.exp (-2 * β * J)) : ℂ)
+            = Complex.exp ((-2 * β * J : ℝ) : ℂ) from
+        Complex.ofReal_exp _, ← Complex.exp_add]
+      simp only [Spin.sign, Spin.toSign, Int.cast_neg, Int.cast_one,
+        neg_mul, one_mul, mul_neg]
+      congr 1; push_cast; ring
+    | down =>
+      simp only [Spin.sign, Spin.toSign, Int.cast_neg, Int.cast_one,
+        neg_mul_neg, one_mul]
+      rw [if_pos (by simp)]; ring
+
 /-! ### Friedli–Velenik factorisation of the partition function
 
 The Friedli–Velenik identity (Friedli–Velenik, *Statistical Mechanics of
