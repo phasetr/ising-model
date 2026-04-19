@@ -1433,6 +1433,27 @@ theorem real_pos_mem_leeYangSubdomain
   · have : (h₀ : ℂ).im = 0 := by simp
     simp [this]; positivity
 
+/-- The Lee-Yang domain is convex (hence connected). -/
+theorem convex_leeYangDomain : Convex ℝ leeYangDomain := by
+  intro x hxmem y hymem a b ha hb hab
+  change |((a : ℝ) • x + (b : ℝ) • y).im| < ((a : ℝ) • x + (b : ℝ) • y).re
+  have hx : |x.im| < x.re := hxmem
+  have hy : |y.im| < y.re := hymem
+  simp only [Complex.add_im, Complex.smul_im, Complex.add_re, Complex.smul_re]
+  calc |a * x.im + b * y.im|
+      ≤ |a * x.im| + |b * y.im| := abs_add_le _ _
+    _ = a * |x.im| + b * |y.im| := by
+        rw [abs_mul, abs_mul, abs_of_nonneg ha, abs_of_nonneg hb]
+    _ < a * x.re + b * y.re := by
+        rcases eq_or_lt_of_le ha with rfl | ha_pos
+        · rcases eq_or_lt_of_le hb with rfl | hb_pos
+          · simp at hab
+          · simpa using mul_lt_mul_of_pos_left hy hb_pos
+        · rcases eq_or_lt_of_le hb with rfl | hb_pos
+          · simpa using mul_lt_mul_of_pos_left hx ha_pos
+          · exact add_lt_add (mul_lt_mul_of_pos_left hx ha_pos)
+              (mul_lt_mul_of_pos_left hy hb_pos)
+
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
 `leeYangDomain`. For each point `h₀`, the local branch `f` from
