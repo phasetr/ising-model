@@ -2084,6 +2084,18 @@ theorem mem_slitPlane_locus_of_mem_leeYangSubdomain
     partitionFunctionComplex G (J : ℂ) h (β : ℂ) ∈ Complex.slitPlane :=
   partitionFunctionComplex_mem_slitPlane_of_leeYangSubdomain G hβ J hh.2
 
+/-- `leeYangSubdomain β N` is open. Restatement of
+`isOpen_leeYangSubdomain`. -/
+theorem isOpen_leeYangSubdomain' (β : ℝ) (N : ℕ) :
+    IsOpen (leeYangSubdomain β N) :=
+  isOpen_leeYangSubdomain β N
+
+/-- `leeYangSubdomain β N` is convex. Restatement of
+`convex_leeYangSubdomain'`. -/
+theorem convex_leeYangSubdomain_alt (β : ℝ) (N : ℕ) :
+    Convex ℝ (leeYangSubdomain β N) :=
+  convex_leeYangSubdomain' β N
+
 
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
