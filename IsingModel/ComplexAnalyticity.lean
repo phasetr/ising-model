@@ -1571,6 +1571,17 @@ theorem partitionFunctionComplex_analyticOnNhd_univ_joint
       Set.univ :=
   fun z _ => partitionFunctionComplex_analyticAt_joint G z
 
+/-- `partitionFunctionComplex_ne_zero_on_leeYangDomain` (PR #199): for
+real ferromagnetic `J > 0`, `β > 0`, the complex partition function
+is non-zero everywhere on `leeYangDomain`. Restatement as a
+`Set.MapsTo` style result. -/
+theorem partitionFunctionComplex_mapsTo_ne_zero_leeYangDomain
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J) :
+    Set.MapsTo (fun h : ℂ => partitionFunctionComplex G (J : ℂ) h (β : ℂ))
+      leeYangDomain {z : ℂ | z ≠ 0} := fun _ hh =>
+  partitionFunctionComplex_ne_zero_on_leeYangDomain G hβ hJ hh
+
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
 `leeYangDomain`. For each point `h₀`, the local branch `f` from
