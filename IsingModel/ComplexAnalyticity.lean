@@ -2293,6 +2293,19 @@ theorem real_positives_subset_leeYangSubdomain (β : ℝ) (N : ℕ) :
   rintro h ⟨h₀, hpos, rfl⟩
   exact real_pos_mem_leeYangSubdomain β N hpos
 
+/-- `leeYangDomain` contains all points with `Re h > 0 ∧ Im h = 0`. -/
+theorem real_axis_pos_subset_leeYangDomain :
+    {h : ℂ | 0 < h.re ∧ h.im = 0} ⊆ leeYangDomain := by
+  intro h ⟨hre, him⟩
+  change |h.im| < h.re
+  rw [him, abs_zero]
+  exact hre
+
+/-- `leeYangDomain` is `IsOpen`; use for nhd calculations. -/
+theorem leeYangDomain_mem_nhds {h : ℂ} (hmem : h ∈ leeYangDomain) :
+    leeYangDomain ∈ nhds h :=
+  isOpen_leeYangDomain.mem_nhds hmem
+
 
 
 
