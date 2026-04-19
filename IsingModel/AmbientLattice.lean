@@ -3056,6 +3056,46 @@ theorem truncated4Infinite_indep_exhaustion
       correlationInfinite_indep_exhaustion G Λ Λ' p hf {i, l},
       correlationInfinite_indep_exhaustion G Λ Λ' p hf {j, k}]
 
+/-- **∞-volume Lebowitz 4-point vanishes at `β = 0`** for any sites
+`i, j, k, l : V`. Infinite-volume counterpart of
+`truncated4_beta_zero` (finite volume, PR #214 in
+`Inequalities/GHS.lean`).
+
+Each of the seven Finset correlations in the Lebowitz combination
+is over a nonempty Finset (every subset contains at least one of
+the supplied sites), so
+`correlationInfinite_beta_zero_vanish_of_nonempty_A` makes every
+term zero and the linear combination vanishes.
+
+Unlike the `β = 0` case, `truncated4Infinite` at `J = 0` is
+`-2·t⁴` (with `t = tanh(β·h)`) for pairwise distinct sites, which
+is non-zero when `β·h ≠ 0`. So only the `β = 0` slice is added
+here.
+
+Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §5.1 pp. 72–74
+(cluster property context); §4.3 Cor. 4.3.3. -/
+theorem truncated4Infinite_beta_zero
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J h : ℝ) (i j k l : V) :
+    truncated4Infinite G Λ (⟨J, h, 0⟩ : IsingParams ℝ) i j k l = 0 := by
+  unfold truncated4Infinite
+  rw [correlationInfinite_beta_zero_vanish_of_nonempty_A G Λ J h
+        {i, j, k, l} ⟨i, by simp⟩,
+      correlationInfinite_beta_zero_vanish_of_nonempty_A G Λ J h
+        {i, j} ⟨i, by simp⟩,
+      correlationInfinite_beta_zero_vanish_of_nonempty_A G Λ J h
+        {k, l} ⟨k, by simp⟩,
+      correlationInfinite_beta_zero_vanish_of_nonempty_A G Λ J h
+        {i, k} ⟨i, by simp⟩,
+      correlationInfinite_beta_zero_vanish_of_nonempty_A G Λ J h
+        {j, l} ⟨j, by simp⟩,
+      correlationInfinite_beta_zero_vanish_of_nonempty_A G Λ J h
+        {i, l} ⟨i, by simp⟩,
+      correlationInfinite_beta_zero_vanish_of_nonempty_A G Λ J h
+        {j, k} ⟨j, by simp⟩]
+  ring
+
 /-! ## Parameter monotonicity of `spontaneous*`
 
 Combine the parameter-direction monotonicity of `correlationInfinite`
