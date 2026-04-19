@@ -1716,6 +1716,18 @@ joint analyticity, $\log Z$ (slit-plane 経由), $\infty$-vol Vitali)
 は後続 PR. `Complex.log` は mathlib では slitPlane 上でのみ analytic な点に注意.
 \end{theorem}
 
+\begin{theorem}[GJ \S 4.6 Thm 4.6.2 continuation: \texttt{freeEnergyComplex} analyticity via slitPlane; PR \#194]
+PR \#193 の各パラメタ entire な $Z$ に続き,
+$Z(J, h_0, \beta) \in \texttt{Complex.slitPlane}$ の点で
+\[
+  \texttt{AnalyticAt}\,\mathbb C\,
+    (h \mapsto \texttt{freeEnergyComplex}\,G\,J\,h\,\beta)\,h_0
+\]
+(他 2 パラメタ版も同様). 証明: mathlib \texttt{AnalyticAt.clog}
+(\texttt{Mathlib.Analysis.SpecialFunctions.Complex.Analytic}) と
+定数乗との合成.
+\end{theorem}
+
 \begin{theorem}[\texttt{freeEnergyInfinite\_of\_eventually\_const}; PR \#171]
 $\forall^\infty n, f_n = c$ のとき
 $\texttt{freeEnergyInfinite}\,G\,\Lambda\,p = c$.

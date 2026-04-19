@@ -1,5 +1,6 @@
 import IsingModel.Hamiltonian
 import Mathlib.Analysis.Analytic.Constructions
+import Mathlib.Analysis.SpecialFunctions.Complex.Analytic
 import Mathlib.Analysis.SpecialFunctions.Complex.Log
 import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 
@@ -86,5 +87,38 @@ theorem partitionFunctionComplex_analyticAt_beta
 noncomputable def freeEnergyComplex (G : SimpleGraph ι) [Fintype G.edgeSet]
     (J h β : ℂ) : ℂ :=
   ((Fintype.card ι : ℂ))⁻¹ * Complex.log (partitionFunctionComplex G J h β)
+
+/-- `freeEnergyComplex` is analytic in `h` at points where `Z ∈ Complex.slitPlane`.
+
+Derived from `partitionFunctionComplex_analyticAt_h` (entire in `h`) and
+`AnalyticAt.clog` (mathlib `Complex.log` is analytic on `slitPlane`). -/
+theorem freeEnergyComplex_analyticAt_h
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℂ) (h₀ : ℂ)
+    (hZ : partitionFunctionComplex G J h₀ β ∈ Complex.slitPlane) :
+    AnalyticAt ℂ (fun h => freeEnergyComplex G J h β) h₀ := by
+  unfold freeEnergyComplex
+  exact analyticAt_const.mul
+    ((partitionFunctionComplex_analyticAt_h G J β h₀).clog hZ)
+
+/-- `freeEnergyComplex` is analytic in `J` at points where `Z ∈ Complex.slitPlane`. -/
+theorem freeEnergyComplex_analyticAt_J
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (h β : ℂ) (J₀ : ℂ)
+    (hZ : partitionFunctionComplex G J₀ h β ∈ Complex.slitPlane) :
+    AnalyticAt ℂ (fun J => freeEnergyComplex G J h β) J₀ := by
+  unfold freeEnergyComplex
+  exact analyticAt_const.mul
+    ((partitionFunctionComplex_analyticAt_J G h β J₀).clog hZ)
+
+/-- `freeEnergyComplex` is analytic in `β` at points where `Z ∈ Complex.slitPlane`. -/
+theorem freeEnergyComplex_analyticAt_beta
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h : ℂ) (β₀ : ℂ)
+    (hZ : partitionFunctionComplex G J h β₀ ∈ Complex.slitPlane) :
+    AnalyticAt ℂ (fun β => freeEnergyComplex G J h β) β₀ := by
+  unfold freeEnergyComplex
+  exact analyticAt_const.mul
+    ((partitionFunctionComplex_analyticAt_beta G J h β₀).clog hZ)
 
 end IsingModel
