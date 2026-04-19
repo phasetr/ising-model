@@ -1398,6 +1398,19 @@ theorem freeEnergyComplex_ofReal_eq_freeEnergy
       = ((freeEnergy G p : ℝ) : ℂ) :=
   (freeEnergy_ofReal_eq_freeEnergyComplex G p).symm
 
+/-- **Uniform-on-compacts norm bound on `partitionFunctionComplex`**:
+for real `β, J`, the map `h ↦ ‖Z(J, h, β)‖` is bounded on any bounded
+subset of `ℂ`. Concretely, if `|Re h| ≤ R` then
+`‖Z‖ ≤ 2^|ι| · exp(|β|·(|J|·|E| + R·|ι|))`. -/
+theorem norm_partitionFunctionComplex_le_of_re_bound
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (β J : ℝ) {R : ℝ} {h : ℂ} (hh : |h.re| ≤ R) :
+    ‖partitionFunctionComplex G (J : ℂ) h (β : ℂ)‖
+      ≤ Fintype.card (Config ι)
+        * Real.exp (|β| * (|J| * G.edgeFinset.card + R * Fintype.card ι)) := by
+  refine (norm_partitionFunctionComplex_le_trivial_bound G β J h).trans ?_
+  gcongr
+
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
 `leeYangDomain`. For each point `h₀`, the local branch `f` from
