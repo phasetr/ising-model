@@ -2463,6 +2463,29 @@ theorem freeEnergyComplex_differentiableOn_slitPlane_locus_joint
                         ∈ Complex.slitPlane} := fun z hmem =>
   (freeEnergyComplex_analyticAt_joint G z hmem).differentiableAt.differentiableWithinAt
 
+/-- **log Z analyticity locus is open**. -/
+theorem isOpen_logZ_slitPlane_locus
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J β : ℂ) :
+    IsOpen {h : ℂ | partitionFunctionComplex G J h β ∈ Complex.slitPlane} :=
+  isOpen_freeEnergy_analyticity_locus G J β
+
+/-- Jointly in (h, β) at fixed real `J > 0`, the slitPlane locus is open. -/
+theorem isOpen_slitPlane_locus_h_beta
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J : ℂ) :
+    IsOpen {z : ℂ × ℂ |
+              partitionFunctionComplex G J z.1 z.2 ∈ Complex.slitPlane} := by
+  have hcont : Continuous
+      (fun z : ℂ × ℂ => partitionFunctionComplex G J z.1 z.2) := by
+    refine continuous_iff_continuousAt.mpr fun z => ?_
+    -- Joint entireness implies continuity.
+    have := continuous_partitionFunctionComplex_joint G
+    have hp : ContinuousAt
+        (fun z : ℂ × ℂ × ℂ =>
+          partitionFunctionComplex G z.1 z.2.1 z.2.2) (J, z.1, z.2) :=
+      this.continuousAt
+    exact hp.comp ((continuous_const (y := J)).prodMk continuous_id).continuousAt
+  exact hcont.isOpen_preimage _ Complex.isOpen_slitPlane
+
 
 
 
