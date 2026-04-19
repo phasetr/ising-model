@@ -1699,6 +1699,44 @@ theorem freeEnergyComplex_analyticAt_from_logZ_branch
     AnalyticAt ℂ (fun h => c * g h) h₀ :=
   analyticAt_const.mul hg_ana
 
+/-! ### Summary of the PR #200 local-branch construction
+
+The goal of PR #200 (continuation of PR #199) is the finite-volume
+analyticity of `freeEnergyComplex` on the Lee-Yang domain. The following
+chain was established:
+
+1. `logDeriv_partitionFunctionComplex_analyticOnNhd_leeYangDomain`
+   (logarithmic derivative is holomorphic on `leeYangDomain`).
+2. `exists_logZ_branch_on_ball_of_leeYangDomain` (Morera primitive).
+3. `exists_normalised_logZ_branch_on_ball` (basepoint normalisation).
+4. `exists_logZ_holomorphic_branch_on_ball` (`exp g = Z`).
+5. `exists_logZ_analytic_branch_on_ball` (`g` analytic on the ball).
+6. `exists_logZ_analyticAt_of_leeYangDomain` (pointwise AnalyticAt on
+   the entire Lee-Yang domain, via openness).
+7. `exists_freeEnergyComplex_analyticAt_branch_of_leeYangDomain` (headline:
+   local analytic branch of `freeEnergyComplex` at every point).
+8. `analyticBranch_freeEnergyComplex_leeYangDomain` (∀-form).
+
+This is the local-branch form of GJ Thm 4.6.2 finite volume. The
+principal-branch `freeEnergyComplex` (using `Complex.log`) can be
+discontinuous where `Z` crosses the negative real axis; the local
+branch is continuous across such crossings.
+
+The infinite-volume lift via Vitali:
+- `vitali_bridge` / `_leeYangDomain` / `_leeYangSubdomain` /
+  `_eventually` wrap mathlib's
+  `TendstoLocallyUniformlyOn.differentiableOn`.
+- `norm_partitionFunctionComplex_le_partitionFunction` +
+  `norm_partitionFunctionComplex_le_trivial_bound` +
+  `norm_partitionFunctionComplex_le_of_re_bound` provide the uniform
+  bounds on `|Z|` (Montel input).
+- `norm_freeEnergyComplex_le_trivial_bound` gives the bound on
+  `‖freeEnergyComplex‖`.
+
+The remaining step (locally uniform convergence of finite-volume
+branches to an infinite-volume branch) requires a Montel-style
+subsequence argument; this is the last ingredient of GJ Thm 4.6.2. -/
+
 
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
