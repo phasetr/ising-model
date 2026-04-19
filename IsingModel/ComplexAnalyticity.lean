@@ -1620,6 +1620,18 @@ theorem leeYangSubdomain_anti_N_of_pos {β : ℝ} (hβ : 0 < β)
         exact mul_le_mul_of_nonneg_left (by exact_mod_cast hN) hnn
     _ < Real.pi / 2 := hh.2
 
+/-- **Complex field at real imaginary part 0 lies in `leeYangSubdomain`**
+iff the real part is positive (the `β · |Im h| · N` constraint is
+vacuous when `Im h = 0`). -/
+theorem mem_leeYangSubdomain_of_im_zero {β : ℝ} (N : ℕ) {h : ℂ}
+    (him : h.im = 0) (hpos : 0 < h.re) :
+    h ∈ leeYangSubdomain β N := by
+  refine ⟨?_, ?_⟩
+  · change |h.im| < h.re
+    rw [him]; simpa using hpos
+  · rw [him]; simp; positivity
+
+
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
 `leeYangDomain`. For each point `h₀`, the local branch `f` from
