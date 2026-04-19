@@ -1459,6 +1459,18 @@ theorem convex_leeYangDomain : Convex ℝ leeYangDomain := by
 theorem isPreconnected_leeYangDomain : IsPreconnected leeYangDomain :=
   convex_leeYangDomain.isPreconnected
 
+/-- The Lee-Yang domain is nonempty (contains `(1 : ℂ)`). -/
+theorem leeYangDomain_nonempty : leeYangDomain.Nonempty :=
+  ⟨(1 : ℂ), real_pos_mem_leeYangDomain (by norm_num : (0 : ℝ) < 1)⟩
+
+/-- The Lee-Yang domain is connected. -/
+theorem isConnected_leeYangDomain : IsConnected leeYangDomain :=
+  ⟨leeYangDomain_nonempty, isPreconnected_leeYangDomain⟩
+
+/-- **Star-convex Lee-Yang domain** at `(1 : ℂ)`: convex + contains `1`. -/
+theorem starConvex_leeYangDomain : StarConvex ℝ (1 : ℂ) leeYangDomain :=
+  convex_leeYangDomain.starConvex (real_pos_mem_leeYangDomain (by norm_num))
+
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
 `leeYangDomain`. For each point `h₀`, the local branch `f` from
