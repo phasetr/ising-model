@@ -1666,6 +1666,40 @@ $\texttt{Tendsto}\,(\texttt{freeEnergyAlongExhaustion}\,G\,\Lambda\,p)\,
 \texttt{freeEnergyInfinite} の値を与える infrastructure.
 \end{theorem}
 
+\begin{theorem}[Glimm--Jaffe \S 4.6 Prop 4.6.1 (Fekete convergence);
+PR \#192]
+以下の仮定バンドル (disjoint-tower exhaustion 条件) のもと,
+自由エネルギー密度が収束する. 仮定:
+\begin{itemize}
+  \item $\forall m, n, |\Lambda_{m+n}| = |\Lambda_m| + |\Lambda_n|$
+        (cardinality additivity)
+  \item $\forall m, n, \log Z_{\Lambda_m} + \log Z_{\Lambda_n}
+          \le \log Z_{\Lambda_{m+n}}$ (super-additivity)
+  \item $\texttt{freeEnergyAlongExhaustion}\,G\,\Lambda\,p$ が上有界
+  \item $|\Lambda_1| \neq 0$
+\end{itemize}
+のもと
+\[
+  \texttt{Tendsto}\,(\texttt{freeEnergyAlongExhaustion}\,G\,\Lambda\,p)\,
+    \texttt{atTop}\,
+    (\mathcal N (\texttt{freeEnergyInfinite}\,G\,\Lambda\,p)).
+\]
+証明: $u_n := -\log Z_{\Lambda_n}$ は super-additivity の符号反転で
+\texttt{Subadditive}. cardinality 加法性の induction で
+$|\Lambda_n| = n \cdot |\Lambda_1|$. mathlib
+\texttt{Subadditive.tendsto\_lim} (Fekete) を適用し
+$u_n / n \to \ell$. 比は
+\[
+  \texttt{freeEnergyAlongExhaustion}\,G\,\Lambda\,p\,n
+    = -(u_n / n) / |\Lambda_1|
+\]
+($n \ge 1$) で, Tendsto が持ち上がる.
+\texttt{freeEnergyInfinite\_eq\_of\_tendsto} で極限値を同定.
+
+Prop 4.6.1 の Fekete 段を完結 (既存の disjoint-union super-additivity,
+upper bound, 発散infra と合わせて対象 exhaustion クラス上で Done).
+\end{theorem}
+
 \begin{theorem}[\texttt{freeEnergyInfinite\_of\_eventually\_const}; PR \#171]
 $\forall^\infty n, f_n = c$ のとき
 $\texttt{freeEnergyInfinite}\,G\,\Lambda\,p = c$.
