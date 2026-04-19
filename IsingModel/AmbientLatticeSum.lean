@@ -872,10 +872,11 @@ theorem log_partitionFunctionΛ_J_zero
   rw [IsingModel.partitionFunction_J_zero, Real.log_pow, Fintype.card_coe]
 
 /-- **Concrete `DisjointTowerHypotheses` instance at `J = 0`**
-(GJ §4.6 Prop 4.6.1, p. 64): given a cardinality-additive exhaustion
-(`hcard_add`) with non-degenerate base step (`hcard_one`), the three
-structural hypotheses of `DisjointTowerHypotheses` hold automatically
-at `J = 0`.
+(GJ §4.6 Prop 4.6.1, p. 64): given `hcard_add` (cardinality additive
+exhaustion) and `hcard_one` (non-degenerate base step) as inputs, the
+remaining super-additivity field of `DisjointTowerHypotheses` at
+`J = 0` is discharged automatically — no translation invariance
+needed.
 
 Mathematical content: at `J = 0`,
 `log Z_Λ = |Λ| · log(2 · cosh(β · h))` by
