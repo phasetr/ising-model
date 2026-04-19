@@ -1603,12 +1603,9 @@ is automatic. -/
 theorem leeYangSubdomain_zero (β : ℝ) :
     leeYangSubdomain β 0 = leeYangDomain := by
   ext h
-  constructor
-  · exact fun hh => hh.1
-  · intro hh
-    refine ⟨hh, ?_⟩
-    simp
-    positivity
+  refine ⟨fun hh => hh.1, fun hh => ⟨hh, ?_⟩⟩
+  simp only [Nat.cast_zero, mul_zero]
+  positivity
 
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
