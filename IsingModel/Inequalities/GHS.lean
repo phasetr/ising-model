@@ -404,9 +404,10 @@ with `t = tanh(β·h)`.
 
 This complements `truncated4_beta_zero` (vanishing slice): at
 `J = 0` the Lebowitz 4-point does not vanish but has the explicit
-closed form `-2·t⁴`. Note `-2·t⁴ ≤ 0` always, which provides a
-direct witness (at the `J = 0` slice) of Cor. 4.3.3's bound
-`U₄ ≤ 0`.
+closed form `-2·t⁴`. Note `-2·t⁴ ≤ 0` always, consistent with
+the `U₄ ≤ 0` statement of Cor. 4.3.3 (though Cor. 4.3.3 itself
+is the `h = 0` case; our `J = 0` slice is an independent special
+case and not a direct witness of the Cor. 4.3.3 theorem).
 
 Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §5.1 pp. 72–74
 (cluster context); §4.3 Cor. 4.3.3 / Lebowitz. -/
