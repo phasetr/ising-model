@@ -834,4 +834,45 @@ theorem exp_neg_beta_hamiltonian_re_pos
   have hexp_pos : 0 < Real.exp a := Real.exp_pos _
   exact mul_pos hexp_pos hcos_pos
 
+/-- **`Re(partitionFunctionComplex) > 0` on the Lee-Yang subdomain**.
+Sum of per-σ positive-real-part Boltzmann weights. -/
+theorem partitionFunctionComplex_re_pos_of_leeYangSubdomain
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β : ℝ} (hβ : 0 < β) (J : ℝ) {h : ℂ}
+    (himπ : β * |h.im| * (Fintype.card ι : ℝ) < Real.pi / 2) :
+    0 < (partitionFunctionComplex G (J : ℂ) h (β : ℂ)).re := by
+  classical
+  unfold partitionFunctionComplex
+  rw [show ((∑ σ : Config ι,
+            Complex.exp (-(β : ℂ) * hamiltonianComplex G (J : ℂ) h σ))).re
+          = ∑ σ : Config ι,
+            (Complex.exp (-(β : ℂ) * hamiltonianComplex G (J : ℂ) h σ)).re
+          from by rw [Complex.re_sum]]
+  refine Finset.sum_pos (fun σ _ =>
+    exp_neg_beta_hamiltonian_re_pos G hβ J himπ σ) ?_
+  exact ⟨Classical.arbitrary (Config ι), Finset.mem_univ _⟩
+
+/-- **`partitionFunctionComplex ∈ Complex.slitPlane` on the Lee-Yang
+subdomain**: `Re Z > 0` implies slitPlane. -/
+theorem partitionFunctionComplex_mem_slitPlane_of_leeYangSubdomain
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β : ℝ} (hβ : 0 < β) (J : ℝ) {h : ℂ}
+    (himπ : β * |h.im| * (Fintype.card ι : ℝ) < Real.pi / 2) :
+    partitionFunctionComplex G (J : ℂ) h (β : ℂ) ∈ Complex.slitPlane :=
+  Or.inl (partitionFunctionComplex_re_pos_of_leeYangSubdomain G hβ J himπ)
+
+/-- **`freeEnergyComplex` is analytic in `h` on the Lee-Yang subdomain**
+(finite-volume `freeEnergyComplex` analyticity; GJ §4.6 Thm 4.6.2
+partial — subdomain where `β · |Im h| · |ι| < π/2`, which collapses as
+`|ι| → ∞`). Combines
+`partitionFunctionComplex_mem_slitPlane_of_leeYangSubdomain` with
+`freeEnergyComplex_analyticAt_h`. -/
+theorem freeEnergyComplex_analyticAt_h_of_leeYangSubdomain
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β : ℝ} (hβ : 0 < β) (J : ℝ) {h : ℂ}
+    (himπ : β * |h.im| * (Fintype.card ι : ℝ) < Real.pi / 2) :
+    AnalyticAt ℂ (fun h' => freeEnergyComplex G (J : ℂ) h' (β : ℂ)) h :=
+  freeEnergyComplex_analyticAt_h G (J : ℂ) (β : ℂ) h
+    (partitionFunctionComplex_mem_slitPlane_of_leeYangSubdomain G hβ J himπ)
+
 end IsingModel
