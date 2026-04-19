@@ -582,6 +582,45 @@ theorem isingEdgePoly_apply_configToFinset
   rw [List.map_map]
   exact Finset.prod_map_toList G.edgeFinset _
 
+/-- Per-configuration factorisation of the complex Boltzmann weight.
+For real coupling `J`, real inverse temperature `β`, and complex field `h`:
+`exp(-β · H(σ; J, h))
+  = leeYangNormalization β J h |E| |ι|
+    · isingEdgePoly (graphToEdgeList G t) X
+    · ∏_{i∈X} leeYangFugacityVec β h i`
+where `X = configToFinset σ` and `t = exp(-2βJ)`. -/
+theorem exp_neg_beta_hamiltonian_eq
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (β J : ℝ) (h : ℂ) (σ : Config ι) :
+    Complex.exp (-(β : ℂ) * hamiltonianComplex G (J : ℂ) h σ)
+      = leeYangNormalization (β : ℂ) (J : ℂ) h
+          G.edgeFinset.card (Fintype.card ι)
+        * isingEdgePoly (graphToEdgeList G (Real.exp (-2 * β * J)))
+            (configToFinset σ)
+        * ∏ i ∈ configToFinset σ, leeYangFugacityVec (β : ℂ) h i := by
+  unfold hamiltonianComplex interactionEnergyComplex externalFieldEnergyComplex
+    leeYangNormalization leeYangFugacityVec
+  rw [show -(β : ℂ) * (-(J : ℂ) * ∑ e ∈ G.edgeFinset, edgeSpinComplex σ e
+            + -h * ∑ i : ι, Spin.sign ℂ (σ i))
+          = (β : ℂ) * (J : ℂ) * ∑ e ∈ G.edgeFinset, edgeSpinComplex σ e
+              + (β : ℂ) * h * ∑ i : ι, Spin.sign ℂ (σ i) from by ring]
+  rw [Complex.exp_add]
+  rw [Finset.mul_sum G.edgeFinset (fun e => edgeSpinComplex σ e)
+        ((β : ℂ) * (J : ℂ)),
+      Finset.mul_sum Finset.univ (fun i => Spin.sign ℂ (σ i))
+        ((β : ℂ) * h)]
+  rw [Complex.exp_sum, Complex.exp_sum]
+  rw [prod_exp_beta_J_edgeSpin_eq G β J σ]
+  rw [prod_exp_beta_h_sign_eq β h σ]
+  rw [isingEdgePoly_apply_configToFinset G (Real.exp (-2 * β * J)) σ]
+  rw [Finset.prod_const]
+  rw [show Complex.exp ((β : ℂ) * (J : ℂ) * (G.edgeFinset.card : ℂ) +
+              (β : ℂ) * h * (Fintype.card ι : ℂ))
+          = Complex.exp ((β : ℂ) * (J : ℂ) * (G.edgeFinset.card : ℂ))
+              * Complex.exp ((β : ℂ) * h * (Fintype.card ι : ℂ))
+          from Complex.exp_add _ _]
+  ring
+
 /-! ### Friedli–Velenik factorisation of the partition function
 
 The Friedli–Velenik identity (Friedli–Velenik, *Statistical Mechanics of
