@@ -1360,6 +1360,19 @@ theorem freeEnergyComplex_differentiableOn_leeYangSubdomain
   (freeEnergyComplex_analyticAt_h_of_leeYangSubdomain
       G hβ J hmem.2).differentiableAt.differentiableWithinAt
 
+/-- **Vitali bridge on `leeYangSubdomain`**: locally uniform limit on
+the subdomain of DifferentiableOn-complex-analytic functions is again
+DifferentiableOn. Specialisation of `vitali_bridge` to
+`U = leeYangSubdomain β N`. -/
+theorem vitali_bridge_leeYangSubdomain
+    (β : ℝ) (N : ℕ)
+    {F : ℕ → ℂ → ℂ} {f : ℂ → ℂ}
+    (hF : ∀ n, DifferentiableOn ℂ (F n) (leeYangSubdomain β N))
+    (hconv : TendstoLocallyUniformlyOn F f Filter.atTop
+      (leeYangSubdomain β N)) :
+    DifferentiableOn ℂ f (leeYangSubdomain β N) :=
+  vitali_bridge (isOpen_leeYangSubdomain β N) hF hconv
+
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
 `leeYangDomain`. For each point `h₀`, the local branch `f` from
