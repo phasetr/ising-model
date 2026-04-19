@@ -756,6 +756,38 @@ theorem freeEnergyAlongExhaustion_zero_params_tendsto_of_eventually_nonempty
   filter_upwards [hne] with n hn using
     freeEnergyAlongExhaustion_zero_params G Λ β n hn
 
+/-- **β=0 slice closed form under `[Nonempty V]`**: drops the
+explicit `eventually_volume_nonempty` hypothesis via
+`Exhaustion.eventually_volume_nonempty`. -/
+theorem freeEnergyInfinite_beta_zero_of_nonempty
+    [Nonempty V] (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J h : ℝ) :
+    freeEnergyInfinite G Λ (⟨J, h, 0⟩ : IsingParams ℝ) = Real.log 2 :=
+  freeEnergyInfinite_beta_zero_of_eventually_nonempty G Λ J h
+    Λ.eventually_volume_nonempty
+
+/-- **J=h=0 slice closed form under `[Nonempty V]`**: drops the
+explicit `eventually_volume_nonempty` hypothesis. -/
+theorem freeEnergyInfinite_zero_params_of_nonempty
+    [Nonempty V] (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (β : ℝ) :
+    freeEnergyInfinite G Λ (⟨0, 0, β⟩ : IsingParams ℝ) = Real.log 2 :=
+  freeEnergyInfinite_zero_params_of_eventually_nonempty G Λ β
+    Λ.eventually_volume_nonempty
+
+/-- **J=0 slice closed form under `[Nonempty V]`**: drops the
+explicit `eventually_volume_nonempty` hypothesis. -/
+theorem freeEnergyInfinite_J_zero_of_nonempty
+    [Nonempty V] (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (h β : ℝ) :
+    freeEnergyInfinite G Λ (⟨0, h, β⟩ : IsingParams ℝ)
+      = Real.log (2 * Real.cosh (β * h)) :=
+  freeEnergyInfinite_J_zero_of_eventually_nonempty G Λ h β
+    Λ.eventually_volume_nonempty
+
 /-- **Infinite-volume J=0 graph-independence**:
 `freeEnergyInfinite G Λ ⟨0, h, β⟩ = freeEnergyInfinite ⊥ Λ ⟨0, h, β⟩`
 for any ambient graph `G, Λ`, any `h, β`.
