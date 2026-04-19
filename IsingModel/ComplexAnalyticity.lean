@@ -1477,6 +1477,16 @@ theorem leeYangDomain_ball_subset {h₀ : ℂ} (hmem : h₀ ∈ leeYangDomain) :
     ∃ r : ℝ, 0 < r ∧ Metric.ball h₀ r ⊆ leeYangDomain :=
   Metric.isOpen_iff.mp isOpen_leeYangDomain h₀ hmem
 
+/-- `leeYangSubdomain` is non-empty for `β ≥ 0` (contains `(1 : ℂ)`). -/
+theorem leeYangSubdomain_nonempty (β : ℝ) (N : ℕ) :
+    (leeYangSubdomain β N).Nonempty :=
+  ⟨(1 : ℂ), real_pos_mem_leeYangSubdomain β N (by norm_num)⟩
+
+/-- `leeYangDomain` membership implies `slitPlane` membership. -/
+theorem mem_slitPlane_of_mem_leeYangDomain {h : ℂ} (hh : h ∈ leeYangDomain) :
+    h ∈ Complex.slitPlane :=
+  leeYangDomain_subset_slitPlane hh
+
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
 `leeYangDomain`. For each point `h₀`, the local branch `f` from
