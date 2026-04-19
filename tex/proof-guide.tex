@@ -4001,8 +4001,8 @@ with $f_\infty = \limsup f_{\Lambda_n}$ via
 Glimm--Jaffe \cite{glimm-jaffe} \S 4.6 Prop 4.6.1, p.~64.
 \end{proof}
 
-\begin{theorem}[GJ \S 5.1 cluster property --- $J = 0$ instance;
-PR \#207]
+\begin{theorem}[Non-interacting ($J=0$) factorisation of the
+truncated 2-point function; PR \#207]
 For any ambient graph $G : \mathrm{SimpleGraph}\, \iota$ with
 $\iota$ finite, any $h, \beta \in \mathbb{R}$, and any distinct
 sites $i \neq j$ in $\iota$,
@@ -4011,14 +4011,12 @@ sites $i \neq j$ in $\iota$,
   = \langle \sigma_i \sigma_j \rangle - \langle \sigma_i\rangle
   \langle \sigma_j \rangle = 0.
 \]
-The factorisation is \emph{exact at every separation}, not just
-asymptotic.
+No distance / separation hypothesis is needed: the
+factorisation is identically true for any two distinct sites.
 \end{theorem}
 
 \begin{proof}
-By \texttt{correlation\_J\_zero}
-(Glimm--Jaffe \cite{glimm-jaffe} style, essentially the
-non-interacting free-spin model), for any subset
+By \texttt{correlation\_J\_zero}, for any subset
 $A \subseteq \iota$,
 $\langle \sigma^A \rangle_{G,\langle 0,h,\beta\rangle} =
 \tanh(\beta h)^{|A|}$.
@@ -4031,9 +4029,12 @@ so
   = \tanh(\beta h)^{2},
 \]
 and the difference vanishes.
-Reference: Glimm--Jaffe \cite{glimm-jaffe} \S 5.1, pp.~76--77. This
-is the trivial non-interacting instance of the cluster property;
-non-zero-$J$ decay at large separation remains follow-up work.
+Reference: Glimm--Jaffe \cite{glimm-jaffe} \S 5.1, pp.~72--74
+(cluster property context). This is the trivial non-interacting
+slice of the cluster property discussion; note that $\beta$ is
+arbitrary, so this is distinct from the high-temperature
+($\beta$ small) regime. Non-zero-$J$ decay at large separation
+in pure phases remains follow-up work.
 \end{proof}
 
 \begin{theorem}[GJ \S 4.6 Prop 4.6.1, log-linear-card builder and

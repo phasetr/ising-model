@@ -46,18 +46,21 @@ noncomputable def truncated3 (G : SimpleGraph ι) [Fintype G.edgeSet]
   - correlation G p {k} * correlation G p {i, j}
   + 2 * correlation G p {i} * correlation G p {j} * correlation G p {k}
 
-/-- **Trivial cluster property at `J = 0`**: the truncated 2-point
-function vanishes for distinct sites at `J = 0`, regardless of the
-distance between them.
+/-- **Non-interacting (`J = 0`) factorisation of the truncated
+2-point function**: for any distinct sites `i ≠ j`, any `h, β ∈ ℝ`,
+and any ambient graph `G`, `truncated2 G ⟨0, h, β⟩ i j = 0`.
 
 At `J = 0` the sites are non-interacting, and `correlation_J_zero`
 gives `⟨σ^A⟩ = tanh(β·h)^|A|`; for `i ≠ j` one has `{i,j}.card = 2`,
 so `⟨σ_i σ_j⟩ = tanh(β·h)^2 = ⟨σ_i⟩ · ⟨σ_j⟩`.
 
-This is the trivial / non-interacting instance of the `§5.1` cluster
-property in Glimm–Jaffe *Quantum Physics* 2nd ed., pp. 76–77: pure
-phases have correlations that factorise at large separation. At
-`J = 0` the factorisation is exact at *every* separation. -/
+This is the trivial non-interacting slice of the cluster property
+discussion in Glimm–Jaffe *Quantum Physics* 2nd ed., §5.1
+pp. 72–74. No distance / separation hypothesis is needed: at
+`J = 0` the factorisation is identically true for any two distinct
+sites, since the Hamiltonian has no `J`-coupling term to link
+them. This is disjoint from the high-temperature (`β` small)
+regime; here `β` is arbitrary. -/
 theorem truncated2_J_zero_of_ne (G : SimpleGraph ι) [Fintype G.edgeSet]
     (h β : ℝ) {i j : ι} (hij : i ≠ j) :
     truncated2 G (⟨0, h, β⟩ : IsingParams ℝ) i j = 0 := by
