@@ -1867,6 +1867,16 @@ theorem norm_partitionFunctionComplex_at_real
     Complex.norm_real]
   exact abs_of_pos (partitionFunction_pos G p)
 
+/-- `partitionFunctionComplex` is nonnegative-real-valued at real
+parameters; combined with positivity, it lies in the positive reals
+`(0, ∞)`. -/
+theorem partitionFunctionComplex_is_pos_real_at_real
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (p : IsingParams ℝ) :
+    ∃ x : ℝ, 0 < x ∧ partitionFunctionComplex G (p.J : ℂ) (p.h : ℂ) (p.β : ℂ)
+              = (x : ℂ) :=
+  ⟨partitionFunction G p, partitionFunction_pos G p,
+    (partitionFunction_ofReal_eq_partitionFunctionComplex G p).symm⟩
+
 
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
