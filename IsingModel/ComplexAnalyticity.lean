@@ -2433,6 +2433,17 @@ theorem real_params_analyticAt_joint
   freeEnergyComplex_analyticAt_joint G _
     (partitionFunctionComplex_mem_slitPlane_of_real G p)
 
+/-- **Image of `IsingParams ℝ` under cast**: `(J, h, β) ↦ ((J:ℂ), (h:ℂ), (β:ℂ))`
+sends every real-parameter point into the joint analyticity locus. -/
+theorem real_params_image_subset_analyticity_locus_joint
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    (fun p : IsingParams ℝ => ((p.J : ℂ), (p.h : ℂ), (p.β : ℂ)))
+      '' Set.univ ⊆
+      {z : ℂ × ℂ × ℂ | partitionFunctionComplex G z.1 z.2.1 z.2.2
+                        ∈ Complex.slitPlane} := by
+  rintro z ⟨p, _, rfl⟩
+  exact partitionFunctionComplex_mem_slitPlane_of_real G p
+
 
 
 
