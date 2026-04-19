@@ -2510,6 +2510,21 @@ theorem freeEnergyComplex_analyticAt_h_real_coe
       (fun h => freeEnergyComplex G (J : ℂ) h (β : ℂ)) (h₀ : ℂ) :=
   freeEnergyComplex_analyticAt_h_ofReal G J h₀ β
 
+/-- **Finite-volume `freeEnergy` is Differentiable at every real h₀**
+(in the complex sense). -/
+theorem freeEnergyComplex_differentiableAt_h_real_coe
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J β : ℝ) (h₀ : ℝ) :
+    DifferentiableAt ℂ
+      (fun h => freeEnergyComplex G (J : ℂ) h (β : ℂ)) (h₀ : ℂ) :=
+  (freeEnergyComplex_analyticAt_h_real_coe G J β h₀).differentiableAt
+
+/-- **Finite-volume `freeEnergy` is Continuous at every real h₀**. -/
+theorem freeEnergyComplex_continuousAt_h_real_coe
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J β : ℝ) (h₀ : ℝ) :
+    ContinuousAt
+      (fun h => freeEnergyComplex G (J : ℂ) h (β : ℂ)) (h₀ : ℂ) :=
+  (freeEnergyComplex_analyticAt_h_real_coe G J β h₀).continuousAt
+
 
 
 
