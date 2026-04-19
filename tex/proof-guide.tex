@@ -4021,7 +4021,9 @@ follow immediately, parallel to the $J = 0$ case.
 \begin{proof}
 (i) Super-additivity reduces to
 $(|\Lambda_m| + |\Lambda_n|) \cdot c \le |\Lambda_{m+n}| \cdot c$;
-under \texttt{hcard\_add} the two sides are equal.
+under \texttt{hcard\_add} the two sides are \emph{equal}, so the
+proof does not rely on any sign assumption on $c$ — it is a pure
+equality reduction, not a monotonicity argument.
 (ii) \texttt{IsingModel.partitionFunction\_beta\_zero} +
 \texttt{card\_config\_eq\_two\_pow} + \texttt{Real.log\_pow} give
 $\log Z_\Lambda = |\Lambda| \cdot \log 2$. The rest is
