@@ -2066,6 +2066,24 @@ theorem leeYangSubdomain_beta_zero (N : ℕ) :
   simp only [zero_mul]
   positivity
 
+/-- `slitPlane` locus for `partitionFunctionComplex` contains
+`leeYangSubdomain`. -/
+theorem leeYangSubdomain_subset_slitPlane_locus
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β : ℝ} (hβ : 0 < β) (J : ℝ) :
+    (leeYangSubdomain β (Fintype.card ι))
+      ⊆ {h : ℂ | partitionFunctionComplex G (J : ℂ) h (β : ℂ)
+                  ∈ Complex.slitPlane} := fun h hh =>
+  partitionFunctionComplex_mem_slitPlane_of_leeYangSubdomain G hβ J hh.2
+
+/-- Every point of `leeYangSubdomain` has `Z` in `slitPlane`. -/
+theorem mem_slitPlane_locus_of_mem_leeYangSubdomain
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β : ℝ} (hβ : 0 < β) (J : ℝ) {h : ℂ}
+    (hh : h ∈ leeYangSubdomain β (Fintype.card ι)) :
+    partitionFunctionComplex G (J : ℂ) h (β : ℂ) ∈ Complex.slitPlane :=
+  partitionFunctionComplex_mem_slitPlane_of_leeYangSubdomain G hβ J hh.2
+
 
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
