@@ -1629,8 +1629,9 @@ theorem mem_leeYangSubdomain_of_im_zero {β : ℝ} (N : ℕ) {h : ℂ}
   refine ⟨?_, ?_⟩
   · change |h.im| < h.re
     rw [him]; simpa using hpos
-  · rw [him]; simp; positivity
+  · rw [him, abs_zero, mul_zero, zero_mul]; positivity
 
+omit [Fintype ι] [DecidableEq ι] in
 /-- `leeYangFugacityVec (β : ℂ) h = (fun _ => exp(-2β h))` is analytic
 in `h` for fixed `β`. -/
 theorem leeYangFugacityVec_analyticAt_h
