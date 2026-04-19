@@ -4001,6 +4001,36 @@ with $f_\infty = \limsup f_{\Lambda_n}$ via
 Glimm--Jaffe \cite{glimm-jaffe} \S 4.6 Prop 4.6.1, p.~64.
 \end{proof}
 
+\begin{theorem}[GJ \S 4.6 Prop 4.6.1, concrete $J = 0$ instance; PR \#205]
+At $J = 0$, with bounded edge density along $\Lambda$, a
+cardinality-additive exhaustion
+($|\Lambda_{m+n}| = |\Lambda_m| + |\Lambda_n|$) with
+$|\Lambda_1| \neq 0$, the exhaustion free-energy density
+converges to the infinite-volume free energy:
+\[
+  f_{\Lambda_n}(0, h, \beta) \longrightarrow f_\infty(0, h, \beta).
+\]
+\end{theorem}
+
+\begin{proof}
+At $J = 0$, \texttt{IsingModel.partitionFunction\_J\_zero} gives
+$Z_\Lambda = (2\cosh(\beta h))^{|\Lambda|}$, so
+$\log Z_\Lambda = |\Lambda| \cdot \log(2\cosh(\beta h))$. The
+\texttt{DisjointTowerHypotheses} record's super-additivity field
+becomes
+\[
+  (|\Lambda_m| + |\Lambda_n|) \log(2\cosh(\beta h))
+  \le |\Lambda_{m+n}| \log(2\cosh(\beta h)),
+\]
+which holds with equality under \texttt{hcard\_add}. Combined with
+\texttt{BoundedEdgeDensity}, the bundled Fekete theorem
+\texttt{freeEnergyAlongExhaustion\_tendsto\_of\_disjointTowerHypotheses}
+closes the proof.  Reference: Glimm--Jaffe \cite{glimm-jaffe} \S 4.6
+Prop 4.6.1, p.~64. This is the first concrete
+\texttt{DisjointTowerHypotheses} instance; non-$J\!=\!0$ instances
+require translation invariance and remain follow-up.
+\end{proof}
+
 \begin{theorem}[GJ \S 4.6 Prop 4.6.1,
 \texttt{DisjointTowerHypotheses} bundle; PR \#204]
 The three structural hypotheses $|\Lambda_{m+n}| = |\Lambda_m|

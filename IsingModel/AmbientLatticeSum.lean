@@ -857,6 +857,88 @@ theorem freeEnergyAlongExhaustion_tendsto_of_disjointTowerHypotheses
   freeEnergyAlongExhaustion_tendsto_of_disjoint_tower G Λ p
     hBED h.card_add h.super h.card_one
 
+/-- **Closed form for `log (partitionFunctionΛ G Λ ⟨0, h, β⟩)`**:
+at `J = 0`, `log Z_Λ = |Λ| · log(2 · cosh(β · h))`.
+
+Direct from `IsingModel.partitionFunction_J_zero`
+(`Z = (2·cosh(β·h))^|ι|`) via `Real.log_pow` and `Fintype.card_coe`. -/
+theorem log_partitionFunctionΛ_J_zero
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (h β : ℝ) :
+    Real.log (partitionFunctionΛ G Λ (⟨0, h, β⟩ : IsingParams ℝ))
+      = (Λ.card : ℝ) * Real.log (2 * Real.cosh (β * h)) := by
+  change Real.log (IsingModel.partitionFunction
+      (inducedGraph G Λ) (⟨0, h, β⟩ : IsingParams ℝ)) = _
+  rw [IsingModel.partitionFunction_J_zero, Real.log_pow, Fintype.card_coe]
+
+/-- **Concrete `DisjointTowerHypotheses` instance at `J = 0`**
+(GJ §4.6 Prop 4.6.1, p. 64): given `hcard_add` (cardinality additive
+exhaustion) and `hcard_one` (non-degenerate base step) as inputs, the
+remaining super-additivity field of `DisjointTowerHypotheses` at
+`J = 0` is discharged automatically — no translation invariance
+needed.
+
+Mathematical content: at `J = 0`,
+`log Z_Λ = |Λ| · log(2 · cosh(β · h))` by
+`log_partitionFunctionΛ_J_zero`; the super-additivity hypothesis
+becomes
+`(|Λ_m| + |Λ_n|) · log(2·cosh(β·h)) ≤ |Λ_{m+n}| · log(2·cosh(β·h))`,
+which holds with equality under `hcard_add`. -/
+def DisjointTowerHypotheses.of_J_zero
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (h β : ℝ)
+    (hcard_add : ∀ m n, (Λ.volume (m + n)).card
+                          = (Λ.volume m).card + (Λ.volume n).card)
+    (hcard_one : (Λ.volume 1).card ≠ 0) :
+    DisjointTowerHypotheses G Λ (⟨0, h, β⟩ : IsingParams ℝ) where
+  card_add := hcard_add
+  super := by
+    intro m n
+    rw [log_partitionFunctionΛ_J_zero, log_partitionFunctionΛ_J_zero,
+        log_partitionFunctionΛ_J_zero]
+    have hcast : ((Λ.volume (m + n)).card : ℝ)
+        = ((Λ.volume m).card : ℝ) + ((Λ.volume n).card : ℝ) := by
+      exact_mod_cast hcard_add m n
+    rw [hcast]
+    ring_nf
+    exact le_refl _
+  card_one := hcard_one
+
+/-- **Fekete convergence of `freeEnergyAlongExhaustion` at `J = 0`**
+(GJ §4.6 Prop 4.6.1, p. 64, concrete `J = 0` instance).
+
+Given a cardinality-additive exhaustion with non-degenerate base step
+and bounded edge density, the free-energy density sequence
+`freeEnergyAlongExhaustion G Λ ⟨0, h, β⟩ n`
+converges to `freeEnergyInfinite G Λ ⟨0, h, β⟩`.
+
+This is the first concrete corollary of
+`freeEnergyAlongExhaustion_tendsto_of_disjointTowerHypotheses`,
+combining `DisjointTowerHypotheses.of_J_zero` (automatic
+super-additivity at `J = 0`) with `BoundedEdgeDensity`.
+
+Note: the limit coincides with `log(2 · cosh(β · h))` (from
+`freeEnergyAlongExhaustion_J_zero`) on nonempty stages, so this is a
+more explicit version of
+`freeEnergyAlongExhaustion_J_zero_tendsto_of_eventually_nonempty`
+obtained via the Fekete pipeline rather than the
+eventually-constant shortcut. -/
+theorem freeEnergyAlongExhaustion_J_zero_tendsto_of_hcard_add
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (h β : ℝ)
+    (hBED : BoundedEdgeDensity G Λ)
+    (hcard_add : ∀ m n, (Λ.volume (m + n)).card
+                          = (Λ.volume m).card + (Λ.volume n).card)
+    (hcard_one : (Λ.volume 1).card ≠ 0) :
+    Filter.Tendsto
+      (freeEnergyAlongExhaustion G Λ (⟨0, h, β⟩ : IsingParams ℝ))
+      Filter.atTop
+      (nhds (freeEnergyInfinite G Λ (⟨0, h, β⟩ : IsingParams ℝ))) :=
+  freeEnergyAlongExhaustion_tendsto_of_disjointTowerHypotheses G Λ _
+    hBED (DisjointTowerHypotheses.of_J_zero G Λ h β hcard_add hcard_one)
+
 /-- **Eventually constant ⇒ `freeEnergyInfinite` equals the constant.**
 
 If `∀ᶠ n in atTop, freeEnergyAlongExhaustion G Λ p n = c`, then
