@@ -1532,6 +1532,27 @@ theorem isOpen_freeEnergy_analyticity_locus
       (partitionFunctionComplex_analyticAt_h G J β h).continuousAt
   exact hcont.isOpen_preimage _ Complex.isOpen_slitPlane
 
+/-- **`Continuous` form of `partitionFunctionComplex` in `h`**. -/
+theorem continuous_partitionFunctionComplex_h
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J β : ℂ) :
+    Continuous (fun h => partitionFunctionComplex G J h β) :=
+  continuous_iff_continuousAt.mpr fun h =>
+    (partitionFunctionComplex_analyticAt_h G J β h).continuousAt
+
+/-- `Continuous` form in `J`. -/
+theorem continuous_partitionFunctionComplex_J
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (h β : ℂ) :
+    Continuous (fun J => partitionFunctionComplex G J h β) :=
+  continuous_iff_continuousAt.mpr fun J =>
+    (partitionFunctionComplex_analyticAt_J G h β J).continuousAt
+
+/-- `Continuous` form in `β`. -/
+theorem continuous_partitionFunctionComplex_beta
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J h : ℂ) :
+    Continuous (fun β => partitionFunctionComplex G J h β) :=
+  continuous_iff_continuousAt.mpr fun β =>
+    (partitionFunctionComplex_analyticAt_beta G J h β).continuousAt
+
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
 `leeYangDomain`. For each point `h₀`, the local branch `f` from
