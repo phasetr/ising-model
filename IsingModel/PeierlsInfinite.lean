@@ -85,4 +85,62 @@ theorem prop_5_4_2_along_exhaustion
   prop_5_4_2_self_contained (Ambient.inducedGraph G (Λ.volume n)) (hconn n)
     J β c hβ hJ (B n) (hB n) (i n) (hexp n)
 
+set_option linter.unusedDecidableInType false in
+/-- **Prop 5.4.2 along an exhaustion — limsup form** (GJ §5.4,
+p. 83). Under the same per-stage hypotheses as
+`prop_5_4_2_along_exhaustion`, the `Filter.limsup` at `atTop` of
+`n ↦ 1 − plusGibbsExpectation (Gₙ) ⟨J, 0, β⟩ (Bₙ) (σ ↦ sign (σ iₙ))`
+is bounded above by `exp (-c · β)`.
+
+This is the minimum ∞-vol lift obtainable from the per-stage bound
+alone: the per-stage inequality holds at every `n`, so the
+`limsup` is at most the common upper bound `exp (-c · β)`. It does
+not require constructing a canonical ∞-vol `+`-boundary-condition
+expectation — only packaging of the eventually-uniform bound.
+
+Proof: `Filter.limsup_le_of_le` takes an eventually-uniform upper
+bound; we use `Filter.Eventually.of_forall` with
+`prop_5_4_2_along_exhaustion` at every `n`. The required
+`IsCoboundedUnder (· ≤ ·)` side condition holds because every
+term is nonneg (hence bounded below by `0`).
+
+Subsequent PRs may define a canonical ∞-vol `+`-BC expectation
+and strengthen this `limsup` statement to a genuine equality
+`1 − ⟨σᵢ⟩₊^∞ ≤ exp (-c · β)`. -/
+theorem prop_5_4_2_limsup_le
+    (G : SimpleGraph V) (Λ : Ambient.Exhaustion V)
+    [∀ n, DecidableRel (Ambient.inducedGraph G (Λ.volume n)).Adj]
+    [∀ n, Fintype (Ambient.inducedGraph G (Λ.volume n)).edgeSet]
+    (hconn : ∀ n, (Ambient.inducedGraph G (Λ.volume n)).Preconnected)
+    (J β c : ℝ) (hβ : 0 < β) (hJ : 0 < J)
+    (B : ∀ n, Finset (↑(Λ.volume n) : Type _))
+    (hB : ∀ n, (B n).Nonempty)
+    (i : ∀ n, (↑(Λ.volume n) : Type _))
+    (hexp : ∀ n,
+      2 * ((2 : ℝ) ^ Fintype.card (↑(Λ.volume n) : Type _)) *
+          Real.exp (-2 * β * J) ≤
+        Real.exp (-c * β)) :
+    Filter.limsup
+      (fun n : ℕ =>
+        1 - plusGibbsExpectation (Ambient.inducedGraph G (Λ.volume n))
+              ⟨J, 0, β⟩ (B n) (fun σ => Spin.sign ℝ (σ (i n))))
+      Filter.atTop ≤ Real.exp (-c * β) := by
+  have hper := prop_5_4_2_along_exhaustion G Λ hconn J β c hβ hJ B hB i hexp
+  have hle : ∀ n,
+      1 - plusGibbsExpectation (Ambient.inducedGraph G (Λ.volume n))
+            ⟨J, 0, β⟩ (B n) (fun σ => Spin.sign ℝ (σ (i n))) ≤
+        Real.exp (-c * β) := fun n => (hper n).2
+  have hge : ∀ n,
+      0 ≤ 1 - plusGibbsExpectation (Ambient.inducedGraph G (Λ.volume n))
+            ⟨J, 0, β⟩ (B n) (fun σ => Spin.sign ℝ (σ (i n))) :=
+    fun n => (hper n).1
+  have hcobdd :
+      Filter.IsCoboundedUnder (· ≤ ·) Filter.atTop
+        (fun n =>
+          1 - plusGibbsExpectation (Ambient.inducedGraph G (Λ.volume n))
+                ⟨J, 0, β⟩ (B n) (fun σ => Spin.sign ℝ (σ (i n)))) :=
+    Filter.isCoboundedUnder_le_of_eventually_le (x := 0) Filter.atTop
+      (Filter.Eventually.of_forall hge)
+  exact Filter.limsup_le_of_le hcobdd (Filter.Eventually.of_forall hle)
+
 end IsingModel
