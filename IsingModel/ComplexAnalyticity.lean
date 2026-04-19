@@ -1818,6 +1818,14 @@ theorem freeEnergyComplex_at_real
       = ((freeEnergy G ⟨J, h, β⟩ : ℝ) : ℂ) :=
   freeEnergyComplex_ofReal_eq_freeEnergy G ⟨J, h, β⟩
 
+/-- **Positivity of `Re Z` at real positive `h`**: at real parameters
+`Z > 0` (real), so `Re Z > 0` in particular. -/
+theorem partitionFunctionComplex_re_pos_at_real
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (p : IsingParams ℝ) :
+    0 < (partitionFunctionComplex G (p.J : ℂ) (p.h : ℂ) (p.β : ℂ)).re := by
+  rw [← partitionFunction_ofReal_eq_partitionFunctionComplex G p]
+  simpa using partitionFunction_pos G p
+
 
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
