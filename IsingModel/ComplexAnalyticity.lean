@@ -1607,6 +1607,19 @@ theorem leeYangSubdomain_zero (β : ℝ) :
   simp only [Nat.cast_zero, mul_zero]
   positivity
 
+/-- `leeYangSubdomain β N` is monotone decreasing in `N` (for `β > 0`):
+larger `N` gives a tighter constraint on `|Im h|`. -/
+theorem leeYangSubdomain_anti_N_of_pos {β : ℝ} (hβ : 0 < β)
+    {N₁ N₂ : ℕ} (hN : N₁ ≤ N₂) :
+    leeYangSubdomain β N₂ ⊆ leeYangSubdomain β N₁ := by
+  intro h hh
+  refine ⟨hh.1, ?_⟩
+  calc β * |h.im| * (N₁ : ℝ)
+      ≤ β * |h.im| * (N₂ : ℝ) := by
+        have hnn : 0 ≤ β * |h.im| := mul_nonneg hβ.le (abs_nonneg _)
+        exact mul_le_mul_of_nonneg_left (by exact_mod_cast hN) hnn
+    _ < Real.pi / 2 := hh.2
+
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
 `leeYangDomain`. For each point `h₀`, the local branch `f` from
