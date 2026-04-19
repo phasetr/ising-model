@@ -2406,6 +2406,15 @@ theorem freeEnergyComplex_analyticOnNhd_slitPlane_locus_joint
   intro z hmem
   exact freeEnergyComplex_analyticAt_joint G z hmem
 
+/-- The joint slitPlane locus is open. -/
+theorem isOpen_freeEnergy_analyticity_locus_joint
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    IsOpen {z : ℂ × ℂ × ℂ |
+              partitionFunctionComplex G z.1 z.2.1 z.2.2
+                ∈ Complex.slitPlane} := by
+  exact (continuous_partitionFunctionComplex_joint G).isOpen_preimage _
+    Complex.isOpen_slitPlane
+
 
 
 
