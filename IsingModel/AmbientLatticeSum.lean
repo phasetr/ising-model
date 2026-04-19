@@ -805,6 +805,58 @@ theorem freeEnergyAlongExhaustion_tendsto_of_disjoint_tower
     (BddAbove_freeEnergyAlongExhaustion_range G Λ p hBED)
     hcard_one
 
+/-- **Bundle of disjoint-tower hypotheses** for `freeEnergyAlongExhaustion`
+Fekete convergence (GJ §4.6 Prop 4.6.1 p. 64).
+
+Packages the three exhaustion-structural hypotheses required by
+`freeEnergyAlongExhaustion_tendsto_of_disjoint_tower`:
+
+* `card_add`: `|Λ_{m+n}| = |Λ_m| + |Λ_n|` (additive cardinality).
+* `super`: `log Z_{Λ_m} + log Z_{Λ_n} ≤ log Z_{Λ_{m+n}}`
+  (super-additivity of `log Z` along the tower).
+* `card_one`: `|Λ_1| ≠ 0` (non-degenerate base step).
+
+The bundle is indexed by a `SimpleGraph V`, an `Exhaustion V`, and
+`IsingParams ℝ`; it does not depend on any probabilistic / ferromagnetic
+content — that enters separately through `BoundedEdgeDensity` when
+needed.
+
+Intended use: future PRs will provide concrete instances under
+translation invariance (GJ §4.6 p. 64 style) so that the user does
+not need to supply the three hypotheses by hand. -/
+structure DisjointTowerHypotheses
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) : Prop where
+  /-- Additive cardinality along the tower:
+  `|Λ_{m+n}| = |Λ_m| + |Λ_n|` for all `m, n`. -/
+  card_add : ∀ m n, (Λ.volume (m + n)).card
+                      = (Λ.volume m).card + (Λ.volume n).card
+  /-- Super-additivity of `log Z` along the tower:
+  `log Z_{Λ_m} + log Z_{Λ_n} ≤ log Z_{Λ_{m+n}}`. -/
+  super : ∀ m n, Real.log (partitionFunctionΛ G (Λ.volume m) p)
+                  + Real.log (partitionFunctionΛ G (Λ.volume n) p)
+                  ≤ Real.log (partitionFunctionΛ G (Λ.volume (m + n)) p)
+  /-- Non-degenerate base step: `|Λ_1| ≠ 0`. -/
+  card_one : (Λ.volume 1).card ≠ 0
+
+/-- **Bundled-hypothesis wrapper for Prop 4.6.1 (disjoint-tower +
+`BoundedEdgeDensity`)** (GJ §4.6 Prop 4.6.1 p. 64).
+
+Same content as `freeEnergyAlongExhaustion_tendsto_of_disjoint_tower`,
+but takes the three structural hypotheses as a single
+`DisjointTowerHypotheses` record for API-site convenience. -/
+theorem freeEnergyAlongExhaustion_tendsto_of_disjointTowerHypotheses
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ)
+    (hBED : BoundedEdgeDensity G Λ)
+    (h : DisjointTowerHypotheses G Λ p) :
+    Filter.Tendsto (freeEnergyAlongExhaustion G Λ p) Filter.atTop
+      (nhds (freeEnergyInfinite G Λ p)) :=
+  freeEnergyAlongExhaustion_tendsto_of_disjoint_tower G Λ p
+    hBED h.card_add h.super h.card_one
+
 /-- **Eventually constant ⇒ `freeEnergyInfinite` equals the constant.**
 
 If `∀ᶠ n in atTop, freeEnergyAlongExhaustion G Λ p n = c`, then
