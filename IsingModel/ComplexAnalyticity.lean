@@ -303,6 +303,14 @@ theorem continuous_leeYangFugacity (β : ℂ) :
   unfold leeYangFugacity
   exact Complex.continuous_exp.comp (by fun_prop)
 
+/-- **`leeYangFugacity β` is entire** (analytic on all of `ℂ`) for any
+fixed `β : ℂ`. Composition of the affine `h ↦ -2β h` with `Complex.exp`. -/
+theorem analyticOnNhd_leeYangFugacity (β : ℂ) :
+    AnalyticOnNhd ℂ (leeYangFugacity β) Set.univ := by
+  intro z _
+  unfold leeYangFugacity
+  exact analyticAt_cexp.comp (by fun_prop)
+
 /-- **Fugacity in the open unit disk on the Lee-Yang domain**:
 for real `β > 0` and `h ∈ leeYangDomain` (i.e., `|Im h| < Re h`),
 the fugacity `e^{-2β h}` has absolute value less than 1.
@@ -325,5 +333,15 @@ theorem norm_leeYangFugacity_lt_one
   refine Real.exp_lt_one_iff.mpr ?_
   have : 0 < 2 * β * h.re := by positivity
   linarith
+
+/-- `leeYangFugacity β` maps `leeYangDomain` into the open unit disk
+(for real `β > 0`): constant-coefficient version of the site fugacity
+vector going into `isingEdgePoly_nonvanishing_of_graph`. -/
+theorem leeYangFugacity_mapsTo_ball
+    {β : ℝ} (hβ : 0 < β) :
+    Set.MapsTo (leeYangFugacity (β : ℂ)) leeYangDomain (Metric.ball (0 : ℂ) 1) := by
+  intro h hh
+  rw [Metric.mem_ball, dist_zero_right]
+  exact norm_leeYangFugacity_lt_one hβ hh
 
 end IsingModel
