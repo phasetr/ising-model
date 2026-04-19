@@ -1766,130 +1766,157 @@ $Z(J, h_0, \beta) \in \texttt{Complex.slitPlane}$ の点で
 \end{theorem}
 
 \begin{theorem}[Lee-Yang domain infrastructure (support toward GJ \S 4.6 Thm 4.6.2); PR \#199]
-GJ \S 4.6 Thm 4.6.2 (pp.~67--70) を将来完結させるための support lemmas.
-以下はいずれも GJ 本体の命題ではなく, 独立した補助結果:
+Support lemmas toward the eventual completion of GJ \S 4.6 Thm 4.6.2
+(pp.~67--70). The following are independent auxiliary results, not
+statements of GJ itself:
 \begin{itemize}
 \item \texttt{leeYangDomain} $= \{h \in \mathbb C : |\mathrm{Im}\,h| < \mathrm{Re}\,h\}$
- は開集合, \texttt{slitPlane} の部分集合, 実正軸を含む.
-\item \texttt{leeYangFugacity}$(\beta, h) := e^{-2\beta h}$ は
- entire ($\beta, h \in \mathbb C$), Lee-Yang 領域 × $\beta > 0$ で
- $\|\cdot\| < 1$ (つまり open unit ball への写像).
+ is open, is a subset of \texttt{slitPlane}, and contains the positive
+ real axis.
+\item \texttt{leeYangFugacity}$(\beta, h) := e^{-2\beta h}$ is entire
+ on $\beta, h \in \mathbb C$, and on the Lee-Yang domain with
+ $\beta > 0$ it satisfies $\|\cdot\| < 1$ (i.e. maps into the open
+ unit disk).
 \item \texttt{leeYangNormalization}$(\beta, J, h, |E|, |\iota|)
- := \exp(\beta J |E| + \beta h |\iota|)$ は entire, 非零,
- 実パラメタで $\mathrm{Re} > 0$.
+ := \exp(\beta J |E| + \beta h |\iota|)$ is entire, non-vanishing, and
+ has positive real part at real parameters.
 \end{itemize}
 \end{theorem}
 
 \begin{theorem}[Friedli--Velenik factorisation; PR \#199]
 \label{thm:friedli-velenik}
-実 $\beta, J$, 複素 uniform field $h \in \mathbb C$ で,
-有限グラフ $G$, $|\iota| = \texttt{Fintype.card}\,\iota$,
+For real $\beta, J$ and complex uniform field $h \in \mathbb C$,
+with finite graph $G$, $|\iota| = \texttt{Fintype.card}\,\iota$,
 $|E| = G.\texttt{edgeFinset.card}$:
 \[
   Z(J, h, \beta)
     = \exp(\beta J |E| + \beta h |\iota|) \cdot P_E(z),
 \]
-ただし $z_k = e^{-2\beta h}$ (uniform fugacity vector) であり
-$P_E$ は Ising partition polynomial \texttt{isingEdgePoly}
-(\texttt{LeeYang.lean}, \texttt{graphToEdgeList}\,$G$\,$(e^{-2\beta J})$
-を係数として).
-証明: $\sigma \mapsto X := \{i : \sigma_i = \mathrm{down}\}$
-(\texttt{configFinsetEquiv}) bijection を通し,
-各 $\sigma$ について per-site + per-edge で $\exp(-\beta H(\sigma))$
-を展開して係数比較.
-Lean 定理名: \texttt{partitionFunctionComplex\_eq\_normalization\_mul\_isingEdgePoly}.
-参照: Friedli--Velenik (3.63)--(3.65), pp.~122--123.
+where $z_k = e^{-2\beta h}$ (uniform fugacity vector) and $P_E$ is the
+Ising partition polynomial \texttt{isingEdgePoly}
+(from \texttt{LeeYang.lean}, with
+\texttt{graphToEdgeList}\,$G$\,$(e^{-2\beta J})$ as coefficients).
+Proof: transport through the bijection
+$\sigma \mapsto X := \{i : \sigma_i = \mathrm{down}\}$
+(\texttt{configFinsetEquiv}) and, for each $\sigma$, expand
+$\exp(-\beta H(\sigma))$ per-site and per-edge and identify
+coefficients.
+Lean name: \texttt{partitionFunctionComplex\_eq\_normalization\_mul\_isingEdgePoly}.
+Reference: Friedli--Velenik (3.63)--(3.65), pp.~122--123.
 \end{theorem}
 
 \begin{theorem}[GJ Thm 4.6.2 non-vanishing half on Lee-Yang domain; PR \#199]
-強磁性 $J > 0$, $\beta > 0$ 実, $h \in \texttt{leeYangDomain}$ で
+For real ferromagnetic $J > 0$, $\beta > 0$, and
+$h \in \texttt{leeYangDomain}$,
 $\texttt{partitionFunctionComplex}\,G\,(J:\mathbb C)\,h\,(\beta:\mathbb C)
 \ne 0$.
-Friedli--Velenik 恒等式 (\ref{thm:friedli-velenik}) で
-$Z = \text{非零 normalization} \cdot P_E(z)$, Lee-Yang 円定理
+The Friedli--Velenik identity (\ref{thm:friedli-velenik}) expresses
+$Z$ as a non-vanishing normalisation times $P_E(z)$; the Lee-Yang
+circle theorem
 (\texttt{lee\_yang\_circle} / \texttt{isingEdgePoly\_nonvanishing\_of\_graph})
-で $P_E$ 部分も非零.
-Lean 定理名: \texttt{partitionFunctionComplex\_ne\_zero\_on\_leeYangDomain}.
+gives non-vanishing of the $P_E$ factor.
+Lean name: \texttt{partitionFunctionComplex\_ne\_zero\_on\_leeYangDomain}.
 
-Note: 非零性は $Z \in \texttt{slitPlane}$ を直接与えない.
-連続 branch 選択で slitPlane 属を確立し,
-\texttt{freeEnergyComplex} の analyticity を完結するのは後続 session.
+Note: non-vanishing does not directly give $Z \in \texttt{slitPlane}$.
+Establishing slit-plane membership via continuous branch selection, and
+hence completing the analyticity of \texttt{freeEnergyComplex}, is
+handled in a later session.
 \end{theorem}
 
 \begin{theorem}[Real-slice slitPlane corollary (preliminary to GJ Thm 4.6.2); PR \#199]
-任意の実 $J, h_0, \beta$ で
+For arbitrary real $J, h_0, \beta$,
 $\texttt{AnalyticAt}\,\mathbb C\,
   (h \mapsto \texttt{freeEnergyComplex}\,G\,(J:\mathbb C)\,h\,(\beta:\mathbb C))\,
   (h_0:\mathbb C)$.
-これは GJ Thm 4.6.2 本文ではなく, 既存の
+This is not the statement of GJ Thm 4.6.2 proper, but a simple
+composition of
 \texttt{partitionFunctionComplex\_mem\_slitPlane\_of\_real}
-(実パラメタで $Z > 0$ 実, よって slitPlane 属) と
-\texttt{freeEnergyComplex\_analyticAt\_h} の単純な合成.
-$J > 0$, $\beta > 0$ や Lee-Yang 領域の仮定は不要.
-Lean 定理名: \texttt{freeEnergyComplex\_analyticAt\_h\_ofReal}.
+(at real parameters $Z > 0$ is real, hence in slit-plane) with
+\texttt{freeEnergyComplex\_analyticAt\_h}. No assumption $J > 0$,
+$\beta > 0$, or Lee-Yang-domain is required.
+Lean name: \texttt{freeEnergyComplex\_analyticAt\_h\_ofReal}.
 \end{theorem}
 
-\begin{theorem}[GJ Thm 4.6.2 有限体積 local branch on Lee-Yang domain; PR \#200]
-実強磁性 $\beta > 0$, $J > 0$, \texttt{[Nonempty }$\iota$\texttt{]} で,
-任意 $h_0 \in \texttt{leeYangDomain}$ で解析関数 $f : \mathbb C \to \mathbb C$ 存在:
-$\texttt{AnalyticAt}\,\mathbb C\,f\,h_0$, $\exp(|\iota| f(h_0)) = Z(h_0)$,
+\begin{theorem}[GJ Thm 4.6.2 finite-volume local branch on Lee-Yang domain; PR \#200]
+For real ferromagnetic $\beta > 0$, $J > 0$, with
+\texttt{[Nonempty }$\iota$\texttt{]}, at any
+$h_0 \in \texttt{leeYangDomain}$ there exists an analytic function
+$f : \mathbb C \to \mathbb C$ such that
+$\texttt{AnalyticAt}\,\mathbb C\,f\,h_0$,
+$\exp(|\iota| f(h_0)) = Z(h_0)$, and
 $f(h_0) = \texttt{freeEnergyComplex}\,G\,(J:\mathbb C)\,h_0\,(\beta:\mathbb C)$.
-証明チェーン:
+Proof chain:
 \begin{enumerate}
-\item $Z$'/Z analytic on Lee-Yang (\texttt{logDeriv\_...\_analyticOnNhd\_leeYangDomain}).
-\item Morera 球 上 primitive (\texttt{DifferentiableOn.isExactOn\_ball}, mathlib)
-  で $g$: $g' = Z'/Z$ (\texttt{exists\_logZ\_branch\_on\_ball\_of\_leeYangDomain}).
-\item $g(h_0) = \log Z(h_0)$ に基準点正規化 (\texttt{\_normalised\_}).
-\item $F(z) := \exp(g(z))/Z(z)$ の微分 $= 0$ (連鎖+商規則), 球 connected ⇒ 定数,
-  $F(h_0) = \exp(\log Z(h_0))/Z(h_0) = 1$ ⇒ $\exp g = Z$.
-\item $g$ は DifferentiableOn 開集合 ⇒ \texttt{AnalyticOnNhd}.
-\item 各 $h_0$ 周りに ball 取って点毎命題.
-\item $f = g / |\iota|$ で \texttt{freeEnergyComplex} の local branch.
+\item $Z'/Z$ analytic on Lee-Yang (\texttt{logDeriv\_...\_analyticOnNhd\_leeYangDomain}).
+\item Morera gives a primitive on each ball contained in the domain
+  (\texttt{DifferentiableOn.isExactOn\_ball}, mathlib), producing $g$
+  with $g' = Z'/Z$ (\texttt{exists\_logZ\_branch\_on\_ball\_of\_leeYangDomain}).
+\item Normalise at the basepoint: $g(h_0) = \log Z(h_0)$
+  (\texttt{\_normalised\_}).
+\item Show $F(z) := \exp(g(z))/Z(z)$ has zero derivative on the ball
+  (chain + quotient rules); the ball is connected, hence $F$ is
+  constant. At the centre, $F(h_0) = \exp(\log Z(h_0))/Z(h_0) = 1$,
+  so $\exp g = Z$ pointwise on the ball.
+\item $g$ is \texttt{DifferentiableOn} an open set $\Rightarrow$
+  \texttt{AnalyticOnNhd}.
+\item Take a ball around each $h_0$ to obtain a pointwise statement.
+\item Set $f = g / |\iota|$ for the local branch of
+  \texttt{freeEnergyComplex}.
 \end{enumerate}
-Lean 定理名: \texttt{exists\_freeEnergyComplex\_analyticAt\_branch\_of\_leeYangDomain},
+Lean names: \texttt{exists\_freeEnergyComplex\_analyticAt\_branch\_of\_leeYangDomain},
 \texttt{analyticBranch\_freeEnergyComplex\_leeYangDomain}.
 
-注: principal-branch \texttt{Complex.log}($Z$) は $Z$ が負実軸を横切る点で不連続.
-local branch $f$ はそうした点でも連続に分岐. GJ Thm 4.6.2 本文が意図する
-``log $Z$ is analytic'' は local branch 解釈が正確.
+Note: the principal branch \texttt{Complex.log}($Z$) is discontinuous
+where $Z$ crosses the negative real axis; the local branch $f$ is
+continuous across such crossings. The statement
+``log $Z$ is analytic'' intended by GJ Thm 4.6.2 is interpreted in the
+local-branch sense.
 \end{theorem}
 
-\begin{theorem}[$\infty$-vol Vitali lift の準備 — 材料群; PR \#200]
+\begin{theorem}[$\infty$-vol Vitali lift preparation --- ingredients; PR \#200]
 \begin{itemize}
-\item \texttt{vitali\_bridge}: mathlib
-  \texttt{TendstoLocallyUniformlyOn.differentiableOn} の直接ラップ.
-  開集合上局所一様収束する正則関数列の極限は正則.
+\item \texttt{vitali\_bridge}: a direct wrapper of mathlib's
+  \texttt{TendstoLocallyUniformlyOn.differentiableOn}. A locally
+  uniform limit of holomorphic functions on an open set is holomorphic.
 \item \texttt{norm\_partitionFunctionComplex\_le\_partitionFunction}:
-  $|Z(J, h, \beta)| \le Z(J, \mathrm{Re}\,h, \beta)$ (実 Ising 分配関数).
+  $|Z(J, h, \beta)| \le Z(J, \mathrm{Re}\,h, \beta)$ (real Ising
+  partition function).
 \item \texttt{norm\_partitionFunctionComplex\_le\_trivial\_bound}:
-  既存 \texttt{partitionFunction\_upper} と合成して
+  combining with the existing \texttt{partitionFunction\_upper},
   $|Z| \le 2^{|\iota|} \exp(|\beta|(|J||E| + |\mathrm{Re}\,h| \cdot |\iota|))$.
 \item \texttt{norm\_complex\_log\_le}:
   $\|{\rm log}\,z\| \le |\log\|z\|| + \pi$.
 \item \texttt{norm\_freeEnergyComplex\_le\_trivial\_bound}:
   $\|f_{\rm complex}\| \le (|\log\|Z\|| + \pi)/|\iota|$.
 \end{itemize}
-これらは Montel 引数 (局所一様有界 + 実軸上 Fekete 収束) による
-局所一様収束を導く材料. 次段階: 局所一様収束の明示,
-\texttt{vitali\_bridge\_leeYangDomain} 適用で $f_\infty$ 解析性.
+These are the ingredients for a Montel-style argument (locally uniform
+boundedness + real-axis Fekete convergence) yielding locally uniform
+convergence. Next step: formalise locally uniform convergence and
+apply \texttt{vitali\_bridge\_leeYangDomain} to obtain analyticity of
+the infinite-volume limit $f_\infty$.
 \end{theorem}
 
-\begin{theorem}[Subdomain of Lee-Yang で \texttt{freeEnergyComplex} analytic; PR \#200]
-実 $\beta > 0$, 実 $J$, 複素 $h$ で
-$\beta \cdot |\mathrm{Im}\,h| \cdot |\iota| < \pi / 2$ (Lee-Yang 下位領域) のとき,
+\begin{theorem}[Subdomain of Lee-Yang on which \texttt{freeEnergyComplex} is analytic; PR \#200]
+For real $\beta > 0$, real $J$, and complex $h$ with
+$\beta \cdot |\mathrm{Im}\,h| \cdot |\iota| < \pi / 2$ (a Lee-Yang
+subdomain),
 \[
   \mathrm{Re}\,(\texttt{partitionFunctionComplex}\,G\,(J:\mathbb C)\,h\,(\beta:\mathbb C)) > 0,
 \]
-従って slitPlane 属, 従って $\texttt{freeEnergyComplex}$ は
-$h$ について解析的.
-証明: 各 $\sigma$ で $\exp(-\beta H(\sigma))$ の real part $= \exp(a) \cos(b)$
-($a$ は実部, $b = \beta \cdot \mathrm{Im}\,h \cdot \sum_i \sigma_i$,
-$|b| \le \beta |\mathrm{Im}\,h| |\iota| < \pi/2$), $\cos > 0$ なので正.
-$\sigma$ 和で real part 正. Lean 定理名:
+so the value lies in \texttt{slitPlane}, and
+$\texttt{freeEnergyComplex}$ is analytic in $h$.
+Proof: for each $\sigma$, the real part of $\exp(-\beta H(\sigma))$
+equals $\exp(a) \cos(b)$
+(with $a$ the real part of the exponent and
+$b = \beta \cdot \mathrm{Im}\,h \cdot \sum_i \sigma_i$,
+$|b| \le \beta |\mathrm{Im}\,h| |\iota| < \pi/2$), hence $\cos > 0$ and
+the term is positive. Summing over $\sigma$ gives positivity of
+$\mathrm{Re}\,Z$. Lean name:
 \texttt{freeEnergyComplex\_analyticAt\_h\_of\_leeYangSubdomain}.
 
-注: 下位領域は $\beta |\iota|$ 増加で縮むため, $\infty$-vol では直接使えない.
-full Lee-Yang への拡張は branch 選択が必要で本 PR の TODO.
+Note: the subdomain shrinks as $\beta |\iota|$ grows, so it is not
+directly usable at the infinite volume limit. Extension to the full
+Lee-Yang domain requires branch selection and is a TODO of this PR.
 \end{theorem}
 
 \begin{theorem}[\texttt{freeEnergyInfinite\_of\_eventually\_const}; PR \#171]
