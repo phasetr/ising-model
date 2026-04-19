@@ -389,6 +389,57 @@ theorem truncated4_beta_zero (G : SimpleGraph ι) [Fintype G.edgeSet]
         ⟨j, by simp⟩]
   ring
 
+/-- **Non-interacting (`J = 0`) closed form for the Lebowitz 4-point
+(truncated) function**: for any ambient graph `G`, any `h, β ∈ ℝ`,
+and pairwise distinct `i, j, k, l : ι`,
+`truncated4 G ⟨0, h, β⟩ i j k l = -2 · tanh(β·h)^4`.
+
+At `J = 0`, `correlation_J_zero` gives
+`⟨σ^A⟩ = tanh(β·h)^|A|`. With pairwise distinct
+`i, j, k, l` one has `{i,j,k,l}.card = 4`,
+`{i,j}.card = {i,k}.card = {i,l}.card = {j,k}.card =
+{j,l}.card = {k,l}.card = 2`, so the Lebowitz combination becomes
+`t⁴ - t² · t² - t² · t² - t² · t² = t⁴ - 3·t⁴ = -2·t⁴`
+with `t = tanh(β·h)`.
+
+This complements `truncated4_beta_zero` (vanishing slice): at
+`J = 0` the Lebowitz 4-point does not vanish but has the explicit
+closed form `-2·t⁴`. Note `-2·t⁴ ≤ 0` always, which provides a
+direct witness (at the `J = 0` slice) of Cor. 4.3.3's bound
+`U₄ ≤ 0`.
+
+Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §5.1 pp. 72–74
+(cluster context); §4.3 Cor. 4.3.3 / Lebowitz. -/
+theorem truncated4_J_zero_of_pairwise_distinct
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (h β : ℝ) {i j k l : ι}
+    (hij : i ≠ j) (hik : i ≠ k) (hil : i ≠ l)
+    (hjk : j ≠ k) (hjl : j ≠ l) (hkl : k ≠ l) :
+    truncated4 G (⟨0, h, β⟩ : IsingParams ℝ) i j k l
+      = -2 * Real.tanh (β * h) ^ 4 := by
+  unfold truncated4
+  rw [correlation_J_zero, correlation_J_zero, correlation_J_zero,
+      correlation_J_zero, correlation_J_zero, correlation_J_zero,
+      correlation_J_zero]
+  have hcard_ijkl : ({i, j, k, l} : Finset ι).card = 4 := by
+    have h_jkl_card : ({j, k, l} : Finset ι).card = 3 := by
+      rw [show ({j, k, l} : Finset ι) = insert j ({k, l} : Finset ι) from rfl,
+          Finset.card_insert_of_notMem (by simp [hjk, hjl]),
+          Finset.card_pair hkl]
+    have h_i_nin : i ∉ ({j, k, l} : Finset ι) := by
+      simp [hij, hik, hil]
+    rw [show ({i, j, k, l} : Finset ι) = insert i ({j, k, l} : Finset ι)
+            from rfl,
+        Finset.card_insert_of_notMem h_i_nin, h_jkl_card]
+  have hcard_ij : ({i, j} : Finset ι).card = 2 := Finset.card_pair hij
+  have hcard_ik : ({i, k} : Finset ι).card = 2 := Finset.card_pair hik
+  have hcard_il : ({i, l} : Finset ι).card = 2 := Finset.card_pair hil
+  have hcard_jk : ({j, k} : Finset ι).card = 2 := Finset.card_pair hjk
+  have hcard_jl : ({j, l} : Finset ι).card = 2 := Finset.card_pair hjl
+  have hcard_kl : ({k, l} : Finset ι).card = 2 := Finset.card_pair hkl
+  rw [hcard_ijkl, hcard_ij, hcard_kl, hcard_ik, hcard_jl, hcard_il, hcard_jk]
+  ring
+
 /-- **Lebowitz 4-site inequality** (Glimm–Jaffe, Cor. 4.3.2 for |A|=|B|=2).
 For ferromagnetic Ising with `h ≥ 0` and four distinct sites,
 `⟨σ_iσ_jσ_kσ_l⟩ + ⟨σ_iσ_j⟩⟨σ_kσ_l⟩

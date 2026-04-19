@@ -3096,6 +3096,60 @@ theorem truncated4Infinite_beta_zero
         {j, k} ⟨j, by simp⟩]
   ring
 
+/-- **∞-volume Lebowitz 4-point closed form at `J = 0`** for
+ferromagnetic `⟨0, h, β⟩` and pairwise distinct sites:
+`truncated4Infinite G Λ ⟨0, h, β⟩ i j k l = -2 · tanh(β·h)^4`.
+
+Infinite-volume counterpart of
+`truncated4_J_zero_of_pairwise_distinct` (finite volume, PR #215
+in `Inequalities/GHS.lean`). Uses the ∞-vol closed form
+`correlationInfinite_J_zero` at the four Finsets of card 4 and
+six Finsets of card 2.
+
+Complements `truncated4Infinite_beta_zero` (vanishing slice at
+`β = 0`): this is the J=0 slice with explicit closed form `-2·t⁴`
+(non-vanishing). Note `-2·t⁴ ≤ 0` always, consistent with
+`truncated4Infinite_nonpos_h_zero`.
+
+Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §5.1 pp. 72–74
+(cluster context); §4.3 Cor. 4.3.3 / Lebowitz. -/
+theorem truncated4Infinite_J_zero_of_pairwise_distinct
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (h β : ℝ)
+    (hf : Ferromagnetic (⟨(0 : ℝ), h, β⟩ : IsingParams ℝ))
+    {i j k l : V}
+    (hij : i ≠ j) (hik : i ≠ k) (hil : i ≠ l)
+    (hjk : j ≠ k) (hjl : j ≠ l) (hkl : k ≠ l) :
+    truncated4Infinite G Λ (⟨0, h, β⟩ : IsingParams ℝ) i j k l
+      = -2 * Real.tanh (β * h) ^ 4 := by
+  unfold truncated4Infinite
+  rw [correlationInfinite_J_zero G Λ h β hf,
+      correlationInfinite_J_zero G Λ h β hf,
+      correlationInfinite_J_zero G Λ h β hf,
+      correlationInfinite_J_zero G Λ h β hf,
+      correlationInfinite_J_zero G Λ h β hf,
+      correlationInfinite_J_zero G Λ h β hf,
+      correlationInfinite_J_zero G Λ h β hf]
+  have hcard_ijkl : ({i, j, k, l} : Finset V).card = 4 := by
+    have h_jkl_card : ({j, k, l} : Finset V).card = 3 := by
+      rw [show ({j, k, l} : Finset V) = insert j ({k, l} : Finset V) from rfl,
+          Finset.card_insert_of_notMem (by simp [hjk, hjl]),
+          Finset.card_pair hkl]
+    have h_i_nin : i ∉ ({j, k, l} : Finset V) := by
+      simp [hij, hik, hil]
+    rw [show ({i, j, k, l} : Finset V) = insert i ({j, k, l} : Finset V)
+            from rfl,
+        Finset.card_insert_of_notMem h_i_nin, h_jkl_card]
+  have hcard_ij : ({i, j} : Finset V).card = 2 := Finset.card_pair hij
+  have hcard_ik : ({i, k} : Finset V).card = 2 := Finset.card_pair hik
+  have hcard_il : ({i, l} : Finset V).card = 2 := Finset.card_pair hil
+  have hcard_jk : ({j, k} : Finset V).card = 2 := Finset.card_pair hjk
+  have hcard_jl : ({j, l} : Finset V).card = 2 := Finset.card_pair hjl
+  have hcard_kl : ({k, l} : Finset V).card = 2 := Finset.card_pair hkl
+  rw [hcard_ijkl, hcard_ij, hcard_kl, hcard_ik, hcard_jl, hcard_il, hcard_jk]
+  ring
+
 /-! ## Parameter monotonicity of `spontaneous*`
 
 Combine the parameter-direction monotonicity of `correlationInfinite`
