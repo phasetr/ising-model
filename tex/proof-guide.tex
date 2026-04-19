@@ -1763,6 +1763,15 @@ PR \#165 \texttt{\_ge\_card\_mul\_log\_two} の sharpening. 3 層 lift
 から $\log$ + \texttt{Real.log\_pow}.
 \end{theorem}
 
+\begin{theorem}[\texttt{magnetizationInfinite\_beta\_zero}; PR \#186]
+$\beta = 0$ で $\infty$-vol magnetization 消失:
+$\texttt{magnetizationInfinite}\,G\,\Lambda\,\langle J, h, 0\rangle\,i = 0$.
+PR \#183 \texttt{correlationInfinite\_beta\_zero\_vanish} を
+singleton $A = \{i\}$ で specialize. 既存
+\texttt{magnetizationInfinite\_zero\_at\_h\_zero} (h=0 による対称性)
+に加えて $\beta = 0$ (無限温度) でも消失することを形式化.
+\end{theorem}
+
 \begin{theorem}[\texttt{correlation\_empty}; PR \#185]
 Gibbs 測度の正規化:
 $\texttt{correlation}\,G\,p\,\emptyset = 1$
