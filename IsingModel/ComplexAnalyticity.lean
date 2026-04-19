@@ -2493,6 +2493,23 @@ theorem real_coe_mem_slitPlane_locus_h
       {h : ℂ | partitionFunctionComplex G (J : ℂ) h (β : ℂ) ∈ Complex.slitPlane} :=
   partitionFunctionComplex_mem_slitPlane_of_real G ⟨J, h₀, β⟩
 
+/-- **The positive real axis (cast) sits in the h-slitPlane locus**:
+for every `h₀ > 0` real, `Z(↑J, ↑h₀, ↑β) ∈ slitPlane` (at real
+parameters). -/
+theorem real_axis_in_slitPlane_locus_h
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J β : ℝ) :
+    ((fun h₀ : ℝ => (h₀ : ℂ)) '' Set.univ) ⊆
+      {h : ℂ | partitionFunctionComplex G (J : ℂ) h (β : ℂ) ∈ Complex.slitPlane} := by
+  rintro h ⟨h₀, _, rfl⟩
+  exact real_coe_mem_slitPlane_locus_h G J β h₀
+
+/-- `freeEnergyComplex` `AnalyticAt` at every real (cast to complex) `h₀`. -/
+theorem freeEnergyComplex_analyticAt_h_real_coe
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J β : ℝ) (h₀ : ℝ) :
+    AnalyticAt ℂ
+      (fun h => freeEnergyComplex G (J : ℂ) h (β : ℂ)) (h₀ : ℂ) :=
+  freeEnergyComplex_analyticAt_h_ofReal G J h₀ β
+
 
 
 
