@@ -1,6 +1,7 @@
 import IsingModel.GibbsMeasure
 import IsingModel.FreeEnergy
 import IsingModel.LeeYang
+import IsingModel.Conditioning
 import Mathlib.Analysis.Analytic.Constructions
 import Mathlib.Analysis.Analytic.Linear
 import Mathlib.Analysis.SpecialFunctions.Complex.Analytic
@@ -1282,6 +1283,23 @@ theorem norm_partitionFunctionComplex_le_partitionFunction
       Complex.ofReal_im, Complex.add_re,
       hEdge, hSpin, him_sum]
   rw [hexp_eq]
+
+/-- **Explicit trivial upper bound on `|partitionFunctionComplex|`**
+combining `norm_partitionFunctionComplex_le_partitionFunction` with
+`partitionFunction_upper`: for real `β, J` and complex `h`,
+`|Z(J, h, β)| ≤ 2^|ι| · exp(|β|·(|J|·|E| + |Re h|·|ι|))`.
+
+This gives a locally uniform bound on `|Z|` over compact subsets of
+`ℂ` where `|Re h|` is bounded, which is the input for Montel's theorem
+in the ∞-vol Vitali lift. -/
+theorem norm_partitionFunctionComplex_le_trivial_bound
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (β J : ℝ) (h : ℂ) :
+    ‖partitionFunctionComplex G (J : ℂ) h (β : ℂ)‖
+      ≤ Fintype.card (Config ι)
+        * Real.exp (|β| * (|J| * G.edgeFinset.card + |h.re| * Fintype.card ι)) := by
+  refine (norm_partitionFunctionComplex_le_partitionFunction G β J h).trans ?_
+  exact partitionFunction_upper G ⟨J, h.re, β⟩
 
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
