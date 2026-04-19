@@ -1201,4 +1201,20 @@ theorem exists_freeEnergyComplex_analyticAt_branch_of_leeYangDomain
     rw [hmul]; exact hg_exp
   · unfold freeEnergyComplex; simp [hg_base]
 
+/-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
+an analytic family of local log-branches of `Z` covering all of
+`leeYangDomain`. For each point `h₀`, the local branch `f` from
+`exists_freeEnergyComplex_analyticAt_branch_of_leeYangDomain` is
+analytic at `h₀` and satisfies `exp(|ι|·f) = Z` near `h₀`. -/
+theorem analyticBranch_freeEnergyComplex_leeYangDomain
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J) [Nonempty ι] :
+    ∀ h₀ ∈ leeYangDomain,
+      ∃ f : ℂ → ℂ,
+          AnalyticAt ℂ f h₀
+        ∧ Complex.exp ((Fintype.card ι : ℂ) * f h₀)
+            = partitionFunctionComplex G (J : ℂ) h₀ (β : ℂ)
+        ∧ f h₀ = freeEnergyComplex G (J : ℂ) h₀ (β : ℂ) := fun _ hmem =>
+  exists_freeEnergyComplex_analyticAt_branch_of_leeYangDomain G hβ hJ hmem
+
 end IsingModel
