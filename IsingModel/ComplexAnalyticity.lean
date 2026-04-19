@@ -2032,6 +2032,13 @@ theorem leeYangDomain_eq_preimage :
   · intro hlt; linarith
   · intro hlt; change |h.im| < h.re; linarith
 
+/-- `leeYangSubdomain` characterized as an intersection of preimages. -/
+theorem leeYangSubdomain_eq_inter_preimage (β : ℝ) (N : ℕ) :
+    leeYangSubdomain β N = leeYangDomain ∩
+      (fun h : ℂ => β * |h.im| * (N : ℝ)) ⁻¹' Set.Iio (Real.pi / 2) := by
+  ext h
+  rfl
+
 
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
