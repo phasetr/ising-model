@@ -1487,6 +1487,21 @@ theorem mem_slitPlane_of_mem_leeYangDomain {h : ℂ} (hh : h ∈ leeYangDomain) 
     h ∈ Complex.slitPlane :=
   leeYangDomain_subset_slitPlane hh
 
+/-- `leeYangSubdomain` membership implies `slitPlane` membership. -/
+theorem mem_slitPlane_of_mem_leeYangSubdomain (β : ℝ) (N : ℕ)
+    {h : ℂ} (hh : h ∈ leeYangSubdomain β N) : h ∈ Complex.slitPlane :=
+  leeYangDomain_subset_slitPlane (leeYangSubdomain_subset_leeYangDomain β N hh)
+
+/-- `partitionFunctionComplex` is non-zero on `leeYangDomain` gives
+`∈ Complex.slitPlane`? No — the partition function may still lie on the
+negative real axis at some `h`. This is a helper stating explicitly the
+gap: the value `Z(J, h, β)` lies in `ℂ \ {0}` (non-vanishing) but not
+automatically in `slitPlane`. -/
+theorem partitionFunctionComplex_ne_zero_not_iff_slitPlane
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J β : ℂ) (h : ℂ)
+    (hne : partitionFunctionComplex G J h β ≠ 0) :
+    partitionFunctionComplex G J h β ∈ ({z : ℂ | z ≠ 0}) := hne
+
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
 `leeYangDomain`. For each point `h₀`, the local branch `f` from
