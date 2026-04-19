@@ -1245,7 +1245,43 @@ theorem norm_partitionFunctionComplex_le_partitionFunction
     (β J : ℝ) (h : ℂ) :
     ‖partitionFunctionComplex G (J : ℂ) h (β : ℂ)‖
       ≤ partitionFunction G ⟨J, h.re, β⟩ := by
-  sorry
+  classical
+  unfold partitionFunctionComplex partitionFunction boltzmannWeight
+  refine (norm_sum_le _ _).trans ?_
+  refine Finset.sum_le_sum (fun σ _ => ?_)
+  rw [Complex.norm_exp]
+  -- Show the real-part of the complex exponent equals the real exponent.
+  have hexp_eq :
+      (-(β : ℂ) * hamiltonianComplex G (J : ℂ) h σ).re
+        = -β * hamiltonian G ⟨J, h.re, β⟩ σ := by
+    unfold hamiltonianComplex interactionEnergyComplex
+      externalFieldEnergyComplex
+    unfold hamiltonian interactionEnergy externalFieldEnergy
+    -- Step 1: ∑ edgeSpinComplex σ e has real part = ∑ edgeSpin σ e (all real).
+    have hEdge : (∑ e ∈ G.edgeFinset, edgeSpinComplex σ e).re
+                  = ∑ e ∈ G.edgeFinset, edgeSpin σ e := by
+      simp only [Complex.re_sum]
+      refine Finset.sum_congr rfl (fun e _ => ?_)
+      refine Sym2.ind (fun i j => ?_) e
+      unfold edgeSpinComplex edgeSpin
+      rw [Sym2.lift_mk, Sym2.lift_mk]
+      cases σ i <;> cases σ j <;>
+        simp [Spin.sign, Spin.toSign]
+    -- Step 2: ∑ Spin.sign ℂ real part = ∑ Spin.sign ℝ.
+    have hSpin : (∑ i : ι, Spin.sign ℂ (σ i)).re
+                  = ∑ i : ι, Spin.sign ℝ (σ i) := by
+      simp only [Complex.re_sum]
+      refine Finset.sum_congr rfl (fun i _ => ?_)
+      cases σ i <;> simp [Spin.sign, Spin.toSign]
+    -- Step 3: compute the full expression.
+    have him_sum : (∑ i : ι, Spin.sign ℂ (σ i)).im = 0 := by
+      simp only [Complex.im_sum]
+      refine Finset.sum_eq_zero (fun i _ => ?_)
+      cases σ i <;> simp [Spin.sign, Spin.toSign]
+    simp [Complex.mul_re, Complex.neg_re, Complex.ofReal_re,
+      Complex.ofReal_im, Complex.add_re,
+      hEdge, hSpin, him_sum]
+  rw [hexp_eq]
 
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is
 an analytic family of local log-branches of `Z` covering all of
