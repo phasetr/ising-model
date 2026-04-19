@@ -2597,6 +2597,14 @@ theorem continuousAt_freeEnergyComplex_at_real_joint
       ((p.J : ℂ), (p.h : ℂ), (p.β : ℂ)) :=
   (real_params_analyticAt_joint G p).continuousAt
 
+/-- `differentiableAt` joint form at real parameters. -/
+theorem differentiableAt_freeEnergyComplex_at_real_joint
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (p : IsingParams ℝ) :
+    DifferentiableAt ℂ
+      (fun z : ℂ × ℂ × ℂ => freeEnergyComplex G z.1 z.2.1 z.2.2)
+      ((p.J : ℂ), (p.h : ℂ), (p.β : ℂ)) :=
+  (real_params_analyticAt_joint G p).differentiableAt
+
 
 
 
