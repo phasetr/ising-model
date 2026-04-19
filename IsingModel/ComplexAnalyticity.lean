@@ -384,6 +384,21 @@ theorem leeYangNormalization_ne_zero
   unfold leeYangNormalization
   exact Complex.exp_ne_zero _
 
+/-- The Lee-Yang normalization factor is jointly entire in `(β, J, h)`. -/
+theorem leeYangNormalization_analyticAt_joint
+    (edgeCount siteCount : ℕ) (z₀ : ℂ × ℂ × ℂ) :
+    AnalyticAt ℂ (fun z : ℂ × ℂ × ℂ =>
+      leeYangNormalization z.2.2 z.1 z.2.1 edgeCount siteCount) z₀ := by
+  unfold leeYangNormalization
+  refine AnalyticAt.cexp' ?_
+  have hJ : AnalyticAt ℂ (fun z : ℂ × ℂ × ℂ => z.1) z₀ := analyticAt_fst
+  have hhβ : AnalyticAt ℂ (fun z : ℂ × ℂ × ℂ => z.2) z₀ := analyticAt_snd
+  have hh : AnalyticAt ℂ (fun z : ℂ × ℂ × ℂ => z.2.1) z₀ :=
+    analyticAt_fst.comp hhβ
+  have hβ : AnalyticAt ℂ (fun z : ℂ × ℂ × ℂ => z.2.2) z₀ :=
+    analyticAt_snd.comp hhβ
+  exact (hβ.mul hJ |>.mul analyticAt_const).add (hβ.mul hh |>.mul analyticAt_const)
+
 /-- **Lee-Yang nonvanishing of the Ising partition polynomial on the
 Lee-Yang domain** (uniform field, real ferromagnetic coupling).
 
