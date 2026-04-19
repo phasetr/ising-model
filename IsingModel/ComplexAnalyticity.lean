@@ -1631,15 +1631,6 @@ theorem mem_leeYangSubdomain_of_im_zero {β : ℝ} (N : ℕ) {h : ℂ}
     rw [him]; simpa using hpos
   · rw [him]; simp; positivity
 
-/-- **`leeYangFugacityVec` jointly analytic in `(β, h)`**: the uniform
-fugacity vector depends analytically on the complex parameters. Useful
-as input to analyticity of `isingEdgePoly.eval ∘ leeYangFugacityVec`. -/
-theorem leeYangFugacityVec_analyticAt_joint
-    (z₀ : ℂ × ℂ) (i : ι) :
-    AnalyticAt ℂ (fun z : ℂ × ℂ => leeYangFugacityVec z.1 z.2 i) z₀ := by
-  unfold leeYangFugacityVec leeYangFugacity
-  exact analyticAt_cexp.comp (by fun_prop)
-
 /-- `leeYangFugacityVec (β : ℂ) h = (fun _ => exp(-2β h))` is analytic
 in `h` for fixed `β`. -/
 theorem leeYangFugacityVec_analyticAt_h
