@@ -691,6 +691,29 @@ theorem freeEnergyInfinite_J_zero_of_eventually_nonempty
   filter_upwards [hne] with n hn using
     freeEnergyAlongExhaustion_J_zero G Λ h β n hn
 
+/-- **`freeEnergyAlongExhaustion` at J=0 converges (Tendsto form)**:
+assuming eventually `(Λ.volume n).Nonempty`, the sequence
+`n ↦ freeEnergyAlongExhaustion G Λ ⟨0, h, β⟩ n` tends to
+`log(2·cosh(β·h))` in the topology on `ℝ`.
+
+First non-trivial ∞-volume convergence under the scope update
+(CLAUDE.local.md: 無限系も対象). The J=0 slice sidesteps the
+translation-invariance issue of the general Fekete program because
+the stagewise sequence is eventually constant (PR #174
+`freeEnergyAlongExhaustion_J_zero`); then
+`tendsto_const_nhds.congr'` transports to Tendsto. -/
+theorem freeEnergyAlongExhaustion_J_zero_tendsto_of_eventually_nonempty
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (h β : ℝ)
+    (hne : ∀ᶠ n in Filter.atTop, (Λ.volume n).Nonempty) :
+    Filter.Tendsto (freeEnergyAlongExhaustion G Λ
+        (⟨0, h, β⟩ : IsingParams ℝ))
+      Filter.atTop (nhds (Real.log (2 * Real.cosh (β * h)))) := by
+  refine tendsto_const_nhds.congr' ?_
+  filter_upwards [hne] with n hn
+  exact (freeEnergyAlongExhaustion_J_zero G Λ h β n hn).symm
+
 /-- **Infinite-volume J=0 graph-independence**:
 `freeEnergyInfinite G Λ ⟨0, h, β⟩ = freeEnergyInfinite ⊥ Λ ⟨0, h, β⟩`
 for any ambient graph `G, Λ`, any `h, β`.
