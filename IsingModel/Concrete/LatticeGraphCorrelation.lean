@@ -166,6 +166,80 @@ theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_shift
   freeEnergyInfinite_shift_eq (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) t p
 
+/-! ## Two-point function on ℤ^d -/
+
+/-- **Two-point function on ℤ^d**:
+`twoPointFunction d p r := correlationInfinite (latticeGraph d)
+(cubicExhaustion d) p {0, r}`.
+
+By translation invariance, the ∞-vol 2-point correlation `⟨σ_i σ_j⟩_∞`
+depends only on the separation `r = j - i`; this scalar-valued function
+packages that dependence. -/
+noncomputable def twoPointFunction (d : ℕ) (p : IsingParams ℝ)
+    (r : Fin d → ℤ) : ℝ :=
+  correlationInfinite (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) p {(0 : Fin d → ℤ), r}
+
+/-- **Pair correlation equals `twoPointFunction` at the separation**:
+for ferromagnetic `p` and any `i, j : Fin d → ℤ`,
+
+`correlationInfinite (latticeGraph d) (cubicExhaustion d) p {i, j}
+  = twoPointFunction d p (j - i)`.
+
+Proof: translate the pair `{i, j}` by `-i` using
+`correlationInfinite_latticeGraph_cubicExhaustion_vaddFinset`;
+`vaddFinset (-i) {i, j} = {-i + i, -i + j} = {0, j - i}`. -/
+theorem correlationInfinite_latticeGraph_pair_eq_twoPointFunction
+    (d : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p) (i j : Fin d → ℤ) :
+    correlationInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) p {i, j}
+      = twoPointFunction d p (j - i) := by
+  unfold twoPointFunction
+  -- Apply translation by `-i`: `{i, j}` becomes `{0, j - i}`.
+  have h_translate := correlationInfinite_latticeGraph_cubicExhaustion_vaddFinset
+    d (-i) p hf {i, j}
+  -- `vaddFinset (-i) {i, j} = {-i + i, -i + j} = {0, j - i}`.
+  have h_finset : vaddFinset (-i) ({i, j} : Finset (Fin d → ℤ))
+      = {(0 : Fin d → ℤ), j - i} := by
+    rw [vaddFinset_pair]
+    have h1 : (-i) +ᵥ i = (0 : Fin d → ℤ) := by
+      change -i + i = 0; abel
+    have h2 : (-i) +ᵥ j = j - i := by
+      change -i + j = j - i; abel
+    rw [h1, h2]
+  rw [h_finset] at h_translate
+  -- Now `h_translate : correlationInfinite ... {0, j - i} = correlationInfinite ... {i, j}`.
+  exact h_translate.symm
+
+/-- **Symmetry of the two-point function under sign inversion**:
+`twoPointFunction d p r = twoPointFunction d p (-r)`.
+
+Proof: `{0, r} = {r, 0}` (unordered pair); translating by `-r` gives
+`{-r, 0} = {0, -r}`, and the correlation is invariant under translation. -/
+theorem twoPointFunction_symm
+    (d : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p) (r : Fin d → ℤ) :
+    twoPointFunction d p r = twoPointFunction d p (-r) := by
+  -- `{0, r} = {r, 0}` (unordered).
+  have h_pair : ({(0 : Fin d → ℤ), r} : Finset (Fin d → ℤ))
+      = {r, (0 : Fin d → ℤ)} := by
+    ext x
+    simp only [Finset.mem_insert, Finset.mem_singleton]
+    tauto
+  have h_zero_sub : (0 : Fin d → ℤ) - r = -r := by abel
+  -- Chain:
+  -- `twoPointFunction d p r = correlationInfinite ... {0, r}`
+  -- `= correlationInfinite ... {r, 0}` (by h_pair)
+  -- `= twoPointFunction d p (0 - r)` (by the pair-to-twoPoint identity)
+  -- `= twoPointFunction d p (-r)` (by h_zero_sub).
+  calc twoPointFunction d p r
+      = correlationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) p {(0 : Fin d → ℤ), r} := rfl
+    _ = correlationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) p {r, (0 : Fin d → ℤ)} := by rw [h_pair]
+    _ = twoPointFunction d p ((0 : Fin d → ℤ) - r) :=
+          correlationInfinite_latticeGraph_pair_eq_twoPointFunction d p hf r 0
+    _ = twoPointFunction d p (-r) := by rw [h_zero_sub]
+
 end Ambient
 
 end IsingModel
