@@ -3831,6 +3831,38 @@ theorem log_partitionFunctionAlongExhaustion_zero_params
       = ((Λ.volume n).card : ℝ) * Real.log 2 := by
   rw [partitionFunctionAlongExhaustion_zero_params, Real.log_pow]
 
+/-! ## J = 0 closed form for `partitionFunctionAlongExhaustion` -/
+
+/-- **Along-exhaustion J=0 partition function closed form**:
+`partitionFunctionAlongExhaustion G Λ ⟨0, h, β⟩ n = (2·cosh(β·h))^|Λ.volume n|`
+for any `h, β` and any ambient graph `G, Λ`.
+
+Specialization of `IsingModel.partitionFunction_J_zero`
+(`Z_G ⟨0, h, β⟩ = (2·cosh(β·h))^|ι|`, graph-independent) with
+`Fintype.card_coe` (`|↑Λ| = |Λ|`). -/
+theorem partitionFunctionAlongExhaustion_J_zero
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (h β : ℝ) (n : ℕ) :
+    partitionFunctionAlongExhaustion G Λ (⟨0, h, β⟩ : IsingParams ℝ) n
+      = (2 * Real.cosh (β * h)) ^ (Λ.volume n).card := by
+  change partitionFunction (inducedGraph G (Λ.volume n))
+      (⟨0, h, β⟩ : IsingParams ℝ) = _
+  rw [IsingModel.partitionFunction_J_zero, Fintype.card_coe]
+
+/-- **Log form**: `log (partitionFunctionAlongExhaustion G Λ ⟨0, h, β⟩ n)
+= |Λ.volume n| · log (2·cosh(β·h))`. Follows from
+`partitionFunctionAlongExhaustion_J_zero` via `Real.log_pow`
+(`2·cosh(β·h) > 0`). -/
+theorem log_partitionFunctionAlongExhaustion_J_zero
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (h β : ℝ) (n : ℕ) :
+    Real.log (partitionFunctionAlongExhaustion G Λ
+        (⟨0, h, β⟩ : IsingParams ℝ) n)
+      = ((Λ.volume n).card : ℝ) * Real.log (2 * Real.cosh (β * h)) := by
+  rw [partitionFunctionAlongExhaustion_J_zero, Real.log_pow]
+
 /-! ## Free-spin identity for induced subgraph -/
 
 omit [DecidableEq V] in
