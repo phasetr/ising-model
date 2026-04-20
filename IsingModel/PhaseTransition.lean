@@ -164,6 +164,45 @@ theorem susceptibility_nonneg (G : SimpleGraph ι) [Fintype G.edgeSet]
   unfold susceptibility
   exact Finset.sum_nonneg (fun j _ => truncated2_nonneg G p hf i j)
 
+/-- **Susceptibility closed form at `J = 0`** (Finset-based): for any
+ambient graph `G`, any `h, β`, and any site `i`,
+
+`susceptibility G ⟨0, h, β⟩ i = tanh(β·h) · (1 − tanh(β·h))`.
+
+Caveat: this is the repo-level `susceptibility` built from
+`truncated2` which uses the Finset `{i, j}` — at `j = i` this
+collapses to `{i}` and yields `⟨σ_i⟩ − ⟨σ_i⟩² = t − t²`, not the
+physics `⟨σ_i σ_i⟩ − ⟨σ_i⟩² = 1 − ⟨σ_i⟩²` (which would use
+`σ_i² = 1`). Accordingly this formula differs from the physics
+response-function identity `dM/dh = β·(1 − t²)` at the diagonal.
+
+Proof: `susceptibility i = ∑_j truncated2 i j`. For `j ≠ i`,
+`truncated2_J_zero_of_ne` makes the summand 0. For `j = i`,
+`{i, i} = {i}` as Finset, so the term reduces to
+`correlation {i} − (correlation {i})² = t − t²` with
+`t = tanh(β·h)` (via `correlation_J_zero`). Factor to `t · (1 − t)`.
+
+Complements the trivial-slice sweep of PRs #207-#215, #218-#219.
+Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §4.1
+(non-interacting `J = 0` slice); §5.1 pp. 76–77 (susceptibility). -/
+theorem susceptibility_J_zero (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (h β : ℝ) (i : ι) :
+    susceptibility G (⟨0, h, β⟩ : IsingParams ℝ) i
+      = Real.tanh (β * h) * (1 - Real.tanh (β * h)) := by
+  unfold susceptibility
+  rw [Finset.sum_eq_single i]
+  · -- Diagonal term at j = i: truncated2 i i = t - t^2
+    unfold truncated2
+    have hsingleton : ({i, i} : Finset ι) = {i} := by simp
+    rw [hsingleton, correlation_J_zero, Finset.card_singleton, pow_one]
+    ring
+  · -- Off-diagonal: truncated2 i j = 0 for j ≠ i
+    intro j _ hji
+    exact truncated2_J_zero_of_ne G h β hji.symm
+  · -- j ∉ univ is vacuous
+    intro hi
+    exact absurd (Finset.mem_univ i) hi
+
 /-- The magnetization vanishes at `h = 0` (Z₂ symmetry, finite volume).
 This is the finite-volume counterpart of the statement that the Z₂
 symmetry is unbroken in finite volume. Symmetry breaking occurs only
