@@ -128,6 +128,16 @@ theorem mem_vaddFinset {T : Type u} [AddGroup T] {V : Type v}
   unfold vaddFinset
   simp [Finset.mem_image]
 
+/-- **Identity translation is identity on Finset**:
+`vaddFinset 0 A = A`. -/
+@[simp]
+theorem vaddFinset_zero {T : Type u} [AddGroup T] {V : Type v}
+    [DecidableEq V] [AddAction T V] (A : Finset V) :
+    vaddFinset (0 : T) A = A := by
+  unfold vaddFinset
+  ext v
+  simp [zero_vadd]
+
 /-- **Disjointness is preserved by translation**:
 if `A` and `B` are disjoint as `Finset V`, then `t +ᵥ A` and
 `t +ᵥ B` are also disjoint.
@@ -170,6 +180,15 @@ successively adjoining disjoint translates of `Λ.volume 1`.
 This is the natural structure under which Prop 4.6.1's
 `hcard_add` hypothesis becomes automatic.
 
+The field `shift_zero : shift 0 = 0` ensures the `n = 0` case of
+`volume_succ` is self-consistent: it forces `volume 1 = volume 1`
+(since `volume 0 = ∅` and `vaddFinset 0 (volume 1) = volume 1`
+by `vaddFinset_zero`).
+
+This structure concerns only the **exhaustion geometry**. It does
+*not* by itself imply translation invariance of the graph edges
+or of the Ising Hamiltonian — those are separate conditions.
+
 Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §4.6 Prop 4.6.1,
 p. 64. -/
 structure TranslationInvariantExhaustion (T : Type u) [AddGroup T]
@@ -177,6 +196,9 @@ structure TranslationInvariantExhaustion (T : Type u) [AddGroup T]
     extends Exhaustion V where
   /-- Translation vector inserted at the `n+1`-th stage. -/
   shift : ℕ → T
+  /-- The stage-0 shift is the identity, making the `n = 0` case of
+  `volume_succ` self-consistent (together with `volume_zero`). -/
+  shift_zero : shift 0 = 0
   /-- `volume 0` is empty — the exhaustion starts from scratch. -/
   volume_zero : volume 0 = ∅
   /-- The `(n+1)`-th volume is the `n`-th volume together with the
