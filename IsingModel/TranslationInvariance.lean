@@ -1,4 +1,5 @@
 import IsingModel.AmbientLattice
+import IsingModel.AmbientLatticeSum
 
 /-!
 # Translation invariance scaffolding for GJ §4.6 Prop 4.6.1
@@ -240,6 +241,37 @@ theorem volume_card_add
   rw [Λ.volume_card_eq_mul (m + n), Λ.volume_card_eq_mul m,
       Λ.volume_card_eq_mul n]
   ring
+
+/-- **`DisjointTowerHypotheses` from a `TranslationInvariantExhaustion`
++ hypothesised `hsuper`**: given a translation-invariant exhaustion
+(which handles `card_add` via `volume_card_add`) together with
+user-supplied super-additivity of `log Z` and non-degeneracy
+`(volume 1).card ≠ 0`, the full `DisjointTowerHypotheses` record
+follows.
+
+This is the abstract assembly step: the `hsuper` input itself —
+`log Z_{volume m} + log Z_{volume n} ≤ log Z_{volume (m + n)}` —
+is expected to come from a full translation-invariance proof of
+the log partition function in a subsequent PR. Current step
+provides the scaffold so that, once `hsuper` is derived, it
+plugs directly into `freeEnergyAlongExhaustion_tendsto_of_disjointTowerHypotheses`.
+
+Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §4.6 Prop 4.6.1,
+p. 64. -/
+def disjointTowerHypotheses_of_translationInvariant
+    (Λ : TranslationInvariantExhaustion T V)
+    (G : SimpleGraph V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ)
+    (hsuper : ∀ m n,
+      Real.log (partitionFunctionΛ G (Λ.volume m) p)
+        + Real.log (partitionFunctionΛ G (Λ.volume n) p)
+        ≤ Real.log (partitionFunctionΛ G (Λ.volume (m + n)) p))
+    (hcard_one : (Λ.volume 1).card ≠ 0) :
+    DisjointTowerHypotheses G Λ.toExhaustion p where
+  card_add := Λ.volume_card_add
+  super := hsuper
+  card_one := hcard_one
 
 end TranslationInvariantExhaustion
 
