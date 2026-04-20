@@ -1,5 +1,6 @@
 import IsingModel.AmbientLattice
 import IsingModel.Lattice
+import IsingModel.TranslationInvariance
 
 /-!
 # Cubic exhaustion of the integer lattice `Fin d → ℤ`
@@ -127,6 +128,16 @@ noncomputable def cubicExhaustion (d : ℕ) : Ambient.Exhaustion (Fin d → ℤ)
   volume := cubicBox d
   mono := cubicBox_mono d
   exhaust := cubicBox_exhaust d
+
+/-! ## `Exhaustion.shift` specialisations on cubicExhaustion -/
+
+/-- **Zero-shift identity** on cubicExhaustion:
+`(cubicExhaustion d).shift 0 = cubicExhaustion d`. Direct from
+`Exhaustion.shift_zero`. -/
+@[simp]
+theorem cubicExhaustion_shift_zero (d : ℕ) :
+    (cubicExhaustion d).shift (0 : Fin d → ℤ) = cubicExhaustion d :=
+  Exhaustion.shift_zero (cubicExhaustion d)
 
 /-! ## Convenience specialisations -/
 
