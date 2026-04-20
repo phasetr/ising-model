@@ -105,6 +105,17 @@ theorem partitionFunctionΛ_pos (G : SimpleGraph V) (Λ : Finset V)
     0 < partitionFunctionΛ G Λ p :=
   IsingModel.partitionFunction_pos _ _
 
+/-- **Λ-level partition-function h-evenness**:
+`Z_Λ(J, -h, β) = Z_Λ(J, h, β)`. Direct lift of
+`IsingModel.partitionFunction_neg_h` (GibbsMeasure.lean) through
+`partitionFunctionΛ = partitionFunction (inducedGraph G Λ)`. The
+flip involution `σ ↦ σ.flip` on `Config (↑Λ)` reindexes the sum. -/
+theorem partitionFunctionΛ_neg_h (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (J h β : ℝ) :
+    partitionFunctionΛ G Λ (⟨J, -h, β⟩ : IsingParams ℝ)
+      = partitionFunctionΛ G Λ (⟨J, h, β⟩ : IsingParams ℝ) :=
+  IsingModel.partitionFunction_neg_h _ J h β
+
 /-- The correlation on `Λ` is bounded: `|⟨σ^A⟩| ≤ 1`. -/
 theorem abs_correlationΛ_le_one (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] (p : IsingParams ℝ)
@@ -3791,6 +3802,18 @@ Specializations of `IsingModel.freeEnergy_neg_h`, `freeEnergy_eq_abs_h`,
 and `freeEnergy_monotone_abs_h` (PRs #126–#127) to each stage of the
 exhaustion, via the `change` + definitional-unfolding pattern already
 used in this file. -/
+
+/-- **Along-exhaustion partition-function h-evenness**:
+`partitionFunctionAlongExhaustion G Λ ⟨J, -h, β⟩ n =
+partitionFunctionAlongExhaustion G Λ ⟨J, h, β⟩ n`. Per-stage lift of
+`IsingModel.partitionFunction_neg_h` via the flip involution. -/
+theorem partitionFunctionAlongExhaustion_neg_h
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J h β : ℝ) (n : ℕ) :
+    partitionFunctionAlongExhaustion G Λ (⟨J, -h, β⟩ : IsingParams ℝ) n
+      = partitionFunctionAlongExhaustion G Λ (⟨J, h, β⟩ : IsingParams ℝ) n :=
+  partitionFunctionΛ_neg_h G (Λ.volume n) J h β
 
 /-- **Along-exhaustion h-evenness**:
 `freeEnergyAlongExhaustion G Λ ⟨J, -h, β⟩ n = freeEnergyAlongExhaustion G Λ ⟨J, h, β⟩ n`. -/
