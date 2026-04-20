@@ -1505,6 +1505,26 @@ theorem magnetizationInfinite_latticeGraph_cubicExhaustion_monotone_beta
   magnetizationInfinite_monotone_beta (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) hJ hh i
 
+/-- **ℤ^d truncated2Infinite symmetry in (i, j)**. -/
+theorem truncated2Infinite_latticeGraph_symm
+    (d : ℕ) (p : IsingParams ℝ) (i j : Fin d → ℤ) :
+    truncated2Infinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) p i j
+      = truncated2Infinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) p j i :=
+  truncated2Infinite_symm (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) p i j
+
+/-- **ℤ^d truncated2Infinite at h=0**: collapses to `correlationInfinite ... {i, j}`. -/
+theorem truncated2Infinite_latticeGraph_h_zero
+    (d : ℕ) (J β : ℝ) (i j : Fin d → ℤ) :
+    truncated2Infinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) ⟨J, 0, β⟩ i j
+      = correlationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) ⟨J, 0, β⟩ {i, j} :=
+  truncated2Infinite_h_zero (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) J β i j
+
 /-- **ℤ^d truncated2Infinite exhaustion-independence**. -/
 theorem truncated2Infinite_latticeGraph_indep_exhaustion
     (d : ℕ) (Λ Λ' : Ambient.Exhaustion (Fin d → ℤ))
