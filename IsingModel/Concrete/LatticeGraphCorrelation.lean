@@ -113,6 +113,47 @@ theorem truncated4Infinite_latticeGraph_cubicExhaustion_translation
   truncated4Infinite_translation (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) t p hf i j k l
 
+/-! ## Concrete `spontaneousCorrelation` on ℤ^d -/
+
+/-- **Nonnegativity of `spontaneousCorrelation` on ℤ^d**. -/
+theorem spontaneousCorrelation_latticeGraph_cubicExhaustion_nonneg
+    (d : ℕ) {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β)
+    (A : Finset (Fin d → ℤ)) :
+    0 ≤ spontaneousCorrelation (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) J β A :=
+  spontaneousCorrelation_nonneg (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) hJ hβ A
+
+/-- **Upper bound on `spontaneousCorrelation` on ℤ^d**. -/
+theorem spontaneousCorrelation_latticeGraph_cubicExhaustion_le_one
+    (d : ℕ) {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β)
+    (A : Finset (Fin d → ℤ)) :
+    spontaneousCorrelation (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) J β A ≤ 1 :=
+  spontaneousCorrelation_le_one (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) hJ hβ A
+
+/-- **Infimum bound** `spontaneousCorrelation ≤ correlationInfinite ⟨J, h, β⟩`
+for `h > 0` on ℤ^d. -/
+theorem spontaneousCorrelation_le_correlationInfinite_latticeGraph
+    (d : ℕ) {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) {h : ℝ} (hh : 0 < h)
+    (A : Finset (Fin d → ℤ)) :
+    spontaneousCorrelation (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) J β A
+      ≤ correlationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) ⟨J, h, β⟩ A :=
+  spontaneousCorrelation_le_correlationInfinite (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) hJ hβ hh A
+
+/-- **Exhaustion-independence of `spontaneousCorrelation` on ℤ^d**. -/
+theorem spontaneousCorrelation_latticeGraph_indep_exhaustion
+    (d : ℕ) (Λ Λ' : Ambient.Exhaustion (Fin d → ℤ))
+    {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) (A : Finset (Fin d → ℤ)) :
+    spontaneousCorrelation (IsingModel.latticeGraph d) Λ J β A
+      = spontaneousCorrelation (IsingModel.latticeGraph d) Λ' J β A :=
+  spontaneousCorrelation_indep_exhaustion (IsingModel.latticeGraph d)
+    Λ Λ' hJ hβ A
+
 /-- **Site-independence of ℤ^d ∞-vol magnetization**:
 for ferromagnetic `p` and any two sites `i, j : Fin d → ℤ`,
 
