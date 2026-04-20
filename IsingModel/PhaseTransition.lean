@@ -203,6 +203,23 @@ theorem susceptibility_J_zero (G : SimpleGraph ι) [Fintype G.edgeSet]
     intro hi
     exact absurd (Finset.mem_univ i) hi
 
+/-- **Susceptibility vanishes at `β = 0`**: for any ambient graph
+`G`, any `J, h`, and any site `i`, `susceptibility G ⟨J, h, 0⟩ i = 0`.
+
+Proof: every summand in `∑_j truncated2 G ⟨J, h, 0⟩ i j` vanishes
+by `truncated2_beta_zero` (PR #208). Companion to
+`susceptibility_J_zero`.
+
+Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §4.1
+infinite-temperature slice; §5.1 pp. 76–77. -/
+theorem susceptibility_beta_zero (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h : ℝ) (i : ι) :
+    susceptibility G (⟨J, h, 0⟩ : IsingParams ℝ) i = 0 := by
+  unfold susceptibility
+  refine Finset.sum_eq_zero ?_
+  intro j _
+  exact truncated2_beta_zero G J h i j
+
 /-- The magnetization vanishes at `h = 0` (Z₂ symmetry, finite volume).
 This is the finite-volume counterpart of the statement that the Z₂
 symmetry is unbroken in finite volume. Symmetry breaking occurs only
