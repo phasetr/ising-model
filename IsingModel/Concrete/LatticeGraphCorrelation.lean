@@ -990,6 +990,68 @@ theorem partitionFunctionΛ_latticeGraph_monotone_abs_h
           (⟨J, h₂, β⟩ : IsingParams ℝ) :=
   partitionFunctionΛ_monotone_abs_h (IsingModel.latticeGraph d) Λ J β hJ hβ hh
 
+/-- **ℤ^d log_partitionFunctionΛ h-evenness**: `log Z_Λ(J,-h,β) = log Z_Λ(J,h,β)`. -/
+theorem log_partitionFunctionΛ_latticeGraph_neg_h
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J h β : ℝ) :
+    Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+        (⟨J, -h, β⟩ : IsingParams ℝ))
+      = Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+          (⟨J, h, β⟩ : IsingParams ℝ)) :=
+  log_partitionFunctionΛ_neg_h (IsingModel.latticeGraph d) Λ J h β
+
+/-- **ℤ^d log_partitionFunctionΛ `|h|`-rewrite**: `log Z_Λ(J,h,β) = log Z_Λ(J,|h|,β)`. -/
+theorem log_partitionFunctionΛ_latticeGraph_eq_abs_h
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J h β : ℝ) :
+    Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+        (⟨J, h, β⟩ : IsingParams ℝ))
+      = Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+          (⟨J, |h|, β⟩ : IsingParams ℝ)) :=
+  log_partitionFunctionΛ_eq_abs_h (IsingModel.latticeGraph d) Λ J h β
+
+/-- **ℤ^d log_partitionFunctionΛ J-monotonicity** (ferromagnetic, pointwise). -/
+theorem log_partitionFunctionΛ_latticeGraph_monotone_J
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    (h β : ℝ) (hh : 0 ≤ h) (hβ : 0 < β) {J₁ J₂ : ℝ}
+    (hJ₁ : 0 ≤ J₁) (hJ : J₁ ≤ J₂) :
+    Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+        (⟨J₁, h, β⟩ : IsingParams ℝ))
+      ≤ Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+          (⟨J₂, h, β⟩ : IsingParams ℝ)) :=
+  log_partitionFunctionΛ_monotone_J (IsingModel.latticeGraph d) Λ h β hh hβ hJ₁ hJ
+
+/-- **ℤ^d log_partitionFunctionΛ h-monotonicity** (ferromagnetic, pointwise). -/
+theorem log_partitionFunctionΛ_latticeGraph_monotone_h
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) {h₁ h₂ : ℝ}
+    (hh₁ : 0 ≤ h₁) (hh : h₁ ≤ h₂) :
+    Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+        (⟨J, h₁, β⟩ : IsingParams ℝ))
+      ≤ Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+          (⟨J, h₂, β⟩ : IsingParams ℝ)) :=
+  log_partitionFunctionΛ_monotone_h (IsingModel.latticeGraph d) Λ J β hJ hβ hh₁ hh
+
+/-- **ℤ^d log_partitionFunctionΛ β-monotonicity** (ferromagnetic, pointwise). -/
+theorem log_partitionFunctionΛ_latticeGraph_monotone_beta
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    (J h : ℝ) (hJ : 0 ≤ J) (hh : 0 ≤ h) {β₁ β₂ : ℝ}
+    (hβ₁ : 0 < β₁) (hβ : β₁ ≤ β₂) :
+    Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+        (⟨J, h, β₁⟩ : IsingParams ℝ))
+      ≤ Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+          (⟨J, h, β₂⟩ : IsingParams ℝ)) :=
+  log_partitionFunctionΛ_monotone_beta (IsingModel.latticeGraph d) Λ J h hJ hh hβ₁ hβ
+
+/-- **ℤ^d log_partitionFunctionΛ `|h|`-monotonicity** (ferromagnetic). -/
+theorem log_partitionFunctionΛ_latticeGraph_monotone_abs_h
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β)
+    {h₁ h₂ : ℝ} (hh : |h₁| ≤ |h₂|) :
+    Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+        (⟨J, h₁, β⟩ : IsingParams ℝ))
+      ≤ Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+          (⟨J, h₂, β⟩ : IsingParams ℝ)) :=
+  log_partitionFunctionΛ_monotone_abs_h (IsingModel.latticeGraph d) Λ J β hJ hβ hh
+
 /-- **ℤ^d partitionFunctionAlongExhaustion `|h|`-rewrite** per stage:
 `Z(Λ_n; J, h, β) = Z(Λ_n; J, |h|, β)`. Concrete specialization of
 `partitionFunctionAlongExhaustion_eq_abs_h`. -/
