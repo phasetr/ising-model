@@ -1572,6 +1572,46 @@ theorem inducedGraph_latticeGraph_bot (d : ℕ) (Λ : Finset (Fin d → ℤ)) :
     Ambient.inducedGraph (⊥ : SimpleGraph (Fin d → ℤ)) Λ = ⊥ :=
   Ambient.inducedGraph_bot Λ
 
+/-- **ℤ^d freeEnergyAlongExhaustion ambient-subgraph monotonicity** from ⊥. -/
+theorem freeEnergyAlongExhaustion_bot_le_latticeGraph
+    (d : ℕ)
+    [∀ n, Fintype (Ambient.inducedGraph (⊥ : SimpleGraph (Fin d → ℤ))
+      ((Ambient.cubicExhaustion d).volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (n : ℕ) :
+    freeEnergyAlongExhaustion (⊥ : SimpleGraph (Fin d → ℤ))
+        (Ambient.cubicExhaustion d) p n
+      ≤ freeEnergyAlongExhaustion (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) p n :=
+  freeEnergyAlongExhaustion_monotone_ambient_subgraph bot_le
+    (Ambient.cubicExhaustion d) p hf n
+
+/-- **ℤ^d partitionFunctionAlongExhaustion ambient-subgraph monotonicity** from ⊥. -/
+theorem partitionFunctionAlongExhaustion_bot_le_latticeGraph
+    (d : ℕ)
+    [∀ n, Fintype (Ambient.inducedGraph (⊥ : SimpleGraph (Fin d → ℤ))
+      ((Ambient.cubicExhaustion d).volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (n : ℕ) :
+    partitionFunctionAlongExhaustion (⊥ : SimpleGraph (Fin d → ℤ))
+        (Ambient.cubicExhaustion d) p n
+      ≤ partitionFunctionAlongExhaustion (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) p n :=
+  partitionFunctionAlongExhaustion_monotone_ambient_subgraph bot_le
+    (Ambient.cubicExhaustion d) p hf n
+
+/-- **ℤ^d correlationAlongExhaustion ambient-subgraph monotonicity** from ⊥. -/
+theorem correlationAlongExhaustion_bot_le_latticeGraph
+    (d : ℕ)
+    [∀ n, Fintype (Ambient.inducedGraph (⊥ : SimpleGraph (Fin d → ℤ))
+      ((Ambient.cubicExhaustion d).volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (A : Finset (Fin d → ℤ))
+    (n : ℕ) :
+    correlationAlongExhaustion (⊥ : SimpleGraph (Fin d → ℤ))
+        (Ambient.cubicExhaustion d) p A n
+      ≤ correlationAlongExhaustion (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) p A n :=
+  correlationAlongExhaustion_monotone_ambient_subgraph bot_le
+    (Ambient.cubicExhaustion d) p hf A n
+
 /-- **ℤ^d partitionFunctionΛ ambient-subgraph monotonicity** from ⊥. -/
 theorem partitionFunctionΛ_bot_le_latticeGraph
     (d : ℕ) (Λ : Finset (Fin d → ℤ))
