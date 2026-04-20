@@ -3044,6 +3044,29 @@ theorem magnetizationΛ_latticeGraph_nonneg
     0 ≤ magnetizationΛ (IsingModel.latticeGraph d) Λ p i :=
   magnetizationΛ_nonneg (IsingModel.latticeGraph d) Λ p hf i
 
+/-- **ℤ^d magnetizationAlongExhaustion unfolding**:
+`magnetizationAlongExhaustion G Λ p i n = correlationAlongExhaustion G Λ p {i} n`. -/
+theorem magnetizationAlongExhaustion_latticeGraph_apply
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (i : Fin d → ℤ) (n : ℕ) :
+    magnetizationAlongExhaustion (IsingModel.latticeGraph d) Λ p i n
+      = correlationAlongExhaustion (IsingModel.latticeGraph d) Λ p {i} n :=
+  magnetizationAlongExhaustion_apply (IsingModel.latticeGraph d) Λ p i n
+
+/-- **ℤ^d magnetizationAlongExhaustion ≤ 1** per stage. -/
+theorem magnetizationAlongExhaustion_latticeGraph_le_one
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (i : Fin d → ℤ) (n : ℕ) :
+    magnetizationAlongExhaustion (IsingModel.latticeGraph d) Λ p i n ≤ 1 :=
+  magnetizationAlongExhaustion_le_one (IsingModel.latticeGraph d) Λ p i n
+
+/-- **ℤ^d magnetizationAlongExhaustion ≥ 0** per stage (ferromagnetic). -/
+theorem magnetizationAlongExhaustion_latticeGraph_nonneg
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i : Fin d → ℤ) (n : ℕ) :
+    0 ≤ magnetizationAlongExhaustion (IsingModel.latticeGraph d) Λ p i n :=
+  magnetizationAlongExhaustion_nonneg (IsingModel.latticeGraph d) Λ p hf i n
+
 /-- **ℤ^d magnetizationInfinite at h = 0 site-wise**:
 `magnetizationInfinite (latticeGraph d) Λ ⟨J, 0, β⟩ i = 0`. -/
 theorem magnetizationInfinite_latticeGraph_zero_at_h_zero
