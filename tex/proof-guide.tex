@@ -4001,6 +4001,43 @@ with $f_\infty = \limsup f_{\Lambda_n}$ via
 Glimm--Jaffe \cite{glimm-jaffe} \S 4.6 Prop 4.6.1, p.~64.
 \end{proof}
 
+\paragraph{Translation-invariance scaffolding for GJ \S 4.6
+Prop 4.6.1 (PRs \#220--\#224).}
+A multi-PR programme toward dropping the disjoint-tower hypotheses
+of \texttt{freeEnergyAlongExhaustion\_tendsto\_of\_disjoint\_tower}
+(PR \#203). Completed steps:
+\begin{enumerate}
+\item \texttt{Ambient.IsTranslationInvariant G}: a
+  \texttt{SimpleGraph V} is translation invariant under an
+  \texttt{AddAction T V} if the edge relation is preserved
+  ($G.Adj\,(t +_v u)\,(t +_v v) \leftrightarrow G.Adj\,u\,v$).
+  Trivial instances for $\bot$ and $\top$.
+\item \texttt{vaddFinset t A := A.image (t +_v \cdot)}, with
+  \texttt{vaddFinset\_card}, \texttt{vaddFinset\_zero},
+  \texttt{vaddFinset\_disjoint\_of\_disjoint}.
+\item \texttt{TranslationInvariantExhaustion T V}
+  (\texttt{extends Exhaustion V}) with fields
+  \texttt{shift : $\mathbb N \to T$}, \texttt{shift\_zero},
+  \texttt{volume\_zero}, \texttt{volume\_succ}
+  ($\Lambda_{n+1} = \Lambda_n \cup (\mathrm{shift}\,n
+  +_v \Lambda_1)$),
+  \texttt{disjoint\_shift}. Gives automatic
+  \texttt{volume\_card\_add}: $|\Lambda_{m+n}| = |\Lambda_m| +
+  |\Lambda_n|$.
+\item \texttt{disjointTowerHypotheses\_of\_translationInvariant}:
+  given a \texttt{TranslationInvariantExhaustion} + user-supplied
+  \texttt{hsuper} + \texttt{hcard\_one}, assemble a full
+  \texttt{DisjointTowerHypotheses} record.
+\item \texttt{freeEnergyAlongExhaustion\_tendsto\_of\_translationInvariant}:
+  combined with \texttt{BoundedEdgeDensity}, yields the Fekete
+  convergence to \texttt{freeEnergyInfinite}.
+\end{enumerate}
+\emph{Remaining}: derive \texttt{hsuper} from log-$Z$ translation
+invariance. Requires Ising-Hamiltonian translation equivariance
+(separate multi-PR step).
+Reference: Glimm--Jaffe \cite{glimm-jaffe} \S 4.6 Prop 4.6.1,
+p.~64.
+
 \begin{theorem}[Finite-volume magnetization at $J = 0$
 $= \tanh(\beta h)$; PR \#219]
 For any graph $G$ with finite $\iota$, any $h, \beta \in \mathbb{R}$,
