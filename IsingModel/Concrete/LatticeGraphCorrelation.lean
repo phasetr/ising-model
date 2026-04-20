@@ -3219,6 +3219,20 @@ theorem magnetizationAlongExhaustion_latticeGraph_J_zero_eventually_eq
   magnetizationAlongExhaustion_J_zero_eventually_eq
     (IsingModel.latticeGraph d) Λ h β i
 
+/-- **ℤ^d pointwise `|correlationAlongExhaustion| ≤ 1`** at every `n`. -/
+theorem abs_correlationAlongExhaustion_latticeGraph_le_one
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (A : Finset (Fin d → ℤ)) (n : ℕ) :
+    |correlationAlongExhaustion (IsingModel.latticeGraph d) Λ p A n| ≤ 1 :=
+  abs_correlationAlongExhaustion_le_one (IsingModel.latticeGraph d) Λ p A n
+
+/-- **ℤ^d pointwise `|magnetizationAlongExhaustion| ≤ 1`** at every `n`. -/
+theorem abs_magnetizationAlongExhaustion_latticeGraph_le_one
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (i : Fin d → ℤ) (n : ℕ) :
+    |magnetizationAlongExhaustion (IsingModel.latticeGraph d) Λ p i n| ≤ 1 :=
+  abs_magnetizationAlongExhaustion_le_one (IsingModel.latticeGraph d) Λ p i n
+
 /-- **ℤ^d magnetizationInfinite at h = 0 site-wise**:
 `magnetizationInfinite (latticeGraph d) Λ ⟨J, 0, β⟩ i = 0`. -/
 theorem magnetizationInfinite_latticeGraph_zero_at_h_zero
