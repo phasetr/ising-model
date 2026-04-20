@@ -958,6 +958,22 @@ theorem truncated2TwoPoint_le_twoPointFunction
   have h_sq : 0 ≤ (uniformMagnetization d p)^2 := sq_nonneg _
   linarith
 
+/-- **`truncated2TwoPoint` at `h = 0` equals `twoPointFunction`** (ferromagnetic):
+`truncated2TwoPoint d ⟨J, 0, β⟩ r = twoPointFunction d ⟨J, 0, β⟩ r`.
+
+At zero external field `h = 0`, Z₂ symmetry forces `M = 0`
+(`uniformMagnetization_zero_at_h_zero`), so
+`truncated2TwoPoint = twoPointFunction − M² = twoPointFunction`. -/
+theorem truncated2TwoPoint_h_zero_eq
+    (d : ℕ) (J β : ℝ) (hf : Ferromagnetic (⟨J, (0 : ℝ), β⟩ : IsingParams ℝ))
+    (r : Fin d → ℤ) :
+    truncated2TwoPoint d (⟨J, 0, β⟩ : IsingParams ℝ) r
+      = twoPointFunction d (⟨J, 0, β⟩ : IsingParams ℝ) r := by
+  rw [truncated2TwoPoint_eq_twoPointFunction_sub_uniformMagnetization_sq
+        d _ hf r,
+      uniformMagnetization_zero_at_h_zero d J β]
+  ring
+
 /-- **`truncated2TwoPoint` at `J = 0` vanishes for `r ≠ 0`** (ferromagnetic):
 `truncated2TwoPoint d ⟨0, h, β⟩ r = 0`.
 
