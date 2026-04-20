@@ -244,6 +244,17 @@ theorem spontaneousMagnetization_latticeGraph_cubicExhaustion_eq
   rw [hvadd] at h
   exact h.symm
 
+/-- **ℤ^d correlationΛ volume-monotonicity**:
+`A ⊆ Λ₁ ⊆ Λ₂ ⇒ ⟨σ^A⟩_{Λ₁} ≤ ⟨σ^A⟩_{Λ₂}` for ferromagnetic `p`. -/
+theorem correlationΛ_latticeGraph_monotone_volume
+    (d : ℕ) {Λ₁ Λ₂ : Finset (Fin d → ℤ)} (h12 : Λ₁ ⊆ Λ₂)
+    (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    {A : Finset (Fin d → ℤ)} (hA : A ⊆ Λ₁) :
+    correlationΛ (IsingModel.latticeGraph d) Λ₁ p (liftFinset A hA)
+      ≤ correlationΛ (IsingModel.latticeGraph d) Λ₂ p
+          (liftFinset A (hA.trans h12)) :=
+  correlationΛ_monotone_volume (IsingModel.latticeGraph d) h12 p hf hA
+
 /-- **ℤ^d partitionFunctionΛ positivity** per finite volume. -/
 theorem partitionFunctionΛ_latticeGraph_pos
     (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ) :
