@@ -546,6 +546,16 @@ theorem neg_one_le_correlation (G : SimpleGraph ι) [Fintype G.edgeSet]
     -1 ≤ correlation G p A :=
   (abs_le.mp (abs_correlation_le_one G p A)).1
 
+/-- **`correlation² ≤ 1`** unconditionally. From `abs_correlation_le_one`
+via `pow_le_pow_left₀` + `sq_abs`. -/
+theorem correlation_sq_le_one (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (p : IsingParams ℝ) (A : Finset ι) :
+    correlation G p A ^ 2 ≤ 1 := by
+  have h := abs_correlation_le_one G p A
+  have : |correlation G p A| ^ 2 ≤ 1 ^ 2 :=
+    pow_le_pow_left₀ (abs_nonneg _) h 2
+  simpa [sq_abs] using this
+
 /-! ## Monotonicity in the lattice (Theorem 4.2.3, lattice version)
 
 For a fixed ambient finite lattice `ι` and ferromagnetic parameters `p`,
