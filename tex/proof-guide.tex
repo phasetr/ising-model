@@ -4544,4 +4544,41 @@ altering the \texttt{Exhaustion} interface, and is deferred to a
 subsequent PR.
 Reference: Glimm--Jaffe \cite{glimm-jaffe} \S 4.6 Prop 4.6.1, p.~64.
 
+\begin{theorem}[GJ \S 4.6 concrete: cubic \texttt{Ambient.Exhaustion} on
+$\mathbb{Z}^d$; PR \#245]
+For every $d : \mathbb{N}$, the \emph{cubic box}
+\[
+  \mathrm{cubicBox}\ d\ n
+  := \mathrm{Fintype.piFinset}\ (\lambda \_\ \Rightarrow\
+    \mathrm{Finset.Icc}\ (-(n:\mathbb{Z}))\ n)
+\]
+determines an \texttt{Ambient.Exhaustion} of the integer lattice
+$\mathrm{Fin}\ d \to \mathbb{Z}$ via
+$\mathrm{cubicExhaustion}\ d .\mathrm{volume} := \mathrm{cubicBox}\ d$,
+together with the monotonicity lemma $m \le n \Rightarrow
+\mathrm{cubicBox}\ d\ m \subseteq \mathrm{cubicBox}\ d\ n$ and the
+exhaust lemma: every finite $A \subset \mathbb{Z}^d$ is contained in
+some $\mathrm{cubicBox}\ d\ N$ where $N$ is the maximum absolute
+coordinate across points of $A$.
+\end{theorem}
+\begin{proof}[Exhaust lemma]
+Let $N := \max\{|a_i| : a \in A,\ i : \mathrm{Fin}\ d\}$ (well defined
+as the max of a finite multiset of natural numbers; if both $A$ and
+$\mathrm{Fin}\ d$ are non-empty, otherwise we take $N = 0$ and
+\texttt{exfalso}). For any $n \ge N$ and $a \in A$, $i : \mathrm{Fin}\ d$,
+$|a_i| \le N \le n$, so $-n \le a_i \le n$ and
+$a \in \mathrm{cubicBox}\ d\ n$.
+\end{proof}
+
+\paragraph{Remark.} This is the first concrete
+\texttt{Ambient.Exhaustion} on the physical integer lattice — prior
+instances exist only on abstract $V$. It makes
+$\mathrm{correlationInfinite}\ (\mathrm{latticeGraph}\ d)\
+(\mathrm{cubicExhaustion}\ d)\ p\ A$ an explicit object. A matching
+\texttt{TranslationInvariantExhaustion} is not provided (structural
+obstruction noted above); bounded-edge-density for
+$\mathrm{latticeGraph}\ d$ along this exhaustion is deferred to a
+subsequent PR.
+Reference: Glimm--Jaffe \cite{glimm-jaffe} \S 4.6, p.~64.
+
 \end{document}
