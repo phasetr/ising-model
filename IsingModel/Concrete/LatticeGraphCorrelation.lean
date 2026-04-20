@@ -166,6 +166,47 @@ theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_shift
   freeEnergyInfinite_shift_eq (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) t p
 
+/-! ## Site-independent magnetization on ℤ^d -/
+
+/-- **Uniform magnetization on ℤ^d**: since the ∞-vol magnetization is
+site-independent on the translation-invariant ℤ^d lattice (PR #257),
+we package the value at `0` as a scalar `uniformMagnetization d p`.
+
+`uniformMagnetization d p := magnetizationInfinite (latticeGraph d)
+(cubicExhaustion d) p 0`. -/
+noncomputable def uniformMagnetization (d : ℕ) (p : IsingParams ℝ) : ℝ :=
+  magnetizationInfinite (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) p 0
+
+/-- **Bridge**: for ferromagnetic `p` and any site `i : Fin d → ℤ`,
+`magnetizationInfinite ... p i = uniformMagnetization d p`.
+
+Immediate from `magnetizationInfinite_latticeGraph_cubicExhaustion_eq`
+(PR #257) at `i, 0`. -/
+@[simp]
+theorem magnetizationInfinite_latticeGraph_cubicExhaustion_eq_uniform
+    (d : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p) (i : Fin d → ℤ) :
+    magnetizationInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) p i
+      = uniformMagnetization d p :=
+  magnetizationInfinite_latticeGraph_cubicExhaustion_eq d p hf i 0
+
+/-- **Nonnegativity of `uniformMagnetization`** (ferromagnetic).
+Specialization of the abstract `magnetizationInfinite_nonneg`. -/
+theorem uniformMagnetization_nonneg
+    (d : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    0 ≤ uniformMagnetization d p :=
+  magnetizationInfinite_nonneg (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) p hf 0
+
+/-- **Upper bound on `uniformMagnetization`**:
+`uniformMagnetization d p ≤ 1`. -/
+theorem uniformMagnetization_le_one
+    (d : ℕ) (p : IsingParams ℝ) :
+    uniformMagnetization d p ≤ 1 :=
+  magnetizationInfinite_le_one (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) p 0
+
 /-! ## Two-point function on ℤ^d -/
 
 /-- **Two-point function on ℤ^d** (Finset-based):
