@@ -1059,6 +1059,78 @@ theorem log_partitionFunctionΛ_monotone_abs_h
   Real.log_le_log (partitionFunctionΛ_pos G Λ _)
     (partitionFunctionΛ_monotone_abs_h G Λ J β hJ hβ hh)
 
+/-- **Along-exhaustion log-Z h-evenness** per stage:
+`log Z(Λ.volume n; ⟨J, -h, β⟩) = log Z(Λ.volume n; ⟨J, h, β⟩)`. -/
+theorem log_partitionFunctionAlongExhaustion_neg_h
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J h β : ℝ) (n : ℕ) :
+    Real.log (partitionFunctionAlongExhaustion G Λ
+        (⟨J, -h, β⟩ : IsingParams ℝ) n)
+      = Real.log (partitionFunctionAlongExhaustion G Λ
+          (⟨J, h, β⟩ : IsingParams ℝ) n) :=
+  log_partitionFunctionΛ_neg_h G (Λ.volume n) J h β
+
+/-- **Along-exhaustion log-Z `|h|`-rewrite** per stage:
+`log Z(Λ.volume n; ⟨J, h, β⟩) = log Z(Λ.volume n; ⟨J, |h|, β⟩)`. -/
+theorem log_partitionFunctionAlongExhaustion_eq_abs_h
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J h β : ℝ) (n : ℕ) :
+    Real.log (partitionFunctionAlongExhaustion G Λ
+        (⟨J, h, β⟩ : IsingParams ℝ) n)
+      = Real.log (partitionFunctionAlongExhaustion G Λ
+          (⟨J, |h|, β⟩ : IsingParams ℝ) n) :=
+  log_partitionFunctionΛ_eq_abs_h G (Λ.volume n) J h β
+
+/-- **Along-exhaustion log-Z J-monotonicity** per stage. -/
+theorem log_partitionFunctionAlongExhaustion_monotone_J
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (h β : ℝ) (hh : 0 ≤ h) (hβ : 0 < β) {J₁ J₂ : ℝ}
+    (hJ₁ : 0 ≤ J₁) (hJ : J₁ ≤ J₂) (n : ℕ) :
+    Real.log (partitionFunctionAlongExhaustion G Λ
+        (⟨J₁, h, β⟩ : IsingParams ℝ) n)
+      ≤ Real.log (partitionFunctionAlongExhaustion G Λ
+          (⟨J₂, h, β⟩ : IsingParams ℝ) n) :=
+  log_partitionFunctionΛ_monotone_J G (Λ.volume n) h β hh hβ hJ₁ hJ
+
+/-- **Along-exhaustion log-Z h-monotonicity** per stage. -/
+theorem log_partitionFunctionAlongExhaustion_monotone_h
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) {h₁ h₂ : ℝ}
+    (hh₁ : 0 ≤ h₁) (hh : h₁ ≤ h₂) (n : ℕ) :
+    Real.log (partitionFunctionAlongExhaustion G Λ
+        (⟨J, h₁, β⟩ : IsingParams ℝ) n)
+      ≤ Real.log (partitionFunctionAlongExhaustion G Λ
+          (⟨J, h₂, β⟩ : IsingParams ℝ) n) :=
+  log_partitionFunctionΛ_monotone_h G (Λ.volume n) J β hJ hβ hh₁ hh
+
+/-- **Along-exhaustion log-Z β-monotonicity** per stage. -/
+theorem log_partitionFunctionAlongExhaustion_monotone_beta
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J h : ℝ) (hJ : 0 ≤ J) (hh : 0 ≤ h) {β₁ β₂ : ℝ}
+    (hβ₁ : 0 < β₁) (hβ : β₁ ≤ β₂) (n : ℕ) :
+    Real.log (partitionFunctionAlongExhaustion G Λ
+        (⟨J, h, β₁⟩ : IsingParams ℝ) n)
+      ≤ Real.log (partitionFunctionAlongExhaustion G Λ
+          (⟨J, h, β₂⟩ : IsingParams ℝ) n) :=
+  log_partitionFunctionΛ_monotone_beta G (Λ.volume n) J h hJ hh hβ₁ hβ
+
+/-- **Along-exhaustion log-Z `|h|`-monotonicity** per stage. -/
+theorem log_partitionFunctionAlongExhaustion_monotone_abs_h
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β)
+    {h₁ h₂ : ℝ} (hh : |h₁| ≤ |h₂|) (n : ℕ) :
+    Real.log (partitionFunctionAlongExhaustion G Λ
+        (⟨J, h₁, β⟩ : IsingParams ℝ) n)
+      ≤ Real.log (partitionFunctionAlongExhaustion G Λ
+          (⟨J, h₂, β⟩ : IsingParams ℝ) n) :=
+  log_partitionFunctionΛ_monotone_abs_h G (Λ.volume n) J β hJ hβ hh
+
 /-- **Closed form for `log (partitionFunctionΛ G Λ ⟨0, 0, β⟩)`**:
 at `J = h = 0`, `log Z_Λ = |Λ| · log 2`. Direct from
 `IsingModel.partitionFunction_zero_params`
