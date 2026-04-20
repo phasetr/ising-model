@@ -478,6 +478,7 @@ inventory (2026-04-17).
 | §4.2 | `magnetizationAlongExhaustion → magnetizationInfinite` (ferromagnetic) + ℤ^d | **Done** | `tendsto_magnetizationAlongExhaustion_magnetizationInfinite` — direct specialization of `tendsto_correlationAlongExhaustion_correlationInfinite` at `A = {i}`. Concrete ℤ^d wrapper. (PR #398.) |
 | §4.2 | `magnetization{Λ, AlongExhaustion}` {J,h,β}-monotonicities + ℤ^d | **Done** | `magnetizationΛ_monotone_{J,h,beta}` (MonotoneOn: `J ∈ Ici 0` / `h ∈ Ici 0` / `β ∈ Ioi 0`) and `magnetizationAlongExhaustion_monotone_{J,h,beta}` (pointwise per-stage). Direct specializations of `correlationΛ_monotone_{J,h,beta}` / `correlationAlongExhaustion_monotone_{J,h,beta}` at `A = {i}`. Concrete ℤ^d cubic wrappers. (PR #399.) |
 | §4.2 | `magnetization{Λ, AlongExhaustion}` at `h = 0` (Z₂) + ℤ^d | **Done** | `magnetizationΛ_h_zero = 0` and per-stage `magnetizationAlongExhaustion_h_zero = 0` for any `J, β` and any site. Specializations of `correlationΛ_odd_vanish_h_zero` / `correlationAlongExhaustion_h_zero` at `A = {i}` (`Odd 1` discharges the odd-cardinality hypothesis). Concrete ℤ^d wrappers. (PR #400.) |
+| §4.2 | `magnetization{Λ, AlongExhaustion}` at `β = 0` / `J = h = 0` + ℤ^d | **Done** | `magnetization{Λ, AlongExhaustion}_{beta_zero, zero_params} = 0`. Specializations of `correlation{Λ, AlongExhaustion}_{beta_zero, zero_params}_vanish` at `A = {i}` using `Finset.singleton_nonempty`. Concrete ℤ^d wrappers. (PR #401.) |
 | §4.7 | Two-component spins | Out of scope | XY model |
 
 ### Chapter 5 (Phase transitions)
