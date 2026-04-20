@@ -244,6 +244,28 @@ theorem spontaneousMagnetization_latticeGraph_cubicExhaustion_eq
   rw [hvadd] at h
   exact h.symm
 
+/-- **log Z → ∞ along cubicExhaustion** (ferromagnetic, infinite ℤ^d). -/
+theorem log_partitionFunctionAlongExhaustion_latticeGraph_tendsto_atTop
+    (d : ℕ) [Infinite (Fin d → ℤ)]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    Filter.Tendsto
+      (fun n => Real.log (partitionFunctionAlongExhaustion
+        (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d) p n))
+      Filter.atTop Filter.atTop :=
+  log_partitionFunctionAlongExhaustion_tendsto_atTop
+    (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d) p hf
+
+/-- **Z → ∞ along cubicExhaustion** (ferromagnetic, infinite ℤ^d). -/
+theorem partitionFunctionAlongExhaustion_latticeGraph_tendsto_atTop
+    (d : ℕ) [Infinite (Fin d → ℤ)]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    Filter.Tendsto
+      (fun n => partitionFunctionAlongExhaustion (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) p n)
+      Filter.atTop Filter.atTop :=
+  partitionFunctionAlongExhaustion_tendsto_atTop
+    (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d) p hf
+
 /-- **Per-stage lower bound on ℤ^d**: `log 2 ≤ freeEnergyAlongExhaustion` for
 ferromagnetic + nonempty stage. -/
 theorem freeEnergyAlongExhaustion_latticeGraph_cubicExhaustion_ge_log_two
