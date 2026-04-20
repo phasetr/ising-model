@@ -3,22 +3,25 @@ import IsingModel.Concrete.LatticeGraphBED
 /-!
 # Concrete free-energy sandwich bound for the `ℤ^d` Ising model
 
-Capstone combining the three concrete ingredients developed in
+Capstone for the concrete ℤ^d infrastructure developed in
 `IsingModel/Concrete/`:
 
-* `isTranslationInvariant_latticeGraph` — translation invariance of
-  the `ℓ¹`-distance-1 lattice graph on `Fin d → ℤ`;
-* `cubicExhaustion d` — the concrete two-sided cubic
-  `Ambient.Exhaustion (Fin d → ℤ)`;
-* `boundedEdgeDensity_latticeGraph_cubicExhaustion` — bounded edge
-  density with constant `c = d`.
+* `isTranslationInvariant_latticeGraph` (PR #244) — translation
+  invariance of the `ℓ¹`-distance-1 lattice graph (supplies the
+  structural datum for future Fekete convergence, not used directly
+  in this sandwich bound);
+* `cubicExhaustion d` (PR #245) — the concrete two-sided cubic
+  `Ambient.Exhaustion (Fin d → ℤ)` (supplies the stages);
+* `boundedEdgeDensity_latticeGraph_cubicExhaustion` (PR #246) —
+  bounded edge density with constant `c = d` (supplies the upper
+  bound's numerical constant via `inducedLatticeGraph_card_edgeFinset_le`).
 
-Together with the general-framework lower bound
-`freeEnergyAlongExhaustion_ge_log_two` (ferromagnetic, nonempty stage)
-and upper bound `freeEnergyAlongExhaustion_le_uniform_upper_bound`
-(BED), we obtain a concrete sandwich
-`log 2 ≤ f_n ≤ log 2 + |β|(|J|·d + |h|)` on every nonempty stage
-of the `d`-dimensional cubic Ising exhaustion.
+This file composes the latter two with the general-framework lower
+bound `freeEnergyAlongExhaustion_ge_log_two` (ferromagnetic, nonempty
+stage) and upper bound `freeEnergyAlongExhaustion_le_uniform_upper_bound`
+(BED) to give an explicit sandwich
+`log 2 ≤ f_n ≤ log 2 + |β|(|J|·d + |h|)` on every nonempty stage of
+the `d`-dimensional cubic Ising exhaustion.
 
 ## Main theorem
 
