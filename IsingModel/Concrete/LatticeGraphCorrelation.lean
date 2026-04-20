@@ -739,6 +739,20 @@ theorem truncated3TwoPoint_beta_zero
     correlationInfinite_beta_zero_vanish _ _ J h _ (by simp)]
   ring
 
+/-- **`twoPointFunction` at `J = h = 0` is 0**:
+`twoPointFunction d ⟨0, 0, β⟩ r = 0`.
+
+Both couplings vanish ⇒ the Hamiltonian is identically zero
+⇒ all configurations are equiprobable ⇒ all nonempty-observable
+correlations vanish. Direct from `correlationInfinite_zero_params_vanish`. -/
+theorem twoPointFunction_zero_params
+    (d : ℕ) (β : ℝ) (r : Fin d → ℤ) :
+    twoPointFunction d (⟨0, 0, β⟩ : IsingParams ℝ) r = 0 := by
+  unfold twoPointFunction
+  exact correlationInfinite_zero_params_vanish
+    (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d) β
+    {(0 : Fin d → ℤ), r} (by simp)
+
 /-- **`twoPointFunction` at `β = 0`**: `twoPointFunction d ⟨J, h, 0⟩ r = 0`.
 
 At infinite temperature `β = 0`, all correlation functions vanish
