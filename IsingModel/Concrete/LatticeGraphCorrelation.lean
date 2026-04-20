@@ -380,6 +380,40 @@ theorem truncated3Infinite_latticeGraph_cubicExhaustion_eq_threePoint
   rw [h1, h2, h3] at h
   exact h.symm
 
+/-! ## Four-point function on ℤ^d -/
+
+/-- **Lebowitz truncated four-point function on ℤ^d**:
+`truncated4TwoPoint d p r s u := truncated4Infinite ... p 0 r s u`.
+
+Packages the translation invariance of the ∞-volume truncated 4-point
+correlation: `truncated4Infinite ... p i j k l` depends only on the
+three differences `(j - i, k - i, l - i)`. -/
+noncomputable def truncated4TwoPoint (d : ℕ) (p : IsingParams ℝ)
+    (r s u : Fin d → ℤ) : ℝ :=
+  truncated4Infinite (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) p 0 r s u
+
+/-- **Four-point correlation depends only on three separations**:
+for ferromagnetic `p` and any `i, j, k, l : Fin d → ℤ`,
+
+`truncated4Infinite ... p i j k l = truncated4TwoPoint d p (j - i) (k - i) (l - i)`.
+
+Proof: translation by `-i`. -/
+theorem truncated4Infinite_latticeGraph_cubicExhaustion_eq_fourPoint
+    (d : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    (i j k l : Fin d → ℤ) :
+    truncated4Infinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) p i j k l
+      = truncated4TwoPoint d p (j - i) (k - i) (l - i) := by
+  have h := truncated4Infinite_latticeGraph_cubicExhaustion_translation
+    d (-i) p hf i j k l
+  have h1 : (-i) +ᵥ i = (0 : Fin d → ℤ) := by change -i + i = 0; abel
+  have h2 : (-i) +ᵥ j = j - i := by change -i + j = j - i; abel
+  have h3 : (-i) +ᵥ k = k - i := by change -i + k = k - i; abel
+  have h4 : (-i) +ᵥ l = l - i := by change -i + l = l - i; abel
+  rw [h1, h2, h3, h4] at h
+  exact h.symm
+
 /-! ## Relating truncated2TwoPoint, twoPointFunction, and magnetization -/
 
 /-- **`truncated2TwoPoint = twoPointFunction - M^2`** on ℤ^d:
