@@ -784,7 +784,7 @@ neither this theorem nor `BddAbove_freeEnergyAlongExhaustion_range`
 needs `Ferromagnetic p`.
 
 Reference: Glimm–Jaffe, *Quantum Physics*, 2nd ed., Springer 1987,
-§4.6 Prop 4.6.1, p. 64. This is a formal weaker variant of the
+§4.6 Prop 4.6.1, p. 68. This is a formal weaker variant of the
 proposition as stated in GJ: the bundled hypotheses replace the
 translation-invariance framework that GJ uses implicitly. -/
 theorem freeEnergyAlongExhaustion_tendsto_of_disjoint_tower
@@ -806,7 +806,7 @@ theorem freeEnergyAlongExhaustion_tendsto_of_disjoint_tower
     hcard_one
 
 /-- **Bundle of disjoint-tower hypotheses** for `freeEnergyAlongExhaustion`
-Fekete convergence (GJ §4.6 Prop 4.6.1 p. 64).
+Fekete convergence (GJ §4.6 Prop 4.6.1 p. 68).
 
 Packages the three exhaustion-structural hypotheses required by
 `freeEnergyAlongExhaustion_tendsto_of_disjoint_tower`:
@@ -822,7 +822,7 @@ content — that enters separately through `BoundedEdgeDensity` when
 needed.
 
 Intended use: future PRs will provide concrete instances under
-translation invariance (GJ §4.6 p. 64 style) so that the user does
+translation invariance (GJ §4.6 p. 68 style) so that the user does
 not need to supply the three hypotheses by hand. -/
 structure DisjointTowerHypotheses
     (G : SimpleGraph V) (Λ : Exhaustion V)
@@ -841,7 +841,7 @@ structure DisjointTowerHypotheses
   card_one : (Λ.volume 1).card ≠ 0
 
 /-- **Bundled-hypothesis wrapper for Prop 4.6.1 (disjoint-tower +
-`BoundedEdgeDensity`)** (GJ §4.6 Prop 4.6.1 p. 64).
+`BoundedEdgeDensity`)** (GJ §4.6 Prop 4.6.1 p. 68).
 
 Same content as `freeEnergyAlongExhaustion_tendsto_of_disjoint_tower`,
 but takes the three structural hypotheses as a single
@@ -923,7 +923,7 @@ def DisjointTowerHypotheses.of_log_linear_card
   card_one := hcard_one
 
 /-- **Concrete `DisjointTowerHypotheses` instance at `J = 0`**
-(GJ §4.6 Prop 4.6.1, p. 64): given `hcard_add` (cardinality additive
+(GJ §4.6 Prop 4.6.1, p. 68): given `hcard_add` (cardinality additive
 exhaustion) and `hcard_one` (non-degenerate base step) as inputs, the
 remaining super-additivity field of `DisjointTowerHypotheses` at
 `J = 0` is discharged automatically via
@@ -943,7 +943,7 @@ def DisjointTowerHypotheses.of_J_zero
     hcard_add hcard_one
 
 /-- **Concrete `DisjointTowerHypotheses` instance at `β = 0`**
-(GJ §4.6 Prop 4.6.1, p. 64): given `hcard_add` (cardinality additive
+(GJ §4.6 Prop 4.6.1, p. 68): given `hcard_add` (cardinality additive
 exhaustion) and `hcard_one` (non-degenerate base step) as inputs, the
 remaining super-additivity field of `DisjointTowerHypotheses` at
 `β = 0` is discharged automatically via
@@ -963,7 +963,7 @@ def DisjointTowerHypotheses.of_beta_zero
     hcard_add hcard_one
 
 /-- **Fekete convergence of `freeEnergyAlongExhaustion` at `J = 0`**
-(GJ §4.6 Prop 4.6.1, p. 64, concrete `J = 0` instance).
+(GJ §4.6 Prop 4.6.1, p. 68, concrete `J = 0` instance).
 
 Given a cardinality-additive exhaustion with non-degenerate base step
 and bounded edge density, the free-energy density sequence
@@ -997,7 +997,7 @@ theorem freeEnergyAlongExhaustion_J_zero_tendsto_of_hcard_add
     hBED (DisjointTowerHypotheses.of_J_zero G Λ h β hcard_add hcard_one)
 
 /-- **Fekete convergence of `freeEnergyAlongExhaustion` at `β = 0`**
-(GJ §4.6 Prop 4.6.1, p. 64, concrete `β = 0` instance).
+(GJ §4.6 Prop 4.6.1, p. 68, concrete `β = 0` instance).
 
 Given a cardinality-additive exhaustion with non-degenerate base step
 and bounded edge density, the free-energy density sequence
