@@ -3007,6 +3007,17 @@ theorem magnetizationInfinite_latticeGraph_nonneg
     0 ≤ magnetizationInfinite (IsingModel.latticeGraph d) Λ p i :=
   magnetizationInfinite_nonneg (IsingModel.latticeGraph d) Λ p hf i
 
+/-- **ℤ^d `|magnetizationInfinite| ≤ 1`** site-wise (any Exhaustion, ferromagnetic):
+combines `magnetizationInfinite_latticeGraph_nonneg` (so `0 ≤ M`, hence
+`-1 ≤ M`) with `magnetizationInfinite_latticeGraph_le_one`. -/
+theorem abs_magnetizationInfinite_latticeGraph_le_one
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i : Fin d → ℤ) :
+    |magnetizationInfinite (IsingModel.latticeGraph d) Λ p i| ≤ 1 := by
+  have hl := magnetizationInfinite_latticeGraph_nonneg d Λ p hf i
+  have hu := magnetizationInfinite_latticeGraph_le_one d Λ p i
+  exact abs_le.mpr ⟨by linarith, hu⟩
+
 /-- **ℤ^d magnetizationInfinite at h = 0 site-wise**:
 `magnetizationInfinite (latticeGraph d) Λ ⟨J, 0, β⟩ i = 0`. -/
 theorem magnetizationInfinite_latticeGraph_zero_at_h_zero
