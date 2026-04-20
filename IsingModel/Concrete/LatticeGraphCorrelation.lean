@@ -246,6 +246,61 @@ theorem twoPointFunction_symm
           correlationInfinite_latticeGraph_pair_eq_twoPointFunction d p hf r 0
     _ = twoPointFunction d p (-r) := by rw [h_zero_sub]
 
+/-- **Truncated two-point function on ℤ^d**:
+`truncated2TwoPoint d p r := truncated2Infinite ... p 0 r`.
+
+Packages the site-independence / separation-dependence of the ∞-vol
+truncated 2-point correlation on the translation-invariant ℤ^d
+Ising model. -/
+noncomputable def truncated2TwoPoint (d : ℕ) (p : IsingParams ℝ)
+    (r : Fin d → ℤ) : ℝ :=
+  truncated2Infinite (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) p 0 r
+
+/-- **Truncated 2-point correlation depends only on the separation**:
+for ferromagnetic `p` and any `i, j : Fin d → ℤ`,
+
+`truncated2Infinite ... p i j = truncated2TwoPoint d p (j - i)`.
+
+Proof: apply `truncated2Infinite_latticeGraph_cubicExhaustion_translation`
+with `t := -i`, giving `truncated2Infinite ... (-i + i) (-i + j)
+= truncated2Infinite ... i j`. Simplify `-i + i = 0`, `-i + j = j - i`. -/
+theorem truncated2Infinite_latticeGraph_cubicExhaustion_eq_twoPoint
+    (d : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p) (i j : Fin d → ℤ) :
+    truncated2Infinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) p i j
+      = truncated2TwoPoint d p (j - i) := by
+  have h := truncated2Infinite_latticeGraph_cubicExhaustion_translation
+    d (-i) p hf i j
+  -- `h : truncated2Infinite ... ((-i) +ᵥ i) ((-i) +ᵥ j) = truncated2Infinite ... i j`.
+  have h1 : (-i) +ᵥ i = (0 : Fin d → ℤ) := by change -i + i = 0; abel
+  have h2 : (-i) +ᵥ j = j - i := by change -i + j = j - i; abel
+  rw [h1, h2] at h
+  exact h.symm
+
+/-- **Symmetry of the truncated two-point function**:
+`truncated2TwoPoint d p r = truncated2TwoPoint d p (-r)`.
+
+Proof: `truncated2Infinite_symm` swaps the two site arguments;
+`truncated2Infinite ... 0 r = truncated2Infinite ... r 0`, which by
+`_eq_twoPoint` equals `truncated2TwoPoint d p (0 - r) = truncated2TwoPoint
+d p (-r)`. -/
+theorem truncated2TwoPoint_symm
+    (d : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p) (r : Fin d → ℤ) :
+    truncated2TwoPoint d p r = truncated2TwoPoint d p (-r) := by
+  have h_symm := truncated2Infinite_symm (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) p 0 r
+  -- h_symm : truncated2Infinite ... 0 r = truncated2Infinite ... r 0
+  have h_zero_sub : (0 : Fin d → ℤ) - r = -r := by abel
+  calc truncated2TwoPoint d p r
+      = truncated2Infinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) p 0 r := rfl
+    _ = truncated2Infinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) p r 0 := h_symm
+    _ = truncated2TwoPoint d p ((0 : Fin d → ℤ) - r) :=
+          truncated2Infinite_latticeGraph_cubicExhaustion_eq_twoPoint d p hf r 0
+    _ = truncated2TwoPoint d p (-r) := by rw [h_zero_sub]
+
 end Ambient
 
 end IsingModel
