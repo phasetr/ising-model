@@ -168,13 +168,19 @@ theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_shift
 
 /-! ## Two-point function on ℤ^d -/
 
-/-- **Two-point function on ℤ^d**:
+/-- **Two-point function on ℤ^d** (Finset-based):
 `twoPointFunction d p r := correlationInfinite (latticeGraph d)
 (cubicExhaustion d) p {0, r}`.
 
-By translation invariance, the ∞-vol 2-point correlation `⟨σ_i σ_j⟩_∞`
-depends only on the separation `r = j - i`; this scalar-valued function
-packages that dependence. -/
+**Caveat (Finset vs physics).** Under ferromagnetic parameters and
+for `r ≠ 0`, this equals the physical two-point correlation
+`⟨σ_0 σ_r⟩_∞` and depends only on the separation `r`. At `r = 0`,
+however, the `Finset` literal `{0, 0}` collapses to `{0}`, so
+`twoPointFunction d p 0 = correlationInfinite ... {0}
+= magnetizationInfinite ... 0`, *not* the physical `⟨σ_0^2⟩_∞ = 1`.
+This is the same `Finset` caveat that already appears in
+`susceptibility_J_zero` (`PhaseTransition.lean`). Consumers interpreting
+this as the "physical" two-point function should restrict to `r ≠ 0`. -/
 noncomputable def twoPointFunction (d : ℕ) (p : IsingParams ℝ)
     (r : Fin d → ℤ) : ℝ :=
   correlationInfinite (IsingModel.latticeGraph d)
