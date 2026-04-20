@@ -1386,6 +1386,16 @@ theorem truncated2TwoPoint_J_zero_of_ne_zero
       uniformMagnetization_J_zero d h β hf]
   ring
 
+/-- **ℤ^d spontaneousMagnetization exhaustion-independence**:
+any two exhaustions yield the same `spontaneousMagnetization`. -/
+theorem spontaneousMagnetization_latticeGraph_indep_exhaustion
+    (d : ℕ) (Λ Λ' : Ambient.Exhaustion (Fin d → ℤ))
+    {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) (i : Fin d → ℤ) :
+    spontaneousMagnetization (IsingModel.latticeGraph d) Λ J β i
+      = spontaneousMagnetization (IsingModel.latticeGraph d) Λ' J β i :=
+  spontaneousMagnetization_indep_exhaustion (IsingModel.latticeGraph d)
+    Λ Λ' hJ hβ i
+
 /-- **ℤ^d magnetizationInfinite exhaustion-independence**:
 any two exhaustions of `Fin d → ℤ` yield the same ∞-vol magnetization. -/
 theorem magnetizationInfinite_latticeGraph_indep_exhaustion
