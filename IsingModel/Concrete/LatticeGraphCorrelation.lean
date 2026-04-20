@@ -703,6 +703,22 @@ theorem partitionFunctionΛ_latticeGraph_ge_two_cosh_pow_card
   partitionFunctionΛ_ge_two_cosh_pow_card_of_ferromagnetic
     (IsingModel.latticeGraph d) Λ p hf
 
+/-- **ℤ^d partitionFunctionAlongExhaustion ≥ 1** (ferromagnetic). -/
+theorem partitionFunctionAlongExhaustion_latticeGraph_ge_one
+    (d : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p) (n : ℕ) :
+    1 ≤ partitionFunctionAlongExhaustion (IsingModel.latticeGraph d)
+      (Ambient.cubicExhaustion d) p n :=
+  partitionFunctionAlongExhaustion_ge_one_of_ferromagnetic
+    (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d) p hf n
+
+/-- **ℤ^d log partitionFunctionAlongExhaustion ≥ 0** (ferromagnetic). -/
+theorem log_partitionFunctionAlongExhaustion_latticeGraph_nonneg
+    (d : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p) (n : ℕ) :
+    0 ≤ Real.log (partitionFunctionAlongExhaustion (IsingModel.latticeGraph d)
+      (Ambient.cubicExhaustion d) p n) :=
+  log_partitionFunctionAlongExhaustion_nonneg_of_ferromagnetic
+    (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d) p hf n
+
 /-- **ℤ^d partitionFunctionAlongExhaustion ≥ 2^|Λ_n|** (ferromagnetic). -/
 theorem partitionFunctionAlongExhaustion_latticeGraph_ge_two_pow_card
     (d : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p) (n : ℕ) :
