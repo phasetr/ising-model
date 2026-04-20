@@ -272,6 +272,20 @@ theorem uniformMagnetization_J_zero
   magnetizationInfinite_J_zero
     (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d) h β hf 0
 
+/-- **`uniformMagnetization` at `J = h = 0`**:
+`uniformMagnetization d ⟨0, 0, β⟩ = 0`.
+
+At `J = h = 0` the Hamiltonian vanishes identically, so all site-level
+correlations are zero. Direct from `correlationInfinite_zero_params_vanish`
+at the singleton `{0}`. -/
+theorem uniformMagnetization_zero_params
+    (d : ℕ) (β : ℝ) :
+    uniformMagnetization d (⟨0, 0, β⟩ : IsingParams ℝ) = 0 := by
+  unfold uniformMagnetization magnetizationInfinite
+  exact correlationInfinite_zero_params_vanish
+    (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d) β
+    {(0 : Fin d → ℤ)} (by simp)
+
 /-- **Z₂ symmetry at `h = 0`**: `uniformMagnetization d ⟨J, 0, β⟩ = 0`.
 
 Concrete specialisation of `magnetizationInfinite_zero_at_h_zero` at
