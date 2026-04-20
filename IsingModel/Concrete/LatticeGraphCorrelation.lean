@@ -500,6 +500,27 @@ theorem twoPointFunction_ge_magnetization_sq
     d p hf r
   linarith [h_identity.symm ▸ h_nonneg]
 
+/-- **Symmetry of `truncated3TwoPoint` under `(r, s)` swap**:
+`truncated3TwoPoint d p r s = truncated3TwoPoint d p s r`.
+
+Reduces to the pairwise-symmetry of the Ursell 3-point function in
+its last two arguments, via unfolding and commutativity of the
+relevant Finset literals and products. -/
+theorem truncated3TwoPoint_symm_rs
+    (d : ℕ) (p : IsingParams ℝ) (r s : Fin d → ℤ) :
+    truncated3TwoPoint d p r s = truncated3TwoPoint d p s r := by
+  unfold truncated3TwoPoint truncated3Infinite
+  -- `{0, r, s} = {0, s, r}` (unordered).
+  have h_triple : ({(0 : Fin d → ℤ), r, s} : Finset (Fin d → ℤ))
+      = {(0 : Fin d → ℤ), s, r} := by
+    ext x
+    simp only [Finset.mem_insert, Finset.mem_singleton]
+    tauto
+  have h_rs : ({r, s} : Finset (Fin d → ℤ)) = {s, r} := by
+    ext x; simp only [Finset.mem_insert, Finset.mem_singleton]; tauto
+  rw [h_triple, h_rs]
+  ring
+
 /-! ## Concrete Lebowitz / GHS inequalities on ℤ^d -/
 
 /-- **GHS `U_3 ≤ 0` on ℤ^d** (Glimm–Jaffe §4.3 Cor 4.3.4): for
