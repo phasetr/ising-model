@@ -1610,6 +1610,20 @@ theorem truncated4Infinite_latticeGraph_indep_exhaustion
   truncated4Infinite_indep_exhaustion (IsingModel.latticeGraph d) Λ Λ' p hf
     i j k l
 
+/-- **ℤ^d correlationInfinite ≤ 1** (any Exhaustion). -/
+theorem correlationInfinite_latticeGraph_le_one
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (A : Finset (Fin d → ℤ)) :
+    correlationInfinite (IsingModel.latticeGraph d) Λ p A ≤ 1 :=
+  correlationInfinite_le_one (IsingModel.latticeGraph d) Λ p A
+
+/-- **ℤ^d correlationInfinite ≥ 0** (any Exhaustion, ferromagnetic). -/
+theorem correlationInfinite_latticeGraph_nonneg
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (A : Finset (Fin d → ℤ)) :
+    0 ≤ correlationInfinite (IsingModel.latticeGraph d) Λ p A :=
+  correlationInfinite_nonneg (IsingModel.latticeGraph d) Λ p hf A
+
 /-- **Exhaustion-independence of `correlationInfinite` on ℤ^d**
 (GJ Thm 4.2.3 corollary): any two exhaustions of `Fin d → ℤ` yield
 the same ∞-vol correlation. -/
