@@ -511,20 +511,29 @@ formalized**, per the full inventory above:
    hypothesis); and
    `freeEnergyAlongExhaustion_tendsto_of_disjointTowerHypotheses`
    (bundled form taking a `DisjointTowerHypotheses` record).
-   Dropping the remaining disjoint-tower hypotheses
-   (`hcard_add`, `hsuper`, `hcard_one`) requires translation
-   invariance. Scaffolding is complete through step 5 (PRs
-   #220-#224, `TranslationInvariance.lean`):
-   `Ambient.IsTranslationInvariant G` class with `⊥`/`⊤` instances
-   (step 1); `vaddFinset` API and cardinality preservation (step 2);
-   `TranslationInvariantExhaustion T V` structure with automatic
-   `volume_card_add` (step 3); abstract assembly
-   `disjointTowerHypotheses_of_translationInvariant` (step 4);
-   full Fekete wrapper
+   The translation-invariance scaffolding chain (PRs #220-#242,
+   11 steps) is now **complete** in `TranslationInvariance.lean`:
+   step 1 `Ambient.IsTranslationInvariant G` class with `⊥`/`⊤`
+   instances; step 2 `vaddFinset` API; step 3
+   `TranslationInvariantExhaustion T V` + automatic
+   `volume_card_add`; step 4 `disjointTowerHypotheses_of_translationInvariant`
+   abstract assembly; step 5
    `freeEnergyAlongExhaustion_tendsto_of_translationInvariant`
-   (step 5). `hsuper` remains as a user input; deriving it from
-   log-Z translation invariance is the next step (requires
-   Ising-Hamiltonian translation equivariance machinery).
+   wrapper (with `hsuper` as input); step 6a `vaddSubtypeEquiv`;
+   6b `inducedGraph_vaddFinset_adj_iff`; 6c `configVaddEquiv`;
+   6d externalField equivariance; 6e `inducedGraphVaddIso`; 6f
+   `interactionEnergy` equivariance; 6g Hamiltonian +
+   `partitionFunctionΛ` translation invariance; step 7
+   `volume_decomposes` + `shift_add` field; step 8
+   `disjoint_volume_shift`; step 9 union-form `hsuper`; step 10
+   `volume (m+n)`-form `hsuper`
+   (`log_partitionFunctionΛ_super_of_translationInvariant`); step 11
+   automatic Fekete convergence
+   `freeEnergyAlongExhaustion_tendsto_of_translationInvariant_auto`
+   (no user-supplied `hsuper`). The only remaining user inputs
+   are `TranslationInvariantExhaustion T V`, `IsTranslationInvariant G`,
+   `Ferromagnetic p`, `BoundedEdgeDensity G Λ`, `hcard_one`, and
+   appropriate `Fintype` instances for translated / union Finsets.
    *(The `correlationAlongExhaustion` convergence side, originally
    listed here as "not yet proved", is in fact discharged by
    `correlationAlongExhaustion_tendsto_ciSup` +
