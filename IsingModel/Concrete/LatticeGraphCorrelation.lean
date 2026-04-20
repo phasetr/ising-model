@@ -3247,6 +3247,47 @@ theorem abs_magnetizationInfinite_latticeGraph_le_one_unconditional
     |magnetizationInfinite (IsingModel.latticeGraph d) Λ p i| ≤ 1 :=
   abs_magnetizationInfinite_le_one (IsingModel.latticeGraph d) Λ p i
 
+/-- **ℤ^d `-1 ≤ correlationΛ`**. -/
+theorem neg_one_le_correlationΛ_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ)
+    (A : Finset (↑Λ : Type _)) :
+    -1 ≤ correlationΛ (IsingModel.latticeGraph d) Λ p A :=
+  neg_one_le_correlationΛ (IsingModel.latticeGraph d) Λ p A
+
+/-- **ℤ^d `-1 ≤ correlationAlongExhaustion`** per stage. -/
+theorem neg_one_le_correlationAlongExhaustion_latticeGraph
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (A : Finset (Fin d → ℤ)) (n : ℕ) :
+    -1 ≤ correlationAlongExhaustion (IsingModel.latticeGraph d) Λ p A n :=
+  neg_one_le_correlationAlongExhaustion (IsingModel.latticeGraph d) Λ p A n
+
+/-- **ℤ^d `-1 ≤ correlationInfinite`** (unconditional). -/
+theorem neg_one_le_correlationInfinite_latticeGraph
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (A : Finset (Fin d → ℤ)) :
+    -1 ≤ correlationInfinite (IsingModel.latticeGraph d) Λ p A :=
+  neg_one_le_correlationInfinite (IsingModel.latticeGraph d) Λ p A
+
+/-- **ℤ^d `-1 ≤ magnetizationΛ`**. -/
+theorem neg_one_le_magnetizationΛ_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ) (i : ↑Λ) :
+    -1 ≤ magnetizationΛ (IsingModel.latticeGraph d) Λ p i :=
+  neg_one_le_magnetizationΛ (IsingModel.latticeGraph d) Λ p i
+
+/-- **ℤ^d `-1 ≤ magnetizationAlongExhaustion`** per stage. -/
+theorem neg_one_le_magnetizationAlongExhaustion_latticeGraph
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (i : Fin d → ℤ) (n : ℕ) :
+    -1 ≤ magnetizationAlongExhaustion (IsingModel.latticeGraph d) Λ p i n :=
+  neg_one_le_magnetizationAlongExhaustion (IsingModel.latticeGraph d) Λ p i n
+
+/-- **ℤ^d `-1 ≤ magnetizationInfinite`** (unconditional). -/
+theorem neg_one_le_magnetizationInfinite_latticeGraph
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (i : Fin d → ℤ) :
+    -1 ≤ magnetizationInfinite (IsingModel.latticeGraph d) Λ p i :=
+  neg_one_le_magnetizationInfinite (IsingModel.latticeGraph d) Λ p i
+
 /-- **ℤ^d magnetizationInfinite at h = 0 site-wise**:
 `magnetizationInfinite (latticeGraph d) Λ ⟨J, 0, β⟩ i = 0`. -/
 theorem magnetizationInfinite_latticeGraph_zero_at_h_zero
