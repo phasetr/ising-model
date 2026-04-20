@@ -3163,6 +3163,36 @@ theorem magnetizationAlongExhaustion_latticeGraph_h_zero
         (⟨J, 0, β⟩ : IsingParams ℝ) i n = 0 :=
   magnetizationAlongExhaustion_h_zero (IsingModel.latticeGraph d) Λ J β i n
 
+/-- **ℤ^d magnetizationΛ vanishes at β=0**. -/
+theorem magnetizationΛ_latticeGraph_beta_zero
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J h : ℝ) (i : ↑Λ) :
+    magnetizationΛ (IsingModel.latticeGraph d) Λ
+        (⟨J, h, 0⟩ : IsingParams ℝ) i = 0 :=
+  magnetizationΛ_beta_zero (IsingModel.latticeGraph d) Λ J h i
+
+/-- **ℤ^d magnetizationAlongExhaustion vanishes at β=0** per stage. -/
+theorem magnetizationAlongExhaustion_latticeGraph_beta_zero
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J h : ℝ)
+    (i : Fin d → ℤ) (n : ℕ) :
+    magnetizationAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, h, 0⟩ : IsingParams ℝ) i n = 0 :=
+  magnetizationAlongExhaustion_beta_zero (IsingModel.latticeGraph d) Λ J h i n
+
+/-- **ℤ^d magnetizationΛ vanishes at J=h=0**. -/
+theorem magnetizationΛ_latticeGraph_zero_params
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (β : ℝ) (i : ↑Λ) :
+    magnetizationΛ (IsingModel.latticeGraph d) Λ
+        (⟨0, 0, β⟩ : IsingParams ℝ) i = 0 :=
+  magnetizationΛ_zero_params (IsingModel.latticeGraph d) Λ β i
+
+/-- **ℤ^d magnetizationAlongExhaustion vanishes at J=h=0** per stage. -/
+theorem magnetizationAlongExhaustion_latticeGraph_zero_params
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (β : ℝ)
+    (i : Fin d → ℤ) (n : ℕ) :
+    magnetizationAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨0, 0, β⟩ : IsingParams ℝ) i n = 0 :=
+  magnetizationAlongExhaustion_zero_params (IsingModel.latticeGraph d) Λ β i n
+
 /-- **ℤ^d magnetizationInfinite at h = 0 site-wise**:
 `magnetizationInfinite (latticeGraph d) Λ ⟨J, 0, β⟩ i = 0`. -/
 theorem magnetizationInfinite_latticeGraph_zero_at_h_zero
