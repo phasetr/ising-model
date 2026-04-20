@@ -244,6 +244,20 @@ theorem spontaneousMagnetization_latticeGraph_cubicExhaustion_eq
   rw [hvadd] at h
   exact h.symm
 
+/-- **ℤ^d physical identification: correlationΛ → correlationInfinite**. -/
+theorem tendsto_correlationΛ_correlationInfinite_latticeGraph
+    (d : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    (A : Finset (Fin d → ℤ)) :
+    ∃ N : ℕ, ∃ hN : ∀ n ≥ N, A ⊆ (Ambient.cubicExhaustion d).volume n,
+      Filter.Tendsto
+        (fun m : ℕ => correlationΛ (IsingModel.latticeGraph d)
+          ((Ambient.cubicExhaustion d).volume (m + N)) p
+          (liftFinset A (hN (m + N) (Nat.le_add_left N m))))
+        Filter.atTop (nhds (correlationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) p A)) :=
+  tendsto_correlationΛ_correlationInfinite (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) p hf A
+
 /-- **ℤ^d correlationAlongExhaustion → ciSup**. -/
 theorem correlationAlongExhaustion_latticeGraph_tendsto_ciSup
     (d : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p) (A : Finset (Fin d → ℤ)) :
