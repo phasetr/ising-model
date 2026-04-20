@@ -128,6 +128,25 @@ noncomputable def cubicExhaustion (d : ℕ) : Ambient.Exhaustion (Fin d → ℤ)
   mono := cubicBox_mono d
   exhaust := cubicBox_exhaust d
 
+/-! ## Convenience specialisations -/
+
+/-- **`cubicExhaustion d`'s volume is eventually nonempty** under
+`[Nonempty (Fin d → ℤ)]`. Specialisation of
+`Exhaustion.eventually_volume_nonempty`. -/
+theorem cubicExhaustion_eventually_volume_nonempty
+    (d : ℕ) [Nonempty (Fin d → ℤ)] :
+    ∀ᶠ n in Filter.atTop, ((cubicExhaustion d).volume n).Nonempty :=
+  Exhaustion.eventually_volume_nonempty (cubicExhaustion d)
+
+/-- **`cubicExhaustion d`'s volume cardinality tends to ∞** under
+`[Infinite (Fin d → ℤ)]`. Specialisation of
+`Exhaustion.tendsto_card_atTop`. -/
+theorem cubicExhaustion_tendsto_card_atTop
+    (d : ℕ) [Infinite (Fin d → ℤ)] :
+    Filter.Tendsto
+      (fun n => ((cubicExhaustion d).volume n).card) Filter.atTop Filter.atTop :=
+  Exhaustion.tendsto_card_atTop (cubicExhaustion d)
+
 end Ambient
 
 end IsingModel
