@@ -2039,6 +2039,20 @@ theorem correlationInfinite_latticeGraph_zero_params_vanish
         (⟨0, 0, β⟩ : IsingParams ℝ) A = 0 :=
   correlationInfinite_zero_params_vanish (IsingModel.latticeGraph d) Λ β A hA
 
+/-- **ℤ^d magnetizationInfinite ≤ 1** site-wise (any Exhaustion). -/
+theorem magnetizationInfinite_latticeGraph_le_one
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (i : Fin d → ℤ) :
+    magnetizationInfinite (IsingModel.latticeGraph d) Λ p i ≤ 1 :=
+  magnetizationInfinite_le_one (IsingModel.latticeGraph d) Λ p i
+
+/-- **ℤ^d magnetizationInfinite ≥ 0** site-wise (any Exhaustion, ferromagnetic). -/
+theorem magnetizationInfinite_latticeGraph_nonneg
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i : Fin d → ℤ) :
+    0 ≤ magnetizationInfinite (IsingModel.latticeGraph d) Λ p i :=
+  magnetizationInfinite_nonneg (IsingModel.latticeGraph d) Λ p hf i
+
 /-- **ℤ^d magnetizationInfinite at h = 0 site-wise**:
 `magnetizationInfinite (latticeGraph d) Λ ⟨J, 0, β⟩ i = 0`. -/
 theorem magnetizationInfinite_latticeGraph_zero_at_h_zero
