@@ -461,6 +461,20 @@ noncomputable def partitionFunctionAlongExhaustion
     (p : IsingParams ℝ) : ℕ → ℝ :=
   fun n => partitionFunctionΛ G (Λ.volume n) p
 
+/-- **Magnetization along an exhaustion** at a fixed ambient site `i : V`:
+the stagewise sequence `n ↦ ⟨σ_i⟩` computed on the induced volume
+`Λ.volume n`. Once `i ∈ Λ.volume n`, this equals
+`correlationΛ G (Λ.volume n) p {liftFinset {i} _}`; before, it is `0`.
+
+Direct specialization of `correlationAlongExhaustion` at `A = {i}`,
+matching the single-site magnetization layering at `magnetizationΛ`
+(PR #396) and `magnetizationInfinite`. -/
+noncomputable def magnetizationAlongExhaustion
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (i : V) : ℕ → ℝ :=
+  correlationAlongExhaustion G Λ p {i}
+
 /-- **Unfolding of `partitionFunctionAlongExhaustion`**: by construction
 equal to `partitionFunctionΛ` at the `n`-th volume.  Unconditional
 `rfl`-proof, marked `@[simp]`. -/
@@ -1595,6 +1609,36 @@ theorem correlationAlongExhaustion_nonneg
   · rw [correlationAlongExhaustion_of_subset G Λ p hA]
     exact correlationΛ_nonneg G (Λ.volume n) p hf _
   · rw [correlationAlongExhaustion_of_not_subset G Λ p hA]
+
+/-! ## Basic properties of `magnetizationAlongExhaustion` -/
+
+/-- **Unfolding of `magnetizationAlongExhaustion`**:
+`magnetizationAlongExhaustion G Λ p i n = correlationAlongExhaustion G Λ p {i} n`,
+by definition. -/
+theorem magnetizationAlongExhaustion_apply
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (i : V) (n : ℕ) :
+    magnetizationAlongExhaustion G Λ p i n
+      = correlationAlongExhaustion G Λ p {i} n := rfl
+
+/-- **`magnetizationAlongExhaustion ≤ 1`** per stage for any parameters.
+Direct from `correlationAlongExhaustion_le_one` at `A = {i}`. -/
+theorem magnetizationAlongExhaustion_le_one
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (i : V) (n : ℕ) :
+    magnetizationAlongExhaustion G Λ p i n ≤ 1 :=
+  correlationAlongExhaustion_le_one G Λ p {i} n
+
+/-- **`magnetizationAlongExhaustion ≥ 0`** per stage for ferromagnetic `p`.
+Direct from `correlationAlongExhaustion_nonneg` at `A = {i}` (GKS-I). -/
+theorem magnetizationAlongExhaustion_nonneg
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i : V) (n : ℕ) :
+    0 ≤ magnetizationAlongExhaustion G Λ p i n :=
+  correlationAlongExhaustion_nonneg G Λ p hf {i} n
 
 /-- **GKS-II at finite volume** (Λ-lifted form): for a ferromagnetic
 Ising model and `A, B ⊆ Λ`,
