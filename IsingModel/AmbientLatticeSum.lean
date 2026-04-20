@@ -889,6 +889,23 @@ theorem log_partitionFunctionΛ_beta_zero
   push_cast
   rw [Real.log_pow, Fintype.card_coe]
 
+/-- **Closed form for `log (partitionFunctionΛ G Λ ⟨0, 0, β⟩)`**:
+at `J = h = 0`, `log Z_Λ = |Λ| · log 2`. Direct from
+`IsingModel.partitionFunction_zero_params`
+(`Z = Fintype.card (Config ↑Λ) = 2^|↑Λ|`) via
+`card_config_eq_two_pow`, `Real.log_pow`, and `Fintype.card_coe`. -/
+theorem log_partitionFunctionΛ_zero_params
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (β : ℝ) :
+    Real.log (partitionFunctionΛ G Λ (⟨0, 0, β⟩ : IsingParams ℝ))
+      = (Λ.card : ℝ) * Real.log 2 := by
+  change Real.log (IsingModel.partitionFunction
+      (inducedGraph G Λ) (⟨0, 0, β⟩ : IsingParams ℝ)) = _
+  rw [IsingModel.partitionFunction_zero_params,
+      IsingModel.card_config_eq_two_pow]
+  push_cast
+  rw [Real.log_pow, Fintype.card_coe]
+
 /-- **Generic `DisjointTowerHypotheses` builder from log-linear `log Z`**
 (GJ §4.6 Prop 4.6.1 helper): whenever
 `log Z_{Λ_n} = |Λ_n| · c` for all `n` with some fixed constant `c`
