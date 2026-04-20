@@ -238,6 +238,14 @@ theorem correlationΛ_le_one (G : SimpleGraph V) (Λ : Finset V)
     correlationΛ G Λ p A ≤ 1 :=
   IsingModel.correlation_le_one _ _ _
 
+/-- The correlation on `Λ` is at least `-1`. Lower side of
+`abs_correlationΛ_le_one`. -/
+theorem neg_one_le_correlationΛ (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (p : IsingParams ℝ)
+    (A : Finset (↑Λ : Type _)) :
+    -1 ≤ correlationΛ G Λ p A :=
+  (abs_le.mp (abs_correlationΛ_le_one G Λ p A)).1
+
 /-- For ferromagnetic `p`, the correlation on `Λ` is non-negative
 (GKS-I, lifted to the ambient framework). -/
 theorem correlationΛ_nonneg (G : SimpleGraph V) (Λ : Finset V)
@@ -266,6 +274,12 @@ theorem abs_magnetizationΛ_le_one (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] (p : IsingParams ℝ) (i : ↑Λ) :
     |magnetizationΛ G Λ p i| ≤ 1 :=
   abs_correlationΛ_le_one G Λ p {i}
+
+/-- **`-1 ≤ magnetizationΛ`** at any site `i : ↑Λ`, for any parameters. -/
+theorem neg_one_le_magnetizationΛ (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (p : IsingParams ℝ) (i : ↑Λ) :
+    -1 ≤ magnetizationΛ G Λ p i :=
+  neg_one_le_correlationΛ G Λ p {i}
 
 /-- **`magnetizationΛ ≥ 0`** for ferromagnetic `p` at any site `i : ↑Λ`.
 Direct from `correlationΛ_nonneg` at `A = {i}` (GKS-I). -/
@@ -560,6 +574,15 @@ theorem abs_correlationAlongExhaustion_le_one
     exact abs_correlationΛ_le_one G (Λ.volume n) p _
   · rw [correlationAlongExhaustion_of_not_subset G Λ p hA, abs_zero]
     exact zero_le_one
+
+/-- **Pointwise `-1 ≤ correlationAlongExhaustion`** at every `n : ℕ`.
+Lower side of `abs_correlationAlongExhaustion_le_one`. -/
+theorem neg_one_le_correlationAlongExhaustion
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (A : Finset V) (n : ℕ) :
+    -1 ≤ correlationAlongExhaustion G Λ p A n :=
+  (abs_le.mp (abs_correlationAlongExhaustion_le_one G Λ p A n)).1
 
 /-! ## Monotonicity in the ambient subgraph direction
 
@@ -1431,6 +1454,15 @@ theorem abs_correlationInfinite_le_one
     (abs_le.mp (abs_correlationAlongExhaustion_le_one G Λ p A 0)).1
   exact h0.trans (le_ciSup (correlationAlongExhaustion_bddAbove G Λ p A) 0)
 
+/-- **`-1 ≤ correlationInfinite`** (unconditional).
+Lower side of `abs_correlationInfinite_le_one`. -/
+theorem neg_one_le_correlationInfinite
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (A : Finset V) :
+    -1 ≤ correlationInfinite G Λ p A :=
+  (abs_le.mp (abs_correlationInfinite_le_one G Λ p A)).1
+
 /-- **Nonnegativity** (ferromagnetic): `correlationInfinite ≥ 0`.
 Uses `Λ.exhaust`: pick `N` with `A ⊆ Λ.volume N`; then
 `correlationAlongExhaustion G Λ p A N ≥ 0` by GKS-I, and this is
@@ -1679,6 +1711,14 @@ theorem abs_magnetizationAlongExhaustion_le_one
     (p : IsingParams ℝ) (i : V) (n : ℕ) :
     |magnetizationAlongExhaustion G Λ p i n| ≤ 1 :=
   abs_correlationAlongExhaustion_le_one G Λ p {i} n
+
+/-- **Pointwise `-1 ≤ magnetizationAlongExhaustion`** at every `n`. -/
+theorem neg_one_le_magnetizationAlongExhaustion
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (i : V) (n : ℕ) :
+    -1 ≤ magnetizationAlongExhaustion G Λ p i n :=
+  neg_one_le_correlationAlongExhaustion G Λ p {i} n
 
 
 
@@ -2088,6 +2128,14 @@ theorem abs_magnetizationInfinite_le_one
     (p : IsingParams ℝ) (i : V) :
     |magnetizationInfinite G Λ p i| ≤ 1 :=
   abs_correlationInfinite_le_one G Λ p {i}
+
+/-- **`-1 ≤ magnetizationInfinite`** unconditionally. -/
+theorem neg_one_le_magnetizationInfinite
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (i : V) :
+    -1 ≤ magnetizationInfinite G Λ p i :=
+  neg_one_le_correlationInfinite G Λ p {i}
 
 /-- **Convergence of `magnetizationAlongExhaustion` to `magnetizationInfinite`**
 for ferromagnetic `p`:
