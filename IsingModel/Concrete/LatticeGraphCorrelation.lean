@@ -220,6 +220,24 @@ noncomputable def uniformSpontaneousMagnetization
   spontaneousMagnetization (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) J β 0
 
+/-- **J-monotonicity of `uniformSpontaneousMagnetization` on ℤ^d**. -/
+theorem uniformSpontaneousMagnetization_monotone_J
+    (d : ℕ) {β : ℝ} (hβ : 0 < β) :
+    MonotoneOn
+      (fun J : ℝ => uniformSpontaneousMagnetization d J β)
+      (Set.Ici 0) :=
+  spontaneousMagnetization_monotone_J (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) hβ 0
+
+/-- **β-monotonicity of `uniformSpontaneousMagnetization` on ℤ^d**. -/
+theorem uniformSpontaneousMagnetization_monotone_beta
+    (d : ℕ) {J : ℝ} (hJ : 0 ≤ J) :
+    MonotoneOn
+      (fun β : ℝ => uniformSpontaneousMagnetization d J β)
+      (Set.Ioi 0) :=
+  spontaneousMagnetization_monotone_beta (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) hJ 0
+
 /-- **Bridge**: for `0 ≤ J`, `0 < β`, and any site `i : Fin d → ℤ`,
 `spontaneousMagnetization ... J β i = uniformSpontaneousMagnetization d J β`.
 
