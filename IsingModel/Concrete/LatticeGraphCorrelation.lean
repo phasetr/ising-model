@@ -669,6 +669,13 @@ theorem partitionFunctionAlongExhaustion_latticeGraph_ge_zero_params
   partitionFunctionAlongExhaustion_ge_zero_params (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) hJ hh hβ n
 
+/-- **ℤ^d partitionFunctionΛ ≥ 1** (ferromagnetic). -/
+theorem partitionFunctionΛ_latticeGraph_ge_one
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ)
+    (hf : Ferromagnetic p) :
+    1 ≤ partitionFunctionΛ (IsingModel.latticeGraph d) Λ p :=
+  partitionFunctionΛ_ge_one_of_ferromagnetic (IsingModel.latticeGraph d) Λ p hf
+
 /-- **ℤ^d partitionFunctionΛ ≥ 2^|Λ|** (ferromagnetic, per-Λ). -/
 theorem partitionFunctionΛ_latticeGraph_ge_two_pow_card
     (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ)
