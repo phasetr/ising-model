@@ -1572,6 +1572,33 @@ theorem inducedGraph_latticeGraph_bot (d : ℕ) (Λ : Finset (Fin d → ℤ)) :
     Ambient.inducedGraph (⊥ : SimpleGraph (Fin d → ℤ)) Λ = ⊥ :=
   Ambient.inducedGraph_bot Λ
 
+/-- **ℤ^d partitionFunctionΛ ambient-subgraph monotonicity** from ⊥. -/
+theorem partitionFunctionΛ_bot_le_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    [Fintype (Ambient.inducedGraph (⊥ : SimpleGraph (Fin d → ℤ)) Λ).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    partitionFunctionΛ (⊥ : SimpleGraph (Fin d → ℤ)) Λ p
+      ≤ partitionFunctionΛ (IsingModel.latticeGraph d) Λ p :=
+  partitionFunctionΛ_monotone_ambient_subgraph bot_le Λ p hf
+
+/-- **ℤ^d freeEnergyΛ ambient-subgraph monotonicity** from ⊥. -/
+theorem freeEnergyΛ_bot_le_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    [Fintype (Ambient.inducedGraph (⊥ : SimpleGraph (Fin d → ℤ)) Λ).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    freeEnergyΛ (⊥ : SimpleGraph (Fin d → ℤ)) Λ p
+      ≤ freeEnergyΛ (IsingModel.latticeGraph d) Λ p :=
+  freeEnergyΛ_monotone_ambient_subgraph bot_le Λ p hf
+
+/-- **ℤ^d correlationΛ ambient-subgraph monotonicity** from ⊥. -/
+theorem correlationΛ_bot_le_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    [Fintype (Ambient.inducedGraph (⊥ : SimpleGraph (Fin d → ℤ)) Λ).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (A : Finset (↑Λ : Type _)) :
+    correlationΛ (⊥ : SimpleGraph (Fin d → ℤ)) Λ p A
+      ≤ correlationΛ (IsingModel.latticeGraph d) Λ p A :=
+  correlationΛ_monotone_ambient_subgraph bot_le Λ p hf A
+
 /-- **`⊥` ≤ `latticeGraph d` correlation monotonicity** on ℤ^d:
 `correlationInfinite ⊥ Λ p A ≤ correlationInfinite (latticeGraph d) Λ p A`
 (ferromagnetic). Any two ambient graphs with `⊥ ≤ G` give ambient-subgraph
