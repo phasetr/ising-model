@@ -244,6 +244,30 @@ theorem spontaneousMagnetization_latticeGraph_cubicExhaustion_eq
   rw [hvadd] at h
   exact h.symm
 
+/-- **ℤ^d correlationAlongExhaustion → ciSup**. -/
+theorem correlationAlongExhaustion_latticeGraph_tendsto_ciSup
+    (d : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p) (A : Finset (Fin d → ℤ)) :
+    Filter.Tendsto
+      (correlationAlongExhaustion (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) p A)
+      Filter.atTop
+      (nhds (⨆ n, correlationAlongExhaustion (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) p A n)) :=
+  correlationAlongExhaustion_tendsto_ciSup (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) p hf A
+
+/-- **ℤ^d correlationAlongExhaustion → correlationInfinite**. -/
+theorem tendsto_correlationAlongExhaustion_correlationInfinite_latticeGraph
+    (d : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p) (A : Finset (Fin d → ℤ)) :
+    Filter.Tendsto
+      (correlationAlongExhaustion (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) p A)
+      Filter.atTop
+      (nhds (correlationInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) p A)) :=
+  tendsto_correlationAlongExhaustion_correlationInfinite
+    (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d) p hf A
+
 /-- **ℤ^d log partitionFunctionAlongExhaustion volume-monotonicity** (ferromagnetic). -/
 theorem log_partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_monotone_volume
     (d : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p) (n : ℕ) :
