@@ -1386,6 +1386,20 @@ theorem truncated2TwoPoint_J_zero_of_ne_zero
       uniformMagnetization_J_zero d h β hf]
   ring
 
+/-- **ℤ^d FKG for spinProducts at ∞-vol** (Glimm–Jaffe §4.4 p. 67):
+alias of the `correlationInfinite_gks_second` GKS-II form. -/
+theorem correlationInfinite_latticeGraph_cubicExhaustion_fkg_spinProduct
+    (d : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    (A B : Finset (Fin d → ℤ)) :
+    correlationInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) p A
+      * correlationInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) p B
+      ≤ correlationInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) p (A ∆ B) :=
+  correlationInfinite_fkg_spinProduct (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) p hf A B
+
 /-- **ℤ^d Z₂ symmetry at `h = 0` for `correlationInfinite`**:
 `correlationInfinite ⟨J, 0, β⟩ A = 0` for any `A` of odd cardinality. -/
 theorem correlationInfinite_latticeGraph_cubicExhaustion_h_zero
