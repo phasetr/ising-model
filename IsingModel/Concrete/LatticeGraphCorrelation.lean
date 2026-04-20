@@ -282,6 +282,15 @@ theorem correlationΛ_latticeGraph_nonneg
     0 ≤ correlationΛ (IsingModel.latticeGraph d) Λ p A :=
   correlationΛ_nonneg (IsingModel.latticeGraph d) Λ p hf A
 
+/-- **ℤ^d correlationAlongExhaustion stage-index Monotone**. -/
+theorem correlationAlongExhaustion_latticeGraph_cubicExhaustion_monotone
+    (d : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    (A : Finset (Fin d → ℤ)) :
+    Monotone (correlationAlongExhaustion (IsingModel.latticeGraph d)
+      (Ambient.cubicExhaustion d) p A) :=
+  correlationAlongExhaustion_monotone (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) p hf A
+
 /-- **ℤ^d per-stage h-monotonicity of correlationAlongExhaustion**. -/
 theorem correlationAlongExhaustion_latticeGraph_cubicExhaustion_monotone_h
     (d : ℕ) {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β)
