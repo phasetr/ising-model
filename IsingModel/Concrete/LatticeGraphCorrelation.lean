@@ -362,6 +362,17 @@ theorem correlationAlongExhaustion_latticeGraph_cubicExhaustion_monotone
   correlationAlongExhaustion_monotone (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) p hf A
 
+/-- **ℤ^d correlationΛ_gks_second** (GKS-II at finite volume). -/
+theorem correlationΛ_latticeGraph_gks_second
+    (d : ℕ) {Λ : Finset (Fin d → ℤ)}
+    (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    {A B : Finset (Fin d → ℤ)} (hA : A ⊆ Λ) (hB : B ⊆ Λ) :
+    correlationΛ (IsingModel.latticeGraph d) Λ p (liftFinset A hA)
+      * correlationΛ (IsingModel.latticeGraph d) Λ p (liftFinset B hB)
+      ≤ correlationΛ (IsingModel.latticeGraph d) Λ p
+          (liftFinset (A ∆ B) (symmDiff_subset_of_subset hA hB)) :=
+  correlationΛ_gks_second (IsingModel.latticeGraph d) p hf hA hB
+
 /-- **ℤ^d per-Λ h-monotonicity of `correlationΛ`**. -/
 theorem correlationΛ_latticeGraph_monotone_h
     (d : ℕ) (Λ : Finset (Fin d → ℤ)) {J : ℝ} (hJ : 0 ≤ J)
