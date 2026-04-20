@@ -649,6 +649,26 @@ theorem freeEnergyAlongExhaustion_latticeGraph_cubicExhaustion_monotone_beta
   freeEnergyAlongExhaustion_monotone_beta (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) hJ hh n
 
+/-- **ℤ^d freeEnergyAlongExhaustion ≥ zero_params**: `f(0,0,β) ≤ f(J,h,β)`. -/
+theorem freeEnergyAlongExhaustion_latticeGraph_ge_zero_params
+    (d : ℕ) {J h β : ℝ} (hJ : 0 ≤ J) (hh : 0 ≤ h) (hβ : 0 < β) (n : ℕ) :
+    freeEnergyAlongExhaustion (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) ⟨0, 0, β⟩ n
+      ≤ freeEnergyAlongExhaustion (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) ⟨J, h, β⟩ n :=
+  freeEnergyAlongExhaustion_ge_zero_params (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) hJ hh hβ n
+
+/-- **ℤ^d partitionFunctionAlongExhaustion ≥ zero_params** analog. -/
+theorem partitionFunctionAlongExhaustion_latticeGraph_ge_zero_params
+    (d : ℕ) {J h β : ℝ} (hJ : 0 ≤ J) (hh : 0 ≤ h) (hβ : 0 < β) (n : ℕ) :
+    partitionFunctionAlongExhaustion (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) ⟨0, 0, β⟩ n
+      ≤ partitionFunctionAlongExhaustion (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) ⟨J, h, β⟩ n :=
+  partitionFunctionAlongExhaustion_ge_zero_params (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) hJ hh hβ n
+
 /-- **ℤ^d partitionFunctionAlongExhaustion ≥ 2^|Λ_n|** (ferromagnetic). -/
 theorem partitionFunctionAlongExhaustion_latticeGraph_ge_two_pow_card
     (d : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p) (n : ℕ) :
