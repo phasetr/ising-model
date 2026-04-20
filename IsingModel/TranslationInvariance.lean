@@ -371,6 +371,27 @@ def configVaddEquiv {T : Type u} [AddGroup T] {V : Type v}
     Config (↑Λ : Type _) ≃ Config (↑(vaddFinset t Λ) : Type _) :=
   Equiv.arrowCongr (vaddSubtypeEquiv t Λ) (Equiv.refl Spin)
 
+/-- **Action of `configVaddEquiv` on a point** (forward direction):
+`(configVaddEquiv t Λ σ) j = σ ((vaddSubtypeEquiv t Λ).symm j)` for
+`j : ↑(vaddFinset t Λ)`. Unfolding lemma for the `Equiv.arrowCongr`
+construction. -/
+@[simp]
+theorem configVaddEquiv_apply {T : Type u} [AddGroup T] {V : Type v}
+    [DecidableEq V] [AddAction T V]
+    (t : T) (Λ : Finset V) (σ : Config (↑Λ : Type _))
+    (j : (↑(vaddFinset t Λ) : Type _)) :
+    (configVaddEquiv t Λ σ) j = σ ((vaddSubtypeEquiv t Λ).symm j) := rfl
+
+/-- **Action of `(configVaddEquiv t Λ).symm` on a point**:
+`((configVaddEquiv t Λ).symm σ') i = σ' (vaddSubtypeEquiv t Λ i)` for
+`i : ↑Λ`. Unfolding lemma for the inverse of the `Equiv.arrowCongr`. -/
+@[simp]
+theorem configVaddEquiv_symm_apply {T : Type u} [AddGroup T] {V : Type v}
+    [DecidableEq V] [AddAction T V]
+    (t : T) (Λ : Finset V) (σ' : Config (↑(vaddFinset t Λ) : Type _))
+    (i : (↑Λ : Type _)) :
+    ((configVaddEquiv t Λ).symm σ') i = σ' (vaddSubtypeEquiv t Λ i) := rfl
+
 /-- **`externalFieldEnergy` is invariant under `configVaddEquiv`**:
 for any translation `t : T` and any `Λ : Finset V`,
 
@@ -604,7 +625,6 @@ theorem spinProduct_map_configVaddEquiv {T : Type u} [AddGroup T]
   -- `emb i = vaddSubtypeEquiv t Λ i` we get `σ ((vaddSubtypeEquiv ...).symm
   -- ((vaddSubtypeEquiv ...) i)) = σ i`.
   have h : configVaddEquiv t Λ σ (vaddSubtypeEquiv t Λ i) = σ i := by
-    unfold configVaddEquiv
     simp
   -- Goal: `↑((configVaddEquiv t Λ σ) ((vaddSubtypeEquiv t Λ).toEmbedding i)).toSign
   --        = ↑(σ i).toSign` (cast into ℝ).
