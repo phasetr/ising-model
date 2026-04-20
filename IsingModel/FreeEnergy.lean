@@ -898,6 +898,22 @@ theorem freeEnergy_monotone_abs_h
     (Set.mem_Ici.mpr (abs_nonneg h₂)) hh
   exact this
 
+/-- **Partition function is monotone in `|h|`** for ferromagnetic parameters:
+`|h₁| ≤ |h₂| → Z(J, h₁, β) ≤ Z(J, h₂, β)`.
+
+Combines `partitionFunction_eq_abs_h` (Z even in h) with
+`partitionFunction_monotone_h` on `[0, ∞)`. Z-level counterpart of
+`freeEnergy_monotone_abs_h`. -/
+theorem partitionFunction_monotone_abs_h
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β)
+    {h₁ h₂ : ℝ} (hh : |h₁| ≤ |h₂|) :
+    partitionFunction G (⟨J, h₁, β⟩ : IsingParams ℝ)
+      ≤ partitionFunction G (⟨J, h₂, β⟩ : IsingParams ℝ) := by
+  rw [partitionFunction_eq_abs_h G J h₁ β,
+      partitionFunction_eq_abs_h G J h₂ β]
+  exact partitionFunction_monotone_h G J β hJ hβ _ _ (abs_nonneg h₁) hh
+
 /-- **Free energy at `β = 0`**: for nonempty `ι` and any `J, h : ℝ`,
 `freeEnergy G ⟨J, h, 0⟩ = log 2`.
 
