@@ -4649,4 +4649,30 @@ $f_n \to f_\infty$ still requires a compatible
 $\mathrm{TranslationInvariantExhaustion}$ on $\mathbb{Z}^d$, deferred
 pending a structure refactor.
 
+\begin{theorem}[Shifted exhaustion; PR \#249]
+Let $T$ be an additive group acting on $V$ (with $\mathrm{DecidableEq}\,V$).
+For every $\mathrm{Ambient.Exhaustion}\,V\ \Lambda$ and $t : T$,
+\[
+  \Lambda.\mathrm{shift}\,t : \mathrm{Ambient.Exhaustion}\,V,
+  \quad (\Lambda.\mathrm{shift}\,t).\mathrm{volume}\,n := t +_v \Lambda.\mathrm{volume}\,n,
+\]
+inherits monotonicity and the exhaust property; moreover
+$|(\Lambda.\mathrm{shift}\,t).\mathrm{volume}\,n| = |\Lambda.\mathrm{volume}\,n|$
+and $\Lambda.\mathrm{shift}\,0 = \Lambda$ pointwise on volumes.
+\end{theorem}
+\begin{proof}
+Monotonicity: the translate $t +_v \cdot$ preserves inclusion.
+Exhaust: given a finite $A$, pull back to $(-t) +_v A$, apply
+$\Lambda$'s exhaust, and push forward.
+\end{proof}
+
+\paragraph{Remark.}
+Infrastructure for translation-invariance lifts of
+$\mathrm{correlationInfinite}$ / $\mathrm{freeEnergyInfinite}$.
+Composing $\Lambda.\mathrm{shift}\,t$ with exhaustion-independence
+corollaries is the planned mechanism to establish
+$\mathrm{correlationInfinite}\,G\,\Lambda\,p\,A =
+\mathrm{correlationInfinite}\,G\,\Lambda\,p\,(t +_v A)$ when $G$
+is $\mathrm{IsTranslationInvariant}$.
+
 \end{document}
