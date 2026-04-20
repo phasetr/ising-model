@@ -770,6 +770,25 @@ theorem twoPointFunction_ge_uniformMagnetization_sq
     (uniformMagnetization d p)^2 ≤ twoPointFunction d p r :=
   twoPointFunction_ge_magnetization_sq d p hf r
 
+/-- **`truncated2TwoPoint` at `J = 0` vanishes for `r ≠ 0`** (ferromagnetic):
+`truncated2TwoPoint d ⟨0, h, β⟩ r = 0`.
+
+At `J = 0` the Ising Hamiltonian has no coupling, so distinct sites are
+independent. Consequently `⟨σ_0 σ_r⟩ = ⟨σ_0⟩⟨σ_r⟩ = M²`, and the
+truncated 2-point function vanishes. Computation:
+`truncated2TwoPoint = twoPointFunction − M² = tanh(βh)² − tanh(βh)² = 0`.
+-/
+theorem truncated2TwoPoint_J_zero_of_ne_zero
+    (d : ℕ) (h β : ℝ)
+    (hf : Ferromagnetic (⟨(0 : ℝ), h, β⟩ : IsingParams ℝ))
+    {r : Fin d → ℤ} (hr : r ≠ 0) :
+    truncated2TwoPoint d (⟨0, h, β⟩ : IsingParams ℝ) r = 0 := by
+  rw [truncated2TwoPoint_eq_twoPointFunction_sub_uniformMagnetization_sq
+        d _ hf r,
+      twoPointFunction_J_zero_of_ne_zero d h β hf hr,
+      uniformMagnetization_J_zero d h β hf]
+  ring
+
 /-! ## Concrete Lebowitz / GHS inequalities on ℤ^d -/
 
 /-- **GHS `U_3 ≤ 0` on ℤ^d** (Glimm–Jaffe §4.3 Cor 4.3.4): for
