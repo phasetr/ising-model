@@ -128,6 +128,16 @@ theorem mem_vaddFinset {T : Type u} [AddGroup T] {V : Type v}
   unfold vaddFinset
   simp [Finset.mem_image]
 
+/-- **Identity translation is identity on Finset**:
+`vaddFinset 0 A = A`. -/
+@[simp]
+theorem vaddFinset_zero {T : Type u} [AddGroup T] {V : Type v}
+    [DecidableEq V] [AddAction T V] (A : Finset V) :
+    vaddFinset (0 : T) A = A := by
+  unfold vaddFinset
+  ext v
+  simp [zero_vadd]
+
 /-- **Disjointness is preserved by translation**:
 if `A` and `B` are disjoint as `Finset V`, then `t +ᵥ A` and
 `t +ᵥ B` are also disjoint.
@@ -147,6 +157,91 @@ theorem vaddFinset_disjoint_of_disjoint {T : Type u} [AddGroup T]
   have hu_eq : u₁ = u₂ := vadd_injective t (heq₁.trans heq₂.symm)
   subst hu_eq
   exact Finset.disjoint_left.mp h hu₁A hu₂B
+
+/-! ## Translation-invariant exhaustions
+
+An exhaustion whose consecutive volumes differ by a disjoint
+translate of the base block `volume 1` gives automatic
+cardinality additivity `|Λ.volume (m + n)| = |Λ.volume m| +
+|Λ.volume n|`, discharging the first field of
+`DisjointTowerHypotheses`.
+
+Deriving the second structural field, `super`, requires
+translation-invariance of the Ising Hamiltonian itself and is
+left to a subsequent PR. -/
+
+/-- A **translation-invariant exhaustion** is an `Exhaustion V`
+whose consecutive volumes differ by a disjoint translate of the
+base block. `shift n : T` is the translation vector inserted at
+stage `n+1`.
+
+Informally: `Λ.volume 0 = ∅`, then `Λ.volume n` is built up by
+successively adjoining disjoint translates of `Λ.volume 1`.
+This is the natural structure under which Prop 4.6.1's
+`hcard_add` hypothesis becomes automatic.
+
+The field `shift_zero : shift 0 = 0` ensures the `n = 0` case of
+`volume_succ` is self-consistent: it forces `volume 1 = volume 1`
+(since `volume 0 = ∅` and `vaddFinset 0 (volume 1) = volume 1`
+by `vaddFinset_zero`).
+
+This structure concerns only the **exhaustion geometry**. It does
+*not* by itself imply translation invariance of the graph edges
+or of the Ising Hamiltonian — those are separate conditions.
+
+Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §4.6 Prop 4.6.1,
+p. 64. -/
+structure TranslationInvariantExhaustion (T : Type u) [AddGroup T]
+    (V : Type v) [DecidableEq V] [AddAction T V]
+    extends Exhaustion V where
+  /-- Translation vector inserted at the `n+1`-th stage. -/
+  shift : ℕ → T
+  /-- The stage-0 shift is the identity, making the `n = 0` case of
+  `volume_succ` self-consistent (together with `volume_zero`). -/
+  shift_zero : shift 0 = 0
+  /-- `volume 0` is empty — the exhaustion starts from scratch. -/
+  volume_zero : volume 0 = ∅
+  /-- The `(n+1)`-th volume is the `n`-th volume together with the
+  translated base block `shift n +ᵥ volume 1`. -/
+  volume_succ : ∀ n,
+    volume (n + 1) = volume n ∪ vaddFinset (shift n) (volume 1)
+  /-- The translated base block is disjoint from `volume n`. -/
+  disjoint_shift : ∀ n,
+    Disjoint (volume n) (vaddFinset (shift n) (volume 1))
+
+namespace TranslationInvariantExhaustion
+
+variable {T : Type u} [AddGroup T] {V : Type v} [DecidableEq V]
+  [AddAction T V]
+
+/-- **Linear cardinality**: `|volume n| = n · |volume 1|` for any
+translation-invariant exhaustion.
+
+Proved by induction on `n`, using `volume_succ`,
+`disjoint_shift`, and `vaddFinset_card`. -/
+theorem volume_card_eq_mul
+    (Λ : TranslationInvariantExhaustion T V) (n : ℕ) :
+    (Λ.volume n).card = n * (Λ.volume 1).card := by
+  induction n with
+  | zero =>
+    rw [Λ.volume_zero, Finset.card_empty, Nat.zero_mul]
+  | succ n ih =>
+    rw [Λ.volume_succ n,
+        Finset.card_union_of_disjoint (Λ.disjoint_shift n),
+        vaddFinset_card, ih]
+    ring
+
+/-- **`hcard_add` holds automatically**:
+`|volume (m + n)| = |volume m| + |volume n|`. Direct from the
+linear-cardinality formula. -/
+theorem volume_card_add
+    (Λ : TranslationInvariantExhaustion T V) (m n : ℕ) :
+    (Λ.volume (m + n)).card = (Λ.volume m).card + (Λ.volume n).card := by
+  rw [Λ.volume_card_eq_mul (m + n), Λ.volume_card_eq_mul m,
+      Λ.volume_card_eq_mul n]
+  ring
+
+end TranslationInvariantExhaustion
 
 end Ambient
 
