@@ -277,9 +277,10 @@ def disjointTowerHypotheses_of_translationInvariant
 given a translation-invariant exhaustion, a bounded-edge-density
 hypothesis, user-supplied `log Z` super-additivity `hsuper`, and
 non-degenerate base step `hcard_one`, the exhaustion free-energy
-density converges to the infinite-volume free energy:
-`freeEnergyAlongExhaustion G Λ.toExhaustion p →
-freeEnergyInfinite G Λ.toExhaustion p`.
+density tends (in the sense of `Filter.Tendsto` at `Filter.atTop`)
+to the infinite-volume free energy: `freeEnergyAlongExhaustion
+G Λ.toExhaustion p` converges to `freeEnergyInfinite G
+Λ.toExhaustion p`.
 
 Thin wrapper over
 `freeEnergyAlongExhaustion_tendsto_of_disjointTowerHypotheses`
