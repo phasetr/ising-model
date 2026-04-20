@@ -669,6 +669,31 @@ theorem partitionFunctionAlongExhaustion_latticeGraph_ge_zero_params
   partitionFunctionAlongExhaustion_ge_zero_params (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) hJ hh hβ n
 
+/-- **ℤ^d freeEnergyΛ ≥ log(2 cosh βh)** (ferromagnetic, nonempty Λ). -/
+theorem freeEnergyΛ_latticeGraph_ge_log_two_cosh
+    (d : ℕ) {Λ : Finset (Fin d → ℤ)} (hne : Λ.Nonempty)
+    {J h β : ℝ} (hJ : 0 ≤ J) (hh : 0 ≤ h) (hβ : 0 < β) :
+    Real.log (2 * Real.cosh (β * h))
+      ≤ freeEnergyΛ (IsingModel.latticeGraph d) Λ
+          (⟨J, h, β⟩ : IsingParams ℝ) :=
+  freeEnergyΛ_ge_log_two_cosh (IsingModel.latticeGraph d) hne hJ hh hβ
+
+/-- **ℤ^d freeEnergyΛ ≥ log 2** (ferromagnetic, nonempty Λ). -/
+theorem freeEnergyΛ_latticeGraph_ge_log_two
+    (d : ℕ) {Λ : Finset (Fin d → ℤ)} (hne : Λ.Nonempty)
+    {J h β : ℝ} (hJ : 0 ≤ J) (hh : 0 ≤ h) (hβ : 0 < β) :
+    Real.log 2
+      ≤ freeEnergyΛ (IsingModel.latticeGraph d) Λ
+          (⟨J, h, β⟩ : IsingParams ℝ) :=
+  freeEnergyΛ_ge_log_two (IsingModel.latticeGraph d) hne hJ hh hβ
+
+/-- **ℤ^d freeEnergyΛ ≥ 0** (ferromagnetic, nonempty Λ). -/
+theorem freeEnergyΛ_latticeGraph_nonneg
+    (d : ℕ) {Λ : Finset (Fin d → ℤ)} (hne : Λ.Nonempty)
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    0 ≤ freeEnergyΛ (IsingModel.latticeGraph d) Λ p :=
+  freeEnergyΛ_nonneg_of_ferromagnetic (IsingModel.latticeGraph d) hne p hf
+
 /-- **ℤ^d partitionFunctionΛ ≥ 1** (ferromagnetic). -/
 theorem partitionFunctionΛ_latticeGraph_ge_one
     (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ)
