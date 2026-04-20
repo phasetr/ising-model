@@ -70,17 +70,58 @@ theorem magnetizationInfinite_latticeGraph_cubicExhaustion_translation
           (Ambient.cubicExhaustion d) p i := by
   unfold magnetizationInfinite
   -- `correlationInfinite G Λ p {t +ᵥ i} = correlationInfinite G Λ p (vaddFinset t {i})`.
-  have h_singleton : ({t +ᵥ i} : Finset (Fin d → ℤ)) = vaddFinset t {i} := by
-    ext x
-    rw [mem_vaddFinset, Finset.mem_singleton]
-    constructor
-    · intro heq; exact ⟨i, Finset.mem_singleton_self i, heq.symm⟩
-    · rintro ⟨u, huA, heq⟩
-      rw [Finset.mem_singleton] at huA
-      subst huA
-      exact heq.symm
-  rw [h_singleton]
+  rw [show ({t +ᵥ i} : Finset (Fin d → ℤ)) = vaddFinset t {i} from
+        (vaddFinset_singleton t i).symm]
   exact correlationInfinite_latticeGraph_cubicExhaustion_vaddFinset d t p hf {i}
+
+/-- **ℤ^d truncated 2-point translation invariance**: for ferromagnetic `p`,
+`truncated2Infinite (latticeGraph d) (cubicExhaustion d) p (t + i) (t + j)
+  = truncated2Infinite ... p i j`.
+
+Direct application of `truncated2Infinite_translation` (PR #253). -/
+theorem truncated2Infinite_latticeGraph_cubicExhaustion_translation
+    (d : ℕ) (t : Fin d → ℤ) (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    (i j : Fin d → ℤ) :
+    truncated2Infinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) p (t +ᵥ i) (t +ᵥ j)
+      = truncated2Infinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) p i j :=
+  truncated2Infinite_translation (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) t p hf i j
+
+/-- **ℤ^d truncated 3-point (Ursell) translation invariance**. -/
+theorem truncated3Infinite_latticeGraph_cubicExhaustion_translation
+    (d : ℕ) (t : Fin d → ℤ) (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    (i j k : Fin d → ℤ) :
+    truncated3Infinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) p (t +ᵥ i) (t +ᵥ j) (t +ᵥ k)
+      = truncated3Infinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) p i j k :=
+  truncated3Infinite_translation (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) t p hf i j k
+
+/-- **ℤ^d Lebowitz 4-point translation invariance**. -/
+theorem truncated4Infinite_latticeGraph_cubicExhaustion_translation
+    (d : ℕ) (t : Fin d → ℤ) (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    (i j k l : Fin d → ℤ) :
+    truncated4Infinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) p (t +ᵥ i) (t +ᵥ j) (t +ᵥ k) (t +ᵥ l)
+      = truncated4Infinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) p i j k l :=
+  truncated4Infinite_translation (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) t p hf i j k l
+
+/-- **ℤ^d free-energy shift invariance**:
+`freeEnergyInfinite (latticeGraph d) ((cubicExhaustion d).shift t) p
+  = freeEnergyInfinite (latticeGraph d) (cubicExhaustion d) p`. -/
+theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_shift
+    (d : ℕ) (t : Fin d → ℤ) (p : IsingParams ℝ) :
+    freeEnergyInfinite (IsingModel.latticeGraph d)
+        ((Ambient.cubicExhaustion d).shift t) p
+      = freeEnergyInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) p :=
+  freeEnergyInfinite_shift_eq (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) t p
 
 end Ambient
 
