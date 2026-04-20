@@ -4509,4 +4509,34 @@ bound $0 \le 1 - \langle\sigma_i\rangle_+^\infty \le \exp(-c\beta)$
 (Glimm--Jaffe \cite{glimm-jaffe} \S 5.4 p.~83).
 \end{proof}
 
+\begin{theorem}[GJ \S 4.6 Prop 4.6.1, concrete translation-invariant lattice;
+PR \#244]
+For every $d : \mathbb{N}$, the Ising lattice graph
+$\texttt{latticeGraph}\ d : \operatorname{SimpleGraph}(\mathrm{Fin}\ d \to \mathbb{Z})$
+(edges between points at $\ell^1$-distance $1$) is invariant under
+the canonical self-action of $\mathrm{Fin}\ d \to \mathbb{Z}$ on
+itself:
+\[
+  \texttt{Ambient.IsTranslationInvariant}\ (\mathrm{Fin}\ d \to \mathbb{Z})\ (\texttt{latticeGraph}\ d).
+\]
+\end{theorem}
+\begin{proof}
+On the self-action, $t +_v u = t + u$ pointwise, hence
+$(t +_v u) - (t +_v v) = u - v$ in every coordinate. The defining
+ℓ¹ condition $\sum_i |x_i - y_i| = 1$ is therefore preserved in
+both directions.
+\end{proof}
+
+\paragraph{Remark.} This is the first non-trivial
+\texttt{IsTranslationInvariant} instance — earlier examples
+$(\bot, \top)$ are structurally trivial (no edges / all pairs).
+The lattice graph $\texttt{latticeGraph}\ d$ is the natural ambient
+graph behind the \S 4.6 Prop 4.6.1 translation-invariant exhaustion
+programme. Constructing a compatible
+\texttt{TranslationInvariantExhaustion} on $\mathbb{Z}^d$ requires
+either relaxing the single-block \texttt{volume\_succ} assumption
+or weakening the two-sided \texttt{Exhaustion.exhaust} requirement;
+this structural refactor is deferred to a subsequent PR.
+Reference: Glimm--Jaffe \cite{glimm-jaffe} \S 4.6 Prop 4.6.1, p.~64.
+
 \end{document}
