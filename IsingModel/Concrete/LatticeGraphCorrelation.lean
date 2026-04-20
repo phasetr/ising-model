@@ -408,6 +408,27 @@ theorem truncated2TwoPoint_nonneg
   truncated2Infinite_nonneg (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) p hf 0 r
 
+/-- **Two-point function bounded below by magnetization squared**:
+for ferromagnetic `p` and any `r : Fin d → ℤ`,
+
+`(magnetizationInfinite (latticeGraph d) (cubicExhaustion d) p 0)^2
+  ≤ twoPointFunction d p r`.
+
+Proof: from `truncated2TwoPoint_nonneg` (GKS-II) and the identity
+`truncated2TwoPoint d p r = twoPointFunction d p r − M²` (PR #261),
+we get `0 ≤ twoPointFunction d p r − M²`, hence `M² ≤ twoPointFunction
+d p r`. This is a classical physical bound: the 2-point function at
+infinite volume is at least as large as the squared magnetization. -/
+theorem twoPointFunction_ge_magnetization_sq
+    (d : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p) (r : Fin d → ℤ) :
+    (magnetizationInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) p 0)^2
+      ≤ twoPointFunction d p r := by
+  have h_nonneg := truncated2TwoPoint_nonneg d p hf r
+  have h_identity := truncated2TwoPoint_eq_twoPointFunction_sub_magnetization_sq
+    d p hf r
+  linarith [h_identity.symm ▸ h_nonneg]
+
 end Ambient
 
 end IsingModel
