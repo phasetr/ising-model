@@ -1585,6 +1585,45 @@ theorem truncated2Infinite_latticeGraph_h_zero
   truncated2Infinite_h_zero (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) J β i j
 
+/-- **ℤ^d truncated3Infinite β=0 site-wise**: `= 0`. -/
+theorem truncated3Infinite_latticeGraph_beta_zero
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J h : ℝ)
+    (i j k : Fin d → ℤ) :
+    truncated3Infinite (IsingModel.latticeGraph d) Λ
+        (⟨J, h, 0⟩ : IsingParams ℝ) i j k = 0 :=
+  truncated3Infinite_beta_zero (IsingModel.latticeGraph d) Λ J h i j k
+
+/-- **ℤ^d truncated3Infinite J=0 pairwise distinct site-wise**: `= 0`. -/
+theorem truncated3Infinite_latticeGraph_J_zero_of_pairwise_distinct
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (h β : ℝ)
+    (hf : Ferromagnetic (⟨(0 : ℝ), h, β⟩ : IsingParams ℝ))
+    {i j k : Fin d → ℤ} (hij : i ≠ j) (hjk : j ≠ k) (hik : i ≠ k) :
+    truncated3Infinite (IsingModel.latticeGraph d) Λ
+        (⟨0, h, β⟩ : IsingParams ℝ) i j k = 0 :=
+  truncated3Infinite_J_zero_of_pairwise_distinct (IsingModel.latticeGraph d) Λ
+    h β hf hij hjk hik
+
+/-- **ℤ^d truncated4Infinite β=0 site-wise**: `= 0`. -/
+theorem truncated4Infinite_latticeGraph_beta_zero
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J h : ℝ)
+    (i j k l : Fin d → ℤ) :
+    truncated4Infinite (IsingModel.latticeGraph d) Λ
+        (⟨J, h, 0⟩ : IsingParams ℝ) i j k l = 0 :=
+  truncated4Infinite_beta_zero (IsingModel.latticeGraph d) Λ J h i j k l
+
+/-- **ℤ^d truncated4Infinite J=0 pairwise distinct site-wise**: `= -2·tanh(β·h)^4`. -/
+theorem truncated4Infinite_latticeGraph_J_zero_of_pairwise_distinct
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (h β : ℝ)
+    (hf : Ferromagnetic (⟨(0 : ℝ), h, β⟩ : IsingParams ℝ))
+    {i j k l : Fin d → ℤ}
+    (hij : i ≠ j) (hik : i ≠ k) (hil : i ≠ l)
+    (hjk : j ≠ k) (hjl : j ≠ l) (hkl : k ≠ l) :
+    truncated4Infinite (IsingModel.latticeGraph d) Λ
+        (⟨0, h, β⟩ : IsingParams ℝ) i j k l
+      = -2 * Real.tanh (β * h) ^ 4 :=
+  truncated4Infinite_J_zero_of_pairwise_distinct (IsingModel.latticeGraph d) Λ
+    h β hf hij hik hil hjk hjl hkl
+
 /-- **ℤ^d truncated3Infinite nonpos** (GHS) site-wise (any Exhaustion). -/
 theorem truncated3Infinite_latticeGraph_nonpos
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
