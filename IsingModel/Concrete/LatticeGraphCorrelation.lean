@@ -259,6 +259,33 @@ theorem uniformMagnetization_beta_zero
   magnetizationInfinite_beta_zero
     (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d) J h 0
 
+/-- **J-monotonicity of `uniformMagnetization` on ℤ^d**. -/
+theorem uniformMagnetization_monotone_J
+    (d : ℕ) {h : ℝ} (hh : 0 ≤ h) {β : ℝ} (hβ : 0 < β) :
+    MonotoneOn
+      (fun J : ℝ => uniformMagnetization d ⟨J, h, β⟩)
+      (Set.Ici 0) :=
+  magnetizationInfinite_monotone_J (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) hh hβ 0
+
+/-- **h-monotonicity of `uniformMagnetization` on ℤ^d**. -/
+theorem uniformMagnetization_monotone_h
+    (d : ℕ) {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) :
+    MonotoneOn
+      (fun h : ℝ => uniformMagnetization d ⟨J, h, β⟩)
+      (Set.Ici 0) :=
+  magnetizationInfinite_monotone_h (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) hJ hβ 0
+
+/-- **β-monotonicity of `uniformMagnetization` on ℤ^d**. -/
+theorem uniformMagnetization_monotone_beta
+    (d : ℕ) {J : ℝ} (hJ : 0 ≤ J) {h : ℝ} (hh : 0 ≤ h) :
+    MonotoneOn
+      (fun β : ℝ => uniformMagnetization d ⟨J, h, β⟩)
+      (Set.Ioi 0) :=
+  magnetizationInfinite_monotone_beta (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) hJ hh 0
+
 /-- **`uniformMagnetization` at `J = 0`**:
 `uniformMagnetization d ⟨0, h, β⟩ = tanh(β · h)` (ferromagnetic).
 
