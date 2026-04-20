@@ -596,6 +596,30 @@ theorem truncated4TwoPoint_symm_su
   rw [h_quad, h_su]
   ring
 
+/-! ## `uniformMagnetization` recasts -/
+
+/-- **`twoPointFunction` at `r = 0` equals `uniformMagnetization`**
+(convenience recast). Combines `twoPointFunction_zero` with the
+definition of `uniformMagnetization`. -/
+theorem twoPointFunction_zero_eq_uniformMagnetization
+    (d : ℕ) (p : IsingParams ℝ) :
+    twoPointFunction d p 0 = uniformMagnetization d p :=
+  twoPointFunction_zero d p
+
+/-- **`truncated2TwoPoint = twoPointFunction − (uniformMagnetization)²`**
+(convenience recast). -/
+theorem truncated2TwoPoint_eq_twoPointFunction_sub_uniformMagnetization_sq
+    (d : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p) (r : Fin d → ℤ) :
+    truncated2TwoPoint d p r
+      = twoPointFunction d p r - (uniformMagnetization d p)^2 :=
+  truncated2TwoPoint_eq_twoPointFunction_sub_magnetization_sq d p hf r
+
+/-- **`twoPointFunction ≥ (uniformMagnetization)²`** (convenience recast). -/
+theorem twoPointFunction_ge_uniformMagnetization_sq
+    (d : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p) (r : Fin d → ℤ) :
+    (uniformMagnetization d p)^2 ≤ twoPointFunction d p r :=
+  twoPointFunction_ge_magnetization_sq d p hf r
+
 /-! ## Concrete Lebowitz / GHS inequalities on ℤ^d -/
 
 /-- **GHS `U_3 ≤ 0` on ℤ^d** (Glimm–Jaffe §4.3 Cor 4.3.4): for
