@@ -2161,6 +2161,7 @@ theorem magnetizationAlongExhaustion_h_zero
   correlationAlongExhaustion_h_zero G Λ J β {i}
     (by simp [Finset.card_singleton]) n
 
+
 /-- **`correlationAlongExhaustion` at `J = 0` (on-stage closed form)**:
 whenever the test set `A` is contained in `Λ.volume n`,
 `correlationAlongExhaustion G Λ ⟨0, h, β⟩ A n = tanh(β·h)^A.card`.
@@ -2337,6 +2338,46 @@ theorem correlationInfinite_zero_params_vanish
     correlationInfinite G Λ (⟨0, 0, β⟩ : IsingParams ℝ) A = 0 := by
   simp only [correlationInfinite,
     correlationAlongExhaustion_zero_params_vanish G Λ β A hA, ciSup_const]
+
+/-- **`magnetizationΛ` vanishes at `β = 0`**: for any `J, h`, any site
+`i : ↑Λ`, `magnetizationΛ G Λ ⟨J, h, 0⟩ i = 0`. Specialization of
+`correlationΛ_beta_zero_vanish_of_nonempty` at the nonempty singleton
+`{i}`. -/
+theorem magnetizationΛ_beta_zero (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (J h : ℝ) (i : ↑Λ) :
+    magnetizationΛ G Λ (⟨J, h, 0⟩ : IsingParams ℝ) i = 0 :=
+  correlationΛ_beta_zero_vanish_of_nonempty G Λ J h {i}
+    (Finset.singleton_nonempty i)
+
+/-- **`magnetizationAlongExhaustion` vanishes at `β = 0`** per stage:
+for any `J, h`, any site `i : V`, and any `n`,
+`magnetizationAlongExhaustion G Λ ⟨J, h, 0⟩ i n = 0`. Specialization
+of `correlationAlongExhaustion_beta_zero_vanish` at `A = {i}`. -/
+theorem magnetizationAlongExhaustion_beta_zero
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J h : ℝ) (i : V) (n : ℕ) :
+    magnetizationAlongExhaustion G Λ (⟨J, h, 0⟩ : IsingParams ℝ) i n = 0 :=
+  correlationAlongExhaustion_beta_zero_vanish G Λ J h {i}
+    (Finset.singleton_nonempty i) n
+
+/-- **`magnetizationΛ` vanishes at `J = h = 0`**: for any `β`, any site
+`i : ↑Λ`, `magnetizationΛ G Λ ⟨0, 0, β⟩ i = 0`. Specialization of
+`correlationΛ_zero_params_vanish_of_nonempty`. -/
+theorem magnetizationΛ_zero_params (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (β : ℝ) (i : ↑Λ) :
+    magnetizationΛ G Λ (⟨0, 0, β⟩ : IsingParams ℝ) i = 0 :=
+  correlationΛ_zero_params_vanish_of_nonempty G Λ β {i}
+    (Finset.singleton_nonempty i)
+
+/-- **`magnetizationAlongExhaustion` vanishes at `J = h = 0`** per stage. -/
+theorem magnetizationAlongExhaustion_zero_params
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (β : ℝ) (i : V) (n : ℕ) :
+    magnetizationAlongExhaustion G Λ (⟨0, 0, β⟩ : IsingParams ℝ) i n = 0 :=
+  correlationAlongExhaustion_zero_params_vanish G Λ β {i}
+    (Finset.singleton_nonempty i) n
 
 /-- **β=0 infinite-volume magnetization vanishes**: at infinite
 temperature (`β = 0`), spins are uniformly distributed and decoupled,
