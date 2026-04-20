@@ -253,6 +253,38 @@ theorem Exhaustion.shift_zero_volume {T : Type u} [AddGroup T]
     (Λ.shift (0 : T)).volume n = Λ.volume n := by
   rw [Exhaustion.shift_volume, vaddFinset_zero]
 
+/-- **Structure-level identity**: `Λ.shift 0 = Λ` as `Exhaustion V`.
+Consequence of `shift_zero_volume` via extensionality on `volume`;
+`Exhaustion` is a one-field structure modulo `Prop`-valued
+`mono` / `exhaust`. -/
+@[simp]
+theorem Exhaustion.shift_zero {T : Type u} [AddGroup T]
+    {V : Type v} [DecidableEq V] [AddAction T V]
+    (Λ : Exhaustion V) :
+    Λ.shift (0 : T) = Λ := by
+  cases Λ
+  simp only [Exhaustion.shift, Exhaustion.mk.injEq]
+  funext n
+  simp [vaddFinset_zero]
+
+/-- **Composition of shifts**: `(Λ.shift t).shift s = Λ.shift (s + t)`
+at the volume level, via `vaddFinset_add`. -/
+@[simp]
+theorem Exhaustion.shift_shift_volume {T : Type u} [AddGroup T]
+    {V : Type v} [DecidableEq V] [AddAction T V]
+    (Λ : Exhaustion V) (s t : T) (n : ℕ) :
+    ((Λ.shift t).shift s).volume n = (Λ.shift (s + t)).volume n := by
+  simp [Exhaustion.shift_volume, vaddFinset_add]
+
+/-- **Inverse shift cancels**: `(Λ.shift t).shift (-t) = Λ`
+at the volume level. -/
+@[simp]
+theorem Exhaustion.shift_neg_shift_volume {T : Type u} [AddGroup T]
+    {V : Type v} [DecidableEq V] [AddAction T V]
+    (Λ : Exhaustion V) (t : T) (n : ℕ) :
+    ((Λ.shift t).shift (-t)).volume n = Λ.volume n := by
+  rw [Exhaustion.shift_shift_volume, neg_add_cancel, Exhaustion.shift_zero_volume]
+
 /-- **Subtype bijection between `↑Λ` and `↑(t +ᵥ Λ)`**: the natural
 translation-induced bijection, sending `⟨v, hv⟩ : ↑Λ` to
 `⟨t +ᵥ v, _⟩ : ↑(vaddFinset t Λ)` and vice versa via `-t`.
