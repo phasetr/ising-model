@@ -116,6 +116,36 @@ theorem partitionFunctionΛ_neg_h (G : SimpleGraph V) (Λ : Finset V)
       = partitionFunctionΛ G Λ (⟨J, h, β⟩ : IsingParams ℝ) :=
   IsingModel.partitionFunction_neg_h _ J h β
 
+/-- **Λ-level J-monotonicity of `partitionFunctionΛ`** (pointwise form).
+Direct lift of `IsingModel.partitionFunction_monotone_J`. -/
+theorem partitionFunctionΛ_monotone_J (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (h β : ℝ) (hh : 0 ≤ h) (hβ : 0 < β) {J₁ J₂ : ℝ}
+    (hJ₁ : 0 ≤ J₁) (hJ : J₁ ≤ J₂) :
+    partitionFunctionΛ G Λ (⟨J₁, h, β⟩ : IsingParams ℝ)
+      ≤ partitionFunctionΛ G Λ (⟨J₂, h, β⟩ : IsingParams ℝ) :=
+  IsingModel.partitionFunction_monotone_J _ h β hh hβ J₁ J₂ hJ₁ hJ
+
+/-- **Λ-level h-monotonicity of `partitionFunctionΛ`** (pointwise form).
+Direct lift of `IsingModel.partitionFunction_monotone_h`. -/
+theorem partitionFunctionΛ_monotone_h (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) {h₁ h₂ : ℝ}
+    (hh₁ : 0 ≤ h₁) (hh : h₁ ≤ h₂) :
+    partitionFunctionΛ G Λ (⟨J, h₁, β⟩ : IsingParams ℝ)
+      ≤ partitionFunctionΛ G Λ (⟨J, h₂, β⟩ : IsingParams ℝ) :=
+  IsingModel.partitionFunction_monotone_h _ J β hJ hβ h₁ h₂ hh₁ hh
+
+/-- **Λ-level β-monotonicity of `partitionFunctionΛ`** (pointwise form).
+Direct lift of `IsingModel.partitionFunction_monotone_beta`. -/
+theorem partitionFunctionΛ_monotone_beta (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J h : ℝ) (hJ : 0 ≤ J) (hh : 0 ≤ h) {β₁ β₂ : ℝ}
+    (hβ₁ : 0 < β₁) (hβ : β₁ ≤ β₂) :
+    partitionFunctionΛ G Λ (⟨J, h, β₁⟩ : IsingParams ℝ)
+      ≤ partitionFunctionΛ G Λ (⟨J, h, β₂⟩ : IsingParams ℝ) :=
+  IsingModel.partitionFunction_monotone_beta _ J h hJ hh β₁ β₂ hβ₁ hβ
+
 /-- **Λ-level partition-function closed form at `J = 0`**:
 `Z_Λ(⟨0, h, β⟩) = (2 · cosh(β·h))^|Λ|`. Direct lift of
 `IsingModel.partitionFunction_J_zero` through
