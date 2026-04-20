@@ -26,11 +26,14 @@ instance on `ℤ^d`, and makes `correlationInfinite (latticeGraph d)
   `x ∈ cubicBox d n ↔ ∀ i, -n ≤ x i ∧ x i ≤ n`.
 * `cubicBox_mono` — `m ≤ n → cubicBox d m ⊆ cubicBox d n`.
 * `cubicBox_exhaust` — any finite `A ⊆ Fin d → ℤ` is contained in
-  some `cubicBox d N`.
+  some `cubicBox d N`. The witness `N` is the `Finset.max'` of the
+  set of `natAbs` of every coordinate of every point of `A`, in the
+  non-degenerate case; the degenerate case (`A = ∅` or `d = 0`) picks
+  `N = 0` and discharges the goal by contradiction / vacuity.
 
 ## References
 
-* Glimm–Jaffe, *Quantum Physics* 2nd ed., §4.6, p. 64.
+* Glimm–Jaffe, *Quantum Physics* 2nd ed., §4.6, p. 67.
 -/
 
 namespace IsingModel
@@ -67,9 +70,17 @@ theorem cubicBox_mono (d : ℕ) : Monotone (cubicBox d) := by
   · linarith [hge, hmn']
 
 /-- **Exhaustion property for `cubicBox`**: any finite set
-`A ⊆ Fin d → ℤ` is contained in some sufficiently large cube. The
-witness `N` is the maximum absolute coordinate value across all
-points of `A`. -/
+`A ⊆ Fin d → ℤ` is contained in some sufficiently large cube.
+
+In the non-degenerate case (`A.Nonempty` and `d ≠ 0`), the witness `N`
+is the `Finset.max'` of `natAbs` of every coordinate of every point
+of `A`. In the degenerate case (`A = ∅` or `d = 0`), the helper
+`Finset` of absolute coordinates is empty and we take `N = 0`; the
+membership goal is then discharged by `exfalso` (for `A = ∅` the
+membership hypothesis `a ∈ A` is false; for `d = 0` there is no
+`i : Fin 0` to contradict, but the assumed membership still provides
+such an `i`-derived element to contradict emptiness of the helper
+set). -/
 theorem cubicBox_exhaust (d : ℕ) (A : Finset (Fin d → ℤ)) :
     ∃ N, ∀ n ≥ N, A ⊆ cubicBox d n := by
   classical

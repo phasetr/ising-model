@@ -4562,12 +4562,18 @@ some $\mathrm{cubicBox}\ d\ N$ where $N$ is the maximum absolute
 coordinate across points of $A$.
 \end{theorem}
 \begin{proof}[Exhaust lemma]
-Let $N := \max\{|a_i| : a \in A,\ i : \mathrm{Fin}\ d\}$ (well defined
-as the max of a finite multiset of natural numbers; if both $A$ and
-$\mathrm{Fin}\ d$ are non-empty, otherwise we take $N = 0$ and
-\texttt{exfalso}). For any $n \ge N$ and $a \in A$, $i : \mathrm{Fin}\ d$,
-$|a_i| \le N \le n$, so $-n \le a_i \le n$ and
-$a \in \mathrm{cubicBox}\ d\ n$.
+Let $S := \{|a_i|^{\mathrm{nat}} : a \in A,\ i : \mathrm{Fin}\ d\}$
+as a \texttt{Finset $\mathbb{N}$}. In the non-degenerate case
+$A \ne \emptyset$ and $d \ne 0$, $S$ is non-empty and we take
+$N := \mathrm{Finset.max'}\ S$. For any $n \ge N$ and $a \in A$,
+$i : \mathrm{Fin}\ d$, we have $|a_i|^{\mathrm{nat}} \le N \le n$,
+so $|a_i| \le n$ in $\mathbb{Z}$, hence $-n \le a_i \le n$ and
+$a \in \mathrm{cubicBox}\ d\ n$. In the degenerate case $S = \emptyset$
+(equivalent to $A = \emptyset \vee d = 0$), take $N := 0$; the
+membership goal $A \subseteq \mathrm{cubicBox}\ d\ n$ reduces,
+under the assumption $a \in A$, to producing an element of $S$ (from
+any $i : \mathrm{Fin}\ d$ supplied by $\mathrm{mem\_cubicBox}$'s
+intro), contradicting $S = \emptyset$.
 \end{proof}
 
 \paragraph{Remark.} This is the first concrete
@@ -4579,6 +4585,6 @@ $\mathrm{correlationInfinite}\ (\mathrm{latticeGraph}\ d)\
 obstruction noted above); bounded-edge-density for
 $\mathrm{latticeGraph}\ d$ along this exhaustion is deferred to a
 subsequent PR.
-Reference: Glimm--Jaffe \cite{glimm-jaffe} \S 4.6, p.~64.
+Reference: Glimm--Jaffe \cite{glimm-jaffe} \S 4.6, p.~67.
 
 \end{document}
