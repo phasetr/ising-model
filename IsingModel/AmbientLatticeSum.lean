@@ -255,6 +255,40 @@ theorem freeEnergyΛ_zero_params
     freeEnergyΛ G Λ (⟨0, 0, β⟩ : IsingParams ℝ) = Real.log 2 :=
   IsingModel.freeEnergy_zero_params _ β hne.fintype_card_coe_pos
 
+/-- **Λ-level free-energy h-evenness**:
+`freeEnergyΛ G Λ ⟨J, -h, β⟩ = freeEnergyΛ G Λ ⟨J, h, β⟩`. Direct lift of
+`IsingModel.freeEnergy_neg_h` via the flip involution through
+`freeEnergyΛ = freeEnergy (inducedGraph G Λ)`. -/
+theorem freeEnergyΛ_neg_h
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (J h β : ℝ) :
+    freeEnergyΛ G Λ (⟨J, -h, β⟩ : IsingParams ℝ)
+      = freeEnergyΛ G Λ (⟨J, h, β⟩ : IsingParams ℝ) :=
+  IsingModel.freeEnergy_neg_h _ J h β
+
+/-- **Λ-level free-energy `|h|`-rewrite**:
+`freeEnergyΛ G Λ ⟨J, h, β⟩ = freeEnergyΛ G Λ ⟨J, |h|, β⟩`. Direct lift
+of `IsingModel.freeEnergy_eq_abs_h`. -/
+theorem freeEnergyΛ_eq_abs_h
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (J h β : ℝ) :
+    freeEnergyΛ G Λ (⟨J, h, β⟩ : IsingParams ℝ)
+      = freeEnergyΛ G Λ (⟨J, |h|, β⟩ : IsingParams ℝ) :=
+  IsingModel.freeEnergy_eq_abs_h _ J h β
+
+/-- **Λ-level ferromagnetic `|h|`-monotonicity**:
+for `J ≥ 0`, `β > 0` and any real `h₁, h₂` with `|h₁| ≤ |h₂|`,
+`freeEnergyΛ G Λ ⟨J, h₁, β⟩ ≤ freeEnergyΛ G Λ ⟨J, h₂, β⟩`. Direct lift
+of `IsingModel.freeEnergy_monotone_abs_h`. -/
+theorem freeEnergyΛ_monotone_abs_h
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β)
+    {h₁ h₂ : ℝ} (hh : |h₁| ≤ |h₂|) :
+    freeEnergyΛ G Λ (⟨J, h₁, β⟩ : IsingParams ℝ)
+      ≤ freeEnergyΛ G Λ (⟨J, h₂, β⟩ : IsingParams ℝ) :=
+  IsingModel.freeEnergy_monotone_abs_h _ J β hJ hβ hh
+
 /-- **`partitionFunctionΛ ≥ 1`** for ferromagnetic parameters:
 lifts PR #141 `partitionFunction_ge_one_of_ferromagnetic` to the
 `partitionFunctionΛ` API level. -/
