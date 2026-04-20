@@ -244,6 +244,12 @@ theorem spontaneousMagnetization_latticeGraph_cubicExhaustion_eq
   rw [hvadd] at h
   exact h.symm
 
+/-- **ℤ^d partitionFunctionΛ positivity** per finite volume. -/
+theorem partitionFunctionΛ_latticeGraph_pos
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ) :
+    0 < partitionFunctionΛ (IsingModel.latticeGraph d) Λ p :=
+  partitionFunctionΛ_pos (IsingModel.latticeGraph d) Λ p
+
 /-- **ℤ^d `|correlationΛ| ≤ 1`** per finite volume. -/
 theorem abs_correlationΛ_latticeGraph_le_one
     (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ)
