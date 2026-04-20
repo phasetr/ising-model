@@ -333,6 +333,69 @@ theorem edgeSpin_map_vaddSubtypeEquiv {T : Type u} [AddGroup T]
   refine Sym2.ind (fun _ _ => ?_) e
   rfl
 
+/-- **`interactionEnergy` is invariant under `configVaddEquiv`**:
+for a translation-invariant graph `G` and any `Λ : Finset V`,
+
+`interactionEnergy (inducedGraph G (vaddFinset t Λ)) J σ'
+  = interactionEnergy (inducedGraph G Λ) J ((configVaddEquiv t Λ).symm σ')`.
+
+Proof: unfold to the sum over edges; rewrite using
+`Finset.sum_nbij'` with `i := Sym2.map (vaddSubtypeEquiv t Λ).symm`
+and inverse `j := Sym2.map (vaddSubtypeEquiv t Λ)`. Membership
+preservation comes from the graph iso `inducedGraphVaddIso`
+(step 6e) applied at the `SimpleGraph.Hom.map_mem_edgeSet` level;
+per-edge equality follows from `edgeSpin_map_vaddSubtypeEquiv`. -/
+theorem interactionEnergy_configVaddEquiv_symm {T : Type u}
+    [AddGroup T] {V : Type v} [DecidableEq V] [AddAction T V]
+    (G : SimpleGraph V) [IsTranslationInvariant T G]
+    (t : T) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    [Fintype (inducedGraph G (vaddFinset t Λ)).edgeSet]
+    (J : ℝ) (σ' : Config (↑(vaddFinset t Λ) : Type _)) :
+    IsingModel.interactionEnergy (inducedGraph G (vaddFinset t Λ)) J σ'
+      = IsingModel.interactionEnergy (inducedGraph G Λ) J
+          ((configVaddEquiv t Λ).symm σ') := by
+  unfold IsingModel.interactionEnergy
+  congr 1
+  -- Direct proof via Finset.sum_nbij' with explicit (vaddSubtypeEquiv t Λ).symm
+  -- as the forward map on Sym2 (from G₁-edges to G₂-edges).
+  refine Finset.sum_nbij'
+    (fun e => Sym2.map (vaddSubtypeEquiv t Λ).symm e)
+    (fun e' => Sym2.map (vaddSubtypeEquiv t Λ) e') ?_ ?_ ?_ ?_ ?_
+  · -- hi: maps edges of G₁ to edges of G₂ via the iso
+    intro e he
+    rw [SimpleGraph.mem_edgeFinset] at he ⊢
+    exact (inducedGraphVaddIso G t Λ).toEmbedding.toHom.map_mem_edgeSet he
+  · -- hj: inverse direction via the symm iso
+    intro e' he'
+    rw [SimpleGraph.mem_edgeFinset] at he' ⊢
+    change Sym2.map (vaddSubtypeEquiv t Λ) e' ∈
+      (inducedGraph G (vaddFinset t Λ)).edgeSet
+    exact (inducedGraphVaddIso G t Λ).symm.toEmbedding.toHom.map_mem_edgeSet he'
+  · -- left_inv: j (i e) = e on ι = Sym2 ↑(vaddFinset t Λ)
+    intro e _
+    change Sym2.map (vaddSubtypeEquiv t Λ)
+          (Sym2.map (vaddSubtypeEquiv t Λ).symm e) = e
+    rw [Sym2.map_map]
+    simp
+  · -- right_inv: i (j e') = e' on κ = Sym2 ↑Λ
+    intro e' _
+    change Sym2.map (vaddSubtypeEquiv t Λ).symm
+          (Sym2.map (vaddSubtypeEquiv t Λ) e') = e'
+    rw [Sym2.map_map]
+    simp
+  · -- h: edgeSpin σ' e = edgeSpin (symm σ') (Sym2.map symm e)
+    intro e _
+    -- Use edgeSpin_map_vaddSubtypeEquiv with e'' := Sym2.map (symm) e; then
+    -- LHS goal becomes edgeSpin σ' (Sym2.map eq (Sym2.map symm e))
+    -- which equals edgeSpin σ' e by Sym2.map_map + apply_symm_apply.
+    have hidentity : e = Sym2.map (vaddSubtypeEquiv t Λ)
+        (Sym2.map (vaddSubtypeEquiv t Λ).symm e) := by
+      rw [Sym2.map_map]; simp
+    conv_lhs => rw [hidentity]
+    exact edgeSpin_map_vaddSubtypeEquiv t Λ σ'
+      (Sym2.map (vaddSubtypeEquiv t Λ).symm e)
+
 /-! ## Translation-invariant exhaustions
 
 An exhaustion whose consecutive volumes differ by a disjoint
