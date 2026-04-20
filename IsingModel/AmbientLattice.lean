@@ -546,6 +546,21 @@ theorem abs_correlationAlongExhaustion_eventually_le_one
   rw [heq]
   exact abs_correlationΛ_le_one G (Λ.volume n) p (liftFinset A hA)
 
+/-- **Pointwise `|correlationAlongExhaustion| ≤ 1`** at every `n : ℕ`,
+strengthening the eventual form: either `A ⊆ Λ.volume n` (in which case
+the value is the finite-volume `correlationΛ` bounded by `1` in absolute
+value) or `A ⊄ Λ.volume n` (the dite branch returns `0`). -/
+theorem abs_correlationAlongExhaustion_le_one
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (A : Finset V) (n : ℕ) :
+    |correlationAlongExhaustion G Λ p A n| ≤ 1 := by
+  by_cases hA : A ⊆ Λ.volume n
+  · rw [correlationAlongExhaustion_of_subset G Λ p hA]
+    exact abs_correlationΛ_le_one G (Λ.volume n) p _
+  · rw [correlationAlongExhaustion_of_not_subset G Λ p hA, abs_zero]
+    exact zero_le_one
+
 /-! ## Monotonicity in the ambient subgraph direction
 
 For a fixed finite volume `Λ : Finset V`, if `G₁ ≤ G₂` as
@@ -1640,6 +1655,15 @@ theorem magnetizationAlongExhaustion_nonneg
     (p : IsingParams ℝ) (hf : Ferromagnetic p) (i : V) (n : ℕ) :
     0 ≤ magnetizationAlongExhaustion G Λ p i n :=
   correlationAlongExhaustion_nonneg G Λ p hf {i} n
+
+/-- **Pointwise `|magnetizationAlongExhaustion| ≤ 1`** at every `n`.
+Direct from `abs_correlationAlongExhaustion_le_one` at `A = {i}`. -/
+theorem abs_magnetizationAlongExhaustion_le_one
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (i : V) (n : ℕ) :
+    |magnetizationAlongExhaustion G Λ p i n| ≤ 1 :=
+  abs_correlationAlongExhaustion_le_one G Λ p {i} n
 
 
 
