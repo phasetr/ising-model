@@ -2634,6 +2634,22 @@ theorem twoPointFunction_le_one
   correlationInfinite_le_one (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) p {(0 : Fin d → ℤ), r}
 
+/-- **`-1 ≤ twoPointFunction`** unconditionally. Direct specialization
+of `neg_one_le_correlationInfinite` at `A = {0, r}`. -/
+theorem neg_one_le_twoPointFunction
+    (d : ℕ) (p : IsingParams ℝ) (r : Fin d → ℤ) :
+    -1 ≤ twoPointFunction d p r :=
+  neg_one_le_correlationInfinite (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) p {(0 : Fin d → ℤ), r}
+
+/-- **`|twoPointFunction| ≤ 1`** unconditionally. Direct specialization
+of `abs_correlationInfinite_le_one` at `A = {0, r}`. -/
+theorem abs_twoPointFunction_le_one
+    (d : ℕ) (p : IsingParams ℝ) (r : Fin d → ℤ) :
+    |twoPointFunction d p r| ≤ 1 :=
+  abs_correlationInfinite_le_one (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) p {(0 : Fin d → ℤ), r}
+
 /-- **J-monotonicity of `twoPointFunction`** (GJ Prop 4.2.1):
 for `0 ≤ h, 0 < β`, `twoPointFunction d ⟨J, h, β⟩ r` is monotone in
 `J` on `Ici 0`. Direct specialization of
