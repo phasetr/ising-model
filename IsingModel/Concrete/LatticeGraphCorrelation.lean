@@ -453,13 +453,12 @@ theorem correlationAlongExhaustion_latticeGraph_cubicExhaustion_bddAbove
 
 /-- **ℤ^d `|correlationAlongExhaustion| ≤ 1` eventually**. -/
 theorem abs_correlationAlongExhaustion_latticeGraph_eventually_le_one
-    (d : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p)
-    (A : Finset (Fin d → ℤ)) :
+    (d : ℕ) (p : IsingParams ℝ) (A : Finset (Fin d → ℤ)) :
     ∀ᶠ n in Filter.atTop,
       |correlationAlongExhaustion (IsingModel.latticeGraph d)
         (Ambient.cubicExhaustion d) p A n| ≤ 1 :=
   abs_correlationAlongExhaustion_eventually_le_one (IsingModel.latticeGraph d)
-    (Ambient.cubicExhaustion d) p hf A
+    (Ambient.cubicExhaustion d) p A
 
 /-- **ℤ^d correlationAlongExhaustion ≤ 1** per stage. -/
 theorem correlationAlongExhaustion_latticeGraph_cubicExhaustion_le_one
