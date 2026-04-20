@@ -4509,8 +4509,8 @@ bound $0 \le 1 - \langle\sigma_i\rangle_+^\infty \le \exp(-c\beta)$
 (Glimm--Jaffe \cite{glimm-jaffe} \S 5.4 p.~83).
 \end{proof}
 
-\begin{theorem}[GJ \S 4.6 Prop 4.6.1, concrete translation-invariant lattice;
-PR \#244]
+\begin{theorem}[Groundwork for GJ \S 4.6 Prop 4.6.1 — concrete
+translation-invariant lattice; PR \#244]
 For every $d : \mathbb{N}$, the Ising lattice graph
 $\texttt{latticeGraph}\ d : \operatorname{SimpleGraph}(\mathrm{Fin}\ d \to \mathbb{Z})$
 (edges between points at $\ell^1$-distance $1$) is invariant under
@@ -4532,11 +4532,16 @@ both directions.
 $(\bot, \top)$ are structurally trivial (no edges / all pairs).
 The lattice graph $\texttt{latticeGraph}\ d$ is the natural ambient
 graph behind the \S 4.6 Prop 4.6.1 translation-invariant exhaustion
-programme. Constructing a compatible
-\texttt{TranslationInvariantExhaustion} on $\mathbb{Z}^d$ requires
-either relaxing the single-block \texttt{volume\_succ} assumption
-or weakening the two-sided \texttt{Exhaustion.exhaust} requirement;
-this structural refactor is deferred to a subsequent PR.
+programme. The natural two-sided cubic exhaustion
+$\Lambda_n = \{x : \mathrm{Fin}\ d \to \mathbb{Z} \mid \forall i,\ -n \le x_i \le n\}$
+does not fit the current
+\texttt{TranslationInvariantExhaustion} structure, which demands
+that each stage differ from the previous by a single translated base
+block (\texttt{volume\_succ}) with \texttt{shift} an additive
+homomorphism $\mathbb{N} \to T$. Assembling a compatible concrete
+exhaustion requires either relaxing the single-block constraint or
+altering the \texttt{Exhaustion} interface, and is deferred to a
+subsequent PR.
 Reference: Glimm--Jaffe \cite{glimm-jaffe} \S 4.6 Prop 4.6.1, p.~64.
 
 \end{document}

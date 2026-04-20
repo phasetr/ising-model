@@ -54,9 +54,12 @@ Formally, for every `t u v : Fin d → ℤ`,
 which reduces to the pointwise identity `(t + u) i - (t + v) i = u i - v i`.
 
 This is the first non-trivial `Ambient.IsTranslationInvariant`
-instance (the prior ones are `⊥` and `⊤`), and the structural datum
+instance (the prior ones are `⊥` and `⊤`). It is groundwork toward
+GJ §4.6 Prop 4.6.1 (p. 64): the class is the structural datum
 feeding into the automatic super-additivity of `log Z` along a
-translation-invariant exhaustion (GJ §4.6 Prop 4.6.1 p. 64). -/
+translation-invariant exhaustion; this file does not yet assemble a
+concrete `TranslationInvariantExhaustion` (see the design note
+above). -/
 instance isTranslationInvariant_latticeGraph (d : ℕ) :
     Ambient.IsTranslationInvariant (Fin d → ℤ) (IsingModel.latticeGraph d) where
   adj_vadd := by
