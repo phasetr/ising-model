@@ -1505,6 +1505,31 @@ theorem magnetizationInfinite_latticeGraph_cubicExhaustion_monotone_beta
   magnetizationInfinite_monotone_beta (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) hJ hh i
 
+/-- **ℤ^d truncated2Infinite nonneg** (general). -/
+theorem truncated2Infinite_latticeGraph_nonneg
+    (d : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p) (i j : Fin d → ℤ) :
+    0 ≤ truncated2Infinite (IsingModel.latticeGraph d)
+      (Ambient.cubicExhaustion d) p i j :=
+  truncated2Infinite_nonneg (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) p hf i j
+
+/-- **ℤ^d truncated2Infinite nonneg at distinct sites**. -/
+theorem truncated2Infinite_latticeGraph_nonneg_of_ne
+    (d : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    {i j : Fin d → ℤ} (hij : i ≠ j) :
+    0 ≤ truncated2Infinite (IsingModel.latticeGraph d)
+      (Ambient.cubicExhaustion d) p i j :=
+  truncated2Infinite_nonneg_of_ne (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) p hf hij
+
+/-- **ℤ^d truncated2Infinite nonneg on diagonal**. -/
+theorem truncated2Infinite_latticeGraph_nonneg_of_eq
+    (d : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p) (i : Fin d → ℤ) :
+    0 ≤ truncated2Infinite (IsingModel.latticeGraph d)
+      (Ambient.cubicExhaustion d) p i i :=
+  truncated2Infinite_nonneg_of_eq (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) p hf i
+
 /-- **ℤ^d truncated2Infinite symmetry in (i, j)**. -/
 theorem truncated2Infinite_latticeGraph_symm
     (d : ℕ) (p : IsingParams ℝ) (i j : Fin d → ℤ) :
