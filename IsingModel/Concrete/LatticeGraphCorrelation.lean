@@ -282,6 +282,28 @@ theorem correlationΛ_latticeGraph_nonneg
     0 ≤ correlationΛ (IsingModel.latticeGraph d) Λ p A :=
   correlationΛ_nonneg (IsingModel.latticeGraph d) Λ p hf A
 
+/-- **ℤ^d correlationAlongExhaustion of_subset unfolding**. -/
+theorem correlationAlongExhaustion_latticeGraph_of_subset
+    (d : ℕ) (p : IsingParams ℝ)
+    {A : Finset (Fin d → ℤ)} {n : ℕ}
+    (hA : A ⊆ (Ambient.cubicExhaustion d).volume n) :
+    correlationAlongExhaustion (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) p A n
+      = correlationΛ (IsingModel.latticeGraph d)
+        ((Ambient.cubicExhaustion d).volume n) p (liftFinset A hA) :=
+  correlationAlongExhaustion_of_subset (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) p hA
+
+/-- **ℤ^d correlationAlongExhaustion of_not_subset unfolding**. -/
+theorem correlationAlongExhaustion_latticeGraph_of_not_subset
+    (d : ℕ) (p : IsingParams ℝ)
+    {A : Finset (Fin d → ℤ)} {n : ℕ}
+    (hA : ¬ A ⊆ (Ambient.cubicExhaustion d).volume n) :
+    correlationAlongExhaustion (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) p A n = 0 :=
+  correlationAlongExhaustion_of_not_subset (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) p hA
+
 /-- **ℤ^d correlationAlongExhaustion stage-index Monotone**. -/
 theorem correlationAlongExhaustion_latticeGraph_cubicExhaustion_monotone
     (d : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p)
