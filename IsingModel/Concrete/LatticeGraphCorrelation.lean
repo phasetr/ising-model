@@ -806,6 +806,19 @@ theorem twoPointFunction_J_zero_of_ne_zero
     exact (Ne.symm hr)
   rw [h_card]
 
+/-- **Sharp lower bound** `freeEnergyInfinite ≥ log(2 cosh(βh))` on ℤ^d. -/
+theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_ge_log_two_cosh
+    (d : ℕ) [Nonempty (Fin d → ℤ)]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    Real.log (2 * Real.cosh (p.β * p.h))
+      ≤ freeEnergyInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) p := by
+  refine freeEnergyInfinite_ge_log_two_cosh (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) p hf (c := (d : ℝ)) ?_
+  intro n _
+  exact inducedLatticeGraph_card_edgeFinset_le d
+    ((Ambient.cubicExhaustion d).volume n)
+
 /-- **ℤ^d ∞-vol free-energy sandwich bound** (ferromagnetic):
 `log 2 ≤ freeEnergyInfinite (latticeGraph d) (cubicExhaustion d) p
   ≤ log 2 + |β|·(|J|·d + |h|)`.
