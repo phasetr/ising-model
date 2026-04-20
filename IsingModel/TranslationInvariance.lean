@@ -273,6 +273,43 @@ def disjointTowerHypotheses_of_translationInvariant
   super := hsuper
   card_one := hcard_one
 
+/-- **Fekete convergence from a `TranslationInvariantExhaustion`**:
+given a translation-invariant exhaustion, a bounded-edge-density
+hypothesis, user-supplied `log Z` super-additivity `hsuper`, and
+non-degenerate base step `hcard_one`, the exhaustion free-energy
+density converges to the infinite-volume free energy:
+`freeEnergyAlongExhaustion G Λ.toExhaustion p →
+freeEnergyInfinite G Λ.toExhaustion p`.
+
+Thin wrapper over
+`freeEnergyAlongExhaustion_tendsto_of_disjointTowerHypotheses`
+(PR #204) + `disjointTowerHypotheses_of_translationInvariant`
+(step 4 / PR #223). `card_add` is supplied automatically by the
+exhaustion structure; once `hsuper` is derived from full
+translation invariance (subsequent PR), this theorem will become
+an unconditional-in-`hsuper` corollary.
+
+Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §4.6 Prop 4.6.1,
+p. 64. -/
+theorem freeEnergyAlongExhaustion_tendsto_of_translationInvariant
+    (Λ : TranslationInvariantExhaustion T V)
+    (G : SimpleGraph V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ)
+    (hBED : BoundedEdgeDensity G Λ.toExhaustion)
+    (hsuper : ∀ m n,
+      Real.log (partitionFunctionΛ G (Λ.volume m) p)
+        + Real.log (partitionFunctionΛ G (Λ.volume n) p)
+        ≤ Real.log (partitionFunctionΛ G (Λ.volume (m + n)) p))
+    (hcard_one : (Λ.volume 1).card ≠ 0) :
+    Filter.Tendsto (freeEnergyAlongExhaustion G Λ.toExhaustion p)
+      Filter.atTop
+      (nhds (freeEnergyInfinite G Λ.toExhaustion p)) :=
+  freeEnergyAlongExhaustion_tendsto_of_disjointTowerHypotheses G
+    Λ.toExhaustion p hBED
+    (disjointTowerHypotheses_of_translationInvariant Λ G p
+      hsuper hcard_one)
+
 end TranslationInvariantExhaustion
 
 end Ambient
