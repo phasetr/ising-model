@@ -607,6 +607,29 @@ theorem truncated2TwoPoint_eq_twoPointFunction_sub_magnetization_sq
   -- = `twoPointFunction d p r - magnetizationInfinite ... 0 ^ 2`.
   ring
 
+/-- **`twoPointFunction` at `J = 0`** (ferromagnetic `⟨0, h, β⟩`), for
+distinct sites: `twoPointFunction d ⟨0, h, β⟩ r = tanh(β · h)^2`
+for `r ≠ 0`.
+
+Proof: `correlationInfinite_J_zero` gives
+`correlationInfinite ... ⟨0, h, β⟩ A = tanh(β h)^|A|`; with `A = {0, r}`
+and `r ≠ 0`, `|A| = 2`, giving `tanh(β h)^2`. -/
+theorem twoPointFunction_J_zero_of_ne_zero
+    (d : ℕ) (h β : ℝ)
+    (hf : Ferromagnetic (⟨(0 : ℝ), h, β⟩ : IsingParams ℝ))
+    {r : Fin d → ℤ} (hr : r ≠ 0) :
+    twoPointFunction d (⟨0, h, β⟩ : IsingParams ℝ) r
+      = Real.tanh (β * h) ^ 2 := by
+  unfold twoPointFunction
+  -- `correlationInfinite ... ⟨0, h, β⟩ {0, r} = tanh(β h)^|{0, r}| = tanh(β h)^2`.
+  rw [correlationInfinite_J_zero (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) h β hf {(0 : Fin d → ℤ), r}]
+  -- `|{0, r}| = 2` since `0 ≠ r`.
+  have h_card : ({(0 : Fin d → ℤ), r} : Finset (Fin d → ℤ)).card = 2 := by
+    rw [Finset.card_pair]
+    exact (Ne.symm hr)
+  rw [h_card]
+
 /-! ## Basic bounds on the ℤ^d two-point functions -/
 
 /-- **Nonnegativity of `twoPointFunction`** (GKS-I).
