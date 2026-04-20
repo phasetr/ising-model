@@ -1386,6 +1386,15 @@ theorem truncated2TwoPoint_J_zero_of_ne_zero
       uniformMagnetization_J_zero d h β hf]
   ring
 
+/-- **ℤ^d magnetizationInfinite exhaustion-independence**:
+any two exhaustions of `Fin d → ℤ` yield the same ∞-vol magnetization. -/
+theorem magnetizationInfinite_latticeGraph_indep_exhaustion
+    (d : ℕ) (Λ Λ' : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i : Fin d → ℤ) :
+    magnetizationInfinite (IsingModel.latticeGraph d) Λ p i
+      = magnetizationInfinite (IsingModel.latticeGraph d) Λ' p i :=
+  magnetizationInfinite_indep_exhaustion (IsingModel.latticeGraph d) Λ Λ' p hf i
+
 /-- **ℤ^d empty-set correlation is 1**: `correlationInfinite ... p ∅ = 1`.
 Gibbs-measure normalisation — an empty spin product is `1`. -/
 @[simp]
