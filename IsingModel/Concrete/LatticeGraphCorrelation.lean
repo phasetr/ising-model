@@ -244,6 +244,26 @@ theorem spontaneousMagnetization_latticeGraph_cubicExhaustion_eq
   rw [hvadd] at h
   exact h.symm
 
+/-- **ℤ^d freeEnergyInfinite is strictly positive** (ferromagnetic). -/
+theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_pos
+    (d : ℕ) [Nonempty (Fin d → ℤ)]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    0 < freeEnergyInfinite (IsingModel.latticeGraph d)
+      (Ambient.cubicExhaustion d) p := by
+  refine freeEnergyInfinite_pos (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) p hf (c := (d : ℝ)) ?_
+  intro n _
+  exact inducedLatticeGraph_card_edgeFinset_le d
+    ((Ambient.cubicExhaustion d).volume n)
+
+/-- **ℤ^d freeEnergyInfinite is nonnegative** (ferromagnetic). -/
+theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_nonneg
+    (d : ℕ) [Nonempty (Fin d → ℤ)]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    0 ≤ freeEnergyInfinite (IsingModel.latticeGraph d)
+      (Ambient.cubicExhaustion d) p :=
+  (freeEnergyInfinite_latticeGraph_cubicExhaustion_pos d p hf).le
+
 /-- **log Z → ∞ along cubicExhaustion** (ferromagnetic, infinite ℤ^d). -/
 theorem log_partitionFunctionAlongExhaustion_latticeGraph_tendsto_atTop
     (d : ℕ) [Infinite (Fin d → ℤ)]
