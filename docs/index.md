@@ -438,7 +438,7 @@ inventory (2026-04-17).
 | §5.2 | Mean field picture | **Done (algebraic)** | `meanFieldEnergy_neg`, `meanField_zero_solution`, `tanh_odd` |
 | §5.3 | Symmetry breaking (Z₂ at `h = 0`) | **Done (finite + infinite)** | Finite: `magnetization_zero_at_h_zero`, `susceptibility_nonneg`; Infinite: `magnetizationInfinite_zero_at_h_zero`, `correlationInfinite_h_zero` |
 | §5.4 | Prop 5.4.1 (Peierls) | **Done** | `peierls_bound` |
-| §5.4 | Prop 5.4.2 (spontaneous magnetization) | **Done (finite +BC)** | Infinite-volume lift: not yet |
+| §5.4 | Prop 5.4.2 (spontaneous magnetization) | **Done (finite +BC) + ∞-vol per-stage + ∞-vol `limsup` form** | Finite: `prop_5_4_2_self_contained` (`Peierls.lean`). Exhaustion scaffolding: `prop_5_4_2_along_exhaustion` (PR #202, `PeierlsInfinite.lean`): per-stage Peierls bound `0 ≤ 1 − ⟨σᵢₙ⟩₊^{Λₙ,Bₙ} ≤ exp(-cβ)` at every `n`. `limsup` form: `prop_5_4_2_limsup_le` (PR #213): `Filter.limsup (1 − ⟨σᵢₙ⟩₊^{Λₙ,Bₙ}) atTop ≤ exp(-cβ)`. A genuine infinite-volume `+`-BC expectation bound remains follow-up (requires a canonical ∞-vol `+`-BC measure construction). |
 | §5.5 | XY example | Out of scope |
 
 ### Chapter 10 (Conditioning)
@@ -509,9 +509,20 @@ formalized**, per the full inventory above:
    hypothesis); and
    `freeEnergyAlongExhaustion_tendsto_of_disjointTowerHypotheses`
    (bundled form taking a `DisjointTowerHypotheses` record).
-   Dropping the remaining disjoint-tower hypotheses (`hcard_add`,
-   `hsuper`, `hcard_one`) requires translation invariance (scaffolding started in `TranslationInvariance.lean` with `Ambient.IsTranslationInvariant` and the trivial `⊥` / `⊤` graph instances; deriving `hsuper` is deferred to subsequent PRs) and is
-   a follow-up step.
+   Dropping the remaining disjoint-tower hypotheses
+   (`hcard_add`, `hsuper`, `hcard_one`) requires translation
+   invariance. Scaffolding is complete through step 5 (PRs
+   #220-#224, `TranslationInvariance.lean`):
+   `Ambient.IsTranslationInvariant G` class with `⊥`/`⊤` instances
+   (step 1); `vaddFinset` API and cardinality preservation (step 2);
+   `TranslationInvariantExhaustion T V` structure with automatic
+   `volume_card_add` (step 3); abstract assembly
+   `disjointTowerHypotheses_of_translationInvariant` (step 4);
+   full Fekete wrapper
+   `freeEnergyAlongExhaustion_tendsto_of_translationInvariant`
+   (step 5). `hsuper` remains as a user input; deriving it from
+   log-Z translation invariance is the next step (requires
+   Ising-Hamiltonian translation equivariance machinery).
    *(The `correlationAlongExhaustion` convergence side, originally
    listed here as "not yet proved", is in fact discharged by
    `correlationAlongExhaustion_tendsto_ciSup` +
@@ -520,8 +531,14 @@ formalized**, per the full inventory above:
    row in the progress table.)*
 2. **Thm 4.6.2 (full form)**: complex analyticity of the
    infinite-volume free energy via Vitali convergence.
-3. **Prop 5.4.2 infinite-volume version**: `0 ≤ 1 − ⟨σᵢ⟩₊∞ ≤ exp(-cβ)`
-   in the genuine `+` boundary-condition infinite-volume measure.
+3. **Prop 5.4.2 genuine `+`-BC infinite-volume version**:
+   `0 ≤ 1 − ⟨σᵢ⟩₊∞ ≤ exp(-cβ)` in the genuine `+`
+   boundary-condition infinite-volume measure. The per-stage
+   bound (`prop_5_4_2_along_exhaustion`, PR #202) and the `limsup`
+   form (`prop_5_4_2_limsup_le`, PR #213) are available; a
+   canonical ∞-vol `+`-BC expectation construction is still
+   required to phrase the bound as an unconditional ∞-vol
+   expectation inequality.
 4. **§5.1 cluster property** at large separation for pure phases.
 5. **§17.5 correlation length continuity** and **§17.8 anomalous
    dimension continuity** — require spectral theory of the transfer
