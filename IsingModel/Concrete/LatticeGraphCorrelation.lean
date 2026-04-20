@@ -649,6 +649,43 @@ theorem freeEnergyAlongExhaustion_latticeGraph_cubicExhaustion_monotone_beta
   freeEnergyAlongExhaustion_monotone_beta (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) hJ hh n
 
+/-- **ℤ^d partitionFunctionAlongExhaustion ≥ 2^|Λ_n|** (ferromagnetic). -/
+theorem partitionFunctionAlongExhaustion_latticeGraph_ge_two_pow_card
+    (d : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p) (n : ℕ) :
+    (2 : ℝ) ^ ((Ambient.cubicExhaustion d).volume n).card
+      ≤ partitionFunctionAlongExhaustion (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) p n :=
+  partitionFunctionAlongExhaustion_ge_two_pow_card_of_ferromagnetic
+    (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d) p hf n
+
+/-- **ℤ^d partitionFunctionAlongExhaustion ≥ (2 cosh βh)^|Λ_n|** (ferromagnetic). -/
+theorem partitionFunctionAlongExhaustion_latticeGraph_ge_two_cosh_pow_card
+    (d : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p) (n : ℕ) :
+    (2 * Real.cosh (p.β * p.h)) ^ ((Ambient.cubicExhaustion d).volume n).card
+      ≤ partitionFunctionAlongExhaustion (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) p n :=
+  partitionFunctionAlongExhaustion_ge_two_cosh_pow_card_of_ferromagnetic
+    (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d) p hf n
+
+/-- **ℤ^d log Z bound**: `|Λ_n|·log 2 ≤ log Z_n`. -/
+theorem log_partitionFunctionAlongExhaustion_latticeGraph_ge_card_mul_log_two
+    (d : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p) (n : ℕ) :
+    (((Ambient.cubicExhaustion d).volume n).card : ℝ) * Real.log 2
+      ≤ Real.log (partitionFunctionAlongExhaustion (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) p n) :=
+  log_partitionFunctionAlongExhaustion_ge_card_mul_log_two_of_ferromagnetic
+    (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d) p hf n
+
+/-- **ℤ^d sharp log Z bound**: `|Λ_n|·log(2 cosh βh) ≤ log Z_n`. -/
+theorem log_partitionFunctionAlongExhaustion_latticeGraph_ge_card_mul_log_two_cosh
+    (d : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p) (n : ℕ) :
+    (((Ambient.cubicExhaustion d).volume n).card : ℝ)
+        * Real.log (2 * Real.cosh (p.β * p.h))
+      ≤ Real.log (partitionFunctionAlongExhaustion (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) p n) :=
+  log_partitionFunctionAlongExhaustion_ge_card_mul_log_two_cosh_of_ferromagnetic
+    (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d) p hf n
+
 /-- **ℤ^d partitionFunctionAlongExhaustion β=0 per-stage**: `= 2^|Λ_n|`. -/
 theorem partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_beta_zero
     (d : ℕ) (J h : ℝ) (n : ℕ) :
