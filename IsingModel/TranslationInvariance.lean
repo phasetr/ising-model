@@ -775,6 +775,48 @@ theorem freeEnergyAlongExhaustion_tendsto_of_translationInvariant
     (disjointTowerHypotheses_of_translationInvariant Λ G p
       hsuper hcard_one)
 
+set_option linter.unusedFintypeInType false in
+/-- **Automatic Fekete convergence under full translation
+invariance** (GJ §4.6 Prop 4.6.1, p. 64): final step of the
+translation scaffolding. Given
+
+* a translation-invariant exhaustion `Λ` (step 3 / PR #222 +
+  step 7 / PR #238);
+* a translation-invariant graph `G` (step 1 / PR #220);
+* ferromagnetic parameters `p` (for the disjoint-union
+  super-additivity);
+* bounded edge density along `Λ` (discharges `hbdd` via
+  PR #203 / `BddAbove_freeEnergyAlongExhaustion_range`);
+* auxiliary Fintype instances for the translated and union
+  Finsets (required for the `log Z` super-additivity statement);
+* `hcard_one`: non-degenerate base block,
+
+the exhaustion free-energy density tends to the infinite-volume
+free energy:
+`freeEnergyAlongExhaustion G Λ.toExhaustion p` converges to
+`freeEnergyInfinite G Λ.toExhaustion p`.
+
+The `hsuper` input of previous steps is now discharged automatically
+via `log_partitionFunctionΛ_super_of_translationInvariant`. -/
+theorem freeEnergyAlongExhaustion_tendsto_of_translationInvariant_auto
+    (Λ : TranslationInvariantExhaustion T V)
+    (G : SimpleGraph V) [IsTranslationInvariant T G]
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    [∀ m n, Fintype (inducedGraph G
+        (vaddFinset (Λ.shift m) (Λ.volume n))).edgeSet]
+    [∀ m n, Fintype (inducedGraph G
+        (Λ.volume m ∪ vaddFinset (Λ.shift m) (Λ.volume n))).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    (hBED : BoundedEdgeDensity G Λ.toExhaustion)
+    (hcard_one : (Λ.volume 1).card ≠ 0) :
+    Filter.Tendsto (freeEnergyAlongExhaustion G Λ.toExhaustion p)
+      Filter.atTop
+      (nhds (freeEnergyInfinite G Λ.toExhaustion p)) :=
+  freeEnergyAlongExhaustion_tendsto_of_translationInvariant Λ G p hBED
+    (fun m n =>
+      log_partitionFunctionΛ_super_of_translationInvariant Λ G p hf m n)
+    hcard_one
+
 end TranslationInvariantExhaustion
 
 end Ambient
