@@ -607,6 +607,22 @@ theorem truncated2TwoPoint_eq_twoPointFunction_sub_magnetization_sq
   -- = `twoPointFunction d p r - magnetizationInfinite ... 0 ^ 2`.
   ring
 
+/-- **`truncated3TwoPoint` at `h = 0` vanishes (pairwise distinct, nonzero)**:
+`truncated3TwoPoint d ⟨J, 0, β⟩ r s = 0`.
+
+Z₂ symmetry at `h = 0` forces all odd-cardinality spin products
+(and hence the Ursell 3-point combination) to vanish.
+Concrete specialisation of `truncated3Infinite_h_zero_of_distinct`. -/
+theorem truncated3TwoPoint_h_zero_of_distinct
+    (d : ℕ) (J β : ℝ)
+    {r s : Fin d → ℤ}
+    (hr : (0 : Fin d → ℤ) ≠ r) (hrs : r ≠ s)
+    (hs : (0 : Fin d → ℤ) ≠ s) :
+    truncated3TwoPoint d (⟨J, 0, β⟩ : IsingParams ℝ) r s = 0 :=
+  truncated3Infinite_h_zero_of_distinct
+    (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d) J β
+    hr hrs hs
+
 /-- **`truncated3TwoPoint` at `J = 0` vanishes (pairwise distinct, nonzero)**:
 for ferromagnetic `⟨0, h, β⟩` and `0 ≠ r, 0 ≠ s, r ≠ s`,
 `truncated3TwoPoint d ⟨0, h, β⟩ r s = 0`.
