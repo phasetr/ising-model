@@ -984,6 +984,30 @@ theorem log_partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_zero_p
   log_partitionFunctionAlongExhaustion_zero_params (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) β n
 
+/-- **ℤ^d partitionFunctionAlongExhaustion J=0 per-stage**:
+`= (2·cosh(β·h))^|Λ_n|`. Concrete specialization of
+`partitionFunctionAlongExhaustion_J_zero`. -/
+theorem partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_J_zero
+    (d : ℕ) (h β : ℝ) (n : ℕ) :
+    partitionFunctionAlongExhaustion (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) (⟨0, h, β⟩ : IsingParams ℝ) n
+      = (2 * Real.cosh (β * h)) ^
+          ((Ambient.cubicExhaustion d).volume n).card :=
+  partitionFunctionAlongExhaustion_J_zero (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) h β n
+
+/-- **ℤ^d log_partitionFunctionAlongExhaustion J=0**:
+`= |Λ_n|·log(2·cosh(β·h))`. Concrete specialization of
+`log_partitionFunctionAlongExhaustion_J_zero`. -/
+theorem log_partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_J_zero
+    (d : ℕ) (h β : ℝ) (n : ℕ) :
+    Real.log (partitionFunctionAlongExhaustion (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) (⟨0, h, β⟩ : IsingParams ℝ) n)
+      = (((Ambient.cubicExhaustion d).volume n).card : ℝ)
+          * Real.log (2 * Real.cosh (β * h)) :=
+  log_partitionFunctionAlongExhaustion_J_zero (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) h β n
+
 /-- **ℤ^d freeEnergyAlongExhaustion β=0 per-stage**: `= log 2`. -/
 theorem freeEnergyAlongExhaustion_latticeGraph_cubicExhaustion_beta_zero
     (d : ℕ) (J h : ℝ) (n : ℕ)
