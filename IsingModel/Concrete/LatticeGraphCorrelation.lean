@@ -207,6 +207,44 @@ theorem uniformMagnetization_le_one
   magnetizationInfinite_le_one (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) p 0
 
+/-- **Uniform spontaneous magnetization on ℤ^d**: by site-independence
+of spontaneous magnetization on the translation-invariant ℤ^d lattice
+(PR #257), we package the value at `0` as a scalar.
+
+`uniformSpontaneousMagnetization d J β := spontaneousMagnetization
+(latticeGraph d) (cubicExhaustion d) J β 0`. -/
+noncomputable def uniformSpontaneousMagnetization
+    (d : ℕ) (J β : ℝ) : ℝ :=
+  spontaneousMagnetization (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) J β 0
+
+/-- **Bridge**: for `0 ≤ J`, `0 < β`, and any site `i : Fin d → ℤ`,
+`spontaneousMagnetization ... J β i = uniformSpontaneousMagnetization d J β`.
+
+Immediate from `spontaneousMagnetization_latticeGraph_cubicExhaustion_eq`
+(PR #257). -/
+theorem spontaneousMagnetization_latticeGraph_cubicExhaustion_eq_uniform
+    (d : ℕ) {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) (i : Fin d → ℤ) :
+    spontaneousMagnetization (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) J β i
+      = uniformSpontaneousMagnetization d J β :=
+  spontaneousMagnetization_latticeGraph_cubicExhaustion_eq d hJ hβ i 0
+
+/-- **Nonnegativity of `uniformSpontaneousMagnetization`**. -/
+theorem uniformSpontaneousMagnetization_nonneg
+    (d : ℕ) {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) :
+    0 ≤ uniformSpontaneousMagnetization d J β :=
+  spontaneousMagnetization_nonneg (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) hJ hβ 0
+
+/-- **Upper bound on `uniformSpontaneousMagnetization`**:
+`uniformSpontaneousMagnetization d J β ≤ 1`. -/
+theorem uniformSpontaneousMagnetization_le_one
+    (d : ℕ) {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) :
+    uniformSpontaneousMagnetization d J β ≤ 1 :=
+  spontaneousMagnetization_le_one (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) hJ hβ 0
+
 /-! ## Two-point function on ℤ^d -/
 
 /-- **Two-point function on ℤ^d** (Finset-based):
