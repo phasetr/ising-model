@@ -637,6 +637,50 @@ theorem disjoint_volume_shift
     -- Disjoint Λ_{m+n} (shift(m+n) +ᵥ Λ_1).
     exact (Λ.disjoint_shift (m + n)).mono_left (Λ.mono (Nat.le_add_right m n))
 
+set_option linter.unusedFintypeInType false in
+/-- **`hsuper` in union form from translation invariance**: for a
+translation-invariant graph `G`, a translation-invariant exhaustion
+`Λ` with additive shift, and ferromagnetic parameters,
+
+`log Z_{Λ.volume m} + log Z_{Λ.volume n}
+  ≤ log Z_{Λ.volume m ∪ vaddFinset (Λ.shift m) (Λ.volume n)}`.
+
+The RHS is, by `volume_decomposes` (step 7),
+`log Z_{Λ.volume (m + n)}` — so this is the same statement as the
+target `hsuper` field of `DisjointTowerHypotheses`, modulo the
+Finset rewrite. Stating it in the union form avoids Fintype-instance
+juggling that arises when applying `volume_decomposes` as a rewrite
+through the partitionFunction indexed by a Fintype typeclass.
+
+Proof: combine
+1. `partitionFunctionΛ_vaddFinset_eq` (PR #237) — translation
+   invariance of Z, reduces `log Z_{shift m +ᵥ Λ_n}` to
+   `log Z_{Λ_n}`.
+2. `log_partitionFunctionΛ_disjUnion_super_additive` — super-
+   additivity on disjoint union (ferromagnetic).
+3. `disjoint_volume_shift` (step 8) — supplies the disjointness. -/
+theorem log_partitionFunctionΛ_super_of_translationInvariant_union
+    (Λ : TranslationInvariantExhaustion T V)
+    (G : SimpleGraph V) [IsTranslationInvariant T G]
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (m n : ℕ)
+    [Fintype (inducedGraph G
+        (vaddFinset (Λ.shift m) (Λ.volume n))).edgeSet]
+    [Fintype (inducedGraph G
+        (Λ.volume m ∪ vaddFinset (Λ.shift m) (Λ.volume n))).edgeSet] :
+    Real.log (partitionFunctionΛ G (Λ.volume m) p)
+      + Real.log (partitionFunctionΛ G (Λ.volume n) p)
+      ≤ Real.log (partitionFunctionΛ G
+          (Λ.volume m ∪ vaddFinset (Λ.shift m) (Λ.volume n)) p) := by
+  have h_translate :
+      partitionFunctionΛ G (vaddFinset (Λ.shift m) (Λ.volume n)) p
+        = partitionFunctionΛ G (Λ.volume n) p :=
+    partitionFunctionΛ_vaddFinset_eq G (Λ.shift m) (Λ.volume n) p
+  have h_super := log_partitionFunctionΛ_disjUnion_super_additive
+    (G := G) (hd := Λ.disjoint_volume_shift m n) p hf
+  rw [h_translate] at h_super
+  exact h_super
+
 /-- **`DisjointTowerHypotheses` from a `TranslationInvariantExhaustion`
 + hypothesised `hsuper`**: given a translation-invariant exhaustion
 (which handles `card_add` via `volume_card_add`) together with
