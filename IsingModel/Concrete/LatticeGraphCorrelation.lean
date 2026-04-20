@@ -282,6 +282,22 @@ theorem correlationΛ_latticeGraph_nonneg
     0 ≤ correlationΛ (IsingModel.latticeGraph d) Λ p A :=
   correlationΛ_nonneg (IsingModel.latticeGraph d) Λ p hf A
 
+/-- **ℤ^d correlationΛ_empty = 1** per finite volume. -/
+@[simp]
+theorem correlationΛ_latticeGraph_empty
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ) :
+    correlationΛ (IsingModel.latticeGraph d) Λ p ∅ = 1 :=
+  correlationΛ_empty (IsingModel.latticeGraph d) Λ p
+
+/-- **ℤ^d correlationAlongExhaustion_empty = 1** per stage. -/
+@[simp]
+theorem correlationAlongExhaustion_latticeGraph_empty
+    (d : ℕ) (p : IsingParams ℝ) (n : ℕ) :
+    correlationAlongExhaustion (IsingModel.latticeGraph d)
+      (Ambient.cubicExhaustion d) p ∅ n = 1 :=
+  correlationAlongExhaustion_empty (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) p n
+
 /-- **ℤ^d correlationAlongExhaustion of_subset unfolding**. -/
 theorem correlationAlongExhaustion_latticeGraph_of_subset
     (d : ℕ) (p : IsingParams ℝ)
