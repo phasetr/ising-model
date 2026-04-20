@@ -1386,6 +1386,26 @@ theorem truncated2TwoPoint_J_zero_of_ne_zero
       uniformMagnetization_J_zero d h β hf]
   ring
 
+/-- **ℤ^d Cor 4.3.5 at ∞-volume** (Glimm–Jaffe §4.3 Cor 4.3.5 p. 62):
+inductive (n+2)-point bound at `h = 0` on ℤ^d. -/
+theorem correlationInfinite_latticeGraph_cubicExhaustion_cor_4_3_5_h0
+    (d : ℕ) (J β : ℝ) (hf : Ferromagnetic (⟨J, (0 : ℝ), β⟩ : IsingParams ℝ))
+    (S : Finset (Fin d → ℤ)) {j k : Fin d → ℤ}
+    (hj : j ∉ S) (hk : k ∉ S) (hjk : j ≠ k) :
+    correlationInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) ⟨J, 0, β⟩ (insert j (insert k S))
+      ≤ correlationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) ⟨J, 0, β⟩ S *
+          correlationInfinite (IsingModel.latticeGraph d)
+            (Ambient.cubicExhaustion d) ⟨J, 0, β⟩ {j, k} +
+        ∑ T ∈ S.powerset,
+          correlationInfinite (IsingModel.latticeGraph d)
+              (Ambient.cubicExhaustion d) ⟨J, 0, β⟩ (insert j T) *
+            correlationInfinite (IsingModel.latticeGraph d)
+              (Ambient.cubicExhaustion d) ⟨J, 0, β⟩ (insert k (S \ T)) :=
+  correlationInfinite_cor_4_3_5_h0 (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) J β hf S hj hk hjk
+
 /-! ## Concrete Lebowitz / GHS inequalities on ℤ^d -/
 
 /-- **GHS `U_3 ≤ 0` on ℤ^d** (Glimm–Jaffe §4.3 Cor 4.3.4): for
