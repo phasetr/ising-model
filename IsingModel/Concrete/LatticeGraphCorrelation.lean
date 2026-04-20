@@ -301,6 +301,32 @@ theorem truncated2TwoPoint_symm
           truncated2Infinite_latticeGraph_cubicExhaustion_eq_twoPoint d p hf r 0
     _ = truncated2TwoPoint d p (-r) := by rw [h_zero_sub]
 
+/-! ## Basic bounds on the ℤ^d two-point functions -/
+
+/-- **Nonnegativity of `twoPointFunction`** (GKS-I).
+`0 ≤ twoPointFunction d p r`. -/
+theorem twoPointFunction_nonneg
+    (d : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p) (r : Fin d → ℤ) :
+    0 ≤ twoPointFunction d p r :=
+  correlationInfinite_nonneg (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) p hf {(0 : Fin d → ℤ), r}
+
+/-- **Upper bound on `twoPointFunction`** (boundedness of correlation).
+`twoPointFunction d p r ≤ 1`. -/
+theorem twoPointFunction_le_one
+    (d : ℕ) (p : IsingParams ℝ) (r : Fin d → ℤ) :
+    twoPointFunction d p r ≤ 1 :=
+  correlationInfinite_le_one (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) p {(0 : Fin d → ℤ), r}
+
+/-- **Nonnegativity of `truncated2TwoPoint`** (GKS-II).
+`0 ≤ truncated2TwoPoint d p r`. -/
+theorem truncated2TwoPoint_nonneg
+    (d : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p) (r : Fin d → ℤ) :
+    0 ≤ truncated2TwoPoint d p r :=
+  truncated2Infinite_nonneg (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) p hf 0 r
+
 end Ambient
 
 end IsingModel
