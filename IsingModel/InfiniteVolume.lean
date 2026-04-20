@@ -539,6 +539,13 @@ theorem correlation_le_one (G : SimpleGraph ι) [Fintype G.edgeSet]
     correlation G p A ≤ 1 :=
   le_trans (le_abs_self _) (abs_correlation_le_one G p A)
 
+/-- The correlation function is bounded below by `-1`.
+Extracted from `abs_correlation_le_one` via the `abs_le` characterization. -/
+theorem neg_one_le_correlation (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (p : IsingParams ℝ) (A : Finset ι) :
+    -1 ≤ correlation G p A :=
+  (abs_le.mp (abs_correlation_le_one G p A)).1
+
 /-! ## Monotonicity in the lattice (Theorem 4.2.3, lattice version)
 
 For a fixed ambient finite lattice `ι` and ferromagnetic parameters `p`,
