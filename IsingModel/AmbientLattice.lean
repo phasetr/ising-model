@@ -1416,6 +1416,21 @@ theorem correlationInfinite_le_one
   intro n
   exact correlationAlongExhaustion_le_one G Λ p A n
 
+/-- **Pointwise `|correlationInfinite| ≤ 1`** (unconditional):
+the infinite-volume correlation is bounded in absolute value by `1`
+regardless of parameters. Upper side is `correlationInfinite_le_one`;
+lower side uses `le_ciSup` with the stage-`0` pointwise bound
+`correlationAlongExhaustion ≥ -1` (from `abs_correlationAlongExhaustion_le_one`). -/
+theorem abs_correlationInfinite_le_one
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (A : Finset V) :
+    |correlationInfinite G Λ p A| ≤ 1 := by
+  refine abs_le.mpr ⟨?_, correlationInfinite_le_one G Λ p A⟩
+  have h0 : -1 ≤ correlationAlongExhaustion G Λ p A 0 :=
+    (abs_le.mp (abs_correlationAlongExhaustion_le_one G Λ p A 0)).1
+  exact h0.trans (le_ciSup (correlationAlongExhaustion_bddAbove G Λ p A) 0)
+
 /-- **Nonnegativity** (ferromagnetic): `correlationInfinite ≥ 0`.
 Uses `Λ.exhaust`: pick `N` with `A ⊆ Λ.volume N`; then
 `correlationAlongExhaustion G Λ p A N ≥ 0` by GKS-I, and this is
@@ -2064,6 +2079,15 @@ theorem magnetizationInfinite_le_one
     (p : IsingParams ℝ) (i : V) :
     magnetizationInfinite G Λ p i ≤ 1 :=
   correlationInfinite_le_one G Λ p {i}
+
+/-- **`|magnetizationInfinite| ≤ 1`** unconditionally (any parameters).
+Direct specialization of `abs_correlationInfinite_le_one` at `A = {i}`. -/
+theorem abs_magnetizationInfinite_le_one
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (i : V) :
+    |magnetizationInfinite G Λ p i| ≤ 1 :=
+  abs_correlationInfinite_le_one G Λ p {i}
 
 /-- **Convergence of `magnetizationAlongExhaustion` to `magnetizationInfinite`**
 for ferromagnetic `p`:
