@@ -681,23 +681,6 @@ theorem log_partitionFunctionΛ_super_of_translationInvariant_union
   rw [h_translate] at h_super
   exact h_super
 
-/-- **`partitionFunctionΛ` congruence under Finset equality**: if
-`Λ₁ = Λ₂`, then `partitionFunctionΛ G Λ₁ p = partitionFunctionΛ G
-Λ₂ p`, independent of the Fintype instance on the induced edge
-set (which is a subsingleton).
-
-Used to transport hsuper from the union form (step 9) to the
-`volume (m+n)` form expected by `DisjointTowerHypotheses.super`. -/
-theorem partitionFunctionΛ_congr_finset {V : Type*} [DecidableEq V]
-    (G : SimpleGraph V) {Λ₁ Λ₂ : Finset V} (heq : Λ₁ = Λ₂)
-    [Fintype (inducedGraph G Λ₁).edgeSet]
-    [Fintype (inducedGraph G Λ₂).edgeSet]
-    (p : IsingParams ℝ) :
-    partitionFunctionΛ G Λ₁ p = partitionFunctionΛ G Λ₂ p := by
-  subst heq
-  congr 1
-  exact Subsingleton.elim _ _
-
 set_option linter.unusedFintypeInType false in
 /-- **`hsuper` in `volume (m + n)` form**: bridges step 9's union
 form to the form expected by `DisjointTowerHypotheses.super`.
