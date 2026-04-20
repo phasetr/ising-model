@@ -619,6 +619,20 @@ theorem partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_monotone_b
   partitionFunctionAlongExhaustion_monotone_beta (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) J h hJ hh hβ₁ hβ n
 
+/-- **ℤ^d per-stage explicit upper bound on freeEnergyAlongExhaustion**. -/
+theorem freeEnergyAlongExhaustion_latticeGraph_cubicExhaustion_upper_bound
+    (d : ℕ) (p : IsingParams ℝ) (n : ℕ)
+    (hne : ((Ambient.cubicExhaustion d).volume n).Nonempty) :
+    freeEnergyAlongExhaustion (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) p n ≤ Real.log 2 +
+      |p.β| * (|p.J| * (Ambient.inducedGraph (IsingModel.latticeGraph d)
+          ((Ambient.cubicExhaustion d).volume n)).edgeFinset.card
+          + |p.h| * Fintype.card
+            (↑((Ambient.cubicExhaustion d).volume n) : Type _))
+        / Fintype.card (↑((Ambient.cubicExhaustion d).volume n) : Type _) :=
+  freeEnergyAlongExhaustion_upper_bound (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) p n hne
+
 /-- **ℤ^d per-stage J-monotonicity of freeEnergyAlongExhaustion**. -/
 theorem freeEnergyAlongExhaustion_latticeGraph_cubicExhaustion_monotone_J
     (d : ℕ) {h : ℝ} (hh : 0 ≤ h) {β : ℝ} (hβ : 0 < β) (n : ℕ) :
