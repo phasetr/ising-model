@@ -244,6 +244,27 @@ theorem spontaneousMagnetization_latticeGraph_cubicExhaustion_eq
   rw [hvadd] at h
   exact h.symm
 
+/-- **ℤ^d `|correlationΛ| ≤ 1`** per finite volume. -/
+theorem abs_correlationΛ_latticeGraph_le_one
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ)
+    (A : Finset (↑Λ : Type _)) :
+    |correlationΛ (IsingModel.latticeGraph d) Λ p A| ≤ 1 :=
+  abs_correlationΛ_le_one (IsingModel.latticeGraph d) Λ p A
+
+/-- **ℤ^d correlationΛ ≤ 1** per finite volume. -/
+theorem correlationΛ_latticeGraph_le_one
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ)
+    (A : Finset (↑Λ : Type _)) :
+    correlationΛ (IsingModel.latticeGraph d) Λ p A ≤ 1 :=
+  correlationΛ_le_one (IsingModel.latticeGraph d) Λ p A
+
+/-- **ℤ^d correlationΛ ≥ 0** per finite volume (ferromagnetic). -/
+theorem correlationΛ_latticeGraph_nonneg
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ)
+    (hf : Ferromagnetic p) (A : Finset (↑Λ : Type _)) :
+    0 ≤ correlationΛ (IsingModel.latticeGraph d) Λ p A :=
+  correlationΛ_nonneg (IsingModel.latticeGraph d) Λ p hf A
+
 /-- **ℤ^d correlationAlongExhaustion ≤ 1** per stage. -/
 theorem correlationAlongExhaustion_latticeGraph_cubicExhaustion_le_one
     (d : ℕ) (p : IsingParams ℝ) (A : Finset (Fin d → ℤ)) (n : ℕ) :
