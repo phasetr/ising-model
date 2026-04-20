@@ -244,6 +244,17 @@ theorem spontaneousMagnetization_latticeGraph_cubicExhaustion_eq
   rw [hvadd] at h
   exact h.symm
 
+/-- **ℤ^d partitionFunctionAlongExhaustion volume-monotonicity** (ferromagnetic):
+`partitionFunctionAlongExhaustion` at stage `n+1` is ≥ stage `n`. -/
+theorem partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_monotone_volume
+    (d : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p) (n : ℕ) :
+    partitionFunctionAlongExhaustion (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) p n
+      ≤ partitionFunctionAlongExhaustion (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) p (n + 1) :=
+  partitionFunctionAlongExhaustion_monotone_volume (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) p hf n
+
 /-- **ℤ^d partitionFunctionAlongExhaustion positivity**. -/
 theorem partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_pos
     (d : ℕ) (p : IsingParams ℝ) (n : ℕ) :
