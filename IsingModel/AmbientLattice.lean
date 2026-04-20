@@ -281,6 +281,16 @@ theorem neg_one_le_magnetizationΛ (G : SimpleGraph V) (Λ : Finset V)
     -1 ≤ magnetizationΛ G Λ p i :=
   neg_one_le_correlationΛ G Λ p {i}
 
+/-- **`magnetizationΛ² ≤ 1`** unconditionally. From
+`abs_magnetizationΛ_le_one` via `sq_le_one'`. -/
+theorem magnetizationΛ_sq_le_one (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (p : IsingParams ℝ) (i : ↑Λ) :
+    magnetizationΛ G Λ p i ^ 2 ≤ 1 := by
+  have h := abs_magnetizationΛ_le_one G Λ p i
+  have : |magnetizationΛ G Λ p i| ^ 2 ≤ 1 ^ 2 :=
+    pow_le_pow_left₀ (abs_nonneg _) h 2
+  simpa [sq_abs] using this
+
 /-- **`magnetizationΛ ≥ 0`** for ferromagnetic `p` at any site `i : ↑Λ`.
 Direct from `correlationΛ_nonneg` at `A = {i}` (GKS-I). -/
 theorem magnetizationΛ_nonneg (G : SimpleGraph V) (Λ : Finset V)
@@ -2137,6 +2147,18 @@ theorem neg_one_le_magnetizationInfinite
     -1 ≤ magnetizationInfinite G Λ p i :=
   neg_one_le_correlationInfinite G Λ p {i}
 
+/-- **`magnetizationInfinite² ≤ 1`** unconditionally. From
+`abs_magnetizationInfinite_le_one` via `sq_le_one'`. -/
+theorem magnetizationInfinite_sq_le_one
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (i : V) :
+    magnetizationInfinite G Λ p i ^ 2 ≤ 1 := by
+  have h := abs_magnetizationInfinite_le_one G Λ p i
+  have : |magnetizationInfinite G Λ p i| ^ 2 ≤ 1 ^ 2 :=
+    pow_le_pow_left₀ (abs_nonneg _) h 2
+  simpa [sq_abs] using this
+
 /-- **Convergence of `magnetizationAlongExhaustion` to `magnetizationInfinite`**
 for ferromagnetic `p`:
 `Tendsto (magnetizationAlongExhaustion G Λ p i) atTop (nhds (magnetizationInfinite G Λ p i))`.
@@ -2786,6 +2808,17 @@ theorem abs_spontaneousMagnetization_le_one
     |spontaneousMagnetization G Λ J β i| ≤ 1 :=
   abs_le.mpr ⟨neg_one_le_spontaneousMagnetization G Λ hJ hβ i,
     spontaneousMagnetization_le_one G Λ hJ hβ i⟩
+
+/-- **`spontaneousMagnetization² ≤ 1`** (ferromagnetic). -/
+theorem spontaneousMagnetization_sq_le_one
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) (i : V) :
+    spontaneousMagnetization G Λ J β i ^ 2 ≤ 1 := by
+  have h := abs_spontaneousMagnetization_le_one G Λ hJ hβ i
+  have : |spontaneousMagnetization G Λ J β i| ^ 2 ≤ 1 ^ 2 :=
+    pow_le_pow_left₀ (abs_nonneg _) h 2
+  simpa [sq_abs] using this
 
 /-- **Lower bound for `magnetizationInfinite` at positive `h`**:
 $m^* \le M(h)$ for $h > 0$. Specialization of
