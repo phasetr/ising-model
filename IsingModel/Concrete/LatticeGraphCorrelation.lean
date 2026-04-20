@@ -2650,6 +2650,23 @@ theorem abs_twoPointFunction_le_one
   abs_correlationInfinite_le_one (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) p {(0 : Fin d → ℤ), r}
 
+/-- **`twoPointFunction` at `h = 0, r = 0` vanishes** (Z₂ via
+`twoPointFunction_zero` + `magnetizationInfinite_zero_at_h_zero`):
+`twoPointFunction d ⟨J, 0, β⟩ 0 = 0`. -/
+theorem twoPointFunction_h_zero_at_zero (d : ℕ) (J β : ℝ) :
+    twoPointFunction d (⟨J, 0, β⟩ : IsingParams ℝ) 0 = 0 := by
+  rw [twoPointFunction_zero,
+      magnetizationInfinite_zero_at_h_zero]
+
+/-- **`truncated2TwoPoint` at `h = 0, r = 0` vanishes**: at `r = 0`,
+`truncated2TwoPoint = M · (1 − M)`; at `h = 0`, `M = 0` by Z₂, so the
+product is `0`. -/
+theorem truncated2TwoPoint_h_zero_at_zero (d : ℕ) (J β : ℝ) :
+    truncated2TwoPoint d (⟨J, 0, β⟩ : IsingParams ℝ) 0 = 0 := by
+  rw [truncated2TwoPoint_zero,
+      magnetizationInfinite_zero_at_h_zero]
+  ring
+
 /-- **J-monotonicity of `twoPointFunction`** (GJ Prop 4.2.1):
 for `0 ≤ h, 0 < β`, `twoPointFunction d ⟨J, h, β⟩ r` is monotone in
 `J` on `Ici 0`. Direct specialization of

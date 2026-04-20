@@ -484,6 +484,7 @@ inventory (2026-04-17).
 | §4.2 | Unconditional `abs_correlationInfinite_le_one` + magnetization + ℤ^d | **Done** | `Ambient.abs_correlationInfinite_le_one`: `|correlationInfinite G Λ p A| ≤ 1` unconditionally (no ferromagnetic assumption). Upper bound from `correlationInfinite_le_one`; lower bound via `le_ciSup` + `correlationAlongExhaustion_bddAbove` applied to stage 0 (where `-1 ≤ correlationAlongExhaustion ... 0`). `abs_magnetizationInfinite_le_one` specialization. Concrete ℤ^d wrappers — strictly stronger than the ferromagnetic-only PR #395. (PR #404.) |
 | §4.2 | `-1 ≤ correlation/magnetization` lower bounds (Λ/Along/Infinite) + ℤ^d | **Done** | `neg_one_le_{correlation,magnetization}{Λ, AlongExhaustion, Infinite}` lower-bound counterparts of the existing `… ≤ 1` upper bounds, derived from the `abs_… ≤ 1` theorems via `abs_le.mp`. Concrete ℤ^d wrappers. (PR #405.) |
 | §4.2 | `-1 ≤ twoPointFunction` + `abs_twoPointFunction_le_one` | **Done** | `neg_one_le_twoPointFunction` and `abs_twoPointFunction_le_one` unconditionally, via specialization of `neg_one_le_correlationInfinite` / `abs_correlationInfinite_le_one` at `A = {0, r}`. (PR #406.) |
+| §4.6 | `{twoPointFunction, truncated2TwoPoint}` at `h = 0, r = 0` | **Done** | `twoPointFunction_h_zero_at_zero = 0` via `twoPointFunction_zero` + `magnetizationInfinite_zero_at_h_zero`. `truncated2TwoPoint_h_zero_at_zero = 0` via `truncated2TwoPoint_zero = M(1-M)` with `M = 0`. (PR #407.) |
 | §4.7 | Two-component spins | Out of scope | XY model |
 
 ### Chapter 5 (Phase transitions)
