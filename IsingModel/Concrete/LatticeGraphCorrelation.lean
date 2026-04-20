@@ -367,11 +367,18 @@ theorem correlationΛ_latticeGraph_gks_second
     (d : ℕ) {Λ : Finset (Fin d → ℤ)}
     (p : IsingParams ℝ) (hf : Ferromagnetic p)
     {A B : Finset (Fin d → ℤ)} (hA : A ⊆ Λ) (hB : B ⊆ Λ) :
-    correlationΛ (IsingModel.latticeGraph d) Λ p (liftFinset A hA)
-      * correlationΛ (IsingModel.latticeGraph d) Λ p (liftFinset B hB)
-      ≤ correlationΛ (IsingModel.latticeGraph d) Λ p
-          (liftFinset (A ∆ B) (symmDiff_subset_of_subset hA hB)) :=
-  correlationΛ_gks_second (IsingModel.latticeGraph d) p hf hA hB
+    ∃ hAB : A ∆ B ⊆ Λ,
+      correlationΛ (IsingModel.latticeGraph d) Λ p (liftFinset A hA)
+        * correlationΛ (IsingModel.latticeGraph d) Λ p (liftFinset B hB)
+        ≤ correlationΛ (IsingModel.latticeGraph d) Λ p (liftFinset (A ∆ B) hAB) := by
+  have hAB : A ∆ B ⊆ Λ := by
+    intro x hx
+    rw [Finset.mem_symmDiff] at hx
+    rcases hx with ⟨hxA, _⟩ | ⟨hxB, _⟩
+    · exact hA hxA
+    · exact hB hxB
+  refine ⟨hAB, ?_⟩
+  exact correlationΛ_gks_second (IsingModel.latticeGraph d) p hf hA hB
 
 /-- **ℤ^d per-Λ h-monotonicity of `correlationΛ`**. -/
 theorem correlationΛ_latticeGraph_monotone_h
