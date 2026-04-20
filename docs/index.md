@@ -510,7 +510,7 @@ formalized**, per the full inventory above:
    `freeEnergyAlongExhaustion_tendsto_of_disjointTowerHypotheses`
    (bundled form taking a `DisjointTowerHypotheses` record).
    Dropping the remaining disjoint-tower hypotheses (`hcard_add`,
-   `hsuper`, `hcard_one`) requires translation invariance and is
+   `hsuper`, `hcard_one`) requires translation invariance (scaffolding started in `TranslationInvariance.lean` with `Ambient.IsTranslationInvariant` and the trivial `⊥` / `⊤` graph instances; deriving `hsuper` is deferred to subsequent PRs) and is
    a follow-up step.
    *(The `correlationAlongExhaustion` convergence side, originally
    listed here as "not yet proved", is in fact discharged by
