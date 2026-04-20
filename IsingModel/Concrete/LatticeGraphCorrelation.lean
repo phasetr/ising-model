@@ -244,6 +244,14 @@ theorem spontaneousMagnetization_latticeGraph_cubicExhaustion_eq
   rw [hvadd] at h
   exact h.symm
 
+/-- **ℤ^d partitionFunctionAlongExhaustion positivity**. -/
+theorem partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_pos
+    (d : ℕ) (p : IsingParams ℝ) (n : ℕ) :
+    0 < partitionFunctionAlongExhaustion (IsingModel.latticeGraph d)
+      (Ambient.cubicExhaustion d) p n :=
+  partitionFunctionAlongExhaustion_pos (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) p n
+
 /-- **ℤ^d freeEnergyInfinite is strictly positive** (ferromagnetic). -/
 theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_pos
     (d : ℕ) [Nonempty (Fin d → ℤ)]
