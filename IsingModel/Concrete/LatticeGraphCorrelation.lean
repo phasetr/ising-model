@@ -282,6 +282,28 @@ theorem correlationΛ_latticeGraph_nonneg
     0 ≤ correlationΛ (IsingModel.latticeGraph d) Λ p A :=
   correlationΛ_nonneg (IsingModel.latticeGraph d) Λ p hf A
 
+/-- **ℤ^d freeEnergyAlongExhaustion_apply unfolding**. -/
+@[simp]
+theorem freeEnergyAlongExhaustion_latticeGraph_apply
+    (d : ℕ) (p : IsingParams ℝ) (n : ℕ) :
+    freeEnergyAlongExhaustion (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) p n
+      = freeEnergyΛ (IsingModel.latticeGraph d)
+        ((Ambient.cubicExhaustion d).volume n) p :=
+  freeEnergyAlongExhaustion_apply (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) p n
+
+/-- **ℤ^d partitionFunctionAlongExhaustion_apply unfolding**. -/
+@[simp]
+theorem partitionFunctionAlongExhaustion_latticeGraph_apply
+    (d : ℕ) (p : IsingParams ℝ) (n : ℕ) :
+    partitionFunctionAlongExhaustion (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) p n
+      = partitionFunctionΛ (IsingModel.latticeGraph d)
+        ((Ambient.cubicExhaustion d).volume n) p :=
+  partitionFunctionAlongExhaustion_apply (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) p n
+
 /-- **ℤ^d freeEnergyAlongExhaustion = log Z / |Λ|** (log-bridge). -/
 theorem freeEnergyAlongExhaustion_latticeGraph_cubicExhaustion_eq_log_div_card
     (d : ℕ) (p : IsingParams ℝ) (n : ℕ) :
