@@ -275,6 +275,7 @@ theorem magnetizationΛ_nonneg (G : SimpleGraph V) (Λ : Finset V)
     0 ≤ magnetizationΛ G Λ p i :=
   correlationΛ_nonneg G Λ p hf {i}
 
+
 /-! ## Thermodynamic limit along exhaustions
 
 An **exhaustion** of the ambient lattice `V` by `G : SimpleGraph V` is
@@ -1641,6 +1642,7 @@ theorem magnetizationAlongExhaustion_nonneg
   correlationAlongExhaustion_nonneg G Λ p hf {i} n
 
 
+
 /-- **GKS-II at finite volume** (Λ-lifted form): for a ferromagnetic
 Ising model and `A, B ⊆ Λ`,
 `correlationΛ G Λ p (lift A) * correlationΛ G Λ p (lift B)
@@ -1910,6 +1912,74 @@ theorem correlationAlongExhaustion_monotone_J
     exact correlationΛ_monotone_J G (Λ.volume n) hh hβ _ hJ₁ (hJ₁.trans hJ₁₂) hJ₁₂
   · rw [correlationAlongExhaustion_of_not_subset G Λ ⟨J₁, h, β⟩ hAn,
         correlationAlongExhaustion_of_not_subset G Λ ⟨J₂, h, β⟩ hAn]
+
+/-! ## Parameter monotonicities of `magnetizationΛ` / `magnetizationAlongExhaustion` -/
+
+/-- **h-monotonicity of `magnetizationΛ`**: `MonotoneOn` in `h` on `Ici 0`
+for `J ≥ 0`, `β > 0`. Specialization of `correlationΛ_monotone_h`. -/
+theorem magnetizationΛ_monotone_h (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) (i : ↑Λ) :
+    MonotoneOn
+      (fun h : ℝ => magnetizationΛ G Λ (⟨J, h, β⟩ : IsingParams ℝ) i)
+      (Set.Ici 0) :=
+  correlationΛ_monotone_h G Λ hJ hβ {i}
+
+/-- **β-monotonicity of `magnetizationΛ`**: `MonotoneOn` in `β` on `Ioi 0`
+for `J, h ≥ 0`. Specialization of `correlationΛ_monotone_beta`. -/
+theorem magnetizationΛ_monotone_beta (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {J : ℝ} (hJ : 0 ≤ J) {h : ℝ} (hh : 0 ≤ h) (i : ↑Λ) :
+    MonotoneOn
+      (fun β : ℝ => magnetizationΛ G Λ (⟨J, h, β⟩ : IsingParams ℝ) i)
+      (Set.Ioi 0) :=
+  correlationΛ_monotone_beta G Λ hJ hh {i}
+
+/-- **J-monotonicity of `magnetizationΛ`**: `MonotoneOn` in `J` on `Ici 0`
+for `h ≥ 0`, `β > 0`. Specialization of `correlationΛ_monotone_J`. -/
+theorem magnetizationΛ_monotone_J (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {h : ℝ} (hh : 0 ≤ h) {β : ℝ} (hβ : 0 < β) (i : ↑Λ) :
+    MonotoneOn
+      (fun J : ℝ => magnetizationΛ G Λ (⟨J, h, β⟩ : IsingParams ℝ) i)
+      (Set.Ici 0) :=
+  correlationΛ_monotone_J G Λ hh hβ {i}
+
+/-- **h-monotonicity of `magnetizationAlongExhaustion`** per stage:
+specialization of `correlationAlongExhaustion_monotone_h` at `A = {i}`. -/
+theorem magnetizationAlongExhaustion_monotone_h
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β)
+    (i : V) {h₁ h₂ : ℝ}
+    (hh₁ : 0 ≤ h₁) (hh₁₂ : h₁ ≤ h₂) (n : ℕ) :
+    magnetizationAlongExhaustion G Λ ⟨J, h₁, β⟩ i n
+      ≤ magnetizationAlongExhaustion G Λ ⟨J, h₂, β⟩ i n :=
+  correlationAlongExhaustion_monotone_h G Λ hJ hβ {i} hh₁ hh₁₂ n
+
+/-- **β-monotonicity of `magnetizationAlongExhaustion`** per stage:
+specialization of `correlationAlongExhaustion_monotone_beta` at `A = {i}`. -/
+theorem magnetizationAlongExhaustion_monotone_beta
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {J : ℝ} (hJ : 0 ≤ J) {h : ℝ} (hh : 0 ≤ h)
+    (i : V) {β₁ β₂ : ℝ}
+    (hβ₁ : 0 < β₁) (hβ₁₂ : β₁ ≤ β₂) (n : ℕ) :
+    magnetizationAlongExhaustion G Λ ⟨J, h, β₁⟩ i n
+      ≤ magnetizationAlongExhaustion G Λ ⟨J, h, β₂⟩ i n :=
+  correlationAlongExhaustion_monotone_beta G Λ hJ hh {i} hβ₁ hβ₁₂ n
+
+/-- **J-monotonicity of `magnetizationAlongExhaustion`** per stage:
+specialization of `correlationAlongExhaustion_monotone_J` at `A = {i}`. -/
+theorem magnetizationAlongExhaustion_monotone_J
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {h : ℝ} (hh : 0 ≤ h) {β : ℝ} (hβ : 0 < β)
+    (i : V) {J₁ J₂ : ℝ}
+    (hJ₁ : 0 ≤ J₁) (hJ₁₂ : J₁ ≤ J₂) (n : ℕ) :
+    magnetizationAlongExhaustion G Λ ⟨J₁, h, β⟩ i n
+      ≤ magnetizationAlongExhaustion G Λ ⟨J₂, h, β⟩ i n :=
+  correlationAlongExhaustion_monotone_J G Λ hh hβ {i} hJ₁ hJ₁₂ n
 
 /-- **J-direction monotonicity of `correlationInfinite`**: for fixed
 `h ≥ 0`, `β > 0`, the thermodynamic-limit correlation is monotone in

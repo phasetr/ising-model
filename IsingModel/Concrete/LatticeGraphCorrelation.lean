@@ -3079,6 +3079,75 @@ theorem tendsto_magnetizationAlongExhaustion_magnetizationInfinite_latticeGraph
   tendsto_magnetizationAlongExhaustion_magnetizationInfinite
     (IsingModel.latticeGraph d) Λ p hf i
 
+/-- **ℤ^d magnetizationΛ h-monotonicity**: `MonotoneOn` in `h` on `Ici 0`. -/
+theorem magnetizationΛ_latticeGraph_monotone_h
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) (i : ↑Λ) :
+    MonotoneOn
+      (fun h : ℝ => magnetizationΛ (IsingModel.latticeGraph d) Λ
+        (⟨J, h, β⟩ : IsingParams ℝ) i)
+      (Set.Ici 0) :=
+  magnetizationΛ_monotone_h (IsingModel.latticeGraph d) Λ hJ hβ i
+
+/-- **ℤ^d magnetizationΛ β-monotonicity**: `MonotoneOn` in `β` on `Ioi 0`. -/
+theorem magnetizationΛ_latticeGraph_monotone_beta
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    {J : ℝ} (hJ : 0 ≤ J) {h : ℝ} (hh : 0 ≤ h) (i : ↑Λ) :
+    MonotoneOn
+      (fun β : ℝ => magnetizationΛ (IsingModel.latticeGraph d) Λ
+        (⟨J, h, β⟩ : IsingParams ℝ) i)
+      (Set.Ioi 0) :=
+  magnetizationΛ_monotone_beta (IsingModel.latticeGraph d) Λ hJ hh i
+
+/-- **ℤ^d magnetizationΛ J-monotonicity**: `MonotoneOn` in `J` on `Ici 0`. -/
+theorem magnetizationΛ_latticeGraph_monotone_J
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    {h : ℝ} (hh : 0 ≤ h) {β : ℝ} (hβ : 0 < β) (i : ↑Λ) :
+    MonotoneOn
+      (fun J : ℝ => magnetizationΛ (IsingModel.latticeGraph d) Λ
+        (⟨J, h, β⟩ : IsingParams ℝ) i)
+      (Set.Ici 0) :=
+  magnetizationΛ_monotone_J (IsingModel.latticeGraph d) Λ hh hβ i
+
+/-- **ℤ^d magnetizationAlongExhaustion h-monotonicity** per stage. -/
+theorem magnetizationAlongExhaustion_latticeGraph_monotone_h
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β)
+    (i : Fin d → ℤ) {h₁ h₂ : ℝ}
+    (hh₁ : 0 ≤ h₁) (hh₁₂ : h₁ ≤ h₂) (n : ℕ) :
+    magnetizationAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, h₁, β⟩ : IsingParams ℝ) i n
+      ≤ magnetizationAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, h₂, β⟩ : IsingParams ℝ) i n :=
+  magnetizationAlongExhaustion_monotone_h (IsingModel.latticeGraph d) Λ
+    hJ hβ i hh₁ hh₁₂ n
+
+/-- **ℤ^d magnetizationAlongExhaustion β-monotonicity** per stage. -/
+theorem magnetizationAlongExhaustion_latticeGraph_monotone_beta
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    {J : ℝ} (hJ : 0 ≤ J) {h : ℝ} (hh : 0 ≤ h)
+    (i : Fin d → ℤ) {β₁ β₂ : ℝ}
+    (hβ₁ : 0 < β₁) (hβ₁₂ : β₁ ≤ β₂) (n : ℕ) :
+    magnetizationAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, h, β₁⟩ : IsingParams ℝ) i n
+      ≤ magnetizationAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, h, β₂⟩ : IsingParams ℝ) i n :=
+  magnetizationAlongExhaustion_monotone_beta (IsingModel.latticeGraph d) Λ
+    hJ hh i hβ₁ hβ₁₂ n
+
+/-- **ℤ^d magnetizationAlongExhaustion J-monotonicity** per stage. -/
+theorem magnetizationAlongExhaustion_latticeGraph_monotone_J
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    {h : ℝ} (hh : 0 ≤ h) {β : ℝ} (hβ : 0 < β)
+    (i : Fin d → ℤ) {J₁ J₂ : ℝ}
+    (hJ₁ : 0 ≤ J₁) (hJ₁₂ : J₁ ≤ J₂) (n : ℕ) :
+    magnetizationAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J₁, h, β⟩ : IsingParams ℝ) i n
+      ≤ magnetizationAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J₂, h, β⟩ : IsingParams ℝ) i n :=
+  magnetizationAlongExhaustion_monotone_J (IsingModel.latticeGraph d) Λ
+    hh hβ i hJ₁ hJ₁₂ n
+
 /-- **ℤ^d magnetizationInfinite at h = 0 site-wise**:
 `magnetizationInfinite (latticeGraph d) Λ ⟨J, 0, β⟩ i = 0`. -/
 theorem magnetizationInfinite_latticeGraph_zero_at_h_zero
