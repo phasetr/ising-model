@@ -29,6 +29,8 @@ theorem (`TranslationInvariance.lean`, PR #251) to the physical
 * Glimm–Jaffe, *Quantum Physics* 2nd ed., §4.6, p. 68.
 -/
 
+open scoped symmDiff
+
 namespace IsingModel
 
 namespace Ambient
@@ -803,6 +805,26 @@ theorem twoPointFunction_J_zero_of_ne_zero
     rw [Finset.card_pair]
     exact (Ne.symm hr)
   rw [h_card]
+
+/-- **GKS-II at ∞-volume on ℤ^d**: for ferromagnetic `p` and any
+`A, B : Finset (Fin d → ℤ)`,
+
+`correlationInfinite ... p A · correlationInfinite ... p B
+  ≤ correlationInfinite ... p (A ∆ B)`.
+
+Concrete ℤ^d specialisation of `correlationInfinite_gks_second`
+(Glimm–Jaffe §4.2 Thm 4.2.3). -/
+theorem correlationInfinite_latticeGraph_cubicExhaustion_gks_second
+    (d : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    (A B : Finset (Fin d → ℤ)) :
+    correlationInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) p A
+      * correlationInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) p B
+      ≤ correlationInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) p (A ∆ B) :=
+  correlationInfinite_gks_second (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) p hf A B
 
 /-! ## Basic bounds on the ℤ^d two-point functions -/
 
