@@ -13,3 +13,4 @@ import IsingModel.AmbientLatticeSum
 import IsingModel.ComplexAnalyticity
 import IsingModel.PeierlsInfinite
 import IsingModel.TranslationInvariance
+import IsingModel.Concrete.IntLattice
