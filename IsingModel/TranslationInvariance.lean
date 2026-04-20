@@ -571,10 +571,10 @@ theorem volume_card_add
 additive `shift_add` structural field,
 `volume (m + n) = volume m ∪ (shift m +ᵥ volume n)`.
 
-Proof by induction on `n`. The base case uses `volume_zero` and
-`vaddFinset_empty`; the inductive step uses `volume_succ`,
-`vaddFinset_union`, `vaddFinset_add`, `shift_add`, and Finset
-union commutativity/associativity. -/
+Proof by induction on `n`. The base case uses `volume_zero`,
+`vaddFinset_empty`, and `Finset.union_empty`; the inductive step
+uses `volume_succ` (twice), `vaddFinset_union`, `vaddFinset_add`,
+`shift_add`, and `Finset.union_assoc`. -/
 theorem volume_decomposes
     (Λ : TranslationInvariantExhaustion T V) (m n : ℕ) :
     Λ.volume (m + n)
