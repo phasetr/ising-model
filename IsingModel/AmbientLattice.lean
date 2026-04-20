@@ -2636,6 +2636,25 @@ theorem spontaneousCorrelation_le_one
     ⟨1, by norm_num⟩ ?_
   exact correlationInfinite_le_one G Λ ⟨J, 1, β⟩ A
 
+/-- **`-1 ≤ spontaneousCorrelation`** (ferromagnetic). Follows from
+`spontaneousCorrelation_nonneg`. -/
+theorem neg_one_le_spontaneousCorrelation
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) (A : Finset V) :
+    -1 ≤ spontaneousCorrelation G Λ J β A := by
+  have := spontaneousCorrelation_nonneg G Λ hJ hβ A
+  linarith
+
+/-- **`|spontaneousCorrelation| ≤ 1`** (ferromagnetic). -/
+theorem abs_spontaneousCorrelation_le_one
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) (A : Finset V) :
+    |spontaneousCorrelation G Λ J β A| ≤ 1 :=
+  abs_le.mpr ⟨neg_one_le_spontaneousCorrelation G Λ hJ hβ A,
+    spontaneousCorrelation_le_one G Λ hJ hβ A⟩
+
 /-- **Lower bound by `correlationInfinite` at positive `h`**: for any
 `h > 0`, $\langle \sigma^A \rangle^* \le \langle \sigma^A \rangle(h)$. -/
 theorem spontaneousCorrelation_le_correlationInfinite

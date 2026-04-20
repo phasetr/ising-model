@@ -1466,6 +1466,7 @@ theorem abs_uniformMagnetization_le_one
   abs_magnetizationInfinite_le_one (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) p 0
 
+
 /-- **Uniform spontaneous magnetization on ℤ^d**: by site-independence
 of spontaneous magnetization on the translation-invariant ℤ^d lattice
 (PR #257), we package the value at `0` as a scalar.
@@ -1521,6 +1522,21 @@ theorem uniformSpontaneousMagnetization_le_one
     uniformSpontaneousMagnetization d J β ≤ 1 :=
   spontaneousMagnetization_le_one (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) hJ hβ 0
+
+/-- **`-1 ≤ uniformSpontaneousMagnetization`** (ferromagnetic).
+Direct from `uniformSpontaneousMagnetization_nonneg`. -/
+theorem neg_one_le_uniformSpontaneousMagnetization
+    (d : ℕ) {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) :
+    -1 ≤ uniformSpontaneousMagnetization d J β := by
+  have := uniformSpontaneousMagnetization_nonneg d hJ hβ
+  linarith
+
+/-- **`|uniformSpontaneousMagnetization| ≤ 1`** (ferromagnetic). -/
+theorem abs_uniformSpontaneousMagnetization_le_one
+    (d : ℕ) {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) :
+    |uniformSpontaneousMagnetization d J β| ≤ 1 :=
+  abs_le.mpr ⟨neg_one_le_uniformSpontaneousMagnetization d hJ hβ,
+    uniformSpontaneousMagnetization_le_one d hJ hβ⟩
 
 /-- **`uniformMagnetization` at `β = 0`**:
 `uniformMagnetization d ⟨J, h, 0⟩ = 0`.
