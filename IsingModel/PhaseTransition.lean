@@ -164,10 +164,17 @@ theorem susceptibility_nonneg (G : SimpleGraph ι) [Fintype G.edgeSet]
   unfold susceptibility
   exact Finset.sum_nonneg (fun j _ => truncated2_nonneg G p hf i j)
 
-/-- **Susceptibility closed form at `J = 0`**: for any ambient graph
-`G`, any `h, β`, and any site `i`,
+/-- **Susceptibility closed form at `J = 0`** (Finset-based): for any
+ambient graph `G`, any `h, β`, and any site `i`,
 
 `susceptibility G ⟨0, h, β⟩ i = tanh(β·h) · (1 − tanh(β·h))`.
+
+Caveat: this is the repo-level `susceptibility` built from
+`truncated2` which uses the Finset `{i, j}` — at `j = i` this
+collapses to `{i}` and yields `⟨σ_i⟩ − ⟨σ_i⟩² = t − t²`, not the
+physics `⟨σ_i σ_i⟩ − ⟨σ_i⟩² = 1 − ⟨σ_i⟩²` (which would use
+`σ_i² = 1`). Accordingly this formula differs from the physics
+response-function identity `dM/dh = β·(1 − t²)` at the diagonal.
 
 Proof: `susceptibility i = ∑_j truncated2 i j`. For `j ≠ i`,
 `truncated2_J_zero_of_ne` makes the summand 0. For `j = i`,
