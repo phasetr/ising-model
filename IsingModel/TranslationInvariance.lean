@@ -258,8 +258,9 @@ Proof: `externalFieldEnergy h σ = -h * ∑_i Spin.sign ℝ (σ i)`;
 the sum `∑_{i : ↑(vaddFinset t Λ)} Spin.sign ℝ (σ' i)` reindexes
 via `Fintype.sum_equiv (vaddSubtypeEquiv t Λ)` to
 `∑_{j : ↑Λ} Spin.sign ℝ (σ' (vaddSubtypeEquiv t Λ j))`, and the
-inner term equals `((configVaddEquiv t Λ).symm σ') j` by the
-inverse-map characterisation. -/
+inner term equals `((configVaddEquiv t Λ).symm σ') j` definitionally
+(by the definition of `Equiv.arrowCongr`, whose `.symm` applied to
+`σ'` is exactly `σ' ∘ (vaddSubtypeEquiv t Λ)`). -/
 theorem externalFieldEnergy_configVaddEquiv_symm {T : Type u}
     [AddGroup T] {V : Type v} [DecidableEq V] [AddAction T V]
     (t : T) (Λ : Finset V) (h : ℝ)
