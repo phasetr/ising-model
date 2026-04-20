@@ -245,6 +245,24 @@ theorem uniformSpontaneousMagnetization_le_one
   spontaneousMagnetization_le_one (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) hJ hβ 0
 
+/-- **Right-limit** `uniformMagnetization` → `uniformSpontaneousMagnetization`
+as `h → 0⁺`.
+
+Concrete specialization of the abstract
+`tendsto_magnetizationInfinite_spontaneousMagnetization_nhdsGT`
+at site `0` on the `(latticeGraph d, cubicExhaustion d)` pair. Realises
+the spontaneous magnetization as the right limit of the uniform
+(site-independent) magnetization as the external field `h` approaches
+zero from above. -/
+theorem tendsto_uniformMagnetization_uniformSpontaneousMagnetization_nhdsGT
+    (d : ℕ) {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) :
+    Filter.Tendsto
+      (fun h : ℝ => uniformMagnetization d ⟨J, h, β⟩)
+      (nhdsWithin (0 : ℝ) (Set.Ioi 0))
+      (nhds (uniformSpontaneousMagnetization d J β)) :=
+  tendsto_magnetizationInfinite_spontaneousMagnetization_nhdsGT
+    (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d) hJ hβ 0
+
 /-- **`uniformSpontaneousMagnetization ≤ uniformMagnetization` at `h > 0`**:
 for `0 ≤ J`, `0 < β`, `0 < h`,
 
