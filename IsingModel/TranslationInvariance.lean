@@ -160,6 +160,33 @@ theorem vaddFinset_disjoint_of_disjoint {T : Type u} [AddGroup T]
   subst hu_eq
   exact Finset.disjoint_left.mp h hu₁A hu₂B
 
+/-- **Translation distributes over union**:
+`vaddFinset t (A ∪ B) = vaddFinset t A ∪ vaddFinset t B`. -/
+theorem vaddFinset_union {T : Type u} [AddGroup T] {V : Type v}
+    [DecidableEq V] [AddAction T V] (t : T) (A B : Finset V) :
+    vaddFinset t (A ∪ B) = vaddFinset t A ∪ vaddFinset t B := by
+  unfold vaddFinset
+  exact Finset.image_union _ _
+
+/-- **Translation distributes over empty Finset**: `vaddFinset t ∅ = ∅`. -/
+@[simp]
+theorem vaddFinset_empty {T : Type u} [AddGroup T] {V : Type v}
+    [DecidableEq V] [AddAction T V] (t : T) :
+    vaddFinset t (∅ : Finset V) = ∅ := by
+  unfold vaddFinset
+  exact Finset.image_empty _
+
+/-- **Translations compose additively**:
+`vaddFinset s (vaddFinset t A) = vaddFinset (s + t) A`. -/
+theorem vaddFinset_add {T : Type u} [AddGroup T] {V : Type v}
+    [DecidableEq V] [AddAction T V] (s t : T) (A : Finset V) :
+    vaddFinset s (vaddFinset t A) = vaddFinset (s + t) A := by
+  unfold vaddFinset
+  rw [Finset.image_image]
+  congr 1
+  ext v
+  exact (add_vadd s t v).symm
+
 /-- **Subtype bijection between `↑Λ` and `↑(t +ᵥ Λ)`**: the natural
 translation-induced bijection, sending `⟨v, hv⟩ : ↑Λ` to
 `⟨t +ᵥ v, _⟩ : ↑(vaddFinset t Λ)` and vice versa via `-t`.
@@ -502,6 +529,11 @@ structure TranslationInvariantExhaustion (T : Type u) [AddGroup T]
   /-- The translated base block is disjoint from `volume n`. -/
   disjoint_shift : ∀ n,
     Disjoint (volume n) (vaddFinset (shift n) (volume 1))
+  /-- `shift` is an additive monoid homomorphism `ℕ → T`:
+  `shift (m + n) = shift m + shift n`. This is the structural datum
+  that makes the tower "regular" and allows
+  `volume (m + n) = volume m ∪ (shift m +ᵥ volume n)`. -/
+  shift_add : ∀ m n, shift (m + n) = shift m + shift n
 
 namespace TranslationInvariantExhaustion
 
@@ -534,6 +566,42 @@ theorem volume_card_add
   rw [Λ.volume_card_eq_mul (m + n), Λ.volume_card_eq_mul m,
       Λ.volume_card_eq_mul n]
   ring
+
+/-- **Decomposition of `volume (m + n)` as a union**: under the
+additive `shift_add` structural field,
+`volume (m + n) = volume m ∪ (shift m +ᵥ volume n)`.
+
+Proof by induction on `n`. The base case uses `volume_zero` and
+`vaddFinset_empty`; the inductive step uses `volume_succ`,
+`vaddFinset_union`, `vaddFinset_add`, `shift_add`, and Finset
+union commutativity/associativity. -/
+theorem volume_decomposes
+    (Λ : TranslationInvariantExhaustion T V) (m n : ℕ) :
+    Λ.volume (m + n)
+      = Λ.volume m ∪ vaddFinset (Λ.shift m) (Λ.volume n) := by
+  induction n with
+  | zero =>
+    rw [Nat.add_zero, Λ.volume_zero, vaddFinset_empty,
+        Finset.union_empty]
+  | succ n ih =>
+    -- LHS: Λ.volume (m + (n + 1)) = Λ.volume (m + n + 1)
+    --    = Λ.volume (m + n) ∪ (shift (m+n) +ᵥ Λ.volume 1) [volume_succ]
+    -- RHS: Λ.volume m ∪ (shift m +ᵥ Λ.volume (n + 1))
+    --    = Λ.volume m ∪ (shift m +ᵥ (Λ.volume n ∪ (shift n +ᵥ Λ.volume 1)))
+    --    = Λ.volume m ∪ ((shift m +ᵥ Λ.volume n) ∪
+    --                    (shift m +ᵥ (shift n +ᵥ Λ.volume 1)))
+    --    = Λ.volume m ∪ ((shift m +ᵥ Λ.volume n) ∪
+    --                    ((shift m + shift n) +ᵥ Λ.volume 1))
+    --    = Λ.volume m ∪ ((shift m +ᵥ Λ.volume n) ∪
+    --                    (shift (m+n) +ᵥ Λ.volume 1)) [shift_add]
+    --    = (Λ.volume m ∪ (shift m +ᵥ Λ.volume n)) ∪
+    --      (shift (m+n) +ᵥ Λ.volume 1) [union_assoc]
+    --    = Λ.volume (m+n) ∪ (shift (m+n) +ᵥ Λ.volume 1) [IH]
+    --    = LHS.
+    have hstep : m + (n + 1) = (m + n) + 1 := by ring
+    rw [hstep, Λ.volume_succ (m + n), Λ.volume_succ n, ih,
+        vaddFinset_union, vaddFinset_add, Λ.shift_add m n,
+        Finset.union_assoc]
 
 /-- **`DisjointTowerHypotheses` from a `TranslationInvariantExhaustion`
 + hypothesised `hsuper`**: given a translation-invariant exhaustion
