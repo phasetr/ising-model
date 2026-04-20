@@ -607,6 +607,45 @@ theorem truncated2TwoPoint_eq_twoPointFunction_sub_magnetization_sq
   -- = `twoPointFunction d p r - magnetizationInfinite ... 0 ^ 2`.
   ring
 
+/-- **`truncated3TwoPoint` at `β = 0` vanishes**:
+`truncated3TwoPoint d ⟨J, h, 0⟩ r s = 0`.
+
+All seven Ursell terms (one 3-set, three pairs, three singletons) vanish
+at β=0 via `correlationInfinite_beta_zero_vanish`. Direct computation. -/
+theorem truncated3TwoPoint_beta_zero
+    (d : ℕ) (J h : ℝ) (r s : Fin d → ℤ) :
+    truncated3TwoPoint d (⟨J, h, 0⟩ : IsingParams ℝ) r s = 0 := by
+  unfold truncated3TwoPoint truncated3Infinite
+  rw [show correlationInfinite (IsingModel.latticeGraph d)
+      (Ambient.cubicExhaustion d) (⟨J, h, 0⟩ : IsingParams ℝ)
+      {(0 : Fin d → ℤ), r, s} = 0 from
+    correlationInfinite_beta_zero_vanish _ _ J h _ (by simp),
+      show correlationInfinite (IsingModel.latticeGraph d)
+      (Ambient.cubicExhaustion d) (⟨J, h, 0⟩ : IsingParams ℝ)
+      {(0 : Fin d → ℤ)} = 0 from
+    correlationInfinite_beta_zero_vanish _ _ J h _ (by simp),
+      show correlationInfinite (IsingModel.latticeGraph d)
+      (Ambient.cubicExhaustion d) (⟨J, h, 0⟩ : IsingParams ℝ)
+      {r, s} = 0 from
+    correlationInfinite_beta_zero_vanish _ _ J h _ (by simp),
+      show correlationInfinite (IsingModel.latticeGraph d)
+      (Ambient.cubicExhaustion d) (⟨J, h, 0⟩ : IsingParams ℝ)
+      {r} = 0 from
+    correlationInfinite_beta_zero_vanish _ _ J h _ (by simp),
+      show correlationInfinite (IsingModel.latticeGraph d)
+      (Ambient.cubicExhaustion d) (⟨J, h, 0⟩ : IsingParams ℝ)
+      {(0 : Fin d → ℤ), s} = 0 from
+    correlationInfinite_beta_zero_vanish _ _ J h _ (by simp),
+      show correlationInfinite (IsingModel.latticeGraph d)
+      (Ambient.cubicExhaustion d) (⟨J, h, 0⟩ : IsingParams ℝ)
+      {s} = 0 from
+    correlationInfinite_beta_zero_vanish _ _ J h _ (by simp),
+      show correlationInfinite (IsingModel.latticeGraph d)
+      (Ambient.cubicExhaustion d) (⟨J, h, 0⟩ : IsingParams ℝ)
+      {(0 : Fin d → ℤ), r} = 0 from
+    correlationInfinite_beta_zero_vanish _ _ J h _ (by simp)]
+  ring
+
 /-- **`twoPointFunction` at `β = 0`**: `twoPointFunction d ⟨J, h, 0⟩ r = 0`.
 
 At infinite temperature `β = 0`, all correlation functions vanish
