@@ -4038,6 +4038,37 @@ invariance. Requires Ising-Hamiltonian translation equivariance
 Reference: Glimm--Jaffe \cite{glimm-jaffe} \S 4.6 Prop 4.6.1,
 p.~64.
 
+\begin{theorem}[Finset-based susceptibility at $J = 0$ closed form;
+PR \#231]
+For the repo-level Finset-based susceptibility
+$\chi := \sum_j U_2(i,j)$, where $U_2(i,j) = \langle
+\sigma^{\{i,j\}}\rangle - \langle\sigma^{\{i\}}\rangle
+\langle\sigma^{\{j\}}\rangle$,
+for any ambient graph $G$ with finite $\iota$ and any
+$h, \beta \in \mathbb{R}$,
+\[
+  \chi^{\langle 0, h, \beta\rangle}_G(i)
+  = \tanh(\beta h) \cdot \big(1 - \tanh(\beta h)\big).
+\]
+(Caveat: this differs from the physics response-function
+$dM/dh = \beta(1-t^2)$ at the diagonal, because the Finset
+collapse $\{i,i\} = \{i\}$ gives
+$\langle\sigma^{\{i\}}\rangle - \langle\sigma^{\{i\}}\rangle^2
+= t - t^2$ rather than the physics
+$\langle\sigma_i^2\rangle - \langle\sigma_i\rangle^2 = 1 - t^2$.)
+\end{theorem}
+
+\begin{proof}
+$\chi(i) := \sum_j U_2(i,j)$. For $j \neq i$,
+\texttt{truncated2\_J\_zero\_of\_ne} (PR \#207) gives summand zero.
+For $j = i$, the Finset $\{i,i\}$ collapses to $\{i\}$, so
+$U_2(i,i) = \langle \sigma^{\{i\}}\rangle -
+\langle \sigma^{\{i\}}\rangle^2 = t - t^2$ with $t = \tanh(\beta h)$
+(\texttt{correlation\_J\_zero} + card$\,\{i\}=1$). Factor to
+$t(1-t)$. Reference: Glimm--Jaffe \cite{glimm-jaffe} \S 4.1
+(non-interacting slice); \S 5.1 pp.~76--77 (susceptibility).
+\end{proof}
+
 \begin{theorem}[Finite-volume magnetization at $J = 0$
 $= \tanh(\beta h)$; PR \#219]
 For any graph $G$ with finite $\iota$, any $h, \beta \in \mathbb{R}$,
