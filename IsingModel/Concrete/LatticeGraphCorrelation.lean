@@ -607,6 +607,24 @@ theorem truncated2TwoPoint_eq_twoPointFunction_sub_magnetization_sq
   -- = `twoPointFunction d p r - magnetizationInfinite ... 0 ^ 2`.
   ring
 
+/-- **`truncated3TwoPoint` at `J = 0` vanishes (pairwise distinct, nonzero)**:
+for ferromagnetic `⟨0, h, β⟩` and `0 ≠ r, 0 ≠ s, r ≠ s`,
+`truncated3TwoPoint d ⟨0, h, β⟩ r s = 0`.
+
+Concrete ℤ^d specialisation of `truncated3Infinite_J_zero_of_pairwise_distinct`
+at `i = 0, j = r, k = s`. Cluster property: at J=0 distinct sites are
+independent, so the 3-point truncated function vanishes. -/
+theorem truncated3TwoPoint_J_zero_of_distinct
+    (d : ℕ) (h β : ℝ)
+    (hf : Ferromagnetic (⟨(0 : ℝ), h, β⟩ : IsingParams ℝ))
+    {r s : Fin d → ℤ}
+    (hr : (0 : Fin d → ℤ) ≠ r) (hrs : r ≠ s)
+    (hs : (0 : Fin d → ℤ) ≠ s) :
+    truncated3TwoPoint d (⟨0, h, β⟩ : IsingParams ℝ) r s = 0 :=
+  truncated3Infinite_J_zero_of_pairwise_distinct
+    (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d) h β hf
+    hr hrs hs
+
 /-- **`truncated4TwoPoint` at `J = 0` closed form** (ferromagnetic,
 pairwise distinct + nonzero separations):
 
