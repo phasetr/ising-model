@@ -154,6 +154,27 @@ theorem abs_magnetization_le_one (G : SimpleGraph ι) [Fintype G.edgeSet]
     |magnetization G p i| ≤ 1 :=
   abs_correlation_le_one G p {i}
 
+/-- **`magnetization ≤ 1`** unconditionally. Direct from
+`correlation_le_one` at `A = {i}`. -/
+theorem magnetization_le_one (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (p : IsingParams ℝ) (i : ι) :
+    magnetization G p i ≤ 1 :=
+  correlation_le_one G p {i}
+
+/-- **`-1 ≤ magnetization`** unconditionally. Direct from
+`neg_one_le_correlation` at `A = {i}`. -/
+theorem neg_one_le_magnetization (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (p : IsingParams ℝ) (i : ι) :
+    -1 ≤ magnetization G p i :=
+  neg_one_le_correlation G p {i}
+
+/-- **`0 ≤ magnetization`** for ferromagnetic `p`. Direct from
+`gks_first` at `A = {i}` (GKS-I). -/
+theorem magnetization_nonneg (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i : ι) :
+    0 ≤ magnetization G p i :=
+  gks_first G p hf {i}
+
 /-- **Susceptibility** (per site `i`):
 `χ(i) = Σ_j ⟨σ_i; σ_j⟩ = Σ_j truncated2(i, j)`.
 
