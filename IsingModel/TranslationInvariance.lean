@@ -159,6 +159,48 @@ theorem vaddFinset_disjoint_of_disjoint {T : Type u} [AddGroup T]
   subst hu_eq
   exact Finset.disjoint_left.mp h hu₁A hu₂B
 
+/-- **Subtype bijection between `↑Λ` and `↑(t +ᵥ Λ)`**: the natural
+translation-induced bijection, sending `⟨v, hv⟩ : ↑Λ` to
+`⟨t +ᵥ v, _⟩ : ↑(vaddFinset t Λ)` and vice versa via `-t`.
+
+This is the structural datum underlying partition-function
+translation invariance: summing over configurations of `↑Λ` and
+of `↑(t +ᵥ Λ)` yield the same value after the identification. -/
+def vaddSubtypeEquiv {T : Type u} [AddGroup T] {V : Type v}
+    [DecidableEq V] [AddAction T V]
+    (t : T) (Λ : Finset V) :
+    (↑Λ : Type _) ≃ (↑(vaddFinset t Λ) : Type _) where
+  toFun := fun ⟨v, hv⟩ =>
+    ⟨t +ᵥ v, by
+      rw [mem_vaddFinset]
+      exact ⟨v, hv, rfl⟩⟩
+  invFun := fun ⟨v, hv⟩ =>
+    ⟨(-t) +ᵥ v, by
+      rw [mem_vaddFinset] at hv
+      obtain ⟨u, huΛ, heq⟩ := hv
+      have : (-t) +ᵥ v = u := by
+        rw [← heq, ← add_vadd, neg_add_cancel, zero_vadd]
+      rw [this]
+      exact huΛ⟩
+  left_inv := by
+    rintro ⟨v, hv⟩
+    apply Subtype.ext
+    change (-t) +ᵥ (t +ᵥ v) = v
+    rw [← add_vadd, neg_add_cancel, zero_vadd]
+  right_inv := by
+    rintro ⟨v, hv⟩
+    apply Subtype.ext
+    change t +ᵥ ((-t) +ᵥ v) = v
+    rw [← add_vadd, add_neg_cancel, zero_vadd]
+
+/-- **`vaddSubtypeEquiv` forward map unfolds to `t +ᵥ ·`**. -/
+@[simp]
+theorem vaddSubtypeEquiv_apply_coe {T : Type u} [AddGroup T]
+    {V : Type v} [DecidableEq V] [AddAction T V]
+    (t : T) (Λ : Finset V) (x : (↑Λ : Type _)) :
+    ((vaddSubtypeEquiv t Λ) x : V) = t +ᵥ (x : V) := by
+  rfl
+
 /-! ## Translation-invariant exhaustions
 
 An exhaustion whose consecutive volumes differ by a disjoint
