@@ -172,6 +172,7 @@ gives, at every `h₀ ∈ leeYangDomain`, an analytic function `f` with
 | `tanh_odd` | `tanh(-x) = -tanh(x)` | `PhaseTransition.lean` | Algebraic |
 | `susceptibility_nonneg` (§5.3) | `χᵢ = Σⱼ⟨σᵢ;σⱼ⟩ ≥ 0` | `PhaseTransition.lean` | Finite |
 | `susceptibility_J_zero` | **J=0 closed form** (Finset-based) `χᵢ = tanh(β·h)·(1 − tanh(β·h))`: at `J = 0` off-diagonal terms vanish (`truncated2_J_zero_of_ne`); diagonal term uses the Finset collapse `{i,i} = {i}` to give `⟨σ_i⟩ − ⟨σ_i⟩² = t − t²`. Differs from the physics response-function `dM/dh = β·(1 − t²)` at the diagonal (which uses `σ_i² = 1`). | `PhaseTransition.lean` | Complements the trivial-slice sweep at the susceptibility level |
+| `susceptibility_beta_zero` | **β=0 vanishing** `χᵢ = 0`: every `truncated2 i j` is zero at `β = 0` (PR #208), so the sum vanishes. | `PhaseTransition.lean` | Companion to `susceptibility_J_zero` |
 | `susceptibility_convergent_{J,h,beta,subgraph}` | convergence | `PhaseTransition.lean` | Finite / Discretized Λ↑ |
 | `magnetization_zero_at_h_zero` | `Mᵢ = 0` at `h = 0` (Z₂) | `PhaseTransition.lean` | Finite |
 | `magnetization_monotone_{h,beta}` | monotone in `h`, `β` | `PhaseTransition.lean` | Finite |
