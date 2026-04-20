@@ -244,6 +244,23 @@ theorem spontaneousMagnetization_latticeGraph_cubicExhaustion_eq
   rw [hvadd] at h
   exact h.symm
 
+/-- **ℤ^d correlationAlongExhaustion ≤ 1** per stage. -/
+theorem correlationAlongExhaustion_latticeGraph_cubicExhaustion_le_one
+    (d : ℕ) (p : IsingParams ℝ) (A : Finset (Fin d → ℤ)) (n : ℕ) :
+    correlationAlongExhaustion (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) p A n ≤ 1 :=
+  correlationAlongExhaustion_le_one (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) p A n
+
+/-- **ℤ^d correlationAlongExhaustion ≥ 0** per stage (ferromagnetic). -/
+theorem correlationAlongExhaustion_latticeGraph_cubicExhaustion_nonneg
+    (d : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    (A : Finset (Fin d → ℤ)) (n : ℕ) :
+    0 ≤ correlationAlongExhaustion (IsingModel.latticeGraph d)
+      (Ambient.cubicExhaustion d) p A n :=
+  correlationAlongExhaustion_nonneg (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) p hf A n
+
 /-- **ℤ^d physical identification: correlationΛ → correlationInfinite**. -/
 theorem tendsto_correlationΛ_correlationInfinite_latticeGraph
     (d : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p)
