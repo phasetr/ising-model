@@ -145,6 +145,19 @@ theorem spontaneousCorrelation_le_correlationInfinite_latticeGraph
   spontaneousCorrelation_le_correlationInfinite (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) hJ hβ hh A
 
+/-- **Translation invariance of `spontaneousCorrelation` on ℤ^d**:
+for `0 ≤ J`, `0 < β` and any `t : Fin d → ℤ`,
+`spontaneousCorrelation ... J β (vaddFinset t A) = spontaneousCorrelation ... J β A`. -/
+theorem spontaneousCorrelation_latticeGraph_cubicExhaustion_translation
+    (d : ℕ) (t : Fin d → ℤ) {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β)
+    (A : Finset (Fin d → ℤ)) :
+    spontaneousCorrelation (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) J β (vaddFinset t A)
+      = spontaneousCorrelation (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) J β A :=
+  spontaneousCorrelation_translation (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) t hJ hβ A
+
 /-- **J-monotonicity of `spontaneousCorrelation` on ℤ^d**. -/
 theorem spontaneousCorrelation_latticeGraph_cubicExhaustion_monotone_J
     (d : ℕ) {β : ℝ} (hβ : 0 < β) (A : Finset (Fin d → ℤ)) :
