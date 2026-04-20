@@ -607,6 +607,20 @@ theorem truncated2TwoPoint_eq_twoPointFunction_sub_magnetization_sq
   -- = `twoPointFunction d p r - magnetizationInfinite ... 0 ^ 2`.
   ring
 
+/-- **`twoPointFunction` at `β = 0`**: `twoPointFunction d ⟨J, h, 0⟩ r = 0`.
+
+At infinite temperature `β = 0`, all correlation functions vanish
+(Boltzmann weight is `exp 0 = 1`, and the summand is the spin product
+which sums to zero over all configurations). Concrete specialisation
+of `correlationInfinite_beta_zero_vanish` at `A = {0, r}` (nonempty). -/
+theorem twoPointFunction_beta_zero
+    (d : ℕ) (J h : ℝ) (r : Fin d → ℤ) :
+    twoPointFunction d (⟨J, h, 0⟩ : IsingParams ℝ) r = 0 := by
+  unfold twoPointFunction
+  exact correlationInfinite_beta_zero_vanish
+    (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d) J h
+    {(0 : Fin d → ℤ), r} (by simp)
+
 /-- **`twoPointFunction` at `J = 0`** (ferromagnetic `⟨0, h, β⟩`), for
 distinct sites: `twoPointFunction d ⟨0, h, β⟩ r = tanh(β · h)^2`
 for `r ≠ 0`.
