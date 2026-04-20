@@ -223,6 +223,38 @@ theorem freeEnergyΛ_nonneg_of_ferromagnetic
   IsingModel.freeEnergy_nonneg_of_ferromagnetic
     (inducedGraph G Λ) p hf hne.fintype_card_coe_pos
 
+/-- **Λ-level free-energy closed form at `J = 0`**:
+for nonempty `Λ` and any ambient graph `G`,
+`freeEnergyΛ G Λ ⟨0, h, β⟩ = log(2·cosh(β·h))`. Thin wrapper of
+`IsingModel.freeEnergy_J_zero` through
+`freeEnergyΛ := freeEnergy (inducedGraph G Λ)`. -/
+theorem freeEnergyΛ_J_zero
+    (G : SimpleGraph V) {Λ : Finset V} (hne : Λ.Nonempty)
+    [Fintype (inducedGraph G Λ).edgeSet] (h β : ℝ) :
+    freeEnergyΛ G Λ (⟨0, h, β⟩ : IsingParams ℝ)
+      = Real.log (2 * Real.cosh (β * h)) :=
+  IsingModel.freeEnergy_J_zero _ h β hne.fintype_card_coe_pos
+
+/-- **Λ-level free-energy closed form at `β = 0`**:
+for nonempty `Λ` and any ambient graph `G`,
+`freeEnergyΛ G Λ ⟨J, h, 0⟩ = log 2`. Thin wrapper of
+`IsingModel.freeEnergy_beta_zero`. -/
+theorem freeEnergyΛ_beta_zero
+    (G : SimpleGraph V) {Λ : Finset V} (hne : Λ.Nonempty)
+    [Fintype (inducedGraph G Λ).edgeSet] (J h : ℝ) :
+    freeEnergyΛ G Λ (⟨J, h, 0⟩ : IsingParams ℝ) = Real.log 2 :=
+  IsingModel.freeEnergy_beta_zero _ J h hne.fintype_card_coe_pos
+
+/-- **Λ-level free-energy closed form at `J = 0, h = 0`**:
+for nonempty `Λ` and any ambient graph `G`,
+`freeEnergyΛ G Λ ⟨0, 0, β⟩ = log 2`. Thin wrapper of
+`IsingModel.freeEnergy_zero_params`. -/
+theorem freeEnergyΛ_zero_params
+    (G : SimpleGraph V) {Λ : Finset V} (hne : Λ.Nonempty)
+    [Fintype (inducedGraph G Λ).edgeSet] (β : ℝ) :
+    freeEnergyΛ G Λ (⟨0, 0, β⟩ : IsingParams ℝ) = Real.log 2 :=
+  IsingModel.freeEnergy_zero_params _ β hne.fintype_card_coe_pos
+
 /-- **`partitionFunctionΛ ≥ 1`** for ferromagnetic parameters:
 lifts PR #141 `partitionFunction_ge_one_of_ferromagnetic` to the
 `partitionFunctionΛ` API level. -/
