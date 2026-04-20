@@ -4587,4 +4587,37 @@ $\mathrm{latticeGraph}\ d$ along this exhaustion is deferred to a
 subsequent PR.
 Reference: Glimm--Jaffe \cite{glimm-jaffe} \S 4.6, p.~67.
 
+\begin{theorem}[Bounded edge density for $\mathrm{latticeGraph}\,d$
+on cubic boxes; PR \#246]
+For every $d : \mathbb{N}$,
+\[
+  \mathrm{Ambient.BoundedEdgeDensity}\ (\mathrm{IsingModel.latticeGraph}\,d)\
+  (\mathrm{Ambient.cubicExhaustion}\,d)
+\]
+holds with constant $c = d$: $|E(\mathrm{latticeGraph}\,d[\Lambda_n])| \le
+d \cdot |\Lambda_n|$ where $\Lambda_n = \mathrm{cubicBox}\,d\,n$.
+\end{theorem}
+\begin{proof}
+\emph{Vertex degree bound.} For every vertex $v : \mathrm{Fin}\,d \to \mathbb{Z}$,
+the neighbours in $\mathrm{latticeGraph}\,d$ lie in the $2d$-element set
+$\{\mathrm{Function.update}\,v\,i\,(v_i \pm 1) : i : \mathrm{Fin}\,d\}$
+(formalised as \texttt{latticeNeighborEnum}). The ℓ¹-distance-$1$ condition
+$\sum_j |v_j - w_j| = 1$ forces exactly one coordinate $i$ to differ from $v$,
+with $|v_i - w_i| = 1$. Restricting to $w \in \Lambda_n$ only lowers the
+degree, so $\deg_{\mathrm{induced}}(v) \le 2d$ for every $v \in \Lambda_n$.
+
+\emph{Handshake.} By the degree-sum formula
+$\sum_{v \in \Lambda_n} \deg(v) = 2|E|$, we get
+$2|E| \le 2d |\Lambda_n|$, hence $|E| \le d |\Lambda_n|$ (divide by $2$).
+\end{proof}
+
+\paragraph{Remark.}
+Combined with $\mathrm{cubicExhaustion}\,d$ (PR~\#245), this closes the
+concrete-ambient-lattice infrastructure for GJ \S 4.6 modulo the still
+missing super-additivity ingredient (a compatible
+$\mathrm{TranslationInvariantExhaustion}$). The per-stage
+$\mathrm{freeEnergyAlongExhaustion}$ bound
+$\le \log 2 + |\beta|(|J|\cdot d + |h|)$ now has an explicit constant.
+Reference: Glimm--Jaffe \cite{glimm-jaffe} \S 4.6, p.~67.
+
 \end{document}
