@@ -930,6 +930,98 @@ theorem twoPointFunction_ge_uniformMagnetization_sq
     (uniformMagnetization d p)^2 ≤ twoPointFunction d p r :=
   twoPointFunction_ge_magnetization_sq d p hf r
 
+/-- **`truncated2TwoPoint` at `J = h = 0` vanishes**:
+`truncated2TwoPoint d ⟨0, 0, β⟩ r = 0`. All three Ursell terms vanish. -/
+theorem truncated2TwoPoint_zero_params
+    (d : ℕ) (β : ℝ) (r : Fin d → ℤ) :
+    truncated2TwoPoint d (⟨0, 0, β⟩ : IsingParams ℝ) r = 0 := by
+  unfold truncated2TwoPoint truncated2Infinite
+  rw [show correlationInfinite (IsingModel.latticeGraph d)
+      (Ambient.cubicExhaustion d) (⟨0, 0, β⟩ : IsingParams ℝ)
+      {(0 : Fin d → ℤ), r} = 0 from
+    correlationInfinite_zero_params_vanish _ _ β _ (by simp),
+      show correlationInfinite (IsingModel.latticeGraph d)
+      (Ambient.cubicExhaustion d) (⟨0, 0, β⟩ : IsingParams ℝ)
+      {(0 : Fin d → ℤ)} = 0 from
+    correlationInfinite_zero_params_vanish _ _ β _ (by simp),
+      show correlationInfinite (IsingModel.latticeGraph d)
+      (Ambient.cubicExhaustion d) (⟨0, 0, β⟩ : IsingParams ℝ)
+      {r} = 0 from
+    correlationInfinite_zero_params_vanish _ _ β _ (by simp)]
+  ring
+
+/-- **`truncated3TwoPoint` at `J = h = 0` vanishes**:
+`truncated3TwoPoint d ⟨0, 0, β⟩ r s = 0`. All seven Ursell terms vanish. -/
+theorem truncated3TwoPoint_zero_params
+    (d : ℕ) (β : ℝ) (r s : Fin d → ℤ) :
+    truncated3TwoPoint d (⟨0, 0, β⟩ : IsingParams ℝ) r s = 0 := by
+  unfold truncated3TwoPoint truncated3Infinite
+  rw [show correlationInfinite (IsingModel.latticeGraph d)
+      (Ambient.cubicExhaustion d) (⟨0, 0, β⟩ : IsingParams ℝ)
+      {(0 : Fin d → ℤ), r, s} = 0 from
+    correlationInfinite_zero_params_vanish _ _ β _ (by simp),
+      show correlationInfinite (IsingModel.latticeGraph d)
+      (Ambient.cubicExhaustion d) (⟨0, 0, β⟩ : IsingParams ℝ)
+      {(0 : Fin d → ℤ)} = 0 from
+    correlationInfinite_zero_params_vanish _ _ β _ (by simp),
+      show correlationInfinite (IsingModel.latticeGraph d)
+      (Ambient.cubicExhaustion d) (⟨0, 0, β⟩ : IsingParams ℝ)
+      {r, s} = 0 from
+    correlationInfinite_zero_params_vanish _ _ β _ (by simp),
+      show correlationInfinite (IsingModel.latticeGraph d)
+      (Ambient.cubicExhaustion d) (⟨0, 0, β⟩ : IsingParams ℝ)
+      {r} = 0 from
+    correlationInfinite_zero_params_vanish _ _ β _ (by simp),
+      show correlationInfinite (IsingModel.latticeGraph d)
+      (Ambient.cubicExhaustion d) (⟨0, 0, β⟩ : IsingParams ℝ)
+      {(0 : Fin d → ℤ), s} = 0 from
+    correlationInfinite_zero_params_vanish _ _ β _ (by simp),
+      show correlationInfinite (IsingModel.latticeGraph d)
+      (Ambient.cubicExhaustion d) (⟨0, 0, β⟩ : IsingParams ℝ)
+      {s} = 0 from
+    correlationInfinite_zero_params_vanish _ _ β _ (by simp),
+      show correlationInfinite (IsingModel.latticeGraph d)
+      (Ambient.cubicExhaustion d) (⟨0, 0, β⟩ : IsingParams ℝ)
+      {(0 : Fin d → ℤ), r} = 0 from
+    correlationInfinite_zero_params_vanish _ _ β _ (by simp)]
+  ring
+
+/-- **`truncated4TwoPoint` at `J = h = 0` vanishes**:
+`truncated4TwoPoint d ⟨0, 0, β⟩ r s u = 0`. All four Lebowitz terms vanish. -/
+theorem truncated4TwoPoint_zero_params
+    (d : ℕ) (β : ℝ) (r s u : Fin d → ℤ) :
+    truncated4TwoPoint d (⟨0, 0, β⟩ : IsingParams ℝ) r s u = 0 := by
+  unfold truncated4TwoPoint truncated4Infinite
+  rw [show correlationInfinite (IsingModel.latticeGraph d)
+      (Ambient.cubicExhaustion d) (⟨0, 0, β⟩ : IsingParams ℝ)
+      {(0 : Fin d → ℤ), r, s, u} = 0 from
+    correlationInfinite_zero_params_vanish _ _ β _ (by simp),
+      show correlationInfinite (IsingModel.latticeGraph d)
+      (Ambient.cubicExhaustion d) (⟨0, 0, β⟩ : IsingParams ℝ)
+      {(0 : Fin d → ℤ), r} = 0 from
+    correlationInfinite_zero_params_vanish _ _ β _ (by simp),
+      show correlationInfinite (IsingModel.latticeGraph d)
+      (Ambient.cubicExhaustion d) (⟨0, 0, β⟩ : IsingParams ℝ)
+      {s, u} = 0 from
+    correlationInfinite_zero_params_vanish _ _ β _ (by simp),
+      show correlationInfinite (IsingModel.latticeGraph d)
+      (Ambient.cubicExhaustion d) (⟨0, 0, β⟩ : IsingParams ℝ)
+      {(0 : Fin d → ℤ), s} = 0 from
+    correlationInfinite_zero_params_vanish _ _ β _ (by simp),
+      show correlationInfinite (IsingModel.latticeGraph d)
+      (Ambient.cubicExhaustion d) (⟨0, 0, β⟩ : IsingParams ℝ)
+      {r, u} = 0 from
+    correlationInfinite_zero_params_vanish _ _ β _ (by simp),
+      show correlationInfinite (IsingModel.latticeGraph d)
+      (Ambient.cubicExhaustion d) (⟨0, 0, β⟩ : IsingParams ℝ)
+      {(0 : Fin d → ℤ), u} = 0 from
+    correlationInfinite_zero_params_vanish _ _ β _ (by simp),
+      show correlationInfinite (IsingModel.latticeGraph d)
+      (Ambient.cubicExhaustion d) (⟨0, 0, β⟩ : IsingParams ℝ)
+      {r, s} = 0 from
+    correlationInfinite_zero_params_vanish _ _ β _ (by simp)]
+  ring
+
 /-- **`truncated2TwoPoint` at `β = 0` vanishes**:
 `truncated2TwoPoint d ⟨J, h, 0⟩ r = 0`.
 
