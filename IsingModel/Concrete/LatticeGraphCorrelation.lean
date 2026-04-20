@@ -607,6 +607,27 @@ theorem truncated2TwoPoint_eq_twoPointFunction_sub_magnetization_sq
   -- = `twoPointFunction d p r - magnetizationInfinite ... 0 ^ 2`.
   ring
 
+/-- **`truncated4TwoPoint` at `J = 0` closed form** (ferromagnetic,
+pairwise distinct + nonzero separations):
+
+`truncated4TwoPoint d ⟨0, h, β⟩ r s u = -2 · tanh(β · h)^4`.
+
+Concrete ℤ^d specialisation of `truncated4Infinite_J_zero_of_pairwise_distinct`
+at `i = 0, j = r, k = s, l = u`. Non-interacting Lebowitz 4-point
+closed form. -/
+theorem truncated4TwoPoint_J_zero_of_distinct
+    (d : ℕ) (h β : ℝ)
+    (hf : Ferromagnetic (⟨(0 : ℝ), h, β⟩ : IsingParams ℝ))
+    {r s u : Fin d → ℤ}
+    (hr : (0 : Fin d → ℤ) ≠ r) (hs : (0 : Fin d → ℤ) ≠ s)
+    (hu : (0 : Fin d → ℤ) ≠ u)
+    (hrs : r ≠ s) (hru : r ≠ u) (hsu : s ≠ u) :
+    truncated4TwoPoint d (⟨0, h, β⟩ : IsingParams ℝ) r s u
+      = -2 * Real.tanh (β * h) ^ 4 :=
+  truncated4Infinite_J_zero_of_pairwise_distinct
+    (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d) h β hf
+    hr hs hu hrs hru hsu
+
 /-- **`truncated4TwoPoint` at `β = 0` vanishes**:
 `truncated4TwoPoint d ⟨J, h, 0⟩ r s u = 0`.
 
