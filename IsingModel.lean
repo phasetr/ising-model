@@ -17,3 +17,4 @@ import IsingModel.Concrete.IntLattice
 import IsingModel.Concrete.CubicExhaustion
 import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.Concrete.LatticeGraphFreeEnergy
+import IsingModel.Concrete.LatticeGraphCorrelation
