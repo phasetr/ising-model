@@ -4620,4 +4620,33 @@ $\mathrm{freeEnergyAlongExhaustion}$ bound
 $\le \log 2 + |\beta|(|J|\cdot d + |h|)$ now has an explicit constant.
 Reference: Glimm--Jaffe \cite{glimm-jaffe} \S 4.6, p.~67.
 
+\begin{theorem}[Concrete $\mathbb{Z}^d$ Ising free-energy sandwich; PR \#247]
+For every $d : \mathbb{N}$, ferromagnetic parameters $0 \le J$,
+$0 \le h$, $0 < \beta$, and any stage $n$ with $(\mathrm{cubicExhaustion}\,d)
+.\mathrm{volume}\,n$ non-empty,
+\[
+  \log 2
+    \le \mathrm{freeEnergyAlongExhaustion}\ (\mathrm{latticeGraph}\,d)\
+        (\mathrm{cubicExhaustion}\,d)\ \langle J, h, \beta\rangle\ n
+    \le \log 2 + |\beta| \cdot (|J| \cdot d + |h|).
+\]
+\end{theorem}
+\begin{proof}
+The lower bound is the ferromagnetic, nonempty-stage specialisation
+of $\mathrm{freeEnergyAlongExhaustion\_ge\_log\_two}$ in
+$\texttt{AmbientLattice.lean}$. The upper bound applies
+$\mathrm{freeEnergyAlongExhaustion\_le\_uniform\_upper\_bound}$ with
+the concrete edge-density constant $c = d$ furnished by
+$\mathrm{inducedLatticeGraph\_card\_edgeFinset\_le}$ (PR~\#246).
+\end{proof}
+
+\paragraph{Remark.}
+Capstone for the concrete $\mathbb{Z}^d$ infrastructure developed
+across PRs~\#244 ($\mathrm{IsTranslationInvariant}$),
+\#245 ($\mathrm{cubicExhaustion}\,d$), and \#246
+($\mathrm{BoundedEdgeDensity}$ with $c = d$). The Fekete convergence
+$f_n \to f_\infty$ still requires a compatible
+$\mathrm{TranslationInvariantExhaustion}$ on $\mathbb{Z}^d$, deferred
+pending a structure refactor.
+
 \end{document}
