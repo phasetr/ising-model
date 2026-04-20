@@ -309,6 +309,30 @@ def inducedGraphVaddIso {T : Type u} [AddGroup T] {V : Type v}
     simp only [Equiv.apply_symm_apply] at this
     exact this.symm
 
+/-- **`edgeSpin` compatibility with `Sym2.map (vaddSubtypeEquiv)`**:
+for any `σ' : Config ↑(vaddFinset t Λ)` and any `e : Sym2 ↑Λ`,
+
+`edgeSpin σ' (Sym2.map (vaddSubtypeEquiv t Λ) e)
+  = edgeSpin ((configVaddEquiv t Λ).symm σ') e`.
+
+Reading right-to-left: evaluating `σ := σ' ∘ vaddSubtypeEquiv` on
+the untranslated edge `e` equals evaluating the original `σ'` on
+the translated edge `Sym2.map vaddSubtypeEquiv e`.
+
+Proof by `Sym2.ind` + definitional unfolding of `Sym2.lift`/
+`Sym2.map`/`Equiv.arrowCongr`. -/
+theorem edgeSpin_map_vaddSubtypeEquiv {T : Type u} [AddGroup T]
+    {V : Type v} [DecidableEq V] [AddAction T V]
+    (t : T) (Λ : Finset V)
+    (σ' : Config (↑(vaddFinset t Λ) : Type _))
+    (e : Sym2 (↑Λ : Type _)) :
+    (IsingModel.edgeSpin σ'
+        (Sym2.map (vaddSubtypeEquiv t Λ) e) : ℝ)
+      = IsingModel.edgeSpin
+          ((configVaddEquiv t Λ).symm σ') e := by
+  refine Sym2.ind (fun _ _ => ?_) e
+  rfl
+
 /-! ## Translation-invariant exhaustions
 
 An exhaustion whose consecutive volumes differ by a disjoint
