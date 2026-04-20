@@ -796,6 +796,21 @@ theorem truncated2TwoPoint_beta_zero
     correlationInfinite_beta_zero_vanish _ _ J h _ (by simp)]
   ring
 
+/-- **`truncated2TwoPoint ≤ twoPointFunction`** on ℤ^d (ferromagnetic):
+`truncated2TwoPoint d p r ≤ twoPointFunction d p r`.
+
+Immediate from `truncated2TwoPoint = twoPointFunction − M²`
+(PR #261) + `M² ≥ 0`: subtracting a nonneg quantity only decreases.
+Physical content: the truncated 2-point function never exceeds the
+connected 2-point function. -/
+theorem truncated2TwoPoint_le_twoPointFunction
+    (d : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p) (r : Fin d → ℤ) :
+    truncated2TwoPoint d p r ≤ twoPointFunction d p r := by
+  have h_eq := truncated2TwoPoint_eq_twoPointFunction_sub_uniformMagnetization_sq
+    d p hf r
+  have h_sq : 0 ≤ (uniformMagnetization d p)^2 := sq_nonneg _
+  linarith
+
 /-- **`truncated2TwoPoint` at `J = 0` vanishes for `r ≠ 0`** (ferromagnetic):
 `truncated2TwoPoint d ⟨0, h, β⟩ r = 0`.
 
