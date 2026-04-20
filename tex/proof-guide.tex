@@ -4038,6 +4038,26 @@ invariance. Requires Ising-Hamiltonian translation equivariance
 Reference: Glimm--Jaffe \cite{glimm-jaffe} \S 4.6 Prop 4.6.1,
 p.~64.
 
+\begin{theorem}[Susceptibility at $J = 0$ closed form; PR \#231]
+For any ambient graph $G$ with finite $\iota$, any $h, \beta \in
+\mathbb{R}$, and any site $i$,
+\[
+  \chi^{\langle 0, h, \beta\rangle}_G(i)
+  = \tanh(\beta h) \cdot \big(1 - \tanh(\beta h)\big).
+\]
+\end{theorem}
+
+\begin{proof}
+$\chi(i) := \sum_j \langle \sigma_i; \sigma_j\rangle$. For $j \neq i$,
+\texttt{truncated2\_J\_zero\_of\_ne} (PR \#207) gives summand zero.
+For $j = i$, the Finset $\{i,i\}$ collapses to $\{i\}$, so
+$\langle \sigma_i;\sigma_i\rangle = \langle \sigma^{\{i\}}\rangle -
+\langle \sigma^{\{i\}}\rangle^2 = t - t^2$ with $t = \tanh(\beta h)$
+(\texttt{correlation\_J\_zero} + card$\,\{i\}=1$). Factor to
+$t(1-t)$. Reference: Glimm--Jaffe \cite{glimm-jaffe} \S 4.1
+(non-interacting slice); \S 5.1 pp.~76--77 (susceptibility).
+\end{proof}
+
 \begin{theorem}[Finite-volume magnetization at $J = 0$
 $= \tanh(\beta h)$; PR \#219]
 For any graph $G$ with finite $\iota$, any $h, \beta \in \mathbb{R}$,

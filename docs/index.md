@@ -171,6 +171,7 @@ gives, at every `h₀ ∈ leeYangDomain`, an analytic function `f` with
 | `meanField_zero_solution` | `tanh(0) = 0` trivial fixed point | `PhaseTransition.lean` | Algebraic |
 | `tanh_odd` | `tanh(-x) = -tanh(x)` | `PhaseTransition.lean` | Algebraic |
 | `susceptibility_nonneg` (§5.3) | `χᵢ = Σⱼ⟨σᵢ;σⱼ⟩ ≥ 0` | `PhaseTransition.lean` | Finite |
+| `susceptibility_J_zero` | **J=0 closed form** `χᵢ = tanh(β·h)·(1 − tanh(β·h))`: at `J = 0` off-diagonal terms vanish (`truncated2_J_zero_of_ne`), diagonal term is `⟨σ_i⟩ − ⟨σ_i⟩² = t − t²` | `PhaseTransition.lean` | Complements the trivial-slice sweep at the susceptibility level |
 | `susceptibility_convergent_{J,h,beta,subgraph}` | convergence | `PhaseTransition.lean` | Finite / Discretized Λ↑ |
 | `magnetization_zero_at_h_zero` | `Mᵢ = 0` at `h = 0` (Z₂) | `PhaseTransition.lean` | Finite |
 | `magnetization_monotone_{h,beta}` | monotone in `h`, `β` | `PhaseTransition.lean` | Finite |
