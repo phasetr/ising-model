@@ -278,8 +278,8 @@ theorem externalFieldEnergy_configVaddEquiv_symm {T : Type u}
 
 /-- **Induced-graph translation isomorphism**: for a translation-
 invariant graph `G` and a translate `vaddFinset t Λ`, the induced
-graphs are isomorphic via `vaddSubtypeEquiv` (as a graph
-isomorphism `≃g`).
+graphs are isomorphic via `(vaddSubtypeEquiv t Λ).symm` (as a
+graph isomorphism `≃g`).
 
 `map_rel_iff'` uses `inducedGraph_vaddFinset_adj_iff` (PR #227);
 the underlying equivalence is the inverse of `vaddSubtypeEquiv`
