@@ -245,6 +245,24 @@ theorem uniformSpontaneousMagnetization_le_one
   spontaneousMagnetization_le_one (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) hJ hβ 0
 
+/-- **`uniformSpontaneousMagnetization ≤ uniformMagnetization` at `h > 0`**:
+for `0 ≤ J`, `0 < β`, `0 < h`,
+
+`uniformSpontaneousMagnetization d J β
+  ≤ uniformMagnetization d ⟨J, h, β⟩`.
+
+Direct specialization of `spontaneousMagnetization_le_magnetizationInfinite`
+at site `0` combined with the uniform recasts. The Ising parameter
+record `⟨J, h, β⟩` with `0 < h` is ferromagnetic, so the
+`uniformMagnetization` bridge applies. -/
+theorem uniformSpontaneousMagnetization_le_uniformMagnetization
+    (d : ℕ) {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β)
+    {h : ℝ} (hh : 0 < h) :
+    uniformSpontaneousMagnetization d J β
+      ≤ uniformMagnetization d ⟨J, h, β⟩ :=
+  spontaneousMagnetization_le_magnetizationInfinite
+    (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d) hJ hβ hh 0
+
 /-! ## Two-point function on ℤ^d -/
 
 /-- **Two-point function on ℤ^d** (Finset-based):
