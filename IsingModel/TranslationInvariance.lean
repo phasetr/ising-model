@@ -201,6 +201,31 @@ theorem vaddSubtypeEquiv_apply_coe {T : Type u} [AddGroup T]
     ((vaddSubtypeEquiv t Λ) x : V) = t +ᵥ (x : V) := by
   rfl
 
+/-- **Induced-graph adjacency is preserved by translation**: when
+`G : SimpleGraph V` is translation invariant under an `AddAction T V`
+and `Λ : Finset V`, the induced adjacency on the translated Finset
+matches that on the original via `vaddSubtypeEquiv`:
+
+`(inducedGraph G (vaddFinset t Λ)).Adj (vaddSubtypeEquiv t Λ u)
+  (vaddSubtypeEquiv t Λ v) ↔ (inducedGraph G Λ).Adj u v`.
+
+Proof: both sides unfold to `G.Adj (·) (·)` on raw vertex values;
+on the LHS the raw values are `t +ᵥ u.val` and `t +ᵥ v.val`,
+and `IsTranslationInvariant.adj_vadd` converts to the RHS. -/
+theorem inducedGraph_vaddFinset_adj_iff {T : Type u} [AddGroup T]
+    {V : Type v} [DecidableEq V] [AddAction T V]
+    (G : SimpleGraph V) [IsTranslationInvariant T G]
+    (t : T) (Λ : Finset V) (u v : (↑Λ : Type _)) :
+    (inducedGraph G (vaddFinset t Λ)).Adj
+        (vaddSubtypeEquiv t Λ u) (vaddSubtypeEquiv t Λ v)
+      ↔ (inducedGraph G Λ).Adj u v := by
+  unfold inducedGraph
+  -- G.induce S.Adj x y = G.Adj x.val y.val definitionally.
+  change G.Adj (((vaddSubtypeEquiv t Λ) u : V))
+      ((vaddSubtypeEquiv t Λ v : V)) ↔ G.Adj (u : V) (v : V)
+  rw [vaddSubtypeEquiv_apply_coe, vaddSubtypeEquiv_apply_coe]
+  exact IsTranslationInvariant.adj_vadd t (u : V) (v : V)
+
 /-! ## Translation-invariant exhaustions
 
 An exhaustion whose consecutive volumes differ by a disjoint
