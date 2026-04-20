@@ -619,6 +619,30 @@ theorem partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_monotone_b
   partitionFunctionAlongExhaustion_monotone_beta (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) J h hJ hh hβ₁ hβ n
 
+/-- **ℤ^d partitionFunctionΛ h-evenness**:
+`Z_{Λ_n}(J, -h, β) = Z_{Λ_n}(J, h, β)` on the ℤ^d cubic box.
+Concrete specialization of `partitionFunctionΛ_neg_h`. -/
+theorem partitionFunctionΛ_latticeGraph_cubicExhaustion_neg_h
+    (d : ℕ) (J h β : ℝ) (n : ℕ) :
+    partitionFunctionΛ (IsingModel.latticeGraph d)
+        ((Ambient.cubicExhaustion d).volume n) (⟨J, -h, β⟩ : IsingParams ℝ)
+      = partitionFunctionΛ (IsingModel.latticeGraph d)
+          ((Ambient.cubicExhaustion d).volume n) (⟨J, h, β⟩ : IsingParams ℝ) :=
+  partitionFunctionΛ_neg_h (IsingModel.latticeGraph d)
+    ((Ambient.cubicExhaustion d).volume n) J h β
+
+/-- **ℤ^d partitionFunctionAlongExhaustion h-evenness** per stage:
+`Z(Λ_n; J, -h, β) = Z(Λ_n; J, h, β)`. Concrete specialization of
+`partitionFunctionAlongExhaustion_neg_h`. -/
+theorem partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_neg_h
+    (d : ℕ) (J h β : ℝ) (n : ℕ) :
+    partitionFunctionAlongExhaustion (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) (⟨J, -h, β⟩ : IsingParams ℝ) n
+      = partitionFunctionAlongExhaustion (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) (⟨J, h, β⟩ : IsingParams ℝ) n :=
+  partitionFunctionAlongExhaustion_neg_h (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) J h β n
+
 /-- **ℤ^d freeEnergyAlongExhaustion h-evenness** per stage. -/
 theorem freeEnergyAlongExhaustion_latticeGraph_cubicExhaustion_neg_h
     (d : ℕ) (J h β : ℝ) (n : ℕ) :
