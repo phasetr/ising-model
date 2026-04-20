@@ -94,6 +94,15 @@ noncomputable def freeEnergyΛ (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] (p : IsingParams ℝ) : ℝ :=
   IsingModel.freeEnergy (inducedGraph G Λ) p
 
+/-- The **magnetization** on a finite volume `Λ` at site `i : ↑Λ`:
+`M_Λ(i) = ⟨σ_i⟩ = correlationΛ G Λ p {i}`. Direct analog of
+`IsingModel.magnetization` at the ambient-lattice Λ layer, matching
+the `correlationΛ` / `partitionFunctionΛ` / `freeEnergyΛ` pattern. -/
+noncomputable def magnetizationΛ (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (p : IsingParams ℝ)
+    (i : ↑Λ) : ℝ :=
+  correlationΛ G Λ p {i}
+
 /-! ## Basic lemmas (forwarded from existing framework)
 
 Since the definitions are direct instantiations, the existing theorems
@@ -236,6 +245,35 @@ theorem correlationΛ_nonneg (G : SimpleGraph V) (Λ : Finset V)
     (hf : Ferromagnetic p) (A : Finset (↑Λ : Type _)) :
     0 ≤ correlationΛ G Λ p A :=
   gks_first _ _ hf _
+
+/-- **Unfolding of `magnetizationΛ`**:
+`magnetizationΛ G Λ p i = correlationΛ G Λ p {i}`, by definition. -/
+theorem magnetizationΛ_apply (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (p : IsingParams ℝ)
+    (i : ↑Λ) :
+    magnetizationΛ G Λ p i = correlationΛ G Λ p {i} := rfl
+
+/-- **`magnetizationΛ ≤ 1`** at any site `i : ↑Λ`, for any parameters.
+Direct from `correlationΛ_le_one` at `A = {i}`. -/
+theorem magnetizationΛ_le_one (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (p : IsingParams ℝ) (i : ↑Λ) :
+    magnetizationΛ G Λ p i ≤ 1 :=
+  correlationΛ_le_one G Λ p {i}
+
+/-- **`|magnetizationΛ| ≤ 1`** at any site `i : ↑Λ`, for any parameters.
+Direct from `abs_correlationΛ_le_one` at `A = {i}`. -/
+theorem abs_magnetizationΛ_le_one (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (p : IsingParams ℝ) (i : ↑Λ) :
+    |magnetizationΛ G Λ p i| ≤ 1 :=
+  abs_correlationΛ_le_one G Λ p {i}
+
+/-- **`magnetizationΛ ≥ 0`** for ferromagnetic `p` at any site `i : ↑Λ`.
+Direct from `correlationΛ_nonneg` at `A = {i}` (GKS-I). -/
+theorem magnetizationΛ_nonneg (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (p : IsingParams ℝ)
+    (hf : Ferromagnetic p) (i : ↑Λ) :
+    0 ≤ magnetizationΛ G Λ p i :=
+  correlationΛ_nonneg G Λ p hf {i}
 
 /-! ## Thermodynamic limit along exhaustions
 
