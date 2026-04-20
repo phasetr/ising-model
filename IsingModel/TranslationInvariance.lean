@@ -396,6 +396,62 @@ theorem interactionEnergy_configVaddEquiv_symm {T : Type u}
     exact edgeSpin_map_vaddSubtypeEquiv t Λ σ'
       (Sym2.map (vaddSubtypeEquiv t Λ).symm e)
 
+/-- **Hamiltonian equivariance under `configVaddEquiv`**: combine
+interaction (step 6f) + external-field (step 6d) energies. -/
+theorem hamiltonian_configVaddEquiv_symm {T : Type u} [AddGroup T]
+    {V : Type v} [DecidableEq V] [AddAction T V]
+    (G : SimpleGraph V) [IsTranslationInvariant T G]
+    (t : T) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    [Fintype (inducedGraph G (vaddFinset t Λ)).edgeSet]
+    (p : IsingParams ℝ)
+    (σ' : Config (↑(vaddFinset t Λ) : Type _)) :
+    IsingModel.hamiltonian (inducedGraph G (vaddFinset t Λ)) p σ'
+      = IsingModel.hamiltonian (inducedGraph G Λ) p
+          ((configVaddEquiv t Λ).symm σ') := by
+  unfold IsingModel.hamiltonian
+  rw [interactionEnergy_configVaddEquiv_symm G t Λ p.J σ',
+      externalFieldEnergy_configVaddEquiv_symm t Λ p.h σ']
+
+/-- **`partitionFunctionΛ` is translation invariant**: for a
+translation-invariant graph `G` and `Λ : Finset V`,
+
+`partitionFunctionΛ G (vaddFinset t Λ) p = partitionFunctionΛ G Λ p`.
+
+Proof: unfold both sides to sums over Config of the respective
+Finsets, then reindex via `Fintype.sum_equiv (configVaddEquiv t Λ).symm`
+(thus mapping σ' on ↑(vaddFinset t Λ) to σ := (symm) σ' on ↑Λ), and
+use Hamiltonian equivariance to match summands. -/
+theorem partitionFunctionΛ_vaddFinset_eq {T : Type u} [AddGroup T]
+    {V : Type v} [DecidableEq V] [AddAction T V]
+    (G : SimpleGraph V) [IsTranslationInvariant T G]
+    (t : T) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    [Fintype (inducedGraph G (vaddFinset t Λ)).edgeSet]
+    (p : IsingParams ℝ) :
+    partitionFunctionΛ G (vaddFinset t Λ) p
+      = partitionFunctionΛ G Λ p := by
+  change IsingModel.partitionFunction
+      (inducedGraph G (vaddFinset t Λ)) p
+    = IsingModel.partitionFunction (inducedGraph G Λ) p
+  unfold IsingModel.partitionFunction IsingModel.boltzmannWeight
+  -- Reindex ∑_{σ'} over Config ↑(t +ᵥ Λ) to ∑_σ over Config ↑Λ.
+  refine (Fintype.sum_equiv (configVaddEquiv t Λ)
+    (fun σ => Real.exp (-p.β *
+        IsingModel.hamiltonian (inducedGraph G Λ) p σ))
+    (fun σ' => Real.exp (-p.β *
+        IsingModel.hamiltonian (inducedGraph G (vaddFinset t Λ)) p σ'))
+    ?_).symm
+  intro σ
+  -- Want: exp(-β H_Λ σ) = exp(-β H_{t+Λ} ((configVaddEquiv) σ)).
+  change Real.exp (-p.β *
+        IsingModel.hamiltonian (inducedGraph G Λ) p σ)
+      = Real.exp (-p.β *
+        IsingModel.hamiltonian (inducedGraph G (vaddFinset t Λ)) p
+            ((configVaddEquiv t Λ) σ))
+  rw [hamiltonian_configVaddEquiv_symm G t Λ p (configVaddEquiv t Λ σ),
+      Equiv.symm_apply_apply]
+
 /-! ## Translation-invariant exhaustions
 
 An exhaustion whose consecutive volumes differ by a disjoint
