@@ -1,5 +1,6 @@
 import IsingModel.AmbientLattice
 import IsingModel.AmbientLatticeSum
+import IsingModel.Hamiltonian
 
 /-!
 # Translation invariance scaffolding for GJ §4.6 Prop 4.6.1
@@ -244,6 +245,36 @@ def configVaddEquiv {T : Type u} [AddGroup T] {V : Type v}
     (t : T) (Λ : Finset V) :
     Config (↑Λ : Type _) ≃ Config (↑(vaddFinset t Λ) : Type _) :=
   Equiv.arrowCongr (vaddSubtypeEquiv t Λ) (Equiv.refl Spin)
+
+/-- **`externalFieldEnergy` is invariant under `configVaddEquiv`**:
+for any translation `t : T` and any `Λ : Finset V`,
+
+`externalFieldEnergy h σ' = externalFieldEnergy h
+  ((configVaddEquiv t Λ).symm σ')`
+
+where `σ' : Config ↑(vaddFinset t Λ)`.
+
+Proof: `externalFieldEnergy h σ = -h * ∑_i Spin.sign ℝ (σ i)`;
+the sum `∑_{i : ↑(vaddFinset t Λ)} Spin.sign ℝ (σ' i)` reindexes
+via `Fintype.sum_equiv (vaddSubtypeEquiv t Λ)` to
+`∑_{j : ↑Λ} Spin.sign ℝ (σ' (vaddSubtypeEquiv t Λ j))`, and the
+inner term equals `((configVaddEquiv t Λ).symm σ') j` definitionally
+(by the definition of `Equiv.arrowCongr`, whose `.symm` applied to
+`σ'` is exactly `σ' ∘ (vaddSubtypeEquiv t Λ)`). -/
+theorem externalFieldEnergy_configVaddEquiv_symm {T : Type u}
+    [AddGroup T] {V : Type v} [DecidableEq V] [AddAction T V]
+    (t : T) (Λ : Finset V) (h : ℝ)
+    (σ' : Config (↑(vaddFinset t Λ) : Type _)) :
+    IsingModel.externalFieldEnergy h σ'
+      = IsingModel.externalFieldEnergy h
+          ((configVaddEquiv t Λ).symm σ') := by
+  unfold IsingModel.externalFieldEnergy
+  congr 1
+  symm
+  exact Fintype.sum_equiv (vaddSubtypeEquiv t Λ)
+      (fun j => Spin.sign ℝ (((configVaddEquiv t Λ).symm σ') j))
+      (fun i => Spin.sign ℝ (σ' i))
+      (fun _ => rfl)
 
 /-! ## Translation-invariant exhaustions
 
