@@ -806,6 +806,38 @@ theorem twoPointFunction_J_zero_of_ne_zero
     exact (Ne.symm hr)
   rw [h_card]
 
+/-- **ℤ^d ∞-vol free-energy sandwich bound** (ferromagnetic):
+`log 2 ≤ freeEnergyInfinite (latticeGraph d) (cubicExhaustion d) p
+  ≤ log 2 + |β|·(|J|·d + |h|)`.
+
+Capstone for the ∞-vol free-energy bounds on ℤ^d. Uses BED `c = d`
+(PR #246) for the upper bound, and `freeEnergyInfinite_ge_log_two`
+for the lower. Note: `[Nonempty (Fin d → ℤ)]` holds for every `d` since
+`Fin 0 → ℤ` has exactly one element (empty function) and `Fin d → ℤ`
+with `d ≥ 1` has `fun _ => 0`. -/
+theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_bounds
+    (d : ℕ) [Nonempty (Fin d → ℤ)]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    Real.log 2
+      ≤ freeEnergyInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) p
+    ∧ freeEnergyInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) p
+        ≤ Real.log 2 + |p.β| * (|p.J| * (d : ℝ) + |p.h|) := by
+  have hc : ∀ n, ((Ambient.cubicExhaustion d).volume n).Nonempty →
+      ((Ambient.inducedGraph (IsingModel.latticeGraph d)
+        ((Ambient.cubicExhaustion d).volume n)).edgeFinset.card : ℝ)
+        ≤ (d : ℝ) * Fintype.card
+            (↑((Ambient.cubicExhaustion d).volume n) : Type _) := by
+    intro n _
+    exact inducedLatticeGraph_card_edgeFinset_le d
+      ((Ambient.cubicExhaustion d).volume n)
+  refine ⟨?_, ?_⟩
+  · exact freeEnergyInfinite_ge_log_two (IsingModel.latticeGraph d)
+      (Ambient.cubicExhaustion d) p hf hc
+  · exact freeEnergyInfinite_le_uniform_upper_bound
+      (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d) p hf hc
+
 /-- **h-evenness of `freeEnergyInfinite` on ℤ^d**:
 `freeEnergyInfinite ⟨J, -h, β⟩ = freeEnergyInfinite ⟨J, h, β⟩`. -/
 theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_neg_h
