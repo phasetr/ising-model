@@ -12,7 +12,7 @@ bound, we prove
 
 ## Main theorems
 
-* `latticeGraph_adj_iff_neighbor_enum` — every neighbour of `v` in
+* `latticeGraph_adj_mem_neighborEnum` — every neighbour of `v` in
   `latticeGraph d` lies in a `2d`-element candidate set
   (`Function.update v i (v i ± 1)` over `i : Fin d`).
 * `inducedLatticeGraph_degree_le` — induced-graph degree bounded by
@@ -144,7 +144,11 @@ theorem latticeGraph_adj_mem_neighborEnum (d : ℕ) (v w : Fin d → ℤ)
     right
     rw [hw_eq, h2]
 
-/-- Decidable-Adj instance for the induced lattice graph. -/
+/-- Decidable-Adj instance for the induced lattice graph.
+
+Provided explicitly because the generic `instDecidableRel_induce_adj`
+does not fire through the `noncomputable def Ambient.inducedGraph`
+wrapper automatically. -/
 instance (d : ℕ) (Λ : Finset (Fin d → ℤ)) :
     DecidableRel (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ).Adj :=
   fun ⟨a, _⟩ ⟨b, _⟩ => by
@@ -152,7 +156,11 @@ instance (d : ℕ) (Λ : Finset (Fin d → ℤ)) :
     exact inferInstance
 
 /-- Fintype instance for the edge set of the induced lattice graph
-on a cubic box. -/
+on a cubic box.
+
+Provided explicitly to thread through `Ambient.inducedGraph` — the
+generic `SimpleGraph.fintypeEdgeSet` would fire directly on
+`SimpleGraph.induce` but the `noncomputable def` wrapper masks this. -/
 noncomputable instance (d : ℕ) (Λ : Finset (Fin d → ℤ)) :
     Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet := by
   haveI : Fintype (↑Λ : Type _) := inferInstance
