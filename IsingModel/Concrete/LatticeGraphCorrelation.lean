@@ -643,6 +643,74 @@ theorem partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_neg_h
   partitionFunctionAlongExhaustion_neg_h (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) J h β n
 
+/-- **ℤ^d partitionFunctionΛ closed form at `J = 0`**:
+`Z_{Λ_n}(⟨0, h, β⟩) = (2·cosh(β·h))^|Λ_n|` on the ℤ^d cubic box.
+Concrete specialization of `partitionFunctionΛ_J_zero`. -/
+theorem partitionFunctionΛ_latticeGraph_cubicExhaustion_J_zero
+    (d : ℕ) (h β : ℝ) (n : ℕ) :
+    partitionFunctionΛ (IsingModel.latticeGraph d)
+        ((Ambient.cubicExhaustion d).volume n) (⟨0, h, β⟩ : IsingParams ℝ)
+      = (2 * Real.cosh (β * h)) ^
+          ((Ambient.cubicExhaustion d).volume n).card :=
+  partitionFunctionΛ_J_zero (IsingModel.latticeGraph d)
+    ((Ambient.cubicExhaustion d).volume n) h β
+
+/-- **ℤ^d partitionFunctionΛ closed form at `β = 0`**:
+`Z_{Λ_n}(⟨J, h, 0⟩) = 2^|Λ_n|` on the ℤ^d cubic box.
+Concrete specialization of `partitionFunctionΛ_beta_zero`. -/
+theorem partitionFunctionΛ_latticeGraph_cubicExhaustion_beta_zero
+    (d : ℕ) (J h : ℝ) (n : ℕ) :
+    partitionFunctionΛ (IsingModel.latticeGraph d)
+        ((Ambient.cubicExhaustion d).volume n) (⟨J, h, 0⟩ : IsingParams ℝ)
+      = (2 : ℝ) ^ ((Ambient.cubicExhaustion d).volume n).card :=
+  partitionFunctionΛ_beta_zero (IsingModel.latticeGraph d)
+    ((Ambient.cubicExhaustion d).volume n) J h
+
+/-- **ℤ^d partitionFunctionΛ closed form at `J = 0, h = 0`**:
+`Z_{Λ_n}(⟨0, 0, β⟩) = 2^|Λ_n|` on the ℤ^d cubic box.
+Concrete specialization of `partitionFunctionΛ_zero_params`. -/
+theorem partitionFunctionΛ_latticeGraph_cubicExhaustion_zero_params
+    (d : ℕ) (β : ℝ) (n : ℕ) :
+    partitionFunctionΛ (IsingModel.latticeGraph d)
+        ((Ambient.cubicExhaustion d).volume n) (⟨0, 0, β⟩ : IsingParams ℝ)
+      = (2 : ℝ) ^ ((Ambient.cubicExhaustion d).volume n).card :=
+  partitionFunctionΛ_zero_params (IsingModel.latticeGraph d)
+    ((Ambient.cubicExhaustion d).volume n) β
+
+/-- **ℤ^d log_partitionFunctionΛ closed form at `J = 0`**:
+`log Z_{Λ_n}(⟨0, h, β⟩) = |Λ_n| · log(2·cosh(β·h))` on the ℤ^d cubic box.
+Concrete specialization of `log_partitionFunctionΛ_J_zero`. -/
+theorem log_partitionFunctionΛ_latticeGraph_cubicExhaustion_J_zero
+    (d : ℕ) (h β : ℝ) (n : ℕ) :
+    Real.log (partitionFunctionΛ (IsingModel.latticeGraph d)
+        ((Ambient.cubicExhaustion d).volume n) (⟨0, h, β⟩ : IsingParams ℝ))
+      = (((Ambient.cubicExhaustion d).volume n).card : ℝ)
+          * Real.log (2 * Real.cosh (β * h)) :=
+  log_partitionFunctionΛ_J_zero (IsingModel.latticeGraph d)
+    ((Ambient.cubicExhaustion d).volume n) h β
+
+/-- **ℤ^d log_partitionFunctionΛ closed form at `β = 0`**:
+`log Z_{Λ_n}(⟨J, h, 0⟩) = |Λ_n| · log 2` on the ℤ^d cubic box.
+Concrete specialization of `log_partitionFunctionΛ_beta_zero`. -/
+theorem log_partitionFunctionΛ_latticeGraph_cubicExhaustion_beta_zero
+    (d : ℕ) (J h : ℝ) (n : ℕ) :
+    Real.log (partitionFunctionΛ (IsingModel.latticeGraph d)
+        ((Ambient.cubicExhaustion d).volume n) (⟨J, h, 0⟩ : IsingParams ℝ))
+      = (((Ambient.cubicExhaustion d).volume n).card : ℝ) * Real.log 2 :=
+  log_partitionFunctionΛ_beta_zero (IsingModel.latticeGraph d)
+    ((Ambient.cubicExhaustion d).volume n) J h
+
+/-- **ℤ^d log_partitionFunctionΛ closed form at `J = 0, h = 0`**:
+`log Z_{Λ_n}(⟨0, 0, β⟩) = |Λ_n| · log 2` on the ℤ^d cubic box.
+Concrete specialization of `log_partitionFunctionΛ_zero_params`. -/
+theorem log_partitionFunctionΛ_latticeGraph_cubicExhaustion_zero_params
+    (d : ℕ) (β : ℝ) (n : ℕ) :
+    Real.log (partitionFunctionΛ (IsingModel.latticeGraph d)
+        ((Ambient.cubicExhaustion d).volume n) (⟨0, 0, β⟩ : IsingParams ℝ))
+      = (((Ambient.cubicExhaustion d).volume n).card : ℝ) * Real.log 2 :=
+  log_partitionFunctionΛ_zero_params (IsingModel.latticeGraph d)
+    ((Ambient.cubicExhaustion d).volume n) β
+
 /-- **ℤ^d freeEnergyAlongExhaustion h-evenness** per stage. -/
 theorem freeEnergyAlongExhaustion_latticeGraph_cubicExhaustion_neg_h
     (d : ℕ) (J h β : ℝ) (n : ℕ) :

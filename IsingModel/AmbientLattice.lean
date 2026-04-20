@@ -116,6 +116,54 @@ theorem partitionFunctionΛ_neg_h (G : SimpleGraph V) (Λ : Finset V)
       = partitionFunctionΛ G Λ (⟨J, h, β⟩ : IsingParams ℝ) :=
   IsingModel.partitionFunction_neg_h _ J h β
 
+/-- **Λ-level partition-function closed form at `J = 0`**:
+`Z_Λ(⟨0, h, β⟩) = (2 · cosh(β·h))^|Λ|`. Direct lift of
+`IsingModel.partitionFunction_J_zero` through
+`partitionFunctionΛ = partitionFunction (inducedGraph G Λ)`; the
+`Fintype.card (↑Λ : Type _)` of the induced vertex type coincides with
+`Λ.card` by `Fintype.card_coe`. -/
+theorem partitionFunctionΛ_J_zero
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (h β : ℝ) :
+    partitionFunctionΛ G Λ (⟨0, h, β⟩ : IsingParams ℝ)
+      = (2 * Real.cosh (β * h)) ^ Λ.card := by
+  change IsingModel.partitionFunction (inducedGraph G Λ)
+      (⟨0, h, β⟩ : IsingParams ℝ) = _
+  rw [IsingModel.partitionFunction_J_zero, Fintype.card_coe]
+
+/-- **Λ-level partition-function closed form at `β = 0`**:
+`Z_Λ(⟨J, h, 0⟩) = 2^|Λ|`. Direct lift of
+`IsingModel.partitionFunction_beta_zero` and
+`IsingModel.card_config_eq_two_pow`; the Boltzmann prefactor `-β`
+kills the Hamiltonian entirely, leaving a counting measure. -/
+theorem partitionFunctionΛ_beta_zero
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (J h : ℝ) :
+    partitionFunctionΛ G Λ (⟨J, h, 0⟩ : IsingParams ℝ)
+      = (2 : ℝ) ^ Λ.card := by
+  change IsingModel.partitionFunction (inducedGraph G Λ)
+      (⟨J, h, 0⟩ : IsingParams ℝ) = _
+  rw [IsingModel.partitionFunction_beta_zero,
+      IsingModel.card_config_eq_two_pow]
+  push_cast
+  rw [Fintype.card_coe]
+
+/-- **Λ-level partition-function closed form at `J = 0, h = 0`**:
+`Z_Λ(⟨0, 0, β⟩) = 2^|Λ|`. Direct lift of
+`IsingModel.partitionFunction_zero_params` and
+`IsingModel.card_config_eq_two_pow`. -/
+theorem partitionFunctionΛ_zero_params
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (β : ℝ) :
+    partitionFunctionΛ G Λ (⟨0, 0, β⟩ : IsingParams ℝ)
+      = (2 : ℝ) ^ Λ.card := by
+  change IsingModel.partitionFunction (inducedGraph G Λ)
+      (⟨0, 0, β⟩ : IsingParams ℝ) = _
+  rw [IsingModel.partitionFunction_zero_params,
+      IsingModel.card_config_eq_two_pow]
+  push_cast
+  rw [Fintype.card_coe]
+
 /-- The correlation on `Λ` is bounded: `|⟨σ^A⟩| ≤ 1`. -/
 theorem abs_correlationΛ_le_one (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] (p : IsingParams ℝ)
