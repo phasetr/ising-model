@@ -32,7 +32,7 @@ starting definitions.
 ## References
 
 * Glimm, J. and Jaffe, A., *Quantum Physics: A Functional Integral
-  Point of View*, 2nd ed., Springer 1987, §4.6 Prop 4.6.1, p. 64.
+  Point of View*, 2nd ed., Springer 1987, §4.6 Prop 4.6.1, p. 68.
 -/
 
 universe u v
@@ -51,7 +51,7 @@ iff the original is; the graph looks the same everywhere.
 
 This is the minimal structural datum behind the automatic
 super-additivity of `log Z` along translation-invariant exhaustions
-(GJ §4.6 Prop 4.6.1 p. 64). The translation-invariance-driven
+(GJ §4.6 Prop 4.6.1 p. 68). The translation-invariance-driven
 derivation of `DisjointTowerHypotheses.super` from this predicate is
 deferred to a subsequent PR. -/
 class IsTranslationInvariant (T : Type u) [AddGroup T]
@@ -511,7 +511,7 @@ This structure concerns only the **exhaustion geometry**. It does
 or of the Ising Hamiltonian — those are separate conditions.
 
 Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §4.6 Prop 4.6.1,
-p. 64. -/
+p. 68. -/
 structure TranslationInvariantExhaustion (T : Type u) [AddGroup T]
     (V : Type v) [DecidableEq V] [AddAction T V]
     extends Exhaustion V where
@@ -721,7 +721,7 @@ provides the scaffold so that, once `hsuper` is derived, it
 plugs directly into `freeEnergyAlongExhaustion_tendsto_of_disjointTowerHypotheses`.
 
 Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §4.6 Prop 4.6.1,
-p. 64. -/
+p. 68. -/
 def disjointTowerHypotheses_of_translationInvariant
     (Λ : TranslationInvariantExhaustion T V)
     (G : SimpleGraph V)
@@ -755,7 +755,7 @@ translation invariance (subsequent PR), this theorem will become
 an unconditional-in-`hsuper` corollary.
 
 Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §4.6 Prop 4.6.1,
-p. 64. -/
+p. 68. -/
 theorem freeEnergyAlongExhaustion_tendsto_of_translationInvariant
     (Λ : TranslationInvariantExhaustion T V)
     (G : SimpleGraph V)
@@ -777,7 +777,7 @@ theorem freeEnergyAlongExhaustion_tendsto_of_translationInvariant
 
 set_option linter.unusedFintypeInType false in
 /-- **Automatic Fekete convergence under full translation
-invariance** (GJ §4.6 Prop 4.6.1, p. 64): final step of the
+invariance** (GJ §4.6 Prop 4.6.1, p. 68): final step of the
 translation scaffolding. Given
 
 * a translation-invariant exhaustion `Λ` (step 3 / PR #222 +

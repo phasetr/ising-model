@@ -36,7 +36,7 @@ delivers only the translation-invariance datum.
 
 ## References
 
-* Glimm–Jaffe, *Quantum Physics* 2nd ed., §4.6 Prop 4.6.1, p. 64.
+* Glimm–Jaffe, *Quantum Physics* 2nd ed., §4.6 Prop 4.6.1, p. 68.
 -/
 
 namespace IsingModel
@@ -55,7 +55,7 @@ which reduces to the pointwise identity `(t + u) i - (t + v) i = u i - v i`.
 
 This is the first non-trivial `Ambient.IsTranslationInvariant`
 instance (the prior ones are `⊥` and `⊤`). It is groundwork toward
-GJ §4.6 Prop 4.6.1 (p. 64): the class is the structural datum
+GJ §4.6 Prop 4.6.1 (p. 68): the class is the structural datum
 feeding into the automatic super-additivity of `log Z` along a
 translation-invariant exhaustion; this file does not yet assemble a
 concrete `TranslationInvariantExhaustion` (see the design note
