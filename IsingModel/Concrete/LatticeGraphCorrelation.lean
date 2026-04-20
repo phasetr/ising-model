@@ -649,6 +649,29 @@ theorem freeEnergyAlongExhaustion_latticeGraph_cubicExhaustion_monotone_beta
   freeEnergyAlongExhaustion_monotone_beta (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) hJ hh n
 
+/-- **ℤ^d BddAbove range of `freeEnergyAlongExhaustion`**: via BED c=d. -/
+theorem BddAbove_freeEnergyAlongExhaustion_latticeGraph_cubicExhaustion
+    (d : ℕ) (p : IsingParams ℝ) :
+    BddAbove (Set.range (freeEnergyAlongExhaustion (IsingModel.latticeGraph d)
+      (Ambient.cubicExhaustion d) p)) :=
+  BddAbove_freeEnergyAlongExhaustion_range (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) p
+    (boundedEdgeDensity_latticeGraph_cubicExhaustion d)
+
+/-- **ℤ^d per-stage freeEnergyAlongExhaustion upper bound** using BED c = d. -/
+theorem freeEnergyAlongExhaustion_latticeGraph_cubicExhaustion_le_uniform_upper_bound
+    (d : ℕ) (p : IsingParams ℝ) (n : ℕ)
+    (hne : ((Ambient.cubicExhaustion d).volume n).Nonempty) :
+    freeEnergyAlongExhaustion (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) p n
+      ≤ Real.log 2 + |p.β| * (|p.J| * (d : ℝ) + |p.h|) := by
+  refine freeEnergyAlongExhaustion_le_uniform_upper_bound
+    (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d) p
+    (c := (d : ℝ)) ?_ n hne
+  intro n _
+  exact inducedLatticeGraph_card_edgeFinset_le d
+    ((Ambient.cubicExhaustion d).volume n)
+
 /-- **Per-stage lower bound on ℤ^d**: `log 2 ≤ freeEnergyAlongExhaustion` for
 ferromagnetic + nonempty stage. -/
 theorem freeEnergyAlongExhaustion_latticeGraph_cubicExhaustion_ge_log_two
