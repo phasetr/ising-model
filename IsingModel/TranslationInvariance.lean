@@ -105,7 +105,7 @@ theorem vadd_injective {T : Type u} [AddGroup T] {V : Type v}
 
 /-- **Translated Finset**: `t +ᵥ A := A.image (t +ᵥ ·)`; a `Finset V`
 obtained by translating every element of `A` by `t`. -/
-noncomputable def vaddFinset {T : Type u} [AddGroup T] {V : Type v}
+def vaddFinset {T : Type u} [AddGroup T] {V : Type v}
     [DecidableEq V] [AddAction T V]
     (t : T) (A : Finset V) : Finset V :=
   A.image (t +ᵥ ·)
