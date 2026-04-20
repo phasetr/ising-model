@@ -603,6 +603,40 @@ theorem volume_decomposes
         vaddFinset_union, vaddFinset_add, Λ.shift_add m n,
         Finset.union_assoc]
 
+/-- **Disjointness of `volume m` and `shift m +ᵥ volume n`**:
+under the `TranslationInvariantExhaustion` structure,
+`Disjoint (volume m) (vaddFinset (shift m) (volume n))`.
+
+Proof by induction on `n`. Base case `n = 0` reduces to `Disjoint _ ∅`
+(trivial via `Finset.disjoint_empty_right`). Inductive step uses
+the decomposition `vaddFinset (shift m) (volume (n+1)) = (shift m +ᵥ
+volume n) ∪ (shift(m+n) +ᵥ volume 1)` (via `volume_succ`,
+`vaddFinset_union`, `vaddFinset_add`, `shift_add`), the IH, and
+`disjoint_shift (m+n)` combined with
+`Λ.volume m ⊆ Λ.volume (m+n)` (from `Λ.mono`) to transfer disjointness. -/
+theorem disjoint_volume_shift
+    (Λ : TranslationInvariantExhaustion T V) (m n : ℕ) :
+    Disjoint (Λ.volume m) (vaddFinset (Λ.shift m) (Λ.volume n)) := by
+  induction n with
+  | zero =>
+    rw [Λ.volume_zero, vaddFinset_empty]
+    exact Finset.disjoint_empty_right _
+  | succ n ih =>
+    -- vaddFinset (shift m) (volume (n+1))
+    --   = vaddFinset (shift m) (volume n ∪ (shift n +ᵥ volume 1))
+    --   = (shift m +ᵥ volume n) ∪ (shift m +ᵥ (shift n +ᵥ volume 1))
+    --   = (shift m +ᵥ volume n) ∪ ((shift m + shift n) +ᵥ volume 1)
+    --   = (shift m +ᵥ volume n) ∪ (shift (m+n) +ᵥ volume 1)
+    rw [Λ.volume_succ n, vaddFinset_union, vaddFinset_add,
+        ← Λ.shift_add m n]
+    -- Show Disjoint Λ_m ((shift m +ᵥ Λ_n) ∪ (shift(m+n) +ᵥ Λ_1)).
+    rw [Finset.disjoint_union_right]
+    refine ⟨ih, ?_⟩
+    -- Disjoint Λ_m (shift(m+n) +ᵥ Λ_1):
+    -- since Λ_m ⊆ Λ_{m+n} (by mono), and disjoint_shift gives
+    -- Disjoint Λ_{m+n} (shift(m+n) +ᵥ Λ_1).
+    exact (Λ.disjoint_shift (m + n)).mono_left (Λ.mono (Nat.le_add_right m n))
+
 /-- **`DisjointTowerHypotheses` from a `TranslationInvariantExhaustion`
 + hypothesised `hsuper`**: given a translation-invariant exhaustion
 (which handles `card_add` via `volume_card_add`) together with
