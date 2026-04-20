@@ -245,6 +245,18 @@ theorem uniformSpontaneousMagnetization_le_one
   spontaneousMagnetization_le_one (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) hJ hβ 0
 
+/-- **Z₂ symmetry at `h = 0`**: `uniformMagnetization d ⟨J, 0, β⟩ = 0`.
+
+Concrete specialisation of `magnetizationInfinite_zero_at_h_zero` at
+site `0` on the `(latticeGraph d, cubicExhaustion d)` pair. At `h = 0`
+the finite-volume Ising model is Z₂-symmetric (flip `σ ↦ −σ`), so
+the magnetization vanishes stage-by-stage, hence at ∞-vol. -/
+theorem uniformMagnetization_zero_at_h_zero
+    (d : ℕ) (J β : ℝ) :
+    uniformMagnetization d ⟨J, 0, β⟩ = 0 :=
+  magnetizationInfinite_zero_at_h_zero
+    (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d) J β 0
+
 /-- **Right-limit** `uniformMagnetization` → `uniformSpontaneousMagnetization`
 as `h → 0⁺`.
 
