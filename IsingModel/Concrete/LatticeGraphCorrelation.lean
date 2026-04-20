@@ -806,6 +806,36 @@ theorem twoPointFunction_J_zero_of_ne_zero
     exact (Ne.symm hr)
   rw [h_card]
 
+/-- **J-monotonicity of `magnetizationInfinite` on ℤ^d** at any site. -/
+theorem magnetizationInfinite_latticeGraph_cubicExhaustion_monotone_J
+    (d : ℕ) {h : ℝ} (hh : 0 ≤ h) {β : ℝ} (hβ : 0 < β) (i : Fin d → ℤ) :
+    MonotoneOn
+      (fun J : ℝ => magnetizationInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) ⟨J, h, β⟩ i)
+      (Set.Ici 0) :=
+  magnetizationInfinite_monotone_J (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) hh hβ i
+
+/-- **h-monotonicity of `magnetizationInfinite` on ℤ^d** at any site. -/
+theorem magnetizationInfinite_latticeGraph_cubicExhaustion_monotone_h
+    (d : ℕ) {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) (i : Fin d → ℤ) :
+    MonotoneOn
+      (fun h : ℝ => magnetizationInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) ⟨J, h, β⟩ i)
+      (Set.Ici 0) :=
+  magnetizationInfinite_monotone_h (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) hJ hβ i
+
+/-- **β-monotonicity of `magnetizationInfinite` on ℤ^d** at any site. -/
+theorem magnetizationInfinite_latticeGraph_cubicExhaustion_monotone_beta
+    (d : ℕ) {J : ℝ} (hJ : 0 ≤ J) {h : ℝ} (hh : 0 ≤ h) (i : Fin d → ℤ) :
+    MonotoneOn
+      (fun β : ℝ => magnetizationInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) ⟨J, h, β⟩ i)
+      (Set.Ioi 0) :=
+  magnetizationInfinite_monotone_beta (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) hJ hh i
+
 /-- **Exhaustion-independence of `correlationInfinite` on ℤ^d**
 (GJ Thm 4.2.3 corollary): any two exhaustions of `Fin d → ℤ` yield
 the same ∞-vol correlation. -/
