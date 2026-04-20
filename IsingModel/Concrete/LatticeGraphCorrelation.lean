@@ -806,6 +806,16 @@ theorem twoPointFunction_J_zero_of_ne_zero
     exact (Ne.symm hr)
   rw [h_card]
 
+/-- **Exhaustion-independence of `correlationInfinite` on ℤ^d**
+(GJ Thm 4.2.3 corollary): any two exhaustions of `Fin d → ℤ` yield
+the same ∞-vol correlation. -/
+theorem correlationInfinite_latticeGraph_indep_exhaustion
+    (d : ℕ) (Λ Λ' : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (A : Finset (Fin d → ℤ)) :
+    correlationInfinite (IsingModel.latticeGraph d) Λ p A
+      = correlationInfinite (IsingModel.latticeGraph d) Λ' p A :=
+  correlationInfinite_indep_exhaustion (IsingModel.latticeGraph d) Λ Λ' p hf A
+
 /-- **h-monotonicity of correlationInfinite on ℤ^d** (GJ Prop 4.2.4):
 for `0 ≤ J, 0 < β`, `correlationInfinite ⟨J, h, β⟩ A` is monotone on
 `h ∈ Ici 0`. -/
