@@ -276,6 +276,39 @@ theorem externalFieldEnergy_configVaddEquiv_symm {T : Type u}
       (fun i => Spin.sign ℝ (σ' i))
       (fun _ => rfl)
 
+/-- **Induced-graph translation isomorphism**: for a translation-
+invariant graph `G` and a translate `vaddFinset t Λ`, the induced
+graphs are isomorphic via `vaddSubtypeEquiv` (as a graph
+isomorphism `≃g`).
+
+`map_rel_iff'` uses `inducedGraph_vaddFinset_adj_iff` (PR #227);
+the underlying equivalence is the inverse of `vaddSubtypeEquiv`
+so the direction matches `RelIso`'s convention.
+
+Intended use: pull back sums over edges of
+`inducedGraph G (vaddFinset t Λ)` to sums over edges of
+`inducedGraph G Λ` via the induced `mapEdgeSet` equivalence, in
+the subsequent step deriving translation-invariance of
+`interactionEnergy` / `partitionFunctionΛ`. -/
+def inducedGraphVaddIso {T : Type u} [AddGroup T] {V : Type v}
+    [DecidableEq V] [AddAction T V]
+    (G : SimpleGraph V) [IsTranslationInvariant T G]
+    (t : T) (Λ : Finset V) :
+    inducedGraph G (vaddFinset t Λ) ≃g inducedGraph G Λ where
+  toEquiv := (vaddSubtypeEquiv t Λ).symm
+  map_rel_iff' := by
+    intro u v
+    -- Goal:
+    --   (inducedGraph G Λ).Adj
+    --       ((vaddSubtypeEquiv t Λ).symm u)
+    --       ((vaddSubtypeEquiv t Λ).symm v)
+    --     ↔ (inducedGraph G (vaddFinset t Λ)).Adj u v
+    have := inducedGraph_vaddFinset_adj_iff G t Λ
+              ((vaddSubtypeEquiv t Λ).symm u)
+              ((vaddSubtypeEquiv t Λ).symm v)
+    simp only [Equiv.apply_symm_apply] at this
+    exact this.symm
+
 /-! ## Translation-invariant exhaustions
 
 An exhaustion whose consecutive volumes differ by a disjoint
