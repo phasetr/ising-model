@@ -111,6 +111,49 @@ theorem truncated4Infinite_latticeGraph_cubicExhaustion_translation
   truncated4Infinite_translation (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) t p hf i j k l
 
+/-- **Site-independence of ℤ^d ∞-vol magnetization**:
+for ferromagnetic `p` and any two sites `i, j : Fin d → ℤ`,
+
+`magnetizationInfinite (latticeGraph d) (cubicExhaustion d) p i
+  = magnetizationInfinite (latticeGraph d) (cubicExhaustion d) p j`.
+
+Consequence of translation invariance: set `t := j - i`; then
+`t + i = j` and `magnetizationInfinite_..._translation` gives the
+equality. Physical content: on the translation-invariant ℤ^d lattice,
+the magnetization is spatially uniform. -/
+theorem magnetizationInfinite_latticeGraph_cubicExhaustion_eq
+    (d : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p) (i j : Fin d → ℤ) :
+    magnetizationInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) p i
+      = magnetizationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) p j := by
+  -- Apply `magnetizationInfinite_..._translation` with `t := j - i`.
+  have h := magnetizationInfinite_latticeGraph_cubicExhaustion_translation
+    d (j - i) p hf i
+  -- `h : magnetizationInfinite ... ((j - i) +ᵥ i) = magnetizationInfinite ... i`.
+  -- On the self-action, `(j - i) +ᵥ i = (j - i) + i = j`.
+  have hvadd : (j - i) +ᵥ i = j := by
+    change (j - i) + i = j
+    abel
+  rw [hvadd] at h
+  exact h.symm
+
+/-- **Site-independence of ℤ^d spontaneous magnetization**. -/
+theorem spontaneousMagnetization_latticeGraph_cubicExhaustion_eq
+    (d : ℕ) {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) (i j : Fin d → ℤ) :
+    spontaneousMagnetization (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) J β i
+      = spontaneousMagnetization (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) J β j := by
+  -- Same trick: `t := j - i`.
+  have h := spontaneousMagnetization_translation (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) (j - i) hJ hβ i
+  have hvadd : (j - i) +ᵥ i = j := by
+    change (j - i) + i = j
+    abel
+  rw [hvadd] at h
+  exact h.symm
+
 /-- **ℤ^d free-energy shift invariance**:
 `freeEnergyInfinite (latticeGraph d) ((cubicExhaustion d).shift t) p
   = freeEnergyInfinite (latticeGraph d) (cubicExhaustion d) p`. -/
