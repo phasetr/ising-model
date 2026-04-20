@@ -2768,6 +2768,25 @@ theorem spontaneousMagnetization_le_one
     spontaneousMagnetization G Λ J β i ≤ 1 :=
   spontaneousCorrelation_le_one G Λ hJ hβ {i}
 
+/-- **`-1 ≤ spontaneousMagnetization`** (ferromagnetic).
+Direct from `spontaneousMagnetization_nonneg`. -/
+theorem neg_one_le_spontaneousMagnetization
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) (i : V) :
+    -1 ≤ spontaneousMagnetization G Λ J β i := by
+  have := spontaneousMagnetization_nonneg G Λ hJ hβ i
+  linarith
+
+/-- **`|spontaneousMagnetization| ≤ 1`** (ferromagnetic). -/
+theorem abs_spontaneousMagnetization_le_one
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) (i : V) :
+    |spontaneousMagnetization G Λ J β i| ≤ 1 :=
+  abs_le.mpr ⟨neg_one_le_spontaneousMagnetization G Λ hJ hβ i,
+    spontaneousMagnetization_le_one G Λ hJ hβ i⟩
+
 /-- **Lower bound for `magnetizationInfinite` at positive `h`**:
 $m^* \le M(h)$ for $h > 0$. Specialization of
 `spontaneousCorrelation_le_correlationInfinite` at `A = {i}` (noting
