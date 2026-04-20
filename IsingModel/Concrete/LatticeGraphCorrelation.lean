@@ -649,6 +649,40 @@ theorem freeEnergyAlongExhaustion_latticeGraph_cubicExhaustion_monotone_beta
   freeEnergyAlongExhaustion_monotone_beta (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) hJ hh n
 
+/-- **ℤ^d freeEnergyInfinite from convergence**: if
+`freeEnergyAlongExhaustion` tendsto `L`, then `freeEnergyInfinite = L`. -/
+theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_eq_of_tendsto
+    (d : ℕ) (p : IsingParams ℝ) {L : ℝ}
+    (h : Filter.Tendsto (freeEnergyAlongExhaustion (IsingModel.latticeGraph d)
+      (Ambient.cubicExhaustion d) p) Filter.atTop (nhds L)) :
+    freeEnergyInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) p = L :=
+  freeEnergyInfinite_eq_of_tendsto (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) p h
+
+/-- **ℤ^d freeEnergyInfinite of eventually constant sequence**. -/
+theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_of_eventually_const
+    (d : ℕ) (p : IsingParams ℝ) {c : ℝ}
+    (h : ∀ᶠ n in Filter.atTop, freeEnergyAlongExhaustion
+      (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d) p n = c) :
+    freeEnergyInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) p = c :=
+  freeEnergyInfinite_of_eventually_const (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) p h
+
+/-- **ℤ^d freeEnergyInfinite uniform upper bound via BED**. -/
+theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_le_uniform_upper_bound
+    (d : ℕ) [Nonempty (Fin d → ℤ)]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    freeEnergyInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) p
+      ≤ Real.log 2 + |p.β| * (|p.J| * (d : ℝ) + |p.h|) := by
+  refine freeEnergyInfinite_le_uniform_upper_bound (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) p hf (c := (d : ℝ)) ?_
+  intro n _
+  exact inducedLatticeGraph_card_edgeFinset_le d
+    ((Ambient.cubicExhaustion d).volume n)
+
 /-- **ℤ^d BddAbove range of `freeEnergyAlongExhaustion`**: via BED c=d. -/
 theorem BddAbove_freeEnergyAlongExhaustion_latticeGraph_cubicExhaustion
     (d : ℕ) (p : IsingParams ℝ) :
