@@ -607,6 +607,44 @@ theorem truncated2TwoPoint_eq_twoPointFunction_sub_magnetization_sq
   -- = `twoPointFunction d p r - magnetizationInfinite ... 0 ^ 2`.
   ring
 
+/-- **`truncated4TwoPoint` at `β = 0` vanishes**:
+`truncated4TwoPoint d ⟨J, h, 0⟩ r s u = 0`.
+
+All four Lebowitz terms vanish at β=0. -/
+theorem truncated4TwoPoint_beta_zero
+    (d : ℕ) (J h : ℝ) (r s u : Fin d → ℤ) :
+    truncated4TwoPoint d (⟨J, h, 0⟩ : IsingParams ℝ) r s u = 0 := by
+  unfold truncated4TwoPoint truncated4Infinite
+  rw [show correlationInfinite (IsingModel.latticeGraph d)
+      (Ambient.cubicExhaustion d) (⟨J, h, 0⟩ : IsingParams ℝ)
+      {(0 : Fin d → ℤ), r, s, u} = 0 from
+    correlationInfinite_beta_zero_vanish _ _ J h _ (by simp),
+      show correlationInfinite (IsingModel.latticeGraph d)
+      (Ambient.cubicExhaustion d) (⟨J, h, 0⟩ : IsingParams ℝ)
+      {(0 : Fin d → ℤ), r} = 0 from
+    correlationInfinite_beta_zero_vanish _ _ J h _ (by simp),
+      show correlationInfinite (IsingModel.latticeGraph d)
+      (Ambient.cubicExhaustion d) (⟨J, h, 0⟩ : IsingParams ℝ)
+      {s, u} = 0 from
+    correlationInfinite_beta_zero_vanish _ _ J h _ (by simp),
+      show correlationInfinite (IsingModel.latticeGraph d)
+      (Ambient.cubicExhaustion d) (⟨J, h, 0⟩ : IsingParams ℝ)
+      {(0 : Fin d → ℤ), s} = 0 from
+    correlationInfinite_beta_zero_vanish _ _ J h _ (by simp),
+      show correlationInfinite (IsingModel.latticeGraph d)
+      (Ambient.cubicExhaustion d) (⟨J, h, 0⟩ : IsingParams ℝ)
+      {r, u} = 0 from
+    correlationInfinite_beta_zero_vanish _ _ J h _ (by simp),
+      show correlationInfinite (IsingModel.latticeGraph d)
+      (Ambient.cubicExhaustion d) (⟨J, h, 0⟩ : IsingParams ℝ)
+      {(0 : Fin d → ℤ), u} = 0 from
+    correlationInfinite_beta_zero_vanish _ _ J h _ (by simp),
+      show correlationInfinite (IsingModel.latticeGraph d)
+      (Ambient.cubicExhaustion d) (⟨J, h, 0⟩ : IsingParams ℝ)
+      {r, s} = 0 from
+    correlationInfinite_beta_zero_vanish _ _ J h _ (by simp)]
+  ring
+
 /-- **`truncated3TwoPoint` at `β = 0` vanishes**:
 `truncated3TwoPoint d ⟨J, h, 0⟩ r s = 0`.
 
