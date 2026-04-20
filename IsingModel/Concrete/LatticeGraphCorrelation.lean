@@ -245,6 +245,18 @@ theorem uniformSpontaneousMagnetization_le_one
   spontaneousMagnetization_le_one (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) hJ hβ 0
 
+/-- **`uniformMagnetization` at `β = 0`**:
+`uniformMagnetization d ⟨J, h, 0⟩ = 0`.
+
+Concrete specialisation of `magnetizationInfinite_beta_zero` at site `0`:
+at infinite temperature (`β = 0`) all spin correlations vanish, in
+particular the magnetization. No ferromagnetic hypothesis needed. -/
+theorem uniformMagnetization_beta_zero
+    (d : ℕ) (J h : ℝ) :
+    uniformMagnetization d (⟨J, h, 0⟩ : IsingParams ℝ) = 0 :=
+  magnetizationInfinite_beta_zero
+    (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d) J h 0
+
 /-- **`uniformMagnetization` at `J = 0`**:
 `uniformMagnetization d ⟨0, h, β⟩ = tanh(β · h)` (ferromagnetic).
 
