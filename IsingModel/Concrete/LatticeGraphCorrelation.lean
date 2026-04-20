@@ -619,6 +619,37 @@ theorem partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_monotone_b
   partitionFunctionAlongExhaustion_monotone_beta (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) J h hJ hh hβ₁ hβ n
 
+/-- **ℤ^d freeEnergyAlongExhaustion h-evenness** per stage. -/
+theorem freeEnergyAlongExhaustion_latticeGraph_cubicExhaustion_neg_h
+    (d : ℕ) (J h β : ℝ) (n : ℕ) :
+    freeEnergyAlongExhaustion (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) (⟨J, -h, β⟩ : IsingParams ℝ) n
+      = freeEnergyAlongExhaustion (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) (⟨J, h, β⟩ : IsingParams ℝ) n :=
+  freeEnergyAlongExhaustion_neg_h (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) J h β n
+
+/-- **ℤ^d freeEnergyAlongExhaustion |h|-form** per stage. -/
+theorem freeEnergyAlongExhaustion_latticeGraph_cubicExhaustion_eq_abs_h
+    (d : ℕ) (J h β : ℝ) (n : ℕ) :
+    freeEnergyAlongExhaustion (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) (⟨J, h, β⟩ : IsingParams ℝ) n
+      = freeEnergyAlongExhaustion (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) (⟨J, |h|, β⟩ : IsingParams ℝ) n :=
+  freeEnergyAlongExhaustion_eq_abs_h (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) J h β n
+
+/-- **ℤ^d freeEnergyAlongExhaustion |h|-monotonicity** per stage. -/
+theorem freeEnergyAlongExhaustion_latticeGraph_cubicExhaustion_monotone_abs_h
+    (d : ℕ) (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β)
+    {h₁ h₂ : ℝ} (hh : |h₁| ≤ |h₂|) (n : ℕ) :
+    freeEnergyAlongExhaustion (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) (⟨J, h₁, β⟩ : IsingParams ℝ) n
+      ≤ freeEnergyAlongExhaustion (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) (⟨J, h₂, β⟩ : IsingParams ℝ) n :=
+  freeEnergyAlongExhaustion_monotone_abs_h (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) J β hJ hβ hh n
+
 /-- **ℤ^d per-stage explicit upper bound on freeEnergyAlongExhaustion**. -/
 theorem freeEnergyAlongExhaustion_latticeGraph_cubicExhaustion_upper_bound
     (d : ℕ) (p : IsingParams ℝ) (n : ℕ)
