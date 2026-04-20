@@ -371,6 +371,27 @@ def configVaddEquiv {T : Type u} [AddGroup T] {V : Type v}
     Config (↑Λ : Type _) ≃ Config (↑(vaddFinset t Λ) : Type _) :=
   Equiv.arrowCongr (vaddSubtypeEquiv t Λ) (Equiv.refl Spin)
 
+/-- **Action of `configVaddEquiv` on a point** (forward direction):
+`(configVaddEquiv t Λ σ) j = σ ((vaddSubtypeEquiv t Λ).symm j)` for
+`j : ↑(vaddFinset t Λ)`. Unfolding lemma for the `Equiv.arrowCongr`
+construction. -/
+@[simp]
+theorem configVaddEquiv_apply {T : Type u} [AddGroup T] {V : Type v}
+    [DecidableEq V] [AddAction T V]
+    (t : T) (Λ : Finset V) (σ : Config (↑Λ : Type _))
+    (j : (↑(vaddFinset t Λ) : Type _)) :
+    (configVaddEquiv t Λ σ) j = σ ((vaddSubtypeEquiv t Λ).symm j) := rfl
+
+/-- **Action of `(configVaddEquiv t Λ).symm` on a point**:
+`((configVaddEquiv t Λ).symm σ') i = σ' (vaddSubtypeEquiv t Λ i)` for
+`i : ↑Λ`. Unfolding lemma for the inverse of the `Equiv.arrowCongr`. -/
+@[simp]
+theorem configVaddEquiv_symm_apply {T : Type u} [AddGroup T] {V : Type v}
+    [DecidableEq V] [AddAction T V]
+    (t : T) (Λ : Finset V) (σ' : Config (↑(vaddFinset t Λ) : Type _))
+    (i : (↑Λ : Type _)) :
+    ((configVaddEquiv t Λ).symm σ') i = σ' (vaddSubtypeEquiv t Λ i) := rfl
+
 /-- **`externalFieldEnergy` is invariant under `configVaddEquiv`**:
 for any translation `t : T` and any `Λ : Finset V`,
 
@@ -576,6 +597,92 @@ theorem partitionFunctionΛ_vaddFinset_eq {T : Type u} [AddGroup T]
             ((configVaddEquiv t Λ) σ))
   rw [hamiltonian_configVaddEquiv_symm G t Λ p (configVaddEquiv t Λ σ),
       Equiv.symm_apply_apply]
+
+/-- **Spin product equivariance under `configVaddEquiv`**:
+for `A : Finset ↑Λ`, `σ : Config ↑Λ`, and translation `t : T`,
+
+`spinProduct (A.map (vaddSubtypeEquiv t Λ).toEmbedding)
+  (configVaddEquiv t Λ σ) = spinProduct A σ`.
+
+The image Finset `A.map (vaddSubtypeEquiv t Λ).toEmbedding` is the
+translated set of sites inside `↑(vaddFinset t Λ)`. Reindexing the
+`∏_j toSign((configVaddEquiv σ) j)` product via `Finset.prod_map`
+reduces to `∏_i toSign((configVaddEquiv σ) (emb i)) = ∏_i toSign(σ i)`,
+since `configVaddEquiv t Λ σ = σ ∘ (vaddSubtypeEquiv t Λ).symm` and
+`emb = (vaddSubtypeEquiv t Λ).toEmbedding`. -/
+theorem spinProduct_map_configVaddEquiv {T : Type u} [AddGroup T]
+    {V : Type v} [DecidableEq V] [AddAction T V]
+    (t : T) (Λ : Finset V) (A : Finset (↑Λ : Type _))
+    (σ : IsingModel.Config (↑Λ : Type _)) :
+    IsingModel.spinProduct (A.map (vaddSubtypeEquiv t Λ).toEmbedding)
+        (configVaddEquiv t Λ σ)
+      = IsingModel.spinProduct A σ := by
+  unfold IsingModel.spinProduct
+  rw [Finset.prod_map]
+  apply Finset.prod_congr rfl
+  intro i _
+  -- `configVaddEquiv t Λ σ = σ ∘ (vaddSubtypeEquiv t Λ).symm`, so at
+  -- `emb i = vaddSubtypeEquiv t Λ i` we get `σ ((vaddSubtypeEquiv ...).symm
+  -- ((vaddSubtypeEquiv ...) i)) = σ i`.
+  have h : configVaddEquiv t Λ σ (vaddSubtypeEquiv t Λ i) = σ i := by
+    simp
+  -- Goal: `↑((configVaddEquiv t Λ σ) ((vaddSubtypeEquiv t Λ).toEmbedding i)).toSign
+  --        = ↑(σ i).toSign` (cast into ℝ).
+  change (↑((configVaddEquiv t Λ σ)
+      (vaddSubtypeEquiv t Λ i)).toSign : ℝ) = (↑(σ i).toSign : ℝ)
+  rw [h]
+
+/-- **Correlation equivariance under ambient translation**: for a
+translation-invariant graph `G` and any `A : Finset ↑Λ`,
+
+`correlationΛ G (vaddFinset t Λ) p (A.map (vaddSubtypeEquiv t Λ).toEmbedding)
+  = correlationΛ G Λ p A`.
+
+Composes `partitionFunctionΛ_vaddFinset_eq` (denominator) with
+`hamiltonian_configVaddEquiv_symm` + `spinProduct_map_configVaddEquiv`
+(numerator) via `configVaddEquiv` reindexing. -/
+theorem correlationΛ_vaddFinset_eq {T : Type u} [AddGroup T]
+    {V : Type v} [DecidableEq V] [AddAction T V]
+    (G : SimpleGraph V) [IsTranslationInvariant T G]
+    (t : T) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    [Fintype (inducedGraph G (vaddFinset t Λ)).edgeSet]
+    (p : IsingParams ℝ) (A : Finset (↑Λ : Type _)) :
+    correlationΛ G (vaddFinset t Λ) p
+        (A.map (vaddSubtypeEquiv t Λ).toEmbedding)
+      = correlationΛ G Λ p A := by
+  -- Unfold `correlationΛ = IsingModel.correlation = gibbsExpectation (spinProduct _)`.
+  change IsingModel.correlation (inducedGraph G (vaddFinset t Λ)) p
+      (A.map (vaddSubtypeEquiv t Λ).toEmbedding)
+    = IsingModel.correlation (inducedGraph G Λ) p A
+  unfold IsingModel.correlation IsingModel.gibbsExpectation
+  -- The partition function factors are equal by `partitionFunctionΛ_vaddFinset_eq`.
+  have hZ : IsingModel.partitionFunction (inducedGraph G (vaddFinset t Λ)) p
+      = IsingModel.partitionFunction (inducedGraph G Λ) p := by
+    change partitionFunctionΛ G (vaddFinset t Λ) p = partitionFunctionΛ G Λ p
+    exact partitionFunctionΛ_vaddFinset_eq G t Λ p
+  rw [hZ]
+  congr 1
+  -- Reindex ∑_{σ'} over Config ↑(vaddFinset t Λ) to ∑_σ over Config ↑Λ.
+  refine (Fintype.sum_equiv (configVaddEquiv t Λ)
+    (fun σ => IsingModel.spinProduct A σ
+        * IsingModel.boltzmannWeight (inducedGraph G Λ) p σ)
+    (fun σ' => IsingModel.spinProduct
+        (A.map (vaddSubtypeEquiv t Λ).toEmbedding) σ'
+      * IsingModel.boltzmannWeight (inducedGraph G (vaddFinset t Λ)) p σ')
+    ?_).symm
+  intro σ
+  -- Both factors equal under `configVaddEquiv`:
+  -- spinProduct via `spinProduct_map_configVaddEquiv`,
+  -- boltzmannWeight via `hamiltonian_configVaddEquiv_symm`.
+  have h_sp := spinProduct_map_configVaddEquiv t Λ A σ
+  have h_bw : IsingModel.boltzmannWeight (inducedGraph G Λ) p σ
+      = IsingModel.boltzmannWeight (inducedGraph G (vaddFinset t Λ)) p
+          (configVaddEquiv t Λ σ) := by
+    unfold IsingModel.boltzmannWeight
+    rw [hamiltonian_configVaddEquiv_symm G t Λ p (configVaddEquiv t Λ σ),
+        Equiv.symm_apply_apply]
+  simp only [h_bw, h_sp]
 
 /-! ## Translation-invariant exhaustions
 
