@@ -175,6 +175,16 @@ theorem magnetization_nonneg (G : SimpleGraph ι) [Fintype G.edgeSet]
     0 ≤ magnetization G p i :=
   gks_first G p hf {i}
 
+/-- **`magnetization² ≤ 1`** unconditionally. Immediate from
+`abs_magnetization_le_one` via `sq_le_one'`. -/
+theorem magnetization_sq_le_one (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (p : IsingParams ℝ) (i : ι) :
+    magnetization G p i ^ 2 ≤ 1 := by
+  have h := abs_magnetization_le_one G p i
+  have : |magnetization G p i| ^ 2 ≤ 1 ^ 2 :=
+    pow_le_pow_left₀ (abs_nonneg _) h 2
+  simpa [sq_abs] using this
+
 /-- **Susceptibility** (per site `i`):
 `χ(i) = Σ_j ⟨σ_i; σ_j⟩ = Σ_j truncated2(i, j)`.
 

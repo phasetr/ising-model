@@ -1466,6 +1466,14 @@ theorem abs_uniformMagnetization_le_one
   abs_magnetizationInfinite_le_one (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) p 0
 
+/-- **`uniformMagnetization² ≤ 1`** unconditionally. Specialization of
+`magnetizationInfinite_sq_le_one` at site `0`. -/
+theorem uniformMagnetization_sq_le_one
+    (d : ℕ) (p : IsingParams ℝ) :
+    uniformMagnetization d p ^ 2 ≤ 1 :=
+  magnetizationInfinite_sq_le_one (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) p 0
+
 
 /-- **Uniform spontaneous magnetization on ℤ^d**: by site-independence
 of spontaneous magnetization on the translation-invariant ℤ^d lattice
@@ -1537,6 +1545,13 @@ theorem abs_uniformSpontaneousMagnetization_le_one
     |uniformSpontaneousMagnetization d J β| ≤ 1 :=
   abs_le.mpr ⟨neg_one_le_uniformSpontaneousMagnetization d hJ hβ,
     uniformSpontaneousMagnetization_le_one d hJ hβ⟩
+
+/-- **`uniformSpontaneousMagnetization² ≤ 1`** (ferromagnetic). -/
+theorem uniformSpontaneousMagnetization_sq_le_one
+    (d : ℕ) {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) :
+    uniformSpontaneousMagnetization d J β ^ 2 ≤ 1 :=
+  spontaneousMagnetization_sq_le_one (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) hJ hβ 0
 
 /-- **ℤ^d `-1 ≤ spontaneousMagnetization`** (ferromagnetic). -/
 theorem neg_one_le_spontaneousMagnetization_latticeGraph
