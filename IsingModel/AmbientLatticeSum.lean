@@ -289,6 +289,42 @@ theorem freeEnergyΛ_monotone_abs_h
       ≤ freeEnergyΛ G Λ (⟨J, h₂, β⟩ : IsingParams ℝ) :=
   IsingModel.freeEnergy_monotone_abs_h _ J β hJ hβ hh
 
+/-- **Λ-level J-monotonicity of `freeEnergyΛ`**:
+for fixed `h ≥ 0`, `β > 0`, the free energy on `Λ` is monotone in `J`
+on `[0, ∞)`. Direct lift of `IsingModel.freeEnergy_monotone_J`. -/
+theorem freeEnergyΛ_monotone_J
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {h : ℝ} (hh : 0 ≤ h) {β : ℝ} (hβ : 0 < β) :
+    MonotoneOn
+      (fun J : ℝ => freeEnergyΛ G Λ (⟨J, h, β⟩ : IsingParams ℝ))
+      (Set.Ici 0) :=
+  IsingModel.freeEnergy_monotone_J (inducedGraph G Λ) h β hh hβ
+
+/-- **Λ-level h-monotonicity of `freeEnergyΛ`**:
+for fixed `J ≥ 0`, `β > 0`, the free energy on `Λ` is monotone in `h`
+on `[0, ∞)`. Direct lift of `IsingModel.freeEnergy_monotone_h`. -/
+theorem freeEnergyΛ_monotone_h
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) :
+    MonotoneOn
+      (fun h : ℝ => freeEnergyΛ G Λ (⟨J, h, β⟩ : IsingParams ℝ))
+      (Set.Ici 0) :=
+  IsingModel.freeEnergy_monotone_h (inducedGraph G Λ) J β hJ hβ
+
+/-- **Λ-level β-monotonicity of `freeEnergyΛ`**:
+for fixed `J ≥ 0`, `h ≥ 0`, the free energy on `Λ` is monotone in `β`
+on `(0, ∞)`. Direct lift of `IsingModel.freeEnergy_monotone_beta`. -/
+theorem freeEnergyΛ_monotone_beta
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {J : ℝ} (hJ : 0 ≤ J) {h : ℝ} (hh : 0 ≤ h) :
+    MonotoneOn
+      (fun β : ℝ => freeEnergyΛ G Λ (⟨J, h, β⟩ : IsingParams ℝ))
+      (Set.Ioi 0) :=
+  IsingModel.freeEnergy_monotone_beta (inducedGraph G Λ) J hJ h hh
+
 /-- **`partitionFunctionΛ ≥ 1`** for ferromagnetic parameters:
 lifts PR #141 `partitionFunction_ge_one_of_ferromagnetic` to the
 `partitionFunctionΛ` API level. -/
