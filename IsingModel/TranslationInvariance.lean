@@ -230,14 +230,15 @@ theorem inducedGraph_vaddFinset_adj_iff {T : Type u} [AddGroup T]
 `Config ↑Λ ≃ Config ↑(vaddFinset t Λ)`, obtained by pre-composing
 spin configurations with `(vaddSubtypeEquiv t Λ).symm`.
 
-Explicit direction:
-- `configVaddEquiv t Λ σ := σ ∘ (vaddSubtypeEquiv t Λ).symm`.
-- Inverse: `σ' := σ' ∘ vaddSubtypeEquiv t Λ`.
+Explicit directions:
+- `configVaddEquiv t Λ σ = σ ∘ (vaddSubtypeEquiv t Λ).symm`.
+- `(configVaddEquiv t Λ).symm σ' = σ' ∘ vaddSubtypeEquiv t Λ`.
 
 This is the reindexing isomorphism used in the subsequent
 partition-function translation-invariance step (rewrite
-`∑_{σ' : Config ↑(t+ᵥΛ)} f(σ')` as `∑_{σ : Config ↑Λ}
-f(configVaddEquiv t Λ σ)` via `Fintype.sum_equiv`). -/
+`∑_{σ' : Config ↑(vaddFinset t Λ)} f(σ')` as
+`∑_{σ : Config ↑Λ} f(configVaddEquiv t Λ σ)` via
+`Fintype.sum_equiv`). -/
 def configVaddEquiv {T : Type u} [AddGroup T] {V : Type v}
     [DecidableEq V] [AddAction T V]
     (t : T) (Λ : Finset V) :
