@@ -1386,6 +1386,16 @@ theorem truncated2TwoPoint_J_zero_of_ne_zero
       uniformMagnetization_J_zero d h β hf]
   ring
 
+/-- **ℤ^d empty-set correlation is 1**: `correlationInfinite ... p ∅ = 1`.
+Gibbs-measure normalisation — an empty spin product is `1`. -/
+@[simp]
+theorem correlationInfinite_latticeGraph_cubicExhaustion_empty
+    (d : ℕ) (p : IsingParams ℝ) :
+    correlationInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) p ∅ = 1 :=
+  correlationInfinite_empty (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) p
+
 /-- **ℤ^d FKG for spinProducts at ∞-vol** (Glimm–Jaffe §4.4 p. 67):
 alias of the `correlationInfinite_gks_second` GKS-II form. -/
 theorem correlationInfinite_latticeGraph_cubicExhaustion_fkg_spinProduct
