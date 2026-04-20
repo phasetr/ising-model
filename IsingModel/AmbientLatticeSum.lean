@@ -991,6 +991,74 @@ theorem log_partitionFunctionΛ_beta_zero
   push_cast
   rw [Real.log_pow, Fintype.card_coe]
 
+/-- **Log form of Λ-level h-evenness**:
+`log Z_Λ(J, -h, β) = log Z_Λ(J, h, β)`. Direct from
+`partitionFunctionΛ_neg_h` by applying `Real.log`. -/
+theorem log_partitionFunctionΛ_neg_h
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (J h β : ℝ) :
+    Real.log (partitionFunctionΛ G Λ (⟨J, -h, β⟩ : IsingParams ℝ))
+      = Real.log (partitionFunctionΛ G Λ (⟨J, h, β⟩ : IsingParams ℝ)) := by
+  rw [partitionFunctionΛ_neg_h]
+
+/-- **Log form of Λ-level `|h|`-rewrite**:
+`log Z_Λ(J, h, β) = log Z_Λ(J, |h|, β)`. Direct from
+`partitionFunctionΛ_eq_abs_h`. -/
+theorem log_partitionFunctionΛ_eq_abs_h
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (J h β : ℝ) :
+    Real.log (partitionFunctionΛ G Λ (⟨J, h, β⟩ : IsingParams ℝ))
+      = Real.log (partitionFunctionΛ G Λ (⟨J, |h|, β⟩ : IsingParams ℝ)) := by
+  rw [partitionFunctionΛ_eq_abs_h]
+
+/-- **Log form of Λ-level J-monotonicity**:
+for `h ≥ 0`, `β > 0`, `0 ≤ J₁ ≤ J₂`,
+`log Z_Λ(⟨J₁, h, β⟩) ≤ log Z_Λ(⟨J₂, h, β⟩)`. Via `Real.log_le_log`
+using `partitionFunctionΛ_pos` and `partitionFunctionΛ_monotone_J`. -/
+theorem log_partitionFunctionΛ_monotone_J
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (h β : ℝ) (hh : 0 ≤ h) (hβ : 0 < β) {J₁ J₂ : ℝ}
+    (hJ₁ : 0 ≤ J₁) (hJ : J₁ ≤ J₂) :
+    Real.log (partitionFunctionΛ G Λ (⟨J₁, h, β⟩ : IsingParams ℝ))
+      ≤ Real.log (partitionFunctionΛ G Λ (⟨J₂, h, β⟩ : IsingParams ℝ)) :=
+  Real.log_le_log (partitionFunctionΛ_pos G Λ _)
+    (partitionFunctionΛ_monotone_J G Λ h β hh hβ hJ₁ hJ)
+
+/-- **Log form of Λ-level h-monotonicity**: ferromagnetic direction. -/
+theorem log_partitionFunctionΛ_monotone_h
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) {h₁ h₂ : ℝ}
+    (hh₁ : 0 ≤ h₁) (hh : h₁ ≤ h₂) :
+    Real.log (partitionFunctionΛ G Λ (⟨J, h₁, β⟩ : IsingParams ℝ))
+      ≤ Real.log (partitionFunctionΛ G Λ (⟨J, h₂, β⟩ : IsingParams ℝ)) :=
+  Real.log_le_log (partitionFunctionΛ_pos G Λ _)
+    (partitionFunctionΛ_monotone_h G Λ J β hJ hβ hh₁ hh)
+
+/-- **Log form of Λ-level β-monotonicity**: ferromagnetic direction. -/
+theorem log_partitionFunctionΛ_monotone_beta
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J h : ℝ) (hJ : 0 ≤ J) (hh : 0 ≤ h) {β₁ β₂ : ℝ}
+    (hβ₁ : 0 < β₁) (hβ : β₁ ≤ β₂) :
+    Real.log (partitionFunctionΛ G Λ (⟨J, h, β₁⟩ : IsingParams ℝ))
+      ≤ Real.log (partitionFunctionΛ G Λ (⟨J, h, β₂⟩ : IsingParams ℝ)) :=
+  Real.log_le_log (partitionFunctionΛ_pos G Λ _)
+    (partitionFunctionΛ_monotone_beta G Λ J h hJ hh hβ₁ hβ)
+
+/-- **Log form of Λ-level `|h|`-monotonicity**: ferromagnetic
+`|h₁| ≤ |h₂|` implies `log Z_Λ(⟨J, h₁, β⟩) ≤ log Z_Λ(⟨J, h₂, β⟩)`. -/
+theorem log_partitionFunctionΛ_monotone_abs_h
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β)
+    {h₁ h₂ : ℝ} (hh : |h₁| ≤ |h₂|) :
+    Real.log (partitionFunctionΛ G Λ (⟨J, h₁, β⟩ : IsingParams ℝ))
+      ≤ Real.log (partitionFunctionΛ G Λ (⟨J, h₂, β⟩ : IsingParams ℝ)) :=
+  Real.log_le_log (partitionFunctionΛ_pos G Λ _)
+    (partitionFunctionΛ_monotone_abs_h G Λ J β hJ hβ hh)
+
 /-- **Closed form for `log (partitionFunctionΛ G Λ ⟨0, 0, β⟩)`**:
 at `J = h = 0`, `log Z_Λ = |Λ| · log 2`. Direct from
 `IsingModel.partitionFunction_zero_params`
