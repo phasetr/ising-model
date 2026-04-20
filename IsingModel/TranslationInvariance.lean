@@ -681,6 +681,48 @@ theorem log_partitionFunctionΛ_super_of_translationInvariant_union
   rw [h_translate] at h_super
   exact h_super
 
+/-- **`partitionFunctionΛ` congruence under Finset equality**: if
+`Λ₁ = Λ₂`, then `partitionFunctionΛ G Λ₁ p = partitionFunctionΛ G
+Λ₂ p`, independent of the Fintype instance on the induced edge
+set (which is a subsingleton).
+
+Used to transport hsuper from the union form (step 9) to the
+`volume (m+n)` form expected by `DisjointTowerHypotheses.super`. -/
+theorem partitionFunctionΛ_congr_finset {V : Type*} [DecidableEq V]
+    (G : SimpleGraph V) {Λ₁ Λ₂ : Finset V} (heq : Λ₁ = Λ₂)
+    [Fintype (inducedGraph G Λ₁).edgeSet]
+    [Fintype (inducedGraph G Λ₂).edgeSet]
+    (p : IsingParams ℝ) :
+    partitionFunctionΛ G Λ₁ p = partitionFunctionΛ G Λ₂ p := by
+  subst heq
+  congr 1
+  exact Subsingleton.elim _ _
+
+set_option linter.unusedFintypeInType false in
+/-- **`hsuper` in `volume (m + n)` form**: bridges step 9's union
+form to the form expected by `DisjointTowerHypotheses.super`.
+
+Proof: apply step 9 (union form), then `partitionFunctionΛ_congr_finset`
+with `volume_decomposes` to rewrite the RHS Finset. -/
+theorem log_partitionFunctionΛ_super_of_translationInvariant
+    (Λ : TranslationInvariantExhaustion T V)
+    (G : SimpleGraph V) [IsTranslationInvariant T G]
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (m n : ℕ)
+    [Fintype (inducedGraph G
+        (vaddFinset (Λ.shift m) (Λ.volume n))).edgeSet]
+    [Fintype (inducedGraph G
+        (Λ.volume m ∪ vaddFinset (Λ.shift m) (Λ.volume n))).edgeSet] :
+    Real.log (partitionFunctionΛ G (Λ.volume m) p)
+      + Real.log (partitionFunctionΛ G (Λ.volume n) p)
+      ≤ Real.log (partitionFunctionΛ G (Λ.volume (m + n)) p) := by
+  have h_union := log_partitionFunctionΛ_super_of_translationInvariant_union
+    Λ G p hf m n
+  have h_eq := partitionFunctionΛ_congr_finset (G := G)
+    (Λ.volume_decomposes m n).symm (p := p)
+  rw [← h_eq]
+  exact h_union
+
 /-- **`DisjointTowerHypotheses` from a `TranslationInvariantExhaustion`
 + hypothesised `hsuper`**: given a translation-invariant exhaustion
 (which handles `card_add` via `volume_card_add`) together with
