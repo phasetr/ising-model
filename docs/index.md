@@ -487,6 +487,7 @@ inventory (2026-04-17).
 | §4.6 | `{twoPointFunction, truncated2TwoPoint}` at `h = 0, r = 0` | **Done** | `twoPointFunction_h_zero_at_zero = 0` via `twoPointFunction_zero` + `magnetizationInfinite_zero_at_h_zero`. `truncated2TwoPoint_h_zero_at_zero = 0` via `truncated2TwoPoint_zero = M(1-M)` with `M = 0`. (PR #407.) |
 | §4.2, §5.3 | `abs_uniformMagnetization_le_one` + `-1 ≤ uniformMagnetization` | **Done** | `abs_uniformMagnetization_le_one` and `neg_one_le_uniformMagnetization` unconditionally (no Ferromagnetic hypothesis), via `abs_magnetizationInfinite_le_one` / `neg_one_le_magnetizationInfinite` at site 0. (PR #408.) |
 | §4.2, §5.4 | `abs_spontaneousCorrelation_le_one` + uniformSpontaneousMagnetization (ferromagnetic) | **Done** | `Ambient.abs_spontaneousCorrelation_le_one` and `neg_one_le_spontaneousCorrelation` (ferromagnetic, via `spontaneousCorrelation_nonneg` + `_le_one`). Concrete ℤ^d `abs_uniformSpontaneousMagnetization_le_one` + `neg_one_le_uniformSpontaneousMagnetization`. (PR #409.) |
+| §5.4 | `abs_spontaneousMagnetization_le_one` + ℤ^d (ferromagnetic) | **Done** | `Ambient.abs_spontaneousMagnetization_le_one` and `neg_one_le_spontaneousMagnetization` via `abs_le.mpr` combining `spontaneousMagnetization_nonneg` + `_le_one`. Concrete ℤ^d wrappers. (PR #410.) |
 | §4.7 | Two-component spins | Out of scope | XY model |
 
 ### Chapter 5 (Phase transitions)
