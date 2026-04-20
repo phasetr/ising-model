@@ -245,6 +245,21 @@ theorem uniformSpontaneousMagnetization_le_one
   spontaneousMagnetization_le_one (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) hJ hβ 0
 
+/-- **`uniformMagnetization` at `J = 0`**:
+`uniformMagnetization d ⟨0, h, β⟩ = tanh(β · h)` (ferromagnetic).
+
+Concrete specialisation of `magnetizationInfinite_J_zero` at site `0`
+on the `(latticeGraph d, cubicExhaustion d)` pair. Non-interacting
+slice: at `J = 0` the Ising Hamiltonian has no coupling, so each site
+is an independent two-state system with Boltzmann weight `exp(β h s)`,
+giving `M = tanh(β h)`. -/
+theorem uniformMagnetization_J_zero
+    (d : ℕ) (h β : ℝ)
+    (hf : Ferromagnetic (⟨(0 : ℝ), h, β⟩ : IsingParams ℝ)) :
+    uniformMagnetization d (⟨0, h, β⟩ : IsingParams ℝ) = Real.tanh (β * h) :=
+  magnetizationInfinite_J_zero
+    (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d) h β hf 0
+
 /-- **Z₂ symmetry at `h = 0`**: `uniformMagnetization d ⟨J, 0, β⟩ = 0`.
 
 Concrete specialisation of `magnetizationInfinite_zero_at_h_zero` at
