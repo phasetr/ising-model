@@ -246,6 +246,13 @@ theorem neg_one_le_correlationΛ (G : SimpleGraph V) (Λ : Finset V)
     -1 ≤ correlationΛ G Λ p A :=
   (abs_le.mp (abs_correlationΛ_le_one G Λ p A)).1
 
+/-- **`correlationΛ² ≤ 1`** unconditionally. -/
+theorem correlationΛ_sq_le_one (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (p : IsingParams ℝ)
+    (A : Finset (↑Λ : Type _)) :
+    correlationΛ G Λ p A ^ 2 ≤ 1 :=
+  IsingModel.correlation_sq_le_one _ p A
+
 /-- For ferromagnetic `p`, the correlation on `Λ` is non-negative
 (GKS-I, lifted to the ambient framework). -/
 theorem correlationΛ_nonneg (G : SimpleGraph V) (Λ : Finset V)
@@ -593,6 +600,17 @@ theorem neg_one_le_correlationAlongExhaustion
     (p : IsingParams ℝ) (A : Finset V) (n : ℕ) :
     -1 ≤ correlationAlongExhaustion G Λ p A n :=
   (abs_le.mp (abs_correlationAlongExhaustion_le_one G Λ p A n)).1
+
+/-- **Pointwise `correlationAlongExhaustion² ≤ 1`** at every `n : ℕ`. -/
+theorem correlationAlongExhaustion_sq_le_one
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (A : Finset V) (n : ℕ) :
+    correlationAlongExhaustion G Λ p A n ^ 2 ≤ 1 := by
+  have h := abs_correlationAlongExhaustion_le_one G Λ p A n
+  have : |correlationAlongExhaustion G Λ p A n| ^ 2 ≤ 1 ^ 2 :=
+    pow_le_pow_left₀ (abs_nonneg _) h 2
+  simpa [sq_abs] using this
 
 /-! ## Monotonicity in the ambient subgraph direction
 
@@ -1472,6 +1490,17 @@ theorem neg_one_le_correlationInfinite
     (p : IsingParams ℝ) (A : Finset V) :
     -1 ≤ correlationInfinite G Λ p A :=
   (abs_le.mp (abs_correlationInfinite_le_one G Λ p A)).1
+
+/-- **`correlationInfinite² ≤ 1`** (unconditional). -/
+theorem correlationInfinite_sq_le_one
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (A : Finset V) :
+    correlationInfinite G Λ p A ^ 2 ≤ 1 := by
+  have h := abs_correlationInfinite_le_one G Λ p A
+  have : |correlationInfinite G Λ p A| ^ 2 ≤ 1 ^ 2 :=
+    pow_le_pow_left₀ (abs_nonneg _) h 2
+  simpa [sq_abs] using this
 
 /-- **Nonnegativity** (ferromagnetic): `correlationInfinite ≥ 0`.
 Uses `Λ.exhaust`: pick `N` with `A ⊆ Λ.volume N`; then
