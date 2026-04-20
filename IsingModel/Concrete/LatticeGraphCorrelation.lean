@@ -965,6 +965,57 @@ theorem partitionFunctionΛ_latticeGraph_monotone_beta
           (⟨J, h, β₂⟩ : IsingParams ℝ) :=
   partitionFunctionΛ_monotone_beta (IsingModel.latticeGraph d) Λ J h hJ hh hβ₁ hβ
 
+/-- **ℤ^d partitionFunctionΛ `|h|`-rewrite**:
+`Z_Λ(J,h,β) = Z_Λ(J,|h|,β)`. Concrete specialization of
+`partitionFunctionΛ_eq_abs_h`. -/
+theorem partitionFunctionΛ_latticeGraph_eq_abs_h
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J h β : ℝ) :
+    partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+        (⟨J, h, β⟩ : IsingParams ℝ)
+      = partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+          (⟨J, |h|, β⟩ : IsingParams ℝ) :=
+  partitionFunctionΛ_eq_abs_h (IsingModel.latticeGraph d) Λ J h β
+
+/-- **ℤ^d partitionFunctionΛ ferromagnetic `|h|`-monotonicity**:
+for `J ≥ 0`, `β > 0`, `|h₁| ≤ |h₂|`,
+`Z_Λ(J,h₁,β) ≤ Z_Λ(J,h₂,β)`. Concrete specialization of
+`partitionFunctionΛ_monotone_abs_h`. -/
+theorem partitionFunctionΛ_latticeGraph_monotone_abs_h
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β)
+    {h₁ h₂ : ℝ} (hh : |h₁| ≤ |h₂|) :
+    partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+        (⟨J, h₁, β⟩ : IsingParams ℝ)
+      ≤ partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+          (⟨J, h₂, β⟩ : IsingParams ℝ) :=
+  partitionFunctionΛ_monotone_abs_h (IsingModel.latticeGraph d) Λ J β hJ hβ hh
+
+/-- **ℤ^d partitionFunctionAlongExhaustion `|h|`-rewrite** per stage:
+`Z(Λ_n; J, h, β) = Z(Λ_n; J, |h|, β)`. Concrete specialization of
+`partitionFunctionAlongExhaustion_eq_abs_h`. -/
+theorem partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_eq_abs_h
+    (d : ℕ) (J h β : ℝ) (n : ℕ) :
+    partitionFunctionAlongExhaustion (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) (⟨J, h, β⟩ : IsingParams ℝ) n
+      = partitionFunctionAlongExhaustion (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) (⟨J, |h|, β⟩ : IsingParams ℝ) n :=
+  partitionFunctionAlongExhaustion_eq_abs_h (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) J h β n
+
+/-- **ℤ^d partitionFunctionAlongExhaustion ferromagnetic `|h|`-monotonicity**
+per stage: for `J ≥ 0`, `β > 0`, `|h₁| ≤ |h₂|`,
+`Z(Λ_n; J, h₁, β) ≤ Z(Λ_n; J, h₂, β)`. Concrete specialization of
+`partitionFunctionAlongExhaustion_monotone_abs_h`. -/
+theorem partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_monotone_abs_h
+    (d : ℕ) (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β)
+    {h₁ h₂ : ℝ} (hh : |h₁| ≤ |h₂|) (n : ℕ) :
+    partitionFunctionAlongExhaustion (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) (⟨J, h₁, β⟩ : IsingParams ℝ) n
+      ≤ partitionFunctionAlongExhaustion (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) (⟨J, h₂, β⟩ : IsingParams ℝ) n :=
+  partitionFunctionAlongExhaustion_monotone_abs_h (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) J β hJ hβ hh n
+
 /-- **ℤ^d partitionFunctionΛ ≥ 1** (ferromagnetic). -/
 theorem partitionFunctionΛ_latticeGraph_ge_one
     (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ)

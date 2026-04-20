@@ -146,6 +146,27 @@ theorem partitionFunctionΛ_monotone_beta (G : SimpleGraph V) (Λ : Finset V)
       ≤ partitionFunctionΛ G Λ (⟨J, h, β₂⟩ : IsingParams ℝ) :=
   IsingModel.partitionFunction_monotone_beta _ J h hJ hh β₁ β₂ hβ₁ hβ
 
+/-- **Λ-level partition-function `|h|`-rewrite**:
+`Z_Λ(J, h, β) = Z_Λ(J, |h|, β)`. Direct lift of
+`IsingModel.partitionFunction_eq_abs_h`. -/
+theorem partitionFunctionΛ_eq_abs_h (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (J h β : ℝ) :
+    partitionFunctionΛ G Λ (⟨J, h, β⟩ : IsingParams ℝ)
+      = partitionFunctionΛ G Λ (⟨J, |h|, β⟩ : IsingParams ℝ) :=
+  IsingModel.partitionFunction_eq_abs_h _ J h β
+
+/-- **Λ-level ferromagnetic `|h|`-monotonicity of `partitionFunctionΛ`**:
+for `J ≥ 0`, `β > 0`, `|h₁| ≤ |h₂|`,
+`Z_Λ(J, h₁, β) ≤ Z_Λ(J, h₂, β)`. Direct lift of
+`IsingModel.partitionFunction_monotone_abs_h`. -/
+theorem partitionFunctionΛ_monotone_abs_h (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β)
+    {h₁ h₂ : ℝ} (hh : |h₁| ≤ |h₂|) :
+    partitionFunctionΛ G Λ (⟨J, h₁, β⟩ : IsingParams ℝ)
+      ≤ partitionFunctionΛ G Λ (⟨J, h₂, β⟩ : IsingParams ℝ) :=
+  IsingModel.partitionFunction_monotone_abs_h _ J β hJ hβ hh
+
 /-- **Λ-level partition-function closed form at `J = 0`**:
 `Z_Λ(⟨0, h, β⟩) = (2 · cosh(β·h))^|Λ|`. Direct lift of
 `IsingModel.partitionFunction_J_zero` through
@@ -3924,6 +3945,32 @@ theorem partitionFunctionAlongExhaustion_neg_h
     partitionFunctionAlongExhaustion G Λ (⟨J, -h, β⟩ : IsingParams ℝ) n
       = partitionFunctionAlongExhaustion G Λ (⟨J, h, β⟩ : IsingParams ℝ) n :=
   partitionFunctionΛ_neg_h G (Λ.volume n) J h β
+
+/-- **Along-exhaustion partition-function `|h|`-rewrite**:
+`partitionFunctionAlongExhaustion G Λ ⟨J, h, β⟩ n =
+partitionFunctionAlongExhaustion G Λ ⟨J, |h|, β⟩ n`. Per-stage lift of
+`partitionFunctionΛ_eq_abs_h`. -/
+theorem partitionFunctionAlongExhaustion_eq_abs_h
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J h β : ℝ) (n : ℕ) :
+    partitionFunctionAlongExhaustion G Λ (⟨J, h, β⟩ : IsingParams ℝ) n
+      = partitionFunctionAlongExhaustion G Λ (⟨J, |h|, β⟩ : IsingParams ℝ) n :=
+  partitionFunctionΛ_eq_abs_h G (Λ.volume n) J h β
+
+/-- **Along-exhaustion ferromagnetic `|h|`-monotonicity of partition
+function**: for `J ≥ 0`, `β > 0`, `|h₁| ≤ |h₂|`,
+`partitionFunctionAlongExhaustion G Λ ⟨J, h₁, β⟩ n ≤
+partitionFunctionAlongExhaustion G Λ ⟨J, h₂, β⟩ n`. Per-stage lift of
+`partitionFunctionΛ_monotone_abs_h`. -/
+theorem partitionFunctionAlongExhaustion_monotone_abs_h
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β)
+    {h₁ h₂ : ℝ} (hh : |h₁| ≤ |h₂|) (n : ℕ) :
+    partitionFunctionAlongExhaustion G Λ (⟨J, h₁, β⟩ : IsingParams ℝ) n
+      ≤ partitionFunctionAlongExhaustion G Λ (⟨J, h₂, β⟩ : IsingParams ℝ) n :=
+  partitionFunctionΛ_monotone_abs_h G (Λ.volume n) J β hJ hβ hh
 
 /-- **Along-exhaustion h-evenness**:
 `freeEnergyAlongExhaustion G Λ ⟨J, -h, β⟩ n = freeEnergyAlongExhaustion G Λ ⟨J, h, β⟩ n`. -/

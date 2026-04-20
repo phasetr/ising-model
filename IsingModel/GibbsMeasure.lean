@@ -502,4 +502,17 @@ theorem partitionFunction_neg_h (G : SimpleGraph ι) [Fintype G.edgeSet]
         (Fintype.sum_equiv flipEquiv _ _
           (fun σ => by dsimp [flipEquiv]; simp [Config.flip_flip])).symm
 
+/-- **Partition function equals its value at `|h|`**:
+`Z(J, h, β) = Z(J, |h|, β)`.
+
+Case-split on `|h| = h ∨ |h| = -h` and apply `partitionFunction_neg_h`
+when needed. Z-level counterpart of `freeEnergy_eq_abs_h`. -/
+theorem partitionFunction_eq_abs_h (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h β : ℝ) :
+    partitionFunction G (⟨J, h, β⟩ : IsingParams ℝ)
+      = partitionFunction G (⟨J, |h|, β⟩ : IsingParams ℝ) := by
+  rcases abs_choice h with habs | habs
+  · rw [habs]
+  · rw [habs, partitionFunction_neg_h]
+
 end IsingModel
