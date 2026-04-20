@@ -1521,6 +1521,12 @@ theorem freeEnergyInfinite_bot_le_latticeGraph
   exact inducedLatticeGraph_card_edgeFinset_le d
     ((Ambient.cubicExhaustion d).volume n)
 
+/-- **ℤ^d inducedGraph of `⊥` = `⊥`** on any Λ. -/
+@[simp]
+theorem inducedGraph_latticeGraph_bot (d : ℕ) (Λ : Finset (Fin d → ℤ)) :
+    Ambient.inducedGraph (⊥ : SimpleGraph (Fin d → ℤ)) Λ = ⊥ :=
+  Ambient.inducedGraph_bot Λ
+
 /-- **`⊥` ≤ `latticeGraph d` correlation monotonicity** on ℤ^d:
 `correlationInfinite ⊥ Λ p A ≤ correlationInfinite (latticeGraph d) Λ p A`
 (ferromagnetic). Any two ambient graphs with `⊥ ≤ G` give ambient-subgraph
