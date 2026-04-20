@@ -1640,6 +1640,7 @@ theorem magnetizationAlongExhaustion_nonneg
     0 ≤ magnetizationAlongExhaustion G Λ p i n :=
   correlationAlongExhaustion_nonneg G Λ p hf {i} n
 
+
 /-- **GKS-II at finite volume** (Λ-lifted form): for a ferromagnetic
 Ising model and `A, B ⊆ Λ`,
 `correlationΛ G Λ p (lift A) * correlationΛ G Λ p (lift B)
@@ -1968,6 +1969,19 @@ theorem magnetizationInfinite_le_one
     (p : IsingParams ℝ) (i : V) :
     magnetizationInfinite G Λ p i ≤ 1 :=
   correlationInfinite_le_one G Λ p {i}
+
+/-- **Convergence of `magnetizationAlongExhaustion` to `magnetizationInfinite`**
+for ferromagnetic `p`:
+`Tendsto (magnetizationAlongExhaustion G Λ p i) atTop (nhds (magnetizationInfinite G Λ p i))`.
+Direct specialization of `tendsto_correlationAlongExhaustion_correlationInfinite`
+at `A = {i}`, unfolding `magnetizationInfinite := correlationInfinite … {i}`. -/
+theorem tendsto_magnetizationAlongExhaustion_magnetizationInfinite
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i : V) :
+    Filter.Tendsto (magnetizationAlongExhaustion G Λ p i)
+      Filter.atTop (nhds (magnetizationInfinite G Λ p i)) :=
+  tendsto_correlationAlongExhaustion_correlationInfinite G Λ p hf {i}
 
 /-- **Exhaustion-independence of `magnetizationInfinite`**:
 the value does not depend on the choice of exhaustion.  Specialization
