@@ -147,6 +147,13 @@ noncomputable def magnetization (G : SimpleGraph ι) [Fintype G.edgeSet]
     (p : IsingParams ℝ) (i : ι) : ℝ :=
   correlation G p {i}
 
+/-- **`|magnetization| ≤ 1`** for any parameters and any site `i`.
+Direct from `abs_correlation_le_one` at `A = {i}`. -/
+theorem abs_magnetization_le_one (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (p : IsingParams ℝ) (i : ι) :
+    |magnetization G p i| ≤ 1 :=
+  abs_correlation_le_one G p {i}
+
 /-- **Susceptibility** (per site `i`):
 `χ(i) = Σ_j ⟨σ_i; σ_j⟩ = Σ_j truncated2(i, j)`.
 
