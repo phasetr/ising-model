@@ -3233,6 +3233,20 @@ theorem abs_magnetizationAlongExhaustion_latticeGraph_le_one
     |magnetizationAlongExhaustion (IsingModel.latticeGraph d) Λ p i n| ≤ 1 :=
   abs_magnetizationAlongExhaustion_le_one (IsingModel.latticeGraph d) Λ p i n
 
+/-- **ℤ^d `|correlationInfinite| ≤ 1`** (unconditional). -/
+theorem abs_correlationInfinite_latticeGraph_le_one
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (A : Finset (Fin d → ℤ)) :
+    |correlationInfinite (IsingModel.latticeGraph d) Λ p A| ≤ 1 :=
+  abs_correlationInfinite_le_one (IsingModel.latticeGraph d) Λ p A
+
+/-- **ℤ^d `|magnetizationInfinite| ≤ 1`** (unconditional). -/
+theorem abs_magnetizationInfinite_latticeGraph_le_one_unconditional
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (i : Fin d → ℤ) :
+    |magnetizationInfinite (IsingModel.latticeGraph d) Λ p i| ≤ 1 :=
+  abs_magnetizationInfinite_le_one (IsingModel.latticeGraph d) Λ p i
+
 /-- **ℤ^d magnetizationInfinite at h = 0 site-wise**:
 `magnetizationInfinite (latticeGraph d) Λ ⟨J, 0, β⟩ i = 0`. -/
 theorem magnetizationInfinite_latticeGraph_zero_at_h_zero
