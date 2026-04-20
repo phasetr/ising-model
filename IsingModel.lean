@@ -15,3 +15,4 @@ import IsingModel.PeierlsInfinite
 import IsingModel.TranslationInvariance
 import IsingModel.Concrete.IntLattice
 import IsingModel.Concrete.CubicExhaustion
+import IsingModel.Concrete.LatticeGraphBED
