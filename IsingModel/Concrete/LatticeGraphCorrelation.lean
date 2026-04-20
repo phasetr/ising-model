@@ -806,6 +806,26 @@ theorem twoPointFunction_J_zero_of_ne_zero
     exact (Ne.symm hr)
   rw [h_card]
 
+/-- **J-monotonicity of `spontaneousMagnetization` on ℤ^d** at any site. -/
+theorem spontaneousMagnetization_latticeGraph_cubicExhaustion_monotone_J
+    (d : ℕ) {β : ℝ} (hβ : 0 < β) (i : Fin d → ℤ) :
+    MonotoneOn
+      (fun J : ℝ => spontaneousMagnetization (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) J β i)
+      (Set.Ici 0) :=
+  spontaneousMagnetization_monotone_J (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) hβ i
+
+/-- **β-monotonicity of `spontaneousMagnetization` on ℤ^d** at any site. -/
+theorem spontaneousMagnetization_latticeGraph_cubicExhaustion_monotone_beta
+    (d : ℕ) {J : ℝ} (hJ : 0 ≤ J) (i : Fin d → ℤ) :
+    MonotoneOn
+      (fun β : ℝ => spontaneousMagnetization (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) J β i)
+      (Set.Ioi 0) :=
+  spontaneousMagnetization_monotone_beta (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) hJ i
+
 /-- **J-monotonicity of `magnetizationInfinite` on ℤ^d** at any site. -/
 theorem magnetizationInfinite_latticeGraph_cubicExhaustion_monotone_J
     (d : ℕ) {h : ℝ} (hh : 0 ≤ h) {β : ℝ} (hβ : 0 < β) (i : Fin d → ℤ) :
