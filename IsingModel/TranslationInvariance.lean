@@ -758,6 +758,11 @@ theorem correlationAlongExhaustion_shift_vaddFinset_eq
     (p : IsingParams ℝ) (A : Finset V) (n : ℕ) :
     correlationAlongExhaustion G (Λ.shift t) p (vaddFinset t A) n
       = correlationAlongExhaustion G Λ p A n := by
+  -- Note: the proof below relies on `(Λ.shift t).volume n` being
+  -- definitionally equal to `vaddFinset t (Λ.volume n)` via the `shift`
+  -- `volume` field equation. A refactor of `Exhaustion.shift` that breaks
+  -- this reducibility would require explicit `Exhaustion.shift_volume`
+  -- rewrites in the subset and term-construction steps.
   by_cases hA : A ⊆ Λ.volume n
   · -- Subset case.
     have hA' : vaddFinset t A ⊆ vaddFinset t (Λ.volume n) :=
