@@ -1505,6 +1505,22 @@ theorem magnetizationInfinite_latticeGraph_cubicExhaustion_monotone_beta
   magnetizationInfinite_monotone_beta (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) hJ hh i
 
+/-- **`⊥` ≤ `latticeGraph d` freeEnergyInfinite monotonicity** on ℤ^d. -/
+theorem freeEnergyInfinite_bot_le_latticeGraph
+    (d : ℕ) [Nonempty (Fin d → ℤ)]
+    [∀ n, Fintype (Ambient.inducedGraph (⊥ : SimpleGraph (Fin d → ℤ))
+      ((Ambient.cubicExhaustion d).volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    freeEnergyInfinite (⊥ : SimpleGraph (Fin d → ℤ))
+        (Ambient.cubicExhaustion d) p
+      ≤ freeEnergyInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) p := by
+  refine freeEnergyInfinite_monotone_ambient_subgraph (G₂ := IsingModel.latticeGraph d)
+    bot_le (Ambient.cubicExhaustion d) p hf (c := (d : ℝ)) ?_
+  intro n _
+  exact inducedLatticeGraph_card_edgeFinset_le d
+    ((Ambient.cubicExhaustion d).volume n)
+
 /-- **`⊥` ≤ `latticeGraph d` correlation monotonicity** on ℤ^d:
 `correlationInfinite ⊥ Λ p A ≤ correlationInfinite (latticeGraph d) Λ p A`
 (ferromagnetic). Any two ambient graphs with `⊥ ≤ G` give ambient-subgraph
