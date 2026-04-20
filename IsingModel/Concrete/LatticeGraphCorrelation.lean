@@ -1386,6 +1386,15 @@ theorem truncated2TwoPoint_J_zero_of_ne_zero
       uniformMagnetization_J_zero d h β hf]
   ring
 
+/-- **ℤ^d Z₂ symmetry at `h = 0` for `correlationInfinite`**:
+`correlationInfinite ⟨J, 0, β⟩ A = 0` for any `A` of odd cardinality. -/
+theorem correlationInfinite_latticeGraph_cubicExhaustion_h_zero
+    (d : ℕ) (J β : ℝ) (A : Finset (Fin d → ℤ)) (hodd : Odd A.card) :
+    correlationInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) ⟨J, 0, β⟩ A = 0 :=
+  correlationInfinite_h_zero (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) J β A hodd
+
 /-- **ℤ^d Cor 4.3.5 at ∞-volume** (Glimm–Jaffe §4.3 Cor 4.3.5 p. 62):
 inductive (n+2)-point bound at `h = 0` on ℤ^d. -/
 theorem correlationInfinite_latticeGraph_cubicExhaustion_cor_4_3_5_h0
