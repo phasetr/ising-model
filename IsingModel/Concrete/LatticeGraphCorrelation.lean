@@ -1585,6 +1585,15 @@ theorem truncated2Infinite_latticeGraph_h_zero
   truncated2Infinite_h_zero (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) J β i j
 
+/-- **ℤ^d truncated3Infinite at h=0 vanishes** site-wise, pairwise distinct. -/
+theorem truncated3Infinite_latticeGraph_h_zero_of_distinct
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
+    {i j k : Fin d → ℤ}
+    (hij : i ≠ j) (hjk : j ≠ k) (hik : i ≠ k) :
+    truncated3Infinite (IsingModel.latticeGraph d) Λ ⟨J, 0, β⟩ i j k = 0 :=
+  truncated3Infinite_h_zero_of_distinct (IsingModel.latticeGraph d) Λ J β
+    hij hjk hik
+
 /-- **ℤ^d truncated2Infinite exhaustion-independence**. -/
 theorem truncated2Infinite_latticeGraph_indep_exhaustion
     (d : ℕ) (Λ Λ' : Ambient.Exhaustion (Fin d → ℤ))
