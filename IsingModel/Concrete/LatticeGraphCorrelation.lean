@@ -806,6 +806,27 @@ theorem twoPointFunction_J_zero_of_ne_zero
     exact (Ne.symm hr)
   rw [h_card]
 
+/-- **h-evenness of `freeEnergyInfinite` on ℤ^d**:
+`freeEnergyInfinite ⟨J, -h, β⟩ = freeEnergyInfinite ⟨J, h, β⟩`. -/
+theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_neg_h
+    (d : ℕ) (J h β : ℝ) :
+    freeEnergyInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) (⟨J, -h, β⟩ : IsingParams ℝ)
+      = freeEnergyInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) (⟨J, h, β⟩ : IsingParams ℝ) :=
+  freeEnergyInfinite_neg_h (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) J h β
+
+/-- **`|h|`-form of `freeEnergyInfinite` on ℤ^d**. -/
+theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_eq_abs_h
+    (d : ℕ) (J h β : ℝ) :
+    freeEnergyInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) (⟨J, h, β⟩ : IsingParams ℝ)
+      = freeEnergyInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) (⟨J, |h|, β⟩ : IsingParams ℝ) :=
+  freeEnergyInfinite_eq_abs_h (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) J h β
+
 /-- **J-monotonicity of `freeEnergyInfinite` on ℤ^d** under the concrete
 BED constant `c = d` (PR #246). -/
 theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_monotone_J
