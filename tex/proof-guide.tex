@@ -903,6 +903,22 @@ the \texttt{\_subgraph} wrappers only fix $\iota = \operatorname{\uparrow}\Lambd
 (the subgraph parameter $G_n$ on the $\Lambda$-induced type remains
 unconstrained and is \emph{not} forced to be $\le$ \texttt{latticeGraph d}).
 
+Susceptibility family (GJ \S5.3, pp.~77–80) at $\mathbb{Z}^d$
+(\texttt{Concrete/LatticeGraphCorrelation.lean}):
+\texttt{susceptibility\_\{apply,nonneg,J\_zero,beta\_zero\}\_latticeGraph}
+and \texttt{susceptibility\_convergent\_\{J,h,beta\}\_latticeGraph}
+are thin pass-throughs of the abstract
+\texttt{IsingModel.susceptibility\_*} on
+\texttt{Ambient.inducedGraph (latticeGraph d)\,$\Lambda$}. The
+$J=0$ closed form reads $\chi_i = t(1-t)$ with $t = \tanh(\beta h)$,
+inheriting the Finset-based \texttt{truncated2} diagonal caveat
+($\{i,i\}$ collapses to $\{i\}$, so the term is $t - t^2$ rather
+than the physical $1 - t^2$). In the same batch,
+\texttt{eta\_nonneg\_finite\_vol\_latticeGraph} is the
+finite-volume slice of GJ Thm~17.7.1 ($\eta \ge 0$) at
+$\mathbb{Z}^d$, derived from GKS-II via
+\texttt{truncated2\_nonneg}.
+
 \begin{remark}
 The original Glimm--Jaffe formulation uses lattice growth
 $\Lambda \uparrow \mathbb{Z}^d$. In the finite-volume setting,
