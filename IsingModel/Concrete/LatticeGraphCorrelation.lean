@@ -3476,6 +3476,23 @@ theorem magnetizationAlongExhaustion_latticeGraph_of_not_mem
     magnetizationAlongExhaustion (IsingModel.latticeGraph d) Λ p i n = 0 :=
   magnetizationAlongExhaustion_of_not_mem (IsingModel.latticeGraph d) Λ p hi
 
+/-- **ℤ^d `magnetizationInfinite_apply`** unfolding. -/
+theorem magnetizationInfinite_latticeGraph_apply
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (i : Fin d → ℤ) :
+    magnetizationInfinite (IsingModel.latticeGraph d) Λ p i
+      = correlationInfinite (IsingModel.latticeGraph d) Λ p {i} :=
+  magnetizationInfinite_apply (IsingModel.latticeGraph d) Λ p i
+
+/-- **ℤ^d `freeEnergyInfinite_apply`** unfolding (limsup form). -/
+theorem freeEnergyInfinite_latticeGraph_apply
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (p : IsingParams ℝ) :
+    freeEnergyInfinite (IsingModel.latticeGraph d) Λ p
+      = Filter.limsup
+          (freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ p)
+          Filter.atTop :=
+  freeEnergyInfinite_apply (IsingModel.latticeGraph d) Λ p
+
 /-- **ℤ^d magnetizationAlongExhaustion ≤ 1** per stage. -/
 theorem magnetizationAlongExhaustion_latticeGraph_le_one
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
