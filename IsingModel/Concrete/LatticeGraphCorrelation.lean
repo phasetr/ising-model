@@ -3961,6 +3961,22 @@ theorem magnetizationAlongExhaustion_latticeGraph_bddAbove
       (magnetizationAlongExhaustion (IsingModel.latticeGraph d) Λ p i)) :=
   magnetizationAlongExhaustion_bddAbove (IsingModel.latticeGraph d) Λ p i
 
+/-- **ℤ^d `correlationAlongExhaustion` bounded below** (unconditional). -/
+theorem correlationAlongExhaustion_latticeGraph_bddBelow
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (A : Finset (Fin d → ℤ)) :
+    BddBelow (Set.range
+      (correlationAlongExhaustion (IsingModel.latticeGraph d) Λ p A)) :=
+  correlationAlongExhaustion_bddBelow (IsingModel.latticeGraph d) Λ p A
+
+/-- **ℤ^d `magnetizationAlongExhaustion` bounded below** (unconditional). -/
+theorem magnetizationAlongExhaustion_latticeGraph_bddBelow
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (i : Fin d → ℤ) :
+    BddBelow (Set.range
+      (magnetizationAlongExhaustion (IsingModel.latticeGraph d) Λ p i)) :=
+  magnetizationAlongExhaustion_bddBelow (IsingModel.latticeGraph d) Λ p i
+
 /-- **ℤ^d magnetizationAlongExhaustion → ⨆ n ...** (ferromagnetic). -/
 theorem magnetizationAlongExhaustion_latticeGraph_tendsto_ciSup
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
