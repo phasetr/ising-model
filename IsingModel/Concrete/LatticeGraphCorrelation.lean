@@ -2490,6 +2490,16 @@ theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_le_uniform_upper_bound
   exact inducedLatticeGraph_card_edgeFinset_le d
     ((Ambient.cubicExhaustion d).volume n)
 
+/-- **ℤ^d BddAbove range of `freeEnergyAlongExhaustion`** (any-Exhaustion,
+caller-supplied BED). -/
+theorem BddAbove_freeEnergyAlongExhaustion_latticeGraph_range
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ)
+    (hBED : Ambient.BoundedEdgeDensity (IsingModel.latticeGraph d) Λ) :
+    BddAbove (Set.range (freeEnergyAlongExhaustion (IsingModel.latticeGraph d)
+      Λ p)) :=
+  BddAbove_freeEnergyAlongExhaustion_range (IsingModel.latticeGraph d) Λ p hBED
+
 /-- **ℤ^d BddAbove range of `freeEnergyAlongExhaustion`**: via BED c=d. -/
 theorem BddAbove_freeEnergyAlongExhaustion_latticeGraph_cubicExhaustion
     (d : ℕ) (p : IsingParams ℝ) :
