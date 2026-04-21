@@ -2155,6 +2155,19 @@ theorem freeEnergyΛ_latticeGraph_vaddFinset_eq
       = freeEnergyΛ (IsingModel.latticeGraph d) Λ p :=
   freeEnergyΛ_vaddFinset_eq (IsingModel.latticeGraph d) t Λ p
 
+/-- **ℤ^d log_partitionFunctionΛ translation invariance**:
+`log Z_{t +ᵥ Λ}(p) = log Z_Λ(p)` on ℤ^d. -/
+theorem log_partitionFunctionΛ_latticeGraph_vaddFinset_eq
+    (d : ℕ) (t : Fin d → ℤ) (Λ : Finset (Fin d → ℤ))
+    [Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
+    [Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+      (vaddFinset t Λ)).edgeSet]
+    (p : IsingParams ℝ) :
+    Real.log (partitionFunctionΛ (IsingModel.latticeGraph d)
+        (vaddFinset t Λ) p)
+      = Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ p) := by
+  rw [partitionFunctionΛ_latticeGraph_vaddFinset_eq d t Λ p]
+
 /-- **ℤ^d partitionFunctionΛ closed form at `J = 0`** (any Finset):
 `Z_Λ(⟨0, h, β⟩) = (2·cosh(β·h))^|Λ|`. -/
 theorem partitionFunctionΛ_latticeGraph_J_zero
