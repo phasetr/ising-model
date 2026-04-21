@@ -1869,6 +1869,20 @@ theorem freeEnergyAlongExhaustion_latticeGraph_eq_log_div_card
   freeEnergyAlongExhaustion_eq_log_div_card
     (IsingModel.latticeGraph d) Λ p n
 
+/-- **ℤ^d `freeEnergyAlongExhaustion` per-stage upper bound** (any-Exhaustion):
+`≤ log 2 + |β|·(|J|·|E_n|+|h|·|V_n|)/|V_n|`. -/
+theorem freeEnergyAlongExhaustion_latticeGraph_upper_bound
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (n : ℕ) (hne : (Λ.volume n).Nonempty) :
+    freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ p n
+      ≤ Real.log 2 + |p.β| *
+          (|p.J| * (Ambient.inducedGraph (IsingModel.latticeGraph d)
+              (Λ.volume n)).edgeFinset.card
+            + |p.h| * Fintype.card (↑(Λ.volume n) : Type _))
+        / Fintype.card (↑(Λ.volume n) : Type _) :=
+  freeEnergyAlongExhaustion_upper_bound
+    (IsingModel.latticeGraph d) Λ p n hne
+
 /-- **ℤ^d partitionFunctionΛ ≥ (2 cosh βh)^|Λ|** (sharp, ferromagnetic). -/
 theorem partitionFunctionΛ_latticeGraph_ge_two_cosh_pow_card
     (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ)
