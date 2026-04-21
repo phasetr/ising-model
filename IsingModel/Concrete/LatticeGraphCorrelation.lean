@@ -935,6 +935,108 @@ theorem inducedGraph_mono_latticeGraph
     Ambient.inducedGraph G₁ Λ ≤ Ambient.inducedGraph G₂ Λ :=
   Ambient.inducedGraph_mono h Λ
 
+/-- **ℤ^d freeEnergy_zero_params at Λ-induced**:
+`freeEnergy ⟨0, 0, β⟩ = log 2` for nonempty Λ. -/
+theorem freeEnergy_zero_params_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (β : ℝ)
+    (hne : 0 < Fintype.card (↑Λ : Type _)) :
+    IsingModel.freeEnergy
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
+        (⟨0, 0, β⟩ : IsingParams ℝ) = Real.log 2 :=
+  IsingModel.freeEnergy_zero_params
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) β hne
+
+/-- **ℤ^d freeEnergy_beta_zero at Λ-induced**:
+`freeEnergy ⟨J, h, 0⟩ = log 2` for nonempty Λ. -/
+theorem freeEnergy_beta_zero_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J h : ℝ)
+    (hne : 0 < Fintype.card (↑Λ : Type _)) :
+    IsingModel.freeEnergy
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
+        (⟨J, h, 0⟩ : IsingParams ℝ) = Real.log 2 :=
+  IsingModel.freeEnergy_beta_zero
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h hne
+
+/-- **ℤ^d freeEnergy_J_zero at Λ-induced**:
+`freeEnergy ⟨0, h, β⟩ = log(2·cosh(β·h))` for nonempty Λ. -/
+theorem freeEnergy_J_zero_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (h β : ℝ)
+    (hne : 0 < Fintype.card (↑Λ : Type _)) :
+    IsingModel.freeEnergy
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
+        (⟨0, h, β⟩ : IsingParams ℝ)
+      = Real.log (2 * Real.cosh (β * h)) :=
+  IsingModel.freeEnergy_J_zero
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) h β hne
+
+/-- **ℤ^d freeEnergy_neg_h at Λ-induced**. -/
+theorem freeEnergy_neg_h_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J h β : ℝ) :
+    IsingModel.freeEnergy
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
+        (⟨J, -h, β⟩ : IsingParams ℝ)
+      = IsingModel.freeEnergy
+          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
+          (⟨J, h, β⟩ : IsingParams ℝ) :=
+  IsingModel.freeEnergy_neg_h
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h β
+
+/-- **ℤ^d freeEnergy_eq_abs_h at Λ-induced**. -/
+theorem freeEnergy_eq_abs_h_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J h β : ℝ) :
+    IsingModel.freeEnergy
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
+        (⟨J, h, β⟩ : IsingParams ℝ)
+      = IsingModel.freeEnergy
+          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
+          (⟨J, |h|, β⟩ : IsingParams ℝ) :=
+  IsingModel.freeEnergy_eq_abs_h
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h β
+
+/-- **ℤ^d freeEnergy_monotone_abs_h at Λ-induced** (ferromagnetic). -/
+theorem freeEnergy_monotone_abs_h_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β)
+    {h₁ h₂ : ℝ} (hh : |h₁| ≤ |h₂|) :
+    IsingModel.freeEnergy
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
+        (⟨J, h₁, β⟩ : IsingParams ℝ)
+      ≤ IsingModel.freeEnergy
+          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
+          (⟨J, h₂, β⟩ : IsingParams ℝ) :=
+  IsingModel.freeEnergy_monotone_abs_h
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J β hJ hβ hh
+
+/-- **ℤ^d freeEnergy_eq_bot_at_J_zero at Λ-induced**. -/
+theorem freeEnergy_eq_bot_at_J_zero_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (h β : ℝ) :
+    IsingModel.freeEnergy
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
+        (⟨0, h, β⟩ : IsingParams ℝ)
+      = IsingModel.freeEnergy (⊥ : SimpleGraph (↑Λ : Type _))
+          (⟨0, h, β⟩ : IsingParams ℝ) :=
+  IsingModel.freeEnergy_eq_bot_at_J_zero
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) h β
+
+/-- **ℤ^d freeEnergy_ge_log_two_cosh at Λ-induced** (ferromagnetic). -/
+theorem freeEnergy_ge_log_two_cosh_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    {J h β : ℝ} (hJ : 0 ≤ J) (hh : 0 ≤ h) (hβ : 0 < β)
+    (hne : 0 < Fintype.card (↑Λ : Type _)) :
+    Real.log (2 * Real.cosh (β * h))
+      ≤ IsingModel.freeEnergy
+          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
+          (⟨J, h, β⟩ : IsingParams ℝ) :=
+  IsingModel.freeEnergy_ge_log_two_cosh
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) hJ hh hβ hne
+
+/-- **ℤ^d freeEnergy_bot at Λ-induced type**: `freeEnergy ⊥ = log(2 cosh(βh))`. -/
+theorem freeEnergy_bot_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ)
+    (hne : 0 < Fintype.card (↑Λ : Type _)) :
+    IsingModel.freeEnergy (⊥ : SimpleGraph (↑Λ : Type _)) p
+      = Real.log (2 * Real.cosh (p.β * p.h)) :=
+  IsingModel.freeEnergy_bot p hne
+
 /-- **ℤ^d `partitionFunction` of `⊥` at Λ**: closed form
 `Z_⊥ = (2 cosh(βh))^|Λ|`. -/
 theorem partitionFunction_bot_latticeGraph
