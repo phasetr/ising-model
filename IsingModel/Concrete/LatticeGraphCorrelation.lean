@@ -3535,6 +3535,32 @@ theorem twoPointFunction_J_zero_of_ne_zero
     exact (Ne.symm hr)
   rw [h_card]
 
+/-- **ℤ^d Fekete-style convergence under super-additivity**
+(any-Exhaustion): if `|Λ.volume (m+n)| = |Λ.volume m| + |Λ.volume n|`,
+log Z is super-additive on this additive grading, the range is bounded above,
+and `|Λ.volume 1| ≠ 0`, then `freeEnergyAlongExhaustion → freeEnergyInfinite`. -/
+theorem freeEnergyAlongExhaustion_latticeGraph_tendsto_of_superadditive
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ)
+    (hcard_add : ∀ m n, (Λ.volume (m + n)).card
+                          = (Λ.volume m).card + (Λ.volume n).card)
+    (hsuper : ∀ m n,
+        Real.log (partitionFunctionΛ (IsingModel.latticeGraph d)
+            (Λ.volume m) p)
+          + Real.log (partitionFunctionΛ (IsingModel.latticeGraph d)
+              (Λ.volume n) p)
+        ≤ Real.log (partitionFunctionΛ (IsingModel.latticeGraph d)
+            (Λ.volume (m + n)) p))
+    (hbdd : BddAbove (Set.range
+      (freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ p)))
+    (hcard_one : (Λ.volume 1).card ≠ 0) :
+    Filter.Tendsto
+      (freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ p)
+      Filter.atTop
+      (nhds (freeEnergyInfinite (IsingModel.latticeGraph d) Λ p)) :=
+  freeEnergyAlongExhaustion_tendsto_of_superadditive
+    (IsingModel.latticeGraph d) Λ p hcard_add hsuper hbdd hcard_one
+
 /-- **ℤ^d generic tendsto helper**: if the stagewise
 `freeEnergyAlongExhaustion` is eventually constantly `c`, it tends to `c`. -/
 theorem freeEnergyAlongExhaustion_latticeGraph_tendsto_of_eventually_const
