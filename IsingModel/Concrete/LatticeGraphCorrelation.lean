@@ -374,6 +374,28 @@ theorem correlationAlongExhaustion_latticeGraph_zero_params_vanish
   correlationAlongExhaustion_zero_params_vanish (IsingModel.latticeGraph d)
     Λ β A hA n
 
+/-- **ℤ^d `correlationAlongExhaustion` at `J = 0`** per stage (on-stage):
+`A ⊆ Λ.volume n ⇒ = tanh(β·h)^|A|`. -/
+theorem correlationAlongExhaustion_latticeGraph_J_zero_of_subset
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (h β : ℝ) {A : Finset (Fin d → ℤ)} {n : ℕ} (hAn : A ⊆ Λ.volume n) :
+    correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨0, h, β⟩ : IsingParams ℝ) A n
+      = Real.tanh (β * h) ^ A.card :=
+  correlationAlongExhaustion_J_zero_of_subset (IsingModel.latticeGraph d) Λ h β hAn
+
+/-- **ℤ^d `correlationAlongExhaustion` at `J = 0` is eventually constant
+at `tanh(β·h)^|A|`**. -/
+theorem correlationAlongExhaustion_latticeGraph_J_zero_eventually_eq
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (h β : ℝ) (A : Finset (Fin d → ℤ)) :
+    ∀ᶠ n in Filter.atTop,
+      correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨0, h, β⟩ : IsingParams ℝ) A n
+        = Real.tanh (β * h) ^ A.card :=
+  correlationAlongExhaustion_J_zero_eventually_eq
+    (IsingModel.latticeGraph d) Λ h β A
+
 
 /-- **ℤ^d correlationΛ_empty = 1** per finite volume. -/
 @[simp]
