@@ -994,6 +994,20 @@ theorem tendsto_correlationAlongExhaustion_correlationInfinite_latticeGraph_gene
   tendsto_correlationAlongExhaustion_correlationInfinite
     (IsingModel.latticeGraph d) Λ p hf A
 
+/-- **ℤ^d `Z` is super-multiplicative on disjoint Finset unions**
+(ferromagnetic). Direct wrapper of `partitionFunctionΛ_disjUnion_super_multiplicative`. -/
+theorem partitionFunctionΛ_latticeGraph_disjUnion_super_multiplicative
+    (d : ℕ) {Λ₁ Λ₂ : Finset (Fin d → ℤ)} (hd : Disjoint Λ₁ Λ₂)
+    [Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ₁).edgeSet]
+    [Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ₂).edgeSet]
+    [Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ₁ ∪ Λ₂)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    partitionFunctionΛ (IsingModel.latticeGraph d) Λ₁ p
+      * partitionFunctionΛ (IsingModel.latticeGraph d) Λ₂ p
+      ≤ partitionFunctionΛ (IsingModel.latticeGraph d) (Λ₁ ∪ Λ₂) p :=
+  partitionFunctionΛ_disjUnion_super_multiplicative
+    (IsingModel.latticeGraph d) hd p hf
+
 /-- **ℤ^d `log Z` is super-additive on disjoint Finset unions**
 (ferromagnetic). Direct wrapper of `log_partitionFunctionΛ_disjUnion_super_additive`. -/
 theorem log_partitionFunctionΛ_latticeGraph_disjUnion_super_additive
