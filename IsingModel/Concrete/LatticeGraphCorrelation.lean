@@ -857,6 +857,14 @@ theorem partitionFunction_bot_latticeGraph_ge_two_pow_card
       ≤ IsingModel.partitionFunction (⊥ : SimpleGraph (↑Λ : Type _)) p :=
   IsingModel.partitionFunction_bot_ge_two_pow_card (ι := (↑Λ : Type _)) p
 
+/-- **ℤ^d hamiltonian_bot at Λ**: `H_⊥(σ) = -h · Σ sign σ`. -/
+theorem hamiltonian_bot_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ)
+    (σ : IsingModel.Config (↑Λ : Type _)) :
+    IsingModel.hamiltonian (⊥ : SimpleGraph (↑Λ : Type _)) p σ
+      = -p.h * ∑ i : (↑Λ : Type _), IsingModel.Spin.sign ℝ (σ i) :=
+  IsingModel.hamiltonian_bot p σ
+
 /-- **ℤ^d boltzmannWeight positivity** at Λ-induced subgraph:
 `0 < exp(-β H_Λ(σ))`. -/
 theorem boltzmannWeightΛ_latticeGraph_pos
