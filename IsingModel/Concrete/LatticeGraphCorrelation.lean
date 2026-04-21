@@ -2256,6 +2256,20 @@ theorem abs_spontaneousMagnetization_latticeGraph_le_one
     |spontaneousMagnetization (IsingModel.latticeGraph d) Λ J β i| ≤ 1 :=
   abs_spontaneousMagnetization_le_one (IsingModel.latticeGraph d) Λ hJ hβ i
 
+/-- **ℤ^d spontaneousMagnetization ≥ 0** (ferromagnetic). -/
+theorem spontaneousMagnetization_latticeGraph_nonneg
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) (i : Fin d → ℤ) :
+    0 ≤ spontaneousMagnetization (IsingModel.latticeGraph d) Λ J β i :=
+  spontaneousMagnetization_nonneg (IsingModel.latticeGraph d) Λ hJ hβ i
+
+/-- **ℤ^d spontaneousMagnetization ≤ 1** (ferromagnetic). -/
+theorem spontaneousMagnetization_latticeGraph_le_one
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) (i : Fin d → ℤ) :
+    spontaneousMagnetization (IsingModel.latticeGraph d) Λ J β i ≤ 1 :=
+  spontaneousMagnetization_le_one (IsingModel.latticeGraph d) Λ hJ hβ i
+
 /-- **`uniformMagnetization` at `β = 0`**:
 `uniformMagnetization d ⟨J, h, 0⟩ = 0`.
 
