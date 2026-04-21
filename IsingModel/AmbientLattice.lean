@@ -2372,6 +2372,18 @@ theorem correlationΛ_odd_vanish_h_zero
     correlationΛ G Λ ⟨J, 0, β⟩ A = 0 :=
   IsingModel.correlation_odd_vanish (inducedGraph G Λ) J β A hodd
 
+/-- **Λ-level correlation closed form at `J = 0`**:
+`correlationΛ G Λ ⟨0, h, β⟩ A = tanh(β·h)^A.card`. Direct lift of
+`IsingModel.correlation_J_zero` through
+`correlationΛ := correlation (inducedGraph G Λ)`. Unconditional. -/
+theorem correlationΛ_J_zero
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (h β : ℝ) (A : Finset (↑Λ : Type _)) :
+    correlationΛ G Λ (⟨0, h, β⟩ : IsingParams ℝ) A
+      = Real.tanh (β * h) ^ A.card :=
+  IsingModel.correlation_J_zero (inducedGraph G Λ) h β A
+
 /-- **Z₂ symmetry at `h = 0` for `correlationAlongExhaustion`**:
 pointwise zero at every `n`.  Either `A ⊄ Λ.volume n` (both branches
 of the dite give `0`) or `A ⊆ Λ.volume n` and the lifted correlation
