@@ -2876,6 +2876,36 @@ theorem correlationInfinite_bot_le_latticeGraph
       ≤ correlationInfinite (IsingModel.latticeGraph d) Λ p A :=
   correlationInfinite_monotone_ambient_subgraph bot_le Λ p hf A
 
+/-- **`⊥` ≤ `latticeGraph d` magnetizationΛ monotonicity** on ℤ^d. -/
+theorem magnetizationΛ_bot_le_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    [Fintype (Ambient.inducedGraph (⊥ : SimpleGraph (Fin d → ℤ)) Λ).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i : ↑Λ) :
+    magnetizationΛ (⊥ : SimpleGraph (Fin d → ℤ)) Λ p i
+      ≤ magnetizationΛ (IsingModel.latticeGraph d) Λ p i :=
+  magnetizationΛ_monotone_ambient_subgraph bot_le Λ p hf i
+
+/-- **`⊥` ≤ `latticeGraph d` magnetizationAlongExhaustion monotonicity**
+per stage on ℤ^d. -/
+theorem magnetizationAlongExhaustion_bot_le_latticeGraph
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (⊥ : SimpleGraph (Fin d → ℤ))
+      (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i : Fin d → ℤ) (n : ℕ) :
+    magnetizationAlongExhaustion (⊥ : SimpleGraph (Fin d → ℤ)) Λ p i n
+      ≤ magnetizationAlongExhaustion (IsingModel.latticeGraph d) Λ p i n :=
+  magnetizationAlongExhaustion_monotone_ambient_subgraph bot_le Λ p hf i n
+
+/-- **`⊥` ≤ `latticeGraph d` magnetizationInfinite monotonicity** on ℤ^d. -/
+theorem magnetizationInfinite_bot_le_latticeGraph
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (⊥ : SimpleGraph (Fin d → ℤ))
+      (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i : Fin d → ℤ) :
+    magnetizationInfinite (⊥ : SimpleGraph (Fin d → ℤ)) Λ p i
+      ≤ magnetizationInfinite (IsingModel.latticeGraph d) Λ p i :=
+  magnetizationInfinite_monotone_ambient_subgraph bot_le Λ p hf i
+
 /-- **ℤ^d truncated2Infinite nonneg** (general). -/
 theorem truncated2Infinite_latticeGraph_nonneg
     (d : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p) (i j : Fin d → ℤ) :
