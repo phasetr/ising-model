@@ -889,6 +889,17 @@ Prop.~4.2.4 companion ($h \to \infty$), and
 \texttt{correlation\_convergent\_beta\_latticeGraph} is a repo-internal
 monotone-bounded extension in $\beta \to \infty$ (not in GJ).
 
+Parallel $\mathbb{Z}^d$ wrappers for the derived \S5 quantities
+(\texttt{Concrete/LatticeGraphCorrelation.lean}):
+\texttt{magnetization\_convergent\_\{J,h,beta\}\_latticeGraph},
+\texttt{truncated2\_convergent\_\{J,h,beta,subgraph\}\_latticeGraph},
+\texttt{susceptibility\_convergent\_subgraph\_latticeGraph}, and
+\texttt{magnetization\_total\_convergent\_subgraph\_latticeGraph}
+pass through the abstract
+\texttt{IsingModel.\{magnetization,truncated2,susceptibility,magnetization\_total\}\_convergent\_*}
+(\texttt{IsingModel/PhaseTransition.lean}) at the
+$\Lambda$-induced subgraph of \texttt{latticeGraph d}.
+
 \begin{remark}
 The original Glimm--Jaffe formulation uses lattice growth
 $\Lambda \uparrow \mathbb{Z}^d$. In the finite-volume setting,
