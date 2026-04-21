@@ -794,6 +794,42 @@ theorem freeEnergyJ_analyticOn_latticeGraph
   IsingModel.freeEnergyJ_analyticOn
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) h β
 
+/-- **ℤ^d hamiltonianΛ at `J = 0`** (Λ-induced subgraph): the Hamiltonian
+reduces to `-h · Σ sign σ`. -/
+theorem hamiltonianΛ_latticeGraph_J_zero
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (h β : ℝ)
+    (σ : IsingModel.Config (↑Λ : Type _)) :
+    IsingModel.hamiltonian
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
+        (⟨0, h, β⟩ : IsingParams ℝ) σ
+      = -h * ∑ i : (↑Λ : Type _), IsingModel.Spin.sign ℝ (σ i) :=
+  IsingModel.hamiltonian_J_zero
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) h β σ
+
+/-- **ℤ^d hamiltonianΛ at zero parameters** (Λ-induced subgraph):
+`H_Λ ⟨0, 0, β⟩ σ = 0`. -/
+theorem hamiltonianΛ_latticeGraph_zero_params
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (β : ℝ)
+    (σ : IsingModel.Config (↑Λ : Type _)) :
+    IsingModel.hamiltonian
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
+        (⟨0, 0, β⟩ : IsingParams ℝ) σ = 0 :=
+  IsingModel.hamiltonian_zero_params
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) β σ
+
+/-- **ℤ^d hamiltonianΛ equals `⊥`-hamiltonian at `J = 0`** (Λ-induced subgraph):
+at `J = 0` the Hamiltonian is graph-independent. -/
+theorem hamiltonianΛ_latticeGraph_eq_bot_at_J_zero
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (h β : ℝ)
+    (σ : IsingModel.Config (↑Λ : Type _)) :
+    IsingModel.hamiltonian
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
+        (⟨0, h, β⟩ : IsingParams ℝ) σ
+      = IsingModel.hamiltonian (⊥ : SimpleGraph (↑Λ : Type _))
+          (⟨0, h, β⟩ : IsingParams ℝ) σ :=
+  IsingModel.hamiltonian_eq_bot_at_J_zero
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) h β σ
+
 /-- **ℤ^d `hamiltonian` absolute value bound** at Λ-induced subgraph:
 `|H_Λ(σ)| ≤ |J|·|E| + |h|·|Λ|`. -/
 theorem hamiltonianΛ_latticeGraph_abs_le
