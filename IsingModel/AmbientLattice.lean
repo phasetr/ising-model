@@ -671,6 +671,18 @@ theorem neg_one_le_correlationAlongExhaustion
     -1 ≤ correlationAlongExhaustion G Λ p A n :=
   (abs_le.mp (abs_correlationAlongExhaustion_le_one G Λ p A n)).1
 
+/-- **`correlationAlongExhaustion` is bounded below** (unconditional):
+the range of `n ↦ correlationAlongExhaustion G Λ p A n` is bounded below
+by `-1` via `neg_one_le_correlationAlongExhaustion`. -/
+theorem correlationAlongExhaustion_bddBelow
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (A : Finset V) :
+    BddBelow (Set.range (correlationAlongExhaustion G Λ p A)) := by
+  refine ⟨-1, ?_⟩
+  rintro _ ⟨n, rfl⟩
+  exact neg_one_le_correlationAlongExhaustion G Λ p A n
+
 /-- **Pointwise `correlationAlongExhaustion² ≤ 1`** at every `n : ℕ`. -/
 theorem correlationAlongExhaustion_sq_le_one
     (G : SimpleGraph V) (Λ : Exhaustion V)
@@ -2390,6 +2402,15 @@ theorem magnetizationAlongExhaustion_bddAbove
     (p : IsingParams ℝ) (i : V) :
     BddAbove (Set.range (magnetizationAlongExhaustion G Λ p i)) :=
   correlationAlongExhaustion_bddAbove G Λ p {i}
+
+/-- **`magnetizationAlongExhaustion` is bounded below** (unconditional):
+specialization of `correlationAlongExhaustion_bddBelow` at `A = {i}`. -/
+theorem magnetizationAlongExhaustion_bddBelow
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (i : V) :
+    BddBelow (Set.range (magnetizationAlongExhaustion G Λ p i)) :=
+  correlationAlongExhaustion_bddBelow G Λ p {i}
 
 /-- **Convergence to the supremum** for `magnetizationAlongExhaustion`
 (ferromagnetic): `Tendsto … atTop (nhds (⨆ n, magnetizationAlongExhaustion G Λ p i n))`.
