@@ -4867,6 +4867,22 @@ theorem correlationInfinite_latticeGraph_cubicExhaustion_h_zero
   correlationInfinite_h_zero (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) J β A hodd
 
+/-- **ℤ^d Z₂ symmetry at `h = 0` for `correlationInfinite`** (any-Exhaustion):
+`correlationInfinite ⟨J, 0, β⟩ A = 0` for any `A` of odd cardinality. -/
+theorem correlationInfinite_latticeGraph_h_zero
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J β : ℝ) (A : Finset (Fin d → ℤ)) (hodd : Odd A.card) :
+    correlationInfinite (IsingModel.latticeGraph d) Λ ⟨J, 0, β⟩ A = 0 :=
+  correlationInfinite_h_zero (IsingModel.latticeGraph d) Λ J β A hodd
+
+/-- **ℤ^d Z₂ symmetry at `h = 0` for `correlationAlongExhaustion`**
+(any-Exhaustion, stage-wise). -/
+theorem correlationAlongExhaustion_latticeGraph_any_h_zero
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J β : ℝ) (A : Finset (Fin d → ℤ)) (hodd : Odd A.card) (n : ℕ) :
+    correlationAlongExhaustion (IsingModel.latticeGraph d) Λ ⟨J, 0, β⟩ A n = 0 :=
+  correlationAlongExhaustion_h_zero (IsingModel.latticeGraph d) Λ J β A hodd n
+
 /-- **ℤ^d Cor 4.3.5 at ∞-volume** (Glimm–Jaffe §4.3 Cor 4.3.5 p. 62):
 inductive (n+2)-point bound at `h = 0` on ℤ^d. -/
 theorem correlationInfinite_latticeGraph_cubicExhaustion_cor_4_3_5_h0
