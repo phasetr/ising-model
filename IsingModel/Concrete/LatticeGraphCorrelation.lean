@@ -1079,6 +1079,26 @@ theorem gibbsExpectation_nonneg_of_numerator_nonneg_latticeGraph
   IsingModel.gibbsExpectation_nonneg_of_numerator_nonneg
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p F hnum
 
+/-- **ℤ^d GKS numerator nonneg** at Λ-induced: for ferromagnetic `p`,
+`0 ≤ numerator (spinProduct A)`. -/
+theorem gks_numerator_nonneg_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    (A : Finset (↑Λ : Type _)) :
+    0 ≤ IsingModel.numerator
+          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p
+          (IsingModel.spinProduct A) :=
+  IsingModel.gks_numerator_nonneg
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p hf A
+
+/-- **ℤ^d boltzmannWeight has non-negative correlations** at Λ-induced
+(ferromagnetic). -/
+theorem boltzmannWeight_hasNonnegCorrelations_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    IsingModel.HasNonnegCorrelations (IsingModel.boltzmannWeight
+      (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p) :=
+  IsingModel.boltzmannWeight_hasNonnegCorrelations
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p hf
+
 /-- **ℤ^d GKS-I at Λ-induced subgraph** (Griffiths 1967):
 `0 ≤ ⟨σ^A⟩_Λ` for ferromagnetic `p`. -/
 theorem gks_first_latticeGraph
