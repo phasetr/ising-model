@@ -1673,6 +1673,17 @@ theorem uniformMagnetization_apply (d : ℕ) (p : IsingParams ℝ) :
       = magnetizationInfinite (IsingModel.latticeGraph d)
           (Ambient.cubicExhaustion d) p 0 := rfl
 
+/-- **`uniformMagnetization` equals `magnetizationInfinite` under any
+Exhaustion** (ferromagnetic): bridges the fixed-`cubicExhaustion` form
+to arbitrary Exhaustions via `magnetizationInfinite_indep_exhaustion`. -/
+theorem uniformMagnetization_eq_magnetizationInfinite_any_exhaustion
+    (d : ℕ) (Λ' : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    uniformMagnetization d p
+      = magnetizationInfinite (IsingModel.latticeGraph d) Λ' p 0 := by
+  rw [uniformMagnetization_apply]
+  exact magnetizationInfinite_indep_exhaustion (IsingModel.latticeGraph d) _ Λ' p hf 0
+
 /-- **Bridge**: for ferromagnetic `p` and any site `i : Fin d → ℤ`,
 `magnetizationInfinite ... p i = uniformMagnetization d p`.
 
