@@ -475,6 +475,20 @@ theorem neg_one_le_spontaneousCorrelation_latticeGraph
     -1 ≤ spontaneousCorrelation (IsingModel.latticeGraph d) Λ J β A :=
   neg_one_le_spontaneousCorrelation (IsingModel.latticeGraph d) Λ hJ hβ A
 
+/-- **ℤ^d spontaneousCorrelation ≥ 0** (ferromagnetic). -/
+theorem spontaneousCorrelation_latticeGraph_nonneg
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) (A : Finset (Fin d → ℤ)) :
+    0 ≤ spontaneousCorrelation (IsingModel.latticeGraph d) Λ J β A :=
+  spontaneousCorrelation_nonneg (IsingModel.latticeGraph d) Λ hJ hβ A
+
+/-- **ℤ^d spontaneousCorrelation ≤ 1** (ferromagnetic). -/
+theorem spontaneousCorrelation_latticeGraph_le_one
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) (A : Finset (Fin d → ℤ)) :
+    spontaneousCorrelation (IsingModel.latticeGraph d) Λ J β A ≤ 1 :=
+  spontaneousCorrelation_le_one (IsingModel.latticeGraph d) Λ hJ hβ A
+
 /-- **ℤ^d `|spontaneousCorrelation| ≤ 1`** (ferromagnetic). -/
 theorem abs_spontaneousCorrelation_latticeGraph_le_one
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
