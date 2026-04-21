@@ -3808,6 +3808,23 @@ theorem correlationInfinite_latticeGraph_eq_ciSup
       = ⨆ n, correlationAlongExhaustion (IsingModel.latticeGraph d) Λ p A n :=
   correlationInfinite_eq_ciSup (IsingModel.latticeGraph d) Λ p A
 
+/-- **ℤ^d `correlationAlongExhaustion ≤ correlationInfinite`** pointwise. -/
+theorem correlationAlongExhaustion_le_correlationInfinite_latticeGraph
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (A : Finset (Fin d → ℤ)) (n : ℕ) :
+    correlationAlongExhaustion (IsingModel.latticeGraph d) Λ p A n
+      ≤ correlationInfinite (IsingModel.latticeGraph d) Λ p A :=
+  correlationAlongExhaustion_le_correlationInfinite (IsingModel.latticeGraph d) Λ p A n
+
+/-- **ℤ^d `magnetizationAlongExhaustion ≤ magnetizationInfinite`** pointwise. -/
+theorem magnetizationAlongExhaustion_le_magnetizationInfinite_latticeGraph
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (i : Fin d → ℤ) (n : ℕ) :
+    magnetizationAlongExhaustion (IsingModel.latticeGraph d) Λ p i n
+      ≤ magnetizationInfinite (IsingModel.latticeGraph d) Λ p i :=
+  magnetizationAlongExhaustion_le_magnetizationInfinite
+    (IsingModel.latticeGraph d) Λ p i n
+
 /-- **ℤ^d magnetizationΛ h-monotonicity**: `MonotoneOn` in `h` on `Ici 0`. -/
 theorem magnetizationΛ_latticeGraph_monotone_h
     (d : ℕ) (Λ : Finset (Fin d → ℤ))
