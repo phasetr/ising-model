@@ -3217,6 +3217,17 @@ theorem truncated4TwoPoint_symm_su
   rw [h_quad, h_su]
   ring
 
+/-- **Symmetry of `truncated4TwoPoint` under `(r, u)` swap**:
+`truncated4TwoPoint d p r s u = truncated4TwoPoint d p u s r`. Derived by
+chaining `_symm_rs`, `_symm_su`, `_symm_rs` to implement the transposition
+`(r, u)` via adjacent swaps. -/
+theorem truncated4TwoPoint_symm_ru
+    (d : ℕ) (p : IsingParams ℝ) (r s u : Fin d → ℤ) :
+    truncated4TwoPoint d p r s u = truncated4TwoPoint d p u s r := by
+  rw [truncated4TwoPoint_symm_rs d p r s u,
+      truncated4TwoPoint_symm_su d p s r u,
+      truncated4TwoPoint_symm_rs d p s u r]
+
 /-! ## `uniformMagnetization` recasts -/
 
 /-- **`twoPointFunction` at `r = 0` equals `uniformMagnetization`**
