@@ -346,6 +346,16 @@ theorem correlationAlongExhaustion_latticeGraph_le_one
     correlationAlongExhaustion (IsingModel.latticeGraph d) Λ p A n ≤ 1 :=
   correlationAlongExhaustion_le_one (IsingModel.latticeGraph d) Λ p A n
 
+/-- **ℤ^d `correlationAlongExhaustion ≤ correlationInfinite`** per stage
+(ferromagnetic): stage-wise upper bound by the limsup value. -/
+theorem correlationAlongExhaustion_latticeGraph_le_correlationInfinite
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (A : Finset (Fin d → ℤ)) (n : ℕ) :
+    correlationAlongExhaustion (IsingModel.latticeGraph d) Λ p A n
+      ≤ correlationInfinite (IsingModel.latticeGraph d) Λ p A :=
+  correlationAlongExhaustion_le_correlationInfinite
+    (IsingModel.latticeGraph d) Λ p A n
+
 /-- **ℤ^d `correlationAlongExhaustion` is ≥ 0** per stage (ferromagnetic).
 Concrete specialization of `correlationAlongExhaustion_nonneg`. -/
 theorem correlationAlongExhaustion_latticeGraph_nonneg
