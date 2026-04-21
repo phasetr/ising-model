@@ -2233,6 +2233,18 @@ theorem magnetizationAlongExhaustion_bddAbove
     BddAbove (Set.range (magnetizationAlongExhaustion G Λ p i)) :=
   correlationAlongExhaustion_bddAbove G Λ p {i}
 
+/-- **Convergence to the supremum** for `magnetizationAlongExhaustion`
+(ferromagnetic): `Tendsto … atTop (nhds (⨆ n, magnetizationAlongExhaustion G Λ p i n))`.
+Specialization of `correlationAlongExhaustion_tendsto_ciSup` at
+`A = {i}`. -/
+theorem magnetizationAlongExhaustion_tendsto_ciSup
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i : V) :
+    Filter.Tendsto (magnetizationAlongExhaustion G Λ p i)
+      Filter.atTop (nhds (⨆ n, magnetizationAlongExhaustion G Λ p i n)) :=
+  correlationAlongExhaustion_tendsto_ciSup G Λ p hf {i}
+
 /-- **Exhaustion-independence of `magnetizationInfinite`**:
 the value does not depend on the choice of exhaustion.  Specialization
 of `correlationInfinite_indep_exhaustion`. -/
