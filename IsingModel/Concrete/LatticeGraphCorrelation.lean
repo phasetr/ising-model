@@ -1144,6 +1144,22 @@ theorem hamiltonian_bot_latticeGraph
       = -p.h * ∑ i : (↑Λ : Type _), IsingModel.Spin.sign ℝ (σ i) :=
   IsingModel.hamiltonian_bot p σ
 
+/-- **ℤ^d partitionFunction_pos direct** at Λ-induced: `0 < Z_Λ`. -/
+theorem partitionFunction_pos_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ) :
+    0 < IsingModel.partitionFunction
+          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p :=
+  IsingModel.partitionFunction_pos
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p
+
+/-- **ℤ^d partitionFunction_ne_zero direct** at Λ-induced. -/
+theorem partitionFunction_ne_zero_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ) :
+    IsingModel.partitionFunction
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p ≠ 0 :=
+  IsingModel.partitionFunction_ne_zero
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p
+
 /-- **ℤ^d boltzmannWeight positivity** at Λ-induced subgraph:
 `0 < exp(-β H_Λ(σ))`. -/
 theorem boltzmannWeightΛ_latticeGraph_pos
