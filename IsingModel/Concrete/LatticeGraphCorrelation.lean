@@ -2711,6 +2711,14 @@ theorem abs_twoPointFunction_le_one
   abs_correlationInfinite_le_one (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) p {(0 : Fin d → ℤ), r}
 
+/-- **`twoPointFunction² ≤ 1`** unconditionally. Direct specialization
+of `correlationInfinite_sq_le_one` at `A = {0, r}`. -/
+theorem twoPointFunction_sq_le_one
+    (d : ℕ) (p : IsingParams ℝ) (r : Fin d → ℤ) :
+    twoPointFunction d p r ^ 2 ≤ 1 :=
+  correlationInfinite_sq_le_one (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) p {(0 : Fin d → ℤ), r}
+
 /-- **`twoPointFunction` at `h = 0, r = 0` vanishes** (Z₂ via
 `twoPointFunction_zero` + `magnetizationInfinite_zero_at_h_zero`):
 `twoPointFunction d ⟨J, 0, β⟩ 0 = 0`. -/
