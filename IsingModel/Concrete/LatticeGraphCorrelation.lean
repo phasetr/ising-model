@@ -2357,6 +2357,100 @@ theorem fkg_ising_latticeGraph
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p hf
     f g hf_nn hg_nn hf_mono hg_mono
 
+/-! ### Hamiltonian / Z bound / `J = 0` closed-form wrappers
+
+Direct ℤ^d forwarders for a mixed batch from
+`IsingModel/Conditioning.lean` and `IsingModel/GibbsMeasure.lean`:
+Boltzmann positivity (`boltzmannWeight_pos`), the GJ §10.3
+finite-volume energy / Z / free-energy bounds
+(`hamiltonian_abs_le`, `partitionFunction_{upper,lower}`,
+`freeEnergy_upper_bound`, Cor 10.3.2), and the `J = 0` Hamiltonian
+closed form (`hamiltonian_J_zero`). The `boltzmannWeight_pos` and
+`hamiltonian_J_zero` items are basic infrastructure, not §10.3 proper. -/
+
+/-- **ℤ^d boltzmannWeight_pos direct** (Λ-induced): `0 < w(σ)` pointwise.
+Thin pass-through of `IsingModel.boltzmannWeight_pos`. -/
+theorem boltzmannWeight_pos_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ)
+    (σ : IsingModel.Config (↑Λ : Type _)) :
+    0 < IsingModel.boltzmannWeight
+          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p σ :=
+  IsingModel.boltzmannWeight_pos
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p σ
+
+/-- **ℤ^d hamiltonian_abs_le direct** (Λ-induced):
+`|H(σ)| ≤ |J| · |E(latticeGraph d)|_Λ + |h| · |Λ|`. Thin pass-through of
+`IsingModel.hamiltonian_abs_le`. Finite-volume energy bound (GJ §10.3). -/
+theorem hamiltonian_abs_le_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ)
+    (σ : IsingModel.Config (↑Λ : Type _)) :
+    |IsingModel.hamiltonian
+          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p σ|
+      ≤ |p.J| *
+          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card
+        + |p.h| * Fintype.card (↑Λ : Type _) :=
+  IsingModel.hamiltonian_abs_le
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p σ
+
+/-- **ℤ^d partitionFunction_upper direct** (Λ-induced):
+`Z ≤ 2^|Λ| · exp(|β|·(|J|·|E|_Λ + |h|·|Λ|))` (GJ §10.3, Cor 10.3.2).
+Thin pass-through of `IsingModel.partitionFunction_upper`. -/
+theorem partitionFunction_upper_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ) :
+    IsingModel.partitionFunction
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p
+      ≤ Fintype.card (IsingModel.Config (↑Λ : Type _)) *
+          Real.exp (|p.β| *
+            (|p.J| *
+              (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card
+              + |p.h| * Fintype.card (↑Λ : Type _))) :=
+  IsingModel.partitionFunction_upper
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p
+
+/-- **ℤ^d partitionFunction_lower direct** (Λ-induced):
+`exp(-|β|·(|J|·|E|_Λ + |h|·|Λ|)) ≤ Z`. Thin pass-through of
+`IsingModel.partitionFunction_lower`. -/
+theorem partitionFunction_lower_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ) :
+    Real.exp (-(|p.β| *
+        (|p.J| *
+          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card
+          + |p.h| * Fintype.card (↑Λ : Type _))))
+      ≤ IsingModel.partitionFunction
+          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p :=
+  IsingModel.partitionFunction_lower
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p
+
+/-- **ℤ^d freeEnergy_upper_bound direct** (Λ-induced, nonempty `Λ`):
+`f ≤ log 2 + |β|·(|J|·|E|_Λ + |h|·|Λ|) / |Λ|` (GJ §10.3). Thin
+pass-through of `IsingModel.freeEnergy_upper_bound`. -/
+theorem freeEnergy_upper_bound_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ)
+    (hne : 0 < Fintype.card (↑Λ : Type _)) :
+    IsingModel.freeEnergy
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p
+      ≤ Real.log 2 +
+          |p.β| *
+            (|p.J| *
+              (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card
+              + |p.h| * Fintype.card (↑Λ : Type _))
+          / Fintype.card (↑Λ : Type _) :=
+  IsingModel.freeEnergy_upper_bound
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p hne
+
+/-- **ℤ^d hamiltonian_J_zero direct** (Λ-induced): at `J = 0`,
+`H = -h · ∑ sign(σ_i)`. Thin pass-through of
+`IsingModel.hamiltonian_J_zero`. -/
+theorem hamiltonian_J_zero_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (h β : ℝ)
+    (σ : IsingModel.Config (↑Λ : Type _)) :
+    IsingModel.hamiltonian
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
+        (⟨0, h, β⟩ : IsingParams ℝ) σ
+      = -h * ∑ i : (↑Λ : Type _), IsingModel.Spin.sign ℝ (σ i) :=
+  IsingModel.hamiltonian_J_zero
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) h β σ
+
 /-- **ℤ^d Cor 4.3.5 at `h = 0`, Λ-induced subgraph** (GJ §4.3 Cor 4.3.5):
 inductive `(n+2)`-point bound at finite volume. -/
 theorem cor_4_3_5_h0_latticeGraph
