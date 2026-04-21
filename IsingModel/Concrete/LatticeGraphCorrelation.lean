@@ -1043,6 +1043,30 @@ theorem partitionFunctionΛ_latticeGraph_lower
   IsingModel.partitionFunction_lower
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p
 
+/-- **ℤ^d gibbsExpectation as ratio** at Λ-induced:
+`⟨F⟩ = Z⁻¹ · numerator(F)`. -/
+theorem gibbsExpectation_eq_div_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ)
+    (F : IsingModel.Config (↑Λ : Type _) → ℝ) :
+    IsingModel.gibbsExpectation
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p F
+      = (partitionFunctionΛ (IsingModel.latticeGraph d) Λ p)⁻¹
+          * IsingModel.numerator
+              (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p F :=
+  IsingModel.gibbsExpectation_eq_div
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p F
+
+/-- **ℤ^d gibbsExpectation nonneg from numerator nonneg** at Λ-induced. -/
+theorem gibbsExpectation_nonneg_of_numerator_nonneg_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ)
+    (F : IsingModel.Config (↑Λ : Type _) → ℝ)
+    (hnum : 0 ≤ IsingModel.numerator
+              (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p F) :
+    0 ≤ IsingModel.gibbsExpectation
+          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p F :=
+  IsingModel.gibbsExpectation_nonneg_of_numerator_nonneg
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p F hnum
+
 /-- **ℤ^d GKS-I at Λ-induced subgraph** (Griffiths 1967):
 `0 ≤ ⟨σ^A⟩_Λ` for ferromagnetic `p`. -/
 theorem gks_first_latticeGraph
