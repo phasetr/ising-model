@@ -827,6 +827,13 @@ theorem partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_pos
   partitionFunctionAlongExhaustion_pos (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) p n
 
+/-- **ℤ^d partitionFunctionAlongExhaustion positivity** (any Exhaustion). -/
+theorem partitionFunctionAlongExhaustion_latticeGraph_pos
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (n : ℕ) :
+    0 < partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ p n :=
+  partitionFunctionAlongExhaustion_pos (IsingModel.latticeGraph d) Λ p n
+
 /-- **ℤ^d freeEnergyInfinite is strictly positive** (ferromagnetic). -/
 theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_pos
     (d : ℕ) [Nonempty (Fin d → ℤ)]
