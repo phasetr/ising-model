@@ -147,6 +147,11 @@ noncomputable def magnetization (G : SimpleGraph ι) [Fintype G.edgeSet]
     (p : IsingParams ℝ) (i : ι) : ℝ :=
   correlation G p {i}
 
+/-- **Unfolding of `magnetization`**: `magnetization G p i = correlation G p {i}`. -/
+theorem magnetization_apply (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (p : IsingParams ℝ) (i : ι) :
+    magnetization G p i = correlation G p {i} := rfl
+
 /-- **`|magnetization| ≤ 1`** for any parameters and any site `i`.
 Direct from `abs_correlation_le_one` at `A = {i}`. -/
 theorem abs_magnetization_le_one (G : SimpleGraph ι) [Fintype G.edgeSet]
@@ -193,6 +198,12 @@ external field. It equals `dM/dh` in the thermodynamic limit. -/
 noncomputable def susceptibility (G : SimpleGraph ι) [Fintype G.edgeSet]
     (p : IsingParams ℝ) (i : ι) : ℝ :=
   ∑ j : ι, truncated2 G p i j
+
+/-- **Unfolding of `susceptibility`**:
+`susceptibility G p i = ∑ j, truncated2 G p i j`. -/
+theorem susceptibility_apply (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (p : IsingParams ℝ) (i : ι) :
+    susceptibility G p i = ∑ j : ι, truncated2 G p i j := rfl
 
 /-- The susceptibility is non-negative for ferromagnetic parameters.
 Follows from `truncated2_nonneg`: each term `⟨σ_i; σ_j⟩ ≥ 0`. -/
