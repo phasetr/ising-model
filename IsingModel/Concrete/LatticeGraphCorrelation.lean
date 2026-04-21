@@ -373,6 +373,18 @@ theorem correlationAlongExhaustion_latticeGraph_le_one
     correlationAlongExhaustion (IsingModel.latticeGraph d) Λ p A n ≤ 1 :=
   correlationAlongExhaustion_le_one (IsingModel.latticeGraph d) Λ p A n
 
+/-- **ℤ^d cross-exhaustion sandwich** (ferromagnetic): for any two ℤ^d
+exhaustions `Λ, Λ'`, per stage `correlationAlongExhaustion Λ'` is ≤
+the `correlationInfinite` computed via `Λ`. -/
+theorem correlationAlongExhaustion_latticeGraph_le_correlationInfinite_of_other
+    (d : ℕ) (Λ Λ' : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    (A : Finset (Fin d → ℤ)) (n : ℕ) :
+    correlationAlongExhaustion (IsingModel.latticeGraph d) Λ' p A n
+      ≤ correlationInfinite (IsingModel.latticeGraph d) Λ p A :=
+  correlationAlongExhaustion_le_correlationInfinite_of_other
+    (IsingModel.latticeGraph d) Λ Λ' p hf A n
+
 /-- **ℤ^d `correlationAlongExhaustion ≤ correlationInfinite`** per stage
 (ferromagnetic): stage-wise upper bound by the limsup value. -/
 theorem correlationAlongExhaustion_latticeGraph_le_correlationInfinite
