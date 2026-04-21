@@ -3777,6 +3777,20 @@ theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_ge_log_two_cosh
   exact inducedLatticeGraph_card_edgeFinset_le d
     ((Ambient.cubicExhaustion d).volume n)
 
+/-- **Lower bound** `freeEnergyInfinite ≥ log 2` on ℤ^d (any Exhaustion
+with caller-supplied BED). -/
+theorem freeEnergyInfinite_latticeGraph_ge_log_two
+    (d : ℕ) [Nonempty (Fin d → ℤ)]
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    {c : ℝ}
+    (hc : ∀ n, (Λ.volume n).Nonempty →
+      ((Ambient.inducedGraph (IsingModel.latticeGraph d)
+          (Λ.volume n)).edgeFinset.card : ℝ)
+        ≤ c * Fintype.card (↑(Λ.volume n) : Type _)) :
+    Real.log 2 ≤ freeEnergyInfinite (IsingModel.latticeGraph d) Λ p :=
+  freeEnergyInfinite_ge_log_two (IsingModel.latticeGraph d) Λ p hf (c := c) hc
+
 /-- **Sharp lower bound** `freeEnergyInfinite ≥ log(2 cosh(βh))` on ℤ^d
 (any Exhaustion with caller-supplied BED). -/
 theorem freeEnergyInfinite_latticeGraph_ge_log_two_cosh
