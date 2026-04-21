@@ -1993,6 +1993,17 @@ theorem twoPointFunction_apply (d : ℕ) (p : IsingParams ℝ) (r : Fin d → �
       = correlationInfinite (IsingModel.latticeGraph d)
           (Ambient.cubicExhaustion d) p {(0 : Fin d → ℤ), r} := rfl
 
+/-- **`twoPointFunction` equals `correlationInfinite` under any Exhaustion**
+(ferromagnetic): `twoPointFunction d p r = correlationInfinite (latticeGraph d) Λ' p {0, r}`. -/
+theorem twoPointFunction_eq_correlationInfinite_any_exhaustion
+    (d : ℕ) (Λ' : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (r : Fin d → ℤ) :
+    twoPointFunction d p r
+      = correlationInfinite (IsingModel.latticeGraph d) Λ' p {(0 : Fin d → ℤ), r} := by
+  rw [twoPointFunction_apply]
+  exact correlationInfinite_indep_exhaustion (IsingModel.latticeGraph d)
+    _ Λ' p hf _
+
 /-- **Pair correlation equals `twoPointFunction` at the separation**:
 for ferromagnetic `p` and any `i, j : Fin d → ℤ`,
 
@@ -2069,6 +2080,17 @@ theorem truncated2TwoPoint_apply (d : ℕ) (p : IsingParams ℝ) (r : Fin d → 
     truncated2TwoPoint d p r
       = truncated2Infinite (IsingModel.latticeGraph d)
           (Ambient.cubicExhaustion d) p 0 r := rfl
+
+/-- **`truncated2TwoPoint` equals `truncated2Infinite` under any Exhaustion**
+(ferromagnetic). -/
+theorem truncated2TwoPoint_eq_truncated2Infinite_any_exhaustion
+    (d : ℕ) (Λ' : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (r : Fin d → ℤ) :
+    truncated2TwoPoint d p r
+      = truncated2Infinite (IsingModel.latticeGraph d) Λ' p 0 r := by
+  rw [truncated2TwoPoint_apply]
+  exact truncated2Infinite_indep_exhaustion (IsingModel.latticeGraph d)
+    _ Λ' p hf 0 r
 
 /-- **Truncated 2-point correlation depends only on the separation**:
 for ferromagnetic `p` and any `i, j : Fin d → ℤ`,
@@ -2176,6 +2198,17 @@ theorem truncated3TwoPoint_apply (d : ℕ) (p : IsingParams ℝ)
       = truncated3Infinite (IsingModel.latticeGraph d)
           (Ambient.cubicExhaustion d) p 0 r s := rfl
 
+/-- **`truncated3TwoPoint` equals `truncated3Infinite` under any Exhaustion**
+(ferromagnetic). -/
+theorem truncated3TwoPoint_eq_truncated3Infinite_any_exhaustion
+    (d : ℕ) (Λ' : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (r s : Fin d → ℤ) :
+    truncated3TwoPoint d p r s
+      = truncated3Infinite (IsingModel.latticeGraph d) Λ' p 0 r s := by
+  rw [truncated3TwoPoint_apply]
+  exact truncated3Infinite_indep_exhaustion (IsingModel.latticeGraph d)
+    _ Λ' p hf 0 r s
+
 /-- **ℤ^d `truncated3Infinite` swap symmetries**. -/
 theorem truncated3Infinite_latticeGraph_swap_ij
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
@@ -2263,6 +2296,17 @@ theorem truncated4TwoPoint_apply (d : ℕ) (p : IsingParams ℝ)
     truncated4TwoPoint d p r s u
       = truncated4Infinite (IsingModel.latticeGraph d)
           (Ambient.cubicExhaustion d) p 0 r s u := rfl
+
+/-- **`truncated4TwoPoint` equals `truncated4Infinite` under any Exhaustion**
+(ferromagnetic). -/
+theorem truncated4TwoPoint_eq_truncated4Infinite_any_exhaustion
+    (d : ℕ) (Λ' : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (r s u : Fin d → ℤ) :
+    truncated4TwoPoint d p r s u
+      = truncated4Infinite (IsingModel.latticeGraph d) Λ' p 0 r s u := by
+  rw [truncated4TwoPoint_apply]
+  exact truncated4Infinite_indep_exhaustion (IsingModel.latticeGraph d)
+    _ Λ' p hf 0 r s u
 
 /-- **Four-point correlation depends only on three separations**:
 for ferromagnetic `p` and any `i, j, k, l : Fin d → ℤ`,
