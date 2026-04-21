@@ -924,6 +924,140 @@ theorem freeEnergy_ofReal_eq_freeEnergyComplex_latticeGraph
   IsingModel.freeEnergy_ofReal_eq_freeEnergyComplex
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p
 
+/-! #### Lee-Yang domain / subdomain analyticity (GJ §4.6 Thm 4.6.2)
+
+Direct ℤ^d forwarders for the Lee-Yang nonvanishing and free-energy
+analyticity package from `IsingModel/ComplexAnalyticity.lean`:
+Friedli-Velenik factorisation, Lee-Yang nonvanishing, `Re Z > 0` /
+`slitPlane` on the subdomain, `freeEnergyComplex` analyticity on the
+subdomain / real slice, and `logDeriv Z / Z` on the entire Lee-Yang
+domain. These feed GJ §4.6 Thm 4.6.2 Vitali completion at ℤ^d. -/
+
+/-- **ℤ^d Friedli-Velenik factorisation** (Λ-induced):
+`Z_ℂ G (J, h, β) = N(β, J, h, |E|, |ι|) · P_E(leeYangFugacityVec β h)`.
+Thin pass-through of
+`IsingModel.partitionFunctionComplex_eq_normalization_mul_isingEdgePoly`.
+Combined with Lee-Yang nonvanishing of `P_E` this yields
+`Z ≠ 0` on the Lee-Yang domain. -/
+theorem partitionFunctionComplex_eq_normalization_mul_isingEdgePoly_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (β J : ℝ) (h : ℂ) :
+    IsingModel.partitionFunctionComplex
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
+        (J : ℂ) h (β : ℂ)
+      = IsingModel.leeYangNormalization (β : ℂ) (J : ℂ) h
+          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card
+          (Fintype.card (↑Λ : Type _))
+        * (IsingModel.isingEdgePoly (IsingModel.graphToEdgeList
+            (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
+            (Real.exp (-2 * β * J)))).eval
+              (IsingModel.leeYangFugacityVec (β : ℂ) h) :=
+  IsingModel.partitionFunctionComplex_eq_normalization_mul_isingEdgePoly
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) β J h
+
+/-- **ℤ^d Lee-Yang nonvanishing on the Lee-Yang domain** (Λ-induced,
+ferromagnetic): for `β > 0`, `J > 0`, and `h ∈ leeYangDomain`,
+`Z_ℂ G (J, h, β) ≠ 0`. GJ §4.6 Thm 4.6.2 core. Thin pass-through of
+`IsingModel.partitionFunctionComplex_ne_zero_on_leeYangDomain`. -/
+theorem partitionFunctionComplex_ne_zero_on_leeYangDomain_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J) {h : ℂ}
+    (hh : h ∈ IsingModel.leeYangDomain) :
+    IsingModel.partitionFunctionComplex
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
+        (J : ℂ) h (β : ℂ) ≠ 0 :=
+  IsingModel.partitionFunctionComplex_ne_zero_on_leeYangDomain
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) hβ hJ hh
+
+/-- **ℤ^d `Re Z_ℂ > 0` on the Lee-Yang subdomain** (Λ-induced): for
+`β > 0` and `h` with `β · |h.im| · |Λ| < π/2`,
+`0 < Re(Z_ℂ G (J, h, β))`. Thin pass-through of
+`IsingModel.partitionFunctionComplex_re_pos_of_leeYangSubdomain`. -/
+theorem partitionFunctionComplex_re_pos_of_leeYangSubdomain_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    {β : ℝ} (hβ : 0 < β) (J : ℝ) {h : ℂ}
+    (himπ : β * |h.im| * (Fintype.card (↑Λ : Type _) : ℝ) < Real.pi / 2) :
+    0 < (IsingModel.partitionFunctionComplex
+          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
+          (J : ℂ) h (β : ℂ)).re :=
+  IsingModel.partitionFunctionComplex_re_pos_of_leeYangSubdomain
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) hβ J himπ
+
+/-- **ℤ^d `Z_ℂ ∈ slitPlane` on the Lee-Yang subdomain** (Λ-induced):
+corollary of the `Re Z > 0` result, feeding `Complex.log` analyticity. -/
+theorem partitionFunctionComplex_mem_slitPlane_of_leeYangSubdomain_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    {β : ℝ} (hβ : 0 < β) (J : ℝ) {h : ℂ}
+    (himπ : β * |h.im| * (Fintype.card (↑Λ : Type _) : ℝ) < Real.pi / 2) :
+    IsingModel.partitionFunctionComplex
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
+        (J : ℂ) h (β : ℂ) ∈ Complex.slitPlane :=
+  IsingModel.partitionFunctionComplex_mem_slitPlane_of_leeYangSubdomain
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) hβ J himπ
+
+/-- **ℤ^d `freeEnergyComplex` analytic in `h` on the Lee-Yang subdomain**
+(Λ-induced). Finite-volume GJ §4.6 Thm 4.6.2 on the subdomain
+`β · |Im h| · |Λ| < π/2`. -/
+theorem freeEnergyComplex_analyticAt_h_of_leeYangSubdomain_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    {β : ℝ} (hβ : 0 < β) (J : ℝ) {h : ℂ}
+    (himπ : β * |h.im| * (Fintype.card (↑Λ : Type _) : ℝ) < Real.pi / 2) :
+    AnalyticAt ℂ (fun h' => IsingModel.freeEnergyComplex
+      (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
+      (J : ℂ) h' (β : ℂ)) h :=
+  IsingModel.freeEnergyComplex_analyticAt_h_of_leeYangSubdomain
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) hβ J himπ
+
+/-- **ℤ^d `freeEnergyComplex` `AnalyticOnNhd` on the Lee-Yang subdomain**
+(Λ-induced). -/
+theorem freeEnergyComplex_analyticOnNhd_leeYangSubdomain_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    {β : ℝ} (hβ : 0 < β) (J : ℝ) :
+    AnalyticOnNhd ℂ (fun h' => IsingModel.freeEnergyComplex
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
+        (J : ℂ) h' (β : ℂ))
+      (IsingModel.leeYangSubdomain β (Fintype.card (↑Λ : Type _))) :=
+  IsingModel.freeEnergyComplex_analyticOnNhd_leeYangSubdomain
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) hβ J
+
+/-- **ℤ^d `freeEnergyComplex` analytic in `h` at real `h₀`** (Λ-induced,
+real-slice corollary; no ferromagnetic hypothesis). -/
+theorem freeEnergyComplex_analyticAt_h_ofReal_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J h₀ β : ℝ) :
+    AnalyticAt ℂ (fun h => IsingModel.freeEnergyComplex
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
+        (J : ℂ) h (β : ℂ))
+      (h₀ : ℂ) :=
+  IsingModel.freeEnergyComplex_analyticAt_h_ofReal
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h₀ β
+
+/-- **ℤ^d `partitionFunctionComplex` `AnalyticOnNhd` on the Lee-Yang
+domain** (Λ-induced): globally entire in `h`. -/
+theorem partitionFunctionComplex_analyticOnNhd_leeYangDomain_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℂ) :
+    AnalyticOnNhd ℂ
+        (fun h' => IsingModel.partitionFunctionComplex
+          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h' β)
+      IsingModel.leeYangDomain :=
+  IsingModel.partitionFunctionComplex_analyticOnNhd_leeYangDomain
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J β
+
+/-- **ℤ^d logarithmic derivative `Z'/Z` analytic on Lee-Yang domain**
+(Λ-induced, ferromagnetic `β > 0`, `J > 0`): input to the Morera-based
+branch construction of `log Z`. -/
+theorem logDeriv_partitionFunctionComplex_analyticOnNhd_leeYangDomain_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J) :
+    AnalyticOnNhd ℂ (fun h : ℂ =>
+        deriv (fun h' => IsingModel.partitionFunctionComplex
+          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
+          (J : ℂ) h' (β : ℂ)) h
+          / IsingModel.partitionFunctionComplex
+              (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
+              (J : ℂ) h (β : ℂ))
+      IsingModel.leeYangDomain :=
+  IsingModel.logDeriv_partitionFunctionComplex_analyticOnNhd_leeYangDomain
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) hβ hJ
+
 /-- **ℤ^d partitionFunction monotone_subgraph** at Λ-induced subgraph:
 `G₁ ≤ G₂ ⇒ Z_{G₁} ≤ Z_{G₂}` for ferromagnetic `p`. -/
 theorem partitionFunction_monotone_subgraph_latticeGraph
