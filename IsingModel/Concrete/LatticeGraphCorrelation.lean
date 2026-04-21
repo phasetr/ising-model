@@ -1168,6 +1168,14 @@ theorem gibbsExpectation_nonneg_of_numerator_nonneg_latticeGraph
   IsingModel.gibbsExpectation_nonneg_of_numerator_nonneg
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p F hnum
 
+/-- **ℤ^d correlation_empty at Λ-induced**: `⟨σ^∅⟩_Λ = 1`. -/
+theorem correlation_empty_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ) :
+    IsingModel.correlation
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p ∅ = 1 :=
+  IsingModel.correlation_empty
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p
+
 /-- **ℤ^d GKS numerator nonneg** at Λ-induced: for ferromagnetic `p`,
 `0 ≤ numerator (spinProduct A)`. -/
 theorem gks_numerator_nonneg_latticeGraph
