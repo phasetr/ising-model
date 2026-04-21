@@ -758,6 +758,19 @@ theorem correlationΛ_latticeGraph_gks_second
   refine ⟨hAB, ?_⟩
   exact correlationΛ_gks_second (IsingModel.latticeGraph d) p hf hA hB
 
+/-- **ℤ^d `hamiltonian` absolute value bound** at Λ-induced subgraph:
+`|H_Λ(σ)| ≤ |J|·|E| + |h|·|Λ|`. -/
+theorem hamiltonianΛ_latticeGraph_abs_le
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ)
+    (σ : IsingModel.Config (↑Λ : Type _)) :
+    |IsingModel.hamiltonian
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p σ|
+      ≤ |p.J|
+          * (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card
+        + |p.h| * Fintype.card (↑Λ : Type _) :=
+  IsingModel.hamiltonian_abs_le
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p σ
+
 /-- **ℤ^d `freeEnergyΛ` upper bound** at nonempty Λ-induced subgraph:
 `f_Λ ≤ log 2 + |β|·(|J|·|E| + |h|·|Λ|) / |Λ|`. -/
 theorem freeEnergyΛ_latticeGraph_upper_bound
