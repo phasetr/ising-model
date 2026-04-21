@@ -3087,6 +3087,26 @@ theorem freeEnergyInfinite_bot_le_latticeGraph
   exact inducedLatticeGraph_card_edgeFinset_le d
     ((Ambient.cubicExhaustion d).volume n)
 
+/-- **ℤ^d freeEnergyInfinite ambient-subgraph monotonicity** up to
+`latticeGraph d` (ferromagnetic, `cubicExhaustion`): for any
+`G₁ ≤ latticeGraph d`, `freeEnergyInfinite G₁ Λ p ≤
+freeEnergyInfinite (latticeGraph d) Λ p`. BED supplied by
+`inducedLatticeGraph_card_edgeFinset_le`. -/
+theorem freeEnergyInfinite_latticeGraph_monotone_ambient_subgraph
+    (d : ℕ) [Nonempty (Fin d → ℤ)]
+    {G₁ : SimpleGraph (Fin d → ℤ)} (hG : G₁ ≤ IsingModel.latticeGraph d)
+    [∀ n, Fintype (Ambient.inducedGraph G₁
+      ((Ambient.cubicExhaustion d).volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    freeEnergyInfinite G₁ (Ambient.cubicExhaustion d) p
+      ≤ freeEnergyInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) p := by
+  refine freeEnergyInfinite_monotone_ambient_subgraph (G₂ := IsingModel.latticeGraph d)
+    hG (Ambient.cubicExhaustion d) p hf (c := (d : ℝ)) ?_
+  intro n _
+  exact inducedLatticeGraph_card_edgeFinset_le d
+    ((Ambient.cubicExhaustion d).volume n)
+
 /-- **ℤ^d inducedGraph of `⊥` = `⊥`** on any Λ. -/
 @[simp]
 theorem inducedGraph_latticeGraph_bot (d : ℕ) (Λ : Finset (Fin d → ℤ)) :
