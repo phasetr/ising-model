@@ -881,6 +881,19 @@ theorem freeEnergy_convergent_subgraph_latticeGraph
       Filter.atTop (nhds L) :=
   IsingModel.freeEnergy_convergent_subgraph Gn hmono p hf
 
+/-- **ℤ^d `freeEnergyInfinite_eq_bot_at_J_zero`** (any-Exhaustion):
+at `J = 0` the ∞-vol free energy equals the `⊥`-graph value. -/
+theorem freeEnergyInfinite_latticeGraph_eq_bot_at_J_zero
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph
+      (⊥ : SimpleGraph (Fin d → ℤ)) (Λ.volume n)).edgeSet]
+    (h β : ℝ) :
+    freeEnergyInfinite (IsingModel.latticeGraph d) Λ
+        (⟨0, h, β⟩ : IsingParams ℝ)
+      = freeEnergyInfinite (⊥ : SimpleGraph (Fin d → ℤ)) Λ
+          (⟨0, h, β⟩ : IsingParams ℝ) :=
+  freeEnergyInfinite_eq_bot_at_J_zero (IsingModel.latticeGraph d) Λ h β
+
 /-- **ℤ^d `freeEnergyAlongExhaustion_eq_bot_at_J_zero`** (any-Exhaustion):
 at `J = 0` the per-stage free energy equals the `⊥`-graph value. -/
 theorem freeEnergyAlongExhaustion_latticeGraph_eq_bot_at_J_zero
