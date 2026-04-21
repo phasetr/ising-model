@@ -3214,6 +3214,38 @@ theorem partitionFunctionAlongExhaustion_latticeGraph_monotone_ambient_subgraph
       ≤ partitionFunctionAlongExhaustion G₂ Λ p n :=
   partitionFunctionAlongExhaustion_monotone_ambient_subgraph hG Λ p hf n
 
+/-- **ℤ^d correlationΛ ambient-subgraph monotonicity** (ferromagnetic). -/
+theorem correlationΛ_latticeGraph_monotone_ambient_subgraph
+    (d : ℕ) {G₁ G₂ : SimpleGraph (Fin d → ℤ)} (hG : G₁ ≤ G₂)
+    (Λ : Finset (Fin d → ℤ))
+    [Fintype (Ambient.inducedGraph G₁ Λ).edgeSet]
+    [Fintype (Ambient.inducedGraph G₂ Λ).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (A : Finset (↑Λ : Type _)) :
+    correlationΛ G₁ Λ p A ≤ correlationΛ G₂ Λ p A :=
+  correlationΛ_monotone_ambient_subgraph hG Λ p hf A
+
+/-- **ℤ^d correlationAlongExhaustion ambient-subgraph monotonicity** per stage. -/
+theorem correlationAlongExhaustion_latticeGraph_monotone_ambient_subgraph
+    (d : ℕ) {G₁ G₂ : SimpleGraph (Fin d → ℤ)} (hG : G₁ ≤ G₂)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph G₁ (Λ.volume n)).edgeSet]
+    [∀ n, Fintype (Ambient.inducedGraph G₂ (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    (A : Finset (Fin d → ℤ)) (n : ℕ) :
+    correlationAlongExhaustion G₁ Λ p A n
+      ≤ correlationAlongExhaustion G₂ Λ p A n :=
+  correlationAlongExhaustion_monotone_ambient_subgraph hG Λ p hf A n
+
+/-- **ℤ^d correlationInfinite ambient-subgraph monotonicity**. -/
+theorem correlationInfinite_latticeGraph_monotone_ambient_subgraph
+    (d : ℕ) {G₁ G₂ : SimpleGraph (Fin d → ℤ)} (hG : G₁ ≤ G₂)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph G₁ (Λ.volume n)).edgeSet]
+    [∀ n, Fintype (Ambient.inducedGraph G₂ (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (A : Finset (Fin d → ℤ)) :
+    correlationInfinite G₁ Λ p A ≤ correlationInfinite G₂ Λ p A :=
+  correlationInfinite_monotone_ambient_subgraph hG Λ p hf A
+
 /-- **ℤ^d `log Z_{Λ_n}` ambient-subgraph `⊥ ≤ latticeGraph d`** per stage
 (ferromagnetic, `cubicExhaustion`). -/
 theorem log_partitionFunctionAlongExhaustion_bot_le_latticeGraph
