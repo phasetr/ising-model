@@ -2619,6 +2619,53 @@ theorem prop_5_4_2_plusGibbsExpectationLiminf_bound_latticeGraph
   exact IsingModel.prop_5_4_2_plusGibbsExpectationLiminf_bound
     (IsingModel.latticeGraph d) Λ hconn J β c hβ hJ B hB i hexp
 
+/-! #### §17.7 critical-exponent bounds at ℤ^d
+
+Direct ℤ^d wrappers for the `η ≥ 0` and `ζ ≥ 0` critical-exponent
+bounds at ℤ^d, for both finite-volume and ∞-volume. Pass-throughs of
+`IsingModel.{eta,zeta}_nonneg_{finite,infinite}_vol`. -/
+
+/-- **ℤ^d `ζ ≥ 0` finite-volume** (Λ-induced, GJ §17.7 Thm 17.7.1,
+ferromagnetic at `h = 0`). Pass-through of
+`IsingModel.zeta_nonneg_finite_vol`. -/
+theorem zeta_nonneg_finite_vol_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
+    (hf : Ferromagnetic (⟨J, (0 : ℝ), β⟩ : IsingParams ℝ))
+    (i j k l : (↑Λ : Type _))
+    (hij : i ≠ j) (hik : i ≠ k) (hil : i ≠ l)
+    (hjk : j ≠ k) (hjl : j ≠ l) (hkl : k ≠ l) :
+    IsingModel.truncated4
+          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
+          ⟨J, 0, β⟩ i j k l ≤ 0 :=
+  IsingModel.zeta_nonneg_finite_vol
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J β hf
+    i j k l hij hik hil hjk hjl hkl
+
+/-- **ℤ^d `η ≥ 0` ∞-volume** (GJ §17.7 Thm 17.7.1, ferromagnetic).
+Pass-through of `IsingModel.Ambient.eta_nonneg_infinite_vol`. -/
+theorem eta_nonneg_infinite_vol_latticeGraph
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph
+        (IsingModel.latticeGraph d) (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i j : Fin d → ℤ) :
+    0 ≤ Ambient.truncated2Infinite (IsingModel.latticeGraph d) Λ p i j :=
+  Ambient.eta_nonneg_infinite_vol (IsingModel.latticeGraph d) Λ p hf i j
+
+/-- **ℤ^d `ζ ≥ 0` ∞-volume** (GJ §17.7 Thm 17.7.1, ferromagnetic at
+`h = 0`). Pass-through of `IsingModel.Ambient.zeta_nonneg_infinite_vol`. -/
+theorem zeta_nonneg_infinite_vol_latticeGraph
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph
+        (IsingModel.latticeGraph d) (Λ.volume n)).edgeSet]
+    (J β : ℝ) (hf : Ferromagnetic (⟨J, (0 : ℝ), β⟩ : IsingParams ℝ))
+    {i j k l : Fin d → ℤ}
+    (hij : i ≠ j) (hik : i ≠ k) (hil : i ≠ l)
+    (hjk : j ≠ k) (hjl : j ≠ l) (hkl : k ≠ l) :
+    Ambient.truncated4Infinite (IsingModel.latticeGraph d) Λ
+        ⟨J, 0, β⟩ i j k l ≤ 0 :=
+  Ambient.zeta_nonneg_infinite_vol (IsingModel.latticeGraph d) Λ J β hf
+    hij hik hil hjk hjl hkl
+
 /-- **ℤ^d partitionFunction monotone_subgraph** at Λ-induced subgraph:
 `G₁ ≤ G₂ ⇒ Z_{G₁} ≤ Z_{G₂}` for ferromagnetic `p`. -/
 theorem partitionFunction_monotone_subgraph_latticeGraph
