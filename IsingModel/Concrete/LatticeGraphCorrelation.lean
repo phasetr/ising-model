@@ -1766,6 +1766,15 @@ theorem log_partitionFunctionAlongExhaustion_latticeGraph_ge_card_mul_log_two_co
   log_partitionFunctionAlongExhaustion_ge_card_mul_log_two_cosh_of_ferromagnetic
     (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d) p hf n
 
+/-- **ℤ^d sharp log Z_Λ bound**: `|Λ|·log(2 cosh βh) ≤ log Z_Λ` (ferromagnetic). -/
+theorem log_partitionFunctionΛ_latticeGraph_ge_card_mul_log_two_cosh
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    (Λ.card : ℝ) * Real.log (2 * Real.cosh (p.β * p.h))
+      ≤ Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ p) :=
+  log_partitionFunctionΛ_ge_card_mul_log_two_cosh_of_ferromagnetic
+    (IsingModel.latticeGraph d) Λ p hf
+
 /-- **ℤ^d partitionFunctionAlongExhaustion β=0 per-stage**: `= 2^|Λ_n|`. -/
 theorem partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_beta_zero
     (d : ℕ) (J h : ℝ) (n : ℕ) :
