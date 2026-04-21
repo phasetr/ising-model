@@ -3174,6 +3174,21 @@ theorem truncated2TwoPoint_le_one
   have h_sq : 0 ≤ (uniformMagnetization d p)^2 := sq_nonneg _
   linarith
 
+/-- **`-1 ≤ truncated2TwoPoint`** (ferromagnetic): from
+`truncated2TwoPoint_nonneg`. -/
+theorem neg_one_le_truncated2TwoPoint
+    (d : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p) (r : Fin d → ℤ) :
+    -1 ≤ truncated2TwoPoint d p r := by
+  have := truncated2TwoPoint_nonneg d p hf r
+  linarith
+
+/-- **`|truncated2TwoPoint| ≤ 1`** (ferromagnetic). -/
+theorem abs_truncated2TwoPoint_le_one
+    (d : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p) (r : Fin d → ℤ) :
+    |truncated2TwoPoint d p r| ≤ 1 :=
+  abs_le.mpr ⟨neg_one_le_truncated2TwoPoint d p hf r,
+    truncated2TwoPoint_le_one d p hf r⟩
+
 /-- **`truncated2TwoPoint ≤ twoPointFunction`** on ℤ^d (ferromagnetic):
 `truncated2TwoPoint d p r ≤ twoPointFunction d p r`.
 
