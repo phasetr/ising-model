@@ -1167,6 +1167,14 @@ theorem log_partitionFunctionΛ_latticeGraph_ge_card_mul_log_two
   log_partitionFunctionΛ_ge_card_mul_log_two_of_ferromagnetic
     (IsingModel.latticeGraph d) Λ p hf
 
+/-- **ℤ^d `log Z_Λ ≥ 0`** (ferromagnetic). -/
+theorem log_partitionFunctionΛ_latticeGraph_nonneg
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ)
+    (hf : Ferromagnetic p) :
+    0 ≤ Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ p) :=
+  log_partitionFunctionΛ_nonneg_of_ferromagnetic
+    (IsingModel.latticeGraph d) Λ p hf
+
 /-- **ℤ^d partitionFunctionΛ ≥ (2 cosh βh)^|Λ|** (sharp, ferromagnetic). -/
 theorem partitionFunctionΛ_latticeGraph_ge_two_cosh_pow_card
     (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ)
