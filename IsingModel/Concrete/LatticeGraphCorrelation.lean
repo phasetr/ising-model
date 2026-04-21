@@ -1395,6 +1395,25 @@ theorem partitionFunction_ne_zero_latticeGraph
   IsingModel.partitionFunction_ne_zero
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p
 
+/-- **ℤ^d cov_hnc_boltzmann_nonneg direct** (Λ-induced, ferromagnetic):
+covariance bound for HNC `f` with Boltzmann weight. -/
+theorem cov_hnc_boltzmann_nonneg_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ) (hferm : Ferromagnetic p)
+    (f : IsingModel.Config (↑Λ : Type _) → ℝ)
+    (hf : IsingModel.HasNonnegCorrelations f) (B : Finset (↑Λ : Type _)) :
+    0 ≤ (∑ σ, IsingModel.spinProduct B σ * f σ
+            * IsingModel.boltzmannWeight
+                (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p σ) *
+        (∑ σ, IsingModel.boltzmannWeight
+            (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p σ) -
+      (∑ σ, IsingModel.spinProduct B σ *
+          IsingModel.boltzmannWeight
+              (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p σ) *
+        (∑ σ, f σ * IsingModel.boltzmannWeight
+            (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p σ) :=
+  IsingModel.cov_hnc_boltzmann_nonneg
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p hferm f hf B
+
 /-- **ℤ^d boltzmannWeight_subgraph_factor direct** (Λ-induced):
 `w_{G₂} = (∏_e exp(...)) · w_{G₁}` for `G₁ ≤ G₂` on `↑Λ`. -/
 theorem boltzmannWeight_subgraph_factor_latticeGraph
