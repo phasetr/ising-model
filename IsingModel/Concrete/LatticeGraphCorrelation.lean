@@ -5,6 +5,7 @@ import IsingModel.PhaseTransition
 import IsingModel.Inequalities.FKG
 import IsingModel.ComplexAnalyticity
 import IsingModel.PeierlsInfinite
+import IsingModel.AmbientComplexAnalyticity
 
 /-!
 # Concrete translation invariance for the ℤ^d Ising correlation
@@ -2292,6 +2293,77 @@ theorem prop_5_4_2_limsup_le_latticeGraph
   classical
   exact IsingModel.prop_5_4_2_limsup_le
     (IsingModel.latticeGraph d) Λ hconn J β c hβ hJ B hB i hexp
+
+/-! #### Complex partition function / free energy along an exhaustion
+(ℤ^d wrappers)
+
+ℤ^d forwarders for the complex along-exhaustion definitions and their
+real-complex compatibility identities from
+`IsingModel/AmbientComplexAnalyticity.lean`. Foundation for the GJ §4.6
+Thm 4.6.2 ∞-vol Vitali completion at ℤ^d. -/
+
+/-- **ℤ^d `partitionFunctionComplexAlongExhaustion` unfolding**:
+equal to `partitionFunctionComplex` on the `n`-th volume of the
+exhaustion. -/
+theorem partitionFunctionComplexAlongExhaustion_latticeGraph_apply
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph
+        (IsingModel.latticeGraph d) (Λ.volume n)).edgeSet]
+    (J h β : ℂ) (n : ℕ) :
+    Ambient.partitionFunctionComplexAlongExhaustion
+        (IsingModel.latticeGraph d) Λ J h β n
+      = IsingModel.partitionFunctionComplex
+          (Ambient.inducedGraph
+            (IsingModel.latticeGraph d) (Λ.volume n)) J h β :=
+  Ambient.partitionFunctionComplexAlongExhaustion_apply
+    (IsingModel.latticeGraph d) Λ J h β n
+
+/-- **ℤ^d `freeEnergyComplexAlongExhaustion` unfolding**:
+equal to `freeEnergyComplex` on the `n`-th volume of the exhaustion. -/
+theorem freeEnergyComplexAlongExhaustion_latticeGraph_apply
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph
+        (IsingModel.latticeGraph d) (Λ.volume n)).edgeSet]
+    (J h β : ℂ) (n : ℕ) :
+    Ambient.freeEnergyComplexAlongExhaustion
+        (IsingModel.latticeGraph d) Λ J h β n
+      = IsingModel.freeEnergyComplex
+          (Ambient.inducedGraph
+            (IsingModel.latticeGraph d) (Λ.volume n)) J h β :=
+  Ambient.freeEnergyComplexAlongExhaustion_apply
+    (IsingModel.latticeGraph d) Λ J h β n
+
+/-- **ℤ^d real-complex compatibility for `partitionFunction_along_exhaustion`**:
+`Z_ℂ_{Λ_n}(↑p.J, ↑p.h, ↑p.β) = ↑(Z_ℝ_{Λ_n}(p))`. Foundational identity for
+the Vitali completion's real-axis limit identification. -/
+theorem partitionFunctionComplexAlongExhaustion_at_real_latticeGraph
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph
+        (IsingModel.latticeGraph d) (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (n : ℕ) :
+    Ambient.partitionFunctionComplexAlongExhaustion
+        (IsingModel.latticeGraph d) Λ
+        (p.J : ℂ) (p.h : ℂ) (p.β : ℂ) n
+      = ((Ambient.partitionFunctionAlongExhaustion
+          (IsingModel.latticeGraph d) Λ p n : ℝ) : ℂ) :=
+  Ambient.partitionFunctionComplexAlongExhaustion_at_real_eq_ofReal
+    (IsingModel.latticeGraph d) Λ p n
+
+/-- **ℤ^d real-complex compatibility for `freeEnergy_along_exhaustion`**:
+`f_ℂ_{Λ_n}(↑p.J, ↑p.h, ↑p.β) = ↑(f_ℝ_{Λ_n}(p))`. Foundational identity
+for the Vitali completion's real-axis Fekete identification. -/
+theorem freeEnergyComplexAlongExhaustion_at_real_latticeGraph
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph
+        (IsingModel.latticeGraph d) (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (n : ℕ) :
+    Ambient.freeEnergyComplexAlongExhaustion
+        (IsingModel.latticeGraph d) Λ
+        (p.J : ℂ) (p.h : ℂ) (p.β : ℂ) n
+      = ((Ambient.freeEnergyAlongExhaustion
+          (IsingModel.latticeGraph d) Λ p n : ℝ) : ℂ) :=
+  Ambient.freeEnergyComplexAlongExhaustion_at_real_eq_ofReal
+    (IsingModel.latticeGraph d) Λ p n
 
 /-- **ℤ^d partitionFunction monotone_subgraph** at Λ-induced subgraph:
 `G₁ ≤ G₂ ⇒ Z_{G₁} ≤ Z_{G₂}` for ferromagnetic `p`. -/
