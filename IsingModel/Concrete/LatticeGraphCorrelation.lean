@@ -1159,6 +1159,37 @@ theorem correlation_bot_closed_latticeGraph
       = Real.tanh (p.β * p.h) ^ A.card :=
   IsingModel.correlation_bot_closed p A
 
+/-- **ℤ^d abs_spinProduct_eq_one at Λ-induced**: `|σ^A| = 1`. -/
+theorem abs_spinProduct_eq_one_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    (A : Finset (↑Λ : Type _)) (σ : IsingModel.Config (↑Λ : Type _)) :
+    |IsingModel.spinProduct A σ| = 1 :=
+  IsingModel.abs_spinProduct_eq_one A σ
+
+/-- **ℤ^d abs_spinProduct_le_one at Λ-induced**: `|σ^A| ≤ 1`. -/
+theorem abs_spinProduct_le_one_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    (A : Finset (↑Λ : Type _)) (σ : IsingModel.Config (↑Λ : Type _)) :
+    |IsingModel.spinProduct A σ| ≤ 1 :=
+  IsingModel.abs_spinProduct_le_one A σ
+
+/-- **ℤ^d Walsh orthogonality at Λ-induced**. -/
+theorem walsh_orthogonality_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    (S T : Finset (↑Λ : Type _)) (hST : S ≠ T) :
+    ∑ σ : IsingModel.Config (↑Λ : Type _),
+      IsingModel.spinProduct S σ * IsingModel.spinProduct T σ = 0 :=
+  IsingModel.walsh_orthogonality S T hST
+
+/-- **ℤ^d Walsh normalization at Λ-induced**. -/
+theorem walsh_normalization_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    (S : Finset (↑Λ : Type _)) :
+    ∑ σ : IsingModel.Config (↑Λ : Type _),
+        IsingModel.spinProduct S σ * IsingModel.spinProduct S σ
+      = Fintype.card (IsingModel.Config (↑Λ : Type _)) :=
+  IsingModel.walsh_normalization S
+
 /-- **ℤ^d `card_config_eq_two_pow` at Λ**:
 `|Config ↑Λ| = 2^|Λ|`. -/
 theorem card_config_eq_two_pow_latticeGraph
