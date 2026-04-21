@@ -1943,6 +1943,27 @@ theorem freeEnergyAlongExhaustion_latticeGraph_cubicExhaustion_ge_log_two_cosh
   freeEnergyAlongExhaustion_ge_log_two_cosh (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) hJ hh hβ n hne
 
+/-- **ℤ^d per-stage `log 2 ≤ f_n`** (ferromagnetic, any Exhaustion). -/
+theorem freeEnergyAlongExhaustion_latticeGraph_ge_log_two
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    {J h β : ℝ} (hJ : 0 ≤ J) (hh : 0 ≤ h) (hβ : 0 < β)
+    (n : ℕ) (hne : (Λ.volume n).Nonempty) :
+    Real.log 2 ≤ freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
+      (⟨J, h, β⟩ : IsingParams ℝ) n :=
+  freeEnergyAlongExhaustion_ge_log_two (IsingModel.latticeGraph d) Λ
+    hJ hh hβ n hne
+
+/-- **ℤ^d per-stage `log(2 cosh(βh)) ≤ f_n`** (ferromagnetic, any Exhaustion). -/
+theorem freeEnergyAlongExhaustion_latticeGraph_ge_log_two_cosh
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    {J h β : ℝ} (hJ : 0 ≤ J) (hh : 0 ≤ h) (hβ : 0 < β)
+    (n : ℕ) (hne : (Λ.volume n).Nonempty) :
+    Real.log (2 * Real.cosh (β * h))
+      ≤ freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, h, β⟩ : IsingParams ℝ) n :=
+  freeEnergyAlongExhaustion_ge_log_two_cosh (IsingModel.latticeGraph d) Λ
+    hJ hh hβ n hne
+
 /-- **ℤ^d free-energy shift invariance**:
 `freeEnergyInfinite (latticeGraph d) ((cubicExhaustion d).shift t) p
   = freeEnergyInfinite (latticeGraph d) (cubicExhaustion d) p`. -/
