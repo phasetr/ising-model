@@ -9,6 +9,16 @@ Lean 4 + mathlib formalization of Ising model theorems, with particular
 emphasis on Glimm–Jaffe, *Quantum Physics: A Functional Integral Point of
 View* (2nd ed., 1987).
 
+> **Notice:** automatic publication of the doc-gen4 API reference to
+> `/docs/` on GitHub Pages is **currently paused**. Every main-push
+> run of the `docs` job in the CI workflow was taking ~1 hour and
+> queuing up behind each merge, so the `docs` job in
+> `.github/workflows/lean_action_ci.yml` has been commented out. The
+> Lean build and tests (`build` job) continue to run on every push
+> and pull request. To build the API reference locally, run
+> `lake -R -Kenv=dev build IsingModel:docs` and open
+> `.lake/build/doc/index.html`.
+
 All theorems are formally proved with **zero `sorry`**.
 Pre-existing axioms (four items) cover Lebowitz-type inequalities
 whose full proofs require measure theory machinery; see the *Axioms*

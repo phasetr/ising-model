@@ -26,7 +26,17 @@ Glimm–Jaffe chapter-by-chapter progress table, see the
 ## Documentation
 
 - Project page: [https://phasetr.github.io/ising-model/](https://phasetr.github.io/ising-model/)
-- API documentation (doc-gen4): [https://phasetr.github.io/ising-model/docs/](https://phasetr.github.io/ising-model/docs/)
+- API documentation (doc-gen4): **temporarily unavailable** (automatic
+  publication paused). See note below.
+
+> **Note:** automatic publication of the doc-gen4 API reference to
+> GitHub Pages is currently paused because each main-push run of the
+> `docs` job was taking roughly an hour and queuing up behind every
+> merge. The `docs` job in `.github/workflows/lean_action_ci.yml` is
+> commented out until we accelerate the docgen step (caching, a
+> scheduled run, or an alternative pipeline). To build the API
+> reference locally, run `lake -R -Kenv=dev build IsingModel:docs`
+> and open `.lake/build/doc/index.html`.
 
 Mathematical documentation for the formalized proofs is in `tex/` as
 LaTeX source files. To compile:
