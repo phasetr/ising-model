@@ -2999,6 +2999,7 @@ theorem spontaneousMagnetization_le_one
     spontaneousMagnetization G Λ J β i ≤ 1 :=
   spontaneousCorrelation_le_one G Λ hJ hβ {i}
 
+
 /-- **`-1 ≤ spontaneousMagnetization`** (ferromagnetic).
 Direct from `spontaneousMagnetization_nonneg`. -/
 theorem neg_one_le_spontaneousMagnetization
@@ -3971,6 +3972,26 @@ theorem spontaneousCorrelation_monotone_J
   exact correlationInfinite_monotone_J G Λ h.property.le hβ A
     hJ₁ (hJ₁.trans hJ₁₂) hJ₁₂
 
+/-- **Ambient-subgraph monotonicity of `spontaneousCorrelation`**
+(ferromagnetic): for `G₁ ≤ G₂`, `0 ≤ J`, `0 < β`,
+`spontaneousCorrelation G₁ Λ J β A ≤ spontaneousCorrelation G₂ Λ J β A`.
+Via `ciInf_mono` + `correlationInfinite_monotone_ambient_subgraph`. -/
+theorem spontaneousCorrelation_monotone_ambient_subgraph
+    {G₁ G₂ : SimpleGraph V} (hG : G₁ ≤ G₂) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G₁ (Λ.volume n)).edgeSet]
+    [∀ n, Fintype (inducedGraph G₂ (Λ.volume n)).edgeSet]
+    {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) (A : Finset V) :
+    spontaneousCorrelation G₁ Λ J β A
+      ≤ spontaneousCorrelation G₂ Λ J β A := by
+  unfold spontaneousCorrelation
+  refine ciInf_mono
+    (correlationInfinite_bddBelow_on_Ioi G₁ Λ hJ hβ A) ?_
+  intro hpos
+  have hf : Ferromagnetic (⟨J, hpos.val, β⟩ : IsingParams ℝ) :=
+    ⟨hJ, hpos.property.le, hβ⟩
+  exact correlationInfinite_monotone_ambient_subgraph hG Λ
+    (⟨J, hpos.val, β⟩ : IsingParams ℝ) hf A
+
 /-- **β-direction monotonicity of `spontaneousCorrelation`**: for
 fixed `J ≥ 0`, the map `β ↦ spontaneousCorrelation G Λ J β A` is
 monotone on `Set.Ioi 0`.
@@ -4016,6 +4037,18 @@ theorem spontaneousMagnetization_monotone_beta
       (fun β : ℝ => spontaneousMagnetization G Λ J β i)
       (Set.Ioi 0) :=
   spontaneousCorrelation_monotone_beta G Λ hJ {i}
+
+/-- **Ambient-subgraph monotonicity of `spontaneousMagnetization`**
+(ferromagnetic): `G₁ ≤ G₂` ⇒ `m*_G₁(i) ≤ m*_G₂(i)`. Specialization of
+`spontaneousCorrelation_monotone_ambient_subgraph` at `A = {i}`. -/
+theorem spontaneousMagnetization_monotone_ambient_subgraph
+    {G₁ G₂ : SimpleGraph V} (hG : G₁ ≤ G₂) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G₁ (Λ.volume n)).edgeSet]
+    [∀ n, Fintype (inducedGraph G₂ (Λ.volume n)).edgeSet]
+    {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) (i : V) :
+    spontaneousMagnetization G₁ Λ J β i
+      ≤ spontaneousMagnetization G₂ Λ J β i :=
+  spontaneousCorrelation_monotone_ambient_subgraph hG Λ hJ hβ {i}
 
 /-! ## Cor 4.3.5 (inductive n-point at h=0) at infinite volume
 

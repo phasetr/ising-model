@@ -433,6 +433,30 @@ theorem magnetizationInfinite_latticeGraph_monotone_ambient_subgraph
     magnetizationInfinite G₁ Λ p i ≤ magnetizationInfinite G₂ Λ p i :=
   magnetizationInfinite_monotone_ambient_subgraph h Λ p hf i
 
+/-- **ℤ^d `spontaneousCorrelation_monotone_ambient_subgraph`**
+(ferromagnetic). -/
+theorem spontaneousCorrelation_latticeGraph_monotone_ambient_subgraph
+    (d : ℕ) {G₁ G₂ : SimpleGraph (Fin d → ℤ)} (hG : G₁ ≤ G₂)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph G₁ (Λ.volume n)).edgeSet]
+    [∀ n, Fintype (Ambient.inducedGraph G₂ (Λ.volume n)).edgeSet]
+    {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) (A : Finset (Fin d → ℤ)) :
+    spontaneousCorrelation G₁ Λ J β A
+      ≤ spontaneousCorrelation G₂ Λ J β A :=
+  spontaneousCorrelation_monotone_ambient_subgraph hG Λ hJ hβ A
+
+/-- **ℤ^d `spontaneousMagnetization_monotone_ambient_subgraph`**
+(ferromagnetic). -/
+theorem spontaneousMagnetization_latticeGraph_monotone_ambient_subgraph
+    (d : ℕ) {G₁ G₂ : SimpleGraph (Fin d → ℤ)} (hG : G₁ ≤ G₂)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph G₁ (Λ.volume n)).edgeSet]
+    [∀ n, Fintype (Ambient.inducedGraph G₂ (Λ.volume n)).edgeSet]
+    {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) (i : Fin d → ℤ) :
+    spontaneousMagnetization G₁ Λ J β i
+      ≤ spontaneousMagnetization G₂ Λ J β i :=
+  spontaneousMagnetization_monotone_ambient_subgraph hG Λ hJ hβ i
+
 /-- **ℤ^d `correlationΛ` at `J = 0` closed form**:
 `correlationΛ ⟨0, h, β⟩ A = tanh(β·h)^|A|`. -/
 theorem correlationΛ_latticeGraph_J_zero
