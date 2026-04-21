@@ -758,6 +758,30 @@ theorem correlationΛ_latticeGraph_gks_second
   refine ⟨hAB, ?_⟩
   exact correlationΛ_gks_second (IsingModel.latticeGraph d) p hf hA hB
 
+/-- **ℤ^d correlationΛ β → ∞ convergence**: for `0 ≤ J`, `0 ≤ h`, the sequence
+`n ↦ ⟨σ^A⟩_Λ(J, h, n+1)` converges. -/
+theorem correlationΛ_latticeGraph_convergent_beta
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J : ℝ) (hJ : 0 ≤ J) (h : ℝ) (hh : 0 ≤ h)
+    (A : Finset (↑Λ : Type _)) :
+    ∃ L : ℝ, Filter.Tendsto
+      (fun n : ℕ => correlationΛ (IsingModel.latticeGraph d) Λ
+        (⟨J, h, (n + 1 : ℝ)⟩ : IsingParams ℝ) A)
+      Filter.atTop (nhds L) :=
+  IsingModel.correlation_convergent_beta
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J hJ h hh A
+
+/-- **ℤ^d correlationΛ h → ∞ convergence**: for `0 ≤ J`, `0 < β`, the sequence
+`n ↦ ⟨σ^A⟩_Λ(J, n, β)` converges. -/
+theorem correlationΛ_latticeGraph_convergent_h
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J : ℝ) (hJ : 0 ≤ J) (β : ℝ) (hβ : 0 < β)
+    (A : Finset (↑Λ : Type _)) :
+    ∃ L : ℝ, Filter.Tendsto
+      (fun n : ℕ => correlationΛ (IsingModel.latticeGraph d) Λ
+        (⟨J, (n : ℝ), β⟩ : IsingParams ℝ) A)
+      Filter.atTop (nhds L) :=
+  IsingModel.correlation_convergent_h
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J hJ β hβ A
+
 /-- **ℤ^d per-Λ h-monotonicity of `correlationΛ`**. -/
 theorem correlationΛ_latticeGraph_monotone_h
     (d : ℕ) (Λ : Finset (Fin d → ℤ)) {J : ℝ} (hJ : 0 ≤ J)
