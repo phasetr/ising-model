@@ -3957,6 +3957,20 @@ theorem truncated2Infinite_latticeGraph_apply
           * correlationInfinite (IsingModel.latticeGraph d) Λ p {j} :=
   truncated2Infinite_apply (IsingModel.latticeGraph d) Λ p i j
 
+/-- **ℤ^d `truncated4Infinite` apply** (definitional, pair-split form). -/
+theorem truncated4Infinite_latticeGraph_apply
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (i j k l : Fin d → ℤ) :
+    truncated4Infinite (IsingModel.latticeGraph d) Λ p i j k l
+      = correlationInfinite (IsingModel.latticeGraph d) Λ p {i, j, k, l}
+        - correlationInfinite (IsingModel.latticeGraph d) Λ p {i, j}
+          * correlationInfinite (IsingModel.latticeGraph d) Λ p {k, l}
+        - correlationInfinite (IsingModel.latticeGraph d) Λ p {i, k}
+          * correlationInfinite (IsingModel.latticeGraph d) Λ p {j, l}
+        - correlationInfinite (IsingModel.latticeGraph d) Λ p {i, l}
+          * correlationInfinite (IsingModel.latticeGraph d) Λ p {j, k} :=
+  truncated4Infinite_apply (IsingModel.latticeGraph d) Λ p i j k l
+
 /-- **ℤ^d `truncated3Infinite` apply** (definitional). -/
 theorem truncated3Infinite_latticeGraph_apply
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
