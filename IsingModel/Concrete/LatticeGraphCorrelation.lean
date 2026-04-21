@@ -1395,6 +1395,20 @@ theorem partitionFunction_ne_zero_latticeGraph
   IsingModel.partitionFunction_ne_zero
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p
 
+/-- **ℤ^d boltzmannWeight_subgraph_factor direct** (Λ-induced):
+`w_{G₂} = (∏_e exp(...)) · w_{G₁}` for `G₁ ≤ G₂` on `↑Λ`. -/
+theorem boltzmannWeight_subgraph_factor_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    {G₁ G₂ : SimpleGraph (↑Λ : Type _)}
+    [Fintype G₁.edgeSet] [Fintype G₂.edgeSet]
+    (h₁₂ : G₁ ≤ G₂) (p : IsingParams ℝ)
+    (σ : IsingModel.Config (↑Λ : Type _)) :
+    IsingModel.boltzmannWeight G₂ p σ
+      = (∏ e ∈ G₂.edgeFinset \ G₁.edgeFinset,
+          Real.exp (p.β * p.J * IsingModel.edgeSpin (K := ℝ) σ e))
+        * IsingModel.boltzmannWeight G₁ p σ :=
+  IsingModel.boltzmannWeight_subgraph_factor h₁₂ p σ
+
 /-- **ℤ^d boltzmannWeight positivity** at Λ-induced subgraph:
 `0 < exp(-β H_Λ(σ))`. -/
 theorem boltzmannWeightΛ_latticeGraph_pos
