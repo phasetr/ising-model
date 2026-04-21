@@ -156,6 +156,18 @@ theorem spontaneousCorrelation_le_correlationInfinite_latticeGraph
   spontaneousCorrelation_le_correlationInfinite (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) hJ hβ hh A
 
+/-- **ℤ^d `spontaneousCorrelation ≤ correlationInfinite`** for `h > 0`
+(any Exhaustion). -/
+theorem spontaneousCorrelation_le_correlationInfinite_latticeGraph_general
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) {h : ℝ} (hh : 0 < h)
+    (A : Finset (Fin d → ℤ)) :
+    spontaneousCorrelation (IsingModel.latticeGraph d) Λ J β A
+      ≤ correlationInfinite (IsingModel.latticeGraph d) Λ
+          (⟨J, h, β⟩ : IsingParams ℝ) A :=
+  spontaneousCorrelation_le_correlationInfinite (IsingModel.latticeGraph d)
+    Λ hJ hβ hh A
+
 /-- **Right-limit** `correlationInfinite ⟨J, h, β⟩ → spontaneousCorrelation J β`
 as `h → 0⁺` on ℤ^d. -/
 theorem tendsto_correlationInfinite_spontaneousCorrelation_latticeGraph
