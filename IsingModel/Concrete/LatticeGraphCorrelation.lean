@@ -1599,6 +1599,22 @@ theorem correlation_empty_latticeGraph
   IsingModel.correlation_empty
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p
 
+/-- **ℤ^d hasNonnegCorrelations_edge_site_product direct** (Λ-induced):
+the edge × site product weight has HNC on `Config ↑Λ`. -/
+theorem hasNonnegCorrelations_edge_site_product_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    (edgeK : Sym2 (↑Λ : Type _) → ℝ) (siteK : (↑Λ : Type _) → ℝ)
+    (hedgeK : ∀ e ∈ (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset,
+      0 ≤ edgeK e)
+    (hsiteK : ∀ i, 0 ≤ siteK i) :
+    IsingModel.HasNonnegCorrelations fun σ : IsingModel.Config (↑Λ : Type _) =>
+      (∏ e ∈ (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset,
+        Real.exp (edgeK e * IsingModel.edgeSpin (K := ℝ) σ e)) *
+      (∏ i : (↑Λ : Type _),
+        Real.exp (siteK i * IsingModel.Spin.sign ℝ (σ i))) :=
+  IsingModel.hasNonnegCorrelations_edge_site_product
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) edgeK siteK hedgeK hsiteK
+
 /-- **ℤ^d GKS numerator nonneg** at Λ-induced: for ferromagnetic `p`,
 `0 ≤ numerator (spinProduct A)`. -/
 theorem gks_numerator_nonneg_latticeGraph
