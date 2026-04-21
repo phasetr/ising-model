@@ -1302,6 +1302,34 @@ theorem partitionFunctionAlongExhaustion_latticeGraph_monotone_beta
   partitionFunctionAlongExhaustion_monotone_beta (IsingModel.latticeGraph d) Λ
     J h hJ hh hβ₁ hβ n
 
+/-- **ℤ^d spontaneousCorrelation translation invariance** (any-Exhaustion):
+for ferromagnetic `(J ≥ 0, β > 0)`,
+`spontaneousCorrelation J β (vaddFinset t A) = spontaneousCorrelation J β A`. -/
+theorem spontaneousCorrelation_latticeGraph_translation
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (t : Fin d → ℤ)
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+      (Λ.volume n)).edgeSet]
+    {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) (A : Finset (Fin d → ℤ)) :
+    spontaneousCorrelation (IsingModel.latticeGraph d) Λ J β (vaddFinset t A)
+      = spontaneousCorrelation (IsingModel.latticeGraph d) Λ J β A := by
+  classical
+  exact spontaneousCorrelation_translation
+    (IsingModel.latticeGraph d) Λ t hJ hβ A
+
+/-- **ℤ^d spontaneousMagnetization translation invariance** (any-Exhaustion):
+for ferromagnetic `(J ≥ 0, β > 0)`,
+`spontaneousMagnetization J β (t +ᵥ i) = spontaneousMagnetization J β i`. -/
+theorem spontaneousMagnetization_latticeGraph_translation
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (t : Fin d → ℤ)
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+      (Λ.volume n)).edgeSet]
+    {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) (i : Fin d → ℤ) :
+    spontaneousMagnetization (IsingModel.latticeGraph d) Λ J β (t +ᵥ i)
+      = spontaneousMagnetization (IsingModel.latticeGraph d) Λ J β i := by
+  classical
+  exact spontaneousMagnetization_translation
+    (IsingModel.latticeGraph d) Λ t hJ hβ i
+
 /-- **ℤ^d truncated2Infinite translation invariance** (any-Exhaustion):
 `U_2(t+i, t+j) = U_2(i, j)`. -/
 theorem truncated2Infinite_latticeGraph_translation
