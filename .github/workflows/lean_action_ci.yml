@@ -21,13 +21,19 @@ jobs:
       - name: Run tests
         run: lake exe GKSTest
 
-  docs:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
-      - uses: leanprover/lean-action@v1
-      - uses: leanprover-community/docgen-action@main
-        with:
-          use-github-cache: false
+  # NOTE: docs generation via `leanprover-community/docgen-action` has been
+  # temporarily disabled because every main-push run takes ~1 hour and
+  # CI queues backed up. Re-enable once the docgen step is accelerated
+  # (e.g. by caching or by running on a schedule instead of every push).
+  # See README / docs/index.md for user-facing notice.
+  #
+  # docs:
+  #   if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v5
+  #     - uses: leanprover/lean-action@v1
+  #     - uses: leanprover-community/docgen-action@main
+  #       with:
+  #         use-github-cache: false
