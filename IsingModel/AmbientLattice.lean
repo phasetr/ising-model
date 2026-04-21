@@ -3112,6 +3112,16 @@ noncomputable def truncated2Infinite
   correlationInfinite G Λ p {i, j}
     - correlationInfinite G Λ p {i} * correlationInfinite G Λ p {j}
 
+/-- **Unfolding of `truncated2Infinite`**: the defining Ursell 2-point
+(covariance) formula as a named identity. -/
+theorem truncated2Infinite_apply
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (i j : V) :
+    truncated2Infinite G Λ p i j
+      = correlationInfinite G Λ p {i, j}
+        - correlationInfinite G Λ p {i} * correlationInfinite G Λ p {j} := rfl
+
 /-- **Symmetry in the two arguments**: $U_2(i, j) = U_2(j, i)$. -/
 theorem truncated2Infinite_symm
     (G : SimpleGraph V) (Λ : Exhaustion V)
@@ -3356,6 +3366,20 @@ noncomputable def truncated3Infinite
     - correlationInfinite G Λ p {k} * correlationInfinite G Λ p {i, j}
     + 2 * correlationInfinite G Λ p {i} * correlationInfinite G Λ p {j}
       * correlationInfinite G Λ p {k}
+
+/-- **Unfolding of `truncated3Infinite`**: the defining Ursell 3-point
+formula as a named identity. -/
+theorem truncated3Infinite_apply
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (i j k : V) :
+    truncated3Infinite G Λ p i j k
+      = correlationInfinite G Λ p {i, j, k}
+        - correlationInfinite G Λ p {i} * correlationInfinite G Λ p {j, k}
+        - correlationInfinite G Λ p {j} * correlationInfinite G Λ p {i, k}
+        - correlationInfinite G Λ p {k} * correlationInfinite G Λ p {i, j}
+        + 2 * correlationInfinite G Λ p {i} * correlationInfinite G Λ p {j}
+          * correlationInfinite G Λ p {k} := rfl
 
 /-- **Truncated 3-point along an exhaustion** (local helper): evaluates
 the `truncated3`-style algebraic expression at the `n`-th volume of
@@ -3687,6 +3711,18 @@ noncomputable def truncated4Infinite
     - correlationInfinite G Λ p {i, j} * correlationInfinite G Λ p {k, l}
     - correlationInfinite G Λ p {i, k} * correlationInfinite G Λ p {j, l}
     - correlationInfinite G Λ p {i, l} * correlationInfinite G Λ p {j, k}
+
+/-- **Unfolding of `truncated4Infinite`**: the defining pair-split
+Ursell 4-point formula as a named identity. -/
+theorem truncated4Infinite_apply
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (i j k l : V) :
+    truncated4Infinite G Λ p i j k l
+      = correlationInfinite G Λ p {i, j, k, l}
+        - correlationInfinite G Λ p {i, j} * correlationInfinite G Λ p {k, l}
+        - correlationInfinite G Λ p {i, k} * correlationInfinite G Λ p {j, l}
+        - correlationInfinite G Λ p {i, l} * correlationInfinite G Λ p {j, k} := rfl
 
 /-- **Truncated 4-point along an exhaustion** (local helper): evaluates
 the `truncated4`-style algebraic expression at the `n`-th volume of
