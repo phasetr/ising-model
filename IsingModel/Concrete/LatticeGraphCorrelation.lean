@@ -963,6 +963,16 @@ theorem freeEnergyΛ_latticeGraph_weighted_super_additive_of_nonempty
   freeEnergyΛ_weighted_super_additive_of_nonempty
     (IsingModel.latticeGraph d) hne₁ hne₂ hd p hf
 
+/-- **ℤ^d `partitionFunctionΛ` respects Finset equality**. -/
+theorem partitionFunctionΛ_latticeGraph_congr_finset
+    (d : ℕ) {Λ₁ Λ₂ : Finset (Fin d → ℤ)} (h : Λ₁ = Λ₂)
+    [Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ₁).edgeSet]
+    [Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ₂).edgeSet]
+    (p : IsingParams ℝ) :
+    partitionFunctionΛ (IsingModel.latticeGraph d) Λ₁ p
+      = partitionFunctionΛ (IsingModel.latticeGraph d) Λ₂ p :=
+  partitionFunctionΛ_congr_finset (IsingModel.latticeGraph d) h p
+
 /-- **ℤ^d `log Z_{Λ₁} ≤ log Z_{Λ₁ ∪ Λ₂}`** on disjoint unions (ferromagnetic). -/
 theorem log_partitionFunctionΛ_latticeGraph_le_of_disjoint_union
     (d : ℕ) {Λ₁ Λ₂ : Finset (Fin d → ℤ)} (hd : Disjoint Λ₁ Λ₂)
