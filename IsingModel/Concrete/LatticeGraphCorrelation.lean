@@ -489,6 +489,26 @@ theorem spontaneousCorrelation_latticeGraph_le_one
     spontaneousCorrelation (IsingModel.latticeGraph d) Λ J β A ≤ 1 :=
   spontaneousCorrelation_le_one (IsingModel.latticeGraph d) Λ hJ hβ A
 
+/-- **ℤ^d J-direction monotonicity of `spontaneousCorrelation`**
+(ferromagnetic). -/
+theorem spontaneousCorrelation_latticeGraph_monotone_J
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    {β : ℝ} (hβ : 0 < β) (A : Finset (Fin d → ℤ)) :
+    MonotoneOn
+      (fun J : ℝ => spontaneousCorrelation (IsingModel.latticeGraph d) Λ J β A)
+      (Set.Ici 0) :=
+  spontaneousCorrelation_monotone_J (IsingModel.latticeGraph d) Λ hβ A
+
+/-- **ℤ^d β-direction monotonicity of `spontaneousCorrelation`**
+(ferromagnetic). -/
+theorem spontaneousCorrelation_latticeGraph_monotone_beta
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    {J : ℝ} (hJ : 0 ≤ J) (A : Finset (Fin d → ℤ)) :
+    MonotoneOn
+      (fun β : ℝ => spontaneousCorrelation (IsingModel.latticeGraph d) Λ J β A)
+      (Set.Ioi 0) :=
+  spontaneousCorrelation_monotone_beta (IsingModel.latticeGraph d) Λ hJ A
+
 /-- **ℤ^d `|spontaneousCorrelation| ≤ 1`** (ferromagnetic). -/
 theorem abs_spontaneousCorrelation_latticeGraph_le_one
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
