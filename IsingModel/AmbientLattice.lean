@@ -2512,6 +2512,18 @@ theorem correlationΛ_ge_tanh_pow_card
   exact correlationΛ_monotone_J G Λ hh hβ A
     (Set.mem_Ici.mpr le_rfl) (Set.mem_Ici.mpr hJ) hJ
 
+/-- **Λ-level lower bound `magnetizationΛ ≥ tanh(β·h)`** (ferromagnetic):
+specialization of `correlationΛ_ge_tanh_pow_card` at `A = {i}` where
+`|A|^1 = |A|.card = 1`. -/
+theorem magnetizationΛ_ge_tanh
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {J h β : ℝ} (hJ : 0 ≤ J) (hh : 0 ≤ h) (hβ : 0 < β) (i : ↑Λ) :
+    Real.tanh (β * h)
+      ≤ magnetizationΛ G Λ (⟨J, h, β⟩ : IsingParams ℝ) i := by
+  have := correlationΛ_ge_tanh_pow_card G Λ hJ hh hβ ({i} : Finset (↑Λ : Type _))
+  simpa [Finset.card_singleton] using this
+
 /-- **Z₂ symmetry at `h = 0` for `correlationAlongExhaustion`**:
 pointwise zero at every `n`.  Either `A ⊄ Λ.volume n` (both branches
 of the dite give `0`) or `A ⊆ Λ.volume n` and the lifted correlation
@@ -2646,6 +2658,18 @@ theorem correlationInfinite_ge_tanh_pow_card
   rw [← h_zero]
   exact correlationInfinite_monotone_J G Λ hh hβ A
     (Set.mem_Ici.mpr le_rfl) (Set.mem_Ici.mpr hJ) hJ
+
+/-- **∞-volume lower bound `magnetizationInfinite ≥ tanh(β·h)`**
+(ferromagnetic): specialization of `correlationInfinite_ge_tanh_pow_card`
+at `A = {i}`. -/
+theorem magnetizationInfinite_ge_tanh
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {J h β : ℝ} (hJ : 0 ≤ J) (hh : 0 ≤ h) (hβ : 0 < β) (i : V) :
+    Real.tanh (β * h)
+      ≤ magnetizationInfinite G Λ (⟨J, h, β⟩ : IsingParams ℝ) i := by
+  have := correlationInfinite_ge_tanh_pow_card G Λ hJ hh hβ ({i} : Finset V)
+  simpa [Finset.card_singleton] using this
 
 /-- **Empty-set correlation on `Λ` is `1`** (normalization). -/
 @[simp]

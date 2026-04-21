@@ -533,6 +533,25 @@ theorem correlationInfinite_latticeGraph_ge_tanh_pow_card
           (⟨J, h, β⟩ : IsingParams ℝ) A :=
   correlationInfinite_ge_tanh_pow_card (IsingModel.latticeGraph d) Λ hJ hh hβ A
 
+/-- **ℤ^d `magnetizationΛ ≥ tanh(β·h)`** (ferromagnetic). -/
+theorem magnetizationΛ_latticeGraph_ge_tanh
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    {J h β : ℝ} (hJ : 0 ≤ J) (hh : 0 ≤ h) (hβ : 0 < β) (i : ↑Λ) :
+    Real.tanh (β * h)
+      ≤ magnetizationΛ (IsingModel.latticeGraph d) Λ
+          (⟨J, h, β⟩ : IsingParams ℝ) i :=
+  magnetizationΛ_ge_tanh (IsingModel.latticeGraph d) Λ hJ hh hβ i
+
+/-- **ℤ^d `magnetizationInfinite ≥ tanh(β·h)`** (ferromagnetic, any Exhaustion). -/
+theorem magnetizationInfinite_latticeGraph_ge_tanh
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    {J h β : ℝ} (hJ : 0 ≤ J) (hh : 0 ≤ h) (hβ : 0 < β) (i : Fin d → ℤ) :
+    Real.tanh (β * h)
+      ≤ magnetizationInfinite (IsingModel.latticeGraph d) Λ
+          (⟨J, h, β⟩ : IsingParams ℝ) i :=
+  magnetizationInfinite_ge_tanh (IsingModel.latticeGraph d) Λ hJ hh hβ i
+
+
 /-- **ℤ^d `correlationAlongExhaustion` at `J = 0`** per stage (on-stage):
 `A ⊆ Λ.volume n ⇒ = tanh(β·h)^|A|`. -/
 theorem correlationAlongExhaustion_latticeGraph_J_zero_of_subset
@@ -1713,6 +1732,14 @@ theorem uniformMagnetization_apply (d : ℕ) (p : IsingParams ℝ) :
     uniformMagnetization d p
       = magnetizationInfinite (IsingModel.latticeGraph d)
           (Ambient.cubicExhaustion d) p 0 := rfl
+
+/-- **ℤ^d `uniformMagnetization ≥ tanh(β·h)`** (ferromagnetic). -/
+theorem uniformMagnetization_ge_tanh
+    (d : ℕ) {J h β : ℝ} (hJ : 0 ≤ J) (hh : 0 ≤ h) (hβ : 0 < β) :
+    Real.tanh (β * h)
+      ≤ uniformMagnetization d (⟨J, h, β⟩ : IsingParams ℝ) :=
+  magnetizationInfinite_ge_tanh (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) hJ hh hβ 0
 
 /-- **`uniformMagnetization` equals `magnetizationInfinite` under any
 Exhaustion** (ferromagnetic): bridges the fixed-`cubicExhaustion` form
