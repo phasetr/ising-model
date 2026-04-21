@@ -94,6 +94,17 @@ noncomputable def freeEnergyΛ (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] (p : IsingParams ℝ) : ℝ :=
   IsingModel.freeEnergy (inducedGraph G Λ) p
 
+/-- **`freeEnergyΛ` as `|Λ|⁻¹ · log Z_Λ`** (named restatement of the
+definition unfolding `IsingModel.freeEnergy := (Fintype.card ι)⁻¹ ·
+log Z`). The ambient `Fintype.card` is taken on the subtype `↑Λ`, which
+coincides with `Λ.card` via `Fintype.card_coe`. -/
+theorem freeEnergyΛ_eq_inv_card_mul_log
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (p : IsingParams ℝ) :
+    freeEnergyΛ G Λ p
+      = (Fintype.card (↑Λ : Type _) : ℝ)⁻¹
+        * Real.log (partitionFunctionΛ G Λ p) := rfl
+
 /-- The **magnetization** on a finite volume `Λ` at site `i : ↑Λ`:
 `M_Λ(i) = ⟨σ_i⟩ = correlationΛ G Λ p {i}`. Direct analog of
 `IsingModel.magnetization` at the ambient-lattice Λ layer, matching
