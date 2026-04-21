@@ -2357,12 +2357,16 @@ theorem fkg_ising_latticeGraph
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p hf
     f g hf_nn hg_nn hf_mono hg_mono
 
-/-! ### Conditioning / §10.3 bound wrappers
+/-! ### Hamiltonian / Z bound / `J = 0` closed-form wrappers
 
-Direct ℤ^d forwarders for the GJ §10.3 finite-volume bounds in
+Direct ℤ^d forwarders for a mixed batch from
 `IsingModel/Conditioning.lean` and `IsingModel/GibbsMeasure.lean`:
-Boltzmann positivity, Hamiltonian bound, Z bounds, free-energy upper
-bound, and the `J = 0` Hamiltonian closed form. -/
+Boltzmann positivity (`boltzmannWeight_pos`), the GJ §10.3
+finite-volume energy / Z / free-energy bounds
+(`hamiltonian_abs_le`, `partitionFunction_{upper,lower}`,
+`freeEnergy_upper_bound`, Cor 10.3.2), and the `J = 0` Hamiltonian
+closed form (`hamiltonian_J_zero`). The `boltzmannWeight_pos` and
+`hamiltonian_J_zero` items are basic infrastructure, not §10.3 proper. -/
 
 /-- **ℤ^d boltzmannWeight_pos direct** (Λ-induced): `0 < w(σ)` pointwise.
 Thin pass-through of `IsingModel.boltzmannWeight_pos`. -/
