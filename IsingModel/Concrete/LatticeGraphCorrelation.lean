@@ -3,6 +3,7 @@ import IsingModel.Concrete.IntLattice
 import IsingModel.TranslationInvariance
 import IsingModel.PhaseTransition
 import IsingModel.Inequalities.FKG
+import IsingModel.ComplexAnalyticity
 
 /-!
 # Concrete translation invariance for the ℤ^d Ising correlation
@@ -795,6 +796,133 @@ theorem freeEnergyJ_analyticOn_latticeGraph
       (Set.Ioi 0) :=
   IsingModel.freeEnergyJ_analyticOn
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) h β
+
+/-! #### Complex analyticity (GJ §4.6 Thm 4.6.2)
+
+Direct ℤ^d forwarders for the complex-analyticity package in
+`IsingModel/ComplexAnalyticity.lean`: per-variable / joint entire
+analyticity of `partitionFunctionComplex`, its `slitPlane`-conditioned
+`freeEnergyComplex` counterpart, and the real-complex compatibility
+identities. -/
+
+/-- **ℤ^d `partitionFunctionComplex` entire in `h`** (Λ-induced). -/
+theorem partitionFunctionComplex_analyticAt_h_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β h₀ : ℂ) :
+    AnalyticAt ℂ (fun h => IsingModel.partitionFunctionComplex
+      (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h β) h₀ :=
+  IsingModel.partitionFunctionComplex_analyticAt_h
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J β h₀
+
+/-- **ℤ^d `partitionFunctionComplex` entire in `J`** (Λ-induced). -/
+theorem partitionFunctionComplex_analyticAt_J_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (h β J₀ : ℂ) :
+    AnalyticAt ℂ (fun J => IsingModel.partitionFunctionComplex
+      (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h β) J₀ :=
+  IsingModel.partitionFunctionComplex_analyticAt_J
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) h β J₀
+
+/-- **ℤ^d `partitionFunctionComplex` entire in `β`** (Λ-induced). -/
+theorem partitionFunctionComplex_analyticAt_beta_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J h β₀ : ℂ) :
+    AnalyticAt ℂ (fun β => IsingModel.partitionFunctionComplex
+      (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h β) β₀ :=
+  IsingModel.partitionFunctionComplex_analyticAt_beta
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h β₀
+
+/-- **ℤ^d `freeEnergyComplex` analytic in `h`** (Λ-induced), on
+`{Z ∈ slitPlane}`. -/
+theorem freeEnergyComplex_analyticAt_h_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β h₀ : ℂ)
+    (hZ : IsingModel.partitionFunctionComplex
+            (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h₀ β
+          ∈ Complex.slitPlane) :
+    AnalyticAt ℂ (fun h => IsingModel.freeEnergyComplex
+      (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h β) h₀ :=
+  IsingModel.freeEnergyComplex_analyticAt_h
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J β h₀ hZ
+
+/-- **ℤ^d `freeEnergyComplex` analytic in `J`** (Λ-induced), on
+`{Z ∈ slitPlane}`. -/
+theorem freeEnergyComplex_analyticAt_J_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (h β J₀ : ℂ)
+    (hZ : IsingModel.partitionFunctionComplex
+            (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J₀ h β
+          ∈ Complex.slitPlane) :
+    AnalyticAt ℂ (fun J => IsingModel.freeEnergyComplex
+      (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h β) J₀ :=
+  IsingModel.freeEnergyComplex_analyticAt_J
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) h β J₀ hZ
+
+/-- **ℤ^d `freeEnergyComplex` analytic in `β`** (Λ-induced), on
+`{Z ∈ slitPlane}`. -/
+theorem freeEnergyComplex_analyticAt_beta_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J h β₀ : ℂ)
+    (hZ : IsingModel.partitionFunctionComplex
+            (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h β₀
+          ∈ Complex.slitPlane) :
+    AnalyticAt ℂ (fun β => IsingModel.freeEnergyComplex
+      (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h β) β₀ :=
+  IsingModel.freeEnergyComplex_analyticAt_beta
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h β₀ hZ
+
+/-- **ℤ^d `partitionFunctionComplex` jointly entire in `(J, h, β)`**
+(Λ-induced). -/
+theorem partitionFunctionComplex_analyticAt_joint_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (z₀ : ℂ × ℂ × ℂ) :
+    AnalyticAt ℂ (fun z : ℂ × ℂ × ℂ =>
+      IsingModel.partitionFunctionComplex
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) z.1 z.2.1 z.2.2) z₀ :=
+  IsingModel.partitionFunctionComplex_analyticAt_joint
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) z₀
+
+/-- **ℤ^d `freeEnergyComplex` jointly analytic** (Λ-induced), on
+`{Z ∈ slitPlane}`. -/
+theorem freeEnergyComplex_analyticAt_joint_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (z₀ : ℂ × ℂ × ℂ)
+    (hZ : IsingModel.partitionFunctionComplex
+            (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
+            z₀.1 z₀.2.1 z₀.2.2
+          ∈ Complex.slitPlane) :
+    AnalyticAt ℂ (fun z : ℂ × ℂ × ℂ =>
+      IsingModel.freeEnergyComplex
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) z.1 z.2.1 z.2.2) z₀ :=
+  IsingModel.freeEnergyComplex_analyticAt_joint
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) z₀ hZ
+
+/-- **ℤ^d `partitionFunction` / `partitionFunctionComplex` real-complex
+compatibility** (Λ-induced):
+`↑(Z G p) = Z_ℂ G ↑p.J ↑p.h ↑p.β`. -/
+theorem partitionFunction_ofReal_eq_partitionFunctionComplex_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ) :
+    ((IsingModel.partitionFunction
+          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p : ℝ) : ℂ)
+      = IsingModel.partitionFunctionComplex
+          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
+          (p.J : ℂ) (p.h : ℂ) (p.β : ℂ) :=
+  IsingModel.partitionFunction_ofReal_eq_partitionFunctionComplex
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p
+
+/-- **ℤ^d `partitionFunctionComplex` in `slitPlane` on the real slice**
+(Λ-induced). -/
+theorem partitionFunctionComplex_mem_slitPlane_of_real_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ) :
+    IsingModel.partitionFunctionComplex
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
+        (p.J : ℂ) (p.h : ℂ) (p.β : ℂ) ∈ Complex.slitPlane :=
+  IsingModel.partitionFunctionComplex_mem_slitPlane_of_real
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p
+
+/-- **ℤ^d `freeEnergy` / `freeEnergyComplex` real-complex compatibility**
+(Λ-induced): `↑(f G p) = f_ℂ G ↑p.J ↑p.h ↑p.β`. -/
+theorem freeEnergy_ofReal_eq_freeEnergyComplex_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ) :
+    ((IsingModel.freeEnergy
+          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p : ℝ) : ℂ)
+      = IsingModel.freeEnergyComplex
+          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
+          (p.J : ℂ) (p.h : ℂ) (p.β : ℂ) :=
+  IsingModel.freeEnergy_ofReal_eq_freeEnergyComplex
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p
 
 /-- **ℤ^d partitionFunction monotone_subgraph** at Λ-induced subgraph:
 `G₁ ≤ G₂ ⇒ Z_{G₁} ≤ Z_{G₂}` for ferromagnetic `p`. -/
