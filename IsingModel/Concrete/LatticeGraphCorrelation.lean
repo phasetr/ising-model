@@ -3594,6 +3594,24 @@ theorem truncated2Infinite_latticeGraph_sq_le_one
     truncated2Infinite (IsingModel.latticeGraph d) Λ p i j ^ 2 ≤ 1 :=
   truncated2Infinite_sq_le_one (IsingModel.latticeGraph d) Λ p hf i j
 
+/-- **ℤ^d truncated 2-point function vanishes at `J = 0`, `i ≠ j`**
+(ferromagnetic). -/
+theorem truncated2Infinite_latticeGraph_J_zero_of_ne
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (h β : ℝ) (hf : Ferromagnetic (⟨(0 : ℝ), h, β⟩ : IsingParams ℝ))
+    {i j : Fin d → ℤ} (hij : i ≠ j) :
+    truncated2Infinite (IsingModel.latticeGraph d) Λ
+        (⟨0, h, β⟩ : IsingParams ℝ) i j = 0 :=
+  truncated2Infinite_J_zero_of_ne (IsingModel.latticeGraph d) Λ h β hf hij
+
+/-- **ℤ^d truncated 2-point function vanishes at `β = 0`**. -/
+theorem truncated2Infinite_latticeGraph_beta_zero
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J h : ℝ) (i j : Fin d → ℤ) :
+    truncated2Infinite (IsingModel.latticeGraph d) Λ
+        (⟨J, h, 0⟩ : IsingParams ℝ) i j = 0 :=
+  truncated2Infinite_beta_zero (IsingModel.latticeGraph d) Λ J h i j
+
 /-- **ℤ^d truncated2Infinite symmetry in (i, j)**. -/
 theorem truncated2Infinite_latticeGraph_symm
     (d : ℕ) (p : IsingParams ℝ) (i j : Fin d → ℤ) :
