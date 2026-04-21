@@ -1286,6 +1286,42 @@ theorem gibbsExpectation_nonneg_of_numerator_nonneg_latticeGraph
   IsingModel.gibbsExpectation_nonneg_of_numerator_nonneg
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p F hnum
 
+/-- **ℤ^d abs_correlation_le_one direct** (Λ-induced): `|⟨σ^A⟩| ≤ 1`. -/
+theorem abs_correlation_le_one_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ)
+    (A : Finset (↑Λ : Type _)) :
+    |IsingModel.correlation
+          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p A| ≤ 1 :=
+  IsingModel.abs_correlation_le_one
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p A
+
+/-- **ℤ^d correlation_le_one direct** (Λ-induced): `⟨σ^A⟩ ≤ 1`. -/
+theorem correlation_le_one_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ)
+    (A : Finset (↑Λ : Type _)) :
+    IsingModel.correlation
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p A ≤ 1 :=
+  IsingModel.correlation_le_one
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p A
+
+/-- **ℤ^d neg_one_le_correlation direct** (Λ-induced): `-1 ≤ ⟨σ^A⟩`. -/
+theorem neg_one_le_correlation_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ)
+    (A : Finset (↑Λ : Type _)) :
+    -1 ≤ IsingModel.correlation
+          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p A :=
+  IsingModel.neg_one_le_correlation
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p A
+
+/-- **ℤ^d correlation_sq_le_one direct** (Λ-induced): `⟨σ^A⟩² ≤ 1`. -/
+theorem correlation_sq_le_one_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ)
+    (A : Finset (↑Λ : Type _)) :
+    IsingModel.correlation
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p A ^ 2 ≤ 1 :=
+  IsingModel.correlation_sq_le_one
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p A
+
 /-- **ℤ^d correlation_empty at Λ-induced**: `⟨σ^∅⟩_Λ = 1`. -/
 theorem correlation_empty_latticeGraph
     (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ) :
