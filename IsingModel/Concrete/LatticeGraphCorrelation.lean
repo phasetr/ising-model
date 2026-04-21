@@ -1762,6 +1762,25 @@ theorem correlation_empty_latticeGraph
   IsingModel.correlation_empty
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p
 
+/-- **ℤ^d hasNonnegCorrelations_one direct** (Λ-induced):
+the constant function `1` has HNC. -/
+theorem hasNonnegCorrelations_one_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) :
+    IsingModel.HasNonnegCorrelations
+      (ι := (↑Λ : Type _)) (fun _ => 1) :=
+  IsingModel.hasNonnegCorrelations_one
+
+/-- **ℤ^d hasNonnegCorrelations_mul direct** (Λ-induced): if `f` has HNC
+then so does `f · (a + b · σ^C)` for `a, b ≥ 0`. -/
+theorem hasNonnegCorrelations_mul_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    {f : IsingModel.Config (↑Λ : Type _) → ℝ}
+    (hf : IsingModel.HasNonnegCorrelations f)
+    {a b : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) (C : Finset (↑Λ : Type _)) :
+    IsingModel.HasNonnegCorrelations fun σ : IsingModel.Config (↑Λ : Type _) =>
+      f σ * (a + b * IsingModel.spinProduct C σ) :=
+  IsingModel.hasNonnegCorrelations_mul hf ha hb C
+
 /-- **ℤ^d hasNonnegCorrelations_general_coupling direct** (Λ-induced):
 general non-negative couplings give HNC product. -/
 theorem hasNonnegCorrelations_general_coupling_latticeGraph
