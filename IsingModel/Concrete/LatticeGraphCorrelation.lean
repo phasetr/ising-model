@@ -1774,29 +1774,31 @@ theorem hasNonnegCorrelations_one_latticeGraph
 a product of `(a + b · σ^C)` factors over a Finset has HNC. -/
 theorem hasNonnegCorrelations_finset_prod_latticeGraph
     (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    {α : Type*} [DecidableEq α]
+    {α : Type*}
     (S : Finset α)
     (g : α → IsingModel.Config (↑Λ : Type _) → ℝ)
     (hg : ∀ a ∈ S, ∃ c e : ℝ, ∃ C : Finset (↑Λ : Type _), 0 ≤ c ∧ 0 ≤ e ∧
       ∀ σ, g a σ = c + e * IsingModel.spinProduct C σ) :
     IsingModel.HasNonnegCorrelations fun σ : IsingModel.Config (↑Λ : Type _) =>
-      ∏ a ∈ S, g a σ :=
-  IsingModel.hasNonnegCorrelations_finset_prod S g hg
+      ∏ a ∈ S, g a σ := by
+  classical
+  exact IsingModel.hasNonnegCorrelations_finset_prod S g hg
 
 /-- **ℤ^d hasNonnegCorrelations_mul_prod direct** (Λ-induced):
 multiplying an HNC function by a product of `(a + b · σ^C)` factors
 preserves HNC. -/
 theorem hasNonnegCorrelations_mul_prod_latticeGraph
     (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    {α : Type*} [DecidableEq α]
+    {α : Type*}
     (S : Finset α) {f : IsingModel.Config (↑Λ : Type _) → ℝ}
     (hf : IsingModel.HasNonnegCorrelations f)
     (g : α → IsingModel.Config (↑Λ : Type _) → ℝ)
     (hg : ∀ a ∈ S, ∃ c e : ℝ, ∃ C : Finset (↑Λ : Type _), 0 ≤ c ∧ 0 ≤ e ∧
       ∀ σ, g a σ = c + e * IsingModel.spinProduct C σ) :
     IsingModel.HasNonnegCorrelations fun σ : IsingModel.Config (↑Λ : Type _) =>
-      f σ * ∏ a ∈ S, g a σ :=
-  IsingModel.hasNonnegCorrelations_mul_prod S hf g hg
+      f σ * ∏ a ∈ S, g a σ := by
+  classical
+  exact IsingModel.hasNonnegCorrelations_mul_prod S hf g hg
 
 /-- **ℤ^d hasNonnegCorrelations_mul direct** (Λ-induced): if `f` has HNC
 then so does `f · (a + b · σ^C)` for `a, b ≥ 0`. -/
