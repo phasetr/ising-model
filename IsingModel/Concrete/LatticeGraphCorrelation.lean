@@ -2619,6 +2619,21 @@ theorem truncated2Infinite_latticeGraph_nonneg_of_eq
   truncated2Infinite_nonneg_of_eq (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) p hf i
 
+/-- **ℤ^d `truncated2Infinite ≤ correlationInfinite {i, j}`** (ferromagnetic). -/
+theorem truncated2Infinite_latticeGraph_le_correlationInfinite
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i j : Fin d → ℤ) :
+    truncated2Infinite (IsingModel.latticeGraph d) Λ p i j
+      ≤ correlationInfinite (IsingModel.latticeGraph d) Λ p {i, j} :=
+  truncated2Infinite_le_correlationInfinite (IsingModel.latticeGraph d) Λ p hf i j
+
+/-- **ℤ^d `truncated2Infinite ≤ 1`** (ferromagnetic). -/
+theorem truncated2Infinite_latticeGraph_le_one
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i j : Fin d → ℤ) :
+    truncated2Infinite (IsingModel.latticeGraph d) Λ p i j ≤ 1 :=
+  truncated2Infinite_le_one (IsingModel.latticeGraph d) Λ p hf i j
+
 /-- **ℤ^d truncated2Infinite symmetry in (i, j)**. -/
 theorem truncated2Infinite_latticeGraph_symm
     (d : ℕ) (p : IsingParams ℝ) (i j : Fin d → ℤ) :
