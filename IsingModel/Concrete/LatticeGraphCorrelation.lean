@@ -1287,6 +1287,60 @@ theorem partitionFunctionAlongExhaustion_latticeGraph_monotone_beta
   partitionFunctionAlongExhaustion_monotone_beta (IsingModel.latticeGraph d) Λ
     J h hJ hh hβ₁ hβ n
 
+/-- **ℤ^d partitionFunctionΛ closed form at `J = 0`** (any Finset):
+`Z_Λ(⟨0, h, β⟩) = (2·cosh(β·h))^|Λ|`. -/
+theorem partitionFunctionΛ_latticeGraph_J_zero
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (h β : ℝ) :
+    partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+        (⟨0, h, β⟩ : IsingParams ℝ)
+      = (2 * Real.cosh (β * h)) ^ Λ.card :=
+  partitionFunctionΛ_J_zero (IsingModel.latticeGraph d) Λ h β
+
+/-- **ℤ^d partitionFunctionΛ closed form at `β = 0`** (any Finset):
+`Z_Λ(⟨J, h, 0⟩) = 2^|Λ|`. -/
+theorem partitionFunctionΛ_latticeGraph_beta_zero
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J h : ℝ) :
+    partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+        (⟨J, h, 0⟩ : IsingParams ℝ)
+      = (2 : ℝ) ^ Λ.card :=
+  partitionFunctionΛ_beta_zero (IsingModel.latticeGraph d) Λ J h
+
+/-- **ℤ^d partitionFunctionΛ closed form at `J = 0, h = 0`** (any Finset):
+`Z_Λ(⟨0, 0, β⟩) = 2^|Λ|`. -/
+theorem partitionFunctionΛ_latticeGraph_zero_params
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (β : ℝ) :
+    partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+        (⟨0, 0, β⟩ : IsingParams ℝ)
+      = (2 : ℝ) ^ Λ.card :=
+  partitionFunctionΛ_zero_params (IsingModel.latticeGraph d) Λ β
+
+/-- **ℤ^d log partitionFunctionΛ closed form at `J = 0`** (any Finset):
+`log Z_Λ(⟨0, h, β⟩) = |Λ| · log(2·cosh(β·h))`. -/
+theorem log_partitionFunctionΛ_latticeGraph_J_zero
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (h β : ℝ) :
+    Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+        (⟨0, h, β⟩ : IsingParams ℝ))
+      = (Λ.card : ℝ) * Real.log (2 * Real.cosh (β * h)) :=
+  log_partitionFunctionΛ_J_zero (IsingModel.latticeGraph d) Λ h β
+
+/-- **ℤ^d log partitionFunctionΛ closed form at `β = 0`** (any Finset):
+`log Z_Λ(⟨J, h, 0⟩) = |Λ| · log 2`. -/
+theorem log_partitionFunctionΛ_latticeGraph_beta_zero
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J h : ℝ) :
+    Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+        (⟨J, h, 0⟩ : IsingParams ℝ))
+      = (Λ.card : ℝ) * Real.log 2 :=
+  log_partitionFunctionΛ_beta_zero (IsingModel.latticeGraph d) Λ J h
+
+/-- **ℤ^d log partitionFunctionΛ closed form at `J = 0, h = 0`** (any Finset):
+`log Z_Λ(⟨0, 0, β⟩) = |Λ| · log 2`. -/
+theorem log_partitionFunctionΛ_latticeGraph_zero_params
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (β : ℝ) :
+    Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+        (⟨0, 0, β⟩ : IsingParams ℝ))
+      = (Λ.card : ℝ) * Real.log 2 :=
+  log_partitionFunctionΛ_zero_params (IsingModel.latticeGraph d) Λ β
+
 /-- **ℤ^d partitionFunctionΛ h-evenness** (any Finset):
 `Z_Λ(J, -h, β) = Z_Λ(J, h, β)`. -/
 theorem partitionFunctionΛ_latticeGraph_neg_h
