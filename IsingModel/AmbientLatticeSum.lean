@@ -335,6 +335,15 @@ theorem partitionFunctionΛ_ge_one_of_ferromagnetic
     1 ≤ partitionFunctionΛ G Λ p :=
   IsingModel.partitionFunction_ge_one_of_ferromagnetic _ p hf
 
+/-- **`log Z_Λ ≥ 0`** for ferromagnetic parameters: immediate from
+`partitionFunctionΛ_ge_one_of_ferromagnetic` via `Real.log_nonneg`. -/
+theorem log_partitionFunctionΛ_nonneg_of_ferromagnetic
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    0 ≤ Real.log (partitionFunctionΛ G Λ p) :=
+  Real.log_nonneg (partitionFunctionΛ_ge_one_of_ferromagnetic G Λ p hf)
+
 /-- **`partitionFunctionAlongExhaustion ≥ 1`** for ferromagnetic
 parameters: pointwise lift of PR #141
 `partitionFunction_ge_one_of_ferromagnetic`. -/
