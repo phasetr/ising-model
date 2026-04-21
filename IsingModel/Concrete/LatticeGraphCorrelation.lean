@@ -3171,6 +3171,28 @@ theorem log_partitionFunctionΛ_bot_le_latticeGraph
   Real.log_le_log (partitionFunctionΛ_pos _ Λ p)
     (partitionFunctionΛ_bot_le_latticeGraph d Λ p hf)
 
+/-- **ℤ^d freeEnergyΛ ambient-subgraph monotonicity** (ferromagnetic):
+for `G₁ ≤ G₂`, `freeEnergyΛ G₁ Λ p ≤ freeEnergyΛ G₂ Λ p`. -/
+theorem freeEnergyΛ_latticeGraph_monotone_ambient_subgraph
+    (d : ℕ) {G₁ G₂ : SimpleGraph (Fin d → ℤ)} (hG : G₁ ≤ G₂)
+    (Λ : Finset (Fin d → ℤ))
+    [Fintype (Ambient.inducedGraph G₁ Λ).edgeSet]
+    [Fintype (Ambient.inducedGraph G₂ Λ).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    freeEnergyΛ G₁ Λ p ≤ freeEnergyΛ G₂ Λ p :=
+  freeEnergyΛ_monotone_ambient_subgraph hG Λ p hf
+
+/-- **ℤ^d freeEnergyAlongExhaustion ambient-subgraph monotonicity** per stage. -/
+theorem freeEnergyAlongExhaustion_latticeGraph_monotone_ambient_subgraph
+    (d : ℕ) {G₁ G₂ : SimpleGraph (Fin d → ℤ)} (hG : G₁ ≤ G₂)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph G₁ (Λ.volume n)).edgeSet]
+    [∀ n, Fintype (Ambient.inducedGraph G₂ (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (n : ℕ) :
+    freeEnergyAlongExhaustion G₁ Λ p n
+      ≤ freeEnergyAlongExhaustion G₂ Λ p n :=
+  freeEnergyAlongExhaustion_monotone_ambient_subgraph hG Λ p hf n
+
 /-- **ℤ^d `log Z_{Λ_n}` ambient-subgraph `⊥ ≤ latticeGraph d`** per stage
 (ferromagnetic, `cubicExhaustion`). -/
 theorem log_partitionFunctionAlongExhaustion_bot_le_latticeGraph
