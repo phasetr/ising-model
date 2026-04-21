@@ -60,6 +60,11 @@ noncomputable def inducedGraph (G : SimpleGraph V) (Λ : Finset V) :
     SimpleGraph (↑Λ : Type _) :=
   G.induce (↑Λ : Set V)
 
+/-- **Unfolding of `inducedGraph`**:
+`inducedGraph G Λ = G.induce (↑Λ : Set V)` by definition. -/
+theorem inducedGraph_apply (G : SimpleGraph V) (Λ : Finset V) :
+    inducedGraph G Λ = G.induce (↑Λ : Set V) := rfl
+
 omit [DecidableEq V] in
 /-- **Helper**: if `Λ : Finset V` is nonempty then the induced subtype
 `↑Λ : Type _` has positive `Fintype.card`. Used throughout the Λ- and
