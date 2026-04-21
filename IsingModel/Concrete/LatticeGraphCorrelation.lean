@@ -2750,6 +2750,23 @@ theorem correlationAlongExhaustion_latticeGraph_shift_vaddFinset_eq
   correlationAlongExhaustion_shift_vaddFinset_eq
     (IsingModel.latticeGraph d) Λ t p A n
 
+/-- **ℤ^d correlationΛ_extendGraph_eq**: correlation equality between
+the extended graph and the induced Λ₁ subgraph. -/
+theorem correlationΛ_latticeGraph_extendGraph_eq
+    (d : ℕ) {Λ₁ Λ₂ : Finset (Fin d → ℤ)} (h12 : Λ₁ ⊆ Λ₂)
+    [Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ₁).edgeSet]
+    [Fintype (Ambient.extendGraphFromΛ₁
+      (IsingModel.latticeGraph d) Λ₁ Λ₂).edgeSet]
+    (p : IsingParams ℝ)
+    {A : Finset (Fin d → ℤ)} (hA : A ⊆ Λ₁) :
+    IsingModel.correlation
+        (Ambient.extendGraphFromΛ₁ (IsingModel.latticeGraph d) Λ₁ Λ₂) p
+        (Ambient.liftFinset A (hA.trans h12))
+      = IsingModel.correlation
+          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ₁) p
+          (Ambient.liftFinset A hA) :=
+  Ambient.correlationΛ_extendGraph_eq (IsingModel.latticeGraph d) h12 p hA
+
 /-- **ℤ^d correlationΛ translation invariance**:
 `⟨σ^{vadd A}⟩_{t +ᵥ Λ}(p) = ⟨σ^A⟩_Λ(p)` on ℤ^d. -/
 theorem correlationΛ_latticeGraph_vaddFinset_eq
