@@ -794,6 +794,27 @@ theorem freeEnergyJ_analyticOn_latticeGraph
   IsingModel.freeEnergyJ_analyticOn
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) h β
 
+/-- **ℤ^d `partitionFunction` of `⊥` at Λ**: closed form
+`Z_⊥ = (2 cosh(βh))^|Λ|`. -/
+theorem partitionFunction_bot_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ) :
+    IsingModel.partitionFunction (⊥ : SimpleGraph (↑Λ : Type _)) p
+      = (2 * Real.cosh (p.β * p.h)) ^ Fintype.card (↑Λ : Type _) :=
+  IsingModel.partitionFunction_bot (ι := (↑Λ : Type _)) p
+
+/-- **ℤ^d `partitionFunction (⊥) ≥ 1`** at Λ-induced subgraph. -/
+theorem partitionFunction_bot_latticeGraph_ge_one
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ) :
+    (1 : ℝ) ≤ IsingModel.partitionFunction (⊥ : SimpleGraph (↑Λ : Type _)) p :=
+  IsingModel.partitionFunction_bot_ge_one (ι := (↑Λ : Type _)) p
+
+/-- **ℤ^d `partitionFunction (⊥) ≥ 2^|Λ|`** at Λ-induced subgraph. -/
+theorem partitionFunction_bot_latticeGraph_ge_two_pow_card
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ) :
+    (2 : ℝ) ^ Fintype.card (↑Λ : Type _)
+      ≤ IsingModel.partitionFunction (⊥ : SimpleGraph (↑Λ : Type _)) p :=
+  IsingModel.partitionFunction_bot_ge_two_pow_card (ι := (↑Λ : Type _)) p
+
 /-- **ℤ^d boltzmannWeight positivity** at Λ-induced subgraph:
 `0 < exp(-β H_Λ(σ))`. -/
 theorem boltzmannWeightΛ_latticeGraph_pos
