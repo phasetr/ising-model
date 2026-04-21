@@ -881,6 +881,13 @@ theorem freeEnergy_convergent_subgraph_latticeGraph
       Filter.atTop (nhds L) :=
   IsingModel.freeEnergy_convergent_subgraph Gn hmono p hf
 
+/-- **ℤ^d inducedGraph_mono**: `G₁ ≤ G₂` lifts to `inducedGraph G₁ Λ ≤ inducedGraph G₂ Λ`. -/
+theorem inducedGraph_mono_latticeGraph
+    (d : ℕ) {G₁ G₂ : SimpleGraph (Fin d → ℤ)} (h : G₁ ≤ G₂)
+    (Λ : Finset (Fin d → ℤ)) :
+    Ambient.inducedGraph G₁ Λ ≤ Ambient.inducedGraph G₂ Λ :=
+  Ambient.inducedGraph_mono h Λ
+
 /-- **ℤ^d `partitionFunction` of `⊥` at Λ**: closed form
 `Z_⊥ = (2 cosh(βh))^|Λ|`. -/
 theorem partitionFunction_bot_latticeGraph
