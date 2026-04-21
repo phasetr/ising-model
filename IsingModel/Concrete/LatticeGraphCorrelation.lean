@@ -758,6 +758,17 @@ theorem correlationΛ_latticeGraph_gks_second
   refine ⟨hAB, ?_⟩
   exact correlationΛ_gks_second (IsingModel.latticeGraph d) p hf hA hB
 
+/-- **ℤ^d correlationΛ J → ∞ convergence**: for `0 ≤ h`, `0 < β`. -/
+theorem correlationΛ_latticeGraph_convergent
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (h : ℝ) (hh : 0 ≤ h) (β : ℝ) (hβ : 0 < β)
+    (B : Finset (↑Λ : Type _)) :
+    ∃ L : ℝ, Filter.Tendsto
+      (fun n : ℕ => IsingModel.correlationJ
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) h β B n)
+      Filter.atTop (nhds L) :=
+  IsingModel.correlation_convergent
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) h hh β hβ B
+
 /-- **ℤ^d correlationΛ β → ∞ convergence**: for `0 ≤ J`, `0 ≤ h`, the sequence
 `n ↦ ⟨σ^A⟩_Λ(J, h, n+1)` converges. -/
 theorem correlationΛ_latticeGraph_convergent_beta
