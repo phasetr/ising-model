@@ -1721,6 +1721,23 @@ theorem partitionFunctionAlongExhaustion_latticeGraph_ge_one
   partitionFunctionAlongExhaustion_ge_one_of_ferromagnetic
     (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d) p hf n
 
+/-- **ℤ^d partitionFunctionAlongExhaustion ≥ 1** (ferromagnetic, any Exhaustion). -/
+theorem partitionFunctionAlongExhaustion_latticeGraph_ge_one_general
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (n : ℕ) :
+    1 ≤ partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ p n :=
+  partitionFunctionAlongExhaustion_ge_one_of_ferromagnetic
+    (IsingModel.latticeGraph d) Λ p hf n
+
+/-- **ℤ^d log Z_n ≥ 0** (ferromagnetic, any Exhaustion). -/
+theorem log_partitionFunctionAlongExhaustion_latticeGraph_nonneg_general
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (n : ℕ) :
+    0 ≤ Real.log (partitionFunctionAlongExhaustion
+        (IsingModel.latticeGraph d) Λ p n) :=
+  log_partitionFunctionAlongExhaustion_nonneg_of_ferromagnetic
+    (IsingModel.latticeGraph d) Λ p hf n
+
 /-- **ℤ^d log partitionFunctionAlongExhaustion ≥ 0** (ferromagnetic). -/
 theorem log_partitionFunctionAlongExhaustion_latticeGraph_nonneg
     (d : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p) (n : ℕ) :
