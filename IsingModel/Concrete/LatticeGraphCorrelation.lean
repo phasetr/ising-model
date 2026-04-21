@@ -1182,6 +1182,17 @@ theorem cor_4_3_5_h0_latticeGraph
   IsingModel.cor_4_3_5_h0
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J β hf S j k hj hk hjk
 
+/-- **ℤ^d correlation_odd_vanish** at Λ-induced: at `h = 0`, the
+correlation `⟨σ^A⟩ = 0` for any odd-cardinality `A`. -/
+theorem correlation_odd_vanish_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
+    (A : Finset (↑Λ : Type _)) (hodd : Odd A.card) :
+    IsingModel.correlation
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
+        (⟨J, 0, β⟩ : IsingParams ℝ) A = 0 :=
+  IsingModel.correlation_odd_vanish
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J β A hodd
+
 /-- **ℤ^d truncated2 J=0 vanish for i ≠ j** at Λ-induced. -/
 theorem truncated2_J_zero_of_ne_latticeGraph
     (d : ℕ) (Λ : Finset (Fin d → ℤ)) (h β : ℝ)
