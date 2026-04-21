@@ -1,4 +1,5 @@
 import IsingModel.AmbientLattice
+import IsingModel.AmbientLatticeSum
 import IsingModel.ComplexAnalyticity
 
 /-!
@@ -241,6 +242,38 @@ theorem partitionFunctionComplexAlongExhaustion_ne_zero_on_leeYangDomain_stage
     partitionFunctionComplexAlongExhaustion G Λ (J : ℂ) h (β : ℂ) n ≠ 0 :=
   IsingModel.partitionFunctionComplex_ne_zero_on_leeYangDomain
     (inducedGraph G (Λ.volume n)) hβ hJ hh
+
+/-! ## Real-axis convergence to `freeEnergyInfinite`
+
+The real-axis half of the Vitali identification: at real parameters,
+`freeEnergyComplexAlongExhaustion G Λ ↑p.J ↑p.h ↑p.β n` converges to
+`↑(freeEnergyInfinite G Λ p)` as `n → ∞`. Combined with the Montel
+extraction (Step 3) and holomorphic-uniqueness (Step 5-6), this pins
+down the Vitali limit on the Lee-Yang (sub)domain. -/
+
+/-- **Real-axis convergence of `freeEnergyComplexAlongExhaustion`**
+(under `DisjointTowerHypotheses` + `BoundedEdgeDensity`). Pointwise
+limit for the Vitali identification at real parameters. -/
+theorem freeEnergyComplexAlongExhaustion_tendsto_at_real_of_disjointTowerHypotheses
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ)
+    (hBED : BoundedEdgeDensity G Λ)
+    (hd : DisjointTowerHypotheses G Λ p) :
+    Filter.Tendsto
+      (fun n => freeEnergyComplexAlongExhaustion G Λ
+        (p.J : ℂ) (p.h : ℂ) (p.β : ℂ) n)
+      Filter.atTop
+      (nhds ((freeEnergyInfinite G Λ p : ℝ) : ℂ)) := by
+  have h_real := freeEnergyAlongExhaustion_tendsto_of_disjointTowerHypotheses
+    G Λ p hBED hd
+  have h_eq : (fun n => freeEnergyComplexAlongExhaustion G Λ
+        (p.J : ℂ) (p.h : ℂ) (p.β : ℂ) n)
+      = fun n => ((freeEnergyAlongExhaustion G Λ p n : ℝ) : ℂ) := by
+    funext n
+    exact freeEnergyComplexAlongExhaustion_at_real_eq_ofReal G Λ p n
+  rw [h_eq]
+  exact (Complex.continuous_ofReal.tendsto _).comp h_real
 
 end Ambient
 
