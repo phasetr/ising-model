@@ -1666,6 +1666,13 @@ noncomputable def uniformMagnetization (d : ℕ) (p : IsingParams ℝ) : ℝ :=
   magnetizationInfinite (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) p 0
 
+/-- **Unfolding of `uniformMagnetization`**:
+`uniformMagnetization d p = magnetizationInfinite (latticeGraph d) (cubicExhaustion d) p 0`. -/
+theorem uniformMagnetization_apply (d : ℕ) (p : IsingParams ℝ) :
+    uniformMagnetization d p
+      = magnetizationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) p 0 := rfl
+
 /-- **Bridge**: for ferromagnetic `p` and any site `i : Fin d → ℤ`,
 `magnetizationInfinite ... p i = uniformMagnetization d p`.
 
@@ -1730,6 +1737,14 @@ noncomputable def uniformSpontaneousMagnetization
     (d : ℕ) (J β : ℝ) : ℝ :=
   spontaneousMagnetization (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) J β 0
+
+/-- **Unfolding of `uniformSpontaneousMagnetization`**:
+`uniformSpontaneousMagnetization d J β = spontaneousMagnetization
+(latticeGraph d) (cubicExhaustion d) J β 0`. -/
+theorem uniformSpontaneousMagnetization_apply (d : ℕ) (J β : ℝ) :
+    uniformSpontaneousMagnetization d J β
+      = spontaneousMagnetization (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) J β 0 := rfl
 
 /-- **J-monotonicity of `uniformSpontaneousMagnetization` on ℤ^d**. -/
 theorem uniformSpontaneousMagnetization_monotone_J
