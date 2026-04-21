@@ -1762,6 +1762,17 @@ theorem correlation_empty_latticeGraph
   IsingModel.correlation_empty
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p
 
+/-- **ℤ^d hasNonnegCorrelations_general_coupling direct** (Λ-induced):
+general non-negative couplings give HNC product. -/
+theorem hasNonnegCorrelations_general_coupling_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    (couplings : Finset (Finset (↑Λ : Type _)))
+    (K : Finset (↑Λ : Type _) → ℝ)
+    (hK : ∀ C ∈ couplings, 0 ≤ K C) :
+    IsingModel.HasNonnegCorrelations fun σ : IsingModel.Config (↑Λ : Type _) =>
+      ∏ C ∈ couplings, Real.exp (K C * IsingModel.spinProduct C σ) :=
+  IsingModel.hasNonnegCorrelations_general_coupling couplings K hK
+
 /-- **ℤ^d hasNonnegCorrelations_edge_site_product direct** (Λ-induced):
 the edge × site product weight has HNC on `Config ↑Λ`. -/
 theorem hasNonnegCorrelations_edge_site_product_latticeGraph
