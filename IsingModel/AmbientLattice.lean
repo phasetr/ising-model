@@ -3178,6 +3178,25 @@ theorem truncated2Infinite_le_one
   have h₂ := correlationInfinite_le_one G Λ p {i, j}
   linarith
 
+/-- **`-1 ≤ truncated2Infinite`** for ferromagnetic `p`: direct from
+`truncated2Infinite_nonneg`. -/
+theorem neg_one_le_truncated2Infinite
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i j : V) :
+    -1 ≤ truncated2Infinite G Λ p i j := by
+  have := truncated2Infinite_nonneg G Λ p hf i j
+  linarith
+
+/-- **`|truncated2Infinite| ≤ 1`** for ferromagnetic `p`. -/
+theorem abs_truncated2Infinite_le_one
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i j : V) :
+    |truncated2Infinite G Λ p i j| ≤ 1 :=
+  abs_le.mpr ⟨neg_one_le_truncated2Infinite G Λ p hf i j,
+    truncated2Infinite_le_one G Λ p hf i j⟩
+
 /-- **Exhaustion-independence of `truncated2Infinite`**: the value
 does not depend on the choice of exhaustion.  Follows from
 `correlationInfinite_indep_exhaustion` applied to each of the three
