@@ -3460,6 +3460,22 @@ theorem magnetizationAlongExhaustion_latticeGraph_apply
       = correlationAlongExhaustion (IsingModel.latticeGraph d) Λ p {i} n :=
   magnetizationAlongExhaustion_apply (IsingModel.latticeGraph d) Λ p i n
 
+/-- **ℤ^d magnetizationAlongExhaustion `of_mem` unfolding**. -/
+theorem magnetizationAlongExhaustion_latticeGraph_of_mem
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) {i : Fin d → ℤ} {n : ℕ} (hi : i ∈ Λ.volume n) :
+    magnetizationAlongExhaustion (IsingModel.latticeGraph d) Λ p i n
+      = correlationΛ (IsingModel.latticeGraph d) (Λ.volume n) p
+          (liftFinset {i} (Finset.singleton_subset_iff.mpr hi)) :=
+  magnetizationAlongExhaustion_of_mem (IsingModel.latticeGraph d) Λ p hi
+
+/-- **ℤ^d magnetizationAlongExhaustion `of_not_mem` unfolding**. -/
+theorem magnetizationAlongExhaustion_latticeGraph_of_not_mem
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) {i : Fin d → ℤ} {n : ℕ} (hi : i ∉ Λ.volume n) :
+    magnetizationAlongExhaustion (IsingModel.latticeGraph d) Λ p i n = 0 :=
+  magnetizationAlongExhaustion_of_not_mem (IsingModel.latticeGraph d) Λ p hi
+
 /-- **ℤ^d magnetizationAlongExhaustion ≤ 1** per stage. -/
 theorem magnetizationAlongExhaustion_latticeGraph_le_one
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
