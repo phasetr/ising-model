@@ -3947,6 +3947,33 @@ theorem truncated2Infinite_latticeGraph_nonneg_of_eq
   truncated2Infinite_nonneg_of_eq (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) p hf i
 
+/-- **ℤ^d `truncated2Infinite` apply** (definitional). -/
+theorem truncated2Infinite_latticeGraph_apply
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (i j : Fin d → ℤ) :
+    truncated2Infinite (IsingModel.latticeGraph d) Λ p i j
+      = correlationInfinite (IsingModel.latticeGraph d) Λ p {i, j}
+        - correlationInfinite (IsingModel.latticeGraph d) Λ p {i}
+          * correlationInfinite (IsingModel.latticeGraph d) Λ p {j} :=
+  truncated2Infinite_apply (IsingModel.latticeGraph d) Λ p i j
+
+/-- **ℤ^d `truncated3Infinite` apply** (definitional). -/
+theorem truncated3Infinite_latticeGraph_apply
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (i j k : Fin d → ℤ) :
+    truncated3Infinite (IsingModel.latticeGraph d) Λ p i j k
+      = correlationInfinite (IsingModel.latticeGraph d) Λ p {i, j, k}
+        - correlationInfinite (IsingModel.latticeGraph d) Λ p {i}
+          * correlationInfinite (IsingModel.latticeGraph d) Λ p {j, k}
+        - correlationInfinite (IsingModel.latticeGraph d) Λ p {j}
+          * correlationInfinite (IsingModel.latticeGraph d) Λ p {i, k}
+        - correlationInfinite (IsingModel.latticeGraph d) Λ p {k}
+          * correlationInfinite (IsingModel.latticeGraph d) Λ p {i, j}
+        + 2 * correlationInfinite (IsingModel.latticeGraph d) Λ p {i}
+          * correlationInfinite (IsingModel.latticeGraph d) Λ p {j}
+          * correlationInfinite (IsingModel.latticeGraph d) Λ p {k} :=
+  truncated3Infinite_apply (IsingModel.latticeGraph d) Λ p i j k
+
 /-- **ℤ^d `truncated2Infinite ≤ correlationInfinite {i, j}`** (ferromagnetic). -/
 theorem truncated2Infinite_latticeGraph_le_correlationInfinite
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
