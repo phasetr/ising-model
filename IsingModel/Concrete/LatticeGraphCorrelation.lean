@@ -1287,6 +1287,16 @@ theorem partitionFunctionAlongExhaustion_latticeGraph_monotone_beta
   partitionFunctionAlongExhaustion_monotone_beta (IsingModel.latticeGraph d) Λ
     J h hJ hh hβ₁ hβ n
 
+/-- **ℤ^d partitionFunctionΛ h-evenness** (any Finset):
+`Z_Λ(J, -h, β) = Z_Λ(J, h, β)`. -/
+theorem partitionFunctionΛ_latticeGraph_neg_h
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J h β : ℝ) :
+    partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+        (⟨J, -h, β⟩ : IsingParams ℝ)
+      = partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+          (⟨J, h, β⟩ : IsingParams ℝ) :=
+  partitionFunctionΛ_neg_h (IsingModel.latticeGraph d) Λ J h β
+
 /-- **ℤ^d partitionFunctionΛ h-evenness**:
 `Z_{Λ_n}(J, -h, β) = Z_{Λ_n}(J, h, β)` on the ℤ^d cubic box.
 Concrete specialization of `partitionFunctionΛ_neg_h`. -/
