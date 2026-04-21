@@ -1981,6 +1981,15 @@ theorem freeEnergyAlongExhaustion_latticeGraph_ge_log_two_cosh
   freeEnergyAlongExhaustion_ge_log_two_cosh (IsingModel.latticeGraph d) Λ
     hJ hh hβ n hne
 
+/-- **ℤ^d per-stage `0 ≤ f_n`** (ferromagnetic, nonempty stage, any Exhaustion). -/
+theorem freeEnergyAlongExhaustion_latticeGraph_nonneg
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) {n : ℕ}
+    (hne : (Λ.volume n).Nonempty) :
+    0 ≤ freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ p n :=
+  freeEnergyAlongExhaustion_nonneg_of_ferromagnetic
+    (IsingModel.latticeGraph d) Λ p hf hne
+
 /-- **ℤ^d free-energy shift invariance**:
 `freeEnergyInfinite (latticeGraph d) ((cubicExhaustion d).shift t) p
   = freeEnergyInfinite (latticeGraph d) (cubicExhaustion d) p`. -/
