@@ -2222,9 +2222,11 @@ theorem isingEdgePoly_eval_leeYangFugacityVec_eq_latticeGraph
 Direct ℤ^d forwarders for `prop_5_4_2_along_exhaustion` and
 `prop_5_4_2_limsup_le` from `IsingModel/PeierlsInfinite.lean`, at the
 ambient `latticeGraph d` on an arbitrary `Ambient.Exhaustion (Fin d → ℤ)`.
-The caller supplies the stage-wise `Preconnected` / `DecidableRel` /
-`Fintype` instances and the geometric choice of `B n`, `i n`, and the
-exponential bound hypothesis. -/
+The caller supplies stage-wise `Preconnected` + `Fintype G_n.edgeSet`
+instances and the geometric choice of `B n`, `i n`, and the exponential
+bound hypothesis; the `DecidableRel (inducedGraph …).Adj` instance
+required by the abstract theorems is supplied via `classical` in the
+proof body (so it does not appear in the wrapper signatures). -/
 
 /-- **ℤ^d GJ §5.4 Prop 5.4.2 per-stage along-exhaustion**
 (Λ-induced): pointwise Peierls bound at every stage of the exhaustion.
