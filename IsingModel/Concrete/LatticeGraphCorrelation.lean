@@ -876,6 +876,34 @@ theorem correlationAlongExhaustion_latticeGraph_cubicExhaustion_nonneg
   correlationAlongExhaustion_nonneg (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) p hf A n
 
+/-- **ℤ^d shifted correlationΛ sequence is monotone and bounded by 1**
+(any-Exhaustion, ferromagnetic). -/
+theorem correlationΛ_shifted_monotone_bounded_latticeGraph
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    {A : Finset (Fin d → ℤ)} {N : ℕ}
+    (hN : ∀ n ≥ N, A ⊆ Λ.volume n) :
+    Monotone (fun n : ℕ =>
+      correlationΛ (IsingModel.latticeGraph d) (Λ.volume (n + N)) p
+        (Ambient.liftFinset A (hN (n + N) (Nat.le_add_left N n))))
+    ∧ ∀ n : ℕ,
+      correlationΛ (IsingModel.latticeGraph d) (Λ.volume (n + N)) p
+        (Ambient.liftFinset A (hN (n + N) (Nat.le_add_left N n))) ≤ 1 :=
+  correlationΛ_shifted_monotone_bounded (IsingModel.latticeGraph d) Λ p hf hN
+
+/-- **ℤ^d shifted correlationΛ sequence converges** (any-Exhaustion, ferromagnetic). -/
+theorem correlationΛ_shifted_tendsto_latticeGraph
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    {A : Finset (Fin d → ℤ)} {N : ℕ}
+    (hN : ∀ n ≥ N, A ⊆ Λ.volume n) :
+    ∃ L : ℝ, Filter.Tendsto
+      (fun m : ℕ => correlationΛ (IsingModel.latticeGraph d)
+        (Λ.volume (m + N)) p
+        (Ambient.liftFinset A (hN (m + N) (Nat.le_add_left N m))))
+      Filter.atTop (nhds L) :=
+  correlationΛ_shifted_tendsto (IsingModel.latticeGraph d) Λ p hf hN
+
 /-- **ℤ^d correlationΛ → correlationInfinite under an explicit subset hypothesis**
 (any-Exhaustion). -/
 theorem tendsto_correlationΛ_correlationInfinite_of_subset_latticeGraph
