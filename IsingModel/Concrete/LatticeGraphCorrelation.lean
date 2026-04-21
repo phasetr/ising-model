@@ -794,6 +794,23 @@ theorem freeEnergyJ_analyticOn_latticeGraph
   IsingModel.freeEnergyJ_analyticOn
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) h β
 
+/-- **ℤ^d boltzmannWeight positivity** at Λ-induced subgraph:
+`0 < exp(-β H_Λ(σ))`. -/
+theorem boltzmannWeightΛ_latticeGraph_pos
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ)
+    (σ : IsingModel.Config (↑Λ : Type _)) :
+    0 < IsingModel.boltzmannWeight
+          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p σ :=
+  IsingModel.boltzmannWeight_pos
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p σ
+
+/-- **ℤ^d partitionFunctionΛ ≠ 0** at Λ-induced subgraph. -/
+theorem partitionFunctionΛ_latticeGraph_ne_zero
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ) :
+    partitionFunctionΛ (IsingModel.latticeGraph d) Λ p ≠ 0 :=
+  IsingModel.partitionFunction_ne_zero
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p
+
 /-- **ℤ^d hamiltonianΛ at `J = 0`** (Λ-induced subgraph): the Hamiltonian
 reduces to `-h · Σ sign σ`. -/
 theorem hamiltonianΛ_latticeGraph_J_zero
