@@ -2152,6 +2152,28 @@ theorem truncated3TwoPoint_apply (d : ℕ) (p : IsingParams ℝ)
       = truncated3Infinite (IsingModel.latticeGraph d)
           (Ambient.cubicExhaustion d) p 0 r s := rfl
 
+/-- **ℤ^d `truncated3Infinite` swap symmetries**. -/
+theorem truncated3Infinite_latticeGraph_swap_ij
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (i j k : Fin d → ℤ) :
+    truncated3Infinite (IsingModel.latticeGraph d) Λ p i j k
+      = truncated3Infinite (IsingModel.latticeGraph d) Λ p j i k :=
+  truncated3Infinite_swap_ij (IsingModel.latticeGraph d) Λ p i j k
+
+theorem truncated3Infinite_latticeGraph_swap_jk
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (i j k : Fin d → ℤ) :
+    truncated3Infinite (IsingModel.latticeGraph d) Λ p i j k
+      = truncated3Infinite (IsingModel.latticeGraph d) Λ p i k j :=
+  truncated3Infinite_swap_jk (IsingModel.latticeGraph d) Λ p i j k
+
+theorem truncated3Infinite_latticeGraph_swap_ik
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (i j k : Fin d → ℤ) :
+    truncated3Infinite (IsingModel.latticeGraph d) Λ p i j k
+      = truncated3Infinite (IsingModel.latticeGraph d) Λ p k j i :=
+  truncated3Infinite_swap_ik (IsingModel.latticeGraph d) Λ p i j k
+
 /-- **Three-point correlation depends only on two separations**:
 for ferromagnetic `p` and any `i, j, k : Fin d → ℤ`,
 
