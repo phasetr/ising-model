@@ -924,6 +924,29 @@ theorem tendsto_correlationAlongExhaustion_correlationInfinite_latticeGraph_gene
   tendsto_correlationAlongExhaustion_correlationInfinite
     (IsingModel.latticeGraph d) Λ p hf A
 
+/-- **ℤ^d `log Z` is super-additive on disjoint Finset unions**
+(ferromagnetic). Direct wrapper of `log_partitionFunctionΛ_disjUnion_super_additive`. -/
+theorem log_partitionFunctionΛ_latticeGraph_disjUnion_super_additive
+    (d : ℕ) {Λ₁ Λ₂ : Finset (Fin d → ℤ)} (hd : Disjoint Λ₁ Λ₂)
+    [Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ₁).edgeSet]
+    [Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ₂).edgeSet]
+    [Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ₁ ∪ Λ₂)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ₁ p)
+      + Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ₂ p)
+    ≤ Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) (Λ₁ ∪ Λ₂) p) :=
+  log_partitionFunctionΛ_disjUnion_super_additive
+    (IsingModel.latticeGraph d) hd p hf
+
+/-- **ℤ^d `|Λ| · freeEnergyΛ = log Z_Λ`** for nonempty `Λ`. -/
+theorem card_mul_freeEnergyΛ_latticeGraph_eq_log_partitionFunctionΛ_of_nonempty
+    (d : ℕ) {Λ : Finset (Fin d → ℤ)} (hne : Λ.Nonempty)
+    (p : IsingParams ℝ) :
+    (Λ.card : ℝ) * freeEnergyΛ (IsingModel.latticeGraph d) Λ p
+      = Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ p) :=
+  card_mul_freeEnergyΛ_eq_log_partitionFunctionΛ_of_nonempty
+    (IsingModel.latticeGraph d) hne p
+
 /-- **ℤ^d log partitionFunctionAlongExhaustion volume-monotonicity**
 (ferromagnetic, any-Exhaustion). -/
 theorem log_partitionFunctionAlongExhaustion_latticeGraph_monotone_volume
