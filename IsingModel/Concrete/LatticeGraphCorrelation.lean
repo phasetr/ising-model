@@ -3181,6 +3181,16 @@ theorem tendsto_magnetizationAlongExhaustion_magnetizationInfinite_latticeGraph
   tendsto_magnetizationAlongExhaustion_magnetizationInfinite
     (IsingModel.latticeGraph d) Λ p hf i
 
+/-- **ℤ^d existential convergence of `magnetizationAlongExhaustion`**
+(ferromagnetic). -/
+theorem magnetizationAlongExhaustion_latticeGraph_convergent
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i : Fin d → ℤ) :
+    ∃ L : ℝ, Filter.Tendsto
+        (magnetizationAlongExhaustion (IsingModel.latticeGraph d) Λ p i)
+      Filter.atTop (nhds L) :=
+  magnetizationAlongExhaustion_convergent (IsingModel.latticeGraph d) Λ p hf i
+
 /-- **ℤ^d magnetizationΛ h-monotonicity**: `MonotoneOn` in `h` on `Ici 0`. -/
 theorem magnetizationΛ_latticeGraph_monotone_h
     (d : ℕ) (Λ : Finset (Fin d → ℤ))
