@@ -1825,6 +1825,28 @@ theorem magnetizationAlongExhaustion_apply
     magnetizationAlongExhaustion G Λ p i n
       = correlationAlongExhaustion G Λ p {i} n := rfl
 
+/-- **Unfolding of `magnetizationAlongExhaustion` when `i ∈ Λ.volume n`**:
+the stagewise value equals the lifted finite-volume correlation. -/
+theorem magnetizationAlongExhaustion_of_mem
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) {i : V} {n : ℕ} (hi : i ∈ Λ.volume n) :
+    magnetizationAlongExhaustion G Λ p i n
+      = correlationΛ G (Λ.volume n) p
+          (liftFinset {i} (Finset.singleton_subset_iff.mpr hi)) :=
+  correlationAlongExhaustion_of_subset G Λ p
+    (Finset.singleton_subset_iff.mpr hi)
+
+/-- **Unfolding of `magnetizationAlongExhaustion` when `i ∉ Λ.volume n`**:
+`magnetizationAlongExhaustion G Λ p i n = 0`. -/
+theorem magnetizationAlongExhaustion_of_not_mem
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) {i : V} {n : ℕ} (hi : i ∉ Λ.volume n) :
+    magnetizationAlongExhaustion G Λ p i n = 0 :=
+  correlationAlongExhaustion_of_not_subset G Λ p
+    (fun hsub => hi (Finset.singleton_subset_iff.mp hsub))
+
 /-- **`magnetizationAlongExhaustion ≤ 1`** per stage for any parameters.
 Direct from `correlationAlongExhaustion_le_one` at `A = {i}`. -/
 theorem magnetizationAlongExhaustion_le_one
