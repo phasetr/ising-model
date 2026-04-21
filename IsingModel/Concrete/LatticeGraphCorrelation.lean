@@ -2287,6 +2287,26 @@ theorem uniformSpontaneousMagnetization_sq_le_one
   spontaneousMagnetization_sq_le_one (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) hJ hβ 0
 
+/-- **ℤ^d `spontaneousCorrelation` apply** (any-Exhaustion):
+`spontaneousCorrelation = ⨅ h ∈ Ioi 0, correlationInfinite ⟨J, h, β⟩ A`. -/
+theorem spontaneousCorrelation_latticeGraph_apply
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J β : ℝ) (A : Finset (Fin d → ℤ)) :
+    spontaneousCorrelation (IsingModel.latticeGraph d) Λ J β A
+      = ⨅ h : ↥(Set.Ioi (0 : ℝ)),
+          correlationInfinite (IsingModel.latticeGraph d) Λ ⟨J, h.val, β⟩ A :=
+  spontaneousCorrelation_apply (IsingModel.latticeGraph d) Λ J β A
+
+/-- **ℤ^d `spontaneousMagnetization` apply** (any-Exhaustion):
+singleton specialization of `spontaneousCorrelation_apply`. -/
+theorem spontaneousMagnetization_latticeGraph_apply
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J β : ℝ) (i : Fin d → ℤ) :
+    spontaneousMagnetization (IsingModel.latticeGraph d) Λ J β i
+      = ⨅ h : ↥(Set.Ioi (0 : ℝ)),
+          magnetizationInfinite (IsingModel.latticeGraph d) Λ ⟨J, h.val, β⟩ i :=
+  spontaneousCorrelation_apply (IsingModel.latticeGraph d) Λ J β {i}
+
 /-- **ℤ^d `-1 ≤ spontaneousMagnetization`** (ferromagnetic). -/
 theorem neg_one_le_spontaneousMagnetization_latticeGraph
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
