@@ -2648,6 +2648,13 @@ theorem abs_truncated2Infinite_latticeGraph_le_one
     |truncated2Infinite (IsingModel.latticeGraph d) Λ p i j| ≤ 1 :=
   abs_truncated2Infinite_le_one (IsingModel.latticeGraph d) Λ p hf i j
 
+/-- **ℤ^d `truncated2Infinite² ≤ 1`** (ferromagnetic). -/
+theorem truncated2Infinite_latticeGraph_sq_le_one
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i j : Fin d → ℤ) :
+    truncated2Infinite (IsingModel.latticeGraph d) Λ p i j ^ 2 ≤ 1 :=
+  truncated2Infinite_sq_le_one (IsingModel.latticeGraph d) Λ p hf i j
+
 /-- **ℤ^d truncated2Infinite symmetry in (i, j)**. -/
 theorem truncated2Infinite_latticeGraph_symm
     (d : ℕ) (p : IsingParams ℝ) (i j : Fin d → ℤ) :
@@ -3188,6 +3195,15 @@ theorem abs_truncated2TwoPoint_le_one
     |truncated2TwoPoint d p r| ≤ 1 :=
   abs_le.mpr ⟨neg_one_le_truncated2TwoPoint d p hf r,
     truncated2TwoPoint_le_one d p hf r⟩
+
+/-- **`truncated2TwoPoint² ≤ 1`** (ferromagnetic). -/
+theorem truncated2TwoPoint_sq_le_one
+    (d : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p) (r : Fin d → ℤ) :
+    truncated2TwoPoint d p r ^ 2 ≤ 1 := by
+  have h := abs_truncated2TwoPoint_le_one d p hf r
+  have : |truncated2TwoPoint d p r| ^ 2 ≤ 1 ^ 2 :=
+    pow_le_pow_left₀ (abs_nonneg _) h 2
+  simpa [sq_abs] using this
 
 /-- **`truncated2TwoPoint ≤ twoPointFunction`** on ℤ^d (ferromagnetic):
 `truncated2TwoPoint d p r ≤ twoPointFunction d p r`.
