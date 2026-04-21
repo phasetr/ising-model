@@ -2263,6 +2263,15 @@ noncomputable def magnetizationInfinite
     (p : IsingParams ℝ) (i : V) : ℝ :=
   correlationInfinite G Λ p {i}
 
+/-- **Unfolding of `magnetizationInfinite`**:
+`magnetizationInfinite G Λ p i = correlationInfinite G Λ p {i}`,
+by definition. -/
+theorem magnetizationInfinite_apply
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (i : V) :
+    magnetizationInfinite G Λ p i = correlationInfinite G Λ p {i} := rfl
+
 /-- **Nonnegativity of `magnetizationInfinite`** (ferromagnetic):
 `0 ≤ magnetizationInfinite G Λ p i`.  Specialization of
 `correlationInfinite_nonneg` at `A = {i}`. -/
@@ -4309,6 +4318,16 @@ noncomputable def freeEnergyInfinite
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
     (p : IsingParams ℝ) : ℝ :=
   Filter.limsup (freeEnergyAlongExhaustion G Λ p) Filter.atTop
+
+/-- **Unfolding of `freeEnergyInfinite`**:
+`freeEnergyInfinite G Λ p = limsup (freeEnergyAlongExhaustion G Λ p)`
+at `atTop`, by definition. -/
+theorem freeEnergyInfinite_apply
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) :
+    freeEnergyInfinite G Λ p
+      = Filter.limsup (freeEnergyAlongExhaustion G Λ p) Filter.atTop := rfl
 
 /-- **Zero-params lower-bound comparison for `freeEnergyAlongExhaustion`**.
 
