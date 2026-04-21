@@ -1757,6 +1757,19 @@ theorem uniformSpontaneousMagnetization_apply (d : ℕ) (J β : ℝ) :
       = spontaneousMagnetization (IsingModel.latticeGraph d)
           (Ambient.cubicExhaustion d) J β 0 := rfl
 
+/-- **`uniformSpontaneousMagnetization` equals `spontaneousMagnetization`
+under any Exhaustion** (ferromagnetic): bridges fixed-`cubicExhaustion`
+definition to arbitrary Exhaustions via
+`spontaneousMagnetization_indep_exhaustion`. -/
+theorem uniformSpontaneousMagnetization_eq_spontaneousMagnetization_any_exhaustion
+    (d : ℕ) (Λ' : Ambient.Exhaustion (Fin d → ℤ))
+    {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) :
+    uniformSpontaneousMagnetization d J β
+      = spontaneousMagnetization (IsingModel.latticeGraph d) Λ' J β 0 := by
+  rw [uniformSpontaneousMagnetization_apply]
+  exact spontaneousMagnetization_indep_exhaustion (IsingModel.latticeGraph d)
+    _ Λ' hJ hβ 0
+
 /-- **J-monotonicity of `uniformSpontaneousMagnetization` on ℤ^d**. -/
 theorem uniformSpontaneousMagnetization_monotone_J
     (d : ℕ) {β : ℝ} (hβ : 0 < β) :
