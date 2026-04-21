@@ -1536,6 +1536,16 @@ theorem correlationInfinite_eq_ciSup
     correlationInfinite G Λ p A
       = ⨆ n, correlationAlongExhaustion G Λ p A n := rfl
 
+/-- **Pointwise bound**: `correlationAlongExhaustion G Λ p A n ≤
+correlationInfinite G Λ p A` at every `n`. Direct from `le_ciSup` +
+`correlationAlongExhaustion_bddAbove`. -/
+theorem correlationAlongExhaustion_le_correlationInfinite
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (A : Finset V) (n : ℕ) :
+    correlationAlongExhaustion G Λ p A n ≤ correlationInfinite G Λ p A :=
+  le_ciSup (correlationAlongExhaustion_bddAbove G Λ p A) n
+
 /-- **Tendsto to infinite-volume correlation** (primary form):
 `correlationAlongExhaustion` converges to `correlationInfinite`.
 Restatement of `correlationAlongExhaustion_tendsto_ciSup` in terms
@@ -2404,6 +2414,15 @@ theorem magnetizationInfinite_eq_ciSup
     (p : IsingParams ℝ) (i : V) :
     magnetizationInfinite G Λ p i
       = ⨆ n, magnetizationAlongExhaustion G Λ p i n := rfl
+
+/-- **Pointwise bound**: `magnetizationAlongExhaustion G Λ p i n ≤
+magnetizationInfinite G Λ p i` at every `n`. Specialization at `A = {i}`. -/
+theorem magnetizationAlongExhaustion_le_magnetizationInfinite
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (i : V) (n : ℕ) :
+    magnetizationAlongExhaustion G Λ p i n ≤ magnetizationInfinite G Λ p i :=
+  correlationAlongExhaustion_le_correlationInfinite G Λ p {i} n
 
 /-- **Exhaustion-independence of `magnetizationInfinite`**:
 the value does not depend on the choice of exhaustion.  Specialization
