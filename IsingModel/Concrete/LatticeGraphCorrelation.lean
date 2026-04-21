@@ -513,6 +513,26 @@ theorem correlationΛ_latticeGraph_J_zero
       = Real.tanh (β * h) ^ A.card :=
   correlationΛ_J_zero (IsingModel.latticeGraph d) Λ h β A
 
+/-- **ℤ^d `correlationΛ ≥ tanh(β·h)^|A|`** (ferromagnetic). -/
+theorem correlationΛ_latticeGraph_ge_tanh_pow_card
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    {J h β : ℝ} (hJ : 0 ≤ J) (hh : 0 ≤ h) (hβ : 0 < β)
+    (A : Finset (↑Λ : Type _)) :
+    Real.tanh (β * h) ^ A.card
+      ≤ correlationΛ (IsingModel.latticeGraph d) Λ
+          (⟨J, h, β⟩ : IsingParams ℝ) A :=
+  correlationΛ_ge_tanh_pow_card (IsingModel.latticeGraph d) Λ hJ hh hβ A
+
+/-- **ℤ^d `correlationInfinite ≥ tanh(β·h)^|A|`** (ferromagnetic). -/
+theorem correlationInfinite_latticeGraph_ge_tanh_pow_card
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    {J h β : ℝ} (hJ : 0 ≤ J) (hh : 0 ≤ h) (hβ : 0 < β)
+    (A : Finset (Fin d → ℤ)) :
+    Real.tanh (β * h) ^ A.card
+      ≤ correlationInfinite (IsingModel.latticeGraph d) Λ
+          (⟨J, h, β⟩ : IsingParams ℝ) A :=
+  correlationInfinite_ge_tanh_pow_card (IsingModel.latticeGraph d) Λ hJ hh hβ A
+
 /-- **ℤ^d `correlationAlongExhaustion` at `J = 0`** per stage (on-stage):
 `A ⊆ Λ.volume n ⇒ = tanh(β·h)^|A|`. -/
 theorem correlationAlongExhaustion_latticeGraph_J_zero_of_subset
