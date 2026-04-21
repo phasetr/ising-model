@@ -924,6 +924,29 @@ theorem tendsto_correlationAlongExhaustion_correlationInfinite_latticeGraph_gene
   tendsto_correlationAlongExhaustion_correlationInfinite
     (IsingModel.latticeGraph d) Λ p hf A
 
+/-- **ℤ^d log partitionFunctionAlongExhaustion volume-monotonicity**
+(ferromagnetic, any-Exhaustion). -/
+theorem log_partitionFunctionAlongExhaustion_latticeGraph_monotone_volume
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (n : ℕ) :
+    Real.log (partitionFunctionAlongExhaustion (IsingModel.latticeGraph d)
+        Λ p n)
+      ≤ Real.log (partitionFunctionAlongExhaustion (IsingModel.latticeGraph d)
+          Λ p (n + 1)) :=
+  log_partitionFunctionAlongExhaustion_monotone_volume
+    (IsingModel.latticeGraph d) Λ p hf n
+
+/-- **ℤ^d partitionFunctionAlongExhaustion volume-monotonicity**
+(ferromagnetic, any-Exhaustion). -/
+theorem partitionFunctionAlongExhaustion_latticeGraph_monotone_volume
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (n : ℕ) :
+    partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ p n
+      ≤ partitionFunctionAlongExhaustion (IsingModel.latticeGraph d)
+          Λ p (n + 1) :=
+  partitionFunctionAlongExhaustion_monotone_volume
+    (IsingModel.latticeGraph d) Λ p hf n
+
 /-- **ℤ^d log partitionFunctionAlongExhaustion volume-monotonicity** (ferromagnetic). -/
 theorem log_partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_monotone_volume
     (d : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p) (n : ℕ) :
