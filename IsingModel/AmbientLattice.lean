@@ -2861,6 +2861,16 @@ noncomputable def spontaneousCorrelation
     (J β : ℝ) (A : Finset V) : ℝ :=
   ⨅ h : ↥(Set.Ioi (0 : ℝ)), correlationInfinite G Λ ⟨J, h.val, β⟩ A
 
+/-- **Unfolding of `spontaneousCorrelation`** as a named identity:
+`spontaneousCorrelation G Λ J β A = ⨅ h ∈ Ioi 0, correlationInfinite G Λ ⟨J, h, β⟩ A`. -/
+theorem spontaneousCorrelation_apply
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (A : Finset V) :
+    spontaneousCorrelation G Λ J β A
+      = ⨅ h : ↥(Set.Ioi (0 : ℝ)), correlationInfinite G Λ ⟨J, h.val, β⟩ A :=
+  rfl
+
 /-- **Bounded-below witness** for `spontaneousCorrelation`: the family
 `h ↦ correlationInfinite G Λ ⟨J, h, β⟩ A` over `Set.Ioi 0` is bounded
 below by `0` (ferromagnetic). -/
@@ -3000,6 +3010,15 @@ noncomputable def spontaneousMagnetization
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
     (J β : ℝ) (i : V) : ℝ :=
   spontaneousCorrelation G Λ J β {i}
+
+/-- **Unfolding of `spontaneousMagnetization`**:
+`spontaneousMagnetization G Λ J β i = spontaneousCorrelation G Λ J β {i}`. -/
+theorem spontaneousMagnetization_apply
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (i : V) :
+    spontaneousMagnetization G Λ J β i = spontaneousCorrelation G Λ J β {i} :=
+  rfl
 
 /-- **Agreement at singletons**: `spontaneousCorrelation` on `{i}`
 equals `spontaneousMagnetization`. Holds by definition. -/
