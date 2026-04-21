@@ -1963,6 +1963,12 @@ noncomputable def twoPointFunction (d : ℕ) (p : IsingParams ℝ)
   correlationInfinite (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) p {(0 : Fin d → ℤ), r}
 
+/-- **Unfolding of `twoPointFunction`**: `= correlationInfinite ... {0, r}`. -/
+theorem twoPointFunction_apply (d : ℕ) (p : IsingParams ℝ) (r : Fin d → ℤ) :
+    twoPointFunction d p r
+      = correlationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) p {(0 : Fin d → ℤ), r} := rfl
+
 /-- **Pair correlation equals `twoPointFunction` at the separation**:
 for ferromagnetic `p` and any `i, j : Fin d → ℤ`,
 
@@ -2033,6 +2039,12 @@ noncomputable def truncated2TwoPoint (d : ℕ) (p : IsingParams ℝ)
     (r : Fin d → ℤ) : ℝ :=
   truncated2Infinite (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) p 0 r
+
+/-- **Unfolding of `truncated2TwoPoint`**: `= truncated2Infinite ... 0 r`. -/
+theorem truncated2TwoPoint_apply (d : ℕ) (p : IsingParams ℝ) (r : Fin d → ℤ) :
+    truncated2TwoPoint d p r
+      = truncated2Infinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) p 0 r := rfl
 
 /-- **Truncated 2-point correlation depends only on the separation**:
 for ferromagnetic `p` and any `i, j : Fin d → ℤ`,
@@ -2133,6 +2145,13 @@ noncomputable def truncated3TwoPoint (d : ℕ) (p : IsingParams ℝ)
   truncated3Infinite (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) p 0 r s
 
+/-- **Unfolding of `truncated3TwoPoint`**: `= truncated3Infinite ... 0 r s`. -/
+theorem truncated3TwoPoint_apply (d : ℕ) (p : IsingParams ℝ)
+    (r s : Fin d → ℤ) :
+    truncated3TwoPoint d p r s
+      = truncated3Infinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) p 0 r s := rfl
+
 /-- **Three-point correlation depends only on two separations**:
 for ferromagnetic `p` and any `i, j, k : Fin d → ℤ`,
 
@@ -2169,6 +2188,13 @@ noncomputable def truncated4TwoPoint (d : ℕ) (p : IsingParams ℝ)
     (r s u : Fin d → ℤ) : ℝ :=
   truncated4Infinite (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) p 0 r s u
+
+/-- **Unfolding of `truncated4TwoPoint`**: `= truncated4Infinite ... 0 r s u`. -/
+theorem truncated4TwoPoint_apply (d : ℕ) (p : IsingParams ℝ)
+    (r s u : Fin d → ℤ) :
+    truncated4TwoPoint d p r s u
+      = truncated4Infinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) p 0 r s u := rfl
 
 /-- **Four-point correlation depends only on three separations**:
 for ferromagnetic `p` and any `i, j, k, l : Fin d → ℤ`,
