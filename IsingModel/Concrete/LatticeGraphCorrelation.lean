@@ -1064,6 +1064,19 @@ theorem freeEnergy_bot_h_zero_latticeGraph
         (⟨J, 0, β⟩ : IsingParams ℝ) = Real.log 2 :=
   IsingModel.freeEnergy_bot_h_zero J β hne
 
+/-- **ℤ^d card_mul_freeEnergy_eq_log_partitionFunction direct** (Λ-induced):
+`|ι|·f = log Z` for nonempty Λ. -/
+theorem card_mul_freeEnergy_eq_log_partitionFunction_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ)
+    (hne : 0 < Fintype.card (↑Λ : Type _)) :
+    (Fintype.card (↑Λ : Type _) : ℝ)
+      * IsingModel.freeEnergy
+          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p
+      = Real.log (IsingModel.partitionFunction
+          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p) :=
+  IsingModel.card_mul_freeEnergy_eq_log_partitionFunction
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p hne
+
 /-- **ℤ^d freeEnergy_ge_log_two_of_ferromagnetic at Λ-induced**:
 `log 2 ≤ freeEnergy Λ p` for ferromagnetic `p` and nonempty Λ. -/
 theorem freeEnergy_ge_log_two_of_ferromagnetic_latticeGraph
