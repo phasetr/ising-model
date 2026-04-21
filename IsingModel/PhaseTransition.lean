@@ -402,6 +402,20 @@ theorem eta_nonneg_finite_vol (G : SimpleGraph ι) [Fintype G.edgeSet]
     0 ≤ truncated2 G p i j :=
   truncated2_nonneg G p hf i j
 
+/-- **ζ ≥ 0** (Glimm–Jaffe, Thm 17.7.1, finite-volume lattice version,
+at `h = 0`). The critical exponent `ζ` measures the anomalous dimension
+of the four-point truncated correlator; `ζ ≥ 0` follows from
+`U₄(i, j, k, l) ≤ 0` (Cor 4.3.3) for pairwise-distinct sites at `h = 0`.
+
+Explicit named alias of `cor_4_3_3` matching the `eta_nonneg_finite_vol`
+pattern. -/
+theorem zeta_nonneg_finite_vol (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hf : Ferromagnetic ⟨J, (0 : ℝ), β⟩) (i j k l : ι)
+    (hij : i ≠ j) (hik : i ≠ k) (hil : i ≠ l)
+    (hjk : j ≠ k) (hjl : j ≠ l) (hkl : k ≠ l) :
+    truncated4 G ⟨J, 0, β⟩ i j k l ≤ 0 :=
+  cor_4_3_3 G J β hf i j k l hij hik hil hjk hjl hkl
+
 /-! ## Lattice-growth convergence of §5 quantities
 
 Named corollaries of `correlation_convergent_subgraph` (PR #64) for the
