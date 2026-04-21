@@ -1055,6 +1055,25 @@ theorem freeEnergy_ge_log_two_cosh_latticeGraph
   IsingModel.freeEnergy_ge_log_two_cosh
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) hJ hh hβ hne
 
+/-- **ℤ^d freeEnergy_bot_h_zero at Λ-induced**:
+`freeEnergy (⊥ : SimpleGraph ↑Λ) ⟨J, 0, β⟩ = log 2`. -/
+theorem freeEnergy_bot_h_zero_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
+    (hne : 0 < Fintype.card (↑Λ : Type _)) :
+    IsingModel.freeEnergy (⊥ : SimpleGraph (↑Λ : Type _))
+        (⟨J, 0, β⟩ : IsingParams ℝ) = Real.log 2 :=
+  IsingModel.freeEnergy_bot_h_zero J β hne
+
+/-- **ℤ^d freeEnergy_nonneg_of_ferromagnetic at Λ-induced**:
+`0 ≤ freeEnergy G Λ p` for ferromagnetic `p` and nonempty Λ. -/
+theorem freeEnergy_nonneg_of_ferromagnetic_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    (hne : 0 < Fintype.card (↑Λ : Type _)) :
+    0 ≤ IsingModel.freeEnergy
+          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p :=
+  IsingModel.freeEnergy_nonneg_of_ferromagnetic
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p hf hne
+
 /-- **ℤ^d freeEnergy_bot at Λ-induced type**: `freeEnergy ⊥ = log(2 cosh(βh))`. -/
 theorem freeEnergy_bot_latticeGraph
     (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ)
