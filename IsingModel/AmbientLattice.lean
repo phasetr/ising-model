@@ -2245,6 +2245,18 @@ theorem magnetizationAlongExhaustion_tendsto_ciSup
       Filter.atTop (nhds (⨆ n, magnetizationAlongExhaustion G Λ p i n)) :=
   correlationAlongExhaustion_tendsto_ciSup G Λ p hf {i}
 
+/-- **`magnetizationInfinite` as `ciSup`**:
+`magnetizationInfinite G Λ p i = ⨆ n, magnetizationAlongExhaustion G Λ p i n`.
+Definitional identity threading `magnetizationInfinite := correlationInfinite … {i}`
+and `correlationInfinite := ⨆ n, correlationAlongExhaustion …` through
+`magnetizationAlongExhaustion := correlationAlongExhaustion … {i}`. -/
+theorem magnetizationInfinite_eq_ciSup
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (i : V) :
+    magnetizationInfinite G Λ p i
+      = ⨆ n, magnetizationAlongExhaustion G Λ p i n := rfl
+
 /-- **Exhaustion-independence of `magnetizationInfinite`**:
 the value does not depend on the choice of exhaustion.  Specialization
 of `correlationInfinite_indep_exhaustion`. -/
