@@ -2960,6 +2960,24 @@ theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_eq_abs_h
   freeEnergyInfinite_eq_abs_h (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) J h β
 
+/-- **h-evenness of `freeEnergyInfinite` on ℤ^d** (any Exhaustion). -/
+theorem freeEnergyInfinite_latticeGraph_neg_h
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J h β : ℝ) :
+    freeEnergyInfinite (IsingModel.latticeGraph d) Λ
+        (⟨J, -h, β⟩ : IsingParams ℝ)
+      = freeEnergyInfinite (IsingModel.latticeGraph d) Λ
+          (⟨J, h, β⟩ : IsingParams ℝ) :=
+  freeEnergyInfinite_neg_h (IsingModel.latticeGraph d) Λ J h β
+
+/-- **`|h|`-form of `freeEnergyInfinite` on ℤ^d** (any Exhaustion). -/
+theorem freeEnergyInfinite_latticeGraph_eq_abs_h
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J h β : ℝ) :
+    freeEnergyInfinite (IsingModel.latticeGraph d) Λ
+        (⟨J, h, β⟩ : IsingParams ℝ)
+      = freeEnergyInfinite (IsingModel.latticeGraph d) Λ
+          (⟨J, |h|, β⟩ : IsingParams ℝ) :=
+  freeEnergyInfinite_eq_abs_h (IsingModel.latticeGraph d) Λ J h β
+
 /-- **J-monotonicity of `freeEnergyInfinite` on ℤ^d** under the concrete
 BED constant `c = d` (PR #246). -/
 theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_monotone_J
