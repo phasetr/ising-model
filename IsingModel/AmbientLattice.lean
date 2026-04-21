@@ -1443,6 +1443,16 @@ noncomputable def correlationInfinite
     (p : IsingParams ℝ) (A : Finset V) : ℝ :=
   ⨆ n, correlationAlongExhaustion G Λ p A n
 
+/-- **`correlationInfinite` as `ciSup`**:
+`correlationInfinite G Λ p A = ⨆ n, correlationAlongExhaustion G Λ p A n`
+(named restatement of the definition for use in rewrites). -/
+theorem correlationInfinite_eq_ciSup
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (A : Finset V) :
+    correlationInfinite G Λ p A
+      = ⨆ n, correlationAlongExhaustion G Λ p A n := rfl
+
 /-- **Tendsto to infinite-volume correlation** (primary form):
 `correlationAlongExhaustion` converges to `correlationInfinite`.
 Restatement of `correlationAlongExhaustion_tendsto_ciSup` in terms
