@@ -1239,6 +1239,30 @@ theorem ghs_inequality_latticeGraph
   IsingModel.ghs_inequality
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p hf i j k hij hjk hik
 
+/-- **ℤ^d truncated4 β=0 vanish** at Λ-induced. -/
+theorem truncated4_beta_zero_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J h : ℝ) (i j k l : ↑Λ) :
+    IsingModel.truncated4
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
+        (⟨J, h, 0⟩ : IsingParams ℝ) i j k l = 0 :=
+  IsingModel.truncated4_beta_zero
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h i j k l
+
+/-- **ℤ^d truncated4 J=0 closed form** at Λ-induced (pairwise distinct):
+`truncated4 = -2 · tanh(β·h)^4`. -/
+theorem truncated4_J_zero_of_pairwise_distinct_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (h β : ℝ)
+    {i j k l : ↑Λ}
+    (hij : i ≠ j) (hik : i ≠ k) (hil : i ≠ l)
+    (hjk : j ≠ k) (hjl : j ≠ l) (hkl : k ≠ l) :
+    IsingModel.truncated4
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
+        (⟨0, h, β⟩ : IsingParams ℝ) i j k l
+      = -2 * Real.tanh (β * h) ^ 4 :=
+  IsingModel.truncated4_J_zero_of_pairwise_distinct
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) h β
+    hij hik hil hjk hjl hkl
+
 /-- **ℤ^d Cor 4.3.3 at Λ-induced subgraph** (Glimm–Jaffe §4.3):
 `U_4(i, j, k, l) ≤ 0` at `h = 0` for ferromagnetic and distinct sites. -/
 theorem cor_4_3_3_latticeGraph
