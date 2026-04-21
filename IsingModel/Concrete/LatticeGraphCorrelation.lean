@@ -1302,6 +1302,19 @@ theorem partitionFunctionAlongExhaustion_latticeGraph_monotone_beta
   partitionFunctionAlongExhaustion_monotone_beta (IsingModel.latticeGraph d) Λ
     J h hJ hh hβ₁ hβ n
 
+/-- **ℤ^d correlationInfinite translation invariance** (any-Exhaustion):
+`correlationInfinite p (vaddFinset t A) = correlationInfinite p A`. -/
+theorem correlationInfinite_latticeGraph_vaddFinset_of_translationInvariant
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (t : Fin d → ℤ)
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+      (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (A : Finset (Fin d → ℤ)) :
+    correlationInfinite (IsingModel.latticeGraph d) Λ p (vaddFinset t A)
+      = correlationInfinite (IsingModel.latticeGraph d) Λ p A := by
+  classical
+  exact correlationInfinite_vaddFinset_of_translationInvariant
+    (IsingModel.latticeGraph d) Λ t p hf A
+
 /-- **ℤ^d spontaneousCorrelation translation invariance** (any-Exhaustion):
 for ferromagnetic `(J ≥ 0, β > 0)`,
 `spontaneousCorrelation J β (vaddFinset t A) = spontaneousCorrelation J β A`. -/
