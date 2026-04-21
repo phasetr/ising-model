@@ -399,6 +399,40 @@ theorem freeEnergyΛ_latticeGraph_apply
           (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p :=
   freeEnergyΛ_apply (IsingModel.latticeGraph d) Λ p
 
+/-- **ℤ^d `magnetizationΛ_monotone_ambient_subgraph`**:
+`G₁ ≤ G₂ ⇒ M_{Λ,G₁}(i) ≤ M_{Λ,G₂}(i)` (ferromagnetic). -/
+theorem magnetizationΛ_latticeGraph_monotone_ambient_subgraph
+    (d : ℕ) {G₁ G₂ : SimpleGraph (Fin d → ℤ)} (h : G₁ ≤ G₂)
+    (Λ : Finset (Fin d → ℤ))
+    [Fintype (Ambient.inducedGraph G₁ Λ).edgeSet]
+    [Fintype (Ambient.inducedGraph G₂ Λ).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i : ↑Λ) :
+    magnetizationΛ G₁ Λ p i ≤ magnetizationΛ G₂ Λ p i :=
+  magnetizationΛ_monotone_ambient_subgraph h Λ p hf i
+
+/-- **ℤ^d `magnetizationAlongExhaustion_monotone_ambient_subgraph`**
+per stage (ferromagnetic). -/
+theorem magnetizationAlongExhaustion_latticeGraph_monotone_ambient_subgraph
+    (d : ℕ) {G₁ G₂ : SimpleGraph (Fin d → ℤ)} (h : G₁ ≤ G₂)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph G₁ (Λ.volume n)).edgeSet]
+    [∀ n, Fintype (Ambient.inducedGraph G₂ (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i : Fin d → ℤ) (n : ℕ) :
+    magnetizationAlongExhaustion G₁ Λ p i n
+      ≤ magnetizationAlongExhaustion G₂ Λ p i n :=
+  magnetizationAlongExhaustion_monotone_ambient_subgraph h Λ p hf i n
+
+/-- **ℤ^d `magnetizationInfinite_monotone_ambient_subgraph`**
+(ferromagnetic). -/
+theorem magnetizationInfinite_latticeGraph_monotone_ambient_subgraph
+    (d : ℕ) {G₁ G₂ : SimpleGraph (Fin d → ℤ)} (h : G₁ ≤ G₂)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph G₁ (Λ.volume n)).edgeSet]
+    [∀ n, Fintype (Ambient.inducedGraph G₂ (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i : Fin d → ℤ) :
+    magnetizationInfinite G₁ Λ p i ≤ magnetizationInfinite G₂ Λ p i :=
+  magnetizationInfinite_monotone_ambient_subgraph h Λ p hf i
+
 /-- **ℤ^d `correlationΛ` at `J = 0` closed form**:
 `correlationΛ ⟨0, h, β⟩ A = tanh(β·h)^|A|`. -/
 theorem correlationΛ_latticeGraph_J_zero
