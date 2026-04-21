@@ -533,6 +533,7 @@ theorem correlationInfinite_latticeGraph_ge_tanh_pow_card
           (⟨J, h, β⟩ : IsingParams ℝ) A :=
   correlationInfinite_ge_tanh_pow_card (IsingModel.latticeGraph d) Λ hJ hh hβ A
 
+
 /-- **ℤ^d `magnetizationΛ ≥ tanh(β·h)`** (ferromagnetic). -/
 theorem magnetizationΛ_latticeGraph_ge_tanh
     (d : ℕ) (Λ : Finset (Fin d → ℤ))
@@ -3280,6 +3281,20 @@ theorem neg_one_le_twoPointFunction
     -1 ≤ twoPointFunction d p r :=
   neg_one_le_correlationInfinite (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) p {(0 : Fin d → ℤ), r}
+
+/-- **ℤ^d `twoPointFunction ≥ tanh(β·h)²` for `r ≠ 0`** (ferromagnetic):
+specialization of `correlationInfinite_ge_tanh_pow_card` at `A = {0, r}`
+where `A.card = 2` (since `r ≠ 0`). -/
+theorem twoPointFunction_ge_tanh_sq_of_ne
+    (d : ℕ) {J h β : ℝ} (hJ : 0 ≤ J) (hh : 0 ≤ h) (hβ : 0 < β)
+    {r : Fin d → ℤ} (hr : r ≠ 0) :
+    Real.tanh (β * h) ^ 2 ≤ twoPointFunction d (⟨J, h, β⟩ : IsingParams ℝ) r := by
+  have hcard : ({(0 : Fin d → ℤ), r} : Finset (Fin d → ℤ)).card = 2 := by
+    rw [Finset.card_pair (Ne.symm hr)]
+  have := correlationInfinite_ge_tanh_pow_card (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) hJ hh hβ ({(0 : Fin d → ℤ), r} : Finset _)
+  rw [hcard] at this
+  exact this
 
 /-- **`|twoPointFunction| ≤ 1`** unconditionally. Direct specialization
 of `abs_correlationInfinite_le_one` at `A = {0, r}`. -/
