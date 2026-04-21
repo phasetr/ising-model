@@ -223,6 +223,16 @@ theorem freeEnergyΛ_nonneg_of_ferromagnetic
   IsingModel.freeEnergy_nonneg_of_ferromagnetic
     (inducedGraph G Λ) p hf hne.fintype_card_coe_pos
 
+/-- **Per-stage `freeEnergyAlongExhaustion ≥ 0`** (ferromagnetic, nonempty stage):
+direct from `freeEnergyΛ_nonneg_of_ferromagnetic` at `Λ.volume n`. -/
+theorem freeEnergyAlongExhaustion_nonneg_of_ferromagnetic
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) {n : ℕ}
+    (hne : (Λ.volume n).Nonempty) :
+    0 ≤ freeEnergyAlongExhaustion G Λ p n :=
+  freeEnergyΛ_nonneg_of_ferromagnetic G hne p hf
+
 /-- **Λ-level free-energy closed form at `J = 0`**:
 for nonempty `Λ` and any ambient graph `G`,
 `freeEnergyΛ G Λ ⟨0, h, β⟩ = log(2·cosh(β·h))`. Thin wrapper of
