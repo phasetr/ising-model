@@ -897,6 +897,32 @@ theorem card_config_eq_two_pow_latticeGraph
       = 2 ^ Fintype.card (↑Λ : Type _) :=
   IsingModel.card_config_eq_two_pow
 
+/-- **ℤ^d hamiltonian_flip_eq at Λ-induced**: at `h = 0` the Hamiltonian
+is invariant under spin flip. -/
+theorem hamiltonianΛ_flip_eq_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ) (hp : p.h = 0)
+    (σ : IsingModel.Config (↑Λ : Type _)) :
+    IsingModel.hamiltonian
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p σ.flip
+      = IsingModel.hamiltonian
+          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p σ :=
+  IsingModel.hamiltonian_flip_eq
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p hp σ
+
+/-- **ℤ^d hamiltonian_neg_h at Λ-induced**:
+`H_Λ(σ; -h) = H_Λ(σ.flip; h)`. -/
+theorem hamiltonianΛ_neg_h_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J h β : ℝ)
+    (σ : IsingModel.Config (↑Λ : Type _)) :
+    IsingModel.hamiltonian
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
+        (⟨J, -h, β⟩ : IsingParams ℝ) σ
+      = IsingModel.hamiltonian
+          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
+          (⟨J, h, β⟩ : IsingParams ℝ) σ.flip :=
+  IsingModel.hamiltonian_neg_h
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h β σ
+
 /-- **ℤ^d hamiltonian_bot at Λ**: `H_⊥(σ) = -h · Σ sign σ`. -/
 theorem hamiltonian_bot_latticeGraph
     (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ)
