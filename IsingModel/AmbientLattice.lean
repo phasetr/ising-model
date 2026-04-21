@@ -2201,6 +2201,17 @@ theorem tendsto_magnetizationAlongExhaustion_magnetizationInfinite
       Filter.atTop (nhds (magnetizationInfinite G Λ p i)) :=
   tendsto_correlationAlongExhaustion_correlationInfinite G Λ p hf {i}
 
+/-- **Existential convergence of `magnetizationAlongExhaustion`** for
+ferromagnetic `p`: `∃ L, Tendsto (magnetizationAlongExhaustion G Λ p i) atTop (nhds L)`.
+Specialization of `correlationAlongExhaustion_convergent` at `A = {i}`. -/
+theorem magnetizationAlongExhaustion_convergent
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i : V) :
+    ∃ L : ℝ, Filter.Tendsto (magnetizationAlongExhaustion G Λ p i)
+      Filter.atTop (nhds L) :=
+  correlationAlongExhaustion_convergent G Λ p hf {i}
+
 /-- **Exhaustion-independence of `magnetizationInfinite`**:
 the value does not depend on the choice of exhaustion.  Specialization
 of `correlationInfinite_indep_exhaustion`. -/
