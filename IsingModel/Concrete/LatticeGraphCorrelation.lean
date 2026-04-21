@@ -2,6 +2,7 @@ import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.Concrete.IntLattice
 import IsingModel.TranslationInvariance
 import IsingModel.PhaseTransition
+import IsingModel.Inequalities.FKG
 
 /-!
 # Concrete translation invariance for the ℤ^d Ising correlation
@@ -2318,6 +2319,43 @@ theorem gks_second_latticeGraph
           (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p (symmDiff A B) :=
   IsingModel.gks_second
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p hf A B
+
+/-- **ℤ^d boltzmannWeight log-supermodularity** (Λ-induced,
+ferromagnetic): `w(σ) · w(σ') ≤ w(σ ⊔ σ') · w(σ ⊓ σ')`. Thin
+pass-through of `IsingModel.boltzmannWeight_log_supermodular`; the
+technical input to `fkg_ising`. -/
+theorem boltzmannWeight_log_supermodular_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    (σ σ' : IsingModel.Config (↑Λ : Type _)) :
+    IsingModel.boltzmannWeight
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p σ
+      * IsingModel.boltzmannWeight
+          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p σ'
+      ≤ IsingModel.boltzmannWeight
+          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p (σ ⊔ σ')
+        * IsingModel.boltzmannWeight
+            (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p (σ ⊓ σ') :=
+  IsingModel.boltzmannWeight_log_supermodular
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p hf σ σ'
+
+/-- **ℤ^d FKG inequality** (Λ-induced, ferromagnetic, GJ §4.4): for
+nonneg monotone `f, g : Config (↑Λ) → ℝ`,
+`⟨f⟩ · ⟨g⟩ ≤ ⟨f · g⟩`. Thin pass-through of
+`IsingModel.fkg_ising`. -/
+theorem fkg_ising_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    (f g : IsingModel.Config (↑Λ : Type _) → ℝ)
+    (hf_nn : 0 ≤ f) (hg_nn : 0 ≤ g)
+    (hf_mono : Monotone f) (hg_mono : Monotone g) :
+    IsingModel.gibbsExpectation
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p f
+      * IsingModel.gibbsExpectation
+          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p g
+      ≤ IsingModel.gibbsExpectation
+          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p (f * g) :=
+  IsingModel.fkg_ising
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p hf
+    f g hf_nn hg_nn hf_mono hg_mono
 
 /-- **ℤ^d Cor 4.3.5 at `h = 0`, Λ-induced subgraph** (GJ §4.3 Cor 4.3.5):
 inductive `(n+2)`-point bound at finite volume. -/
