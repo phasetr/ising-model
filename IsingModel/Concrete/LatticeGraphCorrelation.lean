@@ -752,6 +752,17 @@ theorem tendsto_correlationΛ_correlationInfinite_latticeGraph
   tendsto_correlationΛ_correlationInfinite (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) p hf A
 
+/-- **ℤ^d correlationAlongExhaustion → ciSup** (any Exhaustion). -/
+theorem correlationAlongExhaustion_latticeGraph_tendsto_ciSup_general
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (A : Finset (Fin d → ℤ)) :
+    Filter.Tendsto
+      (correlationAlongExhaustion (IsingModel.latticeGraph d) Λ p A)
+      Filter.atTop
+      (nhds (⨆ n, correlationAlongExhaustion (IsingModel.latticeGraph d)
+        Λ p A n)) :=
+  correlationAlongExhaustion_tendsto_ciSup (IsingModel.latticeGraph d) Λ p hf A
+
 /-- **ℤ^d correlationAlongExhaustion → ciSup**. -/
 theorem correlationAlongExhaustion_latticeGraph_tendsto_ciSup
     (d : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p) (A : Finset (Fin d → ℤ)) :
