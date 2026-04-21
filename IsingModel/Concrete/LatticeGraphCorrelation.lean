@@ -1182,6 +1182,53 @@ theorem cor_4_3_5_h0_latticeGraph
   IsingModel.cor_4_3_5_h0
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J β hf S j k hj hk hjk
 
+/-- **ℤ^d truncated2 J=0 vanish for i ≠ j** at Λ-induced. -/
+theorem truncated2_J_zero_of_ne_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (h β : ℝ)
+    {i j : ↑Λ} (hij : i ≠ j) :
+    IsingModel.truncated2
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
+        (⟨0, h, β⟩ : IsingParams ℝ) i j = 0 :=
+  IsingModel.truncated2_J_zero_of_ne
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) h β hij
+
+/-- **ℤ^d truncated2 β=0 vanish** at Λ-induced. -/
+theorem truncated2_beta_zero_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J h : ℝ) (i j : ↑Λ) :
+    IsingModel.truncated2
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
+        (⟨J, h, 0⟩ : IsingParams ℝ) i j = 0 :=
+  IsingModel.truncated2_beta_zero
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h i j
+
+/-- **ℤ^d truncated3 J=0 vanish for pairwise distinct** at Λ-induced. -/
+theorem truncated3_J_zero_of_pairwise_distinct_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (h β : ℝ)
+    {i j k : ↑Λ} (hij : i ≠ j) (hjk : j ≠ k) (hik : i ≠ k) :
+    IsingModel.truncated3
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
+        (⟨0, h, β⟩ : IsingParams ℝ) i j k = 0 :=
+  IsingModel.truncated3_J_zero_of_pairwise_distinct
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) h β hij hjk hik
+
+/-- **ℤ^d truncated3 β=0 vanish** at Λ-induced. -/
+theorem truncated3_beta_zero_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J h : ℝ) (i j k : ↑Λ) :
+    IsingModel.truncated3
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
+        (⟨J, h, 0⟩ : IsingParams ℝ) i j k = 0 :=
+  IsingModel.truncated3_beta_zero
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h i j k
+
+/-- **ℤ^d truncated2 nonneg** at Λ-induced (ferromagnetic). -/
+theorem truncated2_nonneg_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    (i j : ↑Λ) :
+    0 ≤ IsingModel.truncated2
+          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p i j :=
+  IsingModel.truncated2_nonneg
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p hf i j
+
 /-- **ℤ^d GHS inequality at Λ-induced subgraph** (Glimm–Jaffe §4.3 Cor 4.3.4):
 `U_3(i, j, k) ≤ 0` for ferromagnetic `p` and distinct sites. -/
 theorem ghs_inequality_latticeGraph
