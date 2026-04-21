@@ -794,6 +794,36 @@ theorem freeEnergyJ_analyticOn_latticeGraph
   IsingModel.freeEnergyJ_analyticOn
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) h β
 
+/-- **ℤ^d correlation monotone_subgraph** at Λ-induced subgraph:
+`G₁ ≤ G₂ ⇒ ⟨σ^A⟩_{G₁} ≤ ⟨σ^A⟩_{G₂}` for ferromagnetic `p`. -/
+theorem correlation_monotone_subgraph_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    {G₁ G₂ : SimpleGraph (↑Λ : Type _)}
+    [Fintype G₁.edgeSet] [Fintype G₂.edgeSet]
+    (h₁₂ : G₁ ≤ G₂) (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    (A : Finset (↑Λ : Type _)) :
+    IsingModel.correlation G₁ p A ≤ IsingModel.correlation G₂ p A :=
+  IsingModel.correlation_monotone_subgraph h₁₂ p hf A
+
+/-- **ℤ^d log_partitionFunction monotone_subgraph** at Λ-induced subgraph. -/
+theorem log_partitionFunction_monotone_subgraph_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    {G₁ G₂ : SimpleGraph (↑Λ : Type _)}
+    [Fintype G₁.edgeSet] [Fintype G₂.edgeSet]
+    (h₁₂ : G₁ ≤ G₂) (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    Real.log (IsingModel.partitionFunction G₁ p)
+      ≤ Real.log (IsingModel.partitionFunction G₂ p) :=
+  IsingModel.log_partitionFunction_monotone_subgraph h₁₂ p hf
+
+/-- **ℤ^d freeEnergy monotone_subgraph** at Λ-induced subgraph. -/
+theorem freeEnergy_monotone_subgraph_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    {G₁ G₂ : SimpleGraph (↑Λ : Type _)}
+    [Fintype G₁.edgeSet] [Fintype G₂.edgeSet]
+    (h₁₂ : G₁ ≤ G₂) (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    IsingModel.freeEnergy G₁ p ≤ IsingModel.freeEnergy G₂ p :=
+  IsingModel.freeEnergy_monotone_subgraph h₁₂ p hf
+
 /-- **ℤ^d `freeEnergy_convergent_subgraph` at Λ-induced subgraph**:
 for a monotone sequence of subgraphs `Gn : ℕ → SimpleGraph ↑Λ` and
 ferromagnetic `p`, `n ↦ freeEnergy (Gn n) p` converges. -/
