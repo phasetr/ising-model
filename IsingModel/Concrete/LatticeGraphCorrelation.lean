@@ -2863,6 +2863,32 @@ theorem correlationΛ_bot_le_latticeGraph
       ≤ correlationΛ (IsingModel.latticeGraph d) Λ p A :=
   correlationΛ_monotone_ambient_subgraph bot_le Λ p hf A
 
+/-- **ℤ^d `log Z_Λ` ambient-subgraph `⊥ ≤ latticeGraph d`** (ferromagnetic):
+from `partitionFunctionΛ_bot_le_latticeGraph` via `Real.log_le_log`. -/
+theorem log_partitionFunctionΛ_bot_le_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    [Fintype (Ambient.inducedGraph (⊥ : SimpleGraph (Fin d → ℤ)) Λ).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    Real.log (partitionFunctionΛ (⊥ : SimpleGraph (Fin d → ℤ)) Λ p)
+      ≤ Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ p) :=
+  Real.log_le_log (partitionFunctionΛ_pos _ Λ p)
+    (partitionFunctionΛ_bot_le_latticeGraph d Λ p hf)
+
+/-- **ℤ^d `log Z_{Λ_n}` ambient-subgraph `⊥ ≤ latticeGraph d`** per stage
+(ferromagnetic, `cubicExhaustion`). -/
+theorem log_partitionFunctionAlongExhaustion_bot_le_latticeGraph
+    (d : ℕ)
+    [∀ n, Fintype (Ambient.inducedGraph (⊥ : SimpleGraph (Fin d → ℤ))
+      ((Ambient.cubicExhaustion d).volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (n : ℕ) :
+    Real.log (partitionFunctionAlongExhaustion
+        (⊥ : SimpleGraph (Fin d → ℤ)) (Ambient.cubicExhaustion d) p n)
+      ≤ Real.log (partitionFunctionAlongExhaustion
+          (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d) p n) :=
+  Real.log_le_log
+    (partitionFunctionAlongExhaustion_pos _ (Ambient.cubicExhaustion d) p n)
+    (partitionFunctionAlongExhaustion_bot_le_latticeGraph d p hf n)
+
 /-- **`⊥` ≤ `latticeGraph d` correlation monotonicity** on ℤ^d:
 `correlationInfinite ⊥ Λ p A ≤ correlationInfinite (latticeGraph d) Λ p A`
 (ferromagnetic). Any two ambient graphs with `⊥ ≤ G` give ambient-subgraph
