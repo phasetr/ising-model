@@ -1260,6 +1260,14 @@ theorem card_config_eq_two_pow_latticeGraph
       = 2 ^ Fintype.card (↑Λ : Type _) :=
   IsingModel.card_config_eq_two_pow
 
+/-- **ℤ^d edgeSpin_flip at Λ-induced**:
+`edgeSpin(σ.flip, e) = edgeSpin(σ, e)`. -/
+theorem edgeSpin_flip_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    (σ : IsingModel.Config (↑Λ : Type _)) (e : Sym2 (↑Λ : Type _)) :
+    IsingModel.edgeSpin (K := ℝ) σ.flip e = IsingModel.edgeSpin σ e :=
+  IsingModel.edgeSpin_flip σ e
+
 /-- **ℤ^d interactionEnergy_flip at Λ-induced**:
 `interactionEnergy_Λ(J, σ.flip) = interactionEnergy_Λ(J, σ)`. -/
 theorem interactionEnergy_flip_latticeGraph
