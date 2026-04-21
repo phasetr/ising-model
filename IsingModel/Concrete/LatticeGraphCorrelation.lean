@@ -1302,6 +1302,21 @@ theorem partitionFunctionAlongExhaustion_latticeGraph_monotone_beta
   partitionFunctionAlongExhaustion_monotone_beta (IsingModel.latticeGraph d) Λ
     J h hJ hh hβ₁ hβ n
 
+/-- **ℤ^d correlationAlongExhaustion shift translation invariance**:
+`correlationAlongExhaustion (Λ.shift t) (vaddFinset t A) n = correlationAlongExhaustion Λ A n`. -/
+theorem correlationAlongExhaustion_latticeGraph_shift_vaddFinset_eq
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (t : Fin d → ℤ)
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+      (Λ.volume n)).edgeSet]
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+      ((Λ.shift t).volume n)).edgeSet]
+    (p : IsingParams ℝ) (A : Finset (Fin d → ℤ)) (n : ℕ) :
+    correlationAlongExhaustion (IsingModel.latticeGraph d) (Λ.shift t) p
+        (vaddFinset t A) n
+      = correlationAlongExhaustion (IsingModel.latticeGraph d) Λ p A n :=
+  correlationAlongExhaustion_shift_vaddFinset_eq
+    (IsingModel.latticeGraph d) Λ t p A n
+
 /-- **ℤ^d correlationΛ translation invariance**:
 `⟨σ^{vadd A}⟩_{t +ᵥ Λ}(p) = ⟨σ^A⟩_Λ(p)` on ℤ^d. -/
 theorem correlationΛ_latticeGraph_vaddFinset_eq
