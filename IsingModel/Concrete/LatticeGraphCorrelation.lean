@@ -857,6 +857,38 @@ theorem partitionFunction_bot_latticeGraph_ge_two_pow_card
       ≤ IsingModel.partitionFunction (⊥ : SimpleGraph (↑Λ : Type _)) p :=
   IsingModel.partitionFunction_bot_ge_two_pow_card (ι := (↑Λ : Type _)) p
 
+/-- **ℤ^d `partitionFunction_eq_bot_at_J_zero`** at Λ-induced: at `J = 0`
+the partition function is graph-independent (equals the `⊥`-graph value). -/
+theorem partitionFunctionΛ_eq_bot_at_J_zero_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (h β : ℝ) :
+    partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+        (⟨0, h, β⟩ : IsingParams ℝ)
+      = IsingModel.partitionFunction (⊥ : SimpleGraph (↑Λ : Type _))
+          (⟨0, h, β⟩ : IsingParams ℝ) :=
+  IsingModel.partitionFunction_eq_bot_at_J_zero
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) h β
+
+/-- **ℤ^d `correlation_eq_bot_at_J_zero`** at Λ-induced: at `J = 0`
+the correlation is graph-independent. -/
+theorem correlationΛ_eq_bot_at_J_zero_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (h β : ℝ) (A : Finset (↑Λ : Type _)) :
+    IsingModel.correlation
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
+        (⟨0, h, β⟩ : IsingParams ℝ) A
+      = IsingModel.correlation (⊥ : SimpleGraph (↑Λ : Type _))
+          (⟨0, h, β⟩ : IsingParams ℝ) A :=
+  IsingModel.correlation_eq_bot_at_J_zero
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) h β A
+
+/-- **ℤ^d `correlation_bot_closed`** at Λ-induced:
+`⟨σ^A⟩_⊥ = tanh(β·h)^|A|`. -/
+theorem correlation_bot_closed_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ)
+    (A : Finset (↑Λ : Type _)) :
+    IsingModel.correlation (⊥ : SimpleGraph (↑Λ : Type _)) p A
+      = Real.tanh (p.β * p.h) ^ A.card :=
+  IsingModel.correlation_bot_closed p A
+
 /-- **ℤ^d `card_config_eq_two_pow` at Λ**:
 `|Config ↑Λ| = 2^|Λ|`. -/
 theorem card_config_eq_two_pow_latticeGraph
