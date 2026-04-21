@@ -875,6 +875,20 @@ Auxiliary results:
     (from $|\langle\sigma^B\rangle| \le 1$).
 \end{itemize}
 
+$\mathbb{Z}^d$ direct wrappers
+(\texttt{Concrete/LatticeGraphCorrelation.lean}):
+\texttt{correlationJ\_\{nonneg,le\_one\}\_latticeGraph} and
+\texttt{correlation\_convergent\{,\_h,\_beta\}\_latticeGraph}
+are thin pass-throughs of the above at the
+\texttt{Ambient.inducedGraph (latticeGraph d)\,$\Lambda$}
+subgraph on any finite $\Lambda \subset \mathbb{Z}^d$.
+Only \texttt{correlation\_convergent\_latticeGraph} is the direct
+GJ~\S4.2 Thm.~4.2.3 specialization ($J \to \infty$ along $\mathbb{N}$);
+\texttt{correlation\_convergent\_h\_latticeGraph} is its
+Prop.~4.2.4 companion ($h \to \infty$), and
+\texttt{correlation\_convergent\_beta\_latticeGraph} is a repo-internal
+monotone-bounded extension in $\beta \to \infty$ (not in GJ).
+
 \begin{remark}
 The original Glimm--Jaffe formulation uses lattice growth
 $\Lambda \uparrow \mathbb{Z}^d$. In the finite-volume setting,
