@@ -3197,6 +3197,17 @@ theorem abs_truncated2Infinite_le_one
   abs_le.mpr ⟨neg_one_le_truncated2Infinite G Λ p hf i j,
     truncated2Infinite_le_one G Λ p hf i j⟩
 
+/-- **`truncated2Infinite² ≤ 1`** for ferromagnetic `p`. -/
+theorem truncated2Infinite_sq_le_one
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i j : V) :
+    truncated2Infinite G Λ p i j ^ 2 ≤ 1 := by
+  have h := abs_truncated2Infinite_le_one G Λ p hf i j
+  have : |truncated2Infinite G Λ p i j| ^ 2 ≤ 1 ^ 2 :=
+    pow_le_pow_left₀ (abs_nonneg _) h 2
+  simpa [sq_abs] using this
+
 /-- **Exhaustion-independence of `truncated2Infinite`**: the value
 does not depend on the choice of exhaustion.  Follows from
 `correlationInfinite_indep_exhaustion` applied to each of the three
