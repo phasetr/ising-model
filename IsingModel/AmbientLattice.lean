@@ -3792,6 +3792,47 @@ theorem truncated4Infinite_apply
         - correlationInfinite G Λ p {i, k} * correlationInfinite G Λ p {j, l}
         - correlationInfinite G Λ p {i, l} * correlationInfinite G Λ p {j, k} := rfl
 
+/-- **`truncated4Infinite` symmetry under swapping `i, j`**: adjacent
+swap. The pair-split formula is fully symmetric in the four arguments. -/
+theorem truncated4Infinite_swap_ij
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (i j k l : V) :
+    truncated4Infinite G Λ p i j k l = truncated4Infinite G Λ p j i k l := by
+  unfold truncated4Infinite
+  have h1 : ({i, j, k, l} : Finset V) = {j, i, k, l} := by rw [Finset.insert_comm]
+  have h2 : ({i, j} : Finset V) = {j, i} := Finset.pair_comm i j
+  rw [h1, h2]
+  ring
+
+/-- **`truncated4Infinite` symmetry under swapping `k, l`**: adjacent swap. -/
+theorem truncated4Infinite_swap_kl
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (i j k l : V) :
+    truncated4Infinite G Λ p i j k l = truncated4Infinite G Λ p i j l k := by
+  unfold truncated4Infinite
+  have h1 : ({i, j, k, l} : Finset V) = {i, j, l, k} := by
+    congr 1; congr 1
+    exact Finset.pair_comm k l
+  have h2 : ({k, l} : Finset V) = {l, k} := Finset.pair_comm k l
+  rw [h1, h2]
+  ring
+
+/-- **`truncated4Infinite` symmetry under swapping `j, k`**: adjacent swap. -/
+theorem truncated4Infinite_swap_jk
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (i j k l : V) :
+    truncated4Infinite G Λ p i j k l = truncated4Infinite G Λ p i k j l := by
+  unfold truncated4Infinite
+  have h1 : ({i, j, k, l} : Finset V) = {i, k, j, l} := by
+    congr 1
+    rw [Finset.insert_comm]
+  have h2 : ({j, k} : Finset V) = {k, j} := Finset.pair_comm j k
+  rw [h1, h2]
+  ring
+
 /-- **Truncated 4-point along an exhaustion** (local helper): evaluates
 the `truncated4`-style algebraic expression at the `n`-th volume of
 the exhaustion, using `correlationAlongExhaustion` instead of the
