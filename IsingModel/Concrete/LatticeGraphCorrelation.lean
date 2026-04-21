@@ -457,6 +457,31 @@ theorem spontaneousMagnetization_latticeGraph_monotone_ambient_subgraph
       ≤ spontaneousMagnetization G₂ Λ J β i :=
   spontaneousMagnetization_monotone_ambient_subgraph hG Λ hJ hβ i
 
+/-- **ℤ^d `magnetizationΛ² ≤ 1`**. -/
+theorem magnetizationΛ_latticeGraph_sq_le_one
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ) (i : ↑Λ) :
+    magnetizationΛ (IsingModel.latticeGraph d) Λ p i ^ 2 ≤ 1 :=
+  magnetizationΛ_sq_le_one (IsingModel.latticeGraph d) Λ p i
+
+/-- **ℤ^d `magnetizationAlongExhaustion² ≤ 1`** per stage. -/
+theorem magnetizationAlongExhaustion_latticeGraph_sq_le_one
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (i : Fin d → ℤ) (n : ℕ) :
+    magnetizationAlongExhaustion (IsingModel.latticeGraph d) Λ p i n ^ 2 ≤ 1 := by
+  have h := abs_magnetizationAlongExhaustion_le_one
+    (IsingModel.latticeGraph d) Λ p i n
+  have : |magnetizationAlongExhaustion (IsingModel.latticeGraph d) Λ p i n| ^ 2
+      ≤ 1 ^ 2 :=
+    pow_le_pow_left₀ (abs_nonneg _) h 2
+  simpa [sq_abs] using this
+
+/-- **ℤ^d `magnetizationInfinite² ≤ 1`** (any Exhaustion). -/
+theorem magnetizationInfinite_latticeGraph_sq_le_one
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (i : Fin d → ℤ) :
+    magnetizationInfinite (IsingModel.latticeGraph d) Λ p i ^ 2 ≤ 1 :=
+  magnetizationInfinite_sq_le_one (IsingModel.latticeGraph d) Λ p i
+
 /-- **ℤ^d `correlationΛ` at `J = 0` closed form**:
 `correlationΛ ⟨0, h, β⟩ A = tanh(β·h)^|A|`. -/
 theorem correlationΛ_latticeGraph_J_zero
