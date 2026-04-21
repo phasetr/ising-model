@@ -2496,6 +2496,22 @@ theorem correlationΛ_J_zero
       = Real.tanh (β * h) ^ A.card :=
   IsingModel.correlation_J_zero (inducedGraph G Λ) h β A
 
+/-- **Λ-level lower bound `correlationΛ ≥ tanh(β·h)^|A|`** (ferromagnetic,
+sharp): by J-monotonicity from `J = 0` (where `correlationΛ = tanh(β·h)^|A|`)
+up to any `J ≥ 0`. -/
+theorem correlationΛ_ge_tanh_pow_card
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {J h β : ℝ} (hJ : 0 ≤ J) (hh : 0 ≤ h) (hβ : 0 < β)
+    (A : Finset (↑Λ : Type _)) :
+    Real.tanh (β * h) ^ A.card
+      ≤ correlationΛ G Λ (⟨J, h, β⟩ : IsingParams ℝ) A := by
+  have h_zero : correlationΛ G Λ (⟨0, h, β⟩ : IsingParams ℝ) A
+      = Real.tanh (β * h) ^ A.card := correlationΛ_J_zero G Λ h β A
+  rw [← h_zero]
+  exact correlationΛ_monotone_J G Λ hh hβ A
+    (Set.mem_Ici.mpr le_rfl) (Set.mem_Ici.mpr hJ) hJ
+
 /-- **Z₂ symmetry at `h = 0` for `correlationAlongExhaustion`**:
 pointwise zero at every `n`.  Either `A ⊄ Λ.volume n` (both branches
 of the dite give `0`) or `A ⊆ Λ.volume n` and the lifted correlation
@@ -2613,6 +2629,23 @@ theorem correlationInfinite_J_zero
           (⟨0, h, β⟩ : IsingParams ℝ) A n) = Real.tanh (β * h) ^ A.card :=
     tendsto_nhds_unique h_tendsto_ciSup h_tendsto_const
   simp only [correlationInfinite, h_unique]
+
+/-- **∞-volume lower bound `correlationInfinite ≥ tanh(β·h)^|A|`**
+(ferromagnetic): by J-monotonicity from `J = 0` where
+`correlationInfinite = tanh(β·h)^|A|` (via `correlationInfinite_J_zero`). -/
+theorem correlationInfinite_ge_tanh_pow_card
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {J h β : ℝ} (hJ : 0 ≤ J) (hh : 0 ≤ h) (hβ : 0 < β)
+    (A : Finset V) :
+    Real.tanh (β * h) ^ A.card
+      ≤ correlationInfinite G Λ (⟨J, h, β⟩ : IsingParams ℝ) A := by
+  have hf0 : Ferromagnetic (⟨(0 : ℝ), h, β⟩ : IsingParams ℝ) :=
+    ⟨le_rfl, hh, hβ⟩
+  have h_zero := correlationInfinite_J_zero G Λ h β hf0 A
+  rw [← h_zero]
+  exact correlationInfinite_monotone_J G Λ hh hβ A
+    (Set.mem_Ici.mpr le_rfl) (Set.mem_Ici.mpr hJ) hJ
 
 /-- **Empty-set correlation on `Λ` is `1`** (normalization). -/
 @[simp]
