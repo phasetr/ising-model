@@ -1557,6 +1557,28 @@ theorem correlation_sq_le_one_latticeGraph
   IsingModel.correlation_sq_le_one
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p A
 
+/-- **ℤ^d correlation_beta_zero_vanish_of_nonempty_A direct** (Λ-induced):
+`⟨σ^A⟩ at ⟨J, h, 0⟩ = 0` for nonempty `A`. -/
+theorem correlation_beta_zero_vanish_of_nonempty_A_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J h : ℝ)
+    (A : Finset (↑Λ : Type _)) (hA : A.Nonempty) :
+    IsingModel.correlation
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
+        (⟨J, h, 0⟩ : IsingParams ℝ) A = 0 :=
+  IsingModel.correlation_beta_zero_vanish_of_nonempty_A
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h A hA
+
+/-- **ℤ^d correlation_zero_params_vanish_of_nonempty_A direct** (Λ-induced):
+`⟨σ^A⟩ at ⟨0, 0, β⟩ = 0` for nonempty `A`. -/
+theorem correlation_zero_params_vanish_of_nonempty_A_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (β : ℝ)
+    (A : Finset (↑Λ : Type _)) (hA : A.Nonempty) :
+    IsingModel.correlation
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
+        (⟨0, 0, β⟩ : IsingParams ℝ) A = 0 :=
+  IsingModel.correlation_zero_params_vanish_of_nonempty_A
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) β A hA
+
 /-- **ℤ^d correlation_J_zero direct at Λ-induced**:
 `⟨σ^A⟩ at ⟨0, h, β⟩ = tanh(βh)^|A|`. -/
 theorem correlation_J_zero_latticeGraph
