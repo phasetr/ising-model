@@ -1175,6 +1175,14 @@ theorem log_partitionFunctionΛ_latticeGraph_nonneg
   log_partitionFunctionΛ_nonneg_of_ferromagnetic
     (IsingModel.latticeGraph d) Λ p hf
 
+/-- **ℤ^d `freeEnergyΛ = |↑Λ|⁻¹ · log Z_Λ`**. -/
+theorem freeEnergyΛ_latticeGraph_eq_inv_card_mul_log
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ) :
+    freeEnergyΛ (IsingModel.latticeGraph d) Λ p
+      = (Fintype.card (↑Λ : Type _) : ℝ)⁻¹
+        * Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ p) :=
+  freeEnergyΛ_eq_inv_card_mul_log (IsingModel.latticeGraph d) Λ p
+
 /-- **ℤ^d partitionFunctionΛ ≥ (2 cosh βh)^|Λ|** (sharp, ferromagnetic). -/
 theorem partitionFunctionΛ_latticeGraph_ge_two_cosh_pow_card
     (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ)
