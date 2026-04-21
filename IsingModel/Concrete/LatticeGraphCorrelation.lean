@@ -758,6 +758,30 @@ theorem correlationΛ_latticeGraph_gks_second
   refine ⟨hAB, ?_⟩
   exact correlationΛ_gks_second (IsingModel.latticeGraph d) p hf hA hB
 
+/-- **ℤ^d GKS-I at Λ-induced subgraph** (Griffiths 1967):
+`0 ≤ ⟨σ^A⟩_Λ` for ferromagnetic `p`. -/
+theorem gks_first_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    (A : Finset (↑Λ)) :
+    0 ≤ IsingModel.correlation
+          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p A :=
+  IsingModel.gks_first
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p hf A
+
+/-- **ℤ^d GKS-II at Λ-induced subgraph** (Griffiths 1967):
+`⟨σ^A⟩_Λ · ⟨σ^B⟩_Λ ≤ ⟨σ^{A Δ B}⟩_Λ` for ferromagnetic `p`. -/
+theorem gks_second_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    (A B : Finset (↑Λ)) :
+    IsingModel.correlation
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p A
+      * IsingModel.correlation
+          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p B
+      ≤ IsingModel.correlation
+          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p (symmDiff A B) :=
+  IsingModel.gks_second
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p hf A B
+
 /-- **ℤ^d Cor 4.3.5 at `h = 0`, Λ-induced subgraph** (GJ §4.3 Cor 4.3.5):
 inductive `(n+2)`-point bound at finite volume. -/
 theorem cor_4_3_5_h0_latticeGraph
