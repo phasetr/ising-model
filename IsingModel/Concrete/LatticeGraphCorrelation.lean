@@ -374,6 +374,31 @@ theorem correlationAlongExhaustion_latticeGraph_zero_params_vanish
   correlationAlongExhaustion_zero_params_vanish (IsingModel.latticeGraph d)
     Λ β A hA n
 
+/-- **ℤ^d `partitionFunctionΛ_apply`** unfolding. -/
+theorem partitionFunctionΛ_latticeGraph_apply
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ) :
+    partitionFunctionΛ (IsingModel.latticeGraph d) Λ p
+      = IsingModel.partitionFunction
+          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p :=
+  partitionFunctionΛ_apply (IsingModel.latticeGraph d) Λ p
+
+/-- **ℤ^d `correlationΛ_apply`** unfolding. -/
+theorem correlationΛ_latticeGraph_apply
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ)
+    (A : Finset (↑Λ : Type _)) :
+    correlationΛ (IsingModel.latticeGraph d) Λ p A
+      = IsingModel.correlation
+          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p A :=
+  correlationΛ_apply (IsingModel.latticeGraph d) Λ p A
+
+/-- **ℤ^d `freeEnergyΛ_apply`** unfolding. -/
+theorem freeEnergyΛ_latticeGraph_apply
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ) :
+    freeEnergyΛ (IsingModel.latticeGraph d) Λ p
+      = IsingModel.freeEnergy
+          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p :=
+  freeEnergyΛ_apply (IsingModel.latticeGraph d) Λ p
+
 /-- **ℤ^d `correlationΛ` at `J = 0` closed form**:
 `correlationΛ ⟨0, h, β⟩ A = tanh(β·h)^|A|`. -/
 theorem correlationΛ_latticeGraph_J_zero
