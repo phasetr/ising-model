@@ -1322,6 +1322,18 @@ theorem correlation_sq_le_one_latticeGraph
   IsingModel.correlation_sq_le_one
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p A
 
+/-- **ℤ^d correlation_J_zero direct at Λ-induced**:
+`⟨σ^A⟩ at ⟨0, h, β⟩ = tanh(βh)^|A|`. -/
+theorem correlation_J_zero_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (h β : ℝ)
+    (A : Finset (↑Λ : Type _)) :
+    IsingModel.correlation
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
+        (⟨0, h, β⟩ : IsingParams ℝ) A
+      = Real.tanh (β * h) ^ A.card :=
+  IsingModel.correlation_J_zero
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) h β A
+
 /-- **ℤ^d correlation_empty at Λ-induced**: `⟨σ^∅⟩_Λ = 1`. -/
 theorem correlation_empty_latticeGraph
     (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ) :
