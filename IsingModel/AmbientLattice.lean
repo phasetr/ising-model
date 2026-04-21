@@ -82,6 +82,13 @@ noncomputable def partitionFunctionΛ (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] (p : IsingParams ℝ) : ℝ :=
   IsingModel.partitionFunction (inducedGraph G Λ) p
 
+/-- **Unfolding of `partitionFunctionΛ`**: by construction, equal to
+`IsingModel.partitionFunction (inducedGraph G Λ) p`. -/
+theorem partitionFunctionΛ_apply (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (p : IsingParams ℝ) :
+    partitionFunctionΛ G Λ p = IsingModel.partitionFunction (inducedGraph G Λ) p :=
+  rfl
+
 /-- The correlation function on a finite volume `Λ`, for a subset
 `A : Finset (↑Λ)` of sites. -/
 noncomputable def correlationΛ (G : SimpleGraph V) (Λ : Finset V)
@@ -89,10 +96,23 @@ noncomputable def correlationΛ (G : SimpleGraph V) (Λ : Finset V)
     (A : Finset (↑Λ : Type _)) : ℝ :=
   IsingModel.correlation (inducedGraph G Λ) p A
 
+/-- **Unfolding of `correlationΛ`**: by construction, equal to
+`IsingModel.correlation (inducedGraph G Λ) p A`. -/
+theorem correlationΛ_apply (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (p : IsingParams ℝ)
+    (A : Finset (↑Λ : Type _)) :
+    correlationΛ G Λ p A = IsingModel.correlation (inducedGraph G Λ) p A := rfl
+
 /-- The free energy per site on a finite volume `Λ`. -/
 noncomputable def freeEnergyΛ (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] (p : IsingParams ℝ) : ℝ :=
   IsingModel.freeEnergy (inducedGraph G Λ) p
+
+/-- **Unfolding of `freeEnergyΛ`**: by construction, equal to
+`IsingModel.freeEnergy (inducedGraph G Λ) p`. -/
+theorem freeEnergyΛ_apply (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (p : IsingParams ℝ) :
+    freeEnergyΛ G Λ p = IsingModel.freeEnergy (inducedGraph G Λ) p := rfl
 
 /-- **`freeEnergyΛ` as `|Λ|⁻¹ · log Z_Λ`** (named restatement of the
 definition unfolding `IsingModel.freeEnergy := (Fintype.card ι)⁻¹ ·
