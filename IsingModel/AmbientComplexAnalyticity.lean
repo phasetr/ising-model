@@ -108,6 +108,140 @@ theorem freeEnergyComplexAlongExhaustion_at_real_eq_ofReal
   exact (IsingModel.freeEnergy_ofReal_eq_freeEnergyComplex
     (inducedGraph G (Λ.volume n)) p).symm
 
+/-! ## Per-stage analyticity / continuity / norm bounds
+
+Per-stage analytic / continuous / norm-bound properties for the
+along-exhaustion complex objects. Each is a thin pass-through of the
+finite-volume result (from `ComplexAnalyticity.lean`) applied at the
+stage-`n` induced subgraph `inducedGraph G (Λ.volume n)`. -/
+
+/-- **Per-stage entire in `h`** for `partitionFunctionComplexAlongExhaustion`.
+Pass-through of `IsingModel.partitionFunctionComplex_analyticAt_h` at
+stage `n`. -/
+theorem partitionFunctionComplexAlongExhaustion_analyticAt_h_stage
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℂ) (n : ℕ) (h₀ : ℂ) :
+    AnalyticAt ℂ
+      (fun h => partitionFunctionComplexAlongExhaustion G Λ J h β n) h₀ :=
+  IsingModel.partitionFunctionComplex_analyticAt_h
+    (inducedGraph G (Λ.volume n)) J β h₀
+
+/-- **Per-stage entire in `J`** for `partitionFunctionComplexAlongExhaustion`. -/
+theorem partitionFunctionComplexAlongExhaustion_analyticAt_J_stage
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (h β : ℂ) (n : ℕ) (J₀ : ℂ) :
+    AnalyticAt ℂ
+      (fun J => partitionFunctionComplexAlongExhaustion G Λ J h β n) J₀ :=
+  IsingModel.partitionFunctionComplex_analyticAt_J
+    (inducedGraph G (Λ.volume n)) h β J₀
+
+/-- **Per-stage entire in `β`** for `partitionFunctionComplexAlongExhaustion`. -/
+theorem partitionFunctionComplexAlongExhaustion_analyticAt_beta_stage
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J h : ℂ) (n : ℕ) (β₀ : ℂ) :
+    AnalyticAt ℂ
+      (fun β => partitionFunctionComplexAlongExhaustion G Λ J h β n) β₀ :=
+  IsingModel.partitionFunctionComplex_analyticAt_beta
+    (inducedGraph G (Λ.volume n)) J h β₀
+
+/-- **Per-stage joint entire** for `partitionFunctionComplexAlongExhaustion`. -/
+theorem partitionFunctionComplexAlongExhaustion_analyticAt_joint_stage
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (n : ℕ) (z₀ : ℂ × ℂ × ℂ) :
+    AnalyticAt ℂ (fun z : ℂ × ℂ × ℂ =>
+      partitionFunctionComplexAlongExhaustion G Λ z.1 z.2.1 z.2.2 n) z₀ :=
+  IsingModel.partitionFunctionComplex_analyticAt_joint
+    (inducedGraph G (Λ.volume n)) z₀
+
+/-- **Per-stage `Continuous` in `h`** for `partitionFunctionComplexAlongExhaustion`. -/
+theorem partitionFunctionComplexAlongExhaustion_continuous_h_stage
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℂ) (n : ℕ) :
+    Continuous
+      (fun h => partitionFunctionComplexAlongExhaustion G Λ J h β n) :=
+  IsingModel.continuous_partitionFunctionComplex_h
+    (inducedGraph G (Λ.volume n)) J β
+
+/-- **Per-stage `AnalyticAt h₀` for `freeEnergyComplexAlongExhaustion`
+under `Z_{stage} ∈ slitPlane`**. -/
+theorem freeEnergyComplexAlongExhaustion_analyticAt_h_stage
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℂ) (n : ℕ) (h₀ : ℂ)
+    (hZ : partitionFunctionComplexAlongExhaustion G Λ J h₀ β n
+            ∈ Complex.slitPlane) :
+    AnalyticAt ℂ
+      (fun h => freeEnergyComplexAlongExhaustion G Λ J h β n) h₀ :=
+  IsingModel.freeEnergyComplex_analyticAt_h
+    (inducedGraph G (Λ.volume n)) J β h₀ hZ
+
+/-- **Per-stage `AnalyticOnNhd` on Lee-Yang subdomain** for
+`freeEnergyComplexAlongExhaustion` (ferromagnetic real `β > 0`, `J ∈ ℝ`):
+the finite-volume analytic branch on the stage-`n` Lee-Yang subdomain. -/
+theorem freeEnergyComplexAlongExhaustion_analyticOnNhd_leeYangSubdomain_stage
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {β : ℝ} (hβ : 0 < β) (J : ℝ) (n : ℕ) :
+    AnalyticOnNhd ℂ
+      (fun h => freeEnergyComplexAlongExhaustion G Λ (J : ℂ) h (β : ℂ) n)
+      (IsingModel.leeYangSubdomain β (Fintype.card (↑(Λ.volume n) : Type _))) :=
+  IsingModel.freeEnergyComplex_analyticOnNhd_leeYangSubdomain
+    (inducedGraph G (Λ.volume n)) hβ J
+
+/-- **Per-stage `DifferentiableOn` on Lee-Yang subdomain** for
+`freeEnergyComplexAlongExhaustion`. -/
+theorem freeEnergyComplexAlongExhaustion_differentiableOn_leeYangSubdomain_stage
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {β : ℝ} (hβ : 0 < β) (J : ℝ) (n : ℕ) :
+    DifferentiableOn ℂ
+      (fun h => freeEnergyComplexAlongExhaustion G Λ (J : ℂ) h (β : ℂ) n)
+      (IsingModel.leeYangSubdomain β (Fintype.card (↑(Λ.volume n) : Type _))) :=
+  IsingModel.freeEnergyComplex_differentiableOn_leeYangSubdomain
+    (inducedGraph G (Λ.volume n)) hβ J
+
+/-- **Per-stage `ContinuousOn` on Lee-Yang subdomain** for
+`freeEnergyComplexAlongExhaustion`. -/
+theorem freeEnergyComplexAlongExhaustion_continuousOn_leeYangSubdomain_stage
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {β : ℝ} (hβ : 0 < β) (J : ℝ) (n : ℕ) :
+    ContinuousOn
+      (fun h => freeEnergyComplexAlongExhaustion G Λ (J : ℂ) h (β : ℂ) n)
+      (IsingModel.leeYangSubdomain β (Fintype.card (↑(Λ.volume n) : Type _))) :=
+  IsingModel.freeEnergyComplex_continuousOn_leeYangSubdomain
+    (inducedGraph G (Λ.volume n)) hβ J
+
+/-- **Per-stage locally-uniform norm bound** for
+`partitionFunctionComplexAlongExhaustion` under `|Re h| ≤ R`. Montel input. -/
+theorem norm_partitionFunctionComplexAlongExhaustion_le_of_re_bound_stage
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (β J : ℝ) (n : ℕ) {R : ℝ} {h : ℂ} (hh : |h.re| ≤ R) :
+    ‖partitionFunctionComplexAlongExhaustion G Λ (J : ℂ) h (β : ℂ) n‖
+      ≤ Fintype.card (IsingModel.Config (↑(Λ.volume n) : Type _)) *
+          Real.exp (|β| *
+            (|J| * (inducedGraph G (Λ.volume n)).edgeFinset.card
+              + R * Fintype.card (↑(Λ.volume n) : Type _))) :=
+  IsingModel.norm_partitionFunctionComplex_le_of_re_bound
+    (inducedGraph G (Λ.volume n)) β J hh
+
+/-- **Per-stage `Z_ℂ ≠ 0 on leeYangDomain`** for
+`partitionFunctionComplexAlongExhaustion` (ferromagnetic). -/
+theorem partitionFunctionComplexAlongExhaustion_ne_zero_on_leeYangDomain_stage
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J) (n : ℕ) {h : ℂ}
+    (hh : h ∈ IsingModel.leeYangDomain) :
+    partitionFunctionComplexAlongExhaustion G Λ (J : ℂ) h (β : ℂ) n ≠ 0 :=
+  IsingModel.partitionFunctionComplex_ne_zero_on_leeYangDomain
+    (inducedGraph G (Λ.volume n)) hβ hJ hh
+
 end Ambient
 
 end IsingModel
