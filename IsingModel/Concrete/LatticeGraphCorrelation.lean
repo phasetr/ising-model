@@ -2452,17 +2452,29 @@ theorem hamiltonian_J_zero_latticeGraph
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) h β σ
 
 /-! ### Hamiltonian spin-flip + J=0 graph-independence + spinProduct helpers
+(base `IsingModel.*` layer)
 
 Direct ℤ^d forwarders for a coherent mixed batch from
 `IsingModel/GibbsMeasure.lean` and `IsingModel/Hamiltonian.lean`:
 spin-flip / h-reflection identities
-(`interactionEnergy_flip`, `hamiltonian_flip_eq`, `hamiltonian_neg_h`),
-the full `J = 0` graph-independence chain
+(`hamiltonian_flip_eq`, `hamiltonian_neg_h`),
+the `J = 0` graph-independence chain
 (`hamiltonian_zero_params`, `hamiltonian_eq_bot_at_J_zero`,
-`partitionFunction_eq_bot_at_J_zero`, `correlation_eq_bot_at_J_zero`,
-complementing the already-wrapped `freeEnergy_eq_bot_at_J_zero_latticeGraph`),
+`partitionFunction_eq_bot_at_J_zero`, `correlation_eq_bot_at_J_zero`),
 and three basic `spinProduct` helpers
-(`spinProduct_singleton`, `spinProduct_union`, `spinProduct_sq`). -/
+(`spinProduct_singleton`, `spinProduct_union`, `spinProduct_sq`).
+
+These operate on the base `IsingModel.hamiltonian` /
+`IsingModel.partitionFunction` / `IsingModel.correlation` /
+`IsingModel.spinProduct` API at the Λ-induced subgraph of
+`latticeGraph d` (`ι := ↑Λ`, `G := Ambient.inducedGraph (latticeGraph d) Λ`).
+They parallel — but do not duplicate — the existing `Ambient.*Λ`-layer
+wrappers (`hamiltonianΛ_*_latticeGraph` at line 1287+,
+`partitionFunctionΛ_eq_bot_at_J_zero_latticeGraph` at line 1134, etc.)
+which target `Ambient.hamiltonianΛ` / `Ambient.partitionFunctionΛ` /
+`Ambient.correlationΛ`, a different API surface. The `spinProduct_*`
+wrappers are genuinely new; the `Ambient.*Λ`-layer has no spinProduct
+parallel. -/
 
 /-- **ℤ^d hamiltonian_flip_eq direct** (Λ-induced, `h = 0`): at `h = 0`
 the Hamiltonian is invariant under global spin flip. Thin pass-through
