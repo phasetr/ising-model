@@ -5312,6 +5312,28 @@ theorem correlationInfinite_latticeGraph_cubicExhaustion_empty
   correlationInfinite_empty (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) p
 
+/-- **ℤ^d GKS-II at ∞-vol** (any-Exhaustion): for ferromagnetic `p`,
+`⟨σ^A⟩·⟨σ^B⟩ ≤ ⟨σ^{A ∆ B}⟩` at ∞-volume. -/
+theorem correlationInfinite_latticeGraph_gks_second
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    (A B : Finset (Fin d → ℤ)) :
+    correlationInfinite (IsingModel.latticeGraph d) Λ p A
+      * correlationInfinite (IsingModel.latticeGraph d) Λ p B
+      ≤ correlationInfinite (IsingModel.latticeGraph d) Λ p (A ∆ B) :=
+  correlationInfinite_gks_second (IsingModel.latticeGraph d) Λ p hf A B
+
+/-- **ℤ^d FKG for spinProducts at ∞-vol** (any-Exhaustion): alias of
+GKS-II form. -/
+theorem correlationInfinite_latticeGraph_fkg_spinProduct
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    (A B : Finset (Fin d → ℤ)) :
+    correlationInfinite (IsingModel.latticeGraph d) Λ p A
+      * correlationInfinite (IsingModel.latticeGraph d) Λ p B
+      ≤ correlationInfinite (IsingModel.latticeGraph d) Λ p (A ∆ B) :=
+  correlationInfinite_fkg_spinProduct (IsingModel.latticeGraph d) Λ p hf A B
+
 /-- **ℤ^d FKG for spinProducts at ∞-vol** (Glimm–Jaffe §4.4 p. 67):
 alias of the `correlationInfinite_gks_second` GKS-II form. -/
 theorem correlationInfinite_latticeGraph_cubicExhaustion_fkg_spinProduct
