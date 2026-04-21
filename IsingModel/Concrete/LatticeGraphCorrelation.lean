@@ -758,6 +758,19 @@ theorem correlationΛ_latticeGraph_gks_second
   refine ⟨hAB, ?_⟩
   exact correlationΛ_gks_second (IsingModel.latticeGraph d) p hf hA hB
 
+/-- **ℤ^d `freeEnergyΛ` upper bound** at nonempty Λ-induced subgraph:
+`f_Λ ≤ log 2 + |β|·(|J|·|E| + |h|·|Λ|) / |Λ|`. -/
+theorem freeEnergyΛ_latticeGraph_upper_bound
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ)
+    (hne : 0 < Fintype.card (↑Λ : Type _)) :
+    freeEnergyΛ (IsingModel.latticeGraph d) Λ p
+      ≤ Real.log 2 + |p.β| * (|p.J|
+          * (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card
+          + |p.h| * Fintype.card (↑Λ : Type _))
+        / Fintype.card (↑Λ : Type _) :=
+  IsingModel.freeEnergy_upper_bound
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p hne
+
 /-- **ℤ^d `partitionFunctionΛ` upper bound** at Λ-induced subgraph:
 `Z ≤ |Config| · exp(|β|·(|J|·|E| + |h|·|Λ|))`. -/
 theorem partitionFunctionΛ_latticeGraph_upper
