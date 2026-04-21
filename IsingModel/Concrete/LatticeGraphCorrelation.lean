@@ -4413,6 +4413,40 @@ theorem twoPointFunction_J_zero_of_ne_zero
     exact (Ne.symm hr)
   rw [h_card]
 
+/-- **ℤ^d Fekete J=0 convergence with hcard_add** (any-Exhaustion): given
+BED + additive card + non-degenerate base step, `freeEnergyAlongExhaustion
+⟨0, h, β⟩` converges to `freeEnergyInfinite ⟨0, h, β⟩`. -/
+theorem freeEnergyAlongExhaustion_latticeGraph_J_zero_tendsto_of_hcard_add
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (h β : ℝ)
+    (hBED : Ambient.BoundedEdgeDensity (IsingModel.latticeGraph d) Λ)
+    (hcard_add : ∀ m n, (Λ.volume (m + n)).card
+                          = (Λ.volume m).card + (Λ.volume n).card)
+    (hcard_one : (Λ.volume 1).card ≠ 0) :
+    Filter.Tendsto
+      (freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨0, h, β⟩ : IsingParams ℝ))
+      Filter.atTop
+      (nhds (freeEnergyInfinite (IsingModel.latticeGraph d) Λ
+        (⟨0, h, β⟩ : IsingParams ℝ))) :=
+  freeEnergyAlongExhaustion_J_zero_tendsto_of_hcard_add
+    (IsingModel.latticeGraph d) Λ h β hBED hcard_add hcard_one
+
+/-- **ℤ^d Fekete β=0 convergence with hcard_add** (any-Exhaustion). -/
+theorem freeEnergyAlongExhaustion_latticeGraph_beta_zero_tendsto_of_hcard_add
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J h : ℝ)
+    (hBED : Ambient.BoundedEdgeDensity (IsingModel.latticeGraph d) Λ)
+    (hcard_add : ∀ m n, (Λ.volume (m + n)).card
+                          = (Λ.volume m).card + (Λ.volume n).card)
+    (hcard_one : (Λ.volume 1).card ≠ 0) :
+    Filter.Tendsto
+      (freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, h, 0⟩ : IsingParams ℝ))
+      Filter.atTop
+      (nhds (freeEnergyInfinite (IsingModel.latticeGraph d) Λ
+        (⟨J, h, 0⟩ : IsingParams ℝ))) :=
+  freeEnergyAlongExhaustion_beta_zero_tendsto_of_hcard_add
+    (IsingModel.latticeGraph d) Λ J h hBED hcard_add hcard_one
+
 /-- **ℤ^d Fekete-style convergence under disjoint-tower + BED** (any-Exhaustion):
 if `|Λ.volume (m+n)| = |Λ.volume m| + |Λ.volume n|`, log Z is super-additive,
 and BED holds, then `freeEnergyAlongExhaustion → freeEnergyInfinite`. -/
