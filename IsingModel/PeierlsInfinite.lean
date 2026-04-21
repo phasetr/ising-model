@@ -143,4 +143,80 @@ theorem prop_5_4_2_limsup_le
       (Filter.Eventually.of_forall hge)
   exact Filter.limsup_le_of_le hcobdd (Filter.Eventually.of_forall hle)
 
+/-- **Canonical ∞-vol +BC expectation (`liminf` form)**: defines the
+"genuine" infinite-volume `+`-boundary-condition expectation of a
+stagewise family of observables as the `Filter.liminf` at `atTop` of
+the per-stage `plusGibbsExpectation`.
+
+This is the simplest canonical choice that does not require a full
+Gibbs-measure projective-limit construction. For families bounded in
+`[0, 1]` per stage (like `σ ↦ Spin.sign ℝ (σ i)`), the `liminf` is
+well-defined and gives the natural lower-envelope ∞-vol quantity. -/
+noncomputable def plusGibbsExpectationLiminf
+    (G : SimpleGraph V) (Λ : Ambient.Exhaustion V)
+    [∀ n, DecidableRel (Ambient.inducedGraph G (Λ.volume n)).Adj]
+    [∀ n, Fintype (Ambient.inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ)
+    (B : ∀ n, Finset (↑(Λ.volume n) : Type _))
+    (F : (n : ℕ) →
+      IsingModel.Config (↑(Λ.volume n) : Type _) → ℝ) : ℝ :=
+  Filter.liminf
+    (fun n => plusGibbsExpectation (Ambient.inducedGraph G (Λ.volume n))
+              p (B n) (F n))
+    Filter.atTop
+
+set_option linter.unusedDecidableInType false in
+/-- **GJ §5.4 Prop 5.4.2 genuine ∞-vol `+`-BC bound (liminf form)**:
+under the same hypotheses as `prop_5_4_2_along_exhaustion`, the genuine
+infinite-volume `+`-expectation of `σ ↦ Spin.sign ℝ (σ (i n))`
+satisfies `1 − plusGibbsExpectationLiminf ≤ exp(-c·β)`.
+
+This packages the per-stage Peierls bound
+(`prop_5_4_2_along_exhaustion`) into a canonical `liminf`-based ∞-vol
+statement. The `liminf` form follows from `1 − a_n ≤ M` pointwise
+⇒ `1 − liminf a_n ≤ M` (since `liminf(-a_n) = -limsup a_n` etc., but
+more directly via `Filter.le_liminf_of_le`). -/
+theorem prop_5_4_2_plusGibbsExpectationLiminf_bound
+    (G : SimpleGraph V) (Λ : Ambient.Exhaustion V)
+    [∀ n, DecidableRel (Ambient.inducedGraph G (Λ.volume n)).Adj]
+    [∀ n, Fintype (Ambient.inducedGraph G (Λ.volume n)).edgeSet]
+    (hconn : ∀ n, (Ambient.inducedGraph G (Λ.volume n)).Preconnected)
+    (J β c : ℝ) (hβ : 0 < β) (hJ : 0 < J)
+    (B : ∀ n, Finset (↑(Λ.volume n) : Type _))
+    (hB : ∀ n, (B n).Nonempty)
+    (i : ∀ n, (↑(Λ.volume n) : Type _))
+    (hexp : ∀ n,
+      2 * ((2 : ℝ) ^ Fintype.card (↑(Λ.volume n) : Type _)) *
+          Real.exp (-2 * β * J) ≤
+        Real.exp (-c * β)) :
+    1 - plusGibbsExpectationLiminf G Λ (⟨J, 0, β⟩ : IsingParams ℝ) B
+          (fun n σ => Spin.sign ℝ (σ (i n)))
+      ≤ Real.exp (-c * β) := by
+  classical
+  unfold plusGibbsExpectationLiminf
+  -- per-stage `1 - plusGibbsExp_n ≤ exp(-cβ)` from prop_5_4_2_along_exhaustion
+  have hper := prop_5_4_2_along_exhaustion G Λ hconn J β c hβ hJ B hB i hexp
+  have hge : ∀ n,
+      1 - Real.exp (-c * β)
+        ≤ plusGibbsExpectation (Ambient.inducedGraph G (Λ.volume n))
+            ⟨J, 0, β⟩ (B n) (fun σ => Spin.sign ℝ (σ (i n))) := fun n => by
+    have hpair := hper n
+    linarith [hpair.2]
+  -- `1 - exp(-cβ) ≤ liminf (plusGibbsExp_n)` via eventually pointwise bound
+  have hliminf_ge :
+      (1 - Real.exp (-c * β) : ℝ) ≤
+        Filter.liminf
+          (fun n => plusGibbsExpectation (Ambient.inducedGraph G (Λ.volume n))
+                    ⟨J, 0, β⟩ (B n) (fun σ => Spin.sign ℝ (σ (i n))))
+          Filter.atTop := by
+    have hcobdd : Filter.IsCoboundedUnder (· ≥ ·) Filter.atTop
+        (fun n => plusGibbsExpectation (Ambient.inducedGraph G (Λ.volume n))
+                  ⟨J, 0, β⟩ (B n) (fun σ => Spin.sign ℝ (σ (i n)))) :=
+      Filter.isCoboundedUnder_ge_of_eventually_le (x := 1) Filter.atTop
+        (Filter.Eventually.of_forall (fun n => by
+          have hpair := hper n
+          linarith [hpair.1]))
+    exact Filter.le_liminf_of_le hcobdd (Filter.Eventually.of_forall hge)
+  linarith [hliminf_ge]
+
 end IsingModel

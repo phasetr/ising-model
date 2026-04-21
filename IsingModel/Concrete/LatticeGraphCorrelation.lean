@@ -2588,6 +2588,37 @@ theorem fkg_ising_along_exhaustion_latticeGraph
     (IsingModel.latticeGraph d) Λ p hf F G_fn
     hF_nn hG_nn hF_mono hG_mono n
 
+/-- **ℤ^d GJ §5.4 Prop 5.4.2 genuine ∞-vol `+`-BC bound** (Λ-induced,
+`liminf` form): for any exhaustion `Λ : Ambient.Exhaustion (Fin d → ℤ)`
+with per-stage `Preconnected` + `Fintype G_n.edgeSet` instances and the
+Peierls exponential bound `hexp`, the `liminf`-based canonical ∞-vol
+`+`-expectation of `σ ↦ Spin.sign ℝ (σ (i n))` satisfies
+`1 − plusGibbsExpectationLiminf ≤ exp(-c·β)`. Pass-through of
+`IsingModel.prop_5_4_2_plusGibbsExpectationLiminf_bound`, with
+`DecidableRel` supplied via `classical`. -/
+theorem prop_5_4_2_plusGibbsExpectationLiminf_bound_latticeGraph
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph
+        (IsingModel.latticeGraph d) (Λ.volume n)).edgeSet]
+    (hconn : ∀ n, (Ambient.inducedGraph
+        (IsingModel.latticeGraph d) (Λ.volume n)).Preconnected)
+    (J β c : ℝ) (hβ : 0 < β) (hJ : 0 < J)
+    (B : ∀ n, Finset (↑(Λ.volume n) : Type _))
+    (hB : ∀ n, (B n).Nonempty)
+    (i : ∀ n, (↑(Λ.volume n) : Type _))
+    (hexp : ∀ n,
+      2 * ((2 : ℝ) ^ Fintype.card (↑(Λ.volume n) : Type _)) *
+          Real.exp (-2 * β * J) ≤
+        Real.exp (-c * β)) :
+    1 - IsingModel.plusGibbsExpectationLiminf
+          (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) B
+          (fun n σ => IsingModel.Spin.sign ℝ (σ (i n)))
+      ≤ Real.exp (-c * β) := by
+  classical
+  exact IsingModel.prop_5_4_2_plusGibbsExpectationLiminf_bound
+    (IsingModel.latticeGraph d) Λ hconn J β c hβ hJ B hB i hexp
+
 /-- **ℤ^d partitionFunction monotone_subgraph** at Λ-induced subgraph:
 `G₁ ≤ G₂ ⇒ Z_{G₁} ≤ Z_{G₂}` for ferromagnetic `p`. -/
 theorem partitionFunction_monotone_subgraph_latticeGraph
