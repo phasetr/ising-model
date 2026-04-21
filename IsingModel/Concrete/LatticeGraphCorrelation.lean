@@ -2477,6 +2477,21 @@ theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_of_eventually_const
   freeEnergyInfinite_of_eventually_const (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) p h
 
+/-- **ℤ^d freeEnergyInfinite uniform upper bound via caller-supplied BED**
+(any-Exhaustion): `freeEnergyInfinite ≤ log 2 + |β|·(|J|·c + |h|)`. -/
+theorem freeEnergyInfinite_latticeGraph_le_uniform_upper_bound
+    (d : ℕ) [Nonempty (Fin d → ℤ)]
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) {c : ℝ}
+    (hc : ∀ n, (Λ.volume n).Nonempty →
+      ((Ambient.inducedGraph (IsingModel.latticeGraph d)
+          (Λ.volume n)).edgeFinset.card : ℝ)
+        ≤ c * Fintype.card (↑(Λ.volume n) : Type _)) :
+    freeEnergyInfinite (IsingModel.latticeGraph d) Λ p
+      ≤ Real.log 2 + |p.β| * (|p.J| * c + |p.h|) :=
+  freeEnergyInfinite_le_uniform_upper_bound
+    (IsingModel.latticeGraph d) Λ p hf hc
+
 /-- **ℤ^d freeEnergyInfinite uniform upper bound via BED**. -/
 theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_le_uniform_upper_bound
     (d : ℕ) [Nonempty (Fin d → ℤ)]
