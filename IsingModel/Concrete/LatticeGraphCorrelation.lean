@@ -1205,6 +1205,26 @@ theorem magnetizationΛ_latticeGraph_convergent_beta
   IsingModel.correlation_convergent_beta
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J hJ h hh {i}
 
+/-- **ℤ^d correlationJΛ nonneg** at Λ-induced (ferromagnetic):
+`0 ≤ correlationJ Λ h β B J` for `h, J ≥ 0, β > 0`. -/
+theorem correlationJΛ_latticeGraph_nonneg
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    (h : ℝ) (hh : 0 ≤ h) (β : ℝ) (hβ : 0 < β) (B : Finset (↑Λ : Type _))
+    (J : ℝ) (hJ : 0 ≤ J) :
+    0 ≤ IsingModel.correlationJ
+          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) h β B J :=
+  IsingModel.correlationJ_nonneg
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) h hh β hβ B J hJ
+
+/-- **ℤ^d correlationJΛ ≤ 1** at Λ-induced. -/
+theorem correlationJΛ_latticeGraph_le_one
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    (h β : ℝ) (B : Finset (↑Λ : Type _)) (J : ℝ) :
+    IsingModel.correlationJ
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) h β B J ≤ 1 :=
+  IsingModel.correlationJ_le_one
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) h β B J
+
 /-- **ℤ^d correlationΛ J → ∞ convergence**: for `0 ≤ h`, `0 < β`. -/
 theorem correlationΛ_latticeGraph_convergent
     (d : ℕ) (Λ : Finset (Fin d → ℤ)) (h : ℝ) (hh : 0 ≤ h) (β : ℝ) (hβ : 0 < β)
