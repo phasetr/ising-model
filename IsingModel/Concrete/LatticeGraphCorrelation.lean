@@ -3535,6 +3535,19 @@ theorem twoPointFunction_J_zero_of_ne_zero
     exact (Ne.symm hr)
   rw [h_card]
 
+/-- **ℤ^d generic tendsto helper**: if the stagewise
+`freeEnergyAlongExhaustion` is eventually constantly `c`, it tends to `c`. -/
+theorem freeEnergyAlongExhaustion_latticeGraph_tendsto_of_eventually_const
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) {c : ℝ}
+    (h : ∀ᶠ n in Filter.atTop,
+      freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ p n = c) :
+    Filter.Tendsto
+      (freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ p)
+      Filter.atTop (nhds c) :=
+  freeEnergyAlongExhaustion_tendsto_of_eventually_const
+    (IsingModel.latticeGraph d) Λ p h
+
 /-- **ℤ^d freeEnergyAlongExhaustion Tendsto at J=0 under eventually-nonempty**
 (any-Exhaustion). -/
 theorem freeEnergyAlongExhaustion_latticeGraph_J_zero_tendsto_of_eventually_nonempty
