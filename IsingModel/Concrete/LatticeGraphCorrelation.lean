@@ -1032,6 +1032,39 @@ theorem freeEnergyAlongExhaustion_latticeGraph_cubicExhaustion_monotone_abs_h
   freeEnergyAlongExhaustion_monotone_abs_h (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) J β hJ hβ hh n
 
+/-- **ℤ^d freeEnergyAlongExhaustion h-evenness** per stage (any Exhaustion). -/
+theorem freeEnergyAlongExhaustion_latticeGraph_neg_h
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J h β : ℝ) (n : ℕ) :
+    freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, -h, β⟩ : IsingParams ℝ) n
+      = freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, h, β⟩ : IsingParams ℝ) n :=
+  freeEnergyAlongExhaustion_neg_h (IsingModel.latticeGraph d) Λ J h β n
+
+/-- **ℤ^d freeEnergyAlongExhaustion `|h|`-rewrite** per stage (any Exhaustion). -/
+theorem freeEnergyAlongExhaustion_latticeGraph_eq_abs_h
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J h β : ℝ) (n : ℕ) :
+    freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, h, β⟩ : IsingParams ℝ) n
+      = freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, |h|, β⟩ : IsingParams ℝ) n :=
+  freeEnergyAlongExhaustion_eq_abs_h (IsingModel.latticeGraph d) Λ J h β n
+
+/-- **ℤ^d freeEnergyAlongExhaustion ferromagnetic `|h|`-monotonicity**
+per stage (any Exhaustion). -/
+theorem freeEnergyAlongExhaustion_latticeGraph_monotone_abs_h
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β)
+    {h₁ h₂ : ℝ} (hh : |h₁| ≤ |h₂|) (n : ℕ) :
+    freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, h₁, β⟩ : IsingParams ℝ) n
+      ≤ freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, h₂, β⟩ : IsingParams ℝ) n :=
+  freeEnergyAlongExhaustion_monotone_abs_h (IsingModel.latticeGraph d) Λ
+    J β hJ hβ hh n
+
 /-- **ℤ^d per-stage explicit upper bound on freeEnergyAlongExhaustion**. -/
 theorem freeEnergyAlongExhaustion_latticeGraph_cubicExhaustion_upper_bound
     (d : ℕ) (p : IsingParams ℝ) (n : ℕ)
