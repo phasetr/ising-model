@@ -509,6 +509,17 @@ theorem spontaneousCorrelation_latticeGraph_monotone_beta
       (Set.Ioi 0) :=
   spontaneousCorrelation_monotone_beta (IsingModel.latticeGraph d) Λ hJ A
 
+/-- **ℤ^d `spontaneousCorrelation ... {i} = spontaneousMagnetization ... i`**
+(any-Exhaustion): singleton-set spontaneous correlation equals
+spontaneous magnetization. -/
+theorem spontaneousCorrelation_latticeGraph_singleton_eq_spontaneousMagnetization
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J β : ℝ) (i : Fin d → ℤ) :
+    spontaneousCorrelation (IsingModel.latticeGraph d) Λ J β {i}
+      = spontaneousMagnetization (IsingModel.latticeGraph d) Λ J β i :=
+  spontaneousCorrelation_singleton_eq_spontaneousMagnetization
+    (IsingModel.latticeGraph d) Λ J β i
+
 /-- **ℤ^d `|spontaneousCorrelation| ≤ 1`** (ferromagnetic). -/
 theorem abs_spontaneousCorrelation_latticeGraph_le_one
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
