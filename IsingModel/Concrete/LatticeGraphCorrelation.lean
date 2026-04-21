@@ -1183,6 +1183,35 @@ theorem freeEnergyΛ_latticeGraph_eq_inv_card_mul_log
         * Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ p) :=
   freeEnergyΛ_eq_inv_card_mul_log (IsingModel.latticeGraph d) Λ p
 
+/-- **ℤ^d `freeEnergyΛ = (Λ.card)⁻¹ · log Z_Λ`** (Finset-card form). -/
+theorem freeEnergyΛ_latticeGraph_eq_inv_Λcard_mul_log
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ) :
+    freeEnergyΛ (IsingModel.latticeGraph d) Λ p
+      = (Λ.card : ℝ)⁻¹
+        * Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ p) :=
+  freeEnergyΛ_eq_inv_Λcard_mul_log (IsingModel.latticeGraph d) Λ p
+
+/-- **ℤ^d `freeEnergyAlongExhaustion = |↑(Λ_n)|⁻¹ · log Z_n`** per stage. -/
+theorem freeEnergyAlongExhaustion_latticeGraph_eq_inv_card_mul_log
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (n : ℕ) :
+    freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ p n
+      = (Fintype.card (↑(Λ.volume n) : Type _) : ℝ)⁻¹
+        * Real.log (partitionFunctionAlongExhaustion
+            (IsingModel.latticeGraph d) Λ p n) :=
+  freeEnergyAlongExhaustion_eq_inv_card_mul_log (IsingModel.latticeGraph d) Λ p n
+
+/-- **ℤ^d `freeEnergyAlongExhaustion = ((Λ.volume n).card)⁻¹ · log Z_n`**. -/
+theorem freeEnergyAlongExhaustion_latticeGraph_eq_inv_Λcard_mul_log
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (n : ℕ) :
+    freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ p n
+      = ((Λ.volume n).card : ℝ)⁻¹
+        * Real.log (partitionFunctionAlongExhaustion
+            (IsingModel.latticeGraph d) Λ p n) :=
+  freeEnergyAlongExhaustion_eq_inv_Λcard_mul_log
+    (IsingModel.latticeGraph d) Λ p n
+
 /-- **ℤ^d partitionFunctionΛ ≥ (2 cosh βh)^|Λ|** (sharp, ferromagnetic). -/
 theorem partitionFunctionΛ_latticeGraph_ge_two_cosh_pow_card
     (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ)

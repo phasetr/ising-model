@@ -105,6 +105,16 @@ theorem freeEnergyΛ_eq_inv_card_mul_log
       = (Fintype.card (↑Λ : Type _) : ℝ)⁻¹
         * Real.log (partitionFunctionΛ G Λ p) := rfl
 
+/-- **`freeEnergyΛ` with `Λ.card` cast**: using `Fintype.card_coe`,
+`freeEnergyΛ G Λ p = (Λ.card : ℝ)⁻¹ · log (partitionFunctionΛ G Λ p)`.
+Convenient form when working with the Finset cardinality directly. -/
+theorem freeEnergyΛ_eq_inv_Λcard_mul_log
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (p : IsingParams ℝ) :
+    freeEnergyΛ G Λ p
+      = (Λ.card : ℝ)⁻¹ * Real.log (partitionFunctionΛ G Λ p) := by
+  rw [freeEnergyΛ_eq_inv_card_mul_log, Fintype.card_coe]
+
 /-- The **magnetization** on a finite volume `Λ` at site `i : ↑Λ`:
 `M_Λ(i) = ⟨σ_i⟩ = correlationΛ G Λ p {i}`. Direct analog of
 `IsingModel.magnetization` at the ambient-lattice Λ layer, matching
@@ -494,6 +504,7 @@ theorem freeEnergyAlongExhaustion_apply
     freeEnergyAlongExhaustion G Λ p n = freeEnergyΛ G (Λ.volume n) p :=
   rfl
 
+
 /-- **Partition function along an exhaustion**: the volume-direction
 partition function sequence $Z_n := Z_{\Lambda_n}$.  Companion to
 `freeEnergyAlongExhaustion` (Glimm–Jaffe §4.6); useful for Prop 4.6.1
@@ -529,6 +540,29 @@ theorem partitionFunctionAlongExhaustion_apply
     partitionFunctionAlongExhaustion G Λ p n
       = partitionFunctionΛ G (Λ.volume n) p :=
   rfl
+
+/-- **Along-exhaustion free energy as `|Λ_n|⁻¹ · log Z_n`** per stage:
+`freeEnergyAlongExhaustion G Λ p n = (Fintype.card ↑(Λ.volume n))⁻¹ ·
+log (partitionFunctionAlongExhaustion G Λ p n)`. Per-stage
+specialization of `freeEnergyΛ_eq_inv_card_mul_log`. -/
+theorem freeEnergyAlongExhaustion_eq_inv_card_mul_log
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (n : ℕ) :
+    freeEnergyAlongExhaustion G Λ p n
+      = (Fintype.card (↑(Λ.volume n) : Type _) : ℝ)⁻¹
+        * Real.log (partitionFunctionAlongExhaustion G Λ p n) :=
+  freeEnergyΛ_eq_inv_card_mul_log G (Λ.volume n) p
+
+/-- **Along-exhaustion free energy with `(Λ.volume n).card` cast**. -/
+theorem freeEnergyAlongExhaustion_eq_inv_Λcard_mul_log
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (n : ℕ) :
+    freeEnergyAlongExhaustion G Λ p n
+      = ((Λ.volume n).card : ℝ)⁻¹
+        * Real.log (partitionFunctionAlongExhaustion G Λ p n) :=
+  freeEnergyΛ_eq_inv_Λcard_mul_log G (Λ.volume n) p
 
 /-- **Positivity along an exhaustion**:
 `0 < partitionFunctionAlongExhaustion G Λ p n` for every `n`. -/
