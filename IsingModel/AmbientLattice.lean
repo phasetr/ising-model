@@ -718,6 +718,18 @@ theorem correlationΛ_monotone_ambient_subgraph
     correlationΛ G₁ Λ p A ≤ correlationΛ G₂ Λ p A :=
   IsingModel.correlation_monotone_subgraph (inducedGraph_mono h Λ) p hf A
 
+/-- **Magnetization ambient-subgraph monotonicity** on `Λ`:
+for `G₁ ≤ G₂` and ferromagnetic `p`, `M_{Λ,G₁}(i) ≤ M_{Λ,G₂}(i)` at any
+site `i : ↑Λ`. Specialization of `correlationΛ_monotone_ambient_subgraph`
+at `A = {i}`. -/
+theorem magnetizationΛ_monotone_ambient_subgraph
+    {G₁ G₂ : SimpleGraph V} (h : G₁ ≤ G₂) (Λ : Finset V)
+    [Fintype (inducedGraph G₁ Λ).edgeSet]
+    [Fintype (inducedGraph G₂ Λ).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i : ↑Λ) :
+    magnetizationΛ G₁ Λ p i ≤ magnetizationΛ G₂ Λ p i :=
+  correlationΛ_monotone_ambient_subgraph h Λ p hf {i}
+
 /-- **Free energy ambient-subgraph monotonicity**:
 for `G₁ ≤ G₂` (ambient) and ferromagnetic `p`,
 `f_{G₁,Λ} ≤ f_{G₂,Λ}` on any finite volume `Λ`. -/
@@ -742,6 +754,7 @@ theorem freeEnergyAlongExhaustion_monotone_ambient_subgraph
     freeEnergyAlongExhaustion G₁ Λ p n
       ≤ freeEnergyAlongExhaustion G₂ Λ p n :=
   freeEnergyΛ_monotone_ambient_subgraph h (Λ.volume n) p hf
+
 
 /-- **Subgraph monotonicity of `partitionFunctionAlongExhaustion`**:
 for `G₁ ≤ G₂` and ferromagnetic parameters, the partition function
@@ -1756,6 +1769,19 @@ theorem correlationInfinite_monotone_ambient_subgraph
   exact (correlationAlongExhaustion_monotone_ambient_subgraph h Λ p hf A n).trans
     (le_ciSup (correlationAlongExhaustion_bddAbove G₂ Λ p A) n)
 
+/-- **Magnetization along-exhaustion ambient-subgraph monotonicity**:
+per stage, for `G₁ ≤ G₂` and ferromagnetic `p`. Specialization of
+`correlationAlongExhaustion_monotone_ambient_subgraph` at `A = {i}`. -/
+theorem magnetizationAlongExhaustion_monotone_ambient_subgraph
+    {G₁ G₂ : SimpleGraph V} (h : G₁ ≤ G₂) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G₁ (Λ.volume n)).edgeSet]
+    [∀ n, Fintype (inducedGraph G₂ (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i : V) (n : ℕ) :
+    magnetizationAlongExhaustion G₁ Λ p i n
+      ≤ magnetizationAlongExhaustion G₂ Λ p i n :=
+  correlationAlongExhaustion_monotone_ambient_subgraph h Λ p hf {i} n
+
+
 /-! ## GKS-II (second Griffiths inequality) at infinite volume
 
 Lift the finite-volume second Griffiths inequality (`gks_second`,
@@ -2233,6 +2259,17 @@ theorem magnetizationInfinite_le_one
     (p : IsingParams ℝ) (i : V) :
     magnetizationInfinite G Λ p i ≤ 1 :=
   correlationInfinite_le_one G Λ p {i}
+
+/-- **Magnetization ∞-volume ambient-subgraph monotonicity**:
+for `G₁ ≤ G₂` and ferromagnetic `p`. Specialization of
+`correlationInfinite_monotone_ambient_subgraph` at `A = {i}`. -/
+theorem magnetizationInfinite_monotone_ambient_subgraph
+    {G₁ G₂ : SimpleGraph V} (h : G₁ ≤ G₂) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G₁ (Λ.volume n)).edgeSet]
+    [∀ n, Fintype (inducedGraph G₂ (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i : V) :
+    magnetizationInfinite G₁ Λ p i ≤ magnetizationInfinite G₂ Λ p i :=
+  correlationInfinite_monotone_ambient_subgraph h Λ p hf {i}
 
 /-- **`|magnetizationInfinite| ≤ 1`** unconditionally (any parameters).
 Direct specialization of `abs_correlationInfinite_le_one` at `A = {i}`. -/
