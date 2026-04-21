@@ -1102,6 +1102,18 @@ theorem freeEnergyInfinite_latticeGraph_nonneg
     0 ≤ freeEnergyInfinite (IsingModel.latticeGraph d) Λ p :=
   (freeEnergyInfinite_latticeGraph_pos d Λ p hf hc).le
 
+/-- **log Z → ∞ along any-Exhaustion** (ferromagnetic, infinite ℤ^d). -/
+theorem log_partitionFunctionAlongExhaustion_latticeGraph_tendsto_atTop_general
+    (d : ℕ) [Infinite (Fin d → ℤ)]
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    Filter.Tendsto
+      (fun n => Real.log (partitionFunctionAlongExhaustion
+        (IsingModel.latticeGraph d) Λ p n))
+      Filter.atTop Filter.atTop :=
+  log_partitionFunctionAlongExhaustion_tendsto_atTop
+    (IsingModel.latticeGraph d) Λ p hf
+
 /-- **log Z → ∞ along cubicExhaustion** (ferromagnetic, infinite ℤ^d). -/
 theorem log_partitionFunctionAlongExhaustion_latticeGraph_tendsto_atTop
     (d : ℕ) [Infinite (Fin d → ℤ)]
