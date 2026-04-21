@@ -315,6 +315,31 @@ theorem freeEnergyAlongExhaustion_latticeGraph_cubicExhaustion_eq_log_div_card
   freeEnergyAlongExhaustion_eq_log_div_card (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) p n
 
+/-- **ℤ^d `correlationAlongExhaustion` is ≤ 1** per stage (unconditional).
+Concrete specialization of `correlationAlongExhaustion_le_one`. -/
+theorem correlationAlongExhaustion_latticeGraph_le_one
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (A : Finset (Fin d → ℤ)) (n : ℕ) :
+    correlationAlongExhaustion (IsingModel.latticeGraph d) Λ p A n ≤ 1 :=
+  correlationAlongExhaustion_le_one (IsingModel.latticeGraph d) Λ p A n
+
+/-- **ℤ^d `correlationAlongExhaustion` is ≥ 0** per stage (ferromagnetic).
+Concrete specialization of `correlationAlongExhaustion_nonneg`. -/
+theorem correlationAlongExhaustion_latticeGraph_nonneg
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    (A : Finset (Fin d → ℤ)) (n : ℕ) :
+    0 ≤ correlationAlongExhaustion (IsingModel.latticeGraph d) Λ p A n :=
+  correlationAlongExhaustion_nonneg (IsingModel.latticeGraph d) Λ p hf A n
+
+/-- **ℤ^d `correlationInfinite` on the empty site set = 1** (any Exhaustion). -/
+@[simp]
+theorem correlationInfinite_latticeGraph_empty
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) :
+    correlationInfinite (IsingModel.latticeGraph d) Λ p ∅ = 1 :=
+  correlationInfinite_empty (IsingModel.latticeGraph d) Λ p
+
 /-- **ℤ^d correlationΛ_empty = 1** per finite volume. -/
 @[simp]
 theorem correlationΛ_latticeGraph_empty
