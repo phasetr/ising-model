@@ -1302,6 +1302,30 @@ theorem partitionFunctionAlongExhaustion_latticeGraph_monotone_beta
   partitionFunctionAlongExhaustion_monotone_beta (IsingModel.latticeGraph d) Λ
     J h hJ hh hβ₁ hβ n
 
+/-- **ℤ^d partitionFunctionΛ translation invariance**:
+`Z_{t +ᵥ Λ}(p) = Z_Λ(p)` on ℤ^d. -/
+theorem partitionFunctionΛ_latticeGraph_vaddFinset_eq
+    (d : ℕ) (t : Fin d → ℤ) (Λ : Finset (Fin d → ℤ))
+    [Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
+    [Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+      (vaddFinset t Λ)).edgeSet]
+    (p : IsingParams ℝ) :
+    partitionFunctionΛ (IsingModel.latticeGraph d) (vaddFinset t Λ) p
+      = partitionFunctionΛ (IsingModel.latticeGraph d) Λ p :=
+  partitionFunctionΛ_vaddFinset_eq (IsingModel.latticeGraph d) t Λ p
+
+/-- **ℤ^d freeEnergyΛ translation invariance**:
+`f_{t +ᵥ Λ}(p) = f_Λ(p)` on ℤ^d. -/
+theorem freeEnergyΛ_latticeGraph_vaddFinset_eq
+    (d : ℕ) (t : Fin d → ℤ) (Λ : Finset (Fin d → ℤ))
+    [Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
+    [Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+      (vaddFinset t Λ)).edgeSet]
+    (p : IsingParams ℝ) :
+    freeEnergyΛ (IsingModel.latticeGraph d) (vaddFinset t Λ) p
+      = freeEnergyΛ (IsingModel.latticeGraph d) Λ p :=
+  freeEnergyΛ_vaddFinset_eq (IsingModel.latticeGraph d) t Λ p
+
 /-- **ℤ^d partitionFunctionΛ closed form at `J = 0`** (any Finset):
 `Z_Λ(⟨0, h, β⟩) = (2·cosh(β·h))^|Λ|`. -/
 theorem partitionFunctionΛ_latticeGraph_J_zero
