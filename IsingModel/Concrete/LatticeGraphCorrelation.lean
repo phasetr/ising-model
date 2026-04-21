@@ -1829,6 +1829,19 @@ theorem freeEnergyAlongExhaustion_latticeGraph_eq_inv_Λcard_mul_log
   freeEnergyAlongExhaustion_eq_inv_Λcard_mul_log
     (IsingModel.latticeGraph d) Λ p n
 
+/-- **ℤ^d `freeEnergyAlongExhaustion` as `log Z / card`** (any-Exhaustion):
+alternate form of `freeEnergyAlongExhaustion_eq_inv_card_mul_log` using the
+Fintype-card expression. -/
+theorem freeEnergyAlongExhaustion_latticeGraph_eq_log_div_card
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (n : ℕ) :
+    freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ p n
+      = (Fintype.card (↑(Λ.volume n) : Type _) : ℝ)⁻¹
+        * Real.log (partitionFunctionAlongExhaustion
+            (IsingModel.latticeGraph d) Λ p n) :=
+  freeEnergyAlongExhaustion_eq_log_div_card
+    (IsingModel.latticeGraph d) Λ p n
+
 /-- **ℤ^d partitionFunctionΛ ≥ (2 cosh βh)^|Λ|** (sharp, ferromagnetic). -/
 theorem partitionFunctionΛ_latticeGraph_ge_two_cosh_pow_card
     (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ)
