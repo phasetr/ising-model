@@ -875,6 +875,16 @@ Auxiliary results:
     (from $|\langle\sigma^B\rangle| \le 1$).
 \end{itemize}
 
+$\mathbb{Z}^d$ direct wrappers
+(\texttt{Concrete/LatticeGraphCorrelation.lean}):
+\texttt{correlationJ\_\{nonneg,le\_one\}\_latticeGraph} and
+\texttt{correlation\_convergent\{,\_h,\_beta\}\_latticeGraph}
+are thin pass-throughs of the above at the
+\texttt{Ambient.inducedGraph (latticeGraph d)\,$\Lambda$} subgraph,
+giving the GJ~\S4.2 Prop.~4.2.1 slice and the monotone-bounded
+convergence of $J$, $h$, $\beta$ along $\mathbb{N}$ on any
+finite $\Lambda \subset \mathbb{Z}^d$.
+
 \begin{remark}
 The original Glimm--Jaffe formulation uses lattice growth
 $\Lambda \uparrow \mathbb{Z}^d$. In the finite-volume setting,
