@@ -2212,6 +2212,27 @@ theorem magnetizationAlongExhaustion_convergent
       Filter.atTop (nhds L) :=
   correlationAlongExhaustion_convergent G Λ p hf {i}
 
+/-- **Stage-index monotonicity of `magnetizationAlongExhaustion`** for
+ferromagnetic `p`. Specialization of `correlationAlongExhaustion_monotone`
+at `A = {i}`. -/
+theorem magnetizationAlongExhaustion_monotone
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i : V) :
+    Monotone (magnetizationAlongExhaustion G Λ p i) :=
+  correlationAlongExhaustion_monotone G Λ p hf {i}
+
+/-- **`magnetizationAlongExhaustion` is bounded above** (unconditional):
+the range of `n ↦ magnetizationAlongExhaustion G Λ p i n` is
+bounded above. Specialization of `correlationAlongExhaustion_bddAbove`
+at `A = {i}`. -/
+theorem magnetizationAlongExhaustion_bddAbove
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (i : V) :
+    BddAbove (Set.range (magnetizationAlongExhaustion G Λ p i)) :=
+  correlationAlongExhaustion_bddAbove G Λ p {i}
+
 /-- **Exhaustion-independence of `magnetizationInfinite`**:
 the value does not depend on the choice of exhaustion.  Specialization
 of `correlationInfinite_indep_exhaustion`. -/
