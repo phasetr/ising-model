@@ -758,6 +758,42 @@ theorem correlationΛ_latticeGraph_gks_second
   refine ⟨hAB, ?_⟩
   exact correlationΛ_gks_second (IsingModel.latticeGraph d) p hf hA hB
 
+/-- **ℤ^d `partitionFunction` analytic in `h`** at Λ-induced subgraph. -/
+theorem partitionFunctionH_analyticAt_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β h₀ : ℝ) :
+    AnalyticAt ℝ
+      (fun h => partitionFunctionΛ (IsingModel.latticeGraph d) Λ ⟨J, h, β⟩) h₀ :=
+  IsingModel.partitionFunctionH_analyticAt
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J β h₀
+
+/-- **ℤ^d `freeEnergyH` analytic on `(0, ∞)`** at Λ-induced subgraph. -/
+theorem freeEnergyH_analyticOn_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ) :
+    AnalyticOn ℝ
+      (IsingModel.freeEnergyH
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J β)
+      (Set.Ioi 0) :=
+  IsingModel.freeEnergyH_analyticOn
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J β
+
+/-- **ℤ^d `partitionFunction` analytic in `J`** at Λ-induced subgraph. -/
+theorem partitionFunctionJ_analyticAt_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (h β J₀ : ℝ) :
+    AnalyticAt ℝ
+      (fun J => partitionFunctionΛ (IsingModel.latticeGraph d) Λ ⟨J, h, β⟩) J₀ :=
+  IsingModel.partitionFunctionJ_analyticAt
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) h β J₀
+
+/-- **ℤ^d `freeEnergyJ` analytic on `(0, ∞)`** at Λ-induced subgraph. -/
+theorem freeEnergyJ_analyticOn_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (h β : ℝ) :
+    AnalyticOn ℝ
+      (IsingModel.freeEnergyJ
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) h β)
+      (Set.Ioi 0) :=
+  IsingModel.freeEnergyJ_analyticOn
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) h β
+
 /-- **ℤ^d `hamiltonian` absolute value bound** at Λ-induced subgraph:
 `|H_Λ(σ)| ≤ |J|·|E| + |h|·|Λ|`. -/
 theorem hamiltonianΛ_latticeGraph_abs_le
