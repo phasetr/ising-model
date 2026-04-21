@@ -907,6 +907,18 @@ theorem card_config_eq_two_pow_latticeGraph
       = 2 ^ Fintype.card (↑Λ : Type _) :=
   IsingModel.card_config_eq_two_pow
 
+/-- **ℤ^d interactionEnergy_flip at Λ-induced**:
+`interactionEnergy_Λ(J, σ.flip) = interactionEnergy_Λ(J, σ)`. -/
+theorem interactionEnergy_flip_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J : ℝ)
+    (σ : IsingModel.Config (↑Λ : Type _)) :
+    IsingModel.interactionEnergy
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J σ.flip
+      = IsingModel.interactionEnergy
+          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J σ :=
+  IsingModel.interactionEnergy_flip
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J σ
+
 /-- **ℤ^d hamiltonian_flip_eq at Λ-induced**: at `h = 0` the Hamiltonian
 is invariant under spin flip. -/
 theorem hamiltonianΛ_flip_eq_latticeGraph
