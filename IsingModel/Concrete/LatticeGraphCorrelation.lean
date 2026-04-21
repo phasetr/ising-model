@@ -857,6 +857,14 @@ theorem partitionFunction_bot_latticeGraph_ge_two_pow_card
       ≤ IsingModel.partitionFunction (⊥ : SimpleGraph (↑Λ : Type _)) p :=
   IsingModel.partitionFunction_bot_ge_two_pow_card (ι := (↑Λ : Type _)) p
 
+/-- **ℤ^d `card_config_eq_two_pow` at Λ**:
+`|Config ↑Λ| = 2^|Λ|`. -/
+theorem card_config_eq_two_pow_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) :
+    Fintype.card (IsingModel.Config (↑Λ : Type _))
+      = 2 ^ Fintype.card (↑Λ : Type _) :=
+  IsingModel.card_config_eq_two_pow
+
 /-- **ℤ^d hamiltonian_bot at Λ**: `H_⊥(σ) = -h · Σ sign σ`. -/
 theorem hamiltonian_bot_latticeGraph
     (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ)
