@@ -5072,6 +5072,37 @@ theorem BddAbove_freeEnergyAlongExhaustion_range
       rw [hcard, Nat.cast_zero, inv_zero, zero_mul]
     rw [hfe]; exact le_max_left _ _
 
+/-! ## Critical exponents at ∞-volume (GJ §17.7 Thm 17.7.1)
+
+Explicit ∞-vol named aliases for the critical-exponent bounds
+`η ≥ 0` and `ζ ≥ 0`, matching the finite-volume
+`IsingModel.eta_nonneg_finite_vol` / `zeta_nonneg_finite_vol`
+pattern. Direct pass-throughs of `truncated2Infinite_nonneg` (GKS-II
+at ∞-vol) and `truncated4Infinite_nonpos_h_zero` (Cor 4.3.3 at ∞-vol). -/
+
+/-- **η ≥ 0 at ∞-volume** (GJ §17.7 Thm 17.7.1, ∞-vol lattice version).
+Explicit alias of `truncated2Infinite_nonneg` matching the
+`eta_nonneg_finite_vol` naming convention. -/
+theorem eta_nonneg_infinite_vol
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i j : V) :
+    0 ≤ truncated2Infinite G Λ p i j :=
+  truncated2Infinite_nonneg G Λ p hf i j
+
+/-- **ζ ≥ 0 at ∞-volume** (GJ §17.7 Thm 17.7.1, ∞-vol lattice version,
+at `h = 0`). Explicit alias of `truncated4Infinite_nonpos_h_zero` —
+`U₄^∞ ≤ 0` for pairwise-distinct sites at `h = 0`. -/
+theorem zeta_nonneg_infinite_vol
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (hf : Ferromagnetic ⟨J, (0 : ℝ), β⟩)
+    {i j k l : V}
+    (hij : i ≠ j) (hik : i ≠ k) (hil : i ≠ l)
+    (hjk : j ≠ k) (hjl : j ≠ l) (hkl : k ≠ l) :
+    truncated4Infinite G Λ ⟨J, 0, β⟩ i j k l ≤ 0 :=
+  truncated4Infinite_nonpos_h_zero G Λ J β hf hij hik hil hjk hjl hkl
+
 end Ambient
 end IsingModel
 
