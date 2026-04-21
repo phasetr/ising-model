@@ -1302,6 +1302,32 @@ theorem partitionFunctionAlongExhaustion_latticeGraph_monotone_beta
   partitionFunctionAlongExhaustion_monotone_beta (IsingModel.latticeGraph d) Λ
     J h hJ hh hβ₁ hβ n
 
+/-- **ℤ^d freeEnergyAlongExhaustion shift translation invariance**:
+`freeEnergyAlongExhaustion (Λ.shift t) n = freeEnergyAlongExhaustion Λ n`. -/
+theorem freeEnergyAlongExhaustion_latticeGraph_shift_eq
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (t : Fin d → ℤ)
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+      (Λ.volume n)).edgeSet]
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+      ((Λ.shift t).volume n)).edgeSet]
+    (p : IsingParams ℝ) (n : ℕ) :
+    freeEnergyAlongExhaustion (IsingModel.latticeGraph d) (Λ.shift t) p n
+      = freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ p n :=
+  freeEnergyAlongExhaustion_shift_eq (IsingModel.latticeGraph d) Λ t p n
+
+/-- **ℤ^d freeEnergyInfinite shift translation invariance**:
+`freeEnergyInfinite (Λ.shift t) = freeEnergyInfinite Λ`. -/
+theorem freeEnergyInfinite_latticeGraph_shift_eq
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (t : Fin d → ℤ)
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+      (Λ.volume n)).edgeSet]
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+      ((Λ.shift t).volume n)).edgeSet]
+    (p : IsingParams ℝ) :
+    freeEnergyInfinite (IsingModel.latticeGraph d) (Λ.shift t) p
+      = freeEnergyInfinite (IsingModel.latticeGraph d) Λ p :=
+  freeEnergyInfinite_shift_eq (IsingModel.latticeGraph d) Λ t p
+
 /-- **ℤ^d correlationAlongExhaustion shift translation invariance**:
 `correlationAlongExhaustion (Λ.shift t) (vaddFinset t A) n = correlationAlongExhaustion Λ A n`. -/
 theorem correlationAlongExhaustion_latticeGraph_shift_vaddFinset_eq
