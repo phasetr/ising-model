@@ -933,6 +933,39 @@ theorem partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_neg_h
   partitionFunctionAlongExhaustion_neg_h (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) J h β n
 
+/-- **ℤ^d partitionFunctionAlongExhaustion h-evenness** per stage (any Exhaustion). -/
+theorem partitionFunctionAlongExhaustion_latticeGraph_neg_h
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J h β : ℝ) (n : ℕ) :
+    partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, -h, β⟩ : IsingParams ℝ) n
+      = partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, h, β⟩ : IsingParams ℝ) n :=
+  partitionFunctionAlongExhaustion_neg_h (IsingModel.latticeGraph d) Λ J h β n
+
+/-- **ℤ^d partitionFunctionAlongExhaustion `|h|`-rewrite** per stage (any Exhaustion). -/
+theorem partitionFunctionAlongExhaustion_latticeGraph_eq_abs_h
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J h β : ℝ) (n : ℕ) :
+    partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, h, β⟩ : IsingParams ℝ) n
+      = partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, |h|, β⟩ : IsingParams ℝ) n :=
+  partitionFunctionAlongExhaustion_eq_abs_h (IsingModel.latticeGraph d) Λ J h β n
+
+/-- **ℤ^d partitionFunctionAlongExhaustion ferromagnetic `|h|`-monotonicity**
+per stage (any Exhaustion). -/
+theorem partitionFunctionAlongExhaustion_latticeGraph_monotone_abs_h
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β)
+    {h₁ h₂ : ℝ} (hh : |h₁| ≤ |h₂|) (n : ℕ) :
+    partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, h₁, β⟩ : IsingParams ℝ) n
+      ≤ partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, h₂, β⟩ : IsingParams ℝ) n :=
+  partitionFunctionAlongExhaustion_monotone_abs_h (IsingModel.latticeGraph d) Λ
+    J β hJ hβ hh n
+
 /-- **ℤ^d partitionFunctionΛ closed form at `J = 0`**:
 `Z_{Λ_n}(⟨0, h, β⟩) = (2·cosh(β·h))^|Λ_n|` on the ℤ^d cubic box.
 Concrete specialization of `partitionFunctionΛ_J_zero`. -/
