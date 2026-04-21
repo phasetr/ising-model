@@ -876,6 +876,21 @@ theorem correlationAlongExhaustion_latticeGraph_cubicExhaustion_nonneg
   correlationAlongExhaustion_nonneg (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) p hf A n
 
+/-- **ℤ^d physical identification: correlationΛ → correlationInfinite**
+(any-Exhaustion). -/
+theorem tendsto_correlationΛ_correlationInfinite_latticeGraph_general
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    (A : Finset (Fin d → ℤ)) :
+    ∃ N : ℕ, ∃ hN : ∀ n ≥ N, A ⊆ Λ.volume n,
+      Filter.Tendsto
+        (fun m : ℕ => correlationΛ (IsingModel.latticeGraph d)
+          (Λ.volume (m + N)) p
+          (Ambient.liftFinset A (hN (m + N) (Nat.le_add_left N m))))
+        Filter.atTop (nhds (correlationInfinite (IsingModel.latticeGraph d)
+          Λ p A)) :=
+  tendsto_correlationΛ_correlationInfinite (IsingModel.latticeGraph d) Λ p hf A
+
 /-- **ℤ^d physical identification: correlationΛ → correlationInfinite**. -/
 theorem tendsto_correlationΛ_correlationInfinite_latticeGraph
     (d : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p)
