@@ -340,6 +340,23 @@ theorem correlationInfinite_latticeGraph_empty
     correlationInfinite (IsingModel.latticeGraph d) Λ p ∅ = 1 :=
   correlationInfinite_empty (IsingModel.latticeGraph d) Λ p
 
+/-- **ℤ^d `correlationΛ` vanishes at `β = 0`** for nonempty `A : Finset ↑Λ`. -/
+theorem correlationΛ_latticeGraph_beta_zero_vanish_of_nonempty
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J h : ℝ)
+    (A : Finset (↑Λ : Type _)) (hA : A.Nonempty) :
+    correlationΛ (IsingModel.latticeGraph d) Λ
+        (⟨J, h, 0⟩ : IsingParams ℝ) A = 0 :=
+  correlationΛ_beta_zero_vanish_of_nonempty (IsingModel.latticeGraph d) Λ J h A hA
+
+/-- **ℤ^d `correlationΛ` vanishes at `J = h = 0`** for nonempty `A`. -/
+theorem correlationΛ_latticeGraph_zero_params_vanish_of_nonempty
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (β : ℝ)
+    (A : Finset (↑Λ : Type _)) (hA : A.Nonempty) :
+    correlationΛ (IsingModel.latticeGraph d) Λ
+        (⟨0, 0, β⟩ : IsingParams ℝ) A = 0 :=
+  correlationΛ_zero_params_vanish_of_nonempty (IsingModel.latticeGraph d) Λ β A hA
+
+
 /-- **ℤ^d correlationΛ_empty = 1** per finite volume. -/
 @[simp]
 theorem correlationΛ_latticeGraph_empty
