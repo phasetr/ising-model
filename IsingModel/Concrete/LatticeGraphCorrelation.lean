@@ -133,6 +133,17 @@ theorem spontaneousCorrelation_latticeGraph_cubicExhaustion_le_one
   spontaneousCorrelation_le_one (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) hJ hβ A
 
+/-- **ℤ^d `spontaneousMagnetization ≤ magnetizationInfinite`** at positive `h`. -/
+theorem spontaneousMagnetization_le_magnetizationInfinite_latticeGraph
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β)
+    {h : ℝ} (hh : 0 < h) (i : Fin d → ℤ) :
+    spontaneousMagnetization (IsingModel.latticeGraph d) Λ J β i
+      ≤ magnetizationInfinite (IsingModel.latticeGraph d) Λ
+          (⟨J, h, β⟩ : IsingParams ℝ) i :=
+  spontaneousMagnetization_le_magnetizationInfinite
+    (IsingModel.latticeGraph d) Λ hJ hβ hh i
+
 /-- **Infimum bound** `spontaneousCorrelation ≤ correlationInfinite ⟨J, h, β⟩`
 for `h > 0` on ℤ^d. -/
 theorem spontaneousCorrelation_le_correlationInfinite_latticeGraph
