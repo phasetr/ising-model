@@ -758,6 +758,28 @@ theorem correlationΛ_latticeGraph_gks_second
   refine ⟨hAB, ?_⟩
   exact correlationΛ_gks_second (IsingModel.latticeGraph d) p hf hA hB
 
+/-- **ℤ^d GHS inequality at Λ-induced subgraph** (Glimm–Jaffe §4.3 Cor 4.3.4):
+`U_3(i, j, k) ≤ 0` for ferromagnetic `p` and distinct sites. -/
+theorem ghs_inequality_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    (i j k : ↑Λ) (hij : i ≠ j) (hjk : j ≠ k) (hik : i ≠ k) :
+    IsingModel.truncated3
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p i j k ≤ 0 :=
+  IsingModel.ghs_inequality
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p hf i j k hij hjk hik
+
+/-- **ℤ^d Cor 4.3.3 at Λ-induced subgraph** (Glimm–Jaffe §4.3):
+`U_4(i, j, k, l) ≤ 0` at `h = 0` for ferromagnetic and distinct sites. -/
+theorem cor_4_3_3_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
+    (hf : Ferromagnetic (⟨J, (0 : ℝ), β⟩ : IsingParams ℝ))
+    (i j k l : ↑Λ) (hij : i ≠ j) (hik : i ≠ k) (hil : i ≠ l)
+    (hjk : j ≠ k) (hjl : j ≠ l) (hkl : k ≠ l) :
+    IsingModel.truncated4 (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
+        (⟨J, 0, β⟩ : IsingParams ℝ) i j k l ≤ 0 :=
+  IsingModel.cor_4_3_3 (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
+    J β hf i j k l hij hik hil hjk hjl hkl
+
 /-- **ℤ^d magnetizationΛ J → ∞ convergence**: specialisation of
 `correlation_convergent` at `B = {i}`. -/
 theorem magnetizationΛ_latticeGraph_convergent_J
