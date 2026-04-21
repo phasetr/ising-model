@@ -758,6 +758,29 @@ theorem correlationΛ_latticeGraph_gks_second
   refine ⟨hAB, ?_⟩
   exact correlationΛ_gks_second (IsingModel.latticeGraph d) p hf hA hB
 
+/-- **ℤ^d `partitionFunctionΛ` upper bound** at Λ-induced subgraph:
+`Z ≤ |Config| · exp(|β|·(|J|·|E| + |h|·|Λ|))`. -/
+theorem partitionFunctionΛ_latticeGraph_upper
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ) :
+    partitionFunctionΛ (IsingModel.latticeGraph d) Λ p
+      ≤ Fintype.card (IsingModel.Config (↑Λ : Type _))
+        * Real.exp (|p.β| * (|p.J|
+            * (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card
+          + |p.h| * Fintype.card (↑Λ : Type _))) :=
+  IsingModel.partitionFunction_upper
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p
+
+/-- **ℤ^d `partitionFunctionΛ` lower bound** at Λ-induced subgraph:
+`exp(-|β|·(|J|·|E| + |h|·|Λ|)) ≤ Z`. -/
+theorem partitionFunctionΛ_latticeGraph_lower
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ) :
+    Real.exp (-(|p.β| * (|p.J|
+          * (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card
+        + |p.h| * Fintype.card (↑Λ : Type _))))
+      ≤ partitionFunctionΛ (IsingModel.latticeGraph d) Λ p :=
+  IsingModel.partitionFunction_lower
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p
+
 /-- **ℤ^d GKS-I at Λ-induced subgraph** (Griffiths 1967):
 `0 ≤ ⟨σ^A⟩_Λ` for ferromagnetic `p`. -/
 theorem gks_first_latticeGraph
