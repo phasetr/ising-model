@@ -6,6 +6,7 @@ import IsingModel.Inequalities.FKG
 import IsingModel.ComplexAnalyticity
 import IsingModel.PeierlsInfinite
 import IsingModel.AmbientComplexAnalyticity
+import IsingModel.AmbientFKG
 
 /-!
 # Concrete translation invariance for the ℤ^d Ising correlation
@@ -2544,6 +2545,48 @@ theorem freeEnergyComplexAlongExhaustion_tendsto_at_real_of_disjointTowerHypothe
         (IsingModel.latticeGraph d) Λ p : ℝ) : ℂ)) :=
   Ambient.freeEnergyComplexAlongExhaustion_tendsto_at_real_of_disjointTowerHypotheses
     (IsingModel.latticeGraph d) Λ p hBED hd
+
+/-! #### Per-stage Gibbs expectation along an exhaustion + FKG (ℤ^d) -/
+
+/-- **ℤ^d `gibbsExpectationAlongExhaustion` unfolding**: equal to
+`gibbsExpectation` on the `n`-th volume with the `n`-th family
+member. -/
+theorem gibbsExpectationAlongExhaustion_latticeGraph_apply
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph
+        (IsingModel.latticeGraph d) (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ)
+    (F : (n : ℕ) → IsingModel.Config (↑(Λ.volume n) : Type _) → ℝ) (n : ℕ) :
+    Ambient.gibbsExpectationAlongExhaustion
+        (IsingModel.latticeGraph d) Λ p F n
+      = IsingModel.gibbsExpectation
+          (Ambient.inducedGraph
+            (IsingModel.latticeGraph d) (Λ.volume n)) p (F n) :=
+  Ambient.gibbsExpectationAlongExhaustion_apply
+    (IsingModel.latticeGraph d) Λ p F n
+
+/-- **ℤ^d per-stage FKG along an exhaustion** (GJ §4.4):
+for ferromagnetic `p` and per-stage nonneg monotone families
+`F n, G_fn n : Config (↑(Λ.volume n)) → ℝ`, the FKG inequality holds at
+every stage `n`. Pass-through of `fkg_ising_along_exhaustion`. -/
+theorem fkg_ising_along_exhaustion_latticeGraph
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph
+        (IsingModel.latticeGraph d) (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    (F G_fn : (n : ℕ) → IsingModel.Config (↑(Λ.volume n) : Type _) → ℝ)
+    (hF_nn : ∀ n, 0 ≤ F n) (hG_nn : ∀ n, 0 ≤ G_fn n)
+    (hF_mono : ∀ n, Monotone (F n)) (hG_mono : ∀ n, Monotone (G_fn n))
+    (n : ℕ) :
+    Ambient.gibbsExpectationAlongExhaustion
+        (IsingModel.latticeGraph d) Λ p F n
+      * Ambient.gibbsExpectationAlongExhaustion
+          (IsingModel.latticeGraph d) Λ p G_fn n
+      ≤ Ambient.gibbsExpectationAlongExhaustion
+          (IsingModel.latticeGraph d) Λ p (fun k => F k * G_fn k) n :=
+  Ambient.fkg_ising_along_exhaustion
+    (IsingModel.latticeGraph d) Λ p hf F G_fn
+    hF_nn hG_nn hF_mono hG_mono n
 
 /-- **ℤ^d partitionFunction monotone_subgraph** at Λ-induced subgraph:
 `G₁ ≤ G₂ ⇒ Z_{G₁} ≤ Z_{G₂}` for ferromagnetic `p`. -/
