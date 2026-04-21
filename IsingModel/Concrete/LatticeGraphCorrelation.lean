@@ -1856,6 +1856,23 @@ theorem freeEnergyAlongExhaustion_latticeGraph_eq_inv_Λcard_mul_log
   freeEnergyAlongExhaustion_eq_inv_Λcard_mul_log
     (IsingModel.latticeGraph d) Λ p n
 
+/-- **ℤ^d `freeEnergyΛ ≥ 0`** (ferromagnetic, nonempty `Λ`). -/
+theorem freeEnergyΛ_latticeGraph_nonneg_of_ferromagnetic
+    (d : ℕ) {Λ : Finset (Fin d → ℤ)} (hne : Λ.Nonempty)
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    0 ≤ freeEnergyΛ (IsingModel.latticeGraph d) Λ p :=
+  freeEnergyΛ_nonneg_of_ferromagnetic (IsingModel.latticeGraph d) hne p hf
+
+/-- **ℤ^d `freeEnergyAlongExhaustion ≥ 0`** per stage (ferromagnetic,
+nonempty stage, any-Exhaustion). -/
+theorem freeEnergyAlongExhaustion_latticeGraph_nonneg_of_ferromagnetic
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) {n : ℕ}
+    (hne : (Λ.volume n).Nonempty) :
+    0 ≤ freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ p n :=
+  freeEnergyAlongExhaustion_nonneg_of_ferromagnetic
+    (IsingModel.latticeGraph d) Λ p hf hne
+
 /-- **ℤ^d `freeEnergyAlongExhaustion` as `log Z / card`** (any-Exhaustion):
 alternate form of `freeEnergyAlongExhaustion_eq_inv_card_mul_log` using the
 Fintype-card expression. -/
