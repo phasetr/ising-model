@@ -3409,6 +3409,46 @@ theorem truncated3Infinite_apply
         + 2 * correlationInfinite G Λ p {i} * correlationInfinite G Λ p {j}
           * correlationInfinite G Λ p {k} := rfl
 
+/-- **`truncated3Infinite` symmetry under swapping `i, j`**. The defining
+formula is symmetric in the three site arguments, using that Finsets are
+unordered. -/
+theorem truncated3Infinite_swap_ij
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (i j k : V) :
+    truncated3Infinite G Λ p i j k = truncated3Infinite G Λ p j i k := by
+  unfold truncated3Infinite
+  have h1 : ({i, j, k} : Finset V) = {j, i, k} := by
+    rw [Finset.insert_comm]
+  have h2 : ({i, j} : Finset V) = {j, i} := Finset.pair_comm i j
+  rw [h1, h2]
+  ring
+
+/-- **`truncated3Infinite` symmetry under swapping `j, k`**. -/
+theorem truncated3Infinite_swap_jk
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (i j k : V) :
+    truncated3Infinite G Λ p i j k = truncated3Infinite G Λ p i k j := by
+  unfold truncated3Infinite
+  have h1 : ({i, j, k} : Finset V) = {i, k, j} := by
+    congr 1
+    exact Finset.pair_comm j k
+  have h2 : ({j, k} : Finset V) = {k, j} := Finset.pair_comm j k
+  rw [h1, h2]
+  ring
+
+/-- **`truncated3Infinite` symmetry under swapping `i, k`**: obtained by
+chaining the `ij` and `jk` swaps. -/
+theorem truncated3Infinite_swap_ik
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (i j k : V) :
+    truncated3Infinite G Λ p i j k = truncated3Infinite G Λ p k j i := by
+  rw [truncated3Infinite_swap_ij G Λ p i j k,
+      truncated3Infinite_swap_jk G Λ p j i k,
+      truncated3Infinite_swap_ij G Λ p j k i]
+
 /-- **Truncated 3-point along an exhaustion** (local helper): evaluates
 the `truncated3`-style algebraic expression at the `n`-th volume of
 the exhaustion, using `correlationAlongExhaustion` instead of the
