@@ -1843,8 +1843,10 @@ theorem truncated2_convergent_beta_latticeGraph
 
 /-- **ℤ^d truncated2_convergent_subgraph direct** (Λ-induced,
 ferromagnetic): `n ↦ ⟨σ_i; σ_j⟩_{Gₙ}` converges along any increasing
-subgraph sequence `Gₙ ≤ latticeGraph d` (on the Λ-induced type). Thin
-pass-through of `IsingModel.truncated2_convergent_subgraph`. -/
+subgraph sequence `Gₙ : ℕ → SimpleGraph (↑Λ)` (note: `Gₙ` is arbitrary
+on the Λ-induced vertex type; this wrapper only fixes `ι = ↑Λ`, not the
+graph itself). Thin pass-through of
+`IsingModel.truncated2_convergent_subgraph`. -/
 theorem truncated2_convergent_subgraph_latticeGraph
     (d : ℕ) (Λ : Finset (Fin d → ℤ))
     (Gn : ℕ → SimpleGraph (↑Λ : Type _)) [∀ n, Fintype (Gn n).edgeSet]
@@ -1857,7 +1859,9 @@ theorem truncated2_convergent_subgraph_latticeGraph
 
 /-- **ℤ^d susceptibility_convergent_subgraph direct** (Λ-induced,
 ferromagnetic): `n ↦ χ_i(Gₙ)` converges along any increasing subgraph
-sequence on the Λ-induced type. Thin pass-through of
+sequence `Gₙ : ℕ → SimpleGraph (↑Λ)` (note: `Gₙ` is arbitrary on the
+Λ-induced vertex type; this wrapper only fixes `ι = ↑Λ`, not the graph
+itself). Thin pass-through of
 `IsingModel.susceptibility_convergent_subgraph`. -/
 theorem susceptibility_convergent_subgraph_latticeGraph
     (d : ℕ) (Λ : Finset (Fin d → ℤ))
@@ -1870,8 +1874,10 @@ theorem susceptibility_convergent_subgraph_latticeGraph
   IsingModel.susceptibility_convergent_subgraph Gn hmono p hf i
 
 /-- **ℤ^d magnetization_total_convergent_subgraph direct** (Λ-induced,
-ferromagnetic): `n ↦ Σ_i M_i(Gₙ)` converges along any increasing subgraph
-sequence on the Λ-induced type. Thin pass-through of
+ferromagnetic): `n ↦ Σ_i M_i(Gₙ)` converges along any increasing
+subgraph sequence `Gₙ : ℕ → SimpleGraph (↑Λ)` (note: `Gₙ` is arbitrary on
+the Λ-induced vertex type; this wrapper only fixes `ι = ↑Λ`, not the
+graph itself). Thin pass-through of
 `IsingModel.magnetization_total_convergent_subgraph`. -/
 theorem magnetization_total_convergent_subgraph_latticeGraph
     (d : ℕ) (Λ : Finset (Fin d → ℤ))

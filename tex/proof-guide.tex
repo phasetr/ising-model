@@ -897,8 +897,11 @@ Parallel $\mathbb{Z}^d$ wrappers for the derived \S5 quantities
 \texttt{magnetization\_total\_convergent\_subgraph\_latticeGraph}
 pass through the abstract
 \texttt{IsingModel.\{magnetization,truncated2,susceptibility,magnetization\_total\}\_convergent\_*}
-(\texttt{IsingModel/PhaseTransition.lean}) at the
-$\Lambda$-induced subgraph of \texttt{latticeGraph d}.
+(\texttt{IsingModel/PhaseTransition.lean}). The $J,h,\beta$ wrappers
+fix the graph to \texttt{Ambient.inducedGraph (latticeGraph d)\,$\Lambda$};
+the \texttt{\_subgraph} wrappers only fix $\iota = \operatorname{\uparrow}\Lambda$
+(the subgraph parameter $G_n$ on the $\Lambda$-induced type remains
+unconstrained and is \emph{not} forced to be $\le$ \texttt{latticeGraph d}).
 
 \begin{remark}
 The original Glimm--Jaffe formulation uses lattice growth
