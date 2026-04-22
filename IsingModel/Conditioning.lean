@@ -522,6 +522,13 @@ theorem euclidean_inner_one_fn_right {n : ℕ} (x : Fin n → ℝ) :
   intros i _
   ring
 
+/-- **Euclidean inner of negated pair**: `∑ (-xᵢ) · (-yᵢ) = ∑ xᵢ · yᵢ`. -/
+theorem euclidean_inner_neg_neg {n : ℕ} (x y : Fin n → ℝ) :
+    (∑ i : Fin n, (-x i) * (-y i)) = ∑ i : Fin n, x i * y i := by
+  apply Finset.sum_congr rfl
+  intros i _
+  ring
+
 /-- **Parallelogram identity for Euclidean norm squared**:
 `∑ (xᵢ + yᵢ)² + ∑ (xᵢ - yᵢ)² = 2·(∑ xᵢ² + ∑ yᵢ²)`. -/
 theorem euclidean_parallelogram {n : ℕ} (x y : Fin n → ℝ) :
