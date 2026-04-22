@@ -3836,6 +3836,35 @@ theorem susceptibility_J_zero_latticeGraph
   IsingModel.susceptibility_J_zero
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) h β i
 
+/-- **ℤ^d truncated2 h=0 direct** (Λ-induced): at `h = 0`,
+`truncated2 i j = correlation {i, j}`. Thin pass-through of
+`IsingModel.truncated2_h_zero`. -/
+theorem truncated2_h_zero_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ) (i j : (↑Λ : Type _)) :
+    IsingModel.truncated2
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
+        (⟨J, 0, β⟩ : IsingParams ℝ) i j
+      = IsingModel.correlation
+          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
+          (⟨J, 0, β⟩ : IsingParams ℝ) {i, j} :=
+  IsingModel.truncated2_h_zero
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J β i j
+
+/-- **ℤ^d susceptibility_h_zero direct** (Λ-induced): at `h = 0`,
+`χ_i = ∑_j correlation {i, j}`. Thin pass-through of
+`IsingModel.susceptibility_h_zero`. -/
+theorem susceptibility_h_zero_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ) (i : (↑Λ : Type _)) :
+    IsingModel.susceptibility
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
+        (⟨J, 0, β⟩ : IsingParams ℝ) i
+      = ∑ j : (↑Λ : Type _),
+          IsingModel.correlation
+            (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
+            (⟨J, 0, β⟩ : IsingParams ℝ) {i, j} :=
+  IsingModel.susceptibility_h_zero
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J β i
+
 /-- **ℤ^d susceptibility_beta_zero direct** (Λ-induced): at `β = 0`,
 `χ_i = 0` for any `J, h`. Thin pass-through of
 `IsingModel.susceptibility_beta_zero`. -/
