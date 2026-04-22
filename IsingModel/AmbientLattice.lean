@@ -3341,6 +3341,31 @@ theorem truncated2Infinite_J_zero_of_ne
   rw [hcard_pair, hcard_i, hcard_j]
   ring
 
+/-- **∞-volume truncated 2-point at `J = 0` diagonal**:
+`truncated2Infinite ⟨0, h, β⟩ i i = tanh(β·h) · (1 − tanh(β·h))`
+(ferromagnetic). Complements `truncated2Infinite_J_zero_of_ne`
+(off-diagonal = 0). Uses the Finset collapse `{i,i} = {i}`, so
+`⟨σ_i σ_i⟩ = ⟨σ_i⟩` at the Finset level — the same caveat as
+`susceptibility_J_zero` and `twoPointFunction_zero`. Pure algebraic
+identity at `J = 0` via `correlationInfinite_J_zero`.
+
+Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §5.1 pp. 72–74. -/
+theorem truncated2Infinite_J_zero_diagonal
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (h β : ℝ)
+    (hf : Ferromagnetic (⟨(0 : ℝ), h, β⟩ : IsingParams ℝ))
+    (i : V) :
+    truncated2Infinite G Λ (⟨0, h, β⟩ : IsingParams ℝ) i i
+      = Real.tanh (β * h) * (1 - Real.tanh (β * h)) := by
+  unfold truncated2Infinite
+  have hpair : ({i, i} : Finset V) = {i} := by simp
+  have h1 : correlationInfinite G Λ (⟨(0 : ℝ), h, β⟩ : IsingParams ℝ) {i}
+      = Real.tanh (β * h) := by
+    rw [correlationInfinite_J_zero G Λ h β hf, Finset.card_singleton, pow_one]
+  rw [hpair, h1]
+  ring
+
 /-- **∞-volume truncated 2-point function vanishes at `β = 0`**
 for any `J, h` and any sites `i, j : V` (distinct or not).
 
