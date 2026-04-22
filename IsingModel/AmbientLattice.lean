@@ -4379,6 +4379,37 @@ theorem truncated4Infinite_J_zero_of_two_pair_coincidence
   rw [hiikk, hii, hkk, h1i, h1k, hik2]
   ring
 
+/-- **∞-volume Lebowitz 4-point at `J = 0` triple coincidence**
+(ferromagnetic): if `i ≠ l`, then
+`truncated4Infinite ⟨0,h,β⟩ i i i l = t² − 3·t³` with `t = tanh(β·h)`.
+
+Unlike the pair / two-pair / one-pair coincidence cases (all giving
+`−2t⁴`), triple coincidence produces the asymmetric closed form
+`t² − 3t³`. Finset collapses `{i,i,i,l} = {i,l}` (card 2),
+`{i,i} = {i}` (card 1); each of the three pair-pair products equals
+`t · t² = t³`, yielding `U_4 = t² − 3t³`.
+
+Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §5.1 pp. 72–74. -/
+theorem truncated4Infinite_J_zero_of_triple_coincidence
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (h β : ℝ)
+    (hf : Ferromagnetic (⟨(0 : ℝ), h, β⟩ : IsingParams ℝ))
+    {i l : V} (hil : i ≠ l) :
+    truncated4Infinite G Λ (⟨0, h, β⟩ : IsingParams ℝ) i i i l
+      = Real.tanh (β * h) ^ 2 - 3 * Real.tanh (β * h) ^ 3 := by
+  unfold truncated4Infinite
+  have h1i : correlationInfinite G Λ (⟨(0 : ℝ), h, β⟩ : IsingParams ℝ) {i}
+      = Real.tanh (β * h) := by
+    rw [correlationInfinite_J_zero G Λ h β hf, Finset.card_singleton, pow_one]
+  have hil2 : correlationInfinite G Λ (⟨(0 : ℝ), h, β⟩ : IsingParams ℝ) {i, l}
+      = Real.tanh (β * h) ^ 2 := by
+    rw [correlationInfinite_J_zero G Λ h β hf, Finset.card_pair hil]
+  have hii : ({i, i} : Finset V) = {i} := by simp
+  have hiiil : ({i, i, i, l} : Finset V) = {i, l} := by ext x; simp
+  rw [hiiil, hii, h1i, hil2]
+  ring
+
 /-! ## Parameter monotonicity of `spontaneous*`
 
 Combine the parameter-direction monotonicity of `correlationInfinite`
