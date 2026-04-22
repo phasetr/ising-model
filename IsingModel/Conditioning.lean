@@ -239,6 +239,11 @@ theorem abs_euclidean_inner_le_sqrt {n : ℕ} (x y : Fin n → ℝ) :
   have := Real.sqrt_le_sqrt hsq
   rwa [Real.sqrt_sq_eq_abs] at this
 
+/-- **Euclidean norm-squared nonneg**: `0 ≤ ∑ (xᵢ)²` on `Fin n → ℝ`. -/
+theorem euclidean_norm_sq_nonneg {n : ℕ} (x : Fin n → ℝ) :
+    0 ≤ ∑ i : Fin n, (x i) ^ 2 :=
+  Finset.sum_nonneg (fun _ _ => sq_nonneg _)
+
 /-- **Constant-diagonal instance**: if `f : α → ℝ` is nonneg, then
 the form `fun x _ => f x` (constant in the second argument) is
 reflection positive. -/
