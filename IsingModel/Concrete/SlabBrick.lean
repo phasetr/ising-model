@@ -557,6 +557,64 @@ theorem freeEnergyInfinite_slabBrick_sandwich {widths : Fin d → ℕ}
   ⟨freeEnergyInfinite_slabBrick_ge_log_two hw hJ hh hβ,
    freeEnergyInfinite_slabBrick_le hw _ ⟨hJ, hh, hβ⟩⟩
 
+/-! ## Low-dimensional equivalences for the named infinite-volume limits
+
+Transport the Finset equalities `linearBox_eq_slabBrick_elim0` and
+`stripeBrick2D_eq_slabBrick` through the Fekete limit: since the
+underlying convergent sequences agree pointwise, their named limits
+coincide. -/
+
+/-- **1D limit equivalence**: the 1D linearBox named limit equals the
+`d = 0` slab specialization (empty widths via `Fin.elim0`). -/
+theorem freeEnergyInfinite_linearBox_eq_slabBrick_elim0
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    freeEnergyInfinite_linearBox p hf
+      = @freeEnergyInfinite_slabBrick 0 (Fin.elim0 : Fin 0 → ℕ)
+          (fun j => j.elim0) p hf := by
+  have hpt : ∀ n : ℕ,
+      IsingModel.freeEnergy
+        (Ambient.inducedGraph (IsingModel.latticeGraph 1) (linearBox n)) p
+      = IsingModel.freeEnergy
+        (Ambient.inducedGraph (IsingModel.latticeGraph (0 + 1))
+          (slabBrick (d := 0) Fin.elim0 n)) p := by
+    intro n; rw [linearBox_eq_slabBrick_elim0]
+  have htendsto : Filter.Tendsto
+      (fun n => IsingModel.freeEnergy
+        (Ambient.inducedGraph (IsingModel.latticeGraph (0 + 1))
+          (slabBrick (d := 0) Fin.elim0 n)) p)
+      Filter.atTop (nhds (freeEnergyInfinite_linearBox p hf)) := by
+    refine (freeEnergy_linearBox_tendsto_freeEnergyInfinite p hf).congr ?_
+    intro n; exact hpt n
+  exact (tendsto_nhds_unique htendsto
+    (@freeEnergy_slabBrick_tendsto_freeEnergyInfinite 0 Fin.elim0
+      (fun j => j.elim0) p hf)).symm
+
+/-- **2D limit equivalence**: the 2D stripe named limit equals the
+`d = 1` slab specialization with constant width. -/
+theorem freeEnergyInfinite_stripeBrick2D_eq_slabBrick
+    {w : ℕ} (hw : w ≠ 0) (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    freeEnergyInfinite_stripeBrick2D hw p hf
+      = @freeEnergyInfinite_slabBrick 1 (fun _ : Fin 1 => w)
+          (fun _ => hw) p hf := by
+  have hpt : ∀ n : ℕ,
+      IsingModel.freeEnergy
+        (Ambient.inducedGraph (IsingModel.latticeGraph 2)
+          (stripeBrick2D w n)) p
+      = IsingModel.freeEnergy
+        (Ambient.inducedGraph (IsingModel.latticeGraph (1 + 1))
+          (slabBrick (d := 1) (fun _ : Fin 1 => w) n)) p := by
+    intro n; rw [stripeBrick2D_eq_slabBrick]
+  have htendsto : Filter.Tendsto
+      (fun n => IsingModel.freeEnergy
+        (Ambient.inducedGraph (IsingModel.latticeGraph (1 + 1))
+          (slabBrick (d := 1) (fun _ : Fin 1 => w) n)) p)
+      Filter.atTop (nhds (freeEnergyInfinite_stripeBrick2D hw p hf)) := by
+    refine (freeEnergy_stripeBrick2D_tendsto_freeEnergyInfinite hw p hf).congr ?_
+    intro n; exact hpt n
+  exact (tendsto_nhds_unique htendsto
+    (@freeEnergy_slabBrick_tendsto_freeEnergyInfinite 1 (fun _ : Fin 1 => w)
+      (fun _ => hw) p hf)).symm
+
 end Concrete
 
 end IsingModel
