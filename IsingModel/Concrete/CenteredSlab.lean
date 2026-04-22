@@ -522,6 +522,41 @@ theorem freeEnergy_centeredSlab_tendsto_freeEnergyInfinite
       Filter.atTop (nhds (freeEnergyInfinite_centeredSlab hw p hf)) :=
   Classical.choose_spec (freeEnergy_centeredSlab_tendsto hw p hf)
 
+/-- **`centeredSlab widths n` is nonempty** when all widths are nonzero
+and `n ≥ 1`. Derived from `|centeredSlab widths n| = 2n · ∏ widths`. -/
+theorem centeredSlab_nonempty {widths : Fin d → ℕ}
+    (hw : ∀ j : Fin d, widths j ≠ 0) {n : ℕ} (hn : 1 ≤ n) :
+    (centeredSlab widths n).Nonempty := by
+  rw [← Finset.card_pos, centeredSlab_card]
+  have hprod : 0 < ∏ j : Fin d, widths j :=
+    Nat.pos_of_ne_zero (Finset.prod_ne_zero_iff.mpr (fun j _ => hw j))
+  have h2n : 0 < 2 * n := by linarith
+  exact Nat.mul_pos h2n hprod
+
+/-- **J=0 closed form for the centered-slab infinite-volume
+free-energy density**: `freeEnergyInfinite_centeredSlab hw ⟨0, h, β⟩ hf
+= log(2·cosh(β·h))` under ferromagnetic `0 ≤ h, 0 < β`. Parallel to
+`freeEnergyInfinite_slabBrick_J_zero`. -/
+theorem freeEnergyInfinite_centeredSlab_J_zero {widths : Fin d → ℕ}
+    (hw : ∀ j : Fin d, widths j ≠ 0)
+    {h β : ℝ} (hh : 0 ≤ h) (hβ : 0 < β) :
+    freeEnergyInfinite_centeredSlab hw
+        (⟨0, h, β⟩ : IsingParams ℝ) ⟨le_refl 0, hh, hβ⟩
+      = Real.log (2 * Real.cosh (β * h)) := by
+  have hconst : Filter.Tendsto
+      (fun n => IsingModel.freeEnergy
+        (Ambient.inducedGraph (IsingModel.latticeGraph (d + 1))
+          (centeredSlab widths n)) (⟨0, h, β⟩ : IsingParams ℝ))
+      Filter.atTop (nhds (Real.log (2 * Real.cosh (β * h)))) := by
+    refine Filter.Tendsto.congr' ?_ tendsto_const_nhds
+    filter_upwards [Filter.eventually_ge_atTop 1] with n hn
+    have hne : (centeredSlab widths n).Nonempty := centeredSlab_nonempty hw hn
+    have hpos : 0 < Fintype.card (↑(centeredSlab widths n) : Type _) := by
+      rw [Fintype.card_coe]; exact Finset.card_pos.mpr hne
+    exact (IsingModel.freeEnergy_J_zero _ h β hpos).symm
+  exact tendsto_nhds_unique
+    (freeEnergy_centeredSlab_tendsto_freeEnergyInfinite hw _ _) hconst
+
 end Concrete
 
 end IsingModel

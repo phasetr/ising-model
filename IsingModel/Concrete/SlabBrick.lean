@@ -480,6 +480,44 @@ theorem freeEnergy_slabBrick_tendsto_freeEnergyInfinite
       Filter.atTop (nhds (freeEnergyInfinite_slabBrick hw p hf)) :=
   Classical.choose_spec (freeEnergy_slabBrick_tendsto hw p hf)
 
+/-- **`slabBrick widths n` is nonempty** when all widths are nonzero
+and `n ≥ 1`. Derived from the cardinality identity
+`|slabBrick widths n| = n · ∏ widths j`. -/
+theorem slabBrick_nonempty {widths : Fin d → ℕ}
+    (hw : ∀ j : Fin d, widths j ≠ 0) {n : ℕ} (hn : 1 ≤ n) :
+    (slabBrick widths n).Nonempty := by
+  rw [← Finset.card_pos, slabBrick_card]
+  have hprod : 0 < ∏ j : Fin d, widths j :=
+    Nat.pos_of_ne_zero (Finset.prod_ne_zero_iff.mpr (fun j _ => hw j))
+  exact Nat.mul_pos hn hprod
+
+/-- **J=0 closed form for the infinite-volume free-energy density**
+on the slab: `freeEnergyInfinite_slabBrick hw ⟨0, h, β⟩ hf = log(2·cosh(β·h))`.
+
+Per-stage value is constant `log(2·cosh(β·h))` for nonempty slabs
+(via `IsingModel.freeEnergy_J_zero`); the sequence is eventually
+constant along `atTop`, so `tendsto_nhds_unique` pins the named
+infinite-volume limit. -/
+theorem freeEnergyInfinite_slabBrick_J_zero {widths : Fin d → ℕ}
+    (hw : ∀ j : Fin d, widths j ≠ 0)
+    {h β : ℝ} (hh : 0 ≤ h) (hβ : 0 < β) :
+    freeEnergyInfinite_slabBrick hw
+        (⟨0, h, β⟩ : IsingParams ℝ) ⟨le_refl 0, hh, hβ⟩
+      = Real.log (2 * Real.cosh (β * h)) := by
+  have hconst : Filter.Tendsto
+      (fun n => IsingModel.freeEnergy
+        (Ambient.inducedGraph (IsingModel.latticeGraph (d + 1))
+          (slabBrick widths n)) (⟨0, h, β⟩ : IsingParams ℝ))
+      Filter.atTop (nhds (Real.log (2 * Real.cosh (β * h)))) := by
+    refine Filter.Tendsto.congr' ?_ tendsto_const_nhds
+    filter_upwards [Filter.eventually_ge_atTop 1] with n hn
+    have hne : (slabBrick widths n).Nonempty := slabBrick_nonempty hw hn
+    have hpos : 0 < Fintype.card (↑(slabBrick widths n) : Type _) := by
+      rw [Fintype.card_coe]; exact Finset.card_pos.mpr hne
+    exact (IsingModel.freeEnergy_J_zero _ h β hpos).symm
+  exact tendsto_nhds_unique
+    (freeEnergy_slabBrick_tendsto_freeEnergyInfinite hw _ _) hconst
+
 end Concrete
 
 end IsingModel
