@@ -266,6 +266,29 @@ theorem discriminant_pos_of_strict (a b c : ℝ) (ha : 0 < a)
     linarith
   linarith
 
+/-- **Strict discriminant forward** (for `0 < a`): if the quadratic
+is strictly positive everywhere, then `b² < a·c`. The forward
+direction of `discriminant_pos_iff`, via evaluating at the vertex
+`t = -b/a`. -/
+theorem discriminant_strict_of_pos (a b c : ℝ) (ha : 0 < a)
+    (h : ∀ t : ℝ, 0 < a * t ^ 2 + 2 * b * t + c) :
+    b ^ 2 < a * c := by
+  -- Evaluate at `t = -b/a`: the quadratic becomes `c - b²/a > 0`,
+  -- so `b² < a·c`.
+  have hvertex : 0 < c - b ^ 2 / a := by
+    have := h (-b / a)
+    rw [quadratic_complete_square a b c (-b / a) ha.ne'] at this
+    have : -b / a + b / a = 0 := by ring
+    have hev : a * (-b / a + b / a) ^ 2 = 0 := by rw [this]; ring
+    nlinarith [h (-b / a), quadratic_complete_square a b c (-b / a) ha.ne']
+  have := (div_lt_iff₀ ha).mp (by linarith : b ^ 2 / a < c)
+  linarith
+
+/-- **Strict discriminant iff** (for `0 < a`): combined biconditional. -/
+theorem discriminant_pos_iff (a b c : ℝ) (ha : 0 < a) :
+    (∀ t : ℝ, 0 < a * t ^ 2 + 2 * b * t + c) ↔ b ^ 2 < a * c :=
+  ⟨discriminant_strict_of_pos a b c ha, discriminant_pos_of_strict a b c ha⟩
+
 /-- **Schwarz absolute-value bound** (§10.6): from the quadratic
 positivity `∀ t, 0 ≤ a·t² + 2·b·t + c` with `a, c ≥ 0`, conclude
 the bound `|b| ≤ √(a·c)` on the symmetric linear coefficient.
