@@ -287,6 +287,22 @@ theorem euclidean_inner_zero_right {n : ℕ} (x : Fin n → ℝ) :
   intros i _
   ring
 
+/-- **Euclidean dot product with constant-one left-argument**:
+`∑ 1 · yᵢ = ∑ yᵢ`. -/
+theorem euclidean_inner_one_left {n : ℕ} (y : Fin n → ℝ) :
+    ∑ i : Fin n, (1 : ℝ) * y i = ∑ i : Fin n, y i := by
+  apply Finset.sum_congr rfl
+  intros i _
+  ring
+
+/-- **Euclidean dot product with constant-one right-argument**:
+`∑ xᵢ · 1 = ∑ xᵢ`. -/
+theorem euclidean_inner_one_right {n : ℕ} (x : Fin n → ℝ) :
+    ∑ i : Fin n, x i * (1 : ℝ) = ∑ i : Fin n, x i := by
+  apply Finset.sum_congr rfl
+  intros i _
+  ring
+
 /-- **Constant-diagonal instance**: if `f : α → ℝ` is nonneg, then
 the form `fun x _ => f x` (constant in the second argument) is
 reflection positive. -/
