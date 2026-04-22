@@ -220,6 +220,15 @@ theorem ReflectionPositive.euclidean_dot {n : ℕ} :
   intro x
   exact Finset.sum_nonneg (fun i _ => mul_self_nonneg (x i))
 
+/-- **Classical Cauchy-Schwarz on `Fin n → ℝ`**: for `x, y : Fin n → ℝ`,
+`(∑ xᵢ yᵢ)² ≤ (∑ xᵢ²) · (∑ yᵢ²)`. Direct consequence of mathlib's
+`Finset.sum_mul_sq_le_sq_mul_sq`; a concrete instance of the RP
+framework's Cauchy-Schwarz pattern on the Euclidean inner product. -/
+theorem euclidean_cauchy_schwarz {n : ℕ} (x y : Fin n → ℝ) :
+    (∑ i : Fin n, x i * y i) ^ 2
+      ≤ (∑ i : Fin n, (x i) ^ 2) * (∑ i : Fin n, (y i) ^ 2) :=
+  Finset.sum_mul_sq_le_sq_mul_sq _ x y
+
 /-- **Constant-diagonal instance**: if `f : α → ℝ` is nonneg, then
 the form `fun x _ => f x` (constant in the second argument) is
 reflection positive. -/
