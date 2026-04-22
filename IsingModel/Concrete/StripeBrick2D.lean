@@ -456,6 +456,21 @@ theorem freeEnergyInfinite_stripeBrick2D_nonneg
     rw [Fintype.card_coe]; exact Finset.card_pos.mpr hne
   exact IsingModel.freeEnergy_nonneg_of_ferromagnetic _ p hf hpos
 
+/-- **Tighter lower bound** `log(2·cosh(β·h)) ≤ freeEnergyInfinite_stripeBrick2D`. -/
+theorem freeEnergyInfinite_stripeBrick2D_ge_log_two_cosh
+    {w : ℕ} (hw : w ≠ 0) {J h β : ℝ}
+    (hJ : 0 ≤ J) (hh : 0 ≤ h) (hβ : 0 < β) :
+    Real.log (2 * Real.cosh (β * h))
+      ≤ freeEnergyInfinite_stripeBrick2D hw
+          (⟨J, h, β⟩ : IsingParams ℝ) ⟨hJ, hh, hβ⟩ := by
+  refine ge_of_tendsto
+    (freeEnergy_stripeBrick2D_tendsto_freeEnergyInfinite hw _ ⟨hJ, hh, hβ⟩) ?_
+  filter_upwards [Filter.eventually_ge_atTop 1] with n hn
+  have hne : (stripeBrick2D w n).Nonempty := stripeBrick2D_nonempty hw hn
+  have hpos : 0 < Fintype.card (↑(stripeBrick2D w n) : Type _) := by
+    rw [Fintype.card_coe]; exact Finset.card_pos.mpr hne
+  exact IsingModel.freeEnergy_ge_log_two_cosh _ hJ hh hβ hpos
+
 end Concrete
 
 end IsingModel

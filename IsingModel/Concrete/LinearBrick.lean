@@ -401,6 +401,22 @@ theorem freeEnergyInfinite_linearBox_nonneg
     rw [Fintype.card_coe]; exact Finset.card_pos.mpr hne
   exact IsingModel.freeEnergy_nonneg_of_ferromagnetic _ p hf hpos
 
+/-- **Tighter lower bound** `log(2·cosh(β·h)) ≤ freeEnergyInfinite_linearBox`
+under ferromagnetic `0 ≤ J, 0 ≤ h, 0 < β`. Sharper than
+`freeEnergyInfinite_linearBox_ge_log_two` (PR #650) when `h > 0`. -/
+theorem freeEnergyInfinite_linearBox_ge_log_two_cosh
+    {J h β : ℝ} (hJ : 0 ≤ J) (hh : 0 ≤ h) (hβ : 0 < β) :
+    Real.log (2 * Real.cosh (β * h))
+      ≤ freeEnergyInfinite_linearBox
+          (⟨J, h, β⟩ : IsingParams ℝ) ⟨hJ, hh, hβ⟩ := by
+  refine ge_of_tendsto
+    (freeEnergy_linearBox_tendsto_freeEnergyInfinite _ ⟨hJ, hh, hβ⟩) ?_
+  filter_upwards [Filter.eventually_ge_atTop 1] with n hn
+  have hne : (linearBox n).Nonempty := linearBox_nonempty hn
+  have hpos : 0 < Fintype.card (↑(linearBox n) : Type _) := by
+    rw [Fintype.card_coe]; exact Finset.card_pos.mpr hne
+  exact IsingModel.freeEnergy_ge_log_two_cosh _ hJ hh hβ hpos
+
 end Concrete
 
 end IsingModel

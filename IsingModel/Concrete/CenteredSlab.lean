@@ -629,6 +629,21 @@ theorem freeEnergyInfinite_centeredSlab_nonneg
     rw [Fintype.card_coe]; exact Finset.card_pos.mpr hne
   exact IsingModel.freeEnergy_nonneg_of_ferromagnetic _ p hf hpos
 
+/-- **Tighter lower bound** `log(2·cosh(β·h)) ≤ freeEnergyInfinite_centeredSlab`. -/
+theorem freeEnergyInfinite_centeredSlab_ge_log_two_cosh
+    {widths : Fin d → ℕ} (hw : ∀ j : Fin d, widths j ≠ 0)
+    {J h β : ℝ} (hJ : 0 ≤ J) (hh : 0 ≤ h) (hβ : 0 < β) :
+    Real.log (2 * Real.cosh (β * h))
+      ≤ freeEnergyInfinite_centeredSlab hw
+          (⟨J, h, β⟩ : IsingParams ℝ) ⟨hJ, hh, hβ⟩ := by
+  refine ge_of_tendsto
+    (freeEnergy_centeredSlab_tendsto_freeEnergyInfinite hw _ ⟨hJ, hh, hβ⟩) ?_
+  filter_upwards [Filter.eventually_ge_atTop 1] with n hn
+  have hne : (centeredSlab widths n).Nonempty := centeredSlab_nonempty hw hn
+  have hpos : 0 < Fintype.card (↑(centeredSlab widths n) : Type _) := by
+    rw [Fintype.card_coe]; exact Finset.card_pos.mpr hne
+  exact IsingModel.freeEnergy_ge_log_two_cosh _ hJ hh hβ hpos
+
 /-! ## 1D consistency: `centeredSlab (d=0) = shift_(-n) (linearBox (2n))`
 
 The `d = 0` centered slab is, at each index `n`, a negative-`n` shift
