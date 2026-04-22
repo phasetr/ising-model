@@ -558,6 +558,30 @@ theorem reflection_positive_mean_le_geom_mean
   have := Real.sqrt_le_sqrt hsq
   rwa [Real.sqrt_sq_eq_abs] at this
 
+/-- **Classical symmetric Cauchy-Schwarz** (§10.6 corollary for
+symmetric `b`): for symmetric bilinear `b` (i.e., `b x y = b y x`)
+satisfying `ReflectionPositive b`, the classical Schwarz inequality
+`(b x y)² ≤ b x x · b y y` holds. Direct reduction of
+`schwarz_of_reflection_positive` using `(b x y + b y x)/2 = b x y`
+under symmetry. -/
+theorem classical_schwarz_of_symmetric_reflection_positive
+    {α : Type*} [AddCommGroup α] [Module ℝ α]
+    (b : α → α → ℝ)
+    (hbi_left : ∀ x y z : α, b (x + y) z = b x z + b y z)
+    (hbi_right : ∀ x y z : α, b x (y + z) = b x y + b x z)
+    (hbi_smul_left : ∀ (c : ℝ) (x y : α), b (c • x) y = c * b x y)
+    (hbi_smul_right : ∀ (c : ℝ) (x y : α), b x (c • y) = c * b x y)
+    (hRP : ReflectionPositive b)
+    (hsym : ∀ x y : α, b x y = b y x) (x y : α) :
+    (b x y) ^ 2 ≤ b x x * b y y := by
+  have hsq := schwarz_of_reflection_positive b hbi_left hbi_right
+    hbi_smul_left hbi_smul_right hRP x y
+  -- `(b x y + b y x)/2 = (b x y + b x y)/2 = b x y` under symmetry.
+  have hmean : (b x y + b y x) / 2 = b x y := by
+    rw [hsym y x]; ring
+  rw [hmean] at hsq
+  exact hsq
+
 /-- **Degenerate case variant** (§10.6 corollary): if `b y y = 0`,
 then `b x y + b y x = 0`. Symmetric partner of
 `reflection_positive_off_diag_zero_of_diag_zero`. -/
