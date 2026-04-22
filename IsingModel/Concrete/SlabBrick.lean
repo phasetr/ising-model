@@ -640,6 +640,20 @@ theorem freeEnergyInfinite_slabBrick_tendsto_shift
   exact (Ambient.freeEnergyΛ_vaddFinset_eq
     (IsingModel.latticeGraph (d + 1)) t (slabBrick widths n) p).symm
 
+/-- **Nonnegativity** of `freeEnergyInfinite_slabBrick` under
+ferromagnetic parameters. -/
+theorem freeEnergyInfinite_slabBrick_nonneg
+    {widths : Fin d → ℕ} (hw : ∀ j : Fin d, widths j ≠ 0)
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    0 ≤ freeEnergyInfinite_slabBrick hw p hf := by
+  refine ge_of_tendsto
+    (freeEnergy_slabBrick_tendsto_freeEnergyInfinite hw p hf) ?_
+  filter_upwards [Filter.eventually_ge_atTop 1] with n hn
+  have hne : (slabBrick widths n).Nonempty := slabBrick_nonempty hw hn
+  have hpos : 0 < Fintype.card (↑(slabBrick widths n) : Type _) := by
+    rw [Fintype.card_coe]; exact Finset.card_pos.mpr hne
+  exact IsingModel.freeEnergy_nonneg_of_ferromagnetic _ p hf hpos
+
 end Concrete
 
 end IsingModel
