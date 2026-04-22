@@ -538,6 +538,12 @@ theorem euclidean_inner_smul_smul {n : ℕ} (c d : ℝ) (x y : Fin n → ℝ) :
   intros i _
   ring
 
+/-- **Euclidean scale by 1 is identity**: `∑ 1·xᵢ · 1·yᵢ = ∑ xᵢ·yᵢ`. -/
+theorem euclidean_inner_one_smul_one_smul {n : ℕ} (x y : Fin n → ℝ) :
+    (∑ i : Fin n, ((1 : ℝ) * x i) * ((1 : ℝ) * y i)) = ∑ i : Fin n, x i * y i := by
+  rw [euclidean_inner_smul_smul]
+  ring
+
 /-- **Parallelogram identity for Euclidean norm squared**:
 `∑ (xᵢ + yᵢ)² + ∑ (xᵢ - yᵢ)² = 2·(∑ xᵢ² + ∑ yᵢ²)`. -/
 theorem euclidean_parallelogram {n : ℕ} (x y : Fin n → ℝ) :
