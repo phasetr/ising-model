@@ -305,6 +305,21 @@ theorem susceptibility_h_zero (G : SimpleGraph ι) [Fintype G.edgeSet]
   unfold susceptibility
   exact Finset.sum_congr rfl (fun j _ => truncated2_h_zero G J β i j)
 
+/-- **Magnetization Z₂ odd-symmetry under `h → -h`**:
+`magnetization G ⟨J, -h, β⟩ i = -magnetization G ⟨J, h, β⟩ i`.
+
+Direct consequence of `correlation_neg_h` at `A = {i}` (card 1, so
+`(-1)^1 = -1`).
+
+Reference: Glimm–Jaffe §5.3 pp. 77–80. -/
+theorem magnetization_neg_h (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h β : ℝ) (i : ι) :
+    magnetization G (⟨J, -h, β⟩ : IsingParams ℝ) i
+      = -magnetization G (⟨J, h, β⟩ : IsingParams ℝ) i := by
+  unfold magnetization
+  rw [correlation_neg_h G J h β {i}, Finset.card_singleton, pow_one]
+  ring
+
 /-- The magnetization vanishes at `h = 0` (Z₂ symmetry, finite volume).
 This is the finite-volume counterpart of the statement that the Z₂
 symmetry is unbroken in finite volume. Symmetry breaking occurs only
