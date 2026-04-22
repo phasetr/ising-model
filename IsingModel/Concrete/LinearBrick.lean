@@ -474,6 +474,16 @@ theorem freeEnergyInfinite_linearBox_monotone_J
   intro n
   exact IsingModel.freeEnergy_monotone_J _ h β hh hβ hJ₁ hJ₂ hJle
 
+/-- **Strict positivity** `0 < freeEnergyInfinite_linearBox` under
+ferromagnetic parameters. Immediate from
+`freeEnergyInfinite_linearBox_ge_log_two` and `0 < log 2`. -/
+theorem freeEnergyInfinite_linearBox_pos
+    {J h β : ℝ} (hJ : 0 ≤ J) (hh : 0 ≤ h) (hβ : 0 < β) :
+    0 < freeEnergyInfinite_linearBox
+          (⟨J, h, β⟩ : IsingParams ℝ) ⟨hJ, hh, hβ⟩ :=
+  lt_of_lt_of_le (Real.log_pos (by norm_num))
+    (freeEnergyInfinite_linearBox_ge_log_two hJ hh hβ)
+
 /-- **Fekete convergence for any real h** (not just `h ≥ 0`): the 1D
 linearBox free-energy sequence at `⟨J, h, β⟩` converges to
 `freeEnergyInfinite_linearBox ⟨J, |h|, β⟩` (ferromagnetic at |h|).
