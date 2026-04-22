@@ -541,6 +541,44 @@ theorem schwarz_of_reflection_positive
   have := nonsymmetric_discriminant_mean (b y y) (b x y) (b y x) (b x x) hquad
   linarith [this, mul_comm (b y y) (b x x)]
 
+/-- **Reflection-positive Schwarz, AM-GM form** (§10.6 corollary):
+`|b x y + b y x| / 2 ≤ √(b x x · b y y)` from
+`schwarz_of_reflection_positive` (PR #685) + sqrt monotonicity. -/
+theorem reflection_positive_mean_le_geom_mean
+    {α : Type*} [AddCommGroup α] [Module ℝ α]
+    (b : α → α → ℝ)
+    (hbi_left : ∀ x y z : α, b (x + y) z = b x z + b y z)
+    (hbi_right : ∀ x y z : α, b x (y + z) = b x y + b x z)
+    (hbi_smul_left : ∀ (c : ℝ) (x y : α), b (c • x) y = c * b x y)
+    (hbi_smul_right : ∀ (c : ℝ) (x y : α), b x (c • y) = c * b x y)
+    (hRP : ReflectionPositive b) (x y : α) :
+    |(b x y + b y x) / 2| ≤ Real.sqrt (b x x * b y y) := by
+  have hsq := schwarz_of_reflection_positive b hbi_left hbi_right
+    hbi_smul_left hbi_smul_right hRP x y
+  have := Real.sqrt_le_sqrt hsq
+  rwa [Real.sqrt_sq_eq_abs] at this
+
+/-- **Degenerate reflection-positive case** (§10.6 corollary): if
+`b x x = 0`, then `b x y + b y x = 0` (the symmetrized off-diagonal
+vanishes). Immediate from Schwarz: `((b x y + b y x)/2)² ≤ 0` forces
+`b x y + b y x = 0`. -/
+theorem reflection_positive_off_diag_zero_of_diag_zero
+    {α : Type*} [AddCommGroup α] [Module ℝ α]
+    (b : α → α → ℝ)
+    (hbi_left : ∀ x y z : α, b (x + y) z = b x z + b y z)
+    (hbi_right : ∀ x y z : α, b x (y + z) = b x y + b x z)
+    (hbi_smul_left : ∀ (c : ℝ) (x y : α), b (c • x) y = c * b x y)
+    (hbi_smul_right : ∀ (c : ℝ) (x y : α), b x (c • y) = c * b x y)
+    (hRP : ReflectionPositive b) (x y : α) (hxx : b x x = 0) :
+    b x y + b y x = 0 := by
+  have hsq := schwarz_of_reflection_positive b hbi_left hbi_right
+    hbi_smul_left hbi_smul_right hRP x y
+  rw [hxx, zero_mul] at hsq
+  have hnn : 0 ≤ ((b x y + b y x) / 2) ^ 2 := sq_nonneg _
+  have hzero : ((b x y + b y x) / 2) ^ 2 = 0 := le_antisymm hsq hnn
+  have hhalf_zero : (b x y + b y x) / 2 = 0 := pow_eq_zero_iff (by norm_num : 2 ≠ 0) |>.mp hzero
+  linarith
+
 /-! ## High-temperature / cluster expansion (§18.1–18.3)
 
 Glimm–Jaffe Chapter 18 develops the cluster expansion for P(φ)₂ fields.
