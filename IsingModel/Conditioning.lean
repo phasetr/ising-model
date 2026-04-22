@@ -473,6 +473,24 @@ theorem euclidean_norm_sq_three (x : Fin 3 → ℝ) :
     (∑ i : Fin 3, (x i) ^ 2) = (x 0) ^ 2 + (x 1) ^ 2 + (x 2) ^ 2 := by
   simp [Fin.sum_univ_three]
 
+/-- **Single-element Euclidean inner**:
+`∑ i : Fin 1, x i * y i = x 0 * y 0`. -/
+theorem euclidean_inner_single (x y : Fin 1 → ℝ) :
+    (∑ i : Fin 1, x i * y i) = x 0 * y 0 := by
+  simp [Fin.sum_univ_one]
+
+/-- **Two-element Euclidean inner**:
+`∑ i : Fin 2, x i * y i = x 0 * y 0 + x 1 * y 1`. -/
+theorem euclidean_inner_two (x y : Fin 2 → ℝ) :
+    (∑ i : Fin 2, x i * y i) = x 0 * y 0 + x 1 * y 1 := by
+  simp [Fin.sum_univ_two]
+
+/-- **Three-element Euclidean inner**:
+`∑ i : Fin 3, x i * y i = x 0 * y 0 + x 1 * y 1 + x 2 * y 2`. -/
+theorem euclidean_inner_three (x y : Fin 3 → ℝ) :
+    (∑ i : Fin 3, x i * y i) = x 0 * y 0 + x 1 * y 1 + x 2 * y 2 := by
+  simp [Fin.sum_univ_three]
+
 /-- **Parallelogram identity for Euclidean norm squared**:
 `∑ (xᵢ + yᵢ)² + ∑ (xᵢ - yᵢ)² = 2·(∑ xᵢ² + ∑ yᵢ²)`. -/
 theorem euclidean_parallelogram {n : ℕ} (x y : Fin n → ℝ) :
