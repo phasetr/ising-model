@@ -211,6 +211,15 @@ theorem ReflectionPositive.of_le_diag {α : Type*} {b₁ b₂ : α → α → �
     ReflectionPositive b₂ :=
   fun x => (h x).trans (hle x)
 
+/-- **Euclidean example**: the dot product `(·, ·)` on `Fin n → ℝ`
+defined as `fun x y => ∑ i, x i * y i` is reflection positive. Concrete
+instance of `ReflectionPositive` obtained from a sum of nonneg diagonal
+squares `x i * x i = (x i)² ≥ 0`. -/
+theorem ReflectionPositive.euclidean_dot {n : ℕ} :
+    ReflectionPositive (fun x y : Fin n → ℝ => ∑ i : Fin n, x i * y i) := by
+  intro x
+  exact Finset.sum_nonneg (fun i _ => mul_self_nonneg (x i))
+
 /-- **Constant-diagonal instance**: if `f : α → ℝ` is nonneg, then
 the form `fun x _ => f x` (constant in the second argument) is
 reflection positive. -/
