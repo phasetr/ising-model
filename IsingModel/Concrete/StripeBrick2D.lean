@@ -529,6 +529,21 @@ theorem freeEnergyInfinite_stripeBrick2D_monotone_J
   intro n
   exact IsingModel.freeEnergy_monotone_J _ h β hh hβ hJ₁ hJ₂ hJle
 
+/-- **Fekete convergence for any real h** on the 2D stripe. -/
+theorem freeEnergy_stripeBrick2D_tendsto_of_abs_h
+    {w : ℕ} (hw : w ≠ 0) {J β : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β) (h : ℝ) :
+    Filter.Tendsto
+      (fun n => IsingModel.freeEnergy
+        (Ambient.inducedGraph (IsingModel.latticeGraph 2) (stripeBrick2D w n))
+        (⟨J, h, β⟩ : IsingParams ℝ))
+      Filter.atTop
+      (nhds (freeEnergyInfinite_stripeBrick2D hw
+        (⟨J, |h|, β⟩ : IsingParams ℝ) ⟨hJ, abs_nonneg h, hβ⟩)) := by
+  refine (freeEnergy_stripeBrick2D_tendsto_freeEnergyInfinite hw
+    (⟨J, |h|, β⟩ : IsingParams ℝ) ⟨hJ, abs_nonneg h, hβ⟩).congr ?_
+  intro n
+  exact (IsingModel.freeEnergy_eq_abs_h _ J h β).symm
+
 end Concrete
 
 end IsingModel
