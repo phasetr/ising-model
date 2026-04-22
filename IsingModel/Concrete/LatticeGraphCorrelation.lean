@@ -8634,6 +8634,18 @@ theorem truncated2Infinite_latticeGraph_J_zero_of_ne
         (⟨0, h, β⟩ : IsingParams ℝ) i j = 0 :=
   truncated2Infinite_J_zero_of_ne (IsingModel.latticeGraph d) Λ h β hf hij
 
+/-- **ℤ^d truncated 2-point function at `J = 0` diagonal**
+(ferromagnetic): `truncated2Infinite ⟨0,h,β⟩ i i = tanh(β·h) · (1 − tanh(β·h))`.
+Concrete wrapper for `truncated2Infinite_J_zero_diagonal`. -/
+theorem truncated2Infinite_latticeGraph_J_zero_diagonal
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (h β : ℝ) (hf : Ferromagnetic (⟨(0 : ℝ), h, β⟩ : IsingParams ℝ))
+    (i : Fin d → ℤ) :
+    truncated2Infinite (IsingModel.latticeGraph d) Λ
+        (⟨0, h, β⟩ : IsingParams ℝ) i i
+      = Real.tanh (β * h) * (1 - Real.tanh (β * h)) :=
+  truncated2Infinite_J_zero_diagonal (IsingModel.latticeGraph d) Λ h β hf i
+
 /-- **ℤ^d truncated 2-point function vanishes at `β = 0`**. -/
 theorem truncated2Infinite_latticeGraph_beta_zero
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
