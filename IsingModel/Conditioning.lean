@@ -514,6 +514,14 @@ theorem euclidean_inner_one_fn_left {n : ℕ} (x : Fin n → ℝ) :
   intros i _
   ring
 
+/-- **Euclidean inner with constant-one right vector equals sum**:
+`∑ i, x i · 1 = ∑ i, x i`. -/
+theorem euclidean_inner_one_fn_right {n : ℕ} (x : Fin n → ℝ) :
+    (∑ i : Fin n, x i * (1 : ℝ)) = ∑ i : Fin n, x i := by
+  apply Finset.sum_congr rfl
+  intros i _
+  ring
+
 /-- **Parallelogram identity for Euclidean norm squared**:
 `∑ (xᵢ + yᵢ)² + ∑ (xᵢ - yᵢ)² = 2·(∑ xᵢ² + ∑ yᵢ²)`. -/
 theorem euclidean_parallelogram {n : ℕ} (x y : Fin n → ℝ) :
