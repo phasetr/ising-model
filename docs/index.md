@@ -554,7 +554,7 @@ inventory (2026-04-17).
 | §10.3 | Cor 10.3.2 (Z bounds) | **Done** |
 | §10.4 | Reflection positivity | **Done** |
 | §10.5 | Multiple reflections | **Done** |
-| §10.6 | Nonsymmetric reflections | Documented; not formalized |
+| §10.6 | Nonsymmetric reflections | **Algebraic core started** | `nonsymmetric_discriminant_mean`, `nonsymmetric_mean_le_geom_mean` (`Conditioning.lean`): non-symmetric variant of `discriminant_nonneg` where the linear coefficient is a sum `b₁ + b₂` of two potentially distinct terms (as arises from a non-symmetric bilinear form). Symmetrized average `(b₁ + b₂) / 2` satisfies the Schwarz bound `((b₁ + b₂)/2)² ≤ a·c`, and its absolute value is bounded by `√(a·c)`. Algebraic core for extending §10.4 Schwarz to non-symmetric reflections. (PR #668.) |
 
 ### Chapter 11 (Fields without cutoffs)
 
