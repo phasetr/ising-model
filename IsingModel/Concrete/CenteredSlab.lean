@@ -644,6 +644,19 @@ theorem freeEnergyInfinite_centeredSlab_ge_log_two_cosh
     rw [Fintype.card_coe]; exact Finset.card_pos.mpr hne
   exact IsingModel.freeEnergy_ge_log_two_cosh _ hJ hh hβ hpos
 
+/-- **Cosh-form sandwich** on the centered slab. -/
+theorem freeEnergyInfinite_centeredSlab_sandwich_cosh
+    {widths : Fin d → ℕ} (hw : ∀ j : Fin d, widths j ≠ 0)
+    {J h β : ℝ} (hJ : 0 ≤ J) (hh : 0 ≤ h) (hβ : 0 < β) :
+    Real.log (2 * Real.cosh (β * h))
+        ≤ freeEnergyInfinite_centeredSlab hw
+            (⟨J, h, β⟩ : IsingParams ℝ) ⟨hJ, hh, hβ⟩
+    ∧ freeEnergyInfinite_centeredSlab hw
+            (⟨J, h, β⟩ : IsingParams ℝ) ⟨hJ, hh, hβ⟩
+        ≤ Real.log 2 + |β| * ((d + 1) * |J| + |h|) :=
+  ⟨freeEnergyInfinite_centeredSlab_ge_log_two_cosh hw hJ hh hβ,
+   freeEnergyInfinite_centeredSlab_le hw _ ⟨hJ, hh, hβ⟩⟩
+
 /-! ## 1D consistency: `centeredSlab (d=0) = shift_(-n) (linearBox (2n))`
 
 The `d = 0` centered slab is, at each index `n`, a negative-`n` shift

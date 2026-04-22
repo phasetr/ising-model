@@ -471,6 +471,19 @@ theorem freeEnergyInfinite_stripeBrick2D_ge_log_two_cosh
     rw [Fintype.card_coe]; exact Finset.card_pos.mpr hne
   exact IsingModel.freeEnergy_ge_log_two_cosh _ hJ hh hβ hpos
 
+/-- **Cosh-form sandwich** on the 2D stripe. -/
+theorem freeEnergyInfinite_stripeBrick2D_sandwich_cosh
+    {w : ℕ} (hw : w ≠ 0) {J h β : ℝ}
+    (hJ : 0 ≤ J) (hh : 0 ≤ h) (hβ : 0 < β) :
+    Real.log (2 * Real.cosh (β * h))
+        ≤ freeEnergyInfinite_stripeBrick2D hw
+            (⟨J, h, β⟩ : IsingParams ℝ) ⟨hJ, hh, hβ⟩
+    ∧ freeEnergyInfinite_stripeBrick2D hw
+            (⟨J, h, β⟩ : IsingParams ℝ) ⟨hJ, hh, hβ⟩
+        ≤ Real.log 2 + |β| * (2 * |J| + |h|) :=
+  ⟨freeEnergyInfinite_stripeBrick2D_ge_log_two_cosh hw hJ hh hβ,
+   freeEnergyInfinite_stripeBrick2D_le hw _ ⟨hJ, hh, hβ⟩⟩
+
 end Concrete
 
 end IsingModel
