@@ -443,6 +443,19 @@ theorem freeEnergyInfinite_stripeBrick2D_tendsto_shift
   exact (Ambient.freeEnergyΛ_vaddFinset_eq
     (IsingModel.latticeGraph 2) t (stripeBrick2D w n) p).symm
 
+/-- **Nonnegativity** of `freeEnergyInfinite_stripeBrick2D` under
+ferromagnetic parameters. -/
+theorem freeEnergyInfinite_stripeBrick2D_nonneg
+    {w : ℕ} (hw : w ≠ 0) (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    0 ≤ freeEnergyInfinite_stripeBrick2D hw p hf := by
+  refine ge_of_tendsto
+    (freeEnergy_stripeBrick2D_tendsto_freeEnergyInfinite hw p hf) ?_
+  filter_upwards [Filter.eventually_ge_atTop 1] with n hn
+  have hne : (stripeBrick2D w n).Nonempty := stripeBrick2D_nonempty hw hn
+  have hpos : 0 < Fintype.card (↑(stripeBrick2D w n) : Type _) := by
+    rw [Fintype.card_coe]; exact Finset.card_pos.mpr hne
+  exact IsingModel.freeEnergy_nonneg_of_ferromagnetic _ p hf hpos
+
 end Concrete
 
 end IsingModel

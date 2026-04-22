@@ -388,6 +388,19 @@ theorem freeEnergyInfinite_linearBox_tendsto_shift
   exact (Ambient.freeEnergyΛ_vaddFinset_eq
     (IsingModel.latticeGraph 1) t (linearBox n) p).symm
 
+/-- **Nonnegativity** of `freeEnergyInfinite_linearBox` under
+ferromagnetic parameters. Transport per-stage
+`freeEnergy_nonneg_of_ferromagnetic` through the Fekete limit. -/
+theorem freeEnergyInfinite_linearBox_nonneg
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    0 ≤ freeEnergyInfinite_linearBox p hf := by
+  refine ge_of_tendsto (freeEnergy_linearBox_tendsto_freeEnergyInfinite p hf) ?_
+  filter_upwards [Filter.eventually_ge_atTop 1] with n hn
+  have hne : (linearBox n).Nonempty := linearBox_nonempty hn
+  have hpos : 0 < Fintype.card (↑(linearBox n) : Type _) := by
+    rw [Fintype.card_coe]; exact Finset.card_pos.mpr hne
+  exact IsingModel.freeEnergy_nonneg_of_ferromagnetic _ p hf hpos
+
 end Concrete
 
 end IsingModel
