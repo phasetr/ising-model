@@ -18,3 +18,5 @@ import IsingModel.Concrete.CubicExhaustion
 import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.Concrete.LatticeGraphFreeEnergy
 import IsingModel.Concrete.LatticeGraphCorrelation
+import IsingModel.Concrete.LinearBrick
+import IsingModel.Concrete.StripeBrick2D
