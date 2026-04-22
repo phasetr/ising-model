@@ -412,6 +412,51 @@ theorem stripeBrick2D_eq_slabBrick (w n : ℕ) :
   · intro j
     simp
 
+/-! ## Sandwich bounds for the slab (ferromagnetic)
+
+Pair the upper bound `slabBrick_freeEnergy_le` (PR #642) with the
+underlying lower bound `log 2 ≤ freeEnergy` (from
+`freeEnergy_ge_log_two_of_ferromagnetic`) for the nonempty stages. -/
+
+/-- **Lower bound** on the slab (ferromagnetic, nonempty slab):
+`log 2 ≤ freeEnergy (inducedGraph (latticeGraph (d+1)) (slabBrick widths n)) p`.
+
+Derived from the base-layer `freeEnergy_ge_log_two_of_ferromagnetic`
+via the `Finset.Nonempty` coe-cardinality bridge. -/
+theorem slabBrick_freeEnergy_ge_log_two {widths : Fin d → ℕ} {n : ℕ}
+    (hne : (slabBrick widths n).Nonempty)
+    {J h β : ℝ} (hJ : 0 ≤ J) (hh : 0 ≤ h) (hβ : 0 < β) :
+    Real.log 2
+      ≤ IsingModel.freeEnergy
+          (Ambient.inducedGraph (IsingModel.latticeGraph (d + 1))
+            (slabBrick widths n))
+          (⟨J, h, β⟩ : IsingParams ℝ) := by
+  have hpos : 0 < Fintype.card (↑(slabBrick widths n) : Type _) := by
+    rw [Fintype.card_coe]; exact Finset.card_pos.mpr hne
+  exact IsingModel.freeEnergy_ge_log_two_of_ferromagnetic _ _ ⟨hJ, hh, hβ⟩ hpos
+
+/-- **Sandwich bound** on the slab (ferromagnetic, nonempty slab):
+`log 2 ≤ freeEnergy ≤ log 2 + |β|·((d+1)·|J| + |h|)`.
+
+Combines `slabBrick_freeEnergy_ge_log_two` and `slabBrick_freeEnergy_le`.
+Concrete slab-version of the cubic sandwich
+`freeEnergyAlongExhaustion_latticeGraph_cubicExhaustion_bounds` (PR #247). -/
+theorem slabBrick_freeEnergy_sandwich {widths : Fin d → ℕ} {n : ℕ}
+    (hne : (slabBrick widths n).Nonempty)
+    {J h β : ℝ} (hJ : 0 ≤ J) (hh : 0 ≤ h) (hβ : 0 < β) :
+    Real.log 2
+      ≤ IsingModel.freeEnergy
+          (Ambient.inducedGraph (IsingModel.latticeGraph (d + 1))
+            (slabBrick widths n))
+          (⟨J, h, β⟩ : IsingParams ℝ)
+    ∧ IsingModel.freeEnergy
+          (Ambient.inducedGraph (IsingModel.latticeGraph (d + 1))
+            (slabBrick widths n))
+          (⟨J, h, β⟩ : IsingParams ℝ)
+        ≤ Real.log 2 + |β| * ((d + 1) * |J| + |h|) :=
+  ⟨slabBrick_freeEnergy_ge_log_two hne hJ hh hβ,
+   slabBrick_freeEnergy_le widths n ⟨J, h, β⟩⟩
+
 end Concrete
 
 end IsingModel
