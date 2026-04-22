@@ -236,6 +236,23 @@ theorem discriminant_nonneg_iff (a b c : ℝ) (ha : 0 < a) :
     (∀ t : ℝ, 0 ≤ a * t ^ 2 + 2 * b * t + c) ↔ b ^ 2 ≤ a * c :=
   ⟨discriminant_nonneg a b c, discriminant_nonneg_converse a b c ha⟩
 
+/-- **Strict discriminant positivity** (for `0 < a`):
+if `b² < a · c`, then `a · t² + 2·b·t + c > 0` for all `t ∈ ℝ`.
+
+Proof: complete the square `a·t² + 2·b·t + c = a·(t + b/a)² + (c - b²/a)`;
+the second term is positive under the strict hypothesis (and the
+first is non-negative), so the sum is strictly positive. -/
+theorem discriminant_pos_of_strict (a b c : ℝ) (ha : 0 < a)
+    (h : b ^ 2 < a * c) :
+    ∀ t : ℝ, 0 < a * t ^ 2 + 2 * b * t + c := by
+  intro t
+  rw [quadratic_complete_square a b c t ha.ne']
+  have hsq : 0 ≤ a * (t + b / a) ^ 2 := mul_nonneg ha.le (sq_nonneg _)
+  have hrem_pos : 0 < c - b ^ 2 / a := by
+    have := (div_lt_iff₀ ha).mpr (by linarith : b ^ 2 < c * a)
+    linarith
+  linarith
+
 /-- **Schwarz absolute-value bound** (§10.6): from the quadratic
 positivity `∀ t, 0 ≤ a·t² + 2·b·t + c` with `a, c ≥ 0`, conclude
 the bound `|b| ≤ √(a·c)` on the symmetric linear coefficient.
