@@ -544,6 +544,20 @@ theorem euclidean_inner_one_smul_one_smul {n : ℕ} (x y : Fin n → ℝ) :
   rw [euclidean_inner_smul_smul]
   ring
 
+/-- **Euclidean scale by 0 vanishes, left side**: `∑ 0·xᵢ · yᵢ = 0`. -/
+theorem euclidean_inner_zero_smul_left {n : ℕ} (x y : Fin n → ℝ) :
+    (∑ i : Fin n, ((0 : ℝ) * x i) * y i) = 0 := by
+  apply Finset.sum_eq_zero
+  intros i _
+  ring
+
+/-- **Euclidean scale by 0 vanishes, right side**: `∑ xᵢ · 0·yᵢ = 0`. -/
+theorem euclidean_inner_zero_smul_right {n : ℕ} (x y : Fin n → ℝ) :
+    (∑ i : Fin n, x i * ((0 : ℝ) * y i)) = 0 := by
+  apply Finset.sum_eq_zero
+  intros i _
+  ring
+
 /-- **Parallelogram identity for Euclidean norm squared**:
 `∑ (xᵢ + yᵢ)² + ∑ (xᵢ - yᵢ)² = 2·(∑ xᵢ² + ∑ yᵢ²)`. -/
 theorem euclidean_parallelogram {n : ℕ} (x y : Fin n → ℝ) :
