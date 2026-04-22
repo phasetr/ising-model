@@ -4410,6 +4410,33 @@ theorem truncated4Infinite_J_zero_of_triple_coincidence
   rw [hiiil, hii, h1i, hil2]
   ring
 
+/-- **∞-volume Lebowitz 4-point at `J = 0` all-coincident**
+(ferromagnetic): `truncated4Infinite ⟨0,h,β⟩ i i i i = t − 3·t²`
+with `t = tanh(β·h)`.
+
+Completes the J=0 trivial-slice cascade for the Lebowitz 4-point.
+Finset collapses `{i,i,i,i} = {i}` (card 1), `{i,i} = {i}`; each of
+the three pair-pair products equals `t · t = t²`, yielding
+`U_4 = t − 3t²`.
+
+Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §5.1 pp. 72–74. -/
+theorem truncated4Infinite_J_zero_all_coincident
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (h β : ℝ)
+    (hf : Ferromagnetic (⟨(0 : ℝ), h, β⟩ : IsingParams ℝ))
+    (i : V) :
+    truncated4Infinite G Λ (⟨0, h, β⟩ : IsingParams ℝ) i i i i
+      = Real.tanh (β * h) - 3 * Real.tanh (β * h) ^ 2 := by
+  unfold truncated4Infinite
+  have h1i : correlationInfinite G Λ (⟨(0 : ℝ), h, β⟩ : IsingParams ℝ) {i}
+      = Real.tanh (β * h) := by
+    rw [correlationInfinite_J_zero G Λ h β hf, Finset.card_singleton, pow_one]
+  have hii : ({i, i} : Finset V) = {i} := by simp
+  have hiiii : ({i, i, i, i} : Finset V) = {i} := by ext x; simp
+  rw [hiiii, hii, h1i]
+  ring
+
 /-! ## Parameter monotonicity of `spontaneous*`
 
 Combine the parameter-direction monotonicity of `correlationInfinite`
