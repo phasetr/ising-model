@@ -257,6 +257,34 @@ theorem nonsymmetric_mean_le_geom_mean (a b₁ b₂ c : ℝ)
   have := Real.sqrt_le_sqrt hsq
   rwa [Real.sqrt_sq_eq_abs] at this
 
+/-- **Non-symmetric iterated Schwarz** (§10.6 iterative step): from
+`0 ≤ x, 0 ≤ a, 0 ≤ b` and `x² ≤ a · b`, conclude the non-symmetric
+geometric-mean bound `x ≤ √(a · b)`. Direct analogue of
+`iterated_schwarz_sq` for the two-variable case. -/
+theorem nonsymmetric_iterated_schwarz (x a b : ℝ)
+    (hx : 0 ≤ x) (ha : 0 ≤ a) (hb : 0 ≤ b)
+    (hxab : x ^ 2 ≤ a * b) :
+    x ≤ Real.sqrt (a * b) := by
+  have hab : 0 ≤ a * b := mul_nonneg ha hb
+  have hsqrt : Real.sqrt (x ^ 2) ≤ Real.sqrt (a * b) := Real.sqrt_le_sqrt hxab
+  rw [Real.sqrt_sq hx] at hsqrt
+  exact hsqrt
+
+/-- **Non-symmetric AM-GM consequence** (§10.6): from the iterated
+Schwarz bound `x² ≤ a · b`, deduce the AM-type bound `2x ≤ a + b`,
+via the elementary `(a - b)² ≥ 0` step (AM-GM). -/
+theorem nonsymmetric_two_le_sum (x a b : ℝ)
+    (hx : 0 ≤ x) (ha : 0 ≤ a) (hb : 0 ≤ b)
+    (hxab : x ^ 2 ≤ a * b) :
+    2 * x ≤ a + b := by
+  -- First, `x² ≤ a·b ≤ ((a + b)/2)²` via AM-GM (`(a-b)² ≥ 0`).
+  have hamgm : a * b ≤ ((a + b) / 2) ^ 2 := by nlinarith [sq_nonneg (a - b)]
+  have hx_sq : x ^ 2 ≤ ((a + b) / 2) ^ 2 := hxab.trans hamgm
+  have h_nn : 0 ≤ (a + b) / 2 := by linarith
+  have := abs_le_of_sq_le_sq' hx_sq h_nn
+  have hx_abs : x ≤ (a + b) / 2 := (abs_of_nonneg hx) ▸ this.2
+  linarith
+
 /-! ## High-temperature / cluster expansion (§18.1–18.3)
 
 Glimm–Jaffe Chapter 18 develops the cluster expansion for P(φ)₂ fields.
