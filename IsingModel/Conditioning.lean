@@ -341,6 +341,24 @@ theorem euclidean_inner_smul_right {n : ℕ} (c : ℝ) (x y : Fin n → ℝ) :
   intros i _
   ring
 
+/-- **Euclidean dot product negation, left**:
+`∑ (-xᵢ) · yᵢ = - ∑ xᵢ · yᵢ`. -/
+theorem euclidean_inner_neg_left {n : ℕ} (x y : Fin n → ℝ) :
+    ∑ i : Fin n, (-x i) * y i = -(∑ i : Fin n, x i * y i) := by
+  rw [← Finset.sum_neg_distrib]
+  apply Finset.sum_congr rfl
+  intros i _
+  ring
+
+/-- **Euclidean dot product negation, right**:
+`∑ xᵢ · (-yᵢ) = - ∑ xᵢ · yᵢ`. -/
+theorem euclidean_inner_neg_right {n : ℕ} (x y : Fin n → ℝ) :
+    ∑ i : Fin n, x i * (-y i) = -(∑ i : Fin n, x i * y i) := by
+  rw [← Finset.sum_neg_distrib]
+  apply Finset.sum_congr rfl
+  intros i _
+  ring
+
 /-- **Constant-diagonal instance**: if `f : α → ℝ` is nonneg, then
 the form `fun x _ => f x` (constant in the second argument) is
 reflection positive. -/
