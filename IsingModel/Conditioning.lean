@@ -195,6 +195,19 @@ theorem ReflectionPositive.of_diag_nonneg {α : Type*} (f : α → ℝ)
     ReflectionPositive (fun (x _ : α) => f x) :=
   fun x => hf x
 
+/-- **Sum of reflection-positive forms is reflection positive**. -/
+theorem ReflectionPositive.add {α : Type*} {b₁ b₂ : α → α → ℝ}
+    (h₁ : ReflectionPositive b₁) (h₂ : ReflectionPositive b₂) :
+    ReflectionPositive (fun x y => b₁ x y + b₂ x y) :=
+  fun x => add_nonneg (h₁ x) (h₂ x)
+
+/-- **Non-negative scalar multiple of a reflection-positive form is
+reflection positive**. -/
+theorem ReflectionPositive.smul_nonneg {α : Type*} {b : α → α → ℝ}
+    {c : ℝ} (hc : 0 ≤ c) (h : ReflectionPositive b) :
+    ReflectionPositive (fun x y => c * b x y) :=
+  fun x => mul_nonneg hc (h x)
+
 /-- **Discriminant lemma** (algebraic core of the Schwarz inequality).
 If `a t² + 2b t + c ≥ 0` for all `t ∈ ℝ`, then `b² ≤ a c`.
 This is the key step in deriving the Schwarz inequality (10.4.2)
