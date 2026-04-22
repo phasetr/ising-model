@@ -496,6 +496,11 @@ theorem euclidean_norm_sq_const {n : ℕ} (c : ℝ) :
     (∑ _ : Fin n, c ^ 2) = n * c ^ 2 := by
   rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
 
+/-- **Euclidean constant-constant inner**: `∑ c · d over Fin n = n · c · d`. -/
+theorem euclidean_inner_const {n : ℕ} (c d : ℝ) :
+    (∑ _ : Fin n, c * d) = n * (c * d) := by
+  rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
+
 /-- **Parallelogram identity for Euclidean norm squared**:
 `∑ (xᵢ + yᵢ)² + ∑ (xᵢ - yᵢ)² = 2·(∑ xᵢ² + ∑ yᵢ²)`. -/
 theorem euclidean_parallelogram {n : ℕ} (x y : Fin n → ℝ) :
