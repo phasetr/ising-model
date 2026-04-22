@@ -682,6 +682,21 @@ theorem freeEnergyInfinite_slabBrick_sandwich_cosh
   ⟨freeEnergyInfinite_slabBrick_ge_log_two_cosh hw hJ hh hβ,
    freeEnergyInfinite_slabBrick_le hw _ ⟨hJ, hh, hβ⟩⟩
 
+/-- **β-monotonicity** of `freeEnergyInfinite_slabBrick`. -/
+theorem freeEnergyInfinite_slabBrick_monotone_beta
+    {widths : Fin d → ℕ} (hw : ∀ j : Fin d, widths j ≠ 0)
+    {J h : ℝ} (hJ : 0 ≤ J) (hh : 0 ≤ h)
+    {β₁ β₂ : ℝ} (hβ₁ : 0 < β₁) (hβ₂ : 0 < β₂) (hβle : β₁ ≤ β₂) :
+    freeEnergyInfinite_slabBrick hw
+        (⟨J, h, β₁⟩ : IsingParams ℝ) ⟨hJ, hh, hβ₁⟩
+      ≤ freeEnergyInfinite_slabBrick hw
+        (⟨J, h, β₂⟩ : IsingParams ℝ) ⟨hJ, hh, hβ₂⟩ := by
+  refine le_of_tendsto_of_tendsto'
+    (freeEnergy_slabBrick_tendsto_freeEnergyInfinite hw _ ⟨hJ, hh, hβ₁⟩)
+    (freeEnergy_slabBrick_tendsto_freeEnergyInfinite hw _ ⟨hJ, hh, hβ₂⟩) ?_
+  intro n
+  exact IsingModel.freeEnergy_monotone_beta _ J hJ h hh hβ₁ hβ₂ hβle
+
 end Concrete
 
 end IsingModel
