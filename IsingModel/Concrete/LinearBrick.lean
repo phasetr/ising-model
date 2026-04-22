@@ -289,6 +289,52 @@ theorem freeEnergy_linearBox_tendsto
     (freeEnergy_linearBox_bddAbove p)
     linearBox_one_card_ne_zero
 
+/-! ## Named infinite-volume limit and J=0 closed form -/
+
+/-- **Infinite-volume free-energy density along the 1D linearBox
+sequence**. The `Classical.choose` witness of
+`freeEnergy_linearBox_tendsto`, pinning down the Fekete limit value. -/
+noncomputable def freeEnergyInfinite_linearBox
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) : ℝ :=
+  Classical.choose (freeEnergy_linearBox_tendsto p hf)
+
+/-- **Convergence to the named limit**: the 1D linearBox
+free-energy-density sequence converges to `freeEnergyInfinite_linearBox p hf`. -/
+theorem freeEnergy_linearBox_tendsto_freeEnergyInfinite
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    Filter.Tendsto
+      (fun n => IsingModel.freeEnergy
+        (Ambient.inducedGraph (IsingModel.latticeGraph 1) (linearBox n)) p)
+      Filter.atTop (nhds (freeEnergyInfinite_linearBox p hf)) :=
+  Classical.choose_spec (freeEnergy_linearBox_tendsto p hf)
+
+/-- **`linearBox n` is nonempty** when `n ≥ 1`. Derived from
+`linearBox_card = n`. -/
+theorem linearBox_nonempty {n : ℕ} (hn : 1 ≤ n) : (linearBox n).Nonempty := by
+  rw [← Finset.card_pos, linearBox_card]; exact hn
+
+/-- **J=0 closed form for the 1D linearBox infinite-volume free-energy
+density**: `freeEnergyInfinite_linearBox ⟨0, h, β⟩ hf = log(2·cosh(β·h))`
+under ferromagnetic `0 ≤ h, 0 < β`. Parallel to PR #647. -/
+theorem freeEnergyInfinite_linearBox_J_zero
+    {h β : ℝ} (hh : 0 ≤ h) (hβ : 0 < β) :
+    freeEnergyInfinite_linearBox
+        (⟨0, h, β⟩ : IsingParams ℝ) ⟨le_refl 0, hh, hβ⟩
+      = Real.log (2 * Real.cosh (β * h)) := by
+  have hconst : Filter.Tendsto
+      (fun n => IsingModel.freeEnergy
+        (Ambient.inducedGraph (IsingModel.latticeGraph 1) (linearBox n))
+          (⟨0, h, β⟩ : IsingParams ℝ))
+      Filter.atTop (nhds (Real.log (2 * Real.cosh (β * h)))) := by
+    refine Filter.Tendsto.congr' ?_ tendsto_const_nhds
+    filter_upwards [Filter.eventually_ge_atTop 1] with n hn
+    have hne : (linearBox n).Nonempty := linearBox_nonempty hn
+    have hpos : 0 < Fintype.card (↑(linearBox n) : Type _) := by
+      rw [Fintype.card_coe]; exact Finset.card_pos.mpr hne
+    exact (IsingModel.freeEnergy_J_zero _ h β hpos).symm
+  exact tendsto_nhds_unique
+    (freeEnergy_linearBox_tendsto_freeEnergyInfinite _ _) hconst
+
 end Concrete
 
 end IsingModel
