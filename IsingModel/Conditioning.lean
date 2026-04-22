@@ -208,6 +208,22 @@ theorem ReflectionPositive.smul_nonneg {α : Type*} {b : α → α → ℝ}
     ReflectionPositive (fun x y => c * b x y) :=
   fun x => mul_nonneg hc (h x)
 
+/-- **Reparametrization preserves reflection positivity**: for any
+map `g : β → α` and RP form `b : α → α → ℝ`, the pullback
+`fun x y => b (g x) (g y)` is RP on `β`. -/
+theorem ReflectionPositive.comp {α β : Type*} {b : α → α → ℝ}
+    (h : ReflectionPositive b) (g : β → α) :
+    ReflectionPositive (fun x y : β => b (g x) (g y)) :=
+  fun x => h (g x)
+
+/-- **Finite-sum closure**: a sum of finitely many reflection-positive
+forms indexed by a `Finset` is reflection positive. -/
+theorem ReflectionPositive.sum {α ι : Type*} {b : ι → α → α → ℝ}
+    (s : Finset ι) (h : ∀ i ∈ s, ReflectionPositive (b i)) :
+    ReflectionPositive (fun x y => ∑ i ∈ s, b i x y) := by
+  intro x
+  exact Finset.sum_nonneg (fun i hi => h i hi x)
+
 /-- **Discriminant lemma** (algebraic core of the Schwarz inequality).
 If `a t² + 2b t + c ≥ 0` for all `t ∈ ℝ`, then `b² ≤ a c`.
 This is the key step in deriving the Schwarz inequality (10.4.2)
