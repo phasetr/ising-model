@@ -224,6 +224,17 @@ theorem ReflectionPositive.sum {α ι : Type*} {b : ι → α → α → ℝ}
   intro x
   exact Finset.sum_nonneg (fun i hi => h i hi x)
 
+/-- **Weighted-sum closure**: a nonneg-weighted sum of
+reflection-positive forms is reflection positive. Combines
+`.smul_nonneg` and `.sum`. -/
+theorem ReflectionPositive.weighted_sum {α ι : Type*}
+    {b : ι → α → α → ℝ} {c : ι → ℝ} (s : Finset ι)
+    (hc : ∀ i ∈ s, 0 ≤ c i)
+    (h : ∀ i ∈ s, ReflectionPositive (b i)) :
+    ReflectionPositive (fun x y => ∑ i ∈ s, c i * b i x y) := by
+  intro x
+  exact Finset.sum_nonneg (fun i hi => mul_nonneg (hc i hi) (h i hi x))
+
 /-- **Discriminant lemma** (algebraic core of the Schwarz inequality).
 If `a t² + 2b t + c ≥ 0` for all `t ∈ ℝ`, then `b² ≤ a c`.
 This is the key step in deriving the Schwarz inequality (10.4.2)
