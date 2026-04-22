@@ -269,6 +269,42 @@ theorem susceptibility_beta_zero (G : SimpleGraph ι) [Fintype G.edgeSet]
   intro j _
   exact truncated2_beta_zero G J h i j
 
+/-- **Truncated 2-point at `h = 0`** (finite volume): for any `J, β`
+and any sites `i, j`,
+`truncated2 G ⟨J, 0, β⟩ i j = correlation G ⟨J, 0, β⟩ {i, j}`.
+
+At `h = 0` the singleton correlations `⟨σ_i⟩ = ⟨σ_j⟩ = 0` vanish by
+Z₂ (`correlation_odd_vanish`), so the Ursell 2-point reduces to the
+2-point correlation. Finite-volume counterpart of
+`truncated2Infinite_h_zero`.
+
+Reference: Glimm–Jaffe §5.1 pp. 72–74. -/
+theorem truncated2_h_zero (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (i j : ι) :
+    truncated2 G (⟨J, 0, β⟩ : IsingParams ℝ) i j
+      = correlation G (⟨J, 0, β⟩ : IsingParams ℝ) {i, j} := by
+  unfold truncated2
+  have h_i : Odd ({i} : Finset ι).card := by simp
+  have h_j : Odd ({j} : Finset ι).card := by simp
+  rw [correlation_odd_vanish G J β _ h_i,
+      correlation_odd_vanish G J β _ h_j]
+  ring
+
+/-- **Susceptibility closed form at `h = 0`** (finite volume):
+`susceptibility G ⟨J, 0, β⟩ i = ∑_j correlation G ⟨J, 0, β⟩ {i, j}`.
+
+At `h = 0` each `truncated2 i j` reduces to `correlation {i, j}` by
+`truncated2_h_zero` (Z₂ kills the `⟨σ_i⟩⟨σ_j⟩` piece). Companion to
+`susceptibility_J_zero` / `susceptibility_beta_zero`.
+
+Reference: Glimm–Jaffe §5.3 pp. 77–80. -/
+theorem susceptibility_h_zero (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (i : ι) :
+    susceptibility G (⟨J, 0, β⟩ : IsingParams ℝ) i
+      = ∑ j : ι, correlation G (⟨J, 0, β⟩ : IsingParams ℝ) {i, j} := by
+  unfold susceptibility
+  exact Finset.sum_congr rfl (fun j _ => truncated2_h_zero G J β i j)
+
 /-- The magnetization vanishes at `h = 0` (Z₂ symmetry, finite volume).
 This is the finite-volume counterpart of the statement that the Z₂
 symmetry is unbroken in finite volume. Symmetry breaking occurs only
