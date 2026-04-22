@@ -379,6 +379,16 @@ theorem euclidean_inner_sub_right {n : ℕ} (x y z : Fin n → ℝ) :
   intros i _
   ring
 
+/-- **Parallelogram identity for Euclidean norm squared**:
+`∑ (xᵢ + yᵢ)² + ∑ (xᵢ - yᵢ)² = 2·(∑ xᵢ² + ∑ yᵢ²)`. -/
+theorem euclidean_parallelogram {n : ℕ} (x y : Fin n → ℝ) :
+    (∑ i : Fin n, (x i + y i) ^ 2) + (∑ i : Fin n, (x i - y i) ^ 2)
+      = 2 * ((∑ i : Fin n, (x i) ^ 2) + (∑ i : Fin n, (y i) ^ 2)) := by
+  rw [← Finset.sum_add_distrib, Finset.mul_sum, ← Finset.sum_add_distrib]
+  apply Finset.sum_congr rfl
+  intros i _
+  ring
+
 /-- **Constant-diagonal instance**: if `f : α → ℝ` is nonneg, then
 the form `fun x _ => f x` (constant in the second argument) is
 reflection positive. -/
