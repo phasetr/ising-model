@@ -558,6 +558,26 @@ theorem reflection_positive_mean_le_geom_mean
   have := Real.sqrt_le_sqrt hsq
   rwa [Real.sqrt_sq_eq_abs] at this
 
+/-- **Reflection-positive Schwarz, sum abs bound**:
+`|b x y + b y x| ≤ 2·√(b x x · b y y)` from `_mean_le_geom_mean`
+by multiplying both sides by 2. -/
+theorem reflection_positive_sum_abs_bound
+    {α : Type*} [AddCommGroup α] [Module ℝ α]
+    (b : α → α → ℝ)
+    (hbi_left : ∀ x y z : α, b (x + y) z = b x z + b y z)
+    (hbi_right : ∀ x y z : α, b x (y + z) = b x y + b x z)
+    (hbi_smul_left : ∀ (c : ℝ) (x y : α), b (c • x) y = c * b x y)
+    (hbi_smul_right : ∀ (c : ℝ) (x y : α), b x (c • y) = c * b x y)
+    (hRP : ReflectionPositive b) (x y : α) :
+    |b x y + b y x| ≤ 2 * Real.sqrt (b x x * b y y) := by
+  have hmean := reflection_positive_mean_le_geom_mean b hbi_left hbi_right
+    hbi_smul_left hbi_smul_right hRP x y
+  have habs_half : |(b x y + b y x) / 2| = |b x y + b y x| / 2 := by
+    rw [abs_div]
+    simp
+  rw [habs_half] at hmean
+  linarith
+
 /-- **Classical symmetric Cauchy-Schwarz** (§10.6 corollary for
 symmetric `b`): for symmetric bilinear `b` (i.e., `b x y = b y x`)
 satisfying `ReflectionPositive b`, the classical Schwarz inequality
