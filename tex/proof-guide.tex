@@ -2402,6 +2402,55 @@ These algebraic pieces are the foundation for non-symmetric reflection
 positivity; combined with a bilinear-form expansion hypothesis, they
 yield Schwarz-type bounds without requiring $b(x, y) = b(y, x)$.
 
+\paragraph{Capstone: reflection-positive Schwarz.}
+
+\begin{theorem}[\texttt{polarization\_identity}]
+For a bilinear form $b : \alpha \to \alpha \to \mathbb{R}$ on an
+additive commutative group $\alpha$ (with bilinearity given as four
+elementary hypotheses),
+\[
+  b(x + y, x + y) - b(x - y, x - y) = 2 \cdot (b(x, y) + b(y, x)).
+\]
+Exposes the symmetrized off-diagonal $b(x, y) + b(y, x)$ as a difference
+of diagonal entries, useful even when $b$ is non-symmetric.
+\end{theorem}
+
+\begin{theorem}[\texttt{schwarz\_of\_reflection\_positive}; \S10.6 main]
+For a bilinear $b : \alpha \to \alpha \to \mathbb{R}$ on an $\mathbb{R}$-module $\alpha$
+with \texttt{ReflectionPositive b} ($b(x, x) \ge 0$),
+\[
+  \left(\frac{b(x, y) + b(y, x)}{2}\right)^2 \le b(x, x) \cdot b(y, y).
+\]
+Proof: bilinearity expands
+$b(x + t\cdot y, x + t\cdot y) = b(y, y)\,t^2 + (b(x, y) + b(y, x))\,t
++ b(x, x)$;
+reflection positivity gives this quadratic $\ge 0$ for all $t$;
+\texttt{nonsymmetric\_discriminant\_mean} yields the Schwarz bound.
+\end{theorem}
+
+\begin{theorem}[Corollaries]
+AM-GM form \texttt{reflection\_positive\_mean\_le\_geom\_mean}:
+$|(b(x, y) + b(y, x)) / 2| \le \sqrt{b(x, x) \cdot b(y, y)}$,
+equivalently \texttt{\_sum\_abs\_bound}:
+$|b(x, y) + b(y, x)| \le 2 \sqrt{b(x, x) \cdot b(y, y)}$.
+
+Degenerate case \texttt{\_off\_diag\_zero\_of\_diag\_zero}:
+$b(x, x) = 0 \Rightarrow b(x, y) + b(y, x) = 0$
+(and the symmetric $\texttt{\_right}$ variant for $b(y, y) = 0$).
+\end{theorem}
+
+\begin{theorem}[\texttt{classical\_schwarz\_of\_symmetric\_reflection\_positive}]
+Under the additional symmetry $b(x, y) = b(y, x)$, the non-symmetric
+bound reduces to the classical Cauchy-Schwarz inequality:
+$(b(x, y))^2 \le b(x, x) \cdot b(y, y)$, with abs form
+$|b(x, y)| \le \sqrt{b(x, x) \cdot b(y, y)}$, and the sharper
+degenerate case $b(x, x) = 0 \Rightarrow b(x, y) = 0$ (for the
+individual entry, not just the sum).
+\end{theorem}
+
+This completes the §10.6 algebraic core required for non-symmetric
+reflection-positivity Schwarz bounds.
+
 \section{Phase transitions (\S16.1)}
 
 \begin{theorem}[\texttt{magnetization\_monotone\_h}; \S16.1, p.~283]
