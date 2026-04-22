@@ -457,6 +457,11 @@ theorem euclidean_norm_sq_empty (x : Fin 0 → ℝ) :
     (∑ i : Fin 0, (x i) ^ 2) = 0 := by
   simp
 
+/-- **Single-element Euclidean norm squared**: `∑ i : Fin 1, (xᵢ)² = (x 0)²`. -/
+theorem euclidean_norm_sq_single (x : Fin 1 → ℝ) :
+    (∑ i : Fin 1, (x i) ^ 2) = (x 0) ^ 2 := by
+  simp [Fin.sum_univ_one]
+
 /-- **Parallelogram identity for Euclidean norm squared**:
 `∑ (xᵢ + yᵢ)² + ∑ (xᵢ - yᵢ)² = 2·(∑ xᵢ² + ∑ yᵢ²)`. -/
 theorem euclidean_parallelogram {n : ℕ} (x y : Fin n → ℝ) :
