@@ -257,6 +257,67 @@ theorem correlation_odd_vanish (G : SimpleGraph ι) [Fintype G.edgeSet]
           rw [Finset.sum_neg_distrib]
   linarith
 
+/-- **Z₂ odd-symmetry under `h → -h`**: for any Ising parameters and
+any subset `A`,
+`correlation G ⟨J, -h, β⟩ A = (-1)^|A| · correlation G ⟨J, h, β⟩ A`.
+
+Proof: numerator of `correlation(-h)` equals `(-1)^|A|` times numerator
+of `correlation(h)` via `hamiltonian_neg_h` (`H(σ;-h) = H(σ.flip;h)`) +
+flip reindex + `spinProduct_flip`. The denominators coincide by
+`partitionFunction_neg_h`.
+
+At `h = 0`: gives `⟨σ^A⟩ = (-1)^|A| · ⟨σ^A⟩`, so odd `|A|` ⇒ vanish —
+this generalizes `correlation_odd_vanish`.
+
+Reference: Glimm–Jaffe §5.3 pp. 77–80 (Z₂ symmetry). -/
+theorem correlation_neg_h (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h β : ℝ) (A : Finset ι) :
+    correlation G (⟨J, -h, β⟩ : IsingParams ℝ) A
+      = (-1) ^ A.card * correlation G (⟨J, h, β⟩ : IsingParams ℝ) A := by
+  unfold correlation gibbsExpectation
+  rw [partitionFunction_neg_h]
+  -- Numerator: ∑ spinProduct A σ · w(-h, σ) = (-1)^|A| · ∑ spinProduct A σ · w(h, σ)
+  have hnum : ∑ σ : Config ι,
+        spinProduct A σ * boltzmannWeight G (⟨J, -h, β⟩ : IsingParams ℝ) σ
+      = (-1) ^ A.card * ∑ σ : Config ι,
+          spinProduct A σ * boltzmannWeight G (⟨J, h, β⟩ : IsingParams ℝ) σ := by
+    let flipEquiv : Equiv.Perm (Config ι) :=
+      ⟨Config.flip, Config.flip, Config.flip_flip, Config.flip_flip⟩
+    calc ∑ σ : Config ι,
+            spinProduct A σ * boltzmannWeight G (⟨J, -h, β⟩ : IsingParams ℝ) σ
+        = ∑ σ : Config ι,
+            spinProduct A σ *
+              boltzmannWeight G (⟨J, h, β⟩ : IsingParams ℝ) σ.flip := by
+          refine Finset.sum_congr rfl ?_
+          intros σ _
+          congr 1
+          unfold boltzmannWeight
+          rw [hamiltonian_neg_h]
+      _ = ∑ σ : Config ι,
+            spinProduct A σ.flip *
+              boltzmannWeight G (⟨J, h, β⟩ : IsingParams ℝ) σ := by
+          exact (Fintype.sum_equiv flipEquiv _ _
+            (fun σ => by dsimp [flipEquiv]; simp [Config.flip_flip])).symm
+      _ = ∑ σ : Config ι,
+            ((-1) ^ A.card * spinProduct A σ) *
+              boltzmannWeight G (⟨J, h, β⟩ : IsingParams ℝ) σ := by
+          refine Finset.sum_congr rfl ?_
+          intros σ _
+          rw [spinProduct_flip]
+      _ = ∑ σ : Config ι,
+            (-1) ^ A.card *
+              (spinProduct A σ *
+                boltzmannWeight G (⟨J, h, β⟩ : IsingParams ℝ) σ) := by
+          refine Finset.sum_congr rfl ?_
+          intros σ _
+          ring
+      _ = (-1) ^ A.card * ∑ σ : Config ι,
+            spinProduct A σ *
+              boltzmannWeight G (⟨J, h, β⟩ : IsingParams ℝ) σ :=
+          (Finset.mul_sum _ _ _).symm
+  rw [hnum]
+  ring
+
 /-! ## Lebowitz third inequality
 
 The Lebowitz third inequality (Lebowitz, 1974) is the key input for the GHS
