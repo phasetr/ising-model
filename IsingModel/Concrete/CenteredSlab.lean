@@ -596,6 +596,22 @@ theorem freeEnergyInfinite_centeredSlab_sandwich {widths : Fin d → ℕ}
   ⟨freeEnergyInfinite_centeredSlab_ge_log_two hw hJ hh hβ,
    freeEnergyInfinite_centeredSlab_le hw _ ⟨hJ, hh, hβ⟩⟩
 
+/-- **Translation-invariance of the Fekete limit** on the centered
+slab: any coord-shift of the centered-slab sequence converges to the
+same `freeEnergyInfinite_centeredSlab hw p hf`. -/
+theorem freeEnergyInfinite_centeredSlab_tendsto_shift
+    {widths : Fin d → ℕ} (hw : ∀ j : Fin d, widths j ≠ 0)
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (t : Fin (d + 1) → ℤ) :
+    Filter.Tendsto
+      (fun n => IsingModel.freeEnergy
+        (Ambient.inducedGraph (IsingModel.latticeGraph (d + 1))
+          (Ambient.vaddFinset t (centeredSlab widths n))) p)
+      Filter.atTop (nhds (freeEnergyInfinite_centeredSlab hw p hf)) := by
+  refine (freeEnergy_centeredSlab_tendsto_freeEnergyInfinite hw p hf).congr ?_
+  intro n
+  exact (Ambient.freeEnergyΛ_vaddFinset_eq
+    (IsingModel.latticeGraph (d + 1)) t (centeredSlab widths n) p).symm
+
 end Concrete
 
 end IsingModel

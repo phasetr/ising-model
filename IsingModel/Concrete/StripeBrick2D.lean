@@ -427,6 +427,22 @@ theorem freeEnergyInfinite_stripeBrick2D_sandwich
   ⟨freeEnergyInfinite_stripeBrick2D_ge_log_two hw hJ hh hβ,
    freeEnergyInfinite_stripeBrick2D_le hw _ ⟨hJ, hh, hβ⟩⟩
 
+/-- **Translation-invariance of the Fekete limit** on the 2D stripe:
+any coord-shift of the stripe sequence converges to the same
+`freeEnergyInfinite_stripeBrick2D hw p hf`. -/
+theorem freeEnergyInfinite_stripeBrick2D_tendsto_shift
+    {w : ℕ} (hw : w ≠ 0) (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    (t : Fin 2 → ℤ) :
+    Filter.Tendsto
+      (fun n => IsingModel.freeEnergy
+        (Ambient.inducedGraph (IsingModel.latticeGraph 2)
+          (Ambient.vaddFinset t (stripeBrick2D w n))) p)
+      Filter.atTop (nhds (freeEnergyInfinite_stripeBrick2D hw p hf)) := by
+  refine (freeEnergy_stripeBrick2D_tendsto_freeEnergyInfinite hw p hf).congr ?_
+  intro n
+  exact (Ambient.freeEnergyΛ_vaddFinset_eq
+    (IsingModel.latticeGraph 2) t (stripeBrick2D w n) p).symm
+
 end Concrete
 
 end IsingModel
