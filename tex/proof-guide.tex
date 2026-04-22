@@ -2451,6 +2451,27 @@ individual entry, not just the sum).
 This completes the §10.6 algebraic core required for non-symmetric
 reflection-positivity Schwarz bounds.
 
+\paragraph{Closure operations on ReflectionPositive.}
+
+The class of reflection-positive bilinear forms is closed under
+standard cone operations:
+
+\begin{itemize}
+\item \texttt{ReflectionPositive.zero}: the zero form is RP.
+\item \texttt{ReflectionPositive.const}: the constant form $b(x, y) = c$ with $c \ge 0$ is RP.
+\item \texttt{ReflectionPositive.of\_diag\_nonneg}: a form depending only on the first argument, with nonneg values, is RP.
+\item \texttt{ReflectionPositive.add}: the sum of two RP forms is RP.
+\item \texttt{ReflectionPositive.smul\_nonneg}: a nonneg scalar multiple of an RP form is RP.
+\item \texttt{ReflectionPositive.comp}: reparametrization $b'(x, y) := b(g(x), g(y))$ under $g : \beta \to \alpha$ inherits RP.
+\item \texttt{ReflectionPositive.sum}: a finite sum $\sum_i b_i$ of RP forms is RP.
+\item \texttt{ReflectionPositive.weighted\_sum}: a nonneg-weighted sum $\sum_i c_i b_i$ is RP.
+\item \texttt{ReflectionPositive.of\_diag\_eq}: RP depends only on diagonal values (transfer lemma).
+\end{itemize}
+
+Together these show that RP bilinear forms form a convex cone closed
+under reparametrization and finite sums, supplying building blocks
+for constructing concrete RP witnesses in applications.
+
 \section{Phase transitions (\S16.1)}
 
 \begin{theorem}[\texttt{magnetization\_monotone\_h}; \S16.1, p.~283]
