@@ -4781,4 +4781,101 @@ $\mathrm{correlationInfinite}\,G\,\Lambda\,p\,A =
 \mathrm{correlationInfinite}\,G\,\Lambda\,p\,(t +_v A)$ when $G$
 is $\mathrm{IsTranslationInvariant}$.
 
+\section{Concrete $\mathbb Z^d$ Fekete toolkit for \S 4.6 Prop 4.6.1}
+
+This section summarises the concrete $\mathbb Z^d$ Fekete toolkit
+(PRs \#638--\#667) that applies the generic-Finset Fekete framework
+of \texttt{freeEnergy\_of\_finset\_sequence\_tendsto\_of\_superadditive}
+(PR \#638) to four concrete Finset sequences on
+$\mathrm{latticeGraph}\,d$:
+
+\begin{itemize}
+\item \texttt{linearBox}\,$n : \mathrm{Finset}(\mathrm{Fin}\,1 \to \mathbb Z)$
+  $= [0, n)$ — 1D half-line (\texttt{Concrete/LinearBrick.lean}, PRs \#639--\#640).
+\item \texttt{stripeBrick2D}\,$w\,n : \mathrm{Finset}(\mathrm{Fin}\,2 \to \mathbb Z)$
+  $= [0, n) \times [0, w)$ — 2D rectangular stripe
+  (\texttt{Concrete/StripeBrick2D.lean}, PR \#641).
+\item \texttt{slabBrick}\,$(\mathrm{widths} : \mathrm{Fin}\,d \to \mathbb N)\,n :
+  \mathrm{Finset}(\mathrm{Fin}\,(d+1) \to \mathbb Z)$
+  $= [0, n) \times \prod_j [0, \mathrm{widths}\,j)$ — general $(d+1)$-dim
+  single-sided slab (\texttt{Concrete/SlabBrick.lean}, PRs \#642--\#643).
+\item \texttt{centeredSlab}\,$\mathrm{widths}\,n : \mathrm{Finset}(\mathrm{Fin}\,(d+1) \to \mathbb Z)$
+  $= [-n, n) \times \prod_j [0, \mathrm{widths}\,j)$ — two-sided
+  centered slab (\texttt{Concrete/CenteredSlab.lean}, PR \#644).
+\end{itemize}
+
+Each family supplies the four Fekete hypotheses
+(\texttt{hcard\_add}, \texttt{hsuper}, \texttt{hbdd},
+\texttt{hcard\_one}) via combinatorial lemmas plus disjoint-union
+super-additivity at the $\Lambda$-layer, translation invariance of
+$\mathrm{partitionFunction}_\Lambda$, and the subsingleton-congruence
+bridge \texttt{partitionFunctionΛ\_congr\_finset}. The uniform upper
+bound $\log 2 + |\beta|\cdot((d+1)\cdot|J|+|h|)$ is transported from
+\texttt{freeEnergy\_upper\_bound} + the lattice edge-count bound
+\texttt{inducedLatticeGraph\_card\_edgeFinset\_le}.
+
+\subsection{Named infinite-volume limits (\S 4.6)}
+
+Each family has a named limit defined via \texttt{Classical.choose}
+on the Fekete-convergence existential:
+\[
+  \mathrm{freeEnergyInfinite\_}\ast\,(\mathrm{hw})\,p\,(\mathrm{hf})
+  := \mathrm{Classical.choose}(\mathrm{freeEnergy\_}\ast\,\mathrm{tendsto}\,\ldots),
+\]
+with the corresponding \texttt{freeEnergy\_*\_tendsto\_freeEnergyInfinite}
+convergence lemma.
+(PRs \#646 for slab/centered, \#648 for linearBox/stripeBrick2D.)
+
+\subsection{Named-limit properties}
+
+For all four families, under ferromagnetic $0 \le J, 0 \le h, 0 < \beta$:
+
+\begin{itemize}
+\item \textbf{Sandwich:} $\log 2 \le \mathrm{freeEnergyInfinite\_}\ast
+  \le \log 2 + |\beta|\cdot((d+1)\cdot|J|+|h|)$
+  (PR \#650). Sharpened lower bound
+  $\log(2\cosh(\beta h)) \le \mathrm{freeEnergyInfinite\_}\ast$
+  (PR \#659), combined into a cosh-form sandwich (PR \#660).
+\item \textbf{Positivity:} $0 < \mathrm{freeEnergyInfinite\_}\ast$
+  (PR \#666), hence nonvanishing (PR \#667).
+\item \textbf{Trivial slice:} at $J = 0$,
+  $\mathrm{freeEnergyInfinite\_}\ast\,\langle 0, h, \beta\rangle =
+  \log(2\cosh(\beta h))$ (PRs \#647, \#648) via per-stage
+  $\mathrm{freeEnergy\_J\_zero}$ + \texttt{tendsto\_nhds\_unique}.
+\item \textbf{Monotonicity:} $\mathrm{freeEnergyInfinite\_}\ast$ is
+  monotone on $\mathrm{Ioi}\,0$ in $\beta$ (PR \#661), and on
+  $\mathrm{Ici}\,0$ in $h$ and $J$ (PR \#662). Proof via
+  \texttt{le\_of\_tendsto\_of\_tendsto'} on per-stage
+  \texttt{freeEnergy\_monotone\_\{$\beta$,h,J\}}.
+\item \textbf{Translation invariance of the Fekete limit:} any
+  coordinate shift of the sequence converges to the same named limit
+  (PR \#652), via \texttt{freeEnergyΛ\_vaddFinset\_eq} (PR \#255).
+\item \textbf{Arbitrary-$h$ convergence via $|h|$-symmetry:} for any
+  real $h$, the sequence at $\langle J, h, \beta\rangle$ converges to
+  $\mathrm{freeEnergyInfinite\_}\ast\,\langle J, |h|, \beta\rangle$
+  (PR \#663), bridging the ferromagnetic infrastructure to arbitrary
+  real $h$ via \texttt{freeEnergy\_eq\_abs\_h}.
+\end{itemize}
+
+\subsection{Cross-family equivalences}
+
+All four named limits are equal at matching widths (PRs \#651,
+\#654, \#655, \#656):
+\[
+  \mathrm{freeEnergyInfinite\_linearBox} =
+  \mathrm{freeEnergyInfinite\_slabBrick}\,(\mathrm{Fin.elim0}), \quad
+\]
+\[
+  \mathrm{freeEnergyInfinite\_stripeBrick2D}\,w =
+  \mathrm{freeEnergyInfinite\_slabBrick}\,(\lambda\_,w),
+\]
+\[
+  \mathrm{freeEnergyInfinite\_centeredSlab}\,\mathrm{widths} =
+  \mathrm{freeEnergyInfinite\_slabBrick}\,\mathrm{widths}.
+\]
+The last equivalence uses the Finset identity
+$\mathrm{centeredSlab}\,\mathrm{widths}\,n =
+\mathrm{shift}_{-n}\,(\mathrm{slabBrick}\,\mathrm{widths}\,(2n))$
+plus subsequence convergence at $n \mapsto 2n$.
+
 \end{document}
