@@ -431,6 +431,13 @@ theorem euclidean_norm_sq_smul {n : ℕ} (c : ℝ) (x : Fin n → ℝ) :
   intros i _
   ring
 
+/-- **Euclidean norm squared of negation**: `∑ (-xᵢ)² = ∑ xᵢ²`. -/
+theorem euclidean_norm_sq_neg {n : ℕ} (x : Fin n → ℝ) :
+    (∑ i : Fin n, (-x i) ^ 2) = (∑ i : Fin n, (x i) ^ 2) := by
+  apply Finset.sum_congr rfl
+  intros i _
+  ring
+
 /-- **Parallelogram identity for Euclidean norm squared**:
 `∑ (xᵢ + yᵢ)² + ∑ (xᵢ - yᵢ)² = 2·(∑ xᵢ² + ∑ yᵢ²)`. -/
 theorem euclidean_parallelogram {n : ℕ} (x y : Fin n → ℝ) :
