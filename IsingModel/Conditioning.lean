@@ -445,6 +445,13 @@ theorem euclidean_norm_sq_zero_fn {n : ℕ} :
   intros i _
   ring
 
+/-- **Euclidean sum swap**: for a double-indexed family
+`f : Fin m → Fin n → ℝ`, swap the order of summation:
+`∑ i, ∑ j, f i j = ∑ j, ∑ i, f i j`. -/
+theorem euclidean_sum_swap {m n : ℕ} (f : Fin m → Fin n → ℝ) :
+    (∑ i : Fin m, ∑ j : Fin n, f i j) = ∑ j : Fin n, ∑ i : Fin m, f i j :=
+  Finset.sum_comm
+
 /-- **Parallelogram identity for Euclidean norm squared**:
 `∑ (xᵢ + yᵢ)² + ∑ (xᵢ - yᵢ)² = 2·(∑ xᵢ² + ∑ yᵢ²)`. -/
 theorem euclidean_parallelogram {n : ℕ} (x y : Fin n → ℝ) :
