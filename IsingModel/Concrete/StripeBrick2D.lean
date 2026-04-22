@@ -389,6 +389,44 @@ theorem freeEnergyInfinite_stripeBrick2D_J_zero
   exact tendsto_nhds_unique
     (freeEnergy_stripeBrick2D_tendsto_freeEnergyInfinite hw _ _) hconst
 
+/-- **Infinite-volume lower bound** on the 2D stripe. -/
+theorem freeEnergyInfinite_stripeBrick2D_ge_log_two
+    {w : ℕ} (hw : w ≠ 0) {J h β : ℝ}
+    (hJ : 0 ≤ J) (hh : 0 ≤ h) (hβ : 0 < β) :
+    Real.log 2
+      ≤ freeEnergyInfinite_stripeBrick2D hw
+          (⟨J, h, β⟩ : IsingParams ℝ) ⟨hJ, hh, hβ⟩ := by
+  refine ge_of_tendsto
+    (freeEnergy_stripeBrick2D_tendsto_freeEnergyInfinite hw _ _) ?_
+  filter_upwards [Filter.eventually_ge_atTop 1] with n hn
+  have hne : (stripeBrick2D w n).Nonempty := stripeBrick2D_nonempty hw hn
+  have hpos : 0 < Fintype.card (↑(stripeBrick2D w n) : Type _) := by
+    rw [Fintype.card_coe]; exact Finset.card_pos.mpr hne
+  exact IsingModel.freeEnergy_ge_log_two_of_ferromagnetic _ _ ⟨hJ, hh, hβ⟩ hpos
+
+/-- **Infinite-volume upper bound** on the 2D stripe. -/
+theorem freeEnergyInfinite_stripeBrick2D_le
+    {w : ℕ} (hw : w ≠ 0) (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    freeEnergyInfinite_stripeBrick2D hw p hf
+      ≤ Real.log 2 + |p.β| * (2 * |p.J| + |p.h|) := by
+  refine le_of_tendsto
+    (freeEnergy_stripeBrick2D_tendsto_freeEnergyInfinite hw p hf) ?_
+  filter_upwards with n
+  exact stripeBrick2D_freeEnergy_le w n p
+
+/-- **Infinite-volume sandwich** on the 2D stripe (ferromagnetic). -/
+theorem freeEnergyInfinite_stripeBrick2D_sandwich
+    {w : ℕ} (hw : w ≠ 0) {J h β : ℝ}
+    (hJ : 0 ≤ J) (hh : 0 ≤ h) (hβ : 0 < β) :
+    Real.log 2
+        ≤ freeEnergyInfinite_stripeBrick2D hw
+            (⟨J, h, β⟩ : IsingParams ℝ) ⟨hJ, hh, hβ⟩
+    ∧ freeEnergyInfinite_stripeBrick2D hw
+            (⟨J, h, β⟩ : IsingParams ℝ) ⟨hJ, hh, hβ⟩
+        ≤ Real.log 2 + |β| * (2 * |J| + |h|) :=
+  ⟨freeEnergyInfinite_stripeBrick2D_ge_log_two hw hJ hh hβ,
+   freeEnergyInfinite_stripeBrick2D_le hw _ ⟨hJ, hh, hβ⟩⟩
+
 end Concrete
 
 end IsingModel
