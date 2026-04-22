@@ -196,6 +196,16 @@ theorem discriminant_nonneg (a b c : ℝ) (h : ∀ t : ℝ, 0 ≤ a * t ^ 2 + 2 
     have := h t; rw [sq] at this; linarith)
   unfold discrim at hd; nlinarith
 
+/-- **Completing-the-square factorization** (§10.6 supporting identity):
+for any `a ≠ 0`,
+`a · t² + 2·b·t + c = a · (t + b/a)² + (c - b²/a)`.
+The underlying algebraic identity for `discriminant_nonneg_converse`
+and analogous completing-the-square arguments. -/
+theorem quadratic_complete_square (a b c t : ℝ) (ha : a ≠ 0) :
+    a * t ^ 2 + 2 * b * t + c = a * (t + b / a) ^ 2 + (c - b ^ 2 / a) := by
+  field_simp
+  ring
+
 /-- **Converse of `discriminant_nonneg`** (for `0 < a`):
 if `b² ≤ a · c`, then `a · t² + 2·b·t + c ≥ 0` for all `t ∈ ℝ`.
 
