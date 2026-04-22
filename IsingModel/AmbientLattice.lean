@@ -5103,6 +5103,21 @@ theorem zeta_nonneg_infinite_vol
     truncated4Infinite G Λ ⟨J, 0, β⟩ i j k l ≤ 0 :=
   truncated4Infinite_nonpos_h_zero G Λ J β hf hij hik hil hjk hjl hkl
 
+/-- **Absence of even bound states — ∞-volume lattice** (Glimm–Jaffe
+§17.2, pp. 311–313). ∞-vol version of
+`IsingModel.absence_of_even_bound_states_finite_vol`:
+`U₄^∞(i,j,k,l) ≤ 0` for ferromagnetic `⟨J, 0, β⟩` and pairwise-distinct
+sites. Explicit alias of `truncated4Infinite_nonpos_h_zero`. -/
+theorem absence_of_even_bound_states_infinite_vol
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (hf : Ferromagnetic ⟨J, (0 : ℝ), β⟩)
+    {i j k l : V}
+    (hij : i ≠ j) (hik : i ≠ k) (hil : i ≠ l)
+    (hjk : j ≠ k) (hjl : j ≠ l) (hkl : k ≠ l) :
+    truncated4Infinite G Λ ⟨J, 0, β⟩ i j k l ≤ 0 :=
+  truncated4Infinite_nonpos_h_zero G Λ J β hf hij hik hil hjk hjl hkl
+
 end Ambient
 end IsingModel
 
