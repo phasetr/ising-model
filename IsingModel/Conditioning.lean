@@ -289,6 +289,47 @@ theorem discriminant_pos_iff (a b c : ℝ) (ha : 0 < a) :
     (∀ t : ℝ, 0 < a * t ^ 2 + 2 * b * t + c) ↔ b ^ 2 < a * c :=
   ⟨discriminant_strict_of_pos a b c ha, discriminant_pos_of_strict a b c ha⟩
 
+/-- **Polarization identity for bilinear forms** (§10.6 supporting
+identity): for any bilinear `b : α → α → ℝ` on an additive commutative
+group `α`,
+`b(x + y, x + y) - b(x - y, x - y) = 2 · (b(x, y) + b(y, x))`.
+
+The left-hand side exposes the symmetrized `b(x, y) + b(y, x)` even
+when `b` is non-symmetric. Fundamental tool for §10.6 non-symmetric
+reflection positivity: it expresses the symmetrized off-diagonal
+entries as a difference of diagonal entries.
+
+The bilinearity hypotheses are given explicitly (without requiring a
+concrete `LinearMap.BilinMap`); they suffice for the calculation. -/
+theorem polarization_identity {α : Type*} [AddCommGroup α]
+    (b : α → α → ℝ)
+    (hbi_left : ∀ x y z : α, b (x + y) z = b x z + b y z)
+    (hbi_right : ∀ x y z : α, b x (y + z) = b x y + b x z)
+    (hbi_neg_left : ∀ x y : α, b (-x) y = -b x y)
+    (hbi_neg_right : ∀ x y : α, b x (-y) = -b x y)
+    (x y : α) :
+    b (x + y) (x + y) - b (x - y) (x - y)
+      = 2 * (b x y + b y x) := by
+  -- Expand `b (x + y) (x + y) = b x x + b x y + b y x + b y y`.
+  have h1 : b (x + y) (x + y) = b x x + b x y + b y x + b y y := by
+    rw [hbi_left]
+    rw [hbi_right, hbi_right]
+    ring
+  -- Expand `b (x - y) (x - y) = b x x - b x y - b y x + b y y`.
+  have h2 : b (x - y) (x - y) = b x x - b x y - b y x + b y y := by
+    have hsubst : x - y = x + -y := by abel
+    rw [hsubst]
+    rw [hbi_left]
+    rw [hbi_right, hbi_right]
+    rw [hbi_neg_right, hbi_neg_left]
+    -- Remaining: `b (-y) (-y) = b y y`, via `hbi_neg_left` + `hbi_neg_right`.
+    have hneg_neg : b (-y) (-y) = b y y := by
+      rw [hbi_neg_left, hbi_neg_right]; ring
+    rw [hneg_neg]
+    ring
+  rw [h1, h2]
+  ring
+
 /-- **Schwarz absolute-value bound** (§10.6): from the quadratic
 positivity `∀ t, 0 ≤ a·t² + 2·b·t + c` with `a, c ≥ 0`, conclude
 the bound `|b| ≤ √(a·c)` on the symmetric linear coefficient.
