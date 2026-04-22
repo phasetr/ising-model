@@ -736,6 +736,14 @@ theorem freeEnergyInfinite_slabBrick_pos
   lt_of_lt_of_le (Real.log_pos (by norm_num))
     (freeEnergyInfinite_slabBrick_ge_log_two hw hJ hh hβ)
 
+/-- **Non-vanishing** `freeEnergyInfinite_slabBrick ≠ 0`. -/
+theorem freeEnergyInfinite_slabBrick_ne_zero
+    {widths : Fin d → ℕ} (hw : ∀ j : Fin d, widths j ≠ 0)
+    {J h β : ℝ} (hJ : 0 ≤ J) (hh : 0 ≤ h) (hβ : 0 < β) :
+    freeEnergyInfinite_slabBrick hw
+          (⟨J, h, β⟩ : IsingParams ℝ) ⟨hJ, hh, hβ⟩ ≠ 0 :=
+  ne_of_gt (freeEnergyInfinite_slabBrick_pos hw hJ hh hβ)
+
 /-- **Fekete convergence for any real h** on the slab. -/
 theorem freeEnergy_slabBrick_tendsto_of_abs_h
     {widths : Fin d → ℕ} (hw : ∀ j : Fin d, widths j ≠ 0)

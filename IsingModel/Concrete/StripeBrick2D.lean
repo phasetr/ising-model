@@ -538,6 +538,14 @@ theorem freeEnergyInfinite_stripeBrick2D_pos
   lt_of_lt_of_le (Real.log_pos (by norm_num))
     (freeEnergyInfinite_stripeBrick2D_ge_log_two hw hJ hh hβ)
 
+/-- **Non-vanishing** `freeEnergyInfinite_stripeBrick2D ≠ 0`. -/
+theorem freeEnergyInfinite_stripeBrick2D_ne_zero
+    {w : ℕ} (hw : w ≠ 0) {J h β : ℝ}
+    (hJ : 0 ≤ J) (hh : 0 ≤ h) (hβ : 0 < β) :
+    freeEnergyInfinite_stripeBrick2D hw
+          (⟨J, h, β⟩ : IsingParams ℝ) ⟨hJ, hh, hβ⟩ ≠ 0 :=
+  ne_of_gt (freeEnergyInfinite_stripeBrick2D_pos hw hJ hh hβ)
+
 /-- **Fekete convergence for any real h** on the 2D stripe. -/
 theorem freeEnergy_stripeBrick2D_tendsto_of_abs_h
     {w : ℕ} (hw : w ≠ 0) {J β : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β) (h : ℝ) :
