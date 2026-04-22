@@ -529,6 +529,15 @@ theorem euclidean_inner_neg_neg {n : ℕ} (x y : Fin n → ℝ) :
   intros i _
   ring
 
+/-- **Euclidean inner with scalar multiples on both sides**:
+`∑ (c·xᵢ) · (d·yᵢ) = (c·d) · ∑ xᵢ · yᵢ`. -/
+theorem euclidean_inner_smul_smul {n : ℕ} (c d : ℝ) (x y : Fin n → ℝ) :
+    (∑ i : Fin n, (c * x i) * (d * y i)) = c * d * (∑ i : Fin n, x i * y i) := by
+  rw [Finset.mul_sum]
+  apply Finset.sum_congr rfl
+  intros i _
+  ring
+
 /-- **Parallelogram identity for Euclidean norm squared**:
 `∑ (xᵢ + yᵢ)² + ∑ (xᵢ - yᵢ)² = 2·(∑ xᵢ² + ∑ yᵢ²)`. -/
 theorem euclidean_parallelogram {n : ℕ} (x y : Fin n → ℝ) :
