@@ -271,6 +271,22 @@ theorem euclidean_norm_sq_eq_zero_iff {n : ℕ} (x : Fin n → ℝ) :
     intros i _
     rw [h i]; ring
 
+/-- **Euclidean dot product vanishes with zero left-argument**:
+`∑ (fun i => 0) i * yᵢ = 0`. -/
+theorem euclidean_inner_zero_left {n : ℕ} (y : Fin n → ℝ) :
+    ∑ i : Fin n, (0 : ℝ) * y i = 0 := by
+  apply Finset.sum_eq_zero
+  intros i _
+  ring
+
+/-- **Euclidean dot product vanishes with zero right-argument**:
+`∑ xᵢ · (fun _ => 0) i = 0`. -/
+theorem euclidean_inner_zero_right {n : ℕ} (x : Fin n → ℝ) :
+    ∑ i : Fin n, x i * (0 : ℝ) = 0 := by
+  apply Finset.sum_eq_zero
+  intros i _
+  ring
+
 /-- **Constant-diagonal instance**: if `f : α → ℝ` is nonneg, then
 the form `fun x _ => f x` (constant in the second argument) is
 reflection positive. -/
