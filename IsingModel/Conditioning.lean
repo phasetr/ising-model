@@ -422,6 +422,15 @@ theorem euclidean_pythagorean {n : ℕ} (x y : Fin n → ℝ)
   rw [euclidean_norm_sq_add x y, h_ortho]
   ring
 
+/-- **Euclidean norm squared under scalar multiplication**:
+`∑ (c · xᵢ)² = c² · ∑ xᵢ²`. -/
+theorem euclidean_norm_sq_smul {n : ℕ} (c : ℝ) (x : Fin n → ℝ) :
+    (∑ i : Fin n, (c * x i) ^ 2) = c ^ 2 * (∑ i : Fin n, (x i) ^ 2) := by
+  rw [Finset.mul_sum]
+  apply Finset.sum_congr rfl
+  intros i _
+  ring
+
 /-- **Parallelogram identity for Euclidean norm squared**:
 `∑ (xᵢ + yᵢ)² + ∑ (xᵢ - yᵢ)² = 2·(∑ xᵢ² + ∑ yᵢ²)`. -/
 theorem euclidean_parallelogram {n : ℕ} (x y : Fin n → ℝ) :
