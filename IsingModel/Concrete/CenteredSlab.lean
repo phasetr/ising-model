@@ -4,6 +4,7 @@ import IsingModel.TranslationInvariance
 import IsingModel.AmbientLatticeSum
 import IsingModel.Concrete.LinearBrick
 import IsingModel.Concrete.SlabBrick
+import IsingModel.Concrete.StripeBrick2D
 
 /-!
 # Two-sided centered slab on `latticeGraph (d+1)` (§4.6 Prop 4.6.1 strip convergence)
@@ -812,6 +813,19 @@ theorem freeEnergyInfinite_centeredSlab_elim0_eq_linearBox
     intro n
     exact hperStage n
   exact tendsto_nhds_unique h1' h2
+
+/-- **Limit equivalence (d=1)**: the centered-slab Fekete limit at
+`d = 1, widths = fun _ => w` equals the 2D `stripeBrick2D w` Fekete
+limit. Immediate from transitivity via `freeEnergyInfinite_centeredSlab_eq_slabBrick`
+(PR #655) and `freeEnergyInfinite_stripeBrick2D_eq_slabBrick` (PR #651). -/
+theorem freeEnergyInfinite_centeredSlab_d_one_eq_stripeBrick2D
+    {w : ℕ} (hw : w ≠ 0) (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    @freeEnergyInfinite_centeredSlab 1 (fun _ : Fin 1 => w)
+        (fun _ => hw) p hf
+      = freeEnergyInfinite_stripeBrick2D hw p hf := by
+  rw [freeEnergyInfinite_centeredSlab_eq_slabBrick
+        (widths := fun _ : Fin 1 => w)]
+  exact (freeEnergyInfinite_stripeBrick2D_eq_slabBrick hw p hf).symm
 
 end Concrete
 
