@@ -258,6 +258,19 @@ theorem euclidean_inner_self {n : ℕ} (x : Fin n → ℝ) :
   intros i _
   ring
 
+/-- **Euclidean non-degeneracy**: `∑ (xᵢ)² = 0 ↔ ∀ i, x i = 0`. -/
+theorem euclidean_norm_sq_eq_zero_iff {n : ℕ} (x : Fin n → ℝ) :
+    (∑ i : Fin n, (x i) ^ 2) = 0 ↔ ∀ i, x i = 0 := by
+  constructor
+  · intro h i
+    have h_each : ∀ j ∈ Finset.univ, (x j) ^ 2 = 0 :=
+      (Finset.sum_eq_zero_iff_of_nonneg (fun _ _ => sq_nonneg _)).mp h
+    exact pow_eq_zero_iff (by norm_num : 2 ≠ 0) |>.mp (h_each i (Finset.mem_univ _))
+  · intro h
+    apply Finset.sum_eq_zero
+    intros i _
+    rw [h i]; ring
+
 /-- **Constant-diagonal instance**: if `f : α → ℝ` is nonneg, then
 the form `fun x _ => f x` (constant in the second argument) is
 reflection positive. -/
