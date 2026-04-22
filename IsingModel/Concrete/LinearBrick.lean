@@ -430,6 +430,22 @@ theorem freeEnergyInfinite_linearBox_sandwich_cosh
   ⟨freeEnergyInfinite_linearBox_ge_log_two_cosh hJ hh hβ,
    freeEnergyInfinite_linearBox_le _ ⟨hJ, hh, hβ⟩⟩
 
+/-- **β-monotonicity** of `freeEnergyInfinite_linearBox` on `Set.Ioi 0`:
+for ferromagnetic `0 ≤ J, 0 ≤ h`, `0 < β₁ ≤ β₂` implies
+`freeEnergyInfinite_linearBox ⟨J, h, β₁⟩ ≤ freeEnergyInfinite_linearBox ⟨J, h, β₂⟩`. -/
+theorem freeEnergyInfinite_linearBox_monotone_beta
+    {J h : ℝ} (hJ : 0 ≤ J) (hh : 0 ≤ h)
+    {β₁ β₂ : ℝ} (hβ₁ : 0 < β₁) (hβ₂ : 0 < β₂) (hβle : β₁ ≤ β₂) :
+    freeEnergyInfinite_linearBox
+        (⟨J, h, β₁⟩ : IsingParams ℝ) ⟨hJ, hh, hβ₁⟩
+      ≤ freeEnergyInfinite_linearBox
+        (⟨J, h, β₂⟩ : IsingParams ℝ) ⟨hJ, hh, hβ₂⟩ := by
+  refine le_of_tendsto_of_tendsto'
+    (freeEnergy_linearBox_tendsto_freeEnergyInfinite _ ⟨hJ, hh, hβ₁⟩)
+    (freeEnergy_linearBox_tendsto_freeEnergyInfinite _ ⟨hJ, hh, hβ₂⟩) ?_
+  intro n
+  exact IsingModel.freeEnergy_monotone_beta _ J hJ h hh hβ₁ hβ₂ hβle
+
 end Concrete
 
 end IsingModel
