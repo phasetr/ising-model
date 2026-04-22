@@ -460,6 +460,43 @@ theorem freeEnergy_centeredSlab_tendsto
     (freeEnergy_centeredSlab_bddAbove widths p)
     (centeredSlab_one_card_ne_zero hw)
 
+/-! ## Sandwich bounds for the centered slab (ferromagnetic) -/
+
+/-- **Lower bound** on the centered slab (ferromagnetic, nonempty):
+`log 2 ≤ freeEnergy (inducedGraph (latticeGraph (d+1)) (centeredSlab widths n)) p`. -/
+theorem centeredSlab_freeEnergy_ge_log_two {widths : Fin d → ℕ} {n : ℕ}
+    (hne : (centeredSlab widths n).Nonempty)
+    {J h β : ℝ} (hJ : 0 ≤ J) (hh : 0 ≤ h) (hβ : 0 < β) :
+    Real.log 2
+      ≤ IsingModel.freeEnergy
+          (Ambient.inducedGraph (IsingModel.latticeGraph (d + 1))
+            (centeredSlab widths n))
+          (⟨J, h, β⟩ : IsingParams ℝ) := by
+  have hpos : 0 < Fintype.card (↑(centeredSlab widths n) : Type _) := by
+    rw [Fintype.card_coe]; exact Finset.card_pos.mpr hne
+  exact IsingModel.freeEnergy_ge_log_two_of_ferromagnetic _ _ ⟨hJ, hh, hβ⟩ hpos
+
+/-- **Sandwich bound** on the centered slab (ferromagnetic, nonempty):
+`log 2 ≤ freeEnergy ≤ log 2 + |β|·((d+1)·|J| + |h|)`.
+
+Combines `centeredSlab_freeEnergy_ge_log_two` and
+`centeredSlab_freeEnergy_le`. -/
+theorem centeredSlab_freeEnergy_sandwich {widths : Fin d → ℕ} {n : ℕ}
+    (hne : (centeredSlab widths n).Nonempty)
+    {J h β : ℝ} (hJ : 0 ≤ J) (hh : 0 ≤ h) (hβ : 0 < β) :
+    Real.log 2
+      ≤ IsingModel.freeEnergy
+          (Ambient.inducedGraph (IsingModel.latticeGraph (d + 1))
+            (centeredSlab widths n))
+          (⟨J, h, β⟩ : IsingParams ℝ)
+    ∧ IsingModel.freeEnergy
+          (Ambient.inducedGraph (IsingModel.latticeGraph (d + 1))
+            (centeredSlab widths n))
+          (⟨J, h, β⟩ : IsingParams ℝ)
+        ≤ Real.log 2 + |β| * ((d + 1) * |J| + |h|) :=
+  ⟨centeredSlab_freeEnergy_ge_log_two hne hJ hh hβ,
+   centeredSlab_freeEnergy_le widths n ⟨J, h, β⟩⟩
+
 end Concrete
 
 end IsingModel
