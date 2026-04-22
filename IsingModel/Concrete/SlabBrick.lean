@@ -615,6 +615,31 @@ theorem freeEnergyInfinite_stripeBrick2D_eq_slabBrick
     (@freeEnergy_slabBrick_tendsto_freeEnergyInfinite 1 (fun _ : Fin 1 => w)
       (fun _ => hw) p hf)).symm
 
+/-! ## Translation invariance of the named infinite-volume limit
+
+Any coord-shift of the slab sequence converges to the same
+`freeEnergyInfinite_slabBrick` value, via translation invariance of
+`freeEnergyΛ` on the (translation-invariant) `latticeGraph (d+1)`. -/
+
+/-- **Translation-invariance of the Fekete limit** on the slab: for
+any `t : Fin (d+1) → ℤ`, the shifted sequence
+`n ↦ freeEnergy (inducedGraph (latticeGraph (d+1)) (t +ᵥ slabBrick widths n))`
+converges to the same `freeEnergyInfinite_slabBrick hw p hf`. -/
+theorem freeEnergyInfinite_slabBrick_tendsto_shift
+    {widths : Fin d → ℕ} (hw : ∀ j : Fin d, widths j ≠ 0)
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (t : Fin (d + 1) → ℤ) :
+    Filter.Tendsto
+      (fun n => IsingModel.freeEnergy
+        (Ambient.inducedGraph (IsingModel.latticeGraph (d + 1))
+          (Ambient.vaddFinset t (slabBrick widths n))) p)
+      Filter.atTop (nhds (freeEnergyInfinite_slabBrick hw p hf)) := by
+  refine (freeEnergy_slabBrick_tendsto_freeEnergyInfinite hw p hf).congr ?_
+  intro n
+  -- `freeEnergy (inducedGraph G Λ) p = freeEnergy (inducedGraph G (t +ᵥ Λ)) p`
+  -- via `Ambient.freeEnergyΛ_vaddFinset_eq` (translation invariance of Λ-form).
+  exact (Ambient.freeEnergyΛ_vaddFinset_eq
+    (IsingModel.latticeGraph (d + 1)) t (slabBrick widths n) p).symm
+
 end Concrete
 
 end IsingModel

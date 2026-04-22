@@ -373,6 +373,21 @@ theorem freeEnergyInfinite_linearBox_sandwich
   ⟨freeEnergyInfinite_linearBox_ge_log_two hJ hh hβ,
    freeEnergyInfinite_linearBox_le _ ⟨hJ, hh, hβ⟩⟩
 
+/-- **Translation-invariance of the Fekete limit** on the 1D
+linearBox: any coord-shift of the linearBox sequence converges to the
+same `freeEnergyInfinite_linearBox p hf`. -/
+theorem freeEnergyInfinite_linearBox_tendsto_shift
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (t : Fin 1 → ℤ) :
+    Filter.Tendsto
+      (fun n => IsingModel.freeEnergy
+        (Ambient.inducedGraph (IsingModel.latticeGraph 1)
+          (Ambient.vaddFinset t (linearBox n))) p)
+      Filter.atTop (nhds (freeEnergyInfinite_linearBox p hf)) := by
+  refine (freeEnergy_linearBox_tendsto_freeEnergyInfinite p hf).congr ?_
+  intro n
+  exact (Ambient.freeEnergyΛ_vaddFinset_eq
+    (IsingModel.latticeGraph 1) t (linearBox n) p).symm
+
 end Concrete
 
 end IsingModel
