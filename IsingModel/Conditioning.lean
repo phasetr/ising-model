@@ -412,6 +412,16 @@ theorem euclidean_norm_sq_sub {n : ℕ} (x y : Fin n → ℝ) :
   rw [Finset.sum_congr rfl (fun i _ => h i)]
   rw [Finset.sum_add_distrib, Finset.sum_sub_distrib, ← Finset.mul_sum]
 
+/-- **Euclidean Pythagorean identity**: if `x, y : Fin n → ℝ` are
+orthogonal (`∑ xᵢ·yᵢ = 0`), then `∑ (xᵢ+yᵢ)² = ∑ xᵢ² + ∑ yᵢ²`.
+Immediate from `euclidean_norm_sq_add` with the middle term vanishing. -/
+theorem euclidean_pythagorean {n : ℕ} (x y : Fin n → ℝ)
+    (h_ortho : (∑ i : Fin n, x i * y i) = 0) :
+    (∑ i : Fin n, (x i + y i) ^ 2)
+      = (∑ i : Fin n, (x i) ^ 2) + (∑ i : Fin n, (y i) ^ 2) := by
+  rw [euclidean_norm_sq_add x y, h_ortho]
+  ring
+
 /-- **Parallelogram identity for Euclidean norm squared**:
 `∑ (xᵢ + yᵢ)² + ∑ (xᵢ - yᵢ)² = 2·(∑ xᵢ² + ∑ yᵢ²)`. -/
 theorem euclidean_parallelogram {n : ℕ} (x y : Fin n → ℝ) :
