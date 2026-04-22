@@ -244,6 +244,13 @@ theorem euclidean_norm_sq_nonneg {n : ℕ} (x : Fin n → ℝ) :
     0 ≤ ∑ i : Fin n, (x i) ^ 2 :=
   Finset.sum_nonneg (fun _ _ => sq_nonneg _)
 
+/-- **Euclidean dot product is symmetric**: `∑ xᵢ yᵢ = ∑ yᵢ xᵢ`. -/
+theorem euclidean_inner_comm {n : ℕ} (x y : Fin n → ℝ) :
+    ∑ i : Fin n, x i * y i = ∑ i : Fin n, y i * x i := by
+  apply Finset.sum_congr rfl
+  intros i _
+  ring
+
 /-- **Constant-diagonal instance**: if `f : α → ℝ` is nonneg, then
 the form `fun x _ => f x` (constant in the second argument) is
 reflection positive. -/
