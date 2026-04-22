@@ -335,6 +335,44 @@ theorem freeEnergyInfinite_linearBox_J_zero
   exact tendsto_nhds_unique
     (freeEnergy_linearBox_tendsto_freeEnergyInfinite _ _) hconst
 
+/-- **Infinite-volume lower bound** `log 2 ≤ freeEnergyInfinite_linearBox`
+for ferromagnetic `0 ≤ J, 0 ≤ h, 0 < β`. Transports the per-stage
+`freeEnergy_ge_log_two_of_ferromagnetic` through the Fekete limit. -/
+theorem freeEnergyInfinite_linearBox_ge_log_two
+    {J h β : ℝ} (hJ : 0 ≤ J) (hh : 0 ≤ h) (hβ : 0 < β) :
+    Real.log 2
+      ≤ freeEnergyInfinite_linearBox (⟨J, h, β⟩ : IsingParams ℝ) ⟨hJ, hh, hβ⟩ := by
+  refine ge_of_tendsto (freeEnergy_linearBox_tendsto_freeEnergyInfinite _ _) ?_
+  filter_upwards [Filter.eventually_ge_atTop 1] with n hn
+  have hne : (linearBox n).Nonempty := linearBox_nonempty hn
+  have hpos : 0 < Fintype.card (↑(linearBox n) : Type _) := by
+    rw [Fintype.card_coe]; exact Finset.card_pos.mpr hne
+  exact IsingModel.freeEnergy_ge_log_two_of_ferromagnetic _ _ ⟨hJ, hh, hβ⟩ hpos
+
+/-- **Infinite-volume upper bound**
+`freeEnergyInfinite_linearBox ≤ log 2 + |β|·(|J| + |h|)`. Transports
+the per-stage `linearBox_freeEnergy_le` through the Fekete limit. -/
+theorem freeEnergyInfinite_linearBox_le
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    freeEnergyInfinite_linearBox p hf
+      ≤ Real.log 2 + |p.β| * (|p.J| + |p.h|) := by
+  refine le_of_tendsto (freeEnergy_linearBox_tendsto_freeEnergyInfinite p hf) ?_
+  filter_upwards with n
+  exact linearBox_freeEnergy_le n p
+
+/-- **Infinite-volume sandwich** on the 1D linearBox (ferromagnetic):
+`log 2 ≤ freeEnergyInfinite_linearBox ≤ log 2 + |β|·(|J| + |h|)`. -/
+theorem freeEnergyInfinite_linearBox_sandwich
+    {J h β : ℝ} (hJ : 0 ≤ J) (hh : 0 ≤ h) (hβ : 0 < β) :
+    Real.log 2
+        ≤ freeEnergyInfinite_linearBox
+            (⟨J, h, β⟩ : IsingParams ℝ) ⟨hJ, hh, hβ⟩
+    ∧ freeEnergyInfinite_linearBox
+            (⟨J, h, β⟩ : IsingParams ℝ) ⟨hJ, hh, hβ⟩
+        ≤ Real.log 2 + |β| * (|J| + |h|) :=
+  ⟨freeEnergyInfinite_linearBox_ge_log_two hJ hh hβ,
+   freeEnergyInfinite_linearBox_le _ ⟨hJ, hh, hβ⟩⟩
+
 end Concrete
 
 end IsingModel
