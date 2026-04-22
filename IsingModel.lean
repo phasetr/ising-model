@@ -20,3 +20,4 @@ import IsingModel.Concrete.LatticeGraphFreeEnergy
 import IsingModel.Concrete.LatticeGraphCorrelation
 import IsingModel.Concrete.LinearBrick
 import IsingModel.Concrete.StripeBrick2D
+import IsingModel.Concrete.SlabBrick
