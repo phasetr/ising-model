@@ -8784,6 +8784,28 @@ theorem truncated4Infinite_latticeGraph_J_zero_all_coincident
   truncated4Infinite_J_zero_all_coincident
     (IsingModel.latticeGraph d) Λ h β hf i
 
+/-- **ℤ^d truncated3Infinite h=0 pair coincidence** (#750):
+`truncated3Infinite ⟨J,0,β⟩ i i k = correlationInfinite ⟨J,0,β⟩ {i,k}`
+for `i ≠ k` (any Exhaustion). -/
+theorem truncated3Infinite_latticeGraph_h_zero_of_pair_coincidence
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
+    {i k : Fin d → ℤ} (hik : i ≠ k) :
+    truncated3Infinite (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) i i k
+      = correlationInfinite (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) {i, k} :=
+  truncated3Infinite_h_zero_of_pair_coincidence
+    (IsingModel.latticeGraph d) Λ J β hik
+
+/-- **ℤ^d truncated3Infinite h=0 all-coincident vanishes** (#750). -/
+theorem truncated3Infinite_latticeGraph_h_zero_all_coincident
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
+    (i : Fin d → ℤ) :
+    truncated3Infinite (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) i i i = 0 :=
+  truncated3Infinite_h_zero_all_coincident
+    (IsingModel.latticeGraph d) Λ J β i
+
 /-- **ℤ^d truncated3Infinite nonpos** (GHS) site-wise (any Exhaustion). -/
 theorem truncated3Infinite_latticeGraph_nonpos
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
