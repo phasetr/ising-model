@@ -554,7 +554,7 @@ inventory (2026-04-17).
 | §10.3 | Cor 10.3.2 (Z bounds) | **Done** |
 | §10.4 | Reflection positivity | **Done** |
 | §10.5 | Multiple reflections | **Done** |
-| §10.6 | Nonsymmetric reflections | **Algebraic core started** | `nonsymmetric_discriminant_mean`, `nonsymmetric_mean_le_geom_mean` (`Conditioning.lean`): non-symmetric variant of `discriminant_nonneg` where the linear coefficient is a sum `b₁ + b₂` of two potentially distinct terms (as arises from a non-symmetric bilinear form). Symmetrized average `(b₁ + b₂) / 2` satisfies the Schwarz bound `((b₁ + b₂)/2)² ≤ a·c`, and its absolute value is bounded by `√(a·c)`. Algebraic core for extending §10.4 Schwarz to non-symmetric reflections. (PR #668.) |
+| §10.6 | Nonsymmetric reflections | **Algebraic core** | `Conditioning.lean` algebraic scaffolding for GJ §10.6 non-symmetric reflection Schwarz bounds. **Discriminant variants**: `nonsymmetric_discriminant_mean` — `((b₁ + b₂) / 2)² ≤ a·c` from `∀ t, 0 ≤ a·t² + (b₁+b₂)·t + c` (PR #668). `nonsymmetric_mean_le_geom_mean` — abs-version `|(b₁+b₂)/2| ≤ √(a·c)` (PR #668). **Two-variable iterated Schwarz**: `nonsymmetric_iterated_schwarz` — from `x² ≤ a·b` get `x ≤ √(a·b)` (PR #669). `nonsymmetric_two_le_sum` — AM-GM bound `2·x ≤ a + b` via `(a-b)² ≥ 0` (PR #669). **Product bound**: `nonsymmetric_product_bound` — under `x² ≤ a, y² ≤ b, x·y ≥ 0`, get `x·y ≤ √(a·b)` (PR #670). **Discriminant iff**: `discriminant_nonneg_converse` (for `0 < a`, `b² ≤ a·c` ⇒ `∀ t, 0 ≤ a·t² + 2·b·t + c`, via completing the square), `discriminant_nonneg_iff` (combined biconditional) (PR #671). (PRs #668–#671.) |
 
 ### Chapter 11 (Fields without cutoffs)
 
