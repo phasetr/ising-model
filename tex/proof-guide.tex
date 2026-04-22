@@ -2340,6 +2340,68 @@ for multiple reflection bounds.
 \S10.6 extends the Schwarz inequality to nonsymmetric reflections,
 needed only for regularity of $P(\varphi)_2$ fields (not existence).
 
+\subsubsection{Nonsymmetric reflections (\S10.6 algebraic core)}
+
+For a possibly non-symmetric bilinear form $b$ with
+$b(x, y) \ne b(y, x)$, expanding $b(x + ty, x + ty)$ gives
+$b(y, y)\,t^2 + \bigl(b(x, y) + b(y, x)\bigr)\,t + b(x, x) \ge 0$
+for all $t \in \mathbb{R}$, i.e.\ a quadratic with asymmetric linear
+coefficient $b_1 + b_2$.
+
+\begin{theorem}[\texttt{nonsymmetric\_discriminant\_mean}]
+If $a t^2 + (b_1 + b_2)\,t + c \ge 0$ for all $t$, then
+$\bigl((b_1 + b_2) / 2\bigr)^2 \le a \cdot c$.
+Proved by reducing to \texttt{discriminant\_nonneg} at
+$b := (b_1 + b_2) / 2$.
+\end{theorem}
+
+\begin{theorem}[\texttt{nonsymmetric\_mean\_le\_geom\_mean};
+\texttt{nonsymmetric\_sum\_abs\_bound}]
+$|(b_1 + b_2) / 2| \le \sqrt{a \cdot c}$, equivalently
+$|b_1 + b_2| \le 2\sqrt{a \cdot c}$ (under $a, c \ge 0$).
+\end{theorem}
+
+\begin{theorem}[\texttt{schwarz\_abs\_bound}]
+Symmetric counterpart: $|b| \le \sqrt{a \cdot c}$ from the standard
+quadratic $a t^2 + 2bt + c \ge 0$ with $a, c \ge 0$.
+\end{theorem}
+
+\begin{theorem}[\texttt{discriminant\_nonneg\_converse};
+\texttt{discriminant\_nonneg\_iff}]
+Converse of \texttt{discriminant\_nonneg} for $a > 0$:
+$b^2 \le a\,c$ implies $a t^2 + 2bt + c \ge 0$ for all $t$.
+Proved by completing the square
+$a t^2 + 2bt + c = a(t + b/a)^2 + (c - b^2/a)$.
+Combined biconditional as \texttt{discriminant\_nonneg\_iff}.
+\end{theorem}
+
+Two-variable iteration of the non-symmetric Schwarz gives a
+Cauchy-Schwarz-in-product form and cross-variable cube bounds:
+
+\begin{theorem}[\texttt{nonsymmetric\_iterated\_schwarz};
+\texttt{nonsymmetric\_two\_le\_sum}]
+From $x^2 \le a \cdot b$ with $x, a, b \ge 0$:
+$x \le \sqrt{a \cdot b}$ (GM bound) and $2x \le a + b$ (AM bound,
+via $(a - b)^2 \ge 0$).
+\end{theorem}
+
+\begin{theorem}[\texttt{nonsymmetric\_product\_bound}]
+Under $x^2 \le a$, $y^2 \le b$ with $xy \ge 0$:
+$xy \le \sqrt{a \cdot b}$.
+\end{theorem}
+
+\begin{theorem}[\texttt{nonsymmetric\_cross\_iteration\_x},
+\texttt{\_y}; \texttt{nonsymmetric\_cube\_bound\_x}, \texttt{\_y}]
+From the cross-bounds $x^2 \le a \cdot y$ and $y^2 \le b \cdot x$:
+$x^4 \le a^2 \cdot b \cdot x$ and $y^4 \le a \cdot b^2 \cdot y$.
+When $x > 0$ (resp.\ $y > 0$): $x^3 \le a^2 \cdot b$ (resp.\
+$y^3 \le a \cdot b^2$).
+\end{theorem}
+
+These algebraic pieces are the foundation for non-symmetric reflection
+positivity; combined with a bilinear-form expansion hypothesis, they
+yield Schwarz-type bounds without requiring $b(x, y) = b(y, x)$.
+
 \section{Phase transitions (\S16.1)}
 
 \begin{theorem}[\texttt{magnetization\_monotone\_h}; \S16.1, p.~283]
