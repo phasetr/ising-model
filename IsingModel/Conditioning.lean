@@ -491,6 +491,11 @@ theorem euclidean_inner_three (x y : Fin 3 → ℝ) :
     (∑ i : Fin 3, x i * y i) = x 0 * y 0 + x 1 * y 1 + x 2 * y 2 := by
   simp [Fin.sum_univ_three]
 
+/-- **Euclidean constant-function norm squared**: `∑ c² over Fin n = n · c²`. -/
+theorem euclidean_norm_sq_const {n : ℕ} (c : ℝ) :
+    (∑ _ : Fin n, c ^ 2) = n * c ^ 2 := by
+  rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
+
 /-- **Parallelogram identity for Euclidean norm squared**:
 `∑ (xᵢ + yᵢ)² + ∑ (xᵢ - yᵢ)² = 2·(∑ xᵢ² + ∑ yᵢ²)`. -/
 theorem euclidean_parallelogram {n : ℕ} (x y : Fin n → ℝ) :
