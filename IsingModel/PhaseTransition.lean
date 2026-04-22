@@ -416,6 +416,24 @@ theorem zeta_nonneg_finite_vol (G : SimpleGraph ι) [Fintype G.edgeSet]
     truncated4 G ⟨J, 0, β⟩ i j k l ≤ 0 :=
   cor_4_3_3 G J β hf i j k l hij hik hil hjk hjl hkl
 
+/-- **Absence of even bound states — finite-volume lattice** (Glimm–Jaffe
+§17.2, pp. 311–313). For a ferromagnetic Ising model at zero external
+field, the truncated four-point correlator `U₄(i,j,k,l) ≤ 0` is
+negative semidefinite. Physically this means there are no even-sector
+bound states in the two-body spectrum beyond those already captured by
+disconnected one-body contributions.
+
+Explicit named alias of `cor_4_3_3` (= Lebowitz inequality at `h = 0`),
+matching the `eta_nonneg_finite_vol` / `zeta_nonneg_finite_vol`
+convention. -/
+theorem absence_of_even_bound_states_finite_vol
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hf : Ferromagnetic ⟨J, (0 : ℝ), β⟩) (i j k l : ι)
+    (hij : i ≠ j) (hik : i ≠ k) (hil : i ≠ l)
+    (hjk : j ≠ k) (hjl : j ≠ l) (hkl : k ≠ l) :
+    truncated4 G ⟨J, 0, β⟩ i j k l ≤ 0 :=
+  cor_4_3_3 G J β hf i j k l hij hik hil hjk hjl hkl
+
 /-! ## Lattice-growth convergence of §5 quantities
 
 Named corollaries of `correlation_convergent_subgraph` (PR #64) for the

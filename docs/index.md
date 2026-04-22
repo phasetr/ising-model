@@ -567,7 +567,7 @@ inventory (2026-04-17).
 
 | Section | Result | Status |
 |---|---|---|
-| §17.2 | Absence of even bound states | **Done** (via Cor 4.3.3) |
+| §17.2 | Absence of even bound states | **Done (finite + ∞-vol, explicit)** | `absence_of_even_bound_states_finite_vol` (`PhaseTransition.lean`) + `Ambient.absence_of_even_bound_states_infinite_vol` (`AmbientLattice.lean`) + ℤ^d `_latticeGraph` wrappers. Explicit named aliases of `cor_4_3_3` / `truncated4Infinite_nonpos_h_zero` matching the §17.7 `eta/zeta_nonneg` convention. (PR #637.) |
 | §17.5 | Correlation length | Not formalized (spectral theory) |
 | §17.7 | `η ≥ 0`, `ζ ≥ 0` | **Done (finite + ∞-vol)** | `eta_nonneg_finite_vol` + `zeta_nonneg_finite_vol` (`PhaseTransition.lean`) + `Ambient.eta_nonneg_infinite_vol` + `Ambient.zeta_nonneg_infinite_vol` (`AmbientLattice.lean`) + ℤ^d `{eta,zeta}_nonneg_{finite,infinite}_vol_latticeGraph`. Explicit named aliases of `truncated2_nonneg`/`truncated2Infinite_nonneg` (GKS-II) and `cor_4_3_3`/`truncated4Infinite_nonpos_h_zero` (Lebowitz at `h = 0`). (PR #636.) |
 | §17.8 | `η ≤ 1` | **Done** |
