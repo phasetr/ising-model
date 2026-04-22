@@ -285,6 +285,27 @@ theorem nonsymmetric_two_le_sum (x a b : ℝ)
   have hx_abs : x ≤ (a + b) / 2 := (abs_of_nonneg hx) ▸ this.2
   linarith
 
+/-- **Non-symmetric product bound** (§10.6): under `x² ≤ a, y² ≤ b`
+with `x·y ≥ 0` and `a, b ≥ 0`, conclude `x · y ≤ √(a · b)`.
+
+Captures a Cauchy-Schwarz-in-product form useful for non-symmetric
+reflection contexts where `x = ⟨A⟩, y = ⟨B⟩` with `A, B` reflected
+into `θ(A), θ(B)` and `⟨A²⟩ = a, ⟨B²⟩ = b`. -/
+theorem nonsymmetric_product_bound (x y a b : ℝ)
+    (ha : 0 ≤ a) (hb : 0 ≤ b)
+    (hxy_nn : 0 ≤ x * y)
+    (hxa : x ^ 2 ≤ a) (hyb : y ^ 2 ≤ b) :
+    x * y ≤ Real.sqrt (a * b) := by
+  have hxysq : (x * y) ^ 2 ≤ a * b := by
+    have : (x * y) ^ 2 = x ^ 2 * y ^ 2 := by ring
+    rw [this]
+    exact mul_le_mul hxa hyb (sq_nonneg _) ha
+  have hab : 0 ≤ a * b := mul_nonneg ha hb
+  have hsqrt : Real.sqrt ((x * y) ^ 2) ≤ Real.sqrt (a * b) :=
+    Real.sqrt_le_sqrt hxysq
+  rw [Real.sqrt_sq hxy_nn] at hsqrt
+  exact hsqrt
+
 /-! ## High-temperature / cluster expansion (§18.1–18.3)
 
 Glimm–Jaffe Chapter 18 develops the cluster expansion for P(φ)₂ fields.
