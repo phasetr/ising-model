@@ -622,6 +622,26 @@ theorem classical_schwarz_abs_of_symmetric_reflection_positive
   have := Real.sqrt_le_sqrt hsq
   rwa [Real.sqrt_sq_eq_abs] at this
 
+/-- **Symmetric degenerate case** (§10.6 corollary): if `b` is symmetric
+bilinear with reflection positivity and `b x x = 0`, then `b x y = 0`
+for all `y`. Proof: `(b x y)² ≤ b x x · b y y = 0`, so `b x y = 0`. -/
+theorem symmetric_reflection_positive_off_diag_zero_of_diag_zero
+    {α : Type*} [AddCommGroup α] [Module ℝ α]
+    (b : α → α → ℝ)
+    (hbi_left : ∀ x y z : α, b (x + y) z = b x z + b y z)
+    (hbi_right : ∀ x y z : α, b x (y + z) = b x y + b x z)
+    (hbi_smul_left : ∀ (c : ℝ) (x y : α), b (c • x) y = c * b x y)
+    (hbi_smul_right : ∀ (c : ℝ) (x y : α), b x (c • y) = c * b x y)
+    (hRP : ReflectionPositive b)
+    (hsym : ∀ x y : α, b x y = b y x) (x y : α) (hxx : b x x = 0) :
+    b x y = 0 := by
+  have hsq := classical_schwarz_of_symmetric_reflection_positive b
+    hbi_left hbi_right hbi_smul_left hbi_smul_right hRP hsym x y
+  rw [hxx, zero_mul] at hsq
+  have hnn : 0 ≤ (b x y) ^ 2 := sq_nonneg _
+  have hzero : (b x y) ^ 2 = 0 := le_antisymm hsq hnn
+  exact pow_eq_zero_iff (by norm_num : 2 ≠ 0) |>.mp hzero
+
 /-- **Degenerate case variant** (§10.6 corollary): if `b y y = 0`,
 then `b x y + b y x = 0`. Symmetric partner of
 `reflection_positive_off_diag_zero_of_diag_zero`. -/
