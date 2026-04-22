@@ -582,6 +582,26 @@ theorem classical_schwarz_of_symmetric_reflection_positive
   rw [hmean] at hsq
   exact hsq
 
+/-- **Classical symmetric Schwarz absolute-value form** (§10.6
+corollary): `|b x y| ≤ √(b x x · b y y)` under symmetric bilinear +
+reflection positive. Immediate from
+`classical_schwarz_of_symmetric_reflection_positive` + sqrt
+monotonicity. -/
+theorem classical_schwarz_abs_of_symmetric_reflection_positive
+    {α : Type*} [AddCommGroup α] [Module ℝ α]
+    (b : α → α → ℝ)
+    (hbi_left : ∀ x y z : α, b (x + y) z = b x z + b y z)
+    (hbi_right : ∀ x y z : α, b x (y + z) = b x y + b x z)
+    (hbi_smul_left : ∀ (c : ℝ) (x y : α), b (c • x) y = c * b x y)
+    (hbi_smul_right : ∀ (c : ℝ) (x y : α), b x (c • y) = c * b x y)
+    (hRP : ReflectionPositive b)
+    (hsym : ∀ x y : α, b x y = b y x) (x y : α) :
+    |b x y| ≤ Real.sqrt (b x x * b y y) := by
+  have hsq := classical_schwarz_of_symmetric_reflection_positive b
+    hbi_left hbi_right hbi_smul_left hbi_smul_right hRP hsym x y
+  have := Real.sqrt_le_sqrt hsq
+  rwa [Real.sqrt_sq_eq_abs] at this
+
 /-- **Degenerate case variant** (§10.6 corollary): if `b y y = 0`,
 then `b x y + b y x = 0`. Symmetric partner of
 `reflection_positive_off_diag_zero_of_diag_zero`. -/
