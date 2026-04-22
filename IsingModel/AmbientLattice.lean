@@ -4307,6 +4307,45 @@ theorem truncated4Infinite_J_zero_of_pairwise_distinct
   rw [hcard_ijkl, hcard_ij, hcard_kl, hcard_ik, hcard_jl, hcard_il, hcard_jk]
   ring
 
+/-- **∞-volume Lebowitz 4-point at `J = 0` one-pair coincidence**
+(ferromagnetic): if `i ≠ k`, `i ≠ l`, `k ≠ l`, then
+`truncated4Infinite ⟨0,h,β⟩ i i k l = -2 · tanh(β·h)⁴`.
+
+Same closed form as the pairwise-distinct case
+(`truncated4Infinite_J_zero_of_pairwise_distinct`). Proof uses the
+Finset collapses `{i,i,k,l} = {i,k,l}` (card 3) and `{i,i} = {i}`
+(card 1); the three pair-pair products reduce to
+`t³ + t⁴ + t⁴` giving `U_4 = t³ − t³ − 2t⁴ = −2t⁴`.
+
+Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §5.1 pp. 72–74. -/
+theorem truncated4Infinite_J_zero_of_one_pair_coincidence
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (h β : ℝ)
+    (hf : Ferromagnetic (⟨(0 : ℝ), h, β⟩ : IsingParams ℝ))
+    {i k l : V} (hik : i ≠ k) (hil : i ≠ l) (hkl : k ≠ l) :
+    truncated4Infinite G Λ (⟨0, h, β⟩ : IsingParams ℝ) i i k l
+      = -2 * Real.tanh (β * h) ^ 4 := by
+  unfold truncated4Infinite
+  have hii : ({i, i} : Finset V) = {i} := by simp
+  have hiikl : ({i, i, k, l} : Finset V) = {i, k, l} := by ext x; simp
+  rw [hiikl, hii]
+  rw [correlationInfinite_J_zero G Λ h β hf,
+      correlationInfinite_J_zero G Λ h β hf,
+      correlationInfinite_J_zero G Λ h β hf,
+      correlationInfinite_J_zero G Λ h β hf,
+      correlationInfinite_J_zero G Λ h β hf]
+  have hcard_i : ({i} : Finset V).card = 1 := Finset.card_singleton i
+  have hcard_ik : ({i, k} : Finset V).card = 2 := Finset.card_pair hik
+  have hcard_il : ({i, l} : Finset V).card = 2 := Finset.card_pair hil
+  have hcard_kl : ({k, l} : Finset V).card = 2 := Finset.card_pair hkl
+  have hcard_ikl : ({i, k, l} : Finset V).card = 3 := by
+    have h_i_nin : i ∉ ({k, l} : Finset V) := by simp [hik, hil]
+    rw [show ({i, k, l} : Finset V) = insert i ({k, l} : Finset V) from rfl,
+        Finset.card_insert_of_notMem h_i_nin, hcard_kl]
+  rw [hcard_i, hcard_ik, hcard_il, hcard_kl, hcard_ikl]
+  ring
+
 /-! ## Parameter monotonicity of `spontaneous*`
 
 Combine the parameter-direction monotonicity of `correlationInfinite`
