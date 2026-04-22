@@ -3894,6 +3894,34 @@ theorem truncated3Infinite_J_zero_of_pair_coincidence
   rw [hcard_i, hcard_k, hcard_ik]
   ring
 
+/-- **∞-volume Ursell 3-point at `J = 0` all-coincident closed form**
+(ferromagnetic): `truncated3Infinite ⟨0,h,β⟩ i i i = t·(1−t)·(1−2t)`
+with `t := tanh(β·h)`.
+
+Completes the J=0 trivial-slice cascade: all-distinct vanishes
+(`truncated3Infinite_J_zero_of_pairwise_distinct`), pair-coincident
+vanishes (`truncated3Infinite_J_zero_of_pair_coincidence`), and
+all-coincident is the cubic polynomial `t − 3t² + 2t³`.
+
+Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §5.1 pp. 72–74. -/
+theorem truncated3Infinite_J_zero_all_coincident
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (h β : ℝ)
+    (hf : Ferromagnetic (⟨(0 : ℝ), h, β⟩ : IsingParams ℝ))
+    (i : V) :
+    truncated3Infinite G Λ (⟨0, h, β⟩ : IsingParams ℝ) i i i
+      = Real.tanh (β * h) * (1 - Real.tanh (β * h))
+          * (1 - 2 * Real.tanh (β * h)) := by
+  unfold truncated3Infinite
+  have h1 : correlationInfinite G Λ (⟨(0 : ℝ), h, β⟩ : IsingParams ℝ) {i}
+      = Real.tanh (β * h) := by
+    rw [correlationInfinite_J_zero G Λ h β hf, Finset.card_singleton, pow_one]
+  have hii : ({i, i} : Finset V) = {i} := by simp
+  have hiii : ({i, i, i} : Finset V) = {i} := by ext x; simp
+  rw [hiii, hii, h1]
+  ring
+
 /-- **∞-volume Ursell 3-point vanishes at `β = 0`** for any sites.
 
 Infinite-volume counterpart of `truncated3_beta_zero` (finite
