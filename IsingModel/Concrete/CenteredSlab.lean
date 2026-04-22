@@ -657,6 +657,21 @@ theorem freeEnergyInfinite_centeredSlab_sandwich_cosh
   ⟨freeEnergyInfinite_centeredSlab_ge_log_two_cosh hw hJ hh hβ,
    freeEnergyInfinite_centeredSlab_le hw _ ⟨hJ, hh, hβ⟩⟩
 
+/-- **β-monotonicity** of `freeEnergyInfinite_centeredSlab`. -/
+theorem freeEnergyInfinite_centeredSlab_monotone_beta
+    {widths : Fin d → ℕ} (hw : ∀ j : Fin d, widths j ≠ 0)
+    {J h : ℝ} (hJ : 0 ≤ J) (hh : 0 ≤ h)
+    {β₁ β₂ : ℝ} (hβ₁ : 0 < β₁) (hβ₂ : 0 < β₂) (hβle : β₁ ≤ β₂) :
+    freeEnergyInfinite_centeredSlab hw
+        (⟨J, h, β₁⟩ : IsingParams ℝ) ⟨hJ, hh, hβ₁⟩
+      ≤ freeEnergyInfinite_centeredSlab hw
+        (⟨J, h, β₂⟩ : IsingParams ℝ) ⟨hJ, hh, hβ₂⟩ := by
+  refine le_of_tendsto_of_tendsto'
+    (freeEnergy_centeredSlab_tendsto_freeEnergyInfinite hw _ ⟨hJ, hh, hβ₁⟩)
+    (freeEnergy_centeredSlab_tendsto_freeEnergyInfinite hw _ ⟨hJ, hh, hβ₂⟩) ?_
+  intro n
+  exact IsingModel.freeEnergy_monotone_beta _ J hJ h hh hβ₁ hβ₂ hβle
+
 /-! ## 1D consistency: `centeredSlab (d=0) = shift_(-n) (linearBox (2n))`
 
 The `d = 0` centered slab is, at each index `n`, a negative-`n` shift

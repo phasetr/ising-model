@@ -484,6 +484,21 @@ theorem freeEnergyInfinite_stripeBrick2D_sandwich_cosh
   ⟨freeEnergyInfinite_stripeBrick2D_ge_log_two_cosh hw hJ hh hβ,
    freeEnergyInfinite_stripeBrick2D_le hw _ ⟨hJ, hh, hβ⟩⟩
 
+/-- **β-monotonicity** of `freeEnergyInfinite_stripeBrick2D`. -/
+theorem freeEnergyInfinite_stripeBrick2D_monotone_beta
+    {w : ℕ} (hw : w ≠ 0)
+    {J h : ℝ} (hJ : 0 ≤ J) (hh : 0 ≤ h)
+    {β₁ β₂ : ℝ} (hβ₁ : 0 < β₁) (hβ₂ : 0 < β₂) (hβle : β₁ ≤ β₂) :
+    freeEnergyInfinite_stripeBrick2D hw
+        (⟨J, h, β₁⟩ : IsingParams ℝ) ⟨hJ, hh, hβ₁⟩
+      ≤ freeEnergyInfinite_stripeBrick2D hw
+        (⟨J, h, β₂⟩ : IsingParams ℝ) ⟨hJ, hh, hβ₂⟩ := by
+  refine le_of_tendsto_of_tendsto'
+    (freeEnergy_stripeBrick2D_tendsto_freeEnergyInfinite hw _ ⟨hJ, hh, hβ₁⟩)
+    (freeEnergy_stripeBrick2D_tendsto_freeEnergyInfinite hw _ ⟨hJ, hh, hβ₂⟩) ?_
+  intro n
+  exact IsingModel.freeEnergy_monotone_beta _ J hJ h hh hβ₁ hβ₂ hβle
+
 end Concrete
 
 end IsingModel
