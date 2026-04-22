@@ -3862,6 +3862,38 @@ theorem truncated3Infinite_J_zero_of_pairwise_distinct
   rw [hcard_i, hcard_j, hcard_k, hcard_ij, hcard_jk, hcard_ik, hcard_ijk]
   ring
 
+/-- **∞-volume Ursell 3-point vanishes at `J = 0` with pair coincidence**
+(ferromagnetic): if `i = j` and `i ≠ k`, then
+`truncated3Infinite ⟨0,h,β⟩ i i k = 0`. Extension of
+`truncated3Infinite_J_zero_of_pairwise_distinct` (all three distinct)
+to the two-coincident case.
+
+Proof: with `t := tanh(β·h)`, using Finset collapses `{i,i,k} = {i,k}`
+(card 2) and `{i,i} = {i}` (card 1):
+`U_3(i,i,k) = t² − t·t² − t·t² − t·t + 2·t·t·t = t² − 2t³ − t² + 2t³ = 0`.
+
+Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §5.1 pp. 72–74. -/
+theorem truncated3Infinite_J_zero_of_pair_coincidence
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (h β : ℝ)
+    (hf : Ferromagnetic (⟨(0 : ℝ), h, β⟩ : IsingParams ℝ))
+    {i k : V} (hik : i ≠ k) :
+    truncated3Infinite G Λ (⟨0, h, β⟩ : IsingParams ℝ) i i k = 0 := by
+  unfold truncated3Infinite
+  have hii : ({i, i} : Finset V) = {i} := by simp
+  have hiik : ({i, i, k} : Finset V) = {i, k} := by
+    ext x; simp
+  rw [hii, hiik]
+  rw [correlationInfinite_J_zero G Λ h β hf,
+      correlationInfinite_J_zero G Λ h β hf,
+      correlationInfinite_J_zero G Λ h β hf]
+  have hcard_i : ({i} : Finset V).card = 1 := Finset.card_singleton i
+  have hcard_k : ({k} : Finset V).card = 1 := Finset.card_singleton k
+  have hcard_ik : ({i, k} : Finset V).card = 2 := Finset.card_pair hik
+  rw [hcard_i, hcard_k, hcard_ik]
+  ring
+
 /-- **∞-volume Ursell 3-point vanishes at `β = 0`** for any sites.
 
 Infinite-volume counterpart of `truncated3_beta_zero` (finite
