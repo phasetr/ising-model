@@ -497,6 +497,31 @@ theorem centeredSlab_freeEnergy_sandwich {widths : Fin d → ℕ} {n : ℕ}
   ⟨centeredSlab_freeEnergy_ge_log_two hne hJ hh hβ,
    centeredSlab_freeEnergy_le widths n ⟨J, h, β⟩⟩
 
+/-! ## Named infinite-volume limit -/
+
+/-- **Infinite-volume free-energy density along the centered slab
+sequence**. The `Classical.choose` witness of
+`freeEnergy_centeredSlab_tendsto`, pinning down the limit value of
+the Fekete-convergent sequence for ferromagnetic `p` and all-positive
+`widths`. -/
+noncomputable def freeEnergyInfinite_centeredSlab
+    {widths : Fin d → ℕ} (hw : ∀ j : Fin d, widths j ≠ 0)
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) : ℝ :=
+  Classical.choose (freeEnergy_centeredSlab_tendsto hw p hf)
+
+/-- **Convergence to the named limit**: the centered slab
+free-energy-density sequence converges to
+`freeEnergyInfinite_centeredSlab hw p hf`. -/
+theorem freeEnergy_centeredSlab_tendsto_freeEnergyInfinite
+    {widths : Fin d → ℕ} (hw : ∀ j : Fin d, widths j ≠ 0)
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    Filter.Tendsto
+      (fun n => IsingModel.freeEnergy
+        (Ambient.inducedGraph (IsingModel.latticeGraph (d + 1))
+          (centeredSlab widths n)) p)
+      Filter.atTop (nhds (freeEnergyInfinite_centeredSlab hw p hf)) :=
+  Classical.choose_spec (freeEnergy_centeredSlab_tendsto hw p hf)
+
 end Concrete
 
 end IsingModel
