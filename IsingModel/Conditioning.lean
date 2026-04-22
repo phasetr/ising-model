@@ -384,10 +384,20 @@ theorem euclidean_inner_sub_right {n : ℕ} (x y z : Fin n → ℝ) :
 theorem euclidean_parallelogram {n : ℕ} (x y : Fin n → ℝ) :
     (∑ i : Fin n, (x i + y i) ^ 2) + (∑ i : Fin n, (x i - y i) ^ 2)
       = 2 * ((∑ i : Fin n, (x i) ^ 2) + (∑ i : Fin n, (y i) ^ 2)) := by
-  rw [← Finset.sum_add_distrib, Finset.mul_sum, ← Finset.sum_add_distrib]
-  apply Finset.sum_congr rfl
-  intros i _
-  ring
+  have h_left : (∑ i : Fin n, (x i + y i) ^ 2)
+      + (∑ i : Fin n, (x i - y i) ^ 2)
+      = ∑ i : Fin n, ((x i + y i) ^ 2 + (x i - y i) ^ 2) := by
+    rw [← Finset.sum_add_distrib]
+  have h_pointwise : ∀ i : Fin n,
+      (x i + y i) ^ 2 + (x i - y i) ^ 2 = 2 * ((x i) ^ 2 + (y i) ^ 2) := by
+    intros i; ring
+  rw [h_left]
+  calc ∑ i : Fin n, ((x i + y i) ^ 2 + (x i - y i) ^ 2)
+      = ∑ i : Fin n, 2 * ((x i) ^ 2 + (y i) ^ 2) :=
+        Finset.sum_congr rfl (fun i _ => h_pointwise i)
+    _ = 2 * ∑ i : Fin n, ((x i) ^ 2 + (y i) ^ 2) := (Finset.mul_sum _ _ _).symm
+    _ = 2 * ((∑ i : Fin n, (x i) ^ 2) + (∑ i : Fin n, (y i) ^ 2)) := by
+        rw [Finset.sum_add_distrib]
 
 /-- **Constant-diagonal instance**: if `f : α → ℝ` is nonneg, then
 the form `fun x _ => f x` (constant in the second argument) is
