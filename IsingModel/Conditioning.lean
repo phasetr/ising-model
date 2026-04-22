@@ -300,6 +300,20 @@ theorem nonsymmetric_mean_le_geom_mean (a b₁ b₂ c : ℝ)
   have := Real.sqrt_le_sqrt hsq
   rwa [Real.sqrt_sq_eq_abs] at this
 
+/-- **Non-symmetric sum absolute-value bound** (§10.6): the total
+`|b₁ + b₂|` is bounded by `2·√(a·c)`, from the quadratic positivity.
+Multiplicative restatement of `nonsymmetric_mean_le_geom_mean`. -/
+theorem nonsymmetric_sum_abs_bound (a b₁ b₂ c : ℝ)
+    (ha : 0 ≤ a) (hc : 0 ≤ c)
+    (h : ∀ t : ℝ, 0 ≤ a * t ^ 2 + (b₁ + b₂) * t + c) :
+    |b₁ + b₂| ≤ 2 * Real.sqrt (a * c) := by
+  have hmean := nonsymmetric_mean_le_geom_mean a b₁ b₂ c ha hc h
+  have habs_half : |(b₁ + b₂) / 2| = |b₁ + b₂| / 2 := by
+    rw [abs_div]
+    simp
+  rw [habs_half] at hmean
+  linarith
+
 /-- **Non-symmetric iterated Schwarz** (§10.6 iterative step): from
 `0 ≤ x, 0 ≤ a, 0 ≤ b` and `x² ≤ a · b`, conclude the non-symmetric
 geometric-mean bound `x ≤ √(a · b)`. Direct analogue of
