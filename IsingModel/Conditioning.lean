@@ -193,6 +193,13 @@ theorem ReflectionPositive.const {α : Type*} {c : ℝ} (hc : 0 ≤ c) :
     ReflectionPositive (fun (_ _ : α) => c) :=
   fun _ => hc
 
+/-- **Diagonal-transfer**: if two bilinear forms agree on the diagonal
+(i.e., `b₁ x x = b₂ x x` for all x) and one is RP, the other is too. -/
+theorem ReflectionPositive.of_diag_eq {α : Type*} {b₁ b₂ : α → α → ℝ}
+    (hb : ∀ x, b₁ x x = b₂ x x) (h : ReflectionPositive b₁) :
+    ReflectionPositive b₂ :=
+  fun x => (hb x) ▸ h x
+
 /-- **Constant-diagonal instance**: if `f : α → ℝ` is nonneg, then
 the form `fun x _ => f x` (constant in the second argument) is
 reflection positive. -/
