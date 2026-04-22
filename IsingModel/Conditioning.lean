@@ -196,6 +196,36 @@ theorem discriminant_nonneg (a b c : ℝ) (h : ∀ t : ℝ, 0 ≤ a * t ^ 2 + 2 
     have := h t; rw [sq] at this; linarith)
   unfold discrim at hd; nlinarith
 
+/-- **Converse of `discriminant_nonneg`** (for `0 < a`):
+if `b² ≤ a · c`, then `a · t² + 2·b·t + c ≥ 0` for all `t ∈ ℝ`.
+
+Proof: complete the square `a·t² + 2·b·t + c = a·(t + b/a)² + (c - b²/a)`,
+and both terms are non-negative under the hypotheses. -/
+theorem discriminant_nonneg_converse (a b c : ℝ) (ha : 0 < a)
+    (h : b ^ 2 ≤ a * c) :
+    ∀ t : ℝ, 0 ≤ a * t ^ 2 + 2 * b * t + c := by
+  intro t
+  -- a·(t + b/a)² = a·t² + 2·b·t + b²/a, so
+  -- a·t² + 2·b·t + c = a·(t + b/a)² + (c - b²/a).
+  have hsq : 0 ≤ a * (t + b / a) ^ 2 :=
+    mul_nonneg ha.le (sq_nonneg _)
+  have hrem : 0 ≤ c - b ^ 2 / a := by
+    have := (div_le_iff₀ ha).mpr (by linarith : b ^ 2 ≤ c * a)
+    linarith
+  have hid : a * t ^ 2 + 2 * b * t + c
+      = a * (t + b / a) ^ 2 + (c - b ^ 2 / a) := by
+    field_simp
+    ring
+  linarith [hsq, hrem]
+
+/-- **Discriminant iff** (for `0 < a`):
+`a · t² + 2·b·t + c ≥ 0` for all `t` iff `b² ≤ a · c`. Combines
+`discriminant_nonneg` (forward) and `discriminant_nonneg_converse`
+(backward). -/
+theorem discriminant_nonneg_iff (a b c : ℝ) (ha : 0 < a) :
+    (∀ t : ℝ, 0 ≤ a * t ^ 2 + 2 * b * t + c) ↔ b ^ 2 ≤ a * c :=
+  ⟨discriminant_nonneg a b c, discriminant_nonneg_converse a b c ha⟩
+
 /-! ## Multiple reflections and geometric mean bounds (§10.5–10.6)
 
 Glimm–Jaffe §10.5 develops multiple reflection bounds by iterating
