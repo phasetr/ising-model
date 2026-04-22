@@ -223,6 +223,40 @@ theorem iterated_schwarz_sq (x a : ℝ) (hx : 0 ≤ x) (ha : 0 ≤ a) (hxab : x 
   · simp [ha]
   · nlinarith [sq_nonneg (x - a)]
 
+/-- **Non-symmetric discriminant lemma** (§10.6 algebraic core).
+Generalizes `discriminant_nonneg` to the case where the linear
+coefficient is a sum `b₁ + b₂` of two potentially distinct terms
+(as arises from a non-symmetric bilinear form `b` where
+`b(x, y) ≠ b(y, x)`): if `a·t² + (b₁ + b₂)·t + c ≥ 0` for all `t ∈ ℝ`,
+then `((b₁ + b₂) / 2)² ≤ a · c`.
+
+In a reflection-positivity setting, `b₁` and `b₂` would be the two
+off-diagonal entries of a non-symmetric form; their symmetrized
+average still satisfies the Schwarz bound. This is GJ §10.6's
+algebraic core for extending §10.4 to non-symmetric reflections. -/
+theorem nonsymmetric_discriminant_mean (a b₁ b₂ c : ℝ)
+    (h : ∀ t : ℝ, 0 ≤ a * t ^ 2 + (b₁ + b₂) * t + c) :
+    ((b₁ + b₂) / 2) ^ 2 ≤ a * c := by
+  have h' : ∀ t : ℝ, 0 ≤ a * t ^ 2 + 2 * ((b₁ + b₂) / 2) * t + c := by
+    intro t
+    have := h t
+    linarith
+  exact discriminant_nonneg a ((b₁ + b₂) / 2) c h'
+
+/-- **Non-symmetric Schwarz-AM-GM bound** (§10.6 algebraic consequence):
+for `0 ≤ a, 0 ≤ c` and a non-symmetric bilinear form with `b₁ + b₂`
+as the symmetrized linear term, the arithmetic mean of the two
+non-symmetric entries is bounded by the geometric mean `√(a·c)`.
+Derived from `nonsymmetric_discriminant_mean`. -/
+theorem nonsymmetric_mean_le_geom_mean (a b₁ b₂ c : ℝ)
+    (ha : 0 ≤ a) (hc : 0 ≤ c)
+    (h : ∀ t : ℝ, 0 ≤ a * t ^ 2 + (b₁ + b₂) * t + c) :
+    |(b₁ + b₂) / 2| ≤ Real.sqrt (a * c) := by
+  have hsq := nonsymmetric_discriminant_mean a b₁ b₂ c h
+  have hac : 0 ≤ a * c := mul_nonneg ha hc
+  have := Real.sqrt_le_sqrt hsq
+  rwa [Real.sqrt_sq_eq_abs] at this
+
 /-! ## High-temperature / cluster expansion (§18.1–18.3)
 
 Glimm–Jaffe Chapter 18 develops the cluster expansion for P(φ)₂ fields.
