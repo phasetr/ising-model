@@ -507,6 +507,40 @@ theorem nonsymmetric_cube_bound_y (x y a b : ℝ) (hy : 0 < y)
   have h4 := nonsymmetric_cross_iteration_y x y a b hxay hybx
   nlinarith [h4, hy, sq_nonneg y]
 
+/-- **Non-symmetric reflection-positive Schwarz** (§10.6 main):
+for a bilinear `b : α → α → ℝ` on an ℝ-module `α` satisfying
+`ReflectionPositive b` (i.e., `b x x ≥ 0` for all x), the
+symmetrized off-diagonal entries satisfy the Schwarz-style bound
+
+  `((b x y + b y x) / 2)² ≤ b x x · b y y`.
+
+Proof: for all `t : ℝ`, bilinearity expands `b (x + t•y) (x + t•y)`
+to `b x x + t·(b x y + b y x) + t²·b y y`; reflection positivity
+gives this quadratic ≥ 0 for all t; `nonsymmetric_discriminant_mean`
+yields the Schwarz bound. -/
+theorem schwarz_of_reflection_positive
+    {α : Type*} [AddCommGroup α] [Module ℝ α]
+    (b : α → α → ℝ)
+    (hbi_left : ∀ x y z : α, b (x + y) z = b x z + b y z)
+    (hbi_right : ∀ x y z : α, b x (y + z) = b x y + b x z)
+    (hbi_smul_left : ∀ (c : ℝ) (x y : α), b (c • x) y = c * b x y)
+    (hbi_smul_right : ∀ (c : ℝ) (x y : α), b x (c • y) = c * b x y)
+    (hRP : ReflectionPositive b) (x y : α) :
+    ((b x y + b y x) / 2) ^ 2 ≤ b x x * b y y := by
+  have hquad : ∀ t : ℝ,
+      0 ≤ b y y * t ^ 2 + (b x y + b y x) * t + b x x := by
+    intro t
+    have hrp := hRP (x + t • y)
+    have hexpand : b (x + t • y) (x + t • y)
+        = b y y * t ^ 2 + (b x y + b y x) * t + b x x := by
+      rw [hbi_left]
+      rw [hbi_right, hbi_right]
+      rw [hbi_smul_right, hbi_smul_left, hbi_smul_right, hbi_smul_left]
+      ring
+    linarith [hrp, hexpand]
+  have := nonsymmetric_discriminant_mean (b y y) (b x y) (b y x) (b x x) hquad
+  linarith [this, mul_comm (b y y) (b x x)]
+
 /-! ## High-temperature / cluster expansion (§18.1–18.3)
 
 Glimm–Jaffe Chapter 18 develops the cluster expansion for P(φ)₂ fields.
