@@ -236,6 +236,19 @@ theorem discriminant_nonneg_iff (a b c : ℝ) (ha : 0 < a) :
     (∀ t : ℝ, 0 ≤ a * t ^ 2 + 2 * b * t + c) ↔ b ^ 2 ≤ a * c :=
   ⟨discriminant_nonneg a b c, discriminant_nonneg_converse a b c ha⟩
 
+/-- **Discriminant equality case** (for `a ≠ 0`): if `b² = a · c`,
+the quadratic `a · t² + 2·b·t + c` has a double root at `t = -b/a`
+where it vanishes. -/
+theorem quadratic_zero_of_discriminant_eq (a b c : ℝ) (ha : a ≠ 0)
+    (h : b ^ 2 = a * c) :
+    a * (-b / a) ^ 2 + 2 * b * (-b / a) + c = 0 := by
+  rw [quadratic_complete_square a b c (-b / a) ha]
+  have : -b / a + b / a = 0 := by ring
+  simp [this]
+  -- c - b²/a = 0 since b² = a·c.
+  field_simp
+  linarith
+
 /-- **Strict discriminant positivity** (for `0 < a`):
 if `b² < a · c`, then `a · t² + 2·b·t + c > 0` for all `t ∈ ℝ`.
 
