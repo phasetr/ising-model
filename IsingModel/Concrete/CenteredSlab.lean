@@ -2,6 +2,7 @@ import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.Concrete.IntLattice
 import IsingModel.TranslationInvariance
 import IsingModel.AmbientLatticeSum
+import IsingModel.Concrete.LinearBrick
 
 /-!
 # Two-sided centered slab on `latticeGraph (d+1)` (§4.6 Prop 4.6.1 strip convergence)
@@ -625,6 +626,97 @@ theorem freeEnergyInfinite_centeredSlab_nonneg
   have hpos : 0 < Fintype.card (↑(centeredSlab widths n) : Type _) := by
     rw [Fintype.card_coe]; exact Finset.card_pos.mpr hne
   exact IsingModel.freeEnergy_nonneg_of_ferromagnetic _ p hf hpos
+
+/-! ## 1D consistency: `centeredSlab (d=0) = shift_(-n) (linearBox (2n))`
+
+The `d = 0` centered slab is, at each index `n`, a negative-`n` shift
+of the 1D linearBox at doubled index `2n`. Hence the centeredSlab
+Fekete limit (at `d = 0`) coincides with the linearBox Fekete limit. -/
+
+/-- **Finset identity**: `centeredSlab (d=0) Fin.elim0 n` equals the
+`-n` coord-0 shift of `linearBox (2n)`. Corresponds to the interval
+identity `[-n, n) = shift_(-n) [0, 2n)` on the sole coord. -/
+theorem centeredSlab_elim0_eq_shift_linearBox (n : ℕ) :
+    @centeredSlab 0 Fin.elim0 n
+      = Ambient.vaddFinset
+          ((fun _ : Fin 1 => -(n : ℤ)) : Fin 1 → ℤ) (linearBox (2 * n)) := by
+  ext v
+  rw [mem_centeredSlab, Ambient.mem_vaddFinset]
+  constructor
+  · intro h
+    obtain ⟨⟨hv0a, hv0b⟩, _⟩ := h
+    refine ⟨fun _ : Fin 1 => v 0 + (n : ℤ), ?_, ?_⟩
+    · rw [mem_linearBox]
+      refine ⟨?_, ?_⟩
+      · linarith
+      · push_cast; linarith
+    · funext i
+      refine Fin.cases ?_ (fun j : Fin 0 => j.elim0) i
+      -- Coord 0: `(-n) + (v 0 + n) = v 0`.
+      change ((fun _ : Fin 1 => -(n : ℤ)) +ᵥ
+          (fun _ : Fin 1 => v 0 + (n : ℤ))) 0 = v 0
+      simp only [vadd_eq_add, Pi.add_apply]
+      ring
+  · intro h
+    obtain ⟨u, hu, huv⟩ := h
+    rw [mem_linearBox] at hu
+    have hv0 : v 0 = -(n : ℤ) + u 0 := by
+      have : ((fun _ : Fin 1 => -(n : ℤ)) +ᵥ u) 0 = v 0 := congrArg (· 0) huv
+      simp [vadd_eq_add] at this; linarith
+    refine ⟨⟨?_, ?_⟩, fun j => j.elim0⟩
+    · linarith
+    · have : u 0 < (2 * n : ℤ) := by push_cast at hu; linarith [hu.2]
+      linarith
+
+/-- **Limit equivalence (d=0)**: the centered-slab Fekete limit at
+`d = 0, widths = Fin.elim0` equals the 1D linearBox Fekete limit.
+
+Proof via per-stage identity
+`freeEnergy (centeredSlab Fin.elim0 n) = freeEnergy (linearBox (2n))`
+(from `centeredSlab_elim0_eq_shift_linearBox` + translation invariance
+of `freeEnergyΛ`) and subsequence convergence along
+`n ↦ 2n` of the linearBox Fekete limit. -/
+theorem freeEnergyInfinite_centeredSlab_elim0_eq_linearBox
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    @freeEnergyInfinite_centeredSlab 0 Fin.elim0 (fun j => j.elim0) p hf
+      = freeEnergyInfinite_linearBox p hf := by
+  -- Per-stage: `freeEnergy (centered Fin.elim0 n) = freeEnergy (linearBox (2n))`.
+  have hperStage : ∀ n : ℕ,
+      IsingModel.freeEnergy
+        (Ambient.inducedGraph (IsingModel.latticeGraph (0 + 1))
+          (@centeredSlab 0 Fin.elim0 n)) p
+      = IsingModel.freeEnergy
+        (Ambient.inducedGraph (IsingModel.latticeGraph 1)
+          (linearBox (2 * n))) p := by
+    intro n
+    rw [centeredSlab_elim0_eq_shift_linearBox]
+    exact Ambient.freeEnergyΛ_vaddFinset_eq
+      (IsingModel.latticeGraph 1) _ (linearBox (2 * n)) p
+  -- Subsequence tendsto at `2·`.
+  have htwice : Filter.Tendsto (fun n : ℕ => 2 * n) Filter.atTop Filter.atTop := by
+    refine Filter.tendsto_atTop.mpr (fun b => ?_)
+    refine Filter.eventually_atTop.mpr ⟨b, fun n hn => ?_⟩
+    linarith
+  -- The doubled-index linearBox sequence tendsto `freeEnergyInfinite_linearBox`.
+  have h2 : Filter.Tendsto
+      (fun n => IsingModel.freeEnergy
+        (Ambient.inducedGraph (IsingModel.latticeGraph 1)
+          (linearBox (2 * n))) p)
+      Filter.atTop (nhds (freeEnergyInfinite_linearBox p hf)) :=
+    (freeEnergy_linearBox_tendsto_freeEnergyInfinite p hf).comp htwice
+  -- Transport the centered-slab tendsto to the doubled linearBox sequence.
+  have h1' : Filter.Tendsto
+      (fun n => IsingModel.freeEnergy
+        (Ambient.inducedGraph (IsingModel.latticeGraph 1)
+          (linearBox (2 * n))) p)
+      Filter.atTop
+      (nhds (@freeEnergyInfinite_centeredSlab 0 Fin.elim0
+                (fun j => j.elim0) p hf)) := by
+    refine (@freeEnergy_centeredSlab_tendsto_freeEnergyInfinite 0 Fin.elim0
+              (fun j => j.elim0) p hf).congr ?_
+    intro n
+    exact hperStage n
+  exact tendsto_nhds_unique h1' h2
 
 end Concrete
 
