@@ -226,6 +226,19 @@ theorem discriminant_nonneg_iff (a b c : ℝ) (ha : 0 < a) :
     (∀ t : ℝ, 0 ≤ a * t ^ 2 + 2 * b * t + c) ↔ b ^ 2 ≤ a * c :=
   ⟨discriminant_nonneg a b c, discriminant_nonneg_converse a b c ha⟩
 
+/-- **Schwarz absolute-value bound** (§10.6): from the quadratic
+positivity `∀ t, 0 ≤ a·t² + 2·b·t + c` with `a, c ≥ 0`, conclude
+the bound `|b| ≤ √(a·c)` on the symmetric linear coefficient.
+
+Direct consequence of `discriminant_nonneg` (`b² ≤ a·c`) + sqrt-monotone. -/
+theorem schwarz_abs_bound (a b c : ℝ) (ha : 0 ≤ a) (hc : 0 ≤ c)
+    (h : ∀ t : ℝ, 0 ≤ a * t ^ 2 + 2 * b * t + c) :
+    |b| ≤ Real.sqrt (a * c) := by
+  have hbsq : b ^ 2 ≤ a * c := discriminant_nonneg a b c h
+  have hac : 0 ≤ a * c := mul_nonneg ha hc
+  have hsqrt : Real.sqrt (b ^ 2) ≤ Real.sqrt (a * c) := Real.sqrt_le_sqrt hbsq
+  rwa [Real.sqrt_sq_eq_abs] at hsqrt
+
 /-! ## Multiple reflections and geometric mean bounds (§10.5–10.6)
 
 Glimm–Jaffe §10.5 develops multiple reflection bounds by iterating
