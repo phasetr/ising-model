@@ -499,6 +499,36 @@ theorem freeEnergyInfinite_stripeBrick2D_monotone_beta
   intro n
   exact IsingModel.freeEnergy_monotone_beta _ J hJ h hh hβ₁ hβ₂ hβle
 
+/-- **h-monotonicity** of `freeEnergyInfinite_stripeBrick2D`. -/
+theorem freeEnergyInfinite_stripeBrick2D_monotone_h
+    {w : ℕ} (hw : w ≠ 0)
+    {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β)
+    {h₁ h₂ : ℝ} (hh₁ : 0 ≤ h₁) (hh₂ : 0 ≤ h₂) (hhle : h₁ ≤ h₂) :
+    freeEnergyInfinite_stripeBrick2D hw
+        (⟨J, h₁, β⟩ : IsingParams ℝ) ⟨hJ, hh₁, hβ⟩
+      ≤ freeEnergyInfinite_stripeBrick2D hw
+        (⟨J, h₂, β⟩ : IsingParams ℝ) ⟨hJ, hh₂, hβ⟩ := by
+  refine le_of_tendsto_of_tendsto'
+    (freeEnergy_stripeBrick2D_tendsto_freeEnergyInfinite hw _ ⟨hJ, hh₁, hβ⟩)
+    (freeEnergy_stripeBrick2D_tendsto_freeEnergyInfinite hw _ ⟨hJ, hh₂, hβ⟩) ?_
+  intro n
+  exact IsingModel.freeEnergy_monotone_h _ J β hJ hβ hh₁ hh₂ hhle
+
+/-- **J-monotonicity** of `freeEnergyInfinite_stripeBrick2D`. -/
+theorem freeEnergyInfinite_stripeBrick2D_monotone_J
+    {w : ℕ} (hw : w ≠ 0)
+    {h : ℝ} (hh : 0 ≤ h) {β : ℝ} (hβ : 0 < β)
+    {J₁ J₂ : ℝ} (hJ₁ : 0 ≤ J₁) (hJ₂ : 0 ≤ J₂) (hJle : J₁ ≤ J₂) :
+    freeEnergyInfinite_stripeBrick2D hw
+        (⟨J₁, h, β⟩ : IsingParams ℝ) ⟨hJ₁, hh, hβ⟩
+      ≤ freeEnergyInfinite_stripeBrick2D hw
+        (⟨J₂, h, β⟩ : IsingParams ℝ) ⟨hJ₂, hh, hβ⟩ := by
+  refine le_of_tendsto_of_tendsto'
+    (freeEnergy_stripeBrick2D_tendsto_freeEnergyInfinite hw _ ⟨hJ₁, hh, hβ⟩)
+    (freeEnergy_stripeBrick2D_tendsto_freeEnergyInfinite hw _ ⟨hJ₂, hh, hβ⟩) ?_
+  intro n
+  exact IsingModel.freeEnergy_monotone_J _ h β hh hβ hJ₁ hJ₂ hJle
+
 end Concrete
 
 end IsingModel
