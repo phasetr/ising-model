@@ -506,6 +506,14 @@ theorem euclidean_norm_sq_one_fn {n : ℕ} :
     (∑ _ : Fin n, ((1 : ℝ)) ^ 2) = n := by
   simp [Finset.sum_const, Finset.card_univ, Fintype.card_fin]
 
+/-- **Euclidean inner with constant-one vector equals sum**:
+`∑ i, (fun _ => 1) i · x i = ∑ i, x i`. -/
+theorem euclidean_inner_one_fn_left {n : ℕ} (x : Fin n → ℝ) :
+    (∑ i : Fin n, (1 : ℝ) * x i) = ∑ i : Fin n, x i := by
+  apply Finset.sum_congr rfl
+  intros i _
+  ring
+
 /-- **Parallelogram identity for Euclidean norm squared**:
 `∑ (xᵢ + yᵢ)² + ∑ (xᵢ - yᵢ)² = 2·(∑ xᵢ² + ∑ yᵢ²)`. -/
 theorem euclidean_parallelogram {n : ℕ} (x y : Fin n → ℝ) :
