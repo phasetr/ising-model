@@ -417,6 +417,19 @@ theorem freeEnergyInfinite_linearBox_ge_log_two_cosh
     rw [Fintype.card_coe]; exact Finset.card_pos.mpr hne
   exact IsingModel.freeEnergy_ge_log_two_cosh _ hJ hh hβ hpos
 
+/-- **Cosh-form sandwich** on the 1D linearBox: combines the tighter
+`log(2·cosh(β·h))` lower bound with the upper bound `log 2 + |β|·(|J| + |h|)`. -/
+theorem freeEnergyInfinite_linearBox_sandwich_cosh
+    {J h β : ℝ} (hJ : 0 ≤ J) (hh : 0 ≤ h) (hβ : 0 < β) :
+    Real.log (2 * Real.cosh (β * h))
+        ≤ freeEnergyInfinite_linearBox
+            (⟨J, h, β⟩ : IsingParams ℝ) ⟨hJ, hh, hβ⟩
+    ∧ freeEnergyInfinite_linearBox
+            (⟨J, h, β⟩ : IsingParams ℝ) ⟨hJ, hh, hβ⟩
+        ≤ Real.log 2 + |β| * (|J| + |h|) :=
+  ⟨freeEnergyInfinite_linearBox_ge_log_two_cosh hJ hh hβ,
+   freeEnergyInfinite_linearBox_le _ ⟨hJ, hh, hβ⟩⟩
+
 end Concrete
 
 end IsingModel
