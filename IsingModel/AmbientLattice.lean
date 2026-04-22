@@ -3806,6 +3806,51 @@ theorem truncated3Infinite_h_zero_of_distinct
       correlationInfinite_h_zero G Λ J β _ h_k]
   ring
 
+/-- **∞-volume Ursell 3-point at `h = 0` pair coincidence**:
+for `i ≠ k`,
+`truncated3Infinite ⟨J,0,β⟩ i i k = correlationInfinite ⟨J,0,β⟩ {i,k}`.
+
+Extension of `truncated3Infinite_h_zero_of_distinct` (three distinct
+→ 0) to the two-coincident case. Z₂ symmetry at `h = 0` kills all
+odd-cardinality correlations via `correlationInfinite_h_zero`; the
+Ursell 3-point retains only the `{i,i,k} = {i,k}` even-cardinality
+term (card 2), so the 3-point reduces to the 2-point.
+
+Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §5.1 pp. 72–74. -/
+theorem truncated3Infinite_h_zero_of_pair_coincidence
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) {i k : V} (hik : i ≠ k) :
+    truncated3Infinite G Λ (⟨J, 0, β⟩ : IsingParams ℝ) i i k
+      = correlationInfinite G Λ (⟨J, 0, β⟩ : IsingParams ℝ) {i, k} := by
+  unfold truncated3Infinite
+  have hii : ({i, i} : Finset V) = {i} := by simp
+  have hiik : ({i, i, k} : Finset V) = {i, k} := by ext x; simp
+  have h_i_odd : Odd ({i} : Finset V).card := by simp
+  have h_k_odd : Odd ({k} : Finset V).card := by simp
+  rw [hii, hiik,
+      correlationInfinite_h_zero G Λ J β {i} h_i_odd,
+      correlationInfinite_h_zero G Λ J β {k} h_k_odd]
+  ring
+
+/-- **∞-volume Ursell 3-point at `h = 0` all-coincident vanishes**:
+`truncated3Infinite ⟨J,0,β⟩ i i i = 0`. All Finsets in the Ursell
+formula collapse to `{i}` (card 1, odd), so Z₂ symmetry forces
+every term to vanish.
+
+Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §5.1 pp. 72–74. -/
+theorem truncated3Infinite_h_zero_all_coincident
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (i : V) :
+    truncated3Infinite G Λ (⟨J, 0, β⟩ : IsingParams ℝ) i i i = 0 := by
+  unfold truncated3Infinite
+  have hii : ({i, i} : Finset V) = {i} := by simp
+  have hiii : ({i, i, i} : Finset V) = {i} := by ext x; simp
+  have h_i_odd : Odd ({i} : Finset V).card := by simp
+  rw [hiii, hii, correlationInfinite_h_zero G Λ J β {i} h_i_odd]
+  ring
+
 /-- **Exhaustion-independence of `truncated3Infinite`**: the value
 does not depend on the choice of exhaustion. -/
 theorem truncated3Infinite_indep_exhaustion
