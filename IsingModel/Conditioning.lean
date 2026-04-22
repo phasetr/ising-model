@@ -452,6 +452,11 @@ theorem euclidean_sum_swap {m n : ℕ} (f : Fin m → Fin n → ℝ) :
     (∑ i : Fin m, ∑ j : Fin n, f i j) = ∑ j : Fin n, ∑ i : Fin m, f i j :=
   Finset.sum_comm
 
+/-- **Empty-dimension Euclidean norm squared**: `∑ i : Fin 0, (xᵢ)² = 0`. -/
+theorem euclidean_norm_sq_empty (x : Fin 0 → ℝ) :
+    (∑ i : Fin 0, (x i) ^ 2) = 0 := by
+  simp
+
 /-- **Parallelogram identity for Euclidean norm squared**:
 `∑ (xᵢ + yᵢ)² + ∑ (xᵢ - yᵢ)² = 2·(∑ xᵢ² + ∑ yᵢ²)`. -/
 theorem euclidean_parallelogram {n : ℕ} (x y : Fin n → ℝ) :
