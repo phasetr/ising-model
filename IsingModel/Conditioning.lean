@@ -366,11 +366,7 @@ theorem nonsymmetric_cube_bound_x (x y a b : ℝ) (hx : 0 < x)
     (hxay : x ^ 2 ≤ a * y) (hybx : y ^ 2 ≤ b * x) :
     x ^ 3 ≤ a ^ 2 * b := by
   have h4 := nonsymmetric_cross_iteration_x x y a b hxay hybx
-  -- `x⁴ = x · x³ ≤ x · (a²·b)`.
-  have hid : x ^ 4 = x * x ^ 3 := by ring
-  have hid2 : a ^ 2 * b * x = x * (a ^ 2 * b) := by ring
-  rw [hid, hid2] at h4
-  exact (mul_le_mul_left hx).mp h4
+  nlinarith [h4, hx, sq_nonneg x]
 
 /-- **Cube bound from cross-iteration** (§10.6, y-side): symmetric partner
 `y³ ≤ a · b²` when `y > 0`. -/
@@ -378,10 +374,7 @@ theorem nonsymmetric_cube_bound_y (x y a b : ℝ) (hy : 0 < y)
     (hxay : x ^ 2 ≤ a * y) (hybx : y ^ 2 ≤ b * x) :
     y ^ 3 ≤ a * b ^ 2 := by
   have h4 := nonsymmetric_cross_iteration_y x y a b hxay hybx
-  have hid : y ^ 4 = y * y ^ 3 := by ring
-  have hid2 : a * b ^ 2 * y = y * (a * b ^ 2) := by ring
-  rw [hid, hid2] at h4
-  exact (mul_le_mul_left hy).mp h4
+  nlinarith [h4, hy, sq_nonneg y]
 
 /-! ## High-temperature / cluster expansion (§18.1–18.3)
 
