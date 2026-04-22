@@ -518,6 +518,45 @@ theorem freeEnergyInfinite_slabBrick_J_zero {widths : Fin d → ℕ}
   exact tendsto_nhds_unique
     (freeEnergy_slabBrick_tendsto_freeEnergyInfinite hw _ _) hconst
 
+/-- **Infinite-volume lower bound** on the slab. -/
+theorem freeEnergyInfinite_slabBrick_ge_log_two {widths : Fin d → ℕ}
+    (hw : ∀ j : Fin d, widths j ≠ 0)
+    {J h β : ℝ} (hJ : 0 ≤ J) (hh : 0 ≤ h) (hβ : 0 < β) :
+    Real.log 2
+      ≤ freeEnergyInfinite_slabBrick hw
+          (⟨J, h, β⟩ : IsingParams ℝ) ⟨hJ, hh, hβ⟩ := by
+  refine ge_of_tendsto
+    (freeEnergy_slabBrick_tendsto_freeEnergyInfinite hw _ _) ?_
+  filter_upwards [Filter.eventually_ge_atTop 1] with n hn
+  have hne : (slabBrick widths n).Nonempty := slabBrick_nonempty hw hn
+  have hpos : 0 < Fintype.card (↑(slabBrick widths n) : Type _) := by
+    rw [Fintype.card_coe]; exact Finset.card_pos.mpr hne
+  exact IsingModel.freeEnergy_ge_log_two_of_ferromagnetic _ _ ⟨hJ, hh, hβ⟩ hpos
+
+/-- **Infinite-volume upper bound** on the slab. -/
+theorem freeEnergyInfinite_slabBrick_le {widths : Fin d → ℕ}
+    (hw : ∀ j : Fin d, widths j ≠ 0)
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    freeEnergyInfinite_slabBrick hw p hf
+      ≤ Real.log 2 + |p.β| * ((d + 1) * |p.J| + |p.h|) := by
+  refine le_of_tendsto
+    (freeEnergy_slabBrick_tendsto_freeEnergyInfinite hw p hf) ?_
+  filter_upwards with n
+  exact slabBrick_freeEnergy_le widths n p
+
+/-- **Infinite-volume sandwich** on the slab (ferromagnetic). -/
+theorem freeEnergyInfinite_slabBrick_sandwich {widths : Fin d → ℕ}
+    (hw : ∀ j : Fin d, widths j ≠ 0)
+    {J h β : ℝ} (hJ : 0 ≤ J) (hh : 0 ≤ h) (hβ : 0 < β) :
+    Real.log 2
+        ≤ freeEnergyInfinite_slabBrick hw
+            (⟨J, h, β⟩ : IsingParams ℝ) ⟨hJ, hh, hβ⟩
+    ∧ freeEnergyInfinite_slabBrick hw
+            (⟨J, h, β⟩ : IsingParams ℝ) ⟨hJ, hh, hβ⟩
+        ≤ Real.log 2 + |β| * ((d + 1) * |J| + |h|) :=
+  ⟨freeEnergyInfinite_slabBrick_ge_log_two hw hJ hh hβ,
+   freeEnergyInfinite_slabBrick_le hw _ ⟨hJ, hh, hβ⟩⟩
+
 end Concrete
 
 end IsingModel

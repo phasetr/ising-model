@@ -557,6 +557,45 @@ theorem freeEnergyInfinite_centeredSlab_J_zero {widths : Fin d → ℕ}
   exact tendsto_nhds_unique
     (freeEnergy_centeredSlab_tendsto_freeEnergyInfinite hw _ _) hconst
 
+/-- **Infinite-volume lower bound** on the centered slab. -/
+theorem freeEnergyInfinite_centeredSlab_ge_log_two {widths : Fin d → ℕ}
+    (hw : ∀ j : Fin d, widths j ≠ 0)
+    {J h β : ℝ} (hJ : 0 ≤ J) (hh : 0 ≤ h) (hβ : 0 < β) :
+    Real.log 2
+      ≤ freeEnergyInfinite_centeredSlab hw
+          (⟨J, h, β⟩ : IsingParams ℝ) ⟨hJ, hh, hβ⟩ := by
+  refine ge_of_tendsto
+    (freeEnergy_centeredSlab_tendsto_freeEnergyInfinite hw _ _) ?_
+  filter_upwards [Filter.eventually_ge_atTop 1] with n hn
+  have hne : (centeredSlab widths n).Nonempty := centeredSlab_nonempty hw hn
+  have hpos : 0 < Fintype.card (↑(centeredSlab widths n) : Type _) := by
+    rw [Fintype.card_coe]; exact Finset.card_pos.mpr hne
+  exact IsingModel.freeEnergy_ge_log_two_of_ferromagnetic _ _ ⟨hJ, hh, hβ⟩ hpos
+
+/-- **Infinite-volume upper bound** on the centered slab. -/
+theorem freeEnergyInfinite_centeredSlab_le {widths : Fin d → ℕ}
+    (hw : ∀ j : Fin d, widths j ≠ 0)
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    freeEnergyInfinite_centeredSlab hw p hf
+      ≤ Real.log 2 + |p.β| * ((d + 1) * |p.J| + |p.h|) := by
+  refine le_of_tendsto
+    (freeEnergy_centeredSlab_tendsto_freeEnergyInfinite hw p hf) ?_
+  filter_upwards with n
+  exact centeredSlab_freeEnergy_le widths n p
+
+/-- **Infinite-volume sandwich** on the centered slab (ferromagnetic). -/
+theorem freeEnergyInfinite_centeredSlab_sandwich {widths : Fin d → ℕ}
+    (hw : ∀ j : Fin d, widths j ≠ 0)
+    {J h β : ℝ} (hJ : 0 ≤ J) (hh : 0 ≤ h) (hβ : 0 < β) :
+    Real.log 2
+        ≤ freeEnergyInfinite_centeredSlab hw
+            (⟨J, h, β⟩ : IsingParams ℝ) ⟨hJ, hh, hβ⟩
+    ∧ freeEnergyInfinite_centeredSlab hw
+            (⟨J, h, β⟩ : IsingParams ℝ) ⟨hJ, hh, hβ⟩
+        ≤ Real.log 2 + |β| * ((d + 1) * |J| + |h|) :=
+  ⟨freeEnergyInfinite_centeredSlab_ge_log_two hw hJ hh hβ,
+   freeEnergyInfinite_centeredSlab_le hw _ ⟨hJ, hh, hβ⟩⟩
+
 end Concrete
 
 end IsingModel
