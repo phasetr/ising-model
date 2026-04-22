@@ -181,6 +181,20 @@ This is the semi-inner product property (Glimm–Jaffe, §10.4, p. 198). -/
 def ReflectionPositive {α : Type*} (b : α → α → ℝ) : Prop :=
   ∀ x, 0 ≤ b x x
 
+/-- **Trivial instance**: the identically-zero bilinear form is
+reflection positive. -/
+theorem ReflectionPositive.zero {α : Type*} :
+    ReflectionPositive (fun (_ _ : α) => (0 : ℝ)) :=
+  fun _ => le_refl 0
+
+/-- **Constant-diagonal instance**: if `f : α → ℝ` is nonneg, then
+the form `fun x _ => f x` (constant in the second argument) is
+reflection positive. -/
+theorem ReflectionPositive.of_diag_nonneg {α : Type*} (f : α → ℝ)
+    (hf : ∀ x, 0 ≤ f x) :
+    ReflectionPositive (fun (x _ : α) => f x) :=
+  fun x => hf x
+
 /-- **Discriminant lemma** (algebraic core of the Schwarz inequality).
 If `a t² + 2b t + c ≥ 0` for all `t ∈ ℝ`, then `b² ≤ a c`.
 This is the key step in deriving the Schwarz inequality (10.4.2)
