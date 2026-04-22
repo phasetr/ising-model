@@ -438,6 +438,13 @@ theorem euclidean_norm_sq_neg {n : ℕ} (x : Fin n → ℝ) :
   intros i _
   ring
 
+/-- **Euclidean norm squared of zero function**: `∑ (0 : ℝ)² = 0`. -/
+theorem euclidean_norm_sq_zero_fn {n : ℕ} :
+    (∑ _ : Fin n, ((0 : ℝ)) ^ 2) = 0 := by
+  apply Finset.sum_eq_zero
+  intros i _
+  ring
+
 /-- **Parallelogram identity for Euclidean norm squared**:
 `∑ (xᵢ + yᵢ)² + ∑ (xᵢ - yᵢ)² = 2·(∑ xᵢ² + ∑ yᵢ²)`. -/
 theorem euclidean_parallelogram {n : ℕ} (x y : Fin n → ℝ) :
