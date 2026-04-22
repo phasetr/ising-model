@@ -187,6 +187,12 @@ theorem ReflectionPositive.zero {α : Type*} :
     ReflectionPositive (fun (_ _ : α) => (0 : ℝ)) :=
   fun _ => le_refl 0
 
+/-- **Constant instance**: a constant bilinear form with nonneg value
+is reflection positive. Generalization of `.zero`. -/
+theorem ReflectionPositive.const {α : Type*} {c : ℝ} (hc : 0 ≤ c) :
+    ReflectionPositive (fun (_ _ : α) => c) :=
+  fun _ => hc
+
 /-- **Constant-diagonal instance**: if `f : α → ℝ` is nonneg, then
 the form `fun x _ => f x` (constant in the second argument) is
 reflection positive. -/
