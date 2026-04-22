@@ -379,6 +379,17 @@ theorem euclidean_inner_sub_right {n : ℕ} (x y z : Fin n → ℝ) :
   intros i _
   ring
 
+/-- **Euclidean polarization identity**:
+`4·∑ xᵢ·yᵢ = ∑ (xᵢ + yᵢ)² - ∑ (xᵢ - yᵢ)²`. Expresses the inner
+product as a difference of squared norms. -/
+theorem euclidean_polarization {n : ℕ} (x y : Fin n → ℝ) :
+    4 * (∑ i : Fin n, x i * y i)
+      = (∑ i : Fin n, (x i + y i) ^ 2) - (∑ i : Fin n, (x i - y i) ^ 2) := by
+  rw [Finset.mul_sum, ← Finset.sum_sub_distrib]
+  apply Finset.sum_congr rfl
+  intros i _
+  ring
+
 /-- **Parallelogram identity for Euclidean norm squared**:
 `∑ (xᵢ + yᵢ)² + ∑ (xᵢ - yᵢ)² = 2·(∑ xᵢ² + ∑ yᵢ²)`. -/
 theorem euclidean_parallelogram {n : ℕ} (x y : Fin n → ℝ) :
