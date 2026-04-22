@@ -359,6 +359,26 @@ theorem euclidean_inner_neg_right {n : ℕ} (x y : Fin n → ℝ) :
   intros i _
   ring
 
+/-- **Euclidean dot product distributes over left subtraction**:
+`∑ (xᵢ - yᵢ) · zᵢ = ∑ xᵢ · zᵢ - ∑ yᵢ · zᵢ`. -/
+theorem euclidean_inner_sub_left {n : ℕ} (x y z : Fin n → ℝ) :
+    ∑ i : Fin n, (x i - y i) * z i
+      = (∑ i : Fin n, x i * z i) - (∑ i : Fin n, y i * z i) := by
+  rw [← Finset.sum_sub_distrib]
+  apply Finset.sum_congr rfl
+  intros i _
+  ring
+
+/-- **Euclidean dot product distributes over right subtraction**:
+`∑ xᵢ · (yᵢ - zᵢ) = ∑ xᵢ · yᵢ - ∑ xᵢ · zᵢ`. -/
+theorem euclidean_inner_sub_right {n : ℕ} (x y z : Fin n → ℝ) :
+    ∑ i : Fin n, x i * (y i - z i)
+      = (∑ i : Fin n, x i * y i) - (∑ i : Fin n, x i * z i) := by
+  rw [← Finset.sum_sub_distrib]
+  apply Finset.sum_congr rfl
+  intros i _
+  ring
+
 /-- **Constant-diagonal instance**: if `f : α → ℝ` is nonneg, then
 the form `fun x _ => f x` (constant in the second argument) is
 reflection positive. -/
