@@ -251,6 +251,13 @@ theorem euclidean_inner_comm {n : ℕ} (x y : Fin n → ℝ) :
   intros i _
   ring
 
+/-- **Euclidean self-inner = norm squared**: `∑ xᵢ · xᵢ = ∑ (xᵢ)²`. -/
+theorem euclidean_inner_self {n : ℕ} (x : Fin n → ℝ) :
+    ∑ i : Fin n, x i * x i = ∑ i : Fin n, (x i) ^ 2 := by
+  apply Finset.sum_congr rfl
+  intros i _
+  ring
+
 /-- **Constant-diagonal instance**: if `f : α → ℝ` is nonneg, then
 the form `fun x _ => f x` (constant in the second argument) is
 reflection positive. -/
