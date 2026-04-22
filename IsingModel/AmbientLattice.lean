@@ -4346,6 +4346,39 @@ theorem truncated4Infinite_J_zero_of_one_pair_coincidence
   rw [hcard_i, hcard_ik, hcard_il, hcard_kl, hcard_ikl]
   ring
 
+/-- **∞-volume Lebowitz 4-point at `J = 0` two-pair coincidence**
+(ferromagnetic): if `i ≠ k`, then
+`truncated4Infinite ⟨0,h,β⟩ i i k k = -2 · tanh(β·h)⁴`.
+
+Same closed form as pairwise-distinct and one-pair cases. Finset
+collapses `{i,i,k,k} = {i,k}` (card 2), `{i,i} = {i}`, `{k,k} = {k}`
+(card 1 each). U_4 = `t² − t² − 2t⁴ = −2t⁴`.
+
+Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §5.1 pp. 72–74. -/
+theorem truncated4Infinite_J_zero_of_two_pair_coincidence
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (h β : ℝ)
+    (hf : Ferromagnetic (⟨(0 : ℝ), h, β⟩ : IsingParams ℝ))
+    {i k : V} (hik : i ≠ k) :
+    truncated4Infinite G Λ (⟨0, h, β⟩ : IsingParams ℝ) i i k k
+      = -2 * Real.tanh (β * h) ^ 4 := by
+  unfold truncated4Infinite
+  have h1i : correlationInfinite G Λ (⟨(0 : ℝ), h, β⟩ : IsingParams ℝ) {i}
+      = Real.tanh (β * h) := by
+    rw [correlationInfinite_J_zero G Λ h β hf, Finset.card_singleton, pow_one]
+  have h1k : correlationInfinite G Λ (⟨(0 : ℝ), h, β⟩ : IsingParams ℝ) {k}
+      = Real.tanh (β * h) := by
+    rw [correlationInfinite_J_zero G Λ h β hf, Finset.card_singleton, pow_one]
+  have hik2 : correlationInfinite G Λ (⟨(0 : ℝ), h, β⟩ : IsingParams ℝ) {i, k}
+      = Real.tanh (β * h) ^ 2 := by
+    rw [correlationInfinite_J_zero G Λ h β hf, Finset.card_pair hik]
+  have hii : ({i, i} : Finset V) = {i} := by simp
+  have hkk : ({k, k} : Finset V) = {k} := by simp
+  have hiikk : ({i, i, k, k} : Finset V) = {i, k} := by ext x; simp
+  rw [hiikk, hii, hkk, h1i, h1k, hik2]
+  ring
+
 /-! ## Parameter monotonicity of `spontaneous*`
 
 Combine the parameter-direction monotonicity of `correlationInfinite`
