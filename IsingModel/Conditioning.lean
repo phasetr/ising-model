@@ -401,6 +401,17 @@ theorem euclidean_norm_sq_add {n : ℕ} (x y : Fin n → ℝ) :
   rw [Finset.sum_congr rfl (fun i _ => h i)]
   rw [Finset.sum_add_distrib, Finset.sum_add_distrib, ← Finset.mul_sum]
 
+/-- **Euclidean norm squared of a difference**:
+`∑ (xᵢ - yᵢ)² = ∑ xᵢ² - 2·∑ xᵢ·yᵢ + ∑ yᵢ²`. -/
+theorem euclidean_norm_sq_sub {n : ℕ} (x y : Fin n → ℝ) :
+    (∑ i : Fin n, (x i - y i) ^ 2)
+      = (∑ i : Fin n, (x i) ^ 2) - 2 * (∑ i : Fin n, x i * y i)
+          + (∑ i : Fin n, (y i) ^ 2) := by
+  have h : ∀ i : Fin n, (x i - y i) ^ 2 = (x i) ^ 2 - 2 * (x i * y i) + (y i) ^ 2 :=
+    fun i => by ring
+  rw [Finset.sum_congr rfl (fun i _ => h i)]
+  rw [Finset.sum_add_distrib, Finset.sum_sub_distrib, ← Finset.mul_sum]
+
 /-- **Parallelogram identity for Euclidean norm squared**:
 `∑ (xᵢ + yᵢ)² + ∑ (xᵢ - yᵢ)² = 2·(∑ xᵢ² + ∑ yᵢ²)`. -/
 theorem euclidean_parallelogram {n : ℕ} (x y : Fin n → ℝ) :
