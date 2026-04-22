@@ -336,6 +336,29 @@ theorem nonsymmetric_product_bound (x y a b : ℝ)
   rw [Real.sqrt_sq hxy_nn] at hsqrt
   exact hsqrt
 
+/-- **Cross-variable Schwarz iteration** (§10.6): from the two-sided
+bound `x² ≤ a·y` and `y² ≤ b·x`, derive `x⁴ ≤ a²·b·x` (and by
+symmetry `y⁴ ≤ a·b²·y`).
+
+Chain: `x⁴ = (x²)² ≤ (a·y)² = a²·y² ≤ a²·(b·x) = a²·b·x`.
+Analogue of §10.5's iterated Schwarz for the non-symmetric two-variable
+setting where each variable bounds the other's square. -/
+theorem nonsymmetric_cross_iteration_x (x y a b : ℝ)
+    (hxay : x ^ 2 ≤ a * y) (hybx : y ^ 2 ≤ b * x) :
+    x ^ 4 ≤ a ^ 2 * b * x := by
+  nlinarith [sq_nonneg x, sq_nonneg y, sq_nonneg (x^2 - a*y),
+    mul_self_nonneg (a*y - x^2), hxay, hybx,
+    mul_le_mul_of_nonneg_left hybx (sq_nonneg a)]
+
+/-- **Cross-variable Schwarz iteration** (§10.6, y-side): symmetric
+partner of `nonsymmetric_cross_iteration_x` giving `y⁴ ≤ a·b²·y`. -/
+theorem nonsymmetric_cross_iteration_y (x y a b : ℝ)
+    (hxay : x ^ 2 ≤ a * y) (hybx : y ^ 2 ≤ b * x) :
+    y ^ 4 ≤ a * b ^ 2 * y := by
+  nlinarith [sq_nonneg x, sq_nonneg y, sq_nonneg (y^2 - b*x),
+    mul_self_nonneg (b*x - y^2), hxay, hybx,
+    mul_le_mul_of_nonneg_left hxay (sq_nonneg b)]
+
 /-! ## High-temperature / cluster expansion (§18.1–18.3)
 
 Glimm–Jaffe Chapter 18 develops the cluster expansion for P(φ)₂ fields.
