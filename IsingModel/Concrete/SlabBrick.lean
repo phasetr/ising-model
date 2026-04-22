@@ -2,6 +2,8 @@ import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.Concrete.IntLattice
 import IsingModel.TranslationInvariance
 import IsingModel.AmbientLatticeSum
+import IsingModel.Concrete.LinearBrick
+import IsingModel.Concrete.StripeBrick2D
 
 /-!
 # General `d+1`-dim slab on `latticeGraph (d+1)` (§4.6 Prop 4.6.1 concrete ℤ^(d+1))
@@ -376,6 +378,39 @@ theorem freeEnergy_slabBrick_tendsto
     (log_partitionFunctionΛ_slabBrick_super_additive widths p hf)
     (freeEnergy_slabBrick_bddAbove widths p)
     (slabBrick_one_card_ne_zero hw)
+
+/-! ## Low-dimensional equivalences with `linearBox` and `stripeBrick2D`
+
+These Finset equalities let callers transport results between the
+low-dimensional concrete references and the general slab formulation. -/
+
+/-- **1D equivalence**: the `d = 0` slab specialization (empty widths
+via `Fin.elim0`) is literally the 1D linear brick `linearBox n`. -/
+theorem linearBox_eq_slabBrick_elim0 (n : ℕ) :
+    linearBox n = slabBrick Fin.elim0 n := by
+  unfold linearBox slabBrick
+  congr 1
+  funext i
+  -- `Fin.cases (n : ℤ) (fun _ : Fin 0 => ...) i = (n : ℤ)` for `i : Fin 1`.
+  have : i = 0 := Subsingleton.elim i 0
+  subst this
+  rfl
+
+/-- **2D equivalence**: the `d = 1` slab specialization (single width
+`widths = fun _ : Fin 1 => w`) is literally the 2D stripe
+`stripeBrick2D w n`. -/
+theorem stripeBrick2D_eq_slabBrick (w n : ℕ) :
+    stripeBrick2D w n = slabBrick (fun _ : Fin 1 => w) n := by
+  unfold stripeBrick2D slabBrick
+  congr 1
+  funext i
+  -- Both RHS args are `Finset.Ico 0 _`; show the upper bound matches.
+  congr 1
+  -- Goal: `(if i = 0 then (n : ℤ) else (w : ℤ)) = Fin.cases (n : ℤ) (fun _ => (w : ℤ)) i`
+  refine Fin.cases ?_ ?_ i
+  · simp
+  · intro j
+    simp
 
 end Concrete
 
