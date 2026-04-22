@@ -323,6 +323,24 @@ theorem euclidean_inner_add_right {n : ℕ} (x y z : Fin n → ℝ) :
   intros i _
   ring
 
+/-- **Euclidean dot product pulls out left scalar**:
+`∑ (c · xᵢ) · yᵢ = c · ∑ xᵢ · yᵢ`. -/
+theorem euclidean_inner_smul_left {n : ℕ} (c : ℝ) (x y : Fin n → ℝ) :
+    ∑ i : Fin n, (c * x i) * y i = c * ∑ i : Fin n, x i * y i := by
+  rw [Finset.mul_sum]
+  apply Finset.sum_congr rfl
+  intros i _
+  ring
+
+/-- **Euclidean dot product pulls out right scalar**:
+`∑ xᵢ · (c · yᵢ) = c · ∑ xᵢ · yᵢ`. -/
+theorem euclidean_inner_smul_right {n : ℕ} (c : ℝ) (x y : Fin n → ℝ) :
+    ∑ i : Fin n, x i * (c * y i) = c * ∑ i : Fin n, x i * y i := by
+  rw [Finset.mul_sum]
+  apply Finset.sum_congr rfl
+  intros i _
+  ring
+
 /-- **Constant-diagonal instance**: if `f : α → ℝ` is nonneg, then
 the form `fun x _ => f x` (constant in the second argument) is
 reflection positive. -/
