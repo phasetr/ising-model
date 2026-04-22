@@ -232,6 +232,44 @@ theorem norm_partitionFunctionComplexAlongExhaustion_le_of_re_bound_stage
   IsingModel.norm_partitionFunctionComplex_le_of_re_bound
     (inducedGraph G (Λ.volume n)) β J hh
 
+/-- **Uniform-in-n bound** on `‖Z_ℂ_{Λ_n}‖` under edge-density constant
+`c` and `|Re h| ≤ R`:
+`‖Z_ℂ_{Λ_n}‖ ≤ 2^|Λ_n| · exp(|β|·|Λ_n|·(|J|·c + R))`.
+
+Equivalently `exp(|Λ_n|·M)` with `M := log 2 + |β|·(|J|·c + R)` uniform
+in `n`, so the per-site log form `|Λ_n|⁻¹·log‖Z_ℂ‖ ≤ M` holds uniformly.
+This is the locally-uniform Montel input (compact sets in `h` are
+enclosed in strips `|Re h| ≤ R`) for the Vitali extraction step in
+GJ §4.6 Thm 4.6.2. -/
+theorem norm_partitionFunctionComplexAlongExhaustion_le_uniform_of_edgeDensity
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (β J : ℝ) {c : ℝ}
+    (hc : ∀ n, (Λ.volume n).Nonempty →
+      ((inducedGraph G (Λ.volume n)).edgeFinset.card : ℝ) ≤
+        c * Fintype.card (↑(Λ.volume n) : Type _))
+    {R : ℝ} (n : ℕ) (hne : (Λ.volume n).Nonempty)
+    {h : ℂ} (hh : |h.re| ≤ R) :
+    ‖partitionFunctionComplexAlongExhaustion G Λ (J : ℂ) h (β : ℂ) n‖
+      ≤ (2 : ℝ) ^ (Fintype.card (↑(Λ.volume n) : Type _)) *
+          Real.exp (|β| * Fintype.card (↑(Λ.volume n) : Type _)
+            * (|J| * c + R)) := by
+  have hstage := norm_partitionFunctionComplexAlongExhaustion_le_of_re_bound_stage
+    G Λ β J n hh
+  have hConfig :
+      (Fintype.card (IsingModel.Config (↑(Λ.volume n) : Type _)) : ℝ)
+        = (2 : ℝ) ^ (Fintype.card (↑(Λ.volume n) : Type _)) := by
+    exact_mod_cast IsingModel.card_config_eq_two_pow
+  rw [hConfig] at hstage
+  refine hstage.trans ?_
+  apply mul_le_mul_of_nonneg_left _ (by positivity)
+  apply Real.exp_le_exp.mpr
+  have hE : ((inducedGraph G (Λ.volume n)).edgeFinset.card : ℝ) ≤
+      c * Fintype.card (↑(Λ.volume n) : Type _) := hc n hne
+  have hβ : 0 ≤ |β| := abs_nonneg _
+  have hJ : 0 ≤ |J| := abs_nonneg _
+  nlinarith [hE, hβ, hJ, mul_nonneg hβ hJ]
+
 /-- **Per-stage `Z_ℂ ≠ 0 on leeYangDomain`** for
 `partitionFunctionComplexAlongExhaustion` (ferromagnetic). -/
 theorem partitionFunctionComplexAlongExhaustion_ne_zero_on_leeYangDomain_stage
