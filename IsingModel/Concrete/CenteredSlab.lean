@@ -702,6 +702,23 @@ theorem freeEnergyInfinite_centeredSlab_monotone_J
   intro n
   exact IsingModel.freeEnergy_monotone_J _ h β hh hβ hJ₁ hJ₂ hJle
 
+/-- **Fekete convergence for any real h** on the centered slab. -/
+theorem freeEnergy_centeredSlab_tendsto_of_abs_h
+    {widths : Fin d → ℕ} (hw : ∀ j : Fin d, widths j ≠ 0)
+    {J β : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β) (h : ℝ) :
+    Filter.Tendsto
+      (fun n => IsingModel.freeEnergy
+        (Ambient.inducedGraph (IsingModel.latticeGraph (d + 1))
+          (centeredSlab widths n))
+        (⟨J, h, β⟩ : IsingParams ℝ))
+      Filter.atTop
+      (nhds (freeEnergyInfinite_centeredSlab hw
+        (⟨J, |h|, β⟩ : IsingParams ℝ) ⟨hJ, abs_nonneg h, hβ⟩)) := by
+  refine (freeEnergy_centeredSlab_tendsto_freeEnergyInfinite hw
+    (⟨J, |h|, β⟩ : IsingParams ℝ) ⟨hJ, abs_nonneg h, hβ⟩).congr ?_
+  intro n
+  exact (IsingModel.freeEnergy_eq_abs_h _ J h β).symm
+
 /-! ## 1D consistency: `centeredSlab (d=0) = shift_(-n) (linearBox (2n))`
 
 The `d = 0` centered slab is, at each index `n`, a negative-`n` shift

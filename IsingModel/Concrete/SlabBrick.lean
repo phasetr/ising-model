@@ -727,6 +727,23 @@ theorem freeEnergyInfinite_slabBrick_monotone_J
   intro n
   exact IsingModel.freeEnergy_monotone_J _ h β hh hβ hJ₁ hJ₂ hJle
 
+/-- **Fekete convergence for any real h** on the slab. -/
+theorem freeEnergy_slabBrick_tendsto_of_abs_h
+    {widths : Fin d → ℕ} (hw : ∀ j : Fin d, widths j ≠ 0)
+    {J β : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β) (h : ℝ) :
+    Filter.Tendsto
+      (fun n => IsingModel.freeEnergy
+        (Ambient.inducedGraph (IsingModel.latticeGraph (d + 1))
+          (slabBrick widths n))
+        (⟨J, h, β⟩ : IsingParams ℝ))
+      Filter.atTop
+      (nhds (freeEnergyInfinite_slabBrick hw
+        (⟨J, |h|, β⟩ : IsingParams ℝ) ⟨hJ, abs_nonneg h, hβ⟩)) := by
+  refine (freeEnergy_slabBrick_tendsto_freeEnergyInfinite hw
+    (⟨J, |h|, β⟩ : IsingParams ℝ) ⟨hJ, abs_nonneg h, hβ⟩).congr ?_
+  intro n
+  exact (IsingModel.freeEnergy_eq_abs_h _ J h β).symm
+
 end Concrete
 
 end IsingModel

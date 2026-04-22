@@ -474,6 +474,27 @@ theorem freeEnergyInfinite_linearBox_monotone_J
   intro n
   exact IsingModel.freeEnergy_monotone_J _ h β hh hβ hJ₁ hJ₂ hJle
 
+/-- **Fekete convergence for any real h** (not just `h ≥ 0`): the 1D
+linearBox free-energy sequence at `⟨J, h, β⟩` converges to
+`freeEnergyInfinite_linearBox ⟨J, |h|, β⟩` (ferromagnetic at |h|).
+Proof: per-stage `freeEnergy_eq_abs_h` symmetry rewrites the sequence
+at any real h to the sequence at |h|, which is Fekete-convergent. -/
+theorem freeEnergy_linearBox_tendsto_of_abs_h
+    {J β : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β) (h : ℝ) :
+    Filter.Tendsto
+      (fun n => IsingModel.freeEnergy
+        (Ambient.inducedGraph (IsingModel.latticeGraph 1) (linearBox n))
+        (⟨J, h, β⟩ : IsingParams ℝ))
+      Filter.atTop
+      (nhds (freeEnergyInfinite_linearBox
+        (⟨J, |h|, β⟩ : IsingParams ℝ) ⟨hJ, abs_nonneg h, hβ⟩)) := by
+  refine (freeEnergy_linearBox_tendsto_freeEnergyInfinite
+    (⟨J, |h|, β⟩ : IsingParams ℝ) ⟨hJ, abs_nonneg h, hβ⟩).congr ?_
+  intro n
+  -- `freeEnergy G ⟨J, |h|, β⟩ = freeEnergy G ⟨J, h, β⟩` by
+  -- `IsingModel.freeEnergy_eq_abs_h` (symmetric).
+  exact (IsingModel.freeEnergy_eq_abs_h _ J h β).symm
+
 end Concrete
 
 end IsingModel
