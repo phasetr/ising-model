@@ -558,6 +558,27 @@ theorem reflection_positive_mean_le_geom_mean
   have := Real.sqrt_le_sqrt hsq
   rwa [Real.sqrt_sq_eq_abs] at this
 
+/-- **Degenerate case variant** (§10.6 corollary): if `b y y = 0`,
+then `b x y + b y x = 0`. Symmetric partner of
+`reflection_positive_off_diag_zero_of_diag_zero`. -/
+theorem reflection_positive_off_diag_zero_of_diag_zero_right
+    {α : Type*} [AddCommGroup α] [Module ℝ α]
+    (b : α → α → ℝ)
+    (hbi_left : ∀ x y z : α, b (x + y) z = b x z + b y z)
+    (hbi_right : ∀ x y z : α, b x (y + z) = b x y + b x z)
+    (hbi_smul_left : ∀ (c : ℝ) (x y : α), b (c • x) y = c * b x y)
+    (hbi_smul_right : ∀ (c : ℝ) (x y : α), b x (c • y) = c * b x y)
+    (hRP : ReflectionPositive b) (x y : α) (hyy : b y y = 0) :
+    b x y + b y x = 0 := by
+  have hsq := schwarz_of_reflection_positive b hbi_left hbi_right
+    hbi_smul_left hbi_smul_right hRP x y
+  rw [hyy, mul_zero] at hsq
+  have hnn : 0 ≤ ((b x y + b y x) / 2) ^ 2 := sq_nonneg _
+  have hzero : ((b x y + b y x) / 2) ^ 2 = 0 := le_antisymm hsq hnn
+  have hhalf_zero : (b x y + b y x) / 2 = 0 :=
+    pow_eq_zero_iff (by norm_num : 2 ≠ 0) |>.mp hzero
+  linarith
+
 /-- **Degenerate reflection-positive case** (§10.6 corollary): if
 `b x x = 0`, then `b x y + b y x = 0` (the symmetrized off-diagonal
 vanishes). Immediate from Schwarz: `((b x y + b y x)/2)² ≤ 0` forces
