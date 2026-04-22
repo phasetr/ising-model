@@ -359,6 +359,23 @@ theorem nonsymmetric_cross_iteration_y (x y a b : ℝ)
     mul_self_nonneg (b*x - y^2), hxay, hybx,
     mul_le_mul_of_nonneg_left hxay (sq_nonneg b)]
 
+/-- **Cube bound from cross-iteration** (§10.6): when `x > 0`,
+the bound `x⁴ ≤ a²·b·x` (from `nonsymmetric_cross_iteration_x`)
+strengthens to `x³ ≤ a²·b`. Division by the positive factor `x`. -/
+theorem nonsymmetric_cube_bound_x (x y a b : ℝ) (hx : 0 < x)
+    (hxay : x ^ 2 ≤ a * y) (hybx : y ^ 2 ≤ b * x) :
+    x ^ 3 ≤ a ^ 2 * b := by
+  have h4 := nonsymmetric_cross_iteration_x x y a b hxay hybx
+  nlinarith [h4, hx, sq_nonneg x]
+
+/-- **Cube bound from cross-iteration** (§10.6, y-side): symmetric partner
+`y³ ≤ a · b²` when `y > 0`. -/
+theorem nonsymmetric_cube_bound_y (x y a b : ℝ) (hy : 0 < y)
+    (hxay : x ^ 2 ≤ a * y) (hybx : y ^ 2 ≤ b * x) :
+    y ^ 3 ≤ a * b ^ 2 := by
+  have h4 := nonsymmetric_cross_iteration_y x y a b hxay hybx
+  nlinarith [h4, hy, sq_nonneg y]
+
 /-! ## High-temperature / cluster expansion (§18.1–18.3)
 
 Glimm–Jaffe Chapter 18 develops the cluster expansion for P(φ)₂ fields.
