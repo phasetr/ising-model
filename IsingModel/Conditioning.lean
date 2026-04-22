@@ -229,6 +229,16 @@ theorem euclidean_cauchy_schwarz {n : ℕ} (x y : Fin n → ℝ) :
       ≤ (∑ i : Fin n, (x i) ^ 2) * (∑ i : Fin n, (y i) ^ 2) :=
   Finset.sum_mul_sq_le_sq_mul_sq _ x y
 
+/-- **Euclidean Cauchy-Schwarz abs form**: `|∑ xᵢ yᵢ| ≤ √((∑ xᵢ²) · (∑ yᵢ²))`
+on `Fin n → ℝ`. Direct sqrt-monotone consequence of
+`euclidean_cauchy_schwarz`. -/
+theorem abs_euclidean_inner_le_sqrt {n : ℕ} (x y : Fin n → ℝ) :
+    |∑ i : Fin n, x i * y i|
+      ≤ Real.sqrt ((∑ i : Fin n, (x i) ^ 2) * (∑ i : Fin n, (y i) ^ 2)) := by
+  have hsq := euclidean_cauchy_schwarz x y
+  have := Real.sqrt_le_sqrt hsq
+  rwa [Real.sqrt_sq_eq_abs] at this
+
 /-- **Constant-diagonal instance**: if `f : α → ℝ` is nonneg, then
 the form `fun x _ => f x` (constant in the second argument) is
 reflection positive. -/
