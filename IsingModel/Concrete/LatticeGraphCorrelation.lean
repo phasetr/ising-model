@@ -10673,6 +10673,78 @@ theorem HasExponentialDecay_mono
     exact this
   exact mul_le_mul_of_nonneg_left hexp hC
 
+/-- **Exponential decay implies cluster property**: for `α > 0`,
+`HasExponentialDecay d Λ p α` implies `clusterProperty (latticeGraph d) Λ p`
+(PR #792's predicate). The proof composes
+`tendsto_latticeDistance_atTop_cofinite` (PR #782) with
+`Real.tendsto_exp_atBot` to obtain
+`(j ↦ C · exp(-α · latticeDistance d i j)) → 0` along `cofinite`,
+then squeezes the truncated 2-point function via the bound. -/
+theorem clusterProperty_latticeGraph_of_HasExponentialDecay
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) {α : ℝ} (hα : 0 < α)
+    (h : HasExponentialDecay d Λ p α) :
+    clusterProperty (IsingModel.latticeGraph d) Λ p := by
+  obtain ⟨C, hC, hbound⟩ := h
+  intro i
+  -- Step 1: g(j) := C * exp(-α * latticeDistance d i j) tends to 0 along cofinite.
+  have hdist_nat : Filter.Tendsto
+      (fun j : Fin d → ℤ => IsingModel.latticeDistance d i j)
+      Filter.cofinite Filter.atTop :=
+    IsingModel.tendsto_latticeDistance_atTop_cofinite d i
+  have hdist_real : Filter.Tendsto
+      (fun j : Fin d → ℤ => (IsingModel.latticeDistance d i j : ℝ))
+      Filter.cofinite Filter.atTop :=
+    tendsto_natCast_atTop_atTop.comp hdist_nat
+  have hexp_atTop : Filter.Tendsto (fun x : ℝ => Real.exp (-α * x))
+      Filter.atTop (nhds 0) := by
+    have h_alpha_x : Filter.Tendsto (fun x : ℝ => α * x) Filter.atTop Filter.atTop :=
+      Filter.tendsto_id.const_mul_atTop hα
+    have h_exp_neg : Filter.Tendsto (fun y : ℝ => Real.exp (-y)) Filter.atTop (nhds 0) :=
+      Real.tendsto_exp_neg_atTop_nhds_zero
+    have heq : (fun x : ℝ => Real.exp (-α * x))
+        = (fun y : ℝ => Real.exp (-y)) ∘ (fun x : ℝ => α * x) := by
+      funext x; simp [neg_mul]
+    rw [heq]
+    exact h_exp_neg.comp h_alpha_x
+  have hg_const : Filter.Tendsto (fun x : ℝ => C * Real.exp (-α * x))
+      Filter.atTop (nhds 0) := by
+    have := hexp_atTop.const_mul C
+    simpa using this
+  have hg : Filter.Tendsto
+      (fun j : Fin d → ℤ =>
+        C * Real.exp (-α * (IsingModel.latticeDistance d i j : ℝ)))
+      Filter.cofinite (nhds 0) :=
+    hg_const.comp hdist_real
+  -- Step 2: |U_2(i, j)| ≤ g(j) eventually (avoiding the singleton {i}).
+  have hbound_pos : ∀ᶠ (j : Fin d → ℤ) in Filter.cofinite,
+      truncated2Infinite (IsingModel.latticeGraph d) Λ p i j
+        ≤ C * Real.exp (-α * (IsingModel.latticeDistance d i j : ℝ)) := by
+    rw [Filter.eventually_cofinite]
+    refine (Set.finite_singleton i).subset ?_
+    intro j hj
+    simp only [Set.mem_singleton_iff]
+    by_contra heq
+    exact hj ((abs_le.mp (hbound i j (Ne.symm heq))).2)
+  have hbound_neg : ∀ᶠ (j : Fin d → ℤ) in Filter.cofinite,
+      -(C * Real.exp (-α * (IsingModel.latticeDistance d i j : ℝ)))
+        ≤ truncated2Infinite (IsingModel.latticeGraph d) Λ p i j := by
+    rw [Filter.eventually_cofinite]
+    refine (Set.finite_singleton i).subset ?_
+    intro j hj
+    simp only [Set.mem_singleton_iff]
+    by_contra heq
+    exact hj ((abs_le.mp (hbound i j (Ne.symm heq))).1)
+  -- Step 3: squeeze with -g and g (both → 0).
+  have hng_zero : Filter.Tendsto
+      (fun j : Fin d → ℤ =>
+        -(C * Real.exp (-α * (IsingModel.latticeDistance d i j : ℝ))))
+      Filter.cofinite (nhds 0) := by
+    have := hg.neg
+    simpa using this
+  exact tendsto_of_tendsto_of_tendsto_of_le_of_le' hng_zero hg
+    hbound_neg hbound_pos
+
 end Ambient
 
 end IsingModel
