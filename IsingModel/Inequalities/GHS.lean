@@ -638,4 +638,42 @@ theorem cor_4_3_5_h0 (G : SimpleGraph ι) [Fintype G.edgeSet]
         correlation G ⟨J, 0, β⟩ (insert k (S \ T)) :=
   lebowitz_inductive G ⟨J, 0, β⟩ hf S j k hj hk hjk
 
+/-- **Lebowitz 4-point invariance under `h → -h`** (pairwise distinct):
+`truncated4 G ⟨J, -h, β⟩ i j k l = truncated4 G ⟨J, h, β⟩ i j k l`.
+
+Each summand's total Finset cards are: `|{i,j,k,l}| = 4` (factor +1),
+and `|{a,b}|·|{c,d}| = 2·2 = 4` (factor +1). All signs cancel,
+leaving `U_4` invariant. Requires pairwise distinctness so the
+cards are 4 (not collapsed by Finset coincidences). -/
+theorem truncated4_neg_h (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h β : ℝ) {i j k l : ι}
+    (hij : i ≠ j) (hik : i ≠ k) (hil : i ≠ l)
+    (hjk : j ≠ k) (hjl : j ≠ l) (hkl : k ≠ l) :
+    truncated4 G (⟨J, -h, β⟩ : IsingParams ℝ) i j k l
+      = truncated4 G (⟨J, h, β⟩ : IsingParams ℝ) i j k l := by
+  unfold truncated4
+  rw [correlation_neg_h G J h β {i, j, k, l},
+      correlation_neg_h G J h β {i, j},
+      correlation_neg_h G J h β {k, l},
+      correlation_neg_h G J h β {i, k},
+      correlation_neg_h G J h β {j, l},
+      correlation_neg_h G J h β {i, l},
+      correlation_neg_h G J h β {j, k}]
+  have hcard_ij : ({i, j} : Finset ι).card = 2 := Finset.card_pair hij
+  have hcard_ik : ({i, k} : Finset ι).card = 2 := Finset.card_pair hik
+  have hcard_il : ({i, l} : Finset ι).card = 2 := Finset.card_pair hil
+  have hcard_jk : ({j, k} : Finset ι).card = 2 := Finset.card_pair hjk
+  have hcard_jl : ({j, l} : Finset ι).card = 2 := Finset.card_pair hjl
+  have hcard_kl : ({k, l} : Finset ι).card = 2 := Finset.card_pair hkl
+  have hcard_ijkl : ({i, j, k, l} : Finset ι).card = 4 := by
+    have h_jkl_card : ({j, k, l} : Finset ι).card = 3 := by
+      rw [show ({j, k, l} : Finset ι) = insert j ({k, l} : Finset ι) from rfl,
+          Finset.card_insert_of_notMem (by simp [hjk, hjl]),
+          hcard_kl]
+    have h_i_nin : i ∉ ({j, k, l} : Finset ι) := by simp [hij, hik, hil]
+    rw [show ({i, j, k, l} : Finset ι) = insert i ({j, k, l} : Finset ι) from rfl,
+        Finset.card_insert_of_notMem h_i_nin, h_jkl_card]
+  simp only [hcard_ij, hcard_ik, hcard_il, hcard_jk, hcard_jl, hcard_kl, hcard_ijkl]
+  ring
+
 end IsingModel
