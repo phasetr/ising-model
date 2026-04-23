@@ -1586,10 +1586,33 @@ $|M_\infty(\langle J,h,\beta\rangle;\,i)|
  \le M_\infty(\langle J,|h|,\beta\rangle;\,i)$
 under $0 \le J$, $0 < \beta$. Proved via $\mathtt{abs\_le}$ plus two
 $\mathtt{ciSup}$-level pointwise comparisons driven by the along-exhaustion
-pointwise equality above. Further $\infty$-volume refinements (sign
-control, zero-value at $h < 0$ under a ``missed stage'' hypothesis)
-are tracked in issue~\#770.
+pointwise equality above.
 \end{theorem}
+
+Two further $\infty$-volume sign-control statements pin down the
+$h \le 0$ behavior of the sup-based $M_\infty$:
+\begin{theorem}[\texttt{magnetizationInfinite\_nonpos\_of\_nonpos\_h}, PR~\#774]
+Under $0 \le J$, $0 < \beta$, $h \le 0$, and any exhaustion,
+$M_\infty(\langle J, h, \beta\rangle; i) \le 0$.
+\end{theorem}
+\noindent Proof: rewrite $M_\infty = \sup_n M_\text{along}(n)$; each
+covered stage is $\le 0$ by \texttt{magnetizationAlongExhaustion\_neg\_h}
+plus nonnegativity at $-h$ (ferromagnetic, since $-h \ge 0$), and each
+uncovered stage is $0$; close with $\mathtt{ciSup\_le}$.
+
+\begin{theorem}[\texttt{magnetizationInfinite\_eq\_zero\_of\_exists\_stage\_not\_mem}, PR~\#774]
+Under $0 \le J$, $0 < \beta$, $h \le 0$, and the extra hypothesis that
+some stage misses $i$ (i.e.\ $\exists n_0,\ i \notin \Lambda_{n_0}$),
+$M_\infty(\langle J, h, \beta\rangle; i) = 0$.
+\end{theorem}
+\noindent Proof: the previous theorem gives $M_\infty \le 0$; the
+missed stage contributes $M_\text{along}(n_0) = 0 \le M_\infty$ via
+\texttt{magnetizationAlongExhaustion\_le\_magnetizationInfinite};
+close with \texttt{le\_antisymm}.
+
+Further ``$\Lambda$-layer susceptibility'' and
+``$\infty$-volume susceptibility'' refinements are tracked in
+issue~\#770.
 
 Finally, a closed form for $\chi$ at $|h|$ that does \emph{not} require
 ferromagnetism:
