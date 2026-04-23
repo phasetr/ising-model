@@ -1715,6 +1715,61 @@ and the $\mathbb Z^d$ wrapper
 \texttt{susceptibilityAlongExhaustion\_latticeGraph\_eq\_abs\_h}.
 \end{proof}
 
+\begin{theorem}[\texttt{susceptibilityAlongExhaustion\_le\_abs\_h},
+PR~\#778 (A-4c, issue~\#770)]
+For $0 \le J$, $0 < \beta$, any $h \in \mathbb R$, $i : V$ and $n : \mathbb N$,
+\[
+  \chi_{\mathrm{along}}(\langle J, h, \beta\rangle; i, n)
+  \le \chi_{\mathrm{along}}(\langle J, |h|, \beta\rangle; i, n).
+\]
+\end{theorem}
+\begin{proof}[Proof sketch]
+Case $|h| = h$ ($h \ge 0$): equality by $h = |h|$. Case $|h| = -h$
+($h \le 0$): by PR~\#777's \texttt{susceptibilityAlongExhaustion\_eq\_abs\_h},
+$\chi_{\mathrm{along}}(|h|) = \chi_{\mathrm{along}}(h) + M_{\mathrm{along}}(|h|) - M_{\mathrm{along}}(h)$.
+$\mathrm{Ferromagnetic}\ \langle J, |h|, \beta\rangle$ holds by
+$0 \le J$, $0 \le |h|$, $0 < \beta$, giving
+$M_{\mathrm{along}}(|h|) \ge 0$. Via
+\texttt{magnetizationAlongExhaustion\_neg\_h}, $M_{\mathrm{along}}(h) = -M_{\mathrm{along}}(|h|) \le 0$.
+Thus the correction $M_{\mathrm{along}}(|h|) - M_{\mathrm{along}}(h) \ge 0$, and
+$\chi_{\mathrm{along}}(|h|) \ge \chi_{\mathrm{along}}(h)$.
+\end{proof}
+
+\begin{definition}[\texttt{susceptibilityInfinite}, PR~\#778]
+For an exhaustion $\Lambda = (\Lambda_n)_{n : \mathbb N}$ of $V$ and a
+site $i : V$,
+\[
+  \chi_\infty(G, \Lambda, p; i)
+  := \sup_{n : \mathbb N} \chi_{\mathrm{along}}(G, \Lambda, p; i, n)
+\]
+(\texttt{ciSup} on $\mathbb R$: defaults to $0$ when the sequence is
+unbounded above). Unlike $M$ and correlations which are bounded by $1$,
+susceptibility is not automatically bounded; at the ferromagnetic
+critical point, $\chi_{\mathrm{along}}$ diverges and the \texttt{ciSup}
+default kicks in. Theorems comparing $\chi_\infty$ values typically
+assume an explicit $\texttt{BddAbove}$ hypothesis in the unbounded
+regime. Bundled: \texttt{\_eq\_ciSup}, \texttt{\_apply},
+\texttt{\_nonneg} (ferromagnetic).
+\end{definition}
+
+\begin{theorem}[\texttt{susceptibilityInfinite\_le\_abs\_h},
+PR~\#778 (A-5$'$, issue~\#770)]
+For $0 \le J$, $0 < \beta$, any $h \in \mathbb R$, $i : V$, and under
+the hypothesis that
+$\{\chi_{\mathrm{along}}(\langle J, |h|, \beta\rangle; i, n) : n \in \mathbb N\}$
+is bounded above,
+\[
+  \chi_\infty(\langle J, h, \beta\rangle; i)
+  \le \chi_\infty(\langle J, |h|, \beta\rangle; i).
+\]
+\end{theorem}
+\begin{proof}[Proof sketch]
+A-4c gives pointwise $\chi_{\mathrm{along}}(h) \le \chi_{\mathrm{along}}(|h|)$
+at every $n$. The \texttt{BddAbove} hypothesis on the $|h|$-side and
+pointwise comparison gives the same for the $h$-side. Apply
+\texttt{ciSup\_mono} (mathlib).
+\end{proof}
+
 \subsection{Lattice-growth convergence of \S5 quantities}
 
 Named corollaries of \texttt{correlation\_convergent\_subgraph} (PR~\#64):
