@@ -554,6 +554,22 @@ theorem Current.fromEdgeFinset_singleton_sources
       Sym2.mem_toFinset]
   by_cases hv : v ∈ (e₀ : Sym2 ↑Λ) <;> simp [hv]
 
+omit [DecidableEq V] in
+/-- **Cardinality of `fromEdgeFinset {e₀}.sources` is `2`**: a
+singleton-edge indicator current has exactly two sources, the two
+endpoints of `e₀` in `↑Λ`. Distinctness comes from
+`SimpleGraph.not_isDiag_of_mem_edgeSet` (the underlying
+`inducedGraph` is loopless). -/
+@[simp]
+theorem Current.fromEdgeFinset_singleton_sources_card
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (e₀ : (inducedGraph G Λ).edgeSet) :
+    ((Current.fromEdgeFinset G Λ {e₀}).sources G Λ).card = 2 := by
+  rw [Current.fromEdgeFinset_singleton_sources,
+    Sym2.card_toFinset_of_not_isDiag _
+      ((inducedGraph G Λ).not_isDiag_of_mem_edgeSet e₀.2)]
+
 end Ambient
 
 end IsingModel
