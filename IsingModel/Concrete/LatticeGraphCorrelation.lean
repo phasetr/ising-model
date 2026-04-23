@@ -10443,6 +10443,43 @@ theorem susceptibilityAlongExhaustion_latticeGraph_eq_abs_h
               (⟨J, h, β⟩ : IsingParams ℝ) i n :=
   susceptibilityAlongExhaustion_eq_abs_h (IsingModel.latticeGraph d) Λ J h β i n
 
+/-! ## ℤ^d wrappers for §5.3 A-4c (pointwise) and A-5′
+(∞-volume one-sided under BddAbove) (issue #770) -/
+
+/-- **ℤ^d pointwise `χ_along(h) ≤ χ_along(|h|)`** under `0 ≤ J`, `0 < β`.
+Concrete `latticeGraph d` wrapper for PR #778's
+`susceptibilityAlongExhaustion_le_abs_h`.
+
+Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §5.3 pp. 77–80. -/
+theorem susceptibilityAlongExhaustion_latticeGraph_le_abs_h
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J h β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (i : Fin d → ℤ) (n : ℕ) :
+    susceptibilityAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, h, β⟩ : IsingParams ℝ) i n
+      ≤ susceptibilityAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, |h|, β⟩ : IsingParams ℝ) i n :=
+  susceptibilityAlongExhaustion_le_abs_h (IsingModel.latticeGraph d) Λ
+    J h β hJ hβ i n
+
+/-- **ℤ^d ∞-volume one-sided `χ_∞(h) ≤ χ_∞(|h|)`** (A-5′) under
+`0 ≤ J`, `0 < β`, and `BddAbove` of the `|h|`-side along-exhaustion
+sequence. Concrete `latticeGraph d` wrapper for PR #778's
+`susceptibilityInfinite_le_abs_h`.
+
+Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §5.3 pp. 77–80. -/
+theorem susceptibilityInfinite_latticeGraph_le_abs_h
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J h β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (i : Fin d → ℤ)
+    (hbd : BddAbove (Set.range fun n =>
+      susceptibilityAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, |h|, β⟩ : IsingParams ℝ) i n)) :
+    susceptibilityInfinite (IsingModel.latticeGraph d) Λ
+        (⟨J, h, β⟩ : IsingParams ℝ) i
+      ≤ susceptibilityInfinite (IsingModel.latticeGraph d) Λ
+          (⟨J, |h|, β⟩ : IsingParams ℝ) i :=
+  susceptibilityInfinite_le_abs_h (IsingModel.latticeGraph d) Λ
+    J h β hJ hβ i hbd
+
 end Ambient
 
 end IsingModel
