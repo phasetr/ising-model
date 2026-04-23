@@ -251,6 +251,66 @@ lemma outerVertexBoundary_card_le_sum_degrees [DecidableEq V]
   exact Finset.sum_le_sum (fun x _ =>
     (card_neighborFinset_eq_degree _ _).le)
 
+/-- **Inner vertex boundary** of a finite Finset `S` in a locally
+finite simple graph: vertices of `S` that have at least one
+neighbour outside `S`. Formally
+`S.filter (fun x => ¬ (G.neighborFinset x ⊆ S))`. Companion to
+`outerVertexBoundary`. -/
+def innerVertexBoundary [DecidableEq V] [LocallyFinite G]
+    (S : Finset V) : Finset V :=
+  S.filter (fun x => ¬ (G.neighborFinset x ⊆ S))
+
+/-- **Membership in `innerVertexBoundary G S`**: `x` is in the
+inner vertex boundary iff `x` is in `S` and has at least one
+neighbour outside `S`. -/
+lemma mem_innerVertexBoundary_iff [DecidableEq V] [LocallyFinite G]
+    (S : Finset V) (x : V) :
+    x ∈ G.innerVertexBoundary S
+      ↔ x ∈ S ∧ ∃ y, G.Adj x y ∧ y ∉ S := by
+  simp only [innerVertexBoundary, Finset.mem_filter, Finset.not_subset,
+    mem_neighborFinset]
+
+/-- **Subset of self**: the inner vertex boundary is a subset of
+`S`. Direct from the `Finset.filter` definition. -/
+lemma innerVertexBoundary_subset_self [DecidableEq V] [LocallyFinite G]
+    (S : Finset V) :
+    G.innerVertexBoundary S ⊆ S :=
+  Finset.filter_subset _ _
+
+/-- **Empty boundary of empty set**: the inner vertex boundary of
+`∅` is `∅`, since `Finset.filter` on the empty Finset is empty. -/
+lemma innerVertexBoundary_empty [DecidableEq V] [LocallyFinite G] :
+    G.innerVertexBoundary (∅ : Finset V) = ∅ := by
+  simp [innerVertexBoundary]
+
+/-- **Cheeger-type bound**:
+`|∂_o^v S| ≤ ∑_{x ∈ ∂_i^v S} deg_G(x)`. Every outer-boundary
+vertex `y` is reached as a neighbour of some inner-boundary
+vertex `x`: the witness `x ∈ S` of `y ∈ outerVertexBoundary G S`
+has the outside neighbour `y`, so `x ∈ innerVertexBoundary G S`.
+Hence
+`outerVertexBoundary G S ⊆ (innerVertexBoundary G S).biUnion neighborFinset`,
+and `Finset.card_biUnion_le` + `card_neighborFinset_eq_degree`
+finishes. -/
+lemma outerVertexBoundary_card_le_sum_degrees_innerVertexBoundary
+    [DecidableEq V] [LocallyFinite G] (S : Finset V) :
+    (G.outerVertexBoundary S).card
+      ≤ ∑ x ∈ G.innerVertexBoundary S, G.degree x := by
+  have hsubset : G.outerVertexBoundary S
+      ⊆ (G.innerVertexBoundary S).biUnion
+          (fun v => G.neighborFinset v) := by
+    intro y hy
+    rw [G.mem_outerVertexBoundary_iff] at hy
+    obtain ⟨hy_notS, x, hxS, hadj⟩ := hy
+    refine Finset.mem_biUnion.mpr ⟨x, ?_, ?_⟩
+    · rw [G.mem_innerVertexBoundary_iff]
+      exact ⟨hxS, y, hadj, hy_notS⟩
+    · exact (mem_neighborFinset _ _ _).mpr hadj
+  refine (Finset.card_le_card hsubset).trans ?_
+  refine (Finset.card_biUnion_le).trans ?_
+  exact Finset.sum_le_sum (fun x _ =>
+    (card_neighborFinset_eq_degree _ _).le)
+
 end SimpleGraph
 
 namespace IsingModel
@@ -273,6 +333,25 @@ theorem latticeGraph_outerVertexBoundary_card_le
       ≤ ∑ _x ∈ S, 2 * d :=
         Finset.sum_le_sum (fun x _ => latticeGraph_degree_le d x)
     _ = 2 * d * S.card := by
+        rw [Finset.sum_const, smul_eq_mul, mul_comm]
+
+/-- **ℤ^d Cheeger-type bound**: on `latticeGraph d`,
+`|∂_o^v S| ≤ 2d · |∂_i^v S|`. Combines the generic
+`SimpleGraph.outerVertexBoundary_card_le_sum_degrees_innerVertexBoundary`
+with the per-vertex degree bound `latticeGraph_degree_le`. The
+standard linear vertex-isoperimetric inequality for the integer
+lattice. -/
+theorem latticeGraph_outerVertexBoundary_card_le_two_mul_d_mul_innerVertexBoundary_card
+    (d : ℕ) (S : Finset (Fin d → ℤ)) :
+    ((IsingModel.latticeGraph d).outerVertexBoundary S).card
+      ≤ 2 * d * ((IsingModel.latticeGraph d).innerVertexBoundary S).card := by
+  refine ((IsingModel.latticeGraph d).outerVertexBoundary_card_le_sum_degrees_innerVertexBoundary
+    S).trans ?_
+  calc (∑ x ∈ (IsingModel.latticeGraph d).innerVertexBoundary S,
+          (IsingModel.latticeGraph d).degree x)
+      ≤ ∑ _x ∈ (IsingModel.latticeGraph d).innerVertexBoundary S, 2 * d :=
+        Finset.sum_le_sum (fun x _ => latticeGraph_degree_le d x)
+    _ = 2 * d * ((IsingModel.latticeGraph d).innerVertexBoundary S).card := by
         rw [Finset.sum_const, smul_eq_mul, mul_comm]
 
 /-- Decidable-Adj instance for the induced lattice graph.

@@ -1963,6 +1963,42 @@ indexing object for the Simon--Lieb statement to plug into
 (Epic~\#780, B-iii); the present PR does not yet establish
 Simon--Lieb itself.
 
+\paragraph{Inner vertex boundary
+\texttt{SimpleGraph.innerVertexBoundary G S} and Cheeger-type
+bound (PR~\#786).}
+The companion of the outer vertex boundary is the inner vertex
+boundary, in mathlib's \texttt{SimpleGraph} namespace:
+\[
+  \mathrm{SimpleGraph.innerVertexBoundary}\,G\,S
+  \;:=\; S.\mathrm{filter}\bigl(\lambda x \mapsto \neg (G.\mathrm{neighborFinset}\,x \subseteq S)\bigr)
+  \;\equiv\; \{\,x \in S \mid \exists y,\ G.\mathrm{Adj}\,x\,y \land y \notin S\,\}.
+\]
+Three basic lemmas are
+$\mathrm{mem\_innerVertexBoundary\_iff}$,
+$\mathrm{innerVertexBoundary\_subset\_self}$ (via
+$\mathrm{Finset.filter\_subset}$), and
+$\mathrm{innerVertexBoundary\_empty}$. The substantive new
+content is the Cheeger-type bound
+\[
+  |\partial^v_o S| \;\le\; \sum_{x \in \partial^v_i S} \deg_G(x)
+\]
+(\texttt{outerVertexBoundary\_card\_le\_sum\_degrees\_innerVertexBoundary}).
+The proof exhibits the inclusion
+$\partial^v_o S \subseteq (\partial^v_i S).\mathrm{biUnion}\,
+G.\mathrm{neighborFinset}$ — every $y \in \partial^v_o S$ has
+some $x \in S$ adjacent to $y \notin S$, which already places
+$x$ in $\partial^v_i S$ — and then chains
+$\mathrm{Finset.card\_le\_card}$,
+$\mathrm{Finset.card\_biUnion\_le}$, and
+$\mathrm{card\_neighborFinset\_eq\_degree}$. On $\mathbb Z^d$
+this becomes the linear vertex-isoperimetric inequality
+$|\partial^v_o S| \le 2 d \cdot |\partial^v_i S|$
+(\texttt{latticeGraph\_outerVertexBoundary\_card\_le\_two\_mul\_d\_mul\_innerVertexBoundary\_card}),
+combining the generic bound with PR~\#784's
+$\mathrm{latticeGraph\_degree\_le}$. As with PR~\#785, this PR is
+preparatory infrastructure: no Simon--Lieb result is established
+here.
+
 \subsection{Lattice-growth convergence of \S5 quantities}
 
 Named corollaries of \texttt{correlation\_convergent\_subgraph} (PR~\#64):
