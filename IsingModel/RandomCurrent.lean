@@ -2010,6 +2010,21 @@ theorem CurrentBounded.tendsto_weightSum_atTop_iSup
   tendsto_atTop_ciSup
     (fun _ _ h => CurrentBounded.weightSum_mono G Λ A hβJ h) hbdd
 
+/-- **Real Taylor partial sum is bounded by `Real.exp`** for
+non-negative arguments: for `x ≥ 0`,
+\(∑_{k ≤ N} x^k / k! ≤ Real.exp x\). Direct via
+`Real.exp_eq_tsum_div_factorial` (#850),
+`Real.summable_pow_div_factorial` (mathlib), and
+`Summable.sum_le_tsum`. The per-edge upper bound foundation for
+the BddAbove of `CurrentBounded.weightSum` under non-negative
+coupling. -/
+theorem Real.partial_sum_le_exp_of_nonneg {x : ℝ} (hx : 0 ≤ x) (N : ℕ) :
+    ∑ k ∈ Finset.range (N + 1), x ^ k / (k.factorial : ℝ) ≤ Real.exp x := by
+  rw [Real.exp_eq_tsum_div_factorial]
+  refine Summable.sum_le_tsum _ (fun k _ => ?_)
+    (Real.summable_pow_div_factorial x)
+  exact div_nonneg (pow_nonneg hx k) (Nat.cast_nonneg _)
+
 end Ambient
 
 end IsingModel
