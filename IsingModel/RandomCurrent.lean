@@ -1848,6 +1848,32 @@ theorem Current.mem_boundedFinset_iff (G : SimpleGraph V) (Λ : Finset V)
     · funext e
       rfl
 
+/-- **`boundedFinset` is monotone in `N`**:
+\(N_1 ≤ N_2 → boundedFinset\,N_1 ⊆ boundedFinset\,N_2\).
+A larger bound includes more currents. Direct via
+`mem_boundedFinset_iff`. -/
+theorem Current.boundedFinset_mono (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] {N₁ N₂ : ℕ} (h : N₁ ≤ N₂) :
+    Current.boundedFinset G Λ N₁ ⊆ Current.boundedFinset G Λ N₂ := by
+  intro n hn
+  rw [Current.mem_boundedFinset_iff] at hn ⊢
+  exact fun e => le_trans (hn e) h
+
+/-- **Every current eventually lies in some `boundedFinset N`**:
+for every `n : Current G Λ`, there exists `N : ℕ` such that
+\(n ∈ boundedFinset N\). Concretely take
+\(N = max_{e} n e\) (the supremum over the finite edge set).
+The cofinality property of the filtration. -/
+theorem Current.exists_mem_boundedFinset (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (n : Current G Λ) :
+    ∃ N : ℕ, n ∈ Current.boundedFinset G Λ N := by
+  classical
+  refine ⟨Finset.univ.sup n, ?_⟩
+  rw [Current.mem_boundedFinset_iff]
+  intro e
+  exact Finset.le_sup (Finset.mem_univ e)
+
 end Ambient
 
 end IsingModel
