@@ -1943,6 +1943,32 @@ theorem CurrentBounded.weightSum_eq_sum_boundedFinset (G : SimpleGraph V)
     intro nB _
     rfl
 
+set_option linter.unusedDecidableInType false in
+/-- **RHS-side `N → ∞` limit capstone**: under summability of the
+weight-with-source-condition function,
+\(CurrentBounded.weightSum N A β J → Current.weightSum A β J\) as
+`N → ∞`. Combines `weightSum_eq_sum_boundedFinset` (#858) with
+`Summable.tendsto_sum_boundedFinset` (#857). Together with
+the LHS-side limit (#854), gives
+`Current.weightSum A β J = (1/2^|Λ|) · ∑_σ σ_A · ∏_e Real.exp (β J σ_e)`
+under summability — the random-current expression of the Ising
+correlation function (FV §3.7). -/
+theorem CurrentBounded.tendsto_weightSum_atTop_currentWeightSum
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (β J : ℝ) (A : Finset ↑Λ)
+    (hf : Summable (fun n : Current G Λ =>
+      if n.sources G Λ = A then n.weight G Λ β J else 0)) :
+    Filter.Tendsto (fun N : ℕ => CurrentBounded.weightSum G Λ N A β J)
+      Filter.atTop (nhds (Current.weightSum G Λ A β J)) := by
+  have h_eq : ∀ N, CurrentBounded.weightSum G Λ N A β J
+              = ∑ n ∈ Current.boundedFinset G Λ N,
+                  if n.sources G Λ = A then n.weight G Λ β J else 0 :=
+    fun N => CurrentBounded.weightSum_eq_sum_boundedFinset G Λ N A β J
+  simp_rw [h_eq]
+  unfold Current.weightSum
+  exact Summable.tendsto_sum_boundedFinset G Λ hf
+
 end Ambient
 
 end IsingModel
