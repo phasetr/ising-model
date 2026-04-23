@@ -1732,6 +1732,37 @@ theorem Config.tendsto_prod_Fin_partial_sum_atTop_prod_exp
   refine tendsto_finset_prod _ (fun e _ => ?_)
   exact Real.tendsto_partial_sum_atTop_exp _
 
+omit [DecidableEq V] in
+/-- **Sum-σ-A × edge-product partial sum → sum-σ-A × edge-product exp**:
+as `N → ∞`,
+\(∑_σ σ_A · ∏_e ∑_{k ≤ N} (β J σ_e)^k / k!
+  → ∑_σ σ_A · ∏_e Real.exp (β J σ_e)\).
+The third analytic step in the `N → ∞` limit, combining
+`tendsto_prod_Fin_partial_sum_atTop_prod_exp` (#852, per-σ
+edge-product convergence) with `Tendsto.const_mul` (σ_A is
+`N`-independent) and `tendsto_finset_sum` (finite σ-sum is
+continuous). Bridges the bounded random-current expansion with
+the actual Boltzmann weight `Z · ⟨σ_A⟩` (FV §3.7). -/
+theorem Config.tendsto_sum_spinA_prod_partial_sum_atTop_sum_spinA_prod_exp
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (β J : ℝ) (A : Finset ↑Λ) :
+    Filter.Tendsto
+      (fun N : ℕ => ∑ σ : ↑Λ → Spin,
+        (∏ a ∈ A, ((σ a).toSign : ℝ))
+        * ∏ e : (inducedGraph G Λ).edgeSet,
+            ∑ k : Fin (N + 1),
+              (β * J * Config.spinEdgeProduct σ (e : Sym2 ↑Λ)) ^ (k : ℕ)
+                / (((k : ℕ).factorial : ℝ)))
+      Filter.atTop
+      (nhds
+        (∑ σ : ↑Λ → Spin,
+          (∏ a ∈ A, ((σ a).toSign : ℝ))
+          * ∏ e : (inducedGraph G Λ).edgeSet,
+              Real.exp (β * J * Config.spinEdgeProduct σ (e : Sym2 ↑Λ)))) := by
+  refine tendsto_finset_sum _ (fun σ _ => ?_)
+  exact (Config.tendsto_prod_Fin_partial_sum_atTop_prod_exp G Λ β J σ).const_mul _
+
 end Ambient
 
 end IsingModel
