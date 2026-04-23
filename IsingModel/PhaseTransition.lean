@@ -411,6 +411,39 @@ theorem abs_magnetization_eq_magnetization_abs_h
       rw [← hneg]; exact habs_nonneg
     linarith
 
+/-- **Susceptibility at `|h|` in closed form (finite volume)**:
+`χ(⟨J, |h|, β⟩) = χ(⟨J, h, β⟩) + M(⟨J, |h|, β⟩) − M(⟨J, h, β⟩)`.
+
+**No ferromagnetic assumption is required** (in that narrow sense the
+identity is unconditional in `J, h, β`; it remains a finite-volume
+statement with the existing `SimpleGraph ι` / `Fintype G.edgeSet`
+ambient typeclass assumptions). Proof by `abs_choice h`:
+
+- If `|h| = h` (i.e. `h ≥ 0`), the correction term
+  `M(|h|) − M(h)` vanishes and both sides equal `χ(h)`.
+- If `|h| = -h` (i.e. `h ≤ 0`), `susceptibility_neg_h` gives
+  `χ(-h) = χ(h) − 2·M(h)` and `magnetization_neg_h` gives
+  `M(-h) = −M(h)`, so the RHS equals `χ(h) + (−M(h)) − M(h)
+  = χ(h) − 2·M(h)`, matching the LHS.
+
+Companion to `abs_magnetization_eq_magnetization_abs_h` which uses
+ferromagnetism to express `|M(h)| = M(|h|)`. Under that same
+ferromagnetic hypothesis, this theorem can be combined to yield the
+non-negative closed form `χ(|h|) − χ(h) = |M(h)| − M(h)
+= 2·max(0, −M(h))`.
+
+Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §5.3 pp. 77–80. -/
+theorem susceptibility_eq_abs_h (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h β : ℝ) (i : ι) :
+    susceptibility G (⟨J, |h|, β⟩ : IsingParams ℝ) i
+      = susceptibility G (⟨J, h, β⟩ : IsingParams ℝ) i
+          + magnetization G (⟨J, |h|, β⟩ : IsingParams ℝ) i
+          - magnetization G (⟨J, h, β⟩ : IsingParams ℝ) i := by
+  rcases abs_choice h with habs | habs
+  · rw [habs]; ring
+  · rw [habs, susceptibility_neg_h G J h β i, magnetization_neg_h G J h β i]
+    ring
+
 /-- The magnetization vanishes at `h = 0` (Z₂ symmetry, finite volume).
 This is the finite-volume counterpart of the statement that the Z₂
 symmetry is unbroken in finite volume. Symmetry breaking occurs only
