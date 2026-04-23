@@ -1666,6 +1666,54 @@ $\mathbb{Z}^d$ wrapper
 \texttt{susceptibilityΛ\_latticeGraph\_eq\_abs\_h} are included.
 \end{proof}
 
+\begin{definition}[\texttt{susceptibilityAlongExhaustion}, PR~\#777]
+For an exhaustion $\Lambda = (\Lambda_n)_{n : \mathbb N}$ of $V$, site $i : V$
+and stage $n : \mathbb N$,
+\[
+  \chi_{\mathrm{along}}(i, n)
+  := \begin{cases}
+       \chi_{\Lambda_n}(G, \Lambda_n, p;\ \langle i, h_{in}\rangle) & \text{if } i \in \Lambda_n \\
+       0 & \text{otherwise.}
+     \end{cases}
+\]
+Along-exhaustion companion of $\chi_\Lambda$, mirroring
+\texttt{magnetizationAlongExhaustion}. Prerequisite for a future
+\texttt{susceptibilityInfinite}.
+\end{definition}
+
+\begin{theorem}[\texttt{susceptibilityAlongExhaustion\_eq\_abs\_h},
+PR~\#777 (A-4b, issue~\#770)]
+For all $J, h, \beta \in \mathbb R$, $i : V$ and $n : \mathbb N$,
+\[
+  \chi_{\mathrm{along}}(\langle J, |h|, \beta\rangle; i, n)
+  = \chi_{\mathrm{along}}(\langle J, h, \beta\rangle; i, n)
+    + M_{\mathrm{along}}(\langle J, |h|, \beta\rangle; i, n) - M_{\mathrm{along}}(\langle J, h, \beta\rangle; i, n),
+\]
+unconditionally (no ferromagnetic hypothesis required).
+\end{theorem}
+\begin{proof}[Proof sketch]
+Case split on $i \in \Lambda_n$:
+\begin{itemize}
+  \item \emph{Covered stage}: reduce to
+    \texttt{susceptibilityΛ\_eq\_abs\_h} (PR~\#776) at the lifted
+    subtype site $\langle i, h_i\rangle$. The magnetization-side
+    terms are converted via the helper
+    \texttt{magnetizationAlongExhaustion\_of\_mem\_eq\_magnetizationΛ},
+    which upgrades the \texttt{liftFinset $\{i\}$}-form (from
+    \texttt{correlationAlongExhaustion\_of\_subset}) to the
+    \texttt{magnetizationΛ} form via the auxiliary
+    \texttt{liftFinset\_singleton}.
+  \item \emph{Uncovered stage}: all four terms are $0$ by the
+    \texttt{\_of\_not\_mem} unfoldings, and the identity holds.
+\end{itemize}
+Bundled helpers: \texttt{susceptibilityAlongExhaustion\_apply},
+\texttt{\_of\_mem}, \texttt{\_of\_not\_mem}, \texttt{\_nonneg}
+(ferromagnetic), \texttt{\_neg\_h}
+($\chi_{\mathrm{along}}(-h) = \chi_{\mathrm{along}}(h) - 2 M_{\mathrm{along}}(h)$),
+and the $\mathbb Z^d$ wrapper
+\texttt{susceptibilityAlongExhaustion\_latticeGraph\_eq\_abs\_h}.
+\end{proof}
+
 \subsection{Lattice-growth convergence of \S5 quantities}
 
 Named corollaries of \texttt{correlation\_convergent\_subgraph} (PR~\#64):

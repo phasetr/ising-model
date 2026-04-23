@@ -1938,6 +1938,93 @@ theorem neg_one_le_magnetizationAlongExhaustion
     -1 ≤ magnetizationAlongExhaustion G Λ p i n :=
   neg_one_le_correlationAlongExhaustion G Λ p {i} n
 
+/-- **`liftFinset {i} _ = {⟨i, hi⟩}`** as a Finset on `↑Λ`: the lift of the
+ambient singleton `{i}` (with `i ∈ Λ`) is the subtype singleton `{⟨i, hi⟩}`.
+Small helper used to identify the along-exhaustion magnetization with
+the Λ-layer magnetization at the subtype site. -/
+theorem liftFinset_singleton {Λ : Finset V} {i : V} (hi : i ∈ Λ) :
+    liftFinset {i} (Finset.singleton_subset_iff.mpr hi)
+      = ({⟨i, hi⟩} : Finset (↑Λ : Type _)) := by
+  ext x
+  simp only [mem_liftFinset, Finset.mem_singleton, Subtype.ext_iff]
+
+/-- **Link between `magnetizationAlongExhaustion` and `magnetizationΛ` on a
+covered stage**: when `i ∈ Λ.volume n`,
+`magnetizationAlongExhaustion G Λ p i n = magnetizationΛ G (Λ.volume n) p ⟨i, hi⟩`.
+Upgrades `magnetizationAlongExhaustion_of_mem` (which returns
+`correlationΛ … (liftFinset {i} _)`) to the `magnetizationΛ` form using
+`liftFinset_singleton`. Convenient for along-exhaustion Z₂ symmetry
+proofs that need the Λ-layer magnetization identity at the lifted site. -/
+theorem magnetizationAlongExhaustion_of_mem_eq_magnetizationΛ
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) {i : V} {n : ℕ} (hi : i ∈ Λ.volume n) :
+    magnetizationAlongExhaustion G Λ p i n
+      = magnetizationΛ G (Λ.volume n) p ⟨i, hi⟩ := by
+  rw [magnetizationAlongExhaustion_of_mem G Λ p hi, liftFinset_singleton hi]
+  rfl
+
+/-- **Susceptibility along an exhaustion** at a fixed ambient site `i : V`:
+the stagewise sequence `n ↦ χ_{Λ_n}(⟨i, hi⟩)` when `i ∈ Λ.volume n`, and
+`0` otherwise. Companion to `magnetizationAlongExhaustion` at the
+susceptibility level; bridges the Λ-layer `susceptibilityΛ` (PR #776)
+to the eventual `susceptibilityInfinite` (TODO).
+
+Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §5.3 pp. 77–80. -/
+noncomputable def susceptibilityAlongExhaustion
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (i : V) (n : ℕ) : ℝ :=
+  if h : i ∈ Λ.volume n then
+    susceptibilityΛ G (Λ.volume n) p ⟨i, h⟩
+  else 0
+
+/-- **Unfolding of `susceptibilityAlongExhaustion`**: by definition the
+stagewise value is the dependent `if`-expression over membership. -/
+theorem susceptibilityAlongExhaustion_apply
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (i : V) (n : ℕ) :
+    susceptibilityAlongExhaustion G Λ p i n
+      = if h : i ∈ Λ.volume n then
+          susceptibilityΛ G (Λ.volume n) p ⟨i, h⟩
+        else 0 := rfl
+
+/-- **Unfolding of `susceptibilityAlongExhaustion` when `i ∈ Λ.volume n`**:
+the stagewise value equals `susceptibilityΛ` at the lifted subtype site. -/
+theorem susceptibilityAlongExhaustion_of_mem
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) {i : V} {n : ℕ} (hi : i ∈ Λ.volume n) :
+    susceptibilityAlongExhaustion G Λ p i n
+      = susceptibilityΛ G (Λ.volume n) p ⟨i, hi⟩ := by
+  unfold susceptibilityAlongExhaustion
+  exact dif_pos hi
+
+/-- **Unfolding of `susceptibilityAlongExhaustion` when `i ∉ Λ.volume n`**:
+`susceptibilityAlongExhaustion G Λ p i n = 0`. -/
+theorem susceptibilityAlongExhaustion_of_not_mem
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) {i : V} {n : ℕ} (hi : i ∉ Λ.volume n) :
+    susceptibilityAlongExhaustion G Λ p i n = 0 := by
+  unfold susceptibilityAlongExhaustion
+  exact dif_neg hi
+
+/-- **`susceptibilityAlongExhaustion ≥ 0`** per stage for ferromagnetic `p`.
+Case split on `i ∈ Λ.volume n`: the covered branch applies
+`susceptibilityΛ_nonneg` (which uses `correlationΛ_nonneg` at `{j}`);
+the uncovered branch is `0`. -/
+theorem susceptibilityAlongExhaustion_nonneg
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i : V) (n : ℕ) :
+    0 ≤ susceptibilityAlongExhaustion G Λ p i n := by
+  by_cases hi : i ∈ Λ.volume n
+  · rw [susceptibilityAlongExhaustion_of_mem G Λ p hi]
+    exact susceptibilityΛ_nonneg G (Λ.volume n) p hf ⟨i, hi⟩
+  · rw [susceptibilityAlongExhaustion_of_not_mem G Λ p hi]
+
 
 
 /-- **GKS-II at finite volume** (Λ-lifted form): for a ferromagnetic
@@ -2822,6 +2909,68 @@ theorem abs_magnetizationAlongExhaustion_eq_magnetizationAlongExhaustion_abs_h
         0 ≤ -magnetizationAlongExhaustion G Λ (⟨J, h, β⟩ : IsingParams ℝ) i n := by
       rw [← hneg]; exact habs_nonneg
     linarith
+
+/-- **Along-exhaustion susceptibility under `h → -h`**:
+`χ_along(⟨J, -h, β⟩; i, n) = χ_along(⟨J, h, β⟩; i, n) - 2·M_along(⟨J, h, β⟩; i, n)`.
+
+Case split on `i ∈ Λ.volume n`:
+- Covered stage: reduce to `susceptibilityΛ_neg_h` (PR #776) at the
+  lifted subtype site via
+  `susceptibilityAlongExhaustion_of_mem` and
+  `magnetizationAlongExhaustion_of_mem_eq_magnetizationΛ`.
+- Uncovered stage: all three terms are `0`, so the identity is trivial.
+
+Along-exhaustion counterpart of `susceptibilityΛ_neg_h`.
+
+Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §5.3 pp. 77–80. -/
+theorem susceptibilityAlongExhaustion_neg_h
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J h β : ℝ) (i : V) (n : ℕ) :
+    susceptibilityAlongExhaustion G Λ (⟨J, -h, β⟩ : IsingParams ℝ) i n
+      = susceptibilityAlongExhaustion G Λ (⟨J, h, β⟩ : IsingParams ℝ) i n
+          - 2 * magnetizationAlongExhaustion G Λ (⟨J, h, β⟩ : IsingParams ℝ) i n := by
+  by_cases hi : i ∈ Λ.volume n
+  · rw [susceptibilityAlongExhaustion_of_mem G Λ _ hi,
+        susceptibilityAlongExhaustion_of_mem G Λ _ hi,
+        magnetizationAlongExhaustion_of_mem_eq_magnetizationΛ G Λ _ hi]
+    exact susceptibilityΛ_neg_h G (Λ.volume n) J h β ⟨i, hi⟩
+  · rw [susceptibilityAlongExhaustion_of_not_mem G Λ _ hi,
+        susceptibilityAlongExhaustion_of_not_mem G Λ _ hi,
+        magnetizationAlongExhaustion_of_not_mem G Λ _ hi]
+    ring
+
+/-- **Along-exhaustion susceptibility at `|h|`** (capstone,
+along-exhaustion layer, no ferromagnetic hypothesis):
+`χ_along(⟨J, |h|, β⟩; i, n) = χ_along(⟨J, h, β⟩; i, n)
+ + M_along(⟨J, |h|, β⟩; i, n) - M_along(⟨J, h, β⟩; i, n)`.
+
+Case split on `i ∈ Λ.volume n`: covered stage reduces to
+`susceptibilityΛ_eq_abs_h` (PR #776) at the lifted subtype site;
+uncovered stage is trivial (all four terms `0`).
+
+Along-exhaustion counterpart of PR #776's `susceptibilityΛ_eq_abs_h`.
+
+Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §5.3 pp. 77–80. -/
+theorem susceptibilityAlongExhaustion_eq_abs_h
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J h β : ℝ) (i : V) (n : ℕ) :
+    susceptibilityAlongExhaustion G Λ (⟨J, |h|, β⟩ : IsingParams ℝ) i n
+      = susceptibilityAlongExhaustion G Λ (⟨J, h, β⟩ : IsingParams ℝ) i n
+          + magnetizationAlongExhaustion G Λ (⟨J, |h|, β⟩ : IsingParams ℝ) i n
+          - magnetizationAlongExhaustion G Λ (⟨J, h, β⟩ : IsingParams ℝ) i n := by
+  by_cases hi : i ∈ Λ.volume n
+  · rw [susceptibilityAlongExhaustion_of_mem G Λ _ hi,
+        susceptibilityAlongExhaustion_of_mem G Λ _ hi,
+        magnetizationAlongExhaustion_of_mem_eq_magnetizationΛ G Λ _ hi,
+        magnetizationAlongExhaustion_of_mem_eq_magnetizationΛ G Λ _ hi]
+    exact susceptibilityΛ_eq_abs_h G (Λ.volume n) J h β ⟨i, hi⟩
+  · rw [susceptibilityAlongExhaustion_of_not_mem G Λ _ hi,
+        susceptibilityAlongExhaustion_of_not_mem G Λ _ hi,
+        magnetizationAlongExhaustion_of_not_mem G Λ _ hi,
+        magnetizationAlongExhaustion_of_not_mem G Λ _ hi]
+    ring
 
 /-- **∞-volume one-sided `|M_∞(h)| ≤ M_∞(|h|)`** under ferromagnetism
 at `|h|` (`0 ≤ J`, `0 < β`).
