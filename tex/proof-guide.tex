@@ -1825,6 +1825,37 @@ summability arguments (Simon--Lieb iteration) that this infrastructure
 is meant to support. No mathlib
 \texttt{PseudoMetricSpace} instance is registered at this stage.
 
+\paragraph{Finite $\ell^1$ balls and proper-map property.}
+PR~\#782 complements the metric definition with the proper-map
+companion to PR~\#779's cofinite cluster decay. First,
+\texttt{latticeDistance\_le\_finite (d i N)} shows that the
+$\ell^1$ ball
+\[
+  B_N^{\ell^1}(i) \;=\; \{\, j \in \mathrm{Fin}\,d \to \mathbb Z
+  \mid d_{\mathrm{latt}}(i, j) \le N \,\}
+\]
+is finite for every dimension, basepoint, and radius. The proof
+uses the coordinatewise bound
+$(i_k - j_k)_{\mathbb N} \le d_{\mathrm{latt}}(i, j)$, which places
+each $j_k$ in the finite integer interval
+$[i_k - N,\, i_k + N]$; the ball then embeds into a finite product
+of finite intervals via \texttt{Set.Finite.pi} and
+\texttt{Set.finite\_Icc}. Second,
+\texttt{tendsto\_latticeDistance\_atTop\_cofinite (d i)} packages
+this as a proper-map statement
+$\mathrm{Tendsto}\,\bigl(j \mapsto d_{\mathrm{latt}}(i, j)\bigr)\,
+\mathrm{Filter.cofinite}\; \mathrm{Filter.atTop}$
+by reducing \texttt{Filter.eventually\_cofinite} to finiteness of
+$\{\,j \mid d_{\mathrm{latt}}(i, j) < N\,\}$ for every $N$, a
+subset of the ball at radius $N$. No hypothesis $d \ge 1$ is
+required: at $d = 0$ the domain is a singleton, so
+$\mathrm{Filter.cofinite}$ on the source collapses to $\bot$ (in
+the mathlib convention, the improper filter containing every
+subset) and the Tendsto holds vacuously. Combined with
+PR~\#779 this upgrades the cofinite cluster-decay statement into
+a distance-based one conditional on summability of
+$j \mapsto U_2(i, j)$.
+
 \subsection{Lattice-growth convergence of \S5 quantities}
 
 Named corollaries of \texttt{correlation\_convergent\_subgraph} (PR~\#64):
