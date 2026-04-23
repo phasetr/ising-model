@@ -4204,6 +4204,42 @@ theorem truncated2Infinite_h_zero
       correlationInfinite_h_zero G Λ J β _ h_j]
   ring
 
+/-- **Conditional cluster decay (cofinite form)**: if the ∞-volume
+Ursell 2-point function at a fixed site `i : V`, viewed as a function
+of the free site `j : V`, is *summable* over `V`, then it tends to `0`
+along the cofinite filter:
+`Tendsto (fun j => truncated2Infinite G Λ p i j) Filter.cofinite (nhds 0)`.
+
+Direct application of mathlib's `Summable.tendsto_cofinite_zero`.
+
+**Interpretation.** The summability hypothesis is a finiteness
+condition on the two-point function summed over the free argument `j`.
+In translation-invariant / connected-correlation settings (e.g. a
+pure phase of a ℤ^d Ising model) this matches the physical notion of
+finite susceptibility `χ_∞ < ∞`, expected to hold away from the
+critical line; in the general ambient setup here it is just the
+real-analysis condition `Summable`. `Filter.cofinite` on `V` is the
+filter of cofinite subsets — eventually avoiding every finite subset
+— which on `V = Fin d → ℤ` (with `d ≥ 1`) aligns with the usual
+"$|r| \to \infty$" interpretation (bounded subsets of the lattice are
+finite). So this is a *conditional* cluster decay statement in the
+spirit of Glimm–Jaffe §5.1.
+
+Unconditional exponential cluster decay in pure phases (Simon–Lieb
+inequality and follow-ups) remains unformalized; this lemma is the
+elementary real-analysis building block waiting to be composed with a
+future proof of summability.
+
+Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §5.1 pp. 72–74. -/
+theorem truncated2Infinite_tendsto_cofinite_zero_of_summable
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (i : V)
+    (hsum : Summable (fun j : V => truncated2Infinite G Λ p i j)) :
+    Filter.Tendsto (fun j : V => truncated2Infinite G Λ p i j)
+      Filter.cofinite (nhds 0) :=
+  hsum.tendsto_cofinite_zero
+
 /-! ## Truncated 3-point correlation + GHS at infinite volume
 
 Lift the finite-volume GHS inequality (`ghs_inequality`,
