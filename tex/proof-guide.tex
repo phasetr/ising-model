@@ -2059,6 +2059,23 @@ filter cardinality by
 $|G.\mathrm{neighborFinset}\,x| = \deg_G(x)$ recovers PR~\#787's
 inequality.
 
+\paragraph{Outer-side companion equality (PR~\#789).}
+The symmetric equality counts crossing edges by their outside
+endpoint:
+\[
+  |\partial^e S| \;=\;
+    \sum_{y \in \partial^v_o S} \bigl|\{\,x \in N_G(y) \mid x \in S\,\}\bigr|
+\]
+($\mathrm{edgeBoundary\_card\_eq\_sum\_outer\_filter}$). The proof
+rewrites $\partial^e S$ as a disjoint $\mathrm{biUnion}$ indexed by
+$y \in \partial^v_o S$ (via $\mathrm{Finset.ext}$, with forward /
+backward using $G.\mathrm{symm}$ to swap the adjacency direction),
+then applies the same $\mathrm{Finset.card\_biUnion}$ +
+$\mathrm{Finset.card\_image\_of\_injective}$ pair. Combined with
+PR~\#788 this yields the double-counting identity
+$\sum_{x \in \partial^v_i S} |N_G(x) \setminus S| =
+\sum_{y \in \partial^v_o S} |N_G(y) \cap S|$.
+
 \subsection{Lattice-growth convergence of \S5 quantities}
 
 Named corollaries of \texttt{correlation\_convergent\_subgraph} (PR~\#64):
