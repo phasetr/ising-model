@@ -1632,6 +1632,20 @@ theorem CurrentBounded.weightSum_empty_pos (G : SimpleGraph V)
     · simp only [h, if_false, le_refl]
   · rw [h_zero_summand]; exact zero_lt_one
 
+omit [DecidableEq V] in
+/-- **Sum of two currents is source-free iff their source sets
+agree**: `(n + m).IsSourceFree ↔ n.sources = m.sources`. Direct
+consequence of `add_sources_eq` and `symmDiff_eq_bot` (the
+symmetric difference vanishes iff the two sets agree). The
+"squaring" step at the heart of the Aizenman switching lemma's
+source-set bookkeeping. -/
+theorem Current.add_isSourceFree_iff (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n m : Current G Λ) :
+    (n + m).IsSourceFree G Λ ↔ n.sources G Λ = m.sources G Λ := by
+  unfold Current.IsSourceFree
+  rw [Current.add_sources_eq, ← Finset.bot_eq_empty, symmDiff_eq_bot]
+
 end Ambient
 
 end IsingModel
