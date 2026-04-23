@@ -3392,6 +3392,29 @@ theorem correlation_eq_abs_h_of_even_card_latticeGraph
   IsingModel.correlation_eq_abs_h_of_even_card
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h β A heven
 
+/-- **ℤ^d correlationInfinite invariance under `h → -h`** (even `|A|`):
+`correlationInfinite ⟨J,-h,β⟩ A = correlationInfinite ⟨J,h,β⟩ A`.
+Concrete wrapper for `correlationInfinite_neg_h_of_even_card` (#765). -/
+theorem correlationInfinite_neg_h_of_even_card_latticeGraph
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J h β : ℝ) (A : Finset (Fin d → ℤ)) (heven : Even A.card) :
+    correlationInfinite (IsingModel.latticeGraph d) Λ
+        (⟨J, -h, β⟩ : IsingParams ℝ) A
+      = correlationInfinite (IsingModel.latticeGraph d) Λ
+          (⟨J, h, β⟩ : IsingParams ℝ) A :=
+  correlationInfinite_neg_h_of_even_card (IsingModel.latticeGraph d) Λ J h β A heven
+
+/-- **ℤ^d correlationInfinite equals value at `|h|`** (even `|A|`):
+concrete wrapper for `correlationInfinite_eq_abs_h_of_even_card` (#765). -/
+theorem correlationInfinite_eq_abs_h_of_even_card_latticeGraph
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J h β : ℝ) (A : Finset (Fin d → ℤ)) (heven : Even A.card) :
+    correlationInfinite (IsingModel.latticeGraph d) Λ
+        (⟨J, h, β⟩ : IsingParams ℝ) A
+      = correlationInfinite (IsingModel.latticeGraph d) Λ
+          (⟨J, |h|, β⟩ : IsingParams ℝ) A :=
+  correlationInfinite_eq_abs_h_of_even_card (IsingModel.latticeGraph d) Λ J h β A heven
+
 /-- **ℤ^d partitionFunction_eq_abs_h direct** at Λ-induced. -/
 theorem partitionFunction_eq_abs_h_latticeGraph
     (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J h β : ℝ) :
