@@ -1305,6 +1305,42 @@ theorem Config.sum_spinA_weight_prod_spinEdgeProduct_pow_hasSources
   · rw [if_pos hA, if_pos hA]
   · rw [if_neg hA, if_neg hA, mul_zero]
 
+omit [DecidableEq V] in
+/-- **Per-current σ-sum in Taylor-coefficient form**: at fixed
+current `n` and source set `A`,
+`∑_σ σ_A · ∏_e (β J · spinEdgeProduct σ e)^(n e) / (n e)!
+  = weight β J n · 2^|Λ|` if `n.HasSources A`, else `0`. The
+per-current contribution to the random-current expansion of
+`Z · ⟨σ_A⟩` in the standard Taylor-coefficient form
+(FV §3.7, eq. (3.45)). -/
+theorem Config.sum_spinA_prod_taylor_pow_hasSources
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (β J : ℝ) (n : Current G Λ) (A : Finset ↑Λ)
+    [Decidable (n.HasSources G Λ A)] :
+    (∑ σ : ↑Λ → Spin,
+      (∏ a ∈ A, ((σ a).toSign : ℝ))
+      * ∏ e : (inducedGraph G Λ).edgeSet,
+          (β * J * Config.spinEdgeProduct σ (e : Sym2 ↑Λ))^(n e)
+            / ((n e).factorial : ℝ))
+      = if n.HasSources G Λ A
+        then n.weight G Λ β J * (2 : ℝ)^(Fintype.card ↑Λ) else 0 := by
+  have heq : ∀ σ : ↑Λ → Spin,
+      (∏ a ∈ A, ((σ a).toSign : ℝ))
+      * ∏ e : (inducedGraph G Λ).edgeSet,
+          (β * J * Config.spinEdgeProduct σ (e : Sym2 ↑Λ))^(n e)
+            / ((n e).factorial : ℝ)
+      = (∏ a ∈ A, ((σ a).toSign : ℝ))
+        * (n.weight G Λ β J
+          * ∏ e : (inducedGraph G Λ).edgeSet,
+              (Config.spinEdgeProduct σ (e : Sym2 ↑Λ))^(n e)) := by
+    intro σ
+    rw [← Current.weight_mul_prod_pow G Λ β J n
+      (fun e => Config.spinEdgeProduct σ (e : Sym2 ↑Λ))]
+  rw [Finset.sum_congr rfl (fun σ _ => heq σ)]
+  exact Config.sum_spinA_weight_prod_spinEdgeProduct_pow_hasSources
+    G Λ β J n A
+
 end Ambient
 
 end IsingModel
