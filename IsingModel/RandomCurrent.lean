@@ -510,6 +510,32 @@ theorem Current.fromEdgeFinset_support (G : SimpleGraph V) (Λ : Finset V)
   · simp [he]
   · simp [he]
 
+omit [DecidableEq V] in
+/-- **Parity of `fromEdgeFinset {e₀}` at vertex `v`**: equals `1`
+in `ZMod 2` iff `v` is an endpoint of `e₀`, else `0`. -/
+theorem Current.fromEdgeFinset_singleton_parity
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (e₀ : (inducedGraph G Λ).edgeSet) (v : ↑Λ) :
+    (Current.fromEdgeFinset G Λ {e₀}).parity G Λ v
+      = if v ∈ (e₀ : Sym2 ↑Λ) then (1 : ZMod 2) else 0 := by
+  unfold Current.parity Current.fromEdgeFinset
+  -- ∑ e, if v ∈ e then ((if e ∈ {e₀} then 1 else 0 : ℕ) : ZMod 2) else 0
+  rw [Finset.sum_eq_single e₀]
+  · -- main term: e = e₀ contributes (if v ∈ e₀ then 1 else 0)
+    by_cases hv : v ∈ (e₀ : Sym2 ↑Λ)
+    · simp [hv, Finset.mem_singleton]
+    · simp [hv]
+  · -- other terms: e ≠ e₀ contribute 0 since e ∉ {e₀}
+    intro b _ hb_ne
+    have : b ∉ ({e₀} : Finset _) := Finset.notMem_singleton.mpr hb_ne
+    by_cases hv : v ∈ (b : Sym2 ↑Λ)
+    · simp [hv, this]
+    · simp [hv]
+  · -- e₀ ∈ univ
+    intro h
+    exact absurd (Finset.mem_univ e₀) h
+
 end Ambient
 
 end IsingModel
