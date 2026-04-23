@@ -1366,6 +1366,42 @@ theorem Config.prod_sum_taylor_eq_sum_currentBounded
       (β * J * Config.spinEdgeProduct σ (e : Sym2 ↑Λ))^(k : ℕ)
         / (((k : ℕ)).factorial : ℝ))
 
+omit [DecidableEq V] in
+/-- **Bounded random-current expansion of `∑_σ σ_A · ∏_e Taylor
+partial sum`**: the finite-`N` analogue of the random-current
+expansion of `Z · ⟨σ_A⟩` (FV §3.7, eq. (3.45)),
+\(∑_σ σ_A · ∏_e ∑_{k ≤ N} (β J σ_e)^k / k!
+  = ∑_{n : CurrentBounded N} [n.toCurrent.HasSources A]
+     · weight β J n.toCurrent · 2^|Λ|\).
+Combines `prod_sum_taylor_eq_sum_currentBounded` with
+`sum_spinA_prod_taylor_pow_hasSources`. -/
+theorem Config.sum_spinA_prod_taylor_partialSum_eq_sum_currentBounded
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (β J : ℝ) (N : ℕ) (A : Finset ↑Λ)
+    [∀ n : CurrentBounded G Λ N,
+      Decidable ((n.toCurrent G Λ).HasSources G Λ A)] :
+    (∑ σ : ↑Λ → Spin,
+      (∏ a ∈ A, ((σ a).toSign : ℝ))
+      * ∏ e : (inducedGraph G Λ).edgeSet,
+          ∑ k : Fin (N+1),
+            (β * J * Config.spinEdgeProduct σ (e : Sym2 ↑Λ))^(k : ℕ)
+              / (((k : ℕ)).factorial : ℝ))
+      = ∑ n : CurrentBounded G Λ N,
+          if (n.toCurrent G Λ).HasSources G Λ A
+          then (n.toCurrent G Λ).weight G Λ β J * (2 : ℝ)^(Fintype.card ↑Λ)
+          else 0 := by
+  -- Step 1: replace inner edge product with sum over CurrentBounded.
+  simp_rw [Config.prod_sum_taylor_eq_sum_currentBounded G Λ β J N _]
+  -- ∑_σ σ_A · ∑_n (∏_e ...)
+  -- Step 2: distribute σ_A through the inner sum, then swap σ-sum and n-sum.
+  simp_rw [Finset.mul_sum]
+  rw [Finset.sum_comm]
+  -- Step 3: each inner ∑_σ σ_A · (∏_e ...) is exactly per-current Taylor sum.
+  exact Finset.sum_congr rfl (fun n _ =>
+    Config.sum_spinA_prod_taylor_pow_hasSources G Λ β J
+      (n.toCurrent G Λ) A)
+
 end Ambient
 
 end IsingModel
