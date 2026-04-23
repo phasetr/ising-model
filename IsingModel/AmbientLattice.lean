@@ -4240,6 +4240,88 @@ theorem truncated2Infinite_tendsto_cofinite_zero_of_summable
       Filter.cofinite (nhds 0) :=
   hsum.tendsto_cofinite_zero
 
+/-! ## §5.1 cluster property: definition + sufficient condition + trivial slices
+
+Bundled formalization of the Glimm–Jaffe §5.1 cluster property
+for ferromagnets. The cluster property states that the truncated
+2-point function $U_2(i, j) = \langle\sigma_i\sigma_j\rangle -
+\langle\sigma_i\rangle\langle\sigma_j\rangle$ decays to $0$ as the
+second site moves away to infinity.
+
+Captured here: the formal predicate, a summable sufficient
+condition consolidating
+`truncated2Infinite_tendsto_cofinite_zero_of_summable`, and the
+two trivial slices ($J = 0$ ferromagnetic, $\beta = 0$). The
+general (non-trivial) case requires the Simon–Lieb inequality
+(FV Prop 9.31) or random-current representation, both
+research-level.
+
+Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §5.1 pp. 76–79. -/
+
+/-- **§5.1 cluster property** for the ∞-volume Ursell 2-point
+function: at every fixed basepoint `i : V`, the function
+`j ↦ truncated2Infinite G Λ p i j` tends to `0` along the
+cofinite filter on `V`. The standard formal statement of the
+Glimm–Jaffe §5.1 cluster property of a ferromagnet. -/
+def clusterProperty
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) : Prop :=
+  ∀ i : V, Filter.Tendsto (fun j : V => truncated2Infinite G Λ p i j)
+    Filter.cofinite (nhds 0)
+
+/-- **Cluster property from per-site summability**: if the
+∞-volume Ursell 2-point function `j ↦ U_2(i, j)` is `Summable`
+for every basepoint `i : V`, then the cluster property holds.
+Per-site application of `truncated2Infinite_tendsto_cofinite_zero_of_summable`. -/
+theorem clusterProperty_of_summable
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ)
+    (hsum : ∀ i : V,
+      Summable (fun j : V => truncated2Infinite G Λ p i j)) :
+    clusterProperty G Λ p :=
+  fun i => truncated2Infinite_tendsto_cofinite_zero_of_summable G Λ p i (hsum i)
+
+/-- **Cluster property at the `J = 0` trivial slice (ferromagnetic)**.
+At zero coupling with `0 ≤ h, 0 < β`, the truncated 2-point function
+vanishes off-diagonally (`truncated2Infinite_J_zero_of_ne`). The
+cofinite filter on `V` eventually avoids the singleton `{i}`, so
+the function is eventually zero, hence trivially `Tendsto`s to `0`. -/
+theorem clusterProperty_J_zero
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (h β : ℝ)
+    (hf : Ferromagnetic (⟨(0 : ℝ), h, β⟩ : IsingParams ℝ)) :
+    clusterProperty G Λ (⟨0, h, β⟩ : IsingParams ℝ) := by
+  intro i
+  refine Filter.Tendsto.congr' ?_ tendsto_const_nhds
+  -- Eventually along cofinite: the function equals the constant 0.
+  rw [Filter.eventuallyEq_iff_exists_mem]
+  refine ⟨{i}ᶜ, ?_, ?_⟩
+  · rw [Filter.mem_cofinite]
+    simp [Set.finite_singleton]
+  · intro j hj
+    simp only [Set.mem_compl_iff, Set.mem_singleton_iff] at hj
+    exact (truncated2Infinite_J_zero_of_ne G Λ h β hf (Ne.symm hj)).symm
+
+/-- **Cluster property at the `β = 0` trivial slice**. At infinite
+temperature, the truncated 2-point function vanishes identically
+(`truncated2Infinite_beta_zero`), so the function is the constant
+zero, which trivially `Tendsto`s to `0`. No ferromagnetic
+hypothesis required. -/
+theorem clusterProperty_beta_zero
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J h : ℝ) :
+    clusterProperty G Λ (⟨J, h, 0⟩ : IsingParams ℝ) := by
+  intro i
+  refine Filter.Tendsto.congr' ?_ tendsto_const_nhds
+  rw [Filter.eventuallyEq_iff_exists_mem]
+  refine ⟨Set.univ, Filter.univ_mem, ?_⟩
+  intro j _
+  exact (truncated2Infinite_beta_zero G Λ J h i j).symm
+
 /-! ## Truncated 3-point correlation + GHS at infinite volume
 
 Lift the finite-volume GHS inequality (`ghs_inequality`,
