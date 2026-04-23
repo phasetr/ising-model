@@ -1234,6 +1234,41 @@ theorem Config.abs_spinEdgeProduct_inducedGraph
   Config.abs_spinEdgeProduct_of_not_isDiag σ _
     ((inducedGraph G Λ).not_isDiag_of_mem_edgeSet e.2)
 
+omit [DecidableEq V] in
+/-- **Source-free spin sum in `spinEdgeProduct` form**:
+`∑_σ ∏_e (spinEdgeProduct σ e)^(n e)
+  = 2^|Λ|` if `n.IsSourceFree`, else `0`. Restatement of
+`Config.sum_prod_spin_pow_degreeAt_isSourceFree` using the named
+\`Config.spinEdgeProduct\`. -/
+theorem Config.sum_prod_spinEdgeProduct_pow_isSourceFree
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) [Decidable (n.IsSourceFree G Λ)] :
+    (∑ σ : ↑Λ → Spin, ∏ e : (inducedGraph G Λ).edgeSet,
+        (Config.spinEdgeProduct σ (e : Sym2 ↑Λ))^(n e))
+      = if n.IsSourceFree G Λ
+        then (2 : ℝ)^(Fintype.card ↑Λ) else 0 :=
+  Config.sum_prod_spin_pow_degreeAt_isSourceFree G Λ n
+
+omit [DecidableEq V] in
+/-- **A-source spin sum in `spinEdgeProduct` form**:
+`∑_σ σ_A · ∏_e (spinEdgeProduct σ e)^(n e)
+  = 2^|Λ|` if `n.HasSources A`, else `0`. Restatement of
+`Config.sum_spinA_prod_spin_pow_hasSources` using the named
+\`Config.spinEdgeProduct\`. -/
+theorem Config.sum_spinA_prod_spinEdgeProduct_pow_hasSources
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) (A : Finset ↑Λ)
+    [Decidable (n.HasSources G Λ A)] :
+    (∑ σ : ↑Λ → Spin,
+      (∏ a ∈ A, ((σ a).toSign : ℝ))
+      * (∏ e : (inducedGraph G Λ).edgeSet,
+          (Config.spinEdgeProduct σ (e : Sym2 ↑Λ))^(n e)))
+      = if n.HasSources G Λ A
+        then (2 : ℝ)^(Fintype.card ↑Λ) else 0 :=
+  Config.sum_spinA_prod_spin_pow_hasSources G Λ n A
+
 end Ambient
 
 end IsingModel
