@@ -2598,6 +2598,31 @@ theorem correlationAlongExhaustion_h_zero
     exact hodd
   · exact correlationAlongExhaustion_of_not_subset G Λ ⟨J, 0, β⟩ hAn
 
+/-- **Z₂ odd-symmetry under `h → -h` for `correlationAlongExhaustion`**:
+at every stage `n`,
+`correlationAlongExhaustion G Λ ⟨J,-h,β⟩ A n = (-1)^|A| · correlationAlongExhaustion G Λ ⟨J,h,β⟩ A n`.
+
+Case split on `A ⊆ Λ.volume n`: the else branch is `0`, and
+`(-1)^|A| · 0 = 0`. Subset branch uses `correlationΛ_neg_h` +
+`liftFinset_card` (preservation of cardinality under the lift).
+
+Generalizes `correlationAlongExhaustion_h_zero` from `h = 0` (where
+both sides are `0` at odd `|A|`) to arbitrary `h`. -/
+theorem correlationAlongExhaustion_neg_h
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J h β : ℝ) (A : Finset V) (n : ℕ) :
+    correlationAlongExhaustion G Λ (⟨J, -h, β⟩ : IsingParams ℝ) A n
+      = (-1) ^ A.card * correlationAlongExhaustion G Λ
+          (⟨J, h, β⟩ : IsingParams ℝ) A n := by
+  by_cases hAn : A ⊆ Λ.volume n
+  · rw [correlationAlongExhaustion_of_subset G Λ (⟨J, -h, β⟩ : IsingParams ℝ) hAn,
+        correlationAlongExhaustion_of_subset G Λ (⟨J, h, β⟩ : IsingParams ℝ) hAn,
+        correlationΛ_neg_h, liftFinset_card hAn]
+  · rw [correlationAlongExhaustion_of_not_subset G Λ (⟨J, -h, β⟩ : IsingParams ℝ) hAn,
+        correlationAlongExhaustion_of_not_subset G Λ (⟨J, h, β⟩ : IsingParams ℝ) hAn]
+    ring
+
 /-- **Z₂ symmetry at `h = 0` for `correlationInfinite`**: vanishes
 for odd-cardinality sets.  Supremum of a constantly-zero sequence. -/
 theorem correlationInfinite_h_zero
