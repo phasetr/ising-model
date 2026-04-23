@@ -362,6 +362,25 @@ theorem CurrentBounded.weightSum_nonneg (G : SimpleGraph V) (Λ : Finset V)
   · simp [h, Current.weight_nonneg G Λ hβJ (n.toCurrent G Λ)]
   · simp [h]
 
+/-- **Spin sum of `toSign` powers**: for any `k : ℕ`,
+`∑ s : Spin, ((s.toSign : ℝ))^k = 2` if `k` is even, else `0`.
+This is the elementary spin-sum identity that drives the
+random-current expansion of `Z` and `⟨σ_A⟩^Λ`: summing over a
+single spin gives `2` (when the cumulative power is even) or `0`
+(when odd). -/
+theorem Spin.sum_toSign_pow_real (k : ℕ) :
+    (∑ s : Spin, ((s.toSign : ℝ))^k) = if Even k then 2 else 0 := by
+  have hu : (Finset.univ : Finset Spin) = {Spin.up, Spin.down} := by decide
+  rw [hu, Finset.sum_pair (by decide : Spin.up ≠ Spin.down)]
+  have hup : ((Spin.up.toSign : ℤ) : ℝ) = 1 := by simp [Spin.toSign]
+  have hdown : ((Spin.down.toSign : ℤ) : ℝ) = -1 := by simp [Spin.toSign]
+  rw [hup, hdown, one_pow]
+  by_cases hk : Even k
+  · rw [if_pos hk, hk.neg_one_pow]; norm_num
+  · rw [if_neg hk]
+    have hodd : Odd k := Nat.not_even_iff_odd.mp hk
+    rw [hodd.neg_one_pow]; norm_num
+
 end Ambient
 
 end IsingModel
