@@ -451,6 +451,49 @@ theorem Config.sum_spinProduct {ι : Type*} [Fintype ι] [DecidableEq ι]
     · rw [if_neg hv]
       exact ⟨0, rfl⟩
 
+/-- **Edge-subset current**: the current that takes value `1` on
+edges in `S` and `0` elsewhere. The basic 0/1 currents that
+form the underlying combinatorial substrate of the random-current
+sum (each finite-support current is a sum of indicator currents
+weighted by edge multiplicities). -/
+def Current.fromEdgeFinset (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (S : Finset (inducedGraph G Λ).edgeSet) : Current G Λ :=
+  fun e => if e ∈ S then 1 else 0
+
+omit [DecidableEq V] in
+/-- **`fromEdgeFinset` of empty set is the zero current**. -/
+@[simp]
+theorem Current.fromEdgeFinset_empty (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ] :
+    Current.fromEdgeFinset G Λ (∅ : Finset (inducedGraph G Λ).edgeSet)
+      = (0 : Current G Λ) := by
+  funext e
+  simp [Current.fromEdgeFinset]
+
+omit [DecidableEq V] in
+/-- **Weight of `fromEdgeFinset S`**: equals `(β J)^(S.card)`
+since each edge in `S` contributes `(β J)^1 / 1! = β J` and each
+edge outside `S` contributes `(β J)^0 / 0! = 1`. -/
+theorem Current.fromEdgeFinset_weight (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (S : Finset (inducedGraph G Λ).edgeSet) (β J : ℝ) :
+    (Current.fromEdgeFinset G Λ S).weight G Λ β J = (β * J)^(S.card) := by
+  unfold Current.weight Current.fromEdgeFinset
+  -- factorials are all 1 (since (if … then 1 else 0).factorial = 1)
+  have h_factorial : ∀ e : (inducedGraph G Λ).edgeSet,
+      ((if e ∈ S then 1 else 0 : ℕ).factorial : ℝ) = 1 := by
+    intro e; by_cases he : e ∈ S <;> simp [he]
+  simp_rw [h_factorial, div_one]
+  -- Reduce (β * J)^(if e ∈ S then 1 else 0) to ite (β * J) 1.
+  have h_pow : ∀ e : (inducedGraph G Λ).edgeSet,
+      (β * J)^(if e ∈ S then 1 else 0 : ℕ) = if e ∈ S then β * J else 1 := by
+    intro e; by_cases he : e ∈ S <;> simp [he]
+  simp_rw [h_pow]
+  -- ∏ e ∈ univ, (if e ∈ S then β J else 1) = (β J)^|S|
+  rw [Finset.prod_ite, Finset.prod_const, Finset.prod_const_one, mul_one,
+    Finset.filter_univ_mem]
+
 end Ambient
 
 end IsingModel
