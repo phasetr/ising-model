@@ -1990,6 +1990,26 @@ theorem CurrentBounded.weightSum_mono (G : SimpleGraph V) (Λ : Finset V)
   · exact Current.weight_nonneg G Λ hβJ n
   · exact le_refl 0
 
+set_option linter.unusedDecidableInType false in
+/-- **Monotone convergence of `CurrentBounded.weightSum`** under
+non-negative coupling and bounded-above hypothesis:
+\(Tendsto (fun N => CurrentBounded.weightSum N A β J) atTop
+  (nhds (⨆ N, CurrentBounded.weightSum N A β J))\).
+Combines `CurrentBounded.weightSum_mono` (#860) with
+`tendsto_atTop_ciSup`. Avoids the explicit `Summable` hypothesis
+of `tendsto_weightSum_atTop_currentWeightSum` (#859). -/
+theorem CurrentBounded.tendsto_weightSum_atTop_iSup
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (A : Finset ↑Λ) {β J : ℝ} (hβJ : 0 ≤ β * J)
+    (hbdd : BddAbove (Set.range (fun N =>
+      CurrentBounded.weightSum G Λ N A β J))) :
+    Filter.Tendsto (fun N : ℕ => CurrentBounded.weightSum G Λ N A β J)
+      Filter.atTop
+      (nhds (⨆ N : ℕ, CurrentBounded.weightSum G Λ N A β J)) :=
+  tendsto_atTop_ciSup
+    (fun _ _ h => CurrentBounded.weightSum_mono G Λ A hβJ h) hbdd
+
 end Ambient
 
 end IsingModel
