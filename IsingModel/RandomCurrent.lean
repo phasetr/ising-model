@@ -409,6 +409,48 @@ theorem Config.sum_prod_toSign_pow_real {ι : Type*} [Fintype ι] [DecidableEq �
     refine Finset.prod_eq_zero (Finset.mem_univ v) ?_
     rw [if_neg hv]
 
+/-- **Sum of `spinProduct A`**: for any Finset `A`,
+`∑ σ : ι → Spin, spinProduct A σ = 2^(Fintype.card ι)` if `A = ∅`,
+else `0`. The basic spin-sum identity feeding into the
+random-current expansion of `Z = ∑_σ exp(-βH)` and
+`⟨σ_A⟩^Λ = (∑_σ σ^A · exp(-βH)) / Z` (FV §3.7). Direct corollary
+of `Config.sum_prod_toSign_pow_real` with the indicator exponent
+`k v := if v ∈ A then 1 else 0`. -/
+theorem Config.sum_spinProduct {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (A : Finset ι) :
+    (∑ σ : ι → Spin, IsingModel.spinProduct A σ)
+      = if A = ∅ then 2^(Fintype.card ι) else 0 := by
+  have hrw : ∀ σ : ι → Spin, IsingModel.spinProduct A σ
+      = ∏ v : ι, ((σ v).toSign : ℝ)^(if v ∈ A then 1 else 0) := by
+    intro σ
+    unfold IsingModel.spinProduct
+    rw [show (A : Finset ι) = (Finset.univ : Finset ι).filter (· ∈ A) by
+      ext v; simp]
+    rw [Finset.prod_filter]
+    refine Finset.prod_congr rfl (fun v _ => ?_)
+    by_cases hv : v ∈ A
+    · simp [hv]
+    · simp [hv]
+  simp_rw [hrw]
+  rw [Config.sum_prod_toSign_pow_real]
+  -- Goal: if (∀ v, Even (if v ∈ A then 1 else 0)) then 2^|ι| else 0 = if A = ∅ then 2^|ι| else 0
+  congr 1
+  refine propext ?_
+  constructor
+  · intro h
+    ext v
+    simp only [Finset.notMem_empty, iff_false]
+    intro hv
+    have := h v
+    rw [if_pos hv] at this
+    exact (Nat.not_even_one this).elim
+  · intro hAempty v
+    by_cases hv : v ∈ A
+    · rw [hAempty] at hv
+      exact absurd hv (Finset.notMem_empty v)
+    · rw [if_neg hv]
+      exact ⟨0, rfl⟩
+
 end Ambient
 
 end IsingModel
