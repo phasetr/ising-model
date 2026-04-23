@@ -404,6 +404,60 @@ lemma edgeBoundary_card_eq_sum_inner_filter
     have : (x, a) = (x', b) := ha.trans hb.symm
     exact ((Prod.mk.injEq _ _ _ _).mp this).1
 
+/-- **Edge boundary cardinality as a closed sum over the outer
+boundary**: companion of `edgeBoundary_card_eq_sum_inner_filter`,
+counting crossing edges by their *outside* endpoint instead of
+their inside endpoint.
+
+The proof rewrites `edgeBoundary G S` as a disjoint `biUnion`
+indexed by the outer-boundary vertex `y`, then chains
+`Finset.card_biUnion` (disjointness across distinct second
+coordinates) with `Finset.card_image_of_injective`
+(`x ↦ (x, y)` is injective in `x` for fixed `y`).
+
+Combined with `edgeBoundary_card_eq_sum_inner_filter` this yields
+the double-counting identity
+`∑ x ∈ ∂_i^v S, |N(x) \ S| = ∑ y ∈ ∂_o^v S, |N(y) ∩ S|`. -/
+lemma edgeBoundary_card_eq_sum_outer_filter
+    [DecidableEq V] [LocallyFinite G] (S : Finset V) :
+    (G.edgeBoundary S).card
+      = ∑ y ∈ G.outerVertexBoundary S,
+          ((G.neighborFinset y).filter (fun x => x ∈ S)).card := by
+  -- Reorganise edgeBoundary as a disjoint biUnion indexed by `y`.
+  have hrewrite :
+      G.edgeBoundary S
+        = (G.outerVertexBoundary S).biUnion fun y =>
+            ((G.neighborFinset y).filter (fun x => x ∈ S)).image
+              (fun x => (x, y)) := by
+    ext ⟨x, y⟩
+    simp only [G.mem_edgeBoundary_iff, Finset.mem_biUnion,
+      Finset.mem_image, Finset.mem_filter, mem_neighborFinset,
+      G.mem_outerVertexBoundary_iff, Prod.mk.injEq]
+    refine ⟨?_, ?_⟩
+    · rintro ⟨hxS, hyS, hadj⟩
+      -- y is in outer boundary via x, and x is a neighbour of y in S.
+      refine ⟨y, ⟨hyS, x, hxS, hadj⟩, x, ⟨G.symm hadj, hxS⟩, rfl, rfl⟩
+    · rintro ⟨y', ⟨_, _⟩, x', ⟨hadj', hx'S⟩, hrx, hry⟩
+      subst hrx
+      subst hry
+      -- y' = y from second `rfl`, hadj' : G.Adj y x via mem_neighborFinset
+      exact ⟨hx'S, by simp_all, G.symm hadj'⟩
+  rw [hrewrite, Finset.card_biUnion]
+  · refine Finset.sum_congr rfl (fun y _ => ?_)
+    refine Finset.card_image_of_injective _ ?_
+    intro x₁ x₂ hx
+    exact ((Prod.mk.injEq _ _ _ _).mp hx).1
+  · intro y _ y' _ hyy'
+    simp only [Function.onFun]
+    rw [Finset.disjoint_left]
+    intro p hp1 hp2
+    rw [Finset.mem_image] at hp1 hp2
+    obtain ⟨a, _, ha⟩ := hp1
+    obtain ⟨b, _, hb⟩ := hp2
+    apply hyy'
+    have : (a, y) = (b, y') := ha.trans hb.symm
+    exact ((Prod.mk.injEq _ _ _ _).mp this).2
+
 end SimpleGraph
 
 namespace IsingModel
