@@ -2505,6 +2505,32 @@ theorem correlationΛ_odd_vanish_h_zero
     correlationΛ G Λ ⟨J, 0, β⟩ A = 0 :=
   IsingModel.correlation_odd_vanish (inducedGraph G Λ) J β A hodd
 
+/-- **Z₂ odd-symmetry for `correlationΛ` under `h → -h`**:
+`correlationΛ G Λ ⟨J, -h, β⟩ A = (-1)^|A| · correlationΛ G Λ ⟨J, h, β⟩ A`.
+Λ-level lift of `IsingModel.correlation_neg_h`. Generalizes
+`correlationΛ_odd_vanish_h_zero` from `h = 0` to arbitrary `h`. -/
+theorem correlationΛ_neg_h
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J h β : ℝ) (A : Finset (↑Λ : Type _)) :
+    correlationΛ G Λ (⟨J, -h, β⟩ : IsingParams ℝ) A
+      = (-1) ^ A.card * correlationΛ G Λ (⟨J, h, β⟩ : IsingParams ℝ) A :=
+  IsingModel.correlation_neg_h (inducedGraph G Λ) J h β A
+
+/-- **Z₂ odd-symmetry for `magnetizationΛ` under `h → -h`**:
+`magnetizationΛ G Λ ⟨J, -h, β⟩ i = -magnetizationΛ G Λ ⟨J, h, β⟩ i`.
+Direct specialization of `correlationΛ_neg_h` at `A = {i}`
+(card 1, `(-1)^1 = -1`). -/
+theorem magnetizationΛ_neg_h
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J h β : ℝ) (i : (↑Λ : Type _)) :
+    magnetizationΛ G Λ (⟨J, -h, β⟩ : IsingParams ℝ) i
+      = -magnetizationΛ G Λ (⟨J, h, β⟩ : IsingParams ℝ) i := by
+  unfold magnetizationΛ
+  rw [correlationΛ_neg_h, Finset.card_singleton, pow_one]
+  ring
+
 /-- **Λ-level correlation closed form at `J = 0`**:
 `correlationΛ G Λ ⟨0, h, β⟩ A = tanh(β·h)^A.card`. Direct lift of
 `IsingModel.correlation_J_zero` through
