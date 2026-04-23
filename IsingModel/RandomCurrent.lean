@@ -108,6 +108,33 @@ theorem Current.parity_eq_degreeAt (G : SimpleGraph V) (Λ : Finset V)
   by_cases hv : v ∈ (e : Sym2 ↑Λ) <;> simp [hv]
 
 omit [DecidableEq V] in
+/-- **Zero `degreeAt`**: the zero current has degree `0` at every
+vertex (each summand vanishes). -/
+@[simp]
+theorem Current.zero_degreeAt (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (v : ↑Λ) :
+    (0 : Current G Λ).degreeAt G Λ v = 0 := by
+  unfold Current.degreeAt
+  simp
+
+omit [DecidableEq V] in
+/-- **Linearity of `degreeAt`**:
+`(n + m).degreeAt v = n.degreeAt v + m.degreeAt v`. Each summand
+splits because `if v ∈ e then n e + m e else 0` distributes
+under `+`. -/
+@[simp]
+theorem Current.add_degreeAt (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n m : Current G Λ) (v : ↑Λ) :
+    (n + m).degreeAt G Λ v = n.degreeAt G Λ v + m.degreeAt G Λ v := by
+  unfold Current.degreeAt
+  rw [← Finset.sum_add_distrib]
+  congr 1
+  ext e
+  by_cases hv : v ∈ (e : Sym2 ↑Λ) <;> simp [hv]
+
+omit [DecidableEq V] in
 /-- **Zero parity**: the zero current has parity `0` at every
 vertex (each summand vanishes). -/
 @[simp]
@@ -676,6 +703,34 @@ theorem Current.mem_fromEdgeFinset_sources_iff
   rw [Current.mem_sources_iff, Current.fromEdgeFinset_parity,
     Finset.sum_boole, Ne, ZMod.natCast_eq_zero_iff,
     ← even_iff_two_dvd, ← Nat.not_even_iff_odd]
+
+omit [DecidableEq V] in
+/-- **`degreeAt` of `fromEdgeFinset`**: equals the cardinality of
+the edges in `S` incident to `v`. The ℕ-valued analogue of
+`mem_fromEdgeFinset_sources_iff` (without the parity reduction). -/
+@[simp]
+theorem Current.fromEdgeFinset_degreeAt (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (S : Finset (inducedGraph G Λ).edgeSet) (v : ↑Λ) :
+    (Current.fromEdgeFinset G Λ S).degreeAt G Λ v
+      = (S.filter
+          (fun e : (inducedGraph G Λ).edgeSet => v ∈ (e : Sym2 ↑Λ))).card := by
+  classical
+  unfold Current.degreeAt Current.fromEdgeFinset
+  -- ∑ e : univ, if v ∈ e then (if e ∈ S then 1 else 0) else 0
+  have hswap : ∀ e : (inducedGraph G Λ).edgeSet,
+      (if v ∈ (e : Sym2 ↑Λ) then (if e ∈ S then (1 : ℕ) else 0) else 0)
+        = if e ∈ S then (if v ∈ (e : Sym2 ↑Λ) then (1 : ℕ) else 0) else 0 := by
+    intro e
+    by_cases he : e ∈ S
+    · by_cases hv : v ∈ (e : Sym2 ↑Λ) <;> simp [he, hv]
+    · by_cases hv : v ∈ (e : Sym2 ↑Λ) <;> simp [he, hv]
+  simp_rw [hswap]
+  rw [← Finset.sum_filter]
+  have huniv : (Finset.univ.filter
+      (fun e : (inducedGraph G Λ).edgeSet => e ∈ S)) = S := by
+    ext e; simp
+  rw [huniv, Finset.sum_boole, Nat.cast_id]
 
 end Ambient
 
