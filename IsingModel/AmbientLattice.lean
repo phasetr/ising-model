@@ -2,6 +2,7 @@ import IsingModel.InfiniteVolume
 import IsingModel.FreeEnergy
 import IsingModel.Inequalities.GHS
 import IsingModel.Conditioning
+import IsingModel.PhaseTransition
 
 /-!
 # Genuine infinite-volume framework: ambient lattice
@@ -351,6 +352,34 @@ theorem magnetizationΛ_nonneg (G : SimpleGraph V) (Λ : Finset V)
     (hf : Ferromagnetic p) (i : ↑Λ) :
     0 ≤ magnetizationΛ G Λ p i :=
   correlationΛ_nonneg G Λ p hf {i}
+
+/-- The **susceptibility** on a finite volume `Λ` at site `i : ↑Λ`:
+`χ_Λ(i) = Σ_{j : ↑Λ} ⟨σ_i; σ_j⟩ = IsingModel.susceptibility (inducedGraph G Λ) p i`.
+Direct analog of `IsingModel.susceptibility` at the ambient-lattice Λ layer,
+matching the `correlationΛ` / `magnetizationΛ` / `partitionFunctionΛ` pattern.
+
+Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §5.3 pp. 77–80. -/
+noncomputable def susceptibilityΛ (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (p : IsingParams ℝ)
+    (i : ↑Λ) : ℝ :=
+  IsingModel.susceptibility (inducedGraph G Λ) p i
+
+/-- **Unfolding of `susceptibilityΛ`**:
+`susceptibilityΛ G Λ p i = IsingModel.susceptibility (inducedGraph G Λ) p i`,
+by definition. -/
+theorem susceptibilityΛ_apply (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (p : IsingParams ℝ) (i : ↑Λ) :
+    susceptibilityΛ G Λ p i = IsingModel.susceptibility (inducedGraph G Λ) p i :=
+  rfl
+
+/-- **`susceptibilityΛ ≥ 0`** for ferromagnetic `p` at any site `i : ↑Λ`.
+Direct lift of `IsingModel.susceptibility_nonneg` through
+`susceptibilityΛ := IsingModel.susceptibility (inducedGraph G Λ)`. -/
+theorem susceptibilityΛ_nonneg (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (p : IsingParams ℝ)
+    (hf : Ferromagnetic p) (i : ↑Λ) :
+    0 ≤ susceptibilityΛ G Λ p i :=
+  IsingModel.susceptibility_nonneg (inducedGraph G Λ) p hf i
 
 
 /-! ## Thermodynamic limit along exhaustions
@@ -2585,6 +2614,41 @@ theorem abs_magnetizationΛ_eq_magnetizationΛ_abs_h
         0 ≤ -magnetizationΛ G Λ (⟨J, h, β⟩ : IsingParams ℝ) i := by
       rw [← hneg]; exact habs_nonneg
     linarith
+
+/-- **Λ-level susceptibility under `h → -h`**:
+`χ_Λ(J, -h, β; i) = χ_Λ(J, h, β; i) - 2·M_Λ(J, h, β; i)`.
+Direct lift of `IsingModel.susceptibility_neg_h` through
+`susceptibilityΛ := IsingModel.susceptibility (inducedGraph G Λ)` and
+`magnetizationΛ = IsingModel.magnetization (inducedGraph G Λ)`.
+
+Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §5.3 pp. 77–80. -/
+theorem susceptibilityΛ_neg_h
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J h β : ℝ) (i : (↑Λ : Type _)) :
+    susceptibilityΛ G Λ (⟨J, -h, β⟩ : IsingParams ℝ) i
+      = susceptibilityΛ G Λ (⟨J, h, β⟩ : IsingParams ℝ) i
+          - 2 * magnetizationΛ G Λ (⟨J, h, β⟩ : IsingParams ℝ) i :=
+  IsingModel.susceptibility_neg_h (inducedGraph G Λ) J h β i
+
+/-- **Λ-level susceptibility closed form at `|h|`** (A-4, capstone):
+`χ_Λ(J, |h|, β; i) = χ_Λ(J, h, β; i) + M_Λ(J, |h|, β; i) - M_Λ(J, h, β; i)`,
+unconditionally (no ferromagnetic hypothesis required).
+
+Direct lift of `IsingModel.susceptibility_eq_abs_h` (PR #771) through
+`susceptibilityΛ := IsingModel.susceptibility (inducedGraph G Λ)` and
+`magnetizationΛ = IsingModel.magnetization (inducedGraph G Λ)`.
+
+Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §5.3 pp. 77–80. -/
+theorem susceptibilityΛ_eq_abs_h
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J h β : ℝ) (i : (↑Λ : Type _)) :
+    susceptibilityΛ G Λ (⟨J, |h|, β⟩ : IsingParams ℝ) i
+      = susceptibilityΛ G Λ (⟨J, h, β⟩ : IsingParams ℝ) i
+          + magnetizationΛ G Λ (⟨J, |h|, β⟩ : IsingParams ℝ) i
+          - magnetizationΛ G Λ (⟨J, h, β⟩ : IsingParams ℝ) i :=
+  IsingModel.susceptibility_eq_abs_h (inducedGraph G Λ) J h β i
 
 /-- **Λ-level correlation closed form at `J = 0`**:
 `correlationΛ G Λ ⟨0, h, β⟩ A = tanh(β·h)^A.card`. Direct lift of

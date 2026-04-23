@@ -10402,6 +10402,26 @@ theorem magnetizationInfinite_latticeGraph_eq_zero_of_exists_stage_not_mem
   magnetizationInfinite_eq_zero_of_exists_stage_not_mem
     (IsingModel.latticeGraph d) Λ J h β hJ hβ hh i hmiss
 
+/-! ## ℤ^d wrapper for §5.3 A-4 `susceptibilityΛ_eq_abs_h` (issue #770) -/
+
+/-- **ℤ^d `χ_Λ(|h|) = χ_Λ(h) + M_Λ(|h|) − M_Λ(h)`** (no ferromagnetic
+hypothesis). Concrete `latticeGraph d` wrapper for PR #776's
+`susceptibilityΛ_eq_abs_h`.
+
+Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §5.3 pp. 77–80. -/
+theorem susceptibilityΛ_latticeGraph_eq_abs_h
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    (J h β : ℝ) (i : ↑Λ) :
+    susceptibilityΛ (IsingModel.latticeGraph d) Λ
+        (⟨J, |h|, β⟩ : IsingParams ℝ) i
+      = susceptibilityΛ (IsingModel.latticeGraph d) Λ
+            (⟨J, h, β⟩ : IsingParams ℝ) i
+          + magnetizationΛ (IsingModel.latticeGraph d) Λ
+            (⟨J, |h|, β⟩ : IsingParams ℝ) i
+          - magnetizationΛ (IsingModel.latticeGraph d) Λ
+            (⟨J, h, β⟩ : IsingParams ℝ) i :=
+  susceptibilityΛ_eq_abs_h (IsingModel.latticeGraph d) Λ J h β i
+
 end Ambient
 
 end IsingModel
