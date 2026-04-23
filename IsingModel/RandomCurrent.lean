@@ -1122,6 +1122,28 @@ theorem Current.weightSum_J_zero (G : SimpleGraph V) (Λ : Finset V)
     Current.zero_sources, Current.zero_weight]
   exact if_congr eq_comm rfl rfl
 
+omit [DecidableEq V] in
+/-- **Weight × edge-product of powers**: for any edge-indexed
+`x : edgeSet → ℝ`,
+`weight β J n · (∏_e (x e)^(n e)) = ∏_e (β * J * x e)^(n e) / (n e)!`.
+The per-current summand identity bridging \`weight\` with the
+per-edge Taylor terms `(β J σ_u σ_w)^k / k!`, preparing the
+random-current expansion of the partition function
+(FV §3.7, eq. (3.45)). -/
+theorem Current.weight_mul_prod_pow (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (β J : ℝ) (n : Current G Λ)
+    (x : (inducedGraph G Λ).edgeSet → ℝ) :
+    n.weight G Λ β J * (∏ e : (inducedGraph G Λ).edgeSet, (x e)^(n e))
+      = ∏ e : (inducedGraph G Λ).edgeSet,
+          (β * J * x e)^(n e) / ((n e).factorial : ℝ) := by
+  unfold Current.weight
+  rw [← Finset.prod_mul_distrib]
+  congr 1
+  ext e
+  rw [mul_pow]
+  ring
+
 end Ambient
 
 end IsingModel
