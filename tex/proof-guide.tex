@@ -1485,6 +1485,72 @@ $M_+ = \lim_{h \downarrow 0} \langle\sigma_i\rangle_h > 0$ for $\beta > \beta_c$
 The concavity $d^2 M/dh^2 \le 0$ for $h \ge 0$ follows from the GHS inequality
 (Cor.~4.3.4), as noted on p.~80 of \cite{glimm-jaffe}.
 
+\subsubsection{$\mathbb{Z}_2$ $h$-symmetry across the tower}
+
+The reflection $h \mapsto -h$ combined with the global spin-flip
+$\sigma \mapsto -\sigma$ is a symmetry of the Ising Hamiltonian. On
+correlations, this yields the capstone identity
+(Glimm--Jaffe~\S5.3, pp.~77--80):
+\begin{theorem}[\texttt{correlation\_neg\_h}, PR~\#754]
+$\langle \sigma^A \rangle_{(J,-h,\beta)}
+ = (-1)^{|A|}\,\langle \sigma^A \rangle_{(J,h,\beta)}$.
+\end{theorem}
+\noindent The proof uses the flip reindexing of numerator and denominator:
+\texttt{hamiltonian\_neg\_h} gives $H_{(J,-h,\beta)}(\sigma)
+= H_{(J,h,\beta)}(\sigma.\mathrm{flip})$, \texttt{spinProduct\_flip}
+gives $\prod_{i\in A}\sigma.\mathrm{flip}(i) = (-1)^{|A|}\prod_{i\in A}\sigma(i)$,
+and \texttt{partitionFunction\_neg\_h} shows $Z(-h) = Z(h)$.
+
+Specializations:
+\begin{itemize}
+\item \texttt{magnetization\_neg\_h}: $M(-h) = -M(h)$ ($|A|=1$).
+\item \texttt{truncated\{2,3,4\}\_neg\_h} (PRs~\#755--\#758): the Ursell
+      coefficients inherit the parity of their total degree. E.g.\
+      \texttt{truncated2\_neg\_h} gives $\langle\sigma_i;\sigma_j\rangle(-h)
+      = \langle\sigma_i;\sigma_j\rangle(h)$ for $i\neq j$ (even total).
+\item \texttt{correlation\_eq\_abs\_h\_of\_even\_card} (PR~\#760): for
+      $|A|$ even, $\langle\sigma^A\rangle_{|h|} = \langle\sigma^A\rangle_{h}$.
+\end{itemize}
+The Ambient $\Lambda$-layer, along-exhaustion, and infinite-volume
+counterparts (even $|A|$ in the $\infty$-volume case, since
+$\sup(-f) \ne -\sup(f)$ for odd $|A|$) appear in PRs~\#762--\#766.
+
+\begin{theorem}[\texttt{susceptibility\_neg\_h}, PR~\#767]
+$\chi(\langle J,-h,\beta\rangle; i) = \chi(\langle J,h,\beta\rangle; i)
+ - 2\,M(\langle J,h,\beta\rangle; i)$.
+\end{theorem}
+\noindent The off-diagonal sum $\sum_{j\neq i}\texttt{truncated2}(i,j)$ is
+invariant by \texttt{truncated2\_neg\_h}; the diagonal term, via the
+Finset collapse $\{i,i\}=\{i\}$, contributes $\texttt{truncated2}(-h,i,i)
+- \texttt{truncated2}(h,i,i) = -2\,M(h)$ by the $|A|=1$ case of
+\texttt{correlation\_neg\_h}.
+
+Under ferromagnetism ($0\le J$, $0<\beta$), the magnetization at $|h|$
+coincides with the absolute value:
+\begin{theorem}[\texttt{abs\_magnetization\_eq\_magnetization\_abs\_h}, PR~\#769]
+$|M(\langle J,h,\beta\rangle;i)| = M(\langle J,|h|,\beta\rangle;i)$
+under $0\le J$, $0<\beta$.
+\end{theorem}
+
+Finally, a closed form for $\chi$ at $|h|$ that does \emph{not} require
+ferromagnetism:
+\begin{theorem}[\texttt{susceptibility\_eq\_abs\_h}, PR~\#771]
+$\chi(\langle J,|h|,\beta\rangle;i)
+ = \chi(\langle J,h,\beta\rangle;i)
+   + M(\langle J,|h|,\beta\rangle;i) - M(\langle J,h,\beta\rangle;i)$.
+\end{theorem}
+\begin{proof}[Proof sketch]
+Case $|h| = h$ ($h\ge 0$): $M(|h|) = M(h)$ so the correction vanishes;
+both sides equal $\chi(h)$. Case $|h| = -h$ ($h\le 0$): by
+\texttt{susceptibility\_neg\_h}, $\chi(-h) = \chi(h) - 2\,M(h)$, and by
+\texttt{magnetization\_neg\_h}, $M(-h) = -M(h)$, so the RHS equals
+$\chi(h) + (-M(h)) - M(h) = \chi(h) - 2\,M(h)$, matching the LHS.
+\end{proof}
+\noindent Under ferromagnetism, combining with
+\texttt{abs\_magnetization\_eq\_magnetization\_abs\_h} gives the
+non-negative closed form
+$\chi(|h|) - \chi(h) = |M(h)| - M(h) = 2\max\{0,-M(h)\}$.
+
 \subsection{Lattice-growth convergence of \S5 quantities}
 
 Named corollaries of \texttt{correlation\_convergent\_subgraph} (PR~\#64):
