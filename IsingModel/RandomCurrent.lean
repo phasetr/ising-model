@@ -1535,6 +1535,65 @@ theorem Current.weight_mul_weight_eq_weight_add_mul_choose
     exact_mod_cast h_nat
   field_simp
 
+/-- **Joint factor**: per-edge binomial product
+\(jointFactor n₁ n₂ := ∏_e \binom{n₁ e + n₂ e}{n₁ e}\). The
+\(σ\)-independent factor in the switching-lemma identity
+`weight n₁ * weight n₂ = weight (n₁+n₂) * jointFactor n₁ n₂`
+(see #843). The structural object underlying Aizenman switching
+(FV §3.7). -/
+noncomputable def Current.jointFactor (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (n₁ n₂ : Current G Λ) : ℝ :=
+  ∏ e : (inducedGraph G Λ).edgeSet,
+    (Nat.choose (n₁ e + n₂ e) (n₁ e) : ℝ)
+
+omit [DecidableEq V] in
+/-- **`jointFactor` is symmetric**: \(jointFactor n₁ n₂ = jointFactor n₂ n₁\).
+Each per-edge factor `Nat.choose (n₁ e + n₂ e) (n₁ e)` equals
+`Nat.choose (n₂ e + n₁ e) (n₂ e)` by `Nat.choose_symm_add`
+(after commuting the sum). -/
+theorem Current.jointFactor_symm (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (n₁ n₂ : Current G Λ) :
+    Current.jointFactor G Λ n₁ n₂ = Current.jointFactor G Λ n₂ n₁ := by
+  unfold Current.jointFactor
+  refine Finset.prod_congr rfl (fun e _ => ?_)
+  congr 1
+  rw [Nat.add_comm (n₁ e) (n₂ e)]
+  exact (Nat.choose_symm_add).symm
+
+omit [DecidableEq V] in
+/-- **`jointFactor 0 n = 1`**: each per-edge factor
+`Nat.choose (0 + n e) 0 = 1`. -/
+@[simp]
+theorem Current.jointFactor_zero_left (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (n : Current G Λ) :
+    Current.jointFactor G Λ 0 n = 1 := by
+  unfold Current.jointFactor
+  refine Finset.prod_eq_one (fun e _ => ?_)
+  change ((Nat.choose ((0 : Current G Λ) e + n e) ((0 : Current G Λ) e) : ℝ)) = 1
+  simp
+
+omit [DecidableEq V] in
+/-- **`jointFactor n 0 = 1`**: by `jointFactor_symm` and `_zero_left`. -/
+@[simp]
+theorem Current.jointFactor_zero_right (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (n : Current G Λ) :
+    Current.jointFactor G Λ n 0 = 1 := by
+  rw [Current.jointFactor_symm, Current.jointFactor_zero_left]
+
+omit [DecidableEq V] in
+/-- **`jointFactor` is strictly positive**: every per-edge
+`Nat.choose (n₁ e + n₂ e) (n₁ e)` is `> 0` (by `Nat.choose_pos`
+since `n₁ e ≤ n₁ e + n₂ e`). -/
+theorem Current.jointFactor_pos (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (n₁ n₂ : Current G Λ) :
+    0 < Current.jointFactor G Λ n₁ n₂ := by
+  unfold Current.jointFactor
+  refine Finset.prod_pos (fun e _ => ?_)
+  exact_mod_cast Nat.choose_pos (Nat.le_add_right _ _)
+
 end Ambient
 
 end IsingModel
