@@ -1969,6 +1969,27 @@ theorem CurrentBounded.tendsto_weightSum_atTop_currentWeightSum
   unfold Current.weightSum
   exact Summable.tendsto_sum_boundedFinset G Λ hf
 
+set_option linter.unusedDecidableInType false in
+/-- **`CurrentBounded.weightSum` is monotone in `N`** under
+non-negative coupling: \(N_1 ≤ N_2 →
+CurrentBounded.weightSum N_1 A β J ≤ CurrentBounded.weightSum N_2 A β J\).
+A larger bound includes more (non-negative) summands. Combines
+`weightSum_eq_sum_boundedFinset` with `boundedFinset_mono` and
+`Finset.sum_le_sum_of_subset_of_nonneg`. -/
+theorem CurrentBounded.weightSum_mono (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (A : Finset ↑Λ) {β J : ℝ} (hβJ : 0 ≤ β * J)
+    {N₁ N₂ : ℕ} (h : N₁ ≤ N₂) :
+    CurrentBounded.weightSum G Λ N₁ A β J
+      ≤ CurrentBounded.weightSum G Λ N₂ A β J := by
+  rw [CurrentBounded.weightSum_eq_sum_boundedFinset,
+    CurrentBounded.weightSum_eq_sum_boundedFinset]
+  refine Finset.sum_le_sum_of_subset_of_nonneg
+    (Current.boundedFinset_mono G Λ h) (fun n _ _ => ?_)
+  split_ifs
+  · exact Current.weight_nonneg G Λ hβJ n
+  · exact le_refl 0
+
 end Ambient
 
 end IsingModel
