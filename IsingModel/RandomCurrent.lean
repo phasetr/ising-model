@@ -599,6 +599,26 @@ theorem Current.fromEdgeFinset_parity
   ext e
   simp
 
+omit [DecidableEq V] in
+/-- **Source characterisation for `fromEdgeFinset`**: a vertex `v`
+is a source of `fromEdgeFinset G Λ S` iff an odd number of edges
+in `S` are incident to `v`. The standard combinatorial source
+characterisation (FV §3.7), feeding the source-set
+manipulations in the random-current expansion of `⟨σ_A⟩^Λ` and
+the Aizenman switching lemma. -/
+@[simp]
+theorem Current.mem_fromEdgeFinset_sources_iff
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (S : Finset (inducedGraph G Λ).edgeSet) (v : ↑Λ) :
+    v ∈ (Current.fromEdgeFinset G Λ S).sources G Λ
+      ↔ Odd (S.filter
+          (fun e : (inducedGraph G Λ).edgeSet => v ∈ (e : Sym2 ↑Λ))).card := by
+  classical
+  rw [Current.mem_sources_iff, Current.fromEdgeFinset_parity,
+    Finset.sum_boole, Ne, ZMod.natCast_eq_zero_iff,
+    ← even_iff_two_dvd, ← Nat.not_even_iff_odd]
+
 end Ambient
 
 end IsingModel
