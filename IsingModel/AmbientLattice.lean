@@ -2821,6 +2821,86 @@ theorem abs_magnetizationInfinite_le_magnetizationInfinite_abs_h
       _ = a n := habs n
       _ ≤ ⨆ n, a n := le_ciSup ha_bdd n
 
+/-- **`magnetizationInfinite ≤ 0` at `h ≤ 0` under ferromagnetism**:
+for `0 ≤ J`, `0 < β`, `h ≤ 0`, any exhaustion `Λ`, and any ambient
+site `i`, `magnetizationInfinite G Λ ⟨J, h, β⟩ i ≤ 0`.
+
+Sign-control companion to `magnetizationInfinite_nonneg` (which covers
+the `h ≥ 0` side under ferromagnetism). Proof: rewrite `M_∞` as
+`⨆ n, M_along n`, then show each stage value is `≤ 0`:
+
+- covered stages (`i ∈ Λ.volume n`): `magnetizationAlongExhaustion_neg_h`
+  rewrites `M_along ⟨J, h, β⟩ = -M_along ⟨J, -h, β⟩`, and
+  `magnetizationAlongExhaustion_nonneg` at `⟨J, -h, β⟩` (ferromagnetic,
+  since `0 ≤ -h`) gives `0 ≤ M_along ⟨J, -h, β⟩`, hence
+  `M_along ⟨J, h, β⟩ ≤ 0`;
+- uncovered stages (`i ∉ Λ.volume n`): `M_along = 0 ≤ 0`.
+
+Close with `ciSup_le`.
+
+Reference: Glimm–Jaffe §5.3 pp. 77–80 (background). Part of the §5.3
+Z₂ h-symmetry series tracked in issue #770. -/
+theorem magnetizationInfinite_nonpos_of_nonpos_h
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J h β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (hh : h ≤ 0) (i : V) :
+    magnetizationInfinite G Λ (⟨J, h, β⟩ : IsingParams ℝ) i ≤ 0 := by
+  rw [magnetizationInfinite_eq_ciSup]
+  apply ciSup_le
+  intro n
+  by_cases hi : i ∈ Λ.volume n
+  · have hneg :
+        magnetizationAlongExhaustion G Λ (⟨J, h, β⟩ : IsingParams ℝ) i n
+          = -magnetizationAlongExhaustion G Λ (⟨J, -h, β⟩ : IsingParams ℝ) i n := by
+      have := magnetizationAlongExhaustion_neg_h G Λ J (-h) β i n
+      simpa using this
+    rw [hneg]
+    have hnonneg :
+        0 ≤ magnetizationAlongExhaustion G Λ (⟨J, -h, β⟩ : IsingParams ℝ) i n :=
+      magnetizationAlongExhaustion_nonneg G Λ _
+        ⟨hJ, by linarith, hβ⟩ i n
+    linarith
+  · rw [magnetizationAlongExhaustion_of_not_mem G Λ _ hi]
+
+/-- **`magnetizationInfinite = 0` at `h ≤ 0` when some stage misses `i`**:
+under ferromagnetism at `|h|` (`0 ≤ J`, `0 < β`) and `h ≤ 0`, if there
+exists a stage `n₀` with `i ∉ Λ.volume n₀`, then
+`magnetizationInfinite G Λ ⟨J, h, β⟩ i = 0`.
+
+Concretizes the obstruction noted in
+`abs_magnetizationInfinite_le_magnetizationInfinite_abs_h`: at `h ≤ 0`,
+missed stages contribute the forced value `0` and dominate the sup.
+
+Proof: `magnetizationInfinite_nonpos_of_nonpos_h` gives the `≤ 0`
+direction; for `0 ≤ M_∞`, the missed stage has
+`M_along n₀ = 0 ≤ M_∞` via
+`magnetizationAlongExhaustion_le_magnetizationInfinite`. Close with
+`le_antisymm`.
+
+Reference: Glimm–Jaffe §5.3 pp. 77–80 (background). Part of the §5.3
+Z₂ h-symmetry series tracked in issue #770. -/
+theorem magnetizationInfinite_eq_zero_of_exists_stage_not_mem
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J h β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (hh : h ≤ 0) (i : V)
+    (hmiss : ∃ n, i ∉ Λ.volume n) :
+    magnetizationInfinite G Λ (⟨J, h, β⟩ : IsingParams ℝ) i = 0 := by
+  obtain ⟨n₀, hn₀⟩ := hmiss
+  have hupper :
+      magnetizationInfinite G Λ (⟨J, h, β⟩ : IsingParams ℝ) i ≤ 0 :=
+    magnetizationInfinite_nonpos_of_nonpos_h G Λ J h β hJ hβ hh i
+  have hlower :
+      0 ≤ magnetizationInfinite G Λ (⟨J, h, β⟩ : IsingParams ℝ) i := by
+    have hzero :
+        magnetizationAlongExhaustion G Λ (⟨J, h, β⟩ : IsingParams ℝ) i n₀ = 0 :=
+      magnetizationAlongExhaustion_of_not_mem G Λ _ hn₀
+    have :
+        magnetizationAlongExhaustion G Λ (⟨J, h, β⟩ : IsingParams ℝ) i n₀
+          ≤ magnetizationInfinite G Λ (⟨J, h, β⟩ : IsingParams ℝ) i :=
+      magnetizationAlongExhaustion_le_magnetizationInfinite G Λ _ i n₀
+    linarith
+  linarith
+
 /-- **Z₂ symmetry at `h = 0` for `correlationInfinite`**: vanishes
 for odd-cardinality sets.  Supremum of a constantly-zero sequence. -/
 theorem correlationInfinite_h_zero
