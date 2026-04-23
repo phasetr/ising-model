@@ -1646,6 +1646,18 @@ theorem Current.add_isSourceFree_iff (G : SimpleGraph V) (Λ : Finset V)
   unfold Current.IsSourceFree
   rw [Current.add_sources_eq, ← Finset.bot_eq_empty, symmDiff_eq_bot]
 
+omit [DecidableEq V] in
+/-- **Self-add is always source-free**: \(n + n\) is source-free
+because each parity contribution is doubled (hence even), or
+equivalently \(n.sources \triangle n.sources = ∅\). Direct
+corollary of `add_isSourceFree_iff`. -/
+@[simp]
+theorem Current.self_add_isSourceFree (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) :
+    (n + n).IsSourceFree G Λ :=
+  (Current.add_isSourceFree_iff G Λ n n).mpr rfl
+
 end Ambient
 
 end IsingModel
