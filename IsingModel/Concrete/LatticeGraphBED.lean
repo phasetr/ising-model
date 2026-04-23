@@ -182,6 +182,85 @@ theorem latticeGraph_degree_le (d : ℕ) (v : Fin d → ℤ) :
     _ ≤ (latticeNeighborEnum d v).card := Finset.card_le_card hsubset
     _ ≤ 2 * d := latticeNeighborEnum_card_le d v
 
+/-! ## Outer vertex boundary of a Finset in a locally finite graph
+
+Generic API for the outer vertex boundary
+`∂_o^v S = (⋃_{x ∈ S} N_G(x)) \ S` of a finite Finset `S` in any
+locally finite simple graph, plus the `latticeGraph d` wrapper
+`|∂_o^v S| ≤ 2d · |S|` from the per-vertex degree bound. -/
+
+/-- **Outer vertex boundary** of a finite Finset `S` in a locally
+finite simple graph: vertices not in `S` that have a neighbour in
+`S`. Formally `S.biUnion G.neighborFinset \ S`. The relevant index
+set for the Simon–Lieb inequality (FV Prop 9.31). -/
+def outerVertexBoundary {V : Type*} (G : SimpleGraph V)
+    [DecidableEq V] [SimpleGraph.LocallyFinite G]
+    (S : Finset V) : Finset V :=
+  S.biUnion (fun v => G.neighborFinset v) \ S
+
+/-- **Membership in `outerVertexBoundary G S`**: `y` is in the
+outer vertex boundary iff `y` is outside `S` and has at least one
+neighbour inside `S`. -/
+lemma mem_outerVertexBoundary_iff {V : Type*} (G : SimpleGraph V)
+    [DecidableEq V] [SimpleGraph.LocallyFinite G]
+    (S : Finset V) (y : V) :
+    y ∈ outerVertexBoundary G S
+      ↔ y ∉ S ∧ ∃ x ∈ S, G.Adj x y := by
+  simp only [outerVertexBoundary, Finset.mem_sdiff, Finset.mem_biUnion,
+    SimpleGraph.mem_neighborFinset, and_comm]
+
+/-- **Disjointness**: `outerVertexBoundary G S` is disjoint from
+`S`. Immediate from the membership characterisation, since every
+boundary point lies outside `S`. -/
+lemma outerVertexBoundary_disjoint {V : Type*} (G : SimpleGraph V)
+    [DecidableEq V] [SimpleGraph.LocallyFinite G]
+    (S : Finset V) :
+    Disjoint (outerVertexBoundary G S) S := by
+  rw [Finset.disjoint_left]
+  intro y hy hyS
+  exact ((mem_outerVertexBoundary_iff G S y).mp hy).1 hyS
+
+/-- **Empty boundary of empty set**: the outer vertex boundary of
+`∅` is `∅`. The `biUnion` over an empty Finset is empty, hence
+the set difference is empty. -/
+lemma outerVertexBoundary_empty {V : Type*} (G : SimpleGraph V)
+    [DecidableEq V] [SimpleGraph.LocallyFinite G] :
+    outerVertexBoundary G (∅ : Finset V) = ∅ := by
+  simp [outerVertexBoundary]
+
+/-- **Cardinality bound by sum of degrees**:
+`|∂_o^v S| ≤ ∑_{x ∈ S} deg_G(x)`. The boundary is a subset of
+`S.biUnion G.neighborFinset` whose cardinality is bounded by the
+sum of `|N_G(x)|` (`Finset.card_biUnion_le`); each
+`|N_G(x)| = deg_G(x)` by `card_neighborFinset_eq_degree`. -/
+lemma outerVertexBoundary_card_le_sum_degrees {V : Type*}
+    (G : SimpleGraph V) [DecidableEq V] [SimpleGraph.LocallyFinite G]
+    (S : Finset V) :
+    (outerVertexBoundary G S).card ≤ ∑ x ∈ S, G.degree x := by
+  have hsubset : outerVertexBoundary G S
+      ⊆ S.biUnion (fun v => G.neighborFinset v) :=
+    Finset.sdiff_subset
+  refine (Finset.card_le_card hsubset).trans ?_
+  refine (Finset.card_biUnion_le).trans ?_
+  exact Finset.sum_le_sum (fun x _ =>
+    (SimpleGraph.card_neighborFinset_eq_degree _ _).le)
+
+/-- **ℤ^d boundary cardinality bound**: on `latticeGraph d`,
+`|∂_o^v S| ≤ 2 * d * |S|`. Combines
+`outerVertexBoundary_card_le_sum_degrees` with the per-vertex
+degree bound `latticeGraph_degree_le`. -/
+theorem latticeGraph_outerVertexBoundary_card_le
+    (d : ℕ) (S : Finset (Fin d → ℤ)) :
+    (outerVertexBoundary (IsingModel.latticeGraph d) S).card
+      ≤ 2 * d * S.card := by
+  refine (outerVertexBoundary_card_le_sum_degrees
+    (IsingModel.latticeGraph d) S).trans ?_
+  calc (∑ x ∈ S, (IsingModel.latticeGraph d).degree x)
+      ≤ ∑ _x ∈ S, 2 * d :=
+        Finset.sum_le_sum (fun x _ => latticeGraph_degree_le d x)
+    _ = 2 * d * S.card := by
+        rw [Finset.sum_const, smul_eq_mul, mul_comm]
+
 /-- Decidable-Adj instance for the induced lattice graph.
 
 Provided explicitly because the generic `instDecidableRel_induce_adj`
