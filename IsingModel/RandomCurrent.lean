@@ -1594,6 +1594,19 @@ theorem Current.jointFactor_pos (G : SimpleGraph V) (Λ : Finset V)
   refine Finset.prod_pos (fun e _ => ?_)
   exact_mod_cast Nat.choose_pos (Nat.le_add_right _ _)
 
+omit [DecidableEq V] in
+/-- **Joint weight = sum-weight × `jointFactor`**: clean alias of
+`Current.weight_mul_weight_eq_weight_add_mul_choose` (#843)
+using the named `Current.jointFactor` (#844). The Aizenman
+switching key identity in its final form (FV §3.7). -/
+theorem Current.weight_mul_weight_eq_weight_add_mul_jointFactor
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (β J : ℝ) (n₁ n₂ : Current G Λ) :
+    n₁.weight G Λ β J * n₂.weight G Λ β J
+      = (n₁ + n₂).weight G Λ β J * Current.jointFactor G Λ n₁ n₂ :=
+  Current.weight_mul_weight_eq_weight_add_mul_choose G Λ β J n₁ n₂
+
 end Ambient
 
 end IsingModel
