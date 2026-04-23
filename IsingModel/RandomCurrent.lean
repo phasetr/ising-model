@@ -732,6 +732,46 @@ theorem Current.fromEdgeFinset_degreeAt (G : SimpleGraph V) (Λ : Finset V)
     ext e; simp
   rw [huniv, Finset.sum_boole, Nat.cast_id]
 
+omit [DecidableEq V] in
+/-- **Edge → vertex sum identity (smul form)**: for any
+`f : ↑Λ → M` (`M` an `AddCommMonoid`),
+`∑_v degreeAt n v • f v = ∑_e n e • (e.toFinset.sum f)`. The
+additive form of the central combinatorial step in the
+random-current expansion of the Ising partition function
+(FV §3.7); converts a vertex-side count weighted by edge
+multiplicities into an edge-side count weighted by per-vertex
+sums. -/
+theorem Current.sum_degreeAt_smul {M : Type*} [AddCommMonoid M]
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) (f : ↑Λ → M) :
+    ∑ v ∈ (Finset.univ : Finset ↑Λ), n.degreeAt G Λ v • f v
+      = ∑ e : (inducedGraph G Λ).edgeSet,
+          n e • ((e : Sym2 ↑Λ).toFinset.sum f) := by
+  classical
+  -- LHS: expand degreeAt and pull smul through the sum
+  simp only [Current.degreeAt, Finset.sum_smul]
+  -- ∑ v, ∑ e, (if v ∈ e then n e else 0) • f v
+  --   = ∑ v, ∑ e, if v ∈ e then n e • f v else 0   [push smul through if]
+  have hpush : ∀ (v : ↑Λ) (e : (inducedGraph G Λ).edgeSet),
+      (if v ∈ (e : Sym2 ↑Λ) then n e else 0) • f v
+        = if v ∈ (e : Sym2 ↑Λ) then n e • f v else 0 := by
+    intro v e
+    by_cases hv : v ∈ (e : Sym2 ↑Λ) <;> simp [hv]
+  simp_rw [hpush]
+  -- swap summation order
+  rw [Finset.sum_comm]
+  -- ∑ e, ∑ v, if v ∈ e then n e • f v else 0
+  --   = ∑ e, n e • ∑ v ∈ univ.filter (· ∈ e), f v
+  --   = ∑ e, n e • e.toFinset.sum f
+  congr 1
+  ext e
+  rw [← Finset.sum_filter, Finset.smul_sum]
+  -- ∑ v ∈ univ.filter (· ∈ e), n e • f v = n e • ∑ v ∈ e.toFinset, f v
+  congr 1
+  ext v
+  simp
+
 end Ambient
 
 end IsingModel
