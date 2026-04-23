@@ -10503,6 +10503,50 @@ theorem truncated2Infinite_latticeGraph_tendsto_cofinite_zero_of_summable
   truncated2Infinite_tendsto_cofinite_zero_of_summable
     (IsingModel.latticeGraph d) Λ p i hsum
 
+/-! ## ℤ^d distance-based cluster decay capstone
+
+Combines PR #779's cofinite cluster decay with PR #782's proper-map
+property of `latticeDistance` (via the filter equality
+`comap_latticeDistance_atTop_eq_cofinite` from PR #783) to express
+the §5.1 cluster decay statement in its standard distance-based
+form. -/
+
+/-- **ℤ^d distance-based conditional cluster decay**: under
+summability of `j ↦ U_2(i, j)` at a fixed basepoint
+`i : Fin d → ℤ`, the ∞-volume Ursell 2-point function tends to `0`
+as the lattice distance `latticeDistance d i j` tends to infinity.
+
+Equivalent ε-N statement: for every `ε > 0` there exists `N : ℕ`
+such that `latticeDistance d i j ≥ N` implies
+`|truncated2Infinite (latticeGraph d) Λ p i j| < ε`.
+
+A `Summable`-conditioned corollary, not a standalone Glimm–Jaffe
+result: it presents the §5.1 cluster picture in its distance-based
+form, with the `Summable` hypothesis serving as a placeholder for
+the unconditional summability that the Simon–Lieb inequality
+(Friedli–Velenik Prop 9.31) is expected to provide in subsequent
+PRs. Capstone of the §5.1 cluster-decay infrastructure stack
+(PR #779 + PR #781 + PR #782). The proof is a one-line rewrite of
+the comap filter via `comap_latticeDistance_atTop_eq_cofinite`,
+followed by PR #779's cofinite version.
+
+References: Glimm–Jaffe *Quantum Physics* 2nd ed., §5.1
+pp. 76–79; Friedli–Velenik *Statistical Mechanics of Lattice
+Systems*, Prop 9.31 (Simon–Lieb inequality). -/
+theorem truncated2Infinite_latticeGraph_tendsto_atTop_zero_of_summable
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (i : Fin d → ℤ)
+    (hsum : Summable (fun j : Fin d → ℤ =>
+      truncated2Infinite (IsingModel.latticeGraph d) Λ p i j)) :
+    Filter.Tendsto
+      (fun j : Fin d → ℤ =>
+        truncated2Infinite (IsingModel.latticeGraph d) Λ p i j)
+      (Filter.comap (fun j : Fin d → ℤ =>
+        IsingModel.latticeDistance d i j) Filter.atTop) (nhds 0) := by
+  rw [IsingModel.comap_latticeDistance_atTop_eq_cofinite]
+  exact truncated2Infinite_latticeGraph_tendsto_cofinite_zero_of_summable
+    d Λ p i hsum
+
 end Ambient
 
 end IsingModel
