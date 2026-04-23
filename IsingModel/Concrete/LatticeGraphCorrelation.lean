@@ -10586,6 +10586,87 @@ theorem clusterProperty_latticeGraph_beta_zero
       (⟨J, h, 0⟩ : IsingParams ℝ) :=
   clusterProperty_beta_zero (IsingModel.latticeGraph d) Λ J h
 
+/-! ## §17.1 / §17.5 lattice mass / correlation length foundation
+
+Bundled formalisation of GJ §17.1 (mass m(σ) of (17.1.5)) and
+§17.5 (correlation length) on the lattice. Defines the
+exponential-decay predicate `HasExponentialDecay`, proves it at
+the trivial slices `β = 0` and `J = 0` (ferromagnetic), provides
+α-monotonicity sanity, and links to the cluster-property
+predicate of PR #792.
+
+The general non-trivial-slice exponential decay rate (positive
+mass for `β < β_c`) requires the Simon–Lieb inequality or
+random-current representation, both research-level (Issue #780).
+
+References:
+* Glimm–Jaffe *Quantum Physics* 2nd ed., §17.1 pp. 304–306.
+* Friedli–Velenik, §6 (cluster property), Prop 9.31 (Simon–Lieb). -/
+
+/-- **Exponential decay of the ∞-volume Ursell 2-point function**:
+on `latticeGraph d`, there exists a constant `C ≥ 0` such that
+for every basepoint pair `(i, j)` with `i ≠ j`, the truncated
+2-point function is bounded above (in absolute value) by
+`C · exp(-α · latticeDistance d i j)`. The decay rate parameter
+`α` plays the role of the inverse correlation length / mass
+(see GJ §17.1 (17.1.5)). -/
+def HasExponentialDecay
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (α : ℝ) : Prop :=
+  ∃ C : ℝ, 0 ≤ C ∧ ∀ i j : Fin d → ℤ, i ≠ j →
+    |truncated2Infinite (IsingModel.latticeGraph d) Λ p i j|
+      ≤ C * Real.exp (-α * (IsingModel.latticeDistance d i j : ℝ))
+
+/-- **Trivial slice at `β = 0`**: at infinite temperature, the
+∞-volume Ursell 2-point function vanishes identically, so the
+exponential decay predicate holds for any rate `α` with witness
+`C = 0`. No ferromagnetic hypothesis required. -/
+theorem HasExponentialDecay_beta_zero
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J h α : ℝ) :
+    HasExponentialDecay d Λ (⟨J, h, 0⟩ : IsingParams ℝ) α := by
+  refine ⟨0, le_refl _, fun i j _ => ?_⟩
+  rw [truncated2Infinite_beta_zero (IsingModel.latticeGraph d) Λ J h i j,
+    abs_zero, zero_mul]
+
+/-- **Trivial slice at `J = 0` (ferromagnetic)**: at zero coupling
+with `0 ≤ h, 0 < β`, the ∞-volume Ursell 2-point function
+vanishes off-diagonally (`truncated2Infinite_J_zero_of_ne`); the
+predicate's `i ≠ j` restriction matches, so `C = 0` witnesses
+the bound for any rate `α`. -/
+theorem HasExponentialDecay_J_zero
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (h β α : ℝ)
+    (hf : Ferromagnetic (⟨(0 : ℝ), h, β⟩ : IsingParams ℝ)) :
+    HasExponentialDecay d Λ (⟨0, h, β⟩ : IsingParams ℝ) α := by
+  refine ⟨0, le_refl _, fun i j hij => ?_⟩
+  rw [truncated2Infinite_J_zero_of_ne (IsingModel.latticeGraph d) Λ h β hf hij,
+    abs_zero, zero_mul]
+
+/-- **α-monotonicity**: if `α' ≤ α` and the predicate holds at
+rate `α`, then it holds at rate `α'` with the same constant.
+Decreasing the decay rate weakens the bound (`exp(-α' · dist) ≥
+exp(-α · dist)` since `dist ≥ 0`). -/
+theorem HasExponentialDecay_mono
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) {α α' : ℝ} (hαα' : α' ≤ α)
+    (h : HasExponentialDecay d Λ p α) :
+    HasExponentialDecay d Λ p α' := by
+  obtain ⟨C, hC, hbound⟩ := h
+  refine ⟨C, hC, fun i j hij => ?_⟩
+  refine (hbound i j hij).trans ?_
+  have hdist : (0 : ℝ) ≤ (IsingModel.latticeDistance d i j : ℝ) :=
+    Nat.cast_nonneg _
+  have hexp : Real.exp (-α * (IsingModel.latticeDistance d i j : ℝ))
+      ≤ Real.exp (-α' * (IsingModel.latticeDistance d i j : ℝ)) := by
+    apply Real.exp_monotone
+    have : -α * (IsingModel.latticeDistance d i j : ℝ)
+        ≤ -α' * (IsingModel.latticeDistance d i j : ℝ) := by
+      have hneg : -α ≤ -α' := neg_le_neg hαα'
+      exact mul_le_mul_of_nonneg_right hneg hdist
+    exact this
+  exact mul_le_mul_of_nonneg_left hexp hC
+
 end Ambient
 
 end IsingModel
