@@ -371,6 +371,39 @@ lemma edgeBoundary_card_le_sum_degrees_innerVertexBoundary
   refine (Finset.card_filter_le _ _).trans ?_
   exact (card_neighborFinset_eq_degree _ _).le
 
+/-- **Edge boundary cardinality as a closed sum over the inner
+boundary**: strengthens `edgeBoundary_card_le_sum_degrees_innerVertexBoundary`
+to an equality. Two ingredients: (i) the `biUnion` defining
+`edgeBoundary G S` is disjoint across
+`x ∈ innerVertexBoundary G S` (different first coordinates), so
+`Finset.card_biUnion` rewrites `card biUnion` to `∑ card`;
+(ii) for fixed `x`, the embedding `y ↦ (x, y)` is injective, so
+`Finset.card_image_of_injective` makes each summand's image
+cardinality equal to the underlying filter's cardinality.
+Bounding each filter cardinality by `(G.neighborFinset x).card =
+G.degree x` recovers the previous inequality. -/
+lemma edgeBoundary_card_eq_sum_inner_filter
+    [DecidableEq V] [LocallyFinite G] (S : Finset V) :
+    (G.edgeBoundary S).card
+      = ∑ x ∈ G.innerVertexBoundary S,
+          ((G.neighborFinset x).filter (fun y => y ∉ S)).card := by
+  unfold edgeBoundary
+  rw [Finset.card_biUnion]
+  · refine Finset.sum_congr rfl (fun x _ => ?_)
+    refine Finset.card_image_of_injective _ ?_
+    intro y₁ y₂ hy
+    exact (Prod.mk.injEq _ _ _ _).mp hy |>.2
+  · intro x _ x' _ hxx'
+    simp only [Function.onFun]
+    rw [Finset.disjoint_left]
+    intro p hp1 hp2
+    rw [Finset.mem_image] at hp1 hp2
+    obtain ⟨a, _, ha⟩ := hp1
+    obtain ⟨b, _, hb⟩ := hp2
+    apply hxx'
+    have : (x, a) = (x', b) := ha.trans hb.symm
+    exact ((Prod.mk.injEq _ _ _ _).mp this).1
+
 end SimpleGraph
 
 namespace IsingModel
