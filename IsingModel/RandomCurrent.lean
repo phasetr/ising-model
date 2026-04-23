@@ -1874,6 +1874,41 @@ theorem Current.exists_mem_boundedFinset (G : SimpleGraph V) (Λ : Finset V)
   intro e
   exact Finset.le_sup (Finset.mem_univ e)
 
+/-- **`boundedFinset` is cofinal in `Filter.atTop` on
+`Finset (Current G Λ)`**: for every finset `s` of currents,
+eventually `s ⊆ boundedFinset N` (take `N` = max bound across all
+currents in `s` and all edges). Bridges the ℕ-indexed `atTop`
+filter with the unconditional summation filter on `Finset`. -/
+theorem Current.tendsto_boundedFinset_atTop_finsetAtTop
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] :
+    Filter.Tendsto (Current.boundedFinset G Λ)
+      Filter.atTop (Filter.atTop : Filter (Finset (Current G Λ))) := by
+  classical
+  rw [Filter.tendsto_atTop_atTop]
+  intro s
+  refine ⟨s.sup (fun n => Finset.univ.sup n), ?_⟩
+  intro M hM n hn
+  rw [Current.mem_boundedFinset_iff]
+  intro e
+  calc n e ≤ Finset.univ.sup n := Finset.le_sup (Finset.mem_univ e)
+    _ ≤ s.sup (fun n => Finset.univ.sup n) := Finset.le_sup hn
+    _ ≤ M := hM
+
+/-- **Summable partial sums over `boundedFinset` converge to
+`tsum`**: under `Summable f`, the partial sums
+\(∑ n ∈ boundedFinset N, f n → ∑' n, f n\) as `N → ∞`. Composing
+the cofinal sequence (`tendsto_boundedFinset_atTop_finsetAtTop`)
+with `Summable.hasSum`. -/
+theorem Summable.tendsto_sum_boundedFinset
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {α : Type*} [AddCommMonoid α] [TopologicalSpace α]
+    {f : Current G Λ → α} (hf : Summable f) :
+    Filter.Tendsto (fun N : ℕ => ∑ n ∈ Current.boundedFinset G Λ N, f n)
+      Filter.atTop (nhds (∑' n, f n)) :=
+  hf.hasSum.comp (Current.tendsto_boundedFinset_atTop_finsetAtTop G Λ)
+
 end Ambient
 
 end IsingModel
