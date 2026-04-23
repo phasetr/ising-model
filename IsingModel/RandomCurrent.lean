@@ -381,6 +381,34 @@ theorem Spin.sum_toSign_pow_real (k : ℕ) :
     have hodd : Odd k := Nat.not_even_iff_odd.mp hk
     rw [hodd.neg_one_pow]; norm_num
 
+/-- **Multi-vertex spin sum**: for any `k : ι → ℕ` on a Fintype `ι`,
+`∑ σ : ι → Spin, ∏ v : ι, ((σ v).toSign : ℝ)^(k v) = 2^(Fintype.card ι)`
+when every `k v` is even, else `0`. The Fubini-style sum-product
+swap reduces to per-vertex sums (`Spin.sum_toSign_pow_real`); each
+factor is `2` (even exponent) or `0` (odd exponent), so the product
+is `2^|ι|` when all even, else `0`. The central spin-sum step of
+the random-current expansion (FV §3.7). -/
+theorem Config.sum_prod_toSign_pow_real {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (k : ι → ℕ) :
+    (∑ σ : ι → Spin, ∏ v : ι, ((σ v).toSign : ℝ)^(k v))
+      = if ∀ v : ι, Even (k v) then 2^(Fintype.card ι) else 0 := by
+  have hfubini : (∑ σ : ι → Spin, ∏ v : ι, ((σ v).toSign : ℝ)^(k v))
+      = ∏ v : ι, ∑ s : Spin, ((s.toSign : ℝ))^(k v) :=
+    (Fintype.prod_sum (κ := fun _ => Spin)
+      (fun v s => ((s.toSign : ℝ))^(k v))).symm
+  rw [hfubini]
+  simp_rw [Spin.sum_toSign_pow_real]
+  -- Goal: ∏ v, (if Even (k v) then 2 else 0) = if (∀ v, Even (k v)) then 2^|ι| else 0
+  by_cases h : ∀ v : ι, Even (k v)
+  · rw [if_pos h]
+    rw [Finset.prod_congr rfl (fun v _ => if_pos (h v))]
+    simp [Finset.prod_const, Finset.card_univ]
+  · rw [if_neg h]
+    push Not at h
+    obtain ⟨v, hv⟩ := h
+    refine Finset.prod_eq_zero (Finset.mem_univ v) ?_
+    rw [if_neg hv]
+
 end Ambient
 
 end IsingModel
