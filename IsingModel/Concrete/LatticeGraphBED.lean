@@ -283,7 +283,7 @@ lemma innerVertexBoundary_empty [DecidableEq V] [LocallyFinite G] :
     G.innerVertexBoundary (∅ : Finset V) = ∅ := by
   simp [innerVertexBoundary]
 
-/-- **Cheeger-type bound**:
+/-- **Outer-by-inner boundary degree bound**:
 `|∂_o^v S| ≤ ∑_{x ∈ ∂_i^v S} deg_G(x)`. Every outer-boundary
 vertex `y` is reached as a neighbour of some inner-boundary
 vertex `x`: the witness `x ∈ S` of `y ∈ outerVertexBoundary G S`
@@ -291,7 +291,8 @@ has the outside neighbour `y`, so `x ∈ innerVertexBoundary G S`.
 Hence
 `outerVertexBoundary G S ⊆ (innerVertexBoundary G S).biUnion neighborFinset`,
 and `Finset.card_biUnion_le` + `card_neighborFinset_eq_degree`
-finishes. -/
+finishes. The outer boundary is upper-bounded by a sum of degrees
+ranging only over the (typically much smaller) inner boundary. -/
 lemma outerVertexBoundary_card_le_sum_degrees_innerVertexBoundary
     [DecidableEq V] [LocallyFinite G] (S : Finset V) :
     (G.outerVertexBoundary S).card
@@ -335,12 +336,14 @@ theorem latticeGraph_outerVertexBoundary_card_le
     _ = 2 * d * S.card := by
         rw [Finset.sum_const, smul_eq_mul, mul_comm]
 
-/-- **ℤ^d Cheeger-type bound**: on `latticeGraph d`,
-`|∂_o^v S| ≤ 2d · |∂_i^v S|`. Combines the generic
-`SimpleGraph.outerVertexBoundary_card_le_sum_degrees_innerVertexBoundary`
-with the per-vertex degree bound `latticeGraph_degree_le`. The
-standard linear vertex-isoperimetric inequality for the integer
-lattice. -/
+/-- **ℤ^d outer-by-inner boundary linear bound**: on
+`latticeGraph d`, `|∂_o^v S| ≤ 2d · |∂_i^v S|`. Combines the
+generic `SimpleGraph.outerVertexBoundary_card_le_sum_degrees_innerVertexBoundary`
+with the per-vertex degree bound `latticeGraph_degree_le`. Each
+inner-boundary vertex contributes at most `2d` outer-boundary
+neighbours, giving the linear factor; this is the elementary
+max-degree-based bound, not the optimal vertex-isoperimetric
+inequality on `ℤ^d`. -/
 theorem latticeGraph_outerVertexBoundary_card_le_two_mul_d_mul_innerVertexBoundary_card
     (d : ℕ) (S : Finset (Fin d → ℤ)) :
     ((IsingModel.latticeGraph d).outerVertexBoundary S).card

@@ -1964,8 +1964,8 @@ indexing object for the Simon--Lieb statement to plug into
 Simon--Lieb itself.
 
 \paragraph{Inner vertex boundary
-\texttt{SimpleGraph.innerVertexBoundary G S} and Cheeger-type
-bound (PR~\#786).}
+\texttt{SimpleGraph.innerVertexBoundary G S} and outer-by-inner
+degree bound (PR~\#786).}
 The companion of the outer vertex boundary is the inner vertex
 boundary, in mathlib's \texttt{SimpleGraph} namespace:
 \[
@@ -1991,13 +1991,15 @@ $x$ in $\partial^v_i S$ — and then chains
 $\mathrm{Finset.card\_le\_card}$,
 $\mathrm{Finset.card\_biUnion\_le}$, and
 $\mathrm{card\_neighborFinset\_eq\_degree}$. On $\mathbb Z^d$
-this becomes the linear vertex-isoperimetric inequality
+this becomes the elementary max-degree-based linear bound
 $|\partial^v_o S| \le 2 d \cdot |\partial^v_i S|$
 (\texttt{latticeGraph\_outerVertexBoundary\_card\_le\_two\_mul\_d\_mul\_innerVertexBoundary\_card}),
 combining the generic bound with PR~\#784's
-$\mathrm{latticeGraph\_degree\_le}$. As with PR~\#785, this PR is
-preparatory infrastructure: no Simon--Lieb result is established
-here.
+$\mathrm{latticeGraph\_degree\_le}$. (This is not the optimal
+vertex-isoperimetric inequality on $\mathbb Z^d$, just the
+elementary corollary of the per-vertex degree bound.) As with
+PR~\#785, this PR is preparatory infrastructure: no Simon--Lieb
+result is established here.
 
 \subsection{Lattice-growth convergence of \S5 quantities}
 
