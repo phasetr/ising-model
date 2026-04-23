@@ -10777,9 +10777,10 @@ theorem latticeMass_nonneg
 
 /-- **Lattice mass at `β = 0` trivial slice is `⊤`**.
 At infinite temperature, `HasExponentialDecay` holds at every
-rate `α` (by `HasExponentialDecay_beta_zero`), so the supremum
-ranges over the entire image of `((·) : NNReal → ENNReal)`, which is
-`Set.Iio ⊤`; its supremum is `⊤`. -/
+rate `α` (by `HasExponentialDecay_beta_zero`). For any candidate
+upper bound `b ≠ ⊤` of the supremand, pick the witness
+`α := b.toNNReal + 1`; then `(α : ENNReal) = b + 1 > b`, but the
+upper-bound hypothesis would force `(α : ENNReal) ≤ b`. -/
 theorem latticeMass_top_of_beta_zero
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J h : ℝ) :
     latticeMass d Λ (⟨J, h, 0⟩ : IsingParams ℝ) = ⊤ := by
