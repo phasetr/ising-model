@@ -1402,6 +1402,33 @@ theorem Config.sum_spinA_prod_taylor_partialSum_eq_sum_currentBounded
     Config.sum_spinA_prod_taylor_pow_hasSources G Λ β J
       (n.toCurrent G Λ) A)
 
+omit [DecidableEq V] in
+/-- **Bounded random-current expansion via `CurrentBounded.weightSum`**:
+clean reformulation of `sum_spinA_prod_taylor_partialSum_eq_sum_currentBounded`
+collecting the indicator+weight sum into the existing
+`CurrentBounded.weightSum` definition,
+\(∑_σ σ_A · ∏_e ∑_{k ≤ N} (β J σ_e)^k / k!
+  = 2^|Λ| · CurrentBounded.weightSum N A β J\). The finite-`N`
+analogue ready for the `N → ∞` limit step (FV §3.7, eq. (3.45)). -/
+theorem Config.sum_spinA_prod_taylor_partialSum_eq_pow_card_mul_currentBounded_weightSum
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (β J : ℝ) (N : ℕ) (A : Finset ↑Λ) :
+    (∑ σ : ↑Λ → Spin,
+      (∏ a ∈ A, ((σ a).toSign : ℝ))
+      * ∏ e : (inducedGraph G Λ).edgeSet,
+          ∑ k : Fin (N+1),
+            (β * J * Config.spinEdgeProduct σ (e : Sym2 ↑Λ))^(k : ℕ)
+              / (((k : ℕ)).factorial : ℝ))
+      = (2 : ℝ)^(Fintype.card ↑Λ)
+        * CurrentBounded.weightSum G Λ N A β J := by
+  classical
+  rw [Config.sum_spinA_prod_taylor_partialSum_eq_sum_currentBounded G Λ β J N A]
+  unfold CurrentBounded.weightSum Current.HasSources
+  rw [Finset.mul_sum]
+  refine Finset.sum_congr rfl (fun n _ => ?_)
+  split_ifs <;> ring
+
 end Ambient
 
 end IsingModel
