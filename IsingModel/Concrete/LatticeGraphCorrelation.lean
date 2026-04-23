@@ -3376,6 +3376,22 @@ theorem truncated4_neg_h_latticeGraph
   IsingModel.truncated4_neg_h
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h β hij hik hil hjk hjl hkl
 
+/-- **ℤ^d correlation_eq_abs_h_of_even_card direct** at Λ-induced:
+for `|A|` even, `correlation ⟨J, h, β⟩ A = correlation ⟨J, |h|, β⟩ A`.
+Concrete wrapper for `IsingModel.correlation_eq_abs_h_of_even_card`
+(#760). -/
+theorem correlation_eq_abs_h_of_even_card_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J h β : ℝ)
+    (A : Finset (↑Λ : Type _)) (heven : Even A.card) :
+    IsingModel.correlation
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
+        (⟨J, h, β⟩ : IsingParams ℝ) A
+      = IsingModel.correlation
+          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
+          (⟨J, |h|, β⟩ : IsingParams ℝ) A :=
+  IsingModel.correlation_eq_abs_h_of_even_card
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h β A heven
+
 /-- **ℤ^d partitionFunction_eq_abs_h direct** at Λ-induced. -/
 theorem partitionFunction_eq_abs_h_latticeGraph
     (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J h β : ℝ) :
