@@ -144,6 +144,48 @@ theorem latticeGraph_adj_mem_neighborEnum (d : ℕ) (v w : Fin d → ℤ)
     right
     rw [hw_eq, h2]
 
+/-- **`Fintype` instance for the neighbour set of `latticeGraph d`**:
+every vertex `v : Fin d → ℤ` has finitely many neighbours,
+exhibited as the filter of the candidate set
+`latticeNeighborEnum d v` along the adjacency relation. This
+upgrades `IsingModel.latticeGraph d` to a `LocallyFinite` simple
+graph in mathlib's sense (`SimpleGraph.LocallyFinite` is an
+`abbrev` for `∀ v, Fintype (G.neighborSet v)`), unlocking the
+unrestricted `neighborFinset` / `degree` API on the infinite
+vertex set. Until now the project's `Fintype` reasoning all
+happened on the induced subgraph
+`(Ambient.inducedGraph (latticeGraph d) Λ)` for finite
+`Λ : Finset _`. -/
+noncomputable instance latticeGraph_neighborSet_fintype
+    (d : ℕ) (v : Fin d → ℤ) :
+    Fintype ((IsingModel.latticeGraph d).neighborSet v) :=
+  Fintype.ofFinset
+    ((latticeNeighborEnum d v).filter ((IsingModel.latticeGraph d).Adj v))
+    (fun w => by
+      simp only [Finset.mem_filter, SimpleGraph.mem_neighborSet]
+      refine ⟨fun h => h.2, fun hadj => ?_⟩
+      exact ⟨latticeGraph_adj_mem_neighborEnum d v w hadj, hadj⟩)
+
+/-- **Per-vertex degree bound for the unrestricted `latticeGraph d`**:
+every vertex has degree at most `2 * d`. Mirror of the existing
+`inducedLatticeGraph_degree_le` (PR #608) on the ambient graph,
+made statable by the `LocallyFinite` instance above. The proof
+embeds the (now well-defined) `neighborFinset v` into
+`latticeNeighborEnum d v` via `latticeGraph_adj_mem_neighborEnum`
+and chains `Finset.card_le_card` with the existing
+`latticeNeighborEnum_card_le`. -/
+theorem latticeGraph_degree_le (d : ℕ) (v : Fin d → ℤ) :
+    (IsingModel.latticeGraph d).degree v ≤ 2 * d := by
+  have hsubset : (IsingModel.latticeGraph d).neighborFinset v ⊆
+      latticeNeighborEnum d v := by
+    intro w hw
+    rw [SimpleGraph.mem_neighborFinset] at hw
+    exact latticeGraph_adj_mem_neighborEnum d v w hw
+  calc (IsingModel.latticeGraph d).degree v
+      = ((IsingModel.latticeGraph d).neighborFinset v).card := rfl
+    _ ≤ (latticeNeighborEnum d v).card := Finset.card_le_card hsubset
+    _ ≤ 2 * d := latticeNeighborEnum_card_le d v
+
 /-- Decidable-Adj instance for the induced lattice graph.
 
 Provided explicitly because the generic `instDecidableRel_induce_adj`
