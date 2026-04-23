@@ -4212,13 +4212,18 @@ along the cofinite filter:
 
 Direct application of mathlib's `Summable.tendsto_cofinite_zero`.
 
-**Interpretation.** Summability over `V` is a finite-susceptibility /
-non-critical condition (away from the ferromagnetic critical line,
-$\chi_\infty$ is finite and the two-point function is summable). Under
-that condition, `Filter.cofinite` (the filter of cofinite subsets of `V`)
-gives the natural "large-separation" limit: on $V = \mathbb{Z}^d$ it
-coincides with "$|r| \to \infty$". So this is a Conditional cluster
-decay statement in the sense of Glimm–Jaffe §5.1.
+**Interpretation.** The summability hypothesis is a finiteness
+condition on the two-point function summed over the free argument `j`.
+In translation-invariant / connected-correlation settings (e.g. a
+pure phase of a ℤ^d Ising model) this matches the physical notion of
+finite susceptibility `χ_∞ < ∞`, expected to hold away from the
+critical line; in the general ambient setup here it is just the
+real-analysis condition `Summable`. `Filter.cofinite` on `V` is the
+filter of cofinite subsets — eventually avoiding every finite subset
+— which on `V = Fin d → ℤ` (with `d ≥ 1`) aligns with the usual
+"$|r| \to \infty$" interpretation (bounded subsets of the lattice are
+finite). So this is a *conditional* cluster decay statement in the
+spirit of Glimm–Jaffe §5.1.
 
 Unconditional exponential cluster decay in pure phases (Simon–Lieb
 inequality and follow-ups) remains unformalized; this lemma is the

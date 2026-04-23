@@ -1785,14 +1785,20 @@ over $V$, then
 Direct application of mathlib's \texttt{Summable.tendsto\_cofinite\_zero}.
 \end{proof}
 \noindent
-\emph{Interpretation.} The summability hypothesis is a
-finite-susceptibility / non-critical condition. On
-$V = \mathbb{Z}^d$, $\mathrm{Filter.cofinite}$ coincides with the
-``$|r| \to \infty$'' filter, so this is a \emph{conditional} cluster
-decay statement (Glimm--Jaffe \S5.1). Unconditional exponential decay
-(Simon--Lieb inequality) is not yet formalized; this lemma is the
-elementary real-analysis step ready to be composed with a future proof
-of summability. $\mathbb Z^d$ wrapper:
+\emph{Interpretation.} The summability hypothesis is a finiteness
+condition on the two-point function summed over the free argument $j$;
+in translation-invariant / connected-correlation settings (a pure phase
+of a $\mathbb Z^d$ Ising model) it matches the physical ``finite
+susceptibility'' condition expected away from the critical line, but in
+the general ambient setup of the Lean statement it is simply the
+real-analysis condition $\mathrm{Summable}$. $\mathrm{Filter.cofinite}$
+on $V$ is the filter of cofinite subsets; on $\mathrm{Fin}\ d \to
+\mathbb Z$ (with $d \ge 1$) bounded subsets are finite, so cofinite
+aligns with the informal ``$|r| \to \infty$'' filter. This is therefore
+a \emph{conditional} cluster decay statement (Glimm--Jaffe \S5.1).
+Unconditional exponential decay (Simon--Lieb inequality) is not yet
+formalized; this lemma is the elementary real-analysis step ready to be
+composed with a future proof of summability. $\mathbb Z^d$ wrapper:
 \texttt{truncated2Infinite\_latticeGraph\_tendsto\_cofinite\_zero\_of\_summable}.
 
 \subsection{Lattice-growth convergence of \S5 quantities}
