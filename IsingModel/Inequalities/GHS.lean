@@ -318,6 +318,28 @@ theorem correlation_neg_h (G : SimpleGraph ι) [Fintype G.edgeSet]
   rw [hnum]
   ring
 
+/-- **Ursell 2-point invariance under `h → -h`** (for `i ≠ j`):
+`truncated2 G ⟨J, -h, β⟩ i j = truncated2 G ⟨J, h, β⟩ i j`.
+
+Each summand `⟨A⟩` transforms by `(-1)^|A|`: cards `|{i,j}| = 2`
+(requires `i ≠ j`), `|{i}| = |{j}| = 1`. The signs cancel overall:
+`(-1)² − (-1)·(-1) = 1 − 1` kept vs `−`. Explicitly the h=-h version
+equals the h version.
+
+Caveat: at `i = j` the Finset `{i,i} = {i}` collapses to card 1,
+breaking the parity; the identity does not extend (analogous to the
+`susceptibility_J_zero` diagonal caveat). -/
+theorem truncated2_neg_h (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h β : ℝ) {i j : ι} (hij : i ≠ j) :
+    truncated2 G (⟨J, -h, β⟩ : IsingParams ℝ) i j
+      = truncated2 G (⟨J, h, β⟩ : IsingParams ℝ) i j := by
+  unfold truncated2
+  rw [correlation_neg_h G J h β {i, j},
+      correlation_neg_h G J h β {i},
+      correlation_neg_h G J h β {j}]
+  simp only [Finset.card_singleton, Finset.card_pair hij]
+  ring
+
 /-! ## Lebowitz third inequality
 
 The Lebowitz third inequality (Lebowitz, 1974) is the key input for the GHS
