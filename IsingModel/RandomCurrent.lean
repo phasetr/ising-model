@@ -2097,6 +2097,34 @@ theorem CurrentBounded.tendsto_weightSum_atTop_iSup_of_nonneg
   rintro x ⟨N, rfl⟩
   exact CurrentBounded.weightSum_le_exp_pow_card G Λ N A hβJ
 
+set_option linter.unusedDecidableInType false in
+/-- **Random-current expression of the Ising correlation function**
+(unconditional, under non-negative coupling): for `0 ≤ β J`,
+\(2^|Λ| · (⨆_N CurrentBounded.weightSum N A β J)
+  = ∑_σ σ_A · ∏_e Real.exp (β J σ_e)\).
+The bidirectional limit capstone: by `tendsto_nhds_unique`,
+combines the LHS-side limit (#854) with the unconditional RHS-side
+monotone-convergence limit (#864) — no external `Summable` or
+`BddAbove` hypothesis needed (the bound `exp(β J)^|edgeSet|`
+established in #863 discharges it). The random-current expression
+of the Ising correlation function `Z · ⟨σ_A⟩` (FV §3.7 eq. (3.45))
+in `iSup` form. -/
+theorem CurrentBounded.pow_card_mul_iSup_weightSum_eq_sum_spinA_prod_exp
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (A : Finset ↑Λ) {β J : ℝ} (hβJ : 0 ≤ β * J) :
+    (2 : ℝ) ^ Fintype.card ↑Λ
+        * (⨆ N : ℕ, CurrentBounded.weightSum G Λ N A β J)
+      = ∑ σ : ↑Λ → Spin,
+          (∏ a ∈ A, ((σ a).toSign : ℝ))
+          * ∏ e : (inducedGraph G Λ).edgeSet,
+              Real.exp (β * J * Config.spinEdgeProduct σ (e : Sym2 ↑Λ)) := by
+  refine tendsto_nhds_unique
+    ((CurrentBounded.tendsto_weightSum_atTop_iSup_of_nonneg
+      G Λ A hβJ).const_mul _)
+    (Config.tendsto_pow_card_mul_currentBounded_weightSum_atTop_sum_spinA_prod_exp
+      G Λ β J A)
+
 end Ambient
 
 end IsingModel
