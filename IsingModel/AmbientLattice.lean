@@ -2531,6 +2531,17 @@ theorem magnetizationΛ_neg_h
   rw [correlationΛ_neg_h, Finset.card_singleton, pow_one]
   ring
 
+/-- **Λ-level `correlation_eq_abs_h_of_even_card`**: for `|A|` even,
+`correlationΛ G Λ ⟨J, h, β⟩ A = correlationΛ G Λ ⟨J, |h|, β⟩ A`.
+Λ-layer lift of `IsingModel.correlation_eq_abs_h_of_even_card`. -/
+theorem correlationΛ_eq_abs_h_of_even_card
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J h β : ℝ) (A : Finset (↑Λ : Type _)) (heven : Even A.card) :
+    correlationΛ G Λ (⟨J, h, β⟩ : IsingParams ℝ) A
+      = correlationΛ G Λ (⟨J, |h|, β⟩ : IsingParams ℝ) A :=
+  IsingModel.correlation_eq_abs_h_of_even_card (inducedGraph G Λ) J h β A heven
+
 /-- **Λ-level correlation closed form at `J = 0`**:
 `correlationΛ G Λ ⟨0, h, β⟩ A = tanh(β·h)^A.card`. Direct lift of
 `IsingModel.correlation_J_zero` through
