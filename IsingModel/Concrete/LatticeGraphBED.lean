@@ -404,7 +404,7 @@ lemma edgeBoundary_card_eq_sum_inner_filter
     have : (x, a) = (x', b) := ha.trans hb.symm
     exact ((Prod.mk.injEq _ _ _ _).mp this).1
 
-/-- **Edge boundary cardinality as a closed sum over the outer
+/-- **Edge boundary cardinality as a sum over the outer vertex
 boundary**: companion of `edgeBoundary_card_eq_sum_inner_filter`,
 counting crossing edges by their *outside* endpoint instead of
 their inside endpoint.
@@ -437,11 +437,9 @@ lemma edgeBoundary_card_eq_sum_outer_filter
     · rintro ⟨hxS, hyS, hadj⟩
       -- y is in outer boundary via x, and x is a neighbour of y in S.
       refine ⟨y, ⟨hyS, x, hxS, hadj⟩, x, ⟨G.symm hadj, hxS⟩, rfl, rfl⟩
-    · rintro ⟨y', ⟨_, _⟩, x', ⟨hadj', hx'S⟩, hrx, hry⟩
-      subst hrx
-      subst hry
-      -- y' = y from second `rfl`, hadj' : G.Adj y x via mem_neighborFinset
-      exact ⟨hx'S, by simp_all, G.symm hadj'⟩
+    · rintro ⟨y', ⟨hyS, _⟩, x', ⟨hadj', hx'S⟩, rfl, rfl⟩
+      -- After matching `rfl, rfl`, x' = x and y' = y already.
+      exact ⟨hx'S, hyS, G.symm hadj'⟩
   rw [hrewrite, Finset.card_biUnion]
   · refine Finset.sum_congr rfl (fun y _ => ?_)
     refine Finset.card_image_of_injective _ ?_
