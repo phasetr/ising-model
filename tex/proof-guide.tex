@@ -2041,6 +2041,24 @@ boundary-primitive infrastructure for any locally finite simple
 graph; subsequent Simon--Lieb work (Epic~\#780, B-iii) is
 research-level.
 
+\paragraph{Edge boundary card disjoint
+$\mathrm{biUnion}$ equality (PR~\#788).}
+The previous bound is tightened to an equality
+\[
+  |\partial^e S| \;=\;
+    \sum_{x \in \partial^v_i S} \bigl|\{\,y \in N_G(x) \mid y \notin S\,\}\bigr|
+\]
+($\mathrm{edgeBoundary\_card\_eq\_sum\_inner\_filter}$). The
+$\mathrm{biUnion}$ defining $\partial^e S$ is disjoint across
+$x \in \partial^v_i S$ (different first coordinates), and the
+embedding $y \mapsto (x, y)$ is injective for fixed $x$, so
+$\mathrm{Finset.card\_biUnion}$ applies and
+$\mathrm{Finset.card\_image\_of\_injective}$ replaces each
+image cardinality with its filter cardinality. Bounding the
+filter cardinality by
+$|G.\mathrm{neighborFinset}\,x| = \deg_G(x)$ recovers PR~\#787's
+inequality.
+
 \subsection{Lattice-growth convergence of \S5 quantities}
 
 Named corollaries of \texttt{correlation\_convergent\_subgraph} (PR~\#64):
