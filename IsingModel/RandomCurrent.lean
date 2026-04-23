@@ -536,6 +536,24 @@ theorem Current.fromEdgeFinset_singleton_parity
     intro h
     exact absurd (Finset.mem_univ e₀) h
 
+omit [DecidableEq V] in
+/-- **Sources of `fromEdgeFinset {e₀}`**: equals the endpoint
+finset of `e₀`, i.e. `(e₀ : Sym2 ↑Λ).toFinset`. Direct
+consequence of `fromEdgeFinset_singleton_parity` and
+`mem_sources_iff`. -/
+@[simp]
+theorem Current.fromEdgeFinset_singleton_sources
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (e₀ : (inducedGraph G Λ).edgeSet) :
+    (Current.fromEdgeFinset G Λ {e₀}).sources G Λ
+      = (e₀ : Sym2 ↑Λ).toFinset := by
+  classical
+  ext v
+  rw [Current.mem_sources_iff, Current.fromEdgeFinset_singleton_parity,
+      Sym2.mem_toFinset]
+  by_cases hv : v ∈ (e₀ : Sym2 ↑Λ) <;> simp [hv]
+
 end Ambient
 
 end IsingModel
