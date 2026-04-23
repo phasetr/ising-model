@@ -2001,6 +2001,46 @@ elementary corollary of the per-vertex degree bound.) As with
 PR~\#785, this PR is preparatory infrastructure: no Simon--Lieb
 result is established here.
 
+\paragraph{Oriented edge boundary
+\texttt{SimpleGraph.edgeBoundary G S} (PR~\#787).}
+Closes the elementary boundary-primitive infrastructure with the
+oriented edge boundary
+\[
+  \mathrm{SimpleGraph.edgeBoundary}\,G\,S
+  \;:=\; (\partial^v_i S).\mathrm{biUnion}\,\bigl(\lambda x.\,
+    ((G.\mathrm{neighborFinset}\,x).\mathrm{filter}\,(\cdot \notin S)).\mathrm{image}\,(\lambda y.\,(x, y))\bigr),
+\]
+of type $\mathrm{Finset}\,(V \times V)$. Each crossing edge
+$\{x, y\}$ with $x \in S, y \notin S$ has a unique oriented
+representative $(x, y)$, sidestepping the $\mathrm{Sym2}\,V$
+quotient handling. The membership characterisation
+\[
+  (x, y) \in \partial^e S \iff x \in S \land y \notin S \land G.\mathrm{Adj}\,x\,y
+\]
+($\mathrm{mem\_edgeBoundary\_iff}$) follows by unfolding
+$\mathrm{Finset.mem\_biUnion} / \mathrm{mem\_image} /
+\mathrm{mem\_filter}$ and the inner-boundary characterisation,
+with $\mathrm{Prod.mk.injEq}$ resolving the pair equality. The
+empty case $\partial^e \emptyset = \emptyset$ comes from
+PR~\#786's $\mathrm{innerVertexBoundary\_empty}$. The
+cardinality bound
+\[
+  |\partial^e S| \;\le\; \sum_{x \in \partial^v_i S} \deg_G(x)
+\]
+($\mathrm{edgeBoundary\_card\_le\_sum\_degrees\_innerVertexBoundary}$)
+chains $\mathrm{Finset.card\_biUnion\_le}$,
+$\mathrm{card\_image\_le}$,
+$\mathrm{card\_filter\_le}$, and
+$\mathrm{card\_neighborFinset\_eq\_degree}$. On $\mathbb Z^d$
+this gives
+$|\partial^e S| \le 2 d \cdot |\partial^v_i S|$
+($\mathrm{latticeGraph\_edgeBoundary\_card\_le\_two\_mul\_d\_mul\_innerVertexBoundary\_card}$),
+the linear edge-boundary bound from the per-vertex degree bound.
+Together with PRs~\#785 / \#786 this closes the elementary
+boundary-primitive infrastructure for any locally finite simple
+graph; subsequent Simon--Lieb work (Epic~\#780, B-iii) is
+research-level.
+
 \subsection{Lattice-growth convergence of \S5 quantities}
 
 Named corollaries of \texttt{correlation\_convergent\_subgraph} (PR~\#64):
