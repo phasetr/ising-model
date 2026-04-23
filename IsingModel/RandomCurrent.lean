@@ -318,6 +318,22 @@ theorem Current.add_hasSources_iff (G : SimpleGraph V) (Λ : Finset V)
   unfold Current.HasSources
   rw [Current.add_sources_eq]
 
+/-- **Bounded current**: a current with each edge value bounded
+by `N`. Automatically `Fintype` (each edge contributes a finite
+choice from `Fin (N+1)`, and the edge set is itself `Fintype`),
+enabling finite-sum manipulations as a stepping stone toward the
+limit-based random-current expansion. -/
+abbrev CurrentBounded (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (N : ℕ) :=
+  (e : (inducedGraph G Λ).edgeSet) → Fin (N + 1)
+
+/-- **Coercion `CurrentBounded → Current`**: forget the bound
+on each edge value. -/
+def CurrentBounded.toCurrent (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] {N : ℕ}
+    (n : CurrentBounded G Λ N) : Current G Λ :=
+  fun e => (n e).val
+
 end Ambient
 
 end IsingModel
