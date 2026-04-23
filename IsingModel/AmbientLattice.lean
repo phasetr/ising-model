@@ -2705,6 +2705,115 @@ theorem correlationInfinite_eq_abs_h_of_even_card
   · rw [habs]
   · rw [habs, correlationInfinite_neg_h_of_even_card G Λ J h β A heven]
 
+/-- **Z₂ odd-symmetry for `magnetizationAlongExhaustion` under `h → -h`**:
+at each stage `n`,
+`magnetizationAlongExhaustion ⟨J,-h,β⟩ i n = -magnetizationAlongExhaustion ⟨J,h,β⟩ i n`.
+Specialization of `correlationAlongExhaustion_neg_h` at `A = {i}`
+(`|A| = 1`, `(-1)^1 = -1`). -/
+theorem magnetizationAlongExhaustion_neg_h
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J h β : ℝ) (i : V) (n : ℕ) :
+    magnetizationAlongExhaustion G Λ (⟨J, -h, β⟩ : IsingParams ℝ) i n
+      = -magnetizationAlongExhaustion G Λ (⟨J, h, β⟩ : IsingParams ℝ) i n := by
+  change correlationAlongExhaustion G Λ (⟨J, -h, β⟩ : IsingParams ℝ) {i} n
+    = -correlationAlongExhaustion G Λ (⟨J, h, β⟩ : IsingParams ℝ) {i} n
+  rw [correlationAlongExhaustion_neg_h, Finset.card_singleton, pow_one]
+  ring
+
+/-- **Pointwise along-exhaustion `|M_along(h) n| = M_along(|h|) n`**
+under ferromagnetism at `|h|` (`0 ≤ J`, `0 < β`). Along-exhaustion
+counterpart of the Λ-layer `abs_magnetizationΛ_eq_magnetizationΛ_abs_h`
+(PR #772); uses `magnetizationAlongExhaustion_nonneg` and
+`magnetizationAlongExhaustion_neg_h` via `abs_choice`. -/
+theorem abs_magnetizationAlongExhaustion_eq_magnetizationAlongExhaustion_abs_h
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J h β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (i : V) (n : ℕ) :
+    |magnetizationAlongExhaustion G Λ (⟨J, h, β⟩ : IsingParams ℝ) i n|
+      = magnetizationAlongExhaustion G Λ (⟨J, |h|, β⟩ : IsingParams ℝ) i n := by
+  have hf_abs : Ferromagnetic (⟨J, |h|, β⟩ : IsingParams ℝ) :=
+    ⟨hJ, abs_nonneg _, hβ⟩
+  have habs_nonneg :
+      0 ≤ magnetizationAlongExhaustion G Λ (⟨J, |h|, β⟩ : IsingParams ℝ) i n :=
+    magnetizationAlongExhaustion_nonneg G Λ _ hf_abs i n
+  rcases abs_choice h with habs | habs
+  · -- |h| = h (h ≥ 0)
+    have heq :
+        magnetizationAlongExhaustion G Λ (⟨J, |h|, β⟩ : IsingParams ℝ) i n
+          = magnetizationAlongExhaustion G Λ (⟨J, h, β⟩ : IsingParams ℝ) i n := by
+      rw [habs]
+    rw [heq]
+    apply abs_of_nonneg
+    have h_ge : 0 ≤ h := by rw [← habs]; exact abs_nonneg h
+    exact magnetizationAlongExhaustion_nonneg G Λ _ ⟨hJ, h_ge, hβ⟩ i n
+  · -- |h| = -h (h ≤ 0)
+    have hneg :
+        magnetizationAlongExhaustion G Λ (⟨J, |h|, β⟩ : IsingParams ℝ) i n
+          = -magnetizationAlongExhaustion G Λ (⟨J, h, β⟩ : IsingParams ℝ) i n := by
+      rw [habs]; exact magnetizationAlongExhaustion_neg_h G Λ J h β i n
+    rw [hneg]
+    apply abs_of_nonpos
+    have hne :
+        0 ≤ -magnetizationAlongExhaustion G Λ (⟨J, h, β⟩ : IsingParams ℝ) i n := by
+      rw [← hneg]; exact habs_nonneg
+    linarith
+
+/-- **∞-volume one-sided `|M_∞(h)| ≤ M_∞(|h|)`** under ferromagnetism
+at `|h|` (`0 ≤ J`, `0 < β`).
+
+**Inequality rather than equality**: the natural equality
+`|M_∞(h)| = M_∞(|h|)` (true in Glimm–Jaffe §5.3's standard
+thermodynamic limit) fails under this repo's sup-based
+`magnetizationInfinite := ⨆ n, magnetizationAlongExhaustion …`. At
+`h < 0` ferromagnetic, uncovered early stages force the value `0`
+while covered late stages give `≤ 0`, so `M_∞(h) = 0`, whereas
+`M_∞(|h|) > 0`. This is the same odd-`|A|` obstruction already
+noted in `correlationInfinite_neg_h_of_even_card`.
+
+The one-sided bound still holds: at each stage
+`|M_along(h) n| = M_along(|h|) n ≥ 0`, so both
+`M_∞(h) ≤ M_∞(|h|)` (pointwise `f ≤ |f| = g`) and
+`-M_∞(|h|) ≤ M_∞(h)` (via `a(0) ≤ ciSup a` and
+`-|f(0)| ≤ f(0) ≤ ciSup f`).
+
+Reference: Glimm–Jaffe §5.3 pp. 77–80 (background).  Part of the
+§5.3 Z₂ h-symmetry series tracked in issue #770. -/
+theorem abs_magnetizationInfinite_le_magnetizationInfinite_abs_h
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J h β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (i : V) :
+    |magnetizationInfinite G Λ (⟨J, h, β⟩ : IsingParams ℝ) i|
+      ≤ magnetizationInfinite G Λ (⟨J, |h|, β⟩ : IsingParams ℝ) i := by
+  rw [magnetizationInfinite_eq_ciSup, magnetizationInfinite_eq_ciSup]
+  set f : ℕ → ℝ :=
+    fun n => magnetizationAlongExhaustion G Λ (⟨J, h, β⟩ : IsingParams ℝ) i n
+    with hf_def
+  set a : ℕ → ℝ :=
+    fun n => magnetizationAlongExhaustion G Λ (⟨J, |h|, β⟩ : IsingParams ℝ) i n
+    with ha_def
+  have habs : ∀ n, |f n| = a n := fun n =>
+    abs_magnetizationAlongExhaustion_eq_magnetizationAlongExhaustion_abs_h
+      G Λ J h β hJ hβ i n
+  have hf_bdd : BddAbove (Set.range f) :=
+    correlationAlongExhaustion_bddAbove G Λ (⟨J, h, β⟩ : IsingParams ℝ) {i}
+  have ha_bdd : BddAbove (Set.range a) :=
+    correlationAlongExhaustion_bddAbove G Λ (⟨J, |h|, β⟩ : IsingParams ℝ) {i}
+  apply abs_le.mpr
+  refine ⟨?_, ?_⟩
+  · -- -⨆ a ≤ ⨆ f : pick n = 0 as witness
+    have h1 : a 0 ≤ ⨆ n, a n := le_ciSup ha_bdd 0
+    have h2 : -|f 0| ≤ f 0 := neg_abs_le _
+    have h3 : f 0 ≤ ⨆ n, f n := le_ciSup hf_bdd 0
+    have habs0 : |f 0| = a 0 := habs 0
+    linarith
+  · -- ⨆ f ≤ ⨆ a : pointwise f n ≤ |f n| = a n ≤ ⨆ a
+    apply ciSup_le
+    intro n
+    calc f n ≤ |f n| := le_abs_self _
+      _ = a n := habs n
+      _ ≤ ⨆ n, a n := le_ciSup ha_bdd n
+
 /-- **Z₂ symmetry at `h = 0` for `correlationInfinite`**: vanishes
 for odd-cardinality sets.  Supremum of a constantly-zero sequence. -/
 theorem correlationInfinite_h_zero
