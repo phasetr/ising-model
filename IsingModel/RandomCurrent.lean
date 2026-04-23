@@ -847,6 +847,22 @@ theorem Config.sum_prod_spin_pow_degreeAt
   simp_rw [← Config.prod_pow_spin_degreeAt G Λ _ n]
   exact Config.sum_prod_toSign_pow_real (k := n.degreeAt G Λ)
 
+omit [DecidableEq V] in
+/-- **Even `degreeAt` everywhere ↔ source-free**: a current `n`
+is source-free iff its total incident degree is even at every
+vertex. Bridges the degree-side condition (output of
+`Config.sum_prod_spin_pow_degreeAt`) with the parity-side
+characterisation (`isSourceFree_iff`). -/
+theorem Current.even_degreeAt_iff_isSourceFree
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) :
+    (∀ v : ↑Λ, Even (n.degreeAt G Λ v)) ↔ n.IsSourceFree G Λ := by
+  rw [Current.isSourceFree_iff]
+  refine forall_congr' (fun v => ?_)
+  rw [Current.parity_eq_degreeAt, ZMod.natCast_eq_zero_iff,
+    ← even_iff_two_dvd]
+
 end Ambient
 
 end IsingModel
