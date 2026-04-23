@@ -1536,6 +1536,16 @@ coincides with the absolute value:
 $|M(\langle J,h,\beta\rangle;i)| = M(\langle J,|h|,\beta\rangle;i)$
 under $0\le J$, $0<\beta$.
 \end{theorem}
+\noindent The $\Lambda$-layer counterpart is
+\begin{theorem}[\texttt{abs\_magnetizationΛ\_eq\_magnetizationΛ\_abs\_h}, PR~\#772]
+$|M_\Lambda(\langle J,h,\beta\rangle;i)| = M_\Lambda(\langle J,|h|,\beta\rangle;i)$
+under $0\le J$, $0<\beta$, for any finite volume $\Lambda \subseteq V$ and
+any site $i \in \Lambda$. Proved by the same
+\texttt{abs\_choice}-based case split, using
+\texttt{magnetizationΛ\_nonneg} (ferromagnetic, via GKS-I at
+$\Lambda$-level) and \texttt{magnetizationΛ\_neg\_h}. The $\infty$-volume
+lift is tracked in issue~\#770.
+\end{theorem}
 
 Finally, a closed form for $\chi$ at $|h|$ that does \emph{not} require
 ferromagnetism:
