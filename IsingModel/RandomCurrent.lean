@@ -1269,6 +1269,42 @@ theorem Config.sum_spinA_prod_spinEdgeProduct_pow_hasSources
         then (2 : ℝ)^(Fintype.card ↑Λ) else 0 :=
   Config.sum_spinA_prod_spin_pow_hasSources G Λ n A
 
+omit [DecidableEq V] in
+/-- **Per-current σ-sum with weight**: at fixed current `n` and
+source set `A`,
+`∑_σ σ_A · weight β J n · ∏_e (spinEdgeProduct σ e)^(n e)
+  = weight β J n · 2^|Λ|` if `n.HasSources A`, else `0`. The
+per-current contribution to the random-current expression of
+`⟨σ_A⟩^Λ` (FV §3.7). -/
+theorem Config.sum_spinA_weight_prod_spinEdgeProduct_pow_hasSources
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (β J : ℝ) (n : Current G Λ) (A : Finset ↑Λ)
+    [Decidable (n.HasSources G Λ A)] :
+    (∑ σ : ↑Λ → Spin,
+      (∏ a ∈ A, ((σ a).toSign : ℝ))
+      * (n.weight G Λ β J
+        * ∏ e : (inducedGraph G Λ).edgeSet,
+            (Config.spinEdgeProduct σ (e : Sym2 ↑Λ))^(n e)))
+      = if n.HasSources G Λ A
+        then n.weight G Λ β J * (2 : ℝ)^(Fintype.card ↑Λ) else 0 := by
+  -- Pull the σ-independent weight out of the σ-sum.
+  have heq : ∀ σ : ↑Λ → Spin,
+      (∏ a ∈ A, ((σ a).toSign : ℝ))
+      * (n.weight G Λ β J
+        * ∏ e : (inducedGraph G Λ).edgeSet,
+            (Config.spinEdgeProduct σ (e : Sym2 ↑Λ))^(n e))
+      = n.weight G Λ β J *
+        ((∏ a ∈ A, ((σ a).toSign : ℝ))
+         * ∏ e : (inducedGraph G Λ).edgeSet,
+            (Config.spinEdgeProduct σ (e : Sym2 ↑Λ))^(n e)) := by
+    intro σ; ring
+  rw [Finset.sum_congr rfl (fun σ _ => heq σ), ← Finset.mul_sum,
+    Config.sum_spinA_prod_spinEdgeProduct_pow_hasSources]
+  by_cases hA : n.HasSources G Λ A
+  · rw [if_pos hA, if_pos hA]
+  · rw [if_neg hA, if_neg hA, mul_zero]
+
 end Ambient
 
 end IsingModel
