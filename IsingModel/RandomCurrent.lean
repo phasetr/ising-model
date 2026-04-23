@@ -84,6 +84,29 @@ def Current.parity (G : SimpleGraph V) (Λ : Finset V)
   ∑ e : (inducedGraph G Λ).edgeSet,
     if v ∈ (e : Sym2 ↑Λ) then ((n e : ℕ) : ZMod 2) else 0
 
+/-- **Total incident degree at a vertex**: for a current `n` and a
+vertex `v : ↑Λ`, the ℕ-valued sum of `n e` over edges `e`
+incident to `v`. Lifts `parity` from `ZMod 2` to ℕ; equals the
+exponent of `σ_v` in the random-current expansion of the Ising
+partition function (FV §3.7). -/
+def Current.degreeAt (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) (v : ↑Λ) : ℕ :=
+  ∑ e : (inducedGraph G Λ).edgeSet, if v ∈ (e : Sym2 ↑Λ) then n e else 0
+
+omit [DecidableEq V] in
+/-- **Parity equals `degreeAt mod 2`**: the ZMod 2 parity is the
+ℕ→ZMod 2 cast of the integer-valued total incident degree. -/
+theorem Current.parity_eq_degreeAt (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) (v : ↑Λ) :
+    n.parity G Λ v = ((n.degreeAt G Λ v : ℕ) : ZMod 2) := by
+  unfold Current.parity Current.degreeAt
+  rw [Nat.cast_sum]
+  congr 1
+  ext e
+  by_cases hv : v ∈ (e : Sym2 ↑Λ) <;> simp [hv]
+
 omit [DecidableEq V] in
 /-- **Zero parity**: the zero current has parity `0` at every
 vertex (each summand vanishes). -/
