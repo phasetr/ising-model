@@ -37,6 +37,41 @@ instance Current.instAdd (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] : Add (Current G Λ) :=
   ⟨fun n m => fun e => n e + m e⟩
 
+omit [DecidableEq V] in
+/-- **Current extensionality**: two currents are equal iff they
+agree on every edge. Just `funext` exposed under the `Current`
+namespace for use as `@[ext]`. -/
+@[ext]
+theorem Current.ext (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] {n m : Current G Λ}
+    (h : ∀ e, n e = m e) : n = m := funext h
+
+omit [DecidableEq V] in
+/-- **Pointwise zero**: `(0 : Current G Λ) e = 0` (by definition). -/
+@[simp]
+theorem Current.zero_apply (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (e : (inducedGraph G Λ).edgeSet) :
+    (0 : Current G Λ) e = 0 := rfl
+
+omit [DecidableEq V] in
+/-- **Pointwise sum**: `(n + m) e = n e + m e` (by definition). -/
+@[simp]
+theorem Current.add_apply (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (n m : Current G Λ) (e : (inducedGraph G Λ).edgeSet) :
+    (n + m) e = n e + m e := rfl
+
+/-- **`Current G Λ` is an `AddCommMonoid`**: lifts the pointwise
+`Zero` and `Add` to the full additive commutative monoid
+structure (via `Pi.addCommMonoid`). Allows use of `Finset.sum`,
+`nsmul`, etc. on currents in subsequent random-current expansion
+PRs (FV §3.7). -/
+instance Current.instAddCommMonoid (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] :
+    AddCommMonoid (Current G Λ) :=
+  Pi.addCommMonoid
+
 /-- **Parity at a vertex**: for a current `n` and a vertex
 `v : ↑Λ`, the parity (mod 2) of the sum of `n e` over edges `e`
 incident to `v`. The source set of `n` is the set of vertices
