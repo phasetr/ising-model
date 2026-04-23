@@ -498,7 +498,7 @@ to `edgeBoundary_card_le_sum_degrees_innerVertexBoundary`. The
 proof reduces to the outer-side equality
 `edgeBoundary_card_eq_sum_outer_filter` and bounds each
 `((G.neighborFinset y).filter (· ∈ S)).card` by
-`G.neighborFinset y).card = G.degree y`. -/
+`(G.neighborFinset y).card = G.degree y`. -/
 lemma edgeBoundary_card_le_sum_degrees_outerVertexBoundary
     [DecidableEq V] [LocallyFinite G] (S : Finset V) :
     (G.edgeBoundary S).card
