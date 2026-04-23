@@ -2116,6 +2116,27 @@ PR~\#794 give the full §17.1 / §17.5 lattice mass foundation
 including the precise relationship between exponential decay and
 the cluster-property predicate.
 
+\paragraph{$\mathrm{latticeMass}$ formal definition (PR~\#795).}
+The mass / inverse correlation length is finally defined as a
+supremum:
+\[
+  \mathrm{latticeMass}(d, \Lambda, p) \;:=\;
+    \sup\bigl(\{\, (\alpha : \mathrm{ENNReal}) \mid \alpha : \mathrm{NNReal},\
+       \mathrm{HasExponentialDecay}(d, \Lambda, p, \alpha) \,\}\bigr)
+\]
+as $\mathrm{IsingModel.Ambient.latticeMass}\,d\,\Lambda\,p :
+\mathrm{ENNReal}$. Trivial-slice values
+$\mathrm{latticeMass\_top\_of\_beta\_zero}$ and
+$\mathrm{latticeMass\_top\_of\_J\_zero}$ both give
+$\mathrm{latticeMass} = \top$, matching the physical picture:
+no correlation $\Rightarrow$ infinite mass $\Rightarrow$ zero
+correlation length. The proof: any candidate upper bound
+$b \ne \top$ is exceeded by $\alpha := b.\mathrm{toNNReal} + 1$,
+which sits in the supremand by the corresponding
+$\mathrm{HasExponentialDecay}$ trivial-slice theorem; this
+contradicts $b$ being an upper bound. Sanity:
+$\mathrm{latticeMass\_nonneg}$ is $\mathrm{bot\_le}$.
+
 \paragraph{\S5.1 cluster property bundled formalisation (PR~\#792).}
 The Glimm--Jaffe \S5.1 cluster property is formalised as a single
 predicate
