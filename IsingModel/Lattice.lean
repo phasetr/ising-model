@@ -115,6 +115,54 @@ lemma latticeGraph_adj_iff_latticeDistance_eq_one
   rw [hcast]
   exact_mod_cast Iff.rfl
 
+/-- **Finite ℓ¹ balls**: the set of points at `latticeDistance` at
+most `N` from a fixed basepoint is finite. Follows from the
+coordinatewise bound `(i k - j k).natAbs ≤ latticeDistance d i j`
+(one summand is bounded by a `ℕ`-sum), placing `j k` in the finite
+integer interval `[i k - N, i k + N]`. -/
+lemma latticeDistance_le_finite (d : ℕ) (i : Fin d → ℤ) (N : ℕ) :
+    Set.Finite {j : Fin d → ℤ | latticeDistance d i j ≤ N} := by
+  -- Every point in the ball lies in the product of finite integer
+  -- intervals `[i k - N, i k + N]`.
+  apply Set.Finite.subset
+    (Set.Finite.pi (fun k : Fin d =>
+      Set.finite_Icc ((i k) - (N : ℤ)) ((i k) + (N : ℤ))))
+  intro j hj
+  have hball : latticeDistance d i j ≤ N := hj
+  intro k _
+  -- The `k`-th summand is bounded by the whole sum.
+  have hcoord : (i k - j k).natAbs ≤ latticeDistance d i j := by
+    unfold latticeDistance
+    exact Finset.single_le_sum
+      (f := fun m : Fin d => (i m - j m).natAbs)
+      (fun _ _ => Nat.zero_le _) (Finset.mem_univ k)
+  have hkN : (i k - j k).natAbs ≤ N := hcoord.trans hball
+  -- Convert to the integer interval bound.
+  have habs_le : |i k - j k| ≤ (N : ℤ) := by
+    rw [Int.abs_eq_natAbs]
+    exact_mod_cast hkN
+  obtain ⟨h_neg, h_pos⟩ := abs_le.mp habs_le
+  exact Set.mem_Icc.mpr ⟨by linarith, by linarith⟩
+
+/-- **Proper map property**: `latticeDistance d i` tends to infinity
+along the cofinite filter, for every dimension `d` and basepoint
+`i`. Equivalently, preimages of bounded sets are finite. For `d =
+0` the domain `Fin 0 → ℤ` is a singleton, so `Filter.cofinite` on
+the source collapses to `⊥` and the Tendsto statement holds
+vacuously; for `d ≥ 1` this is the substantive statement that
+lets PR #779's cofinite cluster decay be reread as "`j` tends to
+infinity in the ℓ¹ sense". -/
+theorem tendsto_latticeDistance_atTop_cofinite
+    (d : ℕ) (i : Fin d → ℤ) :
+    Filter.Tendsto (fun j : Fin d → ℤ => latticeDistance d i j)
+      Filter.cofinite Filter.atTop := by
+  rw [Filter.tendsto_atTop]
+  intro N
+  rw [Filter.eventually_cofinite]
+  apply (latticeDistance_le_finite d i N).subset
+  intro j hj
+  exact (Nat.lt_of_not_le hj).le
+
 /-! ## Finite boxes in ℤ^d
 
 We model the box `{-n, ..., n}^d` as `Fin d → Fin (2*n+1)` with a
