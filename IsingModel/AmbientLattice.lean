@@ -2623,6 +2623,44 @@ theorem correlationAlongExhaustion_neg_h
         correlationAlongExhaustion_of_not_subset G Λ (⟨J, h, β⟩ : IsingParams ℝ) hAn]
     ring
 
+/-- **∞-volume `correlationInfinite` invariance under `h → -h`**
+(for even `|A|`):
+`correlationInfinite G Λ ⟨J, -h, β⟩ A = correlationInfinite G Λ ⟨J, h, β⟩ A`.
+
+At even `|A|`, the pointwise `correlationAlongExhaustion_neg_h`
+sign is `(-1)^|A| = 1`, so the sequence is unchanged and the
+`ciSup` agrees. For odd `|A|` the sign flips, turning `ciSup` into
+`-ciInf` (harder to analyze); deferred. -/
+theorem correlationInfinite_neg_h_of_even_card
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J h β : ℝ) (A : Finset V) (heven : Even A.card) :
+    correlationInfinite G Λ (⟨J, -h, β⟩ : IsingParams ℝ) A
+      = correlationInfinite G Λ (⟨J, h, β⟩ : IsingParams ℝ) A := by
+  unfold correlationInfinite
+  refine iSup_congr ?_
+  intro n
+  rw [correlationAlongExhaustion_neg_h]
+  obtain ⟨k, hk⟩ := heven
+  rw [hk]
+  have h2k : (-1 : ℝ) ^ (k + k) = 1 := by
+    rw [show k + k = 2 * k from by omega, pow_mul]
+    simp
+  rw [h2k, one_mul]
+
+/-- **∞-volume `correlationInfinite` equals value at `|h|`**
+(for even `|A|`): direct consequence of
+`correlationInfinite_neg_h_of_even_card` via `abs_choice`. -/
+theorem correlationInfinite_eq_abs_h_of_even_card
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J h β : ℝ) (A : Finset V) (heven : Even A.card) :
+    correlationInfinite G Λ (⟨J, h, β⟩ : IsingParams ℝ) A
+      = correlationInfinite G Λ (⟨J, |h|, β⟩ : IsingParams ℝ) A := by
+  rcases abs_choice h with habs | habs
+  · rw [habs]
+  · rw [habs, correlationInfinite_neg_h_of_even_card G Λ J h β A heven]
+
 /-- **Z₂ symmetry at `h = 0` for `correlationInfinite`**: vanishes
 for odd-cardinality sets.  Supremum of a constantly-zero sequence. -/
 theorem correlationInfinite_h_zero
