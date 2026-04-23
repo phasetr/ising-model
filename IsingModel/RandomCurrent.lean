@@ -1080,6 +1080,48 @@ theorem Config.sum_spinA_prod_spin_pow_hasSources
   exact if_congr
     (Current.even_indicator_add_degreeAt_iff_hasSources G Λ n A) rfl rfl
 
+omit [DecidableEq V] in
+/-- **`weightSum` at zero β collapses to indicator on `A = ∅`**:
+\(Current.weightSum\,A\,0\,J = 1\) if `A = ∅`, else `0`. At zero
+coupling, only the zero current contributes (its source set is
+`∅`); uses `Current.weight_beta_zero` and `tsum_eq_single`. -/
+theorem Current.weightSum_beta_zero (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (A : Finset ↑Λ) (J : ℝ) :
+    Current.weightSum G Λ A 0 J = if A = ∅ then 1 else 0 := by
+  classical
+  unfold Current.weightSum
+  -- Only n = 0 contributes since weight 0 J n = 0 for n ≠ 0.
+  have h_single : ∀ n : Current G Λ, n ≠ 0 →
+      (if n.sources G Λ = A then n.weight G Λ 0 J else 0) = 0 := by
+    intro n hn
+    by_cases hsr : n.sources G Λ = A
+    · rw [if_pos hsr, Current.weight_beta_zero, if_neg hn]
+    · rw [if_neg hsr]
+  rw [tsum_eq_single (0 : Current G Λ) h_single,
+    Current.zero_sources, Current.zero_weight]
+  exact if_congr eq_comm rfl rfl
+
+omit [DecidableEq V] in
+/-- **`weightSum` at zero J collapses to indicator on `A = ∅`**:
+\(Current.weightSum\,A\,β\,0 = 1\) if `A = ∅`, else `0`.
+Symmetric counterpart of `weightSum_beta_zero`. -/
+theorem Current.weightSum_J_zero (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (A : Finset ↑Λ) (β : ℝ) :
+    Current.weightSum G Λ A β 0 = if A = ∅ then 1 else 0 := by
+  classical
+  unfold Current.weightSum
+  have h_single : ∀ n : Current G Λ, n ≠ 0 →
+      (if n.sources G Λ = A then n.weight G Λ β 0 else 0) = 0 := by
+    intro n hn
+    by_cases hsr : n.sources G Λ = A
+    · rw [if_pos hsr, Current.weight_J_zero, if_neg hn]
+    · rw [if_neg hsr]
+  rw [tsum_eq_single (0 : Current G Λ) h_single,
+    Current.zero_sources, Current.zero_weight]
+  exact if_congr eq_comm rfl rfl
+
 end Ambient
 
 end IsingModel
