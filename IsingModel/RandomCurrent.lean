@@ -570,6 +570,35 @@ theorem Current.fromEdgeFinset_singleton_sources_card
     Sym2.card_toFinset_of_not_isDiag _
       ((inducedGraph G Λ).not_isDiag_of_mem_edgeSet e₀.2)]
 
+omit [DecidableEq V] in
+/-- **General `fromEdgeFinset` parity formula**: parity at vertex
+`v` of the indicator current `fromEdgeFinset G Λ S` equals the
+sum over edges `e ∈ S` incident to `v`, in `ZMod 2`. Generalises
+the singleton-edge form `fromEdgeFinset_singleton_parity`. -/
+theorem Current.fromEdgeFinset_parity
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (S : Finset (inducedGraph G Λ).edgeSet) (v : ↑Λ) :
+    (Current.fromEdgeFinset G Λ S).parity G Λ v
+      = ∑ e ∈ S, if v ∈ (e : Sym2 ↑Λ) then (1 : ZMod 2) else 0 := by
+  unfold Current.parity Current.fromEdgeFinset
+  -- swap inner ifs to get (∑ e ∈ univ, if e ∈ S then (if v ∈ e then 1 else 0) else 0)
+  have hswap : ∀ e : (inducedGraph G Λ).edgeSet,
+      (if v ∈ (e : Sym2 ↑Λ)
+          then (((if e ∈ S then (1 : ℕ) else 0) : ℕ) : ZMod 2) else 0)
+        = if e ∈ S
+            then (if v ∈ (e : Sym2 ↑Λ) then (1 : ZMod 2) else 0) else 0 := by
+    intro e
+    by_cases he : e ∈ S
+    · by_cases hv : v ∈ (e : Sym2 ↑Λ) <;> simp [he, hv]
+    · by_cases hv : v ∈ (e : Sym2 ↑Λ) <;> simp [he, hv]
+  simp_rw [hswap]
+  -- ∑ e ∈ univ, if e ∈ S then f e else 0 = ∑ e ∈ S, f e
+  rw [← Finset.sum_filter]
+  congr 1
+  ext e
+  simp
+
 end Ambient
 
 end IsingModel
