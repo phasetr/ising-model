@@ -2542,6 +2542,50 @@ theorem correlationΛ_eq_abs_h_of_even_card
       = correlationΛ G Λ (⟨J, |h|, β⟩ : IsingParams ℝ) A :=
   IsingModel.correlation_eq_abs_h_of_even_card (inducedGraph G Λ) J h β A heven
 
+/-- **Λ-layer `|M_Λ(h)| = M_Λ(|h|)`** under ferromagnetism at `|h|`:
+requires `0 ≤ J ∧ 0 < β` (so that `Ferromagnetic ⟨J, |h|, β⟩` holds
+automatically via `0 ≤ |h|`). Λ-layer counterpart of
+`IsingModel.abs_magnetization_eq_magnetization_abs_h` (PR #769).
+
+Proof by `abs_choice h`: at `|h| = h` (`h ≥ 0`),
+`magnetizationΛ_nonneg` gives the nonneg value matches `|·|`; at
+`|h| = -h` (`h ≤ 0`), `magnetizationΛ_neg_h` flips sign and the
+ferromagnetic nonnegativity at `|h|` makes the absolute value agree.
+
+Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §5.3 (background). -/
+theorem abs_magnetizationΛ_eq_magnetizationΛ_abs_h
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J h β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (i : (↑Λ : Type _)) :
+    |magnetizationΛ G Λ (⟨J, h, β⟩ : IsingParams ℝ) i|
+      = magnetizationΛ G Λ (⟨J, |h|, β⟩ : IsingParams ℝ) i := by
+  have hf_abs : Ferromagnetic (⟨J, |h|, β⟩ : IsingParams ℝ) :=
+    ⟨hJ, abs_nonneg _, hβ⟩
+  have habs_nonneg :
+      0 ≤ magnetizationΛ G Λ (⟨J, |h|, β⟩ : IsingParams ℝ) i :=
+    magnetizationΛ_nonneg G Λ _ hf_abs i
+  rcases abs_choice h with habs | habs
+  · -- |h| = h (h ≥ 0)
+    have heq :
+        magnetizationΛ G Λ (⟨J, |h|, β⟩ : IsingParams ℝ) i
+          = magnetizationΛ G Λ (⟨J, h, β⟩ : IsingParams ℝ) i := by
+      rw [habs]
+    rw [heq]
+    apply abs_of_nonneg
+    have h_ge : 0 ≤ h := by rw [← habs]; exact abs_nonneg h
+    exact magnetizationΛ_nonneg G Λ _ ⟨hJ, h_ge, hβ⟩ i
+  · -- |h| = -h (h ≤ 0)
+    have hneg :
+        magnetizationΛ G Λ (⟨J, |h|, β⟩ : IsingParams ℝ) i
+          = -magnetizationΛ G Λ (⟨J, h, β⟩ : IsingParams ℝ) i := by
+      rw [habs]; exact magnetizationΛ_neg_h G Λ J h β i
+    rw [hneg]
+    apply abs_of_nonpos
+    have hne :
+        0 ≤ -magnetizationΛ G Λ (⟨J, h, β⟩ : IsingParams ℝ) i := by
+      rw [← hneg]; exact habs_nonneg
+    linarith
+
 /-- **Λ-level correlation closed form at `J = 0`**:
 `correlationΛ G Λ ⟨0, h, β⟩ A = tanh(β·h)^A.card`. Direct lift of
 `IsingModel.correlation_J_zero` through
