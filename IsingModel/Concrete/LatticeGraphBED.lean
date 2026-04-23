@@ -312,6 +312,65 @@ lemma outerVertexBoundary_card_le_sum_degrees_innerVertexBoundary
   exact Finset.sum_le_sum (fun x _ =>
     (card_neighborFinset_eq_degree _ _).le)
 
+/-- **Oriented edge boundary** of a finite Finset `S` in a
+locally finite simple graph: ordered pairs `(x, y)` with
+`x ∈ S`, `y ∉ S`, `G.Adj x y`. Each crossing edge is recorded
+exactly once with its `S`-endpoint listed first, so no
+double-counting. The "orientation" here is cut-induced (the
+`S`-endpoint comes first), not a graph orientation; the form
+sidesteps the `Sym2 V` quotient handling that an unordered
+formulation would force. -/
+def edgeBoundary [DecidableEq V] [LocallyFinite G]
+    (S : Finset V) : Finset (V × V) :=
+  (G.innerVertexBoundary S).biUnion fun x =>
+    ((G.neighborFinset x).filter (fun y => y ∉ S)).image
+      (fun y => (x, y))
+
+/-- **Membership in `edgeBoundary G S`**: `(x, y)` is in the
+oriented edge boundary iff `x ∈ S`, `y ∉ S`, and `G.Adj x y`. -/
+lemma mem_edgeBoundary_iff [DecidableEq V] [LocallyFinite G]
+    (S : Finset V) (e : V × V) :
+    e ∈ G.edgeBoundary S
+      ↔ e.1 ∈ S ∧ e.2 ∉ S ∧ G.Adj e.1 e.2 := by
+  obtain ⟨x, y⟩ := e
+  simp only [edgeBoundary, Finset.mem_biUnion, Finset.mem_image,
+    Finset.mem_filter, mem_neighborFinset, Prod.mk.injEq]
+  refine ⟨?_, ?_⟩
+  · rintro ⟨a, ha, b, ⟨hab, hbS⟩, hrfla, hrflb⟩
+    -- `(a, b) = (x, y)` ⇒ `a = x`, `b = y`
+    subst hrfla
+    subst hrflb
+    rw [G.mem_innerVertexBoundary_iff] at ha
+    exact ⟨ha.1, hbS, hab⟩
+  · rintro ⟨hxS, hyS, hadj⟩
+    refine ⟨x, ?_, y, ⟨hadj, hyS⟩, rfl, rfl⟩
+    rw [G.mem_innerVertexBoundary_iff]
+    exact ⟨hxS, y, hadj, hyS⟩
+
+/-- **Empty boundary of empty set**: `edgeBoundary G ∅ = ∅`,
+since `innerVertexBoundary G ∅ = ∅` (PR #786) collapses the
+outer `biUnion` to the empty Finset. -/
+lemma edgeBoundary_empty [DecidableEq V] [LocallyFinite G] :
+    G.edgeBoundary (∅ : Finset V) = ∅ := by
+  simp [edgeBoundary, G.innerVertexBoundary_empty]
+
+/-- **Cardinality bound by sum of degrees over the inner
+boundary**: `|∂^e S| ≤ ∑_{x ∈ ∂_i^v S} deg_G(x)`. Each
+`x ∈ innerVertexBoundary` contributes at most
+`|G.neighborFinset x| = deg_G(x)` oriented edges: the image of
+the filtered neighbour Finset under `y ↦ (x, y)` is no larger
+than the filter, which is no larger than the neighbour Finset.
+`Finset.card_biUnion_le` then sums these bounds. -/
+lemma edgeBoundary_card_le_sum_degrees_innerVertexBoundary
+    [DecidableEq V] [LocallyFinite G] (S : Finset V) :
+    (G.edgeBoundary S).card
+      ≤ ∑ x ∈ G.innerVertexBoundary S, G.degree x := by
+  refine (Finset.card_biUnion_le).trans ?_
+  refine Finset.sum_le_sum (fun x _ => ?_)
+  refine (Finset.card_image_le).trans ?_
+  refine (Finset.card_filter_le _ _).trans ?_
+  exact (card_neighborFinset_eq_degree _ _).le
+
 end SimpleGraph
 
 namespace IsingModel
@@ -349,6 +408,23 @@ theorem latticeGraph_outerVertexBoundary_card_le_two_mul_d_mul_innerVertexBounda
     ((IsingModel.latticeGraph d).outerVertexBoundary S).card
       ≤ 2 * d * ((IsingModel.latticeGraph d).innerVertexBoundary S).card := by
   refine ((IsingModel.latticeGraph d).outerVertexBoundary_card_le_sum_degrees_innerVertexBoundary
+    S).trans ?_
+  calc (∑ x ∈ (IsingModel.latticeGraph d).innerVertexBoundary S,
+          (IsingModel.latticeGraph d).degree x)
+      ≤ ∑ _x ∈ (IsingModel.latticeGraph d).innerVertexBoundary S, 2 * d :=
+        Finset.sum_le_sum (fun x _ => latticeGraph_degree_le d x)
+    _ = 2 * d * ((IsingModel.latticeGraph d).innerVertexBoundary S).card := by
+        rw [Finset.sum_const, smul_eq_mul, mul_comm]
+
+/-- **ℤ^d edge boundary linear bound**: on `latticeGraph d`,
+`|∂^e S| ≤ 2d · |∂_i^v S|`. Combines the generic
+`SimpleGraph.edgeBoundary_card_le_sum_degrees_innerVertexBoundary`
+with the per-vertex degree bound `latticeGraph_degree_le`. -/
+theorem latticeGraph_edgeBoundary_card_le_two_mul_d_mul_innerVertexBoundary_card
+    (d : ℕ) (S : Finset (Fin d → ℤ)) :
+    ((IsingModel.latticeGraph d).edgeBoundary S).card
+      ≤ 2 * d * ((IsingModel.latticeGraph d).innerVertexBoundary S).card := by
+  refine ((IsingModel.latticeGraph d).edgeBoundary_card_le_sum_degrees_innerVertexBoundary
     S).trans ?_
   calc (∑ x ∈ (IsingModel.latticeGraph d).innerVertexBoundary S,
           (IsingModel.latticeGraph d).degree x)
