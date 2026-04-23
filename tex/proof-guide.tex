@@ -2076,6 +2076,33 @@ PR~\#788 this yields the double-counting identity
 $\sum_{x \in \partial^v_i S} |N_G(x) \setminus S| =
 \sum_{y \in \partial^v_o S} |N_G(y) \cap S|$.
 
+\paragraph{\S5.1 cluster property bundled formalisation (PR~\#792).}
+The Glimm--Jaffe \S5.1 cluster property is formalised as a single
+predicate
+\[
+  \mathrm{clusterProperty}\,G\,\Lambda\,p \;:=\;
+    \forall\, i \in V,\
+    \mathrm{Tendsto}\bigl(j \mapsto U_2(i, j)\bigr)\,
+    \mathrm{Filter.cofinite}\,(\mathrm{nhds}\,0)
+\]
+($\mathrm{IsingModel.Ambient.clusterProperty}$, in
+\texttt{AmbientLattice.lean}). The PR bundles the
+sufficient condition $\mathrm{clusterProperty\_of\_summable}$
+(per-site application of
+$\mathrm{truncated2Infinite\_tendsto\_cofinite\_zero\_of\_summable}$),
+together with the two trivial-slice proofs
+$\mathrm{clusterProperty\_J\_zero}$ (for ferromagnetic
+$\langle 0, h, \beta \rangle$, using $U_2 = 0$ off-diagonally and
+$\mathrm{Filter.eventuallyEq}$ on $\{i\}^{\mathrm c}$) and
+$\mathrm{clusterProperty\_beta\_zero}$ (for any
+$\langle J, h, 0 \rangle$, using $U_2 \equiv 0$ at $\beta = 0$).
+$\mathbb Z^d$ wrappers
+$\mathrm{clusterProperty\_latticeGraph\_\{of\_summable, J\_zero, beta\_zero\}}$
+specialise these to the integer lattice graph. The general
+(non-trivial) case requires the Simon--Lieb inequality (FV Prop~9.31)
+or random-current representation; both are research-level and
+remain open (Issue~\#780).
+
 \paragraph{Outer-side companion of PR~\#787's edge bound (PR~\#791).}
 The symmetric outer-side bound
 \[
