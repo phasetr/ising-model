@@ -1801,6 +1801,30 @@ formalized; this lemma is the elementary real-analysis step ready to be
 composed with a future proof of summability. $\mathbb Z^d$ wrapper:
 \texttt{truncated2Infinite\_latticeGraph\_tendsto\_cofinite\_zero\_of\_summable}.
 
+\paragraph{$\ell^1$ lattice distance on $\mathbb Z^d$.}
+As infrastructure for turning the above cofinite statement into a
+distance-based statement (Epic~\#780), PR~\#781 introduces an
+$\mathbb N$-valued $\ell^1$ distance on $\mathrm{Fin}\,d \to \mathbb Z$
+defined by
+\[
+  d_{\mathrm{latt}}(x, y) \;=\; \sum_{i \in \mathrm{Fin}\,d}
+    \lvert x_i - y_i \rvert_{\mathbb N}, \qquad
+  \lvert \cdot \rvert_{\mathbb N} = \texttt{Int.natAbs}.
+\]
+The basic lemmas \texttt{latticeDistance\_self},
+\texttt{latticeDistance\_comm},
+\texttt{latticeDistance\_eq\_zero\_iff},
+\texttt{latticeDistance\_triangle} give a full pseudo-metric structure,
+and \texttt{latticeGraph\_adj\_iff\_latticeDistance\_eq\_one} ties the
+new metric to the pre-existing adjacency relation
+$\sum_i \lvert x_i - y_i\rvert = 1$ via the identity
+$\lvert n \rvert = (\lvert n \rvert_{\mathbb N} : \mathbb Z)$. The
+range is kept in $\mathbb N$ rather than in $\mathbb R$ to avoid
+$\mathbb N$/$\mathbb Z$/$\mathbb R$ cast bookkeeping in the downstream
+summability arguments (Simon--Lieb iteration) that this infrastructure
+is meant to support. No mathlib
+\texttt{PseudoMetricSpace} instance is registered at this stage.
+
 \subsection{Lattice-growth convergence of \S5 quantities}
 
 Named corollaries of \texttt{correlation\_convergent\_subgraph} (PR~\#64):
