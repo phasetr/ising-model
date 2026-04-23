@@ -316,8 +316,10 @@ lemma outerVertexBoundary_card_le_sum_degrees_innerVertexBoundary
 locally finite simple graph: ordered pairs `(x, y)` with
 `x ∈ S`, `y ∉ S`, `G.Adj x y`. Each crossing edge is recorded
 exactly once with its `S`-endpoint listed first, so no
-double-counting. The oriented form sidesteps the `Sym2 V`
-quotient handling that an unordered formulation would force. -/
+double-counting. The "orientation" here is cut-induced (the
+`S`-endpoint comes first), not a graph orientation; the form
+sidesteps the `Sym2 V` quotient handling that an unordered
+formulation would force. -/
 def edgeBoundary [DecidableEq V] [LocallyFinite G]
     (S : Finset V) : Finset (V × V) :=
   (G.innerVertexBoundary S).biUnion fun x =>
@@ -355,11 +357,10 @@ lemma edgeBoundary_empty [DecidableEq V] [LocallyFinite G] :
 /-- **Cardinality bound by sum of degrees over the inner
 boundary**: `|∂^e S| ≤ ∑_{x ∈ ∂_i^v S} deg_G(x)`. Each
 `x ∈ innerVertexBoundary` contributes at most
-`|G.neighborFinset x| = deg_G(x)` oriented edges (the image of
-the filtered neighbour Finset under the trivially injective map
-`y ↦ (x, y)` is no larger than the filter, which is no larger
-than the neighbour Finset). `Finset.card_biUnion_le` then sums
-these bounds. -/
+`|G.neighborFinset x| = deg_G(x)` oriented edges: the image of
+the filtered neighbour Finset under `y ↦ (x, y)` is no larger
+than the filter, which is no larger than the neighbour Finset.
+`Finset.card_biUnion_le` then sums these bounds. -/
 lemma edgeBoundary_card_le_sum_degrees_innerVertexBoundary
     [DecidableEq V] [LocallyFinite G] (S : Finset V) :
     (G.edgeBoundary S).card
