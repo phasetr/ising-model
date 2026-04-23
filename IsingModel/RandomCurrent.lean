@@ -811,6 +811,42 @@ theorem Current.prod_pow_degreeAt {M : Type*} [CommMonoid M]
   ext v
   simp
 
+omit [DecidableEq V] in
+/-- **Spin-edge product = spin-vertex power (via degreeAt)**: for
+any current `n` and spin configuration `σ : ↑Λ → Spin`,
+`∏_v σ_v ^ degreeAt n v = ∏_e (e.toFinset.prod σ.toSign) ^ n e`.
+The specialization of `prod_pow_degreeAt` to the spin-sign
+function `(· : Spin).toSign : Spin → ℝ`. -/
+theorem Config.prod_pow_spin_degreeAt
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (σ : ↑Λ → Spin) (n : Current G Λ) :
+    ∏ v ∈ (Finset.univ : Finset ↑Λ), ((σ v).toSign : ℝ) ^ n.degreeAt G Λ v
+      = ∏ e : (inducedGraph G Λ).edgeSet,
+          ((e : Sym2 ↑Λ).toFinset.prod
+            (fun v => ((σ v).toSign : ℝ))) ^ n e :=
+  Current.prod_pow_degreeAt (M := ℝ) G Λ n (fun v => ((σ v).toSign : ℝ))
+
+omit [DecidableEq V] in
+/-- **Spin sum of the spin-edge product at fixed current**: at
+fixed current `n`,
+`∑_σ ∏_e (e.toFinset.prod σ.toSign) ^ n e = 2^|Λ|` if
+`degreeAt n` is even at every vertex (i.e. `n` is source-free),
+else `0`. Direct consequence of `prod_pow_spin_degreeAt` and
+`Config.sum_prod_toSign_pow_real`; the per-current spin-sum step
+of the random-current expansion (FV §3.7). -/
+theorem Config.sum_prod_spin_pow_degreeAt
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) :
+    (∑ σ : ↑Λ → Spin, ∏ e : (inducedGraph G Λ).edgeSet,
+        ((e : Sym2 ↑Λ).toFinset.prod
+          (fun v => ((σ v).toSign : ℝ))) ^ n e)
+      = if (∀ v : ↑Λ, Even (n.degreeAt G Λ v))
+        then (2 : ℝ)^(Fintype.card ↑Λ) else 0 := by
+  simp_rw [← Config.prod_pow_spin_degreeAt G Λ _ n]
+  exact Config.sum_prod_toSign_pow_real (k := n.degreeAt G Λ)
+
 end Ambient
 
 end IsingModel
