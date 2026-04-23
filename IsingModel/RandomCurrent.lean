@@ -1672,6 +1672,23 @@ theorem Real.exp_eq_tsum_div_factorial (x : ℝ) :
   rw [Real.exp_eq_exp_ℝ]
   exact congrFun NormedSpace.exp_eq_tsum_div x
 
+/-- **Real Taylor partial sum converges to `Real.exp`**:
+\(∑_{k ≤ N} x^k / k! → Real.exp x\) as `N → ∞`. The first analytic
+limit step toward `N → ∞` in the bounded random-current expansion
+(FV §3.7). Combines `Real.exp_eq_tsum_div_factorial` with
+`Real.summable_pow_div_factorial` and `Summable.tendsto_sum_tsum_nat`,
+shifting the index from `range N` to `range (N+1)` via
+`tendsto_add_atTop_nat 1`. -/
+theorem Real.tendsto_partial_sum_atTop_exp (x : ℝ) :
+    Filter.Tendsto
+      (fun N : ℕ => ∑ k ∈ Finset.range (N + 1), x ^ k / (k.factorial : ℝ))
+      Filter.atTop (nhds (Real.exp x)) := by
+  rw [Real.exp_eq_tsum_div_factorial]
+  have h_summable : Summable (fun k : ℕ => x ^ k / (k.factorial : ℝ)) :=
+    Real.summable_pow_div_factorial x
+  exact (Summable.tendsto_sum_tsum_nat h_summable).comp
+    (Filter.tendsto_add_atTop_nat 1)
+
 end Ambient
 
 end IsingModel
