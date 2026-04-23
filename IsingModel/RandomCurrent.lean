@@ -404,7 +404,7 @@ theorem Config.sum_prod_toSign_pow_real {ι : Type*} [Fintype ι] [DecidableEq �
     rw [Finset.prod_congr rfl (fun v _ => if_pos (h v))]
     simp [Finset.prod_const, Finset.card_univ]
   · rw [if_neg h]
-    push_neg at h
+    push Not at h
     obtain ⟨v, hv⟩ := h
     refine Finset.prod_eq_zero (Finset.mem_univ v) ?_
     rw [if_neg hv]
