@@ -1886,10 +1886,14 @@ $\varepsilon$-$N$ reading: for every $\varepsilon > 0$ there exists
 $N \in \mathbb N$ such that $d_{\mathrm{latt}}(i, j) \ge N$
 implies $|U_2(i, j)| < \varepsilon$. The Lean proof rewrites the
 source filter via the equality lemma and applies PR~\#779's
-cofinite version. This is the natural infrastructure capstone
-before tackling the unconditional summability proof
-(Simon--Lieb inequality, FV Prop~9.31), which is research-level
-multi-PR scope.
+cofinite version. The statement is a $\mathrm{Summable}$-conditioned
+corollary, not a stand-alone Glimm--Jaffe result: it presents the
+\S5.1 cluster picture in its distance-based form, with the
+$\mathrm{Summable}$ hypothesis a placeholder for the unconditional
+summability the Simon--Lieb inequality (Friedli--Velenik
+Prop~9.31) is expected to provide in subsequent PRs. This is the
+natural infrastructure capstone before tackling that
+research-level multi-PR step.
 
 \subsection{Lattice-growth convergence of \S5 quantities}
 

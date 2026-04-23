@@ -167,11 +167,11 @@ theorem tendsto_latticeDistance_atTop_cofinite
 `latticeDistance d i` and the cofinite filter on `Fin d → ℤ`. The
 `≥` direction is `Filter.Tendsto.le_comap` of PR #782's
 `tendsto_latticeDistance_atTop_cofinite`. The `≤` direction uses
-PR #782's `latticeDistance_le_finite` together with
-`Set.Finite.bddAbove` on `ℕ`: any cofinite `S` has a finite
-complement, on which `latticeDistance d i` is therefore bounded
-above by some `M`, so `S` contains the preimage of
-`Set.Ici (M + 1) ∈ Filter.atTop`.
+`Set.Finite.bddAbove` on `ℕ` to bound `latticeDistance d i` on
+the finite complement of any cofinite set: the image of that
+finite complement under `latticeDistance d i` is a finite subset
+of `ℕ`, hence has an upper bound `M`, so the cofinite set contains
+the preimage of `Set.Ici (M + 1) ∈ Filter.atTop`.
 
 Geometrically: "going to infinity along the lattice distance" and
 "eventually leaving every finite set" are the same filter on

@@ -10520,12 +10520,19 @@ Equivalent ε-N statement: for every `ε > 0` there exists `N : ℕ`
 such that `latticeDistance d i j ≥ N` implies
 `|truncated2Infinite (latticeGraph d) Λ p i j| < ε`.
 
-Capstone of the §5.1 cluster decay infrastructure stack
+A `Summable`-conditioned corollary, not a standalone Glimm–Jaffe
+result: it presents the §5.1 cluster picture in its distance-based
+form, with the `Summable` hypothesis serving as a placeholder for
+the unconditional summability that the Simon–Lieb inequality
+(Friedli–Velenik Prop 9.31) is expected to provide in subsequent
+PRs. Capstone of the §5.1 cluster-decay infrastructure stack
 (PR #779 + PR #781 + PR #782). The proof is a one-line rewrite of
 the comap filter via `comap_latticeDistance_atTop_eq_cofinite`,
 followed by PR #779's cofinite version.
 
-Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §5.1 pp. 76–79. -/
+References: Glimm–Jaffe *Quantum Physics* 2nd ed., §5.1
+pp. 76–79; Friedli–Velenik *Statistical Mechanics of Lattice
+Systems*, Prop 9.31 (Simon–Lieb inequality). -/
 theorem truncated2Infinite_latticeGraph_tendsto_atTop_zero_of_summable
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
     (p : IsingParams ℝ) (i : Fin d → ℤ)
