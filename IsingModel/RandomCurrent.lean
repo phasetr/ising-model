@@ -1015,6 +1015,31 @@ theorem Current.even_indicator_add_degreeAt_iff_hasSources
       by_contra hne
       exact hvA (hmem.mp hne)
 
+omit [DecidableEq V] in
+/-- **A-source spin sum at fixed current — `HasSources` form**:
+\(∑_σ σ_A · ∏_e (e.toFinset.prod σ.toSign)^n e
+  = 2^|Λ|\) if `n.HasSources A`, else `0`. Final form combining
+`Config.sum_spinA_prod_spin_pow_eq_pow_card_iff` and
+`Current.even_indicator_add_degreeAt_iff_hasSources`; the
+A-source per-current spin-sum identity in its final form,
+ready to feed into the random-current expression of
+`⟨σ_A⟩^Λ` (FV §3.7). -/
+theorem Config.sum_spinA_prod_spin_pow_hasSources
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) (A : Finset ↑Λ)
+    [Decidable (n.HasSources G Λ A)] :
+    (∑ σ : ↑Λ → Spin,
+      (∏ a ∈ A, ((σ a).toSign : ℝ))
+      * (∏ e : (inducedGraph G Λ).edgeSet,
+          ((e : Sym2 ↑Λ).toFinset.prod
+            (fun v => ((σ v).toSign : ℝ))) ^ n e))
+      = if n.HasSources G Λ A
+        then (2 : ℝ)^(Fintype.card ↑Λ) else 0 := by
+  rw [Config.sum_spinA_prod_spin_pow_eq_pow_card_iff]
+  exact if_congr
+    (Current.even_indicator_add_degreeAt_iff_hasSources G Λ n A) rfl rfl
+
 end Ambient
 
 end IsingModel
