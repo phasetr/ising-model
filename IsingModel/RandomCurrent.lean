@@ -512,8 +512,7 @@ theorem Current.fromEdgeFinset_support (G : SimpleGraph V) (Λ : Finset V)
 
 omit [DecidableEq V] in
 /-- **Parity of `fromEdgeFinset {e₀}` at vertex `v`**: equals `1`
-in `ZMod 2` iff `v` is incident to the singleton edge `e₀`,
-else `0`. -/
+in `ZMod 2` iff `v` is an endpoint of `e₀`, else `0`. -/
 theorem Current.fromEdgeFinset_singleton_parity
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
