@@ -1856,6 +1856,41 @@ PR~\#779 this upgrades the cofinite cluster-decay statement into
 a distance-based one conditional on summability of
 $j \mapsto U_2(i, j)$.
 
+\paragraph{Distance-based cluster decay capstone (PR~\#783).}
+PR~\#783 closes the §5.1 cluster-decay infrastructure stack by
+combining the previous two ingredients into a single distance-based
+statement. The bridge is the filter equality
+\[
+  \mathrm{Filter.comap}\,\bigl(d_{\mathrm{latt}}(i, \cdot)\bigr)\,
+    \mathrm{Filter.atTop} \;=\; \mathrm{Filter.cofinite}
+\]
+(\texttt{comap\_latticeDistance\_atTop\_eq\_cofinite}). The $\ge$
+direction is exactly $\mathrm{Filter.Tendsto.le\_comap}$ applied to
+PR~\#782's \texttt{tendsto\_latticeDistance\_atTop\_cofinite}; the
+$\le$ direction uses $\mathrm{Set.Finite.bddAbove}$ on $\mathbb N$
+to bound $d_{\mathrm{latt}}(i, \cdot)$ on the finite complement
+$S^{\mathrm c}$ of any cofinite $S$, then takes
+$[M+1, \infty) \in \mathrm{Filter.atTop}$ to witness $S \in
+\mathrm{comap}\,d_{\mathrm{latt}}(i, \cdot)\,\mathrm{atTop}$. Then
+\[
+  \mathrm{Summable}\bigl(j \mapsto U_2(i, j)\bigr)
+  \;\Longrightarrow\;
+  U_2(i, j) \xrightarrow[d_{\mathrm{latt}}(i, j) \to \infty]{} 0
+\]
+formally as
+\texttt{truncated2Infinite\_latticeGraph\_tendsto\_atTop\_zero\_of\_summable}:
+$\mathrm{Tendsto}\bigl(j \mapsto U_2(i, j)\bigr)\,
+\mathrm{Filter.comap}\,d_{\mathrm{latt}}(i, \cdot)\,
+\mathrm{Filter.atTop}\,(\mathrm{nhds}\,0)$, with the equivalent
+$\varepsilon$-$N$ reading: for every $\varepsilon > 0$ there exists
+$N \in \mathbb N$ such that $d_{\mathrm{latt}}(i, j) \ge N$
+implies $|U_2(i, j)| < \varepsilon$. The Lean proof rewrites the
+source filter via the equality lemma and applies PR~\#779's
+cofinite version. This is the natural infrastructure capstone
+before tackling the unconditional summability proof
+(Simon--Lieb inequality, FV Prop~9.31), which is research-level
+multi-PR scope.
+
 \subsection{Lattice-growth convergence of \S5 quantities}
 
 Named corollaries of \texttt{correlation\_convergent\_subgraph} (PR~\#64):

@@ -163,6 +163,41 @@ theorem tendsto_latticeDistance_atTop_cofinite
   intro j hj
   exact (Nat.lt_of_not_le hj).le
 
+/-- **Filter equality** between the comap of `Filter.atTop` along
+`latticeDistance d i` and the cofinite filter on `Fin d → ℤ`. The
+`≥` direction is `Filter.Tendsto.le_comap` of PR #782's
+`tendsto_latticeDistance_atTop_cofinite`. The `≤` direction uses
+PR #782's `latticeDistance_le_finite` together with
+`Set.Finite.bddAbove` on `ℕ`: any cofinite `S` has a finite
+complement, on which `latticeDistance d i` is therefore bounded
+above by some `M`, so `S` contains the preimage of
+`Set.Ici (M + 1) ∈ Filter.atTop`.
+
+Geometrically: "going to infinity along the lattice distance" and
+"eventually leaving every finite set" are the same filter on
+`Fin d → ℤ`. This lets the cofinite cluster decay of PR #779 be
+restated in distance-based form (see
+`truncated2Infinite_latticeGraph_tendsto_atTop_zero_of_summable`). -/
+lemma comap_latticeDistance_atTop_eq_cofinite
+    (d : ℕ) (i : Fin d → ℤ) :
+    Filter.comap (fun j : Fin d → ℤ => latticeDistance d i j)
+        Filter.atTop
+      = Filter.cofinite := by
+  classical
+  refine le_antisymm ?_ (tendsto_latticeDistance_atTop_cofinite d i).le_comap
+  intro S hS
+  rw [Filter.mem_cofinite] at hS
+  obtain ⟨M, hM⟩ :=
+    (hS.image (fun j : Fin d → ℤ => latticeDistance d i j)).bddAbove
+  refine Filter.mem_comap.mpr ⟨Set.Ici (M + 1), Filter.Ici_mem_atTop _, ?_⟩
+  intro j hj
+  by_contra hjS
+  have hjSc : j ∈ Sᶜ := hjS
+  have hbound : latticeDistance d i j ≤ M :=
+    hM (Set.mem_image_of_mem _ hjSc)
+  have hge : M + 1 ≤ latticeDistance d i j := hj
+  omega
+
 /-! ## Finite boxes in ℤ^d
 
 We model the box `{-n, ..., n}^d` as `Fin d → Fin (2*n+1)` with a
