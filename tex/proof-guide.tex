@@ -1926,6 +1926,43 @@ boundary of a finite Finset of $\mathbb Z^d$, edge boundary,
 $\sup_v \mathrm{degree}$ uniform bounds, etc.) becomes statable
 in mathlib's standard idiom.
 
+\paragraph{Outer vertex boundary
+\texttt{SimpleGraph.outerVertexBoundary G S} (PR~\#785).}
+The Simon--Lieb inequality (FV Prop~9.31)
+\[
+  \langle \sigma_0 \sigma_x \rangle_+^{\Lambda}
+  \;\le\; \sum_{y \in \partial^v_o B}
+    \langle \sigma_0 \sigma_y \rangle_+^{B}
+    \cdot \langle \sigma_y \sigma_x \rangle_+^{\Lambda}
+  \qquad (B \subset \Lambda,\ x \notin B,\ 0 \in B)
+\]
+indexes its boundary sum by the \emph{outer vertex boundary} of
+the inner box $B$. PR~\#785 introduces this notion as a generic
+graph-theoretic primitive in mathlib's \texttt{SimpleGraph}
+namespace: for any locally finite simple graph $G$ and any Finset
+$S$ of vertices,
+\[
+  \mathrm{SimpleGraph.outerVertexBoundary}\,G\,S
+  \;:=\; (S.\mathrm{biUnion}\,G.\mathrm{neighborFinset}) \setminus S
+  \;\equiv\; \{\,y \notin S \mid \exists x \in S,\ G.\mathrm{Adj}\,x\,y\,\}.
+\]
+The four basic lemmas are the membership characterisation
+$\mathrm{mem\_outerVertexBoundary\_iff}$, the disjointness
+$\mathrm{outerVertexBoundary\_disjoint}$, the empty-set value
+$\mathrm{outerVertexBoundary\_empty}$, and the cardinality bound
+\[
+  |\partial^v_o S| \;\le\; \sum_{x \in S} \deg_G(x)
+\]
+(\texttt{outerVertexBoundary\_card\_le\_sum\_degrees}). On
+$\mathbb Z^d$, the wrapper
+$|\partial^v_o S| \le 2 d \cdot |S|$
+(\texttt{IsingModel.Ambient.latticeGraph\_outerVertexBoundary\_card\_le})
+follows by chaining the generic bound with PR~\#784's per-vertex
+$\mathrm{latticeGraph\_degree\_le}$. This is the preparatory
+indexing object for the Simon--Lieb statement to plug into
+(Epic~\#780, B-iii); the present PR does not yet establish
+Simon--Lieb itself.
+
 \subsection{Lattice-growth convergence of \S5 quantities}
 
 Named corollaries of \texttt{correlation\_convergent\_subgraph} (PR~\#64):
