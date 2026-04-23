@@ -882,6 +882,34 @@ theorem Config.sum_prod_spin_pow_degreeAt_isSourceFree
   rw [Config.sum_prod_spin_pow_degreeAt]
   exact if_congr (Current.even_degreeAt_iff_isSourceFree G Λ n) rfl rfl
 
+omit [DecidableEq V] in
+/-- **Subset spin-product as per-vertex indicator power**: for any
+spin configuration `σ : ↑Λ → Spin` and subset `A ⊆ ↑Λ`,
+`∏_{a ∈ A} ((σ a).toSign : ℝ) = ∏_v ((σ v).toSign : ℝ)^(1_A v)`.
+The indicator-power form needed to combine `σ_A` with the
+per-vertex spin powers in the random-current expansion of
+`⟨σ_A⟩^Λ` (FV §3.7). -/
+theorem Config.prod_subset_eq_prod_pow_indicator
+    (Λ : Finset V) [Fintype ↑Λ] [DecidableEq ↑Λ]
+    (σ : ↑Λ → Spin) (A : Finset ↑Λ) :
+    (∏ a ∈ A, ((σ a).toSign : ℝ))
+      = ∏ v : ↑Λ, ((σ v).toSign : ℝ)^(if v ∈ A then 1 else 0) := by
+  classical
+  -- ∏_v σ.toSign(v)^(if v ∈ A then 1 else 0)
+  --   = ∏_v if v ∈ A then σ.toSign(v) else 1
+  --   = (univ.filter (· ∈ A)).prod σ.toSign
+  --   = A.prod σ.toSign
+  have hpow : ∀ v : ↑Λ,
+      ((σ v).toSign : ℝ)^(if v ∈ A then (1 : ℕ) else 0)
+        = if v ∈ A then ((σ v).toSign : ℝ) else 1 := by
+    intro v
+    by_cases hv : v ∈ A <;> simp [hv]
+  simp_rw [hpow]
+  rw [← Finset.prod_filter]
+  congr 1
+  ext v
+  simp
+
 end Ambient
 
 end IsingModel
