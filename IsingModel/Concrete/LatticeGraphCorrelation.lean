@@ -10588,12 +10588,14 @@ theorem clusterProperty_latticeGraph_beta_zero
 
 /-! ## §17.1 / §17.5 lattice mass / correlation length foundation
 
-Bundled formalisation of GJ §17.1 (mass m(σ) of (17.1.5)) and
+Bundled foundation for GJ §17.1 (mass m(σ) of (17.1.5)) and
 §17.5 (correlation length) on the lattice. Defines the
 exponential-decay predicate `HasExponentialDecay`, proves it at
-the trivial slices `β = 0` and `J = 0` (ferromagnetic), provides
-α-monotonicity sanity, and links to the cluster-property
-predicate of PR #792.
+the trivial slices `β = 0` and `J = 0` (ferromagnetic), and
+provides α-monotonicity sanity. The link to the cluster-property
+predicate of PR #792 is deferred to a follow-up PR (the proof
+needs a `Filter.Tendsto.comp` chain or a Summable derivation;
+both are substantive).
 
 The general non-trivial-slice exponential decay rate (positive
 mass for `β < β_c`) requires the Simon–Lieb inequality or
@@ -10609,7 +10611,11 @@ for every basepoint pair `(i, j)` with `i ≠ j`, the truncated
 2-point function is bounded above (in absolute value) by
 `C · exp(-α · latticeDistance d i j)`. The decay rate parameter
 `α` plays the role of the inverse correlation length / mass
-(see GJ §17.1 (17.1.5)). -/
+(see GJ §17.1 (17.1.5)); the physically meaningful regime is
+`0 ≤ α`, but the predicate as stated does not impose this
+condition (negative `α` corresponds to allowed exponential
+*growth*, which the truncated 2-point function does satisfy
+trivially since it is bounded). -/
 def HasExponentialDecay
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
     (p : IsingParams ℝ) (α : ℝ) : Prop :=
