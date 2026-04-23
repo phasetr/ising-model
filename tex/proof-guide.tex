@@ -2096,10 +2096,25 @@ $\mathrm{HasExponentialDecay\_mono}$ ($\alpha$-monotonicity:
 decreasing $\alpha$ weakens the bound while the constant $C$ is
 preserved). The general non-trivial-slice exponential decay
 ($m(\beta) > 0$ for $\beta < \beta_c$) requires Simon--Lieb
-(Issue~\#780, research-level). The link to PR~\#792's
-$\mathrm{clusterProperty}$ predicate (exponential decay with
-$\alpha > 0$ implies the cluster property) is deferred to a
-follow-up PR.
+(Issue~\#780, research-level).
+
+\paragraph{$\mathrm{clusterProperty}$ linkage (PR~\#794).}
+PR~\#794 closes the link: for $\alpha > 0$,
+$\mathrm{HasExponentialDecay}(d, \Lambda, p, \alpha)$ implies
+PR~\#792's $\mathrm{clusterProperty}(\mathrm{latticeGraph}\,d, \Lambda, p)$
+($\mathrm{clusterProperty\_latticeGraph\_of\_HasExponentialDecay}$).
+The proof composes PR~\#782's
+$\mathrm{tendsto\_latticeDistance\_atTop\_cofinite}$ with the
+mathlib chain
+$\mathrm{tendsto\_id.const\_mul\_atTop}$ +
+$\mathrm{Real.tendsto\_exp\_neg\_atTop\_nhds\_zero}$ to obtain
+$(j \mapsto C \cdot e^{-\alpha\, d_{\mathrm{latt}}(i, j)}) \to 0$
+along $\mathrm{cofinite}$, then applies the squeeze
+$\mathrm{tendsto\_of\_tendsto\_of\_tendsto\_of\_le\_of\_le'}$
+between $-g$ and $g$ via $|U_2| \le g$. Together PR~\#793 and
+PR~\#794 give the full §17.1 / §17.5 lattice mass foundation
+including the precise relationship between exponential decay and
+the cluster-property predicate.
 
 \paragraph{\S5.1 cluster property bundled formalisation (PR~\#792).}
 The Glimm--Jaffe \S5.1 cluster property is formalised as a single
