@@ -373,11 +373,14 @@ lemma edgeBoundary_card_le_sum_degrees_innerVertexBoundary
 
 /-- **Edge boundary cardinality as a closed sum over the inner
 boundary**: strengthens `edgeBoundary_card_le_sum_degrees_innerVertexBoundary`
-to an equality. The `biUnion` defining `edgeBoundary G S` is
-disjoint across `x ∈ innerVertexBoundary G S` (different first
-coordinates), and the embedding `y ↦ (x, y)` is injective for
-fixed `x`, so the sum-of-cardinalities formula `Finset.card_biUnion`
-applies. Bounding each summand by `(G.neighborFinset x).card =
+to an equality. Two ingredients: (i) the `biUnion` defining
+`edgeBoundary G S` is disjoint across
+`x ∈ innerVertexBoundary G S` (different first coordinates), so
+`Finset.card_biUnion` rewrites `card biUnion` to `∑ card`;
+(ii) for fixed `x`, the embedding `y ↦ (x, y)` is injective, so
+`Finset.card_image_of_injective` makes each summand's image
+cardinality equal to the underlying filter's cardinality.
+Bounding each filter cardinality by `(G.neighborFinset x).card =
 G.degree x` recovers the previous inequality. -/
 lemma edgeBoundary_card_eq_sum_inner_filter
     [DecidableEq V] [LocallyFinite G] (S : Finset V) :
