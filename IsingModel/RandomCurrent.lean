@@ -159,6 +159,71 @@ theorem Current.zero_weight (G : SimpleGraph V) (Λ : Finset V)
   unfold Current.weight
   simp
 
+omit [DecidableEq V] in
+/-- **Weight is nonneg under nonneg coupling**: when `0 ≤ β J`,
+each factor `(β J)^(n e) / (n e)!` is nonneg, hence the product
+is nonneg. -/
+theorem Current.weight_nonneg (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {β J : ℝ} (hβJ : 0 ≤ β * J) (n : Current G Λ) :
+    0 ≤ n.weight G Λ β J := by
+  unfold Current.weight
+  refine Finset.prod_nonneg (fun e _ => ?_)
+  refine div_nonneg (pow_nonneg hβJ _) ?_
+  exact Nat.cast_nonneg _
+
+omit [DecidableEq V] in
+/-- **Weight is strictly positive under positive coupling**: when
+`0 < β J`, each factor `(β J)^(n e) / (n e)!` is strictly
+positive, hence the product is strictly positive. -/
+theorem Current.weight_pos (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {β J : ℝ} (hβJ : 0 < β * J) (n : Current G Λ) :
+    0 < n.weight G Λ β J := by
+  unfold Current.weight
+  refine Finset.prod_pos (fun e _ => ?_)
+  refine div_pos (pow_pos hβJ _) ?_
+  exact_mod_cast Nat.factorial_pos _
+
+/-- **Edge support of a current**: the Finset of edges with
+non-zero current value. Used in the random-current sum: weight
+of a current depends only on its values on the support. -/
+noncomputable def Current.support (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) :
+    Finset (inducedGraph G Λ).edgeSet :=
+  (Finset.univ : Finset (inducedGraph G Λ).edgeSet).filter (fun e => n e ≠ 0)
+
+omit [DecidableEq V] in
+/-- **Zero current has empty support**: every edge has value `0`. -/
+@[simp]
+theorem Current.support_zero (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ] :
+    (0 : Current G Λ).support G Λ = ∅ := by
+  classical
+  ext e
+  simp [Current.support]
+
+omit [DecidableEq V] in
+/-- **Support of a sum is contained in the union of supports**:
+if `(n + m) e ≠ 0` then `n e ≠ 0 ∨ m e ≠ 0`. -/
+theorem Current.support_add_subset (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n m : Current G Λ) :
+    (n + m).support G Λ ⊆ n.support G Λ ∪ m.support G Λ := by
+  classical
+  intro e he
+  simp only [Current.support, Finset.mem_filter, Finset.mem_univ,
+    true_and] at he
+  simp only [Finset.mem_union, Current.support, Finset.mem_filter,
+    Finset.mem_univ, true_and]
+  by_contra hne
+  rw [not_or] at hne
+  obtain ⟨hn, hm⟩ := hne
+  apply he
+  change n e + m e = 0
+  rw [not_ne_iff.mp hn, not_ne_iff.mp hm]
+
 end Ambient
 
 end IsingModel
