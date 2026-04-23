@@ -494,6 +494,22 @@ theorem Current.fromEdgeFinset_weight (G : SimpleGraph V) (Λ : Finset V)
   rw [Finset.prod_ite, Finset.prod_const, Finset.prod_const_one, mul_one,
     Finset.filter_univ_mem]
 
+omit [DecidableEq V] in
+/-- **Support of `fromEdgeFinset S` is `S`**: the set of edges
+where the 0/1 indicator current is non-zero is exactly `S`. -/
+@[simp]
+theorem Current.fromEdgeFinset_support (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (S : Finset (inducedGraph G Λ).edgeSet) :
+    (Current.fromEdgeFinset G Λ S).support G Λ = S := by
+  classical
+  ext e
+  simp only [Current.support, Current.fromEdgeFinset, Finset.mem_filter,
+    Finset.mem_univ, true_and]
+  by_cases he : e ∈ S
+  · simp [he]
+  · simp [he]
+
 end Ambient
 
 end IsingModel
