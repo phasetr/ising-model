@@ -3977,6 +3977,23 @@ theorem susceptibility_h_zero_latticeGraph
   IsingModel.susceptibility_h_zero
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J β i
 
+/-- **ℤ^d susceptibility_neg_h direct** (Λ-induced):
+`χ(-h) = χ(h) - 2·M(h)`. Concrete wrapper for
+`IsingModel.susceptibility_neg_h` (#767). -/
+theorem susceptibility_neg_h_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J h β : ℝ) (i : (↑Λ : Type _)) :
+    IsingModel.susceptibility
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
+        (⟨J, -h, β⟩ : IsingParams ℝ) i
+      = IsingModel.susceptibility
+          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
+          (⟨J, h, β⟩ : IsingParams ℝ) i
+        - 2 * IsingModel.magnetization
+          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
+          (⟨J, h, β⟩ : IsingParams ℝ) i :=
+  IsingModel.susceptibility_neg_h
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h β i
+
 /-- **ℤ^d susceptibility_beta_zero direct** (Λ-induced): at `β = 0`,
 `χ_i = 0` for any `J, h`. Thin pass-through of
 `IsingModel.susceptibility_beta_zero`. -/
