@@ -1633,6 +1633,39 @@ $\chi(h) + (-M(h)) - M(h) = \chi(h) - 2\,M(h)$, matching the LHS.
 non-negative closed form
 $\chi(|h|) - \chi(h) = |M(h)| - M(h) = 2\max\{0,-M(h)\}$.
 
+\begin{definition}[\texttt{susceptibilityΛ}, PR~\#776]
+For $\Lambda \subseteq V$ a finite volume in an infinite ambient $V$ and
+$i : \uparrow\Lambda$,
+\[
+  \chi_\Lambda(G, \Lambda, p; i)
+  := \chi\bigl(\mathrm{inducedGraph}\ G\ \Lambda,\ p;\ i\bigr)
+  = \sum_{j : \uparrow\Lambda}\mathrm{truncated2}\bigl(\mathrm{inducedGraph}\ G\ \Lambda,\ p;\ i, j\bigr).
+\]
+This is the $\Lambda$-layer counterpart of \texttt{susceptibility}, matching
+the \texttt{magnetizationΛ} / \texttt{correlationΛ} pattern at the ambient
+lattice layer.
+\end{definition}
+
+\begin{theorem}[\texttt{susceptibilityΛ\_eq\_abs\_h}, PR~\#776 (A-4, issue~\#770)]
+For all $J, h, \beta \in \mathbb R$ and $i : \uparrow\Lambda$,
+\[
+  \chi_\Lambda(\langle J, |h|, \beta\rangle; i)
+  = \chi_\Lambda(\langle J, h, \beta\rangle; i)
+    + M_\Lambda(\langle J, |h|, \beta\rangle; i) - M_\Lambda(\langle J, h, \beta\rangle; i),
+\]
+unconditionally (no ferromagnetic hypothesis required).
+\end{theorem}
+\begin{proof}[Proof sketch]
+Direct lift of \texttt{susceptibility\_eq\_abs\_h} (PR~\#771) along
+$\chi_\Lambda := \chi(\mathrm{inducedGraph}\ G\ \Lambda)$ and
+$M_\Lambda = M(\mathrm{inducedGraph}\ G\ \Lambda)$. Bundled helpers
+\texttt{susceptibilityΛ\_apply}, \texttt{susceptibilityΛ\_nonneg}
+(ferromagnetic), \texttt{susceptibilityΛ\_neg\_h}
+($\chi_\Lambda(-h) = \chi_\Lambda(h) - 2 M_\Lambda(h)$), and the
+$\mathbb{Z}^d$ wrapper
+\texttt{susceptibilityΛ\_latticeGraph\_eq\_abs\_h} are included.
+\end{proof}
+
 \subsection{Lattice-growth convergence of \S5 quantities}
 
 Named corollaries of \texttt{correlation\_convergent\_subgraph} (PR~\#64):
