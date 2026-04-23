@@ -224,6 +224,34 @@ theorem Current.support_add_subset (G : SimpleGraph V) (Λ : Finset V)
   change n e + m e = 0
   rw [not_ne_iff.mp hn, not_ne_iff.mp hm]
 
+/-- **Sum of weights over A-source currents**:
+`weightSum A β J := ∑' n : Current G Λ, if n.sources = A then weight β J n else 0`.
+The unnormalized random-current measure of A-source currents,
+central to the random-current expression of correlations
+`⟨σ_A⟩^Λ = weightSum A / weightSum ∅` (FV (3.45)).
+
+If the underlying sum is not Summable, mathlib's `tsum` returns
+`0` as a junk value; convergence is analysed in subsequent PRs. -/
+noncomputable def Current.weightSum (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (A : Finset ↑Λ) (β J : ℝ) : ℝ :=
+  ∑' n : Current G Λ,
+    if n.sources G Λ = A then n.weight G Λ β J else 0
+
+omit [DecidableEq V] in
+/-- **`weightSum` is nonneg under nonneg coupling**: each summand
+is either `0` (if the source set differs from `A`) or
+`weight n ≥ 0` (when `0 ≤ β J`); `tsum_nonneg` finishes. -/
+theorem Current.weightSum_nonneg (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (A : Finset ↑Λ) {β J : ℝ} (hβJ : 0 ≤ β * J) :
+    0 ≤ Current.weightSum G Λ A β J := by
+  unfold Current.weightSum
+  refine tsum_nonneg (fun n => ?_)
+  by_cases h : n.sources G Λ = A
+  · simp [h, Current.weight_nonneg G Λ hβJ n]
+  · simp [h]
+
 end Ambient
 
 end IsingModel
