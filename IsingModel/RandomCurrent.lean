@@ -1144,6 +1144,42 @@ theorem Current.weight_mul_prod_pow (G : SimpleGraph V) (Λ : Finset V)
   rw [mul_pow]
   ring
 
+/-- **Real-valued edge spin product**: for a spin configuration
+`σ : W → Spin` and an edge `e : Sym2 W`, the product of
+`(σ v).toSign : ℝ` over `v ∈ e.toFinset`. For a non-loop edge
+`e = s(u, w)` this is `(σ u).toSign * (σ w).toSign ∈ {-1, +1}`;
+for a (nonexistent in a `SimpleGraph`) loop edge `e = s(v, v)` it
+is just `(σ v).toSign ∈ {-1, +1}`. The per-edge factor in the
+Taylor expansion `exp(β J σ_u σ_w) = ∑_k (β J σ_u σ_w)^k / k!`
+feeding the random-current representation (FV §3.7). -/
+noncomputable def Config.spinEdgeProduct {W : Type*} [DecidableEq W]
+    (σ : W → Spin) (e : Sym2 W) : ℝ :=
+  e.toFinset.prod (fun v => ((σ v).toSign : ℝ))
+
+/-- **Squared edge spin product on a non-loop edge is `1`**: for a
+non-diagonal `e : Sym2 W`, `(spinEdgeProduct σ e)^2 = 1`. Since
+`(σ v).toSign ∈ {-1, +1}` for each endpoint, the product of two
+such values squared is `1`. The ±1 control feeding absolute
+convergence of the Taylor series. -/
+theorem Config.spinEdgeProduct_mul_self_of_not_isDiag {W : Type*}
+    [DecidableEq W] (σ : W → Spin) (e : Sym2 W) (he : ¬ e.IsDiag) :
+    (Config.spinEdgeProduct σ e) ^ 2 = 1 := by
+  unfold Config.spinEdgeProduct
+  refine Sym2.inductionOn e (fun u w hne => ?_) he
+  -- e = s(u, w), non-diag ↔ u ≠ w
+  rw [Sym2.toFinset_mk_eq]
+  rw [Sym2.mk_isDiag_iff] at hne
+  rw [Finset.prod_insert (Finset.notMem_singleton.mpr hne),
+    Finset.prod_singleton]
+  -- ((σ u).toSign * (σ w).toSign)^2 = ((σ u).toSign)^2 * ((σ w).toSign)^2
+  rw [mul_pow]
+  -- ((σ v).toSign : ℝ)^2 = 1 for all v
+  have h_one : ∀ v : W, ((σ v).toSign : ℝ)^2 = 1 := by
+    intro v
+    have := Spin.toSign_sq (σ v)
+    exact_mod_cast this
+  rw [h_one, h_one]; norm_num
+
 end Ambient
 
 end IsingModel
