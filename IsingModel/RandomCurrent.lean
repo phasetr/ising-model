@@ -1492,6 +1492,49 @@ theorem CurrentBounded.weightSum_J_zero (G : SimpleGraph V)
   rw [h0tc, Current.zero_sources, Current.zero_weight]
   exact if_congr eq_comm rfl rfl
 
+omit [DecidableEq V] in
+/-- **Joint weight = sum-weight × product of binomial coefficients**:
+the key combinatorial identity feeding the **Aizenman switching
+lemma** (FV §3.7), \(weight β J n₁ \cdot weight β J n₂
+  = weight β J (n₁ + n₂) \cdot ∏_e \binom{n₁ e + n₂ e}{n₁ e}\).
+Each per-edge factor uses
+`Nat.add_choose_mul_factorial_mul_factorial`. -/
+theorem Current.weight_mul_weight_eq_weight_add_mul_choose
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (β J : ℝ) (n₁ n₂ : Current G Λ) :
+    n₁.weight G Λ β J * n₂.weight G Λ β J
+      = (n₁ + n₂).weight G Λ β J
+        * ∏ e : (inducedGraph G Λ).edgeSet,
+            (Nat.choose (n₁ e + n₂ e) (n₁ e) : ℝ) := by
+  unfold Current.weight
+  rw [← Finset.prod_mul_distrib, ← Finset.prod_mul_distrib]
+  refine Finset.prod_congr rfl (fun e _ => ?_)
+  rw [Current.add_apply, pow_add]
+  -- Express (n₁+n₂)! = choose · n₁! · n₂!  in ℝ.
+  have hchoose : ((n₁ e + n₂ e).factorial : ℝ)
+      = ((n₁ e + n₂ e).choose (n₁ e) : ℝ)
+        * ((n₁ e).factorial : ℝ) * ((n₂ e).factorial : ℝ) := by
+    have hk : (n₂ e + n₁ e).choose (n₁ e) * (n₂ e).factorial * (n₁ e).factorial
+              = (n₂ e + n₁ e).factorial :=
+      Nat.add_choose_mul_factorial_mul_factorial _ _
+    rw [Nat.add_comm (n₂ e) (n₁ e)] at hk
+    have heq : ((n₁ e + n₂ e).factorial : ℝ)
+        = (((n₁ e + n₂ e).choose (n₁ e) * (n₂ e).factorial
+            * (n₁ e).factorial : ℕ) : ℝ) := by
+      exact_mod_cast hk.symm
+    rw [heq]; push_cast; ring
+  rw [hchoose]
+  have hf1 : ((n₁ e).factorial : ℝ) ≠ 0 :=
+    Nat.cast_ne_zero.mpr (Nat.factorial_pos _).ne'
+  have hf2 : ((n₂ e).factorial : ℝ) ≠ 0 :=
+    Nat.cast_ne_zero.mpr (Nat.factorial_pos _).ne'
+  have hch : ((n₁ e + n₂ e).choose (n₁ e) : ℝ) ≠ 0 := by
+    have h_nat : (n₁ e + n₂ e).choose (n₁ e) ≠ 0 :=
+      (Nat.choose_pos (Nat.le_add_right _ _)).ne'
+    exact_mod_cast h_nat
+  field_simp
+
 end Ambient
 
 end IsingModel
