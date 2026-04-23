@@ -10422,6 +10422,27 @@ theorem susceptibilityΛ_latticeGraph_eq_abs_h
             (⟨J, h, β⟩ : IsingParams ℝ) i :=
   susceptibilityΛ_eq_abs_h (IsingModel.latticeGraph d) Λ J h β i
 
+/-! ## ℤ^d wrapper for §5.3 A-4b `susceptibilityAlongExhaustion_eq_abs_h`
+(issue #770) -/
+
+/-- **ℤ^d along-exhaustion `χ_along(|h|) = χ_along(h) + M_along(|h|) − M_along(h)`**
+(no ferromagnetic hypothesis). Concrete `latticeGraph d` wrapper for PR
+#777's `susceptibilityAlongExhaustion_eq_abs_h`.
+
+Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §5.3 pp. 77–80. -/
+theorem susceptibilityAlongExhaustion_latticeGraph_eq_abs_h
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J h β : ℝ) (i : Fin d → ℤ) (n : ℕ) :
+    susceptibilityAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, |h|, β⟩ : IsingParams ℝ) i n
+      = susceptibilityAlongExhaustion (IsingModel.latticeGraph d) Λ
+            (⟨J, h, β⟩ : IsingParams ℝ) i n
+          + magnetizationAlongExhaustion (IsingModel.latticeGraph d) Λ
+              (⟨J, |h|, β⟩ : IsingParams ℝ) i n
+          - magnetizationAlongExhaustion (IsingModel.latticeGraph d) Λ
+              (⟨J, h, β⟩ : IsingParams ℝ) i n :=
+  susceptibilityAlongExhaustion_eq_abs_h (IsingModel.latticeGraph d) Λ J h β i n
+
 end Ambient
 
 end IsingModel
