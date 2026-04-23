@@ -638,6 +638,39 @@ theorem cor_4_3_5_h0 (G : SimpleGraph ι) [Fintype G.edgeSet]
         correlation G ⟨J, 0, β⟩ (insert k (S \ T)) :=
   lebowitz_inductive G ⟨J, 0, β⟩ hf S j k hj hk hjk
 
+/-- **Ursell 3-point antisymmetry under `h → -h`** (pairwise distinct):
+`truncated3 G ⟨J, -h, β⟩ i j k = -truncated3 G ⟨J, h, β⟩ i j k`.
+
+Ursell 3-point is ODD under `h → -h`: every summand has total Finset
+card 3 (odd), so picks up factor `(-1)^3 = -1`. Specifically:
+`|{i,j,k}| = 3`, `|{i}|·|{j,k}| = 1·2 = 3`, `|{i}|·|{j}|·|{k}| = 3`.
+All contribute factor -1, yielding `U_3(-h) = -U_3(h)`.
+
+Requires pairwise distinctness for the cards to be as stated. -/
+theorem truncated3_neg_h (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h β : ℝ) {i j k : ι}
+    (hij : i ≠ j) (hjk : j ≠ k) (hik : i ≠ k) :
+    truncated3 G (⟨J, -h, β⟩ : IsingParams ℝ) i j k
+      = -truncated3 G (⟨J, h, β⟩ : IsingParams ℝ) i j k := by
+  unfold truncated3
+  rw [correlation_neg_h G J h β {i, j, k},
+      correlation_neg_h G J h β {i},
+      correlation_neg_h G J h β {j, k},
+      correlation_neg_h G J h β {j},
+      correlation_neg_h G J h β {i, k},
+      correlation_neg_h G J h β {k},
+      correlation_neg_h G J h β {i, j}]
+  have hcard_ij : ({i, j} : Finset ι).card = 2 := Finset.card_pair hij
+  have hcard_jk : ({j, k} : Finset ι).card = 2 := Finset.card_pair hjk
+  have hcard_ik : ({i, k} : Finset ι).card = 2 := Finset.card_pair hik
+  have hcard_ijk : ({i, j, k} : Finset ι).card = 3 := by
+    have h_i_nin : i ∉ ({j, k} : Finset ι) := by simp [hij, hik]
+    rw [show ({i, j, k} : Finset ι) = insert i ({j, k} : Finset ι) from rfl,
+        Finset.card_insert_of_notMem h_i_nin, hcard_jk]
+  simp only [hcard_ij, hcard_jk, hcard_ik, hcard_ijk,
+             Finset.card_singleton]
+  ring
+
 /-- **Lebowitz 4-point invariance under `h → -h`** (pairwise distinct):
 `truncated4 G ⟨J, -h, β⟩ i j k l = truncated4 G ⟨J, h, β⟩ i j k l`.
 
