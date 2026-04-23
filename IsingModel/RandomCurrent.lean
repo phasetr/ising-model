@@ -1429,6 +1429,69 @@ theorem Config.sum_spinA_prod_taylor_partialSum_eq_pow_card_mul_currentBounded_w
   refine Finset.sum_congr rfl (fun n _ => ?_)
   split_ifs <;> ring
 
+omit [DecidableEq V] in
+/-- **`CurrentBounded.weightSum` at zero β collapses to indicator
+on `A = ∅`**: `CurrentBounded.weightSum N A 0 J = 1` if `A = ∅`,
+else `0`. The finite-sum analogue of `weightSum_beta_zero`; only
+the zero current contributes since `weight 0 J n = 0` for any
+non-zero `n`. -/
+theorem CurrentBounded.weightSum_beta_zero (G : SimpleGraph V)
+    (Λ : Finset V) [Fintype (inducedGraph G Λ).edgeSet]
+    [DecidableEq ↑Λ] (N : ℕ) (A : Finset ↑Λ) (J : ℝ) :
+    CurrentBounded.weightSum G Λ N A 0 J = if A = ∅ then 1 else 0 := by
+  classical
+  unfold CurrentBounded.weightSum
+  -- Only n = 0 contributes since weight 0 J n.toCurrent = 0 for n.toCurrent ≠ 0.
+  have h_single : ∀ n : CurrentBounded G Λ N, n ≠ 0 →
+      (if (n.toCurrent G Λ).sources G Λ = A
+        then (n.toCurrent G Λ).weight G Λ 0 J else 0) = 0 := by
+    intro n hn
+    have hntc : n.toCurrent G Λ ≠ 0 := by
+      intro hnc
+      apply hn
+      funext e
+      have hval : (n.toCurrent G Λ) e = 0 := by rw [hnc]; rfl
+      simpa [CurrentBounded.toCurrent] using hval
+    by_cases hsr : (n.toCurrent G Λ).sources G Λ = A
+    · rw [if_pos hsr, Current.weight_beta_zero, if_neg hntc]
+    · rw [if_neg hsr]
+  rw [Finset.sum_eq_single (0 : CurrentBounded G Λ N)
+    (fun n _ hn => h_single n hn) (fun h => absurd (Finset.mem_univ _) h)]
+  -- Goal: if (0.toCurrent).sources = A then weight 0 J ... else 0 = if A = ∅ then 1 else 0
+  have h0tc : (0 : CurrentBounded G Λ N).toCurrent G Λ = 0 := by
+    funext e; rfl
+  rw [h0tc, Current.zero_sources, Current.zero_weight]
+  exact if_congr eq_comm rfl rfl
+
+omit [DecidableEq V] in
+/-- **`CurrentBounded.weightSum` at zero J collapses to indicator
+on `A = ∅`**: symmetric counterpart of `weightSum_beta_zero`. -/
+theorem CurrentBounded.weightSum_J_zero (G : SimpleGraph V)
+    (Λ : Finset V) [Fintype (inducedGraph G Λ).edgeSet]
+    [DecidableEq ↑Λ] (N : ℕ) (A : Finset ↑Λ) (β : ℝ) :
+    CurrentBounded.weightSum G Λ N A β 0 = if A = ∅ then 1 else 0 := by
+  classical
+  unfold CurrentBounded.weightSum
+  have h_single : ∀ n : CurrentBounded G Λ N, n ≠ 0 →
+      (if (n.toCurrent G Λ).sources G Λ = A
+        then (n.toCurrent G Λ).weight G Λ β 0 else 0) = 0 := by
+    intro n hn
+    have hntc : n.toCurrent G Λ ≠ 0 := by
+      intro hnc
+      apply hn
+      funext e
+      have hval : (n.toCurrent G Λ) e = 0 := by rw [hnc]; rfl
+      simpa [CurrentBounded.toCurrent] using hval
+    by_cases hsr : (n.toCurrent G Λ).sources G Λ = A
+    · rw [if_pos hsr, Current.weight_J_zero, if_neg hntc]
+    · rw [if_neg hsr]
+  rw [Finset.sum_eq_single (0 : CurrentBounded G Λ N)
+    (fun n _ hn => h_single n hn) (fun h => absurd (Finset.mem_univ _) h)]
+  have h0tc : (0 : CurrentBounded G Λ N).toCurrent G Λ = 0 := by
+    funext e; rfl
+  rw [h0tc, Current.zero_sources, Current.zero_weight]
+  exact if_congr eq_comm rfl rfl
+
 end Ambient
 
 end IsingModel
