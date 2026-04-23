@@ -1543,8 +1543,52 @@ under $0\le J$, $0<\beta$, for any finite volume $\Lambda \subseteq V$ and
 any site $i \in \Lambda$. Proved by the same
 \texttt{abs\_choice}-based case split, using
 \texttt{magnetizationΛ\_nonneg} (ferromagnetic, via GKS-I at
-$\Lambda$-level) and \texttt{magnetizationΛ\_neg\_h}. The $\infty$-volume
-lift is tracked in issue~\#770.
+$\Lambda$-level) and \texttt{magnetizationΛ\_neg\_h}.
+\end{theorem}
+\noindent The along-exhaustion counterpart (pointwise per stage) is
+likewise an equality, and it is the bridge to the infinite-volume
+statement:
+\begin{theorem}[\texttt{abs\_magnetizationAlongExhaustion\_eq\_magnetizationAlongExhaustion\_abs\_h}, PR~\#773]
+For every exhaustion stage $n$,
+$|M_\text{along}(\langle J,h,\beta\rangle;i,n)|
+= M_\text{along}(\langle J,|h|,\beta\rangle;i,n)$
+under $0 \le J$, $0 < \beta$. Same case split via
+\texttt{abs\_choice}, using
+\texttt{magnetizationAlongExhaustion\_nonneg} and the new helper
+\texttt{magnetizationAlongExhaustion\_neg\_h} (specialization of
+\texttt{correlationAlongExhaustion\_neg\_h} at $A = \{i\}$).
+\end{theorem}
+
+The naive lift to the thermodynamic-limit $M_\infty$ \emph{fails} as an
+equality for this project's sup-based definition
+$M_\infty := \sup_n M_\text{along}(n)$. The failure mode is the
+odd-$|A|$ obstruction already flagged in
+\texttt{correlationInfinite\_neg\_h\_of\_even\_card}: at $h < 0$
+ferromagnetic, covered stages give $M_\text{along}(n) \le 0$
+(via \texttt{magnetizationAlongExhaustion\_neg\_h} plus the finite/Λ
+ferromagnetic positivity at $|h|$), so the supremum is bounded above
+by the contributions of any \emph{missed} stages (where
+$M_\text{along}(n) = 0$ by the ``if $A \subseteq \Lambda_n$ then
+$\ldots$ else $0$'' convention). Concretely, if there exists
+$n$ with $i \notin \Lambda_n$, then $M_\infty(h) = 0$ but
+$M_\infty(|h|) > 0$, so the equality fails. Since
+\texttt{Exhaustion} does not require such a missed stage, this is an
+obstruction/example rather than a universal identity; still, the
+equality cannot hold in general under this definition.
+Glimm--Jaffe's standard thermodynamic limit
+(e.g.\ $\pm$BC or $h \to 0^\pm$) restores the equality; upgrading the
+definition is out of scope here.
+
+What does survive is the one-sided inequality, which is the natural
+$\infty$-volume odd-$|A|$ result compatible with the sup-based setup:
+\begin{theorem}[\texttt{abs\_magnetizationInfinite\_le\_magnetizationInfinite\_abs\_h}, PR~\#773]
+$|M_\infty(\langle J,h,\beta\rangle;\,i)|
+ \le M_\infty(\langle J,|h|,\beta\rangle;\,i)$
+under $0 \le J$, $0 < \beta$. Proved via $\mathtt{abs\_le}$ plus two
+$\mathtt{ciSup}$-level pointwise comparisons driven by the along-exhaustion
+pointwise equality above. Further $\infty$-volume refinements (sign
+control, zero-value at $h < 0$ under a ``missed stage'' hypothesis)
+are tracked in issue~\#770.
 \end{theorem}
 
 Finally, a closed form for $\chi$ at $|h|$ that does \emph{not} require
