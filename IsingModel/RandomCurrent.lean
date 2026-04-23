@@ -1,4 +1,5 @@
 import IsingModel.AmbientLattice
+import Mathlib.Analysis.SpecialFunctions.Exponential
 
 /-!
 # Random current foundation (GJ §5.1 Simon-Lieb attempt, step 1)
@@ -1657,6 +1658,19 @@ theorem Current.self_add_isSourceFree (G : SimpleGraph V) (Λ : Finset V)
     (n : Current G Λ) :
     (n + n).IsSourceFree G Λ :=
   (Current.add_isSourceFree_iff G Λ n n).mpr rfl
+
+/-- **Real exponential as a real Taylor `tsum`**:
+\(Real.exp x = ∑' n, x^n / n!\). Local convenience wrapper
+composing `Real.exp_eq_exp_ℝ` (Real.exp matches `NormedSpace.exp`)
+and `NormedSpace.exp_eq_tsum_div` (the `exp = ∑' n, x^n / n!`
+formula in `CharZero` algebras). Bridges `Real.exp` and the
+bounded Taylor partial-sum form used in
+`Config.sum_spinA_prod_taylor_partialSum_eq_pow_card_mul_currentBounded_weightSum`
+(#841) for the random-current expansion (FV §3.7). -/
+theorem Real.exp_eq_tsum_div_factorial (x : ℝ) :
+    Real.exp x = ∑' n : ℕ, x ^ n / (n.factorial : ℝ) := by
+  rw [Real.exp_eq_exp_ℝ]
+  exact congrFun NormedSpace.exp_eq_tsum_div x
 
 end Ambient
 
