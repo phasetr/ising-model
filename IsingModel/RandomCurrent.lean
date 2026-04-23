@@ -1689,6 +1689,49 @@ theorem Real.tendsto_partial_sum_atTop_exp (x : ℝ) :
   exact (Summable.tendsto_sum_tsum_nat h_summable).comp
     (Filter.tendsto_add_atTop_nat 1)
 
+omit [DecidableEq V] in
+/-- **Edge-product of Taylor partial sums converges to product of
+exponentials**: as `N → ∞`,
+\(∏_e ∑_{k ≤ N} (β J σ_e)^k / k! → ∏_e Real.exp (β J σ_e)\).
+The finite product is continuous in each factor (`tendsto_finset_prod`),
+and each per-edge factor converges by
+`Real.tendsto_partial_sum_atTop_exp` (#851). The `Fin (N+1)` sum
+matches the `range (N+1)` sum via `Fin.sum_univ_eq_sum_range`.
+Second analytic step toward the `N → ∞` limit of the bounded
+random-current expansion (FV §3.7). -/
+theorem Config.tendsto_prod_Fin_partial_sum_atTop_prod_exp
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (β J : ℝ) (σ : ↑Λ → Spin) :
+    Filter.Tendsto
+      (fun N : ℕ =>
+        ∏ e : (inducedGraph G Λ).edgeSet,
+          ∑ k : Fin (N + 1),
+            (β * J * Config.spinEdgeProduct σ (e : Sym2 ↑Λ)) ^ (k : ℕ)
+              / (((k : ℕ).factorial : ℝ)))
+      Filter.atTop
+      (nhds
+        (∏ e : (inducedGraph G Λ).edgeSet,
+          Real.exp (β * J * Config.spinEdgeProduct σ (e : Sym2 ↑Λ)))) := by
+  -- Convert Fin (N+1) sums to range (N+1) sums.
+  have hconv : ∀ N : ℕ,
+      (∏ e : (inducedGraph G Λ).edgeSet,
+          ∑ k : Fin (N + 1),
+            (β * J * Config.spinEdgeProduct σ (e : Sym2 ↑Λ)) ^ (k : ℕ)
+              / (((k : ℕ).factorial : ℝ)))
+        = ∏ e : (inducedGraph G Λ).edgeSet,
+            ∑ k ∈ Finset.range (N + 1),
+              (β * J * Config.spinEdgeProduct σ (e : Sym2 ↑Λ)) ^ k
+                / ((k.factorial : ℝ)) := by
+    intro N
+    refine Finset.prod_congr rfl (fun e _ => ?_)
+    exact Fin.sum_univ_eq_sum_range
+      (fun k => (β * J * Config.spinEdgeProduct σ (e : Sym2 ↑Λ)) ^ k
+                  / ((k.factorial : ℝ))) (N + 1)
+  simp_rw [hconv]
+  refine tendsto_finset_prod _ (fun e _ => ?_)
+  exact Real.tendsto_partial_sum_atTop_exp _
+
 end Ambient
 
 end IsingModel
