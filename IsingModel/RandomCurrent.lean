@@ -1802,6 +1802,52 @@ theorem Config.tendsto_pow_card_mul_currentBounded_weightSum_atTop_sum_spinA_pro
   rw [hbridge]
   exact Config.tendsto_sum_spinA_prod_partial_sum_atTop_sum_spinA_prod_exp G Λ β J A
 
+omit [DecidableEq V] in
+/-- **`CurrentBounded.toCurrent` is injective**: two bounded
+currents with the same `Current` representative agree as
+functions, hence as bounded currents (`Fin (N+1)` is determined
+by `.val`). -/
+theorem CurrentBounded.toCurrent_injective (G : SimpleGraph V)
+    (Λ : Finset V) [Fintype (inducedGraph G Λ).edgeSet] {N : ℕ} :
+    Function.Injective
+      (CurrentBounded.toCurrent G Λ : CurrentBounded G Λ N → Current G Λ) := by
+  intro n₁ n₂ h
+  funext e
+  apply Fin.ext
+  exact congrFun h e
+
+/-- **`Current.boundedFinset N`**: the `Finset` of currents
+\(n : Current G Λ\) with \(n e ≤ N\) for every edge \(e\),
+realised as the image of `CurrentBounded G Λ N` under `toCurrent`.
+The natural `Finset` filtration of `Current G Λ` whose limit
+covers all currents (every current has finite max value since the
+edge set is finite). Foundation for the RHS-side `N → ∞` limit
+of the random-current expansion (FV §3.7). -/
+noncomputable def Current.boundedFinset (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (N : ℕ) :
+    Finset (Current G Λ) := by
+  classical
+  exact (Finset.univ : Finset (CurrentBounded G Λ N)).image
+    (CurrentBounded.toCurrent G Λ)
+
+/-- **Membership in `boundedFinset N`**: \(n ∈ boundedFinset N\)
+iff every edge value satisfies \(n e ≤ N\). -/
+theorem Current.mem_boundedFinset_iff (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (N : ℕ) (n : Current G Λ) :
+    n ∈ Current.boundedFinset G Λ N ↔ ∀ e : (inducedGraph G Λ).edgeSet, n e ≤ N := by
+  unfold Current.boundedFinset
+  simp only [Finset.mem_image, Finset.mem_univ, true_and]
+  constructor
+  · rintro ⟨nB, rfl⟩ e
+    change ((nB e).val : ℕ) ≤ N
+    exact Nat.lt_succ_iff.mp (nB e).is_lt
+  · intro hbound
+    refine ⟨fun e => ⟨n e, ?_⟩, ?_⟩
+    · exact Nat.lt_succ_iff.mpr (hbound e)
+    · funext e
+      rfl
+
 end Ambient
 
 end IsingModel
