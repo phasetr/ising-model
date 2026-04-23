@@ -252,6 +252,47 @@ theorem Current.weightSum_nonneg (G : SimpleGraph V) (Λ : Finset V)
   · simp [h, Current.weight_nonneg G Λ hβJ n]
   · simp [h]
 
+/-- **Source-free current**: a current with no sources
+(`n.sources = ∅`). The class summed over for the partition
+function in the random-current representation. -/
+def Current.IsSourceFree (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) : Prop :=
+  n.sources G Λ = ∅
+
+/-- **Current with prescribed sources**: a current whose source
+set equals a given Finset `A`. The class summed over for the
+random-current representation of `⟨σ_A⟩^Λ`. -/
+def Current.HasSources (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) (A : Finset ↑Λ) : Prop :=
+  n.sources G Λ = A
+
+omit [DecidableEq V] in
+/-- **Zero current is source-free**: every vertex has parity `0`. -/
+@[simp]
+theorem Current.zero_isSourceFree (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ] :
+    (0 : Current G Λ).IsSourceFree G Λ := by
+  unfold Current.IsSourceFree
+  exact Current.zero_sources G Λ
+
+omit [DecidableEq V] in
+/-- **Source-free characterisation by parity**: a current is
+source-free iff every vertex has parity `0`. -/
+theorem Current.isSourceFree_iff (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) :
+    n.IsSourceFree G Λ ↔ ∀ v : ↑Λ, n.parity G Λ v = 0 := by
+  unfold Current.IsSourceFree
+  constructor
+  · intro h v
+    rw [Current.parity_eq_zero_iff, h]
+    exact Finset.notMem_empty v
+  · intro h
+    ext v
+    simp [Current.mem_sources_iff, h v]
+
 end Ambient
 
 end IsingModel
