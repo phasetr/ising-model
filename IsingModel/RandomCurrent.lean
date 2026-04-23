@@ -910,6 +910,31 @@ theorem Config.prod_subset_eq_prod_pow_indicator
   ext v
   simp
 
+omit [DecidableEq V] in
+/-- **`σ_A` × spin-edge product as single per-vertex power**:
+`σ_A · ∏_e (e.toFinset.prod σ.toSign)^n e
+  = ∏_v ((σ v).toSign : ℝ)^((1_A v) + degreeAt n v)`.
+Combines the indicator-power form of `σ_A` with the per-vertex
+power form of the spin-edge product, ready to apply
+`Config.sum_prod_toSign_pow_real` for the A-source spin sum
+(FV §3.7). -/
+theorem Config.spinA_mul_prod_spin_pow_eq_prod_pow_sum
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (σ : ↑Λ → Spin) (n : Current G Λ) (A : Finset ↑Λ) :
+    (∏ a ∈ A, ((σ a).toSign : ℝ))
+    * (∏ e : (inducedGraph G Λ).edgeSet,
+        ((e : Sym2 ↑Λ).toFinset.prod
+          (fun v => ((σ v).toSign : ℝ))) ^ n e)
+      = ∏ v : ↑Λ, ((σ v).toSign : ℝ) ^
+          ((if v ∈ A then (1 : ℕ) else 0) + n.degreeAt G Λ v) := by
+  rw [Config.prod_subset_eq_prod_pow_indicator Λ σ A,
+    ← Config.prod_pow_spin_degreeAt G Λ σ n,
+    ← Finset.prod_mul_distrib]
+  congr 1
+  ext v
+  rw [← pow_add]
+
 end Ambient
 
 end IsingModel
