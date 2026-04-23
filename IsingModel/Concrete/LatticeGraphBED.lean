@@ -456,6 +456,42 @@ lemma edgeBoundary_card_eq_sum_outer_filter
     have : (a, y) = (b, y') := ha.trans hb.symm
     exact ((Prod.mk.injEq _ _ _ _).mp this).2
 
+/-- **Inner vertex boundary by edge bound**:
+`|∂_i^v S| ≤ |∂^e S|`. Each `x ∈ ∂_i^v S` has a witness
+neighbour `y ∉ S` (from `mem_innerVertexBoundary_iff`), so the
+filter `(N(x)).filter (· ∉ S)` has cardinality `≥ 1`. Sum
+monotonicity through `edgeBoundary_card_eq_sum_inner_filter`
+finishes. -/
+lemma innerVertexBoundary_card_le_edgeBoundary_card
+    [DecidableEq V] [LocallyFinite G] (S : Finset V) :
+    (G.innerVertexBoundary S).card ≤ (G.edgeBoundary S).card := by
+  rw [G.edgeBoundary_card_eq_sum_inner_filter S,
+    Finset.card_eq_sum_ones]
+  refine Finset.sum_le_sum (fun x hx => ?_)
+  rw [G.mem_innerVertexBoundary_iff] at hx
+  obtain ⟨_, y, hadj, hyS⟩ := hx
+  have hy_mem : y ∈ ((G.neighborFinset x).filter (fun y => y ∉ S)) :=
+    Finset.mem_filter.mpr ⟨(mem_neighborFinset _ _ _).mpr hadj, hyS⟩
+  exact Finset.card_pos.mpr ⟨y, hy_mem⟩
+
+/-- **Outer vertex boundary by edge bound**:
+`|∂_o^v S| ≤ |∂^e S|`. Each `y ∈ ∂_o^v S` has a witness
+neighbour `x ∈ S` (from `mem_outerVertexBoundary_iff`), so the
+filter `(N(y)).filter (· ∈ S)` has cardinality `≥ 1`
+(`G.symm` to swap adjacency). Sum monotonicity through
+`edgeBoundary_card_eq_sum_outer_filter` finishes. -/
+lemma outerVertexBoundary_card_le_edgeBoundary_card
+    [DecidableEq V] [LocallyFinite G] (S : Finset V) :
+    (G.outerVertexBoundary S).card ≤ (G.edgeBoundary S).card := by
+  rw [G.edgeBoundary_card_eq_sum_outer_filter S,
+    Finset.card_eq_sum_ones]
+  refine Finset.sum_le_sum (fun y hy => ?_)
+  rw [G.mem_outerVertexBoundary_iff] at hy
+  obtain ⟨_, x, hxS, hadj⟩ := hy
+  have hx_mem : x ∈ ((G.neighborFinset y).filter (fun x => x ∈ S)) :=
+    Finset.mem_filter.mpr ⟨(mem_neighborFinset _ _ _).mpr (G.symm hadj), hxS⟩
+  exact Finset.card_pos.mpr ⟨x, hx_mem⟩
+
 end SimpleGraph
 
 namespace IsingModel

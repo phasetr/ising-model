@@ -2076,6 +2076,28 @@ PR~\#788 this yields the double-counting identity
 $\sum_{x \in \partial^v_i S} |N_G(x) \setminus S| =
 \sum_{y \in \partial^v_o S} |N_G(y) \cap S|$.
 
+\paragraph{Vertex-by-edge bounds (PR~\#790).}
+Two simple-but-useful bounds tying the vertex boundaries to the
+edge boundary:
+\[
+  |\partial^v_i S| \;\le\; |\partial^e S|, \quad
+  |\partial^v_o S| \;\le\; |\partial^e S|
+\]
+($\mathrm{innerVertexBoundary\_card\_le\_edgeBoundary\_card}$,
+$\mathrm{outerVertexBoundary\_card\_le\_edgeBoundary\_card}$).
+Each follow from the equalities of PRs~\#788 / \#789 by observing
+that the very witness making a vertex a boundary vertex is an
+element of the corresponding filter, so each summand is $\ge 1$;
+sum monotonicity finishes. Together with the existing
+edge-boundary bounds these give the linear chain
+\[
+  |\partial^v_i S|,\, |\partial^v_o S|
+  \;\le\; |\partial^e S|
+  \;\le\; \deg_{\max} \cdot |\partial^v_i S|,
+\]
+which on $\mathrm{latticeGraph}(d)$ becomes the chain with
+$\deg_{\max} = 2d$.
+
 \subsection{Lattice-growth convergence of \S5 quantities}
 
 Named corollaries of \texttt{correlation\_convergent\_subgraph} (PR~\#64):
