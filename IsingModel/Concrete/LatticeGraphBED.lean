@@ -460,8 +460,8 @@ lemma edgeBoundary_card_eq_sum_outer_filter
 `|∂_i^v S| ≤ |∂^e S|`. Each `x ∈ ∂_i^v S` has a witness
 neighbour `y ∉ S` (from `mem_innerVertexBoundary_iff`), so the
 filter `(N(x)).filter (· ∉ S)` has cardinality `≥ 1`. Sum
-monotonicity from PR #788's
-`edgeBoundary_card_eq_sum_inner_filter` finishes. -/
+monotonicity through `edgeBoundary_card_eq_sum_inner_filter`
+finishes. -/
 lemma innerVertexBoundary_card_le_edgeBoundary_card
     [DecidableEq V] [LocallyFinite G] (S : Finset V) :
     (G.innerVertexBoundary S).card ≤ (G.edgeBoundary S).card := by
@@ -478,7 +478,7 @@ lemma innerVertexBoundary_card_le_edgeBoundary_card
 `|∂_o^v S| ≤ |∂^e S|`. Each `y ∈ ∂_o^v S` has a witness
 neighbour `x ∈ S` (from `mem_outerVertexBoundary_iff`), so the
 filter `(N(y)).filter (· ∈ S)` has cardinality `≥ 1`
-(`G.symm` to swap adjacency). Sum monotonicity from PR #789's
+(`G.symm` to swap adjacency). Sum monotonicity through
 `edgeBoundary_card_eq_sum_outer_filter` finishes. -/
 lemma outerVertexBoundary_card_le_edgeBoundary_card
     [DecidableEq V] [LocallyFinite G] (S : Finset V) :
