@@ -935,6 +935,29 @@ theorem Config.spinA_mul_prod_spin_pow_eq_prod_pow_sum
   ext v
   rw [← pow_add]
 
+omit [DecidableEq V] in
+/-- **A-source spin sum at fixed current — degree+indicator
+form**: at fixed current `n` and source set `A ⊆ ↑Λ`,
+`∑_σ σ_A · ∏_e (e.toFinset.prod σ.toSign)^n e
+  = 2^|Λ|` if `(1_A v) + degreeAt n v` is even at every vertex,
+else `0`. Combines `spinA_mul_prod_spin_pow_eq_prod_pow_sum`
+with `Config.sum_prod_toSign_pow_real`. -/
+theorem Config.sum_spinA_prod_spin_pow_eq_pow_card_iff
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) (A : Finset ↑Λ) :
+    (∑ σ : ↑Λ → Spin,
+      (∏ a ∈ A, ((σ a).toSign : ℝ))
+      * (∏ e : (inducedGraph G Λ).edgeSet,
+          ((e : Sym2 ↑Λ).toFinset.prod
+            (fun v => ((σ v).toSign : ℝ))) ^ n e))
+      = if (∀ v : ↑Λ,
+            Even ((if v ∈ A then (1 : ℕ) else 0) + n.degreeAt G Λ v))
+        then (2 : ℝ)^(Fintype.card ↑Λ) else 0 := by
+  simp_rw [Config.spinA_mul_prod_spin_pow_eq_prod_pow_sum G Λ _ n A]
+  exact Config.sum_prod_toSign_pow_real
+    (k := fun v => (if v ∈ A then (1 : ℕ) else 0) + n.degreeAt G Λ v)
+
 end Ambient
 
 end IsingModel
