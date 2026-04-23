@@ -10745,6 +10745,93 @@ theorem clusterProperty_latticeGraph_of_HasExponentialDecay
   exact tendsto_of_tendsto_of_tendsto_of_le_of_le' hng_zero hg
     hbound_neg hbound_pos
 
+/-! ## §17.5 latticeMass — formal definition + nonneg sanity
+
+Defines the lattice mass / inverse correlation length
+`latticeMass d Λ p : ENNReal` as the supremum of decay rates
+`α : NNReal` for which `HasExponentialDecay d Λ p (α : ℝ)` holds,
+extended to `ENNReal`. Trivial slices (β = 0, J = 0 ferromagnetic)
+give `latticeMass = ⊤` (decay arbitrarily fast since `U_2 ≡ 0`
+or `U_2 = 0` off-diagonally), matching the physical picture that
+no correlation = infinite mass = zero correlation length.
+
+Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §17.1 pp. 304–306. -/
+
+/-- **Lattice mass / inverse correlation length** for `latticeGraph d`:
+the supremum (in `ENNReal`) of nonneg decay rates `α : NNReal` for
+which `HasExponentialDecay d Λ p (α : ℝ)` holds. The convention
+returns `⊤` (= `+∞`) at trivial slices where every rate works,
+and a finite value when the truncated 2-point function admits
+some maximal exponential decay rate. -/
+noncomputable def latticeMass
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) : ENNReal :=
+  sSup ((fun α : NNReal => (α : ENNReal)) ''
+    {α : NNReal | HasExponentialDecay d Λ p (α : ℝ)})
+
+/-- **Lattice mass nonneg** (trivial via `bot_le` in `ENNReal`). -/
+theorem latticeMass_nonneg
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) :
+    0 ≤ latticeMass d Λ p := bot_le
+
+/-- **Lattice mass at `β = 0` trivial slice is `⊤`**.
+At infinite temperature, `HasExponentialDecay` holds at every
+rate `α` (by `HasExponentialDecay_beta_zero`). For any candidate
+upper bound `b ≠ ⊤` of the supremand, pick the witness
+`α := b.toNNReal + 1`; then `(α : ENNReal) = b + 1 > b`, but the
+upper-bound hypothesis would force `(α : ENNReal) ≤ b`. -/
+theorem latticeMass_top_of_beta_zero
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J h : ℝ) :
+    latticeMass d Λ (⟨J, h, 0⟩ : IsingParams ℝ) = ⊤ := by
+  refine eq_top_iff.mpr ?_
+  refine le_sSup_iff.mpr ?_
+  intro b hb
+  by_contra hb_ne
+  rw [not_le] at hb_ne
+  -- pick α : NNReal with (α : ENNReal) > b: take b.toNNReal + 1.
+  set α : NNReal := b.toNNReal + 1
+  have hαmem : (α : ENNReal) ∈ (fun α : NNReal => (α : ENNReal)) ''
+      {α : NNReal | HasExponentialDecay d Λ
+        (⟨J, h, 0⟩ : IsingParams ℝ) (α : ℝ)} :=
+    ⟨α, HasExponentialDecay_beta_zero d Λ J h (α : ℝ), rfl⟩
+  have hα_le_b : (α : ENNReal) ≤ b := hb hαmem
+  have hb_ne_top : b ≠ ⊤ := ne_of_lt hb_ne
+  have hb_toNN : ((b.toNNReal : ENNReal) : ENNReal) = b :=
+    ENNReal.coe_toNNReal hb_ne_top
+  have hα_eq : (α : ENNReal) = b + 1 := by
+    simp only [α, ENNReal.coe_add, ENNReal.coe_one, hb_toNN]
+  rw [hα_eq] at hα_le_b
+  have hlt : b < b + 1 := ENNReal.lt_add_right hb_ne_top one_ne_zero
+  exact absurd hα_le_b (not_le.mpr hlt)
+
+/-- **Lattice mass at `J = 0` ferromagnetic trivial slice is `⊤`**.
+Same argument as `latticeMass_top_of_beta_zero` using
+`HasExponentialDecay_J_zero`. -/
+theorem latticeMass_top_of_J_zero
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (h β : ℝ)
+    (hf : Ferromagnetic (⟨(0 : ℝ), h, β⟩ : IsingParams ℝ)) :
+    latticeMass d Λ (⟨0, h, β⟩ : IsingParams ℝ) = ⊤ := by
+  refine eq_top_iff.mpr ?_
+  refine le_sSup_iff.mpr ?_
+  intro b hb
+  by_contra hb_ne
+  rw [not_le] at hb_ne
+  set α : NNReal := b.toNNReal + 1
+  have hαmem : (α : ENNReal) ∈ (fun α : NNReal => (α : ENNReal)) ''
+      {α : NNReal | HasExponentialDecay d Λ
+        (⟨0, h, β⟩ : IsingParams ℝ) (α : ℝ)} :=
+    ⟨α, HasExponentialDecay_J_zero d Λ h β (α : ℝ) hf, rfl⟩
+  have hα_le_b : (α : ENNReal) ≤ b := hb hαmem
+  have hb_ne_top : b ≠ ⊤ := ne_of_lt hb_ne
+  have hb_toNN : ((b.toNNReal : ENNReal) : ENNReal) = b :=
+    ENNReal.coe_toNNReal hb_ne_top
+  have hα_eq : (α : ENNReal) = b + 1 := by
+    simp only [α, ENNReal.coe_add, ENNReal.coe_one, hb_toNN]
+  rw [hα_eq] at hα_le_b
+  have hlt : b < b + 1 := ENNReal.lt_add_right hb_ne_top one_ne_zero
+  exact absurd hα_le_b (not_le.mpr hlt)
+
 end Ambient
 
 end IsingModel
