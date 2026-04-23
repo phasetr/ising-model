@@ -108,6 +108,35 @@ theorem Current.zero_sources (G : SimpleGraph V) (Λ : Finset V)
   ext v
   simp
 
+omit [DecidableEq V] in
+/-- **Parity zero iff not a source**: `n.parity v = 0` iff
+`v ∉ n.sources`. -/
+theorem Current.parity_eq_zero_iff (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) (v : ↑Λ) :
+    n.parity G Λ v = 0 ↔ v ∉ n.sources G Λ := by
+  rw [Current.mem_sources_iff, not_not]
+
+omit [DecidableEq V] in
+/-- **Sources of a sum is the symmetric difference**:
+`(n + m).sources = n.sources △ m.sources`.
+At each vertex `v`, `(n + m).parity v = n.parity v + m.parity v`
+in `ZMod 2`; this is non-zero iff exactly one summand is. -/
+theorem Current.add_sources_eq (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n m : Current G Λ) :
+    (n + m).sources G Λ
+      = symmDiff (n.sources G Λ) (m.sources G Λ) := by
+  classical
+  ext v
+  simp only [Current.mem_sources_iff, Finset.mem_symmDiff,
+    Current.add_parity]
+  -- Goal in ZMod 2: a + b ≠ 0 ↔ (a ≠ 0 ∧ ¬ b ≠ 0) ∨ (b ≠ 0 ∧ ¬ a ≠ 0).
+  generalize n.parity G Λ v = a
+  generalize m.parity G Λ v = b
+  revert a b
+  decide
+
 end Ambient
 
 end IsingModel
