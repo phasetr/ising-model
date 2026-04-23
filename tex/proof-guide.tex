@@ -1561,14 +1561,23 @@ under $0 \le J$, $0 < \beta$. Same case split via
 
 The naive lift to the thermodynamic-limit $M_\infty$ \emph{fails} as an
 equality for this project's sup-based definition
-$M_\infty := \sup_n M_\text{along}(n)$. The failure mode is exactly the
+$M_\infty := \sup_n M_\text{along}(n)$. The failure mode is the
 odd-$|A|$ obstruction already flagged in
-\texttt{correlationInfinite\_neg\_h\_of\_even\_card}: at $h<0$
-ferromagnetic, uncovered early stages force $M_\text{along}(n) = 0$,
-and covered stages give $M_\text{along}(n) \le 0$, so
-$M_\infty(h) = 0$ while $M_\infty(|h|) > 0$. Glimm--Jaffe's standard
-thermodynamic limit (e.g.\ $\pm$BC or $h \to 0^\pm$) restores the
-equality; upgrading the definition is out of scope here.
+\texttt{correlationInfinite\_neg\_h\_of\_even\_card}: at $h < 0$
+ferromagnetic, covered stages give $M_\text{along}(n) \le 0$
+(via \texttt{magnetizationAlongExhaustion\_neg\_h} plus the finite/Λ
+ferromagnetic positivity at $|h|$), so the supremum is bounded above
+by the contributions of any \emph{missed} stages (where
+$M_\text{along}(n) = 0$ by the ``if $A \subseteq \Lambda_n$ then
+$\ldots$ else $0$'' convention). Concretely, if there exists
+$n$ with $i \notin \Lambda_n$, then $M_\infty(h) = 0$ but
+$M_\infty(|h|) > 0$, so the equality fails. Since
+\texttt{Exhaustion} does not require such a missed stage, this is an
+obstruction/example rather than a universal identity; still, the
+equality cannot hold in general under this definition.
+Glimm--Jaffe's standard thermodynamic limit
+(e.g.\ $\pm$BC or $h \to 0^\pm$) restores the equality; upgrading the
+definition is out of scope here.
 
 What does survive is the one-sided inequality, which is the natural
 $\infty$-volume odd-$|A|$ result compatible with the sup-based setup:
@@ -1580,7 +1589,7 @@ $\mathtt{ciSup}$-level pointwise comparisons driven by the along-exhaustion
 pointwise equality above. Further $\infty$-volume refinements (sign
 control, zero-value at $h < 0$ under a ``missed stage'' hypothesis)
 are tracked in issue~\#770.
-\end{theorem>
+\end{theorem}
 
 Finally, a closed form for $\chi$ at $|h|$ that does \emph{not} require
 ferromagnetism:

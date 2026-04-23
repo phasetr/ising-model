@@ -2764,14 +2764,21 @@ at `|h|` (`0 ≤ J`, `0 < β`).
 
 **Inequality rather than equality**: the natural equality
 `|M_∞(h)| = M_∞(|h|)` (true in Glimm–Jaffe §5.3's standard
-thermodynamic limit) fails under this repo's sup-based
-`magnetizationInfinite := ⨆ n, magnetizationAlongExhaustion …`. At
-`h < 0` ferromagnetic, uncovered early stages force the value `0`
-while covered late stages give `≤ 0`, so `M_∞(h) = 0`, whereas
-`M_∞(|h|) > 0`. This is the same odd-`|A|` obstruction already
-noted in `correlationInfinite_neg_h_of_even_card`.
+thermodynamic limit) **does not hold in general** under this repo's
+sup-based `magnetizationInfinite := ⨆ n, magnetizationAlongExhaustion
+…`. Concretely: at `h < 0` ferromagnetic, each covered stage gives
+`M_along(n) ≤ 0` by `magnetizationAlongExhaustion_neg_h` plus
+ferromagnetic nonnegativity at `|h|`; any stage with `i ∉ Λ.volume n`
+contributes the forced value `0` (by the
+`if A ⊆ Λ.volume n then … else 0` convention). Thus if there is even
+one such "missed stage", `M_∞(h) = 0` while `M_∞(|h|) > 0`, breaking
+equality. Since `Exhaustion` does not require a missed stage, this
+is an obstruction/example rather than a universal consequence of
+`h < 0` ferromagnetic alone — but it shows the equality cannot be
+expected to hold in general. This is the same odd-`|A|` obstruction
+already noted in `correlationInfinite_neg_h_of_even_card`.
 
-The one-sided bound still holds: at each stage
+The one-sided bound still holds unconditionally: at each stage
 `|M_along(h) n| = M_along(|h|) n ≥ 0`, so both
 `M_∞(h) ≤ M_∞(|h|)` (pointwise `f ≤ |f| = g`) and
 `-M_∞(|h|) ≤ M_∞(h)` (via `a(0) ≤ ciSup a` and
