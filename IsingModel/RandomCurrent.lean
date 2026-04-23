@@ -2025,6 +2025,57 @@ theorem Real.partial_sum_le_exp_of_nonneg {x : ℝ} (hx : 0 ≤ x) (N : ℕ) :
     (Real.summable_pow_div_factorial x)
   exact div_nonneg (pow_nonneg hx k) (Nat.cast_nonneg _)
 
+set_option linter.unusedSectionVars false in
+set_option linter.unusedDecidableInType false in
+/-- **`CurrentBounded.weightSum` is uniformly bounded by
+`Real.exp (β J)^|edgeSet|`** under non-negative coupling.
+\(CurrentBounded.weightSum N A β J ≤ Real.exp (β * J) ^ |edgeSet|\)
+for every `N`. The N-independent bound, providing a concrete
+`BddAbove` for `tendsto_weightSum_atTop_iSup` (#861). Combines:
+(1) drop indicator (sum monotone), (2) `Fintype.prod_sum` (bounded
+sum equals product of partial sums), (3) per-edge
+`Real.partial_sum_le_exp_of_nonneg` (#862), (4) `Finset.prod_le_prod`
+monotonicity, (5) `Finset.prod_const` for `∏ exp = exp^card`. -/
+theorem CurrentBounded.weightSum_le_exp_pow_card
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (N : ℕ) (A : Finset ↑Λ) {β J : ℝ} (hβJ : 0 ≤ β * J) :
+    CurrentBounded.weightSum G Λ N A β J
+      ≤ Real.exp (β * J) ^ Fintype.card (inducedGraph G Λ).edgeSet := by
+  -- Step 1: Drop the indicator (each summand bounded above by weight when present).
+  have h1 : CurrentBounded.weightSum G Λ N A β J
+            ≤ ∑ n : CurrentBounded G Λ N, (n.toCurrent G Λ).weight G Λ β J := by
+    unfold CurrentBounded.weightSum
+    refine Finset.sum_le_sum (fun n _ => ?_)
+    split_ifs
+    · exact le_refl _
+    · exact Current.weight_nonneg G Λ hβJ _
+  -- Step 2: Fintype.prod_sum gives ∑_n ∏_e (β J)^(n e) / (n e)!
+  --                              = ∏_e ∑_k (β J)^k / k! (via toCurrent unfolding).
+  have h2 : ∑ n : CurrentBounded G Λ N, (n.toCurrent G Λ).weight G Λ β J
+          = ∏ e : (inducedGraph G Λ).edgeSet,
+              ∑ k : Fin (N + 1), (β * J)^(k : ℕ) / (((k : ℕ).factorial : ℝ)) := by
+    symm
+    exact Fintype.prod_sum
+      (κ := fun _ : (inducedGraph G Λ).edgeSet => Fin (N + 1))
+      (fun _ k => (β * J)^(k : ℕ) / (((k : ℕ).factorial : ℝ)))
+  -- Step 3: per-edge partial sum bounded by exp.
+  have h3 : ∏ e : (inducedGraph G Λ).edgeSet,
+              ∑ k : Fin (N + 1), (β * J)^(k : ℕ) / (((k : ℕ).factorial : ℝ))
+          ≤ ∏ _e : (inducedGraph G Λ).edgeSet, Real.exp (β * J) := by
+    refine Finset.prod_le_prod (fun e _ => ?_) (fun e _ => ?_)
+    · refine Finset.sum_nonneg (fun k _ => ?_)
+      exact div_nonneg (pow_nonneg hβJ _) (Nat.cast_nonneg _)
+    · have hpartial := Real.partial_sum_le_exp_of_nonneg hβJ N
+      rw [← Fin.sum_univ_eq_sum_range
+        (fun k => (β * J)^k / ((k.factorial : ℝ))) (N + 1)] at hpartial
+      exact hpartial
+  -- Step 4: ∏_e exp(β J) = exp(β J)^|edgeSet|
+  have h4 : ∏ _e : (inducedGraph G Λ).edgeSet, Real.exp (β * J)
+          = Real.exp (β * J) ^ Fintype.card (inducedGraph G Λ).edgeSet := by
+    rw [Finset.prod_const, Finset.card_univ]
+  exact h1.trans (h2.le.trans (h3.trans h4.le))
+
 end Ambient
 
 end IsingModel
