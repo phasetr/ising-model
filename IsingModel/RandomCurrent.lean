@@ -293,6 +293,31 @@ theorem Current.isSourceFree_iff (G : SimpleGraph V) (Λ : Finset V)
     ext v
     simp [Current.mem_sources_iff, h v]
 
+omit [DecidableEq V] in
+/-- **Zero current `HasSources A` iff A = ∅**: the zero current
+is source-free, hence has prescribed sources `A` only when
+`A = ∅`. -/
+theorem Current.zero_hasSources_iff (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (A : Finset ↑Λ) :
+    (0 : Current G Λ).HasSources G Λ A ↔ A = ∅ := by
+  unfold Current.HasSources
+  rw [Current.zero_sources]
+  exact eq_comm
+
+omit [DecidableEq V] in
+/-- **Sum of currents has prescribed sources iff parities give
+the symmetric difference**: `(n + m).HasSources A ↔
+symmDiff n.sources m.sources = A`. Direct consequence of
+`add_sources_eq`. -/
+theorem Current.add_hasSources_iff (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n m : Current G Λ) (A : Finset ↑Λ) :
+    (n + m).HasSources G Λ A
+      ↔ symmDiff (n.sources G Λ) (m.sources G Λ) = A := by
+  unfold Current.HasSources
+  rw [Current.add_sources_eq]
+
 end Ambient
 
 end IsingModel
