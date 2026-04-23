@@ -1763,6 +1763,45 @@ theorem Config.tendsto_sum_spinA_prod_partial_sum_atTop_sum_spinA_prod_exp
   refine tendsto_finset_sum _ (fun σ _ => ?_)
   exact (Config.tendsto_prod_Fin_partial_sum_atTop_prod_exp G Λ β J σ).const_mul _
 
+omit [DecidableEq V] in
+/-- **Bounded `CurrentBounded.weightSum` × `2^|Λ|` converges to
+the Boltzmann sum**: as `N → ∞`,
+\(2^|Λ| · CurrentBounded.weightSum N A β J
+  → ∑_σ σ_A · ∏_e Real.exp (β J σ_e)\).
+Combines `sum_spinA_prod_taylor_partialSum_eq_pow_card_mul_currentBounded_weightSum`
+(#841) with
+`tendsto_sum_spinA_prod_partial_sum_atTop_sum_spinA_prod_exp`
+(#853). Closes the LHS-side `N → ∞` limit, connecting the
+bounded random-current sum to the actual Ising Boltzmann weight
+`Z · ⟨σ_A⟩` (FV §3.7). -/
+theorem Config.tendsto_pow_card_mul_currentBounded_weightSum_atTop_sum_spinA_prod_exp
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (β J : ℝ) (A : Finset ↑Λ) :
+    Filter.Tendsto
+      (fun N : ℕ =>
+        (2 : ℝ) ^ (Fintype.card ↑Λ) * CurrentBounded.weightSum G Λ N A β J)
+      Filter.atTop
+      (nhds
+        (∑ σ : ↑Λ → Spin,
+          (∏ a ∈ A, ((σ a).toSign : ℝ))
+          * ∏ e : (inducedGraph G Λ).edgeSet,
+              Real.exp (β * J * Config.spinEdgeProduct σ (e : Sym2 ↑Λ)))) := by
+  have hbridge :
+      (fun N : ℕ =>
+        (2 : ℝ) ^ (Fintype.card ↑Λ) * CurrentBounded.weightSum G Λ N A β J)
+      = fun N : ℕ => ∑ σ : ↑Λ → Spin,
+        (∏ a ∈ A, ((σ a).toSign : ℝ))
+        * ∏ e : (inducedGraph G Λ).edgeSet,
+            ∑ k : Fin (N + 1),
+              (β * J * Config.spinEdgeProduct σ (e : Sym2 ↑Λ)) ^ (k : ℕ)
+                / (((k : ℕ).factorial : ℝ)) := by
+    funext N
+    exact (Config.sum_spinA_prod_taylor_partialSum_eq_pow_card_mul_currentBounded_weightSum
+      G Λ β J N A).symm
+  rw [hbridge]
+  exact Config.tendsto_sum_spinA_prod_partial_sum_atTop_sum_spinA_prod_exp G Λ β J A
+
 end Ambient
 
 end IsingModel
