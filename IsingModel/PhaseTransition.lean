@@ -269,6 +269,59 @@ theorem susceptibility_beta_zero (G : SimpleGraph ι) [Fintype G.edgeSet]
   intro j _
   exact truncated2_beta_zero G J h i j
 
+/-- **Susceptibility under `h → -h`**:
+`susceptibility G ⟨J,-h,β⟩ i = susceptibility G ⟨J,h,β⟩ i - 2·magnetization G ⟨J,h,β⟩ i`.
+
+The off-diagonal `j ≠ i` terms are invariant by `truncated2_neg_h`.
+The diagonal `j = i` term, via the Finset collapse `{i,i} = {i}`,
+contributes:
+`truncated2(-h, i, i) − truncated2(h, i, i) = −2·correlation(h, {i}) = −2·M(h)`
+where `M = magnetization`, i.e. the odd-symmetry of the singleton
+`correlation(h, {i})` (`correlation_neg_h` at card 1). Summing gives
+the total shift `−2·M(h)`.
+
+At `h = 0`: `M = 0` by Z₂, so `χ(-0) = χ(0)` (consistent with
+`susceptibility_h_zero`).
+
+Reference: Glimm–Jaffe §5.3. -/
+theorem susceptibility_neg_h (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h β : ℝ) (i : ι) :
+    susceptibility G (⟨J, -h, β⟩ : IsingParams ℝ) i
+      = susceptibility G (⟨J, h, β⟩ : IsingParams ℝ) i
+          - 2 * magnetization G (⟨J, h, β⟩ : IsingParams ℝ) i := by
+  unfold susceptibility magnetization
+  -- Split each side into j ≠ i and j = i contributions.
+  have hmem : i ∈ (Finset.univ : Finset ι) := Finset.mem_univ i
+  have hsplit_neg :
+      (∑ j, truncated2 G (⟨J, -h, β⟩ : IsingParams ℝ) i j)
+        = (∑ j ∈ Finset.univ \ {i},
+              truncated2 G (⟨J, -h, β⟩ : IsingParams ℝ) i j)
+          + truncated2 G (⟨J, -h, β⟩ : IsingParams ℝ) i i :=
+    Finset.sum_eq_sum_diff_singleton_add hmem _
+  have hsplit_pos :
+      (∑ j, truncated2 G (⟨J, h, β⟩ : IsingParams ℝ) i j)
+        = (∑ j ∈ Finset.univ \ {i},
+              truncated2 G (⟨J, h, β⟩ : IsingParams ℝ) i j)
+          + truncated2 G (⟨J, h, β⟩ : IsingParams ℝ) i i :=
+    Finset.sum_eq_sum_diff_singleton_add hmem _
+  rw [hsplit_neg, hsplit_pos]
+  -- Off-diagonal: pointwise invariance via truncated2_neg_h
+  have hoff : ∑ j ∈ Finset.univ \ {i},
+        truncated2 G (⟨J, -h, β⟩ : IsingParams ℝ) i j
+      = ∑ j ∈ Finset.univ \ {i},
+          truncated2 G (⟨J, h, β⟩ : IsingParams ℝ) i j := by
+    refine Finset.sum_congr rfl ?_
+    intros j hj
+    have hji : j ≠ i := by simpa using (Finset.mem_sdiff.mp hj).2
+    exact truncated2_neg_h G J h β (Ne.symm hji)
+  rw [hoff]
+  -- Diagonal: compute truncated2(-h, i, i) - truncated2(h, i, i) = -2 M(h)
+  unfold truncated2
+  have hii : ({i, i} : Finset ι) = {i} := by simp
+  rw [hii, correlation_neg_h G J h β {i}]
+  simp only [Finset.card_singleton, pow_one]
+  ring
+
 /-- **Truncated 2-point at `h = 0`** (finite volume): for any `J, β`
 and any sites `i, j`,
 `truncated2 G ⟨J, 0, β⟩ i j = correlation G ⟨J, 0, β⟩ {i, j}`.
