@@ -373,6 +373,44 @@ theorem magnetization_neg_h (G : SimpleGraph ι) [Fintype G.edgeSet]
   rw [correlation_neg_h G J h β {i}, Finset.card_singleton, pow_one]
   ring
 
+/-- **`|magnetization(h)| = magnetization(|h|)`** under ferromagnetic
+at `|h|`: requires `0 ≤ J ∧ 0 < β` (so that `Ferromagnetic ⟨J, |h|, β⟩`
+holds automatically, since `0 ≤ |h|`). Combines `magnetization_neg_h`
+with `magnetization_nonneg` at the absolute-value parameters.
+
+Odd-card counterpart of `correlation_eq_abs_h_of_even_card`: at
+`|A|` even the correlation is invariant, at `|A|` odd the magnitude
+is invariant modulo sign. At `|A| = 1` (the magnetization case),
+this gives `|M(h)| = M(|h|)` under ferromagnetic `|h|`.
+
+Reference: Glimm–Jaffe §5.3. -/
+theorem abs_magnetization_eq_magnetization_abs_h
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (i : ι) :
+    |magnetization G (⟨J, h, β⟩ : IsingParams ℝ) i|
+      = magnetization G (⟨J, |h|, β⟩ : IsingParams ℝ) i := by
+  have hf_abs : Ferromagnetic (⟨J, |h|, β⟩ : IsingParams ℝ) :=
+    ⟨hJ, abs_nonneg _, hβ⟩
+  have habs_nonneg : 0 ≤ magnetization G (⟨J, |h|, β⟩ : IsingParams ℝ) i :=
+    magnetization_nonneg G _ hf_abs i
+  rcases abs_choice h with habs | habs
+  · -- |h| = h (i.e. h ≥ 0)
+    have heq : magnetization G (⟨J, |h|, β⟩ : IsingParams ℝ) i
+        = magnetization G (⟨J, h, β⟩ : IsingParams ℝ) i := by rw [habs]
+    rw [heq]
+    apply abs_of_nonneg
+    have h_ge : 0 ≤ h := by rw [← habs]; exact abs_nonneg h
+    exact magnetization_nonneg G _ ⟨hJ, h_ge, hβ⟩ i
+  · -- |h| = -h (i.e. h ≤ 0)
+    have hneg : magnetization G (⟨J, |h|, β⟩ : IsingParams ℝ) i
+        = -magnetization G (⟨J, h, β⟩ : IsingParams ℝ) i := by
+      rw [habs]; exact magnetization_neg_h G J h β i
+    rw [hneg]
+    apply abs_of_nonpos
+    have hne : 0 ≤ -magnetization G (⟨J, h, β⟩ : IsingParams ℝ) i := by
+      rw [← hneg]; exact habs_nonneg
+    linarith
+
 /-- The magnetization vanishes at `h = 0` (Z₂ symmetry, finite volume).
 This is the finite-volume counterpart of the statement that the Z₂
 symmetry is unbroken in finite volume. Symmetry breaking occurs only
