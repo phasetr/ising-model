@@ -1699,9 +1699,10 @@ Case split on $i \in \Lambda_n$:
     subtype site $\langle i, h_i\rangle$. The magnetization-side
     terms are converted via the helper
     \texttt{magnetizationAlongExhaustion\_of\_mem\_eq\_magnetizationΛ},
-    which upgrades the \texttt{liftFinset $\{i\}$}-form (from
-    \texttt{correlationAlongExhaustion\_of\_subset}) to the
-    \texttt{magnetizationΛ} form via the auxiliary
+    which upgrades the \texttt{liftFinset $\{i\}$}-form returned by
+    \texttt{magnetizationAlongExhaustion\_of\_mem} (itself a singleton
+    specialization of \texttt{correlationAlongExhaustion\_of\_subset})
+    to the \texttt{magnetizationΛ} form via the auxiliary
     \texttt{liftFinset\_singleton}.
   \item \emph{Uncovered stage}: all four terms are $0$ by the
     \texttt{\_of\_not\_mem} unfoldings, and the identity holds.

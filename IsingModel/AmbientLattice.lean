@@ -2013,8 +2013,9 @@ theorem susceptibilityAlongExhaustion_of_not_mem
 
 /-- **`susceptibilityAlongExhaustion ≥ 0`** per stage for ferromagnetic `p`.
 Case split on `i ∈ Λ.volume n`: the covered branch applies
-`susceptibilityΛ_nonneg` (which uses `correlationΛ_nonneg` at `{j}`);
-the uncovered branch is `0`. -/
+`susceptibilityΛ_nonneg` (direct lift of `IsingModel.susceptibility_nonneg`,
+which sums `truncated2_nonneg` over all `j : ↑Λ`); the uncovered branch
+is `0`. -/
 theorem susceptibilityAlongExhaustion_nonneg
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
