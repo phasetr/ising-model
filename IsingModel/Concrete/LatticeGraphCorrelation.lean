@@ -10480,6 +10480,29 @@ theorem susceptibilityInfinite_latticeGraph_le_abs_h
   susceptibilityInfinite_le_abs_h (IsingModel.latticeGraph d) Λ
     J h β hJ hβ i hbd
 
+/-! ## ℤ^d wrapper for §5.1 conditional cluster decay (PR #779) -/
+
+/-- **ℤ^d conditional cluster decay (cofinite form)**: on ℤ^d, if the
+∞-volume Ursell 2-point function at a fixed site `i : Fin d → ℤ`,
+viewed as a function of the free site `j : Fin d → ℤ`, is summable,
+then it tends to `0` along `Filter.cofinite` (which on `Fin d → ℤ`
+coincides with the "|r| → ∞" filter). Concrete `latticeGraph d`
+wrapper for PR #779's
+`truncated2Infinite_tendsto_cofinite_zero_of_summable`.
+
+Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §5.1 pp. 72–74. -/
+theorem truncated2Infinite_latticeGraph_tendsto_cofinite_zero_of_summable
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (i : Fin d → ℤ)
+    (hsum : Summable (fun j : Fin d → ℤ =>
+      truncated2Infinite (IsingModel.latticeGraph d) Λ p i j)) :
+    Filter.Tendsto
+      (fun j : Fin d → ℤ =>
+        truncated2Infinite (IsingModel.latticeGraph d) Λ p i j)
+      Filter.cofinite (nhds 0) :=
+  truncated2Infinite_tendsto_cofinite_zero_of_summable
+    (IsingModel.latticeGraph d) Λ p i hsum
+
 end Ambient
 
 end IsingModel
