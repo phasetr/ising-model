@@ -4204,6 +4204,37 @@ theorem truncated2Infinite_h_zero
       correlationInfinite_h_zero G Λ J β _ h_j]
   ring
 
+/-- **Conditional cluster decay (cofinite form)**: if the ∞-volume
+Ursell 2-point function at a fixed site `i : V`, viewed as a function
+of the free site `j : V`, is *summable* over `V`, then it tends to `0`
+along the cofinite filter:
+`Tendsto (fun j => truncated2Infinite G Λ p i j) Filter.cofinite (nhds 0)`.
+
+Direct application of mathlib's `Summable.tendsto_cofinite_zero`.
+
+**Interpretation.** Summability over `V` is a finite-susceptibility /
+non-critical condition (away from the ferromagnetic critical line,
+$\chi_\infty$ is finite and the two-point function is summable). Under
+that condition, `Filter.cofinite` (the filter of cofinite subsets of `V`)
+gives the natural "large-separation" limit: on $V = \mathbb{Z}^d$ it
+coincides with "$|r| \to \infty$". So this is a Conditional cluster
+decay statement in the sense of Glimm–Jaffe §5.1.
+
+Unconditional exponential cluster decay in pure phases (Simon–Lieb
+inequality and follow-ups) remains unformalized; this lemma is the
+elementary real-analysis building block waiting to be composed with a
+future proof of summability.
+
+Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §5.1 pp. 72–74. -/
+theorem truncated2Infinite_tendsto_cofinite_zero_of_summable
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (i : V)
+    (hsum : Summable (fun j : V => truncated2Infinite G Λ p i j)) :
+    Filter.Tendsto (fun j : V => truncated2Infinite G Λ p i j)
+      Filter.cofinite (nhds 0) :=
+  hsum.tendsto_cofinite_zero
+
 /-! ## Truncated 3-point correlation + GHS at infinite volume
 
 Lift the finite-volume GHS inequality (`ghs_inequality`,

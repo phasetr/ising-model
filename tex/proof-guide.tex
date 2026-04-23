@@ -1770,6 +1770,31 @@ pointwise comparison gives the same for the $h$-side. Apply
 \texttt{ciSup\_mono} (mathlib).
 \end{proof}
 
+\begin{theorem}[\texttt{truncated2Infinite\_tendsto\_cofinite\_zero\_of\_summable},
+PR~\#779]
+For any ambient type $V$, graph $G$, exhaustion $\Lambda$, parameters
+$p$, and fixed site $i : V$, if the function
+$j \mapsto \mathrm{truncated2Infinite}\ G\ \Lambda\ p\ i\ j$ is summable
+over $V$, then
+\[
+  \mathrm{Tendsto}\bigl(\lambda j,\ \mathrm{truncated2Infinite}\ G\ \Lambda\ p\ i\ j\bigr)
+    \ \mathrm{Filter.cofinite}\ (\mathrm{nhds}\ 0).
+\]
+\end{theorem}
+\begin{proof}[Proof sketch]
+Direct application of mathlib's \texttt{Summable.tendsto\_cofinite\_zero}.
+\end{proof}
+\noindent
+\emph{Interpretation.} The summability hypothesis is a
+finite-susceptibility / non-critical condition. On
+$V = \mathbb{Z}^d$, $\mathrm{Filter.cofinite}$ coincides with the
+``$|r| \to \infty$'' filter, so this is a \emph{conditional} cluster
+decay statement (Glimm--Jaffe \S5.1). Unconditional exponential decay
+(Simon--Lieb inequality) is not yet formalized; this lemma is the
+elementary real-analysis step ready to be composed with a future proof
+of summability. $\mathbb Z^d$ wrapper:
+\texttt{truncated2Infinite\_latticeGraph\_tendsto\_cofinite\_zero\_of\_summable}.
+
 \subsection{Lattice-growth convergence of \S5 quantities}
 
 Named corollaries of \texttt{correlation\_convergent\_subgraph} (PR~\#64):
