@@ -1607,6 +1607,31 @@ theorem Current.weight_mul_weight_eq_weight_add_mul_jointFactor
       = (n₁ + n₂).weight G Λ β J * Current.jointFactor G Λ n₁ n₂ :=
   Current.weight_mul_weight_eq_weight_add_mul_choose G Λ β J n₁ n₂
 
+omit [DecidableEq V] in
+/-- **`CurrentBounded.weightSum_empty_pos` (non-negative coupling)**:
+\(CurrentBounded.weightSum N ∅ β J ≥ 1 > 0\) when `0 ≤ β * J`,
+since the zero current is bounded, has \(\text{sources} = ∅\),
+and contributes weight `1`. The other terms are `≥ 0`. -/
+theorem CurrentBounded.weightSum_empty_pos (G : SimpleGraph V)
+    (Λ : Finset V) [Fintype (inducedGraph G Λ).edgeSet]
+    [DecidableEq ↑Λ] (N : ℕ) {β J : ℝ} (hβJ : 0 ≤ β * J) :
+    0 < CurrentBounded.weightSum G Λ N ∅ β J := by
+  unfold CurrentBounded.weightSum
+  -- 0 ∈ univ, summand at 0 = if (0).sources = ∅ then weight 0 else 0 = weight 0 = 1
+  have h_zero_summand :
+      (if ((0 : CurrentBounded G Λ N).toCurrent G Λ).sources G Λ = ∅
+        then ((0 : CurrentBounded G Λ N).toCurrent G Λ).weight G Λ β J
+        else 0) = 1 := by
+    have h0tc : (0 : CurrentBounded G Λ N).toCurrent G Λ = 0 := by
+      funext e; rfl
+    rw [h0tc, Current.zero_sources, if_pos rfl, Current.zero_weight]
+  refine Finset.sum_pos' (fun n _ => ?_) ⟨0, Finset.mem_univ _, ?_⟩
+  · by_cases h : (n.toCurrent G Λ).sources G Λ = ∅
+    · simp only [h, if_true]
+      exact Current.weight_nonneg G Λ hβJ _
+    · simp only [h, if_false, le_refl]
+  · rw [h_zero_summand]; exact zero_lt_one
+
 end Ambient
 
 end IsingModel
