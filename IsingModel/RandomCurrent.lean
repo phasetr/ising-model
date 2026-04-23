@@ -1341,6 +1341,31 @@ theorem Config.sum_spinA_prod_taylor_pow_hasSources
   exact Config.sum_spinA_weight_prod_spinEdgeProduct_pow_hasSources
     G Λ β J n A
 
+omit [DecidableEq V] in
+/-- **Edge product of Taylor partial sums = current-bounded sum**:
+the Fubini swap
+`∏_e ∑_{k ≤ N} (β J · spinEdgeProduct σ e)^k / k!
+  = ∑_{n : CurrentBounded N} ∏_e (β J · spinEdgeProduct σ e)^(n e) / (n e)!`.
+The finite analogue (using `Fintype.prod_sum`) of the infinite
+Taylor expansion that links the partition function to the
+random-current sum (FV §3.7). -/
+theorem Config.prod_sum_taylor_eq_sum_currentBounded
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (β J : ℝ) (N : ℕ) (σ : ↑Λ → Spin) :
+    (∏ e : (inducedGraph G Λ).edgeSet,
+       ∑ k : Fin (N+1),
+         (β * J * Config.spinEdgeProduct σ (e : Sym2 ↑Λ))^(k : ℕ)
+           / (((k : ℕ)).factorial : ℝ))
+     = ∑ n : CurrentBounded G Λ N,
+         ∏ e : (inducedGraph G Λ).edgeSet,
+           (β * J * Config.spinEdgeProduct σ (e : Sym2 ↑Λ))^((n e : ℕ))
+             / (((n e : ℕ)).factorial : ℝ) :=
+  Fintype.prod_sum (κ := fun _ : (inducedGraph G Λ).edgeSet => Fin (N+1))
+    (fun e k =>
+      (β * J * Config.spinEdgeProduct σ (e : Sym2 ↑Λ))^(k : ℕ)
+        / (((k : ℕ)).factorial : ℝ))
+
 end Ambient
 
 end IsingModel
