@@ -1180,6 +1180,28 @@ theorem Config.spinEdgeProduct_mul_self_of_not_isDiag {W : Type*}
     exact_mod_cast this
   rw [h_one, h_one]; norm_num
 
+/-- **Edge spin product is `±1` on a non-loop edge**: for a
+non-diagonal `e : Sym2 W`,
+`spinEdgeProduct σ e = 1 ∨ spinEdgeProduct σ e = -1`. Direct
+corollary of `spinEdgeProduct_mul_self_of_not_isDiag` via
+`sq_eq_one_iff`. -/
+theorem Config.spinEdgeProduct_eq_one_or_neg_one_of_not_isDiag
+    {W : Type*} [DecidableEq W] (σ : W → Spin) (e : Sym2 W)
+    (he : ¬ e.IsDiag) :
+    Config.spinEdgeProduct σ e = 1 ∨ Config.spinEdgeProduct σ e = -1 :=
+  sq_eq_one_iff.mp (Config.spinEdgeProduct_mul_self_of_not_isDiag σ e he)
+
+/-- **Edge spin product has absolute value `1` on a non-loop
+edge**: \(|spinEdgeProduct σ e| = 1\) for non-diagonal `e`.
+Feeding absolute convergence of the Taylor series for
+`exp(β J σ_u σ_w)`. -/
+theorem Config.abs_spinEdgeProduct_of_not_isDiag {W : Type*}
+    [DecidableEq W] (σ : W → Spin) (e : Sym2 W) (he : ¬ e.IsDiag) :
+    |Config.spinEdgeProduct σ e| = 1 := by
+  rcases Config.spinEdgeProduct_eq_one_or_neg_one_of_not_isDiag σ e he with h | h
+  · rw [h]; norm_num
+  · rw [h]; norm_num
+
 end Ambient
 
 end IsingModel
