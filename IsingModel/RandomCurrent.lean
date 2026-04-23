@@ -76,6 +76,38 @@ theorem Current.add_parity (G : SimpleGraph V) (Λ : Finset V)
   · simp [hv, show ((n + m) e : ℕ) = n e + m e from rfl, Nat.cast_add]
   · simp [hv]
 
+/-- **Source set** of a current `n`: the Finset of vertices `v`
+with odd parity (`n.parity v ≠ 0`). The standard "boundary" `∂n`
+in the random-current literature; `⟨σ_A⟩^Λ` is expressed as a
+weighted sum over currents whose source set is exactly `A`
+(FV §3.7). -/
+noncomputable def Current.sources (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) : Finset ↑Λ :=
+  (Finset.univ : Finset ↑Λ).filter (fun v => n.parity G Λ v ≠ 0)
+
+omit [DecidableEq V] in
+/-- **Membership in `Current.sources`**: `v ∈ n.sources` iff
+`n.parity v ≠ 0`. -/
+@[simp]
+theorem Current.mem_sources_iff (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) (v : ↑Λ) :
+    v ∈ n.sources G Λ ↔ n.parity G Λ v ≠ 0 := by
+  classical
+  simp [Current.sources]
+
+omit [DecidableEq V] in
+/-- **Zero current has empty source set**: every vertex has parity
+`0` for the zero current, so the source filter is empty. -/
+@[simp]
+theorem Current.zero_sources (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ] :
+    (0 : Current G Λ).sources G Λ = ∅ := by
+  classical
+  ext v
+  simp
+
 end Ambient
 
 end IsingModel
