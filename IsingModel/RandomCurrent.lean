@@ -1909,6 +1909,40 @@ theorem Summable.tendsto_sum_boundedFinset
       Filter.atTop (nhds (∑' n, f n)) :=
   hf.hasSum.comp (Current.tendsto_boundedFinset_atTop_finsetAtTop G Λ)
 
+/-- **Bounded weight sum as sum over `boundedFinset`**: rewrite
+\(CurrentBounded.weightSum N A β J\) as a sum over the image
+finset \(boundedFinset N\) of currents. Uses `Finset.sum_bij`
+with `toCurrent` as the bijection. Bridges the bounded sum (over
+`CurrentBounded N` as Fintype) with the `Current G Λ`-indexed
+Finset sum used in subsequent N → ∞ arguments. -/
+theorem CurrentBounded.weightSum_eq_sum_boundedFinset (G : SimpleGraph V)
+    (Λ : Finset V) [Fintype (inducedGraph G Λ).edgeSet]
+    [DecidableEq ↑Λ] (N : ℕ) (A : Finset ↑Λ) (β J : ℝ) :
+    CurrentBounded.weightSum G Λ N A β J
+      = ∑ n ∈ Current.boundedFinset G Λ N,
+          if n.sources G Λ = A then n.weight G Λ β J else 0 := by
+  classical
+  unfold CurrentBounded.weightSum
+  refine Finset.sum_bij
+    (fun (nB : CurrentBounded G Λ N) _ => CurrentBounded.toCurrent G Λ nB)
+    ?_ ?_ ?_ ?_
+  · -- maps into boundedFinset
+    intro nB _
+    rw [Current.mem_boundedFinset_iff]
+    intro e
+    exact Nat.lt_succ_iff.mp (nB e).is_lt
+  · -- injective on Finset.univ
+    intro nB₁ _ nB₂ _ hbij
+    exact CurrentBounded.toCurrent_injective G Λ hbij
+  · -- surjective onto boundedFinset
+    intro n hn
+    rw [Current.mem_boundedFinset_iff] at hn
+    refine ⟨fun e => ⟨n e, Nat.lt_succ_iff.mpr (hn e)⟩, Finset.mem_univ _, ?_⟩
+    funext e; rfl
+  · -- summand match
+    intro nB _
+    rfl
+
 end Ambient
 
 end IsingModel
