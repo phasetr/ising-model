@@ -863,6 +863,25 @@ theorem Current.even_degreeAt_iff_isSourceFree
   rw [Current.parity_eq_degreeAt, ZMod.natCast_eq_zero_iff,
     ← even_iff_two_dvd]
 
+omit [DecidableEq V] in
+/-- **Spin sum at fixed current — source-free form**: at fixed
+current `n`, the spin sum of the spin-edge product equals
+`2^|Λ|` if `n` is source-free, else `0`. Combines
+`Config.sum_prod_spin_pow_degreeAt` with
+`Current.even_degreeAt_iff_isSourceFree` to produce the per-current
+spin-sum identity in its final form (FV §3.7, eq. (3.45)). -/
+theorem Config.sum_prod_spin_pow_degreeAt_isSourceFree
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) [Decidable (n.IsSourceFree G Λ)] :
+    (∑ σ : ↑Λ → Spin, ∏ e : (inducedGraph G Λ).edgeSet,
+        ((e : Sym2 ↑Λ).toFinset.prod
+          (fun v => ((σ v).toSign : ℝ))) ^ n e)
+      = if n.IsSourceFree G Λ
+        then (2 : ℝ)^(Fintype.card ↑Λ) else 0 := by
+  rw [Config.sum_prod_spin_pow_degreeAt]
+  exact if_congr (Current.even_degreeAt_iff_isSourceFree G Λ n) rfl rfl
+
 end Ambient
 
 end IsingModel
