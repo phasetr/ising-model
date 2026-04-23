@@ -340,6 +340,32 @@ theorem truncated2_neg_h (G : SimpleGraph ι) [Fintype G.edgeSet]
   simp only [Finset.card_singleton, Finset.card_pair hij]
   ring
 
+/-- **Correlation at `|h|` for even-card `A`**: if `|A|` is even,
+`correlation G ⟨J, h, β⟩ A = correlation G ⟨J, |h|, β⟩ A`.
+
+At even card, `(-1)^|A| = 1` so `correlation_neg_h` gives invariance
+under `h → -h`, hence the value is unchanged by replacing `h` with
+`|h|`. Analog of `freeEnergy_eq_abs_h` for the correlation layer
+(restricted to even-cardinality subsets).
+
+For odd `|A|`, the identity fails: `correlation ⟨J, -h, β⟩ A =
+-correlation ⟨J, h, β⟩ A` means the sign depends on `sign h`. -/
+theorem correlation_eq_abs_h_of_even_card (G : SimpleGraph ι)
+    [Fintype G.edgeSet] (J h β : ℝ) (A : Finset ι)
+    (heven : Even A.card) :
+    correlation G (⟨J, h, β⟩ : IsingParams ℝ) A
+      = correlation G (⟨J, |h|, β⟩ : IsingParams ℝ) A := by
+  rcases abs_choice h with habs | habs
+  · rw [habs]
+  · rw [habs, correlation_neg_h]
+    obtain ⟨k, hk⟩ := heven
+    rw [hk]
+    have h2k : (-1 : ℝ) ^ (k + k) = 1 := by
+      rw [show k + k = 2 * k from by omega]
+      rw [pow_mul]
+      simp
+    rw [h2k, one_mul]
+
 /-! ## Lebowitz third inequality
 
 The Lebowitz third inequality (Lebowitz, 1974) is the key input for the GHS
