@@ -958,6 +958,63 @@ theorem Config.sum_spinA_prod_spin_pow_eq_pow_card_iff
   exact Config.sum_prod_toSign_pow_real
     (k := fun v => (if v ∈ A then (1 : ℕ) else 0) + n.degreeAt G Λ v)
 
+omit [DecidableEq V] in
+/-- **Even (`1_A v + degreeAt n v`) at every vertex ↔
+`n.HasSources A`**: a current `n` has source set exactly `A` iff
+`(1_A v) + degreeAt n v` is even at every vertex. The A-source
+analogue of `even_degreeAt_iff_isSourceFree`. -/
+theorem Current.even_indicator_add_degreeAt_iff_hasSources
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) (A : Finset ↑Λ) :
+    (∀ v : ↑Λ,
+        Even ((if v ∈ A then (1 : ℕ) else 0) + n.degreeAt G Λ v))
+      ↔ n.HasSources G Λ A := by
+  classical
+  unfold Current.HasSources
+  -- Each summand: Even (1_A v + degreeAt n v)
+  --   ↔ ((1_A v + degreeAt n v : ℕ) : ZMod 2) = 0
+  --   ↔ (1_A v : ZMod 2) + parity n v = 0
+  --   ↔ parity n v = -(1_A v : ZMod 2) = (1_A v : ZMod 2)  (char 2)
+  have hper : ∀ v : ↑Λ,
+      Even ((if v ∈ A then (1 : ℕ) else 0) + n.degreeAt G Λ v)
+        ↔ n.parity G Λ v = (if v ∈ A then (1 : ZMod 2) else 0) := by
+    intro v
+    rw [even_iff_two_dvd, ← ZMod.natCast_eq_zero_iff]
+    push_cast
+    rw [← Current.parity_eq_degreeAt]
+    -- Goal: (if v ∈ A then 1 else 0 : ZMod 2) + parity n v = 0
+    --       ↔ parity n v = if v ∈ A then 1 else 0
+    by_cases hvA : v ∈ A
+    · simp only [if_pos hvA]
+      -- (1 : ZMod 2) + parity = 0 ↔ parity = 1
+      have h2 : ∀ x : ZMod 2, 1 + x = 0 ↔ x = 1 := by decide
+      exact h2 _
+    · simp only [if_neg hvA]
+      -- (0 : ZMod 2) + parity = 0 ↔ parity = 0
+      simp
+  rw [forall_congr' hper]
+  -- ∀ v, parity n v = (if v ∈ A then 1 else 0 : ZMod 2) ↔ sources n = A
+  have hZMod2 : ∀ x : ZMod 2, x ≠ 0 ↔ x = 1 := by decide
+  constructor
+  · intro h
+    ext v
+    rw [Current.mem_sources_iff, h v]
+    by_cases hvA : v ∈ A
+    · simp only [if_pos hvA]
+      exact iff_of_true ((hZMod2 1).mpr rfl) hvA
+    · simp only [if_neg hvA]
+      exact iff_of_false (by simp) hvA
+  · intro h v
+    have hmem : (v ∈ n.sources G Λ) ↔ (v ∈ A) := by rw [h]
+    rw [Current.mem_sources_iff] at hmem
+    by_cases hvA : v ∈ A
+    · rw [if_pos hvA]
+      exact (hZMod2 _).mp (hmem.mpr hvA)
+    · rw [if_neg hvA]
+      by_contra hne
+      exact hvA (hmem.mp hne)
+
 end Ambient
 
 end IsingModel
