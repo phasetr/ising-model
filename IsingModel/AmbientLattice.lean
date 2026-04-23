@@ -4261,8 +4261,11 @@ Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §5.1 pp. 76–79. -/
 /-- **§5.1 cluster property** for the ∞-volume Ursell 2-point
 function: at every fixed basepoint `i : V`, the function
 `j ↦ truncated2Infinite G Λ p i j` tends to `0` along the
-cofinite filter on `V`. The standard formal statement of the
-Glimm–Jaffe §5.1 cluster property of a ferromagnet. -/
+cofinite filter on `V`. A Glimm–Jaffe §5.1-motivated predicate
+on `(G, Λ, p)`; the predicate itself does not build in a
+ferromagnetic hypothesis, but the expected nontrivial positive
+results (e.g.\ at high temperature or under a Simon–Lieb-type
+summability assumption) apply in ferromagnetic regimes. -/
 def clusterProperty
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
