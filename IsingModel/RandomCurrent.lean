@@ -1202,6 +1202,38 @@ theorem Config.abs_spinEdgeProduct_of_not_isDiag {W : Type*}
   · rw [h]; norm_num
   · rw [h]; norm_num
 
+omit [DecidableEq V] in
+/-- **Squared edge spin product on `inducedGraph` edge is `1`**:
+edgeSet variant of `spinEdgeProduct_mul_self_of_not_isDiag`,
+auto-deriving non-diagonality from `not_isDiag_of_mem_edgeSet`. -/
+theorem Config.spinEdgeProduct_inducedGraph_mul_self
+    (G : SimpleGraph V) (Λ : Finset V) [DecidableEq ↑Λ]
+    (σ : ↑Λ → Spin) (e : (inducedGraph G Λ).edgeSet) :
+    (Config.spinEdgeProduct σ (e : Sym2 ↑Λ)) ^ 2 = 1 :=
+  Config.spinEdgeProduct_mul_self_of_not_isDiag σ _
+    ((inducedGraph G Λ).not_isDiag_of_mem_edgeSet e.2)
+
+omit [DecidableEq V] in
+/-- **Edge spin product on `inducedGraph` edge is `±1`**: edgeSet
+variant of `spinEdgeProduct_eq_one_or_neg_one_of_not_isDiag`. -/
+theorem Config.spinEdgeProduct_inducedGraph_eq_one_or_neg_one
+    (G : SimpleGraph V) (Λ : Finset V) [DecidableEq ↑Λ]
+    (σ : ↑Λ → Spin) (e : (inducedGraph G Λ).edgeSet) :
+    Config.spinEdgeProduct σ (e : Sym2 ↑Λ) = 1 ∨
+      Config.spinEdgeProduct σ (e : Sym2 ↑Λ) = -1 :=
+  Config.spinEdgeProduct_eq_one_or_neg_one_of_not_isDiag σ _
+    ((inducedGraph G Λ).not_isDiag_of_mem_edgeSet e.2)
+
+omit [DecidableEq V] in
+/-- **Edge spin product on `inducedGraph` edge has |·| = 1**:
+edgeSet variant of `abs_spinEdgeProduct_of_not_isDiag`. -/
+theorem Config.abs_spinEdgeProduct_inducedGraph
+    (G : SimpleGraph V) (Λ : Finset V) [DecidableEq ↑Λ]
+    (σ : ↑Λ → Spin) (e : (inducedGraph G Λ).edgeSet) :
+    |Config.spinEdgeProduct σ (e : Sym2 ↑Λ)| = 1 :=
+  Config.abs_spinEdgeProduct_of_not_isDiag σ _
+    ((inducedGraph G Λ).not_isDiag_of_mem_edgeSet e.2)
+
 end Ambient
 
 end IsingModel
