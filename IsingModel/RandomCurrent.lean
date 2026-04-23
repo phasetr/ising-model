@@ -270,6 +270,46 @@ theorem Current.weight_pos (G : SimpleGraph V) (Λ : Finset V)
   refine div_pos (pow_pos hβJ _) ?_
   exact_mod_cast Nat.factorial_pos _
 
+omit [DecidableEq V] in
+/-- **Weight at zero β collapses to indicator on `n = 0`**:
+\(n.weight\,0\,J = 1\) if `n = 0`, else `0`. Each non-zero edge
+multiplicity gives a `0^(n e) = 0` factor. -/
+theorem Current.weight_beta_zero (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J : ℝ) (n : Current G Λ) :
+    n.weight G Λ 0 J = if n = 0 then 1 else 0 := by
+  classical
+  by_cases hn : n = 0
+  · subst hn; simp
+  · rw [if_neg hn]
+    obtain ⟨e₀, he₀⟩ : ∃ e, n e ≠ 0 := by
+      by_contra hall
+      push Not at hall
+      exact hn (funext hall)
+    unfold Current.weight
+    refine Finset.prod_eq_zero (Finset.mem_univ e₀) ?_
+    rw [zero_mul, zero_pow he₀, zero_div]
+
+omit [DecidableEq V] in
+/-- **Weight at zero J collapses to indicator on `n = 0`**:
+\(n.weight\,β\,0 = 1\) if `n = 0`, else `0`. Symmetric counterpart
+of `weight_beta_zero`. -/
+theorem Current.weight_J_zero (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (β : ℝ) (n : Current G Λ) :
+    n.weight G Λ β 0 = if n = 0 then 1 else 0 := by
+  classical
+  by_cases hn : n = 0
+  · subst hn; simp
+  · rw [if_neg hn]
+    obtain ⟨e₀, he₀⟩ : ∃ e, n e ≠ 0 := by
+      by_contra hall
+      push Not at hall
+      exact hn (funext hall)
+    unfold Current.weight
+    refine Finset.prod_eq_zero (Finset.mem_univ e₀) ?_
+    rw [mul_zero, zero_pow he₀, zero_div]
+
 /-- **Edge support of a current**: the Finset of edges with
 non-zero current value. Used in the random-current sum: weight
 of a current depends only on its values on the support. -/
