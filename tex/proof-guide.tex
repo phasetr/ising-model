@@ -1895,6 +1895,37 @@ Prop~9.31) is expected to provide in subsequent PRs. This is the
 natural infrastructure capstone before tackling that
 research-level multi-PR step.
 
+\paragraph{\texttt{LocallyFinite (latticeGraph d)} + ambient
+degree bound (PR~\#784).}
+On the way to formalising the Simon--Lieb inequality, the ambient
+graph $\mathrm{latticeGraph}(d)$ on the infinite vertex set
+$\mathrm{Fin}\,d \to \mathbb Z$ is endowed with the typeclass
+instance
+\[
+  \mathrm{Fintype}\,\bigl(\mathrm{latticeGraph}(d).\mathrm{neighborSet}\,v\bigr)
+  \quad \text{for every } v
+\]
+(\texttt{latticeGraph\_neighborSet\_fintype}), which is mathlib's
+\texttt{LocallyFinite} property. The witness is
+$\mathrm{Fintype.ofFinset}$ on the filter
+$(\mathrm{latticeNeighborEnum}\,d\,v).\mathrm{filter}\,
+(\mathrm{latticeGraph}(d).\mathrm{Adj}\,v)$, where
+$\mathrm{latticeNeighborEnum}$ and the membership lemma
+$\mathrm{latticeGraph\_adj\_mem\_neighborEnum}$ already supply the
+$2d$-element candidate enumeration. As a corollary,
+$\mathrm{latticeGraph}(d).\mathrm{degree}\,v \le 2d$
+(\texttt{latticeGraph\_degree\_le}), via
+$\mathrm{Finset.card\_le\_card}$ on the inclusion
+$\mathrm{neighborFinset}\,v \subseteq \mathrm{latticeNeighborEnum}\,d\,v$
+and the existing $\mathrm{latticeNeighborEnum\_card\_le}$. Until
+now the project's \texttt{Fintype} reasoning happened only on the
+induced subgraph $(\mathrm{inducedGraph}\,(\mathrm{latticeGraph}\,d)\,\Lambda)$
+for finite $\Lambda$; with the ambient instance in place, the
+next infrastructure layer toward FV Prop~9.31 (outer vertex
+boundary of a finite Finset of $\mathbb Z^d$, edge boundary,
+$\sup_v \mathrm{degree}$ uniform bounds, etc.) becomes statable
+in mathlib's standard idiom.
+
 \subsection{Lattice-growth convergence of \S5 quantities}
 
 Named corollaries of \texttt{correlation\_convergent\_subgraph} (PR~\#64):
