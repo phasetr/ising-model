@@ -492,6 +492,22 @@ lemma outerVertexBoundary_card_le_edgeBoundary_card
     Finset.mem_filter.mpr ⟨(mem_neighborFinset _ _ _).mpr (G.symm hadj), hxS⟩
   exact Finset.card_pos.mpr ⟨x, hx_mem⟩
 
+/-- **Edge boundary card by outer-side degree sum**:
+`(∂^e S).card ≤ ∑ y ∈ ∂_o^v S, G.degree y`. Symmetric companion
+to `edgeBoundary_card_le_sum_degrees_innerVertexBoundary`. The
+proof reduces to the outer-side equality
+`edgeBoundary_card_eq_sum_outer_filter` and bounds each
+`((G.neighborFinset y).filter (· ∈ S)).card` by
+`G.neighborFinset y).card = G.degree y`. -/
+lemma edgeBoundary_card_le_sum_degrees_outerVertexBoundary
+    [DecidableEq V] [LocallyFinite G] (S : Finset V) :
+    (G.edgeBoundary S).card
+      ≤ ∑ y ∈ G.outerVertexBoundary S, G.degree y := by
+  rw [G.edgeBoundary_card_eq_sum_outer_filter S]
+  refine Finset.sum_le_sum (fun y _ => ?_)
+  refine (Finset.card_filter_le _ _).trans ?_
+  exact (card_neighborFinset_eq_degree _ _).le
+
 end SimpleGraph
 
 namespace IsingModel
@@ -552,6 +568,27 @@ theorem latticeGraph_edgeBoundary_card_le_two_mul_d_mul_innerVertexBoundary_card
       ≤ ∑ _x ∈ (IsingModel.latticeGraph d).innerVertexBoundary S, 2 * d :=
         Finset.sum_le_sum (fun x _ => latticeGraph_degree_le d x)
     _ = 2 * d * ((IsingModel.latticeGraph d).innerVertexBoundary S).card := by
+        rw [Finset.sum_const, smul_eq_mul, mul_comm]
+
+/-- **ℤ^d edge boundary outer-side linear bound**: on
+`latticeGraph d`, `|∂^e S| ≤ 2d · |∂_o^v S|`. Symmetric companion
+to `latticeGraph_edgeBoundary_card_le_two_mul_d_mul_innerVertexBoundary_card`.
+Combines the generic
+`SimpleGraph.edgeBoundary_card_le_sum_degrees_outerVertexBoundary`
+with `latticeGraph_degree_le`. Together with the inner-side
+version this yields the strictly stronger combined bound
+`|∂^e S| ≤ 2d · min(|∂_i^v S|, |∂_o^v S|)`. -/
+theorem latticeGraph_edgeBoundary_card_le_two_mul_d_mul_outerVertexBoundary_card
+    (d : ℕ) (S : Finset (Fin d → ℤ)) :
+    ((IsingModel.latticeGraph d).edgeBoundary S).card
+      ≤ 2 * d * ((IsingModel.latticeGraph d).outerVertexBoundary S).card := by
+  refine ((IsingModel.latticeGraph d).edgeBoundary_card_le_sum_degrees_outerVertexBoundary
+    S).trans ?_
+  calc (∑ y ∈ (IsingModel.latticeGraph d).outerVertexBoundary S,
+          (IsingModel.latticeGraph d).degree y)
+      ≤ ∑ _y ∈ (IsingModel.latticeGraph d).outerVertexBoundary S, 2 * d :=
+        Finset.sum_le_sum (fun y _ => latticeGraph_degree_le d y)
+    _ = 2 * d * ((IsingModel.latticeGraph d).outerVertexBoundary S).card := by
         rw [Finset.sum_const, smul_eq_mul, mul_comm]
 
 /-- Decidable-Adj instance for the induced lattice graph.

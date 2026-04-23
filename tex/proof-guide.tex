@@ -2076,6 +2076,21 @@ PR~\#788 this yields the double-counting identity
 $\sum_{x \in \partial^v_i S} |N_G(x) \setminus S| =
 \sum_{y \in \partial^v_o S} |N_G(y) \cap S|$.
 
+\paragraph{Outer-side companion of PR~\#787's edge bound (PR~\#791).}
+The symmetric outer-side bound
+\[
+  |\partial^e S| \;\le\; \sum_{y \in \partial^v_o S} \deg_G(y)
+\]
+($\mathrm{edgeBoundary\_card\_le\_sum\_degrees\_outerVertexBoundary}$)
+follows from PR~\#789's outer-side equality plus the
+$|\mathrm{filter}| \le |\mathrm{neighborFinset}| = \deg$
+estimate, mirroring PR~\#787 with $\partial^v_o$ in place of
+$\partial^v_i$. On $\mathbb Z^d$ this gives
+$|\partial^e S| \le 2 d \cdot |\partial^v_o S|$, and combining
+with PR~\#787's inner-side wrapper yields the strictly stronger
+combined bound
+$|\partial^e S| \le 2 d \cdot \min(|\partial^v_i S|, |\partial^v_o S|)$.
+
 \paragraph{Vertex-by-edge bounds (PR~\#790).}
 Two simple-but-useful bounds tying the vertex boundaries to the
 edge boundary:
