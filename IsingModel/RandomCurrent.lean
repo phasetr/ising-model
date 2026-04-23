@@ -2076,6 +2076,27 @@ theorem CurrentBounded.weightSum_le_exp_pow_card
     rw [Finset.prod_const, Finset.card_univ]
   exact h1.trans (h2.le.trans (h3.trans h4.le))
 
+set_option linter.unusedDecidableInType false in
+/-- **Unconditional monotone-convergence of `CurrentBounded.weightSum`**:
+under non-negative coupling `0 ≤ β J` (without external BddAbove
+hypothesis), `Tendsto (fun N => CurrentBounded.weightSum N A β J)
+atTop (nhds (⨆ N, CurrentBounded.weightSum N A β J))`.
+Combines `tendsto_weightSum_atTop_iSup` (#861) with
+`weightSum_le_exp_pow_card` (#863), the latter discharging the
+`BddAbove` hypothesis with the explicit bound
+`exp(β J)^|edgeSet|`. -/
+theorem CurrentBounded.tendsto_weightSum_atTop_iSup_of_nonneg
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (A : Finset ↑Λ) {β J : ℝ} (hβJ : 0 ≤ β * J) :
+    Filter.Tendsto (fun N : ℕ => CurrentBounded.weightSum G Λ N A β J)
+      Filter.atTop
+      (nhds (⨆ N : ℕ, CurrentBounded.weightSum G Λ N A β J)) := by
+  refine CurrentBounded.tendsto_weightSum_atTop_iSup G Λ A hβJ ?_
+  refine ⟨Real.exp (β * J) ^ Fintype.card (inducedGraph G Λ).edgeSet, ?_⟩
+  rintro x ⟨N, rfl⟩
+  exact CurrentBounded.weightSum_le_exp_pow_card G Λ N A hβJ
+
 end Ambient
 
 end IsingModel
