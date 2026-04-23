@@ -137,6 +137,28 @@ theorem Current.add_sources_eq (G : SimpleGraph V) (Λ : Finset V)
   revert a b
   decide
 
+/-- **Random-current weight** for uniform coupling `J` and inverse
+temperature `β`: `weight β J n := ∏_e (β J)^(n e) / (n e)!`.
+The weight of a current `n` in the random-current expansion of
+the Ising partition function (FV (3.45)). Expectation values
+`⟨σ_A⟩^Λ` are expressed as weighted sums over `A`-source
+currents. -/
+noncomputable def Current.weight (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (β J : ℝ) (n : Current G Λ) : ℝ :=
+  ∏ e : (inducedGraph G Λ).edgeSet,
+    (β * J) ^ (n e) / ((n e).factorial : ℝ)
+
+omit [DecidableEq V] in
+/-- **Zero current has weight 1**: each factor is
+`(β J)^0 / 0! = 1 / 1 = 1`, so the product over edges is `1`. -/
+@[simp]
+theorem Current.zero_weight (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (β J : ℝ) :
+    (0 : Current G Λ).weight G Λ β J = 1 := by
+  unfold Current.weight
+  simp
+
 end Ambient
 
 end IsingModel
