@@ -5782,4 +5782,51 @@ Implemented via \texttt{Finset.sum\_nbij'}.
 \end{proof}
 \noindent\textit{Status}: Both lemmas fully proved. No sorry.
 
+%-------------------------------------------------------
+\subsection*{PR \#900 --- Simon-Lieb Inequality (GJ~\S5.1 / FV Prop.~9.31, p.~428)}
+%-------------------------------------------------------
+
+\begin{theorem}[\texttt{Current.weightSum\_eq\_iSup}]
+  For $0 \le \beta J$,
+  $\mathrm{weightSum}(G,\Lambda,A,\beta,J) = \sup_N \mathrm{CurrentBounded.weightSum}(G,\Lambda,N,A,\beta,J)$.
+\end{theorem}
+\begin{proof}
+  Uniqueness of limits: both sides are the limit of $N\mapsto\mathrm{CurrentBounded.weightSum}(N)$.
+  The first limit uses \texttt{tendsto\_weightSum\_atTop\_currentWeightSum} (requires \texttt{summable\_weight\_if\_sources}, PR~\#898); the second uses \texttt{tendsto\_weightSum\_atTop\_iSup\_of\_nonneg}.
+\end{proof}
+
+\begin{theorem}[\texttt{boltzmannWeight\_inducedGraph\_eq\_prod\_exp\_of\_h\_zero}]
+  For $h=0$: $e^{-\beta H(\sigma)} = \prod_{e \in \mathrm{edgeSet}} e^{\beta J \cdot \mathrm{spinEdgeProduct}(\sigma,e)}$.
+\end{theorem}
+\begin{proof}
+  Unfold at $h=0$: $H = -J\sum_e \mathrm{edgeSpin}(\sigma,e)$.
+  Apply \texttt{Real.exp\_sum} then \texttt{Finset.prod\_subtype} (edgeFinset $\to$ edgeSet),
+  and replace $\mathrm{edgeSpin}$ by $\mathrm{spinEdgeProduct}$ via the bridge lemma.
+\end{proof}
+
+\begin{theorem}[\texttt{correlation\_inducedGraph\_eq\_weightSum\_ratio}]
+  For $h=0$, $0\le\beta J$:
+  $\langle\sigma^A\rangle = \mathrm{weightSum}(A)\,/\,\mathrm{weightSum}(\emptyset)$.
+\end{theorem}
+\begin{proof}
+  Numerator $= 2^{|\Lambda|}\cdot\mathrm{weightSum}(A)$, denominator $= 2^{|\Lambda|}\cdot\mathrm{weightSum}(\emptyset)$;
+  cancel $2^{|\Lambda|}>0$ via \texttt{field\_simp}.
+\end{proof}
+
+\begin{theorem}[\texttt{correlation\_inducedGraph\_simon\_lieb}; GJ~\S5.1 / FV Prop.~9.31]
+  For $h=0$, $0\le\beta J$, $i\neq j\in\Lambda$:
+  \[
+    \langle\sigma_i\sigma_j\rangle \;\le\;
+    \beta J \sum_{e\ni i} \langle\sigma^{\{i,j\}\triangle e}\rangle.
+  \]
+\end{theorem}
+\begin{proof}
+  By \texttt{correlation\_inducedGraph\_eq\_weightSum\_ratio}, both sides are
+  $\mathrm{weightSum}(\cdot)/\mathrm{weightSum}(\emptyset)$.
+  Since $\mathrm{weightSum}(\emptyset)>0$ (zero current has weight~$1$),
+  divide both sides by it via \texttt{div\_le\_div\_iff\_of\_pos\_right}.
+  The resulting inequality is exactly \texttt{weightSum\_pair\_le\_edge\_sum} (PR~\#898).
+\end{proof}
+\noindent\textit{Status}: All lemmas fully proved. No sorry. File: \texttt{Inequalities/SimonLieb.lean}.
+
 \end{document}
