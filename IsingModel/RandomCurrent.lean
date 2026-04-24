@@ -2898,6 +2898,46 @@ theorem Current.pairFinset_with_sources_zero_of_nonempty
   · exact hA' hA.symm
   · exact hB' hB.symm
 
+set_option linter.unusedDecidableInType false in
+/-- **Source-conditioned `jointFactor` sum is bounded by the unrestricted
+closed form**: `∑ m ∈ subFinset_with_source n A, jointFactor m (n - m)
+≤ 2^(∑ e, n e)`. By `Finset.sum_le_sum_of_subset_of_nonneg` (filter is a
+subset, jointFactor ≥ 0) + PR #875 closed form on the unrestricted sum. -/
+theorem Current.sum_subFinset_with_source_jointFactor_le_pow_two
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) (A : Finset ↑Λ) :
+    ∑ m ∈ Current.subFinset_with_source G Λ n A,
+        Current.jointFactor G Λ m (n - m)
+      ≤ (2 : ℝ) ^ (∑ e : (inducedGraph G Λ).edgeSet, n e) := by
+  rw [← Current.sum_subFinset_jointFactor_compl_eq_pow_two G Λ n]
+  refine Finset.sum_le_sum_of_subset_of_nonneg
+    (Current.subFinset_with_source_subset G Λ n A) (fun m _ _ => ?_)
+  unfold Current.jointFactor
+  refine Finset.prod_nonneg (fun e _ => ?_)
+  exact Nat.cast_nonneg _
+
+set_option linter.unusedDecidableInType false in
+/-- **Pair-weight bound (corollary)** under `0 ≤ β J` and
+`symmDiff sources_n A = B`:
+`∑ p ∈ pairFinset_with_sources n A B, weight β J p.1 * weight β J p.2
+  ≤ weight β J n * 2^(∑ e, n e)`. By PR #880 (pair-weight identity) +
+weight nonneg + the previous theorem. -/
+theorem Current.sum_pairFinset_with_sources_weight_mul_weight_le
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) (A B : Finset ↑Λ)
+    (hAB : symmDiff (n.sources G Λ) A = B)
+    {β J : ℝ} (hβJ : 0 ≤ β * J) :
+    ∑ p ∈ Current.pairFinset_with_sources G Λ n A B,
+        Current.weight G Λ β J p.1 * Current.weight G Λ β J p.2
+      ≤ Current.weight G Λ β J n
+        * (2 : ℝ) ^ (∑ e : (inducedGraph G Λ).edgeSet, n e) := by
+  rw [Current.sum_pairFinset_with_sources_weight_mul_weight G Λ n A B hAB]
+  exact mul_le_mul_of_nonneg_left
+    (Current.sum_subFinset_with_source_jointFactor_le_pow_two G Λ n A)
+    (Current.weight_nonneg G Λ hβJ n)
+
 end Ambient
 
 end IsingModel
