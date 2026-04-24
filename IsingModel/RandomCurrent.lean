@@ -2478,6 +2478,42 @@ theorem Current.pairFinset_zero (G : SimpleGraph V) (Λ : Finset V)
   · rintro rfl
     simp
 
+omit [DecidableEq V] in
+/-- **Double truncation cancels under `m ≤ n`**:
+`n - (n - m) = m` when `m ≤ n`. Pointwise via `Nat.sub_sub_self`. -/
+theorem Current.sub_sub_self_of_le (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {n m : Current G Λ} (h : m ≤ n) :
+    n - (n - m) = m := by
+  ext e
+  show n e - (n e - m e) = m e
+  exact Nat.sub_sub_self (h e)
+
+set_option linter.unusedDecidableInType false in
+/-- **Complement involution preserves `subFinset`**:
+`(subFinset n).image (m ↦ n - m) = subFinset n`. Each `m ≤ n` maps
+to `n - m ≤ n` (`sub_le_self`); conversely each `k ≤ n` is the
+image of `n - k` (since `n - (n - k) = k` by `sub_sub_self_of_le`).
+The natural involution corresponding to swapping `(m, n - m) ↔ (n - m, m)`
+in the pair-bijection (PR #868). -/
+theorem Current.subFinset_image_compl (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (n : Current G Λ) :
+    (Current.subFinset G Λ n).image (fun m => n - m)
+      = Current.subFinset G Λ n := by
+  ext k
+  rw [Finset.mem_image]
+  constructor
+  · rintro ⟨m, hm, rfl⟩
+    rw [Current.mem_subFinset_iff] at hm
+    rw [Current.mem_subFinset_iff]
+    exact Current.sub_le_self G Λ n m
+  · intro hk
+    rw [Current.mem_subFinset_iff] at hk
+    refine ⟨n - k, ?_, ?_⟩
+    · rw [Current.mem_subFinset_iff]
+      exact Current.sub_le_self G Λ n k
+    · exact Current.sub_sub_self_of_le G Λ hk
+
 end Ambient
 
 end IsingModel
