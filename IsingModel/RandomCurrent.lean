@@ -3553,6 +3553,70 @@ theorem Current.sources_reachable_of_sources_eq_pair
   have hjSR : j ∈ n.sources G Λ ∩ R := by rw [hboth]; simp
   exact (Finset.mem_filter.mp (Finset.mem_inter.mp hjSR).2).2
 
+omit [DecidableEq V] in
+/-- **Weight peeling identity**: subtracting one unit from active edge `e₀`
+factors the weight by `β * J / n e₀`. Key identity: `(β*J)^k / k! = β*J/k *
+(β*J)^(k-1) / (k-1)!` applied at `k = n e₀` via `k! = k * (k-1)!`.
+Foundational algebraic step for the Simon-Lieb inequality (GJ §5.1). -/
+theorem Current.weight_pred_edge
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (β J : ℝ) (n : Current G Λ) (e₀ : (inducedGraph G Λ).edgeSet)
+    (he : 0 < n e₀) :
+    n.weight G Λ β J =
+      β * J / (n e₀ : ℝ) *
+        (n - Current.fromEdgeFinset G Λ {e₀}).weight G Λ β J := by
+  unfold Current.weight
+  have hsub_e₀ : (n - Current.fromEdgeFinset G Λ {e₀}) e₀ = n e₀ - 1 := by
+    simp [Current.fromEdgeFinset]
+  have hsub_ne : ∀ e : (inducedGraph G Λ).edgeSet, e ≠ e₀ →
+      (n - Current.fromEdgeFinset G Λ {e₀}) e = n e := by
+    intro e he_ne
+    simp [Current.fromEdgeFinset, Finset.mem_singleton, he_ne]
+  -- Key single-edge identity: (β*J)^k / k! = β*J/k * (β*J)^(k-1) / (k-1)!
+  have hkey : (β * J) ^ n e₀ / ((n e₀).factorial : ℝ) =
+      β * J / (n e₀ : ℝ) * ((β * J) ^ (n e₀ - 1) / ((n e₀ - 1).factorial : ℝ)) := by
+    have hpos : (n e₀ : ℝ) > 0 := Nat.cast_pos.mpr he
+    rw [← Nat.succ_pred_eq_of_pos he, pow_succ, Nat.factorial_succ]
+    push_cast
+    field_simp
+  -- Split product at e₀
+  have hlhs : ∏ e : (inducedGraph G Λ).edgeSet, (β * J) ^ n e / ((n e).factorial : ℝ) =
+      (β * J) ^ n e₀ / ((n e₀).factorial : ℝ) *
+      ∏ e ∈ Finset.univ.erase e₀, (β * J) ^ n e / ((n e).factorial : ℝ) :=
+    (Finset.mul_prod_erase _ _ (Finset.mem_univ e₀)).symm
+  have hrhs : ∏ e : (inducedGraph G Λ).edgeSet,
+      (β * J) ^ (n - Current.fromEdgeFinset G Λ {e₀}) e /
+      (((n - Current.fromEdgeFinset G Λ {e₀}) e).factorial : ℝ) =
+      (β * J) ^ (n e₀ - 1) / ((n e₀ - 1).factorial : ℝ) *
+      ∏ e ∈ Finset.univ.erase e₀, (β * J) ^ n e / ((n e).factorial : ℝ) := by
+    rw [(Finset.mul_prod_erase _ _ (Finset.mem_univ e₀)).symm, hsub_e₀]
+    congr 1
+    apply Finset.prod_congr rfl
+    intro e he_mem
+    rw [Finset.mem_erase] at he_mem
+    rw [hsub_ne e he_mem.1]
+  rw [hlhs, hrhs, hkey]
+  ring
+
+omit [DecidableEq V] in
+/-- **Weight peeling bound**: for `0 ≤ β * J` and `0 < n e₀`, the weight
+satisfies `n.weight β J ≤ β * J * (n - fromEdgeFinset {e₀}).weight β J`.
+Since `n e₀ ≥ 1`, we have `β*J / n e₀ ≤ β*J`. Used in the edge-peeling
+argument for Simon-Lieb (GJ §5.1 / FV Prop 9.31). -/
+theorem Current.weight_le_mul_pred_edge
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    {β J : ℝ} (hβJ : 0 ≤ β * J) (n : Current G Λ)
+    (e₀ : (inducedGraph G Λ).edgeSet) (he : 0 < n e₀) :
+    n.weight G Λ β J ≤
+      β * J * (n - Current.fromEdgeFinset G Λ {e₀}).weight G Λ β J := by
+  rw [Current.weight_pred_edge G Λ β J n e₀ he]
+  have hpos : (n e₀ : ℝ) > 0 := Nat.cast_pos.mpr he
+  have hle : β * J / (n e₀ : ℝ) ≤ β * J :=
+    div_le_self hβJ (by exact_mod_cast he)
+  exact mul_le_mul_of_nonneg_right hle (Current.weight_nonneg G Λ hβJ _)
+
 end Ambient
 
 end IsingModel
