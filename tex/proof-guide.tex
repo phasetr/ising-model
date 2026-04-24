@@ -5756,4 +5756,30 @@ to handle the image sum without \texttt{DecidableEq (Current G Λ)}, then
 \end{proof}
 \noindent\textit{Status}: Full proof. No sorry.
 
+\paragraph{Switching Lemma (PR \#899, step 103).}
+
+\begin{theorem}[\texttt{Current.subFinset\_with\_source\_card\_switching}; GJ \S5.1 Thm.~5.1.2 / FV Thm.~9.35]
+  If $\text{symmDiff}(\partial n, A) = B$, then $|\mathcal{S}(n,A)| = |\mathcal{S}(n,B)|$,
+  where $\mathcal{S}(n,A) = \{m \leq n : \partial m = A\}$.
+\end{theorem}
+\begin{proof}
+The map $\varphi: m \mapsto n - m$ is an involution on $\mathcal{S}(n,A) \to \mathcal{S}(n,B)$.
+Well-definedness: if $m \leq n$ and $\partial m = A$, then $n-m \leq n$ (\texttt{sub\_le\_self})
+and $\partial(n-m) = \partial n \triangle A = B$ (\texttt{sub\_hasSources\_iff} +
+$\text{symmDiff}(\text{symmDiff}(A,B), A) = B$ by \texttt{symmDiff\_symmDiff\_cancel\_left}).
+The inverse direction uses $\text{symmDiff}(\partial n, B) = A$ (same logic).
+Involution: $n-(n-m)=m$ by \texttt{sub\_sub\_self\_of\_le}.
+Implemented via \texttt{Finset.card\_nbij'}.
+\end{proof}
+
+\begin{theorem}[\texttt{Current.sum\_subFinset\_with\_source\_weight\_mul\_weight\_switching}]
+  Under the same condition, $\sum_{m \in \mathcal{S}(n,A)} w(m)\,w(n-m) = \sum_{m \in \mathcal{S}(n,B)} w(m)\,w(n-m)$.
+\end{theorem}
+\begin{proof}
+Under $\varphi: m \mapsto n-m$, the summand transforms as
+$w(n-m)\cdot w(n-(n-m)) = w(n-m)\cdot w(m) = w(m)\cdot w(n-m)$.
+Implemented via \texttt{Finset.sum\_nbij'}.
+\end{proof}
+\noindent\textit{Status}: Both lemmas fully proved. No sorry.
+
 \end{document}
