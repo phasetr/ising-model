@@ -3645,21 +3645,150 @@ theorem Current.sources_sub_edge_symmDiff
       Current.fromEdgeFinset_singleton_sources]
 
 set_option linter.unusedDecidableInType false in
+/-- Helper: sum of weights over `boundedFinset N` is bounded by `exp(β*J)^|edgeSet|`.
+Extracted from `CurrentBounded.weightSum_le_exp_pow_card` without the source indicator. -/
+private theorem Current.sum_weight_boundedFinset_le
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (N : ℕ) {β J : ℝ} (hβJ : 0 ≤ β * J) :
+    ∑ n ∈ Current.boundedFinset G Λ N, n.weight G Λ β J ≤
+      Real.exp (β * J) ^ Fintype.card (inducedGraph G Λ).edgeSet := by
+  -- Step 1: rewrite boundedFinset as univ.map emb (avoids DecidableEq in sum)
+  set emb : CurrentBounded G Λ N ↪ Current G Λ :=
+    ⟨CurrentBounded.toCurrent G Λ,
+     fun x y h => funext (fun e => Fin.val_injective (congrFun h e))⟩
+  have hmapeq : Current.boundedFinset G Λ N = Finset.univ.map emb := by
+    classical
+    ext n
+    simp only [Current.mem_boundedFinset_iff, Finset.mem_map, Finset.mem_univ, true_and]
+    constructor
+    · intro hn
+      exact ⟨fun e => ⟨n e, Nat.lt_succ_iff.mpr (hn e)⟩, funext fun e => rfl⟩
+    · rintro ⟨a, rfl⟩
+      exact fun e => Nat.lt_succ_iff.mp (a e).is_lt
+  -- Step 2: sum over map equals sum over source via Finset.sum_map
+  have h_conv : ∑ n ∈ Current.boundedFinset G Λ N, n.weight G Λ β J =
+      ∑ n : CurrentBounded G Λ N, (n.toCurrent G Λ).weight G Λ β J := by
+    rw [hmapeq, Finset.sum_map]; rfl
+  -- Step 3: product-sum exchange for CurrentBounded
+  have h_prod : ∑ n : CurrentBounded G Λ N, (n.toCurrent G Λ).weight G Λ β J =
+      ∏ e : (inducedGraph G Λ).edgeSet,
+        ∑ k : Fin (N + 1), (β * J) ^ (k : ℕ) / ((k : ℕ).factorial : ℝ) :=
+    (Fintype.prod_sum (κ := fun _ => Fin (N + 1))
+      (fun _ k => (β * J) ^ (k : ℕ) / ((k : ℕ).factorial : ℝ))).symm
+  rw [h_conv, h_prod]
+  calc ∏ e : (inducedGraph G Λ).edgeSet,
+          ∑ k : Fin (N + 1), (β * J) ^ (k : ℕ) / ((k : ℕ).factorial : ℝ)
+      ≤ ∏ _ : (inducedGraph G Λ).edgeSet, Real.exp (β * J) :=
+          Finset.prod_le_prod
+            (fun e _ => Finset.sum_nonneg (fun k _ =>
+              div_nonneg (pow_nonneg hβJ _) (Nat.cast_nonneg _)))
+            (fun e _ => by
+              rw [Fin.sum_univ_eq_sum_range
+                (fun k => (β * J) ^ k / (k.factorial : ℝ)) (N + 1)]
+              exact Real.partial_sum_le_exp_of_nonneg hβJ N)
+    _ = Real.exp (β * J) ^ Fintype.card (inducedGraph G Λ).edgeSet := by
+          rw [Finset.prod_const, Finset.card_univ]
+
+set_option linter.unusedDecidableInType false in
+/-- Helper: for any source set `A` and `0 ≤ β * J`, the source-filtered weight function
+`fun n => if n.sources G Λ = A then n.weight β J else 0` is summable.
+Proof by `summable_of_sum_le`: every finite partial sum is bounded by
+`exp(β*J)^|edgeSet|` via `sum_weight_boundedFinset_le`. -/
+private theorem Current.summable_weight_if_sources
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (A : Finset ↑Λ) {β J : ℝ} (hβJ : 0 ≤ β * J) :
+    Summable (fun n : Current G Λ => if n.sources G Λ = A then n.weight G Λ β J else 0) := by
+  have hnn : ∀ n : Current G Λ, 0 ≤ (if n.sources G Λ = A then n.weight G Λ β J else 0) := by
+    intro n
+    by_cases h : n.sources G Λ = A
+    · rw [if_pos h]; exact Current.weight_nonneg G Λ hβJ _
+    · simp [h]
+  refine summable_of_sum_le
+      (c := Real.exp (β * J) ^ Fintype.card (inducedGraph G Λ).edgeSet) hnn ?_
+  intro s
+  have hs : s ⊆ Current.boundedFinset G Λ (s.sup (fun n => Finset.univ.sup n)) := by
+    intro n hn; rw [Current.mem_boundedFinset_iff]
+    exact fun e => Nat.le_trans (Finset.le_sup (Finset.mem_univ e)) (Finset.le_sup hn)
+  calc ∑ n ∈ s, (if n.sources G Λ = A then n.weight G Λ β J else 0)
+      ≤ ∑ n ∈ s, n.weight G Λ β J :=
+          Finset.sum_le_sum (fun n _ => by
+            rcases Classical.em (n.sources G Λ = A) with h | h
+            · exact le_of_eq (if_pos h)
+            · exact le_trans (le_of_eq (if_neg h)) (Current.weight_nonneg G Λ hβJ n))
+    _ ≤ ∑ n ∈ Current.boundedFinset G Λ _, n.weight G Λ β J :=
+          Finset.sum_le_sum_of_subset_of_nonneg hs (fun n _ _ => Current.weight_nonneg G Λ hβJ n)
+    _ ≤ Real.exp (β * J) ^ Fintype.card (inducedGraph G Λ).edgeSet :=
+          Current.sum_weight_boundedFinset_le G Λ _ hβJ
+
+set_option linter.unusedDecidableInType false in
+/-- Helper: for each edge `e` at `i`, a finite sum of peeled weights over currents
+with sources `{i,j}` and `n e ≥ 1` is bounded by `weightSum(symmDiff {i,j} endpoints(e))`.
+Uses: `Finset.sum_image` (injection n ↦ n - 1_e) + `sources_sub_edge_symmDiff`
+(bridge: sources of n - 1_e = symmDiff {i,j} endpoints(e)) + `Summable.sum_le_tsum`. -/
+private theorem Current.sum_filter_le_weightSum_symmDiff
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    {i j : ↑Λ} {β J : ℝ} (hβJ : 0 ≤ β * J)
+    (e : (inducedGraph G Λ).edgeSet) (u : Finset (Current G Λ)) :
+    ∑ n ∈ u, (if n.sources G Λ = {i, j} ∧ 1 ≤ n e then
+        (n - Current.fromEdgeFinset G Λ {e}).weight G Λ β J else 0) ≤
+      ∑' n : Current G Λ,
+        (if n.sources G Λ = symmDiff {i, j} (e : Sym2 ↑Λ).toFinset then
+          n.weight G Λ β J else 0) := by
+  classical
+  -- Rewrite as sum over the filter {src={i,j} ∧ n_e ≥ 1}
+  rw [← Finset.sum_filter]
+  -- Injectivity of n ↦ n - 1_e on the filter
+  have hinj : ∀ n₁ ∈ u.filter (fun n => n.sources G Λ = {i, j} ∧ 1 ≤ n e),
+      ∀ n₂ ∈ u.filter (fun n => n.sources G Λ = {i, j} ∧ 1 ≤ n e),
+      n₁ - Current.fromEdgeFinset G Λ {e} = n₂ - Current.fromEdgeFinset G Λ {e} → n₁ = n₂ := by
+    intro n₁ h₁ n₂ h₂ heq
+    have h₁e := (Finset.mem_filter.mp h₁).2.2
+    have h₂e := (Finset.mem_filter.mp h₂).2.2
+    funext edge
+    have := congrFun heq edge
+    simp only [Current.sub_apply, Current.fromEdgeFinset, Finset.mem_singleton] at this
+    by_cases hedge : edge = e
+    · subst hedge; simp only [↓reduceIte] at this; omega
+    · simp only [hedge, ↓reduceIte, Nat.sub_zero] at this; exact this
+  -- Each element in the filter image has sources = symmDiff (by bridge lemma)
+  have h_src : ∀ n ∈ u.filter (fun n => n.sources G Λ = {i, j} ∧ 1 ≤ n e),
+      (n - Current.fromEdgeFinset G Λ {e}).sources G Λ =
+        symmDiff {i, j} (e : Sym2 ↑Λ).toFinset := by
+    intro n hn
+    rw [Current.sources_sub_edge_symmDiff G Λ n e (Finset.mem_filter.mp hn).2.2,
+        (Finset.mem_filter.mp hn).2.1]
+  -- The sum over the filter equals the sum of f_sd over the image (using sum_image + bridge)
+  have h_image_eq :
+      ∑ n ∈ u.filter (fun n => n.sources G Λ = {i, j} ∧ 1 ≤ n e),
+        (n - Current.fromEdgeFinset G Λ {e}).weight G Λ β J =
+      ∑ m ∈ (u.filter (fun n => n.sources G Λ = {i, j} ∧ 1 ≤ n e)).image
+          (fun n => n - Current.fromEdgeFinset G Λ {e}),
+        (if m.sources G Λ = symmDiff {i, j} (e : Sym2 ↑Λ).toFinset then
+          m.weight G Λ β J else 0) := by
+    rw [Finset.sum_image hinj]
+    exact Finset.sum_congr rfl (fun n hn => (if_pos (h_src n hn)).symm)
+  rw [h_image_eq]
+  -- Apply sum_le_tsum with summability
+  exact (Current.summable_weight_if_sources G Λ _ hβJ).sum_le_tsum _
+    (fun m _ => by
+      split_ifs with h
+      · exact Current.weight_nonneg G Λ hβJ _
+      · exact le_refl _)
+
+set_option linter.unusedDecidableInType false in
+set_option linter.unusedVariables false in
 /-- **Edge-peeling bound for `weightSum`**: for `i ≠ j` in `Λ` and
-`0 ≤ β * J`, the pair-source weighted sum satisfies the bound
+`0 ≤ β * J`, the pair-source weighted sum satisfies
 `weightSum G Λ {i,j} β J ≤ β*J * ∑_{e ∋ i} weightSum G Λ (symmDiff {i,j} endpoints(e)) β J`.
-This is the edge-peeling step of Simon-Lieb (GJ §5.1 / FV Prop 9.31,
-weaker version without product structure):
-for each n with sources = {i,j}, pick any active edge e₀ at i
-(`supportAt_nonempty_of_mem_sources`), then
-`weight_le_mul_pred_edge` gives `w(n) ≤ β*J * w(n-1_{e₀})` and
-`sources_sub_edge_symmDiff` gives `(n-1_{e₀}).sources = symmDiff {i,j} endpoints(e₀)`.
-The injection `n ↦ n - fromEdgeFinset {e₀}` from `{n: src={i,j}, n_{e₀}≥1}`
-to `{n': src=symmDiff {i,j} endpoints(e₀)}` then bounds each tsum term.
-The full proof proceeds by finite-sum (`CurrentBounded`) injection via
-`Finset.sum_image` + `Finset.sum_le_sum_of_subset`, followed by the
-`N → ∞` limit via `tendsto_weightSum_atTop_iSup_of_nonneg` (ℝ-valued);
-the `sorry` body encapsulates these tsum/limit steps. -/
+Proof: apply `Real.tsum_le_of_sum_le`; for each Finset `u` of currents,
+for each n with sources `{i,j}`, pick an active edge `e₀` at `i` via
+`supportAt_nonempty_of_mem_sources`, bound `w(n) ≤ β*J * w(n - 1_{e₀})` via
+`weight_le_mul_pred_edge`, then `Finset.single_le_sum` absorbs `w(n - 1_{e₀})` into
+the edge sum. After `Finset.sum_comm`, each inner per-edge sum is bounded by
+`weightSum(symmDiff)` via `sum_filter_le_weightSum_symmDiff`. (GJ §5.1 / FV Prop 9.31) -/
 theorem Current.weightSum_pair_le_edge_sum
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
@@ -3669,7 +3798,69 @@ theorem Current.weightSum_pair_le_edge_sum
         ∑ e ∈ Finset.univ.filter
             (fun e : (inducedGraph G Λ).edgeSet => i ∈ (e : Sym2 ↑Λ)),
           Current.weightSum G Λ (symmDiff {i, j} (e : Sym2 ↑Λ).toFinset) β J := by
-  sorry
+  unfold Current.weightSum
+  apply Real.tsum_le_of_sum_le
+    (fun n => by
+      split_ifs with h
+      · exact Current.weight_nonneg G Λ hβJ _
+      · exact le_refl _)
+  intro u
+  classical
+  set E := Finset.univ.filter (fun e : (inducedGraph G Λ).edgeSet => i ∈ (e : Sym2 ↑Λ))
+  -- Step 1: pointwise bound n.weight ≤ β*J * ∑_{e ∈ E, src={i,j}∧n_e≥1} (n-1_e).weight
+  calc ∑ n ∈ u, (if n.sources G Λ = {i, j} then n.weight G Λ β J else 0)
+      ≤ ∑ n ∈ u, β * J * ∑ e ∈ E,
+            (if n.sources G Λ = {i, j} ∧ 1 ≤ n e then
+              (n - Current.fromEdgeFinset G Λ {e}).weight G Λ β J else 0) := by
+        apply Finset.sum_le_sum; intro n _
+        by_cases h : n.sources G Λ = {i, j}
+        · -- src = {i,j}: get active edge e₀ at i
+          rw [if_pos h]
+          obtain ⟨e₀, he₀⟩ := Current.supportAt_nonempty_of_mem_sources G Λ n
+              (h ▸ Finset.mem_insert_self i {j})
+          rw [Current.mem_supportAt_iff] at he₀
+          obtain ⟨he₀_supp, he₀_i⟩ := he₀
+          have he₀_pos : 0 < n e₀ :=
+              Nat.pos_of_ne_zero ((Current.mem_support_iff G Λ n e₀).mp he₀_supp)
+          have he₀_E : e₀ ∈ E := Finset.mem_filter.mpr ⟨Finset.mem_univ _, he₀_i⟩
+          calc n.weight G Λ β J
+              ≤ β * J * (n - Current.fromEdgeFinset G Λ {e₀}).weight G Λ β J :=
+                  Current.weight_le_mul_pred_edge G Λ hβJ n e₀ he₀_pos
+            _ = β * J * (if n.sources G Λ = {i, j} ∧ 1 ≤ n e₀ then
+                    (n - Current.fromEdgeFinset G Λ {e₀}).weight G Λ β J else 0) :=
+                  by rw [if_pos ⟨h, he₀_pos⟩]
+            _ ≤ β * J * ∑ e ∈ E, (if n.sources G Λ = {i, j} ∧ 1 ≤ n e then
+                    (n - Current.fromEdgeFinset G Λ {e}).weight G Λ β J else 0) :=
+                  mul_le_mul_of_nonneg_left
+                    (Finset.single_le_sum
+                      (f := fun e => if n.sources G Λ = {i, j} ∧ 1 ≤ n e then
+                          (n - Current.fromEdgeFinset G Λ {e}).weight G Λ β J else 0)
+                      (fun e _ => by
+                        dsimp only
+                        split_ifs with h
+                        · exact Current.weight_nonneg G Λ hβJ _
+                        · exact le_refl _)
+                      he₀_E)
+                    hβJ
+        · -- src ≠ {i,j}: trivial
+          rw [if_neg h]
+          exact mul_nonneg hβJ (Finset.sum_nonneg (fun e _ => by
+            split_ifs with h
+            · exact Current.weight_nonneg G Λ hβJ _
+            · exact le_refl _))
+    -- Step 2: interchange sums
+    _ = β * J * ∑ e ∈ E, ∑ n ∈ u,
+            (if n.sources G Λ = {i, j} ∧ 1 ≤ n e then
+              (n - Current.fromEdgeFinset G Λ {e}).weight G Λ β J else 0) := by
+        rw [← Finset.mul_sum, Finset.sum_comm]
+    -- Step 3: bound each inner per-edge sum by weightSum(symmDiff)
+    _ ≤ β * J * ∑ e ∈ E,
+          (∑' m : Current G Λ, if m.sources G Λ = symmDiff {i, j} (e : Sym2 ↑Λ).toFinset then
+              m.weight G Λ β J else 0) :=
+        mul_le_mul_of_nonneg_left
+          (Finset.sum_le_sum (fun e _ =>
+            Current.sum_filter_le_weightSum_symmDiff G Λ hβJ e u))
+          hβJ
 
 end Ambient
 

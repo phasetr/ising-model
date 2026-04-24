@@ -5727,7 +5727,7 @@ Friedli--Velenik \cite{friedli-velenik} Prop.~9.31 (pp.~399--400).
   $m = \mathbf{1}_{e_0}$, then \texttt{fromEdgeFinset\_singleton\_sources} (PR \#813).
 \end{proof}
 
-\paragraph{Edge-peeling bound for \texttt{weightSum} (PR \#898, step 102, partial).}
+\paragraph{Edge-peeling bound for \texttt{weightSum} (PR \#898, step 102, full proof).}
 
 \begin{theorem}[\texttt{Current.weightSum\_pair\_le\_edge\_sum}; GJ \S5.1 / FV Prop.~9.31]
   For $i \ne j$ in $\Lambda$ and $0 \le \beta J$:
@@ -5737,10 +5737,23 @@ Friedli--Velenik \cite{friedli-velenik} Prop.~9.31 (pp.~399--400).
   \]
   where $\rho^{\Lambda}_A = \sum_{\partial n = A} w(n)$.
 \end{theorem}
-\noindent\textit{Status}: Statement compiles; the body uses \texttt{sorry} pending the
-tsum injection argument (ENNReal monotone comparison + $n \mapsto n - \mathbf{1}_{e_0}$
-injection from $\{\partial n = \{i,j\}, n_{e_0} \ge 1\}$ to $\{\partial n' = \{i,j\} \triangle e_0\}$,
-combined with $N \to \infty$ limit via
-\texttt{tendsto\_weightSum\_atTop\_iSup\_of\_nonneg}).
+\begin{proof}
+Apply \texttt{Real.tsum\_le\_of\_sum\_le} to reduce to finite-Finset bounds.
+For each finite set $u$ of currents and each $n$ with $\partial n = \{i,j\}$,
+pick an active edge $e_0 \ni i$ via \texttt{supportAt\_nonempty\_of\_mem\_sources},
+bound $w(n) \le \beta J \cdot w(n - \mathbf{1}_{e_0})$ via \texttt{weight\_le\_mul\_pred\_edge},
+absorb into the edge sum via \texttt{Finset.single\_le\_sum},
+interchange sums via \texttt{Finset.sum\_comm}, then bound each per-edge finite
+sum against $\sum' m$ with $\partial m = \{i,j\} \triangle e$ via
+\texttt{Summable.sum\_le\_tsum} using the injection $n \mapsto n - \mathbf{1}_e$
+(injectivity by \texttt{fun x \_ y \_ h => funext ...}) and the bridge lemma
+\texttt{sources\_sub\_edge\_symmDiff} (establishes $\partial(n - \mathbf{1}_e) = \{i,j\} \triangle e$
+when $n_e \ge 1$).
+Summability of source-filtered weights is proved via \texttt{summable\_of\_sum\_le}
+with the bound from \texttt{sum\_weight\_boundedFinset\_le} (uses \texttt{Finset.sum\_map}
+to handle the image sum without \texttt{DecidableEq (Current G Λ)}, then
+\texttt{Fintype.prod\_sum} for the product-sum exchange).
+\end{proof}
+\noindent\textit{Status}: Full proof. No sorry.
 
 \end{document}
