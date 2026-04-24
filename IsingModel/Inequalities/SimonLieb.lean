@@ -164,6 +164,160 @@ theorem correlation_inducedGraph_simon_lieb
   simp_rw [← Finset.sum_div, ← mul_div_assoc]
   exact (div_le_div_iff_of_pos_right hW).mpr (Current.weightSum_pair_le_edge_sum G Λ hij hβJ)
 
+/-- **symmDiff of two overlapping pairs**: for `i ≠ j`, `i ≠ u`, `u ≠ j`,
+`{i,j} △ {i,u} = {u,j}` as Finsets. -/
+private lemma symmDiff_pair_pair_of_ne {α : Type*} [DecidableEq α] {i j u : α}
+    (hij : i ≠ j) (hiu : i ≠ u) (huj : u ≠ j) :
+    symmDiff ({i, j} : Finset α) {i, u} = {u, j} := by
+  rw [symmDiff_def]
+  have h1 : ({i, j} : Finset α) \ {i, u} = {j} := by
+    ext x
+    simp only [Finset.mem_sdiff, Finset.mem_insert, Finset.mem_singleton, not_or]
+    constructor
+    · rintro ⟨h, hni, _⟩
+      rcases h with rfl | rfl
+      · exact absurd rfl hni
+      · rfl
+    · rintro rfl; exact ⟨Or.inr rfl, hij.symm, huj.symm⟩
+  have h2 : ({i, u} : Finset α) \ {i, j} = {u} := by
+    ext x
+    simp only [Finset.mem_sdiff, Finset.mem_insert, Finset.mem_singleton, not_or]
+    constructor
+    · rintro ⟨h, hni, _⟩
+      rcases h with rfl | rfl
+      · exact absurd rfl hni
+      · rfl
+    · rintro rfl; exact ⟨Or.inr rfl, hiu.symm, huj⟩
+  rw [h1, h2]
+  ext x; simp [or_comm]
+
+set_option linter.unusedDecidableInType false in
+/-- **Nonnegativity of correlation** via the weightSum ratio. -/
+private lemma correlation_inducedGraph_nonneg
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    {β J : ℝ} (hβJ : 0 ≤ β * J) (A : Finset ↑Λ) :
+    0 ≤ correlation (inducedGraph G Λ) (⟨J, 0, β⟩ : IsingParams ℝ) A :=
+  correlation_inducedGraph_eq_weightSum_ratio G Λ hβJ A ▸
+    div_nonneg (Current.weightSum_nonneg G Λ A hβJ) (weightSum_empty_pos G Λ hβJ).le
+
+set_option linter.unusedDecidableInType false in
+/-- **High-temperature susceptibility bound** (Simon-Lieb iteration):
+for `0 ≤ βJ`, `D` bounding the incident-edge count of every vertex, and `βJD < 1`,
+`∑_{j≠i} ⟨σ_iσ_j⟩ ≤ βJD/(1-βJD)`.
+
+**Proof**: iterate `correlation_inducedGraph_simon_lieb` via a fixed-point argument.
+Define `T_k = ∑_{j≠k} ⟨σ_kσ_j⟩` and `M = max_k T_k`. Simon-Lieb + symmDiff computation
+gives `T_k ≤ βJD(1+M)` for all `k`; taking `k = argmax T` yields
+`M(1-βJD) ≤ βJD`, hence `M ≤ βJD/(1-βJD)`.
+
+Reference: Glimm–Jaffe §5.1; Friedli–Velenik §3.7.3. -/
+theorem correlation_sum_le_of_high_temp
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    {β J : ℝ} (hβJ : 0 ≤ β * J)
+    {D : ℕ} (hD : ∀ v : ↑Λ,
+        (Finset.univ.filter
+          (fun e : (inducedGraph G Λ).edgeSet => v ∈ (e : Sym2 ↑Λ))).card ≤ D)
+    (hlt : β * J * ↑D < 1) (i : ↑Λ) :
+    ∑ j ∈ Finset.univ.filter (fun j : ↑Λ => j ≠ i),
+      correlation (inducedGraph G Λ) (⟨J, 0, β⟩ : IsingParams ℝ) {i, j}
+      ≤ β * J * ↑D / (1 - β * J * ↑D) := by
+  classical
+  let G' := inducedGraph G Λ
+  let p : IsingParams ℝ := ⟨J, 0, β⟩
+  -- Susceptibility T_k = ∑_{j≠k} corr({k,j})
+  let T : ↑Λ → ℝ := fun k =>
+    ∑ j ∈ Finset.univ.filter (fun j : ↑Λ => j ≠ k), correlation G' p {k, j}
+  suffices hTi : T i ≤ β * J * ↑D / (1 - β * J * ↑D) from hTi
+  -- Nonnegativity
+  have hcnn : ∀ k l : ↑Λ, 0 ≤ correlation G' p {k, l} :=
+    fun k l => correlation_inducedGraph_nonneg G Λ hβJ {k, l}
+  have hTnn : ∀ k : ↑Λ, 0 ≤ T k :=
+    fun k => Finset.sum_nonneg fun j _ => hcnn k j
+  -- ↑Λ nonempty since i : ↑Λ
+  have hne : (Finset.univ : Finset ↑Λ).Nonempty := ⟨i, Finset.mem_univ i⟩
+  -- Find the argmax k₀ of T
+  obtain ⟨k₀, -, hk₀⟩ := Finset.exists_max_image Finset.univ T hne
+  -- Step 1: T k ≤ βJ·D·(1 + T k₀) for all k
+  have hTle : ∀ k : ↑Λ, T k ≤ β * J * ↑D * (1 + T k₀) := by
+    intro k
+    let Ek := Finset.univ.filter (fun e : G'.edgeSet => k ∈ (e : Sym2 ↑Λ))
+    -- Apply Simon-Lieb to each j ≠ k
+    calc T k
+        ≤ ∑ j ∈ Finset.univ.filter (fun j : ↑Λ => j ≠ k),
+            β * J * ∑ e ∈ Ek,
+              correlation G' p (symmDiff {k, j} (e : Sym2 ↑Λ).toFinset) :=
+          Finset.sum_le_sum fun j hj =>
+            correlation_inducedGraph_simon_lieb G Λ hβJ ((Finset.mem_filter.mp hj).2.symm)
+      _ = β * J * ∑ e ∈ Ek,
+            ∑ j ∈ Finset.univ.filter (fun j : ↑Λ => j ≠ k),
+              correlation G' p (symmDiff {k, j} (e : Sym2 ↑Λ).toFinset) := by
+          rw [← Finset.mul_sum, Finset.sum_comm]
+      _ ≤ β * J * ∑ e ∈ Ek, (1 + T k₀) := by
+          apply mul_le_mul_of_nonneg_left _ hβJ
+          apply Finset.sum_le_sum
+          intro e he
+          -- Extract other endpoint u of edge e
+          have hke : k ∈ (e : Sym2 ↑Λ) := (Finset.mem_filter.mp he).2
+          set u := Sym2.Mem.other hke
+          have hku : k ≠ u :=
+            (Sym2.other_ne (SimpleGraph.not_isDiag_of_mem_edgeSet _ e.2) hke).symm
+          have he_toFinset : (e : Sym2 ↑Λ).toFinset = {k, u} := by
+            have h := @Sym2.toFinset_mk_eq _ _ k u
+            rwa [Sym2.other_spec hke] at h
+          rw [he_toFinset]
+          -- Split sum at j = u using sum_erase_add
+          let s := Finset.univ.filter (fun j : ↑Λ => j ≠ k)
+          have hu_in : u ∈ s :=
+            Finset.mem_filter.mpr ⟨Finset.mem_univ u, hku.symm⟩
+          calc ∑ j ∈ s, correlation G' p (symmDiff {k, j} {k, u})
+              = ∑ j ∈ s.erase u, correlation G' p (symmDiff {k, j} {k, u}) +
+                correlation G' p (symmDiff {k, u} {k, u}) :=
+                  (Finset.sum_erase_add _ _ hu_in).symm
+            _ = ∑ j ∈ s.erase u, correlation G' p (symmDiff {k, j} {k, u}) + 1 := by
+                  simp only [symmDiff_self, Finset.bot_eq_empty, correlation_empty]
+            _ = 1 + ∑ j ∈ s.erase u, correlation G' p (symmDiff {k, j} {k, u}) :=
+                  add_comm _ _
+            _ = 1 + ∑ j ∈ s.erase u, correlation G' p {u, j} := by
+                  congr 1
+                  apply Finset.sum_congr rfl
+                  intro j hj
+                  have hju : j ≠ u := Finset.ne_of_mem_erase hj
+                  have hjk : j ≠ k :=
+                    (Finset.mem_filter.mp (Finset.mem_of_mem_erase hj)).2
+                  exact congrArg (correlation G' p)
+                    (symmDiff_pair_pair_of_ne hjk.symm hku hju.symm)
+            _ ≤ 1 + ∑ j ∈ Finset.univ.filter (fun j : ↑Λ => j ≠ u),
+                  correlation G' p {u, j} := by
+                  have hsub : ∑ j ∈ s.erase u, correlation G' p {u, j} ≤
+                      ∑ j ∈ Finset.univ.filter (fun j : ↑Λ => j ≠ u),
+                        correlation G' p {u, j} :=
+                    Finset.sum_le_sum_of_subset_of_nonneg
+                      (fun j hj => Finset.mem_filter.mpr
+                        ⟨Finset.mem_univ j, (Finset.mem_erase.mp hj).1⟩)
+                      (fun j _ _ => hcnn u j)
+                  linarith
+            _ ≤ 1 + T k₀ := by
+                  have hTu : ∑ j ∈ Finset.univ.filter (fun j : ↑Λ => j ≠ u),
+                      correlation G' p {u, j} = T u := rfl
+                  linarith [hk₀ u (Finset.mem_univ u)]
+      _ = β * J * (↑Ek.card * (1 + T k₀)) := by
+          rw [Finset.sum_const, nsmul_eq_mul]
+      _ ≤ β * J * (↑D * (1 + T k₀)) := by
+          apply mul_le_mul_of_nonneg_left _ hβJ
+          apply mul_le_mul_of_nonneg_right _ (by linarith [hTnn k₀])
+          exact_mod_cast hD k
+      _ = β * J * ↑D * (1 + T k₀) := by ring
+  -- Step 2: Fixed-point: T k₀ ≤ βJ·D·(1 + T k₀)
+  have hMle : T k₀ ≤ β * J * ↑D * (1 + T k₀) := hTle k₀
+  -- Step 3: T k₀ ≤ βJ·D/(1-βJ·D)
+  have h1 : 0 < 1 - β * J * ↑D := by linarith
+  have hMbound : T k₀ ≤ β * J * ↑D / (1 - β * J * ↑D) := by
+    rw [le_div_iff₀ h1]; nlinarith
+  -- Step 4: T i ≤ T k₀ ≤ bound
+  linarith [hk₀ i (Finset.mem_univ i)]
+
 end Ambient
 
 end IsingModel
