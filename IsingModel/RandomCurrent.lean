@@ -3208,6 +3208,54 @@ theorem Current.not_mem_sources_of_isolated
   obtain ⟨u, hadj⟩ := Current.exists_adj_of_mem_sources G Λ n hmem
   exact hv u hadj
 
+/-- **Active edges incident to a vertex**: for a current `n` and a
+vertex `v : ↑Λ`, the Finset of edges `e ∈ n.support` containing `v`.
+The Finset form of `exists_support_edge_of_mem_sources`, usable in
+downstream counting / partitioning arguments for the switching lemma
+(Aizenman 1982 / FV §3.7). -/
+noncomputable def Current.supportAt (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) (v : ↑Λ) :
+    Finset ((inducedGraph G Λ).edgeSet) :=
+  (n.support G Λ).filter (fun e => v ∈ (e : Sym2 ↑Λ))
+
+omit [DecidableEq V] in
+set_option linter.unusedDecidableInType false in
+/-- **Membership in `Current.supportAt`**: `e ∈ n.supportAt v ↔
+e ∈ n.support ∧ v ∈ (e : Sym2 ↑Λ)`. -/
+theorem Current.mem_supportAt_iff (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) (v : ↑Λ) (e : (inducedGraph G Λ).edgeSet) :
+    e ∈ n.supportAt G Λ v ↔ e ∈ n.support G Λ ∧ v ∈ (e : Sym2 ↑Λ) := by
+  classical
+  unfold Current.supportAt
+  exact Finset.mem_filter
+
+omit [DecidableEq V] in
+set_option linter.unusedDecidableInType false in
+/-- **`supportAt` is contained in `support`**: edges at a vertex are
+in particular active edges. -/
+theorem Current.supportAt_subset_support (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) (v : ↑Λ) :
+    n.supportAt G Λ v ⊆ n.support G Λ := by
+  classical
+  unfold Current.supportAt
+  exact Finset.filter_subset _ _
+
+omit [DecidableEq V] in
+set_option linter.unusedDecidableInType false in
+/-- **Source vertices have non-empty `supportAt`**: the Finset form
+of `exists_support_edge_of_mem_sources`. If `v ∈ n.sources`, then
+`(n.supportAt v).Nonempty`. -/
+theorem Current.supportAt_nonempty_of_mem_sources
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) {v : ↑Λ} (hv : v ∈ n.sources G Λ) :
+    (n.supportAt G Λ v).Nonempty := by
+  obtain ⟨e, he_supp, hve⟩ := Current.exists_support_edge_of_mem_sources G Λ n hv
+  exact ⟨e, (Current.mem_supportAt_iff G Λ n v e).mpr ⟨he_supp, hve⟩⟩
+
 end Ambient
 
 end IsingModel
