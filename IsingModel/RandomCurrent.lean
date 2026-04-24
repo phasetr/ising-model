@@ -2242,6 +2242,76 @@ theorem Current.sub_le_self (G : SimpleGraph V) (Λ : Finset V)
     (n m : Current G Λ) :
     n - m ≤ n := fun _ => Nat.sub_le _ _
 
+set_option linter.unusedDecidableInType false in
+/-- **Pair-Finset of currents summing to `n`**: the `Finset` of pairs
+`(n₁, n₂) : Current G Λ × Current G Λ` with `n₁ + n₂ = n`, realized
+concretely as `(subFinset n).image (m ↦ (m, n - m))`. The LHS of
+the Aizenman switching pair-bijection
+`{(n₁, n₂) : n₁ + n₂ = n} ↔ {m : m ≤ n}` (Aizenman 1982 Lemma 4.1 /
+FV §3.7). -/
+def Current.pairFinset (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (n : Current G Λ) :
+    Finset (Current G Λ × Current G Λ) :=
+  (Current.subFinset G Λ n).image (fun m => (m, n - m))
+
+set_option linter.unusedDecidableInType false in
+/-- **Membership in `pairFinset`**: `(m₁, m₂) ∈ pairFinset n ↔ m₁ + m₂ = n`.
+Forward: any pair in the image has the form `(k, n - k)` with `k ≤ n`,
+so `k + (n - k) = n` by `add_sub_cancel_of_le`. Backward: from
+`m₁ + m₂ = n` we get `m₁ ≤ n` (`le_self_add_right`) and
+`m₂ = n - m₁` (pointwise from `m₁ e + m₂ e = n e`), so `(m₁, n - m₁) = (m₁, m₂)`. -/
+@[simp]
+theorem Current.mem_pairFinset_iff (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (n : Current G Λ) (p : Current G Λ × Current G Λ) :
+    p ∈ Current.pairFinset G Λ n ↔ p.1 + p.2 = n := by
+  unfold Current.pairFinset
+  rw [Finset.mem_image]
+  constructor
+  · rintro ⟨k, hk, rfl⟩
+    rw [Current.mem_subFinset_iff] at hk
+    exact Current.add_sub_cancel_of_le G Λ hk
+  · intro hsum
+    refine ⟨p.1, ?_, ?_⟩
+    · rw [Current.mem_subFinset_iff]
+      intro e
+      have heq : p.1 e + p.2 e = n e := congrFun hsum e
+      exact heq ▸ Nat.le_add_right (p.1 e) (p.2 e)
+    · ext
+      · rfl
+      · rename_i e
+        simp only [Current.sub_apply]
+        have heq : p.1 e + p.2 e = n e := by
+          have h := congrFun hsum e
+          simpa [Pi.add_apply] using h
+        omega
+
+set_option linter.unusedDecidableInType false in
+/-- **`pairFinset` cardinality matches `subFinset`**:
+`(pairFinset n).card = (subFinset n).card`, since the defining map
+`m ↦ (m, n - m)` is injective (the first coordinate is `m`). -/
+theorem Current.pairFinset_card_eq_subFinset_card
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (n : Current G Λ) :
+    (Current.pairFinset G Λ n).card = (Current.subFinset G Λ n).card := by
+  unfold Current.pairFinset
+  apply Finset.card_image_of_injective
+  intro m₁ m₂ h
+  exact congrArg Prod.fst h
+
+set_option linter.unusedDecidableInType false in
+/-- **`pairFinset` cardinality formula**:
+`(pairFinset n).card = ∏ e, (n e + 1)`, by composing
+`pairFinset_card_eq_subFinset_card` with `subFinset_card_eq_prod`
+(PR #866). The number of pairs `(n₁, n₂)` with `n₁ + n₂ = n` equals
+the per-edge product of multiplicities. -/
+theorem Current.pairFinset_card_eq_prod (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (n : Current G Λ) :
+    (Current.pairFinset G Λ n).card
+      = ∏ e : (inducedGraph G Λ).edgeSet, (n e + 1) := by
+  rw [Current.pairFinset_card_eq_subFinset_card,
+      Current.subFinset_card_eq_prod]
+
 end Ambient
 
 end IsingModel
