@@ -2196,6 +2196,52 @@ theorem Current.subFinset_card_eq_prod (G : SimpleGraph V) (Λ : Finset V)
   rw [Fintype.card_piFinset]
   simp [Finset.card_range]
 
+/-- **Pointwise truncated subtraction** of currents: `(n - m) e := n e - m e`
+in `ℕ` (which is `Nat.sub`, cut off at `0`). The truncation primitive
+needed for the switching pair-bijection (Aizenman 1982 Lemma 4.1 /
+FV §3.7), parameterized by `m ↦ (m, n - m)` for `m ≤ n`. -/
+instance Current.instSub (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] : Sub (Current G Λ) :=
+  ⟨fun n m => fun e => n e - m e⟩
+
+omit [DecidableEq V] in
+/-- **Pointwise sub**: `(n - m) e = n e - m e` (by definition of
+`Current.instSub`, which uses `Nat.sub`). -/
+@[simp]
+theorem Current.sub_apply (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (n m : Current G Λ) (e : (inducedGraph G Λ).edgeSet) :
+    (n - m) e = n e - m e := rfl
+
+omit [DecidableEq V] in
+/-- **Truncation cancels under `m ≤ n`**: `(n - m) + m = n`.
+Pointwise via `Nat.sub_add_cancel`. The naming `sub_add_cancel`
+follows mathlib's `Nat.sub_add_cancel` / `tsub_add_cancel_of_le`. -/
+theorem Current.sub_add_cancel_of_le (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {n m : Current G Λ} (h : m ≤ n) :
+    (n - m) + m = n := by
+  ext e
+  simp [Nat.sub_add_cancel (h e)]
+
+omit [DecidableEq V] in
+/-- **Truncation cancels (commuted form) under `m ≤ n`**:
+`m + (n - m) = n`. By commutativity + `sub_add_cancel_of_le`. -/
+theorem Current.add_sub_cancel_of_le (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {n m : Current G Λ} (h : m ≤ n) :
+    m + (n - m) = n := by
+  rw [add_comm]
+  exact Current.sub_add_cancel_of_le G Λ h
+
+omit [DecidableEq V] in
+/-- **Truncated sub is bounded above by the minuend**:
+`n - m ≤ n` for any currents `n, m`. Pointwise via `Nat.sub_le`. -/
+theorem Current.sub_le_self (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (n m : Current G Λ) :
+    n - m ≤ n := fun _ => Nat.sub_le _ _
+
 end Ambient
 
 end IsingModel
