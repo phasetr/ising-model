@@ -2385,6 +2385,53 @@ theorem Current.sub_hasSources_iff (G : SimpleGraph V) (Λ : Finset V)
   unfold Current.HasSources
   rw [Current.sub_sources_eq_symmDiff G Λ h]
 
+omit [DecidableEq V] in
+/-- **`n - 0 = n`**: subtracting the zero current is the identity. -/
+@[simp]
+theorem Current.sub_zero (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (n : Current G Λ) :
+    n - (0 : Current G Λ) = n := by
+  ext e
+  simp
+
+omit [DecidableEq V] in
+/-- **`0 - n = 0`**: truncated subtraction (`Nat.sub`) at the zero
+current pointwise is `0 - n e = 0`. -/
+@[simp]
+theorem Current.zero_sub (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (n : Current G Λ) :
+    (0 : Current G Λ) - n = 0 := by
+  ext e
+  simp
+
+omit [DecidableEq V] in
+/-- **`n - n = 0`**: pointwise `n e - n e = 0` in `ℕ`. -/
+@[simp]
+theorem Current.sub_self (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (n : Current G Λ) :
+    n - n = (0 : Current G Λ) := by
+  ext e
+  simp
+
+set_option linter.unusedDecidableInType false in
+/-- **`subFinset 0 = {0}`**: the only current `m ≤ 0` is `m = 0`,
+since each component `m e ≤ 0` forces `m e = 0`. By `Finset.ext`
++ `mem_subFinset_iff` + `Finset.mem_singleton`. -/
+theorem Current.subFinset_zero (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] :
+    Current.subFinset G Λ (0 : Current G Λ) = {0} := by
+  ext m
+  rw [Current.mem_subFinset_iff, Finset.mem_singleton]
+  constructor
+  · intro h
+    ext e
+    have := h e
+    simp only [Pi.zero_apply, Nat.le_zero] at this
+    exact this
+  · rintro rfl
+    intro _
+    simp
+
 end Ambient
 
 end IsingModel
