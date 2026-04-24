@@ -3091,6 +3091,41 @@ theorem Current.Adj_of_zero_iff (G : SimpleGraph V) (Λ : Finset V)
     exact (Finset.notMem_empty e he).elim
   · intro h; exact h.elim
 
+/-- **`Current.toSimpleGraph`**: the `SimpleGraph` on `↑Λ` whose
+adjacency relation is `Current.Adj` (active-edge adjacency in the
+multigraph defined by `n`). The first-class `SimpleGraph` object
+enabling mathlib's connectivity / path / component APIs needed for
+the switching lemma. -/
+def Current.toSimpleGraph (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) : SimpleGraph ↑Λ where
+  Adj := n.Adj G Λ
+  symm := fun _ _ h => Current.Adj_symm G Λ n h
+  loopless := ⟨fun u h => Current.Adj_irrefl G Λ n u h⟩
+
+omit [DecidableEq V] in
+set_option linter.unusedDecidableInType false in
+/-- **`toSimpleGraph` adjacency unfolding**:
+`(n.toSimpleGraph).Adj u v ↔ n.Adj u v` (definitional). -/
+@[simp]
+theorem Current.toSimpleGraph_adj_iff
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) (u v : ↑Λ) :
+    (n.toSimpleGraph G Λ).Adj u v ↔ n.Adj G Λ u v := Iff.rfl
+
+omit [DecidableEq V] in
+set_option linter.unusedDecidableInType false in
+/-- **Zero current's `toSimpleGraph` is the empty graph**: by
+`Adj_of_zero_iff` (no adjacencies), the SimpleGraph is `⊥`. -/
+theorem Current.toSimpleGraph_zero
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ] :
+    (0 : Current G Λ).toSimpleGraph G Λ = (⊥ : SimpleGraph ↑Λ) := by
+  ext u v
+  rw [Current.toSimpleGraph_adj_iff, Current.Adj_of_zero_iff]
+  simp [SimpleGraph.bot_adj]
+
 end Ambient
 
 end IsingModel
