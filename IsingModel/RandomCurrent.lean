@@ -3044,6 +3044,53 @@ theorem Current.support_eq_empty_iff (G : SimpleGraph V) (Λ : Finset V)
   · rintro rfl
     exact Current.support_zero G Λ
 
+/-- **Current adjacency**: vertices `u, v ∈ ↑Λ` are *adjacent in `n`*
+iff they are distinct and connected by an edge in `n.support` (i.e.
+some `e` with `n e ≠ 0` containing both `u` and `v`). The vertex
+adjacency relation of the multigraph defined by `n`'s active edges,
+the foundation for the connectivity-based Aizenman switching argument
+(Aizenman 1982 Lemma 4.1 / FV §3.7). -/
+def Current.Adj (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) (u v : ↑Λ) : Prop :=
+  u ≠ v ∧ ∃ e ∈ n.support G Λ,
+    u ∈ (e : Sym2 ↑Λ) ∧ v ∈ (e : Sym2 ↑Λ)
+
+omit [DecidableEq V] in
+set_option linter.unusedDecidableInType false in
+/-- **Current adjacency is irreflexive**: a vertex is never adjacent to itself. -/
+theorem Current.Adj_irrefl (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) (u : ↑Λ) :
+    ¬ n.Adj G Λ u u := by
+  rintro ⟨huu, _⟩
+  exact huu rfl
+
+omit [DecidableEq V] in
+set_option linter.unusedDecidableInType false in
+/-- **Current adjacency is symmetric**: `n.Adj u v → n.Adj v u`. -/
+theorem Current.Adj_symm (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) {u v : ↑Λ} (h : n.Adj G Λ u v) :
+    n.Adj G Λ v u := by
+  obtain ⟨hne, e, he, hu, hv⟩ := h
+  exact ⟨hne.symm, e, he, hv, hu⟩
+
+omit [DecidableEq V] in
+set_option linter.unusedDecidableInType false in
+/-- **Zero current has no adjacencies**: `(0 : Current).Adj u v ↔ False`,
+since `support 0 = ∅`. -/
+theorem Current.Adj_of_zero_iff (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (u v : ↑Λ) :
+    (0 : Current G Λ).Adj G Λ u v ↔ False := by
+  unfold Current.Adj
+  constructor
+  · rintro ⟨_, e, he, _, _⟩
+    rw [Current.support_zero] at he
+    exact (Finset.notMem_empty e he).elim
+  · intro h; exact h.elim
+
 end Ambient
 
 end IsingModel
