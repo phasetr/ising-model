@@ -2616,6 +2616,54 @@ theorem Current.sum_pairFinset_weight_mul_weight_eq_weight_pow_two
   rw [Current.sum_pairFinset_weight_mul_weight,
       Current.sum_subFinset_jointFactor_compl_eq_pow_two]
 
+/-- **Source-conditioned pair-Finset**: pairs `(n₁, n₂) ∈ pairFinset n`
+filtered by `n₁.HasSources A ∧ n₂.HasSources B`. The LHS / RHS data
+type for source-bijection statements of the switching lemma
+(Aizenman 1982 Lemma 4.1 / FV §3.7). -/
+noncomputable def Current.pairFinset_with_sources
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) (A B : Finset ↑Λ) :
+    Finset (Current G Λ × Current G Λ) := by
+  classical
+  exact (Current.pairFinset G Λ n).filter
+    (fun p => p.1.HasSources G Λ A ∧ p.2.HasSources G Λ B)
+
+set_option linter.unusedDecidableInType false in
+/-- **Membership in `pairFinset_with_sources`**:
+`(n₁, n₂) ∈ pairFinset_with_sources n A B
+  ↔ n₁ + n₂ = n ∧ n₁.HasSources A ∧ n₂.HasSources B`. -/
+theorem Current.mem_pairFinset_with_sources_iff
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) (A B : Finset ↑Λ)
+    (p : Current G Λ × Current G Λ) :
+    p ∈ Current.pairFinset_with_sources G Λ n A B
+      ↔ p.1 + p.2 = n ∧ p.1.HasSources G Λ A ∧ p.2.HasSources G Λ B := by
+  classical
+  unfold Current.pairFinset_with_sources
+  simp only [Finset.mem_filter, Current.mem_pairFinset_iff]
+
+set_option linter.unusedDecidableInType false in
+/-- **Empty when source XOR doesn't match**: if `symmDiff A B ≠ sources n`,
+then `pairFinset_with_sources n A B = ∅`. The constraint
+`(n₁, n₂)` with `sources n₁ = A`, `sources n₂ = B`, `n₁ + n₂ = n`
+forces `sources n = symmDiff A B` (`add_sources_eq`). -/
+theorem Current.pairFinset_with_sources_eq_empty_of_sources_mismatch
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) (A B : Finset ↑Λ)
+    (h : symmDiff A B ≠ n.sources G Λ) :
+    Current.pairFinset_with_sources G Λ n A B = ∅ := by
+  rw [Finset.eq_empty_iff_forall_notMem]
+  intro p hp
+  rw [Current.mem_pairFinset_with_sources_iff] at hp
+  obtain ⟨hsum, hA, hB⟩ := hp
+  apply h
+  change p.1.sources G Λ = A at hA
+  change p.2.sources G Λ = B at hB
+  rw [show n = p.1 + p.2 from hsum.symm, Current.add_sources_eq, hA, hB]
+
 end Ambient
 
 end IsingModel
