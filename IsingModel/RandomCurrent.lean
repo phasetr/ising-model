@@ -3799,6 +3799,23 @@ private theorem Current.summable_weight_if_sources
           Current.sum_weight_boundedFinset_le G Λ _ hβJ
 
 set_option linter.unusedDecidableInType false in
+/-- **`Current.weightSum` equals the supremum of bounded sums**: for `0 ≤ β J`,
+\(Current.weightSum A β J = ⨆_N CurrentBounded.weightSum N A β J\).
+Proof by uniqueness of limits: the bounded sums converge to both
+`Current.weightSum` (via `tendsto_weightSum_atTop_currentWeightSum` using
+`summable_weight_if_sources`) and to the `⨆`
+(via `tendsto_weightSum_atTop_iSup_of_nonneg`). -/
+theorem Current.weightSum_eq_iSup
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (A : Finset ↑Λ) {β J : ℝ} (hβJ : 0 ≤ β * J) :
+    Current.weightSum G Λ A β J = ⨆ N : ℕ, CurrentBounded.weightSum G Λ N A β J :=
+  tendsto_nhds_unique
+    (CurrentBounded.tendsto_weightSum_atTop_currentWeightSum G Λ β J A
+      (Current.summable_weight_if_sources G Λ A hβJ))
+    (CurrentBounded.tendsto_weightSum_atTop_iSup_of_nonneg G Λ A hβJ)
+
+set_option linter.unusedDecidableInType false in
 /-- Helper: for each edge `e` at `i`, a finite sum of peeled weights over currents
 with sources `{i,j}` and `n e ≥ 1` is bounded by `weightSum(symmDiff {i,j} endpoints(e))`.
 Uses: `Finset.sum_image` (injection n ↦ n - 1_e) + `sources_sub_edge_symmDiff`

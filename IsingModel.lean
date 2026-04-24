@@ -11,6 +11,7 @@ import IsingModel.Asano
 import IsingModel.AmbientLattice
 import IsingModel.AmbientLatticeSum
 import IsingModel.RandomCurrent
+import IsingModel.Inequalities.SimonLieb
 import IsingModel.ComplexAnalyticity
 import IsingModel.PeierlsInfinite
 import IsingModel.TranslationInvariance
