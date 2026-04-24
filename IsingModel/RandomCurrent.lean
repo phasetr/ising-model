@@ -2597,6 +2597,25 @@ theorem Current.sum_subFinset_jointFactor_compl_eq_pow_two
     rfl
   · exact Finset.prod_pow_eq_pow_sum _ _ _
 
+set_option linter.unusedDecidableInType false in
+/-- **Pair-weight closed form (capstone)**: combining the pair-weight
+scaling identity (PR #869) with the joint-factor sum closed form
+(PR #875), the random-current pair sum factors completely:
+\(∑ p ∈ pairFinset n, weight β J p.1 · weight β J p.2
+  = weight β J n · 2^{∑_e n e}\). The single-current weight times an
+exponential of the total current degree, with no remaining combinatorial
+sum. Useful in switching applications. -/
+theorem Current.sum_pairFinset_weight_mul_weight_eq_weight_pow_two
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (n : Current G Λ) (β J : ℝ) :
+    ∑ p ∈ Current.pairFinset G Λ n,
+        Current.weight G Λ β J p.1 * Current.weight G Λ β J p.2
+      = Current.weight G Λ β J n
+        * (2 : ℝ) ^ (∑ e : (inducedGraph G Λ).edgeSet, n e) := by
+  rw [Current.sum_pairFinset_weight_mul_weight,
+      Current.sum_subFinset_jointFactor_compl_eq_pow_two]
+
 end Ambient
 
 end IsingModel
