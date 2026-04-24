@@ -2125,6 +2125,77 @@ theorem CurrentBounded.pow_card_mul_iSup_weightSum_eq_sum_spinA_prod_exp
     (Config.tendsto_pow_card_mul_currentBounded_weightSum_atTop_sum_spinA_prod_exp
       G Λ β J A)
 
+omit [DecidableEq V] in
+/-- **Pointwise order on currents**: `n ≤ m` iff `n e ≤ m e` for
+every edge `e`. The Pi LE on `Current G Λ` (an `abbrev` for the
+edge function type) unfolds definitionally to the pointwise order.
+Used in the Aizenman switching lemma (Aizenman 1982 Lemma 4.1 /
+FV §3.7) to parameterize pairs `(n₁, n₂)` with `n₁ + n₂ = n`. -/
+theorem Current.le_def (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (n m : Current G Λ) :
+    n ≤ m ↔ ∀ e, n e ≤ m e := Iff.rfl
+
+omit [DecidableEq V] in
+/-- **Zero is the least current**: `(0 : Current G Λ) ≤ n` for any
+current `n`. Each component `0 ≤ n e` in `ℕ`. -/
+theorem Current.zero_le (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (n : Current G Λ) :
+    (0 : Current G Λ) ≤ n := fun _ => Nat.zero_le _
+
+omit [DecidableEq V] in
+/-- **Left summand is below the sum**: `n ≤ n + m`, since
+`n e ≤ n e + m e` for every edge `e`. -/
+theorem Current.le_self_add_right (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (n m : Current G Λ) :
+    n ≤ n + m := fun _ => Nat.le_add_right _ _
+
+omit [DecidableEq V] in
+/-- **Right summand is below the sum**: `n ≤ m + n`, since
+`n e ≤ m e + n e` for every edge `e`. -/
+theorem Current.le_self_add_left (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (n m : Current G Λ) :
+    n ≤ m + n := fun _ => Nat.le_add_left _ _
+
+/-- **Finset of currents bounded by `n`**: the `Finset` of currents
+`m` with `m ≤ n` pointwise, enumerated via
+`Fintype.piFinset (fun e => Finset.range (n e + 1))`. This is the
+parameterizing set for the Aizenman switching pair-bijection
+`{(n₁, n₂) : n₁ + n₂ = n} ↔ {m : m ≤ n}` (Aizenman 1982 Lemma 4.1 /
+FV §3.7). -/
+def Current.subFinset (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (n : Current G Λ) :
+    Finset (Current G Λ) :=
+  Fintype.piFinset (fun e => Finset.range (n e + 1))
+
+set_option linter.unusedDecidableInType false in
+/-- **Membership in `subFinset`**: `m ∈ subFinset n ↔ m ≤ n`,
+via `Fintype.mem_piFinset` + `Finset.mem_range` + `Nat.lt_succ_iff`. -/
+@[simp]
+theorem Current.mem_subFinset_iff (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (n m : Current G Λ) :
+    m ∈ Current.subFinset G Λ n ↔ m ≤ n := by
+  unfold Current.subFinset
+  rw [Fintype.mem_piFinset]
+  simp only [Finset.mem_range, Nat.lt_succ_iff]
+  rfl
+
+set_option linter.unusedDecidableInType false in
+/-- **Cardinality of `subFinset`**:
+`#(subFinset n) = ∏_e (n e + 1)`. The number of currents `m ≤ n` is
+the product of per-edge multiplicities `n e + 1`, by
+`Fintype.card_piFinset` + `Finset.card_range`. The combinatorial
+count behind the joint factor `∏_e Nat.choose (n e) (m e)` in
+`Current.weight_mul_weight_eq_weight_add_mul_jointFactor`
+(PR #845). -/
+theorem Current.subFinset_card_eq_prod (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (n : Current G Λ) :
+    (Current.subFinset G Λ n).card
+      = ∏ e : (inducedGraph G Λ).edgeSet, (n e + 1) := by
+  unfold Current.subFinset
+  rw [Fintype.card_piFinset]
+  simp [Finset.card_range]
+
 end Ambient
 
 end IsingModel
