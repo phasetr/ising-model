@@ -5829,4 +5829,75 @@ Implemented via \texttt{Finset.sum\_nbij'}.
 \end{proof}
 \noindent\textit{Status}: All lemmas fully proved. No sorry. File: \texttt{Inequalities/SimonLieb.lean}.
 
+%=======================================================
+\subsection*{PR \#901 --- High-Temperature Susceptibility Bound (GJ~\S5.1 / FV~\S3.7.3)}
+%-------------------------------------------------------
+
+\begin{lemma}[\texttt{symmDiff\_pair\_pair\_of\_ne}; private]
+  Let $\alpha$ be a type with decidable equality, $i,j,u\in\alpha$, $i\neq j$, $i\neq u$, $u\neq j$.
+  Then $\{i,j\}\triangle\{i,u\} = \{u,j\}$ as \texttt{Finset}s.
+\end{lemma}
+\begin{proof}
+  Rewrite via \texttt{symmDiff\_def}.
+  Show $\{i,j\}\setminus\{i,u\}=\{j\}$ and $\{i,u\}\setminus\{i,j\}=\{u\}$
+  by \texttt{ext} + \texttt{simp} (\texttt{mem\_sdiff}, \texttt{not\_or})
+  + \texttt{rintro}/\texttt{rcases} case analysis.
+  Union via \texttt{simp [or\_comm]}.
+\end{proof}
+
+\begin{lemma}[\texttt{correlation\_inducedGraph\_nonneg}; private]
+  For $0\le\beta J$ and any $A\subseteq\Lambda$,
+  $\langle\sigma^A\rangle_\Lambda \ge 0$.
+\end{lemma}
+\begin{proof}
+  By \texttt{correlation\_inducedGraph\_eq\_weightSum\_ratio}:
+  $\langle\sigma^A\rangle = \mathrm{weightSum}(A)/\mathrm{weightSum}(\emptyset)$.
+  Apply \texttt{div\_nonneg} with \texttt{weightSum\_nonneg} (numerator $\ge 0$)
+  and \texttt{weightSum\_empty\_pos} (denominator $> 0$).
+\end{proof}
+
+\begin{theorem}[\texttt{correlation\_sum\_le\_of\_high\_temp}; GJ~\S5.1 / FV~\S3.7.3]
+  Let $G$ be a graph on $\Lambda$ with $h=0$, $0\le\beta J$, and
+  $D\in\mathbb{N}$ bounding the incident-edge count of every vertex.
+  If $\beta J D < 1$ then for every $i\in\Lambda$,
+  \[
+    \sum_{j\neq i}\langle\sigma_i\sigma_j\rangle_\Lambda
+    \;\le\;
+    \frac{\beta J D}{1-\beta J D}.
+  \]
+\end{theorem}
+\begin{proof}
+  Define $T_k = \sum_{j\neq k}\langle\sigma_k\sigma_j\rangle$
+  and $M = \max_k T_k$ (exists by \texttt{Finset.exists\_max\_image}).
+
+  \textbf{Step A.}  Apply \texttt{correlation\_inducedGraph\_simon\_lieb} to each $k$:
+  \[
+    T_k \;\le\; \beta J\sum_{e\ni k}\sum_{j\neq k}
+    \langle\sigma^{\{k,j\}\triangle e}\rangle.
+  \]
+
+  \textbf{Step B.}  For a fixed edge $e = \{k,u\}$ incident to $k$, expand the inner sum
+  over $j\neq k$ by splitting at $j=u$:
+  \begin{itemize}
+    \item $j=u$: $\{k,u\}\triangle\{k,u\}=\emptyset$, $\langle\sigma^\emptyset\rangle=1$.
+    \item $j\neq u$, $j\neq k$: by \texttt{symmDiff\_pair\_pair\_of\_ne},
+      $\{k,j\}\triangle\{k,u\}=\{u,j\}$, contributing $\langle\sigma_u\sigma_j\rangle$.
+  \end{itemize}
+  Hence $\sum_{j\neq k}\langle\sigma^{\{k,j\}\triangle\{k,u\}}\rangle
+  \le 1 + T_u \le 1+M$
+  (via \texttt{Finset.sum\_erase\_add} + \texttt{Finset.sum\_le\_sum\_of\_subset\_of\_nonneg}).
+
+  \textbf{Step C.}  Summing over edges incident to $k$ (at most $D$ edges):
+  $T_k \le \beta J D (1+M)$.
+
+  \textbf{Step D.}  Take $k=k_0 = \operatorname{argmax}T$:
+  $M \le \beta J D(1+M)$, so $M(1-\beta J D)\le\beta J D$, giving
+  $M\le\beta J D/(1-\beta J D)$ by \texttt{le\_div\_iff\textsubscript{0}}.
+  The conclusion $T_i\le M$ follows from the argmax bound.
+\end{proof}
+
+\noindent\textit{Status}: All lemmas fully proved. No sorry.
+File: \texttt{Inequalities/SimonLieb.lean} (branch \texttt{feat/random-current-simon-lieb-sum-bound}, PR~\#901).
+References: Glimm--Jaffe \S5.1~(pp.~73--74); Friedli--Velenik \S3.7.3.
+
 \end{document}
