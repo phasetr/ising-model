@@ -2514,6 +2514,39 @@ theorem Current.subFinset_image_compl (G : SimpleGraph V) (Λ : Finset V)
       exact Current.sub_le_self G Λ n k
     · exact Current.sub_sub_self_of_le G Λ hk
 
+set_option linter.unusedDecidableInType false in
+/-- **`pairFinset` is invariant under `Prod.swap`**:
+`(pairFinset n).image Prod.swap = pairFinset n`. By the commutativity
+of `+` on currents, `(n₁, n₂) ∈ pairFinset n ↔ (n₂, n₁) ∈ pairFinset n`. -/
+theorem Current.pairFinset_image_swap_eq_self
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (n : Current G Λ) :
+    (Current.pairFinset G Λ n).image Prod.swap
+      = Current.pairFinset G Λ n := by
+  ext p
+  rw [Finset.mem_image]
+  constructor
+  · rintro ⟨q, hq, rfl⟩
+    rw [Current.mem_pairFinset_iff] at hq
+    rw [Current.mem_pairFinset_iff]
+    show q.2 + q.1 = n
+    rw [add_comm]; exact hq
+  · intro hp
+    rw [Current.mem_pairFinset_iff] at hp
+    refine ⟨p.swap, ?_, ?_⟩
+    · rw [Current.mem_pairFinset_iff]
+      show p.2 + p.1 = n
+      rw [add_comm]; exact hp
+    · exact Prod.swap_swap p
+
+set_option linter.unusedDecidableInType false in
+/-- **`pairFinset n` is nonempty**: contains `(n, 0)` since `n + 0 = n`
+(`self_mem_pairFinset`, PR #872). -/
+theorem Current.pairFinset_nonempty (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (n : Current G Λ) :
+    (Current.pairFinset G Λ n).Nonempty :=
+  ⟨(n, 0), Current.self_mem_pairFinset G Λ n⟩
+
 end Ambient
 
 end IsingModel
