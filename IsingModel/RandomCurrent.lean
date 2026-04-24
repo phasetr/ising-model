@@ -2761,6 +2761,54 @@ theorem Current.sum_pairFinset_with_sources_eq_sum_subFinset_with_source
   intro m₁ _ m₂ _ h
   exact congrArg Prod.fst h
 
+set_option linter.unusedDecidableInType false in
+/-- **Source-conditioned pair-weight scaling identity** (analog of PR #876
+for source-filtered pairs): under `symmDiff (sources n) A = B`,
+\[
+∑_{p ∈ \text{pairFinset\_with\_sources}\ n\ A\ B}
+  \text{weight}\ p.1 \cdot \text{weight}\ p.2
+ = \text{weight}\ n \cdot
+   ∑_{m ∈ \text{subFinset\_with\_source}\ n\ A}
+     \text{jointFactor}\ m\ (n - m).
+\]
+Apply PR #879 bridge (sum reindexing) + per-summand
+`weight_mul_weight_eq_weight_add_mul_jointFactor` (PR #845) +
+`add_sub_cancel_of_le` (PR #867: `m + (n - m) = n` for `m ≤ n`),
+factored via `Finset.mul_sum`. The source-conditioned version of the
+central scaling identity for the switching lemma. -/
+theorem Current.sum_pairFinset_with_sources_weight_mul_weight
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) (A B : Finset ↑Λ)
+    (hAB : symmDiff (n.sources G Λ) A = B) (β J : ℝ) :
+    ∑ p ∈ Current.pairFinset_with_sources G Λ n A B,
+        Current.weight G Λ β J p.1 * Current.weight G Λ β J p.2
+      = Current.weight G Λ β J n
+        * ∑ m ∈ Current.subFinset_with_source G Λ n A,
+            Current.jointFactor G Λ m (n - m) := by
+  rw [Current.sum_pairFinset_with_sources_eq_sum_subFinset_with_source
+        G Λ n A B hAB, Finset.mul_sum]
+  apply Finset.sum_congr rfl
+  intro m hm
+  rw [Current.mem_subFinset_with_source_iff] at hm
+  obtain ⟨hle, _⟩ := hm
+  rw [Current.weight_mul_weight_eq_weight_add_mul_jointFactor,
+      Current.add_sub_cancel_of_le G Λ hle]
+
+set_option linter.unusedDecidableInType false in
+/-- **Mismatch corollary**: when `symmDiff A B ≠ sources n`, the
+source-conditioned pair-weight sum is `0` (empty Finset).
+By `pairFinset_with_sources_eq_empty_of_sources_mismatch` (PR #877). -/
+theorem Current.sum_pairFinset_with_sources_weight_mul_weight_of_mismatch
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) (A B : Finset ↑Λ)
+    (h : symmDiff A B ≠ n.sources G Λ) (β J : ℝ) :
+    ∑ p ∈ Current.pairFinset_with_sources G Λ n A B,
+        Current.weight G Λ β J p.1 * Current.weight G Λ β J p.2 = 0 := by
+  rw [Current.pairFinset_with_sources_eq_empty_of_sources_mismatch
+        G Λ n A B h, Finset.sum_empty]
+
 end Ambient
 
 end IsingModel
