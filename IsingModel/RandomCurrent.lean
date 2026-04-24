@@ -3417,10 +3417,10 @@ theorem Current.sources_card_even
 
 omit [DecidableEq V] in
 set_option linter.unusedDecidableInType false in
-/-- **`Current.Adj` is decidable**: `n.Adj G Λ u v` is a conjunction of
-`u ≠ v` (decidable by `DecidableEq ↑Λ`) and an existential over the
-finite set `n.support G Λ` (decidable by `Finset.decidableBEx` +
-`Sym2.instDecidableMem`). This instance unlocks mathlib's finite
+/-- **`Current.Adj` is decidable**: a noncomputable `DecidableRel`
+instance for `n.Adj G Λ` via `Classical.propDecidable`. Since
+`n.support` is noncomputable, the instance is classical rather than
+constructive; it is still logically valid and unlocks mathlib's finite
 `SimpleGraph` API — `neighborFinset`, `degree`, `edgeFinset`, and the
 `Reachable` decision procedure — for `Current.toSimpleGraph`. -/
 noncomputable instance Current.instDecidableAdj
