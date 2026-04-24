@@ -3126,6 +3126,25 @@ theorem Current.toSimpleGraph_zero
   rw [Current.toSimpleGraph_adj_iff, Current.Adj_of_zero_iff]
   simp [SimpleGraph.bot_adj]
 
+omit [DecidableEq V] in
+set_option linter.unusedDecidableInType false in
+/-- **`toSimpleGraph` is a subgraph of `inducedGraph`**:
+`n.toSimpleGraph G Λ ≤ inducedGraph G Λ`. Each adjacency in
+`n.toSimpleGraph` arises from a support edge `e ∈ n.support`, which
+satisfies `e.val ∈ (inducedGraph G Λ).edgeSet`; combined with vertex
+membership and distinctness, this gives `inducedGraph.Adj` via
+`SimpleGraph.adj_iff_exists_edge`. -/
+theorem Current.toSimpleGraph_le_inducedGraph
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) :
+    n.toSimpleGraph G Λ ≤ inducedGraph G Λ := by
+  intro u v h
+  rw [Current.toSimpleGraph_adj_iff] at h
+  obtain ⟨hne, e, _, hu, hv⟩ := h
+  rw [SimpleGraph.adj_iff_exists_edge]
+  exact ⟨hne, (e : Sym2 ↑Λ), e.2, hu, hv⟩
+
 end Ambient
 
 end IsingModel
