@@ -3145,6 +3145,69 @@ theorem Current.toSimpleGraph_le_inducedGraph
   rw [SimpleGraph.adj_iff_exists_edge]
   exact ⟨hne, (e : Sym2 ↑Λ), e.2, hu, hv⟩
 
+omit [DecidableEq V] in
+set_option linter.unusedDecidableInType false in
+/-- **A source vertex is incident to an active edge**: if
+`v ∈ n.sources`, then there exists an edge `e ∈ n.support` containing
+`v`. The foundation for the Aizenman switching argument: the boundary
+vertices of a current are non-isolated in the active-edge multigraph.
+(Aizenman 1982 Lemma 4.1 / FV §3.7.) -/
+theorem Current.exists_support_edge_of_mem_sources
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) {v : ↑Λ} (hv : v ∈ n.sources G Λ) :
+    ∃ e ∈ n.support G Λ, v ∈ (e : Sym2 ↑Λ) := by
+  classical
+  by_contra habs
+  push Not at habs
+  rw [Current.mem_sources_iff] at hv
+  apply hv
+  rw [Current.parity_eq_degreeAt]
+  have hdeg : n.degreeAt G Λ v = 0 := by
+    unfold Current.degreeAt
+    refine Finset.sum_eq_zero ?_
+    intro e _
+    by_cases hve : v ∈ (e : Sym2 ↑Λ)
+    · rw [if_pos hve]
+      by_contra hne
+      exact habs e ((Current.mem_support_iff G Λ n e).mpr hne) hve
+    · rw [if_neg hve]
+  rw [hdeg]
+  simp
+
+omit [DecidableEq V] in
+set_option linter.unusedDecidableInType false in
+/-- **A source vertex has a `Current.Adj` neighbour**: if
+`v ∈ n.sources`, then there exists `u` with `n.Adj G Λ u v`, i.e.
+`v` is not isolated in `n.toSimpleGraph`. A foundational step toward
+the switching lemma's path argument (Aizenman 1982 / FV §3.7):
+non-isolation of source vertices is the base case for constructing
+walks from source to source in the active-edge graph. Path existence
+itself is a downstream consequence, not established here. -/
+theorem Current.exists_adj_of_mem_sources
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) {v : ↑Λ} (hv : v ∈ n.sources G Λ) :
+    ∃ u, n.Adj G Λ u v := by
+  obtain ⟨e, he_supp, hve⟩ := Current.exists_support_edge_of_mem_sources G Λ n hv
+  refine ⟨Sym2.Mem.other hve, ?_, e, he_supp, Sym2.other_mem hve, hve⟩
+  exact SimpleGraph.edge_other_ne _ e.2 hve
+
+omit [DecidableEq V] in
+set_option linter.unusedDecidableInType false in
+/-- **Isolated vertices are not sources**: the contrapositive of
+`exists_adj_of_mem_sources`. If no `u` is `Current.Adj`-adjacent to
+`v`, then `v ∉ n.sources`. Convenient downstream when excluding
+potential sources via local isolation. -/
+theorem Current.not_mem_sources_of_isolated
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) {v : ↑Λ} (hv : ∀ u, ¬ n.Adj G Λ u v) :
+    v ∉ n.sources G Λ := by
+  intro hmem
+  obtain ⟨u, hadj⟩ := Current.exists_adj_of_mem_sources G Λ n hmem
+  exact hv u hadj
+
 end Ambient
 
 end IsingModel
