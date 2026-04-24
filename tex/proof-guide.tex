@@ -5900,4 +5900,61 @@ Implemented via \texttt{Finset.sum\_nbij'}.
 File: \texttt{Inequalities/SimonLieb.lean} (branch \texttt{feat/random-current-simon-lieb-sum-bound}, PR~\#901).
 References: Glimm--Jaffe \S5.1~(pp.~73--74); Friedli--Velenik \S3.7.3.
 
+%=======================================================
+\subsection*{PR \#902 --- Infinite-Volume Susceptibility Bound (GJ~\S5.1 / FV~\S3.7.3)}
+%-------------------------------------------------------
+
+\begin{lemma}[\texttt{edgeFilter\_card\_eq\_degree}; private]
+  For a simple graph $G$ on a finite vertex type $V$ and any vertex $v$,
+  the number of edges of $G$ incident to $v$ (counted as a Finset filter over
+  the subtype $G.\mathrm{edgeSet}$) equals $G.\deg(v)$.
+\end{lemma}
+\begin{proof}
+  Bijection with $G.\mathrm{incidenceFinset}(v)$ via $e \mapsto e.\mathrm{val}$,
+  using \texttt{SimpleGraph.edge\_mem\_incidenceSet\_iff}
+  and \texttt{card\_incidenceFinset\_eq\_degree}.
+\end{proof}
+
+\begin{theorem}[\texttt{susceptibilityΛ\_le\_of\_high\_temp}; GJ~\S5.1 / FV~\S3.7.3]
+  For $h=0$, $0\le\beta J$, $D$ bounding the incident-edge count, $\beta J D<1$:
+  $\chi_\Lambda(i) = \sum_{j\in\Lambda}\langle\sigma_i\sigma_j\rangle_\Lambda \le \beta J D/(1-\beta J D)$.
+\end{theorem}
+\begin{proof}
+  By \texttt{truncated2\_h\_zero}: $U_2(i,j)=\langle\sigma_i\sigma_j\rangle$ at $h=0$.
+  By \texttt{magnetization\_zero\_at\_h\_zero}: diagonal term $\langle\sigma_i\sigma_i\rangle=0$.
+  By \texttt{Finset.sum\_filter\_add\_sum\_filter\_not}: split sum.
+  Off-diagonal sum $\le \beta J D/(1-\beta J D)$ by
+  \texttt{correlation\_sum\_le\_of\_high\_temp} (PR~\#901).
+\end{proof}
+
+\begin{theorem}[\texttt{susceptibilityAlongExhaustion\_le\_of\_high\_temp}]
+  Per-stage bound: for each $n$,
+  $\chi_{\Lambda_n}(i) \le \beta J D/(1-\beta J D)$.
+\end{theorem}
+\begin{proof}
+  If $i\in\Lambda_n$: apply above; else $0 \le \text{bound}$.
+\end{proof}
+
+\begin{theorem}[\texttt{susceptibilityInfinite\_le\_of\_high\_temp}]
+  $\chi_\infty(i) = \sup_n\chi_{\Lambda_n}(i) \le \beta J D/(1-\beta J D)$.
+\end{theorem}
+\begin{proof}
+  \texttt{ciSup\_le} from the per-stage bound.
+\end{proof}
+
+\begin{theorem}[\texttt{susceptibilityInfinite\_latticeGraph\_le\_of\_high\_temp};
+  ℤ^d concrete]
+  For the $d$-dimensional lattice graph, $0\le\beta J$, $\beta J\cdot 2d<1$:
+  $\chi_\infty(i) \le \beta J\cdot 2d/(1-\beta J\cdot 2d)$.
+\end{theorem}
+\begin{proof}
+  Apply the abstract theorem with $D=2d$;
+  degree bound from \texttt{edgeFilter\_card\_eq\_degree}
+  $+$ \texttt{inducedLatticeGraph\_degree\_le}.
+\end{proof}
+
+\noindent\textit{Status}: All lemmas fully proved. No sorry.
+File: \texttt{Inequalities/HighTemp.lean} (branch \texttt{feat/random-current-susceptibility-high-temp}, PR~\#902).
+References: Glimm--Jaffe \S5.1~(pp.~73--74); Friedli--Velenik \S3.7.3.
+
 \end{document}
