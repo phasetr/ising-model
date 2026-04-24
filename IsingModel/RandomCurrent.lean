@@ -3380,6 +3380,41 @@ theorem Current.sum_parity_eq_zero
   rw [show (2 : ZMod 2) = 0 from by decide]
   ring
 
+omit [DecidableEq V] in
+set_option linter.unusedDecidableInType false in
+/-- **Indicator cast to `ZMod 2` equals parity**: since `parity v`
+takes values only in `{0, 1} ⊆ ZMod 2`, the ℕ-valued indicator
+`if parity v ≠ 0 then 1 else 0` casts back to `parity v`. -/
+theorem Current.cast_indicator_parity
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) (v : ↑Λ) :
+    ((if n.parity G Λ v ≠ 0 then 1 else 0 : ℕ) : ZMod 2) = n.parity G Λ v := by
+  generalize n.parity G Λ v = p
+  fin_cases p <;> decide
+
+omit [DecidableEq V] in
+set_option linter.unusedDecidableInType false in
+/-- **Source set has even cardinality**: `|(∂n)|` is always even.
+Derived from `sum_parity_eq_zero` by casting the filter-card formula
+through `ZMod 2`: `|sources| ≡ ∑_v parity v = 0 (mod 2)`.
+This is the switching-lemma prerequisite; Aizenman's argument reduces
+to the 2-source case `∂n = {i, j}`, which requires `|∂n|` even. -/
+theorem Current.sources_card_even
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) :
+    Even (n.sources G Λ).card := by
+  have h : ((n.sources G Λ).card : ZMod 2) = 0 := by
+    calc ((n.sources G Λ).card : ZMod 2)
+        = ∑ v : ↑Λ, n.parity G Λ v := by
+          rw [Current.sources, Finset.card_filter, Nat.cast_sum]
+          apply Finset.sum_congr rfl
+          intro v _
+          exact Current.cast_indicator_parity G Λ n v
+      _ = 0 := Current.sum_parity_eq_zero G Λ n
+  exact ZMod.natCast_eq_zero_iff_even.mp h
+
 end Ambient
 
 end IsingModel
