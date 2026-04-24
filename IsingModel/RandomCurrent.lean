@@ -1,5 +1,6 @@
 import IsingModel.AmbientLattice
 import Mathlib.Analysis.SpecialFunctions.Exponential
+import Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite
 
 /-!
 # Random current foundation (GJ §5.1 Simon-Lieb attempt, step 1)
@@ -3446,6 +3447,111 @@ theorem Current.mem_toSimpleGraph_support_of_mem_sources
   rw [SimpleGraph.mem_support]
   obtain ⟨u, hu⟩ := Current.exists_adj_of_mem_sources G Λ n hv
   exact ⟨u, (Current.toSimpleGraph_adj_iff G Λ n v u).mpr (Current.Adj_symm G Λ n hu)⟩
+
+omit [DecidableEq V] in
+set_option linter.unusedDecidableInType false in
+/-- **Local ZMod 2 handshake for closed Finsets**: for any `R : Finset ↑Λ`
+that is closed under active-edge adjacency (v ∈ R and e ∈ n.support with
+v ∈ e forces the other endpoint w into R), the sum of parities over R
+is zero in `ZMod 2`. Each active edge contributes `|R ∩ e| ∈ {0, 2}`
+to the ℕ-valued sum, making it even. The reachable set from any vertex
+is the canonical closed Finset; applied there, this gives the switching
+lemma prerequisite. -/
+theorem Current.sum_parity_closed_eq_zero
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) {R : Finset ↑Λ}
+    (hclosed : ∀ v ∈ R, ∀ w : ↑Λ, n.Adj G Λ v w → w ∈ R) :
+    ∑ v ∈ R, n.parity G Λ v = 0 := by
+  classical
+  simp only [Current.parity_eq_degreeAt, ← Nat.cast_sum]
+  rw [ZMod.natCast_eq_zero_iff_even, even_iff_two_dvd]
+  unfold Current.degreeAt
+  rw [Finset.sum_comm]
+  apply Finset.dvd_sum
+  intro e _
+  rw [← Finset.sum_filter, Finset.sum_const, smul_eq_mul]
+  rcases eq_or_ne (n e) 0 with he0 | he0
+  · simp [he0]
+  · have hesupp : e ∈ n.support G Λ := (Current.mem_support_iff G Λ n e).mpr he0
+    have hle2 : (R.filter (fun v => v ∈ (e : Sym2 ↑Λ))).card ≤ 2 := by
+      apply (Finset.card_le_card _).trans
+          (Current.edgeSet_toFinset_card_eq_two G Λ e).le
+      intro v hv; exact Sym2.mem_toFinset.mpr (Finset.mem_filter.mp hv).2
+    have hne1 : (R.filter (fun v => v ∈ (e : Sym2 ↑Λ))).card ≠ 1 := by
+      intro h1
+      obtain ⟨a, ha⟩ := Finset.card_eq_one.mp h1
+      have hafilter : a ∈ R.filter (fun v => v ∈ (e : Sym2 ↑Λ)) :=
+        ha ▸ Finset.mem_singleton_self a
+      obtain ⟨haR, hae⟩ := Finset.mem_filter.mp hafilter
+      set b := Sym2.Mem.other hae
+      have hbmem : b ∈ (e : Sym2 ↑Λ) := Sym2.other_mem hae
+      have hab : b ≠ a :=
+        Sym2.other_ne (SimpleGraph.not_isDiag_of_mem_edgeSet _ e.2) hae
+      have hadj : n.Adj G Λ a b := ⟨hab.symm, e, hesupp, hae, hbmem⟩
+      have hbR : b ∈ R := hclosed a haR b hadj
+      exact hab (Finset.mem_singleton.mp
+        (ha ▸ Finset.mem_filter.mpr ⟨hbR, hbmem⟩))
+    rcases Nat.eq_zero_or_pos (R.filter (fun v => v ∈ (e : Sym2 ↑Λ))).card with h | h
+    · rw [h, zero_mul]; exact dvd_zero 2
+    · rw [show (R.filter (fun v => v ∈ (e : Sym2 ↑Λ))).card = 2 from by omega]
+      exact dvd_mul_right 2 _
+
+omit [DecidableEq V] in
+set_option linter.unusedDecidableInType false in
+/-- **2-source currents have connected sources**: if
+`n.sources G Λ = {i, j}` with `i ≠ j`, then
+`(n.toSimpleGraph G Λ).Reachable i j`. Proof: the reachable set R
+from i is closed under active-edge adjacency; by `sum_parity_closed_eq_zero`,
+`|sources ∩ R|` is even; since `i ∈ sources ∩ R`, `|sources ∩ R| ≥ 2`,
+forcing `j ∈ R`. This is the key switching-lemma prerequisite for
+Aizenman's 2-source reduction and the Simon-Lieb inequality. -/
+theorem Current.sources_reachable_of_sources_eq_pair
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) {i j : ↑Λ} (hne : i ≠ j)
+    (h : n.sources G Λ = {i, j}) :
+    (n.toSimpleGraph G Λ).Reachable i j := by
+  classical
+  -- R = reachable set from i (classical Finset)
+  let R : Finset ↑Λ := Finset.univ.filter (fun v => (n.toSimpleGraph G Λ).Reachable i v)
+  -- R is closed under active-edge adjacency
+  have hclosed : ∀ v ∈ R, ∀ w : ↑Λ, n.Adj G Λ v w → w ∈ R := by
+    intro v hv w hadj
+    simp only [R, Finset.mem_filter, Finset.mem_univ, true_and] at hv ⊢
+    exact hv.trans ((Current.toSimpleGraph_adj_iff G Λ n v w).mpr hadj).reachable
+  -- Local handshake: (sources ∩ R).card ≡ 0 (mod 2)
+  have heven : ((n.sources G Λ ∩ R).card : ZMod 2) = 0 := by
+    have hsum := Current.sum_parity_closed_eq_zero G Λ n hclosed
+    have hinter : n.sources G Λ ∩ R = R.filter (· ∈ n.sources G Λ) := by
+      ext v; simp [Finset.mem_inter, Finset.mem_filter, and_comm]
+    calc ((n.sources G Λ ∩ R).card : ZMod 2)
+        = ∑ v ∈ R, n.parity G Λ v := by
+          rw [hinter, Finset.card_filter, Nat.cast_sum]
+          apply Finset.sum_congr rfl
+          intro v _
+          have : (if v ∈ n.sources G Λ then (1 : ℕ) else 0) =
+                 if n.parity G Λ v ≠ 0 then 1 else 0 := by simp [Current.mem_sources_iff]
+          rw [this]; exact Current.cast_indicator_parity G Λ n v
+      _ = 0 := hsum
+  -- i ∈ sources ∩ R
+  have hi : i ∈ n.sources G Λ ∩ R := by
+    refine Finset.mem_inter.mpr ⟨?_, ?_⟩
+    · exact h ▸ Finset.mem_insert_self i {j}
+    · exact Finset.mem_filter.mpr ⟨Finset.mem_univ _, SimpleGraph.Reachable.rfl⟩
+  -- |sources ∩ R| ≥ 2
+  have hge2 : 2 ≤ (n.sources G Λ ∩ R).card := by
+    obtain ⟨k, hk⟩ := ZMod.natCast_eq_zero_iff_even.mp heven
+    have hpos : 0 < (n.sources G Λ ∩ R).card := Finset.card_pos.mpr ⟨i, hi⟩
+    omega
+  -- sources ∩ R = {i, j}
+  have hboth : n.sources G Λ ∩ R = {i, j} :=
+    Finset.eq_of_subset_of_card_le
+      (fun v hv => by have hvsrc := (Finset.mem_inter.mp hv).1; rwa [h] at hvsrc)
+      (by rw [Finset.card_pair hne]; exact hge2)
+  -- j ∈ R → Reachable i j
+  have hjSR : j ∈ n.sources G Λ ∩ R := by rw [hboth]; simp
+  exact (Finset.mem_filter.mp (Finset.mem_inter.mp hjSR).2).2
 
 end Ambient
 
