@@ -3415,6 +3415,38 @@ theorem Current.sources_card_even
       _ = 0 := Current.sum_parity_eq_zero G Λ n
   exact ZMod.natCast_eq_zero_iff_even.mp h
 
+omit [DecidableEq V] in
+set_option linter.unusedDecidableInType false in
+/-- **`Current.Adj` is decidable**: a noncomputable `DecidableRel`
+instance for `n.Adj G Λ` via `Classical.propDecidable`. Since
+`n.support` is noncomputable, the instance is classical rather than
+constructive; it is still logically valid and unlocks mathlib's finite
+`SimpleGraph` API — `neighborFinset`, `degree`, `edgeFinset`, and the
+`Reachable` decision procedure — for `Current.toSimpleGraph`. -/
+noncomputable instance Current.instDecidableAdj
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) : DecidableRel (n.Adj G Λ) := fun u v => by
+  unfold Current.Adj
+  exact Classical.propDecidable _
+
+omit [DecidableEq V] in
+set_option linter.unusedDecidableInType false in
+/-- **Source vertices lie in `toSimpleGraph.support`**: if
+`v ∈ n.sources G Λ`, then `v ∈ (n.toSimpleGraph G Λ).support`, i.e.
+`v` has at least one neighbour in `n.toSimpleGraph`.
+`SimpleGraph.support G = {v | ∃ w, G.Adj v w}` requires no `Fintype`
+or `DecidableRel`. This follows from `exists_adj_of_mem_sources`
+(step 94) plus `toSimpleGraph_adj_iff`. -/
+theorem Current.mem_toSimpleGraph_support_of_mem_sources
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) {v : ↑Λ} (hv : v ∈ n.sources G Λ) :
+    v ∈ (n.toSimpleGraph G Λ).support := by
+  rw [SimpleGraph.mem_support]
+  obtain ⟨u, hu⟩ := Current.exists_adj_of_mem_sources G Λ n hv
+  exact ⟨u, (Current.toSimpleGraph_adj_iff G Λ n v u).mpr (Current.Adj_symm G Λ n hu)⟩
+
 end Ambient
 
 end IsingModel
