@@ -2938,6 +2938,67 @@ theorem Current.sum_pairFinset_with_sources_weight_mul_weight_le
     (Current.sum_subFinset_with_source_jointFactor_le_pow_two G Λ n A)
     (Current.weight_nonneg G Λ hβJ n)
 
+set_option linter.unusedDecidableInType false in
+/-- **Source-conditioned pair-Finset swap image identity**:
+`(pairFinset_with_sources n A B).image Prod.swap = pairFinset_with_sources n B A`.
+By `add_comm` on the pair sum and swap of sources A ↔ B. The
+source-conditioned analog of PR #874's `pairFinset_image_swap_eq_self`. -/
+theorem Current.pairFinset_with_sources_image_swap_eq
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) (A B : Finset ↑Λ) :
+    (Current.pairFinset_with_sources G Λ n A B).image Prod.swap
+      = Current.pairFinset_with_sources G Λ n B A := by
+  ext p
+  rw [Finset.mem_image, Current.mem_pairFinset_with_sources_iff]
+  constructor
+  · rintro ⟨q, hq, rfl⟩
+    rw [Current.mem_pairFinset_with_sources_iff] at hq
+    obtain ⟨hsum, hA, hB⟩ := hq
+    refine ⟨?_, hB, hA⟩
+    change q.2 + q.1 = n
+    rw [add_comm]; exact hsum
+  · rintro ⟨hsum, hB, hA⟩
+    refine ⟨p.swap, ?_, ?_⟩
+    · rw [Current.mem_pairFinset_with_sources_iff]
+      refine ⟨?_, hA, hB⟩
+      change p.2 + p.1 = n
+      rw [add_comm]; exact hsum
+    · exact Prod.swap_swap p
+
+set_option linter.unusedDecidableInType false in
+/-- **Source-conditioned pair-Finset sum swap invariance**:
+`∑ p ∈ pairFinset_with_sources n A B, f p
+  = ∑ p ∈ pairFinset_with_sources n B A, f p.swap`.
+By the swap image identity + `Finset.sum_image` on the involutive
+`Prod.swap`. -/
+theorem Current.sum_pairFinset_with_sources_image_swap_eq
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) (A B : Finset ↑Λ)
+    (f : Current G Λ × Current G Λ → ℝ) :
+    ∑ p ∈ Current.pairFinset_with_sources G Λ n A B, f p
+      = ∑ p ∈ Current.pairFinset_with_sources G Λ n B A, f p.swap := by
+  rw [← Current.pairFinset_with_sources_image_swap_eq G Λ n A B]
+  rw [Finset.sum_image]
+  · simp [Prod.swap_swap]
+  · intro a _ b _ h
+    exact (Prod.swap_injective h)
+
+set_option linter.unusedDecidableInType false in
+/-- **Source-conditioned pair-Finset card symmetry in (A, B)**:
+`(pairFinset_with_sources n A B).card = (pairFinset_with_sources n B A).card`.
+By the swap image identity + `Finset.card_image_of_injective` on the
+injective `Prod.swap`. -/
+theorem Current.pairFinset_with_sources_card_eq_swap
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) (A B : Finset ↑Λ) :
+    (Current.pairFinset_with_sources G Λ n A B).card
+      = (Current.pairFinset_with_sources G Λ n B A).card := by
+  rw [← Current.pairFinset_with_sources_image_swap_eq G Λ n A B]
+  exact (Finset.card_image_of_injective _ Prod.swap_injective).symm
+
 end Ambient
 
 end IsingModel
