@@ -2465,13 +2465,13 @@ theorem Current.pairFinset_zero (G : SimpleGraph V) (Λ : Finset V)
       ext e
       have h := congrFun hsum e
       simp only [Pi.add_apply, Pi.zero_apply] at h
-      show p.1 e = 0
+      change p.1 e = 0
       omega
     have hp2 : p.2 = 0 := by
       ext e
       have h := congrFun hsum e
       simp only [Pi.add_apply, Pi.zero_apply] at h
-      show p.2 e = 0
+      change p.2 e = 0
       omega
     rw [Prod.ext_iff]
     exact ⟨hp1, hp2⟩
@@ -2486,7 +2486,7 @@ theorem Current.sub_sub_self_of_le (G : SimpleGraph V) (Λ : Finset V)
     {n m : Current G Λ} (h : m ≤ n) :
     n - (n - m) = m := by
   ext e
-  show n e - (n e - m e) = m e
+  change n e - (n e - m e) = m e
   exact Nat.sub_sub_self (h e)
 
 set_option linter.unusedDecidableInType false in
@@ -2529,13 +2529,13 @@ theorem Current.pairFinset_image_swap_eq_self
   · rintro ⟨q, hq, rfl⟩
     rw [Current.mem_pairFinset_iff] at hq
     rw [Current.mem_pairFinset_iff]
-    show q.2 + q.1 = n
+    change q.2 + q.1 = n
     rw [add_comm]; exact hq
   · intro hp
     rw [Current.mem_pairFinset_iff] at hp
     refine ⟨p.swap, ?_, ?_⟩
     · rw [Current.mem_pairFinset_iff]
-      show p.2 + p.1 = n
+      change p.2 + p.1 = n
       rw [add_comm]; exact hp
     · exact Prod.swap_swap p
 
@@ -2546,6 +2546,56 @@ theorem Current.pairFinset_nonempty (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] (n : Current G Λ) :
     (Current.pairFinset G Λ n).Nonempty :=
   ⟨(n, 0), Current.self_mem_pairFinset G Λ n⟩
+
+omit [DecidableEq V] in
+/-- **`jointFactor m (n - m) = ∏ e, C(n e, m e)`** for `m ≤ n`:
+since `m + (n - m) = n` pointwise, the binomial argument simplifies. -/
+theorem Current.jointFactor_compl_eq_prod_choose
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {n m : Current G Λ} (h : m ≤ n) :
+    Current.jointFactor G Λ m (n - m)
+      = ∏ e : (inducedGraph G Λ).edgeSet, (Nat.choose (n e) (m e) : ℝ) := by
+  unfold Current.jointFactor
+  refine Finset.prod_congr rfl (fun e _ => ?_)
+  congr 2
+  change m e + (n - m) e = n e
+  rw [Current.sub_apply]
+  exact Nat.add_sub_cancel' (h e)
+
+set_option linter.unusedDecidableInType false in
+/-- **Closed-form sum `∑ m ∈ subFinset n, jointFactor m (n - m) = 2^(∑ e, n e)`**:
+combine `jointFactor_compl_eq_prod_choose` (per-summand simplification)
+with Fubini (`Finset.prod_univ_sum`) and the binomial-row identity
+`Nat.sum_range_choose : ∑ k ∈ range (n + 1), C(n, k) = 2^n`, then
+`Finset.prod_pow_eq_pow_sum` to reassemble `∏ e, 2^(n e) = 2^(∑ e, n e)`.
+The closed form completing PR #869's pair-weight scaling identity. -/
+theorem Current.sum_subFinset_jointFactor_compl_eq_pow_two
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (n : Current G Λ) :
+    ∑ m ∈ Current.subFinset G Λ n, Current.jointFactor G Λ m (n - m)
+      = (2 : ℝ) ^ (∑ e : (inducedGraph G Λ).edgeSet, n e) := by
+  have step1 : ∑ m ∈ Current.subFinset G Λ n, Current.jointFactor G Λ m (n - m)
+      = ∑ m ∈ Current.subFinset G Λ n,
+          ∏ e : (inducedGraph G Λ).edgeSet, (Nat.choose (n e) (m e) : ℝ) := by
+    refine Finset.sum_congr rfl (fun m hm => ?_)
+    rw [Current.mem_subFinset_iff] at hm
+    exact Current.jointFactor_compl_eq_prod_choose G Λ hm
+  rw [step1]
+  unfold Current.subFinset
+  have fubini :
+      ∏ e : (inducedGraph G Λ).edgeSet,
+          ∑ k ∈ Finset.range (n e + 1), ((n e).choose k : ℝ)
+        = ∑ m ∈ Fintype.piFinset (fun e => Finset.range (n e + 1)),
+            ∏ e : (inducedGraph G Λ).edgeSet, ((n e).choose (m e) : ℝ) :=
+    Finset.prod_univ_sum _ _
+  rw [← fubini]
+  trans ∏ e : (inducedGraph G Λ).edgeSet, (2 : ℝ) ^ n e
+  · refine Finset.prod_congr rfl (fun e _ => ?_)
+    rw [← Nat.cast_sum, Nat.sum_range_choose]
+    push_cast
+    rfl
+  · exact Finset.prod_pow_eq_pow_sum _ _ _
 
 end Ambient
 
