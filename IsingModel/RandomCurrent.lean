@@ -2664,6 +2664,42 @@ theorem Current.pairFinset_with_sources_eq_empty_of_sources_mismatch
   change p.2.sources G Λ = B at hB
   rw [show n = p.1 + p.2 from hsum.symm, Current.add_sources_eq, hA, hB]
 
+/-- **Source-conditioned subFinset**: `(subFinset n).filter (fun m => m.HasSources A)`.
+The dual to `pairFinset_with_sources` (PR #877) via the pair-bijection
+`m ↦ (m, n - m)` (PR #868). -/
+noncomputable def Current.subFinset_with_source
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) (A : Finset ↑Λ) :
+    Finset (Current G Λ) := by
+  classical
+  exact (Current.subFinset G Λ n).filter (fun m => m.HasSources G Λ A)
+
+set_option linter.unusedDecidableInType false in
+/-- **Membership in `subFinset_with_source`**:
+`m ∈ subFinset_with_source n A ↔ m ≤ n ∧ m.HasSources A`. -/
+theorem Current.mem_subFinset_with_source_iff
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) (A : Finset ↑Λ) (m : Current G Λ) :
+    m ∈ Current.subFinset_with_source G Λ n A
+      ↔ m ≤ n ∧ m.HasSources G Λ A := by
+  classical
+  unfold Current.subFinset_with_source
+  simp only [Finset.mem_filter, Current.mem_subFinset_iff]
+
+set_option linter.unusedDecidableInType false in
+/-- **`subFinset_with_source` is a subset of `subFinset`**: by definition
+as a filter. -/
+theorem Current.subFinset_with_source_subset
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) (A : Finset ↑Λ) :
+    Current.subFinset_with_source G Λ n A ⊆ Current.subFinset G Λ n := by
+  classical
+  unfold Current.subFinset_with_source
+  exact Finset.filter_subset _ _
+
 end Ambient
 
 end IsingModel
