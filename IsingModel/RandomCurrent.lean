@@ -2700,6 +2700,67 @@ theorem Current.subFinset_with_source_subset
   unfold Current.subFinset_with_source
   exact Finset.filter_subset _ _
 
+set_option linter.unusedDecidableInType false in
+/-- **Bridge: `pairFinset_with_sources` is the image of `subFinset_with_source`
+under `m ↦ (m, n - m)`** (when sources XOR matches): if
+`symmDiff (sources n) A = B`, then `pairFinset_with_sources n A B
+= (subFinset_with_source n A).image (fun m => (m, n - m))`.
+Combines pair-bijection (PR #868), `sub_add_cancel_of_le` (PR #867),
+`sub_sources_eq_symmDiff` (PR #870). -/
+theorem Current.pairFinset_with_sources_eq_image_subFinset_with_source
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) (A B : Finset ↑Λ)
+    (hAB : symmDiff (n.sources G Λ) A = B) :
+    Current.pairFinset_with_sources G Λ n A B
+      = (Current.subFinset_with_source G Λ n A).image (fun m => (m, n - m)) := by
+  ext p
+  rw [Current.mem_pairFinset_with_sources_iff, Finset.mem_image]
+  constructor
+  · rintro ⟨hsum, hA, hB⟩
+    refine ⟨p.1, ?_, ?_⟩
+    · rw [Current.mem_subFinset_with_source_iff]
+      refine ⟨?_, hA⟩
+      rw [← hsum]
+      exact Current.le_self_add_right G Λ p.1 p.2
+    · ext
+      · rfl
+      · rename_i e
+        simp only [Current.sub_apply]
+        have heq : p.1 e + p.2 e = n e := by
+          have h := congrFun hsum e
+          simpa [Pi.add_apply] using h
+        omega
+  · rintro ⟨m, hm, rfl⟩
+    rw [Current.mem_subFinset_with_source_iff] at hm
+    obtain ⟨hle, hsrc⟩ := hm
+    refine ⟨Current.add_sub_cancel_of_le G Λ hle, hsrc, ?_⟩
+    -- Goal: (n - m).HasSources G Λ B
+    rw [Current.sub_hasSources_iff G Λ hle]
+    change m.sources G Λ = A at hsrc
+    rw [hsrc]
+    exact hAB
+
+set_option linter.unusedDecidableInType false in
+/-- **Sum reindexing for source-conditioned pair-Finset**:
+when `symmDiff (sources n) A = B`,
+`∑ p ∈ pairFinset_with_sources n A B, f p
+  = ∑ m ∈ subFinset_with_source n A, f (m, n - m)`.
+By the image identity (`pairFinset_with_sources_eq_image_subFinset_with_source`)
++ `Finset.sum_image` on the injective map. -/
+theorem Current.sum_pairFinset_with_sources_eq_sum_subFinset_with_source
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) (A B : Finset ↑Λ)
+    (hAB : symmDiff (n.sources G Λ) A = B)
+    (f : Current G Λ × Current G Λ → ℝ) :
+    ∑ p ∈ Current.pairFinset_with_sources G Λ n A B, f p
+      = ∑ m ∈ Current.subFinset_with_source G Λ n A, f (m, n - m) := by
+  rw [Current.pairFinset_with_sources_eq_image_subFinset_with_source G Λ n A B hAB]
+  rw [Finset.sum_image]
+  intro m₁ _ m₂ _ h
+  exact congrArg Prod.fst h
+
 end Ambient
 
 end IsingModel
