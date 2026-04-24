@@ -3256,6 +3256,66 @@ theorem Current.supportAt_nonempty_of_mem_sources
   obtain ⟨e, he_supp, hve⟩ := Current.exists_support_edge_of_mem_sources G Λ n hv
   exact ⟨e, (Current.mem_supportAt_iff G Λ n v e).mpr ⟨he_supp, hve⟩⟩
 
+omit [DecidableEq V] in
+set_option linter.unusedDecidableInType false in
+/-- **`degreeAt` equals the sum of `n` over `supportAt`**: the
+ℕ-valued total incident degree is recovered by summing `n e` over
+the Finset of active incident edges at `v`. The definitional
+expression over all edges with an `if`-guard contracts to the
+support-restricted sum, since edges contributing zero (either not
+incident to `v` or with `n e = 0`) vanish. -/
+theorem Current.degreeAt_eq_sum_supportAt
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) (v : ↑Λ) :
+    n.degreeAt G Λ v = ∑ e ∈ n.supportAt G Λ v, n e := by
+  classical
+  unfold Current.degreeAt
+  rw [← Finset.sum_filter]
+  symm
+  apply Finset.sum_subset
+  · intro e he
+    rw [Current.mem_supportAt_iff] at he
+    exact Finset.mem_filter.mpr ⟨Finset.mem_univ _, he.2⟩
+  · intro e he he'
+    rw [Finset.mem_filter] at he
+    rw [Current.mem_supportAt_iff] at he'
+    push Not at he'
+    by_contra hne
+    exact he' ((Current.mem_support_iff G Λ n e).mpr hne) he.2
+
+omit [DecidableEq V] in
+set_option linter.unusedDecidableInType false in
+/-- **`supportAt` cardinality is bounded by `degreeAt`**: each
+active incident edge contributes at least `1` to `n.degreeAt v`
+(since `n e ≠ 0` on the support gives `n e ≥ 1` in ℕ), so the
+edge count is at most the total degree. -/
+theorem Current.card_supportAt_le_degreeAt
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) (v : ↑Λ) :
+    (n.supportAt G Λ v).card ≤ n.degreeAt G Λ v := by
+  rw [Current.degreeAt_eq_sum_supportAt, Finset.card_eq_sum_ones]
+  apply Finset.sum_le_sum
+  intro e he
+  rw [Current.mem_supportAt_iff, Current.mem_support_iff] at he
+  exact Nat.one_le_iff_ne_zero.mpr he.1
+
+omit [DecidableEq V] in
+set_option linter.unusedDecidableInType false in
+/-- **`degreeAt` is positive at a source**: `v ∈ n.sources` forces
+at least one active incident edge (step 94), and by the
+`supportAt`↔`degreeAt` bridge the total degree is at least that
+edge's count, which is positive. -/
+theorem Current.degreeAt_pos_of_mem_sources
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) {v : ↑Λ} (hv : v ∈ n.sources G Λ) :
+    0 < n.degreeAt G Λ v := by
+  have hne := Current.supportAt_nonempty_of_mem_sources G Λ n hv
+  have hcard : 0 < (n.supportAt G Λ v).card := Finset.card_pos.mpr hne
+  exact lt_of_lt_of_le hcard (Current.card_supportAt_le_degreeAt G Λ n v)
+
 end Ambient
 
 end IsingModel
