@@ -2432,6 +2432,52 @@ theorem Current.subFinset_zero (G : SimpleGraph V) (Λ : Finset V)
     intro _
     simp
 
+set_option linter.unusedDecidableInType false in
+/-- **`(0, n) ∈ pairFinset n`**: the trivial pair `(0, n)` lies in
+the pair-Finset since `0 + n = n`. -/
+theorem Current.zero_mem_pairFinset (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (n : Current G Λ) :
+    ((0 : Current G Λ), n) ∈ Current.pairFinset G Λ n := by
+  rw [Current.mem_pairFinset_iff]
+  exact zero_add n
+
+set_option linter.unusedDecidableInType false in
+/-- **`(n, 0) ∈ pairFinset n`**: the trivial pair `(n, 0)` lies in
+the pair-Finset since `n + 0 = n`. -/
+theorem Current.self_mem_pairFinset (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (n : Current G Λ) :
+    (n, (0 : Current G Λ)) ∈ Current.pairFinset G Λ n := by
+  rw [Current.mem_pairFinset_iff]
+  exact add_zero n
+
+set_option linter.unusedDecidableInType false in
+/-- **`pairFinset 0 = {(0, 0)}`**: the only pair `(n₁, n₂)` summing
+to `0` is `(0, 0)`, since both components must vanish. -/
+theorem Current.pairFinset_zero (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] :
+    Current.pairFinset G Λ (0 : Current G Λ)
+      = {((0 : Current G Λ), (0 : Current G Λ))} := by
+  ext p
+  rw [Current.mem_pairFinset_iff, Finset.mem_singleton]
+  constructor
+  · intro hsum
+    have hp1 : p.1 = 0 := by
+      ext e
+      have h := congrFun hsum e
+      simp only [Pi.add_apply, Pi.zero_apply] at h
+      show p.1 e = 0
+      omega
+    have hp2 : p.2 = 0 := by
+      ext e
+      have h := congrFun hsum e
+      simp only [Pi.add_apply, Pi.zero_apply] at h
+      show p.2 e = 0
+      omega
+    rw [Prod.ext_iff]
+    exact ⟨hp1, hp2⟩
+  · rintro rfl
+    simp
+
 end Ambient
 
 end IsingModel
