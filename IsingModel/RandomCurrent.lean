@@ -2809,6 +2809,95 @@ theorem Current.sum_pairFinset_with_sources_weight_mul_weight_of_mismatch
   rw [Current.pairFinset_with_sources_eq_empty_of_sources_mismatch
         G Λ n A B h, Finset.sum_empty]
 
+set_option linter.unusedDecidableInType false in
+/-- **`subFinset_with_source 0 ∅ = {0}`**: the only `m ≤ 0` is `m = 0`
+(`subFinset_zero`, PR #871), and `0.sources = ∅` (`zero_sources`). -/
+theorem Current.subFinset_with_source_zero
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ] :
+    Current.subFinset_with_source G Λ (0 : Current G Λ) ∅ = {0} := by
+  classical
+  ext m
+  rw [Current.mem_subFinset_with_source_iff, Finset.mem_singleton]
+  constructor
+  · rintro ⟨hle, hsrc⟩
+    have : m ∈ Current.subFinset G Λ 0 :=
+      (Current.mem_subFinset_iff G Λ 0 m).mpr hle
+    rw [Current.subFinset_zero] at this
+    exact Finset.mem_singleton.mp this
+  · rintro rfl
+    refine ⟨?_, ?_⟩
+    · exact fun _ => Nat.zero_le _
+    · exact Current.zero_sources G Λ
+
+set_option linter.unusedDecidableInType false in
+/-- **`subFinset_with_source 0 A = ∅` for `A ≠ ∅`**: the only `m ≤ 0`
+is `m = 0`, but `0.sources = ∅ ≠ A`. -/
+theorem Current.subFinset_with_source_zero_of_nonempty
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    {A : Finset ↑Λ} (hA : A ≠ ∅) :
+    Current.subFinset_with_source G Λ (0 : Current G Λ) A = ∅ := by
+  classical
+  rw [Finset.eq_empty_iff_forall_notMem]
+  intro m hm
+  rw [Current.mem_subFinset_with_source_iff] at hm
+  obtain ⟨hle, hsrc⟩ := hm
+  apply hA
+  change m.sources G Λ = A at hsrc
+  have hmem : m ∈ Current.subFinset G Λ 0 :=
+    (Current.mem_subFinset_iff G Λ 0 m).mpr hle
+  rw [Current.subFinset_zero] at hmem
+  obtain rfl := Finset.mem_singleton.mp hmem
+  rw [Current.zero_sources] at hsrc
+  exact hsrc.symm
+
+set_option linter.unusedDecidableInType false in
+/-- **`pairFinset_with_sources 0 ∅ ∅ = {(0, 0)}`**: only `(0, 0)`
+satisfies `n₁ + n₂ = 0` and both source-free. -/
+theorem Current.pairFinset_with_sources_zero
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ] :
+    Current.pairFinset_with_sources G Λ (0 : Current G Λ) ∅ ∅
+      = {((0 : Current G Λ), (0 : Current G Λ))} := by
+  classical
+  ext p
+  rw [Current.mem_pairFinset_with_sources_iff, Finset.mem_singleton]
+  constructor
+  · rintro ⟨hsum, _, _⟩
+    have hpair : p ∈ Current.pairFinset G Λ 0 :=
+      (Current.mem_pairFinset_iff G Λ 0 p).mpr hsum
+    rw [Current.pairFinset_zero] at hpair
+    exact Finset.mem_singleton.mp hpair
+  · rintro rfl
+    refine ⟨zero_add 0, ?_, ?_⟩
+    · exact Current.zero_sources G Λ
+    · exact Current.zero_sources G Λ
+
+set_option linter.unusedDecidableInType false in
+/-- **`pairFinset_with_sources 0 A B = ∅` when `A ≠ ∅` or `B ≠ ∅`**:
+the only pair summing to `0` is `(0, 0)`, both source-free. -/
+theorem Current.pairFinset_with_sources_zero_of_nonempty
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    {A B : Finset ↑Λ} (h : A ≠ ∅ ∨ B ≠ ∅) :
+    Current.pairFinset_with_sources G Λ (0 : Current G Λ) A B = ∅ := by
+  classical
+  rw [Finset.eq_empty_iff_forall_notMem]
+  intro p hp
+  rw [Current.mem_pairFinset_with_sources_iff] at hp
+  obtain ⟨hsum, hA, hB⟩ := hp
+  change p.1.sources G Λ = A at hA
+  change p.2.sources G Λ = B at hB
+  have hpair : p ∈ Current.pairFinset G Λ 0 :=
+    (Current.mem_pairFinset_iff G Λ 0 p).mpr hsum
+  rw [Current.pairFinset_zero] at hpair
+  obtain rfl := Finset.mem_singleton.mp hpair
+  rw [Current.zero_sources] at hA hB
+  rcases h with hA' | hB'
+  · exact hA' hA.symm
+  · exact hB' hB.symm
+
 end Ambient
 
 end IsingModel
