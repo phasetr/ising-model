@@ -3316,6 +3316,70 @@ theorem Current.degreeAt_pos_of_mem_sources
   have hcard : 0 < (n.supportAt G Λ v).card := Finset.card_pos.mpr hne
   exact lt_of_lt_of_le hcard (Current.card_supportAt_le_degreeAt G Λ n v)
 
+omit [DecidableEq V] in
+set_option linter.unusedDecidableInType false in
+/-- **Edge vertex set has cardinality two**: each edge `e` in the
+`inducedGraph G Λ` edgeSet has `(e : Sym2 ↑Λ).toFinset.card = 2`,
+since edges are non-diagonal. The building block for the multigraph
+handshake identity. -/
+theorem Current.edgeSet_toFinset_card_eq_two
+    (G : SimpleGraph V) (Λ : Finset V)
+    [DecidableEq ↑Λ]
+    (e : (inducedGraph G Λ).edgeSet) :
+    (e : Sym2 ↑Λ).toFinset.card = 2 :=
+  Sym2.card_toFinset_of_not_isDiag _
+    (SimpleGraph.not_isDiag_of_mem_edgeSet _ e.2)
+
+omit [DecidableEq V] in
+set_option linter.unusedDecidableInType false in
+/-- **Multigraph handshake identity**: `∑_v n.degreeAt v
+= 2 * ∑_e n e`. Each edge of multiplicity `n e` contributes to the
+degree of its two endpoints, so the vertex-side total degree is
+exactly twice the edge-side total multiplicity. Specialization of
+`Current.sum_degreeAt_smul` at `M := ℕ`, `f := fun _ => 1`, combined
+with `edgeSet_toFinset_card_eq_two`. -/
+theorem Current.sum_degreeAt_eq_two_mul_total
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) :
+    ∑ v : ↑Λ, n.degreeAt G Λ v
+      = 2 * ∑ e : (inducedGraph G Λ).edgeSet, n e := by
+  classical
+  unfold Current.degreeAt
+  rw [Finset.sum_comm]
+  have key : ∀ (e : (inducedGraph G Λ).edgeSet),
+      (∑ v : ↑Λ, if v ∈ (e : Sym2 ↑Λ) then n e else 0) = 2 * n e := by
+    intro e
+    rw [← Finset.sum_filter, Finset.sum_const, smul_eq_mul]
+    congr 1
+    have hfilter : ((Finset.univ : Finset ↑Λ).filter
+        (fun v => v ∈ (e : Sym2 ↑Λ)))
+          = (e : Sym2 ↑Λ).toFinset := by
+      ext v
+      simp [Sym2.mem_toFinset]
+    rw [hfilter]
+    exact Current.edgeSet_toFinset_card_eq_two G Λ e
+  simp_rw [key]
+  rw [← Finset.mul_sum]
+
+omit [DecidableEq V] in
+set_option linter.unusedDecidableInType false in
+/-- **Sum of parities over all vertices is zero in `ZMod 2`**: an
+immediate `ZMod 2` consequence of the handshake identity, since
+`2 * X` casts to zero. This is the mod-2 form of "the number of
+odd-degree vertices is even", used in the next step to establish
+`Even (sources).card` (switching-lemma prerequisite). -/
+theorem Current.sum_parity_eq_zero
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) :
+    ∑ v : ↑Λ, n.parity G Λ v = (0 : ZMod 2) := by
+  simp only [Current.parity_eq_degreeAt]
+  rw [← Nat.cast_sum, Current.sum_degreeAt_eq_two_mul_total]
+  push_cast
+  rw [show (2 : ZMod 2) = 0 from by decide]
+  ring
+
 end Ambient
 
 end IsingModel
