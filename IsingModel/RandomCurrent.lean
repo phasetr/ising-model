@@ -3617,6 +3617,60 @@ theorem Current.weight_le_mul_pred_edge
     div_le_self hβJ (by exact_mod_cast he)
   exact mul_le_mul_of_nonneg_right hle (Current.weight_nonneg G Λ hβJ _)
 
+omit [DecidableEq V] in
+set_option linter.unusedDecidableInType false in
+/-- **Bridge lemma — sources after edge subtraction**: subtracting
+`fromEdgeFinset {e₀}` from a current `n` with `0 < n e₀` transforms
+sources by symmetric difference with the two endpoints of `e₀`:
+`(n - 1_{e₀}).sources = symmDiff (n.sources) (e₀.toFinset)`.
+Proof: `0 < n e₀` implies `fromEdgeFinset {e₀} ≤ n` pointwise, then
+`sub_sources_eq_symmDiff` (PR #870) gives the symmDiff formula, and
+`fromEdgeFinset_singleton_sources` (PR #813) identifies the
+singleton-edge sources with the endpoint pair. Used in the edge-peeling
+step of Simon-Lieb (GJ §5.1 / FV Prop 9.31). -/
+theorem Current.sources_sub_edge_symmDiff
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) (e₀ : (inducedGraph G Λ).edgeSet) (he : 0 < n e₀) :
+    (n - Current.fromEdgeFinset G Λ {e₀}).sources G Λ =
+      symmDiff (n.sources G Λ) (e₀ : Sym2 ↑Λ).toFinset := by
+  have hle : Current.fromEdgeFinset G Λ {e₀} ≤ n := by
+    intro e
+    unfold Current.fromEdgeFinset
+    simp only [Finset.mem_singleton]
+    split_ifs with h
+    · subst h; exact he
+    · exact Nat.zero_le _
+  rw [Current.sub_sources_eq_symmDiff G Λ hle,
+      Current.fromEdgeFinset_singleton_sources]
+
+set_option linter.unusedDecidableInType false in
+/-- **Edge-peeling bound for `weightSum`**: for `i ≠ j` in `Λ` and
+`0 ≤ β * J`, the pair-source weighted sum satisfies the bound
+`weightSum G Λ {i,j} β J ≤ β*J * ∑_{e ∋ i} weightSum G Λ (symmDiff {i,j} endpoints(e)) β J`.
+This is the edge-peeling step of Simon-Lieb (GJ §5.1 / FV Prop 9.31,
+weaker version without product structure):
+for each n with sources = {i,j}, pick any active edge e₀ at i
+(`supportAt_nonempty_of_mem_sources`), then
+`weight_le_mul_pred_edge` gives `w(n) ≤ β*J * w(n-1_{e₀})` and
+`sources_sub_edge_symmDiff` gives `(n-1_{e₀}).sources = symmDiff {i,j} endpoints(e₀)`.
+The injection `n ↦ n - fromEdgeFinset {e₀}` from `{n: src={i,j}, n_{e₀}≥1}`
+to `{n': src=symmDiff {i,j} endpoints(e₀)}` then bounds each tsum term.
+The full proof proceeds by finite-sum (`CurrentBounded`) injection via
+`Finset.sum_image` + `Finset.sum_le_sum_of_subset`, followed by the
+`N → ∞` limit via `tendsto_weightSum_atTop_iSup_of_nonneg` (ℝ-valued);
+the `sorry` body encapsulates these tsum/limit steps. -/
+theorem Current.weightSum_pair_le_edge_sum
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    {i j : ↑Λ} (hij : i ≠ j) {β J : ℝ} (hβJ : 0 ≤ β * J) :
+    Current.weightSum G Λ {i, j} β J ≤
+      β * J *
+        ∑ e ∈ Finset.univ.filter
+            (fun e : (inducedGraph G Λ).edgeSet => i ∈ (e : Sym2 ↑Λ)),
+          Current.weightSum G Λ (symmDiff {i, j} (e : Sym2 ↑Λ).toFinset) β J := by
+  sorry
+
 end Ambient
 
 end IsingModel

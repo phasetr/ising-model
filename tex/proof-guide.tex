@@ -5664,4 +5664,83 @@ $\mathrm{centeredSlab}\,\mathrm{widths}\,n =
 \mathrm{shift}_{-n}\,(\mathrm{slabBrick}\,\mathrm{widths}\,(2n))$
 plus subsequence convergence at $n \mapsto 2n$.
 
+%% -------------------------------------------------------------------
+\section{Random current representation (GJ §5.1 / FV §3.7, §9.7)}
+%% -------------------------------------------------------------------
+
+\subsection{Simon--Lieb prep: source connectivity + edge peeling (PRs \#894--\#898)}
+
+Reference: Glimm--Jaffe \cite{glimm-jaffe} \S5.1 (pp.~127--130);
+Friedli--Velenik \cite{friedli-velenik} Prop.~9.31 (pp.~399--400).
+
+\paragraph{Sources have even cardinality (PR \#894, step 98).}
+
+\begin{theorem}[\texttt{Current.sources\_card\_even}]
+  For any current $n$ and $0 \le \beta J$, $|\partial n|$ is even.
+\end{theorem}
+\begin{proof}
+  Cast to $\mathbb{Z}/2\mathbb{Z}$: $|\partial n| \equiv \sum_{v \in \Lambda} \mathrm{parity}(v) \equiv 0$
+  (by the global handshake \texttt{sum\_parity\_eq\_zero}, PR \#893).
+  Even follows via \texttt{ZMod.natCast\_eq\_zero\_iff\_even}.
+\end{proof}
+
+\paragraph{Source connectivity (PR \#896, step 100).}
+
+\begin{theorem}[\texttt{Current.sources\_reachable\_of\_sources\_eq\_pair}]
+  If $\partial n = \{i, j\}$ with $i \ne j$, then $i$ and $j$ are connected
+  in the simple graph $n.\mathrm{toSimpleGraph}$.
+\end{theorem}
+\begin{proof}
+  Let $R = \{v : \mathrm{Reachable}(i, v)\}$.
+  By the local handshake within $R$ (\texttt{sum\_parity\_closed\_eq\_zero}),
+  $|\partial n \cap R|$ is even.
+  Since $i \in \partial n \cap R$ (reflexivity), $|\partial n \cap R| \ge 2$.
+  Since $|\partial n| = 2$, we get $\partial n \subseteq R$, so $j \in R$.
+\end{proof}
+
+\paragraph{Weight peeling identity (PR \#897, step 101).}
+
+\begin{theorem}[\texttt{Current.weight\_pred\_edge}]
+  For $n$ with $n_{e_0} \ge 1$:
+  \[
+    w(n) = \frac{\beta J}{n_{e_0}} \cdot w(n - \mathbf{1}_{e_0}).
+  \]
+\end{theorem}
+\begin{proof}
+  Split the weight product at $e_0$ using \texttt{Finset.mul\_prod\_erase}.
+  The key identity $\frac{(\beta J)^k}{k!} = \frac{\beta J}{k} \cdot \frac{(\beta J)^{k-1}}{(k-1)!}$
+  at $k = n_{e_0}$ is proved by \texttt{pow\_succ} + \texttt{Nat.factorial\_succ} + \texttt{field\_simp}.
+\end{proof}
+
+\paragraph{Bridge lemma (PR \#898, step 102).}
+
+\begin{theorem}[\texttt{Current.sources\_sub\_edge\_symmDiff}]
+  For $n$ with $n_{e_0} \ge 1$:
+  \[
+    \partial(n - \mathbf{1}_{e_0}) = \partial n \,\triangle\, \{u, v\}
+  \]
+  where $e_0 = \{u, v\}$.
+\end{theorem}
+\begin{proof}
+  Since $n_{e_0} \ge 1$, we have $\mathbf{1}_{e_0} \le n$ pointwise.
+  Apply \texttt{sub\_sources\_eq\_symmDiff} (PR \#870) with
+  $m = \mathbf{1}_{e_0}$, then \texttt{fromEdgeFinset\_singleton\_sources} (PR \#813).
+\end{proof}
+
+\paragraph{Edge-peeling bound for \texttt{weightSum} (PR \#898, step 102, partial).}
+
+\begin{theorem}[\texttt{Current.weightSum\_pair\_le\_edge\_sum}; GJ \S5.1 / FV Prop.~9.31]
+  For $i \ne j$ in $\Lambda$ and $0 \le \beta J$:
+  \[
+    \rho^{\Lambda}_{\{i,j\}} \;\le\; \beta J \sum_{\substack{e \in E(\Lambda) \\ i \in e}}
+      \rho^{\Lambda}_{\{i,j\} \triangle e},
+  \]
+  where $\rho^{\Lambda}_A = \sum_{\partial n = A} w(n)$.
+\end{theorem}
+\noindent\textit{Status}: Statement compiles; the body uses \texttt{sorry} pending the
+tsum injection argument (ENNReal monotone comparison + $n \mapsto n - \mathbf{1}_{e_0}$
+injection from $\{\partial n = \{i,j\}, n_{e_0} \ge 1\}$ to $\{\partial n' = \{i,j\} \triangle e_0\}$,
+combined with $N \to \infty$ limit via
+\texttt{tendsto\_weightSum\_atTop\_iSup\_of\_nonneg}).
+
 \end{document}
