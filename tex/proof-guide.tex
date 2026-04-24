@@ -5968,4 +5968,69 @@ References: Glimm--Jaffe \S5.1~(pp.~73--74); Friedli--Velenik \S3.7.3.
 File: \texttt{Inequalities/HighTemp.lean} (branch \texttt{feat/random-current-susceptibility-high-temp}, PR~\#902).
 References: Glimm--Jaffe \S5.1~(pp.~73--74); Friedli--Velenik \S3.7.3.
 
+\subsection*{PR \#903 --- High-Temperature Cluster Property (GJ~\S5.1 / FV~\S3.7.3)}
+
+Steps~107--108.  Under \(\mathrm{Ferromagnetic}\,\langle J,0,\beta\rangle\) (i.e.\
+$0\le J$, $0<\beta$) and $\beta J D < 1$:
+
+\begin{theorem}[\texttt{truncated2Infinite\_summable\_of\_high\_temp}]
+The map $j\mapsto U_2(i,j;\langle J,0,\beta\rangle)$ is summable over $V$.
+\end{theorem}
+
+\paragraph{Proof sketch.}
+Use \texttt{summable\_of\_sum\_le} with constant $\beta J D/(1-\beta J D)$.
+For any finite $s\subseteq V$, the partial sum
+$\sum_{j\in s} U_2(i,j) = \sum_{j\in s}\mathrm{correlationInfinite}(\{i,j\})$ (at $h=0$,
+by \texttt{truncated2Infinite\_h\_zero}).
+The sequence $n\mapsto \sum_{j\in s}\mathrm{correlationAlongExhaustion}(\{i,j\},n)$
+converges to this partial sum (\texttt{tendsto\_finset\_sum} +
+\texttt{tendsto\_correlationAlongExhaustion\_correlationInfinite}).
+For $n$ large enough so that $s\cup\{i\}\subseteq\Lambda_n$, the private helper
+\texttt{sum\_correlationAlongExhaustion\_le\_susceptibilityAlongExhaustion} gives
+\[
+  \textstyle\sum_{j\in s}\mathrm{correlationAlongExhaustion}(\{i,j\},n)
+  \;\le\;
+  \mathrm{susceptibilityAlongExhaustion}(i,n)
+  \;\le\; \frac{\beta J D}{1-\beta J D}.
+\]
+By \texttt{le\_of\_tendsto}, the partial sum $\sum_{j\in s} U_2(i,j)$ is bounded.
+
+\paragraph{Helper lemma.}
+\texttt{sum\_correlationAlongExhaustion\_le\_susceptibilityAlongExhaustion}:
+for $i\in\Lambda_n$ and $s\subseteq\Lambda_n$,
+$\sum_{j\in s}\mathrm{correlationAlongExhaustion}(\{i,j\},n)
+\le \mathrm{susceptibilityAlongExhaustion}(i,n)$.
+Proof: at $h=0$, each $\mathrm{correlationAlongExhaustion}(\{i,j\},n)
+= \mathrm{truncated2}(\Lambda_n)\,\langle i,h_i\rangle\,\langle j,h_j\rangle$
+(via \texttt{correlationAlongExhaustion\_of\_subset}, \texttt{correlationΛ\_apply},
+\texttt{liftFinset} pair form, \texttt{truncated2\_h\_zero}).
+After \texttt{Finset.sum\_attach} + \texttt{Finset.sum\_congr}, bound
+$\sum_{j\in s.\mathtt{attach}} \le \sum_{j':\uparrow\Lambda_n}$
+via \texttt{Finset.sum\_image} injectivity + \texttt{Finset.sum\_le\_sum\_of\_subset\_of\_nonneg}.
+
+\begin{theorem}[\texttt{clusterProperty\_of\_high\_temp}]
+Under the same hypotheses, $\mathrm{clusterProperty}\,G\,\Lambda\,\langle J,0,\beta\rangle$.
+\end{theorem}
+
+\begin{proof}
+Immediate from \texttt{truncated2Infinite\_summable\_of\_high\_temp} +
+\texttt{clusterProperty\_of\_summable}.
+\end{proof}
+
+\begin{corollary}[\texttt{clusterProperty\_latticeGraph\_of\_high\_temp}]
+For the $\mathbb{Z}^d$ lattice graph with cubic exhaustion,
+$\mathrm{Ferromagnetic}\,\langle J,0,\beta\rangle$, and $\beta J\cdot 2d < 1$:
+the high-temperature cluster property holds.
+Proof: apply with $D=2d$, using \texttt{inducedLatticeGraph\_degree\_le}.
+\end{corollary}
+
+\paragraph{Physical significance.}
+At high temperature ($\beta J \cdot 2d < 1$ on $\mathbb{Z}^d$),
+$U_2(i,j)\to 0$ as $|i-j|\to\infty$: the pure-phase cluster property holds.
+The exponential-decay rate ($U_2(i,j)\le C e^{-\alpha|i-j|}$) requires further analysis
+(GJ \S17.1, research-level).
+
+File: \texttt{Inequalities/HighTemp.lean} (branch \texttt{feat/random-current-cluster-high-temp}, PR~\#903).
+References: Glimm--Jaffe \S5.1~(pp.~72--74); Friedli--Velenik \S3.7.3.
+
 \end{document}
