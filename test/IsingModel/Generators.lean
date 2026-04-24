@@ -26,7 +26,7 @@ abbrev chainGraph2 : SimpleGraph (Fin 2) := SimpleGraph.completeGraph (Fin 2)
 
 /-- **3-site path graph**: edges {0,1} and {1,2} on `Fin 3`.
 
-Uses `SimpleGraph.fromRel` (adjacency = nonequal + related) with the
+Uses `SimpleGraph.fromRel` (adjacency = i ≠ j and related in either direction) with the
 path relation `i.val + 1 = j.val`. `DecidableRel` is derived automatically
 from the decidability of ℕ equality. -/
 def chainGraph3 : SimpleGraph (Fin 3) :=
@@ -35,10 +35,11 @@ def chainGraph3 : SimpleGraph (Fin 3) :=
 /-- **Triangle (K₃) graph**: complete graph on `Fin 3`. -/
 abbrev triangleGraph : SimpleGraph (Fin 3) := SimpleGraph.completeGraph (Fin 3)
 
-/-- **4-cycle (square) graph**: edges {0,1},{1,2},{2,3},{3,0} on `Fin 4`. -/
+/-- **4-cycle (square) graph**: edges {0,1},{1,2},{2,3},{3,0} on `Fin 4`.
+Note: `j.val ≤ 3` is redundant for `j : Fin 4` but makes the intent explicit. -/
 def squareGraph : SimpleGraph (Fin 4) :=
   SimpleGraph.fromRel (fun i j : Fin 4 =>
-    (i.val + 1 = j.val ∧ j.val ≤ 3) ∨ (i.val = 3 ∧ j.val = 0))
+    (i.val + 1 = j.val) ∨ (i.val = 3 ∧ j.val = 0))
 
 /-- **Complete graph K₄**: all pairs on `Fin 4`. -/
 abbrev k4Graph : SimpleGraph (Fin 4) := SimpleGraph.completeGraph (Fin 4)
