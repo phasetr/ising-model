@@ -3000,6 +3000,82 @@ theorem Current.pairFinset_with_sources_card_eq_swap
   rw [← Current.pairFinset_with_sources_image_swap_eq G Λ n A B]
   exact (Finset.card_image_of_injective _ Prod.swap_injective).symm
 
+set_option linter.unusedDecidableInType false in
+/-- **Switching Lemma — cardinality**: when `symmDiff (sources n) A = B`,
+the bijection `m ↦ n - m` (involution by `sub_sub_self_of_le`) maps
+`subFinset_with_source n A` bijectively to `subFinset_with_source n B`,
+hence the two source-conditioned sub-current sets have equal cardinality.
+(GJ §5.1 Theorem 5.1.2 / FV Theorem 9.35.) -/
+theorem Current.subFinset_with_source_card_switching
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) (A B : Finset ↑Λ)
+    (hAB : symmDiff (n.sources G Λ) A = B) :
+    (Current.subFinset_with_source G Λ n A).card =
+      (Current.subFinset_with_source G Λ n B).card := by
+  have hBA : symmDiff (n.sources G Λ) B = A := by
+    rw [← hAB]; exact symmDiff_symmDiff_cancel_left _ _
+  refine Finset.card_nbij' (fun m => n - m) (fun m => n - m) ?_ ?_ ?_ ?_
+  · -- forward: m ∈ subFinset_with_source n A → n-m ∈ subFinset_with_source n B
+    intro m hm
+    simp only [Finset.mem_coe, Current.mem_subFinset_with_source_iff] at hm ⊢
+    exact ⟨Current.sub_le_self G Λ n m,
+           (Current.sub_hasSources_iff G Λ hm.1 B).mpr (by rw [hm.2]; exact hAB)⟩
+  · -- backward: m ∈ subFinset_with_source n B → n-m ∈ subFinset_with_source n A
+    intro m hm
+    simp only [Finset.mem_coe, Current.mem_subFinset_with_source_iff] at hm ⊢
+    exact ⟨Current.sub_le_self G Λ n m,
+           (Current.sub_hasSources_iff G Λ hm.1 A).mpr (by rw [hm.2]; exact hBA)⟩
+  · -- left_inv: n-(n-m) = m for m ∈ subFinset_with_source n A
+    intro m hm
+    simp only [Finset.mem_coe, Current.mem_subFinset_with_source_iff] at hm
+    exact Current.sub_sub_self_of_le G Λ hm.1
+  · -- right_inv: n-(n-m) = m for m ∈ subFinset_with_source n B
+    intro m hm
+    simp only [Finset.mem_coe, Current.mem_subFinset_with_source_iff] at hm
+    exact Current.sub_sub_self_of_le G Λ hm.1
+
+set_option linter.unusedDecidableInType false in
+/-- **Switching Lemma — weighted sum**: when `symmDiff (sources n) A = B`,
+the bijection `m ↦ n - m` preserves the function `m ↦ w(m) * w(n - m)`
+(since `w(n-m) * w(n-(n-m)) = w(n-m) * w(m)` by `sub_sub_self_of_le` + `mul_comm`),
+so the weighted sums over `subFinset_with_source n A` and `subFinset_with_source n B` are equal.
+(GJ §5.1 Theorem 5.1.2 / FV Theorem 9.35.) -/
+theorem Current.sum_subFinset_with_source_weight_mul_weight_switching
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) (A B : Finset ↑Λ)
+    (hAB : symmDiff (n.sources G Λ) A = B) {β J : ℝ} :
+    ∑ m ∈ Current.subFinset_with_source G Λ n A,
+        m.weight G Λ β J * (n - m).weight G Λ β J =
+      ∑ m ∈ Current.subFinset_with_source G Λ n B,
+        m.weight G Λ β J * (n - m).weight G Λ β J := by
+  have hBA : symmDiff (n.sources G Λ) B = A := by
+    rw [← hAB]; exact symmDiff_symmDiff_cancel_left _ _
+  refine Finset.sum_nbij' (fun m => n - m) (fun m => n - m) ?_ ?_ ?_ ?_ ?_
+  · -- forward
+    intro m hm
+    rw [Current.mem_subFinset_with_source_iff] at hm ⊢
+    exact ⟨Current.sub_le_self G Λ n m,
+           (Current.sub_hasSources_iff G Λ hm.1 B).mpr (by rw [hm.2]; exact hAB)⟩
+  · -- backward
+    intro m hm
+    rw [Current.mem_subFinset_with_source_iff] at hm ⊢
+    exact ⟨Current.sub_le_self G Λ n m,
+           (Current.sub_hasSources_iff G Λ hm.1 A).mpr (by rw [hm.2]; exact hBA)⟩
+  · -- left_inv
+    intro m hm
+    exact Current.sub_sub_self_of_le G Λ
+      ((Current.mem_subFinset_with_source_iff G Λ n A m).mp hm).1
+  · -- right_inv
+    intro m hm
+    exact Current.sub_sub_self_of_le G Λ
+      ((Current.mem_subFinset_with_source_iff G Λ n B m).mp hm).1
+  · -- value: w(m)*w(n-m) = w(n-m)*w(n-(n-m)) = w(n-m)*w(m)
+    intro m hm
+    rw [Current.sub_sub_self_of_le G Λ
+        ((Current.mem_subFinset_with_source_iff G Λ n A m).mp hm).1, mul_comm]
+
 omit [DecidableEq V] in
 set_option linter.unusedDecidableInType false in
 /-- **Membership in `Current.support`**: `e ∈ n.support ↔ n e ≠ 0`.
