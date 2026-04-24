@@ -2999,6 +2999,51 @@ theorem Current.pairFinset_with_sources_card_eq_swap
   rw [← Current.pairFinset_with_sources_image_swap_eq G Λ n A B]
   exact (Finset.card_image_of_injective _ Prod.swap_injective).symm
 
+omit [DecidableEq V] in
+set_option linter.unusedDecidableInType false in
+/-- **Membership in `Current.support`**: `e ∈ n.support ↔ n e ≠ 0`.
+By definitional unfolding of `support := univ.filter (n e ≠ 0)`. -/
+theorem Current.mem_support_iff (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) (e : (inducedGraph G Λ).edgeSet) :
+    e ∈ n.support G Λ ↔ n e ≠ 0 := by
+  classical
+  unfold Current.support
+  simp [Finset.mem_filter]
+
+omit [DecidableEq V] in
+set_option linter.unusedDecidableInType false in
+/-- **Sub support is bounded by minuend support**:
+`(n - m).support ⊆ n.support`. If `(n - m) e ≠ 0` then `n e - m e > 0`
+(truncated `Nat.sub`), so `n e > m e ≥ 0`, hence `n e ≠ 0`. -/
+theorem Current.support_sub_subset (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n m : Current G Λ) :
+    (n - m).support G Λ ⊆ n.support G Λ := by
+  intro e he
+  rw [Current.mem_support_iff] at he ⊢
+  rw [Current.sub_apply] at he
+  omega
+
+omit [DecidableEq V] in
+set_option linter.unusedDecidableInType false in
+/-- **Empty support characterizes zero**: `n.support = ∅ ↔ n = 0`.
+Forward: every edge has `n e = 0` so `n = 0` by extensionality.
+Backward: `support_zero`. -/
+theorem Current.support_eq_empty_iff (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (n : Current G Λ) :
+    n.support G Λ = ∅ ↔ n = 0 := by
+  constructor
+  · intro h
+    ext e
+    have : e ∉ n.support G Λ := by rw [h]; exact Finset.notMem_empty e
+    rw [Current.mem_support_iff, not_not] at this
+    rw [this]
+    rfl
+  · rintro rfl
+    exact Current.support_zero G Λ
+
 end Ambient
 
 end IsingModel
