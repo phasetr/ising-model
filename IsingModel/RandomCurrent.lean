@@ -2354,6 +2354,37 @@ theorem Current.sum_pairFinset_weight_mul_weight
   rw [Current.weight_mul_weight_eq_weight_add_mul_jointFactor,
       Current.add_sub_cancel_of_le G Λ hm]
 
+omit [DecidableEq V] in
+set_option linter.unusedDecidableInType false in
+/-- **Sources of `n - m` is the symmetric difference under `m ≤ n`**:
+`(n - m).sources = symmDiff (sources n) (sources m)` when `m ≤ n`.
+Combine `sub_add_cancel_of_le` (PR #867: `(n - m) + m = n`) with
+`add_sources_eq` (sources of a sum is symmDiff of summand sources)
+and the involution of `symmDiff` on the right. -/
+theorem Current.sub_sources_eq_symmDiff (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    {n m : Current G Λ} (h : m ≤ n) :
+    (n - m).sources G Λ
+      = symmDiff (n.sources G Λ) (m.sources G Λ) := by
+  have h₁ : ((n - m) + m).sources G Λ
+              = symmDiff ((n - m).sources G Λ) (m.sources G Λ) :=
+    Current.add_sources_eq G Λ (n - m) m
+  rw [Current.sub_add_cancel_of_le G Λ h] at h₁
+  rw [h₁, symmDiff_assoc, symmDiff_self, symmDiff_bot]
+
+omit [DecidableEq V] in
+set_option linter.unusedDecidableInType false in
+/-- **`(n - m).HasSources A` is the symmetric-difference equation under
+`m ≤ n`**: `(n - m).HasSources A ↔ symmDiff (sources n) (sources m) = A`.
+By unfolding `HasSources` and `sub_sources_eq_symmDiff`. -/
+theorem Current.sub_hasSources_iff (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    {n m : Current G Λ} (h : m ≤ n) (A : Finset ↑Λ) :
+    (n - m).HasSources G Λ A
+      ↔ symmDiff (n.sources G Λ) (m.sources G Λ) = A := by
+  unfold Current.HasSources
+  rw [Current.sub_sources_eq_symmDiff G Λ h]
+
 end Ambient
 
 end IsingModel
