@@ -1128,6 +1128,74 @@ theorem twoPointFunction_ge_tanh_betaJ_of_adj
   exact correlationInfinite_monotone_ambient_subgraph hG_le (cubicExhaustion d)
     (⟨J, 0, β⟩ : IsingParams ℝ) hf {(0 : Fin d → ℤ), r}
 
+/-! ## §17.5 Path lower bound on the two-point function (Step 114) -/
+
+/-- From `latticeDistance d 0 r = n + 1`, find a lattice neighbor of `r` that
+is one step closer to `0`.
+
+Proof: since the ℓ¹ sum is n + 1 ≥ 1, some coordinate `i₀` has `|r i₀| ≥ 1`.
+Move `r i₀` one step toward 0 to get `v = r[i₀ ↦ r i₀ ∓ 1]`. -/
+private lemma exists_latticeDistance_succ_adj
+    (d : ℕ) (r : Fin d → ℤ) (n : ℕ)
+    (hn : IsingModel.latticeDistance d 0 r = n + 1) :
+    ∃ v : Fin d → ℤ, (IsingModel.latticeGraph d).Adj v r ∧
+      IsingModel.latticeDistance d 0 v = n := by
+  sorry
+
+/-- **boltzmannWeight** does not depend on `σ b` when `b` is isolated in `G`.
+
+Proof: Hamiltonian is a sum over edges; since `b` has no edges in `G`, changing `σ b`
+does not affect `H` or `bw`. -/
+private lemma boltzmannWeight_indep_of_isolated
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [DecidableRel G.Adj] [Fintype G.edgeSet]
+    (p : IsingParams ℝ) {b : ι} (hb : ∀ v : ι, ¬G.Adj b v)
+    (σ : IsingModel.Config ι) (s t : IsingModel.Spin) :
+    IsingModel.boltzmannWeight G p (Function.update σ b s)
+      = IsingModel.boltzmannWeight G p (Function.update σ b t) := by
+  sorry
+
+/-- **Chain marginalization** (finite graph version):
+adding edge `{a, b}` to a graph `G` where `b` is isolated multiplies `correlation {src, b}` by
+`tanh(βJ)`.
+
+Proof sketch: marginalize σ_b; `∑_{s} sign(s) exp(βJ sign(σ_a) sign(s)) = 2 sinh(βJ) sign(σ_a)`;
+`∑_{s} exp(βJ sign(σ_a) sign(s)) = 2 cosh(βJ)`; divide.
+
+Reference: GJ §17.5 pp. 304–306. -/
+private lemma correlation_chain_marginalize
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [DecidableRel G.Adj] [Fintype G.edgeSet]
+    {a b src : ι} (hab : a ≠ b) (hsrc_b : src ≠ b)
+    (hb_isolated : ∀ v : ι, ¬G.Adj b v)
+    (J β : ℝ) :
+    let G' := G ⊔ SimpleGraph.fromEdgeSet {Sym2.mk a b}
+    haveI : DecidableRel G'.Adj := fun u v => inferInstance
+    haveI : Fintype G'.edgeSet := by
+      haveI : DecidableRel G'.Adj := fun u v => inferInstance
+      exact SimpleGraph.fintypeEdgeSet G'
+    IsingModel.correlation G' (⟨J, 0, β⟩ : IsingParams ℝ) {src, b}
+      = Real.tanh (β * J) * IsingModel.correlation G (⟨J, 0, β⟩ : IsingParams ℝ) {src, a} := by
+  sorry
+
+/-- **Path lower bound on the two-point function** (GJ §17.5 pp. 304–306):
+for any `r ≠ 0` in ℤ^d, ferromagnetic `J ≥ 0`, `β > 0`, `h = 0`:
+
+`tanh(β J)^(latticeDistance d 0 r) ≤ twoPointFunction d ⟨J, 0, β⟩ r`.
+
+Proof: take a geodesic path from 0 to r (via `exists_latticeDistance_succ_adj`);
+define the path subgraph G_path ≤ latticeGraph d; compute
+`correlationInfinite G_path = tanh(βJ)^n` by chain marginalization induction
+(`correlation_chain_marginalize`); apply GKS-II subgraph monotonicity.
+
+Reference: Glimm–Jaffe §17.5 pp. 304–306 (2nd ed.); §4.2 (GKS-II subgraph monotonicity). -/
+theorem twoPointFunction_ge_tanh_betaJ_pow_dist
+    {d : ℕ} {J β : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)
+    {r : Fin d → ℤ} (hr : r ≠ 0) :
+    Real.tanh (β * J) ^ IsingModel.latticeDistance d 0 r ≤
+    twoPointFunction d (⟨J, 0, β⟩ : IsingParams ℝ) r := by
+  sorry
+
 end Ambient
 
 end IsingModel
