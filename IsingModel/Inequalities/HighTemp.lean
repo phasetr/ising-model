@@ -160,6 +160,28 @@ theorem susceptibilityInfinite_latticeGraph_le_of_high_temp
   rw [edgeFilter_card_eq_degree v]
   exact inducedLatticeGraph_degree_le d _ v
 
+open IsingModel in
+/-- **ℤ^d per-stage high-temperature susceptibility bound**: for the `d`-dimensional
+lattice graph with cubic exhaustion, `0 ≤ βJ`, and `βJ · ↑(2*d) < 1`:
+`susceptibilityAlongExhaustion (latticeGraph d) (cubicExhaustion d) ⟨J,0,β⟩ i n`
+is bounded above by `βJ·↑(2*d)/(1-βJ·↑(2*d))`.
+
+Proof: apply `susceptibilityAlongExhaustion_le_of_high_temp` with `D = 2*d : ℕ`;
+the degree bound follows from `edgeFilter_card_eq_degree` + `inducedLatticeGraph_degree_le`.
+
+Reference: Glimm–Jaffe §5.1; Friedli–Velenik §3.7.3. -/
+theorem susceptibilityAlongExhaustion_latticeGraph_le_of_high_temp
+    {d : ℕ} {β J : ℝ} (hβJ : 0 ≤ β * J)
+    (hlt : β * J * ↑(2 * d) < 1) (i : Fin d → ℤ) (n : ℕ) :
+    susceptibilityAlongExhaustion (latticeGraph d) (cubicExhaustion d) ⟨J, 0, β⟩ i n
+      ≤ β * J * ↑(2 * d) / (1 - β * J * ↑(2 * d)) := by
+  apply susceptibilityAlongExhaustion_le_of_high_temp (latticeGraph d) (cubicExhaustion d)
+    hβJ (D := 2 * d) _ hlt
+  intro n' v
+  classical
+  rw [edgeFilter_card_eq_degree v]
+  exact inducedLatticeGraph_degree_le d _ v
+
 -- liftFinset pair rewrite + sum_attach + Finset.sum_image injectivity proof
 /-- **Private helper**: for any finite `s ⊆ Λ.volume n` and `i ∈ Λ.volume n`,
 the sum of along-exhaustion correlations `∑ j ∈ s, correlationAlongExhaustion G Λ ⟨J,0,β⟩ {i,j} n`
@@ -342,8 +364,9 @@ private lemma symmDiff_pair_pair_of_ne' {α : Type*} [DecidableEq α] {i j u : �
 /-- **Nonnegativity of `correlationInfinite`** for `0 ≤ β * J`:
 at `h = 0`, the correlation is ≥ 0, derived from the per-stage nonnegativity
 (via `correlation_inducedGraph_eq_weightSum_ratio` + `Current.weightSum_nonneg`)
-and `le_ciSup`. -/
-private lemma correlationInfinite_nonneg_of_hβJ
+and `le_ciSup`. Unlike `correlationInfinite_nonneg`, this requires only `0 ≤ β * J`
+rather than full `Ferromagnetic` structure. -/
+lemma correlationInfinite_nonneg_of_hβJ
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
     {β J : ℝ} (hβJ : 0 ≤ β * J) (A : Finset V) :
