@@ -6206,4 +6206,55 @@ gives the result.
 File: \texttt{Concrete/LatticeGraphCorrelation/Inequalities.lean} (PR~\#920).
 References: Glimm--Jaffe \S17.5~pp.~304--306 (2nd~ed.); \S4.2~(GKS-II subgraph monotonicity).
 
+\subsection*{Step 114 — \texttt{twoPointFunction\_ge\_tanh\_betaJ\_pow\_dist} (GJ \S17.5)}
+
+\begin{theorem}[\texttt{twoPointFunction\_ge\_tanh\_betaJ\_pow\_dist}]
+Let $d \in \mathbb{N}$, $J \ge 0$, $\beta > 0$, $h = 0$, and $r \in \mathbb{Z}^d$ with $r \neq 0$.
+Write $n = \mathrm{latticeDistance}(d,0,r)$.  Then
+\[
+  \tanh(\beta J)^n \;\le\; \langle\sigma_0\sigma_r\rangle_\infty^{(J,0,\beta)}.
+\]
+\end{theorem}
+
+\begin{proof}
+Strong induction on $n = \mathrm{latticeDistance}(d,0,r) \ge 1$.
+
+\textbf{Auxiliary lemma} (\texttt{exists\_latticeDistance\_succ\_adj}).
+If $\mathrm{latticeDistance}(d,0,r) = n+1$, there exists $v \in \mathbb{Z}^d$ with
+$(v,r) \in \mathrm{latticeGraph}(d)$ and $\mathrm{latticeDistance}(d,0,v) = n$.
+Proof: find a coordinate $i_0$ with $|r_{i_0}| \ge 1$ (since the $\ell^1$ sum is $\ge 1$);
+set $v = r[i_0 \mapsto r_{i_0} \mp 1]$.
+
+\textbf{Base case} ($n = 0$, giving $r$ adjacent to $0$). Apply Step~113 directly.
+
+\textbf{Inductive step} ($n \ge 1$).
+Obtain $v$ from the auxiliary lemma.  Since $\mathrm{latticeDistance}(d,0,v) = n \ge 1$, $v \neq 0$,
+and the inductive hypothesis gives $\tanh(\beta J)^n \le \langle\sigma_0\sigma_v\rangle_\infty$.
+
+Translation invariance (\texttt{correlationInfinite\_latticeGraph\_cubicExhaustion\_vaddFinset}):
+translating by $-v$ gives
+\[
+  \langle\sigma_v\sigma_r\rangle_\infty
+  = \langle\sigma_0\sigma_{r-v}\rangle_\infty
+  = \mathrm{twoPointFunction}(d,\langle J,0,\beta\rangle, r-v).
+\]
+Since $(v,r)$ is an edge and the lattice graph is translation-invariant,
+$(0, r-v)$ is also an edge, so Step~113 gives
+$\tanh(\beta J) \le \langle\sigma_v\sigma_r\rangle_\infty$.
+
+GKS-II product inequality (\texttt{correlationInfinite\_latticeGraph\_cubicExhaustion\_gks\_second}):
+\[
+  \langle\sigma_0\sigma_v\rangle_\infty \cdot \langle\sigma_v\sigma_r\rangle_\infty
+  \;\le\; \langle\sigma_{\{0,v\}\triangle\{v,r\}}\rangle_\infty
+  = \langle\sigma_0\sigma_r\rangle_\infty,
+\]
+where $\{0,v\}\triangle\{v,r\} = \{0,r\}$ because $0 \neq v$, $0 \neq r$, $v \neq r$.
+
+Combining: $\tanh(\beta J)^{n+1} \le \langle\sigma_0\sigma_v\rangle_\infty \cdot \langle\sigma_v\sigma_r\rangle_\infty \le \langle\sigma_0\sigma_r\rangle_\infty$.
+\end{proof}
+
+\noindent\textit{Status}: Fully proved. No sorry.
+File: \texttt{Concrete/LatticeGraphCorrelation/Inequalities.lean} (PR~\#921).
+References: Glimm--Jaffe \S17.5~pp.~304--306 (2nd~ed.); \S4.2~(GKS-II).
+
 \end{document}
