@@ -6348,4 +6348,41 @@ Substituting: $U_4^\infty(i,j,k,l) \geq -\langle\sigma_i\sigma_k\rangle\langle\s
 File: \texttt{AmbientLattice.lean} + \texttt{Concrete/LatticeGraphCorrelation/Inequalities.lean} (PR~\#925).
 References: Glimm--Jaffe \S17.3~p.~308~(17.3.1)~(2nd~ed.); \S4.2~Thm~4.2.3~(GKS-II).
 
+\subsection*{Step 117a — \texttt{hasDerivAt\_correlation\_beta} (GJ \S17.5 pp.~310--311)}
+
+\begin{theorem}[\texttt{hasDerivAt\_correlation\_beta}]
+For a finite simple graph $G$, parameters $\langle J, 0, \beta\rangle$, and $A \subseteq V$:
+\[
+  \frac{d}{d\beta}\langle\sigma^A\rangle_\beta
+  = J \sum_{e=\langle u,v\rangle \in E}
+    \bigl[\langle\sigma^{A\triangle\{u,v\}}\rangle_\beta
+          - \langle\sigma^A\rangle_\beta \cdot \langle\sigma_u\sigma_v\rangle_\beta\bigr].
+\]
+\end{theorem}
+
+\begin{proof}
+\textbf{Step 1 (Quotient rule).}
+Since the Hamiltonian $H(\sigma) = -J\sum_e\sigma_{e+}\sigma_{e-}$ is independent of $\beta$,
+\[
+  \frac{d}{d\beta}\mathrm{bw}(\sigma) = -H(\sigma)\cdot\mathrm{bw}(\sigma), \qquad
+  \frac{d}{d\beta}Z = \sum_\sigma(-H)\cdot\mathrm{bw}.
+\]
+By the quotient rule:
+$\dfrac{d}{d\beta}\langle F\rangle = \langle F\cdot(-H)\rangle - \langle F\rangle\langle{-H}\rangle$.
+
+\textbf{Step 2 (Expand $-H$).}
+At $h=0$: $-H(\sigma) = J\sum_{e\in E}\mathrm{edgeSpin}_e(\sigma)$.
+
+\textbf{Step 3 (Spin product identity).}
+By \texttt{spinProduct\_mul}: $\sigma^A \cdot \sigma^{\{u,v\}} = \sigma^{A\triangle\{u,v\}}$.
+Hence $\langle\sigma^A\cdot\mathrm{edgeSpin}_e\rangle = \langle\sigma^{A\triangle\{e_1,e_2\}}\rangle$.
+
+\textbf{Conclusion.}
+$\dfrac{d}{d\beta}\langle\sigma^A\rangle = J\sum_e\bigl[\langle\sigma^{A\triangle\{e_1,e_2\}}\rangle - \langle\sigma^A\rangle\langle\sigma_{e_1e_2}\rangle\bigr]$.
+\end{proof}
+
+\noindent\textit{Status}: Fully proved. No sorry.
+File: \texttt{BetaDerivative.lean} (PR~\#926).
+References: Glimm--Jaffe \S17.5~pp.~310--311~(2nd~ed.)~(implicit in pseudo-mass proof).
+
 \end{document}
