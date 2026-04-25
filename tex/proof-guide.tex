@@ -6257,4 +6257,66 @@ Combining: $\tanh(\beta J)^{n+1} \le \langle\sigma_0\sigma_v\rangle_\infty \cdot
 File: \texttt{Concrete/LatticeGraphCorrelation/Inequalities.lean} (PR~\#921).
 References: Glimm--Jaffe \S17.5~pp.~304--306 (2nd~ed.); \S4.2~(GKS-II).
 
+\subsection*{Step 115 — \texttt{latticeMass\_le\_neg\_log\_tanh\_betaJ} (GJ \S17.5)}
+
+\begin{theorem}[\texttt{latticeMass\_le\_neg\_log\_tanh\_betaJ}]
+Let $d \ge 1$, $J > 0$, $\beta > 0$, $h = 0$.  Then
+\[
+  \mathrm{latticeMass}(d,\mathrm{cubicExhaustion}(d),\langle J,0,\beta\rangle)
+  \;\le\; -\log\tanh(\beta J).
+\]
+Combined with Step~111, this gives the two-sided bound
+$-\log(\beta J D) \le \mathrm{latticeMass} \le -\log\tanh(\beta J)$
+(where $D = 2d$) in the high-temperature regime $\beta J D < 1$.
+\end{theorem}
+
+\begin{proof}
+Set $c := -\log\tanh(\beta J) > 0$ (positive since $0 < \tanh(\beta J) < 1$).
+
+Fix $\alpha : \mathbb{R}_{\ge 0}$ with $\mathrm{HasExponentialDecay}(d,\Lambda,p,\alpha)$ witnessed by $C \ge 0$.
+We show $\alpha \le c$.
+
+Suppose for contradiction $\alpha > c$, i.e., $\varepsilon := \log\tanh(\beta J) + \alpha > 0$.
+
+\textbf{Archimedean step.}
+By the Archimedean property, choose $n_0 \in \mathbb{N}$ with $C < \varepsilon \cdot n_0$.
+
+\textbf{Axis point.}
+Let $r_{n_0} := (n_0, 0, \ldots, 0) \in \mathbb{Z}^d$.
+The auxiliary lemma \texttt{latticeDistance\_coord\_eq} gives
+$\mathrm{latticeDistance}(d,0,r_{n_0}) = n_0$.
+Since $n_0 \ge 1$, $r_{n_0} \neq 0$.
+
+\textbf{Lower bound (Step~114).}
+\[
+  \tanh(\beta J)^{n_0} \;\le\; \mathrm{twoPointFunction}(d,\langle J,0,\beta\rangle,r_{n_0}).
+\]
+
+\textbf{Upper bound (HasExponentialDecay).}
+At $h = 0$, $\mathrm{twoPointFunction} = |\mathrm{truncated2Infinite}|$, so
+\[
+  \mathrm{twoPointFunction}(d,p,r_{n_0}) \;\le\; C\,e^{-\alpha n_0}.
+\]
+
+\textbf{Rearrangement.}
+Combining:
+\[
+  e^{\varepsilon n_0}
+  = \tanh(\beta J)^{n_0} \cdot e^{\alpha n_0}
+  \;\le\; C\,e^{-\alpha n_0} \cdot e^{\alpha n_0} = C.
+\]
+
+\textbf{Contradiction.}
+$e^{\varepsilon n_0} \ge 1 + \varepsilon n_0 > 1 + C > C$.
+This contradicts $e^{\varepsilon n_0} \le C$.
+
+\textbf{Conclusion.}
+Every $\alpha$ in the supremand satisfies $\alpha \le c$, hence
+$\mathrm{latticeMass} = \sup\{\alpha \mid \mathrm{HasExponentialDecay}(\alpha)\} \le c$.
+\end{proof}
+
+\noindent\textit{Status}: Fully proved. No sorry.
+File: \texttt{Concrete/LatticeGraphCorrelation/Inequalities.lean} (PR~\#923).
+References: Glimm--Jaffe \S17.5~pp.~304--306 (2nd~ed.).
+
 \end{document}
