@@ -6483,4 +6483,42 @@ Immediate from strict antitonicity (\texttt{StrictAntiOn.injOn}).
 File: \texttt{PseudoMass.lean} (PR~\#926).
 References: Glimm--Jaffe \S17.5~pp.~311--312~(2nd~ed.), equation~(17.5.3).
 
+\subsection*{Step 117d — \texttt{pseudoMassG\_hasDerivAt} + \texttt{pseudoMass} definition (GJ \S17.5)}
+
+\begin{theorem}[\texttt{pseudoMassG\_hasDerivAt}]
+For $\alpha \in \mathbb{N}$, $r > 0$, $t \ge 0$:
+\[
+  \frac{d}{dt}\,g(t,r,\alpha) \;=\;
+  \frac{-2r\,e^{-(tr)}\,(1+(tr)^\alpha) - 2\,e^{-(tr)}\,\alpha(tr)^{\alpha-1}\,r}
+       {(1+(tr)^\alpha)^2}.
+\]
+The hypothesis $\alpha \ge 1$ is \emph{not} required; the formula holds for all $\alpha \in \mathbb{N}$.
+\end{theorem}
+\begin{proof}
+Quotient rule: numerator $f(t) = 2e^{-(tr)}$ has derivative $f'=-2r\,e^{-(tr)}$;
+denominator $h(t) = 1+(tr)^\alpha$ has derivative $h'=\alpha(tr)^{\alpha-1}\cdot r$.
+Applied via \texttt{HasDerivAt.div} in Lean.
+\end{proof}
+
+\begin{theorem}[\texttt{pseudoMassG\_deriv\_neg}]
+For $\alpha \in \mathbb{N}$, $r > 0$, $t > 0$: $g'(t,r,\alpha) < 0$.
+\end{theorem}
+\begin{proof}
+Numerator $= -2r\,e^{-(tr)}\,(1+(tr)^\alpha) - 2e^{-(tr)}\,\alpha(tr)^{\alpha-1}\,r < 0$
+since $r,e^{-(tr)}>0$ and $1+(tr)^\alpha+\alpha(tr)^{\alpha-1}\ge 1>0$.
+Denominator $(1+(tr)^\alpha)^2>0$.
+\end{proof}
+
+\begin{definition}[\texttt{pseudoMass}]
+For $\alpha \ge 1$, $r>0$, $c\in(0,2)$, the pseudo-mass $m^-(c,r)$ is defined as the
+$\mathsf{Classical.choose}$ of the existence theorem \texttt{pseudoMassG\_exists\_of\_mem\_Ioo}:
+the unique $t\ge 0$ with $g(t,r,\alpha)=c$.
+Key lemmas: \texttt{pseudoMass\_spec} (defining equation), \texttt{pseudoMass\_nonneg}
+($0 \le m^-$), \texttt{pseudoMass\_eq\_iff} (uniqueness characterisation).
+\end{definition}
+
+\noindent\textit{Status}: Fully proved. No sorry.
+File: \texttt{PseudoMass.lean} (PR~\#926).
+References: Glimm--Jaffe \S17.5~pp.~311--312~(2nd~ed.).
+
 \end{document}
