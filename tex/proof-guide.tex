@@ -6176,4 +6176,34 @@ taking $\mathrm{sSup}$ gives the inequality.
 File: \texttt{Concrete/LatticeGraphCorrelation/Inequalities.lean} (PR~\#919).
 References: Glimm--Jaffe \S17.5~pp.~304--306; \S4.2~Props.~4.2.3--4.2.4~pp.~57--60.
 
+\subsection*{Step 113 — \texttt{twoPointFunction\_ge\_tanh\_betaJ\_of\_adj} (GJ \S17.5)}
+
+\begin{theorem}[\texttt{twoPointFunction\_ge\_tanh\_betaJ\_of\_adj}]
+Let $d \in \mathbb{N}$, $J \ge 0$, $\beta > 0$, $h = 0$.
+Let $r \in \mathbb{Z}^d$ be adjacent to $0$ in $\mathrm{latticeGraph}(d)$.  Then
+\[
+  \tanh(\beta J) \;\le\; \langle\sigma_0\sigma_r\rangle_\infty^{(J,0,\beta)}.
+\]
+\end{theorem}
+
+\begin{proof}
+Let $G_{\mathrm{single}}$ be the graph on $\mathbb{Z}^d$ with exactly one edge $\{0,r\}$.
+Since $0$ and $r$ are adjacent in $\mathrm{latticeGraph}(d)$, we have $G_{\mathrm{single}} \le \mathrm{latticeGraph}(d)$.
+
+We compute $\langle\sigma_0\sigma_r\rangle_\infty^{G_{\mathrm{single}}}$ directly:
+for any finite $\Lambda \ni 0,r$ the Hamiltonian on $G_{\mathrm{single}}$ depends only on $(\sigma_0, \sigma_r)$,
+so the partition function and numerator factorize with a common factor $2^{|\Lambda|-2}$.
+The ratio is $\tanh(\beta J)$, independently of $\Lambda$.
+By the eventually-constant convergence lemma for $\mathrm{correlationAlongExhaustion}$
+and \texttt{correlationAlongExhaustion\_tendsto\_ciSup},
+$\mathrm{correlationInfinite}(G_{\mathrm{single}}) = \tanh(\beta J)$.
+
+Finally, GKS-II subgraph monotonicity (\texttt{correlationInfinite\_monotone\_ambient\_subgraph})
+gives the result.
+\end{proof}
+
+\noindent\textit{Status}: Fully proved. No sorry.
+File: \texttt{Concrete/LatticeGraphCorrelation/Inequalities.lean} (PR~\#920).
+References: Glimm--Jaffe \S17.5~pp.~304--306 (2nd~ed.); \S4.2~(GKS-II subgraph monotonicity).
+
 \end{document}
