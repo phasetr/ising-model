@@ -42,11 +42,11 @@ open Set Real Filter
 
 /-! ## The pseudo-mass profile function -/
 
-/-- The pseudo-mass profile: `g(t, r, α) = 2 · exp(-t·r) / (1 + (t·r)^α)`.
+/-- The pseudo-mass profile: `g(t, r, α) = 2 · exp(-(t·r)) / (1 + (t·r)^α)`.
 For `r > 0` and `α ≥ 1`, this is a continuous, strictly decreasing function
 of `t ≥ 0` with `g(0) = 2` and `g(t) → 0` as `t → ∞`. -/
 noncomputable def pseudoMassG (α : ℕ) (r t : ℝ) : ℝ :=
-  2 * Real.exp (-t * r) / (1 + (t * r) ^ α)
+  2 * Real.exp (-(t * r)) / (1 + (t * r) ^ α)
 
 /-- `pseudoMassG` at `t = 0` equals 2. -/
 theorem pseudoMassG_zero {α : ℕ} (hα : 1 ≤ α) (r : ℝ) : pseudoMassG α r 0 = 2 := by
@@ -69,13 +69,12 @@ theorem pseudoMassG_le_two (α : ℕ) {r t : ℝ} (ht : 0 ≤ t) (hr : 0 < r) :
     have h : 0 ≤ (t * r) ^ α := pow_nonneg (mul_nonneg ht hr.le) α
     linarith
   rw [div_le_iff₀ hdenom_pos]
-  have hexp : Real.exp (-t * r) ≤ 1 := by
-    rw [neg_mul]
-    exact Real.exp_le_one_iff.mpr (neg_nonpos.mpr (mul_nonneg ht hr.le))
+  have hexp : Real.exp (-(t * r)) ≤ 1 :=
+    Real.exp_le_one_iff.mpr (neg_nonpos.mpr (mul_nonneg ht hr.le))
   have hdenom_ge : 1 ≤ 1 + (t * r) ^ α := by
     have h : 0 ≤ (t * r) ^ α := pow_nonneg (mul_nonneg ht hr.le) α
     linarith
-  nlinarith [Real.exp_pos (-t * r)]
+  nlinarith [Real.exp_pos (-(t * r))]
 
 /-- The denominator `1 + (t·r)^α` is strictly increasing in `t` for `r > 0`, `α ≥ 1`. -/
 private lemma pseudoMassG_denom_strictMono
@@ -94,7 +93,7 @@ theorem pseudoMassG_strictAntiOn
   intro s hs t ht hst
   unfold pseudoMassG
   apply div_lt_div₀'
-  · -- 2 * exp(-t*r) ≤ 2 * exp(-s*r): exp is monotone and -t*r < -s*r
+  · -- 2 * exp(-(t*r)) ≤ 2 * exp(-(s*r)): exp is monotone and -(t*r) ≤ -(s*r)
     apply mul_le_mul_of_nonneg_left _ two_pos.le
     apply Real.exp_le_exp.mpr
     linarith [mul_lt_mul_of_pos_right hst hr]
@@ -133,14 +132,11 @@ theorem pseudoMassG_tendsto_zero (α : ℕ) {r : ℝ} (hr : 0 < r) :
     apply div_le_self (by positivity)
     have h : 0 ≤ (t * r) ^ α := pow_nonneg (mul_nonneg ht hr.le) α
     linarith
-  · -- 2 * exp(-t*r) → 0 as t → ∞
+  · -- 2 * exp(-(t*r)) → 0 as t → ∞
     have h_tr_atTop : Filter.Tendsto (fun t : ℝ => t * r) Filter.atTop Filter.atTop :=
       Filter.tendsto_id.atTop_mul_const hr
     have h_exp_zero : Filter.Tendsto (fun t : ℝ => Real.exp (-(t * r))) Filter.atTop (nhds 0) :=
       Real.tendsto_exp_neg_atTop_nhds_zero.comp h_tr_atTop
-    have h_eq : ∀ t : ℝ, 2 * Real.exp (-t * r) = 2 * Real.exp (-(t * r)) := fun t => by
-      congr 1; rw [neg_mul]
-    simp_rw [h_eq]
     have key : Filter.Tendsto (fun t : ℝ => 2 * Real.exp (-(t * r))) Filter.atTop (nhds (2 * 0)) :=
       tendsto_const_nhds.mul h_exp_zero
     simpa using key
@@ -179,5 +175,90 @@ theorem pseudoMassG_unique
     t₁ = t₂ :=
   (pseudoMassG_strictAntiOn hα hr).injOn (Set.mem_Ici.mpr ht₁) (Set.mem_Ici.mpr ht₂)
     (h₁.trans h₂.symm)
+
+/-! ## Derivative of the pseudo-mass profile -/
+
+/-- `pseudoMassG α r` has derivative
+`(-2·r·exp(-(t·r))·(1+(t·r)^α) - 2·exp(-(t·r))·(α·(t·r)^(α-1)·r)) / (1+(t·r)^α)^2`
+at any point `t ≥ 0` with `r > 0`. Proved via quotient rule. -/
+theorem pseudoMassG_hasDerivAt (α : ℕ) {r t : ℝ} (ht : 0 ≤ t) (hr : 0 < r) :
+    HasDerivAt (pseudoMassG α r)
+      ((-2 * r * Real.exp (-(t * r)) * (1 + (t * r) ^ α) -
+        2 * Real.exp (-(t * r)) * (↑α * (t * r) ^ (α - 1) * r)) /
+       (1 + (t * r) ^ α) ^ 2) t := by
+  have hne : (1 + (t * r) ^ α : ℝ) ≠ 0 := by
+    have h : 0 ≤ (t * r) ^ α := pow_nonneg (mul_nonneg ht hr.le) α
+    linarith
+  -- Derivative of fun t => t * r is r, then neg gives fun t => -(t * r) with deriv -r
+  have h_mul : HasDerivAt (fun t : ℝ => t * r) r t := by
+    have h := (hasDerivAt_id t).mul_const r
+    simp only [Function.id_def, one_mul] at h
+    exact h
+  -- Numerator: 2 * exp(-(t * r)) with derivative 2 * (exp(-(t*r)) * (-r))
+  have hf : HasDerivAt (fun t : ℝ => 2 * Real.exp (-(t * r)))
+      (2 * (Real.exp (-(t * r)) * (-r))) t :=
+    h_mul.neg.exp.const_mul 2
+  -- Denominator: 1 + (t * r)^α with derivative ↑α * (t*r)^(α-1) * r
+  have hh : HasDerivAt (fun t => 1 + (t * r) ^ α) (↑α * (t * r) ^ (α - 1) * r) t := by
+    have h := (hasDerivAt_const t (1 : ℝ)).add (h_mul.pow α)
+    simp only [zero_add] at h
+    exact h
+  unfold pseudoMassG
+  have hdiv := hf.div hh hne
+  convert hdiv using 1; ring
+
+/-- The derivative of `pseudoMassG α r` at `t > 0` is strictly negative,
+confirming the strict antitonicity on `(0, ∞)`. -/
+theorem pseudoMassG_deriv_neg (α : ℕ) {r t : ℝ} (ht : 0 < t) (hr : 0 < r) :
+    (-2 * r * Real.exp (-(t * r)) * (1 + (t * r) ^ α) -
+      2 * Real.exp (-(t * r)) * (↑α * (t * r) ^ (α - 1) * r)) /
+     (1 + (t * r) ^ α) ^ 2 < 0 := by
+  have htr : 0 < t * r := mul_pos ht hr
+  have hpow : 0 ≤ (t * r) ^ α := pow_nonneg htr.le α
+  have hpow1 : 0 ≤ (t * r) ^ (α - 1) := pow_nonneg htr.le _
+  have hα_nn : (0 : ℝ) ≤ (α : ℝ) := by exact_mod_cast Nat.zero_le α
+  have hdenom : 0 < (1 + (t * r) ^ α) ^ 2 := by positivity
+  rw [div_neg_iff]
+  right
+  refine ⟨?_, hdenom⟩
+  have hexp := Real.exp_pos (-(t * r))
+  have h1 : 0 < 2 * r * Real.exp (-(t * r)) * (1 + (t * r) ^ α) := by
+    apply mul_pos (mul_pos (mul_pos two_pos hr) hexp)
+    linarith
+  have h2 : 0 ≤ 2 * Real.exp (-(t * r)) * (↑α * (t * r) ^ (α - 1) * r) :=
+    mul_nonneg (mul_nonneg two_pos.le hexp.le)
+      (mul_nonneg (mul_nonneg hα_nn hpow1) hr.le)
+  linarith
+
+/-! ## Definition and basic properties of the pseudo-mass -/
+
+/-- `pseudoMass hα hr hc` is the unique `t ≥ 0` with `pseudoMassG α r t = c`,
+defined via the classical choice principle for `c ∈ (0, 2)` and `r > 0`. -/
+noncomputable def pseudoMass {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) {c : ℝ}
+    (hc : c ∈ Ioo 0 2) : ℝ :=
+  (pseudoMassG_exists_of_mem_Ioo hα hr hc).choose
+
+/-- The pseudo-mass satisfies its defining equation. -/
+theorem pseudoMass_spec {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) {c : ℝ}
+    (hc : c ∈ Ioo 0 2) :
+    pseudoMassG α r (pseudoMass hα hr hc) = c :=
+  (pseudoMassG_exists_of_mem_Ioo hα hr hc).choose_spec.2
+
+/-- The pseudo-mass is nonneg. -/
+theorem pseudoMass_nonneg {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) {c : ℝ}
+    (hc : c ∈ Ioo 0 2) :
+    0 ≤ pseudoMass hα hr hc :=
+  (pseudoMassG_exists_of_mem_Ioo hα hr hc).choose_spec.1
+
+/-- Characterisation of the pseudo-mass: `pseudoMass = t ↔ pseudoMassG α r t = c`
+for `t ≥ 0`. -/
+theorem pseudoMass_eq_iff {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) {c : ℝ}
+    (hc : c ∈ Ioo 0 2) {t : ℝ} (ht : 0 ≤ t) :
+    pseudoMass hα hr hc = t ↔ pseudoMassG α r t = c := by
+  constructor
+  · intro h; rw [← h]; exact pseudoMass_spec hα hr hc
+  · intro h
+    exact pseudoMassG_unique hα hr (pseudoMass_nonneg hα hr hc) ht
+      (pseudoMass_spec hα hr hc) h
 
 end IsingModel
