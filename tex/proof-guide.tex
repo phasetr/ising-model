@@ -6427,4 +6427,60 @@ are bounded via $\langle\sigma_{r,s}\triangle\{u,v\}\rangle - \langle\sigma_{rs}
 File: \texttt{BetaDerivative.lean} (PR~\#926).
 References: Glimm--Jaffe \S17.5~p.~312~(2nd~ed.); Cor.~4.3.3~(Lebowitz).
 
+\subsection*{Step 117c — Pseudo-mass profile \texttt{pseudoMassG} (GJ \S17.5 pp.~311--312)}
+
+\begin{definition}[\texttt{pseudoMassG}]
+For $\alpha \in \mathbb{N}$, $\alpha \ge 1$ (a natural-number specialisation of GJ's general $\alpha > d/2$),
+$r > 0$, and $t \ge 0$, define the pseudo-mass profile
+\[
+  g(t, r, \alpha) \;=\; \frac{2\,e^{-tr}}{1 + (tr)^{\alpha}}.
+\]
+The pseudo-mass $m^-(x,y,\beta,A)$ is then the unique $t \ge 0$ satisfying
+$g(t, \mathrm{dist}(x,y), \alpha) = \langle\sigma_x\sigma_y\rangle_{\beta,A}$ whenever the
+correlation lies in $(0,2)$.
+\end{definition}
+
+\begin{theorem}[\texttt{pseudoMassG\_zero}, \texttt{pseudoMassG\_pos}, \texttt{pseudoMassG\_le\_two}]
+$g(0,r,\alpha) = 2$; for $t \ge 0$, $r > 0$: $0 < g(t,r,\alpha) \le 2$.
+\end{theorem}
+
+\begin{theorem}[\texttt{pseudoMassG\_strictAntiOn}]
+For $r > 0$ and $\alpha \ge 1$, $g(\,\cdot\,,r,\alpha)$ is strictly decreasing on $[0,\infty)$.
+\end{theorem}
+\begin{proof}
+For $s < t$ in $[0,\infty)$: the numerator $2e^{-tr} \le 2e^{-sr}$ (exp is decreasing)
+and the denominator $1+(tr)^\alpha > 1+(sr)^\alpha$ (power strictly increasing).
+Hence $N(t)/D(t) \le N(s)/D(t) < N(s)/D(s)$.
+Applied via \texttt{div\_lt\_div₀'} in Lean.
+\end{proof}
+
+\begin{theorem}[\texttt{pseudoMassG\_tendsto\_zero}]
+$g(t,r,\alpha) \to 0$ as $t \to \infty$ for $r > 0$.
+\end{theorem}
+\begin{proof}
+Squeeze: $0 < g(t,r,\alpha) \le 2e^{-tr} \to 0$ since $tr \to +\infty$.
+\end{proof}
+
+\begin{theorem}[\texttt{pseudoMassG\_exists\_of\_mem\_Ioo}]
+For $c \in (0,2)$, $r > 0$, $\alpha \ge 1$, there exists $t \ge 0$ with $g(t,r,\alpha) = c$.
+\end{theorem}
+\begin{proof}
+$g$ is continuous on $[0,\infty)$, $g(0)=2 > c$, and $g(T) < c$ for large $T$
+(by the previous theorem, take $T$ with $g(T) < c/2$).
+The Intermediate Value Theorem on $[0,T]$ yields the required $t$.
+Applied via \texttt{intermediate\_value\_Icc'} in Lean.
+\end{proof}
+
+\begin{theorem}[\texttt{pseudoMassG\_unique}]
+The solution is unique: if $g(t_1,r,\alpha) = g(t_2,r,\alpha) = c$ with $t_1, t_2 \ge 0$,
+then $t_1 = t_2$.
+\end{theorem}
+\begin{proof}
+Immediate from strict antitonicity (\texttt{StrictAntiOn.injOn}).
+\end{proof}
+
+\noindent\textit{Status}: Fully proved. No sorry.
+File: \texttt{PseudoMass.lean} (PR~\#926).
+References: Glimm--Jaffe \S17.5~pp.~311--312~(2nd~ed.), equation~(17.5.3).
+
 \end{document}
