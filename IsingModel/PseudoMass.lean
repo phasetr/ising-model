@@ -261,4 +261,63 @@ theorem pseudoMass_eq_iff {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) {c 
     exact pseudoMassG_unique hα hr (pseudoMass_nonneg hα hr hc) ht
       (pseudoMass_spec hα hr hc) h
 
+/-! ## Implicit differentiation of the defining equation -/
+
+/-- If `h` satisfies the pseudo-mass defining equation `pseudoMassG α r (h β) = c β`
+and is differentiable at `β`, then its derivative equals `c'(β) / g'(h(β))`,
+where `g' = d/dt pseudoMassG α r`.
+This is the key implicit differentiation step for the GJ §17.5 Lipschitz estimate. -/
+theorem pseudoMass_deriv_formula
+    (α : ℕ) {r : ℝ} (hr : 0 < r)
+    {h c : ℝ → ℝ} {h' c' β : ℝ}
+    (hh : HasDerivAt h h' β)
+    (hc : HasDerivAt c c' β)
+    (hβ : 0 ≤ h β)
+    (hg_eq : ∀ β, pseudoMassG α r (h β) = c β)
+    (hg' : 0 < h β) :
+    h' = c' / ((-2 * r * Real.exp (-(h β * r)) * (1 + (h β * r) ^ α) -
+        2 * Real.exp (-(h β * r)) * (↑α * (h β * r) ^ (α - 1) * r)) /
+       (1 + (h β * r) ^ α) ^ 2) := by
+  -- Let g' denote the value of the derivative of pseudoMassG at h β
+  set g' := (-2 * r * Real.exp (-(h β * r)) * (1 + (h β * r) ^ α) -
+    2 * Real.exp (-(h β * r)) * (↑α * (h β * r) ^ (α - 1) * r)) /
+    (1 + (h β * r) ^ α) ^ 2 with hg'_def
+  -- g' ≠ 0 (from pseudoMassG_deriv_neg, since h β > 0)
+  have hg'_ne : g' ≠ 0 := ne_of_lt (pseudoMassG_deriv_neg α hg' hr)
+  -- HasDerivAt (pseudoMassG α r) g' (h β)
+  have hgd : HasDerivAt (pseudoMassG α r) g' (h β) :=
+    pseudoMassG_hasDerivAt α hβ hr
+  -- Chain rule: HasDerivAt (pseudoMassG α r ∘ h) (g' * h') β
+  have hcomp := hgd.comp β hh
+  -- But pseudoMassG α r ∘ h = c (by hg_eq)
+  have hcomp' : HasDerivAt c (g' * h') β := by
+    have : (pseudoMassG α r ∘ h) = c := funext hg_eq
+    exact this ▸ hcomp
+  -- By uniqueness of derivatives: g' * h' = c'
+  have huniq : g' * h' = c' := hcomp'.unique hc
+  -- Conclude h' = c' / g'
+  field_simp [hg'_ne] at huniq ⊢
+  linarith
+
+/-- Corollary: if the pseudo-mass `m⁻ = pseudoMass hα hr hc(β)` is differentiable
+at `β` with derivative `m'`, then `m'` satisfies the implicit differentiation formula.
+(The differentiability of `pseudoMass` as a function of `β` follows from the
+implicit function theorem, which requires additional infrastructure.) -/
+theorem pseudoMass_deriv_formula_corollary
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    {c : ℝ → ℝ} {c' β m' : ℝ}
+    (hc_mem : c β ∈ Ioo 0 2)
+    (hc_fam : ∀ β', c β' ∈ Ioo 0 2)
+    (hc : HasDerivAt c c' β)
+    (hm_pos : 0 < pseudoMass hα hr hc_mem)
+    (hm_diff : HasDerivAt (fun β' => pseudoMass hα hr (hc_fam β')) m' β) :
+    m' = c' / ((-2 * r * Real.exp (-(pseudoMass hα hr hc_mem * r)) *
+        (1 + (pseudoMass hα hr hc_mem * r) ^ α) -
+        2 * Real.exp (-(pseudoMass hα hr hc_mem * r)) *
+        (↑α * (pseudoMass hα hr hc_mem * r) ^ (α - 1) * r)) /
+       (1 + (pseudoMass hα hr hc_mem * r) ^ α) ^ 2) := by
+  apply pseudoMass_deriv_formula α hr hm_diff hc (pseudoMass_nonneg hα hr hc_mem) _ hm_pos
+  intro β'
+  exact pseudoMass_spec hα hr (hc_fam β')
+
 end IsingModel
