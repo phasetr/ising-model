@@ -1194,41 +1194,6 @@ private lemma exists_latticeDistance_succ_adj
         unfold IsingModel.latticeDistance; simpa [Pi.zero_apply] using h_dist_sum (r i₀ - 1)
       rw [this, h_rest]; omega
 
-/-- **boltzmannWeight** does not depend on `σ b` when `b` is isolated in `G`.
-
-Proof: Hamiltonian is a sum over edges; since `b` has no edges in `G`, changing `σ b`
-does not affect `H` or `bw`. -/
-private lemma boltzmannWeight_indep_of_isolated
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
-    (G : SimpleGraph ι) [Fintype G.edgeSet]
-    (p : IsingParams ℝ) {b : ι} (hb : ∀ v : ι, ¬G.Adj b v)
-    (σ : IsingModel.Config ι) (s t : IsingModel.Spin) :
-    IsingModel.boltzmannWeight G p (Function.update σ b s)
-      = IsingModel.boltzmannWeight G p (Function.update σ b t) := by
-  sorry
-
-/-- **Chain marginalization** (finite graph version):
-adding edge `{a, b}` to a graph `G` where `b` is isolated multiplies `correlation {src, b}` by
-`tanh(βJ)`.
-
-Proof sketch: marginalize σ_b; `∑_{s} sign(s) exp(βJ sign(σ_a) sign(s)) = 2 sinh(βJ) sign(σ_a)`;
-`∑_{s} exp(βJ sign(σ_a) sign(s)) = 2 cosh(βJ)`; divide.
-
-Reference: GJ §17.5 pp. 304–306. -/
-private lemma correlation_chain_marginalize
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
-    (G : SimpleGraph ι) [DecidableRel G.Adj] [Fintype G.edgeSet]
-    {a b src : ι} (hab : a ≠ b) (hsrc_b : src ≠ b)
-    (hb_isolated : ∀ v : ι, ¬G.Adj b v)
-    (J β : ℝ) :
-    let G' := G ⊔ SimpleGraph.fromEdgeSet {Sym2.mk a b}
-    haveI : DecidableRel G'.Adj := fun u v => inferInstance
-    haveI : Fintype G'.edgeSet := by
-      haveI : DecidableRel G'.Adj := fun u v => inferInstance
-      exact SimpleGraph.fintypeEdgeSet G'
-    IsingModel.correlation G' (⟨J, 0, β⟩ : IsingParams ℝ) {src, b}
-      = Real.tanh (β * J) * IsingModel.correlation G (⟨J, 0, β⟩ : IsingParams ℝ) {src, a} := by
-  sorry
 
 /-- **Path lower bound on the two-point function** (GJ §17.5 pp. 304–306):
 for any `r ≠ 0` in ℤ^d, ferromagnetic `J ≥ 0`, `β > 0`, `h = 0`:
