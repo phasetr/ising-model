@@ -1140,7 +1140,59 @@ private lemma exists_latticeDistance_succ_adj
     (hn : IsingModel.latticeDistance d 0 r = n + 1) :
     ∃ v : Fin d → ℤ, (IsingModel.latticeGraph d).Adj v r ∧
       IsingModel.latticeDistance d 0 v = n := by
-  sorry
+  have hsum : ∑ i : Fin d, (r i).natAbs = n + 1 := by
+    unfold IsingModel.latticeDistance at hn; simpa [Pi.zero_apply] using hn
+  have hne : ∑ i : Fin d, (r i).natAbs ≠ 0 := by omega
+  obtain ⟨i₀, -, hi₀⟩ := Finset.exists_ne_zero_of_sum_ne_zero hne
+  have hri₀ : r i₀ ≠ 0 := fun h => by simp [h] at hi₀
+  -- erase decomposition
+  have h_rest : ∑ i ∈ Finset.univ.erase i₀, (r i).natAbs = n + 1 - (r i₀).natAbs := by
+    have h : ∑ i ∈ Finset.univ.erase i₀, (r i).natAbs + (r i₀).natAbs = n + 1 :=
+      (Finset.sum_erase_add Finset.univ (fun i => (r i).natAbs) (Finset.mem_univ i₀)).trans hsum
+    omega
+  -- adjacency: ∑ (update i - r i).natAbs = (x - r i₀).natAbs
+  have h_adj_sum : ∀ (x : ℤ),
+      ∑ i : Fin d, (Function.update r i₀ x i - r i).natAbs = (x - r i₀).natAbs := by
+    intro x
+    have heq : ∑ i : Fin d, (Function.update r i₀ x i - r i).natAbs
+        = (Function.update r i₀ x i₀ - r i₀).natAbs :=
+      Finset.sum_eq_single i₀
+        (fun j _ hj => by simp [Function.update_of_ne hj])
+        (fun h => absurd (Finset.mem_univ i₀) h)
+    simp [heq]
+  -- distance: ∑ (0 - update i).natAbs = x.natAbs + ∑ erase
+  have h_dist_sum : ∀ (x : ℤ),
+      ∑ i : Fin d, (0 - Function.update r i₀ x i).natAbs
+        = x.natAbs + ∑ i ∈ Finset.univ.erase i₀, (r i).natAbs := by
+    intro x
+    rw [show ∑ i : Fin d, (0 - Function.update r i₀ x i).natAbs
+        = ∑ i ∈ insert i₀ (Finset.univ.erase i₀), (0 - Function.update r i₀ x i).natAbs from by
+      rw [Finset.insert_erase (Finset.mem_univ i₀)]]
+    rw [Finset.sum_insert (Finset.notMem_erase i₀ Finset.univ)]
+    simp only [Function.update_apply, zero_sub, Int.natAbs_neg]
+    congr 1
+    apply Finset.sum_congr rfl; intro j hj
+    simp only [if_neg (Finset.mem_erase.mp hj).1]
+  -- sum bound: (r i₀).natAbs ≤ n + 1
+  have h_bound : (r i₀).natAbs ≤ n + 1 :=
+    (Finset.single_le_sum (fun i _ => Nat.zero_le _) (Finset.mem_univ i₀)).trans_eq hsum
+  rcases lt_or_gt_of_ne hri₀ with h_neg | h_pos
+  · -- r i₀ < 0: step v i₀ = r i₀ + 1
+    refine ⟨Function.update r i₀ (r i₀ + 1), ?_, ?_⟩
+    · rw [IsingModel.latticeGraph_adj_iff_latticeDistance_eq_one]
+      unfold IsingModel.latticeDistance; rw [h_adj_sum]; norm_num
+    · have : IsingModel.latticeDistance d 0 (Function.update r i₀ (r i₀ + 1))
+          = (r i₀ + 1).natAbs + ∑ i ∈ Finset.univ.erase i₀, (r i).natAbs := by
+        unfold IsingModel.latticeDistance; simpa [Pi.zero_apply] using h_dist_sum (r i₀ + 1)
+      rw [this, h_rest]; omega
+  · -- r i₀ > 0: step v i₀ = r i₀ - 1
+    refine ⟨Function.update r i₀ (r i₀ - 1), ?_, ?_⟩
+    · rw [IsingModel.latticeGraph_adj_iff_latticeDistance_eq_one]
+      unfold IsingModel.latticeDistance; rw [h_adj_sum]; norm_num
+    · have : IsingModel.latticeDistance d 0 (Function.update r i₀ (r i₀ - 1))
+          = (r i₀ - 1).natAbs + ∑ i ∈ Finset.univ.erase i₀, (r i).natAbs := by
+        unfold IsingModel.latticeDistance; simpa [Pi.zero_apply] using h_dist_sum (r i₀ - 1)
+      rw [this, h_rest]; omega
 
 /-- **boltzmannWeight** does not depend on `σ b` when `b` is isolated in `G`.
 
