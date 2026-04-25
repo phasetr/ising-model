@@ -6521,4 +6521,37 @@ Key lemmas: \texttt{pseudoMass\_spec} (defining equation), \texttt{pseudoMass\_n
 File: \texttt{PseudoMass.lean} (PR~\#926).
 References: Glimm--Jaffe \S17.5~pp.~311--312~(2nd~ed.).
 
+\subsection*{Step 117e — \texttt{pseudoMass\_deriv\_formula} (GJ \S17.5 p.312, implicit differentiation)}
+
+\begin{theorem}[\texttt{pseudoMass\_deriv\_formula}]
+Let $\alpha \in \mathbb{N}$, $r > 0$.
+Suppose $h, c : \mathbb{R} \to \mathbb{R}$ satisfy:
+\begin{itemize}
+  \item $\mathrm{HasDerivAt}\;h\;h'\;\beta$ and $\mathrm{HasDerivAt}\;c\;c'\;\beta$,
+  \item $\forall\,\beta',\; g(h(\beta'), r, \alpha) = c(\beta')$ (defining equation),
+  \item $h(\beta) > 0$.
+\end{itemize}
+Then
+\[
+  h' \;=\; \frac{c'(\beta)}{g'(h(\beta), r, \alpha)}.
+\]
+\end{theorem}
+\begin{proof}
+Chain rule: \texttt{HasDerivAt.comp} gives $\mathrm{HasDerivAt}\,(g\circ h)\,(g'(h\beta)\cdot h')\,\beta$.
+Since $g \circ h = c$, uniqueness of derivatives gives $g'(h\beta)\cdot h' = c'(\beta)$.
+Then $h' = c'/g'$ since $g'(h\beta) < 0 \ne 0$ (by \texttt{pseudoMassG\_deriv\_neg}).
+Applied via \texttt{field\_simp} + \texttt{linarith}.
+\end{proof}
+
+\begin{remark}
+The full GJ §17.5 Lipschitz estimate $m^{-\,2\alpha}\,\frac{dm^-}{d\sigma} \le \mathrm{const}$
+additionally requires bounding the Lebowitz sum using the lattice convolution inequality
+$\sum_{z \in \mathbb{Z}^d} \frac{1}{|x-z|^\alpha|y-z|^\alpha} \le C\,|x-y|^{d-2\alpha}$
+(for $\alpha > d/2$).  This convolution estimate (Step~117f+) is left for future work.
+\end{remark}
+
+\noindent\textit{Status}: Fully proved. No sorry.
+File: \texttt{PseudoMass.lean} (PR~\#926).
+References: Glimm--Jaffe \S17.5~p.~312~(2nd~ed.).
+
 \end{document}
