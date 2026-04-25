@@ -6135,4 +6135,45 @@ and $\mathrm{latticeMass} \ge (\alpha_0 : \mathrm{ENNReal}) > 0$.
 File: \texttt{Concrete/LatticeGraphCorrelation/Inequalities.lean} (PR~\#917).
 Reference: Glimm--Jaffe \S17.5~pp.~304--306.
 
+\subsection*{PR \#919 --- Lattice Mass Antitonicity in $\beta$ and $J$
+(GJ~\S17.5~pp.~304--306)}
+
+Step~112.  For $J \ge 0$ and $0 < \beta_1 \le \beta_2$:
+
+\begin{theorem}[\texttt{latticeMass\_antitone\_beta}]
+$\mathrm{latticeMass}\;d\;\Lambda\;\langle J,0,\beta_2\rangle \le
+\mathrm{latticeMass}\;d\;\Lambda\;\langle J,0,\beta_1\rangle$.
+\end{theorem}
+
+\begin{theorem}[\texttt{latticeMass\_antitone\_J}]
+For $0 \le J_1 \le J_2$ and $\beta > 0$:
+$\mathrm{latticeMass}\;d\;\Lambda\;\langle J_2,0,\beta\rangle \le
+\mathrm{latticeMass}\;d\;\Lambda\;\langle J_1,0,\beta\rangle$.
+\end{theorem}
+
+\begin{proof}
+We show the $\beta$-case; the $J$-case is identical with $J$-monotonicity in place of $\beta$-monotonicity.
+
+Suppose $\mathrm{HasExponentialDecay}(d,\Lambda,\langle J,0,\beta_2\rangle,\alpha)$
+with constant $C \ge 0$.  We construct a witness for $\beta_1$.
+At $h = 0$, the truncated two-point function reduces to the correlation:
+$U_2^\infty(\beta_i; i,j) = \langle\sigma_i\sigma_j\rangle_\infty^{(\beta_i)}$
+(by $Z_2$ symmetry, $\langle\sigma_i\rangle_\infty = 0$, so \texttt{truncated2Infinite\_h\_zero}).
+By GKS-I (\texttt{correlationInfinite\_nonneg\_of\_hβJ}), both values are $\ge 0$.
+By GKS-II $\beta$-monotonicity (GJ Prop.~4.2.4,
+\texttt{correlationInfinite\_monotone\_beta}):
+$\langle\sigma_i\sigma_j\rangle_\infty^{(\beta_1)} \le
+\langle\sigma_i\sigma_j\rangle_\infty^{(\beta_2)}$.
+Hence $|U_2^\infty(\beta_1;i,j)| = U_2^\infty(\beta_1;i,j) \le
+U_2^\infty(\beta_2;i,j) = |U_2^\infty(\beta_2;i,j)| \le C\,e^{-\alpha\,\mathrm{dist}(i,j)}$.
+So $\mathrm{HasExponentialDecay}(\beta_1,\alpha)$ holds with the same $C$.
+
+Since the valid-rate set for $\beta_2$ is a subset of that for $\beta_1$,
+taking $\mathrm{sSup}$ gives the inequality.
+\end{proof}
+
+\noindent\textit{Status}: Fully proved. No sorry.
+File: \texttt{Concrete/LatticeGraphCorrelation/Inequalities.lean} (PR~\#919).
+References: Glimm--Jaffe \S17.5~pp.~304--306; \S4.2~Props.~4.2.3--4.2.4~pp.~57--60.
+
 \end{document}
