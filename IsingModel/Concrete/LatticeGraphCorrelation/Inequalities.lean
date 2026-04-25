@@ -746,6 +746,49 @@ theorem hasExponentialDecay_of_high_temp
           mul_le_mul_of_nonneg_left h_pow_le_exp (div_nonneg zero_le_one (by linarith))
     _ = 1 / (1 - βJD) * Real.exp (-(-Real.log βJD) * ↑N) := by simp [neg_neg]
 
+/-! ## §17.5 Step 111: Positive lattice mass at high temperature -/
+
+open IsingModel in
+/-- **Positive lattice mass at high temperature** (GJ §17.5 pp. 304–306):
+for `0 < βJ` and `βJD < 1` (D = 2d), the lattice mass is positive,
+i.e., the correlation length is finite.
+
+For `d = 0`: `Fin 0 → ℤ` is a singleton, `HasExponentialDecay` holds
+vacuously for any rate; `latticeMass ≥ 1 > 0`.
+For `d ≥ 1`: `hasExponentialDecay_of_high_temp` (Step 110) gives rate
+`α₀ = -log(βJD) > 0` (since `0 < βJD < 1`); `latticeMass ≥ α₀ > 0`.
+
+Reference: Glimm–Jaffe §17.5 pp. 304–306. -/
+theorem latticeMass_pos_of_high_temp
+    {d : ℕ} {β J : ℝ} (hβJ : 0 < β * J)
+    (hlt : β * J * ↑(2 * d) < 1) :
+    0 < latticeMass d (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) := by
+  unfold latticeMass
+  rcases Nat.eq_zero_or_pos d with rfl | hd
+  · -- d = 0: Fin 0 → ℤ is a singleton, all pairs i ≠ j are vacuous
+    have h_vac : HasExponentialDecay 0 (cubicExhaustion 0)
+        (⟨J, 0, β⟩ : IsingParams ℝ) (1 : ℝ) :=
+      ⟨0, le_refl _, fun i j hij =>
+        absurd (funext (fun x => Fin.elim0 x)) hij⟩
+    have h_mem_vac : ((1 : NNReal) : ENNReal) ∈ (fun α : NNReal => (α : ENNReal)) ''
+        {α : NNReal | HasExponentialDecay 0 (cubicExhaustion 0)
+            (⟨J, 0, β⟩ : IsingParams ℝ) (α : ℝ)} :=
+      ⟨1, h_vac, rfl⟩
+    exact lt_of_lt_of_le (by norm_num) (le_sSup h_mem_vac)
+  · -- d ≥ 1: α₀ = -log(βJD) > 0
+    have hβJD_pos : 0 < β * J * ↑(2 * d) :=
+      mul_pos hβJ (Nat.cast_pos.mpr (by omega))
+    have hα_pos : 0 < -Real.log (β * J * ↑(2 * d)) :=
+      neg_pos.mpr (Real.log_neg hβJD_pos hlt)
+    set α₀ : NNReal := ⟨-Real.log (β * J * ↑(2 * d)), le_of_lt hα_pos⟩
+    have h_mem : (α₀ : ENNReal) ∈ (fun α : NNReal => (α : ENNReal)) ''
+        {α : NNReal | HasExponentialDecay d (cubicExhaustion d)
+            (⟨J, 0, β⟩ : IsingParams ℝ) (α : ℝ)} :=
+      ⟨α₀, hasExponentialDecay_of_high_temp hβJ.le hlt, rfl⟩
+    apply lt_of_lt_of_le _ (le_sSup h_mem)
+    have : (0 : ℝ) < (α₀ : ℝ) := hα_pos
+    exact_mod_cast this
+
 end Ambient
 
 end IsingModel
