@@ -5063,6 +5063,52 @@ theorem truncated4Infinite_nonpos_h_zero
     hlift_jl, hlift_il, hlift_jk]
   linarith [hfin]
 
+/-- **GJ §17.3 key inequality (17.3.1) — lower bound on truncated 4-point function**
+(Glimm–Jaffe §17.3 p. 308 eq. (17.3.1), 2nd ed.):
+for a ferromagnetic Ising model at `h = 0` and pairwise distinct sites `i, j, k, l`,
+`-(⟨σᵢσₖ⟩·⟨σⱼσₗ⟩ + ⟨σᵢσₗ⟩·⟨σⱼσₖ⟩) ≤ U₄^∞(i,j,k,l)`.
+
+Combined with `truncated4Infinite_nonpos_h_zero` (upper bound `≤ 0`), this gives
+the two-sided bound `0 ≤ -U₄^∞(i,j,k,l) ≤ ⟨σᵢσₖ⟩·⟨σⱼσₗ⟩ + ⟨σᵢσₗ⟩·⟨σⱼσₖ⟩`.
+
+Proof: unfold `truncated4Infinite`; GKS-II (`correlationInfinite_gks_second`) gives
+`⟨σᵢσⱼ⟩·⟨σₖσₗ⟩ ≤ ⟨σᵢσⱼσₖσₗ⟩` via `{i,j} △ {k,l} = {i,j,k,l}` (disjoint union);
+subtract `⟨σᵢσₖ⟩·⟨σⱼσₗ⟩ + ⟨σᵢσₗ⟩·⟨σⱼσₖ⟩` from both sides. -/
+theorem truncated4Infinite_ge_neg_pair_correlations
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (hf : Ferromagnetic ⟨J, (0 : ℝ), β⟩)
+    {i j k l : V}
+    (hij : i ≠ j) (hik : i ≠ k) (hil : i ≠ l)
+    (hjk : j ≠ k) (hjl : j ≠ l) (hkl : k ≠ l) :
+    -(correlationInfinite G Λ ⟨J, 0, β⟩ {i, k} *
+        correlationInfinite G Λ ⟨J, 0, β⟩ {j, l} +
+      correlationInfinite G Λ ⟨J, 0, β⟩ {i, l} *
+        correlationInfinite G Λ ⟨J, 0, β⟩ {j, k})
+    ≤ truncated4Infinite G Λ ⟨J, 0, β⟩ i j k l := by
+  rw [truncated4Infinite_apply]
+  -- GKS-II: corr{i,j} * corr{k,l} ≤ corr{i,j,k,l}
+  have hdisj : Disjoint ({i, j} : Finset V) {k, l} := by
+    rw [Finset.disjoint_left]
+    intro x hx1 hx2
+    simp only [Finset.mem_insert, Finset.mem_singleton] at hx1 hx2
+    rcases hx1 with rfl | rfl <;> rcases hx2 with rfl | rfl
+    · exact hik rfl
+    · exact hil rfl
+    · exact hjk rfl
+    · exact hjl rfl
+  have h_sdiff : ({i, j} : Finset V) ∆ {k, l} = {i, j, k, l} := by
+    rw [hdisj.symmDiff_eq_sup, Finset.sup_eq_union]
+    ext x
+    simp only [Finset.mem_union, Finset.mem_insert, Finset.mem_singleton]
+    tauto
+  have h_gks : correlationInfinite G Λ ⟨J, 0, β⟩ {i, j} *
+      correlationInfinite G Λ ⟨J, 0, β⟩ {k, l}
+      ≤ correlationInfinite G Λ ⟨J, 0, β⟩ {i, j, k, l} := by
+    rw [← h_sdiff]
+    exact correlationInfinite_gks_second G Λ ⟨J, 0, β⟩ hf {i, j} {k, l}
+  linarith
+
 /-- **Exhaustion-independence of `truncated4Infinite`**. -/
 theorem truncated4Infinite_indep_exhaustion
     (G : SimpleGraph V) (Λ Λ' : Exhaustion V)

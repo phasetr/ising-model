@@ -6319,4 +6319,33 @@ $\mathrm{latticeMass} = \sup\{\alpha \mid \mathrm{HasExponentialDecay}(\alpha)\}
 File: \texttt{Concrete/LatticeGraphCorrelation/Inequalities.lean} (PR~\#923).
 References: Glimm--Jaffe \S17.5~pp.~304--306 (2nd~ed.).
 
+\subsection*{Step 116 — \texttt{truncated4Infinite\_ge\_neg\_pair\_correlations} (GJ \S17.3 (17.3.1))}
+
+\begin{theorem}[\texttt{truncated4Infinite\_ge\_neg\_pair\_correlations}]
+Let $G$ be a simple graph, $\Lambda$ an exhaustion, $J > 0$, $\beta > 0$, $h = 0$,
+and $i,j,k,l \in V$ pairwise distinct.  Then
+\[
+  -\bigl(\langle\sigma_i\sigma_k\rangle_\infty \cdot \langle\sigma_j\sigma_l\rangle_\infty
+  + \langle\sigma_i\sigma_l\rangle_\infty \cdot \langle\sigma_j\sigma_k\rangle_\infty\bigr)
+  \;\leq\; U_4^\infty(i,j,k,l) \;\leq\; 0.
+\]
+The right inequality is \texttt{truncated4Infinite\_nonpos\_h\_zero} (Cor~4.3.3 / Lebowitz).
+The left inequality is Step~116.
+\end{theorem}
+
+\begin{proof}[Proof of left inequality]
+Unfold $U_4^\infty(i,j,k,l) = \langle\sigma_i\sigma_j\sigma_k\sigma_l\rangle - \langle\sigma_i\sigma_j\rangle\langle\sigma_k\sigma_l\rangle - \langle\sigma_i\sigma_k\rangle\langle\sigma_j\sigma_l\rangle - \langle\sigma_i\sigma_l\rangle\langle\sigma_j\sigma_k\rangle$.
+
+GKS-II (\texttt{correlationInfinite\_gks\_second}): since $\{i,j\}$ and $\{k,l\}$ are disjoint
+(all four sites distinct), $\{i,j\} \triangle \{k,l\} = \{i,j,k,l\}$, so
+$\langle\sigma_i\sigma_j\rangle \cdot \langle\sigma_k\sigma_l\rangle
+\leq \langle\sigma_i\sigma_j\sigma_k\sigma_l\rangle$.
+
+Substituting: $U_4^\infty(i,j,k,l) \geq -\langle\sigma_i\sigma_k\rangle\langle\sigma_j\sigma_l\rangle - \langle\sigma_i\sigma_l\rangle\langle\sigma_j\sigma_k\rangle$.
+\end{proof}
+
+\noindent\textit{Status}: Fully proved. No sorry.
+File: \texttt{AmbientLattice.lean} + \texttt{Concrete/LatticeGraphCorrelation/Inequalities.lean} (PR~\#925).
+References: Glimm--Jaffe \S17.3~p.~308~(17.3.1)~(2nd~ed.); \S4.2~Thm~4.2.3~(GKS-II).
+
 \end{document}
