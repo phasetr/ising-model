@@ -6027,10 +6027,86 @@ Proof: apply with $D=2d$, using \texttt{inducedLatticeGraph\_degree\_le}.
 \paragraph{Physical significance.}
 At high temperature ($\beta J \cdot 2d < 1$ on $\mathbb{Z}^d$),
 $U_2(i,j)\to 0$ as $|i-j|\to\infty$: the pure-phase cluster property holds.
-The exponential-decay rate ($U_2(i,j)\le C e^{-\alpha|i-j|}$) requires further analysis
-(GJ \S17.1, research-level).
+The exponential-decay rate is formalized in PR~\#916 (Step~110).
 
 File: \texttt{Inequalities/HighTemp.lean} (branch \texttt{feat/random-current-cluster-high-temp}, PR~\#903).
 References: Glimm--Jaffe \S5.1~(pp.~72--74); Friedli--Velenik \S3.7.3.
+
+%--------------------------------------------------------------------
+\subsection*{PR \#915 / \#916 --- Infinite-Volume Simon-Lieb + Exponential Decay
+(GJ~\S5.1~pp.~76--79, pp.~74--75; FV~Prop.~9.31~p.~428)}
+
+\subsubsection*{Step~109: Infinite-volume Simon-Lieb (PR~\#915)}
+
+\begin{theorem}[\texttt{correlationInfinite\_simon\_lieb}]
+For $h=0$, $0\le\beta J$, $i\ne j$, and $\neg G.\mathit{Adj}\,i\,j$:
+\[
+  \langle\sigma_i\sigma_j\rangle_\infty
+  \;\le\;
+  \beta J\cdot\sum_{k\sim i}\langle\sigma_k\sigma_j\rangle_\infty.
+\]
+\end{theorem}
+
+\begin{proof}
+\texttt{ciSup\_le} reduces to per-stage bounds.
+In the subset case, \texttt{correlation\_inducedGraph\_simon\_lieb}
+(finite-vol peeling, PR~\#900) is applied; the edge-filter sum maps
+injectively into $G.\mathrm{neighborFinset}\,i$ via \texttt{Sym2.Mem.other};
+each term is bounded by \texttt{correlationAlongExhaustion\_le\_correlationInfinite};
+sum monotonicity closes the goal.
+\end{proof}
+
+Concrete $\mathbb{Z}^d$ wrapper: \texttt{correlationInfinite\_simon\_lieb\_latticeGraph}.
+File: \texttt{Inequalities/HighTemp.lean} (PR~\#915).
+
+\subsubsection*{Step~110: High-Temperature Exponential Decay (PR~\#916)}
+
+\begin{theorem}[\texttt{hasExponentialDecay\_of\_high\_temp}]
+For $0\le\beta J$ and $\beta J D < 1$ ($D = 2d$ on $\mathbb{Z}^d$):
+\[
+  \mathrm{HasExponentialDecay}\;d\;(\mathrm{cubicExhaustion}\;d)\;
+  \langle J,0,\beta\rangle\;(-\log(\beta J D)),
+\]
+with witness constant $C = 1/(1-\beta J D)$.
+Explicitly: $|\langle\sigma_i\sigma_j\rangle_\infty|
+  \le C\cdot(\beta J D)^{d_\ell(i,j)}$ for all $i\ne j$.
+\end{theorem}
+
+\begin{proof}
+Let $P(n)$ be: for all $i\ne j$ with $d_\ell(i,j)\ge n+1$,
+$\langle\sigma_i\sigma_j\rangle_\infty\le(\beta J D)^n\cdot\frac{\beta J D}{1-\beta J D}$.
+
+\textit{Base $n=0$}: $d_\ell(i,j)\ge 1$, i.e.\ $i\ne j$.
+For each stage $n'$, if $\{i,j\}\subseteq\Lambda_{n'}$:
+$\mathrm{correlation}\{i',j'\}
+=\mathrm{truncated2}\,i'\,j'$
+(by \texttt{truncated2\_h\_zero})
+$\le\sum_{k:\uparrow\Lambda_{n'}}\mathrm{truncated2}\,i'\,k$
+(by \texttt{Finset.single\_le\_sum} + nonnegativity via
+\texttt{correlation\_inducedGraph\_eq\_weightSum\_ratio} + \texttt{Current.weightSum\_nonneg})
+$=\chi_{\Lambda_{n'}}(i)
+\le\beta J D/(1-\beta J D)$ (Step~106).
+Not-in-stage gives $0\le\beta J D/(1-\beta J D)$.
+Then \texttt{ciSup\_le} closes the base case.
+
+\textit{Step $n\to n+1$}: $d_\ell(i,j)\ge n+2\ge 2\Rightarrow\neg\mathrm{Adj}\,i\,j$.
+Step~109 (Simon-Lieb): $\langle\sigma_i\sigma_j\rangle_\infty\le\beta J\cdot\sum_{k\sim i}\langle\sigma_k\sigma_j\rangle_\infty$.
+For each $k\sim i$: $d_\ell(k,j)\ge d_\ell(i,j)-1\ge n+1$ (triangle).
+By $P(n)$: $\langle\sigma_k\sigma_j\rangle_\infty\le(\beta J D)^n\cdot\frac{\beta J D}{1-\beta J D}$.
+Summing over $|\mathrm{neighborFinset}\,i|\le D=2d$:
+$\beta J\cdot D\cdot(\beta J D)^n\cdot\frac{\beta J D}{1-\beta J D}
+=(\beta J D)^{n+1}\cdot\frac{\beta J D}{1-\beta J D}$.
+
+Apply $P(N-1)$ where $N=d_\ell(i,j)$:
+$\langle\sigma_i\sigma_j\rangle_\infty\le C\cdot(\beta J D)^N$.
+For $\beta J D>0$: $(\beta J D)^N=\exp(\log(\beta J D)\cdot N)=\exp(-\alpha N)$
+(by \texttt{Real.exp\_log} + \texttt{Real.log\_pow}), $\alpha=-\log(\beta J D)$.
+For $\beta J D=0$ ($J=0$ or $\beta=0$): $0^N\le 1=\exp(0)$.
+Conclude $\langle\sigma_i\sigma_j\rangle_\infty\le C\cdot e^{-\alpha N}$.
+\end{proof}
+
+\noindent\textit{Status}: Fully proved. No sorry. Linter warnings: 0.
+File: \texttt{Concrete/LatticeGraphCorrelation/Inequalities.lean} (PR~\#916).
+References: Glimm--Jaffe \S5.1~pp.~74--75; Friedli--Velenik Prop.~9.31~p.~428.
 
 \end{document}
