@@ -6385,4 +6385,46 @@ $\dfrac{d}{d\beta}\langle\sigma^A\rangle = J\sum_e\bigl[\langle\sigma^{A\triangl
 File: \texttt{BetaDerivative.lean} (PR~\#926).
 References: Glimm--Jaffe \S17.5~pp.~310--311~(2nd~ed.)~(implicit in pseudo-mass proof).
 
+\subsection*{Step 117b — \texttt{correlation\_beta\_deriv\_le\_lebowitz} (GJ \S17.5 p.312)}
+
+\begin{theorem}[\texttt{summand\_le\_lebowitz\_of\_disjoint} + \texttt{correlation\_beta\_deriv\_le\_lebowitz}]
+For pairwise distinct $r,s,u,v \in V$ and ferromagnetic $\langle J,0,\beta\rangle$:
+\[
+  \langle\sigma_r\sigma_s\sigma_u\sigma_v\rangle
+    - \langle\sigma_{rs}\rangle\langle\sigma_{uv}\rangle
+  \;\leq\;
+  \langle\sigma_{ru}\rangle\langle\sigma_{sv}\rangle
+  + \langle\sigma_{rv}\rangle\langle\sigma_{su}\rangle.
+\]
+Hence for the $\beta$-derivative and $r \neq s$:
+\[
+  \frac{d}{d\beta}\langle\sigma_r\sigma_s\rangle_{\beta}
+  \;\leq\;
+  J\sum_{e \in E(G)}
+    \bigl[\langle\sigma_r\sigma_{e_1}\rangle\langle\sigma_s\sigma_{e_2}\rangle
+        + \langle\sigma_r\sigma_{e_2}\rangle\langle\sigma_s\sigma_{e_1}\rangle\bigr]
+  + J\cdot|E(G)|.
+\]
+The additive $J\cdot|E(G)|$ accounts for degenerate edges (incident to $r$ or $s$);
+a tighter bound is $J\cdot(\deg r + \deg s)$.
+\end{theorem}
+
+\begin{proof}[Proof of \texttt{summand\_le\_lebowitz\_of\_disjoint}]
+Since $r,s,u,v$ are pairwise distinct, $\{r,s\}\cap\{u,v\}=\emptyset$, so
+$\{r,s\}\triangle\{u,v\}=\{r,s,u,v\}$.
+Apply Cor.~4.3.3 (\texttt{cor\_4\_3\_3}): $U_4(r,s,u,v)\le 0$.
+Unfolding $U_4 = \langle\sigma_{rsuv}\rangle - \langle\sigma_{rs}\rangle\langle\sigma_{uv}\rangle
+- \langle\sigma_{ru}\rangle\langle\sigma_{sv}\rangle - \langle\sigma_{rv}\rangle\langle\sigma_{su}\rangle\le 0$
+gives the result.
+
+The full derivative bound follows from Step~117a (\texttt{hasDerivAt\_correlation\_beta})
+and a case split per edge: non-degenerate edges use the above; degenerate ones
+are bounded via $\langle\sigma_{r,s}\triangle\{u,v\}\rangle - \langle\sigma_{rs}\rangle\langle\sigma_{uv}\rangle\le 1$
+(\texttt{summand\_le\_one}).
+\end{proof}
+
+\noindent\textit{Status}: Fully proved. No sorry.
+File: \texttt{BetaDerivative.lean} (PR~\#926).
+References: Glimm--Jaffe \S17.5~p.~312~(2nd~ed.); Cor.~4.3.3~(Lebowitz).
+
 \end{document}
