@@ -770,10 +770,11 @@ theorem latticeMass_pos_of_high_temp
         (⟨J, 0, β⟩ : IsingParams ℝ) (1 : ℝ) :=
       ⟨0, le_refl _, fun i j hij =>
         absurd (funext (fun x => Fin.elim0 x)) hij⟩
-    exact lt_of_lt_of_le (by norm_num)
-      (le_sSup (show ((1 : NNReal) : ENNReal) ∈ (fun α : NNReal => (α : ENNReal)) ''
-          {α : NNReal | HasExponentialDecay 0 (cubicExhaustion 0)
-              (⟨J, 0, β⟩ : IsingParams ℝ) (α : ℝ)} from ⟨1, h_vac, rfl⟩))
+    have h_mem_vac : ((1 : NNReal) : ENNReal) ∈ (fun α : NNReal => (α : ENNReal)) ''
+        {α : NNReal | HasExponentialDecay 0 (cubicExhaustion 0)
+            (⟨J, 0, β⟩ : IsingParams ℝ) (α : ℝ)} :=
+      ⟨1, h_vac, rfl⟩
+    exact lt_of_lt_of_le (by norm_num) (le_sSup h_mem_vac)
   · -- d ≥ 1: α₀ = -log(βJD) > 0
     have hβJD_pos : 0 < β * J * ↑(2 * d) :=
       mul_pos hβJ (Nat.cast_pos.mpr (by omega))
