@@ -56,6 +56,29 @@ theorem truncated4TwoPoint_nonpos_h_zero_of_distinct
   truncated4Infinite_nonpos_h_zero (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) J β hf hr hs hu hrs hru hsu
 
+/-- **GJ §17.3 (17.3.1) lower bound on U₄^∞ on ℤ^d** (Glimm–Jaffe §17.3 p. 308 eq. (17.3.1)):
+for ferromagnetic `⟨J, 0, β⟩` and pairwise distinct `r, s, u : Fin d → ℤ`,
+`-(corr{0,s}·corr{r,u} + corr{0,u}·corr{r,s}) ≤ truncated4TwoPoint d ⟨J,0,β⟩ r s u`.
+
+Direct application of `truncated4Infinite_ge_neg_pair_correlations` at `i=0, j=r, k=s, l=u`. -/
+theorem truncated4TwoPoint_ge_neg_pair_correlations_of_distinct
+    (d : ℕ) (J β : ℝ) (hf : Ferromagnetic ⟨J, (0 : ℝ), β⟩)
+    {r s u : Fin d → ℤ}
+    (hr : (0 : Fin d → ℤ) ≠ r) (hs : (0 : Fin d → ℤ) ≠ s)
+    (hu : (0 : Fin d → ℤ) ≠ u)
+    (hrs : r ≠ s) (hru : r ≠ u) (hsu : s ≠ u) :
+    -(correlationInfinite (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d)
+          ⟨J, 0, β⟩ {0, s} *
+        correlationInfinite (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d)
+          ⟨J, 0, β⟩ {r, u} +
+      correlationInfinite (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d)
+          ⟨J, 0, β⟩ {0, u} *
+        correlationInfinite (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d)
+          ⟨J, 0, β⟩ {r, s})
+    ≤ truncated4TwoPoint d ⟨J, 0, β⟩ r s u :=
+  truncated4Infinite_ge_neg_pair_correlations (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) J β hf hr hs hu hrs hru hsu
+
 /-! ## ℤ^d wrappers for §5.3 Z₂ h-symmetry abs-h theorems (issue #770 A-6) -/
 
 /-- **ℤ^d `|M_Λ(h)| = M_Λ(|h|)`** under ferromagnetism at `|h|`.
