@@ -6109,4 +6109,30 @@ Conclude $\langle\sigma_i\sigma_j\rangle_\infty\le C\cdot e^{-\alpha N}$.
 File: \texttt{Concrete/LatticeGraphCorrelation/Inequalities.lean} (PR~\#916).
 References: Glimm--Jaffe \S5.1~pp.~74--75; Friedli--Velenik Prop.~9.31~p.~428.
 
+%--------------------------------------------------------------------
+\subsection*{PR \#917 --- Positive Lattice Mass at High Temperature
+(GJ~\S17.5~pp.~304--306)}
+
+Step~111.  For $0 < \beta J$ and $\beta J D < 1$ ($D = 2d$):
+
+\begin{theorem}[\texttt{latticeMass\_pos\_of\_high\_temp}]
+$0 < \mathrm{latticeMass}\;d\;(\mathrm{cubicExhaustion}\;d)\;\langle J,0,\beta\rangle$.
+\end{theorem}
+
+\begin{proof}
+\textit{Case $d = 0$}: $\mathrm{Fin}\,0\to\mathbb{Z}$ is a singleton; the predicate
+$\mathrm{HasExponentialDecay}\;0\;\Lambda\;p\;1$ holds vacuously (no pairs $i \ne j$),
+so rate $1 \in \{\alpha\}$ and $\mathrm{latticeMass} \ge 1 > 0$.
+
+\textit{Case $d \ge 1$}: $\beta J (2d) > 0$, hence
+$\alpha_0 := -\log(\beta J D) > 0$.
+By Step~110, $\mathrm{HasExponentialDecay}\;d\;\Lambda\;p\;\alpha_0$,
+so $\alpha_0 \in \{\alpha : \mathrm{NNReal} \mid \mathrm{HasExponentialDecay}\;\cdots\}$
+and $\mathrm{latticeMass} \ge (\alpha_0 : \mathrm{ENNReal}) > 0$.
+\end{proof}
+
+\noindent\textit{Status}: Fully proved. No sorry.
+File: \texttt{Concrete/LatticeGraphCorrelation/Inequalities.lean} (PR~\#917).
+Reference: Glimm--Jaffe \S17.5~pp.~304--306.
+
 \end{document}
