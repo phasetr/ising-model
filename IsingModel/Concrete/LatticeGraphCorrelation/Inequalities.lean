@@ -1200,7 +1200,7 @@ Proof: Hamiltonian is a sum over edges; since `b` has no edges in `G`, changing 
 does not affect `H` or `bw`. -/
 private lemma boltzmannWeight_indep_of_isolated
     {ι : Type*} [Fintype ι] [DecidableEq ι]
-    (G : SimpleGraph ι) [DecidableRel G.Adj] [Fintype G.edgeSet]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
     (p : IsingParams ℝ) {b : ι} (hb : ∀ v : ι, ¬G.Adj b v)
     (σ : IsingModel.Config ι) (s t : IsingModel.Spin) :
     IsingModel.boltzmannWeight G p (Function.update σ b s)
@@ -1235,10 +1235,15 @@ for any `r ≠ 0` in ℤ^d, ferromagnetic `J ≥ 0`, `β > 0`, `h = 0`:
 
 `tanh(β J)^(latticeDistance d 0 r) ≤ twoPointFunction d ⟨J, 0, β⟩ r`.
 
-Proof: take a geodesic path from 0 to r (via `exists_latticeDistance_succ_adj`);
-define the path subgraph G_path ≤ latticeGraph d; compute
-`correlationInfinite G_path = tanh(βJ)^n` by chain marginalization induction
-(`correlation_chain_marginalize`); apply GKS-II subgraph monotonicity.
+Proof: strong induction on `n = latticeDistance d 0 r`.
+- Base (`n = 0`): contradicts `r ≠ 0`.
+- Step `n + 1`: `exists_latticeDistance_succ_adj` gives `v` with `Adj v r` and `dist 0 v = n`.
+  If `n = 0`, then `v = 0` so `Adj 0 r`, and `twoPointFunction_ge_tanh_betaJ_of_adj` applies.
+  If `n ≥ 1`, then `v ≠ 0`; apply IH to get `tanh^n ≤ twoPointFunction v`.
+  By translation invariance, `correlationInfinite ... {v, r} = twoPointFunction (r−v)`,
+  and since `Adj 0 (r−v)`, Step 113 gives `tanh ≤ twoPointFunction (r−v)`.
+  GKS-II: `twoPointFunction v * correlationInfinite ... {v, r} ≤ twoPointFunction r`
+  (via `{0,v} ∆ {v,r} = {0,r}`), so `tanh^{n+1} ≤ twoPointFunction r`.
 
 Reference: Glimm–Jaffe §17.5 pp. 304–306 (2nd ed.); §4.2 (GKS-II subgraph monotonicity). -/
 theorem twoPointFunction_ge_tanh_betaJ_pow_dist
@@ -1246,7 +1251,117 @@ theorem twoPointFunction_ge_tanh_betaJ_pow_dist
     {r : Fin d → ℤ} (hr : r ≠ 0) :
     Real.tanh (β * J) ^ IsingModel.latticeDistance d 0 r ≤
     twoPointFunction d (⟨J, 0, β⟩ : IsingParams ℝ) r := by
-  sorry
+  have hf : Ferromagnetic (⟨J, 0, β⟩ : IsingParams ℝ) := ⟨hJ, le_refl 0, hβ⟩
+  have htanh_nn : 0 ≤ Real.tanh (β * J) := by
+    rw [Real.tanh_eq_sinh_div_cosh]
+    exact div_nonneg (Real.sinh_nonneg_iff.mpr (mul_nonneg hβ.le hJ)) (Real.cosh_pos _).le
+  -- Helper: adjacent pair gives tanh lower bound on correlationInfinite
+  have h_adj_ge : ∀ (u w : Fin d → ℤ), (IsingModel.latticeGraph d).Adj u w →
+      Real.tanh (β * J) ≤ correlationInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {u, w} := by
+    intro u w huw
+    -- Translate by -u: correlationInfinite {u, w} = correlationInfinite {0, w - u}
+    have htrans : correlationInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {u, w}
+        = twoPointFunction d (⟨J, 0, β⟩ : IsingParams ℝ) (w - u) := by
+      rw [twoPointFunction_apply]
+      rw [← correlationInfinite_latticeGraph_cubicExhaustion_vaddFinset d (-u)
+            (⟨J, 0, β⟩ : IsingParams ℝ) hf]
+      congr 1
+      unfold vaddFinset
+      rw [Finset.image_insert, Finset.image_singleton]
+      simp only [vadd_eq_add, neg_add_cancel]
+      congr 1; ext i; ring
+    -- latticeDistance d 0 (w - u) = latticeDistance d u w = 1
+    have h_adj_0 : (IsingModel.latticeGraph d).Adj 0 (w - u) := by
+      rw [IsingModel.latticeGraph_adj_iff_latticeDistance_eq_one]
+      have huw' : IsingModel.latticeDistance d u w = 1 :=
+        (IsingModel.latticeGraph_adj_iff_latticeDistance_eq_one d u w).mp huw
+      unfold IsingModel.latticeDistance at huw' ⊢
+      simp only [Pi.zero_apply, Pi.sub_apply, zero_sub, Int.natAbs_neg] at huw' ⊢
+      calc ∑ i : Fin d, (w i - u i).natAbs
+          = ∑ i : Fin d, (u i - w i).natAbs :=
+            Finset.sum_congr rfl fun i _ => by
+              rw [show (w i - u i : ℤ) = -(u i - w i) from by ring]
+              exact Int.natAbs_neg _
+        _ = 1 := huw'
+    rw [htrans]
+    exact twoPointFunction_ge_tanh_betaJ_of_adj hJ hβ h_adj_0
+  -- Strong induction on n = latticeDistance d 0 r
+  suffices h : ∀ (n : ℕ) (s : Fin d → ℤ),
+      IsingModel.latticeDistance d 0 s = n → s ≠ 0 →
+      Real.tanh (β * J) ^ n ≤ twoPointFunction d (⟨J, 0, β⟩ : IsingParams ℝ) s from
+    h _ r rfl hr
+  intro n
+  induction n with
+  | zero =>
+    intro s h0 hs0
+    exact absurd ((IsingModel.latticeDistance_eq_zero_iff d 0 s).mp h0).symm hs0
+  | succ n ih =>
+    intro s hn hs0
+    obtain ⟨v, hv_adj, hv_dist⟩ := exists_latticeDistance_succ_adj d s n hn
+    rcases Nat.eq_zero_or_pos n with rfl | hn_pos
+    · -- n = 0: v = 0, Adj 0 s, use Step 113 directly
+      have hv0 : v = 0 := ((IsingModel.latticeDistance_eq_zero_iff d 0 v).mp hv_dist).symm
+      subst hv0
+      simpa using twoPointFunction_ge_tanh_betaJ_of_adj hJ hβ hv_adj
+    · -- n ≥ 1: v ≠ 0, use IH + GKS-II
+      have hv_ne : v ≠ 0 := by
+        intro heq; simp [heq, IsingModel.latticeDistance] at hv_dist; omega
+      -- IH
+      have ih_v : Real.tanh (β * J) ^ n ≤
+          twoPointFunction d (⟨J, 0, β⟩ : IsingParams ℝ) v := ih v hv_dist hv_ne
+      -- tanh ≤ correlationInfinite {v, s}
+      have h_corr_vs : Real.tanh (β * J) ≤ correlationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {v, s} :=
+        h_adj_ge v s hv_adj
+      -- nonnegativity
+      have hv_nn : 0 ≤ twoPointFunction d (⟨J, 0, β⟩ : IsingParams ℝ) v :=
+        (pow_nonneg htanh_nn n).trans ih_v
+      have hcorr_nn : 0 ≤ correlationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {v, s} :=
+        htanh_nn.trans h_corr_vs
+      -- Symmetric difference {0, v} ∆ {v, s} = {0, s}
+      have h0v : (0 : Fin d → ℤ) ≠ v := Ne.symm hv_ne
+      have hvs : v ≠ s := hv_adj.ne
+      have h0s : (0 : Fin d → ℤ) ≠ s := Ne.symm hs0
+      have hsdiff : ({(0 : Fin d → ℤ), v} : Finset _) ∆ {v, s} = {0, s} := by
+        ext x
+        simp only [Finset.mem_symmDiff, Finset.mem_insert, Finset.mem_singleton]
+        constructor
+        · rintro (⟨rfl | rfl, h2⟩ | ⟨rfl | rfl, h2⟩)
+          · exact Or.inl rfl
+          · exact absurd (Or.inl rfl) h2
+          · exact absurd (Or.inr rfl) h2
+          · exact Or.inr rfl
+        · rintro (rfl | rfl)
+          · exact Or.inl ⟨Or.inl rfl, fun h => h.elim (h0v ·) (h0s ·)⟩
+          · exact Or.inr ⟨Or.inr rfl, fun h => h.elim hs0 (fun hv => hvs hv.symm)⟩
+      -- GKS-II: twoPointFunction v * correlationInfinite {v, s} ≤ twoPointFunction s
+      have hgks : twoPointFunction d (⟨J, 0, β⟩ : IsingParams ℝ) v *
+          correlationInfinite (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d)
+            (⟨J, 0, β⟩ : IsingParams ℝ) {v, s}
+          ≤ twoPointFunction d (⟨J, 0, β⟩ : IsingParams ℝ) s :=
+        calc twoPointFunction d (⟨J, 0, β⟩ : IsingParams ℝ) v *
+              correlationInfinite (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d)
+                (⟨J, 0, β⟩ : IsingParams ℝ) {v, s}
+            = correlationInfinite (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d)
+                (⟨J, 0, β⟩ : IsingParams ℝ) {0, v} *
+              correlationInfinite (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d)
+                (⟨J, 0, β⟩ : IsingParams ℝ) {v, s} := by
+                  rw [twoPointFunction_apply]
+          _ ≤ correlationInfinite (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d)
+                (⟨J, 0, β⟩ : IsingParams ℝ) ({(0 : Fin d → ℤ), v} ∆ {v, s}) :=
+                  correlationInfinite_latticeGraph_cubicExhaustion_gks_second d _ hf {0, v} {v, s}
+          _ = twoPointFunction d (⟨J, 0, β⟩ : IsingParams ℝ) s := by
+                  rw [hsdiff, twoPointFunction_apply]
+      calc Real.tanh (β * J) ^ (n + 1)
+          = Real.tanh (β * J) ^ n * Real.tanh (β * J) := pow_succ _ _
+        _ ≤ twoPointFunction d (⟨J, 0, β⟩ : IsingParams ℝ) v *
+              correlationInfinite (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d)
+                (⟨J, 0, β⟩ : IsingParams ℝ) {v, s} :=
+              mul_le_mul ih_v h_corr_vs htanh_nn hv_nn
+        _ ≤ twoPointFunction d (⟨J, 0, β⟩ : IsingParams ℝ) s := hgks
 
 end Ambient
 
