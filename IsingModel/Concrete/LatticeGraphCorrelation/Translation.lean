@@ -257,5 +257,26 @@ theorem magnetizationInfinite_latticeGraph_cubicExhaustion_eq
   rw [hvadd] at h
   exact h.symm
 
+/-- **Site-independence of ℤ^d spontaneous magnetization**: for `0 ≤ J`,
+`0 < β`, and any two sites `i j : Fin d → ℤ`,
+`spontaneousMagnetization (latticeGraph d) (cubicExhaustion d) J β i
+  = spontaneousMagnetization (latticeGraph d) (cubicExhaustion d) J β j`.
+
+Proof: set `t := j - i`; `spontaneousMagnetization_translation` gives
+`... (t +ᵥ i) = ... i`, and `t +ᵥ i = j` on ℤ^d by `abel`. -/
+theorem spontaneousMagnetization_latticeGraph_cubicExhaustion_eq
+    (d : ℕ) {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) (i j : Fin d → ℤ) :
+    spontaneousMagnetization (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) J β i
+      = spontaneousMagnetization (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) J β j := by
+  have h := spontaneousMagnetization_translation (IsingModel.latticeGraph d)
+    (Ambient.cubicExhaustion d) (j - i) hJ hβ i
+  have hvadd : (j - i) +ᵥ i = j := by
+    change (j - i) + i = j
+    abel
+  rw [hvadd] at h
+  exact h.symm
+
 end Ambient
 end IsingModel
