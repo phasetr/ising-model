@@ -320,4 +320,61 @@ theorem pseudoMass_deriv_formula_corollary
   intro β'
   exact pseudoMass_spec hα hr (hc_fam β')
 
+/-! ## Derivation lemma for the Lipschitz estimate (Step 117f partial) -/
+
+/-- For `t ≥ 0`, `r > 0`, the absolute value of `pseudoMassG` derivative
+satisfies `|g'(t,r,α)| ≥ r · g(t,r,α)`.
+Algebraically: `|g'| - r·g = 2·exp(-(tr))·↑α·(tr)^{α-1}·r / (1+(tr)^α)^2 ≥ 0`.
+This is a key analytic ingredient for the GJ §17.5 Lipschitz estimate. -/
+theorem pseudoMassG_deriv_abs_ge (α : ℕ) {r t : ℝ} (ht : 0 ≤ t) (hr : 0 < r) :
+    r * pseudoMassG α r t ≤
+    |(-2 * r * Real.exp (-(t * r)) * (1 + (t * r) ^ α) -
+      2 * Real.exp (-(t * r)) * (↑α * (t * r) ^ (α - 1) * r)) /
+     (1 + (t * r) ^ α) ^ 2| := by
+  have htr : 0 ≤ t * r := mul_nonneg ht hr.le
+  have hpow : 0 ≤ (t * r) ^ α := pow_nonneg htr α
+  have hpow1 : 0 ≤ (t * r) ^ (α - 1) := pow_nonneg htr _
+  have hα_nn : (0 : ℝ) ≤ (α : ℝ) := by exact_mod_cast Nat.zero_le α
+  have hD : 0 < (1 + (t * r) ^ α) ^ 2 := by positivity
+  have hD_base : 0 < 1 + (t * r) ^ α := by linarith
+  have he := Real.exp_pos (-(t * r))
+  -- Key algebraic identity:
+  -- |g'| = (2r*e*(1+u^α) + 2e*α*u^{α-1}*r) / (1+u^α)^2
+  -- r*g  = 2r*e / (1+u^α)
+  -- |g'| - r*g = 2e*α*u^{α-1}*r / (1+u^α)^2 ≥ 0
+  -- Rewrite as: r*g ≤ |g'| iff r*g*(1+u^α)^2 ≤ |numerator|
+  -- iff 2r*e*(1+u^α) ≤ 2r*e*(1+u^α) + 2e*α*u^{α-1}*r, i.e., 0 ≤ 2e*α*u^{α-1}*r
+  -- N := numerator (negative), -N ≥ 0
+  set N := -2 * r * Real.exp (-(t * r)) * (1 + (t * r) ^ α) -
+      2 * Real.exp (-(t * r)) * (↑α * (t * r) ^ (α - 1) * r) with hN_def
+  have hN_neg : N ≤ 0 := by
+    have : 0 ≤ 2 * Real.exp (-(t * r)) * (↑α * (t * r) ^ (α - 1) * r) :=
+      mul_nonneg (mul_nonneg two_pos.le he.le) (mul_nonneg (mul_nonneg hα_nn hpow1) hr.le)
+    simp only [hN_def]
+    nlinarith [mul_pos (mul_pos two_pos hr) he]
+  -- |g'| = (-N) / D
+  have h_abs_eq : |N / (1 + (t * r) ^ α) ^ 2| = (-N) / (1 + (t * r) ^ α) ^ 2 := by
+    rw [abs_div, abs_of_nonpos hN_neg, abs_of_pos hD]
+  rw [h_abs_eq]
+  -- Goal: r * g(t) ≤ (-N) / D
+  unfold pseudoMassG
+  -- Rewrite to: r * (2*e/(1+u^α)) * D ≤ -N
+  -- Cross-multiply by hD: goal becomes r*(2*e/(1+u^α)) * D ≤ -N
+  -- = 2*r*e*(1+u^α) ≤ 2r*e*(1+u^α) + 2e*α*u^{α-1}*r (after simplification)
+  have h_cross : r * (2 * Real.exp (-(t * r)) / (1 + (t * r) ^ α)) *
+      (1 + (t * r) ^ α) ^ 2 ≤ -N := by
+    have h_simp : r * (2 * Real.exp (-(t * r)) / (1 + (t * r) ^ α)) *
+        (1 + (t * r) ^ α) ^ 2 = 2 * r * Real.exp (-(t * r)) * (1 + (t * r) ^ α) := by
+      field_simp [hD_base.ne']
+    rw [h_simp]
+    -- Goal: 2*r*e*(1+u^α) ≤ -N
+    -- -N = 2r*e*(1+u^α) + 2e*α*u^{α-1}*r (from hN_def)
+    have hN_expand : -N = 2 * r * Real.exp (-(t * r)) * (1 + (t * r) ^ α) +
+        2 * Real.exp (-(t * r)) * (↑α * (t * r) ^ (α - 1) * r) := by
+      simp only [hN_def]; ring
+    rw [hN_expand]
+    nlinarith [mul_nonneg (mul_nonneg (mul_nonneg two_pos.le he.le)
+                (mul_nonneg hα_nn hpow1)) hr.le]
+  linarith [le_div_iff₀ hD |>.mpr h_cross]
+
 end IsingModel
