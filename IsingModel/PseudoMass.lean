@@ -569,4 +569,42 @@ theorem pseudoMass_comp_corr_continuousAt
   intro s hs
   exact h_g (h_f hs)
 
+/-! ## Antitonicity of pseudoMass ∘ correlation in β (Step 123) -/
+
+/-- **Step 123**: `β ↦ pseudoMass(c(β))` is antitone in β.
+
+When the correlation `c(β) = ⟨σ^A⟩_β` lies in `(0, 2)` for all `β > 0`,
+the pseudo-mass `β ↦ pseudoMass(c(β))` is antitone (decreasing) on `Ioi 0`.
+
+Proof: compose `correlation_monotoneOn_beta` (β ↑ → c(β) ↑) with `pseudoMass_strictAnti`
+(c ↑ → pseudoMass(c) ↓).
+
+This completes the §17.5 accessible content: higher β → larger correlation →
+smaller pseudo-mass (approaching zero at β_c).
+
+Reference: Glimm–Jaffe §17.5 pp. 345–347 (implicit in the mass continuity argument). -/
+theorem pseudoMass_comp_corr_antitoneOn_beta
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J : ℝ) (hJ : 0 ≤ J) (A : Finset ι)
+    (hc_mem : ∀ β : ℝ, 0 < β →
+        correlation G (⟨J, 0, β⟩ : IsingParams ℝ) A ∈ Set.Ioo 0 2) :
+    AntitoneOn
+      (fun β => if h : 0 < β then pseudoMass hα hr (hc_mem β h) else 0)
+      (Set.Ioi 0) := by
+  intro β₁ hβ₁ β₂ hβ₂ hle
+  simp only [Set.mem_Ioi] at hβ₁ hβ₂
+  simp only [dif_pos hβ₁, dif_pos hβ₂]
+  have hcle : correlation G (⟨J, 0, β₁⟩ : IsingParams ℝ) A ≤
+              correlation G (⟨J, 0, β₂⟩ : IsingParams ℝ) A :=
+    correlation_monotoneOn_beta G J hJ A
+      (Set.mem_Ici.mpr hβ₁.le) (Set.mem_Ici.mpr hβ₂.le) hle
+  by_cases heq : correlation G (⟨J, 0, β₁⟩ : IsingParams ℝ) A =
+                 correlation G (⟨J, 0, β₂⟩ : IsingParams ℝ) A
+  · simp [heq]
+  · exact le_of_lt
+      (pseudoMass_strictAnti hα hr (hc_mem β₁ hβ₁) (hc_mem β₂ hβ₂)
+        (lt_of_le_of_ne hcle heq))
+
 end IsingModel
