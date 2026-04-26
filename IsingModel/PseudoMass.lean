@@ -377,4 +377,43 @@ theorem pseudoMassG_deriv_abs_ge (α : ℕ) {r t : ℝ} (ht : 0 ≤ t) (hr : 0 <
                 (mul_nonneg hα_nn hpow1)) hr.le]
   linarith [le_div_iff₀ hD |>.mpr h_cross]
 
+/-! ## Lemma 17.5.2 (partial): positivity and monotonicity of pseudo-mass (Step 117g) -/
+
+/-- The pseudo-mass is strictly positive for `c ∈ (0, 2)` and `r > 0`.
+Proof: `g(0) = 2 > c`, and `g(m⁻) = c`, so strict antitonicity gives `m⁻ > 0`.
+This is the first part of GJ Lemma 17.5.2. -/
+theorem pseudoMass_pos {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) {c : ℝ}
+    (hc : c ∈ Ioo 0 2) : 0 < pseudoMass hα hr hc := by
+  have hspec := pseudoMass_spec hα hr hc
+  have hnonneg := pseudoMass_nonneg hα hr hc
+  rcases hnonneg.lt_or_eq with h | h
+  · exact h
+  · exfalso
+    rw [← h, pseudoMassG_zero hα r] at hspec
+    linarith [hc.2]
+
+/-- The pseudo-mass is strictly decreasing in `c`: larger correlation value
+means smaller pseudo-mass (slower decay). -/
+theorem pseudoMass_strictAnti {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    {c₁ c₂ : ℝ} (hc₁ : c₁ ∈ Ioo 0 2) (hc₂ : c₂ ∈ Ioo 0 2) (h : c₁ < c₂) :
+    pseudoMass hα hr hc₂ < pseudoMass hα hr hc₁ := by
+  have h₁ := pseudoMass_spec hα hr hc₁
+  have h₂ := pseudoMass_spec hα hr hc₂
+  have h₁_nn := pseudoMass_nonneg hα hr hc₁
+  have h₂_nn := pseudoMass_nonneg hα hr hc₂
+  -- g(m₂⁻) = c₂ > c₁ = g(m₁⁻), so by strict antitonicity, m₂⁻ < m₁⁻
+  have hanti := pseudoMassG_strictAntiOn hα hr
+  by_contra hle
+  simp only [not_lt] at hle
+  -- hle : m₁⁻ ≤ m₂⁻
+  rcases hle.lt_or_eq with hlt | heq
+  · -- g(m₁⁻) > g(m₂⁻) from strict antitonicity, contradicting c₁ < c₂
+    have hg_lt := hanti (Set.mem_Ici.mpr h₁_nn) (Set.mem_Ici.mpr h₂_nn) hlt
+    -- hg_lt : pseudoMassG α r m₂⁻ < pseudoMassG α r m₁⁻
+    -- h₁ : pseudoMassG α r m₁⁻ = c₁, h₂ : pseudoMassG α r m₂⁻ = c₂
+    linarith [h₁.symm.le, h₂.le, hg_lt]
+  · -- m₁⁻ = m₂⁻, so c₁ = g(m₁⁻) = g(m₂⁻) = c₂, contradicting c₁ < c₂
+    rw [heq, h₂] at h₁
+    linarith
+
 end IsingModel
