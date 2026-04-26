@@ -6642,4 +6642,56 @@ The lattice mass function $m(\beta)$ is continuous at the critical point $\beta 
 File: \texttt{PseudoMass.lean}.
 References: Glimm--Jaffe 2nd~ed. (1987), \S17.5 pp.~345--347, \S17.6 pp.~348--351.
 
+%% ---------------------------------------------------------------
+\subsection*{Step 118 -- Theorem 17.6.1: $\partial/\partial h$ of correlations (Done)}
+
+\subsubsection*{Mathematical structure}
+
+The external field $h$ enters the Ising Hamiltonian as:
+\[
+  H(\sigma; J, h, \beta) = -J\sum_{\{i,j\} \in E} \sigma_i\sigma_j - h \sum_{i \in \Lambda} \sigma_i
+  = \text{interactionEnergy} + \text{externalFieldEnergy}(h, \sigma)
+\]
+
+where $\text{externalFieldEnergy}(h, \sigma) = -h \cdot M(\sigma)$ and $M(\sigma) = \sum_{i \in \Lambda} \text{sign}(\sigma_i)$ is the \emph{total magnetization}.
+
+\subsubsection*{Derivative formulas}
+
+Since $\partial_h H = -M(\sigma)$, the chain rule gives:
+\[
+  \frac{\partial}{\partial h} e^{-\beta H(\sigma)} = \beta M(\sigma) \cdot e^{-\beta H(\sigma)}
+\]
+
+Applying the quotient rule to $\langle F \rangle_h = Z(h)^{-1} \sum_\sigma F(\sigma) e^{-\beta H(\sigma; h)}$:
+\[
+  \frac{\partial}{\partial h} \langle F \rangle_h
+  = \beta \left( \langle F \cdot M \rangle_h - \langle F \rangle_h \cdot \langle M \rangle_h \right)
+\]
+
+In particular, for spin products:
+\[
+  \frac{\partial}{\partial h} \langle \sigma^A \rangle_h
+  = \beta \left( \langle \sigma^A \cdot M \rangle_h - \langle \sigma^A \rangle_h \cdot \langle M \rangle_h \right)
+\]
+
+\subsubsection*{Lean 4 formalization}
+
+\begin{theorem}[\texttt{hasDerivAt\_correlation\_field}]
+For any finite graph $G$, coupling $J$, field $h$, inverse temperature $\beta$, and index set $A$:
+\[
+  \mathtt{HasDerivAt}\ (\lambda h' \Rightarrow \langle \sigma^A \rangle_{J,h',\beta})
+  \ (\beta \cdot (\langle \sigma^A M \rangle - \langle \sigma^A \rangle \langle M \rangle))\ h
+\]
+\end{theorem}
+
+\noindent\textbf{Proof}: Compose with \texttt{hasDerivAt\_gibbsExpectation\_field} via quotient rule.
+Intermediate steps: \texttt{externalFieldEnergy\_eq}, \texttt{hasDerivAt\_hamiltonian\_field},
+\texttt{hasDerivAt\_boltzmannWeight\_field} (chain rule via \texttt{HasDerivAt.comp}),
+\texttt{hasDerivAt\_partitionFunction\_field}, \texttt{hasDerivAt\_weightedBoltzmannSum\_field}.
+Ring closure uses \texttt{simp\_rw} + \texttt{Finset.mul\_sum} for $\beta$-factoring.
+
+\noindent\textit{Status}: Complete formalization (PR~\#931).
+File: \texttt{FieldDerivative.lean}.
+Reference: Glimm--Jaffe 2nd~ed. (1987), \S17.6 pp.~348--351.
+
 \end{document}
