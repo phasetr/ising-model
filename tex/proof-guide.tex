@@ -6804,6 +6804,31 @@ For $2\alpha > d$, any $x, y \in \mathbb{Z}^d$:
 File: \texttt{IsingModel/PolyDecay.lean}.
 Reference: GJ 1st~ed., \S17.5, pp.~310--312.
 
+\subsection*{Step 131 -- Abstract Lipschitz bound for pseudo-mass (Done)}
+
+\noindent\textbf{Statements.}
+\begin{itemize}
+  \item \texttt{pseudoMass\_deriv\_abs\_le} (Step 131a):
+    $|h'| \leq |c'| / (r \cdot c(\beta))$.
+  \item \texttt{pseudoMass\_power\_deriv\_le} (Step 131b):
+    $(h(\beta))^{2\alpha} \cdot |h'| \leq K/r$,
+    assuming $|c'| \leq K \cdot c(\beta) / (h(\beta))^{2\alpha}$.
+\end{itemize}
+
+\noindent\textbf{Proof outline.}
+From \texttt{pseudoMass\_deriv\_formula} (Step~117e): $h' = c'/g'$ where
+$g' = d/dt\,\mathrm{pseudoMassG}(\alpha, r, \cdot)|_{t=h(\beta)}$.
+From \texttt{pseudoMassG\_deriv\_abs\_ge} (Step~117f): $r \cdot c(\beta) \leq |g'|$.
+Since $g' < 0$ (\texttt{pseudoMassG\_deriv\_neg}), $|g'| > 0$, giving
+$|h'| = |c'|/|g'| \leq |c'|/(r \cdot c(\beta))$.
+The power bound follows by multiplying by $(h(\beta))^{2\alpha}$ and using the HLS hypothesis.
+The HLS hypothesis $|c'| \leq K \cdot c(\beta)/(h(\beta))^{2\alpha}$ is motivated by
+Step~130 (\texttt{tsum\_pow\_neg\_conv\_le\_const}) via Lebowitz's inequality.
+
+\noindent\textit{Status}: Complete (PR~\#947, Step 131).
+File: \texttt{IsingModel/PseudoMass.lean}.
+Reference: GJ 1st~ed., \S17.5, Theorem~17.5.1 proof, p.~312.
+
 \subsection*{Step 126 -- Discrete exponential convolution bound (Done)}
 
 \noindent\textbf{Theorems} (\texttt{summable\_exp\_neg\_int\_natAbs},
