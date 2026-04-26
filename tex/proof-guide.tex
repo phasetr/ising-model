@@ -6804,6 +6804,22 @@ For $2\alpha > d$, any $x, y \in \mathbb{Z}^d$:
 File: \texttt{IsingModel/PolyDecay.lean}.
 Reference: GJ 1st~ed., \S17.5, pp.~310--312.
 
+\subsection*{Step 133 -- Lipschitz derivative of $(m^-)^{2\alpha+1}$ (Done)}
+
+\noindent\textbf{Statement} (\texttt{pseudoMass\_pow\_succ\_deriv\_bound}).
+Given the same hypotheses as Step~131b, there exists $d$ with
+$\mathrm{HasDerivAt}\;(\beta'\mapsto(h(\beta'))^{2\alpha+1})\;d\;\beta$
+and $|d|\leq\lceil 2\alpha+1\rceil\cdot K/r$.
+
+\noindent\textbf{Proof outline.}
+Chain rule (\texttt{HasDerivAt.fun\_pow}): $d=(2\alpha+1)(h(\beta))^{2\alpha}h'$.
+From Step~131b: $(h(\beta))^{2\alpha}|h'|\leq K/r$.
+Hence $|d|=(2\alpha+1)(h(\beta))^{2\alpha}|h'|\leq(2\alpha+1)K/r$.
+
+\noindent\textit{Status}: Complete (PR~\#949, Step 133).
+File: \texttt{IsingModel/PseudoMass.lean}.
+Reference: GJ 1st~ed., \S17.5, used in the proof of Theorem~17.5.1, p.~312.
+
 \subsection*{Step 132 -- Pseudo-mass upper bound and correlation decay (Done)}
 
 \noindent\textbf{Statements.}
