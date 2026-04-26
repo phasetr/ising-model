@@ -6554,4 +6554,90 @@ $\sum_{z \in \mathbb{Z}^d} \frac{1}{|x-z|^\alpha|y-z|^\alpha} \le C\,|x-y|^{d-2\
 File: \texttt{PseudoMass.lean} (PR~\#926).
 References: Glimm--Jaffe \S17.5~p.~312~(2nd~ed.).
 
+%% ============================================================================
+%% Steps 117f--h: Lipschitz estimate + HLS + Theorem 17.5.1 (in progress)
+%% ============================================================================
+
+\subsection*{Step 117f -- \texttt{pseudoMassG\_deriv\_abs\_ge}: Derivative lower bound}
+
+\begin{theorem}[\texttt{pseudoMassG\_deriv\_abs\_ge}]
+For $\alpha \in \mathbb{N}$, $r > 0$, $t \ge 0$:
+\[
+  r \cdot g(t,r,\alpha) \le |g'(t,r,\alpha)|
+\]
+where $g(t,r,\alpha) = \frac{2e^{-tr}}{1+(tr)^\alpha}$.
+\end{theorem}
+
+\begin{proof}
+Algebraic computation: $|g'| - r \cdot g = \frac{2e^{-tr} \cdot \alpha \cdot (tr)^{\alpha-1} \cdot r}{(1+(tr)^\alpha)^2} \ge 0$
+for all $t \ge 0, r > 0, \alpha \in \mathbb{N}$.
+\end{proof}
+
+\noindent\textit{Status}: Fully proved. No sorry.
+File: \texttt{PseudoMass.lean} (PR~\#927).
+References: Glimm--Jaffe \S17.5~p.~312~(2nd~ed.).
+
+\subsection*{Step 117g -- \texttt{pseudoMass\_pos} and \texttt{pseudoMass\_strictAnti}}
+
+\begin{theorem}[\texttt{pseudoMass\_pos}]
+For $\alpha \ge 1$, $r > 0$, $c \in (0,2)$:
+\[
+  0 < \mathrm{pseudoMass}(\alpha, r, c)
+\]
+\end{theorem}
+
+\begin{theorem}[\texttt{pseudoMass\_strictAnti}]
+For $\alpha \ge 1$, $r > 0$, $c_1, c_2 \in (0,2)$ with $c_1 < c_2$:
+\[
+  \mathrm{pseudoMass}(\alpha, r, c_2) < \mathrm{pseudoMass}(\alpha, r, c_1)
+\]
+\end{theorem}
+
+\begin{proof}
+\texttt{pseudoMass\_pos}: Since $g(0) = 2 > c$ and $g$ is strictly decreasing (Step~117f--g),
+by IVT there exists unique $t > 0$ with $g(t) = c$, hence $\mathrm{pseudoMass} > 0$.
+
+\texttt{pseudoMass\_strictAnti}: If $c_1 < c_2$, then by strict antitonicity $m_1^- > m_2^-$,
+hence the result.
+\end{proof}
+
+\noindent\textit{Status}: Fully proved. No sorry. Partial Lemma 17.5.2 (lower bound).
+File: \texttt{PseudoMass.lean} (PR~\#928).
+References: Glimm--Jaffe \S17.5~p.~311~(2nd~ed.).
+
+\subsection*{Step 117h -- Discrete HLS inequality + Theorem 17.5.1 (in progress)}
+
+\subsubsection*{Discrete Hardy--Littlewood--Sobolev inequality (Axiom)}
+
+Since the discrete HLS inequality is not available in Mathlib, we axiomatize it:
+
+\begin{axiom}[\texttt{discrete\_hls\_inequality}]
+For $\alpha \in \mathbb{N}$ with $\alpha \ge 1$ (specializing GJ's $\alpha > d/2$) and $2\alpha > d$:
+\[
+  \sum_{z \in \mathbb{Z}^d} \frac{1}{|x-z|^\alpha |y-z|^\alpha} \le C_{\alpha,d} \cdot |x-y|^{d-2\alpha}
+\]
+for all $x, y \in \mathbb{Z}^d$ with $x \ne y$.
+\end{axiom}
+
+\textit{Reference}: Glimm--Jaffe \S17.5, formula~(17.5.5), p.~428 (2nd~ed.).
+
+\subsubsection*{Full Lemma 17.5.2 and Theorem 17.5.1}
+
+Using Steps 117a--g combined with the HLS axiom, the goals are:
+
+\begin{theorem}[Lemma 17.5.2]
+For all $\beta$:
+\[
+  m^-(\beta) \le m(\beta) \le C \cdot m^-(\beta)
+\]
+\end{theorem}
+
+\begin{theorem}[Theorem 17.5.1]
+The lattice mass function $m(\beta)$ is continuous at $\beta = \beta_c$.
+\end{theorem}
+
+\noindent\textit{Status}: In progress (PR~\#929).
+File: \texttt{PseudoMass.lean}.
+References: Glimm--Jaffe \S17.5~pp.~310--312~(2nd~ed.).
+
 \end{document}

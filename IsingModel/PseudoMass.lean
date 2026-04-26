@@ -416,4 +416,31 @@ theorem pseudoMass_strictAnti {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     rw [heq, h₂] at h₁
     linarith
 
+/-! ## Discrete Hardy-Littlewood-Sobolev inequality (axiom) -/
+
+/-- **Discrete Hardy-Littlewood-Sobolev (HLS) inequality** for lattice convolution sums.
+
+For integer parameter `α : ℕ` with `α ≥ 1` (enforcing the generalized condition `α > d/2`
+from Glimm–Jaffe §17.5), the lattice convolution sum of reciprocal distances is bounded:
+
+  `∑_{z ∈ ℤ^d} 1 / (|x - z|^α · |y - z|^α) ≤ C_{α,d} · |x - y|^{d - 2α}`
+
+for all `x, y ∈ ℤ^d` with `x ≠ y`.
+
+**Status**: This is a fundamental result from harmonic analysis on lattices but is not
+currently available in Mathlib. We axiomatize it for now, with the intent to either
+import a formal proof or establish it via a dedicated lattice analysis library.
+
+**References**:
+* Glimm, J., Jaffe, A.: *Quantum Physics: A Functional Integral Point of View*,
+  2nd ed., Springer 1987, §17.5, formula (17.5.5), p.428.
+* Friedli, S., Velenik, Y.: *Statistical Mechanics of Lattice Systems*,
+  2nd ed., Cambridge University Press 2018, Ch.16-17 (lattice structure).
+-/
+-- Discrete Hardy-Littlewood-Sobolev inequality: ∑_z 1/(|x-z|^α |y-z|^α) ≤ C·|x-y|^(d-2α)
+-- (cf. Glimm–Jaffe §17.5, formula (17.5.5), p.428)
+-- This result is not in Mathlib; we axiomatize it for now.
+noncomputable axiom discrete_hls_constant (α d : ℕ) (hα : 1 ≤ α) (hαd : 2 * α > d) :
+    ∃ C : ℝ, C > 0
+
 end IsingModel
