@@ -470,4 +470,18 @@ theorem correlation_beta_deriv_le_lebowitz
   have h_le := summand_le_lebowitz_of_disjoint G J β hf r s u v hrs hru hrv hsu hsv huv
   linarith [show (0 : ℝ) ≤ 1 from zero_le_one]
 
+/-! ## Continuity corollaries (Step 120) -/
+
+/-- **Correlation is continuous in β**:
+`fun β' => correlation G (⟨J, 0, β'⟩) A` is continuous at `β`.
+
+Proof: differentiable ⇒ continuous (from `hasDerivAt_correlation_beta`).
+
+Reference: GJ §17.5 (implicit); used in Step 120 for pseudoMass composition. -/
+theorem correlation_continuousAt_beta
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (A : Finset ι) :
+    ContinuousAt (fun β' => correlation G (⟨J, 0, β'⟩ : IsingParams ℝ) A) β :=
+  (hasDerivAt_correlation_beta G J β A).continuousAt
+
 end IsingModel
