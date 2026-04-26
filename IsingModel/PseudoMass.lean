@@ -582,7 +582,9 @@ Proof: compose `correlation_monotoneOn_beta` (β ↑ → c(β) ↑) with `pseudo
 This completes the §17.5 accessible content: higher β → larger correlation →
 smaller pseudo-mass (approaching zero at β_c).
 
-Reference: Glimm–Jaffe §17.5 pp. 345–347 (implicit in the mass continuity argument). -/
+Reference: derived from `pseudoMass_strictAnti` (Step 117g) and
+`correlation_monotoneOn_beta` (Step 122); implicit in the §17.5 pseudo-mass analysis
+(Glimm–Jaffe §17.5, 2nd ed., pp. 311–312). -/
 theorem pseudoMass_comp_corr_antitoneOn_beta
     {ι : Type*} [Fintype ι] [DecidableEq ι]
     {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
