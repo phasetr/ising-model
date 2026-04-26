@@ -1,4 +1,9 @@
 import IsingModel.GibbsMeasure
+import Mathlib.Analysis.Calculus.Deriv.Add
+import Mathlib.Analysis.Calculus.Deriv.Inv
+import Mathlib.Analysis.Calculus.Deriv.Mul
+import Mathlib.Analysis.Calculus.Deriv.Comp
+import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 
 /-!
 # Field (h) derivatives for correlations (GJ §17.6 Step 118)
@@ -8,8 +13,11 @@ parameter `h`, with the explicit derivative formula.
 
 ## Main results
 
-* `hasDerivAt_boltzmannWeight_field` — Existence and formula for d/dh Boltzmann weight
-* `hasDerivAt_correlation_field` — Existence and formula for d/dh correlation
+* `hasDerivAt_boltzmannWeight_field` — `d/dh exp(-β·H(σ)) = β·M(σ)·exp(-β·H(σ))`
+* `hasDerivAt_partitionFunction_field` — `d/dh Z(h) = Σ_σ β·M(σ)·bw(σ)`
+* `hasDerivAt_correlation_field` — `d/dh ⟨σ^A⟩_h = β·(⟨σ^A·M⟩ − ⟨σ^A⟩·⟨M⟩)`
+
+where `M(σ) = totalMagnetization σ = Σ_i sign(σ_i)`.
 
 ## References
 
@@ -18,94 +26,187 @@ parameter `h`, with the explicit derivative formula.
 
 namespace IsingModel
 
-open Real
+open Finset Real
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
-/-! ## Helper: total magnetization (sum of signs) -/
+/-! ## Total magnetization -/
 
 /-- The total magnetization: `∑_i sign(σ_i)`. -/
 noncomputable def totalMagnetization (σ : Config ι) : ℝ :=
-  ∑ i : ι, (σ i).toSign
+  ∑ i : ι, (↑(σ i).toSign : ℝ)
 
-/-! ## Placeholder theorems for field derivatives -/
+/-! ## Relation between externalFieldEnergy and totalMagnetization -/
 
-/-- **Boltzmann weight is differentiable in h**.
+omit [DecidableEq ι] in
+/-- `externalFieldEnergy h σ = -h · totalMagnetization σ`. -/
+private lemma externalFieldEnergy_eq (h : ℝ) (σ : Config ι) :
+    externalFieldEnergy h σ = -h * totalMagnetization σ := by
+  simp [externalFieldEnergy, totalMagnetization, Spin.sign]
 
-The external field enters the Hamiltonian as `-h · (∑_i sign(σ_i))`.
-The derivative of the Boltzmann weight with respect to h is proportional
-to the total magnetization times the Boltzmann weight itself.
+omit [DecidableEq ι] in
+/-- `d/dh externalFieldEnergy h σ = -totalMagnetization σ`. -/
+private lemma hasDerivAt_externalFieldEnergy
+    (h : ℝ) (σ : Config ι) :
+    HasDerivAt (fun h' => externalFieldEnergy h' σ) (-totalMagnetization σ) h := by
+  simp_rw [externalFieldEnergy_eq]
+  have h1 := ((hasDerivAt_id h).neg).mul_const (totalMagnetization σ)
+  simp only [Function.id_def, neg_one_mul] at h1
+  exact h1
 
-Status: Formal statement; proof deferred to full implementation.
+/-! ## Hamiltonian h-derivative -/
+
+omit [DecidableEq ι] in
+/-- `d/dh H(σ; J, h, β) = -totalMagnetization σ`.
+
+The interaction energy is constant in `h`; only the external field term contributes. -/
+private lemma hasDerivAt_hamiltonian_field
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h β : ℝ) (σ : Config ι) :
+    HasDerivAt (fun h' => hamiltonian G (⟨J, h', β⟩ : IsingParams ℝ) σ)
+      (-totalMagnetization σ) h := by
+  rw [show (fun h' => hamiltonian G (⟨J, h', β⟩ : IsingParams ℝ) σ) =
+      (fun h' => interactionEnergy G J σ + externalFieldEnergy h' σ) from rfl]
+  have h1 := (hasDerivAt_const h (interactionEnergy G J σ)).add
+      (hasDerivAt_externalFieldEnergy h σ)
+  simp only [zero_add] at h1
+  exact h1
+
+/-! ## Boltzmann weight h-derivative -/
+
+omit [DecidableEq ι] in
+/-- **Boltzmann weight is differentiable in h**:
+`d/dh exp(-β · H(σ)) = β · totalMagnetization(σ) · exp(-β · H(σ))`.
+
+Proof: chain rule via `d/dh H = -M`, so `d/dh [-β·H] = β·M`.
 
 Reference: Glimm–Jaffe §17.6 pp. 348–351. -/
 theorem hasDerivAt_boltzmannWeight_field
     (G : SimpleGraph ι) [Fintype G.edgeSet]
     (J h β : ℝ) (σ : Config ι) :
-    ∃ (deriv_h : ℝ), deriv_h = β * totalMagnetization σ *
-        boltzmannWeight G (⟨J, h, β⟩ : IsingParams ℝ) σ := by
-  use β * totalMagnetization σ * boltzmannWeight G (⟨J, h, β⟩ : IsingParams ℝ) σ
+    HasDerivAt (fun h' => boltzmannWeight G (⟨J, h', β⟩ : IsingParams ℝ) σ)
+      (β * totalMagnetization σ * boltzmannWeight G (⟨J, h, β⟩ : IsingParams ℝ) σ) h := by
+  set H := hamiltonian G (⟨J, h, β⟩ : IsingParams ℝ) σ
+  set M := totalMagnetization σ
+  have hbw : ∀ h' : ℝ,
+      boltzmannWeight G (⟨J, h', β⟩ : IsingParams ℝ) σ =
+      Real.exp (-β * hamiltonian G (⟨J, h', β⟩ : IsingParams ℝ) σ) := fun h' => rfl
+  simp_rw [hbw]
+  have hH := hasDerivAt_hamiltonian_field G J h β σ
+  have harg : HasDerivAt (fun h' => -β * hamiltonian G (⟨J, h', β⟩ : IsingParams ℝ) σ)
+      (-β * (-M)) h := hH.const_mul (-β)
+  have hexp := (Real.hasDerivAt_exp (-β * H)).comp h harg
+  rw [show (Real.exp ∘ fun h' => -β * hamiltonian G (⟨J, h', β⟩ : IsingParams ℝ) σ) =
+      fun h' => Real.exp (-β * hamiltonian G (⟨J, h', β⟩ : IsingParams ℝ) σ) from rfl] at hexp
+  convert hexp using 1
+  ring
 
-/-- **Partition function is differentiable in h**.
+/-! ## Partition function h-derivative -/
 
-The partition function Z(h) has a derivative in the external field parameter.
-The derivative is a sum of individual magnetization contributions weighted
-by the Boltzmann factor.
+/-- **Partition function is differentiable in h**:
+`d/dh Z(h) = Σ_σ β · totalMagnetization(σ) · bw(σ)`.
 
-Status: Formal statement; proof deferred to full implementation.
-
-Reference: Glimm–Jaffe §17.6 pp. 348–351. -/
+Reference: Glimm–Jaffe §17.6. -/
 theorem hasDerivAt_partitionFunction_field
     (G : SimpleGraph ι) [Fintype G.edgeSet]
     (J h β : ℝ) :
-    ∃ (deriv_h : ℝ), deriv_h = β * ∑ σ : Config ι,
-        totalMagnetization σ * boltzmannWeight G (⟨J, h, β⟩ : IsingParams ℝ) σ := by
-  use β * ∑ σ : Config ι, totalMagnetization σ * boltzmannWeight G (⟨J, h, β⟩ : IsingParams ℝ) σ
+    HasDerivAt (fun h' => partitionFunction G (⟨J, h', β⟩ : IsingParams ℝ))
+      (∑ σ : Config ι,
+        β * totalMagnetization σ * boltzmannWeight G (⟨J, h, β⟩ : IsingParams ℝ) σ) h := by
+  simp only [partitionFunction]
+  exact HasDerivAt.fun_sum (fun σ _ => hasDerivAt_boltzmannWeight_field G J h β σ)
 
-/-- **Gibbs expectation is differentiable in h**.
+/-! ## Weighted Boltzmann sum h-derivative -/
 
-The Gibbs expectation of an observable F has a derivative in the external field,
-given by a quotient rule formula similar to the β-derivative case.
+/-- Weighted Boltzmann sum is differentiable in h. -/
+private theorem hasDerivAt_weightedBoltzmannSum_field
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h β : ℝ) (F : Config ι → ℝ) :
+    HasDerivAt
+      (fun h' => ∑ σ : Config ι, F σ * boltzmannWeight G (⟨J, h', β⟩ : IsingParams ℝ) σ)
+      (∑ σ : Config ι,
+        F σ * (β * totalMagnetization σ * boltzmannWeight G (⟨J, h, β⟩ : IsingParams ℝ) σ)) h := by
+  apply HasDerivAt.fun_sum
+  intro σ _
+  exact (hasDerivAt_boltzmannWeight_field G J h β σ).const_mul (F σ)
 
-Status: Formal statement; proof deferred to full implementation.
+/-! ## Gibbs expectation h-derivative -/
 
-Reference: Glimm–Jaffe §17.6 pp. 348–351. -/
+/-- **Gibbs expectation is differentiable in h**:
+`d/dh ⟨F⟩_h = β · (⟨F · M⟩_h − ⟨F⟩_h · ⟨M⟩_h)`.
+
+Proof: quotient rule on `⟨F⟩ = Z⁻¹ · Σ F·bw`.
+
+Reference: Glimm–Jaffe §17.6. -/
 private theorem hasDerivAt_gibbsExpectation_field
     (G : SimpleGraph ι) [Fintype G.edgeSet]
     (J h β : ℝ) (F : Config ι → ℝ) :
-    ∃ (deriv_h : ℝ), deriv_h = β * (gibbsExpectation G (⟨J, h, β⟩ : IsingParams ℝ)
-                (fun σ => F σ * totalMagnetization σ) -
+    HasDerivAt
+      (fun h' => gibbsExpectation G (⟨J, h', β⟩ : IsingParams ℝ) F)
+      (β * (gibbsExpectation G (⟨J, h, β⟩ : IsingParams ℝ) (fun σ => F σ * totalMagnetization σ) -
             gibbsExpectation G (⟨J, h, β⟩ : IsingParams ℝ) F *
-            gibbsExpectation G (⟨J, h, β⟩ : IsingParams ℝ) totalMagnetization) := by
-  use β * (gibbsExpectation G (⟨J, h, β⟩ : IsingParams ℝ)
-                (fun σ => F σ * totalMagnetization σ) -
-            gibbsExpectation G (⟨J, h, β⟩ : IsingParams ℝ) F *
-            gibbsExpectation G (⟨J, h, β⟩ : IsingParams ℝ) totalMagnetization)
+            gibbsExpectation G (⟨J, h, β⟩ : IsingParams ℝ) totalMagnetization)) h := by
+  set p := (⟨J, h, β⟩ : IsingParams ℝ)
+  have hZpos := partitionFunction_pos G p
+  have hZne : partitionFunction G p ≠ 0 := hZpos.ne'
+  have hge_eq : ∀ h',
+      gibbsExpectation G (⟨J, h', β⟩ : IsingParams ℝ) F =
+      (partitionFunction G (⟨J, h', β⟩ : IsingParams ℝ))⁻¹ *
+      ∑ σ : Config ι, F σ * boltzmannWeight G (⟨J, h', β⟩ : IsingParams ℝ) σ := fun _ => rfl
+  simp_rw [hge_eq]
+  have hZderiv := hasDerivAt_partitionFunction_field G J h β
+  have hZinv : HasDerivAt (fun h' => (partitionFunction G (⟨J, h', β⟩ : IsingParams ℝ))⁻¹)
+      (-(∑ σ, β * totalMagnetization σ * boltzmannWeight G p σ) / (partitionFunction G p) ^ 2) h :=
+    (show (⟨J, h, β⟩ : IsingParams ℝ) = p from rfl) ▸ hZderiv.inv hZne
+  have hnum := hasDerivAt_weightedBoltzmannSum_field G J h β F
+  have hprod := hZinv.mul hnum
+  convert hprod using 1
+  simp only [gibbsExpectation, p]
+  set Z := partitionFunction G (⟨J, h, β⟩ : IsingParams ℝ)
+  have hZne' : Z ≠ 0 := hZne
+  -- Rewrite sums with β factored out for ring
+  have hFM : ∑ x : Config ι, F x * (β * totalMagnetization x *
+      boltzmannWeight G (⟨J, h, β⟩ : IsingParams ℝ) x) =
+      β * ∑ x : Config ι, F x * totalMagnetization x *
+      boltzmannWeight G (⟨J, h, β⟩ : IsingParams ℝ) x := by
+    simp_rw [show ∀ x : Config ι, F x * (β * totalMagnetization x *
+        boltzmannWeight G (⟨J, h, β⟩ : IsingParams ℝ) x) =
+        β * (F x * totalMagnetization x * boltzmannWeight G (⟨J, h, β⟩ : IsingParams ℝ) x)
+        from fun x => by ring]
+    rw [← Finset.mul_sum]
+  rw [hFM]
+  have hMβ : ∑ x : Config ι, β * totalMagnetization x *
+      boltzmannWeight G (⟨J, h, β⟩ : IsingParams ℝ) x =
+      β * ∑ x : Config ι, totalMagnetization x *
+      boltzmannWeight G (⟨J, h, β⟩ : IsingParams ℝ) x := by
+    simp_rw [show ∀ x : Config ι, β * totalMagnetization x *
+        boltzmannWeight G (⟨J, h, β⟩ : IsingParams ℝ) x =
+        β * (totalMagnetization x * boltzmannWeight G (⟨J, h, β⟩ : IsingParams ℝ) x)
+        from fun x => by ring]
+    rw [← Finset.mul_sum]
+  field_simp [hZne']
+  rw [hMβ]
+  ring
 
-/-! ## Main derivative formula for correlations -/
+/-! ## Main correlation h-derivative -/
 
 /-- **Derivative formula for Ising correlations w.r.t. external field** (GJ §17.6):
+`d/dh ⟨σ^A⟩_h = β · (⟨σ^A · M⟩_h − ⟨σ^A⟩_h · ⟨M⟩_h)`.
 
-The finite-volume correlation `⟨σ^A⟩_{β,h}` is differentiable in the external field `h`.
-The derivative formula involves the magnetization and has the structure of a quotient rule
-applied to the field dependence of the Hamiltonian.
+Here `M(σ) = totalMagnetization σ = Σ_i sign(σ_i)`.
 
-Proof: Follows from the quotient rule applied to ⟨F⟩_h = (∑ F bw) / Z, where the external
-field h enters through the Boltzmann weight exp(-β·H(h)) with H(h) = interaction - h·magnetization.
-
-Status: Formal statement; full proof deferred pending completing hasDerivAt_gibbsExpectation_field.
+Proof: Apply the quotient rule for Gibbs expectations with `F = spinProduct A`.
 
 Reference: Glimm–Jaffe §17.6 pp. 348–351. -/
 theorem hasDerivAt_correlation_field
     (G : SimpleGraph ι) [Fintype G.edgeSet]
     (J h β : ℝ) (A : Finset ι) :
-    ∃ (deriv_h : ℝ), deriv_h = β * (gibbsExpectation G (⟨J, h, β⟩ : IsingParams ℝ)
-            (fun σ => spinProduct A σ * totalMagnetization σ) -
+    HasDerivAt (fun h' => correlation G (⟨J, h', β⟩ : IsingParams ℝ) A)
+      (β * (gibbsExpectation G (⟨J, h, β⟩ : IsingParams ℝ)
+              (fun σ => spinProduct A σ * totalMagnetization σ) -
             correlation G (⟨J, h, β⟩ : IsingParams ℝ) A *
-            gibbsExpectation G (⟨J, h, β⟩ : IsingParams ℝ) totalMagnetization) := by
-  use β * (gibbsExpectation G (⟨J, h, β⟩ : IsingParams ℝ)
-            (fun σ => spinProduct A σ * totalMagnetization σ) -
-            correlation G (⟨J, h, β⟩ : IsingParams ℝ) A *
-            gibbsExpectation G (⟨J, h, β⟩ : IsingParams ℝ) totalMagnetization)
+            gibbsExpectation G (⟨J, h, β⟩ : IsingParams ℝ) totalMagnetization)) h := by
+  unfold correlation
+  exact hasDerivAt_gibbsExpectation_field G J h β (spinProduct A)
 
 end IsingModel
