@@ -6,6 +6,7 @@ import IsingModel.PhaseTransition
 import IsingModel.Inequalities.FKG
 import IsingModel.AmbientFKG
 import IsingModel.Inequalities.HighTemp
+import IsingModel.LatticeExpSum
 
 /-!
 # Inequalities, §5.1 cluster decay, and §17 lattice mass at ℤ^d
@@ -1443,6 +1444,190 @@ theorem latticeMass_le_neg_log_tanh_betaJ
             have h0 : -(↑α : ℝ) * ↑n₀ + (↑α : ℝ) * ↑n₀ = 0 := by ring
             rw [h0, Real.exp_zero, mul_one]
   linarith [Real.add_one_le_exp (ε * ↑n₀)]
+
+/-! ## Step 127: Lebowitz–exponential product bound (GJ §17.5 PR N+2) -/
+
+/-- Uniform upper bound on each factor under exponential decay.
+
+Under `HasExponentialDecay` with constant `C` and rate `α`, each
+`truncated2Infinite(i, z)` is bounded uniformly for ALL `z` (including `i = z`)
+by `(C + 1) * exp(-α/2 * d(i, z))`.
+
+At `i = z`: uses `truncated2Infinite_le_one` (≤ 1 ≤ C+1).
+At `i ≠ z`: uses the decay bound `C * exp(-α*d) ≤ (C+1) * exp(-α/2 * d)` for
+`d ≥ 0` (since `-α*d ≤ -α/2*d` and `C ≤ C+1`). -/
+private lemma truncated2Infinite_le_hDecay_uniform
+    {d : ℕ} {J β : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)
+    {α C : ℝ} (hα : 0 < α) (hC : 0 ≤ C)
+    (hbound : ∀ i j : Fin d → ℤ, i ≠ j →
+        |Ambient.truncated2Infinite (latticeGraph d) (Ambient.cubicExhaustion d)
+          (⟨J, 0, β⟩ : IsingParams ℝ) i j|
+        ≤ C * Real.exp (-α * (latticeDistance d i j : ℝ)))
+    (i z : Fin d → ℤ) :
+    Ambient.truncated2Infinite (latticeGraph d) (Ambient.cubicExhaustion d)
+      (⟨J, 0, β⟩ : IsingParams ℝ) i z
+    ≤ (C + 1) * Real.exp (-(α / 2) * (latticeDistance d i z : ℝ)) := by
+  have hf : Ferromagnetic (⟨J, 0, β⟩ : IsingParams ℝ) := ⟨hJ, le_refl 0, hβ⟩
+  have hnn : 0 ≤ Ambient.truncated2Infinite (latticeGraph d) (Ambient.cubicExhaustion d)
+      (⟨J, 0, β⟩ : IsingParams ℝ) i z :=
+    Ambient.truncated2Infinite_nonneg (latticeGraph d) (Ambient.cubicExhaustion d)
+      (⟨J, 0, β⟩ : IsingParams ℝ) hf i z
+  rcases eq_or_ne i z with rfl | hiz
+  · -- Diagonal: truncated2(i,i) ≤ 1 ≤ (C+1)·1 = (C+1)·exp(-α/2·0)
+    have hle1 := Ambient.truncated2Infinite_le_one (latticeGraph d)
+        (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) hf i i
+    simp only [latticeDistance_self, Nat.cast_zero, mul_zero, Real.exp_zero]
+    linarith
+  · -- Off-diagonal: C·exp(-α·d) ≤ (C+1)·exp(-α/2·d)
+    have habs := hbound i z hiz
+    rw [abs_of_nonneg hnn] at habs
+    have hdist_nn : (0 : ℝ) ≤ latticeDistance d i z := Nat.cast_nonneg _
+    calc Ambient.truncated2Infinite _ _ _ i z
+        ≤ C * Real.exp (-α * (latticeDistance d i z : ℝ)) := habs
+      _ ≤ (C + 1) * Real.exp (-(α / 2) * (latticeDistance d i z : ℝ)) := by
+            apply mul_le_mul (le_add_of_nonneg_right one_pos.le)
+              (Real.exp_le_exp.mpr (by nlinarith)) (Real.exp_nonneg _) (by linarith)
+
+/-- **Summability of the truncated-2 product sum** under exponential decay (Step 127).
+
+Under `HasExponentialDecay d (cubicExhaustion d) (⟨J, 0, β⟩) α`, the sum
+`∑_z truncated2Inf(x,z) · truncated2Inf(y,z)` is summable over `ℤ^d`.
+
+Proof: both factors are nonneg (GKS-II) and uniformly bounded by `(C+1)·exp(-α/2·d)`;
+the product is bounded by `(C+1)²·exp(-α/2·d(x,z))·exp(-α/2·d(y,z))`; this is
+summable by `summable_exp_neg_dist` with rate `α/2`.
+
+**Reference**: GJ §17.5 (applying Lemma 17.5.2 exponential decay). -/
+theorem summable_truncated2Infinite_prod_of_hasExponentialDecay
+    {d : ℕ} {J β : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)
+    {α : ℝ} (hα : 0 < α)
+    (hdecay : HasExponentialDecay d (Ambient.cubicExhaustion d)
+                (⟨J, 0, β⟩ : IsingParams ℝ) α)
+    (x y : Fin d → ℤ) :
+    Summable (fun z : Fin d → ℤ =>
+        Ambient.truncated2Infinite (latticeGraph d) (Ambient.cubicExhaustion d)
+          (⟨J, 0, β⟩ : IsingParams ℝ) x z *
+        Ambient.truncated2Infinite (latticeGraph d) (Ambient.cubicExhaustion d)
+          (⟨J, 0, β⟩ : IsingParams ℝ) y z) := by
+  obtain ⟨C, hC, hbound⟩ := hdecay
+  have hf : Ferromagnetic (⟨J, 0, β⟩ : IsingParams ℝ) := ⟨hJ, le_refl 0, hβ⟩
+  have hα2 : 0 < α / 2 := half_pos hα
+  refine Summable.of_nonneg_of_le
+    (fun z => mul_nonneg (Ambient.truncated2Infinite_nonneg (latticeGraph d)
+                            (Ambient.cubicExhaustion d) _ hf x z)
+                         (Ambient.truncated2Infinite_nonneg (latticeGraph d)
+                            (Ambient.cubicExhaustion d) _ hf y z))
+    (fun z => ?_)
+    ((summable_exp_neg_dist hα2 d x).mul_left ((C + 1) ^ 2))
+  have hx := truncated2Infinite_le_hDecay_uniform hJ hβ hα hC hbound x z
+  have hy := truncated2Infinite_le_hDecay_uniform hJ hβ hα hC hbound y z
+  have hnn_y := Ambient.truncated2Infinite_nonneg (latticeGraph d)
+                  (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) hf y z
+  calc Ambient.truncated2Infinite _ _ _ x z * Ambient.truncated2Infinite _ _ _ y z
+      ≤ (C + 1) * Real.exp (-(α / 2) * (latticeDistance d x z : ℝ)) *
+        ((C + 1) * Real.exp (-(α / 2) * (latticeDistance d y z : ℝ))) :=
+          mul_le_mul hx hy hnn_y (mul_nonneg (by linarith) (Real.exp_nonneg _))
+    _ = (C + 1) ^ 2 *
+        (Real.exp (-(α / 2) * (latticeDistance d x z : ℝ)) *
+         Real.exp (-(α / 2) * (latticeDistance d y z : ℝ))) := by ring
+    _ ≤ (C + 1) ^ 2 * Real.exp (-(α / 2) * (latticeDistance d x z : ℝ)) := by
+          apply mul_le_mul_of_nonneg_left _ (sq_nonneg _)
+          exact mul_le_of_le_one_right (Real.exp_nonneg _)
+                (Real.exp_le_one_iff.mpr (by
+                  nlinarith [hα2.le, show (0:ℝ) ≤ latticeDistance d y z from Nat.cast_nonneg _]))
+
+/-- **Upper bound on the truncated-2 product tsum** (Step 127).
+
+Under `HasExponentialDecay d (cubicExhaustion d) (⟨J, 0, β⟩) α` with witness constant `C`,
+the infinite sum satisfies:
+```
+∑_z truncated2Inf(x,z) · truncated2Inf(y,z) ≤
+  (C+1)² · 2 · C(α/2, d) · exp(-α/4 · d(x,y))
+```
+where `C(α/2, d) = ∑_z exp(-α/2 · d(0,z))`.
+
+The uniform factor `C+1` absorbs both the off-diagonal decay `C·exp(-α·d)` and the
+diagonal bound `≤ 1` (GKS-II), avoiding case analysis. The rate `α/4` comes from
+applying `lattice_exp_sum_conv_le` with rate `α/2`.
+
+**Reference**: GJ §17.5, Lemma 17.5.2. -/
+theorem tsum_truncated2Infinite_prod_le
+    {d : ℕ} {J β : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)
+    {α C : ℝ} (hα : 0 < α) (hC : 0 ≤ C)
+    (hbound : ∀ i j : Fin d → ℤ, i ≠ j →
+        |Ambient.truncated2Infinite (latticeGraph d) (Ambient.cubicExhaustion d)
+          (⟨J, 0, β⟩ : IsingParams ℝ) i j|
+        ≤ C * Real.exp (-α * (latticeDistance d i j : ℝ)))
+    (x y : Fin d → ℤ) :
+    ∑' z : Fin d → ℤ,
+        Ambient.truncated2Infinite (latticeGraph d) (Ambient.cubicExhaustion d)
+          (⟨J, 0, β⟩ : IsingParams ℝ) x z *
+        Ambient.truncated2Infinite (latticeGraph d) (Ambient.cubicExhaustion d)
+          (⟨J, 0, β⟩ : IsingParams ℝ) y z
+    ≤ (C + 1) ^ 2 * (2 * ∑' z : Fin d → ℤ,
+          Real.exp (-(α / 2) * (latticeDistance d 0 z : ℝ))) *
+        Real.exp (-(α / 2) * (latticeDistance d x y : ℝ) / 2) := by
+  have hf : Ferromagnetic (⟨J, 0, β⟩ : IsingParams ℝ) := ⟨hJ, le_refl 0, hβ⟩
+  have hα2 : 0 < α / 2 := half_pos hα
+  -- Uniform pointwise bound using C+1
+  have hle_prod : ∀ z : Fin d → ℤ,
+      Ambient.truncated2Infinite (latticeGraph d) (Ambient.cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) x z *
+      Ambient.truncated2Infinite (latticeGraph d) (Ambient.cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) y z
+      ≤ (C + 1) ^ 2 * (Real.exp (-(α / 2) * (latticeDistance d x z : ℝ)) *
+                        Real.exp (-(α / 2) * (latticeDistance d y z : ℝ))) := by
+    intro z
+    have hx := truncated2Infinite_le_hDecay_uniform hJ hβ hα hC hbound x z
+    have hy := truncated2Infinite_le_hDecay_uniform hJ hβ hα hC hbound y z
+    have hnn_y := Ambient.truncated2Infinite_nonneg (latticeGraph d)
+                    (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) hf y z
+    calc Ambient.truncated2Infinite _ _ _ x z * Ambient.truncated2Infinite _ _ _ y z
+        ≤ (C + 1) * Real.exp (-(α / 2) * _) * ((C + 1) * Real.exp (-(α / 2) * _)) :=
+            mul_le_mul hx hy hnn_y (mul_nonneg (by linarith) (Real.exp_nonneg _))
+      _ = (C + 1) ^ 2 * (Real.exp (-(α / 2) * _) * Real.exp (-(α / 2) * _)) := by ring
+  -- Summability of the comparison
+  have hsumm_conv : Summable (fun z : Fin d → ℤ =>
+      Real.exp (-(α / 2) * (latticeDistance d x z : ℝ)) *
+      Real.exp (-(α / 2) * (latticeDistance d y z : ℝ))) :=
+    Summable.of_nonneg_of_le
+      (fun z => mul_nonneg (Real.exp_nonneg _) (Real.exp_nonneg _))
+      (fun z => mul_le_of_le_one_right (Real.exp_nonneg _)
+                  (Real.exp_le_one_iff.mpr (by
+                    nlinarith [hα2.le,
+                      show (0:ℝ) ≤ latticeDistance d y z from Nat.cast_nonneg _])))
+      (summable_exp_neg_dist hα2 d x)
+  have hprod_summable : Summable (fun z : Fin d → ℤ =>
+      Ambient.truncated2Infinite (latticeGraph d) (Ambient.cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) x z *
+      Ambient.truncated2Infinite (latticeGraph d) (Ambient.cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) y z) :=
+    Summable.of_nonneg_of_le
+      (fun z => mul_nonneg (Ambient.truncated2Infinite_nonneg (latticeGraph d)
+                              (Ambient.cubicExhaustion d) _ hf x z)
+                           (Ambient.truncated2Infinite_nonneg (latticeGraph d)
+                              (Ambient.cubicExhaustion d) _ hf y z))
+      hle_prod (hsumm_conv.mul_left _)
+  -- Main calc
+  calc ∑' z, Ambient.truncated2Infinite _ _ _ x z * Ambient.truncated2Infinite _ _ _ y z
+      ≤ ∑' z, (C + 1) ^ 2 * (Real.exp (-(α / 2) * _) * Real.exp (-(α / 2) * _)) :=
+          hprod_summable.tsum_le_tsum hle_prod (hsumm_conv.mul_left _)
+    _ = (C + 1) ^ 2 * ∑' z, Real.exp (-(α / 2) * _) * Real.exp (-(α / 2) * _) :=
+          tsum_mul_left
+    _ ≤ (C + 1) ^ 2 * (2 * ∑' z : Fin d → ℤ,
+            Real.exp (-(α / 2) * (latticeDistance d 0 z : ℝ))) *
+          Real.exp (-(α / 2) * (latticeDistance d x y : ℝ) / 2) := by
+          have hconv := lattice_exp_sum_conv_le hα2 d x y
+          calc (C + 1) ^ 2 * ∑' z : Fin d → ℤ,
+                  Real.exp (-(α / 2) * (latticeDistance d x z : ℝ)) *
+                  Real.exp (-(α / 2) * (latticeDistance d y z : ℝ))
+              ≤ (C + 1) ^ 2 * (2 * (∑' z : Fin d → ℤ,
+                    Real.exp (-(α / 2) * (latticeDistance d 0 z : ℝ))) *
+                  Real.exp (-(α / 2) * (latticeDistance d x y : ℝ) / 2)) :=
+                  mul_le_mul_of_nonneg_left hconv (sq_nonneg _)
+            _ = (C + 1) ^ 2 * (2 * ∑' z : Fin d → ℤ,
+                    Real.exp (-(α / 2) * (latticeDistance d 0 z : ℝ))) *
+                Real.exp (-(α / 2) * (latticeDistance d x y : ℝ) / 2) := by ring
 
 end Ambient
 
