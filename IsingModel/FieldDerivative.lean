@@ -246,22 +246,24 @@ private lemma gibbsExpectation_totalMag_eq_sum
            Finset.sum_mul, Finset.mul_sum]
   rw [Finset.sum_comm]
 
-/-- The h-derivative of correlations is nonneg for ferromagnetic Ising (h ≥ 0).
+/-- The h-derivative of correlations is nonneg (infinitesimal form of h-monotonicity).
 
 `d/dh ⟨σ^A⟩_h = β · Σ_i (⟨σ^{AΔ{i}}⟩ - ⟨σ^A⟩·⟨σ_i⟩) ≥ 0`
 
-by GKS-II (each term ≥ 0 for ferromagnetic `h ≥ 0`).
+by GKS-II: each term `⟨σ^{AΔ{i}}⟩ - ⟨σ^A⟩·⟨σ_i⟩ ≥ 0` for ferromagnetic `h ≥ 0`.
+This is the infinitesimal form underlying the monotonicity of correlations in `h`.
 
-Reference: Glimm–Jaffe §17.5 p.311 (implicit in the monotonicity of correlations in h). -/
+Reference: Friedli–Velenik §4.2, Prop. 4.2.4 (p. 58);
+Glimm–Jaffe §17.6 pp. 348–351 (derivative formula). -/
 theorem correlation_field_deriv_nonneg
     (G : SimpleGraph ι) [Fintype G.edgeSet]
     (J h β : ℝ) (A : Finset ι)
-    (hf : Ferromagnetic (⟨J, h, β⟩ : IsingParams ℝ)) (hβ : 0 ≤ β) :
+    (hf : Ferromagnetic (⟨J, h, β⟩ : IsingParams ℝ)) :
     0 ≤ β * (gibbsExpectation G (⟨J, h, β⟩ : IsingParams ℝ)
               (fun σ => spinProduct A σ * totalMagnetization σ) -
             correlation G (⟨J, h, β⟩ : IsingParams ℝ) A *
             gibbsExpectation G (⟨J, h, β⟩ : IsingParams ℝ) totalMagnetization) := by
-  apply mul_nonneg hβ
+  apply mul_nonneg hf.hβ.le
   rw [gibbsExpectation_spinProd_mul_mag, gibbsExpectation_totalMag_eq_sum, Finset.mul_sum,
       ← Finset.sum_sub_distrib]
   apply Finset.sum_nonneg
