@@ -6804,6 +6804,31 @@ For $2\alpha > d$, any $x, y \in \mathbb{Z}^d$:
 File: \texttt{IsingModel/PolyDecay.lean}.
 Reference: GJ 1st~ed., \S17.5, pp.~310--312.
 
+\subsection*{Step 132 -- Pseudo-mass upper bound and correlation decay (Done)}
+
+\noindent\textbf{Statements.}
+\begin{itemize}
+  \item \texttt{pseudoMassG\_le\_two\_div\_one\_add\_pow} (Step 132a):
+    $\mathrm{pseudoMassG}(\alpha,r,t) \leq 2/(1+(tr)^\alpha)$.
+  \item \texttt{pseudoMassG\_le\_two\_div\_one\_add\_pow\_of\_preimage\_le} (Step 132b):
+    If $\mathrm{pseudoMassG}(\alpha,1,m_1)=c$ and $0\leq m_0\leq m_1$, then $c\leq 2/(1+m_0^\alpha)$.
+\end{itemize}
+
+\noindent\textbf{Proof outline.}
+Step 132a: $e^{-(tr)}\leq 1$ for $tr\geq 0$, so $2e^{-tr}/(1+(tr)^\alpha)\leq 2/(1+(tr)^\alpha)$.
+Step 132b: \texttt{pseudoMassG\_strictAntiOn} gives $c=\mathrm{pseudoMassG}(m_1)\leq\mathrm{pseudoMassG}(m_0)$;
+Step 132a gives $\mathrm{pseudoMassG}(m_0)\leq 2/(1+m_0^\alpha)$.
+
+\noindent\textbf{GJ context.} Step 132b is the abstract form of the bound used in GJ p.~312:
+$c_{x,z}=\langle\phi(x)\phi(z)\rangle/A\leq 2/(1+(m^-_{\rm global}\cdot d(x,z))^\alpha)$,
+since $m^-_{\rm global}\leq m^-_{x,z}$ (inf) and $\mathrm{pseudoMassG}(m^-_{x,z}\cdot d)=c_{x,z}$.
+Combined with the Lebowitz bound and HLS (Step~130), this will yield the \texttt{hc\_der}
+hypothesis for \texttt{pseudoMass\_power\_deriv\_le} (Step~131b).
+
+\noindent\textit{Status}: Complete (PR~\#948, Step 132).
+File: \texttt{IsingModel/PseudoMass.lean}.
+Reference: GJ 1st~ed., \S17.5, Theorem~17.5.1 proof, pp.~311--312.
+
 \subsection*{Step 131 -- Abstract Lipschitz bound for pseudo-mass (Done)}
 
 \noindent\textbf{Statements.}
