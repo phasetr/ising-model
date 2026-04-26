@@ -6694,6 +6694,34 @@ Ring closure uses \texttt{simp\_rw} + \texttt{Finset.mul\_sum} for $\beta$-facto
 File: \texttt{FieldDerivative.lean}.
 Reference: Glimm--Jaffe 2nd~ed. (1987), \S17.6 pp.~348--351.
 
+\subsection*{Step 123 -- Antitonicity of pseudo-mass in $\beta$ (Done)}
+
+\subsubsection*{Mathematical content}
+
+Combining Steps 117g and 122:
+\begin{itemize}
+  \item $\beta \mapsto c(\beta) = \langle \sigma^A \rangle_\beta$ is monotone increasing (Step 122).
+  \item $c \mapsto \mathrm{pseudoMass}(c)$ is strictly decreasing on $(0,2)$ (Step 117g).
+  \item Therefore $\beta \mapsto \mathrm{pseudoMass}(c(\beta))$ is antitone (decreasing) on $\{0 < \beta\}$.
+\end{itemize}
+
+This captures the physical picture: higher inverse temperature $\beta$ leads to
+stronger correlations but smaller mass (mass decreases toward zero at $\beta_c$).
+
+\subsubsection*{Lean 4 formalization}
+
+\begin{theorem}[\texttt{pseudoMass\_comp\_corr\_antitoneOn\_beta}]
+For $J \geq 0$ and $c(\beta) \in (0,2)$ for all $\beta > 0$:
+\[
+  \mathrm{AntitoneOn}\;(\lambda\beta \Rightarrow
+    \mathrm{pseudoMass}(c(\beta)))\;(\mathrm{Ioi}\;0)
+\]
+\end{theorem}
+
+\noindent\textit{Status}: Complete (PR~\#937, Step 123).
+File: \texttt{PseudoMass.lean}.
+Reference: Derived from Steps 117g + 122; implicit in Glimm--Jaffe 2nd~ed., \S17.5, pp.~311--312.
+
 \subsection*{Step 122 -- $\beta$-monotonicity: $\partial_\beta \langle \sigma^A \rangle \geq 0$ (Done)}
 
 \subsubsection*{Mathematical content}
