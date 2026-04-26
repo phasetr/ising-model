@@ -6694,4 +6694,38 @@ Ring closure uses \texttt{simp\_rw} + \texttt{Finset.mul\_sum} for $\beta$-facto
 File: \texttt{FieldDerivative.lean}.
 Reference: Glimm--Jaffe 2nd~ed. (1987), \S17.6 pp.~348--351.
 
+\subsection*{Step 121 -- GKS-II monotonicity: $\partial_h \langle \sigma^A \rangle \geq 0$ (Done)}
+
+\subsubsection*{Mathematical content}
+
+Using the derivative formula from Step 118 and GKS-II:
+\[
+  \frac{\partial}{\partial h} \langle \sigma^A \rangle_h
+  = \beta \sum_{i \in V} \bigl(
+    \langle \sigma^{A \triangle \{i\}} \rangle - \langle \sigma^A \rangle \cdot \langle \sigma_i \rangle
+  \bigr) \geq 0
+\]
+where GKS-II gives each term $\langle \sigma^{A \triangle \{i\}} \rangle \geq \langle \sigma^A \rangle \cdot \langle \sigma_i \rangle$.
+
+\subsubsection*{Lean 4 formalization}
+
+\begin{theorem}[\texttt{correlation\_field\_deriv\_nonneg}]
+For ferromagnetic parameters $\mathtt{hf}$ and $\beta \geq 0$:
+\[
+  0 \leq \beta \cdot \bigl(
+    \langle \sigma^A \cdot M \rangle - \langle \sigma^A \rangle \cdot \langle M \rangle
+  \bigr)
+\]
+\end{theorem}
+
+\noindent\textbf{Proof sketch}:
+Helper lemmas rewrite $\langle \sigma^A \cdot M \rangle = \sum_i \langle \sigma^{A\triangle\{i\}}\rangle$
+and $\langle M \rangle = \sum_i \langle \sigma_i \rangle$.
+Then $\langle \sigma^{A\triangle\{i\}}\rangle - \langle \sigma^A \rangle \cdot \langle \sigma_i \rangle \geq 0$
+follows from \texttt{gks\_second}, and the sum is nonneg by \texttt{Finset.sum\_nonneg}.
+
+\noindent\textit{Status}: Complete formalization (PR~\#TBD, Step 121).
+File: \texttt{FieldDerivative.lean}.
+Reference: Glimm--Jaffe 2nd~ed. (1987), \S17.5 p.~347.
+
 \end{document}
