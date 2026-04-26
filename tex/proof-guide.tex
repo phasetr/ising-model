@@ -6619,25 +6619,27 @@ For $\alpha \in \mathbb{N}$ with $\alpha \ge 1$ (specializing GJ's $\alpha > d/2
 for all $x, y \in \mathbb{Z}^d$ with $x \ne y$.
 \end{axiom}
 
-\textit{Reference}: Glimm--Jaffe \S17.5, formula~(17.5.5), p.~428 (2nd~ed.).
+\textit{Reference}: Glimm--Jaffe 2nd~ed. (1987), \S17.5 (pp.~345--347).
 
-\subsubsection*{Full Lemma 17.5.2 and Theorem 17.5.1}
+\subsubsection*{Lemma 17.5.2 and Theorem 17.6.1 (sketch)}
 
-Using Steps 117a--g combined with the HLS axiom, the goals are:
+Combining Steps 117a--g with the HLS axiom:
 
-\begin{theorem}[Lemma 17.5.2]
-For all $\beta$:
-\[
-  m^-(\beta) \le m(\beta) \le C \cdot m^-(\beta)
-\]
+\begin{theorem}[Lemma 17.5.2 (partial)]
+Lower bound: $0 < m^-(\beta)$ for all $c \in (0, 2)$ (Step 117g).
+
+Upper bound: $m(\beta) \le C \cdot m^-(\beta)$ for some constant $C > 0$ (via HLS axiom).
 \end{theorem}
 
-\begin{theorem}[Theorem 17.5.1]
-The lattice mass function $m(\beta)$ is continuous at $\beta = \beta_c$.
+\begin{theorem}[Theorem 17.6.1: Continuity at critical point]
+The lattice mass function $m(\beta)$ is continuous at the critical point $\beta = \beta_c$.
+
+\textbf{Proof sketch}: Lemma 17.5.2 bounds + implicit differentiation (Step 117e)
++ derivative bounds (Step 117f) + discrete HLS $\Rightarrow$ Lipschitz in $\beta$ $\Rightarrow$ continuity at $\beta_c$.
 \end{theorem}
 
-\noindent\textit{Status}: In progress (PR~\#929).
+\noindent\textit{Status}: Sketch formalization (PR~\#929). Full Lipschitz proof deferred.
 File: \texttt{PseudoMass.lean}.
-References: Glimm--Jaffe \S17.5~pp.~310--312~(2nd~ed.).
+References: Glimm--Jaffe 2nd~ed. (1987), \S17.5 pp.~345--347, \S17.6 pp.~348--351.
 
 \end{document}
