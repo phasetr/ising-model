@@ -6804,6 +6804,23 @@ For $2\alpha > d$, any $x, y \in \mathbb{Z}^d$:
 File: \texttt{IsingModel/PolyDecay.lean}.
 Reference: GJ 1st~ed., \S17.5, pp.~310--312.
 
+\subsection*{Step 134 -- Lipschitz continuity of $(m^-)^{2\alpha+1}$ on interval (Done)}
+
+\noindent\textbf{Statement} (\texttt{pseudoMass\_pow\_succ\_lipschitz}).
+Under the hypotheses of Steps~131--133, uniform on $[\beta_1,\beta_2]$:
+\[|(h(\beta_2))^{2\alpha+1} - (h(\beta_1))^{2\alpha+1}|
+  \leq \lceil 2\alpha+1\rceil\cdot K/r \cdot (\beta_2-\beta_1).\]
+
+\noindent\textbf{Proof outline.}
+Apply \texttt{norm\_image\_sub\_le\_of\_norm\_deriv\_le\_segment'} (MVT) to
+$f(\beta') = (h(\beta'))^{2\alpha+1}$.
+At each $\beta'\in[\beta_1,\beta_2]$: \texttt{HasDerivAt.fun\_pow} gives the derivative;
+\texttt{pseudoMass\_power\_deriv\_le} (Step~131b) gives the bound $\|(f')(\beta')\|\leq C$.
+
+\noindent\textit{Status}: Complete (PR~\#950, Step 134).
+File: \texttt{IsingModel/PseudoMass.lean}.
+Reference: GJ 1st~ed., \S17.5, Theorem~17.5.1, pp.~311--312.
+
 \subsection*{Step 133 -- Lipschitz derivative of $(m^-)^{2\alpha+1}$ (Done)}
 
 \noindent\textbf{Statement} (\texttt{pseudoMass\_pow\_succ\_deriv\_bound}).
