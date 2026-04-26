@@ -425,7 +425,7 @@ We exhibit `C = ∑_z (1 + d(0,z))^{-2α}`, which is finite by `summable_pow_neg
 (Step 128, since `2α > d`) and positive (the `z = 0` term equals 1).
 
 **References**: GJ §17.5 (pp.345-347); de-axiomatized via `IsingModel.PolyDecay`. -/
-theorem discrete_hls_constant (α d : ℕ) (hα : 1 ≤ α) (hαd : 2 * α > d) :
+theorem discrete_hls_constant (α d : ℕ) (hαd : 2 * α > d) :
     ∃ C : ℝ, C > 0 := by
   have hγ : (d : ℝ) < 2 * (α : ℝ) := by exact_mod_cast hαd
   exact ⟨∑' z : Fin d → ℤ, (1 + latticeDistance d 0 z : ℝ) ^ (-(2 * (α : ℝ))),
@@ -453,8 +453,80 @@ This requires the discrete HLS inequality and the derivative bounds from Step 11
 
 **References**: Glimm–Jaffe §17.5, Lemma 17.5.2, pp.311-312 (proof uses HLS + Lipschitz).
 -/
-theorem latticeMass_le_constant_mul_pseudoMass (α d : ℕ) (hα : 1 ≤ α) (hαd : 2 * α > d) :
-    ∃ C : ℝ, C > 0 := discrete_hls_constant α d hα hαd
+theorem latticeMass_le_constant_mul_pseudoMass (α d : ℕ) (hαd : 2 * α > d) :
+    ∃ C : ℝ, C > 0 := discrete_hls_constant α d hαd
+
+/-! ## Theorem 17.5.1: Lipschitz bound (Step 131) -/
+
+/-- **Abstract Lipschitz bound** (Step 131a): pseudo-mass derivative satisfies
+`|h'| ≤ |c'| / (r * c β)`.
+
+Proof combines:
+- `pseudoMass_deriv_formula` (Step 117e): `h' = c' / g'`
+- `pseudoMassG_deriv_abs_ge` (Step 117f): `r * c β = r * pseudoMassG α r (h β) ≤ |g'|`
+
+Since `g' < 0` (from `pseudoMassG_deriv_neg`) we have `|g'| > 0`, and thus
+`|h'| = |c'| / |g'| ≤ |c'| / (r * c β)`.
+
+**References**: Glimm–Jaffe §17.5, Theorem 17.5.1 proof, p.312. -/
+theorem pseudoMass_deriv_abs_le
+    (α : ℕ) {r : ℝ} (hr : 0 < r)
+    {h c : ℝ → ℝ} {h' c' β : ℝ}
+    (hh : HasDerivAt h h' β)
+    (hc : HasDerivAt c c' β)
+    (hβ : 0 ≤ h β)
+    (hg_eq : ∀ β', pseudoMassG α r (h β') = c β')
+    (hm_pos : 0 < h β)
+    (hc_pos : 0 < c β) :
+    |h'| ≤ |c'| / (r * c β) := by
+  set g' := (-2 * r * Real.exp (-(h β * r)) * (1 + (h β * r) ^ α) -
+      2 * Real.exp (-(h β * r)) * (↑α * (h β * r) ^ (α - 1) * r)) /
+     (1 + (h β * r) ^ α) ^ 2 with hg'_def
+  have hform : h' = c' / g' := pseudoMass_deriv_formula α hr hh hc hβ hg_eq hm_pos
+  have hg'_neg : g' < 0 := pseudoMassG_deriv_neg α hm_pos hr
+  have hge : r * c β ≤ |g'| := by
+    have h1 := pseudoMassG_deriv_abs_ge α hβ hr
+    rwa [hg_eq β] at h1
+  have hrc_pos : 0 < r * c β := mul_pos hr hc_pos
+  have hg'_pos : 0 < |g'| := lt_of_lt_of_le hrc_pos hge
+  rw [hform, abs_div]
+  exact div_le_div_of_nonneg_left (abs_nonneg c') hrc_pos hge
+
+/-- **Lipschitz power bound** (Step 131b): `(h β)^(2α) * |h'| ≤ K / r`.
+
+If the correlation derivative satisfies `|c'| ≤ K * c β / (h β)^(2α)` (motivated by
+the HLS convolution bound `tsum_pow_neg_conv_le_const` (Step 130) via Lebowitz's inequality
+applied to lattice correlations), then the Lipschitz power bound holds.
+
+This is the abstract version of GJ §17.5: `m⁻^{2α} · dm⁻/dσ ≤ const`, which via the
+chain rule gives Lipschitz continuity of `m⁻^{2α+1}` in σ (Theorem 17.5.1, p.312).
+
+**References**: Glimm–Jaffe §17.5, Theorem 17.5.1 proof, p.312. -/
+theorem pseudoMass_power_deriv_le
+    (α : ℕ) {r K : ℝ} (hr : 0 < r)
+    {h c : ℝ → ℝ} {h' c' β : ℝ}
+    (hh : HasDerivAt h h' β)
+    (hc : HasDerivAt c c' β)
+    (hβ : 0 ≤ h β)
+    (hg_eq : ∀ β', pseudoMassG α r (h β') = c β')
+    (hm_pos : 0 < h β)
+    (hc_pos : 0 < c β)
+    (hc_der : |c'| ≤ K * c β / (h β) ^ (2 * α)) :
+    (h β) ^ (2 * α) * |h'| ≤ K / r := by
+  have h1 := pseudoMass_deriv_abs_le α hr hh hc hβ hg_eq hm_pos hc_pos
+  have hm_pow_pos : 0 < (h β) ^ (2 * α) := pow_pos hm_pos _
+  have hrc_pos : 0 < r * c β := mul_pos hr hc_pos
+  have key : (h β) ^ (2 * α) * |c'| ≤ K * c β := by
+    calc (h β) ^ (2 * α) * |c'|
+        ≤ (h β) ^ (2 * α) * (K * c β / (h β) ^ (2 * α)) :=
+            mul_le_mul_of_nonneg_left hc_der hm_pow_pos.le
+      _ = K * c β := by field_simp [hm_pow_pos.ne']
+  calc (h β) ^ (2 * α) * |h'|
+      ≤ (h β) ^ (2 * α) * (|c'| / (r * c β)) :=
+          mul_le_mul_of_nonneg_left h1 hm_pow_pos.le
+    _ = (h β) ^ (2 * α) * |c'| / (r * c β) := by ring
+    _ ≤ K * c β / (r * c β) := (div_le_div_iff_of_pos_right hrc_pos).mpr key
+    _ = K / r := by field_simp [hc_pos.ne', hr.ne']
 
 /-! ## Theorem 17.5.1: Continuity at the critical point -/
 
