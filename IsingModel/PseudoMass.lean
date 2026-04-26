@@ -62,7 +62,27 @@ theorem pseudoMassG_pos (α : ℕ) {r t : ℝ} (ht : 0 ≤ t) (hr : 0 < r) :
   have h : 0 ≤ (t * r) ^ α := pow_nonneg (mul_nonneg ht hr.le) α
   linarith
 
-/-- `pseudoMassG` is at most 2 for `t ≥ 0` and `r > 0`. -/
+/-- **Refined upper bound** (Step 132a): `pseudoMassG α r t ≤ 2 / (1 + (t·r)^α)`.
+
+Proof: `pseudoMassG α r t = 2·exp(-(t·r)) / (1+(t·r)^α) ≤ 2 / (1+(t·r)^α)` since `exp(-(t·r)) ≤ 1`.
+
+This is the key bound used in GJ §17.5 p.312 to replace the correlation `⟨φ(x)φ(z)⟩/A`
+by `2/(1+(m^-·d(x,z))^α)` via the pseudo-mass definition.
+
+**References**: Glimm–Jaffe §17.5, Theorem 17.5.1 proof, p.312. -/
+theorem pseudoMassG_le_two_div_one_add_pow (α : ℕ) {r t : ℝ} (ht : 0 ≤ t) (hr : 0 < r) :
+    pseudoMassG α r t ≤ 2 / (1 + (t * r) ^ α) := by
+  unfold pseudoMassG
+  have hdenom_pos : (0 : ℝ) < 1 + (t * r) ^ α := by
+    have h : 0 ≤ (t * r) ^ α := pow_nonneg (mul_nonneg ht hr.le) α
+    linarith
+  rw [(div_le_div_iff_of_pos_right hdenom_pos)]
+  have hexp : Real.exp (-(t * r)) ≤ 1 :=
+    Real.exp_le_one_iff.mpr (neg_nonpos.mpr (mul_nonneg ht hr.le))
+  linarith [Real.exp_pos (-(t * r))]
+
+/-- `pseudoMassG` is at most 2 for `t ≥ 0` and `r > 0`.
+Corollary of `pseudoMassG_le_two_div_one_add_pow`. -/
 theorem pseudoMassG_le_two (α : ℕ) {r t : ℝ} (ht : 0 ≤ t) (hr : 0 < r) :
     pseudoMassG α r t ≤ 2 := by
   unfold pseudoMassG
@@ -106,6 +126,33 @@ theorem pseudoMassG_strictAntiOn
     have h : 0 ≤ (s * r) ^ α :=
       pow_nonneg (mul_nonneg (Set.mem_Ici.mp hs) hr.le) α
     linarith
+
+/-- **Correlation decay bound via global pseudo-mass** (Step 132b):
+If `pseudoMassG α 1 m₁ = c` (defining equation for per-pair pseudo-mass `m₁ = m^-_{x,z} · d(x,z)`)
+and `m₀ ≤ m₁` (e.g. `m₀ = m^-_global · d(x,z)` with `m^-_global ≤ m^-_{x,z}`), then
+`c ≤ 2 / (1 + m₀^α)`.
+
+Proof: `c = pseudoMassG(m₁) ≤ pseudoMassG(m₀)` (strict antitonicity) `≤ 2/(1+m₀^α)` (Step 132a).
+
+This is the abstract form of GJ §17.5 p.312: `⟨φ(x)φ(z)⟩/A ≤ 2/(1+(m^-_global·d(x,z))^α)`.
+Combined with the Lebowitz bound and HLS (Step 130), this yields the `hc_der` hypothesis
+for `pseudoMass_power_deriv_le` (Step 131b).
+
+**References**: Glimm–Jaffe §17.5, Theorem 17.5.1 proof, pp.311–312
+(the bound `c_{x,z} ≤ 2/(1+(m^-_global·d)^α)` used on p.312). -/
+theorem pseudoMassG_le_two_div_one_add_pow_of_preimage_le
+    {α : ℕ} (hα : 1 ≤ α) {m₀ m₁ : ℝ}
+    (hm₀ : 0 ≤ m₀) (hle : m₀ ≤ m₁)
+    {c : ℝ} (heq : pseudoMassG α 1 m₁ = c) :
+    c ≤ 2 / (1 + m₀ ^ α) := by
+  have h_anti := (pseudoMassG_strictAntiOn hα one_pos).antitoneOn
+  have hm₀_mem : m₀ ∈ Set.Ici (0 : ℝ) := Set.mem_Ici.mpr hm₀
+  have hm₁_mem : m₁ ∈ Set.Ici (0 : ℝ) := Set.mem_Ici.mpr (le_trans hm₀ hle)
+  have hstep_a := pseudoMassG_le_two_div_one_add_pow α hm₀ one_pos
+  simp only [mul_one] at hstep_a
+  calc c = pseudoMassG α 1 m₁ := heq.symm
+      _ ≤ pseudoMassG α 1 m₀ := h_anti hm₀_mem hm₁_mem hle
+      _ ≤ 2 / (1 + m₀ ^ α) := hstep_a
 
 /-- `pseudoMassG` is continuous on `[0, ∞)`. -/
 theorem pseudoMassG_continuousOn (α : ℕ) {r : ℝ} (hr : 0 < r) :
