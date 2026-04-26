@@ -5,13 +5,13 @@ import Mathlib.Analysis.SpecialFunctions.Pow.NNReal
 import Mathlib.Topology.Algebra.InfiniteSum.Real
 import Mathlib.Topology.Algebra.InfiniteSum.NatInt
 import Mathlib.Topology.Algebra.InfiniteSum.Order
+import Mathlib.Topology.Algebra.InfiniteSum.Ring
 
 /-!
-# Polynomial decay summability over ℤ^d (Step 128)
+# Polynomial decay summability and constant HLS bound over ℤ^d (Steps 128–130)
 
-We prove that `z ↦ (1 + latticeDistance d 0 z)^{-γ}` is summable over `ℤ^d`
-for `γ > d`. This is the polynomial (ℓ¹ lattice) counterpart of the exponential
-summability in `LatticeExpSum.lean`.
+We prove summability of `z ↦ (1 + latticeDistance d 0 z)^{-γ}` for `γ > d` (Step 128),
+and derive the constant Hardy–Littlewood–Sobolev (HLS) convolution bound (Step 130).
 
 ## Strategy
 
@@ -25,6 +25,13 @@ summability in `LatticeExpSum.lean`.
    `(1 + d(0,z))^{-γ} ≤ ∏_i (1 + |z_i|)^{-γ/d}` for `d ≥ 1, γ > 0`.
 
 4. **Main theorem** (`summable_pow_neg_latticeDistance`): Combine 2 and 3 with `β = γ/d > 1`.
+
+5. **Translation invariance** (`tsum_pow_neg_translate`):
+   `∑_z (1 + d(x,z))^{-γ} = ∑_z (1 + d(0,z))^{-γ}` for any `x`.
+
+6. **Constant HLS bound** (`tsum_pow_neg_conv_le_const`, Step 130):
+   `∑_z (1+d(x,z))^{-α}·(1+d(y,z))^{-α} ≤ ∑_z (1+d(0,z))^{-2α}` for `2α > d`.
+   Proof: AM-GM (`a·b ≤ (a²+b²)/2`) + translation invariance.
 
 ## References
 
@@ -165,5 +172,71 @@ theorem summable_pow_neg_latticeDistance (d : ℕ) {γ : ℝ} (hγ : (d : ℝ) <
     · intro z; exact one_add_dist_rpow_neg_le hd (by linarith) z
     · exact (summable_prod_pow_neg_lattice d hβ).congr fun z =>
         Finset.prod_congr rfl (fun i _ => by congr 1; ring)
+
+/-! ## Steps 130A–B: Translation invariance and constant HLS bound -/
+
+/-- **Translation invariance** (Step 130A): For any `x : Fin d → ℤ`,
+`∑_z (1 + d(x,z))^{-γ} = ∑_z (1 + d(0,z))^{-γ}`. -/
+lemma latticeDistance_translate_eq (d : ℕ) (x z : Fin d → ℤ) :
+    latticeDistance d x z = latticeDistance d 0 (z - x) := by
+  simp [latticeDistance, Pi.sub_apply]
+
+/-- Translation invariance of the polynomial lattice tsum. -/
+lemma tsum_pow_neg_translate (d : ℕ) (x : Fin d → ℤ) {γ : ℝ} :
+    ∑' z : Fin d → ℤ, (1 + latticeDistance d x z : ℝ) ^ (-γ) =
+    ∑' z : Fin d → ℤ, (1 + latticeDistance d 0 z : ℝ) ^ (-γ) := by
+  simp_rw [latticeDistance_translate_eq d x]
+  exact (Equiv.addRight (-x)).tsum_eq (fun z => (1 + latticeDistance d 0 z : ℝ) ^ (-γ))
+
+/-- Translation invariance for summability. -/
+lemma summable_pow_neg_translate (d : ℕ) (x : Fin d → ℤ) {γ : ℝ} (hγ : (d : ℝ) < γ) :
+    Summable (fun z : Fin d → ℤ => (1 + latticeDistance d x z : ℝ) ^ (-γ)) := by
+  have hf : (fun z : Fin d → ℤ => (1 + latticeDistance d x z : ℝ) ^ (-γ)) =
+            (fun z => (1 + latticeDistance d 0 z : ℝ) ^ (-γ)) ∘ (· - x) := by
+    ext z; rw [Function.comp, latticeDistance_translate_eq]
+  rw [hf]
+  exact (summable_pow_neg_latticeDistance d hγ).comp_injective
+    (fun a b h => by simpa using h)
+
+/-- **Constant HLS bound** (Step 130B):
+`∑_z (1 + d(x,z))^{-α}·(1 + d(y,z))^{-α} ≤ ∑_z (1 + d(0,z))^{-2α}` for `2α > d`.
+
+Proof: AM-GM (`a·b ≤ (a² + b²)/2`) + translation invariance of both sums.
+
+**Reference**: GJ §17.5 (pp.310–312); prerequisite for the full HLS inequality. -/
+theorem tsum_pow_neg_conv_le_const (d : ℕ) {α : ℝ} (hαd : (d : ℝ) < 2 * α)
+    (x y : Fin d → ℤ) :
+    ∑' z : Fin d → ℤ,
+        (1 + latticeDistance d x z : ℝ) ^ (-α) *
+        (1 + latticeDistance d y z : ℝ) ^ (-α) ≤
+    ∑' z : Fin d → ℤ, (1 + latticeDistance d 0 z : ℝ) ^ (-(2 * α)) := by
+  have hSx := summable_pow_neg_translate d x hαd
+  have hSy := summable_pow_neg_translate d y hαd
+  have hbound : ∀ z : Fin d → ℤ,
+      (1 + latticeDistance d x z : ℝ) ^ (-α) * (1 + latticeDistance d y z : ℝ) ^ (-α) ≤
+      ((1 + latticeDistance d x z : ℝ) ^ (-(2 * α)) +
+       (1 + latticeDistance d y z : ℝ) ^ (-(2 * α))) / 2 := fun z => by
+    set a := (1 + latticeDistance d x z : ℝ) ^ (-α)
+    set b := (1 + latticeDistance d y z : ℝ) ^ (-α)
+    have ha2 : a ^ 2 = (1 + latticeDistance d x z : ℝ) ^ (-(2 * α)) := by
+      simp only [a]
+      rw [← Real.rpow_natCast _ 2, ← Real.rpow_mul (by positivity)]
+      congr 1; ring
+    have hb2 : b ^ 2 = (1 + latticeDistance d y z : ℝ) ^ (-(2 * α)) := by
+      simp only [b]
+      rw [← Real.rpow_natCast _ 2, ← Real.rpow_mul (by positivity)]
+      congr 1; ring
+    nlinarith [sq_nonneg (a - b), ha2, hb2]
+  have hSsum := (hSx.add hSy).div_const 2
+  calc ∑' z, (1 + latticeDistance d x z : ℝ) ^ (-α) * (1 + latticeDistance d y z : ℝ) ^ (-α)
+      ≤ ∑' z, (((1 + latticeDistance d x z : ℝ) ^ (-(2 * α)) +
+                  (1 + latticeDistance d y z : ℝ) ^ (-(2 * α))) / 2) :=
+          (Summable.of_nonneg_of_le (fun z => by positivity) hbound hSsum).tsum_le_tsum
+            hbound hSsum
+    _ = (∑' z, (1 + latticeDistance d x z : ℝ) ^ (-(2 * α)) +
+          ∑' z, (1 + latticeDistance d y z : ℝ) ^ (-(2 * α))) / 2 := by
+          rw [tsum_div_const, hSx.tsum_add hSy]
+    _ = ∑' z, (1 + latticeDistance d 0 z : ℝ) ^ (-(2 * α)) := by
+          rw [tsum_pow_neg_translate d x, tsum_pow_neg_translate d y]; ring
 
 end IsingModel
