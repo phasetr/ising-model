@@ -6782,6 +6782,28 @@ For $\gamma > d$, the function $z \mapsto (1 + d(0,z))^{-\gamma}$ is summable ov
 File: \texttt{IsingModel/PolyDecay.lean}.
 Reference: GJ 1st~ed., \S17.5, pp.~310--312.
 
+\subsection*{Step 130 -- Constant HLS convolution bound (Done)}
+
+\noindent\textbf{Statement.}
+For $2\alpha > d$, any $x, y \in \mathbb{Z}^d$:
+\[
+\sum_{z \in \mathbb{Z}^d} (1 + d(x,z))^{-\alpha} \cdot (1 + d(y,z))^{-\alpha}
+\leq \sum_{z \in \mathbb{Z}^d} (1 + d(0,z))^{-2\alpha}.
+\]
+
+\noindent\textbf{Proof outline.}
+\begin{enumerate}
+\item \texttt{latticeDistance\_translate\_eq}: $d(x,z) = d(0,z-x)$.
+\item \texttt{tsum\_pow\_neg\_translate}: $\sum_z (1+d(x,z))^{-\gamma} = \sum_z (1+d(0,z))^{-\gamma}$
+  by change of variable $z' = z - x$ via \texttt{Equiv.addRight}.
+\item \texttt{tsum\_pow\_neg\_conv\_le\_const}: apply AM-GM $ab \leq (a^2+b^2)/2$
+  pointwise, sum, and apply translation invariance to both $x$- and $y$-translated sums.
+\end{enumerate}
+
+\noindent\textit{Status}: Complete (PR~\#946, Step 130).
+File: \texttt{IsingModel/PolyDecay.lean}.
+Reference: GJ 1st~ed., \S17.5, pp.~310--312.
+
 \subsection*{Step 126 -- Discrete exponential convolution bound (Done)}
 
 \noindent\textbf{Theorems} (\texttt{summable\_exp\_neg\_int\_natAbs},
