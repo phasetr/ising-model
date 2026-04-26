@@ -424,7 +424,7 @@ theorem pseudoMass_strictAnti {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
 We exhibit `C = ∑_z (1 + d(0,z))^{-2α}`, which is finite by `summable_pow_neg_latticeDistance`
 (Step 128, since `2α > d`) and positive (the `z = 0` term equals 1).
 
-**References**: GJ §17.5 (pp.345-347); de-axiomatized via `IsingModel.PolyDecay`. -/
+**References**: GJ §17.5 (pp.310–312); de-axiomatized via `IsingModel.PolyDecay`. -/
 theorem discrete_hls_constant (α d : ℕ) (hαd : 2 * α > d) :
     ∃ C : ℝ, C > 0 := by
   have hγ : (d : ℝ) < 2 * (α : ℝ) := by exact_mod_cast hαd
