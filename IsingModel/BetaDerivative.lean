@@ -495,7 +495,7 @@ theorem correlation_continuousAt_beta
 by GKS-II: each term `⟨σ^{AΔe}⟩ − ⟨σ^A⟩·⟨σ^e⟩ ≥ 0` for ferromagnetic `h = 0`.
 This is the infinitesimal form underlying the monotonicity of correlations in β.
 
-Reference: Friedli–Velenik §4.2, Prop. 4.2.5 (p. 59);
+Reference: Friedli–Velenik §3.7, Lemma 3.31 part 2 (p. 107) — adapted to general `σ^A`;
 Glimm–Jaffe §17.5 pp. 345–347. -/
 theorem correlation_beta_deriv_nonneg
     (G : SimpleGraph ι) [Fintype G.edgeSet]
@@ -522,7 +522,7 @@ for ferromagnetic coupling `J ≥ 0`.
 Proof: mean value theorem applied to `β ↦ correlation` whose derivative
 is nonneg by GKS-II (`correlation_beta_deriv_nonneg`).
 
-Reference: Friedli–Velenik §4.2, Prop. 4.2.5 (p. 59);
+Reference: Friedli–Velenik §3.7, Lemma 3.31 part 2 (p. 107);
 Glimm–Jaffe §17.5 pp. 345–347. -/
 theorem correlation_monotoneOn_beta
     (G : SimpleGraph ι) [Fintype G.edgeSet]
