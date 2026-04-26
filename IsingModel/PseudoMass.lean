@@ -540,10 +540,12 @@ theorem pseudoMass_continuousAt {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < 
 
 /-! ## Continuity of pseudoMass composition with correlation (Step 120) -/
 
-/-- **pseudoMass(correlation(β)) is continuous in β** (Step 120).
+/-- **pseudoMass∘correlation is continuous in β** (Step 120).
 
-When the correlation `c(β) = ⟨φ(x)φ(y)⟩_β` lies in `(0, 2)`, the composition
-`β ↦ pseudoMass(c(β))` is continuous at `β`.
+When the correlation `c(β) = ⟨σ^A⟩_β` lies in `(0, 2)`, the totalized function
+`β ↦ if c(β) ∈ Ioo 0 2 then pseudoMass(c(β)) else 0` is continuous at `β`.
+
+Proof: manual ContinuousAt composition via Filter.Tendsto.
 
 This is a partial result toward GJ §17.5 Thm 17.5.1: the full theorem requires
 connecting the abstract pseudoMass to the concrete lattice mass via Lemma 17.5.2 bounds.
@@ -559,18 +561,12 @@ theorem pseudoMass_comp_corr_continuousAt
     ContinuousAt (fun β' =>
         if hc : correlation G (⟨J, 0, β'⟩ : IsingParams ℝ) A ∈ Set.Ioo 0 2
         then pseudoMass hα hr hc else 0) β := by
-  -- Use Tendsto composition to avoid type unification issues
+  -- Proof via continuousAt_def + manual composition (Filter.Tendsto)
   set c₀ := correlation G (⟨J, 0, β⟩ : IsingParams ℝ) A
-  have h_g : Filter.Tendsto
-      (fun β' : ℝ => correlation G (⟨J, 0, β'⟩ : IsingParams ℝ) A) (nhds β) (nhds c₀) :=
-    (IsingModel.correlation_continuousAt_beta G J β A).tendsto
-  have h_f : Filter.Tendsto
-      (fun c : ℝ => if hc : c ∈ Set.Ioo 0 2 then pseudoMass hα hr hc else 0)
-      (nhds c₀) (nhds (if hcorr_val : c₀ ∈ Set.Ioo 0 2 then pseudoMass hα hr hcorr_val else 0)) :=
-    (pseudoMass_continuousAt hα hr hcorr).tendsto
+  have h_g := (IsingModel.correlation_continuousAt_beta G J β A).tendsto
+  have h_f := (pseudoMass_continuousAt hα hr hcorr).tendsto
   rw [continuousAt_def]
   intro s hs
-  have := h_f hs
-  exact h_g this
+  exact h_g (h_f hs)
 
 end IsingModel
