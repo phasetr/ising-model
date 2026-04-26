@@ -16,6 +16,7 @@ import IsingModel.Inequalities.HighTemp
 import IsingModel.BetaDerivative
 import IsingModel.FieldDerivative
 import IsingModel.PseudoMass
+import IsingModel.LatticeExpSum
 import IsingModel.ComplexAnalyticity
 import IsingModel.PeierlsInfinite
 import IsingModel.TranslationInvariance

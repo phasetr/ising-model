@@ -6722,6 +6722,35 @@ For $J \geq 0$ and $c(\beta) \in (0,2)$ for all $\beta > 0$:
 File: \texttt{PseudoMass.lean}.
 Reference: Derived from Steps 117g + 122; implicit in Glimm--Jaffe 2nd~ed., \S17.5, pp.~311--312.
 
+\subsection*{Step 126 -- Discrete exponential convolution bound (Done)}
+
+\noindent\textbf{Theorems} (\texttt{summable\_exp\_neg\_int\_natAbs},
+\texttt{summable\_exp\_neg\_latticeDistance},
+\texttt{tsum\_exp\_neg\_dist\_eq},
+\texttt{summable\_exp\_neg\_dist},
+\texttt{lattice\_exp\_sum\_conv\_le}):
+For $m > 0$ and $x, y \in \mathbb{Z}^d$:
+\begin{enumerate}
+\item $\sum_{n \in \mathbb{Z}} e^{-m|n|} < \infty$.
+\item $\sum_{z \in \mathbb{Z}^d} e^{-m \|z\|_1} < \infty$.
+\item $\sum_z e^{-m d(x,z)} = \sum_z e^{-m d(0,z)} =: C(m,d)$ (translation invariance).
+\item $\sum_z e^{-m d(x,z)} < \infty$ for any basepoint $x$.
+\item Convolution bound: $\sum_z e^{-m d(x,z)} e^{-m d(y,z)} \leq 2 C(m,d) \cdot e^{-m d(x,y)/2}$.
+\end{enumerate}
+
+\noindent\textbf{Proof sketch}:
+Item (1): split $\mathbb{Z}$ into positive and negative parts, each bounded by the geometric series $\sum e^{-mn}$.
+Item (2): induction on $d$ using $\mathbb{Z}^{d+1} \cong \mathbb{Z} \times \mathbb{Z}^d$ and product summability.
+Item (3): translation invariance of lattice distance.
+Items (4): immediate from (2) via translation.
+Item (5): key pointwise inequality $e^{-m a} e^{-m b} \leq e^{-m d/2} e^{-m \min(a,b)}$,
+which follows from $d(x,y) \leq a + b = \max(a,b) + \min(a,b)$, hence $\max(a,b) \geq d(x,y)/2$.
+Sum using $e^{-m \min(a,b)} \leq e^{-m a} + e^{-m b}$ to bound $\sum e^{-m \min}$ by $2C$.
+
+\noindent\textit{Status}: Complete (PR~\#940, Step 126).
+File: \texttt{LatticeExpSum.lean}.
+Reference: Glimm--Jaffe 2nd~ed., \S17.5 Lemma~17.5.2 (pp.~311--312).
+
 \subsection*{Step 125 -- GHS consequence at infinite volume: $U_2^\infty(i,j)$ antitone in $h$ (Done)}
 
 \noindent\textbf{Theorem} (\texttt{truncated2Infinite\_antitoneOn\_h\_of\_ne}):
