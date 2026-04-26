@@ -6694,6 +6694,34 @@ Ring closure uses \texttt{simp\_rw} + \texttt{Finset.mul\_sum} for $\beta$-facto
 File: \texttt{FieldDerivative.lean}.
 Reference: Glimm--Jaffe 2nd~ed. (1987), \S17.6 pp.~348--351.
 
+\subsection*{Step 122 -- $\beta$-monotonicity: $\partial_\beta \langle \sigma^A \rangle \geq 0$ (Done)}
+
+\subsubsection*{Mathematical content}
+
+Using the derivative formula from Step 117a and GKS-II:
+\[
+  \frac{d}{d\beta} \langle \sigma^A \rangle_\beta
+  = J \sum_{\{u,v\} \in E} \bigl(
+    \langle \sigma^{A \triangle \{u,v\}} \rangle - \langle \sigma^A \rangle \cdot \langle \sigma^{\{u,v\}} \rangle
+  \bigr) \geq 0
+\]
+By the mean value theorem, $\beta \mapsto \langle \sigma^A \rangle_\beta$ is monotone on $\beta \geq 0$.
+
+\subsubsection*{Lean 4 formalization}
+
+\begin{theorem}[\texttt{correlation\_beta\_deriv\_nonneg}]
+For ferromagnetic $\mathtt{hf} = (J \geq 0, h = 0, \beta > 0)$: $0 \leq J\sum_e(\ldots)$.
+\end{theorem}
+
+\begin{theorem}[\texttt{correlation\_monotoneOn\_beta}]
+For $J \geq 0$: $\mathtt{MonotoneOn}\;(\lambda\beta \Rightarrow \langle\sigma^A\rangle_\beta)\;(\mathrm{Ici}\;0)$.
+\end{theorem}
+
+\noindent\textit{Status}: Complete (PR~\#TBD, Step 122).
+File: \texttt{BetaDerivative.lean}.
+Reference: Friedli--Velenik \S4.2, Prop.~4.2.5, p.~59;
+Glimm--Jaffe 2nd~ed. (1987), \S17.5 pp.~345--347.
+
 \subsection*{Step 121 -- GKS-II monotonicity: $\partial_h \langle \sigma^A \rangle \geq 0$ (Done)}
 
 \subsubsection*{Mathematical content}
