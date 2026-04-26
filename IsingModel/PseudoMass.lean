@@ -523,19 +523,19 @@ theorem pseudoMass_continuousOn {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < 
   rw [h_eq]
   exact continuous_subtype_val.comp (pseudoMassFn_continuous hα hr)
 
-/-- **Theorem 17.5.1 (partial)**: Existence of a continuous mass function.
+/-- **Corollary (Step 119)**: The pseudo-mass is continuous at any `c₀ ∈ Ioo 0 2`.
 
-The pseudo-mass m⁻(c; α, r) is continuous in c on (0, 2) (`pseudoMass_continuousOn`).
-This satisfies the existential statement of GJ Theorem 17.5.1.
-The full statement (β-continuity of the lattice mass m(β)) requires connecting
-pseudoMass to concrete lattice correlations via Lemma 17.5.2 bounds.
+This follows directly from `pseudoMass_continuousOn`.
 
-**References**: Glimm–Jaffe 2nd ed., §17.5 (pp.345–347).
+Note: This is **not** the full GJ Theorem 17.5.1 (β-continuity of lattice mass at β_c).
+That theorem requires connecting `pseudoMass` to concrete lattice correlations via
+Lemma 17.5.2 bounds plus a Lipschitz derivation (Steps 117e-f + HLS axiom, deferred).
+
+**References**: Glimm–Jaffe 2nd ed., §17.5 (pp.310–312).
 -/
-theorem latticeMass_continuity_at_critical_point (α d : ℕ) (hα : 1 ≤ α) (_ : 2 * α > d) :
-    ∃ (β_c : ℝ) (m : ℝ → ℝ), ContinuousAt m β_c := by
-  refine ⟨1, fun c => if hc : c ∈ Set.Ioo 0 2 then pseudoMass hα one_pos hc else 0, ?_⟩
-  apply (pseudoMass_continuousOn hα one_pos).continuousAt
-  exact Ioo_mem_nhds one_pos (by norm_num : (1 : ℝ) < 2)
+theorem pseudoMass_continuousAt {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) {c₀ : ℝ}
+    (hc₀ : c₀ ∈ Set.Ioo 0 2) :
+    ContinuousAt (fun c => if hc : c ∈ Set.Ioo 0 2 then pseudoMass hα hr hc else 0) c₀ :=
+  (pseudoMass_continuousOn hα hr).continuousAt (Ioo_mem_nhds hc₀.1 hc₀.2)
 
 end IsingModel
