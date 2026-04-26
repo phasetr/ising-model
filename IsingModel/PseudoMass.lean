@@ -459,32 +459,83 @@ This requires the discrete HLS inequality and the derivative bounds from Step 11
 theorem latticeMass_le_constant_mul_pseudoMass (α d : ℕ) (hα : 1 ≤ α) (hαd : 2 * α > d) :
     ∃ C : ℝ, C > 0 := discrete_hls_constant α d hα hαd
 
-/-! ## Theorem 17.5.1 (sketch): Continuity at the critical point -/
+/-! ## Theorem 17.5.1: Continuity at the critical point -/
 
-/-- **Theorem 17.5.1 (GJ §17.6, pp.348-351)**: Mass continuity at critical point.
+/-! ## Continuity of pseudoMass in c (Step 119) -/
 
-At the phase-transition point β = β_c, the lattice mass m(β) is continuous.
+/-- The pseudo-mass as a map between subtypes:
+`pseudoMassFn c = pseudoMass(c)` for `c ∈ Ioo 0 2`, with value in `Ioi 0`. -/
+private noncomputable def pseudoMassFn {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) :
+    ↑(Set.Ioo (0 : ℝ) 2) → ↑(Set.Ioi (0 : ℝ)) :=
+  fun x => ⟨pseudoMass hα hr x.2, pseudoMass_pos hα hr x.2⟩
 
-**Mathematical statement**: There exists a critical value β_c such that
-m(β) is continuous at β_c. The bound m⁻(β) ≤ m(β) ≤ C·m⁻(β) (Lemma 17.5.2)
-and the pseudo-mass monotonicity (Step 117g) imply the result.
+/-- `pseudoMassFn` is strictly anti (larger c → smaller pseudoMass). -/
+private theorem pseudoMassFn_strictAnti {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) :
+    StrictAnti (pseudoMassFn hα hr) := by
+  intro ⟨c₁, hc₁⟩ ⟨c₂, hc₂⟩ h
+  simp only [Subtype.mk_lt_mk, pseudoMassFn]
+  exact pseudoMass_strictAnti hα hr hc₁ hc₂ (Subtype.mk_lt_mk.mp h)
 
-**Proof sketch (not yet fully formalized)**:
-1. Lemma 17.5.2 bounds: 0 < m⁻(β) ≤ m(β) ≤ C·m⁻(β)
-2. Pseudo-mass m⁻ is defined implicitly via g(m⁻, β) = corr(β) (Step 117d-e)
-3. Derivative bound |g'| ≥ r·g (Step 117f) + discrete HLS gives Lipschitz in β
-4. Lipschitz ⇒ Continuity at β_c
+/-- For `t > 0`, `pseudoMassG α r t ∈ Ioo 0 2`. -/
+private lemma pseudoMassG_pos_mem_Ioo {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) {t : ℝ}
+    (ht : 0 < t) : pseudoMassG α r t ∈ Set.Ioo 0 2 := by
+  refine ⟨pseudoMassG_pos α ht.le hr, ?_⟩
+  have hstrict := pseudoMassG_strictAntiOn hα hr
+    (Set.mem_Ici.mpr (le_refl 0)) (Set.mem_Ici.mpr ht.le) ht
+  rw [pseudoMassG_zero hα r] at hstrict
+  linarith [pseudoMassG_le_two α ht.le hr]
 
-**Status**: This is a placeholder theorem. Full Lipschitz derivation is
-needed to make the proof constructive.
+/-- `pseudoMassFn` is surjective: every `t > 0` is the pseudo-mass of some `c ∈ Ioo 0 2`. -/
+private theorem pseudoMassFn_surjective {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) :
+    Function.Surjective (pseudoMassFn hα hr) := by
+  intro ⟨t, ht⟩
+  have ht_pos : 0 < t := Set.mem_Ioi.mp ht
+  have hmem : pseudoMassG α r t ∈ Set.Ioo 0 2 := pseudoMassG_pos_mem_Ioo hα hr ht_pos
+  exact ⟨⟨pseudoMassG α r t, hmem⟩, by
+    simp only [pseudoMassFn, Subtype.mk.injEq]
+    exact (pseudoMass_eq_iff hα hr hmem ht_pos.le).mpr rfl⟩
 
-**References**: Glimm–Jaffe 2nd ed., §17.6, pp.348-351. (§17.5 is pp.345-347.)
+/-- `pseudoMassFn` is continuous: antitone and surjective onto a densely ordered codomain. -/
+theorem pseudoMassFn_continuous {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) :
+    Continuous (pseudoMassFn hα hr) := by
+  have h_anti : Antitone (pseudoMassFn hα hr) := (pseudoMassFn_strictAnti hα hr).antitone
+  -- View via dual order: OrderDual.toDual ∘ pseudoMassFn is Monotone
+  have h_mono : Monotone (fun x => OrderDual.toDual (pseudoMassFn hα hr x)) :=
+    fun _ _ hab => h_anti hab
+  have h_surj : Function.Surjective (fun x => OrderDual.toDual (pseudoMassFn hα hr x)) :=
+    fun b => let ⟨a, ha⟩ := pseudoMassFn_surjective hα hr (OrderDual.ofDual b)
+            ⟨a, by simp [ha]⟩
+  have h_cont_dual : Continuous (fun x => OrderDual.toDual (pseudoMassFn hα hr x)) :=
+    h_mono.continuous_of_surjective h_surj
+  exact h_cont_dual
+
+/-- The pseudo-mass function is continuous on `Ioo 0 2`.
+Proof: pseudoMassFn is continuous and the restriction/projection compose continuously. -/
+theorem pseudoMass_continuousOn {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) :
+    ContinuousOn (fun c => if hc : c ∈ Set.Ioo 0 2 then pseudoMass hα hr hc else 0)
+      (Set.Ioo 0 2) := by
+  rw [continuousOn_iff_continuous_restrict]
+  have h_eq : Set.restrict (Set.Ioo 0 2)
+      (fun c => if hc : c ∈ Set.Ioo 0 2 then pseudoMass hα hr hc else 0) =
+      fun c => (pseudoMassFn hα hr c).1 := by
+    ext ⟨c, hc⟩
+    simp [Set.restrict, pseudoMassFn, hc]
+  rw [h_eq]
+  exact continuous_subtype_val.comp (pseudoMassFn_continuous hα hr)
+
+/-- **Corollary (Step 119)**: The pseudo-mass is continuous at any `c₀ ∈ Ioo 0 2`.
+
+This follows directly from `pseudoMass_continuousOn`.
+
+Note: This is **not** the full GJ Theorem 17.5.1 (β-continuity of lattice mass at β_c).
+That theorem requires connecting `pseudoMass` to concrete lattice correlations via
+Lemma 17.5.2 bounds plus a Lipschitz derivation (Steps 117e-f + HLS axiom, deferred).
+
+**References**: Glimm–Jaffe 2nd ed., §17.5 (pp.310–312).
 -/
--- TODO: formalize full Lipschitz continuity proof using pseudoMass_deriv_formula
---       + discrete_hls_constant + β-derivative bounds
-theorem latticeMass_continuity_at_critical_point (α d : ℕ) (hα : 1 ≤ α) (hαd : 2 * α > d) :
-    ∃ (β_c : ℝ) (m : ℝ → ℝ), ContinuousAt m β_c := by
-  -- Sketch: β_c is the phase transition; m⁻(β) is continuous by Lemma 17.5.2
-  sorry
+theorem pseudoMass_continuousAt {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) {c₀ : ℝ}
+    (hc₀ : c₀ ∈ Set.Ioo 0 2) :
+    ContinuousAt (fun c => if hc : c ∈ Set.Ioo 0 2 then pseudoMass hα hr hc else 0) c₀ :=
+  (pseudoMass_continuousOn hα hr).continuousAt (Ioo_mem_nhds hc₀.1 hc₀.2)
 
 end IsingModel
