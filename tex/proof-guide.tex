@@ -6722,6 +6722,32 @@ For $J \geq 0$ and $c(\beta) \in (0,2)$ for all $\beta > 0$:
 File: \texttt{PseudoMass.lean}.
 Reference: Derived from Steps 117g + 122; implicit in Glimm--Jaffe 2nd~ed., \S17.5, pp.~311--312.
 
+\subsection*{Step 127 -- Lebowitz--exponential product bound (Done)}
+
+\noindent\textbf{Theorems} (\texttt{summable\_truncated2Infinite\_prod\_of\_hasExponentialDecay},
+\texttt{tsum\_truncated2Infinite\_prod\_le}):
+Under \texttt{HasExponentialDecay} with constant $C \geq 0$ and rate $\alpha > 0$:
+\begin{enumerate}
+\item The product sum $\sum_{z \in \mathbb{Z}^d} U_2^\infty(x,z) \cdot U_2^\infty(y,z)$
+  is summable over $\mathbb{Z}^d$.
+\item Explicit bound:
+  $\sum_z U_2^\infty(x,z) U_2^\infty(y,z) \leq (C+1)^2 \cdot 2C(\alpha/2,d) \cdot e^{-\alpha d(x,y)/4}$,
+  where $C(\alpha/2,d) = \sum_z e^{-(\alpha/2)d(0,z)}$.
+\end{enumerate}
+
+\noindent\textbf{Proof sketch}:
+Uniform bound: the private lemma \texttt{truncated2Infinite\_le\_hDecay\_uniform}
+gives $U_2^\infty(i,z) \leq (C+1) e^{-(\alpha/2)d(i,z)}$ for all $z$ (including $i=z$),
+using $U_2^\infty(i,i) \leq 1 \leq C+1$ (GKS-II) for the diagonal and
+$C e^{-\alpha d} \leq (C+1) e^{-(\alpha/2)d}$ for $d \geq 0$ off-diagonal.
+The product is bounded by $(C+1)^2 e^{-(\alpha/2)d(x,z)} e^{-(\alpha/2)d(y,z)}$.
+Summability follows from \texttt{summable\_exp\_neg\_dist} with rate $\alpha/2$.
+The tsum bound applies \texttt{lattice\_exp\_sum\_conv\_le} (Step~126) with rate $\alpha/2$.
+
+\noindent\textit{Status}: Complete (PR~\#943, Step 127, Issue~\#940 PR~N+2).
+File: \texttt{Concrete/LatticeGraphCorrelation/Inequalities.lean}.
+Reference: GJ 1st~ed., \S17.5, applying Lemma~17.5.2 (pp.~311--312).
+
 \subsection*{Step 126 -- Discrete exponential convolution bound (Done)}
 
 \noindent\textbf{Theorems} (\texttt{summable\_exp\_neg\_int\_natAbs},
