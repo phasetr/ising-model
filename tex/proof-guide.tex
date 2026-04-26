@@ -6722,6 +6722,25 @@ For $J \geq 0$ and $c(\beta) \in (0,2)$ for all $\beta > 0$:
 File: \texttt{PseudoMass.lean}.
 Reference: Derived from Steps 117g + 122; implicit in Glimm--Jaffe 2nd~ed., \S17.5, pp.~311--312.
 
+\subsection*{Step 125 -- GHS consequence at infinite volume: $U_2^\infty(i,j)$ antitone in $h$ (Done)}
+
+\noindent\textbf{Theorem} (\texttt{truncated2Infinite\_antitoneOn\_h\_of\_ne}):
+For distinct sites $i \neq j$, ferromagnetic coupling $J \geq 0$, and $\beta > 0$,
+the infinite-volume truncated 2-point function
+$h \mapsto U_2^\infty(i,j)(h) = \langle\sigma_i\sigma_j\rangle_\infty(h) - \langle\sigma_i\rangle_\infty(h)\langle\sigma_j\rangle_\infty(h)$
+is antitone on $[0,\infty)$.
+
+\noindent\textbf{Proof sketch}:
+For each stage $n$ with $\{i,j\} \subseteq \Lambda_n$, Step~124 gives
+$U_2^{(n)}(h_2) \leq U_2^{(n)}(h_1)$ for $0 \leq h_1 \leq h_2$.
+By $\texttt{tendsto\_truncated2AlongExhaustion\_truncated2Infinite}$,
+$U_2^{(n)} \to U_2^\infty$ as $n \to \infty$.
+Apply \texttt{le\_of\_tendsto\_of\_tendsto} to pass the pointwise inequality to the limit.
+
+\noindent\textit{Status}: Complete (PR~\#939, Step 125).
+File: \texttt{AmbientLattice.lean}.
+Reference: Glimm--Jaffe 2nd~ed., \S4.3 Cor.~4.3.4; Friedli--Velenik \S3.6.3.
+
 \subsection*{Step 124 -- GHS consequence: $\langle\sigma_i;\sigma_j\rangle_T$ antitone in $h$ (Done)}
 
 \noindent\textbf{Theorem} (\texttt{truncated2\_antitoneOn\_h\_of\_ne}):
