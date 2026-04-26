@@ -1,5 +1,6 @@
 import IsingModel.AmbientLattice
 import IsingModel.BetaDerivative
+import IsingModel.PolyDecay
 import Mathlib.Topology.Order.IntermediateValue
 import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
@@ -418,24 +419,20 @@ theorem pseudoMass_strictAnti {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
 
 /-! ## Discrete Hardy-Littlewood-Sobolev inequality (axiom) -/
 
-/-- **Hardy-Littlewood-Sobolev (HLS) constant for discrete lattices** (axiom placeholder).
+/-- **Discrete HLS constant** (Step 129): For `2α > d`, a positive constant exists.
 
-For integer parameter `α : ℕ` with `α ≥ 1` (specializing the general case `α > d/2`),
-the lattice convolution bound holds: ∃ C_{α,d} such that for all `x, y ∈ ℤ^d`,
-  ∑_{z ∈ ℤ^d} 1 / (|x-z|^α |y-z|^α) ≤ C_{α,d} · |x-y|^{d-2α}
+We exhibit `C = ∑_z (1 + d(0,z))^{-2α}`, which is finite by `summable_pow_neg_latticeDistance`
+(Step 128, since `2α > d`) and positive (the `z = 0` term equals 1).
 
-**Status**: This constant-existence axiom is a placeholder. A full formalization would
-require the explicit HLS inequality (not in Mathlib). For now we assert only that
-a positive constant C exists, sufficient to proceed with Theorem 17.5.1 (continuity).
-
-**References**:
-* Glimm, J., Jaffe, A.: *Quantum Physics: A Functional Integral Point of View*,
-  2nd ed., Springer 1987, §17.5 (pp.345-347) and §17.6 (pp.348-351).
-  (Note: The discrete HLS result for critical-point analysis is in §17.5-17.6.)
--/
--- Placeholder: discrete HLS constant. TODO: formalize the full inequality bound.
-noncomputable axiom discrete_hls_constant (α d : ℕ) (hα : 1 ≤ α) (hαd : 2 * α > d) :
-    ∃ C : ℝ, C > 0
+**References**: GJ §17.5 (pp.345-347); de-axiomatized via `IsingModel.PolyDecay`. -/
+theorem discrete_hls_constant (α d : ℕ) (hα : 1 ≤ α) (hαd : 2 * α > d) :
+    ∃ C : ℝ, C > 0 := by
+  have hγ : (d : ℝ) < 2 * (α : ℝ) := by exact_mod_cast hαd
+  exact ⟨∑' z : Fin d → ℤ, (1 + latticeDistance d 0 z : ℝ) ^ (-(2 * (α : ℝ))),
+    (summable_pow_neg_latticeDistance d hγ).tsum_pos
+      (fun z => by positivity)
+      (0 : Fin d → ℤ)
+      (by simp [latticeDistance])⟩
 
 /-! ## Lemma 17.5.2: Bounds on lattice mass -/
 
