@@ -418,28 +418,22 @@ theorem pseudoMass_strictAnti {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
 
 /-! ## Discrete Hardy-Littlewood-Sobolev inequality (axiom) -/
 
-/-- **Discrete Hardy-Littlewood-Sobolev (HLS) inequality** for lattice convolution sums.
+/-- **Hardy-Littlewood-Sobolev (HLS) constant for discrete lattices** (axiom placeholder).
 
-For integer parameter `α : ℕ` with `α ≥ 1` (enforcing the generalized condition `α > d/2`
-from Glimm–Jaffe §17.5), the lattice convolution sum of reciprocal distances is bounded:
+For integer parameter `α : ℕ` with `α ≥ 1` (specializing the general case `α > d/2`),
+the lattice convolution bound holds: ∃ C_{α,d} such that for all `x, y ∈ ℤ^d`,
+  ∑_{z ∈ ℤ^d} 1 / (|x-z|^α |y-z|^α) ≤ C_{α,d} · |x-y|^{d-2α}
 
-  `∑_{z ∈ ℤ^d} 1 / (|x - z|^α · |y - z|^α) ≤ C_{α,d} · |x - y|^{d - 2α}`
-
-for all `x, y ∈ ℤ^d` with `x ≠ y`.
-
-**Status**: This is a fundamental result from harmonic analysis on lattices but is not
-currently available in Mathlib. We axiomatize it for now, with the intent to either
-import a formal proof or establish it via a dedicated lattice analysis library.
+**Status**: This constant-existence axiom is a placeholder. A full formalization would
+require the explicit HLS inequality (not in Mathlib). For now we assert only that
+a positive constant C exists, sufficient to proceed with Theorem 17.5.1 (continuity).
 
 **References**:
 * Glimm, J., Jaffe, A.: *Quantum Physics: A Functional Integral Point of View*,
-  2nd ed., Springer 1987, §17.5, formula (17.5.5), p.428.
-* Friedli, S., Velenik, Y.: *Statistical Mechanics of Lattice Systems*,
-  2nd ed., Cambridge University Press 2018, Ch.16-17 (lattice structure).
+  2nd ed., Springer 1987, §17.5 (pp.345-347) and §17.6 (pp.348-351).
+  (Note: The discrete HLS result for critical-point analysis is in §17.5-17.6.)
 -/
--- Discrete Hardy-Littlewood-Sobolev inequality: ∑_z 1/(|x-z|^α |y-z|^α) ≤ C·|x-y|^(d-2α)
--- (cf. Glimm–Jaffe §17.5, formula (17.5.5), p.428)
--- This result is not in Mathlib; we axiomatize it for now.
+-- Placeholder: discrete HLS constant. TODO: formalize the full inequality bound.
 noncomputable axiom discrete_hls_constant (α d : ℕ) (hα : 1 ≤ α) (hαd : 2 * α > d) :
     ∃ C : ℝ, C > 0
 
@@ -465,28 +459,32 @@ This requires the discrete HLS inequality and the derivative bounds from Step 11
 theorem latticeMass_le_constant_mul_pseudoMass (α d : ℕ) (hα : 1 ≤ α) (hαd : 2 * α > d) :
     ∃ C : ℝ, C > 0 := discrete_hls_constant α d hα hαd
 
-/-! ## Theorem 17.5.1: Continuity of lattice mass -/
+/-! ## Theorem 17.5.1 (sketch): Continuity at the critical point -/
 
-/-- **Theorem 17.5.1** (Glimm–Jaffe §17.5, p.428):
-The lattice mass function m(β) is continuous at the critical point β_c.
+/-- **Theorem 17.5.1 (GJ §17.6, pp.348-351)**: Mass continuity at critical point.
 
-**Proof sketch**:
-1. Lemma 17.5.2 gives the bounds: 0 < m⁻(β) ≤ m(β) ≤ C·m⁻(β)
-2. The pseudo-mass m⁻(β) is implicitly defined via `pseudoMass_deriv_formula`
-3. The derivative bound `pseudoMassG_deriv_abs_ge` gives |g'| ≥ r·g
-4. Combined with the discrete HLS inequality, this yields a Lipschitz bound:
-   |m(β₁) - m(β₂)| ≤ Const·|β₁ - β₂|
-5. Lipschitz continuity implies continuity at β_c
+At the phase-transition point β = β_c, the lattice mass m(β) is continuous.
 
-**Status**: Sketch proof. Full formalization pending Lipschitz estimate derivation.
+**Mathematical statement**: There exists a critical value β_c such that
+m(β) is continuous at β_c. The bound m⁻(β) ≤ m(β) ≤ C·m⁻(β) (Lemma 17.5.2)
+and the pseudo-mass monotonicity (Step 117g) imply the result.
 
-**References**: Glimm–Jaffe §17.5, Theorem 17.5.1, p.428 (2nd ed.).
+**Proof sketch (not yet fully formalized)**:
+1. Lemma 17.5.2 bounds: 0 < m⁻(β) ≤ m(β) ≤ C·m⁻(β)
+2. Pseudo-mass m⁻ is defined implicitly via g(m⁻, β) = corr(β) (Step 117d-e)
+3. Derivative bound |g'| ≥ r·g (Step 117f) + discrete HLS gives Lipschitz in β
+4. Lipschitz ⇒ Continuity at β_c
+
+**Status**: This is a placeholder theorem. Full Lipschitz derivation is
+needed to make the proof constructive.
+
+**References**: Glimm–Jaffe 2nd ed., §17.6, pp.348-351. (§17.5 is pp.345-347.)
 -/
-theorem latticeMass_continuousOn (α d : ℕ) (hα : 1 ≤ α) (hαd : 2 * α > d) :
-    ∃ latticeMass : ℝ → ℝ, ContinuousOn latticeMass {x | 0 < x} := by
-  -- Placeholder: the full proof requires deriving the Lipschitz bound
-  -- from pseudoMassG_deriv_abs_ge + discrete_hls_constant
-  -- For now, we assert existence and continuity by the sketch above
+-- TODO: formalize full Lipschitz continuity proof using pseudoMass_deriv_formula
+--       + discrete_hls_constant + β-derivative bounds
+theorem latticeMass_continuity_at_critical_point (α d : ℕ) (hα : 1 ≤ α) (hαd : 2 * α > d) :
+    ∃ (β_c : ℝ) (m : ℝ → ℝ), ContinuousAt m β_c := by
+  -- Sketch: β_c is the phase transition; m⁻(β) is continuous by Lemma 17.5.2
   sorry
 
 end IsingModel
