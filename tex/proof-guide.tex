@@ -6722,6 +6722,24 @@ For $J \geq 0$ and $c(\beta) \in (0,2)$ for all $\beta > 0$:
 File: \texttt{PseudoMass.lean}.
 Reference: Derived from Steps 117g + 122; implicit in Glimm--Jaffe 2nd~ed., \S17.5, pp.~311--312.
 
+\subsection*{Step 124 -- GHS consequence: $\langle\sigma_i;\sigma_j\rangle_T$ antitone in $h$ (Done)}
+
+\noindent\textbf{Theorem} (\texttt{truncated2\_antitoneOn\_h\_of\_ne}):
+For distinct sites $i \neq j$, ferromagnetic coupling $J \geq 0$, and $\beta > 0$,
+the truncated 2-point function
+$h \mapsto \langle\sigma_i;\sigma_j\rangle_T(h) = \langle\sigma_i\sigma_j\rangle_h - \langle\sigma_i\rangle_h\langle\sigma_j\rangle_h$
+is antitone on $[0,\infty)$.
+
+\noindent\textbf{Proof sketch}: Compute $\tfrac{d}{dh}\langle\sigma_i;\sigma_j\rangle_T = \beta\sum_{k\in\Lambda} s_k$
+where $s_k = \langle\sigma_i;\sigma_j;\sigma_k\rangle_T \leq 0$ for $k \notin \{i,j\}$ (GHS inequality),
+and $s_i = -2\langle\sigma_i\rangle\langle\sigma_i;\sigma_j\rangle_T \leq 0$,
+$s_j = -2\langle\sigma_j\rangle\langle\sigma_i;\sigma_j\rangle_T \leq 0$ (GKS-I + GKS-II).
+Hence $\tfrac{d}{dh}\langle\sigma_i;\sigma_j\rangle_T \leq 0$, giving antitonicity via MVT.
+
+\noindent\textit{Status}: Complete (PR~\#938, Step 124).
+File: \texttt{FieldDerivative.lean}.
+Reference: Glimm--Jaffe 2nd~ed., \S4.3 Cor.~4.3.4; Friedli--Velenik \S3.6.3.
+
 \subsection*{Step 122 -- $\beta$-monotonicity: $\partial_\beta \langle \sigma^A \rangle \geq 0$ (Done)}
 
 \subsubsection*{Mathematical content}
