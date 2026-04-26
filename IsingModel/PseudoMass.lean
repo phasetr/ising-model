@@ -575,6 +575,44 @@ theorem pseudoMass_power_deriv_le
     _ ≤ K * c β / (r * c β) := (div_le_div_iff_of_pos_right hrc_pos).mpr key
     _ = K / r := by field_simp [hc_pos.ne', hr.ne']
 
+/-- **Lipschitz derivative of (m⁻)^{2α+1}** (Step 133):
+The derivative of `β ↦ (h β)^(2α+1)` exists with absolute value `≤ (2α+1) · K/r`.
+
+This is the abstract derivative/Lipschitz core used in the proof of GJ §17.5 Theorem 17.5.1
+(p.312): `(m⁻)^{2α+1}` is Lipschitz in σ with constant `(2α+1)·K/r`. Via the MVT:
+`|(m⁻(σ₂))^{2α+1} − (m⁻(σ₁))^{2α+1}| ≤ (2α+1)·K/r �� |σ₂ − σ₁|`.
+
+Proof: chain rule gives `d/dβ [(h β)^(2α+1)] = (2α+1)·(h β)^(2α)·h'`;
+then `(h β)^(2α)·|h'| ≤ K/r` by `pseudoMass_power_deriv_le` (Step 131b).
+
+**References**: Glimm–Jaffe §17.5, used in the proof of Theorem 17.5.1, p.312. -/
+theorem pseudoMass_pow_succ_deriv_bound
+    (α : ℕ) {r K : ℝ} (hr : 0 < r)
+    {h c : ℝ → ℝ} {h' c' β : ℝ}
+    (hh : HasDerivAt h h' β)
+    (hc : HasDerivAt c c' β)
+    (hβ : 0 ≤ h β)
+    (hg_eq : ∀ β', pseudoMassG α r (h β') = c β')
+    (hm_pos : 0 < h β)
+    (hc_pos : 0 < c β)
+    (hc_der : |c'| ≤ K * c β / (h β) ^ (2 * α)) :
+    ∃ d : ℝ,
+      HasDerivAt (fun β' => (h β') ^ (2 * α + 1)) d β ∧
+      |d| ≤ ↑(2 * α + 1) * K / r := by
+  have hbound := pseudoMass_power_deriv_le α hr hh hc hβ hg_eq hm_pos hc_pos hc_der
+  have hpow_pos : (0 : ℝ) < ↑(2 * α + 1) := by exact_mod_cast Nat.succ_pos (2 * α)
+  have hm_pow_pos : 0 < (h β) ^ (2 * α) := pow_pos hm_pos _
+  have hderiv : HasDerivAt (fun β' => h β' ^ (2 * α + 1))
+      (↑(2 * α + 1) * h β ^ (2 * α + 1 - 1) * h') β := hh.fun_pow (2 * α + 1)
+  have hexp_eq : 2 * α + 1 - 1 = 2 * α := by omega
+  rw [hexp_eq] at hderiv
+  refine ⟨↑(2 * α + 1) * (h β) ^ (2 * α) * h', hderiv, ?_⟩
+  rw [abs_mul, abs_mul, abs_of_pos hpow_pos, abs_of_pos hm_pow_pos]
+  calc ↑(2 * α + 1) * (h β) ^ (2 * α) * |h'|
+      = ↑(2 * α + 1) * ((h β) ^ (2 * α) * |h'|) := by ring
+    _ ≤ ↑(2 * α + 1) * (K / r) := mul_le_mul_of_nonneg_left hbound hpow_pos.le
+    _ = ↑(2 * α + 1) * K / r := by ring
+
 /-! ## Theorem 17.5.1: Continuity at the critical point -/
 
 /-! ## Continuity of pseudoMass in c (Step 119) -/
