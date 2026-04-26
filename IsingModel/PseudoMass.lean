@@ -613,6 +613,56 @@ theorem pseudoMass_pow_succ_deriv_bound
     _ ≤ ↑(2 * α + 1) * (K / r) := mul_le_mul_of_nonneg_left hbound hpow_pos.le
     _ = ↑(2 * α + 1) * K / r := by ring
 
+/-- **GJ §17.5 Theorem 17.5.1 (abstract Lipschitz)** (Step 134):
+`|(h β₂)^(2α+1) − (h β₁)^(2α+1)| ≤ ↑(2α+1)·K/r · (β₂ − β₁)` for β₁ ≤ β₂.
+
+This is the abstract Lipschitz continuity of GJ §17.5 Theorem 17.5.1 (p.312):
+`m⁻(σ)^{2α+1}` is Lipschitz in σ with constant `(2α+1)·K/r`, uniform in Λ.
+
+Proof: apply MVT (`norm_image_sub_le_of_norm_deriv_le_segment'`) using:
+- `HasDerivAt.fun_pow` for the chain rule derivative
+- `pseudoMass_power_deriv_le` (Step 131b) for the derivative bound at each point
+
+**References**: Glimm–Jaffe §17.5, Theorem 17.5.1, pp.311–312. -/
+theorem pseudoMass_pow_succ_lipschitz
+    (α : ℕ) {r K : ℝ} (hr : 0 < r) {β₁ β₂ : ℝ} (hβ : β₁ ≤ β₂)
+    {h c : ℝ → ℝ}
+    (hh_diff : ∀ β' ∈ Set.Icc β₁ β₂, HasDerivAt h (deriv h β') β')
+    (hc_diff : ∀ β' ∈ Set.Icc β₁ β₂, HasDerivAt c (deriv c β') β')
+    (hβ_nn : ∀ β' ∈ Set.Icc β₁ β₂, 0 ≤ h β')
+    (hg_eq : ∀ β', pseudoMassG α r (h β') = c β')
+    (hm_pos : ∀ β' ∈ Set.Icc β₁ β₂, 0 < h β')
+    (hc_pos : ∀ β' ∈ Set.Icc β₁ β₂, 0 < c β')
+    (hc_der : ∀ β' ∈ Set.Icc β₁ β₂,
+        |deriv c β'| ≤ K * c β' / (h β') ^ (2 * α)) :
+    |(h β₂) ^ (2 * α + 1) - (h β₁) ^ (2 * α + 1)| ≤
+      ↑(2 * α + 1) * K / r * (β₂ - β₁) := by
+  rw [← Real.norm_eq_abs]
+  have := norm_image_sub_le_of_norm_deriv_le_segment'
+    (f := fun β' => (h β') ^ (2 * α + 1))
+    (f' := fun β' => ↑(2 * α + 1) * (h β') ^ (2 * α) * deriv h β')
+    (a := β₁) (b := β₂) (C := ↑(2 * α + 1) * K / r)
+    (hf := fun β' hβ' => by
+      have hderiv := (hh_diff β' hβ').fun_pow (2 * α + 1)
+      have hexp : 2 * α + 1 - 1 = 2 * α := by omega
+      rw [hexp] at hderiv
+      exact hderiv.hasDerivWithinAt)
+    (bound := fun β' hβ' => by
+      have hβ'_mem : β' ∈ Set.Icc β₁ β₂ := Set.Ico_subset_Icc_self hβ'
+      have h1 := pseudoMass_power_deriv_le α hr
+        (hh_diff β' hβ'_mem) (hc_diff β' hβ'_mem)
+        (hβ_nn β' hβ'_mem) hg_eq
+        (hm_pos β' hβ'_mem) (hc_pos β' hβ'_mem) (hc_der β' hβ'_mem)
+      have hpow_pos : (0 : ℝ) < ↑(2 * α + 1) := by exact_mod_cast Nat.succ_pos (2 * α)
+      have hm_pow_pos : 0 < (h β') ^ (2 * α) := pow_pos (hm_pos β' hβ'_mem) _
+      simp only [Real.norm_eq_abs, abs_mul, abs_of_pos hpow_pos, abs_of_pos hm_pow_pos]
+      calc ↑(2 * α + 1) * (h β') ^ (2 * α) * |deriv h β'|
+          = ↑(2 * α + 1) * ((h β') ^ (2 * α) * |deriv h β'|) := by ring
+        _ ≤ ↑(2 * α + 1) * (K / r) := mul_le_mul_of_nonneg_left h1 hpow_pos.le
+        _ = ↑(2 * α + 1) * K / r := by ring)
+  have hmem : β₂ ∈ Set.Icc β₁ β₂ := Set.right_mem_Icc.mpr hβ
+  simpa using this β₂ hmem
+
 /-! ## Theorem 17.5.1: Continuity at the critical point -/
 
 /-! ## Continuity of pseudoMass in c (Step 119) -/
