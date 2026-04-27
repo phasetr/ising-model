@@ -6811,6 +6811,42 @@ and the identity $\sigma^A\cdot\sigma^e=\sigma^{A\triangle e}$ (\texttt{spinProd
 
 \noindent\textit{Status}: Complete (PR~\#952 Step 135, Issue~\#951 Part~1).
 
+\subsection*{Step 136 -- Ball-boundary Simon-Lieb inequality (Done)}
+
+\noindent\textbf{Reference.} Glimm--Jaffe, \emph{Quantum Physics}, 2nd ed., \S17.8 pp.~316--318.
+
+\noindent\textbf{New infrastructure.}
+\begin{itemize}
+  \item \texttt{scaledCorrelation\_nonneg}: GKS-I for the scaled model ($\langle\sigma^A\rangle_s\ge 0$
+    for ferromagnetic $p$ and $s\ge 0$), proved via the product form of $w_s$ and
+    \texttt{hasNonnegCorrelations\_edge\_site\_product} with per-edge couplings.
+  \item \texttt{scaledCorrelation\_gks\_second}: GKS-II for the scaled model
+    ($\langle\sigma^A\rangle_s\langle\sigma^B\rangle_s\le\langle\sigma^{A\triangle B}\rangle_s$),
+    proved by the duplicate-variable trick adapted to the scaled modified weight.
+  \item \texttt{scaledCorrelation\_monotoneOn}: $\langle\sigma^A\rangle_s$ is non-decreasing in $s$,
+    from $d/ds\ge 0$ using GKS-II for the scaled model.
+\end{itemize}
+
+\begin{theorem}[Ball-boundary Simon-Lieb, weak form]
+For ferromagnetic $p=(J,0,\beta)$, $E_0\subseteq E(G)$, distinct $r,s\in V$ not appearing
+as endpoints of any $E_0$-bond, and $\langle\sigma_r\sigma_s\rangle_0=0$:
+\[\langle\sigma_r\sigma_s\rangle\le\beta J\sum_{(k,l)\in E_0}
+  \bigl(\langle\sigma_r\sigma_k\rangle\langle\sigma_s\sigma_l\rangle
+        +\langle\sigma_r\sigma_l\rangle\langle\sigma_s\sigma_k\rangle
+        +\langle\sigma_r\sigma_s\rangle\langle\sigma_k\sigma_l\rangle\bigr).\]
+The extra $\langle\sigma_r\sigma_s\rangle\langle\sigma_k\sigma_l\rangle$ term vanishes in GJ's
+formula (eq.~17.8.4) where Lebowitz for the scaled model removes it.
+\end{theorem}
+
+\noindent\textbf{Proof sketch.}
+FTC: $\langle\cdot\rangle_1-\langle\cdot\rangle_0=\int_0^1(d/ds)\langle\cdot\rangle_s\,ds$.
+With $\langle\sigma_r\sigma_s\rangle_0=0$, use the Step~135 derivative formula, GKS-I (drop negative
+term), 4-pt monotonicity (GKS-II for scaled model), and full-model Lebowitz
+(\texttt{summand\_le\_lebowitz\_of\_disjoint}).
+The MVT via \texttt{norm\_image\_sub\_le\_of\_norm\_deriv\_le\_segment\_01'} concludes.
+
+\noindent\textit{Status}: Complete (PR~\#953 Step 136, Issue~\#951 Part~2).
+
 \subsection*{Step 130 -- Constant HLS convolution bound (Done)}
 
 \noindent\textbf{Statement.}
