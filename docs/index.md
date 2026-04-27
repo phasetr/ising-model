@@ -628,6 +628,8 @@ inventory (2026-04-17).
 | §17.8 | Coupling derivative formula (Step 135) | **Done** | `scaledBoltzmannWeight G E₀ p s σ`: Boltzmann weight with E₀-bonds scaled by s (s=0: no E₀; s=1: full). `hasDerivAt_scaledBoltzmannWeight`: `d/ds w_s(σ) = β·J·(Σ_{E₀}σₑ)·w_s(σ)`. `hasDerivAt_scaledPartitionFunction`, `hasDerivAt_scaledCorrelation`: `d/ds ⟨σ^A⟩_s = β·J·Σ_{e=(u,v)∈E₀}(⟨σ^{AΔ{u,v}}⟩_s − ⟨σ^A⟩_s·⟨σ^{u,v}⟩_s)`. Reference: GJ §17.8 pp. 316–318. (PR #952 Step 135, Issue #951.) |
 | §17.8 | Ball-boundary Simon-Lieb inequality (Step 136) | **Done** | GKS-I for scaled model (`scaledCorrelation_nonneg`), GKS-II for scaled model (`scaledCorrelation_gks_second`, duplicate-variable trick), monotonicity in s (`scaledCorrelation_monotoneOn`). `ball_boundary_simon_lieb`: `⟨σ_r σ_s⟩ ≤ β·J·Σ_{(k,l)∈E₀}[⟨σ_r σ_k⟩·⟨σ_s σ_l⟩ + ⟨σ_r σ_l⟩·⟨σ_s σ_k⟩ + ⟨σ_r σ_s⟩·⟨σ_k σ_l⟩]`. Tight form `ball_boundary_simon_lieb_tight` (no extra term, uses `cor_4_3_3_scaled` axiom). `scaledCorrelation_odd_vanish` (h=0 → odd-card vanish for scaled model). Reference: GJ §17.8 pp. 316–318. (PRs #953, #954 Steps 136–137, Issue #951.) |
 | §17.8 | `η ≤ 1` (Thm 17.8.1, Step 137) | **Done** | `HasPolynomialDecay d Λ p` (lim corr{0,x}·\|x\|^{d-1}=0), `latticeBall d r`, `latticeBallBoundaryEdges d r`, `scaledCorrelation_at_zero_of_sep` (axiom), `ball_boundary_tight_infinite` (axiom), `shellSup_contraction`, `shellSup_iterated_bound`, `pow_div_le_inv_mul_exp`, `correlationInfinite_polynomial_implies_exponential`: polynomial decay → `HasExponentialDecay`. Zero sorrys. Reference: GJ §17.8 pp. 316–318. (PRs #954 #955 Step 137, Issue #951.) |
+| §17.9 | The Scaling Limit | **Out of scope** | Thm 17.9.1: single-phase φ^4/Ising expectations with uniform 2-pt bound (17.9.1) → subsequential convergence to Euclidean field theory. Requires Schwartz-space norms, Osterwalder-Schrader axioms, and continuum QFT compactness — outside current Lean infrastructure. |
+| §17.10 | Conjecture Γ^(6) ≤ 0 | **Out of scope** | Thm 17.10.1: if Γ^(6)(x,x,x,y,y,y) ≤ 0 then 0 ≤ Γ(x) ≤ e^{-3m\|x\|}. Requires 6-point vertex functions and QFT integration-by-parts. |
 
 ### Chapter 18 (Cluster expansion)
 
@@ -636,7 +638,7 @@ inventory (2026-04-17).
 | §18.1 | High-temperature parameter | **Done** |
 | §18.2 | `exp(α·edgeSpin) = cosh α + sinh α · edgeSpin` | **Done** |
 | §18.3 | Clustering and analyticity | **Done (lattice)** |
-| §18.4–18.7 | Cluster expansion machinery | Not formalized (large) |
+| §18.4–18.7 | Cluster expansion machinery | **Out of scope** | QFT cluster expansion (Gaussian functional integrals, Schwartz spaces). Outside current Lean/Ising scope. |
 
 ### Chapter 19 (Reconstruction)
 
