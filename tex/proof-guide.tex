@@ -6782,6 +6782,35 @@ For $\gamma > d$, the function $z \mapsto (1 + d(0,z))^{-\gamma}$ is summable ov
 File: \texttt{IsingModel/PolyDecay.lean}.
 Reference: GJ 1st~ed., \S17.5, pp.~310--312.
 
+\subsection*{Step 135 -- Coupling derivative formula for bond subsets (Done)}
+
+\noindent\textbf{Reference.} Glimm--Jaffe, \emph{Quantum Physics}, 2nd ed., \S17.8 pp.~316--318.
+
+\noindent\textbf{Setup.}
+For a finite graph $G=(V,E)$, edge subset $E_0\subseteq E$, Ising parameters $(J,h,\beta)$ with $\beta,J>0$,
+and $s\in[0,1]$, the \emph{scaled Boltzmann weight} is:
+\[w_s(\sigma) := w_G(\sigma)\cdot\exp\!\bigl(-\beta(1-s)J\sum_{e\in E_0}\sigma_e\bigr),\]
+where $\sigma_e = \sigma_k\sigma_l$ for $e=\{k,l\}$.
+At $s=0$: weight with $E_0$-bonds absent. At $s=1$: full model.
+
+\noindent\textbf{Main results.}
+\begin{itemize}
+  \item \texttt{hasDerivAt\_scaledBoltzmannWeight}:
+    $\dfrac{d}{ds}w_s(\sigma) = \beta J\Bigl(\sum_{e\in E_0}\sigma_e\Bigr)w_s(\sigma)$.
+  \item \texttt{hasDerivAt\_scaledPartitionFunction}:
+    $\dfrac{d}{ds}Z_s = \beta J\,Z_s\bigl\langle\sum_{E_0}\sigma_e\bigr\rangle_s$.
+  \item \texttt{hasDerivAt\_scaledCorrelation} (main):
+    \[\frac{d}{ds}\langle\sigma^A\rangle_s = \beta J\sum_{e=(u,v)\in E_0}
+      \Bigl(\langle\sigma^{A\triangle\{u,v\}}\rangle_s - \langle\sigma^A\rangle_s\cdot\langle\sigma^{\{u,v\}}\rangle_s\Bigr).\]
+\end{itemize}
+
+\noindent\textbf{Proof sketch.}
+Apply the chain rule to $\exp(-\beta(1-s)J X_\sigma)$ where $X_\sigma=\sum_{E_0}\sigma_e$.
+Then use the quotient rule for the Gibbs expectation $Z_s^{-1}\sum_\sigma F(\sigma)w_s(\sigma)$,
+and the identity $\sigma^A\cdot\sigma^e=\sigma^{A\triangle e}$ (\texttt{spinProduct\_mul}).
+
+\noindent\textit{Status}: Complete (PR~\#952 Step 135, Issue~\#951 Part~1).
+
 \subsection*{Step 130 -- Constant HLS convolution bound (Done)}
 
 \noindent\textbf{Statement.}
