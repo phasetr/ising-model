@@ -6847,6 +6847,43 @@ The MVT via \texttt{norm\_image\_sub\_le\_of\_norm\_deriv\_le\_segment\_01'} con
 
 \noindent\textit{Status}: Complete (PR~\#953 Step 136, Issue~\#951 Part~2).
 
+\subsection*{Step 137 -- GJ \S17.8 Thm 17.8.1: polynomial decay $\Rightarrow$ exponential decay (Partial)}
+
+\noindent\textbf{Reference}: Glimm--Jaffe \S17.8 pp.\ 316--318 (GJ 1987).
+
+\noindent\textbf{Statement.}
+\begin{itemize}
+\item \texttt{HasPolynomialDecay d $\Lambda$ p}:
+  $\lim_{|x|\to\infty}\langle\sigma_0\sigma_x\rangle_\infty\cdot|x|^{d-1}=0$.
+\item \texttt{correlationInfinite\_polynomial\_implies\_exponential}:
+  polynomial decay $\Rightarrow$ $\exists\,m>0$, \texttt{HasExponentialDecay} (sorry'd, deferred).
+\end{itemize}
+
+\noindent\textbf{New supporting material in PR \#954.}
+\begin{itemize}
+\item \texttt{scaledCorrelation\_odd\_vanish}: at $h=0$, odd-cardinality scaled correlations
+  vanish (global spin-flip symmetry for the scaled model).
+\item \texttt{cor\_4\_3\_3\_scaled} (axiom): Lebowitz 4-site inequality for the scaled model
+  (proved via $\phi^4$ approximation, same structure as \texttt{lebowitz\_four}).
+\item \texttt{ball\_boundary\_simon\_lieb\_tight}: tight ball-boundary bound
+  (no extra $\langle\sigma_r\sigma_s\rangle\cdot\langle\sigma_k\sigma_l\rangle$ term),
+  using \texttt{cor\_4\_3\_3\_scaled}.
+\item \texttt{scaledCorrelation\_at\_zero\_of\_sep} (axiom): when $E_0$ separates $r$ from $s$
+  and $h=0$, $\langle\sigma_r\sigma_s\rangle_{s=0}=0$.
+\item \texttt{latticeBall d r}, \texttt{latticeBallBoundaryEdges d r}: lattice ball and
+  boundary bond set definitions.
+\end{itemize}
+
+\noindent\textbf{Proof sketch.}
+Choose $R$ large so that $\alpha^{-1}:=\beta J\sum_{k\in\partial B_R}\langle\sigma_0\sigma_k\rangle_\infty<1$
+(possible by polynomial decay). Apply \texttt{scaledCorrelation\_at\_zero\_of\_sep} (origin inside $B_R$,
+target outside) and \texttt{ball\_boundary\_simon\_lieb\_tight} to get
+$\langle\sigma_0\sigma_x\rangle_\infty\le \alpha^{-1}\cdot M_{|x|-R-1}$ where
+$M_n=\sup_{|y|\ge n}\langle\sigma_0\sigma_y\rangle_\infty$.
+Induction: $M_n\le\alpha^{-n/(R+1)}\to 0$ exponentially. Full induction argument sorry'd.
+
+\noindent\textit{Status}: Partial (PR~\#954 Step 137, Issue~\#951 Part~3; main theorem sorry'd).
+
 \subsection*{Step 130 -- Constant HLS convolution bound (Done)}
 
 \noindent\textbf{Statement.}
