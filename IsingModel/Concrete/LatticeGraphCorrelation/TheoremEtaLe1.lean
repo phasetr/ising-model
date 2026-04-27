@@ -31,8 +31,8 @@ than any fixed power), then it decays exponentially (i.e., the mass is positive)
   factor `α_r` tends to `0` under polynomial decay.
 * `shellSup_contraction` (axiom, key inductive step) — one step of the iterated
   contraction argument for the shell supremum.
-* `shellSup_iterated_bound` (axiom, inductive bound) — iterated contraction gives
-  exponential bound on the shell supremum.
+* `shellSup_iterated_bound` — iterated contraction gives exponential bound on the shell supremum.
+  Proved by natural-number induction using `shellSup_contraction`.
 * `correlationInfinite_polynomial_implies_exponential` — polynomial decay
   implies exponential decay (GJ §17.8 Thm 17.8.1).
 
@@ -450,14 +450,62 @@ For all `k : ℕ` and all `n ≥ k * s`:
   Thus `sup(n) ≤ α * α^k = α^(k+1)`.
 
 Reference: Glimm–Jaffe §17.8 proof of Thm 17.8.1, p. 317. -/
-axiom shellSup_iterated_bound (d : ℕ) (hd : 1 ≤ d) (r : ℕ)
+theorem shellSup_iterated_bound (d : ℕ) (hd : 1 ≤ d) (r : ℕ)
     (Λ : Exhaustion (Fin d → ℤ))
     (p : IsingParams ℝ) (hf : Ferromagnetic p) (hh : p.h = 0)
-    (hα : contractionFactor d Λ p r < 1)
-    (k n : ℕ) (hn : k * (r + 2) ≤ n) :
+    (_hα : contractionFactor d Λ p r < 1)
+    (k : ℕ) : ∀ n : ℕ, k * (r + 2) ≤ n →
     ⨆ (y : {y : Fin d → ℤ // n ≤ IsingModel.latticeDistance d 0 y ∧ y ≠ 0}),
         correlationInfinite (IsingModel.latticeGraph d) Λ p {(0 : Fin d → ℤ), y.val}
-      ≤ (contractionFactor d Λ p r) ^ k
+      ≤ (contractionFactor d Λ p r) ^ k := by
+  induction k with
+  | zero =>
+    intro n _
+    simp only [pow_zero]
+    -- For any n and d ≥ 1, the index type is nonempty:
+    -- take y = (n+1, 0, ..., 0), which has latticeDistance = n+1 ≥ n and y ≠ 0.
+    haveI hnem : Nonempty {y : Fin d → ℤ // n ≤ IsingModel.latticeDistance d 0 y ∧ y ≠ 0} := by
+      let y₀ : Fin d → ℤ := fun i => if i = ⟨0, by omega⟩ then (n : ℤ) + 1 else 0
+      refine ⟨⟨y₀, ?_, ?_⟩⟩
+      · -- n ≤ latticeDistance d 0 y₀
+        unfold IsingModel.latticeDistance y₀
+        simp only [Pi.zero_apply, zero_sub, Int.natAbs_neg]
+        let f : Fin d → ℕ := fun i =>
+          (if i = (⟨0, by omega⟩ : Fin d) then (n : ℤ) + 1 else 0).natAbs
+        have hle : f (⟨0, by omega⟩ : Fin d) ≤ ∑ i : Fin d, f i :=
+          Finset.single_le_sum (fun i _ => Nat.zero_le _) (Finset.mem_univ _)
+        have hf0 : f (⟨0, by omega⟩ : Fin d) = n + 1 := by
+          simp only [f, ite_true]; norm_cast
+        calc n ≤ n + 1 := Nat.le_succ n
+          _ = f (⟨0, by omega⟩ : Fin d) := hf0.symm
+          _ ≤ ∑ i : Fin d, f i := hle
+      · -- y₀ ≠ 0
+        intro h
+        have := congrFun h (⟨0, by omega⟩ : Fin d)
+        simp only [y₀, ite_true, Pi.zero_apply] at this
+        omega
+    apply ciSup_le
+    rintro ⟨y, -, -⟩
+    exact correlationInfinite_le_one (IsingModel.latticeGraph d) Λ p _
+  | succ k ih =>
+    intro n hn
+    -- n ≥ (k+1)*(r+2) ≥ r+2 > r+1
+    have hn_gt : r + 1 < n := by
+      have h1 : (k + 1) * (r + 2) ≥ r + 2 := Nat.le_mul_of_pos_left _ (Nat.succ_pos k)
+      omega
+    -- Apply shellSup_contraction
+    have hstep : k * (r + 2) ≤ n - r - 1 := by
+      have h1 : (k + 1) * (r + 2) = k * (r + 2) + (r + 2) := by ring
+      omega
+    calc ⨆ (y : {y : Fin d → ℤ // n ≤ IsingModel.latticeDistance d 0 y ∧ y ≠ 0}),
+            correlationInfinite (IsingModel.latticeGraph d) Λ p {(0 : Fin d → ℤ), y.val}
+        ≤ contractionFactor d Λ p r *
+          ⨆ (y : {y : Fin d → ℤ // (n - r - 1) ≤ IsingModel.latticeDistance d 0 y ∧ y ≠ 0}),
+              correlationInfinite (IsingModel.latticeGraph d) Λ p {(0 : Fin d → ℤ), y.val} :=
+              shellSup_contraction d hd r Λ p hf hh n hn_gt
+      _ ≤ contractionFactor d Λ p r * (contractionFactor d Λ p r) ^ k :=
+          mul_le_mul_of_nonneg_left (ih (n - r - 1) hstep) (contractionFactor_nonneg d Λ p hf r)
+      _ = (contractionFactor d Λ p r) ^ (k + 1) := by rw [pow_succ]; ring
 
 /-! ## Phase 8: Auxiliary lemmas -/
 
