@@ -771,6 +771,28 @@ theorem correlationInfinite_polynomial_implies_exponential
       _ ≤ C * Real.exp (-m * n) := hαk_le
       _ = C * Real.exp (-m * (IsingModel.latticeDistance d i j : ℝ)) := by rw [← hdist]
 
+/-! ## Phase 10: Cluster property from polynomial decay -/
+
+/-- **Cluster property from polynomial decay** (GJ §5.1 / §17.8 corollary):
+For a `d`-dimensional ferromagnetic Ising model at `h = 0`, if the
+infinite-volume two-point function has polynomial decay (`HasPolynomialDecay`),
+then the cluster property holds: the truncated two-point function
+`j ↦ U₂∞(i, j)` tends to `0` along the cofinite filter.
+
+**Proof**: `HasPolynomialDecay` → `HasExponentialDecay` (by
+`correlationInfinite_polynomial_implies_exponential`, GJ §17.8 Thm 17.8.1)
+→ cluster property (by `clusterProperty_latticeGraph_of_HasExponentialDecay`).
+
+Reference: Glimm–Jaffe §5.1 pp. 76–79; §17.8 pp. 316–318. -/
+theorem clusterProperty_latticeGraph_of_polynomialDecay
+    (d : ℕ) (hd : 1 ≤ d)
+    (Λ : Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (hh : p.h = 0)
+    (hpoly : HasPolynomialDecay d Λ p) :
+    Ambient.clusterProperty (IsingModel.latticeGraph d) Λ p :=
+  let ⟨_, hm, hexp⟩ := correlationInfinite_polynomial_implies_exponential d hd Λ p hf hh hpoly
+  clusterProperty_latticeGraph_of_HasExponentialDecay d Λ p hm hexp
+
 end Ambient
 
 end IsingModel
