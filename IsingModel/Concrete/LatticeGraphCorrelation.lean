@@ -6,6 +6,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.Magnetization
 import IsingModel.Concrete.LatticeGraphCorrelation.TwoPoint
 import IsingModel.Concrete.LatticeGraphCorrelation.Translation
 import IsingModel.Concrete.LatticeGraphCorrelation.Inequalities
+import IsingModel.Concrete.LatticeGraphCorrelation.TheoremEtaLe1
 import IsingModel.Concrete.LatticeGraphCorrelation.SiteIndepMag
 import IsingModel.Concrete.LatticeGraphCorrelation.UniformMag
 import IsingModel.Concrete.LatticeGraphCorrelation.Base
