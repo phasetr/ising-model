@@ -1760,7 +1760,8 @@ the lattice mass is strictly positive.
 
 Together with `latticeMass_eq_zero_of_criticalInverseTemp_lt` and
 `criticalInverseTemp_ge_ofReal_of_latticeMass_pos`, this gives a near-complete picture:
-`ENNReal.ofReal β < criticalInverseTemp d J → mass > 0 → ENNReal.ofReal β ≤ criticalInverseTemp d J`.
+`ENNReal.ofReal β < β_c → mass > 0 → ENNReal.ofReal β ≤ β_c`
+(where `β_c = criticalInverseTemp d J`).
 The boundary case `ENNReal.ofReal β = criticalInverseTemp d J` remains undetermined.
 
 **GJ §17.1 context**: for σ < σ_c (= β < β_c in the Ising analog), the theory has
@@ -1795,6 +1796,70 @@ theorem latticeMass_pos_of_lt_criticalInverseTemp
         rw [hm_zero] at hmono
         exact absurd hmass_γ (not_lt.mpr hmono)
     exact absurd h (not_lt.mpr h_bound)
+
+/-! ## §17.1 d = 0 special case -/
+
+/-- **Vacuous HasExponentialDecay in dimension zero**: for `d = 0`, the lattice
+`Fin 0 → ℤ` is a singleton, so there are no distinct pairs `(i, j)`, and
+`HasExponentialDecay 0 Λ p α` holds for every `Λ`, `p`, and `α`. -/
+private lemma HasExponentialDecay_dim_zero
+    (Λ : Ambient.Exhaustion (Fin 0 → ℤ)) (p : IsingParams ℝ) (α : ℝ) :
+    HasExponentialDecay 0 Λ p α :=
+  ⟨0, le_refl _, fun _i _j hij =>
+    absurd (funext (fun x => Fin.elim0 x)) hij⟩
+
+/-- **Lattice mass is `⊤` in dimension zero**: the set of valid decay rates is all of
+`NNReal` (vacuous condition), so `latticeMass = sSup (NNReal → ENNReal) = ⊤`. -/
+private lemma latticeMass_eq_top_of_dim_zero
+    (Λ : Ambient.Exhaustion (Fin 0 → ℤ)) (p : IsingParams ℝ) :
+    latticeMass 0 Λ p = ⊤ := by
+  refine eq_top_iff.mpr ?_
+  refine le_sSup_iff.mpr ?_
+  intro b hb
+  by_contra hb_ne
+  rw [not_le] at hb_ne
+  set α : NNReal := b.toNNReal + 1
+  have hαmem : (α : ENNReal) ∈ (fun α : NNReal => (α : ENNReal)) ''
+      {α : NNReal | HasExponentialDecay 0 Λ p (α : ℝ)} :=
+    ⟨α, HasExponentialDecay_dim_zero Λ p (α : ℝ), rfl⟩
+  have hα_le_b : (α : ENNReal) ≤ b := hb hαmem
+  have hb_ne_top : b ≠ ⊤ := ne_of_lt hb_ne
+  have hb_toNN : ((b.toNNReal : ENNReal) : ENNReal) = b := ENNReal.coe_toNNReal hb_ne_top
+  have hα_eq : (α : ENNReal) = b + 1 := by
+    simp only [α, ENNReal.coe_add, ENNReal.coe_one, hb_toNN]
+  rw [hα_eq] at hα_le_b
+  exact absurd hα_le_b (not_le.mpr (ENNReal.lt_add_right hb_ne_top one_ne_zero))
+
+/-- **Critical inverse temperature is `⊤` in dimension zero** (GJ §17.1):
+for `d = 0` (single-site model, no neighbors), the lattice mass is always `⊤ > 0`,
+so all `β ≥ 0` are in the high-temperature set and `criticalInverseTemp 0 J = ⊤`.
+
+Physics: a zero-dimensional Ising model has no ferromagnetic interactions and no
+phase transition at any temperature; the "critical temperature" is infinite (β_c = ⊤). -/
+theorem criticalInverseTemp_eq_top_of_dim_zero (J : ℝ) :
+    criticalInverseTemp 0 J = ⊤ := by
+  unfold criticalInverseTemp
+  refine eq_top_iff.mpr ?_
+  refine le_sSup_iff.mpr ?_
+  intro b hb
+  by_contra hb_ne
+  rw [not_le] at hb_ne
+  have hb_ne_top : b ≠ ⊤ := ne_of_lt hb_ne
+  set β₀ : NNReal := b.toNNReal + 1
+  have hmass_pos : 0 < latticeMass 0 (cubicExhaustion 0)
+      (⟨J, 0, (β₀ : ℝ)⟩ : IsingParams ℝ) := by
+    rw [latticeMass_eq_top_of_dim_zero]
+    simp
+  have hmem : ENNReal.ofReal (β₀ : ℝ) ∈ ENNReal.ofReal ''
+      { β : ℝ | 0 ≤ β ∧ 0 < latticeMass 0 (cubicExhaustion 0)
+          (⟨J, 0, β⟩ : IsingParams ℝ) } :=
+    ⟨(β₀ : ℝ), ⟨NNReal.coe_nonneg _, hmass_pos⟩, rfl⟩
+  have hle : ENNReal.ofReal (β₀ : ℝ) ≤ b := hb hmem
+  have hb_toNN : ((b.toNNReal : ENNReal) : ENNReal) = b := ENNReal.coe_toNNReal hb_ne_top
+  have hβ₀_eq : ENNReal.ofReal (β₀ : ℝ) = b + 1 := by
+    simp only [β₀, ENNReal.ofReal_coe_nnreal, ENNReal.coe_add, ENNReal.coe_one, hb_toNN]
+  rw [hβ₀_eq] at hle
+  exact absurd hle (not_le.mpr (ENNReal.lt_add_right hb_ne_top one_ne_zero))
 
 end Ambient
 
