@@ -1637,9 +1637,9 @@ of all inverse temperatures `β ≥ 0` for which the lattice mass
 `latticeMass d (cubicExhaustion d) ⟨J, 0, β⟩` is strictly positive.
 
 For β strictly below this threshold (and J > 0 ferromagnetic) the model is in the
-high-temperature phase with exponential decay. At and above the threshold the mass vanishes;
-for fixed J > 0 and sufficiently large β (equivalently, sufficiently large βJ) a genuine
-two-phase region appears in d ≥ 2 (Peierls, §5.4).
+high-temperature phase with exponential decay. For β strictly above the threshold the mass
+equals 0 (see `latticeMass_eq_zero_of_criticalInverseTemp_lt`); for fixed J > 0 and
+sufficiently large β, a genuine two-phase region appears in d ≥ 2 (Peierls, §5.4).
 
 **GJ §17.1 analogy**: Glimm–Jaffe define the critical coupling `σ_c` as the infimum of
 σ (mass² parameter) for which the φ⁴ theory has a unique phase with exponential decay.
