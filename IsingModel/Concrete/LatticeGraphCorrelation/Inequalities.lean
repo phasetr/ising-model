@@ -1637,9 +1637,9 @@ of all inverse temperatures `β ≥ 0` for which the lattice mass
 `latticeMass d (cubicExhaustion d) ⟨J, 0, β⟩` is strictly positive.
 
 For β strictly below this threshold (and J > 0 ferromagnetic) the model is in the
-high-temperature phase with exponential decay. At and above the threshold the mass vanishes;
-for fixed J > 0 and sufficiently large β (equivalently, sufficiently large βJ) a genuine
-two-phase region appears in d ≥ 2 (Peierls, §5.4).
+high-temperature phase with exponential decay. For β strictly above the threshold the mass
+equals 0 (see `latticeMass_eq_zero_of_criticalInverseTemp_lt`); for fixed J > 0 and
+sufficiently large β, a genuine two-phase region appears in d ≥ 2 (Peierls, §5.4).
 
 **GJ §17.1 analogy**: Glimm–Jaffe define the critical coupling `σ_c` as the infimum of
 σ (mass² parameter) for which the φ⁴ theory has a unique phase with exponential decay.
@@ -1724,6 +1724,35 @@ theorem criticalInverseTemp_antitone_J
   · simp [latticeMass_top_of_beta_zero]
   · exact lt_of_lt_of_le hmass_pos
       (latticeMass_antitone_J (cubicExhaustion d) hJ₁ hJ₁₂ hβ_pos)
+
+/-! ## §17.1 Critical inverse temperature — characterization -/
+
+/-- **Lower bound on `criticalInverseTemp` from positive mass** (GJ §17.1):
+if `latticeMass d (cubicExhaustion d) ⟨J, 0, β⟩ > 0` for some `β ≥ 0`, then
+`ENNReal.ofReal β ≤ criticalInverseTemp d J`.
+
+Proof: `β` is in the defining set of `criticalInverseTemp`, so `ENNReal.ofReal β` is
+in the image set, and `le_sSup` gives the bound. -/
+theorem criticalInverseTemp_ge_ofReal_of_latticeMass_pos
+    {d : ℕ} {J β : ℝ} (hβ : 0 ≤ β)
+    (h : 0 < latticeMass d (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ)) :
+    ENNReal.ofReal β ≤ criticalInverseTemp d J :=
+  le_sSup ⟨β, ⟨hβ, h⟩, rfl⟩
+
+/-- **Mass vanishes above the critical inverse temperature** (GJ §17.1):
+if `criticalInverseTemp d J < ENNReal.ofReal β` (and `β ≥ 0`), then
+`latticeMass d (cubicExhaustion d) ⟨J, 0, β⟩ = 0`.
+
+This is the characterization: for β strictly above the critical threshold, the
+high-temperature exponential-decay regime ends and mass vanishes (within the ENNReal lattice).
+Proof: contrapositive of `criticalInverseTemp_ge_ofReal_of_latticeMass_pos`. -/
+theorem latticeMass_eq_zero_of_criticalInverseTemp_lt
+    {d : ℕ} {J β : ℝ} (hβ : 0 ≤ β)
+    (h : criticalInverseTemp d J < ENNReal.ofReal β) :
+    latticeMass d (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) = 0 := by
+  by_contra hm
+  exact absurd h (not_lt.mpr
+    (criticalInverseTemp_ge_ofReal_of_latticeMass_pos hβ (lt_of_le_of_ne (zero_le _) (Ne.symm hm))))
 
 end Ambient
 
