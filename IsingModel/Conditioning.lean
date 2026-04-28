@@ -460,7 +460,7 @@ theorem euclidean_norm_sq_empty (x : Fin 0 → ℝ) :
 /-- **Single-element Euclidean norm squared**: `∑ i : Fin 1, (xᵢ)² = (x 0)²`. -/
 theorem euclidean_norm_sq_single (x : Fin 1 → ℝ) :
     (∑ i : Fin 1, (x i) ^ 2) = (x 0) ^ 2 := by
-  simp [Fin.sum_univ_one]
+  simp
 
 /-- **Two-element Euclidean norm squared**: `∑ i : Fin 2, (xᵢ)² = (x 0)² + (x 1)²`. -/
 theorem euclidean_norm_sq_two (x : Fin 2 → ℝ) :
@@ -477,7 +477,7 @@ theorem euclidean_norm_sq_three (x : Fin 3 → ℝ) :
 `∑ i : Fin 1, x i * y i = x 0 * y 0`. -/
 theorem euclidean_inner_single (x y : Fin 1 → ℝ) :
     (∑ i : Fin 1, x i * y i) = x 0 * y 0 := by
-  simp [Fin.sum_univ_one]
+  simp
 
 /-- **Two-element Euclidean inner**:
 `∑ i : Fin 2, x i * y i = x 0 * y 0 + x 1 * y 1`. -/
