@@ -1704,14 +1704,15 @@ theorem criticalInverseTemp_pos {d : ℕ} (hd : 1 ≤ d) {J : ℝ} (hJ : 0 < J) 
 /-- **Critical inverse temperature is antitone in the coupling J** (GJ §17.1 Cor 17.1.2 analog):
 for `0 ≤ J₁ ≤ J₂`, the critical inverse temperature satisfies `β_c(J₂) ≤ β_c(J₁)`.
 
-Physics: stronger coupling (larger J) → shorter correlation length → phase transition occurs
-at lower temperature (smaller β_c). Proof: `latticeMass_antitone_J` gives
+Physics: stronger coupling (larger J) → smaller lattice mass at fixed β (longer correlation
+length) → phase transition occurs at higher temperature (= smaller β_c, since β_c = 1/T_c
+and larger T_c means smaller β_c). Proof: `latticeMass_antitone_J` gives
 `latticeMass(J₁, β) ≥ latticeMass(J₂, β)` for β > 0, so the high-temperature set for J₁
 contains the high-temperature set for J₂, hence sSup J₁ ≥ sSup J₂.
 
-**GJ §17.1 Cor 17.1.2 analogy**: the mass `m(σ)` in the φ⁴ model is monotone increasing
-in σ (larger σ = weaker coupling = larger mass = higher σ_c). Here J plays the role of
--σ, so β_c is antitone in J. -/
+**GJ §17.1 monotonicity analog**: Cor 17.1.2 states that the mass m(σ) is monotone
+increasing in σ (larger σ = weaker coupling = larger mass). Here J plays the role of
+-σ, so increasing J decreases the mass at fixed β, lowering β_c. -/
 theorem criticalInverseTemp_antitone_J
     {d : ℕ} {J₁ J₂ : ℝ} (hJ₁ : 0 ≤ J₁) (hJ₁₂ : J₁ ≤ J₂) :
     criticalInverseTemp d J₂ ≤ criticalInverseTemp d J₁ := by
