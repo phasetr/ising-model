@@ -1701,6 +1701,30 @@ theorem criticalInverseTemp_pos {d : ℕ} (hd : 1 ≤ d) {J : ℝ} (hJ : 0 < J) 
   (ENNReal.ofReal_pos.mpr (by positivity)).trans_le
     (criticalInverseTemp_ge_ofReal_high_temp hd hJ)
 
+/-- **Critical inverse temperature is antitone in the coupling J** (GJ §17.1 Cor 17.1.2 analog):
+for `0 ≤ J₁ ≤ J₂`, the critical inverse temperature satisfies `β_c(J₂) ≤ β_c(J₁)`.
+
+Physics: stronger coupling (larger J) → smaller lattice mass at fixed β (longer correlation
+length) → phase transition occurs at higher temperature (= smaller β_c, since β_c = 1/T_c
+and larger T_c means smaller β_c). Proof: `latticeMass_antitone_J` gives
+`latticeMass(J₁, β) ≥ latticeMass(J₂, β)` for β > 0, so the high-temperature set for J₁
+contains the high-temperature set for J₂, hence sSup J₁ ≥ sSup J₂.
+
+**GJ §17.1 monotonicity analog**: Cor 17.1.2 states that the mass m(σ) is monotone
+increasing in σ (larger σ = weaker coupling = larger mass). Here J plays the role of
+-σ, so increasing J decreases the mass at fixed β, lowering β_c. -/
+theorem criticalInverseTemp_antitone_J
+    {d : ℕ} {J₁ J₂ : ℝ} (hJ₁ : 0 ≤ J₁) (hJ₁₂ : J₁ ≤ J₂) :
+    criticalInverseTemp d J₂ ≤ criticalInverseTemp d J₁ := by
+  unfold criticalInverseTemp
+  apply sSup_le_sSup
+  rintro x ⟨β, ⟨hβ_nn, hmass_pos⟩, rfl⟩
+  refine ⟨β, ⟨hβ_nn, ?_⟩, rfl⟩
+  rcases eq_or_lt_of_le hβ_nn with rfl | hβ_pos
+  · simp [latticeMass_top_of_beta_zero]
+  · exact lt_of_lt_of_le hmass_pos
+      (latticeMass_antitone_J (cubicExhaustion d) hJ₁ hJ₁₂ hβ_pos)
+
 end Ambient
 
 end IsingModel
