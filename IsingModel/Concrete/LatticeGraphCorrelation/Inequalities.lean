@@ -1629,6 +1629,78 @@ theorem tsum_truncated2Infinite_prod_le
                     Real.exp (-(α / 2) * (latticeDistance d 0 z : ℝ))) *
                 Real.exp (-(α / 2) * (latticeDistance d x y : ℝ) / 2) := by ring
 
+/-! ## §17.1 Critical inverse temperature -/
+
+/-- **Critical inverse temperature** for the d-dimensional Ising model on ℤ^d
+with coupling `J` (no ferromagneticity required in the definition): the supremum (in `ENNReal`)
+of all inverse temperatures `β ≥ 0` for which the lattice mass
+`latticeMass d (cubicExhaustion d) ⟨J, 0, β⟩` is strictly positive.
+
+For β strictly below this threshold (and J > 0 ferromagnetic) the model is in the
+high-temperature phase with exponential decay. At and above the threshold the mass vanishes;
+for fixed J > 0 and sufficiently large β (equivalently, sufficiently large βJ) a genuine
+two-phase region appears in d ≥ 2 (Peierls, §5.4).
+
+**GJ §17.1 analogy**: Glimm–Jaffe define the critical coupling `σ_c` as the infimum of
+σ (mass² parameter) for which the φ⁴ theory has a unique phase with exponential decay.
+Our `criticalInverseTemp d J` is the lattice Ising analog: because higher β = lower
+temperature = stronger interaction, the critical point is a supremum in β rather than an
+infimum in σ. -/
+noncomputable def criticalInverseTemp (d : ℕ) (J : ℝ) : ENNReal :=
+  sSup (ENNReal.ofReal ''
+    { β : ℝ | 0 ≤ β ∧ 0 < latticeMass d (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) })
+
+/-- The defining set for `criticalInverseTemp` is non-empty: at `β = 0` the lattice mass
+equals `⊤ > 0` (see `latticeMass_top_of_beta_zero`), so `0 ∈ {β | 0 ≤ β ∧ mass > 0}`. -/
+theorem criticalInverseTemp_set_nonempty (d : ℕ) (J : ℝ) :
+    (ENNReal.ofReal ''
+      { β : ℝ | 0 ≤ β ∧
+        0 < latticeMass d (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) }).Nonempty :=
+  ⟨ENNReal.ofReal 0, 0,
+    ⟨le_refl 0, by simp [latticeMass_top_of_beta_zero]⟩, rfl⟩
+
+/-- The critical inverse temperature is nonneg; trivially in `ENNReal`. -/
+theorem criticalInverseTemp_nonneg (d : ℕ) (J : ℝ) : 0 ≤ criticalInverseTemp d J :=
+  zero_le _
+
+/-- **High-temperature lower bound on `criticalInverseTemp`** (GJ §17.1):
+for `d ≥ 1` and `J > 0`, the critical inverse temperature satisfies
+`β_c ≥ ENNReal.ofReal (1 / (2 * J * 2d)) > 0`.
+
+Proof: the midpoint `β₀ := 1 / (2 * J * 2d)` satisfies `β₀ * J > 0` and
+`β₀ * J * 2d = 1/2 < 1`, so `latticeMass_pos_of_high_temp` gives `mass > 0` at `β₀`.
+Hence `β₀` lies in the defining set and `criticalInverseTemp ≥ ENNReal.ofReal β₀ > 0`. -/
+theorem criticalInverseTemp_ge_ofReal_high_temp
+    {d : ℕ} (hd : 1 ≤ d) {J : ℝ} (hJ : 0 < J) :
+    ENNReal.ofReal (1 / (2 * J * ↑(2 * d))) ≤ criticalInverseTemp d J := by
+  have h2d_pos : (0 : ℝ) < ↑(2 * d) := by exact_mod_cast Nat.mul_pos two_pos (by omega)
+  have hβ_pos : (0 : ℝ) < 1 / (2 * J * ↑(2 * d)) := by positivity
+  have hβJ : 0 < 1 / (2 * J * ↑(2 * d)) * J := mul_pos hβ_pos hJ
+  have hβJd : 1 / (2 * J * ↑(2 * d)) * J * ↑(2 * d) < 1 := by
+    have h2Jd_pos : (0 : ℝ) < 2 * J * ↑(2 * d) := by positivity
+    rw [show (1 : ℝ) / (2 * J * ↑(2 * d)) * J * ↑(2 * d) =
+        J * ↑(2 * d) / (2 * J * ↑(2 * d)) from by ring,
+      div_lt_one h2Jd_pos]
+    linarith [mul_pos hJ h2d_pos]
+  have hmass : 0 < latticeMass d (cubicExhaustion d)
+      (⟨J, 0, 1 / (2 * J * ↑(2 * d))⟩ : IsingParams ℝ) :=
+    latticeMass_pos_of_high_temp hβJ hβJd
+  have hmem : (1 / (2 * J * ↑(2 * d)) : ℝ) ∈
+      { β : ℝ | 0 ≤ β ∧ 0 < latticeMass d (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) } :=
+    ⟨le_of_lt hβ_pos, hmass⟩
+  calc ENNReal.ofReal (1 / (2 * J * ↑(2 * d)))
+      ≤ sSup (ENNReal.ofReal '' { β : ℝ | 0 ≤ β ∧
+          0 < latticeMass d (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) }) :=
+        le_sSup ⟨1 / (2 * J * ↑(2 * d)), hmem, rfl⟩
+    _ = criticalInverseTemp d J := rfl
+
+/-- The critical inverse temperature is strictly positive for `d ≥ 1` and `J > 0`:
+the high-temperature bound `β_c ≥ 1/(2J·2d) > 0` guarantees positivity. -/
+theorem criticalInverseTemp_pos {d : ℕ} (hd : 1 ≤ d) {J : ℝ} (hJ : 0 < J) :
+    0 < criticalInverseTemp d J :=
+  (ENNReal.ofReal_pos.mpr (by positivity)).trans_le
+    (criticalInverseTemp_ge_ofReal_high_temp hd hJ)
+
 end Ambient
 
 end IsingModel
