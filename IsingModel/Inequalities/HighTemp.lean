@@ -333,33 +333,6 @@ theorem clusterProperty_latticeGraph_of_high_temp
   rw [edgeFilter_card_eq_degree v]
   exact inducedLatticeGraph_degree_le d _ v
 
-/-- **symmDiff of two overlapping pairs** (local copy): for `i ≠ j`, `i ≠ u`, `u ≠ j`,
-`{i,j} △ {i,u} = {u,j}` as Finsets.
-Reproves `SimonLieb.symmDiff_pair_pair_of_ne` (which is `private`) for use here. -/
-private lemma symmDiff_pair_pair_of_ne' {α : Type*} [DecidableEq α] {i j u : α}
-    (hij : i ≠ j) (hiu : i ≠ u) (huj : u ≠ j) :
-    symmDiff ({i, j} : Finset α) {i, u} = {u, j} := by
-  rw [symmDiff_def]
-  have h1 : ({i, j} : Finset α) \ {i, u} = {j} := by
-    ext x
-    simp only [Finset.mem_sdiff, Finset.mem_insert, Finset.mem_singleton, not_or]
-    constructor
-    · rintro ⟨h, hni, _⟩
-      rcases h with rfl | rfl
-      · exact absurd rfl hni
-      · rfl
-    · rintro rfl; exact ⟨Or.inr rfl, hij.symm, huj.symm⟩
-  have h2 : ({i, u} : Finset α) \ {i, j} = {u} := by
-    ext x
-    simp only [Finset.mem_sdiff, Finset.mem_insert, Finset.mem_singleton, not_or]
-    constructor
-    · rintro ⟨h, hni, _⟩
-      rcases h with rfl | rfl
-      · exact absurd rfl hni
-      · rfl
-    · rintro rfl; exact ⟨Or.inr rfl, hiu.symm, huj⟩
-  rw [h1, h2]
-  ext x; simp [or_comm]
 
 /-- **Nonnegativity of `correlationInfinite`** for `0 ≤ β * J`:
 at `h = 0`, the correlation is ≥ 0, derived from the per-stage nonnegativity
@@ -472,7 +445,7 @@ theorem correlationInfinite_simon_lieb
         intro heq
         exact hnadj (heq ▸ get_adj e hei)
       rw [he_toFinset,
-        symmDiff_pair_pair_of_ne' hij' hiu
+        symmDiff_pair_pair_of_ne hij' hiu
           (fun h => huj_val (congr_arg Subtype.val h))]
       -- corr{u, ⟨j,hj⟩} = correlationAlongExhaustion G Λ p {u.val, j} n
       have h_uj_sub : ({u.val, j} : Finset V) ⊆ Λ.volume n :=

@@ -166,7 +166,7 @@ theorem correlation_inducedGraph_simon_lieb
 
 /-- **symmDiff of two overlapping pairs**: for `i ≠ j`, `i ≠ u`, `u ≠ j`,
 `{i,j} △ {i,u} = {u,j}` as Finsets. -/
-private lemma symmDiff_pair_pair_of_ne {α : Type*} [DecidableEq α] {i j u : α}
+lemma symmDiff_pair_pair_of_ne {α : Type*} [DecidableEq α] {i j u : α}
     (hij : i ≠ j) (hiu : i ≠ u) (huj : u ≠ j) :
     symmDiff ({i, j} : Finset α) {i, u} = {u, j} := by
   rw [symmDiff_def]
