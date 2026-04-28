@@ -1797,6 +1797,87 @@ theorem latticeMass_pos_of_lt_criticalInverseTemp
         exact absurd hmass_γ (not_lt.mpr hmono)
     exact absurd h (not_lt.mpr h_bound)
 
+/-! ## §17.1 Cluster property below criticalInverseTemp (Step 146) -/
+
+/-- **Extract positive decay rate from positive lattice mass** (GJ §17.1):
+if `latticeMass d Λ p > 0`, there exists `α : NNReal` with `0 < (α : ℝ)` and
+`HasExponentialDecay d Λ p (α : ℝ)`.
+
+Proof: by `lt_sSup_iff`, a positive supremum of the image set contains some
+element `(α : ENNReal) > 0`; coercing via `ENNReal.coe_pos` and
+`NNReal.coe_pos` yields a positive real decay rate.
+
+**GJ §17.1 context**: the positivity of the lattice mass (= inverse correlation
+length) directly produces an exponential decay witness, connecting the abstract
+`latticeMass` definition to the `HasExponentialDecay` predicate. -/
+theorem HasExponentialDecay_of_latticeMass_pos
+    {d : ℕ} {Λ : Ambient.Exhaustion (Fin d → ℤ)} {p : IsingParams ℝ}
+    (h : 0 < latticeMass d Λ p) :
+    ∃ α : NNReal, 0 < (α : ℝ) ∧ HasExponentialDecay d Λ p (α : ℝ) := by
+  unfold latticeMass at h
+  rw [lt_sSup_iff] at h
+  obtain ⟨y, hy_mem, hy_pos⟩ := h
+  rw [Set.mem_image] at hy_mem
+  obtain ⟨α, hα_decay, hα_eq⟩ := hy_mem
+  rw [← hα_eq] at hy_pos
+  exact ⟨α, NNReal.coe_pos.mpr (ENNReal.coe_pos.mp hy_pos), hα_decay⟩
+
+/-- **Transfer `HasExponentialDecay` across exhaustions** (private helper):
+for ferromagnetic `p`, if `HasExponentialDecay d Λ p α` holds for some
+exhaustion `Λ`, then it holds for any other exhaustion `Λ'`.
+
+Proof: the truncated 2-point function is exhaustion-independent for ferromagnetic
+parameters (`truncated2Infinite_indep_exhaustion`), so the bound transfers directly
+from `Λ` to `Λ'` with the same constant `C` and rate `α`. -/
+private lemma HasExponentialDecay_transfer_exhaustion
+    {d : ℕ} (Λ Λ' : Ambient.Exhaustion (Fin d → ℤ))
+    {p : IsingParams ℝ} {α : ℝ}
+    (hf : Ferromagnetic p)
+    (h : HasExponentialDecay d Λ p α) :
+    HasExponentialDecay d Λ' p α := by
+  obtain ⟨C, hC, hbound⟩ := h
+  refine ⟨C, hC, fun i j hij => ?_⟩
+  rw [truncated2Infinite_indep_exhaustion (IsingModel.latticeGraph d) Λ' Λ p hf i j]
+  exact hbound i j hij
+
+/-- **Cluster property holds below the critical inverse temperature** (GJ §17.1):
+for `J ≥ 0`, `β ≥ 0`, and `ENNReal.ofReal β < criticalInverseTemp d J`, the
+cluster property holds for any exhaustion `Λ`:
+```
+clusterProperty (latticeGraph d) Λ ⟨J, 0, β⟩.
+```
+
+**Physics**: the hypothesis `β < β_c` is the **high-temperature** regime
+(equivalently, above the critical temperature `T_c = 1/β_c`). In this regime,
+the connected 2-point function decays exponentially: for all `i, j`,
+`|⟨σᵢ σⱼ⟩ - ⟨σᵢ⟩⟨σⱼ⟩|` decays to zero as `|i - j| → ∞`. This is the
+GJ §17.1 high-temperature clustering consequence for the Ising model analog.
+
+**Proof strategy**:
+* `β = 0`: `clusterProperty_latticeGraph_beta_zero` (trivial slice).
+* `β > 0`: use `latticeMass_pos_of_lt_criticalInverseTemp` to get `m > 0`,
+  extract a positive rate `α` via `HasExponentialDecay_of_latticeMass_pos`,
+  transfer the decay from `cubicExhaustion d` to `Λ` via
+  `HasExponentialDecay_transfer_exhaustion` (uses `Ferromagnetic`), and
+  conclude by `clusterProperty_latticeGraph_of_HasExponentialDecay`. -/
+theorem clusterProperty_latticeGraph_of_lt_criticalInverseTemp
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    {J β : ℝ} (hβ : 0 ≤ β) (hJ : 0 ≤ J)
+    (h : ENNReal.ofReal β < criticalInverseTemp d J) :
+    clusterProperty (IsingModel.latticeGraph d) Λ (⟨J, 0, β⟩ : IsingParams ℝ) := by
+  rcases eq_or_lt_of_le hβ with rfl | hβ_pos
+  · exact clusterProperty_latticeGraph_beta_zero d Λ J 0
+  · have hm_pos : 0 < latticeMass d (cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) :=
+      latticeMass_pos_of_lt_criticalInverseTemp hβ_pos.le hJ h
+    obtain ⟨α, hα_pos, hα_decay⟩ := HasExponentialDecay_of_latticeMass_pos hm_pos
+    have hf : Ferromagnetic (⟨J, 0, β⟩ : IsingParams ℝ) :=
+      ⟨hJ, le_refl _, hβ_pos⟩
+    have hα_decay' : HasExponentialDecay d Λ (⟨J, 0, β⟩ : IsingParams ℝ) (α : ℝ) :=
+      HasExponentialDecay_transfer_exhaustion (cubicExhaustion d) Λ hf hα_decay
+    exact clusterProperty_latticeGraph_of_HasExponentialDecay d Λ
+      (⟨J, 0, β⟩ : IsingParams ℝ) hα_pos hα_decay'
+
 /-! ## §17.1 d = 0 special case -/
 
 /-- **Vacuous HasExponentialDecay in dimension zero**: for `d = 0`, the lattice
