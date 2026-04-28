@@ -1758,9 +1758,10 @@ theorem latticeMass_eq_zero_of_criticalInverseTemp_lt
 for ferromagnetic `J ≥ 0`, `β ≥ 0`, and `ENNReal.ofReal β < criticalInverseTemp d J`,
 the lattice mass is strictly positive.
 
-This is the converse of `latticeMass_eq_zero_of_criticalInverseTemp_lt`: together they give
-the near-complete characterization `mass > 0 ↔ ENNReal.ofReal β < criticalInverseTemp d J`
-(for `J ≥ 0`; the case `ENNReal.ofReal β = criticalInverseTemp d J` remains undetermined).
+Together with `latticeMass_eq_zero_of_criticalInverseTemp_lt` and
+`criticalInverseTemp_ge_ofReal_of_latticeMass_pos`, this gives a near-complete picture:
+`ENNReal.ofReal β < criticalInverseTemp d J → mass > 0 → ENNReal.ofReal β ≤ criticalInverseTemp d J`.
+The boundary case `ENNReal.ofReal β = criticalInverseTemp d J` remains undetermined.
 
 **GJ §17.1 context**: for σ < σ_c (= β < β_c in the Ising analog), the theory has
 exponential decay of correlations; this is the defining property of the critical coupling.
