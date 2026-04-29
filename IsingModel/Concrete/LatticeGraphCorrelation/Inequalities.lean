@@ -2027,6 +2027,31 @@ theorem criticalInverseTemp_eq_top_of_dim_zero (J : ℝ) :
   rw [hβ₀_eq] at hle
   exact absurd hle (not_le.mpr (ENNReal.lt_add_right hb_ne_top one_ne_zero))
 
+/-! ## §17.1 J = 0 special case -/
+
+/-- **Critical inverse temperature is `⊤` when `J = 0`** (GJ §17.1):
+for zero coupling constant, `latticeMass = ⊤` for every `β ≥ 0` (either from
+`latticeMass_top_of_beta_zero` at `β = 0`, or from `latticeMass_top_of_J_zero` at `β > 0`),
+so the defining set is all of `[0,∞)` and `criticalInverseTemp d 0 = ⊤`.
+
+Physics: with no coupling between sites, no phase transition occurs at any finite inverse
+temperature (β_c = ⊤ means T_c = 0). This is the J = 0 companion of
+`criticalInverseTemp_eq_top_of_dim_zero`. -/
+theorem criticalInverseTemp_eq_top_of_J_zero (d : ℕ) :
+    criticalInverseTemp d 0 = ⊤ := by
+  apply le_antisymm le_top
+  rw [← ENNReal.iSup_natCast]
+  apply iSup_le
+  intro n
+  rw [← ENNReal.ofReal_natCast n]
+  apply criticalInverseTemp_ge_ofReal_of_latticeMass_pos (Nat.cast_nonneg n)
+  rcases n with _ | n
+  · rw [Nat.cast_zero, latticeMass_top_of_beta_zero]; exact ENNReal.zero_lt_top
+  · have hf : Ferromagnetic (⟨(0 : ℝ), (0 : ℝ), (↑(n + 1) : ℝ)⟩ : IsingParams ℝ) :=
+      ⟨le_refl _, le_refl _, by positivity⟩
+    rw [latticeMass_top_of_J_zero d (cubicExhaustion d) 0 _ hf]
+    exact ENNReal.zero_lt_top
+
 /-! ## §17.1 Finite susceptibility below critical inverse temperature (Step 149) -/
 
 /-- **Susceptibility bounded above in the high-temperature regime** (GJ §17.1, ℤ^d):
