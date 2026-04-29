@@ -9,6 +9,7 @@ import IsingModel.Inequalities.HighTemp
 import IsingModel.LatticeExpSum
 import IsingModel.BetaDerivative
 import Mathlib.Topology.UniformSpace.Dini
+import Mathlib.Analysis.BoundedVariation
 
 /-!
 # Inequalities, §5.1 cluster decay, and §17 lattice mass at ℤ^d
@@ -2826,6 +2827,29 @@ theorem correlationAlongExhaustion_tendstoUniformlyOn_beta
       (IsingModel.latticeGraph d) Λ (⟨J, 0, β⟩ : IsingParams ℝ) hf {r_val, s_val}
     simp only [correlationInfinite_eq_ciSup]
     exact htend
+
+/-- **A.e. differentiability of infinite-volume two-point function in β** (Step 171, GJ §17.6):
+For any exhaustion `Λ`, vertices `r_val ≠ s_val`, `0 ≤ J`, `0 < a ≤ b`, `bJ·2d < 1`,
+the infinite-volume two-point function `β ↦ corr_∞(β)` is differentiable within `[a,b]`
+at Lebesgue-almost every `β ∈ [a,b]`.
+
+Proof: direct from Step 168 (`correlationInfinite_lipschitzOnWith_beta_of_high_temp`)
+via Rademacher's theorem (`LipschitzOnWith.ae_differentiableWithinAt_real`).
+
+Reference: Glimm-Jaffe §17.6 Thm 17.6.1 p.313 (partial: a.e. version). -/
+theorem correlationInfinite_ae_differentiableWithinAt_beta_of_high_temp
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (r_val s_val : Fin d → ℤ) (hrs : r_val ≠ s_val)
+    (J : ℝ) (hJ : 0 ≤ J)
+    (a b : ℝ) (ha : 0 < a) (hab : a ≤ b) (hlt : b * J * ↑(2 * d) < 1) :
+    ∀ᵐ β ∂MeasureTheory.Measure.restrict MeasureTheory.volume (Set.Icc a b),
+    DifferentiableWithinAt ℝ
+      (fun β => correlationInfinite (IsingModel.latticeGraph d) Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+                    {r_val, s_val})
+      (Set.Icc a b) β := by
+  have hlip := correlationInfinite_lipschitzOnWith_beta_of_high_temp
+    Λ r_val s_val hrs J hJ a b ha hab hlt
+  exact LipschitzOnWith.ae_differentiableWithinAt_real hlip measurableSet_Icc
 
 end Ambient
 
