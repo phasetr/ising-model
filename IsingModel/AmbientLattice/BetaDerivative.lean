@@ -4,7 +4,7 @@ import IsingModel.BetaDerivative
 /-!
 # β-derivative of correlationAlongExhaustion (GJ §17.5)
 
-Shows that for any finite graph G with a locally-finite exhaustion Λ,
+Shows that for any graph G whose exhaustion stages have finite edge sets,
 the function `fun β' => correlationAlongExhaustion G Λ ⟨J, 0, β'⟩ A n` has a derivative at β.
 
 When `A ⊆ Λ.volume n` the function reduces to the finite-volume correlation
