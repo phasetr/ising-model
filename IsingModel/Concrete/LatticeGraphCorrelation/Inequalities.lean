@@ -587,6 +587,46 @@ theorem latticeMass_top_of_J_zero
   have hlt : b < b + 1 := ENNReal.lt_add_right hb_ne_top one_ne_zero
   exact absurd hα_le_b (not_le.mpr hlt)
 
+/-- **Lattice mass is independent of exhaustion** for ferromagnetic parameters:
+`latticeMass d Λ p = latticeMass d Λ' p` for any two exhaustions `Λ, Λ'` when `p` is
+ferromagnetic.
+
+Proof: `truncated2Infinite_indep_exhaustion` gives `truncated2Infinite G Λ p i j =
+truncated2Infinite G Λ' p i j` for all `i, j`. Hence `HasExponentialDecay d Λ p α ↔
+HasExponentialDecay d Λ' p α`, so the defining supremand sets are equal and the sSup
+values agree.
+
+**Consequence**: for ferromagnetic `p` (i.e. `J ≥ 0`, `β > 0`), the value of
+`latticeMass` — and hence the set of valid exponential decay rates — does not depend
+on the choice of exhaustion. This relies on `correlationInfinite_indep_exhaustion`
+(which itself requires `Ferromagnetic p`). -/
+theorem latticeMass_indep_exhaustion
+    {d : ℕ} (Λ Λ' : Ambient.Exhaustion (Fin d → ℤ))
+    {p : IsingParams ℝ} (hf : Ferromagnetic p) :
+    latticeMass d Λ p = latticeMass d Λ' p := by
+  unfold latticeMass
+  have h_sets : {α : NNReal | HasExponentialDecay d Λ p (α : ℝ)} =
+                {α : NNReal | HasExponentialDecay d Λ' p (α : ℝ)} := by
+    ext α
+    constructor
+    · rintro ⟨C, hC, hbound⟩
+      exact ⟨C, hC, fun i j hij => by
+        rw [← truncated2Infinite_indep_exhaustion (IsingModel.latticeGraph d) Λ Λ' p hf i j]
+        exact hbound i j hij⟩
+    · rintro ⟨C, hC, hbound⟩
+      exact ⟨C, hC, fun i j hij => by
+        rw [truncated2Infinite_indep_exhaustion (IsingModel.latticeGraph d) Λ Λ' p hf i j]
+        exact hbound i j hij⟩
+  rw [h_sets]
+
+/-- **Lattice mass via `cubicExhaustion`** equals lattice mass via any exhaustion
+for ferromagnetic parameters. Corollary of `latticeMass_indep_exhaustion`. -/
+theorem latticeMass_indep_cubicExhaustion
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    {p : IsingParams ℝ} (hf : Ferromagnetic p) :
+    latticeMass d Λ p = latticeMass d (Ambient.cubicExhaustion d) p :=
+  latticeMass_indep_exhaustion Λ (Ambient.cubicExhaustion d) hf
+
 /-! ## §5.1 Step 110: High-temperature exponential decay (Glimm–Jaffe §5.1 pp. 74–75)
 
 Lifts the ∞-volume Simon-Lieb inequality (Step 109) to an explicit
