@@ -1878,6 +1878,51 @@ theorem clusterProperty_latticeGraph_of_lt_criticalInverseTemp
     exact clusterProperty_latticeGraph_of_HasExponentialDecay d Λ
       (⟨J, 0, β⟩ : IsingParams ℝ) hα_pos hα_decay'
 
+/-- **Summability of truncated 2-point below critical inverse temperature** (GJ §17.1/§17.5):
+for `J ≥ 0`, `β ≥ 0`, and `ENNReal.ofReal β < criticalInverseTemp d J`, the truncated
+2-point function is summable:
+`Summable (fun j => truncated2Infinite (latticeGraph d) Λ ⟨J, 0, β⟩ i j)`.
+
+This extends `truncated2Infinite_summable_of_high_temp` (βJD < 1 case, PR #903) to the
+full below-β_c regime, giving a per-site finite-susceptibility result for all high-temperature
+couplings (not just the Simon-Lieb high-temperature range).
+
+**Proof**: β = 0 gives `U_2 = 0` (summable trivially). For β > 0: `latticeMass > 0`
+(via `latticeMass_pos_of_lt_criticalInverseTemp`) → extract `α > 0` and
+`HasExponentialDecay` (via `HasExponentialDecay_of_latticeMass_pos`) → transfer to `Λ`
+(via `HasExponentialDecay_transfer_exhaustion`) → `|U_2(i,j)| ≤ C·exp(-α·d(i,j))` for
+`i ≠ j` and `U_2(i,i) = 0` (Z₂ symmetry) → `summable_exp_neg_dist` + nonneg bound
+→ `Summable.of_nonneg_of_le`. -/
+theorem truncated2Infinite_summable_of_lt_criticalInverseTemp
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    {J β : ℝ} (hβ : 0 ≤ β) (hJ : 0 ≤ J)
+    (h : ENNReal.ofReal β < criticalInverseTemp d J)
+    (i : Fin d → ℤ) :
+    Summable (fun j : Fin d → ℤ =>
+      truncated2Infinite (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) i j) := by
+  rcases eq_or_lt_of_le hβ with rfl | hβ_pos
+  · simp only [truncated2Infinite_beta_zero (IsingModel.latticeGraph d) Λ J 0]
+    exact summable_zero
+  · have hm_pos : 0 < latticeMass d (cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) :=
+      latticeMass_pos_of_lt_criticalInverseTemp hβ_pos.le hJ h
+    obtain ⟨α, hα_pos, hα_decay⟩ := HasExponentialDecay_of_latticeMass_pos hm_pos
+    have hf : Ferromagnetic (⟨J, 0, β⟩ : IsingParams ℝ) := ⟨hJ, le_refl _, hβ_pos⟩
+    obtain ⟨C, hC, hbound⟩ :=
+      HasExponentialDecay_transfer_exhaustion (cubicExhaustion d) Λ hf hα_decay
+    apply Summable.of_nonneg_of_le
+        (fun j => truncated2Infinite_nonneg (IsingModel.latticeGraph d) Λ _ hf i j)
+        (fun j => ?_)
+        ((summable_exp_neg_dist hα_pos d i).mul_left C)
+    by_cases hij : i = j
+    · subst hij
+      rw [truncated2Infinite_h_zero (IsingModel.latticeGraph d) Λ J β i i]
+      simp only [Finset.pair_eq_singleton]
+      rw [Ambient.correlationInfinite_h_zero (IsingModel.latticeGraph d) Λ J β {i} (by simp)]
+      exact mul_nonneg hC (Real.exp_nonneg _)
+    · exact le_trans (le_abs_self _) (hbound i j hij)
+
 /-! ## §17.1 d = 0 special case -/
 
 /-- **Vacuous HasExponentialDecay in dimension zero**: for `d = 0`, the lattice
