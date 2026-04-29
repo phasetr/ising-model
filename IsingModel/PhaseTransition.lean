@@ -1,4 +1,5 @@
 import IsingModel.Inequalities.GHS
+import IsingModel.BetaDerivative
 
 /-!
 # Phase transitions: pure and mixed phases
@@ -798,5 +799,17 @@ theorem susceptibility_convergent_beta (G : SimpleGraph ι) [Fintype G.edgeSet]
   refine ⟨∑ j : ι, Lj j, ?_⟩
   unfold susceptibility
   exact tendsto_finset_sum _ (fun j _ => hLj j)
+
+/-- **Susceptibility is continuous in β at h = 0** (Step 188):
+For finite-volume Ising at h = 0, the susceptibility `χ(i, β) = ∑_j truncated2(i, j, β)`
+is continuous in β. Finite-sum continuity + `truncated2_continuousAt_beta`. -/
+theorem susceptibility_continuousAt_beta
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (i : ι) :
+    ContinuousAt (fun β' => susceptibility G (⟨J, 0, β'⟩ : IsingParams ℝ) i) β := by
+  unfold susceptibility
+  -- Goal: ContinuousAt (fun β' => ∑ j, truncated2 G ⟨J,0,β'⟩ i j) β
+  -- Use tendsto_finset_sum applied to ContinuousAt = Tendsto
+  exact tendsto_finset_sum _ (fun j _ => truncated2_continuousAt_beta G J β i j)
 
 end IsingModel
