@@ -2286,6 +2286,52 @@ theorem inducedLatticeGraph_leb_sum_le_corr_sum_mul
     (fun u => hcorr_nn r u)
     (fun v => hcorr_nn s v)
 
+/-- **Lebowitz sum bounded by susceptibilityAlongExhaustion product** (Step 161, GJ §17.5):
+`∑_{e∈E(G_n)} leb_n(e) ≤ susceptibilityAlongExhaustion_n(r) · susceptibilityAlongExhaustion_n(s)`.
+
+Proof: apply Step 160 + identify `∑_j corr_n(r,j) = susceptibilityAlongExhaustion_n(r.val)`
+via `susceptibility_h_zero` + `susceptibilityAlongExhaustion_of_mem`.
+
+Reference: Glimm–Jaffe §17.5. -/
+theorem inducedLatticeGraph_leb_sum_le_susc_along
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β)
+    (n : ℕ) (r s : ↑(Λ.volume n)) :
+    ∑ e ∈ (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset,
+        Sym2.lift ⟨fun u v =>
+            IsingModel.correlation
+                (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+                (⟨J, 0, β⟩ : IsingParams ℝ) {r, u} *
+            IsingModel.correlation
+                (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+                (⟨J, 0, β⟩ : IsingParams ℝ) {s, v} +
+            IsingModel.correlation
+                (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+                (⟨J, 0, β⟩ : IsingParams ℝ) {r, v} *
+            IsingModel.correlation
+                (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+                (⟨J, 0, β⟩ : IsingParams ℝ) {s, u},
+            fun u v => by ring⟩ e
+    ≤ susceptibilityAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) r.val n *
+      susceptibilityAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) s.val n := by
+  classical
+  set G := inducedGraph (IsingModel.latticeGraph d) (Λ.volume n) with hG
+  -- Identify ∑_j corr_n(r,j) = susceptibilityAlongExhaustion n r.val via h=0
+  have hsusc_r : susceptibilityAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) r.val n
+      = ∑ j : ↑(Λ.volume n), IsingModel.correlation G (⟨J, 0, β⟩ : IsingParams ℝ) {r, j} := by
+    rw [susceptibilityAlongExhaustion_of_mem _ _ _ r.2, susceptibilityΛ_apply,
+        IsingModel.susceptibility_h_zero]
+  have hsusc_s : susceptibilityAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) s.val n
+      = ∑ j : ↑(Λ.volume n), IsingModel.correlation G (⟨J, 0, β⟩ : IsingParams ℝ) {s, j} := by
+    rw [susceptibilityAlongExhaustion_of_mem _ _ _ s.2, susceptibilityΛ_apply,
+        IsingModel.susceptibility_h_zero]
+  rw [hsusc_r, hsusc_s]
+  exact inducedLatticeGraph_leb_sum_le_corr_sum_mul (Λ.volume n) J β hJ hβ r s
+
 end Ambient
 
 end IsingModel
