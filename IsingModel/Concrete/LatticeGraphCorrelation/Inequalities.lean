@@ -852,6 +852,30 @@ theorem latticeMass_pos_of_high_temp
     have : (0 : ℝ) < (α₀ : ℝ) := hα_pos
     exact_mod_cast this
 
+/-- **Lattice mass lower bound in high-temperature regime** (Step 152, GJ §17.5):
+for `d ≥ 1`, `0 < βJ`, and `βJ·2d < 1`:
+`ENNReal.ofReal (-log(βJ·2d)) ≤ latticeMass d (cubicExhaustion d) ⟨J,0,β⟩`.
+
+The rate `α₀ = -log(βJD)` (with `D = 2d`) from Step 110 is in the defining set of
+`latticeMass`, so `latticeMass ≥ α₀`. This makes the lower bound from `latticeMass_pos_of_high_temp`
+(Step 111) explicit: the exponential decay rate `α₀` is a concrete lower bound for the mass.
+
+Reference: Glimm–Jaffe §17.5 pp. 304–306. -/
+theorem latticeMass_ge_neg_log_of_high_temp
+    {d : ℕ} (hd : 1 ≤ d) {β J : ℝ} (hβJ : 0 < β * J)
+    (hlt : β * J * ↑(2 * d) < 1) :
+    ENNReal.ofReal (-Real.log (β * J * ↑(2 * d))) ≤
+    latticeMass d (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) := by
+  unfold latticeMass
+  have hβJD_pos : 0 < β * J * ↑(2 * d) :=
+    mul_pos hβJ (Nat.cast_pos.mpr (by omega))
+  have hα_pos : 0 < -Real.log (β * J * ↑(2 * d)) :=
+    neg_pos.mpr (Real.log_neg hβJD_pos hlt)
+  set α₀ : NNReal := ⟨-Real.log (β * J * ↑(2 * d)), le_of_lt hα_pos⟩
+  apply le_sSup
+  exact ⟨α₀, hasExponentialDecay_of_high_temp hβJ.le hlt,
+         (ENNReal.ofReal_eq_coe_nnreal hα_pos.le).symm⟩
+
 /-! ## §17.5 Step 112: Lattice mass antitonicity in β and J -/
 
 /-- **Lattice mass antitone in β** at h = 0 (GJ §17.5 pp. 304–306):
