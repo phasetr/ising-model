@@ -1987,6 +1987,46 @@ theorem criticalInverseTemp_eq_top_of_dim_zero (J : ℝ) :
   rw [hβ₀_eq] at hle
   exact absurd hle (not_le.mpr (ENNReal.lt_add_right hb_ne_top one_ne_zero))
 
+/-! ## §17.1 Finite susceptibility below critical inverse temperature (Step 149) -/
+
+/-- **Susceptibility bounded above in the high-temperature regime** (GJ §17.1, ℤ^d):
+for `J ≥ 0`, `β ≥ 0`, and `ENNReal.ofReal β < criticalInverseTemp d J` (high temperature,
+i.e., above the critical temperature `T_c = 1/β_c`),
+`susceptibilityInfinite (latticeGraph d) Λ ⟨J,0,β⟩ i`
+`  ≤ ∑' j, truncated2Infinite (latticeGraph d) Λ ⟨J,0,β⟩ i j`.
+
+Combines `susceptibilityInfinite_le_tsum_truncated2Infinite` (Step 148, `HighTemp.lean`)
+with `truncated2Infinite_summable_of_lt_criticalInverseTemp` (Step 147) to give a concrete
+finite upper bound on the susceptibility in the high-temperature regime.
+
+**Physics**: the quantity `∑' j, truncated2Infinite ... i j` (the tsum of the Ursell
+2-point function) provides a finite upper bound on the magnetic susceptibility,
+a hallmark of the paramagnetic (disordered) phase (β < β_c = criticalInverseTemp).
+GJ §17.1 motivates this finiteness as the defining property of exponential clustering. -/
+theorem susceptibilityInfinite_latticeGraph_le_tsum_of_lt_criticalInverseTemp
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    {J β : ℝ} (hβ : 0 ≤ β) (hJ : 0 ≤ J)
+    (h : ENNReal.ofReal β < criticalInverseTemp d J)
+    (i : Fin d → ℤ) :
+    susceptibilityInfinite (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) i
+      ≤ ∑' j : Fin d → ℤ,
+          truncated2Infinite (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, β⟩ : IsingParams ℝ) i j := by
+  rcases eq_or_lt_of_le hβ with rfl | hβ_pos
+  · -- β = 0: susceptibilityInfinite = 0 and ∑' = 0
+    simp only [susceptibilityInfinite_eq_ciSup]
+    apply ciSup_le; intro n
+    simp only [susceptibilityAlongExhaustion]
+    split_ifs with hi
+    · rw [susceptibilityΛ_apply, susceptibility_apply]
+      simp only [truncated2_beta_zero, Finset.sum_const_zero]
+      exact tsum_nonneg (fun j => by rw [truncated2Infinite_beta_zero])
+    · exact tsum_nonneg (fun j => by rw [truncated2Infinite_beta_zero])
+  · exact susceptibilityInfinite_le_tsum_truncated2Infinite (IsingModel.latticeGraph d) Λ
+        ⟨hJ, le_refl _, hβ_pos⟩ i
+        (truncated2Infinite_summable_of_lt_criticalInverseTemp Λ hβ_pos.le hJ h i)
+
 end Ambient
 
 end IsingModel
