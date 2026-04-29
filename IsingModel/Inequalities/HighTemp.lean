@@ -182,6 +182,52 @@ theorem susceptibilityAlongExhaustion_latticeGraph_le_of_high_temp
   rw [edgeFilter_card_eq_degree v]
   exact inducedLatticeGraph_degree_le d _ v
 
+open IsingModel in
+/-- **ℤ^d per-stage high-temperature susceptibility bound (general exhaustion)**:
+for the `d`-dimensional lattice graph with **any** exhaustion `Λ`, `0 ≤ βJ`,
+and `βJ · ↑(2*d) < 1`:
+`susceptibilityAlongExhaustion (latticeGraph d) Λ ⟨J,0,β⟩ i n`
+is bounded above by `βJ·↑(2*d)/(1-βJ·↑(2*d))`.
+
+The proof is identical to `susceptibilityAlongExhaustion_latticeGraph_le_of_high_temp`
+but works for an arbitrary `Λ : Ambient.Exhaustion (Fin d → ℤ)`.
+
+Reference: Glimm–Jaffe §5.1; Friedli–Velenik §3.7.3. -/
+theorem susceptibilityAlongExhaustion_latticeGraph_le_of_high_temp_gen
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    {β J : ℝ} (hβJ : 0 ≤ β * J)
+    (hlt : β * J * ↑(2 * d) < 1) (i : Fin d → ℤ) (n : ℕ) :
+    susceptibilityAlongExhaustion (latticeGraph d) Λ ⟨J, 0, β⟩ i n
+      ≤ β * J * ↑(2 * d) / (1 - β * J * ↑(2 * d)) := by
+  apply susceptibilityAlongExhaustion_le_of_high_temp (latticeGraph d) Λ
+    hβJ (D := 2 * d) _ hlt
+  intro n' v
+  classical
+  rw [edgeFilter_card_eq_degree v]
+  exact inducedLatticeGraph_degree_le d _ v
+
+open IsingModel in
+/-- **BddAbove of susceptibilityAlongExhaustion under high temperature** (Step 164, GJ §17.5):
+For the `d`-dimensional lattice graph with any exhaustion `Λ`, vertex `i ∈ ℤ^d`,
+`0 ≤ βJ`, and `βJ · ↑(2*d) < 1`, the sequence
+`(susceptibilityAlongExhaustion (latticeGraph d) Λ ⟨J,0,β⟩ i n)_n`
+is bounded above.
+
+Proof: `susceptibilityAlongExhaustion_latticeGraph_le_of_high_temp_gen` gives a
+uniform upper bound `βJ·2d/(1-βJ·2d)` for every `n`; this witnesses `BddAbove`.
+
+Reference: Glimm–Jaffe §5.1 pp.~73--74 and §17.5 pp.~311--312. -/
+theorem susceptibilityAlongExhaustion_bddAbove_latticeGraph_of_high_temp
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    {β J : ℝ} (hβJ : 0 ≤ β * J)
+    (hlt : β * J * ↑(2 * d) < 1) (i : Fin d → ℤ) :
+    BddAbove (Set.range fun n =>
+        susceptibilityAlongExhaustion (latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) i n) := by
+  refine ⟨β * J * ↑(2 * d) / (1 - β * J * ↑(2 * d)), ?_⟩
+  rintro x ⟨n, rfl⟩
+  exact susceptibilityAlongExhaustion_latticeGraph_le_of_high_temp_gen Λ hβJ hlt i n
+
 -- liftFinset pair rewrite + sum_attach + Finset.sum_image injectivity proof
 /-- **Private helper**: for any finite `s ⊆ Λ.volume n` and `i ∈ Λ.volume n`,
 the sum of along-exhaustion correlations `∑ j ∈ s, correlationAlongExhaustion G Λ ⟨J,0,β⟩ {i,j} n`
