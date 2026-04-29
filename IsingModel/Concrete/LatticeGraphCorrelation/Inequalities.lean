@@ -2209,6 +2209,83 @@ theorem correlation_inducedLatticeGraph_le_correlationInfinite
   rw [heq]
   exact Ambient.correlationAlongExhaustion_le_correlationInfinite _ _ _ _ _
 
+
+/-! ## Step 160: Lebowitz sum ≤ product of correlation sums (GJ §17.5) -/
+
+/-- **Dart injection bound** (Step 160 helper): for non-negative `f g : V → ℝ`,
+`∑ d : G.Dart, f d.fst * g d.snd ≤ (∑ u, f u) * (∑ v, g v)`.
+
+Proof: the dart-to-pair map `d ↦ (d.fst, d.snd)` injects into `V × V`; adding the
+non-negative non-dart pairs to the sum only increases it. -/
+private lemma sum_dart_le_mul_sum {V : Type*} [Fintype V]
+    (G : SimpleGraph V) [DecidableRel G.Adj]
+    (f g : V → ℝ) (hf : ∀ v, 0 ≤ f v) (hg : ∀ v, 0 ≤ g v) :
+    ∑ d : G.Dart, f d.fst * g d.snd ≤ (∑ u : V, f u) * (∑ v : V, g v) := by
+  classical
+  -- Expand RHS to double sum
+  rw [Fintype.sum_mul_sum]
+  -- Group LHS darts by fst vertex
+  rw [(Finset.sum_fiberwise_of_maps_to (fun (d : G.Dart) _ => Finset.mem_univ d.fst)
+       (fun d => f d.fst * g d.snd)).symm]
+  apply Finset.sum_le_sum
+  intro u _
+  -- Replace f d.fst by f u (using filter condition d.fst = u), then factor
+  have h1 : ∑ d ∈ Finset.univ.filter (fun d : G.Dart => d.fst = u), f d.fst * g d.snd
+      = ∑ d ∈ Finset.univ.filter (fun d : G.Dart => d.fst = u), f u * g d.snd :=
+    Finset.sum_congr rfl (fun d hd => by rw [(Finset.mem_filter.mp hd).2])
+  rw [h1, ← Finset.mul_sum, ← Finset.mul_sum]
+  apply mul_le_mul_of_nonneg_left _ (hf u)
+  -- Bound ∑_{d: d.fst=u} g(d.snd) ≤ ∑_v g v via image
+  have hinj : ∀ d₁ ∈ Finset.univ.filter (fun d : G.Dart => d.fst = u),
+      ∀ d₂ ∈ Finset.univ.filter (fun d : G.Dart => d.fst = u),
+      d₁.snd = d₂.snd → d₁ = d₂ := by
+    intro d₁ hd₁ d₂ hd₂ h
+    exact SimpleGraph.Dart.ext d₁ d₂ (Prod.ext
+      ((Finset.mem_filter.mp hd₁).2.trans (Finset.mem_filter.mp hd₂).2.symm) h)
+  calc ∑ d ∈ Finset.univ.filter (fun d : G.Dart => d.fst = u), g d.snd
+      = ∑ v ∈ (Finset.univ.filter (fun d : G.Dart => d.fst = u)).image (fun d => d.snd), g v := by
+          rw [← Finset.sum_image hinj]
+      _ ≤ ∑ v : V, g v := by
+          apply Finset.sum_le_sum_of_subset_of_nonneg
+          · intro v _; exact Finset.mem_univ v
+          · intro v _ _; exact hg v
+
+/-- **Lebowitz sum bounded by product of correlation sums** (Step 160, GJ §17.5):
+For the induced ℤ^d lattice graph on `Λ`,
+```
+∑_{e ∈ E(G)} (corr(r,u)·corr(s,v) + corr(r,v)·corr(s,u))
+  ≤ (∑_j corr(r,j)) · (∑_j corr(s,j))
+```
+
+Proof: apply the dart product sum identity (`sum_edgeFinset_sym2_lift_prod_eq_sum_dart`),
+then bound the dart sum by the full Cartesian product via the injectivity of
+`d ↦ (d.fst, d.snd)` and GKS non-negativity.
+
+Reference: Glimm–Jaffe §17.5. -/
+theorem inducedLatticeGraph_leb_sum_le_corr_sum_mul
+    {d : ℕ} (Λ : Finset (Fin d → ℤ))
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β)
+    (r s : ↑Λ) :
+    let G := inducedGraph (IsingModel.latticeGraph d) Λ
+    let p := (⟨J, 0, β⟩ : IsingParams ℝ)
+    ∑ e ∈ G.edgeFinset,
+        Sym2.lift ⟨fun u v =>
+            IsingModel.correlation G p {r, u} * IsingModel.correlation G p {s, v} +
+            IsingModel.correlation G p {r, v} * IsingModel.correlation G p {s, u},
+            fun u v => by ring⟩ e
+    ≤ (∑ j : ↑Λ, IsingModel.correlation G p {r, j}) *
+      (∑ j : ↑Λ, IsingModel.correlation G p {s, j}) := by
+  intro G p
+  have hf : Ferromagnetic p := ⟨hJ, le_refl 0, hβ⟩
+  have hcorr_nn : ∀ (x y : ↑Λ), 0 ≤ IsingModel.correlation G p {x, y} :=
+    fun x y => gks_first G p hf _
+  rw [SimpleGraph.sum_edgeFinset_sym2_lift_prod_eq_sum_dart]
+  exact sum_dart_le_mul_sum G
+    (fun u => IsingModel.correlation G p {r, u})
+    (fun v => IsingModel.correlation G p {s, v})
+    (fun u => hcorr_nn r u)
+    (fun v => hcorr_nn s v)
+
 end Ambient
 
 end IsingModel
