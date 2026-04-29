@@ -1509,6 +1509,22 @@ theorem latticeMass_le_neg_log_tanh_betaJ
             rw [h0, Real.exp_zero, mul_one]
   linarith [Real.add_one_le_exp (ε * ↑n₀)]
 
+/-- **Lattice mass two-sided bound** (Step 153, GJ §17.5 pp. 304–306):
+in the high-temperature regime (`d ≥ 1`, `0 < J`, `0 < β`, `βJ·2d < 1`):
+`ENNReal.ofReal (-log(βJ·2d)) ≤ latticeMass ≤ ENNReal.ofReal (-log(tanh(βJ)))`.
+
+Bundles `latticeMass_ge_neg_log_of_high_temp` (lower, Step 152) and
+`latticeMass_le_neg_log_tanh_betaJ` (upper, Step 115) into one statement. -/
+theorem latticeMass_two_sided_bound
+    {d : ℕ} (hd : 0 < d) {J β : ℝ} (hJ : 0 < J) (hβ : 0 < β)
+    (hlt : β * J * ↑(2 * d) < 1) :
+    ENNReal.ofReal (-Real.log (β * J * ↑(2 * d))) ≤
+    latticeMass d (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) ∧
+    latticeMass d (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) ≤
+    ENNReal.ofReal (-Real.log (Real.tanh (β * J))) :=
+  ⟨latticeMass_ge_neg_log_of_high_temp hd (mul_pos hβ hJ) hlt,
+   latticeMass_le_neg_log_tanh_betaJ hd hJ hβ⟩
+
 /-! ## Step 127: Lebowitz–exponential product bound (GJ §17.5 PR N+2) -/
 
 /-- Uniform upper bound on each factor under exponential decay.
