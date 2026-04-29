@@ -572,6 +572,18 @@ theorem correlation_continuousAt_beta
     ContinuousAt (fun β' => correlation G (⟨J, 0, β'⟩ : IsingParams ℝ) A) β :=
   (hasDerivAt_correlation_beta G J β A).continuousAt
 
+/-- **truncated2 is continuous in β at h = 0** (Step 188 helper):
+`fun β' => truncated2 G (⟨J, 0, β'⟩) i j` is continuous at β.
+
+At h = 0, `truncated2 = correlation - correlation * correlation`, each continuous in β. -/
+theorem truncated2_continuousAt_beta
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (i j : ι) :
+    ContinuousAt (fun β' => truncated2 G (⟨J, 0, β'⟩ : IsingParams ℝ) i j) β := by
+  unfold truncated2
+  exact (correlation_continuousAt_beta G J β _).sub
+    ((correlation_continuousAt_beta G J β _).mul (correlation_continuousAt_beta G J β _))
+
 /-! ## Monotonicity in β (Step 122): GKS-II-based bound -/
 
 /-- The β-derivative of two-point correlations is nonneg (infinitesimal form of β-monotonicity).
