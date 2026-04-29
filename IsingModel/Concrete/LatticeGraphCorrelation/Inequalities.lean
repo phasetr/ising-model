@@ -2931,6 +2931,49 @@ theorem correlationInfinite_ae_differentiableWithinAt_beta_of_high_temp_open
     hd Λ r_val s_val hrs J hJ_pos
   exact LocallyBoundedVariationOn.ae_differentiableWithinAt hbv measurableSet_Ioo
 
+/-- **Continuity of corr_∞ on the open high-temperature interval** (Step 173):
+For `0 < J`, `1 ≤ d`, the function `β ↦ corr_∞(β)` is continuous on the open
+high-temperature interval `Ioo 0 (1/(J·2d))`.
+
+Proof: For each β₀ in the open interval, choose a closed neighborhood `[a, b]`
+inside the open interval. Step 169 gives continuity on `[a, b]`, hence at β₀.
+Aggregating over β₀ gives continuity on the entire open interval. -/
+theorem correlationInfinite_continuousOn_beta_of_high_temp_open
+    {d : ℕ} (hd : 1 ≤ d) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (r_val s_val : Fin d → ℤ) (hrs : r_val ≠ s_val)
+    (J : ℝ) (hJ_pos : 0 < J) :
+    ContinuousOn
+      (fun β => correlationInfinite (IsingModel.latticeGraph d) Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+                    {r_val, s_val})
+      (Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d)))) := by
+  have h2d_pos : (0 : ℝ) < ↑(2 * d) := by
+    have : 0 < 2 * d := Nat.mul_pos (by norm_num) hd
+    exact_mod_cast this
+  have hJ2d_pos : 0 < J * ↑(2 * d) := mul_pos hJ_pos h2d_pos
+  intro β₀ hβ₀
+  have hβ₀_pos : 0 < β₀ := hβ₀.1
+  have hβ₀_lt : β₀ < 1 / (J * ↑(2 * d)) := hβ₀.2
+  -- Choose a closed neighborhood [a, b] with a < β₀ < b inside the open interval
+  -- Pick a = β₀/2 and b = (β₀ + βc)/2 where βc = 1/(J·2d)
+  have ha_pos : 0 < β₀ / 2 := by positivity
+  have ha_lt_β₀ : β₀ / 2 < β₀ := by linarith
+  have hβ₀_lt_b : β₀ < (β₀ + 1 / (J * ↑(2 * d))) / 2 := by linarith
+  have hb_lt_βc : (β₀ + 1 / (J * ↑(2 * d))) / 2 < 1 / (J * ↑(2 * d)) := by linarith
+  have ha_le_β₀ : β₀ / 2 ≤ β₀ := ha_lt_β₀.le
+  have hβ₀_le_b : β₀ ≤ (β₀ + 1 / (J * ↑(2 * d))) / 2 := hβ₀_lt_b.le
+  have hab : β₀ / 2 ≤ (β₀ + 1 / (J * ↑(2 * d))) / 2 := ha_le_β₀.trans hβ₀_le_b
+  have hlt : (β₀ + 1 / (J * ↑(2 * d))) / 2 * J * ↑(2 * d) < 1 := by
+    have h1 : (β₀ + 1 / (J * ↑(2 * d))) / 2 * (J * ↑(2 * d)) < 1 := by
+      have := (lt_div_iff₀ hJ2d_pos).mp hb_lt_βc
+      linarith [this]
+    linarith [h1]
+  have hcont_Icc := correlationInfinite_continuousOn_beta_of_high_temp
+    Λ r_val s_val hrs J hJ_pos.le (β₀ / 2) ((β₀ + 1 / (J * ↑(2 * d))) / 2) ha_pos hab hlt
+  apply ContinuousAt.continuousWithinAt
+  have h_Icc_nhd : Set.Icc (β₀ / 2) ((β₀ + 1 / (J * ↑(2 * d))) / 2) ∈ nhds β₀ :=
+    Icc_mem_nhds ha_lt_β₀ hβ₀_lt_b
+  exact (hcont_Icc β₀ ⟨ha_le_β₀, hβ₀_le_b⟩).continuousAt h_Icc_nhd
+
 end Ambient
 
 end IsingModel
