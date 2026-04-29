@@ -647,6 +647,34 @@ theorem inducedLatticeGraph_degree_le (d : ℕ) (Λ : Finset (Fin d → ℤ))
   rw [← h_card_eq]
   exact h_card_img.trans (latticeNeighborEnum_card_le d v.val)
 
+/-- **Incident-edge count for two vertices in the induced lattice graph** (Step 155, GJ §17.5):
+the number of edges in `inducedGraph (latticeGraph d) Λ` incident to `r` or `s` is at most `4 * d`.
+
+In ℤ^d every vertex has degree ≤ 2d, so edges incident to r or s total ≤ 2d + 2d = 4d.
+This converts the tight Lebowitz bound (Step 154) into a bound `J·4d` that stays finite
+as |Λ| → ∞, a prerequisite for the infinite-volume β-derivative argument.
+
+Reference: Glimm–Jaffe §17.5 pp.311–312. -/
+theorem incidentEdgesFinset_inducedLatticeGraph_card_le
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (r s : ↑Λ) :
+    ((Ambient.inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.filter
+      (fun e => r ∈ e ∨ s ∈ e)).card ≤ 4 * d := by
+  classical
+  set G := Ambient.inducedGraph (IsingModel.latticeGraph d) Λ
+  calc (G.edgeFinset.filter (fun e => r ∈ e ∨ s ∈ e)).card
+      = (G.edgeFinset.filter (fun e => r ∈ e) ∪
+         G.edgeFinset.filter (fun e => s ∈ e)).card := by
+          rw [← Finset.filter_or]
+    _ ≤ (G.edgeFinset.filter (fun e => r ∈ e)).card +
+        (G.edgeFinset.filter (fun e => s ∈ e)).card :=
+          Finset.card_union_le _ _
+    _ = G.degree r + G.degree s := by
+          simp only [← G.incidenceFinset_eq_filter, G.card_incidenceFinset_eq_degree]
+    _ ≤ 2 * d + 2 * d :=
+          Nat.add_le_add (inducedLatticeGraph_degree_le d Λ r)
+                         (inducedLatticeGraph_degree_le d Λ s)
+    _ = 4 * d := by ring
+
 /-- **Handshake bound**: on the induced lattice graph,
 `|E| ≤ d · |Λ|`. -/
 theorem inducedLatticeGraph_card_edgeFinset_le (d : ℕ) (Λ : Finset (Fin d → ℤ)) :
