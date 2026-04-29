@@ -2828,7 +2828,7 @@ theorem correlationAlongExhaustion_tendstoUniformlyOn_beta
     simp only [correlationInfinite_eq_ciSup]
     exact htend
 
-/-- **A.e. differentiability of infinite-volume two-point function in β** (Step 171, GJ §17.6):
+/-- **A.e. differentiability of infinite-volume two-point function in β** (Step 171):
 For any exhaustion `Λ`, vertices `r_val ≠ s_val`, `0 ≤ J`, `0 < a ≤ b`, `bJ·2d < 1`,
 the infinite-volume two-point function `β ↦ corr_∞(β)` is differentiable within `[a,b]`
 at Lebesgue-almost every `β ∈ [a,b]`.
@@ -2836,7 +2836,9 @@ at Lebesgue-almost every `β ∈ [a,b]`.
 Proof: direct from Step 168 (`correlationInfinite_lipschitzOnWith_beta_of_high_temp`)
 via Rademacher's theorem (`LipschitzOnWith.ae_differentiableWithinAt_real`).
 
-Reference: Glimm-Jaffe §17.6 Thm 17.6.1 p.313 (partial: a.e. version). -/
+Analytic corollary of the Lipschitz bound established in the GJ §17.5 derivative program.
+Not yet the full everywhere-differentiability claimed by GJ §17.6 Thm 17.6.1 p.313
+(that requires uniform convergence of the derivative sequence). -/
 theorem correlationInfinite_ae_differentiableWithinAt_beta_of_high_temp
     {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
     (r_val s_val : Fin d → ℤ) (hrs : r_val ≠ s_val)
