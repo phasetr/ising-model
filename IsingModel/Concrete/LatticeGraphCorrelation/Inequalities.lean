@@ -7,6 +7,7 @@ import IsingModel.Inequalities.FKG
 import IsingModel.AmbientFKG
 import IsingModel.Inequalities.HighTemp
 import IsingModel.LatticeExpSum
+import IsingModel.BetaDerivative
 
 /-!
 # Inequalities, §5.1 cluster decay, and §17 lattice mass at ℤ^d
@@ -2131,6 +2132,44 @@ theorem susceptibilityInfinite_latticeGraph_le_tsum_of_lt_criticalInverseTemp
   · exact susceptibilityInfinite_le_tsum_truncated2Infinite (IsingModel.latticeGraph d) Λ
         ⟨hJ, le_refl _, hβ_pos⟩ i
         (truncated2Infinite_summable_of_lt_criticalInverseTemp Λ hβ_pos.le hJ h i)
+
+/-- **β-derivative bound for two-point function on ℤ^d** (Step 157, GJ §17.5):
+For the induced lattice graph on any finite Λ ⊆ ℤ^d, vertices r ≠ s in ↑Λ,
+the β-derivative of `correlation G ⟨J,0,β'⟩ {r,s}` is bounded by the Lebowitz sum
+plus the uniform constant `J * 4d`.
+
+Combines `correlation_beta_deriv_le_lebowitz_tight` (Step 154) with
+`incidentEdgesFinset_inducedLatticeGraph_card_le` (Step 155): the incident-edge
+term `J * |{e: r∈e ∨ s∈e}|` is at most `J * 4d`, uniform in |Λ|.
+
+Reference: Glimm–Jaffe §17.5 pp.311–312. -/
+theorem inducedLatticeGraph_beta_deriv_le
+    {d : ℕ} (Λ : Finset (Fin d → ℤ))
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β)
+    (r s : ↑Λ) (hrs : r ≠ s) :
+    ∃ dval : ℝ,
+      HasDerivAt (fun β' => IsingModel.correlation
+          (inducedGraph (IsingModel.latticeGraph d) Λ)
+          (⟨J, 0, β'⟩ : IsingParams ℝ) {r, s}) dval β ∧
+      dval ≤ J * ∑ e ∈ (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset,
+            Sym2.lift ⟨fun u v =>
+                IsingModel.correlation (inducedGraph (IsingModel.latticeGraph d) Λ)
+                  (⟨J, 0, β⟩ : IsingParams ℝ) {r, u} *
+                IsingModel.correlation (inducedGraph (IsingModel.latticeGraph d) Λ)
+                  (⟨J, 0, β⟩ : IsingParams ℝ) {s, v} +
+                IsingModel.correlation (inducedGraph (IsingModel.latticeGraph d) Λ)
+                  (⟨J, 0, β⟩ : IsingParams ℝ) {r, v} *
+                IsingModel.correlation (inducedGraph (IsingModel.latticeGraph d) Λ)
+                  (⟨J, 0, β⟩ : IsingParams ℝ) {s, u},
+              fun u v => by ring⟩ e
+        + J * (4 * ↑d) := by
+  set G := inducedGraph (IsingModel.latticeGraph d) Λ
+  obtain ⟨dval, hd, hbound⟩ :=
+    IsingModel.correlation_beta_deriv_le_lebowitz_tight G J β hJ hβ r s hrs
+  refine ⟨dval, hd, ?_⟩
+  have h_cast : (↑(G.edgeFinset.filter (fun e => r ∈ e ∨ s ∈ e)).card : ℝ) ≤ 4 * ↑d := by
+    exact_mod_cast incidentEdgesFinset_inducedLatticeGraph_card_le d Λ r s
+  linarith [mul_le_mul_of_nonneg_left h_cast hJ]
 
 end Ambient
 
