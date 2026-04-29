@@ -2332,6 +2332,63 @@ theorem inducedLatticeGraph_leb_sum_le_susc_along
   rw [hsusc_r, hsusc_s]
   exact inducedLatticeGraph_leb_sum_le_corr_sum_mul (Λ.volume n) J β hJ hβ r s
 
+/-- **Lebowitz sum bounded by susceptibilityInfinite product** (Step 162, GJ §17.5):
+Under `BddAbove` for the susceptibility sequences,
+`∑_{e∈E(G_n)} leb_n(e) ≤ susceptibilityInfinite_r · susceptibilityInfinite_s`.
+
+Proof: Step 161 + `le_ciSup` (monotone convergence to the supremum).
+
+Reference: Glimm–Jaffe §17.5. -/
+theorem inducedLatticeGraph_leb_sum_le_susceptibilityInfinite
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β)
+    (n : ℕ) (r s : ↑(Λ.volume n))
+    (hbdd_r : BddAbove (Set.range (fun m =>
+        susceptibilityAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) r.val m)))
+    (hbdd_s : BddAbove (Set.range (fun m =>
+        susceptibilityAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) s.val m))) :
+    ∑ e ∈ (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset,
+        Sym2.lift ⟨fun u v =>
+            IsingModel.correlation
+                (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+                (⟨J, 0, β⟩ : IsingParams ℝ) {r, u} *
+            IsingModel.correlation
+                (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+                (⟨J, 0, β⟩ : IsingParams ℝ) {s, v} +
+            IsingModel.correlation
+                (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+                (⟨J, 0, β⟩ : IsingParams ℝ) {r, v} *
+            IsingModel.correlation
+                (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+                (⟨J, 0, β⟩ : IsingParams ℝ) {s, u},
+            fun u v => by ring⟩ e
+    ≤ susceptibilityInfinite (IsingModel.latticeGraph d) Λ (⟨J, 0, β⟩ : IsingParams ℝ) r.val *
+      susceptibilityInfinite (IsingModel.latticeGraph d) Λ (⟨J, 0, β⟩ : IsingParams ℝ) s.val := by
+  have hf : Ferromagnetic (⟨J, 0, β⟩ : IsingParams ℝ) := ⟨hJ, le_refl 0, hβ⟩
+  -- Step 161 bound
+  have h161 := inducedLatticeGraph_leb_sum_le_susc_along Λ J β hJ hβ n r s
+  -- susc_along_n ≤ susc_∞ via le_ciSup
+  have hr : susceptibilityAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) r.val n
+      ≤ susceptibilityInfinite (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) r.val := by
+    rw [susceptibilityInfinite_eq_ciSup]; exact le_ciSup hbdd_r n
+  have hs : susceptibilityAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) s.val n
+      ≤ susceptibilityInfinite (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) s.val := by
+    rw [susceptibilityInfinite_eq_ciSup]; exact le_ciSup hbdd_s n
+  -- Non-negativity
+  have hr_nn : 0 ≤ susceptibilityAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) r.val n :=
+    susceptibilityAlongExhaustion_nonneg _ _ _ hf _ _
+  have hs_nn : 0 ≤ susceptibilityAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) s.val n :=
+    susceptibilityAlongExhaustion_nonneg _ _ _ hf _ _
+  exact h161.trans (mul_le_mul hr hs hs_nn (hr_nn.trans hr))
+
 end Ambient
 
 end IsingModel
