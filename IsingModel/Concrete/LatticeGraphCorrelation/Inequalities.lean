@@ -2171,6 +2171,44 @@ theorem inducedLatticeGraph_beta_deriv_le
     exact_mod_cast incidentEdgesFinset_inducedLatticeGraph_card_le d Λ r s
   linarith [mul_le_mul_of_nonneg_left h_cast hJ]
 
+/-- **Bridge: finite-vol correlation ≤ ∞-vol correlation** (Step 158, GJ §17.5):
+For any exhaustion Λ of ℤ^d, stage n, and vertices r, s : ↑(Λ.volume n),
+the induced-graph correlation is bounded above by the infinite-volume correlation:
+```
+correlation (inducedGraph (latticeGraph d) Λ_n) ⟨J, 0, β⟩ {r, s}
+  ≤ correlationInfinite (latticeGraph d) Λ ⟨J, 0, β⟩ {r.val, s.val}
+```
+
+Proof: `correlation G_n p {r,s} = correlationAlongExhaustion G Λ p {r.val,s.val} n`
+(by unfolding the exhaustion definition and showing `liftFinset {r.val,s.val} h = {r,s}`)
+then apply `correlationAlongExhaustion_le_correlationInfinite`.
+
+Used to bound the Lebowitz sum from Step 157 by the ∞-vol susceptibility.
+
+Reference: Glimm–Jaffe §17.5. -/
+theorem correlation_inducedLatticeGraph_le_correlationInfinite
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J β : ℝ) (n : ℕ) (r s : ↑(Λ.volume n)) :
+    IsingModel.correlation
+        (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+        (⟨J, 0, β⟩ : IsingParams ℝ) {r, s}
+      ≤ Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) {r.val, s.val} := by
+  have h_sub : {r.val, s.val} ⊆ Λ.volume n :=
+    Finset.insert_subset r.2 (Finset.singleton_subset_iff.mpr s.2)
+  have heq : IsingModel.correlation
+        (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+        (⟨J, 0, β⟩ : IsingParams ℝ) {r, s}
+      = Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) {r.val, s.val} n := by
+    rw [Ambient.correlationAlongExhaustion_of_subset _ _ _ h_sub, correlationΛ_apply]
+    congr 1
+    ext x
+    simp only [Ambient.mem_liftFinset, Finset.mem_insert, Finset.mem_singleton,
+               Subtype.ext_iff]
+  rw [heq]
+  exact Ambient.correlationAlongExhaustion_le_correlationInfinite _ _ _ _ _
+
 end Ambient
 
 end IsingModel
