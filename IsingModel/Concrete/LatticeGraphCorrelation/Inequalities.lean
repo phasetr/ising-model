@@ -3974,6 +3974,36 @@ theorem susceptibilityAlongExhaustion_continuousAt_beta
   · simp only [hi, dif_neg, not_false_iff]
     exact continuousAt_const
 
+/-- **correlationAlongExhaustion ContinuousAt β** (Step 190):
+For each finite-volume stage `n`, the correlation along exhaustion is continuous in β.
+
+Proof: subset case unfolds via `correlationAlongExhaustion_of_subset` to a finite-volume
+correlation, which is continuous (`correlation_continuousAt_beta`); non-subset case is
+constant 0. -/
+theorem correlationAlongExhaustion_continuousAt_beta
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (A : Finset (Fin d → ℤ)) (J β : ℝ) (n : ℕ) :
+    ContinuousAt
+      (fun β' => correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                  (⟨J, 0, β'⟩ : IsingParams ℝ) A n)
+      β := by
+  by_cases h_sub : A ⊆ Λ.volume n
+  · have heq : (fun β' => correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                  (⟨J, 0, β'⟩ : IsingParams ℝ) A n) =
+               (fun β' => IsingModel.correlation
+                  (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+                  (⟨J, 0, β'⟩ : IsingParams ℝ) (liftFinset A h_sub)) := by
+      funext β'
+      rw [correlationAlongExhaustion_of_subset _ _ _ h_sub, correlationΛ_apply]
+    rw [heq]
+    exact IsingModel.correlation_continuousAt_beta _ J β _
+  · have heq : (fun β' => correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                  (⟨J, 0, β'⟩ : IsingParams ℝ) A n) = (fun _ => (0 : ℝ)) := by
+      funext β'
+      exact correlationAlongExhaustion_of_not_subset _ _ _ h_sub
+    rw [heq]
+    exact continuousAt_const
+
 end Ambient
 
 end IsingModel
