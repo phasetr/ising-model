@@ -2493,6 +2493,273 @@ theorem inducedLatticeGraph_beta_deriv_le_susc_sq_high_temp
       Λ hβJ hlt' s.val
   exact inducedLatticeGraph_beta_deriv_le_susc_sq Λ J β hJ hβ n r s hrs hbdd_r hbdd_s
 
+
+/-- **Helper**: uniform norm bound for each `corr_n` on `[a, b]` (Step 167, GJ §17.5).
+
+For each stage `n` and any β₁ β₂ ∈ [a, b] (with `0 < a ≤ b` and `bJ·2d < 1`):
+`‖corr_n(β₂) - corr_n(β₁)‖ ≤ (J·M² + J·4d) · ‖β₂ - β₁‖`
+where `M = bJ·2d/(1-bJ·2d)`.
+
+Proof: MVT (`Convex.norm_image_sub_le_of_norm_deriv_le`).
+Each derivative `d_β` satisfies `0 ≤ d_β ≤ C`:
+- `d_β ≥ 0`: monotonicity (`correlation_monotoneOn_beta`) + `HasDerivWithinAt.nonneg_of_monotoneOn`.
+- `d_β ≤ C`: Step 166 + `susceptibilityInfinite_latticeGraph_le_of_high_temp_gen`. -/
+private lemma inducedLatticeGraph_correlation_norm_sub_le
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (hJ : 0 ≤ J)
+    (a b : ℝ) (ha : 0 < a) (hab : a ≤ b) (hlt : b * J * ↑(2 * d) < 1)
+    (n : ℕ) (r s : ↑(Λ.volume n)) (hrs : r ≠ s)
+    (β₁ β₂ : ℝ) (h₁ : β₁ ∈ Set.Icc a b) (h₂ : β₂ ∈ Set.Icc a b) :
+    let G := inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)
+    let M : ℝ := b * J * ↑(2 * d) / (1 - b * J * ↑(2 * d))
+    ‖IsingModel.correlation G (⟨J, 0, β₂⟩ : IsingParams ℝ) {r, s} -
+     IsingModel.correlation G (⟨J, 0, β₁⟩ : IsingParams ℝ) {r, s}‖ ≤
+    (J * M ^ 2 + J * (4 * ↑d)) * ‖β₂ - β₁‖ := by
+  intro G M
+  have hdenom_b : 0 < 1 - b * J * ↑(2 * d) := by linarith
+  have hb_pos : 0 < b := ha.trans_le hab
+  have hM_nn : 0 ≤ M :=
+    div_nonneg (mul_nonneg (mul_nonneg hb_pos.le hJ) (Nat.cast_nonneg _)) hdenom_b.le
+  have hC_nn : 0 ≤ J * M ^ 2 + J * (4 * ↑d) :=
+    add_nonneg (mul_nonneg hJ (pow_nonneg hM_nn 2))
+               (mul_nonneg hJ (mul_nonneg (by norm_num) (Nat.cast_nonneg _)))
+  apply (convex_Icc a b).norm_image_sub_le_of_norm_deriv_le
+    (f := fun β' => IsingModel.correlation G (⟨J, 0, β'⟩ : IsingParams ℝ) {r, s})
+    (C := J * M ^ 2 + J * (4 * ↑d))
+  · -- DifferentiableAt at each β ∈ [a, b]
+    intro β _
+    exact (IsingModel.hasDerivAt_correlation_beta G J β {r, s}).differentiableAt
+  · -- ‖deriv f β‖ ≤ C at each β ∈ [a, b]
+    intro β hβ
+    -- Get the derivative and its HasDerivAt witness
+    obtain ⟨dval, hd, hbound⟩ :=
+      inducedLatticeGraph_beta_deriv_le_susc_sq_high_temp Λ J β hJ
+        (ha.trans_le hβ.1)
+        (by have : β ≤ b := hβ.2; nlinarith [mul_le_mul_of_nonneg_right this
+              (mul_nonneg hJ (Nat.cast_nonneg (2 * d)))])
+        n r s hrs
+    -- deriv f β = dval
+    have hdeq : deriv (fun β' => IsingModel.correlation G (⟨J, 0, β'⟩ : IsingParams ℝ) {r, s}) β
+                = dval := hd.deriv
+    -- dval ≥ 0 from monotonicity
+    have hβ_pos : 0 < β := ha.trans_le hβ.1
+    have hmono : MonotoneOn
+        (fun β' => IsingModel.correlation G (⟨J, 0, β'⟩ : IsingParams ℝ) {r, s}) (Set.Ici 0) :=
+      IsingModel.correlation_monotoneOn_beta G J hJ {r, s}
+    have hacc : AccPt β (Filter.principal (Set.Ici 0)) := by
+      rw [accPt_principal_iff_nhdsWithin]
+      exact (right_nhdsWithin_Ioo_neBot hβ_pos).mono
+        (nhdsWithin_mono β (fun x hx => ⟨le_of_lt hx.1, ne_of_lt hx.2⟩))
+    have hdnn : 0 ≤ dval :=
+      hd.hasDerivWithinAt.nonneg_of_monotoneOn hacc hmono
+    -- dval ≤ C from susceptibility bound
+    have hβJ : 0 ≤ β * J := mul_nonneg hβ_pos.le hJ
+    have hlt_β : β * J * ↑(2 * d) < 1 := by
+      nlinarith [mul_le_mul_of_nonneg_right hβ.2
+                  (mul_nonneg hJ (Nat.cast_nonneg (2 * d)))]
+    have hsusc_r : susceptibilityInfinite (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) r.val ≤ M := by
+      calc susceptibilityInfinite _ Λ _ r.val
+          ≤ β * J * ↑(2 * d) / (1 - β * J * ↑(2 * d)) :=
+            IsingModel.Ambient.susceptibilityInfinite_latticeGraph_le_of_high_temp_gen
+              Λ hβJ hlt_β r.val
+        _ ≤ M := by
+            have hdenom_β : 0 < 1 - β * J * ↑(2 * d) := by linarith
+            rw [div_le_div_iff₀ hdenom_β hdenom_b]
+            nlinarith [mul_le_mul_of_nonneg_right hβ.2
+                        (mul_nonneg hJ (Nat.cast_nonneg (2 * d)))]
+    have hsusc_s : susceptibilityInfinite (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) s.val ≤ M := by
+      calc susceptibilityInfinite _ Λ _ s.val
+          ≤ β * J * ↑(2 * d) / (1 - β * J * ↑(2 * d)) :=
+            IsingModel.Ambient.susceptibilityInfinite_latticeGraph_le_of_high_temp_gen
+              Λ hβJ hlt_β s.val
+        _ ≤ M := by
+            have hdenom_β : 0 < 1 - β * J * ↑(2 * d) := by linarith
+            rw [div_le_div_iff₀ hdenom_β hdenom_b]
+            nlinarith [mul_le_mul_of_nonneg_right hβ.2
+                        (mul_nonneg hJ (Nat.cast_nonneg (2 * d)))]
+    have hsusc_r_nn : 0 ≤ susceptibilityInfinite (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) r.val :=
+      IsingModel.Ambient.susceptibilityInfinite_nonneg _ Λ _ ⟨hJ, le_refl 0, hβ_pos⟩ _
+    have hsusc_s_nn : 0 ≤ susceptibilityInfinite (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) s.val :=
+      IsingModel.Ambient.susceptibilityInfinite_nonneg _ Λ _ ⟨hJ, le_refl 0, hβ_pos⟩ _
+    have hdval_le : dval ≤ J * M ^ 2 + J * (4 * ↑d) :=
+      calc dval ≤ J * susceptibilityInfinite _ Λ _ r.val *
+                  susceptibilityInfinite _ Λ _ s.val + J * (4 * ↑d) := hbound
+           _ ≤ J * M ^ 2 + J * (4 * ↑d) := by
+                nlinarith [mul_le_mul hsusc_r hsusc_s hsusc_s_nn hM_nn,
+                           mul_nonneg hJ (pow_nonneg hM_nn 2)]
+    -- Conclude ‖dval‖ ≤ C
+    rw [hdeq, Real.norm_of_nonneg hdnn]
+    exact hdval_le
+  · exact h₁
+  · exact h₂
+
+/-- **Infinite-volume two-point function is Lipschitz in β** (Step 168, GJ §17.5):
+For any exhaustion `Λ`, vertices `r_val ≠ s_val`, `0 ≤ J`, `0 < a ≤ b`, `bJ·2d < 1`,
+`β ↦ correlationInfinite (latticeGraph d) Λ ⟨J,0,β⟩ {r_val,s_val}`
+is `C`-Lipschitz on `[a, b]`, with `C = J·M² + J·4d`, `M = bJ·2d/(1-bJ·2d)`.
+
+Proof: for β₁ ≤ β₂ in `[a,b]`:
+- Monotonicity: `corr_∞(β₁) ≤ corr_∞(β₂)`.
+- Upper bound: for each stage `n`, either `corr_n(β₂) ≤ corr_n(β₁) + C·(β₂-β₁)` (Step 167)
+  or `corr_n(β₂) = 0 ≤ corr_∞(β₁) + C·(β₂-β₁)`. Taking `ciSup_le` gives
+  `corr_∞(β₂) ≤ corr_∞(β₁) + C·(β₂-β₁)`.
+  So `|corr_∞(β₂) - corr_∞(β₁)| = corr_∞(β₂) - corr_∞(β₁) ≤ C·|β₂-β₁|`.
+
+Reference: Glimm–Jaffe §17.5 p.~312. -/
+theorem correlationInfinite_lipschitzOnWith_beta_of_high_temp
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (r_val s_val : Fin d → ℤ) (hrs : r_val ≠ s_val)
+    (J : ℝ) (hJ : 0 ≤ J)
+    (a b : ℝ) (ha : 0 < a) (hab : a ≤ b) (hlt : b * J * ↑(2 * d) < 1) :
+    let M : ℝ := b * J * ↑(2 * d) / (1 - b * J * ↑(2 * d))
+    LipschitzOnWith ⟨J * M ^ 2 + J * (4 * ↑d), by
+        have hdenom_b : 0 < 1 - b * J * ↑(2 * d) := by linarith
+        have hM_nn : 0 ≤ b * J * ↑(2 * d) / (1 - b * J * ↑(2 * d)) :=
+          div_nonneg (mul_nonneg (mul_nonneg (le_of_lt (ha.trans_le hab)) hJ)
+                       (Nat.cast_nonneg _)) hdenom_b.le
+        exact add_nonneg (mul_nonneg hJ (pow_nonneg hM_nn 2))
+               (mul_nonneg hJ (mul_nonneg (by norm_num) (Nat.cast_nonneg _)))⟩
+      (fun β => correlationInfinite (IsingModel.latticeGraph d) Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+                    {r_val, s_val})
+      (Set.Icc a b) := by
+  intro M
+  have hb_pos : 0 < b := ha.trans_le hab
+  have hdenom_b : 0 < 1 - b * J * ↑(2 * d) := by linarith
+  have hM_nn : 0 ≤ M :=
+    div_nonneg (mul_nonneg (mul_nonneg hb_pos.le hJ) (Nat.cast_nonneg _)) hdenom_b.le
+  have hC_nn : 0 ≤ J * M ^ 2 + J * (4 * ↑d) :=
+    add_nonneg (mul_nonneg hJ (pow_nonneg hM_nn 2))
+               (mul_nonneg hJ (mul_nonneg (by norm_num) (Nat.cast_nonneg _)))
+  apply LipschitzOnWith.of_dist_le_mul
+  intro β₁ h₁ β₂ h₂
+  simp only [Real.dist_eq, NNReal.coe_mk]
+  rcases le_total β₁ β₂ with hβ | hβ
+  · -- Case β₁ ≤ β₂
+    have hmono_inf := IsingModel.Ambient.correlationInfinite_monotone_beta
+        (IsingModel.latticeGraph d) Λ hJ (le_refl 0) {r_val, s_val}
+        (Set.mem_Ioi.mpr (ha.trans_le h₁.1)) (Set.mem_Ioi.mpr (ha.trans_le h₂.1)) hβ
+    rw [abs_of_nonpos (sub_nonpos_of_le hmono_inf), neg_sub,
+        abs_of_nonpos (sub_nonpos.mpr hβ), neg_sub]
+    simp only [correlationInfinite_eq_ciSup]
+    apply sub_le_iff_le_add.mpr
+    apply ciSup_le; intro n
+    by_cases h_sub : ({r_val, s_val} : Finset (Fin d → ℤ)) ⊆ Λ.volume n
+    · have hrn : r_val ∈ Λ.volume n := Finset.insert_subset_iff.mp h_sub |>.1
+      have hsn : s_val ∈ Λ.volume n :=
+        Finset.singleton_subset_iff.mp (Finset.insert_subset_iff.mp h_sub |>.2)
+      set r : ↑(Λ.volume n) := ⟨r_val, hrn⟩ with hr_def
+      set s : ↑(Λ.volume n) := ⟨s_val, hsn⟩ with hs_def
+      have hrs' : r ≠ s := fun h => hrs (congrArg Subtype.val h)
+      have heq : ∀ (p : IsingParams ℝ),
+          correlationAlongExhaustion (IsingModel.latticeGraph d) Λ p {r_val, s_val} n =
+          IsingModel.correlation
+            (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)) p {r, s} := by
+        intro p
+        rw [correlationAlongExhaustion_of_subset _ _ _ h_sub, correlationΛ_apply]
+        congr 1
+        ext u; rw [mem_liftFinset]
+        simp only [Finset.mem_insert, Finset.mem_singleton, Subtype.ext_iff]
+        exact Iff.rfl
+      rw [heq]
+      have hnorm := inducedLatticeGraph_correlation_norm_sub_le Λ J hJ a b ha hab hlt
+                     n r s hrs' β₁ β₂ h₁ h₂
+      have hmono_n := IsingModel.correlation_monotoneOn_beta
+          (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)) J hJ {r, s}
+          (Set.mem_Ici.mpr (ha.trans_le h₁.1).le)
+          (Set.mem_Ici.mpr (ha.trans_le h₂.1).le) hβ
+      simp only [Real.norm_of_nonneg (sub_nonneg_of_le hmono_n),
+                 Real.norm_of_nonneg (sub_nonneg.mpr hβ)] at hnorm
+      have hcn_le_inf :
+          IsingModel.correlation
+              (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+              (⟨J, 0, β₁⟩ : IsingParams ℝ) {r, s} ≤
+          ⨆ m, correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, β₁⟩ : IsingParams ℝ) {r_val, s_val} m := by
+        rw [← heq (⟨J, 0, β₁⟩ : IsingParams ℝ)]
+        exact le_ciSup (correlationAlongExhaustion_bddAbove _ Λ _ _) n
+      linarith
+    · rw [correlationAlongExhaustion_of_not_subset _ _ _ h_sub]
+      have hnn : 0 ≤ ⨆ m, correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β₁⟩ : IsingParams ℝ) {r_val, s_val} m :=
+        Real.iSup_nonneg (fun m => correlationAlongExhaustion_nonneg
+          (IsingModel.latticeGraph d) Λ (⟨J, 0, β₁⟩ : IsingParams ℝ)
+          ⟨hJ, le_refl 0, ha.trans_le h₁.1⟩ {r_val, s_val} m)
+      linarith [mul_nonneg hC_nn (sub_nonneg.mpr hβ)]
+  · -- Case β₂ ≤ β₁: symmetric
+    have hmono_inf := IsingModel.Ambient.correlationInfinite_monotone_beta
+        (IsingModel.latticeGraph d) Λ hJ (le_refl 0) {r_val, s_val}
+        (Set.mem_Ioi.mpr (ha.trans_le h₂.1)) (Set.mem_Ioi.mpr (ha.trans_le h₁.1)) hβ
+    rw [abs_of_nonneg (sub_nonneg_of_le hmono_inf),
+        abs_of_nonneg (sub_nonneg.mpr hβ)]
+    simp only [correlationInfinite_eq_ciSup]
+    apply sub_le_iff_le_add.mpr
+    apply ciSup_le; intro n
+    by_cases h_sub : ({r_val, s_val} : Finset (Fin d → ℤ)) ⊆ Λ.volume n
+    · have hrn : r_val ∈ Λ.volume n := Finset.insert_subset_iff.mp h_sub |>.1
+      have hsn : s_val ∈ Λ.volume n :=
+        Finset.singleton_subset_iff.mp (Finset.insert_subset_iff.mp h_sub |>.2)
+      set r : ↑(Λ.volume n) := ⟨r_val, hrn⟩ with hr_def
+      set s : ↑(Λ.volume n) := ⟨s_val, hsn⟩ with hs_def
+      have hrs' : r ≠ s := fun h => hrs (congrArg Subtype.val h)
+      have heq : ∀ (p : IsingParams ℝ),
+          correlationAlongExhaustion (IsingModel.latticeGraph d) Λ p {r_val, s_val} n =
+          IsingModel.correlation
+            (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)) p {r, s} := by
+        intro p
+        rw [correlationAlongExhaustion_of_subset _ _ _ h_sub, correlationΛ_apply]
+        congr 1
+        ext u; rw [mem_liftFinset]
+        simp only [Finset.mem_insert, Finset.mem_singleton, Subtype.ext_iff]
+        exact Iff.rfl
+      rw [heq]
+      have hnorm := inducedLatticeGraph_correlation_norm_sub_le Λ J hJ a b ha hab hlt
+                     n r s hrs' β₂ β₁ h₂ h₁
+      have hmono_n := IsingModel.correlation_monotoneOn_beta
+          (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)) J hJ {r, s}
+          (Set.mem_Ici.mpr (ha.trans_le h₂.1).le)
+          (Set.mem_Ici.mpr (ha.trans_le h₁.1).le) hβ
+      simp only [Real.norm_of_nonneg (sub_nonneg_of_le hmono_n),
+                 Real.norm_of_nonneg (sub_nonneg.mpr hβ)] at hnorm
+      have hcn_le_inf :
+          IsingModel.correlation
+              (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+              (⟨J, 0, β₂⟩ : IsingParams ℝ) {r, s} ≤
+          ⨆ m, correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, β₂⟩ : IsingParams ℝ) {r_val, s_val} m := by
+        rw [← heq (⟨J, 0, β₂⟩ : IsingParams ℝ)]
+        exact le_ciSup (correlationAlongExhaustion_bddAbove _ Λ _ _) n
+      linarith
+    · rw [correlationAlongExhaustion_of_not_subset _ _ _ h_sub]
+      have hnn : 0 ≤ ⨆ m, correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β₂⟩ : IsingParams ℝ) {r_val, s_val} m :=
+        Real.iSup_nonneg (fun m => correlationAlongExhaustion_nonneg
+          (IsingModel.latticeGraph d) Λ (⟨J, 0, β₂⟩ : IsingParams ℝ)
+          ⟨hJ, le_refl 0, ha.trans_le h₂.1⟩ {r_val, s_val} m)
+      linarith [mul_nonneg hC_nn (sub_nonneg.mpr hβ)]
+
+/-- **Continuity of infinite-volume two-point function in β** (Step 169, GJ §17.5):
+For any exhaustion `Λ`, vertices `r_val ≠ s_val`, `0 ≤ J`, `0 < a ≤ b`, `bJ·2d < 1`,
+`β ↦ correlationInfinite (latticeGraph d) Λ ⟨J,0,β⟩ {r_val,s_val}` is continuous on `[a, b]`.
+
+Follows immediately from the Lipschitz bound of Step 168.
+
+Reference: Glimm–Jaffe §17.5 p.~312. -/
+theorem correlationInfinite_continuousOn_beta_of_high_temp
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (r_val s_val : Fin d → ℤ) (hrs : r_val ≠ s_val)
+    (J : ℝ) (hJ : 0 ≤ J)
+    (a b : ℝ) (ha : 0 < a) (hab : a ≤ b) (hlt : b * J * ↑(2 * d) < 1) :
+    ContinuousOn
+      (fun β => correlationInfinite (IsingModel.latticeGraph d) Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+                    {r_val, s_val})
+      (Set.Icc a b) :=
+  (correlationInfinite_lipschitzOnWith_beta_of_high_temp Λ r_val s_val hrs J hJ a b ha hab
+    hlt).continuousOn
+
 end Ambient
 
 end IsingModel

@@ -161,6 +161,29 @@ theorem susceptibilityInfinite_latticeGraph_le_of_high_temp
   exact inducedLatticeGraph_degree_le d _ v
 
 open IsingModel in
+/-- **ℤ^d infinite-volume high-temperature susceptibility bound (general exhaustion)**:
+for the `d`-dimensional lattice graph with **any** exhaustion `Λ`, `0 ≤ βJ`,
+and `βJ · ↑(2*d) < 1`:
+`susceptibilityInfinite (latticeGraph d) Λ ⟨J,0,β⟩ i ≤ βJ·↑(2*d)/(1-βJ·↑(2*d))`.
+
+Proof: apply `susceptibilityInfinite_le_of_high_temp` with `D = 2*d : ℕ`;
+the degree bound follows from `edgeFilter_card_eq_degree` + `inducedLatticeGraph_degree_le`.
+
+Reference: Glimm–Jaffe §5.1; Friedli–Velenik §3.7.3. -/
+theorem susceptibilityInfinite_latticeGraph_le_of_high_temp_gen
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    {β J : ℝ} (hβJ : 0 ≤ β * J)
+    (hlt : β * J * ↑(2 * d) < 1) (i : Fin d → ℤ) :
+    susceptibilityInfinite (latticeGraph d) Λ ⟨J, 0, β⟩ i
+      ≤ β * J * ↑(2 * d) / (1 - β * J * ↑(2 * d)) := by
+  apply susceptibilityInfinite_le_of_high_temp (latticeGraph d) Λ
+    hβJ (D := 2 * d) _ hlt
+  intro n v
+  classical
+  rw [edgeFilter_card_eq_degree v]
+  exact inducedLatticeGraph_degree_le d _ v
+
+open IsingModel in
 /-- **ℤ^d per-stage high-temperature susceptibility bound**: for the `d`-dimensional
 lattice graph with cubic exhaustion, `0 ≤ βJ`, and `βJ · ↑(2*d) < 1`:
 `susceptibilityAlongExhaustion (latticeGraph d) (cubicExhaustion d) ⟨J,0,β⟩ i n`
