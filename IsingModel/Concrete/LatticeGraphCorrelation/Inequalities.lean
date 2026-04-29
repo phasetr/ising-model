@@ -3037,6 +3037,27 @@ theorem correlationAlongExhaustion_tendstoLocallyUniformlyOn_beta_of_high_temp_o
     simp only [correlationInfinite_eq_ciSup]
     exact htend
 
+/-- **ContinuousAt of corr_∞ at every β in the open high-temperature interval** (Step 175):
+For `0 < J`, `1 ≤ d`, every `β₀ ∈ Ioo 0 (1/(J·2d))`: corr_∞ is continuous at β₀
+(as a function ℝ → ℝ, no within-restriction).
+
+Proof: Since `Ioo 0 β_c` is open, it's a neighborhood of any of its points. So
+ContinuousOn (Step 173) restricted to a neighborhood gives ContinuousAt. -/
+theorem correlationInfinite_continuousAt_beta_of_high_temp
+    {d : ℕ} (hd : 1 ≤ d) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (r_val s_val : Fin d → ℤ) (hrs : r_val ≠ s_val)
+    (J : ℝ) (hJ_pos : 0 < J)
+    (β₀ : ℝ) (hβ₀ : β₀ ∈ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d)))) :
+    ContinuousAt
+      (fun β => correlationInfinite (IsingModel.latticeGraph d) Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+                    {r_val, s_val})
+      β₀ := by
+  have hcont_open := correlationInfinite_continuousOn_beta_of_high_temp_open
+    hd Λ r_val s_val hrs J hJ_pos
+  have h_nhd : Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) ∈ nhds β₀ :=
+    IsOpen.mem_nhds isOpen_Ioo hβ₀
+  exact (hcont_open β₀ hβ₀).continuousAt h_nhd
+
 end Ambient
 
 end IsingModel
