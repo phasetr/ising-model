@@ -3927,6 +3927,25 @@ theorem truncated2Infinite_ae_differentiableWithinAt_beta_Ici_zero
   rw [heq]
   exact correlationInfinite_ae_differentiableWithinAt_beta_Ici_zero Λ r_val s_val J hJ
 
+/-- **truncated2Infinite MonotoneOn β on Ici 0 at h = 0** (Step 187):
+For `0 ≤ J`: truncated2Infinite is monotone non-decreasing in β on `Ici 0` at h = 0.
+Wrapper of Step 183 via `truncated2Infinite_h_zero`. -/
+theorem truncated2Infinite_monotoneOn_beta_Ici_zero
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (r_val s_val : Fin d → ℤ) (J : ℝ) (hJ : 0 ≤ J) :
+    MonotoneOn
+      (fun β => truncated2Infinite (IsingModel.latticeGraph d) Λ
+                  (⟨J, 0, β⟩ : IsingParams ℝ) r_val s_val)
+      (Set.Ici (0 : ℝ)) := by
+  have heq : (fun β => truncated2Infinite (IsingModel.latticeGraph d) Λ
+                  (⟨J, 0, β⟩ : IsingParams ℝ) r_val s_val) =
+             (fun β => correlationInfinite (IsingModel.latticeGraph d) Λ
+                  (⟨J, 0, β⟩ : IsingParams ℝ) {r_val, s_val}) := by
+    funext β
+    exact truncated2Infinite_h_zero (IsingModel.latticeGraph d) Λ J β r_val s_val
+  rw [heq]
+  exact correlationInfinite_monotoneOn_beta_Ici_zero Λ r_val s_val J hJ
+
 end Ambient
 
 end IsingModel
