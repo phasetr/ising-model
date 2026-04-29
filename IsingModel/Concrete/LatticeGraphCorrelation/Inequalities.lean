@@ -3605,6 +3605,30 @@ theorem correlationInfinite_lipschitzOnWith_beta_zero_closed
     push_cast at hbound
     exact hbound
 
+/-- **Linear bound on corr_∞ at β = 0** (Step 181, β ≥ 0 version):
+For `0 ≤ J`, `0 < b`, `bJ·2d < 1`, and any `r ≠ s`, on the interval `[0, b]`:
+`corr_∞(r, s, β) ≤ (J·M(b)² + J·4d) · β`,
+where `M(b) = bJ·2d/(1 - bJ·2d)`. Extension of Step 176 to include β = 0
+(where both sides are 0).
+
+In particular, `corr_∞(r, s, β) → 0` as `β → 0⁺` (right-continuity at 0). -/
+theorem correlationInfinite_le_const_mul_beta_of_high_temp_zero_incl
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (r_val s_val : Fin d → ℤ) (hrs : r_val ≠ s_val)
+    (J : ℝ) (hJ : 0 ≤ J)
+    (b : ℝ) (hb_pos : 0 < b) (hlt : b * J * ↑(2 * d) < 1)
+    (β : ℝ) (hβ_nn : 0 ≤ β) (hβb : β ≤ b) :
+    let M : ℝ := b * J * ↑(2 * d) / (1 - b * J * ↑(2 * d))
+    correlationInfinite (IsingModel.latticeGraph d) Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+      {r_val, s_val} ≤ (J * M ^ 2 + J * (4 * ↑d)) * β := by
+  intro M
+  rcases eq_or_lt_of_le hβ_nn with hβ0 | hβ_pos
+  · -- β = 0: both sides are 0
+    rw [← hβ0, correlationInfinite_eq_zero_at_beta_zero, mul_zero]
+  · -- β > 0: direct from Step 176
+    exact correlationInfinite_le_const_mul_beta_of_high_temp
+      Λ r_val s_val hrs J hJ b hb_pos hlt β hβ_pos hβb
+
 end Ambient
 
 end IsingModel
