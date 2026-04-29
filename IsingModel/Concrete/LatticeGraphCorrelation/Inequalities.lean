@@ -3946,6 +3946,34 @@ theorem truncated2Infinite_monotoneOn_beta_Ici_zero
   rw [heq]
   exact correlationInfinite_monotoneOn_beta_Ici_zero Λ r_val s_val J hJ
 
+/-- **susceptibilityAlongExhaustion ContinuousAt β at h = 0** (Step 189):
+For each finite-volume stage `n`, the susceptibility along the exhaustion is continuous in β.
+
+Proof: subset case unfolds to `susceptibilityΛ` = `susceptibility` on the induced graph,
+which is continuous by Step 188; non-subset case is constant 0. -/
+theorem susceptibilityAlongExhaustion_continuousAt_beta
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (i : Fin d → ℤ) (J β : ℝ) (n : ℕ) :
+    ContinuousAt
+      (fun β' => susceptibilityAlongExhaustion (IsingModel.latticeGraph d) Λ
+                  (⟨J, 0, β'⟩ : IsingParams ℝ) i n)
+      β := by
+  unfold susceptibilityAlongExhaustion
+  by_cases hi : i ∈ Λ.volume n
+  · simp only [hi, dif_pos]
+    have heq : (fun β' => susceptibilityΛ (IsingModel.latticeGraph d) (Λ.volume n)
+                  (⟨J, 0, β'⟩ : IsingParams ℝ) ⟨i, hi⟩) =
+               (fun β' => IsingModel.susceptibility
+                  (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+                  (⟨J, 0, β'⟩ : IsingParams ℝ) ⟨i, hi⟩) := by
+      funext β'
+      exact susceptibilityΛ_apply (IsingModel.latticeGraph d) (Λ.volume n)
+        (⟨J, 0, β'⟩ : IsingParams ℝ) ⟨i, hi⟩
+    rw [heq]
+    exact IsingModel.susceptibility_continuousAt_beta _ J β _
+  · simp only [hi, dif_neg, not_false_iff]
+    exact continuousAt_const
+
 end Ambient
 
 end IsingModel
