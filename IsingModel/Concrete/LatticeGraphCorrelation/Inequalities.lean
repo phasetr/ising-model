@@ -3726,6 +3726,69 @@ theorem correlationInfinite_ae_differentiableWithinAt_beta_Ici_zero
   have hmono := correlationInfinite_monotoneOn_beta_Ici_zero Λ r_val s_val J hJ
   exact hmono.locallyBoundedVariationOn.ae_differentiableWithinAt measurableSet_Ici
 
+/-- **TendstoLocallyUniformlyOn corr_n → corr_∞ on Ico 0 β_c (half-open)** (Step 184):
+For `0 < J`, `1 ≤ d`: corr_n converges locally uniformly to corr_∞ on `Ico 0 (1/(J·2d))`.
+
+Combines Step 174 (Ioo 0 β_c) with Step 178 (Icc 0 b) via Dini's locally-uniform theorem
+on the half-open interval. -/
+theorem correlationAlongExhaustion_tendstoLocallyUniformlyOn_beta_Ico
+    {d : ℕ} (hd : 1 ≤ d) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (r_val s_val : Fin d → ℤ) (hrs : r_val ≠ s_val)
+    (J : ℝ) (hJ_pos : 0 < J) :
+    TendstoLocallyUniformlyOn
+      (fun n β => correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                    (⟨J, 0, β⟩ : IsingParams ℝ) {r_val, s_val} n)
+      (fun β => correlationInfinite (IsingModel.latticeGraph d) Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+                    {r_val, s_val})
+      Filter.atTop (Set.Ico (0 : ℝ) (1 / (J * ↑(2 * d)))) := by
+  apply Monotone.tendstoLocallyUniformlyOn_of_forall_tendsto
+  · -- (1) ContinuousOn each corr_n on Ico 0 β_c
+    intro n
+    by_cases h_sub : ({r_val, s_val} : Finset (Fin d → ℤ)) ⊆ Λ.volume n
+    · have hrn : r_val ∈ Λ.volume n := Finset.insert_subset_iff.mp h_sub |>.1
+      have hsn : s_val ∈ Λ.volume n :=
+        Finset.singleton_subset_iff.mp (Finset.insert_subset_iff.mp h_sub |>.2)
+      intro β _
+      apply ContinuousAt.continuousWithinAt
+      have heq : (fun β' => correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                    (⟨J, 0, β'⟩ : IsingParams ℝ) {r_val, s_val} n) =
+                 (fun β' => IsingModel.correlation
+                    (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+                    (⟨J, 0, β'⟩ : IsingParams ℝ) {(⟨r_val, hrn⟩ : ↑(Λ.volume n)),
+                                                    ⟨s_val, hsn⟩}) := by
+        funext β'
+        rw [correlationAlongExhaustion_of_subset _ _ _ h_sub, correlationΛ_apply]
+        congr 1
+        ext u; rw [mem_liftFinset]
+        simp only [Finset.mem_insert, Finset.mem_singleton, Subtype.ext_iff]
+      rw [heq]
+      exact IsingModel.correlation_continuousAt_beta _ J β _
+    · simp only [correlationAlongExhaustion_of_not_subset _ _ _ h_sub]
+      exact continuousOn_const
+  · -- (2) Monotone in n at each β ∈ Ico 0 β_c
+    intro β hβ
+    rcases eq_or_lt_of_le hβ.1 with hβ0 | hβ_pos
+    · subst hβ0
+      intro n m _
+      simp only [correlationAlongExhaustion_eq_zero_at_beta_zero, le_refl]
+    · exact correlationAlongExhaustion_monotone (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) ⟨hJ_pos.le, le_refl 0, hβ_pos⟩ {r_val, s_val}
+  · -- (3) ContinuousOn corr_∞ on Ico 0 β_c (Step 182)
+    exact correlationInfinite_continuousOn_beta_of_high_temp_Ico hd Λ r_val s_val hrs J hJ_pos
+  · -- (4) Pointwise convergence
+    intro β hβ
+    rcases eq_or_lt_of_le hβ.1 with hβ0 | hβ_pos
+    · subst hβ0
+      simp only [correlationAlongExhaustion_eq_zero_at_beta_zero,
+                 correlationInfinite_eq_zero_at_beta_zero]
+      exact tendsto_const_nhds
+    · have hf : IsingModel.Ferromagnetic (⟨J, 0, β⟩ : IsingParams ℝ) :=
+        ⟨hJ_pos.le, le_refl 0, hβ_pos⟩
+      have htend := IsingModel.Ambient.correlationAlongExhaustion_tendsto_ciSup
+        (IsingModel.latticeGraph d) Λ (⟨J, 0, β⟩ : IsingParams ℝ) hf {r_val, s_val}
+      rw [correlationInfinite_eq_ciSup]
+      exact htend
+
 end Ambient
 
 end IsingModel
