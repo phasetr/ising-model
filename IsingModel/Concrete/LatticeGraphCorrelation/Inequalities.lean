@@ -3789,6 +3789,67 @@ theorem correlationAlongExhaustion_tendstoLocallyUniformlyOn_beta_Ico
       rw [correlationInfinite_eq_ciSup]
       exact htend
 
+/-- **truncated2Infinite ContinuousOn β at h = 0 on Ioo 0 β_c** (Step 185, GJ §17.5):
+For `0 < J`, `1 ≤ d`, `r ≠ s`: the infinite-volume Ursell 2-point function is continuous
+in β on the open high-temperature interval.
+
+Proof: at h = 0, `truncated2Infinite = correlationInfinite {r, s}` (`truncated2Infinite_h_zero`).
+Apply Step 173. -/
+theorem truncated2Infinite_continuousOn_beta_of_high_temp_open
+    {d : ℕ} (hd : 1 ≤ d) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (r_val s_val : Fin d → ℤ) (hrs : r_val ≠ s_val)
+    (J : ℝ) (hJ_pos : 0 < J) :
+    ContinuousOn
+      (fun β => truncated2Infinite (IsingModel.latticeGraph d) Λ
+                  (⟨J, 0, β⟩ : IsingParams ℝ) r_val s_val)
+      (Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d)))) := by
+  have heq : (fun β => truncated2Infinite (IsingModel.latticeGraph d) Λ
+                  (⟨J, 0, β⟩ : IsingParams ℝ) r_val s_val) =
+             (fun β => correlationInfinite (IsingModel.latticeGraph d) Λ
+                  (⟨J, 0, β⟩ : IsingParams ℝ) {r_val, s_val}) := by
+    funext β
+    exact truncated2Infinite_h_zero (IsingModel.latticeGraph d) Λ J β r_val s_val
+  rw [heq]
+  exact correlationInfinite_continuousOn_beta_of_high_temp_open hd Λ r_val s_val hrs J hJ_pos
+
+/-- **truncated2Infinite ContinuousOn β on closed [0, b]** (Step 185 closed variant). -/
+theorem truncated2Infinite_continuousOn_beta_of_high_temp_zero_closed
+    {d : ℕ} (hd : 1 ≤ d) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (r_val s_val : Fin d → ℤ) (hrs : r_val ≠ s_val)
+    (J : ℝ) (hJ_pos : 0 < J)
+    (b : ℝ) (hb_pos : 0 < b) (hlt : b * J * ↑(2 * d) < 1) :
+    ContinuousOn
+      (fun β => truncated2Infinite (IsingModel.latticeGraph d) Λ
+                  (⟨J, 0, β⟩ : IsingParams ℝ) r_val s_val)
+      (Set.Icc (0 : ℝ) b) := by
+  have heq : (fun β => truncated2Infinite (IsingModel.latticeGraph d) Λ
+                  (⟨J, 0, β⟩ : IsingParams ℝ) r_val s_val) =
+             (fun β => correlationInfinite (IsingModel.latticeGraph d) Λ
+                  (⟨J, 0, β⟩ : IsingParams ℝ) {r_val, s_val}) := by
+    funext β
+    exact truncated2Infinite_h_zero (IsingModel.latticeGraph d) Λ J β r_val s_val
+  rw [heq]
+  exact correlationInfinite_continuousOn_beta_of_high_temp_zero_closed
+    hd Λ r_val s_val hrs J hJ_pos b hb_pos hlt
+
+/-- **truncated2Infinite ContinuousOn β on Ico 0 β_c (half-open)** (Step 185 Ico variant). -/
+theorem truncated2Infinite_continuousOn_beta_of_high_temp_Ico
+    {d : ℕ} (hd : 1 ≤ d) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (r_val s_val : Fin d → ℤ) (hrs : r_val ≠ s_val)
+    (J : ℝ) (hJ_pos : 0 < J) :
+    ContinuousOn
+      (fun β => truncated2Infinite (IsingModel.latticeGraph d) Λ
+                  (⟨J, 0, β⟩ : IsingParams ℝ) r_val s_val)
+      (Set.Ico (0 : ℝ) (1 / (J * ↑(2 * d)))) := by
+  have heq : (fun β => truncated2Infinite (IsingModel.latticeGraph d) Λ
+                  (⟨J, 0, β⟩ : IsingParams ℝ) r_val s_val) =
+             (fun β => correlationInfinite (IsingModel.latticeGraph d) Λ
+                  (⟨J, 0, β⟩ : IsingParams ℝ) {r_val, s_val}) := by
+    funext β
+    exact truncated2Infinite_h_zero (IsingModel.latticeGraph d) Λ J β r_val s_val
+  rw [heq]
+  exact correlationInfinite_continuousOn_beta_of_high_temp_Ico hd Λ r_val s_val hrs J hJ_pos
+
 end Ambient
 
 end IsingModel
