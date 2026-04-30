@@ -1968,6 +1968,25 @@ theorem correlation_high_temp_h_zero_nonneg
     Finset.sum_nonneg (fun X _ => pow_nonneg htanh_nn _)
   exact div_nonneg hnum_nn hden_nn
 
+/-- **Z₂ symmetry of correlations at h = 0 from FV (3.46) + handshake**:
+for any `A : Finset ι` of odd cardinality, `correlation G ⟨J, 0, β⟩ A = 0`.
+
+A direct combinatorial proof going through:
+1. `correlation_high_temp_expansion_h_zero_closed` (FV (3.46), Step 284)
+2. `high_temp_numerator_filter_eq_empty_of_odd_card` (Step 297) — the
+   numerator filter is *literally empty* by edge-vertex handshake.
+3. `Finset.sum_empty`: empty sum is `0`; `0 / x = 0`.
+
+Independent of `correlation_odd_vanish` (the standard spin-flip Z₂
+argument). Provides a fully closed-form / combinatorial alternative. -/
+theorem correlation_high_temp_h_zero_odd_card_eq_zero
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (A : Finset ι) (hA_odd : Odd A.card) :
+    correlation G ⟨J, 0, β⟩ A = 0 := by
+  rw [correlation_high_temp_expansion_h_zero_closed,
+      high_temp_numerator_filter_eq_empty_of_odd_card G A hA_odd,
+      Finset.sum_empty, zero_div]
+
 /-- **High-temperature parameter**: `t = tanh(βJ)`.
 For `βJ ≥ 0`, `t ∈ [0, 1)`, and the high-temperature expansion
 converges when `t` is small. -/
