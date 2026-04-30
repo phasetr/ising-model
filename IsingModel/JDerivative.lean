@@ -343,4 +343,78 @@ theorem truncated2_hasDerivAt_J
   rw [hij.deriv, hi.deriv, hj.deriv] at *
   exact h_diff
 
+/-! ## Step 216: Lebowitz upper bound on the J-derivative at h = 0 -/
+
+/-- **Lebowitz upper bound on J-derivative of 2-point function** (Step 216):
+The derivative `d/dJ ⟨σ_r σ_s⟩` at `h = 0` satisfies
+
+  `d/dJ ⟨σ_r σ_s⟩ ≤ β · Σ_{e∈E} [⟨σ_r σ_{e₁}⟩·⟨σ_s σ_{e₂}⟩ + ⟨σ_r σ_{e₂}⟩·⟨σ_s σ_{e₁}⟩]`
+  `                  + β · |E(G)|`
+
+Direct J-direction analogue of `correlation_beta_deriv_le_lebowitz` (Step 117b).
+The proof mirrors the β version with prefactor `J → β`, using `hasDerivAt_correlation_J`
+in place of `hasDerivAt_correlation_beta`.
+
+Reference: parallel to Glimm–Jaffe §17.5 pp.311–312; Cor. 4.3.3 (Lebowitz). -/
+theorem correlation_J_deriv_le_lebowitz
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (r s : ι) (hrs : r ≠ s) :
+    let p := (⟨J, 0, β⟩ : IsingParams ℝ)
+    ∃ d : ℝ,
+      HasDerivAt (fun J' => correlation G (⟨J', 0, β⟩ : IsingParams ℝ) {r, s}) d J ∧
+      d ≤ β * ∑ e ∈ G.edgeFinset,
+          Sym2.lift ⟨fun u v =>
+              correlation G p {r, u} * correlation G p {s, v} +
+              correlation G p {r, v} * correlation G p {s, u},
+            fun u v => by ring⟩ e
+        + β * G.edgeFinset.card := by
+  intro p
+  have hf : Ferromagnetic p := ⟨hJ, le_refl 0, hβ⟩
+  refine ⟨_, hasDerivAt_correlation_J G J 0 β {r, s}, ?_⟩
+  have hcard : (G.edgeFinset.card : ℝ) = ∑ _ ∈ G.edgeFinset, (1 : ℝ) := by
+    simp only [Finset.sum_const, nsmul_eq_mul, mul_one]
+  rw [hcard, ← mul_add, ← Finset.sum_add_distrib]
+  apply mul_le_mul_of_nonneg_left _ hβ.le
+  apply Finset.sum_le_sum
+  intro e he
+  obtain ⟨⟨u, v⟩, rfl⟩ := Quot.exists_rep e
+  have huv : u ≠ v := by
+    intro heq; subst heq; exact (SimpleGraph.mem_edgeFinset.mp he).ne rfl
+  simp only [Sym2.lift_mk]
+  by_cases hru : r = u
+  · subst hru
+    have h1 := summand_le_one G J β hf {r, s} {r, v}
+    have h2 : 0 ≤ correlation G p {r, r} * correlation G p {s, v} +
+                   correlation G p {r, v} * correlation G p {s, r} :=
+      add_nonneg (mul_nonneg (gks_first G p hf _) (gks_first G p hf _))
+                 (mul_nonneg (gks_first G p hf _) (gks_first G p hf _))
+    linarith
+  by_cases hrv : r = v
+  · subst hrv
+    have h1 := summand_le_one G J β hf {r, s} {u, r}
+    have h2 : 0 ≤ correlation G p {r, u} * correlation G p {s, r} +
+                   correlation G p {r, r} * correlation G p {s, u} :=
+      add_nonneg (mul_nonneg (gks_first G p hf _) (gks_first G p hf _))
+                 (mul_nonneg (gks_first G p hf _) (gks_first G p hf _))
+    linarith
+  by_cases hsu : s = u
+  · subst hsu
+    have h1 := summand_le_one G J β hf {r, s} {s, v}
+    have h2 : 0 ≤ correlation G p {r, s} * correlation G p {s, v} +
+                   correlation G p {r, v} * correlation G p {s, s} :=
+      add_nonneg (mul_nonneg (gks_first G p hf _) (gks_first G p hf _))
+                 (mul_nonneg (gks_first G p hf _) (gks_first G p hf _))
+    linarith
+  by_cases hsv : s = v
+  · subst hsv
+    have h1 := summand_le_one G J β hf {r, s} {u, s}
+    have h2 : 0 ≤ correlation G p {r, u} * correlation G p {s, s} +
+                   correlation G p {r, s} * correlation G p {s, u} :=
+      add_nonneg (mul_nonneg (gks_first G p hf _) (gks_first G p hf _))
+                 (mul_nonneg (gks_first G p hf _) (gks_first G p hf _))
+    linarith
+  -- Non-degenerate: r,s,u,v pairwise distinct
+  have h_le := summand_le_lebowitz_of_disjoint G J β hf r s u v hrs hru hrv hsu hsv huv
+  linarith [show (0 : ℝ) ≤ 1 from zero_le_one]
+
 end IsingModel
