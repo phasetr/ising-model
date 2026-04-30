@@ -363,6 +363,19 @@ theorem sum_high_temp_numerator_h_zero_odd_card_eq_zero_Λ
   IsingModel.sum_high_temp_numerator_h_zero_odd_card_eq_zero
     (inducedGraph G Λ) J β A hA_odd
 
+/-- **Λ-level correlation nonnegativity from FV (3.46)** at `h = 0`:
+under `0 ≤ β * J`, `0 ≤ correlationΛ G Λ ⟨J, 0, β⟩ A`.
+Direct lift of `IsingModel.correlation_high_temp_h_zero_nonneg`
+(Step 293) through `correlationΛ_apply`. -/
+theorem correlationΛ_high_temp_h_zero_nonneg
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (A : Finset ↑Λ) :
+    0 ≤ correlationΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) A := by
+  rw [correlationΛ_apply]
+  exact IsingModel.correlation_high_temp_h_zero_nonneg
+    (inducedGraph G Λ) J β hβJ A
+
 /-- The correlation on `Λ` is bounded: `|⟨σ^A⟩| ≤ 1`. -/
 theorem abs_correlationΛ_le_one (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] (p : IsingParams ℝ)
