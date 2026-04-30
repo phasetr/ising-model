@@ -4854,6 +4854,50 @@ theorem correlationInfinite_continuousOn_beta_of_high_temp_Ico
     exact (correlationInfinite_continuousAt_beta_of_high_temp
       hd Λ r_val s_val hrs J hJ_pos β₀ hβ₀_in_open).continuousWithinAt
 
+/-- **ContinuousOn corr_∞ on Ico 0 J_c (half-open) in J** (Step 236):
+For `0 < β`, `1 ≤ d`: `J ↦ corr_∞(J)` is continuous on `Ico 0 (1/(β·2d))`
+(closed at 0, open at J_c). Direct J-direction analogue of Step 182. -/
+theorem correlationInfinite_continuousOn_J_of_high_temp_Ico
+    {d : ℕ} (hd : 1 ≤ d) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (r_val s_val : Fin d → ℤ) (hrs : r_val ≠ s_val)
+    (β : ℝ) (hβ_pos : 0 < β) :
+    ContinuousOn
+      (fun J => correlationInfinite (IsingModel.latticeGraph d) Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+                    {r_val, s_val})
+      (Set.Ico (0 : ℝ) (1 / (β * ↑(2 * d)))) := by
+  have h2d_pos : (0 : ℝ) < ↑(2 * d) := by
+    have : 0 < 2 * d := Nat.mul_pos (by norm_num) hd
+    exact_mod_cast this
+  have hβ2d_pos : 0 < β * ↑(2 * d) := mul_pos hβ_pos h2d_pos
+  have hJc_pos : 0 < 1 / (β * ↑(2 * d)) := one_div_pos.mpr hβ2d_pos
+  intro J₀ hJ₀
+  rcases eq_or_lt_of_le hJ₀.1 with hJ₀0 | hJ₀_pos
+  · subst hJ₀0
+    set b' : ℝ := (1 / (β * ↑(2 * d))) / 2 with hb'_def
+    have hb'_pos : 0 < b' := by positivity
+    have hb'_lt_Jc : b' < 1 / (β * ↑(2 * d)) := by
+      have : b' = (1 / (β * ↑(2 * d))) / 2 := rfl
+      linarith
+    have hlt : b' * β * ↑(2 * d) < 1 := by
+      have h1 : b' * (β * ↑(2 * d)) < 1 := by
+        have := (lt_div_iff₀ hβ2d_pos).mp hb'_lt_Jc
+        linarith [this]
+      linarith [h1]
+    have hcont_closed := correlationInfinite_continuousOn_J_of_high_temp_zero_closed
+      hd Λ r_val s_val hrs β hβ_pos b' hb'_pos hlt
+    have hcwa := hcont_closed 0 (Set.mem_Icc.mpr ⟨le_refl _, hb'_pos.le⟩)
+    apply hcwa.mono_of_mem_nhdsWithin
+    rw [mem_nhdsWithin]
+    refine ⟨Set.Iio b', isOpen_Iio, ?_, ?_⟩
+    · exact hb'_pos
+    · intro x hx
+      have hx_lt_b' : x < b' := hx.1
+      have hx_in_Ico : x ∈ Set.Ico (0 : ℝ) (1 / (β * ↑(2 * d))) := hx.2
+      exact Set.mem_Icc.mpr ⟨hx_in_Ico.1, hx_lt_b'.le⟩
+  · have hJ₀_in_open : J₀ ∈ Set.Ioo (0 : ℝ) (1 / (β * ↑(2 * d))) := ⟨hJ₀_pos, hJ₀.2⟩
+    exact (correlationInfinite_continuousAt_J_of_high_temp
+      hd Λ r_val s_val hrs β hβ_pos J₀ hJ₀_in_open).continuousWithinAt
+
 /-- **MonotoneOn corr_∞ in β on the half-line Ici 0** (Step 183):
 For `0 ≤ J`: corr_∞ is monotone non-decreasing in β on the entire half-line `Ici 0`.
 
