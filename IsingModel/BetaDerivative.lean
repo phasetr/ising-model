@@ -378,7 +378,7 @@ Proof: GKS-I gives all correlations ≥ 0, and all correlations ≤ 1
 (from `abs_correlation_le_one`). The summand is ≥ 0 by GKS-II and ≤ 1.
 
 Reference: Glimm–Jaffe §17.5 p.312 (2nd ed.). -/
-private lemma summand_le_one
+lemma summand_le_one
     (G : SimpleGraph ι) [Fintype G.edgeSet]
     (J β : ℝ) (hf : Ferromagnetic (⟨J, 0, β⟩ : IsingParams ℝ))
     (A B : Finset ι) :
