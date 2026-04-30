@@ -1415,6 +1415,46 @@ theorem partitionFunction_high_temp_expansion_h_zero_closed
   rw [← Finset.mul_sum]
   ring
 
+/-- **High-temperature even-subset sum is `≥ 1`**: under `0 ≤ β J`,
+`∑_{X ⊆ G.edgeFinset, even-degree} tanh(β J)^|X| ≥ 1`.
+
+The empty edge subset `X = ∅` is always even-degree (every vertex
+has degree `0`) and contributes `tanh(βJ)^0 = 1`; every other
+even-degree subset contributes `tanh(βJ)^|X| ≥ 0` under `0 ≤ βJ`
+(via `0 ≤ tanh(βJ)`). The core inequality underlying the Z lower
+bound `partitionFunction_high_temp_expansion_h_zero_lower_bound`. -/
+theorem one_le_sum_pow_tanh_even_subgraph
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) :
+    (1 : ℝ) ≤ ∑ X ∈ G.edgeFinset.powerset.filter
+        (fun X : Finset (Sym2 ι) =>
+          ∀ v : ι, Even ((X.filter (v ∈ ·)).card)),
+        Real.tanh (β * J) ^ X.card := by
+  have htanh_nn : 0 ≤ Real.tanh (β * J) := by
+    rw [Real.tanh_eq_sinh_div_cosh]
+    exact div_nonneg
+      (Real.sinh_nonneg_iff.mpr hβJ) (Real.cosh_pos _).le
+  have hempty_mem : (∅ : Finset (Sym2 ι)) ∈ G.edgeFinset.powerset.filter
+      (fun X => ∀ v : ι, Even ((X.filter (v ∈ ·)).card)) := by
+    refine Finset.mem_filter.mpr ⟨Finset.empty_mem_powerset _, ?_⟩
+    intro v
+    simp
+  have hempty_term : Real.tanh (β * J) ^ (∅ : Finset (Sym2 ι)).card = 1 := by simp
+  have hnn : ∀ X ∈ G.edgeFinset.powerset.filter
+      (fun X : Finset (Sym2 ι) => ∀ v : ι, Even ((X.filter (v ∈ ·)).card)),
+      0 ≤ Real.tanh (β * J) ^ (X : Finset (Sym2 ι)).card :=
+    fun X _ => pow_nonneg htanh_nn _
+  have hsingle :
+      Real.tanh (β * J) ^ (∅ : Finset (Sym2 ι)).card
+        ≤ ∑ X ∈ G.edgeFinset.powerset.filter
+            (fun X : Finset (Sym2 ι) =>
+              ∀ v : ι, Even ((X.filter (v ∈ ·)).card)),
+            Real.tanh (β * J) ^ X.card :=
+    Finset.single_le_sum (f := fun X : Finset (Sym2 ι) =>
+        Real.tanh (β * J) ^ X.card) hnn hempty_mem
+  rw [hempty_term] at hsingle
+  exact hsingle
+
 /-- **Lower bound from the empty-X term**: under `0 ≤ β J`, the
 high-temperature expansion FV (3.45) yields the lower bound
 `Z(G; J, 0, β) ≥ 2^|ι| · (cosh(βJ))^|E|`. The empty edge subset
