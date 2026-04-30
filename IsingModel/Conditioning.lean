@@ -1686,6 +1686,34 @@ theorem log_partitionFunction_high_temp_expansion_h_zero_closed
   rw [Real.log_mul (by positivity) (by positivity),
       Real.log_pow, Real.log_pow]
 
+/-- **Z high-temperature upper bound from FV (3.45)**: under `0 ≤ β·J`,
+`Z(G; J, 0, β) ≤ 2^(|ι|+|E|) · (cosh(βJ))^|E|`.
+
+Pair to `partitionFunction_high_temp_expansion_h_zero_lower_bound`
+(Step 286): the FV (3.45) closed form Z = 2^|ι|·cosh^|E|·S with
+`1 ≤ S ≤ 2^|E|` (Steps 295/319) gives matching bounds. -/
+theorem partitionFunction_high_temp_expansion_h_zero_upper_bound
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) :
+    partitionFunction G ⟨J, 0, β⟩
+      ≤ (2 : ℝ) ^ (Fintype.card ι + G.edgeFinset.card) *
+        Real.cosh (β * J) ^ G.edgeFinset.card := by
+  rw [partitionFunction_high_temp_expansion_h_zero_closed]
+  have hsum_le := sum_pow_tanh_even_subgraph_le_two_pow G J β hβJ
+  have hcommon_nn :
+      0 ≤ (2 : ℝ) ^ Fintype.card ι * Real.cosh (β * J) ^ G.edgeFinset.card :=
+    mul_nonneg (pow_nonneg (by norm_num) _) (pow_nonneg (Real.cosh_pos _).le _)
+  calc (2 : ℝ) ^ Fintype.card ι * Real.cosh (β * J) ^ G.edgeFinset.card *
+        ∑ X ∈ G.edgeFinset.powerset.filter
+          (fun X => ∀ v : ι, Even ((X.filter (v ∈ ·)).card)),
+          Real.tanh (β * J) ^ X.card
+      ≤ (2 : ℝ) ^ Fintype.card ι * Real.cosh (β * J) ^ G.edgeFinset.card *
+        (2 : ℝ) ^ G.edgeFinset.card :=
+        mul_le_mul_of_nonneg_left hsum_le hcommon_nn
+    _ = (2 : ℝ) ^ (Fintype.card ι + G.edgeFinset.card) *
+          Real.cosh (β * J) ^ G.edgeFinset.card := by
+        rw [pow_add]; ring
+
 /-- **Free-energy lower bound from FV (3.45)** at zero external field:
 under `0 < |ι|` and `0 ≤ β * J`,
 `log 2 + (|E|/|ι|) · log(cosh(β·J)) ≤ freeEnergy(G, ⟨J, 0, β⟩)`.
