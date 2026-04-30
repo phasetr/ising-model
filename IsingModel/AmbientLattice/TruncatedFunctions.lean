@@ -293,6 +293,40 @@ theorem truncated2Infinite_h_zero
       correlationInfinite_h_zero G Λ J β _ h_j]
   ring
 
+/-- **`truncated2Infinite` at J = 0 off-diagonal (i ≠ j) vanishes** (Step 275, GJ §17.1):
+At J = 0, sites are non-interacting, so for `i ≠ j` the Ursell 2-point function
+factorizes to zero. Closed-form proof via `correlationInfinite_J_zero`:
+`⟨σ_iσ_j⟩ = tanh(βh)² = ⟨σ_i⟩·⟨σ_j⟩`, hence the truncated correlation vanishes. -/
+theorem truncated2Infinite_J_zero_off_diag
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (h β : ℝ) (hf : Ferromagnetic (⟨(0 : ℝ), h, β⟩ : IsingParams ℝ))
+    {i j : V} (hij : i ≠ j) :
+    truncated2Infinite G Λ ⟨0, h, β⟩ i j = 0 := by
+  unfold truncated2Infinite
+  rw [correlationInfinite_J_zero G Λ h β hf {i, j},
+      correlationInfinite_J_zero G Λ h β hf {i},
+      correlationInfinite_J_zero G Λ h β hf {j}]
+  rw [Finset.card_pair hij, Finset.card_singleton, Finset.card_singleton]
+  ring
+
+/-- **`truncated2Infinite` at J = 0 diagonal (i = j) closed form** (Step 275):
+At J = 0 with `i = j`: `truncated2Infinite(i, i) = tanh(βh)·(1 - tanh(βh))`.
+Note `{i, i} = {i}` collapses by Finset semantics, so the formula is asymmetric
+relative to the off-diagonal case. -/
+theorem truncated2Infinite_J_zero_diag
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (h β : ℝ) (hf : Ferromagnetic (⟨(0 : ℝ), h, β⟩ : IsingParams ℝ))
+    (i : V) :
+    truncated2Infinite G Λ ⟨0, h, β⟩ i i
+      = Real.tanh (β * h) * (1 - Real.tanh (β * h)) := by
+  unfold truncated2Infinite
+  have h_singleton : ({i, i} : Finset V) = {i} := by simp
+  rw [h_singleton, correlationInfinite_J_zero G Λ h β hf {i},
+      Finset.card_singleton, pow_one]
+  ring
+
 /-- **Conditional cluster decay (cofinite form)**: if the ∞-volume
 Ursell 2-point function at a fixed site `i : V`, viewed as a function
 of the free site `j : V`, is *summable* over `V`, then it tends to `0`
