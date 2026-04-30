@@ -3277,6 +3277,26 @@ theorem correlationInfinite_ae_differentiableWithinAt_beta_of_high_temp
     Λ r_val s_val hrs J hJ a b ha hab hlt
   exact LipschitzOnWith.ae_differentiableWithinAt_real hlip measurableSet_Icc
 
+/-- **A.e. differentiability of infinite-volume two-point function in J** (Step 225):
+For any exhaustion `Λ`, vertices `r_val ≠ s_val`, `0 < β`, `0 < a ≤ b`, `bβ·2d < 1`,
+`J ↦ corr_∞(J)` is differentiable within `[a, b]` at Lebesgue-a.e. J.
+
+Direct J-direction analogue of Step 171. Proof: Step 222 (Lipschitz) +
+Rademacher's theorem (`LipschitzOnWith.ae_differentiableWithinAt_real`). -/
+theorem correlationInfinite_ae_differentiableWithinAt_J_of_high_temp
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (r_val s_val : Fin d → ℤ) (hrs : r_val ≠ s_val)
+    (β : ℝ) (hβ : 0 < β)
+    (a b : ℝ) (ha : 0 < a) (hab : a ≤ b) (hlt : b * β * ↑(2 * d) < 1) :
+    ∀ᵐ J ∂MeasureTheory.Measure.restrict MeasureTheory.volume (Set.Icc a b),
+    DifferentiableWithinAt ℝ
+      (fun J => correlationInfinite (IsingModel.latticeGraph d) Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+                    {r_val, s_val})
+      (Set.Icc a b) J := by
+  have hlip := correlationInfinite_lipschitzOnWith_J_of_high_temp
+    Λ r_val s_val hrs β hβ a b ha hab hlt
+  exact LipschitzOnWith.ae_differentiableWithinAt_real hlip measurableSet_Icc
+
 /-- **Locally bounded variation of corr_∞ on the open high-temperature interval** (Step 172):
 For `0 < J`, `1 ≤ d`, the function `β ↦ corr_∞(β)` has locally bounded variation on
 the open interval `Ioo 0 (1/(J·2d))` (the high-temperature region).
