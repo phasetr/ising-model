@@ -2570,6 +2570,38 @@ theorem inducedLatticeGraph_beta_deriv_le_susc_sq_high_temp
       Λ hβJ hlt' s.val
   exact inducedLatticeGraph_beta_deriv_le_susc_sq Λ J β hJ hβ n r s hrs hbdd_r hbdd_s
 
+/-- **Unconditional J-derivative bound under high-temperature condition** (Step 220):
+For any exhaustion `Λ` of `ℤ^d`, `0 ≤ J`, `0 < β`, `βJ·2d < 1`,
+vertices `r ≠ s ∈ Λ_n`:
+`d/dJ corr_n(r,s)(J)|_{h=0} ≤ β · χ_∞(r) · χ_∞(s) + β · 4d`,
+with no explicit `BddAbove` hypothesis.
+
+Direct J-direction analogue of Step 166 (`inducedLatticeGraph_beta_deriv_le_susc_sq_high_temp`).
+Proof: Step 164 supplies `BddAbove`; then Step 219
+(`inducedLatticeGraph_J_deriv_le_susc_sq`) closes the goal. -/
+theorem inducedLatticeGraph_J_deriv_le_susc_sq_high_temp
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β)
+    (hlt : β * J * ↑(2 * d) < 1)
+    (n : ℕ) (r s : ↑(Λ.volume n)) (hrs : r ≠ s) :
+    ∃ dval : ℝ,
+      HasDerivAt (fun J' => IsingModel.correlation
+          (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+          (⟨J', 0, β⟩ : IsingParams ℝ) {r, s}) dval J ∧
+      dval ≤ β * susceptibilityInfinite (IsingModel.latticeGraph d) Λ
+                 (⟨J, 0, β⟩ : IsingParams ℝ) r.val *
+               susceptibilityInfinite (IsingModel.latticeGraph d) Λ
+                 (⟨J, 0, β⟩ : IsingParams ℝ) s.val + β * (4 * ↑d) := by
+  have hβJ : 0 ≤ β * J := mul_nonneg hβ.le hJ
+  have hlt' : β * J * ↑(2 * d) < 1 := by linarith [mul_comm β J, mul_comm J β]
+  have hbdd_r :=
+    IsingModel.Ambient.susceptibilityAlongExhaustion_bddAbove_latticeGraph_of_high_temp
+      Λ hβJ hlt' r.val
+  have hbdd_s :=
+    IsingModel.Ambient.susceptibilityAlongExhaustion_bddAbove_latticeGraph_of_high_temp
+      Λ hβJ hlt' s.val
+  exact inducedLatticeGraph_J_deriv_le_susc_sq Λ J β hJ hβ n r s hrs hbdd_r hbdd_s
+
 
 /-- **Helper**: uniform norm bound for each `corr_n` on `[a, b]` (Step 167, GJ §17.5).
 
