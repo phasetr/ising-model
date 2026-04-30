@@ -610,6 +610,37 @@ theorem truncated2_hasDerivAt_beta
   rw [hij.deriv, hi.deriv, hj.deriv] at *
   exact h_diff
 
+/-- **correlation is Continuous in β over the whole ℝ at h = 0** (Step 193).
+Strengthens `correlation_continuousAt_beta` from `ContinuousAt` to `Continuous`. -/
+theorem correlation_continuous_beta
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J : ℝ) (A : Finset ι) :
+    Continuous (fun β' => correlation G (⟨J, 0, β'⟩ : IsingParams ℝ) A) :=
+  continuous_iff_continuousAt.mpr fun β => correlation_continuousAt_beta G J β A
+
+/-- **truncated2 is Continuous in β over the whole ℝ at h = 0** (Step 193).
+Strengthens `truncated2_continuousAt_beta` to `Continuous`. -/
+theorem truncated2_continuous_beta
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J : ℝ) (i j : ι) :
+    Continuous (fun β' => truncated2 G (⟨J, 0, β'⟩ : IsingParams ℝ) i j) :=
+  continuous_iff_continuousAt.mpr fun β => truncated2_continuousAt_beta G J β i j
+
+/-- **correlation is Differentiable in β at h = 0** (Step 193).
+Strengthens `hasDerivAt_correlation_beta` (single-point) to `Differentiable`. -/
+theorem correlation_differentiable_beta
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J : ℝ) (A : Finset ι) :
+    Differentiable ℝ (fun β' => correlation G (⟨J, 0, β'⟩ : IsingParams ℝ) A) :=
+  fun β => (hasDerivAt_correlation_beta G J β A).differentiableAt
+
+/-- **truncated2 is Differentiable in β at h = 0** (Step 193). -/
+theorem truncated2_differentiable_beta
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J : ℝ) (i j : ι) :
+    Differentiable ℝ (fun β' => truncated2 G (⟨J, 0, β'⟩ : IsingParams ℝ) i j) :=
+  fun β => (truncated2_hasDerivAt_beta G J β i j).differentiableAt
+
 /-! ## Monotonicity in β (Step 122): GKS-II-based bound -/
 
 /-- The β-derivative of two-point correlations is nonneg (infinitesimal form of β-monotonicity).
