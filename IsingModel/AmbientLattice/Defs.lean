@@ -268,6 +268,48 @@ theorem partitionFunctionΛ_zero_params
   push_cast
   rw [Fintype.card_coe]
 
+/-- **Λ-level high-temperature partition function closed form (FV §3.7.3 eq. (3.45))**:
+on the induced subgraph `inducedGraph G Λ` at zero external field,
+`Z_Λ(⟨J, 0, β⟩) = 2^|Λ| · (cosh(β J))^|E_Λ| · ∑_{X ⊆ E_Λ, even-degree} tanh(β J)^|X|`.
+Direct lift of `IsingModel.partitionFunction_high_temp_expansion_h_zero_closed`
+through `partitionFunctionΛ = partitionFunction (inducedGraph G Λ)`,
+using `Fintype.card_coe` to rewrite `Fintype.card ↑Λ = Λ.card`. -/
+theorem partitionFunctionΛ_high_temp_expansion_h_zero_closed
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) :
+    partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+      = (2 : ℝ) ^ Λ.card *
+        Real.cosh (β * J) ^ (inducedGraph G Λ).edgeFinset.card *
+        ∑ X ∈ (inducedGraph G Λ).edgeFinset.powerset.filter
+          (fun X => ∀ v : ↑Λ, Even ((X.filter (v ∈ ·)).card)),
+          Real.tanh (β * J) ^ X.card := by
+  rw [partitionFunctionΛ_apply,
+      IsingModel.partitionFunction_high_temp_expansion_h_zero_closed,
+      Fintype.card_coe]
+
+/-- **Λ-level high-temperature correlation closed form (FV §3.7.3 eq. (3.46))**:
+on the induced subgraph `inducedGraph G Λ` at zero external field,
+`⟨σ_A⟩^Λ_{β,0} = (∑_{X : ∂X=A} tanh^|X|) / (∑_{X : ∂X=∅} tanh^|X|)`.
+Direct lift of `IsingModel.correlation_high_temp_expansion_h_zero_closed`
+through `correlationΛ = correlation (inducedGraph G Λ)`. -/
+theorem correlationΛ_high_temp_expansion_h_zero_closed
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (A : Finset ↑Λ) :
+    correlationΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) A
+      = (∑ X ∈ (inducedGraph G Λ).edgeFinset.powerset.filter
+          (fun X => ∀ v : ↑Λ,
+            Even ((if v ∈ A then (1 : ℕ) else 0)
+                  + (X.filter (v ∈ ·)).card)),
+          Real.tanh (β * J) ^ X.card) /
+        (∑ X ∈ (inducedGraph G Λ).edgeFinset.powerset.filter
+          (fun X => ∀ v : ↑Λ, Even ((X.filter (v ∈ ·)).card)),
+          Real.tanh (β * J) ^ X.card) := by
+  rw [correlationΛ_apply]
+  exact IsingModel.correlation_high_temp_expansion_h_zero_closed
+    (inducedGraph G Λ) J β A
+
 /-- The correlation on `Λ` is bounded: `|⟨σ^A⟩| ≤ 1`. -/
 theorem abs_correlationΛ_le_one (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] (p : IsingParams ℝ)

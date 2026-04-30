@@ -2340,6 +2340,43 @@ theorem partitionFunctionΛ_latticeGraph_zero_params
       = (2 : ℝ) ^ Λ.card :=
   partitionFunctionΛ_zero_params (IsingModel.latticeGraph d) Λ β
 
+/-- **ℤ^d high-temperature partition function closed form (FV §3.7.3 eq. (3.45))**:
+on the ℤ^d induced subgraph at zero external field,
+`Z_Λ(⟨J, 0, β⟩) = 2^|Λ| · (cosh(β J))^|E_Λ| · ∑_{X ⊆ E_Λ, even-degree} tanh(β J)^|X|`.
+ℤ^d wrapper of `partitionFunctionΛ_high_temp_expansion_h_zero_closed`. -/
+theorem partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_closed
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ) :
+    partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ)
+      = (2 : ℝ) ^ Λ.card *
+        Real.cosh (β * J) ^
+          (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card *
+        ∑ X ∈ (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.powerset.filter
+          (fun X => ∀ v : ↑Λ, Even ((X.filter (v ∈ ·)).card)),
+          Real.tanh (β * J) ^ X.card :=
+  partitionFunctionΛ_high_temp_expansion_h_zero_closed
+    (IsingModel.latticeGraph d) Λ J β
+
+/-- **ℤ^d high-temperature correlation closed form (FV §3.7.3 eq. (3.46))**:
+on the ℤ^d induced subgraph at zero external field,
+`⟨σ_A⟩^Λ_{β,0} = (∑_{X : ∂X=A} tanh^|X|) / (∑_{X : ∂X=∅} tanh^|X|)`.
+ℤ^d wrapper of `correlationΛ_high_temp_expansion_h_zero_closed`. -/
+theorem correlationΛ_latticeGraph_high_temp_expansion_h_zero_closed
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
+    (A : Finset ↑Λ) :
+    correlationΛ (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) A
+      = (∑ X ∈ (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.powerset.filter
+          (fun X => ∀ v : ↑Λ,
+            Even ((if v ∈ A then (1 : ℕ) else 0)
+                  + (X.filter (v ∈ ·)).card)),
+          Real.tanh (β * J) ^ X.card) /
+        (∑ X ∈ (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.powerset.filter
+          (fun X => ∀ v : ↑Λ, Even ((X.filter (v ∈ ·)).card)),
+          Real.tanh (β * J) ^ X.card) :=
+  correlationΛ_high_temp_expansion_h_zero_closed
+    (IsingModel.latticeGraph d) Λ J β A
+
 /-- **ℤ^d log partitionFunctionΛ closed form at `J = 0`** (any Finset):
 `log Z_Λ(⟨0, h, β⟩) = |Λ| · log(2·cosh(β·h))`. -/
 theorem log_partitionFunctionΛ_latticeGraph_J_zero
