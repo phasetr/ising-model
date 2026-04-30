@@ -354,6 +354,28 @@ theorem freeEnergyAlongExhaustion_high_temp_h_zero_lower_bound
   exact freeEnergyΛ_high_temp_h_zero_lower_bound
     G (Λ.volume n) J β hβJ hne
 
+/-- **Along-exhaustion partition function high-temperature closed form (FV §3.7.3 eq. (3.45))**:
+at every stage `n`,
+`partitionFunctionAlongExhaustion G Λ ⟨J, 0, β⟩ n = 2^|Λ.volume n| · cosh(βJ)^|E_{Λ.volume n}| · ∑_{X ⊆ E_{Λ.volume n}, even-degree} tanh(βJ)^|X|`.
+Per-stage application of `partitionFunctionΛ_high_temp_expansion_h_zero_closed`
+(Step 285). -/
+theorem partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_closed
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (n : ℕ) :
+    partitionFunctionAlongExhaustion G Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) n
+      = (2 : ℝ) ^ (Λ.volume n).card *
+        Real.cosh (β * J) ^
+          (inducedGraph G (Λ.volume n)).edgeFinset.card *
+        ∑ X ∈ (inducedGraph G (Λ.volume n)).edgeFinset.powerset.filter
+          (fun X => ∀ v : ↑(Λ.volume n),
+            Even ((X.filter (v ∈ ·)).card)),
+          Real.tanh (β * J) ^ X.card := by
+  change partitionFunctionΛ G (Λ.volume n) (⟨J, 0, β⟩ : IsingParams ℝ) = _
+  exact partitionFunctionΛ_high_temp_expansion_h_zero_closed
+    G (Λ.volume n) J β
+
 /-- **Along-exhaustion correlation nonnegativity from FV (3.46)**:
 under `0 ≤ β * J`, at every stage `n`,
 `0 ≤ correlationAlongExhaustion G Λ ⟨J, 0, β⟩ A n`.
