@@ -3320,6 +3320,15 @@ $\partial X = A$. Dividing by $Z$ from the previous theorem
 cancels the prefactor $2^{|\iota|} (\cosh \beta J)^{|E|}$.
 \hfill$\square$
 
+\paragraph{Wrappers.} The two closed forms are lifted to the
+\(\Lambda\)-layer (\texttt{partitionFunctionΛ\_high\_temp\_expansion\_h\_zero\_closed},
+\texttt{correlationΛ\_high\_temp\_expansion\_h\_zero\_closed} in
+\texttt{AmbientLattice/Defs.lean}) and to the concrete
+\(\mathbb{Z}^d\) lattice
+(\texttt{partitionFunctionΛ\_latticeGraph\_high\_temp\_expansion\_h\_zero\_closed},
+\texttt{correlationΛ\_latticeGraph\_high\_temp\_expansion\_h\_zero\_closed}
+in \texttt{Concrete/LatticeGraphCorrelation.lean}).
+
 \section{Peierls argument (\texttt{Peierls.lean})}
 
 \par\noindent\textbf{Prerequisites:} \texttt{GibbsMeasure.lean},
