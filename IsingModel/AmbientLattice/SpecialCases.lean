@@ -315,6 +315,45 @@ theorem log_partitionFunctionAlongExhaustion_J_zero
       = ((Λ.volume n).card : ℝ) * Real.log (2 * Real.cosh (β * h)) := by
   rw [partitionFunctionAlongExhaustion_J_zero, Real.log_pow]
 
+/-! ## Along-exhaustion high-temperature lower bounds (GJ §18.3) -/
+
+/-- **Along-exhaustion partition function high-temperature lower bound**:
+under `0 ≤ β * J`, at every stage `n`,
+`partitionFunctionAlongExhaustion G Λ ⟨J, 0, β⟩ n
+  ≥ 2^|Λ.volume n| · (cosh(βJ))^|E_{Λ.volume n}|`.
+Per-stage application of `partitionFunctionΛ_high_temp_expansion_h_zero_lower_bound`
+(Step 287). -/
+theorem partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_lower_bound
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (n : ℕ) :
+    (2 : ℝ) ^ (Λ.volume n).card *
+        Real.cosh (β * J) ^
+          (inducedGraph G (Λ.volume n)).edgeFinset.card
+      ≤ partitionFunctionAlongExhaustion G Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) n := by
+  change _ ≤ partitionFunctionΛ G (Λ.volume n) (⟨J, 0, β⟩ : IsingParams ℝ)
+  exact partitionFunctionΛ_high_temp_expansion_h_zero_lower_bound
+    G (Λ.volume n) J β hβJ
+
+/-- **Along-exhaustion free-energy high-temperature lower bound**:
+under `0 ≤ β * J` and `0 < |Λ.volume n|`,
+`freeEnergyAlongExhaustion G Λ ⟨J, 0, β⟩ n
+  ≥ log 2 + (|E_{Λ.volume n}|/|Λ.volume n|) · log(cosh(β·J))`.
+Per-stage application of `freeEnergyΛ_high_temp_h_zero_lower_bound`
+(Step 289). -/
+theorem freeEnergyAlongExhaustion_high_temp_h_zero_lower_bound
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (n : ℕ) (hne : 0 < (Λ.volume n).card) :
+    Real.log 2 +
+        ((inducedGraph G (Λ.volume n)).edgeFinset.card : ℝ) /
+          (Λ.volume n).card * Real.log (Real.cosh (β * J))
+      ≤ freeEnergyAlongExhaustion G Λ (⟨J, 0, β⟩ : IsingParams ℝ) n := by
+  change _ ≤ freeEnergyΛ G (Λ.volume n) (⟨J, 0, β⟩ : IsingParams ℝ)
+  exact freeEnergyΛ_high_temp_h_zero_lower_bound
+    G (Λ.volume n) J β hβJ hne
+
 /-! ## Free-spin identity for induced subgraph -/
 
 omit [DecidableEq V] in
