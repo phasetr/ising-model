@@ -268,6 +268,21 @@ theorem partitionFunctionΛ_zero_params
   push_cast
   rw [Fintype.card_coe]
 
+/-- **Λ-level partition function high-temperature expansion at `h = 0`**:
+`Z_Λ(⟨J, 0, β⟩) = (cosh βJ)^|E_Λ| · ∑_σ ∏_e (1 + tanh(βJ) σ_iσ_j)`.
+Direct lift of `IsingModel.partitionFunction_high_temp_expansion_h_zero`
+(Step 282). -/
+theorem partitionFunctionΛ_high_temp_expansion_h_zero
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (J β : ℝ) :
+    partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) =
+      Real.cosh (β * J) ^ (inducedGraph G Λ).edgeFinset.card *
+      ∑ σ : Config ↑Λ,
+        ∏ e ∈ (inducedGraph G Λ).edgeFinset,
+          (1 + Real.tanh (β * J) * edgeSpin σ e) := by
+  rw [partitionFunctionΛ_apply,
+      IsingModel.partitionFunction_high_temp_expansion_h_zero]
+
 /-- **Λ-level partition function high-temperature expansion (general h)**:
 for any parameter `p = (J, h, β)`,
 `Z_Λ(p) = (cosh βJ)^|E_Λ| · ∑_σ ∏_e (1 + tanh(βJ) σ_iσ_j) · exp(βh ∑_i σ_i)`.
