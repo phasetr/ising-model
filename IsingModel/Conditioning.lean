@@ -1524,6 +1524,37 @@ theorem one_le_sum_pow_tanh_even_subgraph
   rw [hempty_term] at hsingle
   exact hsingle
 
+/-- **FV (3.45) closed form at `J = 0` reduces to `Z = 2^|ι|`**: a
+sanity check that `partitionFunction_high_temp_expansion_h_zero_closed`
+specialises consistently with `partitionFunction_J_zero` at `h = 0`.
+At `J = 0`: `cosh(β·0)^|E| = 1`, the even-subgraph sum reduces to `1`
+(only `X = ∅` contributes), giving `Z = 2^|ι| · 1 · 1 = 2^|ι|`. -/
+theorem partitionFunction_high_temp_expansion_h_zero_closed_at_J_zero
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (β : ℝ) :
+    partitionFunction G (⟨0, 0, β⟩ : IsingParams ℝ)
+      = (2 : ℝ) ^ Fintype.card ι := by
+  rw [partitionFunction_high_temp_expansion_h_zero_closed]
+  rw [show (β * (0 : ℝ)) = 0 from by ring, Real.cosh_zero, Real.tanh_zero]
+  rw [one_pow]
+  -- After simplifications: 2^|ι| * ∑_X 0^|X| · [filter] = 2^|ι|
+  -- Split the sum: only X = ∅ contributes 0^0 = 1; others 0^|X| = 0
+  have hsum : ∑ X ∈ G.edgeFinset.powerset.filter
+        (fun X : Finset (Sym2 ι) =>
+          ∀ v : ι, Even ((X.filter (v ∈ ·)).card)),
+        (0 : ℝ) ^ X.card = 1 := by
+    rw [Finset.sum_eq_single (∅ : Finset (Sym2 ι))]
+    · simp
+    · intros X hXmem hXne
+      have hpos : 0 < X.card :=
+        Finset.card_pos.mpr (Finset.nonempty_iff_ne_empty.mpr hXne)
+      rw [zero_pow hpos.ne']
+    · intro hempty_notmem
+      exfalso
+      apply hempty_notmem
+      refine Finset.mem_filter.mpr ⟨Finset.empty_mem_powerset _, ?_⟩
+      intro v; simp
+  rw [hsum]; ring
+
 /-- **Lower bound from the empty-X term**: under `0 ≤ β J`, the
 high-temperature expansion FV (3.45) yields the lower bound
 `Z(G; J, 0, β) ≥ 2^|ι| · (cosh(βJ))^|E|`. The empty edge subset
