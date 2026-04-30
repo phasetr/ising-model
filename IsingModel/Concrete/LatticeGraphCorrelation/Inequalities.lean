@@ -4459,6 +4459,48 @@ theorem correlationInfinite_ae_differentiableWithinAt_beta_zero_closed
   have hmono := correlationInfinite_monotoneOn_beta_zero_closed Λ r_val s_val J hJ b
   exact hmono.locallyBoundedVariationOn.ae_differentiableWithinAt measurableSet_Icc
 
+/-- **MonotoneOn corr_∞ in J on closed interval [0, b]** (Step 233 helper):
+For `0 < β`: `J ↦ corr_∞(r, s, J)` is monotone non-decreasing on `[0, b]`.
+
+Direct J-direction analogue of `correlationInfinite_monotoneOn_beta_zero_closed`.
+Proof: at J > 0 use `correlationInfinite_monotone_J` (MonotoneOn `Ici 0`);
+at J = 0, corr_∞(0) = 0 ≤ corr_∞(J₂) by `correlationInfinite_nonneg`. -/
+theorem correlationInfinite_monotoneOn_J_zero_closed
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (r_val s_val : Fin d → ℤ) (β : ℝ) (hβ : 0 < β) (b : ℝ) :
+    MonotoneOn
+      (fun J => correlationInfinite (IsingModel.latticeGraph d) Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+                    {r_val, s_val})
+      (Set.Icc 0 b) := by
+  intro J₁ hJ₁ J₂ hJ₂ hJ_le
+  simp only
+  rcases eq_or_lt_of_le hJ₁.1 with hJ₁0 | hJ₁_pos
+  · rw [← hJ₁0, correlationInfinite_eq_zero_at_J_zero]
+    rcases eq_or_lt_of_le (hJ₁0.le.trans hJ_le) with hJ₂0 | hJ₂_pos
+    · rw [← hJ₂0, correlationInfinite_eq_zero_at_J_zero]
+    · exact correlationInfinite_nonneg _ _ _ ⟨hJ₂_pos.le, le_refl 0, hβ⟩ _
+  · have hJ₁_in : J₁ ∈ Set.Ici (0 : ℝ) := Set.mem_Ici.mpr hJ₁_pos.le
+    have hJ₂_in : J₂ ∈ Set.Ici (0 : ℝ) := Set.mem_Ici.mpr (hJ₁_pos.le.trans hJ_le)
+    have hmono := correlationInfinite_monotone_J (IsingModel.latticeGraph d) Λ
+      (le_refl 0) hβ {r_val, s_val} hJ₁_in hJ₂_in hJ_le
+    exact hmono
+
+/-- **A.e. differentiability of corr_∞ in J on closed [0, b]** (Step 233):
+For `0 < β`, `b ∈ ℝ`: `J ↦ corr_∞(J)` is differentiable within `[0, b]` at Lebesgue-a.e. J.
+
+Direct J-direction analogue of Step 179. Proof: corr_∞ is monotone on `[0, b]`
+(helper above), hence locally bounded variation, hence a.e. differentiable. -/
+theorem correlationInfinite_ae_differentiableWithinAt_J_zero_closed
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (r_val s_val : Fin d → ℤ) (β : ℝ) (hβ : 0 < β) (b : ℝ) :
+    ∀ᵐ J ∂MeasureTheory.Measure.restrict MeasureTheory.volume (Set.Icc 0 b),
+    DifferentiableWithinAt ℝ
+      (fun J => correlationInfinite (IsingModel.latticeGraph d) Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+                    {r_val, s_val})
+      (Set.Icc 0 b) J := by
+  have hmono := correlationInfinite_monotoneOn_J_zero_closed Λ r_val s_val β hβ b
+  exact hmono.locallyBoundedVariationOn.ae_differentiableWithinAt measurableSet_Icc
+
 /-- **Helper for Step 180**: ordered Lipschitz bound on [0, b] (closed including β = 0).
 For `0 ≤ β₁ ≤ β₂` with `β₂ ≤ b` and `bJ·2d < 1`:
 `corr_∞(β₂) - corr_∞(β₁) ≤ C · (β₂ - β₁)` where `C = J·M² + J·4d`. -/
