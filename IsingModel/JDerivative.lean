@@ -498,4 +498,42 @@ theorem correlation_J_deriv_le_lebowitz_tight
           mul_le_mul_of_nonneg_left h_bound hβ.le
     _ = β * G.edgeFinset.sum leb + β * ↑(#deg) := by ring
 
+/-! ## Step 255: free energy J-derivative -/
+
+/-- **Free energy J-derivative** (Step 255):
+For any `(J, h, β)` and finite-volume Ising:
+
+  `d/dJ freeEnergy(J) = |ι|⁻¹ · β · gibbsExpectation(Σ_e edgeSpin σ e)`
+
+since `freeEnergy = |ι|⁻¹ · log(partitionFunction)` and
+`d/dJ log(Z) = Z'(J)/Z(J) = β · ⟨Σ_e edgeSpin⟩` by `hasDerivAt_partitionFunction_J`.
+
+Reference: Glimm–Jaffe §4.6 / §17.5; standard thermodynamic identity. -/
+theorem hasDerivAt_freeEnergy_J
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h β : ℝ) :
+    HasDerivAt (fun J' => freeEnergy G (⟨J', h, β⟩ : IsingParams ℝ))
+      ((Fintype.card ι : ℝ)⁻¹ *
+        gibbsExpectation G (⟨J, h, β⟩ : IsingParams ℝ)
+          (fun σ => β * (∑ e ∈ G.edgeFinset, edgeSpin (K := ℝ) σ e))) J := by
+  set p := (⟨J, h, β⟩ : IsingParams ℝ)
+  have hZpos : 0 < partitionFunction G p := partitionFunction_pos G p
+  have hZne : partitionFunction G p ≠ 0 := hZpos.ne'
+  have hZderiv := hasDerivAt_partitionFunction_J G J h β
+  have hlogZ : HasDerivAt
+      (fun J' => Real.log (partitionFunction G (⟨J', h, β⟩ : IsingParams ℝ)))
+      ((∑ σ, β * (∑ e ∈ G.edgeFinset, edgeSpin (K := ℝ) σ e) *
+          boltzmannWeight G p σ) / partitionFunction G p) J := by
+    have h := hZderiv.log hZne
+    convert h using 1
+  have hfreeE : (fun J' => freeEnergy G (⟨J', h, β⟩ : IsingParams ℝ)) =
+      (fun J' => (Fintype.card ι : ℝ)⁻¹ *
+        Real.log (partitionFunction G (⟨J', h, β⟩ : IsingParams ℝ))) := by
+    funext J'; rfl
+  rw [hfreeE]
+  have h := hlogZ.const_mul ((Fintype.card ι : ℝ)⁻¹)
+  convert h using 1
+  unfold gibbsExpectation
+  field_simp
+
 end IsingModel
