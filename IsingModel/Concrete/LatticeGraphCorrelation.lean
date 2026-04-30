@@ -2420,6 +2420,17 @@ theorem sum_high_temp_numerator_h_zero_odd_card_eq_zero_latticeGraph
   sum_high_temp_numerator_h_zero_odd_card_eq_zero_Λ
     (IsingModel.latticeGraph d) Λ J β A hA_odd
 
+/-- **ℤ^d Λ-level correlation nonnegativity from FV (3.46)** at `h = 0`:
+under `0 ≤ β * J`, `0 ≤ correlationΛ (latticeGraph d) Λ ⟨J, 0, β⟩ A`.
+ℤ^d wrapper of `correlationΛ_high_temp_h_zero_nonneg`. -/
+theorem correlationΛ_latticeGraph_high_temp_h_zero_nonneg
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
+    (hβJ : 0 ≤ β * J) (A : Finset ↑Λ) :
+    0 ≤ correlationΛ (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) A :=
+  correlationΛ_high_temp_h_zero_nonneg
+    (IsingModel.latticeGraph d) Λ J β hβJ A
+
 /-- **ℤ^d log partitionFunctionΛ closed form at `J = 0`** (any Finset):
 `log Z_Λ(⟨0, h, β⟩) = |Λ| · log(2·cosh(β·h))`. -/
 theorem log_partitionFunctionΛ_latticeGraph_J_zero
