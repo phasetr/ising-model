@@ -376,6 +376,21 @@ theorem correlationΛ_high_temp_h_zero_nonneg
   exact IsingModel.correlation_high_temp_h_zero_nonneg
     (inducedGraph G Λ) J β hβJ A
 
+/-- **Λ-level high-temperature even-subgraph sum is `≥ 1`**: under
+`0 ≤ β * J`,
+`∑_{X ⊆ E_Λ, even-degree at every v ∈ ↑Λ} tanh(β J)^|X| ≥ 1`.
+Direct lift of `IsingModel.one_le_sum_pow_tanh_even_subgraph`
+(Step 295) through the induced subgraph on `Λ`. -/
+theorem one_le_sum_pow_tanh_even_subgraph_Λ
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) :
+    (1 : ℝ) ≤ ∑ X ∈ (inducedGraph G Λ).edgeFinset.powerset.filter
+        (fun X : Finset (Sym2 ↑Λ) =>
+          ∀ v : ↑Λ, Even ((X.filter (v ∈ ·)).card)),
+        Real.tanh (β * J) ^ X.card :=
+  IsingModel.one_le_sum_pow_tanh_even_subgraph (inducedGraph G Λ) J β hβJ
+
 /-- The correlation on `Λ` is bounded: `|⟨σ^A⟩| ≤ 1`. -/
 theorem abs_correlationΛ_le_one (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] (p : IsingParams ℝ)
