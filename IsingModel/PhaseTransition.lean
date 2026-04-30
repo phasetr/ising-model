@@ -1,6 +1,7 @@
 import IsingModel.Inequalities.GHS
 import IsingModel.BetaDerivative
 import IsingModel.FieldDerivative
+import IsingModel.JDerivative
 
 /-!
 # Phase transitions: pure and mixed phases
@@ -976,5 +977,43 @@ theorem magnetization_differentiable_J
     Differentiable ℝ (fun J' => magnetization G (⟨J', h, β⟩ : IsingParams ℝ) i) := by
   unfold magnetization
   exact correlation_differentiable_J G h β _
+
+/-- **Magnetization HasDerivAt J with explicit value** (Step 215):
+For any finite-volume Ising at any `(J, h, β)`,
+`d/dJ magnetization(i) = d/dJ ⟨σ_i⟩ = β · Σ_e [⟨σ^{{i}△{u,v}}⟩ - ⟨σ_i⟩·⟨σ^{u,v}⟩]`.
+Direct from `hasDerivAt_correlation_J` at `A = {i}`. -/
+theorem magnetization_hasDerivAt_J
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h β : ℝ) (i : ι) :
+    HasDerivAt (fun J' => magnetization G (⟨J', h, β⟩ : IsingParams ℝ) i)
+      (β * ∑ e ∈ G.edgeFinset,
+        Sym2.lift ⟨fun u v =>
+          correlation G (⟨J, h, β⟩ : IsingParams ℝ) (symmDiff {i} {u, v}) -
+          correlation G (⟨J, h, β⟩ : IsingParams ℝ) {i} *
+          correlation G (⟨J, h, β⟩ : IsingParams ℝ) {u, v},
+        fun u v => by simp [Finset.pair_comm v u]⟩ e)
+      J := by
+  unfold magnetization
+  exact hasDerivAt_correlation_J G J h β {i}
+
+/-- **Susceptibility HasDerivAt J with explicit value** (Step 215):
+For finite-volume Ising at any `(J, h, β)`, `susceptibility(i, J) = ∑_j truncated2(i, j, J)`
+has a J-derivative equal to the sum of J-derivatives of `truncated2`. -/
+theorem susceptibility_hasDerivAt_J
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h β : ℝ) (i : ι) :
+    HasDerivAt (fun J' => susceptibility G (⟨J', h, β⟩ : IsingParams ℝ) i)
+      (∑ j : ι, deriv (fun J' => truncated2 G (⟨J', h, β⟩ : IsingParams ℝ) i j) J) J := by
+  have heq_fun : (fun J' => susceptibility G (⟨J', h, β⟩ : IsingParams ℝ) i) =
+      (fun J' => ∑ j : ι, truncated2 G (⟨J', h, β⟩ : IsingParams ℝ) i j) := by
+    funext J'
+    exact susceptibility_apply G _ i
+  rw [heq_fun]
+  apply HasDerivAt.fun_sum
+  intro j _
+  have h_t := truncated2_hasDerivAt_J G J h β i j
+  rw [show deriv (fun J' => truncated2 G (⟨J', h, β⟩ : IsingParams ℝ) i j) J =
+      _ from h_t.deriv]
+  exact h_t
 
 end IsingModel
