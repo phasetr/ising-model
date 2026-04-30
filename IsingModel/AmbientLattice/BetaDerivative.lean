@@ -292,6 +292,27 @@ theorem magnetizationAlongExhaustion_differentiable_beta_gen
   simp only [magnetizationAlongExhaustion_apply]
   exact correlationAlongExhaustion_differentiable_beta_gen G Λ J {i} n
 
+/-- **magnetizationAlongExhaustion Continuous in β at general h** (Step 250, general G, Λ).
+Extends Step 213 from h = 0 to general h via Step 249. -/
+theorem magnetizationAlongExhaustion_continuous_beta_general_h_gen
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J h : ℝ) (i : V) (n : ℕ) :
+    Continuous
+      (fun β' => magnetizationAlongExhaustion G Λ (⟨J, h, β'⟩ : IsingParams ℝ) i n) := by
+  simp only [magnetizationAlongExhaustion_apply]
+  exact correlationAlongExhaustion_continuous_beta_general_h_gen G Λ J h {i} n
+
+/-- **magnetizationAlongExhaustion Differentiable in β at general h** (Step 250, general G, Λ). -/
+theorem magnetizationAlongExhaustion_differentiable_beta_general_h_gen
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J h : ℝ) (i : V) (n : ℕ) :
+    Differentiable ℝ
+      (fun β' => magnetizationAlongExhaustion G Λ (⟨J, h, β'⟩ : IsingParams ℝ) i n) := by
+  simp only [magnetizationAlongExhaustion_apply]
+  exact correlationAlongExhaustion_differentiable_beta_general_h_gen G Λ J h {i} n
+
 /-- **magnetizationAlongExhaustion Continuous in h** (Step 213, general G, Λ). -/
 theorem magnetizationAlongExhaustion_continuous_field_gen
     (G : SimpleGraph V) (Λ : Exhaustion V)
