@@ -900,4 +900,41 @@ theorem magnetization_differentiable_field
   unfold magnetization
   exact correlation_differentiable_field G J β _
 
+/-- **Susceptibility is ContinuousAt h** (Step 201).
+For finite-volume Ising, `susceptibility(i, h) = ∑_j truncated2(i, j, h)` is continuous
+in h. Finite-sum continuity + `truncated2_continuousAt_field`. -/
+theorem susceptibility_continuousAt_field
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h β : ℝ) (i : ι) :
+    ContinuousAt (fun h' => susceptibility G (⟨J, h', β⟩ : IsingParams ℝ) i) h := by
+  unfold susceptibility
+  exact tendsto_finset_sum _ (fun j _ => truncated2_continuousAt_field G J h β i j)
+
+/-- **Susceptibility is Continuous in h** (Step 201, whole-ℝ). -/
+theorem susceptibility_continuous_field
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (i : ι) :
+    Continuous (fun h' => susceptibility G (⟨J, h', β⟩ : IsingParams ℝ) i) :=
+  continuous_iff_continuousAt.mpr fun h => susceptibility_continuousAt_field G J h β i
+
+/-- **Susceptibility is DifferentiableAt h** (Step 201). -/
+theorem susceptibility_differentiableAt_field
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h β : ℝ) (i : ι) :
+    DifferentiableAt ℝ (fun h' => susceptibility G (⟨J, h', β⟩ : IsingParams ℝ) i) h := by
+  have heq_fun : (fun h' => susceptibility G (⟨J, h', β⟩ : IsingParams ℝ) i) =
+      (fun h' => ∑ j : ι, truncated2 G (⟨J, h', β⟩ : IsingParams ℝ) i j) := by
+    funext h'
+    exact susceptibility_apply G _ i
+  rw [heq_fun]
+  exact DifferentiableAt.fun_sum (fun j _ =>
+    truncated2_differentiableAt_field G J h β i j)
+
+/-- **Susceptibility is Differentiable in h** (Step 201, whole-ℝ). -/
+theorem susceptibility_differentiable_field
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (i : ι) :
+    Differentiable ℝ (fun h' => susceptibility G (⟨J, h', β⟩ : IsingParams ℝ) i) :=
+  fun h => susceptibility_differentiableAt_field G J h β i
+
 end IsingModel
