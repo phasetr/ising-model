@@ -584,6 +584,32 @@ theorem truncated2_continuousAt_beta
   exact (correlation_continuousAt_beta G J β _).sub
     ((correlation_continuousAt_beta G J β _).mul (correlation_continuousAt_beta G J β _))
 
+/-- **truncated2 has a β-derivative at h = 0** (Step 191):
+For any finite-volume Ising at h = 0, `truncated2 G ⟨J, 0, β⟩ i j` has a derivative in β.
+
+At h = 0, `truncated2 = correlation {i,j} - correlation {i} · correlation {j}`. Each
+correlation has a derivative (`hasDerivAt_correlation_beta`), so the product rule gives
+the derivative for truncated2. -/
+theorem truncated2_hasDerivAt_beta
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (i j : ι) :
+    HasDerivAt (fun β' => truncated2 G (⟨J, 0, β'⟩ : IsingParams ℝ) i j)
+      (deriv (fun β' => correlation G (⟨J, 0, β'⟩ : IsingParams ℝ) {i, j}) β -
+       (deriv (fun β' => correlation G (⟨J, 0, β'⟩ : IsingParams ℝ) {i}) β *
+        correlation G (⟨J, 0, β⟩ : IsingParams ℝ) {j} +
+        correlation G (⟨J, 0, β⟩ : IsingParams ℝ) {i} *
+        deriv (fun β' => correlation G (⟨J, 0, β'⟩ : IsingParams ℝ) {j}) β))
+      β := by
+  unfold truncated2
+  have hij := hasDerivAt_correlation_beta G J β {i, j}
+  have hi := hasDerivAt_correlation_beta G J β {i}
+  have hj := hasDerivAt_correlation_beta G J β {j}
+  have h_prod := hi.mul hj
+  have h_diff := hij.sub h_prod
+  -- Convert HasDerivAt's value to use deriv
+  rw [hij.deriv, hi.deriv, hj.deriv] at *
+  exact h_diff
+
 /-! ## Monotonicity in β (Step 122): GKS-II-based bound -/
 
 /-- The β-derivative of two-point correlations is nonneg (infinitesimal form of β-monotonicity).
