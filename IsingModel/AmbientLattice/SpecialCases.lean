@@ -393,6 +393,32 @@ theorem correlationAlongExhaustion_high_temp_h_zero_nonneg
       (liftFinset A hAn)
   · rw [dif_neg hAn]
 
+/-- **Along-exhaustion correlation high-temperature closed form (FV §3.7.3 eq. (3.46))**:
+at every stage `n` with `A ⊆ Λ.volume n`, the per-stage correlation
+admits the FV (3.46) ratio form. When `A ⊄ Λ.volume n`, the
+along-exhaustion correlation is `0` by definition.
+
+For the `A ⊆` case, lifts via `liftFinset` and applies
+`correlationΛ_high_temp_expansion_h_zero_closed` (Step 285). -/
+theorem correlationAlongExhaustion_high_temp_expansion_h_zero_closed
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (A : Finset V) (n : ℕ) (hAn : A ⊆ Λ.volume n) :
+    correlationAlongExhaustion G Λ (⟨J, 0, β⟩ : IsingParams ℝ) A n =
+      (∑ X ∈ (inducedGraph G (Λ.volume n)).edgeFinset.powerset.filter
+          (fun X : Finset (Sym2 ↑(Λ.volume n)) => ∀ v : ↑(Λ.volume n),
+            Even ((if v ∈ liftFinset A hAn then (1 : ℕ) else 0)
+                  + (X.filter (v ∈ ·)).card)),
+          Real.tanh (β * J) ^ X.card) /
+      (∑ X ∈ (inducedGraph G (Λ.volume n)).edgeFinset.powerset.filter
+          (fun X : Finset (Sym2 ↑(Λ.volume n)) =>
+            ∀ v : ↑(Λ.volume n), Even ((X.filter (v ∈ ·)).card)),
+          Real.tanh (β * J) ^ X.card) := by
+  unfold correlationAlongExhaustion
+  rw [dif_pos hAn]
+  exact correlationΛ_high_temp_expansion_h_zero_closed G (Λ.volume n) J β
+    (liftFinset A hAn)
+
 /-- **Along-exhaustion correlation Z₂ symmetry at h = 0 (GJ §18.3)**:
 for any ambient `A : Finset V` with odd cardinality, at every stage `n`
 where `A ⊆ Λ.volume n`, the per-stage correlation

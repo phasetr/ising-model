@@ -2487,6 +2487,27 @@ theorem correlationΛ_latticeGraph_high_temp_h_zero_odd_card_eq_zero
   correlationΛ_high_temp_h_zero_odd_card_eq_zero
     (IsingModel.latticeGraph d) Λ J β A hA_odd
 
+/-- **ℤ^d along-exhaustion correlation high-temperature closed form (FV §3.7.3 eq. (3.46))**:
+at every stage `n` with `A ⊆ Λ.volume n`, FV (3.46) closed form holds
+on the lifted Finset. When `A ⊄`, equals `0`.
+ℤ^d wrapper of `correlationAlongExhaustion_high_temp_expansion_h_zero_closed`. -/
+theorem correlationAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_closed
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
+    (A : Finset (Fin d → ℤ)) (n : ℕ) (hAn : A ⊆ Λ.volume n) :
+    correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) A n =
+      (∑ X ∈ (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.powerset.filter
+          (fun X : Finset (Sym2 ↑(Λ.volume n)) => ∀ v : ↑(Λ.volume n),
+            Even ((if v ∈ liftFinset A hAn then (1 : ℕ) else 0)
+                  + (X.filter (v ∈ ·)).card)),
+          Real.tanh (β * J) ^ X.card) /
+      (∑ X ∈ (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.powerset.filter
+          (fun X : Finset (Sym2 ↑(Λ.volume n)) =>
+            ∀ v : ↑(Λ.volume n), Even ((X.filter (v ∈ ·)).card)),
+          Real.tanh (β * J) ^ X.card) :=
+  correlationAlongExhaustion_high_temp_expansion_h_zero_closed
+    (IsingModel.latticeGraph d) Λ J β A n hAn
+
 /-- **ℤ^d along-exhaustion Z₂ symmetry of correlation at h = 0**:
 for ambient `A : Finset (Fin d → ℤ)` of odd cardinality,
 `correlationAlongExhaustion (latticeGraph d) Λ ⟨J, 0, β⟩ A n = 0` at
