@@ -2,6 +2,11 @@ import IsingModel.Hamiltonian
 import Mathlib.Analysis.Complex.Exponential
 import Mathlib.Analysis.Complex.Trigonometric
 import Mathlib.Analysis.SpecialFunctions.Exp
+import Mathlib.Analysis.Calculus.Deriv.Basic
+import Mathlib.Analysis.Calculus.Deriv.Add
+import Mathlib.Analysis.Calculus.Deriv.Mul
+import Mathlib.Analysis.Calculus.Deriv.Inv
+import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 
 /-!
 # Gibbs measure, partition function, and expectations
@@ -547,5 +552,34 @@ theorem correlation_continuous_J (G : SimpleGraph ι) [Fintype G.edgeSet]
       exact (partitionFunction_pos G _).ne'
   · exact continuous_finset_sum _ fun σ _ =>
       continuous_const.mul (boltzmannWeight_continuous_J G h β σ)
+
+omit [DecidableEq ι] in
+/-- **boltzmannWeight Differentiable in J** (Step 210).
+boltzmannWeight is exp of linear in J ⇒ smooth in J. -/
+theorem boltzmannWeight_differentiable_J (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (h β : ℝ) (σ : Config ι) :
+    Differentiable ℝ (fun J' => boltzmannWeight G (⟨J', h, β⟩ : IsingParams ℝ) σ) := by
+  unfold boltzmannWeight hamiltonian interactionEnergy externalFieldEnergy
+  fun_prop
+
+/-- **partitionFunction Differentiable in J** (Step 210). -/
+theorem partitionFunction_differentiable_J (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (h β : ℝ) :
+    Differentiable ℝ (fun J' => partitionFunction G (⟨J', h, β⟩ : IsingParams ℝ)) := by
+  unfold partitionFunction
+  exact Differentiable.fun_sum (fun σ _ => boltzmannWeight_differentiable_J G h β σ)
+
+/-- **correlation Differentiable in J** (Step 210). -/
+theorem correlation_differentiable_J (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (h β : ℝ) (A : Finset ι) :
+    Differentiable ℝ (fun J' => correlation G (⟨J', h, β⟩ : IsingParams ℝ) A) := by
+  unfold correlation gibbsExpectation
+  apply Differentiable.mul
+  · apply Differentiable.inv
+    · exact partitionFunction_differentiable_J G h β
+    · intro J'
+      exact (partitionFunction_pos G _).ne'
+  · exact Differentiable.fun_sum (fun σ _ =>
+      (differentiable_const _).mul (boltzmannWeight_differentiable_J G h β σ))
 
 end IsingModel
