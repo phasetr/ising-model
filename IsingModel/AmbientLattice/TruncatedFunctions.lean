@@ -1611,6 +1611,44 @@ theorem truncated3Infinite_J_zero
       Finset.card_singleton, Finset.card_singleton, Finset.card_singleton]
   ring
 
+/-- **`truncated4Infinite` at J = 0 (pairwise distinct) closed form** (Step 277, GJ §4.3):
+At J = 0 with `i, j, k, l` pairwise distinct:
+`truncated4Infinite(i, j, k, l) = -2·tanh(βh)^4`.
+
+Note this is `≤ 0`, consistent with `truncated4Infinite_nonpos_h_zero` (Cor 4.3.3 at h=0,
+where the value is `0`); for `h > 0` it gives a strictly negative value.
+
+**Proof**: `correlationInfinite_J_zero` gives `⟨σ^A⟩ = tanh(βh)^|A|`. With pairwise
+distinct sites: `U_4 = t^4 − 3·t^2·t^2 = -2·t^4`. -/
+theorem truncated4Infinite_J_zero
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (h β : ℝ) (hf : Ferromagnetic (⟨(0 : ℝ), h, β⟩ : IsingParams ℝ))
+    {i j k l : V} (hij : i ≠ j) (hik : i ≠ k) (hil : i ≠ l)
+    (hjk : j ≠ k) (hjl : j ≠ l) (hkl : k ≠ l) :
+    truncated4Infinite G Λ ⟨0, h, β⟩ i j k l = -2 * Real.tanh (β * h) ^ 4 := by
+  unfold truncated4Infinite
+  -- Card of {i, j, k, l} = 4 when pairwise distinct
+  have hcard_ijkl : ({i, j, k, l} : Finset V).card = 4 := by
+    rw [show ({i, j, k, l} : Finset V) = insert i (insert j (insert k {l})) from rfl]
+    rw [Finset.card_insert_of_notMem]
+    · rw [Finset.card_insert_of_notMem]
+      · rw [Finset.card_insert_of_notMem (by simp [hkl] : k ∉ ({l} : Finset V)),
+            Finset.card_singleton]
+      · simp [hjk, hjl]
+    · simp [hij, hik, hil]
+  rw [correlationInfinite_J_zero G Λ h β hf {i, j, k, l},
+      correlationInfinite_J_zero G Λ h β hf {i, j},
+      correlationInfinite_J_zero G Λ h β hf {k, l},
+      correlationInfinite_J_zero G Λ h β hf {i, k},
+      correlationInfinite_J_zero G Λ h β hf {j, l},
+      correlationInfinite_J_zero G Λ h β hf {i, l},
+      correlationInfinite_J_zero G Λ h β hf {j, k},
+      hcard_ijkl, Finset.card_pair hij, Finset.card_pair hkl,
+      Finset.card_pair hik, Finset.card_pair hjl,
+      Finset.card_pair hil, Finset.card_pair hjk]
+  ring
+
 
 end Ambient
 end IsingModel
