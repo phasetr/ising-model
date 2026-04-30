@@ -4179,6 +4179,29 @@ theorem susceptibilityAlongExhaustion_continuous_J
   · simp only [hi, dif_neg, not_false_iff]
     exact continuous_const
 
+/-- **susceptibilityAlongExhaustion Differentiable in J** (Step 212). -/
+theorem susceptibilityAlongExhaustion_differentiable_J
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (i : Fin d → ℤ) (h β : ℝ) (n : ℕ) :
+    Differentiable ℝ
+      (fun J' => susceptibilityAlongExhaustion (IsingModel.latticeGraph d) Λ
+                  (⟨J', h, β⟩ : IsingParams ℝ) i n) := by
+  unfold susceptibilityAlongExhaustion
+  by_cases hi : i ∈ Λ.volume n
+  · simp only [hi, dif_pos]
+    have heq : (fun J' => susceptibilityΛ (IsingModel.latticeGraph d) (Λ.volume n)
+                  (⟨J', h, β⟩ : IsingParams ℝ) ⟨i, hi⟩) =
+               (fun J' => IsingModel.susceptibility
+                  (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+                  (⟨J', h, β⟩ : IsingParams ℝ) ⟨i, hi⟩) := by
+      funext J'
+      exact susceptibilityΛ_apply (IsingModel.latticeGraph d) (Λ.volume n)
+        (⟨J', h, β⟩ : IsingParams ℝ) ⟨i, hi⟩
+    rw [heq]
+    exact IsingModel.susceptibility_differentiable_J _ h β _
+  · simp only [hi, dif_neg, not_false_iff]
+    exact differentiable_const _
+
 end Ambient
 
 end IsingModel
