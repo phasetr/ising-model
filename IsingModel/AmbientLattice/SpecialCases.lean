@@ -354,6 +354,26 @@ theorem freeEnergyAlongExhaustion_high_temp_h_zero_lower_bound
   exact freeEnergyΛ_high_temp_h_zero_lower_bound
     G (Λ.volume n) J β hβJ hne
 
+/-- **Along-exhaustion partition function high-temperature expansion (general h)**:
+at every stage `n`,
+`Z_n(p) = (cosh βJ)^|E_n| · ∑_σ ∏_e (1 + tanh(βJ) σ_iσ_j) · exp(βh ∑_i σ_i)`.
+Per-stage application of `partitionFunctionΛ_high_temp_expansion`
+(Step 311). -/
+theorem partitionFunctionAlongExhaustion_high_temp_expansion
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (n : ℕ) :
+    partitionFunctionAlongExhaustion G Λ p n =
+      Real.cosh (p.β * p.J) ^
+          (inducedGraph G (Λ.volume n)).edgeFinset.card *
+      ∑ σ : Config ↑(Λ.volume n),
+        (∏ e ∈ (inducedGraph G (Λ.volume n)).edgeFinset,
+          (1 + Real.tanh (p.β * p.J) * edgeSpin σ e)) *
+        Real.exp (p.β * p.h *
+                  ∑ i : ↑(Λ.volume n), Spin.sign ℝ (σ i)) := by
+  change partitionFunctionΛ G (Λ.volume n) p = _
+  exact partitionFunctionΛ_high_temp_expansion G (Λ.volume n) p
+
 /-- **Along-exhaustion general-h subset expansion (GJ §18.3)**:
 at every stage `n`,
 `Z_n(p) = (cosh βJ)^|E_n| · ∑_X tanh(βJ)^|X| · ∑_σ (∏_{e ∈ X} σ_iσ_j) exp(βh ∑ σ_i)`.

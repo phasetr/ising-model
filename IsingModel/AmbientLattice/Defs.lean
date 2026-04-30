@@ -268,6 +268,23 @@ theorem partitionFunctionΛ_zero_params
   push_cast
   rw [Fintype.card_coe]
 
+/-- **Λ-level partition function high-temperature expansion (general h)**:
+for any parameter `p = (J, h, β)`,
+`Z_Λ(p) = (cosh βJ)^|E_Λ| · ∑_σ ∏_e (1 + tanh(βJ) σ_iσ_j) · exp(βh ∑_i σ_i)`.
+Direct lift of `IsingModel.partitionFunction_high_temp_expansion`
+(Step 281). -/
+theorem partitionFunctionΛ_high_temp_expansion
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (p : IsingParams ℝ) :
+    partitionFunctionΛ G Λ p =
+      Real.cosh (p.β * p.J) ^ (inducedGraph G Λ).edgeFinset.card *
+      ∑ σ : Config ↑Λ,
+        (∏ e ∈ (inducedGraph G Λ).edgeFinset,
+          (1 + Real.tanh (p.β * p.J) * edgeSpin σ e)) *
+        Real.exp (p.β * p.h * ∑ i : ↑Λ, Spin.sign ℝ (σ i)) := by
+  rw [partitionFunctionΛ_apply,
+      IsingModel.partitionFunction_high_temp_expansion]
+
 /-- **Λ-level high-temperature partition function closed form (FV §3.7.3 eq. (3.45))**:
 on the induced subgraph `inducedGraph G Λ` at zero external field,
 `Z_Λ(⟨J, 0, β⟩) = 2^|Λ| · (cosh(β J))^|E_Λ| · ∑_{X ⊆ E_Λ, even-degree} tanh(β J)^|X|`.
