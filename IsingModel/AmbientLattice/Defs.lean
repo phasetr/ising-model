@@ -398,6 +398,29 @@ theorem partitionFunctionΛ_high_temp_expansion_h_zero_lower_bound
   exact IsingModel.partitionFunction_high_temp_expansion_h_zero_lower_bound
     (inducedGraph G Λ) J β hβJ
 
+/-- **Λ-level log Z high-temperature decomposition (GJ §18.3 / FV (3.45))**:
+under `0 ≤ β·J`,
+`log Z_Λ(⟨J, 0, β⟩) = |Λ| · log 2 + |E_Λ| · log(cosh βJ) + log(∑_{X even} tanh^|X|)`.
+Direct lift of `IsingModel.log_partitionFunction_high_temp_expansion_h_zero_closed`
+(Step 315) via `partitionFunctionΛ_apply` + `Fintype.card_coe`. -/
+theorem log_partitionFunctionΛ_high_temp_expansion_h_zero_closed
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) :
+    Real.log (partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ))
+      = (Λ.card : ℝ) * Real.log 2
+        + ((inducedGraph G Λ).edgeFinset.card : ℝ) *
+            Real.log (Real.cosh (β * J))
+        + Real.log
+            (∑ X ∈ (inducedGraph G Λ).edgeFinset.powerset.filter
+                (fun X : Finset (Sym2 ↑Λ) =>
+                  ∀ v : ↑Λ, Even ((X.filter (v ∈ ·)).card)),
+              Real.tanh (β * J) ^ X.card) := by
+  rw [partitionFunctionΛ_apply,
+      IsingModel.log_partitionFunction_high_temp_expansion_h_zero_closed
+        (inducedGraph G Λ) J β hβJ,
+      Fintype.card_coe]
+
 /-- **Λ-level free-energy lower bound from FV (3.45)** at zero external field:
 under `0 < |Λ|` and `0 ≤ β * J`,
 `f_Λ(⟨J, 0, β⟩) ≥ log 2 + (|E_Λ|/|Λ|) · log(cosh(β·J))`.
