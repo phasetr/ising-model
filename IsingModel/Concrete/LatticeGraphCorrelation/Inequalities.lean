@@ -4087,6 +4087,75 @@ theorem correlationAlongExhaustion_differentiable_beta
                   (⟨J, 0, β'⟩ : IsingParams ℝ) A n) :=
   fun β => correlationAlongExhaustion_differentiableAt_beta Λ A J β n
 
+/-- **susceptibilityAlongExhaustion ContinuousAt h** (Step 206):
+For each finite-volume stage `n`, the susceptibility along exhaustion is continuous in h.
+
+Subset case unfolds via `susceptibilityΛ_apply` to `IsingModel.susceptibility (inducedGraph ...)`,
+which is continuous in h by Step 201; non-subset case: constant 0. -/
+theorem susceptibilityAlongExhaustion_continuousAt_field
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (i : Fin d → ℤ) (J h β : ℝ) (n : ℕ) :
+    ContinuousAt
+      (fun h' => susceptibilityAlongExhaustion (IsingModel.latticeGraph d) Λ
+                  (⟨J, h', β⟩ : IsingParams ℝ) i n) h := by
+  unfold susceptibilityAlongExhaustion
+  by_cases hi : i ∈ Λ.volume n
+  · simp only [hi, dif_pos]
+    have heq : (fun h' => susceptibilityΛ (IsingModel.latticeGraph d) (Λ.volume n)
+                  (⟨J, h', β⟩ : IsingParams ℝ) ⟨i, hi⟩) =
+               (fun h' => IsingModel.susceptibility
+                  (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+                  (⟨J, h', β⟩ : IsingParams ℝ) ⟨i, hi⟩) := by
+      funext h'
+      exact susceptibilityΛ_apply (IsingModel.latticeGraph d) (Λ.volume n)
+        (⟨J, h', β⟩ : IsingParams ℝ) ⟨i, hi⟩
+    rw [heq]
+    exact IsingModel.susceptibility_continuousAt_field _ J h β _
+  · simp only [hi, dif_neg, not_false_iff]
+    exact continuousAt_const
+
+/-- **susceptibilityAlongExhaustion Continuous in h** (Step 206, whole-ℝ). -/
+theorem susceptibilityAlongExhaustion_continuous_field
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (i : Fin d → ℤ) (J β : ℝ) (n : ℕ) :
+    Continuous
+      (fun h' => susceptibilityAlongExhaustion (IsingModel.latticeGraph d) Λ
+                  (⟨J, h', β⟩ : IsingParams ℝ) i n) :=
+  continuous_iff_continuousAt.mpr fun h =>
+    susceptibilityAlongExhaustion_continuousAt_field Λ i J h β n
+
+/-- **susceptibilityAlongExhaustion DifferentiableAt h** (Step 206). -/
+theorem susceptibilityAlongExhaustion_differentiableAt_field
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (i : Fin d → ℤ) (J h β : ℝ) (n : ℕ) :
+    DifferentiableAt ℝ
+      (fun h' => susceptibilityAlongExhaustion (IsingModel.latticeGraph d) Λ
+                  (⟨J, h', β⟩ : IsingParams ℝ) i n) h := by
+  unfold susceptibilityAlongExhaustion
+  by_cases hi : i ∈ Λ.volume n
+  · simp only [hi, dif_pos]
+    have heq : (fun h' => susceptibilityΛ (IsingModel.latticeGraph d) (Λ.volume n)
+                  (⟨J, h', β⟩ : IsingParams ℝ) ⟨i, hi⟩) =
+               (fun h' => IsingModel.susceptibility
+                  (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+                  (⟨J, h', β⟩ : IsingParams ℝ) ⟨i, hi⟩) := by
+      funext h'
+      exact susceptibilityΛ_apply (IsingModel.latticeGraph d) (Λ.volume n)
+        (⟨J, h', β⟩ : IsingParams ℝ) ⟨i, hi⟩
+    rw [heq]
+    exact IsingModel.susceptibility_differentiableAt_field _ J h β _
+  · simp only [hi, dif_neg, not_false_iff]
+    exact differentiableAt_const _
+
+/-- **susceptibilityAlongExhaustion Differentiable in h** (Step 206, whole-ℝ). -/
+theorem susceptibilityAlongExhaustion_differentiable_field
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (i : Fin d → ℤ) (J β : ℝ) (n : ℕ) :
+    Differentiable ℝ
+      (fun h' => susceptibilityAlongExhaustion (IsingModel.latticeGraph d) Λ
+                  (⟨J, h', β⟩ : IsingParams ℝ) i n) :=
+  fun h => susceptibilityAlongExhaustion_differentiableAt_field Λ i J h β n
+
 end Ambient
 
 end IsingModel
