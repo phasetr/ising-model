@@ -2431,6 +2431,20 @@ theorem correlationΛ_latticeGraph_high_temp_h_zero_nonneg
   correlationΛ_high_temp_h_zero_nonneg
     (IsingModel.latticeGraph d) Λ J β hβJ A
 
+/-- **ℤ^d high-temperature even-subgraph sum is `≥ 1`**: under
+`0 ≤ β * J`,
+`∑_{X ⊆ E_Λ, even-degree} tanh(β J)^|X| ≥ 1` on the ℤ^d induced
+subgraph. ℤ^d wrapper of `one_le_sum_pow_tanh_even_subgraph_Λ`. -/
+theorem one_le_sum_pow_tanh_even_subgraph_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ) (hβJ : 0 ≤ β * J) :
+    (1 : ℝ) ≤ ∑ X ∈
+        (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.powerset.filter
+          (fun X : Finset (Sym2 ↑Λ) =>
+            ∀ v : ↑Λ, Even ((X.filter (v ∈ ·)).card)),
+        Real.tanh (β * J) ^ X.card :=
+  one_le_sum_pow_tanh_even_subgraph_Λ
+    (IsingModel.latticeGraph d) Λ J β hβJ
+
 /-- **ℤ^d log partitionFunctionΛ closed form at `J = 0`** (any Finset):
 `log Z_Λ(⟨0, h, β⟩) = |Λ| · log(2·cosh(β·h))`. -/
 theorem log_partitionFunctionΛ_latticeGraph_J_zero
