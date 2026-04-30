@@ -829,4 +829,20 @@ theorem susceptibility_differentiableAt_beta
   exact DifferentiableAt.fun_sum (fun j _ =>
     (truncated2_hasDerivAt_beta G J β i j).differentiableAt)
 
+/-- **Susceptibility is Continuous in β over the whole ℝ at h = 0** (Step 193).
+Strengthens `susceptibility_continuousAt_beta` to `Continuous`. -/
+theorem susceptibility_continuous_beta
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J : ℝ) (i : ι) :
+    Continuous (fun β' => susceptibility G (⟨J, 0, β'⟩ : IsingParams ℝ) i) :=
+  continuous_iff_continuousAt.mpr fun β => susceptibility_continuousAt_beta G J β i
+
+/-- **Susceptibility is Differentiable in β at h = 0** (Step 193).
+Strengthens `susceptibility_differentiableAt_beta` to `Differentiable`. -/
+theorem susceptibility_differentiable_beta
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J : ℝ) (i : ι) :
+    Differentiable ℝ (fun β' => susceptibility G (⟨J, 0, β'⟩ : IsingParams ℝ) i) :=
+  fun β => susceptibility_differentiableAt_beta G J β i
+
 end IsingModel
