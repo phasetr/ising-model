@@ -2500,6 +2500,19 @@ theorem correlationAlongExhaustion_latticeGraph_high_temp_h_zero_odd_card_eq_zer
   correlationAlongExhaustion_high_temp_h_zero_odd_card_eq_zero
     (IsingModel.latticeGraph d) Λ J β A hA_odd n
 
+/-- **ℤ^d along-exhaustion correlation nonnegativity from FV (3.46)**:
+under `0 ≤ β * J`,
+`0 ≤ correlationAlongExhaustion (latticeGraph d) Λ ⟨J, 0, β⟩ A n`
+at every stage `n`. ℤ^d wrapper of
+`correlationAlongExhaustion_high_temp_h_zero_nonneg`. -/
+theorem correlationAlongExhaustion_latticeGraph_high_temp_h_zero_nonneg
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
+    (hβJ : 0 ≤ β * J) (A : Finset (Fin d → ℤ)) (n : ℕ) :
+    0 ≤ correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) A n :=
+  correlationAlongExhaustion_high_temp_h_zero_nonneg
+    (IsingModel.latticeGraph d) Λ J β hβJ A n
+
 /-- **ℤ^d log partitionFunctionΛ closed form at `J = 0`** (any Finset):
 `log Z_Λ(⟨0, h, β⟩) = |Λ| · log(2·cosh(β·h))`. -/
 theorem log_partitionFunctionΛ_latticeGraph_J_zero

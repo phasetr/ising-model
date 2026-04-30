@@ -354,6 +354,23 @@ theorem freeEnergyAlongExhaustion_high_temp_h_zero_lower_bound
   exact freeEnergyΛ_high_temp_h_zero_lower_bound
     G (Λ.volume n) J β hβJ hne
 
+/-- **Along-exhaustion correlation nonnegativity from FV (3.46)**:
+under `0 ≤ β * J`, at every stage `n`,
+`0 ≤ correlationAlongExhaustion G Λ ⟨J, 0, β⟩ A n`.
+When `A ⊄ Λ.volume n`, equals `0` by definition. When `A ⊆`, lifts via
+`liftFinset` and applies `correlationΛ_high_temp_h_zero_nonneg` (Step 294). -/
+theorem correlationAlongExhaustion_high_temp_h_zero_nonneg
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (A : Finset V) (n : ℕ) :
+    0 ≤ correlationAlongExhaustion G Λ (⟨J, 0, β⟩ : IsingParams ℝ) A n := by
+  unfold correlationAlongExhaustion
+  by_cases hAn : A ⊆ Λ.volume n
+  · rw [dif_pos hAn]
+    exact correlationΛ_high_temp_h_zero_nonneg G (Λ.volume n) J β hβJ
+      (liftFinset A hAn)
+  · rw [dif_neg hAn]
+
 /-- **Along-exhaustion correlation Z₂ symmetry at h = 0 (GJ §18.3)**:
 for any ambient `A : Finset V` with odd cardinality, at every stage `n`
 where `A ⊆ Λ.volume n`, the per-stage correlation
