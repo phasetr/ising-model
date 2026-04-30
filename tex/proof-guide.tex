@@ -3257,6 +3257,19 @@ by \texttt{exp\_edgeSpin\_decomp} and $\cosh(\beta J) > 0$.
 Multiplying over edges and pulling out $\cosh(\beta J)^{|E|}$ gives the claim.
 \hfill$\square$
 
+\begin{theorem}[\texttt{partitionFunction\_high\_temp\_expansion\_h\_zero}; GJ~\S18.3 / FV~\S3.7.3 eq.\,(3.42)]
+At zero external field, the high-temperature expansion specialises to
+\[
+Z(G; J, 0, \beta) = (\cosh(\beta J))^{|E|}
+\sum_{\sigma}
+\prod_{\{i,j\} \in E} (1 + \tanh(\beta J)\,\sigma_i\sigma_j).
+\]
+\end{theorem}
+
+\textit{Proof.} Direct specialisation of the previous theorem at $h = 0$,
+where the field factor $\exp(\beta h \sum_i \sigma_i) = 1$.
+\hfill$\square$
+
 \section{Peierls argument (\texttt{Peierls.lean})}
 
 \par\noindent\textbf{Prerequisites:} \texttt{GibbsMeasure.lean},
