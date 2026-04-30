@@ -3293,6 +3293,33 @@ odd-degree vertices vanish, leaving the sum over even-degree
 subgraphs.
 \hfill$\square$
 
+\begin{theorem}[\texttt{correlation\_high\_temp\_expansion\_h\_zero\_closed}; FV~\S3.7.3 eq.\,(3.46)]
+For any $A \subseteq \iota$ on a finite simple graph $G = (\iota, E)$,
+\[
+\langle \sigma_A \rangle_{\beta, 0} =
+  \frac{\sum_{X \subseteq E,\, \partial X = A} \tanh(\beta J)^{|X|}}
+       {\sum_{X \subseteq E,\, \partial X = \emptyset} \tanh(\beta J)^{|X|}},
+\]
+where $\partial X := \{ v : \iota \mid d_X(v) \text{ is odd}\}$ is the
+boundary of the edge set $X$.
+\end{theorem}
+
+\textit{Proof.} The correlation function is
+$\langle \sigma_A \rangle = N / Z$ with
+$N := \sum_\sigma \sigma_A \cdot e^{-\beta H(\sigma)}$. Repeating the
+high-temperature expansion of the previous theorem with the extra
+factor $\sigma_A = \prod_{v \in A} (\sigma_v)^{1}$ gives
+\[
+N = 2^{|\iota|} \cdot (\cosh \beta J)^{|E|}
+   \sum_{X \subseteq E,\, \partial X = A} \tanh(\beta J)^{|X|};
+\]
+the parity step now requires
+$d_X(v) + \mathbf{1}_{v \in A}$ to be even at every $v$, i.e.\
+$d_X(v) \equiv \mathbf{1}_{v \in A} \pmod{2}$, equivalently
+$\partial X = A$. Dividing by $Z$ from the previous theorem
+cancels the prefactor $2^{|\iota|} (\cosh \beta J)^{|E|}$.
+\hfill$\square$
+
 \section{Peierls argument (\texttt{Peierls.lean})}
 
 \par\noindent\textbf{Prerequisites:} \texttt{GibbsMeasure.lean},
