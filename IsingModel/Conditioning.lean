@@ -1792,6 +1792,40 @@ theorem sum_high_temp_numerator_h_zero_odd_card_eq_zero
   rw [zero_mul] at hclosed
   exact hclosed.symm
 
+/-- **Correlation nonnegativity at h = 0 from FV (3.46)**: under
+`0 ≤ β * J`, `0 ≤ correlation G ⟨J, 0, β⟩ A` for any `A : Finset ι`.
+
+Alternate derivation of GKS-I (`gks_first` / `correlation_nonneg_of_ferromagnetic`)
+from the FV (3.46) closed form: numerator and denominator are both
+sums of `tanh(βJ)^|X|` with `tanh(βJ) ≥ 0` (from `0 ≤ βJ`), hence
+both nonneg; the denominator is strictly positive (deduced from
+`partitionFunction_pos`), so the ratio is `≥ 0`. -/
+theorem correlation_high_temp_h_zero_nonneg
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (A : Finset ι) :
+    0 ≤ correlation G ⟨J, 0, β⟩ A := by
+  rw [correlation_high_temp_expansion_h_zero_closed]
+  have htanh_nn : 0 ≤ Real.tanh (β * J) := by
+    rw [Real.tanh_eq_sinh_div_cosh]
+    exact div_nonneg
+      (Real.sinh_nonneg_iff.mpr hβJ) (Real.cosh_pos _).le
+  -- Numerator nonneg: sum of tanh^|X| ≥ 0
+  have hnum_nn :
+      0 ≤ ∑ X ∈ G.edgeFinset.powerset.filter
+          (fun X : Finset (Sym2 ι) => ∀ v : ι,
+            Even ((if v ∈ A then (1 : ℕ) else 0)
+                  + (X.filter (v ∈ ·)).card)),
+          Real.tanh (β * J) ^ X.card :=
+    Finset.sum_nonneg (fun X _ => pow_nonneg htanh_nn _)
+  -- Denominator nonneg: same sum, different filter
+  have hden_nn :
+      0 ≤ ∑ X ∈ G.edgeFinset.powerset.filter
+          (fun X : Finset (Sym2 ι) => ∀ v : ι,
+            Even ((X.filter (v ∈ ·)).card)),
+          Real.tanh (β * J) ^ X.card :=
+    Finset.sum_nonneg (fun X _ => pow_nonneg htanh_nn _)
+  exact div_nonneg hnum_nn hden_nn
+
 /-- **High-temperature parameter**: `t = tanh(βJ)`.
 For `βJ ≥ 0`, `t ∈ [0, 1)`, and the high-temperature expansion
 converges when `t` is small. -/
