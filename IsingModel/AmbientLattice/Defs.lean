@@ -446,6 +446,20 @@ theorem freeEnergyΛ_high_temp_expansion_h_zero_closed
     (inducedGraph G Λ) J β hβJ
     (by rw [Fintype.card_coe]; exact hne)
 
+/-- **Λ-level Z high-temperature upper bound (GJ §18.3 / FV (3.45))**:
+under `0 ≤ β·J`,
+`Z_Λ(⟨J, 0, β⟩) ≤ 2^(|Λ|+|E_Λ|) · (cosh(βJ))^|E_Λ|`. ℤ^d wrapper of Step 320. -/
+theorem partitionFunctionΛ_high_temp_expansion_h_zero_upper_bound
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) :
+    partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+      ≤ (2 : ℝ) ^ (Λ.card + (inducedGraph G Λ).edgeFinset.card) *
+        Real.cosh (β * J) ^ (inducedGraph G Λ).edgeFinset.card := by
+  rw [partitionFunctionΛ_apply, ← Fintype.card_coe (s := Λ)]
+  exact IsingModel.partitionFunction_high_temp_expansion_h_zero_upper_bound
+    (inducedGraph G Λ) J β hβJ
+
 /-- **Λ-level free-energy lower bound from FV (3.45)** at zero external field:
 under `0 < |Λ|` and `0 ≤ β * J`,
 `f_Λ(⟨J, 0, β⟩) ≥ log 2 + (|E_Λ|/|Λ|) · log(cosh(β·J))`.

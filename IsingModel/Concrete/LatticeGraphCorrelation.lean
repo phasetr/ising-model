@@ -2517,6 +2517,35 @@ theorem log_partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_
   log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_closed
     (IsingModel.latticeGraph d) Λ J β hβJ n
 
+/-- **ℤ^d Z high-temperature upper bound (GJ §18.3 / FV (3.45))**:
+under `0 ≤ β·J`,
+`Z_Λ(⟨J, 0, β⟩) ≤ 2^(|Λ|+|E_Λ|) · cosh(βJ)^|E_Λ|`. ℤ^d wrapper of
+`partitionFunctionΛ_high_temp_expansion_h_zero_upper_bound`. -/
+theorem partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_upper_bound
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ) (hβJ : 0 ≤ β * J) :
+    partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ)
+      ≤ (2 : ℝ) ^ (Λ.card +
+            (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card) *
+        Real.cosh (β * J) ^
+            (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card :=
+  partitionFunctionΛ_high_temp_expansion_h_zero_upper_bound
+    (IsingModel.latticeGraph d) Λ J β hβJ
+
+/-- **ℤ^d along-exhaustion Z high-temperature upper bound**:
+under `0 ≤ β·J`, at every stage `n`,
+`Z_n ≤ 2^(|Λ_n|+|E_n|) · cosh(βJ)^|E_n|`. ℤ^d wrapper. -/
+theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_upper_bound
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ) (hβJ : 0 ≤ β * J) (n : ℕ) :
+    partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) n
+      ≤ (2 : ℝ) ^ ((Λ.volume n).card +
+            (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card) *
+        Real.cosh (β * J) ^
+            (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card :=
+  partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_upper_bound
+    (IsingModel.latticeGraph d) Λ J β hβJ n
+
 /-- **ℤ^d high-temperature partition function lower bound (GJ §18.3 / FV (3.45))**:
 under `0 ≤ β * J`,
 `Z_Λ(⟨J, 0, β⟩) ≥ 2^|Λ| · (cosh(βJ))^|E_Λ|`.
