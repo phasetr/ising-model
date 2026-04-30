@@ -4778,6 +4778,26 @@ theorem correlationInfinite_le_const_mul_beta_of_high_temp_zero_incl
     exact correlationInfinite_le_const_mul_beta_of_high_temp
       Λ r_val s_val hrs J hJ b hb_pos hlt β hβ_pos hβb
 
+/-- **Linear bound on corr_∞ at J = 0** (Step 235, J ≥ 0 version):
+For `0 < β`, `0 < b`, `bβ·2d < 1`, and any `r ≠ s`, on the interval `[0, b]`:
+`corr_∞(r, s, J) ≤ (β·M(b)² + β·4d) · J`,
+where `M(b) = bβ·2d/(1 - bβ·2d)`. Direct J-direction analogue of Step 181:
+extends Step 230 to include J = 0 (where both sides are 0). -/
+theorem correlationInfinite_le_const_mul_J_of_high_temp_zero_incl
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (r_val s_val : Fin d → ℤ) (hrs : r_val ≠ s_val)
+    (β : ℝ) (hβ : 0 < β)
+    (b : ℝ) (hb_pos : 0 < b) (hlt : b * β * ↑(2 * d) < 1)
+    (J : ℝ) (hJ_nn : 0 ≤ J) (hJb : J ≤ b) :
+    let M : ℝ := b * β * ↑(2 * d) / (1 - b * β * ↑(2 * d))
+    correlationInfinite (IsingModel.latticeGraph d) Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+      {r_val, s_val} ≤ (β * M ^ 2 + β * (4 * ↑d)) * J := by
+  intro M
+  rcases eq_or_lt_of_le hJ_nn with hJ0 | hJ_pos
+  · rw [← hJ0, correlationInfinite_eq_zero_at_J_zero, mul_zero]
+  · exact correlationInfinite_le_const_mul_J_of_high_temp
+      Λ r_val s_val hrs β hβ b hb_pos hlt J hJ_pos hJb
+
 /-- **ContinuousOn corr_∞ on Ico 0 β_c (half-open high-temperature interval)** (Step 182):
 For `0 < J`, `1 ≤ d`: `β ↦ corr_∞(β)` is continuous on `Ico 0 (1/(J·2d))`
 (closed at 0, open at β_c).
