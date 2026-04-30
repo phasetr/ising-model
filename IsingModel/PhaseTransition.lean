@@ -885,6 +885,33 @@ theorem magnetization_differentiable_beta
   unfold magnetization
   exact correlation_differentiable_beta G J _
 
+/-- **Magnetization β-derivative at general h with explicit value** (Step 244):
+For any finite-volume Ising at any `(J, h, β)`, `magnetization(i)` has a β-derivative
+
+  `d/dβ ⟨σ_i⟩ = J · Σ_e [⟨σ^{{i}△e}⟩ - ⟨σ_i⟩·⟨σ^e⟩]`
+  `             + h · Σ_j [⟨σ^{{i}△{j}}⟩ - ⟨σ_i⟩·⟨σ_j⟩]`.
+
+Direct application of Step 243 (`hasDerivAt_correlation_beta_general_h`) at `A = {i}`.
+Generalises Step 198 (`magnetization_differentiable_beta`) by providing an explicit
+derivative value valid at any h. -/
+theorem magnetization_hasDerivAt_beta_general_h
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h β : ℝ) (i : ι) :
+    HasDerivAt (fun β' => magnetization G (⟨J, h, β'⟩ : IsingParams ℝ) i)
+      (J * ∑ e ∈ G.edgeFinset,
+        Sym2.lift ⟨fun u v =>
+          correlation G (⟨J, h, β⟩ : IsingParams ℝ) (symmDiff {i} {u, v}) -
+          correlation G (⟨J, h, β⟩ : IsingParams ℝ) {i} *
+          correlation G (⟨J, h, β⟩ : IsingParams ℝ) {u, v},
+        fun u v => by simp [Finset.pair_comm v u]⟩ e
+       + h * ∑ j : ι,
+          (correlation G (⟨J, h, β⟩ : IsingParams ℝ) (symmDiff {i} {j}) -
+           correlation G (⟨J, h, β⟩ : IsingParams ℝ) {i} *
+           correlation G (⟨J, h, β⟩ : IsingParams ℝ) {j}))
+      β := by
+  unfold magnetization
+  exact hasDerivAt_correlation_beta_general_h G J h β {i}
+
 /-- **Magnetization is Continuous in h** (Step 200). -/
 theorem magnetization_continuous_field
     (G : SimpleGraph ι) [Fintype G.edgeSet]
