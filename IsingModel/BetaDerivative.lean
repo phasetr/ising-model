@@ -641,6 +641,55 @@ theorem truncated2_differentiable_beta
     Differentiable ℝ (fun β' => truncated2 G (⟨J, 0, β'⟩ : IsingParams ℝ) i j) :=
   fun β => (truncated2_hasDerivAt_beta G J β i j).differentiableAt
 
+/-- **truncated3 is ContinuousAt β at h = 0** (Step 203).
+truncated3 is a polynomial in correlation values, each continuous in β at h = 0. -/
+theorem truncated3_continuousAt_beta
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (i j k : ι) :
+    ContinuousAt (fun β' => truncated3 G (⟨J, 0, β'⟩ : IsingParams ℝ) i j k) β := by
+  unfold truncated3
+  exact (((correlation_continuousAt_beta G J β _).sub
+    ((correlation_continuousAt_beta G J β _).mul (correlation_continuousAt_beta G J β _))).sub
+    ((correlation_continuousAt_beta G J β _).mul (correlation_continuousAt_beta G J β _))).sub
+    ((correlation_continuousAt_beta G J β _).mul (correlation_continuousAt_beta G J β _))
+    |>.add (((continuousAt_const).mul (correlation_continuousAt_beta G J β _)).mul
+      (correlation_continuousAt_beta G J β _) |>.mul
+      (correlation_continuousAt_beta G J β _))
+
+/-- **truncated3 Continuous in β at h = 0** (Step 203, whole-ℝ). -/
+theorem truncated3_continuous_beta
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J : ℝ) (i j k : ι) :
+    Continuous (fun β' => truncated3 G (⟨J, 0, β'⟩ : IsingParams ℝ) i j k) :=
+  continuous_iff_continuousAt.mpr fun β => truncated3_continuousAt_beta G J β i j k
+
+/-- **truncated3 DifferentiableAt β at h = 0** (Step 203). -/
+theorem truncated3_differentiableAt_beta
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (i j k : ι) :
+    DifferentiableAt ℝ (fun β' => truncated3 G (⟨J, 0, β'⟩ : IsingParams ℝ) i j k) β := by
+  unfold truncated3
+  -- Combine 4 differentiable correlation pieces via product rule
+  have h1 := (hasDerivAt_correlation_beta G J β {i, j, k}).differentiableAt
+  have h2 := ((hasDerivAt_correlation_beta G J β {i}).differentiableAt).mul
+              (hasDerivAt_correlation_beta G J β {j, k}).differentiableAt
+  have h3 := ((hasDerivAt_correlation_beta G J β {j}).differentiableAt).mul
+              (hasDerivAt_correlation_beta G J β {i, k}).differentiableAt
+  have h4 := ((hasDerivAt_correlation_beta G J β {k}).differentiableAt).mul
+              (hasDerivAt_correlation_beta G J β {i, j}).differentiableAt
+  have h5 := (((differentiableAt_const (2 : ℝ)).mul
+    (hasDerivAt_correlation_beta G J β {i}).differentiableAt).mul
+    (hasDerivAt_correlation_beta G J β {j}).differentiableAt).mul
+    (hasDerivAt_correlation_beta G J β {k}).differentiableAt
+  exact (((h1.sub h2).sub h3).sub h4).add h5
+
+/-- **truncated3 Differentiable in β at h = 0** (Step 203, whole-ℝ). -/
+theorem truncated3_differentiable_beta
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J : ℝ) (i j k : ι) :
+    Differentiable ℝ (fun β' => truncated3 G (⟨J, 0, β'⟩ : IsingParams ℝ) i j k) :=
+  fun β => truncated3_differentiableAt_beta G J β i j k
+
 /-! ## Monotonicity in β (Step 122): GKS-II-based bound -/
 
 /-- The β-derivative of two-point correlations is nonneg (infinitesimal form of β-monotonicity).
