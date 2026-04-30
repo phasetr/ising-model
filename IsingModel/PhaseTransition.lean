@@ -891,6 +891,39 @@ theorem susceptibility_hasDerivAt_beta_general_h
       _ from h_t.deriv]
   exact h_t
 
+/-- **Susceptibility is Continuous in β at general h** (Step 248).
+Extends Step 193 from h = 0 to general h via Step 246. -/
+theorem susceptibility_continuous_beta_general_h
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h : ℝ) (i : ι) :
+    Continuous (fun β' => susceptibility G (⟨J, h, β'⟩ : IsingParams ℝ) i) :=
+  continuous_iff_continuousAt.mpr fun β =>
+    (susceptibility_hasDerivAt_beta_general_h G J h β i).continuousAt
+
+/-- **Susceptibility is Differentiable in β at general h** (Step 248). -/
+theorem susceptibility_differentiable_beta_general_h
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h : ℝ) (i : ι) :
+    Differentiable ℝ (fun β' => susceptibility G (⟨J, h, β'⟩ : IsingParams ℝ) i) :=
+  fun β => (susceptibility_hasDerivAt_beta_general_h G J h β i).differentiableAt
+
+/-- **Magnetization is Continuous in β at general h** (Step 248).
+Extends Step 198 (h = 0) to general h via Step 244. -/
+theorem magnetization_continuous_beta_general_h
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h : ℝ) (i : ι) :
+    Continuous (fun β' => magnetization G (⟨J, h, β'⟩ : IsingParams ℝ) i) := by
+  unfold magnetization
+  exact correlation_continuous_beta_general_h G J h _
+
+/-- **Magnetization is Differentiable in β at general h** (Step 248). -/
+theorem magnetization_differentiable_beta_general_h
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h : ℝ) (i : ι) :
+    Differentiable ℝ (fun β' => magnetization G (⟨J, h, β'⟩ : IsingParams ℝ) i) := by
+  unfold magnetization
+  exact correlation_differentiable_beta_general_h G J h _
+
 /-- **Magnetization is Continuous in β at h = 0** (Step 198).
 At h = 0, `magnetization G p i = correlation G p {i}`, which is continuous in β. -/
 theorem magnetization_continuous_beta
