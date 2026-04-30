@@ -1,4 +1,5 @@
 import IsingModel.GibbsMeasure
+import IsingModel.FreeEnergy
 import IsingModel.Inequalities.NonnegCorrelations
 import IsingModel.Inequalities.GKS
 import IsingModel.Inequalities.GHS
@@ -551,6 +552,44 @@ theorem truncated2_hasDerivAt_field
   have h_diff := hij.sub h_prod
   rw [hij.deriv, hi.deriv, hj.deriv] at *
   exact h_diff
+
+/-! ## Step 254: free energy h-derivative -/
+
+/-- **Free energy h-derivative** (Step 254):
+For any `(J, h, β)` and finite-volume Ising:
+
+  `d/dh freeEnergy(h) = |ι|⁻¹ · β · gibbsExpectation(totalMagnetization)`
+
+since `freeEnergy = |ι|⁻¹ · log(partitionFunction)` and
+`d/dh log(Z) = Z'(h)/Z(h) = β·⟨M⟩` by the partition function h-derivative
+(`hasDerivAt_partitionFunction_field`).
+
+Reference: Glimm–Jaffe §17.6 / §4.6; standard thermodynamic identity
+(magnetization per site = β⁻¹ · d/dh log(Z) / |ι|). -/
+theorem hasDerivAt_freeEnergy_field
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h β : ℝ) :
+    HasDerivAt (fun h' => freeEnergy G (⟨J, h', β⟩ : IsingParams ℝ))
+      ((Fintype.card ι : ℝ)⁻¹ *
+        gibbsExpectation G (⟨J, h, β⟩ : IsingParams ℝ)
+          (fun σ => β * totalMagnetization σ)) h := by
+  set p := (⟨J, h, β⟩ : IsingParams ℝ)
+  have hZpos : 0 < partitionFunction G p := partitionFunction_pos G p
+  have hZne : partitionFunction G p ≠ 0 := hZpos.ne'
+  have hZderiv := hasDerivAt_partitionFunction_field G J h β
+  have hlogZ : HasDerivAt (fun h' => Real.log (partitionFunction G (⟨J, h', β⟩ : IsingParams ℝ)))
+      ((∑ σ, β * totalMagnetization σ * boltzmannWeight G p σ) / partitionFunction G p) h := by
+    have h := hZderiv.log hZne
+    convert h using 1
+  have hfreeE : (fun h' => freeEnergy G (⟨J, h', β⟩ : IsingParams ℝ)) =
+      (fun h' => (Fintype.card ι : ℝ)⁻¹ *
+        Real.log (partitionFunction G (⟨J, h', β⟩ : IsingParams ℝ))) := by
+    funext h'; rfl
+  rw [hfreeE]
+  have h := hlogZ.const_mul ((Fintype.card ι : ℝ)⁻¹)
+  convert h using 1
+  unfold gibbsExpectation
+  field_simp
 
 /-- **truncated3 ContinuousAt h** (Step 202).
 truncated3 is a polynomial in correlation values, each continuous in h. -/
