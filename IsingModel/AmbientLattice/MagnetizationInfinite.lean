@@ -1000,6 +1000,23 @@ theorem correlationInfinite_J_zero
     tendsto_nhds_unique h_tendsto_ciSup h_tendsto_const
   simp only [correlationInfinite, h_unique]
 
+/-- **`correlationInfinite` at J = h = 0 vanishes for nonempty A** (Step 279, GJ §4.1):
+At zero coupling and zero field, the system is uniformly distributed; for nonempty A
+the spin product averages to zero by Z₂ symmetry.
+
+Specialization of `correlationInfinite_J_zero` at `h = 0` (where `tanh(β·0) = 0` and
+`0^|A| = 0` for `|A| ≥ 1`). -/
+theorem correlationInfinite_zero_params_vanish_of_nonempty_A
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {β : ℝ} (hβ : 0 < β) {A : Finset V} (hA : A.Nonempty) :
+    correlationInfinite G Λ (⟨0, 0, β⟩ : IsingParams ℝ) A = 0 := by
+  have hf : Ferromagnetic (⟨(0 : ℝ), 0, β⟩ : IsingParams ℝ) :=
+    ⟨le_refl 0, le_refl 0, hβ⟩
+  rw [correlationInfinite_J_zero G Λ 0 β hf A]
+  have h_card_pos : 0 < A.card := Finset.card_pos.mpr hA
+  rw [mul_zero, Real.tanh_zero, zero_pow h_card_pos.ne']
+
 /-- **∞-volume lower bound `correlationInfinite ≥ tanh(β·h)^|A|`**
 (ferromagnetic): by J-monotonicity from `J = 0` where
 `correlationInfinite = tanh(β·h)^|A|` (via `correlationInfinite_J_zero`). -/
