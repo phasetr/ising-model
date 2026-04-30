@@ -1,5 +1,6 @@
 import IsingModel.Inequalities.GHS
 import IsingModel.BetaDerivative
+import IsingModel.FieldDerivative
 
 /-!
 # Phase transitions: pure and mixed phases
@@ -882,5 +883,21 @@ theorem magnetization_differentiable_beta
     Differentiable ℝ (fun β' => magnetization G (⟨J, 0, β'⟩ : IsingParams ℝ) i) := by
   unfold magnetization
   exact correlation_differentiable_beta G J _
+
+/-- **Magnetization is Continuous in h** (Step 200). -/
+theorem magnetization_continuous_field
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (i : ι) :
+    Continuous (fun h' => magnetization G (⟨J, h', β⟩ : IsingParams ℝ) i) := by
+  unfold magnetization
+  exact correlation_continuous_field G J β _
+
+/-- **Magnetization is Differentiable in h** (Step 200). -/
+theorem magnetization_differentiable_field
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (i : ι) :
+    Differentiable ℝ (fun h' => magnetization G (⟨J, h', β⟩ : IsingParams ℝ) i) := by
+  unfold magnetization
+  exact correlation_differentiable_field G J β _
 
 end IsingModel
