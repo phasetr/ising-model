@@ -812,4 +812,21 @@ theorem susceptibility_continuousAt_beta
   -- Use tendsto_finset_sum applied to ContinuousAt = Tendsto
   exact tendsto_finset_sum _ (fun j _ => truncated2_continuousAt_beta G J β i j)
 
+/-- **Susceptibility is differentiable in β at h = 0** (Step 191):
+For finite-volume Ising at h = 0, `susceptibility(i, β) = ∑_j truncated2(i, j, β)` is
+differentiable in β. Each `truncated2` is differentiable (Step 191 helper), and the
+finite sum is differentiable. -/
+theorem susceptibility_differentiableAt_beta
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (i : ι) :
+    DifferentiableAt ℝ (fun β' => susceptibility G (⟨J, 0, β'⟩ : IsingParams ℝ) i) β := by
+  have heq_fun : (fun β' => susceptibility G (⟨J, 0, β'⟩ : IsingParams ℝ) i) =
+      (fun β' => ∑ j : ι, truncated2 G (⟨J, 0, β'⟩ : IsingParams ℝ) i j) := by
+    funext β'
+    exact susceptibility_apply G _ i
+  rw [heq_fun]
+  -- Each summand differentiable
+  exact DifferentiableAt.fun_sum (fun j _ =>
+    (truncated2_hasDerivAt_beta G J β i j).differentiableAt)
+
 end IsingModel
