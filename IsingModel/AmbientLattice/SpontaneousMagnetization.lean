@@ -362,6 +362,27 @@ theorem spontaneousMagnetization_J_zero
     exact h_at_zero.mono_left nhdsWithin_le_nhds
   exact tendsto_nhds_unique h_tend' h_tend_zero
 
+/-- **`spontaneousMagnetization` at β = 0 vanishes** (Step 269, GJ §5.1):
+At infinite temperature, every magnetizationInfinite at β = 0 vanishes
+(`magnetizationInfinite_beta_zero`), so the infimum over h ∈ Ioi 0 is 0.
+
+**Proof**: spontaneousMagnetization = ⨅ h, correlationInfinite ⟨J, h, 0⟩ {i};
+each value = 0 (β=0 vanishing); infimum of constant 0 = 0. -/
+theorem spontaneousMagnetization_beta_zero
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J : ℝ) (i : V) :
+    spontaneousMagnetization G Λ J 0 i = 0 := by
+  unfold spontaneousMagnetization spontaneousCorrelation
+  have h_eq : ∀ h : ↥(Set.Ioi (0 : ℝ)),
+      correlationInfinite G Λ (⟨J, h.val, 0⟩ : IsingParams ℝ) {i} = 0 := by
+    intro h
+    -- magnetizationInfinite_beta_zero gives 0 for {i} singleton
+    have := magnetizationInfinite_beta_zero G Λ J h.val i
+    unfold magnetizationInfinite at this
+    exact this
+  simp [h_eq]
+
 
 end Ambient
 end IsingModel
