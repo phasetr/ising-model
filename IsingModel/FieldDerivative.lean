@@ -528,6 +528,30 @@ theorem truncated2_differentiable_field
     Differentiable ℝ (fun h' => truncated2 G (⟨J, h', β⟩ : IsingParams ℝ) i j) :=
   fun h => truncated2_differentiableAt_field G J h β i j
 
+/-- **truncated2 hasDerivAt in h with explicit value** (Step 242):
+For any finite-volume Ising at any `(J, h, β)`, `truncated2 G ⟨J, h, β⟩ i j`
+has an h-derivative given by the product rule. This completes the truncated2
+explicit-derivative trio (truncated2_hasDerivAt_beta at h = 0, truncated2_hasDerivAt_J
+at any h, truncated2_hasDerivAt_field at any J, β). -/
+theorem truncated2_hasDerivAt_field
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h β : ℝ) (i j : ι) :
+    HasDerivAt (fun h' => truncated2 G (⟨J, h', β⟩ : IsingParams ℝ) i j)
+      (deriv (fun h' => correlation G (⟨J, h', β⟩ : IsingParams ℝ) {i, j}) h -
+       (deriv (fun h' => correlation G (⟨J, h', β⟩ : IsingParams ℝ) {i}) h *
+        correlation G (⟨J, h, β⟩ : IsingParams ℝ) {j} +
+        correlation G (⟨J, h, β⟩ : IsingParams ℝ) {i} *
+        deriv (fun h' => correlation G (⟨J, h', β⟩ : IsingParams ℝ) {j}) h))
+      h := by
+  unfold truncated2
+  have hij := hasDerivAt_correlation_field G J h β {i, j}
+  have hi := hasDerivAt_correlation_field G J h β {i}
+  have hj := hasDerivAt_correlation_field G J h β {j}
+  have h_prod := hi.mul hj
+  have h_diff := hij.sub h_prod
+  rw [hij.deriv, hi.deriv, hj.deriv] at *
+  exact h_diff
+
 /-- **truncated3 ContinuousAt h** (Step 202).
 truncated3 is a polynomial in correlation values, each continuous in h. -/
 theorem truncated3_continuousAt_field
