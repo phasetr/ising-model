@@ -2340,6 +2340,37 @@ theorem partitionFunctionΛ_latticeGraph_zero_params
       = (2 : ℝ) ^ Λ.card :=
   partitionFunctionΛ_zero_params (IsingModel.latticeGraph d) Λ β
 
+/-- **ℤ^d Λ-level partition function high-temperature expansion at `h = 0`**:
+`Z_Λ(⟨J, 0, β⟩) = (cosh βJ)^|E_Λ| · ∑_σ ∏_e (1 + tanh(βJ) σ_iσ_j)`.
+ℤ^d wrapper of `partitionFunctionΛ_high_temp_expansion_h_zero`. -/
+theorem partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ) :
+    partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) =
+      Real.cosh (β * J) ^
+          (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card *
+      ∑ σ : Config ↑Λ,
+        ∏ e ∈ (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset,
+          (1 + Real.tanh (β * J) * edgeSpin σ e) :=
+  partitionFunctionΛ_high_temp_expansion_h_zero
+    (IsingModel.latticeGraph d) Λ J β
+
+/-- **ℤ^d along-exhaustion partition function high-temperature expansion at `h = 0`**:
+`Z_n(⟨J, 0, β⟩) = (cosh βJ)^|E_n| · ∑_σ ∏_e (1 + tanh(βJ) σ_iσ_j)`
+at every stage `n`. ℤ^d wrapper of
+`partitionFunctionAlongExhaustion_high_temp_expansion_h_zero`. -/
+theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ) (n : ℕ) :
+    partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) n =
+      Real.cosh (β * J) ^
+          (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card *
+      ∑ σ : Config ↑(Λ.volume n),
+        ∏ e ∈ (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset,
+          (1 + Real.tanh (β * J) * edgeSpin σ e) :=
+  partitionFunctionAlongExhaustion_high_temp_expansion_h_zero
+    (IsingModel.latticeGraph d) Λ J β n
+
 /-- **ℤ^d Λ-level partition function high-temperature expansion (general h)**:
 `Z_Λ(p) = (cosh βJ)^|E_Λ| · ∑_σ ∏_e (1 + tanh(βJ) σ_iσ_j) · exp(βh ∑_i σ_i)`.
 ℤ^d wrapper of `partitionFunctionΛ_high_temp_expansion`. -/
