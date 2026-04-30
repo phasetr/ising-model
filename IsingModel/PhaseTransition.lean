@@ -845,4 +845,25 @@ theorem susceptibility_differentiable_beta
     Differentiable ℝ (fun β' => susceptibility G (⟨J, 0, β'⟩ : IsingParams ℝ) i) :=
   fun β => susceptibility_differentiableAt_beta G J β i
 
+/-- **Susceptibility HasDerivAt β at h = 0 with explicit derivative** (Step 197):
+For finite-volume Ising at h = 0, `susceptibility(i, β) = ∑_j truncated2(i, j, β)` has a
+derivative in β equal to the sum of derivatives of `truncated2`. -/
+theorem susceptibility_hasDerivAt_beta
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (i : ι) :
+    HasDerivAt (fun β' => susceptibility G (⟨J, 0, β'⟩ : IsingParams ℝ) i)
+      (∑ j : ι, deriv (fun β' => truncated2 G (⟨J, 0, β'⟩ : IsingParams ℝ) i j) β) β := by
+  have heq_fun : (fun β' => susceptibility G (⟨J, 0, β'⟩ : IsingParams ℝ) i) =
+      (fun β' => ∑ j : ι, truncated2 G (⟨J, 0, β'⟩ : IsingParams ℝ) i j) := by
+    funext β'
+    exact susceptibility_apply G _ i
+  rw [heq_fun]
+  apply HasDerivAt.fun_sum
+  intro j _
+  have h := truncated2_hasDerivAt_beta G J β i j
+  -- Need to convert h's specific derivative value to deriv (...) β
+  rw [show deriv (fun β' => truncated2 G (⟨J, 0, β'⟩ : IsingParams ℝ) i j) β =
+      _ from h.deriv]
+  exact h
+
 end IsingModel
