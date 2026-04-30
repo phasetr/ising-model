@@ -635,11 +635,11 @@ inventory (2026-04-17).
 
 ### Chapter 18 (Cluster expansion)
 
-| Section | Result | Status |
-|---|---|---|
-| §18.1 | High-temperature parameter | **Done** |
-| §18.2 | `exp(α·edgeSpin) = cosh α + sinh α · edgeSpin` | **Done** |
-| §18.3 | Clustering and analyticity | **Done (lattice)** |
+| Section | Result | Status | Comments |
+|---|---|---|---|
+| §18.1 | High-temperature parameter | **Done** | `highTempParam`, `abs_highTempParam_lt_one`, `highTempParam_lt_one` (`Conditioning.lean`). |
+| §18.2 | `exp(α·edgeSpin) = cosh α + sinh α · edgeSpin` | **Done** | `exp_edgeSpin_decomp` (`Inequalities/NonnegCorrelations.lean`). |
+| §18.3 | Clustering and analyticity (lattice high-temp expansion) | **Done (lattice)** | `partitionFunction_high_temp_expansion` (`Conditioning.lean`): `Z = (cosh βJ)^{\|E\|} · ∑_σ ∏_e (1 + tanh(βJ) σ_iσ_j) · exp(βh ∑ σ_i)`. Lattice analogue of the GJ §18.3 cluster expansion identity (cf. FV §3.7.3, eq. (3.42)). (PR #1118.) |
 | §18.4–18.7 | Cluster expansion machinery | **Out of scope** | QFT cluster expansion (Gaussian functional integrals, Schwartz spaces). Outside current Lean/Ising scope. |
 
 ### Chapter 19 (Reconstruction)

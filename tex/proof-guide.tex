@@ -3234,6 +3234,29 @@ $|t| = |\tanh(\beta J)| < 1$ for all finite $\beta J$.
 $t < 1$.
 \end{theorem}
 
+\begin{theorem}[\texttt{partitionFunction\_high\_temp\_expansion}; GJ~\S18.3,
+cf.\ FV~\S3.7.3 eq.\,(3.42)]
+For any Ising parameter $p = (J, h, \beta)$ on a finite simple graph
+$G = (\iota, E)$,
+\[
+Z(G; p) = (\cosh(\beta J))^{|E|}
+\sum_{\sigma}
+\Bigl(\prod_{\{i,j\} \in E} (1 + \tanh(\beta J)\,\sigma_i\sigma_j)\Bigr)
+\exp\!\Bigl(\beta h \sum_i \sigma_i\Bigr).
+\]
+\end{theorem}
+
+\textit{Proof.} The Hamiltonian factorises as
+$-\beta H = \beta J \sum_e \sigma_i\sigma_j + \beta h \sum_i \sigma_i$,
+so $e^{-\beta H} = \prod_e e^{\beta J \sigma_i\sigma_j} \cdot
+e^{\beta h \sum_i \sigma_i}$.
+Since $\sigma_i\sigma_j \in \{\pm 1\}$,
+$e^{\beta J \sigma_i\sigma_j} = \cosh(\beta J) + \sinh(\beta J)\sigma_i\sigma_j
+= \cosh(\beta J)(1 + \tanh(\beta J)\sigma_i\sigma_j)$
+by \texttt{exp\_edgeSpin\_decomp} and $\cosh(\beta J) > 0$.
+Multiplying over edges and pulling out $\cosh(\beta J)^{|E|}$ gives the claim.
+\hfill$\square$
+
 \section{Peierls argument (\texttt{Peierls.lean})}
 
 \par\noindent\textbf{Prerequisites:} \texttt{GibbsMeasure.lean},
