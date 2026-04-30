@@ -1688,6 +1688,32 @@ theorem freeEnergy_high_temp_h_zero_lower_bound
       field_simp]
   exact mul_le_mul_of_nonneg_left hlog (by positivity)
 
+/-- **Free-energy high-temperature expansion decomposition (GJ §18.3 / FV (3.45))**:
+under `0 < |ι|` and `0 ≤ β·J`,
+`freeEnergy(G; J, 0, β) = log 2 + (|E|/|ι|) · log(cosh βJ) + log(∑_{X even} tanh^|X|) / |ι|`.
+
+Direct corollary of `log_partitionFunction_high_temp_expansion_h_zero_closed`
+(Step 315) by dividing by `|ι|`. The first two terms recover the
+graph-aware lower bound `freeEnergy_high_temp_h_zero_lower_bound`
+(Step 288); the third (the `log ∑` term) is the residual contribution
+absent from the bound. -/
+theorem freeEnergy_high_temp_expansion_h_zero_closed
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (hne : 0 < Fintype.card ι) :
+    freeEnergy G ⟨J, 0, β⟩
+      = Real.log 2
+        + (G.edgeFinset.card : ℝ) / Fintype.card ι *
+            Real.log (Real.cosh (β * J))
+        + Real.log
+            (∑ X ∈ G.edgeFinset.powerset.filter
+                (fun X : Finset (Sym2 ι) =>
+                  ∀ v : ι, Even ((X.filter (v ∈ ·)).card)),
+              Real.tanh (β * J) ^ X.card) / Fintype.card ι := by
+  unfold freeEnergy
+  rw [log_partitionFunction_high_temp_expansion_h_zero_closed G J β hβJ]
+  have hι_ne : (Fintype.card ι : ℝ) ≠ 0 := by exact_mod_cast hne.ne'
+  field_simp
+
 /-! ### Correlation closed form (FV §3.7.3 eq. (3.46)) -/
 
 /-- **`spinProduct` as vertex-power**: for any `A : Finset ι`,
