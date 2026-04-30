@@ -3329,6 +3329,20 @@ cancels the prefactor $2^{|\iota|} (\cosh \beta J)^{|E|}$.
 \texttt{correlationΛ\_latticeGraph\_high\_temp\_expansion\_h\_zero\_closed}
 in \texttt{Concrete/LatticeGraphCorrelation.lean}).
 
+\begin{theorem}[\texttt{partitionFunction\_high\_temp\_expansion\_h\_zero\_lower\_bound}]
+For \(0 \le \beta J\),
+\(Z(G; J, 0, \beta) \ge 2^{|\iota|} \cdot (\cosh(\beta J))^{|E|}.\)
+\end{theorem}
+
+\textit{Proof.} In FV (3.45) the empty edge set \(X = \emptyset\) is
+trivially even-degree (every vertex has degree \(0\)) and contributes
+\(\tanh(\beta J)^0 = 1\) to the sum; every other even-degree subset
+contributes a nonneg amount once \(\tanh(\beta J) \ge 0\) is known
+(equivalent to \(0 \le \beta J\)). Multiplying the inequality
+\(\sum_X \tanh(\beta J)^{|X|} \ge 1\) by the nonneg prefactor
+\(2^{|\iota|} (\cosh \beta J)^{|E|}\) gives the claim.
+\hfill$\square$
+
 \section{Peierls argument (\texttt{Peierls.lean})}
 
 \par\noindent\textbf{Prerequisites:} \texttt{GibbsMeasure.lean},

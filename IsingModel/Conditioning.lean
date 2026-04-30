@@ -1414,6 +1414,63 @@ theorem partitionFunction_high_temp_expansion_h_zero_closed
   rw [← Finset.mul_sum]
   ring
 
+/-- **Lower bound from the empty-X term**: under `0 ≤ β J`, the
+high-temperature expansion FV (3.45) yields the lower bound
+`Z(G; J, 0, β) ≥ 2^|ι| · (cosh(βJ))^|E|`. The empty edge subset
+`X = ∅` is always even-degree (every vertex has degree 0), and
+contributes `tanh(βJ)^0 = 1` to the sum, while every other
+even-degree subset contributes a nonneg amount under `0 ≤ βJ`
+(since `0 ≤ tanh(βJ)` then). -/
+theorem partitionFunction_high_temp_expansion_h_zero_lower_bound
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) :
+    (2 : ℝ) ^ Fintype.card ι * Real.cosh (β * J) ^ G.edgeFinset.card
+      ≤ partitionFunction G ⟨J, 0, β⟩ := by
+  rw [partitionFunction_high_temp_expansion_h_zero_closed]
+  -- ∑_{X ⊆ E, even} tanh^|X| ≥ 1 (X = ∅ contributes 1, others ≥ 0)
+  have htanh_nn : 0 ≤ Real.tanh (β * J) := by
+    rw [Real.tanh_eq_sinh_div_cosh]
+    exact div_nonneg
+      (Real.sinh_nonneg_iff.mpr hβJ) (Real.cosh_pos _).le
+  -- The empty set is in the filtered powerset
+  have hempty_mem : (∅ : Finset (Sym2 ι)) ∈ G.edgeFinset.powerset.filter
+      (fun X => ∀ v : ι, Even ((X.filter (v ∈ ·)).card)) := by
+    refine Finset.mem_filter.mpr ⟨Finset.empty_mem_powerset _, ?_⟩
+    intro v
+    simp
+  have hsum_ge_one :
+      (1 : ℝ) ≤ ∑ X ∈ G.edgeFinset.powerset.filter
+        (fun X => ∀ v : ι, Even ((X.filter (v ∈ ·)).card)),
+        Real.tanh (β * J) ^ X.card := by
+    have hempty_term : Real.tanh (β * J) ^ (∅ : Finset (Sym2 ι)).card = 1 := by
+      simp
+    have hnn : ∀ X ∈ G.edgeFinset.powerset.filter
+        (fun X : Finset (Sym2 ι) => ∀ v : ι, Even ((X.filter (v ∈ ·)).card)),
+        0 ≤ Real.tanh (β * J) ^ (X : Finset (Sym2 ι)).card :=
+      fun X _ => pow_nonneg htanh_nn _
+    have hsingle :
+        Real.tanh (β * J) ^ (∅ : Finset (Sym2 ι)).card
+          ≤ ∑ X ∈ G.edgeFinset.powerset.filter
+              (fun X : Finset (Sym2 ι) =>
+                ∀ v : ι, Even ((X.filter (v ∈ ·)).card)),
+              Real.tanh (β * J) ^ X.card :=
+      Finset.single_le_sum (f := fun X : Finset (Sym2 ι) =>
+          Real.tanh (β * J) ^ X.card) hnn hempty_mem
+    rw [hempty_term] at hsingle
+    exact hsingle
+  -- Multiply both sides by 2^|ι| · cosh^|E| ≥ 0
+  have hcommon_nn :
+      0 ≤ (2 : ℝ) ^ Fintype.card ι * Real.cosh (β * J) ^ G.edgeFinset.card := by
+    exact mul_nonneg (pow_nonneg (by norm_num) _)
+      (pow_nonneg (Real.cosh_pos _).le _)
+  calc (2 : ℝ) ^ Fintype.card ι * Real.cosh (β * J) ^ G.edgeFinset.card
+      = (2 : ℝ) ^ Fintype.card ι * Real.cosh (β * J) ^ G.edgeFinset.card * 1 := by ring
+    _ ≤ (2 : ℝ) ^ Fintype.card ι * Real.cosh (β * J) ^ G.edgeFinset.card *
+        ∑ X ∈ G.edgeFinset.powerset.filter
+          (fun X => ∀ v : ι, Even ((X.filter (v ∈ ·)).card)),
+          Real.tanh (β * J) ^ X.card :=
+        mul_le_mul_of_nonneg_left hsum_ge_one hcommon_nn
+
 /-! ### Correlation closed form (FV §3.7.3 eq. (3.46)) -/
 
 /-- **`spinProduct` as vertex-power**: for any `A : Finset ι`,
