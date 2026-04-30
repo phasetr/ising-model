@@ -401,6 +401,23 @@ theorem spontaneousCorrelation_J_zero
     exact h_at_zero.mono_left nhdsWithin_le_nhds
   exact tendsto_nhds_unique h_tend' h_tend_zero
 
+/-- **`spontaneousCorrelation` at empty A is 1** (Step 273):
+For empty A, every `correlationInfinite ⟨J, h, β⟩ ∅ = 1` (`correlationInfinite_empty`),
+so the infimum over `h ∈ Ioi 0` of constant 1 is 1.
+
+Closed-form complement to `spontaneousCorrelation_J_zero`/`_beta_zero` (Steps 270-271)
+which both require `A.Nonempty`. -/
+theorem spontaneousCorrelation_empty
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) :
+    spontaneousCorrelation G Λ J β (∅ : Finset V) = 1 := by
+  unfold spontaneousCorrelation
+  have h_eq : ∀ h : ↥(Set.Ioi (0 : ℝ)),
+      correlationInfinite G Λ (⟨J, h.val, β⟩ : IsingParams ℝ) (∅ : Finset V) = 1 :=
+    fun h => correlationInfinite_empty G Λ _
+  simp [h_eq]
+
 /-- **`spontaneousCorrelation` at β = 0 vanishes for nonempty A** (Step 271, GJ §5.1):
 At infinite temperature, every infinite-volume correlation vanishes for nonempty A;
 the infimum over `h ∈ Ioi 0` is then the infimum of constant 0, which is 0.
