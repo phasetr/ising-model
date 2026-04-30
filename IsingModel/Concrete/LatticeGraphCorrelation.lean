@@ -2357,6 +2357,23 @@ theorem partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_closed
   partitionFunctionΛ_high_temp_expansion_h_zero_closed
     (IsingModel.latticeGraph d) Λ J β
 
+/-- **ℤ^d general-h subset expansion (GJ §18.3)**:
+on the ℤ^d induced subgraph,
+`Z_Λ(p) = (cosh βJ)^|E_Λ| · ∑_X tanh(βJ)^|X| · ∑_σ (∏_{e ∈ X} σ_iσ_j) exp(βh ∑ σ_i)`.
+ℤ^d wrapper of `partitionFunctionΛ_high_temp_expansion_subset_form`. -/
+theorem partitionFunctionΛ_latticeGraph_high_temp_expansion_subset_form
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ) :
+    partitionFunctionΛ (IsingModel.latticeGraph d) Λ p =
+      Real.cosh (p.β * p.J) ^
+          (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card *
+      ∑ X ∈ (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.powerset,
+        Real.tanh (p.β * p.J) ^ X.card *
+          ∑ σ : Config ↑Λ,
+            (∏ e ∈ X, edgeSpin (K := ℝ) σ e) *
+            Real.exp (p.β * p.h * ∑ i : ↑Λ, Spin.sign ℝ (σ i)) :=
+  partitionFunctionΛ_high_temp_expansion_subset_form
+    (IsingModel.latticeGraph d) Λ p
+
 /-- **ℤ^d high-temperature correlation closed form (FV §3.7.3 eq. (3.46))**:
 on the ℤ^d induced subgraph at zero external field,
 `⟨σ_A⟩^Λ_{β,0} = (∑_{X : ∂X=A} tanh^|X|) / (∑_{X : ∂X=∅} tanh^|X|)`.
