@@ -1010,6 +1010,75 @@ theorem truncated4_differentiable_beta
     Differentiable ℝ (fun β' => truncated4 G (⟨J, 0, β'⟩ : IsingParams ℝ) i j k l) :=
   fun β => truncated4_differentiableAt_beta G J β i j k l
 
+/-! ## Step 252: truncated3/4 β-direction wrappers at general h -/
+
+/-- **truncated3 Continuous in β at general h** (Step 252).
+Extends Step 203 from h = 0 to general h via Step 247. -/
+theorem truncated3_continuous_beta_general_h
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h : ℝ) (i j k : ι) :
+    Continuous (fun β' => truncated3 G (⟨J, h, β'⟩ : IsingParams ℝ) i j k) := by
+  unfold truncated3
+  refine (((correlation_continuous_beta_general_h G J h _).sub
+    ((correlation_continuous_beta_general_h G J h _).mul
+     (correlation_continuous_beta_general_h G J h _))).sub
+    ((correlation_continuous_beta_general_h G J h _).mul
+     (correlation_continuous_beta_general_h G J h _))).sub
+    ((correlation_continuous_beta_general_h G J h _).mul
+     (correlation_continuous_beta_general_h G J h _))
+    |>.add ?_
+  exact ((continuous_const.mul (correlation_continuous_beta_general_h G J h _)).mul
+    (correlation_continuous_beta_general_h G J h _)).mul
+    (correlation_continuous_beta_general_h G J h _)
+
+/-- **truncated3 Differentiable in β at general h** (Step 252). -/
+theorem truncated3_differentiable_beta_general_h
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h : ℝ) (i j k : ι) :
+    Differentiable ℝ (fun β' => truncated3 G (⟨J, h, β'⟩ : IsingParams ℝ) i j k) := by
+  unfold truncated3
+  refine (((correlation_differentiable_beta_general_h G J h _).sub
+    ((correlation_differentiable_beta_general_h G J h _).mul
+     (correlation_differentiable_beta_general_h G J h _))).sub
+    ((correlation_differentiable_beta_general_h G J h _).mul
+     (correlation_differentiable_beta_general_h G J h _))).sub
+    ((correlation_differentiable_beta_general_h G J h _).mul
+     (correlation_differentiable_beta_general_h G J h _))
+    |>.add ?_
+  exact (((differentiable_const (2 : ℝ)).mul
+    (correlation_differentiable_beta_general_h G J h _)).mul
+    (correlation_differentiable_beta_general_h G J h _)).mul
+    (correlation_differentiable_beta_general_h G J h _)
+
+/-- **truncated4 Continuous in β at general h** (Step 252).
+Extends Step 204 from h = 0 to general h. -/
+theorem truncated4_continuous_beta_general_h
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h : ℝ) (i j k l : ι) :
+    Continuous (fun β' => truncated4 G (⟨J, h, β'⟩ : IsingParams ℝ) i j k l) := by
+  unfold truncated4
+  exact (((correlation_continuous_beta_general_h G J h _).sub
+    ((correlation_continuous_beta_general_h G J h _).mul
+     (correlation_continuous_beta_general_h G J h _))).sub
+    ((correlation_continuous_beta_general_h G J h _).mul
+     (correlation_continuous_beta_general_h G J h _))).sub
+    ((correlation_continuous_beta_general_h G J h _).mul
+     (correlation_continuous_beta_general_h G J h _))
+
+/-- **truncated4 Differentiable in β at general h** (Step 252). -/
+theorem truncated4_differentiable_beta_general_h
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h : ℝ) (i j k l : ι) :
+    Differentiable ℝ (fun β' => truncated4 G (⟨J, h, β'⟩ : IsingParams ℝ) i j k l) := by
+  unfold truncated4
+  exact (((correlation_differentiable_beta_general_h G J h _).sub
+    ((correlation_differentiable_beta_general_h G J h _).mul
+     (correlation_differentiable_beta_general_h G J h _))).sub
+    ((correlation_differentiable_beta_general_h G J h _).mul
+     (correlation_differentiable_beta_general_h G J h _))).sub
+    ((correlation_differentiable_beta_general_h G J h _).mul
+     (correlation_differentiable_beta_general_h G J h _))
+
 /-! ## Monotonicity in β (Step 122): GKS-II-based bound -/
 
 /-- The β-derivative of two-point correlations is nonneg (infinitesimal form of β-monotonicity).
