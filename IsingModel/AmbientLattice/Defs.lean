@@ -346,6 +346,23 @@ theorem freeEnergyΛ_high_temp_h_zero_lower_bound
     (inducedGraph G Λ) J β hβJ
     (by rw [Fintype.card_coe]; exact hne)
 
+/-- **Λ-level FV (3.46) numerator vanishes for odd-cardinality A** at `h = 0`:
+for `A : Finset ↑Λ` of odd cardinality,
+`∑_{X ⊆ E_Λ : ∂X = A} tanh(β J)^|X| = 0`.
+Direct lift of `IsingModel.sum_high_temp_numerator_h_zero_odd_card_eq_zero`
+(Step 291) through the induced subgraph on `Λ`. -/
+theorem sum_high_temp_numerator_h_zero_odd_card_eq_zero_Λ
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (A : Finset ↑Λ) (hA_odd : Odd A.card) :
+    ∑ X ∈ (inducedGraph G Λ).edgeFinset.powerset.filter
+        (fun X : Finset (Sym2 ↑Λ) => ∀ v : ↑Λ,
+          Even ((if v ∈ A then (1 : ℕ) else 0)
+                + (X.filter (v ∈ ·)).card)),
+        Real.tanh (β * J) ^ X.card = 0 :=
+  IsingModel.sum_high_temp_numerator_h_zero_odd_card_eq_zero
+    (inducedGraph G Λ) J β A hA_odd
+
 /-- The correlation on `Λ` is bounded: `|⟨σ^A⟩| ≤ 1`. -/
 theorem abs_correlationΛ_le_one (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] (p : IsingParams ℝ)
