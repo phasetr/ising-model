@@ -417,4 +417,85 @@ theorem correlation_J_deriv_le_lebowitz
   have h_le := summand_le_lebowitz_of_disjoint G J β hf r s u v hrs hru hrv hsu hsv huv
   linarith [show (0 : ℝ) ≤ 1 from zero_le_one]
 
+/-- **Tight Lebowitz upper bound on J-derivative of 2-point function** (Step 217):
+The derivative `d/dJ ⟨σ_r σ_s⟩` at `h = 0` satisfies
+
+  `d/dJ ⟨σ_r σ_s⟩ ≤ β · Σ_e Lebowitz_e + β · |{e ∈ E(G) : r ∈ e ∨ s ∈ e}|`
+
+improving Step 216 by counting only **incident** edges in the error term.
+
+Direct J-direction analogue of `correlation_beta_deriv_le_lebowitz_tight` (Step 154).
+The proof mirrors the β version with prefactor `J → β`, using `hasDerivAt_correlation_J`.
+
+Reference: parallel to Glimm–Jaffe §17.5 pp.311–312. -/
+theorem correlation_J_deriv_le_lebowitz_tight
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (r s : ι) (hrs : r ≠ s) :
+    let p := (⟨J, 0, β⟩ : IsingParams ℝ)
+    ∃ d : ℝ,
+      HasDerivAt (fun J' => correlation G (⟨J', 0, β⟩ : IsingParams ℝ) {r, s}) d J ∧
+      d ≤ β * ∑ e ∈ G.edgeFinset,
+              Sym2.lift ⟨fun u v =>
+                  correlation G p {r, u} * correlation G p {s, v} +
+                  correlation G p {r, v} * correlation G p {s, u},
+                fun u v => by ring⟩ e
+          + β * (G.edgeFinset.filter (fun e => r ∈ e ∨ s ∈ e)).card := by
+  classical
+  intro p
+  have hf : Ferromagnetic p := ⟨hJ, le_refl 0, hβ⟩
+  refine ⟨_, hasDerivAt_correlation_J G J 0 β {r, s}, ?_⟩
+  set leb : Sym2 ι → ℝ := fun e =>
+    Sym2.lift ⟨fun u v => correlation G p {r, u} * correlation G p {s, v} +
+                           correlation G p {r, v} * correlation G p {s, u},
+              fun u v => by ring⟩ e
+  set summ : Sym2 ι → ℝ := fun e =>
+    Sym2.lift ⟨fun u v => correlation G (⟨J, 0, β⟩ : IsingParams ℝ) (symmDiff {r, s} {u, v}) -
+                           correlation G (⟨J, 0, β⟩ : IsingParams ℝ) {r, s} *
+                           correlation G (⟨J, 0, β⟩ : IsingParams ℝ) {u, v},
+              fun u v => by simp [Finset.pair_comm v u]⟩ e
+  set deg := G.edgeFinset.filter (fun e => r ∈ e ∨ s ∈ e)
+  have h_leb_nn : ∀ e ∈ G.edgeFinset, 0 ≤ leb e := fun e _ => by
+    obtain ⟨⟨u, v⟩, rfl⟩ := Quot.exists_rep e
+    exact add_nonneg (mul_nonneg (gks_first G p hf _) (gks_first G p hf _))
+                     (mul_nonneg (gks_first G p hf _) (gks_first G p hf _))
+  have h_bound : ∑ e ∈ G.edgeFinset, summ e ≤ ∑ e ∈ G.edgeFinset, leb e + deg.card := by
+    have split := (Finset.sum_filter_add_sum_filter_not G.edgeFinset
+      (fun e => r ∈ e ∨ s ∈ e) summ).symm
+    rw [split]
+    have h1 : ∑ e ∈ deg, summ e ≤ deg.card := by
+      rw [show (deg.card : ℝ) = ∑ _ ∈ deg, 1 from by simp]
+      apply Finset.sum_le_sum
+      intro e he
+      rw [Finset.mem_filter] at he
+      obtain ⟨heE, hmem⟩ := he
+      obtain ⟨⟨u, v⟩, rfl⟩ := Quot.exists_rep e
+      simp only [Sym2.lift_mk, Sym2.mem_iff, summ] at hmem ⊢
+      rcases hmem with (hru | hrv) | (hsu | hsv)
+      · subst hru; exact summand_le_one G J β hf {r, s} {r, v}
+      · subst hrv; exact summand_le_one G J β hf {r, s} {u, r}
+      · subst hsu; exact summand_le_one G J β hf {r, s} {s, v}
+      · subst hsv; exact summand_le_one G J β hf {r, s} {u, s}
+    have h2 : ∑ e ∈ G.edgeFinset.filter (fun e => ¬(r ∈ e ∨ s ∈ e)), summ e ≤
+              ∑ e ∈ G.edgeFinset, leb e :=
+      calc ∑ e ∈ G.edgeFinset.filter (fun e => ¬(r ∈ e ∨ s ∈ e)), summ e
+          ≤ ∑ e ∈ G.edgeFinset.filter (fun e => ¬(r ∈ e ∨ s ∈ e)), leb e := by
+              apply Finset.sum_le_sum
+              intro e he
+              rw [Finset.mem_filter] at he
+              obtain ⟨heE, hni⟩ := he
+              obtain ⟨⟨u, v⟩, rfl⟩ := Quot.exists_rep e
+              have huv : u ≠ v := (SimpleGraph.mem_edgeFinset.mp heE).ne
+              simp only [Sym2.mem_iff, not_or] at hni
+              obtain ⟨⟨hru, hrv⟩, hsu, hsv⟩ := hni
+              exact summand_le_lebowitz_of_disjoint G J β hf r s u v hrs hru hrv hsu hsv huv
+        _ ≤ ∑ e ∈ G.edgeFinset, leb e :=
+              Finset.sum_le_sum_of_subset_of_nonneg (Finset.filter_subset _ _)
+                (fun e he _ => h_leb_nn e he)
+    have eq_deg : ∑ x ∈ G.edgeFinset with r ∈ x ∨ s ∈ x, summ x = ∑ e ∈ deg, summ e := rfl
+    linarith
+  calc β * ∑ e ∈ G.edgeFinset, summ e
+      ≤ β * (∑ e ∈ G.edgeFinset, leb e + ↑(#deg)) :=
+          mul_le_mul_of_nonneg_left h_bound hβ.le
+    _ = β * G.edgeFinset.sum leb + β * ↑(#deg) := by ring
+
 end IsingModel
