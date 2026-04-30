@@ -3596,8 +3596,9 @@ theorem correlationAlongExhaustion_tendstoLocallyUniformlyOn_beta_of_high_temp_o
 /-- **Locally uniform convergence of corr_n → corr_∞ on Ioo 0 J_c in J** (Step 228):
 For `0 < β`, `1 ≤ d`: corr_n → corr_∞ locally uniformly on `Ioo 0 (1/(β·2d))`.
 
-Direct J-direction analogue of Step 174. Proof: `Monotone.tendstoLocallyUniformlyOn_of_forall_tendsto`
-with (1) ContinuousOn each corr_n in J; (2) Monotonicity in n; (3) ContinuousOn corr_∞ (Step 227);
+Direct J-direction analogue of Step 174. Proof:
+`Monotone.tendstoLocallyUniformlyOn_of_forall_tendsto` with
+(1) ContinuousOn each corr_n in J; (2) Monotonicity in n; (3) ContinuousOn corr_∞ (Step 227);
 (4) pointwise convergence. Strengthens Step 224 from compact `[a, b]` to locally uniform on
 `Ioo 0 J_c`. -/
 theorem correlationAlongExhaustion_tendstoLocallyUniformlyOn_J_of_high_temp_open
@@ -3832,6 +3833,136 @@ theorem correlationInfinite_le_const_mul_beta_of_high_temp
       exact add_nonneg (mul_nonneg hJ (pow_nonneg hM_nn 2))
                        (mul_nonneg hJ (mul_nonneg (by norm_num) (Nat.cast_nonneg _)))
     exact mul_nonneg hC_nn hβ_pos.le
+
+/-! ## Step 230: linear bound at J = 0 + right-continuity in J -/
+
+/-- **Helper for Step 230**: per-stage finite-volume linear bound at J = 0. -/
+private lemma inducedLatticeGraph_correlation_le_const_mul_J
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (β : ℝ) (hβ : 0 < β)
+    (b : ℝ) (hlt : b * β * ↑(2 * d) < 1)
+    (n : ℕ) (r s : ↑(Λ.volume n)) (hrs : r ≠ s)
+    (J : ℝ) (hJ_pos : 0 < J) (hJb : J ≤ b) :
+    let G := inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)
+    let M : ℝ := b * β * ↑(2 * d) / (1 - b * β * ↑(2 * d))
+    IsingModel.correlation G (⟨J, 0, β⟩ : IsingParams ℝ) {r, s} ≤
+      (β * M ^ 2 + β * (4 * ↑d)) * J := by
+  intro G M
+  set C : ℝ := β * M ^ 2 + β * (4 * ↑d) with hC_def
+  have h_per_a : ∀ a : ℝ, 0 < a → a ≤ J →
+      IsingModel.correlation G (⟨J, 0, β⟩ : IsingParams ℝ) {r, s} ≤
+      IsingModel.correlation G (⟨a, 0, β⟩ : IsingParams ℝ) {r, s} + C * (J - a) := by
+    intro a ha hab
+    have h_lip := inducedLatticeGraph_correlation_norm_sub_le_J Λ β hβ a b ha (hab.trans hJb) hlt
+        n r s hrs a J (Set.left_mem_Icc.mpr (hab.trans hJb)) ⟨hab, hJb⟩
+    simp only at h_lip
+    have hJ_minus_a_nonneg : 0 ≤ J - a := by linarith
+    have hcorr_diff_nonneg : 0 ≤
+        IsingModel.correlation G (⟨J, 0, β⟩ : IsingParams ℝ) {r, s} -
+        IsingModel.correlation G (⟨a, 0, β⟩ : IsingParams ℝ) {r, s} := by
+      have hmono := IsingModel.correlation_monotone_J G 0 (le_refl 0) β hβ {r, s}
+      have ha_in : a ∈ Set.Ici (0 : ℝ) := Set.mem_Ici.mpr ha.le
+      have hJ_in : J ∈ Set.Ici (0 : ℝ) := Set.mem_Ici.mpr hJ_pos.le
+      have hmono_app : IsingModel.correlation G (⟨a, 0, β⟩ : IsingParams ℝ) {r, s} ≤
+                       IsingModel.correlation G (⟨J, 0, β⟩ : IsingParams ℝ) {r, s} :=
+        hmono ha_in hJ_in hab
+      linarith
+    have habs1 : ‖IsingModel.correlation G (⟨J, 0, β⟩ : IsingParams ℝ) {r, s} -
+        IsingModel.correlation G (⟨a, 0, β⟩ : IsingParams ℝ) {r, s}‖ =
+        IsingModel.correlation G (⟨J, 0, β⟩ : IsingParams ℝ) {r, s} -
+        IsingModel.correlation G (⟨a, 0, β⟩ : IsingParams ℝ) {r, s} :=
+      Real.norm_of_nonneg hcorr_diff_nonneg
+    have habs2 : ‖J - a‖ = J - a := Real.norm_of_nonneg hJ_minus_a_nonneg
+    rw [habs1, habs2] at h_lip
+    linarith
+  have h_cont_corr_at_0 : ContinuousAt
+      (fun a => IsingModel.correlation G (⟨a, 0, β⟩ : IsingParams ℝ) {r, s}) 0 :=
+    (IsingModel.correlation_continuous_J G 0 β {r, s}).continuousAt
+  have h_corr_at_0 : IsingModel.correlation G (⟨0, 0, β⟩ : IsingParams ℝ) {r, s} = 0 :=
+    IsingModel.correlation_zero_params_vanish_of_nonempty_A G β {r, s}
+      (Finset.insert_nonempty _ _)
+  have h_neBot : (nhdsWithin (0 : ℝ) (Set.Ioi 0)).NeBot := nhdsWithin_Ioi_neBot le_rfl
+  have h_g_tendsto : Filter.Tendsto
+      (fun a => IsingModel.correlation G (⟨a, 0, β⟩ : IsingParams ℝ) {r, s} + C * (J - a))
+      (nhdsWithin 0 (Set.Ioi 0)) (nhds (C * J)) := by
+    have h1 : Filter.Tendsto
+        (fun a => IsingModel.correlation G (⟨a, 0, β⟩ : IsingParams ℝ) {r, s})
+        (nhdsWithin 0 (Set.Ioi 0)) (nhds 0) := by
+      have htend := h_cont_corr_at_0.tendsto
+      rw [h_corr_at_0] at htend
+      exact htend.mono_left nhdsWithin_le_nhds
+    have h2 : Filter.Tendsto
+        (fun a : ℝ => C * (J - a)) (nhdsWithin 0 (Set.Ioi 0)) (nhds (C * J)) := by
+      have hf : Continuous fun a : ℝ => C * (J - a) := by
+        exact Continuous.mul continuous_const (Continuous.sub continuous_const continuous_id)
+      have hcont : Filter.Tendsto (fun a : ℝ => C * (J - a)) (nhds 0) (nhds (C * (J - 0))) :=
+        hf.continuousAt (x := (0 : ℝ))
+      have heq : C * (J - 0) = C * J := by ring
+      rw [heq] at hcont
+      exact hcont.mono_left nhdsWithin_le_nhds
+    have hsum := h1.add h2
+    simpa using hsum
+  have h_eventual : ∀ᶠ a in nhdsWithin (0 : ℝ) (Set.Ioi 0),
+      IsingModel.correlation G (⟨J, 0, β⟩ : IsingParams ℝ) {r, s} ≤
+      IsingModel.correlation G (⟨a, 0, β⟩ : IsingParams ℝ) {r, s} + C * (J - a) := by
+    have h_le : ∀ᶠ a in nhdsWithin (0 : ℝ) (Set.Ioi 0), a ≤ J := by
+      have h_nhd : Set.Iic J ∈ nhds (0 : ℝ) := Iic_mem_nhds hJ_pos
+      filter_upwards [self_mem_nhdsWithin, mem_nhdsWithin_of_mem_nhds h_nhd] with a ha hab
+      exact hab
+    filter_upwards [self_mem_nhdsWithin, h_le] with a ha hab
+    exact h_per_a a ha hab
+  exact ge_of_tendsto h_g_tendsto h_eventual
+
+/-- **Linear bound on corr_∞ at J = 0** (Step 230):
+For `0 < β`, `0 < b` with `bβ·2d < 1`, and any `r ≠ s`, on the interval `(0, b]`:
+`corr_∞(r, s, J) ≤ (β·M(b)² + β·4d) · J`,
+where `M(b) = bβ·2d/(1 - bβ·2d)`.
+
+Direct J-direction analogue of Step 176. As an immediate corollary,
+`corr_∞(r, s, J) → 0` as `J → 0⁺` (right-continuity at 0). -/
+theorem correlationInfinite_le_const_mul_J_of_high_temp
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (r_val s_val : Fin d → ℤ) (hrs : r_val ≠ s_val)
+    (β : ℝ) (hβ : 0 < β)
+    (b : ℝ) (hb_pos : 0 < b) (hlt : b * β * ↑(2 * d) < 1)
+    (J : ℝ) (hJ_pos : 0 < J) (hJb : J ≤ b) :
+    let M : ℝ := b * β * ↑(2 * d) / (1 - b * β * ↑(2 * d))
+    correlationInfinite (IsingModel.latticeGraph d) Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+      {r_val, s_val} ≤ (β * M ^ 2 + β * (4 * ↑d)) * J := by
+  intro M
+  set C : ℝ := β * M ^ 2 + β * (4 * ↑d) with hC_def
+  have hferro : IsingModel.Ferromagnetic (⟨J, 0, β⟩ : IsingParams ℝ) :=
+    ⟨hJ_pos.le, le_refl 0, hβ⟩
+  rw [correlationInfinite_eq_ciSup]
+  apply ciSup_le
+  intro n
+  by_cases h_sub : ({r_val, s_val} : Finset (Fin d → ℤ)) ⊆ Λ.volume n
+  · have hrn : r_val ∈ Λ.volume n := Finset.insert_subset_iff.mp h_sub |>.1
+    have hsn : s_val ∈ Λ.volume n :=
+      Finset.singleton_subset_iff.mp (Finset.insert_subset_iff.mp h_sub |>.2)
+    have heq : correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                  (⟨J, 0, β⟩ : IsingParams ℝ) {r_val, s_val} n =
+               IsingModel.correlation
+                  (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+                  (⟨J, 0, β⟩ : IsingParams ℝ) {(⟨r_val, hrn⟩ : ↑(Λ.volume n)),
+                                                ⟨s_val, hsn⟩} := by
+      rw [correlationAlongExhaustion_of_subset _ _ _ h_sub, correlationΛ_apply]
+      congr 1
+      ext u; rw [mem_liftFinset]
+      simp only [Finset.mem_insert, Finset.mem_singleton, Subtype.ext_iff]
+    rw [heq]
+    have hsubsne : (⟨r_val, hrn⟩ : ↑(Λ.volume n)) ≠ ⟨s_val, hsn⟩ :=
+      fun h => hrs (congrArg Subtype.val h)
+    exact inducedLatticeGraph_correlation_le_const_mul_J Λ β hβ b hlt n
+      ⟨r_val, hrn⟩ ⟨s_val, hsn⟩ hsubsne J hJ_pos hJb
+  · rw [correlationAlongExhaustion_of_not_subset _ _ _ h_sub]
+    have hC_nn : 0 ≤ C := by
+      have hdenom_b : 0 < 1 - b * β * ↑(2 * d) := by linarith
+      have hM_nn : 0 ≤ M :=
+        div_nonneg (mul_nonneg (mul_nonneg hb_pos.le hβ.le) (Nat.cast_nonneg _)) hdenom_b.le
+      exact add_nonneg (mul_nonneg hβ.le (pow_nonneg hM_nn 2))
+                       (mul_nonneg hβ.le (mul_nonneg (by norm_num) (Nat.cast_nonneg _)))
+    exact mul_nonneg hC_nn hJ_pos.le
 
 /-- **Helper: corr_∞ vanishes at β = 0 for r ≠ s** (Step 177 helper):
 The infinite-volume two-point function at β = 0, h = 0 is zero (since the Boltzmann
