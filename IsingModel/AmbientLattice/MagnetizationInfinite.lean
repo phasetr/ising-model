@@ -1414,6 +1414,36 @@ theorem susceptibilityInfinite_continuousOn_field_J_zero
         (h_tanh_cont.comp (continuous_const.mul continuous_id)))
   exact h_cont_outer.continuousOn.congr (fun h hh_in => hF_eq h hh_in)
 
+/-- **`susceptibilityInfinite` ContinuousOn β on `Ioi 0` at J = 0** (Step 263):
+For `0 ≤ h`, the function `β ↦ susceptibilityInfinite G Λ ⟨0, h, β⟩ i`
+equals `tanh(β·h)·(1 - tanh(β·h))` on `Ioi 0` (Step 259), which is continuous.
+
+Reference: Glimm–Jaffe §17.6. -/
+theorem susceptibilityInfinite_continuousOn_beta_J_zero
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (h : ℝ) (hh_nn : 0 ≤ h) (i : V) :
+    ContinuousOn
+      (fun β => susceptibilityInfinite G Λ (⟨0, h, β⟩ : IsingParams ℝ) i)
+      (Set.Ioi (0 : ℝ)) := by
+  have hF_eq : ∀ β ∈ Set.Ioi (0 : ℝ),
+      susceptibilityInfinite G Λ (⟨0, h, β⟩ : IsingParams ℝ) i
+        = Real.tanh (β * h) * (1 - Real.tanh (β * h)) := by
+    intro β hβ_in
+    have hβ_pos : 0 < β := hβ_in
+    have hf : Ferromagnetic (⟨(0 : ℝ), h, β⟩ : IsingParams ℝ) :=
+      ⟨le_refl 0, hh_nn, hβ_pos⟩
+    exact susceptibilityInfinite_J_zero G Λ h β hf i
+  have h_tanh_cont : Continuous (Real.tanh : ℝ → ℝ) := by
+    rw [show (Real.tanh : ℝ → ℝ) = (fun x => Real.sinh x / Real.cosh x) from
+        funext fun x => Real.tanh_eq_sinh_div_cosh x]
+    exact Real.continuous_sinh.div Real.continuous_cosh (fun x => (Real.cosh_pos x).ne')
+  have h_cont_outer : Continuous (fun β : ℝ => Real.tanh (β * h) * (1 - Real.tanh (β * h))) :=
+    (h_tanh_cont.comp (continuous_id.mul continuous_const)).mul
+      (continuous_const.sub
+        (h_tanh_cont.comp (continuous_id.mul continuous_const)))
+  exact h_cont_outer.continuousOn.congr (fun β hβ_in => hF_eq β hβ_in)
+
 
 end Ambient
 end IsingModel
