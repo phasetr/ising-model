@@ -327,6 +327,7 @@ theorem truncated2Infinite_J_zero_diag
       Finset.card_singleton, pow_one]
   ring
 
+
 /-- **Conditional cluster decay (cofinite form)**: if the ∞-volume
 Ursell 2-point function at a fixed site `i : V`, viewed as a function
 of the free site `j : V`, is *summable* over `V`, then it tends to `0`
@@ -1578,6 +1579,36 @@ theorem truncated4Infinite_J_zero_all_coincident
   have hii : ({i, i} : Finset V) = {i} := by simp
   have hiiii : ({i, i, i, i} : Finset V) = {i} := by ext x; simp
   rw [hiiii, hii, h1i]
+  ring
+
+/-- **`truncated3Infinite` at J = 0 (pairwise distinct) vanishes** (Step 276, GJ §17.1):
+At J = 0, sites are non-interacting; for pairwise distinct `i, j, k` all spins are
+independent, so the Ursell 3-point function vanishes:
+`truncated3Infinite(i, j, k) = 0`.
+
+**Proof**: by `correlationInfinite_J_zero` each correlation is a power of `tanh(βh)`:
+`⟨σ^A⟩ = tanh(βh)^|A|`. For distinct `i, j, k`:
+`U_3 = t^3 − 3t·t^2 + 2t^3 = t^3 − 3t^3 + 2t^3 = 0`. -/
+theorem truncated3Infinite_J_zero
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (h β : ℝ) (hf : Ferromagnetic (⟨(0 : ℝ), h, β⟩ : IsingParams ℝ))
+    {i j k : V} (hij : i ≠ j) (hik : i ≠ k) (hjk : j ≠ k) :
+    truncated3Infinite G Λ ⟨0, h, β⟩ i j k = 0 := by
+  unfold truncated3Infinite
+  have hcard_ijk : ({i, j, k} : Finset V).card = 3 := by
+    rw [Finset.card_insert_of_notMem, Finset.card_pair hjk]
+    simp [hij, hik]
+  rw [correlationInfinite_J_zero G Λ h β hf {i, j, k},
+      correlationInfinite_J_zero G Λ h β hf {j, k},
+      correlationInfinite_J_zero G Λ h β hf {i, k},
+      correlationInfinite_J_zero G Λ h β hf {i, j},
+      correlationInfinite_J_zero G Λ h β hf {i},
+      correlationInfinite_J_zero G Λ h β hf {j},
+      correlationInfinite_J_zero G Λ h β hf {k},
+      hcard_ijk, Finset.card_pair hjk, Finset.card_pair hik,
+      Finset.card_pair hij,
+      Finset.card_singleton, Finset.card_singleton, Finset.card_singleton]
   ring
 
 
