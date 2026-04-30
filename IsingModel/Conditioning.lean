@@ -1231,6 +1231,189 @@ theorem partitionFunction_high_temp_expansion_h_zero
   rw [partitionFunction_high_temp_expansion G ⟨J, 0, β⟩]
   simp
 
+/-! ### Even-subgraph closed form (FV §3.7.3 eq. (3.45)) -/
+
+omit [DecidableEq ι] in
+/-- Single-spin sum of `toSign^k`: `2` if `k` is even, else `0`.
+Elementary parity fact used in the high-temperature expansion. -/
+private theorem sum_toSign_pow_real (k : ℕ) :
+    (∑ s : Spin, ((s.toSign : ℝ)) ^ k) = if Even k then 2 else 0 := by
+  have hu : (Finset.univ : Finset Spin) = {Spin.up, Spin.down} := by decide
+  rw [hu, Finset.sum_pair (by decide : Spin.up ≠ Spin.down)]
+  have hup : ((Spin.up.toSign : ℤ) : ℝ) = 1 := by simp [Spin.toSign]
+  have hdown : ((Spin.down.toSign : ℤ) : ℝ) = -1 := by simp [Spin.toSign]
+  rw [hup, hdown, one_pow]
+  by_cases hk : Even k
+  · rw [if_pos hk, hk.neg_one_pow]; norm_num
+  · rw [if_neg hk]
+    rw [Nat.not_even_iff_odd] at hk
+    rw [hk.neg_one_pow]; norm_num
+
+/-- Configuration sum of `∏_v (toSign σ v)^(k v)`: equals `2^|ι|`
+when every `k v` is even, else `0`. Per-vertex Fubini reduces to
+`sum_toSign_pow_real`. -/
+private theorem sum_prod_toSign_pow_real (k : ι → ℕ) :
+    (∑ σ : Config ι, ∏ v : ι, ((σ v).toSign : ℝ) ^ (k v))
+      = if (∀ v : ι, Even (k v)) then (2 : ℝ) ^ Fintype.card ι else 0 := by
+  have hfubini :
+      (∑ σ : Config ι, ∏ v : ι, ((σ v).toSign : ℝ) ^ (k v))
+        = ∏ v : ι, ∑ s : Spin, ((s.toSign : ℝ)) ^ (k v) :=
+    (Fintype.prod_sum (κ := fun _ => Spin)
+      (fun v s => ((s.toSign : ℝ)) ^ (k v))).symm
+  rw [hfubini]
+  simp_rw [sum_toSign_pow_real]
+  by_cases h : ∀ v : ι, Even (k v)
+  · rw [if_pos h,
+      Finset.prod_congr rfl (fun v _ => if_pos (h v)),
+      Finset.prod_const, Finset.card_univ]
+  · rw [if_neg h]
+    push Not at h
+    obtain ⟨v, hv⟩ := h
+    exact Finset.prod_eq_zero (Finset.mem_univ v) (if_neg hv)
+
+/-- **Edge-product to vertex-power**: for `X` a subset of `G.edgeFinset`
+on a SimpleGraph (so every edge is non-diagonal),
+`∏_{e ∈ X} edgeSpin σ e = ∏_v (σ v.toSign)^(deg_X v)` where
+`deg_X v := (X.filter (v ∈ ·)).card`. The combinatorial bridge between
+the edge product appearing in the high-temperature expansion and the
+per-vertex Fubini decomposition. -/
+private theorem prod_edgeSpin_eq_prod_pow_filter_card
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (X : Finset (Sym2 ι))
+    (hX : X ⊆ G.edgeFinset) (σ : Config ι) :
+    (∏ e ∈ X, edgeSpin (K := ℝ) σ e)
+      = ∏ v : ι, ((σ v).toSign : ℝ) ^ ((X.filter (v ∈ ·)).card) := by
+  classical
+  -- ∏_v g_v^(filter (v∈·) X).card = ∏_v g_v^(∑_{e ∈ X} if v∈e then 1 else 0)
+  have hcard : ∀ v : ι,
+      (X.filter (v ∈ ·)).card
+        = ∑ e ∈ X, (if v ∈ e then 1 else 0) := fun v => by
+    rw [Finset.card_eq_sum_ones, Finset.sum_filter]
+  simp_rw [hcard]
+  -- ∏_v g_v^(∑_e ...) = ∏_v ∏_e g_v^(if v∈e then 1 else 0)
+  simp_rw [← Finset.prod_pow_eq_pow_sum]
+  -- push pow through if
+  have hpush : ∀ (v : ι) (e : Sym2 ι),
+      ((σ v).toSign : ℝ) ^ (if v ∈ e then (1 : ℕ) else 0)
+        = if v ∈ e then ((σ v).toSign : ℝ) else 1 := by
+    intro v e
+    by_cases hv : v ∈ e <;> simp [hv]
+  simp_rw [hpush]
+  -- swap the two products
+  rw [Finset.prod_comm]
+  -- ∏_e ∏_v (if v∈e then σ v.toSign else 1) = ∏_e edgeSpin σ e
+  refine Finset.prod_congr rfl (fun e he => ?_)
+  rw [show (∏ v : ι, if v ∈ e then ((σ v).toSign : ℝ) else 1)
+      = ∏ v ∈ Finset.univ.filter (· ∈ e), ((σ v).toSign : ℝ) from by
+        rw [Finset.prod_filter]]
+  -- univ.filter (· ∈ e) = e.toFinset
+  have hfilter : (Finset.univ : Finset ι).filter (· ∈ e) = e.toFinset := by
+    ext v; simp
+  rw [hfilter]
+  -- e is non-diag (since e ∈ X ⊆ G.edgeFinset, no loops)
+  have hnd : ¬ e.IsDiag := G.not_isDiag_of_mem_edgeSet
+    (G.mem_edgeFinset.mp (hX he))
+  -- edgeSpin σ e = e.toFinset.prod σ.toSign for non-diag e
+  refine Sym2.inductionOn e (fun i j => ?_) hnd
+  intro hnd_ij
+  rw [Sym2.toFinset_mk_eq, Sym2.mk_isDiag_iff] at *
+  rw [Finset.prod_insert (Finset.notMem_singleton.mpr hnd_ij),
+      Finset.prod_singleton]
+  -- edgeSpin σ s(i,j) = σ i.toSign * σ j.toSign
+  unfold edgeSpin
+  simp [Sym2.lift_mk, Spin.sign]
+
+/-- **σ-sum of edge product**: for `X ⊆ G.edgeFinset` on a SimpleGraph,
+`∑_σ ∏_{e ∈ X} edgeSpin σ e = 2^|ι|` if every vertex has even degree
+in `X`, else `0`. The parity step reducing the high-temperature
+expansion of `Z(h=0)` to a sum over even-degree subgraphs. -/
+private theorem sum_prod_edgeSpin_eq_pow_card_or_zero
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (X : Finset (Sym2 ι))
+    (hX : X ⊆ G.edgeFinset) :
+    (∑ σ : Config ι, ∏ e ∈ X, edgeSpin (K := ℝ) σ e)
+      = if (∀ v : ι, Even ((X.filter (v ∈ ·)).card))
+        then (2 : ℝ) ^ Fintype.card ι else 0 := by
+  simp_rw [prod_edgeSpin_eq_prod_pow_filter_card G X hX]
+  exact sum_prod_toSign_pow_real
+    (k := fun v => (X.filter (v ∈ ·)).card)
+
+/-- **Partition function at h = 0 — Friedli–Velenik §3.7.3 eq. (3.45)**:
+\[
+Z(G; J, 0, \beta) = 2^{|\iota|} \cdot (\cosh(\beta J))^{|E|}
+\sum_{\substack{X \subseteq E \\ \text{every $v$ has even $X$-degree}}}
+  \tanh(\beta J)^{|X|}.
+\]
+
+The full closed form of the lattice high-temperature expansion at zero
+external field. Combines `partitionFunction_high_temp_expansion_h_zero`
+(Step 282), `Finset.prod_one_add` for the subset expansion, and the
+per-σ parity argument `sum_prod_edgeSpin_eq_pow_card_or_zero` to
+collapse to even-degree subgraphs.
+
+References: GJ §18.3 (lattice cluster expansion); FV §3.7.3 eq. (3.45),
+p. 117 (2017 ed.). -/
+theorem partitionFunction_high_temp_expansion_h_zero_closed
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) :
+    partitionFunction G ⟨J, 0, β⟩ =
+      (2 : ℝ) ^ Fintype.card ι * Real.cosh (β * J) ^ G.edgeFinset.card *
+      ∑ X ∈ G.edgeFinset.powerset.filter
+        (fun X => ∀ v : ι, Even ((X.filter (v ∈ ·)).card)),
+        Real.tanh (β * J) ^ X.card := by
+  rw [partitionFunction_high_temp_expansion_h_zero G J β]
+  -- Z = cosh^|E| * ∑_σ ∏_e (1 + t · spin_e)
+  -- Step 1: subset expansion via Finset.prod_one_add
+  have hexpand : ∀ σ : Config ι,
+      (∏ e ∈ G.edgeFinset, (1 + Real.tanh (β * J) * edgeSpin σ e))
+        = ∑ X ∈ G.edgeFinset.powerset,
+            ∏ e ∈ X, (Real.tanh (β * J) * edgeSpin σ e) := fun σ =>
+    Finset.prod_one_add G.edgeFinset
+  simp_rw [hexpand]
+  -- Step 2: pull tanh^|X| out of inner product
+  have hpull : ∀ σ : Config ι, ∀ X : Finset (Sym2 ι),
+      (∏ e ∈ X, (Real.tanh (β * J) * edgeSpin σ e))
+        = Real.tanh (β * J) ^ X.card *
+            (∏ e ∈ X, edgeSpin (K := ℝ) σ e) := by
+    intros σ X
+    rw [Finset.prod_mul_distrib, Finset.prod_const]
+  simp_rw [hpull]
+  -- Step 3: swap σ-sum and X-sum
+  rw [Finset.sum_comm]
+  -- Step 4: pull tanh^|X| out of σ-sum
+  have hsum_const : ∀ X : Finset (Sym2 ι),
+      (∑ σ : Config ι, Real.tanh (β * J) ^ X.card *
+            (∏ e ∈ X, edgeSpin (K := ℝ) σ e))
+        = Real.tanh (β * J) ^ X.card *
+            (∑ σ : Config ι, ∏ e ∈ X, edgeSpin (K := ℝ) σ e) := fun X => by
+    rw [← Finset.mul_sum]
+  simp_rw [hsum_const]
+  -- Step 5: collapse inner σ-sum via parity
+  have hparity : ∀ X ∈ G.edgeFinset.powerset,
+      (∑ σ : Config ι, ∏ e ∈ X, edgeSpin (K := ℝ) σ e)
+        = if (∀ v : ι, Even ((X.filter (v ∈ ·)).card))
+          then (2 : ℝ) ^ Fintype.card ι else 0 := fun X hX =>
+    sum_prod_edgeSpin_eq_pow_card_or_zero G X (Finset.mem_powerset.mp hX)
+  rw [Finset.sum_congr rfl
+    (fun X hX => by rw [hparity X hX])]
+  -- Step 6: redistribute and collapse to filter form
+  -- LHS: cosh^|E| * ∑_X (tanh^|X| * if even then 2^|ι| else 0)
+  -- Goal: 2^|ι| * cosh^|E| * ∑_{X with even} tanh^|X|
+  have hdist : ∀ X : Finset (Sym2 ι),
+      Real.tanh (β * J) ^ X.card *
+          (if (∀ v : ι, Even ((X.filter (v ∈ ·)).card))
+            then (2 : ℝ) ^ Fintype.card ι else 0)
+        = (if (∀ v : ι, Even ((X.filter (v ∈ ·)).card))
+            then (2 : ℝ) ^ Fintype.card ι * Real.tanh (β * J) ^ X.card
+            else 0) := fun X => by
+    by_cases h : ∀ v : ι, Even ((X.filter (v ∈ ·)).card)
+    · rw [if_pos h, if_pos h]; ring
+    · rw [if_neg h, if_neg h]; ring
+  simp_rw [hdist]
+  -- LHS: cosh^|E| * ∑_X (if even then 2^|ι| * tanh^|X| else 0)
+  rw [← Finset.sum_filter]
+  -- LHS: cosh^|E| * ∑_{X filtered} (2^|ι| * tanh^|X|)
+  rw [← Finset.mul_sum]
+  ring
+
 /-- **High-temperature parameter**: `t = tanh(βJ)`.
 For `βJ ≥ 0`, `t ∈ [0, 1)`, and the high-temperature expansion
 converges when `t` is small. -/
