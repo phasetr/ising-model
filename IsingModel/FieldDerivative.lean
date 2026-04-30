@@ -490,4 +490,42 @@ theorem correlation_differentiable_field
     Differentiable ℝ (fun h' => correlation G (⟨J, h', β⟩ : IsingParams ℝ) A) :=
   fun h => correlation_differentiableAt_field G J h β A
 
+/-- **truncated2 ContinuousAt h** (Step 200):
+For finite-volume Ising, `truncated2 G ⟨J, h, β⟩ i j` is continuous in h at any h.
+
+Proof: `truncated2 = correlation {i,j} - correlation {i} · correlation {j}`,
+each continuous in h. -/
+theorem truncated2_continuousAt_field
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h β : ℝ) (i j : ι) :
+    ContinuousAt (fun h' => truncated2 G (⟨J, h', β⟩ : IsingParams ℝ) i j) h := by
+  unfold truncated2
+  exact (correlation_continuousAt_field G J h β _).sub
+    ((correlation_continuousAt_field G J h β _).mul (correlation_continuousAt_field G J h β _))
+
+/-- **truncated2 Continuous in h** (Step 200, whole-ℝ). -/
+theorem truncated2_continuous_field
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (i j : ι) :
+    Continuous (fun h' => truncated2 G (⟨J, h', β⟩ : IsingParams ℝ) i j) :=
+  continuous_iff_continuousAt.mpr fun h => truncated2_continuousAt_field G J h β i j
+
+/-- **truncated2 DifferentiableAt h** (Step 200):
+At any h, truncated2 has a derivative via product rule. -/
+theorem truncated2_differentiableAt_field
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h β : ℝ) (i j : ι) :
+    DifferentiableAt ℝ (fun h' => truncated2 G (⟨J, h', β⟩ : IsingParams ℝ) i j) h := by
+  unfold truncated2
+  exact (correlation_differentiableAt_field G J h β _).sub
+    ((correlation_differentiableAt_field G J h β _).mul
+     (correlation_differentiableAt_field G J h β _))
+
+/-- **truncated2 Differentiable in h** (Step 200, whole-ℝ). -/
+theorem truncated2_differentiable_field
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (i j : ι) :
+    Differentiable ℝ (fun h' => truncated2 G (⟨J, h', β⟩ : IsingParams ℝ) i j) :=
+  fun h => truncated2_differentiableAt_field G J h β i j
+
 end IsingModel
