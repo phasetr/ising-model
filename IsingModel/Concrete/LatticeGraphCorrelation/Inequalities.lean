@@ -3196,6 +3196,62 @@ theorem correlationAlongExhaustion_tendstoUniformlyOn_beta
     simp only [correlationInfinite_eq_ciSup]
     exact htend
 
+/-- **Uniform convergence of finite-volume correlations in J** (Step 224):
+For any exhaustion `Λ`, vertices `r_val ≠ s_val`, `0 < β`, `0 < a ≤ b`, `bβ·2d < 1`,
+the finite-volume two-point functions converge uniformly on `[a, b]` in J.
+
+Direct J-direction analogue of Step 170. Proof: Dini's theorem on the compact `[a, b]`:
+1. Each `J ↦ corr_n(J)` is continuous (Step 207 + `.continuousAt`).
+2. `n ↦ corr_n(J)` is monotone (`correlationAlongExhaustion_monotone`).
+3. Limit `J ↦ corr_∞(J)` is continuous (Step 223).
+4. Pointwise convergence (`correlationAlongExhaustion_tendsto_ciSup`). -/
+theorem correlationAlongExhaustion_tendstoUniformlyOn_J
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (r_val s_val : Fin d → ℤ) (hrs : r_val ≠ s_val)
+    (β : ℝ) (hβ : 0 < β)
+    (a b : ℝ) (ha : 0 < a) (hab : a ≤ b) (hlt : b * β * ↑(2 * d) < 1) :
+    TendstoUniformlyOn
+      (fun n J => correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                    (⟨J, 0, β⟩ : IsingParams ℝ) {r_val, s_val} n)
+      (fun J => correlationInfinite (IsingModel.latticeGraph d) Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+                    {r_val, s_val})
+      Filter.atTop (Set.Icc a b) := by
+  apply Monotone.tendstoUniformlyOn_of_forall_tendsto isCompact_Icc
+  · intro n
+    by_cases h_sub : ({r_val, s_val} : Finset (Fin d → ℤ)) ⊆ Λ.volume n
+    · have hrn : r_val ∈ Λ.volume n := Finset.insert_subset_iff.mp h_sub |>.1
+      have hsn : s_val ∈ Λ.volume n :=
+        Finset.singleton_subset_iff.mp (Finset.insert_subset_iff.mp h_sub |>.2)
+      intro J _
+      apply ContinuousAt.continuousWithinAt
+      have heq : (fun J' => correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                    (⟨J', 0, β⟩ : IsingParams ℝ) {r_val, s_val} n) =
+                 (fun J' => IsingModel.correlation
+                    (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+                    (⟨J', 0, β⟩ : IsingParams ℝ) {(⟨r_val, hrn⟩ : ↑(Λ.volume n)),
+                                                    ⟨s_val, hsn⟩}) := by
+        funext J'
+        rw [correlationAlongExhaustion_of_subset _ _ _ h_sub, correlationΛ_apply]
+        congr 1
+        ext u; rw [mem_liftFinset]
+        simp only [Finset.mem_insert, Finset.mem_singleton, Subtype.ext_iff]
+      rw [heq]
+      exact (IsingModel.correlation_continuous_J _ 0 β _).continuousAt
+    · simp only [correlationAlongExhaustion_of_not_subset _ _ _ h_sub]
+      exact continuousOn_const
+  · intro J hJ_mem
+    exact correlationAlongExhaustion_monotone (IsingModel.latticeGraph d) Λ
+      (⟨J, 0, β⟩ : IsingParams ℝ)
+      ⟨le_of_lt (ha.trans_le hJ_mem.1), le_refl 0, hβ⟩ {r_val, s_val}
+  · exact correlationInfinite_continuousOn_J_of_high_temp Λ r_val s_val hrs β hβ a b ha hab hlt
+  · intro J hJ_mem
+    have hf : IsingModel.Ferromagnetic (⟨J, 0, β⟩ : IsingParams ℝ) :=
+      ⟨le_of_lt (ha.trans_le hJ_mem.1), le_refl 0, hβ⟩
+    have htend := IsingModel.Ambient.correlationAlongExhaustion_tendsto_ciSup
+      (IsingModel.latticeGraph d) Λ (⟨J, 0, β⟩ : IsingParams ℝ) hf {r_val, s_val}
+    simp only [correlationInfinite_eq_ciSup]
+    exact htend
+
 /-- **A.e. differentiability of infinite-volume two-point function in β** (Step 171):
 For any exhaustion `Λ`, vertices `r_val ≠ s_val`, `0 ≤ J`, `0 < a ≤ b`, `bJ·2d < 1`,
 the infinite-volume two-point function `β ↦ corr_∞(β)` is differentiable within `[a,b]`
