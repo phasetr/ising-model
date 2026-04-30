@@ -2487,6 +2487,19 @@ theorem correlationΛ_latticeGraph_high_temp_h_zero_odd_card_eq_zero
   correlationΛ_high_temp_h_zero_odd_card_eq_zero
     (IsingModel.latticeGraph d) Λ J β A hA_odd
 
+/-- **ℤ^d along-exhaustion Z₂ symmetry of correlation at h = 0**:
+for ambient `A : Finset (Fin d → ℤ)` of odd cardinality,
+`correlationAlongExhaustion (latticeGraph d) Λ ⟨J, 0, β⟩ A n = 0` at
+every stage `n`. ℤ^d wrapper of
+`correlationAlongExhaustion_high_temp_h_zero_odd_card_eq_zero`. -/
+theorem correlationAlongExhaustion_latticeGraph_high_temp_h_zero_odd_card_eq_zero
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
+    (A : Finset (Fin d → ℤ)) (hA_odd : Odd A.card) (n : ℕ) :
+    correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) A n = 0 :=
+  correlationAlongExhaustion_high_temp_h_zero_odd_card_eq_zero
+    (IsingModel.latticeGraph d) Λ J β A hA_odd n
+
 /-- **ℤ^d log partitionFunctionΛ closed form at `J = 0`** (any Finset):
 `log Z_Λ(⟨0, h, β⟩) = |Λ| · log(2·cosh(β·h))`. -/
 theorem log_partitionFunctionΛ_latticeGraph_J_zero
