@@ -3489,6 +3489,47 @@ theorem correlationInfinite_continuousOn_beta_of_high_temp_open
     Icc_mem_nhds ha_lt_β₀ hβ₀_lt_b
   exact (hcont_Icc β₀ ⟨ha_le_β₀, hβ₀_le_b⟩).continuousAt h_Icc_nhd
 
+/-- **Continuity of corr_∞ on Ioo 0 J_c in J** (Step 227):
+For `0 < β`, `1 ≤ d`, `J ↦ corr_∞(J)` is continuous on the open
+high-temperature interval `Ioo 0 (1/(β·2d))`.
+
+Direct J-direction analogue of Step 173. Proof: for each J₀ in the open interval,
+choose `[a, b] ⊂ Ioo 0 (1/(β·2d))` with `J₀ ∈ Ioo a b` (e.g., `a = J₀/2`,
+`b = (J₀+J_c)/2`); Step 223 gives continuity on `[a, b]`, hence at J₀. -/
+theorem correlationInfinite_continuousOn_J_of_high_temp_open
+    {d : ℕ} (hd : 1 ≤ d) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (r_val s_val : Fin d → ℤ) (hrs : r_val ≠ s_val)
+    (β : ℝ) (hβ_pos : 0 < β) :
+    ContinuousOn
+      (fun J => correlationInfinite (IsingModel.latticeGraph d) Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+                    {r_val, s_val})
+      (Set.Ioo (0 : ℝ) (1 / (β * ↑(2 * d)))) := by
+  have h2d_pos : (0 : ℝ) < ↑(2 * d) := by
+    have : 0 < 2 * d := Nat.mul_pos (by norm_num) hd
+    exact_mod_cast this
+  have hβ2d_pos : 0 < β * ↑(2 * d) := mul_pos hβ_pos h2d_pos
+  intro J₀ hJ₀
+  have hJ₀_pos : 0 < J₀ := hJ₀.1
+  have hJ₀_lt : J₀ < 1 / (β * ↑(2 * d)) := hJ₀.2
+  have ha_pos : 0 < J₀ / 2 := by positivity
+  have ha_lt_J₀ : J₀ / 2 < J₀ := by linarith
+  have hJ₀_lt_b : J₀ < (J₀ + 1 / (β * ↑(2 * d))) / 2 := by linarith
+  have hb_lt_Jc : (J₀ + 1 / (β * ↑(2 * d))) / 2 < 1 / (β * ↑(2 * d)) := by linarith
+  have ha_le_J₀ : J₀ / 2 ≤ J₀ := ha_lt_J₀.le
+  have hJ₀_le_b : J₀ ≤ (J₀ + 1 / (β * ↑(2 * d))) / 2 := hJ₀_lt_b.le
+  have hab : J₀ / 2 ≤ (J₀ + 1 / (β * ↑(2 * d))) / 2 := ha_le_J₀.trans hJ₀_le_b
+  have hlt : (J₀ + 1 / (β * ↑(2 * d))) / 2 * β * ↑(2 * d) < 1 := by
+    have h1 : (J₀ + 1 / (β * ↑(2 * d))) / 2 * (β * ↑(2 * d)) < 1 := by
+      have := (lt_div_iff₀ hβ2d_pos).mp hb_lt_Jc
+      linarith [this]
+    linarith [h1]
+  have hcont_Icc := correlationInfinite_continuousOn_J_of_high_temp
+    Λ r_val s_val hrs β hβ_pos (J₀ / 2) ((J₀ + 1 / (β * ↑(2 * d))) / 2) ha_pos hab hlt
+  apply ContinuousAt.continuousWithinAt
+  have h_Icc_nhd : Set.Icc (J₀ / 2) ((J₀ + 1 / (β * ↑(2 * d))) / 2) ∈ nhds J₀ :=
+    Icc_mem_nhds ha_lt_J₀ hJ₀_lt_b
+  exact (hcont_Icc J₀ ⟨ha_le_J₀, hJ₀_le_b⟩).continuousAt h_Icc_nhd
+
 /-- **Locally uniform convergence corr_n → corr_∞ on open high-temperature interval** (Step 174):
 For `0 < J`, `1 ≤ d`: the finite-volume two-point functions converge locally uniformly to
 the infinite-volume limit on the open interval `Ioo 0 (1/(J·2d))`.
