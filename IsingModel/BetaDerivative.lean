@@ -804,6 +804,32 @@ theorem truncated2_continuousAt_beta
   exact (correlation_continuousAt_beta G J β _).sub
     ((correlation_continuousAt_beta G J β _).mul (correlation_continuousAt_beta G J β _))
 
+/-- **truncated2 has a β-derivative at general h** (Step 245):
+For any finite-volume Ising at any `(J, h, β)`, `truncated2 G ⟨J, h, β⟩ i j` has a
+derivative in β.
+
+`truncated2 = correlation {i,j} - correlation {i} · correlation {j}`. Each correlation has
+a β-derivative at general h (`hasDerivAt_correlation_beta_general_h`, Step 243), so the
+product rule gives the derivative for truncated2. Generalises Step 191 (h = 0) to any h. -/
+theorem truncated2_hasDerivAt_beta_general_h
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h β : ℝ) (i j : ι) :
+    HasDerivAt (fun β' => truncated2 G (⟨J, h, β'⟩ : IsingParams ℝ) i j)
+      (deriv (fun β' => correlation G (⟨J, h, β'⟩ : IsingParams ℝ) {i, j}) β -
+       (deriv (fun β' => correlation G (⟨J, h, β'⟩ : IsingParams ℝ) {i}) β *
+        correlation G (⟨J, h, β⟩ : IsingParams ℝ) {j} +
+        correlation G (⟨J, h, β⟩ : IsingParams ℝ) {i} *
+        deriv (fun β' => correlation G (⟨J, h, β'⟩ : IsingParams ℝ) {j}) β))
+      β := by
+  unfold truncated2
+  have hij := hasDerivAt_correlation_beta_general_h G J h β {i, j}
+  have hi := hasDerivAt_correlation_beta_general_h G J h β {i}
+  have hj := hasDerivAt_correlation_beta_general_h G J h β {j}
+  have h_prod := hi.mul hj
+  have h_diff := hij.sub h_prod
+  rw [hij.deriv, hi.deriv, hj.deriv] at *
+  exact h_diff
+
 /-- **truncated2 has a β-derivative at h = 0** (Step 191):
 For any finite-volume Ising at h = 0, `truncated2 G ⟨J, 0, β⟩ i j` has a derivative in β.
 
