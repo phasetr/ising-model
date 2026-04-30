@@ -866,4 +866,21 @@ theorem susceptibility_hasDerivAt_beta
       _ from h.deriv]
   exact h
 
+/-- **Magnetization is Continuous in β at h = 0** (Step 198).
+At h = 0, `magnetization G p i = correlation G p {i}`, which is continuous in β. -/
+theorem magnetization_continuous_beta
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J : ℝ) (i : ι) :
+    Continuous (fun β' => magnetization G (⟨J, 0, β'⟩ : IsingParams ℝ) i) := by
+  unfold magnetization
+  exact correlation_continuous_beta G J _
+
+/-- **Magnetization is Differentiable in β at h = 0** (Step 198). -/
+theorem magnetization_differentiable_beta
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J : ℝ) (i : ι) :
+    Differentiable ℝ (fun β' => magnetization G (⟨J, 0, β'⟩ : IsingParams ℝ) i) := by
+  unfold magnetization
+  exact correlation_differentiable_beta G J _
+
 end IsingModel
