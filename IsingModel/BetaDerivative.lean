@@ -1119,6 +1119,21 @@ theorem hasDerivAt_freeEnergy_beta_general_h
   unfold gibbsExpectation
   field_simp
 
+/-- **freeEnergy Continuous in β at general h** (Step 256). -/
+theorem freeEnergy_continuous_beta_general_h
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h : ℝ) :
+    Continuous (fun β' => freeEnergy G (⟨J, h, β'⟩ : IsingParams ℝ)) :=
+  continuous_iff_continuousAt.mpr fun β =>
+    (hasDerivAt_freeEnergy_beta_general_h G J h β).continuousAt
+
+/-- **freeEnergy Differentiable in β at general h** (Step 256). -/
+theorem freeEnergy_differentiable_beta_general_h
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h : ℝ) :
+    Differentiable ℝ (fun β' => freeEnergy G (⟨J, h, β'⟩ : IsingParams ℝ)) :=
+  fun β => (hasDerivAt_freeEnergy_beta_general_h G J h β).differentiableAt
+
 /-! ## Monotonicity in β (Step 122): GKS-II-based bound -/
 
 /-- The β-derivative of two-point correlations is nonneg (infinitesimal form of β-monotonicity).

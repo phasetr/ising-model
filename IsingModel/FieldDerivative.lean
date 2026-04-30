@@ -591,6 +591,21 @@ theorem hasDerivAt_freeEnergy_field
   unfold gibbsExpectation
   field_simp
 
+/-- **freeEnergy Continuous in h** (Step 256). -/
+theorem freeEnergy_continuous_field
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) :
+    Continuous (fun h' => freeEnergy G (⟨J, h', β⟩ : IsingParams ℝ)) :=
+  continuous_iff_continuousAt.mpr fun h =>
+    (hasDerivAt_freeEnergy_field G J h β).continuousAt
+
+/-- **freeEnergy Differentiable in h** (Step 256). -/
+theorem freeEnergy_differentiable_field
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) :
+    Differentiable ℝ (fun h' => freeEnergy G (⟨J, h', β⟩ : IsingParams ℝ)) :=
+  fun h => (hasDerivAt_freeEnergy_field G J h β).differentiableAt
+
 /-- **truncated3 ContinuousAt h** (Step 202).
 truncated3 is a polynomial in correlation values, each continuous in h. -/
 theorem truncated3_continuousAt_field
