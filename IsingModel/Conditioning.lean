@@ -1233,6 +1233,75 @@ theorem partitionFunction_high_temp_expansion_h_zero
   rw [partitionFunction_high_temp_expansion G ⟨J, 0, β⟩]
   simp
 
+/-- **Partition function general-`h` subset expansion**: for any
+Ising parameter `p = (J, h, β)`,
+\[
+Z(G; p) = (\cosh(\beta J))^{|E|}
+\sum_{X \subseteq E} \tanh(\beta J)^{|X|}
+\sum_\sigma \Bigl(\prod_{e \in X} \sigma_i\sigma_j\Bigr)
+\exp\!\bigl(\beta h \sum_i \sigma_i\bigr).
+\]
+
+Intermediate form between `partitionFunction_high_temp_expansion`
+(Step 281, full product form) and `partitionFunction_high_temp_expansion_h_zero_closed`
+(Step 283, h = 0 closed form). At `h = 0` the inner σ-sum collapses
+by parity to give the FV (3.45) even-subgraph form; at general `h`
+the σ-sum carries the residual external-field dependence.
+
+Proof: apply Step 281 (general-`h` expansion), then expand each edge
+product via `Finset.prod_one_add` and pull `tanh(βJ)^|X|` out of the
+inner product, swapping the σ- and `X`-sums via `Finset.sum_comm`. -/
+theorem partitionFunction_high_temp_expansion_subset_form
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (p : IsingParams ℝ) :
+    partitionFunction G p =
+      Real.cosh (p.β * p.J) ^ G.edgeFinset.card *
+      ∑ X ∈ G.edgeFinset.powerset,
+        Real.tanh (p.β * p.J) ^ X.card *
+          ∑ σ : Config ι,
+            (∏ e ∈ X, edgeSpin (K := ℝ) σ e) *
+            Real.exp (p.β * p.h * ∑ i : ι, Spin.sign ℝ (σ i)) := by
+  rw [partitionFunction_high_temp_expansion G p]
+  -- Step 1: subset expansion via Finset.prod_one_add
+  have hexpand : ∀ σ : Config ι,
+      (∏ e ∈ G.edgeFinset, (1 + Real.tanh (p.β * p.J) * edgeSpin σ e))
+        = ∑ X ∈ G.edgeFinset.powerset,
+            ∏ e ∈ X, (Real.tanh (p.β * p.J) * edgeSpin σ e) := fun σ =>
+    Finset.prod_one_add G.edgeFinset
+  simp_rw [hexpand]
+  -- Step 2: pull tanh^|X| out of inner product
+  have hpull : ∀ σ : Config ι, ∀ X : Finset (Sym2 ι),
+      (∏ e ∈ X, (Real.tanh (p.β * p.J) * edgeSpin σ e))
+        = Real.tanh (p.β * p.J) ^ X.card *
+            (∏ e ∈ X, edgeSpin (K := ℝ) σ e) := by
+    intros σ X
+    rw [Finset.prod_mul_distrib, Finset.prod_const]
+  simp_rw [hpull]
+  -- Step 3: distribute the field exponential factor
+  rw [show
+      cosh (p.β * p.J) ^ G.edgeFinset.card *
+          ∑ σ : Config ι,
+            (∑ X ∈ G.edgeFinset.powerset,
+              tanh (p.β * p.J) ^ X.card *
+                ∏ e ∈ X, edgeSpin σ e) *
+            Real.exp (p.β * p.h * ∑ i : ι, Spin.sign ℝ (σ i))
+        = cosh (p.β * p.J) ^ G.edgeFinset.card *
+          ∑ σ : Config ι,
+            ∑ X ∈ G.edgeFinset.powerset,
+              tanh (p.β * p.J) ^ X.card *
+                (∏ e ∈ X, edgeSpin σ e) *
+                Real.exp (p.β * p.h * ∑ i : ι, Spin.sign ℝ (σ i)) by
+    congr 1
+    refine Finset.sum_congr rfl (fun σ _ => ?_)
+    rw [Finset.sum_mul]]
+  -- Step 4: swap σ ↔ X and pull tanh^|X| out of σ-sum
+  congr 1
+  rw [Finset.sum_comm]
+  refine Finset.sum_congr rfl (fun X _ => ?_)
+  rw [Finset.mul_sum]
+  refine Finset.sum_congr rfl (fun σ _ => ?_)
+  ring
+
 /-! ### Even-subgraph closed form (FV §3.7.3 eq. (3.45)) -/
 
 omit [DecidableEq ι] in
