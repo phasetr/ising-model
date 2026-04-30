@@ -3668,6 +3668,27 @@ theorem correlationInfinite_continuousAt_beta_of_high_temp
     IsOpen.mem_nhds isOpen_Ioo hβ₀
   exact (hcont_open β₀ hβ₀).continuousAt h_nhd
 
+/-- **ContinuousAt of corr_∞ at every J ∈ Ioo 0 J_c** (Step 229):
+For `0 < β`, `1 ≤ d`, every `J₀ ∈ Ioo 0 (1/(β·2d))`: corr_∞ is continuous at J₀
+(as a function ℝ → ℝ, full neighborhood).
+
+Direct J-direction analogue of Step 175. Proof: open set is a neighborhood of any
+interior point ⇒ Step 227 ContinuousOn restricts to ContinuousAt. -/
+theorem correlationInfinite_continuousAt_J_of_high_temp
+    {d : ℕ} (hd : 1 ≤ d) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (r_val s_val : Fin d → ℤ) (hrs : r_val ≠ s_val)
+    (β : ℝ) (hβ_pos : 0 < β)
+    (J₀ : ℝ) (hJ₀ : J₀ ∈ Set.Ioo (0 : ℝ) (1 / (β * ↑(2 * d)))) :
+    ContinuousAt
+      (fun J => correlationInfinite (IsingModel.latticeGraph d) Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+                    {r_val, s_val})
+      J₀ := by
+  have hcont_open := correlationInfinite_continuousOn_J_of_high_temp_open
+    hd Λ r_val s_val hrs β hβ_pos
+  have h_nhd : Set.Ioo (0 : ℝ) (1 / (β * ↑(2 * d))) ∈ nhds J₀ :=
+    IsOpen.mem_nhds isOpen_Ioo hJ₀
+  exact (hcont_open J₀ hJ₀).continuousAt h_nhd
+
 /-- **Per-stage linear bound at β = 0** (Step 176, helper):
 For each finite-volume stage `n`, `r ≠ s`, and high-temperature `β ∈ (0, b]` with `bJ·2d < 1`:
 `corr_n(r, s, β) ≤ (J·M(b)² + J·4d) · β`.
