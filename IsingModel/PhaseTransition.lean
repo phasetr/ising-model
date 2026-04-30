@@ -868,6 +868,29 @@ theorem susceptibility_hasDerivAt_beta
       _ from h.deriv]
   exact h
 
+/-- **Susceptibility HasDerivAt β at general h with explicit derivative** (Step 246):
+For finite-volume Ising at any `(J, h, β)`, `susceptibility(i, β) = ∑_j truncated2(i, j, β)`
+has a β-derivative equal to the sum of β-derivatives of `truncated2`.
+
+Direct extension of Step 197 from h = 0 to general h via Step 245
+(`truncated2_hasDerivAt_beta_general_h`). -/
+theorem susceptibility_hasDerivAt_beta_general_h
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h β : ℝ) (i : ι) :
+    HasDerivAt (fun β' => susceptibility G (⟨J, h, β'⟩ : IsingParams ℝ) i)
+      (∑ j : ι, deriv (fun β' => truncated2 G (⟨J, h, β'⟩ : IsingParams ℝ) i j) β) β := by
+  have heq_fun : (fun β' => susceptibility G (⟨J, h, β'⟩ : IsingParams ℝ) i) =
+      (fun β' => ∑ j : ι, truncated2 G (⟨J, h, β'⟩ : IsingParams ℝ) i j) := by
+    funext β'
+    exact susceptibility_apply G _ i
+  rw [heq_fun]
+  apply HasDerivAt.fun_sum
+  intro j _
+  have h_t := truncated2_hasDerivAt_beta_general_h G J h β i j
+  rw [show deriv (fun β' => truncated2 G (⟨J, h, β'⟩ : IsingParams ℝ) i j) β =
+      _ from h_t.deriv]
+  exact h_t
+
 /-- **Magnetization is Continuous in β at h = 0** (Step 198).
 At h = 0, `magnetization G p i = correlation G p {i}`, which is continuous in β. -/
 theorem magnetization_continuous_beta
