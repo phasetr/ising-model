@@ -362,6 +362,45 @@ theorem spontaneousMagnetization_J_zero
     exact h_at_zero.mono_left nhdsWithin_le_nhds
   exact tendsto_nhds_unique h_tend' h_tend_zero
 
+/-- **`spontaneousCorrelation` at J = 0 vanishes for nonempty A** (Step 270, GJ §5.1):
+At zero coupling, all infinite-volume correlations factorise as `tanh(βh)^|A|` (Step 233's
+`correlationInfinite_J_zero`); the infimum over `h ∈ Ioi 0` equals 0 for `A.Nonempty`
+since `tanh(βh) → 0` as `h → 0⁺`.
+
+Generalizes `spontaneousMagnetization_J_zero` (Step 268) from `A = {i}` to arbitrary
+nonempty `A`. -/
+theorem spontaneousCorrelation_J_zero
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {β : ℝ} (hβ : 0 < β) (A : Finset V) (hA : A.Nonempty) :
+    spontaneousCorrelation G Λ 0 β A = 0 := by
+  have h_tend := tendsto_correlationInfinite_spontaneousCorrelation_nhdsGT
+    G Λ (le_refl 0) hβ A
+  have h_eq : ∀ᶠ h in nhdsWithin (0 : ℝ) (Set.Ioi 0),
+      correlationInfinite G Λ (⟨0, h, β⟩ : IsingParams ℝ) A = Real.tanh (β * h) ^ A.card := by
+    filter_upwards [self_mem_nhdsWithin] with h hh
+    have hh_pos : 0 < h := hh
+    have hf : Ferromagnetic (⟨(0 : ℝ), h, β⟩ : IsingParams ℝ) :=
+      ⟨le_refl 0, hh_pos.le, hβ⟩
+    exact correlationInfinite_J_zero G Λ h β hf A
+  have h_tend' := h_tend.congr' h_eq
+  -- tanh(βh)^|A| → 0 as h → 0⁺ (for A nonempty, |A| ≥ 1)
+  have h_tanh_cont : Continuous (Real.tanh : ℝ → ℝ) := by
+    rw [show (Real.tanh : ℝ → ℝ) = (fun x => Real.sinh x / Real.cosh x) from
+        funext fun x => Real.tanh_eq_sinh_div_cosh x]
+    exact Real.continuous_sinh.div Real.continuous_cosh (fun x => (Real.cosh_pos x).ne')
+  have h_card_pos : 0 < A.card := Finset.card_pos.mpr hA
+  have h_pow_zero : (0 : ℝ) ^ A.card = 0 := zero_pow h_card_pos.ne'
+  have h_tend_zero : Filter.Tendsto (fun h : ℝ => Real.tanh (β * h) ^ A.card)
+      (nhdsWithin (0 : ℝ) (Set.Ioi 0)) (nhds 0) := by
+    have h_inner : Continuous (fun h : ℝ => Real.tanh (β * h) ^ A.card) :=
+      (h_tanh_cont.comp (continuous_const.mul continuous_id)).pow _
+    have h_at_zero := h_inner.tendsto 0
+    rw [show Real.tanh (β * 0) ^ A.card = 0 by rw [mul_zero, Real.tanh_zero, h_pow_zero]]
+      at h_at_zero
+    exact h_at_zero.mono_left nhdsWithin_le_nhds
+  exact tendsto_nhds_unique h_tend' h_tend_zero
+
 /-- **`spontaneousMagnetization` at β = 0 vanishes** (Step 269, GJ §5.1):
 At infinite temperature, every magnetizationInfinite at β = 0 vanishes
 (`magnetizationInfinite_beta_zero`), so the infimum over h ∈ Ioi 0 is 0.
