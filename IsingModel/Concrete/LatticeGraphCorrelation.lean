@@ -2377,6 +2377,20 @@ theorem correlationΛ_latticeGraph_high_temp_expansion_h_zero_closed
   correlationΛ_high_temp_expansion_h_zero_closed
     (IsingModel.latticeGraph d) Λ J β A
 
+/-- **ℤ^d high-temperature partition function lower bound (GJ §18.3 / FV (3.45))**:
+under `0 ≤ β * J`,
+`Z_Λ(⟨J, 0, β⟩) ≥ 2^|Λ| · (cosh(βJ))^|E_Λ|`.
+ℤ^d wrapper of `partitionFunctionΛ_high_temp_expansion_h_zero_lower_bound`. -/
+theorem partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_lower_bound
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ) (hβJ : 0 ≤ β * J) :
+    (2 : ℝ) ^ Λ.card *
+        Real.cosh (β * J) ^
+          (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card
+      ≤ partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) :=
+  partitionFunctionΛ_high_temp_expansion_h_zero_lower_bound
+    (IsingModel.latticeGraph d) Λ J β hβJ
+
 /-- **ℤ^d log partitionFunctionΛ closed form at `J = 0`** (any Finset):
 `log Z_Λ(⟨0, h, β⟩) = |Λ| · log(2·cosh(β·h))`. -/
 theorem log_partitionFunctionΛ_latticeGraph_J_zero

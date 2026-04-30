@@ -310,6 +310,21 @@ theorem correlationΛ_high_temp_expansion_h_zero_closed
   exact IsingModel.correlation_high_temp_expansion_h_zero_closed
     (inducedGraph G Λ) J β A
 
+/-- **Λ-level high-temperature partition function lower bound (GJ §18.3 / FV (3.45))**:
+under `0 ≤ β * J`, `Z_Λ(⟨J, 0, β⟩) ≥ 2^|Λ| · (cosh(βJ))^|E_Λ|`.
+Direct lift of `IsingModel.partitionFunction_high_temp_expansion_h_zero_lower_bound`
+(Step 286) through `partitionFunctionΛ_apply` and `Fintype.card_coe`. -/
+theorem partitionFunctionΛ_high_temp_expansion_h_zero_lower_bound
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) :
+    (2 : ℝ) ^ Λ.card *
+        Real.cosh (β * J) ^ (inducedGraph G Λ).edgeFinset.card
+      ≤ partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) := by
+  rw [partitionFunctionΛ_apply, ← Fintype.card_coe]
+  exact IsingModel.partitionFunction_high_temp_expansion_h_zero_lower_bound
+    (inducedGraph G Λ) J β hβJ
+
 /-- The correlation on `Λ` is bounded: `|⟨σ^A⟩| ≤ 1`. -/
 theorem abs_correlationΛ_le_one (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] (p : IsingParams ℝ)
