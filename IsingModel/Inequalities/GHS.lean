@@ -767,4 +767,35 @@ theorem truncated4_continuous_J (G : SimpleGraph ι) [Fintype G.edgeSet]
     ((correlation_continuous_J G h β _).mul (correlation_continuous_J G h β _))).sub
     ((correlation_continuous_J G h β _).mul (correlation_continuous_J G h β _))
 
+/-- **truncated2 Differentiable in J** (Step 211). -/
+theorem truncated2_differentiable_J (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (h β : ℝ) (i j : ι) :
+    Differentiable ℝ (fun J' => truncated2 G (⟨J', h, β⟩ : IsingParams ℝ) i j) := by
+  unfold truncated2
+  exact (correlation_differentiable_J G h β _).sub
+    ((correlation_differentiable_J G h β _).mul (correlation_differentiable_J G h β _))
+
+/-- **truncated3 Differentiable in J** (Step 211). -/
+theorem truncated3_differentiable_J (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (h β : ℝ) (i j k : ι) :
+    Differentiable ℝ (fun J' => truncated3 G (⟨J', h, β⟩ : IsingParams ℝ) i j k) := by
+  unfold truncated3
+  exact (((correlation_differentiable_J G h β _).sub
+    ((correlation_differentiable_J G h β _).mul (correlation_differentiable_J G h β _))).sub
+    ((correlation_differentiable_J G h β _).mul (correlation_differentiable_J G h β _))).sub
+    ((correlation_differentiable_J G h β _).mul (correlation_differentiable_J G h β _))
+    |>.add (((differentiable_const _).mul (correlation_differentiable_J G h β _)).mul
+      (correlation_differentiable_J G h β _) |>.mul
+      (correlation_differentiable_J G h β _))
+
+/-- **truncated4 Differentiable in J** (Step 211). -/
+theorem truncated4_differentiable_J (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (h β : ℝ) (i j k l : ι) :
+    Differentiable ℝ (fun J' => truncated4 G (⟨J', h, β⟩ : IsingParams ℝ) i j k l) := by
+  unfold truncated4
+  exact (((correlation_differentiable_J G h β _).sub
+    ((correlation_differentiable_J G h β _).mul (correlation_differentiable_J G h β _))).sub
+    ((correlation_differentiable_J G h β _).mul (correlation_differentiable_J G h β _))).sub
+    ((correlation_differentiable_J G h β _).mul (correlation_differentiable_J G h β _))
+
 end IsingModel
