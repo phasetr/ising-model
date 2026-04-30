@@ -536,4 +536,19 @@ theorem hasDerivAt_freeEnergy_J
   unfold gibbsExpectation
   field_simp
 
+/-- **freeEnergy Continuous in J** (Step 256). -/
+theorem freeEnergy_continuous_J
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (h β : ℝ) :
+    Continuous (fun J' => freeEnergy G (⟨J', h, β⟩ : IsingParams ℝ)) :=
+  continuous_iff_continuousAt.mpr fun J =>
+    (hasDerivAt_freeEnergy_J G J h β).continuousAt
+
+/-- **freeEnergy Differentiable in J** (Step 256). -/
+theorem freeEnergy_differentiable_J
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (h β : ℝ) :
+    Differentiable ℝ (fun J' => freeEnergy G (⟨J', h, β⟩ : IsingParams ℝ)) :=
+  fun J => (hasDerivAt_freeEnergy_J G J h β).differentiableAt
+
 end IsingModel
