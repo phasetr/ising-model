@@ -957,4 +957,24 @@ theorem magnetization_continuous_J
   unfold magnetization
   exact correlation_continuous_J G h β _
 
+/-- **Susceptibility Differentiable in J** (Step 211). -/
+theorem susceptibility_differentiable_J
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (h β : ℝ) (i : ι) :
+    Differentiable ℝ (fun J' => susceptibility G (⟨J', h, β⟩ : IsingParams ℝ) i) := by
+  have heq_fun : (fun J' => susceptibility G (⟨J', h, β⟩ : IsingParams ℝ) i) =
+      (fun J' => ∑ j : ι, truncated2 G (⟨J', h, β⟩ : IsingParams ℝ) i j) := by
+    funext J'
+    exact susceptibility_apply G _ i
+  rw [heq_fun]
+  exact Differentiable.fun_sum (fun j _ => truncated2_differentiable_J G h β i j)
+
+/-- **Magnetization Differentiable in J** (Step 211). -/
+theorem magnetization_differentiable_J
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (h β : ℝ) (i : ι) :
+    Differentiable ℝ (fun J' => magnetization G (⟨J', h, β⟩ : IsingParams ℝ) i) := by
+  unfold magnetization
+  exact correlation_differentiable_J G h β _
+
 end IsingModel
