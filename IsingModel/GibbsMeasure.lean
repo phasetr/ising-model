@@ -1,6 +1,7 @@
 import IsingModel.Hamiltonian
 import Mathlib.Analysis.Complex.Exponential
 import Mathlib.Analysis.Complex.Trigonometric
+import Mathlib.Analysis.SpecialFunctions.Exp
 
 /-!
 # Gibbs measure, partition function, and expectations
@@ -514,5 +515,37 @@ theorem partitionFunction_eq_abs_h (G : SimpleGraph ι) [Fintype G.edgeSet]
   rcases abs_choice h with habs | habs
   · rw [habs]
   · rw [habs, partitionFunction_neg_h]
+
+/-! ## Continuity in J (Step 207) -/
+
+omit [DecidableEq ι] in
+/-- **boltzmannWeight Continuous in J** (Step 207).
+For fixed h, β, σ: `boltzmannWeight G ⟨J, h, β⟩ σ = exp(-β H(σ; J))` is continuous in J,
+since the Hamiltonian H(σ; J) is linear in J and exp is continuous. -/
+theorem boltzmannWeight_continuous_J (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (h β : ℝ) (σ : Config ι) :
+    Continuous (fun J' => boltzmannWeight G (⟨J', h, β⟩ : IsingParams ℝ) σ) := by
+  unfold boltzmannWeight hamiltonian interactionEnergy externalFieldEnergy
+  fun_prop
+
+/-- **partitionFunction Continuous in J** (Step 207). -/
+theorem partitionFunction_continuous_J (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (h β : ℝ) :
+    Continuous (fun J' => partitionFunction G (⟨J', h, β⟩ : IsingParams ℝ)) := by
+  unfold partitionFunction
+  exact continuous_finset_sum _ (fun σ _ => boltzmannWeight_continuous_J G h β σ)
+
+/-- **correlation Continuous in J** (Step 207). -/
+theorem correlation_continuous_J (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (h β : ℝ) (A : Finset ι) :
+    Continuous (fun J' => correlation G (⟨J', h, β⟩ : IsingParams ℝ) A) := by
+  unfold correlation gibbsExpectation
+  apply Continuous.mul
+  · apply Continuous.inv₀
+    · exact partitionFunction_continuous_J G h β
+    · intro J'
+      exact (partitionFunction_pos G _).ne'
+  · exact continuous_finset_sum _ fun σ _ =>
+      continuous_const.mul (boltzmannWeight_continuous_J G h β σ)
 
 end IsingModel
