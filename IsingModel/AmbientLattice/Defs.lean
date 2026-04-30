@@ -391,6 +391,36 @@ theorem one_le_sum_pow_tanh_even_subgraph_Λ
         Real.tanh (β * J) ^ X.card :=
   IsingModel.one_le_sum_pow_tanh_even_subgraph (inducedGraph G Λ) J β hβJ
 
+/-- **Λ-level FV (3.46) numerator filter is empty for odd-cardinality A**:
+the filtered powerset over which the FV (3.46) numerator sums is
+*literally empty* whenever `|A|` is odd.
+Direct lift of `IsingModel.high_temp_numerator_filter_eq_empty_of_odd_card`
+(Step 297). -/
+theorem high_temp_numerator_filter_eq_empty_of_odd_card_Λ
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (A : Finset ↑Λ) (hA_odd : Odd A.card) :
+    (inducedGraph G Λ).edgeFinset.powerset.filter
+        (fun X : Finset (Sym2 ↑Λ) => ∀ v : ↑Λ,
+          Even ((if v ∈ A then (1 : ℕ) else 0)
+                + (X.filter (v ∈ ·)).card)) = ∅ :=
+  IsingModel.high_temp_numerator_filter_eq_empty_of_odd_card
+    (inducedGraph G Λ) A hA_odd
+
+/-- **Λ-level Z₂ symmetry of correlation at h = 0 from FV (3.46) + handshake**:
+for `A : Finset ↑Λ` of odd cardinality,
+`correlationΛ G Λ ⟨J, 0, β⟩ A = 0`.
+Direct lift of `IsingModel.correlation_high_temp_h_zero_odd_card_eq_zero`
+(Step 298). -/
+theorem correlationΛ_high_temp_h_zero_odd_card_eq_zero
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (A : Finset ↑Λ) (hA_odd : Odd A.card) :
+    correlationΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) A = 0 := by
+  rw [correlationΛ_apply]
+  exact IsingModel.correlation_high_temp_h_zero_odd_card_eq_zero
+    (inducedGraph G Λ) J β A hA_odd
+
 /-- The correlation on `Λ` is bounded: `|⟨σ^A⟩| ≤ 1`. -/
 theorem abs_correlationΛ_le_one (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] (p : IsingParams ℝ)
