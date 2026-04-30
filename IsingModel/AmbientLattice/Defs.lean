@@ -325,6 +325,27 @@ theorem partitionFunctionΛ_high_temp_expansion_h_zero_lower_bound
   exact IsingModel.partitionFunction_high_temp_expansion_h_zero_lower_bound
     (inducedGraph G Λ) J β hβJ
 
+/-- **Λ-level free-energy lower bound from FV (3.45)** at zero external field:
+under `0 < |Λ|` and `0 ≤ β * J`,
+`f_Λ(⟨J, 0, β⟩) ≥ log 2 + (|E_Λ|/|Λ|) · log(cosh(β·J))`.
+Direct lift of `IsingModel.freeEnergy_high_temp_h_zero_lower_bound`
+(Step 288) through `freeEnergyΛ_apply` and `Fintype.card_coe`. -/
+theorem freeEnergyΛ_high_temp_h_zero_lower_bound
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (hne : 0 < Λ.card) :
+    Real.log 2 +
+        ((inducedGraph G Λ).edgeFinset.card : ℝ) / Λ.card *
+          Real.log (Real.cosh (β * J))
+      ≤ freeEnergyΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) := by
+  rw [freeEnergyΛ_apply]
+  have hcoe : (Λ.card : ℝ) = (Fintype.card ↑Λ : ℝ) := by
+    rw [Fintype.card_coe]
+  rw [hcoe]
+  exact IsingModel.freeEnergy_high_temp_h_zero_lower_bound
+    (inducedGraph G Λ) J β hβJ
+    (by rw [Fintype.card_coe]; exact hne)
+
 /-- The correlation on `Λ` is bounded: `|⟨σ^A⟩| ≤ 1`. -/
 theorem abs_correlationΛ_le_one (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] (p : IsingParams ℝ)
