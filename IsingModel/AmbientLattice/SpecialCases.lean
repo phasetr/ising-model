@@ -341,6 +341,23 @@ theorem log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_closed
   exact log_partitionFunctionΛ_high_temp_expansion_h_zero_closed
     G (Λ.volume n) J β hβJ
 
+/-- **Along-exhaustion Z high-temperature upper bound (GJ §18.3 / FV (3.45))**:
+under `0 ≤ β·J`, at every stage `n`,
+`Z_n(⟨J, 0, β⟩) ≤ 2^(|Λ_n|+|E_n|) · cosh(βJ)^|E_n|`.
+Per-stage application of `partitionFunctionΛ_high_temp_expansion_h_zero_upper_bound`. -/
+theorem partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_upper_bound
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (n : ℕ) :
+    partitionFunctionAlongExhaustion G Λ (⟨J, 0, β⟩ : IsingParams ℝ) n
+      ≤ (2 : ℝ) ^ ((Λ.volume n).card +
+            (inducedGraph G (Λ.volume n)).edgeFinset.card) *
+        Real.cosh (β * J) ^
+            (inducedGraph G (Λ.volume n)).edgeFinset.card := by
+  change partitionFunctionΛ G (Λ.volume n) (⟨J, 0, β⟩ : IsingParams ℝ) ≤ _
+  exact partitionFunctionΛ_high_temp_expansion_h_zero_upper_bound
+    G (Λ.volume n) J β hβJ
+
 /-- **Along-exhaustion partition function high-temperature lower bound**:
 under `0 ≤ β * J`, at every stage `n`,
 `partitionFunctionAlongExhaustion G Λ ⟨J, 0, β⟩ n
