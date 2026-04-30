@@ -401,6 +401,23 @@ theorem spontaneousCorrelation_J_zero
     exact h_at_zero.mono_left nhdsWithin_le_nhds
   exact tendsto_nhds_unique h_tend' h_tend_zero
 
+/-- **`spontaneousCorrelation` at β = 0 vanishes for nonempty A** (Step 271, GJ §5.1):
+At infinite temperature, every infinite-volume correlation vanishes for nonempty A;
+the infimum over `h ∈ Ioi 0` is then the infimum of constant 0, which is 0.
+
+Generalizes `spontaneousMagnetization_beta_zero` from `A = {i}` to arbitrary nonempty A. -/
+theorem spontaneousCorrelation_beta_zero
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J : ℝ) (A : Finset V) (hA : A.Nonempty) :
+    spontaneousCorrelation G Λ J 0 A = 0 := by
+  unfold spontaneousCorrelation
+  have h_eq : ∀ h : ↥(Set.Ioi (0 : ℝ)),
+      correlationInfinite G Λ (⟨J, h.val, 0⟩ : IsingParams ℝ) A = 0 := by
+    intro h
+    exact correlationInfinite_beta_zero_vanish G Λ J h.val A hA
+  simp [h_eq]
+
 /-- **`spontaneousMagnetization` at β = 0 vanishes** (Step 269, GJ §5.1):
 At infinite temperature, every magnetizationInfinite at β = 0 vanishes
 (`magnetizationInfinite_beta_zero`), so the infimum over h ∈ Ioi 0 is 0.
