@@ -1471,6 +1471,53 @@ theorem partitionFunction_high_temp_expansion_h_zero_lower_bound
           Real.tanh (β * J) ^ X.card :=
         mul_le_mul_of_nonneg_left hsum_ge_one hcommon_nn
 
+/-- **Free-energy lower bound from FV (3.45)** at zero external field:
+under `0 < |ι|` and `0 ≤ β * J`,
+`log 2 + (|E|/|ι|) · log(cosh(β·J)) ≤ freeEnergy(G, ⟨J, 0, β⟩)`.
+
+A graph-aware sharpening of `freeEnergy_ge_log_two_cosh` specialized
+to `h = 0` (where the latter gives only `log 2`): the edge-density
+factor `|E|/|ι|` times `log(cosh(βJ)) ≥ 0` is the high-temperature
+cluster-expansion bonus. Direct corollary of
+`partitionFunction_high_temp_expansion_h_zero_lower_bound`
+(Step 286) by taking logs and dividing by `|ι|`. -/
+theorem freeEnergy_high_temp_h_zero_lower_bound
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (hne : 0 < Fintype.card ι) :
+    Real.log 2 +
+        (G.edgeFinset.card : ℝ) / Fintype.card ι *
+          Real.log (Real.cosh (β * J))
+      ≤ freeEnergy G ⟨J, 0, β⟩ := by
+  have hZ_lb := partitionFunction_high_temp_expansion_h_zero_lower_bound G J β hβJ
+  have hcosh_pos : 0 < Real.cosh (β * J) := Real.cosh_pos _
+  have hZ_lb_pos :
+      0 < (2 : ℝ) ^ Fintype.card ι * Real.cosh (β * J) ^ G.edgeFinset.card :=
+    mul_pos (pow_pos (by norm_num) _) (pow_pos hcosh_pos _)
+  -- Take logs
+  have hlog : Real.log ((2 : ℝ) ^ Fintype.card ι *
+                          Real.cosh (β * J) ^ G.edgeFinset.card)
+        ≤ Real.log (partitionFunction G ⟨J, 0, β⟩) :=
+    Real.log_le_log hZ_lb_pos hZ_lb
+  -- Simplify LHS
+  have hlog_lhs :
+      Real.log ((2 : ℝ) ^ Fintype.card ι *
+                  Real.cosh (β * J) ^ G.edgeFinset.card)
+        = (Fintype.card ι : ℝ) * Real.log 2
+          + (G.edgeFinset.card : ℝ) * Real.log (Real.cosh (β * J)) := by
+    rw [Real.log_mul (by positivity) (by positivity),
+        Real.log_pow, Real.log_pow]
+  rw [hlog_lhs] at hlog
+  -- Divide by |ι| > 0
+  unfold freeEnergy
+  have hι_pos : (0 : ℝ) < Fintype.card ι := by exact_mod_cast hne
+  rw [show (Real.log 2 + (G.edgeFinset.card : ℝ) / Fintype.card ι *
+              Real.log (Real.cosh (β * J)))
+        = (Fintype.card ι : ℝ)⁻¹ *
+          ((Fintype.card ι : ℝ) * Real.log 2
+            + (G.edgeFinset.card : ℝ) * Real.log (Real.cosh (β * J))) from by
+      field_simp]
+  exact mul_le_mul_of_nonneg_left hlog (by positivity)
+
 /-! ### Correlation closed form (FV §3.7.3 eq. (3.46)) -/
 
 /-- **`spinProduct` as vertex-power**: for any `A : Finset ι`,
