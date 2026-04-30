@@ -1999,6 +1999,44 @@ theorem sum_high_temp_numerator_h_zero_odd_card_eq_zero
   rw [high_temp_numerator_filter_eq_empty_of_odd_card G A hA_odd,
       Finset.sum_empty]
 
+/-- **FV (3.46) at `A = ∅` reduces to `1`**: a consistency check that
+the closed form `correlation_high_temp_expansion_h_zero_closed`
+specializes at `A = ∅` to `1`, matching `correlation_empty`.
+At `A = ∅`, the numerator filter condition `∀v, Even ((1_∅ v) + deg_X v)`
+simplifies to `∀v, Even (deg_X v)` (same as the denominator), so the
+numerator equals the denominator, giving `correlation = N/D = 1`.
+
+Requires `0 ≤ β * J` to ensure the denominator is strictly positive
+(via `one_le_sum_pow_tanh_even_subgraph`, Step 295). -/
+theorem correlation_high_temp_h_zero_at_empty_A
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) :
+    correlation G ⟨J, 0, β⟩ (∅ : Finset ι) = 1 := by
+  rw [correlation_high_temp_expansion_h_zero_closed]
+  -- Numerator filter at A = ∅: condition `∀v, Even ((1_∅ v) + ...)` becomes `∀v, Even (deg_X v)`
+  have hnum_eq_den :
+      G.edgeFinset.powerset.filter
+          (fun X : Finset (Sym2 ι) => ∀ v : ι,
+            Even ((if v ∈ (∅ : Finset ι) then (1 : ℕ) else 0)
+                  + (X.filter (v ∈ ·)).card))
+        = G.edgeFinset.powerset.filter
+            (fun X : Finset (Sym2 ι) =>
+              ∀ v : ι, Even ((X.filter (v ∈ ·)).card)) := by
+    refine Finset.filter_congr ?_
+    intro X _
+    constructor
+    · intro h v
+      have hv := h v
+      simp only [Finset.notMem_empty, if_false, zero_add] at hv
+      exact hv
+    · intro h v
+      have hv := h v
+      simp only [Finset.notMem_empty, if_false, zero_add]
+      exact hv
+  rw [hnum_eq_den]
+  have hden_pos := one_le_sum_pow_tanh_even_subgraph G J β hβJ
+  exact div_self (lt_of_lt_of_le zero_lt_one hden_pos).ne'
+
 /-- **Correlation nonnegativity at h = 0 from FV (3.46)**: under
 `0 ≤ β * J`, `0 ≤ correlation G ⟨J, 0, β⟩ A` for any `A : Finset ι`.
 
