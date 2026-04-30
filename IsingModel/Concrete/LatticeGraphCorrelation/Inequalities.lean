@@ -2173,6 +2173,46 @@ theorem inducedLatticeGraph_beta_deriv_le
     exact_mod_cast incidentEdgesFinset_inducedLatticeGraph_card_le d Λ r s
   linarith [mul_le_mul_of_nonneg_left h_cast hJ]
 
+/-- **J-derivative bound for two-point function on ℤ^d** (Step 218):
+For the induced lattice graph on any finite Λ ⊆ ℤ^d, vertices r ≠ s in ↑Λ,
+the J-derivative of `correlation G ⟨J',0,β⟩ {r,s}` at h = 0 is bounded by the
+Lebowitz sum plus the uniform constant `β * 4d`.
+
+Combines `correlation_J_deriv_le_lebowitz_tight` (Step 217) with
+`incidentEdgesFinset_inducedLatticeGraph_card_le` (Step 155): the incident-edge
+term `β * |{e: r∈e ∨ s∈e}|` is at most `β * 4d`, uniform in |Λ|.
+
+Direct J-direction analogue of `inducedLatticeGraph_beta_deriv_le` (Step 157).
+
+Reference: parallel to Glimm–Jaffe §17.5 pp.311–312. -/
+theorem inducedLatticeGraph_J_deriv_le
+    {d : ℕ} (Λ : Finset (Fin d → ℤ))
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β)
+    (r s : ↑Λ) (hrs : r ≠ s) :
+    ∃ dval : ℝ,
+      HasDerivAt (fun J' => IsingModel.correlation
+          (inducedGraph (IsingModel.latticeGraph d) Λ)
+          (⟨J', 0, β⟩ : IsingParams ℝ) {r, s}) dval J ∧
+      dval ≤ β * ∑ e ∈ (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset,
+            Sym2.lift ⟨fun u v =>
+                IsingModel.correlation (inducedGraph (IsingModel.latticeGraph d) Λ)
+                  (⟨J, 0, β⟩ : IsingParams ℝ) {r, u} *
+                IsingModel.correlation (inducedGraph (IsingModel.latticeGraph d) Λ)
+                  (⟨J, 0, β⟩ : IsingParams ℝ) {s, v} +
+                IsingModel.correlation (inducedGraph (IsingModel.latticeGraph d) Λ)
+                  (⟨J, 0, β⟩ : IsingParams ℝ) {r, v} *
+                IsingModel.correlation (inducedGraph (IsingModel.latticeGraph d) Λ)
+                  (⟨J, 0, β⟩ : IsingParams ℝ) {s, u},
+              fun u v => by ring⟩ e
+        + β * (4 * ↑d) := by
+  set G := inducedGraph (IsingModel.latticeGraph d) Λ
+  obtain ⟨dval, hd, hbound⟩ :=
+    IsingModel.correlation_J_deriv_le_lebowitz_tight G J β hJ hβ r s hrs
+  refine ⟨dval, hd, ?_⟩
+  have h_cast : (↑(G.edgeFinset.filter (fun e => r ∈ e ∨ s ∈ e)).card : ℝ) ≤ 4 * ↑d := by
+    exact_mod_cast incidentEdgesFinset_inducedLatticeGraph_card_le d Λ r s
+  linarith [mul_le_mul_of_nonneg_left h_cast hβ.le]
+
 /-- **Bridge: finite-vol correlation ≤ ∞-vol correlation** (Step 158, GJ §17.5):
 For any exhaustion Λ of ℤ^d, stage n, and vertices r, s : ↑(Λ.volume n),
 the induced-graph correlation is bounded above by the infinite-volume correlation:
