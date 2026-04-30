@@ -319,6 +319,49 @@ theorem tendsto_magnetizationInfinite_spontaneousMagnetization_nhdsGT
       (nhds (spontaneousMagnetization G Λ J β i)) :=
   tendsto_correlationInfinite_spontaneousCorrelation_nhdsGT G Λ hJ hβ {i}
 
+/-- **`spontaneousMagnetization` at J = 0 vanishes** (Step 268, GJ §5.1):
+At zero coupling, no spontaneous symmetry breaking — `m^* := lim_{h → 0⁺} M(h) = 0`.
+
+**Proof**: at J = 0, `magnetizationInfinite G Λ ⟨0, h, β⟩ i = tanh(β·h)` (Step 233's
+`magnetizationInfinite_J_zero`) for `h ≥ 0`. The function `h ↦ tanh(β·h)` is continuous
+with `tanh(β·0) = 0`. By `tendsto_magnetizationInfinite_spontaneousMagnetization_nhdsGT`,
+spontaneousMagnetization = lim_{h → 0⁺} M(h) = lim_{h → 0⁺} tanh(βh) = 0.
+
+Reference: Glimm–Jaffe §5.1 p. 77 (no spontaneous symmetry breaking at J = 0). -/
+theorem spontaneousMagnetization_J_zero
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {β : ℝ} (hβ : 0 < β) (i : V) :
+    spontaneousMagnetization G Λ 0 β i = 0 := by
+  -- Use that lim_{h → 0⁺} M(h) = spontaneousMagnetization
+  have h_tend := tendsto_magnetizationInfinite_spontaneousMagnetization_nhdsGT
+    G Λ (le_refl 0) hβ i
+  -- M(h) at J = 0 equals tanh(βh) for h ≥ 0 (and the limit takes h ∈ Ioi 0 where h > 0)
+  have h_eq : ∀ᶠ h in nhdsWithin (0 : ℝ) (Set.Ioi 0),
+      magnetizationInfinite G Λ ⟨0, h, β⟩ i = Real.tanh (β * h) := by
+    filter_upwards [self_mem_nhdsWithin] with h hh
+    have hh_pos : 0 < h := hh
+    have hf : Ferromagnetic (⟨(0 : ℝ), h, β⟩ : IsingParams ℝ) :=
+      ⟨le_refl 0, hh_pos.le, hβ⟩
+    exact magnetizationInfinite_J_zero G Λ h β hf i
+  have h_tend' := h_tend.congr' h_eq
+  -- tanh(β·h) → tanh(0) = 0 as h → 0⁺
+  have h_tanh_cont : Continuous (Real.tanh : ℝ → ℝ) := by
+    rw [show (Real.tanh : ℝ → ℝ) = (fun x => Real.sinh x / Real.cosh x) from
+        funext fun x => Real.tanh_eq_sinh_div_cosh x]
+    exact Real.continuous_sinh.div Real.continuous_cosh (fun x => (Real.cosh_pos x).ne')
+  have h_tanh_zero : Real.tanh (β * 0) = 0 := by
+    rw [mul_zero]; exact Real.tanh_zero
+  have h_tend_zero : Filter.Tendsto (fun h : ℝ => Real.tanh (β * h))
+      (nhdsWithin (0 : ℝ) (Set.Ioi 0)) (nhds 0) := by
+    have h_cont : Continuous (fun h : ℝ => Real.tanh (β * h)) :=
+      h_tanh_cont.comp (continuous_const.mul continuous_id)
+    have h_at_zero : Filter.Tendsto (fun h : ℝ => Real.tanh (β * h))
+        (nhds (0 : ℝ)) (nhds (Real.tanh (β * 0))) := h_cont.tendsto 0
+    rw [h_tanh_zero] at h_at_zero
+    exact h_at_zero.mono_left nhdsWithin_le_nhds
+  exact tendsto_nhds_unique h_tend' h_tend_zero
+
 
 end Ambient
 end IsingModel
