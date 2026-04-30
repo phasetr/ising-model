@@ -49,6 +49,33 @@ theorem correlationAlongExhaustion_hasDerivAt_beta
     rw [heq]
     exact ⟨0, hasDerivAt_const β 0⟩
 
+/-- **β-derivative of correlationAlongExhaustion at general h** (Step 257):
+The function `fun β' => correlationAlongExhaustion G Λ ⟨J, h, β'⟩ A n` has a derivative
+at β, at any `h` (extends Step 156 from h = 0).
+
+Subset case: lift to finite-volume correlation and apply `hasDerivAt_correlation_beta_general_h`.
+Non-subset case: constant zero. -/
+theorem correlationAlongExhaustion_hasDerivAt_beta_general_h_gen
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J h β : ℝ) (A : Finset V) (n : ℕ) :
+    ∃ d : ℝ, HasDerivAt
+      (fun β' => correlationAlongExhaustion G Λ (⟨J, h, β'⟩ : IsingParams ℝ) A n) d β := by
+  by_cases h_sub : A ⊆ Λ.volume n
+  · have heq : (fun β' => correlationAlongExhaustion G Λ (⟨J, h, β'⟩ : IsingParams ℝ) A n) =
+               (fun β' => IsingModel.correlation (inducedGraph G (Λ.volume n))
+                    (⟨J, h, β'⟩ : IsingParams ℝ) (liftFinset A h_sub)) := by
+      funext β'
+      rw [correlationAlongExhaustion_of_subset G Λ _ h_sub, correlationΛ_apply]
+    rw [heq]
+    exact ⟨_, hasDerivAt_correlation_beta_general_h _ J h β _⟩
+  · have heq : (fun β' => correlationAlongExhaustion G Λ (⟨J, h, β'⟩ : IsingParams ℝ) A n) =
+               fun _ => 0 := by
+      funext β'
+      exact correlationAlongExhaustion_of_not_subset G Λ _ h_sub
+    rw [heq]
+    exact ⟨0, hasDerivAt_const β 0⟩
+
 /-- **correlationAlongExhaustion DifferentiableAt β at h = 0** (Step 196, general G, Λ):
 For any graph G with finite-edge-set exhaustion stages, the correlation along exhaustion
 is differentiable in β at h = 0. Wraps `correlationAlongExhaustion_hasDerivAt_beta`. -/
