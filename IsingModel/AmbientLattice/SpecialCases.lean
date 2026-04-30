@@ -354,7 +354,28 @@ theorem freeEnergyAlongExhaustion_high_temp_h_zero_lower_bound
   exact freeEnergyΛ_high_temp_h_zero_lower_bound
     G (Λ.volume n) J β hβJ hne
 
-/-! ## Free-spin identity for induced subgraph -/
+/-- **Along-exhaustion correlation Z₂ symmetry at h = 0 (GJ §18.3)**:
+for any ambient `A : Finset V` with odd cardinality, at every stage `n`
+where `A ⊆ Λ.volume n`, the per-stage correlation
+`correlationAlongExhaustion G Λ ⟨J, 0, β⟩ A n = 0`.
+
+When `A ⊄ Λ.volume n`, `correlationAlongExhaustion` is `0` by definition,
+trivially satisfying the equation. When `A ⊆ Λ.volume n`, lift via
+`liftFinset` (preserves cardinality) and apply
+`correlationΛ_high_temp_h_zero_odd_card_eq_zero` (Step 299). -/
+theorem correlationAlongExhaustion_high_temp_h_zero_odd_card_eq_zero
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (A : Finset V) (hA_odd : Odd A.card) (n : ℕ) :
+    correlationAlongExhaustion G Λ (⟨J, 0, β⟩ : IsingParams ℝ) A n = 0 := by
+  unfold correlationAlongExhaustion
+  by_cases hAn : A ⊆ Λ.volume n
+  · simp only [dif_pos hAn]
+    have hcard : (liftFinset A hAn).card = A.card := liftFinset_card hAn
+    refine correlationΛ_high_temp_h_zero_odd_card_eq_zero G (Λ.volume n) J β
+      (liftFinset A hAn) ?_
+    rw [hcard]; exact hA_odd
+  · simp only [dif_neg hAn]
 
 omit [DecidableEq V] in
 /-- **Induced subgraph of the empty graph is empty**:
