@@ -459,4 +459,35 @@ theorem truncated2_antitoneOn_h_of_ne
     exact truncated2FieldDerivSummand_nonpos G (⟨J, h, β⟩ : IsingParams ℝ)
       ⟨hJ, le_of_lt hh, hβ⟩ hij k
 
+/-- **correlation ContinuousAt h** (Step 199):
+For finite-volume Ising, `correlation G ⟨J, h, β⟩ A` is continuous in h at any h.
+
+Proof: differentiable ⇒ continuous (from `hasDerivAt_correlation_field`). -/
+theorem correlation_continuousAt_field
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h β : ℝ) (A : Finset ι) :
+    ContinuousAt (fun h' => correlation G (⟨J, h', β⟩ : IsingParams ℝ) A) h :=
+  (hasDerivAt_correlation_field G J h β A).continuousAt
+
+/-- **correlation Continuous in h** (Step 199, whole-ℝ). -/
+theorem correlation_continuous_field
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (A : Finset ι) :
+    Continuous (fun h' => correlation G (⟨J, h', β⟩ : IsingParams ℝ) A) :=
+  continuous_iff_continuousAt.mpr fun h => correlation_continuousAt_field G J h β A
+
+/-- **correlation DifferentiableAt h** (Step 199). -/
+theorem correlation_differentiableAt_field
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h β : ℝ) (A : Finset ι) :
+    DifferentiableAt ℝ (fun h' => correlation G (⟨J, h', β⟩ : IsingParams ℝ) A) h :=
+  (hasDerivAt_correlation_field G J h β A).differentiableAt
+
+/-- **correlation Differentiable in h** (Step 199, whole-ℝ). -/
+theorem correlation_differentiable_field
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (A : Finset ι) :
+    Differentiable ℝ (fun h' => correlation G (⟨J, h', β⟩ : IsingParams ℝ) A) :=
+  fun h => correlation_differentiableAt_field G J h β A
+
 end IsingModel
