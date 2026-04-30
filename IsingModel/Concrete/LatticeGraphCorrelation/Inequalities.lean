@@ -4064,6 +4064,29 @@ theorem susceptibilityAlongExhaustion_differentiable_beta
                   (⟨J, 0, β'⟩ : IsingParams ℝ) i n) :=
   fun β => susceptibilityAlongExhaustion_differentiableAt_beta Λ i J β n
 
+/-- **correlationAlongExhaustion DifferentiableAt β at h = 0** (Step 195):
+For each finite-volume stage `n`, the correlation along exhaustion is differentiable
+in β at h = 0. Wraps Step 156's HasDerivAt result. -/
+theorem correlationAlongExhaustion_differentiableAt_beta
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (A : Finset (Fin d → ℤ)) (J β : ℝ) (n : ℕ) :
+    DifferentiableAt ℝ
+      (fun β' => correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                  (⟨J, 0, β'⟩ : IsingParams ℝ) A n)
+      β := by
+  obtain ⟨_, hd⟩ := correlationAlongExhaustion_hasDerivAt_beta
+    (IsingModel.latticeGraph d) Λ J β A n
+  exact hd.differentiableAt
+
+/-- **correlationAlongExhaustion Differentiable in β over the whole ℝ at h = 0** (Step 195). -/
+theorem correlationAlongExhaustion_differentiable_beta
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (A : Finset (Fin d → ℤ)) (J : ℝ) (n : ℕ) :
+    Differentiable ℝ
+      (fun β' => correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                  (⟨J, 0, β'⟩ : IsingParams ℝ) A n) :=
+  fun β => correlationAlongExhaustion_differentiableAt_beta Λ A J β n
+
 end Ambient
 
 end IsingModel
