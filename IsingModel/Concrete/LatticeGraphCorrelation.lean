@@ -2500,6 +2500,25 @@ theorem correlationAlongExhaustion_latticeGraph_high_temp_h_zero_odd_card_eq_zer
   correlationAlongExhaustion_high_temp_h_zero_odd_card_eq_zero
     (IsingModel.latticeGraph d) Λ J β A hA_odd n
 
+/-- **ℤ^d along-exhaustion partition function high-temperature closed form (FV §3.7.3 eq. (3.45))**:
+at every stage `n`,
+`partitionFunctionAlongExhaustion (latticeGraph d) Λ ⟨J, 0, β⟩ n
+  = 2^|Λ_n| · cosh(βJ)^|E_{Λ_n}| · ∑_{X ⊆ E_{Λ_n}, even-degree} tanh(βJ)^|X|`.
+ℤ^d wrapper of `partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_closed`. -/
+theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_closed
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ) (n : ℕ) :
+    partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) n
+      = (2 : ℝ) ^ (Λ.volume n).card *
+        Real.cosh (β * J) ^
+          (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card *
+        ∑ X ∈ (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.powerset.filter
+          (fun X => ∀ v : ↑(Λ.volume n),
+            Even ((X.filter (v ∈ ·)).card)),
+          Real.tanh (β * J) ^ X.card :=
+  partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_closed
+    (IsingModel.latticeGraph d) Λ J β n
+
 /-- **ℤ^d along-exhaustion correlation nonnegativity from FV (3.46)**:
 under `0 ≤ β * J`,
 `0 ≤ correlationAlongExhaustion (latticeGraph d) Λ ⟨J, 0, β⟩ A n`
