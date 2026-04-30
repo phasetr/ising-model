@@ -937,4 +937,24 @@ theorem susceptibility_differentiable_field
     Differentiable ℝ (fun h' => susceptibility G (⟨J, h', β⟩ : IsingParams ℝ) i) :=
   fun h => susceptibility_differentiableAt_field G J h β i
 
+/-- **Susceptibility Continuous in J** (Step 208). -/
+theorem susceptibility_continuous_J
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (h β : ℝ) (i : ι) :
+    Continuous (fun J' => susceptibility G (⟨J', h, β⟩ : IsingParams ℝ) i) := by
+  have heq_fun : (fun J' => susceptibility G (⟨J', h, β⟩ : IsingParams ℝ) i) =
+      (fun J' => ∑ j : ι, truncated2 G (⟨J', h, β⟩ : IsingParams ℝ) i j) := by
+    funext J'
+    exact susceptibility_apply G _ i
+  rw [heq_fun]
+  exact continuous_finset_sum _ (fun j _ => truncated2_continuous_J G h β i j)
+
+/-- **Magnetization Continuous in J** (Step 208). -/
+theorem magnetization_continuous_J
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (h β : ℝ) (i : ι) :
+    Continuous (fun J' => magnetization G (⟨J', h, β⟩ : IsingParams ℝ) i) := by
+  unfold magnetization
+  exact correlation_continuous_J G h β _
+
 end IsingModel
