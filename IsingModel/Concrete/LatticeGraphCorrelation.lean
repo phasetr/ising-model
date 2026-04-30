@@ -2391,6 +2391,21 @@ theorem partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_lower_bound
   partitionFunctionΛ_high_temp_expansion_h_zero_lower_bound
     (IsingModel.latticeGraph d) Λ J β hβJ
 
+/-- **ℤ^d free-energy lower bound from FV (3.45)** at zero external field:
+under `0 < |Λ|` and `0 ≤ β * J`,
+`f_Λ(⟨J, 0, β⟩) ≥ log 2 + (|E_Λ|/|Λ|) · log(cosh(β·J))`.
+ℤ^d wrapper of `freeEnergyΛ_high_temp_h_zero_lower_bound`. -/
+theorem freeEnergyΛ_latticeGraph_high_temp_h_zero_lower_bound
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
+    (hβJ : 0 ≤ β * J) (hne : 0 < Λ.card) :
+    Real.log 2 +
+        ((inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card : ℝ) /
+          Λ.card * Real.log (Real.cosh (β * J))
+      ≤ freeEnergyΛ (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) :=
+  freeEnergyΛ_high_temp_h_zero_lower_bound
+    (IsingModel.latticeGraph d) Λ J β hβJ hne
+
 /-- **ℤ^d log partitionFunctionΛ closed form at `J = 0`** (any Finset):
 `log Z_Λ(⟨0, h, β⟩) = |Λ| · log(2·cosh(β·h))`. -/
 theorem log_partitionFunctionΛ_latticeGraph_J_zero
