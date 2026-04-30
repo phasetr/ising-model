@@ -1211,6 +1211,26 @@ theorem partitionFunction_high_temp_expansion
       Finset.prod_const]
   ring
 
+/-- **Partition function high-temperature expansion at zero field**
+(GJ §18.3 / FV §3.7.3 eq. (3.42)):
+\[
+Z(G; J, 0, \beta) = (\cosh(\beta J))^{|E|}
+\sum_\sigma \prod_{\{i,j\} \in E}
+  (1 + \tanh(\beta J)\,\sigma_i\sigma_j).
+\]
+
+Direct corollary of `partitionFunction_high_temp_expansion` at `h = 0`,
+where the field factor `exp(βh · Σ sign(σ_i))` collapses to `1`. -/
+theorem partitionFunction_high_temp_expansion_h_zero
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) :
+    partitionFunction G ⟨J, 0, β⟩ =
+      Real.cosh (β * J) ^ G.edgeFinset.card *
+      ∑ σ : Config ι,
+        ∏ e ∈ G.edgeFinset, (1 + Real.tanh (β * J) * edgeSpin σ e) := by
+  rw [partitionFunction_high_temp_expansion G ⟨J, 0, β⟩]
+  simp
+
 /-- **High-temperature parameter**: `t = tanh(βJ)`.
 For `βJ ≥ 0`, `t ∈ [0, 1)`, and the high-temperature expansion
 converges when `t` is small. -/
