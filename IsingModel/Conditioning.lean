@@ -1,5 +1,4 @@
 import IsingModel.FreeEnergy
-import IsingModel.Inequalities.GHS
 import Mathlib.Algebra.BigOperators.Ring.Nat
 
 /-!
@@ -1954,16 +1953,10 @@ theorem high_temp_numerator_filter_eq_empty_of_odd_card
 numerator `∑_{X : ∂X = A} tanh(βJ)^|X|` equals `0` for any `A` of odd
 cardinality.
 
-Proof: by `correlation_odd_vanish` (Z₂ spin-flip argument), the
-correlation `⟨σ_A⟩_{β,0}` itself vanishes for odd `|A|`. Combining this
-with the FV (3.46) closed form (`correlation_high_temp_expansion_h_zero_closed`)
-gives `0 = numerator / denominator`; the denominator is strictly
-positive (deduced from `partitionFunction_pos` and the FV (3.45)
-factorization), so the numerator must be `0`.
-
-Heuristically (not used in this proof), the filtered set indexing the
-numerator is empty by the handshake lemma: `|∂X|` is always even, so no
-`X` can satisfy `∂X = A` when `|A|` is odd. -/
+Direct combinatorial proof via `high_temp_numerator_filter_eq_empty_of_odd_card`
+(Step 297): the filter indexing the numerator is *literally empty*
+because the handshake lemma `∑_v deg_X v = 2|X|` forces `|∂X|` even,
+so no `X` satisfies `∂X = A` when `|A|` is odd. The empty sum is `0`. -/
 theorem sum_high_temp_numerator_h_zero_odd_card_eq_zero
     (G : SimpleGraph ι) [Fintype G.edgeSet]
     (J β : ℝ) (A : Finset ι) (hA_odd : Odd A.card) :
@@ -1972,36 +1965,8 @@ theorem sum_high_temp_numerator_h_zero_odd_card_eq_zero
           Even ((if v ∈ A then (1 : ℕ) else 0)
                 + (X.filter (v ∈ ·)).card)),
         Real.tanh (β * J) ^ X.card = 0 := by
-  -- Multiply both sides of FV (3.46) by the (positive) denominator
-  have hclosed := correlation_high_temp_expansion_h_zero_closed G J β A
-  have hodd_eq_zero := correlation_odd_vanish G J β A hA_odd
-  rw [hodd_eq_zero] at hclosed
-  -- Now: 0 = numerator / denominator, where denominator > 0 (contains X = ∅)
-  set Z_sub : ℝ := ∑ X ∈ G.edgeFinset.powerset.filter
-      (fun X : Finset (Sym2 ι) => ∀ v : ι, Even ((X.filter (v ∈ ·)).card)),
-      Real.tanh (β * J) ^ X.card with hZ_sub
-  set N_sub : ℝ := ∑ X ∈ G.edgeFinset.powerset.filter
-      (fun X : Finset (Sym2 ι) => ∀ v : ι,
-        Even ((if v ∈ A then (1 : ℕ) else 0)
-              + (X.filter (v ∈ ·)).card)),
-      Real.tanh (β * J) ^ X.card with hN_sub
-  -- 0 = N_sub / Z_sub. We need N_sub = 0. This needs Z_sub ≠ 0.
-  -- But the FV (3.45) closed form already established Z_sub > 0
-  -- (since Z > 0 and the prefactor 2^|ι| · cosh^|E| > 0).
-  have hZ_pos : 0 < Z_sub := by
-    -- Z = 2^|ι| · cosh^|E| · Z_sub, Z > 0, prefactor > 0
-    have hZ_eq := partitionFunction_high_temp_expansion_h_zero_closed G J β
-    have hZ_pos := partitionFunction_pos G ⟨J, 0, β⟩
-    have hpref_pos : (0 : ℝ) <
-        (2 : ℝ) ^ Fintype.card ι * Real.cosh (β * J) ^ G.edgeFinset.card :=
-      mul_pos (pow_pos (by norm_num) _) (pow_pos (Real.cosh_pos _) _)
-    have hprod : (0 : ℝ) < (2 : ℝ) ^ Fintype.card ι *
-                              Real.cosh (β * J) ^ G.edgeFinset.card * Z_sub := by
-      rw [← hZ_eq]; exact hZ_pos
-    exact (mul_pos_iff_of_pos_left hpref_pos).mp hprod
-  rw [eq_div_iff hZ_pos.ne'] at hclosed
-  rw [zero_mul] at hclosed
-  exact hclosed.symm
+  rw [high_temp_numerator_filter_eq_empty_of_odd_card G A hA_odd,
+      Finset.sum_empty]
 
 /-- **Correlation nonnegativity at h = 0 from FV (3.46)**: under
 `0 ≤ β * J`, `0 ≤ correlation G ⟨J, 0, β⟩ A` for any `A : Finset ι`.
