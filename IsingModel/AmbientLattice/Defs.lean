@@ -288,6 +288,24 @@ theorem partitionFunctionΛ_high_temp_expansion_h_zero_closed
       IsingModel.partitionFunction_high_temp_expansion_h_zero_closed,
       Fintype.card_coe]
 
+/-- **Λ-level general-h subset expansion (GJ §18.3)**: for any
+parameter `p = (J, h, β)`,
+`Z_Λ(p) = (cosh βJ)^|E_Λ| · ∑_{X ⊆ E_Λ} tanh(βJ)^|X| · ∑_σ (∏_{e ∈ X} σ_iσ_j) exp(βh ∑ σ_i)`.
+Direct lift of `IsingModel.partitionFunction_high_temp_expansion_subset_form`
+(Step 300). -/
+theorem partitionFunctionΛ_high_temp_expansion_subset_form
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (p : IsingParams ℝ) :
+    partitionFunctionΛ G Λ p =
+      Real.cosh (p.β * p.J) ^ (inducedGraph G Λ).edgeFinset.card *
+      ∑ X ∈ (inducedGraph G Λ).edgeFinset.powerset,
+        Real.tanh (p.β * p.J) ^ X.card *
+          ∑ σ : Config ↑Λ,
+            (∏ e ∈ X, edgeSpin (K := ℝ) σ e) *
+            Real.exp (p.β * p.h * ∑ i : ↑Λ, Spin.sign ℝ (σ i)) := by
+  rw [partitionFunctionΛ_apply,
+      IsingModel.partitionFunction_high_temp_expansion_subset_form]
+
 /-- **Λ-level high-temperature correlation closed form (FV §3.7.3 eq. (3.46))**:
 on the induced subgraph `inducedGraph G Λ` at zero external field,
 `⟨σ_A⟩^Λ_{β,0} = (∑_{X : ∂X=A} tanh^|X|) / (∑_{X : ∂X=∅} tanh^|X|)`.
