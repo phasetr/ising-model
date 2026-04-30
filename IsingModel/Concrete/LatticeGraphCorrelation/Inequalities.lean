@@ -4939,6 +4939,36 @@ theorem correlationInfinite_ae_differentiableWithinAt_beta_Ici_zero
   have hmono := correlationInfinite_monotoneOn_beta_Ici_zero Λ r_val s_val J hJ
   exact hmono.locallyBoundedVariationOn.ae_differentiableWithinAt measurableSet_Ici
 
+/-- **MonotoneOn corr_∞ in J on the half-line Ici 0** (Step 237):
+For `0 < β`: corr_∞ is monotone non-decreasing in J on the entire half-line `Ici 0`.
+
+Direct J-direction analogue of Step 183. Direct application of
+`correlationInfinite_monotone_J` at h = 0. -/
+theorem correlationInfinite_monotoneOn_J_Ici_zero
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (r_val s_val : Fin d → ℤ) (β : ℝ) (hβ : 0 < β) :
+    MonotoneOn
+      (fun J => correlationInfinite (IsingModel.latticeGraph d) Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+                    {r_val, s_val})
+      (Set.Ici (0 : ℝ)) :=
+  correlationInfinite_monotone_J (IsingModel.latticeGraph d) Λ (le_refl 0) hβ {r_val, s_val}
+
+/-- **A.e. differentiability of corr_∞ on Ici 0 in J** (Step 237):
+For `0 < β`: `J ↦ corr_∞(J)` is differentiable within `Ici 0` at Lebesgue-a.e. J.
+
+Direct J-direction analogue of Step 183. Proof: `MonotoneOn.locallyBoundedVariationOn`
++ `LocallyBoundedVariationOn.ae_differentiableWithinAt`. No high-temperature condition. -/
+theorem correlationInfinite_ae_differentiableWithinAt_J_Ici_zero
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (r_val s_val : Fin d → ℤ) (β : ℝ) (hβ : 0 < β) :
+    ∀ᵐ J ∂MeasureTheory.Measure.restrict MeasureTheory.volume (Set.Ici (0 : ℝ)),
+    DifferentiableWithinAt ℝ
+      (fun J => correlationInfinite (IsingModel.latticeGraph d) Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+                    {r_val, s_val})
+      (Set.Ici (0 : ℝ)) J := by
+  have hmono := correlationInfinite_monotoneOn_J_Ici_zero Λ r_val s_val β hβ
+  exact hmono.locallyBoundedVariationOn.ae_differentiableWithinAt measurableSet_Ici
+
 /-- **TendstoLocallyUniformlyOn corr_n → corr_∞ on Ico 0 β_c (half-open)** (Step 184):
 For `0 < J`, `1 ≤ d`: corr_n converges locally uniformly to corr_∞ on `Ico 0 (1/(J·2d))`.
 
