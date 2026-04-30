@@ -528,4 +528,51 @@ theorem truncated2_differentiable_field
     Differentiable ℝ (fun h' => truncated2 G (⟨J, h', β⟩ : IsingParams ℝ) i j) :=
   fun h => truncated2_differentiableAt_field G J h β i j
 
+/-- **truncated3 ContinuousAt h** (Step 202).
+truncated3 is a polynomial in correlation values, each continuous in h. -/
+theorem truncated3_continuousAt_field
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h β : ℝ) (i j k : ι) :
+    ContinuousAt (fun h' => truncated3 G (⟨J, h', β⟩ : IsingParams ℝ) i j k) h := by
+  unfold truncated3
+  exact (((correlation_continuousAt_field G J h β _).sub
+    ((correlation_continuousAt_field G J h β _).mul (correlation_continuousAt_field G J h β _))).sub
+    ((correlation_continuousAt_field G J h β _).mul (correlation_continuousAt_field G J h β _))).sub
+    ((correlation_continuousAt_field G J h β _).mul (correlation_continuousAt_field G J h β _))
+    |>.add (((continuousAt_const).mul (correlation_continuousAt_field G J h β _)).mul
+      (correlation_continuousAt_field G J h β _) |>.mul
+      (correlation_continuousAt_field G J h β _))
+
+/-- **truncated3 Continuous in h** (Step 202, whole-ℝ). -/
+theorem truncated3_continuous_field
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (i j k : ι) :
+    Continuous (fun h' => truncated3 G (⟨J, h', β⟩ : IsingParams ℝ) i j k) :=
+  continuous_iff_continuousAt.mpr fun h => truncated3_continuousAt_field G J h β i j k
+
+/-- **truncated3 DifferentiableAt h** (Step 202). -/
+theorem truncated3_differentiableAt_field
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h β : ℝ) (i j k : ι) :
+    DifferentiableAt ℝ (fun h' => truncated3 G (⟨J, h', β⟩ : IsingParams ℝ) i j k) h := by
+  unfold truncated3
+  exact (((correlation_differentiableAt_field G J h β _).sub
+    ((correlation_differentiableAt_field G J h β _).mul
+     (correlation_differentiableAt_field G J h β _))).sub
+    ((correlation_differentiableAt_field G J h β _).mul
+     (correlation_differentiableAt_field G J h β _))).sub
+    ((correlation_differentiableAt_field G J h β _).mul
+     (correlation_differentiableAt_field G J h β _))
+    |>.add (((differentiableAt_const _).mul
+      (correlation_differentiableAt_field G J h β _)).mul
+      (correlation_differentiableAt_field G J h β _) |>.mul
+      (correlation_differentiableAt_field G J h β _))
+
+/-- **truncated3 Differentiable in h** (Step 202, whole-ℝ). -/
+theorem truncated3_differentiable_field
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (i j k : ι) :
+    Differentiable ℝ (fun h' => truncated3 G (⟨J, h', β⟩ : IsingParams ℝ) i j k) :=
+  fun h => truncated3_differentiableAt_field G J h β i j k
+
 end IsingModel
