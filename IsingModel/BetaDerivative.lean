@@ -316,6 +316,226 @@ theorem hasDerivAt_correlation_beta
   rw [hval]
   exact hderiv
 
+/-! ## General-h β-derivative (Step 243, GJ §17.5) -/
+
+omit [DecidableEq ι] in
+/-- The negative Hamiltonian decomposed at general `h`:
+`-H = J·Σ_e edgeSpin + h·Σ_i spinProduct {i}`.
+
+Spin-`{i}` form to leverage `spinProduct_mul`. -/
+private lemma neg_hamiltonian_decomp_general
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h β : ℝ) (σ : Config ι) :
+    - hamiltonian G (⟨J, h, β⟩ : IsingParams ℝ) σ =
+      J * ∑ e ∈ G.edgeFinset, edgeSpin (K := ℝ) σ e
+      + h * ∑ i : ι, spinProduct {i} σ := by
+  unfold hamiltonian interactionEnergy externalFieldEnergy
+  have h_sp : ∀ i : ι, spinProduct {i} σ = (Spin.sign ℝ (σ i) : ℝ) := fun i => by
+    simp [spinProduct, Spin.sign]
+  simp_rw [h_sp]
+  ring
+
+/-- **General-h β-derivative formula for Ising correlations** (Step 243, GJ §17.5):
+For any `J, h, β`, the finite-volume correlation is differentiable in β with derivative
+
+  `d/dβ ⟨σ^A⟩ = J · Σ_{e∈E} [⟨σ^{A△{e₁,e₂}}⟩ − ⟨σ^A⟩·⟨σ_{e₁e₂}⟩]`
+  `              + h · Σ_{i∈ι} [⟨σ^{A△{i}}⟩ − ⟨σ^A⟩·⟨σ_i⟩]`.
+
+Extends Step 117a (`hasDerivAt_correlation_beta`) which is restricted to h = 0.
+
+Proof: quotient rule `d/dβ ⟨F⟩ = ⟨F·(-H)⟩ - ⟨F⟩⟨-H⟩`, then expand
+`−H = J·Σ_e σ^{e₁e₂} + h·Σ_i σ_i` and use `spinProduct_mul` for both
+the edge sum and the singleton sum.
+
+Reference: Glimm–Jaffe §17.5 pp. 310–311 (general h extension). -/
+theorem hasDerivAt_correlation_beta_general_h
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h β : ℝ) (A : Finset ι) :
+    HasDerivAt (fun β' => correlation G (⟨J, h, β'⟩ : IsingParams ℝ) A)
+      (J * ∑ e ∈ G.edgeFinset,
+        Sym2.lift ⟨fun u v =>
+          correlation G (⟨J, h, β⟩ : IsingParams ℝ) (symmDiff A {u, v}) -
+          correlation G (⟨J, h, β⟩ : IsingParams ℝ) A *
+          correlation G (⟨J, h, β⟩ : IsingParams ℝ) {u, v},
+        fun u v => by simp [Finset.pair_comm v u]⟩ e
+       + h * ∑ i : ι,
+          (correlation G (⟨J, h, β⟩ : IsingParams ℝ) (symmDiff A {i}) -
+           correlation G (⟨J, h, β⟩ : IsingParams ℝ) A *
+           correlation G (⟨J, h, β⟩ : IsingParams ℝ) {i}))
+      β := by
+  unfold correlation
+  have hderiv := hasDerivAt_gibbsExpectation_beta G J h β (spinProduct A)
+  set p := (⟨J, h, β⟩ : IsingParams ℝ)
+  -- Helper: -H(σ) = J * Σ_e edgeSpin σ e + h * Σ_i spinProduct {i} σ
+  have hneg_H : ∀ σ : Config ι, - hamiltonian G p σ =
+      J * ∑ e ∈ G.edgeFinset, edgeSpin (K := ℝ) σ e
+      + h * ∑ i : ι, spinProduct {i} σ :=
+    fun σ => neg_hamiltonian_decomp_general G J h β σ
+  -- Rewrite ⟨spinProduct A · (-H)⟩ = J·Σ_e ⟨spinProduct (A△{e₁,e₂})⟩ + h·Σ_i ⟨spinProduct (A△{i})⟩
+  have hFH : gibbsExpectation G p
+      (fun σ => spinProduct A σ * (- hamiltonian G p σ)) =
+      J * ∑ e ∈ G.edgeFinset,
+        Sym2.lift ⟨fun u v => gibbsExpectation G p (spinProduct (symmDiff A {u, v})),
+          fun u v => by simp [Finset.pair_comm v u]⟩ e
+      + h * ∑ i : ι, gibbsExpectation G p (spinProduct (symmDiff A {i})) := by
+    unfold gibbsExpectation
+    have hinner : ∑ σ : Config ι, spinProduct A σ * (- hamiltonian G p σ) *
+        boltzmannWeight G p σ =
+        J * ∑ e ∈ G.edgeFinset,
+          Sym2.lift ⟨fun u v => ∑ σ : Config ι,
+              spinProduct (symmDiff A {u, v}) σ * boltzmannWeight G p σ,
+            fun u v => by simp [Finset.pair_comm v u]⟩ e
+        + h * ∑ i : ι, ∑ σ : Config ι,
+            spinProduct (symmDiff A {i}) σ * boltzmannWeight G p σ := by
+      simp_rw [hneg_H]
+      -- Distribute spinProduct A σ * ((J·Σedge) + h·Σ_i) * bw σ over the two terms
+      simp_rw [mul_add, add_mul]
+      rw [Finset.sum_add_distrib]
+      congr 1
+      · -- J * Σ_e term
+        simp_rw [Finset.mul_sum, Finset.sum_mul]
+        rw [Finset.sum_comm]
+        apply Finset.sum_congr rfl
+        intro e he
+        obtain ⟨⟨u, v⟩, rfl⟩ := Quot.exists_rep e
+        have huv : u ≠ v := by
+          intro heq; subst heq
+          exact (SimpleGraph.mem_edgeFinset.mp he).ne rfl
+        simp only [Sym2.lift_mk]
+        rw [Finset.mul_sum]
+        apply Finset.sum_congr rfl
+        intro σ _
+        rw [edgeSpin_quot_eq_spinProduct huv, ← spinProduct_mul]
+        ring
+      · -- h * Σ_i term
+        simp_rw [Finset.mul_sum, Finset.sum_mul]
+        rw [Finset.sum_comm]
+        apply Finset.sum_congr rfl
+        intro j _
+        apply Finset.sum_congr rfl
+        intro σ _
+        rw [← spinProduct_mul]
+        ring
+    rw [hinner]
+    -- Now: Z⁻¹ * (J·Σ + h·Σ) = J·Σ Z⁻¹·(.) + h·Σ Z⁻¹·(.)
+    rw [mul_add]
+    congr 1
+    · rw [← mul_assoc, mul_comm (partitionFunction G p)⁻¹ J, mul_assoc, Finset.mul_sum]
+      congr 1
+      apply Finset.sum_congr rfl
+      intro e he
+      obtain ⟨⟨u, v⟩, rfl⟩ := Quot.exists_rep e
+      simp only [Sym2.lift_mk]
+    · rw [← mul_assoc, mul_comm (partitionFunction G p)⁻¹ h, mul_assoc, Finset.mul_sum]
+  -- Rewrite ⟨-H⟩ = J·Σ_e ⟨spinProduct {e₁,e₂}⟩ + h·Σ_i ⟨spinProduct {i}⟩
+  have hnH : gibbsExpectation G p (fun σ => - hamiltonian G p σ) =
+      J * ∑ e ∈ G.edgeFinset,
+        Sym2.lift ⟨fun u v => gibbsExpectation G p (spinProduct {u, v}),
+          fun u v => by simp [Finset.pair_comm v u]⟩ e
+      + h * ∑ i : ι, gibbsExpectation G p (spinProduct {i}) := by
+    unfold gibbsExpectation
+    have hinner : ∑ σ : Config ι, (- hamiltonian G p σ) * boltzmannWeight G p σ =
+        J * ∑ e ∈ G.edgeFinset,
+          Sym2.lift ⟨fun u v => ∑ σ : Config ι,
+              spinProduct {u, v} σ * boltzmannWeight G p σ,
+            fun u v => by simp [Finset.pair_comm v u]⟩ e
+        + h * ∑ i : ι, ∑ σ : Config ι,
+            spinProduct {i} σ * boltzmannWeight G p σ := by
+      simp_rw [hneg_H]
+      simp_rw [add_mul]
+      rw [Finset.sum_add_distrib]
+      congr 1
+      · simp_rw [Finset.mul_sum, Finset.sum_mul]
+        rw [Finset.sum_comm]
+        apply Finset.sum_congr rfl
+        intro e he
+        obtain ⟨⟨u, v⟩, rfl⟩ := Quot.exists_rep e
+        have huv : u ≠ v := by
+          intro heq; subst heq
+          exact (SimpleGraph.mem_edgeFinset.mp he).ne rfl
+        simp only [Sym2.lift_mk]
+        rw [Finset.mul_sum]
+        apply Finset.sum_congr rfl
+        intro σ _
+        rw [edgeSpin_quot_eq_spinProduct huv]
+        ring
+      · simp_rw [Finset.mul_sum, Finset.sum_mul]
+        rw [Finset.sum_comm]
+        apply Finset.sum_congr rfl
+        intro j _
+        apply Finset.sum_congr rfl
+        intro σ _
+        ring
+    rw [hinner, mul_add]
+    congr 1
+    · rw [← mul_assoc, mul_comm (partitionFunction G p)⁻¹ J, mul_assoc, Finset.mul_sum]
+      congr 1
+      apply Finset.sum_congr rfl
+      intro e he
+      obtain ⟨⟨u, v⟩, rfl⟩ := Quot.exists_rep e
+      simp only [Sym2.lift_mk]
+    · rw [← mul_assoc, mul_comm (partitionFunction G p)⁻¹ h, mul_assoc, Finset.mul_sum]
+  rw [hFH, hnH] at hderiv
+  -- Now combine: ⟨F·(-H)⟩ - ⟨F⟩·⟨-H⟩ = (J·Σedge + h·Σi terms) - ⟨F⟩·(J·Σedge + h·Σi)
+  --                                  = J·Σ_e [edge truncated] + h·Σ_i [singleton truncated]
+  have hval :
+      J * ∑ e ∈ G.edgeFinset,
+        Sym2.lift ⟨fun u v =>
+          gibbsExpectation G p (spinProduct (symmDiff A {u, v})) -
+          gibbsExpectation G p (spinProduct A) *
+          gibbsExpectation G p (spinProduct {u, v}),
+          fun u v => by simp [Finset.pair_comm v u]⟩ e
+      + h * ∑ i : ι,
+          (gibbsExpectation G p (spinProduct (symmDiff A {i})) -
+           gibbsExpectation G p (spinProduct A) *
+           gibbsExpectation G p (spinProduct {i})) =
+      (J * ∑ e ∈ G.edgeFinset,
+            Sym2.lift ⟨fun u v => gibbsExpectation G p (spinProduct (symmDiff A {u, v})),
+              fun u v => by simp [Finset.pair_comm v u]⟩ e
+        + h * ∑ i : ι, gibbsExpectation G p (spinProduct (symmDiff A {i}))) -
+      gibbsExpectation G p (spinProduct A) *
+        (J * ∑ e ∈ G.edgeFinset,
+            Sym2.lift ⟨fun u v => gibbsExpectation G p (spinProduct {u, v}),
+              fun u v => by simp [Finset.pair_comm v u]⟩ e
+          + h * ∑ i : ι, gibbsExpectation G p (spinProduct {i})) := by
+    -- Distribute and split the edge / singleton sums separately
+    have h_edge :
+        J * ∑ e ∈ G.edgeFinset,
+          Sym2.lift ⟨fun u v =>
+            gibbsExpectation G p (spinProduct (symmDiff A {u, v})) -
+            gibbsExpectation G p (spinProduct A) *
+            gibbsExpectation G p (spinProduct {u, v}),
+            fun u v => by simp [Finset.pair_comm v u]⟩ e =
+        J * ∑ e ∈ G.edgeFinset,
+            Sym2.lift ⟨fun u v => gibbsExpectation G p (spinProduct (symmDiff A {u, v})),
+              fun u v => by simp [Finset.pair_comm v u]⟩ e -
+        gibbsExpectation G p (spinProduct A) *
+          (J * ∑ e ∈ G.edgeFinset,
+              Sym2.lift ⟨fun u v => gibbsExpectation G p (spinProduct {u, v}),
+                fun u v => by simp [Finset.pair_comm v u]⟩ e) := by
+      simp only [Finset.mul_sum, ← Finset.sum_sub_distrib]
+      apply Finset.sum_congr rfl
+      intro e _
+      obtain ⟨⟨u, v⟩, rfl⟩ := Quot.exists_rep e
+      simp only [Sym2.lift_mk]
+      ring
+    have h_site :
+        h * ∑ i : ι,
+          (gibbsExpectation G p (spinProduct (symmDiff A {i})) -
+           gibbsExpectation G p (spinProduct A) *
+           gibbsExpectation G p (spinProduct {i})) =
+        h * ∑ i : ι, gibbsExpectation G p (spinProduct (symmDiff A {i})) -
+        gibbsExpectation G p (spinProduct A) *
+          (h * ∑ i : ι, gibbsExpectation G p (spinProduct {i})) := by
+      simp only [Finset.mul_sum, ← Finset.sum_sub_distrib]
+      apply Finset.sum_congr rfl
+      intro i _
+      ring
+    rw [h_edge, h_site]
+    ring
+  rw [hval]
+  exact hderiv
+
 /-! ## Lebowitz upper bound on the β-derivative (Step 117b) -/
 
 omit [Fintype ι] in
