@@ -1271,6 +1271,80 @@ theorem magnetizationInfinite_zero_at_h_zero
     magnetizationInfinite G Λ ⟨J, 0, β⟩ i = 0 :=
   correlationInfinite_h_zero G Λ J β {i} (by simp)
 
+/-- **`susceptibilityInfinite` at `J = 0` closed form** (Step 259, GJ §17.1):
+`susceptibilityInfinite G Λ ⟨0, h, β⟩ i = tanh(β·h)·(1 - tanh(β·h))`,
+independent of `i` (non-interacting system).
+
+**Proof**: at `J = 0` the system is non-interacting, so each site contributes
+independently. By `susceptibility_J_zero`, the finite-volume susceptibility on
+`inducedGraph G (Λ.volume n)` (for any `n` with `i ∈ Λ.volume n`) equals the
+closed-form value. For `n` with `i ∉ Λ.volume n`, the along-exhaustion susceptibility
+vanishes. Taking the `ciSup`: the sequence is eventually constant at the closed-form
+value (by `Exhaustion.exhaust` applied to `{i}`), hence the sup equals that value.
+
+Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §4.1 (non-interacting `J = 0`
+slice); §5.1 pp. 76–77 (susceptibility). -/
+theorem susceptibilityInfinite_J_zero
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (h β : ℝ)
+    (hf : Ferromagnetic (⟨(0 : ℝ), h, β⟩ : IsingParams ℝ))
+    (i : V) :
+    susceptibilityInfinite G Λ (⟨0, h, β⟩ : IsingParams ℝ) i
+      = Real.tanh (β * h) * (1 - Real.tanh (β * h)) := by
+  -- Per-stage value: closed form when i ∈ Λ_n, 0 otherwise
+  have h_per_stage : ∀ n : ℕ,
+      susceptibilityAlongExhaustion G Λ (⟨0, h, β⟩ : IsingParams ℝ) i n =
+      if i ∈ Λ.volume n then Real.tanh (β * h) * (1 - Real.tanh (β * h)) else 0 := by
+    intro n
+    by_cases hi : i ∈ Λ.volume n
+    · rw [if_pos hi, susceptibilityAlongExhaustion_of_mem G Λ _ hi,
+          susceptibilityΛ_apply]
+      exact IsingModel.susceptibility_J_zero
+        (inducedGraph G (Λ.volume n)) h β ⟨i, hi⟩
+    · rw [if_neg hi, susceptibilityAlongExhaustion_of_not_mem G Λ _ hi]
+  -- Rewrite the susceptibilityInfinite as ciSup
+  rw [susceptibilityInfinite_eq_ciSup]
+  -- Use eventually constant argument: pick N with i ∈ Λ_N, then sequence is constant
+  -- from N onwards (= closed form value).
+  obtain ⟨N, hN⟩ := Λ.exhaust ({i} : Finset V)
+  set c : ℝ := Real.tanh (β * h) * (1 - Real.tanh (β * h)) with hc_def
+  -- Claim: ⨆ n, susceptibilityAlongExhaustion ... i n = c
+  -- Helper: 0 ≤ c (under ferromagnetic h ≥ 0, β > 0)
+  have hc_nn : 0 ≤ c := by
+    obtain ⟨_, hh, hβ_pos⟩ := hf
+    have hβh_nn : 0 ≤ β * h := mul_nonneg hβ_pos.le hh
+    have htanh_nn : 0 ≤ Real.tanh (β * h) := by
+      rw [Real.tanh_eq_sinh_div_cosh]
+      exact div_nonneg (Real.sinh_nonneg_iff.mpr hβh_nn) (Real.cosh_pos _).le
+    have htanh_le_one : Real.tanh (β * h) ≤ 1 := (Real.tanh_lt_one _).le
+    exact mul_nonneg htanh_nn (by linarith)
+  apply le_antisymm
+  · -- ≤ c: every term is ≤ c
+    apply ciSup_le
+    intro n
+    rw [h_per_stage n]
+    by_cases hi : i ∈ Λ.volume n
+    · rw [if_pos hi]
+    · rw [if_neg hi]
+      exact hc_nn
+  · -- ≥ c: pick the term at n = N where i ∈ Λ_N
+    have hi_N : i ∈ Λ.volume N := by
+      have := hN N le_rfl
+      simpa using this
+    have h_bdd : BddAbove (Set.range
+        (fun n => susceptibilityAlongExhaustion G Λ (⟨0, h, β⟩ : IsingParams ℝ) i n)) := by
+      refine ⟨c, ?_⟩
+      rintro x ⟨n, hx⟩
+      simp only at hx
+      rw [← hx, h_per_stage n]
+      by_cases hi : i ∈ Λ.volume n
+      · rw [if_pos hi]
+      · rw [if_neg hi]
+        exact hc_nn
+    refine le_ciSup_of_le h_bdd N ?_
+    rw [h_per_stage N, if_pos hi_N]
+
 
 end Ambient
 end IsingModel
