@@ -1484,6 +1484,51 @@ theorem partitionFunction_high_temp_expansion_h_zero_closed
   rw [← Finset.mul_sum]
   ring
 
+/-- **High-temperature even-subgraph sum upper bound**: under `0 ≤ β J`,
+`∑_{X ⊆ G.edgeFinset, even-deg} tanh(βJ)^|X| ≤ 2^|E|`.
+
+Each `tanh(βJ)^|X| ≤ 1` (since `0 ≤ tanh(βJ) ≤ 1` under `0 ≤ βJ`),
+and the filter is a subset of `G.edgeFinset.powerset` (cardinality
+`2^|E|`). Hence the sum is bounded by the count of summands. -/
+theorem sum_pow_tanh_even_subgraph_le_two_pow
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) :
+    (∑ X ∈ G.edgeFinset.powerset.filter
+        (fun X : Finset (Sym2 ι) =>
+          ∀ v : ι, Even ((X.filter (v ∈ ·)).card)),
+        Real.tanh (β * J) ^ X.card)
+      ≤ (2 : ℝ) ^ G.edgeFinset.card := by
+  classical
+  have htanh_nn : 0 ≤ Real.tanh (β * J) := by
+    rw [Real.tanh_eq_sinh_div_cosh]
+    exact div_nonneg
+      (Real.sinh_nonneg_iff.mpr hβJ) (Real.cosh_pos _).le
+  have htanh_le_one : Real.tanh (β * J) ≤ 1 := (Real.tanh_lt_one _).le
+  -- Each summand ≤ 1
+  have hpow_le_one : ∀ X ∈ G.edgeFinset.powerset.filter
+      (fun X : Finset (Sym2 ι) =>
+        ∀ v : ι, Even ((X.filter (v ∈ ·)).card)),
+      Real.tanh (β * J) ^ X.card ≤ 1 := fun X _ =>
+    pow_le_one₀ htanh_nn htanh_le_one
+  -- ∑ summands ≤ #(filter set) ≤ #powerset = 2^|E|
+  have hbound1 : ∑ X ∈ G.edgeFinset.powerset.filter
+        (fun X : Finset (Sym2 ι) =>
+          ∀ v : ι, Even ((X.filter (v ∈ ·)).card)),
+        Real.tanh (β * J) ^ X.card
+      ≤ ((G.edgeFinset.powerset.filter
+          (fun X : Finset (Sym2 ι) =>
+            ∀ v : ι, Even ((X.filter (v ∈ ·)).card))).card : ℝ) :=
+    Finset.sum_le_card_nsmul _ _ 1 hpow_le_one |>.trans
+      (by rw [nsmul_eq_mul, mul_one])
+  have hbound2 : ((G.edgeFinset.powerset.filter
+        (fun X : Finset (Sym2 ι) =>
+          ∀ v : ι, Even ((X.filter (v ∈ ·)).card))).card : ℝ)
+      ≤ (G.edgeFinset.powerset.card : ℝ) :=
+    Nat.cast_le.mpr (Finset.card_le_card (Finset.filter_subset _ _))
+  have hpow_eq : (G.edgeFinset.powerset.card : ℝ) = (2 : ℝ) ^ G.edgeFinset.card := by
+    rw [Finset.card_powerset]; push_cast; ring
+  linarith
+
 /-- **High-temperature even-subset sum is `≥ 1`**: under `0 ≤ β J`,
 `∑_{X ⊆ G.edgeFinset, even-degree} tanh(β J)^|X| ≥ 1`.
 
