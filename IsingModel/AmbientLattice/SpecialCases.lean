@@ -354,6 +354,22 @@ theorem freeEnergyAlongExhaustion_high_temp_h_zero_lower_bound
   exact freeEnergyΛ_high_temp_h_zero_lower_bound
     G (Λ.volume n) J β hβJ hne
 
+/-- **Along-exhaustion high-temperature even-subgraph sum is `≥ 1`**:
+under `0 ≤ β * J`, at every stage `n`,
+`∑_{X ⊆ E_{Λ.volume n}, even-degree} tanh(β J)^|X| ≥ 1`.
+Per-stage application of `one_le_sum_pow_tanh_even_subgraph_Λ`
+(Step 296). -/
+theorem one_le_sum_pow_tanh_even_subgraph_alongExhaustion
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (n : ℕ) :
+    (1 : ℝ) ≤ ∑ X ∈
+        (inducedGraph G (Λ.volume n)).edgeFinset.powerset.filter
+          (fun X : Finset (Sym2 ↑(Λ.volume n)) =>
+            ∀ v : ↑(Λ.volume n), Even ((X.filter (v ∈ ·)).card)),
+        Real.tanh (β * J) ^ X.card :=
+  one_le_sum_pow_tanh_even_subgraph_Λ G (Λ.volume n) J β hβJ
+
 /-- **Along-exhaustion partition function high-temperature closed form (FV §3.7.3 eq. (3.45))**:
 at every stage `n`,
 `partitionFunctionAlongExhaustion G Λ ⟨J, 0, β⟩ n = 2^|Λ.volume n| · cosh(βJ)^|E_{Λ.volume n}| · ∑_{X ⊆ E_{Λ.volume n}, even-degree} tanh(βJ)^|X|`.
