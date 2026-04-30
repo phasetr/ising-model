@@ -887,6 +887,39 @@ theorem truncated2_differentiable_beta
     Differentiable ℝ (fun β' => truncated2 G (⟨J, 0, β'⟩ : IsingParams ℝ) i j) :=
   fun β => (truncated2_hasDerivAt_beta G J β i j).differentiableAt
 
+/-- **correlation is Continuous in β at general h** (Step 247).
+Strengthens Step 193 from h = 0 to general h via Step 243's
+`hasDerivAt_correlation_beta_general_h`. -/
+theorem correlation_continuous_beta_general_h
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h : ℝ) (A : Finset ι) :
+    Continuous (fun β' => correlation G (⟨J, h, β'⟩ : IsingParams ℝ) A) :=
+  continuous_iff_continuousAt.mpr fun β =>
+    (hasDerivAt_correlation_beta_general_h G J h β A).continuousAt
+
+/-- **correlation is Differentiable in β at general h** (Step 247).
+Strengthens Step 193 from h = 0 to general h via Step 243. -/
+theorem correlation_differentiable_beta_general_h
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h : ℝ) (A : Finset ι) :
+    Differentiable ℝ (fun β' => correlation G (⟨J, h, β'⟩ : IsingParams ℝ) A) :=
+  fun β => (hasDerivAt_correlation_beta_general_h G J h β A).differentiableAt
+
+/-- **truncated2 is Continuous in β at general h** (Step 247). -/
+theorem truncated2_continuous_beta_general_h
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h : ℝ) (i j : ι) :
+    Continuous (fun β' => truncated2 G (⟨J, h, β'⟩ : IsingParams ℝ) i j) :=
+  continuous_iff_continuousAt.mpr fun β =>
+    (truncated2_hasDerivAt_beta_general_h G J h β i j).continuousAt
+
+/-- **truncated2 is Differentiable in β at general h** (Step 247). -/
+theorem truncated2_differentiable_beta_general_h
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h : ℝ) (i j : ι) :
+    Differentiable ℝ (fun β' => truncated2 G (⟨J, h, β'⟩ : IsingParams ℝ) i j) :=
+  fun β => (truncated2_hasDerivAt_beta_general_h G J h β i j).differentiableAt
+
 /-- **truncated3 is ContinuousAt β at h = 0** (Step 203).
 truncated3 is a polynomial in correlation values, each continuous in β at h = 0. -/
 theorem truncated3_continuousAt_beta
