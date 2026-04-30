@@ -2445,6 +2445,31 @@ theorem one_le_sum_pow_tanh_even_subgraph_latticeGraph
   one_le_sum_pow_tanh_even_subgraph_Λ
     (IsingModel.latticeGraph d) Λ J β hβJ
 
+/-- **ℤ^d FV (3.46) numerator filter is empty for odd-cardinality A**:
+the filtered powerset is empty whenever `|A|` is odd.
+ℤ^d wrapper of `high_temp_numerator_filter_eq_empty_of_odd_card_Λ`. -/
+theorem high_temp_numerator_filter_eq_empty_of_odd_card_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    (A : Finset ↑Λ) (hA_odd : Odd A.card) :
+    (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.powerset.filter
+        (fun X : Finset (Sym2 ↑Λ) => ∀ v : ↑Λ,
+          Even ((if v ∈ A then (1 : ℕ) else 0)
+                + (X.filter (v ∈ ·)).card)) = ∅ :=
+  high_temp_numerator_filter_eq_empty_of_odd_card_Λ
+    (IsingModel.latticeGraph d) Λ A hA_odd
+
+/-- **ℤ^d Λ-level Z₂ symmetry of correlation at h = 0 via handshake**:
+for `A : Finset ↑Λ` of odd cardinality,
+`correlationΛ (latticeGraph d) Λ ⟨J, 0, β⟩ A = 0`.
+ℤ^d wrapper of `correlationΛ_high_temp_h_zero_odd_card_eq_zero`. -/
+theorem correlationΛ_latticeGraph_high_temp_h_zero_odd_card_eq_zero
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
+    (A : Finset ↑Λ) (hA_odd : Odd A.card) :
+    correlationΛ (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) A = 0 :=
+  correlationΛ_high_temp_h_zero_odd_card_eq_zero
+    (IsingModel.latticeGraph d) Λ J β A hA_odd
+
 /-- **ℤ^d log partitionFunctionΛ closed form at `J = 0`** (any Finset):
 `log Z_Λ(⟨0, h, β⟩) = |Λ| · log(2·cosh(β·h))`. -/
 theorem log_partitionFunctionΛ_latticeGraph_J_zero
