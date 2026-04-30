@@ -421,6 +421,31 @@ theorem log_partitionFunctionΛ_high_temp_expansion_h_zero_closed
         (inducedGraph G Λ) J β hβJ,
       Fintype.card_coe]
 
+/-- **Λ-level freeEnergy high-temperature decomposition (GJ §18.3 / FV (3.45))**:
+under `0 < |Λ|` and `0 ≤ β·J`,
+`f_Λ = log 2 + (|E_Λ|/|Λ|) · log(cosh βJ) + log(∑_{X even} tanh^|X|) / |Λ|`.
+Direct lift of `IsingModel.freeEnergy_high_temp_expansion_h_zero_closed`
+(Step 317) via `freeEnergyΛ_apply` and `Fintype.card_coe`. -/
+theorem freeEnergyΛ_high_temp_expansion_h_zero_closed
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (hne : 0 < Λ.card) :
+    freeEnergyΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+      = Real.log 2
+        + ((inducedGraph G Λ).edgeFinset.card : ℝ) / Λ.card *
+            Real.log (Real.cosh (β * J))
+        + Real.log
+            (∑ X ∈ (inducedGraph G Λ).edgeFinset.powerset.filter
+                (fun X : Finset (Sym2 ↑Λ) =>
+                  ∀ v : ↑Λ, Even ((X.filter (v ∈ ·)).card)),
+              Real.tanh (β * J) ^ X.card) / Λ.card := by
+  rw [freeEnergyΛ_apply]
+  have hcoe : (Λ.card : ℝ) = (Fintype.card ↑Λ : ℝ) := by rw [Fintype.card_coe]
+  rw [hcoe]
+  exact IsingModel.freeEnergy_high_temp_expansion_h_zero_closed
+    (inducedGraph G Λ) J β hβJ
+    (by rw [Fintype.card_coe]; exact hne)
+
 /-- **Λ-level free-energy lower bound from FV (3.45)** at zero external field:
 under `0 < |Λ|` and `0 ≤ β * J`,
 `f_Λ(⟨J, 0, β⟩) ≥ log 2 + (|E_Λ|/|Λ|) · log(cosh(β·J))`.
