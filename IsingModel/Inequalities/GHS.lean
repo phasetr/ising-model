@@ -735,4 +735,36 @@ theorem truncated4_neg_h (G : SimpleGraph ι) [Fintype G.edgeSet]
   simp only [hcard_ij, hcard_ik, hcard_il, hcard_jk, hcard_jl, hcard_kl, hcard_ijkl]
   ring
 
+/-- **truncated2 Continuous in J** (Step 208).
+At fixed h, β: `truncated2 G ⟨J, h, β⟩ i j` is continuous in J. -/
+theorem truncated2_continuous_J (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (h β : ℝ) (i j : ι) :
+    Continuous (fun J' => truncated2 G (⟨J', h, β⟩ : IsingParams ℝ) i j) := by
+  unfold truncated2
+  exact (correlation_continuous_J G h β _).sub
+    ((correlation_continuous_J G h β _).mul (correlation_continuous_J G h β _))
+
+/-- **truncated3 Continuous in J** (Step 208). -/
+theorem truncated3_continuous_J (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (h β : ℝ) (i j k : ι) :
+    Continuous (fun J' => truncated3 G (⟨J', h, β⟩ : IsingParams ℝ) i j k) := by
+  unfold truncated3
+  exact (((correlation_continuous_J G h β _).sub
+    ((correlation_continuous_J G h β _).mul (correlation_continuous_J G h β _))).sub
+    ((correlation_continuous_J G h β _).mul (correlation_continuous_J G h β _))).sub
+    ((correlation_continuous_J G h β _).mul (correlation_continuous_J G h β _))
+    |>.add (((continuous_const).mul (correlation_continuous_J G h β _)).mul
+      (correlation_continuous_J G h β _) |>.mul
+      (correlation_continuous_J G h β _))
+
+/-- **truncated4 Continuous in J** (Step 208). -/
+theorem truncated4_continuous_J (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (h β : ℝ) (i j k l : ι) :
+    Continuous (fun J' => truncated4 G (⟨J', h, β⟩ : IsingParams ℝ) i j k l) := by
+  unfold truncated4
+  exact (((correlation_continuous_J G h β _).sub
+    ((correlation_continuous_J G h β _).mul (correlation_continuous_J G h β _))).sub
+    ((correlation_continuous_J G h β _).mul (correlation_continuous_J G h β _))).sub
+    ((correlation_continuous_J G h β _).mul (correlation_continuous_J G h β _))
+
 end IsingModel
