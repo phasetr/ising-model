@@ -1139,5 +1139,13 @@ theorem spontaneousCorrelation_latticeGraph_empty
         (∅ : Finset (Fin d → ℤ)) = 1 :=
   spontaneousCorrelation_empty (IsingModel.latticeGraph d) Λ J β
 
+/-- **ℤ^d correlationInfinite at J = h = 0 vanishes for nonempty A** (Step 280). -/
+theorem correlationInfinite_latticeGraph_zero_params_vanish_of_nonempty_A
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) {β : ℝ} (hβ : 0 < β)
+    {A : Finset (Fin d → ℤ)} (hA : A.Nonempty) :
+    correlationInfinite (IsingModel.latticeGraph d) Λ ⟨0, 0, β⟩ A = 0 :=
+  correlationInfinite_zero_params_vanish_of_nonempty_A
+    (IsingModel.latticeGraph d) Λ hβ hA
+
 end Ambient
 end IsingModel
