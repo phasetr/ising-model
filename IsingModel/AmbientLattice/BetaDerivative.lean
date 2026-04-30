@@ -47,4 +47,47 @@ theorem correlationAlongExhaustion_hasDerivAt_beta
     rw [heq]
     exact ⟨0, hasDerivAt_const β 0⟩
 
+/-- **correlationAlongExhaustion DifferentiableAt β at h = 0** (Step 196, general G, Λ):
+For any graph G with finite-edge-set exhaustion stages, the correlation along exhaustion
+is differentiable in β at h = 0. Wraps `correlationAlongExhaustion_hasDerivAt_beta`. -/
+theorem correlationAlongExhaustion_differentiableAt_beta_gen
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (A : Finset V) (n : ℕ) :
+    DifferentiableAt ℝ
+      (fun β' => correlationAlongExhaustion G Λ (⟨J, 0, β'⟩ : IsingParams ℝ) A n) β := by
+  obtain ⟨_, hd⟩ := correlationAlongExhaustion_hasDerivAt_beta G Λ J β A n
+  exact hd.differentiableAt
+
+/-- **correlationAlongExhaustion ContinuousAt β at h = 0** (Step 196, general G, Λ):
+Wraps `differentiableAt` to `continuousAt`. -/
+theorem correlationAlongExhaustion_continuousAt_beta_gen
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (A : Finset V) (n : ℕ) :
+    ContinuousAt
+      (fun β' => correlationAlongExhaustion G Λ (⟨J, 0, β'⟩ : IsingParams ℝ) A n) β :=
+  (correlationAlongExhaustion_differentiableAt_beta_gen G Λ J β A n).continuousAt
+
+/-- **correlationAlongExhaustion Continuous β at h = 0** (Step 196, general G, Λ).
+Whole-ℝ Continuous version. -/
+theorem correlationAlongExhaustion_continuous_beta_gen
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J : ℝ) (A : Finset V) (n : ℕ) :
+    Continuous
+      (fun β' => correlationAlongExhaustion G Λ (⟨J, 0, β'⟩ : IsingParams ℝ) A n) :=
+  continuous_iff_continuousAt.mpr fun β =>
+    correlationAlongExhaustion_continuousAt_beta_gen G Λ J β A n
+
+/-- **correlationAlongExhaustion Differentiable β at h = 0** (Step 196, general G, Λ).
+Whole-ℝ Differentiable version. -/
+theorem correlationAlongExhaustion_differentiable_beta_gen
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J : ℝ) (A : Finset V) (n : ℕ) :
+    Differentiable ℝ
+      (fun β' => correlationAlongExhaustion G Λ (⟨J, 0, β'⟩ : IsingParams ℝ) A n) :=
+  fun β => correlationAlongExhaustion_differentiableAt_beta_gen G Λ J β A n
+
 end IsingModel.Ambient
