@@ -316,4 +316,31 @@ theorem hasDerivAt_correlation_J
   rw [hval]
   exact hderiv
 
+/-! ## Step 215: explicit J-derivatives for truncated2/magnetization/susceptibility -/
+
+/-- **truncated2 has a J-derivative** (Step 215):
+For any finite-volume Ising and any `(J, h, β)`, `truncated2 G ⟨J, h, β⟩ i j`
+has a derivative in J. Holds at any `h` (parallels Step 191 in β direction).
+
+Product rule applied to `truncated2 = correlation {i,j} - correlation {i} · correlation {j}`,
+each factor differentiable via `hasDerivAt_correlation_J`. -/
+theorem truncated2_hasDerivAt_J
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h β : ℝ) (i j : ι) :
+    HasDerivAt (fun J' => truncated2 G (⟨J', h, β⟩ : IsingParams ℝ) i j)
+      (deriv (fun J' => correlation G (⟨J', h, β⟩ : IsingParams ℝ) {i, j}) J -
+       (deriv (fun J' => correlation G (⟨J', h, β⟩ : IsingParams ℝ) {i}) J *
+        correlation G (⟨J, h, β⟩ : IsingParams ℝ) {j} +
+        correlation G (⟨J, h, β⟩ : IsingParams ℝ) {i} *
+        deriv (fun J' => correlation G (⟨J', h, β⟩ : IsingParams ℝ) {j}) J))
+      J := by
+  unfold truncated2
+  have hij := hasDerivAt_correlation_J G J h β {i, j}
+  have hi := hasDerivAt_correlation_J G J h β {i}
+  have hj := hasDerivAt_correlation_J G J h β {j}
+  have h_prod := hi.mul hj
+  have h_diff := hij.sub h_prod
+  rw [hij.deriv, hi.deriv, hj.deriv] at *
+  exact h_diff
+
 end IsingModel
