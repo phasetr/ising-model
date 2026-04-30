@@ -283,6 +283,29 @@ theorem partitionFunctionΛ_high_temp_expansion_h_zero
   rw [partitionFunctionΛ_apply,
       IsingModel.partitionFunction_high_temp_expansion_h_zero]
 
+/-- **Λ-level FV (3.45) at `J = 0` consistency check**:
+`Z_Λ(⟨0, 0, β⟩) = 2^|Λ|`. Direct lift of Step 310. -/
+theorem partitionFunctionΛ_high_temp_expansion_h_zero_closed_at_J_zero
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (β : ℝ) :
+    partitionFunctionΛ G Λ (⟨0, 0, β⟩ : IsingParams ℝ)
+      = (2 : ℝ) ^ Λ.card := by
+  rw [partitionFunctionΛ_apply,
+      IsingModel.partitionFunction_high_temp_expansion_h_zero_closed_at_J_zero,
+      Fintype.card_coe]
+
+/-- **Λ-level FV (3.46) at `A = ∅` consistency check**:
+under `0 ≤ β·J`, `correlationΛ G Λ ⟨J, 0, β⟩ ∅ = 1`.
+Direct lift of Step 313. -/
+theorem correlationΛ_high_temp_h_zero_at_empty_A
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) :
+    correlationΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) (∅ : Finset ↑Λ) = 1 := by
+  rw [correlationΛ_apply]
+  exact IsingModel.correlation_high_temp_h_zero_at_empty_A
+    (inducedGraph G Λ) J β hβJ
+
 /-- **Λ-level partition function high-temperature expansion (general h)**:
 for any parameter `p = (J, h, β)`,
 `Z_Λ(p) = (cosh βJ)^|E_Λ| · ∑_σ ∏_e (1 + tanh(βJ) σ_iσ_j) · exp(βh ∑_i σ_i)`.
