@@ -4004,6 +4004,28 @@ theorem correlationAlongExhaustion_continuousAt_beta
     rw [heq]
     exact continuousAt_const
 
+/-- **correlationAlongExhaustion Continuous in β over the whole ℝ** (Step 192):
+Strengthens Step 190 (ContinuousAt) to `Continuous`. -/
+theorem correlationAlongExhaustion_continuous_beta
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (A : Finset (Fin d → ℤ)) (J : ℝ) (n : ℕ) :
+    Continuous
+      (fun β' => correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                  (⟨J, 0, β'⟩ : IsingParams ℝ) A n) :=
+  continuous_iff_continuousAt.mpr fun β =>
+    correlationAlongExhaustion_continuousAt_beta Λ A J β n
+
+/-- **susceptibilityAlongExhaustion Continuous in β over the whole ℝ at h = 0** (Step 192).
+Strengthens Step 189 (ContinuousAt) to `Continuous`. -/
+theorem susceptibilityAlongExhaustion_continuous_beta
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (i : Fin d → ℤ) (J : ℝ) (n : ℕ) :
+    Continuous
+      (fun β' => susceptibilityAlongExhaustion (IsingModel.latticeGraph d) Λ
+                  (⟨J, 0, β'⟩ : IsingParams ℝ) i n) :=
+  continuous_iff_continuousAt.mpr fun β =>
+    susceptibilityAlongExhaustion_continuousAt_beta Λ i J β n
+
 end Ambient
 
 end IsingModel
