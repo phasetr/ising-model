@@ -3394,6 +3394,38 @@ theorem log_partitionFunctionAlongExhaustion_latticeGraph_J_zero
   log_partitionFunctionAlongExhaustion_J_zero
     (IsingModel.latticeGraph d) Λ h β n
 
+/-- **ℤ^d along-exhaustion partition function high-temperature lower bound (FV (3.45))**:
+under `0 ≤ β * J`, at every stage `n`,
+`partitionFunctionAlongExhaustion (latticeGraph d) Λ ⟨J, 0, β⟩ n
+  ≥ 2^|Λ_n| · (cosh(βJ))^|E_{Λ_n}|`.
+ℤ^d wrapper of `partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_lower_bound`. -/
+theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_lower_bound
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (n : ℕ) :
+    (2 : ℝ) ^ (Λ.volume n).card *
+        Real.cosh (β * J) ^
+          (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card
+      ≤ partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) n :=
+  partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_lower_bound
+    (IsingModel.latticeGraph d) Λ J β hβJ n
+
+/-- **ℤ^d along-exhaustion free-energy high-temperature lower bound from FV (3.45)**:
+under `0 ≤ β * J` and `0 < |Λ_n|`, at stage `n`,
+`freeEnergyAlongExhaustion (latticeGraph d) Λ ⟨J, 0, β⟩ n
+  ≥ log 2 + (|E_{Λ_n}|/|Λ_n|) · log(cosh(β·J))`.
+ℤ^d wrapper of `freeEnergyAlongExhaustion_high_temp_h_zero_lower_bound`. -/
+theorem freeEnergyAlongExhaustion_latticeGraph_high_temp_h_zero_lower_bound
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (n : ℕ) (hne : 0 < (Λ.volume n).card) :
+    Real.log 2 +
+        ((inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card : ℝ) /
+          (Λ.volume n).card * Real.log (Real.cosh (β * J))
+      ≤ freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) n :=
+  freeEnergyAlongExhaustion_high_temp_h_zero_lower_bound
+    (IsingModel.latticeGraph d) Λ J β hβJ n hne
+
 /-- **ℤ^d partitionFunctionAlongExhaustion β=0 per-stage**: `= 2^|Λ_n|`. -/
 theorem partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_beta_zero
     (d : ℕ) (J h : ℝ) (n : ℕ) :
