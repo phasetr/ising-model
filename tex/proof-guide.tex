@@ -3270,6 +3270,29 @@ Z(G; J, 0, \beta) = (\cosh(\beta J))^{|E|}
 where the field factor $\exp(\beta h \sum_i \sigma_i) = 1$.
 \hfill$\square$
 
+\begin{theorem}[\texttt{partitionFunction\_high\_temp\_expansion\_h\_zero\_closed}; FV~\S3.7.3 eq.\,(3.45)]
+For any Ising parameter $(J, 0, \beta)$ on a finite simple graph
+$G = (\iota, E)$,
+\[
+Z(G; J, 0, \beta) = 2^{|\iota|} \cdot (\cosh(\beta J))^{|E|}
+\sum_{\substack{X \subseteq E \\ \text{every $v$ has even $X$-degree}}}
+  \tanh(\beta J)^{|X|}.
+\]
+\end{theorem}
+
+\textit{Proof.} Starting from the zero-field expansion
+$Z = (\cosh \beta J)^{|E|} \sum_\sigma \prod_e (1 + \tanh(\beta J)\sigma_i\sigma_j)$,
+expand each edge product via
+$\prod_{e \in E}(1 + f_e) = \sum_{X \subseteq E} \prod_{e \in X} f_e$
+(\texttt{Finset.prod\_one\_add}); pull out $\tanh(\beta J)^{|X|}$ and
+swap the $\sigma$- and $X$-sums. The inner $\sigma$-sum
+$\sum_\sigma \prod_{e \in X} \sigma_i\sigma_j = \prod_v \sum_{s_v}(s_v)^{d_X(v)}$
+factorises by Fubini and equals $2^{|\iota|}$ when every
+$d_X(v) := |\{e \in X : v \in e\}|$ is even, else $0$. The terms with
+odd-degree vertices vanish, leaving the sum over even-degree
+subgraphs.
+\hfill$\square$
+
 \section{Peierls argument (\texttt{Peierls.lean})}
 
 \par\noindent\textbf{Prerequisites:} \texttt{GibbsMeasure.lean},
