@@ -2371,6 +2371,28 @@ theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero
   partitionFunctionAlongExhaustion_high_temp_expansion_h_zero
     (IsingModel.latticeGraph d) Λ J β n
 
+/-- **ℤ^d FV (3.45) at `J = 0` consistency check**:
+`Z_Λ(⟨0, 0, β⟩) = 2^|Λ|`. ℤ^d wrapper of
+`partitionFunctionΛ_high_temp_expansion_h_zero_closed_at_J_zero`. -/
+theorem partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_closed_at_J_zero
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (β : ℝ) :
+    partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+        (⟨0, 0, β⟩ : IsingParams ℝ)
+      = (2 : ℝ) ^ Λ.card :=
+  partitionFunctionΛ_high_temp_expansion_h_zero_closed_at_J_zero
+    (IsingModel.latticeGraph d) Λ β
+
+/-- **ℤ^d FV (3.46) at `A = ∅` consistency check**:
+under `0 ≤ β·J`,
+`correlationΛ (latticeGraph d) Λ ⟨J, 0, β⟩ ∅ = 1`.
+ℤ^d wrapper of `correlationΛ_high_temp_h_zero_at_empty_A`. -/
+theorem correlationΛ_latticeGraph_high_temp_h_zero_at_empty_A
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ) (hβJ : 0 ≤ β * J) :
+    correlationΛ (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) (∅ : Finset ↑Λ) = 1 :=
+  correlationΛ_high_temp_h_zero_at_empty_A
+    (IsingModel.latticeGraph d) Λ J β hβJ
+
 /-- **ℤ^d Λ-level partition function high-temperature expansion (general h)**:
 `Z_Λ(p) = (cosh βJ)^|E_Λ| · ∑_σ ∏_e (1 + tanh(βJ) σ_iσ_j) · exp(βh ∑_i σ_i)`.
 ℤ^d wrapper of `partitionFunctionΛ_high_temp_expansion`. -/
