@@ -1132,5 +1132,12 @@ theorem spontaneousCorrelation_latticeGraph_beta_zero
     spontaneousCorrelation (IsingModel.latticeGraph d) Λ J 0 A = 0 :=
   spontaneousCorrelation_beta_zero (IsingModel.latticeGraph d) Λ J A hA
 
+/-- **ℤ^d spontaneousCorrelation at empty A is 1** (Step 274). -/
+theorem spontaneousCorrelation_latticeGraph_empty
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ) :
+    spontaneousCorrelation (IsingModel.latticeGraph d) Λ J β
+        (∅ : Finset (Fin d → ℤ)) = 1 :=
+  spontaneousCorrelation_empty (IsingModel.latticeGraph d) Λ J β
+
 end Ambient
 end IsingModel
