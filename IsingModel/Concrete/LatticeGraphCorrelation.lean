@@ -2406,6 +2406,20 @@ theorem freeEnergyΛ_latticeGraph_high_temp_h_zero_lower_bound
   freeEnergyΛ_high_temp_h_zero_lower_bound
     (IsingModel.latticeGraph d) Λ J β hβJ hne
 
+/-- **ℤ^d Λ-level FV (3.46) numerator vanishes for odd-cardinality A**
+at `h = 0`: `∑_{X : ∂X = A} tanh(β J)^|X| = 0` for any `A` of odd
+cardinality. ℤ^d wrapper of `sum_high_temp_numerator_h_zero_odd_card_eq_zero_Λ`. -/
+theorem sum_high_temp_numerator_h_zero_odd_card_eq_zero_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
+    (A : Finset ↑Λ) (hA_odd : Odd A.card) :
+    ∑ X ∈ (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.powerset.filter
+        (fun X : Finset (Sym2 ↑Λ) => ∀ v : ↑Λ,
+          Even ((if v ∈ A then (1 : ℕ) else 0)
+                + (X.filter (v ∈ ·)).card)),
+        Real.tanh (β * J) ^ X.card = 0 :=
+  sum_high_temp_numerator_h_zero_odd_card_eq_zero_Λ
+    (IsingModel.latticeGraph d) Λ J β A hA_odd
+
 /-- **ℤ^d log partitionFunctionΛ closed form at `J = 0`** (any Finset):
 `log Z_Λ(⟨0, h, β⟩) = |Λ| · log(2·cosh(β·h))`. -/
 theorem log_partitionFunctionΛ_latticeGraph_J_zero
