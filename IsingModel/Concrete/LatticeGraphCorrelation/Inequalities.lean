@@ -4632,6 +4632,128 @@ theorem correlationInfinite_lipschitzOnWith_beta_zero_closed
     push_cast at hbound
     exact hbound
 
+/-- **Helper for Step 234**: ordered Lipschitz bound on [0, b] in J (closed including J = 0).
+For `0 ≤ J₁ ≤ J₂` with `J₂ ≤ b`, `0 < β`, `bβ·2d < 1`:
+`corr_∞(J₂) - corr_∞(J₁) ≤ C · (J₂ - J₁)` where `C = β·M² + β·4d`. -/
+private lemma correlationInfinite_diff_le_const_mul_diff_J
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (r_val s_val : Fin d → ℤ) (hrs : r_val ≠ s_val)
+    (β : ℝ) (hβ : 0 < β)
+    (b : ℝ) (hb_pos : 0 < b) (hlt : b * β * ↑(2 * d) < 1)
+    (J₁ J₂ : ℝ) (hJ₁_nn : 0 ≤ J₁) (hJ : J₁ ≤ J₂) (hJ₂_le_b : J₂ ≤ b) :
+    correlationInfinite (IsingModel.latticeGraph d) Λ (⟨J₂, 0, β⟩ : IsingParams ℝ)
+      {r_val, s_val} -
+    correlationInfinite (IsingModel.latticeGraph d) Λ (⟨J₁, 0, β⟩ : IsingParams ℝ)
+      {r_val, s_val} ≤
+    (β * (b * β * ↑(2 * d) / (1 - b * β * ↑(2 * d))) ^ 2 + β * (4 * ↑d)) *
+      (J₂ - J₁) := by
+  rcases eq_or_lt_of_le hJ₁_nn with hJ₁0 | hJ₁_pos
+  · rw [← hJ₁0, correlationInfinite_eq_zero_at_J_zero, sub_zero, sub_zero]
+    rcases eq_or_lt_of_le (hJ₁0.le.trans hJ) with hJ₂0 | hJ₂_pos
+    · rw [← hJ₂0, correlationInfinite_eq_zero_at_J_zero]
+      have hdenom_b : 0 < 1 - b * β * ↑(2 * d) := by linarith
+      have hM_nn : 0 ≤ b * β * ↑(2 * d) / (1 - b * β * ↑(2 * d)) :=
+        div_nonneg (mul_nonneg (mul_nonneg hb_pos.le hβ.le) (Nat.cast_nonneg _)) hdenom_b.le
+      positivity
+    · have hbound := correlationInfinite_le_const_mul_J_of_high_temp
+        Λ r_val s_val hrs β hβ b hb_pos hlt J₂ hJ₂_pos hJ₂_le_b
+      simpa using hbound
+  · have hlip_let := correlationInfinite_lipschitzOnWith_J_of_high_temp
+      Λ r_val s_val hrs β hβ J₁ b hJ₁_pos (hJ.trans hJ₂_le_b) hlt
+    have hlip : LipschitzOnWith
+        ⟨β * (b * β * ↑(2 * d) / (1 - b * β * ↑(2 * d))) ^ 2 + β * (4 * ↑d), by
+          have hdenom_b : 0 < 1 - b * β * ↑(2 * d) := by linarith
+          have hM_nn : 0 ≤ b * β * ↑(2 * d) / (1 - b * β * ↑(2 * d)) :=
+            div_nonneg (mul_nonneg (mul_nonneg hb_pos.le hβ.le)
+                         (Nat.cast_nonneg _)) hdenom_b.le
+          positivity⟩
+        (fun J => correlationInfinite (IsingModel.latticeGraph d) Λ
+                    (⟨J, 0, β⟩ : IsingParams ℝ) {r_val, s_val})
+        (Set.Icc J₁ b) := hlip_let
+    have hJ₁_in : J₁ ∈ Set.Icc J₁ b := Set.mem_Icc.mpr ⟨le_refl _, hJ.trans hJ₂_le_b⟩
+    have hJ₂_in : J₂ ∈ Set.Icc J₁ b := Set.mem_Icc.mpr ⟨hJ, hJ₂_le_b⟩
+    have hdist := hlip.dist_le_mul J₁ hJ₁_in J₂ hJ₂_in
+    have hcorr_nn :
+        0 ≤ correlationInfinite (IsingModel.latticeGraph d) Λ
+              (⟨J₂, 0, β⟩ : IsingParams ℝ) {r_val, s_val} -
+            correlationInfinite (IsingModel.latticeGraph d) Λ
+              (⟨J₁, 0, β⟩ : IsingParams ℝ) {r_val, s_val} := by
+      have hmono := correlationInfinite_monotoneOn_J_zero_closed Λ r_val s_val β hβ b
+      have h1 : J₁ ∈ Set.Icc (0 : ℝ) b := Set.mem_Icc.mpr ⟨hJ₁_pos.le, hJ.trans hJ₂_le_b⟩
+      have h2 : J₂ ∈ Set.Icc (0 : ℝ) b := Set.mem_Icc.mpr ⟨hJ₁_pos.le.trans hJ, hJ₂_le_b⟩
+      linarith [hmono h1 h2 hJ]
+    have hJ_nn : 0 ≤ J₂ - J₁ := by linarith
+    simp only [Real.dist_eq] at hdist
+    rw [abs_sub_comm J₁ J₂, abs_of_nonneg hJ_nn,
+        abs_sub_comm
+          (correlationInfinite (IsingModel.latticeGraph d) Λ
+              (⟨J₁, 0, β⟩ : IsingParams ℝ) {r_val, s_val})
+          (correlationInfinite (IsingModel.latticeGraph d) Λ
+              (⟨J₂, 0, β⟩ : IsingParams ℝ) {r_val, s_val}),
+        abs_of_nonneg hcorr_nn] at hdist
+    push_cast at hdist
+    convert hdist using 2
+    push_cast; ring
+
+/-- **LipschitzOnWith of corr_∞ on closed [0, b] (including J = 0) in J** (Step 234):
+For `0 < β`, `0 < b`, `bβ·2d < 1`: `J ↦ corr_∞(J)` is `C`-Lipschitz on `[0, b]` in J
+with the same constant `C = β·M² + β·4d` as Step 222.
+
+Direct J-direction analogue of Step 180. Strengthens Step 222 from `[a, b]` (a > 0)
+to closed `[0, b]`. -/
+theorem correlationInfinite_lipschitzOnWith_J_zero_closed
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (r_val s_val : Fin d → ℤ) (hrs : r_val ≠ s_val)
+    (β : ℝ) (hβ : 0 < β)
+    (b : ℝ) (hb_pos : 0 < b) (hlt : b * β * ↑(2 * d) < 1) :
+    LipschitzOnWith ⟨β * (b * β * ↑(2 * d) / (1 - b * β * ↑(2 * d))) ^ 2 + β * (4 * ↑d), by
+        have hdenom_b : 0 < 1 - b * β * ↑(2 * d) := by linarith
+        have hM_nn : 0 ≤ b * β * ↑(2 * d) / (1 - b * β * ↑(2 * d)) :=
+          div_nonneg (mul_nonneg (mul_nonneg hb_pos.le hβ.le)
+                       (Nat.cast_nonneg _)) hdenom_b.le
+        have := hM_nn
+        positivity⟩
+      (fun J => correlationInfinite (IsingModel.latticeGraph d) Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+                    {r_val, s_val})
+      (Set.Icc 0 b) := by
+  apply LipschitzOnWith.of_dist_le_mul
+  intro J₁ hJ₁ J₂ hJ₂
+  rcases le_total J₁ J₂ with hJ_le | hJ_le
+  · have hcorr_nn :
+        0 ≤ correlationInfinite (IsingModel.latticeGraph d) Λ
+              (⟨J₂, 0, β⟩ : IsingParams ℝ) {r_val, s_val} -
+            correlationInfinite (IsingModel.latticeGraph d) Λ
+              (⟨J₁, 0, β⟩ : IsingParams ℝ) {r_val, s_val} := by
+      have hmono := correlationInfinite_monotoneOn_J_zero_closed Λ r_val s_val β hβ b
+      linarith [hmono hJ₁ hJ₂ hJ_le]
+    have hJ_nn : 0 ≤ J₂ - J₁ := by linarith
+    rw [Real.dist_eq, Real.dist_eq, abs_sub_comm J₁ J₂,
+        abs_sub_comm
+          ((fun J => correlationInfinite (IsingModel.latticeGraph d) Λ
+                      (⟨J, 0, β⟩ : IsingParams ℝ) {r_val, s_val}) J₁)
+          ((fun J => correlationInfinite (IsingModel.latticeGraph d) Λ
+                      (⟨J, 0, β⟩ : IsingParams ℝ) {r_val, s_val}) J₂),
+        abs_of_nonneg hcorr_nn, abs_of_nonneg hJ_nn]
+    have hbound := correlationInfinite_diff_le_const_mul_diff_J Λ r_val s_val hrs β hβ b hb_pos hlt
+      J₁ J₂ hJ₁.1 hJ_le hJ₂.2
+    push_cast
+    push_cast at hbound
+    exact hbound
+  · have hcorr_nn :
+        0 ≤ correlationInfinite (IsingModel.latticeGraph d) Λ
+              (⟨J₁, 0, β⟩ : IsingParams ℝ) {r_val, s_val} -
+            correlationInfinite (IsingModel.latticeGraph d) Λ
+              (⟨J₂, 0, β⟩ : IsingParams ℝ) {r_val, s_val} := by
+      have hmono := correlationInfinite_monotoneOn_J_zero_closed Λ r_val s_val β hβ b
+      linarith [hmono hJ₂ hJ₁ hJ_le]
+    have hJ_nn : 0 ≤ J₁ - J₂ := by linarith
+    rw [Real.dist_eq, Real.dist_eq, abs_of_nonneg hcorr_nn, abs_of_nonneg hJ_nn]
+    have hbound := correlationInfinite_diff_le_const_mul_diff_J Λ r_val s_val hrs β hβ b hb_pos hlt
+      J₂ J₁ hJ₂.1 hJ_le hJ₁.2
+    push_cast
+    push_cast at hbound
+    exact hbound
+
 /-- **Linear bound on corr_∞ at β = 0** (Step 181, β ≥ 0 version):
 For `0 ≤ J`, `0 < b`, `bJ·2d < 1`, and any `r ≠ s`, on the interval `[0, b]`:
 `corr_∞(r, s, β) ≤ (J·M(b)² + J·4d) · β`,
