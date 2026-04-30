@@ -1105,5 +1105,18 @@ theorem magnetizationInfinite_latticeGraph_differentiableOn_beta_J_zero
       (Set.Ioi (0 : ℝ)) :=
   magnetizationInfinite_differentiableOn_beta_J_zero (IsingModel.latticeGraph d) Λ h hh_nn i
 
+/-- **ℤ^d spontaneousMagnetization at J = 0 vanishes** (Step 269). -/
+theorem spontaneousMagnetization_latticeGraph_J_zero
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) {β : ℝ} (hβ : 0 < β)
+    (i : Fin d → ℤ) :
+    spontaneousMagnetization (IsingModel.latticeGraph d) Λ 0 β i = 0 :=
+  spontaneousMagnetization_J_zero (IsingModel.latticeGraph d) Λ hβ i
+
+/-- **ℤ^d spontaneousMagnetization at β = 0 vanishes** (Step 269). -/
+theorem spontaneousMagnetization_latticeGraph_beta_zero
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J : ℝ) (i : Fin d → ℤ) :
+    spontaneousMagnetization (IsingModel.latticeGraph d) Λ J 0 i = 0 :=
+  spontaneousMagnetization_beta_zero (IsingModel.latticeGraph d) Λ J i
+
 end Ambient
 end IsingModel
