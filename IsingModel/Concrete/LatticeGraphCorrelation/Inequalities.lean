@@ -4026,6 +4026,44 @@ theorem susceptibilityAlongExhaustion_continuous_beta
   continuous_iff_continuousAt.mpr fun β =>
     susceptibilityAlongExhaustion_continuousAt_beta Λ i J β n
 
+/-- **susceptibilityAlongExhaustion DifferentiableAt β at h = 0** (Step 194):
+For each finite-volume stage `n`, the susceptibility along exhaustion is differentiable
+in β at h = 0.
+
+Subset case: unfold via `susceptibilityΛ_apply` to `IsingModel.susceptibility (inducedGraph ...)`,
+which is differentiable (Step 191); non-subset case: constant 0. -/
+theorem susceptibilityAlongExhaustion_differentiableAt_beta
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (i : Fin d → ℤ) (J β : ℝ) (n : ℕ) :
+    DifferentiableAt ℝ
+      (fun β' => susceptibilityAlongExhaustion (IsingModel.latticeGraph d) Λ
+                  (⟨J, 0, β'⟩ : IsingParams ℝ) i n)
+      β := by
+  unfold susceptibilityAlongExhaustion
+  by_cases hi : i ∈ Λ.volume n
+  · simp only [hi, dif_pos]
+    have heq : (fun β' => susceptibilityΛ (IsingModel.latticeGraph d) (Λ.volume n)
+                  (⟨J, 0, β'⟩ : IsingParams ℝ) ⟨i, hi⟩) =
+               (fun β' => IsingModel.susceptibility
+                  (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+                  (⟨J, 0, β'⟩ : IsingParams ℝ) ⟨i, hi⟩) := by
+      funext β'
+      exact susceptibilityΛ_apply (IsingModel.latticeGraph d) (Λ.volume n)
+        (⟨J, 0, β'⟩ : IsingParams ℝ) ⟨i, hi⟩
+    rw [heq]
+    exact IsingModel.susceptibility_differentiableAt_beta _ J β _
+  · simp only [hi, dif_neg, not_false_iff]
+    exact differentiableAt_const _
+
+/-- **susceptibilityAlongExhaustion Differentiable in β over the whole ℝ at h = 0** (Step 194). -/
+theorem susceptibilityAlongExhaustion_differentiable_beta
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (i : Fin d → ℤ) (J : ℝ) (n : ℕ) :
+    Differentiable ℝ
+      (fun β' => susceptibilityAlongExhaustion (IsingModel.latticeGraph d) Λ
+                  (⟨J, 0, β'⟩ : IsingParams ℝ) i n) :=
+  fun β => susceptibilityAlongExhaustion_differentiableAt_beta Λ i J β n
+
 end Ambient
 
 end IsingModel
