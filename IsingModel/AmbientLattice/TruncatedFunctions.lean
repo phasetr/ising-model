@@ -293,40 +293,8 @@ theorem truncated2Infinite_h_zero
       correlationInfinite_h_zero G Λ J β _ h_j]
   ring
 
-/-- **`truncated2Infinite` at J = 0 off-diagonal (i ≠ j) vanishes** (Step 275, GJ §17.1):
-At J = 0, sites are non-interacting, so for `i ≠ j` the Ursell 2-point function
-factorizes to zero. Closed-form proof via `correlationInfinite_J_zero`:
-`⟨σ_iσ_j⟩ = tanh(βh)² = ⟨σ_i⟩·⟨σ_j⟩`, hence the truncated correlation vanishes. -/
-theorem truncated2Infinite_J_zero_off_diag
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (h β : ℝ) (hf : Ferromagnetic (⟨(0 : ℝ), h, β⟩ : IsingParams ℝ))
-    {i j : V} (hij : i ≠ j) :
-    truncated2Infinite G Λ ⟨0, h, β⟩ i j = 0 := by
-  unfold truncated2Infinite
-  rw [correlationInfinite_J_zero G Λ h β hf {i, j},
-      correlationInfinite_J_zero G Λ h β hf {i},
-      correlationInfinite_J_zero G Λ h β hf {j}]
-  rw [Finset.card_pair hij, Finset.card_singleton, Finset.card_singleton]
-  ring
-
-/-- **`truncated2Infinite` at J = 0 diagonal (i = j) closed form** (Step 275):
-At J = 0 with `i = j`: `truncated2Infinite(i, i) = tanh(βh)·(1 - tanh(βh))`.
-Note `{i, i} = {i}` collapses by Finset semantics, so the formula is asymmetric
-relative to the off-diagonal case. -/
-theorem truncated2Infinite_J_zero_diag
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (h β : ℝ) (hf : Ferromagnetic (⟨(0 : ℝ), h, β⟩ : IsingParams ℝ))
-    (i : V) :
-    truncated2Infinite G Λ ⟨0, h, β⟩ i i
-      = Real.tanh (β * h) * (1 - Real.tanh (β * h)) := by
-  unfold truncated2Infinite
-  have h_singleton : ({i, i} : Finset V) = {i} := by simp
-  rw [h_singleton, correlationInfinite_J_zero G Λ h β hf {i},
-      Finset.card_singleton, pow_one]
-  ring
-
+-- (Step 275 duplicates removed: see truncated2Infinite_J_zero_of_ne and
+-- truncated2Infinite_J_zero_diagonal earlier in this file.)
 
 /-- **Conditional cluster decay (cofinite form)**: if the ∞-volume
 Ursell 2-point function at a fixed site `i : V`, viewed as a function
@@ -1581,73 +1549,8 @@ theorem truncated4Infinite_J_zero_all_coincident
   rw [hiiii, hii, h1i]
   ring
 
-/-- **`truncated3Infinite` at J = 0 (pairwise distinct) vanishes** (Step 276, GJ §17.1):
-At J = 0, sites are non-interacting; for pairwise distinct `i, j, k` all spins are
-independent, so the Ursell 3-point function vanishes:
-`truncated3Infinite(i, j, k) = 0`.
-
-**Proof**: by `correlationInfinite_J_zero` each correlation is a power of `tanh(βh)`:
-`⟨σ^A⟩ = tanh(βh)^|A|`. For distinct `i, j, k`:
-`U_3 = t^3 − 3t·t^2 + 2t^3 = t^3 − 3t^3 + 2t^3 = 0`. -/
-theorem truncated3Infinite_J_zero
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (h β : ℝ) (hf : Ferromagnetic (⟨(0 : ℝ), h, β⟩ : IsingParams ℝ))
-    {i j k : V} (hij : i ≠ j) (hik : i ≠ k) (hjk : j ≠ k) :
-    truncated3Infinite G Λ ⟨0, h, β⟩ i j k = 0 := by
-  unfold truncated3Infinite
-  have hcard_ijk : ({i, j, k} : Finset V).card = 3 := by
-    rw [Finset.card_insert_of_notMem, Finset.card_pair hjk]
-    simp [hij, hik]
-  rw [correlationInfinite_J_zero G Λ h β hf {i, j, k},
-      correlationInfinite_J_zero G Λ h β hf {j, k},
-      correlationInfinite_J_zero G Λ h β hf {i, k},
-      correlationInfinite_J_zero G Λ h β hf {i, j},
-      correlationInfinite_J_zero G Λ h β hf {i},
-      correlationInfinite_J_zero G Λ h β hf {j},
-      correlationInfinite_J_zero G Λ h β hf {k},
-      hcard_ijk, Finset.card_pair hjk, Finset.card_pair hik,
-      Finset.card_pair hij,
-      Finset.card_singleton, Finset.card_singleton, Finset.card_singleton]
-  ring
-
-/-- **`truncated4Infinite` at J = 0 (pairwise distinct) closed form** (Step 277, GJ §4.3):
-At J = 0 with `i, j, k, l` pairwise distinct:
-`truncated4Infinite(i, j, k, l) = -2·tanh(βh)^4`.
-
-Note this is `≤ 0`, consistent with `truncated4Infinite_nonpos_h_zero` (Cor 4.3.3 at h=0,
-where the value is `0`); for `h > 0` it gives a strictly negative value.
-
-**Proof**: `correlationInfinite_J_zero` gives `⟨σ^A⟩ = tanh(βh)^|A|`. With pairwise
-distinct sites: `U_4 = t^4 − 3·t^2·t^2 = -2·t^4`. -/
-theorem truncated4Infinite_J_zero
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (h β : ℝ) (hf : Ferromagnetic (⟨(0 : ℝ), h, β⟩ : IsingParams ℝ))
-    {i j k l : V} (hij : i ≠ j) (hik : i ≠ k) (hil : i ≠ l)
-    (hjk : j ≠ k) (hjl : j ≠ l) (hkl : k ≠ l) :
-    truncated4Infinite G Λ ⟨0, h, β⟩ i j k l = -2 * Real.tanh (β * h) ^ 4 := by
-  unfold truncated4Infinite
-  -- Card of {i, j, k, l} = 4 when pairwise distinct
-  have hcard_ijkl : ({i, j, k, l} : Finset V).card = 4 := by
-    rw [show ({i, j, k, l} : Finset V) = insert i (insert j (insert k {l})) from rfl]
-    rw [Finset.card_insert_of_notMem]
-    · rw [Finset.card_insert_of_notMem]
-      · rw [Finset.card_insert_of_notMem (by simp [hkl] : k ∉ ({l} : Finset V)),
-            Finset.card_singleton]
-      · simp [hjk, hjl]
-    · simp [hij, hik, hil]
-  rw [correlationInfinite_J_zero G Λ h β hf {i, j, k, l},
-      correlationInfinite_J_zero G Λ h β hf {i, j},
-      correlationInfinite_J_zero G Λ h β hf {k, l},
-      correlationInfinite_J_zero G Λ h β hf {i, k},
-      correlationInfinite_J_zero G Λ h β hf {j, l},
-      correlationInfinite_J_zero G Λ h β hf {i, l},
-      correlationInfinite_J_zero G Λ h β hf {j, k},
-      hcard_ijkl, Finset.card_pair hij, Finset.card_pair hkl,
-      Finset.card_pair hik, Finset.card_pair hjl,
-      Finset.card_pair hil, Finset.card_pair hjk]
-  ring
+-- (Steps 276-277 duplicates removed: see truncated3Infinite_J_zero_of_pairwise_distinct
+-- and truncated4Infinite_J_zero_of_pairwise_distinct earlier in this file.)
 
 
 end Ambient
