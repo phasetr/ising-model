@@ -457,6 +457,21 @@ theorem correlationAlongExhaustion_high_temp_expansion_h_zero_closed
   exact correlationΛ_high_temp_expansion_h_zero_closed G (Λ.volume n) J β
     (liftFinset A hAn)
 
+/-- **Along-exhaustion FV (3.46) numerator filter empty for odd `|A|`**:
+at every stage `n`, for any `A : Finset ↑(Λ.volume n)` of odd cardinality,
+the FV (3.46) numerator filter set is *literally empty*.
+Per-stage application of `high_temp_numerator_filter_eq_empty_of_odd_card_Λ`
+(Step 299), via the edge-vertex handshake. -/
+theorem high_temp_numerator_filter_eq_empty_of_odd_card_alongExhaustion
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (n : ℕ) (A : Finset ↑(Λ.volume n)) (hA_odd : Odd A.card) :
+    (inducedGraph G (Λ.volume n)).edgeFinset.powerset.filter
+        (fun X : Finset (Sym2 ↑(Λ.volume n)) => ∀ v : ↑(Λ.volume n),
+          Even ((if v ∈ A then (1 : ℕ) else 0)
+                + (X.filter (v ∈ ·)).card)) = ∅ :=
+  high_temp_numerator_filter_eq_empty_of_odd_card_Λ G (Λ.volume n) A hA_odd
+
 /-- **Along-exhaustion correlation Z₂ symmetry at h = 0 (GJ §18.3)**:
 for any ambient `A : Finset V` with odd cardinality, at every stage `n`
 where `A ⊆ Λ.volume n`, the per-stage correlation
