@@ -1345,6 +1345,43 @@ theorem susceptibilityInfinite_J_zero
     refine le_ciSup_of_le h_bdd N ?_
     rw [h_per_stage N, if_pos hi_N]
 
+/-- **`susceptibilityInfinite` at `β = 0` vanishes** (Step 260):
+At infinite temperature, every truncated 2-point function vanishes
+(`truncated2_beta_zero`), so the finite-volume susceptibility is zero
+on each induced graph. The supremum of zeros is zero. -/
+theorem susceptibilityInfinite_beta_zero
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J h : ℝ) (i : V) :
+    susceptibilityInfinite G Λ (⟨J, h, 0⟩ : IsingParams ℝ) i = 0 := by
+  rw [susceptibilityInfinite_eq_ciSup]
+  -- Each susceptibilityAlongExhaustion = 0
+  have h_zero : ∀ n,
+      susceptibilityAlongExhaustion G Λ (⟨J, h, 0⟩ : IsingParams ℝ) i n = 0 := by
+    intro n
+    by_cases hi : i ∈ Λ.volume n
+    · rw [susceptibilityAlongExhaustion_of_mem G Λ _ hi, susceptibilityΛ_apply]
+      exact IsingModel.susceptibility_beta_zero
+        (inducedGraph G (Λ.volume n)) J h ⟨i, hi⟩
+    · rw [susceptibilityAlongExhaustion_of_not_mem G Λ _ hi]
+  simp only [h_zero]
+  exact ciSup_const
+
+/-- **`susceptibilityInfinite` at `J = h = 0` vanishes** (Step 260):
+At zero coupling and zero field, the system is uncoupled and at unit Boltzmann
+weight; truncated 2-point vanishes for non-trivial finsets and the susceptibility
+is zero. Specialization of `susceptibilityInfinite_J_zero` at `h = 0` (where
+`tanh(β·0)·(1 - tanh(β·0)) = 0·1 = 0`). -/
+theorem susceptibilityInfinite_zero_params
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (β : ℝ) (hβ : 0 < β) (i : V) :
+    susceptibilityInfinite G Λ (⟨0, 0, β⟩ : IsingParams ℝ) i = 0 := by
+  have hf : Ferromagnetic (⟨(0 : ℝ), 0, β⟩ : IsingParams ℝ) :=
+    ⟨le_refl 0, le_refl 0, hβ⟩
+  rw [susceptibilityInfinite_J_zero G Λ 0 β hf i]
+  simp
+
 
 end Ambient
 end IsingModel
