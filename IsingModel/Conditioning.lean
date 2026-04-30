@@ -1612,6 +1612,35 @@ theorem partitionFunction_high_temp_expansion_h_zero_lower_bound
           Real.tanh (β * J) ^ X.card :=
         mul_le_mul_of_nonneg_left hsum_ge_one hcommon_nn
 
+/-- **log Z high-temperature decomposition (GJ §18.3 / FV (3.45))**:
+under `0 ≤ β·J`,
+`log Z(G; J, 0, β) = |ι| · log 2 + |E| · log(cosh βJ) + log(∑_{X ⊆ E, even-deg} tanh(βJ)^|X|)`.
+Direct corollary of FV (3.45) closed form (Step 283) by taking
+logarithms; requires the even-subgraph sum to be positive (Step 295). -/
+theorem log_partitionFunction_high_temp_expansion_h_zero_closed
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) :
+    Real.log (partitionFunction G ⟨J, 0, β⟩)
+      = (Fintype.card ι : ℝ) * Real.log 2
+        + (G.edgeFinset.card : ℝ) * Real.log (Real.cosh (β * J))
+        + Real.log
+            (∑ X ∈ G.edgeFinset.powerset.filter
+                (fun X : Finset (Sym2 ι) =>
+                  ∀ v : ι, Even ((X.filter (v ∈ ·)).card)),
+              Real.tanh (β * J) ^ X.card) := by
+  rw [partitionFunction_high_temp_expansion_h_zero_closed]
+  have hpref_pos : (0 : ℝ) <
+      (2 : ℝ) ^ Fintype.card ι * Real.cosh (β * J) ^ G.edgeFinset.card :=
+    mul_pos (pow_pos (by norm_num) _) (pow_pos (Real.cosh_pos _) _)
+  have hsum_pos : 0 < ∑ X ∈ G.edgeFinset.powerset.filter
+      (fun X : Finset (Sym2 ι) =>
+        ∀ v : ι, Even ((X.filter (v ∈ ·)).card)),
+      Real.tanh (β * J) ^ X.card :=
+    lt_of_lt_of_le zero_lt_one (one_le_sum_pow_tanh_even_subgraph G J β hβJ)
+  rw [Real.log_mul hpref_pos.ne' hsum_pos.ne']
+  rw [Real.log_mul (by positivity) (by positivity),
+      Real.log_pow, Real.log_pow]
+
 /-- **Free-energy lower bound from FV (3.45)** at zero external field:
 under `0 < |ι|` and `0 ≤ β * J`,
 `log 2 + (|E|/|ι|) · log(cosh(β·J)) ≤ freeEnergy(G, ⟨J, 0, β⟩)`.
