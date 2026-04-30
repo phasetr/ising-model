@@ -2521,6 +2521,24 @@ theorem correlationAlongExhaustion_latticeGraph_high_temp_h_zero_odd_card_eq_zer
   correlationAlongExhaustion_high_temp_h_zero_odd_card_eq_zero
     (IsingModel.latticeGraph d) Λ J β A hA_odd n
 
+/-- **ℤ^d along-exhaustion general-h subset expansion (GJ §18.3)**:
+at every stage `n`,
+`Z_n(p) = (cosh βJ)^|E_n| · ∑_X tanh(βJ)^|X| · ∑_σ (∏_{e ∈ X} σ_iσ_j) exp(βh ∑ σ_i)`.
+ℤ^d wrapper of `partitionFunctionAlongExhaustion_high_temp_expansion_subset_form`. -/
+theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_subset_form
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (p : IsingParams ℝ) (n : ℕ) :
+    partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ p n =
+      Real.cosh (p.β * p.J) ^
+          (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card *
+      ∑ X ∈ (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.powerset,
+        Real.tanh (p.β * p.J) ^ X.card *
+          ∑ σ : Config ↑(Λ.volume n),
+            (∏ e ∈ X, edgeSpin (K := ℝ) σ e) *
+            Real.exp (p.β * p.h *
+                      ∑ i : ↑(Λ.volume n), Spin.sign ℝ (σ i)) :=
+  partitionFunctionAlongExhaustion_high_temp_expansion_subset_form
+    (IsingModel.latticeGraph d) Λ p n
+
 /-- **ℤ^d along-exhaustion high-temperature even-subgraph sum is `≥ 1`**:
 under `0 ≤ β * J`,
 `∑_{X ⊆ E_{Λ_n}, even-degree} tanh(β J)^|X| ≥ 1` at every stage `n`.
