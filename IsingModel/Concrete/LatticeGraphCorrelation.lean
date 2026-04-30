@@ -2521,6 +2521,21 @@ theorem correlationAlongExhaustion_latticeGraph_high_temp_h_zero_odd_card_eq_zer
   correlationAlongExhaustion_high_temp_h_zero_odd_card_eq_zero
     (IsingModel.latticeGraph d) Λ J β A hA_odd n
 
+/-- **ℤ^d along-exhaustion high-temperature even-subgraph sum is `≥ 1`**:
+under `0 ≤ β * J`,
+`∑_{X ⊆ E_{Λ_n}, even-degree} tanh(β J)^|X| ≥ 1` at every stage `n`.
+ℤ^d wrapper of `one_le_sum_pow_tanh_even_subgraph_alongExhaustion`. -/
+theorem one_le_sum_pow_tanh_even_subgraph_alongExhaustion_latticeGraph
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
+    (hβJ : 0 ≤ β * J) (n : ℕ) :
+    (1 : ℝ) ≤ ∑ X ∈
+        (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.powerset.filter
+          (fun X : Finset (Sym2 ↑(Λ.volume n)) =>
+            ∀ v : ↑(Λ.volume n), Even ((X.filter (v ∈ ·)).card)),
+        Real.tanh (β * J) ^ X.card :=
+  one_le_sum_pow_tanh_even_subgraph_alongExhaustion
+    (IsingModel.latticeGraph d) Λ J β hβJ n
+
 /-- **ℤ^d along-exhaustion partition function high-temperature closed form (FV §3.7.3 eq. (3.45))**:
 at every stage `n`,
 `partitionFunctionAlongExhaustion (latticeGraph d) Λ ⟨J, 0, β⟩ n
