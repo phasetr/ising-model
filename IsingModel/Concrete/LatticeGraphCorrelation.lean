@@ -2508,6 +2508,20 @@ theorem correlationAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_close
   correlationAlongExhaustion_high_temp_expansion_h_zero_closed
     (IsingModel.latticeGraph d) Λ J β A n hAn
 
+/-- **ℤ^d along-exhaustion FV (3.46) numerator filter empty for odd `|A|`**:
+at every stage `n`, the FV (3.46) numerator filter is empty for any
+`A : Finset ↑(Λ.volume n)` of odd cardinality. ℤ^d wrapper of
+`high_temp_numerator_filter_eq_empty_of_odd_card_alongExhaustion`. -/
+theorem high_temp_numerator_filter_eq_empty_of_odd_card_alongExhaustion_latticeGraph
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (n : ℕ) (A : Finset ↑(Λ.volume n)) (hA_odd : Odd A.card) :
+    (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.powerset.filter
+        (fun X : Finset (Sym2 ↑(Λ.volume n)) => ∀ v : ↑(Λ.volume n),
+          Even ((if v ∈ A then (1 : ℕ) else 0)
+                + (X.filter (v ∈ ·)).card)) = ∅ :=
+  high_temp_numerator_filter_eq_empty_of_odd_card_alongExhaustion
+    (IsingModel.latticeGraph d) Λ n A hA_odd
+
 /-- **ℤ^d along-exhaustion Z₂ symmetry of correlation at h = 0**:
 for ambient `A : Finset (Fin d → ℤ)` of odd cardinality,
 `correlationAlongExhaustion (latticeGraph d) Λ ⟨J, 0, β⟩ A n = 0` at
