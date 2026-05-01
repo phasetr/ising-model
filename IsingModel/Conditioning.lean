@@ -1827,6 +1827,67 @@ theorem partitionFunction_high_temp_expansion_h_zero_upper_bound
           Real.cosh (β * J) ^ G.edgeFinset.card := by
         rw [pow_add]; ring
 
+/-- **Sharper log Z high-temperature upper bound (FV (3.45))**: under
+`0 ≤ β·J`,
+`log Z(G; J, 0, β) ≤ |ι| · log 2 + β·J·|E|`.
+
+Direct from `partitionFunction_high_temp_expansion_h_zero_upper_bound_exp`
+(Step 393) by taking logarithms. Globally tighter than the
+`(|ι|+|E|) log 2 + |E| · log cosh(βJ)` form derivable from the cosh
+upper bound (Step 320). -/
+theorem log_partitionFunction_high_temp_expansion_h_zero_upper_bound_exp
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) :
+    Real.log (partitionFunction G ⟨J, 0, β⟩)
+      ≤ (Fintype.card ι : ℝ) * Real.log 2
+        + β * J * G.edgeFinset.card := by
+  have hZ_ub := partitionFunction_high_temp_expansion_h_zero_upper_bound_exp
+    G J β hβJ
+  have hZ_pos := partitionFunction_pos G ⟨J, 0, β⟩
+  have hubound_pos : (0 : ℝ) <
+      (2 : ℝ) ^ Fintype.card ι * Real.exp (β * J * G.edgeFinset.card) :=
+    mul_pos (pow_pos (by norm_num) _) (Real.exp_pos _)
+  calc Real.log (partitionFunction G ⟨J, 0, β⟩)
+      ≤ Real.log ((2 : ℝ) ^ Fintype.card ι *
+            Real.exp (β * J * G.edgeFinset.card)) :=
+        (Real.log_le_log_iff hZ_pos hubound_pos).mpr hZ_ub
+    _ = Real.log ((2 : ℝ) ^ Fintype.card ι)
+        + Real.log (Real.exp (β * J * G.edgeFinset.card)) :=
+        Real.log_mul (pow_pos (by norm_num) _).ne' (Real.exp_pos _).ne'
+    _ = (Fintype.card ι : ℝ) * Real.log 2
+        + β * J * G.edgeFinset.card := by
+        rw [Real.log_pow, Real.log_exp]
+
+/-- **Sharper log Z high-temperature sandwich (FV (3.45))**: under
+`0 ≤ β·J`,
+`|ι| · log 2 + |E| · log cosh(β·J) ≤ log Z ≤ |ι| · log 2 + β·J·|E|`.
+
+Combines `log_partitionFunction_high_temp_expansion_h_zero_closed`
+(decomposition; lower part via `1 ≤ ∑ tanh^|X|`) with the sharper
+exp upper bound (Step 403). -/
+theorem log_partitionFunction_high_temp_expansion_h_zero_sandwich_exp
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) :
+    (Fintype.card ι : ℝ) * Real.log 2
+        + (G.edgeFinset.card : ℝ) * Real.log (Real.cosh (β * J))
+      ≤ Real.log (partitionFunction G ⟨J, 0, β⟩) ∧
+    Real.log (partitionFunction G ⟨J, 0, β⟩)
+      ≤ (Fintype.card ι : ℝ) * Real.log 2
+        + β * J * G.edgeFinset.card := by
+  refine ⟨?_, log_partitionFunction_high_temp_expansion_h_zero_upper_bound_exp
+    G J β hβJ⟩
+  -- log Z ≥ |ι| log 2 + |E| log cosh(βJ) from
+  -- log Z = |ι| log 2 + |E| log cosh + log(∑) and log(∑) ≥ 0.
+  rw [log_partitionFunction_high_temp_expansion_h_zero_closed G J β hβJ]
+  have h_one_le_sum := one_le_sum_pow_tanh_even_subgraph G J β hβJ
+  have hlog_nn : 0 ≤ Real.log
+      (∑ X ∈ G.edgeFinset.powerset.filter
+          (fun X : Finset (Sym2 ι) =>
+            ∀ v : ι, Even ((X.filter (v ∈ ·)).card)),
+          Real.tanh (β * J) ^ X.card) :=
+    Real.log_nonneg h_one_le_sum
+  linarith
+
 /-- **Sharper freeEnergy high-temperature upper bound (FV (3.45))**: under
 `0 < |ι|` and `0 ≤ β·J`,
 `f(G; J, 0, β) ≤ log 2 + β·J·|E|/|ι|`.
