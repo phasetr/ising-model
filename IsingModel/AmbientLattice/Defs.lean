@@ -855,6 +855,49 @@ theorem freeEnergyΛ_high_temp_h_zero_deviation_bound_exp_ferromagnetic
   freeEnergyΛ_high_temp_h_zero_deviation_bound_exp
     G Λ J β (mul_nonneg hβ.le hJ) hne
 
+/-- **Λ-level f continuity at `J = 0`**: under `0 < |Λ|` and `0 ≤ β·J`,
+`|f_Λ(⟨J,0,β⟩) - f_Λ(⟨0,0,β⟩)| ≤ β·J·|E_Λ|/|Λ|`. -/
+theorem freeEnergyΛ_high_temp_h_zero_continuity_at_J_zero
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (hne : 0 < Λ.card) :
+    |freeEnergyΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+        - freeEnergyΛ G Λ (⟨0, 0, β⟩ : IsingParams ℝ)|
+      ≤ β * J * (inducedGraph G Λ).edgeFinset.card / Λ.card := by
+  have hcard : 0 < Fintype.card (↑Λ : Type _) := by
+    rw [Fintype.card_coe]; exact hne
+  rw [freeEnergyΛ_apply, freeEnergyΛ_apply, ← Fintype.card_coe (s := Λ)]
+  exact IsingModel.freeEnergy_high_temp_h_zero_continuity_at_J_zero
+    (inducedGraph G Λ) J β hβJ hcard
+
+/-- **Λ-level f continuity at `β = 0`**. -/
+theorem freeEnergyΛ_high_temp_h_zero_continuity_at_beta_zero
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (hne : 0 < Λ.card) :
+    |freeEnergyΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+        - freeEnergyΛ G Λ (⟨J, 0, 0⟩ : IsingParams ℝ)|
+      ≤ β * J * (inducedGraph G Λ).edgeFinset.card / Λ.card := by
+  have hcard : 0 < Fintype.card (↑Λ : Type _) := by
+    rw [Fintype.card_coe]; exact hne
+  rw [freeEnergyΛ_apply, freeEnergyΛ_apply, ← Fintype.card_coe (s := Λ)]
+  exact IsingModel.freeEnergy_high_temp_h_zero_continuity_at_beta_zero
+    (inducedGraph G Λ) J β hβJ hcard
+
+/-- **Λ-level f continuity bundle at trivial slices**. -/
+theorem freeEnergyΛ_high_temp_h_zero_continuity_bundle
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (hne : 0 < Λ.card) :
+    |freeEnergyΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+        - freeEnergyΛ G Λ (⟨0, 0, β⟩ : IsingParams ℝ)|
+        ≤ β * J * (inducedGraph G Λ).edgeFinset.card / Λ.card ∧
+    |freeEnergyΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+        - freeEnergyΛ G Λ (⟨J, 0, 0⟩ : IsingParams ℝ)|
+        ≤ β * J * (inducedGraph G Λ).edgeFinset.card / Λ.card :=
+  ⟨freeEnergyΛ_high_temp_h_zero_continuity_at_J_zero G Λ J β hβJ hne,
+   freeEnergyΛ_high_temp_h_zero_continuity_at_beta_zero G Λ J β hβJ hne⟩
+
 /-- **Λ-level Z high-temp sandwich (FV (3.45))**: under `0 ≤ β·J`,
 `2^|Λ| · cosh^|E_Λ| ≤ Z_Λ ≤ 2^(|Λ|+|E_Λ|) · cosh^|E_Λ|`. -/
 theorem partitionFunctionΛ_high_temp_expansion_h_zero_sandwich
