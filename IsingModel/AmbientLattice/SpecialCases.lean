@@ -874,6 +874,23 @@ theorem correlationAlongExhaustion_high_temp_h_zero_at_pair_singleton_bundle
    correlationAlongExhaustion_high_temp_h_zero_at_pair_nonneg G Λ J β hβJ i j n,
    correlationAlongExhaustion_high_temp_h_zero_at_pair_le_one G Λ J β i j n⟩
 
+/-- **Along-ex pair+singleton bundle under ferromagnetic at h = 0**:
+under `0 ≤ J, 0 < β`, packages `⟨σ_i⟩ = 0`, `0 ≤ ⟨σ_iσ_j⟩`, and
+`⟨σ_iσ_j⟩ ≤ 1` at every stage `n`. Along-exhaustion wrapper of
+`correlation_high_temp_h_zero_at_pair_singleton_bundle_ferromagnetic`. -/
+theorem correlationAlongExhaustion_high_temp_h_zero_at_pair_singleton_bundle_ferromagnetic
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (i j : V) (n : ℕ) :
+    correlationAlongExhaustion G Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) ({i} : Finset V) n = 0 ∧
+      0 ≤ correlationAlongExhaustion G Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset V) n ∧
+      correlationAlongExhaustion G Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset V) n ≤ 1 :=
+  correlationAlongExhaustion_high_temp_h_zero_at_pair_singleton_bundle
+    G Λ J β (mul_nonneg hβ.le hJ) i j n
+
 /-- **Along-ex singleton ferromagnetic vanish at h = 0**: under
 `0 ≤ J, 0 < β`, `correlationAlongExhaustion G Λ ⟨J, 0, β⟩ {i} n = 0`. -/
 theorem correlationAlongExhaustion_high_temp_h_zero_at_singleton_ferromagnetic
