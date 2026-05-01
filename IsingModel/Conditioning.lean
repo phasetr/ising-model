@@ -2388,6 +2388,14 @@ theorem correlation_high_temp_h_zero_at_pair_nonneg
     0 ≤ correlation G ⟨J, 0, β⟩ ({i, j} : Finset ι) :=
   correlation_high_temp_h_zero_nonneg G J β hβJ {i, j}
 
+/-- **Pair correlation ≤ 1 at h = 0**: `⟨σ_i σ_j⟩_{β,0} ≤ 1`.
+Specialization of the general `correlation_le_one`. -/
+theorem correlation_high_temp_h_zero_at_pair_le_one
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (i j : ι) :
+    correlation G ⟨J, 0, β⟩ ({i, j} : Finset ι) ≤ 1 :=
+  correlation_le_one G ⟨J, 0, β⟩ {i, j}
+
 /-- **Pair correlation high-temp closed form (FV (3.46) at A = {i,j})**:
 for `i ≠ j` and at `h = 0`,
 `⟨σ_i σ_j⟩_{β,0} = (∑_{X : ∂X = {i,j}} tanh^|X|) / (∑_{X : ∂X = ∅} tanh^|X|)`.
