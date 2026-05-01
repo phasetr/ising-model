@@ -2396,6 +2396,16 @@ theorem correlation_high_temp_h_zero_at_pair_le_one
     correlation G ⟨J, 0, β⟩ ({i, j} : Finset ι) ≤ 1 :=
   correlation_le_one G ⟨J, 0, β⟩ {i, j}
 
+/-- **Pair correlation sandwich at h = 0**: under `0 ≤ β·J`,
+`0 ≤ ⟨σ_i σ_j⟩_{β,0} ≤ 1`. Combines Steps 340 and 341. -/
+theorem correlation_high_temp_h_zero_at_pair_sandwich
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (i j : ι) :
+    0 ≤ correlation G ⟨J, 0, β⟩ ({i, j} : Finset ι) ∧
+      correlation G ⟨J, 0, β⟩ ({i, j} : Finset ι) ≤ 1 :=
+  ⟨correlation_high_temp_h_zero_at_pair_nonneg G J β hβJ i j,
+   correlation_high_temp_h_zero_at_pair_le_one G J β i j⟩
+
 /-- **Pair correlation high-temp closed form (FV (3.46) at A = {i,j})**:
 for `i ≠ j` and at `h = 0`,
 `⟨σ_i σ_j⟩_{β,0} = (∑_{X : ∂X = {i,j}} tanh^|X|) / (∑_{X : ∂X = ∅} tanh^|X|)`.
