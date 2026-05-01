@@ -1623,6 +1623,36 @@ theorem freeEnergyInfinite_high_temp_h_zero_sandwich_exp_uniform
   exact freeEnergyInfinite_ge_log_two G Λ (⟨J, 0, β⟩ : IsingParams ℝ)
     ⟨hJ, le_refl 0, hβ⟩ hc
 
+/-- **∞-vol f complete-summary bundle at h = 0 under bounded edge
+density**: under ferromagnetic `0 ≤ J, 0 < β` + bounded-edge-density
+witness `c`, single statement bundling all known §18.3 ∞-vol
+properties of `f` at `h = 0`:
+  1. `log 2 ≤ freeEnergyInfinite G Λ ⟨J, 0, β⟩` (lower),
+  2. `freeEnergyInfinite G Λ ⟨J, 0, β⟩ ≤ log 2 + β·J·c` (upper),
+  3. `freeEnergyInfinite G Λ ⟨0, 0, β⟩ = log 2` (J = 0 trivial slice),
+  4. `freeEnergyInfinite G Λ ⟨J, 0, 0⟩ = log 2` (β = 0 trivial slice).
+Useful as a single import for downstream applications that need both
+sandwich bounds and trivial-slice values at the infinite-volume level. -/
+theorem freeEnergyInfinite_high_temp_h_zero_complete_summary_exp
+    [Nonempty V] (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) {c : ℝ}
+    (hc : ∀ n, (Λ.volume n).Nonempty →
+      ((inducedGraph G (Λ.volume n)).edgeFinset.card : ℝ) ≤
+        c * Fintype.card (↑(Λ.volume n) : Type _)) :
+    Real.log 2
+      ≤ freeEnergyInfinite G Λ (⟨J, 0, β⟩ : IsingParams ℝ) ∧
+    freeEnergyInfinite G Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+      ≤ Real.log 2 + β * J * c ∧
+    freeEnergyInfinite G Λ (⟨0, 0, β⟩ : IsingParams ℝ) = Real.log 2 ∧
+    freeEnergyInfinite G Λ (⟨J, 0, 0⟩ : IsingParams ℝ) = Real.log 2 := by
+  obtain ⟨h_lower, h_upper⟩ :=
+    freeEnergyInfinite_high_temp_h_zero_sandwich_exp_uniform
+      G Λ J β hJ hβ hc
+  exact ⟨h_lower, h_upper,
+    freeEnergyInfinite_zero_params_of_nonempty G Λ β,
+    freeEnergyInfinite_beta_zero_of_nonempty G Λ J 0⟩
+
 /-- **Strict positivity** of `freeEnergyInfinite` under the standard
 ferromagnetic + `BoundedEdgeDensity` + `[Nonempty V]` setup:
 `0 < freeEnergyInfinite G Λ p`.
