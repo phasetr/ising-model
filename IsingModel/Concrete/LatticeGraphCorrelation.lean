@@ -3102,6 +3102,31 @@ theorem freeEnergyΛ_latticeGraph_high_temp_h_zero_complete_summary
   freeEnergyΛ_high_temp_h_zero_complete_summary
     (IsingModel.latticeGraph d) Λ J β hβJ hne
 
+/-- **ℤ^d Λ sharper Z upper bound**: under `0 ≤ β·J`,
+`Z_Λ ≤ 2^|Λ| · exp(β·J·|E_Λ|)`. ℤ^d wrapper. -/
+theorem partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_upper_bound_exp
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ) (hβJ : 0 ≤ β * J) :
+    partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ)
+      ≤ (2 : ℝ) ^ Λ.card *
+          Real.exp (β * J *
+            (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card) :=
+  partitionFunctionΛ_high_temp_expansion_h_zero_upper_bound_exp
+    (IsingModel.latticeGraph d) Λ J β hβJ
+
+/-- **ℤ^d Λ sharper freeEnergy upper bound**: under `0 < |Λ|` and
+`0 ≤ β·J`, `f_Λ ≤ log 2 + β·J·|E_Λ|/|Λ|`. ℤ^d wrapper. -/
+theorem freeEnergyΛ_latticeGraph_high_temp_h_zero_upper_bound_exp
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
+    (hβJ : 0 ≤ β * J) (hne : 0 < Λ.card) :
+    freeEnergyΛ (IsingModel.latticeGraph d) Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+      ≤ Real.log 2 +
+          β * J *
+            (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card /
+              Λ.card :=
+  freeEnergyΛ_high_temp_h_zero_upper_bound_exp
+    (IsingModel.latticeGraph d) Λ J β hβJ hne
+
 /-- **ℤ^d along-exhaustion correlation high-temperature closed form (FV §3.7.3 eq. (3.46))**:
 at every stage `n` with `A ⊆ Λ.volume n`, FV (3.46) closed form holds
 on the lifted Finset. When `A ⊄`, equals `0`.
@@ -3584,6 +3609,33 @@ theorem
       freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
           (⟨J, 0, 0⟩ : IsingParams ℝ) n = Real.log 2 :=
   freeEnergyAlongExhaustion_high_temp_h_zero_complete_summary
+    (IsingModel.latticeGraph d) Λ J β hβJ n hne
+
+/-- **ℤ^d along-ex sharper Z upper bound at stage `n`**: under `0 ≤ β·J`,
+`Z_n ≤ 2^|Λ_n| · exp(β·J·|E_n|)`. ℤ^d wrapper. -/
+theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_upper_bound_exp
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
+    (hβJ : 0 ≤ β * J) (n : ℕ) :
+    partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) n
+      ≤ (2 : ℝ) ^ (Λ.volume n).card *
+          Real.exp (β * J *
+            (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card) :=
+  partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_upper_bound_exp
+    (IsingModel.latticeGraph d) Λ J β hβJ n
+
+/-- **ℤ^d along-ex sharper freeEnergy upper bound at stage `n`**: under
+`0 < |Λ_n|` and `0 ≤ β·J`, `f_n ≤ log 2 + β·J·|E_n|/|Λ_n|`. ℤ^d wrapper. -/
+theorem freeEnergyAlongExhaustion_latticeGraph_high_temp_h_zero_upper_bound_exp
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
+    (hβJ : 0 ≤ β * J) (n : ℕ) (hne : 0 < (Λ.volume n).card) :
+    freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) n
+      ≤ Real.log 2 +
+          β * J *
+            (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card /
+              (Λ.volume n).card :=
+  freeEnergyAlongExhaustion_high_temp_h_zero_upper_bound_exp
     (IsingModel.latticeGraph d) Λ J β hβJ n hne
 
 /-- **ℤ^d along-exhaustion partition function high-temperature closed form (FV §3.7.3 eq. (3.45))**:

@@ -702,6 +702,38 @@ theorem freeEnergyAlongExhaustion_high_temp_h_zero_complete_summary
    freeEnergyAlongExhaustion_zero_params G Λ β n hne,
    freeEnergyAlongExhaustion_beta_zero G Λ J 0 n hne⟩
 
+/-- **Along-ex sharper Z upper bound at stage `n`**: under `0 ≤ β·J`,
+`Z_n(⟨J, 0, β⟩) ≤ 2^|Λ_n| · exp(β·J·|E_n|)`. Stage-`n` Λ-level
+specialization of
+`partitionFunction_high_temp_expansion_h_zero_upper_bound_exp`. -/
+theorem partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_upper_bound_exp
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (n : ℕ) :
+    partitionFunctionAlongExhaustion G Λ (⟨J, 0, β⟩ : IsingParams ℝ) n
+      ≤ (2 : ℝ) ^ (Λ.volume n).card *
+          Real.exp (β * J * (inducedGraph G (Λ.volume n)).edgeFinset.card) := by
+  change partitionFunctionΛ G (Λ.volume n)
+      (⟨J, 0, β⟩ : IsingParams ℝ) ≤ _
+  exact partitionFunctionΛ_high_temp_expansion_h_zero_upper_bound_exp
+    G (Λ.volume n) J β hβJ
+
+/-- **Along-ex sharper freeEnergy upper bound at stage `n`**: under
+`0 ≤ β·J` and `0 < |Λ_n|`, `f_n(⟨J, 0, β⟩) ≤ log 2 + β·J·|E_n|/|Λ_n|`.
+Stage-`n` Λ-level specialization of
+`freeEnergy_high_temp_h_zero_upper_bound_exp`. -/
+theorem freeEnergyAlongExhaustion_high_temp_h_zero_upper_bound_exp
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (n : ℕ) (hne : 0 < (Λ.volume n).card) :
+    freeEnergyAlongExhaustion G Λ (⟨J, 0, β⟩ : IsingParams ℝ) n
+      ≤ Real.log 2 +
+          β * J * (inducedGraph G (Λ.volume n)).edgeFinset.card /
+            (Λ.volume n).card := by
+  change freeEnergyΛ G (Λ.volume n) (⟨J, 0, β⟩ : IsingParams ℝ) ≤ _
+  exact freeEnergyΛ_high_temp_h_zero_upper_bound_exp
+    G (Λ.volume n) J β hβJ hne
+
 /-- **Along-exhaustion freeEnergy high-temp sandwich (FV (3.45))**: under
 `0 ≤ β·J` and `0 < |Λ_n|`, at every stage `n`,
 `log 2 + (|E_n|/|Λ_n|) log cosh(βJ) ≤ f_n ≤ log 2 + (|E_n|/|Λ_n|) log(2·cosh βJ)`. -/
