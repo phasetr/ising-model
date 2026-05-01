@@ -1760,6 +1760,25 @@ theorem freeEnergyInfinite_high_temp_h_zero_continuity_bundle
    freeEnergyInfinite_high_temp_h_zero_continuity_at_beta_zero
       G Λ J β hJ hβ hc⟩
 
+/-- **∞-vol f deviation sandwich**: under ferromagnetic `0 ≤ J, 0 < β`
+and bounded-edge-density witness `c`,
+`0 ≤ freeEnergyInfinite G Λ ⟨J, 0, β⟩ - log 2 ≤ β·J·c`. -/
+theorem freeEnergyInfinite_high_temp_h_zero_deviation_sandwich_exp
+    [Nonempty V] (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) {c : ℝ}
+    (hc : ∀ n, (Λ.volume n).Nonempty →
+      ((inducedGraph G (Λ.volume n)).edgeFinset.card : ℝ) ≤
+        c * Fintype.card (↑(Λ.volume n) : Type _)) :
+    0 ≤ freeEnergyInfinite G Λ (⟨J, 0, β⟩ : IsingParams ℝ) - Real.log 2 ∧
+    freeEnergyInfinite G Λ (⟨J, 0, β⟩ : IsingParams ℝ) - Real.log 2
+      ≤ β * J * c := by
+  have h_lower := freeEnergyInfinite_ge_log_two G Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+    ⟨hJ, le_refl 0, hβ⟩ hc
+  have h_upper := freeEnergyInfinite_high_temp_h_zero_deviation_bound_exp
+    G Λ J β hJ hβ hc
+  exact ⟨by linarith, h_upper⟩
+
 /-- **Strict positivity** of `freeEnergyInfinite` under the standard
 ferromagnetic + `BoundedEdgeDensity` + `[Nonempty V]` setup:
 `0 < freeEnergyInfinite G Λ p`.
