@@ -2488,7 +2488,7 @@ theorem partitionFunction_high_temp_expansion_h_zero_complete_summary
   4. `f⟨J, 0, 0⟩ = log 2` (consistency at trivial slice `β = 0`).
 Useful as a single import for downstream analytic / asymptotic
 arguments that need both bounds and trivial-slice values. -/
-theorem freeEnergy_high_temp_expansion_h_zero_complete_summary
+theorem freeEnergy_high_temp_h_zero_complete_summary
     (G : SimpleGraph ι) [Fintype G.edgeSet]
     (J β : ℝ) (hβJ : 0 ≤ β * J) (hne : 0 < Fintype.card ι) :
     Real.log 2 +

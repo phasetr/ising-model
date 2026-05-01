@@ -580,8 +580,8 @@ theorem partitionFunctionΛ_high_temp_expansion_h_zero_complete_summary
 `0 < |Λ|` and `0 ≤ β·J`, single statement bundling Λ-level lower /
 upper bounds and trivial-slice values at `J = 0` / `β = 0` (both =
 `log 2`). Λ-layer wrapper of
-`freeEnergy_high_temp_expansion_h_zero_complete_summary`. -/
-theorem freeEnergyΛ_high_temp_expansion_h_zero_complete_summary
+`freeEnergy_high_temp_h_zero_complete_summary`. -/
+theorem freeEnergyΛ_high_temp_h_zero_complete_summary
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet]
     (J β : ℝ) (hβJ : 0 ≤ β * J) (hne : 0 < Λ.card) :
