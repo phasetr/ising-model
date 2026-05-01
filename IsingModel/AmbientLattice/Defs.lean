@@ -511,6 +511,39 @@ theorem freeEnergyΛ_high_temp_h_zero_lower_bound
     (inducedGraph G Λ) J β hβJ
     (by rw [Fintype.card_coe]; exact hne)
 
+/-- **Λ-level Z high-temp sandwich (FV (3.45))**: under `0 ≤ β·J`,
+`2^|Λ| · cosh^|E_Λ| ≤ Z_Λ ≤ 2^(|Λ|+|E_Λ|) · cosh^|E_Λ|`. -/
+theorem partitionFunctionΛ_high_temp_expansion_h_zero_sandwich
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) :
+    (2 : ℝ) ^ Λ.card *
+        Real.cosh (β * J) ^ (inducedGraph G Λ).edgeFinset.card
+      ≤ partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+    ∧ partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+      ≤ (2 : ℝ) ^ (Λ.card + (inducedGraph G Λ).edgeFinset.card) *
+          Real.cosh (β * J) ^ (inducedGraph G Λ).edgeFinset.card :=
+  ⟨partitionFunctionΛ_high_temp_expansion_h_zero_lower_bound G Λ J β hβJ,
+   partitionFunctionΛ_high_temp_expansion_h_zero_upper_bound G Λ J β hβJ⟩
+
+/-- **Λ-level freeEnergy high-temp sandwich (FV (3.45))**: under
+`0 < |Λ|` and `0 ≤ β·J`,
+`log 2 + (|E_Λ|/|Λ|) log cosh(βJ) ≤ f_Λ ≤ log 2 + (|E_Λ|/|Λ|) log(2·cosh βJ)`. -/
+theorem freeEnergyΛ_high_temp_h_zero_sandwich
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (hne : 0 < Λ.card) :
+    Real.log 2 +
+        ((inducedGraph G Λ).edgeFinset.card : ℝ) / Λ.card *
+          Real.log (Real.cosh (β * J))
+      ≤ freeEnergyΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+    ∧ freeEnergyΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+      ≤ Real.log 2
+        + ((inducedGraph G Λ).edgeFinset.card : ℝ) / Λ.card *
+            Real.log (2 * Real.cosh (β * J)) :=
+  ⟨freeEnergyΛ_high_temp_h_zero_lower_bound G Λ J β hβJ hne,
+   freeEnergyΛ_high_temp_h_zero_upper_bound G Λ J β hβJ hne⟩
+
 /-- **Λ-level FV (3.46) numerator vanishes for odd-cardinality A** at `h = 0`:
 for `A : Finset ↑Λ` of odd cardinality,
 `∑_{X ⊆ E_Λ : ∂X = A} tanh(β J)^|X| = 0`.
