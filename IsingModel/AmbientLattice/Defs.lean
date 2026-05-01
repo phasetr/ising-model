@@ -1335,6 +1335,54 @@ theorem log_partitionFunctionΛ_high_temp_expansion_h_zero_ratio_bound_bundle_fe
   log_partitionFunctionΛ_high_temp_expansion_h_zero_ratio_bound_bundle
     G Λ J β (mul_nonneg hβ.le hJ)
 
+/-- **Λ-level f ratio sandwich bundle**. -/
+theorem freeEnergyΛ_high_temp_h_zero_ratio_sandwich_bundle
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (hne : 0 < Λ.card) :
+    (((inducedGraph G Λ).edgeFinset.card : ℝ) / Λ.card *
+        Real.log (Real.cosh (β * J))
+        ≤ freeEnergyΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+            - freeEnergyΛ G Λ (⟨0, 0, β⟩ : IsingParams ℝ) ∧
+      freeEnergyΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+          - freeEnergyΛ G Λ (⟨0, 0, β⟩ : IsingParams ℝ)
+          ≤ β * J * (inducedGraph G Λ).edgeFinset.card / Λ.card) ∧
+    (((inducedGraph G Λ).edgeFinset.card : ℝ) / Λ.card *
+        Real.log (Real.cosh (β * J))
+        ≤ freeEnergyΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+            - freeEnergyΛ G Λ (⟨J, 0, 0⟩ : IsingParams ℝ) ∧
+      freeEnergyΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+          - freeEnergyΛ G Λ (⟨J, 0, 0⟩ : IsingParams ℝ)
+          ≤ β * J * (inducedGraph G Λ).edgeFinset.card / Λ.card) := by
+  have hcard : 0 < Fintype.card (↑Λ : Type _) := by
+    rw [Fintype.card_coe]; exact hne
+  rw [freeEnergyΛ_apply, freeEnergyΛ_apply, freeEnergyΛ_apply,
+      ← Fintype.card_coe (s := Λ)]
+  exact IsingModel.freeEnergy_high_temp_h_zero_ratio_sandwich_bundle
+    (inducedGraph G Λ) J β hβJ hcard
+
+/-- **Λ-level ferromagnetic f ratio sandwich bundle**. -/
+theorem freeEnergyΛ_high_temp_h_zero_ratio_sandwich_bundle_ferromagnetic
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (hne : 0 < Λ.card) :
+    (((inducedGraph G Λ).edgeFinset.card : ℝ) / Λ.card *
+        Real.log (Real.cosh (β * J))
+        ≤ freeEnergyΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+            - freeEnergyΛ G Λ (⟨0, 0, β⟩ : IsingParams ℝ) ∧
+      freeEnergyΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+          - freeEnergyΛ G Λ (⟨0, 0, β⟩ : IsingParams ℝ)
+          ≤ β * J * (inducedGraph G Λ).edgeFinset.card / Λ.card) ∧
+    (((inducedGraph G Λ).edgeFinset.card : ℝ) / Λ.card *
+        Real.log (Real.cosh (β * J))
+        ≤ freeEnergyΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+            - freeEnergyΛ G Λ (⟨J, 0, 0⟩ : IsingParams ℝ) ∧
+      freeEnergyΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+          - freeEnergyΛ G Λ (⟨J, 0, 0⟩ : IsingParams ℝ)
+          ≤ β * J * (inducedGraph G Λ).edgeFinset.card / Λ.card) :=
+  freeEnergyΛ_high_temp_h_zero_ratio_sandwich_bundle
+    G Λ J β (mul_nonneg hβ.le hJ) hne
+
 /-- **Λ-level f ratio bound at J=0**. -/
 theorem freeEnergyΛ_high_temp_h_zero_ratio_bound
     (G : SimpleGraph V) (Λ : Finset V)
