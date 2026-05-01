@@ -3575,6 +3575,29 @@ theorem log_partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_deviatio
   log_partitionFunctionΛ_high_temp_expansion_h_zero_deviation_pos
     (IsingModel.latticeGraph d) Λ J β hβJ hEpos
 
+/-- **ℤ^d Λ ferromagnetic Z strict deviation**. -/
+theorem partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_pow_two_lt_ferromagnetic
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
+    (hJ : 0 < J) (hβ : 0 < β)
+    (hEpos : 0 <
+      (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card) :
+    (2 : ℝ) ^ Λ.card
+      < partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) :=
+  partitionFunctionΛ_high_temp_expansion_h_zero_pow_two_lt_ferromagnetic
+    (IsingModel.latticeGraph d) Λ J β hJ hβ hEpos
+
+/-- **ℤ^d Λ ferromagnetic log Z strict deviation**. -/
+theorem log_partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_deviation_pos_ferromagnetic
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
+    (hJ : 0 < J) (hβ : 0 < β)
+    (hEpos : 0 <
+      (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card) :
+    0 < Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ)) - (Λ.card : ℝ) * Real.log 2 :=
+  log_partitionFunctionΛ_high_temp_expansion_h_zero_deviation_pos_ferromagnetic
+    (IsingModel.latticeGraph d) Λ J β hJ hβ hEpos
+
 /-- **ℤ^d along-exhaustion correlation high-temperature closed form (FV §3.7.3 eq. (3.46))**:
 at every stage `n` with `A ⊆ Λ.volume n`, FV (3.46) closed form holds
 on the lifted Finset. When `A ⊄`, equals `0`.
@@ -4548,6 +4571,29 @@ theorem log_partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_
         (⟨J, 0, β⟩ : IsingParams ℝ) n) - ((Λ.volume n).card : ℝ) * Real.log 2 :=
   log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_deviation_pos
     (IsingModel.latticeGraph d) Λ J β hβJ n hEpos
+
+/-- **ℤ^d along-ex ferromagnetic Z strict deviation at stage `n`**. -/
+theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_pow_two_lt_ferromagnetic
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
+    (hJ : 0 < J) (hβ : 0 < β) (n : ℕ)
+    (hEpos : 0 <
+      (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card) :
+    (2 : ℝ) ^ (Λ.volume n).card
+      < partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) n :=
+  partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_pow_two_lt_ferromagnetic
+    (IsingModel.latticeGraph d) Λ J β hJ hβ n hEpos
+
+/-- **ℤ^d along-ex ferromagnetic log Z strict deviation at stage `n`**. -/
+theorem log_partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_deviation_pos_ferromagnetic
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
+    (hJ : 0 < J) (hβ : 0 < β) (n : ℕ)
+    (hEpos : 0 <
+      (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card) :
+    0 < Real.log (partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) n) - ((Λ.volume n).card : ℝ) * Real.log 2 :=
+  log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_deviation_pos_ferromagnetic
+    (IsingModel.latticeGraph d) Λ J β hJ hβ n hEpos
 
 /-- **ℤ^d along-exhaustion partition function high-temperature closed form (FV §3.7.3 eq. (3.45))**:
 at every stage `n`,
