@@ -846,6 +846,19 @@ theorem correlationAlongExhaustion_high_temp_h_zero_at_singleton
     G Λ J β {i} ?_ n
   rw [Finset.card_singleton]; exact ⟨0, rfl⟩
 
+/-- **Along-ex singleton sandwich at h = 0**: `= 0 ∧ ≤ 1`. -/
+theorem correlationAlongExhaustion_high_temp_h_zero_at_singleton_eq_zero_le_one
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (i : V) (n : ℕ) :
+    correlationAlongExhaustion G Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) ({i} : Finset V) n = 0 ∧
+      correlationAlongExhaustion G Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) ({i} : Finset V) n ≤ 1 :=
+  ⟨correlationAlongExhaustion_high_temp_h_zero_at_singleton G Λ J β i n,
+   (correlationAlongExhaustion_high_temp_h_zero_at_singleton G Λ J β i n).symm
+      ▸ zero_le_one⟩
+
 /-- **Along-ex singleton ferromagnetic vanish at h = 0**: under
 `0 ≤ J, 0 < β`, `correlationAlongExhaustion G Λ ⟨J, 0, β⟩ {i} n = 0`. -/
 theorem correlationAlongExhaustion_high_temp_h_zero_at_singleton_ferromagnetic
