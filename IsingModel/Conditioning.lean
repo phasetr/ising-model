@@ -3083,6 +3083,66 @@ theorem freeEnergy_high_temp_h_zero_ratio_bound_beta_zero_ferromagnetic
   freeEnergy_high_temp_h_zero_ratio_bound_beta_zero
     G J β (mul_nonneg hβ.le hJ) hne
 
+/-- **f ratio sandwich at J=0 trivial slice**: under `0 ≤ β·J` and
+`0 < |ι|`, `(|E|/|ι|)·log cosh(β·J) ≤ f⟨J,0,β⟩ - f⟨0,0,β⟩ ≤ β·J·|E|/|ι|`. -/
+theorem freeEnergy_high_temp_h_zero_ratio_sandwich
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (hne : 0 < Fintype.card ι) :
+    (G.edgeFinset.card : ℝ) / Fintype.card ι * Real.log (Real.cosh (β * J))
+        ≤ freeEnergy G ⟨J, 0, β⟩ - freeEnergy G (⟨0, 0, β⟩ : IsingParams ℝ) ∧
+    freeEnergy G ⟨J, 0, β⟩ - freeEnergy G (⟨0, 0, β⟩ : IsingParams ℝ)
+        ≤ β * J * G.edgeFinset.card / Fintype.card ι := by
+  have hf0 : freeEnergy G (⟨0, 0, β⟩ : IsingParams ℝ) = Real.log 2 := by
+    have := freeEnergy_J_zero G (0 : ℝ) β hne
+    simpa [mul_zero, Real.cosh_zero] using this
+  rw [hf0]
+  refine ⟨?_, ?_⟩
+  · linarith [freeEnergy_high_temp_h_zero_lower_bound G J β hβJ hne]
+  · exact freeEnergy_high_temp_h_zero_deviation_bound_exp G J β hβJ hne
+
+/-- **f ratio sandwich at β=0 trivial slice**. -/
+theorem freeEnergy_high_temp_h_zero_ratio_sandwich_beta_zero
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (hne : 0 < Fintype.card ι) :
+    (G.edgeFinset.card : ℝ) / Fintype.card ι * Real.log (Real.cosh (β * J))
+        ≤ freeEnergy G ⟨J, 0, β⟩ - freeEnergy G (⟨J, 0, 0⟩ : IsingParams ℝ) ∧
+    freeEnergy G ⟨J, 0, β⟩ - freeEnergy G (⟨J, 0, 0⟩ : IsingParams ℝ)
+        ≤ β * J * G.edgeFinset.card / Fintype.card ι := by
+  rw [freeEnergy_beta_zero G J 0 hne]
+  refine ⟨?_, ?_⟩
+  · linarith [freeEnergy_high_temp_h_zero_lower_bound G J β hβJ hne]
+  · exact freeEnergy_high_temp_h_zero_deviation_bound_exp G J β hβJ hne
+
+/-- **f ratio sandwich bundle**: bundles both J=0 and β=0 sandwiches. -/
+theorem freeEnergy_high_temp_h_zero_ratio_sandwich_bundle
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (hne : 0 < Fintype.card ι) :
+    ((G.edgeFinset.card : ℝ) / Fintype.card ι * Real.log (Real.cosh (β * J))
+        ≤ freeEnergy G ⟨J, 0, β⟩ - freeEnergy G (⟨0, 0, β⟩ : IsingParams ℝ) ∧
+      freeEnergy G ⟨J, 0, β⟩ - freeEnergy G (⟨0, 0, β⟩ : IsingParams ℝ)
+        ≤ β * J * G.edgeFinset.card / Fintype.card ι) ∧
+    ((G.edgeFinset.card : ℝ) / Fintype.card ι * Real.log (Real.cosh (β * J))
+        ≤ freeEnergy G ⟨J, 0, β⟩ - freeEnergy G (⟨J, 0, 0⟩ : IsingParams ℝ) ∧
+      freeEnergy G ⟨J, 0, β⟩ - freeEnergy G (⟨J, 0, 0⟩ : IsingParams ℝ)
+        ≤ β * J * G.edgeFinset.card / Fintype.card ι) :=
+  ⟨freeEnergy_high_temp_h_zero_ratio_sandwich G J β hβJ hne,
+   freeEnergy_high_temp_h_zero_ratio_sandwich_beta_zero G J β hβJ hne⟩
+
+/-- **Ferromagnetic f ratio sandwich bundle**. -/
+theorem freeEnergy_high_temp_h_zero_ratio_sandwich_bundle_ferromagnetic
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (hne : 0 < Fintype.card ι) :
+    ((G.edgeFinset.card : ℝ) / Fintype.card ι * Real.log (Real.cosh (β * J))
+        ≤ freeEnergy G ⟨J, 0, β⟩ - freeEnergy G (⟨0, 0, β⟩ : IsingParams ℝ) ∧
+      freeEnergy G ⟨J, 0, β⟩ - freeEnergy G (⟨0, 0, β⟩ : IsingParams ℝ)
+        ≤ β * J * G.edgeFinset.card / Fintype.card ι) ∧
+    ((G.edgeFinset.card : ℝ) / Fintype.card ι * Real.log (Real.cosh (β * J))
+        ≤ freeEnergy G ⟨J, 0, β⟩ - freeEnergy G (⟨J, 0, 0⟩ : IsingParams ℝ) ∧
+      freeEnergy G ⟨J, 0, β⟩ - freeEnergy G (⟨J, 0, 0⟩ : IsingParams ℝ)
+        ≤ β * J * G.edgeFinset.card / Fintype.card ι) :=
+  freeEnergy_high_temp_h_zero_ratio_sandwich_bundle
+    G J β (mul_nonneg hβ.le hJ) hne
+
 /-- **Ferromagnetic f ratio bound bundle**. -/
 theorem freeEnergy_high_temp_h_zero_ratio_bound_bundle_ferromagnetic
     (G : SimpleGraph ι) [Fintype G.edgeSet]
