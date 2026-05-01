@@ -3127,6 +3127,36 @@ theorem freeEnergyΛ_latticeGraph_high_temp_h_zero_upper_bound_exp
   freeEnergyΛ_high_temp_h_zero_upper_bound_exp
     (IsingModel.latticeGraph d) Λ J β hβJ hne
 
+/-- **ℤ^d Λ sharper log Z upper bound**: under `0 ≤ β·J`,
+`log Z_Λ ≤ |Λ|·log 2 + β·J·|E_Λ|`. ℤ^d wrapper of
+`log_partitionFunctionΛ_high_temp_expansion_h_zero_upper_bound_exp`. -/
+theorem log_partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_upper_bound_exp
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ) (hβJ : 0 ≤ β * J) :
+    Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ))
+      ≤ (Λ.card : ℝ) * Real.log 2
+        + β * J *
+          (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card :=
+  log_partitionFunctionΛ_high_temp_expansion_h_zero_upper_bound_exp
+    (IsingModel.latticeGraph d) Λ J β hβJ
+
+/-- **ℤ^d Λ sharper log Z sandwich**: under `0 ≤ β·J`,
+`|Λ|·log 2 + |E_Λ|·log cosh(β·J) ≤ log Z_Λ ≤ |Λ|·log 2 + β·J·|E_Λ|`. -/
+theorem log_partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_sandwich_exp
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ) (hβJ : 0 ≤ β * J) :
+    (Λ.card : ℝ) * Real.log 2
+        + ((inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card : ℝ) *
+            Real.log (Real.cosh (β * J))
+      ≤ Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ)) ∧
+    Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ))
+      ≤ (Λ.card : ℝ) * Real.log 2
+        + β * J *
+          (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card :=
+  log_partitionFunctionΛ_high_temp_expansion_h_zero_sandwich_exp
+    (IsingModel.latticeGraph d) Λ J β hβJ
+
 /-- **ℤ^d along-exhaustion correlation high-temperature closed form (FV §3.7.3 eq. (3.46))**:
 at every stage `n` with `A ⊆ Λ.volume n`, FV (3.46) closed form holds
 on the lifted Finset. When `A ⊄`, equals `0`.
@@ -3637,6 +3667,38 @@ theorem freeEnergyAlongExhaustion_latticeGraph_high_temp_h_zero_upper_bound_exp
               (Λ.volume n).card :=
   freeEnergyAlongExhaustion_high_temp_h_zero_upper_bound_exp
     (IsingModel.latticeGraph d) Λ J β hβJ n hne
+
+/-- **ℤ^d along-ex sharper log Z upper bound at stage `n`**: under
+`0 ≤ β·J`, `log Z_n ≤ |Λ_n|·log 2 + β·J·|E_n|`. ℤ^d wrapper. -/
+theorem log_partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_upper_bound_exp
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
+    (hβJ : 0 ≤ β * J) (n : ℕ) :
+    Real.log (partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) n)
+      ≤ ((Λ.volume n).card : ℝ) * Real.log 2
+        + β * J *
+          (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card :=
+  log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_upper_bound_exp
+    (IsingModel.latticeGraph d) Λ J β hβJ n
+
+/-- **ℤ^d along-ex sharper log Z sandwich at stage `n`**: under `0 ≤ β·J`,
+`|Λ_n|·log 2 + |E_n|·log cosh(β·J) ≤ log Z_n ≤ |Λ_n|·log 2 + β·J·|E_n|`.
+ℤ^d wrapper. -/
+theorem log_partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_sandwich_exp
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
+    (hβJ : 0 ≤ β * J) (n : ℕ) :
+    ((Λ.volume n).card : ℝ) * Real.log 2
+        + ((inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card : ℝ) *
+            Real.log (Real.cosh (β * J))
+      ≤ Real.log (partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) n) ∧
+    Real.log (partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) n)
+      ≤ ((Λ.volume n).card : ℝ) * Real.log 2
+        + β * J *
+          (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card :=
+  log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_sandwich_exp
+    (IsingModel.latticeGraph d) Λ J β hβJ n
 
 /-- **ℤ^d along-exhaustion partition function high-temperature closed form (FV §3.7.3 eq. (3.45))**:
 at every stage `n`,

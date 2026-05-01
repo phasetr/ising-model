@@ -432,6 +432,39 @@ theorem log_partitionFunctionΛ_high_temp_expansion_h_zero_closed
         (inducedGraph G Λ) J β hβJ,
       Fintype.card_coe]
 
+/-- **Λ-level sharper log Z high-temperature upper bound**: under
+`0 ≤ β·J`, `log Z_Λ ≤ |Λ| · log 2 + β·J·|E_Λ|`. Λ-layer wrapper of
+`log_partitionFunction_high_temp_expansion_h_zero_upper_bound_exp` (Step 403). -/
+theorem log_partitionFunctionΛ_high_temp_expansion_h_zero_upper_bound_exp
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) :
+    Real.log (partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ))
+      ≤ (Λ.card : ℝ) * Real.log 2
+        + β * J * (inducedGraph G Λ).edgeFinset.card := by
+  rw [partitionFunctionΛ_apply, ← Fintype.card_coe (s := Λ)]
+  exact IsingModel.log_partitionFunction_high_temp_expansion_h_zero_upper_bound_exp
+    (inducedGraph G Λ) J β hβJ
+
+/-- **Λ-level sharper log Z high-temperature sandwich**: under `0 ≤ β·J`,
+`|Λ|·log 2 + |E_Λ|·log cosh(βJ) ≤ log Z_Λ ≤ |Λ|·log 2 + β·J·|E_Λ|`.
+Λ-layer wrapper of
+`log_partitionFunction_high_temp_expansion_h_zero_sandwich_exp` (Step 403). -/
+theorem log_partitionFunctionΛ_high_temp_expansion_h_zero_sandwich_exp
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) :
+    (Λ.card : ℝ) * Real.log 2
+        + ((inducedGraph G Λ).edgeFinset.card : ℝ) *
+            Real.log (Real.cosh (β * J))
+      ≤ Real.log (partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ)) ∧
+    Real.log (partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ))
+      ≤ (Λ.card : ℝ) * Real.log 2
+        + β * J * (inducedGraph G Λ).edgeFinset.card := by
+  rw [partitionFunctionΛ_apply, ← Fintype.card_coe (s := Λ)]
+  exact IsingModel.log_partitionFunction_high_temp_expansion_h_zero_sandwich_exp
+    (inducedGraph G Λ) J β hβJ
+
 /-- **Λ-level freeEnergy high-temperature decomposition (GJ §18.3 / FV (3.45))**:
 under `0 < |Λ|` and `0 ≤ β·J`,
 `f_Λ = log 2 + (|E_Λ|/|Λ|) · log(cosh βJ) + log(∑_{X even} tanh^|X|) / |Λ|`.
