@@ -2876,6 +2876,26 @@ theorem one_le_sum_pow_tanh_even_subgraph_alongExhaustion_latticeGraph
   one_le_sum_pow_tanh_even_subgraph_alongExhaustion
     (IsingModel.latticeGraph d) Λ J β hβJ n
 
+/-- **ℤ^d along-exhaustion FV (3.45) at `J = 0` consistency check**:
+`Z_n(⟨0, 0, β⟩) = 2^|Λ_n|`. -/
+theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_closed_at_J_zero
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (β : ℝ) (n : ℕ) :
+    partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨0, 0, β⟩ : IsingParams ℝ) n
+      = (2 : ℝ) ^ (Λ.volume n).card :=
+  partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_closed_at_J_zero
+    (IsingModel.latticeGraph d) Λ β n
+
+/-- **ℤ^d along-exhaustion FV (3.45) at `β = 0` consistency check**:
+`Z_n(⟨J, 0, 0⟩) = 2^|Λ_n|`. -/
+theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_closed_at_beta_zero
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J : ℝ) (n : ℕ) :
+    partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, 0⟩ : IsingParams ℝ) n
+      = (2 : ℝ) ^ (Λ.volume n).card :=
+  partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_closed_at_beta_zero
+    (IsingModel.latticeGraph d) Λ J n
+
 /-- **ℤ^d along-exhaustion partition function high-temperature closed form (FV §3.7.3 eq. (3.45))**:
 at every stage `n`,
 `partitionFunctionAlongExhaustion (latticeGraph d) Λ ⟨J, 0, β⟩ n
