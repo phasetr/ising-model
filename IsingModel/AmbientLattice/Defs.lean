@@ -535,6 +535,42 @@ theorem freeEnergyΛ_high_temp_h_zero_upper_bound_exp
   exact IsingModel.freeEnergy_high_temp_h_zero_upper_bound_exp
     (inducedGraph G Λ) J β hβJ hcard
 
+/-- **Λ-level ferromagnetic Z sharper upper bound**: under `0 ≤ J, 0 < β`,
+`Z_Λ ≤ 2^|Λ| · exp(β·J·|E_Λ|)`. Λ-layer ferromagnetic wrapper. -/
+theorem partitionFunctionΛ_high_temp_expansion_h_zero_upper_bound_exp_ferromagnetic
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) :
+    partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+      ≤ (2 : ℝ) ^ Λ.card *
+          Real.exp (β * J * (inducedGraph G Λ).edgeFinset.card) :=
+  partitionFunctionΛ_high_temp_expansion_h_zero_upper_bound_exp
+    G Λ J β (mul_nonneg hβ.le hJ)
+
+/-- **Λ-level ferromagnetic log Z sharper upper bound**: under `0 ≤ J, 0 < β`,
+`log Z_Λ ≤ |Λ|·log 2 + β·J·|E_Λ|`. Λ-layer ferromagnetic wrapper. -/
+theorem log_partitionFunctionΛ_high_temp_expansion_h_zero_upper_bound_exp_ferromagnetic
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) :
+    Real.log (partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ))
+      ≤ (Λ.card : ℝ) * Real.log 2
+        + β * J * (inducedGraph G Λ).edgeFinset.card :=
+  log_partitionFunctionΛ_high_temp_expansion_h_zero_upper_bound_exp
+    G Λ J β (mul_nonneg hβ.le hJ)
+
+/-- **Λ-level ferromagnetic f sharper upper bound**: under `0 < |Λ|`,
+`0 ≤ J, 0 < β`, `f_Λ ≤ log 2 + β·J·|E_Λ|/|Λ|`. -/
+theorem freeEnergyΛ_high_temp_h_zero_upper_bound_exp_ferromagnetic
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (hne : 0 < Λ.card) :
+    freeEnergyΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+      ≤ Real.log 2 +
+          β * J * (inducedGraph G Λ).edgeFinset.card / Λ.card :=
+  freeEnergyΛ_high_temp_h_zero_upper_bound_exp
+    G Λ J β (mul_nonneg hβ.le hJ) hne
+
 /-- **Λ-level freeEnergy high-temperature upper bound (FV (3.45))**:
 under `0 < |Λ|` and `0 ≤ β·J`,
 `f_Λ(⟨J, 0, β⟩) ≤ log 2 + (|E_Λ|/|Λ|) · log(2 · cosh(βJ))`.
