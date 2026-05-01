@@ -2032,6 +2032,34 @@ theorem partitionFunction_high_temp_expansion_h_zero_pow_two_lt
     exact (lt_mul_iff_one_lt_right h2_pos).mpr hcosh_pow_gt
   linarith
 
+/-- **Z ratio bound at trivial slice**: under `0 ≤ β·J`,
+`Z(G; J, 0, β) / Z(G; 0, 0, β) ≤ exp(β·J·|E|)`.
+
+Combines the sharper Z upper bound `Z(J,0,β) ≤ 2^|ι|·exp(β·J·|E|)`
+(Step 393) with the trivial slice `Z(0,0,β) = 2^|ι|` (Step 310). The
+ratio measures how much `Z` grows relative to its "free spin"
+(non-interacting) value as `J` increases. -/
+theorem partitionFunction_high_temp_expansion_h_zero_ratio_bound
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) :
+    partitionFunction G ⟨J, 0, β⟩ /
+        partitionFunction G (⟨0, 0, β⟩ : IsingParams ℝ)
+      ≤ Real.exp (β * J * G.edgeFinset.card) := by
+  have h_ub := partitionFunction_high_temp_expansion_h_zero_upper_bound_exp
+    G J β hβJ
+  have h_J0 : partitionFunction G (⟨0, 0, β⟩ : IsingParams ℝ)
+      = (2 : ℝ) ^ Fintype.card ι :=
+    partitionFunction_high_temp_expansion_h_zero_closed_at_J_zero G β
+  rw [h_J0]
+  rw [div_le_iff₀ (pow_pos (by norm_num) _)]
+  have h2_pos : (0 : ℝ) < (2 : ℝ) ^ Fintype.card ι :=
+    pow_pos (by norm_num) _
+  calc partitionFunction G ⟨J, 0, β⟩
+      ≤ (2 : ℝ) ^ Fintype.card ι *
+          Real.exp (β * J * G.edgeFinset.card) := h_ub
+    _ = Real.exp (β * J * G.edgeFinset.card) *
+          (2 : ℝ) ^ Fintype.card ι := by ring
+
 /-- **Sharper Z complete-summary exp bundle**: under `0 ≤ β·J`,
 single statement bundling sharper sandwich + trivial-slice values:
   1. `2^|ι|·cosh^|E| ≤ Z` (lower),
