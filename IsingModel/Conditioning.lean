@@ -1484,6 +1484,44 @@ theorem partitionFunction_high_temp_expansion_h_zero_closed
   rw [← Finset.mul_sum]
   ring
 
+/-- **Sharper even-subgraph sum upper bound (high-temperature)**: under
+`0 ≤ β·J`,
+`∑_{X ⊆ G.edgeFinset, even-deg} tanh(βJ)^|X| ≤ (1 + tanh(βJ))^|E|`.
+
+Tightens `sum_pow_tanh_even_subgraph_le_two_pow` (Step 319): the
+filter is a subset of `G.edgeFinset.powerset`, all terms are
+nonnegative under `0 ≤ tanh(βJ)`, and
+`∑_{X ⊆ E} tanh^|X| = ∏_e (1 + tanh) = (1 + tanh)^|E|` by
+`Finset.prod_one_add` + `Finset.prod_const`. Recovers `≤ 2^|E|` since
+`1 + tanh ≤ 2`. -/
+theorem sum_pow_tanh_even_subgraph_le_one_plus_tanh_pow
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) :
+    (∑ X ∈ G.edgeFinset.powerset.filter
+        (fun X : Finset (Sym2 ι) =>
+          ∀ v : ι, Even ((X.filter (v ∈ ·)).card)),
+        Real.tanh (β * J) ^ X.card)
+      ≤ (1 + Real.tanh (β * J)) ^ G.edgeFinset.card := by
+  classical
+  have htanh_nn : 0 ≤ Real.tanh (β * J) := by
+    rw [Real.tanh_eq_sinh_div_cosh]
+    exact div_nonneg
+      (Real.sinh_nonneg_iff.mpr hβJ) (Real.cosh_pos _).le
+  -- Step 1: rewrite (1+tanh)^|E| as ∑_{X ⊆ E} tanh^|X|.
+  have hpower :
+      (1 + Real.tanh (β * J)) ^ G.edgeFinset.card =
+        ∑ X ∈ G.edgeFinset.powerset, Real.tanh (β * J) ^ X.card := by
+    rw [← Finset.prod_const, Finset.prod_one_add]
+    refine Finset.sum_congr rfl ?_
+    intro X _
+    rw [Finset.prod_const]
+  rw [hpower]
+  -- Step 2: filter ⊆ powerset, all nonneg, so filtered sum ≤ unfiltered.
+  refine Finset.sum_le_sum_of_subset_of_nonneg
+    (Finset.filter_subset _ _) ?_
+  intro X _ _
+  exact pow_nonneg htanh_nn _
+
 /-- **High-temperature even-subgraph sum upper bound**: under `0 ≤ β J`,
 `∑_{X ⊆ G.edgeFinset, even-deg} tanh(βJ)^|X| ≤ 2^|E|`.
 
