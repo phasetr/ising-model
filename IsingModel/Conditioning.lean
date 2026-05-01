@@ -2503,6 +2503,19 @@ theorem freeEnergy_high_temp_h_zero_deviation_sandwich_ferromagnetic
   freeEnergy_high_temp_h_zero_deviation_sandwich
     G J β (mul_nonneg hβ.le hJ) hne
 
+/-- **Ferromagnetic log Z deviation sandwich**: under `0 ≤ J, 0 < β`,
+`0 ≤ log Z - |ι|·log 2 ≤ β·J·|E|`. -/
+theorem log_partitionFunction_high_temp_expansion_h_zero_deviation_sandwich_ferromagnetic
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) :
+    0 ≤ Real.log (partitionFunction G ⟨J, 0, β⟩)
+        - (Fintype.card ι : ℝ) * Real.log 2 ∧
+    Real.log (partitionFunction G ⟨J, 0, β⟩)
+        - (Fintype.card ι : ℝ) * Real.log 2
+      ≤ β * J * G.edgeFinset.card :=
+  log_partitionFunction_high_temp_expansion_h_zero_deviation_sandwich
+    G J β (mul_nonneg hβ.le hJ)
+
 /-- **Ferromagnetic sharper f deviation bound**: under `0 ≤ J, 0 < β`
 and `0 < |ι|`, `f - log 2 ≤ β·J·|E|/|ι|`. Bridges via
 `mul_nonneg hβ.le hJ`. -/
