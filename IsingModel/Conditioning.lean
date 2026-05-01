@@ -2478,6 +2478,34 @@ theorem partitionFunction_high_temp_expansion_h_zero_complete_summary
    partitionFunction_high_temp_expansion_h_zero_closed_at_J_zero G β,
    partitionFunction_high_temp_expansion_h_zero_closed_at_beta_zero G J⟩
 
+/-- **freeEnergy complete-summary bundle at h = 0**: under `0 < |ι|` and
+`0 ≤ β·J`, single statement bundling all known §18.3 properties of
+`f` at `h = 0`:
+  1. `log 2 + (|E|/|ι|) log cosh(βJ) ≤ f` (lower bound),
+  2. `f ≤ log 2 + (|E|/|ι|) log(2·cosh(βJ))` (upper bound),
+  3. `f⟨0, 0, β⟩ = log 2` (consistency at trivial slice `J = 0`,
+     specialisation of `freeEnergy_J_zero` at `h = 0`),
+  4. `f⟨J, 0, 0⟩ = log 2` (consistency at trivial slice `β = 0`).
+Useful as a single import for downstream analytic / asymptotic
+arguments that need both bounds and trivial-slice values. -/
+theorem freeEnergy_high_temp_h_zero_complete_summary
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (hne : 0 < Fintype.card ι) :
+    Real.log 2 +
+        (G.edgeFinset.card : ℝ) / Fintype.card ι * Real.log (Real.cosh (β * J))
+      ≤ freeEnergy G ⟨J, 0, β⟩ ∧
+      freeEnergy G ⟨J, 0, β⟩
+        ≤ Real.log 2 + (G.edgeFinset.card : ℝ) / Fintype.card ι *
+            Real.log (2 * Real.cosh (β * J)) ∧
+      freeEnergy G (⟨0, 0, β⟩ : IsingParams ℝ) = Real.log 2 ∧
+      freeEnergy G (⟨J, 0, 0⟩ : IsingParams ℝ) = Real.log 2 :=
+  ⟨freeEnergy_high_temp_h_zero_lower_bound G J β hβJ hne,
+   freeEnergy_high_temp_h_zero_upper_bound G J β hβJ hne,
+   by
+     have := freeEnergy_J_zero G (0 : ℝ) β hne
+     simpa [mul_zero, Real.cosh_zero] using this,
+   freeEnergy_beta_zero G J 0 hne⟩
+
 /-- **Pair correlation under `Ferromagnetic` at h = 0**: under ferromagnetic
 parameters `⟨J, 0, β⟩` (i.e. `0 ≤ J, 0 < β`),
 `0 ≤ ⟨σ_i σ_j⟩ ≤ 1`. Bridges the `Ferromagnetic` typeclass and FV (3.46)
