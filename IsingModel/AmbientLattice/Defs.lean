@@ -844,6 +844,17 @@ theorem freeEnergyΛ_high_temp_h_zero_deviation_bound_exp
     G Λ J β hβJ hne
   linarith
 
+/-- **Λ-level ferromagnetic f deviation bound**: under `0 ≤ J, 0 < β`,
+`f_Λ - log 2 ≤ β·J·|E_Λ|/|Λ|`. -/
+theorem freeEnergyΛ_high_temp_h_zero_deviation_bound_exp_ferromagnetic
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (hne : 0 < Λ.card) :
+    freeEnergyΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) - Real.log 2
+      ≤ β * J * (inducedGraph G Λ).edgeFinset.card / Λ.card :=
+  freeEnergyΛ_high_temp_h_zero_deviation_bound_exp
+    G Λ J β (mul_nonneg hβ.le hJ) hne
+
 /-- **Λ-level Z high-temp sandwich (FV (3.45))**: under `0 ≤ β·J`,
 `2^|Λ| · cosh^|E_Λ| ≤ Z_Λ ≤ 2^(|Λ|+|E_Λ|) · cosh^|E_Λ|`. -/
 theorem partitionFunctionΛ_high_temp_expansion_h_zero_sandwich
