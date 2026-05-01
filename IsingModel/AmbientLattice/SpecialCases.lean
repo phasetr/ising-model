@@ -992,6 +992,23 @@ theorem correlationAlongExhaustion_high_temp_h_zero_at_pair_singleton_bundle_fer
   correlationAlongExhaustion_high_temp_h_zero_at_pair_singleton_bundle
     G Λ J β (mul_nonneg hβ.le hJ) i j n
 
+/-- **Along-ex pair correlation single-edge tanh lower bound at stage `n` (GJ §18.3 / FV (3.46))**:
+applies the Λ-level single-edge lower bound at the stage-`n`
+subtype `↑(Λ.volume n)`. Along-exhaustion wrapper for
+`correlationΛ_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges`. -/
+theorem correlationAlongExhaustion_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (n : ℕ)
+    (i j : ↑(Λ.volume n)) (hij : i ≠ j)
+    (he : s(i, j) ∈ (inducedGraph G (Λ.volume n)).edgeSet) :
+    Real.tanh (β * J) /
+        (2 : ℝ) ^ (inducedGraph G (Λ.volume n)).edgeFinset.card
+      ≤ correlationΛ G (Λ.volume n) (⟨J, 0, β⟩ : IsingParams ℝ)
+          ({i, j} : Finset ↑(Λ.volume n)) :=
+  correlationΛ_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges
+    G (Λ.volume n) J β hβJ i j hij he
+
 /-- **Along-ex singleton ferromagnetic vanish at h = 0**: under
 `0 ≤ J, 0 < β`, `correlationAlongExhaustion G Λ ⟨J, 0, β⟩ {i} n = 0`. -/
 theorem correlationAlongExhaustion_high_temp_h_zero_at_singleton_ferromagnetic

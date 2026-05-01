@@ -2931,6 +2931,22 @@ theorem
   correlationΛ_high_temp_h_zero_at_pair_singleton_trivial_slices_bundle
     (IsingModel.latticeGraph d) Λ J β i j
 
+/-- **ℤ^d Λ pair correlation single-edge tanh lower bound (GJ §18.3 / FV (3.46))**:
+under `0 ≤ β·J` and an edge `s(i, j) ∈ (inducedGraph (latticeGraph d) Λ).edgeSet`,
+`⟨σ_iσ_j⟩^Λ ≥ tanh(β·J) / 2^|E_Λ|`. ℤ^d wrapper of
+`correlationΛ_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges`. -/
+theorem
+    correlationΛ_latticeGraph_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
+    (hβJ : 0 ≤ β * J) (i j : ↑Λ) (hij : i ≠ j)
+    (he : s(i, j) ∈ (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet) :
+    Real.tanh (β * J) /
+        (2 : ℝ) ^ (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card
+      ≤ correlationΛ (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset ↑Λ) :=
+  correlationΛ_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges
+    (IsingModel.latticeGraph d) Λ J β hβJ i j hij he
+
 /-- **ℤ^d Λ-level magnetization vanishes at h = 0**:
 `correlationΛ (latticeGraph d) Λ ⟨J, 0, β⟩ {i} = 0` for any `i : ↑Λ`.
 ℤ^d wrapper of `correlationΛ_high_temp_h_zero_at_singleton`. -/
@@ -3222,6 +3238,25 @@ theorem
         (⟨J, 0, 0⟩ : IsingParams ℝ) ({i, j} : Finset (Fin d → ℤ)) n = 0 :=
   correlationAlongExhaustion_high_temp_h_zero_at_pair_singleton_trivial_slices_bundle
     (IsingModel.latticeGraph d) Λ J β i j n
+
+/-- **ℤ^d along-ex pair correlation single-edge tanh lower bound at stage `n` (GJ §18.3 / FV (3.46))**:
+applies the Λ-level single-edge lower bound at the stage-`n` subtype.
+ℤ^d wrapper of
+`correlationAlongExhaustion_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges`. -/
+theorem
+    correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
+    (hβJ : 0 ≤ β * J) (n : ℕ)
+    (i j : ↑(Λ.volume n)) (hij : i ≠ j)
+    (he : s(i, j) ∈
+      (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeSet) :
+    Real.tanh (β * J) /
+        (2 : ℝ) ^
+          (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card
+      ≤ correlationΛ (IsingModel.latticeGraph d) (Λ.volume n)
+          (⟨J, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset ↑(Λ.volume n)) :=
+  correlationAlongExhaustion_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges
+    (IsingModel.latticeGraph d) Λ J β hβJ n i j hij he
 
 /-- **ℤ^d along-ex pair at J=0,h=0**: = 0. -/
 theorem correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_pair_J_zero
