@@ -2202,6 +2202,51 @@ theorem partitionFunction_high_temp_expansion_h_zero_ratio_sandwich_bundle
    partitionFunction_high_temp_expansion_h_zero_ratio_sandwich_beta_zero
      G J β hβJ⟩
 
+/-- **Ferromagnetic Z ratio sandwich at J=0 trivial slice**. -/
+theorem partitionFunction_high_temp_expansion_h_zero_ratio_sandwich_ferromagnetic
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) :
+    Real.cosh (β * J) ^ G.edgeFinset.card
+      ≤ partitionFunction G ⟨J, 0, β⟩ /
+          partitionFunction G (⟨0, 0, β⟩ : IsingParams ℝ) ∧
+    partitionFunction G ⟨J, 0, β⟩ /
+        partitionFunction G (⟨0, 0, β⟩ : IsingParams ℝ)
+      ≤ Real.exp (β * J * G.edgeFinset.card) :=
+  partitionFunction_high_temp_expansion_h_zero_ratio_sandwich
+    G J β (mul_nonneg hβ.le hJ)
+
+/-- **Ferromagnetic Z ratio sandwich at β=0 trivial slice**. -/
+theorem partitionFunction_high_temp_expansion_h_zero_ratio_sandwich_beta_zero_ferromagnetic
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) :
+    Real.cosh (β * J) ^ G.edgeFinset.card
+      ≤ partitionFunction G ⟨J, 0, β⟩ /
+          partitionFunction G (⟨J, 0, 0⟩ : IsingParams ℝ) ∧
+    partitionFunction G ⟨J, 0, β⟩ /
+        partitionFunction G (⟨J, 0, 0⟩ : IsingParams ℝ)
+      ≤ Real.exp (β * J * G.edgeFinset.card) :=
+  partitionFunction_high_temp_expansion_h_zero_ratio_sandwich_beta_zero
+    G J β (mul_nonneg hβ.le hJ)
+
+/-- **Ferromagnetic Z ratio sandwich bundle**. -/
+theorem partitionFunction_high_temp_expansion_h_zero_ratio_sandwich_bundle_ferromagnetic
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) :
+    (Real.cosh (β * J) ^ G.edgeFinset.card
+        ≤ partitionFunction G ⟨J, 0, β⟩ /
+            partitionFunction G (⟨0, 0, β⟩ : IsingParams ℝ) ∧
+      partitionFunction G ⟨J, 0, β⟩ /
+          partitionFunction G (⟨0, 0, β⟩ : IsingParams ℝ)
+        ≤ Real.exp (β * J * G.edgeFinset.card)) ∧
+    (Real.cosh (β * J) ^ G.edgeFinset.card
+        ≤ partitionFunction G ⟨J, 0, β⟩ /
+            partitionFunction G (⟨J, 0, 0⟩ : IsingParams ℝ) ∧
+      partitionFunction G ⟨J, 0, β⟩ /
+          partitionFunction G (⟨J, 0, 0⟩ : IsingParams ℝ)
+        ≤ Real.exp (β * J * G.edgeFinset.card)) :=
+  partitionFunction_high_temp_expansion_h_zero_ratio_sandwich_bundle
+    G J β (mul_nonneg hβ.le hJ)
+
 /-- **Ferromagnetic Z relative-deviation sandwich**: under `0 ≤ J, 0 < β`,
 `cosh(β·J)^|E| ≤ Z / 2^|ι| ≤ exp(β·J·|E|)`. -/
 theorem partitionFunction_high_temp_expansion_h_zero_relative_sandwich_ferromagnetic
