@@ -689,6 +689,24 @@ theorem correlationΛ_high_temp_h_zero_at_pair_le_one
     correlationΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset ↑Λ) ≤ 1 :=
   correlationΛ_le_one G Λ _ {i, j}
 
+/-- **Λ-level singleton at J=0,h=0**: `correlationΛ G Λ ⟨0,0,β⟩ {i} = 0`. -/
+theorem correlationΛ_high_temp_h_zero_at_singleton_J_zero
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (β : ℝ) (i : ↑Λ) :
+    correlationΛ G Λ (⟨0, 0, β⟩ : IsingParams ℝ) ({i} : Finset ↑Λ) = 0 := by
+  rw [correlationΛ_apply]
+  exact IsingModel.correlation_high_temp_h_zero_at_singleton_J_zero
+    (inducedGraph G Λ) β i
+
+/-- **Λ-level pair at J=0,h=0**: `correlationΛ G Λ ⟨0,0,β⟩ {i,j} = 0`. -/
+theorem correlationΛ_high_temp_h_zero_at_pair_J_zero
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (β : ℝ) (i j : ↑Λ) :
+    correlationΛ G Λ (⟨0, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset ↑Λ) = 0 := by
+  rw [correlationΛ_apply]
+  exact IsingModel.correlation_high_temp_h_zero_at_pair_J_zero
+    (inducedGraph G Λ) β i j
+
 /-- The correlation on `Λ` is at least `-1`. Lower side of
 `abs_correlationΛ_le_one`. -/
 theorem neg_one_le_correlationΛ (G : SimpleGraph V) (Λ : Finset V)
