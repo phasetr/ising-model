@@ -703,6 +703,33 @@ theorem freeEnergyΛ_high_temp_h_zero_sandwich_exp_ferromagnetic
   freeEnergyΛ_high_temp_h_zero_sandwich_exp G Λ J β
     (mul_nonneg hβ.le hJ) hne
 
+/-- **Λ-level sharper f complete-summary exp bundle**: under `0 < |Λ|`,
+`0 ≤ β·J`, single statement bundling sharper sandwich + trivial-slice
+values at the Λ-layer. -/
+theorem freeEnergyΛ_high_temp_h_zero_complete_summary_exp
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (hne : 0 < Λ.card) :
+    Real.log 2 +
+        ((inducedGraph G Λ).edgeFinset.card : ℝ) / Λ.card *
+          Real.log (Real.cosh (β * J))
+      ≤ freeEnergyΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) ∧
+    freeEnergyΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+      ≤ Real.log 2 +
+          β * J * (inducedGraph G Λ).edgeFinset.card / Λ.card ∧
+    freeEnergyΛ G Λ (⟨0, 0, β⟩ : IsingParams ℝ) = Real.log 2 ∧
+    freeEnergyΛ G Λ (⟨J, 0, 0⟩ : IsingParams ℝ) = Real.log 2 := by
+  have hcard : 0 < Fintype.card (↑Λ : Type _) := by
+    rw [Fintype.card_coe]; exact hne
+  obtain ⟨h1, h2⟩ := freeEnergyΛ_high_temp_h_zero_sandwich_exp
+    G Λ J β hβJ hne
+  refine ⟨h1, h2, ?_, ?_⟩
+  · rw [freeEnergyΛ_apply]
+    have := IsingModel.freeEnergy_J_zero (inducedGraph G Λ) (0 : ℝ) β hcard
+    simpa [mul_zero, Real.cosh_zero] using this
+  · rw [freeEnergyΛ_apply]
+    exact IsingModel.freeEnergy_beta_zero (inducedGraph G Λ) J 0 hcard
+
 /-- **Λ-level Z high-temp sandwich (FV (3.45))**: under `0 ≤ β·J`,
 `2^|Λ| · cosh^|E_Λ| ≤ Z_Λ ≤ 2^(|Λ|+|E_Λ|) · cosh^|E_Λ|`. -/
 theorem partitionFunctionΛ_high_temp_expansion_h_zero_sandwich
