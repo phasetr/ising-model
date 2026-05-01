@@ -2453,6 +2453,18 @@ theorem correlation_high_temp_h_zero_at_singleton_abs_le_one
     |correlation G ⟨J, 0, β⟩ ({i} : Finset ι)| ≤ 1 :=
   abs_correlation_le_one G ⟨J, 0, β⟩ {i}
 
+/-- **Pair correlation under `Ferromagnetic` at h = 0**: under ferromagnetic
+parameters `⟨J, 0, β⟩` (i.e. `0 ≤ J, 0 < β`),
+`0 ≤ ⟨σ_i σ_j⟩ ≤ 1`. Bridges the `Ferromagnetic` typeclass and FV (3.46)
+nonneg/upper-bound. -/
+theorem correlation_high_temp_h_zero_at_pair_ferromagnetic
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (i j : ι) :
+    0 ≤ correlation G ⟨J, 0, β⟩ ({i, j} : Finset ι) ∧
+      correlation G ⟨J, 0, β⟩ ({i, j} : Finset ι) ≤ 1 :=
+  correlation_high_temp_h_zero_at_pair_sandwich G J β
+    (mul_nonneg hβ.le hJ) i j
+
 /-- **Pair correlation high-temp closed form (FV (3.46) at A = {i,j})**:
 for `i ≠ j` and at `h = 0`,
 `⟨σ_i σ_j⟩_{β,0} = (∑_{X : ∂X = {i,j}} tanh^|X|) / (∑_{X : ∂X = ∅} tanh^|X|)`.
