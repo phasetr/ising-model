@@ -1929,6 +1929,41 @@ theorem freeEnergy_high_temp_h_zero_upper_bound_exp
       div_mul_cancel₀ _ hcard_pos.ne']
   linarith
 
+/-- **Ferromagnetic sharper Z high-temperature upper bound**: under
+`0 ≤ J, 0 < β`, `Z(G; J, 0, β) ≤ 2^|ι| · exp(β·J·|E|)`. Bridges
+ferromagnetic-style hypotheses with Step 393 via `mul_nonneg hβ.le hJ`. -/
+theorem partitionFunction_high_temp_expansion_h_zero_upper_bound_exp_ferromagnetic
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) :
+    partitionFunction G ⟨J, 0, β⟩
+      ≤ (2 : ℝ) ^ Fintype.card ι *
+          Real.exp (β * J * G.edgeFinset.card) :=
+  partitionFunction_high_temp_expansion_h_zero_upper_bound_exp
+    G J β (mul_nonneg hβ.le hJ)
+
+/-- **Ferromagnetic sharper log Z high-temperature upper bound**: under
+`0 ≤ J, 0 < β`, `log Z ≤ |ι|·log 2 + β·J·|E|`. Bridges ferromagnetic
+hypotheses with Step 403. -/
+theorem log_partitionFunction_high_temp_expansion_h_zero_upper_bound_exp_ferromagnetic
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) :
+    Real.log (partitionFunction G ⟨J, 0, β⟩)
+      ≤ (Fintype.card ι : ℝ) * Real.log 2
+        + β * J * G.edgeFinset.card :=
+  log_partitionFunction_high_temp_expansion_h_zero_upper_bound_exp
+    G J β (mul_nonneg hβ.le hJ)
+
+/-- **Ferromagnetic sharper f high-temperature upper bound**: under
+`0 < |ι|`, `0 ≤ J, 0 < β`, `f ≤ log 2 + β·J·|E|/|ι|`. Bridges
+ferromagnetic hypotheses with Step 394. -/
+theorem freeEnergy_high_temp_h_zero_upper_bound_exp_ferromagnetic
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (hne : 0 < Fintype.card ι) :
+    freeEnergy G ⟨J, 0, β⟩
+      ≤ Real.log 2 + β * J * G.edgeFinset.card / Fintype.card ι :=
+  freeEnergy_high_temp_h_zero_upper_bound_exp
+    G J β (mul_nonneg hβ.le hJ) hne
+
 /-- **freeEnergy high-temperature upper bound from FV (3.45)**: under
 `0 < |ι|` and `0 ≤ β·J`,
 `freeEnergy(G; J, 0, β) ≤ log 2 + (|E|/|ι|) · log(2 · cosh(β·J))`.
