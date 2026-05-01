@@ -1888,6 +1888,35 @@ theorem log_partitionFunction_high_temp_expansion_h_zero_sandwich_exp
     Real.log_nonneg h_one_le_sum
   linarith
 
+/-- **Sharper log Z complete-summary exp bundle**: under `0 ≤ β·J`,
+single statement bundling sharper sandwich + trivial-slice values:
+  1. `|ι|·log 2 + |E|·log cosh(β·J) ≤ log Z` (lower),
+  2. `log Z ≤ |ι|·log 2 + β·J·|E|` (sharper exp upper),
+  3. `log Z⟨0, 0, β⟩ = |ι|·log 2` (J = 0 trivial slice),
+  4. `log Z⟨J, 0, 0⟩ = |ι|·log 2` (β = 0 trivial slice). -/
+theorem log_partitionFunction_high_temp_expansion_h_zero_complete_summary_exp
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) :
+    (Fintype.card ι : ℝ) * Real.log 2
+        + (G.edgeFinset.card : ℝ) * Real.log (Real.cosh (β * J))
+      ≤ Real.log (partitionFunction G ⟨J, 0, β⟩) ∧
+    Real.log (partitionFunction G ⟨J, 0, β⟩)
+      ≤ (Fintype.card ι : ℝ) * Real.log 2
+        + β * J * G.edgeFinset.card ∧
+    Real.log (partitionFunction G (⟨0, 0, β⟩ : IsingParams ℝ))
+      = (Fintype.card ι : ℝ) * Real.log 2 ∧
+    Real.log (partitionFunction G (⟨J, 0, 0⟩ : IsingParams ℝ))
+      = (Fintype.card ι : ℝ) * Real.log 2 := by
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · exact (log_partitionFunction_high_temp_expansion_h_zero_sandwich_exp
+      G J β hβJ).1
+  · exact log_partitionFunction_high_temp_expansion_h_zero_upper_bound_exp
+      G J β hβJ
+  · rw [partitionFunction_high_temp_expansion_h_zero_closed_at_J_zero,
+        Real.log_pow]
+  · rw [partitionFunction_high_temp_expansion_h_zero_closed_at_beta_zero,
+        Real.log_pow]
+
 /-- **Sharper freeEnergy high-temperature upper bound (FV (3.45))**: under
 `0 < |ι|` and `0 ≤ β·J`,
 `f(G; J, 0, β) ≤ log 2 + β·J·|E|/|ι|`.
