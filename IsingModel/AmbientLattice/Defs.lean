@@ -763,6 +763,19 @@ theorem correlationΛ_high_temp_h_zero_at_singleton_eq_zero_le_one
   ⟨correlationΛ_high_temp_h_zero_at_singleton G Λ J β i,
    (correlationΛ_high_temp_h_zero_at_singleton G Λ J β i).symm ▸ zero_le_one⟩
 
+/-- **Λ pair+singleton bundle at h=0**: combines pair sandwich and
+singleton vanishing. -/
+theorem correlationΛ_high_temp_h_zero_at_pair_singleton_bundle
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (i j : ↑Λ) :
+    correlationΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) ({i} : Finset ↑Λ) = 0 ∧
+      0 ≤ correlationΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset ↑Λ) ∧
+      correlationΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset ↑Λ) ≤ 1 :=
+  ⟨correlationΛ_high_temp_h_zero_at_singleton G Λ J β i,
+   correlationΛ_high_temp_h_zero_at_pair_nonneg G Λ J β hβJ i j,
+   correlationΛ_high_temp_h_zero_at_pair_le_one G Λ J β i j⟩
+
 /-- The correlation on `Λ` is at least `-1`. Lower side of
 `abs_correlationΛ_le_one`. -/
 theorem neg_one_le_correlationΛ (G : SimpleGraph V) (Λ : Finset V)
