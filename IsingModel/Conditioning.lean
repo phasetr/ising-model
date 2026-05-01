@@ -1809,6 +1809,29 @@ theorem partitionFunction_high_temp_expansion_h_zero_sandwich
   ⟨partitionFunction_high_temp_expansion_h_zero_lower_bound G J β hβJ,
    partitionFunction_high_temp_expansion_h_zero_upper_bound G J β hβJ⟩
 
+omit [DecidableEq ι] in
+/-- **Z high-temp bounds consistency**: the FV (3.45) lower bound is
+always at most the upper bound:
+`2^|ι| · cosh^|E| ≤ 2^(|ι|+|E|) · cosh^|E|`. Trivial sanity check. -/
+theorem partitionFunction_high_temp_h_zero_lower_le_upper
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J β : ℝ) :
+    (2 : ℝ) ^ Fintype.card ι * Real.cosh (β * J) ^ G.edgeFinset.card
+      ≤ (2 : ℝ) ^ (Fintype.card ι + G.edgeFinset.card) *
+          Real.cosh (β * J) ^ G.edgeFinset.card := by
+  have hpref_nn : 0 ≤
+      (2 : ℝ) ^ Fintype.card ι * Real.cosh (β * J) ^ G.edgeFinset.card :=
+    mul_nonneg (pow_nonneg (by norm_num) _) (pow_nonneg (Real.cosh_pos _).le _)
+  rw [show (Fintype.card ι + G.edgeFinset.card : ℕ)
+      = Fintype.card ι + G.edgeFinset.card from rfl, pow_add]
+  calc (2 : ℝ) ^ Fintype.card ι * Real.cosh (β * J) ^ G.edgeFinset.card
+      = 1 * ((2 : ℝ) ^ Fintype.card ι * Real.cosh (β * J) ^ G.edgeFinset.card) := by ring
+    _ ≤ (2 : ℝ) ^ G.edgeFinset.card *
+        ((2 : ℝ) ^ Fintype.card ι * Real.cosh (β * J) ^ G.edgeFinset.card) := by
+        apply mul_le_mul_of_nonneg_right _ hpref_nn
+        exact one_le_pow₀ (by norm_num : (1:ℝ) ≤ 2)
+    _ = (2 : ℝ) ^ Fintype.card ι * (2 : ℝ) ^ G.edgeFinset.card *
+        Real.cosh (β * J) ^ G.edgeFinset.card := by ring
+
 /-- **Free-energy lower bound from FV (3.45)** at zero external field:
 under `0 < |ι|` and `0 ≤ β * J`,
 `log 2 + (|E|/|ι|) · log(cosh(β·J)) ≤ freeEnergy(G, ⟨J, 0, β⟩)`.
