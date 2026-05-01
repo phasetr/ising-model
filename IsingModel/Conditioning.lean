@@ -2110,6 +2110,25 @@ theorem partitionFunction_high_temp_expansion_h_zero_relative_sandwich_ferromagn
   partitionFunction_high_temp_expansion_h_zero_relative_sandwich
     G J β (mul_nonneg hβ.le hJ)
 
+/-- **Ferromagnetic Z strict deviation**: under `0 < J, 0 < β` and
+`0 < |E|`, `2^|ι| < Z`. -/
+theorem partitionFunction_high_temp_expansion_h_zero_pow_two_lt_ferromagnetic
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hJ : 0 < J) (hβ : 0 < β) (hEpos : 0 < G.edgeFinset.card) :
+    (2 : ℝ) ^ Fintype.card ι < partitionFunction G ⟨J, 0, β⟩ :=
+  partitionFunction_high_temp_expansion_h_zero_pow_two_lt
+    G J β (mul_pos hβ hJ) hEpos
+
+/-- **Ferromagnetic log Z strict deviation**: under `0 < J, 0 < β` and
+`0 < |E|`, `0 < log Z - |ι|·log 2`. -/
+theorem log_partitionFunction_high_temp_expansion_h_zero_deviation_pos_ferromagnetic
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hJ : 0 < J) (hβ : 0 < β) (hEpos : 0 < G.edgeFinset.card) :
+    0 < Real.log (partitionFunction G ⟨J, 0, β⟩)
+        - (Fintype.card ι : ℝ) * Real.log 2 :=
+  log_partitionFunction_high_temp_expansion_h_zero_deviation_pos
+    G J β (mul_pos hβ hJ) hEpos
+
 /-- **Ferromagnetic sharper Z high-temperature upper bound**: under
 `0 ≤ J, 0 < β`, `Z(G; J, 0, β) ≤ 2^|ι| · exp(β·J·|E|)`. Bridges
 ferromagnetic-style hypotheses with Step 393 via `mul_nonneg hβ.le hJ`. -/
