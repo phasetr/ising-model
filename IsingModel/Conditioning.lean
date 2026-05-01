@@ -2281,6 +2281,19 @@ theorem partitionFunction_high_temp_expansion_h_zero_ratio_bound_beta_zero_ferro
   partitionFunction_high_temp_expansion_h_zero_ratio_bound_beta_zero
     G J β (mul_nonneg hβ.le hJ)
 
+/-- **Ferromagnetic Z ratio upper bound bundle**: under `0 ≤ J, 0 < β`. -/
+theorem partitionFunction_high_temp_expansion_h_zero_ratio_bound_bundle_ferromagnetic
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) :
+    partitionFunction G ⟨J, 0, β⟩ /
+        partitionFunction G (⟨0, 0, β⟩ : IsingParams ℝ)
+        ≤ Real.exp (β * J * G.edgeFinset.card) ∧
+    partitionFunction G ⟨J, 0, β⟩ /
+        partitionFunction G (⟨J, 0, 0⟩ : IsingParams ℝ)
+        ≤ Real.exp (β * J * G.edgeFinset.card) :=
+  partitionFunction_high_temp_expansion_h_zero_ratio_bound_bundle
+    G J β (mul_nonneg hβ.le hJ)
+
 /-- **Ferromagnetic Z relative-deviation sandwich**: under `0 ≤ J, 0 < β`,
 `cosh(β·J)^|E| ≤ Z / 2^|ι| ≤ exp(β·J·|E|)`. -/
 theorem partitionFunction_high_temp_expansion_h_zero_relative_sandwich_ferromagnetic
