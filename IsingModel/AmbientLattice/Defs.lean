@@ -745,6 +745,14 @@ theorem correlationΛ_high_temp_h_zero_at_pair_ferromagnetic
   correlationΛ_high_temp_h_zero_at_pair_sandwich G Λ J β
     (mul_nonneg hβ.le hJ) i j
 
+/-- **Λ singleton ferromagnetic vanish**: `0 ≤ J, 0 < β` → `⟨σ_i⟩^Λ = 0`. -/
+theorem correlationΛ_high_temp_h_zero_at_singleton_ferromagnetic
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (_hJ : 0 ≤ J) (_hβ : 0 < β) (i : ↑Λ) :
+    correlationΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) ({i} : Finset ↑Λ) = 0 :=
+  correlationΛ_high_temp_h_zero_at_singleton G Λ J β i
+
 /-- The correlation on `Λ` is at least `-1`. Lower side of
 `abs_correlationΛ_le_one`. -/
 theorem neg_one_le_correlationΛ (G : SimpleGraph V) (Λ : Finset V)
