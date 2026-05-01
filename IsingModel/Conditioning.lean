@@ -2313,6 +2313,17 @@ theorem freeEnergy_high_temp_h_zero_deviation_bound_exp
   have h := freeEnergy_high_temp_h_zero_upper_bound_exp G J β hβJ hne
   linarith
 
+/-- **Ferromagnetic sharper f deviation bound**: under `0 ≤ J, 0 < β`
+and `0 < |ι|`, `f - log 2 ≤ β·J·|E|/|ι|`. Bridges via
+`mul_nonneg hβ.le hJ`. -/
+theorem freeEnergy_high_temp_h_zero_deviation_bound_exp_ferromagnetic
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (hne : 0 < Fintype.card ι) :
+    freeEnergy G ⟨J, 0, β⟩ - Real.log 2
+      ≤ β * J * G.edgeFinset.card / Fintype.card ι :=
+  freeEnergy_high_temp_h_zero_deviation_bound_exp
+    G J β (mul_nonneg hβ.le hJ) hne
+
 /-- **Free-energy high-temperature expansion decomposition (GJ §18.3 / FV (3.45))**:
 under `0 < |ι|` and `0 ≤ β·J`,
 `freeEnergy(G; J, 0, β) = log 2 + (|E|/|ι|) · log(cosh βJ) + log(∑_{X even} tanh^|X|) / |ι|`.
