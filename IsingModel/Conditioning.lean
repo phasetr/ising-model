@@ -2921,6 +2921,21 @@ theorem freeEnergy_high_temp_h_zero_ratio_bound_bundle_ferromagnetic
   freeEnergy_high_temp_h_zero_ratio_bound_bundle
     G J β (mul_nonneg hβ.le hJ) hne
 
+/-- **Strict deviation bundle**: under `0 < β·J`, `0 < |E|`,
+`0 < |ι|`, single statement bundling Z, log Z, and f strict deviations. -/
+theorem partitionFunction_high_temp_expansion_h_zero_strict_deviation_bundle
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hβJ : 0 < β * J) (hne : 0 < Fintype.card ι)
+    (hEpos : 0 < G.edgeFinset.card) :
+    (2 : ℝ) ^ Fintype.card ι < partitionFunction G ⟨J, 0, β⟩ ∧
+    0 < Real.log (partitionFunction G ⟨J, 0, β⟩)
+        - (Fintype.card ι : ℝ) * Real.log 2 ∧
+    0 < freeEnergy G ⟨J, 0, β⟩ - Real.log 2 :=
+  ⟨partitionFunction_high_temp_expansion_h_zero_pow_two_lt G J β hβJ hEpos,
+   log_partitionFunction_high_temp_expansion_h_zero_deviation_pos
+     G J β hβJ hEpos,
+   freeEnergy_high_temp_h_zero_deviation_pos G J β hβJ hne hEpos⟩
+
 /-- **Ferromagnetic sharper f deviation bound**: under `0 ≤ J, 0 < β`
 and `0 < |ι|`, `f - log 2 ≤ β·J·|E|/|ι|`. Bridges via
 `mul_nonneg hβ.le hJ`. -/
