@@ -2181,6 +2181,27 @@ theorem partitionFunction_high_temp_expansion_h_zero_ratio_sandwich_beta_zero
   rw [h_β0]
   exact partitionFunction_high_temp_expansion_h_zero_relative_sandwich G J β hβJ
 
+/-- **Z ratio sandwich bundle**: under `0 ≤ β·J`, single statement
+bundling Z ratios at both `J = 0` and `β = 0` trivial slices. -/
+theorem partitionFunction_high_temp_expansion_h_zero_ratio_sandwich_bundle
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) :
+    (Real.cosh (β * J) ^ G.edgeFinset.card
+        ≤ partitionFunction G ⟨J, 0, β⟩ /
+            partitionFunction G (⟨0, 0, β⟩ : IsingParams ℝ) ∧
+      partitionFunction G ⟨J, 0, β⟩ /
+          partitionFunction G (⟨0, 0, β⟩ : IsingParams ℝ)
+        ≤ Real.exp (β * J * G.edgeFinset.card)) ∧
+    (Real.cosh (β * J) ^ G.edgeFinset.card
+        ≤ partitionFunction G ⟨J, 0, β⟩ /
+            partitionFunction G (⟨J, 0, 0⟩ : IsingParams ℝ) ∧
+      partitionFunction G ⟨J, 0, β⟩ /
+          partitionFunction G (⟨J, 0, 0⟩ : IsingParams ℝ)
+        ≤ Real.exp (β * J * G.edgeFinset.card)) :=
+  ⟨partitionFunction_high_temp_expansion_h_zero_ratio_sandwich G J β hβJ,
+   partitionFunction_high_temp_expansion_h_zero_ratio_sandwich_beta_zero
+     G J β hβJ⟩
+
 /-- **Ferromagnetic Z relative-deviation sandwich**: under `0 ≤ J, 0 < β`,
 `cosh(β·J)^|E| ≤ Z / 2^|ι| ≤ exp(β·J·|E|)`. -/
 theorem partitionFunction_high_temp_expansion_h_zero_relative_sandwich_ferromagnetic
