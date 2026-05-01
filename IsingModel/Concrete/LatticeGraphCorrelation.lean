@@ -2790,6 +2790,46 @@ theorem high_temp_numerator_filter_eq_empty_of_odd_card_alongExhaustion_latticeG
   high_temp_numerator_filter_eq_empty_of_odd_card_alongExhaustion
     (IsingModel.latticeGraph d) Λ n A hA_odd
 
+/-- **ℤ^d along-exhaustion Z high-temp sandwich**: at every stage `n`,
+under `0 ≤ β·J`,
+`2^|Λ_n| · cosh^|E_n| ≤ Z_n ≤ 2^(|Λ_n|+|E_n|) · cosh^|E_n|`. ℤ^d wrapper. -/
+theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_sandwich
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
+    (hβJ : 0 ≤ β * J) (n : ℕ) :
+    (2 : ℝ) ^ (Λ.volume n).card *
+        Real.cosh (β * J) ^
+          (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card
+      ≤ partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) n
+    ∧ partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) n
+      ≤ (2 : ℝ) ^ ((Λ.volume n).card +
+            (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card) *
+          Real.cosh (β * J) ^
+              (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card :=
+  partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_sandwich
+    (IsingModel.latticeGraph d) Λ J β hβJ n
+
+/-- **ℤ^d along-exhaustion freeEnergy high-temp sandwich**: at every stage `n`,
+under `0 ≤ β·J` and `0 < |Λ_n|`,
+`log 2 + (|E_n|/|Λ_n|) · log cosh(βJ) ≤ f_n ≤ log 2 + (|E_n|/|Λ_n|) · log(2·cosh βJ)`.
+ℤ^d wrapper. -/
+theorem freeEnergyAlongExhaustion_latticeGraph_high_temp_h_zero_sandwich
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
+    (hβJ : 0 ≤ β * J) (n : ℕ) (hne : 0 < (Λ.volume n).card) :
+    Real.log 2 +
+        ((inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card : ℝ) /
+          (Λ.volume n).card * Real.log (Real.cosh (β * J))
+      ≤ freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) n
+    ∧ freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) n
+      ≤ Real.log 2
+        + ((inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card : ℝ) /
+            (Λ.volume n).card * Real.log (2 * Real.cosh (β * J)) :=
+  freeEnergyAlongExhaustion_high_temp_h_zero_sandwich
+    (IsingModel.latticeGraph d) Λ J β hβJ n hne
+
 /-- **ℤ^d along-exhaustion Z₂ symmetry of correlation at h = 0**:
 for ambient `A : Finset (Fin d → ℤ)` of odd cardinality,
 `correlationAlongExhaustion (latticeGraph d) Λ ⟨J, 0, β⟩ A n = 0` at
