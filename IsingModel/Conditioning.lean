@@ -2893,6 +2893,34 @@ theorem freeEnergy_high_temp_h_zero_ratio_bound_bundle
   ⟨freeEnergy_high_temp_h_zero_ratio_bound G J β hβJ hne,
    freeEnergy_high_temp_h_zero_ratio_bound_beta_zero G J β hβJ hne⟩
 
+/-- **Ferromagnetic f ratio bound at J=0**. -/
+theorem freeEnergy_high_temp_h_zero_ratio_bound_ferromagnetic
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (hne : 0 < Fintype.card ι) :
+    freeEnergy G ⟨J, 0, β⟩ - freeEnergy G (⟨0, 0, β⟩ : IsingParams ℝ)
+      ≤ β * J * G.edgeFinset.card / Fintype.card ι :=
+  freeEnergy_high_temp_h_zero_ratio_bound G J β (mul_nonneg hβ.le hJ) hne
+
+/-- **Ferromagnetic f ratio bound at β=0**. -/
+theorem freeEnergy_high_temp_h_zero_ratio_bound_beta_zero_ferromagnetic
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (hne : 0 < Fintype.card ι) :
+    freeEnergy G ⟨J, 0, β⟩ - freeEnergy G (⟨J, 0, 0⟩ : IsingParams ℝ)
+      ≤ β * J * G.edgeFinset.card / Fintype.card ι :=
+  freeEnergy_high_temp_h_zero_ratio_bound_beta_zero
+    G J β (mul_nonneg hβ.le hJ) hne
+
+/-- **Ferromagnetic f ratio bound bundle**. -/
+theorem freeEnergy_high_temp_h_zero_ratio_bound_bundle_ferromagnetic
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (hne : 0 < Fintype.card ι) :
+    freeEnergy G ⟨J, 0, β⟩ - freeEnergy G (⟨0, 0, β⟩ : IsingParams ℝ)
+        ≤ β * J * G.edgeFinset.card / Fintype.card ι ∧
+    freeEnergy G ⟨J, 0, β⟩ - freeEnergy G (⟨J, 0, 0⟩ : IsingParams ℝ)
+        ≤ β * J * G.edgeFinset.card / Fintype.card ι :=
+  freeEnergy_high_temp_h_zero_ratio_bound_bundle
+    G J β (mul_nonneg hβ.le hJ) hne
+
 /-- **Ferromagnetic sharper f deviation bound**: under `0 ≤ J, 0 < β`
 and `0 < |ι|`, `f - log 2 ≤ β·J·|E|/|ι|`. Bridges via
 `mul_nonneg hβ.le hJ`. -/
