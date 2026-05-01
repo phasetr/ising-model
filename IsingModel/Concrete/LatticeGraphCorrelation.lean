@@ -3719,6 +3719,32 @@ theorem partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_ratio_bound_
   partitionFunctionΛ_high_temp_expansion_h_zero_ratio_bound_beta_zero
     (IsingModel.latticeGraph d) Λ J β hβJ
 
+/-- **ℤ^d Λ ferromagnetic Z ratio upper bound at J=0**. -/
+theorem partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_ratio_bound_ferromagnetic
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
+    (hJ : 0 ≤ J) (hβ : 0 < β) :
+    partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) /
+        partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+          (⟨0, 0, β⟩ : IsingParams ℝ)
+      ≤ Real.exp (β * J *
+          (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card) :=
+  partitionFunctionΛ_high_temp_expansion_h_zero_ratio_bound_ferromagnetic
+    (IsingModel.latticeGraph d) Λ J β hJ hβ
+
+/-- **ℤ^d Λ ferromagnetic Z ratio upper bound at β=0**. -/
+theorem partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_ratio_bound_beta_zero_ferromagnetic
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
+    (hJ : 0 ≤ J) (hβ : 0 < β) :
+    partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) /
+        partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, 0⟩ : IsingParams ℝ)
+      ≤ Real.exp (β * J *
+          (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card) :=
+  partitionFunctionΛ_high_temp_expansion_h_zero_ratio_bound_beta_zero_ferromagnetic
+    (IsingModel.latticeGraph d) Λ J β hJ hβ
+
 /-- **ℤ^d along-exhaustion correlation high-temperature closed form (FV §3.7.3 eq. (3.46))**:
 at every stage `n` with `A ⊆ Λ.volume n`, FV (3.46) closed form holds
 on the lifted Finset. When `A ⊄`, equals `0`.
@@ -4803,6 +4829,32 @@ theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero
           (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card) :=
   partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_bound_beta_zero
     (IsingModel.latticeGraph d) Λ J β hβJ n
+
+/-- **ℤ^d along-ex ferromagnetic Z ratio upper bound at J=0, stage `n`**. -/
+theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_ratio_bound_ferromagnetic
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
+    (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ) :
+    partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) n /
+        partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨0, 0, β⟩ : IsingParams ℝ) n
+      ≤ Real.exp (β * J *
+          (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card) :=
+  partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_bound_ferromagnetic
+    (IsingModel.latticeGraph d) Λ J β hJ hβ n
+
+/-- **ℤ^d along-ex ferromagnetic Z ratio upper bound at β=0, stage `n`**. -/
+theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_ratio_bound_beta_zero_ferromagnetic
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
+    (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ) :
+    partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) n /
+        partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, 0⟩ : IsingParams ℝ) n
+      ≤ Real.exp (β * J *
+          (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card) :=
+  partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_bound_beta_zero_ferromagnetic
+    (IsingModel.latticeGraph d) Λ J β hJ hβ n
 
 /-- **ℤ^d along-exhaustion partition function high-temperature closed form (FV §3.7.3 eq. (3.45))**:
 at every stage `n`,
