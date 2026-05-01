@@ -1792,6 +1792,23 @@ theorem freeEnergy_high_temp_h_zero_upper_bound
       field_simp; ring]
   exact mul_le_mul_of_nonneg_left hlog (by positivity)
 
+/-- **Z high-temperature sandwich bounds (GJ §18.3 / FV (3.45))**: under
+`0 ≤ β·J`,
+`2^|ι| · (cosh βJ)^|E| ≤ Z(G; J, 0, β) ≤ 2^(|ι|+|E|) · (cosh βJ)^|E|`.
+Combines `partitionFunction_high_temp_expansion_h_zero_lower_bound`
+(Step 286) and `partitionFunction_high_temp_expansion_h_zero_upper_bound`
+(Step 320) into a single sandwich statement. -/
+theorem partitionFunction_high_temp_expansion_h_zero_sandwich
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) :
+    (2 : ℝ) ^ Fintype.card ι * Real.cosh (β * J) ^ G.edgeFinset.card
+      ≤ partitionFunction G ⟨J, 0, β⟩
+    ∧ partitionFunction G ⟨J, 0, β⟩
+      ≤ (2 : ℝ) ^ (Fintype.card ι + G.edgeFinset.card) *
+          Real.cosh (β * J) ^ G.edgeFinset.card :=
+  ⟨partitionFunction_high_temp_expansion_h_zero_lower_bound G J β hβJ,
+   partitionFunction_high_temp_expansion_h_zero_upper_bound G J β hβJ⟩
+
 /-- **Free-energy lower bound from FV (3.45)** at zero external field:
 under `0 < |ι|` and `0 ≤ β * J`,
 `log 2 + (|E|/|ι|) · log(cosh(β·J)) ≤ freeEnergy(G, ⟨J, 0, β⟩)`.
@@ -1864,6 +1881,25 @@ theorem freeEnergy_high_temp_expansion_h_zero_closed
   rw [log_partitionFunction_high_temp_expansion_h_zero_closed G J β hβJ]
   have hι_ne : (Fintype.card ι : ℝ) ≠ 0 := by exact_mod_cast hne.ne'
   field_simp
+
+/-- **freeEnergy high-temperature sandwich bounds (GJ §18.3 / FV (3.45))**:
+under `0 < |ι|` and `0 ≤ β·J`,
+`log 2 + (|E|/|ι|) · log(cosh βJ) ≤ f(G; J, 0, β) ≤ log 2 + (|E|/|ι|) · log(2 · cosh βJ)`.
+Combines `freeEnergy_high_temp_h_zero_lower_bound` (Step 288) and
+`freeEnergy_high_temp_h_zero_upper_bound` (Step 322). -/
+theorem freeEnergy_high_temp_h_zero_sandwich
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (hne : 0 < Fintype.card ι) :
+    Real.log 2 +
+        (G.edgeFinset.card : ℝ) / Fintype.card ι *
+          Real.log (Real.cosh (β * J))
+      ≤ freeEnergy G ⟨J, 0, β⟩
+    ∧ freeEnergy G ⟨J, 0, β⟩
+      ≤ Real.log 2
+        + (G.edgeFinset.card : ℝ) / Fintype.card ι *
+            Real.log (2 * Real.cosh (β * J)) :=
+  ⟨freeEnergy_high_temp_h_zero_lower_bound G J β hβJ hne,
+   freeEnergy_high_temp_h_zero_upper_bound G J β hβJ hne⟩
 
 /-! ### Correlation closed form (FV §3.7.3 eq. (3.46)) -/
 
