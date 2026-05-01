@@ -3575,6 +3575,38 @@ theorem log_partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_deviatio
   log_partitionFunctionΛ_high_temp_expansion_h_zero_deviation_pos
     (IsingModel.latticeGraph d) Λ J β hβJ hEpos
 
+/-- **ℤ^d Λ Z + log Z + f strict deviation bundle**. -/
+theorem partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_strict_deviation_bundle
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
+    (hβJ : 0 < β * J) (hne : 0 < Λ.card)
+    (hEpos : 0 <
+      (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card) :
+    (2 : ℝ) ^ Λ.card
+        < partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, β⟩ : IsingParams ℝ) ∧
+    0 < Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, β⟩ : IsingParams ℝ)) - (Λ.card : ℝ) * Real.log 2 ∧
+    0 < freeEnergyΛ (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, β⟩ : IsingParams ℝ) - Real.log 2 :=
+  partitionFunctionΛ_high_temp_expansion_h_zero_strict_deviation_bundle
+    (IsingModel.latticeGraph d) Λ J β hβJ hne hEpos
+
+/-- **ℤ^d Λ ferromagnetic Z + log Z + f strict deviation bundle**. -/
+theorem partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_strict_deviation_bundle_ferromagnetic
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
+    (hJ : 0 < J) (hβ : 0 < β) (hne : 0 < Λ.card)
+    (hEpos : 0 <
+      (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card) :
+    (2 : ℝ) ^ Λ.card
+        < partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, β⟩ : IsingParams ℝ) ∧
+    0 < Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, β⟩ : IsingParams ℝ)) - (Λ.card : ℝ) * Real.log 2 ∧
+    0 < freeEnergyΛ (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, β⟩ : IsingParams ℝ) - Real.log 2 :=
+  partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_strict_deviation_bundle
+    d Λ J β (mul_pos hβ hJ) hne hEpos
+
 /-- **ℤ^d Λ ferromagnetic Z strict deviation**. -/
 theorem partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_pow_two_lt_ferromagnetic
     (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
@@ -4845,6 +4877,40 @@ theorem log_partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_
         (⟨J, 0, β⟩ : IsingParams ℝ) n) - ((Λ.volume n).card : ℝ) * Real.log 2 :=
   log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_deviation_pos
     (IsingModel.latticeGraph d) Λ J β hβJ n hEpos
+
+/-- **ℤ^d along-ex Z + log Z + f strict deviation bundle at stage `n`**. -/
+theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_strict_deviation_bundle
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
+    (hβJ : 0 < β * J) (n : ℕ) (hne : 0 < (Λ.volume n).card)
+    (hEpos : 0 <
+      (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card) :
+    (2 : ℝ) ^ (Λ.volume n).card
+        < partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, β⟩ : IsingParams ℝ) n ∧
+    0 < Real.log (partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, β⟩ : IsingParams ℝ) n)
+        - ((Λ.volume n).card : ℝ) * Real.log 2 ∧
+    0 < freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, β⟩ : IsingParams ℝ) n - Real.log 2 :=
+  partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_strict_deviation_bundle
+    (IsingModel.latticeGraph d) Λ J β hβJ n hne hEpos
+
+/-- **ℤ^d along-ex ferromagnetic Z + log Z + f strict deviation bundle at stage `n`**. -/
+theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_strict_deviation_bundle_ferromagnetic
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
+    (hJ : 0 < J) (hβ : 0 < β) (n : ℕ) (hne : 0 < (Λ.volume n).card)
+    (hEpos : 0 <
+      (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card) :
+    (2 : ℝ) ^ (Λ.volume n).card
+        < partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, β⟩ : IsingParams ℝ) n ∧
+    0 < Real.log (partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, β⟩ : IsingParams ℝ) n)
+        - ((Λ.volume n).card : ℝ) * Real.log 2 ∧
+    0 < freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, β⟩ : IsingParams ℝ) n - Real.log 2 :=
+  partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_strict_deviation_bundle
+    d Λ J β (mul_pos hβ hJ) n hne hEpos
 
 /-- **ℤ^d along-ex ferromagnetic Z strict deviation at stage `n`**. -/
 theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_pow_two_lt_ferromagnetic
