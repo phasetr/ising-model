@@ -2406,6 +2406,15 @@ theorem correlation_high_temp_h_zero_at_pair_sandwich
   ⟨correlation_high_temp_h_zero_at_pair_nonneg G J β hβJ i j,
    correlation_high_temp_h_zero_at_pair_le_one G J β i j⟩
 
+/-- **Singleton magnetization absolute bound at h = 0 from FV (3.46)**:
+`|⟨σ_i⟩_{β,0}| ≤ 1`. Combined with Step 331 (`⟨σ_i⟩ = 0`), this is
+trivially `0 ≤ 1` but useful as a conventional restatement. -/
+theorem correlation_high_temp_h_zero_at_singleton_abs_le_one
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (i : ι) :
+    |correlation G ⟨J, 0, β⟩ ({i} : Finset ι)| ≤ 1 :=
+  abs_correlation_le_one G ⟨J, 0, β⟩ {i}
+
 /-- **Pair correlation high-temp closed form (FV (3.46) at A = {i,j})**:
 for `i ≠ j` and at `h = 0`,
 `⟨σ_i σ_j⟩_{β,0} = (∑_{X : ∂X = {i,j}} tanh^|X|) / (∑_{X : ∂X = ∅} tanh^|X|)`.
