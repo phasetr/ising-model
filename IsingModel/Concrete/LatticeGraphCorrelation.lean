@@ -2840,6 +2840,18 @@ theorem freeEnergyAlongExhaustion_latticeGraph_high_temp_h_zero_sandwich
   freeEnergyAlongExhaustion_high_temp_h_zero_sandwich
     (IsingModel.latticeGraph d) Λ J β hβJ n hne
 
+/-- **ℤ^d along-exhaustion magnetization vanishes at h = 0**: at every
+stage `n`,
+`correlationAlongExhaustion (latticeGraph d) Λ ⟨J, 0, β⟩ {i} n = 0`
+for any ambient site `i : Fin d → ℤ`. ℤ^d wrapper. -/
+theorem correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_singleton
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
+    (i : Fin d → ℤ) (n : ℕ) :
+    correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) ({i} : Finset (Fin d → ℤ)) n = 0 :=
+  correlationAlongExhaustion_high_temp_h_zero_at_singleton
+    (IsingModel.latticeGraph d) Λ J β i n
+
 /-- **ℤ^d along-exhaustion Z₂ symmetry of correlation at h = 0**:
 for ambient `A : Finset (Fin d → ℤ)` of odd cardinality,
 `correlationAlongExhaustion (latticeGraph d) Λ ⟨J, 0, β⟩ A n = 0` at

@@ -676,6 +676,19 @@ theorem correlationAlongExhaustion_high_temp_h_zero_odd_card_eq_zero
     rw [hcard]; exact hA_odd
   · simp only [dif_neg hAn]
 
+/-- **Along-exhaustion magnetization vanishes at h = 0**: at every stage `n`,
+`correlationAlongExhaustion G Λ ⟨J, 0, β⟩ {i} n = 0` for any
+ambient site `i : V`. Specialization at `A = {i}`. -/
+theorem correlationAlongExhaustion_high_temp_h_zero_at_singleton
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (i : V) (n : ℕ) :
+    correlationAlongExhaustion G Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) ({i} : Finset V) n = 0 := by
+  refine correlationAlongExhaustion_high_temp_h_zero_odd_card_eq_zero
+    G Λ J β {i} ?_ n
+  rw [Finset.card_singleton]; exact ⟨0, rfl⟩
+
 omit [DecidableEq V] in
 /-- **Induced subgraph of the empty graph is empty**:
 `inducedGraph (⊥ : SimpleGraph V) Λ = ⊥`.
