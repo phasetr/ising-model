@@ -556,8 +556,8 @@ theorem partitionFunctionΛ_high_temp_expansion_h_zero_sandwich
 /-- **Λ-level Z complete-summary bundle at h = 0**: under `0 ≤ β·J`,
 single statement bundling Λ-level Z lower bound, upper bound, and
 trivial-slice values at `J = 0` / `β = 0`. Λ-layer wrapper of
-`partitionFunction_high_temp_h_zero_Z_complete_summary`. -/
-theorem partitionFunctionΛ_high_temp_h_zero_Z_complete_summary
+`partitionFunction_high_temp_expansion_h_zero_complete_summary`. -/
+theorem partitionFunctionΛ_high_temp_expansion_h_zero_complete_summary
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet]
     (J β : ℝ) (hβJ : 0 ≤ β * J) :

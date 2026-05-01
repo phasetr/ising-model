@@ -2461,7 +2461,7 @@ statement bundling all known §18.3 properties of `Z` at `h = 0`:
   4. `Z⟨J, 0, 0⟩ = 2^|ι|` (consistency at trivial slice `β = 0`).
 Useful as a single import for downstream analytic / asymptotic
 arguments that need both bounds and trivial-slice values. -/
-theorem partitionFunction_high_temp_h_zero_Z_complete_summary
+theorem partitionFunction_high_temp_expansion_h_zero_complete_summary
     (G : SimpleGraph ι) [Fintype G.edgeSet]
     (J β : ℝ) (hβJ : 0 ≤ β * J) :
     (2 : ℝ) ^ Fintype.card ι * Real.cosh (β * J) ^ G.edgeFinset.card

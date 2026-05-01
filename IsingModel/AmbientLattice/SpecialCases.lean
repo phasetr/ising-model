@@ -650,8 +650,8 @@ theorem partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_sandwich
 /-- **Along-ex Z complete-summary bundle at h = 0**: under `0 ≤ β·J`,
 at every stage `n` packages along-exhaustion Z lower bound, upper bound,
 and trivial-slice values at `J = 0` / `β = 0`. Along-exhaustion wrapper
-of `partitionFunction_high_temp_h_zero_Z_complete_summary`. -/
-theorem partitionFunctionAlongExhaustion_high_temp_h_zero_Z_complete_summary
+of `partitionFunction_high_temp_expansion_h_zero_complete_summary`. -/
+theorem partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_complete_summary
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
     (J β : ℝ) (hβJ : 0 ≤ β * J) (n : ℕ) :

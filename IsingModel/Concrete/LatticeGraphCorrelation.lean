@@ -2955,8 +2955,8 @@ theorem correlationΛ_latticeGraph_high_temp_h_zero_odd_card_eq_zero
 
 /-- **ℤ^d Λ Z complete-summary bundle at h = 0**: under `0 ≤ β·J`,
 single statement bundling Λ Z bounds and trivial-slice values. ℤ^d
-wrapper of `partitionFunctionΛ_high_temp_h_zero_Z_complete_summary`. -/
-theorem partitionFunctionΛ_latticeGraph_high_temp_h_zero_Z_complete_summary
+wrapper of `partitionFunctionΛ_high_temp_expansion_h_zero_complete_summary`. -/
+theorem partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_complete_summary
     (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ) (hβJ : 0 ≤ β * J) :
     (2 : ℝ) ^ Λ.card *
         Real.cosh (β * J) ^
@@ -2973,7 +2973,7 @@ theorem partitionFunctionΛ_latticeGraph_high_temp_h_zero_Z_complete_summary
           (⟨0, 0, β⟩ : IsingParams ℝ) = (2 : ℝ) ^ Λ.card ∧
       partitionFunctionΛ (IsingModel.latticeGraph d) Λ
           (⟨J, 0, 0⟩ : IsingParams ℝ) = (2 : ℝ) ^ Λ.card :=
-  partitionFunctionΛ_high_temp_h_zero_Z_complete_summary
+  partitionFunctionΛ_high_temp_expansion_h_zero_complete_summary
     (IsingModel.latticeGraph d) Λ J β hβJ
 
 /-- **ℤ^d along-exhaustion correlation high-temperature closed form (FV §3.7.3 eq. (3.46))**:
@@ -3315,9 +3315,9 @@ theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero
 /-- **ℤ^d along-ex Z complete-summary bundle at h = 0**: under `0 ≤ β·J`,
 at every stage `n` packages along-exhaustion Z lower bound, upper bound,
 and trivial-slice values at `J = 0` / `β = 0`. ℤ^d wrapper of
-`partitionFunctionAlongExhaustion_high_temp_h_zero_Z_complete_summary`. -/
+`partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_complete_summary`. -/
 theorem
-    partitionFunctionAlongExhaustion_latticeGraph_high_temp_h_zero_Z_complete_summary
+    partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_complete_summary
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
     (hβJ : 0 ≤ β * J) (n : ℕ) :
     (2 : ℝ) ^ (Λ.volume n).card *
@@ -3335,7 +3335,7 @@ theorem
           (⟨0, 0, β⟩ : IsingParams ℝ) n = (2 : ℝ) ^ (Λ.volume n).card ∧
       partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
           (⟨J, 0, 0⟩ : IsingParams ℝ) n = (2 : ℝ) ^ (Λ.volume n).card :=
-  partitionFunctionAlongExhaustion_high_temp_h_zero_Z_complete_summary
+  partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_complete_summary
     (IsingModel.latticeGraph d) Λ J β hβJ n
 
 /-- **ℤ^d along-exhaustion partition function high-temperature closed form (FV §3.7.3 eq. (3.45))**:
