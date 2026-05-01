@@ -1268,6 +1268,33 @@ theorem freeEnergyAlongExhaustion_high_temp_h_zero_deviation_pos_ferromagnetic
   freeEnergyAlongExhaustion_high_temp_h_zero_deviation_pos
     G Λ J β (mul_pos hβ hJ) n hne hEpos
 
+/-- **Along-ex Z strict deviation at stage `n`**. -/
+theorem partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_pow_two_lt
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (hβJ : 0 < β * J) (n : ℕ)
+    (hEpos : 0 < (inducedGraph G (Λ.volume n)).edgeFinset.card) :
+    (2 : ℝ) ^ (Λ.volume n).card
+      < partitionFunctionAlongExhaustion G Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) n := by
+  change _ < partitionFunctionΛ G (Λ.volume n) (⟨J, 0, β⟩ : IsingParams ℝ)
+  exact partitionFunctionΛ_high_temp_expansion_h_zero_pow_two_lt
+    G (Λ.volume n) J β hβJ hEpos
+
+/-- **Along-ex log Z strict deviation at stage `n`**. -/
+theorem log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_deviation_pos
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (hβJ : 0 < β * J) (n : ℕ)
+    (hEpos : 0 < (inducedGraph G (Λ.volume n)).edgeFinset.card) :
+    0 < Real.log (partitionFunctionAlongExhaustion G Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) n)
+        - ((Λ.volume n).card : ℝ) * Real.log 2 := by
+  change 0 < Real.log (partitionFunctionΛ G (Λ.volume n)
+      (⟨J, 0, β⟩ : IsingParams ℝ)) - _
+  exact log_partitionFunctionΛ_high_temp_expansion_h_zero_deviation_pos
+    G (Λ.volume n) J β hβJ hEpos
+
 /-- **Along-exhaustion freeEnergy high-temp sandwich (FV (3.45))**: under
 `0 ≤ β·J` and `0 < |Λ_n|`, at every stage `n`,
 `log 2 + (|E_n|/|Λ_n|) log cosh(βJ) ≤ f_n ≤ log 2 + (|E_n|/|Λ_n|) log(2·cosh βJ)`. -/
