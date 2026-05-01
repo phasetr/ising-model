@@ -777,6 +777,44 @@ theorem freeEnergyAlongExhaustion_high_temp_h_zero_upper_bound_exp_uniform
     exact mul_le_mul_of_nonneg_left h_edgeRatio hβJ
   linarith
 
+/-- **Along-ex sharper log Z upper bound at stage `n`**: under
+`0 ≤ β·J`, `log Z_n ≤ |Λ_n|·log 2 + β·J·|E_n|`. Stage-`n` Λ-level
+specialization of
+`log_partitionFunction_high_temp_expansion_h_zero_upper_bound_exp`. -/
+theorem log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_upper_bound_exp
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (n : ℕ) :
+    Real.log (partitionFunctionAlongExhaustion G Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) n)
+      ≤ ((Λ.volume n).card : ℝ) * Real.log 2
+        + β * J * (inducedGraph G (Λ.volume n)).edgeFinset.card := by
+  change Real.log (partitionFunctionΛ G (Λ.volume n)
+      (⟨J, 0, β⟩ : IsingParams ℝ)) ≤ _
+  exact log_partitionFunctionΛ_high_temp_expansion_h_zero_upper_bound_exp
+    G (Λ.volume n) J β hβJ
+
+/-- **Along-ex sharper log Z sandwich at stage `n`**: under `0 ≤ β·J`,
+`|Λ_n|·log 2 + |E_n|·log cosh(β·J) ≤ log Z_n ≤ |Λ_n|·log 2 + β·J·|E_n|`. -/
+theorem log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_sandwich_exp
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (n : ℕ) :
+    ((Λ.volume n).card : ℝ) * Real.log 2
+        + ((inducedGraph G (Λ.volume n)).edgeFinset.card : ℝ) *
+            Real.log (Real.cosh (β * J))
+      ≤ Real.log (partitionFunctionAlongExhaustion G Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) n) ∧
+    Real.log (partitionFunctionAlongExhaustion G Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) n)
+      ≤ ((Λ.volume n).card : ℝ) * Real.log 2
+        + β * J * (inducedGraph G (Λ.volume n)).edgeFinset.card := by
+  change ((Λ.volume n).card : ℝ) * _ + _ * _ ≤
+      Real.log (partitionFunctionΛ G (Λ.volume n)
+        (⟨J, 0, β⟩ : IsingParams ℝ)) ∧ _
+  exact log_partitionFunctionΛ_high_temp_expansion_h_zero_sandwich_exp
+    G (Λ.volume n) J β hβJ
+
 /-- **Along-exhaustion freeEnergy high-temp sandwich (FV (3.45))**: under
 `0 ≤ β·J` and `0 < |Λ_n|`, at every stage `n`,
 `log 2 + (|E_n|/|Λ_n|) log cosh(βJ) ≤ f_n ≤ log 2 + (|E_n|/|Λ_n|) log(2·cosh βJ)`. -/
