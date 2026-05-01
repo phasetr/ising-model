@@ -3814,6 +3814,67 @@ theorem partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_ratio_bound_
   partitionFunctionΛ_high_temp_expansion_h_zero_ratio_bound_bundle_ferromagnetic
     (IsingModel.latticeGraph d) Λ J β hJ hβ
 
+/-- **ℤ^d Λ log Z ratio sandwich bundle**. -/
+theorem log_partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_ratio_sandwich_bundle
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ) (hβJ : 0 ≤ β * J) :
+    (((inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card : ℝ) *
+        Real.log (Real.cosh (β * J))
+        ≤ Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, β⟩ : IsingParams ℝ))
+            - Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+                (⟨0, 0, β⟩ : IsingParams ℝ)) ∧
+      Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ))
+          - Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+              (⟨0, 0, β⟩ : IsingParams ℝ))
+          ≤ β * J *
+              (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card) ∧
+    (((inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card : ℝ) *
+        Real.log (Real.cosh (β * J))
+        ≤ Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, β⟩ : IsingParams ℝ))
+            - Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+                (⟨J, 0, 0⟩ : IsingParams ℝ)) ∧
+      Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ))
+          - Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, 0⟩ : IsingParams ℝ))
+          ≤ β * J *
+              (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card) :=
+  log_partitionFunctionΛ_high_temp_expansion_h_zero_ratio_sandwich_bundle
+    (IsingModel.latticeGraph d) Λ J β hβJ
+
+/-- **ℤ^d Λ ferromagnetic log Z ratio sandwich bundle**. -/
+theorem log_partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_ratio_sandwich_bundle_ferromagnetic
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
+    (hJ : 0 ≤ J) (hβ : 0 < β) :
+    (((inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card : ℝ) *
+        Real.log (Real.cosh (β * J))
+        ≤ Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, β⟩ : IsingParams ℝ))
+            - Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+                (⟨0, 0, β⟩ : IsingParams ℝ)) ∧
+      Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ))
+          - Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+              (⟨0, 0, β⟩ : IsingParams ℝ))
+          ≤ β * J *
+              (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card) ∧
+    (((inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card : ℝ) *
+        Real.log (Real.cosh (β * J))
+        ≤ Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, β⟩ : IsingParams ℝ))
+            - Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+                (⟨J, 0, 0⟩ : IsingParams ℝ)) ∧
+      Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ))
+          - Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, 0⟩ : IsingParams ℝ))
+          ≤ β * J *
+              (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card) :=
+  log_partitionFunctionΛ_high_temp_expansion_h_zero_ratio_sandwich_bundle_ferromagnetic
+    (IsingModel.latticeGraph d) Λ J β hJ hβ
+
 /-- **ℤ^d Λ log Z ratio bound bundle**. -/
 theorem log_partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_ratio_bound_bundle
     (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ) (hβJ : 0 ≤ β * J) :
@@ -5123,6 +5184,68 @@ theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero
             (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card) :=
   partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_bound_bundle_ferromagnetic
     (IsingModel.latticeGraph d) Λ J β hJ hβ n
+
+/-- **ℤ^d along-ex log Z ratio sandwich bundle at stage `n`**. -/
+theorem log_partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_ratio_sandwich_bundle
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
+    (hβJ : 0 ≤ β * J) (n : ℕ) :
+    (((inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card : ℝ) *
+        Real.log (Real.cosh (β * J))
+        ≤ Real.log (partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, β⟩ : IsingParams ℝ) n)
+            - Real.log (partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+                (⟨0, 0, β⟩ : IsingParams ℝ) n) ∧
+      Real.log (partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) n)
+          - Real.log (partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+              (⟨0, 0, β⟩ : IsingParams ℝ) n)
+          ≤ β * J *
+              (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card) ∧
+    (((inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card : ℝ) *
+        Real.log (Real.cosh (β * J))
+        ≤ Real.log (partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, β⟩ : IsingParams ℝ) n)
+            - Real.log (partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+                (⟨J, 0, 0⟩ : IsingParams ℝ) n) ∧
+      Real.log (partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) n)
+          - Real.log (partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, 0⟩ : IsingParams ℝ) n)
+          ≤ β * J *
+              (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card) :=
+  log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_sandwich_bundle
+    (IsingModel.latticeGraph d) Λ J β hβJ n
+
+/-- **ℤ^d along-ex ferromagnetic log Z ratio sandwich bundle at stage `n`**. -/
+theorem log_partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_ratio_sandwich_bundle_ferromagnetic
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
+    (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ) :
+    (((inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card : ℝ) *
+        Real.log (Real.cosh (β * J))
+        ≤ Real.log (partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, β⟩ : IsingParams ℝ) n)
+            - Real.log (partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+                (⟨0, 0, β⟩ : IsingParams ℝ) n) ∧
+      Real.log (partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) n)
+          - Real.log (partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+              (⟨0, 0, β⟩ : IsingParams ℝ) n)
+          ≤ β * J *
+              (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card) ∧
+    (((inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card : ℝ) *
+        Real.log (Real.cosh (β * J))
+        ≤ Real.log (partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, β⟩ : IsingParams ℝ) n)
+            - Real.log (partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+                (⟨J, 0, 0⟩ : IsingParams ℝ) n) ∧
+      Real.log (partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) n)
+          - Real.log (partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, 0⟩ : IsingParams ℝ) n)
+          ≤ β * J *
+              (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card) :=
+  log_partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_ratio_sandwich_bundle
+    d Λ J β (mul_nonneg hβ.le hJ) n
 
 /-- **ℤ^d along-ex log Z ratio bound bundle at stage `n`**. -/
 theorem log_partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_ratio_bound_bundle
