@@ -2580,6 +2580,29 @@ theorem correlation_high_temp_h_zero_at_pair_singleton_bundle_ferromagnetic
   correlation_high_temp_h_zero_at_pair_singleton_bundle G J β
     (mul_nonneg hβ.le hJ) i j
 
+/-- **Pair + singleton complete-summary bundle at h = 0**: a single
+statement bundling all known §18.3 properties at `A ∈ {{i}, {i, j}}`:
+  1. `⟨σ_iσ_j⟩ ≤ 1` (unconditional upper bound),
+  2. `0 ≤ ⟨σ_iσ_j⟩` (sandwich lower under `0 ≤ β·J`),
+  3. `⟨σ_i⟩ = 0` (singleton vanishing, unconditional via Z₂ symmetry),
+  4. `⟨σ_iσ_j⟩^{⟨0,0,β⟩} = 0` (pair vanishing at trivial slice `J = 0`),
+  5. `⟨σ_iσ_j⟩^{⟨J,0,0⟩} = 0` (pair vanishing at trivial slice `β = 0`).
+Useful for downstream applications that want a single import for the
+qualitative behaviour of pair / singleton correlations at `h = 0`. -/
+theorem correlation_high_temp_h_zero_at_pair_singleton_complete_summary
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (i j : ι) :
+    correlation G ⟨J, 0, β⟩ ({i, j} : Finset ι) ≤ 1 ∧
+      0 ≤ correlation G ⟨J, 0, β⟩ ({i, j} : Finset ι) ∧
+      correlation G ⟨J, 0, β⟩ ({i} : Finset ι) = 0 ∧
+      correlation G ⟨0, 0, β⟩ ({i, j} : Finset ι) = 0 ∧
+      correlation G ⟨J, 0, 0⟩ ({i, j} : Finset ι) = 0 :=
+  ⟨correlation_high_temp_h_zero_at_pair_le_one G J β i j,
+   correlation_high_temp_h_zero_at_pair_nonneg G J β hβJ i j,
+   correlation_high_temp_h_zero_at_singleton G J β i,
+   correlation_high_temp_h_zero_at_pair_J_zero G β i j,
+   correlation_high_temp_h_zero_at_pair_beta_zero G J i j⟩
+
 /-- **High-temperature parameter**: `t = tanh(βJ)`.
 For `βJ ≥ 0`, `t ∈ [0, 1)`, and the high-temperature expansion
 converges when `t` is small. -/
