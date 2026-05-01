@@ -2856,6 +2856,31 @@ theorem freeEnergy_high_temp_h_zero_deviation_pos_ferromagnetic
   freeEnergy_high_temp_h_zero_deviation_pos
     G J β (mul_pos hβ hJ) hne hEpos
 
+/-- **f ratio bound at J=0 trivial slice**: under `0 ≤ β·J` and
+`0 < |ι|`, `f(G; J, 0, β) - f(G; 0, 0, β) ≤ β·J·|E|/|ι|`.
+
+Equivalent reformulation of the f deviation bound using the trivial
+slice `f(0, 0, β) = log 2`. -/
+theorem freeEnergy_high_temp_h_zero_ratio_bound
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (hne : 0 < Fintype.card ι) :
+    freeEnergy G ⟨J, 0, β⟩ - freeEnergy G (⟨0, 0, β⟩ : IsingParams ℝ)
+      ≤ β * J * G.edgeFinset.card / Fintype.card ι := by
+  have hf0 : freeEnergy G (⟨0, 0, β⟩ : IsingParams ℝ) = Real.log 2 := by
+    have := freeEnergy_J_zero G (0 : ℝ) β hne
+    simpa [mul_zero, Real.cosh_zero] using this
+  rw [hf0]
+  exact freeEnergy_high_temp_h_zero_deviation_bound_exp G J β hβJ hne
+
+/-- **f ratio bound at β=0 trivial slice**. -/
+theorem freeEnergy_high_temp_h_zero_ratio_bound_beta_zero
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (hne : 0 < Fintype.card ι) :
+    freeEnergy G ⟨J, 0, β⟩ - freeEnergy G (⟨J, 0, 0⟩ : IsingParams ℝ)
+      ≤ β * J * G.edgeFinset.card / Fintype.card ι := by
+  rw [freeEnergy_beta_zero G J 0 hne]
+  exact freeEnergy_high_temp_h_zero_deviation_bound_exp G J β hβJ hne
+
 /-- **Ferromagnetic sharper f deviation bound**: under `0 ≤ J, 0 < β`
 and `0 < |ι|`, `f - log 2 ≤ β·J·|E|/|ι|`. Bridges via
 `mul_nonneg hβ.le hJ`. -/
