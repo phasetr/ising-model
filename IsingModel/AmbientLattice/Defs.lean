@@ -981,6 +981,20 @@ theorem partitionFunctionΛ_high_temp_expansion_h_zero_relative_sandwich
   exact IsingModel.partitionFunction_high_temp_expansion_h_zero_relative_sandwich
     (inducedGraph G Λ) J β hβJ
 
+/-- **Λ-level ferromagnetic Z relative-deviation sandwich**. -/
+theorem partitionFunctionΛ_high_temp_expansion_h_zero_relative_sandwich_ferromagnetic
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) :
+    Real.cosh (β * J) ^ (inducedGraph G Λ).edgeFinset.card
+      ≤ partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) /
+          (2 : ℝ) ^ Λ.card ∧
+    partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) /
+        (2 : ℝ) ^ Λ.card
+      ≤ Real.exp (β * J * (inducedGraph G Λ).edgeFinset.card) :=
+  partitionFunctionΛ_high_temp_expansion_h_zero_relative_sandwich
+    G Λ J β (mul_nonneg hβ.le hJ)
+
 /-- **Λ-level Z high-temp sandwich (FV (3.45))**: under `0 ≤ β·J`,
 `2^|Λ| · cosh^|E_Λ| ≤ Z_Λ ≤ 2^(|Λ|+|E_Λ|) · cosh^|E_Λ|`. -/
 theorem partitionFunctionΛ_high_temp_expansion_h_zero_sandwich
