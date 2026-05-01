@@ -1714,6 +1714,54 @@ theorem partitionFunction_high_temp_expansion_h_zero_upper_bound
           Real.cosh (β * J) ^ G.edgeFinset.card := by
         rw [pow_add]; ring
 
+/-- **freeEnergy high-temperature upper bound from FV (3.45)**: under
+`0 < |ι|` and `0 ≤ β·J`,
+`freeEnergy(G; J, 0, β) ≤ log 2 + (|E|/|ι|) · log(2 · cosh(β·J))`.
+
+Pair to `freeEnergy_high_temp_h_zero_lower_bound` (Step 288).
+Direct from `partitionFunction_high_temp_expansion_h_zero_upper_bound`
+(Step 320) by taking logs and dividing by `|ι|`. -/
+theorem freeEnergy_high_temp_h_zero_upper_bound
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (hne : 0 < Fintype.card ι) :
+    freeEnergy G ⟨J, 0, β⟩
+      ≤ Real.log 2
+        + (G.edgeFinset.card : ℝ) / Fintype.card ι *
+            Real.log (2 * Real.cosh (β * J)) := by
+  have hZ_ub := partitionFunction_high_temp_expansion_h_zero_upper_bound G J β hβJ
+  have hZ_pos := partitionFunction_pos G ⟨J, 0, β⟩
+  have hcosh_pos : 0 < Real.cosh (β * J) := Real.cosh_pos _
+  have hubound_pos : (0 : ℝ) <
+      (2 : ℝ) ^ (Fintype.card ι + G.edgeFinset.card) *
+      Real.cosh (β * J) ^ G.edgeFinset.card :=
+    mul_pos (pow_pos (by norm_num) _) (pow_pos hcosh_pos _)
+  -- Take logs
+  have hlog : Real.log (partitionFunction G ⟨J, 0, β⟩) ≤
+      Real.log ((2 : ℝ) ^ (Fintype.card ι + G.edgeFinset.card) *
+        Real.cosh (β * J) ^ G.edgeFinset.card) :=
+    Real.log_le_log hZ_pos hZ_ub
+  -- Simplify the RHS log
+  have hlog_rhs :
+      Real.log ((2 : ℝ) ^ (Fintype.card ι + G.edgeFinset.card) *
+        Real.cosh (β * J) ^ G.edgeFinset.card)
+        = ((Fintype.card ι : ℝ) + G.edgeFinset.card) * Real.log 2
+          + (G.edgeFinset.card : ℝ) * Real.log (Real.cosh (β * J)) := by
+    rw [Real.log_mul (by positivity) (by positivity),
+        Real.log_pow, Real.log_pow]
+    push_cast; ring
+  rw [hlog_rhs] at hlog
+  -- Divide by |ι| > 0
+  unfold freeEnergy
+  have hι_pos : (0 : ℝ) < Fintype.card ι := by exact_mod_cast hne
+  rw [show (Real.log 2 + (G.edgeFinset.card : ℝ) / Fintype.card ι *
+              Real.log (2 * Real.cosh (β * J)))
+        = (Fintype.card ι : ℝ)⁻¹ *
+          (((Fintype.card ι : ℝ) + G.edgeFinset.card) * Real.log 2
+            + (G.edgeFinset.card : ℝ) * Real.log (Real.cosh (β * J))) from by
+      rw [Real.log_mul (by norm_num) hcosh_pos.ne']
+      field_simp; ring]
+  exact mul_le_mul_of_nonneg_left hlog (by positivity)
+
 /-- **Free-energy lower bound from FV (3.45)** at zero external field:
 under `0 < |ι|` and `0 ≤ β * J`,
 `log 2 + (|E|/|ι|) · log(cosh(β·J)) ≤ freeEnergy(G, ⟨J, 0, β⟩)`.
