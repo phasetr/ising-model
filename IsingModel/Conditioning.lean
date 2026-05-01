@@ -2515,6 +2515,18 @@ theorem correlation_high_temp_h_zero_at_singleton_ferromagnetic
     correlation G ⟨J, 0, β⟩ ({i} : Finset ι) = 0 :=
   correlation_high_temp_h_zero_at_singleton G J β i
 
+/-- **Pair + singleton bundle at h = 0**: combines pair sandwich with
+singleton vanishing in a single statement. -/
+theorem correlation_high_temp_h_zero_at_pair_singleton_bundle
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (i j : ι) :
+    correlation G ⟨J, 0, β⟩ ({i} : Finset ι) = 0 ∧
+      0 ≤ correlation G ⟨J, 0, β⟩ ({i, j} : Finset ι) ∧
+      correlation G ⟨J, 0, β⟩ ({i, j} : Finset ι) ≤ 1 :=
+  ⟨correlation_high_temp_h_zero_at_singleton G J β i,
+   correlation_high_temp_h_zero_at_pair_nonneg G J β hβJ i j,
+   correlation_high_temp_h_zero_at_pair_le_one G J β i j⟩
+
 /-- **High-temperature parameter**: `t = tanh(βJ)`.
 For `βJ ≥ 0`, `t ∈ [0, 1)`, and the high-temperature expansion
 converges when `t` is small. -/
