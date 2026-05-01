@@ -2137,6 +2137,37 @@ theorem freeEnergy_high_temp_h_zero_sandwich_exp
   ⟨freeEnergy_high_temp_h_zero_lower_bound G J β hβJ hne,
    freeEnergy_high_temp_h_zero_upper_bound_exp G J β hβJ hne⟩
 
+/-- **Ferromagnetic sharper Z high-temperature sandwich**: under
+`0 ≤ J, 0 < β`,
+`2^|ι|·cosh^|E| ≤ Z(G;J,0,β) ≤ 2^|ι|·exp(β·J·|E|)`. Bridges
+ferromagnetic hypotheses with Step 407 via `mul_nonneg hβ.le hJ`. -/
+theorem partitionFunction_high_temp_expansion_h_zero_sandwich_exp_ferromagnetic
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) :
+    (2 : ℝ) ^ Fintype.card ι *
+        Real.cosh (β * J) ^ G.edgeFinset.card
+      ≤ partitionFunction G ⟨J, 0, β⟩ ∧
+    partitionFunction G ⟨J, 0, β⟩
+      ≤ (2 : ℝ) ^ Fintype.card ι *
+          Real.exp (β * J * G.edgeFinset.card) :=
+  partitionFunction_high_temp_expansion_h_zero_sandwich_exp
+    G J β (mul_nonneg hβ.le hJ)
+
+/-- **Ferromagnetic sharper f high-temperature sandwich**: under
+`0 < |ι|`, `0 ≤ J, 0 < β`,
+`log 2 + (|E|/|ι|)·log cosh(β·J) ≤ f ≤ log 2 + β·J·|E|/|ι|`. -/
+theorem freeEnergy_high_temp_h_zero_sandwich_exp_ferromagnetic
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (hne : 0 < Fintype.card ι) :
+    Real.log 2 +
+        (G.edgeFinset.card : ℝ) / Fintype.card ι *
+          Real.log (Real.cosh (β * J))
+      ≤ freeEnergy G ⟨J, 0, β⟩ ∧
+    freeEnergy G ⟨J, 0, β⟩
+      ≤ Real.log 2 + β * J * G.edgeFinset.card / Fintype.card ι :=
+  freeEnergy_high_temp_h_zero_sandwich_exp G J β
+    (mul_nonneg hβ.le hJ) hne
+
 /-- **Free-energy high-temperature expansion decomposition (GJ §18.3 / FV (3.45))**:
 under `0 < |ι|` and `0 ≤ β·J`,
 `freeEnergy(G; J, 0, β) = log 2 + (|E|/|ι|) · log(cosh βJ) + log(∑_{X even} tanh^|X|) / |ι|`.
