@@ -1779,6 +1779,57 @@ theorem freeEnergyInfinite_high_temp_h_zero_deviation_sandwich_exp
     G Λ J β hJ hβ hc
   exact ⟨by linarith, h_upper⟩
 
+/-- **∞-vol f ratio upper bound at J=0 trivial slice (GJ §18.3)**:
+under ferromagnetic + bounded-edge-density witness `c`,
+`freeEnergyInfinite ⟨J, 0, β⟩ - freeEnergyInfinite ⟨0, 0, β⟩ ≤ β·J·c`.
+
+Reformulation of Step 418 deviation bound using the trivial slice
+identity `f_∞⟨0, 0, β⟩ = log 2`. -/
+theorem freeEnergyInfinite_high_temp_h_zero_ratio_bound
+    [Nonempty V] (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) {c : ℝ}
+    (hc : ∀ n, (Λ.volume n).Nonempty →
+      ((inducedGraph G (Λ.volume n)).edgeFinset.card : ℝ) ≤
+        c * Fintype.card (↑(Λ.volume n) : Type _)) :
+    freeEnergyInfinite G Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+        - freeEnergyInfinite G Λ (⟨0, 0, β⟩ : IsingParams ℝ)
+      ≤ β * J * c := by
+  rw [freeEnergyInfinite_zero_params_of_nonempty G Λ β]
+  exact freeEnergyInfinite_high_temp_h_zero_deviation_bound_exp
+    G Λ J β hJ hβ hc
+
+/-- **∞-vol f ratio upper bound at β=0 trivial slice**. -/
+theorem freeEnergyInfinite_high_temp_h_zero_ratio_bound_beta_zero
+    [Nonempty V] (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) {c : ℝ}
+    (hc : ∀ n, (Λ.volume n).Nonempty →
+      ((inducedGraph G (Λ.volume n)).edgeFinset.card : ℝ) ≤
+        c * Fintype.card (↑(Λ.volume n) : Type _)) :
+    freeEnergyInfinite G Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+        - freeEnergyInfinite G Λ (⟨J, 0, 0⟩ : IsingParams ℝ)
+      ≤ β * J * c := by
+  rw [freeEnergyInfinite_beta_zero_of_nonempty G Λ J 0]
+  exact freeEnergyInfinite_high_temp_h_zero_deviation_bound_exp
+    G Λ J β hJ hβ hc
+
+/-- **∞-vol f ratio bound bundle**. -/
+theorem freeEnergyInfinite_high_temp_h_zero_ratio_bound_bundle
+    [Nonempty V] (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) {c : ℝ}
+    (hc : ∀ n, (Λ.volume n).Nonempty →
+      ((inducedGraph G (Λ.volume n)).edgeFinset.card : ℝ) ≤
+        c * Fintype.card (↑(Λ.volume n) : Type _)) :
+    (freeEnergyInfinite G Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+        - freeEnergyInfinite G Λ (⟨0, 0, β⟩ : IsingParams ℝ) ≤ β * J * c) ∧
+    (freeEnergyInfinite G Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+        - freeEnergyInfinite G Λ (⟨J, 0, 0⟩ : IsingParams ℝ) ≤ β * J * c) :=
+  ⟨freeEnergyInfinite_high_temp_h_zero_ratio_bound G Λ J β hJ hβ hc,
+   freeEnergyInfinite_high_temp_h_zero_ratio_bound_beta_zero
+     G Λ J β hJ hβ hc⟩
+
 /-- **Strict positivity** of `freeEnergyInfinite` under the standard
 ferromagnetic + `BoundedEdgeDensity` + `[Nonempty V]` setup:
 `0 < freeEnergyInfinite G Λ p`.
