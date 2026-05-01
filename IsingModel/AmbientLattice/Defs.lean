@@ -790,6 +790,23 @@ theorem correlationΛ_high_temp_h_zero_at_pair_singleton_bundle_ferromagnetic
   correlationΛ_high_temp_h_zero_at_pair_singleton_bundle G Λ J β
     (mul_nonneg hβ.le hJ) i j
 
+/-- **Λ pair + singleton trivial-slices full bundle at h = 0**:
+at `J = 0` and `β = 0`, both Λ-pair and Λ-singleton correlations vanish.
+Λ-layer wrapper of
+`correlation_high_temp_h_zero_at_pair_singleton_trivial_slices_bundle`. -/
+theorem correlationΛ_high_temp_h_zero_at_pair_singleton_trivial_slices_bundle
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (i j : ↑Λ) :
+    correlationΛ G Λ (⟨0, 0, β⟩ : IsingParams ℝ) ({i} : Finset ↑Λ) = 0 ∧
+      correlationΛ G Λ (⟨J, 0, 0⟩ : IsingParams ℝ) ({i} : Finset ↑Λ) = 0 ∧
+      correlationΛ G Λ (⟨0, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset ↑Λ) = 0 ∧
+      correlationΛ G Λ (⟨J, 0, 0⟩ : IsingParams ℝ) ({i, j} : Finset ↑Λ) = 0 :=
+  ⟨correlationΛ_high_temp_h_zero_at_singleton_J_zero G Λ β i,
+   correlationΛ_high_temp_h_zero_at_singleton_beta_zero G Λ J i,
+   correlationΛ_high_temp_h_zero_at_pair_J_zero G Λ β i j,
+   correlationΛ_high_temp_h_zero_at_pair_beta_zero G Λ J i j⟩
+
 /-- The correlation on `Λ` is at least `-1`. Lower side of
 `abs_correlationΛ_le_one`. -/
 theorem neg_one_le_correlationΛ (G : SimpleGraph V) (Λ : Finset V)
