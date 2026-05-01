@@ -2938,6 +2938,24 @@ theorem correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_pair_nonneg
   correlationAlongExhaustion_high_temp_h_zero_at_pair_nonneg
     (IsingModel.latticeGraph d) Λ J β hβJ i j n
 
+/-- **ℤ^d along-ex singleton at J=0,h=0**: = 0. -/
+theorem correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_singleton_J_zero
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (β : ℝ)
+    (i : Fin d → ℤ) (n : ℕ) :
+    correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨0, 0, β⟩ : IsingParams ℝ) ({i} : Finset (Fin d → ℤ)) n = 0 :=
+  correlationAlongExhaustion_high_temp_h_zero_at_singleton_J_zero
+    (IsingModel.latticeGraph d) Λ β i n
+
+/-- **ℤ^d along-ex singleton at β=0,h=0**: = 0. -/
+theorem correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_singleton_beta_zero
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J : ℝ)
+    (i : Fin d → ℤ) (n : ℕ) :
+    correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, 0⟩ : IsingParams ℝ) ({i} : Finset (Fin d → ℤ)) n = 0 :=
+  correlationAlongExhaustion_high_temp_h_zero_at_singleton_beta_zero
+    (IsingModel.latticeGraph d) Λ J i n
+
 /-- **ℤ^d along-exhaustion magnetization vanishes at h = 0**: at every
 stage `n`,
 `correlationAlongExhaustion (latticeGraph d) Λ ⟨J, 0, β⟩ {i} n = 0`
