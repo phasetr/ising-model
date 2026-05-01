@@ -2168,6 +2168,32 @@ theorem freeEnergy_high_temp_h_zero_sandwich_exp_ferromagnetic
   freeEnergy_high_temp_h_zero_sandwich_exp G J β
     (mul_nonneg hβ.le hJ) hne
 
+/-- **Sharper f complete-summary bundle**: under `0 < |ι|` and
+`0 ≤ β·J`, single statement bundling sharper sandwich + trivial-slice
+values:
+  1. `log 2 + (|E|/|ι|)·log cosh(β·J) ≤ f` (lower),
+  2. `f ≤ log 2 + β·J·|E|/|ι|` (sharper exp upper),
+  3. `f⟨0, 0, β⟩ = log 2` (J = 0 trivial slice),
+  4. `f⟨J, 0, 0⟩ = log 2` (β = 0 trivial slice).
+Useful as a single import for downstream applications. -/
+theorem freeEnergy_high_temp_h_zero_complete_summary_exp
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (hne : 0 < Fintype.card ι) :
+    Real.log 2 +
+        (G.edgeFinset.card : ℝ) / Fintype.card ι *
+          Real.log (Real.cosh (β * J))
+      ≤ freeEnergy G ⟨J, 0, β⟩ ∧
+    freeEnergy G ⟨J, 0, β⟩
+      ≤ Real.log 2 + β * J * G.edgeFinset.card / Fintype.card ι ∧
+    freeEnergy G (⟨0, 0, β⟩ : IsingParams ℝ) = Real.log 2 ∧
+    freeEnergy G (⟨J, 0, 0⟩ : IsingParams ℝ) = Real.log 2 :=
+  ⟨freeEnergy_high_temp_h_zero_lower_bound G J β hβJ hne,
+   freeEnergy_high_temp_h_zero_upper_bound_exp G J β hβJ hne,
+   by
+     have := freeEnergy_J_zero G (0 : ℝ) β hne
+     simpa [mul_zero, Real.cosh_zero] using this,
+   freeEnergy_beta_zero G J 0 hne⟩
+
 /-- **Free-energy high-temperature expansion decomposition (GJ §18.3 / FV (3.45))**:
 under `0 < |ι|` and `0 ≤ β·J`,
 `freeEnergy(G; J, 0, β) = log 2 + (|E|/|ι|) · log(cosh βJ) + log(∑_{X even} tanh^|X|) / |ι|`.
