@@ -2046,6 +2046,18 @@ theorem partitionFunction_high_temp_expansion_h_zero_relative_sandwich
   · rw [le_div_iff₀ h2_pos]; linarith
   · rw [div_le_iff₀ h2_pos]; linarith
 
+/-- **Ferromagnetic Z relative-deviation sandwich**: under `0 ≤ J, 0 < β`,
+`cosh(β·J)^|E| ≤ Z / 2^|ι| ≤ exp(β·J·|E|)`. -/
+theorem partitionFunction_high_temp_expansion_h_zero_relative_sandwich_ferromagnetic
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) :
+    Real.cosh (β * J) ^ G.edgeFinset.card
+      ≤ partitionFunction G ⟨J, 0, β⟩ / (2 : ℝ) ^ Fintype.card ι ∧
+    partitionFunction G ⟨J, 0, β⟩ / (2 : ℝ) ^ Fintype.card ι
+      ≤ Real.exp (β * J * G.edgeFinset.card) :=
+  partitionFunction_high_temp_expansion_h_zero_relative_sandwich
+    G J β (mul_nonneg hβ.le hJ)
+
 /-- **Ferromagnetic sharper Z high-temperature upper bound**: under
 `0 ≤ J, 0 < β`, `Z(G; J, 0, β) ≤ 2^|ι| · exp(β·J·|E|)`. Bridges
 ferromagnetic-style hypotheses with Step 393 via `mul_nonneg hβ.le hJ`. -/
