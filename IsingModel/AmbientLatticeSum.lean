@@ -1678,6 +1678,43 @@ theorem freeEnergyInfinite_high_temp_h_zero_deviation_bound_exp
     G Λ J β hJ hβ hc
   linarith
 
+/-- **∞-vol f quantitative continuity at `J = 0`**: under ferromagnetic
+`0 ≤ J, 0 < β` + bounded-edge-density witness `c`,
+`|freeEnergyInfinite G Λ ⟨J, 0, β⟩ - freeEnergyInfinite G Λ ⟨0, 0, β⟩| ≤ β·J·c`.
+
+Combines:
+- Step 397 upper `f_∞ ≤ log 2 + β·J·c`.
+- Existing `freeEnergyInfinite_ge_log_two` lower `log 2 ≤ f_∞`.
+- `freeEnergyInfinite_zero_params_of_nonempty` value `f_∞⟨0, 0, β⟩ = log 2`.
+
+Right-continuity at `J = 0` with explicit linear modulus at the
+infinite-volume level. -/
+theorem freeEnergyInfinite_high_temp_h_zero_continuity_at_J_zero
+    [Nonempty V] (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) {c : ℝ}
+    (hc : ∀ n, (Λ.volume n).Nonempty →
+      ((inducedGraph G (Λ.volume n)).edgeFinset.card : ℝ) ≤
+        c * Fintype.card (↑(Λ.volume n) : Type _)) :
+    |freeEnergyInfinite G Λ (⟨J, 0, β⟩ : IsingParams ℝ) -
+        freeEnergyInfinite G Λ (⟨0, 0, β⟩ : IsingParams ℝ)|
+      ≤ β * J * c := by
+  have hf0 : freeEnergyInfinite G Λ (⟨0, 0, β⟩ : IsingParams ℝ) = Real.log 2 :=
+    freeEnergyInfinite_zero_params_of_nonempty G Λ β
+  rw [hf0]
+  have h_upper := freeEnergyInfinite_high_temp_h_zero_upper_bound_exp_uniform
+    G Λ J β hJ hβ hc
+  have h_lower := freeEnergyInfinite_ge_log_two G Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+    ⟨hJ, le_refl 0, hβ⟩ hc
+  have h_dev_nn : (0 : ℝ) ≤ β * J * c := by
+    have hβJ : 0 ≤ β * J := mul_nonneg hβ.le hJ
+    -- We don't have 0 ≤ c direct here; derive from the upper bound
+    -- via h_upper - log 2 ≤ β·J·c plus log 2 ≤ f_∞ (h_lower), so
+    -- 0 ≤ f_∞ - log 2 ≤ β·J·c.
+    linarith
+  rw [abs_sub_le_iff]
+  refine ⟨by linarith, by linarith⟩
+
 /-- **Strict positivity** of `freeEnergyInfinite` under the standard
 ferromagnetic + `BoundedEdgeDensity` + `[Nonempty V]` setup:
 `0 < freeEnergyInfinite G Λ p`.
