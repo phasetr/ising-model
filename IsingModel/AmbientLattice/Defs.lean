@@ -490,6 +490,33 @@ theorem freeEnergyΛ_high_temp_h_zero_upper_bound
     (inducedGraph G Λ) J β hβJ
     (by rw [Fintype.card_coe]; exact hne)
 
+/-- **Λ-level Z bounds consistency**: lower ≤ upper. -/
+theorem partitionFunctionΛ_high_temp_h_zero_lower_le_upper
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (J β : ℝ) :
+    (2 : ℝ) ^ Λ.card *
+        Real.cosh (β * J) ^ (inducedGraph G Λ).edgeFinset.card
+      ≤ (2 : ℝ) ^ (Λ.card + (inducedGraph G Λ).edgeFinset.card) *
+        Real.cosh (β * J) ^ (inducedGraph G Λ).edgeFinset.card := by
+  have := IsingModel.partitionFunction_high_temp_h_zero_lower_le_upper
+    (inducedGraph G Λ) J β
+  rwa [Fintype.card_coe] at this
+
+/-- **Λ-level freeEnergy bounds consistency**: lower ≤ upper. -/
+theorem freeEnergyΛ_high_temp_h_zero_lower_le_upper
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) :
+    Real.log 2 +
+        ((inducedGraph G Λ).edgeFinset.card : ℝ) / Λ.card *
+          Real.log (Real.cosh (β * J))
+      ≤ Real.log 2
+        + ((inducedGraph G Λ).edgeFinset.card : ℝ) / Λ.card *
+            Real.log (2 * Real.cosh (β * J)) := by
+  have := IsingModel.freeEnergy_high_temp_h_zero_lower_le_upper
+    (inducedGraph G Λ) J β hβJ
+  rwa [Fintype.card_coe] at this
+
 /-- **Λ-level free-energy lower bound from FV (3.45)** at zero external field:
 under `0 < |Λ|` and `0 ≤ β * J`,
 `f_Λ(⟨J, 0, β⟩) ≥ log 2 + (|E_Λ|/|Λ|) · log(cosh(β·J))`.
