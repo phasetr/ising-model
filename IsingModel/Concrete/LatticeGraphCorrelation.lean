@@ -2987,6 +2987,51 @@ theorem correlationΛ_latticeGraph_high_temp_h_zero_at_pair_pos_of_edge_ferromag
   correlationΛ_high_temp_h_zero_at_pair_pos_of_edge_ferromagnetic
     (IsingModel.latticeGraph d) Λ J β hJ hβ i j hij he
 
+/-- **ℤ^d Λ pair single-edge tanh lower bound via lattice adjacency**:
+under `0 ≤ β·J` and `(latticeGraph d).Adj ↑i ↑j` (i.e.
+`latticeDistance d ↑i ↑j = 1`),
+`⟨σ_iσ_j⟩^Λ ≥ tanh(β·J) / 2^|E_Λ|`. Direct corollary of
+`correlationΛ_latticeGraph_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges`,
+removing the explicit edge-set membership in favour of the more
+familiar lattice adjacency on the ambient lattice. -/
+theorem correlationΛ_latticeGraph_at_pair_ge_tanh_div_two_pow_edges_of_latticeAdj
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
+    (hβJ : 0 ≤ β * J) (i j : ↑Λ)
+    (hij : (IsingModel.latticeGraph d).Adj ↑i ↑j) :
+    Real.tanh (β * J) /
+        (2 : ℝ) ^ (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card
+      ≤ correlationΛ (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset ↑Λ) := by
+  have hne : i ≠ j := by
+    intro h
+    apply hij.ne
+    exact congrArg Subtype.val h
+  have he : s(i, j) ∈ (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet := by
+    rw [SimpleGraph.mem_edgeSet]
+    exact (SimpleGraph.induce_adj).mpr hij
+  exact correlationΛ_latticeGraph_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges
+    d Λ J β hβJ i j hne he
+
+/-- **ℤ^d Λ pair strict positivity via lattice adjacency**: under
+`0 < β·J` and `(latticeGraph d).Adj ↑i ↑j`,
+`0 < ⟨σ_iσ_j⟩^Λ`. Direct corollary of
+`correlationΛ_latticeGraph_high_temp_h_zero_at_pair_pos_of_edge`. -/
+theorem correlationΛ_latticeGraph_at_pair_pos_of_latticeAdj
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
+    (hβJ : 0 < β * J) (i j : ↑Λ)
+    (hij : (IsingModel.latticeGraph d).Adj ↑i ↑j) :
+    0 < correlationΛ (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset ↑Λ) := by
+  have hne : i ≠ j := by
+    intro h
+    apply hij.ne
+    exact congrArg Subtype.val h
+  have he : s(i, j) ∈ (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet := by
+    rw [SimpleGraph.mem_edgeSet]
+    exact (SimpleGraph.induce_adj).mpr hij
+  exact correlationΛ_latticeGraph_high_temp_h_zero_at_pair_pos_of_edge
+    d Λ J β hβJ i j hne he
+
 /-- **ℤ^d Λ-level magnetization vanishes at h = 0**:
 `correlationΛ (latticeGraph d) Λ ⟨J, 0, β⟩ {i} = 0` for any `i : ↑Λ`.
 ℤ^d wrapper of `correlationΛ_high_temp_h_zero_at_singleton`. -/
@@ -3345,6 +3390,34 @@ theorem
         (⟨J, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset ↑(Λ.volume n)) :=
   correlationAlongExhaustion_high_temp_h_zero_at_pair_pos_of_edge_ferromagnetic
     (IsingModel.latticeGraph d) Λ J β hJ hβ n i j hij he
+
+/-- **ℤ^d along-ex pair single-edge tanh lower bound via lattice adjacency
+at stage `n`**: under `0 ≤ β·J` and `(latticeGraph d).Adj ↑i ↑j` for
+`i, j : ↑(Λ.volume n)`, the lifted pair correlation satisfies the
+single-edge tanh lower bound. -/
+theorem correlationAlongExhaustion_latticeGraph_at_pair_ge_tanh_div_two_pow_edges_of_latticeAdj
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
+    (hβJ : 0 ≤ β * J) (n : ℕ) (i j : ↑(Λ.volume n))
+    (hij : (IsingModel.latticeGraph d).Adj ↑i ↑j) :
+    Real.tanh (β * J) /
+        (2 : ℝ) ^
+          (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card
+      ≤ correlationΛ (IsingModel.latticeGraph d) (Λ.volume n)
+          (⟨J, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset ↑(Λ.volume n)) :=
+  correlationΛ_latticeGraph_at_pair_ge_tanh_div_two_pow_edges_of_latticeAdj
+    d (Λ.volume n) J β hβJ i j hij
+
+/-- **ℤ^d along-ex pair strict positivity via lattice adjacency at stage `n`**:
+under `0 < β·J` and `(latticeGraph d).Adj ↑i ↑j`,
+`0 < ⟨σ_iσ_j⟩^{Λ_n}`. -/
+theorem correlationAlongExhaustion_latticeGraph_at_pair_pos_of_latticeAdj
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
+    (hβJ : 0 < β * J) (n : ℕ) (i j : ↑(Λ.volume n))
+    (hij : (IsingModel.latticeGraph d).Adj ↑i ↑j) :
+    0 < correlationΛ (IsingModel.latticeGraph d) (Λ.volume n)
+        (⟨J, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset ↑(Λ.volume n)) :=
+  correlationΛ_latticeGraph_at_pair_pos_of_latticeAdj
+    d (Λ.volume n) J β hβJ i j hij
 
 /-- **ℤ^d along-ex pair at J=0,h=0**: = 0. -/
 theorem correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_pair_J_zero
