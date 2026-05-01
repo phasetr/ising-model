@@ -2060,6 +2060,27 @@ theorem partitionFunction_high_temp_expansion_h_zero_ratio_bound
     _ = Real.exp (β * J * G.edgeFinset.card) *
           (2 : ℝ) ^ Fintype.card ι := by ring
 
+/-- **Z ratio bound at β=0 trivial slice**: under `0 ≤ β·J`,
+`Z(G; J, 0, β) / Z(G; J, 0, 0) ≤ exp(β·J·|E|)`. -/
+theorem partitionFunction_high_temp_expansion_h_zero_ratio_bound_beta_zero
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) :
+    partitionFunction G ⟨J, 0, β⟩ /
+        partitionFunction G (⟨J, 0, 0⟩ : IsingParams ℝ)
+      ≤ Real.exp (β * J * G.edgeFinset.card) := by
+  have h_ub := partitionFunction_high_temp_expansion_h_zero_upper_bound_exp
+    G J β hβJ
+  have h_β0 : partitionFunction G (⟨J, 0, 0⟩ : IsingParams ℝ)
+      = (2 : ℝ) ^ Fintype.card ι :=
+    partitionFunction_high_temp_expansion_h_zero_closed_at_beta_zero G J
+  rw [h_β0]
+  rw [div_le_iff₀ (pow_pos (by norm_num) _)]
+  calc partitionFunction G ⟨J, 0, β⟩
+      ≤ (2 : ℝ) ^ Fintype.card ι *
+          Real.exp (β * J * G.edgeFinset.card) := h_ub
+    _ = Real.exp (β * J * G.edgeFinset.card) *
+          (2 : ℝ) ^ Fintype.card ι := by ring
+
 /-- **Sharper Z complete-summary exp bundle**: under `0 ≤ β·J`,
 single statement bundling sharper sandwich + trivial-slice values:
   1. `2^|ι|·cosh^|E| ≤ Z` (lower),
