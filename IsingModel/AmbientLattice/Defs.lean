@@ -294,6 +294,17 @@ theorem partitionFunctionΛ_high_temp_expansion_h_zero_closed_at_J_zero
       IsingModel.partitionFunction_high_temp_expansion_h_zero_closed_at_J_zero,
       Fintype.card_coe]
 
+/-- **Λ-level FV (3.45) at `β = 0` consistency check**:
+`Z_Λ(⟨J, 0, 0⟩) = 2^|Λ|`. Direct lift of Step 324. -/
+theorem partitionFunctionΛ_high_temp_expansion_h_zero_closed_at_beta_zero
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (J : ℝ) :
+    partitionFunctionΛ G Λ (⟨J, 0, 0⟩ : IsingParams ℝ)
+      = (2 : ℝ) ^ Λ.card := by
+  rw [partitionFunctionΛ_apply,
+      IsingModel.partitionFunction_high_temp_expansion_h_zero_closed_at_beta_zero,
+      Fintype.card_coe]
+
 /-- **Λ-level FV (3.46) at `A = ∅` consistency check**:
 under `0 ≤ β·J`, `correlationΛ G Λ ⟨J, 0, β⟩ ∅ = 1`.
 Direct lift of Step 313. -/
