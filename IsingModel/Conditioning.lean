@@ -2332,6 +2332,17 @@ theorem correlation_high_temp_h_zero_odd_card_eq_zero
       high_temp_numerator_filter_eq_empty_of_odd_card G A hA_odd,
       Finset.sum_empty, zero_div]
 
+/-- **Magnetization at h = 0 vanishes via FV (3.46) handshake**:
+specialization of `correlation_high_temp_h_zero_odd_card_eq_zero` (Step 298)
+at `A = {i}`. Since `|{i}| = 1` is odd, the FV (3.46) numerator filter
+is empty by handshake, so `⟨σ_i⟩ = 0`. -/
+theorem correlation_high_temp_h_zero_at_singleton
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J β : ℝ) (i : ι) :
+    correlation G ⟨J, 0, β⟩ ({i} : Finset ι) = 0 := by
+  refine correlation_high_temp_h_zero_odd_card_eq_zero G J β {i} ?_
+  rw [Finset.card_singleton]
+  exact ⟨0, rfl⟩
+
 /-- **High-temperature parameter**: `t = tanh(βJ)`.
 For `βJ ≥ 0`, `t ∈ [0, 1)`, and the high-temperature expansion
 converges when `t` is small. -/
