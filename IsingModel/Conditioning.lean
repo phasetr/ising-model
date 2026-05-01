@@ -2428,6 +2428,22 @@ theorem correlation_high_temp_h_zero_at_pair_beta_zero
   refine correlation_beta_zero_vanish_of_nonempty_A G J 0 {i, j} ?_
   exact ⟨i, by simp⟩
 
+/-- **Singleton magnetization at J = 0, h = 0 vanishes**: at `J = 0, h = 0`,
+`⟨σ_i⟩ = 0`. -/
+theorem correlation_high_temp_h_zero_at_singleton_J_zero
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (β : ℝ) (i : ι) :
+    correlation G ⟨0, 0, β⟩ ({i} : Finset ι) = 0 := by
+  classical
+  rw [correlation_J_zero, mul_zero, Real.tanh_zero, Finset.card_singleton,
+      pow_one]
+
+/-- **Singleton magnetization at β = 0, h = 0 vanishes**: at `β = 0, h = 0`,
+`⟨σ_i⟩ = 0`. -/
+theorem correlation_high_temp_h_zero_at_singleton_beta_zero
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J : ℝ) (i : ι) :
+    correlation G ⟨J, 0, 0⟩ ({i} : Finset ι) = 0 :=
+  correlation_beta_zero_vanish_of_nonempty_A G J 0 {i} ⟨i, by simp⟩
+
 /-- **Singleton magnetization absolute bound at h = 0 from FV (3.46)**:
 `|⟨σ_i⟩_{β,0}| ≤ 1`. Combined with Step 331 (`⟨σ_i⟩ = 0`), this is
 trivially `0 ≤ 1` but useful as a conventional restatement. -/
