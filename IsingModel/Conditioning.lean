@@ -2506,6 +2506,101 @@ theorem freeEnergy_high_temp_h_zero_complete_summary
      simpa [mul_zero, Real.cosh_zero] using this,
    freeEnergy_beta_zero G J 0 hne⟩
 
+/-- **Single-edge subset is in the FV (3.46) numerator filter at `A = {i, j}`**:
+for `i ≠ j` and an edge `e = s(i, j) ∈ G.edgeSet`, the singleton
+`{e} ⊆ G.edgeFinset` satisfies the parity predicate: at `v = i, j`,
+`1_{v ∈ A} + 1 = 2` is even; at any other `v`, `0 + 0 = 0` is even.
+This is the key combinatorial fact behind the single-edge lower bound
+`tanh(βJ) ≤ ∑_{X : ∂X = {i,j}} tanh^|X|`. -/
+theorem singleton_edge_mem_high_temp_pair_filter
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (i j : ι) (hij : i ≠ j) (he : s(i, j) ∈ G.edgeSet) :
+    ({s(i, j)} : Finset (Sym2 ι)) ∈ G.edgeFinset.powerset.filter
+      (fun X : Finset (Sym2 ι) => ∀ v : ι,
+        Even ((if v ∈ ({i, j} : Finset ι) then (1 : ℕ) else 0)
+              + (X.filter (v ∈ ·)).card)) := by
+  classical
+  refine Finset.mem_filter.mpr ⟨?_, ?_⟩
+  · -- {s(i, j)} ⊆ G.edgeFinset
+    rw [Finset.mem_powerset, Finset.singleton_subset_iff]
+    exact (SimpleGraph.mem_edgeFinset).mpr he
+  · -- parity predicate holds for every v
+    intro v
+    by_cases hv : v ∈ ({i, j} : Finset ι)
+    · -- v ∈ {i, j}: 1 + 1 = 2 is even
+      rw [if_pos hv]
+      have : ({s(i, j)} : Finset (Sym2 ι)).filter (v ∈ ·) = {s(i, j)} := by
+        rw [Finset.filter_singleton, if_pos]
+        rcases Finset.mem_insert.mp hv with hi | hj
+        · subst hi; exact Sym2.mem_mk_left _ _
+        · rw [Finset.mem_singleton] at hj; subst hj; exact Sym2.mem_mk_right _ _
+      rw [this, Finset.card_singleton]; exact ⟨1, rfl⟩
+    · -- v ∉ {i, j}: 0 + 0 = 0 is even
+      rw [if_neg hv]
+      have : ({s(i, j)} : Finset (Sym2 ι)).filter (v ∈ ·) = ∅ := by
+        rw [Finset.filter_singleton, if_neg]
+        intro hv_in
+        apply hv
+        simp only [Finset.mem_insert, Finset.mem_singleton]
+        exact (Sym2.mem_iff.mp hv_in)
+      rw [this, Finset.card_empty]; exact ⟨0, rfl⟩
+
+/-- **Pair correlation single-edge tanh lower bound (GJ §18.3 / FV (3.46))**:
+under `0 ≤ β·J` and an edge `s(i, j) ∈ G.edgeSet`,
+`⟨σ_iσ_j⟩^{⟨J,0,β⟩} ≥ tanh(β·J) / 2^|E|`.
+
+The single edge `e = s(i, j)` contributes `tanh(β·J)` to the FV (3.46)
+numerator; the denominator is bounded above by `2^|E|`
+(Step 319). Provides a quantitative non-trivial lower bound: at high
+temperature, the pair correlation between adjacent sites does not
+vanish faster than `tanh(βJ) / 2^|E|`. -/
+theorem correlation_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J)
+    (i j : ι) (hij : i ≠ j) (he : s(i, j) ∈ G.edgeSet) :
+    Real.tanh (β * J) / (2 : ℝ) ^ G.edgeFinset.card
+      ≤ correlation G ⟨J, 0, β⟩ ({i, j} : Finset ι) := by
+  classical
+  rw [correlation_high_temp_expansion_h_zero_closed]
+  -- Goal: tanh / 2^|E| ≤ N / D
+  set N : ℝ := ∑ X ∈ G.edgeFinset.powerset.filter
+      (fun X : Finset (Sym2 ι) => ∀ v : ι,
+        Even ((if v ∈ ({i, j} : Finset ι) then (1 : ℕ) else 0)
+              + (X.filter (v ∈ ·)).card)),
+      Real.tanh (β * J) ^ X.card with hN_def
+  set D : ℝ := ∑ X ∈ G.edgeFinset.powerset.filter
+      (fun X : Finset (Sym2 ι) => ∀ v : ι, Even ((X.filter (v ∈ ·)).card)),
+      Real.tanh (β * J) ^ X.card with hD_def
+  have h_tanh_nn : 0 ≤ Real.tanh (β * J) := by
+    rw [Real.tanh_eq_sinh_div_cosh]
+    exact div_nonneg
+      (Real.sinh_nonneg_iff.mpr hβJ) (Real.cosh_pos _).le
+  have h_one_le_D : 1 ≤ D := one_le_sum_pow_tanh_even_subgraph G J β hβJ
+  have h_D_pos : 0 < D := lt_of_lt_of_le zero_lt_one h_one_le_D
+  have h_D_le : D ≤ (2 : ℝ) ^ G.edgeFinset.card :=
+    sum_pow_tanh_even_subgraph_le_two_pow G J β hβJ
+  have h_tanh_le_N : Real.tanh (β * J) ≤ N := by
+    -- Singleton edge {s(i,j)} contributes tanh^1 to N; other terms ≥ 0.
+    have h_mem := singleton_edge_mem_high_temp_pair_filter G i j hij he
+    have h_term_eq : Real.tanh (β * J) ^ ({s(i, j)} : Finset (Sym2 ι)).card =
+        Real.tanh (β * J) := by rw [Finset.card_singleton, pow_one]
+    have h_terms_nn : ∀ X ∈ G.edgeFinset.powerset.filter
+        (fun X : Finset (Sym2 ι) => ∀ v : ι,
+          Even ((if v ∈ ({i, j} : Finset ι) then (1 : ℕ) else 0)
+                + (X.filter (v ∈ ·)).card)),
+        0 ≤ Real.tanh (β * J) ^ X.card := fun X _ => pow_nonneg h_tanh_nn _
+    calc Real.tanh (β * J)
+        = Real.tanh (β * J) ^ ({s(i, j)} : Finset (Sym2 ι)).card := h_term_eq.symm
+      _ ≤ N := Finset.single_le_sum (f := fun X : Finset (Sym2 ι) =>
+                Real.tanh (β * J) ^ X.card) h_terms_nn h_mem
+  -- tanh / 2^|E| ≤ tanh / D ≤ N / D
+  have h_step1 : Real.tanh (β * J) / (2 : ℝ) ^ G.edgeFinset.card
+      ≤ Real.tanh (β * J) / D :=
+    div_le_div_of_nonneg_left h_tanh_nn h_D_pos h_D_le
+  have h_step2 : Real.tanh (β * J) / D ≤ N / D :=
+    div_le_div_of_nonneg_right h_tanh_le_N h_D_pos.le
+  exact h_step1.trans h_step2
+
 /-- **Pair correlation under `Ferromagnetic` at h = 0**: under ferromagnetic
 parameters `⟨J, 0, β⟩` (i.e. `0 ≤ J, 0 < β`),
 `0 ≤ ⟨σ_i σ_j⟩ ≤ 1`. Bridges the `Ferromagnetic` typeclass and FV (3.46)
