@@ -1439,6 +1439,61 @@ theorem freeEnergyΛ_high_temp_h_zero_ratio_bound_bundle_ferromagnetic
   freeEnergyΛ_high_temp_h_zero_ratio_bound_bundle
     G Λ J β (mul_nonneg hβ.le hJ) hne
 
+/-- **Λ-level triple (Z + log Z + f) ratio bound bundle at J=0**. -/
+theorem partitionFunctionΛ_high_temp_expansion_h_zero_triple_ratio_bound_bundle
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (hne : 0 < Λ.card) :
+    partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) /
+        partitionFunctionΛ G Λ (⟨0, 0, β⟩ : IsingParams ℝ)
+        ≤ Real.exp (β * J * (inducedGraph G Λ).edgeFinset.card) ∧
+    Real.log (partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ))
+        - Real.log (partitionFunctionΛ G Λ (⟨0, 0, β⟩ : IsingParams ℝ))
+        ≤ β * J * (inducedGraph G Λ).edgeFinset.card ∧
+    freeEnergyΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+        - freeEnergyΛ G Λ (⟨0, 0, β⟩ : IsingParams ℝ)
+        ≤ β * J * (inducedGraph G Λ).edgeFinset.card / Λ.card :=
+  ⟨partitionFunctionΛ_high_temp_expansion_h_zero_ratio_bound G Λ J β hβJ,
+   log_partitionFunctionΛ_high_temp_expansion_h_zero_ratio_bound G Λ J β hβJ,
+   freeEnergyΛ_high_temp_h_zero_ratio_bound G Λ J β hβJ hne⟩
+
+/-- **Λ-level triple ratio bound bundle at β=0**. -/
+theorem partitionFunctionΛ_high_temp_expansion_h_zero_triple_ratio_bound_bundle_beta_zero
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (hne : 0 < Λ.card) :
+    partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) /
+        partitionFunctionΛ G Λ (⟨J, 0, 0⟩ : IsingParams ℝ)
+        ≤ Real.exp (β * J * (inducedGraph G Λ).edgeFinset.card) ∧
+    Real.log (partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ))
+        - Real.log (partitionFunctionΛ G Λ (⟨J, 0, 0⟩ : IsingParams ℝ))
+        ≤ β * J * (inducedGraph G Λ).edgeFinset.card ∧
+    freeEnergyΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+        - freeEnergyΛ G Λ (⟨J, 0, 0⟩ : IsingParams ℝ)
+        ≤ β * J * (inducedGraph G Λ).edgeFinset.card / Λ.card :=
+  ⟨partitionFunctionΛ_high_temp_expansion_h_zero_ratio_bound_beta_zero
+     G Λ J β hβJ,
+   log_partitionFunctionΛ_high_temp_expansion_h_zero_ratio_bound_beta_zero
+     G Λ J β hβJ,
+   freeEnergyΛ_high_temp_h_zero_ratio_bound_beta_zero G Λ J β hβJ hne⟩
+
+/-- **Λ-level ferromagnetic triple ratio bound bundle at J=0**. -/
+theorem partitionFunctionΛ_high_temp_expansion_h_zero_triple_ratio_bound_bundle_ferromagnetic
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (hne : 0 < Λ.card) :
+    partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) /
+        partitionFunctionΛ G Λ (⟨0, 0, β⟩ : IsingParams ℝ)
+        ≤ Real.exp (β * J * (inducedGraph G Λ).edgeFinset.card) ∧
+    Real.log (partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ))
+        - Real.log (partitionFunctionΛ G Λ (⟨0, 0, β⟩ : IsingParams ℝ))
+        ≤ β * J * (inducedGraph G Λ).edgeFinset.card ∧
+    freeEnergyΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+        - freeEnergyΛ G Λ (⟨0, 0, β⟩ : IsingParams ℝ)
+        ≤ β * J * (inducedGraph G Λ).edgeFinset.card / Λ.card :=
+  partitionFunctionΛ_high_temp_expansion_h_zero_triple_ratio_bound_bundle
+    G Λ J β (mul_nonneg hβ.le hJ) hne
+
 /-- **Λ-level ferromagnetic f ratio bound at J=0**. -/
 theorem freeEnergyΛ_high_temp_h_zero_ratio_bound_ferromagnetic
     (G : SimpleGraph V) (Λ : Finset V)
