@@ -2406,6 +2406,19 @@ theorem correlation_high_temp_h_zero_at_pair_sandwich
   ⟨correlation_high_temp_h_zero_at_pair_nonneg G J β hβJ i j,
    correlation_high_temp_h_zero_at_pair_le_one G J β i j⟩
 
+/-- **Pair correlation at J = 0, h = 0 vanishes**: at `J = 0, h = 0`,
+`⟨σ_i σ_j⟩ = 0` for any `i, j : ι`. Direct from `correlation_J_zero`
+which gives `⟨σ_A⟩ = tanh(β · h)^|A|`; at `h = 0` and `A = {i, j}`
+(nonempty), this gives `0`. -/
+theorem correlation_high_temp_h_zero_at_pair_J_zero
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (β : ℝ) (i j : ι) :
+    correlation G ⟨0, 0, β⟩ ({i, j} : Finset ι) = 0 := by
+  classical
+  rw [correlation_J_zero, mul_zero, Real.tanh_zero]
+  have hcard_pos : 0 < ({i, j} : Finset ι).card := by
+    rw [Finset.card_pos]; exact ⟨i, by simp⟩
+  exact zero_pow hcard_pos.ne'
+
 /-- **Singleton magnetization absolute bound at h = 0 from FV (3.46)**:
 `|⟨σ_i⟩_{β,0}| ≤ 1`. Combined with Step 331 (`⟨σ_i⟩ = 0`), this is
 trivially `0 ≤ 1` but useful as a conventional restatement. -/
