@@ -1741,6 +1741,25 @@ theorem freeEnergyInfinite_high_temp_h_zero_continuity_at_beta_zero
   rw [abs_sub_le_iff]
   refine ⟨by linarith, by linarith⟩
 
+/-- **∞-vol f continuity bundle at trivial slices**: under ferromagnetic
+`0 ≤ J, 0 < β` + bounded-edge-density witness `c`, single statement
+bundling continuity at both `J = 0` and `β = 0` trivial slices. -/
+theorem freeEnergyInfinite_high_temp_h_zero_continuity_bundle
+    [Nonempty V] (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) {c : ℝ}
+    (hc : ∀ n, (Λ.volume n).Nonempty →
+      ((inducedGraph G (Λ.volume n)).edgeFinset.card : ℝ) ≤
+        c * Fintype.card (↑(Λ.volume n) : Type _)) :
+    |freeEnergyInfinite G Λ (⟨J, 0, β⟩ : IsingParams ℝ) -
+        freeEnergyInfinite G Λ (⟨0, 0, β⟩ : IsingParams ℝ)| ≤ β * J * c ∧
+    |freeEnergyInfinite G Λ (⟨J, 0, β⟩ : IsingParams ℝ) -
+        freeEnergyInfinite G Λ (⟨J, 0, 0⟩ : IsingParams ℝ)| ≤ β * J * c :=
+  ⟨freeEnergyInfinite_high_temp_h_zero_continuity_at_J_zero
+      G Λ J β hJ hβ hc,
+   freeEnergyInfinite_high_temp_h_zero_continuity_at_beta_zero
+      G Λ J β hJ hβ hc⟩
+
 /-- **Strict positivity** of `freeEnergyInfinite` under the standard
 ferromagnetic + `BoundedEdgeDensity` + `[Nonempty V]` setup:
 `0 < freeEnergyInfinite G Λ p`.
