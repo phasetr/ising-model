@@ -1067,6 +1067,21 @@ theorem log_partitionFunctionΛ_high_temp_expansion_h_zero_deviation_pos_ferroma
   log_partitionFunctionΛ_high_temp_expansion_h_zero_deviation_pos
     G Λ J β (mul_pos hβ hJ) hEpos
 
+/-- **Λ-level Z ratio sandwich at J=0**. -/
+theorem partitionFunctionΛ_high_temp_expansion_h_zero_ratio_sandwich
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) :
+    Real.cosh (β * J) ^ (inducedGraph G Λ).edgeFinset.card
+      ≤ partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) /
+          partitionFunctionΛ G Λ (⟨0, 0, β⟩ : IsingParams ℝ) ∧
+    partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) /
+        partitionFunctionΛ G Λ (⟨0, 0, β⟩ : IsingParams ℝ)
+      ≤ Real.exp (β * J * (inducedGraph G Λ).edgeFinset.card) := by
+  rw [partitionFunctionΛ_apply, partitionFunctionΛ_apply]
+  exact IsingModel.partitionFunction_high_temp_expansion_h_zero_ratio_sandwich
+    (inducedGraph G Λ) J β hβJ
+
 /-- **Λ-level Z high-temp sandwich (FV (3.45))**: under `0 ≤ β·J`,
 `2^|Λ| · cosh^|E_Λ| ≤ Z_Λ ≤ 2^(|Λ|+|E_Λ|) · cosh^|E_Λ|`. -/
 theorem partitionFunctionΛ_high_temp_expansion_h_zero_sandwich

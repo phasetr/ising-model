@@ -3598,6 +3598,24 @@ theorem log_partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_deviatio
   log_partitionFunctionΛ_high_temp_expansion_h_zero_deviation_pos_ferromagnetic
     (IsingModel.latticeGraph d) Λ J β hJ hβ hEpos
 
+/-- **ℤ^d Λ Z ratio sandwich at J=0**. -/
+theorem partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_ratio_sandwich
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ) (hβJ : 0 ≤ β * J) :
+    Real.cosh (β * J) ^
+        (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card
+      ≤ partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) /
+          partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+            (⟨0, 0, β⟩ : IsingParams ℝ) ∧
+    partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) /
+        partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+          (⟨0, 0, β⟩ : IsingParams ℝ)
+      ≤ Real.exp (β * J *
+          (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card) :=
+  partitionFunctionΛ_high_temp_expansion_h_zero_ratio_sandwich
+    (IsingModel.latticeGraph d) Λ J β hβJ
+
 /-- **ℤ^d along-exhaustion correlation high-temperature closed form (FV §3.7.3 eq. (3.46))**:
 at every stage `n` with `A ⊆ Λ.volume n`, FV (3.46) closed form holds
 on the lifted Finset. When `A ⊄`, equals `0`.
