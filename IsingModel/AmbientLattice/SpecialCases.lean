@@ -1495,6 +1495,26 @@ theorem partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_bound_
   partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_bound_bundle
     G Λ J β (mul_nonneg hβ.le hJ) n
 
+/-- **Along-ex f ratio bound bundle at stage `n`**. -/
+theorem freeEnergyAlongExhaustion_high_temp_h_zero_ratio_bound_bundle
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (n : ℕ) (hne : 0 < (Λ.volume n).card) :
+    freeEnergyAlongExhaustion G Λ (⟨J, 0, β⟩ : IsingParams ℝ) n
+        - freeEnergyAlongExhaustion G Λ (⟨0, 0, β⟩ : IsingParams ℝ) n
+        ≤ β * J * (inducedGraph G (Λ.volume n)).edgeFinset.card /
+            (Λ.volume n).card ∧
+    freeEnergyAlongExhaustion G Λ (⟨J, 0, β⟩ : IsingParams ℝ) n
+        - freeEnergyAlongExhaustion G Λ (⟨J, 0, 0⟩ : IsingParams ℝ) n
+        ≤ β * J * (inducedGraph G (Λ.volume n)).edgeFinset.card /
+            (Λ.volume n).card := by
+  change freeEnergyΛ G (Λ.volume n) (⟨J, 0, β⟩ : IsingParams ℝ)
+      - freeEnergyΛ G (Λ.volume n) (⟨0, 0, β⟩ : IsingParams ℝ) ≤ _ ∧
+      freeEnergyΛ G (Λ.volume n) (⟨J, 0, β⟩ : IsingParams ℝ)
+        - freeEnergyΛ G (Λ.volume n) (⟨J, 0, 0⟩ : IsingParams ℝ) ≤ _
+  exact freeEnergyΛ_high_temp_h_zero_ratio_bound_bundle
+    G (Λ.volume n) J β hβJ hne
+
 /-- **Along-exhaustion freeEnergy high-temp sandwich (FV (3.45))**: under
 `0 ≤ β·J` and `0 < |Λ_n|`, at every stage `n`,
 `log 2 + (|E_n|/|Λ_n|) log cosh(βJ) ≤ f_n ≤ log 2 + (|E_n|/|Λ_n|) log(2·cosh βJ)`. -/
