@@ -1924,6 +1924,29 @@ theorem freeEnergy_high_temp_h_zero_sandwich
   ⟨freeEnergy_high_temp_h_zero_lower_bound G J β hβJ hne,
    freeEnergy_high_temp_h_zero_upper_bound G J β hβJ hne⟩
 
+omit [DecidableEq ι] in
+/-- **freeEnergy high-temp bounds consistency**: the FV (3.45) lower
+bound is always at most the upper bound:
+`log 2 + (|E|/|ι|) · log cosh(βJ) ≤ log 2 + (|E|/|ι|) · log(2·cosh βJ)`.
+
+Trivial sanity check: `log cosh ≤ log(2·cosh) = log 2 + log cosh`,
+i.e., `log 2 ≥ 0`. -/
+theorem freeEnergy_high_temp_h_zero_lower_le_upper
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J β : ℝ) (hβJ : 0 ≤ β * J) :
+    Real.log 2 +
+        (G.edgeFinset.card : ℝ) / Fintype.card ι *
+          Real.log (Real.cosh (β * J))
+      ≤ Real.log 2
+        + (G.edgeFinset.card : ℝ) / Fintype.card ι *
+            Real.log (2 * Real.cosh (β * J)) := by
+  have hcosh_pos : 0 < Real.cosh (β * J) := Real.cosh_pos _
+  have hlog_le : Real.log (Real.cosh (β * J)) ≤ Real.log (2 * Real.cosh (β * J)) := by
+    apply Real.log_le_log hcosh_pos
+    linarith [Real.one_le_cosh (β * J)]
+  have hcoeff_nn : (0 : ℝ) ≤
+      (G.edgeFinset.card : ℝ) / Fintype.card ι := by positivity
+  linarith [mul_le_mul_of_nonneg_left hlog_le hcoeff_nn]
+
 /-! ### Correlation closed form (FV §3.7.3 eq. (3.46)) -/
 
 /-- **`spinProduct` as vertex-power**: for any `A : Finset ι`,
