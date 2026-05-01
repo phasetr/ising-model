@@ -995,6 +995,20 @@ theorem partitionFunctionΛ_high_temp_expansion_h_zero_relative_sandwich_ferroma
   partitionFunctionΛ_high_temp_expansion_h_zero_relative_sandwich
     G Λ J β (mul_nonneg hβ.le hJ)
 
+/-- **Λ-level f strict deviation**: under `0 < β·J`, `0 < |Λ|`,
+`0 < |E_Λ|`, `0 < f_Λ - log 2`. -/
+theorem freeEnergyΛ_high_temp_h_zero_deviation_pos
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hβJ : 0 < β * J) (hne : 0 < Λ.card)
+    (hEpos : 0 < (inducedGraph G Λ).edgeFinset.card) :
+    0 < freeEnergyΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) - Real.log 2 := by
+  have hcard : 0 < Fintype.card (↑Λ : Type _) := by
+    rw [Fintype.card_coe]; exact hne
+  rw [freeEnergyΛ_apply]
+  exact IsingModel.freeEnergy_high_temp_h_zero_deviation_pos
+    (inducedGraph G Λ) J β hβJ hcard hEpos
+
 /-- **Λ-level Z high-temp sandwich (FV (3.45))**: under `0 ≤ β·J`,
 `2^|Λ| · cosh^|E_Λ| ≤ Z_Λ ≤ 2^(|Λ|+|E_Λ|) · cosh^|E_Λ|`. -/
 theorem partitionFunctionΛ_high_temp_expansion_h_zero_sandwich
