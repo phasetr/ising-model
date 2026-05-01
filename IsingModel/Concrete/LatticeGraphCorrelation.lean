@@ -4905,6 +4905,30 @@ theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_high_temp_h_zero_sandwic
   exact inducedLatticeGraph_card_edgeFinset_le d
     ((Ambient.cubicExhaustion d).volume n)
 
+/-- **ℤ^d ∞-vol f complete-summary on `cubicExhaustion d`**: under
+ferromagnetic `0 ≤ J, 0 < β`, single statement bundling sandwich
+bounds and trivial-slice values at the ℤ^d concrete level.
+ℤ^d wrapper of `freeEnergyInfinite_high_temp_h_zero_complete_summary_exp`. -/
+theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_high_temp_h_zero_complete_summary_exp
+    (d : ℕ) [Nonempty (Fin d → ℤ)]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) :
+    Real.log 2
+      ≤ freeEnergyInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) ∧
+    freeEnergyInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ)
+      ≤ Real.log 2 + β * J * (d : ℝ) ∧
+    freeEnergyInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) (⟨0, 0, β⟩ : IsingParams ℝ) = Real.log 2 ∧
+    freeEnergyInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) (⟨J, 0, 0⟩ : IsingParams ℝ) = Real.log 2 := by
+  refine freeEnergyInfinite_high_temp_h_zero_complete_summary_exp
+    (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d) J β hJ hβ
+    (c := (d : ℝ)) ?_
+  intro n _
+  exact inducedLatticeGraph_card_edgeFinset_le d
+    ((Ambient.cubicExhaustion d).volume n)
+
 /-- **ℤ^d freeEnergyInfinite uniform upper bound via caller-supplied BED**
 (any-Exhaustion): `freeEnergyInfinite ≤ log 2 + |β|·(|J|·c + |h|)`. -/
 theorem freeEnergyInfinite_latticeGraph_le_uniform_upper_bound
