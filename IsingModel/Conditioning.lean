@@ -2300,6 +2300,19 @@ theorem freeEnergy_high_temp_h_zero_complete_summary_exp_ferromagnetic
   freeEnergy_high_temp_h_zero_complete_summary_exp
     G J β (mul_nonneg hβ.le hJ) hne
 
+/-- **Sharper f deviation bound from `log 2`**: under `0 < |ι|` and
+`0 ≤ β·J`, `freeEnergy G ⟨J, 0, β⟩ - log 2 ≤ β·J·|E|/|ι|`.
+
+Direct from `freeEnergy_high_temp_h_zero_upper_bound_exp` (Step 394) by
+subtracting `log 2`. Quantitative high-temperature deviation estimate. -/
+theorem freeEnergy_high_temp_h_zero_deviation_bound_exp
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (hne : 0 < Fintype.card ι) :
+    freeEnergy G ⟨J, 0, β⟩ - Real.log 2
+      ≤ β * J * G.edgeFinset.card / Fintype.card ι := by
+  have h := freeEnergy_high_temp_h_zero_upper_bound_exp G J β hβJ hne
+  linarith
+
 /-- **Free-energy high-temperature expansion decomposition (GJ §18.3 / FV (3.45))**:
 under `0 < |ι|` and `0 ≤ β·J`,
 `freeEnergy(G; J, 0, β) = log 2 + (|E|/|ι|) · log(cosh βJ) + log(∑_{X even} tanh^|X|) / |ι|`.
