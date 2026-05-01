@@ -1045,6 +1045,36 @@ theorem log_partitionFunctionΛ_high_temp_expansion_h_zero_deviation_pos
   exact IsingModel.log_partitionFunction_high_temp_expansion_h_zero_deviation_pos
     (inducedGraph G Λ) J β hβJ hEpos
 
+/-- **Λ-level Z + log Z + f strict deviation bundle**: under `0 < β·J`,
+`0 < |E_Λ|`, `0 < |Λ|`, single statement bundling all three strict deviations. -/
+theorem partitionFunctionΛ_high_temp_expansion_h_zero_strict_deviation_bundle
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hβJ : 0 < β * J) (hne : 0 < Λ.card)
+    (hEpos : 0 < (inducedGraph G Λ).edgeFinset.card) :
+    (2 : ℝ) ^ Λ.card < partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) ∧
+    0 < Real.log (partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ))
+        - (Λ.card : ℝ) * Real.log 2 ∧
+    0 < freeEnergyΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) - Real.log 2 :=
+  ⟨partitionFunctionΛ_high_temp_expansion_h_zero_pow_two_lt G Λ J β hβJ hEpos,
+   log_partitionFunctionΛ_high_temp_expansion_h_zero_deviation_pos
+     G Λ J β hβJ hEpos,
+   freeEnergyΛ_high_temp_h_zero_deviation_pos G Λ J β hβJ hne hEpos⟩
+
+/-- **Λ-level ferromagnetic Z + log Z + f strict deviation bundle**:
+under `0 < J, 0 < β`, the same triple via `mul_pos hβ hJ`. -/
+theorem partitionFunctionΛ_high_temp_expansion_h_zero_strict_deviation_bundle_ferromagnetic
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hJ : 0 < J) (hβ : 0 < β) (hne : 0 < Λ.card)
+    (hEpos : 0 < (inducedGraph G Λ).edgeFinset.card) :
+    (2 : ℝ) ^ Λ.card < partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) ∧
+    0 < Real.log (partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ))
+        - (Λ.card : ℝ) * Real.log 2 ∧
+    0 < freeEnergyΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) - Real.log 2 :=
+  partitionFunctionΛ_high_temp_expansion_h_zero_strict_deviation_bundle
+    G Λ J β (mul_pos hβ hJ) hne hEpos
+
 /-- **Λ-level ferromagnetic Z strict deviation**. -/
 theorem partitionFunctionΛ_high_temp_expansion_h_zero_pow_two_lt_ferromagnetic
     (G : SimpleGraph V) (Λ : Finset V)
