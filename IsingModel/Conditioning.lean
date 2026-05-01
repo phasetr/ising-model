@@ -2398,6 +2398,19 @@ theorem freeEnergy_high_temp_h_zero_continuity_at_beta_zero
     div_nonneg h_num hcard_pos.le
   linarith
 
+/-- **f continuity bundle at trivial slices**: under `0 ≤ β·J` and
+`0 < |ι|`, single statement bundling continuity at both `J = 0` and
+`β = 0` trivial slices. -/
+theorem freeEnergy_high_temp_h_zero_continuity_bundle
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (hne : 0 < Fintype.card ι) :
+    |freeEnergy G ⟨J, 0, β⟩ - freeEnergy G (⟨0, 0, β⟩ : IsingParams ℝ)|
+        ≤ β * J * G.edgeFinset.card / Fintype.card ι ∧
+    |freeEnergy G ⟨J, 0, β⟩ - freeEnergy G (⟨J, 0, 0⟩ : IsingParams ℝ)|
+        ≤ β * J * G.edgeFinset.card / Fintype.card ι :=
+  ⟨freeEnergy_high_temp_h_zero_continuity_at_J_zero G J β hβJ hne,
+   freeEnergy_high_temp_h_zero_continuity_at_beta_zero G J β hβJ hne⟩
+
 /-- **Ferromagnetic sharper f deviation bound**: under `0 ≤ J, 0 < β`
 and `0 < |ι|`, `f - log 2 ≤ β·J·|E|/|ι|`. Bridges via
 `mul_nonneg hβ.le hJ`. -/
