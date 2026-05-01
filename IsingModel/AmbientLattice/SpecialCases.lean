@@ -1009,6 +1009,21 @@ theorem correlationAlongExhaustion_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_
   correlationΛ_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges
     G (Λ.volume n) J β hβJ i j hij he
 
+/-- **Along-ex pair correlation strict positivity under edge at stage `n` (GJ §18.3 / FV (3.46))**:
+under `0 < β·J` and an edge in the stage-`n` induced subgraph,
+`0 < ⟨σ_iσ_j⟩^{Λ_n}`. Stage-`n` Λ-level specialization of
+`correlation_high_temp_h_zero_at_pair_pos_of_edge`. -/
+theorem correlationAlongExhaustion_high_temp_h_zero_at_pair_pos_of_edge
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (hβJ : 0 < β * J) (n : ℕ)
+    (i j : ↑(Λ.volume n)) (hij : i ≠ j)
+    (he : s(i, j) ∈ (inducedGraph G (Λ.volume n)).edgeSet) :
+    0 < correlationΛ G (Λ.volume n) (⟨J, 0, β⟩ : IsingParams ℝ)
+        ({i, j} : Finset ↑(Λ.volume n)) :=
+  correlationΛ_high_temp_h_zero_at_pair_pos_of_edge
+    G (Λ.volume n) J β hβJ i j hij he
+
 /-- **Along-ex singleton ferromagnetic vanish at h = 0**: under
 `0 ≤ J, 0 < β`, `correlationAlongExhaustion G Λ ⟨J, 0, β⟩ {i} n = 0`. -/
 theorem correlationAlongExhaustion_high_temp_h_zero_at_singleton_ferromagnetic

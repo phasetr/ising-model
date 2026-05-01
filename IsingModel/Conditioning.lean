@@ -2601,6 +2601,29 @@ theorem correlation_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges
     div_le_div_of_nonneg_right h_tanh_le_N h_D_pos.le
   exact h_step1.trans h_step2
 
+/-- **Pair correlation strict positivity under edge (GJ §18.3 / FV (3.46))**:
+under `0 < β·J` and an edge `s(i, j) ∈ G.edgeSet`,
+`0 < ⟨σ_iσ_j⟩^{⟨J,0,β⟩}`.
+
+Direct from `correlation_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges`
+(Step 386) and `Real.tanh_pos` at `0 < β·J`. Strengthens GKS-I in this
+specific setting: the pair correlation between adjacent sites is
+*strictly* positive at any non-trivial high-temperature parameters. -/
+theorem correlation_high_temp_h_zero_at_pair_pos_of_edge
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hβJ : 0 < β * J)
+    (i j : ι) (hij : i ≠ j) (he : s(i, j) ∈ G.edgeSet) :
+    0 < correlation G ⟨J, 0, β⟩ ({i, j} : Finset ι) := by
+  have h_tanh_pos : 0 < Real.tanh (β * J) := by
+    rw [Real.tanh_eq_sinh_div_cosh]
+    exact div_pos (Real.sinh_pos_iff.mpr hβJ) (Real.cosh_pos _)
+  have h_pow_pos : (0 : ℝ) < (2 : ℝ) ^ G.edgeFinset.card := pow_pos (by norm_num) _
+  have h_lb_pos : 0 < Real.tanh (β * J) / (2 : ℝ) ^ G.edgeFinset.card :=
+    div_pos h_tanh_pos h_pow_pos
+  exact lt_of_lt_of_le h_lb_pos
+    (correlation_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges
+      G J β hβJ.le i j hij he)
+
 /-- **Pair correlation under `Ferromagnetic` at h = 0**: under ferromagnetic
 parameters `⟨J, 0, β⟩` (i.e. `0 ≤ J, 0 < β`),
 `0 ≤ ⟨σ_i σ_j⟩ ≤ 1`. Bridges the `Ferromagnetic` typeclass and FV (3.46)
