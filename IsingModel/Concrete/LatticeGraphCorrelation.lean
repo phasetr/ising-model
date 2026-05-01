@@ -2994,7 +2994,7 @@ under `0 ≤ β·J` and `(latticeGraph d).Adj ↑i ↑j` (i.e.
 `correlationΛ_latticeGraph_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges`,
 removing the explicit edge-set membership in favour of the more
 familiar lattice adjacency on the ambient lattice. -/
-theorem correlationΛ_latticeGraph_at_pair_ge_tanh_div_two_pow_edges_of_latticeAdj
+theorem correlationΛ_latticeGraph_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges_of_latticeAdj
     (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
     (hβJ : 0 ≤ β * J) (i j : ↑Λ)
     (hij : (IsingModel.latticeGraph d).Adj ↑i ↑j) :
@@ -3016,7 +3016,7 @@ theorem correlationΛ_latticeGraph_at_pair_ge_tanh_div_two_pow_edges_of_latticeA
 `0 < β·J` and `(latticeGraph d).Adj ↑i ↑j`,
 `0 < ⟨σ_iσ_j⟩^Λ`. Direct corollary of
 `correlationΛ_latticeGraph_high_temp_h_zero_at_pair_pos_of_edge`. -/
-theorem correlationΛ_latticeGraph_at_pair_pos_of_latticeAdj
+theorem correlationΛ_latticeGraph_high_temp_h_zero_at_pair_pos_of_latticeAdj
     (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
     (hβJ : 0 < β * J) (i j : ↑Λ)
     (hij : (IsingModel.latticeGraph d).Adj ↑i ↑j) :
@@ -3395,7 +3395,7 @@ theorem
 at stage `n`**: under `0 ≤ β·J` and `(latticeGraph d).Adj ↑i ↑j` for
 `i, j : ↑(Λ.volume n)`, the lifted pair correlation satisfies the
 single-edge tanh lower bound. -/
-theorem correlationAlongExhaustion_latticeGraph_at_pair_ge_tanh_div_two_pow_edges_of_latticeAdj
+theorem correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges_of_latticeAdj
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
     (hβJ : 0 ≤ β * J) (n : ℕ) (i j : ↑(Λ.volume n))
     (hij : (IsingModel.latticeGraph d).Adj ↑i ↑j) :
@@ -3404,19 +3404,19 @@ theorem correlationAlongExhaustion_latticeGraph_at_pair_ge_tanh_div_two_pow_edge
           (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card
       ≤ correlationΛ (IsingModel.latticeGraph d) (Λ.volume n)
           (⟨J, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset ↑(Λ.volume n)) :=
-  correlationΛ_latticeGraph_at_pair_ge_tanh_div_two_pow_edges_of_latticeAdj
+  correlationΛ_latticeGraph_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges_of_latticeAdj
     d (Λ.volume n) J β hβJ i j hij
 
 /-- **ℤ^d along-ex pair strict positivity via lattice adjacency at stage `n`**:
 under `0 < β·J` and `(latticeGraph d).Adj ↑i ↑j`,
 `0 < ⟨σ_iσ_j⟩^{Λ_n}`. -/
-theorem correlationAlongExhaustion_latticeGraph_at_pair_pos_of_latticeAdj
+theorem correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_pair_pos_of_latticeAdj
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
     (hβJ : 0 < β * J) (n : ℕ) (i j : ↑(Λ.volume n))
     (hij : (IsingModel.latticeGraph d).Adj ↑i ↑j) :
     0 < correlationΛ (IsingModel.latticeGraph d) (Λ.volume n)
         (⟨J, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset ↑(Λ.volume n)) :=
-  correlationΛ_latticeGraph_at_pair_pos_of_latticeAdj
+  correlationΛ_latticeGraph_high_temp_h_zero_at_pair_pos_of_latticeAdj
     d (Λ.volume n) J β hβJ i j hij
 
 /-- **ℤ^d along-ex pair at J=0,h=0**: = 0. -/
