@@ -1827,6 +1827,47 @@ theorem partitionFunction_high_temp_expansion_h_zero_upper_bound
           Real.cosh (β * J) ^ G.edgeFinset.card := by
         rw [pow_add]; ring
 
+/-- **Sharper freeEnergy high-temperature upper bound (FV (3.45))**: under
+`0 < |ι|` and `0 ≤ β·J`,
+`f(G; J, 0, β) ≤ log 2 + β·J·|E|/|ι|`.
+
+Globally tighter than `freeEnergy_high_temp_h_zero_upper_bound`:
+`log(2·cosh(β·J)) = log 2 + log cosh(β·J)` and `log cosh(β·J) ≤ β·J`
+(since `cosh(β·J) ≤ exp(β·J)`), so this bound is sharper. Direct
+corollary of `partitionFunction_high_temp_expansion_h_zero_upper_bound_exp`
+(Step 393) by taking logarithms and dividing by `|ι|`. -/
+theorem freeEnergy_high_temp_h_zero_upper_bound_exp
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (hne : 0 < Fintype.card ι) :
+    freeEnergy G ⟨J, 0, β⟩
+      ≤ Real.log 2 + β * J * G.edgeFinset.card / Fintype.card ι := by
+  have hZ_ub := partitionFunction_high_temp_expansion_h_zero_upper_bound_exp G J β hβJ
+  have hZ_pos := partitionFunction_pos G ⟨J, 0, β⟩
+  have hcard_pos : (0 : ℝ) < (Fintype.card ι : ℝ) := by exact_mod_cast hne
+  have hubound_pos : (0 : ℝ) <
+      (2 : ℝ) ^ Fintype.card ι * Real.exp (β * J * G.edgeFinset.card) :=
+    mul_pos (pow_pos (by norm_num) _) (Real.exp_pos _)
+  have hlog : Real.log (partitionFunction G ⟨J, 0, β⟩)
+      ≤ (Fintype.card ι : ℝ) * Real.log 2
+        + β * J * G.edgeFinset.card := by
+    calc Real.log (partitionFunction G ⟨J, 0, β⟩)
+        ≤ Real.log ((2 : ℝ) ^ Fintype.card ι *
+              Real.exp (β * J * G.edgeFinset.card)) :=
+          (Real.log_le_log_iff hZ_pos hubound_pos).mpr hZ_ub
+      _ = Real.log ((2 : ℝ) ^ Fintype.card ι)
+          + Real.log (Real.exp (β * J * G.edgeFinset.card)) :=
+          Real.log_mul (pow_pos (by norm_num) _).ne' (Real.exp_pos _).ne'
+      _ = (Fintype.card ι : ℝ) * Real.log 2
+          + β * J * G.edgeFinset.card := by
+          rw [Real.log_pow, Real.log_exp]
+  unfold freeEnergy
+  rw [show ((Fintype.card ι : ℝ)⁻¹ * Real.log (partitionFunction G ⟨J, 0, β⟩))
+        = Real.log (partitionFunction G ⟨J, 0, β⟩) / Fintype.card ι by
+        rw [div_eq_inv_mul]]
+  rw [div_le_iff₀ hcard_pos, add_mul, mul_comm (Real.log 2) _,
+      div_mul_cancel₀ _ hcard_pos.ne']
+  linarith
+
 /-- **freeEnergy high-temperature upper bound from FV (3.45)**: under
 `0 < |ι|` and `0 ≤ β·J`,
 `freeEnergy(G; J, 0, β) ≤ log 2 + (|E|/|ι|) · log(2 · cosh(β·J))`.
