@@ -2550,6 +2550,35 @@ theorem log_partitionFunction_high_temp_expansion_h_zero_deviation_sandwich_ferr
   log_partitionFunction_high_temp_expansion_h_zero_deviation_sandwich
     G J β (mul_nonneg hβ.le hJ)
 
+/-- **f strict deviation under non-trivial high-temperature**: under
+`0 < β·J`, `0 < |ι|`, and `0 < |E|`, `0 < f - log 2`.
+
+Strengthens Step 433 lower bound (`0 ≤ f - log 2`) to strict
+positivity at non-trivial parameters. Follows from the lower bound
+`log 2 + (|E|/|ι|)·log cosh(β·J) ≤ f` plus `log cosh(β·J) > 0` (since
+`cosh(β·J) > 1` when `β·J ≠ 0`) plus `|E|/|ι| > 0`. -/
+theorem freeEnergy_high_temp_h_zero_deviation_pos
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hβJ : 0 < β * J) (hne : 0 < Fintype.card ι)
+    (hEpos : 0 < G.edgeFinset.card) :
+    0 < freeEnergy G ⟨J, 0, β⟩ - Real.log 2 := by
+  have h_lb : Real.log 2 + (G.edgeFinset.card : ℝ) / Fintype.card ι *
+        Real.log (Real.cosh (β * J)) ≤ freeEnergy G ⟨J, 0, β⟩ :=
+    freeEnergy_high_temp_h_zero_lower_bound G J β hβJ.le hne
+  have hcosh_gt : 1 < Real.cosh (β * J) := by
+    rw [show (1 : ℝ) = Real.cosh 0 from Real.cosh_zero.symm]
+    refine Real.cosh_lt_cosh.mpr ?_
+    rw [abs_zero, abs_of_pos hβJ]
+    exact hβJ
+  have hlog_pos : 0 < Real.log (Real.cosh (β * J)) := Real.log_pos hcosh_gt
+  have hcard_pos : (0 : ℝ) < Fintype.card ι := by exact_mod_cast hne
+  have hE_pos : (0 : ℝ) < G.edgeFinset.card := by exact_mod_cast hEpos
+  have hratio_pos : 0 < (G.edgeFinset.card : ℝ) / Fintype.card ι :=
+    div_pos hE_pos hcard_pos
+  have h_corr_pos : 0 < ((G.edgeFinset.card : ℝ) / Fintype.card ι) *
+        Real.log (Real.cosh (β * J)) := mul_pos hratio_pos hlog_pos
+  linarith
+
 /-- **Ferromagnetic sharper f deviation bound**: under `0 ≤ J, 0 < β`
 and `0 < |ι|`, `f - log 2 ≤ β·J·|E|/|ι|`. Bridges via
 `mul_nonneg hβ.le hJ`. -/
