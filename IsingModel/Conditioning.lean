@@ -2453,6 +2453,31 @@ theorem correlation_high_temp_h_zero_at_singleton_abs_le_one
     |correlation G ⟨J, 0, β⟩ ({i} : Finset ι)| ≤ 1 :=
   abs_correlation_le_one G ⟨J, 0, β⟩ {i}
 
+/-- **Z complete-summary bundle at h = 0**: under `0 ≤ β·J`, single
+statement bundling all known §18.3 properties of `Z` at `h = 0`:
+  1. `2^|ι| · cosh(βJ)^|E| ≤ Z` (lower bound from FV (3.45)),
+  2. `Z ≤ 2^(|ι|+|E|) · cosh(βJ)^|E|` (upper bound from FV (3.45)),
+  3. `Z⟨0, 0, β⟩ = 2^|ι|` (consistency at trivial slice `J = 0`),
+  4. `Z⟨J, 0, 0⟩ = 2^|ι|` (consistency at trivial slice `β = 0`).
+Useful as a single import for downstream analytic / asymptotic
+arguments that need both bounds and trivial-slice values. -/
+theorem partitionFunction_high_temp_expansion_h_zero_complete_summary
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) :
+    (2 : ℝ) ^ Fintype.card ι * Real.cosh (β * J) ^ G.edgeFinset.card
+        ≤ partitionFunction G ⟨J, 0, β⟩ ∧
+      partitionFunction G ⟨J, 0, β⟩
+        ≤ (2 : ℝ) ^ (Fintype.card ι + G.edgeFinset.card) *
+            Real.cosh (β * J) ^ G.edgeFinset.card ∧
+      partitionFunction G (⟨0, 0, β⟩ : IsingParams ℝ)
+        = (2 : ℝ) ^ Fintype.card ι ∧
+      partitionFunction G (⟨J, 0, 0⟩ : IsingParams ℝ)
+        = (2 : ℝ) ^ Fintype.card ι :=
+  ⟨partitionFunction_high_temp_expansion_h_zero_lower_bound G J β hβJ,
+   partitionFunction_high_temp_expansion_h_zero_upper_bound G J β hβJ,
+   partitionFunction_high_temp_expansion_h_zero_closed_at_J_zero G β,
+   partitionFunction_high_temp_expansion_h_zero_closed_at_beta_zero G J⟩
+
 /-- **Pair correlation under `Ferromagnetic` at h = 0**: under ferromagnetic
 parameters `⟨J, 0, β⟩` (i.e. `0 ≤ J, 0 < β`),
 `0 ≤ ⟨σ_i σ_j⟩ ≤ 1`. Bridges the `Ferromagnetic` typeclass and FV (3.46)
