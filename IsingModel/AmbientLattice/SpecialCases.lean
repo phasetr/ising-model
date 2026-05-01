@@ -733,6 +733,31 @@ theorem correlationAlongExhaustion_high_temp_h_zero_at_pair_nonneg
         (⟨J, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset V) n :=
   correlationAlongExhaustion_high_temp_h_zero_nonneg G Λ J β hβJ {i, j} n
 
+/-- **Along-ex singleton at J=0,h=0 vanishes**. -/
+theorem correlationAlongExhaustion_high_temp_h_zero_at_singleton_J_zero
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (β : ℝ) (i : V) (n : ℕ) :
+    correlationAlongExhaustion G Λ
+        (⟨0, 0, β⟩ : IsingParams ℝ) ({i} : Finset V) n = 0 := by
+  refine correlationAlongExhaustion_high_temp_h_zero_odd_card_eq_zero
+    G Λ 0 β {i} ?_ n
+  rw [Finset.card_singleton]; exact ⟨0, rfl⟩
+
+/-- **Along-ex singleton at β=0,h=0 vanishes**. -/
+theorem correlationAlongExhaustion_high_temp_h_zero_at_singleton_beta_zero
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J : ℝ) (i : V) (n : ℕ) :
+    correlationAlongExhaustion G Λ
+        (⟨J, 0, 0⟩ : IsingParams ℝ) ({i} : Finset V) n = 0 := by
+  unfold correlationAlongExhaustion
+  by_cases hAn : ({i} : Finset V) ⊆ Λ.volume n
+  · rw [dif_pos hAn]
+    exact correlationΛ_high_temp_h_zero_at_singleton_beta_zero
+      G (Λ.volume n) J ⟨i, hAn (by simp)⟩
+  · rw [dif_neg hAn]
+
 /-- **Along-exhaustion magnetization vanishes at h = 0**: at every stage `n`,
 `correlationAlongExhaustion G Λ ⟨J, 0, β⟩ {i} n = 0` for any
 ambient site `i : V`. Specialization at `A = {i}`. -/
