@@ -913,6 +913,21 @@ theorem freeEnergyΛ_high_temp_h_zero_continuity_bundle_ferromagnetic
   freeEnergyΛ_high_temp_h_zero_continuity_bundle
     G Λ J β (mul_nonneg hβ.le hJ) hne
 
+/-- **Λ-level f deviation sandwich**: under `0 < |Λ|` and `0 ≤ β·J`,
+`0 ≤ f_Λ - log 2 ≤ β·J·|E_Λ|/|Λ|`. -/
+theorem freeEnergyΛ_high_temp_h_zero_deviation_sandwich
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (hne : 0 < Λ.card) :
+    0 ≤ freeEnergyΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) - Real.log 2 ∧
+    freeEnergyΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) - Real.log 2
+      ≤ β * J * (inducedGraph G Λ).edgeFinset.card / Λ.card := by
+  have hcard : 0 < Fintype.card (↑Λ : Type _) := by
+    rw [Fintype.card_coe]; exact hne
+  rw [freeEnergyΛ_apply, ← Fintype.card_coe (s := Λ)]
+  exact IsingModel.freeEnergy_high_temp_h_zero_deviation_sandwich
+    (inducedGraph G Λ) J β hβJ hcard
+
 /-- **Λ-level Z high-temp sandwich (FV (3.45))**: under `0 ≤ β·J`,
 `2^|Λ| · cosh^|E_Λ| ≤ Z_Λ ≤ 2^(|Λ|+|E_Λ|) · cosh^|E_Λ|`. -/
 theorem partitionFunctionΛ_high_temp_expansion_h_zero_sandwich
