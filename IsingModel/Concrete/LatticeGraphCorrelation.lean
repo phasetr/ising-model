@@ -3820,6 +3820,32 @@ theorem freeEnergyΛ_latticeGraph_high_temp_h_zero_ratio_bound_bundle_ferromagne
   freeEnergyΛ_high_temp_h_zero_ratio_bound_bundle_ferromagnetic
     (IsingModel.latticeGraph d) Λ J β hJ hβ hne
 
+/-- **ℤ^d Λ f ratio bound at J=0**. -/
+theorem freeEnergyΛ_latticeGraph_high_temp_h_zero_ratio_bound
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
+    (hβJ : 0 ≤ β * J) (hne : 0 < Λ.card) :
+    freeEnergyΛ (IsingModel.latticeGraph d) Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+        - freeEnergyΛ (IsingModel.latticeGraph d) Λ
+            (⟨0, 0, β⟩ : IsingParams ℝ)
+      ≤ β * J *
+          (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card /
+            Λ.card :=
+  freeEnergyΛ_high_temp_h_zero_ratio_bound
+    (IsingModel.latticeGraph d) Λ J β hβJ hne
+
+/-- **ℤ^d Λ f ratio bound at β=0**. -/
+theorem freeEnergyΛ_latticeGraph_high_temp_h_zero_ratio_bound_beta_zero
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
+    (hβJ : 0 ≤ β * J) (hne : 0 < Λ.card) :
+    freeEnergyΛ (IsingModel.latticeGraph d) Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+        - freeEnergyΛ (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, 0⟩ : IsingParams ℝ)
+      ≤ β * J *
+          (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card /
+            Λ.card :=
+  freeEnergyΛ_high_temp_h_zero_ratio_bound_beta_zero
+    (IsingModel.latticeGraph d) Λ J β hβJ hne
+
 /-- **ℤ^d along-exhaustion correlation high-temperature closed form (FV §3.7.3 eq. (3.46))**:
 at every stage `n` with `A ⊆ Λ.volume n`, FV (3.46) closed form holds
 on the lifted Finset. When `A ⊄`, equals `0`.
