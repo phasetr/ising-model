@@ -3488,6 +3488,19 @@ theorem log_partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_deviatio
   log_partitionFunctionΛ_high_temp_expansion_h_zero_deviation_sandwich
     (IsingModel.latticeGraph d) Λ J β hβJ
 
+/-- **ℤ^d Λ ferromagnetic log Z deviation sandwich**. -/
+theorem log_partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_deviation_sandwich_ferromagnetic
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
+    (hJ : 0 ≤ J) (hβ : 0 < β) :
+    0 ≤ Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ)) - (Λ.card : ℝ) * Real.log 2 ∧
+    Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ)) - (Λ.card : ℝ) * Real.log 2
+      ≤ β * J *
+          (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card :=
+  log_partitionFunctionΛ_high_temp_expansion_h_zero_deviation_sandwich_ferromagnetic
+    (IsingModel.latticeGraph d) Λ J β hJ hβ
+
 /-- **ℤ^d along-exhaustion correlation high-temperature closed form (FV §3.7.3 eq. (3.46))**:
 at every stage `n` with `A ⊆ Λ.volume n`, FV (3.46) closed form holds
 on the lifted Finset. When `A ⊄`, equals `0`.
@@ -4373,6 +4386,19 @@ theorem log_partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_
           (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card :=
   log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_deviation_sandwich
     (IsingModel.latticeGraph d) Λ J β hβJ n
+
+/-- **ℤ^d along-ex ferromagnetic log Z deviation sandwich at stage `n`**. -/
+theorem log_partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_deviation_sandwich_ferromagnetic
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
+    (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ) :
+    0 ≤ Real.log (partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) n) - ((Λ.volume n).card : ℝ) * Real.log 2 ∧
+    Real.log (partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) n) - ((Λ.volume n).card : ℝ) * Real.log 2
+      ≤ β * J *
+          (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card :=
+  log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_deviation_sandwich_ferromagnetic
+    (IsingModel.latticeGraph d) Λ J β hJ hβ n
 
 /-- **ℤ^d along-exhaustion partition function high-temperature closed form (FV §3.7.3 eq. (3.45))**:
 at every stage `n`,
