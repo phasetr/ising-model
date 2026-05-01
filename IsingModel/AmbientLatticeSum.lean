@@ -1596,6 +1596,33 @@ theorem freeEnergyInfinite_ge_log_two
   exact h_le.trans
     (freeEnergyInfinite_ge_log_two_cosh G Λ p hf hc)
 
+/-- **∞-vol sharper f sandwich at h = 0 under bounded edge density**:
+under ferromagnetic `0 ≤ J, 0 < β` + bounded-edge-density witness `c`,
+`log 2 ≤ freeEnergyInfinite G Λ ⟨J, 0, β⟩ ≤ log 2 + β·J·c`.
+
+Combines the upper bound of Step 397
+(`freeEnergyInfinite_high_temp_h_zero_upper_bound_exp_uniform`) with
+`freeEnergyInfinite_ge_log_two` (which is `log 2 ≤ f_∞` under
+ferromagnetic + BED). The sandwich shows the ∞-vol free energy lies
+in a tight `[log 2, log 2 + β·J·c]` interval — the lower bound is the
+`J = 0` value and the upper bound is the edge-density-bounded
+high-temperature contribution. -/
+theorem freeEnergyInfinite_high_temp_h_zero_sandwich_exp_uniform
+    [Nonempty V] (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) {c : ℝ}
+    (hc : ∀ n, (Λ.volume n).Nonempty →
+      ((inducedGraph G (Λ.volume n)).edgeFinset.card : ℝ) ≤
+        c * Fintype.card (↑(Λ.volume n) : Type _)) :
+    Real.log 2
+      ≤ freeEnergyInfinite G Λ (⟨J, 0, β⟩ : IsingParams ℝ) ∧
+    freeEnergyInfinite G Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+      ≤ Real.log 2 + β * J * c := by
+  refine ⟨?_, freeEnergyInfinite_high_temp_h_zero_upper_bound_exp_uniform
+    G Λ J β hJ hβ hc⟩
+  exact freeEnergyInfinite_ge_log_two G Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+    ⟨hJ, le_refl 0, hβ⟩ hc
+
 /-- **Strict positivity** of `freeEnergyInfinite` under the standard
 ferromagnetic + `BoundedEdgeDensity` + `[Nonempty V]` setup:
 `0 < freeEnergyInfinite G Λ p`.
