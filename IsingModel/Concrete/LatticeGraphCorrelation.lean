@@ -2949,6 +2949,27 @@ theorem correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_pair_nonneg
   correlationAlongExhaustion_high_temp_h_zero_at_pair_nonneg
     (IsingModel.latticeGraph d) Λ J β hβJ i j n
 
+/-- **ℤ^d along-ex pair correlation ≤ 1 at h = 0**. -/
+theorem correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_pair_le_one
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
+    (i j : Fin d → ℤ) (n : ℕ) :
+    correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset (Fin d → ℤ)) n ≤ 1 :=
+  correlationAlongExhaustion_high_temp_h_zero_at_pair_le_one
+    (IsingModel.latticeGraph d) Λ J β i j n
+
+/-- **ℤ^d along-ex pair sandwich at h = 0**: under `0 ≤ β·J`,
+`0 ≤ correlationAlongExhaustion ⟨J,0,β⟩ {i,j} n ≤ 1`. -/
+theorem correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_pair_sandwich
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
+    (hβJ : 0 ≤ β * J) (i j : Fin d → ℤ) (n : ℕ) :
+    0 ≤ correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset (Fin d → ℤ)) n ∧
+      correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset (Fin d → ℤ)) n ≤ 1 :=
+  correlationAlongExhaustion_high_temp_h_zero_at_pair_sandwich
+    (IsingModel.latticeGraph d) Λ J β hβJ i j n
+
 /-- **ℤ^d along-ex pair at J=0,h=0**: = 0. -/
 theorem correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_pair_J_zero
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (β : ℝ)
