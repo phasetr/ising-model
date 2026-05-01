@@ -358,6 +358,33 @@ theorem partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_upper_bound
   exact partitionFunctionΛ_high_temp_expansion_h_zero_upper_bound
     G (Λ.volume n) J β hβJ
 
+/-- **Along-exhaustion Z bounds consistency**: lower ≤ upper. -/
+theorem partitionFunctionAlongExhaustion_high_temp_h_zero_lower_le_upper
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (n : ℕ) :
+    (2 : ℝ) ^ (Λ.volume n).card *
+        Real.cosh (β * J) ^
+          (inducedGraph G (Λ.volume n)).edgeFinset.card
+      ≤ (2 : ℝ) ^ ((Λ.volume n).card +
+            (inducedGraph G (Λ.volume n)).edgeFinset.card) *
+        Real.cosh (β * J) ^
+            (inducedGraph G (Λ.volume n)).edgeFinset.card :=
+  partitionFunctionΛ_high_temp_h_zero_lower_le_upper G (Λ.volume n) J β
+
+/-- **Along-exhaustion freeEnergy bounds consistency**: lower ≤ upper. -/
+theorem freeEnergyAlongExhaustion_high_temp_h_zero_lower_le_upper
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (n : ℕ) :
+    Real.log 2 +
+        ((inducedGraph G (Λ.volume n)).edgeFinset.card : ℝ) /
+          (Λ.volume n).card * Real.log (Real.cosh (β * J))
+      ≤ Real.log 2
+        + ((inducedGraph G (Λ.volume n)).edgeFinset.card : ℝ) /
+            (Λ.volume n).card * Real.log (2 * Real.cosh (β * J)) :=
+  freeEnergyΛ_high_temp_h_zero_lower_le_upper G (Λ.volume n) J β hβJ
+
 /-- **Along-exhaustion partition function high-temperature lower bound**:
 under `0 ≤ β * J`, at every stage `n`,
 `partitionFunctionAlongExhaustion G Λ ⟨J, 0, β⟩ n

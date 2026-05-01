@@ -2556,6 +2556,31 @@ theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero
   partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_upper_bound
     (IsingModel.latticeGraph d) Λ J β hβJ n
 
+/-- **ℤ^d Z bounds consistency**: lower ≤ upper. -/
+theorem partitionFunctionΛ_latticeGraph_high_temp_h_zero_lower_le_upper
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ) :
+    (2 : ℝ) ^ Λ.card *
+        Real.cosh (β * J) ^
+          (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card
+      ≤ (2 : ℝ) ^ (Λ.card +
+            (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card) *
+        Real.cosh (β * J) ^
+            (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card :=
+  partitionFunctionΛ_high_temp_h_zero_lower_le_upper
+    (IsingModel.latticeGraph d) Λ J β
+
+/-- **ℤ^d freeEnergy bounds consistency**: lower ≤ upper. -/
+theorem freeEnergyΛ_latticeGraph_high_temp_h_zero_lower_le_upper
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ) (hβJ : 0 ≤ β * J) :
+    Real.log 2 +
+        ((inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card : ℝ) /
+          Λ.card * Real.log (Real.cosh (β * J))
+      ≤ Real.log 2
+        + ((inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card : ℝ) /
+            Λ.card * Real.log (2 * Real.cosh (β * J)) :=
+  freeEnergyΛ_high_temp_h_zero_lower_le_upper
+    (IsingModel.latticeGraph d) Λ J β hβJ
+
 /-- **ℤ^d high-temperature partition function lower bound (GJ §18.3 / FV (3.45))**:
 under `0 ≤ β * J`,
 `Z_Λ(⟨J, 0, β⟩) ≥ 2^|Λ| · (cosh(βJ))^|E_Λ|`.
