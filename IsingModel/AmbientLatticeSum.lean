@@ -1653,6 +1653,31 @@ theorem freeEnergyInfinite_high_temp_h_zero_complete_summary_exp
     freeEnergyInfinite_zero_params_of_nonempty G Λ β,
     freeEnergyInfinite_beta_zero_of_nonempty G Λ J 0⟩
 
+/-- **∞-vol f deviation bound from `log 2`**: under ferromagnetic
+`0 ≤ J, 0 < β` + bounded-edge-density witness `c`,
+`freeEnergyInfinite G Λ ⟨J, 0, β⟩ - log 2 ≤ β·J·c`.
+
+Direct from `freeEnergyInfinite_high_temp_h_zero_upper_bound_exp_uniform`
+(Step 397) by subtracting `log 2`. Useful as a pre-formed
+"high-temperature deviation" estimate quantifying how much the ∞-vol
+free energy can differ from its `J = 0` (free-spin) value `log 2`
+under the linear-`β·J·c` regime.
+
+In the `β·J → 0` limit, the RHS vanishes, recovering
+`freeEnergyInfinite ⟨0, 0, β⟩ = log 2` continuously. -/
+theorem freeEnergyInfinite_high_temp_h_zero_deviation_bound_exp
+    [Nonempty V] (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) {c : ℝ}
+    (hc : ∀ n, (Λ.volume n).Nonempty →
+      ((inducedGraph G (Λ.volume n)).edgeFinset.card : ℝ) ≤
+        c * Fintype.card (↑(Λ.volume n) : Type _)) :
+    freeEnergyInfinite G Λ (⟨J, 0, β⟩ : IsingParams ℝ) - Real.log 2
+      ≤ β * J * c := by
+  have h_upper := freeEnergyInfinite_high_temp_h_zero_upper_bound_exp_uniform
+    G Λ J β hJ hβ hc
+  linarith
+
 /-- **Strict positivity** of `freeEnergyInfinite` under the standard
 ferromagnetic + `BoundedEdgeDensity` + `[Nonempty V]` setup:
 `0 < freeEnergyInfinite G Λ p`.
