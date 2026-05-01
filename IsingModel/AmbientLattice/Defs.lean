@@ -776,6 +776,20 @@ theorem correlationΛ_high_temp_h_zero_at_pair_singleton_bundle
    correlationΛ_high_temp_h_zero_at_pair_nonneg G Λ J β hβJ i j,
    correlationΛ_high_temp_h_zero_at_pair_le_one G Λ J β i j⟩
 
+/-- **Λ pair+singleton bundle under ferromagnetic at h = 0**: under
+`0 ≤ J, 0 < β`, packages `⟨σ_i⟩^Λ = 0`, `0 ≤ ⟨σ_iσ_j⟩^Λ`, and
+`⟨σ_iσ_j⟩^Λ ≤ 1` into a single triple. Λ-layer wrapper of
+`correlation_high_temp_h_zero_at_pair_singleton_bundle_ferromagnetic`. -/
+theorem correlationΛ_high_temp_h_zero_at_pair_singleton_bundle_ferromagnetic
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (i j : ↑Λ) :
+    correlationΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) ({i} : Finset ↑Λ) = 0 ∧
+      0 ≤ correlationΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset ↑Λ) ∧
+      correlationΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset ↑Λ) ≤ 1 :=
+  correlationΛ_high_temp_h_zero_at_pair_singleton_bundle G Λ J β
+    (mul_nonneg hβ.le hJ) i j
+
 /-- The correlation on `Λ` is at least `-1`. Lower side of
 `abs_correlationΛ_le_one`. -/
 theorem neg_one_le_correlationΛ (G : SimpleGraph V) (Λ : Finset V)

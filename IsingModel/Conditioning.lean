@@ -2527,6 +2527,20 @@ theorem correlation_high_temp_h_zero_at_pair_singleton_bundle
    correlation_high_temp_h_zero_at_pair_nonneg G J β hβJ i j,
    correlation_high_temp_h_zero_at_pair_le_one G J β i j⟩
 
+/-- **Pair + singleton bundle under ferromagnetic at h = 0**: under
+ferromagnetic parameters `⟨J, 0, β⟩` (i.e. `0 ≤ J, 0 < β`), packages
+`⟨σ_i⟩ = 0`, `0 ≤ ⟨σ_iσ_j⟩`, and `⟨σ_iσ_j⟩ ≤ 1` into a single triple.
+Bridges the `Ferromagnetic` typeclass and the bundle of Step 339 via
+`mul_nonneg hβ.le hJ`. -/
+theorem correlation_high_temp_h_zero_at_pair_singleton_bundle_ferromagnetic
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (i j : ι) :
+    correlation G ⟨J, 0, β⟩ ({i} : Finset ι) = 0 ∧
+      0 ≤ correlation G ⟨J, 0, β⟩ ({i, j} : Finset ι) ∧
+      correlation G ⟨J, 0, β⟩ ({i, j} : Finset ι) ≤ 1 :=
+  correlation_high_temp_h_zero_at_pair_singleton_bundle G J β
+    (mul_nonneg hβ.le hJ) i j
+
 /-- **High-temperature parameter**: `t = tanh(βJ)`.
 For `βJ ≥ 0`, `t ∈ [0, 1)`, and the high-temperature expansion
 converges when `t` is small. -/
