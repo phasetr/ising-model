@@ -2470,6 +2470,17 @@ theorem freeEnergy_high_temp_h_zero_deviation_sandwich
         Real.log (Real.cosh (β * J)) := mul_nonneg hedge_nn hlog_nn
   linarith
 
+/-- **Ferromagnetic f deviation sandwich**: under `0 ≤ J, 0 < β`
+and `0 < |ι|`, `0 ≤ f - log 2 ≤ β·J·|E|/|ι|`. -/
+theorem freeEnergy_high_temp_h_zero_deviation_sandwich_ferromagnetic
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (hne : 0 < Fintype.card ι) :
+    0 ≤ freeEnergy G ⟨J, 0, β⟩ - Real.log 2 ∧
+    freeEnergy G ⟨J, 0, β⟩ - Real.log 2
+      ≤ β * J * G.edgeFinset.card / Fintype.card ι :=
+  freeEnergy_high_temp_h_zero_deviation_sandwich
+    G J β (mul_nonneg hβ.le hJ) hne
+
 /-- **Ferromagnetic sharper f deviation bound**: under `0 ≤ J, 0 < β`
 and `0 < |ι|`, `f - log 2 ≤ β·J·|E|/|ι|`. Bridges via
 `mul_nonneg hβ.le hJ`. -/

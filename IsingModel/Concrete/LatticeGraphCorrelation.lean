@@ -3462,6 +3462,20 @@ theorem freeEnergyΛ_latticeGraph_high_temp_h_zero_deviation_sandwich
   freeEnergyΛ_high_temp_h_zero_deviation_sandwich
     (IsingModel.latticeGraph d) Λ J β hβJ hne
 
+/-- **ℤ^d Λ ferromagnetic f deviation sandwich**. -/
+theorem freeEnergyΛ_latticeGraph_high_temp_h_zero_deviation_sandwich_ferromagnetic
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
+    (hJ : 0 ≤ J) (hβ : 0 < β) (hne : 0 < Λ.card) :
+    0 ≤ freeEnergyΛ (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) - Real.log 2 ∧
+    freeEnergyΛ (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) - Real.log 2
+      ≤ β * J *
+          (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card /
+            Λ.card :=
+  freeEnergyΛ_high_temp_h_zero_deviation_sandwich_ferromagnetic
+    (IsingModel.latticeGraph d) Λ J β hJ hβ hne
+
 /-- **ℤ^d along-exhaustion correlation high-temperature closed form (FV §3.7.3 eq. (3.46))**:
 at every stage `n` with `A ⊆ Λ.volume n`, FV (3.46) closed form holds
 on the lifted Finset. When `A ⊄`, equals `0`.
@@ -4320,6 +4334,20 @@ theorem freeEnergyAlongExhaustion_latticeGraph_high_temp_h_zero_deviation_sandwi
             (Λ.volume n).card :=
   freeEnergyAlongExhaustion_high_temp_h_zero_deviation_sandwich
     (IsingModel.latticeGraph d) Λ J β hβJ n hne
+
+/-- **ℤ^d along-ex ferromagnetic f deviation sandwich at stage `n`**. -/
+theorem freeEnergyAlongExhaustion_latticeGraph_high_temp_h_zero_deviation_sandwich_ferromagnetic
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
+    (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ) (hne : 0 < (Λ.volume n).card) :
+    0 ≤ freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) n - Real.log 2 ∧
+    freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) n - Real.log 2
+      ≤ β * J *
+          (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card /
+            (Λ.volume n).card :=
+  freeEnergyAlongExhaustion_high_temp_h_zero_deviation_sandwich_ferromagnetic
+    (IsingModel.latticeGraph d) Λ J β hJ hβ n hne
 
 /-- **ℤ^d along-exhaustion partition function high-temperature closed form (FV §3.7.3 eq. (3.45))**:
 at every stage `n`,

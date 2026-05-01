@@ -1169,6 +1169,19 @@ theorem freeEnergyAlongExhaustion_high_temp_h_zero_deviation_sandwich
   exact freeEnergyΛ_high_temp_h_zero_deviation_sandwich
     G (Λ.volume n) J β hβJ hne
 
+/-- **Along-ex ferromagnetic f deviation sandwich at stage `n`**. -/
+theorem freeEnergyAlongExhaustion_high_temp_h_zero_deviation_sandwich_ferromagnetic
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ)
+    (hne : 0 < (Λ.volume n).card) :
+    0 ≤ freeEnergyAlongExhaustion G Λ (⟨J, 0, β⟩ : IsingParams ℝ) n - Real.log 2 ∧
+    freeEnergyAlongExhaustion G Λ (⟨J, 0, β⟩ : IsingParams ℝ) n - Real.log 2
+      ≤ β * J * (inducedGraph G (Λ.volume n)).edgeFinset.card /
+          (Λ.volume n).card :=
+  freeEnergyAlongExhaustion_high_temp_h_zero_deviation_sandwich
+    G Λ J β (mul_nonneg hβ.le hJ) n hne
+
 /-- **Along-exhaustion freeEnergy high-temp sandwich (FV (3.45))**: under
 `0 ≤ β·J` and `0 < |Λ_n|`, at every stage `n`,
 `log 2 + (|E_n|/|Λ_n|) log cosh(βJ) ≤ f_n ≤ log 2 + (|E_n|/|Λ_n|) log(2·cosh βJ)`. -/
