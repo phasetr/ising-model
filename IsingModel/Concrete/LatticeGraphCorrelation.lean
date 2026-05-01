@@ -2976,6 +2976,31 @@ theorem partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_complete_sum
   partitionFunctionΛ_high_temp_expansion_h_zero_complete_summary
     (IsingModel.latticeGraph d) Λ J β hβJ
 
+/-- **ℤ^d Λ freeEnergy complete-summary bundle at h = 0**: under
+`0 < |Λ|` and `0 ≤ β·J`, single statement bundling Λ-level lower /
+upper bounds and trivial-slice values at `J = 0` / `β = 0` (both =
+`log 2`). ℤ^d wrapper of
+`freeEnergyΛ_high_temp_expansion_h_zero_complete_summary`. -/
+theorem freeEnergyΛ_latticeGraph_high_temp_expansion_h_zero_complete_summary
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
+    (hβJ : 0 ≤ β * J) (hne : 0 < Λ.card) :
+    Real.log 2 +
+        ((inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card : ℝ) /
+          Λ.card * Real.log (Real.cosh (β * J))
+      ≤ freeEnergyΛ (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) ∧
+      freeEnergyΛ (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ)
+        ≤ Real.log 2 +
+            ((inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card : ℝ) /
+              Λ.card * Real.log (2 * Real.cosh (β * J)) ∧
+      freeEnergyΛ (IsingModel.latticeGraph d) Λ
+          (⟨0, 0, β⟩ : IsingParams ℝ) = Real.log 2 ∧
+      freeEnergyΛ (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, 0⟩ : IsingParams ℝ) = Real.log 2 :=
+  freeEnergyΛ_high_temp_expansion_h_zero_complete_summary
+    (IsingModel.latticeGraph d) Λ J β hβJ hne
+
 /-- **ℤ^d along-exhaustion correlation high-temperature closed form (FV §3.7.3 eq. (3.46))**:
 at every stage `n` with `A ⊆ Λ.volume n`, FV (3.46) closed form holds
 on the lifted Finset. When `A ⊄`, equals `0`.
@@ -3337,6 +3362,33 @@ theorem
           (⟨J, 0, 0⟩ : IsingParams ℝ) n = (2 : ℝ) ^ (Λ.volume n).card :=
   partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_complete_summary
     (IsingModel.latticeGraph d) Λ J β hβJ n
+
+/-- **ℤ^d along-ex freeEnergy complete-summary bundle at h = 0**: under
+`0 ≤ β·J` and `(Λ.volume n).Nonempty`, at every stage `n` packages
+along-exhaustion freeEnergy lower / upper bounds and trivial-slice
+values at `J = 0` / `β = 0` (both = `log 2`). ℤ^d wrapper of
+`freeEnergyAlongExhaustion_high_temp_expansion_h_zero_complete_summary`. -/
+theorem
+    freeEnergyAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_complete_summary
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
+    (hβJ : 0 ≤ β * J) (n : ℕ) (hne : (Λ.volume n).Nonempty) :
+    Real.log 2 +
+        ((inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card : ℝ) /
+          (Λ.volume n).card * Real.log (Real.cosh (β * J))
+      ≤ freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) n ∧
+      freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) n
+        ≤ Real.log 2 +
+            ((inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card : ℝ) /
+              (Λ.volume n).card *
+                Real.log (2 * Real.cosh (β * J)) ∧
+      freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨0, 0, β⟩ : IsingParams ℝ) n = Real.log 2 ∧
+      freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, 0⟩ : IsingParams ℝ) n = Real.log 2 :=
+  freeEnergyAlongExhaustion_high_temp_expansion_h_zero_complete_summary
+    (IsingModel.latticeGraph d) Λ J β hβJ n hne
 
 /-- **ℤ^d along-exhaustion partition function high-temperature closed form (FV §3.7.3 eq. (3.45))**:
 at every stage `n`,
