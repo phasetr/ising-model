@@ -471,6 +471,37 @@ theorem partitionFunctionΛ_high_temp_expansion_h_zero_upper_bound
   exact IsingModel.partitionFunction_high_temp_expansion_h_zero_upper_bound
     (inducedGraph G Λ) J β hβJ
 
+/-- **Λ-level sharper Z high-temperature upper bound**: under `0 ≤ β·J`,
+`Z_Λ(⟨J, 0, β⟩) ≤ 2^|Λ| · exp(β·J·|E_Λ|)`. Λ-layer wrapper of
+`partitionFunction_high_temp_expansion_h_zero_upper_bound_exp` (Step 393). -/
+theorem partitionFunctionΛ_high_temp_expansion_h_zero_upper_bound_exp
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) :
+    partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+      ≤ (2 : ℝ) ^ Λ.card *
+          Real.exp (β * J * (inducedGraph G Λ).edgeFinset.card) := by
+  rw [partitionFunctionΛ_apply, ← Fintype.card_coe (s := Λ)]
+  exact IsingModel.partitionFunction_high_temp_expansion_h_zero_upper_bound_exp
+    (inducedGraph G Λ) J β hβJ
+
+/-- **Λ-level sharper freeEnergy high-temperature upper bound**: under
+`0 < |Λ|` and `0 ≤ β·J`,
+`f_Λ(⟨J, 0, β⟩) ≤ log 2 + β·J·|E_Λ|/|Λ|`. Λ-layer wrapper of
+`freeEnergy_high_temp_h_zero_upper_bound_exp` (Step 394). -/
+theorem freeEnergyΛ_high_temp_h_zero_upper_bound_exp
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (hne : 0 < Λ.card) :
+    freeEnergyΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+      ≤ Real.log 2 +
+          β * J * (inducedGraph G Λ).edgeFinset.card / Λ.card := by
+  have hcard : 0 < Fintype.card (↑Λ : Type _) := by
+    rw [Fintype.card_coe]; exact hne
+  rw [freeEnergyΛ_apply, ← Fintype.card_coe (s := Λ)]
+  exact IsingModel.freeEnergy_high_temp_h_zero_upper_bound_exp
+    (inducedGraph G Λ) J β hβJ hcard
+
 /-- **Λ-level freeEnergy high-temperature upper bound (FV (3.45))**:
 under `0 < |Λ|` and `0 ≤ β·J`,
 `f_Λ(⟨J, 0, β⟩) ≤ log 2 + (|E_Λ|/|Λ|) · log(2 · cosh(βJ))`.
