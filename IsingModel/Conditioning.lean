@@ -2313,6 +2313,52 @@ theorem freeEnergy_high_temp_h_zero_deviation_bound_exp
   have h := freeEnergy_high_temp_h_zero_upper_bound_exp G J β hβJ hne
   linarith
 
+/-- **f quantitative continuity at `J = 0` from deviation bound**:
+under `0 ≤ β·J` and `0 < |ι|`,
+`|f(J, 0, β) - f(0, 0, β)| ≤ β·J·|E|/|ι|`.
+
+`f(0, 0, β) = log 2` from `freeEnergy_zero_params`, so the bound reads
+`f - log 2 ≤ β·J·|E|/|ι|` (Step 420). The reverse direction
+`f(0, 0, β) - f ≤ 0 ≤ β·J·|E|/|ι|` follows from the cosh-form lower
+bound being non-negative under `0 ≤ β·J` (since `log cosh ≥ 0`).
+
+Quantitative right-continuity: as `β·J → 0+` the deviation vanishes. -/
+theorem freeEnergy_high_temp_h_zero_continuity_at_J_zero
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (hne : 0 < Fintype.card ι) :
+    |freeEnergy G ⟨J, 0, β⟩ - freeEnergy G (⟨0, 0, β⟩ : IsingParams ℝ)|
+      ≤ β * J * G.edgeFinset.card / Fintype.card ι := by
+  have hf0 : freeEnergy G (⟨0, 0, β⟩ : IsingParams ℝ) = Real.log 2 := by
+    have := freeEnergy_J_zero G (0 : ℝ) β hne
+    simpa [mul_zero, Real.cosh_zero] using this
+  rw [hf0]
+  -- |f - log 2| ≤ β·J·|E|/|ι|
+  have h_upper : freeEnergy G ⟨J, 0, β⟩ - Real.log 2
+      ≤ β * J * G.edgeFinset.card / Fintype.card ι :=
+    freeEnergy_high_temp_h_zero_deviation_bound_exp G J β hβJ hne
+  have h_lower : Real.log 2 ≤ freeEnergy G ⟨J, 0, β⟩ := by
+    -- log 2 ≤ log 2 + (|E|/|ι|)·log cosh(βJ) ≤ f, since log cosh ≥ 0
+    have h_lb : Real.log 2 + (G.edgeFinset.card : ℝ) / Fintype.card ι *
+          Real.log (Real.cosh (β * J)) ≤ freeEnergy G ⟨J, 0, β⟩ :=
+      freeEnergy_high_temp_h_zero_lower_bound G J β hβJ hne
+    have hcosh_ge : 1 ≤ Real.cosh (β * J) := Real.one_le_cosh _
+    have hlog_nn : 0 ≤ Real.log (Real.cosh (β * J)) :=
+      Real.log_nonneg hcosh_ge
+    have hcard_pos : (0 : ℝ) < Fintype.card ι := by exact_mod_cast hne
+    have hedge_nn : 0 ≤ ((G.edgeFinset.card : ℝ) / Fintype.card ι) :=
+      div_nonneg (Nat.cast_nonneg _) hcard_pos.le
+    have h_corr_nn : 0 ≤ ((G.edgeFinset.card : ℝ) / Fintype.card ι) *
+          Real.log (Real.cosh (β * J)) := mul_nonneg hedge_nn hlog_nn
+    linarith
+  rw [abs_sub_le_iff]
+  refine ⟨h_upper, ?_⟩
+  have h_dev_nn : (0 : ℝ) ≤ β * J * G.edgeFinset.card / Fintype.card ι := by
+    have hcard_pos : (0 : ℝ) < Fintype.card ι := by exact_mod_cast hne
+    have hedge_nn : (0 : ℝ) ≤ G.edgeFinset.card := Nat.cast_nonneg _
+    have h_num : 0 ≤ β * J * G.edgeFinset.card := mul_nonneg hβJ hedge_nn
+    exact div_nonneg h_num hcard_pos.le
+  linarith
+
 /-- **Ferromagnetic sharper f deviation bound**: under `0 ≤ J, 0 < β`
 and `0 < |ι|`, `f - log 2 ≤ β·J·|E|/|ι|`. Bridges via
 `mul_nonneg hβ.le hJ`. -/
