@@ -4060,6 +4060,78 @@ theorem freeEnergyΛ_latticeGraph_high_temp_h_zero_ratio_bound_beta_zero_ferroma
   freeEnergyΛ_high_temp_h_zero_ratio_bound_beta_zero_ferromagnetic
     (IsingModel.latticeGraph d) Λ J β hJ hβ hne
 
+/-- **ℤ^d Λ triple (Z + log Z + f) ratio bound bundle at J=0**. -/
+theorem partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_triple_ratio_bound_bundle
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
+    (hβJ : 0 ≤ β * J) (hne : 0 < Λ.card) :
+    partitionFunctionΛ (IsingModel.latticeGraph d) Λ (⟨J, 0, β⟩ : IsingParams ℝ) /
+        partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+          (⟨0, 0, β⟩ : IsingParams ℝ)
+        ≤ Real.exp (β * J *
+            (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card) ∧
+    Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ))
+        - Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+            (⟨0, 0, β⟩ : IsingParams ℝ))
+        ≤ β * J *
+            (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card ∧
+    freeEnergyΛ (IsingModel.latticeGraph d) Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+        - freeEnergyΛ (IsingModel.latticeGraph d) Λ
+            (⟨0, 0, β⟩ : IsingParams ℝ)
+        ≤ β * J *
+            (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card /
+            Λ.card :=
+  partitionFunctionΛ_high_temp_expansion_h_zero_triple_ratio_bound_bundle
+    (IsingModel.latticeGraph d) Λ J β hβJ hne
+
+/-- **ℤ^d Λ triple ratio bound bundle at β=0**. -/
+theorem partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_triple_ratio_bound_bundle_beta_zero
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
+    (hβJ : 0 ≤ β * J) (hne : 0 < Λ.card) :
+    partitionFunctionΛ (IsingModel.latticeGraph d) Λ (⟨J, 0, β⟩ : IsingParams ℝ) /
+        partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, 0⟩ : IsingParams ℝ)
+        ≤ Real.exp (β * J *
+            (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card) ∧
+    Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ))
+        - Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, 0⟩ : IsingParams ℝ))
+        ≤ β * J *
+            (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card ∧
+    freeEnergyΛ (IsingModel.latticeGraph d) Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+        - freeEnergyΛ (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, 0⟩ : IsingParams ℝ)
+        ≤ β * J *
+            (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card /
+            Λ.card :=
+  partitionFunctionΛ_high_temp_expansion_h_zero_triple_ratio_bound_bundle_beta_zero
+    (IsingModel.latticeGraph d) Λ J β hβJ hne
+
+/-- **ℤ^d Λ ferromagnetic triple ratio bound bundle at J=0**. -/
+theorem partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_triple_ratio_bound_bundle_ferromagnetic
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
+    (hJ : 0 ≤ J) (hβ : 0 < β) (hne : 0 < Λ.card) :
+    partitionFunctionΛ (IsingModel.latticeGraph d) Λ (⟨J, 0, β⟩ : IsingParams ℝ) /
+        partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+          (⟨0, 0, β⟩ : IsingParams ℝ)
+        ≤ Real.exp (β * J *
+            (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card) ∧
+    Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ))
+        - Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+            (⟨0, 0, β⟩ : IsingParams ℝ))
+        ≤ β * J *
+            (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card ∧
+    freeEnergyΛ (IsingModel.latticeGraph d) Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+        - freeEnergyΛ (IsingModel.latticeGraph d) Λ
+            (⟨0, 0, β⟩ : IsingParams ℝ)
+        ≤ β * J *
+            (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card /
+            Λ.card :=
+  partitionFunctionΛ_high_temp_expansion_h_zero_triple_ratio_bound_bundle_ferromagnetic
+    (IsingModel.latticeGraph d) Λ J β hJ hβ hne
+
 /-- **ℤ^d along-exhaustion correlation high-temperature closed form (FV §3.7.3 eq. (3.46))**:
 at every stage `n` with `A ⊆ Λ.volume n`, FV (3.46) closed form holds
 on the lifted Finset. When `A ⊄`, equals `0`.
@@ -5529,6 +5601,84 @@ theorem freeEnergyAlongExhaustion_latticeGraph_high_temp_h_zero_ratio_bound_beta
             (Λ.volume n).card :=
   freeEnergyAlongExhaustion_high_temp_h_zero_ratio_bound_beta_zero_ferromagnetic
     (IsingModel.latticeGraph d) Λ J β hJ hβ n hne
+
+/-- **ℤ^d along-ex triple (Z + log Z + f) ratio bound bundle at J=0, stage `n`**. -/
+theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_triple_ratio_bound_bundle
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
+    (hβJ : 0 ≤ β * J) (n : ℕ) (hne : 0 < (Λ.volume n).card) :
+    partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) n /
+        partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨0, 0, β⟩ : IsingParams ℝ) n
+        ≤ Real.exp (β * J *
+            (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card) ∧
+    Real.log (partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) n)
+        - Real.log (partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+            (⟨0, 0, β⟩ : IsingParams ℝ) n)
+        ≤ β * J *
+            (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card ∧
+    freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) n
+        - freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
+            (⟨0, 0, β⟩ : IsingParams ℝ) n
+        ≤ β * J *
+            (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card /
+            (Λ.volume n).card :=
+  partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_triple_ratio_bound_bundle
+    (IsingModel.latticeGraph d) Λ J β hβJ n hne
+
+/-- **ℤ^d along-ex triple ratio bound bundle at β=0, stage `n`**. -/
+theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_triple_ratio_bound_bundle_beta_zero
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
+    (hβJ : 0 ≤ β * J) (n : ℕ) (hne : 0 < (Λ.volume n).card) :
+    partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) n /
+        partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, 0⟩ : IsingParams ℝ) n
+        ≤ Real.exp (β * J *
+            (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card) ∧
+    Real.log (partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) n)
+        - Real.log (partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, 0⟩ : IsingParams ℝ) n)
+        ≤ β * J *
+            (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card ∧
+    freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) n
+        - freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, 0⟩ : IsingParams ℝ) n
+        ≤ β * J *
+            (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card /
+            (Λ.volume n).card :=
+  partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_triple_ratio_bound_bundle_beta_zero
+    (IsingModel.latticeGraph d) Λ J β hβJ n hne
+
+/-- **ℤ^d along-ex ferromagnetic triple ratio bound bundle at J=0, stage `n`**. -/
+theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_triple_ratio_bound_bundle_ferromagnetic
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
+    (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ) (hne : 0 < (Λ.volume n).card) :
+    partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) n /
+        partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨0, 0, β⟩ : IsingParams ℝ) n
+        ≤ Real.exp (β * J *
+            (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card) ∧
+    Real.log (partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) n)
+        - Real.log (partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+            (⟨0, 0, β⟩ : IsingParams ℝ) n)
+        ≤ β * J *
+            (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card ∧
+    freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) n
+        - freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
+            (⟨0, 0, β⟩ : IsingParams ℝ) n
+        ≤ β * J *
+            (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card /
+            (Λ.volume n).card :=
+  partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_triple_ratio_bound_bundle
+    d Λ J β (mul_nonneg hβ.le hJ) n hne
 
 /-- **ℤ^d along-exhaustion partition function high-temperature closed form (FV §3.7.3 eq. (3.45))**:
 at every stage `n`,
