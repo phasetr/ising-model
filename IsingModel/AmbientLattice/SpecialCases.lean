@@ -859,6 +859,21 @@ theorem correlationAlongExhaustion_high_temp_h_zero_at_singleton_eq_zero_le_one
    (correlationAlongExhaustion_high_temp_h_zero_at_singleton G Λ J β i n).symm
       ▸ zero_le_one⟩
 
+/-- **Along-ex pair+singleton bundle at h=0**. -/
+theorem correlationAlongExhaustion_high_temp_h_zero_at_pair_singleton_bundle
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (i j : V) (n : ℕ) :
+    correlationAlongExhaustion G Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) ({i} : Finset V) n = 0 ∧
+      0 ≤ correlationAlongExhaustion G Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset V) n ∧
+      correlationAlongExhaustion G Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset V) n ≤ 1 :=
+  ⟨correlationAlongExhaustion_high_temp_h_zero_at_singleton G Λ J β i n,
+   correlationAlongExhaustion_high_temp_h_zero_at_pair_nonneg G Λ J β hβJ i j n,
+   correlationAlongExhaustion_high_temp_h_zero_at_pair_le_one G Λ J β i j n⟩
+
 /-- **Along-ex singleton ferromagnetic vanish at h = 0**: under
 `0 ≤ J, 0 < β`, `correlationAlongExhaustion G Λ ⟨J, 0, β⟩ {i} n = 0`. -/
 theorem correlationAlongExhaustion_high_temp_h_zero_at_singleton_ferromagnetic
