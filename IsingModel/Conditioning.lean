@@ -2497,6 +2497,16 @@ theorem correlation_high_temp_h_zero_at_singleton
   rw [Finset.card_singleton]
   exact ⟨0, rfl⟩
 
+/-- **Singleton vanish + ≤ 1 sandwich at h = 0**: trivial since the
+correlation is exactly 0 at h = 0 (Z₂ symmetry). -/
+theorem correlation_high_temp_h_zero_at_singleton_eq_zero_le_one
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (i : ι) :
+    correlation G ⟨J, 0, β⟩ ({i} : Finset ι) = 0 ∧
+      correlation G ⟨J, 0, β⟩ ({i} : Finset ι) ≤ 1 :=
+  ⟨correlation_high_temp_h_zero_at_singleton G J β i,
+   (correlation_high_temp_h_zero_at_singleton G J β i).symm ▸ zero_le_one⟩
+
 /-- **Singleton magnetization under ferromagnetic at h = 0**:
 under `0 ≤ J, 0 < β`, `⟨σ_i⟩_{β,0} = 0`. Trivial wrap of Step 331. -/
 theorem correlation_high_temp_h_zero_at_singleton_ferromagnetic
