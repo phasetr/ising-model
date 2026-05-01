@@ -2378,6 +2378,16 @@ theorem correlation_high_temp_h_zero_odd_card_eq_zero
       high_temp_numerator_filter_eq_empty_of_odd_card G A hA_odd,
       Finset.sum_empty, zero_div]
 
+/-- **Pair correlation nonnegativity at h = 0 from FV (3.46)**: under
+`0 ≤ β·J`, `0 ≤ ⟨σ_i σ_j⟩_{β,0}` for any `i, j : ι`.
+Direct specialization of `correlation_high_temp_h_zero_nonneg` (Step 293)
+at A = {i, j}. -/
+theorem correlation_high_temp_h_zero_at_pair_nonneg
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (i j : ι) :
+    0 ≤ correlation G ⟨J, 0, β⟩ ({i, j} : Finset ι) :=
+  correlation_high_temp_h_zero_nonneg G J β hβJ {i, j}
+
 /-- **Pair correlation high-temp closed form (FV (3.46) at A = {i,j})**:
 for `i ≠ j` and at `h = 0`,
 `⟨σ_i σ_j⟩_{β,0} = (∑_{X : ∂X = {i,j}} tanh^|X|) / (∑_{X : ∂X = ∅} tanh^|X|)`.
