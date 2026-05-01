@@ -3046,6 +3046,21 @@ theorem correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_pair_sandwic
   correlationAlongExhaustion_high_temp_h_zero_at_pair_sandwich
     (IsingModel.latticeGraph d) Λ J β hβJ i j n
 
+/-- **ℤ^d along-ex pair+singleton bundle at h = 0**: combines
+`{i}`-vanishing with the `{i,j}` sandwich at every stage `n`. ℤ^d
+wrapper of `correlationAlongExhaustion_high_temp_h_zero_at_pair_singleton_bundle`. -/
+theorem correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_pair_singleton_bundle
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
+    (hβJ : 0 ≤ β * J) (i j : Fin d → ℤ) (n : ℕ) :
+    correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) ({i} : Finset (Fin d → ℤ)) n = 0 ∧
+      0 ≤ correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset (Fin d → ℤ)) n ∧
+      correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset (Fin d → ℤ)) n ≤ 1 :=
+  correlationAlongExhaustion_high_temp_h_zero_at_pair_singleton_bundle
+    (IsingModel.latticeGraph d) Λ J β hβJ i j n
+
 /-- **ℤ^d along-ex pair at J=0,h=0**: = 0. -/
 theorem correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_pair_J_zero
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (β : ℝ)
