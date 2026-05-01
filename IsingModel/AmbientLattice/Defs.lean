@@ -1045,6 +1045,28 @@ theorem log_partitionFunctionΛ_high_temp_expansion_h_zero_deviation_pos
   exact IsingModel.log_partitionFunction_high_temp_expansion_h_zero_deviation_pos
     (inducedGraph G Λ) J β hβJ hEpos
 
+/-- **Λ-level ferromagnetic Z strict deviation**. -/
+theorem partitionFunctionΛ_high_temp_expansion_h_zero_pow_two_lt_ferromagnetic
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hJ : 0 < J) (hβ : 0 < β)
+    (hEpos : 0 < (inducedGraph G Λ).edgeFinset.card) :
+    (2 : ℝ) ^ Λ.card
+      < partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) :=
+  partitionFunctionΛ_high_temp_expansion_h_zero_pow_two_lt
+    G Λ J β (mul_pos hβ hJ) hEpos
+
+/-- **Λ-level ferromagnetic log Z strict deviation**. -/
+theorem log_partitionFunctionΛ_high_temp_expansion_h_zero_deviation_pos_ferromagnetic
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hJ : 0 < J) (hβ : 0 < β)
+    (hEpos : 0 < (inducedGraph G Λ).edgeFinset.card) :
+    0 < Real.log (partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ))
+        - (Λ.card : ℝ) * Real.log 2 :=
+  log_partitionFunctionΛ_high_temp_expansion_h_zero_deviation_pos
+    G Λ J β (mul_pos hβ hJ) hEpos
+
 /-- **Λ-level Z high-temp sandwich (FV (3.45))**: under `0 ≤ β·J`,
 `2^|Λ| · cosh^|E_Λ| ≤ Z_Λ ≤ 2^(|Λ|+|E_Λ|) · cosh^|E_Λ|`. -/
 theorem partitionFunctionΛ_high_temp_expansion_h_zero_sandwich
