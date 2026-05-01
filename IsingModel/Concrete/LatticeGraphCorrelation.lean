@@ -5060,6 +5060,34 @@ theorem freeEnergyAlongExhaustion_latticeGraph_high_temp_h_zero_deviation_pos_of
   freeEnergyAlongExhaustion_high_temp_h_zero_deviation_pos_of_nonempty
     (IsingModel.latticeGraph d) Λ J β hβJ n hne hEpos
 
+/-- **ℤ^d along-ex f ratio bound at J=0, stage `n`**. -/
+theorem freeEnergyAlongExhaustion_latticeGraph_high_temp_h_zero_ratio_bound
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
+    (hβJ : 0 ≤ β * J) (n : ℕ) (hne : 0 < (Λ.volume n).card) :
+    freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) n
+        - freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
+            (⟨0, 0, β⟩ : IsingParams ℝ) n
+      ≤ β * J *
+          (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card /
+            (Λ.volume n).card :=
+  freeEnergyAlongExhaustion_high_temp_h_zero_ratio_bound
+    (IsingModel.latticeGraph d) Λ J β hβJ n hne
+
+/-- **ℤ^d along-ex f ratio bound at β=0, stage `n`**. -/
+theorem freeEnergyAlongExhaustion_latticeGraph_high_temp_h_zero_ratio_bound_beta_zero
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
+    (hβJ : 0 ≤ β * J) (n : ℕ) (hne : 0 < (Λ.volume n).card) :
+    freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) n
+        - freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, 0⟩ : IsingParams ℝ) n
+      ≤ β * J *
+          (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card /
+            (Λ.volume n).card :=
+  freeEnergyAlongExhaustion_high_temp_h_zero_ratio_bound_beta_zero
+    (IsingModel.latticeGraph d) Λ J β hβJ n hne
+
 /-- **ℤ^d along-exhaustion partition function high-temperature closed form (FV §3.7.3 eq. (3.45))**:
 at every stage `n`,
 `partitionFunctionAlongExhaustion (latticeGraph d) Λ ⟨J, 0, β⟩ n
