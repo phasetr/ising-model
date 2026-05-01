@@ -5558,6 +5558,25 @@ theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_high_temp_h_zero_continu
   exact inducedLatticeGraph_card_edgeFinset_le d
     ((Ambient.cubicExhaustion d).volume n)
 
+/-- **ℤ^d ∞-vol f continuity bundle at trivial slices**: under
+ferromagnetic `0 ≤ J, 0 < β`, both `J = 0` and `β = 0` continuity at
+the ∞-volume on `cubicExhaustion d`. -/
+theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_high_temp_h_zero_continuity_bundle
+    (d : ℕ) [Nonempty (Fin d → ℤ)]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) :
+    |freeEnergyInfinite (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ)
+      - freeEnergyInfinite (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d)
+        (⟨0, 0, β⟩ : IsingParams ℝ)| ≤ β * J * (d : ℝ) ∧
+    |freeEnergyInfinite (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ)
+      - freeEnergyInfinite (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d)
+        (⟨J, 0, 0⟩ : IsingParams ℝ)| ≤ β * J * (d : ℝ) :=
+  ⟨freeEnergyInfinite_latticeGraph_cubicExhaustion_high_temp_h_zero_continuity_at_J_zero
+      d J β hJ hβ,
+   freeEnergyInfinite_latticeGraph_cubicExhaustion_high_temp_h_zero_continuity_at_beta_zero
+      d J β hJ hβ⟩
+
 /-- **ℤ^d freeEnergyInfinite uniform upper bound via caller-supplied BED**
 (any-Exhaustion): `freeEnergyInfinite ≤ log 2 + |β|·(|J|·c + |h|)`. -/
 theorem freeEnergyInfinite_latticeGraph_le_uniform_upper_bound
