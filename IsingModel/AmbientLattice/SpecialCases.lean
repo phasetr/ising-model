@@ -647,6 +647,35 @@ theorem partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_sandwich
    partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_upper_bound
       G Λ J β hβJ n⟩
 
+/-- **Along-ex Z complete-summary bundle at h = 0**: under `0 ≤ β·J`,
+at every stage `n` packages along-exhaustion Z lower bound, upper bound,
+and trivial-slice values at `J = 0` / `β = 0`. Along-exhaustion wrapper
+of `partitionFunction_high_temp_h_zero_Z_complete_summary`. -/
+theorem partitionFunctionAlongExhaustion_high_temp_h_zero_Z_complete_summary
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (n : ℕ) :
+    (2 : ℝ) ^ (Λ.volume n).card *
+        Real.cosh (β * J) ^ (inducedGraph G (Λ.volume n)).edgeFinset.card
+      ≤ partitionFunctionAlongExhaustion G Λ (⟨J, 0, β⟩ : IsingParams ℝ) n ∧
+      partitionFunctionAlongExhaustion G Λ (⟨J, 0, β⟩ : IsingParams ℝ) n
+        ≤ (2 : ℝ) ^ ((Λ.volume n).card +
+              (inducedGraph G (Λ.volume n)).edgeFinset.card) *
+            Real.cosh (β * J) ^
+              (inducedGraph G (Λ.volume n)).edgeFinset.card ∧
+      partitionFunctionAlongExhaustion G Λ (⟨0, 0, β⟩ : IsingParams ℝ) n
+        = (2 : ℝ) ^ (Λ.volume n).card ∧
+      partitionFunctionAlongExhaustion G Λ (⟨J, 0, 0⟩ : IsingParams ℝ) n
+        = (2 : ℝ) ^ (Λ.volume n).card :=
+  ⟨partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_lower_bound
+      G Λ J β hβJ n,
+   partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_upper_bound
+      G Λ J β hβJ n,
+   partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_closed_at_J_zero
+      G Λ β n,
+   partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_closed_at_beta_zero
+      G Λ J n⟩
+
 /-- **Along-exhaustion freeEnergy high-temp sandwich (FV (3.45))**: under
 `0 ≤ β·J` and `0 < |Λ_n|`, at every stage `n`,
 `log 2 + (|E_n|/|Λ_n|) log cosh(βJ) ≤ f_n ≤ log 2 + (|E_n|/|Λ_n|) log(2·cosh βJ)`. -/
