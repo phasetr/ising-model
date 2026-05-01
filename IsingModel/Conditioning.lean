@@ -1888,6 +1888,28 @@ theorem log_partitionFunction_high_temp_expansion_h_zero_sandwich_exp
     Real.log_nonneg h_one_le_sum
   linarith
 
+/-- **log Z deviation sandwich**: under `0 ≤ β·J`,
+`0 ≤ log Z - |ι|·log 2 ≤ β·J·|E|`. -/
+theorem log_partitionFunction_high_temp_expansion_h_zero_deviation_sandwich
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) :
+    0 ≤ Real.log (partitionFunction G ⟨J, 0, β⟩)
+        - (Fintype.card ι : ℝ) * Real.log 2 ∧
+    Real.log (partitionFunction G ⟨J, 0, β⟩)
+        - (Fintype.card ι : ℝ) * Real.log 2
+      ≤ β * J * G.edgeFinset.card := by
+  obtain ⟨h_lb, h_ub⟩ := log_partitionFunction_high_temp_expansion_h_zero_sandwich_exp
+    G J β hβJ
+  refine ⟨?_, by linarith⟩
+  -- log Z ≥ |ι| log 2 from |ι| log 2 + |E|·log cosh(βJ) ≤ log Z and log cosh ≥ 0.
+  have hcosh_ge : 1 ≤ Real.cosh (β * J) := Real.one_le_cosh _
+  have hlog_nn : 0 ≤ Real.log (Real.cosh (β * J)) :=
+    Real.log_nonneg hcosh_ge
+  have hedge_nn : (0 : ℝ) ≤ G.edgeFinset.card := Nat.cast_nonneg _
+  have h_corr_nn : 0 ≤ (G.edgeFinset.card : ℝ) * Real.log (Real.cosh (β * J)) :=
+    mul_nonneg hedge_nn hlog_nn
+  linarith
+
 /-- **Sharper log Z complete-summary exp bundle**: under `0 ≤ β·J`,
 single statement bundling sharper sandwich + trivial-slice values:
   1. `|ι|·log 2 + |E|·log cosh(β·J) ≤ log Z` (lower),
