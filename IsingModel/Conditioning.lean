@@ -2624,6 +2624,33 @@ theorem correlation_high_temp_h_zero_at_pair_pos_of_edge
     (correlation_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges
       G J β hβJ.le i j hij he)
 
+/-- **Ferromagnetic pair correlation single-edge tanh lower bound (GJ §18.3 / FV (3.46))**:
+under `0 ≤ J, 0 < β` and an edge `s(i, j) ∈ G.edgeSet`,
+`⟨σ_iσ_j⟩^{⟨J,0,β⟩} ≥ tanh(β·J) / 2^|E|`. Bridges the
+`Ferromagnetic`-style hypotheses with
+`correlation_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges` via
+`mul_nonneg hβ.le hJ`. -/
+theorem correlation_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges_ferromagnetic
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β)
+    (i j : ι) (hij : i ≠ j) (he : s(i, j) ∈ G.edgeSet) :
+    Real.tanh (β * J) / (2 : ℝ) ^ G.edgeFinset.card
+      ≤ correlation G ⟨J, 0, β⟩ ({i, j} : Finset ι) :=
+  correlation_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges
+    G J β (mul_nonneg hβ.le hJ) i j hij he
+
+/-- **Ferromagnetic pair correlation strict positivity under edge (GJ §18.3 / FV (3.46))**:
+under `0 < J, 0 < β` and an edge `s(i, j) ∈ G.edgeSet`,
+`0 < ⟨σ_iσ_j⟩^{⟨J,0,β⟩}`. Bridges strict-ferromagnetic hypotheses with
+`correlation_high_temp_h_zero_at_pair_pos_of_edge` via `mul_pos hβ hJ`. -/
+theorem correlation_high_temp_h_zero_at_pair_pos_of_edge_ferromagnetic
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hJ : 0 < J) (hβ : 0 < β)
+    (i j : ι) (hij : i ≠ j) (he : s(i, j) ∈ G.edgeSet) :
+    0 < correlation G ⟨J, 0, β⟩ ({i, j} : Finset ι) :=
+  correlation_high_temp_h_zero_at_pair_pos_of_edge
+    G J β (mul_pos hβ hJ) i j hij he
+
 /-- **Pair correlation under `Ferromagnetic` at h = 0**: under ferromagnetic
 parameters `⟨J, 0, β⟩` (i.e. `0 ≤ J, 0 < β`),
 `0 ≤ ⟨σ_i σ_j⟩ ≤ 1`. Bridges the `Ferromagnetic` typeclass and FV (3.46)

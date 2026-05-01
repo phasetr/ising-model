@@ -911,6 +911,35 @@ theorem correlationΛ_high_temp_h_zero_at_pair_pos_of_edge
   exact correlation_high_temp_h_zero_at_pair_pos_of_edge
     (inducedGraph G Λ) J β hβJ i j hij he
 
+/-- **Λ ferromagnetic pair single-edge tanh lower bound (GJ §18.3 / FV (3.46))**:
+under `0 ≤ J, 0 < β` and an edge `s(i, j) ∈ (inducedGraph G Λ).edgeSet`,
+`⟨σ_iσ_j⟩^Λ ≥ tanh(β·J) / 2^|E_Λ|`. Λ-layer wrapper of
+`correlation_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges_ferromagnetic`. -/
+theorem correlationΛ_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges_ferromagnetic
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (i j : ↑Λ) (hij : i ≠ j)
+    (he : s(i, j) ∈ (inducedGraph G Λ).edgeSet) :
+    Real.tanh (β * J) / (2 : ℝ) ^ (inducedGraph G Λ).edgeFinset.card
+      ≤ correlationΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+          ({i, j} : Finset ↑Λ) :=
+  correlationΛ_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges
+    G Λ J β (mul_nonneg hβ.le hJ) i j hij he
+
+/-- **Λ ferromagnetic pair strict positivity under edge (GJ §18.3 / FV (3.46))**:
+under `0 < J, 0 < β` and an edge `s(i, j) ∈ (inducedGraph G Λ).edgeSet`,
+`0 < ⟨σ_iσ_j⟩^Λ`. Λ-layer wrapper of
+`correlation_high_temp_h_zero_at_pair_pos_of_edge_ferromagnetic`. -/
+theorem correlationΛ_high_temp_h_zero_at_pair_pos_of_edge_ferromagnetic
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hJ : 0 < J) (hβ : 0 < β) (i j : ↑Λ) (hij : i ≠ j)
+    (he : s(i, j) ∈ (inducedGraph G Λ).edgeSet) :
+    0 < correlationΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+        ({i, j} : Finset ↑Λ) :=
+  correlationΛ_high_temp_h_zero_at_pair_pos_of_edge
+    G Λ J β (mul_pos hβ hJ) i j hij he
+
 /-- The correlation on `Λ` is at least `-1`. Lower side of
 `abs_correlationΛ_le_one`. -/
 theorem neg_one_le_correlationΛ (G : SimpleGraph V) (Λ : Finset V)
