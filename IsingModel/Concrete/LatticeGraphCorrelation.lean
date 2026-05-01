@@ -3194,6 +3194,39 @@ theorem freeEnergyΛ_latticeGraph_high_temp_h_zero_upper_bound_exp_ferromagnetic
   freeEnergyΛ_high_temp_h_zero_upper_bound_exp_ferromagnetic
     (IsingModel.latticeGraph d) Λ J β hJ hβ hne
 
+/-- **ℤ^d Λ sharper Z high-temp sandwich**. -/
+theorem partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_sandwich_exp
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ) (hβJ : 0 ≤ β * J) :
+    (2 : ℝ) ^ Λ.card *
+        Real.cosh (β * J) ^
+          (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card
+      ≤ partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) ∧
+    partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ)
+      ≤ (2 : ℝ) ^ Λ.card *
+          Real.exp (β * J *
+            (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card) :=
+  partitionFunctionΛ_high_temp_expansion_h_zero_sandwich_exp
+    (IsingModel.latticeGraph d) Λ J β hβJ
+
+/-- **ℤ^d Λ sharper f high-temp sandwich**. -/
+theorem freeEnergyΛ_latticeGraph_high_temp_h_zero_sandwich_exp
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
+    (hβJ : 0 ≤ β * J) (hne : 0 < Λ.card) :
+    Real.log 2 +
+        ((inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card : ℝ) /
+          Λ.card * Real.log (Real.cosh (β * J))
+      ≤ freeEnergyΛ (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) ∧
+    freeEnergyΛ (IsingModel.latticeGraph d) Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+      ≤ Real.log 2 +
+          β * J *
+            (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card /
+              Λ.card :=
+  freeEnergyΛ_high_temp_h_zero_sandwich_exp
+    (IsingModel.latticeGraph d) Λ J β hβJ hne
+
 /-- **ℤ^d along-exhaustion correlation high-temperature closed form (FV §3.7.3 eq. (3.46))**:
 at every stage `n` with `A ⊆ Λ.volume n`, FV (3.46) closed form holds
 on the lifted Finset. When `A ⊄`, equals `0`.
@@ -3773,6 +3806,41 @@ theorem freeEnergyAlongExhaustion_latticeGraph_high_temp_h_zero_upper_bound_exp_
               (Λ.volume n).card :=
   freeEnergyAlongExhaustion_high_temp_h_zero_upper_bound_exp_ferromagnetic
     (IsingModel.latticeGraph d) Λ J β hJ hβ n hne
+
+/-- **ℤ^d along-ex sharper Z high-temp sandwich at stage `n`**. -/
+theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_sandwich_exp
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
+    (hβJ : 0 ≤ β * J) (n : ℕ) :
+    (2 : ℝ) ^ (Λ.volume n).card *
+        Real.cosh (β * J) ^
+          (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card
+      ≤ partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) n ∧
+    partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) n
+      ≤ (2 : ℝ) ^ (Λ.volume n).card *
+          Real.exp (β * J *
+            (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card) :=
+  partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_sandwich_exp
+    (IsingModel.latticeGraph d) Λ J β hβJ n
+
+/-- **ℤ^d along-ex sharper f high-temp sandwich at stage `n`**. -/
+theorem freeEnergyAlongExhaustion_latticeGraph_high_temp_h_zero_sandwich_exp
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
+    (hβJ : 0 ≤ β * J) (n : ℕ) (hne : 0 < (Λ.volume n).card) :
+    Real.log 2 +
+        ((inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card : ℝ) /
+          (Λ.volume n).card * Real.log (Real.cosh (β * J))
+      ≤ freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) n ∧
+    freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) n
+      ≤ Real.log 2 +
+          β * J *
+            (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card /
+              (Λ.volume n).card :=
+  freeEnergyAlongExhaustion_high_temp_h_zero_sandwich_exp
+    (IsingModel.latticeGraph d) Λ J β hβJ n hne
 
 /-- **ℤ^d along-exhaustion partition function high-temperature closed form (FV §3.7.3 eq. (3.45))**:
 at every stage `n`,
