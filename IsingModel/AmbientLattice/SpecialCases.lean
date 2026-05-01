@@ -928,6 +928,30 @@ theorem freeEnergyAlongExhaustion_high_temp_h_zero_sandwich_exp_ferromagnetic
   freeEnergyAlongExhaustion_high_temp_h_zero_sandwich_exp G Λ J β
     (mul_nonneg hβ.le hJ) n hne
 
+/-- **Along-ex sharper f complete-summary exp bundle at stage `n`**:
+under `0 ≤ β·J` and `0 < |Λ_n|`, single statement bundling sharper
+sandwich + trivial-slice values. -/
+theorem freeEnergyAlongExhaustion_high_temp_h_zero_complete_summary_exp
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (n : ℕ) (hne : (Λ.volume n).Nonempty) :
+    Real.log 2 +
+        ((inducedGraph G (Λ.volume n)).edgeFinset.card : ℝ) /
+          (Λ.volume n).card * Real.log (Real.cosh (β * J))
+      ≤ freeEnergyAlongExhaustion G Λ (⟨J, 0, β⟩ : IsingParams ℝ) n ∧
+    freeEnergyAlongExhaustion G Λ (⟨J, 0, β⟩ : IsingParams ℝ) n
+      ≤ Real.log 2 +
+          β * J * (inducedGraph G (Λ.volume n)).edgeFinset.card /
+            (Λ.volume n).card ∧
+    freeEnergyAlongExhaustion G Λ (⟨0, 0, β⟩ : IsingParams ℝ) n = Real.log 2 ∧
+    freeEnergyAlongExhaustion G Λ (⟨J, 0, 0⟩ : IsingParams ℝ) n = Real.log 2 := by
+  have hcard : 0 < (Λ.volume n).card := hne.card_pos
+  obtain ⟨h1, h2⟩ := freeEnergyAlongExhaustion_high_temp_h_zero_sandwich_exp
+    G Λ J β hβJ n hcard
+  refine ⟨h1, h2, ?_, ?_⟩
+  · exact freeEnergyAlongExhaustion_zero_params G Λ β n hne
+  · exact freeEnergyAlongExhaustion_beta_zero G Λ J 0 n hne
+
 /-- **Along-exhaustion freeEnergy high-temp sandwich (FV (3.45))**: under
 `0 ≤ β·J` and `0 < |Λ_n|`, at every stage `n`,
 `log 2 + (|E_n|/|Λ_n|) log cosh(βJ) ≤ f_n ≤ log 2 + (|E_n|/|Λ_n|) log(2·cosh βJ)`. -/
