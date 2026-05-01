@@ -1341,6 +1341,28 @@ theorem partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_sandwi
   exact partitionFunctionΛ_high_temp_expansion_h_zero_ratio_sandwich
     G (Λ.volume n) J β hβJ
 
+/-- **Along-ex Z ratio sandwich at β=0 trivial slice, stage `n`**. -/
+theorem partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_sandwich_beta_zero
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (n : ℕ) :
+    Real.cosh (β * J) ^ (inducedGraph G (Λ.volume n)).edgeFinset.card
+      ≤ partitionFunctionAlongExhaustion G Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) n /
+          partitionFunctionAlongExhaustion G Λ
+            (⟨J, 0, 0⟩ : IsingParams ℝ) n ∧
+    partitionFunctionAlongExhaustion G Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) n /
+        partitionFunctionAlongExhaustion G Λ
+          (⟨J, 0, 0⟩ : IsingParams ℝ) n
+      ≤ Real.exp (β * J * (inducedGraph G (Λ.volume n)).edgeFinset.card) := by
+  change _ ≤ partitionFunctionΛ G (Λ.volume n) (⟨J, 0, β⟩ : IsingParams ℝ) /
+      partitionFunctionΛ G (Λ.volume n) (⟨J, 0, 0⟩ : IsingParams ℝ) ∧
+      partitionFunctionΛ G (Λ.volume n) (⟨J, 0, β⟩ : IsingParams ℝ) /
+        partitionFunctionΛ G (Λ.volume n) (⟨J, 0, 0⟩ : IsingParams ℝ) ≤ _
+  exact partitionFunctionΛ_high_temp_expansion_h_zero_ratio_sandwich_beta_zero
+    G (Λ.volume n) J β hβJ
+
 /-- **Along-exhaustion freeEnergy high-temp sandwich (FV (3.45))**: under
 `0 ≤ β·J` and `0 < |Λ_n|`, at every stage `n`,
 `log 2 + (|E_n|/|Λ_n|) log cosh(βJ) ≤ f_n ≤ log 2 + (|E_n|/|Λ_n|) log(2·cosh βJ)`. -/
