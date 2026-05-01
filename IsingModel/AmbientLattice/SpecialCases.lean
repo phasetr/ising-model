@@ -676,6 +676,25 @@ theorem correlationAlongExhaustion_high_temp_h_zero_odd_card_eq_zero
     rw [hcard]; exact hA_odd
   · simp only [dif_neg hAn]
 
+/-- **Along-exhaustion FV (3.46) at A = ∅ consistency check**:
+under `0 ≤ β·J`, at every stage `n`,
+`correlationAlongExhaustion G Λ ⟨J, 0, β⟩ ∅ n = 1`.
+The empty Finset is always a subset of `Λ.volume n`, so we lift via
+`liftFinset`, then apply `correlationΛ_high_temp_h_zero_at_empty_A` (Step 314). -/
+theorem correlationAlongExhaustion_high_temp_h_zero_at_empty_A
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (n : ℕ) :
+    correlationAlongExhaustion G Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) (∅ : Finset V) n = 1 := by
+  unfold correlationAlongExhaustion
+  rw [dif_pos (Finset.empty_subset _)]
+  have h_lift : liftFinset (∅ : Finset V) (Finset.empty_subset (Λ.volume n))
+      = (∅ : Finset ↑(Λ.volume n)) := by
+    ext v; simp [liftFinset]
+  rw [h_lift]
+  exact correlationΛ_high_temp_h_zero_at_empty_A G (Λ.volume n) J β hβJ
+
 /-- **Along-exhaustion magnetization vanishes at h = 0**: at every stage `n`,
 `correlationAlongExhaustion G Λ ⟨J, 0, β⟩ {i} n = 0` for any
 ambient site `i : V`. Specialization at `A = {i}`. -/
