@@ -3283,6 +3283,46 @@ theorem freeEnergyΛ_latticeGraph_high_temp_h_zero_complete_summary_exp
   freeEnergyΛ_high_temp_h_zero_complete_summary_exp
     (IsingModel.latticeGraph d) Λ J β hβJ hne
 
+/-- **ℤ^d Λ sharper Z complete-summary exp bundle**. -/
+theorem partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_complete_summary_exp
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ) (hβJ : 0 ≤ β * J) :
+    (2 : ℝ) ^ Λ.card *
+        Real.cosh (β * J) ^
+          (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card
+      ≤ partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) ∧
+    partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ)
+      ≤ (2 : ℝ) ^ Λ.card *
+          Real.exp (β * J *
+            (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card) ∧
+    partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+        (⟨0, 0, β⟩ : IsingParams ℝ) = (2 : ℝ) ^ Λ.card ∧
+    partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, 0⟩ : IsingParams ℝ) = (2 : ℝ) ^ Λ.card :=
+  partitionFunctionΛ_high_temp_expansion_h_zero_complete_summary_exp
+    (IsingModel.latticeGraph d) Λ J β hβJ
+
+/-- **ℤ^d Λ sharper log Z complete-summary exp bundle**. -/
+theorem log_partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_complete_summary_exp
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ) (hβJ : 0 ≤ β * J) :
+    (Λ.card : ℝ) * Real.log 2
+        + ((inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card : ℝ) *
+            Real.log (Real.cosh (β * J))
+      ≤ Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ)) ∧
+    Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ))
+      ≤ (Λ.card : ℝ) * Real.log 2
+        + β * J *
+          (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card ∧
+    Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+        (⟨0, 0, β⟩ : IsingParams ℝ)) = (Λ.card : ℝ) * Real.log 2 ∧
+    Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, 0⟩ : IsingParams ℝ)) = (Λ.card : ℝ) * Real.log 2 :=
+  log_partitionFunctionΛ_high_temp_expansion_h_zero_complete_summary_exp
+    (IsingModel.latticeGraph d) Λ J β hβJ
+
 /-- **ℤ^d along-exhaustion correlation high-temperature closed form (FV §3.7.3 eq. (3.46))**:
 at every stage `n` with `A ⊆ Λ.volume n`, FV (3.46) closed form holds
 on the lifted Finset. When `A ⊄`, equals `0`.
@@ -3954,6 +3994,48 @@ theorem freeEnergyAlongExhaustion_latticeGraph_high_temp_h_zero_complete_summary
         (⟨J, 0, 0⟩ : IsingParams ℝ) n = Real.log 2 :=
   freeEnergyAlongExhaustion_high_temp_h_zero_complete_summary_exp
     (IsingModel.latticeGraph d) Λ J β hβJ n hne
+
+/-- **ℤ^d along-ex sharper Z complete-summary exp bundle at stage `n`**. -/
+theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_complete_summary_exp
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
+    (hβJ : 0 ≤ β * J) (n : ℕ) :
+    (2 : ℝ) ^ (Λ.volume n).card *
+        Real.cosh (β * J) ^
+          (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card
+      ≤ partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) n ∧
+    partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) n
+      ≤ (2 : ℝ) ^ (Λ.volume n).card *
+          Real.exp (β * J *
+            (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card) ∧
+    partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨0, 0, β⟩ : IsingParams ℝ) n = (2 : ℝ) ^ (Λ.volume n).card ∧
+    partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, 0⟩ : IsingParams ℝ) n = (2 : ℝ) ^ (Λ.volume n).card :=
+  partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_complete_summary_exp
+    (IsingModel.latticeGraph d) Λ J β hβJ n
+
+/-- **ℤ^d along-ex sharper log Z complete-summary exp bundle at stage `n`**. -/
+theorem log_partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_complete_summary_exp
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
+    (hβJ : 0 ≤ β * J) (n : ℕ) :
+    ((Λ.volume n).card : ℝ) * Real.log 2
+        + ((inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card : ℝ) *
+            Real.log (Real.cosh (β * J))
+      ≤ Real.log (partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) n) ∧
+    Real.log (partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) n)
+      ≤ ((Λ.volume n).card : ℝ) * Real.log 2
+        + β * J *
+          (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card ∧
+    Real.log (partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨0, 0, β⟩ : IsingParams ℝ) n) = ((Λ.volume n).card : ℝ) * Real.log 2 ∧
+    Real.log (partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, 0⟩ : IsingParams ℝ) n) = ((Λ.volume n).card : ℝ) * Real.log 2 :=
+  log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_complete_summary_exp
+    (IsingModel.latticeGraph d) Λ J β hβJ n
 
 /-- **ℤ^d along-exhaustion partition function high-temperature closed form (FV §3.7.3 eq. (3.45))**:
 at every stage `n`,
