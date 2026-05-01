@@ -1531,6 +1531,19 @@ theorem freeEnergyAlongExhaustion_high_temp_h_zero_ratio_bound_bundle_ferromagne
   freeEnergyAlongExhaustion_high_temp_h_zero_ratio_bound_bundle
     G Λ J β (mul_nonneg hβ.le hJ) n hne
 
+/-- **Along-ex f deviation bound under `(Λ.volume n).Nonempty`**:
+under `0 ≤ β·J` and `(Λ.volume n).Nonempty`,
+`f_n - log 2 ≤ β·J·|E_n|/|Λ_n|`. Bridges from the Nonempty hypothesis. -/
+theorem freeEnergyAlongExhaustion_high_temp_h_zero_deviation_bound_exp_of_nonempty
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (n : ℕ) (hne : (Λ.volume n).Nonempty) :
+    freeEnergyAlongExhaustion G Λ (⟨J, 0, β⟩ : IsingParams ℝ) n - Real.log 2
+      ≤ β * J * (inducedGraph G (Λ.volume n)).edgeFinset.card /
+          (Λ.volume n).card :=
+  freeEnergyAlongExhaustion_high_temp_h_zero_deviation_bound_exp
+    G Λ J β hβJ n hne.card_pos
+
 /-- **Along-exhaustion freeEnergy high-temp sandwich (FV (3.45))**: under
 `0 ≤ β·J` and `0 < |Λ_n|`, at every stage `n`,
 `log 2 + (|E_n|/|Λ_n|) log cosh(βJ) ≤ f_n ≤ log 2 + (|E_n|/|Λ_n|) log(2·cosh βJ)`. -/
