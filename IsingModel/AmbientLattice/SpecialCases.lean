@@ -874,6 +874,31 @@ theorem correlationAlongExhaustion_high_temp_h_zero_at_pair_singleton_bundle
    correlationAlongExhaustion_high_temp_h_zero_at_pair_nonneg G Λ J β hβJ i j n,
    correlationAlongExhaustion_high_temp_h_zero_at_pair_le_one G Λ J β i j n⟩
 
+/-- **Along-ex pair + singleton complete-summary bundle at h = 0**:
+under `0 ≤ β·J`, at every stage `n` packages pair upper bound, pair
+sandwich lower, singleton vanishing, and pair vanishing at `J = 0` /
+`β = 0` trivial slices. Along-exhaustion wrapper of
+`correlation_high_temp_h_zero_at_pair_singleton_complete_summary`. -/
+theorem correlationAlongExhaustion_high_temp_h_zero_at_pair_singleton_complete_summary
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (i j : V) (n : ℕ) :
+    correlationAlongExhaustion G Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset V) n ≤ 1 ∧
+      0 ≤ correlationAlongExhaustion G Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset V) n ∧
+      correlationAlongExhaustion G Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) ({i} : Finset V) n = 0 ∧
+      correlationAlongExhaustion G Λ
+        (⟨0, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset V) n = 0 ∧
+      correlationAlongExhaustion G Λ
+        (⟨J, 0, 0⟩ : IsingParams ℝ) ({i, j} : Finset V) n = 0 :=
+  ⟨correlationAlongExhaustion_high_temp_h_zero_at_pair_le_one G Λ J β i j n,
+   correlationAlongExhaustion_high_temp_h_zero_at_pair_nonneg G Λ J β hβJ i j n,
+   correlationAlongExhaustion_high_temp_h_zero_at_singleton G Λ J β i n,
+   correlationAlongExhaustion_high_temp_h_zero_at_pair_J_zero G Λ β i j n,
+   correlationAlongExhaustion_high_temp_h_zero_at_pair_beta_zero G Λ J i j n⟩
+
 /-- **Along-ex pair + singleton trivial-slices full bundle at h = 0**:
 at `J = 0` and `β = 0`, both pair and singleton correlations vanish at
 every stage `n`. Along-exhaustion wrapper of
