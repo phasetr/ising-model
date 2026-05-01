@@ -2579,6 +2579,16 @@ theorem freeEnergy_high_temp_h_zero_deviation_pos
         Real.log (Real.cosh (β * J)) := mul_pos hratio_pos hlog_pos
   linarith
 
+/-- **Ferromagnetic f strict deviation**: under `0 < J, 0 < β`,
+`0 < |ι|`, `0 < |E|`, `0 < f - log 2`. -/
+theorem freeEnergy_high_temp_h_zero_deviation_pos_ferromagnetic
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hJ : 0 < J) (hβ : 0 < β) (hne : 0 < Fintype.card ι)
+    (hEpos : 0 < G.edgeFinset.card) :
+    0 < freeEnergy G ⟨J, 0, β⟩ - Real.log 2 :=
+  freeEnergy_high_temp_h_zero_deviation_pos
+    G J β (mul_pos hβ hJ) hne hEpos
+
 /-- **Ferromagnetic sharper f deviation bound**: under `0 ≤ J, 0 < β`
 and `0 < |ι|`, `f - log 2 ≤ β·J·|E|/|ι|`. Bridges via
 `mul_nonneg hβ.le hJ`. -/
