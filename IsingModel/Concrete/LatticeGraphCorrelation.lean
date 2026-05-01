@@ -2850,6 +2850,16 @@ theorem correlationΛ_latticeGraph_high_temp_h_zero_at_pair_ferromagnetic
   correlationΛ_high_temp_h_zero_at_pair_ferromagnetic
     (IsingModel.latticeGraph d) Λ J β hJ hβ i j
 
+/-- **ℤ^d Λ singleton sandwich at h = 0**: `⟨σ_i⟩^Λ = 0 ∧ ≤ 1`. -/
+theorem correlationΛ_latticeGraph_high_temp_h_zero_at_singleton_eq_zero_le_one
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ) (i : ↑Λ) :
+    correlationΛ (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) ({i} : Finset ↑Λ) = 0 ∧
+      correlationΛ (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) ({i} : Finset ↑Λ) ≤ 1 :=
+  correlationΛ_high_temp_h_zero_at_singleton_eq_zero_le_one
+    (IsingModel.latticeGraph d) Λ J β i
+
 /-- **ℤ^d Λ-level magnetization vanishes at h = 0**:
 `correlationΛ (latticeGraph d) Λ ⟨J, 0, β⟩ {i} = 0` for any `i : ↑Λ`.
 ℤ^d wrapper of `correlationΛ_high_temp_h_zero_at_singleton`. -/
