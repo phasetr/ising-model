@@ -2497,6 +2497,14 @@ theorem correlation_high_temp_h_zero_at_singleton
   rw [Finset.card_singleton]
   exact ⟨0, rfl⟩
 
+/-- **Singleton magnetization under ferromagnetic at h = 0**:
+under `0 ≤ J, 0 < β`, `⟨σ_i⟩_{β,0} = 0`. Trivial wrap of Step 331. -/
+theorem correlation_high_temp_h_zero_at_singleton_ferromagnetic
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (_hJ : 0 ≤ J) (_hβ : 0 < β) (i : ι) :
+    correlation G ⟨J, 0, β⟩ ({i} : Finset ι) = 0 :=
+  correlation_high_temp_h_zero_at_singleton G J β i
+
 /-- **High-temperature parameter**: `t = tanh(βJ)`.
 For `βJ ≥ 0`, `t ∈ [0, 1)`, and the high-temperature expansion
 converges when `t` is small. -/
