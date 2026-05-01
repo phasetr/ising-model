@@ -2411,6 +2411,38 @@ theorem freeEnergy_high_temp_h_zero_continuity_bundle
   ⟨freeEnergy_high_temp_h_zero_continuity_at_J_zero G J β hβJ hne,
    freeEnergy_high_temp_h_zero_continuity_at_beta_zero G J β hβJ hne⟩
 
+/-- **Ferromagnetic f continuity at `J = 0`**: under `0 ≤ J, 0 < β`
+and `0 < |ι|`, `|f(J,0,β) - f(0,0,β)| ≤ β·J·|E|/|ι|`. -/
+theorem freeEnergy_high_temp_h_zero_continuity_at_J_zero_ferromagnetic
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (hne : 0 < Fintype.card ι) :
+    |freeEnergy G ⟨J, 0, β⟩ - freeEnergy G (⟨0, 0, β⟩ : IsingParams ℝ)|
+      ≤ β * J * G.edgeFinset.card / Fintype.card ι :=
+  freeEnergy_high_temp_h_zero_continuity_at_J_zero
+    G J β (mul_nonneg hβ.le hJ) hne
+
+/-- **Ferromagnetic f continuity at `β = 0`**: under `0 ≤ J, 0 < β`
+and `0 < |ι|`, `|f(J,0,β) - f(J,0,0)| ≤ β·J·|E|/|ι|`. -/
+theorem freeEnergy_high_temp_h_zero_continuity_at_beta_zero_ferromagnetic
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (hne : 0 < Fintype.card ι) :
+    |freeEnergy G ⟨J, 0, β⟩ - freeEnergy G (⟨J, 0, 0⟩ : IsingParams ℝ)|
+      ≤ β * J * G.edgeFinset.card / Fintype.card ι :=
+  freeEnergy_high_temp_h_zero_continuity_at_beta_zero
+    G J β (mul_nonneg hβ.le hJ) hne
+
+/-- **Ferromagnetic f continuity bundle**: under `0 ≤ J, 0 < β` and
+`0 < |ι|`, both `J = 0` and `β = 0` continuity bounds. -/
+theorem freeEnergy_high_temp_h_zero_continuity_bundle_ferromagnetic
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (hne : 0 < Fintype.card ι) :
+    |freeEnergy G ⟨J, 0, β⟩ - freeEnergy G (⟨0, 0, β⟩ : IsingParams ℝ)|
+        ≤ β * J * G.edgeFinset.card / Fintype.card ι ∧
+    |freeEnergy G ⟨J, 0, β⟩ - freeEnergy G (⟨J, 0, 0⟩ : IsingParams ℝ)|
+        ≤ β * J * G.edgeFinset.card / Fintype.card ι :=
+  freeEnergy_high_temp_h_zero_continuity_bundle
+    G J β (mul_nonneg hβ.le hJ) hne
+
 /-- **Ferromagnetic sharper f deviation bound**: under `0 ≤ J, 0 < β`
 and `0 < |ι|`, `f - log 2 ≤ β·J·|E|/|ι|`. Bridges via
 `mul_nonneg hβ.le hJ`. -/
