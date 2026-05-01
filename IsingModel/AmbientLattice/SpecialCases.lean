@@ -573,6 +573,47 @@ theorem correlationAlongExhaustion_high_temp_expansion_h_zero_closed
   exact correlationΛ_high_temp_expansion_h_zero_closed G (Λ.volume n) J β
     (liftFinset A hAn)
 
+/-- **Along-exhaustion Z high-temp sandwich (FV (3.45))**: under
+`0 ≤ β·J`, at every stage `n`,
+`2^|Λ_n| · cosh^|E_n| ≤ Z_n ≤ 2^(|Λ_n|+|E_n|) · cosh^|E_n|`. -/
+theorem partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_sandwich
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (n : ℕ) :
+    (2 : ℝ) ^ (Λ.volume n).card *
+        Real.cosh (β * J) ^
+          (inducedGraph G (Λ.volume n)).edgeFinset.card
+      ≤ partitionFunctionAlongExhaustion G Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) n
+    ∧ partitionFunctionAlongExhaustion G Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) n
+      ≤ (2 : ℝ) ^ ((Λ.volume n).card +
+            (inducedGraph G (Λ.volume n)).edgeFinset.card) *
+          Real.cosh (β * J) ^
+              (inducedGraph G (Λ.volume n)).edgeFinset.card :=
+  ⟨partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_lower_bound
+      G Λ J β hβJ n,
+   partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_upper_bound
+      G Λ J β hβJ n⟩
+
+/-- **Along-exhaustion freeEnergy high-temp sandwich (FV (3.45))**: under
+`0 ≤ β·J` and `0 < |Λ_n|`, at every stage `n`,
+`log 2 + (|E_n|/|Λ_n|) log cosh(βJ) ≤ f_n ≤ log 2 + (|E_n|/|Λ_n|) log(2·cosh βJ)`. -/
+theorem freeEnergyAlongExhaustion_high_temp_h_zero_sandwich
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (n : ℕ) (hne : 0 < (Λ.volume n).card) :
+    Real.log 2 +
+        ((inducedGraph G (Λ.volume n)).edgeFinset.card : ℝ) /
+          (Λ.volume n).card * Real.log (Real.cosh (β * J))
+      ≤ freeEnergyAlongExhaustion G Λ (⟨J, 0, β⟩ : IsingParams ℝ) n
+    ∧ freeEnergyAlongExhaustion G Λ (⟨J, 0, β⟩ : IsingParams ℝ) n
+      ≤ Real.log 2
+        + ((inducedGraph G (Λ.volume n)).edgeFinset.card : ℝ) /
+            (Λ.volume n).card * Real.log (2 * Real.cosh (β * J)) :=
+  ⟨freeEnergyAlongExhaustion_high_temp_h_zero_lower_bound G Λ J β hβJ n hne,
+   freeEnergyAlongExhaustion_high_temp_h_zero_upper_bound G Λ J β hβJ n hne⟩
+
 /-- **Along-exhaustion FV (3.46) numerator filter empty for odd `|A|`**:
 at every stage `n`, for any `A : Finset ↑(Λ.volume n)` of odd cardinality,
 the FV (3.46) numerator filter set is *literally empty*.
