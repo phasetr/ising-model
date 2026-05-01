@@ -2874,6 +2874,23 @@ theorem correlationΛ_latticeGraph_high_temp_h_zero_at_pair_singleton_bundle
   correlationΛ_high_temp_h_zero_at_pair_singleton_bundle
     (IsingModel.latticeGraph d) Λ J β hβJ i j
 
+/-- **ℤ^d Λ pair+singleton bundle under ferromagnetic at h = 0**:
+under `0 ≤ J, 0 < β`, packages `⟨σ_i⟩^Λ = 0`, `0 ≤ ⟨σ_iσ_j⟩^Λ`, and
+`⟨σ_iσ_j⟩^Λ ≤ 1` into a single triple. ℤ^d wrapper of
+`correlationΛ_high_temp_h_zero_at_pair_singleton_bundle_ferromagnetic`. -/
+theorem
+    correlationΛ_latticeGraph_high_temp_h_zero_at_pair_singleton_bundle_ferromagnetic
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
+    (hJ : 0 ≤ J) (hβ : 0 < β) (i j : ↑Λ) :
+    correlationΛ (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) ({i} : Finset ↑Λ) = 0 ∧
+      0 ≤ correlationΛ (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset ↑Λ) ∧
+      correlationΛ (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset ↑Λ) ≤ 1 :=
+  correlationΛ_high_temp_h_zero_at_pair_singleton_bundle_ferromagnetic
+    (IsingModel.latticeGraph d) Λ J β hJ hβ i j
+
 /-- **ℤ^d Λ-level magnetization vanishes at h = 0**:
 `correlationΛ (latticeGraph d) Λ ⟨J, 0, β⟩ {i} = 0` for any `i : ↑Λ`.
 ℤ^d wrapper of `correlationΛ_high_temp_h_zero_at_singleton`. -/
@@ -3060,6 +3077,23 @@ theorem correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_pair_singlet
           (⟨J, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset (Fin d → ℤ)) n ≤ 1 :=
   correlationAlongExhaustion_high_temp_h_zero_at_pair_singleton_bundle
     (IsingModel.latticeGraph d) Λ J β hβJ i j n
+
+/-- **ℤ^d along-ex pair+singleton bundle under ferromagnetic at h = 0**:
+under `0 ≤ J, 0 < β`, packages `⟨σ_i⟩ = 0`, `0 ≤ ⟨σ_iσ_j⟩`, and
+`⟨σ_iσ_j⟩ ≤ 1` at every stage `n`. ℤ^d wrapper of
+`correlationAlongExhaustion_high_temp_h_zero_at_pair_singleton_bundle_ferromagnetic`. -/
+theorem
+    correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_pair_singleton_bundle_ferromagnetic
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
+    (hJ : 0 ≤ J) (hβ : 0 < β) (i j : Fin d → ℤ) (n : ℕ) :
+    correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) ({i} : Finset (Fin d → ℤ)) n = 0 ∧
+      0 ≤ correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset (Fin d → ℤ)) n ∧
+      correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset (Fin d → ℤ)) n ≤ 1 :=
+  correlationAlongExhaustion_high_temp_h_zero_at_pair_singleton_bundle_ferromagnetic
+    (IsingModel.latticeGraph d) Λ J β hJ hβ i j n
 
 /-- **ℤ^d along-ex pair at J=0,h=0**: = 0. -/
 theorem correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_pair_J_zero
