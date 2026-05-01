@@ -2378,6 +2378,27 @@ theorem correlation_high_temp_h_zero_odd_card_eq_zero
       high_temp_numerator_filter_eq_empty_of_odd_card G A hA_odd,
       Finset.sum_empty, zero_div]
 
+/-- **Pair correlation high-temp closed form (FV (3.46) at A = {i,j})**:
+for `i ≠ j` and at `h = 0`,
+`⟨σ_i σ_j⟩_{β,0} = (∑_{X : ∂X = {i,j}} tanh^|X|) / (∑_{X : ∂X = ∅} tanh^|X|)`.
+
+Direct instantiation of `correlation_high_temp_expansion_h_zero_closed`
+(Step 284) at `A = {i, j}`. Useful concrete case of the
+two-point function formula. -/
+theorem correlation_high_temp_h_zero_at_pair
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (i j : ι) :
+    correlation G ⟨J, 0, β⟩ ({i, j} : Finset ι) =
+      (∑ X ∈ G.edgeFinset.powerset.filter
+          (fun X : Finset (Sym2 ι) => ∀ v : ι,
+            Even ((if v ∈ ({i, j} : Finset ι) then (1 : ℕ) else 0)
+                  + (X.filter (v ∈ ·)).card)),
+          Real.tanh (β * J) ^ X.card) /
+      (∑ X ∈ G.edgeFinset.powerset.filter
+          (fun X : Finset (Sym2 ι) => ∀ v : ι, Even ((X.filter (v ∈ ·)).card)),
+          Real.tanh (β * J) ^ X.card) :=
+  correlation_high_temp_expansion_h_zero_closed G J β {i, j}
+
 /-- **Magnetization at h = 0 vanishes via FV (3.46) handshake**:
 specialization of `correlation_high_temp_h_zero_odd_card_eq_zero` (Step 298)
 at `A = {i}`. Since `|{i}| = 1` is odd, the FV (3.46) numerator filter
