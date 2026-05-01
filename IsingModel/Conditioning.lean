@@ -2147,6 +2147,23 @@ theorem partitionFunction_high_temp_expansion_h_zero_relative_sandwich
   · rw [le_div_iff₀ h2_pos]; linarith
   · rw [div_le_iff₀ h2_pos]; linarith
 
+/-- **Z ratio sandwich at trivial slice**: under `0 ≤ β·J`,
+`cosh(β·J)^|E| ≤ Z(G; J, 0, β) / Z(G; 0, 0, β) ≤ exp(β·J·|E|)`. -/
+theorem partitionFunction_high_temp_expansion_h_zero_ratio_sandwich
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) :
+    Real.cosh (β * J) ^ G.edgeFinset.card
+      ≤ partitionFunction G ⟨J, 0, β⟩ /
+          partitionFunction G (⟨0, 0, β⟩ : IsingParams ℝ) ∧
+    partitionFunction G ⟨J, 0, β⟩ /
+        partitionFunction G (⟨0, 0, β⟩ : IsingParams ℝ)
+      ≤ Real.exp (β * J * G.edgeFinset.card) := by
+  have h_J0 : partitionFunction G (⟨0, 0, β⟩ : IsingParams ℝ)
+      = (2 : ℝ) ^ Fintype.card ι :=
+    partitionFunction_high_temp_expansion_h_zero_closed_at_J_zero G β
+  rw [h_J0]
+  exact partitionFunction_high_temp_expansion_h_zero_relative_sandwich G J β hβJ
+
 /-- **Ferromagnetic Z relative-deviation sandwich**: under `0 ≤ J, 0 < β`,
 `cosh(β·J)^|E| ≤ Z / 2^|ι| ≤ exp(β·J·|E|)`. -/
 theorem partitionFunction_high_temp_expansion_h_zero_relative_sandwich_ferromagnetic
