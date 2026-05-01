@@ -1929,6 +1929,25 @@ theorem freeEnergy_high_temp_h_zero_upper_bound_exp
       div_mul_cancel₀ _ hcard_pos.ne']
   linarith
 
+/-- **Sharper Z high-temperature sandwich (FV (3.45))**: under
+`0 ≤ β·J`,
+`2^|ι| · (cosh βJ)^|E| ≤ Z(G; J, 0, β) ≤ 2^|ι| · exp(β·J·|E|)`.
+
+Combines `partitionFunction_high_temp_expansion_h_zero_lower_bound`
+(Step 286) with `partitionFunction_high_temp_expansion_h_zero_upper_bound_exp`
+(Step 393). Globally sharper than the cosh-only sandwich of Step 326. -/
+theorem partitionFunction_high_temp_expansion_h_zero_sandwich_exp
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) :
+    (2 : ℝ) ^ Fintype.card ι *
+        Real.cosh (β * J) ^ G.edgeFinset.card
+      ≤ partitionFunction G ⟨J, 0, β⟩ ∧
+    partitionFunction G ⟨J, 0, β⟩
+      ≤ (2 : ℝ) ^ Fintype.card ι *
+          Real.exp (β * J * G.edgeFinset.card) :=
+  ⟨partitionFunction_high_temp_expansion_h_zero_lower_bound G J β hβJ,
+   partitionFunction_high_temp_expansion_h_zero_upper_bound_exp G J β hβJ⟩
+
 /-- **Ferromagnetic sharper Z high-temperature upper bound**: under
 `0 ≤ J, 0 < β`, `Z(G; J, 0, β) ≤ 2^|ι| · exp(β·J·|E|)`. Bridges
 ferromagnetic-style hypotheses with Step 393 via `mul_nonneg hβ.le hJ`. -/
@@ -2098,6 +2117,25 @@ theorem freeEnergy_high_temp_h_zero_lower_bound
             + (G.edgeFinset.card : ℝ) * Real.log (Real.cosh (β * J))) from by
       field_simp]
   exact mul_le_mul_of_nonneg_left hlog (by positivity)
+
+/-- **Sharper f high-temperature sandwich (FV (3.45))**: under
+`0 < |ι|` and `0 ≤ β·J`,
+`log 2 + (|E|/|ι|)·log cosh(β·J) ≤ f ≤ log 2 + β·J·|E|/|ι|`.
+
+Combines `freeEnergy_high_temp_h_zero_lower_bound` with
+`freeEnergy_high_temp_h_zero_upper_bound_exp` (Step 394). Globally
+sharper than the cosh-based sandwich at the upper side. -/
+theorem freeEnergy_high_temp_h_zero_sandwich_exp
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (hne : 0 < Fintype.card ι) :
+    Real.log 2 +
+        (G.edgeFinset.card : ℝ) / Fintype.card ι *
+          Real.log (Real.cosh (β * J))
+      ≤ freeEnergy G ⟨J, 0, β⟩ ∧
+    freeEnergy G ⟨J, 0, β⟩
+      ≤ Real.log 2 + β * J * G.edgeFinset.card / Fintype.card ι :=
+  ⟨freeEnergy_high_temp_h_zero_lower_bound G J β hβJ hne,
+   freeEnergy_high_temp_h_zero_upper_bound_exp G J β hβJ hne⟩
 
 /-- **Free-energy high-temperature expansion decomposition (GJ §18.3 / FV (3.45))**:
 under `0 < |ι|` and `0 ≤ β·J`,
