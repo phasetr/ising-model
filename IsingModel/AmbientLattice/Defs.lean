@@ -1159,6 +1159,28 @@ theorem partitionFunctionΛ_high_temp_expansion_h_zero_ratio_bound_beta_zero
   (partitionFunctionΛ_high_temp_expansion_h_zero_ratio_sandwich_beta_zero
     G Λ J β hβJ).2
 
+/-- **Λ-level ferromagnetic Z ratio upper bound at J=0**. -/
+theorem partitionFunctionΛ_high_temp_expansion_h_zero_ratio_bound_ferromagnetic
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) :
+    partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) /
+        partitionFunctionΛ G Λ (⟨0, 0, β⟩ : IsingParams ℝ)
+      ≤ Real.exp (β * J * (inducedGraph G Λ).edgeFinset.card) :=
+  partitionFunctionΛ_high_temp_expansion_h_zero_ratio_bound
+    G Λ J β (mul_nonneg hβ.le hJ)
+
+/-- **Λ-level ferromagnetic Z ratio upper bound at β=0**. -/
+theorem partitionFunctionΛ_high_temp_expansion_h_zero_ratio_bound_beta_zero_ferromagnetic
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) :
+    partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) /
+        partitionFunctionΛ G Λ (⟨J, 0, 0⟩ : IsingParams ℝ)
+      ≤ Real.exp (β * J * (inducedGraph G Λ).edgeFinset.card) :=
+  partitionFunctionΛ_high_temp_expansion_h_zero_ratio_bound_beta_zero
+    G Λ J β (mul_nonneg hβ.le hJ)
+
 /-- **Λ-level Z high-temp sandwich (FV (3.45))**: under `0 ≤ β·J`,
 `2^|Λ| · cosh^|E_Λ| ≤ Z_Λ ≤ 2^(|Λ|+|E_Λ|) · cosh^|E_Λ|`. -/
 theorem partitionFunctionΛ_high_temp_expansion_h_zero_sandwich
