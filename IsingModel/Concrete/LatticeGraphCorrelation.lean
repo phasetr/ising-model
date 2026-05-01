@@ -4850,6 +4850,41 @@ theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_of_eventually_const
   freeEnergyInfinite_of_eventually_const (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) p h
 
+/-- **ℤ^d ∞-vol sharper f upper bound via caller-supplied BED**:
+under ferromagnetic `0 ≤ J, 0 < β` + bounded-edge-density witness `c`
+on any `Exhaustion`, `freeEnergyInfinite ⟨J, 0, β⟩ ≤ log 2 + β·J·c`.
+ℤ^d wrapper of `freeEnergyInfinite_high_temp_h_zero_upper_bound_exp_uniform`. -/
+theorem freeEnergyInfinite_latticeGraph_high_temp_h_zero_upper_bound_exp_uniform
+    (d : ℕ) [Nonempty (Fin d → ℤ)]
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) {c : ℝ}
+    (hc : ∀ n, (Λ.volume n).Nonempty →
+      ((Ambient.inducedGraph (IsingModel.latticeGraph d)
+          (Λ.volume n)).edgeFinset.card : ℝ)
+        ≤ c * Fintype.card (↑(Λ.volume n) : Type _)) :
+    freeEnergyInfinite (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ)
+      ≤ Real.log 2 + β * J * c :=
+  freeEnergyInfinite_high_temp_h_zero_upper_bound_exp_uniform
+    (IsingModel.latticeGraph d) Λ J β hJ hβ hc
+
+/-- **ℤ^d ∞-vol sharper f upper bound on `cubicExhaustion d`**: under
+ferromagnetic `0 ≤ J, 0 < β`,
+`freeEnergyInfinite ⟨J, 0, β⟩ ≤ log 2 + β·J·d`. ℤ^d-cubic
+specialization (constant `c = d` via `inducedLatticeGraph_card_edgeFinset_le`). -/
+theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_high_temp_h_zero_upper_bound_exp
+    (d : ℕ) [Nonempty (Fin d → ℤ)]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) :
+    freeEnergyInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ)
+      ≤ Real.log 2 + β * J * (d : ℝ) := by
+  refine freeEnergyInfinite_high_temp_h_zero_upper_bound_exp_uniform
+    (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d) J β hJ hβ
+    (c := (d : ℝ)) ?_
+  intro n _
+  exact inducedLatticeGraph_card_edgeFinset_le d
+    ((Ambient.cubicExhaustion d).volume n)
+
 /-- **ℤ^d freeEnergyInfinite uniform upper bound via caller-supplied BED**
 (any-Exhaustion): `freeEnergyInfinite ≤ log 2 + |β|·(|J|·c + |h|)`. -/
 theorem freeEnergyInfinite_latticeGraph_le_uniform_upper_bound
