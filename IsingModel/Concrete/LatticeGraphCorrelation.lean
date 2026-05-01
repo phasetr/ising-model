@@ -2830,6 +2830,17 @@ theorem correlationΛ_latticeGraph_high_temp_h_zero_at_pair_sandwich
   correlationΛ_high_temp_h_zero_at_pair_sandwich
     (IsingModel.latticeGraph d) Λ J β hβJ i j
 
+/-- **ℤ^d Λ ferromagnetic pair sandwich**: `0 ≤ J, 0 < β` → pair sandwich. -/
+theorem correlationΛ_latticeGraph_high_temp_h_zero_at_pair_ferromagnetic
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
+    (hJ : 0 ≤ J) (hβ : 0 < β) (i j : ↑Λ) :
+    0 ≤ correlationΛ (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset ↑Λ) ∧
+      correlationΛ (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset ↑Λ) ≤ 1 :=
+  correlationΛ_high_temp_h_zero_at_pair_ferromagnetic
+    (IsingModel.latticeGraph d) Λ J β hJ hβ i j
+
 /-- **ℤ^d Λ-level magnetization vanishes at h = 0**:
 `correlationΛ (latticeGraph d) Λ ⟨J, 0, β⟩ {i} = 0` for any `i : ↑Λ`.
 ℤ^d wrapper of `correlationΛ_high_temp_h_zero_at_singleton`. -/
