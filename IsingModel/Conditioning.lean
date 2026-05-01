@@ -2443,6 +2443,33 @@ theorem freeEnergy_high_temp_h_zero_continuity_bundle_ferromagnetic
   freeEnergy_high_temp_h_zero_continuity_bundle
     G J β (mul_nonneg hβ.le hJ) hne
 
+/-- **f deviation sandwich**: under `0 ≤ β·J` and `0 < |ι|`,
+`0 ≤ f - log 2 ≤ β·J·|E|/|ι|`.
+
+Combines the lower bound `log 2 ≤ f` (from Step 288 + `cosh ≥ 1`) with
+the deviation bound `f - log 2 ≤ β·J·|E|/|ι|` (Step 420). Pins the
+free-energy deviation from the trivial slice in a tight non-negative
+linear interval. -/
+theorem freeEnergy_high_temp_h_zero_deviation_sandwich
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (hne : 0 < Fintype.card ι) :
+    0 ≤ freeEnergy G ⟨J, 0, β⟩ - Real.log 2 ∧
+    freeEnergy G ⟨J, 0, β⟩ - Real.log 2
+      ≤ β * J * G.edgeFinset.card / Fintype.card ι := by
+  refine ⟨?_, freeEnergy_high_temp_h_zero_deviation_bound_exp G J β hβJ hne⟩
+  have h_lb : Real.log 2 + (G.edgeFinset.card : ℝ) / Fintype.card ι *
+        Real.log (Real.cosh (β * J)) ≤ freeEnergy G ⟨J, 0, β⟩ :=
+    freeEnergy_high_temp_h_zero_lower_bound G J β hβJ hne
+  have hcosh_ge : 1 ≤ Real.cosh (β * J) := Real.one_le_cosh _
+  have hlog_nn : 0 ≤ Real.log (Real.cosh (β * J)) :=
+    Real.log_nonneg hcosh_ge
+  have hcard_pos : (0 : ℝ) < Fintype.card ι := by exact_mod_cast hne
+  have hedge_nn : 0 ≤ ((G.edgeFinset.card : ℝ) / Fintype.card ι) :=
+    div_nonneg (Nat.cast_nonneg _) hcard_pos.le
+  have h_corr_nn : 0 ≤ ((G.edgeFinset.card : ℝ) / Fintype.card ι) *
+        Real.log (Real.cosh (β * J)) := mul_nonneg hedge_nn hlog_nn
+  linarith
+
 /-- **Ferromagnetic sharper f deviation bound**: under `0 ≤ J, 0 < β`
 and `0 < |ι|`, `f - log 2 ≤ β·J·|E|/|ι|`. Bridges via
 `mul_nonneg hβ.le hJ`. -/
