@@ -896,6 +896,21 @@ theorem correlationΛ_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges
   exact correlation_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges
     (inducedGraph G Λ) J β hβJ i j hij he
 
+/-- **Λ pair correlation strict positivity under edge (GJ §18.3 / FV (3.46))**:
+under `0 < β·J` and an edge `s(i, j) ∈ (inducedGraph G Λ).edgeSet`,
+`0 < ⟨σ_iσ_j⟩^Λ`. Λ-layer wrapper of
+`correlation_high_temp_h_zero_at_pair_pos_of_edge`. -/
+theorem correlationΛ_high_temp_h_zero_at_pair_pos_of_edge
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hβJ : 0 < β * J) (i j : ↑Λ) (hij : i ≠ j)
+    (he : s(i, j) ∈ (inducedGraph G Λ).edgeSet) :
+    0 < correlationΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+        ({i, j} : Finset ↑Λ) := by
+  rw [correlationΛ_apply]
+  exact correlation_high_temp_h_zero_at_pair_pos_of_edge
+    (inducedGraph G Λ) J β hβJ i j hij he
+
 /-- The correlation on `Λ` is at least `-1`. Lower side of
 `abs_correlationΛ_le_one`. -/
 theorem neg_one_le_correlationΛ (G : SimpleGraph V) (Λ : Finset V)
