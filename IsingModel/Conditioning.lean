@@ -2003,6 +2003,35 @@ theorem freeEnergy_high_temp_h_zero_upper_bound_exp
       div_mul_cancel₀ _ hcard_pos.ne']
   linarith
 
+/-- **Z strict deviation under non-trivial high-temperature**: under
+`0 < β·J` and `0 < |E|`, `(2 : ℝ)^|ι| < Z(G; J, 0, β)`.
+
+Strict version of Step 286 lower bound. Follows from
+`partitionFunction_high_temp_expansion_h_zero_lower_bound` plus
+strict `1 < cosh(β·J)`. -/
+theorem partitionFunction_high_temp_expansion_h_zero_pow_two_lt
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hβJ : 0 < β * J) (hEpos : 0 < G.edgeFinset.card) :
+    (2 : ℝ) ^ Fintype.card ι < partitionFunction G ⟨J, 0, β⟩ := by
+  have h_lb := partitionFunction_high_temp_expansion_h_zero_lower_bound
+    G J β hβJ.le
+  have hcosh_gt : 1 < Real.cosh (β * J) := by
+    rw [show (1 : ℝ) = Real.cosh 0 from Real.cosh_zero.symm]
+    refine Real.cosh_lt_cosh.mpr ?_
+    rw [abs_zero, abs_of_pos hβJ]
+    exact hβJ
+  have hcosh_pow_gt : 1 < Real.cosh (β * J) ^ G.edgeFinset.card :=
+    one_lt_pow₀ hcosh_gt hEpos.ne'
+  have h2_pos : (0 : ℝ) < (2 : ℝ) ^ Fintype.card ι :=
+    pow_pos (by norm_num) _
+  have : (2 : ℝ) ^ Fintype.card ι < (2 : ℝ) ^ Fintype.card ι *
+      Real.cosh (β * J) ^ G.edgeFinset.card := by
+    rw [show (2 : ℝ) ^ Fintype.card ι = (2 : ℝ) ^ Fintype.card ι * 1 from
+      (mul_one _).symm]
+    rw [mul_one]
+    exact (lt_mul_iff_one_lt_right h2_pos).mpr hcosh_pow_gt
+  linarith
+
 /-- **Sharper Z complete-summary exp bundle**: under `0 ≤ β·J`,
 single statement bundling sharper sandwich + trivial-slice values:
   1. `2^|ι|·cosh^|E| ≤ Z` (lower),
