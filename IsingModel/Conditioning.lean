@@ -2579,8 +2579,6 @@ theorem correlation_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges
   have h_D_pos : 0 < D := lt_of_lt_of_le zero_lt_one h_one_le_D
   have h_D_le : D ≤ (2 : ℝ) ^ G.edgeFinset.card :=
     sum_pow_tanh_even_subgraph_le_two_pow G J β hβJ
-  have h_two_pow_pos : (0 : ℝ) < (2 : ℝ) ^ G.edgeFinset.card :=
-    pow_pos (by norm_num) _
   have h_tanh_le_N : Real.tanh (β * J) ≤ N := by
     -- Singleton edge {s(i,j)} contributes tanh^1 to N; other terms ≥ 0.
     have h_mem := singleton_edge_mem_high_temp_pair_filter G i j hij he
