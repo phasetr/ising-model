@@ -2191,6 +2191,42 @@ theorem freeEnergy_high_temp_h_zero_sandwich_exp
   ⟨freeEnergy_high_temp_h_zero_lower_bound G J β hβJ hne,
    freeEnergy_high_temp_h_zero_upper_bound_exp G J β hβJ hne⟩
 
+/-- **Ferromagnetic sharper Z complete-summary exp bundle**: under
+`0 ≤ J, 0 < β`. -/
+theorem partitionFunction_high_temp_expansion_h_zero_complete_summary_exp_ferromagnetic
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) :
+    (2 : ℝ) ^ Fintype.card ι *
+        Real.cosh (β * J) ^ G.edgeFinset.card
+      ≤ partitionFunction G ⟨J, 0, β⟩ ∧
+    partitionFunction G ⟨J, 0, β⟩
+      ≤ (2 : ℝ) ^ Fintype.card ι *
+          Real.exp (β * J * G.edgeFinset.card) ∧
+    partitionFunction G (⟨0, 0, β⟩ : IsingParams ℝ)
+      = (2 : ℝ) ^ Fintype.card ι ∧
+    partitionFunction G (⟨J, 0, 0⟩ : IsingParams ℝ)
+      = (2 : ℝ) ^ Fintype.card ι :=
+  partitionFunction_high_temp_expansion_h_zero_complete_summary_exp
+    G J β (mul_nonneg hβ.le hJ)
+
+/-- **Ferromagnetic sharper log Z complete-summary exp bundle**: under
+`0 ≤ J, 0 < β`. -/
+theorem log_partitionFunction_high_temp_expansion_h_zero_complete_summary_exp_ferromagnetic
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) :
+    (Fintype.card ι : ℝ) * Real.log 2
+        + (G.edgeFinset.card : ℝ) * Real.log (Real.cosh (β * J))
+      ≤ Real.log (partitionFunction G ⟨J, 0, β⟩) ∧
+    Real.log (partitionFunction G ⟨J, 0, β⟩)
+      ≤ (Fintype.card ι : ℝ) * Real.log 2
+        + β * J * G.edgeFinset.card ∧
+    Real.log (partitionFunction G (⟨0, 0, β⟩ : IsingParams ℝ))
+      = (Fintype.card ι : ℝ) * Real.log 2 ∧
+    Real.log (partitionFunction G (⟨J, 0, 0⟩ : IsingParams ℝ))
+      = (Fintype.card ι : ℝ) * Real.log 2 :=
+  log_partitionFunction_high_temp_expansion_h_zero_complete_summary_exp
+    G J β (mul_nonneg hβ.le hJ)
+
 /-- **Ferromagnetic sharper Z high-temperature sandwich**: under
 `0 ≤ J, 0 < β`,
 `2^|ι|·cosh^|E| ≤ Z(G;J,0,β) ≤ 2^|ι|·exp(β·J·|E|)`. Bridges
@@ -2247,6 +2283,22 @@ theorem freeEnergy_high_temp_h_zero_complete_summary_exp
      have := freeEnergy_J_zero G (0 : ℝ) β hne
      simpa [mul_zero, Real.cosh_zero] using this,
    freeEnergy_beta_zero G J 0 hne⟩
+
+/-- **Ferromagnetic sharper f complete-summary exp bundle**: under
+`0 < |ι|`, `0 ≤ J, 0 < β`. Bridges via `mul_nonneg hβ.le hJ`. -/
+theorem freeEnergy_high_temp_h_zero_complete_summary_exp_ferromagnetic
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (hne : 0 < Fintype.card ι) :
+    Real.log 2 +
+        (G.edgeFinset.card : ℝ) / Fintype.card ι *
+          Real.log (Real.cosh (β * J))
+      ≤ freeEnergy G ⟨J, 0, β⟩ ∧
+    freeEnergy G ⟨J, 0, β⟩
+      ≤ Real.log 2 + β * J * G.edgeFinset.card / Fintype.card ι ∧
+    freeEnergy G (⟨0, 0, β⟩ : IsingParams ℝ) = Real.log 2 ∧
+    freeEnergy G (⟨J, 0, 0⟩ : IsingParams ℝ) = Real.log 2 :=
+  freeEnergy_high_temp_h_zero_complete_summary_exp
+    G J β (mul_nonneg hβ.le hJ) hne
 
 /-- **Free-energy high-temperature expansion decomposition (GJ §18.3 / FV (3.45))**:
 under `0 < |ι|` and `0 ≤ β·J`,
