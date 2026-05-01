@@ -1929,6 +1929,31 @@ theorem freeEnergy_high_temp_h_zero_upper_bound_exp
       div_mul_cancel₀ _ hcard_pos.ne']
   linarith
 
+/-- **Sharper Z complete-summary exp bundle**: under `0 ≤ β·J`,
+single statement bundling sharper sandwich + trivial-slice values:
+  1. `2^|ι|·cosh^|E| ≤ Z` (lower),
+  2. `Z ≤ 2^|ι|·exp(β·J·|E|)` (sharper exp upper),
+  3. `Z⟨0, 0, β⟩ = 2^|ι|` (J = 0 trivial slice),
+  4. `Z⟨J, 0, 0⟩ = 2^|ι|` (β = 0 trivial slice).
+Useful as a single import for downstream applications. -/
+theorem partitionFunction_high_temp_expansion_h_zero_complete_summary_exp
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) :
+    (2 : ℝ) ^ Fintype.card ι *
+        Real.cosh (β * J) ^ G.edgeFinset.card
+      ≤ partitionFunction G ⟨J, 0, β⟩ ∧
+    partitionFunction G ⟨J, 0, β⟩
+      ≤ (2 : ℝ) ^ Fintype.card ι *
+          Real.exp (β * J * G.edgeFinset.card) ∧
+    partitionFunction G (⟨0, 0, β⟩ : IsingParams ℝ)
+      = (2 : ℝ) ^ Fintype.card ι ∧
+    partitionFunction G (⟨J, 0, 0⟩ : IsingParams ℝ)
+      = (2 : ℝ) ^ Fintype.card ι :=
+  ⟨partitionFunction_high_temp_expansion_h_zero_lower_bound G J β hβJ,
+   partitionFunction_high_temp_expansion_h_zero_upper_bound_exp G J β hβJ,
+   partitionFunction_high_temp_expansion_h_zero_closed_at_J_zero G β,
+   partitionFunction_high_temp_expansion_h_zero_closed_at_beta_zero G J⟩
+
 /-- **Sharper Z high-temperature sandwich (FV (3.45))**: under
 `0 ≤ β·J`,
 `2^|ι| · (cosh βJ)^|E| ≤ Z(G; J, 0, β) ≤ 2^|ι| · exp(β·J·|E|)`.
