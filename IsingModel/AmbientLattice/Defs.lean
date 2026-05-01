@@ -1240,6 +1240,48 @@ theorem partitionFunctionΛ_high_temp_expansion_h_zero_ratio_bound_bundle_ferrom
   partitionFunctionΛ_high_temp_expansion_h_zero_ratio_bound_bundle
     G Λ J β (mul_nonneg hβ.le hJ)
 
+/-- **Λ-level log Z ratio sandwich bundle**. -/
+theorem log_partitionFunctionΛ_high_temp_expansion_h_zero_ratio_sandwich_bundle
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) :
+    (((inducedGraph G Λ).edgeFinset.card : ℝ) * Real.log (Real.cosh (β * J))
+        ≤ Real.log (partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ))
+            - Real.log (partitionFunctionΛ G Λ (⟨0, 0, β⟩ : IsingParams ℝ)) ∧
+      Real.log (partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ))
+          - Real.log (partitionFunctionΛ G Λ (⟨0, 0, β⟩ : IsingParams ℝ))
+          ≤ β * J * (inducedGraph G Λ).edgeFinset.card) ∧
+    (((inducedGraph G Λ).edgeFinset.card : ℝ) * Real.log (Real.cosh (β * J))
+        ≤ Real.log (partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ))
+            - Real.log (partitionFunctionΛ G Λ (⟨J, 0, 0⟩ : IsingParams ℝ)) ∧
+      Real.log (partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ))
+          - Real.log (partitionFunctionΛ G Λ (⟨J, 0, 0⟩ : IsingParams ℝ))
+          ≤ β * J * (inducedGraph G Λ).edgeFinset.card) := by
+  rw [partitionFunctionΛ_apply, partitionFunctionΛ_apply,
+      partitionFunctionΛ_apply]
+  exact IsingModel.log_partitionFunction_high_temp_expansion_h_zero_ratio_sandwich_bundle
+    (inducedGraph G Λ) J β hβJ
+
+/-- **Λ-level ferromagnetic log Z ratio sandwich bundle**. -/
+theorem log_partitionFunctionΛ_high_temp_expansion_h_zero_ratio_sandwich_bundle_ferromagnetic
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) :
+    (((inducedGraph G Λ).edgeFinset.card : ℝ) * Real.log (Real.cosh (β * J))
+        ≤ Real.log (partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ))
+            - Real.log (partitionFunctionΛ G Λ (⟨0, 0, β⟩ : IsingParams ℝ)) ∧
+      Real.log (partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ))
+          - Real.log (partitionFunctionΛ G Λ (⟨0, 0, β⟩ : IsingParams ℝ))
+          ≤ β * J * (inducedGraph G Λ).edgeFinset.card) ∧
+    (((inducedGraph G Λ).edgeFinset.card : ℝ) * Real.log (Real.cosh (β * J))
+        ≤ Real.log (partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ))
+            - Real.log (partitionFunctionΛ G Λ (⟨J, 0, 0⟩ : IsingParams ℝ)) ∧
+      Real.log (partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ))
+          - Real.log (partitionFunctionΛ G Λ (⟨J, 0, 0⟩ : IsingParams ℝ))
+          ≤ β * J * (inducedGraph G Λ).edgeFinset.card) :=
+  log_partitionFunctionΛ_high_temp_expansion_h_zero_ratio_sandwich_bundle
+    G Λ J β (mul_nonneg hβ.le hJ)
+
 /-- **Λ-level log Z ratio bound at J=0**. -/
 theorem log_partitionFunctionΛ_high_temp_expansion_h_zero_ratio_bound
     (G : SimpleGraph V) (Λ : Finset V)
