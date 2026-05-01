@@ -778,6 +778,60 @@ theorem log_partitionFunctionΛ_high_temp_expansion_h_zero_complete_summary_exp
   · rw [partitionFunctionΛ_high_temp_expansion_h_zero_closed_at_beta_zero,
         Real.log_pow]
 
+/-- **Λ-level ferromagnetic Z complete-summary exp bundle**. -/
+theorem partitionFunctionΛ_high_temp_expansion_h_zero_complete_summary_exp_ferromagnetic
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) :
+    (2 : ℝ) ^ Λ.card *
+        Real.cosh (β * J) ^ (inducedGraph G Λ).edgeFinset.card
+      ≤ partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) ∧
+    partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+      ≤ (2 : ℝ) ^ Λ.card *
+          Real.exp (β * J * (inducedGraph G Λ).edgeFinset.card) ∧
+    partitionFunctionΛ G Λ (⟨0, 0, β⟩ : IsingParams ℝ)
+      = (2 : ℝ) ^ Λ.card ∧
+    partitionFunctionΛ G Λ (⟨J, 0, 0⟩ : IsingParams ℝ)
+      = (2 : ℝ) ^ Λ.card :=
+  partitionFunctionΛ_high_temp_expansion_h_zero_complete_summary_exp
+    G Λ J β (mul_nonneg hβ.le hJ)
+
+/-- **Λ-level ferromagnetic log Z complete-summary exp bundle**. -/
+theorem log_partitionFunctionΛ_high_temp_expansion_h_zero_complete_summary_exp_ferromagnetic
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) :
+    (Λ.card : ℝ) * Real.log 2
+        + ((inducedGraph G Λ).edgeFinset.card : ℝ) *
+            Real.log (Real.cosh (β * J))
+      ≤ Real.log (partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ)) ∧
+    Real.log (partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ))
+      ≤ (Λ.card : ℝ) * Real.log 2
+        + β * J * (inducedGraph G Λ).edgeFinset.card ∧
+    Real.log (partitionFunctionΛ G Λ (⟨0, 0, β⟩ : IsingParams ℝ))
+      = (Λ.card : ℝ) * Real.log 2 ∧
+    Real.log (partitionFunctionΛ G Λ (⟨J, 0, 0⟩ : IsingParams ℝ))
+      = (Λ.card : ℝ) * Real.log 2 :=
+  log_partitionFunctionΛ_high_temp_expansion_h_zero_complete_summary_exp
+    G Λ J β (mul_nonneg hβ.le hJ)
+
+/-- **Λ-level ferromagnetic f complete-summary exp bundle**. -/
+theorem freeEnergyΛ_high_temp_h_zero_complete_summary_exp_ferromagnetic
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (hne : 0 < Λ.card) :
+    Real.log 2 +
+        ((inducedGraph G Λ).edgeFinset.card : ℝ) / Λ.card *
+          Real.log (Real.cosh (β * J))
+      ≤ freeEnergyΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) ∧
+    freeEnergyΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+      ≤ Real.log 2 +
+          β * J * (inducedGraph G Λ).edgeFinset.card / Λ.card ∧
+    freeEnergyΛ G Λ (⟨0, 0, β⟩ : IsingParams ℝ) = Real.log 2 ∧
+    freeEnergyΛ G Λ (⟨J, 0, 0⟩ : IsingParams ℝ) = Real.log 2 :=
+  freeEnergyΛ_high_temp_h_zero_complete_summary_exp
+    G Λ J β (mul_nonneg hβ.le hJ) hne
+
 /-- **Λ-level Z high-temp sandwich (FV (3.45))**: under `0 ≤ β·J`,
 `2^|Λ| · cosh^|E_Λ| ≤ Z_Λ ≤ 2^(|Λ|+|E_Λ|) · cosh^|E_Λ|`. -/
 theorem partitionFunctionΛ_high_temp_expansion_h_zero_sandwich
