@@ -1754,6 +1754,51 @@ theorem log_partitionFunction_high_temp_expansion_h_zero_closed
   rw [Real.log_mul (by positivity) (by positivity),
       Real.log_pow, Real.log_pow]
 
+/-- **Sharper Z high-temperature upper bound (FV (3.45))**: under
+`0 ≤ β·J`,
+`Z(G; J, 0, β) ≤ 2^|ι| · exp(β·J·|E|)`.
+
+Tighter than `partitionFunction_high_temp_expansion_h_zero_upper_bound`
+(`≤ 2^(|ι|+|E|)·cosh^|E|`) at small `β·J`. Uses
+`sum_pow_tanh_even_subgraph_le_one_plus_tanh_pow` (Step 392)
+to bound the even-subgraph sum by `(1 + tanh(β·J))^|E|`, then collapses
+`cosh^|E| · (1 + tanh)^|E| = (cosh + sinh)^|E| = exp(β·J)^|E|` via
+`Real.cosh_add_sinh`. -/
+theorem partitionFunction_high_temp_expansion_h_zero_upper_bound_exp
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) :
+    partitionFunction G ⟨J, 0, β⟩
+      ≤ (2 : ℝ) ^ Fintype.card ι *
+          Real.exp (β * J * G.edgeFinset.card) := by
+  rw [partitionFunction_high_temp_expansion_h_zero_closed]
+  have hsum_le := sum_pow_tanh_even_subgraph_le_one_plus_tanh_pow G J β hβJ
+  have hcommon_nn :
+      0 ≤ (2 : ℝ) ^ Fintype.card ι * Real.cosh (β * J) ^ G.edgeFinset.card :=
+    mul_nonneg (pow_nonneg (by norm_num) _) (pow_nonneg (Real.cosh_pos _).le _)
+  have hcosh_pos : 0 < Real.cosh (β * J) := Real.cosh_pos _
+  have hcosh_one_plus_tanh : Real.cosh (β * J) * (1 + Real.tanh (β * J))
+      = Real.exp (β * J) := by
+    have hne : Real.cosh (β * J) ≠ 0 := hcosh_pos.ne'
+    rw [Real.tanh_eq_sinh_div_cosh]
+    field_simp
+    exact Real.cosh_add_sinh (β * J)
+  calc (2 : ℝ) ^ Fintype.card ι * Real.cosh (β * J) ^ G.edgeFinset.card *
+        ∑ X ∈ G.edgeFinset.powerset.filter
+          (fun X => ∀ v : ι, Even ((X.filter (v ∈ ·)).card)),
+          Real.tanh (β * J) ^ X.card
+      ≤ (2 : ℝ) ^ Fintype.card ι * Real.cosh (β * J) ^ G.edgeFinset.card *
+        (1 + Real.tanh (β * J)) ^ G.edgeFinset.card :=
+        mul_le_mul_of_nonneg_left hsum_le hcommon_nn
+    _ = (2 : ℝ) ^ Fintype.card ι *
+          (Real.cosh (β * J) * (1 + Real.tanh (β * J))) ^ G.edgeFinset.card := by
+        rw [mul_pow, mul_assoc]
+    _ = (2 : ℝ) ^ Fintype.card ι * Real.exp (β * J) ^ G.edgeFinset.card := by
+        rw [hcosh_one_plus_tanh]
+    _ = (2 : ℝ) ^ Fintype.card ι *
+          Real.exp (β * J * G.edgeFinset.card) := by
+        rw [← Real.exp_nat_mul]
+        ring_nf
+
 /-- **Z high-temperature upper bound from FV (3.45)**: under `0 ≤ β·J`,
 `Z(G; J, 0, β) ≤ 2^(|ι|+|E|) · (cosh(βJ))^|E|`.
 
