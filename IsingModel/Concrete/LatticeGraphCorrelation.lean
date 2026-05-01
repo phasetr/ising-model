@@ -2743,6 +2743,16 @@ theorem freeEnergyΛ_latticeGraph_high_temp_h_zero_sandwich
   freeEnergyΛ_high_temp_h_zero_sandwich
     (IsingModel.latticeGraph d) Λ J β hβJ hne
 
+/-- **ℤ^d Λ-level magnetization vanishes at h = 0**:
+`correlationΛ (latticeGraph d) Λ ⟨J, 0, β⟩ {i} = 0` for any `i : ↑Λ`.
+ℤ^d wrapper of `correlationΛ_high_temp_h_zero_at_singleton`. -/
+theorem correlationΛ_latticeGraph_high_temp_h_zero_at_singleton
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ) (i : ↑Λ) :
+    correlationΛ (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) ({i} : Finset ↑Λ) = 0 :=
+  correlationΛ_high_temp_h_zero_at_singleton
+    (IsingModel.latticeGraph d) Λ J β i
+
 /-- **ℤ^d Λ-level Z₂ symmetry of correlation at h = 0 via handshake**:
 for `A : Finset ↑Λ` of odd cardinality,
 `correlationΛ (latticeGraph d) Λ ⟨J, 0, β⟩ A = 0`.

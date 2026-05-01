@@ -619,6 +619,17 @@ theorem correlationΛ_high_temp_h_zero_odd_card_eq_zero
   exact IsingModel.correlation_high_temp_h_zero_odd_card_eq_zero
     (inducedGraph G Λ) J β A hA_odd
 
+/-- **Λ-level magnetization vanishes at h = 0**:
+`correlationΛ G Λ ⟨J, 0, β⟩ {i} = 0` for any single site `i : ↑Λ`.
+Specialization at `A = {i}`. -/
+theorem correlationΛ_high_temp_h_zero_at_singleton
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (i : ↑Λ) :
+    correlationΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) ({i} : Finset ↑Λ) = 0 := by
+  refine correlationΛ_high_temp_h_zero_odd_card_eq_zero G Λ J β {i} ?_
+  rw [Finset.card_singleton]; exact ⟨0, rfl⟩
+
 /-- The correlation on `Λ` is bounded: `|⟨σ^A⟩| ≤ 1`. -/
 theorem abs_correlationΛ_le_one (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] (p : IsingParams ℝ)
