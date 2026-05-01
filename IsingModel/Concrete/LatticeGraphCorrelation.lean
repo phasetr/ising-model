@@ -3000,6 +3000,17 @@ theorem correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_pair_ferroma
   correlationAlongExhaustion_high_temp_h_zero_at_pair_ferromagnetic
     (IsingModel.latticeGraph d) Λ J β hJ hβ i j n
 
+/-- **ℤ^d along-ex singleton sandwich at h = 0**: `= 0 ∧ ≤ 1`. -/
+theorem correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_singleton_eq_zero_le_one
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
+    (i : Fin d → ℤ) (n : ℕ) :
+    correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) ({i} : Finset (Fin d → ℤ)) n = 0 ∧
+      correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) ({i} : Finset (Fin d → ℤ)) n ≤ 1 :=
+  correlationAlongExhaustion_high_temp_h_zero_at_singleton_eq_zero_le_one
+    (IsingModel.latticeGraph d) Λ J β i n
+
 /-- **ℤ^d along-ex pair correlation ≤ 1 at h = 0**. -/
 theorem correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_pair_le_one
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
