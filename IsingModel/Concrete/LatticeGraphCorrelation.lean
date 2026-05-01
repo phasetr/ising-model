@@ -3541,6 +3541,17 @@ theorem freeEnergyΛ_latticeGraph_high_temp_h_zero_deviation_pos
   freeEnergyΛ_high_temp_h_zero_deviation_pos
     (IsingModel.latticeGraph d) Λ J β hβJ hne hEpos
 
+/-- **ℤ^d Λ ferromagnetic f strict deviation**. -/
+theorem freeEnergyΛ_latticeGraph_high_temp_h_zero_deviation_pos_ferromagnetic
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
+    (hJ : 0 < J) (hβ : 0 < β) (hne : 0 < Λ.card)
+    (hEpos : 0 <
+      (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card) :
+    0 < freeEnergyΛ (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) - Real.log 2 :=
+  freeEnergyΛ_high_temp_h_zero_deviation_pos_ferromagnetic
+    (IsingModel.latticeGraph d) Λ J β hJ hβ hne hEpos
+
 /-- **ℤ^d along-exhaustion correlation high-temperature closed form (FV §3.7.3 eq. (3.46))**:
 at every stage `n` with `A ⊆ Λ.volume n`, FV (3.46) closed form holds
 on the lifted Finset. When `A ⊄`, equals `0`.
@@ -4480,6 +4491,17 @@ theorem freeEnergyAlongExhaustion_latticeGraph_high_temp_h_zero_deviation_pos
         (⟨J, 0, β⟩ : IsingParams ℝ) n - Real.log 2 :=
   freeEnergyAlongExhaustion_high_temp_h_zero_deviation_pos
     (IsingModel.latticeGraph d) Λ J β hβJ n hne hEpos
+
+/-- **ℤ^d along-ex ferromagnetic f strict deviation at stage `n`**. -/
+theorem freeEnergyAlongExhaustion_latticeGraph_high_temp_h_zero_deviation_pos_ferromagnetic
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
+    (hJ : 0 < J) (hβ : 0 < β) (n : ℕ) (hne : 0 < (Λ.volume n).card)
+    (hEpos : 0 <
+      (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card) :
+    0 < freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) n - Real.log 2 :=
+  freeEnergyAlongExhaustion_high_temp_h_zero_deviation_pos_ferromagnetic
+    (IsingModel.latticeGraph d) Λ J β hJ hβ n hne hEpos
 
 /-- **ℤ^d along-exhaustion partition function high-temperature closed form (FV §3.7.3 eq. (3.45))**:
 at every stage `n`,
