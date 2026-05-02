@@ -3233,4 +3233,14 @@ theorem mayer_identity_of_no_polymers
       exact absurd h0 (Finset.notMem_empty _)
   rw [h_lhs, h_rhs]
 
+/-- **Mayer identity tanh form for empty-polymer graphs** (Step 619):
+restate Step 618 in `tanh(β·J)` form. -/
+theorem mayer_identity_of_no_polymers_tanh
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (h_no : allPolymers G = ∅) (β J : ℝ) (N : ℕ) :
+    polymerFreeEnergy G (Real.tanh (β * J)) =
+      mayerPartialSum G N (Real.tanh (β * J)) :=
+  mayer_identity_of_no_polymers G h_no _ N
+
 end IsingModel
