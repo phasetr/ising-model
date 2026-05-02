@@ -2767,12 +2767,10 @@ theorem vdPolymerFamilies_sum_at_zero
     (∑ Γ ∈ vdCompatiblePolymerFamilies G,
         ∏ P ∈ Γ, (0 : ℝ) ^ P.card) = 1 := by
   classical
-  -- Empty family is in vdCompatiblePolymerFamilies.
   have h_empty_in :
       (∅ : Finset (Finset (Sym2 ι))) ∈ vdCompatiblePolymerFamilies G := by
     rw [mem_vdCompatiblePolymerFamilies]
     exact ⟨Finset.empty_subset _, IsCompatiblePolymerFamilyVertexDisjoint.empty G⟩
-  -- Helper: non-empty Γ contributes 0.
   have h_nonempty_zero : ∀ Γ ∈ vdCompatiblePolymerFamilies G,
       Γ ≠ ∅ → (∏ P ∈ Γ, (0 : ℝ) ^ P.card) = 0 := by
     intro Γ hΓ hne
@@ -2781,12 +2779,30 @@ theorem vdPolymerFamilies_sum_at_zero
     have hP_polymer : IsPolymer G P := mem_allPolymers.mp (hΓ.1 hP)
     have hP_pos : 0 < P.card := hP_polymer.nonempty.card_pos
     exact Finset.prod_eq_zero hP (zero_pow hP_pos.ne')
-  -- Split sum: empty family contributes 1, others 0.
   rw [Finset.sum_eq_single ∅]
   · rw [Finset.prod_empty]
   · intro Γ hΓ hne
     exact h_nonempty_zero Γ hΓ hne
   · intro h
     exact absurd h_empty_in h
+
+/-- **Mayer identity at `t = 0`** (Step 600, milestone): the first
+verified instance of the Mayer expansion identity
+`log Ξ = ∑_{n ≥ 0} mayerExpansionTerm G n t`. At `t = 0`,
+both sides equal `0`:
+- `log (vdPolymerFamilies_sum G 0) = log 1 = 0` via Step 599
+- `mayerPartialSum G N 0 = 0` via Step 598
+
+This is a trivial special case symbolically marking the structural
+target. The general identity for non-zero `t` requires substantial
+combinatorial work (Mayer/Ursell algebraic manipulations of formal
+power series); it remains deferred. -/
+theorem mayer_identity_at_zero
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (N : ℕ) :
+    Real.log (∑ Γ ∈ vdCompatiblePolymerFamilies G,
+              ∏ P ∈ Γ, (0 : ℝ) ^ P.card) =
+      mayerPartialSum G N 0 := by
+  rw [vdPolymerFamilies_sum_at_zero, Real.log_one, mayerPartialSum_at_zero]
 
 end IsingModel
