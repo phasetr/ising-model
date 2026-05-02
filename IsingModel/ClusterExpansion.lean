@@ -3029,4 +3029,29 @@ theorem polymerFreeEnergy_analyticOnNhd_Ici_zero
     AnalyticOnNhd ℝ (fun s : ℝ => polymerFreeEnergy G s) (Set.Ici 0) :=
   log_vdPolymerFamilies_sum_analyticOnNhd_Ici_zero G
 
+/-- **`polymerFreeEnergy` is `ContinuousAt` for `t ≥ 0`** (Step 611):
+direct consequence of analyticAt. -/
+theorem polymerFreeEnergy_continuousAt
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) :
+    ContinuousAt (fun s : ℝ => polymerFreeEnergy G s) t :=
+  (polymerFreeEnergy_analyticAt G ht).continuousAt
+
+/-- **`polymerFreeEnergy` is `DifferentiableAt` for `t ≥ 0`** (Step 611). -/
+theorem polymerFreeEnergy_differentiableAt
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) :
+    DifferentiableAt ℝ (fun s : ℝ => polymerFreeEnergy G s) t :=
+  (polymerFreeEnergy_analyticAt G ht).differentiableAt
+
+/-- **Mayer identity at `t = 0` in `polymerFreeEnergy` form** (Step 611):
+restatement of Step 600 using the named wrapper. -/
+theorem polymerFreeEnergy_eq_mayerPartialSum_at_zero
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (N : ℕ) :
+    polymerFreeEnergy G 0 = mayerPartialSum G N 0 := by
+  rw [polymerFreeEnergy_at_zero, mayerPartialSum_at_zero]
+
 end IsingModel
