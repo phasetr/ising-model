@@ -3192,4 +3192,45 @@ theorem mayerPartialSum_two
       mayerExpansionTerm_zero, mayerExpansionTerm_one,
       mayerExpansionTerm_two_filter, zero_add]
 
+/-- **Mayer identity for empty-polymer graphs** (Step 618): when
+`allPolymers G = ∅`, `polymerFreeEnergy G t = mayerPartialSum G N t = 0`
+for any `t` and `N`. The polymer-family sum reduces to the empty
+family contributing 1, so `log 1 = 0`; on the Mayer side, for `n ≥ 1`
+every entry `ω i` would have to be in `allPolymers G = ∅`, an empty
+domain, so the piFinset is empty and the sum vanishes. -/
+theorem mayer_identity_of_no_polymers
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (h_no : allPolymers G = ∅) (t : ℝ) (N : ℕ) :
+    polymerFreeEnergy G t = mayerPartialSum G N t := by
+  classical
+  have h_vd : vdCompatiblePolymerFamilies G = {∅} := by
+    apply Finset.ext
+    intro Γ
+    rw [mem_vdCompatiblePolymerFamilies, Finset.mem_singleton]
+    refine ⟨?_, ?_⟩
+    · rintro ⟨h_sub, _⟩
+      rw [h_no, Finset.subset_empty] at h_sub
+      exact h_sub
+    · intro h_eq
+      refine ⟨?_, ?_⟩
+      · rw [h_eq, h_no]
+      · rw [h_eq]
+        exact IsCompatiblePolymerFamilyVertexDisjoint.empty G
+  have h_lhs : polymerFreeEnergy G t = 0 := by
+    unfold polymerFreeEnergy
+    rw [h_vd, Finset.sum_singleton, Finset.prod_empty, Real.log_one]
+  have h_rhs : mayerPartialSum G N t = 0 := by
+    unfold mayerPartialSum
+    refine Finset.sum_eq_zero (fun n _ => ?_)
+    rcases n with _ | k
+    · exact mayerExpansionTerm_zero G t
+    · unfold mayerExpansionTerm
+      refine Finset.sum_eq_zero (fun ω hω => ?_)
+      rw [Fintype.mem_piFinset] at hω
+      have h0 : ω 0 ∈ allPolymers G := hω 0
+      rw [h_no] at h0
+      exact absurd h0 (Finset.notMem_empty _)
+  rw [h_lhs, h_rhs]
+
 end IsingModel
