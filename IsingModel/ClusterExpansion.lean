@@ -2944,6 +2944,22 @@ theorem mayerExpansionTerm_abs_le
   refine (Finset.abs_sum_le_sum_abs _ _).trans (le_of_eq ?_)
   exact Finset.sum_congr rfl (fun ω _ => abs_mul _ _)
 
+/-- **Uniform Ursell bound** (Step 615): independent-of-ω bound
+`|ϕ^T(ω)| ≤ 2^(n choose 2) / n!`. Combines Step 603 (`2^|E(G(ω))| / n!`)
+with Mathlib's `SimpleGraph.card_edgeFinset_le_card_choose_two`
+(graph on `Fin n` has at most `n.choose 2` edges). -/
+theorem ursellCoefficient_abs_le_choose_pow_div_factorial
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {n : ℕ} (ω : Fin n → Finset (Sym2 ι)) :
+    |ursellCoefficient ω| ≤ (2 ^ (n.choose 2) : ℝ) / (n.factorial : ℝ) := by
+  refine (ursellCoefficient_abs_le_pow_div_factorial ω).trans ?_
+  refine div_le_div_of_nonneg_right ?_ (Nat.cast_nonneg _)
+  refine pow_le_pow_right₀ (by norm_num : (1 : ℝ) ≤ 2) ?_
+  have h := SimpleGraph.card_edgeFinset_le_card_choose_two
+              (G := polymerSeqIncompatibilityGraph ω)
+  rw [show Fintype.card (Fin n) = n from Fintype.card_fin n] at h
+  exact h
+
 /-- **Mayer identity at `t = 0`** (Step 600, milestone): the first
 verified instance of the Mayer expansion identity
 `log Ξ = ∑_{n ≥ 0} mayerExpansionTerm G n t`. At `t = 0`,
