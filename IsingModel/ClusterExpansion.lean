@@ -349,4 +349,28 @@ theorem polymerPartition_empty {ι : Type*} [DecidableEq ι]
         exact IsCompatiblePolymerFamily.empty G]
   simp
 
+/-- **Polymer activity for the lattice Ising model**: the natural
+weight `t^|P|` arising from the FV (3.45) closed form
+`Z = 2^|ι|·cosh^|E|·∑_{X ⊆ E, even} tanh(β·J)^|X|`.
+
+Set `t = tanh(β·J)` to recover the FV (3.45) summand. -/
+def polymerActivity (t : ℝ) (P : Finset (Sym2 ι)) : ℝ := t ^ P.card
+
+/-- **Lattice Ising polymer partition function**: the polymer model
+partition function `polymerPartition` evaluated at the universe of all
+polymers in `G` with the canonical activity `tanh(β·J)^|P|`. This is
+the polymer-decomposition reformulation of the FV (3.45) sum
+`∑_{X ⊆ E, even} tanh(β·J)^|X|` modulo the connected-components
+identification (proved in subsequent PRs). -/
+noncomputable def latticeIsingPolymerPartition {ι : Type*} [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (β J : ℝ) : ℝ :=
+  polymerPartition G (allPolymers G) (polymerActivity (Real.tanh (β * J)))
+
+/-- **Polymer activity is `1` on the empty edge set** (since `t^0 = 1`). -/
+@[simp]
+theorem polymerActivity_empty (t : ℝ) :
+    polymerActivity t (∅ : Finset (Sym2 ι)) = 1 := by
+  unfold polymerActivity
+  simp
+
 end IsingModel
