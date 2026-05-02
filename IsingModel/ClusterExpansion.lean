@@ -4815,4 +4815,42 @@ theorem freeEnergy_analyticOnNhd_joint
       Set.univ :=
   fun ⟨β, J, h⟩ _ => freeEnergy_analyticAt_joint G β J h
 
+/-- **Partition function jointly `Continuous` in `(β, J, h)`** (§18.6,
+direct corollary of `partitionFunction_analyticAt_joint` via
+`AnalyticAt → ContinuousAt`). -/
+theorem partitionFunction_continuous_joint
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    Continuous (fun p : ℝ × ℝ × ℝ => partitionFunction G ⟨p.2.1, p.2.2, p.1⟩) :=
+  continuous_iff_continuousAt.mpr fun ⟨β, J, h⟩ =>
+    (partitionFunction_analyticAt_joint G β J h).continuousAt
+
+/-- **Partition function jointly `Differentiable ℝ` in `(β, J, h)`**
+(§18.6, direct corollary of `partitionFunction_analyticAt_joint` via
+`AnalyticAt → DifferentiableAt`). -/
+theorem partitionFunction_differentiable_joint
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    Differentiable ℝ
+      (fun p : ℝ × ℝ × ℝ => partitionFunction G ⟨p.2.1, p.2.2, p.1⟩) :=
+  fun ⟨β, J, h⟩ => (partitionFunction_analyticAt_joint G β J h).differentiableAt
+
+/-- **Free energy jointly `Continuous` in `(β, J, h)`** (§18.6,
+direct corollary of `freeEnergy_analyticAt_joint`). -/
+theorem freeEnergy_continuous_joint
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    Continuous (fun p : ℝ × ℝ × ℝ => freeEnergy G ⟨p.2.1, p.2.2, p.1⟩) :=
+  continuous_iff_continuousAt.mpr fun ⟨β, J, h⟩ =>
+    (freeEnergy_analyticAt_joint G β J h).continuousAt
+
+/-- **Free energy jointly `Differentiable ℝ` in `(β, J, h)`** (§18.6,
+direct corollary of `freeEnergy_analyticAt_joint`). -/
+theorem freeEnergy_differentiable_joint
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    Differentiable ℝ
+      (fun p : ℝ × ℝ × ℝ => freeEnergy G ⟨p.2.1, p.2.2, p.1⟩) :=
+  fun ⟨β, J, h⟩ => (freeEnergy_analyticAt_joint G β J h).differentiableAt
+
 end IsingModel
