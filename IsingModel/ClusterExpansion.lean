@@ -1421,4 +1421,20 @@ theorem polymerActivity_empty (t : ℝ) :
   unfold polymerActivity
   simp
 
+/-- **VD polymer-family sum is continuous in `t`**: the sum
+`∑_{Γ ∈ vdCompatiblePolymerFamilies G} ∏_{P ∈ Γ} t^|P|`
+is a finite sum of finite products of monomials `t^|P|`, hence continuous
+(and indeed polynomial) in `t : ℝ`. This is the foundation for the §18.6
+analyticity of the polymer expansion in `tanh(β·J)`. -/
+theorem vdPolymerFamilies_sum_continuous
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    Continuous (fun t : ℝ =>
+      ∑ Γ ∈ vdCompatiblePolymerFamilies G, ∏ P ∈ Γ, t ^ P.card) := by
+  refine continuous_finset_sum _ ?_
+  intro Γ _
+  refine continuous_finset_prod _ ?_
+  intro P _
+  exact continuous_id.pow _
+
 end IsingModel
