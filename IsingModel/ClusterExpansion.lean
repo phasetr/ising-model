@@ -4482,4 +4482,40 @@ theorem polymerFreeEnergy_lt_log_two_of_pow_lt_two
   have h_lt_two : 1 + ε < 2 := by linarith
   exact (Real.log_lt_log_iff h_pos (by norm_num : (0 : ℝ) < 2)).mpr h_lt_two
 
+/-- **`polymerFreeEnergy ≤ ε(tanh(β·J))` under `0 ≤ β·J`** (§18.4
+sharpening, tanh form): the ferromagnetic-Ising specialisation of
+`polymerFreeEnergy_le_eps_of_nonneg`. Substituting `t = tanh(β·J)`
+(non-negative under `0 ≤ β·J`), the polymer free energy is bounded
+above by the polymer-family activity excess at activity `tanh(β·J)`. -/
+theorem polymerFreeEnergy_tanh_le_eps_of_betaJ_nonneg
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (hβJ : 0 ≤ β * J) :
+    polymerFreeEnergy G (Real.tanh (β * J)) ≤
+      ∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅,
+        ∏ P ∈ Γ, (Real.tanh (β * J)) ^ P.card :=
+  polymerFreeEnergy_le_eps_of_nonneg G (real_tanh_nonneg hβJ)
+
+/-- **`polymerFreeEnergy ≤ (1+tanh(β·J))^|E| - 1` under `0 ≤ β·J`**
+(§18.4 sharpening, tanh form): tanh-substituted form of
+`polymerFreeEnergy_le_pow_sub_one_of_nonneg`. -/
+theorem polymerFreeEnergy_tanh_le_pow_sub_one_of_betaJ_nonneg
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (hβJ : 0 ≤ β * J) :
+    polymerFreeEnergy G (Real.tanh (β * J)) ≤
+      (1 + Real.tanh (β * J)) ^ G.edgeFinset.card - 1 :=
+  polymerFreeEnergy_le_pow_sub_one_of_nonneg G (real_tanh_nonneg hβJ)
+
+/-- **`polymerFreeEnergy < log 2` under `(1+tanh(β·J))^|E| < 2` and
+`0 ≤ β·J`** (§18.4 sharpening, tanh form): tanh-substituted form of
+`polymerFreeEnergy_lt_log_two_of_pow_lt_two`. -/
+theorem polymerFreeEnergy_tanh_lt_log_two_of_pow_lt_two
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (hβJ : 0 ≤ β * J)
+    (h_pow : (1 + Real.tanh (β * J)) ^ G.edgeFinset.card < 2) :
+    polymerFreeEnergy G (Real.tanh (β * J)) < Real.log 2 :=
+  polymerFreeEnergy_lt_log_two_of_pow_lt_two G (real_tanh_nonneg hβJ) h_pow
+
 end IsingModel
