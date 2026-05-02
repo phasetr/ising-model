@@ -1346,6 +1346,21 @@ theorem vdPolymerFamilies_sum_le_one_plus_tanh_pow
   rw [evenSubgraphs_eq_inline_filter]
   exact sum_pow_tanh_even_subgraph_le_one_plus_tanh_pow G J β hβJ
 
+/-- **Sharper VD polymer-family sum sandwich**: under `0 ≤ β·J`,
+`1 ≤ ∑_Γ ∏ tanh(β·J)^|P| ≤ (1 + tanh(β·J))^|E|`. Bundles Steps 550
+and 553. -/
+theorem vdPolymerFamilies_sum_sandwich_sharp
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (hβJ : 0 ≤ β * J) :
+    1 ≤ (∑ Γ ∈ vdCompatiblePolymerFamilies G,
+        ∏ P ∈ Γ, Real.tanh (β * J) ^ P.card) ∧
+    (∑ Γ ∈ vdCompatiblePolymerFamilies G,
+        ∏ P ∈ Γ, Real.tanh (β * J) ^ P.card)
+      ≤ (1 + Real.tanh (β * J)) ^ G.edgeFinset.card :=
+  ⟨one_le_vdPolymerFamilies_sum G hβJ,
+   vdPolymerFamilies_sum_le_one_plus_tanh_pow G hβJ⟩
+
 /-- **VD polymer-family sum sandwich**: under `0 ≤ β·J`,
 `1 ≤ ∑_Γ ∏ tanh(β·J)^|P| ≤ 2^|E|`. Bundles Steps 550 and 551. -/
 theorem vdPolymerFamilies_sum_sandwich
