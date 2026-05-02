@@ -296,6 +296,23 @@ theorem IsCompatiblePolymerFamily.mono {ι : Type*} [DecidableEq ι]
     have hQ' : Q ∈ Γ := hsub (Finset.mem_coe.mp hQ)
     exact hΓ.2 (Finset.mem_coe.mpr hP') (Finset.mem_coe.mpr hQ') hPQ
 
+/-- **All even subgraphs of `G`**: the `Finset` of edge subsets that
+satisfy `IsEvenSubgraph G`. -/
+def evenSubgraphs {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    Finset (Finset (Sym2 ι)) :=
+  G.edgeFinset.powerset.filter (fun X => IsEvenSubgraph G X)
+
+/-- **Membership in `evenSubgraphs` characterisation**: `X ∈ evenSubgraphs G`
+iff `IsEvenSubgraph G X`. -/
+theorem mem_evenSubgraphs {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {G : SimpleGraph ι} [Fintype G.edgeSet]
+    {X : Finset (Sym2 ι)} :
+    X ∈ evenSubgraphs G ↔ IsEvenSubgraph G X := by
+  unfold evenSubgraphs
+  rw [Finset.mem_filter, Finset.mem_powerset]
+  refine ⟨fun ⟨_, h⟩ => h, fun h => ⟨h.subset, h⟩⟩
+
 /-- **All polymers in a graph**: the natural reference universe of
 polymers in `G`, defined noncomputably as the filter of polymers in
 `G.edgeFinset.powerset`. -/
