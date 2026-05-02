@@ -4686,4 +4686,50 @@ theorem freeEnergy_analyticOnNhd_beta_general_h
     AnalyticOnNhd ℝ (fun β' : ℝ => freeEnergy G ⟨J, h, β'⟩) Set.univ :=
   fun β _ => freeEnergy_analyticAt_beta_general_h G J h β
 
+/-- **Partition function `AnalyticAt ℝ` in `h`** (§18.6 extension):
+for any `(J, β, h)`, `Z(h) = ∑_σ exp(-β · H(σ))` is real-analytic in
+`h`. The Hamiltonian is linear in `h` via
+`externalFieldEnergy h σ = -h · ∑_i Spin.sign(σ_i)`. Direct proof
+analogous to PRs #1528, #1529. -/
+theorem partitionFunction_analyticAt_h
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β h : ℝ) :
+    AnalyticAt ℝ (fun h' : ℝ => partitionFunction G ⟨J, h', β⟩) h := by
+  have h_eq : (fun h' : ℝ => partitionFunction G ⟨J, h', β⟩) =
+      fun h' : ℝ => ∑ σ : Config ι,
+        Real.exp ((β * (∑ i : ι, Spin.sign ℝ (σ i))) * h' +
+          (-β * interactionEnergy G J σ)) := by
+    funext h'
+    unfold partitionFunction boltzmannWeight hamiltonian externalFieldEnergy
+    refine Finset.sum_congr rfl (fun σ _ => ?_)
+    congr 1
+    ring
+  rw [h_eq]
+  refine Finset.analyticAt_fun_sum _ (fun σ _ => ?_)
+  refine analyticAt_rexp.comp ?_
+  exact (analyticAt_const.mul analyticAt_id).add analyticAt_const
+
+/-- **Free energy `AnalyticAt ℝ` in `h`** (§18.6 extension):
+`f = (1/|ι|) · log Z` is real-analytic in `h` at every point, for
+any `J, β`. -/
+theorem freeEnergy_analyticAt_h
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β h : ℝ) :
+    AnalyticAt ℝ (fun h' : ℝ => freeEnergy G ⟨J, h', β⟩) h := by
+  unfold freeEnergy
+  refine analyticAt_const.mul ?_
+  exact (partitionFunction_analyticAt_h G J β h).log
+    (partitionFunction_pos G _)
+
+/-- **Free energy `AnalyticOnNhd ℝ` in `h`** (§18.6 extension): global
+form of `freeEnergy_analyticAt_h`. -/
+theorem freeEnergy_analyticOnNhd_h
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) :
+    AnalyticOnNhd ℝ (fun h' : ℝ => freeEnergy G ⟨J, h', β⟩) Set.univ :=
+  fun h _ => freeEnergy_analyticAt_h G J β h
+
 end IsingModel
