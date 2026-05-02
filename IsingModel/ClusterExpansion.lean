@@ -3433,6 +3433,17 @@ theorem polymerFreeEnergy_sandwich_of_nonneg
   ⟨polymerFreeEnergy_nonneg_of_nonneg G ht,
    polymerFreeEnergy_le_card_log_one_plus_of_nonneg G ht⟩
 
+/-- **`polymerFreeEnergy` sandwich at `tanh(β·J)`** (Step 632): tanh-form
+restatement of Step 631. Under `0 ≤ β·J`, `0 ≤ Real.tanh (β·J)`, so
+the sandwich applies. -/
+theorem polymerFreeEnergy_tanh_sandwich
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] {β J : ℝ} (hβJ : 0 ≤ β * J) :
+    0 ≤ polymerFreeEnergy G (Real.tanh (β * J)) ∧
+    polymerFreeEnergy G (Real.tanh (β * J)) ≤
+      G.edgeFinset.card * Real.log (1 + Real.tanh (β * J)) :=
+  polymerFreeEnergy_sandwich_of_nonneg G (real_tanh_nonneg hβJ)
+
 /-- **`polymerFreeEnergy` HasDerivAt** (Step 625): explicit derivative
 of `polymerFreeEnergy G t = Real.log (vdPolymerFamilies_sum G t)` via
 the log-derivative formula `(log f)' = f' / f`. The derivative of
