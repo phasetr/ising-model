@@ -3909,4 +3909,28 @@ theorem vdPolymerFamilies_sum_minus_one_lt_one_eventually
         ∏ P ∈ Γ, t ^ P.card) < 1 := by
   exact (vdPolymerFamilies_sum_minus_one_tendsto_zero G).eventually_lt_const zero_lt_one
 
+/-- **`Real.log(1+x)` power series for `|x| < 1`** (Step 666, Mayer
+general-t Phase A): wrapper of Mathlib's `hasSum_pow_div_log_of_abs_lt_one`
+applied at `-x`, giving
+  HasSum (fun n => (-1)^n · x^(n+1) / (n+1)) (Real.log (1 + x))
+
+This is the standard alternating-sign log(1+x) Taylor series, which
+matches the n-th order Mayer-expansion contribution structure. -/
+theorem hasSum_real_log_one_add_of_abs_lt_one {x : ℝ} (h : |x| < 1) :
+    HasSum (fun n : ℕ => (-1 : ℝ) ^ n * x ^ (n + 1) / (n + 1))
+      (Real.log (1 + x)) := by
+  have h_neg : |(-x)| < 1 := by rwa [abs_neg]
+  have h_base : HasSum (fun n : ℕ => (-x) ^ (n + 1) / ((n : ℝ) + 1))
+      (-Real.log (1 - -x)) := Real.hasSum_pow_div_log_of_abs_lt_one h_neg
+  rw [show ((1 : ℝ) - -x) = 1 + x from by ring] at h_base
+  have h' := h_base.neg
+  rw [neg_neg] at h'
+  convert h' using 1
+  funext n
+  have h_neg_pow : (-1 : ℝ) ^ (n + 1) = -((-1) ^ n) := by
+    rw [pow_succ]; ring
+  rw [show ((-x : ℝ) ^ (n + 1)) = (-1) ^ (n + 1) * x ^ (n + 1) from by ring,
+      h_neg_pow]
+  ring
+
 end IsingModel
