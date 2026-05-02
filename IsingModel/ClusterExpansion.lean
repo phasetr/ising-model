@@ -756,7 +756,8 @@ for a cluster sequence `ω : Fin n → Finset (Sym2 ι)` and an activity
 parameter `t : ℝ`, the activity factor is the monomial product
 `z(ω) = ∏ i, t ^ |ω i|`. This is the factor multiplying the Ursell
 coefficient in the Mayer expansion
-`log Ξ = ∑_n (1/n!) ∑_{ω cluster} ϕ^T(ω) · z(ω)`. -/
+`log Ξ = ∑_{n ≥ 1} ∑_ω ϕ^T(ω) · z(ω)` (the `1/n!` factor is absorbed
+into `ursellCoefficient`; cf. Step 583). -/
 def clusterSeqActivity {ι : Type*} [Fintype ι] [DecidableEq ι]
     (t : ℝ) {n : ℕ} (ω : Fin n → Finset (Sym2 ι)) : ℝ :=
   ∏ i : Fin n, t ^ (ω i).card
@@ -791,7 +792,7 @@ foundation): for a finite-vertex SimpleGraph `G`, the `Finset` of edge
 subsets `S ⊆ G.edgeFinset` such that the SimpleGraph reconstructed from
 `S` (with vertex set `V`) is `Connected`. The Ursell coefficient of a
 cluster sequence will be the alternating-sign sum
-`(1/n!) · ∑_{S ∈ connectedSpanningEdgeSubsets G(ω)} (-1)^|S|`. -/
+`(∑_{S ∈ connectedSpanningEdgeSubsets G(ω)} (-1)^|S|) / n!` (cf. Step 583). -/
 noncomputable def connectedSpanningEdgeSubsets {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] :
     Finset (Finset (Sym2 V)) :=
@@ -2321,5 +2322,61 @@ theorem vdPolymerFamilies_sum_hasDerivAt
     (f' := fun P : Finset (Sym2 ι) => (P.card : ℝ) * t ^ (P.card - 1))
     (x := t) (fun P _ => hasDerivAt_pow P.card t)
   simpa [smul_eq_mul] using h
+
+/-- **Mayer expansion n-th term** (Step 587, Mayer expansion):
+the contribution of `n`-element polymer sequences to `log Ξ`:
+`mayerExpansionTerm G n t = ∑_{ω ∈ piFinset (allPolymers G)} ϕ^T(ω) · z(t, ω)`.
+The factor `1/n!` is already absorbed into the Ursell coefficient
+(Step 583), so the Mayer expansion is
+`log Ξ = ∑_{n ≥ 1} mayerExpansionTerm G n t`. -/
+noncomputable def mayerExpansionTerm
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (n : ℕ) (t : ℝ) : ℝ :=
+  ∑ ω ∈ Fintype.piFinset (fun _ : Fin n => allPolymers G),
+    ursellCoefficient ω * clusterSeqActivity t ω
+
+/-- **n=0 Mayer term vanishes**: `mayerExpansionTerm G 0 t = 0`.
+The unique `ω : Fin 0 → polymers` is the empty function;
+`connectedSpanningEdgeSubsets` of the empty graph on `Fin 0` is empty
+(`Connected` requires `Nonempty`), so `ursellCoefficient empty = 0`. -/
+theorem mayerExpansionTerm_zero
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (t : ℝ) :
+    mayerExpansionTerm G 0 t = 0 := by
+  unfold mayerExpansionTerm
+  refine Finset.sum_eq_zero (fun ω _ => ?_)
+  refine mul_eq_zero.mpr (Or.inl ?_)
+  apply ursellCoefficient_eq_zero_of_disconnected
+  intro h
+  exact (h.nonempty.elim Fin.elim0)
+
+/-- **n=1 Mayer term equals total polymer activity**:
+`mayerExpansionTerm G 1 t = ∑_{P ∈ allPolymers G} t^|P|`.
+For `n = 1`, every singleton sequence has `ϕ^T = 1` (Step 583, with
+the `1/1!` factor absorbed) and `z(t, ω) = t^|ω 0|` (Step 581). The
+sum over `Fin 1 → allPolymers G` reindexes to a sum over `allPolymers G`. -/
+theorem mayerExpansionTerm_one
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (t : ℝ) :
+    mayerExpansionTerm G 1 t =
+      ∑ P ∈ allPolymers G, t ^ P.card := by
+  unfold mayerExpansionTerm
+  apply Finset.sum_bij (fun (ω : Fin 1 → Finset (Sym2 ι)) (_ : ω ∈ _) => ω 0)
+  · intro ω hω
+    rw [Fintype.mem_piFinset] at hω
+    exact hω 0
+  · intro ω₁ _ ω₂ _ heq
+    funext i
+    have hi : i = 0 := Subsingleton.elim i 0
+    rw [hi]
+    exact heq
+  · intro P hP
+    refine ⟨fun _ => P, ?_, rfl⟩
+    rw [Fintype.mem_piFinset]
+    intro _
+    exact hP
+  · intro ω _
+    rw [ursellCoefficient_singleton, clusterSeqActivity_singleton, one_mul]
 
 end IsingModel
