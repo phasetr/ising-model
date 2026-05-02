@@ -981,6 +981,47 @@ theorem ursellCoefficient_eq_zero_of_disconnected
     exact (hS_conn.preconnected u v).mono h_le
   rw [h_empty, Finset.sum_empty, zero_div]
 
+/-- **Pair Ursell coefficient (compatible)** (Step 586): for
+`ω : Fin 2 → polymers` with `¬ PolymersIncompatible (ω 0) (ω 1)`,
+`ϕ^T(ω) = 0`. Compatibility means no edge in `G(ω)` between the only
+two vertices `0, 1 : Fin 2`; the graph is disconnected and Step 584
+applies. -/
+theorem ursellCoefficient_pair_compatible
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ω : Fin 2 → Finset (Sym2 ι)}
+    (hω : ¬ PolymersIncompatible (ω 0) (ω 1)) :
+    ursellCoefficient ω = 0 := by
+  apply ursellCoefficient_eq_zero_of_disconnected
+  intro h_conn
+  obtain ⟨w⟩ := h_conn.preconnected 0 1
+  -- A walk from 0 to 1 has a first edge `G(ω).Adj 0 v`. On `Fin 2`,
+  -- the only vertex `v ≠ 0` is `1`, so this gives
+  -- `PolymersIncompatible (ω 0) (ω 1)` — contradicting the
+  -- compatibility hypothesis.
+  cases w with
+  | @cons _ v _ hadj _ =>
+    rw [polymerSeqIncompatibilityGraph_adj] at hadj
+    obtain ⟨h_ne, h_inc⟩ := hadj
+    apply hω
+    fin_cases v
+    · exact absurd rfl h_ne
+    · exact h_inc
+
+/-- **Pair Ursell coefficient (unified)** (Step 586): unified
+case-conditional formula for n=2:
+`ϕ^T(ω) = if PolymersIncompatible (ω 0) (ω 1) then -1/2 else 0`.
+Combines Step 585 (incompatible: `-1/2`) with Step 586's compatible
+case (`= 0`). -/
+theorem ursellCoefficient_pair {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (ω : Fin 2 → Finset (Sym2 ι)) :
+    ursellCoefficient ω =
+      (if PolymersIncompatible (ω 0) (ω 1) then -1/2 else 0) := by
+  by_cases hω : PolymersIncompatible (ω 0) (ω 1)
+  · rw [if_pos hω]
+    exact ursellCoefficient_pair_incompatible hω
+  · rw [if_neg hω]
+    exact ursellCoefficient_pair_compatible hω
+
 /-- **Cluster polymer set** (Step 578, Mayer expansion foundation):
 a finite set of polymers `Γ` is a *cluster set* iff `Γ` is non-empty,
 every element is a polymer of `G`, and the induced subgraph of
