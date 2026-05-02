@@ -1332,6 +1332,20 @@ theorem one_le_vdPolymerFamilies_sum
   rw [evenSubgraphs_eq_inline_filter]
   exact one_le_sum_pow_tanh_even_subgraph G J β hβJ
 
+/-- **VD polymer-family sum sandwich**: under `0 ≤ β·J`,
+`1 ≤ ∑_Γ ∏ tanh(β·J)^|P| ≤ 2^|E|`. Bundles Steps 550 and 551. -/
+theorem vdPolymerFamilies_sum_sandwich
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (hβJ : 0 ≤ β * J) :
+    1 ≤ (∑ Γ ∈ vdCompatiblePolymerFamilies G,
+        ∏ P ∈ Γ, Real.tanh (β * J) ^ P.card) ∧
+    (∑ Γ ∈ vdCompatiblePolymerFamilies G,
+        ∏ P ∈ Γ, Real.tanh (β * J) ^ P.card)
+      ≤ (2 : ℝ) ^ G.edgeFinset.card :=
+  ⟨one_le_vdPolymerFamilies_sum G hβJ,
+   vdPolymerFamilies_sum_le_two_pow G hβJ⟩
+
 /-- **Polymer activity for the lattice Ising model**: the natural
 weight `t^|P|` arising from the FV (3.45) closed form
 `Z = 2^|ι|·cosh^|E|·∑_{X ⊆ E, even} tanh(β·J)^|X|`.
