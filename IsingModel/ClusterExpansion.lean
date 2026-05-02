@@ -3535,6 +3535,16 @@ theorem vdPolymerFamilies_sum_at_one
     exact one_pow _
   rw [Finset.sum_congr rfl h_each, Finset.sum_const, Nat.smul_one_eq_cast]
 
+/-- **`polymerFreeEnergy` at `t = 1`** (Step 640): equals
+`log |vdCompatiblePolymerFamilies G|`. Direct via Step 639. -/
+theorem polymerFreeEnergy_at_one
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    polymerFreeEnergy G 1 =
+      Real.log (vdCompatiblePolymerFamilies G).card := by
+  unfold polymerFreeEnergy
+  rw [vdPolymerFamilies_sum_at_one]
+
 /-- **`mayerPartialSum` recurrence in `N`** (Step 638):
 `mayerPartialSum G (N+1) t = mayerPartialSum G N t + mayerExpansionTerm G (N+1) t`. -/
 theorem mayerPartialSum_succ
