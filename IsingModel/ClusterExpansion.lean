@@ -2786,6 +2786,18 @@ theorem vdPolymerFamilies_sum_at_zero
   · intro h
     exact absurd h_empty_in h
 
+/-- **`connectedSpanningEdgeSubsets` cardinality bound** (Step 602):
+the connected-spanning edge subsets are a filter of the powerset of
+`G.edgeFinset`, hence their count is at most `2^|G.edgeFinset|`. -/
+theorem connectedSpanningEdgeSubsets_card_le_pow
+    {V : Type*} [Fintype V] [DecidableEq V]
+    (G : SimpleGraph V) [DecidableRel G.Adj] :
+    (connectedSpanningEdgeSubsets G).card ≤ 2 ^ G.edgeFinset.card := by
+  classical
+  unfold connectedSpanningEdgeSubsets
+  refine (Finset.card_filter_le _ _).trans ?_
+  rw [Finset.card_powerset]
+
 /-- **Ursell coefficient absolute bound** (Step 601): the triangle
 inequality on the alternating-sign sum gives
 `|ϕ^T(ω)| ≤ |connectedSpanningEdgeSubsets G(ω)| / n!`. Since each
