@@ -3074,4 +3074,42 @@ theorem freeEnergy_eq_polymerFreeEnergy
   rw [← evenSubgraphs_eq_inline_filter,
       evenSubgraphs_sum_eq_vdPolymerFamilies_sum G (Real.tanh (β * J))]
 
+/-- **`polymerFreeEnergy` analyticAt in `β`** (Step 613): named-wrapper
+restatement of Step 608. -/
+theorem polymerFreeEnergy_tanh_analyticAt_beta
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J β : ℝ) (hβJ : 0 ≤ β * J) :
+    AnalyticAt ℝ
+      (fun β' : ℝ => polymerFreeEnergy G (Real.tanh (β' * J))) β :=
+  log_vdPolymerFamilies_sum_tanh_analyticAt_beta G J β hβJ
+
+/-- **`polymerFreeEnergy` analyticAt in `J`** (Step 613). -/
+theorem polymerFreeEnergy_tanh_analyticAt_J
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (β J : ℝ) (hβJ : 0 ≤ β * J) :
+    AnalyticAt ℝ
+      (fun J' : ℝ => polymerFreeEnergy G (Real.tanh (β * J'))) J :=
+  log_vdPolymerFamilies_sum_tanh_analyticAt_J G β J hβJ
+
+/-- **`polymerFreeEnergy` AnalyticOnNhd in `β` over `[0, ∞)` (under
+`0 ≤ J`)** (Step 613): for fixed `J ≥ 0`, the function is analytic at
+every `β ≥ 0` since `0 ≤ β·J = β·J` follows from `mul_nonneg`. -/
+theorem polymerFreeEnergy_tanh_analyticOnNhd_beta_Ici_zero
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {J : ℝ} (hJ : 0 ≤ J) :
+    AnalyticOnNhd ℝ
+      (fun β' : ℝ => polymerFreeEnergy G (Real.tanh (β' * J))) (Set.Ici 0) :=
+  fun β hβ => polymerFreeEnergy_tanh_analyticAt_beta G J β (mul_nonneg hβ hJ)
+
+/-- **`polymerFreeEnergy` AnalyticOnNhd in `J` over `[0, ∞)` (under
+`0 ≤ β`)** (Step 613). -/
+theorem polymerFreeEnergy_tanh_analyticOnNhd_J_Ici_zero
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β : ℝ} (hβ : 0 ≤ β) :
+    AnalyticOnNhd ℝ
+      (fun J' : ℝ => polymerFreeEnergy G (Real.tanh (β * J'))) (Set.Ici 0) :=
+  fun J hJ => polymerFreeEnergy_tanh_analyticAt_J G β J (mul_nonneg hβ hJ)
+
 end IsingModel
