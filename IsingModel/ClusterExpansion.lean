@@ -2425,4 +2425,47 @@ theorem mayerExpansionTerm_differentiable
   refine Differentiable.fun_sum (fun ω _ => ?_)
   exact (clusterSeqActivity_differentiable ω).const_mul _
 
+/-- **Cluster-sequence activity is real-analytic at every `t`** (Step
+590): the activity factor `clusterSeqActivity t ω = ∏ i, t ^ |ω i|`
+is a finite product of monomials. By induction on the index Finset
+`Finset.univ : Finset (Fin n)`, each monomial `s ↦ s^k` is analytic
+(`AnalyticAt.pow` of `analyticAt_id`), and analyticity is preserved by
+multiplication. -/
+theorem clusterSeqActivity_analyticAt
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {n : ℕ} (ω : Fin n → Finset (Sym2 ι)) (t : ℝ) :
+    AnalyticAt ℝ (fun s : ℝ => clusterSeqActivity s ω) t := by
+  classical
+  unfold clusterSeqActivity
+  induction (Finset.univ : Finset (Fin n)) using Finset.induction_on with
+  | empty =>
+      simpa using (analyticAt_const : AnalyticAt ℝ (fun _ : ℝ => (1 : ℝ)) t)
+  | insert i I hi ih =>
+      have h_step : (fun s : ℝ => ∏ j ∈ insert i I, s ^ (ω j).card) =
+          (fun s : ℝ => s ^ (ω i).card * ∏ j ∈ I, s ^ (ω j).card) := by
+        funext s
+        exact Finset.prod_insert hi
+      rw [h_step]
+      exact (analyticAt_id.pow _).mul ih
+
+/-- **Mayer expansion n-th term is real-analytic at every `t`** (Step
+590): each term is a polynomial in `t`, hence analytic. Strengthens
+`mayerExpansionTerm_differentiable` (Step 589) via `AnalyticAt.fun_sum`
+plus `AnalyticAt.const_mul`. -/
+theorem mayerExpansionTerm_analyticAt
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (n : ℕ) (t : ℝ) :
+    AnalyticAt ℝ (fun s : ℝ => mayerExpansionTerm G n s) t := by
+  unfold mayerExpansionTerm
+  refine Finset.analyticAt_fun_sum _ (fun ω _ => ?_)
+  exact analyticAt_const.mul (clusterSeqActivity_analyticAt ω t)
+
+/-- **Mayer expansion n-th term `AnalyticOnNhd ℝ _ Set.univ`** (Step
+590): the global form of `mayerExpansionTerm_analyticAt`. -/
+theorem mayerExpansionTerm_analyticOnNhd
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (n : ℕ) :
+    AnalyticOnNhd ℝ (fun s : ℝ => mayerExpansionTerm G n s) Set.univ :=
+  fun t _ => mayerExpansionTerm_analyticAt G n t
+
 end IsingModel
