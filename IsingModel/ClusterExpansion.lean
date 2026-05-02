@@ -3875,4 +3875,14 @@ theorem vdPolymerFamilies_sum_minus_one_continuous
   refine continuous_finset_prod _ (fun P _ => ?_)
   exact continuous_id.pow _
 
+/-- **`ε(t)` is analyticAt every `t`** (Step 663, Mayer general-t
+Phase A): finite sum of analytic terms via `analyticAt_prod_pow`. -/
+theorem vdPolymerFamilies_sum_minus_one_analyticAt
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (t : ℝ) :
+    AnalyticAt ℝ (fun s : ℝ =>
+      ∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅,
+        ∏ P ∈ Γ, s ^ P.card) t := by
+  refine Finset.analyticAt_fun_sum _ (fun Γ _ => analyticAt_prod_pow Γ t)
+
 end IsingModel
