@@ -2723,4 +2723,37 @@ theorem mayerExpansionTerm_two_filter
   simp_rw [ite_mul, zero_mul]
   rw [← Finset.sum_filter, ← Finset.mul_sum]
 
+/-- **Mayer expansion term vanishes at `t = 0`** (Step 598):
+`mayerExpansionTerm G n 0 = 0` for every `n : ℕ`. For `n = 0`,
+`ursellCoefficient` already vanishes (Step 587). For `n ≥ 1`, every
+polymer `ω i` has `|ω i| ≥ 1`, so `0 ^ |ω i| = 0` and the product
+`clusterSeqActivity 0 ω = ∏ i, 0 ^ |ω i|` contains a zero factor. -/
+theorem mayerExpansionTerm_at_zero
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (n : ℕ) :
+    mayerExpansionTerm G n 0 = 0 := by
+  match n with
+  | 0 => exact mayerExpansionTerm_zero G 0
+  | k + 1 =>
+    unfold mayerExpansionTerm
+    refine Finset.sum_eq_zero (fun ω hω => ?_)
+    rw [Fintype.mem_piFinset] at hω
+    have h_polymer : IsPolymer G (ω 0) := mem_allPolymers.mp (hω 0)
+    have h_pos : 0 < (ω 0).card := h_polymer.nonempty.card_pos
+    have h_zero : (0 : ℝ) ^ (ω 0).card = 0 := zero_pow h_pos.ne'
+    have h_prod : clusterSeqActivity (0 : ℝ) ω = 0 := by
+      unfold clusterSeqActivity
+      exact Finset.prod_eq_zero (Finset.mem_univ 0) h_zero
+    rw [h_prod, mul_zero]
+
+/-- **Mayer partial sum vanishes at `t = 0`** (Step 598): consequence
+of `mayerExpansionTerm_at_zero` summed over `Finset.range (N + 1)`. -/
+theorem mayerPartialSum_at_zero
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (N : ℕ) :
+    mayerPartialSum G N 0 = 0 := by
+  unfold mayerPartialSum
+  refine Finset.sum_eq_zero (fun n _ => ?_)
+  exact mayerExpansionTerm_at_zero G n
+
 end IsingModel
