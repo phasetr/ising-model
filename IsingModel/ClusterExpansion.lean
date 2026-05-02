@@ -309,6 +309,31 @@ theorem polymerSupport_union {ι : Type*} [Fintype ι] [DecidableEq ι]
     · exact ⟨e, Finset.mem_union_left _ he, hv⟩
     · exact ⟨e, Finset.mem_union_right _ he, hv⟩
 
+/-- **`edgeComponent` absorbs incident edges**: if some edge of the
+component contains `v`, then every `X`-edge containing `v` is also in
+the component. This is the closure-under-incidence property that
+ensures connected components have well-defined vertex degrees.
+
+Proof: edge-adjacency through the shared vertex `v` extends the
+reach-relation by one step. -/
+theorem edgeComponent_absorbs_incident
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {X : Finset (Sym2 ι)} {e : Sym2 ι} {v : ι}
+    (hv : v ∈ polymerSupport (edgeComponent X e))
+    {e' : Sym2 ι} (he' : e' ∈ X) (hv' : v ∈ e') :
+    e' ∈ edgeComponent X e := by
+  rw [mem_polymerSupport] at hv
+  obtain ⟨f, hf, hvf⟩ := hv
+  rw [mem_edgeComponent] at hf
+  obtain ⟨hfX, hef⟩ := hf
+  rw [mem_edgeComponent]
+  refine ⟨he', ?_⟩
+  -- Need: ReflTransGen (edgeAdjacentIn X) e e'
+  -- We have hef : ReflTransGen (edgeAdjacentIn X) e f
+  -- And f, e' both in X, sharing vertex v.
+  have h_step : edgeAdjacentIn X f e' := ⟨hfX, he', v, hvf, hv'⟩
+  exact hef.tail h_step
+
 /-- **Polymer edge-disjointness**: two polymers `P, Q` are *edge-disjoint*
 if they share no edge. This is a *weak* compatibility relation that
 suffices for the multiplicative weight identity but does not give a
