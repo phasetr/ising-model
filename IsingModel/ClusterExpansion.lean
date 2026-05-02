@@ -1734,4 +1734,32 @@ theorem partitionFunction_analyticAt_J_h_zero
   refine analyticAt_const.mul ?_
   exact ((Real.analyticAt_cosh).comp h_mul).pow _
 
+/-- **Free energy `AnalyticAt ℝ` in `β` (at `h = 0`) via polymer
+expansion**: composes `partitionFunction_analyticAt_beta_h_zero` (Step 563)
+with `AnalyticAt.log` (using `partitionFunction_pos` to discharge the
+positivity hypothesis) and the constant `1/|ι|` factor.
+
+The free energy `f = (1/|ι|) · log Z` is therefore real-analytic in `β`
+at every point. Completes the §18.6 free-energy analyticity capstone at
+`h = 0`. -/
+theorem freeEnergy_analyticAt_beta_h_zero
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J β : ℝ) :
+    AnalyticAt ℝ (fun β' : ℝ => freeEnergy G ⟨J, 0, β'⟩) β := by
+  unfold freeEnergy
+  refine analyticAt_const.mul ?_
+  exact (partitionFunction_analyticAt_beta_h_zero G J β).log
+    (partitionFunction_pos G _)
+
+/-- **Free energy `AnalyticAt ℝ` in `J` (at `h = 0`) via polymer
+expansion**: dual of `freeEnergy_analyticAt_beta_h_zero`. -/
+theorem freeEnergy_analyticAt_J_h_zero
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (β J : ℝ) :
+    AnalyticAt ℝ (fun J' : ℝ => freeEnergy G ⟨J', 0, β⟩) J := by
+  unfold freeEnergy
+  refine analyticAt_const.mul ?_
+  exact (partitionFunction_analyticAt_J_h_zero G β J).log
+    (partitionFunction_pos G _)
+
 end IsingModel
