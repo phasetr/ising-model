@@ -296,6 +296,27 @@ theorem IsCompatiblePolymerFamily.mono {ι : Type*} [DecidableEq ι]
     have hQ' : Q ∈ Γ := hsub (Finset.mem_coe.mp hQ)
     exact hΓ.2 (Finset.mem_coe.mpr hP') (Finset.mem_coe.mpr hQ') hPQ
 
+/-- **All polymers in a graph**: the natural reference universe of
+polymers in `G`, defined noncomputably as the filter of polymers in
+`G.edgeFinset.powerset`. -/
+noncomputable def allPolymers {ι : Type*} [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    Finset (Finset (Sym2 ι)) := by
+  classical
+  exact G.edgeFinset.powerset.filter (fun P => IsPolymer G P)
+
+/-- **Membership in `allPolymers` characterisation**: `P ∈ allPolymers G`
+iff `IsPolymer G P` (since `IsPolymer` already implies the subset
+condition). -/
+theorem mem_allPolymers {ι : Type*} [DecidableEq ι]
+    {G : SimpleGraph ι} [Fintype G.edgeSet]
+    {P : Finset (Sym2 ι)} :
+    P ∈ allPolymers G ↔ IsPolymer G P := by
+  classical
+  unfold allPolymers
+  rw [Finset.mem_filter, Finset.mem_powerset]
+  refine ⟨fun ⟨_, h⟩ => h, fun h => ⟨h.isEven.subset, h⟩⟩
+
 /-- **Polymer model partition function (abstract)**: given a reference
 finite universe of polymer candidates `Ω : Finset (Finset (Sym2 ι))`
 and a weight function `z : Finset (Sym2 ι) → ℝ`, the polymer model
