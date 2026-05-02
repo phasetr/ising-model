@@ -1268,6 +1268,22 @@ theorem partitionFunction_high_temp_expansion_h_zero_closed_evenSubgraphs
   rw [partitionFunction_high_temp_expansion_h_zero_closed G J β,
       evenSubgraphs_eq_inline_filter]
 
+/-- **Z FV (3.45) polymer-family form**: under no further hypotheses,
+`Z(J,0,β) = 2^|ι| · cosh(β·J)^|E| · ∑_{Γ ∈ vdCompatiblePolymerFamilies G,
+∏_{P ∈ Γ} tanh(β·J)^|P|}`.
+
+Combines Step 517 (FV (3.45) via `evenSubgraphs G`) with Step 547
+(`evenSubgraphs_sum_eq_vdPolymerFamilies_sum`). -/
+theorem partitionFunction_high_temp_expansion_h_zero_polymer_family
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J β : ℝ) :
+    partitionFunction G ⟨J, 0, β⟩ =
+      (2 : ℝ) ^ Fintype.card ι * Real.cosh (β * J) ^ G.edgeFinset.card *
+      ∑ Γ ∈ vdCompatiblePolymerFamilies G,
+        ∏ P ∈ Γ, Real.tanh (β * J) ^ P.card := by
+  rw [partitionFunction_high_temp_expansion_h_zero_closed_evenSubgraphs G J β,
+      evenSubgraphs_sum_eq_vdPolymerFamilies_sum G (Real.tanh (β * J))]
+
 /-- **Polymer activity for the lattice Ising model**: the natural
 weight `t^|P|` arising from the FV (3.45) closed form
 `Z = 2^|ι|·cosh^|E|·∑_{X ⊆ E, even} tanh(β·J)^|X|`.
