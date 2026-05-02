@@ -100,5 +100,43 @@ theorem correlationΛ_differentiable_joint (G : SimpleGraph V) (Λ : Finset V)
       (fun p : ℝ × ℝ × ℝ => correlationΛ G Λ ⟨p.2.1, p.2.2, p.1⟩ A) :=
   IsingModel.correlation_differentiable_joint (inducedGraph G Λ) A
 
+/-! ## Λ-layer partitionFunction per-direction regularity at general h -/
+
+/-- **partitionFunctionΛ Continuous in `β` at general h** (Λ-layer). -/
+theorem partitionFunctionΛ_continuous_beta_general_h (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (J h : ℝ) :
+    Continuous (fun β' : ℝ => partitionFunctionΛ G Λ ⟨J, h, β'⟩) :=
+  IsingModel.partitionFunction_continuous_beta_general_h (inducedGraph G Λ) J h
+
+/-- **partitionFunctionΛ Differentiable in `β` at general h** (Λ-layer). -/
+theorem partitionFunctionΛ_differentiable_beta_general_h (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (J h : ℝ) :
+    Differentiable ℝ (fun β' : ℝ => partitionFunctionΛ G Λ ⟨J, h, β'⟩) :=
+  IsingModel.partitionFunction_differentiable_beta_general_h (inducedGraph G Λ) J h
+
+/-- **partitionFunctionΛ Continuous in `J` at general h** (Λ-layer). -/
+theorem partitionFunctionΛ_continuous_J_general_h (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (β h : ℝ) :
+    Continuous (fun J' : ℝ => partitionFunctionΛ G Λ ⟨J', h, β⟩) :=
+  IsingModel.partitionFunction_continuous_J_general_h (inducedGraph G Λ) β h
+
+/-- **partitionFunctionΛ Differentiable in `J` at general h** (Λ-layer). -/
+theorem partitionFunctionΛ_differentiable_J_general_h (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (β h : ℝ) :
+    Differentiable ℝ (fun J' : ℝ => partitionFunctionΛ G Λ ⟨J', h, β⟩) :=
+  IsingModel.partitionFunction_differentiable_J_general_h (inducedGraph G Λ) β h
+
+/-- **partitionFunctionΛ Continuous in `h`** (Λ-layer). -/
+theorem partitionFunctionΛ_continuous_h (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (J β : ℝ) :
+    Continuous (fun h' : ℝ => partitionFunctionΛ G Λ ⟨J, h', β⟩) :=
+  IsingModel.partitionFunction_continuous_h (inducedGraph G Λ) J β
+
+/-- **partitionFunctionΛ Differentiable in `h`** (Λ-layer). -/
+theorem partitionFunctionΛ_differentiable_h (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (J β : ℝ) :
+    Differentiable ℝ (fun h' : ℝ => partitionFunctionΛ G Λ ⟨J, h', β⟩) :=
+  IsingModel.partitionFunction_differentiable_h (inducedGraph G Λ) J β
+
 end Ambient
 end IsingModel
