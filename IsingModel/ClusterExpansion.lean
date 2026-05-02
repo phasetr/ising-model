@@ -236,6 +236,20 @@ theorem IsCompatiblePolymerFamily.biUnion_isEvenSubgraph
     simp only [id]
     exact h_polymer_P.isEven.union_disjoint (ih hΓ') h_disjoint
 
+/-- **Cardinality additivity over a compatible polymer family**: the
+size of `Γ.biUnion id` equals `∑_{P ∈ Γ} |P|` when `Γ` is compatible
+(pairwise edge-disjoint). This is the key combinatorial identity that
+turns `t^|X|` into `∏_{P ∈ Γ} t^|P|` in the cluster expansion. -/
+theorem IsCompatiblePolymerFamily.card_biUnion
+    {ι : Type*} [DecidableEq ι]
+    {G : SimpleGraph ι} [Fintype G.edgeSet]
+    {Γ : Finset (Finset (Sym2 ι))}
+    (hΓ : IsCompatiblePolymerFamily G Γ) :
+    (Γ.biUnion id).card = ∑ P ∈ Γ, P.card := by
+  refine Finset.card_biUnion ?_
+  intro P hP Q hQ hPQ
+  exact hΓ.2 hP hQ hPQ
+
 /-- **Singleton polymer family is compatible iff the polymer is a polymer**:
 a one-element family `{P}` is compatible iff `IsPolymer G P`. -/
 theorem isCompatiblePolymerFamily_singleton {ι : Type*} [DecidableEq ι]
