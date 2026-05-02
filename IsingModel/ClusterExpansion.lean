@@ -4795,4 +4795,24 @@ theorem freeEnergy_analyticAt_joint
   unfold freeEnergy
   exact analyticAt_const.mul h_log
 
+/-- **Partition function jointly `AnalyticOnNhd ℝ` over `Set.univ`**
+(§18.6 extension): global form of `partitionFunction_analyticAt_joint`. -/
+theorem partitionFunction_analyticOnNhd_joint
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    AnalyticOnNhd ℝ
+      (fun p : ℝ × ℝ × ℝ => partitionFunction G ⟨p.2.1, p.2.2, p.1⟩)
+      Set.univ :=
+  fun ⟨β, J, h⟩ _ => partitionFunction_analyticAt_joint G β J h
+
+/-- **Free energy jointly `AnalyticOnNhd ℝ` over `Set.univ`** (§18.6
+capstone, jointly): global form of `freeEnergy_analyticAt_joint`. -/
+theorem freeEnergy_analyticOnNhd_joint
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    AnalyticOnNhd ℝ
+      (fun p : ℝ × ℝ × ℝ => freeEnergy G ⟨p.2.1, p.2.2, p.1⟩)
+      Set.univ :=
+  fun ⟨β, J, h⟩ _ => freeEnergy_analyticAt_joint G β J h
+
 end IsingModel
