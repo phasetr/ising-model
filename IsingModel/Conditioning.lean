@@ -3976,6 +3976,70 @@ theorem evenSubgraph_pair_boundary_exists_edge_incident_to
   rcases Finset.mem_filter.mp he with ⟨he_in_X, he_contains_i⟩
   exact ⟨e, he_in_X, he_contains_i⟩
 
+/-- **Card-1 case of pair-boundary numerator: `X = {s(i,j)}` and
+`G.Adj i j` (GJ §18.7 foundation)**: if `i ≠ j`, `X.card = 1`, and `X`
+is in the FV (3.46) numerator filter for `A = {i, j}`, then
+`X = {s(i, j)}` and `i, j` are adjacent in `G`.
+
+Establishes the base case for the inductive `d_G(i, j) ≤ X.card`
+proof: when `X.card = 1`, the unique edge in `X` connects `i` and `j`
+directly, so the graph distance is `≤ 1 = X.card`.
+
+Proof: from Step 569 applied to both `i` and `j` (using
+symmetry of `A = {i, j}` for the second invocation), the unique edge
+in `X` must contain both `i` and `j`. Since `i ≠ j`, this edge is
+exactly `s(i, j)`. Membership in `G.edgeFinset` gives `G.Adj i j`. -/
+theorem evenSubgraph_pair_boundary_card_one_adj
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (i j : ι) (hij : i ≠ j)
+    (X : Finset (Sym2 ι))
+    (hX : X ∈ G.edgeFinset.powerset.filter
+        (fun X' : Finset (Sym2 ι) => ∀ v : ι,
+          Even ((if v ∈ ({i, j} : Finset ι) then (1 : ℕ) else 0)
+                + (X'.filter (v ∈ ·)).card)))
+    (hcard : X.card = 1) :
+    X = {s(i, j)} ∧ G.Adj i j := by
+  classical
+  obtain ⟨e, hX_eq⟩ := Finset.card_eq_one.mp hcard
+  -- Step 569 at (i, j): ∃ e' ∈ X, i ∈ e'. With X = {e}, e' = e, so i ∈ e.
+  obtain ⟨e_i, he_i, hi_in⟩ :=
+    evenSubgraph_pair_boundary_exists_edge_incident_to G i j X hX
+  rw [hX_eq, Finset.mem_singleton] at he_i
+  rw [he_i] at hi_in
+  -- Symmetry: A = {i, j} = {j, i}, so we can apply Step 569 with (j, i).
+  have hX_swap : X ∈ G.edgeFinset.powerset.filter
+      (fun X' : Finset (Sym2 ι) => ∀ v : ι,
+        Even ((if v ∈ ({j, i} : Finset ι) then (1 : ℕ) else 0)
+              + (X'.filter (v ∈ ·)).card)) := by
+    have h_set_eq : ({j, i} : Finset ι) = ({i, j} : Finset ι) := by
+      ext x; simp [or_comm]
+    rw [h_set_eq]; exact hX
+  obtain ⟨e_j, he_j, hj_in⟩ :=
+    evenSubgraph_pair_boundary_exists_edge_incident_to G j i X hX_swap
+  rw [hX_eq, Finset.mem_singleton] at he_j
+  rw [he_j] at hj_in
+  -- e contains both i and j; since i ≠ j, e = s(i, j)
+  have he_eq : e = s(i, j) := by
+    induction e using Sym2.ind with
+    | _ a b =>
+      rcases Sym2.mem_iff.mp hi_in with hi_eq | hi_eq
+      · subst hi_eq
+        rcases Sym2.mem_iff.mp hj_in with hj_eq | hj_eq
+        · exact absurd hj_eq.symm hij
+        · subst hj_eq; rfl
+      · subst hi_eq
+        rcases Sym2.mem_iff.mp hj_in with hj_eq | hj_eq
+        · subst hj_eq; exact Sym2.eq_swap
+        · exact absurd hj_eq.symm hij
+  -- X ⊆ G.edgeFinset gives e ∈ G.edgeFinset, so G.Adj i j
+  have hX_sub : X ⊆ G.edgeFinset :=
+    Finset.mem_powerset.mp (Finset.mem_filter.mp hX).1
+  rw [hX_eq] at hX_sub
+  have he_in_G : e ∈ G.edgeFinset := hX_sub (Finset.mem_singleton_self _)
+  rw [he_eq, SimpleGraph.mem_edgeFinset, SimpleGraph.mem_edgeSet] at he_in_G
+  refine ⟨?_, he_in_G⟩
+  rw [hX_eq, he_eq]
+
 /-- **Pair correlation weak upper bound `≤ 2^|E| · tanh(β·J)` at `h = 0`
 (GJ §18.7 weak upper bound)**: under `0 ≤ β·J`,
 \[
