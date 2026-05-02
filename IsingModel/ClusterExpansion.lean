@@ -3090,6 +3090,20 @@ theorem freeEnergy_eq_polymerFreeEnergy
   rw [← evenSubgraphs_eq_inline_filter,
       evenSubgraphs_sum_eq_vdPolymerFamilies_sum G (Real.tanh (β * J))]
 
+/-- **Ferromagnetic `freeEnergy = log 2 + ... + polymerFreeEnergy/|ι|`**
+(Step 616): under `0 ≤ J`, `0 < β`, `0 < |ι|`, the Step 612 decomposition
+holds (since `0 ≤ β·J` follows from `mul_nonneg`). -/
+theorem freeEnergy_eq_polymerFreeEnergy_ferromagnetic
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (hne : 0 < Fintype.card ι) :
+    freeEnergy G ⟨J, 0, β⟩ =
+      Real.log 2 +
+        (G.edgeFinset.card : ℝ) / Fintype.card ι *
+          Real.log (Real.cosh (β * J)) +
+        polymerFreeEnergy G (Real.tanh (β * J)) / Fintype.card ι :=
+  freeEnergy_eq_polymerFreeEnergy G J β (mul_nonneg hβ.le hJ) hne
+
 /-- **`polymerFreeEnergy` analyticAt in `β`** (Step 613): named-wrapper
 restatement of Step 608. -/
 theorem polymerFreeEnergy_tanh_analyticAt_beta
