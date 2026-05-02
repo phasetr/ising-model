@@ -3863,4 +3863,16 @@ theorem vdPolymerFamilies_sum_minus_one_le_of_nonneg
   rw [vdPolymerFamilies_sum_eq_one_add] at h_le
   linarith
 
+/-- **`ε(t)` is continuous** (Step 662, Mayer general-t Phase A):
+finite sum of finite products of monomials in `t`. -/
+theorem vdPolymerFamilies_sum_minus_one_continuous
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    Continuous (fun t : ℝ =>
+      ∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅,
+        ∏ P ∈ Γ, t ^ P.card) := by
+  refine continuous_finset_sum _ (fun Γ _ => ?_)
+  refine continuous_finset_prod _ (fun P _ => ?_)
+  exact continuous_id.pow _
+
 end IsingModel
