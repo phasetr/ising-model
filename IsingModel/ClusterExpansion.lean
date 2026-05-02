@@ -313,6 +313,21 @@ theorem mem_evenSubgraphs {ι : Type*} [Fintype ι] [DecidableEq ι]
   rw [Finset.mem_filter, Finset.mem_powerset]
   refine ⟨fun ⟨_, h⟩ => h, fun h => ⟨h.subset, h⟩⟩
 
+/-- **Bridge to the inline FV (3.45) filter**: `evenSubgraphs G` equals
+the inline form `G.edgeFinset.powerset.filter (∀ v, Even ((·.filter
+(v ∈ ·)).card))` used by `partitionFunction_high_temp_expansion_h_zero_closed`. -/
+theorem evenSubgraphs_eq_inline_filter {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    evenSubgraphs G =
+      G.edgeFinset.powerset.filter
+        (fun X : Finset (Sym2 ι) =>
+          ∀ v : ι, Even ((X.filter (v ∈ ·)).card)) := by
+  unfold evenSubgraphs
+  apply Finset.filter_congr
+  intro X hX
+  rw [Finset.mem_powerset] at hX
+  exact ⟨fun h => h.even_degree, fun h => ⟨hX, h⟩⟩
+
 /-- **All polymers in a graph**: the natural reference universe of
 polymers in `G`, defined noncomputably as the filter of polymers in
 `G.edgeFinset.powerset`. -/
