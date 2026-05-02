@@ -4011,6 +4011,32 @@ theorem polymerFreeEnergy_hasSum_via_log_eventually
     h_abs_tendsto.eventually_lt_const zero_lt_one
   exact h_abs_lt.mono (fun t h => polymerFreeEnergy_hasSum_via_log G h)
 
+/-- **Explicit convergence radius for Mayer log expansion**: under
+`0 ≤ t` with `(1 + t) ^ |E(G)| < 2`, the polymer free energy admits
+the convergent series representation
+  polymerFreeEnergy G t = ∑_{n ≥ 0} (-1)^n · ε(t)^(n+1) / (n+1).
+
+Combines Step 661 (`ε(t) ≤ (1+t)^|E| - 1`) and Step 660 (`ε(t) ≥ 0`)
+to derive `|ε(t)| < 1`, then applies `polymerFreeEnergy_hasSum_via_log`. -/
+theorem polymerFreeEnergy_hasSum_via_log_of_pow_lt_two
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) (h_pow : (1 + t) ^ G.edgeFinset.card < 2) :
+    HasSum (fun n : ℕ =>
+        (-1 : ℝ) ^ n *
+          (∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅,
+            ∏ P ∈ Γ, t ^ P.card) ^ (n + 1) /
+          (n + 1))
+      (polymerFreeEnergy G t) := by
+  have h_eps_nonneg := vdPolymerFamilies_sum_minus_one_nonneg_of_nonneg G ht
+  have h_eps_le := vdPolymerFamilies_sum_minus_one_le_of_nonneg G ht
+  have h_eps_lt_one :
+      |∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅,
+        ∏ P ∈ Γ, t ^ P.card| < 1 := by
+    rw [abs_of_nonneg h_eps_nonneg]
+    linarith
+  exact polymerFreeEnergy_hasSum_via_log G h_eps_lt_one
+
 /-! ## K_n alternating connected-spanning subgraph sum (Mayer Phase B)
 
 **Goal**: prove the Mayer combinatorial identity
