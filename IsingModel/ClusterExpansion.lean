@@ -1614,4 +1614,46 @@ theorem partitionFunction_differentiable_J_h_zero
   refine (differentiable_const _).mul ?_
   exact (Real.differentiable_cosh.comp h_mul).pow _
 
+/-- **Real-analytic version of `Finset.prod` of monomials**: for any
+finite set `Γ : Finset (Finset (Sym2 ι))`, the function
+`fun t : ℝ => ∏ P ∈ Γ, t ^ P.card` is real-analytic at every point.
+Proof by `Finset.induction` on `Γ`. -/
+theorem analyticAt_prod_pow
+    {ι : Type*} (Γ : Finset (Finset (Sym2 ι))) (t : ℝ) :
+    AnalyticAt ℝ (fun s : ℝ => ∏ P ∈ Γ, s ^ P.card) t := by
+  classical
+  induction Γ using Finset.induction_on with
+  | empty =>
+      simpa using (analyticAt_const : AnalyticAt ℝ (fun _ : ℝ => (1 : ℝ)) t)
+  | insert P Γ hP ih =>
+      have h_step : (fun s : ℝ => ∏ P' ∈ insert P Γ, s ^ P'.card) =
+          (fun s : ℝ => s ^ P.card * ∏ P' ∈ Γ, s ^ P'.card) := by
+        funext s
+        exact Finset.prod_insert hP
+      rw [h_step]
+      exact (analyticAt_id.pow P.card).mul ih
+
+/-- **VD polymer-family sum is real-analytic in `t`**: at every `t : ℝ`,
+the polymer-family sum is a polynomial in `t` and hence real-analytic.
+Proof by `Finset.induction` on `vdCompatiblePolymerFamilies G` using
+`analyticAt_prod_pow`. Strengthens Step 558 (`Differentiable`) to
+`AnalyticAt ℝ`. -/
+theorem vdPolymerFamilies_sum_analyticAt
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (t : ℝ) :
+    AnalyticAt ℝ (fun s : ℝ =>
+      ∑ Γ ∈ vdCompatiblePolymerFamilies G, ∏ P ∈ Γ, s ^ P.card) t := by
+  classical
+  induction (vdCompatiblePolymerFamilies G) using Finset.induction_on with
+  | empty =>
+      simpa using (analyticAt_const : AnalyticAt ℝ (fun _ : ℝ => (0 : ℝ)) t)
+  | insert Γ S hΓ ih =>
+      have h_step : (fun s : ℝ => ∑ Γ' ∈ insert Γ S, ∏ P ∈ Γ', s ^ P.card) =
+          (fun s : ℝ => (∏ P ∈ Γ, s ^ P.card) +
+            ∑ Γ' ∈ S, ∏ P ∈ Γ', s ^ P.card) := by
+        funext s
+        exact Finset.sum_insert hΓ
+      rw [h_step]
+      exact (analyticAt_prod_pow Γ t).add ih
+
 end IsingModel
