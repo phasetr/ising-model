@@ -919,6 +919,23 @@ theorem mem_allPolymers {ι : Type*} [DecidableEq ι]
   rw [Finset.mem_filter, Finset.mem_powerset]
   refine ⟨fun ⟨_, h⟩ => h, fun h => ⟨h.isEven.subset, h⟩⟩
 
+/-- **Even subgraph polymer decomposition (main statement)**: every even
+subgraph `X ⊆ G.edgeFinset` has a canonical decomposition into a
+vertex-disjoint compatible polymer family `polymerDecomposition X` whose
+biUnion recovers `X`.
+
+This is the heart of GJ §18.4 cluster expansion at the lattice Ising
+level: `evenSubgraphs G` is in bijection with the vertex-disjoint
+compatible polymer families with `biUnion ⊆ G.edgeFinset`. -/
+theorem IsEvenSubgraph.polymerDecomposition_main
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {G : SimpleGraph ι} [Fintype G.edgeSet]
+    {X : Finset (Sym2 ι)} (hX : IsEvenSubgraph G X) :
+    IsCompatiblePolymerFamilyVertexDisjoint G (polymerDecomposition X) ∧
+    (polymerDecomposition X).biUnion id = X :=
+  ⟨hX.polymerDecomposition_isCompatibleVertexDisjoint,
+   polymerDecomposition_biUnion_id X⟩
+
 /-- **Polymer model partition function (abstract)**: given a reference
 finite universe of polymer candidates `Ω : Finset (Finset (Sym2 ι))`
 and a weight function `z : Finset (Sym2 ι) → ℝ`, the polymer model
