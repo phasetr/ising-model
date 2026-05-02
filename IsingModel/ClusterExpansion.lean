@@ -2837,6 +2837,40 @@ theorem ursellCoefficient_abs_le_pow_div_factorial
   refine div_le_div_of_nonneg_right ?_ (Nat.cast_nonneg _)
   exact_mod_cast connectedSpanningEdgeSubsets_card_le_pow _
 
+/-- **Polymer-family sum ≥ 1 under `t ≥ 0`** (Step 605): for any
+non-negative activity parameter `t`, the empty family `Γ = ∅`
+contributes `1` and all other families contribute non-negative
+products `∏ P ∈ Γ, t^|P| ≥ 0`. Hence the total is at least `1`.
+This generalises `one_le_vdPolymerFamilies_sum` (Step 549) from the
+tanh form to a generic non-negative activity. -/
+theorem vdPolymerFamilies_sum_ge_one_of_nonneg
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) :
+    1 ≤ ∑ Γ ∈ vdCompatiblePolymerFamilies G, ∏ P ∈ Γ, t ^ P.card := by
+  classical
+  have h_empty_in :
+      (∅ : Finset (Finset (Sym2 ι))) ∈ vdCompatiblePolymerFamilies G := by
+    rw [mem_vdCompatiblePolymerFamilies]
+    exact ⟨Finset.empty_subset _, IsCompatiblePolymerFamilyVertexDisjoint.empty G⟩
+  have h_nonneg : ∀ Γ ∈ vdCompatiblePolymerFamilies G,
+      0 ≤ ∏ P ∈ Γ, t ^ P.card :=
+    fun _ _ => Finset.prod_nonneg (fun _ _ => pow_nonneg ht _)
+  have h_empty_eq : (1 : ℝ) =
+      ∏ P ∈ (∅ : Finset (Finset (Sym2 ι))), t ^ P.card := (Finset.prod_empty).symm
+  rw [h_empty_eq]
+  exact Finset.single_le_sum h_nonneg h_empty_in
+
+/-- **Polymer-family sum > 0 under `t ≥ 0`** (Step 605):
+strict positivity follows from `≥ 1` and `0 < 1`. Useful to ensure
+`Real.log (vdPolymerFamilies_sum G t)` is well-defined. -/
+theorem vdPolymerFamilies_sum_pos_of_nonneg
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) :
+    0 < ∑ Γ ∈ vdCompatiblePolymerFamilies G, ∏ P ∈ Γ, t ^ P.card :=
+  lt_of_lt_of_le zero_lt_one (vdPolymerFamilies_sum_ge_one_of_nonneg G ht)
+
 /-- **Mayer expansion term absolute bound** (Step 604): the triangle
 inequality applied to the Mayer term gives
 `|mayerExpansionTerm G n t| ≤ ∑_ω |ϕ^T(ω)| · |z(t, ω)|`. -/
