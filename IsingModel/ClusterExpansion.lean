@@ -441,6 +441,29 @@ theorem mem_polymerDecomposition {ι : Type*} [DecidableEq ι]
   unfold polymerDecomposition
   rw [Finset.mem_image]
 
+/-- **`polymerDecomposition X` covers `X`**:
+`(polymerDecomposition X).biUnion id = X`.
+
+Forward: every element of the biUnion is in some component, which is
+a subset of `X`. Backward: every `e ∈ X` is in `edgeComponent X e`
+(Step 532), which is a member of the decomposition. -/
+theorem polymerDecomposition_biUnion_id {ι : Type*} [DecidableEq ι]
+    (X : Finset (Sym2 ι)) :
+    (polymerDecomposition X).biUnion id = X := by
+  ext e
+  rw [Finset.mem_biUnion]
+  refine ⟨?_, ?_⟩
+  · rintro ⟨C, hC, heC⟩
+    rw [mem_polymerDecomposition] at hC
+    obtain ⟨f, _hf, hCf⟩ := hC
+    rw [show (id C : Finset (Sym2 ι)) = C from rfl] at heC
+    rw [← hCf] at heC
+    exact (edgeComponent_subset X f) heC
+  · intro he
+    refine ⟨edgeComponent X e, ?_, ?_⟩
+    · rw [mem_polymerDecomposition]; exact ⟨e, he, rfl⟩
+    · exact self_mem_edgeComponent he
+
 /-- **Polymer edge-disjointness**: two polymers `P, Q` are *edge-disjoint*
 if they share no edge. This is a *weak* compatibility relation that
 suffices for the multiplicative weight identity but does not give a
