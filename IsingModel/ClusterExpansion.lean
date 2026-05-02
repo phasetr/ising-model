@@ -3322,4 +3322,18 @@ theorem mayerPartialSum_eq_zero_of_edgeFinset_empty
   mayerPartialSum_eq_zero_of_no_polymers G
     (allPolymers_eq_empty_of_edgeFinset_empty G h_empty) t N
 
+/-- **`freeEnergy = log 2` at `β·J = 0`** (Step 624): when `β·J = 0`,
+the Step 612 decomposition reduces to `f = log 2` since
+`cosh(0) = 1`, `log 1 = 0`, and `polymerFreeEnergy G (tanh 0) = 0`
+(Step 600). Recovers the well-known free-energy value at trivial
+slices. -/
+theorem freeEnergy_eq_log_two_at_betaJ_zero
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (hβJ : β * J = 0) (hne : 0 < Fintype.card ι) :
+    freeEnergy G ⟨J, 0, β⟩ = Real.log 2 := by
+  rw [freeEnergy_eq_polymerFreeEnergy G J β (hβJ.symm ▸ le_refl 0) hne, hβJ,
+      Real.cosh_zero, Real.log_one, Real.tanh_zero,
+      polymerFreeEnergy_at_zero, mul_zero, zero_div, add_zero, add_zero]
+
 end IsingModel
