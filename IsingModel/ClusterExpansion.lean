@@ -2897,6 +2897,40 @@ theorem log_vdPolymerFamilies_sum_analyticOnNhd_Ici_zero
                                  ∏ P ∈ Γ, s ^ P.card)) (Set.Ici 0) :=
   fun _ ht => log_vdPolymerFamilies_sum_analyticAt G ht
 
+/-- **`Real.tanh` is non-negative under non-negative argument** (helper
+for Step 608): `0 ≤ x → 0 ≤ Real.tanh x`. Uses `Real.sinh_nonneg_iff`
+and `Real.cosh_pos`. -/
+private theorem real_tanh_nonneg {x : ℝ} (hx : 0 ≤ x) : 0 ≤ Real.tanh x := by
+  rw [Real.tanh_eq_sinh_div_cosh]
+  exact div_nonneg (Real.sinh_nonneg_iff.mpr hx) (Real.cosh_pos x).le
+
+/-- **`log (vdPolymerFamilies_sum tanh(β·J))` analyticAt in `β`**
+(Step 608): under `0 ≤ β·J`, the function
+`β' ↦ Real.log (∑_Γ ∏_{P ∈ Γ} tanh(β'·J)^|P|)` is `AnalyticAt ℝ` at `β`.
+Combines Step 562 (vdSum analytic in β via tanh chain) with positivity
+of vdSum at `tanh(β·J) ≥ 0` (Steps 605 + helper). -/
+theorem log_vdPolymerFamilies_sum_tanh_analyticAt_beta
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J β : ℝ) (hβJ : 0 ≤ β * J) :
+    AnalyticAt ℝ
+      (fun β' : ℝ => Real.log
+        (∑ Γ ∈ vdCompatiblePolymerFamilies G,
+          ∏ P ∈ Γ, Real.tanh (β' * J) ^ P.card)) β := by
+  refine (vdPolymerFamilies_sum_tanh_analyticAt_beta G J β).log ?_
+  exact vdPolymerFamilies_sum_pos_of_nonneg G (real_tanh_nonneg hβJ)
+
+/-- **`log (vdPolymerFamilies_sum tanh(β·J))` analyticAt in `J`**
+(Step 608): dual of `_beta`. -/
+theorem log_vdPolymerFamilies_sum_tanh_analyticAt_J
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (β J : ℝ) (hβJ : 0 ≤ β * J) :
+    AnalyticAt ℝ
+      (fun J' : ℝ => Real.log
+        (∑ Γ ∈ vdCompatiblePolymerFamilies G,
+          ∏ P ∈ Γ, Real.tanh (β * J') ^ P.card)) J := by
+  refine (vdPolymerFamilies_sum_tanh_analyticAt_J G β J).log ?_
+  exact vdPolymerFamilies_sum_pos_of_nonneg G (real_tanh_nonneg hβJ)
+
 /-- **Mayer expansion term absolute bound** (Step 604): the triangle
 inequality applied to the Mayer term gives
 `|mayerExpansionTerm G n t| ≤ ∑_ω |ϕ^T(ω)| · |z(t, ω)|`. -/
