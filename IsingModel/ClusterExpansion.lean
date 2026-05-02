@@ -420,6 +420,27 @@ theorem IsEvenSubgraph.edgeComponent_isPolymer
   nonempty := ⟨e, self_mem_edgeComponent he⟩
   connected := isEdgeConnected_edgeComponent e
 
+/-- **Polymer decomposition of an edge subset**: the (deduplicated)
+collection of edge components of `X`, indexed by representative
+edges in `X`.
+
+For an even subgraph `X`, this is the set of polymers in the canonical
+decomposition `X = Γ.biUnion id` where `Γ` is vertex-disjoint
+compatible (proved in subsequent PRs). -/
+noncomputable def polymerDecomposition {ι : Type*} [DecidableEq ι]
+    (X : Finset (Sym2 ι)) : Finset (Finset (Sym2 ι)) := by
+  classical
+  exact X.image (fun e => edgeComponent X e)
+
+/-- **Membership in `polymerDecomposition`**: a `C` is in the
+decomposition iff there exists `e ∈ X` with `C = edgeComponent X e`. -/
+theorem mem_polymerDecomposition {ι : Type*} [DecidableEq ι]
+    {X : Finset (Sym2 ι)} {C : Finset (Sym2 ι)} :
+    C ∈ polymerDecomposition X ↔ ∃ e ∈ X, edgeComponent X e = C := by
+  classical
+  unfold polymerDecomposition
+  rw [Finset.mem_image]
+
 /-- **Polymer edge-disjointness**: two polymers `P, Q` are *edge-disjoint*
 if they share no edge. This is a *weak* compatibility relation that
 suffices for the multiplicative weight identity but does not give a
