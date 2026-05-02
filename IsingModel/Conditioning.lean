@@ -3907,6 +3907,39 @@ theorem evenSubgraph_pair_boundary_card_pos
     simp [hi_mem] at h_at_i
   · exact h
 
+omit [Fintype ι] in
+/-- **Erase-edge filter card transition (GJ §18.7 foundation)**:
+for `X : Finset (Sym2 ι)`, `e ∈ X`, and any vertex `v`,
+\[
+|\{X' \in X \mid v \in X'\}|
+  = |\{X' \in X.\mathrm{erase}\,e \mid v \in X'\}|
+    + [v \in e],
+\]
+i.e., erasing `e` decreases the per-vertex filter card by `1` exactly
+when `v` is incident to `e`, and leaves it unchanged otherwise.
+
+Encodes the parity-flip behaviour `∂(X.erase e) = ∂X △ e` underlying
+the inductive proof of `d_G(i, j) ≤ |X|` (planned Step 571+).
+
+Proof: combine `Finset.filter_erase` (filter and erase commute) with
+case analysis on whether `v ∈ e`. -/
+theorem filter_mem_card_erase
+    (X : Finset (Sym2 ι)) (e : Sym2 ι) (hX : e ∈ X) (v : ι) :
+    (X.filter (v ∈ ·)).card =
+      ((X.erase e).filter (v ∈ ·)).card + (if v ∈ e then 1 else 0) := by
+  classical
+  rw [Finset.filter_erase]
+  by_cases hv : v ∈ e
+  · have h_e_in_filter : e ∈ X.filter (v ∈ ·) :=
+      Finset.mem_filter.mpr ⟨hX, hv⟩
+    rw [Finset.card_erase_of_mem h_e_in_filter, if_pos hv]
+    have h_pos : 0 < (X.filter (v ∈ ·)).card := Finset.card_pos.mpr ⟨e, h_e_in_filter⟩
+    omega
+  · have h_e_notin_filter : e ∉ X.filter (v ∈ ·) := by
+      intro h_in
+      exact hv (Finset.mem_filter.mp h_in).2
+    rw [Finset.erase_eq_of_notMem h_e_notin_filter, if_neg hv, Nat.add_zero]
+
 /-- **Pair-boundary numerator: `i` is incident to some edge in `X`
 (GJ §18.7 foundation)**: for any `X` in the FV (3.46) numerator filter
 for `A = {i, j}`, there exists an edge `e ∈ X` with `i ∈ e`.
