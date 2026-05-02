@@ -82,4 +82,43 @@ theorem isEvenSubgraph_iff {ι : Type*} [DecidableEq ι]
     IsEvenSubgraph G X ↔ ∀ v : ι, Even ((X.filter (v ∈ ·)).card) :=
   ⟨fun h => h.even_degree, fun h => ⟨hX, h⟩⟩
 
+/-- **Edge-adjacency relation in an edge subset**: two edges in `X` are
+adjacent if they share a vertex. Used to define edge-connectedness of
+an edge subset. -/
+def edgeAdjacentIn {ι : Type*} (X : Finset (Sym2 ι))
+    (e f : Sym2 ι) : Prop :=
+  e ∈ X ∧ f ∈ X ∧ ∃ v : ι, v ∈ e ∧ v ∈ f
+
+/-- **Edge-connectedness of an edge subset**: any two edges in `X` are
+connected by a chain of edge-adjacency steps within `X`. The empty set
+is vacuously edge-connected, and a single edge is also trivially
+edge-connected (the reflexive case). -/
+def IsEdgeConnected {ι : Type*} (X : Finset (Sym2 ι)) : Prop :=
+  ∀ e₁ ∈ X, ∀ e₂ ∈ X,
+    Relation.ReflTransGen (edgeAdjacentIn X) e₁ e₂
+
+/-- **Polymer**: a non-empty connected even subgraph. In the
+high-temperature cluster expansion of the lattice Ising model, the FV
+(3.45) sum `∑_{X ⊆ E even} tanh(β·J)^|X|` decomposes into a sum over
+edge-disjoint families of polymers via the connected-component
+decomposition of `X`. -/
+structure IsPolymer {ι : Type*} [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (P : Finset (Sym2 ι)) : Prop where
+  /-- `P` is an even subgraph of `G`. -/
+  isEven : IsEvenSubgraph G P
+  /-- `P` is non-empty (the empty even subgraph is excluded). -/
+  nonempty : P.Nonempty
+  /-- `P` is edge-connected. -/
+  connected : IsEdgeConnected P
+
+/-- **Edge-connectedness is reflexive on its singletons**: a single
+edge `{e}` is edge-connected. -/
+theorem isEdgeConnected_singleton {ι : Type*} (e : Sym2 ι) :
+    IsEdgeConnected ({e} : Finset (Sym2 ι)) := by
+  intro e₁ he₁ e₂ he₂
+  rw [Finset.mem_singleton] at he₁ he₂
+  subst he₁; subst he₂
+  exact Relation.ReflTransGen.refl
+
 end IsingModel
