@@ -3340,6 +3340,20 @@ theorem polymerFreeEnergy_continuousOn_Ici_zero
   fun _ ht =>
     ((polymerFreeEnergy_analyticAt G ht).continuousAt).continuousWithinAt
 
+/-- **`mayerPartialSum` ContinuousOn arbitrary set** (Step 628). -/
+theorem mayerPartialSum_continuousOn
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (N : ℕ) (s : Set ℝ) :
+    ContinuousOn (fun t : ℝ => mayerPartialSum G N t) s :=
+  (mayerPartialSum_continuous G N).continuousOn
+
+/-- **`mayerPartialSum` DifferentiableOn arbitrary set** (Step 628). -/
+theorem mayerPartialSum_differentiableOn
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (N : ℕ) (s : Set ℝ) :
+    DifferentiableOn ℝ (fun t : ℝ => mayerPartialSum G N t) s :=
+  (mayerPartialSum_differentiable G N).differentiableOn
+
 /-- **`polymerFreeEnergy` HasDerivAt** (Step 625): explicit derivative
 of `polymerFreeEnergy G t = Real.log (vdPolymerFamilies_sum G t)` via
 the log-derivative formula `(log f)' = f' / f`. The derivative of
