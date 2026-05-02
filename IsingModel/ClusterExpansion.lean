@@ -3519,6 +3519,16 @@ theorem mayerExpansionTerm_one_nonneg_of_nonneg
   rw [mayerExpansionTerm_one]
   exact Finset.sum_nonneg (fun P _ => pow_nonneg ht _)
 
+/-- **`mayerPartialSum` recurrence in `N`** (Step 638):
+`mayerPartialSum G (N+1) t = mayerPartialSum G N t + mayerExpansionTerm G (N+1) t`. -/
+theorem mayerPartialSum_succ
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (N : ℕ) (t : ℝ) :
+    mayerPartialSum G (N + 1) t =
+      mayerPartialSum G N t + mayerExpansionTerm G (N + 1) t := by
+  unfold mayerPartialSum
+  rw [show ((N + 1) + 1) = (N + 1) + 1 from rfl, Finset.sum_range_succ]
+
 /-- **`mayerExpansionTerm G 2 t ≤ 0` under `t ≥ 0`** (Step 637):
 the n=2 Mayer term equals `-1/2 · ∑_{(P,Q) incompat} t^|P|·t^|Q|`,
 non-positive. Matches the alternating sign of log(1+x) Taylor
