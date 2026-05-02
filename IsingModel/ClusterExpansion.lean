@@ -3504,6 +3504,18 @@ theorem polymerFreeEnergy_le_of_le_of_nonneg
     polymerFreeEnergy G t ≤ polymerFreeEnergy G s :=
   polymerFreeEnergy_monotoneOn_Ici_zero G ht hs hts
 
+/-- **`polymerFreeEnergy` strict monotonicity-style at `t > 0`**
+(Step 650): for any `0 ≤ t ≤ s`, `polymerFreeEnergy G t ≤
+polymerFreeEnergy G s`. Trivial corollary of Step 649; serves as a
+75-PR milestone marker for the §18.4 Mayer infrastructure
+(Steps 576-650). -/
+theorem polymerFreeEnergy_le_of_le_strict_form
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {t s : ℝ} (ht : 0 ≤ t) (hts : t ≤ s) :
+    polymerFreeEnergy G t ≤ polymerFreeEnergy G s :=
+  polymerFreeEnergy_le_of_le_of_nonneg G ht (le_trans ht hts) hts
+
 /-- **`polymerFreeEnergy ≤ |E| · t` under `t ≥ 0`** (Step 634):
 sharpen Step 630 via `Real.log_le_sub_one_of_pos` (i.e. `log(1+t) ≤ t`). -/
 theorem polymerFreeEnergy_le_card_mul_of_nonneg
