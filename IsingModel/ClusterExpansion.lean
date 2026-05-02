@@ -1115,6 +1115,49 @@ theorem IsEvenSubgraph.polymerDecomposition_mem_vdCompatiblePolymerFamilies
   rw [mem_allPolymers]
   exact hX.polymerDecomposition_isPolymer hC
 
+/-- **FV (3.45) sum equals VD-polymer sum**: under no further hypotheses,
+`∑_{X ∈ evenSubgraphs G} t^|X| = ∑_{Γ ∈ vdCompatiblePolymerFamilies G,
+  ∏_{P ∈ Γ} t^|P|}`.
+
+Proved by `Finset.sum_bij` along the bijection `X ↔ polymerDecomposition X`
+between `evenSubgraphs G` and `vdCompatiblePolymerFamilies G`. The
+weight identity uses `pow_card_biUnion` (Step 521) plus
+`polymerDecomposition_biUnion_id = X` (Step 539). -/
+theorem evenSubgraphs_sum_eq_vdPolymerFamilies_sum
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (t : ℝ) :
+    (∑ X ∈ evenSubgraphs G, t ^ X.card) =
+      ∑ Γ ∈ vdCompatiblePolymerFamilies G, ∏ P ∈ Γ, t ^ P.card := by
+  classical
+  apply Finset.sum_bij
+    (fun X (_ : X ∈ evenSubgraphs G) => polymerDecomposition X)
+  · -- Membership: polymerDecomposition X ∈ vdCompatiblePolymerFamilies G.
+    intro X hX
+    rw [mem_evenSubgraphs] at hX
+    exact hX.polymerDecomposition_mem_vdCompatiblePolymerFamilies
+  · -- Injectivity: polymerDecomposition X = polymerDecomposition X' ⇒ X = X'.
+    intro X hX X' hX' h_eq
+    have h₁ : (polymerDecomposition X).biUnion id = X :=
+      polymerDecomposition_biUnion_id X
+    have h₂ : (polymerDecomposition X').biUnion id = X' :=
+      polymerDecomposition_biUnion_id X'
+    rw [← h₁, ← h₂, h_eq]
+  · -- Surjectivity: given Γ, find X with polymerDecomposition X = Γ.
+    intro Γ hΓ
+    rw [mem_vdCompatiblePolymerFamilies] at hΓ
+    refine ⟨Γ.biUnion id, ?_, ?_⟩
+    · rw [mem_evenSubgraphs]
+      exact hΓ.2.biUnion_isEvenSubgraph
+    · exact hΓ.2.polymerDecomposition_biUnion
+  · -- Weight match: t^|X| = ∏ t^|P|.
+    intro X hX
+    rw [mem_evenSubgraphs] at hX
+    have h_biU : (polymerDecomposition X).biUnion id = X :=
+      polymerDecomposition_biUnion_id X
+    have h_pow := hX.polymerDecomposition_isCompatibleVertexDisjoint.pow_card_biUnion t
+    rw [h_biU] at h_pow
+    exact h_pow
+
 /-- **Polymer model partition function (abstract)**: given a reference
 finite universe of polymer candidates `Ω : Finset (Finset (Sym2 ι))`
 and a weight function `z : Finset (Sym2 ι) → ℝ`, the polymer model
