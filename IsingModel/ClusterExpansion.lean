@@ -3366,6 +3366,29 @@ theorem mayerPartialSum_zero_tanh_le_polymerFreeEnergy_ferromagnetic
       polymerFreeEnergy G (Real.tanh (β * J)) :=
   mayerPartialSum_zero_tanh_le_polymerFreeEnergy G (mul_nonneg hβ.le hJ)
 
+/-- **`vdPolymerFamilies_sum` split as 1 + (Γ ≠ ∅) contribution**
+(Step 657, Mayer general-t Phase A): writing
+`vdSum G t = 1 + ε(t)` where `ε(t) = ∑_{Γ ∈ vdCompat, Γ ≠ ∅} ∏ t^|P|`.
+Foundation for `log(1+ε)` Taylor expansion via Mayer combinatorics. -/
+theorem vdPolymerFamilies_sum_eq_one_add
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (t : ℝ) :
+    (∑ Γ ∈ vdCompatiblePolymerFamilies G, ∏ P ∈ Γ, t ^ P.card) =
+      1 + ∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅,
+            ∏ P ∈ Γ, t ^ P.card := by
+  classical
+  have h_empty_in :
+      (∅ : Finset (Finset (Sym2 ι))) ∈ vdCompatiblePolymerFamilies G := by
+    rw [mem_vdCompatiblePolymerFamilies]
+    exact ⟨Finset.empty_subset _, IsCompatiblePolymerFamilyVertexDisjoint.empty G⟩
+  rw [show vdCompatiblePolymerFamilies G =
+        insert (∅ : Finset (Finset (Sym2 ι)))
+          ((vdCompatiblePolymerFamilies G).erase ∅) from
+        (Finset.insert_erase h_empty_in).symm,
+      Finset.sum_insert (Finset.notMem_erase _ _),
+      Finset.prod_empty,
+      Finset.erase_insert (Finset.notMem_erase _ _)]
+
 /-- **`allPolymers G = ∅` when `G` has no edges** (Step 620): an
 edgeless graph has no even subgraph other than `∅`, which is excluded
 from `IsPolymer` by the non-emptiness clause. -/
