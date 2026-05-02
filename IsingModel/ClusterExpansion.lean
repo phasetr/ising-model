@@ -126,6 +126,14 @@ theorem edgeAdjacentIn_symm {ι : Type*} {X : Finset (Sym2 ι)}
   rintro ⟨he, hf, v, hve, hvf⟩
   exact ⟨hf, he, v, hvf, hve⟩
 
+/-- **`Relation.ReflTransGen edgeAdjacentIn` is symmetric**:
+follows from `edgeAdjacentIn` being symmetric and the fact that the
+reflexive-transitive closure of a symmetric relation is symmetric. -/
+theorem reflTransGen_edgeAdjacentIn_symmetric {ι : Type*}
+    (X : Finset (Sym2 ι)) :
+    Symmetric (Relation.ReflTransGen (edgeAdjacentIn X)) :=
+  Relation.ReflTransGen.symmetric fun {_ _} h => edgeAdjacentIn_symm h
+
 /-- **Edge-connectedness of an edge subset**: any two edges in `X` are
 connected by a chain of edge-adjacency steps within `X`. The empty set
 is vacuously edge-connected, and a single edge is also trivially
