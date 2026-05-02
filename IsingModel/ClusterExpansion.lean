@@ -464,6 +464,19 @@ theorem polymerDecomposition_biUnion_id {ι : Type*} [DecidableEq ι]
     · rw [mem_polymerDecomposition]; exact ⟨e, he, rfl⟩
     · exact self_mem_edgeComponent he
 
+/-- **Members of `polymerDecomposition X` are polymers when `X` is
+even**: every component in the decomposition of an even subgraph is a
+polymer (non-empty + connected + even-degree). -/
+theorem IsEvenSubgraph.polymerDecomposition_isPolymer
+    {ι : Type*} [DecidableEq ι]
+    {G : SimpleGraph ι} [Fintype G.edgeSet]
+    {X : Finset (Sym2 ι)} (hX : IsEvenSubgraph G X)
+    {C : Finset (Sym2 ι)} (hC : C ∈ polymerDecomposition X) :
+    IsPolymer G C := by
+  rw [mem_polymerDecomposition] at hC
+  obtain ⟨e, he, rfl⟩ := hC
+  exact hX.edgeComponent_isPolymer he
+
 /-- **Polymer edge-disjointness**: two polymers `P, Q` are *edge-disjoint*
 if they share no edge. This is a *weak* compatibility relation that
 suffices for the multiplicative weight identity but does not give a
