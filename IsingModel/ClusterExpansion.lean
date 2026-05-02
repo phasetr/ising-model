@@ -3808,4 +3808,17 @@ theorem freeEnergy_eq_log_two_at_betaJ_zero
       Real.cosh_zero, Real.log_one, Real.tanh_zero,
       polymerFreeEnergy_at_zero, mul_zero, zero_div, add_zero, add_zero]
 
+/-- **`polymerFreeEnergy = log(1 + ε)` form** (Step 658, Mayer
+general-t Phase A): rewrite `polymerFreeEnergy G t` as
+`Real.log (1 + ε(t))` where `ε(t) = ∑_{Γ ≠ ∅} ∏ t^|P|`. Foundation
+for Taylor expansion `log(1+ε) = ∑_n (-1)^(n-1)/n · ε^n` for `|ε| < 1`. -/
+theorem polymerFreeEnergy_eq_log_one_add_eps
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (t : ℝ) :
+    polymerFreeEnergy G t =
+      Real.log (1 + ∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅,
+        ∏ P ∈ Γ, t ^ P.card) := by
+  unfold polymerFreeEnergy
+  rw [vdPolymerFamilies_sum_eq_one_add]
+
 end IsingModel
