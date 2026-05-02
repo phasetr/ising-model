@@ -2468,4 +2468,50 @@ theorem mayerExpansionTerm_analyticOnNhd
     AnalyticOnNhd ℝ (fun s : ℝ => mayerExpansionTerm G n s) Set.univ :=
   fun t _ => mayerExpansionTerm_analyticAt G n t
 
+/-- **Mayer expansion partial sum** (Step 591): finite truncation of
+the Mayer expansion through cluster size `N`,
+`mayerPartialSum G N t = ∑_{n = 0..N} mayerExpansionTerm G n t`.
+The full Mayer expansion `log Ξ = ∑_{n ≥ 0} mayerExpansionTerm G n t`
+is the limit of these partial sums; convergence follows from
+Kotecky-Preiss-type bounds (deferred). -/
+noncomputable def mayerPartialSum
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (N : ℕ) (t : ℝ) : ℝ :=
+  ∑ n ∈ Finset.range (N + 1), mayerExpansionTerm G n t
+
+/-- **Mayer partial sum is continuous in `t`** (Step 591). -/
+theorem mayerPartialSum_continuous
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (N : ℕ) :
+    Continuous (fun t : ℝ => mayerPartialSum G N t) := by
+  unfold mayerPartialSum
+  refine continuous_finset_sum _ (fun n _ => ?_)
+  exact mayerExpansionTerm_continuous G n
+
+/-- **Mayer partial sum is differentiable in `t`** (Step 591). -/
+theorem mayerPartialSum_differentiable
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (N : ℕ) :
+    Differentiable ℝ (fun t : ℝ => mayerPartialSum G N t) := by
+  unfold mayerPartialSum
+  refine Differentiable.fun_sum (fun n _ => ?_)
+  exact mayerExpansionTerm_differentiable G n
+
+/-- **Mayer partial sum is real-analytic at every `t`** (Step 591). -/
+theorem mayerPartialSum_analyticAt
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (N : ℕ) (t : ℝ) :
+    AnalyticAt ℝ (fun s : ℝ => mayerPartialSum G N s) t := by
+  unfold mayerPartialSum
+  refine Finset.analyticAt_fun_sum _ (fun n _ => ?_)
+  exact mayerExpansionTerm_analyticAt G n t
+
+/-- **Mayer partial sum `AnalyticOnNhd ℝ _ Set.univ`** (Step 591). -/
+theorem mayerPartialSum_analyticOnNhd
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (N : ℕ) :
+    AnalyticOnNhd ℝ (fun s : ℝ => mayerPartialSum G N s) Set.univ :=
+  fun t _ => mayerPartialSum_analyticAt G N t
+
 end IsingModel
