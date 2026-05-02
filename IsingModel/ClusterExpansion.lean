@@ -72,6 +72,34 @@ instance {ι : Type*} [Fintype ι] [DecidableEq ι]
     (X ⊆ G.edgeFinset ∧ ∀ v : ι, Even ((X.filter (v ∈ ·)).card)) ?_
   exact ⟨fun ⟨h₁, h₂⟩ => ⟨h₁, h₂⟩, fun ⟨h₁, h₂⟩ => ⟨h₁, h₂⟩⟩
 
+/-- **Union of disjoint even subgraphs is an even subgraph**: when two
+even subgraphs `X, Y ⊆ G.edgeFinset` are edge-disjoint, their union is
+also an even subgraph.
+
+This is the key building block for the cluster decomposition: a
+compatible polymer family unions to an even subgraph. -/
+theorem IsEvenSubgraph.union_disjoint {ι : Type*} [DecidableEq ι]
+    {G : SimpleGraph ι} [Fintype G.edgeSet]
+    {X Y : Finset (Sym2 ι)}
+    (hX : IsEvenSubgraph G X) (hY : IsEvenSubgraph G Y)
+    (hd : Disjoint X Y) :
+    IsEvenSubgraph G (X ∪ Y) where
+  subset := by
+    intro e he
+    rcases Finset.mem_union.mp he with he | he
+    · exact hX.subset he
+    · exact hY.subset he
+  even_degree v := by
+    have hX' := hX.even_degree v
+    have hY' := hY.even_degree v
+    have hfilter : (X ∪ Y).filter (v ∈ ·) =
+        X.filter (v ∈ ·) ∪ Y.filter (v ∈ ·) :=
+      Finset.filter_union _ _ _
+    have hd' : Disjoint (X.filter (v ∈ ·)) (Y.filter (v ∈ ·)) :=
+      hd.mono (Finset.filter_subset _ _) (Finset.filter_subset _ _)
+    rw [hfilter, Finset.card_union_of_disjoint hd']
+    exact hX'.add hY'
+
 /-- **Bridging lemma**: an `X ⊆ G.edgeFinset` is an `IsEvenSubgraph G X`
 iff every vertex has even incidence in `X`. This relates the new
 predicate to the inline form used by FV (3.45)
