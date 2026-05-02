@@ -4732,4 +4732,67 @@ theorem freeEnergy_analyticOnNhd_h
     AnalyticOnNhd ℝ (fun h' : ℝ => freeEnergy G ⟨J, h', β⟩) Set.univ :=
   fun h _ => freeEnergy_analyticAt_h G J β h
 
+/-- **Partition function jointly `AnalyticAt ℝ` in `(β, J, h)`** (§18.6
+extension): for any `(β, J, h)`, `Z(β, J, h) = ∑_σ exp(-β · H(σ))` is
+real-analytic JOINTLY in all three Ising parameters at every point.
+
+Proof: each summand `exp(β·J·A_σ + β·h·B_σ)` is `exp ∘ polynomial in
+(β, J, h)`, which is analytic jointly via `analyticAt_rexp` composed
+with the polynomial; sum over `σ` preserves analyticity. -/
+theorem partitionFunction_analyticAt_joint
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (β J h : ℝ) :
+    AnalyticAt ℝ
+      (fun p : ℝ × ℝ × ℝ => partitionFunction G ⟨p.2.1, p.2.2, p.1⟩)
+      (β, J, h) := by
+  -- p = (β', J', h')
+  have h_eq : (fun p : ℝ × ℝ × ℝ =>
+      partitionFunction G ⟨p.2.1, p.2.2, p.1⟩) =
+      fun p : ℝ × ℝ × ℝ => ∑ σ : Config ι,
+        Real.exp (p.1 * p.2.1 * (∑ e ∈ G.edgeFinset, edgeSpin σ e) +
+          p.1 * p.2.2 * (∑ i : ι, Spin.sign ℝ (σ i))) := by
+    funext p
+    unfold partitionFunction boltzmannWeight hamiltonian
+      interactionEnergy externalFieldEnergy
+    refine Finset.sum_congr rfl (fun σ _ => ?_)
+    congr 1
+    ring
+  rw [h_eq]
+  refine Finset.analyticAt_fun_sum _ (fun σ _ => ?_)
+  refine analyticAt_rexp.comp ?_
+  -- Linear combination of polynomials in (β, J, h).
+  have h_β : AnalyticAt ℝ (fun p : ℝ × ℝ × ℝ => p.1) (β, J, h) := analyticAt_fst
+  have h_snd : AnalyticAt ℝ (fun p : ℝ × ℝ × ℝ => p.2) (β, J, h) := analyticAt_snd
+  have h_J : AnalyticAt ℝ (fun p : ℝ × ℝ × ℝ => p.2.1) (β, J, h) :=
+    analyticAt_fst.comp h_snd
+  have h_h : AnalyticAt ℝ (fun p : ℝ × ℝ × ℝ => p.2.2) (β, J, h) :=
+    analyticAt_snd.comp h_snd
+  exact ((h_β.mul h_J).mul analyticAt_const).add ((h_β.mul h_h).mul analyticAt_const)
+
+/-- **Free energy jointly `AnalyticAt ℝ` in `(β, J, h)`** (§18.6
+capstone, jointly): `f = (1/|ι|) · log Z` is real-analytic jointly
+in all three Ising parameters at every point. -/
+theorem freeEnergy_analyticAt_joint
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (β J h : ℝ) :
+    AnalyticAt ℝ
+      (fun p : ℝ × ℝ × ℝ => freeEnergy G ⟨p.2.1, p.2.2, p.1⟩)
+      (β, J, h) := by
+  have h_pos : 0 < partitionFunction G ⟨J, h, β⟩ := partitionFunction_pos G _
+  set f : ℝ × ℝ × ℝ → ℝ :=
+    fun p => partitionFunction G ⟨p.2.1, p.2.2, p.1⟩ with hf_def
+  have h_inner : AnalyticAt ℝ f (β, J, h) :=
+    partitionFunction_analyticAt_joint G β J h
+  have h_f_val : f (β, J, h) = partitionFunction G ⟨J, h, β⟩ := rfl
+  have h_outer : AnalyticAt ℝ Real.log (f (β, J, h)) := by
+    rw [h_f_val]; exact analyticAt_log h_pos
+  have h_log :
+      AnalyticAt ℝ
+        (fun p : ℝ × ℝ × ℝ => Real.log (f p))
+        (β, J, h) := h_outer.comp h_inner
+  unfold freeEnergy
+  exact analyticAt_const.mul h_log
+
 end IsingModel
