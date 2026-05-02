@@ -3480,6 +3480,15 @@ theorem polymerFreeEnergy_le_card_mul_of_nonneg
   have := Real.log_le_sub_one_of_pos h_pos
   linarith
 
+/-- **`polymerFreeEnergy ≤ |E|·tanh(β·J)` under `0 ≤ β·J`** (Step 635):
+tanh form of Step 634. -/
+theorem polymerFreeEnergy_tanh_le_card_mul
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] {β J : ℝ} (hβJ : 0 ≤ β * J) :
+    polymerFreeEnergy G (Real.tanh (β * J)) ≤
+      G.edgeFinset.card * Real.tanh (β * J) :=
+  polymerFreeEnergy_le_card_mul_of_nonneg G (real_tanh_nonneg hβJ)
+
 /-- **`polymerFreeEnergy` HasDerivAt** (Step 625): explicit derivative
 of `polymerFreeEnergy G t = Real.log (vdPolymerFamilies_sum G t)` via
 the log-derivative formula `(log f)' = f' / f`. The derivative of
