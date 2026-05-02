@@ -617,6 +617,46 @@ theorem IsCompatiblePolymerFamilyVertexDisjoint.empty
     exact absurd hP (Finset.notMem_empty P)
   · simp
 
+/-- **Distinct components share no vertex**: if `C, C'` are different
+members of `polymerDecomposition X`, then they are vertex-disjoint.
+
+Proof: a shared support vertex `v` would force, via
+`edgeComponent_absorbs_incident`, an edge of `C` to also be in `C'`,
+violating the equal-or-disjoint property of distinct components. -/
+theorem polymerDecomposition_pairwise_vertexDisjoint
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {X : Finset (Sym2 ι)} :
+    (polymerDecomposition X : Set (Finset (Sym2 ι))).Pairwise
+      IsPolymerVertexDisjoint := by
+  intro C hC C' hC' hCC'
+  rw [Finset.mem_coe, mem_polymerDecomposition] at hC hC'
+  obtain ⟨e, _he, rfl⟩ := hC
+  obtain ⟨e', _he', rfl⟩ := hC'
+  have h_neq : edgeComponent X e ≠ edgeComponent X e' := hCC'
+  have h_disj := edgeComponent_eq_or_disjoint (X := X) e e'
+  rcases h_disj with heq | hdisj
+  · exact absurd heq h_neq
+  unfold IsPolymerVertexDisjoint
+  rw [Finset.disjoint_left]
+  intro v hv hv'
+  rw [mem_polymerSupport] at hv hv'
+  obtain ⟨f, hfC, hvf⟩ := hv
+  obtain ⟨g, hgC', hvg⟩ := hv'
+  have hgX : g ∈ X := (edgeComponent_subset X e') hgC'
+  have hg_in_e : g ∈ edgeComponent X e :=
+    edgeComponent_absorbs_incident hfC hvf hgX hvg
+  exact (Finset.disjoint_left.mp hdisj) hg_in_e hgC'
+
+/-- **`polymerDecomposition` is a vertex-disjoint compatible polymer
+family when `X` is even**. -/
+theorem IsEvenSubgraph.polymerDecomposition_isCompatibleVertexDisjoint
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {G : SimpleGraph ι} [Fintype G.edgeSet]
+    {X : Finset (Sym2 ι)} (hX : IsEvenSubgraph G X) :
+    IsCompatiblePolymerFamilyVertexDisjoint G (polymerDecomposition X) :=
+  ⟨fun _ hC => hX.polymerDecomposition_isPolymer hC,
+   polymerDecomposition_pairwise_vertexDisjoint⟩
+
 /-- **Union over a compatible polymer family is an even subgraph**:
 the `Finset.biUnion` of a compatible polymer family is an even subgraph
 of `G`. Proved by induction on the family. -/
