@@ -4164,6 +4164,106 @@ theorem evenSubgraph_pair_boundary_erase_swap
           rw [if_neg h3]
           simpa using h_par_v
 
+/-- **Pair-boundary graph-distance bound (GJ §18.7 capstone, key step)**:
+under `∂X = {i, j}` (i.e. `X` is in the FV (3.46) numerator filter for
+`A = {i, j}`), the graph distance satisfies `G.dist i j ≤ X.card`.
+
+Strong induction on `X.card`, building an explicit walk:
+- `i = j`: walk = `nil`, length `0 ≤ X.card` (and `dist_self = 0`).
+- `i ≠ j`, `X.card ≥ 1` (Step 567): pick `e = s(i, k) ∈ X` (Step 569),
+  giving `G.Adj i k` (since `e ∈ G.edgeFinset`).
+  - `k = j`: walk = `cons hadj nil`, length `1 ≤ X.card`.
+  - `k ≠ j`: erase `e`. Parity transition (Step 572) gives
+    `∂(X.erase e) = {k, j}`. IH on `X.erase e` (with
+    `(X.erase e).card < X.card`) yields a walk `k → j` of length
+    `≤ X.card - 1`. Prepend the `i → k` edge to get a walk `i → j` of
+    length `≤ X.card`.
+
+Combined with Step 568 (numerator counting via `tanh(β·J)^|X|`) and a
+`tanh(β·J)^k ≤ tanh(β·J)^{d_G(i,j)}` reduction (using `|X| ≥ d_G(i, j)`
+shown here), gives the §18.7 capstone exponential decay
+`⟨σ_iσ_j⟩ ≤ ... · tanh(β·J)^{d_G(i,j)}` at high temperature. -/
+theorem evenSubgraph_pair_boundary_dist_le
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (i j : ι)
+    (X : Finset (Sym2 ι))
+    (hX : X ∈ G.edgeFinset.powerset.filter
+        (fun X' : Finset (Sym2 ι) => ∀ v : ι,
+          Even ((if v ∈ ({i, j} : Finset ι) then (1 : ℕ) else 0)
+                + (X'.filter (v ∈ ·)).card))) :
+    G.dist i j ≤ X.card := by
+  classical
+  -- Reduce to constructing a walk of bounded length, then apply dist_le.
+  suffices h : ∀ (n : ℕ) (i' j' : ι) (X' : Finset (Sym2 ι)),
+      i' ≠ j' → X'.card = n →
+      X' ∈ G.edgeFinset.powerset.filter
+          (fun X'' : Finset (Sym2 ι) => ∀ v : ι,
+            Even ((if v ∈ ({i', j'} : Finset ι) then (1 : ℕ) else 0)
+                  + (X''.filter (v ∈ ·)).card)) →
+      ∃ p : G.Walk i' j', p.length ≤ X'.card by
+    by_cases hij : i = j
+    · subst hij
+      rw [G.dist_self]
+      exact Nat.zero_le _
+    · obtain ⟨p, hp⟩ := h X.card i j X hij rfl hX
+      exact (G.dist_le p).trans hp
+  intro n
+  induction n using Nat.strong_induction_on with
+  | _ n ih =>
+    intro i' j' X' hij' hcard hX'
+    have h_card_pos : 1 ≤ X'.card := evenSubgraph_pair_boundary_card_pos G i' j' X' hX'
+    -- Pick edge incident to i' (Step 569)
+    obtain ⟨e, he_in, hi_in⟩ :=
+      evenSubgraph_pair_boundary_exists_edge_incident_to G i' j' X' hX'
+    -- Other endpoint k via Sym2.Mem.other
+    have he_eq : s(i', Sym2.Mem.other hi_in) = e := Sym2.other_spec hi_in
+    have hX_sub : X' ⊆ G.edgeFinset :=
+      Finset.mem_powerset.mp (Finset.mem_filter.mp hX').1
+    have he_in_G : e ∈ G.edgeFinset := hX_sub he_in
+    have he_in_edgeSet : e ∈ G.edgeSet := SimpleGraph.mem_edgeFinset.mp he_in_G
+    have he_not_diag : ¬ e.IsDiag := G.not_isDiag_of_mem_edgeSet he_in_edgeSet
+    have hk_ne_i : Sym2.Mem.other hi_in ≠ i' := Sym2.other_ne he_not_diag hi_in
+    -- G.Adj i' k from e = s(i', k) ∈ G.edgeSet
+    have hadj_ik : G.Adj i' (Sym2.Mem.other hi_in) := by
+      have h_in : s(i', Sym2.Mem.other hi_in) ∈ G.edgeSet := he_eq.symm ▸ he_in_edgeSet
+      rwa [SimpleGraph.mem_edgeSet] at h_in
+    -- Case: k = j' or k ≠ j'
+    by_cases hk_eq : Sym2.Mem.other hi_in = j'
+    · -- k = j': single-edge walk of length 1
+      have hadj_ij : G.Adj i' j' := hk_eq ▸ hadj_ik
+      refine ⟨SimpleGraph.Walk.cons hadj_ij SimpleGraph.Walk.nil, ?_⟩
+      rw [SimpleGraph.Walk.length_cons, SimpleGraph.Walk.length_nil]
+      -- goal: 0 + 1 ≤ X'.card
+      omega
+    · -- k ≠ j': erase e, recurse via parity transition (Step 572)
+      have h_erase_card : (X'.erase e).card = n - 1 := by
+        rw [Finset.card_erase_of_mem he_in, hcard]
+      have h_erase_lt : (X'.erase e).card < n := by
+        rw [h_erase_card]; omega
+      -- Convert e back to s(i', k) for Step 572 application
+      have he_actual : e = s(i', Sym2.Mem.other hi_in) := he_eq.symm
+      have he_in' : s(i', Sym2.Mem.other hi_in) ∈ X' := he_actual ▸ he_in
+      have hX_swap : X'.erase s(i', Sym2.Mem.other hi_in) ∈
+          G.edgeFinset.powerset.filter
+            (fun X'' : Finset (Sym2 ι) => ∀ v : ι,
+              Even ((if v ∈ ({Sym2.Mem.other hi_in, j'} : Finset ι) then (1 : ℕ) else 0)
+                    + (X''.filter (v ∈ ·)).card)) :=
+        evenSubgraph_pair_boundary_erase_swap G i' j' (Sym2.Mem.other hi_in)
+          hij' hk_ne_i hk_eq X' hX' he_in'
+      -- Convert the erase to use e
+      have hX_swap' : (X'.erase e) ∈ G.edgeFinset.powerset.filter
+          (fun X'' : Finset (Sym2 ι) => ∀ v : ι,
+            Even ((if v ∈ ({Sym2.Mem.other hi_in, j'} : Finset ι) then (1 : ℕ) else 0)
+                  + (X''.filter (v ∈ ·)).card)) := by
+        rwa [← he_actual] at hX_swap
+      -- Apply IH
+      obtain ⟨p_kj, hp_kj⟩ := ih (X'.erase e).card h_erase_lt
+        (Sym2.Mem.other hi_in) j' (X'.erase e) hk_eq rfl hX_swap'
+      -- Build walk i' → j' as cons (i' → k) (k → j')
+      refine ⟨SimpleGraph.Walk.cons hadj_ik p_kj, ?_⟩
+      rw [SimpleGraph.Walk.length_cons, h_erase_card] at *
+      omega
+
 /-- **Pair correlation weak upper bound `≤ 2^|E| · tanh(β·J)` at `h = 0`
 (GJ §18.7 weak upper bound)**: under `0 ≤ β·J`,
 \[
