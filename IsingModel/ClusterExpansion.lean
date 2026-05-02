@@ -4056,6 +4056,71 @@ private theorem top_simpleGraph_fin_one_edgeFinset :
     rw [SimpleGraph.mem_edgeSet, SimpleGraph.top_adj] at he
     exact he (Subsingleton.elim a b)
 
+/-- **`K_2` edge set = {s(0,1)}**: K_2 on `Fin 2` has the single
+edge `s(0,1)`. -/
+private theorem top_simpleGraph_fin_two_edgeFinset :
+    (⊤ : SimpleGraph (Fin 2)).edgeFinset = {s(0, 1)} := by
+  classical
+  apply Finset.ext
+  intro e
+  rw [SimpleGraph.mem_edgeFinset, Finset.mem_singleton]
+  refine ⟨?_, fun h => ?_⟩
+  · induction e using Sym2.ind with
+    | h a b =>
+      intro hab
+      rw [SimpleGraph.mem_edgeSet, SimpleGraph.top_adj] at hab
+      fin_cases a <;> fin_cases b <;> simp_all [Sym2.eq_swap]
+  · rw [h, SimpleGraph.mem_edgeSet, SimpleGraph.top_adj]
+    decide
+
+/-- **`K_2` alternating sum = -1** (Mayer Phase B base case):
+`(-1)^(2-1) · (2-1)! = -1 · 1 = -1`. The connected spanning subgraphs
+of K_2 are: only `{edge}` (since ∅ leaves both vertices isolated).
+Sum = `(-1)^1 = -1`. -/
+theorem alternatingConnectedSubgraphSum_K2 :
+    alternatingConnectedSubgraphSum (⊤ : SimpleGraph (Fin 2)) = -1 := by
+  classical
+  unfold alternatingConnectedSubgraphSum
+  -- Key: (fromEdgeSet ∅) on Fin 2 is disconnected; (fromEdgeSet {s(0,1)}) is connected.
+  have h_zero_ne_one : (0 : Fin 2) ≠ (1 : Fin 2) := by decide
+  have h_disconn_empty :
+      ¬ (SimpleGraph.fromEdgeSet (∅ : Set (Sym2 (Fin 2)))).Connected := by
+    intro hc
+    obtain ⟨w⟩ := hc.preconnected 0 1
+    cases w with
+    | cons hadj _ =>
+      rw [SimpleGraph.fromEdgeSet_adj] at hadj
+      exact hadj.1
+  have h_conn_full :
+      (SimpleGraph.fromEdgeSet ({s(0, 1)} : Set (Sym2 (Fin 2)))).Connected := by
+    refine { preconnected := ?_, nonempty := ⟨0⟩ }
+    intro u v
+    have h_adj_uv : ∀ a b : Fin 2, a ≠ b →
+        (SimpleGraph.fromEdgeSet ({s(0, 1)} : Set (Sym2 (Fin 2)))).Adj a b := by
+      intro a b hne
+      rw [SimpleGraph.fromEdgeSet_adj]
+      refine ⟨?_, hne⟩
+      fin_cases a <;> fin_cases b <;> simp_all [Sym2.eq_swap]
+    by_cases huv : u = v
+    · exact huv ▸ SimpleGraph.Reachable.refl u
+    · exact ⟨SimpleGraph.Walk.cons (h_adj_uv u v huv) SimpleGraph.Walk.nil⟩
+  have h_set : connectedSpanningEdgeSubsets (⊤ : SimpleGraph (Fin 2)) = {{s(0, 1)}} := by
+    apply Finset.ext
+    intro S
+    rw [mem_connectedSpanningEdgeSubsets, top_simpleGraph_fin_two_edgeFinset,
+        Finset.mem_singleton]
+    refine ⟨?_, ?_⟩
+    · rintro ⟨hS_sub, hS_conn⟩
+      rw [Finset.subset_singleton_iff] at hS_sub
+      rcases hS_sub with rfl | rfl
+      · exact absurd (by simpa using hS_conn) h_disconn_empty
+      · rfl
+    · intro hS_eq
+      refine ⟨by rw [hS_eq], ?_⟩
+      rw [hS_eq]
+      simpa using h_conn_full
+  rw [h_set, Finset.sum_singleton, Finset.card_singleton, pow_one]
+
 /-- **`K_1` alternating sum = 1** (Mayer Phase B base case):
 `(-1)^(1-1) · (1-1)! = (-1)^0 · 0! = 1 · 1 = 1`. The only edge subset
 of an edgeless K_1 is `∅`, which gives a single-vertex graph that is
