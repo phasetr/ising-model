@@ -2379,4 +2379,27 @@ theorem mayerExpansionTerm_one
   · intro ω _
     rw [ursellCoefficient_singleton, clusterSeqActivity_singleton, one_mul]
 
+/-- **Cluster-sequence activity is continuous in `t`** (Step 588):
+the activity factor `clusterSeqActivity t ω = ∏ i, t ^ |ω i|` is a
+finite product of monomials, hence continuous in `t`. -/
+theorem clusterSeqActivity_continuous
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {n : ℕ} (ω : Fin n → Finset (Sym2 ι)) :
+    Continuous (fun t : ℝ => clusterSeqActivity t ω) := by
+  unfold clusterSeqActivity
+  refine continuous_finset_prod _ (fun i _ => ?_)
+  exact continuous_id.pow _
+
+/-- **Mayer expansion n-th term is continuous in `t`** (Step 588):
+each term `mayerExpansionTerm G n t = ∑_ω ϕ^T(ω) · z(t, ω)` is a
+finite sum of `(constant) · (continuous in t)`, hence continuous.
+First step toward Mayer-expansion regularity matching `log Ξ`. -/
+theorem mayerExpansionTerm_continuous
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (n : ℕ) :
+    Continuous (fun t : ℝ => mayerExpansionTerm G n t) := by
+  unfold mayerExpansionTerm
+  refine continuous_finset_sum _ (fun ω _ => ?_)
+  exact continuous_const.mul (clusterSeqActivity_continuous ω)
+
 end IsingModel
