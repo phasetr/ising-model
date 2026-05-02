@@ -2756,4 +2756,37 @@ theorem mayerPartialSum_at_zero
   refine Finset.sum_eq_zero (fun n _ => ?_)
   exact mayerExpansionTerm_at_zero G n
 
+/-- **Polymer-family sum at `t = 0`** (Step 599):
+`∑_{Γ ∈ vdCompatiblePolymerFamilies G} ∏_{P ∈ Γ} 0^|P| = 1`. Only the
+empty family `Γ = ∅` contributes (its empty product equals `1`); any
+non-empty `Γ` contains a polymer with `|P| ≥ 1`, so `0^|P| = 0` and
+the product vanishes. -/
+theorem vdPolymerFamilies_sum_at_zero
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    (∑ Γ ∈ vdCompatiblePolymerFamilies G,
+        ∏ P ∈ Γ, (0 : ℝ) ^ P.card) = 1 := by
+  classical
+  -- Empty family is in vdCompatiblePolymerFamilies.
+  have h_empty_in :
+      (∅ : Finset (Finset (Sym2 ι))) ∈ vdCompatiblePolymerFamilies G := by
+    rw [mem_vdCompatiblePolymerFamilies]
+    exact ⟨Finset.empty_subset _, IsCompatiblePolymerFamilyVertexDisjoint.empty G⟩
+  -- Helper: non-empty Γ contributes 0.
+  have h_nonempty_zero : ∀ Γ ∈ vdCompatiblePolymerFamilies G,
+      Γ ≠ ∅ → (∏ P ∈ Γ, (0 : ℝ) ^ P.card) = 0 := by
+    intro Γ hΓ hne
+    rw [mem_vdCompatiblePolymerFamilies] at hΓ
+    obtain ⟨P, hP⟩ := Finset.nonempty_iff_ne_empty.mpr hne
+    have hP_polymer : IsPolymer G P := mem_allPolymers.mp (hΓ.1 hP)
+    have hP_pos : 0 < P.card := hP_polymer.nonempty.card_pos
+    exact Finset.prod_eq_zero hP (zero_pow hP_pos.ne')
+  -- Split sum: empty family contributes 1, others 0.
+  rw [Finset.sum_eq_single ∅]
+  · rw [Finset.prod_empty]
+  · intro Γ hΓ hne
+    exact h_nonempty_zero Γ hΓ hne
+  · intro h
+    exact absurd h_empty_in h
+
 end IsingModel
