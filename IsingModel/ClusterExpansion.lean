@@ -3509,6 +3509,30 @@ theorem polymerFreeEnergy_tanh_le_card_mul_ferromagnetic
       G.edgeFinset.card * Real.tanh (β * J) :=
   polymerFreeEnergy_tanh_le_card_mul G (mul_nonneg hβ.le hJ)
 
+/-- **`mayerExpansionTerm G 1 t ≥ 0` under `t ≥ 0`** (Step 637):
+the n=1 Mayer term equals `∑_P t^|P|`, all non-negative. -/
+theorem mayerExpansionTerm_one_nonneg_of_nonneg
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) :
+    0 ≤ mayerExpansionTerm G 1 t := by
+  rw [mayerExpansionTerm_one]
+  exact Finset.sum_nonneg (fun P _ => pow_nonneg ht _)
+
+/-- **`mayerExpansionTerm G 2 t ≤ 0` under `t ≥ 0`** (Step 637):
+the n=2 Mayer term equals `-1/2 · ∑_{(P,Q) incompat} t^|P|·t^|Q|`,
+non-positive. Matches the alternating sign of log(1+x) Taylor
+coefficients. -/
+theorem mayerExpansionTerm_two_nonpos_of_nonneg
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) :
+    mayerExpansionTerm G 2 t ≤ 0 := by
+  rw [mayerExpansionTerm_two_filter]
+  refine mul_nonpos_of_nonpos_of_nonneg (by norm_num) ?_
+  refine Finset.sum_nonneg (fun pq _ => ?_)
+  exact mul_nonneg (pow_nonneg ht _) (pow_nonneg ht _)
+
 /-- **`polymerFreeEnergy` HasDerivAt** (Step 625): explicit derivative
 of `polymerFreeEnergy G t = Real.log (vdPolymerFamilies_sum G t)` via
 the log-derivative formula `(log f)' = f' / f`. The derivative of
