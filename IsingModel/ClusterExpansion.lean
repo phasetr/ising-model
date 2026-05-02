@@ -740,6 +740,28 @@ noncomputable def latticeIsingPolymerPartition {ι : Type*} [DecidableEq ι]
     (G : SimpleGraph ι) [Fintype G.edgeSet] (β J : ℝ) : ℝ :=
   polymerPartition G (allPolymers G) (polymerActivity (Real.tanh (β * J)))
 
+/-- **Polymer activity at non-negative `t` is non-negative**: with
+`t = tanh(β·J)`, this gives `0 ≤ tanh(β·J)^|P|` whenever `0 ≤ β·J`. -/
+theorem polymerActivity_nonneg {ι : Type*} {t : ℝ} (ht : 0 ≤ t)
+    (P : Finset (Sym2 ι)) : 0 ≤ polymerActivity t P := by
+  unfold polymerActivity
+  exact pow_nonneg ht _
+
+/-- **Lattice Ising polymer partition function ≥ 1 under `0 ≤ β·J`**:
+since `0 ≤ β·J` implies `0 ≤ tanh(β·J)`, the activity is non-negative
+and the empty family contributes exactly 1. -/
+theorem latticeIsingPolymerPartition_ge_one {ι : Type*} [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (hβJ : 0 ≤ β * J) :
+    1 ≤ latticeIsingPolymerPartition G β J := by
+  have h_tanh_nn : 0 ≤ Real.tanh (β * J) := by
+    rw [Real.tanh_eq_sinh_div_cosh]
+    exact div_nonneg (Real.sinh_nonneg_iff.mpr hβJ) (Real.cosh_pos _).le
+  unfold latticeIsingPolymerPartition
+  apply polymerPartition_ge_one G _
+  intro P _
+  exact polymerActivity_nonneg h_tanh_nn P
+
 /-- **Polymer activity is `1` on the empty edge set** (since `t^0 = 1`). -/
 @[simp]
 theorem polymerActivity_empty (t : ℝ) :
