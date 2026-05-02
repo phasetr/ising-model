@@ -30,3 +30,4 @@ import IsingModel.Concrete.LinearBrick
 import IsingModel.Concrete.StripeBrick2D
 import IsingModel.Concrete.SlabBrick
 import IsingModel.Concrete.CenteredSlab
+import IsingModel.ClusterExpansion
