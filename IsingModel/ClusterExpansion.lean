@@ -3898,4 +3898,15 @@ theorem vdPolymerFamilies_sum_minus_one_tendsto_zero
   rw [ContinuousAt, vdPolymerFamilies_sum_minus_one_at_zero] at h_cont
   exact h_cont
 
+/-- **`ε(t) < 1` eventually as `t → 0`** (Step 665, Mayer general-t
+Phase A): since ε is continuous and ε(0) = 0, in some nbhd of 0,
+ε(t) < 1 (the threshold for `log(1+ε)` Taylor convergence). -/
+theorem vdPolymerFamilies_sum_minus_one_lt_one_eventually
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    ∀ᶠ t : ℝ in nhds 0,
+      (∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅,
+        ∏ P ∈ Γ, t ^ P.card) < 1 := by
+  exact (vdPolymerFamilies_sum_minus_one_tendsto_zero G).eventually_lt_const zero_lt_one
+
 end IsingModel
