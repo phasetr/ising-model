@@ -269,6 +269,41 @@ theorem IsCompatiblePolymerFamily.empty {ι : Type*} [DecidableEq ι]
     exact absurd hP (Finset.notMem_empty P)
   · simp
 
+/-- **Vertex-disjoint compatible polymer family**: a `Finset` of
+polymers such that the polymers are pairwise vertex-disjoint. This is
+the *strong* family compatibility needed for the bijection between
+even subgraphs and their connected-component decomposition. -/
+def IsCompatiblePolymerFamilyVertexDisjoint
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (Γ : Finset (Finset (Sym2 ι))) : Prop :=
+  (∀ P ∈ Γ, IsPolymer G P) ∧
+  (Γ : Set (Finset (Sym2 ι))).Pairwise IsPolymerVertexDisjoint
+
+/-- **Vertex-disjoint family implies edge-disjoint family**: a vertex-
+disjoint compatible polymer family is also an edge-disjoint compatible
+polymer family. -/
+theorem IsCompatiblePolymerFamilyVertexDisjoint.toCompatible
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {G : SimpleGraph ι} [Fintype G.edgeSet]
+    {Γ : Finset (Finset (Sym2 ι))}
+    (hΓ : IsCompatiblePolymerFamilyVertexDisjoint G Γ) :
+    IsCompatiblePolymerFamily G Γ := by
+  refine ⟨hΓ.1, ?_⟩
+  intro P hP Q hQ hPQ
+  exact (hΓ.2 hP hQ hPQ).toEdgeDisjoint
+
+/-- **Empty vertex-disjoint polymer family is compatible**. -/
+theorem IsCompatiblePolymerFamilyVertexDisjoint.empty
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    IsCompatiblePolymerFamilyVertexDisjoint G
+      (∅ : Finset (Finset (Sym2 ι))) := by
+  refine ⟨?_, ?_⟩
+  · intro P hP
+    exact absurd hP (Finset.notMem_empty P)
+  · simp
+
 /-- **Union over a compatible polymer family is an even subgraph**:
 the `Finset.biUnion` of a compatible polymer family is an even subgraph
 of `G`. Proved by induction on the family. -/
