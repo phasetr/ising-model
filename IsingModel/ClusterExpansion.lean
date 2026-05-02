@@ -1284,6 +1284,22 @@ theorem partitionFunction_high_temp_expansion_h_zero_polymer_family
   rw [partitionFunction_high_temp_expansion_h_zero_closed_evenSubgraphs G J β,
       evenSubgraphs_sum_eq_vdPolymerFamilies_sum G (Real.tanh (β * J))]
 
+/-- **Sum of polymer cardinalities is bounded by `|E|`**: in a
+vertex-disjoint compatible polymer family, the total edge count is at
+most `G.edgeFinset.card` since the biUnion is a subset of the edge set. -/
+theorem IsCompatiblePolymerFamilyVertexDisjoint.sum_card_le_edgeFinset_card
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {G : SimpleGraph ι} [Fintype G.edgeSet]
+    {Γ : Finset (Finset (Sym2 ι))}
+    (hΓ : IsCompatiblePolymerFamilyVertexDisjoint G Γ) :
+    ∑ P ∈ Γ, P.card ≤ G.edgeFinset.card := by
+  rw [← hΓ.card_biUnion]
+  apply Finset.card_le_card
+  intro e he
+  rw [Finset.mem_biUnion] at he
+  obtain ⟨P, hP, heP⟩ := he
+  exact (hΓ.1 P hP).isEven.subset heP
+
 /-- **Polymer activity for the lattice Ising model**: the natural
 weight `t^|P|` arising from the FV (3.45) closed form
 `Z = 2^|ι|·cosh^|E|·∑_{X ⊆ E, even} tanh(β·J)^|X|`.
