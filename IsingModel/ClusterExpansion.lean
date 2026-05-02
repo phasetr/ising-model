@@ -142,6 +142,40 @@ def IsEdgeConnected {ι : Type*} (X : Finset (Sym2 ι)) : Prop :=
   ∀ e₁ ∈ X, ∀ e₂ ∈ X,
     Relation.ReflTransGen (edgeAdjacentIn X) e₁ e₂
 
+/-- **Edge-connected component of `e` in `X`**: the set of edges in `X`
+reachable from `e` by chains of edge-adjacency steps within `X`. This
+is the building block for the connected-components decomposition of an
+even subgraph into polymers. -/
+noncomputable def edgeComponent {ι : Type*} (X : Finset (Sym2 ι))
+    (e : Sym2 ι) : Finset (Sym2 ι) := by
+  classical
+  exact X.filter (fun f => Relation.ReflTransGen (edgeAdjacentIn X) e f)
+
+/-- **`edgeComponent X e ⊆ X`**: components are sub-finsets. -/
+theorem edgeComponent_subset {ι : Type*} (X : Finset (Sym2 ι))
+    (e : Sym2 ι) :
+    edgeComponent X e ⊆ X := by
+  classical
+  unfold edgeComponent
+  exact Finset.filter_subset _ _
+
+/-- **Membership in `edgeComponent`**: `f ∈ edgeComponent X e ↔
+f ∈ X ∧ ReflTransGen (edgeAdjacentIn X) e f`. -/
+theorem mem_edgeComponent {ι : Type*} {X : Finset (Sym2 ι)}
+    {e f : Sym2 ι} :
+    f ∈ edgeComponent X e ↔
+      f ∈ X ∧ Relation.ReflTransGen (edgeAdjacentIn X) e f := by
+  classical
+  unfold edgeComponent
+  rw [Finset.mem_filter]
+
+/-- **`e ∈ edgeComponent X e` whenever `e ∈ X`**: components contain
+their basepoint. -/
+theorem self_mem_edgeComponent {ι : Type*} {X : Finset (Sym2 ι)}
+    {e : Sym2 ι} (he : e ∈ X) :
+    e ∈ edgeComponent X e :=
+  mem_edgeComponent.mpr ⟨he, Relation.ReflTransGen.refl⟩
+
 /-- **Polymer**: a non-empty connected even subgraph. In the
 high-temperature cluster expansion of the lattice Ising model, the FV
 (3.45) sum `∑_{X ⊆ E even} tanh(β·J)^|X|` decomposes into a sum over
