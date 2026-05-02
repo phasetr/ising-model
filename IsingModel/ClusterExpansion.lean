@@ -871,6 +871,81 @@ theorem ursellCoefficient_singleton
   rw [h_set]
   simp [Nat.factorial]
 
+/-- **Pair Ursell coefficient (incompatible)** (Step 585): for
+`ω : Fin 2 → polymers` with `PolymersIncompatible (ω 0) (ω 1)`,
+`ϕ^T(ω) = -1/2`. The index-side graph `G(ω)` on `Fin 2` has the single
+edge `s(0, 1)`; the only connected spanning subgraph is the full graph
+itself (the empty edge subset gives a disconnected 2-vertex graph).
+Sum = `(-1)^1 = -1`, divided by `2! = 2`. Together with Step 584
+(vanishing for compatible/disconnected pairs), this gives the leading
+non-trivial Mayer-expansion coefficient
+`-(1/2) ∑_{P, Q incompat} z(P) z(Q)`. -/
+theorem ursellCoefficient_pair_incompatible
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ω : Fin 2 → Finset (Sym2 ι)}
+    (hω : PolymersIncompatible (ω 0) (ω 1)) :
+    ursellCoefficient ω = -1/2 := by
+  unfold ursellCoefficient
+  have h_zero_ne_one : (0 : Fin 2) ≠ (1 : Fin 2) := by decide
+  -- G(ω).Adj 0 1.
+  have h_adj_01 : (polymerSeqIncompatibilityGraph ω).Adj 0 1 := by
+    rw [polymerSeqIncompatibilityGraph_adj]
+    exact ⟨h_zero_ne_one, hω⟩
+  -- G(ω).edgeFinset = {s(0, 1)}.
+  have h_edges :
+      (polymerSeqIncompatibilityGraph ω).edgeFinset = {s(0, 1)} := by
+    apply Finset.ext
+    intro e
+    rw [SimpleGraph.mem_edgeFinset, Finset.mem_singleton]
+    refine ⟨?_, fun h => h ▸ h_adj_01⟩
+    induction e using Sym2.ind with
+    | h a b =>
+      intro hab
+      rw [SimpleGraph.mem_edgeSet, polymerSeqIncompatibilityGraph_adj] at hab
+      obtain ⟨h_ne, _⟩ := hab
+      fin_cases a <;> fin_cases b <;> simp_all [Sym2.eq_swap]
+  -- The spanning graph from `{s(0, 1)}` on `Fin 2` is connected.
+  have h_conn_full :
+      (SimpleGraph.fromEdgeSet ({s(0, 1)} : Set (Sym2 (Fin 2)))).Connected := by
+    refine { preconnected := ?_, nonempty := ⟨0⟩ }
+    intro u v
+    have h_adj_uv : ∀ a b : Fin 2, a ≠ b →
+        (SimpleGraph.fromEdgeSet ({s(0, 1)} : Set (Sym2 (Fin 2)))).Adj a b := by
+      intro a b hne
+      rw [SimpleGraph.fromEdgeSet_adj]
+      refine ⟨?_, hne⟩
+      fin_cases a <;> fin_cases b <;> simp_all [Sym2.eq_swap]
+    by_cases huv : u = v
+    · exact huv ▸ SimpleGraph.Reachable.refl u
+    · exact ⟨SimpleGraph.Walk.cons (h_adj_uv u v huv) SimpleGraph.Walk.nil⟩
+  -- The empty edge set on `Fin 2` is NOT connected.
+  have h_disconn_empty :
+      ¬ (SimpleGraph.fromEdgeSet (∅ : Set (Sym2 (Fin 2)))).Connected := by
+    intro h
+    obtain ⟨w⟩ := h.preconnected 0 1
+    cases w with
+    | cons hadj _ =>
+      rw [SimpleGraph.fromEdgeSet_adj] at hadj
+      exact hadj.1
+  -- connectedSpanningEdgeSubsets = {{s(0, 1)}}.
+  have h_set :
+      connectedSpanningEdgeSubsets (polymerSeqIncompatibilityGraph ω) = {{s(0, 1)}} := by
+    apply Finset.ext
+    intro S
+    rw [mem_connectedSpanningEdgeSubsets, h_edges, Finset.mem_singleton]
+    refine ⟨?_, ?_⟩
+    · rintro ⟨hS_sub, hS_conn⟩
+      rw [Finset.subset_singleton_iff] at hS_sub
+      rcases hS_sub with rfl | rfl
+      · exact absurd (by simpa using hS_conn) h_disconn_empty
+      · rfl
+    · intro hS_eq
+      refine ⟨by rw [hS_eq], ?_⟩
+      rw [hS_eq]
+      simpa using h_conn_full
+  rw [h_set, Finset.sum_singleton, Finset.card_singleton]
+  norm_num [Nat.factorial]
+
 /-- **Ursell coefficient vanishes for disconnected sequences** (Step
 584): if the index-side incompatibility graph `G(ω)` is not
 `Connected`, then `ϕ^T(ω) = 0`. The Mayer-expansion sum effectively
