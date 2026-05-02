@@ -250,6 +250,20 @@ theorem IsCompatiblePolymerFamily.card_biUnion
   intro P hP Q hQ hPQ
   exact hΓ.2 hP hQ hPQ
 
+/-- **Weight multiplicativity over a compatible polymer family**:
+`t^|Γ.biUnion| = ∏ t^|P|` for any base `t`. Combines Step 509 card
+additivity with the algebraic identity `t^(∑ aᵢ) = ∏ t^aᵢ`.
+
+This identity converts the FV (3.45) summand `tanh(βJ)^|X|` into the
+multiplicative form `∏_{P ∈ Γ} tanh(βJ)^|P|` once `X = Γ.biUnion id`. -/
+theorem IsCompatiblePolymerFamily.pow_card_biUnion
+    {ι : Type*} [DecidableEq ι]
+    {G : SimpleGraph ι} [Fintype G.edgeSet]
+    (t : ℝ) {Γ : Finset (Finset (Sym2 ι))}
+    (hΓ : IsCompatiblePolymerFamily G Γ) :
+    t ^ (Γ.biUnion id).card = ∏ P ∈ Γ, t ^ P.card := by
+  rw [hΓ.card_biUnion, ← Finset.prod_pow_eq_pow_sum]
+
 /-- **Singleton polymer family is compatible iff the polymer is a polymer**:
 a one-element family `{P}` is compatible iff `IsPolymer G P`. -/
 theorem isCompatiblePolymerFamily_singleton {ι : Type*} [DecidableEq ι]
