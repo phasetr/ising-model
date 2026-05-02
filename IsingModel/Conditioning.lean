@@ -3825,6 +3825,54 @@ theorem correlation_high_temp_h_zero_nonneg
     Finset.sum_nonneg (fun X _ => pow_nonneg htanh_nn _)
   exact div_nonneg hnum_nn hden_nn
 
+/-- **Correlation upper bound by FV (3.46) numerator at `h = 0` (GJ §18.7
+foundation)**: under `0 ≤ β·J`,
+\[
+\langle \sigma_A \rangle_{\beta, 0}
+  \le \sum_{X \subseteq E,\, \partial X = A} \tanh(\beta J)^{|X|}.
+\]
+
+Combines `correlation_high_temp_expansion_h_zero_closed` (FV (3.46)) with:
+- numerator nonneg under `0 ≤ tanh(β·J)`;
+- denominator `≥ 1` (Step 295 `one_le_sum_pow_tanh_even_subgraph`,
+  using that the empty subgraph contributes `1`).
+
+Reduces the §18.7 capstone (exponential decay
+`|⟨σ_iσ_j⟩| ≤ C · tanh(β·J)^{d(i,j)}`) to a *numerator-only* estimate.
+
+References: GJ §18.7; FV §3.7.3 eq. (3.46), p. 117 (2017 ed.). -/
+theorem correlation_high_temp_h_zero_le_numerator
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (A : Finset ι) :
+    correlation G ⟨J, 0, β⟩ A ≤
+      ∑ X ∈ G.edgeFinset.powerset.filter
+          (fun X => ∀ v : ι,
+            Even ((if v ∈ A then (1 : ℕ) else 0)
+                  + (X.filter (v ∈ ·)).card)),
+        Real.tanh (β * J) ^ X.card := by
+  rw [correlation_high_temp_expansion_h_zero_closed]
+  have htanh_nn : 0 ≤ Real.tanh (β * J) := by
+    rw [Real.tanh_eq_sinh_div_cosh]
+    exact div_nonneg
+      (Real.sinh_nonneg_iff.mpr hβJ) (Real.cosh_pos _).le
+  set N : ℝ := ∑ X ∈ G.edgeFinset.powerset.filter
+      (fun X : Finset (Sym2 ι) => ∀ v : ι,
+        Even ((if v ∈ A then (1 : ℕ) else 0)
+              + (X.filter (v ∈ ·)).card)),
+      Real.tanh (β * J) ^ X.card with hN_def
+  set D : ℝ := ∑ X ∈ G.edgeFinset.powerset.filter
+      (fun X : Finset (Sym2 ι) => ∀ v : ι, Even ((X.filter (v ∈ ·)).card)),
+      Real.tanh (β * J) ^ X.card with hD_def
+  have hN_nn : 0 ≤ N :=
+    Finset.sum_nonneg (fun X _ => pow_nonneg htanh_nn _)
+  have h_one_le_D : 1 ≤ D := one_le_sum_pow_tanh_even_subgraph G J β hβJ
+  have h_D_pos : 0 < D := lt_of_lt_of_le zero_lt_one h_one_le_D
+  -- N / D ≤ N / 1 = N because D ≥ 1 and N ≥ 0
+  have h_step : N / D ≤ N / 1 :=
+    div_le_div_of_nonneg_left hN_nn zero_lt_one h_one_le_D
+  rw [div_one] at h_step
+  exact h_step
+
 /-- **Z₂ symmetry of correlations at h = 0 from FV (3.46) + handshake**:
 for any `A : Finset ι` of odd cardinality, `correlation G ⟨J, 0, β⟩ A = 0`.
 
