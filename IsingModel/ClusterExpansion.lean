@@ -4518,4 +4518,53 @@ theorem polymerFreeEnergy_tanh_lt_log_two_of_pow_lt_two
     polymerFreeEnergy G (Real.tanh (β * J)) < Real.log 2 :=
   polymerFreeEnergy_lt_log_two_of_pow_lt_two G (real_tanh_nonneg hβJ) h_pow
 
+/-- **`polymerFreeEnergy` high-temperature regime sandwich**
+(§18.4 sharpening): under `0 ≤ t` and `(1+t)^|E| < 2`,
+  `0 ≤ polymerFreeEnergy G t ≤ ε(t) ≤ (1+t)^|E| - 1 < 1`,
+hence in particular `polymerFreeEnergy G t < log 2`.
+
+Single-statement bundle of the high-temperature convergence-regime
+bounds — combines `polymerFreeEnergy_nonneg_of_nonneg`,
+`polymerFreeEnergy_le_eps_of_nonneg`,
+`vdPolymerFamilies_sum_minus_one_le_of_nonneg` (Step 661), and the
+hypothesis `(1+t)^|E| < 2`. -/
+theorem polymerFreeEnergy_high_temp_sandwich
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) (h_pow : (1 + t) ^ G.edgeFinset.card < 2) :
+    0 ≤ polymerFreeEnergy G t ∧
+    polymerFreeEnergy G t ≤
+      ∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅,
+        ∏ P ∈ Γ, t ^ P.card ∧
+    (∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅,
+        ∏ P ∈ Γ, t ^ P.card) ≤ (1 + t) ^ G.edgeFinset.card - 1 ∧
+    (1 + t) ^ G.edgeFinset.card - 1 < 1 ∧
+    polymerFreeEnergy G t < Real.log 2 := by
+  refine ⟨?_, ?_, ?_, ?_, ?_⟩
+  · exact polymerFreeEnergy_nonneg_of_nonneg G ht
+  · exact polymerFreeEnergy_le_eps_of_nonneg G ht
+  · exact vdPolymerFamilies_sum_minus_one_le_of_nonneg G ht
+  · linarith
+  · exact polymerFreeEnergy_lt_log_two_of_pow_lt_two G ht h_pow
+
+/-- **`polymerFreeEnergy` high-temperature regime sandwich (tanh form)**
+(§18.4 sharpening): tanh-substituted version of
+`polymerFreeEnergy_high_temp_sandwich` for the ferromagnetic Ising
+activity `t = tanh(β·J)` under `0 ≤ β·J`. -/
+theorem polymerFreeEnergy_tanh_high_temp_sandwich
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (hβJ : 0 ≤ β * J)
+    (h_pow : (1 + Real.tanh (β * J)) ^ G.edgeFinset.card < 2) :
+    0 ≤ polymerFreeEnergy G (Real.tanh (β * J)) ∧
+    polymerFreeEnergy G (Real.tanh (β * J)) ≤
+      ∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅,
+        ∏ P ∈ Γ, (Real.tanh (β * J)) ^ P.card ∧
+    (∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅,
+        ∏ P ∈ Γ, (Real.tanh (β * J)) ^ P.card) ≤
+      (1 + Real.tanh (β * J)) ^ G.edgeFinset.card - 1 ∧
+    (1 + Real.tanh (β * J)) ^ G.edgeFinset.card - 1 < 1 ∧
+    polymerFreeEnergy G (Real.tanh (β * J)) < Real.log 2 :=
+  polymerFreeEnergy_high_temp_sandwich G (real_tanh_nonneg hβJ) h_pow
+
 end IsingModel
