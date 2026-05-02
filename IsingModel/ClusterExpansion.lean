@@ -668,6 +668,45 @@ instance incompatibilityGraph_decidableAdj
   rw [incompatibilityGraph_adj]
   exact instDecidableAnd
 
+/-- **Cluster polymer set** (Step 578, Mayer expansion foundation):
+a finite set of polymers `Γ` is a *cluster set* iff `Γ` is non-empty,
+every element is a polymer of `G`, and the induced subgraph of
+`incompatibilityGraph` on `↑Γ` is `Connected`. This is the set-level
+notion of cluster (no multiplicity); multi-set / sequence versions
+follow in subsequent steps. The Mayer expansion expresses `log Ξ` as
+a sum over clusters (with multiplicity) weighted by the Ursell
+coefficient. -/
+def IsClusterPolymerSet {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (Γ : Finset (Finset (Sym2 ι))) : Prop :=
+  Γ.Nonempty ∧
+  (∀ P ∈ Γ, IsPolymer G P) ∧
+  ((incompatibilityGraph (ι := ι)).induce (↑Γ : Set (Finset (Sym2 ι)))).Connected
+
+/-- **Singleton cluster set**: for any polymer `P`, the singleton
+`{P}` is a cluster set. The induced subgraph on a singleton vertex
+set is `Preconnected` vacuously (every two equal vertices are reachable
+via the empty walk), and `Nonempty` is immediate. -/
+theorem IsClusterPolymerSet.singleton
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {P : Finset (Sym2 ι)} (hP : IsPolymer G P) :
+    IsClusterPolymerSet G {P} := by
+  refine ⟨Finset.singleton_nonempty P, ?_, ?_⟩
+  · intro Q hQ
+    rw [Finset.mem_singleton] at hQ
+    exact hQ ▸ hP
+  · have hne :
+        Nonempty ↑(↑({P} : Finset (Finset (Sym2 ι))) : Set (Finset (Sym2 ι))) :=
+      ⟨⟨P, by simp⟩⟩
+    refine { preconnected := ?_, nonempty := hne }
+    intro u v
+    have hu : (u : Finset (Sym2 ι)) ∈ ({P} : Finset (Finset (Sym2 ι))) := u.2
+    have hv : (v : Finset (Sym2 ι)) ∈ ({P} : Finset (Finset (Sym2 ι))) := v.2
+    rw [Finset.mem_singleton] at hu hv
+    have huv : u = v := Subtype.ext (hu.trans hv.symm)
+    exact huv ▸ SimpleGraph.Reachable.refl u
+
 /-- **Compatible polymer family**: a `Finset` of polymers such that
 the polymers are pairwise compatible (i.e. pairwise edge-disjoint).
 This is the natural input to the polymer partition function:
