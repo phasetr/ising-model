@@ -3467,6 +3467,19 @@ theorem polymerFreeEnergy_monotoneOn_Ici_zero
   exact Real.log_le_log (vdPolymerFamilies_sum_pos_of_nonneg G ht)
     (vdPolymerFamilies_sum_monotoneOn_Ici_zero G ht hs hts)
 
+/-- **`polymerFreeEnergy ≤ |E| · t` under `t ≥ 0`** (Step 634):
+sharpen Step 630 via `Real.log_le_sub_one_of_pos` (i.e. `log(1+t) ≤ t`). -/
+theorem polymerFreeEnergy_le_card_mul_of_nonneg
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) :
+    polymerFreeEnergy G t ≤ G.edgeFinset.card * t := by
+  refine (polymerFreeEnergy_le_card_log_one_plus_of_nonneg G ht).trans ?_
+  refine mul_le_mul_of_nonneg_left ?_ (Nat.cast_nonneg _)
+  have h_pos : (0 : ℝ) < 1 + t := by linarith
+  have := Real.log_le_sub_one_of_pos h_pos
+  linarith
+
 /-- **`polymerFreeEnergy` HasDerivAt** (Step 625): explicit derivative
 of `polymerFreeEnergy G t = Real.log (vdPolymerFamilies_sum G t)` via
 the log-derivative formula `(log f)' = f' / f`. The derivative of
