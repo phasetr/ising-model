@@ -751,6 +751,41 @@ theorem IsClusterPolymerSequence.singleton
     have huv : u = v := Subsingleton.elim u v
     exact huv ▸ SimpleGraph.Reachable.refl u
 
+/-- **Cluster-sequence activity** (Step 581, Mayer expansion foundation):
+for a cluster sequence `ω : Fin n → Finset (Sym2 ι)` and an activity
+parameter `t : ℝ`, the activity factor is the monomial product
+`z(ω) = ∏ i, t ^ |ω i|`. This is the factor multiplying the Ursell
+coefficient in the Mayer expansion
+`log Ξ = ∑_n (1/n!) ∑_{ω cluster} ϕ^T(ω) · z(ω)`. -/
+def clusterSeqActivity {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (t : ℝ) {n : ℕ} (ω : Fin n → Finset (Sym2 ι)) : ℝ :=
+  ∏ i : Fin n, t ^ (ω i).card
+
+/-- **Activity at a singleton sequence**: `z(ω) = t ^ |ω 0|` for
+`ω : Fin 1 → polymer`. The product over `Fin 1` collapses to the value
+at the single index. -/
+theorem clusterSeqActivity_singleton {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (t : ℝ) (ω : Fin 1 → Finset (Sym2 ι)) :
+    clusterSeqActivity t ω = t ^ (ω 0).card := by
+  unfold clusterSeqActivity
+  rw [Fin.prod_univ_one]
+
+/-- **Activity is non-negative for non-negative activity**: when
+`0 ≤ t`, every factor `t ^ |ω i| ≥ 0`, so the product is non-negative. -/
+theorem clusterSeqActivity_nonneg {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {t : ℝ} (ht : 0 ≤ t) {n : ℕ} (ω : Fin n → Finset (Sym2 ι)) :
+    0 ≤ clusterSeqActivity t ω := by
+  unfold clusterSeqActivity
+  exact Finset.prod_nonneg (fun i _ => pow_nonneg ht _)
+
+/-- **Activity at the empty sequence (`n = 0`)**: the empty product
+equals `1`, regardless of `t`. -/
+theorem clusterSeqActivity_zero {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (t : ℝ) (ω : Fin 0 → Finset (Sym2 ι)) :
+    clusterSeqActivity t ω = 1 := by
+  unfold clusterSeqActivity
+  rw [Fin.prod_univ_zero]
+
 /-- **Cluster polymer set** (Step 578, Mayer expansion foundation):
 a finite set of polymers `Γ` is a *cluster set* iff `Γ` is non-empty,
 every element is a polymer of `G`, and the induced subgraph of
