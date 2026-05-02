@@ -3332,6 +3332,14 @@ theorem polymerFreeEnergy_differentiableOn_Ici_zero
   fun _ ht =>
     ((polymerFreeEnergy_analyticAt G ht).differentiableAt).differentiableWithinAt
 
+/-- **`polymerFreeEnergy` ContinuousOn `[0, ∞)`** (Step 627). -/
+theorem polymerFreeEnergy_continuousOn_Ici_zero
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    ContinuousOn (fun s : ℝ => polymerFreeEnergy G s) (Set.Ici 0) :=
+  fun _ ht =>
+    ((polymerFreeEnergy_analyticAt G ht).continuousAt).continuousWithinAt
+
 /-- **`polymerFreeEnergy` HasDerivAt** (Step 625): explicit derivative
 of `polymerFreeEnergy G t = Real.log (vdPolymerFamilies_sum G t)` via
 the log-derivative formula `(log f)' = f' / f`. The derivative of
