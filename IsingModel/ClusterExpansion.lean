@@ -1694,4 +1694,44 @@ theorem vdPolymerFamilies_sum_tanh_analyticAt_J
   exact (vdPolymerFamilies_sum_analyticAt G _).comp
     ((analyticAt_real_tanh _).comp h_mul)
 
+/-- **Partition function `AnalyticAt ℝ` in `β` (at `h = 0`) via polymer
+expansion**: combines the §18.4 polymer-family identity (Step 548) with
+Step 562 (polymer-family sum `AnalyticAt`) and `Real.analyticAt_cosh` to
+obtain `AnalyticAt ℝ (fun β => partitionFunction G ⟨J, 0, β⟩) β`.
+Strengthens `partitionFunction_differentiable_beta_h_zero` from
+`Differentiable ℝ` to `AnalyticAt ℝ`. -/
+theorem partitionFunction_analyticAt_beta_h_zero
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J β : ℝ) :
+    AnalyticAt ℝ (fun β' : ℝ => partitionFunction G ⟨J, 0, β'⟩) β := by
+  have h_eq : (fun β' : ℝ => partitionFunction G ⟨J, 0, β'⟩) =
+      fun β' : ℝ => (2 : ℝ) ^ Fintype.card ι * Real.cosh (β' * J) ^ G.edgeFinset.card *
+        ∑ Γ ∈ vdCompatiblePolymerFamilies G,
+          ∏ P ∈ Γ, Real.tanh (β' * J) ^ P.card :=
+    funext (partitionFunction_high_temp_expansion_h_zero_polymer_family G J)
+  rw [h_eq]
+  have h_mul : AnalyticAt ℝ (fun β' : ℝ => β' * J) β :=
+    analyticAt_id.mul analyticAt_const
+  refine AnalyticAt.mul ?_ (vdPolymerFamilies_sum_tanh_analyticAt_beta G J β)
+  refine analyticAt_const.mul ?_
+  exact ((Real.analyticAt_cosh).comp h_mul).pow _
+
+/-- **Partition function `AnalyticAt ℝ` in `J` (at `h = 0`) via polymer
+expansion**: dual of `partitionFunction_analyticAt_beta_h_zero`. -/
+theorem partitionFunction_analyticAt_J_h_zero
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (β J : ℝ) :
+    AnalyticAt ℝ (fun J' : ℝ => partitionFunction G ⟨J', 0, β⟩) J := by
+  have h_eq : (fun J' : ℝ => partitionFunction G ⟨J', 0, β⟩) =
+      fun J' : ℝ => (2 : ℝ) ^ Fintype.card ι * Real.cosh (β * J') ^ G.edgeFinset.card *
+        ∑ Γ ∈ vdCompatiblePolymerFamilies G,
+          ∏ P ∈ Γ, Real.tanh (β * J') ^ P.card :=
+    funext (fun J' => partitionFunction_high_temp_expansion_h_zero_polymer_family G J' β)
+  rw [h_eq]
+  have h_mul : AnalyticAt ℝ (fun J' : ℝ => β * J') J :=
+    analyticAt_const.mul analyticAt_id
+  refine AnalyticAt.mul ?_ (vdPolymerFamilies_sum_tanh_analyticAt_J G β J)
+  refine analyticAt_const.mul ?_
+  exact ((Real.analyticAt_cosh).comp h_mul).pow _
+
 end IsingModel
