@@ -936,6 +936,36 @@ theorem IsEvenSubgraph.polymerDecomposition_main
   ⟨hX.polymerDecomposition_isCompatibleVertexDisjoint,
    polymerDecomposition_biUnion_id X⟩
 
+/-- **Polymer's edge component is itself**: if `P` is a polymer and
+`e ∈ P`, then `edgeComponent P e = P`. -/
+theorem IsPolymer.edgeComponent_eq_self
+    {ι : Type*} [DecidableEq ι]
+    {G : SimpleGraph ι} [Fintype G.edgeSet]
+    {P : Finset (Sym2 ι)} (hP : IsPolymer G P)
+    {e : Sym2 ι} (he : e ∈ P) :
+    edgeComponent P e = P := by
+  apply Finset.Subset.antisymm (edgeComponent_subset P e)
+  intro f hf
+  rw [mem_edgeComponent]
+  exact ⟨hf, hP.connected e he f hf⟩
+
+/-- **Polymer's decomposition is itself**: if `P` is a polymer, then
+`polymerDecomposition P = {P}`. -/
+theorem IsPolymer.polymerDecomposition_eq_singleton
+    {ι : Type*} [DecidableEq ι]
+    {G : SimpleGraph ι} [Fintype G.edgeSet]
+    {P : Finset (Sym2 ι)} (hP : IsPolymer G P) :
+    polymerDecomposition P = {P} := by
+  classical
+  unfold polymerDecomposition
+  have h_image_eq : P.image (fun e => edgeComponent P e) =
+      P.image (fun _ => P) := by
+    apply Finset.image_congr
+    intro e he
+    exact hP.edgeComponent_eq_self he
+  rw [h_image_eq]
+  exact Finset.image_const hP.nonempty P
+
 /-- **Polymer model partition function (abstract)**: given a reference
 finite universe of polymer candidates `Ω : Finset (Finset (Sym2 ι))`
 and a weight function `z : Finset (Sym2 ι) → ℝ`, the polymer model
