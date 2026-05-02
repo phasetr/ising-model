@@ -3356,6 +3356,16 @@ theorem mayerPartialSum_zero_tanh_le_polymerFreeEnergy
       polymerFreeEnergy G (Real.tanh (β * J)) :=
   mayerPartialSum_zero_le_polymerFreeEnergy G (real_tanh_nonneg hβJ)
 
+/-- **`mayerPartialSum G 0 ≤ polymerFreeEnergy G (tanh(β·J))`
+ferromagnetic** (Step 656). -/
+theorem mayerPartialSum_zero_tanh_le_polymerFreeEnergy_ferromagnetic
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] {β J : ℝ}
+    (hJ : 0 ≤ J) (hβ : 0 < β) :
+    mayerPartialSum G 0 (Real.tanh (β * J)) ≤
+      polymerFreeEnergy G (Real.tanh (β * J)) :=
+  mayerPartialSum_zero_tanh_le_polymerFreeEnergy G (mul_nonneg hβ.le hJ)
+
 /-- **`allPolymers G = ∅` when `G` has no edges** (Step 620): an
 edgeless graph has no even subgraph other than `∅`, which is excluded
 from `IsPolymer` by the non-emptiness clause. -/
