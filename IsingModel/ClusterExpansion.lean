@@ -1797,4 +1797,30 @@ theorem freeEnergy_analyticOnNhd_J_h_zero
     AnalyticOnNhd ℝ (fun J' : ℝ => freeEnergy G ⟨J', 0, β⟩) Set.univ :=
   fun J _ => freeEnergy_analyticAt_J_h_zero G β J
 
+/-- **VD polymer-family sum has explicit polynomial derivative** (Step 575):
+the polymer-family sum `t ↦ ∑_{Γ} ∏_{P ∈ Γ} t^|P|` has derivative at every
+`t : ℝ` given by the explicit polynomial formula obtained from the product
+rule. Specifically the derivative equals
+`∑_{Γ} ∑_{Q ∈ Γ} (∏_{P ∈ Γ.erase Q} t^|P|) · ((|Q| : ℝ) · t^(|Q|-1))`,
+which is itself a polynomial in `t`. Strengthens
+`vdPolymerFamilies_sum_differentiable` (Step 558) by providing the
+explicit derivative; closes the §18.6 deferred item "HasDerivAt with
+explicit polynomial derivative" tracked in #1344. The proof combines
+`HasDerivAt.fun_finset_prod` (product rule), `hasDerivAt_pow` (monomial),
+and `HasDerivAt.fun_sum` (linearity). -/
+theorem vdPolymerFamilies_sum_hasDerivAt
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (t : ℝ) :
+    HasDerivAt (fun s : ℝ =>
+        ∑ Γ ∈ vdCompatiblePolymerFamilies G, ∏ P ∈ Γ, s ^ P.card)
+      (∑ Γ ∈ vdCompatiblePolymerFamilies G,
+        ∑ Q ∈ Γ, (∏ P ∈ Γ.erase Q, t ^ P.card) *
+          ((Q.card : ℝ) * t ^ (Q.card - 1))) t := by
+  refine HasDerivAt.fun_sum (fun Γ _ => ?_)
+  have h := HasDerivAt.fun_finset_prod (u := Γ)
+    (f := fun P : Finset (Sym2 ι) => fun s : ℝ => s ^ P.card)
+    (f' := fun P : Finset (Sym2 ι) => (P.card : ℝ) * t ^ (P.card - 1))
+    (x := t) (fun P _ => hasDerivAt_pow P.card t)
+  simpa [smul_eq_mul] using h
+
 end IsingModel
