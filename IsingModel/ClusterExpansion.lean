@@ -3379,6 +3379,27 @@ theorem mayerPartialSum_differentiableOn
     DifferentiableOn ℝ (fun t : ℝ => mayerPartialSum G N t) s :=
   (mayerPartialSum_differentiable G N).differentiableOn
 
+/-- **`polymerFreeEnergy ≤ |E| · log(1+t)` under `t ≥ 0`** (Step 630):
+apply `Real.log_le_log` to Step 629's bound `vdSum ≤ (1+t)^|E|`. The
+right-hand side `Real.log ((1+t)^|E|) = |E| · log(1+t)` via `Real.log_pow`. -/
+theorem polymerFreeEnergy_le_card_log_one_plus_of_nonneg
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) :
+    polymerFreeEnergy G t ≤ G.edgeFinset.card * Real.log (1 + t) := by
+  unfold polymerFreeEnergy
+  have h_pos : 0 < ∑ Γ ∈ vdCompatiblePolymerFamilies G,
+      ∏ P ∈ Γ, t ^ P.card :=
+    vdPolymerFamilies_sum_pos_of_nonneg G ht
+  have h_le : (∑ Γ ∈ vdCompatiblePolymerFamilies G, ∏ P ∈ Γ, t ^ P.card) ≤
+      (1 + t) ^ G.edgeFinset.card :=
+    vdPolymerFamilies_sum_le_one_plus_pow_of_nonneg G ht
+  calc Real.log (∑ Γ ∈ vdCompatiblePolymerFamilies G, ∏ P ∈ Γ, t ^ P.card)
+      ≤ Real.log ((1 + t) ^ G.edgeFinset.card) :=
+            Real.log_le_log h_pos h_le
+    _ = G.edgeFinset.card * Real.log (1 + t) := by
+            rw [Real.log_pow]
+
 /-- **`polymerFreeEnergy` HasDerivAt** (Step 625): explicit derivative
 of `polymerFreeEnergy G t = Real.log (vdPolymerFamilies_sum G t)` via
 the log-derivative formula `(log f)' = f' / f`. The derivative of
