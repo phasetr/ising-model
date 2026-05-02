@@ -2703,4 +2703,24 @@ theorem mayerPartialSum_tanh_analyticOnNhd_J
     AnalyticOnNhd ℝ (fun J' : ℝ => mayerPartialSum G N (Real.tanh (β * J'))) Set.univ :=
   fun J _ => mayerPartialSum_tanh_analyticAt_J G N β J
 
+/-- **Mayer expansion `n = 2` term as filter sum** (Step 597): the
+ordered-pair sum from Step 593 reduces to a sum over the incompatible
+pairs only,
+`mayerExpansionTerm G 2 t = (-1/2) · ∑_{(P, Q) ∈ allPolymers² with
+PolymersIncompatible P Q} t^|P| · t^|Q|`.
+The if-then-else summand vanishes on compatible pairs, so the sum
+restricts to the filter `(allPolymers G ×ˢ allPolymers G).filter
+(fun pq => PolymersIncompatible pq.1 pq.2)`. -/
+theorem mayerExpansionTerm_two_filter
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (t : ℝ) :
+    mayerExpansionTerm G 2 t =
+      (-1/2 : ℝ) *
+        ∑ pq ∈ ((allPolymers G) ×ˢ (allPolymers G)).filter
+            (fun pq => PolymersIncompatible pq.1 pq.2),
+          (t ^ pq.1.card * t ^ pq.2.card) := by
+  rw [mayerExpansionTerm_two]
+  simp_rw [ite_mul, zero_mul]
+  rw [← Finset.sum_filter, ← Finset.mul_sum]
+
 end IsingModel
