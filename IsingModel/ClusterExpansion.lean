@@ -4524,6 +4524,32 @@ theorem polymerFreeEnergy_lt_eps_of_eps_pos
   have h := Real.log_lt_sub_one_of_pos h_pos h_ne_one
   linarith
 
+/-- **`polymerFreeEnergy < ε(t) ↔ ε(t) > 0` under `0 ≤ t`** (§18.4
+strict iff): the polymer free energy is strictly below the activity
+excess iff the activity excess is strictly positive. Forward: from
+the contrapositive ε ≤ 0 → ε = 0 → polymerFreeEnergy = 0 = ε.
+Backward: from `polymerFreeEnergy_lt_eps_of_eps_pos` (PR #1547). -/
+theorem polymerFreeEnergy_lt_eps_iff_eps_pos
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) :
+    polymerFreeEnergy G t <
+        ∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅,
+          ∏ P ∈ Γ, t ^ P.card ↔
+      0 < ∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅,
+        ∏ P ∈ Γ, t ^ P.card := by
+  have h_eps_nn := vdPolymerFamilies_sum_minus_one_nonneg_of_nonneg G ht
+  refine ⟨?_, fun h => polymerFreeEnergy_lt_eps_of_eps_pos G h⟩
+  intro h_lt
+  by_contra h_eps_not_pos
+  push_neg at h_eps_not_pos
+  have h_eps_zero :
+      (∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅,
+        ∏ P ∈ Γ, t ^ P.card) = 0 := le_antisymm h_eps_not_pos h_eps_nn
+  have h_pf_zero := (polymerFreeEnergy_eq_zero_iff_eps_eq_zero G ht).mpr h_eps_zero
+  rw [h_pf_zero, h_eps_zero] at h_lt
+  exact lt_irrefl 0 h_lt
+
 /-- **`polymerFreeEnergy ≤ (1+t)^|E| - 1` under `0 ≤ t`** (§18.4
 sharpening): combines `polymerFreeEnergy ≤ ε(t)` (above) with Step 661
 (`ε(t) ≤ (1+t)^|E| - 1`). Sharper than the existing
