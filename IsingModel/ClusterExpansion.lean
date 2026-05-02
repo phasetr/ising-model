@@ -1656,4 +1656,42 @@ theorem vdPolymerFamilies_sum_analyticAt
       rw [h_step]
       exact (analyticAt_prod_pow Γ t).add ih
 
+/-- **`Real.tanh` is real-analytic at every point** (project-local helper):
+derived from `tanh = sinh / cosh` together with `Real.cosh > 0` and
+`AnalyticAt.div`. Mathlib does not yet export `Real.analyticAt_tanh`. -/
+theorem analyticAt_real_tanh (x : ℝ) : AnalyticAt ℝ Real.tanh x := by
+  have h_eq : Real.tanh = fun y : ℝ => Real.sinh y / Real.cosh y :=
+    funext (fun y => Real.tanh_eq_sinh_div_cosh y)
+  rw [h_eq]
+  exact AnalyticAt.div Real.analyticAt_sinh Real.analyticAt_cosh
+    (Real.cosh_pos x).ne'
+
+/-- **VD polymer-family sum is real-analytic in `β` (with `J` fixed)**:
+chain-rule composition of Step 561 with `analyticAt_real_tanh` and the
+analytic linear factor `β ↦ β * J`. -/
+theorem vdPolymerFamilies_sum_tanh_analyticAt_beta
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J β : ℝ) :
+    AnalyticAt ℝ (fun β' : ℝ =>
+      ∑ Γ ∈ vdCompatiblePolymerFamilies G,
+        ∏ P ∈ Γ, Real.tanh (β' * J) ^ P.card) β := by
+  have h_mul : AnalyticAt ℝ (fun β' : ℝ => β' * J) β :=
+    analyticAt_id.mul analyticAt_const
+  exact (vdPolymerFamilies_sum_analyticAt G _).comp
+    ((analyticAt_real_tanh _).comp h_mul)
+
+/-- **VD polymer-family sum is real-analytic in `J` (with `β` fixed)**:
+chain-rule composition of Step 561 with `analyticAt_real_tanh` and the
+analytic linear factor `J ↦ β * J`. -/
+theorem vdPolymerFamilies_sum_tanh_analyticAt_J
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (β J : ℝ) :
+    AnalyticAt ℝ (fun J' : ℝ =>
+      ∑ Γ ∈ vdCompatiblePolymerFamilies G,
+        ∏ P ∈ Γ, Real.tanh (β * J') ^ P.card) J := by
+  have h_mul : AnalyticAt ℝ (fun J' : ℝ => β * J') J :=
+    analyticAt_const.mul analyticAt_id
+  exact (vdPolymerFamilies_sum_analyticAt G _).comp
+    ((analyticAt_real_tanh _).comp h_mul)
+
 end IsingModel
