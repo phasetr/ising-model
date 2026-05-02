@@ -786,6 +786,34 @@ theorem clusterSeqActivity_zero {ι : Type*} [Fintype ι] [DecidableEq ι]
   unfold clusterSeqActivity
   rw [Fin.prod_univ_zero]
 
+/-- **Connected spanning edge subsets** (Step 582, Mayer expansion
+foundation): for a finite-vertex SimpleGraph `G`, the `Finset` of edge
+subsets `S ⊆ G.edgeFinset` such that the SimpleGraph reconstructed from
+`S` (with vertex set `V`) is `Connected`. The Ursell coefficient of a
+cluster sequence will be the alternating-sign sum
+`(1/n!) · ∑_{S ∈ connectedSpanningEdgeSubsets G(ω)} (-1)^|S|`. -/
+noncomputable def connectedSpanningEdgeSubsets {V : Type*} [Fintype V] [DecidableEq V]
+    (G : SimpleGraph V) [DecidableRel G.Adj] :
+    Finset (Finset (Sym2 V)) :=
+  letI : DecidablePred fun S : Finset (Sym2 V) =>
+      (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 V))).Connected :=
+    fun _ => Classical.dec _
+  G.edgeFinset.powerset.filter
+    (fun S => (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 V))).Connected)
+
+/-- **Membership in `connectedSpanningEdgeSubsets`**: `S` belongs iff
+`S ⊆ G.edgeFinset` and the SimpleGraph from `S` is connected. -/
+theorem mem_connectedSpanningEdgeSubsets {V : Type*} [Fintype V] [DecidableEq V]
+    {G : SimpleGraph V} [DecidableRel G.Adj] {S : Finset (Sym2 V)} :
+    S ∈ connectedSpanningEdgeSubsets G ↔
+      S ⊆ G.edgeFinset ∧
+      (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 V))).Connected := by
+  unfold connectedSpanningEdgeSubsets
+  letI : DecidablePred fun S : Finset (Sym2 V) =>
+      (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 V))).Connected :=
+    fun _ => Classical.dec _
+  rw [Finset.mem_filter, Finset.mem_powerset]
+
 /-- **Cluster polymer set** (Step 578, Mayer expansion foundation):
 a finite set of polymers `Γ` is a *cluster set* iff `Γ` is non-empty,
 every element is a polymer of `G`, and the induced subgraph of
