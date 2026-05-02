@@ -4919,4 +4919,35 @@ theorem correlation_analyticAt_joint
     exact h_Z.inv h_ne
   exact h_inv.mul (correlation_numerator_analyticAt_joint G A β J h)
 
+/-- **Correlation function jointly `AnalyticOnNhd ℝ` over `Set.univ`**
+(§18.6 extension): global form of `correlation_analyticAt_joint`. -/
+theorem correlation_analyticOnNhd_joint
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (A : Finset ι) :
+    AnalyticOnNhd ℝ
+      (fun p : ℝ × ℝ × ℝ => correlation G ⟨p.2.1, p.2.2, p.1⟩ A)
+      Set.univ :=
+  fun ⟨β, J, h⟩ _ => correlation_analyticAt_joint G A β J h
+
+/-- **Correlation function jointly `Continuous` in `(β, J, h)`** (§18.6,
+direct corollary). -/
+theorem correlation_continuous_joint
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (A : Finset ι) :
+    Continuous (fun p : ℝ × ℝ × ℝ => correlation G ⟨p.2.1, p.2.2, p.1⟩ A) :=
+  continuous_iff_continuousAt.mpr fun ⟨β, J, h⟩ =>
+    (correlation_analyticAt_joint G A β J h).continuousAt
+
+/-- **Correlation function jointly `Differentiable ℝ` in `(β, J, h)`**
+(§18.6, direct corollary). -/
+theorem correlation_differentiable_joint
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (A : Finset ι) :
+    Differentiable ℝ
+      (fun p : ℝ × ℝ × ℝ => correlation G ⟨p.2.1, p.2.2, p.1⟩ A) :=
+  fun ⟨β, J, h⟩ => (correlation_analyticAt_joint G A β J h).differentiableAt
+
 end IsingModel
