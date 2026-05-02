@@ -718,6 +718,39 @@ theorem polymerSeqIncompatibilityGraph_id
     polymerSeqIncompatibilityGraph (id : Finset (Sym2 ι) → Finset (Sym2 ι)) =
       incompatibilityGraph (ι := ι) := rfl
 
+/-- **Cluster polymer sequence** (Step 580, Mayer expansion foundation):
+a sequence `ω : Fin n → Finset (Sym2 ι)` of polymers (with `n ≥ 1`) is a
+*cluster sequence* iff every entry is a polymer of `G` and the
+index-side incompatibility graph on `Fin n` (Step 579) is `Connected`.
+This is the sequence-level analogue of `IsClusterPolymerSet` (Step 578),
+allowing multiplicities — the same polymer may appear at multiple
+indices. The Mayer expansion sums over cluster sequences (modulo
+permutation symmetry, divided by `n!`) weighted by the Ursell
+coefficient. -/
+def IsClusterPolymerSequence {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {n : ℕ} (_hn : 1 ≤ n) (ω : Fin n → Finset (Sym2 ι)) : Prop :=
+  (∀ i : Fin n, IsPolymer G (ω i)) ∧
+  (polymerSeqIncompatibilityGraph ω).Connected
+
+/-- **Singleton cluster sequence**: any one-element sequence
+`ω : Fin 1 → Finset (Sym2 ι)` whose single entry is a polymer is a
+cluster sequence. The index-side graph on `Fin 1` is `Connected`
+because there is only one vertex (`Reachable.refl`). -/
+theorem IsClusterPolymerSequence.singleton
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {ω : Fin 1 → Finset (Sym2 ι)} (hω : IsPolymer G (ω 0)) :
+    IsClusterPolymerSequence G (n := 1) (le_refl 1) ω := by
+  refine ⟨?_, ?_⟩
+  · intro i
+    have : i = 0 := Fin.fin_one_eq_zero i
+    exact this ▸ hω
+  · refine { preconnected := ?_, nonempty := ⟨0⟩ }
+    intro u v
+    have huv : u = v := Subsingleton.elim u v
+    exact huv ▸ SimpleGraph.Reachable.refl u
+
 /-- **Cluster polymer set** (Step 578, Mayer expansion foundation):
 a finite set of polymers `Γ` is a *cluster set* iff `Γ` is non-empty,
 every element is a polymer of `G`, and the induced subgraph of
