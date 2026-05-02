@@ -3296,6 +3296,20 @@ theorem mayer_identity_of_no_polymers_tanh
       mayerPartialSum G N (Real.tanh (β * J)) :=
   mayer_identity_of_no_polymers G h_no _ N
 
+/-- **Mayer identity holds under disjunctive trivial conditions** (Step 651):
+`polymerFreeEnergy G (tanh(β·J)) = mayerPartialSum G N (tanh(β·J))`
+holds when either `β·J = 0` (so `tanh = 0`, both sides reduce to 0)
+or `allPolymers G = ∅` (so both sides equal 0 via vanishing). -/
+theorem mayer_identity_of_trivial
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (h : β * J = 0 ∨ allPolymers G = ∅) (N : ℕ) :
+    polymerFreeEnergy G (Real.tanh (β * J)) =
+      mayerPartialSum G N (Real.tanh (β * J)) := by
+  rcases h with hβJ | hno
+  · exact polymerFreeEnergy_eq_mayerPartialSum_at_betaJ_zero G hβJ N
+  · exact mayer_identity_of_no_polymers_tanh G hno β J N
+
 /-- **`allPolymers G = ∅` when `G` has no edges** (Step 620): an
 edgeless graph has no even subgraph other than `∅`, which is excluded
 from `IsPolymer` by the non-emptiness clause. -/
