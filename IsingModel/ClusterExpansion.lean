@@ -3112,4 +3112,26 @@ theorem polymerFreeEnergy_tanh_analyticOnNhd_J_Ici_zero
       (fun J' : ℝ => polymerFreeEnergy G (Real.tanh (β * J'))) (Set.Ici 0) :=
   fun J hJ => polymerFreeEnergy_tanh_analyticAt_J G β J (mul_nonneg hβ hJ)
 
+/-- **`mayerPartialSum G 2 t` explicit formula** (Step 614):
+`mayerPartialSum G 2 t = ∑_{P ∈ allPolymers G} t^|P|
+                       - (1/2) ∑_{(P, Q) ∈ allPolymers², PolymersIncompatible P Q}
+                          t^|P| · t^|Q|`.
+The `N = 2` truncation of the Mayer expansion expressed entirely via
+explicit polymer sums. Combines Step 592 (n=1: total polymer activity)
+with Step 597 (n=2 filter form). -/
+theorem mayerPartialSum_two
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (t : ℝ) :
+    mayerPartialSum G 2 t =
+      (∑ P ∈ allPolymers G, t ^ P.card) +
+        (-1/2 : ℝ) *
+          ∑ pq ∈ ((allPolymers G) ×ˢ (allPolymers G)).filter
+              (fun pq => PolymersIncompatible pq.1 pq.2),
+            (t ^ pq.1.card * t ^ pq.2.card) := by
+  unfold mayerPartialSum
+  rw [show ((2 : ℕ) + 1) = 3 from rfl,
+      Finset.sum_range_succ, Finset.sum_range_succ, Finset.sum_range_one,
+      mayerExpansionTerm_zero, mayerExpansionTerm_one,
+      mayerExpansionTerm_two_filter, zero_add]
+
 end IsingModel
