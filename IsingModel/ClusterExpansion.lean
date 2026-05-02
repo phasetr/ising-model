@@ -1471,4 +1471,51 @@ theorem vdPolymerFamilies_sum_tanh_continuous_J
     continuous_const.mul continuous_id
   exact (vdPolymerFamilies_sum_continuous G).comp (continuous_real_tanh.comp h_mul)
 
+/-- **Partition function continuous in `β` (at `h = 0`) via polymer
+expansion**: combines the §18.4 polymer-family identity (Step 548) with
+the polymer-family sum continuity (Step 556) and continuity of
+`cosh(β·J)^|E|` to obtain
+`Continuous (fun β => partitionFunction G ⟨J, 0, β⟩)`.
+
+The polymer expansion realises `Z(J,0,β) = 2^|ι| · cosh(β·J)^|E| ·
+∑_Γ ∏_P tanh(β·J)^|P|` as a product of three β-continuous factors. -/
+theorem partitionFunction_continuous_beta_h_zero
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J : ℝ) :
+    Continuous (fun β : ℝ => partitionFunction G ⟨J, 0, β⟩) := by
+  have h_eq : (fun β : ℝ => partitionFunction G ⟨J, 0, β⟩) =
+      fun β : ℝ => (2 : ℝ) ^ Fintype.card ι * Real.cosh (β * J) ^ G.edgeFinset.card *
+        ∑ Γ ∈ vdCompatiblePolymerFamilies G,
+          ∏ P ∈ Γ, Real.tanh (β * J) ^ P.card :=
+    funext (partitionFunction_high_temp_expansion_h_zero_polymer_family G J)
+  rw [h_eq]
+  have h_mul : Continuous (fun β : ℝ => β * J) :=
+    continuous_id.mul continuous_const
+  refine Continuous.mul ?_ (vdPolymerFamilies_sum_tanh_continuous_beta G J)
+  refine continuous_const.mul ?_
+  exact (Real.continuous_cosh.comp h_mul).pow _
+
+/-- **Partition function continuous in `J` (at `h = 0`) via polymer
+expansion**: dual of `partitionFunction_continuous_beta_h_zero` for the
+coupling variable, again via the polymer-family identity. The general
+form for non-zero `h` is `partitionFunction_continuous_J` in
+`GibbsMeasure.lean`; this `_h_zero` version goes through the polymer
+expansion and so will be the natural place to extend to higher
+regularity (e.g. analyticity) in subsequent steps. -/
+theorem partitionFunction_continuous_J_h_zero
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (β : ℝ) :
+    Continuous (fun J : ℝ => partitionFunction G ⟨J, 0, β⟩) := by
+  have h_eq : (fun J : ℝ => partitionFunction G ⟨J, 0, β⟩) =
+      fun J : ℝ => (2 : ℝ) ^ Fintype.card ι * Real.cosh (β * J) ^ G.edgeFinset.card *
+        ∑ Γ ∈ vdCompatiblePolymerFamilies G,
+          ∏ P ∈ Γ, Real.tanh (β * J) ^ P.card :=
+    funext (fun J => partitionFunction_high_temp_expansion_h_zero_polymer_family G J β)
+  rw [h_eq]
+  have h_mul : Continuous (fun J : ℝ => β * J) :=
+    continuous_const.mul continuous_id
+  refine Continuous.mul ?_ (vdPolymerFamilies_sum_tanh_continuous_J G β)
+  refine continuous_const.mul ?_
+  exact (Real.continuous_cosh.comp h_mul).pow _
+
 end IsingModel
