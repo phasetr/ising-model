@@ -2823,6 +2823,20 @@ theorem ursellCoefficient_abs_le
     rw [abs_pow, abs_neg, abs_one, one_pow]
   rw [Finset.sum_congr rfl h_each, Finset.sum_const, Nat.smul_one_eq_cast]
 
+/-- **Uniform Ursell coefficient bound** (Step 603): combining Step
+601 (|ϕ^T| ≤ card / n!) and Step 602 (card ≤ 2^|E|) gives
+`|ϕ^T(ω)| ≤ 2^|E(G(ω))| / n!`. The classical Mayer-expansion uniform
+bound from connected-spanning subgraphs of the incompatibility graph. -/
+theorem ursellCoefficient_abs_le_pow_div_factorial
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {n : ℕ} (ω : Fin n → Finset (Sym2 ι)) :
+    |ursellCoefficient ω| ≤
+      (2 ^ (polymerSeqIncompatibilityGraph ω).edgeFinset.card : ℝ)
+        / (n.factorial : ℝ) := by
+  refine (ursellCoefficient_abs_le ω).trans ?_
+  refine div_le_div_of_nonneg_right ?_ (Nat.cast_nonneg _)
+  exact_mod_cast connectedSpanningEdgeSubsets_card_le_pow _
+
 /-- **Mayer identity at `t = 0`** (Step 600, milestone): the first
 verified instance of the Mayer expansion identity
 `log Ξ = ∑_{n ≥ 0} mayerExpansionTerm G n t`. At `t = 0`,
