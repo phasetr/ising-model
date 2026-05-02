@@ -1,5 +1,6 @@
 import IsingModel.FreeEnergy
 import Mathlib.Algebra.BigOperators.Ring.Nat
+import Mathlib.Combinatorics.SimpleGraph.Metric
 
 /-!
 # Conditioning inequalities
@@ -4039,6 +4040,129 @@ theorem evenSubgraph_pair_boundary_card_one_adj
   rw [he_eq, SimpleGraph.mem_edgeFinset, SimpleGraph.mem_edgeSet] at he_in_G
   refine ⟨?_, he_in_G⟩
   rw [hX_eq, he_eq]
+
+/-- **Parity transition for `X.erase s(i, k)` when `∂X = {i, j}`,
+`k ∉ {i, j}` (GJ §18.7 foundation)**: under `i ≠ j`, `k ≠ i`, `k ≠ j`,
+if `X` is in the FV (3.46) numerator filter for `A = {i, j}` and
+`s(i, k) ∈ X`, then `X.erase s(i, k)` is in the FV (3.46) numerator
+filter for `A' = {k, j}`.
+
+The boundary "moves" from `{i, j}` to `{k, j}`: erasing the edge
+`s(i, k)` flips parity at both endpoints `i` and `k` (Step 570),
+turning `i`'s odd degree into even (so `i` leaves the boundary) and
+`k`'s even degree into odd (so `k` joins the boundary). The vertex
+`j`'s parity is preserved.
+
+The mod-2 identity verified: for every `v`,
+`[v ∈ {i, j}] + [v ∈ s(i, k)] ≡ [v ∈ {k, j}] (mod 2)`. -/
+theorem evenSubgraph_pair_boundary_erase_swap
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (i j k : ι) (hij : i ≠ j) (hki : k ≠ i) (hkj : k ≠ j)
+    (X : Finset (Sym2 ι))
+    (hX : X ∈ G.edgeFinset.powerset.filter
+        (fun X' : Finset (Sym2 ι) => ∀ v : ι,
+          Even ((if v ∈ ({i, j} : Finset ι) then (1 : ℕ) else 0)
+                + (X'.filter (v ∈ ·)).card)))
+    (he_in : s(i, k) ∈ X) :
+    X.erase s(i, k) ∈ G.edgeFinset.powerset.filter
+      (fun X' : Finset (Sym2 ι) => ∀ v : ι,
+        Even ((if v ∈ ({k, j} : Finset ι) then (1 : ℕ) else 0)
+              + (X'.filter (v ∈ ·)).card)) := by
+  classical
+  rcases Finset.mem_filter.mp hX with ⟨h_pow, h_par⟩
+  refine Finset.mem_filter.mpr ⟨?_, fun v => ?_⟩
+  · exact Finset.mem_powerset.mpr
+      ((Finset.erase_subset _ _).trans (Finset.mem_powerset.mp h_pow))
+  · have h_par_v := h_par v
+    have h_step570 := filter_mem_card_erase X (s(i, k)) he_in v
+    rw [h_step570] at h_par_v
+    -- Both indicators concretely:
+    have h_v_in_e_iff : v ∈ (s(i, k) : Sym2 ι) ↔ v = i ∨ v = k := Sym2.mem_iff
+    have h_in_ij_iff : v ∈ ({i, j} : Finset ι) ↔ v = i ∨ v = j := by simp
+    have h_in_kj_iff : v ∈ ({k, j} : Finset ι) ↔ v = k ∨ v = j := by simp
+    -- Compute the indicator parity sum: [v ∈ {i, j}] + [v ∈ s(i, k)] + [v ∈ {k, j}]
+    -- has the same parity for all v (always even, by case analysis).
+    -- Strategy: express both sides via the "X.erase ...".filter card and
+    -- reduce to comparing indicator sums.
+    by_cases hvi : v = i
+    · -- v = i: indicators (1, 1, 0)
+      have h1 : v ∈ ({i, j} : Finset ι) := by rw [hvi]; exact Finset.mem_insert_self _ _
+      have h2 : v ∈ (s(i, k) : Sym2 ι) := by rw [hvi]; exact Sym2.mem_mk_left _ _
+      have h3 : v ∉ ({k, j} : Finset ι) := by
+        intro hv_in
+        rw [h_in_kj_iff, hvi] at hv_in
+        rcases hv_in with heq | heq
+        · exact hki heq.symm
+        · exact hij heq
+      rw [if_pos h1, if_pos h2] at h_par_v
+      rw [if_neg h3]
+      -- h_par_v : Even (1 + ((X.erase s(i,k)).filter (v ∈ ·)).card + 1))
+      -- Goal: Even (0 + ((X.erase s(i,k)).filter (v ∈ ·)).card)
+      have h_eq_orig : (1 : ℕ) + (((X.erase s(i, k)).filter (v ∈ ·)).card + 1) =
+          ((X.erase s(i, k)).filter (v ∈ ·)).card + 2 := by ring
+      rw [h_eq_orig] at h_par_v
+      have h_eq_goal : (0 : ℕ) + ((X.erase s(i, k)).filter (v ∈ ·)).card =
+          ((X.erase s(i, k)).filter (v ∈ ·)).card := by ring
+      rw [h_eq_goal]
+      exact (Nat.even_add.mp h_par_v).mpr (by decide : Even 2)
+    · by_cases hvj : v = j
+      · -- v = j: indicators (1, 0, 1) — note j ≠ i, j ≠ k so j ∉ s(i, k)
+        have h1 : v ∈ ({i, j} : Finset ι) := by rw [hvj]; simp
+        have h2 : v ∉ (s(i, k) : Sym2 ι) := by
+          intro hv_in
+          rw [h_v_in_e_iff, hvj] at hv_in
+          rcases hv_in with heq | heq
+          · exact hij heq.symm
+          · exact hkj heq.symm
+        have h3 : v ∈ ({k, j} : Finset ι) := by rw [hvj]; simp
+        rw [if_pos h1, if_neg h2] at h_par_v
+        rw [if_pos h3]
+        -- h_par_v : Even (1 + ((X.erase s(i,k)).filter (v ∈ ·)).card + 0))
+        -- Goal: Even (1 + ((X.erase s(i,k)).filter (v ∈ ·)).card)
+        simpa using h_par_v
+      · by_cases hvk : v = k
+        · -- v = k: indicators (0, 1, 1) — k ∉ {i, j}, k ∈ s(i, k), k ∈ {k, j}
+          have h1 : v ∉ ({i, j} : Finset ι) := by
+            intro hv_in
+            rw [h_in_ij_iff, hvk] at hv_in
+            rcases hv_in with heq | heq
+            · exact hki heq
+            · exact hkj heq
+          have h2 : v ∈ (s(i, k) : Sym2 ι) := by rw [hvk]; exact Sym2.mem_mk_right _ _
+          have h3 : v ∈ ({k, j} : Finset ι) := by rw [hvk]; exact Finset.mem_insert_self _ _
+          rw [if_neg h1, if_pos h2] at h_par_v
+          rw [if_pos h3]
+          -- h_par_v : Even (0 + ((X.erase s(i,k)).filter (v ∈ ·)).card + 1))
+          -- Goal: Even (1 + ((X.erase s(i,k)).filter (v ∈ ·)).card)
+          have h_eq_orig : (0 : ℕ) + (((X.erase s(i, k)).filter (v ∈ ·)).card + 1) =
+              ((X.erase s(i, k)).filter (v ∈ ·)).card + 1 := by ring
+          have h_eq_goal : (1 : ℕ) + ((X.erase s(i, k)).filter (v ∈ ·)).card =
+              ((X.erase s(i, k)).filter (v ∈ ·)).card + 1 := by ring
+          rw [h_eq_orig] at h_par_v
+          rw [h_eq_goal]
+          exact h_par_v
+        · -- v ∉ {i, j, k}: indicators (0, 0, 0)
+          have h1 : v ∉ ({i, j} : Finset ι) := by
+            intro hv_in
+            rw [h_in_ij_iff] at hv_in
+            rcases hv_in with heq | heq
+            · exact hvi heq
+            · exact hvj heq
+          have h2 : v ∉ (s(i, k) : Sym2 ι) := by
+            intro hv_in
+            rw [h_v_in_e_iff] at hv_in
+            rcases hv_in with heq | heq
+            · exact hvi heq
+            · exact hvk heq
+          have h3 : v ∉ ({k, j} : Finset ι) := by
+            intro hv_in
+            rw [h_in_kj_iff] at hv_in
+            rcases hv_in with heq | heq
+            · exact hvk heq
+            · exact hvj heq
+          rw [if_neg h1, if_neg h2] at h_par_v
+          rw [if_neg h3]
+          simpa using h_par_v
 
 /-- **Pair correlation weak upper bound `≤ 2^|E| · tanh(β·J)` at `h = 0`
 (GJ §18.7 weak upper bound)**: under `0 ≤ β·J`,
