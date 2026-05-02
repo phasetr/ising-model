@@ -3495,6 +3495,15 @@ theorem polymerFreeEnergy_monotoneOn_Ici_zero
   exact Real.log_le_log (vdPolymerFamilies_sum_pos_of_nonneg G ht)
     (vdPolymerFamilies_sum_monotoneOn_Ici_zero G ht hs hts)
 
+/-- **`polymerFreeEnergy` preserves order on `[0, ∞)`** (Step 649):
+direct order-preservation corollary of Step 633 (monotonicity). -/
+theorem polymerFreeEnergy_le_of_le_of_nonneg
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {t s : ℝ} (ht : 0 ≤ t) (hs : 0 ≤ s) (hts : t ≤ s) :
+    polymerFreeEnergy G t ≤ polymerFreeEnergy G s :=
+  polymerFreeEnergy_monotoneOn_Ici_zero G ht hs hts
+
 /-- **`polymerFreeEnergy ≤ |E| · t` under `t ≥ 0`** (Step 634):
 sharpen Step 630 via `Real.log_le_sub_one_of_pos` (i.e. `log(1+t) ≤ t`). -/
 theorem polymerFreeEnergy_le_card_mul_of_nonneg
