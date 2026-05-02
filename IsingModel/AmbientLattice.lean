@@ -9,6 +9,7 @@ import IsingModel.AmbientLattice.TruncatedFunctions
 import IsingModel.AmbientLattice.SpontaneousMono
 import IsingModel.AmbientLattice.SpecialCases
 import IsingModel.AmbientLattice.BetaDerivative
+import IsingModel.AmbientLattice.Analyticity
 import IsingModel.InfiniteVolume
 import IsingModel.FreeEnergy
 import IsingModel.Inequalities.GHS
