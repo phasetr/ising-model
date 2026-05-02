@@ -181,6 +181,35 @@ def IsPolymerVertexDisjoint {ι : Type*} [Fintype ι] [DecidableEq ι]
     (P Q : Finset (Sym2 ι)) : Prop :=
   Disjoint (polymerSupport P) (polymerSupport Q)
 
+/-- **Vertex-disjointness is symmetric**. -/
+theorem isPolymerVertexDisjoint_symm
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {P Q : Finset (Sym2 ι)} :
+    IsPolymerVertexDisjoint P Q → IsPolymerVertexDisjoint Q P :=
+  fun h => h.symm
+
+/-- **Vertex-disjointness is irreflexive on polymers** (which are
+non-empty by definition): a polymer cannot be vertex-disjoint from
+itself. -/
+theorem not_isPolymerVertexDisjoint_self_of_isPolymer
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {G : SimpleGraph ι} [Fintype G.edgeSet]
+    {P : Finset (Sym2 ι)} (hP : IsPolymer G P) :
+    ¬ IsPolymerVertexDisjoint P P := by
+  intro h
+  unfold IsPolymerVertexDisjoint at h
+  have h_inf : polymerSupport P ⊓ polymerSupport P = ⊥ := h.eq_bot
+  rw [inf_idem] at h_inf
+  obtain ⟨e, heP⟩ := hP.nonempty
+  -- Pick a vertex of `e` to derive `polymerSupport P ≠ ∅`.
+  induction e using Sym2.ind with
+  | h a b =>
+    have ha : a ∈ (s(a, b) : Sym2 ι) := Sym2.mem_mk_left a b
+    have hvP : a ∈ polymerSupport P :=
+      mem_polymerSupport.mpr ⟨s(a, b), heP, ha⟩
+    rw [h_inf] at hvP
+    exact (Finset.notMem_empty _) hvP
+
 /-- **Vertex-disjointness implies edge-disjointness**: if `P, Q` are
 vertex-disjoint, then they are also edge-disjoint. (The converse fails
 in general — see the figure-eight example.) -/
