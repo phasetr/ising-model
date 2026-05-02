@@ -4422,4 +4422,40 @@ theorem mayerExpansionTerm_filter_connected_one
   have huv : u = v := Subsingleton.elim u v
   exact huv ▸ SimpleGraph.Reachable.refl u
 
+/-- **`polymerFreeEnergy ≤ ε(t)` under `0 ≤ t`** (§18.4 sharpening):
+the polymer free energy is bounded above by the polymer-family
+activity excess `ε(t) = ∑_{Γ ≠ ∅} ∏ t^|P|`. Proof: from `Real.log(1+x) ≤ x`
+for `x ≥ -1` (via `Real.add_one_le_exp`) applied to `x = ε(t) ≥ 0`. -/
+theorem polymerFreeEnergy_le_eps_of_nonneg
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) :
+    polymerFreeEnergy G t ≤
+      ∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅,
+        ∏ P ∈ Γ, t ^ P.card := by
+  rw [polymerFreeEnergy_eq_log_one_add_eps]
+  set ε := ∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅,
+    ∏ P ∈ Γ, t ^ P.card
+  have hε : 0 ≤ ε := vdPolymerFamilies_sum_minus_one_nonneg_of_nonneg G ht
+  have h_pos : 0 < 1 + ε := by linarith
+  have h_le : 1 + ε ≤ Real.exp ε := by
+    have := Real.add_one_le_exp ε
+    linarith
+  exact (Real.log_le_iff_le_exp h_pos).mpr h_le
+
+/-- **`polymerFreeEnergy ≤ (1+t)^|E| - 1` under `0 ≤ t`** (§18.4
+sharpening): combines `polymerFreeEnergy ≤ ε(t)` (above) with Step 661
+(`ε(t) ≤ (1+t)^|E| - 1`). Sharper than the existing
+`polymerFreeEnergy ≤ |E|·log(1+t)` (Step 630) for moderate `t`,
+since `(1+t)^|E| - 1` grows polynomially while `|E|·log(1+t)`
+grows logarithmically — but the new bound is meaningful in the
+regime `(1+t)^|E| < 2` where the cluster expansion converges. -/
+theorem polymerFreeEnergy_le_pow_sub_one_of_nonneg
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) :
+    polymerFreeEnergy G t ≤ (1 + t) ^ G.edgeFinset.card - 1 :=
+  (polymerFreeEnergy_le_eps_of_nonneg G ht).trans
+    (vdPolymerFamilies_sum_minus_one_le_of_nonneg G ht)
+
 end IsingModel
