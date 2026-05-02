@@ -3909,6 +3909,22 @@ theorem vdPolymerFamilies_sum_minus_one_lt_one_eventually
         ∏ P ∈ Γ, t ^ P.card) < 1 := by
   exact (vdPolymerFamilies_sum_minus_one_tendsto_zero G).eventually_lt_const zero_lt_one
 
+/-- **ε(t)^n expansion as sum over Γ-tuples** (Step 667, Mayer
+general-t Phase A): apply `Finset.sum_pow'` to express
+  ε(t)^n = ∑_{(Γ_1, ..., Γ_n) ∈ piFinset (vdCompat.erase ∅)^n}
+            ∏_i ∏_{P ∈ Γ_i} t^|P|.
+This is the multi-Γ-tuple expansion needed to combine with
+log(1+x) Taylor series (Step 666). -/
+theorem vdPolymerFamilies_sum_minus_one_pow
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (t : ℝ) (n : ℕ) :
+    (∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅,
+      ∏ P ∈ Γ, t ^ P.card) ^ n =
+      ∑ ω ∈ Fintype.piFinset
+              (fun _ : Fin n => (vdCompatiblePolymerFamilies G).erase ∅),
+        ∏ i : Fin n, ∏ P ∈ ω i, t ^ P.card :=
+  Finset.sum_pow' _ _ n
+
 /-- **`Real.log(1+x)` power series for `|x| < 1`** (Step 666, Mayer
 general-t Phase A): wrapper of Mathlib's `hasSum_pow_div_log_of_abs_lt_one`
 applied at `-x`, giving
