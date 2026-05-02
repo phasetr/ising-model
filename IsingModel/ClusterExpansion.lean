@@ -718,6 +718,22 @@ theorem polymerSeqIncompatibilityGraph_id
     polymerSeqIncompatibilityGraph (id : Finset (Sym2 ι) → Finset (Sym2 ι)) =
       incompatibilityGraph (ι := ι) := rfl
 
+/-- **Constant polymer sequence gives `K_n`** (Step 647): for a polymer
+`P_0` and the constant sequence `ω : Fin n → {P_0}`,
+`polymerSeqIncompatibilityGraph ω = ⊤`. Since `P_0` is self-incompatible
+(Step 576), every distinct pair `i, j ∈ Fin n` is adjacent. Useful for
+the Mayer expansion of one-polymer graphs (where `log(1+x)` Taylor series
+emerges). -/
+theorem polymerSeqIncompatibilityGraph_const_polymer
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {G : SimpleGraph ι} [Fintype G.edgeSet]
+    {P_0 : Finset (Sym2 ι)} (hP : IsPolymer G P_0) (n : ℕ) :
+    polymerSeqIncompatibilityGraph (fun _ : Fin n => P_0) = ⊤ := by
+  ext i j
+  rw [polymerSeqIncompatibilityGraph_adj, SimpleGraph.top_adj]
+  refine ⟨fun ⟨hne, _⟩ => hne, fun hne => ⟨hne, ?_⟩⟩
+  exact PolymersIncompatible.self_of_isPolymer hP
+
 /-- **Cluster polymer sequence** (Step 580, Mayer expansion foundation):
 a sequence `ω : Fin n → Finset (Sym2 ι)` of polymers (with `n ≥ 1`) is a
 *cluster sequence* iff every entry is a polymer of `G` and the
