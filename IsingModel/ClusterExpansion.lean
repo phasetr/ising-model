@@ -2871,6 +2871,21 @@ theorem vdPolymerFamilies_sum_pos_of_nonneg
     0 < ∑ Γ ∈ vdCompatiblePolymerFamilies G, ∏ P ∈ Γ, t ^ P.card :=
   lt_of_lt_of_le zero_lt_one (vdPolymerFamilies_sum_ge_one_of_nonneg G ht)
 
+/-- **`log (vdPolymerFamilies_sum)` is real-analytic at any `t ≥ 0`**
+(Step 606): `AnalyticAt ℝ (Real.log ∘ vdPolymerFamilies_sum G) t` via
+`AnalyticAt.log` (Step 561) plus positivity (Step 605). Sets up the
+LHS of the Mayer expansion identity as a real-analytic function on
+the non-negative axis. -/
+theorem log_vdPolymerFamilies_sum_analyticAt
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) :
+    AnalyticAt ℝ
+      (fun s : ℝ => Real.log (∑ Γ ∈ vdCompatiblePolymerFamilies G,
+                                 ∏ P ∈ Γ, s ^ P.card)) t :=
+  (vdPolymerFamilies_sum_analyticAt G t).log
+    (vdPolymerFamilies_sum_pos_of_nonneg G ht)
+
 /-- **Mayer expansion term absolute bound** (Step 604): the triangle
 inequality applied to the Mayer term gives
 `|mayerExpansionTerm G n t| ≤ ∑_ω |ϕ^T(ω)| · |z(t, ω)|`. -/
