@@ -2576,4 +2576,45 @@ theorem mayerExpansionTerm_two
     rw [ursellCoefficient_pair, clusterSeqActivity]
     simp only [Fin.prod_univ_two]
 
+/-- **Mayer expansion term continuous in `β` (with `J` fixed)** (Step
+594): chain composition of `mayerExpansionTerm_continuous` with
+`continuous_real_tanh` and `Continuous.mul`. -/
+theorem mayerExpansionTerm_tanh_continuous_beta
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (n : ℕ) (J : ℝ) :
+    Continuous (fun β : ℝ => mayerExpansionTerm G n (Real.tanh (β * J))) := by
+  have h_mul : Continuous (fun β : ℝ => β * J) :=
+    continuous_id.mul continuous_const
+  exact (mayerExpansionTerm_continuous G n).comp (continuous_real_tanh.comp h_mul)
+
+/-- **Mayer expansion term continuous in `J` (with `β` fixed)** (Step
+594). -/
+theorem mayerExpansionTerm_tanh_continuous_J
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (n : ℕ) (β : ℝ) :
+    Continuous (fun J : ℝ => mayerExpansionTerm G n (Real.tanh (β * J))) := by
+  have h_mul : Continuous (fun J : ℝ => β * J) :=
+    continuous_const.mul continuous_id
+  exact (mayerExpansionTerm_continuous G n).comp (continuous_real_tanh.comp h_mul)
+
+/-- **Mayer partial sum continuous in `β` (with `J` fixed)** (Step
+594). -/
+theorem mayerPartialSum_tanh_continuous_beta
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (N : ℕ) (J : ℝ) :
+    Continuous (fun β : ℝ => mayerPartialSum G N (Real.tanh (β * J))) := by
+  have h_mul : Continuous (fun β : ℝ => β * J) :=
+    continuous_id.mul continuous_const
+  exact (mayerPartialSum_continuous G N).comp (continuous_real_tanh.comp h_mul)
+
+/-- **Mayer partial sum continuous in `J` (with `β` fixed)** (Step
+594). -/
+theorem mayerPartialSum_tanh_continuous_J
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (N : ℕ) (β : ℝ) :
+    Continuous (fun J : ℝ => mayerPartialSum G N (Real.tanh (β * J))) := by
+  have h_mul : Continuous (fun J : ℝ => β * J) :=
+    continuous_const.mul continuous_id
+  exact (mayerPartialSum_continuous G N).comp (continuous_real_tanh.comp h_mul)
+
 end IsingModel
