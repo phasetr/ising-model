@@ -1,4 +1,5 @@
 import IsingModel.Conditioning
+import Mathlib.Combinatorics.SimpleGraph.Hasse
 import Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite
 
 /-!
@@ -5092,5 +5093,130 @@ theorem partitionFunction_differentiable_h
     (G : SimpleGraph ι) [Fintype G.edgeSet] (J β : ℝ) :
     Differentiable ℝ (fun h' : ℝ => partitionFunction G ⟨J, h', β⟩) :=
   fun h => (partitionFunction_analyticAt_h G J β h).differentiableAt
+
+/-! ## §18.4 Mayer Phase B: alternating sum on `pathGraph 3`
+
+Companion to the K_n base cases (PRs #1514-#1519). The `pathGraph 3`
+on `Fin 3` has 2 edges (between consecutive vertices); its
+alternating connected-spanning sum equals 1, matching the n=3
+"path-shaped cluster" Ursell-coefficient denominator. -/
+
+/-- **Path graph on `Fin 3` `DecidableRel` instance**: needed for
+`Fintype` of the edge set + `decide`-based proofs. -/
+private instance : DecidableRel (SimpleGraph.pathGraph 3).Adj :=
+  fun u v => decidable_of_iff _ SimpleGraph.pathGraph_adj.symm
+
+/-- **Path graph on `Fin 3` edge finset** = `{s(0,1), s(1,2)}`. -/
+private theorem pathGraph_three_edgeFinset :
+    (SimpleGraph.pathGraph 3).edgeFinset = {s(0, 1), s(1, 2)} := by
+  classical
+  apply Finset.ext
+  intro e
+  rw [SimpleGraph.mem_edgeFinset]
+  refine ⟨?_, fun h => ?_⟩
+  · induction e using Sym2.ind with
+    | h a b =>
+      intro hab
+      rw [SimpleGraph.mem_edgeSet, SimpleGraph.pathGraph_adj] at hab
+      fin_cases a <;> fin_cases b <;> simp_all [Sym2.eq_swap]
+  · rcases (by simpa using h : e = s(0,1) ∨ e = s(1,2)) with h | h <;>
+      · subst h
+        rw [SimpleGraph.mem_edgeSet, SimpleGraph.pathGraph_adj]
+        decide
+
+/-- **`pathGraph 3` alternating connected-spanning sum = 1**: the
+graph has 2 edges; the only connected spanning edge subset is the
+full edge set `{s(0,1), s(1,2)}` (both edges needed to connect 3
+vertices via the path 0 - 1 - 2). Sum = `(-1)^2 = 1`. Matches the
+standard Ursell-coefficient identity for an n=3 path cluster:
+`ϕ^T = (alternating sum) / n! = 1/6`. -/
+theorem alternatingConnectedSubgraphSum_pathGraph_three :
+    alternatingConnectedSubgraphSum (SimpleGraph.pathGraph 3) = 1 := by
+  classical
+  unfold alternatingConnectedSubgraphSum
+  -- Convert to integer-valued sum then `decide`.
+  have h_int :
+      (∑ S ∈ (SimpleGraph.pathGraph 3).edgeFinset.powerset.filter
+        (fun S : Finset (Sym2 (Fin 3)) =>
+          (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 (Fin 3)))).Connected),
+        ((-1 : ℤ) ^ S.card)) = 1 := by decide
+  unfold connectedSpanningEdgeSubsets
+  have h_cast :
+      (∑ S ∈ (SimpleGraph.pathGraph 3).edgeFinset.powerset.filter
+          (fun S : Finset (Sym2 (Fin 3)) =>
+            (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 (Fin 3)))).Connected),
+        ((-1 : ℝ) ^ S.card)) =
+        (((∑ S ∈ (SimpleGraph.pathGraph 3).edgeFinset.powerset.filter
+            (fun S : Finset (Sym2 (Fin 3)) =>
+              (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 (Fin 3)))).Connected),
+          ((-1 : ℤ) ^ S.card)) : ℤ) : ℝ) := by
+    push_cast
+    rfl
+  rw [h_cast, h_int]
+  norm_num
+
+/-- **Path graph on `Fin 4` `DecidableRel` instance**. -/
+private instance : DecidableRel (SimpleGraph.pathGraph 4).Adj :=
+  fun u v => decidable_of_iff _ SimpleGraph.pathGraph_adj.symm
+
+/-- **`pathGraph 4` alternating connected-spanning sum = -1**: the
+graph has 3 edges `{s(0,1), s(1,2), s(2,3)}`; the only connected
+spanning edge subset is the full edge set (all 3 edges needed to
+connect 4 vertices linearly). Sum = `(-1)^3 = -1`. Ursell coefficient
+for n=4 path cluster: `ϕ^T = -1/4! = -1/24`. -/
+theorem alternatingConnectedSubgraphSum_pathGraph_four :
+    alternatingConnectedSubgraphSum (SimpleGraph.pathGraph 4) = -1 := by
+  classical
+  unfold alternatingConnectedSubgraphSum
+  have h_int :
+      (∑ S ∈ (SimpleGraph.pathGraph 4).edgeFinset.powerset.filter
+        (fun S : Finset (Sym2 (Fin 4)) =>
+          (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 (Fin 4)))).Connected),
+        ((-1 : ℤ) ^ S.card)) = -1 := by decide
+  unfold connectedSpanningEdgeSubsets
+  have h_cast :
+      (∑ S ∈ (SimpleGraph.pathGraph 4).edgeFinset.powerset.filter
+          (fun S : Finset (Sym2 (Fin 4)) =>
+            (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 (Fin 4)))).Connected),
+        ((-1 : ℝ) ^ S.card)) =
+        (((∑ S ∈ (SimpleGraph.pathGraph 4).edgeFinset.powerset.filter
+            (fun S : Finset (Sym2 (Fin 4)) =>
+              (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 (Fin 4)))).Connected),
+          ((-1 : ℤ) ^ S.card)) : ℤ) : ℝ) := by
+    push_cast
+    rfl
+  rw [h_cast, h_int]
+  norm_num
+
+/-- **Path graph on `Fin 5` `DecidableRel` instance**. -/
+private instance : DecidableRel (SimpleGraph.pathGraph 5).Adj :=
+  fun u v => decidable_of_iff _ SimpleGraph.pathGraph_adj.symm
+
+/-- **`pathGraph 5` alternating connected-spanning sum = 1**: 4 edges,
+only the full path is connected spanning, sum = `(-1)^4 = 1`. Ursell
+coefficient for n=5 path cluster: `ϕ^T = 1/5! = 1/120`. -/
+theorem alternatingConnectedSubgraphSum_pathGraph_five :
+    alternatingConnectedSubgraphSum (SimpleGraph.pathGraph 5) = 1 := by
+  classical
+  unfold alternatingConnectedSubgraphSum
+  have h_int :
+      (∑ S ∈ (SimpleGraph.pathGraph 5).edgeFinset.powerset.filter
+        (fun S : Finset (Sym2 (Fin 5)) =>
+          (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 (Fin 5)))).Connected),
+        ((-1 : ℤ) ^ S.card)) = 1 := by decide
+  unfold connectedSpanningEdgeSubsets
+  have h_cast :
+      (∑ S ∈ (SimpleGraph.pathGraph 5).edgeFinset.powerset.filter
+          (fun S : Finset (Sym2 (Fin 5)) =>
+            (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 (Fin 5)))).Connected),
+        ((-1 : ℝ) ^ S.card)) =
+        (((∑ S ∈ (SimpleGraph.pathGraph 5).edgeFinset.powerset.filter
+            (fun S : Finset (Sym2 (Fin 5)) =>
+              (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 (Fin 5)))).Connected),
+          ((-1 : ℤ) ^ S.card)) : ℤ) : ℝ) := by
+    push_cast
+    rfl
+  rw [h_cast, h_int]
+  norm_num
 
 end IsingModel
