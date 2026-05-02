@@ -3610,6 +3610,16 @@ theorem mayerPartialSum_succ
   unfold mayerPartialSum
   rw [show ((N + 1) + 1) = (N + 1) + 1 from rfl, Finset.sum_range_succ]
 
+/-- **`mayerExpansionTerm = mayerPartialSum` diff** (Step 646):
+rearrangement of Step 638. -/
+theorem mayerExpansionTerm_eq_mayerPartialSum_diff
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (N : ℕ) (t : ℝ) :
+    mayerExpansionTerm G (N + 1) t =
+      mayerPartialSum G (N + 1) t - mayerPartialSum G N t := by
+  rw [mayerPartialSum_succ]
+  ring
+
 /-- **`mayerExpansionTerm G 2 t ≤ 0` under `t ≥ 0`** (Step 637):
 the n=2 Mayer term equals `-1/2 · ∑_{(P,Q) incompat} t^|P|·t^|Q|`,
 non-positive. Matches the alternating sign of log(1+x) Taylor
