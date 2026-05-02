@@ -3273,4 +3273,25 @@ theorem mayer_identity_of_edgeFinset_empty
   mayer_identity_of_no_polymers G
     (allPolymers_eq_empty_of_edgeFinset_empty G h_empty) t N
 
+/-- **`polymerFreeEnergy = 0` for empty-polymer graphs** (Step 621):
+when `allPolymers G = ∅`, `polymerFreeEnergy G t = 0` for every `t`,
+since `vdCompatiblePolymerFamilies G = {∅}` and `log 1 = 0`. -/
+theorem polymerFreeEnergy_eq_zero_of_no_polymers
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (h_no : allPolymers G = ∅) (t : ℝ) :
+    polymerFreeEnergy G t = 0 := by
+  rw [mayer_identity_of_no_polymers G h_no t 0, mayerPartialSum_zero]
+
+/-- **`mayerPartialSum = 0` for empty-polymer graphs** (Step 621):
+when `allPolymers G = ∅`, every Mayer term vanishes (no polymer
+sequences exist for `n ≥ 1`; n=0 vanishes via Step 587). -/
+theorem mayerPartialSum_eq_zero_of_no_polymers
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (h_no : allPolymers G = ∅) (t : ℝ) (N : ℕ) :
+    mayerPartialSum G N t = 0 := by
+  rw [← mayer_identity_of_no_polymers G h_no t N,
+      polymerFreeEnergy_eq_zero_of_no_polymers G h_no t]
+
 end IsingModel
