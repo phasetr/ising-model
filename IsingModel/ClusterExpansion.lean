@@ -403,6 +403,42 @@ theorem IsCompatiblePolymerFamilyVertexDisjoint.pow_card_biUnion
     t ^ (Γ.biUnion id).card = ∏ P ∈ Γ, t ^ P.card :=
   hΓ.toCompatible.pow_card_biUnion t
 
+/-- **Singleton vertex-disjoint family is compatible iff polymer**: a
+one-element family `{P}` is vertex-disjoint compatible iff `IsPolymer G P`. -/
+theorem isCompatiblePolymerFamilyVertexDisjoint_singleton
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (P : Finset (Sym2 ι)) :
+    IsCompatiblePolymerFamilyVertexDisjoint G
+        ({P} : Finset (Finset (Sym2 ι))) ↔
+      IsPolymer G P := by
+  refine ⟨fun ⟨h₁, _⟩ => h₁ P (Finset.mem_singleton.mpr rfl), ?_⟩
+  intro hP
+  refine ⟨?_, ?_⟩
+  · intro Q hQ
+    rw [Finset.mem_singleton] at hQ
+    subst hQ; exact hP
+  · intro P₁ hP₁ P₂ hP₂ hne
+    rw [Finset.coe_singleton, Set.mem_singleton_iff] at hP₁ hP₂
+    subst hP₁; subst hP₂
+    exact absurd rfl hne
+
+/-- **Monotonicity of vertex-disjoint compatible polymer family**: any
+subset of a vertex-disjoint compatible polymer family is again vertex-
+disjoint compatible. -/
+theorem IsCompatiblePolymerFamilyVertexDisjoint.mono
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {G : SimpleGraph ι} [Fintype G.edgeSet]
+    {Γ Γ' : Finset (Finset (Sym2 ι))} (hsub : Γ' ⊆ Γ)
+    (hΓ : IsCompatiblePolymerFamilyVertexDisjoint G Γ) :
+    IsCompatiblePolymerFamilyVertexDisjoint G Γ' := by
+  refine ⟨?_, ?_⟩
+  · intro P hP
+    exact hΓ.1 P (hsub hP)
+  · intro P hP Q hQ hPQ
+    have hP' : P ∈ Γ := hsub (Finset.mem_coe.mp hP)
+    have hQ' : Q ∈ Γ := hsub (Finset.mem_coe.mp hQ)
+    exact hΓ.2 (Finset.mem_coe.mpr hP') (Finset.mem_coe.mpr hQ') hPQ
+
 /-- **Singleton polymer family is compatible iff the polymer is a polymer**:
 a one-element family `{P}` is compatible iff `IsPolymer G P`. -/
 theorem isCompatiblePolymerFamily_singleton {ι : Type*} [DecidableEq ι]
