@@ -1300,6 +1300,22 @@ theorem IsCompatiblePolymerFamilyVertexDisjoint.sum_card_le_edgeFinset_card
   obtain ⟨P, hP, heP⟩ := he
   exact (hΓ.1 P hP).isEven.subset heP
 
+/-- **VD polymer-family sum ≤ 2^|E|**: under `0 ≤ β·J`,
+`∑_{Γ ∈ vdCompatiblePolymerFamilies G} ∏ tanh(β·J)^|P| ≤ 2^|E|`.
+
+Direct via the bijection (Step 547) plus the existing even-subgraph
+upper bound `sum_pow_tanh_even_subgraph_le_two_pow` (Step 319). -/
+theorem vdPolymerFamilies_sum_le_two_pow
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (hβJ : 0 ≤ β * J) :
+    (∑ Γ ∈ vdCompatiblePolymerFamilies G,
+        ∏ P ∈ Γ, Real.tanh (β * J) ^ P.card)
+      ≤ (2 : ℝ) ^ G.edgeFinset.card := by
+  rw [← evenSubgraphs_sum_eq_vdPolymerFamilies_sum G (Real.tanh (β * J))]
+  rw [evenSubgraphs_eq_inline_filter]
+  exact sum_pow_tanh_even_subgraph_le_two_pow G J β hβJ
+
 /-- **VD polymer-family sum ≥ 1**: under `0 ≤ β·J`,
 `1 ≤ ∑_{Γ ∈ vdCompatiblePolymerFamilies G} ∏ tanh(β·J)^|P|`.
 
