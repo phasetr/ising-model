@@ -195,6 +195,47 @@ theorem IsCompatiblePolymerFamily.empty {ι : Type*} [DecidableEq ι]
     exact absurd hP (Finset.notMem_empty P)
   · simp
 
+/-- **Union over a compatible polymer family is an even subgraph**:
+the `Finset.biUnion` of a compatible polymer family is an even subgraph
+of `G`. Proved by induction on the family. -/
+theorem IsCompatiblePolymerFamily.biUnion_isEvenSubgraph
+    {ι : Type*} [DecidableEq ι]
+    {G : SimpleGraph ι} [Fintype G.edgeSet]
+    {Γ : Finset (Finset (Sym2 ι))}
+    (hΓ : IsCompatiblePolymerFamily G Γ) :
+    IsEvenSubgraph G (Γ.biUnion id) := by
+  classical
+  induction Γ using Finset.induction with
+  | empty =>
+    simpa using IsEvenSubgraph.empty (ι := ι) G
+  | insert P Γ' hP_notin ih =>
+    obtain ⟨h_polymer, h_pairwise⟩ := hΓ
+    have h_polymer_P : IsPolymer G P := h_polymer P (Finset.mem_insert_self _ _)
+    have h_polymer' : ∀ Q ∈ Γ', IsPolymer G Q := by
+      intro Q hQ
+      exact h_polymer Q (Finset.mem_insert_of_mem hQ)
+    have h_pairwise' :
+        (Γ' : Set (Finset (Sym2 ι))).Pairwise IsPolymerCompatible := by
+      intro Q hQ R hR hne
+      exact h_pairwise (Finset.mem_coe.mpr (Finset.mem_insert_of_mem
+        (Finset.mem_coe.mp hQ))) (Finset.mem_coe.mpr (Finset.mem_insert_of_mem
+        (Finset.mem_coe.mp hR))) hne
+    have hΓ' : IsCompatiblePolymerFamily G Γ' := ⟨h_polymer', h_pairwise'⟩
+    have h_disjoint : Disjoint P (Γ'.biUnion id) := by
+      rw [Finset.disjoint_biUnion_right]
+      intro Q hQ
+      have hPQ : P ≠ Q := by
+        intro heq
+        rw [heq] at hP_notin
+        exact hP_notin hQ
+      have h_compat : IsPolymerCompatible P Q :=
+        h_pairwise (Finset.mem_coe.mpr (Finset.mem_insert_self _ _))
+          (Finset.mem_coe.mpr (Finset.mem_insert_of_mem hQ)) hPQ
+      simpa [id] using h_compat
+    rw [Finset.biUnion_insert]
+    simp only [id]
+    exact h_polymer_P.isEven.union_disjoint (ih hΓ') h_disjoint
+
 /-- **Singleton polymer family is compatible iff the polymer is a polymer**:
 a one-element family `{P}` is compatible iff `IsPolymer G P`. -/
 theorem isCompatiblePolymerFamily_singleton {ι : Type*} [DecidableEq ι]
