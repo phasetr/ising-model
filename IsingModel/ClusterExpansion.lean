@@ -188,6 +188,27 @@ theorem polymerSupport_empty {ι : Type*} [Fintype ι] [DecidableEq ι] :
   ext v
   simp [mem_polymerSupport]
 
+/-- **`polymerSupport (Γ.biUnion id) = Γ.biUnion polymerSupport`**:
+support of a biUnion equals biUnion of supports. -/
+theorem polymerSupport_biUnion {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (Γ : Finset (Finset (Sym2 ι))) :
+    polymerSupport (Γ.biUnion id) = Γ.biUnion polymerSupport := by
+  ext v
+  rw [mem_polymerSupport, Finset.mem_biUnion]
+  refine ⟨?_, ?_⟩
+  · rintro ⟨e, he, hv⟩
+    rw [Finset.mem_biUnion] at he
+    obtain ⟨P, hP, hePid⟩ := he
+    refine ⟨P, hP, ?_⟩
+    rw [mem_polymerSupport]
+    exact ⟨e, hePid, hv⟩
+  · rintro ⟨P, hP, hvP⟩
+    rw [mem_polymerSupport] at hvP
+    obtain ⟨e, heP, hv⟩ := hvP
+    refine ⟨e, ?_, hv⟩
+    rw [Finset.mem_biUnion]
+    exact ⟨P, hP, heP⟩
+
 /-- **`polymerSupport (P ∪ Q) = polymerSupport P ∪ polymerSupport Q`**:
 support is union-distributive. -/
 theorem polymerSupport_union {ι : Type*} [Fintype ι] [DecidableEq ι]
