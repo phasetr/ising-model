@@ -3310,6 +3310,22 @@ theorem mayer_identity_of_trivial
   · exact polymerFreeEnergy_eq_mayerPartialSum_at_betaJ_zero G hβJ N
   · exact mayer_identity_of_no_polymers_tanh G hno β J N
 
+/-- **Mayer identity at `J = 0`** (Step 652 specialisation). -/
+theorem mayer_identity_at_J_zero_polymer_free_energy
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (β : ℝ) (N : ℕ) :
+    polymerFreeEnergy G (Real.tanh (β * (0 : ℝ))) =
+      mayerPartialSum G N (Real.tanh (β * (0 : ℝ))) :=
+  mayer_identity_of_trivial G (Or.inl (mul_zero β)) N
+
+/-- **Mayer identity at `β = 0`** (Step 652 specialisation). -/
+theorem mayer_identity_at_beta_zero_polymer_free_energy
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J : ℝ) (N : ℕ) :
+    polymerFreeEnergy G (Real.tanh ((0 : ℝ) * J)) =
+      mayerPartialSum G N (Real.tanh ((0 : ℝ) * J)) :=
+  mayer_identity_of_trivial G (Or.inl (zero_mul J)) N
+
 /-- **`allPolymers G = ∅` when `G` has no edges** (Step 620): an
 edgeless graph has no even subgraph other than `∅`, which is excluded
 from `IsPolymer` by the non-emptiness clause. -/
