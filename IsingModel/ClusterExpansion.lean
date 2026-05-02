@@ -1076,6 +1076,45 @@ theorem IsCompatiblePolymerFamilyVertexDisjoint.polymerDecomposition_biUnion
       exact ⟨C, hC, heC⟩
     · exact hΓ.edgeComponent_biUnion_eq_polymer hC heC
 
+/-- **Set of vertex-disjoint compatible polymer families** in `G`:
+the universe used for the polymer-model identity. Defined as
+sub-families of `allPolymers G` that are pairwise vertex-disjoint. -/
+noncomputable def vdCompatiblePolymerFamilies
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    Finset (Finset (Finset (Sym2 ι))) := by
+  classical
+  exact (allPolymers G).powerset.filter
+    (fun Γ => IsCompatiblePolymerFamilyVertexDisjoint G Γ)
+
+/-- **Membership in `vdCompatiblePolymerFamilies`**:
+`Γ ∈ vdCompatiblePolymerFamilies G ↔ Γ ⊆ allPolymers G ∧
+IsCompatiblePolymerFamilyVertexDisjoint G Γ`. -/
+theorem mem_vdCompatiblePolymerFamilies
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {G : SimpleGraph ι} [Fintype G.edgeSet]
+    {Γ : Finset (Finset (Sym2 ι))} :
+    Γ ∈ vdCompatiblePolymerFamilies G ↔
+      Γ ⊆ allPolymers G ∧
+        IsCompatiblePolymerFamilyVertexDisjoint G Γ := by
+  classical
+  unfold vdCompatiblePolymerFamilies
+  rw [Finset.mem_filter, Finset.mem_powerset]
+
+/-- **`polymerDecomposition` lands in `vdCompatiblePolymerFamilies`**:
+for any even subgraph `X`, the canonical decomposition is a member of
+`vdCompatiblePolymerFamilies G`. -/
+theorem IsEvenSubgraph.polymerDecomposition_mem_vdCompatiblePolymerFamilies
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {G : SimpleGraph ι} [Fintype G.edgeSet]
+    {X : Finset (Sym2 ι)} (hX : IsEvenSubgraph G X) :
+    polymerDecomposition X ∈ vdCompatiblePolymerFamilies G := by
+  rw [mem_vdCompatiblePolymerFamilies]
+  refine ⟨?_, hX.polymerDecomposition_isCompatibleVertexDisjoint⟩
+  intro C hC
+  rw [mem_allPolymers]
+  exact hX.polymerDecomposition_isPolymer hC
+
 /-- **Polymer model partition function (abstract)**: given a reference
 finite universe of polymer candidates `Ω : Finset (Finset (Sym2 ι))`
 and a weight function `z : Finset (Sym2 ι) → ℝ`, the polymer model
