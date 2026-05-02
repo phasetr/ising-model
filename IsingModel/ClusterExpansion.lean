@@ -149,14 +149,59 @@ theorem isEdgeConnected_singleton {ι : Type*} (e : Sym2 ι) :
   subst he₁; subst he₂
   exact Relation.ReflTransGen.refl
 
-/-- **Polymer compatibility**: two polymers are *compatible* if they
-are edge-disjoint. This is the natural compatibility relation for the
-polymer model arising from the FV (3.45) cycle-space sum: distinct
-edge-disjoint cycles contribute multiplicatively to the partition
-function. -/
+/-- **Polymer support**: the set of vertices touched by some edge of
+`P`. For polymers in the cluster expansion of the lattice Ising model,
+the support is the natural "geometric" set on which the polymer lives. -/
+def polymerSupport {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (P : Finset (Sym2 ι)) : Finset ι :=
+  Finset.univ.filter (fun v => ∃ e ∈ P, v ∈ e)
+
+/-- **Membership in `polymerSupport`**: `v ∈ polymerSupport P` iff `v`
+is contained in some edge of `P`. -/
+theorem mem_polymerSupport {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {P : Finset (Sym2 ι)} {v : ι} :
+    v ∈ polymerSupport P ↔ ∃ e ∈ P, v ∈ e := by
+  unfold polymerSupport
+  simp [Finset.mem_filter]
+
+/-- **Polymer edge-disjointness**: two polymers `P, Q` are *edge-disjoint*
+if they share no edge. This is a *weak* compatibility relation that
+suffices for the multiplicative weight identity but does not give a
+unique connected-component decomposition (counter-example: figure-eight
+of two triangles edge-disjoint but vertex-sharing). -/
 def IsPolymerCompatible {ι : Type*} [DecidableEq ι]
     (P Q : Finset (Sym2 ι)) : Prop :=
   Disjoint P Q
+
+/-- **Polymer vertex-disjointness**: two polymers `P, Q` are *vertex-
+disjoint* if they share no vertex (i.e. their supports are disjoint).
+This is the *strong* compatibility relation needed for the bijection
+between even subgraphs and their connected-component decomposition. -/
+def IsPolymerVertexDisjoint {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (P Q : Finset (Sym2 ι)) : Prop :=
+  Disjoint (polymerSupport P) (polymerSupport Q)
+
+/-- **Vertex-disjointness implies edge-disjointness**: if `P, Q` are
+vertex-disjoint, then they are also edge-disjoint. (The converse fails
+in general — see the figure-eight example.) -/
+theorem IsPolymerVertexDisjoint.toEdgeDisjoint
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {P Q : Finset (Sym2 ι)}
+    (h : IsPolymerVertexDisjoint P Q) :
+    IsPolymerCompatible P Q := by
+  unfold IsPolymerVertexDisjoint at h
+  unfold IsPolymerCompatible
+  rw [Finset.disjoint_left]
+  intro e heP heQ
+  -- An edge `e` has two endpoints; pick one to derive a contradiction.
+  induction e using Sym2.ind with
+  | h a b =>
+    have ha : a ∈ (s(a, b) : Sym2 ι) := Sym2.mem_mk_left a b
+    have hvP : a ∈ polymerSupport P :=
+      mem_polymerSupport.mpr ⟨s(a, b), heP, ha⟩
+    have hvQ : a ∈ polymerSupport Q :=
+      mem_polymerSupport.mpr ⟨s(a, b), heQ, ha⟩
+    exact (Finset.disjoint_left.mp h) hvP hvQ
 
 /-- **Polymer compatibility is symmetric**. -/
 theorem isPolymerCompatible_symm {ι : Type*} [DecidableEq ι]
