@@ -2536,4 +2536,44 @@ theorem mayerPartialSum_one
   rw [show ((1 : ℕ) + 1) = 2 from rfl, Finset.sum_range_succ, Finset.sum_range_one,
       mayerExpansionTerm_zero, mayerExpansionTerm_one, zero_add]
 
+/-- **Mayer expansion `n = 2` term as explicit pair sum** (Step 593):
+under `mayerExpansionTerm G 2 t = ∑_{(P, Q) ∈ allPolymers² with
+PolymersIncompatible P Q} (-1/2) · t^|P| · t^|Q|`. The reindexing
+`piFinset (Fin 2 → allPolymers G) ↔ allPolymers G ×ˢ allPolymers G`
+sends `ω ↦ (ω 0, ω 1)`. The pair Ursell formula (Step 586) reduces
+each summand to `(-1/2)` when incompatible and `0` otherwise. -/
+theorem mayerExpansionTerm_two
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (t : ℝ) :
+    mayerExpansionTerm G 2 t =
+      ∑ pq ∈ (allPolymers G) ×ˢ (allPolymers G),
+        (if PolymersIncompatible pq.1 pq.2 then (-1/2 : ℝ) else 0) *
+          (t ^ pq.1.card * t ^ pq.2.card) := by
+  unfold mayerExpansionTerm
+  -- Reindex piFinset (Fin 2, allPolymers) ↔ allPolymers ×ˢ allPolymers via ω ↔ (ω 0, ω 1).
+  apply Finset.sum_bij
+    (fun (ω : Fin 2 → Finset (Sym2 ι)) (_ : ω ∈ _) => (ω 0, ω 1))
+  · intro ω hω
+    rw [Fintype.mem_piFinset] at hω
+    rw [Finset.mem_product]
+    exact ⟨hω 0, hω 1⟩
+  · intro ω₁ _ ω₂ _ heq
+    funext i
+    fin_cases i
+    · exact (Prod.mk.inj heq).1
+    · exact (Prod.mk.inj heq).2
+  · intro pq hpq
+    rw [Finset.mem_product] at hpq
+    refine ⟨fun i => if i = 0 then pq.1 else pq.2, ?_, ?_⟩
+    · rw [Fintype.mem_piFinset]
+      intro i
+      fin_cases i
+      · simpa using hpq.1
+      · simpa using hpq.2
+    · rfl
+  · intro ω hω
+    rw [Fintype.mem_piFinset] at hω
+    rw [ursellCoefficient_pair, clusterSeqActivity]
+    simp only [Fin.prod_univ_two]
+
 end IsingModel
