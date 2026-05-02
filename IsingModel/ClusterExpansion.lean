@@ -147,4 +147,41 @@ theorem not_isPolymerCompatible_self_of_nonempty {ι : Type*} [DecidableEq ι]
   rw [inf_idem] at h_inf
   exact hP.ne_empty h_inf
 
+/-- **Compatible polymer family**: a `Finset` of polymers such that
+the polymers are pairwise compatible (i.e. pairwise edge-disjoint).
+This is the natural input to the polymer partition function:
+`Ξ = ∑_{compatible Γ} ∏_{P ∈ Γ} z(P)`. -/
+def IsCompatiblePolymerFamily {ι : Type*} [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (Γ : Finset (Finset (Sym2 ι))) : Prop :=
+  (∀ P ∈ Γ, IsPolymer G P) ∧
+  (Γ : Set (Finset (Sym2 ι))).Pairwise IsPolymerCompatible
+
+/-- **Empty polymer family is compatible**: the empty family vacuously
+satisfies both clauses. -/
+theorem IsCompatiblePolymerFamily.empty {ι : Type*} [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    IsCompatiblePolymerFamily G (∅ : Finset (Finset (Sym2 ι))) := by
+  refine ⟨?_, ?_⟩
+  · intro P hP
+    exact absurd hP (Finset.notMem_empty P)
+  · simp
+
+/-- **Singleton polymer family is compatible iff the polymer is a polymer**:
+a one-element family `{P}` is compatible iff `IsPolymer G P`. -/
+theorem isCompatiblePolymerFamily_singleton {ι : Type*} [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (P : Finset (Sym2 ι)) :
+    IsCompatiblePolymerFamily G ({P} : Finset (Finset (Sym2 ι))) ↔
+      IsPolymer G P := by
+  refine ⟨fun ⟨h₁, _⟩ => h₁ P (Finset.mem_singleton.mpr rfl), ?_⟩
+  intro hP
+  refine ⟨?_, ?_⟩
+  · intro Q hQ
+    rw [Finset.mem_singleton] at hQ
+    subst hQ; exact hP
+  · intro P₁ hP₁ P₂ hP₂ hne
+    rw [Finset.coe_singleton, Set.mem_singleton_iff] at hP₁ hP₂
+    subst hP₁; subst hP₂
+    exact absurd rfl hne
+
 end IsingModel
