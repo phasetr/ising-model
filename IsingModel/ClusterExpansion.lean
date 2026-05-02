@@ -630,6 +630,38 @@ noncomputable def polymerPartition {ι : Type*} [DecidableEq ι]
   exact ∑ Γ ∈ Ω.powerset.filter (fun Γ => IsCompatiblePolymerFamily G Γ),
     ∏ P ∈ Γ, z P
 
+/-- **Polymer partition function on a single polymer**: when the
+universe is `{P}` for a single polymer `P`, the partition function
+equals `1 + z(P)` (the empty family contributes `1`, the singleton
+family contributes `z(P)`). -/
+theorem polymerPartition_singleton {ι : Type*} [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {P : Finset (Sym2 ι)} (hP : IsPolymer G P)
+    (z : Finset (Sym2 ι) → ℝ) :
+    polymerPartition G ({P} : Finset (Finset (Sym2 ι))) z = 1 + z P := by
+  classical
+  unfold polymerPartition
+  -- powerset of `{P}` is `{∅, {P}}`; both are compatible.
+  have hpow : ({P} : Finset (Finset (Sym2 ι))).powerset =
+      ({∅, {P}} : Finset (Finset (Finset (Sym2 ι)))) := by
+    ext Γ
+    simp [Finset.mem_powerset, Finset.subset_singleton_iff]
+  rw [hpow]
+  rw [show ({∅, {P}} : Finset (Finset (Finset (Sym2 ι)))).filter
+      (fun Γ => IsCompatiblePolymerFamily G Γ) = {∅, {P}} from ?_]
+  · rw [Finset.sum_pair (a := (∅ : Finset (Finset (Sym2 ι))))
+        (b := ({P} : Finset (Finset (Sym2 ι))))
+        (by simp)]
+    simp
+  · ext Γ
+    rw [Finset.mem_filter]
+    refine ⟨fun ⟨h, _⟩ => h, fun h => ⟨h, ?_⟩⟩
+    rcases Finset.mem_insert.mp h with h | h
+    · subst h; exact IsCompatiblePolymerFamily.empty G
+    · rw [Finset.mem_singleton] at h
+      subst h
+      exact (isCompatiblePolymerFamily_singleton G P).mpr hP
+
 /-- **Polymer partition function on an empty universe equals 1**: the
 only sub-family is `∅`, which is compatible with empty product `1`. -/
 theorem polymerPartition_empty {ι : Type*} [DecidableEq ι]
