@@ -1461,6 +1461,16 @@ theorem continuous_real_tanh : Continuous Real.tanh := by
   exact Real.continuous_sinh.div Real.continuous_cosh
     (fun x => (Real.cosh_pos x).ne')
 
+/-- **`Real.tanh` is differentiable on `ℝ`** (project-local helper):
+derived from `tanh = sinh / cosh` together with `Real.cosh > 0` and
+`Differentiable.div`. Mathlib does not yet export `Real.differentiable_tanh`. -/
+theorem differentiable_real_tanh : Differentiable ℝ Real.tanh := by
+  have h_eq : Real.tanh = fun x : ℝ => Real.sinh x / Real.cosh x :=
+    funext (fun x => Real.tanh_eq_sinh_div_cosh x)
+  rw [h_eq]
+  exact Real.differentiable_sinh.div Real.differentiable_cosh
+    (fun x => (Real.cosh_pos x).ne')
+
 /-- **VD polymer-family sum is continuous in `β` (with `J` fixed)**:
 composing Step 555 with continuity of `tanh` and multiplication. -/
 theorem vdPolymerFamilies_sum_tanh_continuous_beta
@@ -1484,6 +1494,34 @@ theorem vdPolymerFamilies_sum_tanh_continuous_J
   have h_mul : Continuous (fun J : ℝ => β * J) :=
     continuous_const.mul continuous_id
   exact (vdPolymerFamilies_sum_continuous G).comp (continuous_real_tanh.comp h_mul)
+
+/-- **VD polymer-family sum is differentiable in `β` (with `J` fixed)**:
+chain-rule composition of Step 558 with `differentiable_real_tanh` and
+`Differentiable.mul_const`. -/
+theorem vdPolymerFamilies_sum_tanh_differentiable_beta
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J : ℝ) :
+    Differentiable ℝ (fun β : ℝ =>
+      ∑ Γ ∈ vdCompatiblePolymerFamilies G,
+        ∏ P ∈ Γ, Real.tanh (β * J) ^ P.card) := by
+  have h_mul : Differentiable ℝ (fun β : ℝ => β * J) :=
+    (differentiable_id (𝕜 := ℝ)).mul_const J
+  exact (vdPolymerFamilies_sum_differentiable G).comp
+    (differentiable_real_tanh.comp h_mul)
+
+/-- **VD polymer-family sum is differentiable in `J` (with `β` fixed)**:
+chain-rule composition of Step 558 with `differentiable_real_tanh` and
+`Differentiable.const_mul`. -/
+theorem vdPolymerFamilies_sum_tanh_differentiable_J
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (β : ℝ) :
+    Differentiable ℝ (fun J : ℝ =>
+      ∑ Γ ∈ vdCompatiblePolymerFamilies G,
+        ∏ P ∈ Γ, Real.tanh (β * J) ^ P.card) := by
+  have h_mul : Differentiable ℝ (fun J : ℝ => β * J) :=
+    (differentiable_id (𝕜 := ℝ)).const_mul β
+  exact (vdPolymerFamilies_sum_differentiable G).comp
+    (differentiable_real_tanh.comp h_mul)
 
 /-- **Partition function continuous in `β` (at `h = 0`) via polymer
 expansion**: combines the §18.4 polymer-family identity (Step 548) with
