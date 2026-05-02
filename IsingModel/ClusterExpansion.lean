@@ -5396,6 +5396,40 @@ theorem alternatingConnectedSubgraphSum_cycleGraph_four :
 private instance : DecidableRel (SimpleGraph.cycleGraph 5).Adj :=
   fun u v => decidable_of_iff _ SimpleGraph.cycleGraph_adj'.symm
 
+/-- **Cycle graph on `Fin 6` `DecidableRel` instance**. -/
+private instance : DecidableRel (SimpleGraph.cycleGraph 6).Adj :=
+  fun u v => decidable_of_iff _ SimpleGraph.cycleGraph_adj'.symm
+
+set_option maxRecDepth 8000 in
+set_option maxHeartbeats 1000000 in
+/-- **`cycleGraph 6` alternating connected-spanning sum = -5**:
+the cycle on Fin 6 has 6 edges. Connected spanning subsets: 6
+spanning trees (paths of size 5 each) + the full cycle (size 6).
+Sum = `6 · (-1)^5 + (-1)^6 = -6 + 1 = -5`. -/
+theorem alternatingConnectedSubgraphSum_cycleGraph_six :
+    alternatingConnectedSubgraphSum (SimpleGraph.cycleGraph 6) = -5 := by
+  classical
+  unfold alternatingConnectedSubgraphSum
+  have h_int :
+      (∑ S ∈ (SimpleGraph.cycleGraph 6).edgeFinset.powerset.filter
+        (fun S : Finset (Sym2 (Fin 6)) =>
+          (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 (Fin 6)))).Connected),
+        ((-1 : ℤ) ^ S.card)) = -5 := by decide
+  unfold connectedSpanningEdgeSubsets
+  have h_cast :
+      (∑ S ∈ (SimpleGraph.cycleGraph 6).edgeFinset.powerset.filter
+          (fun S : Finset (Sym2 (Fin 6)) =>
+            (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 (Fin 6)))).Connected),
+        ((-1 : ℝ) ^ S.card)) =
+        (((∑ S ∈ (SimpleGraph.cycleGraph 6).edgeFinset.powerset.filter
+            (fun S : Finset (Sym2 (Fin 6)) =>
+              (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 (Fin 6)))).Connected),
+          ((-1 : ℤ) ^ S.card)) : ℤ) : ℝ) := by
+    push_cast
+    rfl
+  rw [h_cast, h_int]
+  norm_num
+
 set_option maxRecDepth 4000 in
 /-- **`cycleGraph 5` alternating connected-spanning sum = 4**:
 the cycle on Fin 5 has 5 edges. Connected spanning subsets: 5
