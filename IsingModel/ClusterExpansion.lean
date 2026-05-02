@@ -1570,4 +1570,48 @@ theorem partitionFunction_continuous_J_h_zero
   refine continuous_const.mul ?_
   exact (Real.continuous_cosh.comp h_mul).pow _
 
+/-- **Partition function differentiable in `β` (at `h = 0`) via polymer
+expansion**: strengthens `partitionFunction_continuous_beta_h_zero` from
+`Continuous` to `Differentiable ℝ`, using Step 559 plus differentiability
+of `cosh(β·J)^|E|` (composition of `Real.differentiable_cosh` and
+`Differentiable.mul_const`, raised to the power `|E|`).
+
+The polymer expansion realises `Z(J,0,β) = 2^|ι| · cosh(β·J)^|E| ·
+∑_Γ ∏_P tanh(β·J)^|P|` as a product of three differentiable factors. -/
+theorem partitionFunction_differentiable_beta_h_zero
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J : ℝ) :
+    Differentiable ℝ (fun β : ℝ => partitionFunction G ⟨J, 0, β⟩) := by
+  have h_eq : (fun β : ℝ => partitionFunction G ⟨J, 0, β⟩) =
+      fun β : ℝ => (2 : ℝ) ^ Fintype.card ι * Real.cosh (β * J) ^ G.edgeFinset.card *
+        ∑ Γ ∈ vdCompatiblePolymerFamilies G,
+          ∏ P ∈ Γ, Real.tanh (β * J) ^ P.card :=
+    funext (partitionFunction_high_temp_expansion_h_zero_polymer_family G J)
+  rw [h_eq]
+  have h_mul : Differentiable ℝ (fun β : ℝ => β * J) :=
+    (differentiable_id (𝕜 := ℝ)).mul_const J
+  refine Differentiable.mul ?_ (vdPolymerFamilies_sum_tanh_differentiable_beta G J)
+  refine (differentiable_const _).mul ?_
+  exact (Real.differentiable_cosh.comp h_mul).pow _
+
+/-- **Partition function differentiable in `J` (at `h = 0`) via polymer
+expansion**: dual of `partitionFunction_differentiable_beta_h_zero` for
+the coupling variable. Strengthens `partitionFunction_continuous_J_h_zero`
+from `Continuous` to `Differentiable ℝ`. -/
+theorem partitionFunction_differentiable_J_h_zero
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (β : ℝ) :
+    Differentiable ℝ (fun J : ℝ => partitionFunction G ⟨J, 0, β⟩) := by
+  have h_eq : (fun J : ℝ => partitionFunction G ⟨J, 0, β⟩) =
+      fun J : ℝ => (2 : ℝ) ^ Fintype.card ι * Real.cosh (β * J) ^ G.edgeFinset.card *
+        ∑ Γ ∈ vdCompatiblePolymerFamilies G,
+          ∏ P ∈ Γ, Real.tanh (β * J) ^ P.card :=
+    funext (fun J => partitionFunction_high_temp_expansion_h_zero_polymer_family G J β)
+  rw [h_eq]
+  have h_mul : Differentiable ℝ (fun J : ℝ => β * J) :=
+    (differentiable_id (𝕜 := ℝ)).const_mul β
+  refine Differentiable.mul ?_ (vdPolymerFamilies_sum_tanh_differentiable_J G β)
+  refine (differentiable_const _).mul ?_
+  exact (Real.differentiable_cosh.comp h_mul).pow _
+
 end IsingModel
