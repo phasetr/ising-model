@@ -2861,6 +2861,31 @@ theorem vdPolymerFamilies_sum_ge_one_of_nonneg
   rw [h_empty_eq]
   exact Finset.single_le_sum h_nonneg h_empty_in
 
+/-- **Polymer-family sum ≤ `(1+t)^|E|` under `t ≥ 0`** (Step 629):
+generic upper bound generalising Step 552's tanh-form bound. Proof:
+`evenSubgraphs G ⊆ G.edgeFinset.powerset`, so the sum over even
+subgraphs of `t^|X|` is at most the sum over all subsets, which equals
+`(1+t)^|E|` by binomial expansion (`Finset.prod_one_add`). -/
+theorem vdPolymerFamilies_sum_le_one_plus_pow_of_nonneg
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) :
+    (∑ Γ ∈ vdCompatiblePolymerFamilies G, ∏ P ∈ Γ, t ^ P.card) ≤
+      (1 + t) ^ G.edgeFinset.card := by
+  classical
+  rw [← evenSubgraphs_sum_eq_vdPolymerFamilies_sum G t,
+      evenSubgraphs_eq_inline_filter]
+  have hpower :
+      (1 + t) ^ G.edgeFinset.card =
+        ∑ X ∈ G.edgeFinset.powerset, t ^ X.card := by
+    rw [← Finset.prod_const, Finset.prod_one_add]
+    refine Finset.sum_congr rfl (fun X _ => ?_)
+    rw [Finset.prod_const]
+  rw [hpower]
+  refine Finset.sum_le_sum_of_subset_of_nonneg (Finset.filter_subset _ _) ?_
+  intro X _ _
+  exact pow_nonneg ht _
+
 /-- **Polymer-family sum > 0 under `t ≥ 0`** (Step 605):
 strict positivity follows from `≥ 1` and `0 < 1`. Useful to ensure
 `Real.log (vdPolymerFamilies_sum G t)` is well-defined. -/
