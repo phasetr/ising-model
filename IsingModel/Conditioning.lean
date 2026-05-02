@@ -3907,6 +3907,42 @@ theorem evenSubgraph_pair_boundary_card_pos
     simp [hi_mem] at h_at_i
   · exact h
 
+/-- **Pair-boundary numerator: `i` is incident to some edge in `X`
+(GJ §18.7 foundation)**: for any `X` in the FV (3.46) numerator filter
+for `A = {i, j}`, there exists an edge `e ∈ X` with `i ∈ e`.
+
+Direct from the parity constraint at `v = i`: since `i ∈ A`, we get
+`Even (1 + (X.filter (i ∈ ·)).card)`, forcing the filter card to be
+**odd**, hence `≥ 1`, hence non-empty.
+
+Building block toward the §18.7 graph-distance lower bound
+`d_G(i, j) ≤ X.card` via induction on `X.card`. -/
+theorem evenSubgraph_pair_boundary_exists_edge_incident_to
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (i j : ι)
+    (X : Finset (Sym2 ι))
+    (hX : X ∈ G.edgeFinset.powerset.filter
+        (fun X : Finset (Sym2 ι) => ∀ v : ι,
+          Even ((if v ∈ ({i, j} : Finset ι) then (1 : ℕ) else 0)
+                + (X.filter (v ∈ ·)).card))) :
+    ∃ e ∈ X, i ∈ e := by
+  rcases Finset.mem_filter.mp hX with ⟨_, hparity⟩
+  have h_at_i := hparity i
+  have hi_mem : i ∈ ({i, j} : Finset ι) := Finset.mem_insert_self i {j}
+  rw [if_pos hi_mem] at h_at_i
+  -- h_at_i : Even (1 + (X.filter (i ∈ ·)).card)
+  -- Hence (X.filter (i ∈ ·)).card is odd, hence ≥ 1
+  have h_filter_card_pos : 0 < (X.filter (i ∈ ·)).card := by
+    rcases Nat.eq_zero_or_pos (X.filter (i ∈ ·)).card with h_zero | h_pos
+    · exfalso
+      rw [h_zero] at h_at_i
+      simp at h_at_i
+    · exact h_pos
+  -- Filter is non-empty, pick any element
+  obtain ⟨e, he⟩ := Finset.card_pos.mp h_filter_card_pos
+  rcases Finset.mem_filter.mp he with ⟨he_in_X, he_contains_i⟩
+  exact ⟨e, he_in_X, he_contains_i⟩
+
 /-- **Pair correlation weak upper bound `≤ 2^|E| · tanh(β·J)` at `h = 0`
 (GJ §18.7 weak upper bound)**: under `0 ≤ β·J`,
 \[
