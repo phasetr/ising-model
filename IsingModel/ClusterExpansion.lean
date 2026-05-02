@@ -3821,4 +3821,22 @@ theorem polymerFreeEnergy_eq_log_one_add_eps
   unfold polymerFreeEnergy
   rw [vdPolymerFamilies_sum_eq_one_add]
 
+/-- **`ε(0) = 0`** (Step 659, Mayer general-t Phase A): every Γ ≠ ∅
+in `vdCompatiblePolymerFamilies` contains a polymer P with |P| ≥ 1,
+so 0^|P| = 0 and the product vanishes. -/
+theorem vdPolymerFamilies_sum_minus_one_at_zero
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    (∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅,
+      ∏ P ∈ Γ, (0 : ℝ) ^ P.card) = 0 := by
+  classical
+  refine Finset.sum_eq_zero (fun Γ hΓ => ?_)
+  rw [Finset.mem_erase] at hΓ
+  obtain ⟨h_ne, h_in⟩ := hΓ
+  obtain ⟨P, hP⟩ := Finset.nonempty_iff_ne_empty.mpr h_ne
+  rw [mem_vdCompatiblePolymerFamilies] at h_in
+  have hP_polymer : IsPolymer G P := mem_allPolymers.mp (h_in.1 hP)
+  have hP_pos : 0 < P.card := hP_polymer.nonempty.card_pos
+  exact Finset.prod_eq_zero hP (zero_pow hP_pos.ne')
+
 end IsingModel
