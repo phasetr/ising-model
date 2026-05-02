@@ -3294,4 +3294,14 @@ theorem mayerPartialSum_eq_zero_of_no_polymers
   rw [← mayer_identity_of_no_polymers G h_no t N,
       polymerFreeEnergy_eq_zero_of_no_polymers G h_no t]
 
+/-- **Edgeless-graph Mayer identity in tanh form** (Step 622): lift
+Step 620 to the `tanh(β·J)` argument. -/
+theorem mayer_identity_of_edgeFinset_empty_tanh
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (h_empty : G.edgeFinset = ∅) (β J : ℝ) (N : ℕ) :
+    polymerFreeEnergy G (Real.tanh (β * J)) =
+      mayerPartialSum G N (Real.tanh (β * J)) :=
+  mayer_identity_of_edgeFinset_empty G h_empty _ N
+
 end IsingModel
