@@ -1437,4 +1437,38 @@ theorem vdPolymerFamilies_sum_continuous
   intro P _
   exact continuous_id.pow _
 
+/-- **`Real.tanh` is continuous on `ℝ`** (project-local helper): derived
+from `tanh = sinh / cosh` together with `Real.cosh > 0`. Mathlib does
+not yet export `Real.continuous_tanh`, so we provide it here. -/
+theorem continuous_real_tanh : Continuous Real.tanh := by
+  have h_eq : Real.tanh = fun x : ℝ => Real.sinh x / Real.cosh x :=
+    funext (fun x => Real.tanh_eq_sinh_div_cosh x)
+  rw [h_eq]
+  exact Real.continuous_sinh.div Real.continuous_cosh
+    (fun x => (Real.cosh_pos x).ne')
+
+/-- **VD polymer-family sum is continuous in `β` (with `J` fixed)**:
+composing Step 555 with continuity of `tanh` and multiplication. -/
+theorem vdPolymerFamilies_sum_tanh_continuous_beta
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J : ℝ) :
+    Continuous (fun β : ℝ =>
+      ∑ Γ ∈ vdCompatiblePolymerFamilies G,
+        ∏ P ∈ Γ, Real.tanh (β * J) ^ P.card) := by
+  have h_mul : Continuous (fun β : ℝ => β * J) :=
+    continuous_id.mul continuous_const
+  exact (vdPolymerFamilies_sum_continuous G).comp (continuous_real_tanh.comp h_mul)
+
+/-- **VD polymer-family sum is continuous in `J` (with `β` fixed)**:
+composing Step 555 with continuity of `tanh` and multiplication. -/
+theorem vdPolymerFamilies_sum_tanh_continuous_J
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (β : ℝ) :
+    Continuous (fun J : ℝ =>
+      ∑ Γ ∈ vdCompatiblePolymerFamilies G,
+        ∏ P ∈ Γ, Real.tanh (β * J) ^ P.card) := by
+  have h_mul : Continuous (fun J : ℝ => β * J) :=
+    continuous_const.mul continuous_id
+  exact (vdPolymerFamilies_sum_continuous G).comp (continuous_real_tanh.comp h_mul)
+
 end IsingModel
