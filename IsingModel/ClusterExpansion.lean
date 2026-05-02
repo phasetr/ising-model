@@ -2886,6 +2886,17 @@ theorem log_vdPolymerFamilies_sum_analyticAt
   (vdPolymerFamilies_sum_analyticAt G t).log
     (vdPolymerFamilies_sum_pos_of_nonneg G ht)
 
+/-- **`log (vdPolymerFamilies_sum)` AnalyticOnNhd over `[0, ∞)`**
+(Step 607): global form of Step 606 — at every `t ∈ Set.Ici 0`, the
+function is `AnalyticAt`, hence `AnalyticOnNhd ℝ _ (Set.Ici 0)`. -/
+theorem log_vdPolymerFamilies_sum_analyticOnNhd_Ici_zero
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    AnalyticOnNhd ℝ
+      (fun s : ℝ => Real.log (∑ Γ ∈ vdCompatiblePolymerFamilies G,
+                                 ∏ P ∈ Γ, s ^ P.card)) (Set.Ici 0) :=
+  fun _ ht => log_vdPolymerFamilies_sum_analyticAt G ht
+
 /-- **Mayer expansion term absolute bound** (Step 604): the triangle
 inequality applied to the Mayer term gives
 `|mayerExpansionTerm G n t| ≤ ∑_ω |ϕ^T(ω)| · |z(t, ω)|`. -/
