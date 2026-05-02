@@ -4593,4 +4593,50 @@ theorem freeEnergy_lt_log_two_plus_high_temp_correction
     div_lt_div_of_pos_right h_lt h_pos
   linarith
 
+/-- **Partition function `AnalyticAt ℝ` in `β` at general `h`** (§18.6
+extension): for any `(J, h, β)`, `Z(β) = ∑_σ exp(-β · H(σ))` is real-
+analytic in `β`. Direct proof: each summand `exp(-β · H(σ))` is
+`exp ∘ (linear in β)`, which is analytic; sum of analytic functions
+over a finite finset is analytic. Extends `partitionFunction_analyticAt_beta_h_zero`
+(Step 563) from `h = 0` to arbitrary `h`. -/
+theorem partitionFunction_analyticAt_beta_general_h
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h β : ℝ) :
+    AnalyticAt ℝ (fun β' : ℝ => partitionFunction G ⟨J, h, β'⟩) β := by
+  have h_eq : (fun β' : ℝ => partitionFunction G ⟨J, h, β'⟩) =
+      fun β' : ℝ => ∑ σ : Config ι,
+        Real.exp ((-hamiltonian G ⟨J, h, β⟩ σ) * β') := by
+    funext β'
+    unfold partitionFunction boltzmannWeight
+    refine Finset.sum_congr rfl (fun σ _ => ?_)
+    have h_ham : hamiltonian G ⟨J, h, β'⟩ σ = hamiltonian G ⟨J, h, β⟩ σ := rfl
+    rw [h_ham]; ring_nf
+  rw [h_eq]
+  refine Finset.analyticAt_fun_sum _ (fun σ _ => ?_)
+  exact analyticAt_rexp.comp (analyticAt_const.mul analyticAt_id)
+
+/-- **Free energy `AnalyticAt ℝ` in `β` at general `h`** (§18.6
+extension): `f = (1/|ι|) · log Z` is real-analytic in `β` at every
+point, for any `J, h`. Composes `partitionFunction_analyticAt_beta_general_h`
+with `AnalyticAt.log` (using `partitionFunction_pos`). -/
+theorem freeEnergy_analyticAt_beta_general_h
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h β : ℝ) :
+    AnalyticAt ℝ (fun β' : ℝ => freeEnergy G ⟨J, h, β'⟩) β := by
+  unfold freeEnergy
+  refine analyticAt_const.mul ?_
+  exact (partitionFunction_analyticAt_beta_general_h G J h β).log
+    (partitionFunction_pos G _)
+
+/-- **Free energy `AnalyticOnNhd ℝ` in `β` at general `h`** (§18.6
+extension): global form of `freeEnergy_analyticAt_beta_general_h`. -/
+theorem freeEnergy_analyticOnNhd_beta_general_h
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h : ℝ) :
+    AnalyticOnNhd ℝ (fun β' : ℝ => freeEnergy G ⟨J, h, β'⟩) Set.univ :=
+  fun β _ => freeEnergy_analyticAt_beta_general_h G J h β
+
 end IsingModel
