@@ -4370,6 +4370,25 @@ theorem mayerExpansionTerm_filter_connected
     rw [ursellCoefficient_eq_zero_of_disconnected ω hω.2, zero_mul]
   rw [h_disc, add_zero]
 
+/-- **Mayer partial sum restricts to connected polymer sequences**:
+the partial sum `mayerPartialSum G N t = ∑_{n=0..N} mayerExpansionTerm G n t`
+can be rewritten so each term sums only over cluster sequences (those
+`ω : Fin n → polymers` with connected incompatibility graph).
+Direct corollary of `mayerExpansionTerm_filter_connected` applied
+term-by-term. -/
+theorem mayerPartialSum_filter_connected
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (N : ℕ) (t : ℝ) :
+    mayerPartialSum G N t =
+      ∑ n ∈ Finset.range (N + 1),
+        ∑ ω ∈ (Fintype.piFinset (fun _ : Fin n => allPolymers G)).filter
+          (fun ω => (polymerSeqIncompatibilityGraph ω).Connected),
+          ursellCoefficient ω * clusterSeqActivity t ω := by
+  unfold mayerPartialSum
+  refine Finset.sum_congr rfl (fun n _ => ?_)
+  exact mayerExpansionTerm_filter_connected G n t
+
 /-- **Mayer expansion term restricted to connected sequences (n=0)**:
 `mayerExpansionTerm G 0 t = 0` since the unique `ω : Fin 0 → polymers`
 gives a graph on `Fin 0` which is disconnected (`Connected` requires
