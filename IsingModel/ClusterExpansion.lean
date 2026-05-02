@@ -627,6 +627,47 @@ theorem PolymersIncompatible.self_of_isPolymer
   PolymersIncompatible.iff_not_isPolymerVertexDisjoint.mpr
     (not_isPolymerVertexDisjoint_self_of_isPolymer hP)
 
+/-- **Polymer incompatibility graph** (Step 577, Mayer expansion
+foundation): the simple graph on `Finset (Sym2 ι)` (the space of all
+edge subsets, viewed as candidate polymers) where two distinct polymers
+`P, Q` are adjacent iff they are incompatible (share a vertex). Built
+via `SimpleGraph.fromRel PolymersIncompatible`, which automatically
+provides symmetry and irreflexivity (the diagonal is removed even though
+`PolymersIncompatible` is reflexive on non-empty polymers). Connected
+components of this graph (or of induced subgraphs on a multi-set of
+polymers) are precisely the *clusters* in the Mayer expansion. -/
+def incompatibilityGraph {ι : Type*} [Fintype ι] [DecidableEq ι] :
+    SimpleGraph (Finset (Sym2 ι)) :=
+  SimpleGraph.fromRel PolymersIncompatible
+
+/-- **Adjacency in the incompatibility graph**: two polymers are
+adjacent iff they are distinct and incompatible. The disjunction
+`PolymersIncompatible P Q ∨ PolymersIncompatible Q P` from
+`SimpleGraph.fromRel` collapses to a single conjunct because
+`PolymersIncompatible` is symmetric. -/
+theorem incompatibilityGraph_adj {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {P Q : Finset (Sym2 ι)} :
+    (incompatibilityGraph (ι := ι)).Adj P Q ↔
+      P ≠ Q ∧ PolymersIncompatible P Q := by
+  unfold incompatibilityGraph
+  rw [SimpleGraph.fromRel_adj]
+  refine ⟨?_, ?_⟩
+  · rintro ⟨hne, hPQ | hQP⟩
+    · exact ⟨hne, hPQ⟩
+    · exact ⟨hne, hQP.symm⟩
+  · rintro ⟨hne, hPQ⟩
+    exact ⟨hne, Or.inl hPQ⟩
+
+/-- **Decidable adjacency** in the incompatibility graph, derived from
+the `Decidable` instance of `PolymersIncompatible` and `DecidableEq` on
+`Finset`. Required for finite sums and computational use of the graph. -/
+instance incompatibilityGraph_decidableAdj
+    {ι : Type*} [Fintype ι] [DecidableEq ι] :
+    DecidableRel (incompatibilityGraph (ι := ι)).Adj := by
+  intro P Q
+  rw [incompatibilityGraph_adj]
+  exact instDecidableAnd
+
 /-- **Compatible polymer family**: a `Finset` of polymers such that
 the polymers are pairwise compatible (i.e. pairwise edge-disjoint).
 This is the natural input to the polymer partition function:
