@@ -2963,4 +2963,35 @@ theorem mayer_identity_at_zero
       mayerPartialSum G N 0 := by
   rw [vdPolymerFamilies_sum_at_zero, Real.log_one, mayerPartialSum_at_zero]
 
+/-- **Mayer identity at `β·J = 0`** (Step 609): trivial extension of
+Step 600 to the β/J directions. When `β·J = 0`, `tanh(β·J) = 0`,
+reducing both sides to the t=0 case. -/
+theorem mayer_identity_at_betaJ_zero
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (hβJ : β * J = 0) (N : ℕ) :
+    Real.log (∑ Γ ∈ vdCompatiblePolymerFamilies G,
+              ∏ P ∈ Γ, Real.tanh (β * J) ^ P.card) =
+      mayerPartialSum G N (Real.tanh (β * J)) := by
+  rw [hβJ, Real.tanh_zero]
+  exact mayer_identity_at_zero G N
+
+/-- **Mayer identity at `β = 0`** (Step 609 specialisation). -/
+theorem mayer_identity_at_beta_zero
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J : ℝ) (N : ℕ) :
+    Real.log (∑ Γ ∈ vdCompatiblePolymerFamilies G,
+              ∏ P ∈ Γ, Real.tanh ((0 : ℝ) * J) ^ P.card) =
+      mayerPartialSum G N (Real.tanh ((0 : ℝ) * J)) :=
+  mayer_identity_at_betaJ_zero G (zero_mul J) N
+
+/-- **Mayer identity at `J = 0`** (Step 609 specialisation). -/
+theorem mayer_identity_at_J_zero
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (β : ℝ) (N : ℕ) :
+    Real.log (∑ Γ ∈ vdCompatiblePolymerFamilies G,
+              ∏ P ∈ Γ, Real.tanh (β * (0 : ℝ)) ^ P.card) =
+      mayerPartialSum G N (Real.tanh (β * (0 : ℝ))) :=
+  mayer_identity_at_betaJ_zero G (mul_zero β) N
+
 end IsingModel
