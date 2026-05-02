@@ -3322,6 +3322,24 @@ theorem mayerPartialSum_eq_zero_of_edgeFinset_empty
   mayerPartialSum_eq_zero_of_no_polymers G
     (allPolymers_eq_empty_of_edgeFinset_empty G h_empty) t N
 
+/-- **`polymerFreeEnergy` HasDerivAt** (Step 625): explicit derivative
+of `polymerFreeEnergy G t = Real.log (vdPolymerFamilies_sum G t)` via
+the log-derivative formula `(log f)' = f' / f`. The derivative of
+`vdPolymerFamilies_sum G` is given by Step 575 (explicit polynomial
+form), and positivity (Step 605) ensures `f t ≠ 0`. -/
+theorem polymerFreeEnergy_hasDerivAt
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) :
+    HasDerivAt (fun s : ℝ => polymerFreeEnergy G s)
+      ((∑ Γ ∈ vdCompatiblePolymerFamilies G,
+          ∑ Q ∈ Γ, (∏ P ∈ Γ.erase Q, t ^ P.card) *
+            ((Q.card : ℝ) * t ^ (Q.card - 1))) /
+        (∑ Γ ∈ vdCompatiblePolymerFamilies G, ∏ P ∈ Γ, t ^ P.card)) t := by
+  unfold polymerFreeEnergy
+  exact (vdPolymerFamilies_sum_hasDerivAt G t).log
+    (vdPolymerFamilies_sum_pos_of_nonneg G ht).ne'
+
 /-- **`freeEnergy = log 2` at `β·J = 0`** (Step 624): when `β·J = 0`,
 the Step 612 decomposition reduces to `f = log 2` since
 `cosh(0) = 1`, `log 1 = 0`, and `polymerFreeEnergy G (tanh 0) = 0`
