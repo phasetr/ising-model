@@ -3587,6 +3587,19 @@ theorem polymerFreeEnergy_tanh_le_card_log_two_ferromagnetic
       G.edgeFinset.card * Real.log 2 :=
   polymerFreeEnergy_tanh_le_card_log_two G (mul_nonneg hβ.le hJ)
 
+/-- **`polymerFreeEnergy_tanh` double bound** (Step 645): under
+`0 ≤ β·J`, both `polymerFreeEnergy_tanh ≤ |E|·tanh(β·J)` (Step 635)
+and `≤ |E|·log 2` (Step 643) hold simultaneously. -/
+theorem polymerFreeEnergy_tanh_double_bound
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] {β J : ℝ} (hβJ : 0 ≤ β * J) :
+    polymerFreeEnergy G (Real.tanh (β * J)) ≤
+      G.edgeFinset.card * Real.tanh (β * J) ∧
+    polymerFreeEnergy G (Real.tanh (β * J)) ≤
+      G.edgeFinset.card * Real.log 2 :=
+  ⟨polymerFreeEnergy_tanh_le_card_mul G hβJ,
+   polymerFreeEnergy_tanh_le_card_log_two G hβJ⟩
+
 /-- **`mayerPartialSum` recurrence in `N`** (Step 638):
 `mayerPartialSum G (N+1) t = mayerPartialSum G N t + mayerExpansionTerm G (N+1) t`. -/
 theorem mayerPartialSum_succ
