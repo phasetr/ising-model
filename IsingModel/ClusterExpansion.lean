@@ -2651,4 +2651,56 @@ theorem mayerPartialSum_tanh_differentiable_J
   exact (mayerPartialSum_differentiable G N).comp
     (differentiable_real_tanh.comp ((differentiable_id (𝕜 := ℝ)).const_mul _))
 
+/-- **Mayer expansion term real-analytic in `β` (with `J` fixed)**
+(Step 596): chain of `mayerExpansionTerm_analyticAt` (Step 590),
+`analyticAt_real_tanh`, and the analytic linear factor `β ↦ β·J`. -/
+theorem mayerExpansionTerm_tanh_analyticAt_beta
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (n : ℕ) (J β : ℝ) :
+    AnalyticAt ℝ (fun β' : ℝ => mayerExpansionTerm G n (Real.tanh (β' * J))) β := by
+  have h_lin : AnalyticAt ℝ (fun β' : ℝ => β' * J) β :=
+    analyticAt_id.mul analyticAt_const
+  exact (mayerExpansionTerm_analyticAt G n _).comp ((analyticAt_real_tanh _).comp h_lin)
+
+/-- **Mayer expansion term real-analytic in `J` (with `β` fixed)** (Step 596). -/
+theorem mayerExpansionTerm_tanh_analyticAt_J
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (n : ℕ) (β J : ℝ) :
+    AnalyticAt ℝ (fun J' : ℝ => mayerExpansionTerm G n (Real.tanh (β * J'))) J := by
+  have h_lin : AnalyticAt ℝ (fun J' : ℝ => β * J') J :=
+    analyticAt_const.mul analyticAt_id
+  exact (mayerExpansionTerm_analyticAt G n _).comp ((analyticAt_real_tanh _).comp h_lin)
+
+/-- **Mayer partial sum real-analytic in `β` (with `J` fixed)** (Step 596). -/
+theorem mayerPartialSum_tanh_analyticAt_beta
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (N : ℕ) (J β : ℝ) :
+    AnalyticAt ℝ (fun β' : ℝ => mayerPartialSum G N (Real.tanh (β' * J))) β := by
+  have h_lin : AnalyticAt ℝ (fun β' : ℝ => β' * J) β :=
+    analyticAt_id.mul analyticAt_const
+  exact (mayerPartialSum_analyticAt G N _).comp ((analyticAt_real_tanh _).comp h_lin)
+
+/-- **Mayer partial sum real-analytic in `J` (with `β` fixed)** (Step 596). -/
+theorem mayerPartialSum_tanh_analyticAt_J
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (N : ℕ) (β J : ℝ) :
+    AnalyticAt ℝ (fun J' : ℝ => mayerPartialSum G N (Real.tanh (β * J'))) J := by
+  have h_lin : AnalyticAt ℝ (fun J' : ℝ => β * J') J :=
+    analyticAt_const.mul analyticAt_id
+  exact (mayerPartialSum_analyticAt G N _).comp ((analyticAt_real_tanh _).comp h_lin)
+
+/-- **Mayer partial sum `AnalyticOnNhd ℝ _ Set.univ` in `β`** (Step 596). -/
+theorem mayerPartialSum_tanh_analyticOnNhd_beta
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (N : ℕ) (J : ℝ) :
+    AnalyticOnNhd ℝ (fun β' : ℝ => mayerPartialSum G N (Real.tanh (β' * J))) Set.univ :=
+  fun β _ => mayerPartialSum_tanh_analyticAt_beta G N J β
+
+/-- **Mayer partial sum `AnalyticOnNhd ℝ _ Set.univ` in `J`** (Step 596). -/
+theorem mayerPartialSum_tanh_analyticOnNhd_J
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (N : ℕ) (β : ℝ) :
+    AnalyticOnNhd ℝ (fun J' : ℝ => mayerPartialSum G N (Real.tanh (β * J'))) Set.univ :=
+  fun J _ => mayerPartialSum_tanh_analyticAt_J G N β J
+
 end IsingModel
