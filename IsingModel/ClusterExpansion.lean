@@ -2617,4 +2617,38 @@ theorem mayerPartialSum_tanh_continuous_J
     continuous_const.mul continuous_id
   exact (mayerPartialSum_continuous G N).comp (continuous_real_tanh.comp h_mul)
 
+/-- **Mayer expansion term differentiable in `β` (with `J` fixed)**
+(Step 595): chain rule with `differentiable_real_tanh` and the
+linear factor `β ↦ β * J`. -/
+theorem mayerExpansionTerm_tanh_differentiable_beta
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (n : ℕ) (J : ℝ) :
+    Differentiable ℝ (fun β : ℝ => mayerExpansionTerm G n (Real.tanh (β * J))) := by
+  exact (mayerExpansionTerm_differentiable G n).comp
+    (differentiable_real_tanh.comp ((differentiable_id (𝕜 := ℝ)).mul_const _))
+
+/-- **Mayer expansion term differentiable in `J` (with `β` fixed)** (Step 595). -/
+theorem mayerExpansionTerm_tanh_differentiable_J
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (n : ℕ) (β : ℝ) :
+    Differentiable ℝ (fun J : ℝ => mayerExpansionTerm G n (Real.tanh (β * J))) := by
+  exact (mayerExpansionTerm_differentiable G n).comp
+    (differentiable_real_tanh.comp ((differentiable_id (𝕜 := ℝ)).const_mul _))
+
+/-- **Mayer partial sum differentiable in `β` (with `J` fixed)** (Step 595). -/
+theorem mayerPartialSum_tanh_differentiable_beta
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (N : ℕ) (J : ℝ) :
+    Differentiable ℝ (fun β : ℝ => mayerPartialSum G N (Real.tanh (β * J))) := by
+  exact (mayerPartialSum_differentiable G N).comp
+    (differentiable_real_tanh.comp ((differentiable_id (𝕜 := ℝ)).mul_const _))
+
+/-- **Mayer partial sum differentiable in `J` (with `β` fixed)** (Step 595). -/
+theorem mayerPartialSum_tanh_differentiable_J
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (N : ℕ) (β : ℝ) :
+    Differentiable ℝ (fun J : ℝ => mayerPartialSum G N (Real.tanh (β * J))) := by
+  exact (mayerPartialSum_differentiable G N).comp
+    (differentiable_real_tanh.comp ((differentiable_id (𝕜 := ℝ)).const_mul _))
+
 end IsingModel
