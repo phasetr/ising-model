@@ -3885,4 +3885,17 @@ theorem vdPolymerFamilies_sum_minus_one_analyticAt
         ∏ P ∈ Γ, s ^ P.card) t := by
   refine Finset.analyticAt_fun_sum _ (fun Γ _ => analyticAt_prod_pow Γ t)
 
+/-- **`ε(t) → 0` as `t → 0`** (Step 664, Mayer general-t Phase A):
+combine continuity (Step 662) with `ε(0) = 0` (Step 659) to get
+the limit at `t = 0`. -/
+theorem vdPolymerFamilies_sum_minus_one_tendsto_zero
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    Filter.Tendsto (fun t : ℝ =>
+      ∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅,
+        ∏ P ∈ Γ, t ^ P.card) (nhds 0) (nhds 0) := by
+  have h_cont := (vdPolymerFamilies_sum_minus_one_continuous G).continuousAt (x := 0)
+  rw [ContinuousAt, vdPolymerFamilies_sum_minus_one_at_zero] at h_cont
+  exact h_cont
+
 end IsingModel
