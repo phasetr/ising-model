@@ -5045,4 +5045,52 @@ theorem gibbsExpectation_differentiable_joint
       (fun p : ℝ × ℝ × ℝ => gibbsExpectation G ⟨p.2.1, p.2.2, p.1⟩ F) :=
   fun ⟨β, J, h⟩ => (gibbsExpectation_analyticAt_joint G F β J h).differentiableAt
 
+/-- **partitionFunction Continuous in `β` at general `h`** (§18.6,
+direct corollary of `partitionFunction_analyticAt_beta_general_h`). -/
+theorem partitionFunction_continuous_beta_general_h
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J h : ℝ) :
+    Continuous (fun β' : ℝ => partitionFunction G ⟨J, h, β'⟩) :=
+  continuous_iff_continuousAt.mpr fun β =>
+    (partitionFunction_analyticAt_beta_general_h G J h β).continuousAt
+
+/-- **partitionFunction Differentiable in `β` at general `h`** (§18.6). -/
+theorem partitionFunction_differentiable_beta_general_h
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J h : ℝ) :
+    Differentiable ℝ (fun β' : ℝ => partitionFunction G ⟨J, h, β'⟩) :=
+  fun β => (partitionFunction_analyticAt_beta_general_h G J h β).differentiableAt
+
+/-- **partitionFunction Continuous in `J` at general `h`** (§18.6,
+direct corollary of `partitionFunction_analyticAt_J_general_h`). -/
+theorem partitionFunction_continuous_J_general_h
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (β h : ℝ) :
+    Continuous (fun J' : ℝ => partitionFunction G ⟨J', h, β⟩) :=
+  continuous_iff_continuousAt.mpr fun J =>
+    (partitionFunction_analyticAt_J_general_h G β h J).continuousAt
+
+/-- **partitionFunction Differentiable in `J` at general `h`** (§18.6). -/
+theorem partitionFunction_differentiable_J_general_h
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (β h : ℝ) :
+    Differentiable ℝ (fun J' : ℝ => partitionFunction G ⟨J', h, β⟩) :=
+  fun J => (partitionFunction_analyticAt_J_general_h G β h J).differentiableAt
+
+/-- **partitionFunction Continuous in `h`** (§18.6, direct corollary of
+`partitionFunction_analyticAt_h`). -/
+theorem partitionFunction_continuous_h
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J β : ℝ) :
+    Continuous (fun h' : ℝ => partitionFunction G ⟨J, h', β⟩) :=
+  continuous_iff_continuousAt.mpr fun h =>
+    (partitionFunction_analyticAt_h G J β h).continuousAt
+
+/-- **partitionFunction Differentiable in `h`** (§18.6). -/
+theorem partitionFunction_differentiable_h
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J β : ℝ) :
+    Differentiable ℝ (fun h' : ℝ => partitionFunction G ⟨J, h', β⟩) :=
+  fun h => (partitionFunction_analyticAt_h G J β h).differentiableAt
+
 end IsingModel
