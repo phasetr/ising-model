@@ -4445,6 +4445,62 @@ theorem polymerFreeEnergy_le_eps_of_nonneg
     linarith
   exact (Real.log_le_iff_le_exp h_pos).mpr h_le
 
+/-- **`polymerFreeEnergy = 0 ↔ ε(t) = 0` under `0 ≤ t`** (§18.4
+sharpening): the polymer free energy vanishes iff the polymer-family
+activity excess vanishes. Proof: `polymerFreeEnergy = log(1+ε)`,
+and for `ε ≥ 0`, log(1+ε) = 0 iff 1+ε = 1 iff ε = 0. -/
+theorem polymerFreeEnergy_eq_zero_iff_eps_eq_zero
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) :
+    polymerFreeEnergy G t = 0 ↔
+      (∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅,
+        ∏ P ∈ Γ, t ^ P.card) = 0 := by
+  rw [polymerFreeEnergy_eq_log_one_add_eps]
+  set ε := ∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅,
+    ∏ P ∈ Γ, t ^ P.card
+  have hε : 0 ≤ ε := vdPolymerFamilies_sum_minus_one_nonneg_of_nonneg G ht
+  have h_pos : 0 < 1 + ε := by linarith
+  rw [Real.log_eq_zero]
+  refine ⟨?_, ?_⟩
+  · rintro (h | h | h)
+    · linarith
+    · linarith
+    · linarith
+  · intro hε_zero
+    right; left; linarith
+
+/-- **`0 < polymerFreeEnergy ↔ 0 < ε(t)` under `0 ≤ t`** (§18.4
+sharpening): the polymer free energy is strictly positive iff the
+polymer-family activity excess is strictly positive. Direct corollary
+of `polymerFreeEnergy_eq_zero_iff_eps_eq_zero` combined with
+`polymerFreeEnergy_nonneg_of_nonneg` and
+`vdPolymerFamilies_sum_minus_one_nonneg_of_nonneg`. -/
+theorem polymerFreeEnergy_pos_iff_eps_pos
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) :
+    0 < polymerFreeEnergy G t ↔
+      0 < ∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅,
+        ∏ P ∈ Γ, t ^ P.card := by
+  have h_pf_nn := polymerFreeEnergy_nonneg_of_nonneg G ht
+  have h_eps_nn := vdPolymerFamilies_sum_minus_one_nonneg_of_nonneg G ht
+  have h_eq := polymerFreeEnergy_eq_zero_iff_eps_eq_zero G ht
+  constructor
+  · intro h_pf_pos
+    by_contra h_eps_not_pos
+    push_neg at h_eps_not_pos
+    have h_eps_zero : (∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅,
+        ∏ P ∈ Γ, t ^ P.card) = 0 := le_antisymm h_eps_not_pos h_eps_nn
+    rw [← h_eq] at h_eps_zero
+    linarith
+  · intro h_eps_pos
+    by_contra h_pf_not_pos
+    push_neg at h_pf_not_pos
+    have h_pf_zero : polymerFreeEnergy G t = 0 := le_antisymm h_pf_not_pos h_pf_nn
+    rw [h_eq] at h_pf_zero
+    linarith
+
 /-- **`polymerFreeEnergy < ε(t)` when `ε(t) > 0`** (§18.4 strict
 sharpening): when the polymer-family activity excess is strictly
 positive, the polymer free energy is *strictly* less than `ε(t)`.
