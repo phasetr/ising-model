@@ -3850,4 +3850,17 @@ theorem vdPolymerFamilies_sum_minus_one_nonneg_of_nonneg
   refine Finset.sum_nonneg (fun _ _ => ?_)
   exact Finset.prod_nonneg (fun _ _ => pow_nonneg ht _)
 
+/-- **`ε(t) ≤ (1+t)^|E| - 1` for `t ≥ 0`** (Step 661, Mayer general-t
+Phase A): subtract 1 from Step 629's `vdSum ≤ (1+t)^|E|` after using
+the Step 657 split. -/
+theorem vdPolymerFamilies_sum_minus_one_le_of_nonneg
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) :
+    (∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅,
+      ∏ P ∈ Γ, t ^ P.card) ≤ (1 + t) ^ G.edgeFinset.card - 1 := by
+  have h_le := vdPolymerFamilies_sum_le_one_plus_pow_of_nonneg G ht
+  rw [vdPolymerFamilies_sum_eq_one_add] at h_le
+  linarith
+
 end IsingModel
