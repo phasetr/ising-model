@@ -4567,4 +4567,30 @@ theorem polymerFreeEnergy_tanh_high_temp_sandwich
     polymerFreeEnergy G (Real.tanh (β * J)) < Real.log 2 :=
   polymerFreeEnergy_high_temp_sandwich G (real_tanh_nonneg hβJ) h_pow
 
+/-- **`freeEnergy` strict upper bound in cluster-expansion convergence
+regime** (§18.4 capstone): under `0 ≤ β·J`, `0 < |ι|`, and
+`(1+tanh(β·J))^|E| < 2`,
+  freeEnergy G ⟨J, 0, β⟩ < log 2 + (|E|/|ι|) · log cosh(β·J) + log 2 / |ι|.
+
+Combines `freeEnergy_eq_polymerFreeEnergy` (Step 612) with the
+strict bound `polymerFreeEnergy < log 2` from PR #1524. -/
+theorem freeEnergy_lt_log_two_plus_high_temp_correction
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (hne : 0 < Fintype.card ι)
+    (h_pow : (1 + Real.tanh (β * J)) ^ G.edgeFinset.card < 2) :
+    freeEnergy G ⟨J, 0, β⟩ <
+      Real.log 2 +
+        (G.edgeFinset.card : ℝ) / Fintype.card ι *
+          Real.log (Real.cosh (β * J)) +
+        Real.log 2 / Fintype.card ι := by
+  rw [freeEnergy_eq_polymerFreeEnergy G J β hβJ hne]
+  have h_lt : polymerFreeEnergy G (Real.tanh (β * J)) < Real.log 2 :=
+    polymerFreeEnergy_lt_log_two_of_pow_lt_two G (real_tanh_nonneg hβJ) h_pow
+  have h_pos : 0 < (Fintype.card ι : ℝ) := by exact_mod_cast hne
+  have h_div_lt : polymerFreeEnergy G (Real.tanh (β * J)) / (Fintype.card ι : ℝ) <
+      Real.log 2 / (Fintype.card ι : ℝ) :=
+    div_lt_div_of_pos_right h_lt h_pos
+  linarith
+
 end IsingModel
