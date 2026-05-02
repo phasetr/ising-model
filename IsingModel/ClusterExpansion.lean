@@ -4445,6 +4445,29 @@ theorem polymerFreeEnergy_le_eps_of_nonneg
     linarith
   exact (Real.log_le_iff_le_exp h_pos).mpr h_le
 
+/-- **`polymerFreeEnergy < ε(t)` when `ε(t) > 0`** (§18.4 strict
+sharpening): when the polymer-family activity excess is strictly
+positive, the polymer free energy is *strictly* less than `ε(t)`.
+Proof: `Real.log_lt_sub_one_of_pos` gives `log(1+ε) < (1+ε) - 1 = ε`
+for `1 + ε > 0` and `1 + ε ≠ 1`, i.e., `ε > 0`. Strengthens
+`polymerFreeEnergy_le_eps_of_nonneg` to strict inequality in the
+non-degenerate regime. -/
+theorem polymerFreeEnergy_lt_eps_of_eps_pos
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {t : ℝ} (h_eps_pos : 0 < ∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅,
+      ∏ P ∈ Γ, t ^ P.card) :
+    polymerFreeEnergy G t <
+      ∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅,
+        ∏ P ∈ Γ, t ^ P.card := by
+  rw [polymerFreeEnergy_eq_log_one_add_eps]
+  set ε := ∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅,
+    ∏ P ∈ Γ, t ^ P.card with hε_def
+  have h_pos : 0 < 1 + ε := by linarith
+  have h_ne_one : 1 + ε ≠ 1 := by linarith
+  have h := Real.log_lt_sub_one_of_pos h_pos h_ne_one
+  linarith
+
 /-- **`polymerFreeEnergy ≤ (1+t)^|E| - 1` under `0 ≤ t`** (§18.4
 sharpening): combines `polymerFreeEnergy ≤ ε(t)` (above) with Step 661
 (`ε(t) ≤ (1+t)^|E| - 1`). Sharper than the existing
