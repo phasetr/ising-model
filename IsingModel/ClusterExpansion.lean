@@ -1300,6 +1300,22 @@ theorem IsCompatiblePolymerFamilyVertexDisjoint.sum_card_le_edgeFinset_card
   obtain ⟨P, hP, heP⟩ := he
   exact (hΓ.1 P hP).isEven.subset heP
 
+/-- **VD polymer-family sum ≥ 1**: under `0 ≤ β·J`,
+`1 ≤ ∑_{Γ ∈ vdCompatiblePolymerFamilies G} ∏ tanh(β·J)^|P|`.
+
+Direct via the bijection (Step 547) plus `one_le_sum_pow_tanh_even_subgraph`
+(Step 318). The empty family contributes 1; non-empty families add
+non-negative weights. -/
+theorem one_le_vdPolymerFamilies_sum
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (hβJ : 0 ≤ β * J) :
+    1 ≤ ∑ Γ ∈ vdCompatiblePolymerFamilies G,
+        ∏ P ∈ Γ, Real.tanh (β * J) ^ P.card := by
+  rw [← evenSubgraphs_sum_eq_vdPolymerFamilies_sum G (Real.tanh (β * J))]
+  rw [evenSubgraphs_eq_inline_filter]
+  exact one_le_sum_pow_tanh_even_subgraph G J β hβJ
+
 /-- **Polymer activity for the lattice Ising model**: the natural
 weight `t^|P|` arising from the FV (3.45) closed form
 `Z = 2^|ι|·cosh^|E|·∑_{X ⊆ E, even} tanh(β·J)^|X|`.
