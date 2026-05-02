@@ -3907,6 +3907,76 @@ theorem evenSubgraph_pair_boundary_card_pos
     simp [hi_mem] at h_at_i
   · exact h
 
+/-- **Pair correlation weak upper bound `≤ 2^|E| · tanh(β·J)` at `h = 0`
+(GJ §18.7 weak upper bound)**: under `0 ≤ β·J`,
+\[
+\langle \sigma_i \sigma_j \rangle_{\beta, 0}
+  \le 2^{|E|} \cdot \tanh(\beta J).
+\]
+
+A weak quantitative version of GJ §18.7 / FV §3.7.3 — *not* yet
+exponential decay in graph distance, but the natural companion to the
+single-edge tanh **lower** bound `tanh / 2^|E| ≤ ⟨σ_iσ_j⟩` (Step 386).
+
+Proof:
+1. Step 566 reduces to numerator-only: `correlation ≤ N`.
+2. Each contributing `X` has `1 ≤ |X|` (Step 567), so
+   `tanh(β·J)^|X| ≤ tanh(β·J)^1 = tanh(β·J)` since
+   `0 ≤ tanh(β·J) ≤ 1` (`Real.tanh_lt_one`).
+3. `N ≤ |filter| · tanh(β·J) ≤ 2^|E| · tanh(β·J)` since the filter is
+   a subset of `G.edgeFinset.powerset` whose cardinality is `2^|E|`.
+
+References: GJ §18.7; FV §3.7.3 eq. (3.46), p. 117 (2017 ed.). -/
+theorem correlation_high_temp_h_zero_at_pair_le_two_pow_edges_mul_tanh
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (i j : ι) :
+    correlation G ⟨J, 0, β⟩ ({i, j} : Finset ι)
+      ≤ (2 : ℝ) ^ G.edgeFinset.card * Real.tanh (β * J) := by
+  classical
+  have htanh_nn : 0 ≤ Real.tanh (β * J) := by
+    rw [Real.tanh_eq_sinh_div_cosh]
+    exact div_nonneg
+      (Real.sinh_nonneg_iff.mpr hβJ) (Real.cosh_pos _).le
+  have htanh_le_one : Real.tanh (β * J) ≤ 1 := (Real.tanh_lt_one _).le
+  -- Step 566: correlation ≤ N
+  have h_step1 := correlation_high_temp_h_zero_le_numerator
+    G J β hβJ ({i, j} : Finset ι)
+  -- Step 2: each X in numerator filter satisfies |X| ≥ 1, so tanh^|X| ≤ tanh
+  set F : Finset (Finset (Sym2 ι)) :=
+    G.edgeFinset.powerset.filter (fun X : Finset (Sym2 ι) => ∀ v : ι,
+      Even ((if v ∈ ({i, j} : Finset ι) then (1 : ℕ) else 0)
+            + (X.filter (v ∈ ·)).card)) with hF_def
+  have h_term_le : ∀ X ∈ F, Real.tanh (β * J) ^ X.card ≤ Real.tanh (β * J) := by
+    intro X hX
+    have hX_card_pos : 1 ≤ X.card :=
+      evenSubgraph_pair_boundary_card_pos G i j X hX
+    have h_pow_le : Real.tanh (β * J) ^ X.card ≤ Real.tanh (β * J) ^ 1 :=
+      pow_le_pow_of_le_one htanh_nn htanh_le_one hX_card_pos
+    rwa [pow_one] at h_pow_le
+  -- Step 3: ∑ over F of tanh^|X| ≤ |F| · tanh ≤ 2^|E| · tanh
+  have h_sum_le_card_smul : (∑ X ∈ F, Real.tanh (β * J) ^ X.card)
+      ≤ F.card • Real.tanh (β * J) :=
+    Finset.sum_le_card_nsmul F _ _ h_term_le
+  -- |F| ≤ |powerset| = 2^|E|
+  have h_F_subset : F ⊆ G.edgeFinset.powerset := Finset.filter_subset _ _
+  have h_F_card_le : F.card ≤ G.edgeFinset.powerset.card :=
+    Finset.card_le_card h_F_subset
+  have h_powerset_card : G.edgeFinset.powerset.card = 2 ^ G.edgeFinset.card :=
+    Finset.card_powerset _
+  have h_F_card_le_two_pow : F.card ≤ 2 ^ G.edgeFinset.card := by
+    rw [← h_powerset_card]; exact h_F_card_le
+  -- Convert nsmul to mul
+  have h_smul_eq : F.card • Real.tanh (β * J) =
+      (F.card : ℝ) * Real.tanh (β * J) := by
+    rw [nsmul_eq_mul]
+  rw [h_smul_eq] at h_sum_le_card_smul
+  have h_smul_le : (F.card : ℝ) * Real.tanh (β * J)
+      ≤ (2 : ℝ) ^ G.edgeFinset.card * Real.tanh (β * J) := by
+    apply mul_le_mul_of_nonneg_right _ htanh_nn
+    exact_mod_cast h_F_card_le_two_pow
+  -- Combine
+  exact h_step1.trans (h_sum_le_card_smul.trans h_smul_le)
+
 /-- **Z₂ symmetry of correlations at h = 0 from FV (3.46) + handshake**:
 for any `A : Finset ι` of odd cardinality, `correlation G ⟨J, 0, β⟩ A = 0`.
 
