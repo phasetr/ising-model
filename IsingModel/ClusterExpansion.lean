@@ -473,6 +473,21 @@ theorem IsCompatiblePolymerFamily.pow_card_biUnion
     t ^ (Γ.biUnion id).card = ∏ P ∈ Γ, t ^ P.card := by
   rw [hΓ.card_biUnion, ← Finset.prod_pow_eq_pow_sum]
 
+/-- **Vertex-disjoint family support card additivity**: for a vertex-
+disjoint compatible polymer family,
+`|polymerSupport (Γ.biUnion id)| = ∑ |polymerSupport P|`. -/
+theorem IsCompatiblePolymerFamilyVertexDisjoint.support_card_biUnion
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {G : SimpleGraph ι} [Fintype G.edgeSet]
+    {Γ : Finset (Finset (Sym2 ι))}
+    (hΓ : IsCompatiblePolymerFamilyVertexDisjoint G Γ) :
+    (polymerSupport (Γ.biUnion id)).card =
+      ∑ P ∈ Γ, (polymerSupport P).card := by
+  rw [polymerSupport_biUnion]
+  apply Finset.card_biUnion
+  intro P hP Q hQ hPQ
+  exact hΓ.2 hP hQ hPQ
+
 /-- **Vertex-disjoint family card additivity**. -/
 theorem IsCompatiblePolymerFamilyVertexDisjoint.card_biUnion
     {ι : Type*} [Fintype ι] [DecidableEq ι]
