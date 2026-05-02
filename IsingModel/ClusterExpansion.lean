@@ -3010,6 +3010,7 @@ theorem mayer_identity_at_J_zero
       mayerPartialSum G N (Real.tanh (β * (0 : ℝ))) :=
   mayer_identity_at_betaJ_zero G (mul_zero β) N
 
+
 /-- **Polymer free energy** (Step 610): named wrapper for the LHS of
 the Mayer expansion identity,
 `polymerFreeEnergy G t := Real.log (∑_Γ ∏_{P ∈ Γ} t^|P|)`. The Mayer
@@ -3103,6 +3104,33 @@ theorem freeEnergy_eq_polymerFreeEnergy_ferromagnetic
           Real.log (Real.cosh (β * J)) +
         polymerFreeEnergy G (Real.tanh (β * J)) / Fintype.card ι :=
   freeEnergy_eq_polymerFreeEnergy G J β (mul_nonneg hβ.le hJ) hne
+
+/-- **Mayer identity at `β·J = 0` in `polymerFreeEnergy` form** (Step 617):
+restate Step 609 using the named wrapper. -/
+theorem polymerFreeEnergy_eq_mayerPartialSum_at_betaJ_zero
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (hβJ : β * J = 0) (N : ℕ) :
+    polymerFreeEnergy G (Real.tanh (β * J)) =
+      mayerPartialSum G N (Real.tanh (β * J)) := by
+  unfold polymerFreeEnergy
+  exact mayer_identity_at_betaJ_zero G hβJ N
+
+/-- **Mayer identity at `β = 0` in `polymerFreeEnergy` form** (Step 617). -/
+theorem polymerFreeEnergy_eq_mayerPartialSum_at_beta_zero
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J : ℝ) (N : ℕ) :
+    polymerFreeEnergy G (Real.tanh ((0 : ℝ) * J)) =
+      mayerPartialSum G N (Real.tanh ((0 : ℝ) * J)) :=
+  polymerFreeEnergy_eq_mayerPartialSum_at_betaJ_zero G (zero_mul J) N
+
+/-- **Mayer identity at `J = 0` in `polymerFreeEnergy` form** (Step 617). -/
+theorem polymerFreeEnergy_eq_mayerPartialSum_at_J_zero
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (β : ℝ) (N : ℕ) :
+    polymerFreeEnergy G (Real.tanh (β * (0 : ℝ))) =
+      mayerPartialSum G N (Real.tanh (β * (0 : ℝ))) :=
+  polymerFreeEnergy_eq_mayerPartialSum_at_betaJ_zero G (mul_zero β) N
 
 /-- **`polymerFreeEnergy` analyticAt in `β`** (Step 613): named-wrapper
 restatement of Step 608. -/
