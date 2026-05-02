@@ -3347,6 +3347,15 @@ theorem mayerPartialSum_zero_le_polymerFreeEnergy
   unfold polymerFreeEnergy
   exact Real.log_nonneg (vdPolymerFamilies_sum_ge_one_of_nonneg G ht)
 
+/-- **`mayerPartialSum G 0 ≤ polymerFreeEnergy G (tanh(β·J))` under
+`0 ≤ β·J`** (Step 655). -/
+theorem mayerPartialSum_zero_tanh_le_polymerFreeEnergy
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] {β J : ℝ} (hβJ : 0 ≤ β * J) :
+    mayerPartialSum G 0 (Real.tanh (β * J)) ≤
+      polymerFreeEnergy G (Real.tanh (β * J)) :=
+  mayerPartialSum_zero_le_polymerFreeEnergy G (real_tanh_nonneg hβJ)
+
 /-- **`allPolymers G = ∅` when `G` has no edges** (Step 620): an
 edgeless graph has no even subgraph other than `∅`, which is excluded
 from `IsPolymer` by the non-emptiness clause. -/
