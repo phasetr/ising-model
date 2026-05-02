@@ -2837,6 +2837,19 @@ theorem ursellCoefficient_abs_le_pow_div_factorial
   refine div_le_div_of_nonneg_right ?_ (Nat.cast_nonneg _)
   exact_mod_cast connectedSpanningEdgeSubsets_card_le_pow _
 
+/-- **Mayer expansion term absolute bound** (Step 604): the triangle
+inequality applied to the Mayer term gives
+`|mayerExpansionTerm G n t| ≤ ∑_ω |ϕ^T(ω)| · |z(t, ω)|`. -/
+theorem mayerExpansionTerm_abs_le
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (n : ℕ) (t : ℝ) :
+    |mayerExpansionTerm G n t| ≤
+      ∑ ω ∈ Fintype.piFinset (fun _ : Fin n => allPolymers G),
+        |ursellCoefficient ω| * |clusterSeqActivity t ω| := by
+  unfold mayerExpansionTerm
+  refine (Finset.abs_sum_le_sum_abs _ _).trans (le_of_eq ?_)
+  exact Finset.sum_congr rfl (fun ω _ => abs_mul _ _)
+
 /-- **Mayer identity at `t = 0`** (Step 600, milestone): the first
 verified instance of the Mayer expansion identity
 `log Ξ = ∑_{n ≥ 0} mayerExpansionTerm G n t`. At `t = 0`,
