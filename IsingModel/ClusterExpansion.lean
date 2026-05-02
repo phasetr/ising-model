@@ -2514,4 +2514,26 @@ theorem mayerPartialSum_analyticOnNhd
     AnalyticOnNhd ℝ (fun s : ℝ => mayerPartialSum G N s) Set.univ :=
   fun t _ => mayerPartialSum_analyticAt G N t
 
+/-- **Mayer partial sum at `N = 0`**: only the `n = 0` term, which
+vanishes (`mayerExpansionTerm_zero`). -/
+theorem mayerPartialSum_zero
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (t : ℝ) :
+    mayerPartialSum G 0 t = 0 := by
+  unfold mayerPartialSum
+  rw [show ((0 : ℕ) + 1) = 1 from rfl, Finset.sum_range_one]
+  exact mayerExpansionTerm_zero G t
+
+/-- **Mayer partial sum at `N = 1`**: the leading non-trivial truncation
+equals the total polymer activity. The `n = 0` term vanishes
+(`mayerExpansionTerm_zero`) and the `n = 1` term equals
+`∑_{P ∈ allPolymers G} t^|P|` (`mayerExpansionTerm_one`). -/
+theorem mayerPartialSum_one
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (t : ℝ) :
+    mayerPartialSum G 1 t = ∑ P ∈ allPolymers G, t ^ P.card := by
+  unfold mayerPartialSum
+  rw [show ((1 : ℕ) + 1) = 2 from rfl, Finset.sum_range_succ, Finset.sum_range_one,
+      mayerExpansionTerm_zero, mayerExpansionTerm_one, zero_add]
+
 end IsingModel
