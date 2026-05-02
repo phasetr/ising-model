@@ -734,6 +734,18 @@ theorem polymerSeqIncompatibilityGraph_const_polymer
   refine ⟨fun ⟨hne, _⟩ => hne, fun hne => ⟨hne, ?_⟩⟩
   exact PolymersIncompatible.self_of_isPolymer hP
 
+/-- **`polymerSeqIncompatibilityGraph_const_polymer` adjacency**
+(Step 648): direct corollary — for the constant polymer sequence, two
+distinct indices are always adjacent. -/
+theorem polymerSeqIncompatibilityGraph_const_polymer_adj
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {G : SimpleGraph ι} [Fintype G.edgeSet]
+    {P_0 : Finset (Sym2 ι)} (hP : IsPolymer G P_0)
+    {n : ℕ} {i j : Fin n} (hne : i ≠ j) :
+    (polymerSeqIncompatibilityGraph (fun _ : Fin n => P_0)).Adj i j := by
+  rw [polymerSeqIncompatibilityGraph_adj]
+  exact ⟨hne, PolymersIncompatible.self_of_isPolymer hP⟩
+
 /-- **Cluster polymer sequence** (Step 580, Mayer expansion foundation):
 a sequence `ω : Fin n → Finset (Sym2 ι)` of polymers (with `n ≥ 1`) is a
 *cluster sequence* iff every entry is a polymer of `G` and the
