@@ -209,6 +209,22 @@ theorem edgeComponent_eq_of_mem {ι : Type*} {X : Finset (Sym2 ι)}
     (edgeComponent_subset_of_mem_symm hf)
     (edgeComponent_subset_of_mem hf)
 
+/-- **Two `edgeComponent`s are either equal or disjoint**: any
+intersection forces equality, since shared elements give equal
+components (via `edgeComponent_eq_of_mem`). -/
+theorem edgeComponent_eq_or_disjoint {ι : Type*} {X : Finset (Sym2 ι)}
+    (e f : Sym2 ι) :
+    edgeComponent X e = edgeComponent X f ∨
+      Disjoint (edgeComponent X e) (edgeComponent X f) := by
+  classical
+  by_cases h : Disjoint (edgeComponent X e) (edgeComponent X f)
+  · exact Or.inr h
+  · refine Or.inl ?_
+    rw [Finset.not_disjoint_iff] at h
+    obtain ⟨g, hge, hgf⟩ := h
+    -- `g ∈ both ⇒ edgeComponent X e = edgeComponent X g = edgeComponent X f`.
+    rw [edgeComponent_eq_of_mem hge, ← edgeComponent_eq_of_mem hgf]
+
 /-- **Polymer**: a non-empty connected even subgraph. In the
 high-temperature cluster expansion of the lattice Ising model, the FV
 (3.45) sum `∑_{X ⊆ E even} tanh(β·J)^|X|` decomposes into a sum over
