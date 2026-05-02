@@ -3489,6 +3489,26 @@ theorem polymerFreeEnergy_tanh_le_card_mul
       G.edgeFinset.card * Real.tanh (β * J) :=
   polymerFreeEnergy_le_card_mul_of_nonneg G (real_tanh_nonneg hβJ)
 
+/-- **Ferromagnetic `polymerFreeEnergy_tanh_sandwich`** (Step 636):
+under `0 ≤ J, 0 < β`. -/
+theorem polymerFreeEnergy_tanh_sandwich_ferromagnetic
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] {β J : ℝ}
+    (hJ : 0 ≤ J) (hβ : 0 < β) :
+    0 ≤ polymerFreeEnergy G (Real.tanh (β * J)) ∧
+    polymerFreeEnergy G (Real.tanh (β * J)) ≤
+      G.edgeFinset.card * Real.log (1 + Real.tanh (β * J)) :=
+  polymerFreeEnergy_tanh_sandwich G (mul_nonneg hβ.le hJ)
+
+/-- **Ferromagnetic `polymerFreeEnergy_tanh_le_card_mul`** (Step 636). -/
+theorem polymerFreeEnergy_tanh_le_card_mul_ferromagnetic
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] {β J : ℝ}
+    (hJ : 0 ≤ J) (hβ : 0 < β) :
+    polymerFreeEnergy G (Real.tanh (β * J)) ≤
+      G.edgeFinset.card * Real.tanh (β * J) :=
+  polymerFreeEnergy_tanh_le_card_mul G (mul_nonneg hβ.le hJ)
+
 /-- **`polymerFreeEnergy` HasDerivAt** (Step 625): explicit derivative
 of `polymerFreeEnergy G t = Real.log (vdPolymerFamilies_sum G t)` via
 the log-derivative formula `(log f)' = f' / f`. The derivative of
