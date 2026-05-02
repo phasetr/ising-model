@@ -407,6 +407,33 @@ theorem IsCompatiblePolymerFamily.biUnion_isEvenSubgraph
     simp only [id]
     exact h_polymer_P.isEven.union_disjoint (ih hΓ') h_disjoint
 
+/-- **Insertion preserves vertex-disjoint compatibility**: if `Γ` is
+vertex-disjoint compatible and `P` is a polymer vertex-disjoint from
+every member of `Γ`, then `insert P Γ` is vertex-disjoint compatible. -/
+theorem IsCompatiblePolymerFamilyVertexDisjoint.insert
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {G : SimpleGraph ι} [Fintype G.edgeSet]
+    {Γ : Finset (Finset (Sym2 ι))} {P : Finset (Sym2 ι)}
+    (hP : IsPolymer G P)
+    (hPΓ : ∀ Q ∈ Γ, IsPolymerVertexDisjoint P Q)
+    (hPnotIn : P ∉ Γ)
+    (hΓ : IsCompatiblePolymerFamilyVertexDisjoint G Γ) :
+    IsCompatiblePolymerFamilyVertexDisjoint G (insert P Γ) := by
+  refine ⟨?_, ?_⟩
+  · intro Q hQ
+    rcases Finset.mem_insert.mp hQ with hQ | hQ
+    · subst hQ; exact hP
+    · exact hΓ.1 Q hQ
+  · intro Q hQ R hR hne
+    rcases Finset.mem_insert.mp (Finset.mem_coe.mp hQ) with hQ' | hQ' <;>
+        rcases Finset.mem_insert.mp (Finset.mem_coe.mp hR) with hR' | hR'
+    · subst hQ'; subst hR'; exact absurd rfl hne
+    · subst hQ'
+      exact hPΓ R hR'
+    · subst hR'
+      exact (hPΓ Q hQ').symm
+    · exact hΓ.2 (Finset.mem_coe.mpr hQ') (Finset.mem_coe.mpr hR') hne
+
 /-- **Vertex-disjoint family unions to an even subgraph**: corollary
 of \`IsCompatiblePolymerFamily.biUnion_isEvenSubgraph\` via downgrade
 to edge-disjoint compatibility. -/
