@@ -176,6 +176,39 @@ theorem self_mem_edgeComponent {ι : Type*} {X : Finset (Sym2 ι)}
     e ∈ edgeComponent X e :=
   mem_edgeComponent.mpr ⟨he, Relation.ReflTransGen.refl⟩
 
+/-- **`edgeComponent` consistency under reachability**: if `f` is in
+`edgeComponent X e`, then `edgeComponent X f ⊆ edgeComponent X e`.
+Anything reachable from `f` is, by transitivity, also reachable from
+`e`. -/
+theorem edgeComponent_subset_of_mem {ι : Type*} {X : Finset (Sym2 ι)}
+    {e f : Sym2 ι} (hf : f ∈ edgeComponent X e) :
+    edgeComponent X f ⊆ edgeComponent X e := by
+  intro g hg
+  rw [mem_edgeComponent] at hf hg ⊢
+  exact ⟨hg.1, hf.2.trans hg.2⟩
+
+/-- **`edgeComponent` symmetric consistency**: if `f ∈ edgeComponent X e`,
+then `edgeComponent X e ⊆ edgeComponent X f`. Combined with
+`edgeComponent_subset_of_mem`, the components are equal. -/
+theorem edgeComponent_subset_of_mem_symm {ι : Type*} {X : Finset (Sym2 ι)}
+    {e f : Sym2 ι} (hf : f ∈ edgeComponent X e) :
+    edgeComponent X e ⊆ edgeComponent X f := by
+  intro g hg
+  rw [mem_edgeComponent] at hf hg ⊢
+  refine ⟨hg.1, ?_⟩
+  -- Use symmetry: e and f are connected, so f and e are connected.
+  have hef_symm := reflTransGen_edgeAdjacentIn_symmetric X hf.2
+  exact hef_symm.trans hg.2
+
+/-- **`edgeComponent` equality from membership**: if `f ∈ edgeComponent X e`,
+then `edgeComponent X e = edgeComponent X f`. -/
+theorem edgeComponent_eq_of_mem {ι : Type*} {X : Finset (Sym2 ι)}
+    {e f : Sym2 ι} (hf : f ∈ edgeComponent X e) :
+    edgeComponent X e = edgeComponent X f :=
+  Finset.Subset.antisymm
+    (edgeComponent_subset_of_mem_symm hf)
+    (edgeComponent_subset_of_mem hf)
+
 /-- **Polymer**: a non-empty connected even subgraph. In the
 high-temperature cluster expansion of the lattice Ising model, the FV
 (3.45) sum `∑_{X ⊆ E even} tanh(β·J)^|X|` decomposes into a sum over
