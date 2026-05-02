@@ -668,6 +668,56 @@ instance incompatibilityGraph_decidableAdj
   rw [incompatibilityGraph_adj]
   exact instDecidableAnd
 
+/-- **Polymer-sequence incompatibility graph** (Step 579, Mayer
+expansion foundation): given a sequence `ω : α → Finset (Sym2 ι)` of
+polymers indexed by an arbitrary type `α`, the *index-side*
+incompatibility graph on `α` has `i ~ j` iff `i ≠ j` and
+`PolymersIncompatible (ω i) (ω j)`. Built via `SimpleGraph.fromRel`
+applied to `fun i j => PolymersIncompatible (ω i) (ω j)`. This
+generalises `incompatibilityGraph` (Step 577) — the special case
+`α = Finset (Sym2 ι)` and `ω = id` — and supports the multi-set /
+sequence-level cluster definition needed for Mayer expansion. -/
+def polymerSeqIncompatibilityGraph
+    {ι α : Type*} [Fintype ι] [DecidableEq ι]
+    (ω : α → Finset (Sym2 ι)) : SimpleGraph α :=
+  SimpleGraph.fromRel (fun i j => PolymersIncompatible (ω i) (ω j))
+
+/-- **Adjacency in the polymer-sequence incompatibility graph**:
+indices `i, j` are adjacent iff `i ≠ j` and the underlying polymers are
+incompatible. The disjunction in `SimpleGraph.fromRel` collapses by
+symmetry of `PolymersIncompatible`. -/
+theorem polymerSeqIncompatibilityGraph_adj
+    {ι α : Type*} [Fintype ι] [DecidableEq ι]
+    {ω : α → Finset (Sym2 ι)} {i j : α} :
+    (polymerSeqIncompatibilityGraph ω).Adj i j ↔
+      i ≠ j ∧ PolymersIncompatible (ω i) (ω j) := by
+  unfold polymerSeqIncompatibilityGraph
+  rw [SimpleGraph.fromRel_adj]
+  refine ⟨?_, ?_⟩
+  · rintro ⟨hne, hij | hji⟩
+    · exact ⟨hne, hij⟩
+    · exact ⟨hne, hji.symm⟩
+  · rintro ⟨hne, hij⟩
+    exact ⟨hne, Or.inl hij⟩
+
+/-- **Decidable adjacency** for the polymer-sequence incompatibility
+graph, given a `DecidableEq` instance on the index type. -/
+instance polymerSeqIncompatibilityGraph_decidableAdj
+    {ι α : Type*} [Fintype ι] [DecidableEq ι] [DecidableEq α]
+    (ω : α → Finset (Sym2 ι)) :
+    DecidableRel (polymerSeqIncompatibilityGraph ω).Adj := by
+  intro i j
+  rw [polymerSeqIncompatibilityGraph_adj]
+  exact instDecidableAnd
+
+/-- **Specialisation to the polymer-space graph** (Step 577): the
+identity-indexed sequence on the polymer space `Finset (Sym2 ι)`
+recovers `incompatibilityGraph`. -/
+theorem polymerSeqIncompatibilityGraph_id
+    {ι : Type*} [Fintype ι] [DecidableEq ι] :
+    polymerSeqIncompatibilityGraph (id : Finset (Sym2 ι) → Finset (Sym2 ι)) =
+      incompatibilityGraph (ι := ι) := rfl
+
 /-- **Cluster polymer set** (Step 578, Mayer expansion foundation):
 a finite set of polymers `Γ` is a *cluster set* iff `Γ` is non-empty,
 every element is a polymer of `G`, and the induced subgraph of
