@@ -181,6 +181,30 @@ theorem mem_polymerSupport {ι : Type*} [Fintype ι] [DecidableEq ι]
   unfold polymerSupport
   simp [Finset.mem_filter]
 
+/-- **`polymerSupport ∅ = ∅`**. -/
+@[simp]
+theorem polymerSupport_empty {ι : Type*} [Fintype ι] [DecidableEq ι] :
+    polymerSupport (∅ : Finset (Sym2 ι)) = ∅ := by
+  ext v
+  simp [mem_polymerSupport]
+
+/-- **`polymerSupport (P ∪ Q) = polymerSupport P ∪ polymerSupport Q`**:
+support is union-distributive. -/
+theorem polymerSupport_union {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (P Q : Finset (Sym2 ι)) :
+    polymerSupport (P ∪ Q) = polymerSupport P ∪ polymerSupport Q := by
+  ext v
+  rw [Finset.mem_union, mem_polymerSupport, mem_polymerSupport,
+      mem_polymerSupport]
+  refine ⟨?_, ?_⟩
+  · rintro ⟨e, he, hv⟩
+    rcases Finset.mem_union.mp he with he | he
+    · exact Or.inl ⟨e, he, hv⟩
+    · exact Or.inr ⟨e, he, hv⟩
+  · rintro (⟨e, he, hv⟩ | ⟨e, he, hv⟩)
+    · exact ⟨e, Finset.mem_union_left _ he, hv⟩
+    · exact ⟨e, Finset.mem_union_right _ he, hv⟩
+
 /-- **Polymer edge-disjointness**: two polymers `P, Q` are *edge-disjoint*
 if they share no edge. This is a *weak* compatibility relation that
 suffices for the multiplicative weight identity but does not give a
