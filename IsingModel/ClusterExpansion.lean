@@ -1,6 +1,7 @@
 import IsingModel.Conditioning
 import Mathlib.Combinatorics.SimpleGraph.Hasse
 import Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite
+import Mathlib.Combinatorics.SimpleGraph.Circulant
 
 /-!
 # Cluster (polymer) expansion for the lattice Ising model
@@ -5310,6 +5311,81 @@ theorem alternatingConnectedSubgraphSum_pathGraph_eight :
         (((∑ S ∈ (SimpleGraph.pathGraph 8).edgeFinset.powerset.filter
             (fun S : Finset (Sym2 (Fin 8)) =>
               (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 (Fin 8)))).Connected),
+          ((-1 : ℤ) ^ S.card)) : ℤ) : ℝ) := by
+    push_cast
+    rfl
+  rw [h_cast, h_int]
+  norm_num
+
+/-! ## Mayer Phase B: cycleGraph base cases (Issue #1499)
+
+Companion to the K_n and pathGraph cases. The cycleGraph has more
+edges than the path on the same vertex set, giving multiple connected
+spanning subgraphs (the full cycle plus its spanning trees of size n-1). -/
+
+/-- **Cycle graph on `Fin 3` `DecidableRel` instance**. -/
+private instance : DecidableRel (SimpleGraph.cycleGraph 3).Adj :=
+  fun u v => decidable_of_iff _ SimpleGraph.cycleGraph_adj'.symm
+
+/-- **`cycleGraph 3` alternating connected-spanning sum = 2**:
+the cycle on Fin 3 has 3 edges (the triangle). Connected spanning
+subsets: 3 paths (size 2 each, remove any one edge) + the full
+triangle (size 3). Sum = `3 · (-1)^2 + (-1)^3 = 2`. Same as
+`alternatingConnectedSubgraphSum_K3` (PR #1518) since `cycleGraph 3`
+has the same edge structure as the complete graph K_3. -/
+theorem alternatingConnectedSubgraphSum_cycleGraph_three :
+    alternatingConnectedSubgraphSum (SimpleGraph.cycleGraph 3) = 2 := by
+  classical
+  unfold alternatingConnectedSubgraphSum
+  have h_int :
+      (∑ S ∈ (SimpleGraph.cycleGraph 3).edgeFinset.powerset.filter
+        (fun S : Finset (Sym2 (Fin 3)) =>
+          (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 (Fin 3)))).Connected),
+        ((-1 : ℤ) ^ S.card)) = 2 := by decide
+  unfold connectedSpanningEdgeSubsets
+  have h_cast :
+      (∑ S ∈ (SimpleGraph.cycleGraph 3).edgeFinset.powerset.filter
+          (fun S : Finset (Sym2 (Fin 3)) =>
+            (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 (Fin 3)))).Connected),
+        ((-1 : ℝ) ^ S.card)) =
+        (((∑ S ∈ (SimpleGraph.cycleGraph 3).edgeFinset.powerset.filter
+            (fun S : Finset (Sym2 (Fin 3)) =>
+              (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 (Fin 3)))).Connected),
+          ((-1 : ℤ) ^ S.card)) : ℤ) : ℝ) := by
+    push_cast
+    rfl
+  rw [h_cast, h_int]
+  norm_num
+
+/-- **Cycle graph on `Fin 4` `DecidableRel` instance**. -/
+private instance : DecidableRel (SimpleGraph.cycleGraph 4).Adj :=
+  fun u v => decidable_of_iff _ SimpleGraph.cycleGraph_adj'.symm
+
+/-- **`cycleGraph 4` alternating connected-spanning sum = -3**:
+the cycle on Fin 4 has 4 edges. Connected spanning subsets: 4 paths
+(size 3 each, remove any one edge) + the full cycle (size 4).
+Sum = `4 · (-1)^3 + (-1)^4 = -4 + 1 = -3`. Distinct from K_4 case
+(PR #1519, value -6) since cycleGraph 4 has fewer connected spanning
+subsets than K_4 (the K_4 cases include subgraphs containing both
+diagonals). -/
+theorem alternatingConnectedSubgraphSum_cycleGraph_four :
+    alternatingConnectedSubgraphSum (SimpleGraph.cycleGraph 4) = -3 := by
+  classical
+  unfold alternatingConnectedSubgraphSum
+  have h_int :
+      (∑ S ∈ (SimpleGraph.cycleGraph 4).edgeFinset.powerset.filter
+        (fun S : Finset (Sym2 (Fin 4)) =>
+          (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 (Fin 4)))).Connected),
+        ((-1 : ℤ) ^ S.card)) = -3 := by decide
+  unfold connectedSpanningEdgeSubsets
+  have h_cast :
+      (∑ S ∈ (SimpleGraph.cycleGraph 4).edgeFinset.powerset.filter
+          (fun S : Finset (Sym2 (Fin 4)) =>
+            (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 (Fin 4)))).Connected),
+        ((-1 : ℝ) ^ S.card)) =
+        (((∑ S ∈ (SimpleGraph.cycleGraph 4).edgeFinset.powerset.filter
+            (fun S : Finset (Sym2 (Fin 4)) =>
+              (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 (Fin 4)))).Connected),
           ((-1 : ℤ) ^ S.card)) : ℤ) : ℝ) := by
     push_cast
     rfl
