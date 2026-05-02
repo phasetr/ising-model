@@ -3444,6 +3444,29 @@ theorem polymerFreeEnergy_tanh_sandwich
       G.edgeFinset.card * Real.log (1 + Real.tanh (β * J)) :=
   polymerFreeEnergy_sandwich_of_nonneg G (real_tanh_nonneg hβJ)
 
+/-- **`vdPolymerFamilies_sum` is monotone on `[0, ∞)`** (Step 633):
+each term `t^|X|` is monotone in `t` for `t ≥ 0`, so the sum is too. -/
+theorem vdPolymerFamilies_sum_monotoneOn_Ici_zero
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    MonotoneOn (fun t : ℝ =>
+      ∑ Γ ∈ vdCompatiblePolymerFamilies G, ∏ P ∈ Γ, t ^ P.card) (Set.Ici 0) := by
+  intro t ht s hs hts
+  refine Finset.sum_le_sum (fun Γ _ => ?_)
+  refine Finset.prod_le_prod (fun P _ => pow_nonneg ht _) (fun P _ => ?_)
+  exact pow_le_pow_left₀ ht hts _
+
+/-- **`polymerFreeEnergy` is monotone on `[0, ∞)`** (Step 633): apply
+`Real.log_le_log` to `vdSum` monotonicity. -/
+theorem polymerFreeEnergy_monotoneOn_Ici_zero
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    MonotoneOn (fun t : ℝ => polymerFreeEnergy G t) (Set.Ici 0) := by
+  intro t ht s hs hts
+  unfold polymerFreeEnergy
+  exact Real.log_le_log (vdPolymerFamilies_sum_pos_of_nonneg G ht)
+    (vdPolymerFamilies_sum_monotoneOn_Ici_zero G ht hs hts)
+
 /-- **`polymerFreeEnergy` HasDerivAt** (Step 625): explicit derivative
 of `polymerFreeEnergy G t = Real.log (vdPolymerFamilies_sum G t)` via
 the log-derivative formula `(log f)' = f' / f`. The derivative of
