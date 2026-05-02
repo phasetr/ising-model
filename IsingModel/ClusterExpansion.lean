@@ -1437,6 +1437,20 @@ theorem vdPolymerFamilies_sum_continuous
   intro P _
   exact continuous_id.pow _
 
+/-- **VD polymer-family sum is differentiable in `t`**: as a finite sum
+of finite products of monomials `t^|P|`, the polymer-family sum is a
+polynomial in `t`, hence differentiable on all of `ℝ`. Strengthens
+`vdPolymerFamilies_sum_continuous` from `Continuous` to `Differentiable`
+and prepares the §18.6 analyticity statement. -/
+theorem vdPolymerFamilies_sum_differentiable
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    Differentiable ℝ (fun t : ℝ =>
+      ∑ Γ ∈ vdCompatiblePolymerFamilies G, ∏ P ∈ Γ, t ^ P.card) := by
+  refine Differentiable.fun_sum (fun Γ _ => ?_)
+  refine Differentiable.fun_finset_prod (fun P _ => ?_)
+  exact (differentiable_id (𝕜 := ℝ)).pow _
+
 /-- **`Real.tanh` is continuous on `ℝ`** (project-local helper): derived
 from `tanh = sinh / cosh` together with `Real.cosh > 0`. Mathlib does
 not yet export `Real.continuous_tanh`, so we provide it here. -/
