@@ -381,6 +381,21 @@ theorem polymerPartition_empty {ι : Type*} [DecidableEq ι]
         exact IsCompatiblePolymerFamily.empty G]
   simp
 
+/-- **FV (3.45) closed form via `evenSubgraphs G`**: under no further
+hypotheses, the FV (3.45) closed form may be rewritten as
+`Z(J,0,β) = 2^|ι| · cosh(β·J)^|E| · ∑ X ∈ evenSubgraphs G, tanh(β·J)^|X|`.
+
+Direct corollary of `partitionFunction_high_temp_expansion_h_zero_closed`
+(Step 283) plus `evenSubgraphs_eq_inline_filter` (Step 516). -/
+theorem partitionFunction_high_temp_expansion_h_zero_closed_evenSubgraphs
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J β : ℝ) :
+    partitionFunction G ⟨J, 0, β⟩ =
+      (2 : ℝ) ^ Fintype.card ι * Real.cosh (β * J) ^ G.edgeFinset.card *
+      ∑ X ∈ evenSubgraphs G, Real.tanh (β * J) ^ X.card := by
+  rw [partitionFunction_high_temp_expansion_h_zero_closed G J β,
+      evenSubgraphs_eq_inline_filter]
+
 /-- **Polymer activity for the lattice Ising model**: the natural
 weight `t^|P|` arising from the FV (3.45) closed form
 `Z = 2^|ι|·cosh^|E|·∑_{X ⊆ E, even} tanh(β·J)^|X|`.
