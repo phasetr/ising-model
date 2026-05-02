@@ -814,6 +814,63 @@ theorem mem_connectedSpanningEdgeSubsets {V : Type*} [Fintype V] [DecidableEq V]
     fun _ => Classical.dec _
   rw [Finset.mem_filter, Finset.mem_powerset]
 
+/-- **Ursell (truncated) coefficient** (Step 583, Mayer expansion):
+for a polymer sequence `ω : Fin n → Finset (Sym2 ι)`, the Ursell
+coefficient is
+  `ϕ^T(ω) = (1/n!) · ∑_{S ∈ connectedSpanningEdgeSubsets G(ω)} (-1)^|S|`,
+where `G(ω) = polymerSeqIncompatibilityGraph ω` is the index-side
+incompatibility graph on `Fin n`. The Mayer expansion expresses the
+logarithm of the polymer partition function as
+  `log Ξ = ∑_{n ≥ 1} ∑_{ω ∈ polymers^n} ϕ^T(ω) · z(ω)`,
+where `z(ω)` is the activity factor (Step 581). -/
+noncomputable def ursellCoefficient
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {n : ℕ} (ω : Fin n → Finset (Sym2 ι)) : ℝ :=
+  (∑ S ∈ connectedSpanningEdgeSubsets (polymerSeqIncompatibilityGraph ω),
+    (-1 : ℝ) ^ S.card) / (n.factorial : ℝ)
+
+/-- **Singleton Ursell coefficient**: `ϕ^T(ω) = 1` for any one-element
+sequence `ω : Fin 1 → polymer`. The index-side graph on `Fin 1` has no
+edges (no `i ≠ j` with `i, j : Fin 1`), so the only edge subset is
+`∅`; the spanning subgraph from `∅` on a single vertex is connected.
+Sum = `(-1)^0 = 1`, divided by `1! = 1`. -/
+theorem ursellCoefficient_singleton
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (ω : Fin 1 → Finset (Sym2 ι)) :
+    ursellCoefficient ω = 1 := by
+  unfold ursellCoefficient
+  -- `G(ω).edgeFinset = ∅` on `Fin 1` since there is no `i ≠ j`.
+  have h_emptyG : (polymerSeqIncompatibilityGraph ω).edgeFinset = ∅ := by
+    rw [Finset.eq_empty_iff_forall_notMem]
+    intro e he
+    rw [SimpleGraph.mem_edgeFinset] at he
+    induction e using Sym2.ind with
+    | h a b =>
+      have hab : (polymerSeqIncompatibilityGraph ω).Adj a b := he
+      rw [polymerSeqIncompatibilityGraph_adj] at hab
+      have hab_eq : a = b := Subsingleton.elim a b
+      exact hab.1 hab_eq
+  -- Connected spanning edge subsets reduces to {∅}.
+  have h_set : connectedSpanningEdgeSubsets (polymerSeqIncompatibilityGraph ω) = {∅} := by
+    apply Finset.ext
+    intro S
+    rw [mem_connectedSpanningEdgeSubsets, Finset.mem_singleton]
+    constructor
+    · rintro ⟨hS_sub, _⟩
+      rw [h_emptyG, Finset.subset_empty] at hS_sub
+      exact hS_sub
+    · intro hS_eq
+      refine ⟨?_, ?_⟩
+      · rw [hS_eq, h_emptyG]
+      · -- The spanning graph on Fin 1 from ∅ is connected (singleton).
+        rw [hS_eq]
+        refine { preconnected := ?_, nonempty := ⟨0⟩ }
+        intro u v
+        have huv : u = v := Subsingleton.elim u v
+        exact huv ▸ SimpleGraph.Reachable.refl u
+  rw [h_set]
+  simp [Nat.factorial]
+
 /-- **Cluster polymer set** (Step 578, Mayer expansion foundation):
 a finite set of polymers `Γ` is a *cluster set* iff `Γ` is non-empty,
 every element is a polymer of `G`, and the induced subgraph of
