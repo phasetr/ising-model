@@ -3839,4 +3839,15 @@ theorem vdPolymerFamilies_sum_minus_one_at_zero
   have hP_pos : 0 < P.card := hP_polymer.nonempty.card_pos
   exact Finset.prod_eq_zero hP (zero_pow hP_pos.ne')
 
+/-- **`ε(t) ≥ 0` for `t ≥ 0`** (Step 660, Mayer general-t Phase A):
+each summand is a finite product of non-negative terms `t^|P|`. -/
+theorem vdPolymerFamilies_sum_minus_one_nonneg_of_nonneg
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) :
+    0 ≤ ∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅,
+      ∏ P ∈ Γ, t ^ P.card := by
+  refine Finset.sum_nonneg (fun _ _ => ?_)
+  exact Finset.prod_nonneg (fun _ _ => pow_nonneg ht _)
+
 end IsingModel
