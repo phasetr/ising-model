@@ -281,6 +281,21 @@ theorem isCompatiblePolymerFamily_singleton {ι : Type*} [DecidableEq ι]
     subst hP₁; subst hP₂
     exact absurd rfl hne
 
+/-- **Monotonicity of compatible polymer family**: any subset of a
+compatible polymer family is again compatible. -/
+theorem IsCompatiblePolymerFamily.mono {ι : Type*} [DecidableEq ι]
+    {G : SimpleGraph ι} [Fintype G.edgeSet]
+    {Γ Γ' : Finset (Finset (Sym2 ι))} (hsub : Γ' ⊆ Γ)
+    (hΓ : IsCompatiblePolymerFamily G Γ) :
+    IsCompatiblePolymerFamily G Γ' := by
+  refine ⟨?_, ?_⟩
+  · intro P hP
+    exact hΓ.1 P (hsub hP)
+  · intro P hP Q hQ hPQ
+    have hP' : P ∈ Γ := hsub (Finset.mem_coe.mp hP)
+    have hQ' : Q ∈ Γ := hsub (Finset.mem_coe.mp hQ)
+    exact hΓ.2 (Finset.mem_coe.mpr hP') (Finset.mem_coe.mpr hQ') hPQ
+
 /-- **Polymer model partition function (abstract)**: given a reference
 finite universe of polymer candidates `Ω : Finset (Finset (Sym2 ι))`
 and a weight function `z : Finset (Sym2 ι) → ℝ`, the polymer model
