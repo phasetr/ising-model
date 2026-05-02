@@ -2786,6 +2786,31 @@ theorem vdPolymerFamilies_sum_at_zero
   · intro h
     exact absurd h_empty_in h
 
+/-- **Ursell coefficient absolute bound** (Step 601): the triangle
+inequality on the alternating-sign sum gives
+`|ϕ^T(ω)| ≤ |connectedSpanningEdgeSubsets G(ω)| / n!`. Since each
+summand `(-1)^|S|` has absolute value `1`, summing `|·|` gives the
+cardinality of the index set. Useful for convergence estimates of the
+Mayer expansion. -/
+theorem ursellCoefficient_abs_le
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {n : ℕ} (ω : Fin n → Finset (Sym2 ι)) :
+    |ursellCoefficient ω| ≤
+      ((connectedSpanningEdgeSubsets (polymerSeqIncompatibilityGraph ω)).card : ℝ)
+        / n.factorial := by
+  unfold ursellCoefficient
+  rw [abs_div]
+  have h_fact_abs : |((n.factorial : ℝ))| = n.factorial :=
+    abs_of_nonneg (Nat.cast_nonneg _)
+  rw [h_fact_abs]
+  refine div_le_div_of_nonneg_right ?_ (Nat.cast_nonneg _)
+  refine (Finset.abs_sum_le_sum_abs _ _).trans ?_
+  have h_each : ∀ S ∈ connectedSpanningEdgeSubsets (polymerSeqIncompatibilityGraph ω),
+      |((-1 : ℝ) ^ S.card)| = 1 := by
+    intro S _
+    rw [abs_pow, abs_neg, abs_one, one_pow]
+  rw [Finset.sum_congr rfl h_each, Finset.sum_const, Nat.smul_one_eq_cast]
+
 /-- **Mayer identity at `t = 0`** (Step 600, milestone): the first
 verified instance of the Mayer expansion identity
 `log Ξ = ∑_{n ≥ 0} mayerExpansionTerm G n t`. At `t = 0`,
