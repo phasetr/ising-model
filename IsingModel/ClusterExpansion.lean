@@ -345,6 +345,17 @@ theorem IsCompatiblePolymerFamily.biUnion_isEvenSubgraph
     simp only [id]
     exact h_polymer_P.isEven.union_disjoint (ih hΓ') h_disjoint
 
+/-- **Vertex-disjoint family unions to an even subgraph**: corollary
+of \`IsCompatiblePolymerFamily.biUnion_isEvenSubgraph\` via downgrade
+to edge-disjoint compatibility. -/
+theorem IsCompatiblePolymerFamilyVertexDisjoint.biUnion_isEvenSubgraph
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {G : SimpleGraph ι} [Fintype G.edgeSet]
+    {Γ : Finset (Finset (Sym2 ι))}
+    (hΓ : IsCompatiblePolymerFamilyVertexDisjoint G Γ) :
+    IsEvenSubgraph G (Γ.biUnion id) :=
+  hΓ.toCompatible.biUnion_isEvenSubgraph
+
 /-- **Cardinality additivity over a compatible polymer family**: the
 size of `Γ.biUnion id` equals `∑_{P ∈ Γ} |P|` when `Γ` is compatible
 (pairwise edge-disjoint). This is the key combinatorial identity that
@@ -372,6 +383,25 @@ theorem IsCompatiblePolymerFamily.pow_card_biUnion
     (hΓ : IsCompatiblePolymerFamily G Γ) :
     t ^ (Γ.biUnion id).card = ∏ P ∈ Γ, t ^ P.card := by
   rw [hΓ.card_biUnion, ← Finset.prod_pow_eq_pow_sum]
+
+/-- **Vertex-disjoint family card additivity**. -/
+theorem IsCompatiblePolymerFamilyVertexDisjoint.card_biUnion
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {G : SimpleGraph ι} [Fintype G.edgeSet]
+    {Γ : Finset (Finset (Sym2 ι))}
+    (hΓ : IsCompatiblePolymerFamilyVertexDisjoint G Γ) :
+    (Γ.biUnion id).card = ∑ P ∈ Γ, P.card :=
+  hΓ.toCompatible.card_biUnion
+
+/-- **Vertex-disjoint family weight multiplicativity**:
+`t^|biUnion| = ∏ t^|P|` for vertex-disjoint families. -/
+theorem IsCompatiblePolymerFamilyVertexDisjoint.pow_card_biUnion
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {G : SimpleGraph ι} [Fintype G.edgeSet]
+    (t : ℝ) {Γ : Finset (Finset (Sym2 ι))}
+    (hΓ : IsCompatiblePolymerFamilyVertexDisjoint G Γ) :
+    t ^ (Γ.biUnion id).card = ∏ P ∈ Γ, t ^ P.card :=
+  hΓ.toCompatible.pow_card_biUnion t
 
 /-- **Singleton polymer family is compatible iff the polymer is a polymer**:
 a one-element family `{P}` is compatible iff `IsPolymer G P`. -/
