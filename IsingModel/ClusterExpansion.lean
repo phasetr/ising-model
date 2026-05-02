@@ -2994,4 +2994,39 @@ theorem mayer_identity_at_J_zero
       mayerPartialSum G N (Real.tanh (β * (0 : ℝ))) :=
   mayer_identity_at_betaJ_zero G (mul_zero β) N
 
+/-- **Polymer free energy** (Step 610): named wrapper for the LHS of
+the Mayer expansion identity,
+`polymerFreeEnergy G t := Real.log (∑_Γ ∏_{P ∈ Γ} t^|P|)`. The Mayer
+identity then reads `polymerFreeEnergy G t = ∑_{n ≥ 0} mayerExpansionTerm G n t`
+(general-`t` identity deferred). -/
+noncomputable def polymerFreeEnergy
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (t : ℝ) : ℝ :=
+  Real.log (∑ Γ ∈ vdCompatiblePolymerFamilies G, ∏ P ∈ Γ, t ^ P.card)
+
+/-- **`polymerFreeEnergy` at `t = 0`** (Step 610): equals `0` since
+`vdPolymerFamilies_sum G 0 = 1`. -/
+theorem polymerFreeEnergy_at_zero
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    polymerFreeEnergy G 0 = 0 := by
+  unfold polymerFreeEnergy
+  rw [vdPolymerFamilies_sum_at_zero, Real.log_one]
+
+/-- **`polymerFreeEnergy` analyticAt for `t ≥ 0`** (Step 610): direct
+restatement of Step 606 in the named-wrapper form. -/
+theorem polymerFreeEnergy_analyticAt
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) :
+    AnalyticAt ℝ (fun s : ℝ => polymerFreeEnergy G s) t :=
+  log_vdPolymerFamilies_sum_analyticAt G ht
+
+/-- **`polymerFreeEnergy` AnalyticOnNhd over `[0, ∞)`** (Step 610). -/
+theorem polymerFreeEnergy_analyticOnNhd_Ici_zero
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    AnalyticOnNhd ℝ (fun s : ℝ => polymerFreeEnergy G s) (Set.Ici 0) :=
+  log_vdPolymerFamilies_sum_analyticOnNhd_Ici_zero G
+
 end IsingModel
