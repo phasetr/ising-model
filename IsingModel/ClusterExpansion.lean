@@ -3519,6 +3519,22 @@ theorem mayerExpansionTerm_one_nonneg_of_nonneg
   rw [mayerExpansionTerm_one]
   exact Finset.sum_nonneg (fun P _ => pow_nonneg ht _)
 
+/-- **`vdPolymerFamilies_sum` at `t = 1`** (Step 639): every product
+`∏ 1^|P| = 1`, so the sum collapses to the cardinality of
+`vdCompatiblePolymerFamilies G`. -/
+theorem vdPolymerFamilies_sum_at_one
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    (∑ Γ ∈ vdCompatiblePolymerFamilies G, ∏ P ∈ Γ, (1 : ℝ) ^ P.card) =
+      (vdCompatiblePolymerFamilies G).card := by
+  classical
+  have h_each : ∀ Γ ∈ vdCompatiblePolymerFamilies G,
+      (∏ P ∈ Γ, (1 : ℝ) ^ P.card) = 1 := by
+    intro Γ _
+    refine Finset.prod_eq_one (fun P _ => ?_)
+    exact one_pow _
+  rw [Finset.sum_congr rfl h_each, Finset.sum_const, Nat.smul_one_eq_cast]
+
 /-- **`mayerPartialSum` recurrence in `N`** (Step 638):
 `mayerPartialSum G (N+1) t = mayerPartialSum G N t + mayerExpansionTerm G (N+1) t`. -/
 theorem mayerPartialSum_succ
