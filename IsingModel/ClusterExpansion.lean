@@ -3243,4 +3243,34 @@ theorem mayer_identity_of_no_polymers_tanh
       mayerPartialSum G N (Real.tanh (β * J)) :=
   mayer_identity_of_no_polymers G h_no _ N
 
+/-- **`allPolymers G = ∅` when `G` has no edges** (Step 620): an
+edgeless graph has no even subgraph other than `∅`, which is excluded
+from `IsPolymer` by the non-emptiness clause. -/
+theorem allPolymers_eq_empty_of_edgeFinset_empty
+    {ι : Type*} [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (h_empty : G.edgeFinset = ∅) :
+    allPolymers G = ∅ := by
+  classical
+  rw [Finset.eq_empty_iff_forall_notMem]
+  intro P hP
+  rw [mem_allPolymers] at hP
+  -- IsPolymer G P ⇒ P ⊆ G.edgeFinset (= ∅) and P.Nonempty
+  obtain ⟨e, heP⟩ := hP.nonempty
+  have h_e : e ∈ G.edgeFinset := hP.isEven.subset heP
+  rw [h_empty] at h_e
+  exact absurd h_e (Finset.notMem_empty _)
+
+/-- **Mayer identity for edgeless graphs** (Step 620): when
+`G.edgeFinset = ∅`, the Mayer identity `polymerFreeEnergy G t =
+mayerPartialSum G N t` holds for every `t` and `N`. Combines
+Step 620's `allPolymers = ∅` with Step 618. -/
+theorem mayer_identity_of_edgeFinset_empty
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (h_empty : G.edgeFinset = ∅) (t : ℝ) (N : ℕ) :
+    polymerFreeEnergy G t = mayerPartialSum G N t :=
+  mayer_identity_of_no_polymers G
+    (allPolymers_eq_empty_of_edgeFinset_empty G h_empty) t N
+
 end IsingModel
