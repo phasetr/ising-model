@@ -1,4 +1,5 @@
 import IsingModel.Conditioning
+import Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite
 
 /-!
 # Cluster (polymer) expansion for the lattice Ising model
@@ -824,9 +825,6 @@ cluster sequence will be the alternating-sign sum
 noncomputable def connectedSpanningEdgeSubsets {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] :
     Finset (Finset (Sym2 V)) :=
-  letI : DecidablePred fun S : Finset (Sym2 V) =>
-      (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 V))).Connected :=
-    fun _ => Classical.dec _
   G.edgeFinset.powerset.filter
     (fun S => (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 V))).Connected)
 
@@ -838,9 +836,6 @@ theorem mem_connectedSpanningEdgeSubsets {V : Type*} [Fintype V] [DecidableEq V]
       S ⊆ G.edgeFinset ∧
       (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 V))).Connected := by
   unfold connectedSpanningEdgeSubsets
-  letI : DecidablePred fun S : Finset (Sym2 V) =>
-      (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 V))).Connected :=
-    fun _ => Classical.dec _
   rw [Finset.mem_filter, Finset.mem_powerset]
 
 /-- **Ursell (truncated) coefficient** (Step 583, Mayer expansion):
@@ -4099,6 +4094,23 @@ private theorem top_simpleGraph_fin_two_edgeFinset :
   · rw [h, SimpleGraph.mem_edgeSet, SimpleGraph.top_adj]
     decide
 
+/-- **`K_3` edge set = {s(0,1), s(0,2), s(1,2)}**: K_3 has the 3
+edges between distinct vertex pairs. -/
+private theorem top_simpleGraph_fin_three_edgeFinset :
+    (⊤ : SimpleGraph (Fin 3)).edgeFinset = {s(0, 1), s(0, 2), s(1, 2)} := by
+  classical
+  apply Finset.ext
+  intro e
+  rw [SimpleGraph.mem_edgeFinset]
+  refine ⟨?_, fun h => ?_⟩
+  · induction e using Sym2.ind with
+    | h a b =>
+      intro hab
+      rw [SimpleGraph.mem_edgeSet, SimpleGraph.top_adj] at hab
+      fin_cases a <;> fin_cases b <;> simp_all [Sym2.eq_swap]
+  · rcases (by simpa using h : e = s(0,1) ∨ e = s(0,2) ∨ e = s(1,2)) with h | h | h <;>
+      · subst h; rw [SimpleGraph.mem_edgeSet, SimpleGraph.top_adj]; decide
+
 /-- **`K_2` alternating sum = -1** (Mayer Phase B base case):
 `(-1)^(2-1) · (2-1)! = -1 · 1 = -1`. The connected spanning subgraphs
 of K_2 are: only `{edge}` (since ∅ leaves both vertices isolated).
@@ -4168,5 +4180,128 @@ theorem alternatingConnectedSubgraphSum_K1 :
     have huv : u = v := Subsingleton.elim u v
     exact huv ▸ SimpleGraph.Reachable.refl u
   rw [h_set, Finset.sum_singleton, Finset.card_empty, pow_zero]
+
+/-- **K_3 connected: pair {s(0,1), s(0,2)} as Finset** (path 1-0-2),
+proved by `decide`. -/
+private theorem fin_three_connected_01_02_finset :
+    (SimpleGraph.fromEdgeSet
+        (↑({s(0, 1), s(0, 2)} : Finset (Sym2 (Fin 3))) : Set (Sym2 (Fin 3)))).Connected := by
+  decide
+
+/-- **K_3 connected: pair {s(0,1), s(1,2)} as Finset** (path 0-1-2),
+proved by `decide`. -/
+private theorem fin_three_connected_01_12_finset :
+    (SimpleGraph.fromEdgeSet
+        (↑({s(0, 1), s(1, 2)} : Finset (Sym2 (Fin 3))) : Set (Sym2 (Fin 3)))).Connected := by
+  decide
+
+/-- **K_3 connected: pair {s(0,2), s(1,2)} as Finset** (path 0-2-1),
+proved by `decide`. -/
+private theorem fin_three_connected_02_12_finset :
+    (SimpleGraph.fromEdgeSet
+        (↑({s(0, 2), s(1, 2)} : Finset (Sym2 (Fin 3))) : Set (Sym2 (Fin 3)))).Connected := by
+  decide
+
+/-- **K_3 connected: triangle as Finset**, proved by `decide`. -/
+private theorem fin_three_connected_triangle_finset :
+    (SimpleGraph.fromEdgeSet
+        (↑({s(0, 1), s(0, 2), s(1, 2)} : Finset (Sym2 (Fin 3))) :
+          Set (Sym2 (Fin 3)))).Connected := by
+  decide
+
+/-- **K_3 disconnected: empty edge set as Finset**, proved by `decide`. -/
+private theorem fin_three_disconnected_empty_finset :
+    ¬ (SimpleGraph.fromEdgeSet
+        (↑(∅ : Finset (Sym2 (Fin 3))) : Set (Sym2 (Fin 3)))).Connected := by
+  decide
+
+/-- **K_3 disconnected: {s(0,1)} as Finset**, proved by `decide`. -/
+private theorem fin_three_disconnected_01_finset :
+    ¬ (SimpleGraph.fromEdgeSet
+        (↑({s(0, 1)} : Finset (Sym2 (Fin 3))) : Set (Sym2 (Fin 3)))).Connected := by
+  decide
+
+/-- **K_3 disconnected: {s(0,2)} as Finset**, proved by `decide`. -/
+private theorem fin_three_disconnected_02_finset :
+    ¬ (SimpleGraph.fromEdgeSet
+        (↑({s(0, 2)} : Finset (Sym2 (Fin 3))) : Set (Sym2 (Fin 3)))).Connected := by
+  decide
+
+/-- **K_3 disconnected: {s(1,2)} as Finset**, proved by `decide`. -/
+private theorem fin_three_disconnected_12_finset :
+    ¬ (SimpleGraph.fromEdgeSet
+        (↑({s(1, 2)} : Finset (Sym2 (Fin 3))) : Set (Sym2 (Fin 3)))).Connected := by
+  decide
+
+/-- **`K_3` alternating sum = 2** (Mayer Phase B base case):
+`(-1)^(3-1) · (3-1)! = 1 · 2 = 2`. The 4 connected spanning subgraphs
+of `K_3` are the 3 paths (size 2 each) and the triangle (size 3):
+sum = `3 · (-1)^2 + (-1)^3 = 3 - 1 = 2`. Connectivity / disconnectivity
+of each subset is verified by `decide` on the finite-graph
+`SimpleGraph.Connected` decidable instance. -/
+theorem alternatingConnectedSubgraphSum_K3 :
+    alternatingConnectedSubgraphSum (⊤ : SimpleGraph (Fin 3)) = 2 := by
+  classical
+  unfold alternatingConnectedSubgraphSum
+  have h_set : connectedSpanningEdgeSubsets (⊤ : SimpleGraph (Fin 3)) =
+      ({{s(0, 1), s(0, 2)}, {s(0, 1), s(1, 2)}, {s(0, 2), s(1, 2)},
+          {s(0, 1), s(0, 2), s(1, 2)}} : Finset (Finset (Sym2 (Fin 3)))) := by
+    ext S
+    rw [mem_connectedSpanningEdgeSubsets, top_simpleGraph_fin_three_edgeFinset]
+    constructor
+    · rintro ⟨hsub, hconn⟩
+      have hpow : S ∈ ({s(0, 1), s(0, 2), s(1, 2)} :
+          Finset (Sym2 (Fin 3))).powerset :=
+        Finset.mem_powerset.mpr hsub
+      -- powerset of a 3-element finset has 8 specific elements (verify by decide).
+      have h_pow_eq : ({s(0, 1), s(0, 2), s(1, 2)} :
+          Finset (Sym2 (Fin 3))).powerset =
+          ({∅, {s(0, 1)}, {s(0, 2)}, {s(1, 2)},
+              {s(0, 1), s(0, 2)}, {s(0, 1), s(1, 2)},
+              {s(0, 2), s(1, 2)}, {s(0, 1), s(0, 2), s(1, 2)}} :
+            Finset (Finset (Sym2 (Fin 3)))) := by decide
+      rw [h_pow_eq] at hpow
+      simp only [Finset.mem_insert, Finset.mem_singleton] at hpow
+      rcases hpow with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl
+      · exact absurd hconn fin_three_disconnected_empty_finset
+      · exact absurd hconn fin_three_disconnected_01_finset
+      · exact absurd hconn fin_three_disconnected_02_finset
+      · exact absurd hconn fin_three_disconnected_12_finset
+      · decide
+      · decide
+      · decide
+      · decide
+    · intro hmem
+      simp only [Finset.mem_insert, Finset.mem_singleton] at hmem
+      rcases hmem with rfl | rfl | rfl | rfl
+      · refine ⟨by decide, fin_three_connected_01_02_finset⟩
+      · refine ⟨by decide, fin_three_connected_01_12_finset⟩
+      · refine ⟨by decide, fin_three_connected_02_12_finset⟩
+      · refine ⟨by decide, fin_three_connected_triangle_finset⟩
+  rw [h_set]
+  -- Now compute the sum: (-1)^2 + (-1)^2 + (-1)^2 + (-1)^3 = 2.
+  -- The 4 finsets are pairwise distinct (verify by decide).
+  have h1 : ({s(0, 1), s(0, 2)} : Finset (Sym2 (Fin 3))).card = 2 := by decide
+  have h2 : ({s(0, 1), s(1, 2)} : Finset (Sym2 (Fin 3))).card = 2 := by decide
+  have h3 : ({s(0, 2), s(1, 2)} : Finset (Sym2 (Fin 3))).card = 2 := by decide
+  have h4 : ({s(0, 1), s(0, 2), s(1, 2)} : Finset (Sym2 (Fin 3))).card = 3 := by decide
+  have hd1 : ({s(0, 1), s(0, 2)} : Finset (Sym2 (Fin 3))) ∉
+      ({{s(0, 1), s(1, 2)}, {s(0, 2), s(1, 2)}, {s(0, 1), s(0, 2), s(1, 2)}} :
+        Finset (Finset (Sym2 (Fin 3)))) := by decide
+  have hd2 : ({s(0, 1), s(1, 2)} : Finset (Sym2 (Fin 3))) ∉
+      ({{s(0, 2), s(1, 2)}, {s(0, 1), s(0, 2), s(1, 2)}} :
+        Finset (Finset (Sym2 (Fin 3)))) := by decide
+  have hd3 : ({s(0, 2), s(1, 2)} : Finset (Sym2 (Fin 3))) ∉
+      ({{s(0, 1), s(0, 2), s(1, 2)}} : Finset (Finset (Sym2 (Fin 3)))) := by decide
+  rw [show ({{s(0, 1), s(0, 2)}, {s(0, 1), s(1, 2)}, {s(0, 2), s(1, 2)},
+            {s(0, 1), s(0, 2), s(1, 2)}} : Finset (Finset (Sym2 (Fin 3)))) =
+        insert ({s(0, 1), s(0, 2)} : Finset (Sym2 (Fin 3)))
+          (insert ({s(0, 1), s(1, 2)} : Finset (Sym2 (Fin 3)))
+            (insert ({s(0, 2), s(1, 2)} : Finset (Sym2 (Fin 3)))
+              ({{s(0, 1), s(0, 2), s(1, 2)}} : Finset (Finset (Sym2 (Fin 3))))))
+        from rfl,
+      Finset.sum_insert hd1, Finset.sum_insert hd2, Finset.sum_insert hd3,
+      Finset.sum_singleton, h1, h2, h3, h4]
+  norm_num
 
 end IsingModel
