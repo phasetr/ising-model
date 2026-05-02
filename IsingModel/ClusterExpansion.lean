@@ -662,6 +662,37 @@ theorem polymerPartition_singleton {ι : Type*} [DecidableEq ι]
       subst h
       exact (isCompatiblePolymerFamily_singleton G P).mpr hP
 
+/-- **Polymer partition function is at least 1 under non-negative
+weights**: if `z(P) ≥ 0` for every `P ∈ Ω`, then
+`polymerPartition G Ω z ≥ 1`. The empty sub-family always contributes
+exactly 1 to the sum. -/
+theorem polymerPartition_ge_one {ι : Type*} [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (Ω : Finset (Finset (Sym2 ι))) {z : Finset (Sym2 ι) → ℝ}
+    (hz : ∀ Q ∈ Ω, 0 ≤ z Q) :
+    1 ≤ polymerPartition G Ω z := by
+  classical
+  unfold polymerPartition
+  -- Split off the empty sub-family: contributes 1 to the sum.
+  have h_empty_in : (∅ : Finset (Finset (Sym2 ι))) ∈
+      Ω.powerset.filter (fun Γ => IsCompatiblePolymerFamily G Γ) := by
+    rw [Finset.mem_filter]
+    exact ⟨Finset.empty_mem_powerset _,
+      IsCompatiblePolymerFamily.empty G⟩
+  have h_split := Finset.add_sum_erase _ (fun Γ => ∏ P ∈ Γ, z P) h_empty_in
+  simp only [Finset.prod_empty] at h_split
+  have h_other_nn : 0 ≤ ∑ Γ ∈ (Ω.powerset.filter
+        (fun Γ => IsCompatiblePolymerFamily G Γ)).erase ∅,
+        ∏ P ∈ Γ, z P := by
+    apply Finset.sum_nonneg
+    intro Γ hΓ
+    rw [Finset.mem_erase, Finset.mem_filter, Finset.mem_powerset] at hΓ
+    obtain ⟨_, hsub, _⟩ := hΓ
+    apply Finset.prod_nonneg
+    intro P hPΓ
+    exact hz P (hsub hPΓ)
+  linarith
+
 /-- **Polymer partition function on an empty universe equals 1**: the
 only sub-family is `∅`, which is compatible with empty product `1`. -/
 theorem polymerPartition_empty {ι : Type*} [DecidableEq ι]
