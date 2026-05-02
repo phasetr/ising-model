@@ -562,6 +562,71 @@ theorem not_isPolymerCompatible_self_of_nonempty {ι : Type*} [DecidableEq ι]
   rw [inf_idem] at h_inf
   exact hP.ne_empty h_inf
 
+/-- **Polymer incompatibility relation** (Step 576, Mayer expansion
+foundation): two polymers `P, Q` are *incompatible* iff their supports
+overlap, i.e. they share a vertex. This is the negation of
+`IsPolymerVertexDisjoint` and is the foundational relation for cluster
+decomposition: a *cluster* is (informally) a multi-set of polymers whose
+incompatibility graph is connected, and the Mayer/cluster expansion
+expresses `log Ξ` as a sum over clusters with the Ursell coefficient.
+A non-empty polymer is incompatible with itself, which corresponds to
+the standard convention that clusters are multi-sets (not sets). -/
+def PolymersIncompatible {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (P Q : Finset (Sym2 ι)) : Prop :=
+  ¬ Disjoint (polymerSupport P) (polymerSupport Q)
+
+/-- **`PolymersIncompatible` is decidable**: inherits decidability from
+`Disjoint` on `Finset`. -/
+instance PolymersIncompatible.decidable {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (P Q : Finset (Sym2 ι)) : Decidable (PolymersIncompatible P Q) := by
+  unfold PolymersIncompatible
+  exact instDecidableNot
+
+/-- **`PolymersIncompatible` is symmetric**: incompatibility is a
+symmetric relation since support overlap is. -/
+theorem PolymersIncompatible.symm
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {P Q : Finset (Sym2 ι)} (h : PolymersIncompatible P Q) :
+    PolymersIncompatible Q P := by
+  unfold PolymersIncompatible at *
+  rwa [disjoint_comm]
+
+/-- **`PolymersIncompatible` is the negation of `IsPolymerVertexDisjoint`**.
+This makes the duality between the compatibility used in the
+even-subgraph bijection (`IsPolymerVertexDisjoint`) and the
+incompatibility used in cluster decomposition explicit. -/
+theorem PolymersIncompatible.iff_not_isPolymerVertexDisjoint
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {P Q : Finset (Sym2 ι)} :
+    PolymersIncompatible P Q ↔ ¬ IsPolymerVertexDisjoint P Q :=
+  Iff.rfl
+
+/-- **Characterisation via shared vertex**: two polymers are
+incompatible iff there is a vertex in both supports. The forward
+direction uses `Finset.not_disjoint_iff`; the backward direction is
+immediate. -/
+theorem PolymersIncompatible.iff_exists_shared_vertex
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {P Q : Finset (Sym2 ι)} :
+    PolymersIncompatible P Q ↔
+    ∃ v : ι, v ∈ polymerSupport P ∧ v ∈ polymerSupport Q := by
+  unfold PolymersIncompatible
+  rw [Finset.not_disjoint_iff]
+
+/-- **Self-incompatibility for non-empty polymers**: any non-empty
+polymer is incompatible with itself, since its non-empty support
+overlaps with itself. This is the dual of
+`not_isPolymerVertexDisjoint_self_of_isPolymer` and reflects the
+standard convention that clusters in Mayer expansion are multi-sets
+where polymers can repeat. -/
+theorem PolymersIncompatible.self_of_isPolymer
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {G : SimpleGraph ι} [Fintype G.edgeSet]
+    {P : Finset (Sym2 ι)} (hP : IsPolymer G P) :
+    PolymersIncompatible P P :=
+  PolymersIncompatible.iff_not_isPolymerVertexDisjoint.mpr
+    (not_isPolymerVertexDisjoint_self_of_isPolymer hP)
+
 /-- **Compatible polymer family**: a `Finset` of polymers such that
 the polymers are pairwise compatible (i.e. pairwise edge-disjoint).
 This is the natural input to the polymer partition function:
