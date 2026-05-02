@@ -3545,6 +3545,18 @@ theorem polymerFreeEnergy_at_one
   unfold polymerFreeEnergy
   rw [vdPolymerFamilies_sum_at_one]
 
+/-- **`mayerPartialSum G 1 t = |allPolymers G|` at `t = 1`** (Step 641):
+each polymer contributes `1^|P| = 1`, so the sum equals the number of
+polymers. -/
+theorem mayerPartialSum_one_at_one
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    mayerPartialSum G 1 1 = (allPolymers G).card := by
+  classical
+  rw [mayerPartialSum_one]
+  have h_each : ∀ P ∈ allPolymers G, (1 : ℝ) ^ P.card = 1 := fun _ _ => one_pow _
+  rw [Finset.sum_congr rfl h_each, Finset.sum_const, Nat.smul_one_eq_cast]
+
 /-- **`mayerPartialSum` recurrence in `N`** (Step 638):
 `mayerPartialSum G (N+1) t = mayerPartialSum G N t + mayerExpansionTerm G (N+1) t`. -/
 theorem mayerPartialSum_succ
