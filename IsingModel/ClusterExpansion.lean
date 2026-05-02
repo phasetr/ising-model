@@ -3960,4 +3960,55 @@ theorem hasSum_real_log_one_add_of_abs_lt_one {x : ℝ} (h : |x| < 1) :
       h_neg_pow]
   ring
 
+/-- **polymerFreeEnergy power series via log(1+ε) Taylor**: when
+`|ε(t)| < 1`, the polymer free energy admits a convergent series
+representation
+  polymerFreeEnergy G t = ∑_{n ≥ 0} (-1)^n · ε(t)^(n+1) / (n+1)
+where `ε(t) = ∑_{Γ ≠ ∅} ∏ t^|P|`. This connects Mayer-side
+combinatorial sums to the analytic log Taylor series.
+
+Bundles together the ε-power expansion (Step 667), log(1+x) Taylor
+(Step 666), and `polymerFreeEnergy = log(1+ε)` (Step 658). The full
+Mayer identity (matching this sum to a polymer-sequence sum via
+Mayer combinatorial identity for `K_n` connected subgraphs)
+remains deferred; this lemma provides the analytic side. -/
+theorem polymerFreeEnergy_hasSum_via_log
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {t : ℝ} (h_abs : |∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅,
+                       ∏ P ∈ Γ, t ^ P.card| < 1) :
+    HasSum (fun n : ℕ =>
+        (-1 : ℝ) ^ n *
+          (∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅,
+            ∏ P ∈ Γ, t ^ P.card) ^ (n + 1) /
+          (n + 1))
+      (polymerFreeEnergy G t) := by
+  rw [polymerFreeEnergy_eq_log_one_add_eps]
+  exact hasSum_real_log_one_add_of_abs_lt_one h_abs
+
+/-- **polymerFreeEnergy series convergence eventually** (companion
+bundle): in some neighbourhood of `t = 0`, the convergent log(1+ε)
+representation holds. -/
+theorem polymerFreeEnergy_hasSum_via_log_eventually
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    ∀ᶠ t : ℝ in nhds 0,
+      HasSum (fun n : ℕ =>
+          (-1 : ℝ) ^ n *
+            (∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅,
+              ∏ P ∈ Γ, t ^ P.card) ^ (n + 1) /
+            (n + 1))
+        (polymerFreeEnergy G t) := by
+  have h_abs_tendsto :
+      Filter.Tendsto (fun t : ℝ =>
+        |∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅,
+          ∏ P ∈ Γ, t ^ P.card|) (nhds 0) (nhds 0) := by
+    have h := vdPolymerFamilies_sum_minus_one_tendsto_zero G
+    simpa using (Continuous.tendsto continuous_abs (0 : ℝ)).comp h
+  have h_abs_lt : ∀ᶠ t : ℝ in nhds 0,
+      |∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅,
+        ∏ P ∈ Γ, t ^ P.card| < 1 :=
+    h_abs_tendsto.eventually_lt_const zero_lt_one
+  exact h_abs_lt.mono (fun t h => polymerFreeEnergy_hasSum_via_log G h)
+
 end IsingModel
