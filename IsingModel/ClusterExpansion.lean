@@ -4011,4 +4011,71 @@ theorem polymerFreeEnergy_hasSum_via_log_eventually
     h_abs_tendsto.eventually_lt_const zero_lt_one
   exact h_abs_lt.mono (fun t h => polymerFreeEnergy_hasSum_via_log G h)
 
+/-! ## K_n alternating connected-spanning subgraph sum (Mayer Phase B)
+
+**Goal**: prove the Mayer combinatorial identity
+  Σ_{S ⊆ E(K_n) connected spanning} (-1)^|S| = (-1)^(n-1) · (n-1)!
+
+at least for small `n` cases (`n = 0, 1, 2`), and document the
+general-n proof as research-level work (via matrix-tree / Tutte
+polynomial / inclusion-exclusion). -/
+
+/-- **Alternating connected-spanning sum** (helper definition):
+`Σ_{S ∈ connectedSpanningEdgeSubsets G} (-1)^|S|`. The Mayer
+combinatorial identity asserts this equals `(-1)^(n-1) · (n-1)!`
+for `K_n`. -/
+noncomputable def alternatingConnectedSubgraphSum
+    {V : Type*} [Fintype V] [DecidableEq V]
+    (G : SimpleGraph V) [DecidableRel G.Adj] : ℝ :=
+  ∑ S ∈ connectedSpanningEdgeSubsets G, (-1 : ℝ) ^ S.card
+
+/-- **`K_0` alternating sum = 0** (Mayer Phase B base case): for the
+empty graph on `Fin 0`, no SimpleGraph is `Connected` (Connected
+requires `Nonempty V`), so `connectedSpanningEdgeSubsets = ∅` and
+the alternating sum is 0. -/
+theorem alternatingConnectedSubgraphSum_K0 :
+    alternatingConnectedSubgraphSum (⊤ : SimpleGraph (Fin 0)) = 0 := by
+  classical
+  unfold alternatingConnectedSubgraphSum connectedSpanningEdgeSubsets
+  refine Finset.sum_eq_zero ?_ |>.trans rfl
+  intro S hS
+  exfalso
+  rw [Finset.mem_filter] at hS
+  exact hS.2.nonempty.elim Fin.elim0
+
+/-- **`K_n` is loopless on Fin 1**: K_1 has no edges since SimpleGraph
+disallows self-loops and Fin 1 has only one vertex. -/
+private theorem top_simpleGraph_fin_one_edgeFinset :
+    (⊤ : SimpleGraph (Fin 1)).edgeFinset = ∅ := by
+  classical
+  rw [Finset.eq_empty_iff_forall_notMem]
+  intro e he
+  rw [SimpleGraph.mem_edgeFinset] at he
+  induction e using Sym2.ind with
+  | h a b =>
+    rw [SimpleGraph.mem_edgeSet, SimpleGraph.top_adj] at he
+    exact he (Subsingleton.elim a b)
+
+/-- **`K_1` alternating sum = 1** (Mayer Phase B base case):
+`(-1)^(1-1) · (1-1)! = (-1)^0 · 0! = 1 · 1 = 1`. The only edge subset
+of an edgeless K_1 is `∅`, which gives a single-vertex graph that is
+trivially connected; sum = `(-1)^0 = 1`. -/
+theorem alternatingConnectedSubgraphSum_K1 :
+    alternatingConnectedSubgraphSum (⊤ : SimpleGraph (Fin 1)) = 1 := by
+  classical
+  unfold alternatingConnectedSubgraphSum
+  -- connectedSpanningEdgeSubsets ⊤ = {∅} for K_1
+  have h_set : connectedSpanningEdgeSubsets (⊤ : SimpleGraph (Fin 1)) = {∅} := by
+    apply Finset.ext
+    intro S
+    rw [mem_connectedSpanningEdgeSubsets, Finset.mem_singleton,
+        top_simpleGraph_fin_one_edgeFinset, Finset.subset_empty]
+    refine ⟨fun h => h.1, fun hS => ⟨hS, ?_⟩⟩
+    rw [hS]
+    refine { preconnected := ?_, nonempty := ⟨0⟩ }
+    intro u v
+    have huv : u = v := Subsingleton.elim u v
+    exact huv ▸ SimpleGraph.Reachable.refl u
+  rw [h_set, Finset.sum_singleton, Finset.card_empty, pow_zero]
+
 end IsingModel
