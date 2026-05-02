@@ -3873,6 +3873,40 @@ theorem correlation_high_temp_h_zero_le_numerator
   rw [div_one] at h_step
   exact h_step
 
+/-- **Pair numerator filter forces `1 ≤ |X|` (GJ §18.7 foundation)**:
+for any `i j : ι`, every `X` in the FV (3.46) numerator filter for
+`A = {i, j}` satisfies `1 ≤ X.card`.
+
+The empty subgraph cannot occur: at `v = i` (which lies in `A = {i, j}`),
+the constraint `Even (1 + (X.filter (i ∈ ·)).card)` forces
+`(X.filter (i ∈ ·)).card` to be **odd**; if `X = ∅` this would give
+`(X.filter (i ∈ ·)).card = 0`, even, and `1 + 0 = 1` is *not* even —
+contradiction.
+
+Note that `i ≠ j` is *not* needed: when `i = j`, `A = {i}` and the same
+parity argument at `v = i` excludes `X = ∅`.
+
+Building block toward the §18.7 capstone graph-distance bound
+`d_G(i, j) ≤ X.card`. -/
+theorem evenSubgraph_pair_boundary_card_pos
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (i j : ι)
+    (X : Finset (Sym2 ι))
+    (hX : X ∈ G.edgeFinset.powerset.filter
+        (fun X : Finset (Sym2 ι) => ∀ v : ι,
+          Even ((if v ∈ ({i, j} : Finset ι) then (1 : ℕ) else 0)
+                + (X.filter (v ∈ ·)).card))) :
+    1 ≤ X.card := by
+  rcases Finset.mem_filter.mp hX with ⟨_, hparity⟩
+  rcases Nat.eq_zero_or_pos X.card with h | h
+  · exfalso
+    have hX_empty : X = ∅ := Finset.card_eq_zero.mp h
+    have h_at_i := hparity i
+    have hi_mem : i ∈ ({i, j} : Finset ι) := Finset.mem_insert_self i {j}
+    rw [hX_empty] at h_at_i
+    simp [hi_mem] at h_at_i
+  · exact h
+
 /-- **Z₂ symmetry of correlations at h = 0 from FV (3.46) + handshake**:
 for any `A : Finset ι` of odd cardinality, `correlation G ⟨J, 0, β⟩ A = 0`.
 
