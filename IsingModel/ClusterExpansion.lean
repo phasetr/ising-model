@@ -281,4 +281,36 @@ theorem isCompatiblePolymerFamily_singleton {ι : Type*} [DecidableEq ι]
     subst hP₁; subst hP₂
     exact absurd rfl hne
 
+/-- **Polymer model partition function (abstract)**: given a reference
+finite universe of polymer candidates `Ω : Finset (Finset (Sym2 ι))`
+and a weight function `z : Finset (Sym2 ι) → ℝ`, the polymer model
+partition function is
+`Ξ(Ω, z) = ∑_{Γ ⊆ Ω, Γ compatible} ∏_{P ∈ Γ} z(P)`,
+where compatibility is pairwise edge-disjointness.
+
+`Classical.dec` is used to decide compatibility of arbitrary
+sub-families because `IsPolymer` (involving edge-connectedness via
+`Relation.ReflTransGen`) is not constructively decidable. -/
+noncomputable def polymerPartition {ι : Type*} [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (Ω : Finset (Finset (Sym2 ι))) (z : Finset (Sym2 ι) → ℝ) : ℝ := by
+  classical
+  exact ∑ Γ ∈ Ω.powerset.filter (fun Γ => IsCompatiblePolymerFamily G Γ),
+    ∏ P ∈ Γ, z P
+
+/-- **Polymer partition function on an empty universe equals 1**: the
+only sub-family is `∅`, which is compatible with empty product `1`. -/
+theorem polymerPartition_empty {ι : Type*} [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (z : Finset (Sym2 ι) → ℝ) :
+    polymerPartition G (∅ : Finset (Finset (Sym2 ι))) z = 1 := by
+  classical
+  unfold polymerPartition
+  rw [Finset.powerset_empty,
+      Finset.filter_eq_self.mpr fun Γ hΓ => by
+        rw [Finset.mem_singleton] at hΓ
+        subst hΓ
+        exact IsCompatiblePolymerFamily.empty G]
+  simp
+
 end IsingModel
