@@ -2402,4 +2402,27 @@ theorem mayerExpansionTerm_continuous
   refine continuous_finset_sum _ (fun ω _ => ?_)
   exact continuous_const.mul (clusterSeqActivity_continuous ω)
 
+/-- **Cluster-sequence activity is differentiable in `t`** (Step 589):
+the activity factor `clusterSeqActivity t ω = ∏ i, t ^ |ω i|` is a
+finite product of monomials, hence differentiable in `t` on all of `ℝ`. -/
+theorem clusterSeqActivity_differentiable
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {n : ℕ} (ω : Fin n → Finset (Sym2 ι)) :
+    Differentiable ℝ (fun t : ℝ => clusterSeqActivity t ω) := by
+  unfold clusterSeqActivity
+  refine Differentiable.fun_finset_prod (fun i _ => ?_)
+  exact (differentiable_id (𝕜 := ℝ)).pow _
+
+/-- **Mayer expansion n-th term is differentiable in `t`** (Step 589):
+each term is a polynomial in `t` (constant Ursell coefficients times
+monomial activity factors), hence differentiable. Strengthens
+`mayerExpansionTerm_continuous` (Step 588) and prepares for analyticity. -/
+theorem mayerExpansionTerm_differentiable
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (n : ℕ) :
+    Differentiable ℝ (fun t : ℝ => mayerExpansionTerm G n t) := by
+  unfold mayerExpansionTerm
+  refine Differentiable.fun_sum (fun ω _ => ?_)
+  exact (clusterSeqActivity_differentiable ω).const_mul _
+
 end IsingModel
