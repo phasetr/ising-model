@@ -1762,4 +1762,39 @@ theorem freeEnergy_analyticAt_J_h_zero
   exact (partitionFunction_analyticAt_J_h_zero G β J).log
     (partitionFunction_pos G _)
 
+/-- **Partition function `AnalyticOnNhd ℝ _ Set.univ` in `β` (at `h = 0`)**:
+strengthens `partitionFunction_analyticAt_beta_h_zero` (Step 563) from
+per-point `AnalyticAt` to a global `AnalyticOnNhd ℝ _ Set.univ` statement. -/
+theorem partitionFunction_analyticOnNhd_beta_h_zero
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J : ℝ) :
+    AnalyticOnNhd ℝ (fun β' : ℝ => partitionFunction G ⟨J, 0, β'⟩) Set.univ :=
+  fun β _ => partitionFunction_analyticAt_beta_h_zero G J β
+
+/-- **Partition function `AnalyticOnNhd ℝ _ Set.univ` in `J` (at `h = 0`)**:
+dual of `partitionFunction_analyticOnNhd_beta_h_zero`. -/
+theorem partitionFunction_analyticOnNhd_J_h_zero
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (β : ℝ) :
+    AnalyticOnNhd ℝ (fun J' : ℝ => partitionFunction G ⟨J', 0, β⟩) Set.univ :=
+  fun J _ => partitionFunction_analyticAt_J_h_zero G β J
+
+/-- **Free energy `AnalyticOnNhd ℝ _ Set.univ` in `β` (at `h = 0`)**:
+strengthens `freeEnergy_analyticAt_beta_h_zero` (Step 564) from per-point
+`AnalyticAt` to a global `AnalyticOnNhd ℝ _ Set.univ` statement. Completes
+the §18.6 capstone in its global form at `h = 0`. -/
+theorem freeEnergy_analyticOnNhd_beta_h_zero
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J : ℝ) :
+    AnalyticOnNhd ℝ (fun β' : ℝ => freeEnergy G ⟨J, 0, β'⟩) Set.univ :=
+  fun β _ => freeEnergy_analyticAt_beta_h_zero G J β
+
+/-- **Free energy `AnalyticOnNhd ℝ _ Set.univ` in `J` (at `h = 0`)**:
+dual of `freeEnergy_analyticOnNhd_beta_h_zero`. -/
+theorem freeEnergy_analyticOnNhd_J_h_zero
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (β : ℝ) :
+    AnalyticOnNhd ℝ (fun J' : ℝ => freeEnergy G ⟨J', 0, β⟩) Set.univ :=
+  fun J _ => freeEnergy_analyticAt_J_h_zero G β J
+
 end IsingModel
