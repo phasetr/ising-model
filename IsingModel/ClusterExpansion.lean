@@ -373,6 +373,53 @@ theorem IsEvenSubgraph.toEdgeComponent
       rw [h_filter_empty, Finset.card_empty]
       exact ⟨0, rfl⟩
 
+/-- **Lifting reachability to the component**: if `f ∈ edgeComponent X e`,
+then there is a chain in `edgeAdjacentIn (edgeComponent X e)` from `e`
+to `f` (not just in the larger relation `edgeAdjacentIn X`). -/
+theorem reflTransGen_edgeAdjacentIn_within_component
+    {ι : Type*} {X : Finset (Sym2 ι)} {e f : Sym2 ι}
+    (h : Relation.ReflTransGen (edgeAdjacentIn X) e f) :
+    Relation.ReflTransGen (edgeAdjacentIn (edgeComponent X e)) e f := by
+  induction h with
+  | refl => exact Relation.ReflTransGen.refl
+  | tail h_chain h_step ih =>
+    rename_i a b
+    have ha_comp : a ∈ edgeComponent X e :=
+      mem_edgeComponent.mpr ⟨h_step.1, h_chain⟩
+    have hb_comp : b ∈ edgeComponent X e :=
+      mem_edgeComponent.mpr ⟨h_step.2.1,
+        Relation.ReflTransGen.tail h_chain h_step⟩
+    have h_step' : edgeAdjacentIn (edgeComponent X e) a b :=
+      ⟨ha_comp, hb_comp, h_step.2.2⟩
+    exact Relation.ReflTransGen.tail ih h_step'
+
+/-- **`edgeComponent X e` is edge-connected**: any two edges in the
+component are linked by a chain of edge-adjacency steps within the
+component. -/
+theorem isEdgeConnected_edgeComponent
+    {ι : Type*} {X : Finset (Sym2 ι)} (e : Sym2 ι) :
+    IsEdgeConnected (edgeComponent X e) := by
+  intro f hf g hg
+  -- Use lift-to-component for both f and g, then symmetry + transitivity.
+  rw [mem_edgeComponent] at hf hg
+  have hef := reflTransGen_edgeAdjacentIn_within_component hf.2
+  have heg := reflTransGen_edgeAdjacentIn_within_component hg.2
+  have hfe := reflTransGen_edgeAdjacentIn_symmetric (edgeComponent X e) hef
+  exact hfe.trans heg
+
+/-- **`edgeComponent X e` is a polymer when `X` is even and `e ∈ X`**:
+combines all the previous component lemmas — non-empty (contains `e`),
+even-degree (Step 536), and edge-connected (Step 537). -/
+theorem IsEvenSubgraph.edgeComponent_isPolymer
+    {ι : Type*} [DecidableEq ι]
+    {G : SimpleGraph ι} [Fintype G.edgeSet]
+    {X : Finset (Sym2 ι)} (hX : IsEvenSubgraph G X)
+    {e : Sym2 ι} (he : e ∈ X) :
+    IsPolymer G (edgeComponent X e) where
+  isEven := hX.toEdgeComponent e
+  nonempty := ⟨e, self_mem_edgeComponent he⟩
+  connected := isEdgeConnected_edgeComponent e
+
 /-- **Polymer edge-disjointness**: two polymers `P, Q` are *edge-disjoint*
 if they share no edge. This is a *weak* compatibility relation that
 suffices for the multiplicative weight identity but does not give a
