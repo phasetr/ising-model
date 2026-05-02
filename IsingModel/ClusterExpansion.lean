@@ -3568,6 +3568,16 @@ theorem polymerFreeEnergy_le_card_log_two_of_le_one
   refine mul_le_mul_of_nonneg_left ?_ (Nat.cast_nonneg _)
   exact Real.log_le_log (by linarith) (by linarith)
 
+/-- **`polymerFreeEnergy_tanh ≤ |E| · log 2` under `0 ≤ β·J`** (Step 643):
+since `tanh(β·J) < 1` always, Step 642 applies. -/
+theorem polymerFreeEnergy_tanh_le_card_log_two
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] {β J : ℝ} (hβJ : 0 ≤ β * J) :
+    polymerFreeEnergy G (Real.tanh (β * J)) ≤
+      G.edgeFinset.card * Real.log 2 :=
+  polymerFreeEnergy_le_card_log_two_of_le_one G (real_tanh_nonneg hβJ)
+    (Real.tanh_lt_one _).le
+
 /-- **`mayerPartialSum` recurrence in `N`** (Step 638):
 `mayerPartialSum G (N+1) t = mayerPartialSum G N t + mayerExpansionTerm G (N+1) t`. -/
 theorem mayerPartialSum_succ
