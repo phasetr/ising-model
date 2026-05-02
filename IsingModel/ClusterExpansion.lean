@@ -309,30 +309,69 @@ theorem polymerSupport_union {ι : Type*} [Fintype ι] [DecidableEq ι]
     · exact ⟨e, Finset.mem_union_left _ he, hv⟩
     · exact ⟨e, Finset.mem_union_right _ he, hv⟩
 
-/-- **`edgeComponent` absorbs incident edges**: if some edge of the
-component contains `v`, then every `X`-edge containing `v` is also in
-the component. This is the closure-under-incidence property that
+/-- **`edgeComponent` absorbs incident edges**: if some edge `f` of the
+component contains `v`, then every `X`-edge `e'` containing `v` is also
+in the component. This is the closure-under-incidence property that
 ensures connected components have well-defined vertex degrees.
 
 Proof: edge-adjacency through the shared vertex `v` extends the
 reach-relation by one step. -/
 theorem edgeComponent_absorbs_incident
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
-    {X : Finset (Sym2 ι)} {e : Sym2 ι} {v : ι}
-    (hv : v ∈ polymerSupport (edgeComponent X e))
+    {ι : Type*}
+    {X : Finset (Sym2 ι)} {e f : Sym2 ι} {v : ι}
+    (hf : f ∈ edgeComponent X e) (hvf : v ∈ f)
     {e' : Sym2 ι} (he' : e' ∈ X) (hv' : v ∈ e') :
     e' ∈ edgeComponent X e := by
-  rw [mem_polymerSupport] at hv
-  obtain ⟨f, hf, hvf⟩ := hv
   rw [mem_edgeComponent] at hf
   obtain ⟨hfX, hef⟩ := hf
   rw [mem_edgeComponent]
   refine ⟨he', ?_⟩
-  -- Need: ReflTransGen (edgeAdjacentIn X) e e'
-  -- We have hef : ReflTransGen (edgeAdjacentIn X) e f
-  -- And f, e' both in X, sharing vertex v.
   have h_step : edgeAdjacentIn X f e' := ⟨hfX, he', v, hvf, hv'⟩
   exact hef.tail h_step
+
+/-- **edgeComponent of an even subgraph is even**: if `X` is an even
+subgraph of `G`, then so is `edgeComponent X e` for every `e`.
+
+Proof per vertex `v`:
+- Case `v ∈ polymerSupport (edgeComponent X e)`: by
+  `edgeComponent_absorbs_incident`, every `X`-edge at `v` is in the
+  component, so the component-degree at `v` equals the `X`-degree at
+  `v`, which is even.
+- Case `v ∉ polymerSupport (edgeComponent X e)`: then no edge of the
+  component contains `v`, so component-degree at `v` is zero, even. -/
+theorem IsEvenSubgraph.toEdgeComponent
+    {ι : Type*} [DecidableEq ι]
+    {G : SimpleGraph ι} [Fintype G.edgeSet]
+    {X : Finset (Sym2 ι)} (hX : IsEvenSubgraph G X) (e : Sym2 ι) :
+    IsEvenSubgraph G (edgeComponent X e) where
+  subset := (edgeComponent_subset X e).trans hX.subset
+  even_degree v := by
+    by_cases hv : ∃ f ∈ edgeComponent X e, v ∈ f
+    · -- The component-incident set at v equals X-incident set at v.
+      obtain ⟨f, hf, hvf⟩ := hv
+      have h_filter_eq :
+          (edgeComponent X e).filter (v ∈ ·) = X.filter (v ∈ ·) := by
+        apply Finset.Subset.antisymm
+        · intro g hg
+          rw [Finset.mem_filter] at hg ⊢
+          exact ⟨(edgeComponent_subset X e) hg.1, hg.2⟩
+        · intro g hg
+          rw [Finset.mem_filter] at hg ⊢
+          exact ⟨edgeComponent_absorbs_incident hf hvf hg.1 hg.2, hg.2⟩
+      rw [h_filter_eq]
+      exact hX.even_degree v
+    · -- Component has no incidence at v, so count is zero.
+      have hv' : ∀ f ∈ edgeComponent X e, v ∉ f := by
+        intro f hf hvf
+        exact hv ⟨f, hf, hvf⟩
+      have h_filter_empty :
+          (edgeComponent X e).filter (v ∈ ·) = ∅ := by
+        rw [Finset.eq_empty_iff_forall_notMem]
+        intro f hf
+        rw [Finset.mem_filter] at hf
+        exact hv' f hf.1 hf.2
+      rw [h_filter_empty, Finset.card_empty]
+      exact ⟨0, rfl⟩
 
 /-- **Polymer edge-disjointness**: two polymers `P, Q` are *edge-disjoint*
 if they share no edge. This is a *weak* compatibility relation that
