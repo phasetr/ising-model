@@ -871,6 +871,41 @@ theorem ursellCoefficient_singleton
   rw [h_set]
   simp [Nat.factorial]
 
+/-- **Ursell coefficient vanishes for disconnected sequences** (Step
+584): if the index-side incompatibility graph `G(ω)` is not
+`Connected`, then `ϕ^T(ω) = 0`. The Mayer-expansion sum effectively
+restricts to *cluster* sequences (Step 580). Argument: any connected
+spanning subgraph `fromEdgeSet ↑S` of `G(ω)` (with `S ⊆ G(ω).edgeFinset`)
+implies `G(ω)` itself is `Connected` (via `Reachable.mono`), so
+disconnected `G(ω)` forces `connectedSpanningEdgeSubsets G(ω) = ∅`. -/
+theorem ursellCoefficient_eq_zero_of_disconnected
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {n : ℕ} (ω : Fin n → Finset (Sym2 ι))
+    (h_disc : ¬ (polymerSeqIncompatibilityGraph ω).Connected) :
+    ursellCoefficient ω = 0 := by
+  unfold ursellCoefficient
+  have h_empty :
+      connectedSpanningEdgeSubsets (polymerSeqIncompatibilityGraph ω) = ∅ := by
+    rw [Finset.eq_empty_iff_forall_notMem]
+    intro S hS
+    rw [mem_connectedSpanningEdgeSubsets] at hS
+    obtain ⟨hS_sub, hS_conn⟩ := hS
+    apply h_disc
+    refine { preconnected := ?_, nonempty := hS_conn.nonempty }
+    intro u v
+    have h_le : SimpleGraph.fromEdgeSet (↑S : Set (Sym2 (Fin n))) ≤
+        polymerSeqIncompatibilityGraph ω := by
+      intro a b hab
+      rw [SimpleGraph.fromEdgeSet_adj] at hab
+      obtain ⟨h_in, _⟩ := hab
+      have h_in_finset : s(a, b) ∈ S := h_in
+      have h_in_eS :
+          s(a, b) ∈ (polymerSeqIncompatibilityGraph ω).edgeFinset :=
+        hS_sub h_in_finset
+      rwa [SimpleGraph.mem_edgeFinset] at h_in_eS
+    exact (hS_conn.preconnected u v).mono h_le
+  rw [h_empty, Finset.sum_empty, zero_div]
+
 /-- **Cluster polymer set** (Step 578, Mayer expansion foundation):
 a finite set of polymers `Γ` is a *cluster set* iff `Γ` is non-empty,
 every element is a polymer of `G`, and the induced subgraph of
