@@ -3379,6 +3379,19 @@ theorem mayerPartialSum_differentiableOn
     DifferentiableOn ℝ (fun t : ℝ => mayerPartialSum G N t) s :=
   (mayerPartialSum_differentiable G N).differentiableOn
 
+/-- **vdPolymerFamilies sum sandwich for `t ≥ 0`** (Step 631):
+`1 ≤ vdSum G t ≤ (1+t)^|E|`. Combines Step 605 (≥ 1) with Step 629
+(≤ (1+t)^|E|). -/
+theorem vdPolymerFamilies_sum_sandwich_of_nonneg
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) :
+    1 ≤ (∑ Γ ∈ vdCompatiblePolymerFamilies G, ∏ P ∈ Γ, t ^ P.card) ∧
+    (∑ Γ ∈ vdCompatiblePolymerFamilies G, ∏ P ∈ Γ, t ^ P.card) ≤
+      (1 + t) ^ G.edgeFinset.card :=
+  ⟨vdPolymerFamilies_sum_ge_one_of_nonneg G ht,
+   vdPolymerFamilies_sum_le_one_plus_pow_of_nonneg G ht⟩
+
 /-- **`polymerFreeEnergy ≤ |E| · log(1+t)` under `t ≥ 0`** (Step 630):
 apply `Real.log_le_log` to Step 629's bound `vdSum ≤ (1+t)^|E|`. The
 right-hand side `Real.log ((1+t)^|E|) = |E| · log(1+t)` via `Real.log_pow`. -/
@@ -3399,6 +3412,26 @@ theorem polymerFreeEnergy_le_card_log_one_plus_of_nonneg
             Real.log_le_log h_pos h_le
     _ = G.edgeFinset.card * Real.log (1 + t) := by
             rw [Real.log_pow]
+
+/-- **`polymerFreeEnergy ≥ 0` under `t ≥ 0`** (Step 631): direct
+consequence of Step 605 (`vdSum ≥ 1`) and `Real.log_nonneg`. -/
+theorem polymerFreeEnergy_nonneg_of_nonneg
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) :
+    0 ≤ polymerFreeEnergy G t :=
+  Real.log_nonneg (vdPolymerFamilies_sum_ge_one_of_nonneg G ht)
+
+/-- **`polymerFreeEnergy` sandwich for `t ≥ 0`** (Step 631):
+`0 ≤ polymerFreeEnergy G t ≤ |E| · log(1 + t)`. -/
+theorem polymerFreeEnergy_sandwich_of_nonneg
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) :
+    0 ≤ polymerFreeEnergy G t ∧
+    polymerFreeEnergy G t ≤ G.edgeFinset.card * Real.log (1 + t) :=
+  ⟨polymerFreeEnergy_nonneg_of_nonneg G ht,
+   polymerFreeEnergy_le_card_log_one_plus_of_nonneg G ht⟩
 
 /-- **`polymerFreeEnergy` HasDerivAt** (Step 625): explicit derivative
 of `polymerFreeEnergy G t = Real.log (vdPolymerFamilies_sum G t)` via
