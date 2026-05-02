@@ -121,4 +121,30 @@ theorem isEdgeConnected_singleton {ι : Type*} (e : Sym2 ι) :
   subst he₁; subst he₂
   exact Relation.ReflTransGen.refl
 
+/-- **Polymer compatibility**: two polymers are *compatible* if they
+are edge-disjoint. This is the natural compatibility relation for the
+polymer model arising from the FV (3.45) cycle-space sum: distinct
+edge-disjoint cycles contribute multiplicatively to the partition
+function. -/
+def IsPolymerCompatible {ι : Type*} [DecidableEq ι]
+    (P Q : Finset (Sym2 ι)) : Prop :=
+  Disjoint P Q
+
+/-- **Polymer compatibility is symmetric**. -/
+theorem isPolymerCompatible_symm {ι : Type*} [DecidableEq ι]
+    {P Q : Finset (Sym2 ι)} :
+    IsPolymerCompatible P Q → IsPolymerCompatible Q P :=
+  fun h => h.symm
+
+/-- **Polymer compatibility is irreflexive on non-empty sets**: a
+non-empty polymer is not compatible with itself (since it shares all
+its edges with itself). -/
+theorem not_isPolymerCompatible_self_of_nonempty {ι : Type*} [DecidableEq ι]
+    {P : Finset (Sym2 ι)} (hP : P.Nonempty) :
+    ¬ IsPolymerCompatible P P := by
+  intro h
+  have h_inf : P ⊓ P = ⊥ := h.eq_bot
+  rw [inf_idem] at h_inf
+  exact hP.ne_empty h_inf
+
 end IsingModel
