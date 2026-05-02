@@ -5283,4 +5283,37 @@ theorem alternatingConnectedSubgraphSum_pathGraph_six :
   rw [h_cast, h_int]
   norm_num
 
+/-- **Path graph on `Fin 8` `DecidableRel` instance**. -/
+private instance : DecidableRel (SimpleGraph.pathGraph 8).Adj :=
+  fun u v => decidable_of_iff _ SimpleGraph.pathGraph_adj.symm
+
+set_option maxRecDepth 8000 in
+set_option maxHeartbeats 1000000 in
+/-- **`pathGraph 8` alternating connected-spanning sum = -1**: 7 edges,
+only the full path is connected spanning, sum = `(-1)^7 = -1`. Ursell
+coefficient for n=8 path cluster: `ϕ^T = -1/8! = -1/40320`. -/
+theorem alternatingConnectedSubgraphSum_pathGraph_eight :
+    alternatingConnectedSubgraphSum (SimpleGraph.pathGraph 8) = -1 := by
+  classical
+  unfold alternatingConnectedSubgraphSum
+  have h_int :
+      (∑ S ∈ (SimpleGraph.pathGraph 8).edgeFinset.powerset.filter
+        (fun S : Finset (Sym2 (Fin 8)) =>
+          (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 (Fin 8)))).Connected),
+        ((-1 : ℤ) ^ S.card)) = -1 := by decide
+  unfold connectedSpanningEdgeSubsets
+  have h_cast :
+      (∑ S ∈ (SimpleGraph.pathGraph 8).edgeFinset.powerset.filter
+          (fun S : Finset (Sym2 (Fin 8)) =>
+            (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 (Fin 8)))).Connected),
+        ((-1 : ℝ) ^ S.card)) =
+        (((∑ S ∈ (SimpleGraph.pathGraph 8).edgeFinset.powerset.filter
+            (fun S : Finset (Sym2 (Fin 8)) =>
+              (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 (Fin 8)))).Connected),
+          ((-1 : ℤ) ^ S.card)) : ℤ) : ℝ) := by
+    push_cast
+    rfl
+  rw [h_cast, h_int]
+  norm_num
+
 end IsingModel
