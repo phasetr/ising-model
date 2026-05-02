@@ -1048,6 +1048,34 @@ theorem IsCompatiblePolymerFamilyVertexDisjoint.edgeComponent_biUnion_eq_polymer
       rw [Finset.mem_biUnion]; exact ⟨P, hP_mem, hx⟩
     exact reflTransGen_edgeAdjacentIn_mono hP_sub h_chain_in_P
 
+/-- **`polymerDecomposition (Γ.biUnion id) = Γ`** for VD-compatible Γ:
+the polymer decomposition of the biUnion of a vertex-disjoint
+compatible polymer family recovers the family. -/
+theorem IsCompatiblePolymerFamilyVertexDisjoint.polymerDecomposition_biUnion
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {G : SimpleGraph ι} [Fintype G.edgeSet]
+    {Γ : Finset (Finset (Sym2 ι))}
+    (hΓ : IsCompatiblePolymerFamilyVertexDisjoint G Γ) :
+    polymerDecomposition (Γ.biUnion id) = Γ := by
+  ext C
+  rw [mem_polymerDecomposition]
+  refine ⟨?_, ?_⟩
+  · -- C ∈ image: ∃ e ∈ biUnion, edgeComponent biUnion e = C
+    rintro ⟨e, he, rfl⟩
+    rw [Finset.mem_biUnion] at he
+    obtain ⟨P, hP_mem, heP⟩ := he
+    -- edgeComponent biUnion e = P (Step 544)
+    rw [hΓ.edgeComponent_biUnion_eq_polymer hP_mem heP]
+    exact hP_mem
+  · -- C ∈ Γ ⇒ C ∈ image (pick any edge of C)
+    intro hC
+    have hC_polymer := hΓ.1 C hC
+    obtain ⟨e, heC⟩ := hC_polymer.nonempty
+    refine ⟨e, ?_, ?_⟩
+    · rw [Finset.mem_biUnion]
+      exact ⟨C, hC, heC⟩
+    · exact hΓ.edgeComponent_biUnion_eq_polymer hC heC
+
 /-- **Polymer model partition function (abstract)**: given a reference
 finite universe of polymer candidates `Ω : Finset (Finset (Sym2 ι))`
 and a weight function `z : Finset (Sym2 ι) → ℝ`, the polymer model
