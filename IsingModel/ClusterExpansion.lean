@@ -117,6 +117,15 @@ def edgeAdjacentIn {ι : Type*} (X : Finset (Sym2 ι))
     (e f : Sym2 ι) : Prop :=
   e ∈ X ∧ f ∈ X ∧ ∃ v : ι, v ∈ e ∧ v ∈ f
 
+/-- **Edge-adjacency is symmetric**: `edgeAdjacentIn X e f ↔
+edgeAdjacentIn X f e` (since "share a vertex" is a symmetric relation
+on edges). -/
+theorem edgeAdjacentIn_symm {ι : Type*} {X : Finset (Sym2 ι)}
+    {e f : Sym2 ι} :
+    edgeAdjacentIn X e f → edgeAdjacentIn X f e := by
+  rintro ⟨he, hf, v, hve, hvf⟩
+  exact ⟨hf, he, v, hvf, hve⟩
+
 /-- **Edge-connectedness of an edge subset**: any two edges in `X` are
 connected by a chain of edge-adjacency steps within `X`. The empty set
 is vacuously edge-connected, and a single edge is also trivially
