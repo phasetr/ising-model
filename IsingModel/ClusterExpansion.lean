@@ -3557,6 +3557,17 @@ theorem mayerPartialSum_one_at_one
   have h_each : ∀ P ∈ allPolymers G, (1 : ℝ) ^ P.card = 1 := fun _ _ => one_pow _
   rw [Finset.sum_congr rfl h_each, Finset.sum_const, Nat.smul_one_eq_cast]
 
+/-- **`polymerFreeEnergy ≤ |E| · log 2` for `0 ≤ t ≤ 1`** (Step 642):
+under `t ≤ 1`, `log(1+t) ≤ log 2`. -/
+theorem polymerFreeEnergy_le_card_log_two_of_le_one
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) (ht1 : t ≤ 1) :
+    polymerFreeEnergy G t ≤ G.edgeFinset.card * Real.log 2 := by
+  refine (polymerFreeEnergy_le_card_log_one_plus_of_nonneg G ht).trans ?_
+  refine mul_le_mul_of_nonneg_left ?_ (Nat.cast_nonneg _)
+  exact Real.log_le_log (by linarith) (by linarith)
+
 /-- **`mayerPartialSum` recurrence in `N`** (Step 638):
 `mayerPartialSum G (N+1) t = mayerPartialSum G N t + mayerExpansionTerm G (N+1) t`. -/
 theorem mayerPartialSum_succ
