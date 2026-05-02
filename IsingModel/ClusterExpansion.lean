@@ -4458,4 +4458,28 @@ theorem polymerFreeEnergy_le_pow_sub_one_of_nonneg
   (polymerFreeEnergy_le_eps_of_nonneg G ht).trans
     (vdPolymerFamilies_sum_minus_one_le_of_nonneg G ht)
 
+/-- **`polymerFreeEnergy < log 2` under `(1+t)^|E| < 2` and `0 ≤ t`**
+(§18.4 high-temperature sharpening): in the cluster-expansion
+convergence regime (where `polymerFreeEnergy_hasSum_via_log_of_pow_lt_two`
+applies), `polymerFreeEnergy G t < Real.log 2`.
+
+Proof: `polymerFreeEnergy G t = log(1 + ε(t))` with
+`ε(t) ≤ (1+t)^|E| - 1 < 1` (Step 661 + hypothesis), hence
+`1 + ε(t) < 2` and `log` strict-monotone gives `log(1+ε) < log 2`. -/
+theorem polymerFreeEnergy_lt_log_two_of_pow_lt_two
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) (h_pow : (1 + t) ^ G.edgeFinset.card < 2) :
+    polymerFreeEnergy G t < Real.log 2 := by
+  rw [polymerFreeEnergy_eq_log_one_add_eps]
+  set ε := ∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅,
+    ∏ P ∈ Γ, t ^ P.card
+  have hε : 0 ≤ ε := vdPolymerFamilies_sum_minus_one_nonneg_of_nonneg G ht
+  have hε_le : ε ≤ (1 + t) ^ G.edgeFinset.card - 1 :=
+    vdPolymerFamilies_sum_minus_one_le_of_nonneg G ht
+  have h_lt_one : ε < 1 := by linarith
+  have h_pos : 0 < 1 + ε := by linarith
+  have h_lt_two : 1 + ε < 2 := by linarith
+  exact (Real.log_lt_log_iff h_pos (by norm_num : (0 : ℝ) < 2)).mpr h_lt_two
+
 end IsingModel
