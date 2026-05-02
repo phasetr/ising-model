@@ -3909,6 +3909,17 @@ theorem vdPolymerFamilies_sum_minus_one_lt_one_eventually
         ∏ P ∈ Γ, t ^ P.card) < 1 := by
   exact (vdPolymerFamilies_sum_minus_one_tendsto_zero G).eventually_lt_const zero_lt_one
 
+/-- **ε(t)^n at t=0 for n ≥ 1** (Step 668, Mayer general-t Phase A):
+since `ε(0) = 0` and `0^n = 0` for `n ≥ 1`, every `n`-th power
+vanishes at t=0. -/
+theorem vdPolymerFamilies_sum_minus_one_pow_at_zero
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] {n : ℕ} (hn : 1 ≤ n) :
+    (∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅,
+      ∏ P ∈ Γ, (0 : ℝ) ^ P.card) ^ n = 0 := by
+  rw [vdPolymerFamilies_sum_minus_one_at_zero]
+  exact zero_pow (by omega : n ≠ 0)
+
 /-- **ε(t)^n expansion as sum over Γ-tuples** (Step 667, Mayer
 general-t Phase A): apply `Finset.sum_pow'` to express
   ε(t)^n = ∑_{(Γ_1, ..., Γ_n) ∈ piFinset (vdCompat.erase ∅)^n}
