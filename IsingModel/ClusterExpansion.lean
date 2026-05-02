@@ -3054,4 +3054,24 @@ theorem polymerFreeEnergy_eq_mayerPartialSum_at_zero
     polymerFreeEnergy G 0 = mayerPartialSum G N 0 := by
   rw [polymerFreeEnergy_at_zero, mayerPartialSum_at_zero]
 
+/-- **freeEnergy decomposition with `polymerFreeEnergy`** (Step 612):
+under `0 < |ι|` and `0 ≤ β·J`,
+  `f = log 2 + (|E|/|ι|) · log cosh(β·J) + polymerFreeEnergy G (tanh(β·J)) / |ι|`.
+Restatement of `freeEnergy_high_temp_expansion_h_zero_closed` (Step 317)
+using the polymer-family form (Step 547 bijection wraps the
+`evenSubgraphs` sum into the `vdCompatiblePolymerFamilies` form). -/
+theorem freeEnergy_eq_polymerFreeEnergy
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (hne : 0 < Fintype.card ι) :
+    freeEnergy G ⟨J, 0, β⟩ =
+      Real.log 2 +
+        (G.edgeFinset.card : ℝ) / Fintype.card ι *
+          Real.log (Real.cosh (β * J)) +
+        polymerFreeEnergy G (Real.tanh (β * J)) / Fintype.card ι := by
+  rw [freeEnergy_high_temp_expansion_h_zero_closed G J β hβJ hne]
+  unfold polymerFreeEnergy
+  rw [← evenSubgraphs_eq_inline_filter,
+      evenSubgraphs_sum_eq_vdPolymerFamilies_sum G (Real.tanh (β * J))]
+
 end IsingModel
