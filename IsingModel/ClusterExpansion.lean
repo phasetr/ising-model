@@ -3322,6 +3322,16 @@ theorem mayerPartialSum_eq_zero_of_edgeFinset_empty
   mayerPartialSum_eq_zero_of_no_polymers G
     (allPolymers_eq_empty_of_edgeFinset_empty G h_empty) t N
 
+/-- **`polymerFreeEnergy` DifferentiableOn `[0, ∞)`** (Step 626):
+lift Step 610's per-point AnalyticAt to DifferentiableOn over the
+half-line. -/
+theorem polymerFreeEnergy_differentiableOn_Ici_zero
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    DifferentiableOn ℝ (fun s : ℝ => polymerFreeEnergy G s) (Set.Ici 0) :=
+  fun _ ht =>
+    ((polymerFreeEnergy_analyticAt G ht).differentiableAt).differentiableWithinAt
+
 /-- **`polymerFreeEnergy` HasDerivAt** (Step 625): explicit derivative
 of `polymerFreeEnergy G t = Real.log (vdPolymerFamilies_sum G t)` via
 the log-derivative formula `(log f)' = f' / f`. The derivative of
