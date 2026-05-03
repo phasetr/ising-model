@@ -5615,4 +5615,49 @@ theorem polymerFreeEnergy_tanh_lt_eps_of_eps_pos
         ∏ P ∈ Γ, (Real.tanh (β * J)) ^ P.card :=
   polymerFreeEnergy_lt_eps_of_eps_pos G h_eps_pos
 
+/-- **Connected G(ω) for n=2 ↔ incompatibility of the pair** (§18.4
+sharpening): for `ω : Fin 2 → polymers`, the index-side incompatibility
+graph `polymerSeqIncompatibilityGraph ω` is `Connected` iff
+`PolymersIncompatible (ω 0) (ω 1)`. Provides an explicit
+characterisation linking the filter-connected form (PR #1521) to the
+existing pair Ursell formula (Step 585). -/
+theorem polymerSeqIncompatibilityGraph_two_connected_iff_incompatible
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (ω : Fin 2 → Finset (Sym2 ι)) :
+    (polymerSeqIncompatibilityGraph ω).Connected ↔
+      PolymersIncompatible (ω 0) (ω 1) := by
+  refine ⟨?_, ?_⟩
+  · -- Forward: Connected ⇒ Adj 0 1 ⇒ incompatibility (use contrapositive).
+    intro h_conn
+    by_contra h_compat
+    -- If not incompatible, graph has no edges; 0 and 1 not reachable.
+    have h_no_adj : ∀ a b : Fin 2,
+        ¬ (polymerSeqIncompatibilityGraph ω).Adj a b := by
+      intro a b hab
+      rw [polymerSeqIncompatibilityGraph_adj] at hab
+      obtain ⟨hne, hincompat⟩ := hab
+      -- a, b ∈ Fin 2 and a ≠ b. So {a, b} = {0, 1}.
+      fin_cases a <;> fin_cases b <;>
+        first
+          | exact hne rfl
+          | exact h_compat hincompat
+          | exact h_compat hincompat.symm
+    obtain ⟨w⟩ := h_conn.preconnected 0 1
+    cases w with
+    | cons hadj _ =>
+      exact h_no_adj _ _ hadj
+  · intro h_incompat
+    refine { preconnected := ?_, nonempty := ⟨0⟩ }
+    intro u v
+    have h_adj : (polymerSeqIncompatibilityGraph ω).Adj 0 1 := by
+      rw [polymerSeqIncompatibilityGraph_adj]
+      exact ⟨by decide, h_incompat⟩
+    have h_reach_0 : ∀ w : Fin 2,
+        (polymerSeqIncompatibilityGraph ω).Reachable w 0 := by
+      intro w
+      fin_cases w
+      · exact SimpleGraph.Reachable.refl 0
+      · exact ⟨SimpleGraph.Walk.cons h_adj.symm SimpleGraph.Walk.nil⟩
+    exact (h_reach_0 u).trans (h_reach_0 v).symm
+
 end IsingModel
