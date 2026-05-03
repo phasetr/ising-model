@@ -5564,4 +5564,55 @@ theorem alternatingConnectedSubgraphSum_cycleGraph_five :
   rw [h_cast, h_int]
   norm_num
 
+/-! ## Tanh-substituted forms of the new strict / iff polymerFreeEnergy bounds -/
+
+/-- **`polymerFreeEnergy < ε(tanh) ↔ ε(tanh) > 0` under `0 ≤ β·J`** (§18.4
+sharpening, tanh form): tanh-substituted form of
+`polymerFreeEnergy_lt_eps_iff_eps_pos`. -/
+theorem polymerFreeEnergy_tanh_lt_eps_iff_eps_pos
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (hβJ : 0 ≤ β * J) :
+    polymerFreeEnergy G (Real.tanh (β * J)) <
+        ∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅,
+          ∏ P ∈ Γ, (Real.tanh (β * J)) ^ P.card ↔
+      0 < ∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅,
+        ∏ P ∈ Γ, (Real.tanh (β * J)) ^ P.card :=
+  polymerFreeEnergy_lt_eps_iff_eps_pos G (real_tanh_nonneg hβJ)
+
+/-- **`polymerFreeEnergy = 0 ↔ ε(tanh) = 0` under `0 ≤ β·J`** (§18.4
+sharpening, tanh form). -/
+theorem polymerFreeEnergy_tanh_eq_zero_iff_eps_eq_zero
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (hβJ : 0 ≤ β * J) :
+    polymerFreeEnergy G (Real.tanh (β * J)) = 0 ↔
+      (∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅,
+        ∏ P ∈ Γ, (Real.tanh (β * J)) ^ P.card) = 0 :=
+  polymerFreeEnergy_eq_zero_iff_eps_eq_zero G (real_tanh_nonneg hβJ)
+
+/-- **`0 < polymerFreeEnergy ↔ 0 < ε(tanh)` under `0 ≤ β·J`** (§18.4
+sharpening, tanh form). -/
+theorem polymerFreeEnergy_tanh_pos_iff_eps_pos
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (hβJ : 0 ≤ β * J) :
+    0 < polymerFreeEnergy G (Real.tanh (β * J)) ↔
+      0 < ∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅,
+        ∏ P ∈ Γ, (Real.tanh (β * J)) ^ P.card :=
+  polymerFreeEnergy_pos_iff_eps_pos G (real_tanh_nonneg hβJ)
+
+/-- **`polymerFreeEnergy < ε(tanh) when ε(tanh) > 0` under `0 ≤ β·J`**
+(§18.4 sharpening, tanh form). -/
+theorem polymerFreeEnergy_tanh_lt_eps_of_eps_pos
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (_ : 0 ≤ β * J)
+    (h_eps_pos : 0 < ∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅,
+      ∏ P ∈ Γ, (Real.tanh (β * J)) ^ P.card) :
+    polymerFreeEnergy G (Real.tanh (β * J)) <
+      ∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅,
+        ∏ P ∈ Γ, (Real.tanh (β * J)) ^ P.card :=
+  polymerFreeEnergy_lt_eps_of_eps_pos G h_eps_pos
+
 end IsingModel
