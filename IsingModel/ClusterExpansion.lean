@@ -6174,4 +6174,49 @@ theorem vdPolymerFamilies_sum_strictMonoOn_Ioi_zero_of_polymers_nonempty
   fun _ hs _ _ hst =>
     vdPolymerFamilies_sum_lt_of_lt_of_polymers_nonempty G h_poly (Set.mem_Ioi.mp hs).le hst
 
+/-! ## §18.4 mayerPartialSum strict positivity / sign bundle
+
+Sign characterisations of `mayerPartialSum` at small N: positivity at
+N=1 under `t > 0` and polymers exist; non-positive contribution from
+n=2 Mayer term. Bundle of corollaries derivable from existing
+mayerExpansionTerm explicit forms (Steps 587, 593, 614, 637). -/
+
+/-- **`mayerPartialSum G 1 t > 0` under `0 < t` and polymers exist**
+(§18.4 strict-pos bundle): `mayerPartialSum G 1 t = ∑_{P ∈ allPolymers} t^|P|`
+(Step 592), each summand `t^|P| > 0` when `t > 0` and `|P| ≥ 1`, so
+the total is positive when `allPolymers G ≠ ∅`. -/
+theorem mayerPartialSum_one_pos_of_t_pos_of_polymers_nonempty
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {t : ℝ} (h_t_pos : 0 < t) (h_poly : (allPolymers G).Nonempty) :
+    0 < mayerPartialSum G 1 t := by
+  rw [mayerPartialSum_one]
+  apply Finset.sum_pos
+  · intro P hP
+    have hP_polymer : IsPolymer G P := mem_allPolymers.mp hP
+    have hP_card_pos : 0 < P.card := Finset.card_pos.mpr hP_polymer.nonempty
+    exact pow_pos h_t_pos _
+  · exact h_poly
+
+/-- **`mayerPartialSum G 1 t ≥ 0` under `0 ≤ t`** (§18.4): total
+polymer activity is non-negative. -/
+theorem mayerPartialSum_one_nonneg_of_nonneg
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) :
+    0 ≤ mayerPartialSum G 1 t := by
+  rw [mayerPartialSum_one]
+  exact Finset.sum_nonneg (fun _ _ => pow_nonneg ht _)
+
+/-- **`mayerPartialSum G 0 t = 0`** (§18.4 sharpening):
+trivial corollary of `mayerExpansionTerm_zero` and the def of
+`mayerPartialSum` (sum from 0 to N+1, only the n=0 term for N=0). -/
+theorem mayerPartialSum_zero_eq_zero
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (t : ℝ) :
+    mayerPartialSum G 0 t = 0 := by
+  unfold mayerPartialSum
+  rw [show Finset.range (0 + 1) = {0} from rfl, Finset.sum_singleton]
+  exact mayerExpansionTerm_zero G t
+
 end IsingModel
