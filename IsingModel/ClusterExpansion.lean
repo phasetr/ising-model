@@ -5761,4 +5761,34 @@ theorem mayerExpansionTerm_eq_zero_of_no_polymers
       simpa using hω ⟨0, hn⟩
     rw [h_empty, Finset.sum_empty]
 
+/-- **`vdPolymerFamilies_sum = 1 ↔ ε = 0`** (§18.4 sharpening): the
+polymer-family sum equals 1 iff the activity excess `ε(t)` equals 0.
+Direct corollary of `vdPolymerFamilies_sum_eq_one_add` (Step 657):
+vdSum = 1 + ε, so vdSum = 1 ↔ ε = 0. -/
+theorem vdPolymerFamilies_sum_eq_one_iff_eps_eq_zero
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (t : ℝ) :
+    (∑ Γ ∈ vdCompatiblePolymerFamilies G, ∏ P ∈ Γ, t ^ P.card) = 1 ↔
+      (∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅,
+        ∏ P ∈ Γ, t ^ P.card) = 0 := by
+  rw [vdPolymerFamilies_sum_eq_one_add]
+  constructor
+  · intro h; linarith
+  · intro h; linarith
+
+/-- **`vdPolymerFamilies_sum > 1 ↔ ε > 0` under `0 ≤ t`** (§18.4
+sharpening): under non-negative activity, the polymer-family sum
+strictly exceeds 1 iff the activity excess is strictly positive. -/
+theorem vdPolymerFamilies_sum_gt_one_iff_eps_pos
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) :
+    1 < (∑ Γ ∈ vdCompatiblePolymerFamilies G, ∏ P ∈ Γ, t ^ P.card) ↔
+      0 < ∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅,
+        ∏ P ∈ Γ, t ^ P.card := by
+  rw [vdPolymerFamilies_sum_eq_one_add]
+  constructor
+  · intro h; linarith
+  · intro h; linarith
+
 end IsingModel
