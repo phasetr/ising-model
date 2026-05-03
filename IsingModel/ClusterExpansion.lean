@@ -5660,4 +5660,20 @@ theorem polymerSeqIncompatibilityGraph_two_connected_iff_incompatible
       · exact ⟨SimpleGraph.Walk.cons h_adj.symm SimpleGraph.Walk.nil⟩
     exact (h_reach_0 u).trans (h_reach_0 v).symm
 
+/-- **Filter-connected = filter-incompatible on `Fin 2`** (§18.4
+sharpening): the cluster-sequence filter for n=2 (PR #1521) coincides
+with the existing `PolymersIncompatible`-based filter (Step 597).
+Direct corollary of `polymerSeqIncompatibilityGraph_two_connected_iff_incompatible`. -/
+theorem mayerExpansionTerm_two_filter_connected_eq_incompat
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    (Fintype.piFinset (fun _ : Fin 2 => allPolymers G)).filter
+        (fun ω => (polymerSeqIncompatibilityGraph ω).Connected) =
+      (Fintype.piFinset (fun _ : Fin 2 => allPolymers G)).filter
+        (fun ω => PolymersIncompatible (ω 0) (ω 1)) := by
+  classical
+  apply Finset.filter_congr
+  intro ω _
+  exact polymerSeqIncompatibilityGraph_two_connected_iff_incompatible ω
+
 end IsingModel
