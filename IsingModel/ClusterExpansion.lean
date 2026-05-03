@@ -6081,4 +6081,97 @@ theorem vdPolymerFamilies_sum_strictMonoOn_of_polymers_nonempty
   fun _ hs _ _ hst =>
     vdPolymerFamilies_sum_lt_of_lt_of_polymers_nonempty G h_poly hs hst
 
+/-! ## §18.4 strict-positivity GJ-命題-bundle
+
+Strict positivity of `polymerFreeEnergy`, `vdSum > 1`, and `ε > 0`
+under the joint hypothesis `t > 0 ∧ allPolymers G ≠ ∅`. Direct
+consequences of the iff theorems plus tanh / ferromagnetic forms. -/
+
+/-- **`polymerFreeEnergy > 0` under `0 < t` and polymers exist**
+(§18.4, strict-pos bundle): direct corollary of `polymerFreeEnergy_pos_iff`. -/
+theorem polymerFreeEnergy_pos_of_t_pos_of_polymers_nonempty
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {t : ℝ} (h_t_pos : 0 < t) (h_poly : (allPolymers G).Nonempty) :
+    0 < polymerFreeEnergy G t :=
+  (polymerFreeEnergy_pos_iff G h_t_pos.le).mpr ⟨h_t_pos, h_poly⟩
+
+/-- **`vdSum > 1` under `0 < t` and polymers exist** (§18.4 strict-pos
+bundle): direct corollary. -/
+theorem vdPolymerFamilies_sum_gt_one_of_t_pos_of_polymers_nonempty
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {t : ℝ} (h_t_pos : 0 < t) (h_poly : (allPolymers G).Nonempty) :
+    1 < (∑ Γ ∈ vdCompatiblePolymerFamilies G, ∏ P ∈ Γ, t ^ P.card) := by
+  rw [vdPolymerFamilies_sum_gt_one_iff_eps_pos G h_t_pos.le]
+  exact (vdPolymerFamilies_sum_minus_one_pos_iff G h_t_pos.le).mpr ⟨h_t_pos, h_poly⟩
+
+/-- **`ε > 0` under `0 < t` and polymers exist** (§18.4 strict-pos
+bundle). -/
+theorem vdPolymerFamilies_sum_minus_one_pos_of_t_pos_of_polymers_nonempty
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {t : ℝ} (h_t_pos : 0 < t) (h_poly : (allPolymers G).Nonempty) :
+    0 < (∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅,
+          ∏ P ∈ Γ, t ^ P.card) :=
+  (vdPolymerFamilies_sum_minus_one_pos_iff G h_t_pos.le).mpr ⟨h_t_pos, h_poly⟩
+
+/-! ### Tanh forms -/
+
+/-- **`polymerFreeEnergy > 0` under `0 < tanh(β·J)` and polymers exist**
+(§18.4 strict-pos bundle, tanh form). -/
+theorem polymerFreeEnergy_tanh_pos_of_tanh_pos_of_polymers_nonempty
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (h_tanh_pos : 0 < Real.tanh (β * J))
+    (h_poly : (allPolymers G).Nonempty) :
+    0 < polymerFreeEnergy G (Real.tanh (β * J)) :=
+  polymerFreeEnergy_pos_of_t_pos_of_polymers_nonempty G h_tanh_pos h_poly
+
+/-- **`vdSum (tanh) > 1` under `0 < tanh(β·J)` and polymers exist**
+(§18.4 strict-pos bundle, tanh form). -/
+theorem vdPolymerFamilies_sum_tanh_gt_one_of_tanh_pos_of_polymers_nonempty
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (h_tanh_pos : 0 < Real.tanh (β * J))
+    (h_poly : (allPolymers G).Nonempty) :
+    1 < (∑ Γ ∈ vdCompatiblePolymerFamilies G,
+          ∏ P ∈ Γ, (Real.tanh (β * J)) ^ P.card) :=
+  vdPolymerFamilies_sum_gt_one_of_t_pos_of_polymers_nonempty G h_tanh_pos h_poly
+
+/-- **`ε(tanh) > 0` under `0 < tanh(β·J)` and polymers exist**
+(§18.4 strict-pos bundle, tanh form). -/
+theorem vdPolymerFamilies_sum_minus_one_tanh_pos_of_tanh_pos_of_polymers_nonempty
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (h_tanh_pos : 0 < Real.tanh (β * J))
+    (h_poly : (allPolymers G).Nonempty) :
+    0 < (∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅,
+          ∏ P ∈ Γ, (Real.tanh (β * J)) ^ P.card) :=
+  vdPolymerFamilies_sum_minus_one_pos_of_t_pos_of_polymers_nonempty G h_tanh_pos h_poly
+
+/-! ### StrictMono on Set.Ioi 0 (open positive reals) -/
+
+/-- **`polymerFreeEnergy` is `StrictMonoOn (Set.Ioi 0)` under polymers
+exist** (§18.4 strict-mono bundle, open positive reals). -/
+theorem polymerFreeEnergy_strictMonoOn_Ioi_zero_of_polymers_nonempty
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (h_poly : (allPolymers G).Nonempty) :
+    StrictMonoOn (fun t : ℝ => polymerFreeEnergy G t) (Set.Ioi 0) :=
+  fun _ hs _ _ hst =>
+    polymerFreeEnergy_lt_of_lt_of_polymers_nonempty G h_poly (Set.mem_Ioi.mp hs).le hst
+
+/-- **`vdPolymerFamilies_sum` is `StrictMonoOn (Set.Ioi 0)` under
+polymers exist** (§18.4 strict-mono bundle). -/
+theorem vdPolymerFamilies_sum_strictMonoOn_Ioi_zero_of_polymers_nonempty
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (h_poly : (allPolymers G).Nonempty) :
+    StrictMonoOn
+      (fun t : ℝ => ∑ Γ ∈ vdCompatiblePolymerFamilies G, ∏ P ∈ Γ, t ^ P.card)
+      (Set.Ioi 0) :=
+  fun _ hs _ _ hst =>
+    vdPolymerFamilies_sum_lt_of_lt_of_polymers_nonempty G h_poly (Set.mem_Ioi.mp hs).le hst
+
 end IsingModel
