@@ -249,5 +249,100 @@ theorem vdPolymerFamilies_sum_Λ_eq_one_iff_eps_zero
         ∏ P ∈ Γ, t ^ P.card) = 0 :=
   IsingModel.vdPolymerFamilies_sum_eq_one_iff_eps_eq_zero (inducedGraph G Λ) t
 
+/-! ### §18.4 mayerExpansionTerm / mayerPartialSum Λ-layer wrappers -/
+
+/-- **Λ-layer: `mayerExpansionTerm = 0` for graphs with no polymers** (§18.4 Λ wrap). -/
+theorem mayerExpansionTerm_Λ_eq_zero_of_no_polymers
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (h_no : IsingModel.allPolymers (inducedGraph G Λ) = ∅) (n : ℕ) (t : ℝ) :
+    IsingModel.mayerExpansionTerm (inducedGraph G Λ) n t = 0 :=
+  IsingModel.mayerExpansionTerm_eq_zero_of_no_polymers (inducedGraph G Λ) h_no n t
+
+/-- **Λ-layer: `mayerPartialSum G 0 t = 0`** (§18.4 Λ wrap). -/
+theorem mayerPartialSum_Λ_zero_eq_zero
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (t : ℝ) :
+    IsingModel.mayerPartialSum (inducedGraph G Λ) 0 t = 0 :=
+  IsingModel.mayerPartialSum_zero_eq_zero (inducedGraph G Λ) t
+
+/-- **Λ-layer: `mayerPartialSum G 1 t > 0` under `0 < t` and polymers exist**
+(§18.4 Λ wrap). -/
+theorem mayerPartialSum_Λ_one_pos_of_t_pos_of_polymers_nonempty
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {t : ℝ} (h_t_pos : 0 < t)
+    (h_poly : (IsingModel.allPolymers (inducedGraph G Λ)).Nonempty) :
+    0 < IsingModel.mayerPartialSum (inducedGraph G Λ) 1 t :=
+  IsingModel.mayerPartialSum_one_pos_of_t_pos_of_polymers_nonempty
+    (inducedGraph G Λ) h_t_pos h_poly
+
+/-- **Λ-layer: `mayerPartialSum G 1 t ≥ 0` under `0 ≤ t`** (§18.4 Λ wrap). -/
+theorem mayerPartialSum_Λ_one_nonneg_of_nonneg
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) :
+    0 ≤ IsingModel.mayerPartialSum (inducedGraph G Λ) 1 t :=
+  IsingModel.mayerPartialSum_one_nonneg_of_nonneg (inducedGraph G Λ) ht
+
+/-- **Λ-layer: `mayerExpansionTerm` filter to connected polymer
+sequences** (§18.4 Λ wrap of PR #1521). -/
+theorem mayerExpansionTerm_Λ_filter_connected
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (n : ℕ) (t : ℝ) :
+    IsingModel.mayerExpansionTerm (inducedGraph G Λ) n t =
+      ∑ ω ∈ (Fintype.piFinset
+          (fun _ : Fin n => IsingModel.allPolymers (inducedGraph G Λ))).filter
+        (fun ω => (IsingModel.polymerSeqIncompatibilityGraph ω).Connected),
+        IsingModel.ursellCoefficient ω * IsingModel.clusterSeqActivity t ω :=
+  IsingModel.mayerExpansionTerm_filter_connected (inducedGraph G Λ) n t
+
+/-- **Λ-layer: `mayerPartialSum` filter to connected polymer sequences**
+(§18.4 Λ wrap of PR #1522). -/
+theorem mayerPartialSum_Λ_filter_connected
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (N : ℕ) (t : ℝ) :
+    IsingModel.mayerPartialSum (inducedGraph G Λ) N t =
+      ∑ n ∈ Finset.range (N + 1),
+        ∑ ω ∈ (Fintype.piFinset
+            (fun _ : Fin n => IsingModel.allPolymers (inducedGraph G Λ))).filter
+          (fun ω => (IsingModel.polymerSeqIncompatibilityGraph ω).Connected),
+          IsingModel.ursellCoefficient ω * IsingModel.clusterSeqActivity t ω :=
+  IsingModel.mayerPartialSum_filter_connected (inducedGraph G Λ) N t
+
+/-- **Λ-layer: high-temperature sandwich for `polymerFreeEnergy`** (§18.4 Λ wrap of PR #1526). -/
+theorem polymerFreeEnergy_Λ_high_temp_sandwich
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {t : ℝ} (ht : 0 ≤ t)
+    (h_pow : (1 + t) ^ (inducedGraph G Λ).edgeFinset.card < 2) :
+    0 ≤ IsingModel.polymerFreeEnergy (inducedGraph G Λ) t ∧
+    IsingModel.polymerFreeEnergy (inducedGraph G Λ) t ≤
+      ∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies (inducedGraph G Λ)).erase ∅,
+        ∏ P ∈ Γ, t ^ P.card ∧
+    (∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies (inducedGraph G Λ)).erase ∅,
+        ∏ P ∈ Γ, t ^ P.card) ≤
+      (1 + t) ^ (inducedGraph G Λ).edgeFinset.card - 1 ∧
+    (1 + t) ^ (inducedGraph G Λ).edgeFinset.card - 1 < 1 ∧
+    IsingModel.polymerFreeEnergy (inducedGraph G Λ) t < Real.log 2 :=
+  IsingModel.polymerFreeEnergy_high_temp_sandwich (inducedGraph G Λ) ht h_pow
+
+/-- **Λ-layer: explicit log Taylor expansion for `polymerFreeEnergy`** (§18.4 Λ wrap of PR #1517). -/
+theorem polymerFreeEnergy_Λ_hasSum_via_log_of_pow_lt_two
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {t : ℝ} (ht : 0 ≤ t)
+    (h_pow : (1 + t) ^ (inducedGraph G Λ).edgeFinset.card < 2) :
+    HasSum (fun n : ℕ =>
+        (-1 : ℝ) ^ n *
+          (∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies (inducedGraph G Λ)).erase ∅,
+            ∏ P ∈ Γ, t ^ P.card) ^ (n + 1) /
+          (n + 1))
+      (IsingModel.polymerFreeEnergy (inducedGraph G Λ) t) :=
+  IsingModel.polymerFreeEnergy_hasSum_via_log_of_pow_lt_two
+    (inducedGraph G Λ) ht h_pow
+
 end Ambient
 end IsingModel
