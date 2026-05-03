@@ -5883,10 +5883,8 @@ theorem vdPolymerFamilies_sum_minus_one_eq_zero_iff
     push_neg at h_neg
     obtain ⟨h_t_ne, h_poly_ne⟩ := h_neg
     have h_t_pos : 0 < t := lt_of_le_of_ne ht (Ne.symm h_t_ne)
-    have h_poly_nonempty : (allPolymers G).Nonempty :=
-      Finset.nonempty_iff_ne_empty.mpr h_poly_ne
     have : 0 < ∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅,
-        ∏ P ∈ Γ, t ^ P.card := h_pos_iff.mpr ⟨h_t_pos, h_poly_nonempty⟩
+        ∏ P ∈ Γ, t ^ P.card := h_pos_iff.mpr ⟨h_t_pos, h_poly_ne⟩
     linarith
   · rintro (h_t_zero | h_poly_empty)
     · -- t = 0: each Γ ≠ ∅ has some polymer P with |P| ≥ 1, so 0^|P| = 0.
