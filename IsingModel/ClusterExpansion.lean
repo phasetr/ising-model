@@ -4580,6 +4580,18 @@ theorem polymerFreeEnergy_lt_pow_sub_one_of_eps_pos
   (polymerFreeEnergy_lt_eps_of_eps_pos G h_eps_pos).trans_le
     (vdPolymerFamilies_sum_minus_one_le_of_nonneg G ht)
 
+/-- **Tanh form of `polymerFreeEnergy < (1+t)^|E| - 1`** under `0 ≤ β·J`
+and tanh-substituted ε > 0 (§18.4 sharpening, ferromagnetic). -/
+theorem polymerFreeEnergy_tanh_lt_pow_sub_one_of_eps_pos
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (hβJ : 0 ≤ β * J)
+    (h_eps_pos : 0 < ∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅,
+      ∏ P ∈ Γ, (Real.tanh (β * J)) ^ P.card) :
+    polymerFreeEnergy G (Real.tanh (β * J)) <
+      (1 + Real.tanh (β * J)) ^ G.edgeFinset.card - 1 :=
+  polymerFreeEnergy_lt_pow_sub_one_of_eps_pos G (real_tanh_nonneg hβJ) h_eps_pos
+
 /-- **`polymerFreeEnergy < log 2` under `(1+t)^|E| < 2` and `0 ≤ t`**
 (§18.4 high-temperature sharpening): in the cluster-expansion
 convergence regime (where `polymerFreeEnergy_hasSum_via_log_of_pow_lt_two`
