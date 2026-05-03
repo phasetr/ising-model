@@ -4565,6 +4565,21 @@ theorem polymerFreeEnergy_le_pow_sub_one_of_nonneg
   (polymerFreeEnergy_le_eps_of_nonneg G ht).trans
     (vdPolymerFamilies_sum_minus_one_le_of_nonneg G ht)
 
+/-- **`polymerFreeEnergy < (1+t)^|E| - 1` when `ε(t) > 0` and `0 ≤ t`**
+(§18.4 strict sharpening): combines `polymerFreeEnergy_lt_eps_of_eps_pos`
+(PR #1547) with `vdPolymerFamilies_sum_minus_one_le_of_nonneg` (Step 661).
+The `<` is from the first; the `≤` from the second is composed.
+Strengthens `polymerFreeEnergy_le_pow_sub_one_of_nonneg` (above) to
+strict inequality in the non-degenerate regime. -/
+theorem polymerFreeEnergy_lt_pow_sub_one_of_eps_pos
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) (h_eps_pos : 0 < ∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅,
+      ∏ P ∈ Γ, t ^ P.card) :
+    polymerFreeEnergy G t < (1 + t) ^ G.edgeFinset.card - 1 :=
+  (polymerFreeEnergy_lt_eps_of_eps_pos G h_eps_pos).trans_le
+    (vdPolymerFamilies_sum_minus_one_le_of_nonneg G ht)
+
 /-- **`polymerFreeEnergy < log 2` under `(1+t)^|E| < 2` and `0 ≤ t`**
 (§18.4 high-temperature sharpening): in the cluster-expansion
 convergence regime (where `polymerFreeEnergy_hasSum_via_log_of_pow_lt_two`
