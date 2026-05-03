@@ -6348,7 +6348,7 @@ private theorem real_tanh_strictMono : StrictMono Real.tanh := by
   -- Goal: sinh x · cosh y < sinh y · cosh x
   -- Use: sinh y · cosh x - sinh x · cosh y = sinh(y - x) > 0.
   have h_sub : Real.sinh y * Real.cosh x - Real.sinh x * Real.cosh y =
-      Real.sinh (y - x) := by rw [Real.sinh_sub]
+      Real.sinh (y - x) := by rw [Real.sinh_sub]; ring
   have h_sinh_pos : 0 < Real.sinh (y - x) := by
     rw [show (0 : ℝ) = Real.sinh 0 from Real.sinh_zero.symm]
     exact Real.sinh_strictMono (sub_pos.mpr hxy)
