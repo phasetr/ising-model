@@ -3489,6 +3489,16 @@ The four $\mathbb{Z}^d$ wrappers use the abbreviated suffix
 \texttt{\_ferro} (instead of \texttt{\_ferromagnetic}) so each
 declaration fits the linter's 100-character budget.
 
+\paragraph{Basic identities at\_zero / at\_one, all volume layers
+(\S18.5, PR~\#1593).} The eight abstract base-case identities
+(\texttt{vdPolymerFamilies\_sum\_at\_zero} (Step~599),
+\texttt{\_at\_one} (Step~639),
+\texttt{mayerPartialSum\_zero}, \texttt{\_one},
+\texttt{\_at\_zero} (Steps~592, 598),
+\texttt{mayerExpansionTerm\_zero}, \texttt{\_one},
+\texttt{\_at\_zero} (Steps~587, 598)) are lifted to the four
+volume layers, giving $32$ thin direct-instantiation wrappers.
+
 \paragraph{Mayer identity edge-cases (no polymers / trivial /
 edgeless), all volume layers (\S18.5, PR~\#1592).} The five abstract
 edge-case Mayer identity statements

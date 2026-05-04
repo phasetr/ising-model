@@ -1357,5 +1357,68 @@ theorem mayer_identity_of_edgeFinset_empty_tanh_Λ
   IsingModel.mayer_identity_of_edgeFinset_empty_tanh
     (inducedGraph G Λ) h_empty β J N
 
+/-! ### §18.5 basic identities at_zero / at_one Λ wraps -/
+
+/-- **Λ-layer: vdPolymerFamilies_sum at t = 0 = 1**. -/
+theorem vdPolymerFamilies_sum_Λ_at_zero
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] :
+    (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies (inducedGraph G Λ),
+        ∏ P ∈ Γ, (0 : ℝ) ^ P.card) = 1 :=
+  IsingModel.vdPolymerFamilies_sum_at_zero (inducedGraph G Λ)
+
+/-- **Λ-layer: vdPolymerFamilies_sum at t = 1 = #vdCompatPoly families**. -/
+theorem vdPolymerFamilies_sum_Λ_at_one
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] :
+    (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies (inducedGraph G Λ),
+        ∏ P ∈ Γ, (1 : ℝ) ^ P.card) =
+      (IsingModel.vdCompatiblePolymerFamilies (inducedGraph G Λ)).card :=
+  IsingModel.vdPolymerFamilies_sum_at_one (inducedGraph G Λ)
+
+/-- **Λ-layer: mayerPartialSum at N = 0 = 0**. -/
+theorem mayerPartialSum_Λ_zero
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (t : ℝ) :
+    IsingModel.mayerPartialSum (inducedGraph G Λ) 0 t = 0 :=
+  IsingModel.mayerPartialSum_zero (inducedGraph G Λ) t
+
+/-- **Λ-layer: mayerPartialSum at N = 1 = ∑_P t^|P|**. -/
+theorem mayerPartialSum_Λ_one
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (t : ℝ) :
+    IsingModel.mayerPartialSum (inducedGraph G Λ) 1 t =
+      ∑ P ∈ IsingModel.allPolymers (inducedGraph G Λ), t ^ P.card :=
+  IsingModel.mayerPartialSum_one (inducedGraph G Λ) t
+
+/-- **Λ-layer: mayerPartialSum at t = 0 = 0**. -/
+theorem mayerPartialSum_Λ_at_zero
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (N : ℕ) :
+    IsingModel.mayerPartialSum (inducedGraph G Λ) N 0 = 0 :=
+  IsingModel.mayerPartialSum_at_zero (inducedGraph G Λ) N
+
+/-- **Λ-layer: mayerExpansionTerm at n = 0 = 0**. -/
+theorem mayerExpansionTerm_Λ_zero
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (t : ℝ) :
+    IsingModel.mayerExpansionTerm (inducedGraph G Λ) 0 t = 0 :=
+  IsingModel.mayerExpansionTerm_zero (inducedGraph G Λ) t
+
+/-- **Λ-layer: mayerExpansionTerm at n = 1 = ∑_P t^|P|**. -/
+theorem mayerExpansionTerm_Λ_one
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (t : ℝ) :
+    IsingModel.mayerExpansionTerm (inducedGraph G Λ) 1 t =
+      ∑ P ∈ IsingModel.allPolymers (inducedGraph G Λ), t ^ P.card :=
+  IsingModel.mayerExpansionTerm_one (inducedGraph G Λ) t
+
+/-- **Λ-layer: mayerExpansionTerm at t = 0 = 0**. -/
+theorem mayerExpansionTerm_Λ_at_zero
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (n : ℕ) :
+    IsingModel.mayerExpansionTerm (inducedGraph G Λ) n 0 = 0 :=
+  IsingModel.mayerExpansionTerm_at_zero (inducedGraph G Λ) n
+
 end Ambient
 end IsingModel
