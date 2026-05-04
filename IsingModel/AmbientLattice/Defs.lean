@@ -2492,6 +2492,74 @@ theorem correlationΛ_differentiable_J (G : SimpleGraph V) (Λ : Finset V)
   simp_rw [correlationΛ_apply]
   exact IsingModel.correlation_differentiable_J _ h β A
 
+/-- **correlationΛ ContinuousAt β at h = 0** at a specific point. -/
+theorem correlationΛ_continuousAt_beta (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (A : Finset (↑Λ : Type _)) :
+    ContinuousAt
+      (fun β' => correlationΛ G Λ (⟨J, 0, β'⟩ : IsingParams ℝ) A) β := by
+  simp_rw [correlationΛ_apply]
+  exact IsingModel.correlation_continuousAt_beta _ J β A
+
+/-- **correlationΛ ContinuousAt h** at a specific point. -/
+theorem correlationΛ_continuousAt_field (G : SimpleGraph V)
+    (Λ : Finset V) [Fintype (inducedGraph G Λ).edgeSet]
+    (J h β : ℝ) (A : Finset (↑Λ : Type _)) :
+    ContinuousAt
+      (fun h' => correlationΛ G Λ (⟨J, h', β⟩ : IsingParams ℝ) A) h := by
+  simp_rw [correlationΛ_apply]
+  exact IsingModel.correlation_continuousAt_field _ J h β A
+
+/-- **correlationΛ DifferentiableAt h** at a specific point. -/
+theorem correlationΛ_differentiableAt_field (G : SimpleGraph V)
+    (Λ : Finset V) [Fintype (inducedGraph G Λ).edgeSet]
+    (J h β : ℝ) (A : Finset (↑Λ : Type _)) :
+    DifferentiableAt ℝ
+      (fun h' => correlationΛ G Λ (⟨J, h', β⟩ : IsingParams ℝ) A) h := by
+  simp_rw [correlationΛ_apply]
+  exact IsingModel.correlation_differentiableAt_field _ J h β A
+
+/-- **susceptibilityΛ ContinuousAt β at h = 0**. -/
+theorem susceptibilityΛ_continuousAt_beta (G : SimpleGraph V)
+    (Λ : Finset V) [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (i : ↑Λ) :
+    ContinuousAt
+      (fun β' => susceptibilityΛ G Λ (⟨J, 0, β'⟩ : IsingParams ℝ) i)
+      β := by
+  simp_rw [susceptibilityΛ_apply]
+  exact IsingModel.susceptibility_continuousAt_beta _ J β _
+
+/-- **susceptibilityΛ DifferentiableAt β at h = 0**. -/
+theorem susceptibilityΛ_differentiableAt_beta (G : SimpleGraph V)
+    (Λ : Finset V) [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (i : ↑Λ) :
+    DifferentiableAt ℝ
+      (fun β' => susceptibilityΛ G Λ (⟨J, 0, β'⟩ : IsingParams ℝ) i)
+      β := by
+  simp_rw [susceptibilityΛ_apply]
+  exact IsingModel.susceptibility_differentiableAt_beta _ J β _
+
+/-- **susceptibilityΛ ContinuousAt h**. -/
+theorem susceptibilityΛ_continuousAt_field (G : SimpleGraph V)
+    (Λ : Finset V) [Fintype (inducedGraph G Λ).edgeSet]
+    (J h β : ℝ) (i : ↑Λ) :
+    ContinuousAt
+      (fun h' => susceptibilityΛ G Λ (⟨J, h', β⟩ : IsingParams ℝ) i)
+      h := by
+  simp_rw [susceptibilityΛ_apply]
+  exact IsingModel.susceptibility_continuousAt_field _ J h β _
+
+/-- **susceptibilityΛ DifferentiableAt h**. -/
+theorem susceptibilityΛ_differentiableAt_field (G : SimpleGraph V)
+    (Λ : Finset V) [Fintype (inducedGraph G Λ).edgeSet]
+    (J h β : ℝ) (i : ↑Λ) :
+    DifferentiableAt ℝ
+      (fun h' => susceptibilityΛ G Λ (⟨J, h', β⟩ : IsingParams ℝ) i)
+      h := by
+  simp_rw [susceptibilityΛ_apply]
+  exact IsingModel.susceptibility_differentiableAt_field _ J h β _
+
+
 /-- **magnetizationΛ HasDerivAt β at general h** with explicit
 derivative. -/
 theorem magnetizationΛ_hasDerivAt_beta_general_h (G : SimpleGraph V)
