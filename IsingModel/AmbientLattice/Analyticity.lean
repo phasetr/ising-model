@@ -629,5 +629,46 @@ theorem polymerFreeEnergy_Λ_tanh_analyticOnNhd_J_Ici_zero
   IsingModel.polymerFreeEnergy_tanh_analyticOnNhd_J_Ici_zero
     (inducedGraph G Λ) hβ
 
+/-- **Λ-layer: `polymerFreeEnergy ≥ 0` under `t ≥ 0`** (§18.5 Λ wrap). -/
+theorem polymerFreeEnergy_Λ_nonneg_of_nonneg
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) :
+    0 ≤ IsingModel.polymerFreeEnergy (inducedGraph G Λ) t :=
+  IsingModel.polymerFreeEnergy_nonneg_of_nonneg
+    (inducedGraph G Λ) ht
+
+/-- **Λ-layer: `polymerFreeEnergy ≤ |E| · log(1 + t)` under
+`t ≥ 0`** (§18.5 Λ wrap). -/
+theorem polymerFreeEnergy_Λ_le_card_log_one_plus_of_nonneg
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) :
+    IsingModel.polymerFreeEnergy (inducedGraph G Λ) t ≤
+      (inducedGraph G Λ).edgeFinset.card * Real.log (1 + t) :=
+  IsingModel.polymerFreeEnergy_le_card_log_one_plus_of_nonneg
+    (inducedGraph G Λ) ht
+
+/-- **Λ-layer: `polymerFreeEnergy ≤ |E| · t` under `t ≥ 0`**
+(§18.5 Λ wrap of Step 634). -/
+theorem polymerFreeEnergy_Λ_le_card_mul_of_nonneg
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) :
+    IsingModel.polymerFreeEnergy (inducedGraph G Λ) t ≤
+      (inducedGraph G Λ).edgeFinset.card * t :=
+  IsingModel.polymerFreeEnergy_le_card_mul_of_nonneg
+    (inducedGraph G Λ) ht
+
+/-- **Λ-layer: `polymerFreeEnergy` is `MonotoneOn (Set.Ici 0)`**
+(§18.5 Λ wrap of Step 633). -/
+theorem polymerFreeEnergy_Λ_monotoneOn_Ici_zero
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] :
+    MonotoneOn (fun t : ℝ =>
+        IsingModel.polymerFreeEnergy (inducedGraph G Λ) t)
+      (Set.Ici 0) :=
+  IsingModel.polymerFreeEnergy_monotoneOn_Ici_zero (inducedGraph G Λ)
+
 end Ambient
 end IsingModel

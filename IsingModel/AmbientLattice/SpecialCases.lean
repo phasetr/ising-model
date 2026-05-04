@@ -3004,5 +3004,50 @@ theorem polymerFreeEnergyAlongExhaustion_tanh_analyticOnNhd_J_Ici_zero
   polymerFreeEnergy_Λ_tanh_analyticOnNhd_J_Ici_zero
     G (Λ.volume n) hβ
 
+/-- **Along-ex: `polymerFreeEnergy ≥ 0` under `t ≥ 0`** (§18.5
+along-ex wrap). -/
+theorem polymerFreeEnergyAlongExhaustion_nonneg_of_nonneg
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) (n : ℕ) :
+    0 ≤ IsingModel.polymerFreeEnergy
+        (inducedGraph G (Λ.volume n)) t :=
+  polymerFreeEnergy_Λ_nonneg_of_nonneg G (Λ.volume n) ht
+
+/-- **Along-ex: `polymerFreeEnergy ≤ |E| · log(1 + t)` under
+`t ≥ 0`** (§18.5 along-ex wrap). -/
+theorem
+polymerFreeEnergyAlongExhaustion_le_card_log_one_plus_of_nonneg
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) (n : ℕ) :
+    IsingModel.polymerFreeEnergy
+        (inducedGraph G (Λ.volume n)) t ≤
+      (inducedGraph G (Λ.volume n)).edgeFinset.card *
+        Real.log (1 + t) :=
+  polymerFreeEnergy_Λ_le_card_log_one_plus_of_nonneg
+    G (Λ.volume n) ht
+
+/-- **Along-ex: `polymerFreeEnergy ≤ |E| · t` under `t ≥ 0`**
+(§18.5 along-ex wrap). -/
+theorem polymerFreeEnergyAlongExhaustion_le_card_mul_of_nonneg
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) (n : ℕ) :
+    IsingModel.polymerFreeEnergy
+        (inducedGraph G (Λ.volume n)) t ≤
+      (inducedGraph G (Λ.volume n)).edgeFinset.card * t :=
+  polymerFreeEnergy_Λ_le_card_mul_of_nonneg G (Λ.volume n) ht
+
+/-- **Along-ex: `polymerFreeEnergy` is `MonotoneOn (Set.Ici 0)`**
+(§18.5 along-ex wrap). -/
+theorem polymerFreeEnergyAlongExhaustion_monotoneOn_Ici_zero
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet] (n : ℕ) :
+    MonotoneOn (fun t : ℝ =>
+        IsingModel.polymerFreeEnergy
+          (inducedGraph G (Λ.volume n)) t) (Set.Ici 0) :=
+  polymerFreeEnergy_Λ_monotoneOn_Ici_zero G (Λ.volume n)
+
 end Ambient
 end IsingModel
