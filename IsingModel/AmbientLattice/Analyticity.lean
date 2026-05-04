@@ -1295,5 +1295,67 @@ theorem mayerPartialSum_zero_Λ_tanh_le_polymerFreeEnergy_ferromagnetic
   IsingModel.mayerPartialSum_zero_tanh_le_polymerFreeEnergy_ferromagnetic
     (inducedGraph G Λ) hJ hβ
 
+/-! ### §18.5 mayer_identity_of edge-case Λ wraps -/
+
+/-- **Λ-layer: Mayer identity for empty-polymer graphs**. -/
+theorem mayer_identity_of_no_polymers_Λ
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (h_no : IsingModel.allPolymers (inducedGraph G Λ) = ∅)
+    (t : ℝ) (N : ℕ) :
+    IsingModel.polymerFreeEnergy (inducedGraph G Λ) t =
+      IsingModel.mayerPartialSum (inducedGraph G Λ) N t :=
+  IsingModel.mayer_identity_of_no_polymers (inducedGraph G Λ) h_no t N
+
+/-- **Λ-layer: Mayer identity for empty-polymer graphs (tanh form)**. -/
+theorem mayer_identity_of_no_polymers_tanh_Λ
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (h_no : IsingModel.allPolymers (inducedGraph G Λ) = ∅)
+    (β J : ℝ) (N : ℕ) :
+    IsingModel.polymerFreeEnergy (inducedGraph G Λ)
+        (Real.tanh (β * J)) =
+      IsingModel.mayerPartialSum (inducedGraph G Λ) N
+        (Real.tanh (β * J)) :=
+  IsingModel.mayer_identity_of_no_polymers_tanh
+    (inducedGraph G Λ) h_no β J N
+
+/-- **Λ-layer: Mayer identity under disjunctive trivial conditions**. -/
+theorem mayer_identity_of_trivial_Λ
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {β J : ℝ}
+    (h : β * J = 0 ∨
+      IsingModel.allPolymers (inducedGraph G Λ) = ∅) (N : ℕ) :
+    IsingModel.polymerFreeEnergy (inducedGraph G Λ)
+        (Real.tanh (β * J)) =
+      IsingModel.mayerPartialSum (inducedGraph G Λ) N
+        (Real.tanh (β * J)) :=
+  IsingModel.mayer_identity_of_trivial (inducedGraph G Λ) h N
+
+/-- **Λ-layer: Mayer identity for edgeless induced graphs**. -/
+theorem mayer_identity_of_edgeFinset_empty_Λ
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (h_empty : (inducedGraph G Λ).edgeFinset = ∅)
+    (t : ℝ) (N : ℕ) :
+    IsingModel.polymerFreeEnergy (inducedGraph G Λ) t =
+      IsingModel.mayerPartialSum (inducedGraph G Λ) N t :=
+  IsingModel.mayer_identity_of_edgeFinset_empty
+    (inducedGraph G Λ) h_empty t N
+
+/-- **Λ-layer: Mayer identity for edgeless induced graphs (tanh form)**. -/
+theorem mayer_identity_of_edgeFinset_empty_tanh_Λ
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (h_empty : (inducedGraph G Λ).edgeFinset = ∅)
+    (β J : ℝ) (N : ℕ) :
+    IsingModel.polymerFreeEnergy (inducedGraph G Λ)
+        (Real.tanh (β * J)) =
+      IsingModel.mayerPartialSum (inducedGraph G Λ) N
+        (Real.tanh (β * J)) :=
+  IsingModel.mayer_identity_of_edgeFinset_empty_tanh
+    (inducedGraph G Λ) h_empty β J N
+
 end Ambient
 end IsingModel
