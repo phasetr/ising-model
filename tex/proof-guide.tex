@@ -3489,6 +3489,20 @@ The four $\mathbb{Z}^d$ wrappers use the abbreviated suffix
 \texttt{\_ferro} (instead of \texttt{\_ferromagnetic}) so each
 declaration fits the linter's 100-character budget.
 
+\paragraph{\texttt{polymerFreeEnergy} edge-cases + comparison
+family, all volume layers (\S18.5, PR~\#1579).} The four abstract
+edge-case / comparison statements
+(\texttt{polymerFreeEnergy\_eq\_zero\_of\_no\_polymers} (Step~621),
+\texttt{polymerFreeEnergy\_eq\_zero\_of\_edgeFinset\_empty}
+(Step~623),
+\texttt{polymerFreeEnergy\_le\_of\_le\_of\_nonneg} (Step~649),
+\texttt{polymerFreeEnergy\_le\_of\_le\_strict\_form} (Step~650))
+are lifted to the four volume layers, giving $16$ thin
+direct-instantiation wrappers in
+\texttt{IsingModel/AmbientLattice/Analyticity.lean},
+\texttt{AmbientLattice/SpecialCases.lean}, and
+\texttt{Concrete/LatticeGraphCorrelation.lean}.
+
 \paragraph{\texttt{polymerFreeEnergy} bound family, all volume layers
 (\S18.5, PR~\#1578).} The four abstract bound statements
 (\texttt{polymerFreeEnergy\_nonneg\_of\_nonneg},

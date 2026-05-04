@@ -670,5 +670,48 @@ theorem polymerFreeEnergy_Λ_monotoneOn_Ici_zero
       (Set.Ici 0) :=
   IsingModel.polymerFreeEnergy_monotoneOn_Ici_zero (inducedGraph G Λ)
 
+/-- **Λ-layer: `polymerFreeEnergy = 0` for empty-polymer induced
+graphs** (§18.5 Λ wrap of Step 621). -/
+theorem polymerFreeEnergy_Λ_eq_zero_of_no_polymers
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (h_no : IsingModel.allPolymers (inducedGraph G Λ) = ∅)
+    (t : ℝ) :
+    IsingModel.polymerFreeEnergy (inducedGraph G Λ) t = 0 :=
+  IsingModel.polymerFreeEnergy_eq_zero_of_no_polymers
+    (inducedGraph G Λ) h_no t
+
+/-- **Λ-layer: `polymerFreeEnergy = 0` for edgeless induced graphs**
+(§18.5 Λ wrap of Step 623). -/
+theorem polymerFreeEnergy_Λ_eq_zero_of_edgeFinset_empty
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (h_empty : (inducedGraph G Λ).edgeFinset = ∅) (t : ℝ) :
+    IsingModel.polymerFreeEnergy (inducedGraph G Λ) t = 0 :=
+  IsingModel.polymerFreeEnergy_eq_zero_of_edgeFinset_empty
+    (inducedGraph G Λ) h_empty t
+
+/-- **Λ-layer: `polymerFreeEnergy` preserves order on `[0, ∞)`**
+(§18.5 Λ wrap of Step 649). -/
+theorem polymerFreeEnergy_Λ_le_of_le_of_nonneg
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {t s : ℝ} (ht : 0 ≤ t) (hs : 0 ≤ s) (hts : t ≤ s) :
+    IsingModel.polymerFreeEnergy (inducedGraph G Λ) t ≤
+      IsingModel.polymerFreeEnergy (inducedGraph G Λ) s :=
+  IsingModel.polymerFreeEnergy_le_of_le_of_nonneg
+    (inducedGraph G Λ) ht hs hts
+
+/-- **Λ-layer: `polymerFreeEnergy` strict-form order preservation**
+(§18.5 Λ wrap of Step 650). -/
+theorem polymerFreeEnergy_Λ_le_of_le_strict_form
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {t s : ℝ} (ht : 0 ≤ t) (hts : t ≤ s) :
+    IsingModel.polymerFreeEnergy (inducedGraph G Λ) t ≤
+      IsingModel.polymerFreeEnergy (inducedGraph G Λ) s :=
+  IsingModel.polymerFreeEnergy_le_of_le_strict_form
+    (inducedGraph G Λ) ht hts
+
 end Ambient
 end IsingModel
