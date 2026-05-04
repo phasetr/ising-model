@@ -3489,6 +3489,18 @@ The four $\mathbb{Z}^d$ wrappers use the abbreviated suffix
 \texttt{\_ferro} (instead of \texttt{\_ferromagnetic}) so each
 declaration fits the linter's 100-character budget.
 
+\paragraph{Mayer identity at edge-case parameter slices, all
+volume layers (\S18.5, PR~\#1588).} The four abstract Mayer identity
+statements at trivial parameter slices
+(\texttt{mayer\_identity\_at\_zero} (Step~600),
+\texttt{\_at\_betaJ\_zero}, \texttt{\_at\_beta\_zero},
+\texttt{\_at\_J\_zero} (Step~609 specialisations)) are lifted to
+the four volume layers, giving $16$ thin direct-instantiation
+wrappers in
+\texttt{IsingModel/AmbientLattice/Analyticity.lean},
+\texttt{AmbientLattice/SpecialCases.lean}, and
+\texttt{Concrete/LatticeGraphCorrelation.lean}.
+
 \paragraph{\texttt{log\_vdPolymerFamilies\_sum} analyticity, all
 volume layers (\S18.5, PR~\#1587).} The four abstract analyticity
 statements
