@@ -540,5 +540,46 @@ theorem freeEnergyΛ_lt_log_two_plus_high_temp_correction_ferromagnetic
   freeEnergyΛ_lt_log_two_plus_high_temp_correction
     G Λ J β (mul_nonneg hβ.le hJ) hne h_pow
 
+/-- **Λ-layer: `polymerFreeEnergy` is `ContinuousAt` for `t ≥ 0`**
+(§18.5 Λ wrap of #1517 / Step 611). -/
+theorem polymerFreeEnergy_Λ_continuousAt
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) :
+    ContinuousAt (fun s : ℝ =>
+        IsingModel.polymerFreeEnergy (inducedGraph G Λ) s) t :=
+  IsingModel.polymerFreeEnergy_continuousAt (inducedGraph G Λ) ht
+
+/-- **Λ-layer: `polymerFreeEnergy` is `DifferentiableAt` for `t ≥ 0`**
+(§18.5 Λ wrap). -/
+theorem polymerFreeEnergy_Λ_differentiableAt
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) :
+    DifferentiableAt ℝ (fun s : ℝ =>
+        IsingModel.polymerFreeEnergy (inducedGraph G Λ) s) t :=
+  IsingModel.polymerFreeEnergy_differentiableAt (inducedGraph G Λ) ht
+
+/-- **Λ-layer: `polymerFreeEnergy` is `ContinuousOn (Set.Ici 0)`**
+(§18.5 Λ wrap). -/
+theorem polymerFreeEnergy_Λ_continuousOn_Ici_zero
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] :
+    ContinuousOn (fun s : ℝ =>
+        IsingModel.polymerFreeEnergy (inducedGraph G Λ) s)
+      (Set.Ici 0) :=
+  IsingModel.polymerFreeEnergy_continuousOn_Ici_zero (inducedGraph G Λ)
+
+/-- **Λ-layer: `polymerFreeEnergy` is `DifferentiableOn (Set.Ici 0)`**
+(§18.5 Λ wrap). -/
+theorem polymerFreeEnergy_Λ_differentiableOn_Ici_zero
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] :
+    DifferentiableOn ℝ (fun s : ℝ =>
+        IsingModel.polymerFreeEnergy (inducedGraph G Λ) s)
+      (Set.Ici 0) :=
+  IsingModel.polymerFreeEnergy_differentiableOn_Ici_zero
+    (inducedGraph G Λ)
+
 end Ambient
 end IsingModel

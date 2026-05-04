@@ -8226,6 +8226,97 @@ freeEnergyAlongExhaustion_latticeGraph_lt_log_two_plus_high_temp_correction_ferr
   freeEnergyAlongExhaustion_latticeGraph_lt_log_two_plus_high_temp_correction
     d Λ J β (mul_nonneg hβ.le hJ) n hne h_pow
 
+/-! ### §18.5 polymerFreeEnergy regularity ℤ^d wraps -/
+
+/-- **ℤ^d Λ: `polymerFreeEnergy` is `ContinuousAt` for `t ≥ 0`**. -/
+theorem polymerFreeEnergy_Λ_latticeGraph_continuousAt
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) :
+    ContinuousAt (fun s : ℝ => IsingModel.polymerFreeEnergy
+        (inducedGraph (IsingModel.latticeGraph d) Λ) s) t :=
+  Ambient.polymerFreeEnergy_Λ_continuousAt
+    (IsingModel.latticeGraph d) Λ ht
+
+/-- **ℤ^d Λ: `polymerFreeEnergy` is `DifferentiableAt` for `t ≥ 0`**. -/
+theorem polymerFreeEnergy_Λ_latticeGraph_differentiableAt
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) :
+    DifferentiableAt ℝ (fun s : ℝ => IsingModel.polymerFreeEnergy
+        (inducedGraph (IsingModel.latticeGraph d) Λ) s) t :=
+  Ambient.polymerFreeEnergy_Λ_differentiableAt
+    (IsingModel.latticeGraph d) Λ ht
+
+/-- **ℤ^d Λ: `polymerFreeEnergy` is `ContinuousOn (Set.Ici 0)`**. -/
+theorem polymerFreeEnergy_Λ_latticeGraph_continuousOn_Ici_zero
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet] :
+    ContinuousOn (fun s : ℝ => IsingModel.polymerFreeEnergy
+        (inducedGraph (IsingModel.latticeGraph d) Λ) s)
+      (Set.Ici 0) :=
+  Ambient.polymerFreeEnergy_Λ_continuousOn_Ici_zero
+    (IsingModel.latticeGraph d) Λ
+
+/-- **ℤ^d Λ: `polymerFreeEnergy` is `DifferentiableOn (Set.Ici 0)`**. -/
+theorem polymerFreeEnergy_Λ_latticeGraph_differentiableOn_Ici_zero
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet] :
+    DifferentiableOn ℝ (fun s : ℝ => IsingModel.polymerFreeEnergy
+        (inducedGraph (IsingModel.latticeGraph d) Λ) s)
+      (Set.Ici 0) :=
+  Ambient.polymerFreeEnergy_Λ_differentiableOn_Ici_zero
+    (IsingModel.latticeGraph d) Λ
+
+/-- **ℤ^d along-ex: `polymerFreeEnergy` is `ContinuousAt` for
+`t ≥ 0`**. -/
+theorem polymerFreeEnergyAlongExhaustion_latticeGraph_continuousAt
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
+      (Λ.volume n)).edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) (n : ℕ) :
+    ContinuousAt (fun s : ℝ => IsingModel.polymerFreeEnergy
+        (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)) s) t :=
+  Ambient.polymerFreeEnergyAlongExhaustion_continuousAt
+    (IsingModel.latticeGraph d) Λ ht n
+
+/-- **ℤ^d along-ex: `polymerFreeEnergy` is `DifferentiableAt` for
+`t ≥ 0`**. -/
+theorem polymerFreeEnergyAlongExhaustion_latticeGraph_differentiableAt
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
+      (Λ.volume n)).edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) (n : ℕ) :
+    DifferentiableAt ℝ (fun s : ℝ => IsingModel.polymerFreeEnergy
+        (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)) s) t :=
+  Ambient.polymerFreeEnergyAlongExhaustion_differentiableAt
+    (IsingModel.latticeGraph d) Λ ht n
+
+/-- **ℤ^d along-ex: `polymerFreeEnergy` is
+`ContinuousOn (Set.Ici 0)`**. -/
+theorem polymerFreeEnergyAlongExhaustion_latticeGraph_continuousOn_Ici_zero
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
+      (Λ.volume n)).edgeSet] (n : ℕ) :
+    ContinuousOn (fun s : ℝ => IsingModel.polymerFreeEnergy
+        (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)) s)
+      (Set.Ici 0) :=
+  Ambient.polymerFreeEnergyAlongExhaustion_continuousOn_Ici_zero
+    (IsingModel.latticeGraph d) Λ n
+
+/-- **ℤ^d along-ex: `polymerFreeEnergy` is
+`DifferentiableOn (Set.Ici 0)`**. -/
+theorem
+polymerFreeEnergyAlongExhaustion_latticeGraph_differentiableOn_Ici_zero
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
+      (Λ.volume n)).edgeSet] (n : ℕ) :
+    DifferentiableOn ℝ (fun s : ℝ => IsingModel.polymerFreeEnergy
+        (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)) s)
+      (Set.Ici 0) :=
+  Ambient.polymerFreeEnergyAlongExhaustion_differentiableOn_Ici_zero
+    (IsingModel.latticeGraph d) Λ n
+
 end Ambient
 
 end IsingModel
