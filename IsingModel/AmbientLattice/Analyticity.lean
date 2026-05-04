@@ -393,5 +393,37 @@ theorem polymerFreeEnergy_Λ_tanh_hasSum_via_log_of_pow_lt_two
   IsingModel.polymerFreeEnergy_tanh_hasSum_via_log_of_pow_lt_two
     (inducedGraph G Λ) hβJ h_pow
 
+/-- **Λ-layer: VD polymer-family sum sandwich** (§18.5 Λ wrap of
+`vdPolymerFamilies_sum_sandwich`). -/
+theorem vdPolymerFamilies_sum_Λ_sandwich
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {β J : ℝ} (hβJ : 0 ≤ β * J) :
+    1 ≤ (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
+            (inducedGraph G Λ),
+        ∏ P ∈ Γ, Real.tanh (β * J) ^ P.card) ∧
+    (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
+            (inducedGraph G Λ),
+        ∏ P ∈ Γ, Real.tanh (β * J) ^ P.card)
+      ≤ (2 : ℝ) ^ (inducedGraph G Λ).edgeFinset.card :=
+  IsingModel.vdPolymerFamilies_sum_sandwich (inducedGraph G Λ) hβJ
+
+/-- **Λ-layer: VD polymer-family sum sharp sandwich** (§18.5 Λ wrap
+of `vdPolymerFamilies_sum_sandwich_sharp`). -/
+theorem vdPolymerFamilies_sum_Λ_sandwich_sharp
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {β J : ℝ} (hβJ : 0 ≤ β * J) :
+    1 ≤ (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
+            (inducedGraph G Λ),
+        ∏ P ∈ Γ, Real.tanh (β * J) ^ P.card) ∧
+    (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
+            (inducedGraph G Λ),
+        ∏ P ∈ Γ, Real.tanh (β * J) ^ P.card)
+      ≤ (1 + Real.tanh (β * J)) ^
+        (inducedGraph G Λ).edgeFinset.card :=
+  IsingModel.vdPolymerFamilies_sum_sandwich_sharp
+    (inducedGraph G Λ) hβJ
+
 end Ambient
 end IsingModel
