@@ -1258,5 +1258,42 @@ theorem mayer_identity_at_either_zero_polymer_free_energy_Λ
   IsingModel.mayer_identity_at_either_zero_polymer_free_energy
     (inducedGraph G Λ) N
 
+/-! ### §18.5 mayerPartialSum_zero ≤ polymerFreeEnergy Λ wraps -/
+
+/-- **Λ-layer: mayerPartialSum 0 ≤ polymerFreeEnergy under `t ≥ 0`**. -/
+theorem mayerPartialSum_zero_Λ_le_polymerFreeEnergy
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) :
+    IsingModel.mayerPartialSum (inducedGraph G Λ) 0 t ≤
+      IsingModel.polymerFreeEnergy (inducedGraph G Λ) t :=
+  IsingModel.mayerPartialSum_zero_le_polymerFreeEnergy
+    (inducedGraph G Λ) ht
+
+/-- **Λ-layer: mayerPartialSum 0 ≤ polymerFreeEnergy(tanh(β·J))**. -/
+theorem mayerPartialSum_zero_Λ_tanh_le_polymerFreeEnergy
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {β J : ℝ} (hβJ : 0 ≤ β * J) :
+    IsingModel.mayerPartialSum (inducedGraph G Λ) 0
+        (Real.tanh (β * J)) ≤
+      IsingModel.polymerFreeEnergy (inducedGraph G Λ)
+        (Real.tanh (β * J)) :=
+  IsingModel.mayerPartialSum_zero_tanh_le_polymerFreeEnergy
+    (inducedGraph G Λ) hβJ
+
+/-- **Λ-layer: ferromagnetic mayerPartialSum 0 ≤
+polymerFreeEnergy(tanh(β·J))**. -/
+theorem mayerPartialSum_zero_Λ_tanh_le_polymerFreeEnergy_ferromagnetic
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β) :
+    IsingModel.mayerPartialSum (inducedGraph G Λ) 0
+        (Real.tanh (β * J)) ≤
+      IsingModel.polymerFreeEnergy (inducedGraph G Λ)
+        (Real.tanh (β * J)) :=
+  IsingModel.mayerPartialSum_zero_tanh_le_polymerFreeEnergy_ferromagnetic
+    (inducedGraph G Λ) hJ hβ
+
 end Ambient
 end IsingModel

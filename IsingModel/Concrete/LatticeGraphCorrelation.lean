@@ -9951,6 +9951,99 @@ mayer_identity_at_either_zero_polymer_free_energy_AlongExhaustion_latticeGraph
   Ambient.mayer_identity_at_either_zero_polymer_free_energy_AlongExhaustion
     (IsingModel.latticeGraph d) Λ N n
 
+/-! ### §18.5 mayerPartialSum_zero ≤ polymerFreeEnergy ℤ^d wraps -/
+
+/-- **ℤ^d Λ: mayerPartialSum 0 ≤ polymerFreeEnergy under `t ≥ 0`**. -/
+theorem mayerPartialSum_zero_Λ_latticeGraph_le_polymerFreeEnergy
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) :
+    IsingModel.mayerPartialSum
+        (inducedGraph (IsingModel.latticeGraph d) Λ) 0 t ≤
+      IsingModel.polymerFreeEnergy
+        (inducedGraph (IsingModel.latticeGraph d) Λ) t :=
+  Ambient.mayerPartialSum_zero_Λ_le_polymerFreeEnergy
+    (IsingModel.latticeGraph d) Λ ht
+
+/-- **ℤ^d Λ: mayerPartialSum 0 ≤ polymerFreeEnergy(tanh(β·J))**. -/
+theorem mayerPartialSum_zero_Λ_latticeGraph_tanh_le_polymerFreeEnergy
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
+    {β J : ℝ} (hβJ : 0 ≤ β * J) :
+    IsingModel.mayerPartialSum
+        (inducedGraph (IsingModel.latticeGraph d) Λ) 0
+        (Real.tanh (β * J)) ≤
+      IsingModel.polymerFreeEnergy
+        (inducedGraph (IsingModel.latticeGraph d) Λ)
+        (Real.tanh (β * J)) :=
+  Ambient.mayerPartialSum_zero_Λ_tanh_le_polymerFreeEnergy
+    (IsingModel.latticeGraph d) Λ hβJ
+
+/-- **ℤ^d Λ: ferromagnetic mayerPartialSum 0 ≤
+polymerFreeEnergy(tanh(β·J))**. -/
+theorem
+mayerPartialSum_zero_Λ_latticeGraph_tanh_le_polymerFreeEnergy_ferro
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
+    {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β) :
+    IsingModel.mayerPartialSum
+        (inducedGraph (IsingModel.latticeGraph d) Λ) 0
+        (Real.tanh (β * J)) ≤
+      IsingModel.polymerFreeEnergy
+        (inducedGraph (IsingModel.latticeGraph d) Λ)
+        (Real.tanh (β * J)) :=
+  Ambient.mayerPartialSum_zero_Λ_tanh_le_polymerFreeEnergy_ferromagnetic
+    (IsingModel.latticeGraph d) Λ hJ hβ
+
+/-- **ℤ^d along-ex: mayerPartialSum 0 ≤ polymerFreeEnergy under
+`t ≥ 0`**. -/
+theorem
+mayerPartialSum_zero_AlongExhaustion_latticeGraph_le_polymerFreeEnergy
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
+      (Λ.volume n)).edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) (n : ℕ) :
+    IsingModel.mayerPartialSum
+        (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)) 0 t ≤
+      IsingModel.polymerFreeEnergy
+        (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)) t :=
+  Ambient.mayerPartialSum_zero_AlongExhaustion_le_polymerFreeEnergy
+    (IsingModel.latticeGraph d) Λ ht n
+
+/-- **ℤ^d along-ex: mayerPartialSum 0 ≤
+polymerFreeEnergy(tanh(β·J))**. -/
+theorem
+mayerPartialSum_zero_AlongExhaustion_latticeGraph_tanh_le_polymerFreeEnergy
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
+      (Λ.volume n)).edgeSet]
+    {β J : ℝ} (hβJ : 0 ≤ β * J) (n : ℕ) :
+    IsingModel.mayerPartialSum
+        (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)) 0
+        (Real.tanh (β * J)) ≤
+      IsingModel.polymerFreeEnergy
+        (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+        (Real.tanh (β * J)) :=
+  Ambient.mayerPartialSum_zero_AlongExhaustion_tanh_le_polymerFreeEnergy
+    (IsingModel.latticeGraph d) Λ hβJ n
+
+/-- **ℤ^d along-ex: ferromagnetic mayerPartialSum 0 ≤
+polymerFreeEnergy(tanh(β·J))**. -/
+theorem
+mayerPartialSum_zero_AlongExhaustion_latticeGraph_tanh_le_polymerFreeEnergy_ferro
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
+      (Λ.volume n)).edgeSet]
+    {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ) :
+    IsingModel.mayerPartialSum
+        (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)) 0
+        (Real.tanh (β * J)) ≤
+      IsingModel.polymerFreeEnergy
+        (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+        (Real.tanh (β * J)) :=
+  Ambient.mayerPartialSum_zero_AlongExhaustion_tanh_le_polymerFreeEnergy_ferromagnetic
+    (IsingModel.latticeGraph d) Λ hJ hβ n
+
 end Ambient
 
 end IsingModel
