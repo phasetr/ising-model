@@ -1765,6 +1765,19 @@ correlationΛ_high_temp_h_zero_at_pair_le_two_pow_edges_mul_tanh_pow_dist
   exact IsingModel.correlation_high_temp_h_zero_at_pair_le_two_pow_edges_mul_tanh_pow_dist
     (inducedGraph G Λ) J β hβJ i j
 
+/-- **Λ-level §18.7 ferromagnetic capstone**: under `0 ≤ J, 0 < β`,
+the same exponential-decay bound as the non-ferromagnetic Λ wrap. -/
+theorem
+correlationΛ_high_temp_h_zero_at_pair_le_two_pow_edges_mul_tanh_pow_dist_ferromagnetic
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (i j : ↑Λ) :
+    correlationΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset ↑Λ)
+      ≤ (2 : ℝ) ^ (inducedGraph G Λ).edgeFinset.card *
+        Real.tanh (β * J) ^ (inducedGraph G Λ).dist i j :=
+  correlationΛ_high_temp_h_zero_at_pair_le_two_pow_edges_mul_tanh_pow_dist
+    G Λ J β (mul_nonneg hβ.le hJ) i j
+
 /-- **Λ-level high-temperature even-subgraph sum is `≥ 1`**: under
 `0 ≤ β * J`,
 `∑_{X ⊆ E_Λ, even-degree at every v ∈ ↑Λ} tanh(β J)^|X| ≥ 1`.

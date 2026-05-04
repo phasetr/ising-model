@@ -2968,6 +2968,21 @@ correlationΛ_latticeGraph_high_temp_h_zero_at_pair_le_two_pow_edges_mul_tanh_po
   correlationΛ_high_temp_h_zero_at_pair_le_two_pow_edges_mul_tanh_pow_dist
     (IsingModel.latticeGraph d) Λ J β hβJ i j
 
+/-- **ℤ^d Λ §18.7 ferromagnetic capstone**: under `0 ≤ J, 0 < β`,
+the same exponential-decay bound on `latticeGraph d` for `i, j : ↑Λ`. -/
+theorem
+correlationΛ_latticeGraph_high_temp_h_zero_at_pair_le_two_pow_edges_mul_tanh_pow_dist_ferromagnetic
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
+    (hJ : 0 ≤ J) (hβ : 0 < β) (i j : ↑Λ) :
+    correlationΛ (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset ↑Λ)
+      ≤ (2 : ℝ) ^
+          (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card *
+        Real.tanh (β * J) ^
+          (inducedGraph (IsingModel.latticeGraph d) Λ).dist i j :=
+  correlationΛ_latticeGraph_high_temp_h_zero_at_pair_le_two_pow_edges_mul_tanh_pow_dist
+    d Λ J β (mul_nonneg hβ.le hJ) i j
+
 /-- **ℤ^d along-ex §18.7 capstone: high-temperature exponential decay
 of the pair correlation in graph distance, at stage `n`**. Under
 `0 ≤ β·J` for `i, j : ↑(Λ.volume n)`,
@@ -2991,6 +3006,25 @@ correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_pair_le_two_pow_edge
             (Λ.volume n)).dist i j :=
   correlationAlongExhaustion_high_temp_h_zero_at_pair_le_two_pow_edges_mul_tanh_pow_dist
     (IsingModel.latticeGraph d) Λ J β hβJ n i j
+
+/-- **ℤ^d along-ex §18.7 ferromagnetic capstone**: under `0 ≤ J, 0 < β`,
+the same exponential-decay bound at stage `n` on `latticeGraph d`. -/
+theorem
+correlationAlongExhaustion_latticeGraph_h_zero_at_pair_le_two_pow_edges_mul_tanh_pow_dist_ferro
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
+      (Λ.volume n)).edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ)
+    (i j : ↑(Λ.volume n)) :
+    correlationΛ (IsingModel.latticeGraph d) (Λ.volume n)
+        (⟨J, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset ↑(Λ.volume n))
+      ≤ (2 : ℝ) ^ (inducedGraph (IsingModel.latticeGraph d)
+          (Λ.volume n)).edgeFinset.card *
+        Real.tanh (β * J) ^
+          (inducedGraph (IsingModel.latticeGraph d)
+            (Λ.volume n)).dist i j :=
+correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_pair_le_two_pow_edges_mul_tanh_pow_dist
+  d Λ J β (mul_nonneg hβ.le hJ) n i j
 
 /-- **ℤ^d Λ pair correlation strict positivity under edge (GJ §18.3 / FV (3.46))**:
 under `0 < β·J` and an edge in `inducedGraph (latticeGraph d) Λ`,
