@@ -3489,6 +3489,18 @@ The four $\mathbb{Z}^d$ wrappers use the abbreviated suffix
 \texttt{\_ferro} (instead of \texttt{\_ferromagnetic}) so each
 declaration fits the linter's 100-character budget.
 
+\paragraph{\texttt{vdPolymerFamilies\_sum} $\beta$ / $J$ regularity
+(tanh form), all volume layers (\S18.5, PR~\#1586).} The six
+abstract $\beta$/$J$ regularity statements
+(\texttt{vdPolymerFamilies\_sum\_tanh\_continuous\_\{beta,J\}},
+\texttt{\_differentiable\_\{beta,J\}},
+\texttt{\_analyticAt\_\{beta,J\}}, Steps 556, 559, 562) are lifted
+to the four volume layers, giving $24$ thin direct-instantiation
+wrappers in
+\texttt{IsingModel/AmbientLattice/Analyticity.lean},
+\texttt{AmbientLattice/SpecialCases.lean}, and
+\texttt{Concrete/LatticeGraphCorrelation.lean}.
+
 \paragraph{\texttt{vdPolymerFamilies\_sum} regularity in $t$, all
 volume layers (\S18.5, PR~\#1585).} The four abstract regularity
 statements for the polymer-family sum

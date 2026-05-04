@@ -1022,5 +1022,65 @@ theorem vdPolymerFamilies_sum_Λ_hasDerivAt
           ((Q.card : ℝ) * t ^ (Q.card - 1))) t :=
   IsingModel.vdPolymerFamilies_sum_hasDerivAt (inducedGraph G Λ) t
 
+/-! ### §18.5 vdPolymerFamilies_sum tanh β/J Λ wraps -/
+
+/-- **Λ-layer: vdPolymerFamilies_sum ∘ tanh ∘ (·*J) continuous in β**. -/
+theorem vdPolymerFamilies_sum_Λ_tanh_continuous_beta
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (J : ℝ) :
+    Continuous (fun β' : ℝ =>
+        ∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies (inducedGraph G Λ),
+          ∏ P ∈ Γ, Real.tanh (β' * J) ^ P.card) :=
+  IsingModel.vdPolymerFamilies_sum_tanh_continuous_beta (inducedGraph G Λ) J
+
+/-- **Λ-layer: vdPolymerFamilies_sum ∘ tanh ∘ (β*·) continuous in J**. -/
+theorem vdPolymerFamilies_sum_Λ_tanh_continuous_J
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (β : ℝ) :
+    Continuous (fun J' : ℝ =>
+        ∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies (inducedGraph G Λ),
+          ∏ P ∈ Γ, Real.tanh (β * J') ^ P.card) :=
+  IsingModel.vdPolymerFamilies_sum_tanh_continuous_J (inducedGraph G Λ) β
+
+/-- **Λ-layer: vdPolymerFamilies_sum ∘ tanh ∘ (·*J) differentiable in β**. -/
+theorem vdPolymerFamilies_sum_Λ_tanh_differentiable_beta
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (J : ℝ) :
+    Differentiable ℝ (fun β' : ℝ =>
+        ∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies (inducedGraph G Λ),
+          ∏ P ∈ Γ, Real.tanh (β' * J) ^ P.card) :=
+  IsingModel.vdPolymerFamilies_sum_tanh_differentiable_beta
+    (inducedGraph G Λ) J
+
+/-- **Λ-layer: vdPolymerFamilies_sum ∘ tanh ∘ (β*·) differentiable in J**. -/
+theorem vdPolymerFamilies_sum_Λ_tanh_differentiable_J
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (β : ℝ) :
+    Differentiable ℝ (fun J' : ℝ =>
+        ∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies (inducedGraph G Λ),
+          ∏ P ∈ Γ, Real.tanh (β * J') ^ P.card) :=
+  IsingModel.vdPolymerFamilies_sum_tanh_differentiable_J
+    (inducedGraph G Λ) β
+
+/-- **Λ-layer: vdPolymerFamilies_sum ∘ tanh ∘ (·*J) AnalyticAt in β**. -/
+theorem vdPolymerFamilies_sum_Λ_tanh_analyticAt_beta
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (J β : ℝ) :
+    AnalyticAt ℝ (fun β' : ℝ =>
+        ∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies (inducedGraph G Λ),
+          ∏ P ∈ Γ, Real.tanh (β' * J) ^ P.card) β :=
+  IsingModel.vdPolymerFamilies_sum_tanh_analyticAt_beta
+    (inducedGraph G Λ) J β
+
+/-- **Λ-layer: vdPolymerFamilies_sum ∘ tanh ∘ (β*·) AnalyticAt in J**. -/
+theorem vdPolymerFamilies_sum_Λ_tanh_analyticAt_J
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (β J : ℝ) :
+    AnalyticAt ℝ (fun J' : ℝ =>
+        ∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies (inducedGraph G Λ),
+          ∏ P ∈ Γ, Real.tanh (β * J') ^ P.card) J :=
+  IsingModel.vdPolymerFamilies_sum_tanh_analyticAt_J
+    (inducedGraph G Λ) β J
+
 end Ambient
 end IsingModel
