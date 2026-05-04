@@ -3343,6 +3343,159 @@ contributes a nonneg amount once \(\tanh(\beta J) \ge 0\) is known
 \(2^{|\iota|} (\cosh \beta J)^{|E|}\) gives the claim.
 \hfill$\square$
 
+\section{Cluster (polymer / Mayer) expansion (\S18.4--\S18.7)}
+
+\paragraph{Polymer-family identity (\S18.4).} The
+even-subgraph sum in FV~(3.45) is reorganised into a sum over
+\textbf{vertex-disjoint compatible polymer families}. A
+\emph{polymer} is a non-empty connected even-degree edge subset
+(\texttt{IsPolymer}); compatibility is vertex-disjointness
+(\texttt{IsPolymerVertexDisjoint}). Each even-degree edge set $X$
+decomposes uniquely into its connected components
+(\texttt{polymerDecomposition}), giving a bijection between
+$\{X : \partial X = \emptyset\}$ and
+$\mathrm{vdCompatiblePolymerFamilies}\,G$. The capstone identity is
+\[
+Z(G; J, 0, \beta) = 2^{|\iota|} \cdot (\cosh \beta J)^{|E|}
+  \sum_{\Gamma \in \mathrm{vdCompatiblePolymerFamilies}(G)}
+    \prod_{P \in \Gamma} \tanh(\beta J)^{|P|}
+\]
+(\texttt{partitionFunction\_high\_temp\_expansion\_h\_zero\_polymer\_family}).
+
+\paragraph{Mayer / Ursell infrastructure (Steps~576--615).}
+The exponential identity $\log \Xi = \sum_{n \ge 1} \frac{1}{n!}
+\sum_{\omega} \phi^T(\omega)\, z(t,\omega)$ is formalised via
+\texttt{ursellCoefficient} (\(\phi^T(\omega)\),
+Step~583), \texttt{clusterSeqActivity} (\(z(t,\omega)\),
+Step~581), \texttt{mayerExpansionTerm} (the $n$-th term,
+Step~587), and \texttt{mayerPartialSum} (truncation through
+cluster size $N$, Step~591). Pair-Ursell formula
+$\phi^T(\omega) = -\tfrac{1}{2}$ for incompatible pairs,
+$0$ otherwise (Steps~585--586); uniform absolute bound
+$|\phi^T(\omega)| \le 2^{\binom{n}{2}}/n!$ (Step~615) via
+$|\mathrm{connectedSpanningEdgeSubsets}\,G| \le 2^{|G.\mathrm{edgeFinset}|}$
+(Step~602) plus
+\texttt{SimpleGraph.card\_edgeFinset\_le\_card\_choose\_two}.
+Polymer free energy
+$\mathrm{polymerFreeEnergy}\,G\,t := \log(\sum_\Gamma \prod_P t^{|P|})$
+(Step~610) is real-analytic on $[0,\infty)$ and connects to the
+Ising free energy via
+$f(J,0,\beta) = \log 2 + (|E|/|\iota|) \log\cosh(\beta J)
+  + \mathrm{polymerFreeEnergy}\,G\,(\tanh \beta J)/|\iota|$
+under $0 < |\iota|$, $0 \le \beta J$ (Step~612).
+
+\paragraph{Phase~B base cases (PRs~\#1518--\#1546, \#1553).}
+Explicit values of the alternating connected-subgraph sum
+$\mathrm{alternatingConnectedSubgraphSum}\,G
+:= \sum_{S \in \mathrm{connectedSpanningEdgeSubsets}\,G} (-1)^{|S|}$
+were computed by \texttt{decide} (with
+\texttt{set\_option maxRecDepth} / \texttt{maxHeartbeats} raised) on:
+\begin{itemize}
+  \item Complete graphs \(K_3 = 2\), \(K_4 = -6\)
+    (PRs~\#1518, \#1519);
+  \item Path graphs \(P_n\) for \(n = 3,\dots,8\) with values
+    \(1, -1, 1, -1, 1, -1\) (PRs~\#1542--\#1544; \(P_8\) requires
+    \texttt{maxRecDepth 8000} + \texttt{maxHeartbeats 1000000});
+  \item Cycle graphs \(C_n\) for \(n = 3,\dots,7\) with values
+    \(2, -3, 4, -5, 6\) (PRs~\#1545, \#1546, \#1553).
+\end{itemize}
+The general formula
+$\mathrm{alternatingConnectedSubgraphSum}(K_n) = (-1)^{n-1}(n-1)!$
+and any case with $n \ge 9$ require chromatic-polynomial /
+matrix-tree-theorem machinery not yet in Mathlib, and remain
+deferred (Phase~B blocker).
+
+\paragraph{Polymer free energy bounds and characterisations
+(PRs~\#1517--\#1566).} A coordinated set of sharpenings was added
+in this batch:
+\begin{itemize}
+  \item \emph{Convergence radius via $\log$ \texttt{HasSum}}
+    (\#1517): \texttt{polymerFreeEnergy\_hasSum\_via\_log\_of\_pow\_lt\_two}
+    expresses $\mathrm{polymerFreeEnergy}\,G\,t$ as a `HasSum` of
+    the natural log expansion under the explicit radius
+    $(1+t)^{|E|} < 2$.
+  \item \emph{Filter forms} (\#1521, \#1522): the
+    \texttt{mayerExpansionTerm} / \texttt{mayerPartialSum} sums
+    can be restricted to connected polymer-sequence supports
+    (\texttt{\_filter\_connected}) without changing the value.
+  \item \emph{Upper bounds} (\#1523--\#1527):
+    $\mathrm{polymerFreeEnergy}\,G\,t \le \varepsilon(G,t)$
+    (where $\varepsilon := \sum_\Gamma \prod_P t^{|P|} - 1$),
+    $\le (1+t)^{|E|} - 1$, $< \log 2$ under
+    $(1+t)^{|E|} < 2$, the
+    \texttt{polymerFreeEnergy\_high\_temp\_sandwich} 5-tuple, and
+    the explicit free-energy correction
+    \texttt{freeEnergy\_lt\_log\_two\_plus\_high\_temp\_correction}.
+  \item \emph{Strict / iff characterisations}
+    (\#1547--\#1550, \#1554--\#1560): under $\varepsilon > 0$,
+    $\mathrm{polymerFreeEnergy} < \varepsilon$ (strict; \#1547),
+    $= 0 \iff \varepsilon = 0$, $> 0 \iff \varepsilon > 0$
+    (\#1548), strict $< (1+t)^{|E|} - 1$ (\#1554, \#1555 tanh
+    form), \texttt{vdPolymerFamilies\_sum\_eq\_one\_iff\_eps\_eq\_zero}
+    and \texttt{\_gt\_one\_iff\_eps\_pos} (\#1557), bundles of
+    strict-mono / strict-pos (\#1559, \#1560)
+    including \texttt{StrictMonoOn (Set.Ioi 0)}.
+  \item \emph{Pair connectivity} (\#1551, \#1552):
+    \texttt{polymerSeqIncompatibilityGraph\_two\_connected\_iff\_incompatible}
+    and the connected-restricted form of the $n=2$ Mayer term
+    equate to incompatibility.
+  \item \emph{$\Lambda$-layer wrappers} (\#1563, \#1564):
+    $10 + 8$ theorems lifting the abstract API to the
+    $\Lambda$ layer in
+    \texttt{IsingModel/AmbientLattice/Analyticity.lean}.
+  \item \emph{Ferromagnetic / tanh-monotonicity} (\#1565, \#1566):
+    $0 \le J,\, 0 < \beta$ versions of the strict / iff bundle, and
+    $\mathrm{polymerFreeEnergy}(\tanh(\beta J))$ monotone (resp.\
+    strictly monotone) in $\beta$ and $J$ under the appropriate
+    sign assumptions; \#1566 introduces the local helper
+    \texttt{real\_tanh\_strictMono}.
+\end{itemize}
+
+\paragraph{General-$h$ analyticity capstone (\S18.6,
+PRs~\#1528--\#1541).} Per-direction and joint analyticity of the
+free energy at \emph{general} external field $h$:
+\begin{itemize}
+  \item \texttt{freeEnergy\_analyticAt\_\{beta,J,h\}\_general\_h}
+    (\#1528--\#1530) and matching
+    \texttt{\_analyticOnNhd\_\{beta,J,h\}\_general\_h}: the partial
+    real-analyticity of $f(J,h,\beta)$ is now available without
+    the $h = 0$ restriction.
+  \item \texttt{freeEnergy\_analyticAt\_joint} (\#1531) and
+    \texttt{\_analyticOnNhd\_joint} (\#1532) over $\mathrm{Set.univ}$:
+    joint analyticity in $(\beta, J, h)$.
+  \item \texttt{freeEnergy\_continuous\_joint} +
+    \texttt{\_differentiable\_joint} (\#1533).
+  \item Λ-layer joint analyticity in
+    \texttt{IsingModel/AmbientLattice/Analyticity.lean} (\#1535).
+  \item \texttt{correlation\_analyticAt\_joint} +
+    full hierarchy at the Λ layer (\#1536, \#1537).
+  \item \texttt{gibbsExpectation\_analyticAt\_joint} for an arbitrary
+    observable $F: \mathrm{Configuration} \to \mathbb{R}$ (\#1539).
+  \item \texttt{partitionFunction} continuity / differentiability per
+    direction at general $h$ (\#1540) plus Λ-layer wrappers
+    (\#1541).
+\end{itemize}
+
+\paragraph{Decay of correlations at $h=0$ (\S18.7, Step~574).} The
+high-temperature exponential-decay capstone
+\[
+\bigl|\langle \sigma_i \sigma_j \rangle_{\beta,0}\bigr|
+  \le 2^{|E|} \cdot \tanh(\beta J)^{d_G(i,j)}
+\quad \text{for } 0 \le \beta J,
+\]
+where $d_G$ is graph distance, is proved via the
+even-subgraph-boundary distance bound
+\texttt{evenSubgraph\_pair\_boundary\_dist\_le} (Step~573), which
+uses strong induction to construct an explicit
+$G.\mathrm{Walk}\,i\,j$ from any $X$ with
+$\partial X = \{i, j\}$.
+
+References: Glimm--Jaffe~\cite{glimm-jaffe}, \S18.4--\S18.7;
+Friedli--Velenik~\cite{friedli-velenik}, \S5; for Mayer / Ursell
+combinatorics see also Fern\'andez--Fr\"ohlich--Sokal
+(``Random Walks, Critical Phenomena, and Triviality in Quantum
+Field Theory''), Ch.~12.
+
 \section{Peierls argument (\texttt{Peierls.lean})}
 
 \par\noindent\textbf{Prerequisites:} \texttt{GibbsMeasure.lean},
