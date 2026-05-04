@@ -3489,6 +3489,20 @@ The four $\mathbb{Z}^d$ wrappers use the abbreviated suffix
 \texttt{\_ferro} (instead of \texttt{\_ferromagnetic}) so each
 declaration fits the linter's 100-character budget.
 
+\paragraph{\texttt{polymerFreeEnergy} bound family, all volume layers
+(\S18.5, PR~\#1578).} The four abstract bound statements
+(\texttt{polymerFreeEnergy\_nonneg\_of\_nonneg},
+\texttt{polymerFreeEnergy\_le\_card\_log\_one\_plus\_of\_nonneg}
+($\le |E| \cdot \log(1+t)$),
+\texttt{polymerFreeEnergy\_le\_card\_mul\_of\_nonneg}
+($\le |E| \cdot t$),
+\texttt{polymerFreeEnergy\_monotoneOn\_Ici\_zero}) are lifted to
+the four volume layers, giving $16$ thin direct-instantiation
+wrappers in
+\texttt{IsingModel/AmbientLattice/Analyticity.lean},
+\texttt{AmbientLattice/SpecialCases.lean}, and
+\texttt{Concrete/LatticeGraphCorrelation.lean}.
+
 \paragraph{\texttt{polymerFreeEnergy} $\beta$ / $J$ analyticity, all
 volume layers (\S18.6, PR~\#1577).} The four abstract β/J real-
 analyticity statements (\texttt{polymerFreeEnergy\_tanh\_analyticAt\_beta}
