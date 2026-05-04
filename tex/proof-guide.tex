@@ -3500,6 +3500,20 @@ existed; this PR fills the bare-bound and `\geq 1` gaps. 12 new
 thin direct-instantiation wrappers (3 abstracts $\times$ 4
 layers).
 
+\paragraph{$\varepsilon(t)$ infrastructure + Mayer-term sign at
+$n = 1, 2$ + \texttt{allPolymers} empty on edgeless, all volume
+layers (\S18.5, PR~\#1601).} Lifts seven abstract Mayer-expansion
+theorems to the four volume layers (\textit{Λ}, along-ex,
+$\mathbb{Z}^d$ \textit{Λ}, $\mathbb{Z}^d$ along-ex):
+\texttt{mayerExpansionTerm\_one\_nonneg\_of\_nonneg},
+\texttt{\_two\_nonpos\_of\_nonneg},
+\texttt{vdPolymerFamilies\_sum\_minus\_one\_at\_zero}
+($\varepsilon(0) = 0$),
+\texttt{\_continuous}, \texttt{\_analyticAt},
+\texttt{\_lt\_one\_eventually}, and
+\texttt{allPolymers\_eq\_empty\_of\_edgeFinset\_empty}.
+28 new thin direct-instantiation wrappers.
+
 \paragraph{Mayer recurrence + \texttt{polymerFreeEnergy} hasSum +
 $\varepsilon(t) \to 0$ tendsto, all volume layers (\S18.5,
 PR~\#1600).} Lifts five abstract Mayer-expansion theorems to the
