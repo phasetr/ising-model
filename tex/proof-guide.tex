@@ -3500,6 +3500,26 @@ existed; this PR fills the bare-bound and `\geq 1` gaps. 12 new
 thin direct-instantiation wrappers (3 abstracts $\times$ 4
 layers).
 
+\paragraph{Mayer filter-connected $n=0/1/2$ + $\varepsilon^n$
+expansion + \texttt{mayerPartialSum\_analyticOnNhd}, all volume
+layers (\S18.5, PR~\#1613).} Lifts five Mayer / $\varepsilon(t)$
+lemmas to the four volume layers (\textit{Λ}, along-ex,
+$\mathbb{Z}^d$ \textit{Λ}, $\mathbb{Z}^d$ along-ex):
+\texttt{mayerPartialSum\_analyticOnNhd}
+(\texttt{AnalyticOnNhd ℝ \_ Set.univ}),
+\texttt{vdPolymerFamilies\_sum\_minus\_one\_pow}
+($\varepsilon(t)^k$ as multi-$\Gamma$ piFinset sum),
+\texttt{mayerExpansionTerm\_filter\_connected\_zero}
+(filter at $n=0$ is $\emptyset$),
+\texttt{\_filter\_connected\_one} (filter at $n=1$ equals full
+piFinset), and \texttt{\_two\_filter\_connected\_eq\_incompat}
+(filter-connected $\Leftrightarrow$ pair-incompatible at $n=2$).
+20 new thin direct-instantiation wrappers (5 abstracts $\times$
+4 layers). The longest $\mathbb{Z}^d$ along-ex name
+abbreviates \texttt{\_filter\_connected\_eq\_incompat} to
+\texttt{\_filter\_conn\_eq\_incompat} to fit under the
+100-character linter budget.
+
 \paragraph{\S18.4--\S18.6 capstones ($Z$ formula +
 \texttt{freeEnergy} decomposition + log $2$ / $N=1$ corollaries),
 all volume layers (PR~\#1612).} Lifts six capstone formulas to the

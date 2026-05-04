@@ -2763,5 +2763,75 @@ theorem mayerPartialSum_Λ_one_at_one
       (IsingModel.allPolymers (inducedGraph G Λ)).card :=
   IsingModel.mayerPartialSum_one_at_one (inducedGraph G Λ)
 
+/-! ### §18.5 Mayer filter-connected + ε^n + mayerPartialSum
+analyticOnNhd Λ-layer wraps -/
+
+/-- **Λ-layer: mayerPartialSum `AnalyticOnNhd ℝ _ Set.univ`**. -/
+theorem mayerPartialSum_Λ_analyticOnNhd
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (N : ℕ) :
+    AnalyticOnNhd ℝ
+      (fun s : ℝ => IsingModel.mayerPartialSum
+          (inducedGraph G Λ) N s) Set.univ :=
+  IsingModel.mayerPartialSum_analyticOnNhd (inducedGraph G Λ) N
+
+/-- **Λ-layer: ε(t)^n as multi-Γ piFinset sum**. -/
+theorem vdPolymerFamilies_sum_Λ_minus_one_pow
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (t : ℝ) (n : ℕ) :
+    (∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
+              (inducedGraph G Λ)).erase ∅,
+          ∏ P ∈ Γ, t ^ P.card) ^ n =
+      ∑ ω ∈ Fintype.piFinset
+              (fun _ : Fin n =>
+                (IsingModel.vdCompatiblePolymerFamilies
+                  (inducedGraph G Λ)).erase ∅),
+        ∏ i : Fin n, ∏ P ∈ ω i, t ^ P.card :=
+  IsingModel.vdPolymerFamilies_sum_minus_one_pow
+    (inducedGraph G Λ) t n
+
+/-- **Λ-layer: mayerExpansionTerm filter-connected at n=0 = ∅**. -/
+theorem mayerExpansionTerm_Λ_filter_connected_zero
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (t : ℝ) :
+    (Fintype.piFinset
+        (fun _ : Fin 0 =>
+          IsingModel.allPolymers (inducedGraph G Λ))).filter
+        (fun ω =>
+          (IsingModel.polymerSeqIncompatibilityGraph ω).Connected) = ∅ :=
+  IsingModel.mayerExpansionTerm_filter_connected_zero
+    (inducedGraph G Λ) t
+
+/-- **Λ-layer: mayerExpansionTerm filter-connected at n=1 = full
+piFinset**. -/
+theorem mayerExpansionTerm_Λ_filter_connected_one
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] :
+    (Fintype.piFinset
+        (fun _ : Fin 1 =>
+          IsingModel.allPolymers (inducedGraph G Λ))).filter
+        (fun ω =>
+          (IsingModel.polymerSeqIncompatibilityGraph ω).Connected) =
+      Fintype.piFinset
+        (fun _ : Fin 1 =>
+          IsingModel.allPolymers (inducedGraph G Λ)) :=
+  IsingModel.mayerExpansionTerm_filter_connected_one (inducedGraph G Λ)
+
+/-- **Λ-layer: filter-connected = filter-incompatible at n=2**. -/
+theorem mayerExpansionTerm_Λ_two_filter_connected_eq_incompat
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] :
+    (Fintype.piFinset
+        (fun _ : Fin 2 =>
+          IsingModel.allPolymers (inducedGraph G Λ))).filter
+        (fun ω =>
+          (IsingModel.polymerSeqIncompatibilityGraph ω).Connected) =
+      (Fintype.piFinset
+          (fun _ : Fin 2 =>
+            IsingModel.allPolymers (inducedGraph G Λ))).filter
+          (fun ω => IsingModel.PolymersIncompatible (ω 0) (ω 1)) :=
+  IsingModel.mayerExpansionTerm_two_filter_connected_eq_incompat
+    (inducedGraph G Λ)
+
 end Ambient
 end IsingModel
