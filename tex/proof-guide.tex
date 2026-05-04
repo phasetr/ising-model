@@ -3476,6 +3476,20 @@ free energy at \emph{general} external field $h$:
     (\#1541).
 \end{itemize}
 
+\paragraph{Polymer-family sum sandwich, all volume layers
+(\S18.5, PR~\#1572).} The two abstract sandwich statements
+\texttt{vdPolymerFamilies\_sum\_sandwich} ($1 \le \sum_\Gamma \le
+2^{|E|}$) and \texttt{vdPolymerFamilies\_sum\_sandwich\_sharp}
+($\le (1 + \tanh(\beta J))^{|E|}$), both under $0 \le \beta J$,
+are now lifted to the $\Lambda$, along-exhaustion, $\mathbb{Z}^d$
+$\Lambda$, and $\mathbb{Z}^d$ along-exhaustion layers --- $8$
+wrappers in total --- in
+\texttt{IsingModel/AmbientLattice/Analyticity.lean},
+\texttt{AmbientLattice/SpecialCases.lean}, and
+\texttt{Concrete/LatticeGraphCorrelation.lean}. Each is a thin
+direct-instantiation wrapper of the abstract theorem on the
+corresponding induced subgraph.
+
 \paragraph{Convergence radius at all volume layers (\S18.5,
 PR~\#1569).} The cluster-expansion convergence-radius statements
 (`polymerFreeEnergy_high_temp_sandwich' from \#1526 and

@@ -2761,5 +2761,36 @@ polymerFreeEnergyAlongExhaustion_tanh_hasSum_via_log_of_pow_lt_two
   polymerFreeEnergy_Λ_tanh_hasSum_via_log_of_pow_lt_two
     G (Λ.volume n) hβJ h_pow
 
+/-- **Along-exhaustion: VD polymer-family sum sandwich** (§18.5
+along-ex wrap of `vdPolymerFamilies_sum_sandwich`). -/
+theorem vdPolymerFamilies_sumAlongExhaustion_sandwich
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {β J : ℝ} (hβJ : 0 ≤ β * J) (n : ℕ) :
+    1 ≤ (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
+            (inducedGraph G (Λ.volume n)),
+        ∏ P ∈ Γ, Real.tanh (β * J) ^ P.card) ∧
+    (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
+            (inducedGraph G (Λ.volume n)),
+        ∏ P ∈ Γ, Real.tanh (β * J) ^ P.card)
+      ≤ (2 : ℝ) ^ (inducedGraph G (Λ.volume n)).edgeFinset.card :=
+  vdPolymerFamilies_sum_Λ_sandwich G (Λ.volume n) hβJ
+
+/-- **Along-exhaustion: VD polymer-family sum sharp sandwich** (§18.5
+along-ex wrap of `vdPolymerFamilies_sum_sandwich_sharp`). -/
+theorem vdPolymerFamilies_sumAlongExhaustion_sandwich_sharp
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {β J : ℝ} (hβJ : 0 ≤ β * J) (n : ℕ) :
+    1 ≤ (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
+            (inducedGraph G (Λ.volume n)),
+        ∏ P ∈ Γ, Real.tanh (β * J) ^ P.card) ∧
+    (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
+            (inducedGraph G (Λ.volume n)),
+        ∏ P ∈ Γ, Real.tanh (β * J) ^ P.card)
+      ≤ (1 + Real.tanh (β * J)) ^
+        (inducedGraph G (Λ.volume n)).edgeFinset.card :=
+  vdPolymerFamilies_sum_Λ_sandwich_sharp G (Λ.volume n) hβJ
+
 end Ambient
 end IsingModel
