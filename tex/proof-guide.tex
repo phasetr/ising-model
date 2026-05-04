@@ -3489,6 +3489,23 @@ The four $\mathbb{Z}^d$ wrappers use the abbreviated suffix
 \texttt{\_ferro} (instead of \texttt{\_ferromagnetic}) so each
 declaration fits the linter's 100-character budget.
 
+\paragraph{Strict \texttt{freeEnergy} upper bound in cluster-expansion
+convergence regime, all volume layers (\S18.5, PR~\#1575).}
+PR~\#1527's abstract strict bound
+\texttt{freeEnergy\_lt\_log\_two\_plus\_high\_temp\_correction}
+(under $0 \le \beta J,\, 0 < |\iota|,\, (1+\tanh(\beta J))^{|E|} < 2$,
+giving
+$f < \log 2 + (|E|/|\iota|) \log\cosh(\beta J) + \log 2/|\iota|$)
+admits a ferromagnetic version
+($0 \le J,\, 0 < \beta$) and is lifted to all five layers via
+direct \texttt{freeEnergyΛ\_apply} / \texttt{freeEnergyAlongExhaustion}
+unfoldings: 9 new theorems in
+\texttt{IsingModel/AmbientLattice/Analyticity.lean},
+\texttt{AmbientLattice/SpecialCases.lean}, and
+\texttt{Concrete/LatticeGraphCorrelation.lean}. The two
+$\mathbb{Z}^d$ ferromagnetic variants use the abbreviated
+\texttt{\_ferro} suffix to fit the linter's 100-character budget.
+
 \paragraph{Ferromagnetic polymer-family sum sandwich, all volume
 layers (\S18.5, PR~\#1574).} Under $0 \le J,\, 0 < \beta$ each of
 the two abstract sandwich statements admits a ferromagnetic
