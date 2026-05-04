@@ -848,5 +848,81 @@ theorem mayerExpansionTerm_Λ_analyticOnNhd
       Set.univ :=
   IsingModel.mayerExpansionTerm_analyticOnNhd (inducedGraph G Λ) n
 
+/-! ### §18.6 mayerPartialSum tanh β/J Λ wraps -/
+
+/-- **Λ-layer: `mayerPartialSum ∘ tanh ∘ (·*J)` continuous in β**. -/
+theorem mayerPartialSum_Λ_tanh_continuous_beta
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (N : ℕ) (J : ℝ) :
+    Continuous (fun β' : ℝ =>
+        IsingModel.mayerPartialSum (inducedGraph G Λ) N
+          (Real.tanh (β' * J))) :=
+  IsingModel.mayerPartialSum_tanh_continuous_beta (inducedGraph G Λ) N J
+
+/-- **Λ-layer: `mayerPartialSum ∘ tanh ∘ (β*·)` continuous in J**. -/
+theorem mayerPartialSum_Λ_tanh_continuous_J
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (N : ℕ) (β : ℝ) :
+    Continuous (fun J' : ℝ =>
+        IsingModel.mayerPartialSum (inducedGraph G Λ) N
+          (Real.tanh (β * J'))) :=
+  IsingModel.mayerPartialSum_tanh_continuous_J (inducedGraph G Λ) N β
+
+/-- **Λ-layer: `mayerPartialSum ∘ tanh ∘ (·*J)` differentiable in β**. -/
+theorem mayerPartialSum_Λ_tanh_differentiable_beta
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (N : ℕ) (J : ℝ) :
+    Differentiable ℝ (fun β' : ℝ =>
+        IsingModel.mayerPartialSum (inducedGraph G Λ) N
+          (Real.tanh (β' * J))) :=
+  IsingModel.mayerPartialSum_tanh_differentiable_beta (inducedGraph G Λ) N J
+
+/-- **Λ-layer: `mayerPartialSum ∘ tanh ∘ (β*·)` differentiable in J**. -/
+theorem mayerPartialSum_Λ_tanh_differentiable_J
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (N : ℕ) (β : ℝ) :
+    Differentiable ℝ (fun J' : ℝ =>
+        IsingModel.mayerPartialSum (inducedGraph G Λ) N
+          (Real.tanh (β * J'))) :=
+  IsingModel.mayerPartialSum_tanh_differentiable_J (inducedGraph G Λ) N β
+
+/-- **Λ-layer: `mayerPartialSum ∘ tanh ∘ (·*J)` AnalyticAt in β**. -/
+theorem mayerPartialSum_Λ_tanh_analyticAt_beta
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (N : ℕ) (J β : ℝ) :
+    AnalyticAt ℝ (fun β' : ℝ =>
+        IsingModel.mayerPartialSum (inducedGraph G Λ) N
+          (Real.tanh (β' * J))) β :=
+  IsingModel.mayerPartialSum_tanh_analyticAt_beta (inducedGraph G Λ) N J β
+
+/-- **Λ-layer: `mayerPartialSum ∘ tanh ∘ (β*·)` AnalyticAt in J**. -/
+theorem mayerPartialSum_Λ_tanh_analyticAt_J
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (N : ℕ) (β J : ℝ) :
+    AnalyticAt ℝ (fun J' : ℝ =>
+        IsingModel.mayerPartialSum (inducedGraph G Λ) N
+          (Real.tanh (β * J'))) J :=
+  IsingModel.mayerPartialSum_tanh_analyticAt_J (inducedGraph G Λ) N β J
+
+/-- **Λ-layer: `mayerPartialSum ∘ tanh ∘ (·*J)` AnalyticOnNhd in β
+over `Set.univ`**. -/
+theorem mayerPartialSum_Λ_tanh_analyticOnNhd_beta
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (N : ℕ) (J : ℝ) :
+    AnalyticOnNhd ℝ (fun β' : ℝ =>
+        IsingModel.mayerPartialSum (inducedGraph G Λ) N
+          (Real.tanh (β' * J))) Set.univ :=
+  IsingModel.mayerPartialSum_tanh_analyticOnNhd_beta (inducedGraph G Λ) N J
+
+/-- **Λ-layer: `mayerPartialSum ∘ tanh ∘ (β*·)` AnalyticOnNhd in J
+over `Set.univ`**. -/
+theorem mayerPartialSum_Λ_tanh_analyticOnNhd_J
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (N : ℕ) (β : ℝ) :
+    AnalyticOnNhd ℝ (fun J' : ℝ =>
+        IsingModel.mayerPartialSum (inducedGraph G Λ) N
+          (Real.tanh (β * J'))) Set.univ :=
+  IsingModel.mayerPartialSum_tanh_analyticOnNhd_J (inducedGraph G Λ) N β
+
 end Ambient
 end IsingModel
