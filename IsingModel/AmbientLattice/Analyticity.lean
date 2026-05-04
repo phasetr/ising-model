@@ -980,5 +980,47 @@ theorem mayerExpansionTerm_Λ_tanh_analyticAt_J
           (Real.tanh (β * J'))) J :=
   IsingModel.mayerExpansionTerm_tanh_analyticAt_J (inducedGraph G Λ) n β J
 
+/-! ### §18.6 vdPolymerFamilies_sum regularity in t Λ wraps -/
+
+/-- **Λ-layer: `vdPolymerFamilies_sum` is `Continuous` in `t`** (§18.6). -/
+theorem vdPolymerFamilies_sum_Λ_continuous
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] :
+    Continuous (fun t : ℝ =>
+        ∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies (inducedGraph G Λ),
+          ∏ P ∈ Γ, t ^ P.card) :=
+  IsingModel.vdPolymerFamilies_sum_continuous (inducedGraph G Λ)
+
+/-- **Λ-layer: `vdPolymerFamilies_sum` is `Differentiable ℝ` in `t`**. -/
+theorem vdPolymerFamilies_sum_Λ_differentiable
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] :
+    Differentiable ℝ (fun t : ℝ =>
+        ∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies (inducedGraph G Λ),
+          ∏ P ∈ Γ, t ^ P.card) :=
+  IsingModel.vdPolymerFamilies_sum_differentiable (inducedGraph G Λ)
+
+/-- **Λ-layer: `vdPolymerFamilies_sum` is `AnalyticAt ℝ` in `t`**. -/
+theorem vdPolymerFamilies_sum_Λ_analyticAt
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (t : ℝ) :
+    AnalyticAt ℝ (fun s : ℝ =>
+        ∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies (inducedGraph G Λ),
+          ∏ P ∈ Γ, s ^ P.card) t :=
+  IsingModel.vdPolymerFamilies_sum_analyticAt (inducedGraph G Λ) t
+
+/-- **Λ-layer: `vdPolymerFamilies_sum` `HasDerivAt` (explicit
+polynomial derivative)**. -/
+theorem vdPolymerFamilies_sum_Λ_hasDerivAt
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (t : ℝ) :
+    HasDerivAt (fun s : ℝ =>
+        ∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies (inducedGraph G Λ),
+          ∏ P ∈ Γ, s ^ P.card)
+      (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies (inducedGraph G Λ),
+        ∑ Q ∈ Γ, (∏ P ∈ Γ.erase Q, t ^ P.card) *
+          ((Q.card : ℝ) * t ^ (Q.card - 1))) t :=
+  IsingModel.vdPolymerFamilies_sum_hasDerivAt (inducedGraph G Λ) t
+
 end Ambient
 end IsingModel
