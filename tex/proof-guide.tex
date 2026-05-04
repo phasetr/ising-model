@@ -3500,6 +3500,26 @@ existed; this PR fills the bare-bound and `\geq 1` gaps. 12 new
 thin direct-instantiation wrappers (3 abstracts $\times$ 4
 layers).
 
+\paragraph{\texttt{polymerFreeEnergy} / \texttt{vdSum} tanh
+ferromagnetic iff family, all volume layers (\S18.5, PR~\#1604).}
+Lifts nine ferromagnetic abstract iff / inequality lemmas to the
+four volume layers (\textit{Λ}, along-ex, $\mathbb{Z}^d$
+\textit{Λ}, $\mathbb{Z}^d$ along-ex). All require
+$0 \le \beta$ and $0 \le J$:
+\texttt{\_tanh\_lt\_eps\_iff\_eps\_pos\_ferromagnetic},
+\texttt{\_tanh\_eq\_zero\_iff\_eps\_eq\_zero\_ferromagnetic},
+\texttt{\_tanh\_pos\_iff\_eps\_pos\_ferromagnetic},
+\texttt{\_tanh\_pos\_iff\_ferromagnetic},
+\texttt{\_tanh\_eq\_zero\_iff\_ferromagnetic},
+\texttt{vdPolymerFamilies\_sum\_tanh\_gt\_one\_iff\_ferromagnetic},
+\texttt{\_eq\_one\_iff\_ferromagnetic},
+\texttt{\_tanh\_lt\_pow\_sub\_one\_of\_eps\_pos\_ferromagnetic},
+\texttt{\_tanh\_lt\_eps\_of\_eps\_pos\_ferromagnetic}.
+36 new thin direct-instantiation wrappers; all use the
+abbreviated \texttt{\_ferro} suffix in place of
+\texttt{\_ferromagnetic} to fit under the 100-character linter
+budget.
+
 \paragraph{Strict-mono / strict-pos under polymers $\ne
 \emptyset$, all volume layers (\S18.5, PR~\#1603).} Lifts ten
 abstract strict-monotone / strict-positive lemmas to the four
