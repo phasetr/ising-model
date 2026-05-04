@@ -3578,5 +3578,58 @@ theorem log_vdPolymerFamilies_sumAlongExhaustion_tanh_analyticAt_J
   log_vdPolymerFamilies_sum_Λ_tanh_analyticAt_J
     G (Λ.volume n) β J hβJ
 
+/-! ### §18.5 mayer_identity_at edge-case along-ex wraps -/
+
+/-- **Along-ex: Mayer identity at `t = 0`**. -/
+theorem mayer_identity_at_zero_AlongExhaustion
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (N : ℕ) (n : ℕ) :
+    Real.log (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
+                (inducedGraph G (Λ.volume n)),
+              ∏ P ∈ Γ, (0 : ℝ) ^ P.card) =
+      IsingModel.mayerPartialSum
+        (inducedGraph G (Λ.volume n)) N 0 :=
+  mayer_identity_at_zero_Λ G (Λ.volume n) N
+
+/-- **Along-ex: Mayer identity at `β·J = 0`**. -/
+theorem mayer_identity_at_betaJ_zero_AlongExhaustion
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {β J : ℝ} (hβJ : β * J = 0) (N : ℕ) (n : ℕ) :
+    Real.log (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
+                (inducedGraph G (Λ.volume n)),
+              ∏ P ∈ Γ, Real.tanh (β * J) ^ P.card) =
+      IsingModel.mayerPartialSum
+        (inducedGraph G (Λ.volume n)) N
+        (Real.tanh (β * J)) :=
+  mayer_identity_at_betaJ_zero_Λ G (Λ.volume n) hβJ N
+
+/-- **Along-ex: Mayer identity at `β = 0`**. -/
+theorem mayer_identity_at_beta_zero_AlongExhaustion
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J : ℝ) (N : ℕ) (n : ℕ) :
+    Real.log (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
+                (inducedGraph G (Λ.volume n)),
+              ∏ P ∈ Γ, Real.tanh ((0 : ℝ) * J) ^ P.card) =
+      IsingModel.mayerPartialSum
+        (inducedGraph G (Λ.volume n)) N
+        (Real.tanh ((0 : ℝ) * J)) :=
+  mayer_identity_at_beta_zero_Λ G (Λ.volume n) J N
+
+/-- **Along-ex: Mayer identity at `J = 0`**. -/
+theorem mayer_identity_at_J_zero_AlongExhaustion
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (β : ℝ) (N : ℕ) (n : ℕ) :
+    Real.log (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
+                (inducedGraph G (Λ.volume n)),
+              ∏ P ∈ Γ, Real.tanh (β * (0 : ℝ)) ^ P.card) =
+      IsingModel.mayerPartialSum
+        (inducedGraph G (Λ.volume n)) N
+        (Real.tanh (β * (0 : ℝ))) :=
+  mayer_identity_at_J_zero_Λ G (Λ.volume n) β N
+
 end Ambient
 end IsingModel

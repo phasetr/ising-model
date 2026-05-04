@@ -1130,5 +1130,51 @@ theorem log_vdPolymerFamilies_sum_Λ_tanh_analyticAt_J
   IsingModel.log_vdPolymerFamilies_sum_tanh_analyticAt_J
     (inducedGraph G Λ) β J hβJ
 
+/-! ### §18.5 mayer_identity_at edge-case Λ wraps -/
+
+/-- **Λ-layer: Mayer identity at `t = 0`** (Step 600). -/
+theorem mayer_identity_at_zero_Λ
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (N : ℕ) :
+    Real.log (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
+                (inducedGraph G Λ),
+              ∏ P ∈ Γ, (0 : ℝ) ^ P.card) =
+      IsingModel.mayerPartialSum (inducedGraph G Λ) N 0 :=
+  IsingModel.mayer_identity_at_zero (inducedGraph G Λ) N
+
+/-- **Λ-layer: Mayer identity at `β·J = 0`** (Step 609). -/
+theorem mayer_identity_at_betaJ_zero_Λ
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {β J : ℝ} (hβJ : β * J = 0) (N : ℕ) :
+    Real.log (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
+                (inducedGraph G Λ),
+              ∏ P ∈ Γ, Real.tanh (β * J) ^ P.card) =
+      IsingModel.mayerPartialSum (inducedGraph G Λ) N
+        (Real.tanh (β * J)) :=
+  IsingModel.mayer_identity_at_betaJ_zero (inducedGraph G Λ) hβJ N
+
+/-- **Λ-layer: Mayer identity at `β = 0`** (Step 609 specialisation). -/
+theorem mayer_identity_at_beta_zero_Λ
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (J : ℝ) (N : ℕ) :
+    Real.log (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
+                (inducedGraph G Λ),
+              ∏ P ∈ Γ, Real.tanh ((0 : ℝ) * J) ^ P.card) =
+      IsingModel.mayerPartialSum (inducedGraph G Λ) N
+        (Real.tanh ((0 : ℝ) * J)) :=
+  IsingModel.mayer_identity_at_beta_zero (inducedGraph G Λ) J N
+
+/-- **Λ-layer: Mayer identity at `J = 0`** (Step 609 specialisation). -/
+theorem mayer_identity_at_J_zero_Λ
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (β : ℝ) (N : ℕ) :
+    Real.log (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
+                (inducedGraph G Λ),
+              ∏ P ∈ Γ, Real.tanh (β * (0 : ℝ)) ^ P.card) =
+      IsingModel.mayerPartialSum (inducedGraph G Λ) N
+        (Real.tanh (β * (0 : ℝ))) :=
+  IsingModel.mayer_identity_at_J_zero (inducedGraph G Λ) β N
+
 end Ambient
 end IsingModel
