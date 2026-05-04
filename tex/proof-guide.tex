@@ -3489,6 +3489,17 @@ The four $\mathbb{Z}^d$ wrappers use the abbreviated suffix
 \texttt{\_ferro} (instead of \texttt{\_ferromagnetic}) so each
 declaration fits the linter's 100-character budget.
 
+\paragraph{\texttt{mayerExpansionTerm} regularity, all volume layers
+(\S18.6, PR~\#1582).} The four abstract regularity statements
+(\texttt{mayerExpansionTerm\_continuous} (Step~588),
+\texttt{\_differentiable} (Step~589),
+\texttt{\_analyticAt} and \texttt{\_analyticOnNhd} (Step~590)) are
+lifted to the four volume layers, giving $16$ thin
+direct-instantiation wrappers in
+\texttt{IsingModel/AmbientLattice/Analyticity.lean},
+\texttt{AmbientLattice/SpecialCases.lean}, and
+\texttt{Concrete/LatticeGraphCorrelation.lean}.
+
 \paragraph{\texttt{mayerPartialSum} regularity, all volume layers
 (\S18.6, PR~\#1581).} The five abstract regularity statements
 (\texttt{mayerPartialSum\_continuous},
