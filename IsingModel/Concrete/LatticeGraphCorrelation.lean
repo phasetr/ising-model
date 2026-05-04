@@ -9859,6 +9859,98 @@ polymerFreeEnergyAlongExhaustion_latticeGraph_eq_mayerPartialSum_at_J_zero
   Ambient.polymerFreeEnergyAlongExhaustion_eq_mayerPartialSum_at_J_zero
     (IsingModel.latticeGraph d) Λ β N n
 
+/-! ### §18.5 mayer_identity polymer_free_energy variants ℤ^d wraps -/
+
+/-- **ℤ^d Λ: Mayer identity at `J = 0` (polymer_free_energy form)**. -/
+theorem
+mayer_identity_at_J_zero_polymer_free_energy_Λ_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
+    (β : ℝ) (N : ℕ) :
+    IsingModel.polymerFreeEnergy
+        (inducedGraph (IsingModel.latticeGraph d) Λ)
+        (Real.tanh (β * (0 : ℝ))) =
+      IsingModel.mayerPartialSum
+        (inducedGraph (IsingModel.latticeGraph d) Λ) N
+        (Real.tanh (β * (0 : ℝ))) :=
+  Ambient.mayer_identity_at_J_zero_polymer_free_energy_Λ
+    (IsingModel.latticeGraph d) Λ β N
+
+/-- **ℤ^d Λ: Mayer identity at `β = 0` (polymer_free_energy form)**. -/
+theorem
+mayer_identity_at_beta_zero_polymer_free_energy_Λ_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
+    (J : ℝ) (N : ℕ) :
+    IsingModel.polymerFreeEnergy
+        (inducedGraph (IsingModel.latticeGraph d) Λ)
+        (Real.tanh ((0 : ℝ) * J)) =
+      IsingModel.mayerPartialSum
+        (inducedGraph (IsingModel.latticeGraph d) Λ) N
+        (Real.tanh ((0 : ℝ) * J)) :=
+  Ambient.mayer_identity_at_beta_zero_polymer_free_energy_Λ
+    (IsingModel.latticeGraph d) Λ J N
+
+/-- **ℤ^d Λ: Mayer identity at `J = β = 0` (polymer_free_energy form)**. -/
+theorem
+mayer_identity_at_either_zero_polymer_free_energy_Λ_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
+    (N : ℕ) :
+    IsingModel.polymerFreeEnergy
+        (inducedGraph (IsingModel.latticeGraph d) Λ)
+        (Real.tanh ((0 : ℝ) * (0 : ℝ))) =
+      IsingModel.mayerPartialSum
+        (inducedGraph (IsingModel.latticeGraph d) Λ) N
+        (Real.tanh ((0 : ℝ) * (0 : ℝ))) :=
+  Ambient.mayer_identity_at_either_zero_polymer_free_energy_Λ
+    (IsingModel.latticeGraph d) Λ N
+
+/-- **ℤ^d along-ex: Mayer identity at `J = 0` (polymer_free_energy form)**. -/
+theorem
+mayer_identity_at_J_zero_polymer_free_energy_AlongExhaustion_latticeGraph
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
+      (Λ.volume n)).edgeSet] (β : ℝ) (N : ℕ) (n : ℕ) :
+    IsingModel.polymerFreeEnergy
+        (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+        (Real.tanh (β * (0 : ℝ))) =
+      IsingModel.mayerPartialSum
+        (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)) N
+        (Real.tanh (β * (0 : ℝ))) :=
+  Ambient.mayer_identity_at_J_zero_polymer_free_energy_AlongExhaustion
+    (IsingModel.latticeGraph d) Λ β N n
+
+/-- **ℤ^d along-ex: Mayer identity at `β = 0` (polymer_free_energy form)**. -/
+theorem
+mayer_identity_at_beta_zero_polymer_free_energy_AlongExhaustion_latticeGraph
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
+      (Λ.volume n)).edgeSet] (J : ℝ) (N : ℕ) (n : ℕ) :
+    IsingModel.polymerFreeEnergy
+        (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+        (Real.tanh ((0 : ℝ) * J)) =
+      IsingModel.mayerPartialSum
+        (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)) N
+        (Real.tanh ((0 : ℝ) * J)) :=
+  Ambient.mayer_identity_at_beta_zero_polymer_free_energy_AlongExhaustion
+    (IsingModel.latticeGraph d) Λ J N n
+
+/-- **ℤ^d along-ex: Mayer identity at `J = β = 0` (polymer_free_energy form)**. -/
+theorem
+mayer_identity_at_either_zero_polymer_free_energy_AlongExhaustion_latticeGraph
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
+      (Λ.volume n)).edgeSet] (N : ℕ) (n : ℕ) :
+    IsingModel.polymerFreeEnergy
+        (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+        (Real.tanh ((0 : ℝ) * (0 : ℝ))) =
+      IsingModel.mayerPartialSum
+        (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)) N
+        (Real.tanh ((0 : ℝ) * (0 : ℝ))) :=
+  Ambient.mayer_identity_at_either_zero_polymer_free_energy_AlongExhaustion
+    (IsingModel.latticeGraph d) Λ N n
+
 end Ambient
 
 end IsingModel
