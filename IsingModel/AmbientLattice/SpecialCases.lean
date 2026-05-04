@@ -3975,5 +3975,40 @@ theorem vdPolymerFamilies_sumAlongExhaustion_tanh_eq_one_iff
           (inducedGraph G (Λ.volume n)) = ∅ :=
   vdPolymerFamilies_sum_Λ_tanh_eq_one_iff G (Λ.volume n) hβJ
 
+/-! ### §18.5 vdPolymerFamilies_sum bound family along-ex wraps -/
+
+/-- **Along-ex: vdSum_tanh ≤ 2^|E|**. -/
+theorem vdPolymerFamilies_sumAlongExhaustion_le_two_pow
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {β J : ℝ} (hβJ : 0 ≤ β * J) (n : ℕ) :
+    (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
+            (inducedGraph G (Λ.volume n)),
+        ∏ P ∈ Γ, Real.tanh (β * J) ^ P.card)
+      ≤ (2 : ℝ) ^ (inducedGraph G (Λ.volume n)).edgeFinset.card :=
+  vdPolymerFamilies_sum_Λ_le_two_pow G (Λ.volume n) hβJ
+
+/-- **Along-ex: vdSum_tanh ≤ (1+tanh)^|E|**. -/
+theorem vdPolymerFamilies_sumAlongExhaustion_le_one_plus_tanh_pow
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {β J : ℝ} (hβJ : 0 ≤ β * J) (n : ℕ) :
+    (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
+            (inducedGraph G (Λ.volume n)),
+        ∏ P ∈ Γ, Real.tanh (β * J) ^ P.card)
+      ≤ (1 + Real.tanh (β * J)) ^
+          (inducedGraph G (Λ.volume n)).edgeFinset.card :=
+  vdPolymerFamilies_sum_Λ_le_one_plus_tanh_pow G (Λ.volume n) hβJ
+
+/-- **Along-ex: 1 ≤ vdSum_tanh**. -/
+theorem one_le_vdPolymerFamilies_sumAlongExhaustion
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {β J : ℝ} (hβJ : 0 ≤ β * J) (n : ℕ) :
+    1 ≤ ∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
+              (inducedGraph G (Λ.volume n)),
+        ∏ P ∈ Γ, Real.tanh (β * J) ^ P.card :=
+  one_le_vdPolymerFamilies_sum_Λ G (Λ.volume n) hβJ
+
 end Ambient
 end IsingModel

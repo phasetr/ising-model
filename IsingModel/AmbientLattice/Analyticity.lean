@@ -1448,5 +1448,37 @@ theorem vdPolymerFamilies_sum_Λ_tanh_eq_one_iff
   IsingModel.vdPolymerFamilies_sum_tanh_eq_one_iff
     (inducedGraph G Λ) hβJ
 
+/-! ### §18.5 vdPolymerFamilies_sum bound family Λ-layer wraps -/
+
+/-- **Λ-layer: vdSum_tanh ≤ 2^|E|** under `0 ≤ β·J`. -/
+theorem vdPolymerFamilies_sum_Λ_le_two_pow
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {β J : ℝ} (hβJ : 0 ≤ β * J) :
+    (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies (inducedGraph G Λ),
+        ∏ P ∈ Γ, Real.tanh (β * J) ^ P.card)
+      ≤ (2 : ℝ) ^ (inducedGraph G Λ).edgeFinset.card :=
+  IsingModel.vdPolymerFamilies_sum_le_two_pow (inducedGraph G Λ) hβJ
+
+/-- **Λ-layer: vdSum_tanh ≤ (1+tanh)^|E|** under `0 ≤ β·J`. -/
+theorem vdPolymerFamilies_sum_Λ_le_one_plus_tanh_pow
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {β J : ℝ} (hβJ : 0 ≤ β * J) :
+    (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies (inducedGraph G Λ),
+        ∏ P ∈ Γ, Real.tanh (β * J) ^ P.card)
+      ≤ (1 + Real.tanh (β * J)) ^ (inducedGraph G Λ).edgeFinset.card :=
+  IsingModel.vdPolymerFamilies_sum_le_one_plus_tanh_pow
+    (inducedGraph G Λ) hβJ
+
+/-- **Λ-layer: 1 ≤ vdSum_tanh** under `0 ≤ β·J`. -/
+theorem one_le_vdPolymerFamilies_sum_Λ
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {β J : ℝ} (hβJ : 0 ≤ β * J) :
+    1 ≤ ∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies (inducedGraph G Λ),
+        ∏ P ∈ Γ, Real.tanh (β * J) ^ P.card :=
+  IsingModel.one_le_vdPolymerFamilies_sum (inducedGraph G Λ) hβJ
+
 end Ambient
 end IsingModel
