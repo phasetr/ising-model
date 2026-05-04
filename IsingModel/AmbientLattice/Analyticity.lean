@@ -1522,5 +1522,75 @@ theorem vdPolymerFamilies_sum_Λ_eq_one_add
               ∏ P ∈ Γ, t ^ P.card :=
   IsingModel.vdPolymerFamilies_sum_eq_one_add (inducedGraph G Λ) t
 
+/-! ### §18.5 Mayer expansion edge-cases + n=2 + abs_le Λ-layer -/
+
+/-- **Λ-layer: mayerExpansionTerm at `n = 2`**. -/
+theorem mayerExpansionTerm_Λ_two
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (t : ℝ) :
+    IsingModel.mayerExpansionTerm (inducedGraph G Λ) 2 t =
+      ∑ pq ∈ (IsingModel.allPolymers (inducedGraph G Λ)) ×ˢ
+              (IsingModel.allPolymers (inducedGraph G Λ)),
+        (if IsingModel.PolymersIncompatible pq.1 pq.2 then (-1/2 : ℝ)
+          else 0) *
+          (t ^ pq.1.card * t ^ pq.2.card) :=
+  IsingModel.mayerExpansionTerm_two (inducedGraph G Λ) t
+
+/-- **Λ-layer: mayerExpansionTerm at `n = 2`, filter form**. -/
+theorem mayerExpansionTerm_Λ_two_filter
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (t : ℝ) :
+    IsingModel.mayerExpansionTerm (inducedGraph G Λ) 2 t =
+      (-1/2 : ℝ) *
+        ∑ pq ∈ ((IsingModel.allPolymers (inducedGraph G Λ)) ×ˢ
+                (IsingModel.allPolymers (inducedGraph G Λ))).filter
+            (fun pq => IsingModel.PolymersIncompatible pq.1 pq.2),
+          (t ^ pq.1.card * t ^ pq.2.card) :=
+  IsingModel.mayerExpansionTerm_two_filter (inducedGraph G Λ) t
+
+/-- **Λ-layer: mayerPartialSum at `N = 2`**. -/
+theorem mayerPartialSum_Λ_two
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (t : ℝ) :
+    IsingModel.mayerPartialSum (inducedGraph G Λ) 2 t =
+      (∑ P ∈ IsingModel.allPolymers (inducedGraph G Λ), t ^ P.card) +
+        (-1/2 : ℝ) *
+          ∑ pq ∈ ((IsingModel.allPolymers (inducedGraph G Λ)) ×ˢ
+                  (IsingModel.allPolymers (inducedGraph G Λ))).filter
+              (fun pq => IsingModel.PolymersIncompatible pq.1 pq.2),
+            (t ^ pq.1.card * t ^ pq.2.card) :=
+  IsingModel.mayerPartialSum_two (inducedGraph G Λ) t
+
+/-- **Λ-layer: mayerPartialSum = 0 on no-polymer graphs**. -/
+theorem mayerPartialSum_Λ_eq_zero_of_no_polymers
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (h_no : IsingModel.allPolymers (inducedGraph G Λ) = ∅)
+    (t : ℝ) (N : ℕ) :
+    IsingModel.mayerPartialSum (inducedGraph G Λ) N t = 0 :=
+  IsingModel.mayerPartialSum_eq_zero_of_no_polymers
+    (inducedGraph G Λ) h_no t N
+
+/-- **Λ-layer: mayerPartialSum = 0 on edgeless graphs**. -/
+theorem mayerPartialSum_Λ_eq_zero_of_edgeFinset_empty
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (h_empty : (inducedGraph G Λ).edgeFinset = ∅)
+    (t : ℝ) (N : ℕ) :
+    IsingModel.mayerPartialSum (inducedGraph G Λ) N t = 0 :=
+  IsingModel.mayerPartialSum_eq_zero_of_edgeFinset_empty
+    (inducedGraph G Λ) h_empty t N
+
+/-- **Λ-layer: mayerExpansionTerm absolute bound**. -/
+theorem mayerExpansionTerm_Λ_abs_le
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (n : ℕ) (t : ℝ) :
+    |IsingModel.mayerExpansionTerm (inducedGraph G Λ) n t| ≤
+      ∑ ω ∈ Fintype.piFinset
+              (fun _ : Fin n => IsingModel.allPolymers (inducedGraph G Λ)),
+        |IsingModel.ursellCoefficient ω| *
+          |IsingModel.clusterSeqActivity t ω| :=
+  IsingModel.mayerExpansionTerm_abs_le (inducedGraph G Λ) n t
+
 end Ambient
 end IsingModel

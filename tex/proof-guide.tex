@@ -3500,6 +3500,24 @@ existed; this PR fills the bare-bound and `\geq 1` gaps. 12 new
 thin direct-instantiation wrappers (3 abstracts $\times$ 4
 layers).
 
+\paragraph{Mayer expansion edge-cases (zero) + $n = 2$ +
+\texttt{abs\_le}, all volume layers (\S18.5, PR~\#1597).}
+Lifts six abstract Mayer-expansion theorems to the four volume
+layers (Λ-direct, along-exhaustion, $\mathbb{Z}^d$ Λ-direct,
+$\mathbb{Z}^d$ along-exhaustion):
+\texttt{mayerExpansionTerm\_two}, \texttt{\_two\_filter},
+\texttt{mayerPartialSum\_two},
+\texttt{mayerPartialSum\_eq\_zero\_of\_no\_polymers},
+\texttt{mayerPartialSum\_eq\_zero\_of\_edgeFinset\_empty},
+and \texttt{mayerExpansionTerm\_abs\_le}. 24 new thin
+direct-instantiation wrappers (6 abstracts $\times$ 4 layers).
+The two `zero' wrappers establish that the partial sums vanish
+on no-polymer / edgeless induced subgraphs, the `two' wrappers
+provide the explicit $n=2$ /$\,N=2$ formulas, and
+\texttt{abs\_le} gives the triangle-inequality bound
+$|\mathrm{mayerExpansionTerm}| \le \sum |\phi^T(\omega)| \cdot
+|z(t,\omega)|$.
+
 \paragraph{\texttt{vdPolymerFamilies\_sum} generic-\textit{t}
 bounds + decomposition, all volume layers (\S18.5, PR~\#1596).}
 Adds 4-layer wraps for the four abstract generic-\textit{t}
