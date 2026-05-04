@@ -14202,6 +14202,52 @@ theorem magnetizationAlongExhaustion_latticeGraph_differentiable_J
   Ambient.magnetizationAlongExhaustion_differentiable_J
     (IsingModel.latticeGraph d) Λ h β i n
 
+/-! ### susceptibility regularity ℤ^d wraps -/
+
+/-- **ℤ^d Λ: susceptibility Continuous in `h`**. -/
+theorem susceptibilityΛ_latticeGraph_continuous_field
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
+    (J β : ℝ) (i : ↑Λ) :
+    Continuous (fun h' =>
+      Ambient.susceptibilityΛ (IsingModel.latticeGraph d) Λ
+        (⟨J, h', β⟩ : IsingParams ℝ) i) :=
+  Ambient.susceptibilityΛ_continuous_field
+    (IsingModel.latticeGraph d) Λ J β i
+
+/-- **ℤ^d Λ: susceptibility Differentiable in `h`**. -/
+theorem susceptibilityΛ_latticeGraph_differentiable_field
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
+    (J β : ℝ) (i : ↑Λ) :
+    Differentiable ℝ (fun h' =>
+      Ambient.susceptibilityΛ (IsingModel.latticeGraph d) Λ
+        (⟨J, h', β⟩ : IsingParams ℝ) i) :=
+  Ambient.susceptibilityΛ_differentiable_field
+    (IsingModel.latticeGraph d) Λ J β i
+
+/-- **ℤ^d Λ: susceptibility Continuous in `J`**. -/
+theorem susceptibilityΛ_latticeGraph_continuous_J
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
+    (h β : ℝ) (i : ↑Λ) :
+    Continuous (fun J' =>
+      Ambient.susceptibilityΛ (IsingModel.latticeGraph d) Λ
+        (⟨J', h, β⟩ : IsingParams ℝ) i) :=
+  Ambient.susceptibilityΛ_continuous_J
+    (IsingModel.latticeGraph d) Λ h β i
+
+/-- **ℤ^d Λ: susceptibility Differentiable in `J`**. -/
+theorem susceptibilityΛ_latticeGraph_differentiable_J
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
+    (h β : ℝ) (i : ↑Λ) :
+    Differentiable ℝ (fun J' =>
+      Ambient.susceptibilityΛ (IsingModel.latticeGraph d) Λ
+        (⟨J', h, β⟩ : IsingParams ℝ) i) :=
+  Ambient.susceptibilityΛ_differentiable_J
+    (IsingModel.latticeGraph d) Λ h β i
+
 end Ambient
 
 end IsingModel
