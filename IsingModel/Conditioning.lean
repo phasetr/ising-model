@@ -3231,7 +3231,8 @@ theorem partitionFunction_high_temp_expansion_h_zero_triple_ratio_sandwich_bundl
     G J β (mul_nonneg hβ.le hJ) hne
 
 /-- **Ferromagnetic triple ratio sandwich bundle at β=0**. -/
-theorem partitionFunction_high_temp_expansion_h_zero_triple_ratio_sandwich_bundle_beta_zero_ferromagnetic
+theorem
+partitionFunction_high_temp_expansion_h_zero_triple_ratio_sandwich_bundle_beta_zero_ferromagnetic
     (G : SimpleGraph ι) [Fintype G.edgeSet]
     (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (hne : 0 < Fintype.card ι) :
     (Real.cosh (β * J) ^ G.edgeFinset.card
@@ -3306,7 +3307,8 @@ theorem partitionFunction_high_temp_expansion_h_zero_triple_ratio_bound_bundle_f
     G J β (mul_nonneg hβ.le hJ) hne
 
 /-- **Ferromagnetic triple ratio bound bundle at β=0**. -/
-theorem partitionFunction_high_temp_expansion_h_zero_triple_ratio_bound_bundle_beta_zero_ferromagnetic
+theorem
+partitionFunction_high_temp_expansion_h_zero_triple_ratio_bound_bundle_beta_zero_ferromagnetic
     (G : SimpleGraph ι) [Fintype G.edgeSet]
     (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (hne : 0 < Fintype.card ι) :
     partitionFunction G ⟨J, 0, β⟩ /
@@ -3399,7 +3401,7 @@ bound is always at most the upper bound:
 Trivial sanity check: `log cosh ≤ log(2·cosh) = log 2 + log cosh`,
 i.e., `log 2 ≥ 0`. -/
 theorem freeEnergy_high_temp_h_zero_lower_le_upper
-    (G : SimpleGraph ι) [Fintype G.edgeSet] (J β : ℝ) (hβJ : 0 ≤ β * J) :
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J β : ℝ) (_hβJ : 0 ≤ β * J) :
     Real.log 2 +
         (G.edgeFinset.card : ℝ) / Fintype.card ι *
           Real.log (Real.cosh (β * J))

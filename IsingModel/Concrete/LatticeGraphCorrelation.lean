@@ -2520,7 +2520,8 @@ theorem log_partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_
         + ((inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card : ℝ) *
             Real.log (Real.cosh (β * J))
         + Real.log
-            (∑ X ∈ (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.powerset.filter
+            (∑ X ∈ (inducedGraph (IsingModel.latticeGraph d)
+                  (Λ.volume n)).edgeFinset.powerset.filter
                 (fun X : Finset (Sym2 ↑(Λ.volume n)) =>
                   ∀ v : ↑(Λ.volume n), Even ((X.filter (v ∈ ·)).card)),
               Real.tanh (β * J) ^ X.card) :=
@@ -2628,7 +2629,8 @@ theorem freeEnergyAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_closed
         + ((inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card : ℝ) /
             (Λ.volume n).card * Real.log (Real.cosh (β * J))
         + Real.log
-            (∑ X ∈ (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.powerset.filter
+            (∑ X ∈ (inducedGraph (IsingModel.latticeGraph d)
+                  (Λ.volume n)).edgeFinset.powerset.filter
                 (fun X : Finset (Sym2 ↑(Λ.volume n)) =>
                   ∀ v : ↑(Λ.volume n), Even ((X.filter (v ∈ ·)).card)),
               Real.tanh (β * J) ^ X.card) / (Λ.volume n).card :=
@@ -3324,7 +3326,8 @@ theorem log_partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_complete
     (IsingModel.latticeGraph d) Λ J β hβJ
 
 /-- **ℤ^d Λ ferromagnetic Z/logZ/f complete-summary exp bundles**. -/
-theorem partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_complete_summary_exp_ferromagnetic
+theorem
+partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_complete_summary_exp_ferromagnetic
     (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
     (hJ : 0 ≤ J) (hβ : 0 < β) :
     (2 : ℝ) ^ Λ.card *
@@ -3345,7 +3348,8 @@ theorem partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_complete_sum
     (IsingModel.latticeGraph d) Λ J β hJ hβ
 
 /-- **ℤ^d Λ ferromagnetic log Z complete-summary exp bundle**. -/
-theorem log_partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_complete_summary_exp_ferromagnetic
+theorem
+log_partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_complete_summary_exp_ferromagnetic
     (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
     (hJ : 0 ≤ J) (hβ : 0 < β) :
     (Λ.card : ℝ) * Real.log 2
@@ -3489,7 +3493,8 @@ theorem log_partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_deviatio
     (IsingModel.latticeGraph d) Λ J β hβJ
 
 /-- **ℤ^d Λ ferromagnetic log Z deviation sandwich**. -/
-theorem log_partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_deviation_sandwich_ferromagnetic
+theorem
+log_partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_deviation_sandwich_ferromagnetic
     (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
     (hJ : 0 ≤ J) (hβ : 0 < β) :
     0 ≤ Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
@@ -3592,7 +3597,8 @@ theorem partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_strict_devia
     (IsingModel.latticeGraph d) Λ J β hβJ hne hEpos
 
 /-- **ℤ^d Λ ferromagnetic Z + log Z + f strict deviation bundle**. -/
-theorem partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_strict_deviation_bundle_ferromagnetic
+theorem
+partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_strict_deviation_bundle_ferromagnetic
     (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
     (hJ : 0 < J) (hβ : 0 < β) (hne : 0 < Λ.card)
     (hEpos : 0 <
@@ -3697,7 +3703,8 @@ theorem partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_ratio_sandwi
     (IsingModel.latticeGraph d) Λ J β hβJ
 
 /-- **ℤ^d Λ ferromagnetic Z ratio sandwich bundle**. -/
-theorem partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_ratio_sandwich_bundle_ferromagnetic
+theorem
+partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_ratio_sandwich_bundle_ferromagnetic
     (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
     (hJ : 0 ≤ J) (hβ : 0 < β) :
     (Real.cosh (β * J) ^
@@ -3765,7 +3772,8 @@ theorem partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_ratio_bound_
     (IsingModel.latticeGraph d) Λ J β hJ hβ
 
 /-- **ℤ^d Λ ferromagnetic Z ratio upper bound at β=0**. -/
-theorem partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_ratio_bound_beta_zero_ferromagnetic
+theorem
+partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_ratio_bound_beta_zero_ferromagnetic
     (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
     (hJ : 0 ≤ J) (hβ : 0 < β) :
     partitionFunctionΛ (IsingModel.latticeGraph d) Λ
@@ -3903,7 +3911,8 @@ theorem log_partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_ratio_sa
     (IsingModel.latticeGraph d) Λ J β hβJ
 
 /-- **ℤ^d Λ ferromagnetic log Z ratio sandwich bundle**. -/
-theorem log_partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_ratio_sandwich_bundle_ferromagnetic
+theorem
+log_partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_ratio_sandwich_bundle_ferromagnetic
     (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
     (hJ : 0 ≤ J) (hβ : 0 < β) :
     (((inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card : ℝ) *
@@ -3952,7 +3961,8 @@ theorem log_partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_ratio_bo
     (IsingModel.latticeGraph d) Λ J β hβJ
 
 /-- **ℤ^d Λ ferromagnetic log Z ratio bound bundle**. -/
-theorem log_partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_ratio_bound_bundle_ferromagnetic
+theorem
+log_partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_ratio_bound_bundle_ferromagnetic
     (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
     (hJ : 0 ≤ J) (hβ : 0 < β) :
     Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
@@ -4105,7 +4115,8 @@ theorem partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_triple_ratio
     (IsingModel.latticeGraph d) Λ J β hβJ hne
 
 /-- **ℤ^d Λ triple ratio sandwich bundle at β=0**. -/
-theorem partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_triple_ratio_sandwich_bundle_beta_zero
+theorem
+partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_triple_ratio_sandwich_bundle_beta_zero
     (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
     (hβJ : 0 ≤ β * J) (hne : 0 < Λ.card) :
     (Real.cosh (β * J) ^
@@ -4149,7 +4160,7 @@ theorem partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_triple_ratio
     (IsingModel.latticeGraph d) Λ J β hβJ hne
 
 /-- **ℤ^d Λ ferromagnetic triple ratio sandwich bundle at β=0**. -/
-theorem partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_triple_ratio_sandwich_bundle_beta_zero_ferromagnetic
+theorem partitionFunctionΛ_latticeGraph_h_zero_triple_ratio_sandwich_bundle_beta_zero_ferromagnetic
     (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
     (hJ : 0 ≤ J) (hβ : 0 < β) (hne : 0 < Λ.card) :
     (Real.cosh (β * J) ^
@@ -4193,7 +4204,7 @@ theorem partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_triple_ratio
     d Λ J β (mul_nonneg hβ.le hJ) hne
 
 /-- **ℤ^d Λ ferromagnetic triple ratio sandwich bundle at J=0**. -/
-theorem partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_triple_ratio_sandwich_bundle_ferromagnetic
+theorem partitionFunctionΛ_latticeGraph_h_zero_triple_ratio_sandwich_bundle_ferromagnetic
     (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
     (hJ : 0 ≤ J) (hβ : 0 < β) (hne : 0 < Λ.card) :
     (Real.cosh (β * J) ^
@@ -4261,7 +4272,8 @@ theorem partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_triple_ratio
     (IsingModel.latticeGraph d) Λ J β hβJ hne
 
 /-- **ℤ^d Λ triple ratio bound bundle at β=0**. -/
-theorem partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_triple_ratio_bound_bundle_beta_zero
+theorem
+partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_triple_ratio_bound_bundle_beta_zero
     (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
     (hβJ : 0 ≤ β * J) (hne : 0 < Λ.card) :
     partitionFunctionΛ (IsingModel.latticeGraph d) Λ (⟨J, 0, β⟩ : IsingParams ℝ) /
@@ -4285,7 +4297,8 @@ theorem partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_triple_ratio
     (IsingModel.latticeGraph d) Λ J β hβJ hne
 
 /-- **ℤ^d Λ ferromagnetic triple ratio bound bundle at J=0**. -/
-theorem partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_triple_ratio_bound_bundle_ferromagnetic
+theorem
+partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_triple_ratio_bound_bundle_ferromagnetic
     (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
     (hJ : 0 ≤ J) (hβ : 0 < β) (hne : 0 < Λ.card) :
     partitionFunctionΛ (IsingModel.latticeGraph d) Λ (⟨J, 0, β⟩ : IsingParams ℝ) /
@@ -4530,7 +4543,8 @@ theorem
   correlationAlongExhaustion_high_temp_h_zero_at_pair_singleton_trivial_slices_bundle
     (IsingModel.latticeGraph d) Λ J β i j n
 
-/-- **ℤ^d along-ex pair correlation single-edge tanh lower bound at stage `n` (GJ §18.3 / FV (3.46))**:
+/-- **ℤ^d along-ex pair correlation single-edge tanh lower bound at stage `n`
+(GJ §18.3 / FV (3.46))**:
 applies the Λ-level single-edge lower bound at the stage-`n` subtype.
 ℤ^d wrapper of
 `correlationAlongExhaustion_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges`. -/
@@ -4568,7 +4582,7 @@ theorem correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_pair_pos_of_
 under `0 ≤ J, 0 < β` and an edge in the stage-`n` induced ℤ^d subgraph,
 `⟨σ_iσ_j⟩^{Λ_n} ≥ tanh(β·J) / 2^|E_{Λ_n}|`. ℤ^d wrapper. -/
 theorem
-    correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges_ferromagnetic
+    correlationAlongExhaustion_latticeGraph_h_zero_at_pair_ge_tanh_div_two_pow_edges_ferromagnetic
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
     (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ)
     (i j : ↑(Λ.volume n)) (hij : i ≠ j)
@@ -4601,7 +4615,8 @@ theorem
 at stage `n`**: under `0 ≤ β·J` and `(latticeGraph d).Adj ↑i ↑j` for
 `i, j : ↑(Λ.volume n)`, the lifted pair correlation satisfies the
 single-edge tanh lower bound. -/
-theorem correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges_of_latticeAdj
+theorem
+correlationAlongExhaustion_latticeGraph_h_zero_at_pair_ge_tanh_div_two_pow_edges_of_latticeAdj
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
     (hβJ : 0 ≤ β * J) (n : ℕ) (i j : ↑(Λ.volume n))
     (hij : (IsingModel.latticeGraph d).Adj ↑i ↑j) :
@@ -4852,7 +4867,7 @@ theorem log_partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_
     (IsingModel.latticeGraph d) Λ J β hβJ n
 
 /-- **ℤ^d along-ex ferromagnetic Z/logZ/f sharper upper bounds at stage `n`**. -/
-theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_upper_bound_exp_ferromagnetic
+theorem partitionFunctionAlongExhaustion_latticeGraph_h_zero_upper_bound_exp_ferromagnetic
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
     (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ) :
     partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
@@ -4864,7 +4879,7 @@ theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero
     (IsingModel.latticeGraph d) Λ J β hJ hβ n
 
 /-- **ℤ^d along-ex ferromagnetic log Z sharper upper bound at stage `n`**. -/
-theorem log_partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_upper_bound_exp_ferromagnetic
+theorem log_partitionFunctionAlongExhaustion_latticeGraph_h_zero_upper_bound_exp_ferromagnetic
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
     (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ) :
     Real.log (partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
@@ -4924,7 +4939,8 @@ theorem freeEnergyAlongExhaustion_latticeGraph_high_temp_h_zero_sandwich_exp
     (IsingModel.latticeGraph d) Λ J β hβJ n hne
 
 /-- **ℤ^d along-ex ferromagnetic Z sharper sandwich at stage `n`**. -/
-theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_sandwich_exp_ferromagnetic
+theorem
+partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_sandwich_exp_ferromagnetic
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
     (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ) :
     (2 : ℝ) ^ (Λ.volume n).card *
@@ -4981,7 +4997,8 @@ theorem freeEnergyAlongExhaustion_latticeGraph_high_temp_h_zero_complete_summary
     (IsingModel.latticeGraph d) Λ J β hβJ n hne
 
 /-- **ℤ^d along-ex sharper Z complete-summary exp bundle at stage `n`**. -/
-theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_complete_summary_exp
+theorem
+partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_complete_summary_exp
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
     (hβJ : 0 ≤ β * J) (n : ℕ) :
     (2 : ℝ) ^ (Λ.volume n).card *
@@ -5002,7 +5019,8 @@ theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero
     (IsingModel.latticeGraph d) Λ J β hβJ n
 
 /-- **ℤ^d along-ex sharper log Z complete-summary exp bundle at stage `n`**. -/
-theorem log_partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_complete_summary_exp
+theorem
+log_partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_complete_summary_exp
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
     (hβJ : 0 ≤ β * J) (n : ℕ) :
     ((Λ.volume n).card : ℝ) * Real.log 2
@@ -5023,7 +5041,7 @@ theorem log_partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_
     (IsingModel.latticeGraph d) Λ J β hβJ n
 
 /-- **ℤ^d along-ex ferromagnetic Z/logZ/f complete-summary exp bundles at stage `n`**. -/
-theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_complete_summary_exp_ferromagnetic
+theorem partitionFunctionAlongExhaustion_latticeGraph_h_zero_complete_summary_exp_ferromagnetic
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
     (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ) :
     (2 : ℝ) ^ (Λ.volume n).card *
@@ -5044,7 +5062,7 @@ theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero
     (IsingModel.latticeGraph d) Λ J β hJ hβ n
 
 /-- **ℤ^d along-ex ferromagnetic log Z complete-summary exp bundle at stage `n`**. -/
-theorem log_partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_complete_summary_exp_ferromagnetic
+theorem log_partitionFunctionAlongExhaustion_latticeGraph_h_zero_complete_summary_exp_ferromagnetic
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
     (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ) :
     ((Λ.volume n).card : ℝ) * Real.log 2
@@ -5182,7 +5200,8 @@ theorem freeEnergyAlongExhaustion_latticeGraph_high_temp_h_zero_deviation_sandwi
     (IsingModel.latticeGraph d) Λ J β hJ hβ n hne
 
 /-- **ℤ^d along-ex log Z deviation sandwich at stage `n`**. -/
-theorem log_partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_deviation_sandwich
+theorem
+log_partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_deviation_sandwich
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
     (hβJ : 0 ≤ β * J) (n : ℕ) :
     0 ≤ Real.log (partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
@@ -5195,7 +5214,7 @@ theorem log_partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_
     (IsingModel.latticeGraph d) Λ J β hβJ n
 
 /-- **ℤ^d along-ex ferromagnetic log Z deviation sandwich at stage `n`**. -/
-theorem log_partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_deviation_sandwich_ferromagnetic
+theorem log_partitionFunctionAlongExhaustion_latticeGraph_h_zero_deviation_sandwich_ferromagnetic
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
     (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ) :
     0 ≤ Real.log (partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
@@ -5223,7 +5242,7 @@ theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero
     (IsingModel.latticeGraph d) Λ J β hβJ n
 
 /-- **ℤ^d along-ex ferromagnetic Z relative-deviation sandwich at stage `n`**. -/
-theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_relative_sandwich_ferromagnetic
+theorem partitionFunctionAlongExhaustion_latticeGraph_h_zero_relative_sandwich_ferromagnetic
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
     (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ) :
     Real.cosh (β * J) ^
@@ -5283,7 +5302,8 @@ theorem log_partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_
     (IsingModel.latticeGraph d) Λ J β hβJ n hEpos
 
 /-- **ℤ^d along-ex Z + log Z + f strict deviation bundle at stage `n`**. -/
-theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_strict_deviation_bundle
+theorem
+partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_strict_deviation_bundle
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
     (hβJ : 0 < β * J) (n : ℕ) (hne : 0 < (Λ.volume n).card)
     (hEpos : 0 <
@@ -5300,7 +5320,7 @@ theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero
     (IsingModel.latticeGraph d) Λ J β hβJ n hne hEpos
 
 /-- **ℤ^d along-ex ferromagnetic Z + log Z + f strict deviation bundle at stage `n`**. -/
-theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_strict_deviation_bundle_ferromagnetic
+theorem partitionFunctionAlongExhaustion_latticeGraph_h_zero_strict_deviation_bundle_ferromagnetic
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
     (hJ : 0 < J) (hβ : 0 < β) (n : ℕ) (hne : 0 < (Λ.volume n).card)
     (hEpos : 0 <
@@ -5317,7 +5337,8 @@ theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero
     d Λ J β (mul_pos hβ hJ) n hne hEpos
 
 /-- **ℤ^d along-ex ferromagnetic Z strict deviation at stage `n`**. -/
-theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_pow_two_lt_ferromagnetic
+theorem
+partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_pow_two_lt_ferromagnetic
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
     (hJ : 0 < J) (hβ : 0 < β) (n : ℕ)
     (hEpos : 0 <
@@ -5329,7 +5350,7 @@ theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero
     (IsingModel.latticeGraph d) Λ J β hJ hβ n hEpos
 
 /-- **ℤ^d along-ex ferromagnetic log Z strict deviation at stage `n`**. -/
-theorem log_partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_deviation_pos_ferromagnetic
+theorem log_partitionFunctionAlongExhaustion_latticeGraph_h_zero_deviation_pos_ferromagnetic
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
     (hJ : 0 < J) (hβ : 0 < β) (n : ℕ)
     (hEpos : 0 <
@@ -5340,7 +5361,8 @@ theorem log_partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_
     (IsingModel.latticeGraph d) Λ J β hJ hβ n hEpos
 
 /-- **ℤ^d along-ex Z ratio sandwich bundle at stage `n`**. -/
-theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_ratio_sandwich_bundle
+theorem
+partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_ratio_sandwich_bundle
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
     (hβJ : 0 ≤ β * J) (n : ℕ) :
     (Real.cosh (β * J) ^
@@ -5371,7 +5393,7 @@ theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero
     (IsingModel.latticeGraph d) Λ J β hβJ n
 
 /-- **ℤ^d along-ex ferromagnetic Z ratio sandwich bundle at stage `n`**. -/
-theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_ratio_sandwich_bundle_ferromagnetic
+theorem partitionFunctionAlongExhaustion_latticeGraph_h_zero_ratio_sandwich_bundle_ferromagnetic
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
     (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ) :
     (Real.cosh (β * J) ^
@@ -5415,7 +5437,8 @@ theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero
     (IsingModel.latticeGraph d) Λ J β hβJ n
 
 /-- **ℤ^d along-ex Z ratio upper bound at β=0, stage `n`**. -/
-theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_ratio_bound_beta_zero
+theorem
+partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_ratio_bound_beta_zero
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
     (hβJ : 0 ≤ β * J) (n : ℕ) :
     partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
@@ -5428,7 +5451,8 @@ theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero
     (IsingModel.latticeGraph d) Λ J β hβJ n
 
 /-- **ℤ^d along-ex ferromagnetic Z ratio upper bound at J=0, stage `n`**. -/
-theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_ratio_bound_ferromagnetic
+theorem
+partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_ratio_bound_ferromagnetic
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
     (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ) :
     partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
@@ -5441,7 +5465,7 @@ theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero
     (IsingModel.latticeGraph d) Λ J β hJ hβ n
 
 /-- **ℤ^d along-ex ferromagnetic Z ratio upper bound at β=0, stage `n`**. -/
-theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_ratio_bound_beta_zero_ferromagnetic
+theorem partitionFunctionAlongExhaustion_latticeGraph_h_zero_ratio_bound_beta_zero_ferromagnetic
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
     (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ) :
     partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
@@ -5473,7 +5497,7 @@ theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero
     (IsingModel.latticeGraph d) Λ J β hβJ n
 
 /-- **ℤ^d along-ex ferromagnetic Z ratio upper bound bundle at stage `n`**. -/
-theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_ratio_bound_bundle_ferromagnetic
+theorem partitionFunctionAlongExhaustion_latticeGraph_h_zero_ratio_bound_bundle_ferromagnetic
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
     (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ) :
     partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
@@ -5558,7 +5582,8 @@ theorem freeEnergyAlongExhaustion_latticeGraph_high_temp_h_zero_ratio_sandwich_b
     d Λ J β (mul_nonneg hβ.le hJ) n hne
 
 /-- **ℤ^d along-ex log Z ratio sandwich bundle at stage `n`**. -/
-theorem log_partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_ratio_sandwich_bundle
+theorem
+log_partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_ratio_sandwich_bundle
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
     (hβJ : 0 ≤ β * J) (n : ℕ) :
     (((inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card : ℝ) *
@@ -5589,7 +5614,7 @@ theorem log_partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_
     (IsingModel.latticeGraph d) Λ J β hβJ n
 
 /-- **ℤ^d along-ex ferromagnetic log Z ratio sandwich bundle at stage `n`**. -/
-theorem log_partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_ratio_sandwich_bundle_ferromagnetic
+theorem log_partitionFunctionAlongExhaustion_latticeGraph_h_zero_ratio_sandwich_bundle_ferromagnetic
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
     (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ) :
     (((inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card : ℝ) *
@@ -5620,7 +5645,8 @@ theorem log_partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_
     d Λ J β (mul_nonneg hβ.le hJ) n
 
 /-- **ℤ^d along-ex log Z ratio bound bundle at stage `n`**. -/
-theorem log_partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_ratio_bound_bundle
+theorem
+log_partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_ratio_bound_bundle
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
     (hβJ : 0 ≤ β * J) (n : ℕ) :
     Real.log (partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
@@ -5639,7 +5665,7 @@ theorem log_partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_
     (IsingModel.latticeGraph d) Λ J β hβJ n
 
 /-- **ℤ^d along-ex ferromagnetic log Z ratio bound bundle at stage `n`**. -/
-theorem log_partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_ratio_bound_bundle_ferromagnetic
+theorem log_partitionFunctionAlongExhaustion_latticeGraph_h_zero_ratio_bound_bundle_ferromagnetic
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
     (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ) :
     Real.log (partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
@@ -5779,7 +5805,7 @@ theorem freeEnergyAlongExhaustion_latticeGraph_high_temp_h_zero_ratio_bound_beta
     (IsingModel.latticeGraph d) Λ J β hJ hβ n hne
 
 /-- **ℤ^d along-ex triple ratio sandwich bundle at J=0, stage `n`**. -/
-theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_triple_ratio_sandwich_bundle
+theorem partitionFunctionAlongExhaustion_latticeGraph_h_zero_triple_ratio_sandwich_bundle
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
     (hβJ : 0 ≤ β * J) (n : ℕ) (hne : 0 < (Λ.volume n).card) :
     (Real.cosh (β * J) ^
@@ -5823,7 +5849,7 @@ theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero
     (IsingModel.latticeGraph d) Λ J β hβJ n hne
 
 /-- **ℤ^d along-ex triple ratio sandwich bundle at β=0, stage `n`**. -/
-theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_triple_ratio_sandwich_bundle_beta_zero
+theorem partitionFunctionAlongExhaustion_latticeGraph_h_zero_triple_ratio_sandwich_bundle_beta_zero
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
     (hβJ : 0 ≤ β * J) (n : ℕ) (hne : 0 < (Λ.volume n).card) :
     (Real.cosh (β * J) ^
@@ -5867,7 +5893,8 @@ theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero
     (IsingModel.latticeGraph d) Λ J β hβJ n hne
 
 /-- **ℤ^d along-ex ferromagnetic triple ratio sandwich bundle at β=0, stage `n`**. -/
-theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_triple_ratio_sandwich_bundle_beta_zero_ferromagnetic
+theorem
+partitionFunctionAlongExhaustion_latticeGraph_h_zero_triple_ratio_sandwich_bundle_beta_zero_ferro
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
     (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ) (hne : 0 < (Λ.volume n).card) :
     (Real.cosh (β * J) ^
@@ -5907,11 +5934,12 @@ theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero
           ≤ β * J *
               (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card /
               (Λ.volume n).card) :=
-  partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_triple_ratio_sandwich_bundle_beta_zero
+  partitionFunctionAlongExhaustion_latticeGraph_h_zero_triple_ratio_sandwich_bundle_beta_zero
     d Λ J β (mul_nonneg hβ.le hJ) n hne
 
 /-- **ℤ^d along-ex ferromagnetic triple ratio sandwich bundle at J=0, stage `n`**. -/
-theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_triple_ratio_sandwich_bundle_ferromagnetic
+theorem
+partitionFunctionAlongExhaustion_latticeGraph_h_zero_triple_ratio_sandwich_bundle_ferromagnetic
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
     (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ) (hne : 0 < (Λ.volume n).card) :
     (Real.cosh (β * J) ^
@@ -5951,11 +5979,12 @@ theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero
           ≤ β * J *
               (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card /
               (Λ.volume n).card) :=
-  partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_triple_ratio_sandwich_bundle
+  partitionFunctionAlongExhaustion_latticeGraph_h_zero_triple_ratio_sandwich_bundle
     d Λ J β (mul_nonneg hβ.le hJ) n hne
 
 /-- **ℤ^d along-ex triple (Z + log Z + f) ratio bound bundle at J=0, stage `n`**. -/
-theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_triple_ratio_bound_bundle
+theorem
+partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_triple_ratio_bound_bundle
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
     (hβJ : 0 ≤ β * J) (n : ℕ) (hne : 0 < (Λ.volume n).card) :
     partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
@@ -5981,7 +6010,7 @@ theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero
     (IsingModel.latticeGraph d) Λ J β hβJ n hne
 
 /-- **ℤ^d along-ex triple ratio bound bundle at β=0, stage `n`**. -/
-theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_triple_ratio_bound_bundle_beta_zero
+theorem partitionFunctionAlongExhaustion_latticeGraph_h_zero_triple_ratio_bound_bundle_beta_zero
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
     (hβJ : 0 ≤ β * J) (n : ℕ) (hne : 0 < (Λ.volume n).card) :
     partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
@@ -6007,7 +6036,7 @@ theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero
     (IsingModel.latticeGraph d) Λ J β hβJ n hne
 
 /-- **ℤ^d along-ex ferromagnetic triple ratio bound bundle at J=0, stage `n`**. -/
-theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_triple_ratio_bound_bundle_ferromagnetic
+theorem partitionFunctionAlongExhaustion_latticeGraph_h_zero_triple_ratio_bound_bundle_ferromagnetic
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
     (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ) (hne : 0 < (Λ.volume n).card) :
     partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ

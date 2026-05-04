@@ -4397,7 +4397,7 @@ gives a graph on `Fin 0` which is disconnected (`Connected` requires
 `Nonempty`). The filtered sum is empty. -/
 theorem mayerExpansionTerm_filter_connected_zero
     {ι : Type*} [Fintype ι] [DecidableEq ι]
-    (G : SimpleGraph ι) [Fintype G.edgeSet] (t : ℝ) :
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (_t : ℝ) :
     (Fintype.piFinset (fun _ : Fin 0 => allPolymers G)).filter
         (fun ω => (polymerSeqIncompatibilityGraph ω).Connected) = ∅ := by
   classical
@@ -4489,14 +4489,14 @@ theorem polymerFreeEnergy_pos_iff_eps_pos
   constructor
   · intro h_pf_pos
     by_contra h_eps_not_pos
-    push_neg at h_eps_not_pos
+    push Not at h_eps_not_pos
     have h_eps_zero : (∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅,
         ∏ P ∈ Γ, t ^ P.card) = 0 := le_antisymm h_eps_not_pos h_eps_nn
     rw [← h_eq] at h_eps_zero
     linarith
   · intro h_eps_pos
     by_contra h_pf_not_pos
-    push_neg at h_pf_not_pos
+    push Not at h_pf_not_pos
     have h_pf_zero : polymerFreeEnergy G t = 0 := le_antisymm h_pf_not_pos h_pf_nn
     rw [h_eq] at h_pf_zero
     linarith
@@ -4542,7 +4542,7 @@ theorem polymerFreeEnergy_lt_eps_iff_eps_pos
   refine ⟨?_, fun h => polymerFreeEnergy_lt_eps_of_eps_pos G h⟩
   intro h_lt
   by_contra h_eps_not_pos
-  push_neg at h_eps_not_pos
+  push Not at h_eps_not_pos
   have h_eps_zero :
       (∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅,
         ∏ P ∈ Γ, t ^ P.card) = 0 := le_antisymm h_eps_not_pos h_eps_nn
@@ -5237,7 +5237,7 @@ alternating connected-spanning sum equals 1, matching the n=3
 /-- **Path graph on `Fin 3` `DecidableRel` instance**: needed for
 `Fintype` of the edge set + `decide`-based proofs. -/
 private instance : DecidableRel (SimpleGraph.pathGraph 3).Adj :=
-  fun u v => decidable_of_iff _ SimpleGraph.pathGraph_adj.symm
+  fun _ _ => decidable_of_iff _ SimpleGraph.pathGraph_adj.symm
 
 /-- **Path graph on `Fin 3` edge finset** = `{s(0,1), s(1,2)}`. -/
 private theorem pathGraph_three_edgeFinset :
@@ -5290,7 +5290,7 @@ theorem alternatingConnectedSubgraphSum_pathGraph_three :
 
 /-- **Path graph on `Fin 4` `DecidableRel` instance**. -/
 private instance : DecidableRel (SimpleGraph.pathGraph 4).Adj :=
-  fun u v => decidable_of_iff _ SimpleGraph.pathGraph_adj.symm
+  fun _ _ => decidable_of_iff _ SimpleGraph.pathGraph_adj.symm
 
 /-- **`pathGraph 4` alternating connected-spanning sum = -1**: the
 graph has 3 edges `{s(0,1), s(1,2), s(2,3)}`; the only connected
@@ -5323,7 +5323,7 @@ theorem alternatingConnectedSubgraphSum_pathGraph_four :
 
 /-- **Path graph on `Fin 5` `DecidableRel` instance**. -/
 private instance : DecidableRel (SimpleGraph.pathGraph 5).Adj :=
-  fun u v => decidable_of_iff _ SimpleGraph.pathGraph_adj.symm
+  fun _ _ => decidable_of_iff _ SimpleGraph.pathGraph_adj.symm
 
 /-- **`pathGraph 5` alternating connected-spanning sum = 1**: 4 edges,
 only the full path is connected spanning, sum = `(-1)^4 = 1`. Ursell
@@ -5354,11 +5354,11 @@ theorem alternatingConnectedSubgraphSum_pathGraph_five :
 
 /-- **Path graph on `Fin 6` `DecidableRel` instance**. -/
 private instance : DecidableRel (SimpleGraph.pathGraph 6).Adj :=
-  fun u v => decidable_of_iff _ SimpleGraph.pathGraph_adj.symm
+  fun _ _ => decidable_of_iff _ SimpleGraph.pathGraph_adj.symm
 
 /-- **Path graph on `Fin 7` `DecidableRel` instance**. -/
 private instance : DecidableRel (SimpleGraph.pathGraph 7).Adj :=
-  fun u v => decidable_of_iff _ SimpleGraph.pathGraph_adj.symm
+  fun _ _ => decidable_of_iff _ SimpleGraph.pathGraph_adj.symm
 
 set_option maxRecDepth 4000 in
 /-- **`pathGraph 7` alternating connected-spanning sum = 1**: 6 edges,
@@ -5418,10 +5418,13 @@ theorem alternatingConnectedSubgraphSum_pathGraph_six :
 
 /-- **Path graph on `Fin 8` `DecidableRel` instance**. -/
 private instance : DecidableRel (SimpleGraph.pathGraph 8).Adj :=
-  fun u v => decidable_of_iff _ SimpleGraph.pathGraph_adj.symm
+  fun _ _ => decidable_of_iff _ SimpleGraph.pathGraph_adj.symm
 
 set_option maxRecDepth 8000 in
 set_option maxHeartbeats 1000000 in
+-- `decide` on `pathGraph 8` (7 edges, 2^7 = 128 subsets) needs the
+-- raised recursion / heartbeat limits; the default budget runs out
+-- mid-decision while enumerating connected spanning edge subsets.
 /-- **`pathGraph 8` alternating connected-spanning sum = -1**: 7 edges,
 only the full path is connected spanning, sum = `(-1)^7 = -1`. Ursell
 coefficient for n=8 path cluster: `ϕ^T = -1/8! = -1/40320`. -/
@@ -5457,7 +5460,7 @@ spanning subgraphs (the full cycle plus its spanning trees of size n-1). -/
 
 /-- **Cycle graph on `Fin 3` `DecidableRel` instance**. -/
 private instance : DecidableRel (SimpleGraph.cycleGraph 3).Adj :=
-  fun u v => decidable_of_iff _ SimpleGraph.cycleGraph_adj'.symm
+  fun _ _ => decidable_of_iff _ SimpleGraph.cycleGraph_adj'.symm
 
 /-- **`cycleGraph 3` alternating connected-spanning sum = 2**:
 the cycle on Fin 3 has 3 edges (the triangle). Connected spanning
@@ -5491,7 +5494,7 @@ theorem alternatingConnectedSubgraphSum_cycleGraph_three :
 
 /-- **Cycle graph on `Fin 4` `DecidableRel` instance**. -/
 private instance : DecidableRel (SimpleGraph.cycleGraph 4).Adj :=
-  fun u v => decidable_of_iff _ SimpleGraph.cycleGraph_adj'.symm
+  fun _ _ => decidable_of_iff _ SimpleGraph.cycleGraph_adj'.symm
 
 /-- **`cycleGraph 4` alternating connected-spanning sum = -3**:
 the cycle on Fin 4 has 4 edges. Connected spanning subsets: 4 paths
@@ -5526,14 +5529,16 @@ theorem alternatingConnectedSubgraphSum_cycleGraph_four :
 
 /-- **Cycle graph on `Fin 5` `DecidableRel` instance**. -/
 private instance : DecidableRel (SimpleGraph.cycleGraph 5).Adj :=
-  fun u v => decidable_of_iff _ SimpleGraph.cycleGraph_adj'.symm
+  fun _ _ => decidable_of_iff _ SimpleGraph.cycleGraph_adj'.symm
 
 /-- **Cycle graph on `Fin 6` `DecidableRel` instance**. -/
 private instance : DecidableRel (SimpleGraph.cycleGraph 6).Adj :=
-  fun u v => decidable_of_iff _ SimpleGraph.cycleGraph_adj'.symm
+  fun _ _ => decidable_of_iff _ SimpleGraph.cycleGraph_adj'.symm
 
 set_option maxRecDepth 8000 in
 set_option maxHeartbeats 1000000 in
+-- `decide` on `cycleGraph 6` (6 edges, 2^6 = 64 subsets) requires the
+-- raised recursion / heartbeat budgets to enumerate spanning subsets.
 /-- **`cycleGraph 6` alternating connected-spanning sum = -5**:
 the cycle on Fin 6 has 6 edges. Connected spanning subsets: 6
 spanning trees (paths of size 5 each) + the full cycle (size 6).
@@ -5705,10 +5710,13 @@ theorem mayerExpansionTerm_two_filter_connected_eq_incompat
 
 /-- **Cycle graph on `Fin 7` `DecidableRel` instance**. -/
 private instance : DecidableRel (SimpleGraph.cycleGraph 7).Adj :=
-  fun u v => decidable_of_iff _ SimpleGraph.cycleGraph_adj'.symm
+  fun _ _ => decidable_of_iff _ SimpleGraph.cycleGraph_adj'.symm
 
 set_option maxRecDepth 16000 in
 set_option maxHeartbeats 4000000 in
+-- `decide` on `cycleGraph 7` (7 edges, 2^7 = 128 subsets) requires
+-- the raised recursion / heartbeat budgets; the larger n=8+ cases
+-- exceed these limits and remain in Phase B blocker territory.
 /-- **`cycleGraph 7` alternating connected-spanning sum = 6**:
 the cycle on Fin 7 has 7 edges. Connected spanning subsets:
 7 spanning paths (size 6 each) + the full cycle (size 7).
@@ -5782,7 +5790,7 @@ strictly exceeds 1 iff the activity excess is strictly positive. -/
 theorem vdPolymerFamilies_sum_gt_one_iff_eps_pos
     {ι : Type*} [Fintype ι] [DecidableEq ι]
     (G : SimpleGraph ι) [Fintype G.edgeSet]
-    {t : ℝ} (ht : 0 ≤ t) :
+    {t : ℝ} (_ht : 0 ≤ t) :
     1 < (∑ Γ ∈ vdCompatiblePolymerFamilies G, ∏ P ∈ Γ, t ^ P.card) ↔
       0 < ∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅,
         ∏ P ∈ Γ, t ^ P.card := by
@@ -5815,7 +5823,7 @@ theorem vdPolymerFamilies_sum_minus_one_pos_iff
     have h_exists_ne_zero : ∃ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅,
         ∏ P ∈ Γ, t ^ P.card ≠ 0 := by
       by_contra h_all_zero
-      push_neg at h_all_zero
+      push Not at h_all_zero
       exact h_ne_zero ((Finset.sum_eq_zero_iff_of_nonneg h_nn).mpr h_all_zero)
     obtain ⟨Γ, hΓ_mem, hΓ_ne_zero⟩ := h_exists_ne_zero
     have hΓ_pos : 0 < ∏ P ∈ Γ, t ^ P.card :=
@@ -5832,7 +5840,7 @@ theorem vdPolymerFamilies_sum_minus_one_pos_iff
     have h_prod_pos : 0 < ∏ Q ∈ Γ, t ^ Q.card := hΓ_pos
     have h_t_pos : 0 < t := by
       by_contra h_t_not_pos
-      push_neg at h_t_not_pos
+      push Not at h_t_not_pos
       have h_t_zero : t = 0 := le_antisymm h_t_not_pos ht
       have : (∏ Q ∈ Γ, t ^ Q.card) = 0 := by
         apply Finset.prod_eq_zero hP_in_Γ
@@ -5880,7 +5888,7 @@ theorem vdPolymerFamilies_sum_minus_one_eq_zero_iff
   constructor
   · intro h_zero
     by_contra h_neg
-    push_neg at h_neg
+    push Not at h_neg
     obtain ⟨h_t_ne, h_poly_ne⟩ := h_neg
     have h_t_pos : 0 < t := lt_of_le_of_ne ht (Ne.symm h_t_ne)
     have : 0 < ∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅,

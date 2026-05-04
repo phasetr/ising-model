@@ -606,6 +606,7 @@ theorem freeEnergyΛ_high_temp_h_zero_upper_bound
     (inducedGraph G Λ) J β hβJ
     (by rw [Fintype.card_coe]; exact hne)
 
+omit [DecidableEq V] in
 /-- **Λ-level Z bounds consistency**: lower ≤ upper. -/
 theorem partitionFunctionΛ_high_temp_h_zero_lower_le_upper
     (G : SimpleGraph V) (Λ : Finset V)
@@ -618,6 +619,7 @@ theorem partitionFunctionΛ_high_temp_h_zero_lower_le_upper
     (inducedGraph G Λ) J β
   rwa [Fintype.card_coe] at this
 
+omit [DecidableEq V] in
 /-- **Λ-level freeEnergy bounds consistency**: lower ≤ upper. -/
 theorem freeEnergyΛ_high_temp_h_zero_lower_le_upper
     (G : SimpleGraph V) (Λ : Finset V)
@@ -1499,7 +1501,8 @@ theorem partitionFunctionΛ_high_temp_expansion_h_zero_triple_ratio_sandwich_bun
    (freeEnergyΛ_high_temp_h_zero_ratio_sandwich_bundle G Λ J β hβJ hne).2⟩
 
 /-- **Λ-level ferromagnetic triple ratio sandwich bundle at β=0**. -/
-theorem partitionFunctionΛ_high_temp_expansion_h_zero_triple_ratio_sandwich_bundle_beta_zero_ferromagnetic
+theorem
+partitionFunctionΛ_high_temp_expansion_h_zero_triple_ratio_sandwich_bundle_beta_zero_ferromagnetic
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet]
     (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (hne : 0 < Λ.card) :
