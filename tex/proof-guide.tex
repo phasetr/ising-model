@@ -3500,6 +3500,22 @@ existed; this PR fills the bare-bound and `\geq 1` gaps. 12 new
 thin direct-instantiation wrappers (3 abstracts $\times$ 4
 layers).
 
+\paragraph{\texttt{susceptibility} / \texttt{magnetization}
+HasDerivAt in $\beta/J$, $\Lambda$-layer (\S17.5--\S17.6,
+PR~\#1619).} Lifts five HasDerivAt abstracts to the $\Lambda$
+layer with explicit derivative formulas:
+\texttt{susceptibilityΛ\_hasDerivAt\_beta} (at $h = 0$),
+\texttt{\_hasDerivAt\_beta\_general\_h},
+\texttt{\_hasDerivAt\_J} (sum over $j : \uparrow\!\Lambda$ of
+\texttt{deriv (truncated2 \ldots) \ldots}),
+\texttt{magnetizationΛ\_hasDerivAt\_J} (sum over edges of
+\texttt{(inducedGraph G $\Lambda$).edgeFinset}), and
+\texttt{magnetizationΛ\_hasDerivAt\_beta\_general\_h}. 5 new
+thin direct-instantiation wrappers; explicit derivative
+formulas are inherently tied to the ambient site set, so the
+along-exhaustion and $\mathbb{Z}^d$ versions are deferred until
+a use case requires them.
+
 \paragraph{\texttt{susceptibility} parameter-direction convergent
 ($\beta/h/J \to \infty$), all volume layers (\S5.3, PR~\#1618).}
 Lifts three convergence abstracts to all 4 volume layers:

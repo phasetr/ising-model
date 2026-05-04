@@ -2364,5 +2364,89 @@ theorem susceptibilityΛ_convergent_J (G : SimpleGraph V) (Λ : Finset V)
   simp_rw [susceptibilityΛ_apply]
   exact IsingModel.susceptibility_convergent_J _ h hh β hβ _
 
+/-- **susceptibilityΛ HasDerivAt β at h = 0** with explicit derivative
+as sum over induced-graph sites. -/
+theorem susceptibilityΛ_hasDerivAt_beta (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (J β : ℝ) (i : ↑Λ) :
+    HasDerivAt
+      (fun β' => susceptibilityΛ G Λ (⟨J, 0, β'⟩ : IsingParams ℝ) i)
+      (∑ j : ↑Λ, deriv (fun β' =>
+        IsingModel.truncated2 (inducedGraph G Λ)
+          (⟨J, 0, β'⟩ : IsingParams ℝ) i j) β) β := by
+  simp_rw [susceptibilityΛ_apply]
+  exact IsingModel.susceptibility_hasDerivAt_beta _ J β _
+
+/-- **susceptibilityΛ HasDerivAt β at general h** with explicit
+derivative. -/
+theorem susceptibilityΛ_hasDerivAt_beta_general_h (G : SimpleGraph V)
+    (Λ : Finset V) [Fintype (inducedGraph G Λ).edgeSet]
+    (J h β : ℝ) (i : ↑Λ) :
+    HasDerivAt
+      (fun β' => susceptibilityΛ G Λ (⟨J, h, β'⟩ : IsingParams ℝ) i)
+      (∑ j : ↑Λ, deriv (fun β' =>
+        IsingModel.truncated2 (inducedGraph G Λ)
+          (⟨J, h, β'⟩ : IsingParams ℝ) i j) β) β := by
+  simp_rw [susceptibilityΛ_apply]
+  exact IsingModel.susceptibility_hasDerivAt_beta_general_h _ J h β _
+
+/-- **susceptibilityΛ HasDerivAt J** with explicit derivative. -/
+theorem susceptibilityΛ_hasDerivAt_J (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (J h β : ℝ) (i : ↑Λ) :
+    HasDerivAt
+      (fun J' => susceptibilityΛ G Λ (⟨J', h, β⟩ : IsingParams ℝ) i)
+      (∑ j : ↑Λ, deriv (fun J' =>
+        IsingModel.truncated2 (inducedGraph G Λ)
+          (⟨J', h, β⟩ : IsingParams ℝ) i j) J) J := by
+  simp_rw [susceptibilityΛ_apply]
+  exact IsingModel.susceptibility_hasDerivAt_J _ J h β _
+
+/-- **magnetizationΛ HasDerivAt J** with explicit derivative as sum
+over induced-graph edges. -/
+theorem magnetizationΛ_hasDerivAt_J (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (J h β : ℝ) (i : ↑Λ) :
+    HasDerivAt
+      (fun J' => magnetizationΛ G Λ (⟨J', h, β⟩ : IsingParams ℝ) i)
+      (β * ∑ e ∈ (inducedGraph G Λ).edgeFinset,
+        Sym2.lift ⟨fun u v =>
+          IsingModel.correlation (inducedGraph G Λ)
+              (⟨J, h, β⟩ : IsingParams ℝ) (symmDiff {i} {u, v}) -
+          IsingModel.correlation (inducedGraph G Λ)
+              (⟨J, h, β⟩ : IsingParams ℝ) {i} *
+          IsingModel.correlation (inducedGraph G Λ)
+              (⟨J, h, β⟩ : IsingParams ℝ) {u, v},
+        fun u v => by simp [Finset.pair_comm v u]⟩ e)
+      J := by
+  unfold magnetizationΛ
+  simp_rw [correlationΛ_apply]
+  exact IsingModel.magnetization_hasDerivAt_J _ J h β _
+
+/-- **magnetizationΛ HasDerivAt β at general h** with explicit
+derivative. -/
+theorem magnetizationΛ_hasDerivAt_beta_general_h (G : SimpleGraph V)
+    (Λ : Finset V) [Fintype (inducedGraph G Λ).edgeSet]
+    (J h β : ℝ) (i : ↑Λ) :
+    HasDerivAt
+      (fun β' => magnetizationΛ G Λ (⟨J, h, β'⟩ : IsingParams ℝ) i)
+      (J * ∑ e ∈ (inducedGraph G Λ).edgeFinset,
+        Sym2.lift ⟨fun u v =>
+          IsingModel.correlation (inducedGraph G Λ)
+              (⟨J, h, β⟩ : IsingParams ℝ) (symmDiff {i} {u, v}) -
+          IsingModel.correlation (inducedGraph G Λ)
+              (⟨J, h, β⟩ : IsingParams ℝ) {i} *
+          IsingModel.correlation (inducedGraph G Λ)
+              (⟨J, h, β⟩ : IsingParams ℝ) {u, v},
+        fun u v => by simp [Finset.pair_comm v u]⟩ e
+       + h * ∑ j : ↑Λ,
+          (IsingModel.correlation (inducedGraph G Λ)
+              (⟨J, h, β⟩ : IsingParams ℝ) (symmDiff {i} {j}) -
+           IsingModel.correlation (inducedGraph G Λ)
+              (⟨J, h, β⟩ : IsingParams ℝ) {i} *
+           IsingModel.correlation (inducedGraph G Λ)
+              (⟨J, h, β⟩ : IsingParams ℝ) {j}))
+      β := by
+  unfold magnetizationΛ
+  simp_rw [correlationΛ_apply]
+  exact IsingModel.magnetization_hasDerivAt_beta_general_h _ J h β _
+
 end Ambient
 end IsingModel
