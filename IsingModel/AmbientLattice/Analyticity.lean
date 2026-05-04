@@ -713,5 +713,57 @@ theorem polymerFreeEnergy_Λ_le_of_le_strict_form
   IsingModel.polymerFreeEnergy_le_of_le_strict_form
     (inducedGraph G Λ) ht hts
 
+/-- **Λ-layer: `polymerFreeEnergy` tanh-form sandwich** (§18.5 Λ wrap
+of Step 632). -/
+theorem polymerFreeEnergy_Λ_tanh_sandwich
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {β J : ℝ} (hβJ : 0 ≤ β * J) :
+    0 ≤ IsingModel.polymerFreeEnergy (inducedGraph G Λ)
+        (Real.tanh (β * J)) ∧
+    IsingModel.polymerFreeEnergy (inducedGraph G Λ)
+        (Real.tanh (β * J)) ≤
+      (inducedGraph G Λ).edgeFinset.card *
+        Real.log (1 + Real.tanh (β * J)) :=
+  IsingModel.polymerFreeEnergy_tanh_sandwich (inducedGraph G Λ) hβJ
+
+/-- **Λ-layer: `polymerFreeEnergy ≤ |E|·log 2` for `0 ≤ t ≤ 1`**
+(§18.5 Λ wrap of Step 642). -/
+theorem polymerFreeEnergy_Λ_le_card_log_two_of_le_one
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) (ht1 : t ≤ 1) :
+    IsingModel.polymerFreeEnergy (inducedGraph G Λ) t ≤
+      (inducedGraph G Λ).edgeFinset.card * Real.log 2 :=
+  IsingModel.polymerFreeEnergy_le_card_log_two_of_le_one
+    (inducedGraph G Λ) ht ht1
+
+/-- **Λ-layer: `polymerFreeEnergy_tanh ≤ |E|·log 2` under `0 ≤ β·J`**
+(§18.5 Λ wrap of Step 643). -/
+theorem polymerFreeEnergy_Λ_tanh_le_card_log_two
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {β J : ℝ} (hβJ : 0 ≤ β * J) :
+    IsingModel.polymerFreeEnergy (inducedGraph G Λ)
+        (Real.tanh (β * J)) ≤
+      (inducedGraph G Λ).edgeFinset.card * Real.log 2 :=
+  IsingModel.polymerFreeEnergy_tanh_le_card_log_two
+    (inducedGraph G Λ) hβJ
+
+/-- **Λ-layer: `polymerFreeEnergy_tanh` double bound** (§18.5 Λ wrap
+of Step 645). -/
+theorem polymerFreeEnergy_Λ_tanh_double_bound
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {β J : ℝ} (hβJ : 0 ≤ β * J) :
+    IsingModel.polymerFreeEnergy (inducedGraph G Λ)
+        (Real.tanh (β * J)) ≤
+      (inducedGraph G Λ).edgeFinset.card * Real.tanh (β * J) ∧
+    IsingModel.polymerFreeEnergy (inducedGraph G Λ)
+        (Real.tanh (β * J)) ≤
+      (inducedGraph G Λ).edgeFinset.card * Real.log 2 :=
+  IsingModel.polymerFreeEnergy_tanh_double_bound
+    (inducedGraph G Λ) hβJ
+
 end Ambient
 end IsingModel
