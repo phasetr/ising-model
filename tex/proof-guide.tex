@@ -3500,6 +3500,23 @@ existed; this PR fills the bare-bound and `\geq 1` gaps. 12 new
 thin direct-instantiation wrappers (3 abstracts $\times$ 4
 layers).
 
+\paragraph{vdSum sandwich/monotone + $\varepsilon$ bound +
+\texttt{polymerFreeEnergy(tanh)} bound + $\log 2$, all volume
+layers (\S18.5, PR~\#1607).} Lifts six abstract bound/regularity
+lemmas to the four volume layers (\textit{Λ}, along-ex,
+$\mathbb{Z}^d$ \textit{Λ}, $\mathbb{Z}^d$ along-ex):
+\texttt{vdPolymerFamilies\_sum\_sandwich\_of\_nonneg}
+($1 \le \mathrm{vdSum} \le (1+t)^{|E|}$),
+\texttt{\_monotoneOn\_Ici\_zero},
+\texttt{\_minus\_one\_le\_of\_nonneg}
+($\varepsilon(t) \le (1+t)^{|E|} - 1$),
+\texttt{polymerFreeEnergy\_tanh\_le\_eps\_of\_betaJ\_nonneg},
+\texttt{\_tanh\_le\_pow\_sub\_one\_of\_betaJ\_nonneg}, and
+\texttt{\_tanh\_lt\_log\_two\_of\_pow\_lt\_two}. 24 new thin
+direct-instantiation wrappers. The longest ℤ$^d$ along-ex name
+abbreviates the suffix \texttt{\_of\_betaJ\_nonneg} to
+\texttt{\_betaJ} to fit under the 100-character linter budget.
+
 \paragraph{$\varepsilon(t)$ nonneg + non-tanh
 \texttt{polymerFreeEnergy} sharpening, all volume layers (\S18.5,
 PR~\#1606).} Lifts six abstract sharpening lemmas to the four

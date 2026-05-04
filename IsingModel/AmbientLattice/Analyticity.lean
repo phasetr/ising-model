@@ -2384,5 +2384,81 @@ theorem polymerFreeEnergy_Λ_lt_pow_sub_one_of_eps_pos
   IsingModel.polymerFreeEnergy_lt_pow_sub_one_of_eps_pos
     (inducedGraph G Λ) ht h_eps_pos
 
+/-! ### §18.5 vdSum sandwich/monotone + ε bound + pFE(tanh) bound +
+log2 Λ-layer wraps -/
+
+/-- **Λ-layer: vdSum sandwich for `t ≥ 0`**: `1 ≤ vdSum ≤
+(1+t)^|E|`. -/
+theorem vdPolymerFamilies_sum_Λ_sandwich_of_nonneg
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) :
+    1 ≤ (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies (inducedGraph G Λ),
+          ∏ P ∈ Γ, t ^ P.card) ∧
+    (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies (inducedGraph G Λ),
+          ∏ P ∈ Γ, t ^ P.card) ≤
+      (1 + t) ^ (inducedGraph G Λ).edgeFinset.card :=
+  IsingModel.vdPolymerFamilies_sum_sandwich_of_nonneg
+    (inducedGraph G Λ) ht
+
+/-- **Λ-layer: vdSum is `MonotoneOn (Set.Ici 0)`**. -/
+theorem vdPolymerFamilies_sum_Λ_monotoneOn_Ici_zero
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] :
+    MonotoneOn
+      (fun t : ℝ => ∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
+              (inducedGraph G Λ),
+          ∏ P ∈ Γ, t ^ P.card) (Set.Ici 0) :=
+  IsingModel.vdPolymerFamilies_sum_monotoneOn_Ici_zero (inducedGraph G Λ)
+
+/-- **Λ-layer: ε(t) ≤ (1+t)^|E| - 1** for `0 ≤ t`. -/
+theorem vdPolymerFamilies_sum_Λ_minus_one_le_of_nonneg
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) :
+    (∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
+              (inducedGraph G Λ)).erase ∅,
+          ∏ P ∈ Γ, t ^ P.card) ≤
+      (1 + t) ^ (inducedGraph G Λ).edgeFinset.card - 1 :=
+  IsingModel.vdPolymerFamilies_sum_minus_one_le_of_nonneg
+    (inducedGraph G Λ) ht
+
+/-- **Λ-layer: pFE(tanh) ≤ ε(tanh) under `0 ≤ β·J`**. -/
+theorem polymerFreeEnergy_Λ_tanh_le_eps_of_betaJ_nonneg
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {β J : ℝ} (hβJ : 0 ≤ β * J) :
+    IsingModel.polymerFreeEnergy (inducedGraph G Λ)
+        (Real.tanh (β * J)) ≤
+      ∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
+              (inducedGraph G Λ)).erase ∅,
+            ∏ P ∈ Γ, (Real.tanh (β * J)) ^ P.card :=
+  IsingModel.polymerFreeEnergy_tanh_le_eps_of_betaJ_nonneg
+    (inducedGraph G Λ) hβJ
+
+/-- **Λ-layer: pFE(tanh) ≤ (1+tanh)^|E| - 1 under `0 ≤ β·J`**. -/
+theorem polymerFreeEnergy_Λ_tanh_le_pow_sub_one_of_betaJ_nonneg
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {β J : ℝ} (hβJ : 0 ≤ β * J) :
+    IsingModel.polymerFreeEnergy (inducedGraph G Λ)
+        (Real.tanh (β * J)) ≤
+      (1 + Real.tanh (β * J)) ^ (inducedGraph G Λ).edgeFinset.card - 1 :=
+  IsingModel.polymerFreeEnergy_tanh_le_pow_sub_one_of_betaJ_nonneg
+    (inducedGraph G Λ) hβJ
+
+/-- **Λ-layer: pFE(tanh) < log 2** under `(1+tanh)^|E| < 2` and
+`0 ≤ β·J`. -/
+theorem polymerFreeEnergy_Λ_tanh_lt_log_two_of_pow_lt_two
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {β J : ℝ} (hβJ : 0 ≤ β * J)
+    (h_pow : (1 + Real.tanh (β * J)) ^
+        (inducedGraph G Λ).edgeFinset.card < 2) :
+    IsingModel.polymerFreeEnergy (inducedGraph G Λ)
+        (Real.tanh (β * J)) < Real.log 2 :=
+  IsingModel.polymerFreeEnergy_tanh_lt_log_two_of_pow_lt_two
+    (inducedGraph G Λ) hβJ h_pow
+
 end Ambient
 end IsingModel
