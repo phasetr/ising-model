@@ -3508,7 +3508,8 @@ estimates that depend on the maximum vertex degree of $G$ instead of
 $|E|$ remain deferred (they require chromatic-polynomial /
 matrix-tree machinery not yet available in Mathlib).
 
-\paragraph{Decay of correlations at $h=0$ (\S18.7, Step~574).} The
+\paragraph{Decay of correlations at $h=0$, all volume layers
+(\S18.7, Step~574 + PR~\#1570).} The
 high-temperature exponential-decay capstone
 \[
 \bigl|\langle \sigma_i \sigma_j \rangle_{\beta,0}\bigr|
@@ -3521,6 +3522,18 @@ even-subgraph-boundary distance bound
 uses strong induction to construct an explicit
 $G.\mathrm{Walk}\,i\,j$ from any $X$ with
 $\partial X = \{i, j\}$.
+
+PR~\#1570 lifts this capstone to every volume layer: the
+$\Lambda$-direct form
+\texttt{correlation$\Lambda$\_high\_temp\_h\_zero\_at\_pair\_le\_two\_pow\_edges\_mul\_tanh\_pow\_dist}
+in \texttt{AmbientLattice/Defs.lean}, the per-stage
+\texttt{correlationAlongExhaustion\_high\_temp\_h\_zero\_at\_pair\_le\_two\_pow\_edges\_mul\_tanh\_pow\_dist}
+in \texttt{AmbientLattice/SpecialCases.lean}, plus the
+$\mathbb{Z}^d$ concrete forms
+\texttt{correlation$\Lambda$\_latticeGraph\_high\_temp\_h\_zero\_at\_pair\_le\_two\_pow\_edges\_mul\_tanh\_pow\_dist}
+and
+\texttt{correlationAlongExhaustion\_latticeGraph\_high\_temp\_h\_zero\_at\_pair\_le\_two\_pow\_edges\_mul\_tanh\_pow\_dist}
+in \texttt{Concrete/LatticeGraphCorrelation.lean}.
 
 References: Glimm--Jaffe~\cite{glimm-jaffe}, \S18.4--\S18.7;
 Friedli--Velenik~\cite{friedli-velenik}, \S5; for Mayer / Ursell

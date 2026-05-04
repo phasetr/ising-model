@@ -2398,6 +2398,25 @@ theorem correlationAlongExhaustion_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_
   correlationΛ_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges
     G (Λ.volume n) J β hβJ i j hij he
 
+/-- **Along-ex §18.7 capstone: high-temperature exponential decay of
+the pair correlation in graph distance, at stage `n`**. Under
+`0 ≤ β·J`, for `i, j : ↑(Λ.volume n)`,
+`⟨σ_iσ_j⟩^{Λ_n}_{β,0} ≤ 2^{|E_{Λ_n}|} ·
+    tanh(β·J)^{(inducedGraph G (Λ.volume n)).dist i j}`.
+Stage-`n` Λ-level specialization of
+`correlationΛ_high_temp_h_zero_at_pair_le_two_pow_edges_mul_tanh_pow_dist`. -/
+theorem
+correlationAlongExhaustion_high_temp_h_zero_at_pair_le_two_pow_edges_mul_tanh_pow_dist
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (n : ℕ) (i j : ↑(Λ.volume n)) :
+    correlationΛ G (Λ.volume n) (⟨J, 0, β⟩ : IsingParams ℝ)
+        ({i, j} : Finset ↑(Λ.volume n))
+      ≤ (2 : ℝ) ^ (inducedGraph G (Λ.volume n)).edgeFinset.card *
+        Real.tanh (β * J) ^ (inducedGraph G (Λ.volume n)).dist i j :=
+  correlationΛ_high_temp_h_zero_at_pair_le_two_pow_edges_mul_tanh_pow_dist
+    G (Λ.volume n) J β hβJ i j
+
 /-- **Along-ex pair correlation strict positivity under edge at stage `n` (GJ §18.3 / FV (3.46))**:
 under `0 < β·J` and an edge in the stage-`n` induced subgraph,
 `0 < ⟨σ_iσ_j⟩^{Λ_n}`. Stage-`n` Λ-level specialization of
