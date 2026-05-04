@@ -2294,5 +2294,42 @@ theorem susceptibilityΛ_differentiable_J (G : SimpleGraph V) (Λ : Finset V)
   simp_rw [susceptibilityΛ_apply]
   exact IsingModel.susceptibility_differentiable_J _ h β _
 
+/-- **magnetizationΛ β → ∞ convergence** under ferromagnetic
+`J, h ≥ 0`. -/
+theorem magnetizationΛ_convergent_beta (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J : ℝ) (hJ : 0 ≤ J) (h : ℝ) (hh : 0 ≤ h) (i : ↑Λ) :
+    ∃ L : ℝ, Filter.Tendsto
+      (fun n : ℕ => magnetizationΛ G Λ
+        (⟨J, h, (n + 1 : ℝ)⟩ : IsingParams ℝ) i)
+      Filter.atTop (nhds L) := by
+  unfold magnetizationΛ
+  simp_rw [correlationΛ_apply]
+  exact IsingModel.magnetization_convergent_beta _ J hJ h hh _
+
+/-- **magnetizationΛ h → ∞ convergence** under `J ≥ 0, β > 0`. -/
+theorem magnetizationΛ_convergent_h (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J : ℝ) (hJ : 0 ≤ J) (β : ℝ) (hβ : 0 < β) (i : ↑Λ) :
+    ∃ L : ℝ, Filter.Tendsto
+      (fun n : ℕ => magnetizationΛ G Λ
+        (⟨J, (n : ℝ), β⟩ : IsingParams ℝ) i)
+      Filter.atTop (nhds L) := by
+  unfold magnetizationΛ
+  simp_rw [correlationΛ_apply]
+  exact IsingModel.magnetization_convergent_h _ J hJ β hβ _
+
+/-- **magnetizationΛ J → ∞ convergence** under `h ≥ 0, β > 0`. -/
+theorem magnetizationΛ_convergent_J (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (h : ℝ) (hh : 0 ≤ h) (β : ℝ) (hβ : 0 < β) (i : ↑Λ) :
+    ∃ L : ℝ, Filter.Tendsto
+      (fun n : ℕ => magnetizationΛ G Λ
+        (⟨(n : ℝ), h, β⟩ : IsingParams ℝ) i)
+      Filter.atTop (nhds L) := by
+  unfold magnetizationΛ
+  simp_rw [correlationΛ_apply]
+  exact IsingModel.magnetization_convergent_J _ h hh β hβ _
+
 end Ambient
 end IsingModel
