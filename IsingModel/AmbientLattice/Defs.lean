@@ -2559,6 +2559,45 @@ theorem susceptibilityΛ_differentiableAt_field (G : SimpleGraph V)
   simp_rw [susceptibilityΛ_apply]
   exact IsingModel.susceptibility_differentiableAt_field _ J h β _
 
+/-- **HasDerivAt for `freeEnergyΛ` in β at general h** with explicit
+derivative `(|↑Λ|)⁻¹ · ⟨−H⟩`. -/
+theorem hasDerivAt_freeEnergyΛ_beta_general_h (G : SimpleGraph V)
+    (Λ : Finset V) [Fintype (inducedGraph G Λ).edgeSet]
+    (J h β : ℝ) :
+    HasDerivAt (fun β' => freeEnergyΛ G Λ (⟨J, h, β'⟩ : IsingParams ℝ))
+      ((Fintype.card ↑(Λ : Finset V) : ℝ)⁻¹ *
+        IsingModel.gibbsExpectation (inducedGraph G Λ)
+          (⟨J, h, β⟩ : IsingParams ℝ)
+          (fun σ => - IsingModel.hamiltonian (inducedGraph G Λ)
+                      (⟨J, h, β⟩ : IsingParams ℝ) σ)) β := by
+  simp_rw [freeEnergyΛ_apply]
+  exact IsingModel.hasDerivAt_freeEnergy_beta_general_h _ J h β
+
+/-- **HasDerivAt for `freeEnergyΛ` in J** with explicit derivative
+`(|↑Λ|)⁻¹ · ⟨β·∑_e edgeSpin⟩`. -/
+theorem hasDerivAt_freeEnergyΛ_J (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (J h β : ℝ) :
+    HasDerivAt (fun J' => freeEnergyΛ G Λ (⟨J', h, β⟩ : IsingParams ℝ))
+      ((Fintype.card ↑(Λ : Finset V) : ℝ)⁻¹ *
+        IsingModel.gibbsExpectation (inducedGraph G Λ)
+          (⟨J, h, β⟩ : IsingParams ℝ)
+          (fun σ => β * (∑ e ∈ (inducedGraph G Λ).edgeFinset,
+            IsingModel.edgeSpin (K := ℝ) σ e))) J := by
+  simp_rw [freeEnergyΛ_apply]
+  exact IsingModel.hasDerivAt_freeEnergy_J _ J h β
+
+/-- **HasDerivAt for `freeEnergyΛ` in h** with explicit derivative
+`(|↑Λ|)⁻¹ · ⟨β · M⟩` (magnetization per site). -/
+theorem hasDerivAt_freeEnergyΛ_field (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (J h β : ℝ) :
+    HasDerivAt (fun h' => freeEnergyΛ G Λ (⟨J, h', β⟩ : IsingParams ℝ))
+      ((Fintype.card ↑(Λ : Finset V) : ℝ)⁻¹ *
+        IsingModel.gibbsExpectation (inducedGraph G Λ)
+          (⟨J, h, β⟩ : IsingParams ℝ)
+          (fun σ => β * IsingModel.totalMagnetization σ)) h := by
+  simp_rw [freeEnergyΛ_apply]
+  exact IsingModel.hasDerivAt_freeEnergy_field _ J h β
+
 
 /-- **magnetizationΛ HasDerivAt β at general h** with explicit
 derivative. -/

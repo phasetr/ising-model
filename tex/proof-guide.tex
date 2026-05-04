@@ -3500,6 +3500,20 @@ existed; this PR fills the bare-bound and `\geq 1` gaps. 12 new
 thin direct-instantiation wrappers (3 abstracts $\times$ 4
 layers).
 
+\paragraph{\texttt{hasDerivAt\_freeEnergyΛ} in $\beta / J / h$ at
+the $\Lambda$-layer (\S17.5--\S17.6, \S4.6, PR~\#1623).} Lifts
+three explicit-derivative thermodynamic-identity abstracts to
+the $\Lambda$ layer:
+\texttt{hasDerivAt\_freeEnergyΛ\_beta\_general\_h}
+($\partial_\beta f = (|\!\uparrow\!\Lambda|)^{-1} \cdot \langle
+-H\rangle$),
+\texttt{hasDerivAt\_freeEnergyΛ\_J}
+($\partial_J f = (|\!\uparrow\!\Lambda|)^{-1} \cdot \langle
+\beta \cdot \sum_e \mathrm{edgeSpin}\rangle$), and
+\texttt{hasDerivAt\_freeEnergyΛ\_field}
+($\partial_h f = (|\!\uparrow\!\Lambda|)^{-1} \cdot \langle
+\beta \cdot M\rangle$). 3 new thin wrappers.
+
 \paragraph{\texttt{correlationΛ} / \texttt{susceptibilityΛ}
 ContinuousAt + DifferentiableAt at the $\Lambda$-layer
 (\S17.5--\S17.6, PR~\#1622).} Point-wise versions
