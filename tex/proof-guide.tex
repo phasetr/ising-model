@@ -3489,6 +3489,16 @@ The four $\mathbb{Z}^d$ wrappers use the abbreviated suffix
 \texttt{\_ferro} (instead of \texttt{\_ferromagnetic}) so each
 declaration fits the linter's 100-character budget.
 
+\paragraph{\texttt{polymerFreeEnergy} tanh-bound family, all volume
+layers (\S18.5, PR~\#1580).} The tanh-form sandwich (Step~632),
+the $\le |E| \cdot \log 2$ bound for $0 \le t \le 1$ (Step~642),
+its tanh-form (Step~643), and the combined double bound
+(Step~645) are lifted to the four volume layers, giving $20$ thin
+direct-instantiation wrappers in
+\texttt{IsingModel/AmbientLattice/Analyticity.lean},
+\texttt{AmbientLattice/SpecialCases.lean}, and
+\texttt{Concrete/LatticeGraphCorrelation.lean}.
+
 \paragraph{\texttt{polymerFreeEnergy} edge-cases + comparison
 family, all volume layers (\S18.5, PR~\#1579).} The four abstract
 edge-case / comparison statements
