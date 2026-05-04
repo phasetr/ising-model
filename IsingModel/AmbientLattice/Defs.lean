@@ -2214,6 +2214,41 @@ theorem magnetizationΛ_differentiable_beta (G : SimpleGraph V) (Λ : Finset V)
   simp_rw [correlationΛ_apply]
   exact IsingModel.correlation_differentiable_beta_general_h _ J h _
 
+/-- **magnetizationΛ Continuous in `h`**. -/
+theorem magnetizationΛ_continuous_field (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (J β : ℝ) (i : ↑Λ) :
+    Continuous (fun h' => magnetizationΛ G Λ (⟨J, h', β⟩ : IsingParams ℝ) i) := by
+  unfold magnetizationΛ
+  simp_rw [correlationΛ_apply]
+  exact IsingModel.magnetization_continuous_field _ J β _
+
+/-- **magnetizationΛ Differentiable in `h`**. -/
+theorem magnetizationΛ_differentiable_field (G : SimpleGraph V)
+    (Λ : Finset V) [Fintype (inducedGraph G Λ).edgeSet] (J β : ℝ)
+    (i : ↑Λ) :
+    Differentiable ℝ
+      (fun h' => magnetizationΛ G Λ (⟨J, h', β⟩ : IsingParams ℝ) i) := by
+  unfold magnetizationΛ
+  simp_rw [correlationΛ_apply]
+  exact IsingModel.magnetization_differentiable_field _ J β _
+
+/-- **magnetizationΛ Continuous in `J`**. -/
+theorem magnetizationΛ_continuous_J (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (h β : ℝ) (i : ↑Λ) :
+    Continuous (fun J' => magnetizationΛ G Λ (⟨J', h, β⟩ : IsingParams ℝ) i) := by
+  unfold magnetizationΛ
+  simp_rw [correlationΛ_apply]
+  exact IsingModel.magnetization_continuous_J _ h β _
+
+/-- **magnetizationΛ Differentiable in `J`**. -/
+theorem magnetizationΛ_differentiable_J (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (h β : ℝ) (i : ↑Λ) :
+    Differentiable ℝ
+      (fun J' => magnetizationΛ G Λ (⟨J', h, β⟩ : IsingParams ℝ) i) := by
+  unfold magnetizationΛ
+  simp_rw [correlationΛ_apply]
+  exact IsingModel.magnetization_differentiable_J _ h β _
+
 /-- **susceptibilityΛ Continuous in β at general h** (Step 258, general G, Λ). -/
 theorem susceptibilityΛ_continuous_beta (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] (J h : ℝ) (i : ↑Λ) :
