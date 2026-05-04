@@ -3489,6 +3489,15 @@ The four $\mathbb{Z}^d$ wrappers use the abbreviated suffix
 \texttt{\_ferro} (instead of \texttt{\_ferromagnetic}) so each
 declaration fits the linter's 100-character budget.
 
+\paragraph{Ferromagnetic polymer-family sum sandwich, all volume
+layers (\S18.5, PR~\#1574).} Under $0 \le J,\, 0 < \beta$ each of
+the two abstract sandwich statements admits a ferromagnetic
+version, derived through \texttt{mul\_nonneg h$\beta$.le hJ} and
+matched at each of the five layers. The two $\mathbb{Z}^d$ sharp
+wrappers use the abbreviated \texttt{\_ferro} suffix to fit the
+linter's 100-character budget; the other ferromagnetic wrappers
+retain \texttt{\_ferromagnetic}.
+
 \paragraph{Polymer-family sum sandwich, all volume layers
 (\S18.5, PR~\#1572).} The two abstract sandwich statements
 \texttt{vdPolymerFamilies\_sum\_sandwich} ($1 \le \sum_\Gamma \le
