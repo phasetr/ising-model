@@ -358,6 +358,7 @@ theorem partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_upper_bound
   exact partitionFunctionΛ_high_temp_expansion_h_zero_upper_bound
     G (Λ.volume n) J β hβJ
 
+omit [DecidableEq V] in
 /-- **Along-exhaustion Z bounds consistency**: lower ≤ upper. -/
 theorem partitionFunctionAlongExhaustion_high_temp_h_zero_lower_le_upper
     (G : SimpleGraph V) (Λ : Exhaustion V)
@@ -372,6 +373,7 @@ theorem partitionFunctionAlongExhaustion_high_temp_h_zero_lower_le_upper
             (inducedGraph G (Λ.volume n)).edgeFinset.card :=
   partitionFunctionΛ_high_temp_h_zero_lower_le_upper G (Λ.volume n) J β
 
+omit [DecidableEq V] in
 /-- **Along-exhaustion freeEnergy bounds consistency**: lower ≤ upper. -/
 theorem freeEnergyAlongExhaustion_high_temp_h_zero_lower_le_upper
     (G : SimpleGraph V) (Λ : Exhaustion V)
@@ -561,7 +563,8 @@ theorem partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_closed_at_be
 
 /-- **Along-exhaustion partition function high-temperature closed form (FV §3.7.3 eq. (3.45))**:
 at every stage `n`,
-`partitionFunctionAlongExhaustion G Λ ⟨J, 0, β⟩ n = 2^|Λ.volume n| · cosh(βJ)^|E_{Λ.volume n}| · ∑_{X ⊆ E_{Λ.volume n}, even-degree} tanh(βJ)^|X|`.
+`partitionFunctionAlongExhaustion G Λ ⟨J, 0, β⟩ n = 2^|Λ.volume n| · cosh(βJ)^|E_{Λ.volume n}|
+  · ∑_{X ⊆ E_{Λ.volume n}, even-degree} tanh(βJ)^|X|`.
 Per-stage application of `partitionFunctionΛ_high_temp_expansion_h_zero_closed`
 (Step 285). -/
 theorem partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_closed
@@ -832,7 +835,8 @@ theorem partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_upper_bound_
 /-- **Along-ex ferromagnetic log Z sharper upper bound at stage `n`**:
 under `0 ≤ J, 0 < β`,
 `log Z_n ≤ |Λ_n|·log 2 + β·J·|E_n|`. -/
-theorem log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_upper_bound_exp_ferromagnetic
+theorem
+log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_upper_bound_exp_ferromagnetic
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
     (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ) :
@@ -1007,7 +1011,8 @@ theorem log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_complete
     G (Λ.volume n) J β hβJ
 
 /-- **Along-ex ferromagnetic Z complete-summary exp bundle at stage `n`**. -/
-theorem partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_complete_summary_exp_ferromagnetic
+theorem
+partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_complete_summary_exp_ferromagnetic
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
     (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ) :
@@ -1025,7 +1030,8 @@ theorem partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_complete_sum
     G Λ J β (mul_nonneg hβ.le hJ) n
 
 /-- **Along-ex ferromagnetic log Z complete-summary exp bundle at stage `n`**. -/
-theorem log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_complete_summary_exp_ferromagnetic
+theorem
+log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_complete_summary_exp_ferromagnetic
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
     (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ) :
@@ -1201,7 +1207,8 @@ theorem log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_deviatio
     G (Λ.volume n) J β hβJ
 
 /-- **Along-ex ferromagnetic log Z deviation sandwich at stage `n`**. -/
-theorem log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_deviation_sandwich_ferromagnetic
+theorem
+log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_deviation_sandwich_ferromagnetic
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
     (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ) :
@@ -1315,7 +1322,8 @@ theorem partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_strict_devia
      G Λ J β hβJ n hne hEpos⟩
 
 /-- **Along-ex ferromagnetic Z + log Z + f strict deviation bundle at stage `n`**. -/
-theorem partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_strict_deviation_bundle_ferromagnetic
+theorem
+partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_strict_deviation_bundle_ferromagnetic
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
     (J β : ℝ) (hJ : 0 < J) (hβ : 0 < β) (n : ℕ) (hne : 0 < (Λ.volume n).card)
@@ -1428,7 +1436,8 @@ theorem partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_sandwi
       G Λ J β hβJ n⟩
 
 /-- **Along-ex ferromagnetic Z ratio sandwich bundle at stage `n`**. -/
-theorem partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_sandwich_bundle_ferromagnetic
+theorem
+partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_sandwich_bundle_ferromagnetic
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
     (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ) :
@@ -1489,7 +1498,8 @@ theorem partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_bound_
     G Λ J β (mul_nonneg hβ.le hJ) n
 
 /-- **Along-ex ferromagnetic Z ratio upper bound at β=0, stage `n`**. -/
-theorem partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_bound_beta_zero_ferromagnetic
+theorem
+partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_bound_beta_zero_ferromagnetic
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
     (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ) :
@@ -1620,7 +1630,8 @@ theorem log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_sa
     G (Λ.volume n) J β hβJ
 
 /-- **Along-ex ferromagnetic log Z ratio sandwich bundle at stage `n`**. -/
-theorem log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_sandwich_bundle_ferromagnetic
+theorem
+log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_sandwich_bundle_ferromagnetic
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
     (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ) :
@@ -1704,7 +1715,8 @@ theorem log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_bo
       G Λ J β hβJ n⟩
 
 /-- **Along-ex ferromagnetic log Z ratio bound bundle at stage `n`**. -/
-theorem log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_bound_bundle_ferromagnetic
+theorem
+log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_bound_bundle_ferromagnetic
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
     (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ) :
@@ -1888,7 +1900,8 @@ theorem partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_triple_ratio
       G Λ J β hβJ n hne).1⟩
 
 /-- **Along-ex triple ratio sandwich bundle at β=0, stage `n`**. -/
-theorem partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_triple_ratio_sandwich_bundle_beta_zero
+theorem
+partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_triple_ratio_sandwich_bundle_beta_zero
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
     (J β : ℝ) (hβJ : 0 ≤ β * J) (n : ℕ) (hne : 0 < (Λ.volume n).card) :
@@ -1930,7 +1943,7 @@ theorem partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_triple_ratio
       G Λ J β hβJ n hne).2⟩
 
 /-- **Along-ex ferromagnetic triple ratio sandwich bundle at β=0, stage `n`**. -/
-theorem partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_triple_ratio_sandwich_bundle_beta_zero_ferromagnetic
+theorem partitionFunctionAlongExhaustion_h_zero_triple_ratio_sandwich_bundle_beta_zero_ferromagnetic
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
     (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ) (hne : 0 < (Λ.volume n).card) :
@@ -1968,7 +1981,7 @@ theorem partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_triple_ratio
     G Λ J β (mul_nonneg hβ.le hJ) n hne
 
 /-- **Along-ex ferromagnetic triple ratio sandwich bundle at J=0, stage `n`**. -/
-theorem partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_triple_ratio_sandwich_bundle_ferromagnetic
+theorem partitionFunctionAlongExhaustion_h_zero_triple_ratio_sandwich_bundle_ferromagnetic
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
     (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ) (hne : 0 < (Λ.volume n).card) :
@@ -2030,7 +2043,8 @@ theorem partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_triple_ratio
    freeEnergyAlongExhaustion_high_temp_h_zero_ratio_bound G Λ J β hβJ n hne⟩
 
 /-- **Along-ex triple ratio bound bundle at β=0, stage `n`**. -/
-theorem partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_triple_ratio_bound_bundle_beta_zero
+theorem
+partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_triple_ratio_bound_bundle_beta_zero
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
     (J β : ℝ) (hβJ : 0 ≤ β * J) (n : ℕ) (hne : 0 < (Λ.volume n).card) :
@@ -2055,7 +2069,8 @@ theorem partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_triple_ratio
      G Λ J β hβJ n hne⟩
 
 /-- **Along-ex ferromagnetic triple ratio bound bundle at J=0, stage `n`**. -/
-theorem partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_triple_ratio_bound_bundle_ferromagnetic
+theorem
+partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_triple_ratio_bound_bundle_ferromagnetic
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
     (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ) (hne : 0 < (Λ.volume n).card) :
