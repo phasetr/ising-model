@@ -581,5 +581,53 @@ theorem polymerFreeEnergy_Λ_differentiableOn_Ici_zero
   IsingModel.polymerFreeEnergy_differentiableOn_Ici_zero
     (inducedGraph G Λ)
 
+/-- **Λ-layer: `polymerFreeEnergy ∘ tanh ∘ (·*J)` `AnalyticAt ℝ`
+in β** (§18.6 Λ wrap of #1569 Step 613). -/
+theorem polymerFreeEnergy_Λ_tanh_analyticAt_beta
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) :
+    AnalyticAt ℝ (fun β' : ℝ =>
+        IsingModel.polymerFreeEnergy (inducedGraph G Λ)
+          (Real.tanh (β' * J))) β :=
+  IsingModel.polymerFreeEnergy_tanh_analyticAt_beta
+    (inducedGraph G Λ) J β hβJ
+
+/-- **Λ-layer: `polymerFreeEnergy ∘ tanh ∘ (β*·)` `AnalyticAt ℝ`
+in J** (§18.6 Λ wrap). -/
+theorem polymerFreeEnergy_Λ_tanh_analyticAt_J
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (β J : ℝ) (hβJ : 0 ≤ β * J) :
+    AnalyticAt ℝ (fun J' : ℝ =>
+        IsingModel.polymerFreeEnergy (inducedGraph G Λ)
+          (Real.tanh (β * J'))) J :=
+  IsingModel.polymerFreeEnergy_tanh_analyticAt_J
+    (inducedGraph G Λ) β J hβJ
+
+/-- **Λ-layer: `polymerFreeEnergy ∘ tanh ∘ (·*J)` `AnalyticOnNhd
+ℝ _ (Set.Ici 0)` in β under `0 ≤ J`** (§18.6 Λ wrap). -/
+theorem polymerFreeEnergy_Λ_tanh_analyticOnNhd_beta_Ici_zero
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {J : ℝ} (hJ : 0 ≤ J) :
+    AnalyticOnNhd ℝ (fun β' : ℝ =>
+        IsingModel.polymerFreeEnergy (inducedGraph G Λ)
+          (Real.tanh (β' * J))) (Set.Ici 0) :=
+  IsingModel.polymerFreeEnergy_tanh_analyticOnNhd_beta_Ici_zero
+    (inducedGraph G Λ) hJ
+
+/-- **Λ-layer: `polymerFreeEnergy ∘ tanh ∘ (β*·)` `AnalyticOnNhd
+ℝ _ (Set.Ici 0)` in J under `0 ≤ β`** (§18.6 Λ wrap). -/
+theorem polymerFreeEnergy_Λ_tanh_analyticOnNhd_J_Ici_zero
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {β : ℝ} (hβ : 0 ≤ β) :
+    AnalyticOnNhd ℝ (fun J' : ℝ =>
+        IsingModel.polymerFreeEnergy (inducedGraph G Λ)
+          (Real.tanh (β * J'))) (Set.Ici 0) :=
+  IsingModel.polymerFreeEnergy_tanh_analyticOnNhd_J_Ici_zero
+    (inducedGraph G Λ) hβ
+
 end Ambient
 end IsingModel
