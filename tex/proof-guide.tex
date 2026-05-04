@@ -3476,6 +3476,38 @@ free energy at \emph{general} external field $h$:
     (\#1541).
 \end{itemize}
 
+\paragraph{Convergence radius at all volume layers (\S18.5,
+PR~\#1569).} The cluster-expansion convergence-radius statements
+(`polymerFreeEnergy_high_temp_sandwich' from \#1526 and
+`polymerFreeEnergy_hasSum_via_log_of_pow_lt_two' from \#1517) are
+lifted to every volume layer:
+\begin{itemize}
+  \item \emph{Abstract tanh form (new)}:
+    \texttt{polymerFreeEnergy\_tanh\_hasSum\_via\_log\_of\_pow\_lt\_two}
+    --- under $0 \le \beta J$ and $(1+\tanh(\beta J))^{|E|} < 2$,
+    $\mathrm{polymerFreeEnergy}\,G\,(\tanh(\beta J))$ admits the same
+    explicit log-Taylor series as the abstract form, restated in the
+    Ising activity $t = \tanh(\beta J)$.
+  \item \emph{Λ-layer tanh wraps}:
+    \texttt{polymerFreeEnergy\_Λ\_tanh\_high\_temp\_sandwich} and
+    \texttt{polymerFreeEnergy\_Λ\_tanh\_hasSum\_via\_log\_of\_pow\_lt\_two}
+    in \texttt{AmbientLattice/Analyticity.lean}.
+  \item \emph{Along-exhaustion wraps}:
+    \texttt{polymerFreeEnergyAlongExhaustion\_\{,tanh\_\}\{high\_temp\_sandwich,hasSum\_via\_log\_of\_pow\_lt\_two\}}
+    (4 theorems, per stage $n$) in
+    \texttt{AmbientLattice/SpecialCases.lean}.
+  \item \emph{$\mathbb{Z}^d$ concrete wraps}: 8 theorems in
+    \texttt{Concrete/LatticeGraphCorrelation.lean}, covering both
+    the $\Lambda$-direct family on $\Lambda \subseteq \mathbb{Z}^d$
+    and the along-exhaustion family on
+    $\mathrm{Exhaustion}\,(\mathrm{Fin}\,d \to \mathbb{Z})$.
+\end{itemize}
+The convergence-radius condition $(1+t)^{|E|} < 2$ is exponentially
+restrictive in $|E|$; sharper polymer-density / Kotecky--Preiss
+estimates that depend on the maximum vertex degree of $G$ instead of
+$|E|$ remain deferred (they require chromatic-polynomial /
+matrix-tree machinery not yet available in Mathlib).
+
 \paragraph{Decay of correlations at $h=0$ (\S18.7, Step~574).} The
 high-temperature exponential-decay capstone
 \[
