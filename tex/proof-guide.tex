@@ -3489,6 +3489,16 @@ The four $\mathbb{Z}^d$ wrappers use the abbreviated suffix
 \texttt{\_ferro} (instead of \texttt{\_ferromagnetic}) so each
 declaration fits the linter's 100-character budget.
 
+\paragraph{\texttt{mayerPartialSum} $\beta$ / $J$ regularity (tanh
+form), all volume layers (\S18.6, PR~\#1583).} The eight abstract
+$\beta$/$J$ regularity statements (continuous, differentiable,
+analyticAt, analyticOnNhd, each in $\beta$ and $J$) for
+\texttt{mayerPartialSum} composed with $\tanh(\beta J)$ are lifted
+to the four volume layers, giving $32$ thin direct-instantiation
+wrappers in \texttt{IsingModel/AmbientLattice/Analyticity.lean},
+\texttt{AmbientLattice/SpecialCases.lean}, and
+\texttt{Concrete/LatticeGraphCorrelation.lean}.
+
 \paragraph{\texttt{mayerExpansionTerm} regularity, all volume layers
 (\S18.6, PR~\#1582).} The four abstract regularity statements
 (\texttt{mayerExpansionTerm\_continuous} (Step~588),
