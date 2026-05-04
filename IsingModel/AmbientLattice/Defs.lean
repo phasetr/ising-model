@@ -2263,5 +2263,36 @@ theorem susceptibilityΛ_differentiable_beta (G : SimpleGraph V) (Λ : Finset V)
   simp_rw [susceptibilityΛ_apply]
   exact IsingModel.susceptibility_differentiable_beta_general_h _ J h _
 
+/-- **susceptibilityΛ Continuous in `h`**. -/
+theorem susceptibilityΛ_continuous_field (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (J β : ℝ) (i : ↑Λ) :
+    Continuous (fun h' => susceptibilityΛ G Λ (⟨J, h', β⟩ : IsingParams ℝ) i) := by
+  simp_rw [susceptibilityΛ_apply]
+  exact IsingModel.susceptibility_continuous_field _ J β _
+
+/-- **susceptibilityΛ Differentiable in `h`**. -/
+theorem susceptibilityΛ_differentiable_field (G : SimpleGraph V)
+    (Λ : Finset V) [Fintype (inducedGraph G Λ).edgeSet] (J β : ℝ)
+    (i : ↑Λ) :
+    Differentiable ℝ
+      (fun h' => susceptibilityΛ G Λ (⟨J, h', β⟩ : IsingParams ℝ) i) := by
+  simp_rw [susceptibilityΛ_apply]
+  exact IsingModel.susceptibility_differentiable_field _ J β _
+
+/-- **susceptibilityΛ Continuous in `J`**. -/
+theorem susceptibilityΛ_continuous_J (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (h β : ℝ) (i : ↑Λ) :
+    Continuous (fun J' => susceptibilityΛ G Λ (⟨J', h, β⟩ : IsingParams ℝ) i) := by
+  simp_rw [susceptibilityΛ_apply]
+  exact IsingModel.susceptibility_continuous_J _ h β _
+
+/-- **susceptibilityΛ Differentiable in `J`**. -/
+theorem susceptibilityΛ_differentiable_J (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (h β : ℝ) (i : ↑Λ) :
+    Differentiable ℝ
+      (fun J' => susceptibilityΛ G Λ (⟨J', h, β⟩ : IsingParams ℝ) i) := by
+  simp_rw [susceptibilityΛ_apply]
+  exact IsingModel.susceptibility_differentiable_J _ h β _
+
 end Ambient
 end IsingModel
