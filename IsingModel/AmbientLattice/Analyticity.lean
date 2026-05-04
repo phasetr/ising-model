@@ -1082,5 +1082,53 @@ theorem vdPolymerFamilies_sum_Λ_tanh_analyticAt_J
   IsingModel.vdPolymerFamilies_sum_tanh_analyticAt_J
     (inducedGraph G Λ) β J
 
+/-! ### §18.5 log_vdPolymerFamilies_sum analyticity Λ wraps -/
+
+/-- **Λ-layer: `log_vdPolymerFamilies_sum` AnalyticAt for `t ≥ 0`**. -/
+theorem log_vdPolymerFamilies_sum_Λ_analyticAt
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) :
+    AnalyticAt ℝ (fun s : ℝ =>
+        Real.log (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
+            (inducedGraph G Λ), ∏ P ∈ Γ, s ^ P.card)) t :=
+  IsingModel.log_vdPolymerFamilies_sum_analyticAt (inducedGraph G Λ) ht
+
+/-- **Λ-layer: `log_vdPolymerFamilies_sum` AnalyticOnNhd over `[0, ∞)`**. -/
+theorem log_vdPolymerFamilies_sum_Λ_analyticOnNhd_Ici_zero
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] :
+    AnalyticOnNhd ℝ (fun s : ℝ =>
+        Real.log (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
+            (inducedGraph G Λ), ∏ P ∈ Γ, s ^ P.card)) (Set.Ici 0) :=
+  IsingModel.log_vdPolymerFamilies_sum_analyticOnNhd_Ici_zero
+    (inducedGraph G Λ)
+
+/-- **Λ-layer: log_vdPolymerFamilies_sum ∘ tanh AnalyticAt in β under
+`0 ≤ β·J`**. -/
+theorem log_vdPolymerFamilies_sum_Λ_tanh_analyticAt_beta
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) :
+    AnalyticAt ℝ (fun β' : ℝ =>
+        Real.log (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
+            (inducedGraph G Λ),
+          ∏ P ∈ Γ, Real.tanh (β' * J) ^ P.card)) β :=
+  IsingModel.log_vdPolymerFamilies_sum_tanh_analyticAt_beta
+    (inducedGraph G Λ) J β hβJ
+
+/-- **Λ-layer: log_vdPolymerFamilies_sum ∘ tanh AnalyticAt in J under
+`0 ≤ β·J`**. -/
+theorem log_vdPolymerFamilies_sum_Λ_tanh_analyticAt_J
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (β J : ℝ) (hβJ : 0 ≤ β * J) :
+    AnalyticAt ℝ (fun J' : ℝ =>
+        Real.log (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
+            (inducedGraph G Λ),
+          ∏ P ∈ Γ, Real.tanh (β * J') ^ P.card)) J :=
+  IsingModel.log_vdPolymerFamilies_sum_tanh_analyticAt_J
+    (inducedGraph G Λ) β J hβJ
+
 end Ambient
 end IsingModel

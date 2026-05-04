@@ -9525,6 +9525,113 @@ theorem vdPolymerFamilies_sumAlongExhaustion_latticeGraph_tanh_analyticAt_J
   Ambient.vdPolymerFamilies_sumAlongExhaustion_tanh_analyticAt_J
     (IsingModel.latticeGraph d) Λ β J n
 
+/-! ### §18.5 log_vdPolymerFamilies_sum analyticity ℤ^d wraps -/
+
+/-- **ℤ^d Λ: log_vdPolymerFamilies_sum AnalyticAt for `t ≥ 0`**. -/
+theorem log_vdPolymerFamilies_sum_Λ_latticeGraph_analyticAt
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) :
+    AnalyticAt ℝ (fun s : ℝ =>
+        Real.log (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
+            (inducedGraph (IsingModel.latticeGraph d) Λ),
+          ∏ P ∈ Γ, s ^ P.card)) t :=
+  Ambient.log_vdPolymerFamilies_sum_Λ_analyticAt
+    (IsingModel.latticeGraph d) Λ ht
+
+/-- **ℤ^d Λ: log_vdPolymerFamilies_sum AnalyticOnNhd over `[0, ∞)`**. -/
+theorem log_vdPolymerFamilies_sum_Λ_latticeGraph_analyticOnNhd_Ici_zero
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet] :
+    AnalyticOnNhd ℝ (fun s : ℝ =>
+        Real.log (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
+            (inducedGraph (IsingModel.latticeGraph d) Λ),
+          ∏ P ∈ Γ, s ^ P.card)) (Set.Ici 0) :=
+  Ambient.log_vdPolymerFamilies_sum_Λ_analyticOnNhd_Ici_zero
+    (IsingModel.latticeGraph d) Λ
+
+/-- **ℤ^d Λ: log_vdPolymerFamilies_sum ∘ tanh AnalyticAt in β under
+`0 ≤ β·J`**. -/
+theorem log_vdPolymerFamilies_sum_Λ_latticeGraph_tanh_analyticAt_beta
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) :
+    AnalyticAt ℝ (fun β' : ℝ =>
+        Real.log (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
+            (inducedGraph (IsingModel.latticeGraph d) Λ),
+          ∏ P ∈ Γ, Real.tanh (β' * J) ^ P.card)) β :=
+  Ambient.log_vdPolymerFamilies_sum_Λ_tanh_analyticAt_beta
+    (IsingModel.latticeGraph d) Λ J β hβJ
+
+/-- **ℤ^d Λ: log_vdPolymerFamilies_sum ∘ tanh AnalyticAt in J under
+`0 ≤ β·J`**. -/
+theorem log_vdPolymerFamilies_sum_Λ_latticeGraph_tanh_analyticAt_J
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
+    (β J : ℝ) (hβJ : 0 ≤ β * J) :
+    AnalyticAt ℝ (fun J' : ℝ =>
+        Real.log (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
+            (inducedGraph (IsingModel.latticeGraph d) Λ),
+          ∏ P ∈ Γ, Real.tanh (β * J') ^ P.card)) J :=
+  Ambient.log_vdPolymerFamilies_sum_Λ_tanh_analyticAt_J
+    (IsingModel.latticeGraph d) Λ β J hβJ
+
+/-- **ℤ^d along-ex: log_vdPolymerFamilies_sum AnalyticAt for `t ≥ 0`**. -/
+theorem log_vdPolymerFamilies_sumAlongExhaustion_latticeGraph_analyticAt
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
+      (Λ.volume n)).edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) (n : ℕ) :
+    AnalyticAt ℝ (fun s : ℝ =>
+        Real.log (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
+            (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)),
+          ∏ P ∈ Γ, s ^ P.card)) t :=
+  Ambient.log_vdPolymerFamilies_sumAlongExhaustion_analyticAt
+    (IsingModel.latticeGraph d) Λ ht n
+
+/-- **ℤ^d along-ex: log_vdPolymerFamilies_sum AnalyticOnNhd over `[0, ∞)`**. -/
+theorem
+log_vdPolymerFamilies_sumAlongExhaustion_latticeGraph_analyticOnNhd_Ici_zero
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
+      (Λ.volume n)).edgeSet] (n : ℕ) :
+    AnalyticOnNhd ℝ (fun s : ℝ =>
+        Real.log (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
+            (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)),
+          ∏ P ∈ Γ, s ^ P.card)) (Set.Ici 0) :=
+  Ambient.log_vdPolymerFamilies_sumAlongExhaustion_analyticOnNhd_Ici_zero
+    (IsingModel.latticeGraph d) Λ n
+
+/-- **ℤ^d along-ex: log_vdPolymerFamilies_sum ∘ tanh AnalyticAt in β
+under `0 ≤ β·J`**. -/
+theorem
+log_vdPolymerFamilies_sumAlongExhaustion_latticeGraph_tanh_analyticAt_beta
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
+      (Λ.volume n)).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (n : ℕ) :
+    AnalyticAt ℝ (fun β' : ℝ =>
+        Real.log (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
+            (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)),
+          ∏ P ∈ Γ, Real.tanh (β' * J) ^ P.card)) β :=
+  Ambient.log_vdPolymerFamilies_sumAlongExhaustion_tanh_analyticAt_beta
+    (IsingModel.latticeGraph d) Λ J β hβJ n
+
+/-- **ℤ^d along-ex: log_vdPolymerFamilies_sum ∘ tanh AnalyticAt in J
+under `0 ≤ β·J`**. -/
+theorem
+log_vdPolymerFamilies_sumAlongExhaustion_latticeGraph_tanh_analyticAt_J
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
+      (Λ.volume n)).edgeSet]
+    (β J : ℝ) (hβJ : 0 ≤ β * J) (n : ℕ) :
+    AnalyticAt ℝ (fun J' : ℝ =>
+        Real.log (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
+            (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)),
+          ∏ P ∈ Γ, Real.tanh (β * J') ^ P.card)) J :=
+  Ambient.log_vdPolymerFamilies_sumAlongExhaustion_tanh_analyticAt_J
+    (IsingModel.latticeGraph d) Λ β J hβJ n
+
 end Ambient
 
 end IsingModel
