@@ -3489,6 +3489,16 @@ The four $\mathbb{Z}^d$ wrappers use the abbreviated suffix
 \texttt{\_ferro} (instead of \texttt{\_ferromagnetic}) so each
 declaration fits the linter's 100-character budget.
 
+\paragraph{\texttt{vdPolymerFamilies\_sum} iff characterizations,
+all volume layers (\S18.5, PR~\#1594).} The four abstract iff
+characterizations (\texttt{\_eq\_one\_iff\_eps\_eq\_zero},
+\texttt{\_gt\_one\_iff\_eps\_pos},
+\texttt{\_tanh\_gt\_one\_iff}, \texttt{\_tanh\_eq\_one\_iff}) are
+lifted to the four volume layers. The non-tanh forms had Λ-layer
+wraps already; this PR completes the along-exhaustion and
+$\mathbb{Z}^d$ wraps for both, plus all four layers for the tanh
+forms. 14 new thin direct-instantiation wrappers.
+
 \paragraph{Basic identities at\_zero / at\_one, all volume layers
 (\S18.5, PR~\#1593).} The eight abstract base-case identities
 (\texttt{vdPolymerFamilies\_sum\_at\_zero} (Step~599),
