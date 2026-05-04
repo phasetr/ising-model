@@ -2420,6 +2420,78 @@ theorem magnetizationΛ_hasDerivAt_J (G : SimpleGraph V) (Λ : Finset V)
   simp_rw [correlationΛ_apply]
   exact IsingModel.magnetization_hasDerivAt_J _ J h β _
 
+/-- **correlationΛ Continuous in β at h = 0**. -/
+theorem correlationΛ_continuous_beta (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J : ℝ) (A : Finset (↑Λ : Type _)) :
+    Continuous
+      (fun β' => correlationΛ G Λ (⟨J, 0, β'⟩ : IsingParams ℝ) A) := by
+  simp_rw [correlationΛ_apply]
+  exact IsingModel.correlation_continuous_beta _ J A
+
+/-- **correlationΛ Continuous in β at general h**. -/
+theorem correlationΛ_continuous_beta_general_h (G : SimpleGraph V)
+    (Λ : Finset V) [Fintype (inducedGraph G Λ).edgeSet]
+    (J h : ℝ) (A : Finset (↑Λ : Type _)) :
+    Continuous
+      (fun β' => correlationΛ G Λ (⟨J, h, β'⟩ : IsingParams ℝ) A) := by
+  simp_rw [correlationΛ_apply]
+  exact IsingModel.correlation_continuous_beta_general_h _ J h A
+
+/-- **correlationΛ Differentiable in β at h = 0**. -/
+theorem correlationΛ_differentiable_beta (G : SimpleGraph V)
+    (Λ : Finset V) [Fintype (inducedGraph G Λ).edgeSet]
+    (J : ℝ) (A : Finset (↑Λ : Type _)) :
+    Differentiable ℝ
+      (fun β' => correlationΛ G Λ (⟨J, 0, β'⟩ : IsingParams ℝ) A) := by
+  simp_rw [correlationΛ_apply]
+  exact IsingModel.correlation_differentiable_beta _ J A
+
+/-- **correlationΛ Differentiable in β at general h**. -/
+theorem correlationΛ_differentiable_beta_general_h (G : SimpleGraph V)
+    (Λ : Finset V) [Fintype (inducedGraph G Λ).edgeSet]
+    (J h : ℝ) (A : Finset (↑Λ : Type _)) :
+    Differentiable ℝ
+      (fun β' => correlationΛ G Λ (⟨J, h, β'⟩ : IsingParams ℝ) A) := by
+  simp_rw [correlationΛ_apply]
+  exact IsingModel.correlation_differentiable_beta_general_h _ J h A
+
+/-- **correlationΛ Continuous in `h`**. -/
+theorem correlationΛ_continuous_field (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (A : Finset (↑Λ : Type _)) :
+    Continuous
+      (fun h' => correlationΛ G Λ (⟨J, h', β⟩ : IsingParams ℝ) A) := by
+  simp_rw [correlationΛ_apply]
+  exact IsingModel.correlation_continuous_field _ J β A
+
+/-- **correlationΛ Differentiable in `h`**. -/
+theorem correlationΛ_differentiable_field (G : SimpleGraph V)
+    (Λ : Finset V) [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (A : Finset (↑Λ : Type _)) :
+    Differentiable ℝ
+      (fun h' => correlationΛ G Λ (⟨J, h', β⟩ : IsingParams ℝ) A) := by
+  simp_rw [correlationΛ_apply]
+  exact IsingModel.correlation_differentiable_field _ J β A
+
+/-- **correlationΛ Continuous in `J`**. -/
+theorem correlationΛ_continuous_J (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (h β : ℝ) (A : Finset (↑Λ : Type _)) :
+    Continuous
+      (fun J' => correlationΛ G Λ (⟨J', h, β⟩ : IsingParams ℝ) A) := by
+  simp_rw [correlationΛ_apply]
+  exact IsingModel.correlation_continuous_J _ h β A
+
+/-- **correlationΛ Differentiable in `J`**. -/
+theorem correlationΛ_differentiable_J (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (h β : ℝ) (A : Finset (↑Λ : Type _)) :
+    Differentiable ℝ
+      (fun J' => correlationΛ G Λ (⟨J', h, β⟩ : IsingParams ℝ) A) := by
+  simp_rw [correlationΛ_apply]
+  exact IsingModel.correlation_differentiable_J _ h β A
+
 /-- **magnetizationΛ HasDerivAt β at general h** with explicit
 derivative. -/
 theorem magnetizationΛ_hasDerivAt_beta_general_h (G : SimpleGraph V)
