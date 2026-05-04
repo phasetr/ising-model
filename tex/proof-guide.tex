@@ -3500,6 +3500,29 @@ existed; this PR fills the bare-bound and `\geq 1` gaps. 12 new
 thin direct-instantiation wrappers (3 abstracts $\times$ 4
 layers).
 
+\paragraph{Strict-mono / strict-pos under polymers $\ne
+\emptyset$, all volume layers (\S18.5, PR~\#1603).} Lifts ten
+abstract strict-monotone / strict-positive lemmas to the four
+volume layers (\textit{Λ}, along-ex, $\mathbb{Z}^d$
+\textit{Λ}, $\mathbb{Z}^d$ along-ex). All require the
+hypothesis $\mathrm{allPolymers}\ G \ne \emptyset$:
+\texttt{vdPolymerFamilies\_sum\_lt\_of\_lt\_of\_polymers\_nonempty},
+\texttt{\_strictMonoOn\_of\_polymers\_nonempty} (over
+$[0,\infty)$),
+\texttt{polymerFreeEnergy\_pos\_of\_t\_pos\_of\_polymers\_nonempty},
+\texttt{vdPolymerFamilies\_sum\_gt\_one\_of\_t\_pos\_of\_polymers\_nonempty},
+\texttt{\_minus\_one\_pos\_of\_t\_pos\_of\_polymers\_nonempty},
+\texttt{polymerFreeEnergy\_tanh\_pos\_of\_tanh\_pos\_of\_polymers\_nonempty},
+\texttt{vdPolymerFamilies\_sum\_tanh\_gt\_one\_of\_tanh\_pos\_of\_polymers\_nonempty},
+\texttt{\_minus\_one\_tanh\_pos\_of\_tanh\_pos\_of\_polymers\_nonempty},
+\texttt{polymerFreeEnergy\_strictMonoOn\_Ioi\_zero\_of\_polymers\_nonempty},
+\texttt{vdPolymerFamilies\_sum\_strictMonoOn\_Ioi\_zero\_of\_polymers\_nonempty}.
+40 new thin direct-instantiation wrappers. The longest name
+(ℤ$^d$ along-ex \texttt{\_minus\_one\_tanh\_pos}) drops the
+second \texttt{\_of\_tanh\_pos\_} from its name to fit under the
+100-character linter budget; the hypothesis is preserved in the
+\texttt{h\_tanh\_pos} parameter.
+
 \paragraph{$\varepsilon(t)$ / \texttt{polymerFreeEnergy}
 positivity / zero iff family, all volume layers (\S18.5,
 PR~\#1602).} Lifts six abstract iff characterisations to the
