@@ -3500,6 +3500,25 @@ existed; this PR fills the bare-bound and `\geq 1` gaps. 12 new
 thin direct-instantiation wrappers (3 abstracts $\times$ 4
 layers).
 
+\paragraph{\S18.4--\S18.6 capstones ($Z$ formula +
+\texttt{freeEnergy} decomposition + log $2$ / $N=1$ corollaries),
+all volume layers (PR~\#1612).} Lifts six capstone formulas to the
+four volume layers (\textit{Λ}, along-ex, $\mathbb{Z}^d$
+\textit{Λ}, $\mathbb{Z}^d$ along-ex):
+\texttt{partitionFunction\_high\_temp\_expansion\_h\_zero\_polymer\_family}
+(\S18.4 main: $Z = 2^{|\iota|} \cdot \cosh^{|E|} \cdot
+\sum_\Gamma \prod \tanh^{|P|}$),
+\texttt{\_closed\_evenSubgraphs} (FV (3.45) form),
+\texttt{freeEnergy\_eq\_polymerFreeEnergy} and
+\texttt{\_ferromagnetic} (\S18.6 decomposition $f = \log 2 +
+(|E|/|\iota|) \cdot \log \cosh + \mathrm{pFE} / |\iota|$),
+\texttt{freeEnergy\_eq\_log\_two\_at\_betaJ\_zero} ($f = \log 2$
+at $\beta J = 0$), and \texttt{mayerPartialSum\_one\_at\_one}
+($\mathrm{mayerPartialSum}\,G\,1\,1 = |\mathrm{allPolymers}\,G|$).
+24 new thin direct-instantiation wrappers (6 abstracts $\times$
+4 layers). The hypothesis $0 < |\iota|$ at the Λ / along-ex
+layers is discharged via \texttt{Finset.Nonempty.fintype\_card\_coe\_pos}.
+
 \paragraph{\texttt{partitionFunction}
 Continuous/Differentiable per-direction at general $h$ +
 \texttt{freeEnergy} joint Continuous/Differentiable, completion
