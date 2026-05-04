@@ -1711,5 +1711,69 @@ theorem polymerFreeEnergy_Λ_hasDerivAt
             ∏ P ∈ Γ, t ^ P.card)) t :=
   IsingModel.polymerFreeEnergy_hasDerivAt (inducedGraph G Λ) ht
 
+/-! ### §18.5 Mayer recurrence + hasSum + tendsto Λ-layer wraps -/
+
+/-- **Λ-layer: mayerPartialSum recurrence** in `N`. -/
+theorem mayerPartialSum_Λ_succ
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (N : ℕ) (t : ℝ) :
+    IsingModel.mayerPartialSum (inducedGraph G Λ) (N + 1) t =
+      IsingModel.mayerPartialSum (inducedGraph G Λ) N t +
+        IsingModel.mayerExpansionTerm (inducedGraph G Λ) (N + 1) t :=
+  IsingModel.mayerPartialSum_succ (inducedGraph G Λ) N t
+
+/-- **Λ-layer: mayerExpansionTerm = mayerPartialSum diff**. -/
+theorem mayerExpansionTerm_Λ_eq_mayerPartialSum_diff
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (N : ℕ) (t : ℝ) :
+    IsingModel.mayerExpansionTerm (inducedGraph G Λ) (N + 1) t =
+      IsingModel.mayerPartialSum (inducedGraph G Λ) (N + 1) t -
+        IsingModel.mayerPartialSum (inducedGraph G Λ) N t :=
+  IsingModel.mayerExpansionTerm_eq_mayerPartialSum_diff
+    (inducedGraph G Λ) N t
+
+/-- **Λ-layer: polymerFreeEnergy hasSum via log under `|ε(t)| < 1`**. -/
+theorem polymerFreeEnergy_Λ_hasSum_via_log
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {t : ℝ}
+    (h_abs : |∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
+                        (inducedGraph G Λ)).erase ∅,
+                ∏ P ∈ Γ, t ^ P.card| < 1) :
+    HasSum (fun n : ℕ =>
+        (-1 : ℝ) ^ n *
+          (∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
+                    (inducedGraph G Λ)).erase ∅,
+              ∏ P ∈ Γ, t ^ P.card) ^ (n + 1) /
+          (n + 1))
+      (IsingModel.polymerFreeEnergy (inducedGraph G Λ) t) :=
+  IsingModel.polymerFreeEnergy_hasSum_via_log (inducedGraph G Λ) h_abs
+
+/-- **Λ-layer: polymerFreeEnergy hasSum eventually as `t → 0`**. -/
+theorem polymerFreeEnergy_Λ_hasSum_via_log_eventually
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] :
+    ∀ᶠ t : ℝ in nhds 0,
+      HasSum (fun n : ℕ =>
+          (-1 : ℝ) ^ n *
+            (∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
+                      (inducedGraph G Λ)).erase ∅,
+                ∏ P ∈ Γ, t ^ P.card) ^ (n + 1) /
+            (n + 1))
+        (IsingModel.polymerFreeEnergy (inducedGraph G Λ) t) :=
+  IsingModel.polymerFreeEnergy_hasSum_via_log_eventually
+    (inducedGraph G Λ)
+
+/-- **Λ-layer: ε(t) → 0 as t → 0**. -/
+theorem vdPolymerFamilies_sum_Λ_minus_one_tendsto_zero
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] :
+    Filter.Tendsto (fun t : ℝ =>
+      ∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
+              (inducedGraph G Λ)).erase ∅,
+        ∏ P ∈ Γ, t ^ P.card) (nhds 0) (nhds 0) :=
+  IsingModel.vdPolymerFamilies_sum_minus_one_tendsto_zero
+    (inducedGraph G Λ)
+
 end Ambient
 end IsingModel
