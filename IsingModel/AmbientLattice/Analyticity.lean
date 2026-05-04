@@ -505,5 +505,40 @@ theorem vdPolymerFamilies_sum_Λ_sandwich_sharp_ferromagnetic
   IsingModel.vdPolymerFamilies_sum_sandwich_sharp_ferromagnetic
     (inducedGraph G Λ) hJ hβ
 
+/-- **Λ-layer: strict `freeEnergyΛ` upper bound in cluster-expansion
+convergence regime** (§18.5 Λ wrap of #1527). -/
+theorem freeEnergyΛ_lt_log_two_plus_high_temp_correction
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (hne : 0 < Λ.card)
+    (h_pow : (1 + Real.tanh (β * J)) ^
+        (inducedGraph G Λ).edgeFinset.card < 2) :
+    freeEnergyΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) <
+      Real.log 2 +
+        ((inducedGraph G Λ).edgeFinset.card : ℝ) / Λ.card *
+          Real.log (Real.cosh (β * J)) +
+        Real.log 2 / Λ.card := by
+  rw [freeEnergyΛ_apply]
+  have hne' : 0 < Fintype.card ↑Λ := by rw [Fintype.card_coe]; exact hne
+  have := IsingModel.freeEnergy_lt_log_two_plus_high_temp_correction
+    (inducedGraph G Λ) J β hβJ hne' h_pow
+  rwa [Fintype.card_coe] at this
+
+/-- **Λ-layer: strict `freeEnergyΛ` upper bound in cluster-expansion
+convergence regime (ferromagnetic)** (§18.5 Λ wrap, ferro). -/
+theorem freeEnergyΛ_lt_log_two_plus_high_temp_correction_ferromagnetic
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (hne : 0 < Λ.card)
+    (h_pow : (1 + Real.tanh (β * J)) ^
+        (inducedGraph G Λ).edgeFinset.card < 2) :
+    freeEnergyΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) <
+      Real.log 2 +
+        ((inducedGraph G Λ).edgeFinset.card : ℝ) / Λ.card *
+          Real.log (Real.cosh (β * J)) +
+        Real.log 2 / Λ.card :=
+  freeEnergyΛ_lt_log_two_plus_high_temp_correction
+    G Λ J β (mul_nonneg hβ.le hJ) hne h_pow
+
 end Ambient
 end IsingModel
