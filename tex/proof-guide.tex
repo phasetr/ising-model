@@ -3489,6 +3489,17 @@ The four $\mathbb{Z}^d$ wrappers use the abbreviated suffix
 \texttt{\_ferro} (instead of \texttt{\_ferromagnetic}) so each
 declaration fits the linter's 100-character budget.
 
+\paragraph{\texttt{mayerPartialSum} regularity, all volume layers
+(\S18.6, PR~\#1581).} The five abstract regularity statements
+(\texttt{mayerPartialSum\_continuous},
+\texttt{\_differentiable}, \texttt{\_analyticAt} (Step~591),
+\texttt{\_continuousOn}, \texttt{\_differentiableOn} (Step~628))
+are lifted to the four volume layers, giving $20$ thin
+direct-instantiation wrappers in
+\texttt{IsingModel/AmbientLattice/Analyticity.lean},
+\texttt{AmbientLattice/SpecialCases.lean}, and
+\texttt{Concrete/LatticeGraphCorrelation.lean}.
+
 \paragraph{\texttt{polymerFreeEnergy} tanh-bound family, all volume
 layers (\S18.5, PR~\#1580).} The tanh-form sandwich (Step~632),
 the $\le |E| \cdot \log 2$ bound for $0 \le t \le 1$ (Step~642),
