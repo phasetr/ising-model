@@ -2460,5 +2460,87 @@ theorem polymerFreeEnergy_Λ_tanh_lt_log_two_of_pow_lt_two
   IsingModel.polymerFreeEnergy_tanh_lt_log_two_of_pow_lt_two
     (inducedGraph G Λ) hβJ h_pow
 
+/-! ### §18.6 partitionFunctionΛ regularity at `h = 0` Λ-layer wraps -/
+
+/-- **Λ-layer: partitionFunction Continuous in `β` at `h = 0`**. -/
+theorem partitionFunctionΛ_continuous_beta_h_zero
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (J : ℝ) :
+    Continuous (fun β : ℝ => partitionFunctionΛ G Λ ⟨J, 0, β⟩) := by
+  simp only [partitionFunctionΛ_apply]
+  exact IsingModel.partitionFunction_continuous_beta_h_zero
+    (inducedGraph G Λ) J
+
+/-- **Λ-layer: partitionFunction Continuous in `J` at `h = 0`**. -/
+theorem partitionFunctionΛ_continuous_J_h_zero
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (β : ℝ) :
+    Continuous (fun J : ℝ => partitionFunctionΛ G Λ ⟨J, 0, β⟩) := by
+  simp only [partitionFunctionΛ_apply]
+  exact IsingModel.partitionFunction_continuous_J_h_zero
+    (inducedGraph G Λ) β
+
+/-- **Λ-layer: partitionFunction Differentiable in `β` at `h = 0`**. -/
+theorem partitionFunctionΛ_differentiable_beta_h_zero
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (J : ℝ) :
+    Differentiable ℝ
+      (fun β : ℝ => partitionFunctionΛ G Λ ⟨J, 0, β⟩) := by
+  simp only [partitionFunctionΛ_apply]
+  exact IsingModel.partitionFunction_differentiable_beta_h_zero
+    (inducedGraph G Λ) J
+
+/-- **Λ-layer: partitionFunction Differentiable in `J` at `h = 0`**. -/
+theorem partitionFunctionΛ_differentiable_J_h_zero
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (β : ℝ) :
+    Differentiable ℝ
+      (fun J : ℝ => partitionFunctionΛ G Λ ⟨J, 0, β⟩) := by
+  simp only [partitionFunctionΛ_apply]
+  exact IsingModel.partitionFunction_differentiable_J_h_zero
+    (inducedGraph G Λ) β
+
+/-- **Λ-layer: partitionFunction `AnalyticAt ℝ` in `β` at `h = 0`**. -/
+theorem partitionFunctionΛ_analyticAt_beta_h_zero
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (J β : ℝ) :
+    AnalyticAt ℝ
+      (fun β' : ℝ => partitionFunctionΛ G Λ ⟨J, 0, β'⟩) β := by
+  simp only [partitionFunctionΛ_apply]
+  exact IsingModel.partitionFunction_analyticAt_beta_h_zero
+    (inducedGraph G Λ) J β
+
+/-- **Λ-layer: partitionFunction `AnalyticAt ℝ` in `J` at `h = 0`**. -/
+theorem partitionFunctionΛ_analyticAt_J_h_zero
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (β J : ℝ) :
+    AnalyticAt ℝ
+      (fun J' : ℝ => partitionFunctionΛ G Λ ⟨J', 0, β⟩) J := by
+  simp only [partitionFunctionΛ_apply]
+  exact IsingModel.partitionFunction_analyticAt_J_h_zero
+    (inducedGraph G Λ) β J
+
+/-- **Λ-layer: partitionFunction `AnalyticOnNhd ℝ _ Set.univ` in `β`
+at `h = 0`**. -/
+theorem partitionFunctionΛ_analyticOnNhd_beta_h_zero
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (J : ℝ) :
+    AnalyticOnNhd ℝ
+      (fun β' : ℝ => partitionFunctionΛ G Λ ⟨J, 0, β'⟩) Set.univ := by
+  simp only [partitionFunctionΛ_apply]
+  exact IsingModel.partitionFunction_analyticOnNhd_beta_h_zero
+    (inducedGraph G Λ) J
+
+/-- **Λ-layer: partitionFunction `AnalyticOnNhd ℝ _ Set.univ` in `J`
+at `h = 0`**. -/
+theorem partitionFunctionΛ_analyticOnNhd_J_h_zero
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (β : ℝ) :
+    AnalyticOnNhd ℝ
+      (fun J' : ℝ => partitionFunctionΛ G Λ ⟨J', 0, β⟩) Set.univ := by
+  simp only [partitionFunctionΛ_apply]
+  exact IsingModel.partitionFunction_analyticOnNhd_J_h_zero
+    (inducedGraph G Λ) β
+
 end Ambient
 end IsingModel

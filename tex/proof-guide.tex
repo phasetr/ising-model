@@ -3500,6 +3500,24 @@ existed; this PR fills the bare-bound and `\geq 1` gaps. 12 new
 thin direct-instantiation wrappers (3 abstracts $\times$ 4
 layers).
 
+\paragraph{\texttt{partitionFunction} \texttt{h\_zero} regularity,
+all volume layers (\S18.6, PR~\#1608).} Lifts eight abstract
+\texttt{partitionFunction\_*\_h\_zero} regularity theorems to the
+four volume layers (\textit{Λ}, along-ex, $\mathbb{Z}^d$
+\textit{Λ}, $\mathbb{Z}^d$ along-ex):
+\texttt{\_continuous\_beta\_h\_zero},
+\texttt{\_continuous\_J\_h\_zero},
+\texttt{\_differentiable\_beta\_h\_zero},
+\texttt{\_differentiable\_J\_h\_zero},
+\texttt{\_analyticAt\_beta\_h\_zero},
+\texttt{\_analyticAt\_J\_h\_zero},
+\texttt{\_analyticOnNhd\_beta\_h\_zero}, and
+\texttt{\_analyticOnNhd\_J\_h\_zero}. 32 new thin
+direct-instantiation wrappers (8 abstracts $\times$ 4 layers).
+These provide the polymer-expansion-derived h-zero regularity of
+$Z(J, 0, \beta)$ in $\beta / J$ at every volume layer, alongside
+the existing general-$h$ wrappers.
+
 \paragraph{vdSum sandwich/monotone + $\varepsilon$ bound +
 \texttt{polymerFreeEnergy(tanh)} bound + $\log 2$, all volume
 layers (\S18.5, PR~\#1607).} Lifts six abstract bound/regularity
