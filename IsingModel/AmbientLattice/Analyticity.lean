@@ -1420,5 +1420,33 @@ theorem mayerExpansionTerm_Λ_at_zero
     IsingModel.mayerExpansionTerm (inducedGraph G Λ) n 0 = 0 :=
   IsingModel.mayerExpansionTerm_at_zero (inducedGraph G Λ) n
 
+/-! ### §18.5 vdPolymerFamilies_sum tanh iff characterizations Λ wraps -/
+
+/-- **Λ-layer: vdSum_tanh > 1 ↔ 0 < tanh ∧ allPolymers ≠ ∅**. -/
+theorem vdPolymerFamilies_sum_Λ_tanh_gt_one_iff
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {β J : ℝ} (hβJ : 0 ≤ β * J) :
+    1 < (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
+            (inducedGraph G Λ),
+          ∏ P ∈ Γ, (Real.tanh (β * J)) ^ P.card) ↔
+      0 < Real.tanh (β * J) ∧
+        (IsingModel.allPolymers (inducedGraph G Λ)).Nonempty :=
+  IsingModel.vdPolymerFamilies_sum_tanh_gt_one_iff
+    (inducedGraph G Λ) hβJ
+
+/-- **Λ-layer: vdSum_tanh = 1 ↔ tanh = 0 ∨ allPolymers = ∅**. -/
+theorem vdPolymerFamilies_sum_Λ_tanh_eq_one_iff
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {β J : ℝ} (hβJ : 0 ≤ β * J) :
+    (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
+        (inducedGraph G Λ),
+        ∏ P ∈ Γ, (Real.tanh (β * J)) ^ P.card) = 1 ↔
+      Real.tanh (β * J) = 0 ∨
+        IsingModel.allPolymers (inducedGraph G Λ) = ∅ :=
+  IsingModel.vdPolymerFamilies_sum_tanh_eq_one_iff
+    (inducedGraph G Λ) hβJ
+
 end Ambient
 end IsingModel
