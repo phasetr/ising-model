@@ -2627,5 +2627,58 @@ theorem freeEnergyΛ_analyticOnNhd_h
       (fun h' : ℝ => freeEnergyΛ G Λ ⟨J, h', β⟩) Set.univ :=
   IsingModel.freeEnergy_analyticOnNhd_h (inducedGraph G Λ) J β
 
+/-! ### §18.6 partitionFunction joint + general-h analyticity
+Λ-layer wraps -/
+
+/-- **Λ-layer: partitionFunction jointly `Continuous` in
+`(β, J, h)`**. -/
+theorem partitionFunctionΛ_continuous_joint
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] :
+    Continuous (fun p : ℝ × ℝ × ℝ =>
+      partitionFunctionΛ G Λ ⟨p.2.1, p.2.2, p.1⟩) := by
+  simp only [partitionFunctionΛ_apply]
+  exact IsingModel.partitionFunction_continuous_joint (inducedGraph G Λ)
+
+/-- **Λ-layer: partitionFunction jointly `Differentiable ℝ` in
+`(β, J, h)`**. -/
+theorem partitionFunctionΛ_differentiable_joint
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] :
+    Differentiable ℝ (fun p : ℝ × ℝ × ℝ =>
+      partitionFunctionΛ G Λ ⟨p.2.1, p.2.2, p.1⟩) := by
+  simp only [partitionFunctionΛ_apply]
+  exact IsingModel.partitionFunction_differentiable_joint
+    (inducedGraph G Λ)
+
+/-- **Λ-layer: partitionFunction `AnalyticAt ℝ` in `β` at general
+`h`**. -/
+theorem partitionFunctionΛ_analyticAt_beta_general_h
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (J h β : ℝ) :
+    AnalyticAt ℝ (fun β' : ℝ => partitionFunctionΛ G Λ ⟨J, h, β'⟩) β := by
+  simp only [partitionFunctionΛ_apply]
+  exact IsingModel.partitionFunction_analyticAt_beta_general_h
+    (inducedGraph G Λ) J h β
+
+/-- **Λ-layer: partitionFunction `AnalyticAt ℝ` in `J` at general
+`h`**. -/
+theorem partitionFunctionΛ_analyticAt_J_general_h
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (β h J : ℝ) :
+    AnalyticAt ℝ (fun J' : ℝ => partitionFunctionΛ G Λ ⟨J', h, β⟩) J := by
+  simp only [partitionFunctionΛ_apply]
+  exact IsingModel.partitionFunction_analyticAt_J_general_h
+    (inducedGraph G Λ) β h J
+
+/-- **Λ-layer: partitionFunction `AnalyticAt ℝ` in `h`**. -/
+theorem partitionFunctionΛ_analyticAt_h
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (J β h : ℝ) :
+    AnalyticAt ℝ (fun h' : ℝ => partitionFunctionΛ G Λ ⟨J, h', β⟩) h := by
+  simp only [partitionFunctionΛ_apply]
+  exact IsingModel.partitionFunction_analyticAt_h
+    (inducedGraph G Λ) J β h
+
 end Ambient
 end IsingModel

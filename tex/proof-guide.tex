@@ -3500,6 +3500,21 @@ existed; this PR fills the bare-bound and `\geq 1` gaps. 12 new
 thin direct-instantiation wrappers (3 abstracts $\times$ 4
 layers).
 
+\paragraph{\texttt{partitionFunction} joint
+Continuous/Differentiable + general-$h$ analyticAt, all volume
+layers (\S18.6, PR~\#1610).} Lifts five abstract
+\texttt{partitionFunction} regularity theorems to the four
+volume layers (\textit{Λ}, along-ex, $\mathbb{Z}^d$ \textit{Λ},
+$\mathbb{Z}^d$ along-ex):
+\texttt{\_continuous\_joint},
+\texttt{\_differentiable\_joint},
+\texttt{\_analyticAt\_beta\_general\_h},
+\texttt{\_analyticAt\_J\_general\_h}, and
+\texttt{\_analyticAt\_h}. 20 new thin direct-instantiation
+wrappers (5 abstracts $\times$ 4 layers). Complements the
+existing joint analyticity (PR~\#1535, joint analyticAt) and
+$h$-zero regularity (PR~\#1608) wrappers.
+
 \paragraph{\texttt{freeEnergy} per-direction analyticAt +
 analyticOnNhd, all volume layers (\S18.6, PR~\#1609).} Lifts
 ten abstract \texttt{freeEnergy} per-direction analyticity
