@@ -3725,5 +3725,47 @@ mayer_identity_at_either_zero_polymer_free_energy_AlongExhaustion
         (Real.tanh ((0 : ℝ) * (0 : ℝ))) :=
   mayer_identity_at_either_zero_polymer_free_energy_Λ G (Λ.volume n) N
 
+/-! ### §18.5 mayerPartialSum_zero ≤ polymerFreeEnergy along-ex wraps -/
+
+/-- **Along-ex: mayerPartialSum 0 ≤ polymerFreeEnergy under `t ≥ 0`**. -/
+theorem mayerPartialSum_zero_AlongExhaustion_le_polymerFreeEnergy
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) (n : ℕ) :
+    IsingModel.mayerPartialSum
+        (inducedGraph G (Λ.volume n)) 0 t ≤
+      IsingModel.polymerFreeEnergy
+        (inducedGraph G (Λ.volume n)) t :=
+  mayerPartialSum_zero_Λ_le_polymerFreeEnergy G (Λ.volume n) ht
+
+/-- **Along-ex: mayerPartialSum 0 ≤ polymerFreeEnergy(tanh(β·J))**. -/
+theorem mayerPartialSum_zero_AlongExhaustion_tanh_le_polymerFreeEnergy
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {β J : ℝ} (hβJ : 0 ≤ β * J) (n : ℕ) :
+    IsingModel.mayerPartialSum
+        (inducedGraph G (Λ.volume n)) 0
+        (Real.tanh (β * J)) ≤
+      IsingModel.polymerFreeEnergy
+        (inducedGraph G (Λ.volume n))
+        (Real.tanh (β * J)) :=
+  mayerPartialSum_zero_Λ_tanh_le_polymerFreeEnergy G (Λ.volume n) hβJ
+
+/-- **Along-ex: ferromagnetic mayerPartialSum 0 ≤
+polymerFreeEnergy(tanh(β·J))**. -/
+theorem
+mayerPartialSum_zero_AlongExhaustion_tanh_le_polymerFreeEnergy_ferromagnetic
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ) :
+    IsingModel.mayerPartialSum
+        (inducedGraph G (Λ.volume n)) 0
+        (Real.tanh (β * J)) ≤
+      IsingModel.polymerFreeEnergy
+        (inducedGraph G (Λ.volume n))
+        (Real.tanh (β * J)) :=
+  mayerPartialSum_zero_Λ_tanh_le_polymerFreeEnergy_ferromagnetic
+    G (Λ.volume n) hJ hβ
+
 end Ambient
 end IsingModel
