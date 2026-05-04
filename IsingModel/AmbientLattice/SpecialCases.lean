@@ -3343,5 +3343,73 @@ theorem mayerPartialSumAlongExhaustion_tanh_analyticOnNhd_J
           (Real.tanh (β * J'))) Set.univ :=
   mayerPartialSum_Λ_tanh_analyticOnNhd_J G (Λ.volume n) N β
 
+/-! ### §18.5 mayerExpansionTerm tanh β/J along-ex wraps -/
+
+/-- **Along-ex: mayerExpansionTerm ∘ tanh ∘ (·*J) continuous in β**. -/
+theorem mayerExpansionTermAlongExhaustion_tanh_continuous_beta
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (k : ℕ) (J : ℝ) (n : ℕ) :
+    Continuous (fun β' : ℝ =>
+        IsingModel.mayerExpansionTerm
+          (inducedGraph G (Λ.volume n)) k
+          (Real.tanh (β' * J))) :=
+  mayerExpansionTerm_Λ_tanh_continuous_beta G (Λ.volume n) k J
+
+/-- **Along-ex: mayerExpansionTerm ∘ tanh ∘ (β*·) continuous in J**. -/
+theorem mayerExpansionTermAlongExhaustion_tanh_continuous_J
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (k : ℕ) (β : ℝ) (n : ℕ) :
+    Continuous (fun J' : ℝ =>
+        IsingModel.mayerExpansionTerm
+          (inducedGraph G (Λ.volume n)) k
+          (Real.tanh (β * J'))) :=
+  mayerExpansionTerm_Λ_tanh_continuous_J G (Λ.volume n) k β
+
+/-- **Along-ex: mayerExpansionTerm ∘ tanh ∘ (·*J) differentiable in β**. -/
+theorem mayerExpansionTermAlongExhaustion_tanh_differentiable_beta
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (k : ℕ) (J : ℝ) (n : ℕ) :
+    Differentiable ℝ (fun β' : ℝ =>
+        IsingModel.mayerExpansionTerm
+          (inducedGraph G (Λ.volume n)) k
+          (Real.tanh (β' * J))) :=
+  mayerExpansionTerm_Λ_tanh_differentiable_beta G (Λ.volume n) k J
+
+/-- **Along-ex: mayerExpansionTerm ∘ tanh ∘ (β*·) differentiable in J**. -/
+theorem mayerExpansionTermAlongExhaustion_tanh_differentiable_J
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (k : ℕ) (β : ℝ) (n : ℕ) :
+    Differentiable ℝ (fun J' : ℝ =>
+        IsingModel.mayerExpansionTerm
+          (inducedGraph G (Λ.volume n)) k
+          (Real.tanh (β * J'))) :=
+  mayerExpansionTerm_Λ_tanh_differentiable_J G (Λ.volume n) k β
+
+/-- **Along-ex: mayerExpansionTerm ∘ tanh ∘ (·*J) AnalyticAt in β**. -/
+theorem mayerExpansionTermAlongExhaustion_tanh_analyticAt_beta
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (k : ℕ) (J β : ℝ) (n : ℕ) :
+    AnalyticAt ℝ (fun β' : ℝ =>
+        IsingModel.mayerExpansionTerm
+          (inducedGraph G (Λ.volume n)) k
+          (Real.tanh (β' * J))) β :=
+  mayerExpansionTerm_Λ_tanh_analyticAt_beta G (Λ.volume n) k J β
+
+/-- **Along-ex: mayerExpansionTerm ∘ tanh ∘ (β*·) AnalyticAt in J**. -/
+theorem mayerExpansionTermAlongExhaustion_tanh_analyticAt_J
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (k : ℕ) (β J : ℝ) (n : ℕ) :
+    AnalyticAt ℝ (fun J' : ℝ =>
+        IsingModel.mayerExpansionTerm
+          (inducedGraph G (Λ.volume n)) k
+          (Real.tanh (β * J'))) J :=
+  mayerExpansionTerm_Λ_tanh_analyticAt_J G (Λ.volume n) k β J
+
 end Ambient
 end IsingModel
