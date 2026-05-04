@@ -3431,8 +3431,9 @@ in this batch:
     $\mathrm{polymerFreeEnergy} < \varepsilon$ (strict; \#1547),
     $= 0 \iff \varepsilon = 0$, $> 0 \iff \varepsilon > 0$
     (\#1548), strict $< (1+t)^{|E|} - 1$ (\#1554, \#1555 tanh
-    form), $\mathrm{vdPolymerFamilies\_sum} = 1$ iff no polymers
-    (\#1557), bundles of strict-mono / strict-pos (\#1559, \#1560)
+    form), \texttt{vdPolymerFamilies\_sum\_eq\_one\_iff\_eps\_eq\_zero}
+    and \texttt{\_gt\_one\_iff\_eps\_pos} (\#1557), bundles of
+    strict-mono / strict-pos (\#1559, \#1560)
     including \texttt{StrictMonoOn (Set.Ioi 0)}.
   \item \emph{Pair connectivity} (\#1551, \#1552):
     \texttt{polymerSeqIncompatibilityGraph\_two\_connected\_iff\_incompatible}
