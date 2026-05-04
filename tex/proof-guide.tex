@@ -3500,6 +3500,24 @@ existed; this PR fills the bare-bound and `\geq 1` gaps. 12 new
 thin direct-instantiation wrappers (3 abstracts $\times$ 4
 layers).
 
+\paragraph{\texttt{partitionFunction}
+Continuous/Differentiable per-direction at general $h$ +
+\texttt{freeEnergy} joint Continuous/Differentiable, completion
+to all volume layers (\S18.6, PR~\#1611).} Lifts eight abstract
+regularity theorems to the missing along-exhaustion +
+$\mathbb{Z}^d$ layers (Λ-layer wraps already exist via PRs
+\#1541, \#1533):
+\texttt{partitionFunction\_continuous\_beta\_general\_h},
+\texttt{\_continuous\_J\_general\_h},
+\texttt{\_differentiable\_beta\_general\_h},
+\texttt{\_differentiable\_J\_general\_h},
+\texttt{\_continuous\_h},
+\texttt{\_differentiable\_h}, plus
+\texttt{freeEnergy\_continuous\_joint} and
+\texttt{\_differentiable\_joint}. 24 new thin
+direct-instantiation wrappers (8 abstracts $\times$ 3 missing
+layers).
+
 \paragraph{\texttt{partitionFunction} joint
 Continuous/Differentiable + general-$h$ analyticAt, all volume
 layers (\S18.6, PR~\#1610).} Lifts five abstract
