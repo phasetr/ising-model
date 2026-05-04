@@ -3411,5 +3411,54 @@ theorem mayerExpansionTermAlongExhaustion_tanh_analyticAt_J
           (Real.tanh (β * J'))) J :=
   mayerExpansionTerm_Λ_tanh_analyticAt_J G (Λ.volume n) k β J
 
+/-! ### §18.6 vdPolymerFamilies_sum regularity in t along-ex wraps -/
+
+/-- **Along-ex: `vdPolymerFamilies_sum` is `Continuous` in `t`**. -/
+theorem vdPolymerFamilies_sumAlongExhaustion_continuous
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet] (n : ℕ) :
+    Continuous (fun t : ℝ =>
+        ∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
+            (inducedGraph G (Λ.volume n)),
+          ∏ P ∈ Γ, t ^ P.card) :=
+  vdPolymerFamilies_sum_Λ_continuous G (Λ.volume n)
+
+/-- **Along-ex: `vdPolymerFamilies_sum` is `Differentiable ℝ`
+in `t`**. -/
+theorem vdPolymerFamilies_sumAlongExhaustion_differentiable
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet] (n : ℕ) :
+    Differentiable ℝ (fun t : ℝ =>
+        ∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
+            (inducedGraph G (Λ.volume n)),
+          ∏ P ∈ Γ, t ^ P.card) :=
+  vdPolymerFamilies_sum_Λ_differentiable G (Λ.volume n)
+
+/-- **Along-ex: `vdPolymerFamilies_sum` is `AnalyticAt ℝ` in `t`**. -/
+theorem vdPolymerFamilies_sumAlongExhaustion_analyticAt
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (n : ℕ) (t : ℝ) :
+    AnalyticAt ℝ (fun s : ℝ =>
+        ∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
+            (inducedGraph G (Λ.volume n)),
+          ∏ P ∈ Γ, s ^ P.card) t :=
+  vdPolymerFamilies_sum_Λ_analyticAt G (Λ.volume n) t
+
+/-- **Along-ex: `vdPolymerFamilies_sum` `HasDerivAt`**. -/
+theorem vdPolymerFamilies_sumAlongExhaustion_hasDerivAt
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (n : ℕ) (t : ℝ) :
+    HasDerivAt (fun s : ℝ =>
+        ∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
+            (inducedGraph G (Λ.volume n)),
+          ∏ P ∈ Γ, s ^ P.card)
+      (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
+            (inducedGraph G (Λ.volume n)),
+        ∑ Q ∈ Γ, (∏ P ∈ Γ.erase Q, t ^ P.card) *
+          ((Q.card : ℝ) * t ^ (Q.card - 1))) t :=
+  vdPolymerFamilies_sum_Λ_hasDerivAt G (Λ.volume n) t
+
 end Ambient
 end IsingModel
