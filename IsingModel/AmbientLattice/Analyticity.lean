@@ -345,5 +345,53 @@ theorem polymerFreeEnergy_Λ_hasSum_via_log_of_pow_lt_two
   IsingModel.polymerFreeEnergy_hasSum_via_log_of_pow_lt_two
     (inducedGraph G Λ) ht h_pow
 
+/-- **Λ-layer: high-temperature sandwich for `polymerFreeEnergy`
+(tanh form)** (§18.5 Λ wrap of the abstract tanh-form
+`polymerFreeEnergy_tanh_high_temp_sandwich`). -/
+theorem polymerFreeEnergy_Λ_tanh_high_temp_sandwich
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {β J : ℝ} (hβJ : 0 ≤ β * J)
+    (h_pow : (1 + Real.tanh (β * J)) ^
+        (inducedGraph G Λ).edgeFinset.card < 2) :
+    0 ≤ IsingModel.polymerFreeEnergy (inducedGraph G Λ)
+        (Real.tanh (β * J)) ∧
+    IsingModel.polymerFreeEnergy (inducedGraph G Λ)
+        (Real.tanh (β * J)) ≤
+      ∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
+            (inducedGraph G Λ)).erase ∅,
+        ∏ P ∈ Γ, (Real.tanh (β * J)) ^ P.card ∧
+    (∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
+            (inducedGraph G Λ)).erase ∅,
+        ∏ P ∈ Γ, (Real.tanh (β * J)) ^ P.card) ≤
+      (1 + Real.tanh (β * J)) ^
+        (inducedGraph G Λ).edgeFinset.card - 1 ∧
+    (1 + Real.tanh (β * J)) ^
+        (inducedGraph G Λ).edgeFinset.card - 1 < 1 ∧
+    IsingModel.polymerFreeEnergy (inducedGraph G Λ)
+        (Real.tanh (β * J)) < Real.log 2 :=
+  IsingModel.polymerFreeEnergy_tanh_high_temp_sandwich
+    (inducedGraph G Λ) hβJ h_pow
+
+/-- **Λ-layer: explicit log Taylor expansion for `polymerFreeEnergy`
+(tanh form)** (§18.5 Λ wrap of the abstract tanh-form
+`polymerFreeEnergy_tanh_hasSum_via_log_of_pow_lt_two`). -/
+theorem polymerFreeEnergy_Λ_tanh_hasSum_via_log_of_pow_lt_two
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {β J : ℝ} (hβJ : 0 ≤ β * J)
+    (h_pow : (1 + Real.tanh (β * J)) ^
+        (inducedGraph G Λ).edgeFinset.card < 2) :
+    HasSum (fun n : ℕ =>
+        (-1 : ℝ) ^ n *
+          (∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
+              (inducedGraph G Λ)).erase ∅,
+            ∏ P ∈ Γ, (Real.tanh (β * J)) ^ P.card) ^ (n + 1) /
+          (n + 1))
+      (IsingModel.polymerFreeEnergy (inducedGraph G Λ)
+        (Real.tanh (β * J))) :=
+  IsingModel.polymerFreeEnergy_tanh_hasSum_via_log_of_pow_lt_two
+    (inducedGraph G Λ) hβJ h_pow
+
 end Ambient
 end IsingModel
