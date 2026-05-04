@@ -1176,5 +1176,52 @@ theorem mayer_identity_at_J_zero_Λ
         (Real.tanh (β * (0 : ℝ))) :=
   IsingModel.mayer_identity_at_J_zero (inducedGraph G Λ) β N
 
+/-! ### §18.5 polymerFreeEnergy_eq_mayerPartialSum_at edge-case Λ wraps -/
+
+/-- **Λ-layer: polymerFreeEnergy = mayerPartialSum at t = 0**
+(Step 611). -/
+theorem polymerFreeEnergy_Λ_eq_mayerPartialSum_at_zero
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (N : ℕ) :
+    IsingModel.polymerFreeEnergy (inducedGraph G Λ) 0 =
+      IsingModel.mayerPartialSum (inducedGraph G Λ) N 0 :=
+  IsingModel.polymerFreeEnergy_eq_mayerPartialSum_at_zero
+    (inducedGraph G Λ) N
+
+/-- **Λ-layer: polymerFreeEnergy = mayerPartialSum at β·J = 0**
+(Step 617). -/
+theorem polymerFreeEnergy_Λ_eq_mayerPartialSum_at_betaJ_zero
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {β J : ℝ} (hβJ : β * J = 0) (N : ℕ) :
+    IsingModel.polymerFreeEnergy (inducedGraph G Λ)
+        (Real.tanh (β * J)) =
+      IsingModel.mayerPartialSum (inducedGraph G Λ) N
+        (Real.tanh (β * J)) :=
+  IsingModel.polymerFreeEnergy_eq_mayerPartialSum_at_betaJ_zero
+    (inducedGraph G Λ) hβJ N
+
+/-- **Λ-layer: polymerFreeEnergy = mayerPartialSum at β = 0**. -/
+theorem polymerFreeEnergy_Λ_eq_mayerPartialSum_at_beta_zero
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (J : ℝ) (N : ℕ) :
+    IsingModel.polymerFreeEnergy (inducedGraph G Λ)
+        (Real.tanh ((0 : ℝ) * J)) =
+      IsingModel.mayerPartialSum (inducedGraph G Λ) N
+        (Real.tanh ((0 : ℝ) * J)) :=
+  IsingModel.polymerFreeEnergy_eq_mayerPartialSum_at_beta_zero
+    (inducedGraph G Λ) J N
+
+/-- **Λ-layer: polymerFreeEnergy = mayerPartialSum at J = 0**. -/
+theorem polymerFreeEnergy_Λ_eq_mayerPartialSum_at_J_zero
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (β : ℝ) (N : ℕ) :
+    IsingModel.polymerFreeEnergy (inducedGraph G Λ)
+        (Real.tanh (β * (0 : ℝ))) =
+      IsingModel.mayerPartialSum (inducedGraph G Λ) N
+        (Real.tanh (β * (0 : ℝ))) :=
+  IsingModel.polymerFreeEnergy_eq_mayerPartialSum_at_J_zero
+    (inducedGraph G Λ) β N
+
 end Ambient
 end IsingModel
