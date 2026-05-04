@@ -1747,6 +1747,24 @@ theorem correlationΛ_high_temp_h_zero_nonneg
   exact IsingModel.correlation_high_temp_h_zero_nonneg
     (inducedGraph G Λ) J β hβJ A
 
+/-- **Λ-level §18.7 capstone: high-temperature exponential decay of
+the pair correlation in graph distance**. Under `0 ≤ β·J`, for
+`i, j : ↑Λ`,
+`⟨σ_iσ_j⟩^{Λ}_{β,0} ≤ 2^{|E_Λ|} · tanh(β·J)^{(inducedGraph G Λ).dist i j}`.
+Direct lift of `IsingModel.correlation_high_temp_h_zero_at_pair_le_two_pow_edges_mul_tanh_pow_dist`
+(Step 574) through `correlationΛ_apply`. -/
+theorem
+correlationΛ_high_temp_h_zero_at_pair_le_two_pow_edges_mul_tanh_pow_dist
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (i j : ↑Λ) :
+    correlationΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset ↑Λ)
+      ≤ (2 : ℝ) ^ (inducedGraph G Λ).edgeFinset.card *
+        Real.tanh (β * J) ^ (inducedGraph G Λ).dist i j := by
+  rw [correlationΛ_apply]
+  exact IsingModel.correlation_high_temp_h_zero_at_pair_le_two_pow_edges_mul_tanh_pow_dist
+    (inducedGraph G Λ) J β hβJ i j
+
 /-- **Λ-level high-temperature even-subgraph sum is `≥ 1`**: under
 `0 ≤ β * J`,
 `∑_{X ⊆ E_Λ, even-degree at every v ∈ ↑Λ} tanh(β J)^|X| ≥ 1`.
