@@ -3500,6 +3500,26 @@ existed; this PR fills the bare-bound and `\geq 1` gaps. 12 new
 thin direct-instantiation wrappers (3 abstracts $\times$ 4
 layers).
 
+\paragraph{\texttt{freeEnergy} per-direction analyticAt +
+analyticOnNhd, all volume layers (\S18.6, PR~\#1609).} Lifts
+ten abstract \texttt{freeEnergy} per-direction analyticity
+theorems to the four volume layers (\textit{Λ}, along-ex,
+$\mathbb{Z}^d$ \textit{Λ}, $\mathbb{Z}^d$ along-ex):
+\texttt{\_analyticAt\_beta\_h\_zero},
+\texttt{\_analyticAt\_J\_h\_zero},
+\texttt{\_analyticOnNhd\_beta\_h\_zero},
+\texttt{\_analyticOnNhd\_J\_h\_zero},
+\texttt{\_analyticAt\_beta\_general\_h},
+\texttt{\_analyticAt\_J\_general\_h},
+\texttt{\_analyticAt\_h},
+\texttt{\_analyticOnNhd\_beta\_general\_h},
+\texttt{\_analyticOnNhd\_J\_general\_h}, and
+\texttt{\_analyticOnNhd\_h}. 40 new thin
+direct-instantiation wrappers (10 abstracts $\times$ 4 layers).
+Complements the existing joint-direction
+\texttt{freeEnergyΛ\_analyticAt\_joint} (PR~\#1535) at the same
+volume layers.
+
 \paragraph{\texttt{partitionFunction} \texttt{h\_zero} regularity,
 all volume layers (\S18.6, PR~\#1608).} Lifts eight abstract
 \texttt{partitionFunction\_*\_h\_zero} regularity theorems to the
