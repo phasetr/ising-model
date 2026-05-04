@@ -2914,5 +2914,47 @@ freeEnergyAlongExhaustion_lt_log_two_plus_high_temp_correction_ferromagnetic
   freeEnergyAlongExhaustion_lt_log_two_plus_high_temp_correction
     G Λ J β (mul_nonneg hβ.le hJ) n hne h_pow
 
+/-- **Along-exhaustion: `polymerFreeEnergy` is `ContinuousAt` for
+`t ≥ 0`** (§18.5 along-ex wrap). -/
+theorem polymerFreeEnergyAlongExhaustion_continuousAt
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) (n : ℕ) :
+    ContinuousAt (fun s : ℝ =>
+        IsingModel.polymerFreeEnergy
+          (inducedGraph G (Λ.volume n)) s) t :=
+  polymerFreeEnergy_Λ_continuousAt G (Λ.volume n) ht
+
+/-- **Along-exhaustion: `polymerFreeEnergy` is `DifferentiableAt`
+for `t ≥ 0`** (§18.5 along-ex wrap). -/
+theorem polymerFreeEnergyAlongExhaustion_differentiableAt
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) (n : ℕ) :
+    DifferentiableAt ℝ (fun s : ℝ =>
+        IsingModel.polymerFreeEnergy
+          (inducedGraph G (Λ.volume n)) s) t :=
+  polymerFreeEnergy_Λ_differentiableAt G (Λ.volume n) ht
+
+/-- **Along-exhaustion: `polymerFreeEnergy` is
+`ContinuousOn (Set.Ici 0)`** (§18.5 along-ex wrap). -/
+theorem polymerFreeEnergyAlongExhaustion_continuousOn_Ici_zero
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet] (n : ℕ) :
+    ContinuousOn (fun s : ℝ =>
+        IsingModel.polymerFreeEnergy
+          (inducedGraph G (Λ.volume n)) s) (Set.Ici 0) :=
+  polymerFreeEnergy_Λ_continuousOn_Ici_zero G (Λ.volume n)
+
+/-- **Along-exhaustion: `polymerFreeEnergy` is
+`DifferentiableOn (Set.Ici 0)`** (§18.5 along-ex wrap). -/
+theorem polymerFreeEnergyAlongExhaustion_differentiableOn_Ici_zero
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet] (n : ℕ) :
+    DifferentiableOn ℝ (fun s : ℝ =>
+        IsingModel.polymerFreeEnergy
+          (inducedGraph G (Λ.volume n)) s) (Set.Ici 0) :=
+  polymerFreeEnergy_Λ_differentiableOn_Ici_zero G (Λ.volume n)
+
 end Ambient
 end IsingModel
