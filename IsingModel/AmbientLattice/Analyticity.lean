@@ -1638,5 +1638,78 @@ theorem polymerFreeEnergy_Λ_sandwich_of_nonneg
       (inducedGraph G Λ).edgeFinset.card * Real.log (1 + t) :=
   IsingModel.polymerFreeEnergy_sandwich_of_nonneg (inducedGraph G Λ) ht
 
+/-! ### §18.5 polymerFreeEnergy tanh-bound + ferro + hasDerivAt +
+eq_log_one_add Λ-layer wraps -/
+
+/-- **Λ-layer: polymerFreeEnergy tanh ≤ |E| · tanh** under `0 ≤ β·J`. -/
+theorem polymerFreeEnergy_Λ_tanh_le_card_mul
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {β J : ℝ} (hβJ : 0 ≤ β * J) :
+    IsingModel.polymerFreeEnergy (inducedGraph G Λ)
+        (Real.tanh (β * J)) ≤
+      (inducedGraph G Λ).edgeFinset.card * Real.tanh (β * J) :=
+  IsingModel.polymerFreeEnergy_tanh_le_card_mul (inducedGraph G Λ) hβJ
+
+/-- **Λ-layer: ferromagnetic polymerFreeEnergy_tanh_le_card_mul**. -/
+theorem polymerFreeEnergy_Λ_tanh_le_card_mul_ferromagnetic
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β) :
+    IsingModel.polymerFreeEnergy (inducedGraph G Λ)
+        (Real.tanh (β * J)) ≤
+      (inducedGraph G Λ).edgeFinset.card * Real.tanh (β * J) :=
+  IsingModel.polymerFreeEnergy_tanh_le_card_mul_ferromagnetic
+    (inducedGraph G Λ) hJ hβ
+
+/-- **Λ-layer: ferromagnetic polymerFreeEnergy_tanh_sandwich**. -/
+theorem polymerFreeEnergy_Λ_tanh_sandwich_ferromagnetic
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β) :
+    0 ≤ IsingModel.polymerFreeEnergy (inducedGraph G Λ)
+          (Real.tanh (β * J)) ∧
+    IsingModel.polymerFreeEnergy (inducedGraph G Λ)
+        (Real.tanh (β * J)) ≤
+      (inducedGraph G Λ).edgeFinset.card *
+        Real.log (1 + Real.tanh (β * J)) :=
+  IsingModel.polymerFreeEnergy_tanh_sandwich_ferromagnetic
+    (inducedGraph G Λ) hJ hβ
+
+/-- **Λ-layer: ferromagnetic polymerFreeEnergy_tanh ≤ |E| · log 2**. -/
+theorem polymerFreeEnergy_Λ_tanh_le_card_log_two_ferro
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β) :
+    IsingModel.polymerFreeEnergy (inducedGraph G Λ)
+        (Real.tanh (β * J)) ≤
+      (inducedGraph G Λ).edgeFinset.card * Real.log 2 :=
+  IsingModel.polymerFreeEnergy_tanh_le_card_log_two_ferromagnetic
+    (inducedGraph G Λ) hJ hβ
+
+/-- **Λ-layer: polymerFreeEnergy = log(1 + ε(t))** decomposition. -/
+theorem polymerFreeEnergy_Λ_eq_log_one_add_eps
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (t : ℝ) :
+    IsingModel.polymerFreeEnergy (inducedGraph G Λ) t =
+      Real.log (1 + ∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
+              (inducedGraph G Λ)).erase ∅,
+              ∏ P ∈ Γ, t ^ P.card) :=
+  IsingModel.polymerFreeEnergy_eq_log_one_add_eps (inducedGraph G Λ) t
+
+/-- **Λ-layer: polymerFreeEnergy hasDerivAt at `t ≥ 0`**. -/
+theorem polymerFreeEnergy_Λ_hasDerivAt
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) :
+    HasDerivAt (fun s : ℝ => IsingModel.polymerFreeEnergy
+        (inducedGraph G Λ) s)
+      ((∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies (inducedGraph G Λ),
+          ∑ Q ∈ Γ, (∏ P ∈ Γ.erase Q, t ^ P.card) *
+            ((Q.card : ℝ) * t ^ (Q.card - 1))) /
+        (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies (inducedGraph G Λ),
+            ∏ P ∈ Γ, t ^ P.card)) t :=
+  IsingModel.polymerFreeEnergy_hasDerivAt (inducedGraph G Λ) ht
+
 end Ambient
 end IsingModel
