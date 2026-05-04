@@ -2179,5 +2179,134 @@ theorem polymerFreeEnergy_Λ_tanh_lt_eps_of_eps_pos_ferro
   IsingModel.polymerFreeEnergy_tanh_lt_eps_of_eps_pos_ferromagnetic
     (inducedGraph G Λ) hβ hJ h_eps_pos
 
+/-! ### §18.5 polymerFreeEnergy tanh sharpening + β/J strict-mono
+Λ-layer wraps -/
+
+/-- **Λ-layer: pFE(tanh) < ε(tanh) ↔ 0 < ε(tanh)** under `0 ≤ β·J`. -/
+theorem polymerFreeEnergy_Λ_tanh_lt_eps_iff_eps_pos
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {β J : ℝ} (hβJ : 0 ≤ β * J) :
+    IsingModel.polymerFreeEnergy (inducedGraph G Λ)
+        (Real.tanh (β * J)) <
+        ∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
+                (inducedGraph G Λ)).erase ∅,
+              ∏ P ∈ Γ, (Real.tanh (β * J)) ^ P.card ↔
+      0 < ∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
+                (inducedGraph G Λ)).erase ∅,
+            ∏ P ∈ Γ, (Real.tanh (β * J)) ^ P.card :=
+  IsingModel.polymerFreeEnergy_tanh_lt_eps_iff_eps_pos
+    (inducedGraph G Λ) hβJ
+
+/-- **Λ-layer: pFE(tanh) = 0 ↔ ε(tanh) = 0** under `0 ≤ β·J`. -/
+theorem polymerFreeEnergy_Λ_tanh_eq_zero_iff_eps_eq_zero
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {β J : ℝ} (hβJ : 0 ≤ β * J) :
+    IsingModel.polymerFreeEnergy (inducedGraph G Λ)
+        (Real.tanh (β * J)) = 0 ↔
+      (∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
+              (inducedGraph G Λ)).erase ∅,
+          ∏ P ∈ Γ, (Real.tanh (β * J)) ^ P.card) = 0 :=
+  IsingModel.polymerFreeEnergy_tanh_eq_zero_iff_eps_eq_zero
+    (inducedGraph G Λ) hβJ
+
+/-- **Λ-layer: 0 < pFE(tanh) ↔ 0 < ε(tanh)** under `0 ≤ β·J`. -/
+theorem polymerFreeEnergy_Λ_tanh_pos_iff_eps_pos
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {β J : ℝ} (hβJ : 0 ≤ β * J) :
+    0 < IsingModel.polymerFreeEnergy (inducedGraph G Λ)
+          (Real.tanh (β * J)) ↔
+      0 < ∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
+                (inducedGraph G Λ)).erase ∅,
+            ∏ P ∈ Γ, (Real.tanh (β * J)) ^ P.card :=
+  IsingModel.polymerFreeEnergy_tanh_pos_iff_eps_pos
+    (inducedGraph G Λ) hβJ
+
+/-- **Λ-layer: pFE(tanh) < ε(tanh)** under ε(tanh) > 0 (`0 ≤ β·J`). -/
+theorem polymerFreeEnergy_Λ_tanh_lt_eps_of_eps_pos
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {β J : ℝ} (hβJ : 0 ≤ β * J)
+    (h_eps_pos : 0 < ∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
+                (inducedGraph G Λ)).erase ∅,
+            ∏ P ∈ Γ, (Real.tanh (β * J)) ^ P.card) :
+    IsingModel.polymerFreeEnergy (inducedGraph G Λ)
+        (Real.tanh (β * J)) <
+      ∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
+              (inducedGraph G Λ)).erase ∅,
+            ∏ P ∈ Γ, (Real.tanh (β * J)) ^ P.card :=
+  IsingModel.polymerFreeEnergy_tanh_lt_eps_of_eps_pos
+    (inducedGraph G Λ) hβJ h_eps_pos
+
+/-- **Λ-layer: pFE(tanh) < (1+tanh)^|E| - 1** under ε(tanh) > 0
+(`0 ≤ β·J`). -/
+theorem polymerFreeEnergy_Λ_tanh_lt_pow_sub_one_of_eps_pos
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {β J : ℝ} (hβJ : 0 ≤ β * J)
+    (h_eps_pos : 0 < ∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
+                (inducedGraph G Λ)).erase ∅,
+            ∏ P ∈ Γ, (Real.tanh (β * J)) ^ P.card) :
+    IsingModel.polymerFreeEnergy (inducedGraph G Λ)
+        (Real.tanh (β * J)) <
+      (1 + Real.tanh (β * J)) ^ (inducedGraph G Λ).edgeFinset.card - 1 :=
+  IsingModel.polymerFreeEnergy_tanh_lt_pow_sub_one_of_eps_pos
+    (inducedGraph G Λ) hβJ h_eps_pos
+
+/-- **Λ-layer: pFE(tanh(β₁·J)) < pFE(tanh(β₂·J))** under `J > 0`,
+`0 ≤ β₁ < β₂`, polymers nonempty. -/
+theorem polymerFreeEnergy_Λ_tanh_lt_of_lt_in_beta_of_polymers_nonempty
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (h_poly : (IsingModel.allPolymers (inducedGraph G Λ)).Nonempty)
+    {β₁ β₂ J : ℝ} (hβ₁ : 0 ≤ β₁) (hJ : 0 < J) (hβ : β₁ < β₂) :
+    IsingModel.polymerFreeEnergy (inducedGraph G Λ)
+        (Real.tanh (β₁ * J)) <
+      IsingModel.polymerFreeEnergy (inducedGraph G Λ)
+        (Real.tanh (β₂ * J)) :=
+  IsingModel.polymerFreeEnergy_tanh_lt_of_lt_in_beta_of_polymers_nonempty
+    (inducedGraph G Λ) h_poly hβ₁ hJ hβ
+
+/-- **Λ-layer: pFE(tanh(β·J₁)) < pFE(tanh(β·J₂))** under `β > 0`,
+`0 ≤ J₁ < J₂`, polymers nonempty. -/
+theorem polymerFreeEnergy_Λ_tanh_lt_of_lt_in_J_of_polymers_nonempty
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (h_poly : (IsingModel.allPolymers (inducedGraph G Λ)).Nonempty)
+    {β J₁ J₂ : ℝ} (hJ₁ : 0 ≤ J₁) (hβ : 0 < β) (hJ : J₁ < J₂) :
+    IsingModel.polymerFreeEnergy (inducedGraph G Λ)
+        (Real.tanh (β * J₁)) <
+      IsingModel.polymerFreeEnergy (inducedGraph G Λ)
+        (Real.tanh (β * J₂)) :=
+  IsingModel.polymerFreeEnergy_tanh_lt_of_lt_in_J_of_polymers_nonempty
+    (inducedGraph G Λ) h_poly hJ₁ hβ hJ
+
+/-- **Λ-layer: pFE(tanh(β·J)) is `StrictMonoOn (Set.Ici 0)` in β**
+under `J > 0` and polymers nonempty. -/
+theorem
+polymerFreeEnergy_Λ_tanh_strictMonoOn_beta_of_polymers_nonempty
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (h_poly : (IsingModel.allPolymers (inducedGraph G Λ)).Nonempty)
+    {J : ℝ} (hJ : 0 < J) :
+    StrictMonoOn (fun β : ℝ => IsingModel.polymerFreeEnergy
+        (inducedGraph G Λ) (Real.tanh (β * J))) (Set.Ici 0) :=
+  IsingModel.polymerFreeEnergy_tanh_strictMonoOn_beta_of_polymers_nonempty
+    (inducedGraph G Λ) h_poly hJ
+
+/-- **Λ-layer: pFE(tanh(β·J)) is `StrictMonoOn (Set.Ici 0)` in J**
+under `β > 0` and polymers nonempty. -/
+theorem polymerFreeEnergy_Λ_tanh_strictMonoOn_J_of_polymers_nonempty
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (h_poly : (IsingModel.allPolymers (inducedGraph G Λ)).Nonempty)
+    {β : ℝ} (hβ : 0 < β) :
+    StrictMonoOn (fun J : ℝ => IsingModel.polymerFreeEnergy
+        (inducedGraph G Λ) (Real.tanh (β * J))) (Set.Ici 0) :=
+  IsingModel.polymerFreeEnergy_tanh_strictMonoOn_J_of_polymers_nonempty
+    (inducedGraph G Λ) h_poly hβ
+
 end Ambient
 end IsingModel

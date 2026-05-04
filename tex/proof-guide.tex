@@ -3500,6 +3500,28 @@ existed; this PR fills the bare-bound and `\geq 1` gaps. 12 new
 thin direct-instantiation wrappers (3 abstracts $\times$ 4
 layers).
 
+\paragraph{\texttt{polymerFreeEnergy} tanh sharpening + $\beta/J$
+strict-mono under polymers $\ne \emptyset$, all volume layers
+(\S18.5, PR~\#1605).} Lifts nine abstract \texttt{polymerFreeEnergy}
+theorems to the four volume layers (\textit{Λ}, along-ex,
+$\mathbb{Z}^d$ \textit{Λ}, $\mathbb{Z}^d$ along-ex):
+five tanh sharpening lemmas under $0 \le \beta J$
+(\texttt{\_tanh\_lt\_eps\_iff\_eps\_pos},
+\texttt{\_tanh\_eq\_zero\_iff\_eps\_eq\_zero},
+\texttt{\_tanh\_pos\_iff\_eps\_pos},
+\texttt{\_tanh\_lt\_eps\_of\_eps\_pos},
+\texttt{\_tanh\_lt\_pow\_sub\_one\_of\_eps\_pos}) plus four
+$\beta/J$-strict-mono lemmas under polymers nonempty
+(\texttt{\_tanh\_lt\_of\_lt\_in\_beta},
+\texttt{\_tanh\_lt\_of\_lt\_in\_J},
+\texttt{\_tanh\_strictMonoOn\_beta},
+\texttt{\_tanh\_strictMonoOn\_J}). 36 new thin
+direct-instantiation wrappers. Several long
+$\mathbb{Z}^d$ along-ex names abbreviate
+\texttt{\_of\_polymers\_nonempty} to \texttt{\_polymers\_nonempty}
+(or further to \texttt{\_polymers}) to fit under the
+100-character linter budget.
+
 \paragraph{\texttt{polymerFreeEnergy} / \texttt{vdSum} tanh
 ferromagnetic iff family, all volume layers (\S18.5, PR~\#1604).}
 Lifts nine ferromagnetic abstract iff / inequality lemmas to the
