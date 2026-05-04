@@ -1480,5 +1480,47 @@ theorem one_le_vdPolymerFamilies_sum_Λ
         ∏ P ∈ Γ, Real.tanh (β * J) ^ P.card :=
   IsingModel.one_le_vdPolymerFamilies_sum (inducedGraph G Λ) hβJ
 
+/-! ### §18.5 vdPolymerFamilies_sum generic-t bounds Λ-layer -/
+
+/-- **Λ-layer: 1 ≤ vdSum** under `0 ≤ t`. -/
+theorem vdPolymerFamilies_sum_Λ_ge_one_of_nonneg
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) :
+    1 ≤ ∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies (inducedGraph G Λ),
+          ∏ P ∈ Γ, t ^ P.card :=
+  IsingModel.vdPolymerFamilies_sum_ge_one_of_nonneg (inducedGraph G Λ) ht
+
+/-- **Λ-layer: vdSum ≤ (1+t)^|E|** under `0 ≤ t`. -/
+theorem vdPolymerFamilies_sum_Λ_le_one_plus_pow_of_nonneg
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) :
+    (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies (inducedGraph G Λ),
+          ∏ P ∈ Γ, t ^ P.card)
+      ≤ (1 + t) ^ (inducedGraph G Λ).edgeFinset.card :=
+  IsingModel.vdPolymerFamilies_sum_le_one_plus_pow_of_nonneg
+    (inducedGraph G Λ) ht
+
+/-- **Λ-layer: 0 < vdSum** under `0 ≤ t`. -/
+theorem vdPolymerFamilies_sum_Λ_pos_of_nonneg
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) :
+    0 < ∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies (inducedGraph G Λ),
+          ∏ P ∈ Γ, t ^ P.card :=
+  IsingModel.vdPolymerFamilies_sum_pos_of_nonneg (inducedGraph G Λ) ht
+
+/-- **Λ-layer: vdSum = 1 + ε(t)** decomposition. -/
+theorem vdPolymerFamilies_sum_Λ_eq_one_add
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (t : ℝ) :
+    (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies (inducedGraph G Λ),
+          ∏ P ∈ Γ, t ^ P.card) =
+      1 + ∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
+              (inducedGraph G Λ)).erase ∅,
+              ∏ P ∈ Γ, t ^ P.card :=
+  IsingModel.vdPolymerFamilies_sum_eq_one_add (inducedGraph G Λ) t
+
 end Ambient
 end IsingModel

@@ -3500,6 +3500,22 @@ existed; this PR fills the bare-bound and `\geq 1` gaps. 12 new
 thin direct-instantiation wrappers (3 abstracts $\times$ 4
 layers).
 
+\paragraph{\texttt{vdPolymerFamilies\_sum} generic-\textit{t}
+bounds + decomposition, all volume layers (\S18.5, PR~\#1596).}
+Adds 4-layer wraps for the four abstract generic-\textit{t}
+theorems
+\texttt{\_ge\_one\_of\_nonneg},
+\texttt{\_le\_one\_plus\_pow\_of\_nonneg},
+\texttt{\_pos\_of\_nonneg}, and \texttt{\_eq\_one\_add}
+(which had no wrappers before). 16 new thin
+direct-instantiation wrappers (4 abstracts $\times$ 4 layers).
+The generic-\textit{t} bounds are the non-tanh ($t \geq 0$)
+counterparts of the tanh bound family from PR~\#1595; the
+\texttt{\_eq\_one\_add} decomposition expresses
+$\mathrm{vdSum}(G,t) = 1 + \varepsilon(t)$ where
+$\varepsilon(t) = \sum_{\Gamma \neq \emptyset} \prod_{P \in
+\Gamma} t^{|P|}$.
+
 \paragraph{\texttt{vdPolymerFamilies\_sum} iff characterizations,
 all volume layers (\S18.5, PR~\#1594).} The four abstract iff
 characterizations (\texttt{\_eq\_one\_iff\_eps\_eq\_zero},
