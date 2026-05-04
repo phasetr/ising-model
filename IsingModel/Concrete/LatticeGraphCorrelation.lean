@@ -8747,6 +8747,112 @@ theorem polymerFreeEnergyAlongExhaustion_latticeGraph_tanh_double_bound
   Ambient.polymerFreeEnergyAlongExhaustion_tanh_double_bound
     (IsingModel.latticeGraph d) Λ hβJ n
 
+/-! ### §18.6 mayerPartialSum regularity ℤ^d wraps -/
+
+/-- **ℤ^d Λ: mayerPartialSum Continuous**. -/
+theorem mayerPartialSum_Λ_latticeGraph_continuous
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
+    (N : ℕ) :
+    Continuous (fun t : ℝ => IsingModel.mayerPartialSum
+        (inducedGraph (IsingModel.latticeGraph d) Λ) N t) :=
+  Ambient.mayerPartialSum_Λ_continuous (IsingModel.latticeGraph d) Λ N
+
+/-- **ℤ^d Λ: mayerPartialSum Differentiable ℝ**. -/
+theorem mayerPartialSum_Λ_latticeGraph_differentiable
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
+    (N : ℕ) :
+    Differentiable ℝ (fun t : ℝ => IsingModel.mayerPartialSum
+        (inducedGraph (IsingModel.latticeGraph d) Λ) N t) :=
+  Ambient.mayerPartialSum_Λ_differentiable
+    (IsingModel.latticeGraph d) Λ N
+
+/-- **ℤ^d Λ: mayerPartialSum AnalyticAt ℝ**. -/
+theorem mayerPartialSum_Λ_latticeGraph_analyticAt
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
+    (N : ℕ) (t : ℝ) :
+    AnalyticAt ℝ (fun s : ℝ => IsingModel.mayerPartialSum
+        (inducedGraph (IsingModel.latticeGraph d) Λ) N s) t :=
+  Ambient.mayerPartialSum_Λ_analyticAt
+    (IsingModel.latticeGraph d) Λ N t
+
+/-- **ℤ^d Λ: mayerPartialSum ContinuousOn**. -/
+theorem mayerPartialSum_Λ_latticeGraph_continuousOn
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
+    (N : ℕ) (s : Set ℝ) :
+    ContinuousOn (fun t : ℝ => IsingModel.mayerPartialSum
+        (inducedGraph (IsingModel.latticeGraph d) Λ) N t) s :=
+  Ambient.mayerPartialSum_Λ_continuousOn
+    (IsingModel.latticeGraph d) Λ N s
+
+/-- **ℤ^d Λ: mayerPartialSum DifferentiableOn ℝ**. -/
+theorem mayerPartialSum_Λ_latticeGraph_differentiableOn
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
+    (N : ℕ) (s : Set ℝ) :
+    DifferentiableOn ℝ (fun t : ℝ => IsingModel.mayerPartialSum
+        (inducedGraph (IsingModel.latticeGraph d) Λ) N t) s :=
+  Ambient.mayerPartialSum_Λ_differentiableOn
+    (IsingModel.latticeGraph d) Λ N s
+
+/-- **ℤ^d along-ex: mayerPartialSum Continuous**. -/
+theorem mayerPartialSumAlongExhaustion_latticeGraph_continuous
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
+      (Λ.volume n)).edgeSet]
+    (N : ℕ) (n : ℕ) :
+    Continuous (fun t : ℝ => IsingModel.mayerPartialSum
+        (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)) N t) :=
+  Ambient.mayerPartialSumAlongExhaustion_continuous
+    (IsingModel.latticeGraph d) Λ N n
+
+/-- **ℤ^d along-ex: mayerPartialSum Differentiable ℝ**. -/
+theorem mayerPartialSumAlongExhaustion_latticeGraph_differentiable
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
+      (Λ.volume n)).edgeSet]
+    (N : ℕ) (n : ℕ) :
+    Differentiable ℝ (fun t : ℝ => IsingModel.mayerPartialSum
+        (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)) N t) :=
+  Ambient.mayerPartialSumAlongExhaustion_differentiable
+    (IsingModel.latticeGraph d) Λ N n
+
+/-- **ℤ^d along-ex: mayerPartialSum AnalyticAt ℝ**. -/
+theorem mayerPartialSumAlongExhaustion_latticeGraph_analyticAt
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
+      (Λ.volume n)).edgeSet]
+    (N : ℕ) (n : ℕ) (t : ℝ) :
+    AnalyticAt ℝ (fun s : ℝ => IsingModel.mayerPartialSum
+        (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)) N s) t :=
+  Ambient.mayerPartialSumAlongExhaustion_analyticAt
+    (IsingModel.latticeGraph d) Λ N n t
+
+/-- **ℤ^d along-ex: mayerPartialSum ContinuousOn**. -/
+theorem mayerPartialSumAlongExhaustion_latticeGraph_continuousOn
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
+      (Λ.volume n)).edgeSet]
+    (N : ℕ) (n : ℕ) (s : Set ℝ) :
+    ContinuousOn (fun t : ℝ => IsingModel.mayerPartialSum
+        (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)) N t) s :=
+  Ambient.mayerPartialSumAlongExhaustion_continuousOn
+    (IsingModel.latticeGraph d) Λ N n s
+
+/-- **ℤ^d along-ex: mayerPartialSum DifferentiableOn ℝ**. -/
+theorem mayerPartialSumAlongExhaustion_latticeGraph_differentiableOn
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
+      (Λ.volume n)).edgeSet]
+    (N : ℕ) (n : ℕ) (s : Set ℝ) :
+    DifferentiableOn ℝ (fun t : ℝ => IsingModel.mayerPartialSum
+        (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)) N t) s :=
+  Ambient.mayerPartialSumAlongExhaustion_differentiableOn
+    (IsingModel.latticeGraph d) Λ N n s
+
 end Ambient
 
 end IsingModel
