@@ -809,5 +809,44 @@ theorem mayerPartialSum_Λ_differentiableOn
         IsingModel.mayerPartialSum (inducedGraph G Λ) N t) s :=
   IsingModel.mayerPartialSum_differentiableOn (inducedGraph G Λ) N s
 
+/-! ### §18.6 mayerExpansionTerm regularity Λ wraps -/
+
+/-- **Λ-layer: `mayerExpansionTerm` is `Continuous`** (§18.6 Λ wrap
+of Step 588). -/
+theorem mayerExpansionTerm_Λ_continuous
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (n : ℕ) :
+    Continuous (fun t : ℝ =>
+        IsingModel.mayerExpansionTerm (inducedGraph G Λ) n t) :=
+  IsingModel.mayerExpansionTerm_continuous (inducedGraph G Λ) n
+
+/-- **Λ-layer: `mayerExpansionTerm` is `Differentiable ℝ`** (§18.6
+Λ wrap of Step 589). -/
+theorem mayerExpansionTerm_Λ_differentiable
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (n : ℕ) :
+    Differentiable ℝ (fun t : ℝ =>
+        IsingModel.mayerExpansionTerm (inducedGraph G Λ) n t) :=
+  IsingModel.mayerExpansionTerm_differentiable (inducedGraph G Λ) n
+
+/-- **Λ-layer: `mayerExpansionTerm` is `AnalyticAt ℝ`** (§18.6 Λ
+wrap of Step 590). -/
+theorem mayerExpansionTerm_Λ_analyticAt
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (n : ℕ) (t : ℝ) :
+    AnalyticAt ℝ (fun s : ℝ =>
+        IsingModel.mayerExpansionTerm (inducedGraph G Λ) n s) t :=
+  IsingModel.mayerExpansionTerm_analyticAt (inducedGraph G Λ) n t
+
+/-- **Λ-layer: `mayerExpansionTerm` is `AnalyticOnNhd ℝ _ Set.univ`**
+(§18.6 Λ wrap of Step 590). -/
+theorem mayerExpansionTerm_Λ_analyticOnNhd
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (n : ℕ) :
+    AnalyticOnNhd ℝ (fun s : ℝ =>
+        IsingModel.mayerExpansionTerm (inducedGraph G Λ) n s)
+      Set.univ :=
+  IsingModel.mayerExpansionTerm_analyticOnNhd (inducedGraph G Λ) n
+
 end Ambient
 end IsingModel

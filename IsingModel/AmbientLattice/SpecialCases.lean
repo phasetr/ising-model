@@ -3208,5 +3208,48 @@ theorem mayerPartialSumAlongExhaustion_differentiableOn
           (inducedGraph G (Λ.volume n)) N t) s :=
   mayerPartialSum_Λ_differentiableOn G (Λ.volume n) N s
 
+/-! ### §18.6 mayerExpansionTerm regularity along-ex wraps -/
+
+/-- **Along-ex: `mayerExpansionTerm` is `Continuous`**. -/
+theorem mayerExpansionTermAlongExhaustion_continuous
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (k : ℕ) (n : ℕ) :
+    Continuous (fun t : ℝ =>
+        IsingModel.mayerExpansionTerm
+          (inducedGraph G (Λ.volume n)) k t) :=
+  mayerExpansionTerm_Λ_continuous G (Λ.volume n) k
+
+/-- **Along-ex: `mayerExpansionTerm` is `Differentiable ℝ`**. -/
+theorem mayerExpansionTermAlongExhaustion_differentiable
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (k : ℕ) (n : ℕ) :
+    Differentiable ℝ (fun t : ℝ =>
+        IsingModel.mayerExpansionTerm
+          (inducedGraph G (Λ.volume n)) k t) :=
+  mayerExpansionTerm_Λ_differentiable G (Λ.volume n) k
+
+/-- **Along-ex: `mayerExpansionTerm` is `AnalyticAt ℝ`**. -/
+theorem mayerExpansionTermAlongExhaustion_analyticAt
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (k : ℕ) (n : ℕ) (t : ℝ) :
+    AnalyticAt ℝ (fun s : ℝ =>
+        IsingModel.mayerExpansionTerm
+          (inducedGraph G (Λ.volume n)) k s) t :=
+  mayerExpansionTerm_Λ_analyticAt G (Λ.volume n) k t
+
+/-- **Along-ex: `mayerExpansionTerm` is
+`AnalyticOnNhd ℝ _ Set.univ`**. -/
+theorem mayerExpansionTermAlongExhaustion_analyticOnNhd
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (k : ℕ) (n : ℕ) :
+    AnalyticOnNhd ℝ (fun s : ℝ =>
+        IsingModel.mayerExpansionTerm
+          (inducedGraph G (Λ.volume n)) k s) Set.univ :=
+  mayerExpansionTerm_Λ_analyticOnNhd G (Λ.volume n) k
+
 end Ambient
 end IsingModel
