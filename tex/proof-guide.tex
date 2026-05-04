@@ -3500,6 +3500,25 @@ existed; this PR fills the bare-bound and `\geq 1` gaps. 12 new
 thin direct-instantiation wrappers (3 abstracts $\times$ 4
 layers).
 
+\paragraph{\texttt{polymerFreeEnergy} tanh-bound +
+ferromagnetic + \texttt{hasDerivAt} +
+\texttt{eq\_log\_one\_add\_eps}, all volume layers (\S18.5,
+PR~\#1599).} Lifts six abstract \texttt{polymerFreeEnergy}
+lemmas to the four volume layers (\textit{Λ}, along-ex,
+$\mathbb{Z}^d$ \textit{Λ}, $\mathbb{Z}^d$ along-ex):
+\texttt{\_tanh\_le\_card\_mul} (under $0 \le \beta J$),
+\texttt{\_tanh\_le\_card\_mul\_ferromagnetic},
+\texttt{\_tanh\_sandwich\_ferromagnetic},
+\texttt{\_tanh\_le\_card\_log\_two\_ferromagnetic} (the latter
+three under $0 \le J$ and $0 < \beta$), the
+$\log(1 + \varepsilon(t))$ decomposition
+\texttt{\_eq\_log\_one\_add\_eps}, and \texttt{\_hasDerivAt}
+giving the explicit log-derivative for $t \ge 0$. 24 new thin
+direct-instantiation wrappers. Most ferromagnetic ℤ$^d$ /
+along-ex wrappers use the abbreviated \texttt{\_ferro} suffix
+to keep each declaration line under the 100-character linter
+budget.
+
 \paragraph{\texttt{polymerFreeEnergy} \texttt{at\_zero} /
 \texttt{at\_one} + \texttt{analyticAt} +
 \texttt{analyticOnNhd\_Ici\_zero} +
