@@ -4034,6 +4034,25 @@ theorem polymerFreeEnergy_hasSum_via_log_of_pow_lt_two
     linarith
   exact polymerFreeEnergy_hasSum_via_log G h_eps_lt_one
 
+/-- **`polymerFreeEnergy` log-Taylor expansion (tanh form)** (§18.5
+GJ-命題-bundle): tanh-substituted version of
+`polymerFreeEnergy_hasSum_via_log_of_pow_lt_two` for the
+ferromagnetic Ising activity `t = tanh(β·J)` under `0 ≤ β·J` and
+`(1 + tanh(β·J))^|E| < 2`. -/
+theorem polymerFreeEnergy_tanh_hasSum_via_log_of_pow_lt_two
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (hβJ : 0 ≤ β * J)
+    (h_pow : (1 + Real.tanh (β * J)) ^ G.edgeFinset.card < 2) :
+    HasSum (fun n : ℕ =>
+        (-1 : ℝ) ^ n *
+          (∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅,
+            ∏ P ∈ Γ, (Real.tanh (β * J)) ^ P.card) ^ (n + 1) /
+          (n + 1))
+      (polymerFreeEnergy G (Real.tanh (β * J))) :=
+  polymerFreeEnergy_hasSum_via_log_of_pow_lt_two G
+    (real_tanh_nonneg hβJ) h_pow
+
 /-! ## K_n alternating connected-spanning subgraph sum (Mayer Phase B)
 
 **Goal**: prove the Mayer combinatorial identity

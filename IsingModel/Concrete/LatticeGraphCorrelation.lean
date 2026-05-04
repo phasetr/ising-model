@@ -7588,6 +7588,229 @@ theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_shift
   freeEnergyInfinite_shift_eq (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) t p
 
+/-! ## §18.5 cluster-expansion convergence-radius ℤ^d concrete wraps
+
+ℤ^d concrete instantiations of the §18.5 sandwich and log-Taylor
+(`HasSum`) wrappers for `polymerFreeEnergy`, on the lattice graph
+`latticeGraph d` and the cubic exhaustion. Each is a direct
+specialisation of the Λ-direct or along-exhaustion theorem in
+`AmbientLattice/Analyticity.lean` / `AmbientLattice/SpecialCases.lean`.
+-/
+
+/-- **ℤ^d Λ-direct: high-temperature sandwich for `polymerFreeEnergy`**
+(§18.5 ℤ^d wrap). -/
+theorem polymerFreeEnergy_Λ_latticeGraph_high_temp_sandwich
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
+    {t : ℝ} (ht : 0 ≤ t)
+    (h_pow : (1 + t) ^
+        (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card < 2) :
+    0 ≤ IsingModel.polymerFreeEnergy
+        (inducedGraph (IsingModel.latticeGraph d) Λ) t ∧
+    IsingModel.polymerFreeEnergy
+        (inducedGraph (IsingModel.latticeGraph d) Λ) t ≤
+      ∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
+            (inducedGraph (IsingModel.latticeGraph d) Λ)).erase ∅,
+        ∏ P ∈ Γ, t ^ P.card ∧
+    (∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
+            (inducedGraph (IsingModel.latticeGraph d) Λ)).erase ∅,
+        ∏ P ∈ Γ, t ^ P.card) ≤
+      (1 + t) ^
+        (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card - 1 ∧
+    (1 + t) ^
+        (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card - 1 < 1 ∧
+    IsingModel.polymerFreeEnergy
+        (inducedGraph (IsingModel.latticeGraph d) Λ) t < Real.log 2 :=
+  Ambient.polymerFreeEnergy_Λ_high_temp_sandwich
+    (IsingModel.latticeGraph d) Λ ht h_pow
+
+/-- **ℤ^d Λ-direct: log Taylor expansion for `polymerFreeEnergy`**
+(§18.5 ℤ^d wrap). -/
+theorem polymerFreeEnergy_Λ_latticeGraph_hasSum_via_log_of_pow_lt_two
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
+    {t : ℝ} (ht : 0 ≤ t)
+    (h_pow : (1 + t) ^
+        (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card < 2) :
+    HasSum (fun n : ℕ =>
+        (-1 : ℝ) ^ n *
+          (∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
+              (inducedGraph (IsingModel.latticeGraph d) Λ)).erase ∅,
+            ∏ P ∈ Γ, t ^ P.card) ^ (n + 1) /
+          (n + 1))
+      (IsingModel.polymerFreeEnergy
+        (inducedGraph (IsingModel.latticeGraph d) Λ) t) :=
+  Ambient.polymerFreeEnergy_Λ_hasSum_via_log_of_pow_lt_two
+    (IsingModel.latticeGraph d) Λ ht h_pow
+
+/-- **ℤ^d Λ-direct: high-temperature sandwich for `polymerFreeEnergy`
+(tanh form)** (§18.5 ℤ^d wrap). -/
+theorem polymerFreeEnergy_Λ_latticeGraph_tanh_high_temp_sandwich
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
+    {β J : ℝ} (hβJ : 0 ≤ β * J)
+    (h_pow : (1 + Real.tanh (β * J)) ^
+        (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card < 2) :
+    0 ≤ IsingModel.polymerFreeEnergy
+        (inducedGraph (IsingModel.latticeGraph d) Λ)
+        (Real.tanh (β * J)) ∧
+    IsingModel.polymerFreeEnergy
+        (inducedGraph (IsingModel.latticeGraph d) Λ)
+        (Real.tanh (β * J)) ≤
+      ∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
+            (inducedGraph (IsingModel.latticeGraph d) Λ)).erase ∅,
+        ∏ P ∈ Γ, (Real.tanh (β * J)) ^ P.card ∧
+    (∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
+            (inducedGraph (IsingModel.latticeGraph d) Λ)).erase ∅,
+        ∏ P ∈ Γ, (Real.tanh (β * J)) ^ P.card) ≤
+      (1 + Real.tanh (β * J)) ^
+        (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card - 1 ∧
+    (1 + Real.tanh (β * J)) ^
+        (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card - 1 < 1 ∧
+    IsingModel.polymerFreeEnergy
+        (inducedGraph (IsingModel.latticeGraph d) Λ)
+        (Real.tanh (β * J)) < Real.log 2 :=
+  Ambient.polymerFreeEnergy_Λ_tanh_high_temp_sandwich
+    (IsingModel.latticeGraph d) Λ hβJ h_pow
+
+/-- **ℤ^d Λ-direct: log Taylor expansion for `polymerFreeEnergy`
+(tanh form)** (§18.5 ℤ^d wrap). -/
+theorem polymerFreeEnergy_Λ_latticeGraph_tanh_hasSum_via_log_of_pow_lt_two
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
+    {β J : ℝ} (hβJ : 0 ≤ β * J)
+    (h_pow : (1 + Real.tanh (β * J)) ^
+        (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card < 2) :
+    HasSum (fun n : ℕ =>
+        (-1 : ℝ) ^ n *
+          (∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
+              (inducedGraph (IsingModel.latticeGraph d) Λ)).erase ∅,
+            ∏ P ∈ Γ, (Real.tanh (β * J)) ^ P.card) ^ (n + 1) /
+          (n + 1))
+      (IsingModel.polymerFreeEnergy
+        (inducedGraph (IsingModel.latticeGraph d) Λ)
+        (Real.tanh (β * J))) :=
+  Ambient.polymerFreeEnergy_Λ_tanh_hasSum_via_log_of_pow_lt_two
+    (IsingModel.latticeGraph d) Λ hβJ h_pow
+
+/-- **ℤ^d along-exhaustion: high-temperature sandwich for
+`polymerFreeEnergy`** (§18.5 ℤ^d along-ex wrap). -/
+theorem polymerFreeEnergyAlongExhaustion_latticeGraph_high_temp_sandwich
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
+      (Λ.volume n)).edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) (n : ℕ)
+    (h_pow : (1 + t) ^
+        (inducedGraph (IsingModel.latticeGraph d)
+          (Λ.volume n)).edgeFinset.card < 2) :
+    0 ≤ IsingModel.polymerFreeEnergy
+        (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)) t ∧
+    IsingModel.polymerFreeEnergy
+        (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)) t ≤
+      ∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
+            (inducedGraph (IsingModel.latticeGraph d)
+              (Λ.volume n))).erase ∅,
+        ∏ P ∈ Γ, t ^ P.card ∧
+    (∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
+            (inducedGraph (IsingModel.latticeGraph d)
+              (Λ.volume n))).erase ∅,
+        ∏ P ∈ Γ, t ^ P.card) ≤
+      (1 + t) ^
+        (inducedGraph (IsingModel.latticeGraph d)
+          (Λ.volume n)).edgeFinset.card - 1 ∧
+    (1 + t) ^
+        (inducedGraph (IsingModel.latticeGraph d)
+          (Λ.volume n)).edgeFinset.card - 1 < 1 ∧
+    IsingModel.polymerFreeEnergy
+        (inducedGraph (IsingModel.latticeGraph d)
+          (Λ.volume n)) t < Real.log 2 :=
+  Ambient.polymerFreeEnergyAlongExhaustion_high_temp_sandwich
+    (IsingModel.latticeGraph d) Λ ht n h_pow
+
+/-- **ℤ^d along-exhaustion: log Taylor expansion for `polymerFreeEnergy`**
+(§18.5 ℤ^d along-ex wrap). -/
+theorem
+polymerFreeEnergyAlongExhaustion_latticeGraph_hasSum_via_log_of_pow_lt_two
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
+      (Λ.volume n)).edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) (n : ℕ)
+    (h_pow : (1 + t) ^
+        (inducedGraph (IsingModel.latticeGraph d)
+          (Λ.volume n)).edgeFinset.card < 2) :
+    HasSum (fun k : ℕ =>
+        (-1 : ℝ) ^ k *
+          (∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
+              (inducedGraph (IsingModel.latticeGraph d)
+                (Λ.volume n))).erase ∅,
+            ∏ P ∈ Γ, t ^ P.card) ^ (k + 1) /
+          (k + 1))
+      (IsingModel.polymerFreeEnergy
+        (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)) t) :=
+  Ambient.polymerFreeEnergyAlongExhaustion_hasSum_via_log_of_pow_lt_two
+    (IsingModel.latticeGraph d) Λ ht n h_pow
+
+/-- **ℤ^d along-exhaustion: high-temperature sandwich for
+`polymerFreeEnergy` (tanh form)** (§18.5 ℤ^d along-ex wrap). -/
+theorem
+polymerFreeEnergyAlongExhaustion_latticeGraph_tanh_high_temp_sandwich
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
+      (Λ.volume n)).edgeSet]
+    {β J : ℝ} (hβJ : 0 ≤ β * J) (n : ℕ)
+    (h_pow : (1 + Real.tanh (β * J)) ^
+        (inducedGraph (IsingModel.latticeGraph d)
+          (Λ.volume n)).edgeFinset.card < 2) :
+    0 ≤ IsingModel.polymerFreeEnergy
+        (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+        (Real.tanh (β * J)) ∧
+    IsingModel.polymerFreeEnergy
+        (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+        (Real.tanh (β * J)) ≤
+      ∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
+            (inducedGraph (IsingModel.latticeGraph d)
+              (Λ.volume n))).erase ∅,
+        ∏ P ∈ Γ, (Real.tanh (β * J)) ^ P.card ∧
+    (∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
+            (inducedGraph (IsingModel.latticeGraph d)
+              (Λ.volume n))).erase ∅,
+        ∏ P ∈ Γ, (Real.tanh (β * J)) ^ P.card) ≤
+      (1 + Real.tanh (β * J)) ^
+        (inducedGraph (IsingModel.latticeGraph d)
+          (Λ.volume n)).edgeFinset.card - 1 ∧
+    (1 + Real.tanh (β * J)) ^
+        (inducedGraph (IsingModel.latticeGraph d)
+          (Λ.volume n)).edgeFinset.card - 1 < 1 ∧
+    IsingModel.polymerFreeEnergy
+        (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+        (Real.tanh (β * J)) < Real.log 2 :=
+  Ambient.polymerFreeEnergyAlongExhaustion_tanh_high_temp_sandwich
+    (IsingModel.latticeGraph d) Λ hβJ n h_pow
+
+/-- **ℤ^d along-exhaustion: log Taylor expansion for `polymerFreeEnergy`
+(tanh form)** (§18.5 ℤ^d along-ex wrap). -/
+theorem
+polymerFreeEnergyAlongExhaustion_latticeGraph_tanh_hasSum_via_log_of_pow_lt_two
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
+      (Λ.volume n)).edgeSet]
+    {β J : ℝ} (hβJ : 0 ≤ β * J) (n : ℕ)
+    (h_pow : (1 + Real.tanh (β * J)) ^
+        (inducedGraph (IsingModel.latticeGraph d)
+          (Λ.volume n)).edgeFinset.card < 2) :
+    HasSum (fun k : ℕ =>
+        (-1 : ℝ) ^ k *
+          (∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
+              (inducedGraph (IsingModel.latticeGraph d)
+                (Λ.volume n))).erase ∅,
+            ∏ P ∈ Γ, (Real.tanh (β * J)) ^ P.card) ^ (k + 1) /
+          (k + 1))
+      (IsingModel.polymerFreeEnergy
+        (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+        (Real.tanh (β * J))) :=
+  Ambient.polymerFreeEnergyAlongExhaustion_tanh_hasSum_via_log_of_pow_lt_two
+    (IsingModel.latticeGraph d) Λ hβJ n h_pow
+
 end Ambient
 
 end IsingModel
