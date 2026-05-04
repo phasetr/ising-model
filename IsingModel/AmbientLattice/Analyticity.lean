@@ -2542,5 +2542,90 @@ theorem partitionFunctionΛ_analyticOnNhd_J_h_zero
   exact IsingModel.partitionFunction_analyticOnNhd_J_h_zero
     (inducedGraph G Λ) β
 
+/-! ### §18.6 freeEnergyΛ per-direction analyticity Λ-layer wraps -/
+
+/-- **Λ-layer: freeEnergy `AnalyticAt ℝ` in `β` at `h = 0`**. -/
+theorem freeEnergyΛ_analyticAt_beta_h_zero
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (J β : ℝ) :
+    AnalyticAt ℝ (fun β' : ℝ => freeEnergyΛ G Λ ⟨J, 0, β'⟩) β :=
+  IsingModel.freeEnergy_analyticAt_beta_h_zero (inducedGraph G Λ) J β
+
+/-- **Λ-layer: freeEnergy `AnalyticAt ℝ` in `J` at `h = 0`**. -/
+theorem freeEnergyΛ_analyticAt_J_h_zero
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (β J : ℝ) :
+    AnalyticAt ℝ (fun J' : ℝ => freeEnergyΛ G Λ ⟨J', 0, β⟩) J :=
+  IsingModel.freeEnergy_analyticAt_J_h_zero (inducedGraph G Λ) β J
+
+/-- **Λ-layer: freeEnergy `AnalyticOnNhd ℝ _ Set.univ` in `β`
+at `h = 0`**. -/
+theorem freeEnergyΛ_analyticOnNhd_beta_h_zero
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (J : ℝ) :
+    AnalyticOnNhd ℝ
+      (fun β' : ℝ => freeEnergyΛ G Λ ⟨J, 0, β'⟩) Set.univ :=
+  IsingModel.freeEnergy_analyticOnNhd_beta_h_zero (inducedGraph G Λ) J
+
+/-- **Λ-layer: freeEnergy `AnalyticOnNhd ℝ _ Set.univ` in `J`
+at `h = 0`**. -/
+theorem freeEnergyΛ_analyticOnNhd_J_h_zero
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (β : ℝ) :
+    AnalyticOnNhd ℝ
+      (fun J' : ℝ => freeEnergyΛ G Λ ⟨J', 0, β⟩) Set.univ :=
+  IsingModel.freeEnergy_analyticOnNhd_J_h_zero (inducedGraph G Λ) β
+
+/-- **Λ-layer: freeEnergy `AnalyticAt ℝ` in `β` at general `h`**. -/
+theorem freeEnergyΛ_analyticAt_beta_general_h
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (J h β : ℝ) :
+    AnalyticAt ℝ (fun β' : ℝ => freeEnergyΛ G Λ ⟨J, h, β'⟩) β :=
+  IsingModel.freeEnergy_analyticAt_beta_general_h
+    (inducedGraph G Λ) J h β
+
+/-- **Λ-layer: freeEnergy `AnalyticAt ℝ` in `J` at general `h`**. -/
+theorem freeEnergyΛ_analyticAt_J_general_h
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (β h J : ℝ) :
+    AnalyticAt ℝ (fun J' : ℝ => freeEnergyΛ G Λ ⟨J', h, β⟩) J :=
+  IsingModel.freeEnergy_analyticAt_J_general_h
+    (inducedGraph G Λ) β h J
+
+/-- **Λ-layer: freeEnergy `AnalyticAt ℝ` in `h`**. -/
+theorem freeEnergyΛ_analyticAt_h
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (J β h : ℝ) :
+    AnalyticAt ℝ (fun h' : ℝ => freeEnergyΛ G Λ ⟨J, h', β⟩) h :=
+  IsingModel.freeEnergy_analyticAt_h (inducedGraph G Λ) J β h
+
+/-- **Λ-layer: freeEnergy `AnalyticOnNhd ℝ _ Set.univ` in `β` at
+general `h`**. -/
+theorem freeEnergyΛ_analyticOnNhd_beta_general_h
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (J h : ℝ) :
+    AnalyticOnNhd ℝ
+      (fun β' : ℝ => freeEnergyΛ G Λ ⟨J, h, β'⟩) Set.univ :=
+  IsingModel.freeEnergy_analyticOnNhd_beta_general_h
+    (inducedGraph G Λ) J h
+
+/-- **Λ-layer: freeEnergy `AnalyticOnNhd ℝ _ Set.univ` in `J` at
+general `h`**. -/
+theorem freeEnergyΛ_analyticOnNhd_J_general_h
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (β h : ℝ) :
+    AnalyticOnNhd ℝ
+      (fun J' : ℝ => freeEnergyΛ G Λ ⟨J', h, β⟩) Set.univ :=
+  IsingModel.freeEnergy_analyticOnNhd_J_general_h
+    (inducedGraph G Λ) β h
+
+/-- **Λ-layer: freeEnergy `AnalyticOnNhd ℝ _ Set.univ` in `h`**. -/
+theorem freeEnergyΛ_analyticOnNhd_h
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (J β : ℝ) :
+    AnalyticOnNhd ℝ
+      (fun h' : ℝ => freeEnergyΛ G Λ ⟨J, h', β⟩) Set.univ :=
+  IsingModel.freeEnergy_analyticOnNhd_h (inducedGraph G Λ) J β
+
 end Ambient
 end IsingModel
