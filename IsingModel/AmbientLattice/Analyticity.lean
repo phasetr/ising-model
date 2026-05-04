@@ -1592,5 +1592,51 @@ theorem mayerExpansionTerm_Λ_abs_le
           |IsingModel.clusterSeqActivity t ω| :=
   IsingModel.mayerExpansionTerm_abs_le (inducedGraph G Λ) n t
 
+/-! ### §18.5 polymerFreeEnergy at-zero/at-one + analytic + sandwich Λ -/
+
+/-- **Λ-layer: polymerFreeEnergy at `t = 0`** = 0. -/
+theorem polymerFreeEnergy_Λ_at_zero
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] :
+    IsingModel.polymerFreeEnergy (inducedGraph G Λ) 0 = 0 :=
+  IsingModel.polymerFreeEnergy_at_zero (inducedGraph G Λ)
+
+/-- **Λ-layer: polymerFreeEnergy at `t = 1`** =
+`log |vdCompatiblePolymerFamilies|`. -/
+theorem polymerFreeEnergy_Λ_at_one
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] :
+    IsingModel.polymerFreeEnergy (inducedGraph G Λ) 1 =
+      Real.log (IsingModel.vdCompatiblePolymerFamilies
+        (inducedGraph G Λ)).card :=
+  IsingModel.polymerFreeEnergy_at_one (inducedGraph G Λ)
+
+/-- **Λ-layer: polymerFreeEnergy is `AnalyticAt ℝ` for `t ≥ 0`**. -/
+theorem polymerFreeEnergy_Λ_analyticAt
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) :
+    AnalyticAt ℝ (fun s : ℝ => IsingModel.polymerFreeEnergy
+      (inducedGraph G Λ) s) t :=
+  IsingModel.polymerFreeEnergy_analyticAt (inducedGraph G Λ) ht
+
+/-- **Λ-layer: polymerFreeEnergy AnalyticOnNhd over `[0, ∞)`**. -/
+theorem polymerFreeEnergy_Λ_analyticOnNhd_Ici_zero
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] :
+    AnalyticOnNhd ℝ (fun s : ℝ => IsingModel.polymerFreeEnergy
+      (inducedGraph G Λ) s) (Set.Ici 0) :=
+  IsingModel.polymerFreeEnergy_analyticOnNhd_Ici_zero (inducedGraph G Λ)
+
+/-- **Λ-layer: polymerFreeEnergy sandwich for `t ≥ 0`**. -/
+theorem polymerFreeEnergy_Λ_sandwich_of_nonneg
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) :
+    0 ≤ IsingModel.polymerFreeEnergy (inducedGraph G Λ) t ∧
+    IsingModel.polymerFreeEnergy (inducedGraph G Λ) t ≤
+      (inducedGraph G Λ).edgeFinset.card * Real.log (1 + t) :=
+  IsingModel.polymerFreeEnergy_sandwich_of_nonneg (inducedGraph G Λ) ht
+
 end Ambient
 end IsingModel
