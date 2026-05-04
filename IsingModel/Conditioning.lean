@@ -4335,6 +4335,22 @@ theorem correlation_high_temp_h_zero_at_pair_le_two_pow_edges_mul_tanh_pow_dist
     exact_mod_cast h_F_card_le_two_pow
   exact h_step1.trans (h_sum_le_card_smul.trans h_smul_le)
 
+/-- **Ferromagnetic §18.7 capstone**: under `0 ≤ J, 0 < β`,
+\[
+\langle \sigma_i \sigma_j \rangle_{\beta, 0}
+  \le 2^{|E|} \cdot \tanh(\beta J)^{d_G(i,j)}.
+\]
+Bridges ferromagnetic hypotheses with the abstract capstone via
+`mul_nonneg hβ.le hJ`. -/
+theorem
+correlation_high_temp_h_zero_at_pair_le_two_pow_edges_mul_tanh_pow_dist_ferromagnetic
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (i j : ι) :
+    correlation G ⟨J, 0, β⟩ ({i, j} : Finset ι)
+      ≤ (2 : ℝ) ^ G.edgeFinset.card * Real.tanh (β * J) ^ G.dist i j :=
+  correlation_high_temp_h_zero_at_pair_le_two_pow_edges_mul_tanh_pow_dist
+    G J β (mul_nonneg hβ.le hJ) i j
+
 /-- **Pair correlation weak upper bound `≤ 2^|E| · tanh(β·J)` at `h = 0`
 (GJ §18.7 weak upper bound)**: under `0 ≤ β·J`,
 \[

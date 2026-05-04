@@ -3535,6 +3535,15 @@ and
 \texttt{correlationAlongExhaustion\_latticeGraph\_high\_temp\_h\_zero\_at\_pair\_le\_two\_pow\_edges\_mul\_tanh\_pow\_dist}
 in \texttt{Concrete/LatticeGraphCorrelation.lean}.
 
+PR~\#1571 adds ferromagnetic ($0 \le J,\, 0 < \beta$) versions of
+all five layers; the bridge $0 \le \beta J$ follows from
+\texttt{mul\_nonneg h$\beta$.le hJ}. The ℤ^d along-exhaustion form
+uses the abbreviated name
+\texttt{correlationAlongExhaustion\_latticeGraph\_h\_zero\_at\_pair\_le\_two\_pow\_edges\_mul\_tanh\_pow\_dist\_ferro}
+(dropping \texttt{\_high\_temp} and shortening
+\texttt{\_ferromagnetic} to \texttt{\_ferro}) so that the
+declaration line stays within the linter's 100-character budget.
+
 References: Glimm--Jaffe~\cite{glimm-jaffe}, \S18.4--\S18.7;
 Friedli--Velenik~\cite{friedli-velenik}, \S5; for Mayer / Ursell
 combinatorics see also Fern\'andez--Fr\"ohlich--Sokal
