@@ -4053,6 +4053,23 @@ theorem polymerFreeEnergy_tanh_hasSum_via_log_of_pow_lt_two
   polymerFreeEnergy_hasSum_via_log_of_pow_lt_two G
     (real_tanh_nonneg hβJ) h_pow
 
+/-- **`polymerFreeEnergy` log-Taylor expansion (ferromagnetic tanh
+form)** (§18.5 ferromagnetic): under `0 ≤ J, 0 < β` and
+`(1 + tanh(β·J))^|E| < 2`, same `HasSum` log-Taylor expansion. -/
+theorem polymerFreeEnergy_tanh_hasSum_via_log_of_pow_lt_two_ferromagnetic
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)
+    (h_pow : (1 + Real.tanh (β * J)) ^ G.edgeFinset.card < 2) :
+    HasSum (fun n : ℕ =>
+        (-1 : ℝ) ^ n *
+          (∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅,
+            ∏ P ∈ Γ, (Real.tanh (β * J)) ^ P.card) ^ (n + 1) /
+          (n + 1))
+      (polymerFreeEnergy G (Real.tanh (β * J))) :=
+  polymerFreeEnergy_tanh_hasSum_via_log_of_pow_lt_two G
+    (mul_nonneg hβ.le hJ) h_pow
+
 /-! ## K_n alternating connected-spanning subgraph sum (Mayer Phase B)
 
 **Goal**: prove the Mayer combinatorial identity
@@ -4719,6 +4736,26 @@ theorem polymerFreeEnergy_tanh_high_temp_sandwich
     (1 + Real.tanh (β * J)) ^ G.edgeFinset.card - 1 < 1 ∧
     polymerFreeEnergy G (Real.tanh (β * J)) < Real.log 2 :=
   polymerFreeEnergy_high_temp_sandwich G (real_tanh_nonneg hβJ) h_pow
+
+/-- **`polymerFreeEnergy` high-temperature regime sandwich
+(ferromagnetic tanh form)** (§18.5 ferromagnetic): under
+`0 ≤ J, 0 < β`, the same 5-statement sandwich. -/
+theorem polymerFreeEnergy_tanh_high_temp_sandwich_ferromagnetic
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)
+    (h_pow : (1 + Real.tanh (β * J)) ^ G.edgeFinset.card < 2) :
+    0 ≤ polymerFreeEnergy G (Real.tanh (β * J)) ∧
+    polymerFreeEnergy G (Real.tanh (β * J)) ≤
+      ∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅,
+        ∏ P ∈ Γ, (Real.tanh (β * J)) ^ P.card ∧
+    (∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅,
+        ∏ P ∈ Γ, (Real.tanh (β * J)) ^ P.card) ≤
+      (1 + Real.tanh (β * J)) ^ G.edgeFinset.card - 1 ∧
+    (1 + Real.tanh (β * J)) ^ G.edgeFinset.card - 1 < 1 ∧
+    polymerFreeEnergy G (Real.tanh (β * J)) < Real.log 2 :=
+  polymerFreeEnergy_tanh_high_temp_sandwich G
+    (mul_nonneg hβ.le hJ) h_pow
 
 /-- **`freeEnergy` strict upper bound in cluster-expansion convergence
 regime** (§18.4 capstone): under `0 ≤ β·J`, `0 < |ι|`, and

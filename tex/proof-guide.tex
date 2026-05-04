@@ -3476,6 +3476,19 @@ free energy at \emph{general} external field $h$:
     (\#1541).
 \end{itemize}
 
+\paragraph{Ferromagnetic forms of \texttt{polymerFreeEnergy}
+sandwich + hasSum, all volume layers (\S18.5, PR~\#1573).} Under
+$0 \le J,\, 0 < \beta$ each of the §18.5 PR~\#1569 statements
+(\texttt{polymerFreeEnergy\_tanh\_high\_temp\_sandwich} and
+\texttt{polymerFreeEnergy\_tanh\_hasSum\_via\_log\_of\_pow\_lt\_two})
+admits a ferromagnetic version, derived through
+\texttt{mul\_nonneg h$\beta$.le hJ} and matched at each of the five
+layers (abstract / $\Lambda$-direct / along-exhaustion /
+$\mathbb{Z}^d$ $\Lambda$-direct / $\mathbb{Z}^d$ along-exhaustion).
+The $\mathbb{Z}^d$ wrappers use the abbreviated suffix
+\texttt{\_ferro} so the declaration fits the linter's 100-character
+budget.
+
 \paragraph{Polymer-family sum sandwich, all volume layers
 (\S18.5, PR~\#1572).} The two abstract sandwich statements
 \texttt{vdPolymerFamilies\_sum\_sandwich} ($1 \le \sum_\Gamma \le
