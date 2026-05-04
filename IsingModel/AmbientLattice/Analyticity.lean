@@ -472,5 +472,38 @@ polymerFreeEnergy_Λ_tanh_hasSum_via_log_of_pow_lt_two_ferromagnetic
   IsingModel.polymerFreeEnergy_tanh_hasSum_via_log_of_pow_lt_two_ferromagnetic
     (inducedGraph G Λ) hJ hβ h_pow
 
+/-- **Λ-layer: VD polymer-family sum sandwich (ferromagnetic)**
+(§18.5 ferromagnetic Λ wrap). -/
+theorem vdPolymerFamilies_sum_Λ_sandwich_ferromagnetic
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β) :
+    1 ≤ (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
+            (inducedGraph G Λ),
+        ∏ P ∈ Γ, Real.tanh (β * J) ^ P.card) ∧
+    (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
+            (inducedGraph G Λ),
+        ∏ P ∈ Γ, Real.tanh (β * J) ^ P.card)
+      ≤ (2 : ℝ) ^ (inducedGraph G Λ).edgeFinset.card :=
+  IsingModel.vdPolymerFamilies_sum_sandwich_ferromagnetic
+    (inducedGraph G Λ) hJ hβ
+
+/-- **Λ-layer: VD polymer-family sum sharp sandwich
+(ferromagnetic)** (§18.5 ferromagnetic Λ wrap). -/
+theorem vdPolymerFamilies_sum_Λ_sandwich_sharp_ferromagnetic
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β) :
+    1 ≤ (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
+            (inducedGraph G Λ),
+        ∏ P ∈ Γ, Real.tanh (β * J) ^ P.card) ∧
+    (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
+            (inducedGraph G Λ),
+        ∏ P ∈ Γ, Real.tanh (β * J) ^ P.card)
+      ≤ (1 + Real.tanh (β * J)) ^
+        (inducedGraph G Λ).edgeFinset.card :=
+  IsingModel.vdPolymerFamilies_sum_sandwich_sharp_ferromagnetic
+    (inducedGraph G Λ) hJ hβ
+
 end Ambient
 end IsingModel

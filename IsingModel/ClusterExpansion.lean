@@ -1900,6 +1900,33 @@ theorem vdPolymerFamilies_sum_sandwich
   ⟨one_le_vdPolymerFamilies_sum G hβJ,
    vdPolymerFamilies_sum_le_two_pow G hβJ⟩
 
+/-- **VD polymer-family sum sandwich (ferromagnetic)**: under
+`0 ≤ J, 0 < β`, the same `1 ≤ ∑_Γ ∏ tanh(β·J)^|P| ≤ 2^|E|`. -/
+theorem vdPolymerFamilies_sum_sandwich_ferromagnetic
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β) :
+    1 ≤ (∑ Γ ∈ vdCompatiblePolymerFamilies G,
+        ∏ P ∈ Γ, Real.tanh (β * J) ^ P.card) ∧
+    (∑ Γ ∈ vdCompatiblePolymerFamilies G,
+        ∏ P ∈ Γ, Real.tanh (β * J) ^ P.card)
+      ≤ (2 : ℝ) ^ G.edgeFinset.card :=
+  vdPolymerFamilies_sum_sandwich G (mul_nonneg hβ.le hJ)
+
+/-- **VD polymer-family sum sharp sandwich (ferromagnetic)**: under
+`0 ≤ J, 0 < β`, the same `1 ≤ ∑_Γ ∏ tanh(β·J)^|P| ≤
+(1+tanh(β·J))^|E|`. -/
+theorem vdPolymerFamilies_sum_sandwich_sharp_ferromagnetic
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β) :
+    1 ≤ (∑ Γ ∈ vdCompatiblePolymerFamilies G,
+        ∏ P ∈ Γ, Real.tanh (β * J) ^ P.card) ∧
+    (∑ Γ ∈ vdCompatiblePolymerFamilies G,
+        ∏ P ∈ Γ, Real.tanh (β * J) ^ P.card)
+      ≤ (1 + Real.tanh (β * J)) ^ G.edgeFinset.card :=
+  vdPolymerFamilies_sum_sandwich_sharp G (mul_nonneg hβ.le hJ)
+
 /-- **Polymer activity for the lattice Ising model**: the natural
 weight `t^|P|` arising from the FV (3.45) closed form
 `Z = 2^|ι|·cosh^|E|·∑_{X ⊆ E, even} tanh(β·J)^|X|`.
