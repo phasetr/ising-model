@@ -2642,6 +2642,50 @@ theorem hasDerivAt_partitionFunctionΛ_field (G : SimpleGraph V)
   simp_rw [partitionFunctionΛ_apply]
   exact IsingModel.hasDerivAt_partitionFunction_field _ J h β
 
+omit [DecidableEq V] in
+/-- **HasDerivAt for ambient-induced Boltzmann weight in β** at a
+single configuration `σ : Config ↑Λ`. -/
+theorem hasDerivAt_boltzmannWeightΛ_beta (G : SimpleGraph V)
+    (Λ : Finset V) [Fintype (inducedGraph G Λ).edgeSet]
+    (J h β : ℝ) (σ : IsingModel.Config ↑(Λ : Finset V)) :
+    HasDerivAt
+      (fun β' => IsingModel.boltzmannWeight (inducedGraph G Λ)
+        (⟨J, h, β'⟩ : IsingParams ℝ) σ)
+      (- IsingModel.hamiltonian (inducedGraph G Λ)
+            (⟨J, h, β⟩ : IsingParams ℝ) σ *
+         IsingModel.boltzmannWeight (inducedGraph G Λ)
+            (⟨J, h, β⟩ : IsingParams ℝ) σ) β :=
+  IsingModel.hasDerivAt_boltzmannWeight_beta _ J h β σ
+
+omit [DecidableEq V] in
+/-- **HasDerivAt for ambient-induced Boltzmann weight in J** at a
+single configuration. -/
+theorem hasDerivAt_boltzmannWeightΛ_J (G : SimpleGraph V)
+    (Λ : Finset V) [Fintype (inducedGraph G Λ).edgeSet]
+    (J h β : ℝ) (σ : IsingModel.Config ↑(Λ : Finset V)) :
+    HasDerivAt
+      (fun J' => IsingModel.boltzmannWeight (inducedGraph G Λ)
+        (⟨J', h, β⟩ : IsingParams ℝ) σ)
+      (β * (∑ e ∈ (inducedGraph G Λ).edgeFinset,
+              IsingModel.edgeSpin (K := ℝ) σ e) *
+         IsingModel.boltzmannWeight (inducedGraph G Λ)
+            (⟨J, h, β⟩ : IsingParams ℝ) σ) J :=
+  IsingModel.hasDerivAt_boltzmannWeight_J _ J h β σ
+
+omit [DecidableEq V] in
+/-- **HasDerivAt for ambient-induced Boltzmann weight in h** at a
+single configuration. -/
+theorem hasDerivAt_boltzmannWeightΛ_field (G : SimpleGraph V)
+    (Λ : Finset V) [Fintype (inducedGraph G Λ).edgeSet]
+    (J h β : ℝ) (σ : IsingModel.Config ↑(Λ : Finset V)) :
+    HasDerivAt
+      (fun h' => IsingModel.boltzmannWeight (inducedGraph G Λ)
+        (⟨J, h', β⟩ : IsingParams ℝ) σ)
+      (β * IsingModel.totalMagnetization σ *
+         IsingModel.boltzmannWeight (inducedGraph G Λ)
+            (⟨J, h, β⟩ : IsingParams ℝ) σ) h :=
+  IsingModel.hasDerivAt_boltzmannWeight_field _ J h β σ
+
 
 /-- **magnetizationΛ HasDerivAt β at general h** with explicit
 derivative. -/
