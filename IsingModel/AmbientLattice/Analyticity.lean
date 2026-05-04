@@ -1847,5 +1847,84 @@ theorem allPolymers_Λ_eq_empty_of_edgeFinset_empty
   IsingModel.allPolymers_eq_empty_of_edgeFinset_empty
     (inducedGraph G Λ) h_empty
 
+/-! ### §18.5 ε(t) / polymerFreeEnergy positivity-iff Λ-layer wraps -/
+
+/-- **Λ-layer: 0 < ε(t) ↔ 0 < t ∧ allPolymers ≠ ∅** under `0 ≤ t`. -/
+theorem vdPolymerFamilies_sum_Λ_minus_one_pos_iff
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) :
+    0 < (∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
+              (inducedGraph G Λ)).erase ∅,
+            ∏ P ∈ Γ, t ^ P.card) ↔
+      0 < t ∧
+        (IsingModel.allPolymers (inducedGraph G Λ)).Nonempty :=
+  IsingModel.vdPolymerFamilies_sum_minus_one_pos_iff
+    (inducedGraph G Λ) ht
+
+/-- **Λ-layer: ε(t) = 0 ↔ t = 0 ∨ allPolymers = ∅** under `0 ≤ t`. -/
+theorem vdPolymerFamilies_sum_Λ_minus_one_eq_zero_iff
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) :
+    (∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
+              (inducedGraph G Λ)).erase ∅,
+          ∏ P ∈ Γ, t ^ P.card) = 0 ↔
+      t = 0 ∨ IsingModel.allPolymers (inducedGraph G Λ) = ∅ :=
+  IsingModel.vdPolymerFamilies_sum_minus_one_eq_zero_iff
+    (inducedGraph G Λ) ht
+
+/-- **Λ-layer: 0 < ε(tanh) ↔ 0 < tanh ∧ allPolymers ≠ ∅** under
+`0 ≤ β·J`. -/
+theorem vdPolymerFamilies_sum_Λ_minus_one_tanh_pos_iff
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {β J : ℝ} (hβJ : 0 ≤ β * J) :
+    0 < (∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
+              (inducedGraph G Λ)).erase ∅,
+            ∏ P ∈ Γ, (Real.tanh (β * J)) ^ P.card) ↔
+      0 < Real.tanh (β * J) ∧
+        (IsingModel.allPolymers (inducedGraph G Λ)).Nonempty :=
+  IsingModel.vdPolymerFamilies_sum_minus_one_tanh_pos_iff
+    (inducedGraph G Λ) hβJ
+
+/-- **Λ-layer: ε(tanh) = 0 ↔ tanh = 0 ∨ allPolymers = ∅**. -/
+theorem vdPolymerFamilies_sum_Λ_minus_one_tanh_eq_zero_iff
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {β J : ℝ} (hβJ : 0 ≤ β * J) :
+    (∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
+              (inducedGraph G Λ)).erase ∅,
+          ∏ P ∈ Γ, (Real.tanh (β * J)) ^ P.card) = 0 ↔
+      Real.tanh (β * J) = 0 ∨
+        IsingModel.allPolymers (inducedGraph G Λ) = ∅ :=
+  IsingModel.vdPolymerFamilies_sum_minus_one_tanh_eq_zero_iff
+    (inducedGraph G Λ) hβJ
+
+/-- **Λ-layer: 0 < polymerFreeEnergy(tanh) ↔ 0 < tanh ∧
+allPolymers ≠ ∅** under `0 ≤ β·J`. -/
+theorem polymerFreeEnergy_Λ_tanh_pos_iff
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {β J : ℝ} (hβJ : 0 ≤ β * J) :
+    0 < IsingModel.polymerFreeEnergy (inducedGraph G Λ)
+          (Real.tanh (β * J)) ↔
+      0 < Real.tanh (β * J) ∧
+        (IsingModel.allPolymers (inducedGraph G Λ)).Nonempty :=
+  IsingModel.polymerFreeEnergy_tanh_pos_iff (inducedGraph G Λ) hβJ
+
+/-- **Λ-layer: polymerFreeEnergy(tanh) = 0 ↔ tanh = 0 ∨
+allPolymers = ∅** under `0 ≤ β·J`. -/
+theorem polymerFreeEnergy_Λ_tanh_eq_zero_iff
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {β J : ℝ} (hβJ : 0 ≤ β * J) :
+    IsingModel.polymerFreeEnergy (inducedGraph G Λ)
+        (Real.tanh (β * J)) = 0 ↔
+      Real.tanh (β * J) = 0 ∨
+        IsingModel.allPolymers (inducedGraph G Λ) = ∅ :=
+  IsingModel.polymerFreeEnergy_tanh_eq_zero_iff
+    (inducedGraph G Λ) hβJ
+
 end Ambient
 end IsingModel
