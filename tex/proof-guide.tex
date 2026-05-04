@@ -3500,6 +3500,19 @@ existed; this PR fills the bare-bound and `\geq 1` gaps. 12 new
 thin direct-instantiation wrappers (3 abstracts $\times$ 4
 layers).
 
+\paragraph{\texttt{magnetization} Continuous + Differentiable in
+$h$ / $J$, all volume layers (\S17.5--\S17.6, PR~\#1615).} Lifts
+four \texttt{magnetization} regularity abstracts to the four
+volume layers (\textit{Λ}, along-ex, $\mathbb{Z}^d$ \textit{Λ},
+$\mathbb{Z}^d$ along-ex):
+\texttt{\_continuous\_field}, \texttt{\_differentiable\_field}
+(in $h$),
+\texttt{\_continuous\_J}, \texttt{\_differentiable\_J} (in $J$).
+16 new thin direct-instantiation wrappers (4 abstracts $\times$
+4 layers). The along-ex wrappers case-split on
+$i \in \Lambda.\mathrm{volume}\ n$: when $i \in$, the value
+reduces to the \textit{Λ} wrap; otherwise it is constantly $0$.
+
 \paragraph{Mayer filter-connected $n=0/1/2$ + $\varepsilon^n$
 expansion + \texttt{mayerPartialSum\_analyticOnNhd}, all volume
 layers (\S18.5, PR~\#1613).} Lifts five Mayer / $\varepsilon(t)$
