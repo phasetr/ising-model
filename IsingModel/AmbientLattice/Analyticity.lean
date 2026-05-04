@@ -2680,5 +2680,88 @@ theorem partitionFunctionΛ_analyticAt_h
   exact IsingModel.partitionFunction_analyticAt_h
     (inducedGraph G Λ) J β h
 
+/-! ### §18.4-§18.6 capstones Λ-layer wraps -/
+
+/-- **Λ-layer: §18.4 partitionFunction polymer-family form** capstone:
+`Z_Λ(J, 0, β) = 2^|Λ| · cosh(β·J)^|E_Λ| · ∑_Γ ∏ tanh(β·J)^|P|`. -/
+theorem partitionFunctionΛ_high_temp_expansion_h_zero_polymer_family
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (J β : ℝ) :
+    partitionFunctionΛ G Λ ⟨J, 0, β⟩ =
+      (2 : ℝ) ^ Fintype.card ↑(Λ : Finset V) *
+        Real.cosh (β * J) ^ (inducedGraph G Λ).edgeFinset.card *
+        ∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies (inducedGraph G Λ),
+          ∏ P ∈ Γ, Real.tanh (β * J) ^ P.card := by
+  simp only [partitionFunctionΛ_apply]
+  exact IsingModel.partitionFunction_high_temp_expansion_h_zero_polymer_family
+    (inducedGraph G Λ) J β
+
+/-- **Λ-layer: §18.4 partitionFunction even-subgraph form** (FV (3.45))**:
+`Z_Λ = 2^|Λ| · cosh(β·J)^|E_Λ| · ∑_X tanh(β·J)^|X|`. -/
+theorem
+partitionFunctionΛ_high_temp_expansion_h_zero_closed_evenSubgraphs
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (J β : ℝ) :
+    partitionFunctionΛ G Λ ⟨J, 0, β⟩ =
+      (2 : ℝ) ^ Fintype.card ↑(Λ : Finset V) *
+        Real.cosh (β * J) ^ (inducedGraph G Λ).edgeFinset.card *
+        ∑ X ∈ IsingModel.evenSubgraphs (inducedGraph G Λ),
+          Real.tanh (β * J) ^ X.card := by
+  simp only [partitionFunctionΛ_apply]
+  exact IsingModel.partitionFunction_high_temp_expansion_h_zero_closed_evenSubgraphs
+    (inducedGraph G Λ) J β
+
+/-- **Λ-layer: §18.6 freeEnergy decomposition** under `0 ≤ β·J` and
+`Λ.Nonempty`. -/
+theorem freeEnergyΛ_eq_polymerFreeEnergy
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (hne : Λ.Nonempty) :
+    freeEnergyΛ G Λ ⟨J, 0, β⟩ =
+      Real.log 2 +
+        ((inducedGraph G Λ).edgeFinset.card : ℝ) /
+            Fintype.card ↑(Λ : Finset V) *
+          Real.log (Real.cosh (β * J)) +
+        IsingModel.polymerFreeEnergy (inducedGraph G Λ)
+          (Real.tanh (β * J)) /
+            Fintype.card ↑(Λ : Finset V) :=
+  IsingModel.freeEnergy_eq_polymerFreeEnergy
+    (inducedGraph G Λ) J β hβJ (Finset.Nonempty.fintype_card_coe_pos hne)
+
+/-- **Λ-layer: §18.6 ferromagnetic freeEnergy decomposition** under
+`0 ≤ J, 0 < β` and `Λ.Nonempty`. -/
+theorem freeEnergyΛ_eq_polymerFreeEnergy_ferromagnetic
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (hne : Λ.Nonempty) :
+    freeEnergyΛ G Λ ⟨J, 0, β⟩ =
+      Real.log 2 +
+        ((inducedGraph G Λ).edgeFinset.card : ℝ) /
+            Fintype.card ↑(Λ : Finset V) *
+          Real.log (Real.cosh (β * J)) +
+        IsingModel.polymerFreeEnergy (inducedGraph G Λ)
+          (Real.tanh (β * J)) /
+            Fintype.card ↑(Λ : Finset V) :=
+  IsingModel.freeEnergy_eq_polymerFreeEnergy_ferromagnetic
+    (inducedGraph G Λ) J β hJ hβ (Finset.Nonempty.fintype_card_coe_pos hne)
+
+/-- **Λ-layer: freeEnergy = log 2** at `β·J = 0`, under
+`Λ.Nonempty`. -/
+theorem freeEnergyΛ_eq_log_two_at_betaJ_zero
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {β J : ℝ} (hβJ : β * J = 0) (hne : Λ.Nonempty) :
+    freeEnergyΛ G Λ ⟨J, 0, β⟩ = Real.log 2 :=
+  IsingModel.freeEnergy_eq_log_two_at_betaJ_zero
+    (inducedGraph G Λ) hβJ (Finset.Nonempty.fintype_card_coe_pos hne)
+
+/-- **Λ-layer: mayerPartialSum at N=1, t=1 = |allPolymers|**. -/
+theorem mayerPartialSum_Λ_one_at_one
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] :
+    IsingModel.mayerPartialSum (inducedGraph G Λ) 1 1 =
+      (IsingModel.allPolymers (inducedGraph G Λ)).card :=
+  IsingModel.mayerPartialSum_one_at_one (inducedGraph G Λ)
+
 end Ambient
 end IsingModel
