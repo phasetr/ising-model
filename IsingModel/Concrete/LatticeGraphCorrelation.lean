@@ -8052,7 +8052,7 @@ polymerFreeEnergyAlongExhaustion_latticeGraph_tanh_high_temp_sandwich_ferro
 /-- **ℤ^d along-exhaustion: log Taylor expansion for `polymerFreeEnergy`
 (ferromagnetic tanh form)** (§18.5 ferromagnetic ℤ^d along-ex wrap). -/
 theorem
-polymerFreeEnergyAlongExhaustion_latticeGraph_tanh_hasSum_log_pow_lt_two_ferro
+polymerFreeEnergyAlongExhaustion_latticeGraph_tanh_hasSum_via_log_of_pow_lt_two_ferro
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
     [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
       (Λ.volume n)).edgeSet]
