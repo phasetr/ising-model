@@ -765,5 +765,49 @@ theorem polymerFreeEnergy_Λ_tanh_double_bound
   IsingModel.polymerFreeEnergy_tanh_double_bound
     (inducedGraph G Λ) hβJ
 
+/-! ### §18.6 mayerPartialSum regularity Λ wraps -/
+
+/-- **Λ-layer: `mayerPartialSum` is `Continuous`** (§18.6 Λ wrap). -/
+theorem mayerPartialSum_Λ_continuous
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (N : ℕ) :
+    Continuous (fun t : ℝ =>
+        IsingModel.mayerPartialSum (inducedGraph G Λ) N t) :=
+  IsingModel.mayerPartialSum_continuous (inducedGraph G Λ) N
+
+/-- **Λ-layer: `mayerPartialSum` is `Differentiable ℝ`** (§18.6 Λ wrap). -/
+theorem mayerPartialSum_Λ_differentiable
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (N : ℕ) :
+    Differentiable ℝ (fun t : ℝ =>
+        IsingModel.mayerPartialSum (inducedGraph G Λ) N t) :=
+  IsingModel.mayerPartialSum_differentiable (inducedGraph G Λ) N
+
+/-- **Λ-layer: `mayerPartialSum` is `AnalyticAt ℝ`** (§18.6 Λ wrap). -/
+theorem mayerPartialSum_Λ_analyticAt
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (N : ℕ) (t : ℝ) :
+    AnalyticAt ℝ (fun s : ℝ =>
+        IsingModel.mayerPartialSum (inducedGraph G Λ) N s) t :=
+  IsingModel.mayerPartialSum_analyticAt (inducedGraph G Λ) N t
+
+/-- **Λ-layer: `mayerPartialSum` is `ContinuousOn`** (§18.6 Λ wrap of
+Step 628). -/
+theorem mayerPartialSum_Λ_continuousOn
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (N : ℕ) (s : Set ℝ) :
+    ContinuousOn (fun t : ℝ =>
+        IsingModel.mayerPartialSum (inducedGraph G Λ) N t) s :=
+  IsingModel.mayerPartialSum_continuousOn (inducedGraph G Λ) N s
+
+/-- **Λ-layer: `mayerPartialSum` is `DifferentiableOn ℝ`** (§18.6
+Λ wrap of Step 628). -/
+theorem mayerPartialSum_Λ_differentiableOn
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (N : ℕ) (s : Set ℝ) :
+    DifferentiableOn ℝ (fun t : ℝ =>
+        IsingModel.mayerPartialSum (inducedGraph G Λ) N t) s :=
+  IsingModel.mayerPartialSum_differentiableOn (inducedGraph G Λ) N s
+
 end Ambient
 end IsingModel
