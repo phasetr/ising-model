@@ -4810,6 +4810,22 @@ theorem freeEnergy_lt_log_two_plus_high_temp_correction
     div_lt_div_of_pos_right h_lt h_pos
   linarith
 
+/-- **Ferromagnetic strict `freeEnergy` upper bound in cluster-expansion
+convergence regime** (§18.5): under `0 ≤ J, 0 < β`, `0 < |ι|`, and
+`(1+tanh(β·J))^|E| < 2`, the same strict upper bound. -/
+theorem freeEnergy_lt_log_two_plus_high_temp_correction_ferromagnetic
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (hne : 0 < Fintype.card ι)
+    (h_pow : (1 + Real.tanh (β * J)) ^ G.edgeFinset.card < 2) :
+    freeEnergy G ⟨J, 0, β⟩ <
+      Real.log 2 +
+        (G.edgeFinset.card : ℝ) / Fintype.card ι *
+          Real.log (Real.cosh (β * J)) +
+        Real.log 2 / Fintype.card ι :=
+  freeEnergy_lt_log_two_plus_high_temp_correction
+    G J β (mul_nonneg hβ.le hJ) hne h_pow
+
 /-- **Partition function `AnalyticAt ℝ` in `β` at general `h`** (§18.6
 extension): for any `(J, h, β)`, `Z(β) = ∑_σ exp(-β · H(σ))` is real-
 analytic in `β`. Direct proof: each summand `exp(-β · H(σ))` is
