@@ -4138,5 +4138,54 @@ theorem mayerExpansionTermAlongExhaustion_abs_le
           |IsingModel.clusterSeqActivity t ω| :=
   mayerExpansionTerm_Λ_abs_le G (Λ.volume n) k t
 
+/-! ### §18.5 polymerFreeEnergy at-zero/at-one + analytic + sandwich
+along-ex -/
+
+/-- **Along-ex: polymerFreeEnergy at `t = 0`** = 0. -/
+theorem polymerFreeEnergyAlongExhaustion_at_zero
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet] (n : ℕ) :
+    IsingModel.polymerFreeEnergy
+        (inducedGraph G (Λ.volume n)) 0 = 0 :=
+  polymerFreeEnergy_Λ_at_zero G (Λ.volume n)
+
+/-- **Along-ex: polymerFreeEnergy at `t = 1`** =
+`log |vdCompatiblePolymerFamilies|`. -/
+theorem polymerFreeEnergyAlongExhaustion_at_one
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet] (n : ℕ) :
+    IsingModel.polymerFreeEnergy (inducedGraph G (Λ.volume n)) 1 =
+      Real.log (IsingModel.vdCompatiblePolymerFamilies
+        (inducedGraph G (Λ.volume n))).card :=
+  polymerFreeEnergy_Λ_at_one G (Λ.volume n)
+
+/-- **Along-ex: polymerFreeEnergy is `AnalyticAt ℝ` for `t ≥ 0`**. -/
+theorem polymerFreeEnergyAlongExhaustion_analyticAt
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) (n : ℕ) :
+    AnalyticAt ℝ (fun s : ℝ => IsingModel.polymerFreeEnergy
+      (inducedGraph G (Λ.volume n)) s) t :=
+  polymerFreeEnergy_Λ_analyticAt G (Λ.volume n) ht
+
+/-- **Along-ex: polymerFreeEnergy AnalyticOnNhd over `[0, ∞)`**. -/
+theorem polymerFreeEnergyAlongExhaustion_analyticOnNhd_Ici_zero
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet] (n : ℕ) :
+    AnalyticOnNhd ℝ (fun s : ℝ => IsingModel.polymerFreeEnergy
+      (inducedGraph G (Λ.volume n)) s) (Set.Ici 0) :=
+  polymerFreeEnergy_Λ_analyticOnNhd_Ici_zero G (Λ.volume n)
+
+/-- **Along-ex: polymerFreeEnergy sandwich for `t ≥ 0`**. -/
+theorem polymerFreeEnergyAlongExhaustion_sandwich_of_nonneg
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) (n : ℕ) :
+    0 ≤ IsingModel.polymerFreeEnergy (inducedGraph G (Λ.volume n)) t ∧
+    IsingModel.polymerFreeEnergy (inducedGraph G (Λ.volume n)) t ≤
+      (inducedGraph G (Λ.volume n)).edgeFinset.card *
+        Real.log (1 + t) :=
+  polymerFreeEnergy_Λ_sandwich_of_nonneg G (Λ.volume n) ht
+
 end Ambient
 end IsingModel
