@@ -924,5 +924,61 @@ theorem mayerPartialSum_Λ_tanh_analyticOnNhd_J
           (Real.tanh (β * J'))) Set.univ :=
   IsingModel.mayerPartialSum_tanh_analyticOnNhd_J (inducedGraph G Λ) N β
 
+/-! ### §18.5 mayerExpansionTerm tanh β/J Λ wraps -/
+
+/-- **Λ-layer: mayerExpansionTerm ∘ tanh ∘ (·*J) continuous in β**. -/
+theorem mayerExpansionTerm_Λ_tanh_continuous_beta
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (n : ℕ) (J : ℝ) :
+    Continuous (fun β' : ℝ =>
+        IsingModel.mayerExpansionTerm (inducedGraph G Λ) n
+          (Real.tanh (β' * J))) :=
+  IsingModel.mayerExpansionTerm_tanh_continuous_beta (inducedGraph G Λ) n J
+
+/-- **Λ-layer: mayerExpansionTerm ∘ tanh ∘ (β*·) continuous in J**. -/
+theorem mayerExpansionTerm_Λ_tanh_continuous_J
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (n : ℕ) (β : ℝ) :
+    Continuous (fun J' : ℝ =>
+        IsingModel.mayerExpansionTerm (inducedGraph G Λ) n
+          (Real.tanh (β * J'))) :=
+  IsingModel.mayerExpansionTerm_tanh_continuous_J (inducedGraph G Λ) n β
+
+/-- **Λ-layer: mayerExpansionTerm ∘ tanh ∘ (·*J) differentiable in β**. -/
+theorem mayerExpansionTerm_Λ_tanh_differentiable_beta
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (n : ℕ) (J : ℝ) :
+    Differentiable ℝ (fun β' : ℝ =>
+        IsingModel.mayerExpansionTerm (inducedGraph G Λ) n
+          (Real.tanh (β' * J))) :=
+  IsingModel.mayerExpansionTerm_tanh_differentiable_beta (inducedGraph G Λ) n J
+
+/-- **Λ-layer: mayerExpansionTerm ∘ tanh ∘ (β*·) differentiable in J**. -/
+theorem mayerExpansionTerm_Λ_tanh_differentiable_J
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (n : ℕ) (β : ℝ) :
+    Differentiable ℝ (fun J' : ℝ =>
+        IsingModel.mayerExpansionTerm (inducedGraph G Λ) n
+          (Real.tanh (β * J'))) :=
+  IsingModel.mayerExpansionTerm_tanh_differentiable_J (inducedGraph G Λ) n β
+
+/-- **Λ-layer: mayerExpansionTerm ∘ tanh ∘ (·*J) AnalyticAt in β**. -/
+theorem mayerExpansionTerm_Λ_tanh_analyticAt_beta
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (n : ℕ) (J β : ℝ) :
+    AnalyticAt ℝ (fun β' : ℝ =>
+        IsingModel.mayerExpansionTerm (inducedGraph G Λ) n
+          (Real.tanh (β' * J))) β :=
+  IsingModel.mayerExpansionTerm_tanh_analyticAt_beta (inducedGraph G Λ) n J β
+
+/-- **Λ-layer: mayerExpansionTerm ∘ tanh ∘ (β*·) AnalyticAt in J**. -/
+theorem mayerExpansionTerm_Λ_tanh_analyticAt_J
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (n : ℕ) (β J : ℝ) :
+    AnalyticAt ℝ (fun J' : ℝ =>
+        IsingModel.mayerExpansionTerm (inducedGraph G Λ) n
+          (Real.tanh (β * J'))) J :=
+  IsingModel.mayerExpansionTerm_tanh_analyticAt_J (inducedGraph G Λ) n β J
+
 end Ambient
 end IsingModel
