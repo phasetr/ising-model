@@ -3049,5 +3049,57 @@ theorem polymerFreeEnergyAlongExhaustion_monotoneOn_Ici_zero
           (inducedGraph G (Λ.volume n)) t) (Set.Ici 0) :=
   polymerFreeEnergy_Λ_monotoneOn_Ici_zero G (Λ.volume n)
 
+/-- **Along-ex: `polymerFreeEnergy = 0` for empty-polymer induced
+graphs** (§18.5 along-ex wrap of Step 621). -/
+theorem polymerFreeEnergyAlongExhaustion_eq_zero_of_no_polymers
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (n : ℕ)
+    (h_no : IsingModel.allPolymers
+      (inducedGraph G (Λ.volume n)) = ∅) (t : ℝ) :
+    IsingModel.polymerFreeEnergy
+        (inducedGraph G (Λ.volume n)) t = 0 :=
+  polymerFreeEnergy_Λ_eq_zero_of_no_polymers G (Λ.volume n) h_no t
+
+/-- **Along-ex: `polymerFreeEnergy = 0` for edgeless induced
+graphs** (§18.5 along-ex wrap of Step 623). -/
+theorem
+polymerFreeEnergyAlongExhaustion_eq_zero_of_edgeFinset_empty
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (n : ℕ)
+    (h_empty : (inducedGraph G (Λ.volume n)).edgeFinset = ∅)
+    (t : ℝ) :
+    IsingModel.polymerFreeEnergy
+        (inducedGraph G (Λ.volume n)) t = 0 :=
+  polymerFreeEnergy_Λ_eq_zero_of_edgeFinset_empty
+    G (Λ.volume n) h_empty t
+
+/-- **Along-ex: `polymerFreeEnergy` preserves order on `[0, ∞)`**
+(§18.5 along-ex wrap of Step 649). -/
+theorem polymerFreeEnergyAlongExhaustion_le_of_le_of_nonneg
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet] (n : ℕ)
+    {t s : ℝ} (ht : 0 ≤ t) (hs : 0 ≤ s) (hts : t ≤ s) :
+    IsingModel.polymerFreeEnergy
+        (inducedGraph G (Λ.volume n)) t ≤
+      IsingModel.polymerFreeEnergy
+        (inducedGraph G (Λ.volume n)) s :=
+  polymerFreeEnergy_Λ_le_of_le_of_nonneg
+    G (Λ.volume n) ht hs hts
+
+/-- **Along-ex: `polymerFreeEnergy` strict-form order preservation**
+(§18.5 along-ex wrap of Step 650). -/
+theorem polymerFreeEnergyAlongExhaustion_le_of_le_strict_form
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet] (n : ℕ)
+    {t s : ℝ} (ht : 0 ≤ t) (hts : t ≤ s) :
+    IsingModel.polymerFreeEnergy
+        (inducedGraph G (Λ.volume n)) t ≤
+      IsingModel.polymerFreeEnergy
+        (inducedGraph G (Λ.volume n)) s :=
+  polymerFreeEnergy_Λ_le_of_le_strict_form
+    G (Λ.volume n) ht hts
+
 end Ambient
 end IsingModel
