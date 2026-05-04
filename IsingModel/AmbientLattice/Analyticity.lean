@@ -1775,5 +1775,77 @@ theorem vdPolymerFamilies_sum_Λ_minus_one_tendsto_zero
   IsingModel.vdPolymerFamilies_sum_minus_one_tendsto_zero
     (inducedGraph G Λ)
 
+/-! ### §18.5 ε(t) infrastructure + Mayer term sign + allPolymers
+empty Λ-layer wraps -/
+
+/-- **Λ-layer: 0 ≤ mayerExpansionTerm at n = 1** under `0 ≤ t`. -/
+theorem mayerExpansionTerm_Λ_one_nonneg_of_nonneg
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) :
+    0 ≤ IsingModel.mayerExpansionTerm (inducedGraph G Λ) 1 t :=
+  IsingModel.mayerExpansionTerm_one_nonneg_of_nonneg
+    (inducedGraph G Λ) ht
+
+/-- **Λ-layer: mayerExpansionTerm at n = 2 ≤ 0** under `0 ≤ t`. -/
+theorem mayerExpansionTerm_Λ_two_nonpos_of_nonneg
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) :
+    IsingModel.mayerExpansionTerm (inducedGraph G Λ) 2 t ≤ 0 :=
+  IsingModel.mayerExpansionTerm_two_nonpos_of_nonneg
+    (inducedGraph G Λ) ht
+
+/-- **Λ-layer: ε(0) = 0**. -/
+theorem vdPolymerFamilies_sum_Λ_minus_one_at_zero
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] :
+    (∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
+              (inducedGraph G Λ)).erase ∅,
+        ∏ P ∈ Γ, (0 : ℝ) ^ P.card) = 0 :=
+  IsingModel.vdPolymerFamilies_sum_minus_one_at_zero (inducedGraph G Λ)
+
+/-- **Λ-layer: ε(t) is `Continuous`**. -/
+theorem vdPolymerFamilies_sum_Λ_minus_one_continuous
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] :
+    Continuous (fun t : ℝ =>
+      ∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
+              (inducedGraph G Λ)).erase ∅,
+        ∏ P ∈ Γ, t ^ P.card) :=
+  IsingModel.vdPolymerFamilies_sum_minus_one_continuous
+    (inducedGraph G Λ)
+
+/-- **Λ-layer: ε(t) is `AnalyticAt ℝ` at every `t`**. -/
+theorem vdPolymerFamilies_sum_Λ_minus_one_analyticAt
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (t : ℝ) :
+    AnalyticAt ℝ (fun s : ℝ =>
+      ∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
+              (inducedGraph G Λ)).erase ∅,
+        ∏ P ∈ Γ, s ^ P.card) t :=
+  IsingModel.vdPolymerFamilies_sum_minus_one_analyticAt
+    (inducedGraph G Λ) t
+
+/-- **Λ-layer: ε(t) < 1 eventually as t → 0**. -/
+theorem vdPolymerFamilies_sum_Λ_minus_one_lt_one_eventually
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] :
+    ∀ᶠ t : ℝ in nhds 0,
+      (∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
+              (inducedGraph G Λ)).erase ∅,
+          ∏ P ∈ Γ, t ^ P.card) < 1 :=
+  IsingModel.vdPolymerFamilies_sum_minus_one_lt_one_eventually
+    (inducedGraph G Λ)
+
+/-- **Λ-layer: allPolymers = ∅ on edgeless induced graphs**. -/
+theorem allPolymers_Λ_eq_empty_of_edgeFinset_empty
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (h_empty : (inducedGraph G Λ).edgeFinset = ∅) :
+    IsingModel.allPolymers (inducedGraph G Λ) = ∅ :=
+  IsingModel.allPolymers_eq_empty_of_edgeFinset_empty
+    (inducedGraph G Λ) h_empty
+
 end Ambient
 end IsingModel
