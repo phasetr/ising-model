@@ -219,4 +219,95 @@ theorem prop_5_4_2_plusGibbsExpectationLiminf_bound
     exact Filter.le_liminf_of_le hcobdd (Filter.Eventually.of_forall hge)
   linarith [hliminf_ge]
 
+set_option linter.unusedDecidableInType false in
+/-- **GJ §5.4 Prop 5.4.2 ∞-vol `+`-BC lower bound (liminf form)**:
+the genuine infinite-volume `+`-expectation lies in `[0, 1]`, so
+`0 ≤ 1 − plusGibbsExpectationLiminf`.
+
+Per-stage `plusGibbsExpectation_n ≤ 1` lifts to
+`liminf plusGibbsExpectation_n ≤ 1` via `Filter.liminf_le_of_le`,
+hence `0 ≤ 1 − liminf`. -/
+theorem prop_5_4_2_plusGibbsExpectationLiminf_lower_bound
+    (G : SimpleGraph V) (Λ : Ambient.Exhaustion V)
+    [∀ n, DecidableRel (Ambient.inducedGraph G (Λ.volume n)).Adj]
+    [∀ n, Fintype (Ambient.inducedGraph G (Λ.volume n)).edgeSet]
+    (hconn : ∀ n, (Ambient.inducedGraph G (Λ.volume n)).Preconnected)
+    (J β c : ℝ) (hβ : 0 < β) (hJ : 0 < J)
+    (B : ∀ n, Finset (↑(Λ.volume n) : Type _))
+    (hB : ∀ n, (B n).Nonempty)
+    (i : ∀ n, (↑(Λ.volume n) : Type _))
+    (hexp : ∀ n,
+      2 * ((2 : ℝ) ^ Fintype.card (↑(Λ.volume n) : Type _)) *
+          Real.exp (-2 * β * J) ≤
+        Real.exp (-c * β)) :
+    0 ≤ 1 - plusGibbsExpectationLiminf G Λ (⟨J, 0, β⟩ : IsingParams ℝ) B
+              (fun n σ => Spin.sign ℝ (σ (i n))) := by
+  classical
+  unfold plusGibbsExpectationLiminf
+  have hper := prop_5_4_2_along_exhaustion G Λ hconn J β c hβ hJ B hB i hexp
+  set f : ℕ → ℝ := fun n =>
+    plusGibbsExpectation (Ambient.inducedGraph G (Λ.volume n))
+        ⟨J, 0, β⟩ (B n) (fun σ => Spin.sign ℝ (σ (i n))) with hf_def
+  have hle1 : ∀ n, f n ≤ 1 := fun n => by
+    have hpair := hper n
+    have h1 : 0 ≤ 1 - f n := hpair.1
+    linarith
+  have hge_lower : ∀ n, 1 - Real.exp (-c * β) ≤ f n := fun n => by
+    have hpair := hper n
+    have h2 : 1 - f n ≤ Real.exp (-c * β) := hpair.2
+    linarith
+  -- IsBoundedUnder (· ≤ ·): bounded above by 1
+  have hbdd_le : Filter.IsBoundedUnder (· ≤ ·) Filter.atTop f :=
+    ⟨1, Filter.eventually_map.mpr (Filter.Eventually.of_forall hle1)⟩
+  -- IsBoundedUnder (· ≥ ·): bounded below by 1 - exp(-cβ)
+  have hbdd_ge : Filter.IsBoundedUnder (· ≥ ·) Filter.atTop f :=
+    ⟨1 - Real.exp (-c * β),
+      Filter.eventually_map.mpr (Filter.Eventually.of_forall hge_lower)⟩
+  -- limsup f ≤ 1 from pointwise upper bound
+  have hcobdd_le : Filter.IsCoboundedUnder (· ≤ ·) Filter.atTop f :=
+    Filter.isCoboundedUnder_le_of_eventually_le (x := 1 - Real.exp (-c * β))
+      Filter.atTop (Filter.Eventually.of_forall hge_lower)
+  have hlimsup_le : Filter.limsup f Filter.atTop ≤ (1 : ℝ) :=
+    Filter.limsup_le_of_le hcobdd_le (Filter.Eventually.of_forall hle1)
+  -- liminf ≤ limsup
+  have hliminf_le_limsup :
+      Filter.liminf f Filter.atTop ≤ Filter.limsup f Filter.atTop :=
+    Filter.liminf_le_limsup hbdd_le hbdd_ge
+  have hliminf_le_one : Filter.liminf f Filter.atTop ≤ (1 : ℝ) :=
+    le_trans hliminf_le_limsup hlimsup_le
+  linarith [hliminf_le_one]
+
+set_option linter.unusedDecidableInType false in
+/-- **GJ §5.4 Prop 5.4.2 ∞-vol `+`-BC full Peierls bound (liminf form)**:
+combining the upper bound (`prop_5_4_2_plusGibbsExpectationLiminf_bound`)
+with the lower bound (`prop_5_4_2_plusGibbsExpectationLiminf_lower_bound`),
+the genuine infinite-volume `+`-BC quantity satisfies
+`0 ≤ 1 − plusGibbsExpectationLiminf ≤ exp(-c·β)`.
+
+This is the infinite-volume version of `prop_5_4_2_self_contained`,
+expressed via `Filter.liminf` of the per-stage `+`-Gibbs expectation
+of `σ ↦ Spin.sign ℝ (σ iₙ)`. -/
+theorem prop_5_4_2_plusGibbsExpectationLiminf
+    (G : SimpleGraph V) (Λ : Ambient.Exhaustion V)
+    [∀ n, DecidableRel (Ambient.inducedGraph G (Λ.volume n)).Adj]
+    [∀ n, Fintype (Ambient.inducedGraph G (Λ.volume n)).edgeSet]
+    (hconn : ∀ n, (Ambient.inducedGraph G (Λ.volume n)).Preconnected)
+    (J β c : ℝ) (hβ : 0 < β) (hJ : 0 < J)
+    (B : ∀ n, Finset (↑(Λ.volume n) : Type _))
+    (hB : ∀ n, (B n).Nonempty)
+    (i : ∀ n, (↑(Λ.volume n) : Type _))
+    (hexp : ∀ n,
+      2 * ((2 : ℝ) ^ Fintype.card (↑(Λ.volume n) : Type _)) *
+          Real.exp (-2 * β * J) ≤
+        Real.exp (-c * β)) :
+    0 ≤ 1 - plusGibbsExpectationLiminf G Λ (⟨J, 0, β⟩ : IsingParams ℝ) B
+              (fun n σ => Spin.sign ℝ (σ (i n))) ∧
+    1 - plusGibbsExpectationLiminf G Λ (⟨J, 0, β⟩ : IsingParams ℝ) B
+          (fun n σ => Spin.sign ℝ (σ (i n)))
+      ≤ Real.exp (-c * β) :=
+  ⟨prop_5_4_2_plusGibbsExpectationLiminf_lower_bound
+      G Λ hconn J β c hβ hJ B hB i hexp,
+   prop_5_4_2_plusGibbsExpectationLiminf_bound
+      G Λ hconn J β c hβ hJ B hB i hexp⟩
+
 end IsingModel
