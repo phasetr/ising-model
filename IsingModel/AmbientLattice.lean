@@ -9,6 +9,8 @@ import IsingModel.AmbientLattice.TruncatedFunctions
 import IsingModel.AmbientLattice.SpontaneousMono
 import IsingModel.AmbientLattice.SpecialCases
 import IsingModel.AmbientLattice.BetaDerivative
+import IsingModel.AmbientLattice.JDerivative
+import IsingModel.AmbientLattice.FieldDerivative
 import IsingModel.AmbientLattice.Analyticity
 import IsingModel.InfiniteVolume
 import IsingModel.FreeEnergy
