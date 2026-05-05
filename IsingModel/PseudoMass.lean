@@ -2789,4 +2789,49 @@ theorem pseudoMassFromParamsAtPair_at_h_zero_mul_r_le_log_two_div_truncated2
   rw [le_div_iff₀ hr] at h
   exact h
 
+/-- **Strict multiplied form**: `pseudoMassFromParamsAtPair_at_h_zero · r < log(2/truncated2)`. -/
+theorem pseudoMassFromParamsAtPair_at_h_zero_mul_r_lt_log_two_div_truncated2
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (J β : ℝ) (x z : Fin d → ℤ)
+    (htrunc : Ambient.truncated2Infinite (IsingModel.latticeGraph d) Λ
+                (⟨J, 0, β⟩ : IsingParams ℝ) x z ∈ Set.Ioo (0 : ℝ) 2) :
+    pseudoMassFromParamsAtPair hα hr d Λ (⟨J, 0, β⟩ : IsingParams ℝ) x z * r <
+      Real.log (2 / Ambient.truncated2Infinite (IsingModel.latticeGraph d) Λ
+                       (⟨J, 0, β⟩ : IsingParams ℝ) x z) := by
+  have h := pseudoMassFromParamsAtPair_at_h_zero_lt_log_two_div_truncated2
+              hα hr d Λ J β x z htrunc
+  rw [lt_div_iff₀ hr] at h
+  exact h
+
+/-- **Multiplied J=0 form**: `pseudoMassFromParamsAtPair_at_J_zero · r ≤ log(2/tanh^2)`. -/
+theorem pseudoMassFromParamsAtPair_at_J_zero_distinct_mul_r_le_log_two_div_tanh_sq
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    {h β : ℝ} (hh : 0 < h) (hβ : 0 < β) {x z : Fin d → ℤ} (hxz : x ≠ z) :
+    pseudoMassFromParamsAtPair hα hr d Λ (⟨0, h, β⟩ : IsingParams ℝ) x z * r ≤
+      Real.log (2 / Real.tanh (β * h) ^ 2) := by
+  have hbnd := pseudoMassFromParamsAtPair_at_J_zero_distinct_le_log_two_div_tanh_sq
+                  hα hr d Λ hh hβ hxz
+  rw [le_div_iff₀ hr] at hbnd
+  exact hbnd
+
+/-- **Strict multiplied J=0 form**: `pseudoMassFromParamsAtPair_at_J_zero · r < log(2/tanh^2)`. -/
+theorem pseudoMassFromParamsAtPair_at_J_zero_distinct_mul_r_lt_log_two_div_tanh_sq
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    {h β : ℝ} (hh : 0 < h) (hβ : 0 < β) {x z : Fin d → ℤ} (hxz : x ≠ z) :
+    pseudoMassFromParamsAtPair hα hr d Λ (⟨0, h, β⟩ : IsingParams ℝ) x z * r <
+      Real.log (2 / Real.tanh (β * h) ^ 2) := by
+  have hbnd := pseudoMassFromParamsAtPair_at_J_zero_distinct_lt_log_two_div_tanh_sq
+                  hα hr d Λ hh hβ hxz
+  rw [lt_div_iff₀ hr] at hbnd
+  exact hbnd
+
 end IsingModel
