@@ -1648,4 +1648,85 @@ theorem pseudoMassFromParamsAtPair_sandwich_of_corr_mem {α : ℕ} (hα : 1 ≤ 
   ⟨pseudoMassFromParamsAtPair_ge_of_corr_le hα hr d Λ p x z hc_max hcorr hle,
    pseudoMassFromParamsAtPair_le_of_corr_ge hα hr d Λ p x z hc_min hcorr hge⟩
 
+/-! ### `h = 0` specialisations using `truncated2Infinite`
+
+At zero external field, `correlationInfinite ⟨J, 0, β⟩ {x, z} = truncated2Infinite ⟨J, 0, β⟩ x z`
+(spin-flip Z₂ symmetry forces the singleton magnetisations to vanish), so the
+`*_of_corr_*` family of bounds for `pseudoMassFromParamsAtPair` translates to
+the corresponding `*_of_truncated2_*` form in terms of the function
+`latticeMass` is actually defined against.
+-/
+
+/-- **At `h = 0`, `pseudoMassFromParamsAtPair ≤ pseudoMassExt(c_min)` from
+`c_min ≤ truncated2`**: h = 0 specialisation of `_le_of_corr_ge` using the
+identity `correlationInfinite ⟨J, 0, β⟩ {x,z} = truncated2Infinite ⟨J,0,β⟩ x z`. -/
+theorem pseudoMassFromParamsAtPair_at_h_zero_le_of_truncated2_ge {α : ℕ} (hα : 1 ≤ α)
+    {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (J β : ℝ) (x z : Fin d → ℤ)
+    {c_min : ℝ} (hc_min : c_min ∈ Set.Ioo (0 : ℝ) 2)
+    (htrunc : Ambient.truncated2Infinite (IsingModel.latticeGraph d) Λ
+                (⟨J, 0, β⟩ : IsingParams ℝ) x z ∈ Set.Ioo (0 : ℝ) 2)
+    (hge : c_min ≤ Ambient.truncated2Infinite (IsingModel.latticeGraph d) Λ
+                    (⟨J, 0, β⟩ : IsingParams ℝ) x z) :
+    pseudoMassFromParamsAtPair hα hr d Λ (⟨J, 0, β⟩ : IsingParams ℝ) x z ≤
+      pseudoMassExt hα hr c_min := by
+  have hbridge := Ambient.truncated2Infinite_h_zero
+    (IsingModel.latticeGraph d) Λ J β x z
+  rw [hbridge] at htrunc hge
+  exact pseudoMassFromParamsAtPair_le_of_corr_ge hα hr d Λ
+    (⟨J, 0, β⟩ : IsingParams ℝ) x z hc_min htrunc hge
+
+/-- **At `h = 0`, `pseudoMassExt(c_max) ≤ pseudoMassFromParamsAtPair` from
+`truncated2 ≤ c_max`**: h = 0 specialisation of `_ge_of_corr_le`. -/
+theorem pseudoMassFromParamsAtPair_at_h_zero_ge_of_truncated2_le {α : ℕ} (hα : 1 ≤ α)
+    {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (J β : ℝ) (x z : Fin d → ℤ)
+    {c_max : ℝ} (hc_max : c_max ∈ Set.Ioo (0 : ℝ) 2)
+    (htrunc : Ambient.truncated2Infinite (IsingModel.latticeGraph d) Λ
+                (⟨J, 0, β⟩ : IsingParams ℝ) x z ∈ Set.Ioo (0 : ℝ) 2)
+    (hle : Ambient.truncated2Infinite (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β⟩ : IsingParams ℝ) x z ≤ c_max) :
+    pseudoMassExt hα hr c_max ≤
+      pseudoMassFromParamsAtPair hα hr d Λ (⟨J, 0, β⟩ : IsingParams ℝ) x z := by
+  have hbridge := Ambient.truncated2Infinite_h_zero
+    (IsingModel.latticeGraph d) Λ J β x z
+  rw [hbridge] at htrunc hle
+  exact pseudoMassFromParamsAtPair_ge_of_corr_le hα hr d Λ
+    (⟨J, 0, β⟩ : IsingParams ℝ) x z hc_max htrunc hle
+
+/-- **At `h = 0`, `pseudoMassFromParamsAtPair` sandwich** combining
+`_le_of_truncated2_ge` and `_ge_of_truncated2_le`: if
+`c_min ≤ truncated2 ≤ c_max` with all values in `Ioo 0 2`, then
+`pseudoMassExt(c_max) ≤ pseudoMassFromParamsAtPair ≤ pseudoMassExt(c_min)`. -/
+theorem pseudoMassFromParamsAtPair_at_h_zero_sandwich_of_truncated2_mem
+    {α : ℕ} (hα : 1 ≤ α)
+    {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (J β : ℝ) (x z : Fin d → ℤ)
+    {c_min c_max : ℝ}
+    (hc_min : c_min ∈ Set.Ioo (0 : ℝ) 2)
+    (hc_max : c_max ∈ Set.Ioo (0 : ℝ) 2)
+    (htrunc : Ambient.truncated2Infinite (IsingModel.latticeGraph d) Λ
+                (⟨J, 0, β⟩ : IsingParams ℝ) x z ∈ Set.Ioo (0 : ℝ) 2)
+    (hge : c_min ≤ Ambient.truncated2Infinite (IsingModel.latticeGraph d) Λ
+                    (⟨J, 0, β⟩ : IsingParams ℝ) x z)
+    (hle : Ambient.truncated2Infinite (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β⟩ : IsingParams ℝ) x z ≤ c_max) :
+    pseudoMassExt hα hr c_max ≤
+      pseudoMassFromParamsAtPair hα hr d Λ (⟨J, 0, β⟩ : IsingParams ℝ) x z ∧
+    pseudoMassFromParamsAtPair hα hr d Λ (⟨J, 0, β⟩ : IsingParams ℝ) x z ≤
+      pseudoMassExt hα hr c_min :=
+  ⟨pseudoMassFromParamsAtPair_at_h_zero_ge_of_truncated2_le
+      hα hr d Λ J β x z hc_max htrunc hle,
+   pseudoMassFromParamsAtPair_at_h_zero_le_of_truncated2_ge
+      hα hr d Λ J β x z hc_min htrunc hge⟩
+
 end IsingModel
