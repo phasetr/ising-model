@@ -746,6 +746,17 @@ theorem pseudoMass_strictAnti {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     rw [heq, h₂] at h₁
     linarith
 
+/-- **`pseudoMass` is antitone (non-strict)**: corollary of
+`pseudoMass_strictAnti` weakened to `≤`. Useful when the strict
+inequality is unnecessarily strong (e.g., bound chains). -/
+theorem pseudoMass_antitone {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    {c₁ c₂ : ℝ} (hc₁ : c₁ ∈ Ioo 0 2) (hc₂ : c₂ ∈ Ioo 0 2) (h : c₁ ≤ c₂) :
+    pseudoMass hα hr hc₂ ≤ pseudoMass hα hr hc₁ := by
+  rcases h.lt_or_eq with hlt | heq
+  · exact (pseudoMass_strictAnti hα hr hc₁ hc₂ hlt).le
+  · subst heq
+    exact le_refl _
+
 /-! ## Discrete Hardy-Littlewood-Sobolev inequality (axiom) -/
 
 /-- **Discrete HLS constant** (Step 129): For `2α > d`, a positive constant exists.
