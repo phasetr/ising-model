@@ -1278,4 +1278,29 @@ theorem pseudoMassFromParamsAtPair_at_J_zero_distinct_eq {α : ℕ} (hα : 1 ≤
       pseudoMassExt hα hr (Real.tanh (β * h) ^ 2) := by
   rw [pseudoMassFromParamsAtPair_at_J_zero_eq hα hr d Λ hf x z, Finset.card_pair hxz]
 
+/-- **`pseudoMassFromParamsAtPair` upper-bounded by `pseudoMass` at a
+positive correlation lower bound**: if `c_min ≤ correlationInfinite ...`
+with `c_min ∈ Ioo 0 2`, then by anti-monotonicity, `pseudoMassFromParamsAtPair
+≤ pseudoMass(c_min)`. (Requires correlation also in `Ioo 0 2`.) -/
+theorem pseudoMassFromParamsAtPair_le_of_corr_ge {α : ℕ} (hα : 1 ≤ α)
+    {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (x z : Fin d → ℤ)
+    {c_min : ℝ} (hc_min : c_min ∈ Set.Ioo (0 : ℝ) 2)
+    (hcorr : Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ p {x, z}
+              ∈ Set.Ioo (0 : ℝ) 2)
+    (hge : c_min ≤ Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ p {x, z}) :
+    pseudoMassFromParamsAtPair hα hr d Λ p x z ≤ pseudoMassExt hα hr c_min := by
+  unfold pseudoMassFromParamsAtPair
+  by_cases heq :
+      Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ p {x, z} = c_min
+  · rw [heq]
+  · have hlt : c_min <
+        Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ p {x, z} :=
+      lt_of_le_of_ne hge (Ne.symm heq)
+    exact le_of_lt
+      (pseudoMassExt_strictAntiOn hα hr hc_min hcorr hlt)
+
 end IsingModel
