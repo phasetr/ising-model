@@ -877,6 +877,32 @@ theorem pseudoMass_hasStrictDerivAt {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 
     exact pseudoMass_spec hα hr hy
   exact hf_strict.of_local_left_inverse hg_cont hf_ne hfg
 
+/-- **Step 117i corollary: `pseudoMass` `HasDerivAt`** (non-strict version). -/
+theorem pseudoMass_hasDerivAt {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    {c₀ : ℝ} (hc₀ : c₀ ∈ Set.Ioo 0 2) :
+    HasDerivAt
+      (fun c => if hc : c ∈ Set.Ioo 0 2 then pseudoMass hα hr hc else 0)
+      (((-2 * r * Real.exp (-(pseudoMass hα hr hc₀ * r)) *
+            (1 + (pseudoMass hα hr hc₀ * r) ^ α) -
+          2 * Real.exp (-(pseudoMass hα hr hc₀ * r)) *
+            (↑α * (pseudoMass hα hr hc₀ * r) ^ (α - 1) * r)) /
+         (1 + (pseudoMass hα hr hc₀ * r) ^ α) ^ 2)⁻¹) c₀ :=
+  (pseudoMass_hasStrictDerivAt hα hr hc₀).hasDerivAt
+
+/-- **Step 117i corollary: `pseudoMass` `DifferentiableAt`**. -/
+theorem pseudoMass_differentiableAt {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    {c₀ : ℝ} (hc₀ : c₀ ∈ Set.Ioo 0 2) :
+    DifferentiableAt ℝ
+      (fun c => if hc : c ∈ Set.Ioo 0 2 then pseudoMass hα hr hc else 0) c₀ :=
+  (pseudoMass_hasDerivAt hα hr hc₀).differentiableAt
+
+/-- **Step 117i corollary: `pseudoMass` `DifferentiableOn` `Ioo 0 2`**. -/
+theorem pseudoMass_differentiableOn {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) :
+    DifferentiableOn ℝ
+      (fun c => if hc : c ∈ Set.Ioo 0 2 then pseudoMass hα hr hc else 0)
+      (Set.Ioo 0 2) :=
+  fun _ hc₀ => (pseudoMass_differentiableAt hα hr hc₀).differentiableWithinAt
+
 /-! ## Continuity of pseudoMass composition with correlation (Step 120) -/
 
 /-- **pseudoMass∘correlation is continuous in β** (Step 120).
