@@ -5616,6 +5616,132 @@ theorem magnetizationAlongExhaustion_differentiable_J
   · simp only [hi, dif_neg, not_false_iff]
     exact differentiable_const _
 
+/-- **Along-ex: magnetization Continuous in `β`** (general h). -/
+theorem magnetizationAlongExhaustion_continuous_beta
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J h : ℝ) (i : V) (n : ℕ) :
+    Continuous (fun β' =>
+      magnetizationAlongExhaustion G Λ
+        (⟨J, h, β'⟩ : IsingParams ℝ) i n) := by
+  unfold magnetizationAlongExhaustion correlationAlongExhaustion
+  by_cases hi : ({i} : Finset V) ⊆ Λ.volume n
+  · simp only [hi, dif_pos]
+    exact magnetizationΛ_continuous_beta G (Λ.volume n) J h _
+  · simp only [hi, dif_neg, not_false_iff]
+    exact continuous_const
+
+/-- **Along-ex: magnetization Differentiable in `β`** (general h). -/
+theorem magnetizationAlongExhaustion_differentiable_beta
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J h : ℝ) (i : V) (n : ℕ) :
+    Differentiable ℝ (fun β' =>
+      magnetizationAlongExhaustion G Λ
+        (⟨J, h, β'⟩ : IsingParams ℝ) i n) := by
+  unfold magnetizationAlongExhaustion correlationAlongExhaustion
+  by_cases hi : ({i} : Finset V) ⊆ Λ.volume n
+  · simp only [hi, dif_pos]
+    exact magnetizationΛ_differentiable_beta G (Λ.volume n) J h _
+  · simp only [hi, dif_neg, not_false_iff]
+    exact differentiable_const _
+
+/-! ### susceptibility regularity along-ex wraps (general G).
+The `_gen` suffix distinguishes these general-graph versions from
+the ℤ^d-specialized variants in
+`Concrete/LatticeGraphCorrelation/Inequalities.lean` which share
+the unsuffixed names with `(IsingModel.latticeGraph d)` baked in. -/
+
+/-- **Along-ex: susceptibility Continuous in `β`** (general G, general h). -/
+theorem susceptibilityAlongExhaustion_continuous_beta_gen
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J h : ℝ) (i : V) (n : ℕ) :
+    Continuous (fun β' =>
+      susceptibilityAlongExhaustion G Λ
+        (⟨J, h, β'⟩ : IsingParams ℝ) i n) := by
+  unfold susceptibilityAlongExhaustion
+  by_cases hi : i ∈ Λ.volume n
+  · simp only [hi, dif_pos]
+    exact susceptibilityΛ_continuous_beta G (Λ.volume n) J h _
+  · simp only [hi, dif_neg, not_false_iff]
+    exact continuous_const
+
+/-- **Along-ex: susceptibility Differentiable in `β`** (general G, general h). -/
+theorem susceptibilityAlongExhaustion_differentiable_beta_gen
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J h : ℝ) (i : V) (n : ℕ) :
+    Differentiable ℝ (fun β' =>
+      susceptibilityAlongExhaustion G Λ
+        (⟨J, h, β'⟩ : IsingParams ℝ) i n) := by
+  unfold susceptibilityAlongExhaustion
+  by_cases hi : i ∈ Λ.volume n
+  · simp only [hi, dif_pos]
+    exact susceptibilityΛ_differentiable_beta G (Λ.volume n) J h _
+  · simp only [hi, dif_neg, not_false_iff]
+    exact differentiable_const _
+
+/-- **Along-ex: susceptibility Continuous in `h`** (general G). -/
+theorem susceptibilityAlongExhaustion_continuous_field_gen
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (i : V) (n : ℕ) :
+    Continuous (fun h' =>
+      susceptibilityAlongExhaustion G Λ
+        (⟨J, h', β⟩ : IsingParams ℝ) i n) := by
+  unfold susceptibilityAlongExhaustion
+  by_cases hi : i ∈ Λ.volume n
+  · simp only [hi, dif_pos]
+    exact susceptibilityΛ_continuous_field G (Λ.volume n) J β _
+  · simp only [hi, dif_neg, not_false_iff]
+    exact continuous_const
+
+/-- **Along-ex: susceptibility Differentiable in `h`** (general G). -/
+theorem susceptibilityAlongExhaustion_differentiable_field_gen
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (i : V) (n : ℕ) :
+    Differentiable ℝ (fun h' =>
+      susceptibilityAlongExhaustion G Λ
+        (⟨J, h', β⟩ : IsingParams ℝ) i n) := by
+  unfold susceptibilityAlongExhaustion
+  by_cases hi : i ∈ Λ.volume n
+  · simp only [hi, dif_pos]
+    exact susceptibilityΛ_differentiable_field G (Λ.volume n) J β _
+  · simp only [hi, dif_neg, not_false_iff]
+    exact differentiable_const _
+
+/-- **Along-ex: susceptibility Continuous in `J`** (general G). -/
+theorem susceptibilityAlongExhaustion_continuous_J_gen
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (h β : ℝ) (i : V) (n : ℕ) :
+    Continuous (fun J' =>
+      susceptibilityAlongExhaustion G Λ
+        (⟨J', h, β⟩ : IsingParams ℝ) i n) := by
+  unfold susceptibilityAlongExhaustion
+  by_cases hi : i ∈ Λ.volume n
+  · simp only [hi, dif_pos]
+    exact susceptibilityΛ_continuous_J G (Λ.volume n) h β _
+  · simp only [hi, dif_neg, not_false_iff]
+    exact continuous_const
+
+/-- **Along-ex: susceptibility Differentiable in `J`** (general G). -/
+theorem susceptibilityAlongExhaustion_differentiable_J_gen
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (h β : ℝ) (i : V) (n : ℕ) :
+    Differentiable ℝ (fun J' =>
+      susceptibilityAlongExhaustion G Λ
+        (⟨J', h, β⟩ : IsingParams ℝ) i n) := by
+  unfold susceptibilityAlongExhaustion
+  by_cases hi : i ∈ Λ.volume n
+  · simp only [hi, dif_pos]
+    exact susceptibilityΛ_differentiable_J G (Λ.volume n) h β _
+  · simp only [hi, dif_neg, not_false_iff]
+    exact differentiable_const _
+
 /-! ### magnetization parameter-direction convergent (β/h/J → ∞)
 along-ex wraps -/
 
