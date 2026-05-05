@@ -3506,4 +3506,31 @@ theorem pseudoMassFromParamsAtPair_at_J_zero_distinct_ge_pseudoMass_iff_ge_tanh_
   have := pseudoMass_strictAnti hα hr hc hmem h_neg'
   linarith
 
+/-- **`pseudoMassFromParamsAtPair_at_J_zero_distinct = pseudoMass(c) ↔
+tanh(β·h)^2 = c`**: equality iff via antisymmetry of le/ge iff
+characterizations (PR #1739). -/
+theorem pseudoMassFromParamsAtPair_at_J_zero_distinct_eq_pseudoMass_iff_tanh_sq_eq
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    {h β : ℝ} (hh : 0 < h) (hβ : 0 < β) {x z : Fin d → ℤ} (hxz : x ≠ z)
+    {c : ℝ} (hc : c ∈ Set.Ioo (0 : ℝ) 2) :
+    pseudoMassFromParamsAtPair hα hr d Λ (⟨0, h, β⟩ : IsingParams ℝ) x z =
+      pseudoMass hα hr hc ↔
+    Real.tanh (β * h) ^ 2 = c := by
+  refine ⟨?_, ?_⟩
+  · intro heq
+    have h1 := (pseudoMassFromParamsAtPair_at_J_zero_distinct_le_pseudoMass_iff_le_tanh_sq
+                  hα hr d Λ hh hβ hxz hc).mp heq.le
+    have h2 := (pseudoMassFromParamsAtPair_at_J_zero_distinct_ge_pseudoMass_iff_ge_tanh_sq
+                  hα hr d Λ hh hβ hxz hc).mp heq.ge
+    linarith
+  · intro heq_t
+    obtain ⟨hmem, h_eq_pm⟩ :=
+      pseudoMassFromParamsAtPair_at_J_zero_distinct_eq_pseudoMass
+        hα hr d Λ hh hβ hxz
+    rw [h_eq_pm]
+    congr 1
+
 end IsingModel
