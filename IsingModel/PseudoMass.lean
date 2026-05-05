@@ -1013,6 +1013,32 @@ theorem pseudoMassExt_pos_iff {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
   rw [pseudoMassExt_of_not_mem hα hr hnotmem] at h_pos
   exact lt_irrefl 0 h_pos
 
+/-- **`pseudoMassExt 0 = 0`**: zero is not in `Ioo 0 2` (open interval). -/
+theorem pseudoMassExt_zero {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) :
+    pseudoMassExt hα hr 0 = 0 :=
+  pseudoMassExt_of_not_mem hα hr (by simp [Set.mem_Ioo])
+
+/-- **`pseudoMassExt 2 = 0`**: 2 is not in `Ioo 0 2` (open interval). -/
+theorem pseudoMassExt_two {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) :
+    pseudoMassExt hα hr 2 = 0 :=
+  pseudoMassExt_of_not_mem hα hr (by simp [Set.mem_Ioo])
+
+/-- **`pseudoMassExt` of a negative value = 0**. -/
+theorem pseudoMassExt_of_nonpos {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    {c : ℝ} (hc : c ≤ 0) :
+    pseudoMassExt hα hr c = 0 := by
+  apply pseudoMassExt_of_not_mem
+  intro hmem
+  exact lt_irrefl 0 (lt_of_lt_of_le hmem.1 hc)
+
+/-- **`pseudoMassExt` of a value ≥ 2 = 0**. -/
+theorem pseudoMassExt_of_two_le {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    {c : ℝ} (hc : 2 ≤ c) :
+    pseudoMassExt hα hr c = 0 := by
+  apply pseudoMassExt_of_not_mem
+  intro hmem
+  exact lt_irrefl 2 (lt_of_le_of_lt hc hmem.2)
+
 /-! ## Continuity of pseudoMass composition with correlation (Step 120) -/
 
 /-- **pseudoMass∘correlation is continuous in β** (Step 120).
