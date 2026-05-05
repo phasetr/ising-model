@@ -14377,6 +14377,251 @@ theorem susceptibilityAlongExhaustion_latticeGraph_convergent_J_param
   Ambient.susceptibilityAlongExhaustion_convergent_J_param
     (IsingModel.latticeGraph d) Λ h hh β hβ i n
 
+/-! ### ℤ^d Λ-layer `hasDerivAt` wrappers (GJ §17.5–§17.6)
+
+Direct instantiations of the `hasDerivAt_*Λ_*` family
+(PRs #1619, #1623–#1628) at `G := IsingModel.latticeGraph d`.
+
+All wrappers are stated in existence form `∃ d : ℝ, HasDerivAt _ d _`
+to avoid reproducing the long explicit-derivative formulas at the
+ℤ^d concrete layer; consumers needing the explicit formula can call
+the underlying `Ambient.hasDerivAt_*Λ_*` directly. -/
+
+/-- **ℤ^d Λ: `correlationΛ` HasDerivAt in β at h = 0**. -/
+theorem hasDerivAt_correlationΛ_latticeGraph_beta
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
+    (J β : ℝ) (A : Finset (↑Λ : Type _)) :
+    ∃ c : ℝ, HasDerivAt (fun β' =>
+        Ambient.correlationΛ (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β'⟩ : IsingParams ℝ) A) c β :=
+  ⟨_, Ambient.hasDerivAt_correlationΛ_beta
+    (IsingModel.latticeGraph d) Λ J β A⟩
+
+/-- **ℤ^d Λ: `correlationΛ` HasDerivAt in β at general h**. -/
+theorem hasDerivAt_correlationΛ_latticeGraph_beta_general_h
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
+    (J h β : ℝ) (A : Finset (↑Λ : Type _)) :
+    ∃ c : ℝ, HasDerivAt (fun β' =>
+        Ambient.correlationΛ (IsingModel.latticeGraph d) Λ
+          (⟨J, h, β'⟩ : IsingParams ℝ) A) c β :=
+  ⟨_, Ambient.hasDerivAt_correlationΛ_beta_general_h
+    (IsingModel.latticeGraph d) Λ J h β A⟩
+
+/-- **ℤ^d Λ: `correlationΛ` HasDerivAt in J**. -/
+theorem hasDerivAt_correlationΛ_latticeGraph_J
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
+    (J h β : ℝ) (A : Finset (↑Λ : Type _)) :
+    ∃ c : ℝ, HasDerivAt (fun J' =>
+        Ambient.correlationΛ (IsingModel.latticeGraph d) Λ
+          (⟨J', h, β⟩ : IsingParams ℝ) A) c J :=
+  ⟨_, Ambient.hasDerivAt_correlationΛ_J
+    (IsingModel.latticeGraph d) Λ J h β A⟩
+
+/-- **ℤ^d Λ: `correlationΛ` HasDerivAt in h**. -/
+theorem hasDerivAt_correlationΛ_latticeGraph_field
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
+    (J h β : ℝ) (A : Finset (↑Λ : Type _)) :
+    ∃ c : ℝ, HasDerivAt (fun h' =>
+        Ambient.correlationΛ (IsingModel.latticeGraph d) Λ
+          (⟨J, h', β⟩ : IsingParams ℝ) A) c h :=
+  ⟨_, Ambient.hasDerivAt_correlationΛ_field
+    (IsingModel.latticeGraph d) Λ J h β A⟩
+
+/-- **ℤ^d Λ: `freeEnergyΛ` HasDerivAt in β at general h**. -/
+theorem hasDerivAt_freeEnergyΛ_latticeGraph_beta_general_h
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
+    (J h β : ℝ) :
+    ∃ c : ℝ, HasDerivAt (fun β' =>
+        Ambient.freeEnergyΛ (IsingModel.latticeGraph d) Λ
+          (⟨J, h, β'⟩ : IsingParams ℝ)) c β :=
+  ⟨_, Ambient.hasDerivAt_freeEnergyΛ_beta_general_h
+    (IsingModel.latticeGraph d) Λ J h β⟩
+
+/-- **ℤ^d Λ: `freeEnergyΛ` HasDerivAt in J**. -/
+theorem hasDerivAt_freeEnergyΛ_latticeGraph_J
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
+    (J h β : ℝ) :
+    ∃ c : ℝ, HasDerivAt (fun J' =>
+        Ambient.freeEnergyΛ (IsingModel.latticeGraph d) Λ
+          (⟨J', h, β⟩ : IsingParams ℝ)) c J :=
+  ⟨_, Ambient.hasDerivAt_freeEnergyΛ_J
+    (IsingModel.latticeGraph d) Λ J h β⟩
+
+/-- **ℤ^d Λ: `freeEnergyΛ` HasDerivAt in h**. -/
+theorem hasDerivAt_freeEnergyΛ_latticeGraph_field
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
+    (J h β : ℝ) :
+    ∃ c : ℝ, HasDerivAt (fun h' =>
+        Ambient.freeEnergyΛ (IsingModel.latticeGraph d) Λ
+          (⟨J, h', β⟩ : IsingParams ℝ)) c h :=
+  ⟨_, Ambient.hasDerivAt_freeEnergyΛ_field
+    (IsingModel.latticeGraph d) Λ J h β⟩
+
+/-- **ℤ^d Λ: `partitionFunctionΛ` HasDerivAt in β**. -/
+theorem hasDerivAt_partitionFunctionΛ_latticeGraph_beta
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
+    (J h β : ℝ) :
+    ∃ c : ℝ, HasDerivAt (fun β' =>
+        Ambient.partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+          (⟨J, h, β'⟩ : IsingParams ℝ)) c β :=
+  ⟨_, Ambient.hasDerivAt_partitionFunctionΛ_beta
+    (IsingModel.latticeGraph d) Λ J h β⟩
+
+/-- **ℤ^d Λ: `partitionFunctionΛ` HasDerivAt in J**. -/
+theorem hasDerivAt_partitionFunctionΛ_latticeGraph_J
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
+    (J h β : ℝ) :
+    ∃ c : ℝ, HasDerivAt (fun J' =>
+        Ambient.partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+          (⟨J', h, β⟩ : IsingParams ℝ)) c J :=
+  ⟨_, Ambient.hasDerivAt_partitionFunctionΛ_J
+    (IsingModel.latticeGraph d) Λ J h β⟩
+
+/-- **ℤ^d Λ: `partitionFunctionΛ` HasDerivAt in h**. -/
+theorem hasDerivAt_partitionFunctionΛ_latticeGraph_field
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
+    (J h β : ℝ) :
+    ∃ c : ℝ, HasDerivAt (fun h' =>
+        Ambient.partitionFunctionΛ (IsingModel.latticeGraph d) Λ
+          (⟨J, h', β⟩ : IsingParams ℝ)) c h :=
+  ⟨_, Ambient.hasDerivAt_partitionFunctionΛ_field
+    (IsingModel.latticeGraph d) Λ J h β⟩
+
+/-- **ℤ^d Λ: ambient-induced Boltzmann weight HasDerivAt in β**
+(per-configuration, lifted from `IsingModel.boltzmannWeight`). -/
+theorem hasDerivAt_boltzmannWeightΛ_latticeGraph_beta
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
+    (J h β : ℝ) (σ : Config (↑Λ : Type _)) :
+    ∃ c : ℝ, HasDerivAt (fun β' =>
+        IsingModel.boltzmannWeight
+          (inducedGraph (IsingModel.latticeGraph d) Λ)
+          (⟨J, h, β'⟩ : IsingParams ℝ) σ) c β :=
+  ⟨_, Ambient.hasDerivAt_boltzmannWeightΛ_beta
+    (IsingModel.latticeGraph d) Λ J h β σ⟩
+
+/-- **ℤ^d Λ: ambient-induced Boltzmann weight HasDerivAt in J**. -/
+theorem hasDerivAt_boltzmannWeightΛ_latticeGraph_J
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
+    (J h β : ℝ) (σ : Config (↑Λ : Type _)) :
+    ∃ c : ℝ, HasDerivAt (fun J' =>
+        IsingModel.boltzmannWeight
+          (inducedGraph (IsingModel.latticeGraph d) Λ)
+          (⟨J', h, β⟩ : IsingParams ℝ) σ) c J :=
+  ⟨_, Ambient.hasDerivAt_boltzmannWeightΛ_J
+    (IsingModel.latticeGraph d) Λ J h β σ⟩
+
+/-- **ℤ^d Λ: ambient-induced Boltzmann weight HasDerivAt in h**. -/
+theorem hasDerivAt_boltzmannWeightΛ_latticeGraph_field
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
+    (J h β : ℝ) (σ : Config (↑Λ : Type _)) :
+    ∃ c : ℝ, HasDerivAt (fun h' =>
+        IsingModel.boltzmannWeight
+          (inducedGraph (IsingModel.latticeGraph d) Λ)
+          (⟨J, h', β⟩ : IsingParams ℝ) σ) c h :=
+  ⟨_, Ambient.hasDerivAt_boltzmannWeightΛ_field
+    (IsingModel.latticeGraph d) Λ J h β σ⟩
+
+/-- **ℤ^d Λ: `magnetizationΛ` HasDerivAt in h**. -/
+theorem magnetizationΛ_latticeGraph_hasDerivAt_field
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
+    (J h β : ℝ) (i : ↑Λ) :
+    ∃ c : ℝ, HasDerivAt (fun h' =>
+        Ambient.magnetizationΛ (IsingModel.latticeGraph d) Λ
+          (⟨J, h', β⟩ : IsingParams ℝ) i) c h :=
+  ⟨_, Ambient.magnetizationΛ_hasDerivAt_field
+    (IsingModel.latticeGraph d) Λ J h β i⟩
+
+/-- **ℤ^d Λ: `magnetizationΛ` HasDerivAt in β at h = 0**. -/
+theorem magnetizationΛ_latticeGraph_hasDerivAt_beta
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
+    (J β : ℝ) (i : ↑Λ) :
+    ∃ c : ℝ, HasDerivAt (fun β' =>
+        Ambient.magnetizationΛ (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β'⟩ : IsingParams ℝ) i) c β :=
+  ⟨_, Ambient.magnetizationΛ_hasDerivAt_beta
+    (IsingModel.latticeGraph d) Λ J β i⟩
+
+/-- **ℤ^d Λ: `magnetizationΛ` HasDerivAt in β at general h**. -/
+theorem magnetizationΛ_latticeGraph_hasDerivAt_beta_general_h
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
+    (J h β : ℝ) (i : ↑Λ) :
+    ∃ c : ℝ, HasDerivAt (fun β' =>
+        Ambient.magnetizationΛ (IsingModel.latticeGraph d) Λ
+          (⟨J, h, β'⟩ : IsingParams ℝ) i) c β :=
+  ⟨_, Ambient.magnetizationΛ_hasDerivAt_beta_general_h
+    (IsingModel.latticeGraph d) Λ J h β i⟩
+
+/-- **ℤ^d Λ: `magnetizationΛ` HasDerivAt in J**. -/
+theorem magnetizationΛ_latticeGraph_hasDerivAt_J
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
+    (J h β : ℝ) (i : ↑Λ) :
+    ∃ c : ℝ, HasDerivAt (fun J' =>
+        Ambient.magnetizationΛ (IsingModel.latticeGraph d) Λ
+          (⟨J', h, β⟩ : IsingParams ℝ) i) c J :=
+  ⟨_, Ambient.magnetizationΛ_hasDerivAt_J
+    (IsingModel.latticeGraph d) Λ J h β i⟩
+
+/-- **ℤ^d Λ: `susceptibilityΛ` HasDerivAt in β at h = 0**. -/
+theorem susceptibilityΛ_latticeGraph_hasDerivAt_beta
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
+    (J β : ℝ) (i : ↑Λ) :
+    ∃ c : ℝ, HasDerivAt (fun β' =>
+        Ambient.susceptibilityΛ (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β'⟩ : IsingParams ℝ) i) c β :=
+  ⟨_, Ambient.susceptibilityΛ_hasDerivAt_beta
+    (IsingModel.latticeGraph d) Λ J β i⟩
+
+/-- **ℤ^d Λ: `susceptibilityΛ` HasDerivAt in β at general h**. -/
+theorem susceptibilityΛ_latticeGraph_hasDerivAt_beta_general_h
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
+    (J h β : ℝ) (i : ↑Λ) :
+    ∃ c : ℝ, HasDerivAt (fun β' =>
+        Ambient.susceptibilityΛ (IsingModel.latticeGraph d) Λ
+          (⟨J, h, β'⟩ : IsingParams ℝ) i) c β :=
+  ⟨_, Ambient.susceptibilityΛ_hasDerivAt_beta_general_h
+    (IsingModel.latticeGraph d) Λ J h β i⟩
+
+/-- **ℤ^d Λ: `susceptibilityΛ` HasDerivAt in J**. -/
+theorem susceptibilityΛ_latticeGraph_hasDerivAt_J
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
+    (J h β : ℝ) (i : ↑Λ) :
+    ∃ c : ℝ, HasDerivAt (fun J' =>
+        Ambient.susceptibilityΛ (IsingModel.latticeGraph d) Λ
+          (⟨J', h, β⟩ : IsingParams ℝ) i) c J :=
+  ⟨_, Ambient.susceptibilityΛ_hasDerivAt_J
+    (IsingModel.latticeGraph d) Λ J h β i⟩
+
+/-- **ℤ^d Λ: `susceptibilityΛ` HasDerivAt in h**. -/
+theorem susceptibilityΛ_latticeGraph_hasDerivAt_field
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
+    (J h β : ℝ) (i : ↑Λ) :
+    ∃ c : ℝ, HasDerivAt (fun h' =>
+        Ambient.susceptibilityΛ (IsingModel.latticeGraph d) Λ
+          (⟨J, h', β⟩ : IsingParams ℝ) i) c h :=
+  ⟨_, Ambient.susceptibilityΛ_hasDerivAt_field
+    (IsingModel.latticeGraph d) Λ J h β i⟩
+
 end Ambient
 
 end IsingModel
