@@ -1377,6 +1377,24 @@ theorem pseudoMassFromParamsAtPair_ge_of_corr_le {α : ℕ} (hα : 1 ≤ α)
     exact le_of_lt
       (pseudoMassExt_strictAntiOn hα hr hcorr hc_max hlt)
 
+/-- **`pseudoMassFromParamsAtPair` independence of exhaustion for
+ferromagnetic params**: `correlationInfinite` is exhaustion-independent
+under ferromagnetic hypothesis, hence so is the bridge. -/
+theorem pseudoMassFromParamsAtPair_indep_exhaustion {α : ℕ} (hα : 1 ≤ α)
+    {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ Λ' : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ'.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (x z : Fin d → ℤ) :
+    pseudoMassFromParamsAtPair hα hr d Λ p x z =
+      pseudoMassFromParamsAtPair hα hr d Λ' p x z := by
+  unfold pseudoMassFromParamsAtPair
+  congr 1
+  exact Ambient.correlationInfinite_indep_exhaustion
+    (IsingModel.latticeGraph d) Λ Λ' p hf {x, z}
+
 /-- **`pseudoMassFromParamsAtPair` h-symmetry under `h → -h` for distinct
 pairs**: `|{x, z}| = 2` is even, so `correlationInfinite` is unchanged
 under `h ↦ -h`, hence the bridge is too. -/
