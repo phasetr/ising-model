@@ -3501,6 +3501,20 @@ thin direct-instantiation wrappers (3 abstracts $\times$ 4
 layers).
 
 \paragraph{$\mathbb{Z}^d$ concrete (\texttt{latticeGraph} $d$)
+along-exhaustion \texttt{HasDerivAt} wrappers
+(\S17.5--\S17.6, PR~\#1630).} Direct instantiations at
+$G := \texttt{IsingModel.latticeGraph}\,d$ of the
+along-exhaustion \texttt{hasDerivAt} family
+(\texttt{AmbientLattice/\{BetaDerivative, JDerivative,
+FieldDerivative\}.lean}; PR~\#1628 + earlier):
+\texttt{correlationAlongExhaustion\_latticeGraph\_hasDerivAt\_*}
+(4) and
+\texttt{magnetizationAlongExhaustion\_latticeGraph\_hasDerivAt\_*}
+(4) for $\beta$ (h $=$ 0 and general h), $J$, and $h$ directions.
+8 new theorems in existence form
+$\exists c \in \mathbb{R},\,\mathrm{HasDerivAt}\,f\,c\,x$.
+
+\paragraph{$\mathbb{Z}^d$ concrete (\texttt{latticeGraph} $d$)
 $\Lambda$-layer \texttt{HasDerivAt} wrappers
 (\S17.5--\S17.6, PR~\#1629).} Direct instantiations at
 $G := \texttt{IsingModel.latticeGraph}\,d$ of the
