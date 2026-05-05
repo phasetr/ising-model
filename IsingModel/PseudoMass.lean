@@ -158,6 +158,20 @@ theorem pseudoMassG_lt_two_of_pos {α : ℕ} (hα : 1 ≤ α) {r t : ℝ}
   rw [hzero] at hlt
   exact hlt
 
+/-- **`pseudoMassG α r t < 2 ↔ 0 < t`** (for `t ≥ 0`, `r > 0`,
+`α ≥ 1`): combines `_lt_two_of_pos` (forward, t > 0 → g < 2) with
+`pseudoMassG_zero` (reverse: t = 0 → g = 2 ≥ 2 contradicts g < 2). -/
+theorem pseudoMassG_lt_two_iff_pos {α : ℕ} (hα : 1 ≤ α) {r t : ℝ}
+    (ht : 0 ≤ t) (hr : 0 < r) :
+    pseudoMassG α r t < 2 ↔ 0 < t := by
+  refine ⟨?_, fun h => pseudoMassG_lt_two_of_pos hα h hr⟩
+  intro hlt
+  by_contra h_neg
+  push_neg at h_neg
+  have ht_eq : t = 0 := le_antisymm h_neg ht
+  rw [ht_eq, pseudoMassG_zero hα] at hlt
+  exact lt_irrefl _ hlt
+
 /-- **Correlation decay bound via global pseudo-mass** (Step 132b):
 If `pseudoMassG α 1 m₁ = c` (defining equation for per-pair pseudo-mass `m₁ = m^-_{x,z} · d(x,z)`)
 and `m₀ ≤ m₁` (e.g. `m₀ = m^-_global · d(x,z)` with `m^-_global ≤ m^-_{x,z}`), then
