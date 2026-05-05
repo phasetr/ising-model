@@ -1329,4 +1329,28 @@ theorem pseudoMassFromParamsAtPair_ge_of_corr_le {α : ℕ} (hα : 1 ≤ α)
     exact le_of_lt
       (pseudoMassExt_strictAntiOn hα hr hcorr hc_max hlt)
 
+/-- **`pseudoMassFromParamsAtPair` sandwich**: if `c_min ≤ correlation ≤ c_max`
+all in `Ioo 0 2`, then `pseudoMassExt c_max ≤ pseudoMassFromParamsAtPair ≤ pseudoMassExt c_min`.
+
+This packages `_le_of_corr_ge` and `_ge_of_corr_le` into a single sandwich
+inequality, useful for the §17.5 Lemma 17.5.2 capstone. -/
+theorem pseudoMassFromParamsAtPair_sandwich_of_corr_mem {α : ℕ} (hα : 1 ≤ α)
+    {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (x z : Fin d → ℤ)
+    {c_min c_max : ℝ}
+    (hc_min : c_min ∈ Set.Ioo (0 : ℝ) 2)
+    (hc_max : c_max ∈ Set.Ioo (0 : ℝ) 2)
+    (hcorr : Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ p {x, z}
+              ∈ Set.Ioo (0 : ℝ) 2)
+    (hge : c_min ≤ Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ p {x, z})
+    (hle : Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ p {x, z}
+              ≤ c_max) :
+    pseudoMassExt hα hr c_max ≤ pseudoMassFromParamsAtPair hα hr d Λ p x z ∧
+    pseudoMassFromParamsAtPair hα hr d Λ p x z ≤ pseudoMassExt hα hr c_min :=
+  ⟨pseudoMassFromParamsAtPair_ge_of_corr_le hα hr d Λ p x z hc_max hcorr hle,
+   pseudoMassFromParamsAtPair_le_of_corr_ge hα hr d Λ p x z hc_min hcorr hge⟩
+
 end IsingModel
