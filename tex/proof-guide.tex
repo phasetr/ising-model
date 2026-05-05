@@ -3500,6 +3500,24 @@ existed; this PR fills the bare-bound and `\geq 1` gaps. 12 new
 thin direct-instantiation wrappers (3 abstracts $\times$ 4
 layers).
 
+\paragraph{\texttt{magnetizationAlongExhaustion} $\beta$-direction
++ general-$G$ \texttt{susceptibilityAlongExhaustion}
+Continuous/Differentiable wrappers
+(\S17.5--\S17.6, PR~\#1633).} Ambient
+(\texttt{SpecialCases.lean}):
+\texttt{magnetizationAlongExhaustion\_\{continuous,
+differentiable\}\_beta} (general $h$, 2) and
+\texttt{susceptibilityAlongExhaustion\_\{continuous,
+differentiable\}\_\{beta, field, J\}\_gen} (general $G$, general
+$h$, 8). The \texttt{\_gen} suffix on susceptibility distinguishes
+from the $\mathbb{Z}^d$-specialized variants in
+\texttt{Concrete/LatticeGraphCorrelation/Inequalities.lean} which
+share the unsuffixed names with \texttt{(IsingModel.latticeGraph
+d)} baked in. $\mathbb{Z}^d$ concrete
+(\texttt{LatticeGraphCorrelation.lean}):
+\texttt{magnetizationAlongExhaustion\_latticeGraph\_\{continuous,
+differentiable\}\_beta} (2). 12 new wrappers.
+
 \paragraph{Per-parameter
 \texttt{freeEnergyAlongExhaustion} Continuous/Differentiable
 wrappers (along-ex + $\mathbb{Z}^d$ concrete)
