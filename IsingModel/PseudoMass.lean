@@ -480,6 +480,51 @@ theorem pseudoMass_nonneg {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) {c 
     0 ≤ pseudoMass hα hr hc :=
   (pseudoMassG_exists_of_mem_Ioo hα hr hc).choose_spec.1
 
+/-- **`pseudoMass(c) ≤ log(2/c)/r`**: explicit upper bound on the
+pseudo-mass. From the inequality
+`g(t, r, α) = 2·exp(-(t·r)) / (1 + (t·r)^α) ≤ 2·exp(-(t·r))`
+(denominator ≥ 1), the defining equation `g(pm) = c` yields
+`c ≤ 2·exp(-pm·r)`, i.e., `exp(-pm·r) ≥ c/2 > 0`, hence
+`-pm·r ≥ log(c/2)`, hence `pm ≤ -log(c/2)/r = log(2/c)/r`.
+
+This is the natural quantitative bound on `pseudoMass`: as `c → 2-`,
+`pm(c) → 0+`; as `c → 0+`, `pm(c) → ∞`. -/
+theorem pseudoMass_le_log_two_div {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    {c : ℝ} (hc : c ∈ Ioo 0 2) :
+    pseudoMass hα hr hc ≤ Real.log (2 / c) / r := by
+  set pm := pseudoMass hα hr hc with hpm_def
+  have hpm_nn : 0 ≤ pm := pseudoMass_nonneg hα hr hc
+  have hg : pseudoMassG α r pm = c := pseudoMass_spec hα hr hc
+  have hc_pos : 0 < c := hc.1
+  have h_two_pos : (0 : ℝ) < 2 := by norm_num
+  -- Step 1: c ≤ 2·exp(-pm·r)
+  have h_pow_nn : 0 ≤ (pm * r) ^ α :=
+    pow_nonneg (mul_nonneg hpm_nn hr.le) α
+  have h_denom_ge_one : 1 ≤ 1 + (pm * r) ^ α := by linarith
+  have h_denom_pos : 0 < 1 + (pm * r) ^ α := by linarith
+  have h_step1 : c ≤ 2 * Real.exp (-(pm * r)) := by
+    rw [← hg]
+    unfold pseudoMassG
+    rw [div_le_iff₀ h_denom_pos]
+    have h_exp_pos : 0 < Real.exp (-(pm * r)) := Real.exp_pos _
+    nlinarith
+  -- Step 2: c/2 ≤ exp(-pm·r)
+  have h_step2 : c / 2 ≤ Real.exp (-(pm * r)) := by linarith
+  -- Step 3: log(c/2) ≤ -pm·r
+  have h_c_div_2_pos : 0 < c / 2 := by linarith
+  have h_log_le : Real.log (c / 2) ≤ -(pm * r) := by
+    have := Real.log_le_log h_c_div_2_pos h_step2
+    rwa [Real.log_exp] at this
+  -- Step 4: pm·r ≤ -log(c/2) = log(2/c)
+  have h_log_eq : Real.log (2 / c) = -Real.log (c / 2) := by
+    rw [show (2 / c) = (c / 2)⁻¹ from by field_simp,
+        Real.log_inv]
+  have h_pm_r_le : pm * r ≤ Real.log (2 / c) := by
+    rw [h_log_eq]; linarith
+  -- Step 5: pm ≤ log(2/c)/r
+  rw [le_div_iff₀ hr]
+  linarith
+
 /-- Characterisation of the pseudo-mass: `pseudoMass = t ↔ pseudoMassG α r t = c`
 for `t ≥ 0`. -/
 theorem pseudoMass_eq_iff {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) {c : ℝ}
