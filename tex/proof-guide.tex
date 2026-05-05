@@ -3500,6 +3500,23 @@ existed; this PR fills the bare-bound and `\geq 1` gaps. 12 new
 thin direct-instantiation wrappers (3 abstracts $\times$ 4
 layers).
 
+\paragraph{\S17.5 Lemma 17.5.2 stub honest naming + docs cleanup
+(PR~\#1644).} The previously-named
+\texttt{latticeMass\_ge\_pseudoMass} and
+\texttt{latticeMass\_le\_constant\_mul\_pseudoMass} in
+\texttt{PseudoMass.lean} were misleading aliases of
+\texttt{pseudoMass\_pos} and \texttt{discrete\_hls\_constant}
+respectively (their conclusions did not mention
+\texttt{latticeMass}). They have been renamed to
+\texttt{lemma\_17\_5\_2\_pseudoMass\_pos} and
+\texttt{lemma\_17\_5\_2\_constant\_exists} to honestly reflect
+their content as \emph{helpers} toward the full Lemma 17.5.2,
+not the lemma itself. \texttt{docs/index.md} updated: §17.5
+Lemma 17.5.2 (full) is now marked as \textbf{Partial}, with the
+gap explicitly identified as the missing concrete-to-abstract map
+$(d, \Lambda, p) \to (\alpha, r, c)$ and the exponential decay
+bounds on $\mathbb{Z}^d$ (Step 117h+).
+
 \paragraph{\S5.4 Prop 5.4.2 infinite-volume Peierls bound (liminf form)
 (PR~\#1643).} Adds the genuine infinite-volume lift of GJ Prop 5.4.2:
 under the per-stage hypotheses of \texttt{prop\_5\_4\_2\_along\_exhaustion},

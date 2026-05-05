@@ -481,27 +481,62 @@ theorem discrete_hls_constant (α d : ℕ) (hαd : 2 * α > d) :
       (0 : Fin d → ℤ)
       (by simp [latticeDistance])⟩
 
-/-! ## Lemma 17.5.2: Bounds on lattice mass -/
+/-! ## Lemma 17.5.2: Bounds on lattice mass
 
-/-- **Lemma 17.5.2 (partial)**: Lower bound on lattice mass.
+The full GJ Lemma 17.5.2 statement is
 
-The pseudo-mass m⁻(β) is positive for all correlation values in (0, 2).
-This follows from Step 117g (`pseudoMass_pos`).
+  `m⁻(β) ≤ m(β) ≤ const · m⁻(β)`
 
-**References**: Glimm–Jaffe §17.5, p.311.
--/
-theorem latticeMass_ge_pseudoMass (α : ℕ) (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) {c : ℝ}
-    (hc : c ∈ Ioo 0 2) : 0 < pseudoMass hα hr hc := pseudoMass_pos hα hr hc
+where `m⁻` is the pseudo-mass (the abstract `pseudoMass` defined above
+in terms of parameters `α, r, c`) and `m(β)` is the lattice mass
+`latticeMass d Λ p : ENNReal` (defined in
+`Concrete/LatticeGraphCorrelation/Inequalities.lean` as the supremum
+of validating exponential decay rates).
 
-/-- **Lemma 17.5.2 (partial)**: Upper bound on lattice mass.
+**Status: Partial**. Bridging the abstract `pseudoMass` to the concrete
+`latticeMass` requires:
 
-The lattice mass m(β) is bounded above by a constant multiple of the pseudo-mass m⁻(β).
-This requires the discrete HLS inequality and the derivative bounds from Step 117f.
+1. A concrete map `(d, Λ, p) → (α, r, c)` (the physically-motivated
+   parameter selection used in GJ p.311);
+2. Exponential decay bounds on ℤ^d (Step 117h+, not yet formalized);
+3. Connecting `pseudoMass`-positivity to a validating decay rate for
+   `latticeMass`.
 
-**References**: Glimm–Jaffe §17.5, Lemma 17.5.2, pp.311-312 (proof uses HLS + Lipschitz).
--/
-theorem latticeMass_le_constant_mul_pseudoMass (α d : ℕ) (hαd : 2 * α > d) :
-    ∃ C : ℝ, C > 0 := discrete_hls_constant α d hαd
+The helper theorems below (`pseudoMass_pos`,
+`discrete_hls_constant`) are ingredients toward the full lemma, but
+the bridge is not yet in place. Earlier names
+`latticeMass_ge_pseudoMass` / `latticeMass_le_constant_mul_pseudoMass`
+were misleading aliases of `pseudoMass_pos` and
+`discrete_hls_constant` respectively (their conclusions did not
+mention `latticeMass`); they have been renamed to avoid the
+appearance of completeness.
+
+**References**: Glimm–Jaffe §17.5, Lemma 17.5.2, pp. 311–312
+(proof uses HLS + Lipschitz). -/
+
+/-- **Lemma 17.5.2 lower-bound helper** (positivity of `pseudoMass`).
+Alias of `pseudoMass_pos`; kept for §17.5 cross-referencing.
+The actual lower-bound statement `pseudoMass ≤ latticeMass` requires
+linking `pseudoMass` to a validating exponential decay rate for
+`latticeMass` (Step 117h+, not yet formalized).
+
+**References**: Glimm–Jaffe §17.5, p. 311. -/
+theorem lemma_17_5_2_pseudoMass_pos (α : ℕ) (hα : 1 ≤ α) {r : ℝ}
+    (hr : 0 < r) {c : ℝ} (hc : c ∈ Ioo 0 2) :
+    0 < pseudoMass hα hr hc :=
+  pseudoMass_pos hα hr hc
+
+/-- **Lemma 17.5.2 upper-bound helper** (existence of the discrete
+HLS constant). Alias of `discrete_hls_constant`; kept for §17.5
+cross-referencing. The actual upper-bound statement
+`latticeMass ≤ const · pseudoMass` requires the discrete HLS
+inequality + Lipschitz estimate combined with exponential decay
+on ℤ^d (Step 117h+, not yet formalized).
+
+**References**: Glimm–Jaffe §17.5, Lemma 17.5.2, p. 311. -/
+theorem lemma_17_5_2_constant_exists (α d : ℕ) (hαd : 2 * α > d) :
+    ∃ C : ℝ, C > 0 :=
+  discrete_hls_constant α d hαd
 
 /-! ## Theorem 17.5.1: Lipschitz bound (Step 131) -/
 
