@@ -3267,4 +3267,17 @@ theorem pseudoMassFromParamsAtPair_at_h_zero_ne_zero_of_truncated2_pos
   (pseudoMassFromParamsAtPair_at_h_zero_pos_of_truncated2_pos
       hα hr d Λ hJ hβ x z htrunc_pos).ne'
 
+/-- **`pseudoMassFromParamsAtPair_at_J_zero_distinct ≠ 0`** for
+ferromagnetic, h>0, β>0, distinct pair: trivial from
+`pseudoMassFromParamsAtPair_pos_at_J_zero`. -/
+theorem pseudoMassFromParamsAtPair_at_J_zero_distinct_ne_zero
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    {h β : ℝ} (hh : 0 < h) (hβ : 0 < β) {x z : Fin d → ℤ} (hxz : x ≠ z) :
+    pseudoMassFromParamsAtPair hα hr d Λ
+        (⟨0, h, β⟩ : IsingParams ℝ) x z ≠ 0 :=
+  (pseudoMassFromParamsAtPair_pos_at_J_zero hα hr d Λ hh hβ hxz).ne'
+
 end IsingModel
