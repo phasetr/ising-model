@@ -3280,4 +3280,29 @@ theorem pseudoMassFromParamsAtPair_at_J_zero_distinct_ne_zero
         (⟨0, h, β⟩ : IsingParams ℝ) x z ≠ 0 :=
   (pseudoMassFromParamsAtPair_pos_at_J_zero hα hr d Λ hh hβ hxz).ne'
 
+/-- **`pseudoMassFromParamsAtPair_at_h_zero < pseudoMass(c) ↔ c < truncated2`**
+when both `c, truncated2 ∈ Ioo 0 2`: pseudoMass strict anti reverses the
+inequality. -/
+theorem pseudoMassFromParamsAtPair_at_h_zero_lt_pseudoMass_iff_lt_truncated2
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (J β : ℝ) (x z : Fin d → ℤ)
+    {c : ℝ} (hc : c ∈ Set.Ioo (0 : ℝ) 2)
+    (htrunc : Ambient.truncated2Infinite (IsingModel.latticeGraph d) Λ
+                (⟨J, 0, β⟩ : IsingParams ℝ) x z ∈ Set.Ioo (0 : ℝ) 2) :
+    pseudoMassFromParamsAtPair hα hr d Λ (⟨J, 0, β⟩ : IsingParams ℝ) x z <
+      pseudoMass hα hr hc ↔
+    c < Ambient.truncated2Infinite (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, β⟩ : IsingParams ℝ) x z := by
+  rw [pseudoMassFromParamsAtPair_at_h_zero_eq_pseudoMass_of_truncated2_mem
+        hα hr d Λ J β x z htrunc]
+  refine ⟨?_, fun hlt => pseudoMass_strictAnti hα hr hc htrunc hlt⟩
+  intro hlt
+  by_contra h_neg
+  have h_neg' : Ambient.truncated2Infinite (IsingModel.latticeGraph d) Λ
+                  (⟨J, 0, β⟩ : IsingParams ℝ) x z ≤ c := not_lt.mp h_neg
+  exact absurd hlt (not_lt.mpr (pseudoMass_antitone hα hr htrunc hc h_neg'))
+
 end IsingModel
