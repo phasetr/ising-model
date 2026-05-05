@@ -991,6 +991,28 @@ theorem pseudoMassExt_continuousOn {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0
     ContinuousOn (pseudoMassExt hα hr) (Set.Ioo 0 2) :=
   pseudoMass_continuousOn hα hr
 
+/-- **`pseudoMassExt c = 0 ↔ c ∉ Ioo 0 2`**: characterisation. The
+forward direction uses `pseudoMass_pos` (positive on `Ioo 0 2`) to
+contradict `pseudoMassExt = 0` when `c ∈ Ioo 0 2`. -/
+theorem pseudoMassExt_eq_zero_iff {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    (c : ℝ) :
+    pseudoMassExt hα hr c = 0 ↔ c ∉ Set.Ioo (0 : ℝ) 2 := by
+  refine ⟨?_, pseudoMassExt_of_not_mem hα hr⟩
+  intro h_eq
+  by_contra hmem
+  -- `by_contra` cleaned up the double negation: `hmem : c ∈ Ioo 0 2`
+  have : 0 < pseudoMassExt hα hr c := pseudoMassExt_pos_of_mem hα hr hmem
+  linarith
+
+/-- **`pseudoMassExt c > 0 ↔ c ∈ Ioo 0 2`**: dual characterisation. -/
+theorem pseudoMassExt_pos_iff {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (c : ℝ) :
+    0 < pseudoMassExt hα hr c ↔ c ∈ Set.Ioo (0 : ℝ) 2 := by
+  refine ⟨?_, pseudoMassExt_pos_of_mem hα hr⟩
+  intro h_pos
+  by_contra hnotmem
+  rw [pseudoMassExt_of_not_mem hα hr hnotmem] at h_pos
+  exact lt_irrefl 0 h_pos
+
 /-! ## Continuity of pseudoMass composition with correlation (Step 120) -/
 
 /-- **pseudoMass∘correlation is continuous in β** (Step 120).
