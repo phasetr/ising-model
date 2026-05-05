@@ -2341,6 +2341,67 @@ theorem pseudoMassFromParamsAtPair_at_J_zero_distinct_continuousAt_h_pos
     ((fun s : ℝ => pseudoMassExt hα hr (Real.tanh s ^ 2)) ∘ (fun y : ℝ => β * y)) h
   exact ContinuousAt.comp houter hmul
 
+/-- **At `J = 0` distinct pair, `pseudoMassFromParamsAtPair` is
+`ContinuousOn (Ioi 0)` in `β`**: lift `_continuousAt_beta_pos` to a
+`ContinuousOn` over the open positive real interval. -/
+theorem pseudoMassFromParamsAtPair_at_J_zero_distinct_continuousOn_beta_Ioi
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    {h : ℝ} (hh : 0 < h) {x z : Fin d → ℤ} (hxz : x ≠ z) :
+    ContinuousOn
+      (fun b : ℝ => pseudoMassFromParamsAtPair hα hr d Λ
+                      (⟨0, h, b⟩ : IsingParams ℝ) x z) (Set.Ioi 0) := by
+  intro β hβ
+  exact (pseudoMassFromParamsAtPair_at_J_zero_distinct_continuousAt_beta_pos
+            hα hr d Λ hh hβ hxz).continuousWithinAt
+
+/-- **At `J = 0` distinct pair, `pseudoMassFromParamsAtPair` is
+`ContinuousOn (Ioi 0)` in `h`**: lift `_continuousAt_h_pos`. -/
+theorem pseudoMassFromParamsAtPair_at_J_zero_distinct_continuousOn_h_Ioi
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    {β : ℝ} (hβ : 0 < β) {x z : Fin d → ℤ} (hxz : x ≠ z) :
+    ContinuousOn
+      (fun y : ℝ => pseudoMassFromParamsAtPair hα hr d Λ
+                      (⟨0, y, β⟩ : IsingParams ℝ) x z) (Set.Ioi 0) := by
+  intro h hh
+  exact (pseudoMassFromParamsAtPair_at_J_zero_distinct_continuousAt_h_pos
+            hα hr d Λ hh hβ hxz).continuousWithinAt
+
+/-- **At `J = 0` distinct pair, `pseudoMassFromParamsAtPair` is
+`DifferentiableOn (Ioi 0)` in `β`**. -/
+theorem pseudoMassFromParamsAtPair_at_J_zero_distinct_differentiableOn_beta_Ioi
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    {h : ℝ} (hh : 0 < h) {x z : Fin d → ℤ} (hxz : x ≠ z) :
+    DifferentiableOn ℝ
+      (fun b : ℝ => pseudoMassFromParamsAtPair hα hr d Λ
+                      (⟨0, h, b⟩ : IsingParams ℝ) x z) (Set.Ioi 0) := by
+  intro β hβ
+  exact (pseudoMassFromParamsAtPair_at_J_zero_distinct_differentiableAt_beta_pos
+            hα hr d Λ hh hβ hxz).differentiableWithinAt
+
+/-- **At `J = 0` distinct pair, `pseudoMassFromParamsAtPair` is
+`DifferentiableOn (Ioi 0)` in `h`**. -/
+theorem pseudoMassFromParamsAtPair_at_J_zero_distinct_differentiableOn_h_Ioi
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    {β : ℝ} (hβ : 0 < β) {x z : Fin d → ℤ} (hxz : x ≠ z) :
+    DifferentiableOn ℝ
+      (fun y : ℝ => pseudoMassFromParamsAtPair hα hr d Λ
+                      (⟨0, y, β⟩ : IsingParams ℝ) x z) (Set.Ioi 0) := by
+  intro h hh
+  exact (pseudoMassFromParamsAtPair_at_J_zero_distinct_differentiableAt_h_pos
+            hα hr d Λ hh hβ hxz).differentiableWithinAt
+
 /-- **At `J = 0` distinct pair, `pseudoMassFromParamsAtPair` is jointly
 `DifferentiableAt` in `(β, h)` for `β > 0, h > 0`**: composition of
 `(β, h) ↦ β·h` (joint differentiable) with `pseudoMassExt(tanh(t)^2)`
