@@ -891,6 +891,30 @@ theorem pseudoMass_antitone {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
   · subst heq
     exact le_refl _
 
+/-- **`pseudoMass(c₂) < pseudoMass(c₁) ↔ c₁ < c₂`**: iff form of
+`pseudoMass_strictAnti`. -/
+theorem pseudoMass_lt_iff {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    {c₁ c₂ : ℝ} (hc₁ : c₁ ∈ Ioo 0 2) (hc₂ : c₂ ∈ Ioo 0 2) :
+    pseudoMass hα hr hc₂ < pseudoMass hα hr hc₁ ↔ c₁ < c₂ := by
+  refine ⟨?_, fun h => pseudoMass_strictAnti hα hr hc₁ hc₂ h⟩
+  intro hlt
+  by_contra h_neg
+  have h_neg' : c₂ ≤ c₁ := not_lt.mp h_neg
+  have := pseudoMass_antitone hα hr hc₂ hc₁ h_neg'
+  linarith
+
+/-- **`pseudoMass(c₂) ≤ pseudoMass(c₁) ↔ c₁ ≤ c₂`**: iff form of
+`pseudoMass_antitone`. -/
+theorem pseudoMass_le_iff {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    {c₁ c₂ : ℝ} (hc₁ : c₁ ∈ Ioo 0 2) (hc₂ : c₂ ∈ Ioo 0 2) :
+    pseudoMass hα hr hc₂ ≤ pseudoMass hα hr hc₁ ↔ c₁ ≤ c₂ := by
+  refine ⟨?_, fun h => pseudoMass_antitone hα hr hc₁ hc₂ h⟩
+  intro hle
+  by_contra h_neg
+  have h_neg' : c₂ < c₁ := not_le.mp h_neg
+  have := pseudoMass_strictAnti hα hr hc₂ hc₁ h_neg'
+  linarith
+
 /-! ## Discrete Hardy-Littlewood-Sobolev inequality (axiom) -/
 
 /-- **Discrete HLS constant** (Step 129): For `2α > d`, a positive constant exists.
