@@ -15743,6 +15743,54 @@ theorem susceptibilityAlongExhaustion_latticeGraph_analyticOnNhd_joint
   Ambient.susceptibilityAlongExhaustion_analyticOnNhd_joint_gen
     (IsingModel.latticeGraph d) Λ i n
 
+/-- **ℤ^d along-ex: partitionFunctionAlongExhaustion jointly AnalyticAt**. -/
+theorem partitionFunctionAlongExhaustion_latticeGraph_analyticAt_joint
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
+      (Λ.volume n)).edgeSet]
+    (n : ℕ) (β J h : ℝ) :
+    AnalyticAt ℝ (fun p : ℝ × ℝ × ℝ =>
+      Ambient.partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+        ⟨p.2.1, p.2.2, p.1⟩ n) (β, J, h) :=
+  Ambient.partitionFunctionAlongExhaustion_analyticAt_joint
+    (IsingModel.latticeGraph d) Λ n β J h
+
+/-- **ℤ^d along-ex: partitionFunctionAlongExhaustion jointly AnalyticOnNhd**. -/
+theorem partitionFunctionAlongExhaustion_latticeGraph_analyticOnNhd_joint
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
+      (Λ.volume n)).edgeSet]
+    (n : ℕ) :
+    AnalyticOnNhd ℝ (fun p : ℝ × ℝ × ℝ =>
+      Ambient.partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+        ⟨p.2.1, p.2.2, p.1⟩ n) Set.univ :=
+  Ambient.partitionFunctionAlongExhaustion_analyticOnNhd_joint
+    (IsingModel.latticeGraph d) Λ n
+
+/-- **ℤ^d along-ex: freeEnergyAlongExhaustion jointly AnalyticAt**. -/
+theorem freeEnergyAlongExhaustion_latticeGraph_analyticAt_joint
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
+      (Λ.volume n)).edgeSet]
+    (n : ℕ) (β J h : ℝ) :
+    AnalyticAt ℝ (fun p : ℝ × ℝ × ℝ =>
+      Ambient.freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
+        ⟨p.2.1, p.2.2, p.1⟩ n) (β, J, h) :=
+  Ambient.freeEnergyAlongExhaustion_analyticAt_joint
+    (IsingModel.latticeGraph d) Λ n β J h
+
+/-- **ℤ^d along-ex: freeEnergyAlongExhaustion jointly AnalyticOnNhd**. -/
+theorem freeEnergyAlongExhaustion_latticeGraph_analyticOnNhd_joint
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
+      (Λ.volume n)).edgeSet]
+    (n : ℕ) :
+    AnalyticOnNhd ℝ (fun p : ℝ × ℝ × ℝ =>
+      Ambient.freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
+        ⟨p.2.1, p.2.2, p.1⟩ n) Set.univ :=
+  Ambient.freeEnergyAlongExhaustion_analyticOnNhd_joint
+    (IsingModel.latticeGraph d) Λ n
+
 end Ambient
 
 end IsingModel
