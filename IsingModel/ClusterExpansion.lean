@@ -1,4 +1,5 @@
 import IsingModel.Conditioning
+import IsingModel.PhaseTransition
 import Mathlib.Combinatorics.SimpleGraph.Hasse
 import Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite
 import Mathlib.Combinatorics.SimpleGraph.Circulant
@@ -5182,6 +5183,69 @@ theorem correlation_differentiable_joint
     Differentiable ℝ
       (fun p : ℝ × ℝ × ℝ => correlation G ⟨p.2.1, p.2.2, p.1⟩ A) :=
   fun ⟨β, J, h⟩ => (correlation_analyticAt_joint G A β J h).differentiableAt
+
+/-- **Magnetization jointly `Continuous` in `(β, J, h)`**: direct
+corollary of `correlation_continuous_joint` at `A = {i}`. -/
+theorem magnetization_continuous_joint
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (i : ι) :
+    Continuous (fun p : ℝ × ℝ × ℝ =>
+      magnetization G ⟨p.2.1, p.2.2, p.1⟩ i) := by
+  unfold magnetization
+  exact correlation_continuous_joint G {i}
+
+/-- **Magnetization jointly `Differentiable ℝ` in `(β, J, h)`**:
+direct corollary of `correlation_differentiable_joint` at `A = {i}`. -/
+theorem magnetization_differentiable_joint
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (i : ι) :
+    Differentiable ℝ (fun p : ℝ × ℝ × ℝ =>
+      magnetization G ⟨p.2.1, p.2.2, p.1⟩ i) := by
+  unfold magnetization
+  exact correlation_differentiable_joint G {i}
+
+/-- **Susceptibility jointly `Continuous` in `(β, J, h)`**: finite sum of
+`truncated2 = correlation {i,j} - correlation {i} · correlation {j}`,
+each Continuous joint. -/
+theorem susceptibility_continuous_joint
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (i : ι) :
+    Continuous (fun p : ℝ × ℝ × ℝ =>
+      susceptibility G ⟨p.2.1, p.2.2, p.1⟩ i) := by
+  have heq : (fun p : ℝ × ℝ × ℝ => susceptibility G ⟨p.2.1, p.2.2, p.1⟩ i) =
+      (fun p : ℝ × ℝ × ℝ =>
+        ∑ j : ι, truncated2 G ⟨p.2.1, p.2.2, p.1⟩ i j) := by
+    funext p
+    exact susceptibility_apply G _ i
+  rw [heq]
+  refine continuous_finset_sum _ (fun j _ => ?_)
+  unfold truncated2
+  exact (correlation_continuous_joint G {i, j}).sub
+    ((correlation_continuous_joint G {i}).mul
+      (correlation_continuous_joint G {j}))
+
+/-- **Susceptibility jointly `Differentiable ℝ` in `(β, J, h)`**:
+finite sum of differentiable `truncated2` summands. -/
+theorem susceptibility_differentiable_joint
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (i : ι) :
+    Differentiable ℝ (fun p : ℝ × ℝ × ℝ =>
+      susceptibility G ⟨p.2.1, p.2.2, p.1⟩ i) := by
+  have heq : (fun p : ℝ × ℝ × ℝ => susceptibility G ⟨p.2.1, p.2.2, p.1⟩ i) =
+      (fun p : ℝ × ℝ × ℝ =>
+        ∑ j : ι, truncated2 G ⟨p.2.1, p.2.2, p.1⟩ i j) := by
+    funext p
+    exact susceptibility_apply G _ i
+  rw [heq]
+  refine Differentiable.fun_sum (fun j _ => ?_)
+  unfold truncated2
+  exact (correlation_differentiable_joint G {i, j}).sub
+    ((correlation_differentiable_joint G {i}).mul
+      (correlation_differentiable_joint G {j}))
 
 /-- **Numerator of gibbsExpectation jointly `AnalyticAt ℝ` in `(β, J, h)`**
 for any observable `F : Config ι → ℝ`: the unnormalised expectation

@@ -3500,6 +3500,25 @@ existed; this PR fills the bare-bound and `\geq 1` gaps. 12 new
 thin direct-instantiation wrappers (3 abstracts $\times$ 4
 layers).
 
+\paragraph{Joint Continuous + Differentiable wrappers across
+all 4 layers
+(\S17.5--\S17.6, PR~\#1639).} Adds joint (in $(\beta, J, h)$)
+Continuous and Differentiable wrappers for
+\texttt{magnetization}, \texttt{susceptibility}, and
+\texttt{correlation} across abstract, $\Lambda$, along-exhaustion,
+and $\mathbb{Z}^d$ concrete layers. 26 new theorems total:
+abstract \texttt{magnetization\_/susceptibility\_\{continuous,
+differentiable\}\_joint} (4); $\Lambda$ counterparts (4); along-ex
+general-$G$ \texttt{correlation/magnetization/
+susceptibility\_AlongExhaustion\_\{continuous,
+differentiable\}\_joint(\_gen)} (6); $\mathbb{Z}^d$ concrete
+$\Lambda$- and along-ex-layer
+\texttt{*\_latticeGraph\_\{continuous, differentiable\}\_joint}
+(12). The susceptibility joint case is proved as a finite sum of
+\texttt{truncated2 = corr(\{i,j\}) - corr(\{i\})·corr(\{j\})},
+each Continuous / Differentiable joint via
+\texttt{correlation\_\{continuous, differentiable\}\_joint}.
+
 \paragraph{$\mathbb{Z}^d$ concrete
 \texttt{partitionFunctionAlongExhaustion} /
 \texttt{freeEnergyAlongExhaustion} ContinuousAt +
