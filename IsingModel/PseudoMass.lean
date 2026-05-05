@@ -1351,6 +1351,25 @@ theorem pseudoMassFromParamsAtPair_ge_of_corr_le {α : ℕ} (hα : 1 ≤ α)
     exact le_of_lt
       (pseudoMassExt_strictAntiOn hα hr hcorr hc_max hlt)
 
+/-- **`pseudoMassFromParamsAtPair` h-symmetry under `h → -h` for distinct
+pairs**: `|{x, z}| = 2` is even, so `correlationInfinite` is unchanged
+under `h ↦ -h`, hence the bridge is too. -/
+theorem pseudoMassFromParamsAtPair_neg_h_distinct {α : ℕ} (hα : 1 ≤ α)
+    {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (J h β : ℝ) {x z : Fin d → ℤ} (hxz : x ≠ z) :
+    pseudoMassFromParamsAtPair hα hr d Λ (⟨J, -h, β⟩ : IsingParams ℝ) x z =
+      pseudoMassFromParamsAtPair hα hr d Λ (⟨J, h, β⟩ : IsingParams ℝ) x z := by
+  unfold pseudoMassFromParamsAtPair
+  congr 1
+  have heven : Even (({x, z} : Finset (Fin d → ℤ)).card) := by
+    rw [Finset.card_pair hxz]
+    decide
+  exact Ambient.correlationInfinite_neg_h_of_even_card
+    (IsingModel.latticeGraph d) Λ J h β {x, z} heven
+
 /-- **`pseudoMassFromParamsAtPair = 0 ↔ correlation ∉ Ioo 0 2`**: lifted from
 `pseudoMassExt_eq_zero_iff`. -/
 theorem pseudoMassFromParamsAtPair_eq_zero_iff {α : ℕ} (hα : 1 ≤ α)
