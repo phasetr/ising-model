@@ -1936,6 +1936,26 @@ theorem pseudoMassFromParamsAtPair_at_h_zero_ge_pseudoMass_of_truncated2_le
                     hα hr d Λ J β x z hc_max htrunc hle
   rwa [pseudoMassExt_of_mem hα hr hc_max] at hbound
 
+/-- **At `h = 0`, `pseudoMassFromParamsAtPair > 0` from `truncated2 ∈ Ioo 0 2`**:
+direct corollary of `_at_h_zero_eq_pseudoMass_of_truncated2_mem` (PR #1672)
++ `pseudoMass_pos` (PR #928 Step 117g). When the truncated 2-point function
+falls in the regime `(0, 2)`, the bridge is strictly positive — the
+canonical "non-vanishing" condition for `pseudoMassFromParamsAtPair`
+expressed in terms of the function `latticeMass` is defined against. -/
+theorem pseudoMassFromParamsAtPair_at_h_zero_pos_of_truncated2_mem
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (J β : ℝ) (x z : Fin d → ℤ)
+    (htrunc : Ambient.truncated2Infinite (IsingModel.latticeGraph d) Λ
+                (⟨J, 0, β⟩ : IsingParams ℝ) x z ∈ Set.Ioo (0 : ℝ) 2) :
+    0 < pseudoMassFromParamsAtPair hα hr d Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) x z := by
+  rw [pseudoMassFromParamsAtPair_at_h_zero_eq_pseudoMass_of_truncated2_mem
+        hα hr d Λ J β x z htrunc]
+  exact pseudoMass_pos hα hr htrunc
+
 /-- **At `h = 0`, full sandwich `pseudoMass(c_max) ≤
 pseudoMassFromParamsAtPair ≤ pseudoMass(c_min)`** under
 `c_min ≤ truncated2 ≤ c_max` with all values in `Ioo 0 2`. Combines
