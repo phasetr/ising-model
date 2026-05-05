@@ -3163,4 +3163,31 @@ theorem pseudoMassFromParamsAtPair_at_h_zero_ge_pseudoMass_one
   exact pseudoMassFromParamsAtPair_at_h_zero_ge_pseudoMass_of_truncated2_le
             hα hr d Λ J β x z hone_mem htrunc_mem htrunc_le_one
 
+/-- **At `J = 0` distinct, `pseudoMassFromParamsAtPair ≥ pseudoMass(1)`**
+when `0 < h, 0 < β`: J=0 reference slice analog of
+`_at_h_zero_ge_pseudoMass_one` (PR #1725). Uses
+`pseudoMassFromParamsAtPair_at_J_zero_distinct_eq_pseudoMass` (PR #1681)
++ `pseudoMass_antitone` (PR #1714) with the bound `tanh(β·h)^2 ≤ 1`. -/
+theorem pseudoMassFromParamsAtPair_at_J_zero_distinct_ge_pseudoMass_one
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    {h β : ℝ} (hh : 0 < h) (hβ : 0 < β) {x z : Fin d → ℤ} (hxz : x ≠ z) :
+    pseudoMass hα hr (show (1 : ℝ) ∈ Set.Ioo 0 2 from
+        ⟨zero_lt_one, one_lt_two⟩) ≤
+      pseudoMassFromParamsAtPair hα hr d Λ (⟨0, h, β⟩ : IsingParams ℝ) x z := by
+  obtain ⟨hmem, heq⟩ :=
+    pseudoMassFromParamsAtPair_at_J_zero_distinct_eq_pseudoMass
+      hα hr d Λ hh hβ hxz
+  have habs : |Real.tanh (β * h)| < 1 := Real.abs_tanh_lt_one _
+  have htanh_lt : Real.tanh (β * h) < 1 := lt_of_abs_lt habs
+  have htanh_gt_neg : -1 < Real.tanh (β * h) := neg_lt_of_abs_lt habs
+  have htanh_sq_le_one : Real.tanh (β * h) ^ 2 ≤ 1 := by nlinarith
+  have hone_mem : (1 : ℝ) ∈ Set.Ioo (0 : ℝ) 2 := ⟨zero_lt_one, one_lt_two⟩
+  have hge : pseudoMass hα hr hone_mem ≤ pseudoMass hα hr hmem :=
+    pseudoMass_antitone hα hr hmem hone_mem htanh_sq_le_one
+  rw [heq]
+  exact hge
+
 end IsingModel
