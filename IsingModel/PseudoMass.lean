@@ -1048,4 +1048,73 @@ theorem pseudoMass_comp_corr_antitoneOn_beta
       (pseudoMass_strictAnti hα hr (hc_mem β₁ hβ₁) (hc_mem β₂ hβ₂)
         (lt_of_le_of_ne hcle heq))
 
+/-! ## Step 117k: concrete `pseudoMassFromParamsAtPair` (Issue #1645)
+
+Bridges the abstract `pseudoMassExt : ℝ → ℝ` to the concrete physical
+parameters `(d, Λ, p, x, z)` by composing with the infinite-volume
+correlation function `correlationInfinite (latticeGraph d) Λ p {x, z}`. -/
+
+/-- **Step 117k (Issue #1645): concrete pseudo-mass from physical
+parameters and a pair**.
+
+`pseudoMassFromParamsAtPair α hα r hr d Λ p x z` is the pseudo-mass
+associated to the infinite-volume correlation
+`⟨σ_x σ_z⟩^∞ = correlationInfinite (latticeGraph d) Λ p {x, z}`,
+returning `pseudoMass hα hr hc` if this correlation lies in `Ioo 0 2`,
+else 0.
+
+This bridges the abstract `pseudoMass : ℝ` (parameterized by `α, r, c`)
+to the concrete `latticeMass : (d, Λ, p) → ENNReal` defined in
+`Concrete/LatticeGraphCorrelation/Inequalities.lean` via the
+correlation at a chosen pair.
+
+For the §17.5 Lemma 17.5.2 application, the natural choice is `r = 1`
+and `α` such that `2α > d` (HLS condition); see `lemma_17_5_2_constant_exists`.
+
+**References**: Glimm–Jaffe §17.5, p. 311. -/
+noncomputable def pseudoMassFromParamsAtPair {α : ℕ} (hα : 1 ≤ α)
+    {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (x z : Fin d → ℤ) : ℝ :=
+  pseudoMassExt hα hr
+    (Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ p {x, z})
+
+/-- **`pseudoMassFromParamsAtPair` is non-negative**. -/
+theorem pseudoMassFromParamsAtPair_nonneg {α : ℕ} (hα : 1 ≤ α)
+    {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (x z : Fin d → ℤ) :
+    0 ≤ pseudoMassFromParamsAtPair hα hr d Λ p x z :=
+  pseudoMassExt_nonneg hα hr _
+
+/-- **`pseudoMassFromParamsAtPair` positive when the correlation
+lies in `Ioo 0 2`**. -/
+theorem pseudoMassFromParamsAtPair_pos_of_corr_mem
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (x z : Fin d → ℤ)
+    (hc : Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ p {x, z}
+            ∈ Set.Ioo (0 : ℝ) 2) :
+    0 < pseudoMassFromParamsAtPair hα hr d Λ p x z :=
+  pseudoMassExt_pos_of_mem hα hr hc
+
+/-- **`pseudoMassFromParamsAtPair` is zero when the correlation falls
+outside `Ioo 0 2`**. -/
+theorem pseudoMassFromParamsAtPair_eq_zero_of_corr_not_mem
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (x z : Fin d → ℤ)
+    (hc : Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ p {x, z}
+            ∉ Set.Ioo (0 : ℝ) 2) :
+    pseudoMassFromParamsAtPair hα hr d Λ p x z = 0 :=
+  pseudoMassExt_of_not_mem hα hr hc
+
 end IsingModel
