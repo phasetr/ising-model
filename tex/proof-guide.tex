@@ -3500,6 +3500,28 @@ existed; this PR fills the bare-bound and `\geq 1` gaps. 12 new
 thin direct-instantiation wrappers (3 abstracts $\times$ 4
 layers).
 
+\paragraph{\texttt{correlationAlongExhaustion} /
+\texttt{magnetizationAlongExhaustion} HasDerivAt in $J$ / $h$
+/ $\beta$ along-exhaustion layer
+(\S17.5--\S17.6, PR~\#1628).} Adds the missing
+\texttt{hasDerivAt} directions for the along-exhaustion layer.
+New files
+\texttt{IsingModel/AmbientLattice/JDerivative.lean} and
+\texttt{IsingModel/AmbientLattice/FieldDerivative.lean}
+(mirroring \texttt{BetaDerivative.lean}):
+\texttt{correlationAlongExhaustion\_hasDerivAt\_\{J, field\}},
+\texttt{magnetizationAlongExhaustion\_hasDerivAt\_\{J, field\}}.
+$\beta$-direction wrappers in
+\texttt{BetaDerivative.lean}:
+\texttt{magnetizationAlongExhaustion\_hasDerivAt\_beta} (at $h = 0$),
+\texttt{magnetizationAlongExhaustion\_hasDerivAt\_beta\_general\_h\_gen}.
+6 new theorems with existence-form derivative
+$\exists d,\,\mathrm{HasDerivAt}\,f\,d\,x$; subset case lifts to
+finite-volume \texttt{hasDerivAt\_correlation\_*}, non-subset is
+constant zero. The corresponding \texttt{Continuous*} /
+\texttt{Differentiable*} along-ex wrappers already exist in
+\texttt{BetaDerivative.lean} under the \texttt{\_gen} suffix.
+
 \paragraph{\texttt{magnetization} / \texttt{susceptibility}
 HasDerivAt in $h$ + \texttt{magnetization} HasDerivAt in $\beta$
 at $h = 0$, abstract + $\Lambda$ layers
