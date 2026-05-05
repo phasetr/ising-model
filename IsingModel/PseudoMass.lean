@@ -301,6 +301,22 @@ theorem pseudoMassG_analyticOnNhd_univ_of_even {α : ℕ} (hα_even : Even α)
   intro t _
   exact pseudoMassG_analyticAt_of_even hα_even r t
 
+/-- **`pseudoMassG(t₂) < pseudoMassG(t₁) ↔ t₁ < t₂`** (for `t₁, t₂ ≥ 0`,
+`r > 0`, `α ≥ 1`): iff form of `pseudoMassG_strictAntiOn`. -/
+theorem pseudoMassG_lt_iff {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    {t₁ t₂ : ℝ} (ht₁ : 0 ≤ t₁) (ht₂ : 0 ≤ t₂) :
+    pseudoMassG α r t₂ < pseudoMassG α r t₁ ↔ t₁ < t₂ := by
+  have hanti := pseudoMassG_strictAntiOn hα hr
+  refine ⟨?_, fun h => hanti (Set.mem_Ici.mpr ht₁) (Set.mem_Ici.mpr ht₂) h⟩
+  intro hlt
+  by_contra h_neg
+  have h_neg' : t₂ ≤ t₁ := not_lt.mp h_neg
+  rcases h_neg'.lt_or_eq with hlt_t | heq_t
+  · have := hanti (Set.mem_Ici.mpr ht₂) (Set.mem_Ici.mpr ht₁) hlt_t
+    linarith
+  · subst heq_t
+    exact lt_irrefl _ hlt
+
 /-- **`pseudoMassG α r t < 2` for `t > 0` (strict at positive `t`)**:
 direct corollary of `pseudoMassG_strictAntiOn` (strict anti on `Ici 0`)
 and `pseudoMassG_zero` (`g(0) = 2`). Sharpens `pseudoMassG_le_two`
