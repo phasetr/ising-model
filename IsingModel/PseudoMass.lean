@@ -1729,4 +1729,24 @@ theorem pseudoMassFromParamsAtPair_at_h_zero_sandwich_of_truncated2_mem
    pseudoMassFromParamsAtPair_at_h_zero_le_of_truncated2_ge
       hα hr d Λ J β x z hc_min htrunc hge⟩
 
+/-- **At `h = 0`, when `truncated2Infinite ∈ Ioo 0 2`, the bridge equals
+the underlying `pseudoMass`** (not the totalised `pseudoMassExt`):
+combining `pseudoMassFromParamsAtPair_at_h_zero_eq` (PR #1669) with
+`pseudoMassExt_of_mem`. This gives access to the implicit-function-theorem
+derivative API of `pseudoMass` (`HasStrictDerivAt`, etc.) when reasoning
+about the bridge in the high-temperature ferromagnetic regime where
+truncated2 is positive but bounded by 1. -/
+theorem pseudoMassFromParamsAtPair_at_h_zero_eq_pseudoMass_of_truncated2_mem
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (J β : ℝ) (x z : Fin d → ℤ)
+    (htrunc : Ambient.truncated2Infinite (IsingModel.latticeGraph d) Λ
+                (⟨J, 0, β⟩ : IsingParams ℝ) x z ∈ Set.Ioo (0 : ℝ) 2) :
+    pseudoMassFromParamsAtPair hα hr d Λ (⟨J, 0, β⟩ : IsingParams ℝ) x z =
+      pseudoMass hα hr htrunc := by
+  rw [pseudoMassFromParamsAtPair_at_h_zero_eq hα hr d Λ J β x z]
+  exact pseudoMassExt_of_mem hα hr htrunc
+
 end IsingModel
