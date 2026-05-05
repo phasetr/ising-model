@@ -116,6 +116,12 @@ theorem pseudoMassG_lt_two_mul_exp_of_pos {α : ℕ} (hα : 1 ≤ α) {r t : ℝ
   have := hα
   nlinarith
 
+/-- **`pseudoMassG α r t ≠ 0`** for `t ≥ 0`, `r > 0`: direct from
+`pseudoMassG_pos`. Useful when `≠ 0` form is needed (e.g., division). -/
+theorem pseudoMassG_ne_zero (α : ℕ) {r t : ℝ} (ht : 0 ≤ t) (hr : 0 < r) :
+    pseudoMassG α r t ≠ 0 :=
+  (pseudoMassG_pos α ht hr).ne'
+
 /-- **`pseudoMassG α r t ≥ exp(-(t·r))`** (for `t·r ≤ 1`, `t ≥ 0`,
 `r > 0`, `α ≥ 1`): in the small-t regime, denominator
 `1 + (t·r)^α ≤ 2` (since `(t·r)^α ≤ 1` for `t·r ∈ [0, 1]` and α ≥ 1),
