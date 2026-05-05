@@ -2789,6 +2789,27 @@ theorem pseudoMassFromParamsAtPair_at_h_zero_mul_r_le_log_two_div_truncated2
   rw [le_div_iff₀ hr] at h
   exact h
 
+/-- **`pseudoMassFromParamsAtPair_at_h_zero ∈ Ioo 0 (log(2/truncated2)/r)`**
+when `truncated2 ∈ Ioo 0 2`: bundles `_pos_of_truncated2_mem` (PR #1679,
+strict positivity) with `_lt_log_two_div_truncated2` (PR #1707, strict
+upper bound) into a single membership statement. -/
+theorem pseudoMassFromParamsAtPair_at_h_zero_mem_Ioo_log_two_div
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (J β : ℝ) (x z : Fin d → ℤ)
+    (htrunc : Ambient.truncated2Infinite (IsingModel.latticeGraph d) Λ
+                (⟨J, 0, β⟩ : IsingParams ℝ) x z ∈ Set.Ioo (0 : ℝ) 2) :
+    pseudoMassFromParamsAtPair hα hr d Λ (⟨J, 0, β⟩ : IsingParams ℝ) x z ∈
+      Set.Ioo (0 : ℝ)
+        (Real.log (2 / Ambient.truncated2Infinite (IsingModel.latticeGraph d) Λ
+                         (⟨J, 0, β⟩ : IsingParams ℝ) x z) / r) :=
+  ⟨pseudoMassFromParamsAtPair_at_h_zero_pos_of_truncated2_mem
+      hα hr d Λ J β x z htrunc,
+   pseudoMassFromParamsAtPair_at_h_zero_lt_log_two_div_truncated2
+      hα hr d Λ J β x z htrunc⟩
+
 /-- **Strict multiplied form**: `pseudoMassFromParamsAtPair_at_h_zero · r < log(2/truncated2)`. -/
 theorem pseudoMassFromParamsAtPair_at_h_zero_mul_r_lt_log_two_div_truncated2
     {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
