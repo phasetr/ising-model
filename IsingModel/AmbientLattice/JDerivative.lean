@@ -75,4 +75,28 @@ theorem magnetizationAlongExhaustion_hasDerivAt_J
   unfold magnetizationAlongExhaustion
   exact correlationAlongExhaustion_hasDerivAt_J G Λ J h β {i} n
 
+/-- **J-derivative of `partitionFunctionAlongExhaustion`** (GJ §17.5):
+Direct specialization of `hasDerivAt_partitionFunctionΛ_J` at
+`Λ := Λ.volume n`. -/
+theorem partitionFunctionAlongExhaustion_hasDerivAt_J
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J h β : ℝ) (n : ℕ) :
+    ∃ d : ℝ, HasDerivAt
+      (fun J' => partitionFunctionAlongExhaustion G Λ
+          (⟨J', h, β⟩ : IsingParams ℝ) n) d J :=
+  ⟨_, hasDerivAt_partitionFunctionΛ_J G (Λ.volume n) J h β⟩
+
+/-- **J-derivative of `freeEnergyAlongExhaustion`** (GJ §17.5):
+Direct specialization of `hasDerivAt_freeEnergyΛ_J` at
+`Λ := Λ.volume n`. -/
+theorem freeEnergyAlongExhaustion_hasDerivAt_J
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J h β : ℝ) (n : ℕ) :
+    ∃ d : ℝ, HasDerivAt
+      (fun J' => freeEnergyAlongExhaustion G Λ
+          (⟨J', h, β⟩ : IsingParams ℝ) n) d J :=
+  ⟨_, hasDerivAt_freeEnergyΛ_J G (Λ.volume n) J h β⟩
+
 end IsingModel.Ambient
