@@ -3500,6 +3500,15 @@ existed; this PR fills the bare-bound and `\geq 1` gaps. 12 new
 thin direct-instantiation wrappers (3 abstracts $\times$ 4
 layers).
 
+\paragraph{Joint ContinuousAt + DifferentiableAt wrappers across
+all 4 layers (\S17.5--\S17.6, PR~\#1640).} Adds joint pointwise
+(in $(\beta, J, h)$) ContinuousAt and DifferentiableAt wrappers
+for \texttt{correlation}, \texttt{magnetization}, and
+\texttt{susceptibility} across abstract, $\Lambda$,
+along-exhaustion, and $\mathbb{Z}^d$ concrete layers. 30 new
+theorems, each derived from PR~\#1639 via
+\texttt{.continuousAt} / \texttt{.differentiableAt}.
+
 \paragraph{Joint Continuous + Differentiable wrappers across
 all 4 layers
 (\S17.5--\S17.6, PR~\#1639).} Adds joint (in $(\beta, J, h)$)
