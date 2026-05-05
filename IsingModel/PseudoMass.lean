@@ -1236,4 +1236,19 @@ theorem pseudoMassFromParamsAtPair_pos_at_J_zero {α : ℕ} (hα : 1 ≤ α)
       nlinarith
     linarith
 
+/-- **`pseudoMassFromParamsAtPair` at `J = 0` explicit form**: equals
+`pseudoMass` evaluated at `tanh(βh)^|{x,z}|`. -/
+theorem pseudoMassFromParamsAtPair_at_J_zero_eq {α : ℕ} (hα : 1 ≤ α)
+    {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    {h β : ℝ} (hf : Ferromagnetic (⟨(0 : ℝ), h, β⟩ : IsingParams ℝ))
+    (x z : Fin d → ℤ) :
+    pseudoMassFromParamsAtPair hα hr d Λ (⟨0, h, β⟩ : IsingParams ℝ) x z =
+      pseudoMassExt hα hr (Real.tanh (β * h) ^
+                            ({x, z} : Finset (Fin d → ℤ)).card) := by
+  unfold pseudoMassFromParamsAtPair
+  rw [Ambient.correlationInfinite_J_zero (IsingModel.latticeGraph d) Λ h β hf {x, z}]
+
 end IsingModel
