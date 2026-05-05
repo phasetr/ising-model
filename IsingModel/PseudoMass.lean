@@ -536,6 +536,7 @@ theorem pseudoMass_mul_r_le_log_two_div {α : ℕ} (hα : 1 ≤ α) {r : ℝ}
   rw [le_div_iff₀ hr] at h
   exact h
 
+
 /-- Characterisation of the pseudo-mass: `pseudoMass = t ↔ pseudoMassG α r t = c`
 for `t ≥ 0`. -/
 theorem pseudoMass_eq_iff {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) {c : ℝ}
@@ -711,6 +712,15 @@ theorem pseudoMass_lt_log_two_div {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 
     rw [h_log_eq]; linarith
   rw [lt_div_iff₀ hr]
   linarith
+
+/-- **`pseudoMass(c) · r < log(2/c)`**: strict multiplied form of
+`pseudoMass_lt_log_two_div`. -/
+theorem pseudoMass_mul_r_lt_log_two_div {α : ℕ} (hα : 1 ≤ α) {r : ℝ}
+    (hr : 0 < r) {c : ℝ} (hc : c ∈ Ioo 0 2) :
+    pseudoMass hα hr hc * r < Real.log (2 / c) := by
+  have h := pseudoMass_lt_log_two_div hα hr hc
+  rw [lt_div_iff₀ hr] at h
+  exact h
 
 /-- The pseudo-mass is strictly decreasing in `c`: larger correlation value
 means smaller pseudo-mass (slower decay). -/
