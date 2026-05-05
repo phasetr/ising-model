@@ -3129,4 +3129,38 @@ theorem pseudoMassExt_tendsto_zero_at_two
     rw [pseudoMassExt_of_mem hα hr hc]
     exact pseudoMass_le_two_sub_div_mul_r hα hr hc
 
+/-- **At `h = 0` ferromagnetic, `pseudoMassFromParamsAtPair ≥ pseudoMass(1)`**
+when `0 < truncated2`: combines `_at_h_zero_ge_pseudoMass_of_truncated2_le`
+(PR #1677) with `truncated2Infinite_le_one` (ferromagnetic) to get a
+uniform lower bound `pseudoMass(1)` on the bridge.
+
+`pseudoMass(1)` here means `pseudoMass hα hr ⟨zero_lt_one, one_lt_two⟩`.
+
+Useful uniform-in-(β, J) lower bound: as long as truncated2 is
+strictly positive and bounded by 1 (ferromagnetic), the bridge is
+at least `pseudoMass(1)`. -/
+theorem pseudoMassFromParamsAtPair_at_h_zero_ge_pseudoMass_one
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    {J β : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β) (x z : Fin d → ℤ)
+    (htrunc_pos : 0 < Ambient.truncated2Infinite (IsingModel.latticeGraph d) Λ
+                        (⟨J, 0, β⟩ : IsingParams ℝ) x z) :
+    pseudoMass hα hr (show (1 : ℝ) ∈ Set.Ioo 0 2 from
+        ⟨zero_lt_one, one_lt_two⟩) ≤
+      pseudoMassFromParamsAtPair hα hr d Λ (⟨J, 0, β⟩ : IsingParams ℝ) x z := by
+  have hf : Ferromagnetic (⟨J, 0, β⟩ : IsingParams ℝ) :=
+    ⟨hJ, le_refl 0, hβ⟩
+  have htrunc_le_one : Ambient.truncated2Infinite (IsingModel.latticeGraph d) Λ
+                          (⟨J, 0, β⟩ : IsingParams ℝ) x z ≤ 1 :=
+    Ambient.truncated2Infinite_le_one (IsingModel.latticeGraph d) Λ
+      (⟨J, 0, β⟩ : IsingParams ℝ) hf x z
+  have htrunc_mem : Ambient.truncated2Infinite (IsingModel.latticeGraph d) Λ
+                      (⟨J, 0, β⟩ : IsingParams ℝ) x z ∈ Set.Ioo (0 : ℝ) 2 :=
+    ⟨htrunc_pos, by linarith⟩
+  have hone_mem : (1 : ℝ) ∈ Set.Ioo (0 : ℝ) 2 := ⟨zero_lt_one, one_lt_two⟩
+  exact pseudoMassFromParamsAtPair_at_h_zero_ge_pseudoMass_of_truncated2_le
+            hα hr d Λ J β x z hone_mem htrunc_mem htrunc_le_one
+
 end IsingModel
