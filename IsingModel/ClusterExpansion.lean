@@ -5247,6 +5247,59 @@ theorem susceptibility_differentiable_joint
     ((correlation_differentiable_joint G {i}).mul
       (correlation_differentiable_joint G {j}))
 
+/-- **Correlation jointly `ContinuousAt` in `(β, J, h)`**: pointwise. -/
+theorem correlation_continuousAt_joint
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (A : Finset ι) (p : ℝ × ℝ × ℝ) :
+    ContinuousAt (fun q : ℝ × ℝ × ℝ => correlation G ⟨q.2.1, q.2.2, q.1⟩ A) p :=
+  (correlation_continuous_joint G A).continuousAt
+
+/-- **Correlation jointly `DifferentiableAt ℝ` in `(β, J, h)`**: pointwise. -/
+theorem correlation_differentiableAt_joint
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (A : Finset ι) (p : ℝ × ℝ × ℝ) :
+    DifferentiableAt ℝ
+      (fun q : ℝ × ℝ × ℝ => correlation G ⟨q.2.1, q.2.2, q.1⟩ A) p :=
+  (correlation_differentiable_joint G A).differentiableAt
+
+/-- **Magnetization jointly `ContinuousAt` in `(β, J, h)`**: pointwise. -/
+theorem magnetization_continuousAt_joint
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (i : ι) (p : ℝ × ℝ × ℝ) :
+    ContinuousAt (fun q : ℝ × ℝ × ℝ =>
+      magnetization G ⟨q.2.1, q.2.2, q.1⟩ i) p :=
+  (magnetization_continuous_joint G i).continuousAt
+
+/-- **Magnetization jointly `DifferentiableAt ℝ` in `(β, J, h)`**: pointwise. -/
+theorem magnetization_differentiableAt_joint
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (i : ι) (p : ℝ × ℝ × ℝ) :
+    DifferentiableAt ℝ (fun q : ℝ × ℝ × ℝ =>
+      magnetization G ⟨q.2.1, q.2.2, q.1⟩ i) p :=
+  (magnetization_differentiable_joint G i).differentiableAt
+
+/-- **Susceptibility jointly `ContinuousAt` in `(β, J, h)`**: pointwise. -/
+theorem susceptibility_continuousAt_joint
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (i : ι) (p : ℝ × ℝ × ℝ) :
+    ContinuousAt (fun q : ℝ × ℝ × ℝ =>
+      susceptibility G ⟨q.2.1, q.2.2, q.1⟩ i) p :=
+  (susceptibility_continuous_joint G i).continuousAt
+
+/-- **Susceptibility jointly `DifferentiableAt ℝ` in `(β, J, h)`**: pointwise. -/
+theorem susceptibility_differentiableAt_joint
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (i : ι) (p : ℝ × ℝ × ℝ) :
+    DifferentiableAt ℝ (fun q : ℝ × ℝ × ℝ =>
+      susceptibility G ⟨q.2.1, q.2.2, q.1⟩ i) p :=
+  (susceptibility_differentiable_joint G i).differentiableAt
+
 /-- **Numerator of gibbsExpectation jointly `AnalyticAt ℝ` in `(β, J, h)`**
 for any observable `F : Config ι → ℝ`: the unnormalised expectation
 `∑_σ F(σ) · boltzmannWeight G p σ` is real-analytic jointly. Each
