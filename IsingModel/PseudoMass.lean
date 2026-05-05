@@ -2770,4 +2770,23 @@ theorem pseudoMassFromParamsAtPair_at_h_zero_le_log_two_div_truncated2
         hα hr d Λ J β x z htrunc]
   exact pseudoMass_le_log_two_div hα hr htrunc
 
+/-- **Multiplied form: `pseudoMassFromParamsAtPair_at_h_zero · r ≤ log(2/truncated2)`**.
+Direct multiplication of `_at_h_zero_le_log_two_div_truncated2` (PR #1704)
+through by `r > 0`. Useful when `pm·d(x,z)` decay rates appear. -/
+theorem pseudoMassFromParamsAtPair_at_h_zero_mul_r_le_log_two_div_truncated2
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (J β : ℝ) (x z : Fin d → ℤ)
+    (htrunc : Ambient.truncated2Infinite (IsingModel.latticeGraph d) Λ
+                (⟨J, 0, β⟩ : IsingParams ℝ) x z ∈ Set.Ioo (0 : ℝ) 2) :
+    pseudoMassFromParamsAtPair hα hr d Λ (⟨J, 0, β⟩ : IsingParams ℝ) x z * r ≤
+      Real.log (2 / Ambient.truncated2Infinite (IsingModel.latticeGraph d) Λ
+                       (⟨J, 0, β⟩ : IsingParams ℝ) x z) := by
+  have h := pseudoMassFromParamsAtPair_at_h_zero_le_log_two_div_truncated2
+              hα hr d Λ J β x z htrunc
+  rw [le_div_iff₀ hr] at h
+  exact h
+
 end IsingModel
