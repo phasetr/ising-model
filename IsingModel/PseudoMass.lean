@@ -176,6 +176,29 @@ theorem pseudoMassG_analyticOnNhd_Ioi_zero (α : ℕ) {r : ℝ} (hr : 0 < r) :
   intro t ht
   exact pseudoMassG_analyticAt α hr (le_of_lt ht)
 
+/-- **For even `α`, `pseudoMassG α r` is `AnalyticAt` everywhere on `ℝ`**
+(`r > 0`): the denominator `1 + (t·r)^α` is bounded below by `1 > 0`
+since `(t·r)^α ≥ 0` for even `α`, so the quotient is analytic on all
+of `ℝ`. -/
+theorem pseudoMassG_analyticAt_of_even {α : ℕ} (hα_even : Even α) (r t : ℝ) :
+    AnalyticAt ℝ (pseudoMassG α r) t := by
+  unfold pseudoMassG
+  have h_tr : AnalyticAt ℝ (fun x : ℝ => x * r) t :=
+    analyticAt_id.mul (analyticAt_const)
+  have h_neg_tr : AnalyticAt ℝ (fun x : ℝ => -(x * r)) t :=
+    h_tr.neg
+  have h_exp : AnalyticAt ℝ (fun x : ℝ => Real.exp (-(x * r))) t :=
+    analyticAt_rexp.comp h_neg_tr
+  have h_two_exp : AnalyticAt ℝ (fun x : ℝ => 2 * Real.exp (-(x * r))) t :=
+    analyticAt_const.mul h_exp
+  have h_pow : AnalyticAt ℝ (fun x : ℝ => (x * r) ^ α) t :=
+    h_tr.pow α
+  have h_denom : AnalyticAt ℝ (fun x : ℝ => 1 + (x * r) ^ α) t :=
+    analyticAt_const.add h_pow
+  have h_pow_nn : 0 ≤ (t * r) ^ α := hα_even.pow_nonneg _
+  have h_denom_ne : (1 + (t * r) ^ α) ≠ 0 := by linarith
+  exact h_two_exp.div h_denom h_denom_ne
+
 /-- **`pseudoMassG α r t < 2` for `t > 0` (strict at positive `t`)**:
 direct corollary of `pseudoMassG_strictAntiOn` (strict anti on `Ici 0`)
 and `pseudoMassG_zero` (`g(0) = 2`). Sharpens `pseudoMassG_le_two`
