@@ -1358,6 +1358,22 @@ theorem pseudoMassExt_antitoneOn_Ioo_zero_one
     AntitoneOn (pseudoMassExt hα hr) (Set.Ioo 0 1) :=
   (pseudoMassExt_strictAntiOn_Ioo_zero_one hα hr).antitoneOn
 
+/-- **`pseudoMassExt` strictly anti on `Ioc 0 1`** (boundary-inclusive
+sub-interval): `Ioc 0 1 ⊂ Ioo 0 2` since `1 < 2`. -/
+theorem pseudoMassExt_strictAntiOn_Ioc_zero_one
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) :
+    StrictAntiOn (pseudoMassExt hα hr) (Set.Ioc 0 1) := by
+  intro c₁ hc₁ c₂ hc₂ h
+  have hc₁_in : c₁ ∈ Set.Ioo (0 : ℝ) 2 := ⟨hc₁.1, by linarith [hc₁.2]⟩
+  have hc₂_in : c₂ ∈ Set.Ioo (0 : ℝ) 2 := ⟨hc₂.1, by linarith [hc₂.2]⟩
+  exact pseudoMassExt_strictAntiOn hα hr hc₁_in hc₂_in h
+
+/-- **`pseudoMassExt` antitone on `Ioc 0 1`**. -/
+theorem pseudoMassExt_antitoneOn_Ioc_zero_one
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) :
+    AntitoneOn (pseudoMassExt hα hr) (Set.Ioc 0 1) :=
+  (pseudoMassExt_strictAntiOn_Ioc_zero_one hα hr).antitoneOn
+
 /-- **`pseudoMassExt(tanh(t)^2)` `ContinuousAt` for `0 < t`**: composition
 of continuous functions. `tanh` is continuous, squaring is continuous,
 `pseudoMassExt` is continuous at `tanh(t)^2 ∈ Ioo 0 1 ⊂ Ioo 0 2`. -/
