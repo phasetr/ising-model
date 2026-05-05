@@ -99,4 +99,20 @@ theorem freeEnergyAlongExhaustion_hasDerivAt_J
           (⟨J', h, β⟩ : IsingParams ℝ) n) d J :=
   ⟨_, hasDerivAt_freeEnergyΛ_J G (Λ.volume n) J h β⟩
 
+/-- **J-derivative of `susceptibilityAlongExhaustion`** (GJ §17.5,
+general G). -/
+theorem susceptibilityAlongExhaustion_hasDerivAt_J_gen
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J h β : ℝ) (i : V) (n : ℕ) :
+    ∃ d : ℝ, HasDerivAt
+      (fun J' => susceptibilityAlongExhaustion G Λ
+          (⟨J', h, β⟩ : IsingParams ℝ) i n) d J := by
+  unfold susceptibilityAlongExhaustion
+  by_cases hi : i ∈ Λ.volume n
+  · simp only [hi, dif_pos]
+    exact ⟨_, susceptibilityΛ_hasDerivAt_J G (Λ.volume n) J h β _⟩
+  · simp only [hi, dif_neg, not_false_iff]
+    exact ⟨0, hasDerivAt_const J 0⟩
+
 end IsingModel.Ambient
