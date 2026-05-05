@@ -2801,5 +2801,56 @@ theorem magnetizationΛ_hasDerivAt_beta_general_h (G : SimpleGraph V)
   simp_rw [correlationΛ_apply]
   exact IsingModel.magnetization_hasDerivAt_beta_general_h _ J h β _
 
+/-- **magnetizationΛ HasDerivAt h** with explicit covariance derivative
+on the induced graph. -/
+theorem magnetizationΛ_hasDerivAt_field (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (J h β : ℝ) (i : ↑Λ) :
+    HasDerivAt
+      (fun h' => magnetizationΛ G Λ (⟨J, h', β⟩ : IsingParams ℝ) i)
+      (β * (IsingModel.gibbsExpectation (inducedGraph G Λ)
+              (⟨J, h, β⟩ : IsingParams ℝ)
+              (fun σ => IsingModel.spinProduct {i} σ *
+                          IsingModel.totalMagnetization σ) -
+            IsingModel.correlation (inducedGraph G Λ)
+                (⟨J, h, β⟩ : IsingParams ℝ) {i} *
+            IsingModel.gibbsExpectation (inducedGraph G Λ)
+                (⟨J, h, β⟩ : IsingParams ℝ)
+                IsingModel.totalMagnetization)) h := by
+  unfold magnetizationΛ
+  simp_rw [correlationΛ_apply]
+  exact IsingModel.magnetization_hasDerivAt_field _ J h β _
+
+/-- **magnetizationΛ HasDerivAt β at h = 0** with explicit derivative
+as sum over induced-graph edges. -/
+theorem magnetizationΛ_hasDerivAt_beta (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (J β : ℝ) (i : ↑Λ) :
+    HasDerivAt
+      (fun β' => magnetizationΛ G Λ (⟨J, 0, β'⟩ : IsingParams ℝ) i)
+      (J * ∑ e ∈ (inducedGraph G Λ).edgeFinset,
+        Sym2.lift ⟨fun u v =>
+          IsingModel.correlation (inducedGraph G Λ)
+              (⟨J, 0, β⟩ : IsingParams ℝ) (symmDiff {i} {u, v}) -
+          IsingModel.correlation (inducedGraph G Λ)
+              (⟨J, 0, β⟩ : IsingParams ℝ) {i} *
+          IsingModel.correlation (inducedGraph G Λ)
+              (⟨J, 0, β⟩ : IsingParams ℝ) {u, v},
+        fun u v => by simp [Finset.pair_comm v u]⟩ e)
+      β := by
+  unfold magnetizationΛ
+  simp_rw [correlationΛ_apply]
+  exact IsingModel.magnetization_hasDerivAt_beta _ J β _
+
+/-- **susceptibilityΛ HasDerivAt h** with explicit derivative
+as sum of `truncated2` h-derivatives over induced-graph sites. -/
+theorem susceptibilityΛ_hasDerivAt_field (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (J h β : ℝ) (i : ↑Λ) :
+    HasDerivAt
+      (fun h' => susceptibilityΛ G Λ (⟨J, h', β⟩ : IsingParams ℝ) i)
+      (∑ j : ↑Λ, deriv (fun h' =>
+        IsingModel.truncated2 (inducedGraph G Λ)
+          (⟨J, h', β⟩ : IsingParams ℝ) i j) h) h := by
+  simp_rw [susceptibilityΛ_apply]
+  exact IsingModel.susceptibility_hasDerivAt_field _ J h β _
+
 end Ambient
 end IsingModel

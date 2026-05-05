@@ -1099,4 +1099,67 @@ theorem susceptibility_hasDerivAt_J
       _ from h_t.deriv]
   exact h_t
 
+/-- **Magnetization HasDerivAt h with explicit value**:
+For any finite-volume Ising at any `(J, h, β)`,
+`d/dh magnetization(i) = d/dh ⟨σ_i⟩ = β · (⟨σ_i · M⟩ - ⟨σ_i⟩ · ⟨M⟩)`.
+
+Direct from `hasDerivAt_correlation_field` at `A = {i}`.
+
+Reference: Glimm–Jaffe §17.6. -/
+theorem magnetization_hasDerivAt_field
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h β : ℝ) (i : ι) :
+    HasDerivAt (fun h' => magnetization G (⟨J, h', β⟩ : IsingParams ℝ) i)
+      (β * (gibbsExpectation G (⟨J, h, β⟩ : IsingParams ℝ)
+              (fun σ => spinProduct {i} σ * totalMagnetization σ) -
+            correlation G (⟨J, h, β⟩ : IsingParams ℝ) {i} *
+            gibbsExpectation G (⟨J, h, β⟩ : IsingParams ℝ) totalMagnetization)) h := by
+  unfold magnetization
+  exact hasDerivAt_correlation_field G J h β {i}
+
+/-- **Magnetization HasDerivAt β at h = 0 with explicit value**:
+For any finite-volume Ising at `h = 0`,
+`d/dβ magnetization(i) = d/dβ ⟨σ_i⟩|_{h=0} = J · Σ_e [⟨σ^{{i}△{u,v}}⟩ - ⟨σ_i⟩·⟨σ^{u,v}⟩]`.
+
+Direct from `hasDerivAt_correlation_beta` at `A = {i}`.
+
+Reference: Glimm–Jaffe §17.5. -/
+theorem magnetization_hasDerivAt_beta
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (i : ι) :
+    HasDerivAt (fun β' => magnetization G (⟨J, 0, β'⟩ : IsingParams ℝ) i)
+      (J * ∑ e ∈ G.edgeFinset,
+        Sym2.lift ⟨fun u v =>
+          correlation G (⟨J, 0, β⟩ : IsingParams ℝ) (symmDiff {i} {u, v}) -
+          correlation G (⟨J, 0, β⟩ : IsingParams ℝ) {i} *
+          correlation G (⟨J, 0, β⟩ : IsingParams ℝ) {u, v},
+        fun u v => by simp [Finset.pair_comm v u]⟩ e)
+      β := by
+  unfold magnetization
+  exact hasDerivAt_correlation_beta G J β {i}
+
+/-- **Susceptibility HasDerivAt h with explicit value**:
+For finite-volume Ising at any `(J, h, β)`, `susceptibility(i, h) = ∑_j truncated2(i, j, h)`
+has an h-derivative equal to the sum of h-derivatives of `truncated2`.
+
+Direct extension via `truncated2_hasDerivAt_field`.
+
+Reference: Glimm–Jaffe §17.6. -/
+theorem susceptibility_hasDerivAt_field
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J h β : ℝ) (i : ι) :
+    HasDerivAt (fun h' => susceptibility G (⟨J, h', β⟩ : IsingParams ℝ) i)
+      (∑ j : ι, deriv (fun h' => truncated2 G (⟨J, h', β⟩ : IsingParams ℝ) i j) h) h := by
+  have heq_fun : (fun h' => susceptibility G (⟨J, h', β⟩ : IsingParams ℝ) i) =
+      (fun h' => ∑ j : ι, truncated2 G (⟨J, h', β⟩ : IsingParams ℝ) i j) := by
+    funext h'
+    exact susceptibility_apply G _ i
+  rw [heq_fun]
+  apply HasDerivAt.fun_sum
+  intro j _
+  have h_t := truncated2_hasDerivAt_field G J h β i j
+  rw [show deriv (fun h' => truncated2 G (⟨J, h', β⟩ : IsingParams ℝ) i j) h =
+      _ from h_t.deriv]
+  exact h_t
+
 end IsingModel
