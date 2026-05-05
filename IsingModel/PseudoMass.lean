@@ -116,6 +116,25 @@ theorem pseudoMassG_lt_two_mul_exp_of_pos {α : ℕ} (hα : 1 ≤ α) {r t : ℝ
   have := hα
   nlinarith
 
+/-- **`pseudoMassG α r t ≥ exp(-(t·r))`** (for `t·r ≤ 1`, `t ≥ 0`,
+`r > 0`, `α ≥ 1`): in the small-t regime, denominator
+`1 + (t·r)^α ≤ 2` (since `(t·r)^α ≤ 1` for `t·r ∈ [0, 1]` and α ≥ 1),
+so quotient ≥ numerator/2 = exp(-(t·r)). -/
+theorem pseudoMassG_ge_exp_of_tr_le_one {α : ℕ} (hα : 1 ≤ α) {r t : ℝ}
+    (ht : 0 ≤ t) (hr : 0 < r) (htr_le : t * r ≤ 1) :
+    Real.exp (-(t * r)) ≤ pseudoMassG α r t := by
+  unfold pseudoMassG
+  have htr_nn : 0 ≤ t * r := mul_nonneg ht hr.le
+  have h_pow_nn : 0 ≤ (t * r) ^ α := pow_nonneg htr_nn α
+  have h_pow_le_one : (t * r) ^ α ≤ 1 := by
+    apply pow_le_one₀ htr_nn htr_le
+  have h_denom_pos : 0 < 1 + (t * r) ^ α := by linarith
+  have h_denom_le_two : 1 + (t * r) ^ α ≤ 2 := by linarith
+  have h_exp_pos : 0 < Real.exp (-(t * r)) := Real.exp_pos _
+  rw [le_div_iff₀ h_denom_pos]
+  have := hα
+  nlinarith
+
 /-- **`pseudoMassG α r t ≤ 2·exp(-(t·r))`** (for `t ≥ 0`, `r > 0`):
 since the denominator `1 + (tr)^α ≥ 1`, the quotient is dominated
 by the numerator. -/
