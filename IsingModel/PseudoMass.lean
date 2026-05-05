@@ -98,6 +98,24 @@ theorem pseudoMassG_le_two_div_one_add_pow (α : ℕ) {r t : ℝ} (ht : 0 ≤ t)
     Real.exp_le_one_iff.mpr (neg_nonpos.mpr (mul_nonneg ht hr.le))
   linarith [Real.exp_pos (-(t * r))]
 
+/-- **`pseudoMassG α r t < 2·exp(-(t·r))`** (for `t > 0`, `r > 0`,
+`α ≥ 1`): since the denominator `1 + (tr)^α > 1` strictly when
+`tr > 0`, the quotient is strictly dominated. -/
+theorem pseudoMassG_lt_two_mul_exp_of_pos {α : ℕ} (hα : 1 ≤ α) {r t : ℝ}
+    (ht : 0 < t) (hr : 0 < r) :
+    pseudoMassG α r t < 2 * Real.exp (-(t * r)) := by
+  unfold pseudoMassG
+  have htr_pos : 0 < t * r := mul_pos ht hr
+  -- (t*r)^α > 0 since t*r > 0 and α ≥ 1
+  have h_pow_pos : 0 < (t * r) ^ α := pow_pos htr_pos α
+  have h_denom_pos : 0 < 1 + (t * r) ^ α := by linarith
+  have h_denom_gt_one : 1 < 1 + (t * r) ^ α := by linarith
+  have h_exp_pos : 0 < Real.exp (-(t * r)) := Real.exp_pos _
+  rw [div_lt_iff₀ h_denom_pos]
+  -- Suppress unused warning by linking hα
+  have := hα
+  nlinarith
+
 /-- **`pseudoMassG α r t ≤ 2·exp(-(t·r))`** (for `t ≥ 0`, `r > 0`):
 since the denominator `1 + (tr)^α ≥ 1`, the quotient is dominated
 by the numerator. -/
