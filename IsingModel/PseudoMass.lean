@@ -2871,6 +2871,44 @@ theorem pseudoMassFromParamsAtPair_at_h_zero_mem_Ioo_log_two_div
    pseudoMassFromParamsAtPair_at_h_zero_lt_log_two_div_truncated2
       hα hr d Λ J β x z htrunc⟩
 
+/-- **At `h = 0`, `pseudoMassFromParamsAtPair ≤ (2 - truncated2)/(truncated2 · r)`**:
+sharper bound near `truncated2 = 2`, lifted from
+`pseudoMass_le_two_sub_div_mul_r` (PR #1715) via bridge identity. -/
+theorem pseudoMassFromParamsAtPair_at_h_zero_le_two_sub_div_mul_r
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (J β : ℝ) (x z : Fin d → ℤ)
+    (htrunc : Ambient.truncated2Infinite (IsingModel.latticeGraph d) Λ
+                (⟨J, 0, β⟩ : IsingParams ℝ) x z ∈ Set.Ioo (0 : ℝ) 2) :
+    pseudoMassFromParamsAtPair hα hr d Λ (⟨J, 0, β⟩ : IsingParams ℝ) x z ≤
+      (2 - Ambient.truncated2Infinite (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β⟩ : IsingParams ℝ) x z) /
+        (Ambient.truncated2Infinite (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β⟩ : IsingParams ℝ) x z * r) := by
+  rw [pseudoMassFromParamsAtPair_at_h_zero_eq_pseudoMass_of_truncated2_mem
+        hα hr d Λ J β x z htrunc]
+  exact pseudoMass_le_two_sub_div_mul_r hα hr htrunc
+
+/-- **Strict version**: same as above with `<`. -/
+theorem pseudoMassFromParamsAtPair_at_h_zero_lt_two_sub_div_mul_r
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (J β : ℝ) (x z : Fin d → ℤ)
+    (htrunc : Ambient.truncated2Infinite (IsingModel.latticeGraph d) Λ
+                (⟨J, 0, β⟩ : IsingParams ℝ) x z ∈ Set.Ioo (0 : ℝ) 2) :
+    pseudoMassFromParamsAtPair hα hr d Λ (⟨J, 0, β⟩ : IsingParams ℝ) x z <
+      (2 - Ambient.truncated2Infinite (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β⟩ : IsingParams ℝ) x z) /
+        (Ambient.truncated2Infinite (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β⟩ : IsingParams ℝ) x z * r) := by
+  rw [pseudoMassFromParamsAtPair_at_h_zero_eq_pseudoMass_of_truncated2_mem
+        hα hr d Λ J β x z htrunc]
+  exact pseudoMass_lt_two_sub_div_mul_r hα hr htrunc
+
 /-- **Strict multiplied form**: `pseudoMassFromParamsAtPair_at_h_zero · r < log(2/truncated2)`. -/
 theorem pseudoMassFromParamsAtPair_at_h_zero_mul_r_lt_log_two_div_truncated2
     {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
