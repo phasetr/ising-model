@@ -6226,5 +6226,92 @@ theorem freeEnergyAlongExhaustion_differentiableAt_joint
       freeEnergyAlongExhaustion G Λ ⟨q.2.1, q.2.2, q.1⟩ n) p :=
   (freeEnergyAlongExhaustion_differentiable_joint G Λ n).differentiableAt
 
+/-! ### Joint Continuous / Differentiable wrappers along-ex
+(general G), for correlation, magnetization, susceptibility -/
+
+/-- **Along-ex: correlation jointly Continuous in `(β, J, h)`** (general G). -/
+theorem correlationAlongExhaustion_continuous_joint_gen
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (A : Finset V) (n : ℕ) :
+    Continuous (fun p : ℝ × ℝ × ℝ =>
+      correlationAlongExhaustion G Λ ⟨p.2.1, p.2.2, p.1⟩ A n) := by
+  unfold correlationAlongExhaustion
+  by_cases hA : A ⊆ Λ.volume n
+  · simp only [hA, dif_pos]
+    exact correlationΛ_continuous_joint G (Λ.volume n) (liftFinset A hA)
+  · simp only [hA, dif_neg, not_false_iff]
+    exact continuous_const
+
+/-- **Along-ex: correlation jointly Differentiable ℝ in `(β, J, h)`** (general G). -/
+theorem correlationAlongExhaustion_differentiable_joint_gen
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (A : Finset V) (n : ℕ) :
+    Differentiable ℝ (fun p : ℝ × ℝ × ℝ =>
+      correlationAlongExhaustion G Λ ⟨p.2.1, p.2.2, p.1⟩ A n) := by
+  unfold correlationAlongExhaustion
+  by_cases hA : A ⊆ Λ.volume n
+  · simp only [hA, dif_pos]
+    exact correlationΛ_differentiable_joint G (Λ.volume n) (liftFinset A hA)
+  · simp only [hA, dif_neg, not_false_iff]
+    exact differentiable_const _
+
+/-- **Along-ex: magnetization jointly Continuous in `(β, J, h)`** (general G). -/
+theorem magnetizationAlongExhaustion_continuous_joint
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (i : V) (n : ℕ) :
+    Continuous (fun p : ℝ × ℝ × ℝ =>
+      magnetizationAlongExhaustion G Λ ⟨p.2.1, p.2.2, p.1⟩ i n) := by
+  unfold magnetizationAlongExhaustion correlationAlongExhaustion
+  by_cases hi : ({i} : Finset V) ⊆ Λ.volume n
+  · simp only [hi, dif_pos]
+    exact correlationΛ_continuous_joint G (Λ.volume n) (liftFinset {i} hi)
+  · simp only [hi, dif_neg, not_false_iff]
+    exact continuous_const
+
+/-- **Along-ex: magnetization jointly Differentiable ℝ in `(β, J, h)`** (general G). -/
+theorem magnetizationAlongExhaustion_differentiable_joint
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (i : V) (n : ℕ) :
+    Differentiable ℝ (fun p : ℝ × ℝ × ℝ =>
+      magnetizationAlongExhaustion G Λ ⟨p.2.1, p.2.2, p.1⟩ i n) := by
+  unfold magnetizationAlongExhaustion correlationAlongExhaustion
+  by_cases hi : ({i} : Finset V) ⊆ Λ.volume n
+  · simp only [hi, dif_pos]
+    exact correlationΛ_differentiable_joint G (Λ.volume n) (liftFinset {i} hi)
+  · simp only [hi, dif_neg, not_false_iff]
+    exact differentiable_const _
+
+/-- **Along-ex: susceptibility jointly Continuous in `(β, J, h)`** (general G). -/
+theorem susceptibilityAlongExhaustion_continuous_joint_gen
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (i : V) (n : ℕ) :
+    Continuous (fun p : ℝ × ℝ × ℝ =>
+      susceptibilityAlongExhaustion G Λ ⟨p.2.1, p.2.2, p.1⟩ i n) := by
+  unfold susceptibilityAlongExhaustion
+  by_cases hi : i ∈ Λ.volume n
+  · simp only [hi, dif_pos]
+    exact susceptibilityΛ_continuous_joint G (Λ.volume n) ⟨i, hi⟩
+  · simp only [hi, dif_neg, not_false_iff]
+    exact continuous_const
+
+/-- **Along-ex: susceptibility jointly Differentiable ℝ in `(β, J, h)`** (general G). -/
+theorem susceptibilityAlongExhaustion_differentiable_joint_gen
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (i : V) (n : ℕ) :
+    Differentiable ℝ (fun p : ℝ × ℝ × ℝ =>
+      susceptibilityAlongExhaustion G Λ ⟨p.2.1, p.2.2, p.1⟩ i n) := by
+  unfold susceptibilityAlongExhaustion
+  by_cases hi : i ∈ Λ.volume n
+  · simp only [hi, dif_pos]
+    exact susceptibilityΛ_differentiable_joint G (Λ.volume n) ⟨i, hi⟩
+  · simp only [hi, dif_neg, not_false_iff]
+    exact differentiable_const _
+
 end Ambient
 end IsingModel

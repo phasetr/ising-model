@@ -100,6 +100,40 @@ theorem correlationΛ_differentiable_joint (G : SimpleGraph V) (Λ : Finset V)
       (fun p : ℝ × ℝ × ℝ => correlationΛ G Λ ⟨p.2.1, p.2.2, p.1⟩ A) :=
   IsingModel.correlation_differentiable_joint (inducedGraph G Λ) A
 
+/-- **magnetizationΛ jointly `Continuous` in `(β, J, h)`** (Λ-layer). -/
+theorem magnetizationΛ_continuous_joint (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (i : ↑Λ) :
+    Continuous (fun p : ℝ × ℝ × ℝ =>
+      magnetizationΛ G Λ ⟨p.2.1, p.2.2, p.1⟩ i) := by
+  unfold magnetizationΛ
+  simp_rw [correlationΛ_apply]
+  exact IsingModel.correlation_continuous_joint (inducedGraph G Λ) {i}
+
+/-- **magnetizationΛ jointly `Differentiable ℝ` in `(β, J, h)`** (Λ-layer). -/
+theorem magnetizationΛ_differentiable_joint (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (i : ↑Λ) :
+    Differentiable ℝ (fun p : ℝ × ℝ × ℝ =>
+      magnetizationΛ G Λ ⟨p.2.1, p.2.2, p.1⟩ i) := by
+  unfold magnetizationΛ
+  simp_rw [correlationΛ_apply]
+  exact IsingModel.correlation_differentiable_joint (inducedGraph G Λ) {i}
+
+/-- **susceptibilityΛ jointly `Continuous` in `(β, J, h)`** (Λ-layer). -/
+theorem susceptibilityΛ_continuous_joint (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (i : ↑Λ) :
+    Continuous (fun p : ℝ × ℝ × ℝ =>
+      susceptibilityΛ G Λ ⟨p.2.1, p.2.2, p.1⟩ i) := by
+  simp_rw [susceptibilityΛ_apply]
+  exact IsingModel.susceptibility_continuous_joint (inducedGraph G Λ) i
+
+/-- **susceptibilityΛ jointly `Differentiable ℝ` in `(β, J, h)`** (Λ-layer). -/
+theorem susceptibilityΛ_differentiable_joint (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (i : ↑Λ) :
+    Differentiable ℝ (fun p : ℝ × ℝ × ℝ =>
+      susceptibilityΛ G Λ ⟨p.2.1, p.2.2, p.1⟩ i) := by
+  simp_rw [susceptibilityΛ_apply]
+  exact IsingModel.susceptibility_differentiable_joint (inducedGraph G Λ) i
+
 /-! ## Λ-layer partitionFunction per-direction regularity at general h -/
 
 /-- **partitionFunctionΛ Continuous in `β` at general h** (Λ-layer). -/
