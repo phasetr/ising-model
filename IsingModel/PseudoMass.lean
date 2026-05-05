@@ -2689,6 +2689,25 @@ theorem pseudoMassFromParamsAtPair_at_J_zero_distinct_continuousAt_betaH_pos
   exact ContinuousAt.comp houter hmul
 
 /-- **At `J = 0` distinct pair with `0 < h, 0 < β`,
+`pseudoMassFromParamsAtPair < log(2/tanh(β·h)^2)/r`**: strict version of
+`_le_log_two_div_tanh_sq` (PR #1708). Combines
+`_at_J_zero_distinct_eq_pseudoMass` (PR #1681) with
+`pseudoMass_lt_log_two_div` (PR #1705). -/
+theorem pseudoMassFromParamsAtPair_at_J_zero_distinct_lt_log_two_div_tanh_sq
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    {h β : ℝ} (hh : 0 < h) (hβ : 0 < β) {x z : Fin d → ℤ} (hxz : x ≠ z) :
+    pseudoMassFromParamsAtPair hα hr d Λ (⟨0, h, β⟩ : IsingParams ℝ) x z <
+      Real.log (2 / Real.tanh (β * h) ^ 2) / r := by
+  obtain ⟨hmem, heq⟩ :=
+    pseudoMassFromParamsAtPair_at_J_zero_distinct_eq_pseudoMass
+      hα hr d Λ hh hβ hxz
+  rw [heq]
+  exact pseudoMass_lt_log_two_div hα hr hmem
+
+/-- **At `J = 0` distinct pair with `0 < h, 0 < β`,
 `pseudoMassFromParamsAtPair ≤ log(2/tanh(β·h)^2)/r`**: explicit
 quantitative upper bound on the J=0 reference slice. Combines
 `_at_J_zero_distinct_eq_pseudoMass` (PR #1681, identifies bridge with
