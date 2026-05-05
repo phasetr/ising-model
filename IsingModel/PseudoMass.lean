@@ -43,6 +43,23 @@ open Set Real Filter
 
 /-! ## The pseudo-mass profile function -/
 
+/-- **`Real.tanh` is strictly monotone**: derived from
+`sinh (y - x) = sinh y · cosh x − cosh y · sinh x > 0` for `x < y`,
+divided by `cosh x · cosh y > 0`.
+
+Mathlib lacks a direct `Real.tanh_strictMono`; this is a local
+helper. -/
+theorem _root_.Real.tanh_strictMono : StrictMono Real.tanh := by
+  intro x y hxy
+  rw [Real.tanh_eq_sinh_div_cosh, Real.tanh_eq_sinh_div_cosh]
+  have hcx : 0 < Real.cosh x := Real.cosh_pos _
+  have hcy : 0 < Real.cosh y := Real.cosh_pos _
+  rw [div_lt_div_iff₀ hcx hcy]
+  have hsub_pos : 0 < Real.sinh (y - x) := Real.sinh_pos_iff.mpr (sub_pos.mpr hxy)
+  have heq : Real.sinh (y - x) =
+      Real.sinh y * Real.cosh x - Real.cosh y * Real.sinh x := Real.sinh_sub y x
+  linarith
+
 /-- The pseudo-mass profile: `g(t, r, α) = 2 · exp(-(t·r)) / (1 + (t·r)^α)`.
 For `r > 0` and `α ≥ 1`, this is a continuous, strictly decreasing function
 of `t ≥ 0` with `g(0) = 2` and `g(t) → 0` as `t → ∞`. -/
