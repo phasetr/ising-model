@@ -134,6 +134,50 @@ theorem susceptibilityΛ_differentiable_joint (G : SimpleGraph V) (Λ : Finset V
   simp_rw [susceptibilityΛ_apply]
   exact IsingModel.susceptibility_differentiable_joint (inducedGraph G Λ) i
 
+/-- **correlationΛ jointly `ContinuousAt`** (Λ-layer). -/
+theorem correlationΛ_continuousAt_joint (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (A : Finset (↑Λ : Type _))
+    (p : ℝ × ℝ × ℝ) :
+    ContinuousAt (fun q : ℝ × ℝ × ℝ =>
+      correlationΛ G Λ ⟨q.2.1, q.2.2, q.1⟩ A) p :=
+  (correlationΛ_continuous_joint G Λ A).continuousAt
+
+/-- **correlationΛ jointly `DifferentiableAt ℝ`** (Λ-layer). -/
+theorem correlationΛ_differentiableAt_joint (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (A : Finset (↑Λ : Type _))
+    (p : ℝ × ℝ × ℝ) :
+    DifferentiableAt ℝ (fun q : ℝ × ℝ × ℝ =>
+      correlationΛ G Λ ⟨q.2.1, q.2.2, q.1⟩ A) p :=
+  (correlationΛ_differentiable_joint G Λ A).differentiableAt
+
+/-- **magnetizationΛ jointly `ContinuousAt`** (Λ-layer). -/
+theorem magnetizationΛ_continuousAt_joint (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (i : ↑Λ) (p : ℝ × ℝ × ℝ) :
+    ContinuousAt (fun q : ℝ × ℝ × ℝ =>
+      magnetizationΛ G Λ ⟨q.2.1, q.2.2, q.1⟩ i) p :=
+  (magnetizationΛ_continuous_joint G Λ i).continuousAt
+
+/-- **magnetizationΛ jointly `DifferentiableAt ℝ`** (Λ-layer). -/
+theorem magnetizationΛ_differentiableAt_joint (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (i : ↑Λ) (p : ℝ × ℝ × ℝ) :
+    DifferentiableAt ℝ (fun q : ℝ × ℝ × ℝ =>
+      magnetizationΛ G Λ ⟨q.2.1, q.2.2, q.1⟩ i) p :=
+  (magnetizationΛ_differentiable_joint G Λ i).differentiableAt
+
+/-- **susceptibilityΛ jointly `ContinuousAt`** (Λ-layer). -/
+theorem susceptibilityΛ_continuousAt_joint (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (i : ↑Λ) (p : ℝ × ℝ × ℝ) :
+    ContinuousAt (fun q : ℝ × ℝ × ℝ =>
+      susceptibilityΛ G Λ ⟨q.2.1, q.2.2, q.1⟩ i) p :=
+  (susceptibilityΛ_continuous_joint G Λ i).continuousAt
+
+/-- **susceptibilityΛ jointly `DifferentiableAt ℝ`** (Λ-layer). -/
+theorem susceptibilityΛ_differentiableAt_joint (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (i : ↑Λ) (p : ℝ × ℝ × ℝ) :
+    DifferentiableAt ℝ (fun q : ℝ × ℝ × ℝ =>
+      susceptibilityΛ G Λ ⟨q.2.1, q.2.2, q.1⟩ i) p :=
+  (susceptibilityΛ_differentiable_joint G Λ i).differentiableAt
+
 /-! ## Λ-layer partitionFunction per-direction regularity at general h -/
 
 /-- **partitionFunctionΛ Continuous in `β` at general h** (Λ-layer). -/
