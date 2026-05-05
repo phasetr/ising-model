@@ -679,6 +679,33 @@ theorem pseudoMass_pos {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) {c : �
     rw [← h, pseudoMassG_zero hα r] at hspec
     linarith [hc.2]
 
+/-- **`pseudoMass(c) < (2-c)/(c·r)`**: strict version of
+`pseudoMass_le_two_sub_div_mul_r`, using
+`Real.log_lt_sub_one_of_pos` (strict at `c ≠ 2`). For `c ∈ Ioo 0 2`,
+`c ≠ 2` is automatic. -/
+theorem pseudoMass_lt_two_sub_div_mul_r {α : ℕ} (hα : 1 ≤ α) {r : ℝ}
+    (hr : 0 < r) {c : ℝ} (hc : c ∈ Ioo 0 2) :
+    pseudoMass hα hr hc < (2 - c) / (c * r) := by
+  have hc_pos : 0 < c := hc.1
+  have hc_lt : c < 2 := hc.2
+  have hcr_pos : 0 < c * r := mul_pos hc_pos hr
+  have h2c_pos : 0 < (2 : ℝ) / c := by positivity
+  have h2c_ne_one : (2 : ℝ) / c ≠ 1 := by
+    intro h_eq
+    have : (2 : ℝ) = c := by field_simp at h_eq; linarith
+    linarith
+  have h_log_lt : Real.log (2 / c) < 2 / c - 1 :=
+    Real.log_lt_sub_one_of_pos h2c_pos h2c_ne_one
+  have h_eq : (2 : ℝ) / c - 1 = (2 - c) / c := by field_simp
+  have h_step1 : pseudoMass hα hr hc ≤ Real.log (2 / c) / r :=
+    pseudoMass_le_log_two_div hα hr hc
+  have h_step2 : Real.log (2 / c) / r < (2 - c) / c / r := by
+    apply div_lt_div_of_pos_right
+    · rw [← h_eq]; exact h_log_lt
+    · exact hr
+  have h_div : (2 - c) / c / r = (2 - c) / (c * r) := by rw [div_div]
+  linarith [h_step1, h_step2, h_div.symm.le, h_div.le]
+
 /-- **`pseudoMass(c) ≤ (2-c)/(c·r)`**: sharper bound near `c = 2`,
 where `log(2/c) ≤ 2/c - 1 = (2-c)/c` via `Real.log_le_sub_one_of_pos`.
 Captures the boundary behavior `pseudoMass(c) → 0` linearly as
