@@ -3500,6 +3500,28 @@ existed; this PR fills the bare-bound and `\geq 1` gaps. 12 new
 thin direct-instantiation wrappers (3 abstracts $\times$ 4
 layers).
 
+\paragraph{Along-exhaustion + $\mathbb{Z}^d$ concrete
+\texttt{partitionFunctionAlongExhaustion} /
+\texttt{freeEnergyAlongExhaustion} \texttt{HasDerivAt} wrappers
+(\S17.5--\S17.6, PR~\#1631).} Specializes the $\Lambda$-layer
+\texttt{hasDerivAt\_\{partitionFunctionΛ, freeEnergyΛ\}\_*} family
+(PRs~\#1623, \#1624) at $\Lambda := \Lambda.\mathrm{volume}\,n$.
+Along-ex layer:
+\texttt{partitionFunctionAlongExhaustion\_hasDerivAt\_\{beta, J,
+field\}} (3),
+\texttt{freeEnergyAlongExhaustion\_hasDerivAt\_\{beta\_general\_h,
+J, field\}} (3) split across
+\texttt{AmbientLattice/\{BetaDerivative, JDerivative,
+FieldDerivative\}.lean}.
+$\mathbb{Z}^d$ concrete:
+\texttt{partitionFunctionAlongExhaustion\_latticeGraph\_hasDerivAt\_*}
+(3) and
+\texttt{freeEnergyAlongExhaustion\_latticeGraph\_hasDerivAt\_*}
+(3) in
+\texttt{Concrete/LatticeGraphCorrelation.lean}.
+12 new theorems in existence form
+$\exists c \in \mathbb{R},\,\mathrm{HasDerivAt}\,f\,c\,x$.
+
 \paragraph{$\mathbb{Z}^d$ concrete (\texttt{latticeGraph} $d$)
 along-exhaustion \texttt{HasDerivAt} wrappers
 (\S17.5--\S17.6, PR~\#1630).} Direct instantiations at
