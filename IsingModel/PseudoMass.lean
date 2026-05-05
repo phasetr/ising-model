@@ -168,6 +168,14 @@ theorem pseudoMassG_analyticAt (α : ℕ) {r : ℝ} (hr : 0 < r) {t : ℝ} (ht :
     linarith
   exact h_two_exp.div h_denom h_denom_ne
 
+/-- **`pseudoMassG α r` is `AnalyticOnNhd ℝ` on `Ioi 0`** (for `r > 0`):
+lift `pseudoMassG_analyticAt` to a global form on the open positive
+real interval. -/
+theorem pseudoMassG_analyticOnNhd_Ioi_zero (α : ℕ) {r : ℝ} (hr : 0 < r) :
+    AnalyticOnNhd ℝ (pseudoMassG α r) (Set.Ioi 0) := by
+  intro t ht
+  exact pseudoMassG_analyticAt α hr (le_of_lt ht)
+
 /-- **`pseudoMassG α r t < 2` for `t > 0` (strict at positive `t`)**:
 direct corollary of `pseudoMassG_strictAntiOn` (strict anti on `Ici 0`)
 and `pseudoMassG_zero` (`g(0) = 2`). Sharpens `pseudoMassG_le_two`
