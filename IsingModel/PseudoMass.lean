@@ -1332,6 +1332,12 @@ theorem pseudoMassExt_pos_of_mem {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 <
   rw [pseudoMassExt_of_mem hα hr hc]
   exact pseudoMass_pos hα hr hc
 
+/-- **`pseudoMassExt c ≠ 0`** for `c ∈ Ioo 0 2`. -/
+theorem pseudoMassExt_ne_zero_of_mem {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    {c : ℝ} (hc : c ∈ Set.Ioo 0 2) :
+    pseudoMassExt hα hr c ≠ 0 :=
+  (pseudoMassExt_pos_of_mem hα hr hc).ne'
+
 /-- **`pseudoMassExt` `ContinuousAt c₀ ∈ Ioo 0 2`**: re-statement of
 `pseudoMass_continuousAt` using the named definition. -/
 theorem pseudoMassExt_continuousAt {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
