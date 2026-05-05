@@ -1369,6 +1369,28 @@ theorem pseudoMassFromParamsAtPair_at_h_zero_eq {α : ℕ} (hα : 1 ≤ α)
   unfold pseudoMassFromParamsAtPair
   rw [Ambient.truncated2Infinite_h_zero (IsingModel.latticeGraph d) Λ J β x z]
 
+/-- **At `J = 0` for distinct pair, `pseudoMassFromParamsAtPair` depends
+only on the product `β·h`**: for any two ferromagnetic params
+`⟨0, h₁, β₁⟩` and `⟨0, h₂, β₂⟩` with `β₁·h₁ = β₂·h₂`, the bridge values
+agree. Direct corollary of `pseudoMassFromParamsAtPair_at_J_zero_distinct_eq`
+which gives `pseudoMassExt(tanh(β·h)^2)` — only the product enters
+the right-hand side. -/
+theorem pseudoMassFromParamsAtPair_at_J_zero_eq_of_product_eq
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    {h₁ β₁ h₂ β₂ : ℝ}
+    (hf₁ : Ferromagnetic (⟨(0 : ℝ), h₁, β₁⟩ : IsingParams ℝ))
+    (hf₂ : Ferromagnetic (⟨(0 : ℝ), h₂, β₂⟩ : IsingParams ℝ))
+    (hprod : β₁ * h₁ = β₂ * h₂)
+    {x z : Fin d → ℤ} (hxz : x ≠ z) :
+    pseudoMassFromParamsAtPair hα hr d Λ (⟨0, h₁, β₁⟩ : IsingParams ℝ) x z =
+      pseudoMassFromParamsAtPair hα hr d Λ (⟨0, h₂, β₂⟩ : IsingParams ℝ) x z := by
+  rw [pseudoMassFromParamsAtPair_at_J_zero_distinct_eq hα hr d Λ hf₁ hxz,
+      pseudoMassFromParamsAtPair_at_J_zero_distinct_eq hα hr d Λ hf₂ hxz,
+      hprod]
+
 /-- **`pseudoMassFromParamsAtPair` strictly anti in `h` at `J = 0`** for
 distinct pair, β > 0, h > 0: `tanh(β·h)^2` increases (in `Ioo 0 1 ⊂ Ioo 0 2`)
 as h increases (β > 0 fixed), and `pseudoMassExt` is strictly antitone
