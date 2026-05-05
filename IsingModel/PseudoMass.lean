@@ -1936,4 +1936,38 @@ theorem pseudoMassFromParamsAtPair_at_h_zero_ge_pseudoMass_of_truncated2_le
                     hα hr d Λ J β x z hc_max htrunc hle
   rwa [pseudoMassExt_of_mem hα hr hc_max] at hbound
 
+/-- **At `h = 0`, full sandwich `pseudoMass(c_max) ≤
+pseudoMassFromParamsAtPair ≤ pseudoMass(c_min)`** under
+`c_min ≤ truncated2 ≤ c_max` with all values in `Ioo 0 2`. Combines
+`_at_h_zero_le_pseudoMass_of_truncated2_ge` and
+`_at_h_zero_ge_pseudoMass_of_truncated2_le` (PR #1677) into a single
+sandwich in terms of the typed `pseudoMass`. This is the canonical
+sandwich form for §17.5 Lemma 17.5.2: a uniform-in-Λ exponential
+decay bound on `truncated2Infinite` plus the Lipschitz capstone
+(`pseudoMass_pow_succ_lipschitz`) on the typed `pseudoMass` would
+combine into the sandwich `m⁻ ≤ m ≤ const · m⁻`. -/
+theorem pseudoMassFromParamsAtPair_at_h_zero_sandwich_pseudoMass
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (J β : ℝ) (x z : Fin d → ℤ)
+    {c_min c_max : ℝ}
+    (hc_min : c_min ∈ Set.Ioo (0 : ℝ) 2)
+    (hc_max : c_max ∈ Set.Ioo (0 : ℝ) 2)
+    (htrunc : Ambient.truncated2Infinite (IsingModel.latticeGraph d) Λ
+                (⟨J, 0, β⟩ : IsingParams ℝ) x z ∈ Set.Ioo (0 : ℝ) 2)
+    (hge : c_min ≤ Ambient.truncated2Infinite (IsingModel.latticeGraph d) Λ
+                    (⟨J, 0, β⟩ : IsingParams ℝ) x z)
+    (hle : Ambient.truncated2Infinite (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β⟩ : IsingParams ℝ) x z ≤ c_max) :
+    pseudoMass hα hr hc_max ≤
+      pseudoMassFromParamsAtPair hα hr d Λ (⟨J, 0, β⟩ : IsingParams ℝ) x z ∧
+    pseudoMassFromParamsAtPair hα hr d Λ (⟨J, 0, β⟩ : IsingParams ℝ) x z ≤
+      pseudoMass hα hr hc_min :=
+  ⟨pseudoMassFromParamsAtPair_at_h_zero_ge_pseudoMass_of_truncated2_le
+      hα hr d Λ J β x z hc_max htrunc hle,
+   pseudoMassFromParamsAtPair_at_h_zero_le_pseudoMass_of_truncated2_ge
+      hα hr d Λ J β x z hc_min htrunc hge⟩
+
 end IsingModel
