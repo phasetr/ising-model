@@ -3500,6 +3500,24 @@ existed; this PR fills the bare-bound and `\geq 1` gaps. 12 new
 thin direct-instantiation wrappers (3 abstracts $\times$ 4
 layers).
 
+\paragraph{$\mathbb{Z}^d$ concrete (\texttt{latticeGraph} $d$)
+$\Lambda$-layer \texttt{HasDerivAt} wrappers
+(\S17.5--\S17.6, PR~\#1629).} Direct instantiations at
+$G := \texttt{IsingModel.latticeGraph}\,d$ of the
+$\Lambda$-layer \texttt{hasDerivAt} family
+(PRs~\#1619, \#1623--\#1628):
+\texttt{hasDerivAt\_correlationΛ\_latticeGraph\_*} (4),
+\texttt{hasDerivAt\_freeEnergyΛ\_latticeGraph\_*} (3),
+\texttt{hasDerivAt\_partitionFunctionΛ\_latticeGraph\_*} (3),
+\texttt{hasDerivAt\_boltzmannWeightΛ\_latticeGraph\_*} (3),
+\texttt{magnetizationΛ\_latticeGraph\_hasDerivAt\_*} (4),
+\texttt{susceptibilityΛ\_latticeGraph\_hasDerivAt\_*} (4).
+21 new theorems in existence form
+$\exists c \in \mathbb{R},\,\mathrm{HasDerivAt}\,f\,c\,x$, since
+the explicit derivative formulas at the $\mathbb{Z}^d$ concrete
+layer would be long and unwieldy; consumers needing the explicit
+formula call \texttt{Ambient.hasDerivAt\_*Λ\_*} directly.
+
 \paragraph{\texttt{correlationAlongExhaustion} /
 \texttt{magnetizationAlongExhaustion} HasDerivAt in $J$ / $h$
 / $\beta$ along-exhaustion layer
