@@ -1394,6 +1394,56 @@ theorem pseudoMassFromParamsAtPair_ge_of_corr_le {α : ℕ} (hα : 1 ≤ α)
     exact le_of_lt
       (pseudoMassExt_strictAntiOn hα hr hcorr hc_max hlt)
 
+/-- **`pseudoMassFromParamsAtPair` strictly anti in β at `J = 0`** for
+distinct pair, `h > 0`, β > 0: as β increases, `tanh(βh)^2` increases
+(remaining in `Ioo 0 1 ⊂ Ioo 0 2`), and `pseudoMass` is strictly
+antitone in its correlation argument. -/
+theorem pseudoMassFromParamsAtPair_strictAntiOn_beta_at_J_zero
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    {h : ℝ} (hh : 0 < h) {x z : Fin d → ℤ} (hxz : x ≠ z) :
+    StrictAntiOn (fun β =>
+        pseudoMassFromParamsAtPair hα hr d Λ
+          (⟨0, h, β⟩ : IsingParams ℝ) x z) (Set.Ioi 0) := by
+  intro β₁ hβ₁ β₂ hβ₂ hlt
+  simp only [Set.mem_Ioi] at hβ₁ hβ₂
+  have hf₁ : Ferromagnetic (⟨(0 : ℝ), h, β₁⟩ : IsingParams ℝ) :=
+    ⟨le_refl 0, hh.le, hβ₁⟩
+  have hf₂ : Ferromagnetic (⟨(0 : ℝ), h, β₂⟩ : IsingParams ℝ) :=
+    ⟨le_refl 0, hh.le, hβ₂⟩
+  change pseudoMassFromParamsAtPair hα hr d Λ (⟨0, h, β₂⟩ : IsingParams ℝ) x z
+        < pseudoMassFromParamsAtPair hα hr d Λ (⟨0, h, β₁⟩ : IsingParams ℝ) x z
+  rw [pseudoMassFromParamsAtPair_at_J_zero_distinct_eq hα hr d Λ hf₁ hxz,
+      pseudoMassFromParamsAtPair_at_J_zero_distinct_eq hα hr d Λ hf₂ hxz]
+  have htanh_pos₁ : 0 < Real.tanh (β₁ * h) := by
+    rw [Real.tanh_eq_sinh_div_cosh]
+    exact div_pos (Real.sinh_pos_iff.mpr (mul_pos hβ₁ hh)) (Real.cosh_pos _)
+  have htanh_pos₂ : 0 < Real.tanh (β₂ * h) := by
+    rw [Real.tanh_eq_sinh_div_cosh]
+    exact div_pos (Real.sinh_pos_iff.mpr (mul_pos hβ₂ hh)) (Real.cosh_pos _)
+  have htanh_mono : Real.tanh (β₁ * h) < Real.tanh (β₂ * h) :=
+    Real.tanh_strictMono (mul_lt_mul_of_pos_right hlt hh)
+  have hsq_lt : Real.tanh (β₁ * h) ^ 2 < Real.tanh (β₂ * h) ^ 2 := by
+    have h1 : Real.tanh (β₁ * h) ^ 2 = Real.tanh (β₁ * h) * Real.tanh (β₁ * h) := sq _
+    have h2 : Real.tanh (β₂ * h) ^ 2 = Real.tanh (β₂ * h) * Real.tanh (β₂ * h) := sq _
+    rw [h1, h2]
+    exact mul_lt_mul' htanh_mono.le htanh_mono htanh_pos₁.le htanh_pos₂
+  have hmem₁ : Real.tanh (β₁ * h) ^ 2 ∈ Set.Ioo (0 : ℝ) 2 := by
+    refine ⟨by positivity, ?_⟩
+    have habs : |Real.tanh (β₁ * h)| < 1 := Real.abs_tanh_lt_one _
+    have h1 : -1 < Real.tanh (β₁ * h) := neg_lt_of_abs_lt habs
+    have h2 : Real.tanh (β₁ * h) < 1 := lt_of_abs_lt habs
+    nlinarith
+  have hmem₂ : Real.tanh (β₂ * h) ^ 2 ∈ Set.Ioo (0 : ℝ) 2 := by
+    refine ⟨by positivity, ?_⟩
+    have habs : |Real.tanh (β₂ * h)| < 1 := Real.abs_tanh_lt_one _
+    have h1 : -1 < Real.tanh (β₂ * h) := neg_lt_of_abs_lt habs
+    have h2 : Real.tanh (β₂ * h) < 1 := lt_of_abs_lt habs
+    nlinarith
+  exact pseudoMassExt_strictAntiOn hα hr hmem₁ hmem₂ hsq_lt
+
 /-- **`pseudoMassFromParamsAtPair` independence of exhaustion for
 ferromagnetic params**: `correlationInfinite` is exhaustion-independent
 under ferromagnetic hypothesis, hence so is the bridge. -/
