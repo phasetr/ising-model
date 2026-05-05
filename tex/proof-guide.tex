@@ -3500,6 +3500,19 @@ existed; this PR fills the bare-bound and `\geq 1` gaps. 12 new
 thin direct-instantiation wrappers (3 abstracts $\times$ 4
 layers).
 
+\paragraph{\texttt{partitionFunctionAlongExhaustion} /
+\texttt{freeEnergyAlongExhaustion} ContinuousAt + DifferentiableAt
+wrappers (ambient)
+(\S17.5--\S17.6, PR~\#1636).}
+\texttt{SpecialCases.lean}:
+\texttt{partitionFunctionAlongExhaustion\_\{continuousAt,
+differentiableAt\}\_\{beta\_h\_zero, J\_h\_zero,
+beta\_general\_h, J\_general\_h, h, joint\}} (12 thms) and
+\texttt{freeEnergyAlongExhaustion\_\{continuousAt,
+differentiableAt\}\_\{beta, field, J, joint\}} (8 thms). 20 new
+pointwise wrappers, each derived from the existing whole-$\mathbb{R}$
+wrapper via \texttt{.continuousAt} / \texttt{.differentiableAt}.
+
 \paragraph{Along-exhaustion ContinuousAt + DifferentiableAt
 wrappers (ambient general $G$)
 (\S17.5--\S17.6, PR~\#1635).}
