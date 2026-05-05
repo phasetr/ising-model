@@ -144,6 +144,20 @@ theorem pseudoMassG_strictAntiOn
       pow_nonneg (mul_nonneg (Set.mem_Ici.mp hs) hr.le) α
     linarith
 
+/-- **`pseudoMassG α r t < 2` for `t > 0` (strict at positive `t`)**:
+direct corollary of `pseudoMassG_strictAntiOn` (strict anti on `Ici 0`)
+and `pseudoMassG_zero` (`g(0) = 2`). Sharpens `pseudoMassG_le_two`
+to a strict inequality away from `t = 0`. -/
+theorem pseudoMassG_lt_two_of_pos {α : ℕ} (hα : 1 ≤ α) {r t : ℝ}
+    (ht : 0 < t) (hr : 0 < r) :
+    pseudoMassG α r t < 2 := by
+  have h_anti := pseudoMassG_strictAntiOn hα hr
+  have hzero : pseudoMassG α r 0 = 2 := pseudoMassG_zero hα r
+  have hlt : pseudoMassG α r t < pseudoMassG α r 0 :=
+    h_anti (Set.mem_Ici.mpr (le_refl 0)) (Set.mem_Ici.mpr ht.le) ht
+  rw [hzero] at hlt
+  exact hlt
+
 /-- **Correlation decay bound via global pseudo-mass** (Step 132b):
 If `pseudoMassG α 1 m₁ = c` (defining equation for per-pair pseudo-mass `m₁ = m^-_{x,z} · d(x,z)`)
 and `m₀ ≤ m₁` (e.g. `m₀ = m^-_global · d(x,z)` with `m^-_global ≤ m^-_{x,z}`), then
