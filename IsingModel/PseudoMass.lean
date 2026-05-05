@@ -525,6 +525,17 @@ theorem pseudoMass_le_log_two_div {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 
   rw [le_div_iff₀ hr]
   linarith
 
+/-- **`pseudoMass(c) · r ≤ log(2/c)`**: multiplied form of
+`pseudoMass_le_log_two_div`, useful when `r` appears as a factor
+(e.g., `pm·d(x,z)` decay rates). Direct from the divided form
+multiplied through by `r > 0`. -/
+theorem pseudoMass_mul_r_le_log_two_div {α : ℕ} (hα : 1 ≤ α) {r : ℝ}
+    (hr : 0 < r) {c : ℝ} (hc : c ∈ Ioo 0 2) :
+    pseudoMass hα hr hc * r ≤ Real.log (2 / c) := by
+  have h := pseudoMass_le_log_two_div hα hr hc
+  rw [le_div_iff₀ hr] at h
+  exact h
+
 /-- Characterisation of the pseudo-mass: `pseudoMass = t ↔ pseudoMassG α r t = c`
 for `t ≥ 0`. -/
 theorem pseudoMass_eq_iff {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) {c : ℝ}
