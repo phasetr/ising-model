@@ -1002,6 +1002,12 @@ theorem pseudoMassExt_strictAntiOn {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0
   rw [pseudoMassExt_of_mem hα hr hc₁, pseudoMassExt_of_mem hα hr hc₂]
   exact pseudoMass_strictAnti hα hr hc₁ hc₂ h
 
+/-- **`pseudoMassExt` antitone (non-strict) on `Ioo 0 2`**: weaker form
+of `_strictAntiOn`. Convenience corollary for non-strict bound chains. -/
+theorem pseudoMassExt_antitoneOn {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) :
+    AntitoneOn (pseudoMassExt hα hr) (Set.Ioo 0 2) :=
+  (pseudoMassExt_strictAntiOn hα hr).antitoneOn
+
 /-- **`pseudoMassExt` continuous on `Ioo 0 2`**: lifted from
 `pseudoMass_continuousOn`. -/
 theorem pseudoMassExt_continuousOn {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) :
