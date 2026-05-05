@@ -2026,4 +2026,22 @@ theorem pseudoMassFromParamsAtPair_at_J_zero_distinct_eq_pseudoMass
   rw [pseudoMassFromParamsAtPair_at_J_zero_distinct_eq hα hr d Λ hf hxz]
   exact pseudoMassExt_of_mem hα hr hmem
 
+/-- **At `J = 0, h = 0` for ANY pair `(x, z)` (diag + distinct), the
+bridge = 0**: combines `_diag_h_zero` (covers `x = z`, any J, β, h=0)
+with `_at_J_zero_h_zero_eq_zero` (covers `x ≠ z` under `0 < β`).
+At `J = h = 0`, the system is independent uniform spins for any β > 0,
+so all 2-point correlations vanish identically. -/
+theorem pseudoMassFromParamsAtPair_J_zero_h_zero_any_pair
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    {β : ℝ} (hβ : 0 < β) (x z : Fin d → ℤ) :
+    pseudoMassFromParamsAtPair hα hr d Λ
+        (⟨0, 0, β⟩ : IsingParams ℝ) x z = 0 := by
+  by_cases hxz : x = z
+  · subst hxz
+    exact pseudoMassFromParamsAtPair_diag_h_zero hα hr d Λ 0 β x
+  · exact pseudoMassFromParamsAtPair_at_J_zero_h_zero_eq_zero hα hr d Λ hβ hxz
+
 end IsingModel
