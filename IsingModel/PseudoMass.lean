@@ -1369,6 +1369,42 @@ theorem pseudoMassFromParamsAtPair_at_h_zero_eq {α : ℕ} (hα : 1 ≤ α)
   unfold pseudoMassFromParamsAtPair
   rw [Ambient.truncated2Infinite_h_zero (IsingModel.latticeGraph d) Λ J β x z]
 
+/-- **At `J = 0` distinct pair, ferromagnetic, `0 < pseudoMassFromParamsAtPair`
+iff `0 < h`**: under `Ferromagnetic ⟨0, h, β⟩` (which gives `0 ≤ h`, `0 < β`)
+and `x ≠ z`, `0 < pseudoMassFromParamsAtPair ↔ 0 < h`. The forward
+direction follows from `_at_J_zero_distinct_eq` + `pseudoMassExt_pos_iff`
+(forces `tanh(β·h)^2 ∈ Ioo 0 2`, hence `tanh(β·h) ≠ 0`, hence `β·h ≠ 0`,
+combined with `β > 0` gives `h ≠ 0`, then `h > 0` from `h ≥ 0`).
+The reverse is `pseudoMassFromParamsAtPair_pos_at_J_zero` (already
+proven). -/
+theorem pseudoMassFromParamsAtPair_at_J_zero_distinct_pos_iff_h_pos
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    {h β : ℝ} (hf : Ferromagnetic (⟨(0 : ℝ), h, β⟩ : IsingParams ℝ))
+    {x z : Fin d → ℤ} (hxz : x ≠ z) :
+    0 < pseudoMassFromParamsAtPair hα hr d Λ
+          (⟨0, h, β⟩ : IsingParams ℝ) x z ↔ 0 < h := by
+  refine ⟨?_, fun hh => pseudoMassFromParamsAtPair_pos_at_J_zero hα hr d Λ hh hf.hβ hxz⟩
+  intro hpos
+  rw [pseudoMassFromParamsAtPair_at_J_zero_distinct_eq hα hr d Λ hf hxz] at hpos
+  rw [pseudoMassExt_pos_iff hα hr] at hpos
+  have htanh_sq_pos : 0 < Real.tanh (β * h) ^ 2 := hpos.1
+  have htanh_ne : Real.tanh (β * h) ≠ 0 := by
+    intro habs
+    rw [habs] at htanh_sq_pos
+    norm_num at htanh_sq_pos
+  have hβh_ne : β * h ≠ 0 := by
+    intro habs
+    rw [habs, Real.tanh_zero] at htanh_ne
+    exact htanh_ne rfl
+  have hh_ne : h ≠ 0 := by
+    intro h_eq
+    rw [h_eq, mul_zero] at hβh_ne
+    exact hβh_ne rfl
+  exact lt_of_le_of_ne hf.hh (Ne.symm hh_ne)
+
 /-- **At `J = 0` for distinct pair, `pseudoMassFromParamsAtPair` depends
 only on the product `β·h`**: for any two ferromagnetic params
 `⟨0, h₁, β₁⟩` and `⟨0, h₂, β₂⟩` with `β₁·h₁ = β₂·h₂`, the bridge values
