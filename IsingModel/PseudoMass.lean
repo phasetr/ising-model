@@ -1162,4 +1162,44 @@ theorem pseudoMassFromParamsAtPair_J_zero_h_zero {α : ℕ} (hα : 1 ≤ α)
   rw [htanh] at hmem
   exact lt_irrefl 0 hmem.1
 
+/-- **`pseudoMassFromParamsAtPair` is symmetric in `(x, z)`**: the pair
+`{x, z}` as a `Finset` is unchanged under swap, hence the correlation
+and the resulting pseudo-mass are unchanged. -/
+theorem pseudoMassFromParamsAtPair_symm {α : ℕ} (hα : 1 ≤ α)
+    {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (x z : Fin d → ℤ) :
+    pseudoMassFromParamsAtPair hα hr d Λ p x z =
+      pseudoMassFromParamsAtPair hα hr d Λ p z x := by
+  unfold pseudoMassFromParamsAtPair
+  congr 2
+  exact Finset.pair_comm x z
+
+/-- **`pseudoMassFromParamsAtPair` at `x = z` (degenerate pair) at h = 0**:
+`{x, x} = {x}` is a singleton (odd cardinality), and at h = 0 the Z₂
+symmetry forces the singleton correlation = magnetization to vanish.
+Hence `pseudoMassFromParamsAtPair = 0`. -/
+theorem pseudoMassFromParamsAtPair_diag_h_zero {α : ℕ} (hα : 1 ≤ α)
+    {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (J β : ℝ) (x : Fin d → ℤ) :
+    pseudoMassFromParamsAtPair hα hr d Λ (⟨J, 0, β⟩ : IsingParams ℝ) x x = 0 := by
+  unfold pseudoMassFromParamsAtPair
+  have hsing : ({x, x} : Finset (Fin d → ℤ)) = {x} := by
+    ext y; simp
+  rw [hsing]
+  have hodd : Odd (({x} : Finset (Fin d → ℤ)).card) := by
+    simp only [Finset.card_singleton]
+    exact ⟨0, rfl⟩
+  have hcorr := Ambient.correlationInfinite_h_zero
+    (IsingModel.latticeGraph d) Λ J β {x} hodd
+  rw [hcorr]
+  apply pseudoMassExt_of_not_mem
+  intro hmem
+  exact lt_irrefl 0 hmem.1
+
 end IsingModel
