@@ -196,6 +196,21 @@ theorem pseudoMassG_lt_two_iff_pos {α : ℕ} (hα : 1 ≤ α) {r t : ℝ}
   rw [ht_eq, pseudoMassG_zero hα] at hlt
   exact lt_irrefl _ hlt
 
+/-- **`pseudoMassG α r t = 2 ↔ t = 0`** (for `t ≥ 0`, `r > 0`,
+`α ≥ 1`): boundary value characterisation. Forward via
+`pseudoMassG_le_two` (≤ 2) + `pseudoMassG_lt_two_iff_pos` (strict
+< 2 iff t > 0). Reverse: direct from `pseudoMassG_zero`. -/
+theorem pseudoMassG_eq_two_iff_zero {α : ℕ} (hα : 1 ≤ α) {r t : ℝ}
+    (ht : 0 ≤ t) (hr : 0 < r) :
+    pseudoMassG α r t = 2 ↔ t = 0 := by
+  refine ⟨?_, fun h_eq => by rw [h_eq]; exact pseudoMassG_zero hα r⟩
+  intro h_eq
+  by_contra h_ne
+  have ht_pos : 0 < t := lt_of_le_of_ne ht (Ne.symm h_ne)
+  have h_lt : pseudoMassG α r t < 2 := pseudoMassG_lt_two_of_pos hα ht_pos hr
+  rw [h_eq] at h_lt
+  exact lt_irrefl _ h_lt
+
 /-- **Correlation decay bound via global pseudo-mass** (Step 132b):
 If `pseudoMassG α 1 m₁ = c` (defining equation for per-pair pseudo-mass `m₁ = m^-_{x,z} · d(x,z)`)
 and `m₀ ≤ m₁` (e.g. `m₀ = m^-_global · d(x,z)` with `m^-_global ≤ m^-_{x,z}`), then
