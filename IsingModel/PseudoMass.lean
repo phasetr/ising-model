@@ -1892,4 +1892,48 @@ theorem pseudoMassFromParamsAtPair_at_h_zero_eq_pseudoMass_of_truncated2_mem
   rw [pseudoMassFromParamsAtPair_at_h_zero_eq hα hr d Λ J β x z]
   exact pseudoMassExt_of_mem hα hr htrunc
 
+/-- **At `h = 0`, the bridge as a `pseudoMass` upper bound from a
+`truncated2` lower bound**: combining `_at_h_zero_le_of_truncated2_ge`
+(PR #1671, gives `≤ pseudoMassExt(c_min)`) with `pseudoMassExt_of_mem`
+(reduces to `pseudoMass(c_min)` when `c_min ∈ Ioo 0 2`). Useful for
+deriving the §17.5 lower-bound `pseudoMass(...) ≤ latticeMass(...)`
+direction. -/
+theorem pseudoMassFromParamsAtPair_at_h_zero_le_pseudoMass_of_truncated2_ge
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (J β : ℝ) (x z : Fin d → ℤ)
+    {c_min : ℝ} (hc_min : c_min ∈ Set.Ioo (0 : ℝ) 2)
+    (htrunc : Ambient.truncated2Infinite (IsingModel.latticeGraph d) Λ
+                (⟨J, 0, β⟩ : IsingParams ℝ) x z ∈ Set.Ioo (0 : ℝ) 2)
+    (hge : c_min ≤ Ambient.truncated2Infinite (IsingModel.latticeGraph d) Λ
+                    (⟨J, 0, β⟩ : IsingParams ℝ) x z) :
+    pseudoMassFromParamsAtPair hα hr d Λ (⟨J, 0, β⟩ : IsingParams ℝ) x z ≤
+      pseudoMass hα hr hc_min := by
+  have hbound := pseudoMassFromParamsAtPair_at_h_zero_le_of_truncated2_ge
+                    hα hr d Λ J β x z hc_min htrunc hge
+  rwa [pseudoMassExt_of_mem hα hr hc_min] at hbound
+
+/-- **At `h = 0`, the bridge as a `pseudoMass` lower bound from a
+`truncated2` upper bound**: combining `_at_h_zero_ge_of_truncated2_le`
+with `pseudoMassExt_of_mem`. Companion to
+`_at_h_zero_le_pseudoMass_of_truncated2_ge`. -/
+theorem pseudoMassFromParamsAtPair_at_h_zero_ge_pseudoMass_of_truncated2_le
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (J β : ℝ) (x z : Fin d → ℤ)
+    {c_max : ℝ} (hc_max : c_max ∈ Set.Ioo (0 : ℝ) 2)
+    (htrunc : Ambient.truncated2Infinite (IsingModel.latticeGraph d) Λ
+                (⟨J, 0, β⟩ : IsingParams ℝ) x z ∈ Set.Ioo (0 : ℝ) 2)
+    (hle : Ambient.truncated2Infinite (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β⟩ : IsingParams ℝ) x z ≤ c_max) :
+    pseudoMass hα hr hc_max ≤
+      pseudoMassFromParamsAtPair hα hr d Λ (⟨J, 0, β⟩ : IsingParams ℝ) x z := by
+  have hbound := pseudoMassFromParamsAtPair_at_h_zero_ge_of_truncated2_le
+                    hα hr d Λ J β x z hc_max htrunc hle
+  rwa [pseudoMassExt_of_mem hα hr hc_max] at hbound
+
 end IsingModel
