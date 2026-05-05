@@ -873,6 +873,13 @@ theorem pseudoMass_strictAnti {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     rw [heq, h₂] at h₁
     linarith
 
+/-- **`pseudoMass(c) ≠ 0`** for `c ∈ Ioo 0 2`: direct from
+`pseudoMass_pos`. -/
+theorem pseudoMass_ne_zero {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) {c : ℝ}
+    (hc : c ∈ Ioo 0 2) :
+    pseudoMass hα hr hc ≠ 0 :=
+  (pseudoMass_pos hα hr hc).ne'
+
 /-- **`pseudoMass` is antitone (non-strict)**: corollary of
 `pseudoMass_strictAnti` weakened to `≤`. Useful when the strict
 inequality is unnecessarily strong (e.g., bound chains). -/
