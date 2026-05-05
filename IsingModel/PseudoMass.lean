@@ -1024,6 +1024,63 @@ theorem pseudoMassExt_antitoneOn_Ioo_zero_one
     AntitoneOn (pseudoMassExt hα hr) (Set.Ioo 0 1) :=
   (pseudoMassExt_strictAntiOn_Ioo_zero_one hα hr).antitoneOn
 
+/-- **`pseudoMassExt(tanh(t)^2)` `ContinuousAt` for `0 < t`**: composition
+of continuous functions. `tanh` is continuous, squaring is continuous,
+`pseudoMassExt` is continuous at `tanh(t)^2 ∈ Ioo 0 1 ⊂ Ioo 0 2`. -/
+theorem pseudoMassExt_tanh_sq_continuousAt_pos
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) {t : ℝ} (ht : 0 < t) :
+    ContinuousAt (fun s : ℝ => pseudoMassExt hα hr (Real.tanh s ^ 2)) t := by
+  have htanh_pos : 0 < Real.tanh t := by
+    rw [Real.tanh_eq_sinh_div_cosh]
+    exact div_pos (Real.sinh_pos_iff.mpr ht) (Real.cosh_pos _)
+  have htanh_lt : Real.tanh t < 1 := lt_of_abs_lt (Real.abs_tanh_lt_one _)
+  have hmem : Real.tanh t ^ 2 ∈ Set.Ioo (0 : ℝ) 2 := by
+    refine ⟨by positivity, ?_⟩
+    nlinarith
+  have h_tanh_cont : Continuous Real.tanh := by
+    have h_eq : Real.tanh = fun x : ℝ => Real.sinh x / Real.cosh x :=
+      funext (fun x => Real.tanh_eq_sinh_div_cosh x)
+    rw [h_eq]
+    exact Real.continuous_sinh.div Real.continuous_cosh
+      (fun x => (Real.cosh_pos x).ne')
+  have h_tanh_cont_at : ContinuousAt Real.tanh t := h_tanh_cont.continuousAt
+  have h_sq_cont_at : ContinuousAt (fun x : ℝ => x ^ 2) (Real.tanh t) :=
+    (continuous_pow 2).continuousAt
+  have h_inner_cont : ContinuousAt (fun s : ℝ => Real.tanh s ^ 2) t :=
+    h_sq_cont_at.comp h_tanh_cont_at
+  have h_outer_cont : ContinuousAt (pseudoMassExt hα hr) (Real.tanh t ^ 2) :=
+    pseudoMassExt_continuousAt hα hr hmem
+  change ContinuousAt ((pseudoMassExt hα hr) ∘ (fun s : ℝ => Real.tanh s ^ 2)) t
+  exact ContinuousAt.comp h_outer_cont h_inner_cont
+
+/-- **`pseudoMassExt(tanh(t)^2)` `DifferentiableAt` for `0 < t`**:
+composition of differentiable functions on `Ioi 0`. -/
+theorem pseudoMassExt_tanh_sq_differentiableAt_pos
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) {t : ℝ} (ht : 0 < t) :
+    DifferentiableAt ℝ (fun s : ℝ => pseudoMassExt hα hr (Real.tanh s ^ 2)) t := by
+  have htanh_pos : 0 < Real.tanh t := by
+    rw [Real.tanh_eq_sinh_div_cosh]
+    exact div_pos (Real.sinh_pos_iff.mpr ht) (Real.cosh_pos _)
+  have htanh_lt : Real.tanh t < 1 := lt_of_abs_lt (Real.abs_tanh_lt_one _)
+  have hmem : Real.tanh t ^ 2 ∈ Set.Ioo (0 : ℝ) 2 := by
+    refine ⟨by positivity, ?_⟩
+    nlinarith
+  have h_tanh_diff : Differentiable ℝ Real.tanh := by
+    have h_eq : Real.tanh = fun x : ℝ => Real.sinh x / Real.cosh x :=
+      funext (fun x => Real.tanh_eq_sinh_div_cosh x)
+    rw [h_eq]
+    exact Real.differentiable_sinh.div Real.differentiable_cosh
+      (fun x => (Real.cosh_pos x).ne')
+  have h_tanh_diff_at : DifferentiableAt ℝ Real.tanh t := h_tanh_diff.differentiableAt
+  have h_sq_diff_at : DifferentiableAt ℝ (fun x : ℝ => x ^ 2) (Real.tanh t) :=
+    (differentiable_pow 2).differentiableAt
+  have h_inner_diff : DifferentiableAt ℝ (fun s : ℝ => Real.tanh s ^ 2) t :=
+    h_sq_diff_at.comp t h_tanh_diff_at
+  have h_outer_diff : DifferentiableAt ℝ (pseudoMassExt hα hr) (Real.tanh t ^ 2) :=
+    pseudoMassExt_differentiableAt hα hr hmem
+  change DifferentiableAt ℝ ((pseudoMassExt hα hr) ∘ (fun s : ℝ => Real.tanh s ^ 2)) t
+  exact DifferentiableAt.comp t h_outer_diff h_inner_diff
+
 /-- **`pseudoMassExt(tanh(t)^2)` strictly anti in `t` on `Ioi 0`**:
 the composition of the strictly increasing `t ↦ tanh(t)^2` (mapping
 `Ioi 0` into `Ioo 0 1`) with the strictly anti `pseudoMassExt`
