@@ -1351,6 +1351,34 @@ theorem pseudoMassFromParamsAtPair_ge_of_corr_le {α : ℕ} (hα : 1 ≤ α)
     exact le_of_lt
       (pseudoMassExt_strictAntiOn hα hr hcorr hc_max hlt)
 
+/-- **`pseudoMassFromParamsAtPair = 0 ↔ correlation ∉ Ioo 0 2`**: lifted from
+`pseudoMassExt_eq_zero_iff`. -/
+theorem pseudoMassFromParamsAtPair_eq_zero_iff {α : ℕ} (hα : 1 ≤ α)
+    {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (x z : Fin d → ℤ) :
+    pseudoMassFromParamsAtPair hα hr d Λ p x z = 0 ↔
+    Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ p {x, z}
+        ∉ Set.Ioo (0 : ℝ) 2 := by
+  unfold pseudoMassFromParamsAtPair
+  exact pseudoMassExt_eq_zero_iff hα hr _
+
+/-- **`pseudoMassFromParamsAtPair > 0 ↔ correlation ∈ Ioo 0 2`**: lifted from
+`pseudoMassExt_pos_iff`. -/
+theorem pseudoMassFromParamsAtPair_pos_iff {α : ℕ} (hα : 1 ≤ α)
+    {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (x z : Fin d → ℤ) :
+    0 < pseudoMassFromParamsAtPair hα hr d Λ p x z ↔
+    Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ p {x, z}
+        ∈ Set.Ioo (0 : ℝ) 2 := by
+  unfold pseudoMassFromParamsAtPair
+  exact pseudoMassExt_pos_iff hα hr _
+
 /-- **`pseudoMassFromParamsAtPair` sandwich**: if `c_min ≤ correlation ≤ c_max`
 all in `Ioo 0 2`, then `pseudoMassExt c_max ≤ pseudoMassFromParamsAtPair ≤ pseudoMassExt c_min`.
 
