@@ -2841,6 +2841,21 @@ theorem pseudoMassFromParamsAtPair_at_J_zero_distinct_mul_r_le_log_two_div_tanh_
   rw [le_div_iff₀ hr] at hbnd
   exact hbnd
 
+/-- **`pseudoMassFromParamsAtPair_at_J_zero_distinct ∈ Ioo 0 (log(2/tanh^2)/r)`**
+when `0 < h, 0 < β`: bundles `_pos_at_J_zero` with `_lt_log_two_div_tanh_sq`
+(PR #1709) into one Ioo membership statement. -/
+theorem pseudoMassFromParamsAtPair_at_J_zero_distinct_mem_Ioo_log_two_div
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    {h β : ℝ} (hh : 0 < h) (hβ : 0 < β) {x z : Fin d → ℤ} (hxz : x ≠ z) :
+    pseudoMassFromParamsAtPair hα hr d Λ (⟨0, h, β⟩ : IsingParams ℝ) x z ∈
+      Set.Ioo (0 : ℝ) (Real.log (2 / Real.tanh (β * h) ^ 2) / r) :=
+  ⟨pseudoMassFromParamsAtPair_pos_at_J_zero hα hr d Λ hh hβ hxz,
+   pseudoMassFromParamsAtPair_at_J_zero_distinct_lt_log_two_div_tanh_sq
+      hα hr d Λ hh hβ hxz⟩
+
 /-- **Strict multiplied J=0 form**: `pseudoMassFromParamsAtPair_at_J_zero · r < log(2/tanh^2)`. -/
 theorem pseudoMassFromParamsAtPair_at_J_zero_distinct_mul_r_lt_log_two_div_tanh_sq
     {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
