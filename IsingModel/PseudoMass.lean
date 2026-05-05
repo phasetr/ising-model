@@ -2197,6 +2197,86 @@ theorem pseudoMassFromParamsAtPair_at_J_zero_distinct_continuousAt_beta_pos
   exact ContinuousAt.comp houter hmul
 
 /-- **At `J = 0` distinct pair, `pseudoMassFromParamsAtPair` is
+`DifferentiableAt` in `β` for `β > 0`** (with `h > 0` fixed): same
+proof structure as `_continuousAt_beta_pos` (PR #1686), substituting
+`pseudoMassExt_tanh_sq_differentiableAt_pos` (PR #1685) for the
+ContinuousAt version. -/
+theorem pseudoMassFromParamsAtPair_at_J_zero_distinct_differentiableAt_beta_pos
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    {h β : ℝ} (hh : 0 < h) (hβ : 0 < β) {x z : Fin d → ℤ} (hxz : x ≠ z) :
+    DifferentiableAt ℝ
+      (fun b : ℝ => pseudoMassFromParamsAtPair hα hr d Λ
+                      (⟨0, h, b⟩ : IsingParams ℝ) x z) β := by
+  have hf_at : ∀ b > 0, Ferromagnetic (⟨(0 : ℝ), h, b⟩ : IsingParams ℝ) :=
+    fun b hb => ⟨le_refl 0, hh.le, hb⟩
+  have hβ_nhd : ∀ᶠ b in nhds β, 0 < b := by
+    rw [Metric.eventually_nhds_iff]
+    refine ⟨β / 2, by linarith, ?_⟩
+    intros y hy
+    rw [Real.dist_eq, abs_lt] at hy
+    linarith
+  have hEq : (fun b : ℝ => pseudoMassFromParamsAtPair hα hr d Λ
+                              (⟨0, h, b⟩ : IsingParams ℝ) x z) =ᶠ[nhds β]
+              (fun b : ℝ => pseudoMassExt hα hr (Real.tanh (b * h) ^ 2)) := by
+    filter_upwards [hβ_nhd] with b hb
+    exact pseudoMassFromParamsAtPair_at_J_zero_distinct_eq hα hr d Λ
+            (hf_at b hb) hxz
+  have hdiff_alt : DifferentiableAt ℝ
+                    (fun b : ℝ => pseudoMassExt hα hr (Real.tanh (b * h) ^ 2)) β := by
+    have hβh_pos : 0 < β * h := mul_pos hβ hh
+    have hmul : DifferentiableAt ℝ (fun b : ℝ => b * h) β :=
+      (differentiable_id.mul (differentiable_const _)).differentiableAt
+    have houter : DifferentiableAt ℝ
+                    (fun s : ℝ => pseudoMassExt hα hr (Real.tanh s ^ 2)) (β * h) :=
+      pseudoMassExt_tanh_sq_differentiableAt_pos hα hr hβh_pos
+    change DifferentiableAt ℝ
+      ((fun s : ℝ => pseudoMassExt hα hr (Real.tanh s ^ 2)) ∘ (fun b : ℝ => b * h)) β
+    exact DifferentiableAt.comp β houter hmul
+  exact hdiff_alt.congr_of_eventuallyEq hEq
+
+/-- **At `J = 0` distinct pair, `pseudoMassFromParamsAtPair` is
+`DifferentiableAt` in `h` for `h > 0`** (with `β > 0` fixed):
+h-direction analogue of `_differentiableAt_beta_pos`. -/
+theorem pseudoMassFromParamsAtPair_at_J_zero_distinct_differentiableAt_h_pos
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    {h β : ℝ} (hh : 0 < h) (hβ : 0 < β) {x z : Fin d → ℤ} (hxz : x ≠ z) :
+    DifferentiableAt ℝ
+      (fun y : ℝ => pseudoMassFromParamsAtPair hα hr d Λ
+                      (⟨0, y, β⟩ : IsingParams ℝ) x z) h := by
+  have hf_at : ∀ y > 0, Ferromagnetic (⟨(0 : ℝ), y, β⟩ : IsingParams ℝ) :=
+    fun y hy => ⟨le_refl 0, hy.le, hβ⟩
+  have hh_nhd : ∀ᶠ y in nhds h, 0 < y := by
+    rw [Metric.eventually_nhds_iff]
+    refine ⟨h / 2, by linarith, ?_⟩
+    intros y hy
+    rw [Real.dist_eq, abs_lt] at hy
+    linarith
+  have hEq : (fun y : ℝ => pseudoMassFromParamsAtPair hα hr d Λ
+                              (⟨0, y, β⟩ : IsingParams ℝ) x z) =ᶠ[nhds h]
+              (fun y : ℝ => pseudoMassExt hα hr (Real.tanh (β * y) ^ 2)) := by
+    filter_upwards [hh_nhd] with y hy
+    exact pseudoMassFromParamsAtPair_at_J_zero_distinct_eq hα hr d Λ
+            (hf_at y hy) hxz
+  have hdiff_alt : DifferentiableAt ℝ
+                    (fun y : ℝ => pseudoMassExt hα hr (Real.tanh (β * y) ^ 2)) h := by
+    have hβh_pos : 0 < β * h := mul_pos hβ hh
+    have hmul : DifferentiableAt ℝ (fun y : ℝ => β * y) h :=
+      ((differentiable_const _).mul differentiable_id).differentiableAt
+    have houter : DifferentiableAt ℝ
+                    (fun s : ℝ => pseudoMassExt hα hr (Real.tanh s ^ 2)) (β * h) :=
+      pseudoMassExt_tanh_sq_differentiableAt_pos hα hr hβh_pos
+    change DifferentiableAt ℝ
+      ((fun s : ℝ => pseudoMassExt hα hr (Real.tanh s ^ 2)) ∘ (fun y : ℝ => β * y)) h
+    exact DifferentiableAt.comp h houter hmul
+  exact hdiff_alt.congr_of_eventuallyEq hEq
+
+/-- **At `J = 0` distinct pair, `pseudoMassFromParamsAtPair` is
 `ContinuousAt` in `h` for `h > 0`** (with `β > 0` fixed): h-direction
 analogue of `_at_J_zero_distinct_continuousAt_beta_pos`. -/
 theorem pseudoMassFromParamsAtPair_at_J_zero_distinct_continuousAt_h_pos
