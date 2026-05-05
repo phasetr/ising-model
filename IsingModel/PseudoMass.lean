@@ -1343,6 +1343,32 @@ theorem pseudoMassFromParamsAtPair_at_J_zero_distinct_eq {α : ℕ} (hα : 1 ≤
       pseudoMassExt hα hr (Real.tanh (β * h) ^ 2) := by
   rw [pseudoMassFromParamsAtPair_at_J_zero_eq hα hr d Λ hf x z, Finset.card_pair hxz]
 
+/-- **`pseudoMassFromParamsAtPair` at `h = 0` equals
+`pseudoMassExt(truncated2Infinite)`**: at zero external field, the
+unconnected pair correlation `⟨σ_x σ_z⟩` agrees with the truncated
+2-point Ursell function `⟨σ_x σ_z⟩ - ⟨σ_x⟩⟨σ_z⟩`, since the spin-flip
+symmetry forces `⟨σ_x⟩ = ⟨σ_z⟩ = 0`. Thus
+
+  `pseudoMassFromParamsAtPair hα hr d Λ ⟨J, 0, β⟩ x z =
+   pseudoMassExt hα hr (truncated2Infinite (latticeGraph d) Λ ⟨J,0,β⟩ x z)`.
+
+This is the bridge identity needed to compare `pseudoMassFromParamsAtPair`
+to `latticeMass`, which is defined as the supremum of validating
+exponential decay rates of `truncated2Infinite`. (Step 117l support,
+Issue #1645.) -/
+theorem pseudoMassFromParamsAtPair_at_h_zero_eq {α : ℕ} (hα : 1 ≤ α)
+    {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (J β : ℝ) (x z : Fin d → ℤ) :
+    pseudoMassFromParamsAtPair hα hr d Λ (⟨J, 0, β⟩ : IsingParams ℝ) x z =
+      pseudoMassExt hα hr
+        (Ambient.truncated2Infinite (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) x z) := by
+  unfold pseudoMassFromParamsAtPair
+  rw [Ambient.truncated2Infinite_h_zero (IsingModel.latticeGraph d) Λ J β x z]
+
 /-- **`pseudoMassFromParamsAtPair` upper-bounded by `pseudoMass` at a
 positive correlation lower bound**: if `c_min ≤ correlationInfinite ...`
 with `c_min ∈ Ioo 0 2`, then by anti-monotonicity, `pseudoMassFromParamsAtPair
