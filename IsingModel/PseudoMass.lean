@@ -3382,4 +3382,36 @@ theorem pseudoMassFromParamsAtPair_at_h_zero_ge_pseudoMass_iff_ge_truncated2
   have := pseudoMass_strictAnti hα hr hc htrunc h_neg'
   linarith
 
+/-- **`pseudoMassFromParamsAtPair_at_h_zero = pseudoMass(c) ↔ truncated2 = c`**:
+combines the `_le_iff` and `_ge_iff` non-strict iff characterizations
+via antisymmetry. -/
+theorem pseudoMassFromParamsAtPair_at_h_zero_eq_pseudoMass_iff_truncated2_eq
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (J β : ℝ) (x z : Fin d → ℤ)
+    {c : ℝ} (hc : c ∈ Set.Ioo (0 : ℝ) 2)
+    (htrunc : Ambient.truncated2Infinite (IsingModel.latticeGraph d) Λ
+                (⟨J, 0, β⟩ : IsingParams ℝ) x z ∈ Set.Ioo (0 : ℝ) 2) :
+    pseudoMassFromParamsAtPair hα hr d Λ (⟨J, 0, β⟩ : IsingParams ℝ) x z =
+      pseudoMass hα hr hc ↔
+    Ambient.truncated2Infinite (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) x z = c := by
+  refine ⟨?_, ?_⟩
+  · intro heq
+    have hle : pseudoMassFromParamsAtPair hα hr d Λ
+                (⟨J, 0, β⟩ : IsingParams ℝ) x z ≤ pseudoMass hα hr hc := heq.le
+    have hge : pseudoMass hα hr hc ≤ pseudoMassFromParamsAtPair hα hr d Λ
+                (⟨J, 0, β⟩ : IsingParams ℝ) x z := heq.ge
+    have h1 := (pseudoMassFromParamsAtPair_at_h_zero_le_pseudoMass_iff_le_truncated2
+                  hα hr d Λ J β x z hc htrunc).mp hle
+    have h2 := (pseudoMassFromParamsAtPair_at_h_zero_ge_pseudoMass_iff_ge_truncated2
+                  hα hr d Λ J β x z hc htrunc).mp hge
+    linarith
+  · intro heq_t
+    rw [pseudoMassFromParamsAtPair_at_h_zero_eq_pseudoMass_of_truncated2_mem
+          hα hr d Λ J β x z htrunc]
+    congr 1
+
 end IsingModel
