@@ -3500,6 +3500,16 @@ existed; this PR fills the bare-bound and `\geq 1` gaps. 12 new
 thin direct-instantiation wrappers (3 abstracts $\times$ 4
 layers).
 
+\paragraph{Joint AnalyticAt + AnalyticOnNhd wrappers across
+all 4 layers (\S17.5--\S17.6, PR~\#1641).} Adds joint (in
+$(\beta, J, h)$) AnalyticAt and AnalyticOnNhd wrappers for
+\texttt{magnetization}, \texttt{susceptibility}, and along-ex
+\texttt{correlation} across abstract, $\Lambda$, along-exhaustion,
+and $\mathbb{Z}^d$ concrete layers. 24 new theorems. The
+susceptibility joint AnalyticAt case is proved as
+\texttt{Finset.analyticAt\_fun\_sum} over the
+\texttt{truncated2} summands.
+
 \paragraph{Joint ContinuousAt + DifferentiableAt wrappers across
 all 4 layers (\S17.5--\S17.6, PR~\#1640).} Adds joint pointwise
 (in $(\beta, J, h)$) ContinuousAt and DifferentiableAt wrappers

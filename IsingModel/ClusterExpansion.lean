@@ -5300,6 +5300,60 @@ theorem susceptibility_differentiableAt_joint
       susceptibility G ⟨q.2.1, q.2.2, q.1⟩ i) p :=
   (susceptibility_differentiable_joint G i).differentiableAt
 
+/-- **Magnetization jointly `AnalyticAt ℝ` in `(β, J, h)`**:
+direct corollary of `correlation_analyticAt_joint` at `A = {i}`. -/
+theorem magnetization_analyticAt_joint
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (i : ι) (β J h : ℝ) :
+    AnalyticAt ℝ
+      (fun p : ℝ × ℝ × ℝ => magnetization G ⟨p.2.1, p.2.2, p.1⟩ i)
+      (β, J, h) := by
+  unfold magnetization
+  exact correlation_analyticAt_joint G {i} β J h
+
+/-- **Magnetization jointly `AnalyticOnNhd ℝ` over `Set.univ`**. -/
+theorem magnetization_analyticOnNhd_joint
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (i : ι) :
+    AnalyticOnNhd ℝ
+      (fun p : ℝ × ℝ × ℝ => magnetization G ⟨p.2.1, p.2.2, p.1⟩ i)
+      Set.univ :=
+  fun ⟨β, J, h⟩ _ => magnetization_analyticAt_joint G i β J h
+
+/-- **Susceptibility jointly `AnalyticAt ℝ` in `(β, J, h)`**: finite
+sum of analytic `truncated2 = corr({i,j}) − corr({i})·corr({j})`. -/
+theorem susceptibility_analyticAt_joint
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (i : ι) (β J h : ℝ) :
+    AnalyticAt ℝ
+      (fun p : ℝ × ℝ × ℝ => susceptibility G ⟨p.2.1, p.2.2, p.1⟩ i)
+      (β, J, h) := by
+  have heq : (fun p : ℝ × ℝ × ℝ =>
+        susceptibility G ⟨p.2.1, p.2.2, p.1⟩ i) =
+      (fun p : ℝ × ℝ × ℝ =>
+        ∑ j : ι, truncated2 G ⟨p.2.1, p.2.2, p.1⟩ i j) := by
+    funext p
+    exact susceptibility_apply G _ i
+  rw [heq]
+  refine Finset.analyticAt_fun_sum _ (fun j _ => ?_)
+  unfold truncated2
+  exact (correlation_analyticAt_joint G {i, j} β J h).sub
+    ((correlation_analyticAt_joint G {i} β J h).mul
+      (correlation_analyticAt_joint G {j} β J h))
+
+/-- **Susceptibility jointly `AnalyticOnNhd ℝ` over `Set.univ`**. -/
+theorem susceptibility_analyticOnNhd_joint
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (i : ι) :
+    AnalyticOnNhd ℝ
+      (fun p : ℝ × ℝ × ℝ => susceptibility G ⟨p.2.1, p.2.2, p.1⟩ i)
+      Set.univ :=
+  fun ⟨β, J, h⟩ _ => susceptibility_analyticAt_joint G i β J h
+
 /-- **Numerator of gibbsExpectation jointly `AnalyticAt ℝ` in `(β, J, h)`**
 for any observable `F : Config ι → ℝ`: the unnormalised expectation
 `∑_σ F(σ) · boltzmannWeight G p σ` is real-analytic jointly. Each

@@ -178,6 +178,37 @@ theorem susceptibilityΛ_differentiableAt_joint (G : SimpleGraph V) (Λ : Finset
       susceptibilityΛ G Λ ⟨q.2.1, q.2.2, q.1⟩ i) p :=
   (susceptibilityΛ_differentiable_joint G Λ i).differentiableAt
 
+/-- **magnetizationΛ jointly `AnalyticAt ℝ`** (Λ-layer). -/
+theorem magnetizationΛ_analyticAt_joint (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (i : ↑Λ) (β J h : ℝ) :
+    AnalyticAt ℝ (fun p : ℝ × ℝ × ℝ =>
+      magnetizationΛ G Λ ⟨p.2.1, p.2.2, p.1⟩ i) (β, J, h) := by
+  unfold magnetizationΛ
+  simp_rw [correlationΛ_apply]
+  exact IsingModel.correlation_analyticAt_joint (inducedGraph G Λ) {i} β J h
+
+/-- **magnetizationΛ jointly `AnalyticOnNhd ℝ`** over `Set.univ` (Λ-layer). -/
+theorem magnetizationΛ_analyticOnNhd_joint (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (i : ↑Λ) :
+    AnalyticOnNhd ℝ (fun p : ℝ × ℝ × ℝ =>
+      magnetizationΛ G Λ ⟨p.2.1, p.2.2, p.1⟩ i) Set.univ :=
+  fun ⟨β, J, h⟩ _ => magnetizationΛ_analyticAt_joint G Λ i β J h
+
+/-- **susceptibilityΛ jointly `AnalyticAt ℝ`** (Λ-layer). -/
+theorem susceptibilityΛ_analyticAt_joint (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (i : ↑Λ) (β J h : ℝ) :
+    AnalyticAt ℝ (fun p : ℝ × ℝ × ℝ =>
+      susceptibilityΛ G Λ ⟨p.2.1, p.2.2, p.1⟩ i) (β, J, h) := by
+  simp_rw [susceptibilityΛ_apply]
+  exact IsingModel.susceptibility_analyticAt_joint (inducedGraph G Λ) i β J h
+
+/-- **susceptibilityΛ jointly `AnalyticOnNhd ℝ`** over `Set.univ` (Λ-layer). -/
+theorem susceptibilityΛ_analyticOnNhd_joint (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (i : ↑Λ) :
+    AnalyticOnNhd ℝ (fun p : ℝ × ℝ × ℝ =>
+      susceptibilityΛ G Λ ⟨p.2.1, p.2.2, p.1⟩ i) Set.univ :=
+  fun ⟨β, J, h⟩ _ => susceptibilityΛ_analyticAt_joint G Λ i β J h
+
 /-! ## Λ-layer partitionFunction per-direction regularity at general h -/
 
 /-- **partitionFunctionΛ Continuous in `β` at general h** (Λ-layer). -/
