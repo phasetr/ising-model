@@ -98,6 +98,19 @@ theorem pseudoMassG_le_two_div_one_add_pow (α : ℕ) {r t : ℝ} (ht : 0 ≤ t)
     Real.exp_le_one_iff.mpr (neg_nonpos.mpr (mul_nonneg ht hr.le))
   linarith [Real.exp_pos (-(t * r))]
 
+/-- **`pseudoMassG α r t ≤ 2·exp(-(t·r))`** (for `t ≥ 0`, `r > 0`):
+since the denominator `1 + (tr)^α ≥ 1`, the quotient is dominated
+by the numerator. -/
+theorem pseudoMassG_le_two_mul_exp (α : ℕ) {r t : ℝ} (ht : 0 ≤ t) (hr : 0 < r) :
+    pseudoMassG α r t ≤ 2 * Real.exp (-(t * r)) := by
+  unfold pseudoMassG
+  have h_pow_nn : 0 ≤ (t * r) ^ α := pow_nonneg (mul_nonneg ht hr.le) α
+  have h_denom_pos : 0 < 1 + (t * r) ^ α := by linarith
+  have h_denom_ge_one : 1 ≤ 1 + (t * r) ^ α := by linarith
+  have h_exp_pos : 0 < Real.exp (-(t * r)) := Real.exp_pos _
+  rw [div_le_iff₀ h_denom_pos]
+  nlinarith
+
 /-- `pseudoMassG` is at most 2 for `t ≥ 0` and `r > 0`.
 Corollary of `pseudoMassG_le_two_div_one_add_pow`. -/
 theorem pseudoMassG_le_two (α : ℕ) {r t : ℝ} (ht : 0 ≤ t) (hr : 0 < r) :
