@@ -199,6 +199,15 @@ theorem pseudoMassG_analyticAt_of_even {α : ℕ} (hα_even : Even α) (r t : �
   have h_denom_ne : (1 + (t * r) ^ α) ≠ 0 := by linarith
   exact h_two_exp.div h_denom h_denom_ne
 
+/-- **For even `α`, `pseudoMassG α r` is `AnalyticOnNhd ℝ` on
+`Set.univ`**: lift `_analyticAt_of_even` to a set-level form on all
+of `ℝ`. -/
+theorem pseudoMassG_analyticOnNhd_univ_of_even {α : ℕ} (hα_even : Even α)
+    (r : ℝ) :
+    AnalyticOnNhd ℝ (pseudoMassG α r) Set.univ := by
+  intro t _
+  exact pseudoMassG_analyticAt_of_even hα_even r t
+
 /-- **`pseudoMassG α r t < 2` for `t > 0` (strict at positive `t`)**:
 direct corollary of `pseudoMassG_strictAntiOn` (strict anti on `Ici 0`)
 and `pseudoMassG_zero` (`g(0) = 2`). Sharpens `pseudoMassG_le_two`
