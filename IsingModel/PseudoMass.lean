@@ -317,6 +317,37 @@ theorem pseudoMassG_lt_iff {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
   · subst heq_t
     exact lt_irrefl _ hlt
 
+/-- **`pseudoMassG(t₂) ≤ pseudoMassG(t₁) ↔ t₁ ≤ t₂`** (non-strict). -/
+theorem pseudoMassG_le_iff {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    {t₁ t₂ : ℝ} (ht₁ : 0 ≤ t₁) (ht₂ : 0 ≤ t₂) :
+    pseudoMassG α r t₂ ≤ pseudoMassG α r t₁ ↔ t₁ ≤ t₂ := by
+  have hanti := pseudoMassG_strictAntiOn hα hr
+  refine ⟨?_, ?_⟩
+  · intro hle
+    by_contra h_neg
+    have h_neg' : t₂ < t₁ := not_le.mp h_neg
+    have := hanti (Set.mem_Ici.mpr ht₂) (Set.mem_Ici.mpr ht₁) h_neg'
+    linarith
+  · intro hle
+    rcases hle.lt_or_eq with hlt | heq
+    · exact (hanti (Set.mem_Ici.mpr ht₁) (Set.mem_Ici.mpr ht₂) hlt).le
+    · subst heq; exact le_refl _
+
+/-- **`pseudoMassG(t₂) = pseudoMassG(t₁) ↔ t₁ = t₂`** (for `t₁, t₂ ≥ 0`):
+strict anti is injective, so equality on values reverses to equality
+on arguments. -/
+theorem pseudoMassG_eq_iff_eq {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    {t₁ t₂ : ℝ} (ht₁ : 0 ≤ t₁) (ht₂ : 0 ≤ t₂) :
+    pseudoMassG α r t₂ = pseudoMassG α r t₁ ↔ t₁ = t₂ := by
+  refine ⟨?_, ?_⟩
+  · intro heq
+    have h1 := (pseudoMassG_le_iff hα hr ht₁ ht₂).mp heq.le
+    have h2 := (pseudoMassG_le_iff hα hr ht₂ ht₁).mp heq.ge
+    linarith
+  · intro heq_t
+    subst heq_t
+    rfl
+
 /-- **`pseudoMassG α r t < 2` for `t > 0` (strict at positive `t`)**:
 direct corollary of `pseudoMassG_strictAntiOn` (strict anti on `Ici 0`)
 and `pseudoMassG_zero` (`g(0) = 2`). Sharpens `pseudoMassG_le_two`
