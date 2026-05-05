@@ -915,6 +915,20 @@ theorem pseudoMass_le_iff {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
   have := pseudoMass_strictAnti hα hr hc₂ hc₁ h_neg'
   linarith
 
+/-- **`pseudoMass(c₂) = pseudoMass(c₁) ↔ c₁ = c₂`**: equality iff
+via antisymmetry. -/
+theorem pseudoMass_eq_iff_eq {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    {c₁ c₂ : ℝ} (hc₁ : c₁ ∈ Ioo 0 2) (hc₂ : c₂ ∈ Ioo 0 2) :
+    pseudoMass hα hr hc₂ = pseudoMass hα hr hc₁ ↔ c₁ = c₂ := by
+  refine ⟨?_, ?_⟩
+  · intro heq
+    have h1 := (pseudoMass_le_iff hα hr hc₁ hc₂).mp heq.le
+    have h2 := (pseudoMass_le_iff hα hr hc₂ hc₁).mp heq.ge
+    linarith
+  · intro heq_c
+    subst heq_c
+    rfl
+
 /-! ## Discrete Hardy-Littlewood-Sobolev inequality (axiom) -/
 
 /-- **Discrete HLS constant** (Step 129): For `2α > d`, a positive constant exists.
