@@ -3163,6 +3163,33 @@ theorem pseudoMassFromParamsAtPair_at_h_zero_ge_pseudoMass_one
   exact pseudoMassFromParamsAtPair_at_h_zero_ge_pseudoMass_of_truncated2_le
             hα hr d Λ J β x z hone_mem htrunc_mem htrunc_le_one
 
+/-- **At `h = 0` ferromagnetic, `0 < pseudoMassFromParamsAtPair`**
+when `0 < truncated2`: avoids the explicit `Ioo 0 2` membership
+hypothesis by combining `truncated2Infinite_le_one` (ferromagnetic
+→ truncated2 ≤ 1 < 2) to derive membership. Useful when only
+strict positivity of truncated2 is known. -/
+theorem pseudoMassFromParamsAtPair_at_h_zero_pos_of_truncated2_pos
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    {J β : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β) (x z : Fin d → ℤ)
+    (htrunc_pos : 0 < Ambient.truncated2Infinite (IsingModel.latticeGraph d) Λ
+                        (⟨J, 0, β⟩ : IsingParams ℝ) x z) :
+    0 < pseudoMassFromParamsAtPair hα hr d Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) x z := by
+  have hf : Ferromagnetic (⟨J, 0, β⟩ : IsingParams ℝ) :=
+    ⟨hJ, le_refl 0, hβ⟩
+  have htrunc_le_one : Ambient.truncated2Infinite (IsingModel.latticeGraph d) Λ
+                          (⟨J, 0, β⟩ : IsingParams ℝ) x z ≤ 1 :=
+    Ambient.truncated2Infinite_le_one (IsingModel.latticeGraph d) Λ
+      (⟨J, 0, β⟩ : IsingParams ℝ) hf x z
+  have htrunc_mem : Ambient.truncated2Infinite (IsingModel.latticeGraph d) Λ
+                      (⟨J, 0, β⟩ : IsingParams ℝ) x z ∈ Set.Ioo (0 : ℝ) 2 :=
+    ⟨htrunc_pos, by linarith⟩
+  exact pseudoMassFromParamsAtPair_at_h_zero_pos_of_truncated2_mem
+            hα hr d Λ J β x z htrunc_mem
+
 /-- **At `J = 0` distinct, `pseudoMassFromParamsAtPair ≥ pseudoMass(1)`**
 when `0 < h, 0 < β`: J=0 reference slice analog of
 `_at_h_zero_ge_pseudoMass_one` (PR #1725). Uses
