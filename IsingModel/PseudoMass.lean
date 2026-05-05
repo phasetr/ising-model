@@ -678,6 +678,40 @@ theorem pseudoMass_pos {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) {c : �
     rw [← h, pseudoMassG_zero hα r] at hspec
     linarith [hc.2]
 
+/-- **`pseudoMass(c) < log(2/c)/r`** (strict version of
+`pseudoMass_le_log_two_div`): since `pseudoMass(c) > 0` (pseudoMass_pos)
+for `c ∈ Ioo 0 2` and `α ≥ 1`, the denominator `1 + (pm·r)^α > 1`
+strictly, giving `c < 2·exp(-pm·r)` strictly. -/
+theorem pseudoMass_lt_log_two_div {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    {c : ℝ} (hc : c ∈ Ioo 0 2) :
+    pseudoMass hα hr hc < Real.log (2 / c) / r := by
+  set pm := pseudoMass hα hr hc with hpm_def
+  have hpm_pos : 0 < pm := pseudoMass_pos hα hr hc
+  have hg : pseudoMassG α r pm = c := pseudoMass_spec hα hr hc
+  have hc_pos : 0 < c := hc.1
+  have hpmr_pos : 0 < pm * r := mul_pos hpm_pos hr
+  have hpow_pos : 0 < (pm * r) ^ α := by positivity
+  have hdenom_gt_one : 1 < 1 + (pm * r) ^ α := by linarith
+  have hdenom_pos : 0 < 1 + (pm * r) ^ α := by linarith
+  have hexp_pos : 0 < Real.exp (-(pm * r)) := Real.exp_pos _
+  have h_step1 : c < 2 * Real.exp (-(pm * r)) := by
+    rw [← hg]
+    unfold pseudoMassG
+    rw [div_lt_iff₀ hdenom_pos]
+    nlinarith
+  have h_step2 : c / 2 < Real.exp (-(pm * r)) := by linarith
+  have h_c_div_2_pos : 0 < c / 2 := by linarith
+  have h_log_lt : Real.log (c / 2) < -(pm * r) := by
+    have := Real.log_lt_log h_c_div_2_pos h_step2
+    rwa [Real.log_exp] at this
+  have h_log_eq : Real.log (2 / c) = -Real.log (c / 2) := by
+    rw [show (2 / c) = (c / 2)⁻¹ from by field_simp,
+        Real.log_inv]
+  have h_pm_r_lt : pm * r < Real.log (2 / c) := by
+    rw [h_log_eq]; linarith
+  rw [lt_div_iff₀ hr]
+  linarith
+
 /-- The pseudo-mass is strictly decreasing in `c`: larger correlation value
 means smaller pseudo-mass (slower decay). -/
 theorem pseudoMass_strictAnti {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
