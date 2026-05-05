@@ -2644,4 +2644,27 @@ theorem pseudoMassFromParamsAtPair_at_J_zero_distinct_continuousAt_betaH_pos
       (fun p : ℝ × ℝ => p.1 * p.2)) (β, h)
   exact ContinuousAt.comp houter hmul
 
+/-- **At `h = 0` with `truncated2 ∈ Ioo 0 2`,
+`pseudoMassFromParamsAtPair ≤ log(2/truncated2)/r`**: explicit
+quantitative upper bound on the bridge in terms of the truncated
+2-point function. Combines `_at_h_zero_eq_pseudoMass_of_truncated2_mem`
+(PR #1672, identifies bridge with typed `pseudoMass`) with
+`pseudoMass_le_log_two_div` (PR #1702). The bound goes to 0 as
+truncated2 → 2- and diverges as truncated2 → 0+, capturing the
+expected qualitative behaviour. -/
+theorem pseudoMassFromParamsAtPair_at_h_zero_le_log_two_div_truncated2
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (J β : ℝ) (x z : Fin d → ℤ)
+    (htrunc : Ambient.truncated2Infinite (IsingModel.latticeGraph d) Λ
+                (⟨J, 0, β⟩ : IsingParams ℝ) x z ∈ Set.Ioo (0 : ℝ) 2) :
+    pseudoMassFromParamsAtPair hα hr d Λ (⟨J, 0, β⟩ : IsingParams ℝ) x z ≤
+      Real.log (2 / Ambient.truncated2Infinite (IsingModel.latticeGraph d) Λ
+                       (⟨J, 0, β⟩ : IsingParams ℝ) x z) / r := by
+  rw [pseudoMassFromParamsAtPair_at_h_zero_eq_pseudoMass_of_truncated2_mem
+        hα hr d Λ J β x z htrunc]
+  exact pseudoMass_le_log_two_div hα hr htrunc
+
 end IsingModel
