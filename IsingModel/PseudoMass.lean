@@ -255,6 +255,48 @@ theorem pseudoMassG_hasDerivAt (α : ℕ) {r t : ℝ} (ht : 0 ≤ t) (hr : 0 < r
   have hdiv := hf.div hh hne
   convert hdiv using 1; ring
 
+/-- **Step 117h (Issue #1645): `pseudoMassG α r` has a STRICT derivative
+at any `t ≥ 0`** (`HasStrictDerivAt`, not just `HasDerivAt`).
+
+Proof: `pseudoMassG α r t = 2 · exp(-(t·r)) / (1 + (t·r)^α)`, and each
+component is built from `HasStrictDerivAt` primitives:
+- `t ↦ -(t·r)` is affine.
+- `t ↦ Real.exp(...)` is `HasStrictDerivAt` via `Real.exp.hasStrictDerivAt` chain.
+- `t ↦ (t·r)^α` is polynomial.
+- `1 + (t·r)^α ≠ 0` (denominator non-zero), so division preserves
+  `HasStrictDerivAt`.
+
+This is the prerequisite for the implicit function theorem application
+to deduce `HasDerivAt` for `pseudoMass` (the inverse), unlocking the
+substantive bridge of GJ §17.5 Lemma 17.5.2 (Issue #1645). -/
+theorem pseudoMassG_hasStrictDerivAt (α : ℕ) {r t : ℝ} (ht : 0 ≤ t) (hr : 0 < r) :
+    HasStrictDerivAt (pseudoMassG α r)
+      ((-2 * r * Real.exp (-(t * r)) * (1 + (t * r) ^ α) -
+        2 * Real.exp (-(t * r)) * (↑α * (t * r) ^ (α - 1) * r)) /
+       (1 + (t * r) ^ α) ^ 2) t := by
+  have hne : (1 + (t * r) ^ α : ℝ) ≠ 0 := by
+    have h : 0 ≤ (t * r) ^ α := pow_nonneg (mul_nonneg ht hr.le) α
+    linarith
+  -- t ↦ t * r has strict derivative r
+  have h_mul : HasStrictDerivAt (fun t : ℝ => t * r) r t := by
+    have h := (hasStrictDerivAt_id t).mul_const r
+    simpa using h
+  -- t ↦ -(t * r) has strict derivative -r
+  -- t ↦ 2 * exp(-(t * r)) has strict derivative 2 * (exp(-(t*r)) * (-r))
+  have hf : HasStrictDerivAt (fun t : ℝ => 2 * Real.exp (-(t * r)))
+      (2 * (Real.exp (-(t * r)) * (-r))) t :=
+    h_mul.neg.exp.const_mul 2
+  -- t ↦ 1 + (t * r)^α has strict derivative ↑α * (t*r)^(α-1) * r
+  have hh : HasStrictDerivAt (fun t => 1 + (t * r) ^ α)
+      (↑α * (t * r) ^ (α - 1) * r) t := by
+    have h := (hasStrictDerivAt_const t (1 : ℝ)).add (h_mul.pow α)
+    convert h using 1
+    simp
+  -- Division gives the quotient rule derivative
+  unfold pseudoMassG
+  have hdiv := hf.div hh hne
+  convert hdiv using 1; ring
+
 /-- The derivative of `pseudoMassG α r` at `t > 0` is strictly negative,
 confirming the strict antitonicity on `(0, ∞)`. -/
 theorem pseudoMassG_deriv_neg (α : ℕ) {r t : ℝ} (ht : 0 < t) (hr : 0 < r) :
