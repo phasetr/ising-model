@@ -242,6 +242,27 @@ theorem pseudoMassG_analyticOn_Ici_zero (α : ℕ) {r : ℝ} (hr : 0 < r) :
   intro t ht
   exact pseudoMassG_analyticWithinAt_Ici_zero α hr (Set.mem_Ici.mp ht)
 
+/-- **`pseudoMassG α r` is `ContinuousWithinAt (Ici 0)`** at any
+`t ≥ 0`: corollary of `_analyticWithinAt_Ici_zero` via
+`AnalyticWithinAt.continuousWithinAt`. Useful at the boundary
+`t = 0` where 2-sided continuity isn't directly accessible. -/
+theorem pseudoMassG_continuousWithinAt_Ici_zero (α : ℕ) {r : ℝ} (hr : 0 < r)
+    {t : ℝ} (ht : 0 ≤ t) :
+    ContinuousWithinAt (pseudoMassG α r) (Set.Ici 0) t :=
+  (pseudoMassG_analyticWithinAt_Ici_zero α hr ht).continuousWithinAt
+
+/-- **`pseudoMassG α r` is `DifferentiableWithinAt ℝ ... (Ici 0)`**
+at any `t ≥ 0`: corollary of `_analyticWithinAt_Ici_zero` via
+`AnalyticWithinAt.differentiableWithinAt`. -/
+theorem pseudoMassG_differentiableWithinAt_Ici_zero (α : ℕ) {r : ℝ} (hr : 0 < r)
+    {t : ℝ} (ht : 0 ≤ t) :
+    DifferentiableWithinAt ℝ (pseudoMassG α r) (Set.Ici 0) t := by
+  have h_insert : insert t (Set.Ici (0 : ℝ)) = Set.Ici 0 := by
+    apply Set.insert_eq_self.mpr
+    exact Set.mem_Ici.mpr ht
+  have h := (pseudoMassG_analyticWithinAt_Ici_zero α hr ht).differentiableWithinAt
+  rwa [h_insert] at h
+
 /-- **For even `α`, `pseudoMassG α r` is `AnalyticAt` everywhere on `ℝ`**
 (`r > 0`): the denominator `1 + (t·r)^α` is bounded below by `1 > 0`
 since `(t·r)^α ≥ 0` for even `α`, so the quotient is analytic on all
