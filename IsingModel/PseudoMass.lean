@@ -903,6 +903,80 @@ theorem pseudoMass_differentiableOn {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 
       (Set.Ioo 0 2) :=
   fun _ hc₀ => (pseudoMass_differentiableAt hα hr hc₀).differentiableWithinAt
 
+/-! ## Step 117j: named totalization `pseudoMassExt` (Issue #1645) -/
+
+/-- **Step 117j (Issue #1645): named totalization of `pseudoMass`** as
+a function `ℝ → ℝ`.
+
+`pseudoMassExt hα hr c` returns `pseudoMass hα hr hc` if `c ∈ Ioo 0 2`,
+else 0. This is a named version of the conditional `if-then-else 0`
+appearing throughout `pseudoMass_continuousAt`, `_hasStrictDerivAt`,
+etc., useful for cleaner statements in subsequent steps (117k, 117l)
+of the §17.5 Lemma 17.5.2 plan. -/
+noncomputable def pseudoMassExt {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    (c : ℝ) : ℝ :=
+  if hc : c ∈ Set.Ioo 0 2 then pseudoMass hα hr hc else 0
+
+/-- **`pseudoMassExt c` agrees with `pseudoMass hα hr hc` when `c ∈ Ioo 0 2`**. -/
+theorem pseudoMassExt_of_mem {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    {c : ℝ} (hc : c ∈ Set.Ioo 0 2) :
+    pseudoMassExt hα hr c = pseudoMass hα hr hc := by
+  unfold pseudoMassExt
+  rw [dif_pos hc]
+
+/-- **`pseudoMassExt c = 0` when `c ∉ Ioo 0 2`**. -/
+theorem pseudoMassExt_of_not_mem {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    {c : ℝ} (hc : c ∉ Set.Ioo 0 2) :
+    pseudoMassExt hα hr c = 0 := by
+  unfold pseudoMassExt
+  rw [dif_neg hc]
+
+/-- **`pseudoMassExt` non-negative**. -/
+theorem pseudoMassExt_nonneg {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (c : ℝ) :
+    0 ≤ pseudoMassExt hα hr c := by
+  unfold pseudoMassExt
+  by_cases hc : c ∈ Set.Ioo 0 2
+  · rw [dif_pos hc]
+    exact pseudoMass_nonneg hα hr hc
+  · rw [dif_neg hc]
+
+/-- **`pseudoMassExt` positive on `Ioo 0 2`**. -/
+theorem pseudoMassExt_pos_of_mem {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    {c : ℝ} (hc : c ∈ Set.Ioo 0 2) :
+    0 < pseudoMassExt hα hr c := by
+  rw [pseudoMassExt_of_mem hα hr hc]
+  exact pseudoMass_pos hα hr hc
+
+/-- **`pseudoMassExt` `ContinuousAt c₀ ∈ Ioo 0 2`**: re-statement of
+`pseudoMass_continuousAt` using the named definition. -/
+theorem pseudoMassExt_continuousAt {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    {c₀ : ℝ} (hc₀ : c₀ ∈ Set.Ioo 0 2) :
+    ContinuousAt (pseudoMassExt hα hr) c₀ :=
+  pseudoMass_continuousAt hα hr hc₀
+
+/-- **`pseudoMassExt` `HasStrictDerivAt c₀ ∈ Ioo 0 2`**: re-statement of
+`pseudoMass_hasStrictDerivAt` using the named definition. -/
+theorem pseudoMassExt_hasStrictDerivAt {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    {c₀ : ℝ} (hc₀ : c₀ ∈ Set.Ioo 0 2) :
+    HasStrictDerivAt (pseudoMassExt hα hr)
+      (((-2 * r * Real.exp (-(pseudoMass hα hr hc₀ * r)) *
+            (1 + (pseudoMass hα hr hc₀ * r) ^ α) -
+          2 * Real.exp (-(pseudoMass hα hr hc₀ * r)) *
+            (↑α * (pseudoMass hα hr hc₀ * r) ^ (α - 1) * r)) /
+         (1 + (pseudoMass hα hr hc₀ * r) ^ α) ^ 2)⁻¹) c₀ :=
+  pseudoMass_hasStrictDerivAt hα hr hc₀
+
+/-- **`pseudoMassExt` `DifferentiableAt c₀ ∈ Ioo 0 2`**. -/
+theorem pseudoMassExt_differentiableAt {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    {c₀ : ℝ} (hc₀ : c₀ ∈ Set.Ioo 0 2) :
+    DifferentiableAt ℝ (pseudoMassExt hα hr) c₀ :=
+  pseudoMass_differentiableAt hα hr hc₀
+
+/-- **`pseudoMassExt` `DifferentiableOn (Ioo 0 2)`**. -/
+theorem pseudoMassExt_differentiableOn {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) :
+    DifferentiableOn ℝ (pseudoMassExt hα hr) (Set.Ioo 0 2) :=
+  pseudoMass_differentiableOn hα hr
+
 /-! ## Continuity of pseudoMass composition with correlation (Step 120) -/
 
 /-- **pseudoMass∘correlation is continuous in β** (Step 120).
