@@ -3236,4 +3236,35 @@ theorem pseudoMassFromParamsAtPair_at_J_zero_distinct_ge_pseudoMass_one
   rw [heq]
   exact hge
 
+/-- **`pseudoMassFromParamsAtPair_at_h_zero ≠ 0`** when truncated2 ∈ Ioo 0 2:
+trivial corollary of `_pos_of_truncated2_mem` (PR #1679). -/
+theorem pseudoMassFromParamsAtPair_at_h_zero_ne_zero_of_truncated2_mem
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (J β : ℝ) (x z : Fin d → ℤ)
+    (htrunc : Ambient.truncated2Infinite (IsingModel.latticeGraph d) Λ
+                (⟨J, 0, β⟩ : IsingParams ℝ) x z ∈ Set.Ioo (0 : ℝ) 2) :
+    pseudoMassFromParamsAtPair hα hr d Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) x z ≠ 0 :=
+  (pseudoMassFromParamsAtPair_at_h_zero_pos_of_truncated2_mem
+      hα hr d Λ J β x z htrunc).ne'
+
+/-- **`pseudoMassFromParamsAtPair_at_h_zero ≠ 0`** when truncated2 > 0
+under ferromagnetic: companion of `_ne_zero_of_truncated2_mem` using
+the simpler positivity hypothesis. -/
+theorem pseudoMassFromParamsAtPair_at_h_zero_ne_zero_of_truncated2_pos
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    {J β : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β) (x z : Fin d → ℤ)
+    (htrunc_pos : 0 < Ambient.truncated2Infinite (IsingModel.latticeGraph d) Λ
+                        (⟨J, 0, β⟩ : IsingParams ℝ) x z) :
+    pseudoMassFromParamsAtPair hα hr d Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) x z ≠ 0 :=
+  (pseudoMassFromParamsAtPair_at_h_zero_pos_of_truncated2_pos
+      hα hr d Λ hJ hβ x z htrunc_pos).ne'
+
 end IsingModel
