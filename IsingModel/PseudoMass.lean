@@ -191,8 +191,8 @@ theorem pseudoMassG_lt_two_iff_pos {α : ℕ} (hα : 1 ≤ α) {r t : ℝ}
   refine ⟨?_, fun h => pseudoMassG_lt_two_of_pos hα h hr⟩
   intro hlt
   by_contra h_neg
-  push_neg at h_neg
-  have ht_eq : t = 0 := le_antisymm h_neg ht
+  have h_neg' : t ≤ 0 := not_lt.mp h_neg
+  have ht_eq : t = 0 := le_antisymm h_neg' ht
   rw [ht_eq, pseudoMassG_zero hα] at hlt
   exact lt_irrefl _ hlt
 
