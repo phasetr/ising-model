@@ -977,6 +977,20 @@ theorem pseudoMassExt_differentiableOn {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr
     DifferentiableOn ℝ (pseudoMassExt hα hr) (Set.Ioo 0 2) :=
   pseudoMass_differentiableOn hα hr
 
+/-- **`pseudoMassExt` strict anti on `Ioo 0 2`**: lifted from
+`pseudoMass_strictAnti`. -/
+theorem pseudoMassExt_strictAntiOn {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) :
+    StrictAntiOn (pseudoMassExt hα hr) (Set.Ioo 0 2) := by
+  intro c₁ hc₁ c₂ hc₂ h
+  rw [pseudoMassExt_of_mem hα hr hc₁, pseudoMassExt_of_mem hα hr hc₂]
+  exact pseudoMass_strictAnti hα hr hc₁ hc₂ h
+
+/-- **`pseudoMassExt` continuous on `Ioo 0 2`**: lifted from
+`pseudoMass_continuousOn`. -/
+theorem pseudoMassExt_continuousOn {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) :
+    ContinuousOn (pseudoMassExt hα hr) (Set.Ioo 0 2) :=
+  pseudoMass_continuousOn hα hr
+
 /-! ## Continuity of pseudoMass composition with correlation (Step 120) -/
 
 /-- **pseudoMass∘correlation is continuous in β** (Step 120).
