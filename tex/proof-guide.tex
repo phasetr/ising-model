@@ -3500,6 +3500,30 @@ existed; this PR fills the bare-bound and `\geq 1` gaps. 12 new
 thin direct-instantiation wrappers (3 abstracts $\times$ 4
 layers).
 
+\paragraph{\texttt{magnetization} / \texttt{susceptibility}
+HasDerivAt in $h$ + \texttt{magnetization} HasDerivAt in $\beta$
+at $h = 0$, abstract + $\Lambda$ layers
+(\S17.5--\S17.6, PR~\#1627).} Completes the §17.5--§17.6
+single-site \texttt{hasDerivAt} suite at the $\Lambda$ layer
+(the \texttt{\_J} and \texttt{\_beta\_general\_h} directions
+were added in PR~\#1619; this PR adds the \texttt{\_field} and
+\texttt{\_beta} ($h = 0$) directions). Abstract layer
+(\texttt{PhaseTransition.lean}):
+\texttt{magnetization\_hasDerivAt\_field}
+($\partial_h \langle\sigma_i\rangle = \beta \cdot
+(\langle\sigma_i \cdot M\rangle - \langle\sigma_i\rangle
+\langle M\rangle)$),
+\texttt{magnetization\_hasDerivAt\_beta} (at $h = 0$, edge-sum
+form), \texttt{susceptibility\_hasDerivAt\_field} (sum-of-
+\texttt{truncated2} h-derivatives via
+\texttt{truncated2\_hasDerivAt\_field}). $\Lambda$-layer
+(\texttt{AmbientLattice/Defs.lean}):
+\texttt{magnetizationΛ\_hasDerivAt\_field},
+\texttt{magnetizationΛ\_hasDerivAt\_beta} (at $h = 0$),
+\texttt{susceptibilityΛ\_hasDerivAt\_field}. 6 new theorems
+(3 abstract + 3 thin $\Lambda$ wrappers); standard
+thermodynamic-derivative identities (Glimm--Jaffe §17.5 / §17.6).
+
 \paragraph{\texttt{hasDerivAt\_correlationΛ} in $\beta / J / h$
 at the $\Lambda$-layer (\S17.5--\S17.6, \S4.6, PR~\#1626).}
 Lifts four explicit-derivative correlation abstracts to the
