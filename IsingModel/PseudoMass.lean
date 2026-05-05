@@ -2926,6 +2926,41 @@ theorem pseudoMassFromParamsAtPair_at_h_zero_mul_r_lt_log_two_div_truncated2
   rw [lt_div_iff₀ hr] at h
   exact h
 
+/-- **At `J = 0` distinct, `pseudoMassFromParamsAtPair ≤
+(2 - tanh(β·h)^2)/(tanh(β·h)^2 · r)`**: sharper bound near
+`tanh(β·h)^2 = 1` (which never occurs since `tanh^2 < 1` strictly,
+but this captures the linearly-vanishing-with-tanh^2 ↑ regime).
+Combines `_at_J_zero_distinct_eq_pseudoMass` with
+`pseudoMass_le_two_sub_div_mul_r` (PR #1715). -/
+theorem pseudoMassFromParamsAtPair_at_J_zero_distinct_le_two_sub_tanh_sq
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    {h β : ℝ} (hh : 0 < h) (hβ : 0 < β) {x z : Fin d → ℤ} (hxz : x ≠ z) :
+    pseudoMassFromParamsAtPair hα hr d Λ (⟨0, h, β⟩ : IsingParams ℝ) x z ≤
+      (2 - Real.tanh (β * h) ^ 2) / (Real.tanh (β * h) ^ 2 * r) := by
+  obtain ⟨hmem, heq⟩ :=
+    pseudoMassFromParamsAtPair_at_J_zero_distinct_eq_pseudoMass
+      hα hr d Λ hh hβ hxz
+  rw [heq]
+  exact pseudoMass_le_two_sub_div_mul_r hα hr hmem
+
+/-- **Strict version** of `_le_two_sub_tanh_sq`. -/
+theorem pseudoMassFromParamsAtPair_at_J_zero_distinct_lt_two_sub_tanh_sq
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    {h β : ℝ} (hh : 0 < h) (hβ : 0 < β) {x z : Fin d → ℤ} (hxz : x ≠ z) :
+    pseudoMassFromParamsAtPair hα hr d Λ (⟨0, h, β⟩ : IsingParams ℝ) x z <
+      (2 - Real.tanh (β * h) ^ 2) / (Real.tanh (β * h) ^ 2 * r) := by
+  obtain ⟨hmem, heq⟩ :=
+    pseudoMassFromParamsAtPair_at_J_zero_distinct_eq_pseudoMass
+      hα hr d Λ hh hβ hxz
+  rw [heq]
+  exact pseudoMass_lt_two_sub_div_mul_r hα hr hmem
+
 /-- **Multiplied J=0 form**: `pseudoMassFromParamsAtPair_at_J_zero · r ≤ log(2/tanh^2)`. -/
 theorem pseudoMassFromParamsAtPair_at_J_zero_distinct_mul_r_le_log_two_div_tanh_sq
     {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
