@@ -1008,6 +1008,22 @@ theorem pseudoMassExt_antitoneOn {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 <
     AntitoneOn (pseudoMassExt hα hr) (Set.Ioo 0 2) :=
   (pseudoMassExt_strictAntiOn hα hr).antitoneOn
 
+/-- **`pseudoMassExt` strictly anti on `Ioo 0 1`** (sub-interval of
+`Ioo 0 2`): convenient when working with `tanh^2 ∈ [0, 1)` regime. -/
+theorem pseudoMassExt_strictAntiOn_Ioo_zero_one
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) :
+    StrictAntiOn (pseudoMassExt hα hr) (Set.Ioo 0 1) := by
+  intro c₁ hc₁ c₂ hc₂ h
+  have hc₁_in : c₁ ∈ Set.Ioo (0 : ℝ) 2 := ⟨hc₁.1, by linarith [hc₁.2]⟩
+  have hc₂_in : c₂ ∈ Set.Ioo (0 : ℝ) 2 := ⟨hc₂.1, by linarith [hc₂.2]⟩
+  exact pseudoMassExt_strictAntiOn hα hr hc₁_in hc₂_in h
+
+/-- **`pseudoMassExt` antitone on `Ioo 0 1`** (sub-interval form). -/
+theorem pseudoMassExt_antitoneOn_Ioo_zero_one
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) :
+    AntitoneOn (pseudoMassExt hα hr) (Set.Ioo 0 1) :=
+  (pseudoMassExt_strictAntiOn_Ioo_zero_one hα hr).antitoneOn
+
 /-- **`pseudoMassExt` continuous on `Ioo 0 2`**: lifted from
 `pseudoMass_continuousOn`. -/
 theorem pseudoMassExt_continuousOn {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) :
