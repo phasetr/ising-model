@@ -1369,6 +1369,57 @@ theorem pseudoMassFromParamsAtPair_at_h_zero_eq {α : ℕ} (hα : 1 ≤ α)
   unfold pseudoMassFromParamsAtPair
   rw [Ambient.truncated2Infinite_h_zero (IsingModel.latticeGraph d) Λ J β x z]
 
+/-- **`pseudoMassFromParamsAtPair` strictly anti in `h` at `J = 0`** for
+distinct pair, β > 0, h > 0: `tanh(β·h)^2` increases (in `Ioo 0 1 ⊂ Ioo 0 2`)
+as h increases (β > 0 fixed), and `pseudoMassExt` is strictly antitone
+on `Ioo 0 2`. Companion to `_strictAntiOn_beta_at_J_zero` (β-direction
+analogue, PR #1668). -/
+theorem pseudoMassFromParamsAtPair_strictAntiOn_h_at_J_zero
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    {β : ℝ} (hβ : 0 < β) {x z : Fin d → ℤ} (hxz : x ≠ z) :
+    StrictAntiOn (fun h =>
+        pseudoMassFromParamsAtPair hα hr d Λ
+          (⟨0, h, β⟩ : IsingParams ℝ) x z) (Set.Ioi 0) := by
+  intro h₁ hh₁ h₂ hh₂ hlt
+  simp only [Set.mem_Ioi] at hh₁ hh₂
+  have hf₁ : Ferromagnetic (⟨(0 : ℝ), h₁, β⟩ : IsingParams ℝ) :=
+    ⟨le_refl 0, hh₁.le, hβ⟩
+  have hf₂ : Ferromagnetic (⟨(0 : ℝ), h₂, β⟩ : IsingParams ℝ) :=
+    ⟨le_refl 0, hh₂.le, hβ⟩
+  change pseudoMassFromParamsAtPair hα hr d Λ (⟨0, h₂, β⟩ : IsingParams ℝ) x z
+        < pseudoMassFromParamsAtPair hα hr d Λ (⟨0, h₁, β⟩ : IsingParams ℝ) x z
+  rw [pseudoMassFromParamsAtPair_at_J_zero_distinct_eq hα hr d Λ hf₁ hxz,
+      pseudoMassFromParamsAtPair_at_J_zero_distinct_eq hα hr d Λ hf₂ hxz]
+  have htanh_pos₁ : 0 < Real.tanh (β * h₁) := by
+    rw [Real.tanh_eq_sinh_div_cosh]
+    exact div_pos (Real.sinh_pos_iff.mpr (mul_pos hβ hh₁)) (Real.cosh_pos _)
+  have htanh_pos₂ : 0 < Real.tanh (β * h₂) := by
+    rw [Real.tanh_eq_sinh_div_cosh]
+    exact div_pos (Real.sinh_pos_iff.mpr (mul_pos hβ hh₂)) (Real.cosh_pos _)
+  have htanh_mono : Real.tanh (β * h₁) < Real.tanh (β * h₂) :=
+    Real.tanh_strictMono (mul_lt_mul_of_pos_left hlt hβ)
+  have hsq_lt : Real.tanh (β * h₁) ^ 2 < Real.tanh (β * h₂) ^ 2 := by
+    have h1 : Real.tanh (β * h₁) ^ 2 = Real.tanh (β * h₁) * Real.tanh (β * h₁) := sq _
+    have h2 : Real.tanh (β * h₂) ^ 2 = Real.tanh (β * h₂) * Real.tanh (β * h₂) := sq _
+    rw [h1, h2]
+    exact mul_lt_mul' htanh_mono.le htanh_mono htanh_pos₁.le htanh_pos₂
+  have hmem₁ : Real.tanh (β * h₁) ^ 2 ∈ Set.Ioo (0 : ℝ) 2 := by
+    refine ⟨by positivity, ?_⟩
+    have habs : |Real.tanh (β * h₁)| < 1 := Real.abs_tanh_lt_one _
+    have h1 : -1 < Real.tanh (β * h₁) := neg_lt_of_abs_lt habs
+    have h2 : Real.tanh (β * h₁) < 1 := lt_of_abs_lt habs
+    nlinarith
+  have hmem₂ : Real.tanh (β * h₂) ^ 2 ∈ Set.Ioo (0 : ℝ) 2 := by
+    refine ⟨by positivity, ?_⟩
+    have habs : |Real.tanh (β * h₂)| < 1 := Real.abs_tanh_lt_one _
+    have h1 : -1 < Real.tanh (β * h₂) := neg_lt_of_abs_lt habs
+    have h2 : Real.tanh (β * h₂) < 1 := lt_of_abs_lt habs
+    nlinarith
+  exact pseudoMassExt_strictAntiOn hα hr hmem₁ hmem₂ hsq_lt
+
 /-- **`pseudoMassFromParamsAtPair` at `J = 0, h = 0` distinct pair = 0**:
 combining `pseudoMassFromParamsAtPair_at_h_zero_eq` with
 `Ambient.truncated2Infinite_J_zero_of_ne` (which gives 0 for distinct
