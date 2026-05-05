@@ -3500,6 +3500,19 @@ existed; this PR fills the bare-bound and `\geq 1` gaps. 12 new
 thin direct-instantiation wrappers (3 abstracts $\times$ 4
 layers).
 
+\paragraph{$\mathbb{Z}^d$ concrete along-exhaustion
+ContinuousAt + DifferentiableAt wrappers
+(\S17.5--\S17.6, PR~\#1637).}
+\texttt{Concrete/LatticeGraphCorrelation.lean}:
+\texttt{correlationAlongExhaustion\_latticeGraph\_\{continuousAt,
+differentiableAt\}\_J} (2),
+\texttt{magnetizationAlongExhaustion\_latticeGraph\_\{continuousAt,
+differentiableAt\}\_\{beta, field, J\}} (6),
+\texttt{susceptibilityAlongExhaustion\_latticeGraph\_\{continuousAt,
+differentiableAt\}\_\{beta\_general\_h, field, J\}} (6). 14 new
+wrappers at $G := \texttt{IsingModel.latticeGraph}\,d$, lifting the
+ambient general-$G$ versions from PR~\#1635.
+
 \paragraph{\texttt{partitionFunctionAlongExhaustion} /
 \texttt{freeEnergyAlongExhaustion} ContinuousAt + DifferentiableAt
 wrappers (ambient)
