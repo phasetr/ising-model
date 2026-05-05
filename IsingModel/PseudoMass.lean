@@ -1024,6 +1024,40 @@ theorem pseudoMassExt_antitoneOn_Ioo_zero_one
     AntitoneOn (pseudoMassExt hα hr) (Set.Ioo 0 1) :=
   (pseudoMassExt_strictAntiOn_Ioo_zero_one hα hr).antitoneOn
 
+/-- **`pseudoMassExt(tanh(t)^2)` strictly anti in `t` on `Ioi 0`**:
+the composition of the strictly increasing `t ↦ tanh(t)^2` (mapping
+`Ioi 0` into `Ioo 0 1`) with the strictly anti `pseudoMassExt`
+(restricted to `Ioo 0 1`) is strictly anti. Useful for §17.5 §J=0
+slice analysis where the bridge is `pseudoMassExt(tanh(β·h)^2)`
+parametrised by the product `β·h`. -/
+theorem pseudoMassExt_tanh_sq_strictAntiOn_Ioi_zero
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) :
+    StrictAntiOn (fun t : ℝ => pseudoMassExt hα hr (Real.tanh t ^ 2))
+      (Set.Ioi 0) := by
+  intro t₁ ht₁ t₂ ht₂ hlt
+  simp only [Set.mem_Ioi] at ht₁ ht₂
+  have htanh_pos₁ : 0 < Real.tanh t₁ := by
+    rw [Real.tanh_eq_sinh_div_cosh]
+    exact div_pos (Real.sinh_pos_iff.mpr ht₁) (Real.cosh_pos _)
+  have htanh_pos₂ : 0 < Real.tanh t₂ := by
+    rw [Real.tanh_eq_sinh_div_cosh]
+    exact div_pos (Real.sinh_pos_iff.mpr ht₂) (Real.cosh_pos _)
+  have htanh_lt₁ : Real.tanh t₁ < 1 := lt_of_abs_lt (Real.abs_tanh_lt_one _)
+  have htanh_lt₂ : Real.tanh t₂ < 1 := lt_of_abs_lt (Real.abs_tanh_lt_one _)
+  have htanh_mono : Real.tanh t₁ < Real.tanh t₂ := Real.tanh_strictMono hlt
+  have hsq_lt : Real.tanh t₁ ^ 2 < Real.tanh t₂ ^ 2 := by
+    have h1 : Real.tanh t₁ ^ 2 = Real.tanh t₁ * Real.tanh t₁ := sq _
+    have h2 : Real.tanh t₂ ^ 2 = Real.tanh t₂ * Real.tanh t₂ := sq _
+    rw [h1, h2]
+    exact mul_lt_mul' htanh_mono.le htanh_mono htanh_pos₁.le htanh_pos₂
+  have hmem₁ : Real.tanh t₁ ^ 2 ∈ Set.Ioo (0 : ℝ) 1 := by
+    refine ⟨by positivity, ?_⟩
+    nlinarith
+  have hmem₂ : Real.tanh t₂ ^ 2 ∈ Set.Ioo (0 : ℝ) 1 := by
+    refine ⟨by positivity, ?_⟩
+    nlinarith
+  exact pseudoMassExt_strictAntiOn_Ioo_zero_one hα hr hmem₁ hmem₂ hsq_lt
+
 /-- **`pseudoMassExt` continuous on `Ioo 0 2`**: lifted from
 `pseudoMass_continuousOn`. -/
 theorem pseudoMassExt_continuousOn {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) :
