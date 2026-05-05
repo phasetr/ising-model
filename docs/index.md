@@ -201,8 +201,20 @@ gives, at every `h₀ ∈ leeYangDomain`, an analytic function `f` with
 | `prop_5_4_2_limsup_le` | **Direct limsup corollary of Prop 5.4.2 along an exhaustion**: under the same per-stage hypotheses, `Filter.limsup (n ↦ 1 − ⟨σᵢₙ⟩₊^{Λₙ,Bₙ}) atTop ≤ exp(-cβ)`. Proof via `Filter.limsup_le_of_le` + `isCoboundedUnder_le_of_eventually_le` (cobounded from the per-stage nonneg lower bound). No canonical ∞-vol `+`-BC expectation is required. | `PeierlsInfinite.lean` | Exhaustion (+ BC), limsup form |
 | `eta_nonneg_finite_vol` (§17.7) | `η ≥ 0` | `PhaseTransition.lean` | Finite |
 
-**Not yet formalized**: infinite-volume lift of Prop 5.4.2 (requires
-boundary-condition infinite-volume measure framework).
+**Done (liminf form, PR #1643)**: infinite-volume lift of Prop 5.4.2
+via `Filter.liminf` of the per-stage `+`-Gibbs expectation. The
+canonical ∞-vol `+`-BC quantity
+`plusGibbsExpectationLiminf G Λ ⟨J, 0, β⟩ B (fun n σ => sign(σ iₙ))`
+satisfies the genuine infinite-volume Peierls bound:
+`0 ≤ 1 − plusGibbsExpectationLiminf ≤ exp(-c·β)` under the same
+per-stage hypotheses as `prop_5_4_2_along_exhaustion`. Theorems
+`prop_5_4_2_plusGibbsExpectationLiminf_lower_bound`,
+`prop_5_4_2_plusGibbsExpectationLiminf_bound` (upper),
+`prop_5_4_2_plusGibbsExpectationLiminf` (full sandwich) in
+`PeierlsInfinite.lean`. The full Gibbs-measure projective-limit
+construction with canonical `B` and `i` from the ambient geometry
+is deferred (would require additional ambient-geometry machinery
+beyond this lift).
 
 ### Chapter 10 (Conditioning inequalities)
 
