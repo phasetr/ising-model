@@ -2196,4 +2196,41 @@ theorem pseudoMassFromParamsAtPair_at_J_zero_distinct_continuousAt_beta_pos
     ((fun s : ℝ => pseudoMassExt hα hr (Real.tanh s ^ 2)) ∘ (fun b : ℝ => b * h)) β
   exact ContinuousAt.comp houter hmul
 
+/-- **At `J = 0` distinct pair, `pseudoMassFromParamsAtPair` is
+`ContinuousAt` in `h` for `h > 0`** (with `β > 0` fixed): h-direction
+analogue of `_at_J_zero_distinct_continuousAt_beta_pos`. -/
+theorem pseudoMassFromParamsAtPair_at_J_zero_distinct_continuousAt_h_pos
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    {h β : ℝ} (hh : 0 < h) (hβ : 0 < β) {x z : Fin d → ℤ} (hxz : x ≠ z) :
+    ContinuousAt
+      (fun y : ℝ => pseudoMassFromParamsAtPair hα hr d Λ
+                      (⟨0, y, β⟩ : IsingParams ℝ) x z) h := by
+  have hf_at : ∀ y > 0, Ferromagnetic (⟨(0 : ℝ), y, β⟩ : IsingParams ℝ) :=
+    fun y hy => ⟨le_refl 0, hy.le, hβ⟩
+  have hh_nhd : ∀ᶠ y in nhds h, 0 < y := by
+    rw [Metric.eventually_nhds_iff]
+    refine ⟨h / 2, by linarith, ?_⟩
+    intros y hy
+    rw [Real.dist_eq, abs_lt] at hy
+    linarith
+  have hEq : (fun y : ℝ => pseudoMassFromParamsAtPair hα hr d Λ
+                              (⟨0, y, β⟩ : IsingParams ℝ) x z) =ᶠ[nhds h]
+              (fun y : ℝ => pseudoMassExt hα hr (Real.tanh (β * y) ^ 2)) := by
+    filter_upwards [hh_nhd] with y hy
+    exact pseudoMassFromParamsAtPair_at_J_zero_distinct_eq hα hr d Λ
+            (hf_at y hy) hxz
+  refine (ContinuousAt.congr ?_ hEq.symm)
+  have hβh_pos : 0 < β * h := mul_pos hβ hh
+  have hmul : ContinuousAt (fun y : ℝ => β * y) h :=
+    (continuous_const.mul continuous_id).continuousAt
+  have houter : ContinuousAt
+                  (fun s : ℝ => pseudoMassExt hα hr (Real.tanh s ^ 2)) (β * h) :=
+    pseudoMassExt_tanh_sq_continuousAt_pos hα hr hβh_pos
+  change ContinuousAt
+    ((fun s : ℝ => pseudoMassExt hα hr (Real.tanh s ^ 2)) ∘ (fun y : ℝ => β * y)) h
+  exact ContinuousAt.comp houter hmul
+
 end IsingModel
