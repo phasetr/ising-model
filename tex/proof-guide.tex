@@ -3500,6 +3500,24 @@ existed; this PR fills the bare-bound and `\geq 1` gaps. 12 new
 thin direct-instantiation wrappers (3 abstracts $\times$ 4
 layers).
 
+\paragraph{Per-parameter
+\texttt{freeEnergyAlongExhaustion} Continuous/Differentiable
+wrappers (along-ex + $\mathbb{Z}^d$ concrete)
+(\S17.5--\S17.6, PR~\#1632).} Previously only joint Continuous /
+Differentiable wrappers existed. This PR adds per-parameter
+versions at both ambient and $\mathbb{Z}^d$ concrete layers,
+mirroring the existing per-parameter coverage of
+\texttt{partitionFunctionAlongExhaustion}. Ambient
+(\texttt{SpecialCases.lean}):
+\texttt{freeEnergyAlongExhaustion\_\{continuous, differentiable\}\_\{beta, field, J\}}
+(6, with $\beta$ at general $h$).
+$\mathbb{Z}^d$ concrete (\texttt{LatticeGraphCorrelation.lean}):
+\texttt{freeEnergyAlongExhaustion\_latticeGraph\_\{continuous,
+differentiable\}\_\{beta, field, J\}} (6). 12 new thin
+instantiations of the corresponding
+\texttt{freeEnergyΛ\_\{continuous, differentiable\}\_*} at
+$\Lambda := \Lambda.\mathrm{volume}\,n$.
+
 \paragraph{Along-exhaustion + $\mathbb{Z}^d$ concrete
 \texttt{partitionFunctionAlongExhaustion} /
 \texttt{freeEnergyAlongExhaustion} \texttt{HasDerivAt} wrappers
