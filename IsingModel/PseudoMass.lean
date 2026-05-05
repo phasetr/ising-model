@@ -819,6 +819,64 @@ theorem pseudoMass_continuousAt {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < 
     ContinuousAt (fun c => if hc : c ∈ Set.Ioo 0 2 then pseudoMass hα hr hc else 0) c₀ :=
   (pseudoMass_continuousOn hα hr).continuousAt (Ioo_mem_nhds hc₀.1 hc₀.2)
 
+/-- **Step 117i (Issue #1645): `pseudoMass` `HasStrictDerivAt` via inverse function theorem**.
+
+The totalized pseudo-mass `fun c => if c ∈ Ioo 0 2 then pseudoMass hα hr hc else 0`
+is strictly differentiable at every `c₀ ∈ Ioo 0 2`, with derivative the
+reciprocal of `pseudoMassG α r`'s derivative at `pseudoMass(c₀)`.
+
+Proof via `HasStrictDerivAt.of_local_left_inverse` applied to:
+- `f = pseudoMassG α r`, `g = pseudoMassExt`, `a = c₀`.
+- `g(c₀) = pseudoMass(c₀) > 0` (by `pseudoMass_pos`).
+- Strict derivative of `f` at `g(c₀)` from `pseudoMassG_hasStrictDerivAt` (PR #1647).
+- Non-zero derivative from `pseudoMassG_deriv_neg`.
+- Local-left-inverse from `pseudoMass_spec` on a neighborhood of `c₀` in `Ioo 0 2`.
+
+**References**: Glimm–Jaffe §17.5, p. 311 (implicit differentiation).
+**Issue**: tracks Step 117i of Issue #1645. -/
+theorem pseudoMass_hasStrictDerivAt {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    {c₀ : ℝ} (hc₀ : c₀ ∈ Set.Ioo 0 2) :
+    HasStrictDerivAt
+      (fun c => if hc : c ∈ Set.Ioo 0 2 then pseudoMass hα hr hc else 0)
+      (((-2 * r * Real.exp (-(pseudoMass hα hr hc₀ * r)) *
+            (1 + (pseudoMass hα hr hc₀ * r) ^ α) -
+          2 * Real.exp (-(pseudoMass hα hr hc₀ * r)) *
+            (↑α * (pseudoMass hα hr hc₀ * r) ^ (α - 1) * r)) /
+         (1 + (pseudoMass hα hr hc₀ * r) ^ α) ^ 2)⁻¹) c₀ := by
+  set g : ℝ → ℝ := fun c =>
+    if hc : c ∈ Set.Ioo 0 2 then pseudoMass hα hr hc else 0 with hg_def
+  have hg_at_c₀ : g c₀ = pseudoMass hα hr hc₀ := by
+    change (if hc : c₀ ∈ Set.Ioo 0 2 then pseudoMass hα hr hc else 0) =
+        pseudoMass hα hr hc₀
+    rw [dif_pos hc₀]
+  -- Hypotheses for `HasStrictDerivAt.of_local_left_inverse`
+  have hg_cont : ContinuousAt g c₀ := pseudoMass_continuousAt hα hr hc₀
+  have hpm_pos : 0 < pseudoMass hα hr hc₀ := pseudoMass_pos hα hr hc₀
+  have hf_strict : HasStrictDerivAt (pseudoMassG α r)
+      ((-2 * r * Real.exp (-(pseudoMass hα hr hc₀ * r)) *
+            (1 + (pseudoMass hα hr hc₀ * r) ^ α) -
+          2 * Real.exp (-(pseudoMass hα hr hc₀ * r)) *
+            (↑α * (pseudoMass hα hr hc₀ * r) ^ (α - 1) * r)) /
+         (1 + (pseudoMass hα hr hc₀ * r) ^ α) ^ 2)
+      (g c₀) := by
+    rw [hg_at_c₀]
+    exact pseudoMassG_hasStrictDerivAt α hpm_pos.le hr
+  have hf_ne :
+      ((-2 * r * Real.exp (-(pseudoMass hα hr hc₀ * r)) *
+            (1 + (pseudoMass hα hr hc₀ * r) ^ α) -
+          2 * Real.exp (-(pseudoMass hα hr hc₀ * r)) *
+            (↑α * (pseudoMass hα hr hc₀ * r) ^ (α - 1) * r)) /
+         (1 + (pseudoMass hα hr hc₀ * r) ^ α) ^ 2) ≠ 0 :=
+    ne_of_lt (pseudoMassG_deriv_neg α hpm_pos hr)
+  -- Local-left-inverse: pseudoMassG α r (g y) = y for y near c₀ in Ioo 0 2
+  have hfg : ∀ᶠ y in nhds c₀, pseudoMassG α r (g y) = y := by
+    filter_upwards [Ioo_mem_nhds hc₀.1 hc₀.2] with y hy
+    change pseudoMassG α r
+        (if hc : y ∈ Set.Ioo 0 2 then pseudoMass hα hr hc else 0) = y
+    rw [dif_pos hy]
+    exact pseudoMass_spec hα hr hy
+  exact hf_strict.of_local_left_inverse hg_cont hf_ne hfg
+
 /-! ## Continuity of pseudoMass composition with correlation (Step 120) -/
 
 /-- **pseudoMass∘correlation is continuous in β** (Step 120).
