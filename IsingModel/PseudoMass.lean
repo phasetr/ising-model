@@ -176,6 +176,22 @@ theorem pseudoMassG_analyticOnNhd_Ioi_zero (α : ℕ) {r : ℝ} (hr : 0 < r) :
   intro t ht
   exact pseudoMassG_analyticAt α hr (le_of_lt ht)
 
+/-- **`pseudoMassG α r` is `AnalyticWithinAt ℝ ... (Ici 0)`** at every
+`t ≥ 0` (for `r > 0`): lift `pseudoMassG_analyticAt` (PR #1695)
+via `.analyticWithinAt`. Useful at the boundary `t = 0` where
+`AnalyticOnNhd` over Ici 0 would require a 2-sided neighborhood. -/
+theorem pseudoMassG_analyticWithinAt_Ici_zero (α : ℕ) {r : ℝ} (hr : 0 < r)
+    {t : ℝ} (ht : 0 ≤ t) :
+    AnalyticWithinAt ℝ (pseudoMassG α r) (Set.Ici 0) t :=
+  (pseudoMassG_analyticAt α hr ht).analyticWithinAt
+
+/-- **`pseudoMassG α r` is `AnalyticOn ℝ ... (Ici 0)`**: set-level
+form of `_analyticWithinAt_Ici_zero`. -/
+theorem pseudoMassG_analyticOn_Ici_zero (α : ℕ) {r : ℝ} (hr : 0 < r) :
+    AnalyticOn ℝ (pseudoMassG α r) (Set.Ici 0) := by
+  intro t ht
+  exact pseudoMassG_analyticWithinAt_Ici_zero α hr (Set.mem_Ici.mp ht)
+
 /-- **For even `α`, `pseudoMassG α r` is `AnalyticAt` everywhere on `ℝ`**
 (`r > 0`): the denominator `1 + (t·r)^α` is bounded below by `1 > 0`
 since `(t·r)^α ≥ 0` for even `α`, so the quotient is analytic on all
