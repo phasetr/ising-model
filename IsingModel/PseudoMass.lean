@@ -1420,6 +1420,30 @@ theorem pseudoMassExt_antitoneOn {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 <
     AntitoneOn (pseudoMassExt hα hr) (Set.Ioo 0 2) :=
   (pseudoMassExt_strictAntiOn hα hr).antitoneOn
 
+/-- **`pseudoMassExt(c₂) < pseudoMassExt(c₁) ↔ c₁ < c₂`** for both
+in `Ioo 0 2`: iff form of `pseudoMassExt_strictAntiOn`. -/
+theorem pseudoMassExt_lt_iff {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    {c₁ c₂ : ℝ} (hc₁ : c₁ ∈ Set.Ioo 0 2) (hc₂ : c₂ ∈ Set.Ioo 0 2) :
+    pseudoMassExt hα hr c₂ < pseudoMassExt hα hr c₁ ↔ c₁ < c₂ := by
+  rw [pseudoMassExt_of_mem hα hr hc₁, pseudoMassExt_of_mem hα hr hc₂]
+  exact pseudoMass_lt_iff hα hr hc₁ hc₂
+
+/-- **`pseudoMassExt(c₂) ≤ pseudoMassExt(c₁) ↔ c₁ ≤ c₂`** for both
+in `Ioo 0 2`. -/
+theorem pseudoMassExt_le_iff {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    {c₁ c₂ : ℝ} (hc₁ : c₁ ∈ Set.Ioo 0 2) (hc₂ : c₂ ∈ Set.Ioo 0 2) :
+    pseudoMassExt hα hr c₂ ≤ pseudoMassExt hα hr c₁ ↔ c₁ ≤ c₂ := by
+  rw [pseudoMassExt_of_mem hα hr hc₁, pseudoMassExt_of_mem hα hr hc₂]
+  exact pseudoMass_le_iff hα hr hc₁ hc₂
+
+/-- **`pseudoMassExt(c₂) = pseudoMassExt(c₁) ↔ c₁ = c₂`** for both
+in `Ioo 0 2`. -/
+theorem pseudoMassExt_eq_iff_of_mem {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    {c₁ c₂ : ℝ} (hc₁ : c₁ ∈ Set.Ioo 0 2) (hc₂ : c₂ ∈ Set.Ioo 0 2) :
+    pseudoMassExt hα hr c₂ = pseudoMassExt hα hr c₁ ↔ c₁ = c₂ := by
+  rw [pseudoMassExt_of_mem hα hr hc₁, pseudoMassExt_of_mem hα hr hc₂]
+  exact pseudoMass_eq_iff_eq hα hr hc₁ hc₂
+
 /-- **`pseudoMassExt` strictly anti on `Ioo 0 1`** (sub-interval of
 `Ioo 0 2`): convenient when working with `tanh^2 ∈ [0, 1)` regime. -/
 theorem pseudoMassExt_strictAntiOn_Ioo_zero_one
