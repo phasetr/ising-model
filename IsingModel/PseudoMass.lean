@@ -1117,4 +1117,23 @@ theorem pseudoMassFromParamsAtPair_eq_zero_of_corr_not_mem
     pseudoMassFromParamsAtPair hα hr d Λ p x z = 0 :=
   pseudoMassExt_of_not_mem hα hr hc
 
+/-- **`pseudoMassFromParamsAtPair` at `β = 0` (infinite-temperature
+trivial slice)**: equals 0 because the correlation vanishes. -/
+theorem pseudoMassFromParamsAtPair_beta_zero {α : ℕ} (hα : 1 ≤ α)
+    {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (J h : ℝ) (x z : Fin d → ℤ) :
+    pseudoMassFromParamsAtPair hα hr d Λ (⟨J, h, 0⟩ : IsingParams ℝ) x z = 0 := by
+  have hxz_ne : ({x, z} : Finset (Fin d → ℤ)).Nonempty :=
+    ⟨x, by simp⟩
+  have hcorr := Ambient.correlationInfinite_beta_zero_vanish
+    (IsingModel.latticeGraph d) Λ J h {x, z} hxz_ne
+  unfold pseudoMassFromParamsAtPair
+  rw [hcorr]
+  apply pseudoMassExt_of_not_mem
+  intro hmem
+  exact lt_irrefl 0 hmem.1
+
 end IsingModel
