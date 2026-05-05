@@ -3004,4 +3004,42 @@ theorem pseudoMassFromParamsAtPair_at_J_zero_distinct_mul_r_lt_log_two_div_tanh_
   rw [lt_div_iff₀ hr] at hbnd
   exact hbnd
 
+/-- **`pseudoMassExt` tends to 0 as `c → 2` within `Ioo 0 2`**: squeeze
+between `0` (lower bound, `pseudoMassExt_nonneg`) and
+`(2 - c) / (c · r)` (upper bound, `pseudoMass_le_two_sub_div_mul_r`,
+PR #1715), where the upper bound tends to `0/(2·r) = 0`. -/
+theorem pseudoMassExt_tendsto_zero_at_two
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) :
+    Filter.Tendsto (pseudoMassExt hα hr) (nhdsWithin 2 (Set.Ioo (0 : ℝ) 2))
+      (nhds 0) := by
+  apply tendsto_of_tendsto_of_tendsto_of_le_of_le'
+        (g := fun _ : ℝ => (0 : ℝ))
+        (h := fun c : ℝ => (2 - c) / (c * r))
+  · exact tendsto_const_nhds
+  · -- (2 - c)/(c · r) → 0 as c → 2 within Ioo 0 2
+    have hcont : ContinuousAt (fun c : ℝ => (2 - c) / (c * r)) 2 := by
+      apply ContinuousAt.div
+      · exact (continuous_const.sub continuous_id).continuousAt
+      · exact (continuous_id.mul continuous_const).continuousAt
+      · change (2 : ℝ) * r ≠ 0
+        exact (mul_pos (by norm_num : (0 : ℝ) < 2) hr).ne'
+    have hval : (2 - 2) / (2 * r) = (0 : ℝ) := by simp
+    have htnd : Filter.Tendsto (fun c : ℝ => (2 - c) / (c * r)) (nhds 2) (nhds 0) := by
+      rw [← hval]
+      exact hcont.tendsto
+    exact htnd.mono_left nhdsWithin_le_nhds
+  · -- 0 ≤ pseudoMassExt(c) (eventually)
+    refine Filter.Eventually.of_forall ?_
+    intro c
+    exact pseudoMassExt_nonneg hα hr c
+  · -- pseudoMassExt(c) ≤ (2-c)/(c·r) (eventually within Ioo 0 2)
+    rw [Filter.eventually_iff]
+    rw [mem_nhdsWithin]
+    refine ⟨Set.univ, isOpen_univ, ⟨⟩, ?_⟩
+    intro c hc_pair
+    have hc : c ∈ Set.Ioo (0 : ℝ) 2 := hc_pair.2
+    change pseudoMassExt hα hr c ≤ (2 - c) / (c * r)
+    rw [pseudoMassExt_of_mem hα hr hc]
+    exact pseudoMass_le_two_sub_div_mul_r hα hr hc
+
 end IsingModel
