@@ -3500,6 +3500,22 @@ existed; this PR fills the bare-bound and `\geq 1` gaps. 12 new
 thin direct-instantiation wrappers (3 abstracts $\times$ 4
 layers).
 
+\paragraph{\texttt{susceptibilityAlongExhaustion} \texttt{HasDerivAt}
+wrappers (ambient + $\mathbb{Z}^d$ concrete)
+(\S17.5--\S17.6, PR~\#1634).} Adds \texttt{HasDerivAt} along-ex
+wrappers for \texttt{susceptibilityAlongExhaustion} in all four
+parameter directions. Ambient (general $G$, split across
+\texttt{BetaDerivative.lean} / \texttt{JDerivative.lean} /
+\texttt{FieldDerivative.lean}):
+\texttt{susceptibilityAlongExhaustion\_hasDerivAt\_\{beta\_gen,
+beta\_general\_h\_gen, J\_gen, field\_gen\}} (4 thms).
+$\mathbb{Z}^d$ concrete:
+\texttt{susceptibilityAlongExhaustion\_latticeGraph\_hasDerivAt\_*}
+(4 thms). 8 new wrappers in existence form
+$\exists d \in \mathbb{R},\,\mathrm{HasDerivAt}\,f\,d\,x$. The
+ambient layer uses \texttt{\_gen} suffix to avoid potential clash
+with $\mathbb{Z}^d$-specialized variants.
+
 \paragraph{\texttt{magnetizationAlongExhaustion} $\beta$-direction
 + general-$G$ \texttt{susceptibilityAlongExhaustion}
 Continuous/Differentiable wrappers

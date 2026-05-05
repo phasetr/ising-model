@@ -437,4 +437,38 @@ theorem freeEnergyAlongExhaustion_hasDerivAt_beta_general_h
           (⟨J, h, β'⟩ : IsingParams ℝ) n) d β :=
   ⟨_, hasDerivAt_freeEnergyΛ_beta_general_h G (Λ.volume n) J h β⟩
 
+/-- **β-derivative of `susceptibilityAlongExhaustion` at h = 0**
+(GJ §17.5, general G). The `_gen` suffix avoids clash with potential
+ℤ^d-specialized variants. -/
+theorem susceptibilityAlongExhaustion_hasDerivAt_beta_gen
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (i : V) (n : ℕ) :
+    ∃ d : ℝ, HasDerivAt
+      (fun β' => susceptibilityAlongExhaustion G Λ
+          (⟨J, 0, β'⟩ : IsingParams ℝ) i n) d β := by
+  unfold susceptibilityAlongExhaustion
+  by_cases hi : i ∈ Λ.volume n
+  · simp only [hi, dif_pos]
+    exact ⟨_, susceptibilityΛ_hasDerivAt_beta G (Λ.volume n) J β _⟩
+  · simp only [hi, dif_neg, not_false_iff]
+    exact ⟨0, hasDerivAt_const β 0⟩
+
+/-- **β-derivative of `susceptibilityAlongExhaustion` at general h**
+(GJ §17.5, general G). -/
+theorem susceptibilityAlongExhaustion_hasDerivAt_beta_general_h_gen
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J h β : ℝ) (i : V) (n : ℕ) :
+    ∃ d : ℝ, HasDerivAt
+      (fun β' => susceptibilityAlongExhaustion G Λ
+          (⟨J, h, β'⟩ : IsingParams ℝ) i n) d β := by
+  unfold susceptibilityAlongExhaustion
+  by_cases hi : i ∈ Λ.volume n
+  · simp only [hi, dif_pos]
+    exact ⟨_, susceptibilityΛ_hasDerivAt_beta_general_h
+              G (Λ.volume n) J h β _⟩
+  · simp only [hi, dif_neg, not_false_iff]
+    exact ⟨0, hasDerivAt_const β 0⟩
+
 end IsingModel.Ambient
