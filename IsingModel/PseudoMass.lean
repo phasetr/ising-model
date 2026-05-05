@@ -1251,4 +1251,17 @@ theorem pseudoMassFromParamsAtPair_at_J_zero_eq {α : ℕ} (hα : 1 ≤ α)
   unfold pseudoMassFromParamsAtPair
   rw [Ambient.correlationInfinite_J_zero (IsingModel.latticeGraph d) Λ h β hf {x, z}]
 
+/-- **`pseudoMassFromParamsAtPair_at_J_zero_eq` distinct form**:
+under `x ≠ z`, the cardinality is 2, giving an explicit `tanh^2`. -/
+theorem pseudoMassFromParamsAtPair_at_J_zero_distinct_eq {α : ℕ} (hα : 1 ≤ α)
+    {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    {h β : ℝ} (hf : Ferromagnetic (⟨(0 : ℝ), h, β⟩ : IsingParams ℝ))
+    {x z : Fin d → ℤ} (hxz : x ≠ z) :
+    pseudoMassFromParamsAtPair hα hr d Λ (⟨0, h, β⟩ : IsingParams ℝ) x z =
+      pseudoMassExt hα hr (Real.tanh (β * h) ^ 2) := by
+  rw [pseudoMassFromParamsAtPair_at_J_zero_eq hα hr d Λ hf x z, Finset.card_pair hxz]
+
 end IsingModel
