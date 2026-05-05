@@ -1405,6 +1405,40 @@ theorem pseudoMassFromParamsAtPair_at_J_zero_distinct_pos_iff_h_pos
     exact hβh_ne rfl
   exact lt_of_le_of_ne hf.hh (Ne.symm hh_ne)
 
+/-- **At `J = 0` distinct pair, ferromagnetic, `pseudoMassFromParamsAtPair = 0`
+iff `h = 0`**: contrapositive of `_at_J_zero_distinct_pos_iff_h_pos`,
+using non-negativity to flip the strict iff. -/
+theorem pseudoMassFromParamsAtPair_at_J_zero_distinct_eq_zero_iff_h_zero
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    {h β : ℝ} (hf : Ferromagnetic (⟨(0 : ℝ), h, β⟩ : IsingParams ℝ))
+    {x z : Fin d → ℤ} (hxz : x ≠ z) :
+    pseudoMassFromParamsAtPair hα hr d Λ
+        (⟨0, h, β⟩ : IsingParams ℝ) x z = 0 ↔ h = 0 := by
+  have hh_nonneg : 0 ≤ h := hf.hh
+  have hpm_nonneg := pseudoMassFromParamsAtPair_nonneg hα hr d Λ
+                        (⟨0, h, β⟩ : IsingParams ℝ) x z
+  constructor
+  · intro h_eq
+    by_contra h_ne
+    have hh_pos : 0 < h := lt_of_le_of_ne hh_nonneg (Ne.symm h_ne)
+    have hpm_pos : 0 < pseudoMassFromParamsAtPair hα hr d Λ
+                          (⟨0, h, β⟩ : IsingParams ℝ) x z :=
+      (pseudoMassFromParamsAtPair_at_J_zero_distinct_pos_iff_h_pos
+        hα hr d Λ hf hxz).mpr hh_pos
+    linarith
+  · intro hh_eq
+    by_contra h_pm_ne
+    have hpm_pos : 0 < pseudoMassFromParamsAtPair hα hr d Λ
+                          (⟨0, h, β⟩ : IsingParams ℝ) x z :=
+      lt_of_le_of_ne hpm_nonneg (Ne.symm h_pm_ne)
+    have hh_pos : 0 < h :=
+      (pseudoMassFromParamsAtPair_at_J_zero_distinct_pos_iff_h_pos
+        hα hr d Λ hf hxz).mp hpm_pos
+    linarith
+
 /-- **At `J = 0` for distinct pair, `pseudoMassFromParamsAtPair` depends
 only on the product `β·h`**: for any two ferromagnetic params
 `⟨0, h₁, β₁⟩` and `⟨0, h₂, β₂⟩` with `β₁·h₁ = β₂·h₂`, the bridge values
