@@ -533,6 +533,38 @@ theorem latticeMass_nonneg
     (p : IsingParams ℝ) :
     0 ≤ latticeMass d Λ p := bot_le
 
+/-- **Lattice mass lower bound from a validating exponential decay rate**:
+if `HasExponentialDecay d Λ p α` holds, then the real rate `α` (viewed in
+`ENNReal` via `ofReal`) is bounded above by `latticeMass d Λ p`.
+
+This is the direct bridge from the predicate defining admissible decay rates
+to the supremum definition of `latticeMass`; later §17.5 arguments can use it
+to turn a uniform exponential-decay estimate into a quantitative mass lower
+bound. -/
+theorem latticeMass_ge_of_HasExponentialDecay
+    {d : ℕ} {Λ : Ambient.Exhaustion (Fin d → ℤ)} {p : IsingParams ℝ}
+    {α : ℝ} (hα : 0 ≤ α) (hdecay : HasExponentialDecay d Λ p α) :
+    ENNReal.ofReal α ≤ latticeMass d Λ p := by
+  unfold latticeMass
+  set αNN : NNReal := ⟨α, hα⟩
+  apply le_sSup
+  exact ⟨αNN, hdecay, (ENNReal.ofReal_eq_coe_nnreal hα).symm⟩
+
+/-- **Positive lattice mass from a positive validating decay rate**:
+if `HasExponentialDecay d Λ p α` holds at some strictly positive real rate,
+then `latticeMass d Λ p` is strictly positive.
+
+This is the forward direction complementary to
+`HasExponentialDecay_of_latticeMass_pos`, and is the convenient form when a
+Simon--Lieb or high-temperature argument has already produced an explicit
+uniform exponential-decay rate. -/
+theorem latticeMass_pos_of_HasExponentialDecay
+    {d : ℕ} {Λ : Ambient.Exhaustion (Fin d → ℤ)} {p : IsingParams ℝ}
+    {α : ℝ} (hα : 0 < α) (hdecay : HasExponentialDecay d Λ p α) :
+    0 < latticeMass d Λ p :=
+  lt_of_lt_of_le (ENNReal.ofReal_pos.mpr hα)
+    (latticeMass_ge_of_HasExponentialDecay hα.le hdecay)
+
 /-- **Lattice mass at `β = 0` trivial slice is `⊤`**.
 At infinite temperature, `HasExponentialDecay` holds at every
 rate `α` (by `HasExponentialDecay_beta_zero`). For any candidate

@@ -2153,6 +2153,17 @@ which sits in the supremand by the corresponding
 $\mathrm{HasExponentialDecay}$ trivial-slice theorem; this
 contradicts $b$ being an upper bound. Sanity:
 $\mathrm{latticeMass\_nonneg}$ is $\mathrm{bot\_le}$.
+The bridge lemma
+$\mathrm{latticeMass\_ge\_of\_HasExponentialDecay}$ records the
+direct lower-bound direction of this definition: if a non-negative
+real rate $\alpha$ validates
+$\mathrm{HasExponentialDecay}(d,\Lambda,p,\alpha)$, then
+$\mathrm{ENNReal.ofReal}\,\alpha \le \mathrm{latticeMass}(d,\Lambda,p)$.
+The companion $\mathrm{latticeMass\_pos\_of\_HasExponentialDecay}$
+specialises this to a strictly positive rate and concludes
+$0 < \mathrm{latticeMass}(d,\Lambda,p)$. These package the
+$\mathrm{le\_sSup}$ argument needed in the later GJ \S17.5
+Lemma~17.5.2 lower-bound bridge.
 
 \paragraph{\S5.1 cluster property bundled formalisation (PR~\#792).}
 The Glimm--Jaffe \S5.1 cluster property is formalised as a single
