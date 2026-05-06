@@ -325,6 +325,12 @@ theorem pseudoMassG_differentiable_of_even {α : ℕ} (hα_even : Even α) (r : 
     Differentiable ℝ (pseudoMassG α r) :=
   fun t => (pseudoMassG_analyticAt_of_even hα_even r t).differentiableAt
 
+/-- **For even `α`, `pseudoMassG α r` is `AnalyticOn ℝ Set.univ`**. -/
+theorem pseudoMassG_analyticOn_univ_of_even {α : ℕ} (hα_even : Even α)
+    (r : ℝ) :
+    AnalyticOn ℝ (pseudoMassG α r) Set.univ :=
+  (pseudoMassG_analyticOnNhd_univ_of_even hα_even r).analyticOn
+
 /-- **`-pseudoMassG α r` is `StrictMonoOn (Ici 0)`**: dual of
 `pseudoMassG_strictAntiOn`. -/
 theorem neg_pseudoMassG_strictMonoOn {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) :
