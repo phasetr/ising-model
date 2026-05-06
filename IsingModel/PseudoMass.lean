@@ -313,6 +313,18 @@ theorem pseudoMassG_analyticOnNhd_univ_of_even {α : ℕ} (hα_even : Even α)
   intro t _
   exact pseudoMassG_analyticAt_of_even hα_even r t
 
+/-- **For even `α`, `pseudoMassG α r` is `Continuous`**: lift
+`_analyticAt_of_even` to global continuity. -/
+theorem pseudoMassG_continuous_of_even {α : ℕ} (hα_even : Even α) (r : ℝ) :
+    Continuous (pseudoMassG α r) :=
+  continuous_iff_continuousAt.mpr fun t =>
+    (pseudoMassG_analyticAt_of_even hα_even r t).continuousAt
+
+/-- **For even `α`, `pseudoMassG α r` is `Differentiable ℝ`**. -/
+theorem pseudoMassG_differentiable_of_even {α : ℕ} (hα_even : Even α) (r : ℝ) :
+    Differentiable ℝ (pseudoMassG α r) :=
+  fun t => (pseudoMassG_analyticAt_of_even hα_even r t).differentiableAt
+
 /-- **`-pseudoMassG α r` is `StrictMonoOn (Ici 0)`**: dual of
 `pseudoMassG_strictAntiOn`. -/
 theorem neg_pseudoMassG_strictMonoOn {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) :
