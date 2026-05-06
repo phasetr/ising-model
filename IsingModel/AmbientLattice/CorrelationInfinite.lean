@@ -306,6 +306,16 @@ theorem correlationInfinite_nonneg
     exact correlationΛ_nonneg G (Λ.volume N) p hf _
   exact hval.trans (le_ciSup (correlationAlongExhaustion_bddAbove G Λ p A) N)
 
+/-- **`correlationInfinite ∈ Icc 0 1`** under ferromagnetic: combines
+`correlationInfinite_nonneg` and `correlationInfinite_le_one`. -/
+theorem correlationInfinite_mem_Icc_zero_one
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (A : Finset V) :
+    correlationInfinite G Λ p A ∈ Set.Icc (0 : ℝ) 1 :=
+  ⟨correlationInfinite_nonneg G Λ p hf A,
+   correlationInfinite_le_one G Λ p A⟩
+
 /-- **Tendsto of the lifted `correlationΛ` sequence (explicit form)**:
 given an explicit `N` and a hypothesis `hN : ∀ n ≥ N, A ⊆ Λ.volume n`,
 the sequence `m ↦ correlationΛ G (Λ.volume (m+N)) p (liftFinset A …)`
