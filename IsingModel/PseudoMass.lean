@@ -1640,6 +1640,7 @@ theorem pseudoMassExt_mem_Ioi_zero_of_mem {α : ℕ} (hα : 1 ≤ α) {r : ℝ}
     pseudoMassExt hα hr c ∈ Set.Ioi (0 : ℝ) :=
   pseudoMassExt_pos_of_mem hα hr hc
 
+
 /-- **`pseudoMassExt c ∈ Set.Ioo 0 (log(2/c)/r)`** for `c ∈ Ioo 0 2`:
 combine pos with strict log upper bound. -/
 theorem pseudoMassExt_mem_Ioo_zero_log_two_div {α : ℕ} (hα : 1 ≤ α) {r : ℝ}
@@ -1949,6 +1950,13 @@ theorem pseudoMassExt_pos_iff {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
   by_contra hnotmem
   rw [pseudoMassExt_of_not_mem hα hr hnotmem] at h_pos
   exact lt_irrefl 0 h_pos
+
+/-- **`pseudoMassExt c ∈ Set.Ioi 0 ↔ c ∈ Ioo 0 2`**: combines positivity
+iff with mem reformulation. -/
+theorem pseudoMassExt_mem_Ioi_iff_mem {α : ℕ} (hα : 1 ≤ α) {r : ℝ}
+    (hr : 0 < r) (c : ℝ) :
+    pseudoMassExt hα hr c ∈ Set.Ioi (0 : ℝ) ↔ c ∈ Set.Ioo (0 : ℝ) 2 :=
+  pseudoMassExt_pos_iff hα hr c
 
 /-- **`pseudoMassExt 0 = 0`**: zero is not in `Ioo 0 2` (open interval). -/
 theorem pseudoMassExt_zero {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) :
