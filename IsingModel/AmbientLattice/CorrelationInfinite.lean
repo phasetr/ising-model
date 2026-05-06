@@ -331,7 +331,7 @@ theorem correlationInfinite_mem_Icc_zero_two
 theorem correlationInfinite_mem_Ioc_zero_one_of_pos
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (p : IsingParams ℝ) (hf : Ferromagnetic p) (A : Finset V)
+    (p : IsingParams ℝ) (_hf : Ferromagnetic p) (A : Finset V)
     (hpos : 0 < correlationInfinite G Λ p A) :
     correlationInfinite G Λ p A ∈ Set.Ioc (0 : ℝ) 1 :=
   ⟨hpos, correlationInfinite_le_one G Λ p A⟩
@@ -340,7 +340,7 @@ theorem correlationInfinite_mem_Ioc_zero_one_of_pos
 theorem correlationInfinite_mem_Ioo_zero_two_of_pos
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (p : IsingParams ℝ) (hf : Ferromagnetic p) (A : Finset V)
+    (p : IsingParams ℝ) (_hf : Ferromagnetic p) (A : Finset V)
     (hpos : 0 < correlationInfinite G Λ p A) :
     correlationInfinite G Λ p A ∈ Set.Ioo (0 : ℝ) 2 :=
   ⟨hpos, correlationInfinite_lt_two G Λ p A⟩
