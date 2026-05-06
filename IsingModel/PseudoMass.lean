@@ -3669,4 +3669,17 @@ theorem pseudoMassFromParamsAtPair_at_h_zero_pos_iff_ne_zero
   exact Ambient.truncated2Infinite_pos_iff_ne_zero
             (IsingModel.latticeGraph d) Λ (⟨J, 0, β⟩ : IsingParams ℝ) hf x z
 
+/-- **`0 < pseudoMassFromParamsAtPair ↔ pseudoMassFromParamsAtPair ≠ 0`**:
+trivial via `pseudoMassFromParamsAtPair_nonneg`. -/
+theorem pseudoMassFromParamsAtPair_pos_iff_ne_zero
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (x z : Fin d → ℤ) :
+    0 < pseudoMassFromParamsAtPair hα hr d Λ p x z ↔
+    pseudoMassFromParamsAtPair hα hr d Λ p x z ≠ 0 :=
+  (pseudoMassFromParamsAtPair_nonneg hα hr d Λ p x z).lt_iff_ne.trans
+    ⟨fun h => h.symm, fun h => h.symm⟩
+
 end IsingModel
