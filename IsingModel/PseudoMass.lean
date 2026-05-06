@@ -4278,4 +4278,14 @@ theorem pseudoMassFromParamsAtPair_mem_Ioi_zero_of_corr_mem
     pseudoMassFromParamsAtPair hα hr d Λ p x z ∈ Set.Ioi (0 : ℝ) :=
   pseudoMassFromParamsAtPair_pos_of_corr_mem hα hr d Λ p x z hcorr
 
+/-- **`pseudoMassFromParamsAtPair ∉ Iio 0`**: trivial. -/
+theorem pseudoMassFromParamsAtPair_not_mem_Iio_zero
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (x z : Fin d → ℤ) :
+    pseudoMassFromParamsAtPair hα hr d Λ p x z ∉ Set.Iio (0 : ℝ) :=
+  not_lt.mpr (pseudoMassFromParamsAtPair_nonneg hα hr d Λ p x z)
+
 end IsingModel
