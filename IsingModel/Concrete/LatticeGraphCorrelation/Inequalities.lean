@@ -2316,6 +2316,144 @@ theorem latticeMass_pos_of_pseudoMassFromParamsAtPair_cubic_le_high_temp_rate
   latticeMass_pos_of_pseudoMassFromParamsAtPair_exhaustion_le_high_temp_rate
     hα hr Λ (Ambient.cubicExhaustion d) hJ hβ hlt hpos hle_cubic
 
+/-- **Reference pseudo-mass itself is a target validating rate**:
+if the pseudo-mass/high-temperature-rate comparison is verified on a reference
+exhaustion `Λ₀`, then that reference pseudo-mass value is also a validating
+`HasExponentialDecay` rate for the target exhaustion `Λ`.
+
+This is the direct reference-rate form of
+`HasExponentialDecay_pseudoMassFromParamsAtPair_of_exhaustion_le_high_temp_rate`;
+it only needs the numerical comparison of the reference pseudo-mass with the
+transferred high-temperature rate.
+
+Reference: Glimm--Jaffe §17.5 Lemma 17.5.2, pp. 311--312. -/
+theorem HasExponentialDecay_reference_pseudoMassFromParamsAtPair_of_exhaustion_le_high_temp_rate
+    {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    (Λ Λ₀ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ₀.volume n)).edgeSet]
+    {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)
+    (hlt : β * J * ↑(2 * d) < 1) {x z : Fin d → ℤ}
+    (hle₀ : pseudoMassFromParamsAtPair hα hr d Λ₀
+        (⟨J, 0, β⟩ : IsingParams ℝ) x z
+      ≤ -Real.log (β * J * ↑(2 * d))) :
+    HasExponentialDecay d Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+      (pseudoMassFromParamsAtPair hα hr d Λ₀
+        (⟨J, 0, β⟩ : IsingParams ℝ) x z) :=
+  HasExponentialDecay_mono d Λ (⟨J, 0, β⟩ : IsingParams ℝ) hle₀
+    (HasExponentialDecay_transfer_high_temp Λ hJ hβ hlt)
+
+/-- **Reference pseudo-mass lower bound on target lattice mass**:
+under the reference-exhaustion high-temperature comparison, the reference
+pseudo-mass value itself is bounded above by the target `latticeMass`.
+
+Reference: Glimm--Jaffe §17.5 Lemma 17.5.2, pp. 311--312. -/
+theorem latticeMass_ge_reference_pseudoMassFromParamsAtPair_of_exhaustion_le_high_temp_rate
+    {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    (Λ Λ₀ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ₀.volume n)).edgeSet]
+    {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)
+    (hlt : β * J * ↑(2 * d) < 1) {x z : Fin d → ℤ}
+    (hle₀ : pseudoMassFromParamsAtPair hα hr d Λ₀
+        (⟨J, 0, β⟩ : IsingParams ℝ) x z
+      ≤ -Real.log (β * J * ↑(2 * d))) :
+    ENNReal.ofReal
+        (pseudoMassFromParamsAtPair hα hr d Λ₀
+          (⟨J, 0, β⟩ : IsingParams ℝ) x z)
+      ≤ latticeMass d Λ (⟨J, 0, β⟩ : IsingParams ℝ) :=
+  latticeMass_ge_of_HasExponentialDecay
+    (pseudoMassFromParamsAtPair_nonneg hα hr d Λ₀ _ x z)
+    (HasExponentialDecay_reference_pseudoMassFromParamsAtPair_of_exhaustion_le_high_temp_rate
+      hα hr Λ Λ₀ hJ hβ hlt hle₀)
+
+/-- **Positive target lattice mass from a positive reference pseudo-mass**:
+if the reference pseudo-mass is positive and no larger than the high-temperature
+rate, then the target `latticeMass` is positive.
+
+Reference: Glimm--Jaffe §17.5 Lemma 17.5.2, pp. 311--312. -/
+theorem latticeMass_pos_of_reference_pseudoMassFromParamsAtPair_exhaustion_le_high_temp_rate
+    {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    (Λ Λ₀ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ₀.volume n)).edgeSet]
+    {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)
+    (hlt : β * J * ↑(2 * d) < 1) {x z : Fin d → ℤ}
+    (hpos₀ : 0 < pseudoMassFromParamsAtPair hα hr d Λ₀
+      (⟨J, 0, β⟩ : IsingParams ℝ) x z)
+    (hle₀ : pseudoMassFromParamsAtPair hα hr d Λ₀
+        (⟨J, 0, β⟩ : IsingParams ℝ) x z
+      ≤ -Real.log (β * J * ↑(2 * d))) :
+    0 < latticeMass d Λ (⟨J, 0, β⟩ : IsingParams ℝ) :=
+  latticeMass_pos_of_HasExponentialDecay hpos₀
+    (HasExponentialDecay_reference_pseudoMassFromParamsAtPair_of_exhaustion_le_high_temp_rate
+      hα hr Λ Λ₀ hJ hβ hlt hle₀)
+
+/-- **Cubic pseudo-mass itself is a target validating rate**:
+if the pseudo-mass/high-temperature-rate comparison is verified on
+`cubicExhaustion d`, then that cubic pseudo-mass value is a validating
+`HasExponentialDecay` rate for any target exhaustion `Λ`.
+
+Reference: Glimm--Jaffe §17.5 Lemma 17.5.2, pp. 311--312. -/
+theorem HasExponentialDecay_cubic_pseudoMassFromParamsAtPair_of_cubic_le_high_temp_rate
+    {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      ((Ambient.cubicExhaustion d).volume n)).edgeSet]
+    {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)
+    (hlt : β * J * ↑(2 * d) < 1) {x z : Fin d → ℤ}
+    (hle_cubic : pseudoMassFromParamsAtPair hα hr d (Ambient.cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) x z
+      ≤ -Real.log (β * J * ↑(2 * d))) :
+    HasExponentialDecay d Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+      (pseudoMassFromParamsAtPair hα hr d (Ambient.cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) x z) :=
+  HasExponentialDecay_reference_pseudoMassFromParamsAtPair_of_exhaustion_le_high_temp_rate
+    hα hr Λ (Ambient.cubicExhaustion d) hJ hβ hlt hle_cubic
+
+/-- **Cubic pseudo-mass lower bound on arbitrary-exhaustion lattice mass**:
+under the cubic-reference comparison with `-log(βJ·2d)`, the cubic pseudo-mass
+value itself is bounded above by the target `latticeMass`.
+
+Reference: Glimm--Jaffe §17.5 Lemma 17.5.2, pp. 311--312. -/
+theorem latticeMass_ge_cubic_pseudoMassFromParamsAtPair_of_cubic_le_high_temp_rate
+    {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      ((Ambient.cubicExhaustion d).volume n)).edgeSet]
+    {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)
+    (hlt : β * J * ↑(2 * d) < 1) {x z : Fin d → ℤ}
+    (hle_cubic : pseudoMassFromParamsAtPair hα hr d (Ambient.cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) x z
+      ≤ -Real.log (β * J * ↑(2 * d))) :
+    ENNReal.ofReal
+        (pseudoMassFromParamsAtPair hα hr d (Ambient.cubicExhaustion d)
+          (⟨J, 0, β⟩ : IsingParams ℝ) x z)
+      ≤ latticeMass d Λ (⟨J, 0, β⟩ : IsingParams ℝ) :=
+  latticeMass_ge_reference_pseudoMassFromParamsAtPair_of_exhaustion_le_high_temp_rate
+    hα hr Λ (Ambient.cubicExhaustion d) hJ hβ hlt hle_cubic
+
+/-- **Positive target lattice mass from a positive cubic pseudo-mass**:
+if the cubic-reference pseudo-mass is positive and no larger than the
+high-temperature rate, then the target `latticeMass` is positive.
+
+Reference: Glimm--Jaffe §17.5 Lemma 17.5.2, pp. 311--312. -/
+theorem latticeMass_pos_of_cubic_pseudoMassFromParamsAtPair_cubic_le_high_temp_rate
+    {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      ((Ambient.cubicExhaustion d).volume n)).edgeSet]
+    {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)
+    (hlt : β * J * ↑(2 * d) < 1) {x z : Fin d → ℤ}
+    (hpos_cubic : 0 < pseudoMassFromParamsAtPair hα hr d (Ambient.cubicExhaustion d)
+      (⟨J, 0, β⟩ : IsingParams ℝ) x z)
+    (hle_cubic : pseudoMassFromParamsAtPair hα hr d (Ambient.cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) x z
+      ≤ -Real.log (β * J * ↑(2 * d))) :
+    0 < latticeMass d Λ (⟨J, 0, β⟩ : IsingParams ℝ) :=
+  latticeMass_pos_of_reference_pseudoMassFromParamsAtPair_exhaustion_le_high_temp_rate
+    hα hr Λ (Ambient.cubicExhaustion d) hJ hβ hlt hpos_cubic hle_cubic
+
 /-- **Cluster property holds below the critical inverse temperature** (GJ §17.1):
 for `J ≥ 0`, `β ≥ 0`, and `ENNReal.ofReal β < criticalInverseTemp d J`, the
 cluster property holds for any exhaustion `Λ`:
