@@ -1463,6 +1463,19 @@ theorem pseudoMassExt_ne_zero_of_mem {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr :
     pseudoMassExt hα hr c ≠ 0 :=
   (pseudoMassExt_pos_of_mem hα hr hc).ne'
 
+/-- **`pseudoMassExt c ∈ Set.Ici 0`** (always): direct from
+`pseudoMassExt_nonneg`. -/
+theorem pseudoMassExt_mem_Ici_zero {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    (c : ℝ) :
+    pseudoMassExt hα hr c ∈ Set.Ici (0 : ℝ) :=
+  pseudoMassExt_nonneg hα hr c
+
+/-- **`pseudoMassExt c ∈ Set.Ioi 0`** for `c ∈ Ioo 0 2`. -/
+theorem pseudoMassExt_mem_Ioi_zero_of_mem {α : ℕ} (hα : 1 ≤ α) {r : ℝ}
+    (hr : 0 < r) {c : ℝ} (hc : c ∈ Set.Ioo 0 2) :
+    pseudoMassExt hα hr c ∈ Set.Ioi (0 : ℝ) :=
+  pseudoMassExt_pos_of_mem hα hr hc
+
 /-- **`0 < pseudoMassExt c ↔ pseudoMassExt c ≠ 0`**: standard
 nonneg → pos iff ne_zero pattern (`pseudoMassExt_nonneg`). -/
 theorem pseudoMassExt_pos_iff_ne_zero {α : ℕ} (hα : 1 ≤ α) {r : ℝ}
