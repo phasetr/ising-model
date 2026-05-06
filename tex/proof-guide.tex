@@ -2228,6 +2228,29 @@ proved on $\mathrm{cubicExhaustion}\,d$ immediately usable as a target
 decay rate and target $\mathrm{latticeMass}$ lower bound for arbitrary
 exhaustions.
 
+The profile-comparison refinement
+\path{pseudoMassFromParamsAtPair_le_high_temp_rate_of_pseudoMassG_le_corr}
+reduces this remaining quantitative comparison to a direct pair-correlation
+lower bound.  If
+$C_\Lambda(x,z)=\mathrm{correlationInfinite}(\mathrm{latticeGraph}\,d,\Lambda,
+\langle J,0,\beta\rangle,\{x,z\})$ lies in $(0,2)$ and
+\[
+  \mathrm{pseudoMassG}\,\alpha\,r\,(-\log(\beta J\,2d))
+    \le C_\Lambda(x,z),
+\]
+then $m^-_{\Lambda,x,z}\le -\log(\beta J\,2d)$.  The proof uses
+$0\le -\log(\beta J\,2d)$ from $0\le J$, $0<\beta$, and
+$\beta J\,2d<1$, rewrites $\mathrm{pseudoMassExt}$ to
+$\mathrm{pseudoMass}$ on the active interval $(0,2)$, and applies the
+implicit characterization
+$\mathrm{pseudoMass}(c)\le t \iff \mathrm{pseudoMassG}(\alpha,r,t)\le c$.
+
+The companion profile-bound theorems compose this comparison with the
+transferred high-temperature rate.  Their reference-exhaustion and
+cubic-reference variants provide the same target decay and target
+$\mathrm{latticeMass}$ conclusions when the profile lower bound is checked on
+$\Lambda_0$ or on $\mathrm{cubicExhaustion}\,d$.
+
 \paragraph{\S5.1 cluster property bundled formalisation (PR~\#792).}
 The Glimm--Jaffe \S5.1 cluster property is formalised as a single
 predicate
