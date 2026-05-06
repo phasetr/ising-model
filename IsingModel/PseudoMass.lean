@@ -1637,6 +1637,12 @@ theorem neg_pseudoMassExt_strictMonoOn {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr
     pseudoMassExt_strictAntiOn hα hr hc₁ hc₂ h
   linarith
 
+/-- **`-pseudoMassExt` is `MonotoneOn (Ioo 0 2)`**: non-strict. -/
+theorem neg_pseudoMassExt_monotoneOn {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) :
+    MonotoneOn (fun c => -pseudoMassExt hα hr c) (Set.Ioo 0 2) :=
+  (neg_pseudoMassExt_strictMonoOn hα hr).monotoneOn
+
+
 /-- **`pseudoMassExt(c₂) < pseudoMassExt(c₁) ↔ c₁ < c₂`** for both
 in `Ioo 0 2`: iff form of `pseudoMassExt_strictAntiOn`. -/
 theorem pseudoMassExt_lt_iff {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
@@ -1676,6 +1682,15 @@ theorem pseudoMassExt_antitoneOn_Ioo_zero_one
     {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) :
     AntitoneOn (pseudoMassExt hα hr) (Set.Ioo 0 1) :=
   (pseudoMassExt_strictAntiOn_Ioo_zero_one hα hr).antitoneOn
+
+/-- **`-pseudoMassExt` is `StrictMonoOn (Ioo 0 1)`**: sub-interval. -/
+theorem neg_pseudoMassExt_strictMonoOn_Ioo_zero_one
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) :
+    StrictMonoOn (fun c => -pseudoMassExt hα hr c) (Set.Ioo 0 1) := by
+  intro c₁ hc₁ c₂ hc₂ h
+  have hgt : pseudoMassExt hα hr c₂ < pseudoMassExt hα hr c₁ :=
+    pseudoMassExt_strictAntiOn_Ioo_zero_one hα hr hc₁ hc₂ h
+  linarith
 
 /-- **`pseudoMassExt` strictly anti on `Ioc 0 1`** (boundary-inclusive
 sub-interval): `Ioc 0 1 ⊂ Ioo 0 2` since `1 < 2`. -/
