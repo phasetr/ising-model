@@ -4150,4 +4150,25 @@ theorem pseudoMassFromParamsAtPair_at_J_zero_distinct_mem_Ioo_zero_log_two_div
    pseudoMassFromParamsAtPair_at_J_zero_distinct_lt_log_two_div_tanh_sq
       hα hr d Λ hh hβ hxz⟩
 
+/-- **At `h = 0` with `truncated2 ∈ Ioo 0 2`,
+`pseudoMassFromParamsAtPair_at_h_zero ∈ Ioo 0 (log(2/truncated2)/r)`**:
+bundles `_pos_of_truncated2_mem` (PR #1679) + `_lt_log_two_div_truncated2`
+(PR #1707). -/
+theorem pseudoMassFromParamsAtPair_at_h_zero_mem_Ioo_zero_log_two_div
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (J β : ℝ) (x z : Fin d → ℤ)
+    (htrunc : Ambient.truncated2Infinite (IsingModel.latticeGraph d) Λ
+                (⟨J, 0, β⟩ : IsingParams ℝ) x z ∈ Set.Ioo (0 : ℝ) 2) :
+    pseudoMassFromParamsAtPair hα hr d Λ (⟨J, 0, β⟩ : IsingParams ℝ) x z ∈
+      Set.Ioo (0 : ℝ)
+        (Real.log (2 / Ambient.truncated2Infinite (IsingModel.latticeGraph d) Λ
+                         (⟨J, 0, β⟩ : IsingParams ℝ) x z) / r) :=
+  ⟨pseudoMassFromParamsAtPair_at_h_zero_pos_of_truncated2_mem
+      hα hr d Λ J β x z htrunc,
+   pseudoMassFromParamsAtPair_at_h_zero_lt_log_two_div_truncated2
+      hα hr d Λ J β x z htrunc⟩
+
 end IsingModel
