@@ -4195,4 +4195,31 @@ theorem pseudoMassFromParamsAtPair_at_h_zero_mem_Ioo_zero_log_two_div
    pseudoMassFromParamsAtPair_at_h_zero_lt_log_two_div_truncated2
       hα hr d Λ J β x z htrunc⟩
 
+/-- **At `h = 0` with `truncated2 ∈ Ioo 0 2`,
+`pseudoMassFromParamsAtPair_at_h_zero ∈ Iio (log(2/truncated2)/r)`**. -/
+theorem pseudoMassFromParamsAtPair_at_h_zero_mem_Iio_log_two_div
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (J β : ℝ) (x z : Fin d → ℤ)
+    (htrunc : Ambient.truncated2Infinite (IsingModel.latticeGraph d) Λ
+                (⟨J, 0, β⟩ : IsingParams ℝ) x z ∈ Set.Ioo (0 : ℝ) 2) :
+    pseudoMassFromParamsAtPair hα hr d Λ (⟨J, 0, β⟩ : IsingParams ℝ) x z ∈
+      Set.Iio (Real.log (2 / Ambient.truncated2Infinite (IsingModel.latticeGraph d) Λ
+                              (⟨J, 0, β⟩ : IsingParams ℝ) x z) / r) :=
+  pseudoMassFromParamsAtPair_at_h_zero_lt_log_two_div_truncated2
+      hα hr d Λ J β x z htrunc
+
+/-- **At `h = 0`, `pseudoMassFromParamsAtPair ∈ Ici 0`**: trivial. -/
+theorem pseudoMassFromParamsAtPair_at_h_zero_mem_Ici_zero
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (J β : ℝ) (x z : Fin d → ℤ) :
+    pseudoMassFromParamsAtPair hα hr d Λ (⟨J, 0, β⟩ : IsingParams ℝ) x z ∈
+      Set.Ici (0 : ℝ) :=
+  pseudoMassFromParamsAtPair_nonneg hα hr d Λ _ x z
+
 end IsingModel
