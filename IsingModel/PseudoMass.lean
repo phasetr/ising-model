@@ -1457,6 +1457,21 @@ theorem pseudoMassExt_pos_iff_ne_zero {α : ℕ} (hα : 1 ≤ α) {r : ℝ}
   (pseudoMassExt_nonneg hα hr c).lt_iff_ne.trans
     ⟨fun h => h.symm, fun h => h.symm⟩
 
+/-- **`¬(pseudoMassExt c < 0)`**: trivial via nonneg. -/
+theorem pseudoMassExt_not_lt_zero {α : ℕ} (hα : 1 ≤ α) {r : ℝ}
+    (hr : 0 < r) (c : ℝ) :
+    ¬ (pseudoMassExt hα hr c < 0) :=
+  not_lt.mpr (pseudoMassExt_nonneg hα hr c)
+
+/-- **`pseudoMassExt c ≤ 0 ↔ pseudoMassExt c = 0`**: trivial via
+nonneg + antisymmetry. -/
+theorem pseudoMassExt_le_zero_iff_eq_zero {α : ℕ} (hα : 1 ≤ α) {r : ℝ}
+    (hr : 0 < r) (c : ℝ) :
+    pseudoMassExt hα hr c ≤ 0 ↔ pseudoMassExt hα hr c = 0 := by
+  refine ⟨?_, fun h => le_of_eq h⟩
+  intro hle
+  exact le_antisymm hle (pseudoMassExt_nonneg hα hr c)
+
 /-- **`pseudoMassExt` `ContinuousAt c₀ ∈ Ioo 0 2`**: re-statement of
 `pseudoMass_continuousAt` using the named definition. -/
 theorem pseudoMassExt_continuousAt {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
