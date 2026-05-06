@@ -316,6 +316,16 @@ theorem correlationInfinite_mem_Icc_zero_one
   ⟨correlationInfinite_nonneg G Λ p hf A,
    correlationInfinite_le_one G Λ p A⟩
 
+/-- **`0 < correlationInfinite ↔ correlationInfinite ≠ 0`** under
+ferromagnetic: standard nonneg → pos iff ne_zero pattern. -/
+theorem correlationInfinite_pos_iff_ne_zero
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (A : Finset V) :
+    0 < correlationInfinite G Λ p A ↔ correlationInfinite G Λ p A ≠ 0 :=
+  (correlationInfinite_nonneg G Λ p hf A).lt_iff_ne.trans
+    ⟨fun h => h.symm, fun h => h.symm⟩
+
 /-- **Tendsto of the lifted `correlationΛ` sequence (explicit form)**:
 given an explicit `N` and a hypothesis `hN : ∀ n ≥ N, A ⊆ Λ.volume n`,
 the sequence `m ↦ correlationΛ G (Λ.volume (m+N)) p (liftFinset A …)`
