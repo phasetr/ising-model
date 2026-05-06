@@ -1958,6 +1958,12 @@ theorem pseudoMassExt_mem_Ioi_iff_mem {α : ℕ} (hα : 1 ≤ α) {r : ℝ}
     pseudoMassExt hα hr c ∈ Set.Ioi (0 : ℝ) ↔ c ∈ Set.Ioo (0 : ℝ) 2 :=
   pseudoMassExt_pos_iff hα hr c
 
+/-- **`pseudoMassExt c ∈ Set.Iio 0` is False**: `pseudoMassExt` is nonneg. -/
+theorem pseudoMassExt_not_mem_Iio_zero {α : ℕ} (hα : 1 ≤ α) {r : ℝ}
+    (hr : 0 < r) (c : ℝ) :
+    pseudoMassExt hα hr c ∉ Set.Iio (0 : ℝ) :=
+  not_lt.mpr (pseudoMassExt_nonneg hα hr c)
+
 /-- **`pseudoMassExt 0 = 0`**: zero is not in `Ioo 0 2` (open interval). -/
 theorem pseudoMassExt_zero {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) :
     pseudoMassExt hα hr 0 = 0 :=
