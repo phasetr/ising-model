@@ -3642,4 +3642,23 @@ theorem pseudoMassFromParamsAtPair_at_J_zero_distinct_eq_pseudoMass_iff_tanh_sq_
     rw [h_eq_pm]
     congr 1
 
+/-- **`pseudoMassFromParamsAtPair_at_h_zero pos iff truncated2 ≠ 0`**:
+combines `_at_h_zero_pos_iff` (PR #1670, pos iff truncated2 > 0) with
+`truncated2Infinite_pos_iff_ne_zero` (PR #1748). -/
+theorem pseudoMassFromParamsAtPair_at_h_zero_pos_iff_ne_zero
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    {J β : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β) (x z : Fin d → ℤ) :
+    0 < pseudoMassFromParamsAtPair hα hr d Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) x z ↔
+    Ambient.truncated2Infinite (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) x z ≠ 0 := by
+  have hf : Ferromagnetic (⟨J, 0, β⟩ : IsingParams ℝ) :=
+    ⟨hJ, le_refl 0, hβ⟩
+  rw [pseudoMassFromParamsAtPair_at_h_zero_pos_iff hα hr d Λ hJ hβ x z]
+  exact Ambient.truncated2Infinite_pos_iff_ne_zero
+            (IsingModel.latticeGraph d) Λ (⟨J, 0, β⟩ : IsingParams ℝ) hf x z
+
 end IsingModel
