@@ -295,6 +295,16 @@ theorem truncated2Infinite_mem_Ioc_zero_one_of_pos
     truncated2Infinite G Λ p i j ∈ Set.Ioc (0 : ℝ) 1 :=
   ⟨hpos, truncated2Infinite_le_one G Λ p hf i j⟩
 
+/-- **`0 < truncated2Infinite ↔ truncated2Infinite ≠ 0`** under
+ferromagnetic: standard nonneg → pos iff ne_zero pattern. -/
+theorem truncated2Infinite_pos_iff_ne_zero
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i j : V) :
+    0 < truncated2Infinite G Λ p i j ↔ truncated2Infinite G Λ p i j ≠ 0 :=
+  (truncated2Infinite_nonneg G Λ p hf i j).lt_iff_ne.trans
+    ⟨fun h => h.symm, fun h => h.symm⟩
+
 /-- **Exhaustion-independence of `truncated2Infinite`**: the value
 does not depend on the choice of exhaustion.  Follows from
 `correlationInfinite_indep_exhaustion` applied to each of the three
