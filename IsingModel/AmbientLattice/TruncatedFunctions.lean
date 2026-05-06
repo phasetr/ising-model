@@ -316,6 +316,14 @@ theorem truncated2Infinite_le_zero_iff_eq_zero
   intro hle
   exact le_antisymm hle (truncated2Infinite_nonneg G Λ p hf i j)
 
+/-- **`¬(truncated2Infinite < 0)`** under ferromagnetic. -/
+theorem truncated2Infinite_not_lt_zero
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i j : V) :
+    ¬ (truncated2Infinite G Λ p i j < 0) :=
+  not_lt.mpr (truncated2Infinite_nonneg G Λ p hf i j)
+
 /-- **Exhaustion-independence of `truncated2Infinite`**: the value
 does not depend on the choice of exhaustion.  Follows from
 `correlationInfinite_indep_exhaustion` applied to each of the three
