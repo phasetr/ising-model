@@ -354,6 +354,30 @@ theorem correlationInfinite_mem_Ico_zero_two
   ⟨correlationInfinite_nonneg G Λ p hf A,
    correlationInfinite_lt_two G Λ p A⟩
 
+/-- **`correlationInfinite ∈ Iio 2`** (unconditional). -/
+theorem correlationInfinite_mem_Iio_two
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (A : Finset V) :
+    correlationInfinite G Λ p A ∈ Set.Iio (2 : ℝ) :=
+  correlationInfinite_lt_two G Λ p A
+
+/-- **`correlationInfinite ∈ Iic 1`** (unconditional). -/
+theorem correlationInfinite_mem_Iic_one
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (A : Finset V) :
+    correlationInfinite G Λ p A ∈ Set.Iic (1 : ℝ) :=
+  correlationInfinite_le_one G Λ p A
+
+/-- **`correlationInfinite ∈ Ici 0`** under ferromagnetic. -/
+theorem correlationInfinite_mem_Ici_zero
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (A : Finset V) :
+    correlationInfinite G Λ p A ∈ Set.Ici (0 : ℝ) :=
+  correlationInfinite_nonneg G Λ p hf A
+
 /-- **`0 < correlationInfinite ↔ correlationInfinite ≠ 0`** under
 ferromagnetic: standard nonneg → pos iff ne_zero pattern. -/
 theorem correlationInfinite_pos_iff_ne_zero
