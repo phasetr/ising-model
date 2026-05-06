@@ -301,6 +301,15 @@ theorem pseudoMassG_analyticOnNhd_univ_of_even {α : ℕ} (hα_even : Even α)
   intro t _
   exact pseudoMassG_analyticAt_of_even hα_even r t
 
+/-- **`-pseudoMassG α r` is `StrictMonoOn (Ici 0)`**: dual of
+`pseudoMassG_strictAntiOn`. -/
+theorem neg_pseudoMassG_strictMonoOn {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) :
+    StrictMonoOn (fun t : ℝ => -pseudoMassG α r t) (Set.Ici 0) := by
+  intro t₁ ht₁ t₂ ht₂ h
+  have hgt : pseudoMassG α r t₂ < pseudoMassG α r t₁ :=
+    pseudoMassG_strictAntiOn hα hr ht₁ ht₂ h
+  linarith
+
 /-- **`pseudoMassG(t₂) < pseudoMassG(t₁) ↔ t₁ < t₂`** (for `t₁, t₂ ≥ 0`,
 `r > 0`, `α ≥ 1`): iff form of `pseudoMassG_strictAntiOn`. -/
 theorem pseudoMassG_lt_iff {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
