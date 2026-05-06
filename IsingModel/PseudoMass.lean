@@ -4136,4 +4136,18 @@ theorem pseudoMassFromParamsAtPair_mem_Ici_zero
     pseudoMassFromParamsAtPair hα hr d Λ p x z ∈ Set.Ici (0 : ℝ) :=
   pseudoMassFromParamsAtPair_nonneg hα hr d Λ p x z
 
+/-- **At `J = 0` distinct, `pseudoMassFromParamsAtPair ∈ Ioo 0 (log(2/tanh^2)/r)`**:
+J=0 analog of `_at_h_zero_mem_Ioo_log_two_div`. -/
+theorem pseudoMassFromParamsAtPair_at_J_zero_distinct_mem_Ioo_zero_log_two_div
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    {h β : ℝ} (hh : 0 < h) (hβ : 0 < β) {x z : Fin d → ℤ} (hxz : x ≠ z) :
+    pseudoMassFromParamsAtPair hα hr d Λ (⟨0, h, β⟩ : IsingParams ℝ) x z ∈
+      Set.Ioo (0 : ℝ) (Real.log (2 / Real.tanh (β * h) ^ 2) / r) :=
+  ⟨pseudoMassFromParamsAtPair_pos_at_J_zero hα hr d Λ hh hβ hxz,
+   pseudoMassFromParamsAtPair_at_J_zero_distinct_lt_log_two_div_tanh_sq
+      hα hr d Λ hh hβ hxz⟩
+
 end IsingModel
