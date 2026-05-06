@@ -1655,6 +1655,20 @@ theorem pseudoMassExt_mem_Ioo_zero_two_sub_div {α : ℕ} (hα : 1 ≤ α) {r : 
   rw [pseudoMassExt_of_mem hα hr hc]
   exact pseudoMass_mem_Ioo_zero_two_sub_div hα hr hc
 
+/-- **`pseudoMassExt c ∈ Set.Iio (log(2/c)/r)`** for `c ∈ Ioo 0 2`. -/
+theorem pseudoMassExt_mem_Iio_log_two_div {α : ℕ} (hα : 1 ≤ α) {r : ℝ}
+    (hr : 0 < r) {c : ℝ} (hc : c ∈ Set.Ioo 0 2) :
+    pseudoMassExt hα hr c ∈ Set.Iio (Real.log (2 / c) / r) := by
+  rw [pseudoMassExt_of_mem hα hr hc]
+  exact pseudoMass_mem_Iio_log_two_div hα hr hc
+
+/-- **`pseudoMassExt c ∈ Set.Iio ((2-c)/(c·r))`** for `c ∈ Ioo 0 2`. -/
+theorem pseudoMassExt_mem_Iio_two_sub_div {α : ℕ} (hα : 1 ≤ α) {r : ℝ}
+    (hr : 0 < r) {c : ℝ} (hc : c ∈ Set.Ioo 0 2) :
+    pseudoMassExt hα hr c ∈ Set.Iio ((2 - c) / (c * r)) := by
+  rw [pseudoMassExt_of_mem hα hr hc]
+  exact pseudoMass_mem_Iio_two_sub_div hα hr hc
+
 /-- **`0 < pseudoMassExt c ↔ pseudoMassExt c ≠ 0`**: standard
 nonneg → pos iff ne_zero pattern (`pseudoMassExt_nonneg`). -/
 theorem pseudoMassExt_pos_iff_ne_zero {α : ℕ} (hα : 1 ≤ α) {r : ℝ}
