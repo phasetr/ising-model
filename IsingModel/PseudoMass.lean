@@ -905,6 +905,15 @@ theorem pseudoMass_mul_r_lt_log_two_div {α : ℕ} (hα : 1 ≤ α) {r : ℝ}
   rw [lt_div_iff₀ hr] at h
   exact h
 
+/-- **`pseudoMass(c) ∈ Ioo 0 (log(2/c)/r)`**: bundles
+`pseudoMass_pos` and `pseudoMass_lt_log_two_div` into one Ioo
+membership statement. -/
+theorem pseudoMass_mem_Ioo_zero_log_two_div {α : ℕ} (hα : 1 ≤ α) {r : ℝ}
+    (hr : 0 < r) {c : ℝ} (hc : c ∈ Ioo 0 2) :
+    pseudoMass hα hr hc ∈ Set.Ioo (0 : ℝ) (Real.log (2 / c) / r) :=
+  ⟨pseudoMass_pos hα hr hc,
+   pseudoMass_lt_log_two_div hα hr hc⟩
+
 /-- The pseudo-mass is strictly decreasing in `c`: larger correlation value
 means smaller pseudo-mass (slower decay). -/
 theorem pseudoMass_strictAnti {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
