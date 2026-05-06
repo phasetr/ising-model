@@ -181,6 +181,16 @@ theorem pseudoMassG_mem_Ioc_zero_two (α : ℕ) {r t : ℝ} (ht : 0 ≤ t) (hr :
     pseudoMassG α r t ∈ Set.Ioc (0 : ℝ) 2 :=
   ⟨pseudoMassG_pos α ht hr, pseudoMassG_le_two α ht hr⟩
 
+/-- **`pseudoMassG α r t ∈ Set.Ici 0`** for `t ≥ 0`, `r > 0`. -/
+theorem pseudoMassG_mem_Ici_zero (α : ℕ) {r t : ℝ} (ht : 0 ≤ t) (hr : 0 < r) :
+    pseudoMassG α r t ∈ Set.Ici (0 : ℝ) :=
+  le_of_lt (pseudoMassG_pos α ht hr)
+
+/-- **`pseudoMassG α r t ∈ Set.Iic 2`** for `t ≥ 0`, `r > 0`. -/
+theorem pseudoMassG_mem_Iic_two (α : ℕ) {r t : ℝ} (ht : 0 ≤ t) (hr : 0 < r) :
+    pseudoMassG α r t ∈ Set.Iic (2 : ℝ) :=
+  pseudoMassG_le_two α ht hr
+
 /-- The denominator `1 + (t·r)^α` is strictly increasing in `t` for `r > 0`, `α ≥ 1`. -/
 private lemma pseudoMassG_denom_strictMono
     {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) :
