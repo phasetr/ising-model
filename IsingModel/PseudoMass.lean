@@ -3874,4 +3874,29 @@ theorem pseudoMassFromParamsAtPair_eq_pseudoMassExt_iff_corr_eq
   rw [pseudoMassExt_eq_iff_of_mem hα hr hc hcorr]
   exact eq_comm
 
+/-- **Λ-uniform `pseudoMass(1)` lower bound at h=0**: combines
+`_at_h_zero_ge_pseudoMass_one` (PR #1725) with `_indep_exhaustion`
+(PR #1666) to make the lower bound explicitly Λ-independent. For any
+two exhaustions Λ, Λ', the bridge values are equal (under ferromagnetic),
+and both bounded below by `pseudoMass(1)`. -/
+theorem pseudoMassFromParamsAtPair_at_h_zero_ge_pseudoMass_one_uniform
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ Λ' : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ'.volume n)).edgeSet]
+    {J β : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β) (x z : Fin d → ℤ)
+    (htrunc_pos : 0 < Ambient.truncated2Infinite (IsingModel.latticeGraph d) Λ
+                        (⟨J, 0, β⟩ : IsingParams ℝ) x z) :
+    pseudoMass hα hr (show (1 : ℝ) ∈ Set.Ioo 0 2 from
+        ⟨zero_lt_one, one_lt_two⟩) ≤
+      pseudoMassFromParamsAtPair hα hr d Λ' (⟨J, 0, β⟩ : IsingParams ℝ) x z := by
+  have hf : Ferromagnetic (⟨J, 0, β⟩ : IsingParams ℝ) :=
+    ⟨hJ, le_refl 0, hβ⟩
+  rw [← pseudoMassFromParamsAtPair_indep_exhaustion hα hr d Λ Λ'
+        (⟨J, 0, β⟩ : IsingParams ℝ) hf x z]
+  exact pseudoMassFromParamsAtPair_at_h_zero_ge_pseudoMass_one
+            hα hr d Λ hJ hβ x z htrunc_pos
+
 end IsingModel
