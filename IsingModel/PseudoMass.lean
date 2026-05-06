@@ -368,6 +368,20 @@ theorem pseudoMassG_eq_iff_eq {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     subst heq_t
     rfl
 
+/-- **`pseudoMassG α r` is `StrictAntiOn (Ioi 0)`**: sub-interval form
+of `pseudoMassG_strictAntiOn` on `Ici 0`. -/
+theorem pseudoMassG_strictAntiOn_Ioi_zero {α : ℕ} (hα : 1 ≤ α) {r : ℝ}
+    (hr : 0 < r) :
+    StrictAntiOn (pseudoMassG α r) (Set.Ioi (0 : ℝ)) := by
+  intro s hs t ht hst
+  exact pseudoMassG_strictAntiOn hα hr (Set.mem_Ici.mpr (le_of_lt hs))
+    (Set.mem_Ici.mpr (le_of_lt ht)) hst
+
+/-- **`pseudoMassG α r` is `AntitoneOn (Ici 0)`**: non-strict form. -/
+theorem pseudoMassG_antitoneOn {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) :
+    AntitoneOn (pseudoMassG α r) (Set.Ici (0 : ℝ)) :=
+  (pseudoMassG_strictAntiOn hα hr).antitoneOn
+
 /-- **`pseudoMassG α r t < 2` for `t > 0` (strict at positive `t`)**:
 direct corollary of `pseudoMassG_strictAntiOn` (strict anti on `Ici 0`)
 and `pseudoMassG_zero` (`g(0) = 2`). Sharpens `pseudoMassG_le_two`
