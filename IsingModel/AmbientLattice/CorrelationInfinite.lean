@@ -345,6 +345,15 @@ theorem correlationInfinite_mem_Ioo_zero_two_of_pos
     correlationInfinite G Λ p A ∈ Set.Ioo (0 : ℝ) 2 :=
   ⟨hpos, correlationInfinite_lt_two G Λ p A⟩
 
+/-- **`correlationInfinite ∈ Ico 0 2`** under ferromagnetic. -/
+theorem correlationInfinite_mem_Ico_zero_two
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (A : Finset V) :
+    correlationInfinite G Λ p A ∈ Set.Ico (0 : ℝ) 2 :=
+  ⟨correlationInfinite_nonneg G Λ p hf A,
+   correlationInfinite_lt_two G Λ p A⟩
+
 /-- **`0 < correlationInfinite ↔ correlationInfinite ≠ 0`** under
 ferromagnetic: standard nonneg → pos iff ne_zero pattern. -/
 theorem correlationInfinite_pos_iff_ne_zero
