@@ -305,6 +305,17 @@ theorem truncated2Infinite_pos_iff_ne_zero
   (truncated2Infinite_nonneg G Λ p hf i j).lt_iff_ne.trans
     ⟨fun h => h.symm, fun h => h.symm⟩
 
+/-- **`truncated2Infinite ≤ 0 ↔ truncated2Infinite = 0`** under
+ferromagnetic: combines nonneg with antisymmetry. -/
+theorem truncated2Infinite_le_zero_iff_eq_zero
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i j : V) :
+    truncated2Infinite G Λ p i j ≤ 0 ↔ truncated2Infinite G Λ p i j = 0 := by
+  refine ⟨?_, fun h => le_of_eq h⟩
+  intro hle
+  exact le_antisymm hle (truncated2Infinite_nonneg G Λ p hf i j)
+
 /-- **Exhaustion-independence of `truncated2Infinite`**: the value
 does not depend on the choice of exhaustion.  Follows from
 `correlationInfinite_indep_exhaustion` applied to each of the three
