@@ -3717,4 +3717,38 @@ theorem pseudoMassFromParamsAtPair_pos_iff_ne_zero
   (pseudoMassFromParamsAtPair_nonneg hα hr d Λ p x z).lt_iff_ne.trans
     ⟨fun h => h.symm, fun h => h.symm⟩
 
+/-- **At `h = 0`, `pseudoMassFromParamsAtPair ∈ Ioo 0 ((2-truncated2)/(truncated2·r))`**:
+sharper Ioo membership at h=0 using `(2-c)/(c·r)`. -/
+theorem pseudoMassFromParamsAtPair_at_h_zero_mem_Ioo_zero_two_sub_div
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (J β : ℝ) (x z : Fin d → ℤ)
+    (htrunc : Ambient.truncated2Infinite (IsingModel.latticeGraph d) Λ
+                (⟨J, 0, β⟩ : IsingParams ℝ) x z ∈ Set.Ioo (0 : ℝ) 2) :
+    pseudoMassFromParamsAtPair hα hr d Λ (⟨J, 0, β⟩ : IsingParams ℝ) x z ∈
+      Set.Ioo (0 : ℝ)
+        ((2 - Ambient.truncated2Infinite (IsingModel.latticeGraph d) Λ
+                  (⟨J, 0, β⟩ : IsingParams ℝ) x z) /
+         (Ambient.truncated2Infinite (IsingModel.latticeGraph d) Λ
+                  (⟨J, 0, β⟩ : IsingParams ℝ) x z * r)) :=
+  ⟨pseudoMassFromParamsAtPair_at_h_zero_pos_of_truncated2_mem
+      hα hr d Λ J β x z htrunc,
+   pseudoMassFromParamsAtPair_at_h_zero_lt_two_sub_div_mul_r
+      hα hr d Λ J β x z htrunc⟩
+
+/-- **At `J = 0` distinct, `pseudoMassFromParamsAtPair ∈ Ioo 0 ((2-tanh^2)/(tanh^2·r))`**. -/
+theorem pseudoMassFromParamsAtPair_at_J_zero_distinct_mem_Ioo_zero_two_sub_div
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    {h β : ℝ} (hh : 0 < h) (hβ : 0 < β) {x z : Fin d → ℤ} (hxz : x ≠ z) :
+    pseudoMassFromParamsAtPair hα hr d Λ (⟨0, h, β⟩ : IsingParams ℝ) x z ∈
+      Set.Ioo (0 : ℝ) ((2 - Real.tanh (β * h) ^ 2) / (Real.tanh (β * h) ^ 2 * r)) :=
+  ⟨pseudoMassFromParamsAtPair_pos_at_J_zero hα hr d Λ hh hβ hxz,
+   pseudoMassFromParamsAtPair_at_J_zero_distinct_lt_two_sub_tanh_sq
+      hα hr d Λ hh hβ hxz⟩
+
 end IsingModel
