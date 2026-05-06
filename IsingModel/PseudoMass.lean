@@ -259,6 +259,7 @@ theorem pseudoMassG_analyticOn_Ici_zero (α : ℕ) {r : ℝ} (hr : 0 < r) :
   intro t ht
   exact pseudoMassG_analyticWithinAt_Ici_zero α hr (Set.mem_Ici.mp ht)
 
+
 /-- **`pseudoMassG α r` is `ContinuousWithinAt (Ici 0)`** at any
 `t ≥ 0`: corollary of `_analyticWithinAt_Ici_zero` via
 `AnalyticWithinAt.continuousWithinAt`. Useful at the boundary
@@ -463,6 +464,20 @@ theorem pseudoMassG_continuousOn (α : ℕ) {r : ℝ} (hr : 0 < r) :
     have ht' : 0 ≤ t := Set.mem_Ici.mp ht
     have h : 0 ≤ (t * r) ^ α := pow_nonneg (mul_nonneg ht' hr.le) α
     exact ne_of_gt (by linarith)
+
+/-- **`pseudoMassG α r` is `ContinuousOn (Ioi 0)`**: sub-interval form. -/
+theorem pseudoMassG_continuousOn_Ioi_zero (α : ℕ) {r : ℝ} (hr : 0 < r) :
+    ContinuousOn (pseudoMassG α r) (Set.Ioi (0 : ℝ)) := by
+  apply (pseudoMassG_continuousOn α hr).mono
+  intro t ht
+  exact Set.mem_Ici.mpr (le_of_lt ht)
+
+/-- **`pseudoMassG α r` is `ContinuousAt t` for `t > 0`**: pointwise
+form. -/
+theorem pseudoMassG_continuousAt_of_pos (α : ℕ) {r : ℝ} (hr : 0 < r)
+    {t : ℝ} (ht : 0 < t) :
+    ContinuousAt (pseudoMassG α r) t :=
+  (pseudoMassG_analyticAt α hr ht.le).continuousAt
 
 /-- `pseudoMassG` tends to 0 as `t → ∞` for `r > 0`. -/
 theorem pseudoMassG_tendsto_zero (α : ℕ) {r : ℝ} (hr : 0 < r) :
