@@ -2170,6 +2170,18 @@ under ferromagnetic parameters, a validating rate for one exhaustion
 also validates the same rate for any other exhaustion. Its proof is
 just $\mathrm{truncated2Infinite\_indep\_exhaustion}$ followed by
 reuse of the same constant and rate.
+The conditional Step~117l bridge
+$\mathrm{latticeMass\_ge\_pseudoMassFromParamsAtPair\_of\_decay}$
+packages the final supremum step on the lower-bound side of
+Glimm--Jaffe \S17.5 Lemma~17.5.2 (2nd ed., pp.~311--312): once the
+concrete pair pseudo-mass at $h=0$ is supplied as a validating
+$\mathrm{HasExponentialDecay}$ rate, its
+$\mathrm{ENNReal.ofReal}$ value is bounded by
+$\mathrm{latticeMass}$. The companion
+$\mathrm{latticeMass\_pos\_of\_pseudoMassFromParamsAtPair\_decay}$
+turns a positive validating pseudo-mass into $0 < \mathrm{latticeMass}$.
+The remaining substantive input is not this order-theoretic step but
+the uniform-in-exhaustion Simon--Lieb / random-current decay estimate.
 
 \paragraph{\S5.1 cluster property bundled formalisation (PR~\#792).}
 The Glimm--Jaffe \S5.1 cluster property is formalised as a single

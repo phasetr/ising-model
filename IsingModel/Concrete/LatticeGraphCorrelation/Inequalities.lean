@@ -8,6 +8,7 @@ import IsingModel.AmbientFKG
 import IsingModel.Inequalities.HighTemp
 import IsingModel.LatticeExpSum
 import IsingModel.BetaDerivative
+import IsingModel.PseudoMass
 import Mathlib.Topology.UniformSpace.Dini
 import Mathlib.Analysis.BoundedVariation
 
@@ -564,6 +565,53 @@ theorem latticeMass_pos_of_HasExponentialDecay
     0 < latticeMass d Λ p :=
   lt_of_lt_of_le (ENNReal.ofReal_pos.mpr hα)
     (latticeMass_ge_of_HasExponentialDecay hα.le hdecay)
+
+/-- **Step 117l bridge, conditional lower-bound form**:
+if the concrete pseudo-mass associated to a pair at `h = 0` is known to be
+a validating `HasExponentialDecay` rate for `truncated2Infinite`, then its
+`ENNReal.ofReal` value is bounded above by `latticeMass`.
+
+This theorem isolates the final algebraic step of the lower-bound side of
+GJ §17.5 Lemma 17.5.2 (2nd ed., pp. 311--312). The remaining substantive
+work is to prove the uniform-in-exhaustion exponential-decay hypothesis,
+typically from a Simon--Lieb / random-current refinement. -/
+theorem latticeMass_ge_pseudoMassFromParamsAtPair_of_decay
+    {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    {Λ : Ambient.Exhaustion (Fin d → ℤ)}
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    {J β : ℝ} {x z : Fin d → ℤ}
+    (hdecay : HasExponentialDecay d Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+      (pseudoMassFromParamsAtPair hα hr d Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) x z)) :
+    ENNReal.ofReal
+        (pseudoMassFromParamsAtPair hα hr d Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) x z)
+      ≤ latticeMass d Λ (⟨J, 0, β⟩ : IsingParams ℝ) :=
+  latticeMass_ge_of_HasExponentialDecay
+    (pseudoMassFromParamsAtPair_nonneg hα hr d Λ _ x z) hdecay
+
+/-- **Step 117l bridge, conditional positive-mass form**:
+if the concrete pseudo-mass associated to a pair at `h = 0` is positive and
+also validates `HasExponentialDecay`, then `latticeMass` is positive.
+
+This is the positivity-oriented companion to
+`latticeMass_ge_pseudoMassFromParamsAtPair_of_decay`, intended for later
+high-temperature / Simon--Lieb arguments where the pseudo-mass rate is
+first shown to be strictly positive and then shown to control `U_2`. -/
+theorem latticeMass_pos_of_pseudoMassFromParamsAtPair_decay
+    {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    {Λ : Ambient.Exhaustion (Fin d → ℤ)}
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    {J β : ℝ} {x z : Fin d → ℤ}
+    (hpos : 0 < pseudoMassFromParamsAtPair hα hr d Λ
+      (⟨J, 0, β⟩ : IsingParams ℝ) x z)
+    (hdecay : HasExponentialDecay d Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+      (pseudoMassFromParamsAtPair hα hr d Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) x z)) :
+    0 < latticeMass d Λ (⟨J, 0, β⟩ : IsingParams ℝ) :=
+  latticeMass_pos_of_HasExponentialDecay hpos hdecay
 
 /-- **Lattice mass at `β = 0` trivial slice is `⊤`**.
 At infinite temperature, `HasExponentialDecay` holds at every
