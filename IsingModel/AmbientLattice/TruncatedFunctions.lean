@@ -275,6 +275,26 @@ theorem truncated2Infinite_mem_Ioo_zero_two_of_pos
     truncated2Infinite G Λ p i j ∈ Set.Ioo (0 : ℝ) 2 :=
   ⟨hpos, truncated2Infinite_lt_two G Λ p hf i j⟩
 
+/-- **`truncated2Infinite ∈ Icc 0 1`** for ferromagnetic `p`: combines
+`truncated2Infinite_nonneg` and `truncated2Infinite_le_one`. -/
+theorem truncated2Infinite_mem_Icc_zero_one
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i j : V) :
+    truncated2Infinite G Λ p i j ∈ Set.Icc (0 : ℝ) 1 :=
+  ⟨truncated2Infinite_nonneg G Λ p hf i j,
+   truncated2Infinite_le_one G Λ p hf i j⟩
+
+/-- **`truncated2Infinite ∈ Ioc 0 1`** when `0 < truncated2` under
+ferromagnetic: strict positivity + ≤ 1. -/
+theorem truncated2Infinite_mem_Ioc_zero_one_of_pos
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i j : V)
+    (hpos : 0 < truncated2Infinite G Λ p i j) :
+    truncated2Infinite G Λ p i j ∈ Set.Ioc (0 : ℝ) 1 :=
+  ⟨hpos, truncated2Infinite_le_one G Λ p hf i j⟩
+
 /-- **Exhaustion-independence of `truncated2Infinite`**: the value
 does not depend on the choice of exhaustion.  Follows from
 `correlationInfinite_indep_exhaustion` applied to each of the three
