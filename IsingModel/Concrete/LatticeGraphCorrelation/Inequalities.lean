@@ -1937,14 +1937,14 @@ theorem HasExponentialDecay_of_latticeMass_pos
   rw [← hα_eq] at hy_pos
   exact ⟨α, NNReal.coe_pos.mpr (ENNReal.coe_pos.mp hy_pos), hα_decay⟩
 
-/-- **Transfer `HasExponentialDecay` across exhaustions** (private helper):
+/-- **Transfer `HasExponentialDecay` across exhaustions**:
 for ferromagnetic `p`, if `HasExponentialDecay d Λ p α` holds for some
 exhaustion `Λ`, then it holds for any other exhaustion `Λ'`.
 
 Proof: the truncated 2-point function is exhaustion-independent for ferromagnetic
 parameters (`truncated2Infinite_indep_exhaustion`), so the bound transfers directly
 from `Λ` to `Λ'` with the same constant `C` and rate `α`. -/
-private lemma HasExponentialDecay_transfer_exhaustion
+theorem HasExponentialDecay_transfer_exhaustion
     {d : ℕ} (Λ Λ' : Ambient.Exhaustion (Fin d → ℤ))
     {p : IsingParams ℝ} {α : ℝ}
     (hf : Ferromagnetic p)
