@@ -3926,4 +3926,15 @@ theorem pseudoMassFromParamsAtPair_at_h_zero_ge_pseudoMass_one_uniform
   exact pseudoMassFromParamsAtPair_at_h_zero_ge_pseudoMass_one
             hα hr d Λ hJ hβ x z htrunc_pos
 
+/-- **`pseudoMassFromParamsAtPair ∈ Ici 0`** (always): direct from
+nonneg. -/
+theorem pseudoMassFromParamsAtPair_mem_Ici_zero
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (x z : Fin d → ℤ) :
+    pseudoMassFromParamsAtPair hα hr d Λ p x z ∈ Set.Ici (0 : ℝ) :=
+  pseudoMassFromParamsAtPair_nonneg hα hr d Λ p x z
+
 end IsingModel
