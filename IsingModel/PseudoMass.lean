@@ -524,6 +524,13 @@ theorem pseudoMassG_differentiableOn_Ioi_zero (α : ℕ) {r : ℝ} (hr : 0 < r) 
   intro t ht
   exact (pseudoMassG_differentiableAt α hr ht.le).differentiableWithinAt
 
+/-- **`pseudoMassG α r` is `DifferentiableAt t` for `t > 0`**: pointwise
+form on the open positive line. -/
+theorem pseudoMassG_differentiableAt_of_pos (α : ℕ) {r : ℝ} (hr : 0 < r)
+    {t : ℝ} (ht : 0 < t) :
+    DifferentiableAt ℝ (pseudoMassG α r) t :=
+  pseudoMassG_differentiableAt α hr ht.le
+
 /-- `pseudoMassG` tends to 0 as `t → ∞` for `r > 0`. -/
 theorem pseudoMassG_tendsto_zero (α : ℕ) {r : ℝ} (hr : 0 < r) :
     Filter.Tendsto (pseudoMassG α r) Filter.atTop (nhds 0) := by
