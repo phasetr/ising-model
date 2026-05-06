@@ -3751,4 +3751,28 @@ theorem pseudoMassFromParamsAtPair_at_J_zero_distinct_mem_Ioo_zero_two_sub_div
    pseudoMassFromParamsAtPair_at_J_zero_distinct_lt_two_sub_tanh_sq
       hα hr d Λ hh hβ hxz⟩
 
+/-- **`¬(pseudoMassFromParamsAtPair < 0)`**: trivial via nonneg. -/
+theorem pseudoMassFromParamsAtPair_not_lt_zero
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (x z : Fin d → ℤ) :
+    ¬ (pseudoMassFromParamsAtPair hα hr d Λ p x z < 0) :=
+  not_lt.mpr (pseudoMassFromParamsAtPair_nonneg hα hr d Λ p x z)
+
+/-- **`pseudoMassFromParamsAtPair ≤ 0 ↔ pseudoMassFromParamsAtPair = 0`**:
+trivial via nonneg + antisymmetry. -/
+theorem pseudoMassFromParamsAtPair_le_zero_iff_eq_zero
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (x z : Fin d → ℤ) :
+    pseudoMassFromParamsAtPair hα hr d Λ p x z ≤ 0 ↔
+    pseudoMassFromParamsAtPair hα hr d Λ p x z = 0 := by
+  refine ⟨?_, fun h => le_of_eq h⟩
+  intro hle
+  exact le_antisymm hle (pseudoMassFromParamsAtPair_nonneg hα hr d Λ p x z)
+
 end IsingModel
