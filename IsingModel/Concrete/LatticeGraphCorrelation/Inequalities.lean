@@ -2067,6 +2067,86 @@ theorem latticeMass_pos_of_high_temp_exhaustion
   exact latticeMass_pos_of_HasExponentialDecay hα_pos
     (HasExponentialDecay_transfer_high_temp Λ hJ hβ hlt)
 
+/-- **Pseudo-mass validates decay when it is below the high-temperature rate**:
+if the concrete pair pseudo-mass is bounded above by the transferred
+Simon--Lieb high-temperature rate `-log(βJ·2d)`, then that pseudo-mass itself
+is a validating `HasExponentialDecay` rate.
+
+This is the monotonicity step needed after
+`HasExponentialDecay_transfer_high_temp`: smaller decay rates give weaker
+exponential bounds, so they remain valid.
+
+References: Glimm--Jaffe §17.5 Lemma 17.5.2, pp. 311--312; Glimm--Jaffe §5.1
+pp. 74--75; Friedli--Velenik Prop. 9.31 p. 428. -/
+theorem HasExponentialDecay_pseudoMassFromParamsAtPair_of_le_high_temp_rate
+    {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)
+    (hlt : β * J * ↑(2 * d) < 1) {x z : Fin d → ℤ}
+    (hle : pseudoMassFromParamsAtPair hα hr d Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) x z
+      ≤ -Real.log (β * J * ↑(2 * d))) :
+    HasExponentialDecay d Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+      (pseudoMassFromParamsAtPair hα hr d Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) x z) :=
+  HasExponentialDecay_mono d Λ (⟨J, 0, β⟩ : IsingParams ℝ) hle
+    (HasExponentialDecay_transfer_high_temp Λ hJ hβ hlt)
+
+/-- **Pseudo-mass lower bound from comparison with the high-temperature rate**:
+under the comparison `pseudoMassFromParamsAtPair ≤ -log(βJ·2d)`, the concrete
+pseudo-mass is bounded above by `latticeMass`.
+
+This composes the transferred Simon--Lieb high-temperature decay rate, rate
+monotonicity of `HasExponentialDecay`, and the `sSup` definition of
+`latticeMass`.
+
+Reference: Glimm--Jaffe §17.5 Lemma 17.5.2, pp. 311--312. -/
+theorem latticeMass_ge_pseudoMassFromParamsAtPair_of_le_high_temp_rate
+    {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)
+    (hlt : β * J * ↑(2 * d) < 1) {x z : Fin d → ℤ}
+    (hle : pseudoMassFromParamsAtPair hα hr d Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) x z
+      ≤ -Real.log (β * J * ↑(2 * d))) :
+    ENNReal.ofReal
+        (pseudoMassFromParamsAtPair hα hr d Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) x z)
+      ≤ latticeMass d Λ (⟨J, 0, β⟩ : IsingParams ℝ) :=
+  latticeMass_ge_of_HasExponentialDecay
+    (pseudoMassFromParamsAtPair_nonneg hα hr d Λ _ x z)
+    (HasExponentialDecay_pseudoMassFromParamsAtPair_of_le_high_temp_rate
+      hα hr Λ hJ hβ hlt hle)
+
+/-- **Positive lattice mass from positive pseudo-mass below the high-temperature rate**:
+if the concrete pair pseudo-mass is positive and no larger than the transferred
+Simon--Lieb high-temperature rate, then `latticeMass` is positive.
+
+This is the positivity companion to
+`latticeMass_ge_pseudoMassFromParamsAtPair_of_le_high_temp_rate`.
+
+Reference: Glimm--Jaffe §17.5 Lemma 17.5.2, pp. 311--312. -/
+theorem latticeMass_pos_of_pseudoMassFromParamsAtPair_le_high_temp_rate
+    {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)
+    (hlt : β * J * ↑(2 * d) < 1) {x z : Fin d → ℤ}
+    (hpos : 0 < pseudoMassFromParamsAtPair hα hr d Λ
+      (⟨J, 0, β⟩ : IsingParams ℝ) x z)
+    (hle : pseudoMassFromParamsAtPair hα hr d Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) x z
+      ≤ -Real.log (β * J * ↑(2 * d))) :
+    0 < latticeMass d Λ (⟨J, 0, β⟩ : IsingParams ℝ) :=
+  latticeMass_pos_of_HasExponentialDecay hpos
+    (HasExponentialDecay_pseudoMassFromParamsAtPair_of_le_high_temp_rate
+      hα hr Λ hJ hβ hlt hle)
+
 /-- **Cluster property holds below the critical inverse temperature** (GJ §17.1):
 for `J ≥ 0`, `β ≥ 0`, and `ENNReal.ofReal β < criticalInverseTemp d J`, the
 cluster property holds for any exhaustion `Λ`:

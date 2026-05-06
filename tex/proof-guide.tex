@@ -2191,9 +2191,19 @@ gives the same explicit lower bound for every exhaustion, and
 $\mathrm{latticeMass\_pos\_of\_high\_temp\_exhaustion}$ gives positive
 mass for $d \ge 1$ in the strict high-temperature regime. This discharges the
 exhaustion-uniform high-temperature decay transfer used by the
-Step~117l bridge. The remaining pseudo-mass-specific input is to
-identify the concrete pair pseudo-mass itself as a validating rate, or
-to compare it quantitatively with the transferred Simon--Lieb rate.
+Step~117l bridge.
+The comparison form
+$\mathrm{HasExponentialDecay\_pseudoMassFromParamsAtPair\_of\_le\_high\_temp\_rate}$
+then records the remaining order-theoretic step: if the concrete pair
+pseudo-mass is at most $-\log(\beta J\,2d)$, monotonicity of
+$\mathrm{HasExponentialDecay}$ turns the transferred Simon--Lieb rate into a
+validating pseudo-mass rate. Consequently
+$\mathrm{latticeMass\_ge\_pseudoMassFromParamsAtPair\_of\_le\_high\_temp\_rate}$
+gives $\mathrm{ENNReal.ofReal}(m^-_{x,z}) \le \mathrm{latticeMass}$, and
+$\mathrm{latticeMass\_pos\_of\_pseudoMassFromParamsAtPair\_le\_high\_temp\_rate}$
+gives positive lattice mass when the pseudo-mass is positive. The remaining
+substantive input is the quantitative comparison of the concrete pseudo-mass
+with the transferred Simon--Lieb rate.
 
 \paragraph{\S5.1 cluster property bundled formalisation (PR~\#792).}
 The Glimm--Jaffe \S5.1 cluster property is formalised as a single
