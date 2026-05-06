@@ -279,6 +279,16 @@ theorem correlationInfinite_lt_two
   have h := correlationInfinite_le_one G Λ p A
   linarith
 
+/-- **`correlationInfinite ∈ Icc (-1) 1`** (unconditional): combines
+`abs_correlationInfinite_le_one` lower and upper sides. -/
+theorem correlationInfinite_mem_Icc_neg_one_one
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (A : Finset V) :
+    correlationInfinite G Λ p A ∈ Set.Icc (-1 : ℝ) 1 :=
+  ⟨neg_one_le_correlationInfinite G Λ p A,
+   correlationInfinite_le_one G Λ p A⟩
+
 /-- **Nonnegativity** (ferromagnetic): `correlationInfinite ≥ 0`.
 Uses `Λ.exhaust`: pick `N` with `A ⊆ Λ.volume N`; then
 `correlationAlongExhaustion G Λ p A N ≥ 0` by GKS-I, and this is
