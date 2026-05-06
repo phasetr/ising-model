@@ -1423,6 +1423,14 @@ theorem pseudoMassExt_ne_zero_of_mem {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr :
     pseudoMassExt hα hr c ≠ 0 :=
   (pseudoMassExt_pos_of_mem hα hr hc).ne'
 
+/-- **`0 < pseudoMassExt c ↔ pseudoMassExt c ≠ 0`**: standard
+nonneg → pos iff ne_zero pattern (`pseudoMassExt_nonneg`). -/
+theorem pseudoMassExt_pos_iff_ne_zero {α : ℕ} (hα : 1 ≤ α) {r : ℝ}
+    (hr : 0 < r) (c : ℝ) :
+    0 < pseudoMassExt hα hr c ↔ pseudoMassExt hα hr c ≠ 0 :=
+  (pseudoMassExt_nonneg hα hr c).lt_iff_ne.trans
+    ⟨fun h => h.symm, fun h => h.symm⟩
+
 /-- **`pseudoMassExt` `ContinuousAt c₀ ∈ Ioo 0 2`**: re-statement of
 `pseudoMass_continuousAt` using the named definition. -/
 theorem pseudoMassExt_continuousAt {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
