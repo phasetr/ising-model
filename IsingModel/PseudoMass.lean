@@ -3823,4 +3823,55 @@ theorem pseudoMassFromParamsAtPair_gt_pseudoMassExt_iff_corr_lt
   unfold pseudoMassFromParamsAtPair
   exact pseudoMassExt_lt_iff hα hr hcorr hc
 
+/-- **`pseudoMassFromParamsAtPair ≤ pseudoMassExt(c) ↔ c ≤ correlation`**:
+non-strict iff form. -/
+theorem pseudoMassFromParamsAtPair_le_pseudoMassExt_iff_le_corr
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (x z : Fin d → ℤ)
+    {c : ℝ} (hc : c ∈ Set.Ioo (0 : ℝ) 2)
+    (hcorr : Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ p {x, z}
+              ∈ Set.Ioo (0 : ℝ) 2) :
+    pseudoMassFromParamsAtPair hα hr d Λ p x z ≤
+      pseudoMassExt hα hr c ↔
+    c ≤ Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ p {x, z} := by
+  unfold pseudoMassFromParamsAtPair
+  exact pseudoMassExt_le_iff hα hr hc hcorr
+
+/-- **`pseudoMassExt(c) ≤ pseudoMassFromParamsAtPair ↔ correlation ≤ c`**. -/
+theorem pseudoMassFromParamsAtPair_ge_pseudoMassExt_iff_corr_le
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (x z : Fin d → ℤ)
+    {c : ℝ} (hc : c ∈ Set.Ioo (0 : ℝ) 2)
+    (hcorr : Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ p {x, z}
+              ∈ Set.Ioo (0 : ℝ) 2) :
+    pseudoMassExt hα hr c ≤
+      pseudoMassFromParamsAtPair hα hr d Λ p x z ↔
+    Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ p {x, z} ≤ c := by
+  unfold pseudoMassFromParamsAtPair
+  exact pseudoMassExt_le_iff hα hr hcorr hc
+
+/-- **`pseudoMassFromParamsAtPair = pseudoMassExt(c) ↔ correlation = c`**:
+equality iff. -/
+theorem pseudoMassFromParamsAtPair_eq_pseudoMassExt_iff_corr_eq
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (x z : Fin d → ℤ)
+    {c : ℝ} (hc : c ∈ Set.Ioo (0 : ℝ) 2)
+    (hcorr : Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ p {x, z}
+              ∈ Set.Ioo (0 : ℝ) 2) :
+    pseudoMassFromParamsAtPair hα hr d Λ p x z =
+      pseudoMassExt hα hr c ↔
+    Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ p {x, z} = c := by
+  unfold pseudoMassFromParamsAtPair
+  rw [pseudoMassExt_eq_iff_of_mem hα hr hc hcorr]
+  exact eq_comm
+
 end IsingModel
