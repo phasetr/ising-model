@@ -378,6 +378,23 @@ theorem correlationInfinite_mem_Ici_zero
     correlationInfinite G Λ p A ∈ Set.Ici (0 : ℝ) :=
   correlationInfinite_nonneg G Λ p hf A
 
+/-- **`correlationInfinite ∉ Iio 0`** under ferromagnetic. -/
+theorem correlationInfinite_not_mem_Iio_zero
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (A : Finset V) :
+    correlationInfinite G Λ p A ∉ Set.Iio (0 : ℝ) :=
+  not_lt.mpr (correlationInfinite_nonneg G Λ p hf A)
+
+/-- **`correlationInfinite ∉ Ioi 1`** (unconditional): direct from
+`correlationInfinite_le_one`. -/
+theorem correlationInfinite_not_mem_Ioi_one
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (A : Finset V) :
+    correlationInfinite G Λ p A ∉ Set.Ioi (1 : ℝ) :=
+  not_lt.mpr (correlationInfinite_le_one G Λ p A)
+
 /-- **`0 < correlationInfinite ↔ correlationInfinite ≠ 0`** under
 ferromagnetic: standard nonneg → pos iff ne_zero pattern. -/
 theorem correlationInfinite_pos_iff_ne_zero
