@@ -1078,6 +1078,30 @@ theorem pseudoMass_lt_iff_pseudoMassG_lt {α : ℕ} (hα : 1 ≤ α) {r : ℝ}
   rw [hspec] at hG_iff
   exact hG_iff.symm
 
+/-- **Implicit definition: `t ≤ pseudoMass(c) ↔ c ≤ pseudoMassG α r t`** (reverse). -/
+theorem pseudoMass_ge_iff_pseudoMassG_ge {α : ℕ} (hα : 1 ≤ α) {r : ℝ}
+    (hr : 0 < r) {c : ℝ} (hc : c ∈ Ioo 0 2) {t : ℝ} (ht : 0 ≤ t) :
+    t ≤ pseudoMass hα hr hc ↔ c ≤ pseudoMassG α r t := by
+  have hspec : pseudoMassG α r (pseudoMass hα hr hc) = c := pseudoMass_spec hα hr hc
+  have hpm_nn : 0 ≤ pseudoMass hα hr hc := pseudoMass_nonneg hα hr hc
+  have hG_iff : pseudoMassG α r (pseudoMass hα hr hc) ≤ pseudoMassG α r t ↔
+                  t ≤ pseudoMass hα hr hc :=
+    pseudoMassG_le_iff hα hr ht hpm_nn
+  rw [hspec] at hG_iff
+  exact hG_iff.symm
+
+/-- **Implicit definition strict reverse**: `t < pseudoMass(c) ↔ c < pseudoMassG α r t`. -/
+theorem pseudoMass_gt_iff_pseudoMassG_gt {α : ℕ} (hα : 1 ≤ α) {r : ℝ}
+    (hr : 0 < r) {c : ℝ} (hc : c ∈ Ioo 0 2) {t : ℝ} (ht : 0 ≤ t) :
+    t < pseudoMass hα hr hc ↔ c < pseudoMassG α r t := by
+  have hspec : pseudoMassG α r (pseudoMass hα hr hc) = c := pseudoMass_spec hα hr hc
+  have hpm_nn : 0 ≤ pseudoMass hα hr hc := pseudoMass_nonneg hα hr hc
+  have hG_iff : pseudoMassG α r (pseudoMass hα hr hc) < pseudoMassG α r t ↔
+                  t < pseudoMass hα hr hc :=
+    pseudoMassG_lt_iff hα hr ht hpm_nn
+  rw [hspec] at hG_iff
+  exact hG_iff.symm
+
 /-- **`pseudoMass` is antitone (non-strict)**: corollary of
 `pseudoMass_strictAnti` weakened to `≤`. Useful when the strict
 inequality is unnecessarily strong (e.g., bound chains). -/
