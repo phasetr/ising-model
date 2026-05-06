@@ -295,6 +295,15 @@ theorem truncated2Infinite_mem_Ioc_zero_one_of_pos
     truncated2Infinite G Λ p i j ∈ Set.Ioc (0 : ℝ) 1 :=
   ⟨hpos, truncated2Infinite_le_one G Λ p hf i j⟩
 
+/-- **`truncated2Infinite ∈ Ico 0 2`** under ferromagnetic. -/
+theorem truncated2Infinite_mem_Ico_zero_two
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i j : V) :
+    truncated2Infinite G Λ p i j ∈ Set.Ico (0 : ℝ) 2 :=
+  ⟨truncated2Infinite_nonneg G Λ p hf i j,
+   truncated2Infinite_lt_two G Λ p hf i j⟩
+
 /-- **`0 < truncated2Infinite ↔ truncated2Infinite ≠ 0`** under
 ferromagnetic: standard nonneg → pos iff ne_zero pattern. -/
 theorem truncated2Infinite_pos_iff_ne_zero
