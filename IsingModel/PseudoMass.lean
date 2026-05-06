@@ -1052,6 +1052,32 @@ theorem pseudoMass_mem_Ici_zero {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < 
     pseudoMass hα hr hc ∈ Set.Ici (0 : ℝ) :=
   pseudoMass_nonneg hα hr hc
 
+/-- **Implicit definition: `pseudoMass(c) ≤ t ↔ pseudoMassG α r t ≤ c`** for
+`t ≥ 0` and `c ∈ Ioo 0 2`: characterizes pseudoMass(c) as the unique
+threshold by the anti-monotone defining equation `g(pseudoMass(c)) = c`. -/
+theorem pseudoMass_le_iff_pseudoMassG_le {α : ℕ} (hα : 1 ≤ α) {r : ℝ}
+    (hr : 0 < r) {c : ℝ} (hc : c ∈ Ioo 0 2) {t : ℝ} (ht : 0 ≤ t) :
+    pseudoMass hα hr hc ≤ t ↔ pseudoMassG α r t ≤ c := by
+  have hspec : pseudoMassG α r (pseudoMass hα hr hc) = c := pseudoMass_spec hα hr hc
+  have hpm_nn : 0 ≤ pseudoMass hα hr hc := pseudoMass_nonneg hα hr hc
+  have hG_iff : pseudoMassG α r t ≤ pseudoMassG α r (pseudoMass hα hr hc) ↔
+                  pseudoMass hα hr hc ≤ t :=
+    pseudoMassG_le_iff hα hr hpm_nn ht
+  rw [hspec] at hG_iff
+  exact hG_iff.symm
+
+/-- **Implicit definition strict version**: `pseudoMass(c) < t ↔ pseudoMassG α r t < c`. -/
+theorem pseudoMass_lt_iff_pseudoMassG_lt {α : ℕ} (hα : 1 ≤ α) {r : ℝ}
+    (hr : 0 < r) {c : ℝ} (hc : c ∈ Ioo 0 2) {t : ℝ} (ht : 0 ≤ t) :
+    pseudoMass hα hr hc < t ↔ pseudoMassG α r t < c := by
+  have hspec : pseudoMassG α r (pseudoMass hα hr hc) = c := pseudoMass_spec hα hr hc
+  have hpm_nn : 0 ≤ pseudoMass hα hr hc := pseudoMass_nonneg hα hr hc
+  have hG_iff : pseudoMassG α r t < pseudoMassG α r (pseudoMass hα hr hc) ↔
+                  pseudoMass hα hr hc < t :=
+    pseudoMassG_lt_iff hα hr hpm_nn ht
+  rw [hspec] at hG_iff
+  exact hG_iff.symm
+
 /-- **`pseudoMass` is antitone (non-strict)**: corollary of
 `pseudoMass_strictAnti` weakened to `≤`. Useful when the strict
 inequality is unnecessarily strong (e.g., bound chains). -/
