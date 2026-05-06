@@ -269,6 +269,16 @@ theorem correlationInfinite_sq_le_one
     pow_le_pow_left₀ (abs_nonneg _) h 2
   simpa [sq_abs] using this
 
+/-- **`correlationInfinite < 2`** (unconditional): direct from
+`correlationInfinite ≤ 1 < 2`. -/
+theorem correlationInfinite_lt_two
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (A : Finset V) :
+    correlationInfinite G Λ p A < 2 := by
+  have h := correlationInfinite_le_one G Λ p A
+  linarith
+
 /-- **Nonnegativity** (ferromagnetic): `correlationInfinite ≥ 0`.
 Uses `Λ.exhaust`: pick `N` with `A ⊆ Λ.volume N`; then
 `correlationAlongExhaustion G Λ p A N ≥ 0` by GKS-I, and this is
