@@ -328,6 +328,34 @@ theorem truncated2Infinite_mem_Ici_zero
     truncated2Infinite G Λ p i j ∈ Set.Ici (0 : ℝ) :=
   truncated2Infinite_nonneg G Λ p hf i j
 
+/-- **`truncated2Infinite ∉ Iio 0`** under ferromagnetic. -/
+theorem truncated2Infinite_not_mem_Iio_zero
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i j : V) :
+    truncated2Infinite G Λ p i j ∉ Set.Iio (0 : ℝ) :=
+  not_lt.mpr (truncated2Infinite_nonneg G Λ p hf i j)
+
+/-- **`truncated2Infinite ∉ Ioi 1`** under ferromagnetic. -/
+theorem truncated2Infinite_not_mem_Ioi_one
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i j : V) :
+    truncated2Infinite G Λ p i j ∉ Set.Ioi (1 : ℝ) :=
+  not_lt.mpr (truncated2Infinite_le_one G Λ p hf i j)
+
+/-- **`truncated2Infinite ∉ Ioi 2`** under ferromagnetic: stronger than
+`_lt_two`. -/
+theorem truncated2Infinite_not_mem_Ioi_two
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i j : V) :
+    truncated2Infinite G Λ p i j ∉ Set.Ioi (2 : ℝ) := by
+  intro h_lt
+  rw [Set.mem_Ioi] at h_lt
+  have h := truncated2Infinite_le_one G Λ p hf i j
+  linarith
+
 /-- **`0 < truncated2Infinite ↔ truncated2Infinite ≠ 0`** under
 ferromagnetic: standard nonneg → pos iff ne_zero pattern. -/
 theorem truncated2Infinite_pos_iff_ne_zero
