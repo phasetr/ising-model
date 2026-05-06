@@ -479,6 +479,20 @@ theorem pseudoMassG_continuousAt_of_pos (α : ℕ) {r : ℝ} (hr : 0 < r)
     ContinuousAt (pseudoMassG α r) t :=
   (pseudoMassG_analyticAt α hr ht.le).continuousAt
 
+/-- **`pseudoMassG α r` is `DifferentiableAt t` for `t ≥ 0`**: from
+`pseudoMassG_analyticAt`. -/
+theorem pseudoMassG_differentiableAt (α : ℕ) {r : ℝ} (hr : 0 < r)
+    {t : ℝ} (ht : 0 ≤ t) :
+    DifferentiableAt ℝ (pseudoMassG α r) t :=
+  (pseudoMassG_analyticAt α hr ht).differentiableAt
+
+/-- **`pseudoMassG α r` is `DifferentiableOn ℝ ... (Ioi 0)`**: lifted
+from `differentiableAt`. -/
+theorem pseudoMassG_differentiableOn_Ioi_zero (α : ℕ) {r : ℝ} (hr : 0 < r) :
+    DifferentiableOn ℝ (pseudoMassG α r) (Set.Ioi (0 : ℝ)) := by
+  intro t ht
+  exact (pseudoMassG_differentiableAt α hr ht.le).differentiableWithinAt
+
 /-- `pseudoMassG` tends to 0 as `t → ∞` for `r > 0`. -/
 theorem pseudoMassG_tendsto_zero (α : ℕ) {r : ℝ} (hr : 0 < r) :
     Filter.Tendsto (pseudoMassG α r) Filter.atTop (nhds 0) := by
