@@ -14,12 +14,29 @@
 
 % Allow hyphenation in tt font
 \usepackage{hyphenat}
+\usepackage{newunicodechar}
+\newunicodechar{β}{\ensuremath{\beta}}
+\newunicodechar{ℤ}{\ensuremath{\mathbb{Z}}}
+\newunicodechar{ℝ}{\ensuremath{\mathbb{R}}}
+\newunicodechar{≤}{\ensuremath{\le}}
+\newunicodechar{≥}{\ensuremath{\ge}}
+\newunicodechar{ℓ}{\ensuremath{\ell}}
+\newunicodechar{₀}{\ensuremath{_0}}
+\newunicodechar{₁}{\ensuremath{_1}}
+\newunicodechar{₂}{\ensuremath{_2}}
+\newunicodechar{₃}{\ensuremath{_3}}
+\newunicodechar{∂}{\ensuremath{\partial}}
+\newunicodechar{∈}{\ensuremath{\in}}
 
 \newtheorem{theorem}{Theorem}
 \newtheorem{lemma}[theorem]{Lemma}
 \newtheorem{definition}[theorem]{Definition}
 \newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{axiom}[theorem]{Axiom}
 \newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\LeanLambda}{\texorpdfstring{\ensuremath{\Lambda}}{Lambda}}
 
 \title{Ising Model Formalization: A Mathematical Guide to the Lean 4 Code}
 \author{ising-model project}
@@ -126,7 +143,7 @@ GibbsMeasure.lean            Z, Gibbs expectation, correlation
   |
   +-- ContinuousSpin/Phi4.lean    phi^4 identities (axioms)
   |
-  +-- AmbientLattice.lean         ambient V : Type*, Λ : Finset V, exhaustion
+  +-- AmbientLattice.lean         ambient V : Type*, Lambda : Finset V, exhaustion
 \end{Verbatim}
 
 \subsection{Recommended reading paths}
@@ -1537,13 +1554,13 @@ $|M(\langle J,h,\beta\rangle;i)| = M(\langle J,|h|,\beta\rangle;i)$
 under $0\le J$, $0<\beta$.
 \end{theorem}
 \noindent The $\Lambda$-layer counterpart is
-\begin{theorem}[\texttt{abs\_magnetizationΛ\_eq\_magnetizationΛ\_abs\_h}, PR~\#772]
+\begin{theorem}[\texttt{abs\_magnetization\LeanLambda\_eq\_magnetization\LeanLambda\_abs\_h}, PR~\#772]
 $|M_\Lambda(\langle J,h,\beta\rangle;i)| = M_\Lambda(\langle J,|h|,\beta\rangle;i)$
 under $0\le J$, $0<\beta$, for any finite volume $\Lambda \subseteq V$ and
 any site $i \in \Lambda$. Proved by the same
 \texttt{abs\_choice}-based case split, using
-\texttt{magnetizationΛ\_nonneg} (ferromagnetic, via GKS-I at
-$\Lambda$-level) and \texttt{magnetizationΛ\_neg\_h}.
+\texttt{magnetization\LeanLambda\_nonneg} (ferromagnetic, via GKS-I at
+$\Lambda$-level) and \texttt{magnetization\LeanLambda\_neg\_h}.
 \end{theorem}
 \noindent The along-exhaustion counterpart (pointwise per stage) is
 likewise an equality, and it is the bridge to the infinite-volume
@@ -1565,7 +1582,7 @@ $M_\infty := \sup_n M_\text{along}(n)$. The failure mode is the
 odd-$|A|$ obstruction already flagged in
 \texttt{correlationInfinite\_neg\_h\_of\_even\_card}: at $h < 0$
 ferromagnetic, covered stages give $M_\text{along}(n) \le 0$
-(via \texttt{magnetizationAlongExhaustion\_neg\_h} plus the finite/Λ
+(via \texttt{magnetizationAlongExhaustion\_neg\_h} plus the finite/\(\Lambda\)
 ferromagnetic positivity at $|h|$), so the supremum is bounded above
 by the contributions of any \emph{missed} stages (where
 $M_\text{along}(n) = 0$ by the ``if $A \subseteq \Lambda_n$ then
@@ -1633,7 +1650,7 @@ $\chi(h) + (-M(h)) - M(h) = \chi(h) - 2\,M(h)$, matching the LHS.
 non-negative closed form
 $\chi(|h|) - \chi(h) = |M(h)| - M(h) = 2\max\{0,-M(h)\}$.
 
-\begin{definition}[\texttt{susceptibilityΛ}, PR~\#776]
+\begin{definition}[\texttt{susceptibility\LeanLambda}, PR~\#776]
 For $\Lambda \subseteq V$ a finite volume in an infinite ambient $V$ and
 $i : \uparrow\Lambda$,
 \[
@@ -1642,11 +1659,11 @@ $i : \uparrow\Lambda$,
   = \sum_{j : \uparrow\Lambda}\mathrm{truncated2}\bigl(\mathrm{inducedGraph}\ G\ \Lambda,\ p;\ i, j\bigr).
 \]
 This is the $\Lambda$-layer counterpart of \texttt{susceptibility}, matching
-the \texttt{magnetizationΛ} / \texttt{correlationΛ} pattern at the ambient
+the \texttt{magnetization\LeanLambda} / \texttt{correlation\LeanLambda} pattern at the ambient
 lattice layer.
 \end{definition}
 
-\begin{theorem}[\texttt{susceptibilityΛ\_eq\_abs\_h}, PR~\#776 (A-4, issue~\#770)]
+\begin{theorem}[\texttt{susceptibility\LeanLambda\_eq\_abs\_h}, PR~\#776 (A-4, issue~\#770)]
 For all $J, h, \beta \in \mathbb R$ and $i : \uparrow\Lambda$,
 \[
   \chi_\Lambda(\langle J, |h|, \beta\rangle; i)
@@ -1659,11 +1676,11 @@ unconditionally (no ferromagnetic hypothesis required).
 Direct lift of \texttt{susceptibility\_eq\_abs\_h} (PR~\#771) along
 $\chi_\Lambda := \chi(\mathrm{inducedGraph}\ G\ \Lambda)$ and
 $M_\Lambda = M(\mathrm{inducedGraph}\ G\ \Lambda)$. Bundled helpers
-\texttt{susceptibilityΛ\_apply}, \texttt{susceptibilityΛ\_nonneg}
-(ferromagnetic), \texttt{susceptibilityΛ\_neg\_h}
+\texttt{susceptibility\LeanLambda\_apply}, \texttt{susceptibility\LeanLambda\_nonneg}
+(ferromagnetic), \texttt{susceptibility\LeanLambda\_neg\_h}
 ($\chi_\Lambda(-h) = \chi_\Lambda(h) - 2 M_\Lambda(h)$), and the
 $\mathbb{Z}^d$ wrapper
-\texttt{susceptibilityΛ\_latticeGraph\_eq\_abs\_h} are included.
+\texttt{susceptibility\LeanLambda\_latticeGraph\_eq\_abs\_h} are included.
 \end{proof}
 
 \begin{definition}[\texttt{susceptibilityAlongExhaustion}, PR~\#777]
@@ -1695,14 +1712,14 @@ unconditionally (no ferromagnetic hypothesis required).
 Case split on $i \in \Lambda_n$:
 \begin{itemize}
   \item \emph{Covered stage}: reduce to
-    \texttt{susceptibilityΛ\_eq\_abs\_h} (PR~\#776) at the lifted
+    \texttt{susceptibility\LeanLambda\_eq\_abs\_h} (PR~\#776) at the lifted
     subtype site $\langle i, h_i\rangle$. The magnetization-side
     terms are converted via the helper
-    \texttt{magnetizationAlongExhaustion\_of\_mem\_eq\_magnetizationΛ},
+    \texttt{magnetizationAlongExhaustion\_of\_mem\_eq\_magnetization\LeanLambda},
     which upgrades the \texttt{liftFinset $\{i\}$}-form returned by
     \texttt{magnetizationAlongExhaustion\_of\_mem} (itself a singleton
     specialization of \texttt{correlationAlongExhaustion\_of\_subset})
-    to the \texttt{magnetizationΛ} form via the auxiliary
+    to the \texttt{magnetization\LeanLambda} form via the auxiliary
     \texttt{liftFinset\_singleton}.
   \item \emph{Uncovered stage}: all four terms are $0$ by the
     \texttt{\_of\_not\_mem} unfoldings, and the identity holds.
@@ -2284,13 +2301,14 @@ specialization of \texttt{freeEnergy\_upper\_bound} at each stage.
 
 \subsection{Free-spin / one-body limit $(G = \bot)$}
 
-参考: Glimm--Jaffe, \S 4 chapter 冒頭 (free spin).
-$J$ に関わらず ambient graph が $\bot$ (辺なし) なら相互作用項は消える.
+Reference: Glimm--Jaffe, opening of \S 4 (free spin).
+Regardless of $J$, if the ambient graph is $\bot$ (no edges), the
+interaction term disappears.
 
 \begin{theorem}[\texttt{hamiltonian\_bot}]
 $H_{\bot, p}(\sigma) = -h \sum_{i \in \iota} \operatorname{sign}(\sigma_i)$.
-\texttt{edgeFinset\_bot}: $(\bot).\text{edgeFinset} = \emptyset$ で
-$J$ 項は空和, 0 になる.
+\texttt{edgeFinset\_bot}: $(\bot).\text{edgeFinset} = \emptyset$, so the
+$J$-term is an empty sum and is zero.
 \end{theorem}
 
 \begin{theorem}[\texttt{sum\_exp\_spin\_sign}]
@@ -2303,102 +2321,106 @@ $Z_{\bot, p} = (2 \cosh(\beta h))^{|\iota|}$.
 
 \begin{proof}
 \texttt{hamiltonian\_bot} + $\exp(-\beta H) = \prod_i \exp(\beta h \cdot \operatorname{sign}(\sigma_i))$.
-finite 分配則 \texttt{Finset.sum\_prod\_piFinset} で
+The finite product-sum rule \texttt{Finset.sum\_prod\_piFinset} gives
 $\sum_\sigma \prod_i f(\sigma_i) = \prod_i \sum_s f(s)$.
-単サイト和を \texttt{sum\_exp\_spin\_sign} で閉じる.
+The one-site sum is closed by \texttt{sum\_exp\_spin\_sign}.
 \end{proof}
 
 \begin{theorem}[\texttt{freeEnergy\_bot}]
-$|\iota| > 0$ で
+For $|\iota| > 0$,
 \[
   f(\bot, p) = \log(2 \cosh(\beta h)).
 \]
-\texttt{partitionFunction\_bot} に \texttt{Real.log\_pow} を適用し
-$|\iota|$ で割る.
+Apply \texttt{Real.log\_pow} to \texttt{partitionFunction\_bot} and divide
+by $|\iota|$.
 \end{theorem}
 
 \begin{theorem}[\texttt{freeEnergy\_bot\_h\_zero}]
-$|\iota| > 0$ と任意の $J, \beta \in \mathbb R$ で
+For $|\iota| > 0$ and arbitrary $J, \beta \in \mathbb R$,
 \[
   f(\bot, \langle J, 0, \beta \rangle) = \log 2.
 \]
-$\cosh 0 = 1$ で \texttt{freeEnergy\_bot} から即座. J 任意なのは
-$\bot$ で $J$ 項が空和になるため. PR \#120 \texttt{freeEnergy\_zero\_params}
-($J = h = 0$) の $J$-arbitrary 拡張.
+This follows immediately from \texttt{freeEnergy\_bot} and $\cosh 0 = 1$.
+The parameter $J$ is arbitrary because the $J$-term is empty on $\bot$.
+It extends PR \#120 \texttt{freeEnergy\_zero\_params} ($J = h = 0$) to
+arbitrary $J$.
 \end{theorem}
 
 \begin{theorem}[\texttt{partitionFunction\_beta\_zero}]
 $Z_G(\langle J, h, 0 \rangle) = |\text{Config}\,\iota|$.
-$-\beta = 0$ で Boltzmann weight $= \exp 0 = 1$.
+When $-\beta = 0$, the Boltzmann weight is $\exp 0 = 1$.
 \end{theorem}
 
 \begin{theorem}[\texttt{freeEnergy\_beta\_zero}]
-$|\iota| > 0$, 任意の $J, h, G$ で
+For $|\iota| > 0$ and arbitrary $J, h, G$,
 \[
   f(G, \langle J, h, 0 \rangle) = \log 2.
 \]
-PR \#120 \texttt{freeEnergy\_zero\_params} の $\beta$-direction 版.
+This is the $\beta$-direction analogue of PR \#120
+\texttt{freeEnergy\_zero\_params}.
 \texttt{partitionFunction\_beta\_zero} + \texttt{Real.log\_pow} + $|\iota|^{-1}$ cancel.
 \end{theorem}
 
 \begin{theorem}[\texttt{freeEnergyAlongExhaustion\_beta\_zero}; PR \#132]
-Nonempty $\Lambda.\text{volume}\,n$ で
+For nonempty $\Lambda.\text{volume}\,n$,
 $\texttt{freeEnergyAlongExhaustion}\,G\,\Lambda\,\langle J, h, 0 \rangle\,n = \log 2$.
-\texttt{change} + definitional unfolding で specialize.
+Specialize by \texttt{change} and definitional unfolding.
 \end{theorem}
 
 \begin{theorem}[\texttt{freeEnergyInfinite\_beta\_zero}; PR \#133]
-$\forall n, \Lambda.\text{volume}\,n$ nonempty を仮定:
+Assume $\Lambda.\text{volume}\,n$ is nonempty for every $n$:
 $\texttt{freeEnergyInfinite}\,G\,\Lambda\,\langle J, h, 0 \rangle = \log 2$.
-Constant 列に書き直して \texttt{Filter.limsup\_const} で閉.
+Rewrite to a constant sequence and close with \texttt{Filter.limsup\_const}.
 \end{theorem}
 
 \begin{theorem}[\texttt{freeEnergyAlongExhaustion\_zero\_params}; PR \#162]
-Nonempty $\Lambda.\text{volume}\,n$ で
+For nonempty $\Lambda.\text{volume}\,n$,
 $\texttt{freeEnergyAlongExhaustion}\,G\,\Lambda\,\langle 0, 0, \beta \rangle\,n = \log 2$.
-\texttt{change} + definitional unfolding で
-\texttt{IsingModel.freeEnergy\_zero\_params} に specialize.
+Use \texttt{change} and definitional unfolding to specialize
+\texttt{IsingModel.freeEnergy\_zero\_params}.
 \end{theorem}
 
 \begin{theorem}[\texttt{freeEnergyInfinite\_zero\_params}; PR \#162]
-$\forall n, \Lambda.\text{volume}\,n$ nonempty を仮定:
+Assume $\Lambda.\text{volume}\,n$ is nonempty for every $n$:
 $\texttt{freeEnergyInfinite}\,G\,\Lambda\,\langle 0, 0, \beta \rangle = \log 2$.
-\texttt{freeEnergyInfinite\_beta\_zero} の構造を
-\texttt{freeEnergyAlongExhaustion\_zero\_params} 経由で再利用.
-最大エントロピー値を $J = h = 0$ (Hamiltonian 恒等零) から得る pair.
+Reuse the structure of \texttt{freeEnergyInfinite\_beta\_zero} through
+\texttt{freeEnergyAlongExhaustion\_zero\_params}. This gives the maximal
+entropy value from the $J = h = 0$ pair, where the Hamiltonian is
+identically zero.
 \end{theorem}
 
 \begin{theorem}[\texttt{partitionFunctionAlongExhaustion\_zero\_params}; PR \#163]
-任意の $n$ で
+For every $n$,
 \[
   \texttt{partitionFunctionAlongExhaustion}\,G\,\Lambda\,\langle 0, 0, \beta \rangle\,n
     = 2^{|\Lambda_n|}.
 \]
-\texttt{IsingModel.partitionFunction\_zero\_params} 直接 specialize +
+\texttt{IsingModel.partitionFunction\_zero\_params} is specialized directly,
+then combined with
 \texttt{card\_config\_eq\_two\_pow} + \texttt{Fintype.card\_coe}.
 \end{theorem}
 
 \begin{theorem}[\texttt{log\_partitionFunctionAlongExhaustion\_zero\_params}; PR \#163]
-任意の $n$ で
+For every $n$,
 \[
   \log \texttt{partitionFunctionAlongExhaustion}\,G\,\Lambda\,\langle 0, 0, \beta \rangle\,n
     = |\Lambda_n| \cdot \log 2.
 \]
-上記と \texttt{Real.log\_pow} の合成.
+This is the composition of the preceding theorem with \texttt{Real.log\_pow}.
 \end{theorem}
 
 \begin{theorem}[\texttt{partitionFunctionAlongExhaustion\_beta\_zero}; PR \#164]
-任意の $n$ および任意の $J, h \in \mathbb R$ で
+For every $n$ and arbitrary $J, h \in \mathbb R$,
 \[
   \texttt{partitionFunctionAlongExhaustion}\,G\,\Lambda\,\langle J, h, 0 \rangle\,n
     = 2^{|\Lambda_n|}.
 \]
-\texttt{IsingModel.partitionFunction\_beta\_zero} を specialize.
-$\beta = 0$ で Boltzmann weight $\exp(-\beta H) = 1$ を経由.
+Specialize \texttt{IsingModel.partitionFunction\_beta\_zero}. At
+$\beta = 0$, the Boltzmann weight satisfies $\exp(-\beta H) = 1$.
 \end{theorem}
 
 \begin{theorem}[\texttt{log\_partitionFunctionAlongExhaustion\_beta\_zero}; PR \#164]
-同条件で
+Under the same assumptions,
 \[
   \log \texttt{partitionFunctionAlongExhaustion}\,G\,\Lambda\,\langle J, h, 0 \rangle\,n
     = |\Lambda_n| \cdot \log 2.
@@ -2406,123 +2428,133 @@ $\beta = 0$ で Boltzmann weight $\exp(-\beta H) = 1$ を経由.
 \end{theorem}
 
 \begin{theorem}[\texttt{freeEnergy\_ge\_log\_two\_of\_ferromagnetic}; PR \#168]
-$0 < |\iota|$, 強磁性 $p$ で
+For $0 < |\iota|$ and ferromagnetic $p$,
 \[
   \log 2 \;\le\; f_G(p).
 \]
-\texttt{freeEnergy\_ge\_log\_two\_cosh} + \texttt{Real.one\_le\_cosh}
-+ log 単調. 既存 $\Lambda$ 版 \texttt{freeEnergyΛ\_ge\_log\_two}
-(PR \#125) は本 PR で base 恒等への薄い wrapper に refactor.
+\texttt{freeEnergy\_ge\_log\_two\_cosh}, \texttt{Real.one\_le\_cosh}, and
+monotonicity of logarithm. The existing $\Lambda$ version
+\texttt{freeEnergy\LeanLambda\_ge\_log\_two} (PR \#125) is refactored here into a
+thin wrapper around the base identity.
 \end{theorem}
 
 \begin{theorem}[\texttt{freeEnergyInfinite\_eq\_of\_tendsto}; PR \#170]
+Assuming
 $\texttt{Tendsto}\,(\texttt{freeEnergyAlongExhaustion}\,G\,\Lambda\,p)\,
-\texttt{atTop}\,(\mathcal N (L))$ のもと
+\texttt{atTop}\,(\mathcal N (L))$,
 \[
   \texttt{freeEnergyInfinite}\,G\,\Lambda\,p \;=\; L.
 \]
-\texttt{freeEnergyInfinite := Filter.limsup} 定義と
-\texttt{Filter.Tendsto.limsup\_eq} の合成. Fekete 収束成立時に
-\texttt{freeEnergyInfinite} の値を与える infrastructure.
+Combine the definition \texttt{freeEnergyInfinite := Filter.limsup} with
+\texttt{Filter.Tendsto.limsup\_eq}. This infrastructure identifies the value
+of \texttt{freeEnergyInfinite} once Fekete convergence is available.
 \end{theorem}
 
 \begin{theorem}[Glimm--Jaffe \S 4.6 Prop 4.6.1 (Fekete convergence);
 PR \#192]
-以下の仮定バンドル (disjoint-tower exhaustion 条件) のもと,
-自由エネルギー密度が収束する. 仮定:
+Under the following bundled assumptions, expressing a disjoint-tower
+exhaustion condition, the free-energy density converges:
 \begin{itemize}
   \item $\forall m, n, |\Lambda_{m+n}| = |\Lambda_m| + |\Lambda_n|$
         (cardinality additivity)
   \item $\forall m, n, \log Z_{\Lambda_m} + \log Z_{\Lambda_n}
           \le \log Z_{\Lambda_{m+n}}$ (super-additivity)
-  \item $\texttt{freeEnergyAlongExhaustion}\,G\,\Lambda\,p$ が上有界
+  \item $\texttt{freeEnergyAlongExhaustion}\,G\,\Lambda\,p$ is bounded above
   \item $|\Lambda_1| \neq 0$
 \end{itemize}
-のもと
+Under these assumptions,
 \[
   \texttt{Tendsto}\,(\texttt{freeEnergyAlongExhaustion}\,G\,\Lambda\,p)\,
     \texttt{atTop}\,
     (\mathcal N (\texttt{freeEnergyInfinite}\,G\,\Lambda\,p)).
 \]
-証明: $u_n := -\log Z_{\Lambda_n}$ は super-additivity の符号反転で
-\texttt{Subadditive}. cardinality 加法性の induction で
-$|\Lambda_n| = n \cdot |\Lambda_1|$. mathlib
-\texttt{Subadditive.tendsto\_lim} (Fekete) を適用し
-$u_n / n \to \ell$. 比は
+Proof: $u_n := -\log Z_{\Lambda_n}$ is \texttt{Subadditive} by sign reversal
+of super-additivity. Cardinality additivity gives
+$|\Lambda_n| = n \cdot |\Lambda_1|$ by induction. Apply mathlib
+\texttt{Subadditive.tendsto\_lim} (Fekete) to obtain $u_n / n \to \ell$.
+The ratio is
 \[
   \texttt{freeEnergyAlongExhaustion}\,G\,\Lambda\,p\,n
     = -(u_n / n) / |\Lambda_1|
 \]
-($n \ge 1$) で, Tendsto が持ち上がる.
-\texttt{freeEnergyInfinite\_eq\_of\_tendsto} で極限値を同定.
+for $n \ge 1$, so the \texttt{Tendsto} result transfers.
+\texttt{freeEnergyInfinite\_eq\_of\_tendsto} identifies the limit value.
 
-Prop 4.6.1 の Fekete 段を完結 (既存の disjoint-union super-additivity,
-upper bound, 発散infra と合わせて対象 exhaustion クラス上で Done).
+This completes the Fekete stage of Proposition 4.6.1; together with the
+existing disjoint-union super-additivity, upper bound, and divergence
+infrastructure, the targeted exhaustion class is covered.
 \end{theorem}
 
-\begin{theorem}[GJ \S 4.6 Thm 4.6.2 に向けた support: finite-volume complex $Z$ analyticity; PR \#193]
-GJ Thm 4.6.2 の前段支援: 有限体積分配関数
-$Z_G(J, h, \beta)$ を $(J, h, \beta) \in \mathbb C^3$ に
-拡張すると, 各パラメタ個別に entire:
+\begin{theorem}[Support toward GJ \S 4.6 Thm 4.6.2: finite-volume complex $Z$ analyticity; PR \#193]
+Preliminary support for GJ Theorem 4.6.2: after extending the finite-volume
+partition function $Z_G(J, h, \beta)$ to $(J, h, \beta) \in \mathbb C^3$, it
+is entire in each parameter separately:
 \[
   Z_G^{\mathbb C}(J, h, \beta) = \sum_\sigma \exp(-\beta \cdot H^{\mathbb C}_G(J, h; \sigma)),
 \]
-$H^{\mathbb C}_G$ は $(J, h)$ について affine. したがって各 Boltzmann
-weight は $\exp \circ$(affine) で entire, 有限和 $Z$ も entire.
+$H^{\mathbb C}_G$ is affine in $(J, h)$. Hence each Boltzmann weight is
+$\exp \circ$(affine) and entire, and the finite sum $Z$ is entire.
 \texttt{partitionFunctionComplex\_analyticAt\_\{h,J,beta\}}.
-本 PR は $Z$ の個別-パラメタ analyticity までで, GJ Thm 4.6.2 本文
-(free energy の complex analyticity on $|\mathrm{Im}\,h| < \mathrm{Re}\,h$,
-joint analyticity, $\log Z$ (slit-plane 経由), $\infty$-vol Vitali)
-は後続 PR. `Complex.log` は mathlib では slitPlane 上でのみ analytic な点に注意.
+This PR only covers separate-parameter analyticity of $Z$. The body of GJ
+Theorem 4.6.2, namely complex analyticity of free energy on
+$|\mathrm{Im}\,h| < \mathrm{Re}\,h$, joint analyticity, $\log Z$ via the
+slit plane, and the infinite-volume Vitali step, is left to later PRs. Note
+that in mathlib, \texttt{Complex.log} is analytic only on \texttt{slitPlane}.
 \end{theorem}
 
 \begin{theorem}[GJ \S 4.6 Thm 4.6.2 continuation: $Z \in$ slitPlane on real slice; PR \#198]
 \texttt{partitionFunctionComplex\_mem\_slitPlane\_of\_real}:
-実 $p$ で $Z^{\mathbb C}_G(p.J, p.h, p.\beta) \in \texttt{Complex.slitPlane}$.
-証明: PR \#196 real-complex compat + \texttt{partitionFunction\_pos} ($Z > 0$) で
-real part $> 0$, imaginary part $= 0$. slitPlane 条件の Or.inl.
+For real $p$, $Z^{\mathbb C}_G(p.J, p.h, p.\beta) \in \texttt{Complex.slitPlane}$.
+Proof: PR \#196 real-complex compatibility and \texttt{partitionFunction\_pos}
+($Z > 0$) give positive real part and zero imaginary part. This is the
+\texttt{Or.inl} branch of the slit-plane condition.
 \end{theorem}
 
 \begin{theorem}[GJ \S 4.6 Thm 4.6.2 continuation: \texttt{freeEnergy} real-complex compat; PR \#197]
 \texttt{freeEnergy\_ofReal\_eq\_freeEnergyComplex}:
-実パラメタ $p$ で
+For real parameters $p$,
 $((\texttt{freeEnergy}\,G\,p : \mathbb R) : \mathbb C) = \texttt{freeEnergyComplex}\,G\,(J:\mathbb C)\,(h:\mathbb C)\,(\beta:\mathbb C)$.
-証明: PR \#196 の $Z$ 整合性 + \texttt{partitionFunction\_pos}
-($Z > 0$) で \texttt{Complex.ofReal\_log} 適用.
+Proof: use the $Z$ compatibility from PR \#196 and
+\texttt{partitionFunction\_pos} ($Z > 0$), then apply
+\texttt{Complex.ofReal\_log}.
 \end{theorem}
 
 \begin{theorem}[GJ \S 4.6 Thm 4.6.2 continuation: real-complex compatibility; PR \#196]
 \texttt{partitionFunction\_ofReal\_eq\_partitionFunctionComplex}:
-実パラメタ $p = \langle J, h, \beta\rangle$ で
-$(\texttt{partitionFunction}\,G\,p : \mathbb R)$ を $\mathbb C$ に昇格すると
+For real parameters $p = \langle J, h, \beta\rangle$, coercing
+$(\texttt{partitionFunction}\,G\,p : \mathbb R)$ to $\mathbb C$ gives
 $\texttt{partitionFunctionComplex}\,G\,(J:\mathbb C)\,(h:\mathbb C)\,(\beta:\mathbb C)$.
-証明: \texttt{Complex.ofReal} は環準同型なので有限和/exp/各 site の
-spin sign と可換.
+Proof: \texttt{Complex.ofReal} is a ring homomorphism, so it commutes with
+finite sums, exponentials, and each site's spin sign.
 \end{theorem}
 
 \begin{theorem}[GJ \S 4.6 Thm 4.6.2 continuation: joint analyticity in $(J,h,\beta)$; PR \#195]
 \texttt{partitionFunctionComplex\_analyticAt\_joint}:
-$(J, h, \beta) \in \mathbb C^3 \mapsto Z_G^{\mathbb C}$ は entire.
+The map $(J, h, \beta) \in \mathbb C^3 \mapsto Z_G^{\mathbb C}$ is entire.
 \texttt{freeEnergyComplex\_analyticAt\_joint}: $Z \in$ \texttt{slitPlane}
-の点で $f_G^{\mathbb C}$ も joint analytic.
-証明: 定義 $H_J = -J \cdot \text{edgeSum}$, $H_h = -h \cdot \text{siteSum}$
-より exponent $-\beta(H_J + H_h) = \beta \cdot (J \cdot \text{edgeSum} + h \cdot \text{siteSum})$
-は $(J, h, \beta)$ に関して多項式. \texttt{analyticAt\_fst}/\texttt{analyticAt\_snd}
-で projections を analytic とし, \texttt{add}/\texttt{mul}/\texttt{neg} で合成,
-\texttt{AnalyticAt.cexp'} + \texttt{Finset.analyticAt\_fun\_sum} で $Z$ entire.
-\texttt{AnalyticAt.clog} + \texttt{analyticAt\_const.mul} で $f$.
+at a point where $f_G^{\mathbb C}$ is also jointly analytic.
+Proof: by the definitions $H_J = -J \cdot \text{edgeSum}$ and
+$H_h = -h \cdot \text{siteSum}$, the exponent
+$-\beta(H_J + H_h) = \beta \cdot (J \cdot \text{edgeSum} + h \cdot \text{siteSum})$
+is polynomial in $(J, h, \beta)$. Use
+\texttt{analyticAt\_fst}/\texttt{analyticAt\_snd} for projections and compose
+with \texttt{add}/\texttt{mul}/\texttt{neg}. Then
+\texttt{AnalyticAt.cexp'} plus \texttt{Finset.analyticAt\_fun\_sum} gives
+entireness of $Z$, and \texttt{AnalyticAt.clog} plus
+\texttt{analyticAt\_const.mul} gives analyticity of $f$.
 \end{theorem}
 
 \begin{theorem}[GJ \S 4.6 Thm 4.6.2 continuation: \texttt{freeEnergyComplex} analyticity via slitPlane; PR \#194]
-PR \#193 の各パラメタ entire な $Z$ に続き,
-$Z(J, h_0, \beta) \in \texttt{Complex.slitPlane}$ の点で
+Following PR \#193, where $Z$ is entire in each parameter separately, at a
+point with $Z(J, h_0, \beta) \in \texttt{Complex.slitPlane}$,
 \[
   \texttt{AnalyticAt}\,\mathbb C\,
     (h \mapsto \texttt{freeEnergyComplex}\,G\,J\,h\,\beta)\,h_0
 \]
-(他 2 パラメタ版も同様). 証明: mathlib \texttt{AnalyticAt.clog}
-(\texttt{Mathlib.Analysis.SpecialFunctions.Complex.Analytic}) と
-定数乗との合成.
+with analogous statements for the other two parameters. Proof: compose
+mathlib \texttt{AnalyticAt.clog}
+(\texttt{Mathlib.Analysis.SpecialFunctions.Complex.Analytic}) with
+multiplication by a constant.
 \end{theorem}
 
 \begin{theorem}[Lee-Yang domain infrastructure (support toward GJ \S 4.6 Thm 4.6.2); PR \#199]
@@ -2707,30 +2739,30 @@ Lee-Yang domain requires branch selection and is a TODO of this PR.
 \end{theorem}
 
 \begin{theorem}[\texttt{freeEnergyInfinite\_of\_eventually\_const}; PR \#171]
-$\forall^\infty n, f_n = c$ のとき
+If $\forall^\infty n, f_n = c$, then
 $\texttt{freeEnergyInfinite}\,G\,\Lambda\,p = c$.
-\texttt{tendsto\_const\_nhds.congr'} で eventually const
-$\Rightarrow$ Tendsto, PR \#170 で limsup = limit.
-既存 \texttt{\_beta\_zero} / \texttt{\_zero\_params} (全 $n$ nonempty 仮定下)
-の一般化.
+\texttt{tendsto\_const\_nhds.congr'} turns eventual constancy into a
+\texttt{Tendsto} statement, and PR \#170 turns the limsup into the limit.
+This generalizes the existing \texttt{\_beta\_zero} and
+\texttt{\_zero\_params} results, which assumed every $n$ was nonempty.
 \end{theorem}
 
-\begin{theorem}[\texttt{freeEnergy\_J\_zero} 系; PR \#174]
-$J = 0$ で interaction 項 $= 0$ で $Z_G = Z_\bot$ グラフ非依存.
-$|\iota| > 0$, 任意の $h, \beta$ で
+\begin{theorem}[\texttt{freeEnergy\_J\_zero} family; PR \#174]
+At $J = 0$, the interaction term is zero and $Z_G = Z_\bot$, independently
+of the graph. For $|\iota| > 0$ and arbitrary $h, \beta$,
 \[
   Z_G(\langle 0, h, \beta\rangle) = (2 \cosh(\beta h))^{|\iota|},
   \quad
   f_G(\langle 0, h, \beta\rangle) = \log(2 \cosh(\beta h)).
 \]
-along-exhaustion / $\infty$-vol lift (eventually nonempty) も同 PR.
-既存の $\beta = 0$ / $J = h = 0$ / $\bot$-graph 系列の 4 本目の
-zero-parameter closed form.
+The same PR also provides the along-exhaustion and infinite-volume lifts
+under eventual nonemptiness. This is the fourth zero-parameter closed form
+alongside the existing $\beta = 0$, $J = h = 0$, and $\bot$-graph families.
 \end{theorem}
 
 \begin{theorem}[\texttt{\_eq\_bot\_at\_J\_zero} along-exhaustion / $\infty$-vol lift; PR \#176]
-base 層の $\bot$-equivalence identities (PR \#175) を
-along-exhaustion / $\infty$-vol まで延長:
+The base-layer $\bot$-equivalence identities from PR \#175 are extended to
+the along-exhaustion and infinite-volume layers:
 \[
   \texttt{freeEnergyAlongExhaustion}\,G\,\Lambda\,\langle 0,h,\beta\rangle\,n
     = \texttt{freeEnergyAlongExhaustion}\,\bot\,\Lambda\,\langle 0,h,\beta\rangle\,n,
@@ -2739,51 +2771,53 @@ along-exhaustion / $\infty$-vol まで延長:
   \texttt{freeEnergyInfinite}\,G\,\Lambda\,\langle 0,h,\beta\rangle
     = \texttt{freeEnergyInfinite}\,\bot\,\Lambda\,\langle 0,h,\beta\rangle.
 \]
-Along-exhaustion 版は \texttt{change} + \texttt{freeEnergy\_eq\_bot\_at\_J\_zero}
-適用, $\infty$-vol 版は \texttt{Filter.limsup} の関数性.
+The along-exhaustion version uses \texttt{change} and
+\texttt{freeEnergy\_eq\_bot\_at\_J\_zero}. The infinite-volume version uses
+functoriality of \texttt{Filter.limsup}.
 \end{theorem}
 
 \begin{theorem}[\texttt{correlation\_eq\_bot\_at\_J\_zero}; PR \#190]
-PR \#175 の $\bot$-equivalence 恒等式鎖を相関関数層に拡張:
-任意の $G, A, h, \beta$ で
+The $\bot$-equivalence identity chain from PR \#175 is extended to the
+correlation layer. For arbitrary $G, A, h, \beta$,
 \[
   \texttt{correlation}\,G\,\langle 0, h, \beta\rangle\,A
     = \texttt{correlation}\,\bot\,\langle 0, h, \beta\rangle\,A.
 \]
-分母 $Z$ はグラフ非依存
+The denominator $Z$ is graph-independent
 (\texttt{partitionFunction\_eq\_bot\_at\_J\_zero}),
-分子積分内の Boltzmann weight もグラフ非依存
+and the Boltzmann weight in the numerator integral is also graph-independent
 (\texttt{hamiltonian\_eq\_bot\_at\_J\_zero}).
-比で graph-independent.
+Taking the ratio gives graph-independence.
 \end{theorem}
 
 \begin{theorem}[\texttt{correlation\_bot\_closed} / \texttt{correlation\_J\_zero}; PR \#191]
-$\bot$-graph 上の相関関数閉形式と, その $J=0$ 一般 graph への
-持ち上げ. 任意の $p, A$ で
+This records the closed form for correlations on the $\bot$-graph and lifts
+it to arbitrary graphs at $J=0$. For arbitrary $p, A$,
 \[
   \texttt{correlation}\,\bot\,p\,A = \tanh(p.\beta \cdot p.h)^{|A|},
 \]
-さらに PR \#190 と合成して任意の $G, A, h, \beta$ で
+Combining with PR \#190 gives, for arbitrary $G, A, h, \beta$,
 \[
   \texttt{correlation}\,G\,\langle 0, h, \beta\rangle\,A
     = \tanh(\beta h)^{|A|}.
 \]
-証明: $\bot$ では Boltzmann weight $=\prod_i \exp(\beta h\,\mathrm{sign}(\sigma_i))$
-と site-wise factor 化. \texttt{spinProduct} 側は
-\texttt{Finset.prod\_filter} で
+Proof: on $\bot$, the Boltzmann weight factors site-wise as
+$\prod_i \exp(\beta h\,\mathrm{sign}(\sigma_i))$. On the
+\texttt{spinProduct} side, \texttt{Finset.prod\_filter} rewrites it as
 $\prod_{i \in \iota}\, (\mathrm{if}\ i \in A\ \mathrm{then}\ \mathrm{sign}(\sigma_i)\ \mathrm{else}\ 1)$
-に書き直す. \texttt{Fintype.sum\_prod\_piFinset} で
-$\sum_\sigma \prod_i \to \prod_i \sum_s$ に swap. Site sum は
-$i \in A$ で $2\sinh$ (\texttt{sum\_spin\_sign\_exp\_sign}),
-$i \notin A$ で $2\cosh$ (\texttt{sum\_exp\_spin\_sign}).
-$Z = (2\cosh)^{|\iota|}$ で割って
+Then \texttt{Fintype.sum\_prod\_piFinset} swaps
+$\sum_\sigma \prod_i$ to $\prod_i \sum_s$. The site sum is $2\sinh$ when
+$i \in A$ (\texttt{sum\_spin\_sign\_exp\_sign}) and $2\cosh$ when
+$i \notin A$ (\texttt{sum\_exp\_spin\_sign}). Dividing by
+$Z = (2\cosh)^{|\iota|}$ yields
 $\prod_i (\mathrm{if}\ i \in A\ \mathrm{then}\ \tanh\ \mathrm{else}\ 1) = \tanh^{|A|}$.
-PR \#175 の $Z$/freeEnergy 対 5 本目の zero-parameter closed form.
+This is the fifth zero-parameter closed form paired with the $Z$/free-energy
+results from PR \#175.
 \end{theorem}
 
 \begin{theorem}[$\bot$-equivalence core identities at $J=0$; PR \#175]
-PR \#174 の各層で独立した ``$\bot$ への reduction'' を単一の
-基底恒等式に集約 refactor:
+Refactor the separate ``reduction to $\bot$'' arguments from each layer of
+PR \#174 into a single base identity chain:
 \begin{align*}
   H_G(\langle 0, h, \beta\rangle, \sigma) &= H_\bot(\langle 0, h, \beta\rangle, \sigma), \\
   Z_G(\langle 0, h, \beta\rangle) &= Z_\bot(\langle 0, h, \beta\rangle), \\
@@ -2791,196 +2825,217 @@ PR \#174 の各層で独立した ``$\bot$ への reduction'' を単一の
 \end{align*}
 (\texttt{hamiltonian\_eq\_bot\_at\_J\_zero} /
 \texttt{partitionFunction\_eq\_bot\_at\_J\_zero} /
-\texttt{freeEnergy\_eq\_bot\_at\_J\_zero}, 命名サフィックス
-\texttt{\_eq\_bot\_at\_J\_zero} で統一).
-\texttt{\_J\_zero} 本体は上記恒等 + \texttt{partitionFunction\_bot} /
-\texttt{freeEnergy\_bot} の \texttt{.trans} 合成に簡約.
+\texttt{freeEnergy\_eq\_bot\_at\_J\_zero}, with names unified under the
+\texttt{\_eq\_bot\_at\_J\_zero} suffix). The main \texttt{\_J\_zero}
+statements reduce to these identities composed by \texttt{.trans} with
+\texttt{partitionFunction\_bot} and \texttt{freeEnergy\_bot}.
 \end{theorem}
 
 \begin{theorem}[\texttt{freeEnergyInfinite\_\{beta\_zero,zero\_params\}\_of\_eventually\_nonempty}; PR \#172]
-仮定 $\forall^\infty n, \Lambda_n$ nonempty のもと
+Under the assumption $\forall^\infty n, \Lambda_n$ is nonempty,
 \[
   \texttt{freeEnergyInfinite}\,G\,\Lambda\,\langle J, h, 0\rangle
     \;=\; \texttt{freeEnergyInfinite}\,G\,\Lambda\,\langle 0, 0, \beta\rangle
     \;=\; \log 2.
 \]
-PR \#171 \texttt{\_of\_eventually\_const} に finite 版
+Feed the finite versions
 \texttt{freeEnergyAlongExhaustion\_\{beta\_zero,zero\_params\}}
-を \texttt{filter\_upwards} で流し込む. \texttt{[Nonempty V]} のもと
-\texttt{Exhaustion.eventually\_volume\_nonempty} で自動成立.
+into PR \#171 \texttt{\_of\_eventually\_const} using
+\texttt{filter\_upwards}. Under \texttt{[Nonempty V]}, this holds
+automatically by \texttt{Exhaustion.eventually\_volume\_nonempty}.
 \end{theorem}
 
 \begin{theorem}[\texttt{freeEnergy\_nonneg\_of\_ferromagnetic}; PR \#169]
-$0 < |\iota|$, 強磁性 $p$ で
+For $0 < |\iota|$ and ferromagnetic $p$,
 \[
   0 \;\le\; f_G(p).
 \]
-PR \#168 と \texttt{Real.log\_pos} ($0 < \log 2$) の推移.
-既存 $\Lambda$ 版 \texttt{freeEnergyΛ\_nonneg\_of\_ferromagnetic}
-(PR \#125) は本 PR で base への薄い wrapper に refactor.
+This follows by transitivity from PR \#168 and \texttt{Real.log\_pos}
+($0 < \log 2$). The existing $\Lambda$ version
+\texttt{freeEnergy\LeanLambda\_nonneg\_of\_ferromagnetic} (PR \#125) is refactored
+here into a thin wrapper around the base result.
 \end{theorem}
 
 \begin{theorem}[\texttt{card\_mul\_freeEnergy\_eq\_log\_partitionFunction}; PR \#167]
-$|\iota| > 0$ で
+For $|\iota| > 0$,
 \[
   |\iota| \cdot f_G(p) = \log Z_G(p).
 \]
-\texttt{freeEnergy = |\iota|\textsuperscript{-1}\,\textperiodcentered \log Z}
-定義展開 + \texttt{field\_simp} で $|\iota|$ 消去. 既存 $\Lambda$ 版
-\texttt{card\_mul\_freeEnergyΛ\_eq\_log\_partitionFunctionΛ\_of\_nonempty}
-(PR \#119) の base layer; 同 $\Lambda$ 版は本 PR で薄い wrapper に refactor.
+Unfold the definition $f_G(p) = |\iota|^{-1} \cdot \log Z_G(p)$
+and use \texttt{field\_simp} to cancel $|\iota|$. This is the base layer for
+the existing $\Lambda$ version
+\texttt{card\_mul\_freeEnergy\LeanLambda\_eq\_log\_partitionFunction\LeanLambda\_of\_nonempty}
+(PR \#119); that $\Lambda$ version is refactored here into a thin wrapper.
 \end{theorem}
 
-\begin{theorem}[\texttt{log\_partitionFunction\_ge\_card\_mul\_log\_two\_cosh\_of\_ferromagnetic} 系; PR \#173]
-強磁性 $p$ で
+\begin{theorem}[\texttt{log\_partitionFunction\_ge\_card\_mul\_log\_two\_cosh\_of\_ferromagnetic} family; PR \#173]
+For ferromagnetic $p$,
 \[
   |\iota| \cdot \log(2 \cosh(\beta h)) \;\le\; \log Z_G(p).
 \]
-PR \#165 \texttt{\_ge\_card\_mul\_log\_two} の sharpening. 3 層 lift
-(base / $\Lambda$ / along-exhaustion). 証明: $Z_G \ge Z_\bot = (2 \cosh(\beta h))^{|\iota|}$
-から $\log$ + \texttt{Real.log\_pow}.
+This sharpens PR \#165 \texttt{\_ge\_card\_mul\_log\_two}. It provides
+three-layer lifts: base, $\Lambda$, and along-exhaustion. Proof:
+$Z_G \ge Z_\bot = (2 \cosh(\beta h))^{|\iota|}$, followed by $\log$ and
+\texttt{Real.log\_pow}.
 \end{theorem}
 
 \begin{theorem}[\texttt{magnetization\_beta\_zero}; PR \#187]
-有限体積 $\beta = 0$ 磁化消失:
+Finite-volume magnetization vanishes at $\beta = 0$:
 $\texttt{magnetization}\,G\,\langle J, h, 0\rangle\,i = 0$.
-PR \#182 を singleton で specialize. PR \#186 (\texttt{magnetizationInfinite\_beta\_zero})
-の finite-volume companion.
+Specialize PR \#182 to a singleton. This is the finite-volume companion to
+PR \#186 (\texttt{magnetizationInfinite\_beta\_zero}).
 \end{theorem}
 
 \begin{theorem}[\texttt{magnetizationInfinite\_beta\_zero}; PR \#186]
-$\beta = 0$ で $\infty$-vol magnetization 消失:
+Infinite-volume magnetization vanishes at $\beta = 0$:
 $\texttt{magnetizationInfinite}\,G\,\Lambda\,\langle J, h, 0\rangle\,i = 0$.
-PR \#183 \texttt{correlationInfinite\_beta\_zero\_vanish} を
-singleton $A = \{i\}$ で specialize. 既存
-\texttt{magnetizationInfinite\_zero\_at\_h\_zero} (h=0 による対称性)
-に加えて $\beta = 0$ (無限温度) でも消失することを形式化.
+Specialize PR \#183 \texttt{correlationInfinite\_beta\_zero\_vanish} to the
+singleton $A = \{i\}$. In addition to the existing
+\texttt{magnetizationInfinite\_zero\_at\_h\_zero} from $h=0$ symmetry, this
+formalizes vanishing at $\beta = 0$ (infinite temperature).
 \end{theorem}
 
 \begin{theorem}[\texttt{correlation\_empty}; PR \#185]
-Gibbs 測度の正規化:
+Normalization of the Gibbs measure:
 $\texttt{correlation}\,G\,p\,\emptyset = 1$
-全 4 層 (base, $\Lambda$, along-exhaustion, $\infty$-vol) で成立.
-\texttt{spinProduct\_empty} で $\sigma^\emptyset = 1$, 相関関数定義展開で
+holds in all four layers: base, $\Lambda$, along-exhaustion, and
+infinite-volume. \texttt{spinProduct\_empty} gives $\sigma^\emptyset = 1$;
+unfolding the correlation definition gives
 $Z^{-1} \sum_\sigma 1 \cdot w = Z^{-1} \cdot Z = 1$.
 \end{theorem}
 
-\begin{theorem}[\texttt{correlationΛ / correlationAlongExhaustion / correlationInfinite\_beta\_zero\_vanish}; PR \#183]
-PR \#182 を 3 層 lift:
+\begin{theorem}[\texttt{correlation\LeanLambda / correlationAlongExhaustion / correlationInfinite\_beta\_zero\_vanish}; PR \#183]
+PR \#182 is lifted through three layers:
 \begin{itemize}
-\item $\Lambda$ 層: $A : \texttt{Finset}\,\uparrow\Lambda$, $A.\texttt{Nonempty}$
-  で $\texttt{correlationΛ} = 0$.
-\item along-exhaustion: $A \subseteq \Lambda_n$ or not, 各 branch で 0.
-\item $\infty$-vol: $\texttt{ciSup\_const}$ で 0 の sup = 0.
+\item $\Lambda$ layer: for $A : \texttt{Finset}\,\uparrow\Lambda$ with
+  $A.\texttt{Nonempty}$, $\texttt{correlation\LeanLambda} = 0$.
+\item Along-exhaustion: both branches, $A \subseteq \Lambda_n$ and its
+  negation, give 0.
+\item Infinite-volume: \texttt{ciSup\_const} gives the supremum of the
+  zero sequence as 0.
 \end{itemize}
 \end{theorem}
 
-\begin{theorem}[\texttt{correlationΛ / correlationAlongExhaustion / correlationInfinite\_zero\_params\_vanish}; PR \#189]
-PR \#188 を 3 層 lift (PR \#183 の J=h=0 対).
+\begin{theorem}[\texttt{correlation\LeanLambda / correlationAlongExhaustion / correlationInfinite\_zero\_params\_vanish}; PR \#189]
+PR \#188 is lifted through three layers, as the $J=h=0$ counterpart of
+PR \#183.
 \end{theorem}
 
 \begin{theorem}[\texttt{correlation\_zero\_params\_vanish\_of\_nonempty\_A}; PR \#188]
-$J = h = 0$ slice の相関消失: $A.\texttt{Nonempty}$ で
+Correlation vanishes on the $J = h = 0$ slice: if $A.\texttt{Nonempty}$, then
 $\texttt{correlation}\,G\,\langle 0, 0, \beta\rangle\,A = 0$.
-\texttt{hamiltonian\_zero\_params} より Boltzmann weight $= 1$,
-PR \#148 \texttt{sum\_config\_spinProduct\_eq\_zero} で分子消失.
-PR \#182 ($\beta = 0$) の companion.
+\texttt{hamiltonian\_zero\_params} gives Boltzmann weight $= 1$, and
+PR \#148 \texttt{sum\_config\_spinProduct\_eq\_zero} makes the numerator
+vanish.
+This is the companion to PR \#182 ($\beta = 0$).
 \end{theorem}
 
 \begin{theorem}[\texttt{correlation\_beta\_zero\_vanish\_of\_nonempty\_A}; PR \#182]
-$\beta = 0$ の相関関数は非空 $A$ で消失:
+At $\beta = 0$, correlations vanish for nonempty $A$:
 \[
   A.\texttt{Nonempty} \Rightarrow
     \texttt{correlation}\,G\,\langle J, h, 0\rangle\,A = 0.
 \]
-Glimm--Jaffe \S 4.1 相関関数定義の無限温度 ($\beta = 0$) slice.
-Boltzmann weight $= 1$ より分子は $\sum_\sigma \prod_{i \in A} \sigma_i$,
-既存 \texttt{sum\_config\_spinProduct\_eq\_zero} (NonnegCorrelations.lean,
-\texttt{flipAt} involution 経由) で $0$. 既存 $\beta = 0$ 閉形式
+This is the infinite-temperature ($\beta = 0$) slice of the Glimm--Jaffe
+\S 4.1 correlation definition. Since the Boltzmann weight is 1, the
+numerator is $\sum_\sigma \prod_{i \in A} \sigma_i$, which is 0 by the
+existing \texttt{sum\_config\_spinProduct\_eq\_zero}
+(NonnegCorrelations.lean, via the \texttt{flipAt} involution). Alongside the
+existing $\beta = 0$ closed forms
 (\texttt{freeEnergy\_beta\_zero} = $\log 2$, PR \#131;
-\texttt{partitionFunction\_beta\_zero}) に加えて, 相関関数 slice を補完.
+\texttt{partitionFunction\_beta\_zero}), this completes the correlation
+slice.
 \end{theorem}
 
 \begin{theorem}[\texttt{freeEnergyInfinite\_\{J\_zero,beta\_zero,zero\_params\}\_of\_nonempty}; PR \#181]
-\texttt{[Nonempty V]} のもと仮定省略版. J=0: $\log(2 \cosh(\beta h))$,
-β=0 / J=h=0: $\log 2$. 既存 \texttt{\_of\_eventually\_nonempty}
-+ \texttt{Λ.eventually\_volume\_nonempty} の直接合成.
+Under \texttt{[Nonempty V]}, these are assumption-free versions. The values
+are $\log(2 \cosh(\beta h))$ for $J=0$ and $\log 2$ for $\beta=0$ or
+$J=h=0$. They directly combine the existing
+\texttt{\_of\_eventually\_nonempty} results with
+\texttt{\LeanLambda.eventually\_volume\_nonempty}.
 \end{theorem}
 
 \begin{theorem}[\texttt{Ambient.Finset.Nonempty.fintype\_card\_coe\_pos}; PR \#180]
-Helper抽出 (refactor): 重複 21+ 箇所の
+Helper extraction refactor: the repeated pattern in 21+ locations,
 $\Lambda.\texttt{Nonempty} \Rightarrow 0 < \texttt{Fintype.card}\,\uparrow\Lambda$
-を定理化. \texttt{rw [Fintype.card\_coe]; exact Finset.card\_pos.mpr hne}
-chain を単一呼び出しに. 数学的内容不変, AmbientLattice / AmbientLatticeSum
-の可読性向上.
+is made into a theorem. The chain
+\texttt{rw [Fintype.card\_coe]; exact Finset.card\_pos.mpr hne} is replaced
+by one call. The mathematical content is unchanged, and readability improves
+in AmbientLattice and AmbientLatticeSum.
 \end{theorem}
 
 \begin{theorem}[\texttt{freeEnergyAlongExhaustion\_\{beta\_zero,zero\_params\}\_tendsto\_of\_eventually\_nonempty}; PR \#179]
-PR \#178 の J=0 Tendsto の $\beta=0$ / $J=h=0$ 並列版:
+This is the $\beta=0$ and $J=h=0$ parallel version of the $J=0$ Tendsto
+statement from PR \#178:
 \[
   \texttt{Tendsto}\,(\cdots \langle J, h, 0\rangle)\,\texttt{atTop}\,(\mathcal N(\log 2))
 \]
 \[
   \texttt{Tendsto}\,(\cdots \langle 0, 0, \beta\rangle)\,\texttt{atTop}\,(\mathcal N(\log 2))
 \]
-同じ eventually-constant + \texttt{tendsto\_const\_nhds.congr'} pattern.
-全 zero-parameter slice の $\infty$-vol Tendsto 完備.
+It uses the same eventually-constant plus
+\texttt{tendsto\_const\_nhds.congr'} pattern. This completes the
+infinite-volume Tendsto results for all zero-parameter slices.
 \end{theorem}
 
 \begin{theorem}[\texttt{freeEnergyAlongExhaustion\_J\_zero\_tendsto\_of\_eventually\_nonempty}; PR \#178]
-CLAUDE.local.md 更新 (無限系スコープ内) 後の初の非自明 $\infty$-vol
-\texttt{Tendsto} 収束. $\forall^\infty n, \Lambda_n$ nonempty のもと
+This is the first nontrivial infinite-volume \texttt{Tendsto} convergence
+after the CLAUDE.local.md update bringing infinite systems into scope. Under
+$\forall^\infty n, \Lambda_n$ nonempty,
 \[
   \texttt{Tendsto}\,(\texttt{freeEnergyAlongExhaustion}\,G\,\Lambda\,\langle 0, h, \beta\rangle)\,
     \texttt{atTop}\,(\mathcal N(\log(2 \cosh(\beta h)))).
 \]
-$J = 0$ slice は stagewise constant $\log(2 \cosh(\beta h))$ なので
-translation invariance を要さず Fekete sidestep.
-\texttt{tendsto\_const\_nhds.congr'} で transport.
+The $J = 0$ slice is stagewise constant with value
+$\log(2 \cosh(\beta h))$, so it avoids the Fekete step and does not require
+translation invariance. Transport by \texttt{tendsto\_const\_nhds.congr'}.
 \end{theorem}
 
-\begin{theorem}[\texttt{partitionFunction\_ge\_two\_cosh\_pow\_card\_of\_ferromagnetic} 系; PR \#177]
-強磁性 $p$ で non-log 形
+\begin{theorem}[\texttt{partitionFunction\_ge\_two\_cosh\_pow\_card\_of\_ferromagnetic} family; PR \#177]
+For ferromagnetic $p$, the non-logarithmic form is
 \[
   (2 \cosh(\beta h))^{|\iota|} \;\le\; Z_G(p).
 \]
-PR \#173 log 形の exp 画像. 証明: \texttt{partitionFunction\_bot}
-+ \texttt{partitionFunction\_monotone\_subgraph}. 3 層 lift
-(base / $\Lambda$ / along-exhaustion).
+This is the exponential image of the log form from PR \#173. Proof:
+\texttt{partitionFunction\_bot} plus
+\texttt{partitionFunction\_monotone\_subgraph}. It provides three-layer
+lifts: base, $\Lambda$, and along-exhaustion.
 \end{theorem}
 
-\begin{theorem}[\texttt{partitionFunction\_ge\_two\_pow\_card\_of\_ferromagnetic} 系; PR \#165]
-強磁性 $p$ で
+\begin{theorem}[\texttt{partitionFunction\_ge\_two\_pow\_card\_of\_ferromagnetic} family; PR \#165]
+For ferromagnetic $p$,
 \[
   2^{|\iota|} \;\le\; Z_G(p).
 \]
 \texttt{partitionFunction\_bot\_ge\_two\_pow\_card}
-($\bot$-graph + $\cosh \ge 1$) と
-\texttt{partitionFunction\_monotone\_subgraph} の合成.
-log 形 \texttt{log\_partitionFunction\_ge\_card\_mul\_log\_two\_of\_ferromagnetic}
-は $|\iota| \cdot \log 2 \le \log Z_G$, $\Lambda$ / along-exhaustion lifts
-も同 PR で提供.
+This combines the $\bot$-graph bound with $\cosh \ge 1$ and
+\texttt{partitionFunction\_monotone\_subgraph}. The log form
+\texttt{log\_partitionFunction\_ge\_card\_mul\_log\_two\_of\_ferromagnetic}
+states $|\iota| \cdot \log 2 \le \log Z_G$, and the same PR also provides
+the $\Lambda$ and along-exhaustion lifts.
 \end{theorem}
 
 \begin{theorem}[\texttt{inducedGraph\_bot}; PR \#129]
 $\texttt{inducedGraph}\,(\bot : \texttt{SimpleGraph}\,V)\,\Lambda
   = (\bot : \texttt{SimpleGraph}\,\uparrow\Lambda)$.
 \texttt{induce = comap} + \texttt{SimpleGraph.comap\_bot}.
-\texttt{@[simp]} 付与.
+It is marked \texttt{@[simp]}.
 \end{theorem}
 
 \begin{theorem}[\texttt{freeEnergy\_ge\_log\_two\_cosh}]
-強磁性系 $J \ge 0, h \ge 0, \beta > 0$, $|\iota| > 0$ で
+For a ferromagnetic system with $J \ge 0, h \ge 0, \beta > 0$ and
+$|\iota| > 0$,
 \[
   \log(2 \cosh(\beta h)) \le \texttt{freeEnergy}\,G\,p.
 \]
-\texttt{freeEnergy\_bot} で LHS $= f(\bot, p)$,
-\texttt{freeEnergy\_monotone\_subgraph} を \texttt{bot\_le} に適用.
-PR \#121 の uniform $\log 2$ 下界を $\cosh \ge 1$ で sharpen.
+\texttt{freeEnergy\_bot} identifies the left-hand side with $f(\bot, p)$,
+then \texttt{freeEnergy\_monotone\_subgraph} is applied to \texttt{bot\_le}.
+This sharpens the uniform $\log 2$ lower bound from PR \#121 using
+$\cosh \ge 1$.
 \end{theorem}
 
 \begin{theorem}[\texttt{freeEnergyAlongExhaustion\_ge\_log\_two\_cosh}]
-各 nonempty stage で同じ下界.
+The same lower bound holds at each nonempty stage.
 Specialization via \texttt{change} + definitional unfolding.
 \end{theorem}
 
@@ -2991,46 +3046,52 @@ Specialization via \texttt{change} + definitional unfolding.
   H_{G, (J, -h, \beta)}(\sigma)
     = H_{G, (J, h, \beta)}(\sigma.\text{flip}).
 \]
-$J$ 項は \texttt{interactionEnergy\_flip} で不変, 外部磁場は
+The $J$-term is invariant by \texttt{interactionEnergy\_flip}; the external
+field satisfies
 $-(-h) \sum \text{sign}(\sigma_i) = h \sum \text{sign}(\sigma_i)
   = -h \sum \text{sign}(\sigma.\text{flip}_i)$.
 \end{theorem}
 
 \begin{theorem}[\texttt{partitionFunction\_neg\_h}]
 $Z(J, -h, \beta) = Z(J, h, \beta)$.
-\texttt{hamiltonian\_neg\_h} + \texttt{flipEquiv} 双射での reindex.
+\texttt{hamiltonian\_neg\_h} plus reindexing along the \texttt{flipEquiv}
+bijection.
 \end{theorem}
 
 \begin{theorem}[\texttt{freeEnergy\_neg\_h}]
 $f(J, -h, \beta) = f(J, h, \beta)$.
-自由エネルギー密度は $h$ の偶関数.
+The free-energy density is an even function of $h$.
 \end{theorem}
 
 \subsection{$|h|$-monotonicity (PR \#127)}
 
 \begin{theorem}[\texttt{freeEnergy\_eq\_abs\_h}]
 $f(J, h, \beta) = f(J, |h|, \beta)$.
-$|h| = h$ or $|h| = -h$ の場合分けと \texttt{freeEnergy\_neg\_h}.
+Split into the cases $|h| = h$ and $|h| = -h$, then use
+\texttt{freeEnergy\_neg\_h}.
 \end{theorem}
 
 \begin{theorem}[\texttt{freeEnergy\_monotone\_abs\_h}]
-強磁性系で $|h_1| \le |h_2| \Rightarrow f(J, h_1, \beta) \le f(J, h_2, \beta)$.
-両辺を \texttt{freeEnergy\_eq\_abs\_h} で $|h_i|$ に書き換え,
-$|h_i| \ge 0$ から \texttt{freeEnergy\_monotone\_h} (Ici 0 上 monotone) を適用.
+For ferromagnetic systems,
+$|h_1| \le |h_2| \Rightarrow f(J, h_1, \beta) \le f(J, h_2, \beta)$.
+Rewrite both sides to $|h_i|$ using \texttt{freeEnergy\_eq\_abs\_h}, then
+apply \texttt{freeEnergy\_monotone\_h} (monotone on \texttt{Ici 0}) from
+$|h_i| \ge 0$.
 \end{theorem}
 
 \subsubsection{Along-exhaustion specializations (PR \#128)}
 
 \begin{theorem}[\texttt{freeEnergyAlongExhaustion\_neg\_h} /
 \texttt{\_eq\_abs\_h} / \texttt{\_monotone\_abs\_h}]
-各 $n$ で finite-volume 版をそのまま specialize:
+For each $n$, specialize the finite-volume versions directly:
 \begin{itemize}
   \item $f_n(J, -h, \beta) = f_n(J, h, \beta)$.
   \item $f_n(J, h, \beta) = f_n(J, |h|, \beta)$.
-  \item 強磁性系 $J \ge 0, \beta > 0$ で $|h_1| \le |h_2| \Rightarrow f_n(h_1) \le f_n(h_2)$.
+  \item For ferromagnetic systems with $J \ge 0, \beta > 0$,
+        $|h_1| \le |h_2| \Rightarrow f_n(h_1) \le f_n(h_2)$.
 \end{itemize}
-いずれも \texttt{change} + definitional unfolding で \texttt{IsingModel.freeEnergy\_*}
-を適用.
+Each proof uses \texttt{change} and definitional unfolding to apply
+\texttt{IsingModel.freeEnergy\_*}.
 \end{theorem}
 
 \subsection{Reflection positivity (\S10.4)}
@@ -3321,12 +3382,12 @@ cancels the prefactor $2^{|\iota|} (\cosh \beta J)^{|E|}$.
 \hfill$\square$
 
 \paragraph{Wrappers.} The two closed forms are lifted to the
-\(\Lambda\)-layer (\texttt{partitionFunctionΛ\_high\_temp\_expansion\_h\_zero\_closed},
-\texttt{correlationΛ\_high\_temp\_expansion\_h\_zero\_closed} in
+\(\Lambda\)-layer (\texttt{partitionFunction\LeanLambda\_high\_temp\_expansion\_h\_zero\_closed},
+\texttt{correlation\LeanLambda\_high\_temp\_expansion\_h\_zero\_closed} in
 \texttt{AmbientLattice/Defs.lean}) and to the concrete
 \(\mathbb{Z}^d\) lattice
-(\texttt{partitionFunctionΛ\_latticeGraph\_high\_temp\_expansion\_h\_zero\_closed},
-\texttt{correlationΛ\_latticeGraph\_high\_temp\_expansion\_h\_zero\_closed}
+(\texttt{partitionFunction\LeanLambda\_latticeGraph\_high\_temp\_expansion\_h\_zero\_closed},
+\texttt{correlation\LeanLambda\_latticeGraph\_high\_temp\_expansion\_h\_zero\_closed}
 in \texttt{Concrete/LatticeGraphCorrelation.lean}).
 
 \begin{theorem}[\texttt{partitionFunction\_high\_temp\_expansion\_h\_zero\_lower\_bound}]
@@ -3465,14 +3526,14 @@ free energy at \emph{general} external field $h$:
     joint analyticity in $(\beta, J, h)$.
   \item \texttt{freeEnergy\_continuous\_joint} +
     \texttt{\_differentiable\_joint} (\#1533).
-  \item Λ-layer joint analyticity in
+  \item Lambda-layer joint analyticity in
     \texttt{IsingModel/AmbientLattice/Analyticity.lean} (\#1535).
   \item \texttt{correlation\_analyticAt\_joint} +
-    full hierarchy at the Λ layer (\#1536, \#1537).
+    full hierarchy at the Lambda layer (\#1536, \#1537).
   \item \texttt{gibbsExpectation\_analyticAt\_joint} for an arbitrary
     observable $F: \mathrm{Configuration} \to \mathbb{R}$ (\#1539).
   \item \texttt{partitionFunction} continuity / differentiability per
-    direction at general $h$ (\#1540) plus Λ-layer wrappers
+    direction at general $h$ (\#1540) plus Lambda-layer wrappers
     (\#1541).
 \end{itemize}
 
@@ -3490,12 +3551,12 @@ The four $\mathbb{Z}^d$ wrappers use the abbreviated suffix
 declaration fits the linter's 100-character budget.
 
 \paragraph{\texttt{vdPolymerFamilies\_sum} bound family completion,
-all volume layers (\S18.5, PR~\#1595).} Adds Λ, along-ex, and
+all volume layers (\S18.5, PR~\#1595).} Adds Lambda, along-ex, and
 $\mathbb{Z}^d$ wraps for the three abstract bound theorems
 \texttt{\_le\_two\_pow},
 \texttt{\_le\_one\_plus\_tanh\_pow}, and
 \texttt{one\_le\_vdPolymerFamilies\_sum} (which had no wrappers
-before). The Λ wrappers for the four sandwich abstracts already
+before). The Lambda wrappers for the four sandwich abstracts already
 existed; this PR fills the bare-bound and `\geq 1` gaps. 12 new
 thin direct-instantiation wrappers (3 abstracts $\times$ 4
 layers).
@@ -3538,8 +3599,8 @@ existing upper bound (PR~\#1099) with the new lower bound.
 wrappers (along-ex + $\mathbb{Z}^d$)
 (\S17.5--\S17.6, PR~\#1642).} 8 new pointwise / global analytic
 wrappers, each a thin instantiation of the existing $\Lambda$-layer
-\texttt{partitionFunctionΛ\_*\_joint} /
-\texttt{freeEnergyΛ\_*\_joint} at
+\texttt{partitionFunction\LeanLambda\_*\_joint} /
+\texttt{freeEnergy\LeanLambda\_*\_joint} at
 $\Lambda := \Lambda.\mathrm{volume}\,n$.
 
 \paragraph{Joint AnalyticAt + AnalyticOnNhd wrappers across
@@ -3684,14 +3745,14 @@ $\mathbb{Z}^d$ concrete (\texttt{LatticeGraphCorrelation.lean}):
 \texttt{freeEnergyAlongExhaustion\_latticeGraph\_\{continuous,
 differentiable\}\_\{beta, field, J\}} (6). 12 new thin
 instantiations of the corresponding
-\texttt{freeEnergyΛ\_\{continuous, differentiable\}\_*} at
+\texttt{freeEnergy\LeanLambda\_\{continuous, differentiable\}\_*} at
 $\Lambda := \Lambda.\mathrm{volume}\,n$.
 
 \paragraph{Along-exhaustion + $\mathbb{Z}^d$ concrete
 \texttt{partitionFunctionAlongExhaustion} /
 \texttt{freeEnergyAlongExhaustion} \texttt{HasDerivAt} wrappers
 (\S17.5--\S17.6, PR~\#1631).} Specializes the $\Lambda$-layer
-\texttt{hasDerivAt\_\{partitionFunctionΛ, freeEnergyΛ\}\_*} family
+\texttt{hasDerivAt\_\{partitionFunction\LeanLambda, freeEnergy\LeanLambda\}\_*} family
 (PRs~\#1623, \#1624) at $\Lambda := \Lambda.\mathrm{volume}\,n$.
 Along-ex layer:
 \texttt{partitionFunctionAlongExhaustion\_hasDerivAt\_\{beta, J,
@@ -3729,17 +3790,17 @@ $\Lambda$-layer \texttt{HasDerivAt} wrappers
 $G := \texttt{IsingModel.latticeGraph}\,d$ of the
 $\Lambda$-layer \texttt{hasDerivAt} family
 (PRs~\#1619, \#1623--\#1628):
-\texttt{hasDerivAt\_correlationΛ\_latticeGraph\_*} (4),
-\texttt{hasDerivAt\_freeEnergyΛ\_latticeGraph\_*} (3),
-\texttt{hasDerivAt\_partitionFunctionΛ\_latticeGraph\_*} (3),
-\texttt{hasDerivAt\_boltzmannWeightΛ\_latticeGraph\_*} (3),
-\texttt{magnetizationΛ\_latticeGraph\_hasDerivAt\_*} (4),
-\texttt{susceptibilityΛ\_latticeGraph\_hasDerivAt\_*} (4).
+\texttt{hasDerivAt\_correlation\LeanLambda\_latticeGraph\_*} (4),
+\texttt{hasDerivAt\_freeEnergy\LeanLambda\_latticeGraph\_*} (3),
+\texttt{hasDerivAt\_partitionFunction\LeanLambda\_latticeGraph\_*} (3),
+\texttt{hasDerivAt\_boltzmannWeight\LeanLambda\_latticeGraph\_*} (3),
+\texttt{magnetization\LeanLambda\_latticeGraph\_hasDerivAt\_*} (4),
+\texttt{susceptibility\LeanLambda\_latticeGraph\_hasDerivAt\_*} (4).
 21 new theorems in existence form
 $\exists c \in \mathbb{R},\,\mathrm{HasDerivAt}\,f\,c\,x$, since
 the explicit derivative formulas at the $\mathbb{Z}^d$ concrete
 layer would be long and unwieldy; consumers needing the explicit
-formula call \texttt{Ambient.hasDerivAt\_*Λ\_*} directly.
+formula call \texttt{Ambient.hasDerivAt\_*\LeanLambda\_*} directly.
 
 \paragraph{\texttt{correlationAlongExhaustion} /
 \texttt{magnetizationAlongExhaustion} HasDerivAt in $J$ / $h$
@@ -3781,71 +3842,71 @@ form), \texttt{susceptibility\_hasDerivAt\_field} (sum-of-
 \texttt{truncated2} h-derivatives via
 \texttt{truncated2\_hasDerivAt\_field}). $\Lambda$-layer
 (\texttt{AmbientLattice/Defs.lean}):
-\texttt{magnetizationΛ\_hasDerivAt\_field},
-\texttt{magnetizationΛ\_hasDerivAt\_beta} (at $h = 0$),
-\texttt{susceptibilityΛ\_hasDerivAt\_field}. 6 new theorems
+\texttt{magnetization\LeanLambda\_hasDerivAt\_field},
+\texttt{magnetization\LeanLambda\_hasDerivAt\_beta} (at $h = 0$),
+\texttt{susceptibility\LeanLambda\_hasDerivAt\_field}. 6 new theorems
 (3 abstract + 3 thin $\Lambda$ wrappers); standard
 thermodynamic-derivative identities (Glimm--Jaffe §17.5 / §17.6).
 
-\paragraph{\texttt{hasDerivAt\_correlationΛ} in $\beta / J / h$
+\paragraph{\texttt{hasDerivAt\_correlation\LeanLambda} in $\beta / J / h$
 at the $\Lambda$-layer (\S17.5--\S17.6, \S4.6, PR~\#1626).}
 Lifts four explicit-derivative correlation abstracts to the
 $\Lambda$ layer with covariance-form derivatives:
-\texttt{hasDerivAt\_correlationΛ\_beta} (at $h = 0$),
+\texttt{hasDerivAt\_correlation\LeanLambda\_beta} (at $h = 0$),
 \texttt{\_beta\_general\_h},
 \texttt{\_J}, \texttt{\_field}. 4 new thin wrappers.
 
-\paragraph{\texttt{hasDerivAt\_boltzmannWeightΛ} in $\beta / J / h$
+\paragraph{\texttt{hasDerivAt\_boltzmannWeight\LeanLambda} in $\beta / J / h$
 at the $\Lambda$-layer (\S17.5--\S17.6, \S4.6, PR~\#1625).}
 Lifts the three per-configuration Boltzmann-weight derivative
 abstracts to the $\Lambda$ layer:
-\texttt{hasDerivAt\_boltzmannWeightΛ\_beta},
+\texttt{hasDerivAt\_boltzmannWeight\LeanLambda\_beta},
 \texttt{\_J}, \texttt{\_field}. Building blocks for the
 partition-function / free-energy variants (PR~\#1623, \#1624).
 3 new thin wrappers.
 
-\paragraph{\texttt{hasDerivAt\_partitionFunctionΛ} in $\beta / J
+\paragraph{\texttt{hasDerivAt\_partitionFunction\LeanLambda} in $\beta / J
 / h$ at the $\Lambda$-layer (\S17.5--\S17.6, \S4.6, PR~\#1624).}
 Lifts three explicit-derivative abstracts to the $\Lambda$
-layer: \texttt{hasDerivAt\_partitionFunctionΛ\_beta}
+layer: \texttt{hasDerivAt\_partitionFunction\LeanLambda\_beta}
 ($\partial_\beta Z = \sum_\sigma -H \cdot w$),
 \texttt{\_J} ($\partial_J Z = \sum_\sigma \beta \cdot \sum_e
 \mathrm{edgeSpin} \cdot w$), and \texttt{\_field}
 ($\partial_h Z = \sum_\sigma \beta \cdot M \cdot w$). 3 new thin
 wrappers.
 
-\paragraph{\texttt{hasDerivAt\_freeEnergyΛ} in $\beta / J / h$ at
+\paragraph{\texttt{hasDerivAt\_freeEnergy\LeanLambda} in $\beta / J / h$ at
 the $\Lambda$-layer (\S17.5--\S17.6, \S4.6, PR~\#1623).} Lifts
 three explicit-derivative thermodynamic-identity abstracts to
 the $\Lambda$ layer:
-\texttt{hasDerivAt\_freeEnergyΛ\_beta\_general\_h}
+\texttt{hasDerivAt\_freeEnergy\LeanLambda\_beta\_general\_h}
 ($\partial_\beta f = (|\!\uparrow\!\Lambda|)^{-1} \cdot \langle
 -H\rangle$),
-\texttt{hasDerivAt\_freeEnergyΛ\_J}
+\texttt{hasDerivAt\_freeEnergy\LeanLambda\_J}
 ($\partial_J f = (|\!\uparrow\!\Lambda|)^{-1} \cdot \langle
 \beta \cdot \sum_e \mathrm{edgeSpin}\rangle$), and
-\texttt{hasDerivAt\_freeEnergyΛ\_field}
+\texttt{hasDerivAt\_freeEnergy\LeanLambda\_field}
 ($\partial_h f = (|\!\uparrow\!\Lambda|)^{-1} \cdot \langle
 \beta \cdot M\rangle$). 3 new thin wrappers.
 
-\paragraph{\texttt{correlationΛ} / \texttt{susceptibilityΛ}
+\paragraph{\texttt{correlation\LeanLambda} / \texttt{susceptibility\LeanLambda}
 ContinuousAt + DifferentiableAt at the $\Lambda$-layer
 (\S17.5--\S17.6, PR~\#1622).} Point-wise versions
 complementing the whole-$\mathbb{R}$ \texttt{Continuous} /
 \texttt{Differentiable} wrappers (PR~\#1620, \#1616):
-\texttt{correlationΛ\_continuousAt\_beta},
+\texttt{correlation\LeanLambda\_continuousAt\_beta},
 \texttt{\_continuousAt\_field},
 \texttt{\_differentiableAt\_field},
-\texttt{susceptibilityΛ\_continuousAt\_beta},
+\texttt{susceptibility\LeanLambda\_continuousAt\_beta},
 \texttt{\_differentiableAt\_beta},
 \texttt{\_continuousAt\_field},
 \texttt{\_differentiableAt\_field}. 7 new thin wrappers.
 
-\paragraph{\texttt{correlationΛ} Continuous + Differentiable in
+\paragraph{\texttt{correlation\LeanLambda} Continuous + Differentiable in
 $\beta / h / J$, $\Lambda$-layer (\S17.5--\S17.6, PR~\#1620).}
 Lifts eight correlation regularity abstracts to the $\Lambda$
 layer:
-\texttt{correlationΛ\_\{continuous, differentiable\}\_beta} (at
+\texttt{correlation\LeanLambda\_\{continuous, differentiable\}\_beta} (at
 $h = 0$),
 \texttt{\_\{continuous, differentiable\}\_beta\_general\_h},
 \texttt{\_\{continuous, differentiable\}\_field}, and
@@ -3859,13 +3920,13 @@ already exist in
 HasDerivAt in $\beta/J$, $\Lambda$-layer (\S17.5--\S17.6,
 PR~\#1619).} Lifts five HasDerivAt abstracts to the $\Lambda$
 layer with explicit derivative formulas:
-\texttt{susceptibilityΛ\_hasDerivAt\_beta} (at $h = 0$),
+\texttt{susceptibility\LeanLambda\_hasDerivAt\_beta} (at $h = 0$),
 \texttt{\_hasDerivAt\_beta\_general\_h},
 \texttt{\_hasDerivAt\_J} (sum over $j : \uparrow\!\Lambda$ of
 \texttt{deriv (truncated2 \ldots) \ldots}),
-\texttt{magnetizationΛ\_hasDerivAt\_J} (sum over edges of
+\texttt{magnetization\LeanLambda\_hasDerivAt\_J} (sum over edges of
 \texttt{(inducedGraph G $\Lambda$).edgeFinset}), and
-\texttt{magnetizationΛ\_hasDerivAt\_beta\_general\_h}. 5 new
+\texttt{magnetization\LeanLambda\_hasDerivAt\_beta\_general\_h}. 5 new
 thin direct-instantiation wrappers; explicit derivative
 formulas are inherently tied to the ambient site set, so the
 along-exhaustion and $\mathbb{Z}^d$ versions are deferred until
@@ -3919,7 +3980,7 @@ layers).
 \paragraph{\texttt{magnetization} Continuous + Differentiable in
 $h$ / $J$, all volume layers (\S17.5--\S17.6, PR~\#1615).} Lifts
 four \texttt{magnetization} regularity abstracts to the four
-volume layers (\textit{Λ}, along-ex, $\mathbb{Z}^d$ \textit{Λ},
+volume layers (\textit{Lambda}, along-ex, $\mathbb{Z}^d$ \textit{Lambda},
 $\mathbb{Z}^d$ along-ex):
 \texttt{\_continuous\_field}, \texttt{\_differentiable\_field}
 (in $h$),
@@ -3927,13 +3988,13 @@ $\mathbb{Z}^d$ along-ex):
 16 new thin direct-instantiation wrappers (4 abstracts $\times$
 4 layers). The along-ex wrappers case-split on
 $i \in \Lambda.\mathrm{volume}\ n$: when $i \in$, the value
-reduces to the \textit{Λ} wrap; otherwise it is constantly $0$.
+reduces to the \textit{Lambda} wrap; otherwise it is constantly $0$.
 
 \paragraph{Mayer filter-connected $n=0/1/2$ + $\varepsilon^n$
 expansion + \texttt{mayerPartialSum\_analyticOnNhd}, all volume
 layers (\S18.5, PR~\#1613).} Lifts five Mayer / $\varepsilon(t)$
-lemmas to the four volume layers (\textit{Λ}, along-ex,
-$\mathbb{Z}^d$ \textit{Λ}, $\mathbb{Z}^d$ along-ex):
+lemmas to the four volume layers (\textit{Lambda}, along-ex,
+$\mathbb{Z}^d$ \textit{Lambda}, $\mathbb{Z}^d$ along-ex):
 \texttt{mayerPartialSum\_analyticOnNhd}
 (\texttt{AnalyticOnNhd ℝ \_ Set.univ}),
 \texttt{vdPolymerFamilies\_sum\_minus\_one\_pow}
@@ -3952,8 +4013,8 @@ abbreviates \texttt{\_filter\_connected\_eq\_incompat} to
 \paragraph{\S18.4--\S18.6 capstones ($Z$ formula +
 \texttt{freeEnergy} decomposition + log $2$ / $N=1$ corollaries),
 all volume layers (PR~\#1612).} Lifts six capstone formulas to the
-four volume layers (\textit{Λ}, along-ex, $\mathbb{Z}^d$
-\textit{Λ}, $\mathbb{Z}^d$ along-ex):
+four volume layers (\textit{Lambda}, along-ex, $\mathbb{Z}^d$
+\textit{Lambda}, $\mathbb{Z}^d$ along-ex):
 \texttt{partitionFunction\_high\_temp\_expansion\_h\_zero\_polymer\_family}
 (\S18.4 main: $Z = 2^{|\iota|} \cdot \cosh^{|E|} \cdot
 \sum_\Gamma \prod \tanh^{|P|}$),
@@ -3965,7 +4026,7 @@ four volume layers (\textit{Λ}, along-ex, $\mathbb{Z}^d$
 at $\beta J = 0$), and \texttt{mayerPartialSum\_one\_at\_one}
 ($\mathrm{mayerPartialSum}\,G\,1\,1 = |\mathrm{allPolymers}\,G|$).
 24 new thin direct-instantiation wrappers (6 abstracts $\times$
-4 layers). The hypothesis $0 < |\iota|$ at the Λ / along-ex
+4 layers). The hypothesis $0 < |\iota|$ at the Lambda / along-ex
 layers is discharged via \texttt{Finset.Nonempty.fintype\_card\_coe\_pos}.
 The $\mathbb{Z}^d$ along-ex ferromagnetic wrap uses the
 abbreviated \texttt{\_ferro} suffix in
@@ -3977,7 +4038,7 @@ Continuous/Differentiable per-direction at general $h$ +
 \texttt{freeEnergy} joint Continuous/Differentiable, completion
 to all volume layers (\S18.6, PR~\#1611).} Lifts eight abstract
 regularity theorems to the missing along-exhaustion +
-$\mathbb{Z}^d$ layers (Λ-layer wraps already exist via PRs
+$\mathbb{Z}^d$ layers (Lambda-layer wraps already exist via PRs
 \#1541, \#1533):
 \texttt{partitionFunction\_continuous\_beta\_general\_h},
 \texttt{\_continuous\_J\_general\_h},
@@ -3994,7 +4055,7 @@ layers).
 Continuous/Differentiable + general-$h$ analyticAt, all volume
 layers (\S18.6, PR~\#1610).} Lifts five abstract
 \texttt{partitionFunction} regularity theorems to the four
-volume layers (\textit{Λ}, along-ex, $\mathbb{Z}^d$ \textit{Λ},
+volume layers (\textit{Lambda}, along-ex, $\mathbb{Z}^d$ \textit{Lambda},
 $\mathbb{Z}^d$ along-ex):
 \texttt{\_continuous\_joint},
 \texttt{\_differentiable\_joint},
@@ -4008,8 +4069,8 @@ $h$-zero regularity (PR~\#1608) wrappers.
 \paragraph{\texttt{freeEnergy} per-direction analyticAt +
 analyticOnNhd, all volume layers (\S18.6, PR~\#1609).} Lifts
 ten abstract \texttt{freeEnergy} per-direction analyticity
-theorems to the four volume layers (\textit{Λ}, along-ex,
-$\mathbb{Z}^d$ \textit{Λ}, $\mathbb{Z}^d$ along-ex):
+theorems to the four volume layers (\textit{Lambda}, along-ex,
+$\mathbb{Z}^d$ \textit{Lambda}, $\mathbb{Z}^d$ along-ex):
 \texttt{\_analyticAt\_beta\_h\_zero},
 \texttt{\_analyticAt\_J\_h\_zero},
 \texttt{\_analyticOnNhd\_beta\_h\_zero},
@@ -4022,14 +4083,14 @@ $\mathbb{Z}^d$ \textit{Λ}, $\mathbb{Z}^d$ along-ex):
 \texttt{\_analyticOnNhd\_h}. 40 new thin
 direct-instantiation wrappers (10 abstracts $\times$ 4 layers).
 Complements the existing joint-direction
-\texttt{freeEnergyΛ\_analyticAt\_joint} (PR~\#1535) at the same
+\texttt{freeEnergy\LeanLambda\_analyticAt\_joint} (PR~\#1535) at the same
 volume layers.
 
 \paragraph{\texttt{partitionFunction} \texttt{h\_zero} regularity,
 all volume layers (\S18.6, PR~\#1608).} Lifts eight abstract
 \texttt{partitionFunction\_*\_h\_zero} regularity theorems to the
-four volume layers (\textit{Λ}, along-ex, $\mathbb{Z}^d$
-\textit{Λ}, $\mathbb{Z}^d$ along-ex):
+four volume layers (\textit{Lambda}, along-ex, $\mathbb{Z}^d$
+\textit{Lambda}, $\mathbb{Z}^d$ along-ex):
 \texttt{\_continuous\_beta\_h\_zero},
 \texttt{\_continuous\_J\_h\_zero},
 \texttt{\_differentiable\_beta\_h\_zero},
@@ -4046,8 +4107,8 @@ the existing general-$h$ wrappers.
 \paragraph{vdSum sandwich/monotone + $\varepsilon$ bound +
 \texttt{polymerFreeEnergy(tanh)} bound + $\log 2$, all volume
 layers (\S18.5, PR~\#1607).} Lifts six abstract bound/regularity
-lemmas to the four volume layers (\textit{Λ}, along-ex,
-$\mathbb{Z}^d$ \textit{Λ}, $\mathbb{Z}^d$ along-ex):
+lemmas to the four volume layers (\textit{Lambda}, along-ex,
+$\mathbb{Z}^d$ \textit{Lambda}, $\mathbb{Z}^d$ along-ex):
 \texttt{vdPolymerFamilies\_sum\_sandwich\_of\_nonneg}
 ($1 \le \mathrm{vdSum} \le (1+t)^{|E|}$),
 \texttt{\_monotoneOn\_Ici\_zero},
@@ -4063,7 +4124,7 @@ abbreviates the suffix \texttt{\_of\_betaJ\_nonneg} to
 \paragraph{$\varepsilon(t)$ nonneg + non-tanh
 \texttt{polymerFreeEnergy} sharpening, all volume layers (\S18.5,
 PR~\#1606).} Lifts six abstract sharpening lemmas to the four
-volume layers (\textit{Λ}, along-ex, $\mathbb{Z}^d$ \textit{Λ},
+volume layers (\textit{Lambda}, along-ex, $\mathbb{Z}^d$ \textit{Lambda},
 $\mathbb{Z}^d$ along-ex):
 \texttt{vdPolymerFamilies\_sum\_minus\_one\_nonneg\_of\_nonneg}
 ($0 \le \varepsilon(t)$ for $t \ge 0$),
@@ -4078,8 +4139,8 @@ direct-instantiation wrappers.
 \paragraph{\texttt{polymerFreeEnergy} tanh sharpening + $\beta/J$
 strict-mono under polymers $\ne \emptyset$, all volume layers
 (\S18.5, PR~\#1605).} Lifts nine abstract \texttt{polymerFreeEnergy}
-theorems to the four volume layers (\textit{Λ}, along-ex,
-$\mathbb{Z}^d$ \textit{Λ}, $\mathbb{Z}^d$ along-ex):
+theorems to the four volume layers (\textit{Lambda}, along-ex,
+$\mathbb{Z}^d$ \textit{Lambda}, $\mathbb{Z}^d$ along-ex):
 five tanh sharpening lemmas under $0 \le \beta J$
 (\texttt{\_tanh\_lt\_eps\_iff\_eps\_pos},
 \texttt{\_tanh\_eq\_zero\_iff\_eps\_eq\_zero},
@@ -4100,8 +4161,8 @@ $\mathbb{Z}^d$ along-ex names abbreviate
 \paragraph{\texttt{polymerFreeEnergy} / \texttt{vdSum} tanh
 ferromagnetic iff family, all volume layers (\S18.5, PR~\#1604).}
 Lifts nine ferromagnetic abstract iff / inequality lemmas to the
-four volume layers (\textit{Λ}, along-ex, $\mathbb{Z}^d$
-\textit{Λ}, $\mathbb{Z}^d$ along-ex). All require
+four volume layers (\textit{Lambda}, along-ex, $\mathbb{Z}^d$
+\textit{Lambda}, $\mathbb{Z}^d$ along-ex). All require
 $0 \le \beta$ and $0 \le J$:
 \texttt{\_tanh\_lt\_eps\_iff\_eps\_pos\_ferromagnetic},
 \texttt{\_tanh\_eq\_zero\_iff\_eps\_eq\_zero\_ferromagnetic},
@@ -4120,8 +4181,8 @@ budget.
 \paragraph{Strict-mono / strict-pos under polymers $\ne
 \emptyset$, all volume layers (\S18.5, PR~\#1603).} Lifts ten
 abstract strict-monotone / strict-positive lemmas to the four
-volume layers (\textit{Λ}, along-ex, $\mathbb{Z}^d$
-\textit{Λ}, $\mathbb{Z}^d$ along-ex). All require the
+volume layers (\textit{Lambda}, along-ex, $\mathbb{Z}^d$
+\textit{Lambda}, $\mathbb{Z}^d$ along-ex). All require the
 hypothesis $\mathrm{allPolymers}\ G \ne \emptyset$:
 \texttt{vdPolymerFamilies\_sum\_lt\_of\_lt\_of\_polymers\_nonempty},
 \texttt{\_strictMonoOn\_of\_polymers\_nonempty} (over
@@ -4143,8 +4204,8 @@ second \texttt{\_of\_tanh\_pos\_} from its name to fit under the
 \paragraph{$\varepsilon(t)$ / \texttt{polymerFreeEnergy}
 positivity / zero iff family, all volume layers (\S18.5,
 PR~\#1602).} Lifts six abstract iff characterisations to the
-four volume layers (\textit{Λ}, along-ex, $\mathbb{Z}^d$
-\textit{Λ}, $\mathbb{Z}^d$ along-ex):
+four volume layers (\textit{Lambda}, along-ex, $\mathbb{Z}^d$
+\textit{Lambda}, $\mathbb{Z}^d$ along-ex):
 \texttt{vdPolymerFamilies\_sum\_minus\_one\_pos\_iff}
 ($0 < \varepsilon(t) \Leftrightarrow 0 < t \wedge
 \mathrm{allPolymers}\ G \ne \emptyset$),
@@ -4157,8 +4218,8 @@ direct-instantiation wrappers.
 \paragraph{$\varepsilon(t)$ infrastructure + Mayer-term sign at
 $n = 1, 2$ + \texttt{allPolymers} empty on edgeless, all volume
 layers (\S18.5, PR~\#1601).} Lifts seven abstract Mayer-expansion
-theorems to the four volume layers (\textit{Λ}, along-ex,
-$\mathbb{Z}^d$ \textit{Λ}, $\mathbb{Z}^d$ along-ex):
+theorems to the four volume layers (\textit{Lambda}, along-ex,
+$\mathbb{Z}^d$ \textit{Lambda}, $\mathbb{Z}^d$ along-ex):
 \texttt{mayerExpansionTerm\_one\_nonneg\_of\_nonneg},
 \texttt{\_two\_nonpos\_of\_nonneg},
 \texttt{vdPolymerFamilies\_sum\_minus\_one\_at\_zero}
@@ -4171,8 +4232,8 @@ $\mathbb{Z}^d$ \textit{Λ}, $\mathbb{Z}^d$ along-ex):
 \paragraph{Mayer recurrence + \texttt{polymerFreeEnergy} hasSum +
 $\varepsilon(t) \to 0$ tendsto, all volume layers (\S18.5,
 PR~\#1600).} Lifts five abstract Mayer-expansion theorems to the
-four volume layers (\textit{Λ}, along-ex, $\mathbb{Z}^d$
-\textit{Λ}, $\mathbb{Z}^d$ along-ex):
+four volume layers (\textit{Lambda}, along-ex, $\mathbb{Z}^d$
+\textit{Lambda}, $\mathbb{Z}^d$ along-ex):
 \texttt{mayerPartialSum\_succ} (recurrence in $N$),
 \texttt{mayerExpansionTerm\_eq\_mayerPartialSum\_diff},
 \texttt{polymerFreeEnergy\_hasSum\_via\_log} (under $|\varepsilon|
@@ -4187,8 +4248,8 @@ direct-instantiation wrappers.
 ferromagnetic + \texttt{hasDerivAt} +
 \texttt{eq\_log\_one\_add\_eps}, all volume layers (\S18.5,
 PR~\#1599).} Lifts six abstract \texttt{polymerFreeEnergy}
-lemmas to the four volume layers (\textit{Λ}, along-ex,
-$\mathbb{Z}^d$ \textit{Λ}, $\mathbb{Z}^d$ along-ex):
+lemmas to the four volume layers (\textit{Lambda}, along-ex,
+$\mathbb{Z}^d$ \textit{Lambda}, $\mathbb{Z}^d$ along-ex):
 \texttt{\_tanh\_le\_card\_mul} (under $0 \le \beta J$),
 \texttt{\_tanh\_le\_card\_mul\_ferromagnetic},
 \texttt{\_tanh\_sandwich\_ferromagnetic},
@@ -4207,8 +4268,8 @@ budget.
 \texttt{analyticOnNhd\_Ici\_zero} +
 \texttt{sandwich\_of\_nonneg}, all volume layers (\S18.5,
 PR~\#1598).} Lifts five abstract \texttt{polymerFreeEnergy}
-lemmas to the four volume layers (\textit{Λ}, along-ex,
-$\mathbb{Z}^d$ \textit{Λ}, $\mathbb{Z}^d$ along-ex):
+lemmas to the four volume layers (\textit{Lambda}, along-ex,
+$\mathbb{Z}^d$ \textit{Lambda}, $\mathbb{Z}^d$ along-ex):
 $\mathrm{pFE}(G, 0) = 0$,
 $\mathrm{pFE}(G, 1) = \log |\mathrm{vdCompat}(G)|$,
 \texttt{analyticAt} for $t \ge 0$ (named-wrapper of
@@ -4220,7 +4281,7 @@ $t \ge 0$. 20 new thin direct-instantiation wrappers.
 \paragraph{Mayer expansion edge-cases (zero) + $n = 2$ +
 \texttt{abs\_le}, all volume layers (\S18.5, PR~\#1597).}
 Lifts six abstract Mayer-expansion theorems to the four volume
-layers (Λ-direct, along-exhaustion, $\mathbb{Z}^d$ Λ-direct,
+layers (Lambda-direct, along-exhaustion, $\mathbb{Z}^d$ Lambda-direct,
 $\mathbb{Z}^d$ along-exhaustion):
 \texttt{mayerExpansionTerm\_two}, \texttt{\_two\_filter},
 \texttt{mayerPartialSum\_two},
@@ -4256,7 +4317,7 @@ all volume layers (\S18.5, PR~\#1594).} The four abstract iff
 characterizations (\texttt{\_eq\_one\_iff\_eps\_eq\_zero},
 \texttt{\_gt\_one\_iff\_eps\_pos},
 \texttt{\_tanh\_gt\_one\_iff}, \texttt{\_tanh\_eq\_one\_iff}) are
-lifted to the four volume layers. The non-tanh forms had Λ-layer
+lifted to the four volume layers. The non-tanh forms had Lambda-layer
 wraps already; this PR completes the along-exhaustion and
 $\mathbb{Z}^d$ wraps for both, plus all four layers for the tanh
 forms. 14 new thin direct-instantiation wrappers.
@@ -4468,7 +4529,7 @@ giving
 $f < \log 2 + (|E|/|\iota|) \log\cosh(\beta J) + \log 2/|\iota|$)
 admits a ferromagnetic version
 ($0 \le J,\, 0 < \beta$) and is lifted to all five layers via
-direct \texttt{freeEnergyΛ\_apply} / \texttt{freeEnergyAlongExhaustion}
+direct \texttt{freeEnergy\LeanLambda\_apply} / \texttt{freeEnergyAlongExhaustion}
 unfoldings: 9 new theorems in
 \texttt{IsingModel/AmbientLattice/Analyticity.lean},
 \texttt{AmbientLattice/SpecialCases.lean}, and
@@ -4501,8 +4562,8 @@ corresponding induced subgraph.
 
 \paragraph{Convergence radius at all volume layers (\S18.5,
 PR~\#1569).} The cluster-expansion convergence-radius statements
-(`polymerFreeEnergy_high_temp_sandwich' from \#1526 and
-`polymerFreeEnergy_hasSum_via_log_of_pow_lt_two' from \#1517) are
+\texttt{polymerFreeEnergy\_high\_temp\_sandwich} from \#1526 and
+\texttt{polymerFreeEnergy\_hasSum\_via\_log\_of\_pow\_lt\_two} from \#1517 are
 lifted to every volume layer:
 \begin{itemize}
   \item \emph{Abstract tanh form (new)}:
@@ -4511,9 +4572,9 @@ lifted to every volume layer:
     $\mathrm{polymerFreeEnergy}\,G\,(\tanh(\beta J))$ admits the same
     explicit log-Taylor series as the abstract form, restated in the
     Ising activity $t = \tanh(\beta J)$.
-  \item \emph{Λ-layer tanh wraps}:
-    \texttt{polymerFreeEnergy\_Λ\_tanh\_high\_temp\_sandwich} and
-    \texttt{polymerFreeEnergy\_Λ\_tanh\_hasSum\_via\_log\_of\_pow\_lt\_two}
+  \item \emph{Lambda-layer tanh wraps}:
+    \texttt{polymerFreeEnergy\_\LeanLambda\_tanh\_high\_temp\_sandwich} and
+    \texttt{polymerFreeEnergy\_\LeanLambda\_tanh\_hasSum\_via\_log\_of\_pow\_lt\_two}
     in \texttt{AmbientLattice/Analyticity.lean}.
   \item \emph{Along-exhaustion wraps}:
     \texttt{polymerFreeEnergyAlongExhaustion\_\{,tanh\_\}\{high\_temp\_sandwich,hasSum\_via\_log\_of\_pow\_lt\_two\}}
@@ -4548,19 +4609,19 @@ $\partial X = \{i, j\}$.
 
 PR~\#1570 lifts this capstone to every volume layer: the
 $\Lambda$-direct form
-\texttt{correlation$\Lambda$\_high\_temp\_h\_zero\_at\_pair\_le\_two\_pow\_edges\_mul\_tanh\_pow\_dist}
+\texttt{correlation\LeanLambda\_high\_temp\_h\_zero\_at\_pair\_le\_two\_pow\_edges\_mul\_tanh\_pow\_dist}
 in \texttt{AmbientLattice/Defs.lean}, the per-stage
 \texttt{correlationAlongExhaustion\_high\_temp\_h\_zero\_at\_pair\_le\_two\_pow\_edges\_mul\_tanh\_pow\_dist}
 in \texttt{AmbientLattice/SpecialCases.lean}, plus the
 $\mathbb{Z}^d$ concrete forms
-\texttt{correlation$\Lambda$\_latticeGraph\_high\_temp\_h\_zero\_at\_pair\_le\_two\_pow\_edges\_mul\_tanh\_pow\_dist}
+\texttt{correlation\LeanLambda\_latticeGraph\_high\_temp\_h\_zero\_at\_pair\_le\_two\_pow\_edges\_mul\_tanh\_pow\_dist}
 and
 \texttt{correlationAlongExhaustion\_latticeGraph\_high\_temp\_h\_zero\_at\_pair\_le\_two\_pow\_edges\_mul\_tanh\_pow\_dist}
 in \texttt{Concrete/LatticeGraphCorrelation.lean}.
 
 PR~\#1571 adds ferromagnetic ($0 \le J,\, 0 < \beta$) versions of
 all five layers; the bridge $0 \le \beta J$ follows from
-\texttt{mul\_nonneg h$\beta$.le hJ}. The ℤ^d along-exhaustion form
+\texttt{mul\_nonneg hbeta.le hJ}. The $\mathbb{Z}^d$ along-exhaustion form
 uses the abbreviated name
 \texttt{correlationAlongExhaustion\_latticeGraph\_h\_zero\_at\_pair\_le\_two\_pow\_edges\_mul\_tanh\_pow\_dist\_ferro}
 (dropping \texttt{\_high\_temp} and shortening
@@ -4777,17 +4838,17 @@ $\texttt{SimpleGraph}~(\uparrow\!\Lambda : \texttt{Type})$.
 
 \subsection{Finite-volume observables}
 
-\begin{definition}[\texttt{partitionFunctionΛ}, \texttt{correlationΛ},
-  \texttt{freeEnergyΛ}]
+\begin{definition}[\texttt{partitionFunction\LeanLambda}, \texttt{correlation\LeanLambda},
+  \texttt{freeEnergy\LeanLambda}]
 Each is the existing \texttt{IsingModel} counterpart applied to
 $\texttt{inducedGraph}~G~\Lambda$ (with $[\texttt{Fintype}~(\texttt{inducedGraph}~G~\Lambda).\texttt{edgeSet}]$).
 \end{definition}
 
 \begin{theorem}[basic properties]
-$\texttt{partitionFunctionΛ}_{\mathrm{pos}}$,
-$\texttt{abs\_correlationΛ}_{\mathrm{le\_one}}$,
-$\texttt{correlationΛ}_{\mathrm{le\_one}}$,
-$\texttt{correlationΛ}_{\mathrm{nonneg}}$ (GKS-I): all follow by
+$\texttt{partitionFunction\LeanLambda}_{\mathrm{pos}}$,
+$\texttt{abs\_correlation\LeanLambda}_{\mathrm{le\_one}}$,
+$\texttt{correlation\LeanLambda}_{\mathrm{le\_one}}$,
+$\texttt{correlation\LeanLambda}_{\mathrm{nonneg}}$ (GKS-I): all follow by
 direct forwarding from the corresponding existing theorems.
 \end{theorem}
 
@@ -4804,14 +4865,14 @@ there exists $N$ such that $A \subseteq \Lambda(n)$ for $n \ge N$.
 For $A \subseteq \Lambda$, the finite set
 $A.\texttt{attach}.\texttt{image}~(\lambda v \mapsto v \in \Lambda)$
 lifts $A$ to a $\texttt{Finset}~(\uparrow\!\Lambda)$.  This is the
-finite set on which \texttt{correlationΛ} is evaluated.
+finite set on which \texttt{correlation\LeanLambda} is evaluated.
 \end{definition}
 
 \begin{definition}[\texttt{correlationAlongExhaustion}]
 For an \texttt{Exhaustion} $\Lambda_\bullet$ and a finite
 $A : \texttt{Finset}~V$, returns a sequence
 $\mathbb{N} \to \mathbb{R}$ that equals
-$\texttt{correlationΛ}~G~(\Lambda(n))~p~(\texttt{liftFinset}~A)$
+$\texttt{correlation\LeanLambda}~G~(\Lambda(n))~p~(\texttt{liftFinset}~A)$
 once $A \subseteq \Lambda(n)$, and $0$ otherwise.
 \end{definition}
 
@@ -4845,13 +4906,13 @@ pointwise.
 \begin{theorem}
 The following are monotone in the ambient graph direction:
 \begin{itemize}
-  \item \texttt{partitionFunctionΛ\_monotone\_ambient\_subgraph}:
+  \item \texttt{partitionFunction\LeanLambda\_monotone\_ambient\_subgraph}:
     $Z_{G_1,\Lambda} \le Z_{G_2,\Lambda}$
-  \item \texttt{correlationΛ\_monotone\_ambient\_subgraph}:
+  \item \texttt{correlation\LeanLambda\_monotone\_ambient\_subgraph}:
     $\langle\sigma^A\rangle_{G_1,\Lambda} \le
      \langle\sigma^A\rangle_{G_2,\Lambda}$ for any
     $A : \texttt{Finset}~(\uparrow\!\Lambda)$
-  \item \texttt{freeEnergyΛ\_monotone\_ambient\_subgraph}:
+  \item \texttt{freeEnergy\LeanLambda\_monotone\_ambient\_subgraph}:
     $f_{G_1,\Lambda} \le f_{G_2,\Lambda}$
 \end{itemize}
 \end{theorem}
@@ -4866,7 +4927,7 @@ theorems (on the Fintype $(\uparrow\!\Lambda)$) then apply directly.
 Convergence of \texttt{correlationAlongExhaustion} (i.e., $\exists L,
 \texttt{Tendsto} \ldots \texttt{(nhds }L\texttt{)}$) is the natural
 next step, requiring a compatibility argument between
-\texttt{correlationΛ}~on $\Lambda_n$ and $\Lambda_{n+1}$ when
+\texttt{correlation\LeanLambda}~on $\Lambda_n$ and $\Lambda_{n+1}$ when
 $\Lambda_n \subseteq \Lambda_{n+1}$.  This is the \emph{volume}
 direction of monotonicity, which requires a configuration
 factorization and is left for a follow-up.
@@ -4880,14 +4941,14 @@ we construct a graph on $(\uparrow\!\Lambda_2)$ whose edges are
 exactly the edges of $G.\texttt{induce}\,\Lambda_1$ embedded via
 the inclusion $\uparrow\!\Lambda_1 \hookrightarrow \uparrow\!\Lambda_2$.
 
-\begin{definition}[\texttt{extendGraphFromΛ₁}]
-$(\texttt{extendGraphFromΛ₁}\,G\,\Lambda_1\,\Lambda_2).\texttt{Adj}\,u\,v
+\begin{definition}[\texttt{extendGraphFrom\LeanLambda₁}]
+$(\texttt{extendGraphFrom\LeanLambda₁}\,G\,\Lambda_1\,\Lambda_2).\texttt{Adj}\,u\,v
 \;\Leftrightarrow\; u.val \in \Lambda_1 \wedge v.val \in \Lambda_1 \wedge
 G.\texttt{Adj}\,u.val\,v.val$, for $u, v : \uparrow\!\Lambda_2$.
 \end{definition}
 
-\begin{theorem}[\texttt{extendGraphFromΛ₁\_le\_induce}]
-$\texttt{extendGraphFromΛ₁}\,G\,\Lambda_1\,\Lambda_2 \le
+\begin{theorem}[\texttt{extendGraphFrom\LeanLambda₁\_le\_induce}]
+$\texttt{extendGraphFrom\LeanLambda₁}\,G\,\Lambda_1\,\Lambda_2 \le
 \texttt{inducedGraph}\,G\,\Lambda_2$.
 \end{theorem}
 
@@ -4933,7 +4994,7 @@ the restriction $\sigma \circ \texttt{subtypeIncl}\,h_{12}
 : \uparrow\!\Lambda_1 \to \texttt{Spin}$.
 \end{definition}
 
-\begin{definition}[\texttt{Λ₁subtypeEquiv}]
+\begin{definition}[\texttt{\LeanLambda₁subtypeEquiv}]
 The equivalence $\{x : \uparrow\!\Lambda_2 \;//\; x.\text{val} \in \Lambda_1\}
 \simeq \uparrow\!\Lambda_1$, which is how one bridges the subtype used
 by \texttt{piEquivPiSubtypeProd} with the natural
@@ -4948,7 +5009,7 @@ The configuration space factoring
   (\{x : \uparrow\!\Lambda_2 \;//\; x.\text{val} \notin \Lambda_1\} \to \texttt{Spin}),
 \]
 obtained by composing \texttt{Equiv.piEquivPiSubtypeProd} with
-\texttt{Λ₁subtypeEquiv} on the first component.
+\texttt{\LeanLambda₁subtypeEquiv} on the first component.
 \end{definition}
 
 \begin{theorem}[\texttt{configEquivSubtypeProd\_fst}]
@@ -4974,11 +5035,11 @@ to the trivial pointwise identity.
 
 \begin{theorem}[\texttt{mem\_extendGraph\_edgeSet\_of\_mem\_induce}]
 If $e \in (G.\texttt{induce}\,\Lambda_1).\texttt{edgeSet}$, then
-$\texttt{Sym2.map}\,(\texttt{subtypeIncl}\,h_{12})\,e \in (\texttt{extendGraphFromΛ₁}\,G\,\Lambda_1\,\Lambda_2).\texttt{edgeSet}$.
+$\texttt{Sym2.map}\,(\texttt{subtypeIncl}\,h_{12})\,e \in (\texttt{extendGraphFrom\LeanLambda₁}\,G\,\Lambda_1\,\Lambda_2).\texttt{edgeSet}$.
 \end{theorem}
 
 \begin{theorem}[\texttt{exists\_induce\_edge\_of\_extendGraph}]
-Every $e \in (\texttt{extendGraphFromΛ₁}\,G\,\Lambda_1\,\Lambda_2).\texttt{edgeSet}$ is the
+Every $e \in (\texttt{extendGraphFrom\LeanLambda₁}\,G\,\Lambda_1\,\Lambda_2).\texttt{edgeSet}$ is the
 image of a unique $e' \in (G.\texttt{induce}\,\Lambda_1).\texttt{edgeSet}$ under
 $\texttt{Sym2.map}\,(\texttt{subtypeIncl}\,h_{12})$.
 \end{theorem}
@@ -4987,7 +5048,7 @@ These two together with \texttt{Sym2.map.injective}\,(\texttt{subtypeIncl\_injec
 
 \begin{theorem}[\texttt{extendGraph\_edgeSum\_eq}]
 \[
-\sum_{e \in (\texttt{extendGraphFromΛ₁}\,G\,\Lambda_1\,\Lambda_2).\texttt{edgeFinset}}
+\sum_{e \in (\texttt{extendGraphFrom\LeanLambda₁}\,G\,\Lambda_1\,\Lambda_2).\texttt{edgeFinset}}
   \texttt{edgeSpin}\,\sigma\,e
 = \sum_{e' \in (\texttt{inducedGraph}\,G\,\Lambda_1).\texttt{edgeFinset}}
   \texttt{edgeSpin}\,(\texttt{restrictConfig}\,h_{12}\,\sigma)\,e'.
@@ -5005,7 +5066,7 @@ surjectivity via \texttt{exists\_induce\_edge\_of\_extendGraph},
 pointwise equality via \texttt{edgeSpin\_subtypeIncl}.
 \end{proof}
 
-\begin{theorem}[\texttt{sum\_Λ₁\_subtype\_eq}]
+\begin{theorem}[\texttt{sum\_\LeanLambda₁\_subtype\_eq}]
 Site-sum reindex helper: for $\Lambda_1 \subseteq \Lambda_2$,
 \[
 \sum_{v : \{x : \uparrow\!\Lambda_2 \mid x.\text{val} \in \Lambda_1\}}
@@ -5016,7 +5077,7 @@ Site-sum reindex helper: for $\Lambda_1 \subseteq \Lambda_2$,
 \end{theorem}
 
 \begin{proof}
-\texttt{Fintype.sum\_equiv} applied to \texttt{Λ₁subtypeEquiv};
+\texttt{Fintype.sum\_equiv} applied to \texttt{\LeanLambda₁subtypeEquiv};
 pointwise equality follows by unfolding \texttt{restrictConfig}
 $= \sigma \circ \texttt{subtypeIncl}$.
 \end{proof}
@@ -5041,13 +5102,13 @@ Full splitting, with the $\Lambda_1$-part expressed via
 \end{theorem}
 
 \begin{proof}
-\texttt{siteSum\_partition} + \texttt{sum\_Λ₁\_subtype\_eq}.
+\texttt{siteSum\_partition} + \texttt{sum\_\LeanLambda₁\_subtype\_eq}.
 \end{proof}
 
 \begin{theorem}[\texttt{hamiltonian\_extendGraph\_factor}]
-The Hamiltonian on \texttt{extendGraphFromΛ₁} decomposes:
+The Hamiltonian on \texttt{extendGraphFrom\LeanLambda₁} decomposes:
 \[
-H_{\texttt{extendGraphFromΛ₁}\,G\,\Lambda_1\,\Lambda_2,\,p}(\sigma)
+H_{\texttt{extendGraphFrom\LeanLambda₁}\,G\,\Lambda_1\,\Lambda_2,\,p}(\sigma)
  = H_{\texttt{inducedGraph}\,G\,\Lambda_1,\,p}(\texttt{restrictConfig}\,h_{12}\,\sigma)
  + \Bigl(-p.h \sum_{v : \{x \mid \neg(x.\text{val} \in \Lambda_1)\}} \texttt{Spin.sign}\,\mathbb{R}\,(\sigma\,v.\text{val})\Bigr).
 \]
@@ -5061,7 +5122,7 @@ Unfold \texttt{hamiltonian}, \texttt{interactionEnergy},
 \end{proof}
 
 \begin{theorem}[\texttt{boltzmannWeight\_extendGraph\_factor}]
-The Boltzmann weight on \texttt{extendGraphFromΛ₁} factors as:
+The Boltzmann weight on \texttt{extendGraphFrom\LeanLambda₁} factors as:
 \[
 w_{G_1^\text{ext},\,p}(\sigma)
   = w_{\texttt{inducedGraph}\,G\,\Lambda_1,\,p}(\texttt{restrictConfig}\,h_{12}\,\sigma)
@@ -5107,7 +5168,7 @@ For $(\sigma_1, \sigma_2) \in (\uparrow\!\Lambda_1 \to \texttt{Spin})
 
 \begin{proof}
 \texttt{ext v}, \texttt{simp} with \texttt{configEquivSubtypeProd},
-\texttt{Λ₁subtypeEquiv}, \texttt{piEquivPiSubtypeProd},
+\texttt{\LeanLambda₁subtypeEquiv}, \texttt{piEquivPiSubtypeProd},
 \texttt{subtypeIncl}, and $v.\texttt{property}$
 (which selects the $\uparrow\!\Lambda_1$ branch).
 \end{proof}
@@ -5129,7 +5190,7 @@ selects the complement branch.
 
 \begin{theorem}[\texttt{partitionFunction\_extendGraph\_factor}]
 \[
-Z_{\texttt{extendGraphFromΛ₁}\,G\,\Lambda_1\,\Lambda_2,\,p}
+Z_{\texttt{extendGraphFrom\LeanLambda₁}\,G\,\Lambda_1\,\Lambda_2,\,p}
   = Z_{\texttt{inducedGraph}\,G\,\Lambda_1,\,p} \cdot F,
 \]
 where $F := \sum_{\sigma_2 : C \to \texttt{Spin}}
@@ -5159,7 +5220,7 @@ Same pattern as partition function factoring, with
 spinProduct through \texttt{restrictConfig}.
 \end{proof}
 
-\begin{theorem}[\texttt{correlationΛ\_extendGraph\_eq}]
+\begin{theorem}[\texttt{correlation\LeanLambda\_extendGraph\_eq}]
 For $A \subseteq \Lambda_1$,
 $\langle\sigma^{A_2}\rangle_{G_1^\text{ext}}
  = \langle\sigma^{A_1}\rangle_{\texttt{inducedGraph}\,G\,\Lambda_1}$.
@@ -5173,7 +5234,7 @@ and cancel the common complement factor $F$ using \texttt{field\_simp}.
 
 \subsection{Volume-direction monotonicity main theorem}
 
-\begin{theorem}[\texttt{correlationΛ\_monotone\_volume}]
+\begin{theorem}[\texttt{correlation\LeanLambda\_monotone\_volume}]
 For ferromagnetic $p$ and $A \subseteq \Lambda_1 \subseteq \Lambda_2 : \text{Finset}\,V$,
 \[
 \langle\sigma^A\rangle_{G, \Lambda_1} \le \langle\sigma^A\rangle_{G, \Lambda_2}.
@@ -5184,10 +5245,10 @@ For ferromagnetic $p$ and $A \subseteq \Lambda_1 \subseteq \Lambda_2 : \text{Fin
 \begin{align*}
 \langle\sigma^A\rangle_{G, \Lambda_1}
 &= \langle\sigma^{A_1}\rangle_{\texttt{inducedGraph}\,G\,\Lambda_1} && \text{(def)}\\
-&= \langle\sigma^{A_2}\rangle_{\texttt{extendGraphFromΛ₁}\,G\,\Lambda_1\,\Lambda_2}
-   && \text{(\texttt{correlationΛ\_extendGraph\_eq})}\\
+&= \langle\sigma^{A_2}\rangle_{\texttt{extendGraphFrom\LeanLambda₁}\,G\,\Lambda_1\,\Lambda_2}
+   && \text{(\texttt{correlation\LeanLambda\_extendGraph\_eq})}\\
 &\le \langle\sigma^{A_2}\rangle_{\texttt{inducedGraph}\,G\,\Lambda_2}
-   && \text{(\texttt{correlation\_monotone\_subgraph} + \texttt{extendGraphFromΛ₁\_le\_induce})}\\
+   && \text{(\texttt{correlation\_monotone\_subgraph} + \texttt{extendGraphFrom\LeanLambda₁\_le\_induce})}\\
 &= \langle\sigma^A\rangle_{G, \Lambda_2}. && \text{(def)}
 \end{align*}
 \end{proof}
@@ -5195,7 +5256,7 @@ For ferromagnetic $p$ and $A \subseteq \Lambda_1 \subseteq \Lambda_2 : \text{Fin
 This completes the volume-direction monotonicity on the genuine
 infinite-volume (\texttt{AmbientLattice}) framework.
 
-\begin{theorem}[\texttt{correlationΛ\_shifted\_monotone\_bounded}]
+\begin{theorem}[\texttt{correlation\LeanLambda\_shifted\_monotone\_bounded}]
 For ferromagnetic $p$, an exhaustion $\Lambda$, and $N$ such that
 $A \subseteq \Lambda.\text{volume}\,n$ for $n \ge N$, the sequence
 \[
@@ -5205,15 +5266,15 @@ is monotone and bounded above by $1$.
 \end{theorem}
 
 \begin{proof}
-Monotonicity from \texttt{correlationΛ\_monotone\_volume} applied
-via $\Lambda.\text{mono}$; upper bound from \texttt{correlationΛ\_le\_one}.
+Monotonicity from \texttt{correlation\LeanLambda\_monotone\_volume} applied
+via $\Lambda.\text{mono}$; upper bound from \texttt{correlation\LeanLambda\_le\_one}.
 \end{proof}
 
 The full Tendsto-convergence of \texttt{correlationAlongExhaustion}
 (connecting this clean shifted sequence to the dite-based definition)
 is deferred to a follow-up PR.
 
-\begin{theorem}[\texttt{correlationΛ\_shifted\_tendsto}]
+\begin{theorem}[\texttt{correlation\LeanLambda\_shifted\_tendsto}]
 The shifted correlation sequence (monotone + bounded) converges to
 its supremum by \texttt{tendsto\_atTop\_ciSup}.
 \end{theorem}
@@ -5229,16 +5290,16 @@ is monotone.  Specifically, for $n \le m$:
 \begin{itemize}
   \item $A \subseteq \Lambda.\text{volume}\,n$: then
     $A \subseteq \Lambda.\text{volume}\,m$ follows from $\Lambda.\text{mono}$;
-    monotonicity follows from \texttt{correlationΛ\_monotone\_volume}.
+    monotonicity follows from \texttt{correlation\LeanLambda\_monotone\_volume}.
   \item $A \not\subseteq \Lambda.\text{volume}\,n$: LHS is 0;
     RHS is either 0 (when $A \not\subseteq \Lambda.\text{volume}\,m$)
-    or $\ge 0$ by GKS-I (\texttt{correlationΛ\_nonneg}).
+    or $\ge 0$ by GKS-I (\texttt{correlation\LeanLambda\_nonneg}).
 \end{itemize}
 \end{theorem}
 
 \begin{theorem}[\texttt{correlationAlongExhaustion\_le\_one}]
 For every $n$, $\texttt{correlationAlongExhaustion}\,G\,\Lambda\,p\,A\,n \le 1$,
-either because the value is 0 or via \texttt{correlationΛ\_le\_one}.
+either because the value is 0 or via \texttt{correlation\LeanLambda\_le\_one}.
 \end{theorem}
 
 \begin{theorem}[\texttt{correlationAlongExhaustion\_tendsto\_ciSup}]
@@ -5275,8 +5336,9 @@ This completes the genuine infinite-volume convergence on the
 
 \subsection{Infinite-volume correlation function}
 
-参考: Glimm--Jaffe \textit{Quantum Physics} 2nd ed.\ (1987),
-\S 4.2 Theorem 4.2.3, pp.\ 58--59 (ferromagnetic Ising の熱力学極限相関).
+Reference: Glimm--Jaffe, \textit{Quantum Physics}, 2nd ed.\ (1987),
+\S 4.2 Theorem 4.2.3, pp.\ 58--59 (thermodynamic-limit correlations for
+the ferromagnetic Ising model).
 Friedli--Velenik \S 3.2.
 
 \begin{definition}[\texttt{correlationInfinite}]
@@ -5296,47 +5358,53 @@ $\langle \sigma^A \rangle_V^{\mathrm{FM}} \le 1$.
 \end{theorem}
 
 \begin{proof}
-\texttt{correlationAlongExhaustion\_le\_one} から sup の上界が 1.
+\texttt{correlationAlongExhaustion\_le\_one} gives 1 as an upper bound for
+the supremum.
 \end{proof}
 
 \begin{theorem}[\texttt{correlationInfinite\_nonneg}]
-強磁性下で $\langle \sigma^A \rangle_V^{\mathrm{FM}} \ge 0$.
+Under ferromagnetic assumptions,
+$\langle \sigma^A \rangle_V^{\mathrm{FM}} \ge 0$.
 \end{theorem}
 
 \begin{proof}
-$\Lambda.\text{exhaust}$ で $A \subseteq \Lambda.\text{volume}\,N$
-を取り, GKS-I で $\texttt{correlationAlongExhaustion}\,N \ge 0$.
-単調増加列の sup も $\ge 0$.
+Use $\Lambda.\text{exhaust}$ to choose
+$A \subseteq \Lambda.\text{volume}\,N$, then GKS-I gives
+$\texttt{correlationAlongExhaustion}\,N \ge 0$. The supremum of the
+monotone sequence is also nonnegative.
 \end{proof}
 
-\begin{theorem}[\texttt{tendsto\_correlationΛ\_correlationInfinite\_of\_subset}]
-明示的 $N$ と $h_N : \forall n \ge N,\ A \subseteq \Lambda.\text{volume}\,n$
-を与えたとき,
+\begin{theorem}[\texttt{tendsto\_correlation\LeanLambda\_correlationInfinite\_of\_subset}]
+Given an explicit $N$ and
+$h_N : \forall n \ge N,\ A \subseteq \Lambda.\text{volume}\,n$,
 \[
-\text{Tendsto}\,\bigl(m \mapsto \texttt{correlationΛ}~G~\Lambda(m+N)~p~
+\text{Tendsto}\,\bigl(m \mapsto \texttt{correlation\LeanLambda}~G~\Lambda(m+N)~p~
   (\texttt{liftFinset}~A~\ldots)\bigr)\,\text{atTop}\,
   (\text{nhds}\,\langle \sigma^A \rangle_V^{\mathrm{FM}}).
 \]
 \end{theorem}
 
 \begin{proof}
-\texttt{tendsto\_add\_atTop\_nat} で \texttt{correlationAlongExhaustion}
-の shift 版が極限と一致. $n \ge N$ で \texttt{correlationAlongExhaustion}
-は dite の分岐を展開し \texttt{correlationΛ} に一致 (\texttt{Tendsto.congr}).
+\texttt{tendsto\_add\_atTop\_nat} shows that the shifted
+\texttt{correlationAlongExhaustion} sequence has the same limit. For
+$n \ge N$, unfolding the \texttt{dite} branch identifies
+\texttt{correlationAlongExhaustion} with \texttt{correlation\LeanLambda}
+(\texttt{Tendsto.congr}).
 \end{proof}
 
-\begin{theorem}[\texttt{tendsto\_correlationΛ\_correlationInfinite}]
-$\Lambda.\text{exhaust}$ を使った系:
-$\exists N, \exists h_N$ で上と同じ結論が得られる.
+\begin{theorem}[\texttt{tendsto\_correlation\LeanLambda\_correlationInfinite}]
+Corollary using $\Lambda.\text{exhaust}$: there exist $N$ and $h_N$, so the
+preceding conclusion applies.
 \end{theorem}
 
 \subsection{Exhaustion-independence}
 
-参考: Glimm--Jaffe \S 4.2, pp.\ 58--59 (無限体積極限は exhaustion の
-選び方に依存しない). Friedli--Velenik \S 3.2 (Infinite-volume Gibbs states).
+Reference: Glimm--Jaffe \S 4.2, pp.\ 58--59 (the infinite-volume limit is
+independent of the exhaustion). Friedli--Velenik \S 3.2
+(Infinite-volume Gibbs states).
 
 \begin{lemma}[\texttt{correlationAlongExhaustion\_le\_correlationInfinite\_of\_other}]
-2 つの exhaustion $\Lambda, \Lambda'$ に対し任意の $n$ で
+For two exhaustions $\Lambda, \Lambda'$ and every $n$,
 \[
 \texttt{correlationAlongExhaustion}\,G\,\Lambda'\,p\,A\,n
   \le \texttt{correlationInfinite}\,G\,\Lambda\,p\,A.
@@ -5344,13 +5412,13 @@ $\exists N, \exists h_N$ で上と同じ結論が得られる.
 \end{lemma}
 
 \begin{proof}
-$A \subseteq \Lambda'.\text{volume}\,n$ のとき,
-$\Lambda.\text{exhaust}(\Lambda'.\text{volume}\,n)$ で
-$m$ を取り $\Lambda'.\text{volume}\,n \subseteq \Lambda.\text{volume}\,m$.
-\texttt{correlationΛ\_monotone\_volume} (PR \#87) と
-\texttt{le\_ciSup} を連結.
-$A \not\subseteq \Lambda'.\text{volume}\,n$ のとき LHS $= 0$,
-\texttt{correlationInfinite\_nonneg} で RHS $\ge 0$.
+If $A \subseteq \Lambda'.\text{volume}\,n$, use
+$\Lambda.\text{exhaust}(\Lambda'.\text{volume}\,n)$ to choose $m$ with
+$\Lambda'.\text{volume}\,n \subseteq \Lambda.\text{volume}\,m$. Chain
+\texttt{correlation\LeanLambda\_monotone\_volume} (PR \#87) with \texttt{le\_ciSup}.
+If $A \not\subseteq \Lambda'.\text{volume}\,n$, then the left-hand side is
+0, while \texttt{correlationInfinite\_nonneg} gives a nonnegative
+right-hand side.
 \end{proof}
 
 \begin{theorem}[\texttt{correlationInfinite\_indep\_exhaustion}]
@@ -5359,27 +5427,28 @@ $\texttt{correlationInfinite}\,G\,\Lambda\,p\,A
 \end{theorem}
 
 \begin{proof}
-両向きに \texttt{ciSup\_le} と上の lemma.
+Apply \texttt{ciSup\_le} and the preceding lemma in both directions.
 \end{proof}
 
 \subsection{Ambient-subgraph monotonicity at infinite volume}
 
-参考: Glimm--Jaffe \S 4.2, pp.\ 58--59 (熱力学極限は有限体積の
-monotonicity を保持する). Friedli--Velenik \S 3.6.
+Reference: Glimm--Jaffe \S 4.2, pp.\ 58--59 (the thermodynamic limit
+preserves finite-volume monotonicity). Friedli--Velenik \S 3.6.
 
 \begin{lemma}[\texttt{correlationAlongExhaustion\_monotone\_ambient\_subgraph}]
-$G_1 \le G_2$ のとき, 任意の $n$ で
+If $G_1 \le G_2$, then for every $n$,
 $\texttt{correlationAlongExhaustion}\,G_1\,\Lambda\,p\,A\,n
   \le \texttt{correlationAlongExhaustion}\,G_2\,\Lambda\,p\,A\,n$.
 \end{lemma}
 
 \begin{proof}
-$A \subseteq \Lambda.\text{volume}\,n$ のとき
-\texttt{correlationΛ\_monotone\_ambient\_subgraph} 適用; それ以外は両辺 $0$.
+If $A \subseteq \Lambda.\text{volume}\,n$, apply
+\texttt{correlation\LeanLambda\_monotone\_ambient\_subgraph}; otherwise both sides
+are 0.
 \end{proof}
 
 \begin{theorem}[\texttt{correlationInfinite\_monotone\_ambient\_subgraph}]
-$G_1 \le G_2$ のとき
+If $G_1 \le G_2$,
 $\texttt{correlationInfinite}\,G_1\,\Lambda\,p\,A
   \le \texttt{correlationInfinite}\,G_2\,\Lambda\,p\,A$.
 \end{theorem}
@@ -5392,30 +5461,32 @@ Lemma + \texttt{le\_ciSup} + \texttt{ciSup\_le}.
 
 Glimm--Jaffe, \textit{Quantum Physics}, 2nd ed.\ (1987),
 \S 4.2 Theorem 4.2.3, pp.\ 58--59: the second Griffiths inequality
-holds in the thermodynamic limit. 有限体積版は Friedli--Velenik
+holds in the thermodynamic limit. The finite-volume version is
+Friedli--Velenik
 \textit{Statistical Mechanics of Lattice Systems}, Theorem 3.49
 (eq.~3.55), pp.\ 127--128.
 
 \begin{lemma}[\texttt{liftFinset\_symmDiff}]
-$A, B \subseteq \Lambda$ のとき
+If $A, B \subseteq \Lambda$,
 $\texttt{liftFinset}\,A\,h_A \triangle \texttt{liftFinset}\,B\,h_B
   = \texttt{liftFinset}\,(A \triangle B)\,h_{A \triangle B}$.
 \end{lemma}
 
 \begin{proof}
-拡張等式 (ext) と \texttt{mem\_liftFinset} による.
+By extensional equality (ext) and \texttt{mem\_liftFinset}.
 \end{proof}
 
-\begin{lemma}[\texttt{correlationΛ\_gks\_second}]
-$A, B \subseteq \Lambda$ のとき
-$\texttt{correlationΛ}\,G\,\Lambda\,p\,(\text{lift}\,A)
-  \cdot \texttt{correlationΛ}\,G\,\Lambda\,p\,(\text{lift}\,B)
-  \le \texttt{correlationΛ}\,G\,\Lambda\,p\,(\text{lift}\,(A \triangle B))$.
+\begin{lemma}[\texttt{correlation\LeanLambda\_gks\_second}]
+If $A, B \subseteq \Lambda$,
+$\texttt{correlation\LeanLambda}\,G\,\Lambda\,p\,(\text{lift}\,A)
+  \cdot \texttt{correlation\LeanLambda}\,G\,\Lambda\,p\,(\text{lift}\,B)
+  \le \texttt{correlation\LeanLambda}\,G\,\Lambda\,p\,(\text{lift}\,(A \triangle B))$.
 \end{lemma}
 
 \begin{proof}
-\texttt{IsingModel.gks\_second} を \texttt{inducedGraph}\,$G\,\Lambda$ で
-適用し, \texttt{liftFinset\_symmDiff} で整形.
+Apply \texttt{IsingModel.gks\_second} to
+\texttt{inducedGraph}\,$G\,\Lambda$, then rewrite with
+\texttt{liftFinset\_symmDiff}.
 \end{proof}
 
 \begin{theorem}[\texttt{correlationInfinite\_gks\_second}]
@@ -5427,37 +5498,41 @@ $\texttt{correlationΛ}\,G\,\Lambda\,p\,(\text{lift}\,A)
 \end{theorem}
 
 \begin{proof}
-\texttt{Tendsto.mul} で LHS の列が
+\texttt{Tendsto.mul} shows that the left-hand sequence converges to
 $\texttt{correlationInfinite}\,A \cdot \texttt{correlationInfinite}\,B$
-に収束, RHS の列が $\texttt{correlationInfinite}\,(A \triangle B)$
-に収束. 各 $n$ について
-\texttt{correlationΛ\_gks\_second} (両者 $\subseteq$ 時) または
+and the right-hand sequence converges to
+$\texttt{correlationInfinite}\,(A \triangle B)$. For each $n$,
+use \texttt{correlation\LeanLambda\_gks\_second} when both sets are contained, or
 LHS $= 0 \le$ RHS (\texttt{correlationAlongExhaustion\_nonneg})
-で点毎不等式が成立. \texttt{le\_of\_tendsto\_of\_tendsto'} で結論.
+otherwise. This gives pointwise inequalities, and
+\texttt{le\_of\_tendsto\_of\_tendsto'} gives the result.
 \end{proof}
 
 \subsection{h-direction monotonicity at infinite volume}
 
 Glimm--Jaffe, \textit{Quantum Physics}, 2nd ed.\ (1987), \S 4.2
-Proposition 4.2.4 (Exercise), p.\ 58 の h-方向無限体積版.
+Infinite-volume version in the $h$ direction of Proposition 4.2.4
+(Exercise), p.\ 58.
 
-\begin{lemma}[\texttt{correlationΛ\_monotone\_h}]
-$J \ge 0$, $\beta > 0$, $\Lambda \subseteq V$ finite で
-$\texttt{MonotoneOn}\,(h \mapsto \texttt{correlationΛ}\,G\,\Lambda\,\langle J,h,\beta\rangle\,A)\,(\mathrm{Ici}\,0)$.
+\begin{lemma}[\texttt{correlation\LeanLambda\_monotone\_h}]
+For $J \ge 0$, $\beta > 0$, and finite $\Lambda \subseteq V$,
+$\texttt{MonotoneOn}\,(h \mapsto \texttt{correlation\LeanLambda}\,G\,\Lambda\,\langle J,h,\beta\rangle\,A)\,(\mathrm{Ici}\,0)$.
 \end{lemma}
 
 \begin{proof}
-\texttt{correlation\_monotone\_h} を \texttt{inducedGraph}\,$G\,\Lambda$ に直接適用.
+Apply \texttt{correlation\_monotone\_h} directly to
+\texttt{inducedGraph}\,$G\,\Lambda$.
 \end{proof}
 
 \begin{lemma}[\texttt{correlationAlongExhaustion\_monotone\_h}]
-$0 \le h_1 \le h_2$ ならば任意の $n$ で
+If $0 \le h_1 \le h_2$, then for every $n$,
 $\texttt{correlationAlongExhaustion}\,G\,\Lambda\,\langle J,h_1,\beta\rangle\,A\,n
   \le \texttt{correlationAlongExhaustion}\,G\,\Lambda\,\langle J,h_2,\beta\rangle\,A\,n$.
 \end{lemma}
 
 \begin{proof}
-$A \subseteq \Lambda.\text{volume}\,n$ で上 Lemma を適用; それ以外は両辺 $0$.
+If $A \subseteq \Lambda.\text{volume}\,n$, apply the preceding lemma;
+otherwise both sides are 0.
 \end{proof}
 
 \begin{theorem}[\texttt{correlationInfinite\_monotone\_h}]
@@ -5465,29 +5540,32 @@ $\texttt{MonotoneOn}\,(h \mapsto \texttt{correlationInfinite}\,G\,\Lambda\,\lang
 \end{theorem}
 
 \begin{proof}
-点毎 $\le$ と \texttt{ciSup\_le}, \texttt{le\_ciSup}.
+Use pointwise $\le$ together with \texttt{ciSup\_le} and \texttt{le\_ciSup}.
 \end{proof}
 
 \subsection{β-direction monotonicity at infinite volume}
 
 Glimm--Jaffe, \textit{Quantum Physics}, 2nd ed.\ (1987), \S 4.2
-Proposition 4.2.4 (Exercise), p.\ 58 の β-方向無限体積版.
+Infinite-volume version in the $\beta$ direction of Proposition 4.2.4
+(Exercise), p.\ 58.
 
-\begin{lemma}[\texttt{correlationΛ\_monotone\_beta}]
-$J \ge 0, h \ge 0$ で
-$\texttt{MonotoneOn}\,(\beta \mapsto \texttt{correlationΛ}\,G\,\Lambda\,\langle J,h,\beta\rangle\,A)\,(\mathrm{Ioi}\,0)$.
+\begin{lemma}[\texttt{correlation\LeanLambda\_monotone\_beta}]
+For $J \ge 0$ and $h \ge 0$,
+$\texttt{MonotoneOn}\,(\beta \mapsto \texttt{correlation\LeanLambda}\,G\,\Lambda\,\langle J,h,\beta\rangle\,A)\,(\mathrm{Ioi}\,0)$.
 \end{lemma}
 
 \begin{proof}
-\texttt{correlation\_monotone\_beta} を \texttt{inducedGraph}\,$G\,\Lambda$ に適用.
+Apply \texttt{correlation\_monotone\_beta} to
+\texttt{inducedGraph}\,$G\,\Lambda$.
 \end{proof}
 
 \begin{lemma}[\texttt{correlationAlongExhaustion\_monotone\_beta}]
-$0 < \beta_1 \le \beta_2$ で任意の $n$ で pointwise monotone.
+For $0 < \beta_1 \le \beta_2$, pointwise monotonicity holds for every $n$.
 \end{lemma}
 
 \begin{proof}
-case split + correlationΛ\_monotone\_beta; それ以外は両辺 $0$.
+Case split and use \texttt{correlation\LeanLambda\_monotone\_beta}; otherwise both
+sides are 0.
 \end{proof}
 
 \begin{theorem}[\texttt{correlationInfinite\_monotone\_beta}]
@@ -5495,30 +5573,33 @@ $\texttt{MonotoneOn}\,(\beta \mapsto \texttt{correlationInfinite}\,G\,\Lambda\,\
 \end{theorem}
 
 \begin{proof}
-点毎 $\le$ + \texttt{ciSup\_le}, \texttt{le\_ciSup}.
+Use pointwise $\le$ together with \texttt{ciSup\_le} and \texttt{le\_ciSup}.
 \end{proof}
 
 \subsection{J-direction monotonicity at infinite volume}
 
 Glimm--Jaffe, \textit{Quantum Physics}, 2nd ed.\ (1987), \S 4.2
-Proposition 4.2.4 (Exercise), p.\ 58 の J-方向無限体積版.
-三パラメータ (J, h, $\beta$) monotonicity の対称性完成.
+Infinite-volume version in the $J$ direction of Proposition 4.2.4
+(Exercise), p.\ 58. This completes the three-parameter monotonicity symmetry
+for $(J, h, \beta)$.
 
-\begin{lemma}[\texttt{correlationΛ\_monotone\_J}]
-$h \ge 0, \beta > 0$ で
-$\texttt{MonotoneOn}\,(J \mapsto \texttt{correlationΛ}\,G\,\Lambda\,\langle J,h,\beta\rangle\,A)\,(\mathrm{Ici}\,0)$.
+\begin{lemma}[\texttt{correlation\LeanLambda\_monotone\_J}]
+For $h \ge 0$ and $\beta > 0$,
+$\texttt{MonotoneOn}\,(J \mapsto \texttt{correlation\LeanLambda}\,G\,\Lambda\,\langle J,h,\beta\rangle\,A)\,(\mathrm{Ici}\,0)$.
 \end{lemma}
 
 \begin{proof}
-\texttt{correlation\_monotone\_J} を \texttt{inducedGraph}\,$G\,\Lambda$ に適用.
+Apply \texttt{correlation\_monotone\_J} to
+\texttt{inducedGraph}\,$G\,\Lambda$.
 \end{proof}
 
 \begin{lemma}[\texttt{correlationAlongExhaustion\_monotone\_J}]
-$0 \le J_1 \le J_2$ で任意の $n$ に pointwise monotone.
+For $0 \le J_1 \le J_2$, pointwise monotonicity holds for every $n$.
 \end{lemma}
 
 \begin{proof}
-case split + correlationΛ\_monotone\_J; それ以外は両辺 $0$.
+Case split and use \texttt{correlation\LeanLambda\_monotone\_J}; otherwise both sides
+are 0.
 \end{proof}
 
 \begin{theorem}[\texttt{correlationInfinite\_monotone\_J}]
@@ -5526,12 +5607,13 @@ $\texttt{MonotoneOn}\,(J \mapsto \texttt{correlationInfinite}\,G\,\Lambda\,\lang
 \end{theorem}
 
 \begin{proof}
-点毎 $\le$ + \texttt{ciSup\_le}, \texttt{le\_ciSup}.
+Use pointwise $\le$ together with \texttt{ciSup\_le} and \texttt{le\_ciSup}.
 \end{proof}
 
 \subsection{Infinite-volume single-site magnetization}
 
-参考: Glimm--Jaffe \S 4.2 (pp.\ 57ff), \S 5.1 (p.\ 77 の $m^* := \lim_{h \to 0^+} M$);
+Reference: Glimm--Jaffe \S 4.2 (pp.\ 57ff), \S 5.1
+(p.\ 77, $m^* := \lim_{h \to 0^+} M$);
 Friedli--Velenik \S 3.2 Theorem 3.16.
 
 \begin{definition}[\texttt{magnetizationInfinite}]
@@ -5541,49 +5623,53 @@ M^{\mathrm{FM}}_{G,\Lambda}(J, h, \beta; i)
 \]
 \end{definition}
 
-\begin{theorem}[\texttt{magnetizationInfinite} 基本性質]
-以下すべて $\texttt{correlationInfinite\_*}$ を $A := \{i\}$ に specialize
-して直ちに従う:
+\begin{theorem}[\texttt{magnetizationInfinite} basic properties]
+All of the following follow immediately by specializing
+$\texttt{correlationInfinite\_*}$ to $A := \{i\}$:
 \begin{itemize}
-\item \texttt{magnetizationInfinite\_nonneg} (強磁性),
+\item \texttt{magnetizationInfinite\_nonneg} (ferromagnetic case),
 \item \texttt{magnetizationInfinite\_le\_one},
 \item \texttt{magnetizationInfinite\_indep\_exhaustion},
-\item \texttt{magnetizationInfinite\_monotone\_\{J,h,beta\}} (3 パラメータ monotonicity).
+\item \texttt{magnetizationInfinite\_monotone\_\{J,h,beta\}} (three-parameter monotonicity).
 \end{itemize}
 \end{theorem}
 
 \subsection*{Z₂ spin-flip symmetry at $h = 0$}
 
-参考: Glimm--Jaffe \S 5.1 p.\ 77 (自発磁化 $m^*$ は $h \to 0^+$ の極限で
-boundary condition に依存 — $h = 0$ 自体ではなく). 有限体積の元は
+Reference: Glimm--Jaffe \S 5.1 p.\ 77: spontaneous magnetization $m^*$ is
+the $h \to 0^+$ limit with boundary-condition dependence, not the value at
+$h = 0$ itself. The finite-volume input is
 \texttt{IsingModel.correlation\_odd\_vanish} (\texttt{Inequalities/GHS.lean}).
 
 \begin{theorem}[\texttt{correlationInfinite\_h\_zero}]
-$h = 0$ かつ $|A|$ が奇数のとき
+If $h = 0$ and $|A|$ is odd,
 $\texttt{correlationInfinite}\,G\,\Lambda\,\langle J,0,\beta\rangle\,A = 0$.
 \end{theorem}
 
 \begin{proof}
-有限体積で \texttt{correlation\_odd\_vanish} を \texttt{inducedGraph} に適用
-(\texttt{correlationΛ\_odd\_vanish\_h\_zero}). 各 $n$ で
-\texttt{correlationAlongExhaustion} は 0 (dite の両分岐共).
+Apply \texttt{correlation\_odd\_vanish} in finite volume to
+\texttt{inducedGraph} (\texttt{correlation\LeanLambda\_odd\_vanish\_h\_zero}). For
+each $n$, \texttt{correlationAlongExhaustion} is 0 in both \texttt{dite}
+branches.
 \texttt{ciSup} of zero sequence $= 0$.
 \end{proof}
 
 \begin{theorem}[\texttt{magnetizationInfinite\_zero\_at\_h\_zero}]
-$h = 0$ で $M^{\mathrm{FM}} = 0$ (単サイト $|\{i\}| = 1$ は奇数).
+At $h = 0$, $M^{\mathrm{FM}} = 0$, because the singleton has odd cardinality
+$|\{i\}| = 1$.
 \end{theorem}
 
 \subsection{Spontaneous correlation function (general \texorpdfstring{$A$}{A})}
 
-参考: Glimm--Jaffe, \textit{Quantum Physics}, 2nd ed.\ (1987),
+Reference: Glimm--Jaffe, \textit{Quantum Physics}, 2nd ed.\ (1987),
 \S 4.2 p.\ 57ff, \S 5.1 p.\ 77:
 $m^*(J, \beta) := \lim_{h \to 0^+} M(J, h, \beta)$.
 Friedli--Velenik \S 3.10.
 
-無限体積相関関数 $\langle \sigma^A \rangle$ の $h \to 0^+$ 極限を
-**一般 $A : \texttt{Finset}\,V$** に対して定義し, 基本性質を揃える.
-単サイト $A = \{i\}$ の場合が自発磁化 $m^*$ (Glimm--Jaffe §5.1 p.\ 77).
+Define the $h \to 0^+$ limit of the infinite-volume correlation
+$\langle \sigma^A \rangle$ for a general $A : \texttt{Finset}\,V$, and record
+its basic properties. The single-site case $A = \{i\}$ is the spontaneous
+magnetization $m^*$ (Glimm--Jaffe \S 5.1 p.\ 77).
 
 \begin{definition}[\texttt{spontaneousCorrelation}]
 \[
@@ -5592,8 +5678,9 @@ Friedli--Velenik \S 3.10.
 \]
 \end{definition}
 
-\begin{theorem}[\texttt{spontaneousCorrelation}の基本性質]
-強磁性下で 5 properties (全て \texttt{correlationInfinite\_*} の specialize):
+\begin{theorem}[\texttt{spontaneousCorrelation} basic properties]
+Under ferromagnetic assumptions, five properties follow by specializing
+\texttt{correlationInfinite\_*}:
 \texttt{\_nonneg},
 \texttt{\_le\_one},
 \texttt{\_le\_correlationInfinite},
@@ -5603,7 +5690,8 @@ Friedli--Velenik \S 3.10.
 
 \subsection*{Spontaneous magnetization (single-site specialization)}
 
-自発磁化 $m^*$ は \texttt{spontaneousCorrelation} の $A = \{i\}$ 特殊化:
+Spontaneous magnetization $m^*$ is the $A = \{i\}$ specialization of
+\texttt{spontaneousCorrelation}:
 
 \begin{definition}[\texttt{spontaneousMagnetization}]
 \[
@@ -5613,17 +5701,17 @@ Friedli--Velenik \S 3.10.
 \end{definition}
 
 \begin{theorem}[\texttt{spontaneousCorrelation\_singleton\_eq\_spontaneousMagnetization}]
-上記定義より \texttt{rfl} で等価.
+This is equivalent by \texttt{rfl} from the definitions above.
 \end{theorem}
 
-\begin{theorem}[\texttt{spontaneousMagnetization}の基本性質]
-全て \texttt{spontaneousCorrelation\_*} の $A := \{i\}$ specialization
+\begin{theorem}[\texttt{spontaneousMagnetization} basic properties]
+All are $A := \{i\}$ specializations of \texttt{spontaneousCorrelation\_*}
 (1-line specialization):
 \begin{itemize}
 \item \texttt{\_nonneg}: $m^* \ge 0$,
 \item \texttt{\_le\_one}: $m^* \le 1$,
-\item \texttt{\_le\_magnetizationInfinite}: $h > 0$ で $m^* \le M(h)$,
-\item \texttt{\_indep\_exhaustion}: $\Lambda$ 非依存,
+\item \texttt{\_le\_magnetizationInfinite}: for $h > 0$, $m^* \le M(h)$,
+\item \texttt{\_indep\_exhaustion}: independent of $\Lambda$,
 \item \texttt{tendsto\_magnetizationInfinite\_spontaneousMagnetization\_nhdsGT}:
       $m^* = \lim_{h \to 0^+} M(h)$.
 \end{itemize}
@@ -5631,10 +5719,11 @@ Friedli--Velenik \S 3.10.
 
 \subsection{Truncated 2-point correlation at infinite volume}
 
-参考: Glimm--Jaffe, \textit{Quantum Physics}, 2nd ed.\ (1987),
+Reference: Glimm--Jaffe, \textit{Quantum Physics}, 2nd ed.\ (1987),
 \S 4.2 p.\ 57ff (GKS-II); Friedli--Velenik \S 3.6.3.
 
-PR \#94 の \texttt{correlationInfinite\_gks\_second} を 2 点ケースに specialize.
+Specialize \texttt{correlationInfinite\_gks\_second} from PR \#94 to the
+two-point case.
 
 \begin{definition}[\texttt{truncated2Infinite}]
 \[
@@ -5644,23 +5733,27 @@ U_2(G, \Lambda; p; i, j)
 \]
 \end{definition}
 
-\begin{theorem}[\texttt{truncated2Infinite}の基本性質]
+\begin{theorem}[\texttt{truncated2Infinite} basic properties]
 \begin{itemize}
 \item \texttt{\_symm}: $U_2(i, j) = U_2(j, i)$ (\texttt{Finset.pair\_comm}).
 \item \texttt{\_nonneg\_of\_ne}: $i \ne j \Rightarrow U_2 \ge 0$
-      (\texttt{correlationInfinite\_gks\_second} 経由, $\{i,j\} = \{i\} \triangle \{j\}$).
+      (via \texttt{correlationInfinite\_gks\_second},
+      $\{i,j\} = \{i\} \triangle \{j\}$).
 \item \texttt{\_nonneg\_of\_eq}: $U_2(i, i) = M(i)(1 - M(i)) \ge 0$
       ($\{i, i\} = \{i\}$, $M \in [0, 1]$).
-\item \texttt{\_nonneg}: 任意の $i, j$ で $0 \le U_2(i, j)$ (上 2 つの統合).
-\item \texttt{\_indep\_exhaustion}: $\Lambda$ 非依存.
-\item \texttt{\_h\_zero}: $h = 0$ で $U_2 = \langle \sigma_i \sigma_j \rangle_\infty$
-      (任意 $i, j$; singletons vanish by Z₂, $\texttt{correlationInfinite\_h\_zero}$).
+\item \texttt{\_nonneg}: for arbitrary $i, j$, $0 \le U_2(i, j)$, combining
+      the two preceding cases.
+\item \texttt{\_indep\_exhaustion}: independent of $\Lambda$.
+\item \texttt{\_h\_zero}: at $h = 0$,
+      $U_2 = \langle \sigma_i \sigma_j \rangle_\infty$ for arbitrary
+      $i, j$, since singletons vanish by Z₂ via
+      $\texttt{correlationInfinite\_h\_zero}$.
 \end{itemize}
 \end{theorem}
 
 \subsection{Truncated 3-point correlation + GHS at infinite volume}
 
-参考: Glimm--Jaffe, \textit{Quantum Physics}, 2nd ed.\ (1987),
+Reference: Glimm--Jaffe, \textit{Quantum Physics}, 2nd ed.\ (1987),
 \S 4.3 Corollary 4.3.4 GHS, pp.\ 68ff.
 Friedli--Velenik \S 3.6.4 (higher truncated functions).
 
@@ -5673,28 +5766,32 @@ $U_3 := \langle \sigma^{\{i,j,k\}} \rangle_\infty
 \end{definition}
 
 \begin{theorem}[\texttt{truncated3Infinite\_nonpos} — GHS at infinite volume]
-強磁性系 + pairwise distinct $i, j, k$ で $U_3 \le 0$.
+For a ferromagnetic system and pairwise distinct $i, j, k$, $U_3 \le 0$.
 \end{theorem}
 
 \begin{proof}
-有限体積 \texttt{ghs\_inequality} を eventually 適用 (n ≥ N で
-$\{i,j,k\} \subseteq \Lambda.\text{volume}\,n$). $U_3$ の 5 correlation
-terms は全て $\texttt{correlationAlongExhaustion} \to \texttt{correlationInfinite}$
-(Tendsto) で合成され, \texttt{le\_of\_tendsto} で極限で $\le 0$.
+Apply the finite-volume \texttt{ghs\_inequality} eventually, once
+$n \ge N$ gives $\{i,j,k\} \subseteq \Lambda.\text{volume}\,n$. The five
+correlation terms in $U_3$ are all assembled using
+$\texttt{correlationAlongExhaustion} \to \texttt{correlationInfinite}$
+(\texttt{Tendsto}), and \texttt{le\_of\_tendsto} gives the limit inequality
+$\le 0$.
 \end{proof}
 
 \begin{theorem}[\texttt{truncated3Infinite\_h\_zero\_of\_distinct}]
-$h = 0$ かつ pairwise distinct で $U_3 = 0$.
-全 singletons 奇数 + $\{i, j, k\}$ (distinct) 奇数 → 全項 0.
+At $h = 0$ and for pairwise distinct sites, $U_3 = 0$. All singleton terms
+are odd, and $\{i, j, k\}$ is also odd when the sites are distinct, so every
+term vanishes.
 \end{theorem}
 
 \begin{theorem}[\texttt{truncated3Infinite\_indep\_exhaustion}]
-$\Lambda$ 非依存 (7 箇所 correlationInfinite\_indep\_exhaustion).
+Independent of $\Lambda$, using \texttt{correlationInfinite\_indep\_exhaustion}
+in seven places.
 \end{theorem}
 
 \subsection{Truncated 4-point correlation + $U_4 \le 0$ at $h = 0$}
 
-参考: Glimm--Jaffe, \textit{Quantum Physics}, 2nd ed.\ (1987),
+Reference: Glimm--Jaffe, \textit{Quantum Physics}, 2nd ed.\ (1987),
 \S 4.3 Corollary 4.3.3, pp.\ 68ff.
 
 \begin{definition}[\texttt{truncated4Infinite}]
@@ -5707,143 +5804,153 @@ U_4 &:= \langle \sigma^{\{i,j,k,l\}} \rangle_\infty
 \end{definition}
 
 \begin{theorem}[\texttt{truncated4Infinite\_nonpos\_h\_zero}]
-$h = 0$ + 強磁性 + 4 sites pairwise distinct で $U_4 \le 0$.
+At $h = 0$, for a ferromagnetic system and four pairwise distinct sites,
+$U_4 \le 0$.
 \end{theorem}
 
 \begin{proof}
-有限体積 \texttt{cor\_4\_3\_3} を eventually 適用 (4 sites $\subseteq$
-$\Lambda.\text{volume}\,n$). Tendsto.sub/mul で
+Apply the finite-volume \texttt{cor\_4\_3\_3} eventually, once the four sites
+are contained in $\Lambda.\text{volume}\,n$. Use \texttt{Tendsto.sub/mul} for
 $\texttt{truncated4AlongExhaustion} \to \texttt{truncated4Infinite}$.
-\texttt{le\_of\_tendsto} で極限 $\le 0$.
+\texttt{le\_of\_tendsto} gives the limit inequality $\le 0$.
 \end{proof}
 
 \begin{theorem}[\texttt{truncated4Infinite\_indep\_exhaustion}]
-$\Lambda$ 非依存 (7 箇所).
+Independent of $\Lambda$, in seven places.
 \end{theorem}
 
 \subsection{Parameter monotonicity of spontaneous*}
 
-参考: Glimm--Jaffe \S 5.1 p.\ 77.
+Reference: Glimm--Jaffe \S 5.1 p.\ 77.
 PR \#95-\#97 (correlationInfinite J/h/$\beta$) + PR \#99/\#101 (spontaneous).
 
 \begin{theorem}[\texttt{spontaneousCorrelation\_monotone\_J}]
-$\beta > 0$ 固定で
+With $\beta > 0$ fixed,
 $\texttt{MonotoneOn}\,(J \mapsto \langle \sigma^A \rangle^*)\,(\mathrm{Ici}\,0)$.
-各 $h > 0$ で $\texttt{correlationInfinite\_monotone\_J}$, \texttt{ciInf\_mono}.
+Use $\texttt{correlationInfinite\_monotone\_J}$ for each $h > 0$, then
+\texttt{ciInf\_mono}.
 \end{theorem}
 
 \begin{theorem}[\texttt{spontaneousCorrelation\_monotone\_beta}]
-$J \ge 0$ 固定で
+With $J \ge 0$ fixed,
 $\texttt{MonotoneOn}\,(\beta \mapsto \langle \sigma^A \rangle^*)\,(\mathrm{Ioi}\,0)$.
 \end{theorem}
 
 \begin{theorem}[\texttt{spontaneousMagnetization\_monotone\_J}]
-単サイト $A = \{i\}$ specialization of \texttt{spontaneousCorrelation\_monotone\_J}.
+Single-site $A = \{i\}$ specialization of
+\texttt{spontaneousCorrelation\_monotone\_J}.
 \end{theorem}
 
 \begin{theorem}[\texttt{spontaneousMagnetization\_monotone\_beta}]
-単サイト $A = \{i\}$ specialization of \texttt{spontaneousCorrelation\_monotone\_beta}.
+Single-site $A = \{i\}$ specialization of
+\texttt{spontaneousCorrelation\_monotone\_beta}.
 \end{theorem}
 
-\subsection{FKG-form correlation inequality at infinite volume (\S 4.4 名目)}
+\subsection{FKG-form correlation inequality at infinite volume (nominal \S 4.4)}
 
-参考: Glimm--Jaffe \S 4.4 p.\ 67 (FKG inequality general, 要 monotone).
+Reference: Glimm--Jaffe \S 4.4 p.\ 67 (general FKG inequality, requiring
+monotonicity).
 
-重要な但し書き: spinProduct 観測量は一般には monotone でない
-(例: $|A| = 2$ の場合, 両 spin flip で $\sigma^A$ は $+1 \to +1$ だが
-中間 config で $-1$ になる). よって FKG 一般形は spinProducts に
-直接適用不可.
+Important caveat: \texttt{spinProduct} observables are not generally
+monotone. For example, when $|A| = 2$, flipping both spins keeps
+$\sigma^A$ at $+1$, but an intermediate configuration can make it $-1$.
+Thus the general FKG form cannot be applied directly to spin products.
 
-以下は同じ数値不等式 (GKS-II) を FKG 名称で提供する alias theorem
+The following is an alias theorem that exposes the same numerical inequality
+(GKS-II) under an FKG-oriented name for
 (searchability + \S 4.4 coverage).
 
 \begin{theorem}[\texttt{correlationInfinite\_fkg\_spinProduct}]
-強磁性系で
+For ferromagnetic systems,
 $\langle \sigma^A \rangle_\infty \langle \sigma^B \rangle_\infty
   \le \langle \sigma^{A \triangle B} \rangle_\infty$.
 \end{theorem}
 
 \begin{proof}
-\texttt{correlationInfinite\_gks\_second} (PR \#94) そのもの.
-GKS-II は HNC / Boltzmann weight log-supermodularity で証明される
-(FKG の lattice condition argument ではなく別経路).
+This is exactly \texttt{correlationInfinite\_gks\_second} (PR \#94).
+GKS-II is proved through HNC / Boltzmann-weight log-supermodularity, not the
+FKG lattice-condition argument.
 \end{proof}
 
 \subsection{freeEnergyAlongExhaustion (§4.6 Prop 4.6.1 scaffold)}
 
-参考: Glimm--Jaffe \S 4.6 Proposition 4.6.1, pp.\ 78ff
-(volume 方向 free energy 収束).
+Reference: Glimm--Jaffe \S 4.6 Proposition 4.6.1, pp.\ 78ff
+(free-energy convergence in the volume direction).
 
 \begin{definition}[\texttt{freeEnergyAlongExhaustion}]
 \[
 \texttt{freeEnergyAlongExhaustion}\,G\,\Lambda\,p\,n
-  \;:=\; \texttt{freeEnergyΛ}\,G\,(\Lambda.\text{volume}\,n)\,p.
+  \;:=\; \texttt{freeEnergy\LeanLambda}\,G\,(\Lambda.\text{volume}\,n)\,p.
 \]
 \end{definition}
 
 \begin{definition}[\texttt{partitionFunctionAlongExhaustion}]
 \[
 \texttt{partitionFunctionAlongExhaustion}\,G\,\Lambda\,p\,n
-  \;:=\; \texttt{partitionFunctionΛ}\,G\,(\Lambda.\text{volume}\,n)\,p.
+  \;:=\; \texttt{partitionFunction\LeanLambda}\,G\,(\Lambda.\text{volume}\,n)\,p.
 \]
-$0 <$ positivity trivial from \texttt{partitionFunctionΛ\_pos}.
+$0 <$ positivity trivial from \texttt{partitionFunction\LeanLambda\_pos}.
 \end{definition}
 
 \begin{theorem}[\texttt{freeEnergyAlongExhaustion\_monotone\_ambient\_subgraph}]
-$G_1 \le G_2$ のとき任意の $n$ で pointwise monotone.
-\texttt{freeEnergyΛ\_monotone\_ambient\_subgraph} を各 $\Lambda.\text{volume}\,n$
-で specialize.
+If $G_1 \le G_2$, pointwise monotonicity holds for every $n$. Specialize
+\texttt{freeEnergy\LeanLambda\_monotone\_ambient\_subgraph} to each
+$\Lambda.\text{volume}\,n$.
 \end{theorem}
 
 \begin{theorem}[\texttt{partitionFunctionAlongExhaustion\_monotone\_ambient\_subgraph}]
-$G_1 \le G_2$ のとき任意の $n$ で $Z_{G_1}(\Lambda_n) \le Z_{G_2}(\Lambda_n)$.
+If $G_1 \le G_2$, then for every $n$,
+$Z_{G_1}(\Lambda_n) \le Z_{G_2}(\Lambda_n)$.
 \end{theorem}
 
 \begin{theorem}[\texttt{freeEnergyAlongExhaustion\_eq\_log\_div\_card}]
 \[
 f_n = |\Lambda.\text{volume}\,n|^{-1} \cdot \log Z_n.
 \]
-\texttt{IsingModel.freeEnergy} 定義の展開.
+Unfold the definition of \texttt{IsingModel.freeEnergy}.
 \end{theorem}
 
 \begin{theorem}[\texttt{log\_partitionFunctionAlongExhaustion\_tendsto\_atTop} / \texttt{partitionFunctionAlongExhaustion\_tendsto\_atTop}]
-無限格子 $V$ (型クラス \texttt{[Infinite V]}) 上の任意の exhaustion
-$\Lambda$ と強磁性パラメタ $p = \langle J, h, \beta \rangle$
-($J, h \ge 0$, $\beta > 0$) について, それぞれ
+For any exhaustion $\Lambda$ of an infinite lattice $V$ (typeclass
+\texttt{[Infinite V]}) and ferromagnetic parameters
+$p = \langle J, h, \beta \rangle$ with $J, h \ge 0$ and $\beta > 0$,
+respectively,
 \[
   \lim_{n \to \infty} \log Z_{\Lambda_n} \;=\; +\infty
 \]
-と
+and
 \[
   \lim_{n \to \infty} Z_{\Lambda_n} \;=\; +\infty.
 \]
 \end{theorem}
 
 \begin{proof}
-\texttt{Exhaustion.eventually\_volume\_nonempty} により, 十分大きい
-$n$ で $\Lambda_n \neq \emptyset$ が成り立つ. その範囲では既存 API
+\texttt{Exhaustion.eventually\_volume\_nonempty} gives
+$\Lambda_n \neq \emptyset$ for all sufficiently large $n$. In that range,
+the existing APIs
 \[
-  \log 2 \le \texttt{freeEnergyΛ}\,G\,\Lambda_n\,p
-  \qquad\text{(\texttt{freeEnergyΛ\_ge\_log\_two})}
+  \log 2 \le \texttt{freeEnergy\LeanLambda}\,G\,\Lambda_n\,p
+  \qquad\text{(\texttt{freeEnergy\LeanLambda\_ge\_log\_two})}
 \]
 \[
-  |\Lambda_n| \cdot \texttt{freeEnergyΛ}\,G\,\Lambda_n\,p
+  |\Lambda_n| \cdot \texttt{freeEnergy\LeanLambda}\,G\,\Lambda_n\,p
     = \log Z_{\Lambda_n}
-  \qquad\text{(\texttt{card\_mul\_freeEnergyΛ\_eq\_log\_partitionFunctionΛ\_of\_nonempty})}
+  \qquad\text{(\texttt{card\_mul\_freeEnergy\LeanLambda\_eq\_log\_partitionFunction\LeanLambda\_of\_nonempty})}
 \]
-から
-$|\Lambda_n| \cdot \log 2 \le \log Z_{\Lambda_n}$ が従う.
-\texttt{Exhaustion.tendsto\_card\_atTop} (PR \#160) より
-$|\Lambda_n| \to \infty$, $\log 2 > 0$ で LHS $\to \infty$,
-\texttt{Filter.tendsto\_atTop\_mono'} で $\log Z_{\Lambda_n} \to \infty$.
-$Z_{\Lambda_n} \to \infty$ は \texttt{Real.tendsto\_exp\_atTop.comp} +
-\texttt{Real.exp\_log} ($Z_{\Lambda_n} > 0$) で転送.
+imply $|\Lambda_n| \cdot \log 2 \le \log Z_{\Lambda_n}$.
+\texttt{Exhaustion.tendsto\_card\_atTop} (PR \#160) gives
+$|\Lambda_n| \to \infty$. Since $\log 2 > 0$, the left-hand side tends to
+$\infty$, and \texttt{Filter.tendsto\_atTop\_mono'} gives
+$\log Z_{\Lambda_n} \to \infty$. The result
+$Z_{\Lambda_n} \to \infty$ transfers by \texttt{Real.tendsto\_exp\_atTop.comp}
+and \texttt{Real.exp\_log} using $Z_{\Lambda_n} > 0$.
 \end{proof}
 
-Fekete 版の free energy density 収束 (weighted free energy の super-additivity
-から具体値への収束) は translation invariance を要するため別扱い.
+The Fekete version of free-energy-density convergence, which derives
+convergence to a concrete value from super-additivity of weighted free
+energy, requires translation invariance and is treated separately.
 
-\subsubsection{Bounded edge density と一様上界 (PR \#123)}
+\subsubsection{Bounded edge density and uniform upper bound (PR \#123)}
 
 \begin{definition}[\texttt{BoundedEdgeDensity}]
 \[
@@ -5851,34 +5958,35 @@ Fekete 版の free energy density 収束 (weighted free energy の super-additiv
     \Lambda.\text{volume}\,n \neq \emptyset \implies
     |E(G[\Lambda_n])| \le c \cdot |\Lambda_n|.
 \]
-Bounded-degree 環境 ($\max\deg = \Delta$) で $c = \Delta/2$.
+In a bounded-degree environment with $\max\deg = \Delta$, take $c = \Delta/2$.
 \end{definition}
 
 \begin{theorem}[\texttt{freeEnergyAlongExhaustion\_le\_uniform\_upper\_bound}]
-\texttt{BoundedEdgeDensity} 定数 $c$ のもと, 任意の $n$ かつ
-$\Lambda_n \neq \emptyset$ で
+Under \texttt{BoundedEdgeDensity} with constant $c$, for arbitrary $n$ with
+$\Lambda_n \neq \emptyset$,
 \[
   f_n \le \log 2 + |\beta| \bigl(|J| \cdot c + |h|\bigr).
 \]
-\texttt{freeEnergyAlongExhaustion\_upper\_bound} (PR \#122) に
-$|E_n|/|\Lambda_n| \le c$ を代入.
+Substitute $|E_n|/|\Lambda_n| \le c$ into
+\texttt{freeEnergyAlongExhaustion\_upper\_bound} (PR \#122).
 \end{theorem}
 
 \begin{theorem}[\texttt{BddAbove\_freeEnergyAlongExhaustion\_range}]
-\texttt{BoundedEdgeDensity} のもと,
+Under \texttt{BoundedEdgeDensity},
 $\operatorname{BddAbove}(\operatorname{range}(\texttt{freeEnergyAlongExhaustion}\,G\,\Lambda\,p))$.
-空 $\Lambda_n$ では $f_n = 0$ (definitional) なので $\max\{0, \log 2 + |\beta|(|J|c+|h|)\}$
-が一様上界.
+for empty $\Lambda_n$, $f_n = 0$ by definition. Hence
+$\max\{0, \log 2 + |\beta|(|J|c+|h|)\}$ is a uniform upper bound.
 \end{theorem}
 
 \subsection{Cor 4.3.5 (inductive n-point at $h = 0$) at infinite volume}
 
-参考: Glimm--Jaffe, \textit{Quantum Physics}, 2nd ed.\ (1987),
+Reference: Glimm--Jaffe, \textit{Quantum Physics}, 2nd ed.\ (1987),
 \S 4.3 Corollary 4.3.5, p.\ 62.
 
 \begin{theorem}[\texttt{correlationInfinite\_cor\_4\_3\_5\_h0}]
-強磁性系 $(J \ge 0, \beta > 0)$, $h = 0$, $S : \texttt{Finset}\,V$,
-$j, k : V$, $j \notin S$, $k \notin S$, $j \ne k$ のとき
+For a ferromagnetic system $(J \ge 0, \beta > 0)$ with $h = 0$,
+$S : \texttt{Finset}\,V$, $j, k : V$, $j \notin S$, $k \notin S$, and
+$j \ne k$,
 \[
 \langle \sigma^{\{j, k\} \cup S} \rangle_\infty
   \le \langle \sigma^S \rangle_\infty \langle \sigma^{\{j, k\}} \rangle_\infty
@@ -5889,17 +5997,18 @@ $j, k : V$, $j \notin S$, $k \notin S$, $j \ne k$ のとき
 \end{theorem}
 
 \begin{proof}
-Along-exhaustion lhs/rhs 列 $\to$ \texttt{Tendsto}
+The along-exhaustion left-hand and right-hand sequences satisfy
+\texttt{Tendsto}
 (\texttt{tendsto\_finset\_sum} + \texttt{Tendsto.mul/add}).
-各 $n$ で $\{j, k\} \cup S \subseteq \Lambda.\text{volume}\,n$
-が成立する場合, 有限体積 \texttt{cor\_4\_3\_5\_h0} を
-\texttt{inducedGraph}\,$G\,\Lambda(n)$ に適用.
-\texttt{liftFinset\_insert}, \texttt{liftFinset\_sdiff} (PR \#107) で
+For each $n$ such that $\{j, k\} \cup S \subseteq \Lambda.\text{volume}\,n$,
+apply the finite-volume \texttt{cor\_4\_3\_5\_h0} theorem to
+\texttt{inducedGraph}\,$G\,\Lambda(n)$. Use
+\texttt{liftFinset\_insert} and \texttt{liftFinset\_sdiff} (PR \#107) for
 compound set identifications.
-\texttt{Finset.sum\_bij} で $S.powerset \leftrightarrow S'.powerset$ reindex
+\texttt{Finset.sum\_bij} reindexes $S.powerset \leftrightarrow S'.powerset$
 ($S' := \texttt{liftFinset}\,S$).
-それ以外の $n$: lhs $= 0 \le$ rhs (各項 $\ge 0$).
-\texttt{le\_of\_tendsto\_of\_tendsto'} で結論.
+For other $n$, the left-hand side is $0 \le$ the right-hand side, since each
+term is nonnegative. Finish with \texttt{le\_of\_tendsto\_of\_tendsto'}.
 \end{proof}
 
 \subsection{Edge-set decomposition for disjoint sum graphs (\texttt{SumGraph.lean})}
@@ -6243,12 +6352,13 @@ of \texttt{freeEnergyAlongExhaustion\_tendsto\_of\_disjoint\_tower}
   \texttt{AddAction T V} if the edge relation is preserved
   ($G.Adj\,(t +_v u)\,(t +_v v) \leftrightarrow G.Adj\,u\,v$).
   Trivial instances for $\bot$ and $\top$.
-\item \texttt{vaddFinset t A := A.image (t +_v \cdot)}, with
+\item \texttt{vaddFinset t A := A.image (...)} using the map
+  $u \mapsto t +_v u$, with
   \texttt{vaddFinset\_card}, \texttt{vaddFinset\_zero},
   \texttt{vaddFinset\_disjoint\_of\_disjoint}.
 \item \texttt{TranslationInvariantExhaustion T V}
   (\texttt{extends Exhaustion V}) with fields
-  \texttt{shift : $\mathbb N \to T$}, \texttt{shift\_zero},
+  \texttt{shift} of type $\mathbb N \to T$, \texttt{shift\_zero},
   \texttt{volume\_zero}, \texttt{volume\_succ}
   ($\Lambda_{n+1} = \Lambda_n \cup (\mathrm{shift}\,n
   +_v \Lambda_1)$),
@@ -6419,7 +6529,7 @@ sites, the $\infty$-vol Ursell 3-point function also vanishes.
 
 \begin{proof}
 $J = 0$: Substitute
-$\langle \sigma^A \rangle_\infty = \tanh(\beta h)^{|A|}$ (the PR #210
+$\langle \sigma^A \rangle_\infty = \tanh(\beta h)^{|A|}$ (the PR \#210
 closed form) into each of the seven Finset correlations, use
 $|\{i,j,k\}| = 3, |\{i\}|=|\{j\}|=|\{k\}|=1,
 |\{i,j\}|=|\{j,k\}|=|\{i,k\}|=2$, and reduce the Ursell
@@ -6427,7 +6537,7 @@ combination to $t^3 - 3\cdot t^3 + 2\cdot t^3 = 0$ with
 $t := \tanh(\beta h)$.
 
 $\beta = 0$: Every Finset correlation in the Ursell expression is
-over a nonempty Finset, so the PR #211 vanishing
+over a nonempty Finset, so the PR \#211 vanishing
 $\langle \sigma^A \rangle_\infty^{\langle J,h,0\rangle} = 0$
 forces each term to zero.
 
@@ -6934,7 +7044,7 @@ Each family supplies the four Fekete hypotheses
 \texttt{hcard\_one}) via combinatorial lemmas plus disjoint-union
 super-additivity at the $\Lambda$-layer, translation invariance of
 $\mathrm{partitionFunction}_\Lambda$, and the subsingleton-congruence
-bridge \texttt{partitionFunctionΛ\_congr\_finset}. The uniform upper
+bridge \texttt{partitionFunction\LeanLambda\_congr\_finset}. The uniform upper
 bound $\log 2 + |\beta|\cdot((d+1)\cdot|J|+|h|)$ is transported from
 \texttt{freeEnergy\_upper\_bound} + the lattice edge-count bound
 \texttt{inducedLatticeGraph\_card\_edgeFinset\_le}.
@@ -6974,7 +7084,7 @@ For all four families, under ferromagnetic $0 \le J, 0 \le h, 0 < \beta$:
   \texttt{freeEnergy\_monotone\_\{$\beta$,h,J\}}.
 \item \textbf{Translation invariance of the Fekete limit:} any
   coordinate shift of the sequence converges to the same named limit
-  (PR \#652), via \texttt{freeEnergyΛ\_vaddFinset\_eq} (PR \#255).
+  (PR \#652), via \texttt{freeEnergy\LeanLambda\_vaddFinset\_eq} (PR \#255).
 \item \textbf{Arbitrary-$h$ convergence via $|h|$-symmetry:} for any
   real $h$, the sequence at $\langle J, h, \beta\rangle$ converges to
   $\mathrm{freeEnergyInfinite\_}\ast\,\langle J, |h|, \beta\rangle$
@@ -7090,7 +7200,7 @@ sum against $\sum' m$ with $\partial m = \{i,j\} \triangle e$ via
 when $n_e \ge 1$).
 Summability of source-filtered weights is proved via \texttt{summable\_of\_sum\_le}
 with the bound from \texttt{sum\_weight\_boundedFinset\_le} (uses \texttt{Finset.sum\_map}
-to handle the image sum without \texttt{DecidableEq (Current G Λ)}, then
+to handle the image sum without \texttt{DecidableEq (Current G \LeanLambda)}, then
 \texttt{Fintype.prod\_sum} for the product-sum exchange).
 \end{proof}
 \noindent\textit{Status}: Full proof. No sorry.
@@ -7254,7 +7364,7 @@ References: Glimm--Jaffe \S5.1~(pp.~73--74); Friedli--Velenik \S3.7.3.
   and \texttt{card\_incidenceFinset\_eq\_degree}.
 \end{proof}
 
-\begin{theorem}[\texttt{susceptibilityΛ\_le\_of\_high\_temp}; GJ~\S5.1 / FV~\S3.7.3]
+\begin{theorem}[\texttt{susceptibility\LeanLambda\_le\_of\_high\_temp}; GJ~\S5.1 / FV~\S3.7.3]
   For $h=0$, $0\le\beta J$, $D$ bounding the incident-edge count, $\beta J D<1$:
   $\chi_\Lambda(i)
   := \sum_{j\in\Lambda} U_2(i,j)
@@ -7293,7 +7403,7 @@ References: Glimm--Jaffe \S5.1~(pp.~73--74); Friedli--Velenik \S3.7.3.
 \end{proof}
 
 \begin{theorem}[\texttt{susceptibilityInfinite\_latticeGraph\_le\_of\_high\_temp};
-  ℤ^d concrete]
+  Z\textasciicircum d concrete]
   For the $d$-dimensional lattice graph, $0\le\beta J$, $\beta J\cdot 2d<1$:
   $\chi_\infty(i) \le \beta J\cdot 2d/(1-\beta J\cdot 2d)$.
 \end{theorem}
@@ -7341,7 +7451,7 @@ $\sum_{j\in s}\mathrm{correlationAlongExhaustion}(\{i,j\},n)
 \le \mathrm{susceptibilityAlongExhaustion}(i,n)$.
 Proof: at $h=0$, each $\mathrm{correlationAlongExhaustion}(\{i,j\},n)
 = \mathrm{truncated2}(\Lambda_n)\,\langle i,h_i\rangle\,\langle j,h_j\rangle$
-(via \texttt{correlationAlongExhaustion\_of\_subset}, \texttt{correlationΛ\_apply},
+(via \texttt{correlationAlongExhaustion\_of\_subset}, \texttt{correlation\LeanLambda\_apply},
 \texttt{liftFinset} pair form, \texttt{truncated2\_h\_zero}).
 After \texttt{Finset.sum\_attach} + \texttt{Finset.sum\_congr}, bound
 $\sum_{j\in s.\mathtt{attach}} \le \sum_{j':\uparrow\Lambda_n}$
