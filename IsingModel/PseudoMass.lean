@@ -1708,6 +1708,21 @@ theorem pseudoMassExt_antitoneOn_Ioc_zero_one
     AntitoneOn (pseudoMassExt hα hr) (Set.Ioc 0 1) :=
   (pseudoMassExt_strictAntiOn_Ioc_zero_one hα hr).antitoneOn
 
+/-- **`-pseudoMassExt` is `StrictMonoOn (Ioc 0 1)`**. -/
+theorem neg_pseudoMassExt_strictMonoOn_Ioc_zero_one
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) :
+    StrictMonoOn (fun c => -pseudoMassExt hα hr c) (Set.Ioc 0 1) := by
+  intro c₁ hc₁ c₂ hc₂ h
+  have hgt : pseudoMassExt hα hr c₂ < pseudoMassExt hα hr c₁ :=
+    pseudoMassExt_strictAntiOn_Ioc_zero_one hα hr hc₁ hc₂ h
+  linarith
+
+/-- **`-pseudoMassExt` is `MonotoneOn (Ioc 0 1)`**. -/
+theorem neg_pseudoMassExt_monotoneOn_Ioc_zero_one
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) :
+    MonotoneOn (fun c => -pseudoMassExt hα hr c) (Set.Ioc 0 1) :=
+  (neg_pseudoMassExt_strictMonoOn_Ioc_zero_one hα hr).monotoneOn
+
 /-- **`pseudoMassExt(tanh(t)^2)` `ContinuousAt` for `0 < t`**: composition
 of continuous functions. `tanh` is continuous, squaring is continuous,
 `pseudoMassExt` is continuous at `tanh(t)^2 ∈ Ioo 0 1 ⊂ Ioo 0 2`. -/
