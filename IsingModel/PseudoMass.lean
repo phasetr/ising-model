@@ -1007,6 +1007,18 @@ theorem pseudoMass_mem_Ioo_zero_two_sub_div {α : ℕ} (hα : 1 ≤ α) {r : ℝ
   ⟨pseudoMass_pos hα hr hc,
    pseudoMass_lt_two_sub_div_mul_r hα hr hc⟩
 
+/-- **`pseudoMass(c) ∈ Iio (log(2/c)/r)`**: trivial via `_lt_log_two_div`. -/
+theorem pseudoMass_mem_Iio_log_two_div {α : ℕ} (hα : 1 ≤ α) {r : ℝ}
+    (hr : 0 < r) {c : ℝ} (hc : c ∈ Ioo 0 2) :
+    pseudoMass hα hr hc ∈ Set.Iio (Real.log (2 / c) / r) :=
+  pseudoMass_lt_log_two_div hα hr hc
+
+/-- **`pseudoMass(c) ∈ Iio ((2-c)/(c·r))`**: trivial via `_lt_two_sub_div_mul_r`. -/
+theorem pseudoMass_mem_Iio_two_sub_div {α : ℕ} (hα : 1 ≤ α) {r : ℝ}
+    (hr : 0 < r) {c : ℝ} (hc : c ∈ Ioo 0 2) :
+    pseudoMass hα hr hc ∈ Set.Iio ((2 - c) / (c * r)) :=
+  pseudoMass_lt_two_sub_div_mul_r hα hr hc
+
 /-- The pseudo-mass is strictly decreasing in `c`: larger correlation value
 means smaller pseudo-mass (slower decay). -/
 theorem pseudoMass_strictAnti {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
