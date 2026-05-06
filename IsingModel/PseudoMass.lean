@@ -1475,6 +1475,15 @@ theorem pseudoMassExt_antitoneOn {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 <
     AntitoneOn (pseudoMassExt hα hr) (Set.Ioo 0 2) :=
   (pseudoMassExt_strictAntiOn hα hr).antitoneOn
 
+/-- **`-pseudoMassExt` is `StrictMonoOn (Ioo 0 2)`**: dual of
+`pseudoMassExt_strictAntiOn`. -/
+theorem neg_pseudoMassExt_strictMonoOn {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) :
+    StrictMonoOn (fun c => -pseudoMassExt hα hr c) (Set.Ioo 0 2) := by
+  intro c₁ hc₁ c₂ hc₂ h
+  have hgt : pseudoMassExt hα hr c₂ < pseudoMassExt hα hr c₁ :=
+    pseudoMassExt_strictAntiOn hα hr hc₁ hc₂ h
+  linarith
+
 /-- **`pseudoMassExt(c₂) < pseudoMassExt(c₁) ↔ c₁ < c₂`** for both
 in `Ioo 0 2`: iff form of `pseudoMassExt_strictAntiOn`. -/
 theorem pseudoMassExt_lt_iff {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
