@@ -340,6 +340,19 @@ theorem neg_pseudoMassG_strictMonoOn {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr :
     pseudoMassG_strictAntiOn hα hr ht₁ ht₂ h
   linarith
 
+/-- **`-pseudoMassG α r` is `StrictMonoOn (Ioi 0)`**: sub-interval form. -/
+theorem neg_pseudoMassG_strictMonoOn_Ioi_zero
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) :
+    StrictMonoOn (fun t : ℝ => -pseudoMassG α r t) (Set.Ioi 0) := by
+  intro t₁ ht₁ t₂ ht₂ h
+  exact (neg_pseudoMassG_strictMonoOn hα hr) (Set.mem_Ici.mpr (le_of_lt ht₁))
+    (Set.mem_Ici.mpr (le_of_lt ht₂)) h
+
+/-- **`-pseudoMassG α r` is `MonotoneOn (Ici 0)`**: non-strict. -/
+theorem neg_pseudoMassG_monotoneOn {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) :
+    MonotoneOn (fun t : ℝ => -pseudoMassG α r t) (Set.Ici 0) :=
+  (neg_pseudoMassG_strictMonoOn hα hr).monotoneOn
+
 /-- **`pseudoMassG(t₂) < pseudoMassG(t₁) ↔ t₁ < t₂`** (for `t₁, t₂ ≥ 0`,
 `r > 0`, `α ≥ 1`): iff form of `pseudoMassG_strictAntiOn`. -/
 theorem pseudoMassG_lt_iff {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
