@@ -4222,4 +4222,28 @@ theorem pseudoMassFromParamsAtPair_at_h_zero_mem_Ici_zero
       Set.Ici (0 : ℝ) :=
   pseudoMassFromParamsAtPair_nonneg hα hr d Λ _ x z
 
+/-- **At `J = 0` distinct, `pseudoMassFromParamsAtPair ∈ Iio (log(2/tanh^2)/r)`**. -/
+theorem pseudoMassFromParamsAtPair_at_J_zero_distinct_mem_Iio_log_two_div
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    {h β : ℝ} (hh : 0 < h) (hβ : 0 < β) {x z : Fin d → ℤ} (hxz : x ≠ z) :
+    pseudoMassFromParamsAtPair hα hr d Λ (⟨0, h, β⟩ : IsingParams ℝ) x z ∈
+      Set.Iio (Real.log (2 / Real.tanh (β * h) ^ 2) / r) :=
+  pseudoMassFromParamsAtPair_at_J_zero_distinct_lt_log_two_div_tanh_sq
+      hα hr d Λ hh hβ hxz
+
+/-- **At `J = 0` distinct, `pseudoMassFromParamsAtPair ∈ Iio ((2-tanh^2)/(tanh^2·r))`**. -/
+theorem pseudoMassFromParamsAtPair_at_J_zero_distinct_mem_Iio_two_sub_tanh_sq
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    {h β : ℝ} (hh : 0 < h) (hβ : 0 < β) {x z : Fin d → ℤ} (hxz : x ≠ z) :
+    pseudoMassFromParamsAtPair hα hr d Λ (⟨0, h, β⟩ : IsingParams ℝ) x z ∈
+      Set.Iio ((2 - Real.tanh (β * h) ^ 2) / (Real.tanh (β * h) ^ 2 * r)) :=
+  pseudoMassFromParamsAtPair_at_J_zero_distinct_lt_two_sub_tanh_sq
+      hα hr d Λ hh hβ hxz
+
 end IsingModel
