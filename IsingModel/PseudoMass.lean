@@ -4246,4 +4246,16 @@ theorem pseudoMassFromParamsAtPair_at_J_zero_distinct_mem_Iio_two_sub_tanh_sq
   pseudoMassFromParamsAtPair_at_J_zero_distinct_lt_two_sub_tanh_sq
       hα hr d Λ hh hβ hxz
 
+/-- **`pseudoMassFromParamsAtPair ∈ Ioi 0`** when corr ∈ Ioo 0 2: -/
+theorem pseudoMassFromParamsAtPair_mem_Ioi_zero_of_corr_mem
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (x z : Fin d → ℤ)
+    (hcorr : Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ p {x, z}
+              ∈ Set.Ioo (0 : ℝ) 2) :
+    pseudoMassFromParamsAtPair hα hr d Λ p x z ∈ Set.Ioi (0 : ℝ) :=
+  pseudoMassFromParamsAtPair_pos_of_corr_mem hα hr d Λ p x z hcorr
+
 end IsingModel
