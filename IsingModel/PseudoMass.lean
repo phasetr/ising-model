@@ -1081,6 +1081,12 @@ theorem pseudoMass_mem_Ici_zero {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < 
     pseudoMass hα hr hc ∈ Set.Ici (0 : ℝ) :=
   pseudoMass_nonneg hα hr hc
 
+/-- **`pseudoMass(c) ∉ Set.Iio 0`** for `c ∈ Ioo 0 2`: direct from `pos`. -/
+theorem pseudoMass_not_mem_Iio_zero {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    {c : ℝ} (hc : c ∈ Ioo 0 2) :
+    pseudoMass hα hr hc ∉ Set.Iio (0 : ℝ) :=
+  not_lt.mpr (pseudoMass_nonneg hα hr hc)
+
 /-- **Implicit definition: `pseudoMass(c) ≤ t ↔ pseudoMassG α r t ≤ c`** for
 `t ≥ 0` and `c ∈ Ioo 0 2`: characterizes pseudoMass(c) as the unique
 threshold by the anti-monotone defining equation `g(pseudoMass(c)) = c`. -/
