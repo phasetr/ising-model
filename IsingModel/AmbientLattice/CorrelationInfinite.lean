@@ -337,6 +337,15 @@ theorem correlationInfinite_le_zero_iff_eq_zero
   intro hle
   exact le_antisymm hle (correlationInfinite_nonneg G Λ p hf A)
 
+/-- **`¬(correlationInfinite < 0)`** under ferromagnetic: direct
+from `correlationInfinite_nonneg`. -/
+theorem correlationInfinite_not_lt_zero
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (A : Finset V) :
+    ¬ (correlationInfinite G Λ p A < 0) :=
+  not_lt.mpr (correlationInfinite_nonneg G Λ p hf A)
+
 /-- **Tendsto of the lifted `correlationΛ` sequence (explicit form)**:
 given an explicit `N` and a hypothesis `hN : ∀ n ≥ N, A ⊆ Λ.volume n`,
 the sequence `m ↦ correlationΛ G (Λ.volume (m+N)) p (liftFinset A …)`
