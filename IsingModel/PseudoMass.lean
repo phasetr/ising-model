@@ -122,6 +122,11 @@ theorem pseudoMassG_ne_zero (α : ℕ) {r t : ℝ} (ht : 0 ≤ t) (hr : 0 < r) :
     pseudoMassG α r t ≠ 0 :=
   (pseudoMassG_pos α ht hr).ne'
 
+/-- **`pseudoMassG α r t ∈ Set.Ioi 0`** for `t ≥ 0`, `r > 0`. -/
+theorem pseudoMassG_mem_Ioi_zero (α : ℕ) {r t : ℝ} (ht : 0 ≤ t) (hr : 0 < r) :
+    pseudoMassG α r t ∈ Set.Ioi (0 : ℝ) :=
+  pseudoMassG_pos α ht hr
+
 /-- **`pseudoMassG α r t ≥ exp(-(t·r))`** (for `t·r ≤ 1`, `t ≥ 0`,
 `r > 0`, `α ≥ 1`): in the small-t regime, denominator
 `1 + (t·r)^α ≤ 2` (since `(t·r)^α ≤ 1` for `t·r ∈ [0, 1]` and α ≥ 1),
@@ -169,6 +174,12 @@ theorem pseudoMassG_le_two (α : ℕ) {r t : ℝ} (ht : 0 ≤ t) (hr : 0 < r) :
     have h : 0 ≤ (t * r) ^ α := pow_nonneg (mul_nonneg ht hr.le) α
     linarith
   nlinarith [Real.exp_pos (-(t * r))]
+
+/-- **`pseudoMassG α r t ∈ Set.Ioc 0 2`** for `t ≥ 0`, `r > 0`,
+combining pos and ≤ 2. -/
+theorem pseudoMassG_mem_Ioc_zero_two (α : ℕ) {r t : ℝ} (ht : 0 ≤ t) (hr : 0 < r) :
+    pseudoMassG α r t ∈ Set.Ioc (0 : ℝ) 2 :=
+  ⟨pseudoMassG_pos α ht hr, pseudoMassG_le_two α ht hr⟩
 
 /-- The denominator `1 + (t·r)^α` is strictly increasing in `t` for `r > 0`, `α ≥ 1`. -/
 private lemma pseudoMassG_denom_strictMono
