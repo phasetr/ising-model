@@ -2180,8 +2180,20 @@ $\mathrm{ENNReal.ofReal}$ value is bounded by
 $\mathrm{latticeMass}$. The companion
 $\mathrm{latticeMass\_pos\_of\_pseudoMassFromParamsAtPair\_decay}$
 turns a positive validating pseudo-mass into $0 < \mathrm{latticeMass}$.
-The remaining substantive input is not this order-theoretic step but
-the uniform-in-exhaustion Simon--Lieb / random-current decay estimate.
+The high-temperature Simon--Lieb estimate now has an exhaustion-uniform
+form:
+$\mathrm{HasExponentialDecay\_transfer\_high\_temp}$ transfers the
+rate $-\log(\beta J\,2d)$ from the cubic exhaustion to any exhaustion,
+using the exhaustion-independence of the infinite-volume truncated
+two-point function. Consequently
+$\mathrm{latticeMass\_ge\_neg\_log\_of\_high\_temp\_exhaustion}$
+gives the same explicit lower bound for every exhaustion, and
+$\mathrm{latticeMass\_pos\_of\_high\_temp\_exhaustion}$ gives positive
+mass for $d \ge 1$ in the strict high-temperature regime. This discharges the
+exhaustion-uniform high-temperature decay transfer used by the
+Step~117l bridge. The remaining pseudo-mass-specific input is to
+identify the concrete pair pseudo-mass itself as a validating rate, or
+to compare it quantitatively with the transferred Simon--Lieb rate.
 
 \paragraph{\S5.1 cluster property bundled formalisation (PR~\#792).}
 The Glimm--Jaffe \S5.1 cluster property is formalised as a single
