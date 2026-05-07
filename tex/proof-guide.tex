@@ -2503,6 +2503,17 @@ sharper interval \((0,1]\), and the isolated upper endpoint \(<2\) from
 \path{cubicTanhProfileBound}.  They are direct compositions of the existing
 tanh-profile active-range API, so later named-rate statements can use the named
 condition without repeating the full tanh-power formula.
+PR~\#1832 packages the named tanh-profile predicate as the two bridge inputs
+consumed by the anchored cubic profile-to-named-rate comparison:
+\begin{Verbatim}[breaklines=true,breakanywhere=true]
+cubicTanhProfileBound_cubic_corr_mem_Ioo_and_profile
+\end{Verbatim}
+It returns active-range membership of the anchored cubic pair correlation
+together with the cubic correlation lower bound supplied by
+\path{cubicTanhProfileBound_le_cubic_correlation}.  Directly concluding the
+named pseudo-mass comparison from \path{cubicTanhProfileBound} still triggers
+deterministic elaboration timeouts, so this theorem keeps the public API on the
+stable bridge-input layer while avoiding repetition of the tanh-power formula.
 
 The totalized comparison
 \path{pseudoMassExt_twoPointFunction_le_high_temp_rate_of_pseudoMassG_le_tanh_pow_dist}
