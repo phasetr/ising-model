@@ -147,6 +147,130 @@ theorem latticeMass_pos_of_cubicOriginPseudoMassFromParamsAtPair_le_high_temp_ra
     (HasExponentialDecay_cubicOriginPseudoMassFromParamsAtPair_of_le_high_temp_rate
       hα hr Λ hJ hβ hlt hle)
 
+/-- **Anchored cubic named-rate comparison from a cubic profile lower bound**:
+if the anchored cubic pair correlation lies in the active pseudo-mass interval
+and dominates `pseudoMassG` at the transferred high-temperature rate, then the
+named anchored cubic pseudo-mass is no larger than that rate.
+
+Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+theorem cubicOriginPseudoMassFromParamsAtPair_le_high_temp_rate_of_cubic_pseudoMassG_le_corr
+    {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      ((Ambient.cubicExhaustion d).volume n)).edgeSet]
+    {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)
+    (hlt : β * J * ↑(2 * d) < 1) {z : Fin d → ℤ}
+    (hcorr_cubic : Ambient.correlationInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ)
+          {(0 : Fin d → ℤ), z} ∈ Set.Ioo (0 : ℝ) 2)
+    (hprofile_cubic : pseudoMassG α r (-Real.log (β * J * ↑(2 * d))) ≤
+      Ambient.correlationInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ)
+          {(0 : Fin d → ℤ), z}) :
+    cubicOriginPseudoMassFromParamsAtPair hα hr β J z ≤
+      -Real.log (β * J * ↑(2 * d)) := by
+  exact (cubicOriginPseudoMassFromParamsAtPair_le_iff hα hr β J z
+      (-Real.log (β * J * ↑(2 * d)))).2
+    (pseudoMassFromParamsAtPair_le_high_temp_rate_of_pseudoMassG_le_corr
+      hα hr (Ambient.cubicExhaustion d) hJ hβ hlt hcorr_cubic hprofile_cubic)
+
+/-- **Anchored cubic named pseudo-mass is positive from cubic active range**:
+active-range membership of the anchored cubic pair correlation gives strict
+positivity of the named concrete pseudo-mass.
+
+Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+theorem cubicOriginPseudoMassFromParamsAtPair_pos_of_cubic_corr_mem
+    {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      ((Ambient.cubicExhaustion d).volume n)).edgeSet]
+    {β J : ℝ} {z : Fin d → ℤ}
+    (hcorr_cubic : Ambient.correlationInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ)
+          {(0 : Fin d → ℤ), z} ∈ Set.Ioo (0 : ℝ) 2) :
+    0 < cubicOriginPseudoMassFromParamsAtPair hα hr β J z := by
+  rw [cubicOriginPseudoMassFromParamsAtPair_eq]
+  exact pseudoMassFromParamsAtPair_pos_of_corr_mem hα hr d
+    (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) 0 z hcorr_cubic
+
+/-- **Anchored cubic named rate validates high-temperature decay from a cubic
+profile lower bound**: the named-rate comparison supplied by the cubic profile
+input feeds the conditional named-rate bridge.
+
+Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+theorem HasExponentialDecay_cubicOriginPseudoMassFromParamsAtPair_of_cubic_pseudoMassG_le_corr
+    {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      ((Ambient.cubicExhaustion d).volume n)).edgeSet]
+    {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)
+    (hlt : β * J * ↑(2 * d) < 1) {z : Fin d → ℤ}
+    (hcorr_cubic : Ambient.correlationInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ)
+          {(0 : Fin d → ℤ), z} ∈ Set.Ioo (0 : ℝ) 2)
+    (hprofile_cubic : pseudoMassG α r (-Real.log (β * J * ↑(2 * d))) ≤
+      Ambient.correlationInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ)
+          {(0 : Fin d → ℤ), z}) :
+    HasExponentialDecay d Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+      (cubicOriginPseudoMassFromParamsAtPair hα hr β J z) :=
+  HasExponentialDecay_cubicOriginPseudoMassFromParamsAtPair_of_le_high_temp_rate
+    hα hr Λ hJ hβ hlt
+    (cubicOriginPseudoMassFromParamsAtPair_le_high_temp_rate_of_cubic_pseudoMassG_le_corr
+      hα hr hJ hβ hlt hcorr_cubic hprofile_cubic)
+
+/-- **Anchored cubic named pseudo-mass lower bound from a cubic profile lower
+bound**: under the profile condition, the named anchored cubic pseudo-mass is
+bounded above by the target-exhaustion `latticeMass`.
+
+Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+theorem latticeMass_ge_cubicOriginPseudoMassFromParamsAtPair_of_cubic_pseudoMassG_le_corr
+    {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      ((Ambient.cubicExhaustion d).volume n)).edgeSet]
+    {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)
+    (hlt : β * J * ↑(2 * d) < 1) {z : Fin d → ℤ}
+    (hcorr_cubic : Ambient.correlationInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ)
+          {(0 : Fin d → ℤ), z} ∈ Set.Ioo (0 : ℝ) 2)
+    (hprofile_cubic : pseudoMassG α r (-Real.log (β * J * ↑(2 * d))) ≤
+      Ambient.correlationInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ)
+          {(0 : Fin d → ℤ), z}) :
+    ENNReal.ofReal (cubicOriginPseudoMassFromParamsAtPair hα hr β J z) ≤
+      latticeMass d Λ (⟨J, 0, β⟩ : IsingParams ℝ) :=
+  latticeMass_ge_cubicOriginPseudoMassFromParamsAtPair_of_le_high_temp_rate
+    hα hr Λ hJ hβ hlt
+    (cubicOriginPseudoMassFromParamsAtPair_le_high_temp_rate_of_cubic_pseudoMassG_le_corr
+      hα hr hJ hβ hlt hcorr_cubic hprofile_cubic)
+
+/-- **Positive target lattice mass from a positive anchored cubic named rate
+generated by a cubic profile lower bound**: the active-range and profile
+conditions supply both positivity of the named pseudo-mass and its comparison
+with the high-temperature rate.
+
+Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+theorem latticeMass_pos_of_cubicOriginPseudoMassFromParamsAtPair_cubic_pseudoMassG_le_corr
+    {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      ((Ambient.cubicExhaustion d).volume n)).edgeSet]
+    {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)
+    (hlt : β * J * ↑(2 * d) < 1) {z : Fin d → ℤ}
+    (hcorr_cubic : Ambient.correlationInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ)
+          {(0 : Fin d → ℤ), z} ∈ Set.Ioo (0 : ℝ) 2)
+    (hprofile_cubic : pseudoMassG α r (-Real.log (β * J * ↑(2 * d))) ≤
+      Ambient.correlationInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ)
+          {(0 : Fin d → ℤ), z}) :
+    0 < latticeMass d Λ (⟨J, 0, β⟩ : IsingParams ℝ) :=
+  latticeMass_pos_of_cubicOriginPseudoMassFromParamsAtPair_le_high_temp_rate
+    hα hr Λ hJ hβ hlt
+    (cubicOriginPseudoMassFromParamsAtPair_pos_of_cubic_corr_mem
+      hα hr hcorr_cubic)
+    (cubicOriginPseudoMassFromParamsAtPair_le_high_temp_rate_of_cubic_pseudoMassG_le_corr
+      hα hr hJ hβ hlt hcorr_cubic hprofile_cubic)
+
 /-- **High-temperature lattice-mass lower bound under a cubic tanh-profile
 hypothesis**: this checks the anchored cubic active-range theorem generated by
 the same tanh-profile hypothesis and then returns the transferred Simon--Lieb
