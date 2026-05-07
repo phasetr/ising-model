@@ -2459,6 +2459,23 @@ summable_truncated2Infinite_prod_of_cubicNamedRate_corr_mem_le_high_temp_rate
 The proofs compose the named-rate decay bridges with
 \path{clusterProperty_latticeGraph_of_HasExponentialDecay} and the Step~127
 theorem \path{summable_truncated2Infinite_prod_of_hasExponentialDecay}.
+PR~\#1829 packages the corresponding explicit product-sum upper bounds.  Once
+the named rate \(m\) supplies a positive exponential-decay witness, Step~127
+\path{tsum_truncated2Infinite_prod_le} yields a constant \(C \ge 0\) such that
+\[
+  \sum_w \operatorname{cubicTruncated2Product}(d,\beta,J,x,y,w)
+  \le (C+1)^2
+    \left(2\sum_w e^{-(m/2)d(0,w)}\right)
+    e^{-(m/2)d(x,y)/2}.
+\]
+The three packaged forms are
+\begin{Verbatim}[breaklines=true,breakanywhere=true]
+exists_tsum_cubicTruncated2Product_le_of_cubicNamedRate_pos_le_high_temp_rate
+exists_tsum_cubicTruncated2Product_le_of_cubicNamedRate_cubic_pseudoMassG_le_corr
+exists_tsum_cubicTruncated2Product_le_of_cubicNamedRate_corr_mem_le_high_temp_rate
+\end{Verbatim}
+covering the conditional named-rate comparison, the cubic active-range/profile
+input, and active range plus direct named-rate comparison.
 
 The totalized comparison
 \path{pseudoMassExt_twoPointFunction_le_high_temp_rate_of_pseudoMassG_le_tanh_pow_dist}
