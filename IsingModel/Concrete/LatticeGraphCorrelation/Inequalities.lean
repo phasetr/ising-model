@@ -2916,6 +2916,33 @@ theorem pseudoMassG_le_cubic_correlation_of_le_tanh_pow_dist
     exact twoPointFunction_ge_tanh_betaJ_pow_dist hJ hβ hz
   exact hprofile_tanh.trans hpow_le_corr
 
+/-- **Cubic pair correlation is positive from a tanh-power profile bound**:
+under the high-temperature hypothesis, the rate `-log(βJ·2d)` is nonnegative,
+so `pseudoMassG` is positive at that rate.  Combining this positivity with the
+tanh-power reduction gives positivity of the anchored cubic pair correlation.
+
+This supplies the lower half of the active-range input used by the
+profile-comparison bridge toward GJ §17.5 Lemma 17.5.2.
+
+Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+theorem correlationInfinite_cubic_pair_pos_of_pseudoMassG_le_tanh_pow_dist
+    {α d : ℕ} {r : ℝ} (hr : 0 < r)
+    {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)
+    (hlt : β * J * ↑(2 * d) < 1) {z : Fin d → ℤ} (hz : z ≠ 0)
+    (hprofile_tanh : pseudoMassG α r (-Real.log (β * J * ↑(2 * d))) ≤
+      Real.tanh (β * J) ^ IsingModel.latticeDistance d 0 z) :
+    0 < Ambient.correlationInfinite (IsingModel.latticeGraph d)
+      (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ)
+        {(0 : Fin d → ℤ), z} := by
+  have hβJd_nonneg : 0 ≤ β * J * ↑(2 * d) := by
+    exact mul_nonneg (mul_nonneg hβ.le hJ) (Nat.cast_nonneg (2 * d))
+  have hrate_nonneg : 0 ≤ -Real.log (β * J * ↑(2 * d)) := by
+    exact neg_nonneg.mpr (Real.log_nonpos hβJd_nonneg hlt.le)
+  exact lt_of_lt_of_le (pseudoMassG_pos α hrate_nonneg hr)
+    (pseudoMassG_le_cubic_correlation_of_le_tanh_pow_dist
+      (α := α) (d := d) (r := r) (β := β) (J := J)
+      hJ hβ (z := z) hz hprofile_tanh)
+
 /-- **Cluster property holds below the critical inverse temperature** (GJ §17.1):
 for `J ≥ 0`, `β ≥ 0`, and `ENNReal.ofReal β < criticalInverseTemp d J`, the
 cluster property holds for any exhaustion `Λ`:
