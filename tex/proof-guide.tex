@@ -2580,6 +2580,19 @@ These forms use strict positivity of
 than deriving it from the anchored cubic active range.  They are useful when a
 later argument has positivity from another source but still wants to stay on
 the irreducible named comparison proposition for the high-temperature bound.
+PR~\#1839 adds capstone consequence bundles for the same irreducible named
+proposition:
+\begin{Verbatim}[breaklines=true,breakanywhere=true]
+cubicNamedRate_capstone_bundle_of_cubicOriginNamedRateLeHighTemp_pos
+cubicNamedRate_capstone_bundle_of_cubicOriginNamedRateLeHighTemp_cubic_corr_mem
+\end{Verbatim}
+Each bundle returns the target-exhaustion decay witness, half-open target
+interval membership, positive and nonzero target \path{latticeMass}, the target
+cluster property, cubic product summability, and the Step~127 product-sum
+witness.  The first form takes strict positivity of the named cubic pseudo-mass
+directly; the second derives it from anchored cubic active-range membership.
+Both forms keep later arguments on \path{cubicOriginNamedRateLeHighTemp} and do
+not unfold or restate the heavy concrete comparison.
 PR~\#1837 extends the same named-proposition input to the cluster and
 summability layer:
 \begin{Verbatim}[breaklines=true,breakanywhere=true]
