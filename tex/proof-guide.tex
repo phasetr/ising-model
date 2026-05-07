@@ -2285,6 +2285,31 @@ $C_{\mathrm{cubic}}(0,z)$.  The upper endpoint $C_{\mathrm{cubic}}(0,z)<2$ is
 provided by the general $\mathrm{correlationInfinite}<2$ API and is still kept
 as a separate composition step.
 
+\paragraph{Cubic active range from tanh profile bounds (PR~\#1819).}
+The cubic active-range package makes that composition explicit without
+unfolding the concrete pseudo-mass wrapper.  The theorem
+\path{correlationInfinite_cubic_pair_mem_Ioo_zero_two_of_pseudoMassG_le_tanh_pow_dist}
+combines
+\path{correlationInfinite_cubic_pair_pos_of_pseudoMassG_le_tanh_pow_dist}
+with the universal estimate
+\[
+  C_{\mathrm{cubic}}(0,z) \le 1 < 2
+\]
+to prove
+\[
+  C_{\mathrm{cubic}}(0,z)\in(0,2).
+\]
+The companion forms
+\path{correlationInfinite_cubic_pair_ne_zero_of_pseudoMassG_le_tanh_pow_dist},
+\path{correlationInfinite_cubic_pair_mem_Ioc_zero_one_of_pseudoMassG_le_tanh_pow_dist},
+and
+\path{correlationInfinite_cubic_pair_lt_two_of_pseudoMassG_le_tanh_pow_dist}
+record non-vanishing, the sharper interval $(0,1]$, and the isolated upper
+endpoint.  These statements provide the active-range input required by the
+profile-comparison bridge while avoiding the heavy direct definitional
+identification of \(\mathrm{pseudoMassFromParamsAtPair}\) with the anchored
+two-point function.
+
 The totalized comparison
 \path{pseudoMassExt_twoPointFunction_le_high_temp_rate_of_pseudoMassG_le_tanh_pow_dist}
 packages the same tanh-power input without forcing the upper endpoint into the
