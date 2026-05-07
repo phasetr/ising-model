@@ -5207,6 +5207,12 @@ ferromagnetic bridge, and named-rate versions of the exact-rate and
 monotone-rate finite-volume correlation bounds.  This keeps downstream
 statements from restating the logarithmic rate expression.
 
+PR~\#1845 lifts the named-rate API through the volume layers.  It adds
+\(\Lambda\)-direct, along-exhaustion, and \(\mathbb{Z}^d\) wrappers for
+both the exact named-rate bound and the named monotone-rate bound
+\(\alpha \le \texttt{highTempExpRate}\,\beta\,J\).  These wrappers align
+the named API with the earlier explicit-rate and monotone-rate packages.
+
 References: Glimm--Jaffe~\cite{glimm-jaffe}, \S18.4--\S18.7;
 Friedli--Velenik~\cite{friedli-velenik}, \S5; for Mayer / Ursell
 combinatorics see also Fern\'andez--Fr\"ohlich--Sokal
