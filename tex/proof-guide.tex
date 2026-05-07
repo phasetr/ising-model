@@ -2348,6 +2348,14 @@ gives the target \(\mathrm{latticeMass}\) lower bound, and
 gives positive target \(\mathrm{latticeMass}\) from a positive named rate.
 This isolates the stable high-temperature transfer step without restating the
 full high-arity concrete pseudo-mass expression in the theorem conclusions.
+PR~\#1822 adds the transport lemmas
+\path{cubicOriginPseudoMassFromParamsAtPair_le_iff},
+\path{cubicOriginPseudoMassFromParamsAtPair_lt_iff}, and
+\path{cubicOriginPseudoMassFromParamsAtPair_eq_iff}.  These rewrite
+comparisons between the named rate and the underlying concrete
+\(\mathrm{pseudoMassFromParamsAtPair}\) expression, keeping downstream theorem
+statements on the named-rate API while still permitting explicit conversion
+when needed.
 
 The totalized comparison
 \path{pseudoMassExt_twoPointFunction_le_high_temp_rate_of_pseudoMassG_le_tanh_pow_dist}

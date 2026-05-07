@@ -50,6 +50,42 @@ theorem cubicOriginPseudoMassFromParamsAtPair_nonneg {α d : ℕ} (hα : 1 ≤ �
   exact pseudoMassFromParamsAtPair_nonneg hα hr d (Ambient.cubicExhaustion d)
     (⟨J, 0, β⟩ : IsingParams ℝ) 0 z
 
+/-- Transport a `≤` comparison between the named anchored cubic pseudo-mass and
+the underlying concrete `pseudoMassFromParamsAtPair` expression. -/
+theorem cubicOriginPseudoMassFromParamsAtPair_le_iff {α d : ℕ} (hα : 1 ≤ α)
+    {r : ℝ} (hr : 0 < r)
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      ((Ambient.cubicExhaustion d).volume n)).edgeSet]
+    (β J : ℝ) (z : Fin d → ℤ) (t : ℝ) :
+    cubicOriginPseudoMassFromParamsAtPair hα hr β J z ≤ t ↔
+      pseudoMassFromParamsAtPair hα hr d (Ambient.cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) 0 z ≤ t := by
+  rw [cubicOriginPseudoMassFromParamsAtPair_eq]
+
+/-- Transport a `<` comparison between the named anchored cubic pseudo-mass and
+the underlying concrete `pseudoMassFromParamsAtPair` expression. -/
+theorem cubicOriginPseudoMassFromParamsAtPair_lt_iff {α d : ℕ} (hα : 1 ≤ α)
+    {r : ℝ} (hr : 0 < r)
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      ((Ambient.cubicExhaustion d).volume n)).edgeSet]
+    (β J : ℝ) (z : Fin d → ℤ) (t : ℝ) :
+    cubicOriginPseudoMassFromParamsAtPair hα hr β J z < t ↔
+      pseudoMassFromParamsAtPair hα hr d (Ambient.cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) 0 z < t := by
+  rw [cubicOriginPseudoMassFromParamsAtPair_eq]
+
+/-- Transport equality between the named anchored cubic pseudo-mass and the
+underlying concrete `pseudoMassFromParamsAtPair` expression. -/
+theorem cubicOriginPseudoMassFromParamsAtPair_eq_iff {α d : ℕ} (hα : 1 ≤ α)
+    {r : ℝ} (hr : 0 < r)
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      ((Ambient.cubicExhaustion d).volume n)).edgeSet]
+    (β J : ℝ) (z : Fin d → ℤ) (t : ℝ) :
+    cubicOriginPseudoMassFromParamsAtPair hα hr β J z = t ↔
+      pseudoMassFromParamsAtPair hα hr d (Ambient.cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) 0 z = t := by
+  rw [cubicOriginPseudoMassFromParamsAtPair_eq]
+
 /-- **Anchored cubic pseudo-mass validates high-temperature decay**:
 if the named anchored cubic pseudo-mass is bounded above by the transferred
 high-temperature rate, then it is a valid exponential-decay rate for any target
