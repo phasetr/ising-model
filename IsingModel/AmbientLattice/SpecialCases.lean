@@ -2463,6 +2463,40 @@ correlationAlongExhaustion_high_temp_h_zero_at_pair_le_exp_rate_dist_ferromagnet
   correlationAlongExhaustion_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_rate_dist
     G Λ J β (mul_nonneg hβ.le hJ) n i j
 
+/-- **Along-ex §18.7 monotone-rate capstone at stage `n`**: any
+`α ≤ -log(tanh(β·J))` may replace the exact high-temperature rate in the
+pair-correlation distance bound at `Λ.volume n`. -/
+theorem
+correlationAlongExhaustion_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_alpha_dist
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β α : ℝ) (hβJ : 0 ≤ β * J)
+    (hα : α ≤ -Real.log (Real.tanh (β * J))) (n : ℕ)
+    (i j : ↑(Λ.volume n)) :
+    correlationΛ G (Λ.volume n) (⟨J, 0, β⟩ : IsingParams ℝ)
+        ({i, j} : Finset ↑(Λ.volume n))
+      ≤ (2 : ℝ) ^ (inducedGraph G (Λ.volume n)).edgeFinset.card *
+        Real.exp (-α * ((inducedGraph G (Λ.volume n)).dist i j : ℝ)) :=
+  correlationΛ_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_alpha_dist
+    G (Λ.volume n) J β α hβJ hα i j
+
+/-- **Along-ex ferromagnetic §18.7 monotone-rate capstone at stage `n`**:
+under `0 ≤ J, 0 < β`, any `α ≤ -log(tanh(β·J))` gives the stage-`n`
+pair-correlation distance bound with rate `α`. -/
+theorem
+correlationAlongExhaustion_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_alpha_dist_ferro
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β α : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β)
+    (hα : α ≤ -Real.log (Real.tanh (β * J))) (n : ℕ)
+    (i j : ↑(Λ.volume n)) :
+    correlationΛ G (Λ.volume n) (⟨J, 0, β⟩ : IsingParams ℝ)
+        ({i, j} : Finset ↑(Λ.volume n))
+      ≤ (2 : ℝ) ^ (inducedGraph G (Λ.volume n)).edgeFinset.card *
+        Real.exp (-α * ((inducedGraph G (Λ.volume n)).dist i j : ℝ)) :=
+  correlationAlongExhaustion_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_alpha_dist
+    G Λ J β α (mul_nonneg hβ.le hJ) hα n i j
+
 /-- **Along-ex pair correlation strict positivity under edge at stage `n` (GJ §18.3 / FV (3.46))**:
 under `0 < β·J` and an edge in the stage-`n` induced subgraph,
 `0 < ⟨σ_iσ_j⟩^{Λ_n}`. Stage-`n` Λ-level specialization of
