@@ -2568,6 +2568,22 @@ high-temperature comparison input for decay, \path{latticeMass}, interval, and
 nonzero consequences.  The closed interval forms require only the named
 proposition; the positive half-open and nonzero forms also take the active-range
 membership needed for strict positivity of the anchored cubic pseudo-mass.
+PR~\#1837 extends the same named-proposition input to the cluster and
+summability layer:
+\begin{Verbatim}[breaklines=true,breakanywhere=true]
+clusterProperty_of_cubicOriginNamedRateLeHighTemp_pos
+clusterProperty_of_cubicOriginNamedRateLeHighTemp_cubic_corr_mem
+summable_truncated2Infinite_prod_of_cubicOriginNamedRateLeHighTemp_pos
+summable_truncated2Infinite_prod_of_cubicOriginNamedRateLeHighTemp_cubic_corr_mem
+exists_tsum_cubicTruncated2Product_le_of_cubicOriginNamedRateLeHighTemp_pos
+exists_tsum_cubicTruncated2Product_le_of_cubicOriginNamedRateLeHighTemp_cubic_corr_mem
+\end{Verbatim}
+The positive forms accept strict positivity of the named pseudo-mass directly.
+The active-range forms derive that positivity from the anchored cubic pair
+correlation and use \path{cubicOriginNamedRateLeHighTemp} for the rate
+comparison.  This keeps the cluster-property bridge, cubic product summability,
+and explicit Step~127 product-sum bound on the same lightweight named
+comparison API.
 
 The totalized comparison
 \path{pseudoMassExt_twoPointFunction_le_high_temp_rate_of_pseudoMassG_le_tanh_pow_dist}
