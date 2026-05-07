@@ -4351,6 +4351,57 @@ correlation_high_temp_h_zero_at_pair_le_two_pow_edges_mul_tanh_pow_dist_ferromag
   correlation_high_temp_h_zero_at_pair_le_two_pow_edges_mul_tanh_pow_dist
     G J β (mul_nonneg hβ.le hJ) i j
 
+/-- **Rate-form §18.7 capstone**: the finite-volume high-temperature
+pair-correlation distance bound can be written with the explicit rate
+`-log(tanh(β J))`. Under `0 ≤ β * J`,
+\[
+\langle \sigma_i \sigma_j \rangle_{\beta,0}
+  \le 2^{|E|} \exp\{-(-\log(\tanh(\beta J)))\,d_G(i,j)\}.
+\]
+When `tanh(β J)=0`, Lean's total `Real.log 0 = 0` makes the right-hand
+side `2^{|E|}`, so the statement remains a valid endpoint form of the
+tanh-power capstone. -/
+theorem correlation_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_rate_dist
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (i j : ι) :
+    correlation G ⟨J, 0, β⟩ ({i, j} : Finset ι)
+      ≤ (2 : ℝ) ^ G.edgeFinset.card *
+        Real.exp (-(-Real.log (Real.tanh (β * J))) * (G.dist i j : ℝ)) := by
+  have hbase :=
+    correlation_high_temp_h_zero_at_pair_le_two_pow_edges_mul_tanh_pow_dist
+      G J β hβJ i j
+  have htanh_nn : 0 ≤ Real.tanh (β * J) := by
+    rw [Real.tanh_eq_sinh_div_cosh]
+    exact div_nonneg (Real.sinh_nonneg_iff.mpr hβJ) (Real.cosh_pos _).le
+  have htanh_le_one : Real.tanh (β * J) ≤ 1 := (Real.tanh_lt_one _).le
+  have hpow_le_exp : Real.tanh (β * J) ^ G.dist i j
+      ≤ Real.exp (-(-Real.log (Real.tanh (β * J))) * (G.dist i j : ℝ)) := by
+    by_cases hzero : Real.tanh (β * J) = 0
+    · rw [hzero, Real.log_zero, neg_zero, neg_zero, zero_mul, Real.exp_zero]
+      exact pow_le_one₀ (by norm_num) (by norm_num)
+    · have htanh_pos : 0 < Real.tanh (β * J) :=
+        lt_of_le_of_ne htanh_nn (Ne.symm hzero)
+      have hpow_exp : Real.tanh (β * J) ^ G.dist i j =
+          Real.exp (-(-Real.log (Real.tanh (β * J))) * (G.dist i j : ℝ)) := by
+        rw [← Real.exp_log (pow_pos htanh_pos (G.dist i j)), Real.log_pow]
+        ring_nf
+      exact le_of_eq hpow_exp
+  exact hbase.trans
+    (mul_le_mul_of_nonneg_left hpow_le_exp (pow_nonneg (by norm_num) _))
+
+/-- **Ferromagnetic rate-form §18.7 capstone**: under `0 ≤ J, 0 < β`,
+the finite-volume pair correlation is bounded by
+`2^|E| * exp(-(-log(tanh(β J))) * dist)`. -/
+theorem
+correlation_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_rate_dist_ferromagnetic
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (i j : ι) :
+    correlation G ⟨J, 0, β⟩ ({i, j} : Finset ι)
+      ≤ (2 : ℝ) ^ G.edgeFinset.card *
+        Real.exp (-(-Real.log (Real.tanh (β * J))) * (G.dist i j : ℝ)) :=
+  correlation_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_rate_dist
+    G J β (mul_nonneg hβ.le hJ) i j
+
 /-- **Pair correlation weak upper bound `≤ 2^|E| · tanh(β·J)` at `h = 0`
 (GJ §18.7 weak upper bound)**: under `0 ≤ β·J`,
 \[
