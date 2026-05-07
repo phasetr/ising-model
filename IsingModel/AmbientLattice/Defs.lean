@@ -1822,6 +1822,20 @@ theorem correlationΛ_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_highTemp
     IsingModel.correlation_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_highTempExpRate_dist
       (inducedGraph G Λ) J β hβJ i j
 
+/-- **Λ-level ferromagnetic named-rate §18.7 capstone**: under
+`0 ≤ J, 0 < β`, the induced finite-volume pair-correlation distance
+bound is written with `highTempExpRate`. -/
+theorem
+correlationΛ_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_highTempExpRate_dist_ferromagnetic
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (i j : ↑Λ) :
+    correlationΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset ↑Λ)
+      ≤ (2 : ℝ) ^ (inducedGraph G Λ).edgeFinset.card *
+        Real.exp (-(highTempExpRate β J) * ((inducedGraph G Λ).dist i j : ℝ)) :=
+  correlationΛ_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_highTempExpRate_dist
+    G Λ J β (mul_nonneg hβ.le hJ) i j
+
 /-- **Λ-level monotone-rate §18.7 capstone**: any
 `α ≤ -log(tanh(β·J))` may replace the exact high-temperature rate in the
 finite-volume pair-correlation distance bound on the induced graph. -/
@@ -1853,6 +1867,21 @@ correlationΛ_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_alpha_dist_of_le
   simpa [highTempExpRate] using
     IsingModel.correlation_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_alpha_dist
       (inducedGraph G Λ) J β α hβJ hα i j
+
+/-- **Λ-level ferromagnetic named monotone-rate §18.7 capstone**: under
+`0 ≤ J, 0 < β`, any `α ≤ highTempExpRate β J` gives the induced-graph
+pair-correlation distance bound with rate `α`. -/
+theorem
+correlationΛ_high_temp_h_zero_at_pair_le_exp_alpha_dist_of_le_highTempExpRate_ferromagnetic
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β α : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β)
+    (hα : α ≤ highTempExpRate β J) (i j : ↑Λ) :
+    correlationΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset ↑Λ)
+      ≤ (2 : ℝ) ^ (inducedGraph G Λ).edgeFinset.card *
+        Real.exp (-α * ((inducedGraph G Λ).dist i j : ℝ)) :=
+  correlationΛ_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_alpha_dist_of_le_highTempExpRate
+    G Λ J β α (mul_nonneg hβ.le hJ) hα i j
 
 /-- **Λ-level ferromagnetic monotone-rate §18.7 capstone**: under
 `0 ≤ J, 0 < β`, any `α ≤ -log(tanh(β·J))` gives the induced-graph

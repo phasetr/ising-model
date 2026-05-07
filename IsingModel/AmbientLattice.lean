@@ -1,5 +1,6 @@
 import IsingModel.AmbientLattice.Defs
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLattice.CorrelationDecay
 import IsingModel.AmbientLattice.Monotonicity
 import IsingModel.AmbientLattice.CorrelationInfinite
 import IsingModel.AmbientLattice.MagnetizationAlongExhaustion
