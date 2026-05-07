@@ -14,6 +14,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.Base
 import IsingModel.Concrete.LatticeGraphCorrelation.CorrelationDecay
 import IsingModel.Concrete.LatticeGraphCorrelation.Regularity
 import IsingModel.Concrete.LatticeGraphCorrelation.PointwiseRegularity
+import IsingModel.Concrete.LatticeGraphCorrelation.MagnetizationPointwiseRegularity
 import IsingModel.TranslationInvariance
 import IsingModel.PhaseTransition
 import IsingModel.Inequalities.FKG
@@ -14688,78 +14689,6 @@ theorem magnetizationAlongExhaustion_latticeGraph_differentiable_beta
         Λ (⟨J, h, β'⟩ : IsingParams ℝ) i n) :=
   Ambient.magnetizationAlongExhaustion_differentiable_beta
     (IsingModel.latticeGraph d) Λ J h i n
-
-/-- **ℤ^d along-ex: `magnetizationAlongExhaustion` ContinuousAt β** (general h). -/
-theorem magnetizationAlongExhaustion_latticeGraph_continuousAt_beta
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet]
-    (J h β : ℝ) (i : Fin d → ℤ) (n : ℕ) :
-    ContinuousAt (fun β' =>
-      Ambient.magnetizationAlongExhaustion (IsingModel.latticeGraph d) Λ
-        (⟨J, h, β'⟩ : IsingParams ℝ) i n) β :=
-  Ambient.magnetizationAlongExhaustion_continuousAt_beta
-    (IsingModel.latticeGraph d) Λ J h β i n
-
-/-- **ℤ^d along-ex: `magnetizationAlongExhaustion` DifferentiableAt β** (general h). -/
-theorem magnetizationAlongExhaustion_latticeGraph_differentiableAt_beta
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet]
-    (J h β : ℝ) (i : Fin d → ℤ) (n : ℕ) :
-    DifferentiableAt ℝ (fun β' =>
-      Ambient.magnetizationAlongExhaustion (IsingModel.latticeGraph d) Λ
-        (⟨J, h, β'⟩ : IsingParams ℝ) i n) β :=
-  Ambient.magnetizationAlongExhaustion_differentiableAt_beta
-    (IsingModel.latticeGraph d) Λ J h β i n
-
-/-- **ℤ^d along-ex: `magnetizationAlongExhaustion` ContinuousAt h**. -/
-theorem magnetizationAlongExhaustion_latticeGraph_continuousAt_field
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet]
-    (J h β : ℝ) (i : Fin d → ℤ) (n : ℕ) :
-    ContinuousAt (fun h' =>
-      Ambient.magnetizationAlongExhaustion (IsingModel.latticeGraph d) Λ
-        (⟨J, h', β⟩ : IsingParams ℝ) i n) h :=
-  Ambient.magnetizationAlongExhaustion_continuousAt_field
-    (IsingModel.latticeGraph d) Λ J h β i n
-
-/-- **ℤ^d along-ex: `magnetizationAlongExhaustion` DifferentiableAt h**. -/
-theorem magnetizationAlongExhaustion_latticeGraph_differentiableAt_field
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet]
-    (J h β : ℝ) (i : Fin d → ℤ) (n : ℕ) :
-    DifferentiableAt ℝ (fun h' =>
-      Ambient.magnetizationAlongExhaustion (IsingModel.latticeGraph d) Λ
-        (⟨J, h', β⟩ : IsingParams ℝ) i n) h :=
-  Ambient.magnetizationAlongExhaustion_differentiableAt_field
-    (IsingModel.latticeGraph d) Λ J h β i n
-
-/-- **ℤ^d along-ex: `magnetizationAlongExhaustion` ContinuousAt J**. -/
-theorem magnetizationAlongExhaustion_latticeGraph_continuousAt_J
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet]
-    (J h β : ℝ) (i : Fin d → ℤ) (n : ℕ) :
-    ContinuousAt (fun J' =>
-      Ambient.magnetizationAlongExhaustion (IsingModel.latticeGraph d) Λ
-        (⟨J', h, β⟩ : IsingParams ℝ) i n) J :=
-  Ambient.magnetizationAlongExhaustion_continuousAt_J
-    (IsingModel.latticeGraph d) Λ J h β i n
-
-/-- **ℤ^d along-ex: `magnetizationAlongExhaustion` DifferentiableAt J**. -/
-theorem magnetizationAlongExhaustion_latticeGraph_differentiableAt_J
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet]
-    (J h β : ℝ) (i : Fin d → ℤ) (n : ℕ) :
-    DifferentiableAt ℝ (fun J' =>
-      Ambient.magnetizationAlongExhaustion (IsingModel.latticeGraph d) Λ
-        (⟨J', h, β⟩ : IsingParams ℝ) i n) J :=
-  Ambient.magnetizationAlongExhaustion_differentiableAt_J
-    (IsingModel.latticeGraph d) Λ J h β i n
 
 /-- **ℤ^d along-ex: `susceptibilityAlongExhaustion` ContinuousAt β at general h**. -/
 theorem susceptibilityAlongExhaustion_latticeGraph_continuousAt_beta_general_h

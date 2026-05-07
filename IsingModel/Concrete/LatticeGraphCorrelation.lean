@@ -11,5 +11,9 @@ concrete `HasDerivAt` wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.Regularity` directly. For
 concrete J-direction `correlationAlongExhaustion` `ContinuousAt` /
 `DifferentiableAt` wrappers, import
-`IsingModel.Concrete.LatticeGraphCorrelation.PointwiseRegularity` directly.
+`IsingModel.Concrete.LatticeGraphCorrelation.PointwiseRegularity` directly. For
+concrete per-parameter `magnetizationAlongExhaustion` pointwise wrappers,
+import
+`IsingModel.Concrete.LatticeGraphCorrelation.MagnetizationPointwiseRegularity`
+directly.
 -/
