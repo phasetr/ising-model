@@ -1,4 +1,4 @@
-import IsingModel.AmbientLattice
+import IsingModel.AmbientLattice.TruncatedFunctions
 import IsingModel.BetaDerivative
 import IsingModel.PolyDecay
 import Mathlib.Topology.Order.IntermediateValue
