@@ -11,6 +11,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.TheoremEtaLe1
 import IsingModel.Concrete.LatticeGraphCorrelation.SiteIndepMag
 import IsingModel.Concrete.LatticeGraphCorrelation.UniformMag
 import IsingModel.Concrete.LatticeGraphCorrelation.Base
+import IsingModel.Concrete.LatticeGraphCorrelation.CorrelationDecay
 import IsingModel.TranslationInvariance
 import IsingModel.PhaseTransition
 import IsingModel.Inequalities.FKG

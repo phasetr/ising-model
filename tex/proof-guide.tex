@@ -5213,6 +5213,13 @@ both the exact named-rate bound and the named monotone-rate bound
 \(\alpha \le \texttt{highTempExpRate}\,\beta\,J\).  These wrappers align
 the named API with the earlier explicit-rate and monotone-rate packages.
 
+PR~\#1846 adds the matching ferromagnetic convenience wrappers for the
+named exact-rate and named monotone-rate APIs.  The along-exhaustion and
+concrete \(\mathbb{Z}^d\) additions are placed in lightweight
+correlation-decay modules, so incremental verification does not import
+the analytic cluster-expansion stack used by the broader special-case
+files.
+
 References: Glimm--Jaffe~\cite{glimm-jaffe}, \S18.4--\S18.7;
 Friedli--Velenik~\cite{friedli-velenik}, \S5; for Mayer / Ursell
 combinatorics see also Fern\'andez--Fr\"ohlich--Sokal

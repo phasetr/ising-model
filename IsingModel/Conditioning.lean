@@ -4494,6 +4494,17 @@ correlation_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_alpha_dist_of_le_h
     correlation_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_alpha_dist
       G J β α hβJ hα i j
 
+/-- Ferromagnetic bridge for the named monotone-rate §18.7 capstone. -/
+theorem
+correlation_high_temp_h_zero_at_pair_le_exp_alpha_dist_of_le_highTempExpRate_ferromagnetic
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β α : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β)
+    (hα : α ≤ highTempExpRate β J) (i j : ι) :
+    correlation G ⟨J, 0, β⟩ ({i, j} : Finset ι)
+      ≤ (2 : ℝ) ^ G.edgeFinset.card * Real.exp (-α * (G.dist i j : ℝ)) :=
+  correlation_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_alpha_dist_of_le_highTempExpRate
+    G J β α (mul_nonneg hβ.le hJ) hα i j
+
 /-- **Ferromagnetic monotone-rate §18.7 capstone**: under
 `0 ≤ J, 0 < β`, any `α ≤ -log(tanh(β J))` gives the finite-volume
 bound with rate `α`. -/
