@@ -1,4 +1,3 @@
-import IsingModel.AmbientLattice
 import IsingModel.AmbientLatticeSum
 import IsingModel.Hamiltonian
 
