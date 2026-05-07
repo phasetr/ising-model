@@ -395,6 +395,27 @@ theorem cubicOriginPseudoMassFromParamsAtPair_pos_of_cubic_corr_mem
   exact pseudoMassFromParamsAtPair_pos_of_corr_mem hα hr d
     (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) 0 z hcorr_cubic
 
+/-- **Cubic active-range/profile input bundle from the named tanh-profile
+condition**: the named predicate supplies exactly the two hypotheses consumed by
+the existing cubic profile-to-named-rate comparison bridge.
+
+Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+theorem cubicTanhProfileBound_cubic_corr_mem_Ioo_and_profile
+    {α d : ℕ} {r : ℝ} (hr : 0 < r)
+    {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)
+    (hlt : β * J * ↑(2 * d) < 1) {z : Fin d → ℤ} (hz : z ≠ 0)
+    (hprofile_tanh : cubicTanhProfileBound α d r β J z) :
+    Ambient.correlationInfinite (IsingModel.latticeGraph d)
+      (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ)
+        {(0 : Fin d → ℤ), z} ∈ Set.Ioo (0 : ℝ) 2 ∧
+    pseudoMassG α r (-Real.log (β * J * ↑(2 * d))) ≤
+      Ambient.correlationInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ)
+          {(0 : Fin d → ℤ), z} :=
+  ⟨correlationInfinite_cubic_pair_mem_Ioo_zero_two_of_cubicTanhProfileBound
+      hr hJ hβ hlt hz hprofile_tanh,
+    cubicTanhProfileBound_le_cubic_correlation hJ hβ hz hprofile_tanh⟩
+
 /-- **Anchored cubic named rate validates high-temperature decay from a cubic
 profile lower bound**: the named-rate comparison supplied by the cubic profile
 input feeds the conditional named-rate bridge.
