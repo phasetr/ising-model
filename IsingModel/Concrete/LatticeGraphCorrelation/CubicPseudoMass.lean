@@ -1125,5 +1125,59 @@ theorem latticeMass_pos_of_high_temp_exhaustion_of_cubic_tanh_profile
       (α := α) hr hJ hβ hlt hz hprofile_tanh
   exact latticeMass_pos_of_high_temp_exhaustion hd Λ hJ hβ hβJ hlt
 
+/-- **High-temperature lattice-mass lower bound from the named cubic
+tanh-profile predicate**: named input form of
+`latticeMass_ge_neg_log_of_high_temp_exhaustion_of_cubic_tanh_profile`.
+
+This keeps theorem statements on the lightweight `cubicTanhProfileBound`
+predicate while avoiding the heavier concrete named-rate conclusion that still
+triggers deterministic elaboration timeouts.
+
+Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+theorem latticeMass_ge_neg_log_of_high_temp_exhaustion_of_cubicTanhProfileBound
+    {α d : ℕ} {r : ℝ} (hr : 0 < r)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)
+    (hlt : β * J * ↑(2 * d) < 1) {z : Fin d → ℤ} (hz : z ≠ 0)
+    (hprofile_tanh : cubicTanhProfileBound α d r β J z) :
+    ENNReal.ofReal (-Real.log (β * J * ↑(2 * d))) ≤
+      latticeMass d Λ (⟨J, 0, β⟩ : IsingParams ℝ) :=
+  latticeMass_ge_neg_log_of_high_temp_exhaustion_of_cubic_tanh_profile
+    hr Λ hJ hβ hlt hz hprofile_tanh
+
+/-- **Positive lattice mass from the named cubic tanh-profile predicate**:
+named input form of
+`latticeMass_pos_of_high_temp_exhaustion_of_cubic_tanh_profile`.
+
+Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+theorem latticeMass_pos_of_high_temp_exhaustion_of_cubicTanhProfileBound
+    {α d : ℕ} (hd : 1 ≤ d) {r : ℝ} (hr : 0 < r)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β) (hβJ : 0 < β * J)
+    (hlt : β * J * ↑(2 * d) < 1) {z : Fin d → ℤ} (hz : z ≠ 0)
+    (hprofile_tanh : cubicTanhProfileBound α d r β J z) :
+    0 < latticeMass d Λ (⟨J, 0, β⟩ : IsingParams ℝ) :=
+  latticeMass_pos_of_high_temp_exhaustion_of_cubic_tanh_profile
+    hd hr Λ hJ hβ hβJ hlt hz hprofile_tanh
+
+/-- **High-temperature lattice-mass lower and positive bounds from the named
+cubic tanh-profile predicate**: conjunction form for downstream Step 117l
+arguments that need both final high-temperature lattice-mass consequences.
+
+Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+theorem latticeMass_ge_neg_log_and_pos_of_high_temp_exhaustion_of_cubicTanhProfileBound
+    {α d : ℕ} (hd : 1 ≤ d) {r : ℝ} (hr : 0 < r)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β) (hβJ : 0 < β * J)
+    (hlt : β * J * ↑(2 * d) < 1) {z : Fin d → ℤ} (hz : z ≠ 0)
+    (hprofile_tanh : cubicTanhProfileBound α d r β J z) :
+    ENNReal.ofReal (-Real.log (β * J * ↑(2 * d))) ≤
+        latticeMass d Λ (⟨J, 0, β⟩ : IsingParams ℝ) ∧
+      0 < latticeMass d Λ (⟨J, 0, β⟩ : IsingParams ℝ) :=
+  ⟨latticeMass_ge_neg_log_of_high_temp_exhaustion_of_cubicTanhProfileBound
+      hr Λ hJ hβ hlt hz hprofile_tanh,
+    latticeMass_pos_of_high_temp_exhaustion_of_cubicTanhProfileBound
+      hd hr Λ hJ hβ hβJ hlt hz hprofile_tanh⟩
+
 end Ambient
 end IsingModel
