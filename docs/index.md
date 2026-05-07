@@ -18,6 +18,13 @@ View* (2nd ed., 1987).
 > and pull request. To build the API reference locally, run
 > `lake -R -Kenv=dev build IsingModel:docs` and open
 > `.lake/build/doc/index.html`.
+>
+> **Import note:** `IsingModel.Concrete.LatticeGraphCorrelation` is a thin
+> public re-export. The pre-existing monolithic implementation lives in
+> `IsingModel.Concrete.LatticeGraphCorrelation.Legacy`, while new narrow APIs
+> should prefer dedicated child modules such as
+> `IsingModel.Concrete.LatticeGraphCorrelation.CorrelationDecay` for faster
+> targeted checks.
 
 All theorems are formally proved with **zero `sorry`**.
 Pre-existing axioms (four items) cover Lebowitz-type inequalities
