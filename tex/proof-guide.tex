@@ -2491,6 +2491,18 @@ correlationInfinite_cubic_pair_pos_of_cubicTanhProfileBound
 feed this named condition into the existing tanh-profile lower-bound and
 positivity API.  This keeps future statements from restating the heavy
 tanh-profile expression while preserving the same GJ~§17.5 Lemma~17.5.2 input.
+PR~\#1831 extends this named predicate to the cubic active-range package:
+\begin{Verbatim}[breaklines=true,breakanywhere=true]
+correlationInfinite_cubic_pair_mem_Ioo_zero_two_of_cubicTanhProfileBound
+correlationInfinite_cubic_pair_ne_zero_of_cubicTanhProfileBound
+correlationInfinite_cubic_pair_mem_Ioc_zero_one_of_cubicTanhProfileBound
+correlationInfinite_cubic_pair_lt_two_of_cubicTanhProfileBound
+\end{Verbatim}
+These wrappers expose the active interval \((0,2)\), nonzero correlation, the
+sharper interval \((0,1]\), and the isolated upper endpoint \(<2\) from
+\path{cubicTanhProfileBound}.  They are direct compositions of the existing
+tanh-profile active-range API, so later named-rate statements can use the named
+condition without repeating the full tanh-power formula.
 
 The totalized comparison
 \path{pseudoMassExt_twoPointFunction_le_high_temp_rate_of_pseudoMassG_le_tanh_pow_dist}
