@@ -19,6 +19,7 @@ import IsingModel.ComplexAnalyticity
 import IsingModel.PeierlsInfinite
 import IsingModel.AmbientComplexAnalyticity
 import IsingModel.AmbientFKG
+import IsingModel.AmbientLattice.SpecialCases.Legacy
 
 /-!
 # Concrete translation invariance for the ℤ^d Ising correlation
