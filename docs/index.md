@@ -32,10 +32,13 @@ View* (2nd ed., 1987).
 > concrete J-direction `correlationAlongExhaustion` pointwise wrappers,
 > `IsingModel.Concrete.LatticeGraphCorrelation.MagnetizationPointwiseRegularity`
 > for concrete per-parameter `magnetizationAlongExhaustion` pointwise wrappers,
+> `IsingModel.Concrete.LatticeGraphCorrelation.SusceptibilityPointwiseRegularity`
+> for concrete per-parameter `susceptibilityAlongExhaustion` pointwise wrappers,
 > plus
 > `IsingModel.AmbientLattice.SpecialCases.FreeEnergy` /
-> `IsingModel.AmbientLattice.SpecialCases.InfiniteVolume` for faster targeted
-> checks.
+> `IsingModel.AmbientLattice.SpecialCases.InfiniteVolume`, and
+> `IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularity`
+> for faster targeted checks.
 
 All theorems are formally proved with **zero `sorry`**.
 Pre-existing axioms (four items) cover Lebowitz-type inequalities
