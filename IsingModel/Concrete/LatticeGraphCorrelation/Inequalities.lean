@@ -2888,6 +2888,34 @@ theorem latticeMass_pos_of_cubic_pseudoMassFromParamsAtPair_cubic_pseudoMassG_le
   latticeMass_pos_of_reference_pseudoMassFromParamsAtPair_exhaustion_pseudoMassG_le_corr
     hα hr Λ (Ambient.cubicExhaustion d) hJ hβ hlt hcorr_cubic hprofile_cubic
 
+/-- **Tanh-power profile bound implies the cubic pair-correlation profile bound**:
+the existing path lower bound
+`tanh(βJ) ^ latticeDistance d 0 z ≤ twoPointFunction d ⟨J,0,β⟩ z`
+turns the numerical condition
+`pseudoMassG α r (-log(βJ·2d)) ≤ tanh(βJ) ^ latticeDistance d 0 z`
+into the cubic-exhaustion correlation lower bound required by the
+profile-comparison bridge.
+
+Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+theorem pseudoMassG_le_cubic_correlation_of_le_tanh_pow_dist
+    {α d : ℕ} {r β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)
+    {z : Fin d → ℤ} (hz : z ≠ 0)
+    (hprofile_tanh : pseudoMassG α r (-Real.log (β * J * ↑(2 * d))) ≤
+      Real.tanh (β * J) ^ IsingModel.latticeDistance d 0 z) :
+    pseudoMassG α r (-Real.log (β * J * ↑(2 * d))) ≤
+      Ambient.correlationInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ)
+          {(0 : Fin d → ℤ), z} := by
+  have hpow_le_corr :
+      Real.tanh (β * J) ^ IsingModel.latticeDistance d 0 z ≤
+        Ambient.correlationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ)
+            {(0 : Fin d → ℤ), z} := by
+    change Real.tanh (β * J) ^ IsingModel.latticeDistance d 0 z ≤
+      twoPointFunction d (⟨J, 0, β⟩ : IsingParams ℝ) z
+    exact twoPointFunction_ge_tanh_betaJ_pow_dist hJ hβ hz
+  exact hprofile_tanh.trans hpow_le_corr
+
 /-- **Cluster property holds below the critical inverse temperature** (GJ §17.1):
 for `J ≥ 0`, `β ≥ 0`, and `ENNReal.ofReal β < criticalInverseTemp d J`, the
 cluster property holds for any exhaustion `Λ`:

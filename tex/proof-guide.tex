@@ -2251,6 +2251,29 @@ cubic-reference variants provide the same target decay and target
 $\mathrm{latticeMass}$ conclusions when the profile lower bound is checked on
 $\Lambda_0$ or on $\mathrm{cubicExhaustion}\,d$.
 
+For the canonical anchored cubic pair, the lower-bound input can be reduced
+one step further to a tanh-power estimate.  The theorem
+\path{pseudoMassG_le_cubic_correlation_of_le_tanh_pow_dist} uses the
+Glimm--Jaffe \S17.5 path lower bound, pp.~304--306,
+\[
+  \tanh(\beta J)^{\mathrm{latticeDistance}\,d\,0\,z}
+    \le \mathrm{twoPointFunction}\,d\,\langle J,0,\beta\rangle\,z,
+\]
+and the definition of $\mathrm{twoPointFunction}$ as the cubic
+$\mathrm{correlationInfinite}$ at $\{0,z\}$.  Hence the concrete numerical
+condition
+\[
+  \mathrm{pseudoMassG}\,\alpha\,r\,(-\log(\beta J\,2d))
+    \le \tanh(\beta J)^{\mathrm{latticeDistance}\,d\,0\,z}
+\]
+implies the pair-correlation lower bound required by the profile-comparison
+bridge above.  This is still a conditional reduction toward Lemma~17.5.2
+rather than the full lower-bound side of the lemma: it replaces only the direct
+infinite-volume correlation lower-bound hypothesis by an explicit tanh-power
+comparison, while the active-range condition
+$C_{\mathrm{cubic}}(0,z)\in(0,2)$ remains a separate input to the
+profile-comparison bridge.
+
 \paragraph{\S5.1 cluster property bundled formalisation (PR~\#792).}
 The Glimm--Jaffe \S5.1 cluster property is formalised as a single
 predicate
