@@ -26,6 +26,7 @@ View* (2nd ed., 1987).
 > `IsingModel.AmbientLattice.SpecialCases.Legacy`. New narrow APIs should
 > prefer dedicated child modules such as
 > `IsingModel.Concrete.LatticeGraphCorrelation.CorrelationDecay` and
+> `IsingModel.Concrete.LatticeGraphCorrelation.Regularity`, plus
 > `IsingModel.AmbientLattice.SpecialCases.FreeEnergy` /
 > `IsingModel.AmbientLattice.SpecialCases.InfiniteVolume` for faster targeted
 > checks.
