@@ -2310,6 +2310,26 @@ profile-comparison bridge while avoiding the heavy direct definitional
 identification of \(\mathrm{pseudoMassFromParamsAtPair}\) with the anchored
 two-point function.
 
+\paragraph{Profile-compatible high-temperature lattice-mass corollaries
+(PR~\#1820).}
+The small module \path{Concrete/LatticeGraphCorrelation/CubicPseudoMass.lean}
+records target-level corollaries under the same anchored cubic tanh-profile
+hypotheses.  The theorem
+\path{latticeMass_ge_neg_log_of_high_temp_exhaustion_of_cubic_tanh_profile}
+keeps the profile hypothesis and the active-range proof in scope, then returns
+the transferred Simon--Lieb lower bound
+\[
+  \mathrm{ofReal}(-\log(\beta J\,2d))
+    \le \mathrm{latticeMass}(d,\Lambda,\langle J,0,\beta\rangle).
+\]
+With \(d\ge 1\) and \(0<\beta J\), the companion
+\path{latticeMass_pos_of_high_temp_exhaustion_of_cubic_tanh_profile}
+returns \(0<\mathrm{latticeMass}\).  These are deliberately target-level
+profile-compatible restatements of the high-temperature transfer theorems:
+direct new statements exposing the concrete
+\(\mathrm{pseudoMassFromParamsAtPair}\) value still trigger heavy elaboration,
+so the concrete pseudo-mass comparison itself remains a separate follow-up.
+
 The totalized comparison
 \path{pseudoMassExt_twoPointFunction_le_high_temp_rate_of_pseudoMassG_le_tanh_pow_dist}
 packages the same tanh-power input without forcing the upper endpoint into the
