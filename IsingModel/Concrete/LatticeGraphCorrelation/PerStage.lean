@@ -5,6 +5,7 @@ import IsingModel.ComplexAnalyticity
 import IsingModel.PeierlsInfinite
 import IsingModel.AmbientComplexAnalyticity
 import IsingModel.AmbientFKG
+import IsingModel.AmbientLattice.SpecialCases.InfiniteVolume
 
 /-!
 # Per-stage complex analyticity, convergence, and critical-exponent bounds at ℤ^d
