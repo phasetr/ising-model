@@ -5183,6 +5183,23 @@ right-hand side equal to \(2^{|E|}\), and the result follows from
 \(\Lambda\)-direct, along-exhaustion, \(\mathbb{Z}^d\), and
 ferromagnetic wrappers.
 
+PR~\#1843 adds the monotone-rate companion.  If
+\(\alpha \le -\log(\tanh(\beta J))\), then
+\[
+\langle \sigma_i \sigma_j \rangle_{\beta,0}
+  \le 2^{|E|}\exp\{-\alpha\,d_G(i,j)\}.
+\]
+The proof uses the PR~\#1842 exact-rate form and the elementary
+monotonicity step
+\[
+  -(-\log(\tanh(\beta J)))\,d_G(i,j)
+    \le -\alpha\,d_G(i,j),
+\]
+which follows from \(\alpha \le -\log(\tanh(\beta J))\) because graph
+distance is nonnegative.  The package again includes
+\(\Lambda\)-direct, along-exhaustion, \(\mathbb{Z}^d\), and
+ferromagnetic wrappers.
+
 References: Glimm--Jaffe~\cite{glimm-jaffe}, \S18.4--\S18.7;
 Friedli--Velenik~\cite{friedli-velenik}, \S5; for Mayer / Ursell
 combinatorics see also Fern\'andez--Fr\"ohlich--Sokal
