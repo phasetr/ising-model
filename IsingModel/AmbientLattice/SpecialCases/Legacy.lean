@@ -1,4 +1,5 @@
 import IsingModel.AmbientLattice.SpecialCases.FreeEnergy
+import IsingModel.AmbientLattice.SpecialCases.InfiniteVolume
 import IsingModel.AmbientLattice.Analyticity
 
 /-!
@@ -2336,17 +2337,6 @@ theorem correlationAlongExhaustion_high_temp_h_zero_at_singleton_ferromagnetic
         (⟨J, 0, β⟩ : IsingParams ℝ) ({i} : Finset V) n = 0 :=
   correlationAlongExhaustion_high_temp_h_zero_at_singleton G Λ J β i n
 
-omit [DecidableEq V] in
-/-- **Induced subgraph of the empty graph is empty**:
-`inducedGraph (⊥ : SimpleGraph V) Λ = ⊥`.
-
-`inducedGraph = induce = comap` and `SimpleGraph.comap_bot`.
-Useful rewrite when the ambient graph is `⊥` (free-spin limit). -/
-@[simp]
-theorem inducedGraph_bot (Λ : Finset V) :
-    inducedGraph (⊥ : SimpleGraph V) Λ = (⊥ : SimpleGraph (↑Λ : Type _)) :=
-  SimpleGraph.comap_bot _
-
 /-! ## h-symmetry / `|h|`-monotonicity along exhaustion
 
 Specializations of `IsingModel.freeEnergy_neg_h`, `freeEnergy_eq_abs_h`,
@@ -2391,52 +2381,6 @@ theorem partitionFunctionAlongExhaustion_monotone_abs_h
     partitionFunctionAlongExhaustion G Λ (⟨J, h₁, β⟩ : IsingParams ℝ) n
       ≤ partitionFunctionAlongExhaustion G Λ (⟨J, h₂, β⟩ : IsingParams ℝ) n :=
   partitionFunctionΛ_monotone_abs_h G (Λ.volume n) J β hJ hβ hh
-
-/-! ## Critical exponents at ∞-volume (GJ §17.7 Thm 17.7.1)
-
-Explicit ∞-vol named aliases for the critical-exponent bounds
-`η ≥ 0` and `ζ ≥ 0`, matching the finite-volume
-`IsingModel.eta_nonneg_finite_vol` / `zeta_nonneg_finite_vol`
-pattern. Direct pass-throughs of `truncated2Infinite_nonneg` (GKS-II
-at ∞-vol) and `truncated4Infinite_nonpos_h_zero` (Cor 4.3.3 at ∞-vol). -/
-
-/-- **η ≥ 0 at ∞-volume** (GJ §17.7 Thm 17.7.1, ∞-vol lattice version).
-Explicit alias of `truncated2Infinite_nonneg` matching the
-`eta_nonneg_finite_vol` naming convention. -/
-theorem eta_nonneg_infinite_vol
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i j : V) :
-    0 ≤ truncated2Infinite G Λ p i j :=
-  truncated2Infinite_nonneg G Λ p hf i j
-
-/-- **ζ ≥ 0 at ∞-volume** (GJ §17.7 Thm 17.7.1, ∞-vol lattice version,
-at `h = 0`). Explicit alias of `truncated4Infinite_nonpos_h_zero` —
-`U₄^∞ ≤ 0` for pairwise-distinct sites at `h = 0`. -/
-theorem zeta_nonneg_infinite_vol
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (hf : Ferromagnetic ⟨J, (0 : ℝ), β⟩)
-    {i j k l : V}
-    (hij : i ≠ j) (hik : i ≠ k) (hil : i ≠ l)
-    (hjk : j ≠ k) (hjl : j ≠ l) (hkl : k ≠ l) :
-    truncated4Infinite G Λ ⟨J, 0, β⟩ i j k l ≤ 0 :=
-  truncated4Infinite_nonpos_h_zero G Λ J β hf hij hik hil hjk hjl hkl
-
-/-- **Absence of even bound states — ∞-volume lattice** (Glimm–Jaffe
-§17.2, pp. 311–313). ∞-vol version of
-`IsingModel.absence_of_even_bound_states_finite_vol`:
-`U₄^∞(i,j,k,l) ≤ 0` for ferromagnetic `⟨J, 0, β⟩` and pairwise-distinct
-sites. Explicit alias of `truncated4Infinite_nonpos_h_zero`. -/
-theorem absence_of_even_bound_states_infinite_vol
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (hf : Ferromagnetic ⟨J, (0 : ℝ), β⟩)
-    {i j k l : V}
-    (hij : i ≠ j) (hik : i ≠ k) (hil : i ≠ l)
-    (hjk : j ≠ k) (hjl : j ≠ l) (hkl : k ≠ l) :
-    truncated4Infinite G Λ ⟨J, 0, β⟩ i j k l ≤ 0 :=
-  truncated4Infinite_nonpos_h_zero G Λ J β hf hij hik hil hjk hjl hkl
 
 /-! ## §18.5 cluster-expansion convergence-radius along-exhaustion wraps
 

@@ -11,6 +11,7 @@ import IsingModel.TranslationInvariance
 import IsingModel.PhaseTransition
 import IsingModel.Inequalities.FKG
 import IsingModel.AmbientFKG
+import IsingModel.AmbientLattice.SpecialCases.InfiniteVolume
 
 open scoped symmDiff
 

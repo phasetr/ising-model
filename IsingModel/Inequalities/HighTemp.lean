@@ -1,4 +1,4 @@
-import IsingModel.AmbientLattice
+import IsingModel.AmbientLattice.TruncatedFunctions
 import IsingModel.Inequalities.SimonLieb
 import IsingModel.Concrete.LatticeGraphBED
 

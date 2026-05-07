@@ -6,6 +6,7 @@ import IsingModel.TranslationInvariance
 import IsingModel.PhaseTransition
 import IsingModel.Inequalities.FKG
 import IsingModel.AmbientFKG
+import IsingModel.AmbientLattice.BetaDerivative
 import IsingModel.Inequalities.HighTemp
 import IsingModel.LatticeExpSum
 import IsingModel.BetaDerivative
