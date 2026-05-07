@@ -1121,6 +1121,50 @@ theorem clusterProperty_of_cubicNamedRate_corr_mem_le_high_temp_rate
       hα hr hcorr_cubic)
     hle
 
+/-- **Cluster property from a positive named cubic rate and the named
+comparison proposition**: the irreducible proposition supplies the comparison
+input without restating the high-temperature inequality.
+
+Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+theorem clusterProperty_of_cubicOriginNamedRateLeHighTemp_pos
+    {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      ((Ambient.cubicExhaustion d).volume n)).edgeSet]
+    {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)
+    (hlt : β * J * ↑(2 * d) < 1) {z : Fin d → ℤ}
+    (hpos : 0 < cubicOriginPseudoMassFromParamsAtPair hα hr β J z)
+    (hnamed : cubicOriginNamedRateLeHighTemp hα hr β J z) :
+    clusterProperty (IsingModel.latticeGraph d) Λ
+      (⟨J, 0, β⟩ : IsingParams ℝ) :=
+  clusterProperty_of_cubicNamedRate_pos_le_high_temp_rate hα hr Λ hJ hβ hlt
+    hpos
+    (cubicOriginPseudoMassFromParamsAtPair_le_high_temp_rate_of_cubicOriginNamedRateLeHighTemp
+      hα hr hnamed)
+
+/-- **Cluster property from cubic active range and the named comparison
+proposition**: active-range membership supplies positivity and the irreducible
+proposition supplies the high-temperature comparison.
+
+Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+theorem clusterProperty_of_cubicOriginNamedRateLeHighTemp_cubic_corr_mem
+    {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      ((Ambient.cubicExhaustion d).volume n)).edgeSet]
+    {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)
+    (hlt : β * J * ↑(2 * d) < 1) {z : Fin d → ℤ}
+    (hcorr_cubic : Ambient.correlationInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ)
+          {(0 : Fin d → ℤ), z} ∈ Set.Ioo (0 : ℝ) 2)
+    (hnamed : cubicOriginNamedRateLeHighTemp hα hr β J z) :
+    clusterProperty (IsingModel.latticeGraph d) Λ
+      (⟨J, 0, β⟩ : IsingParams ℝ) :=
+  clusterProperty_of_cubicOriginNamedRateLeHighTemp_pos hα hr Λ hJ hβ hlt
+    (cubicOriginPseudoMassFromParamsAtPair_pos_of_cubic_corr_mem
+      hα hr hcorr_cubic)
+    hnamed
+
 /-- **Cubic product summability from a positive named cubic rate and
 high-temperature comparison**: on the cubic exhaustion, the named rate feeds the
 Step 127 product-summability theorem.
@@ -1190,6 +1234,48 @@ theorem summable_truncated2Infinite_prod_of_cubicNamedRate_corr_mem_le_high_temp
     (cubicOriginPseudoMassFromParamsAtPair_pos_of_cubic_corr_mem
       hα hr hcorr_cubic)
     hle x y
+
+/-- **Cubic product summability from a positive named cubic rate and the named
+comparison proposition**: the irreducible proposition supplies the validating
+decay comparison on the cubic exhaustion.
+
+Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+theorem summable_truncated2Infinite_prod_of_cubicOriginNamedRateLeHighTemp_pos
+    {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      ((Ambient.cubicExhaustion d).volume n)).edgeSet]
+    {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)
+    (hlt : β * J * ↑(2 * d) < 1) {z : Fin d → ℤ}
+    (hpos : 0 < cubicOriginPseudoMassFromParamsAtPair hα hr β J z)
+    (hnamed : cubicOriginNamedRateLeHighTemp hα hr β J z) (x y : Fin d → ℤ) :
+    Summable (cubicTruncated2Product d β J x y) :=
+  summable_truncated2Infinite_prod_of_cubicNamedRate_pos_le_high_temp_rate
+    hα hr hJ hβ hlt hpos
+    (cubicOriginPseudoMassFromParamsAtPair_le_high_temp_rate_of_cubicOriginNamedRateLeHighTemp
+      hα hr hnamed)
+    x y
+
+/-- **Cubic product summability from active range and the named comparison
+proposition**: active-range membership supplies positivity and the irreducible
+proposition supplies the comparison.
+
+Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+theorem summable_truncated2Infinite_prod_of_cubicOriginNamedRateLeHighTemp_cubic_corr_mem
+    {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      ((Ambient.cubicExhaustion d).volume n)).edgeSet]
+    {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)
+    (hlt : β * J * ↑(2 * d) < 1) {z : Fin d → ℤ}
+    (hcorr_cubic : Ambient.correlationInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ)
+          {(0 : Fin d → ℤ), z} ∈ Set.Ioo (0 : ℝ) 2)
+    (hnamed : cubicOriginNamedRateLeHighTemp hα hr β J z) (x y : Fin d → ℤ) :
+    Summable (cubicTruncated2Product d β J x y) :=
+  summable_truncated2Infinite_prod_of_cubicOriginNamedRateLeHighTemp_pos
+    hα hr hJ hβ hlt
+    (cubicOriginPseudoMassFromParamsAtPair_pos_of_cubic_corr_mem
+      hα hr hcorr_cubic)
+    hnamed x y
 
 /-- **Cubic product-sum bound from a positive named cubic rate and
 high-temperature comparison**: the named rate supplies an exponential-decay
@@ -1281,6 +1367,58 @@ theorem exists_tsum_cubicTruncated2Product_le_of_cubicNamedRate_corr_mem_le_high
     (cubicOriginPseudoMassFromParamsAtPair_pos_of_cubic_corr_mem
       hα hr hcorr_cubic)
     hle x y
+
+/-- **Cubic product-sum bound from a positive named cubic rate and the named
+comparison proposition**: the irreducible proposition supplies the validating
+decay comparison and Step 127 supplies the explicit convolution bound.
+
+Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+theorem exists_tsum_cubicTruncated2Product_le_of_cubicOriginNamedRateLeHighTemp_pos
+    {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      ((Ambient.cubicExhaustion d).volume n)).edgeSet]
+    {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)
+    (hlt : β * J * ↑(2 * d) < 1) {z : Fin d → ℤ}
+    (hpos : 0 < cubicOriginPseudoMassFromParamsAtPair hα hr β J z)
+    (hnamed : cubicOriginNamedRateLeHighTemp hα hr β J z) (x y : Fin d → ℤ) :
+    let m := cubicOriginPseudoMassFromParamsAtPair hα hr β J z
+    ∃ C : ℝ, 0 ≤ C ∧
+      ∑' w : Fin d → ℤ, cubicTruncated2Product d β J x y w ≤
+        (C + 1) ^ 2 * (2 * ∑' w : Fin d → ℤ,
+          Real.exp (-(m / 2) * (latticeDistance d 0 w : ℝ))) *
+        Real.exp (-(m / 2) * (latticeDistance d x y : ℝ) / 2) :=
+  exists_tsum_cubicTruncated2Product_le_of_cubicNamedRate_pos_le_high_temp_rate
+    hα hr hJ hβ hlt hpos
+    (cubicOriginPseudoMassFromParamsAtPair_le_high_temp_rate_of_cubicOriginNamedRateLeHighTemp
+      hα hr hnamed)
+    x y
+
+/-- **Cubic product-sum bound from active range and the named comparison
+proposition**: active-range membership supplies positivity and the irreducible
+proposition supplies the validating decay comparison.
+
+Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+theorem exists_tsum_cubicTruncated2Product_le_of_cubicOriginNamedRateLeHighTemp_cubic_corr_mem
+    {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      ((Ambient.cubicExhaustion d).volume n)).edgeSet]
+    {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)
+    (hlt : β * J * ↑(2 * d) < 1) {z : Fin d → ℤ}
+    (hcorr_cubic : Ambient.correlationInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ)
+          {(0 : Fin d → ℤ), z} ∈ Set.Ioo (0 : ℝ) 2)
+    (hnamed : cubicOriginNamedRateLeHighTemp hα hr β J z) (x y : Fin d → ℤ) :
+    let m := cubicOriginPseudoMassFromParamsAtPair hα hr β J z
+    ∃ C : ℝ, 0 ≤ C ∧
+      ∑' w : Fin d → ℤ, cubicTruncated2Product d β J x y w ≤
+        (C + 1) ^ 2 * (2 * ∑' w : Fin d → ℤ,
+          Real.exp (-(m / 2) * (latticeDistance d 0 w : ℝ))) *
+        Real.exp (-(m / 2) * (latticeDistance d x y : ℝ) / 2) :=
+  exists_tsum_cubicTruncated2Product_le_of_cubicOriginNamedRateLeHighTemp_pos
+    hα hr hJ hβ hlt
+    (cubicOriginPseudoMassFromParamsAtPair_pos_of_cubic_corr_mem
+      hα hr hcorr_cubic)
+    hnamed x y
 
 /-- **Nonzero target lattice mass from cubic active range plus named-rate
 comparison**: the positive target `latticeMass` bridge rules out zero. -/
