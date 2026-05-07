@@ -2551,6 +2551,23 @@ proposition from the same two inputs consumed by the existing profile-to-rate
 theorem.  A direct \path{cubicTanhProfileBound} wrapper for this named
 proposition still triggers deterministic \path{whnf} timeouts, so it is not part
 of the public API.
+PR~\#1836 adds downstream consumers for the irreducible proposition:
+\begin{Verbatim}[breaklines=true,breakanywhere=true]
+cubicOriginPseudoMassFromParamsAtPair_le_high_temp_rate_of_cubicOriginNamedRateLeHighTemp
+HasExponentialDecay_cubicOriginPseudoMassFromParamsAtPair_of_cubicOriginNamedRateLeHighTemp
+latticeMass_ge_cubicOriginPseudoMassFromParamsAtPair_of_cubicOriginNamedRateLeHighTemp
+cubicNamedRate_ofReal_mem_Icc_latticeMass_of_cubicOriginNamedRateLeHighTemp
+latticeMass_pos_of_cubicOriginNamedRateLeHighTemp_cubic_corr_mem
+cubicNamedRate_ofReal_mem_Ioc_latticeMass_of_cubicOriginNamedRateLeHighTemp
+latticeMass_ne_zero_of_cubicOriginNamedRateLeHighTemp_cubic_corr_mem
+cubicNamedRate_decay_mem_Icc_of_cubicOriginNamedRateLeHighTemp
+cubicNamedRate_decay_mem_Ioc_of_cubicOriginNamedRateLeHighTemp
+\end{Verbatim}
+These wrappers let downstream proofs use the named proposition directly as the
+high-temperature comparison input for decay, \path{latticeMass}, interval, and
+nonzero consequences.  The closed interval forms require only the named
+proposition; the positive half-open and nonzero forms also take the active-range
+membership needed for strict positivity of the anchored cubic pseudo-mass.
 
 The totalized comparison
 \path{pseudoMassExt_twoPointFunction_le_high_temp_rate_of_pseudoMassG_le_tanh_pow_dist}
