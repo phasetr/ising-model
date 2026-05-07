@@ -2609,6 +2609,21 @@ witness.  The first form takes strict positivity of the named cubic pseudo-mass
 directly; the second derives it from anchored cubic active-range membership.
 Both forms keep later arguments on \path{cubicOriginNamedRateLeHighTemp} and do
 not unfold or restate the heavy concrete comparison.
+PR~\#1840 adds the corresponding capstone bundles one layer before the named
+proposition:
+\begin{Verbatim}[breaklines=true,breakanywhere=true]
+cubicNamedRate_capstone_bundle_of_cubic_pseudoMassG_le_corr
+cubicNamedRate_capstone_bundle_of_corr_mem_le_high_temp_rate
+\end{Verbatim}
+The first form consumes anchored cubic active-range membership together with the
+cubic profile lower bound
+\(\mathrm{pseudoMassG}(\alpha,r,-\log(\beta J\,2d))\le
+\mathrm{correlationInfinite}(\{0,z\})\).  The second consumes active-range
+membership together with the raw named-rate comparison.  Both forms delegate to
+the irreducible named-proposition bundle, so downstream proofs can obtain the
+same target decay, interval, \path{latticeMass}, cluster, summability, and
+Step~127 witness package without exposing a direct \path{cubicTanhProfileBound}
+heavy-comparison wrapper.
 
 The totalized comparison
 \path{pseudoMassExt_twoPointFunction_le_high_temp_rate_of_pseudoMassG_le_tanh_pow_dist}
