@@ -13,6 +13,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.UniformMag
 import IsingModel.Concrete.LatticeGraphCorrelation.Base
 import IsingModel.Concrete.LatticeGraphCorrelation.CorrelationDecay
 import IsingModel.Concrete.LatticeGraphCorrelation.Regularity
+import IsingModel.Concrete.LatticeGraphCorrelation.PointwiseRegularity
 import IsingModel.TranslationInvariance
 import IsingModel.PhaseTransition
 import IsingModel.Inequalities.FKG
@@ -14687,33 +14688,6 @@ theorem magnetizationAlongExhaustion_latticeGraph_differentiable_beta
         Λ (⟨J, h, β'⟩ : IsingParams ℝ) i n) :=
   Ambient.magnetizationAlongExhaustion_differentiable_beta
     (IsingModel.latticeGraph d) Λ J h i n
-
-/-! ### ℤ^d along-ex pointwise (ContinuousAt / DifferentiableAt)
-wrappers, lifting the ambient general-G versions from PR #1635 -/
-
-/-- **ℤ^d along-ex: `correlationAlongExhaustion` ContinuousAt J**. -/
-theorem correlationAlongExhaustion_latticeGraph_continuousAt_J
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet]
-    (J h β : ℝ) (A : Finset (Fin d → ℤ)) (n : ℕ) :
-    ContinuousAt (fun J' =>
-      Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
-        (⟨J', h, β⟩ : IsingParams ℝ) A n) J :=
-  Ambient.correlationAlongExhaustion_continuousAt_J_gen
-    (IsingModel.latticeGraph d) Λ J h β A n
-
-/-- **ℤ^d along-ex: `correlationAlongExhaustion` DifferentiableAt J**. -/
-theorem correlationAlongExhaustion_latticeGraph_differentiableAt_J
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet]
-    (J h β : ℝ) (A : Finset (Fin d → ℤ)) (n : ℕ) :
-    DifferentiableAt ℝ (fun J' =>
-      Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
-        (⟨J', h, β⟩ : IsingParams ℝ) A n) J :=
-  Ambient.correlationAlongExhaustion_differentiableAt_J_gen
-    (IsingModel.latticeGraph d) Λ J h β A n
 
 /-- **ℤ^d along-ex: `magnetizationAlongExhaustion` ContinuousAt β** (general h). -/
 theorem magnetizationAlongExhaustion_latticeGraph_continuousAt_beta
