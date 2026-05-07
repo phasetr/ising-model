@@ -2624,6 +2624,16 @@ the irreducible named-proposition bundle, so downstream proofs can obtain the
 same target decay, interval, \path{latticeMass}, cluster, summability, and
 Step~127 witness package without exposing a direct \path{cubicTanhProfileBound}
 heavy-comparison wrapper.
+PR~\#1841 adds the bundled-input form:
+\begin{Verbatim}[breaklines=true,breakanywhere=true]
+cubicNamedRate_capstone_bundle_of_cubic_corr_mem_Ioo_and_profile
+\end{Verbatim}
+The hypothesis is the conjunction produced by
+\path{cubicTanhProfileBound_cubic_corr_mem_Ioo_and_profile}: anchored cubic
+active-range membership and the cubic profile lower bound.  This gives
+downstream proofs a stable way to pass that pair into the capstone bundle
+without placing \path{cubicTanhProfileBound} itself in the heavy comparison
+statement.
 
 The totalized comparison
 \path{pseudoMassExt_twoPointFunction_le_high_temp_rate_of_pseudoMassG_le_tanh_pow_dist}
