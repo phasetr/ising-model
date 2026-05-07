@@ -7,6 +7,7 @@ This module is intentionally a thin re-export. The legacy monolithic
 implementation lives in `IsingModel.Concrete.LatticeGraphCorrelation.Legacy`;
 new narrow APIs should be added in dedicated child modules and re-exported
 here only when they belong to the public concrete correlation surface. For
-concrete derivative wrappers, import
-`IsingModel.Concrete.LatticeGraphCorrelation.Regularity` directly.
+concrete derivative and pointwise regularity wrappers, import
+`IsingModel.Concrete.LatticeGraphCorrelation.Regularity` or
+`IsingModel.Concrete.LatticeGraphCorrelation.PointwiseRegularity` directly.
 -/
