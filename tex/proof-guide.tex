@@ -2568,6 +2568,18 @@ high-temperature comparison input for decay, \path{latticeMass}, interval, and
 nonzero consequences.  The closed interval forms require only the named
 proposition; the positive half-open and nonzero forms also take the active-range
 membership needed for strict positivity of the anchored cubic pseudo-mass.
+PR~\#1838 adds the corresponding direct-positive consumers:
+\begin{Verbatim}[breaklines=true,breakanywhere=true]
+latticeMass_pos_of_cubicOriginNamedRateLeHighTemp_pos
+cubicNamedRate_ofReal_mem_Ioc_latticeMass_of_cubicOriginNamedRateLeHighTemp_pos
+latticeMass_ne_zero_of_cubicOriginNamedRateLeHighTemp_pos
+cubicNamedRate_decay_mem_Ioc_of_cubicOriginNamedRateLeHighTemp_pos
+\end{Verbatim}
+These forms use strict positivity of
+\path{cubicOriginPseudoMassFromParamsAtPair} as a direct hypothesis, rather
+than deriving it from the anchored cubic active range.  They are useful when a
+later argument has positivity from another source but still wants to stay on
+the irreducible named comparison proposition for the high-temperature bound.
 PR~\#1837 extends the same named-proposition input to the cluster and
 summability layer:
 \begin{Verbatim}[breaklines=true,breakanywhere=true]
