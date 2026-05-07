@@ -2285,6 +2285,22 @@ $C_{\mathrm{cubic}}(0,z)$.  The upper endpoint $C_{\mathrm{cubic}}(0,z)<2$ is
 provided by the general $\mathrm{correlationInfinite}<2$ API and is still kept
 as a separate composition step.
 
+The totalized comparison
+\path{pseudoMassExt_twoPointFunction_le_high_temp_rate_of_pseudoMassG_le_tanh_pow_dist}
+packages the same tanh-power input without forcing the upper endpoint into the
+proof.  It proves
+\[
+  \mathrm{pseudoMassExt}\bigl(
+    \mathrm{twoPointFunction}\,d\,\langle J,0,\beta\rangle\,z\bigr)
+    \le -\log(\beta J\,2d).
+\]
+If the two-point function lies in $(0,2)$, this is the ordinary pseudo-mass
+comparison via the implicit characterization of $\mathrm{pseudoMass}$.  If it
+does not lie in $(0,2)$, the totalized function is zero, and the comparison
+follows from $0\le -\log(\beta J\,2d)$ for Lean's total real logarithm.  The
+concrete $\mathrm{pseudoMassFromParamsAtPair}$ wrapper remains a separate
+lightweight composition step.
+
 \paragraph{\S5.1 cluster property bundled formalisation (PR~\#792).}
 The Glimm--Jaffe \S5.1 cluster property is formalised as a single
 predicate

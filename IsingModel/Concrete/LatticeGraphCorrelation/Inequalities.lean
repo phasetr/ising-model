@@ -2944,6 +2944,38 @@ theorem correlationInfinite_cubic_pair_pos_of_pseudoMassG_le_tanh_pow_dist
       (α := α) (d := d) (r := r) (β := β) (J := J)
       hJ hβ (z := z) hz hprofile_tanh)
 
+set_option maxHeartbeats 2000000 in
+-- The totalized proof splits on active-interval membership and reuses the
+-- implicit pseudo-mass comparison, which is heavier than the surrounding wrappers.
+/-- **Two-point pseudo-mass extension comparison from a tanh-power profile bound**:
+the tanh-power lower-bound reduction supplies the profile comparison whenever
+the anchored two-point function is in the active interval.  Outside the active
+interval, `pseudoMassExt` is zero, so the high-temperature comparison is
+automatic from nonnegativity of the Lean real-log rate.
+
+Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+theorem pseudoMassExt_twoPointFunction_le_high_temp_rate_of_pseudoMassG_le_tanh_pow_dist
+    {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)
+    (hlt : β * J * ↑(2 * d) < 1) {z : Fin d → ℤ} (hz : z ≠ 0)
+    (hprofile_tanh : pseudoMassG α r (-Real.log (β * J * ↑(2 * d))) ≤
+      Real.tanh (β * J) ^ IsingModel.latticeDistance d 0 z) :
+    pseudoMassExt hα hr (twoPointFunction d (⟨J, 0, β⟩ : IsingParams ℝ) z)
+      ≤ -Real.log (β * J * ↑(2 * d)) := by
+  have hβJd_nonneg : 0 ≤ β * J * ↑(2 * d) := by
+    exact mul_nonneg (mul_nonneg hβ.le hJ) (Nat.cast_nonneg (2 * d))
+  have hrate_nonneg : 0 ≤ -Real.log (β * J * ↑(2 * d)) := by
+    exact neg_nonneg.mpr (Real.log_nonpos hβJd_nonneg hlt.le)
+  have hprofile_two :
+      pseudoMassG α r (-Real.log (β * J * ↑(2 * d))) ≤
+        twoPointFunction d (⟨J, 0, β⟩ : IsingParams ℝ) z :=
+    hprofile_tanh.trans (twoPointFunction_ge_tanh_betaJ_pow_dist hJ hβ hz)
+  by_cases hcorr : twoPointFunction d (⟨J, 0, β⟩ : IsingParams ℝ) z ∈ Set.Ioo (0 : ℝ) 2
+  · rw [pseudoMassExt_of_mem hα hr hcorr]
+    exact (pseudoMass_le_iff_pseudoMassG_le hα hr hcorr hrate_nonneg).mpr hprofile_two
+  · rw [pseudoMassExt_of_not_mem hα hr hcorr]
+    exact hrate_nonneg
+
 /-- **Cluster property holds below the critical inverse temperature** (GJ §17.1):
 for `J ≥ 0`, `β ≥ 0`, and `ENNReal.ofReal β < criticalInverseTemp d J`, the
 cluster property holds for any exhaustion `Λ`:
