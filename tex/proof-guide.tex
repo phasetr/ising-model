@@ -2327,6 +2327,18 @@ pseudo-mass comparison under this profile hypothesis.  This stays on the
 anchored two-point API and deliberately does not claim the concrete
 \(\mathrm{pseudoMassFromParamsAtPair}\) wrapper.
 
+\paragraph{Positive active two-point pseudo-mass consequences (PR~\#1818).}
+The positivity follow-up keeps the same anchored two-point scope.  The theorem
+\path{pseudoMass_twoPointFunction_pos_of_pseudoMassG_le_tanh_pow_dist}
+applies \(\mathrm{pseudoMass\_pos}\) to the active-interval proof from
+PR~\#1817.  The totalized form
+\path{pseudoMassExt_twoPointFunction_pos_of_pseudoMassG_le_tanh_pow_dist}
+uses \(\mathrm{pseudoMassExt\_pos\_of\_mem}\) with the same active proof, and
+\path{pseudoMassExt_twoPointFunction_ne_zero_of_pseudoMassG_le_tanh_pow_dist}
+records the corresponding non-vanishing corollary.  These are bookkeeping
+consequences for later Step~117l compositions and still do not assert the
+concrete \(\mathrm{pseudoMassFromParamsAtPair}\) comparison.
+
 \paragraph{\S5.1 cluster property bundled formalisation (PR~\#792).}
 The Glimm--Jaffe \S5.1 cluster property is formalised as a single
 predicate
