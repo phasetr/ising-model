@@ -2301,6 +2301,32 @@ follows from $0\le -\log(\beta J\,2d)$ for Lean's total real logarithm.  The
 concrete $\mathrm{pseudoMassFromParamsAtPair}$ wrapper remains a separate
 lightweight composition step.
 
+\paragraph{Active two-point pseudo-mass comparison from tanh profile bounds
+(PR~\#1817).}
+The follow-up
+\path{twoPointFunction_mem_Ioo_zero_two_of_pseudoMassG_le_tanh_pow_dist}
+records that the same tanh-power profile hypothesis places the anchored
+two-point function itself in the active interval $(0,2)$.  The lower endpoint
+is obtained by the positivity of $\mathrm{pseudoMassG}$ at the nonnegative
+Lean real-log rate and the tanh-distance lower bound, while the upper endpoint
+uses the universal estimate
+\(\mathrm{twoPointFunction}\le 1 < 2\).
+Consequently
+\path{pseudoMass_twoPointFunction_le_high_temp_rate_of_pseudoMassG_le_tanh_pow_dist}
+removes the totalisation and proves the ordinary pseudo-mass comparison
+\[
+  \mathrm{pseudoMass}\bigl(
+    \mathrm{twoPointFunction}\,d\,\langle J,0,\beta\rangle\,z\bigr)
+    \le -\log(\beta J\,2d),
+\]
+with the required active-interval proof supplied as the implicit argument to
+\(\mathrm{pseudoMass}\).  The equality
+\path{pseudoMassExt_twoPointFunction_eq_pseudoMass_of_pseudoMassG_le_tanh_pow_dist}
+then states that the totalised comparison of PR~\#1816 agrees with the ordinary
+pseudo-mass comparison under this profile hypothesis.  This stays on the
+anchored two-point API and deliberately does not claim the concrete
+\(\mathrm{pseudoMassFromParamsAtPair}\) wrapper.
+
 \paragraph{\S5.1 cluster property bundled formalisation (PR~\#792).}
 The Glimm--Jaffe \S5.1 cluster property is formalised as a single
 predicate
