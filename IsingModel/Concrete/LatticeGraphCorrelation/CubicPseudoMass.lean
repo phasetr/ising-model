@@ -62,6 +62,51 @@ noncomputable def cubicTruncated2Product (d : ℕ) (β J : ℝ)
     Ambient.truncated2Infinite (latticeGraph d) (Ambient.cubicExhaustion d)
       (⟨J, 0, β⟩ : IsingParams ℝ) y w
 
+/-- **Anchored cubic tanh-power profile condition**: the lightweight named
+predicate
+`pseudoMassG α r (-log(βJ·2d)) ≤ tanh(βJ) ^ dist(0,z)`.
+
+Keeping this condition named avoids repeatedly elaborating the tanh-profile
+expression in downstream theorem statements. -/
+def cubicTanhProfileBound (α d : ℕ) (r β J : ℝ) (z : Fin d → ℤ) : Prop :=
+  pseudoMassG α r (-Real.log (β * J * ↑(2 * d))) ≤
+    Real.tanh (β * J) ^ IsingModel.latticeDistance d 0 z
+
+/-- The named cubic tanh-power profile condition unfolds to the underlying
+`pseudoMassG` lower-bound inequality. -/
+theorem cubicTanhProfileBound_iff (α d : ℕ) (r β J : ℝ) (z : Fin d → ℤ) :
+    cubicTanhProfileBound α d r β J z ↔
+      pseudoMassG α r (-Real.log (β * J * ↑(2 * d))) ≤
+        Real.tanh (β * J) ^ IsingModel.latticeDistance d 0 z :=
+  Iff.rfl
+
+/-- **Cubic correlation lower bound from the named tanh-profile condition**:
+the named predicate feeds the existing tanh-power bridge. -/
+theorem cubicTanhProfileBound_le_cubic_correlation
+    {α d : ℕ} {r β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)
+    {z : Fin d → ℤ} (hz : z ≠ 0)
+    (hprofile_tanh : cubicTanhProfileBound α d r β J z) :
+    pseudoMassG α r (-Real.log (β * J * ↑(2 * d))) ≤
+      Ambient.correlationInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ)
+          {(0 : Fin d → ℤ), z} :=
+  pseudoMassG_le_cubic_correlation_of_le_tanh_pow_dist
+    (α := α) (d := d) (r := r) (β := β) (J := J)
+    hJ hβ hz hprofile_tanh
+
+/-- **Cubic pair-correlation positivity from the named tanh-profile condition**:
+the named predicate supplies the existing tanh-profile positivity bridge. -/
+theorem correlationInfinite_cubic_pair_pos_of_cubicTanhProfileBound
+    {α d : ℕ} {r : ℝ} (hr : 0 < r)
+    {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)
+    (hlt : β * J * ↑(2 * d) < 1) {z : Fin d → ℤ} (hz : z ≠ 0)
+    (hprofile_tanh : cubicTanhProfileBound α d r β J z) :
+    0 < Ambient.correlationInfinite (IsingModel.latticeGraph d)
+      (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ)
+        {(0 : Fin d → ℤ), z} :=
+  correlationInfinite_cubic_pair_pos_of_pseudoMassG_le_tanh_pow_dist
+    (α := α) hr hJ hβ hlt hz hprofile_tanh
+
 /-- Transport a `≤` comparison between the named anchored cubic pseudo-mass and
 the underlying concrete `pseudoMassFromParamsAtPair` expression. -/
 theorem cubicOriginPseudoMassFromParamsAtPair_le_iff {α d : ℕ} (hα : 1 ≤ α)
