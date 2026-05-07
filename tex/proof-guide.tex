@@ -2330,6 +2330,25 @@ direct new statements exposing the concrete
 \(\mathrm{pseudoMassFromParamsAtPair}\) value still trigger heavy elaboration,
 so the concrete pseudo-mass comparison itself remains a separate follow-up.
 
+\paragraph{Anchored cubic pseudo-mass named-rate bridge (PR~\#1821).}
+The same module now names the concrete anchored cubic pseudo-mass at the pair
+\((0,z)\) as
+\path{cubicOriginPseudoMassFromParamsAtPair}, with arguments
+\(h_\alpha\), \(h_r\), \(\beta\), \(J\), and \(z\).
+The definition is accompanied by
+\path{cubicOriginPseudoMassFromParamsAtPair_eq} and
+\path{cubicOriginPseudoMassFromParamsAtPair_nonneg}.  The conditional bridge
+\path{HasExponentialDecay_cubicOriginPseudoMassFromParamsAtPair_of_le_high_temp_rate}
+states that, once this named rate is bounded by
+\(-\log(\beta J\,2d)\), it validates target-exhaustion exponential decay.
+Consequently
+\path{latticeMass_ge_cubicOriginPseudoMassFromParamsAtPair_of_le_high_temp_rate}
+gives the target \(\mathrm{latticeMass}\) lower bound, and
+\path{latticeMass_pos_of_cubicOriginPseudoMassFromParamsAtPair_le_high_temp_rate}
+gives positive target \(\mathrm{latticeMass}\) from a positive named rate.
+This isolates the stable high-temperature transfer step without restating the
+full high-arity concrete pseudo-mass expression in the theorem conclusions.
+
 The totalized comparison
 \path{pseudoMassExt_twoPointFunction_le_high_temp_rate_of_pseudoMassG_le_tanh_pow_dist}
 packages the same tanh-power input without forcing the upper endpoint into the
