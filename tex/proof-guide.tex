@@ -2596,6 +2596,19 @@ correlation and use \path{cubicOriginNamedRateLeHighTemp} for the rate
 comparison.  This keeps the cluster-property bridge, cubic product summability,
 and explicit Step~127 product-sum bound on the same lightweight named
 comparison API.
+PR~\#1839 adds capstone consequence bundles for the same irreducible named
+proposition:
+\begin{Verbatim}[breaklines=true,breakanywhere=true]
+cubicNamedRate_capstone_bundle_of_cubicOriginNamedRateLeHighTemp_pos
+cubicNamedRate_capstone_bundle_of_cubicOriginNamedRateLeHighTemp_cubic_corr_mem
+\end{Verbatim}
+Each bundle returns the target-exhaustion decay witness, half-open target
+interval membership, positive and nonzero target \path{latticeMass}, the target
+cluster property, cubic product summability, and the Step~127 product-sum
+witness.  The first form takes strict positivity of the named cubic pseudo-mass
+directly; the second derives it from anchored cubic active-range membership.
+Both forms keep later arguments on \path{cubicOriginNamedRateLeHighTemp} and do
+not unfold or restate the heavy concrete comparison.
 
 The totalized comparison
 \path{pseudoMassExt_twoPointFunction_le_high_temp_rate_of_pseudoMassG_le_tanh_pow_dist}
