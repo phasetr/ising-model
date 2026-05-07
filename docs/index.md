@@ -29,7 +29,10 @@ View* (2nd ed., 1987).
 > `IsingModel.Concrete.LatticeGraphCorrelation.Regularity` for concrete
 > `HasDerivAt` wrappers, and
 > `IsingModel.Concrete.LatticeGraphCorrelation.PointwiseRegularity` for
-> concrete J-direction `correlationAlongExhaustion` pointwise wrappers, plus
+> concrete J-direction `correlationAlongExhaustion` pointwise wrappers,
+> `IsingModel.Concrete.LatticeGraphCorrelation.MagnetizationPointwiseRegularity`
+> for concrete per-parameter `magnetizationAlongExhaustion` pointwise wrappers,
+> plus
 > `IsingModel.AmbientLattice.SpecialCases.FreeEnergy` /
 > `IsingModel.AmbientLattice.SpecialCases.InfiniteVolume` for faster targeted
 > checks.
