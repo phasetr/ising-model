@@ -2917,9 +2917,10 @@ theorem pseudoMassG_le_cubic_correlation_of_le_tanh_pow_dist
   exact hprofile_tanh.trans hpow_le_corr
 
 /-- **Cubic pair correlation is positive from a tanh-power profile bound**:
-under the high-temperature hypothesis, the rate `-log(βJ·2d)` is nonnegative,
-so `pseudoMassG` is positive at that rate.  Combining this positivity with the
-tanh-power reduction gives positivity of the anchored cubic pair correlation.
+under the high-temperature hypothesis, the Lean real-log rate `-log(βJ·2d)` is
+nonnegative, so `pseudoMassG` is positive at that rate.  Combining this
+positivity with the tanh-power reduction gives positivity of the anchored cubic
+pair correlation.
 
 This supplies the lower half of the active-range input used by the
 profile-comparison bridge toward GJ §17.5 Lemma 17.5.2.
