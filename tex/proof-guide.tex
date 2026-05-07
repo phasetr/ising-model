@@ -2351,8 +2351,13 @@ full high-arity concrete pseudo-mass expression in the theorem conclusions.
 PR~\#1822 adds the transport lemmas
 \path{cubicOriginPseudoMassFromParamsAtPair_le_iff},
 \path{cubicOriginPseudoMassFromParamsAtPair_lt_iff}, and
-\path{cubicOriginPseudoMassFromParamsAtPair_eq_iff}.  These rewrite
-comparisons between the named rate and the underlying concrete
+\path{cubicOriginPseudoMassFromParamsAtPair_eq_iff}.  PR~\#1825 completes
+the same transport layer with
+\path{cubicOriginPseudoMassFromParamsAtPair_ge_iff},
+\path{cubicOriginPseudoMassFromParamsAtPair_gt_iff}, and
+\path{cubicOriginPseudoMassFromParamsAtPair_ne_iff}.  These rewrite
+order, equality, and non-equality comparisons between the named rate and the
+underlying concrete
 \(\mathrm{pseudoMassFromParamsAtPair}\) expression, keeping downstream theorem
 statements on the named-rate API while still permitting explicit conversion
 when needed.
@@ -2378,10 +2383,16 @@ PR~\#1824 records the reusable active-range positivity layer:
 \path{ENNReal_ofReal_cubicOriginPseudoMassFromParamsAtPair_pos_of_cubic_corr_mem},
 and
 \path{latticeMass_pos_of_cubicOriginPseudoMassFromParamsAtPair_cubic_corr_mem_le_high_temp_rate}.
-Thus active-range membership alone gives a nonzero named pseudo-mass and a
-positive \(\mathrm{ofReal}\) coercion, while the final positive
-\(\mathrm{latticeMass}\) bridge only asks for the named-rate comparison with
-\(-\log(\beta J\,2d)\).
+PR~\#1825 adds the matching non-vanishing conveniences
+\path{ENNReal_ofReal_cubicOriginPseudoMassFromParamsAtPair_ne_zero_of_cubic_corr_mem},
+\path{latticeMass_ne_zero_of_cubicOriginPseudoMassFromParamsAtPair_le_high_temp_rate},
+\path{latticeMass_ne_zero_of_cubicOriginPseudoMassFromParamsAtPair_cubic_pseudoMassG_le_corr},
+and
+\path{latticeMass_ne_zero_of_cubic_corr_mem_le_high_temp_rate}.
+Thus active-range membership alone gives a nonzero named pseudo-mass and
+positive/nonzero \(\mathrm{ofReal}\) coercions, while the final positive and
+nonzero \(\mathrm{latticeMass}\) bridges only ask for the named-rate comparison
+with \(-\log(\beta J\,2d)\) or the existing cubic profile lower-bound package.
 
 The totalized comparison
 \path{pseudoMassExt_twoPointFunction_le_high_temp_rate_of_pseudoMassG_le_tanh_pow_dist}

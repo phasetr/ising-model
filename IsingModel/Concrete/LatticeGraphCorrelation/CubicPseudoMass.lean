@@ -86,6 +86,42 @@ theorem cubicOriginPseudoMassFromParamsAtPair_eq_iff {α d : ℕ} (hα : 1 ≤ �
         (⟨J, 0, β⟩ : IsingParams ℝ) 0 z = t := by
   rw [cubicOriginPseudoMassFromParamsAtPair_eq]
 
+/-- Transport a `≥` comparison between the named anchored cubic pseudo-mass and
+the underlying concrete `pseudoMassFromParamsAtPair` expression. -/
+theorem cubicOriginPseudoMassFromParamsAtPair_ge_iff {α d : ℕ} (hα : 1 ≤ α)
+    {r : ℝ} (hr : 0 < r)
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      ((Ambient.cubicExhaustion d).volume n)).edgeSet]
+    (β J : ℝ) (z : Fin d → ℤ) (t : ℝ) :
+    t ≤ cubicOriginPseudoMassFromParamsAtPair hα hr β J z ↔
+      t ≤ pseudoMassFromParamsAtPair hα hr d (Ambient.cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) 0 z := by
+  rw [cubicOriginPseudoMassFromParamsAtPair_eq]
+
+/-- Transport a `>` comparison between the named anchored cubic pseudo-mass and
+the underlying concrete `pseudoMassFromParamsAtPair` expression. -/
+theorem cubicOriginPseudoMassFromParamsAtPair_gt_iff {α d : ℕ} (hα : 1 ≤ α)
+    {r : ℝ} (hr : 0 < r)
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      ((Ambient.cubicExhaustion d).volume n)).edgeSet]
+    (β J : ℝ) (z : Fin d → ℤ) (t : ℝ) :
+    t < cubicOriginPseudoMassFromParamsAtPair hα hr β J z ↔
+      t < pseudoMassFromParamsAtPair hα hr d (Ambient.cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) 0 z := by
+  rw [cubicOriginPseudoMassFromParamsAtPair_eq]
+
+/-- Transport non-equality between the named anchored cubic pseudo-mass and the
+underlying concrete `pseudoMassFromParamsAtPair` expression. -/
+theorem cubicOriginPseudoMassFromParamsAtPair_ne_iff {α d : ℕ} (hα : 1 ≤ α)
+    {r : ℝ} (hr : 0 < r)
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      ((Ambient.cubicExhaustion d).volume n)).edgeSet]
+    (β J : ℝ) (z : Fin d → ℤ) (t : ℝ) :
+    cubicOriginPseudoMassFromParamsAtPair hα hr β J z ≠ t ↔
+      pseudoMassFromParamsAtPair hα hr d (Ambient.cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) 0 z ≠ t := by
+  rw [cubicOriginPseudoMassFromParamsAtPair_eq]
+
 /-- **Anchored cubic pseudo-mass validates high-temperature decay**:
 if the named anchored cubic pseudo-mass is bounded above by the transferred
 high-temperature rate, then it is a valid exponential-decay rate for any target
@@ -146,6 +182,23 @@ theorem latticeMass_pos_of_cubicOriginPseudoMassFromParamsAtPair_le_high_temp_ra
   latticeMass_pos_of_HasExponentialDecay hpos
     (HasExponentialDecay_cubicOriginPseudoMassFromParamsAtPair_of_le_high_temp_rate
       hα hr Λ hJ hβ hlt hle)
+
+/-- **Nonzero target lattice mass from a positive anchored cubic pseudo-mass**:
+the positive lattice-mass bridge also rules out zero. -/
+theorem latticeMass_ne_zero_of_cubicOriginPseudoMassFromParamsAtPair_le_high_temp_rate
+    {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      ((Ambient.cubicExhaustion d).volume n)).edgeSet]
+    {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)
+    (hlt : β * J * ↑(2 * d) < 1) {z : Fin d → ℤ}
+    (hpos : 0 < cubicOriginPseudoMassFromParamsAtPair hα hr β J z)
+    (hle : cubicOriginPseudoMassFromParamsAtPair hα hr β J z ≤
+      -Real.log (β * J * ↑(2 * d))) :
+    latticeMass d Λ (⟨J, 0, β⟩ : IsingParams ℝ) ≠ 0 :=
+  ne_of_gt
+    (latticeMass_pos_of_cubicOriginPseudoMassFromParamsAtPair_le_high_temp_rate
+      hα hr Λ hJ hβ hlt hpos hle)
 
 /-- **Anchored cubic named-rate comparison from a cubic profile lower bound**:
 if the anchored cubic pair correlation lies in the active pseudo-mass interval
@@ -271,6 +324,28 @@ theorem latticeMass_pos_of_cubicOriginPseudoMassFromParamsAtPair_cubic_pseudoMas
     (cubicOriginPseudoMassFromParamsAtPair_le_high_temp_rate_of_cubic_pseudoMassG_le_corr
       hα hr hJ hβ hlt hcorr_cubic hprofile_cubic)
 
+/-- **Nonzero target lattice mass from a cubic profile lower bound**:
+the active-range and profile inputs imply positive target `latticeMass`, hence
+non-vanishing. -/
+theorem latticeMass_ne_zero_of_cubicOriginPseudoMassFromParamsAtPair_cubic_pseudoMassG_le_corr
+    {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      ((Ambient.cubicExhaustion d).volume n)).edgeSet]
+    {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)
+    (hlt : β * J * ↑(2 * d) < 1) {z : Fin d → ℤ}
+    (hcorr_cubic : Ambient.correlationInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ)
+          {(0 : Fin d → ℤ), z} ∈ Set.Ioo (0 : ℝ) 2)
+    (hprofile_cubic : pseudoMassG α r (-Real.log (β * J * ↑(2 * d))) ≤
+      Ambient.correlationInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ)
+          {(0 : Fin d → ℤ), z}) :
+    latticeMass d Λ (⟨J, 0, β⟩ : IsingParams ℝ) ≠ 0 :=
+  ne_of_gt
+    (latticeMass_pos_of_cubicOriginPseudoMassFromParamsAtPair_cubic_pseudoMassG_le_corr
+      hα hr Λ hJ hβ hlt hcorr_cubic hprofile_cubic)
+
 /-- **Anchored cubic named pseudo-mass nonzero from cubic active range**:
 strict positivity from active-range membership rules out zero.
 
@@ -305,6 +380,21 @@ theorem ENNReal_ofReal_cubicOriginPseudoMassFromParamsAtPair_pos_of_cubic_corr_m
     (cubicOriginPseudoMassFromParamsAtPair_pos_of_cubic_corr_mem
       hα hr hcorr_cubic)
 
+/-- **Nonzero `ENNReal.ofReal` named rate from cubic active range**:
+the positive coercion supplied by active-range membership is nonzero. -/
+theorem ENNReal_ofReal_cubicOriginPseudoMassFromParamsAtPair_ne_zero_of_cubic_corr_mem
+    {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      ((Ambient.cubicExhaustion d).volume n)).edgeSet]
+    {β J : ℝ} {z : Fin d → ℤ}
+    (hcorr_cubic : Ambient.correlationInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ)
+          {(0 : Fin d → ℤ), z} ∈ Set.Ioo (0 : ℝ) 2) :
+    ENNReal.ofReal (cubicOriginPseudoMassFromParamsAtPair hα hr β J z) ≠ 0 :=
+  ne_of_gt
+    (ENNReal_ofReal_cubicOriginPseudoMassFromParamsAtPair_pos_of_cubic_corr_mem
+      hα hr hcorr_cubic)
+
 /-- **Positive target lattice mass from cubic active range plus named-rate
 comparison**: active-range membership supplies positivity of the named
 pseudo-mass, so it is enough to prove the high-temperature rate comparison.
@@ -327,6 +417,25 @@ theorem latticeMass_pos_of_cubicOriginPseudoMassFromParamsAtPair_cubic_corr_mem_
     hα hr Λ hJ hβ hlt
     (cubicOriginPseudoMassFromParamsAtPair_pos_of_cubic_corr_mem hα hr hcorr_cubic)
     hle
+
+/-- **Nonzero target lattice mass from cubic active range plus named-rate
+comparison**: the positive target `latticeMass` bridge rules out zero. -/
+theorem latticeMass_ne_zero_of_cubic_corr_mem_le_high_temp_rate
+    {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      ((Ambient.cubicExhaustion d).volume n)).edgeSet]
+    {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)
+    (hlt : β * J * ↑(2 * d) < 1) {z : Fin d → ℤ}
+    (hcorr_cubic : Ambient.correlationInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ)
+          {(0 : Fin d → ℤ), z} ∈ Set.Ioo (0 : ℝ) 2)
+    (hle : cubicOriginPseudoMassFromParamsAtPair hα hr β J z ≤
+      -Real.log (β * J * ↑(2 * d))) :
+    latticeMass d Λ (⟨J, 0, β⟩ : IsingParams ℝ) ≠ 0 :=
+  ne_of_gt
+    (latticeMass_pos_of_cubicOriginPseudoMassFromParamsAtPair_cubic_corr_mem_le_high_temp_rate
+      hα hr Λ hJ hβ hlt hcorr_cubic hle)
 
 /-- **High-temperature lattice-mass lower bound under a cubic tanh-profile
 hypothesis**: this checks the anchored cubic active-range theorem generated by
