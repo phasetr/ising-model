@@ -2514,6 +2514,15 @@ together with the cubic correlation lower bound supplied by
 named pseudo-mass comparison from \path{cubicTanhProfileBound} still triggers
 deterministic elaboration timeouts, so this theorem keeps the public API on the
 stable bridge-input layer while avoiding repetition of the tanh-power formula.
+PR~\#1833 adds the corresponding eliminator
+\begin{Verbatim}[breaklines=true,breakanywhere=true]
+cubicTanhProfileBound_elim_cubic_corr_mem_Ioo_and_profile
+\end{Verbatim}
+which proves an arbitrary proposition once it can be proved from those two
+bridge inputs.  This is a proof-engineering wrapper around the PR~\#1832
+bundle: downstream statements can receive the active-range membership and
+profile lower bound without restating the tanh-power condition or placing the
+heavy named-rate comparison directly in the theorem statement.
 
 The totalized comparison
 \path{pseudoMassExt_twoPointFunction_le_high_temp_rate_of_pseudoMassG_le_tanh_pow_dist}
