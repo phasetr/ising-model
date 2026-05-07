@@ -1,4 +1,4 @@
-import IsingModel.Concrete.IntLattice
+import IsingModel.Lattice
 import IsingModel.AmbientLattice.BetaDerivative
 import IsingModel.AmbientLattice.JDerivative
 import IsingModel.AmbientLattice.FieldDerivative
@@ -6,10 +6,10 @@ import IsingModel.AmbientLattice.FieldDerivative
 /-!
 # Concrete regularity wrappers for the ℤ^d Ising correlation
 
-This module contains concrete latticeGraph specializations of ambient derivative,
-continuity, differentiability, and analyticity APIs. It is split out of the
-legacy concrete correlation module so future regularity work can build a
-narrower child path instead of touching the monolithic legacy file.
+This module contains concrete `latticeGraph` specializations of ambient
+`HasDerivAt` APIs. It is split out of the legacy concrete correlation module
+so future derivative-wrapper work can build a narrower child path instead of
+touching the monolithic legacy file.
 -/
 
 open scoped symmDiff
