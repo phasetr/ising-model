@@ -2463,6 +2463,22 @@ correlationAlongExhaustion_high_temp_h_zero_at_pair_le_exp_rate_dist_ferromagnet
   correlationAlongExhaustion_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_rate_dist
     G Λ J β (mul_nonneg hβ.le hJ) n i j
 
+/-- **Along-ex §18.7 named-rate capstone at stage `n`**: the stage-`n`
+pair-correlation distance bound written with `highTempExpRate`. -/
+theorem
+correlationAlongExhaustion_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_highTempExpRate_dist
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (n : ℕ)
+    (i j : ↑(Λ.volume n)) :
+    correlationΛ G (Λ.volume n) (⟨J, 0, β⟩ : IsingParams ℝ)
+        ({i, j} : Finset ↑(Λ.volume n))
+      ≤ (2 : ℝ) ^ (inducedGraph G (Λ.volume n)).edgeFinset.card *
+        Real.exp (-(highTempExpRate β J) *
+          ((inducedGraph G (Λ.volume n)).dist i j : ℝ)) :=
+  correlationΛ_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_highTempExpRate_dist
+    G (Λ.volume n) J β hβJ i j
+
 /-- **Along-ex §18.7 monotone-rate capstone at stage `n`**: any
 `α ≤ -log(tanh(β·J))` may replace the exact high-temperature rate in the
 pair-correlation distance bound at `Λ.volume n`. -/
@@ -2478,6 +2494,23 @@ correlationAlongExhaustion_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_alp
       ≤ (2 : ℝ) ^ (inducedGraph G (Λ.volume n)).edgeFinset.card *
         Real.exp (-α * ((inducedGraph G (Λ.volume n)).dist i j : ℝ)) :=
   correlationΛ_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_alpha_dist
+    G (Λ.volume n) J β α hβJ hα i j
+
+/-- **Along-ex §18.7 named monotone-rate capstone at stage `n`**:
+any `α ≤ highTempExpRate β J` gives the stage-`n` pair-correlation
+distance bound with rate `α`. -/
+theorem
+correlationAlongExhaustion_high_temp_h_zero_at_pair_le_exp_alpha_dist_of_le_highTempExpRate
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β α : ℝ) (hβJ : 0 ≤ β * J)
+    (hα : α ≤ highTempExpRate β J) (n : ℕ)
+    (i j : ↑(Λ.volume n)) :
+    correlationΛ G (Λ.volume n) (⟨J, 0, β⟩ : IsingParams ℝ)
+        ({i, j} : Finset ↑(Λ.volume n))
+      ≤ (2 : ℝ) ^ (inducedGraph G (Λ.volume n)).edgeFinset.card *
+        Real.exp (-α * ((inducedGraph G (Λ.volume n)).dist i j : ℝ)) :=
+  correlationΛ_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_alpha_dist_of_le_highTempExpRate
     G (Λ.volume n) J β α hβJ hα i j
 
 /-- **Along-ex ferromagnetic §18.7 monotone-rate capstone at stage `n`**:
