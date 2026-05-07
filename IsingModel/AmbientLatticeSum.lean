@@ -1,4 +1,4 @@
-import IsingModel.AmbientLattice
+import IsingModel.AmbientLattice.SpecialCases.FreeEnergy
 import IsingModel.PartitionFunctionIso
 import IsingModel.SumModel
 import Mathlib.Analysis.Subadditive

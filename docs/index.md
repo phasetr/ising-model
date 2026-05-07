@@ -21,12 +21,13 @@ View* (2nd ed., 1987).
 >
 > **Import note:** `IsingModel.Concrete.LatticeGraphCorrelation` and
 > `IsingModel.AmbientLattice.SpecialCases` are thin public re-exports. Their
-> pre-existing monolithic implementations live in
+> pre-existing monolithic bodies live in
 > `IsingModel.Concrete.LatticeGraphCorrelation.Legacy` and
-> `IsingModel.AmbientLattice.SpecialCases.Legacy`, while new narrow APIs should
+> `IsingModel.AmbientLattice.SpecialCases.Legacy`. New narrow APIs should
 > prefer dedicated child modules such as
-> `IsingModel.Concrete.LatticeGraphCorrelation.CorrelationDecay` for faster
-> targeted checks.
+> `IsingModel.Concrete.LatticeGraphCorrelation.CorrelationDecay` and
+> `IsingModel.AmbientLattice.SpecialCases.FreeEnergy` for faster targeted
+> checks.
 
 All theorems are formally proved with **zero `sorry`**.
 Pre-existing axioms (four items) cover Lebowitz-type inequalities
