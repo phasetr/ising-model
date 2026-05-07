@@ -4402,6 +4402,43 @@ correlation_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_rate_dist_ferromag
   correlation_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_rate_dist
     G J β (mul_nonneg hβ.le hJ) i j
 
+/-- **Monotone-rate §18.7 capstone**: any real rate `α` no larger than
+the explicit high-temperature rate `-log(tanh(β J))` may replace the
+exact rate in the finite-volume pair-correlation bound. This is a
+consumer-facing weakening of
+`correlation_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_rate_dist`. -/
+theorem correlation_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_alpha_dist
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β α : ℝ) (hβJ : 0 ≤ β * J)
+    (hα : α ≤ -Real.log (Real.tanh (β * J))) (i j : ι) :
+    correlation G ⟨J, 0, β⟩ ({i, j} : Finset ι)
+      ≤ (2 : ℝ) ^ G.edgeFinset.card * Real.exp (-α * (G.dist i j : ℝ)) := by
+  have hbase :=
+    correlation_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_rate_dist
+      G J β hβJ i j
+  have hdist_nn : 0 ≤ (G.dist i j : ℝ) := by
+    exact_mod_cast Nat.zero_le _
+  have h_exp_le :
+      Real.exp (-(-Real.log (Real.tanh (β * J))) * (G.dist i j : ℝ)) ≤
+        Real.exp (-α * (G.dist i j : ℝ)) := by
+    apply Real.exp_le_exp.mpr
+    exact mul_le_mul_of_nonneg_right (neg_le_neg hα) hdist_nn
+  exact hbase.trans
+    (mul_le_mul_of_nonneg_left h_exp_le (pow_nonneg (by norm_num) _))
+
+/-- **Ferromagnetic monotone-rate §18.7 capstone**: under
+`0 ≤ J, 0 < β`, any `α ≤ -log(tanh(β J))` gives the finite-volume
+bound with rate `α`. -/
+theorem
+correlation_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_alpha_dist_ferromagnetic
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β α : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β)
+    (hα : α ≤ -Real.log (Real.tanh (β * J))) (i j : ι) :
+    correlation G ⟨J, 0, β⟩ ({i, j} : Finset ι)
+      ≤ (2 : ℝ) ^ G.edgeFinset.card * Real.exp (-α * (G.dist i j : ℝ)) :=
+  correlation_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_alpha_dist
+    G J β α (mul_nonneg hβ.le hJ) hα i j
+
 /-- **Pair correlation weak upper bound `≤ 2^|E| · tanh(β·J)` at `h = 0`
 (GJ §18.7 weak upper bound)**: under `0 ≤ β·J`,
 \[
