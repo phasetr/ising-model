@@ -519,7 +519,7 @@ theorem exp_beta_J_sign_mul_sign_eq
     | down =>
       simp only [Spin.sign, Spin.toSign, Int.cast_neg, Int.cast_one,
         neg_mul_neg, one_mul]
-      rw [if_pos (by simp)]; ring
+      rw [if_pos (by simp)]; ring_nf
 
 omit [DecidableEq ι] in
 /-- Product over sites of the external-field exponential factorises as

@@ -1,4 +1,4 @@
-import IsingModel.AmbientLattice
+import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.Lattice
 import IsingModel.TranslationInvariance
 
