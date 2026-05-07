@@ -19,10 +19,12 @@ View* (2nd ed., 1987).
 > `lake -R -Kenv=dev build IsingModel:docs` and open
 > `.lake/build/doc/index.html`.
 >
-> **Import note:** `IsingModel.Concrete.LatticeGraphCorrelation` is a thin
-> public re-export. The pre-existing monolithic implementation lives in
-> `IsingModel.Concrete.LatticeGraphCorrelation.Legacy`, while new narrow APIs
-> should prefer dedicated child modules such as
+> **Import note:** `IsingModel.Concrete.LatticeGraphCorrelation` and
+> `IsingModel.AmbientLattice.SpecialCases` are thin public re-exports. Their
+> pre-existing monolithic implementations live in
+> `IsingModel.Concrete.LatticeGraphCorrelation.Legacy` and
+> `IsingModel.AmbientLattice.SpecialCases.Legacy`, while new narrow APIs should
+> prefer dedicated child modules such as
 > `IsingModel.Concrete.LatticeGraphCorrelation.CorrelationDecay` for faster
 > targeted checks.
 
