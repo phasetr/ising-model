@@ -2523,6 +2523,18 @@ bridge inputs.  This is a proof-engineering wrapper around the PR~\#1832
 bundle: downstream statements can receive the active-range membership and
 profile lower bound without restating the tanh-power condition or placing the
 heavy named-rate comparison directly in the theorem statement.
+PR~\#1834 adds named-predicate high-temperature lattice-mass consequences:
+\begin{Verbatim}[breaklines=true,breakanywhere=true]
+latticeMass_ge_neg_log_of_high_temp_exhaustion_of_cubicTanhProfileBound
+latticeMass_pos_of_high_temp_exhaustion_of_cubicTanhProfileBound
+latticeMass_ge_neg_log_and_pos_of_high_temp_exhaustion_of_cubicTanhProfileBound
+\end{Verbatim}
+These are the \path{cubicTanhProfileBound} input forms of the existing final
+high-temperature lower-bound and positivity theorems for \path{latticeMass}.
+They deliberately keep the conclusion at the stable high-temperature
+\(-\log(\beta J\,2d)\) layer: exposing the heavier
+\path{cubicOriginPseudoMassFromParamsAtPair} named-rate conclusion directly from
+\path{cubicTanhProfileBound} still triggers deterministic elaboration timeouts.
 
 The totalized comparison
 \path{pseudoMassExt_twoPointFunction_le_high_temp_rate_of_pseudoMassG_le_tanh_pow_dist}
