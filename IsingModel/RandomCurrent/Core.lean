@@ -1,4 +1,4 @@
-import IsingModel.AmbientLattice
+import IsingModel.AmbientLattice.Defs
 import Mathlib.Analysis.SpecialFunctions.Exponential
 import Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite
 

@@ -2,7 +2,6 @@ import IsingModel.RandomCurrent.Core
 import IsingModel.RandomCurrent.BoundedExpansion
 import IsingModel.RandomCurrent.Switching
 import IsingModel.RandomCurrent.Peeling
-import IsingModel.AmbientLattice
 import Mathlib.Analysis.SpecialFunctions.Exponential
 import Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite
 
