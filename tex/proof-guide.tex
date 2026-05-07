@@ -2394,27 +2394,38 @@ positive/nonzero \(\mathrm{ofReal}\) coercions, while the final positive and
 nonzero \(\mathrm{latticeMass}\) bridges only ask for the named-rate comparison
 with \(-\log(\beta J\,2d)\) or the existing cubic profile lower-bound package.
 PR~\#1826 packages the same lower-bound and positivity information as interval
-membership.  The closed-interval theorems have the shared prefix
-\path{cubicNamedRate_ofReal_mem_Icc_latticeMass_} and cover the direct
-high-temperature comparison and cubic-profile comparison cases:
+membership.  The closed-interval theorems
+\begin{Verbatim}[breaklines=true,breakanywhere=true]
+cubicNamedRate_ofReal_mem_Icc_latticeMass_of_le_high_temp_rate
+cubicNamedRate_ofReal_mem_Icc_latticeMass_of_cubic_pseudoMassG_le_corr
+\end{Verbatim}
+cover the direct high-temperature comparison and cubic-profile comparison cases:
 \[
   \operatorname{ofReal}(m^-_{\mathrm{cub}}) \in
   [0,\mathrm{latticeMass}],
 \]
-while the half-open theorems have the shared prefix
-\path{cubicNamedRate_ofReal_mem_Ioc_latticeMass_} and cover the positive
-comparison, cubic-profile, and active-range plus high-temperature comparison
-cases:
+while the half-open theorems
+\begin{Verbatim}[breaklines=true,breakanywhere=true]
+cubicNamedRate_ofReal_mem_Ioc_latticeMass_of_pos_le_high_temp_rate
+cubicNamedRate_ofReal_mem_Ioc_latticeMass_of_cubic_pseudoMassG_le_corr
+cubicNamedRate_ofReal_mem_Ioc_latticeMass_of_corr_mem_le_high_temp_rate
+\end{Verbatim}
+cover the positive comparison, cubic-profile, and active-range plus
+high-temperature comparison cases:
 \(\operatorname{ofReal}(m^-_{\mathrm{cub}}) \in
 (0,\mathrm{latticeMass}]\) form.  These statements are pure compositions of the
 named-rate comparison and active-range positivity bridges, so they avoid the
 known heavy tanh-profile elaboration path.
 PR~\#1827 adds conjunction forms that package these interval statements with
-the validating decay proof itself.  The five theorem names all start with
-\path{cubicNamedRate_decay_mem_}; their suffixes cover the closed-interval
-high-temperature comparison, the positive half-open comparison, the closed and
-half-open cubic-profile cases, and the active-range plus high-temperature
-comparison case.  Each theorem returns
+the validating decay proof itself:
+\begin{Verbatim}[breaklines=true,breakanywhere=true]
+cubicNamedRate_decay_mem_Icc_of_le_high_temp_rate
+cubicNamedRate_decay_mem_Ioc_of_pos_le_high_temp_rate
+cubicNamedRate_decay_mem_Icc_of_cubic_pseudoMassG_le_corr
+cubicNamedRate_decay_mem_Ioc_of_cubic_pseudoMassG_le_corr
+cubicNamedRate_decay_mem_Ioc_of_corr_mem_le_high_temp_rate
+\end{Verbatim}
+Each theorem returns
 \[
   \mathrm{HasExponentialDecay}\bigl(d,\Lambda,\langle J,0,\beta\rangle,
     m^-_{\mathrm{cub}}\bigr)
