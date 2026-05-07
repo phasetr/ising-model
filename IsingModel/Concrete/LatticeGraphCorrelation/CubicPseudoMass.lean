@@ -416,6 +416,33 @@ theorem cubicTanhProfileBound_cubic_corr_mem_Ioo_and_profile
       hr hJ hβ hlt hz hprofile_tanh,
     cubicTanhProfileBound_le_cubic_correlation hJ hβ hz hprofile_tanh⟩
 
+/-- **Eliminator for the named tanh-profile bridge inputs**: to prove an
+arbitrary proposition `P`, it is enough to prove it from the active-range
+membership and cubic profile lower bound supplied by `cubicTanhProfileBound`.
+
+This avoids restating the tanh-power formula while keeping downstream proofs on
+the stable cubic profile-to-named-rate bridge input layer.
+
+Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+theorem cubicTanhProfileBound_elim_cubic_corr_mem_Ioo_and_profile
+    {α d : ℕ} {r : ℝ} (hr : 0 < r)
+    {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)
+    (hlt : β * J * ↑(2 * d) < 1) {z : Fin d → ℤ} (hz : z ≠ 0)
+    (hprofile_tanh : cubicTanhProfileBound α d r β J z) {P : Prop}
+    (h :
+      Ambient.correlationInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ)
+          {(0 : Fin d → ℤ), z} ∈ Set.Ioo (0 : ℝ) 2 →
+      pseudoMassG α r (-Real.log (β * J * ↑(2 * d))) ≤
+        Ambient.correlationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ)
+            {(0 : Fin d → ℤ), z} →
+      P) :
+    P := by
+  rcases cubicTanhProfileBound_cubic_corr_mem_Ioo_and_profile
+      hr hJ hβ hlt hz hprofile_tanh with ⟨hcorr_cubic, hprofile_cubic⟩
+  exact h hcorr_cubic hprofile_cubic
+
 /-- **Anchored cubic named rate validates high-temperature decay from a cubic
 profile lower bound**: the named-rate comparison supplied by the cubic profile
 input feeds the conditional named-rate bridge.
