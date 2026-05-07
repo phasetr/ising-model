@@ -2437,6 +2437,28 @@ or the corresponding half-open interval
 \((0,\mathrm{latticeMass}]\).  The proofs only pair the named-rate decay bridge
 with the PR~\#1826 interval package, leaving the tanh-profile reduction outside
 the new theorem statements.
+PR~\#1828 packages the downstream cluster and summability consequences.  The
+named summand
+\path{cubicTruncated2Product} abbreviates
+\[
+  w \mapsto U_2(x,w)\,U_2(y,w)
+\]
+on the cubic exhaustion at zero external field, keeping the summability
+statements lightweight.  The cluster-property consequences are
+\begin{Verbatim}[breaklines=true,breakanywhere=true]
+clusterProperty_of_cubicNamedRate_pos_le_high_temp_rate
+clusterProperty_of_cubicNamedRate_cubic_pseudoMassG_le_corr
+clusterProperty_of_cubicNamedRate_corr_mem_le_high_temp_rate
+\end{Verbatim}
+and the cubic product-summability consequences are
+\begin{Verbatim}[breaklines=true,breakanywhere=true]
+summable_truncated2Infinite_prod_of_cubicNamedRate_pos_le_high_temp_rate
+summable_truncated2Infinite_prod_of_cubicNamedRate_cubic_pseudoMassG_le_corr
+summable_truncated2Infinite_prod_of_cubicNamedRate_corr_mem_le_high_temp_rate
+\end{Verbatim}
+The proofs compose the named-rate decay bridges with
+\path{clusterProperty_latticeGraph_of_HasExponentialDecay} and the Step~127
+theorem \path{summable_truncated2Infinite_prod_of_hasExponentialDecay}.
 
 The totalized comparison
 \path{pseudoMassExt_twoPointFunction_le_high_temp_rate_of_pseudoMassG_le_tanh_pow_dist}
