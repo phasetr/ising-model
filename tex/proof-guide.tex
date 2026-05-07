@@ -2393,6 +2393,25 @@ Thus active-range membership alone gives a nonzero named pseudo-mass and
 positive/nonzero \(\mathrm{ofReal}\) coercions, while the final positive and
 nonzero \(\mathrm{latticeMass}\) bridges only ask for the named-rate comparison
 with \(-\log(\beta J\,2d)\) or the existing cubic profile lower-bound package.
+PR~\#1826 packages the same lower-bound and positivity information as interval
+membership:
+\path{cubicNamedRate_ofReal_mem_Icc_latticeMass_of_le_high_temp_rate} and
+\path{cubicNamedRate_ofReal_mem_Icc_latticeMass_of_cubic_pseudoMassG_le_corr}
+give
+\[
+  \operatorname{ofReal}(m^-_{\mathrm{cub}}) \in
+  [0,\mathrm{latticeMass}],
+\]
+while
+\path{cubicNamedRate_ofReal_mem_Ioc_latticeMass_of_pos_le_high_temp_rate},
+\path{cubicNamedRate_ofReal_mem_Ioc_latticeMass_of_cubic_pseudoMassG_le_corr},
+and
+\path{cubicNamedRate_ofReal_mem_Ioc_latticeMass_of_corr_mem_le_high_temp_rate}
+give the sharpened
+\(\operatorname{ofReal}(m^-_{\mathrm{cub}}) \in
+(0,\mathrm{latticeMass}]\) form.  These statements are pure compositions of the
+named-rate comparison and active-range positivity bridges, so they avoid the
+known heavy tanh-profile elaboration path.
 
 The totalized comparison
 \path{pseudoMassExt_twoPointFunction_le_high_temp_rate_of_pseudoMassG_le_tanh_pow_dist}
