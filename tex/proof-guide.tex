@@ -2535,6 +2535,22 @@ They deliberately keep the conclusion at the stable high-temperature
 \(-\log(\beta J\,2d)\) layer: exposing the heavier
 \path{cubicOriginPseudoMassFromParamsAtPair} named-rate conclusion directly from
 \path{cubicTanhProfileBound} still triggers deterministic elaboration timeouts.
+PR~\#1835 names the heavy comparison itself as an irreducible proposition:
+\begin{Verbatim}[breaklines=true,breakanywhere=true]
+cubicOriginNamedRateLeHighTemp
+cubicOriginNamedRateLeHighTemp_of_cubic_pseudoMassG_le_corr
+\end{Verbatim}
+The proposition abbreviates the comparison
+\[
+  \mathrm{cubicOriginPseudoMassFromParamsAtPair}(\alpha,r,\beta,J,z)
+  \le -\log(\beta J\,2d)
+\]
+without requiring downstream theorem conclusions to expose that concrete
+expression directly.  The active-range/profile-input bridge proves the named
+proposition from the same two inputs consumed by the existing profile-to-rate
+theorem.  A direct \path{cubicTanhProfileBound} wrapper for this named
+proposition still triggers deterministic \path{whnf} timeouts, so it is not part
+of the public API.
 
 The totalized comparison
 \path{pseudoMassExt_twoPointFunction_le_high_temp_rate_of_pseudoMassG_le_tanh_pow_dist}
