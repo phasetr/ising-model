@@ -19,6 +19,8 @@ Mayer analytic wrappers live in
 General-graph `vdPolymerFamilies_sum` and `log_vdPolymerFamilies_sum`
 analytic wrappers live in
 `IsingModel.AmbientLattice.SpecialCases.VdPolymerFamiliesAnalyticity`.
+General-graph high-temperature convergence and correction wrappers live in
+`IsingModel.AmbientLattice.SpecialCases.HighTemperature`.
 General-graph
 `partitionFunctionAlongExhaustion` / `freeEnergyAlongExhaustion` pointwise
 regularity wrappers live in
