@@ -4901,7 +4901,13 @@ forms. 14 new thin direct-instantiation wrappers.
 \texttt{\_at\_zero} (Steps~592, 598),
 \texttt{mayerExpansionTerm\_zero}, \texttt{\_one},
 \texttt{\_at\_zero} (Steps~587, 598)) are lifted to the four
-volume layers, giving $32$ thin direct-instantiation wrappers.
+volume layers, giving $32$ thin direct-instantiation wrappers. The
+along-exhaustion and concrete $\mathbb{Z}^d$ wrappers now live in
+\path{AmbientLattice/SpecialCases/MayerBasicIdentities.lean}
+and
+\path{Concrete/LatticeGraphCorrelation/MayerBasicIdentities.lean};
+the $\Lambda$-layer wrappers remain in
+\path{IsingModel/AmbientLattice/Analyticity.lean}.
 
 \paragraph{Mayer identity edge-cases (no polymers / trivial /
 edgeless), all volume layers (\S18.5, PR~\#1592).} The five abstract
