@@ -10,6 +10,8 @@ lightweight infinite-volume aliases live in
 `IsingModel.AmbientLattice.SpecialCases.InfiniteVolume`. General-graph joint
 regularity wrappers live in
 `IsingModel.AmbientLattice.SpecialCases.JointRegularity`. General-graph
+joint analyticity wrappers live in
+`IsingModel.AmbientLattice.SpecialCases.JointAnalyticity`. General-graph
 `partitionFunctionAlongExhaustion` / `freeEnergyAlongExhaustion` pointwise
 regularity wrappers live in
 `IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyPointwiseRegularity`,
