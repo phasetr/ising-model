@@ -22,6 +22,8 @@ import
 directly. For concrete per-parameter `partitionFunctionAlongExhaustion` /
 `freeEnergyAlongExhaustion` pointwise wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.PartitionFreeEnergyPointwiseRegularity`
+directly. For concrete `polymerFreeEnergy` analytic wrappers, import
+`IsingModel.Concrete.LatticeGraphCorrelation.PolymerFreeEnergyAnalyticity`
 directly. For concrete per-parameter `susceptibilityAlongExhaustion`
 pointwise wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.SusceptibilityPointwiseRegularity`

@@ -12,6 +12,9 @@ regularity wrappers live in
 `IsingModel.AmbientLattice.SpecialCases.JointRegularity`. General-graph
 joint analyticity wrappers live in
 `IsingModel.AmbientLattice.SpecialCases.JointAnalyticity`. General-graph
+`polymerFreeEnergy` analytic wrappers live in
+`IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyAnalyticity`.
+General-graph
 `partitionFunctionAlongExhaustion` / `freeEnergyAlongExhaustion` pointwise
 regularity wrappers live in
 `IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyPointwiseRegularity`,
