@@ -4892,6 +4892,12 @@ lifted to the four volume layers. The non-tanh forms had Lambda-layer
 wraps already; this PR completes the along-exhaustion and
 $\mathbb{Z}^d$ wraps for both, plus all four layers for the tanh
 forms. 14 new thin direct-instantiation wrappers.
+The along-exhaustion and concrete $\mathbb{Z}^d$ wrappers now live in
+\path{IsingModel/AmbientLattice/SpecialCases/MayerVdIff.lean}
+and
+\path{IsingModel/Concrete/LatticeGraphCorrelation/MayerVdIff.lean};
+the $\Lambda$-layer wrappers remain in
+\path{IsingModel/AmbientLattice/Analyticity.lean}.
 
 \paragraph{Basic identities at\_zero / at\_one, all volume layers
 (\S18.5, PR~\#1593).} The eight abstract base-case identities
