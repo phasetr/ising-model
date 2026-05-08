@@ -4083,7 +4083,13 @@ layers (abstract / $\Lambda$-direct / along-exhaustion /
 $\mathbb{Z}^d$ $\Lambda$-direct / $\mathbb{Z}^d$ along-exhaustion).
 The four $\mathbb{Z}^d$ wrappers use the abbreviated suffix
 \texttt{\_ferro} (instead of \texttt{\_ferromagnetic}) so each
-declaration fits the linter's 100-character budget.
+declaration fits the linter's 100-character budget. The along-exhaustion
+and $\mathbb{Z}^d$ high-temperature wrappers from this family now live in
+\texttt{AmbientLattice/SpecialCases/HighTemperature.lean} and
+\texttt{Concrete/LatticeGraphCorrelation/HighTemperature.lean};
+PR~\#1864 moved only those non-$\Lambda$ wrappers out of the legacy
+modules. The $\Lambda$-layer wrappers were already in
+\texttt{IsingModel/AmbientLattice/Analyticity.lean} and remain there.
 
 \paragraph{\texttt{vdPolymerFamilies\_sum} bound family completion,
 all volume layers (\S18.5, PR~\#1595).} Adds Lambda, along-ex, and
@@ -5144,8 +5150,8 @@ admits a ferromagnetic version
 direct \texttt{freeEnergy\LeanLambda\_apply} / \texttt{freeEnergyAlongExhaustion}
 unfoldings: 9 new theorems in
 \texttt{IsingModel/AmbientLattice/Analyticity.lean},
-\texttt{AmbientLattice/SpecialCases.lean}, and
-\texttt{Concrete/LatticeGraphCorrelation.lean}. The two
+\texttt{AmbientLattice/SpecialCases/HighTemperature.lean}, and
+\texttt{Concrete/LatticeGraphCorrelation/HighTemperature.lean}. The two
 $\mathbb{Z}^d$ ferromagnetic variants use the abbreviated
 \texttt{\_ferro} suffix to fit the linter's 100-character budget.
 
@@ -5167,10 +5173,12 @@ are now lifted to the $\Lambda$, along-exhaustion, $\mathbb{Z}^d$
 $\Lambda$, and $\mathbb{Z}^d$ along-exhaustion layers --- $8$
 wrappers in total --- in
 \texttt{IsingModel/AmbientLattice/Analyticity.lean},
-\texttt{AmbientLattice/SpecialCases.lean}, and
-\texttt{Concrete/LatticeGraphCorrelation.lean}. Each is a thin
+\texttt{AmbientLattice/SpecialCases/HighTemperature.lean}, and
+\texttt{Concrete/LatticeGraphCorrelation/HighTemperature.lean}. Each is a thin
 direct-instantiation wrapper of the abstract theorem on the
-corresponding induced subgraph.
+corresponding induced subgraph. These high-temperature sandwich wrappers
+now live in the dedicated child modules rather than the legacy monoliths
+(moved in PR~\#1864).
 
 \paragraph{Convergence radius at all volume layers (\S18.5,
 PR~\#1569).} The cluster-expansion convergence-radius statements
@@ -5191,9 +5199,9 @@ lifted to every volume layer:
   \item \emph{Along-exhaustion wraps}:
     \texttt{polymerFreeEnergyAlongExhaustion\_\{,tanh\_\}\{high\_temp\_sandwich,hasSum\_via\_log\_of\_pow\_lt\_two\}}
     (4 theorems, per stage $n$) in
-    \texttt{AmbientLattice/SpecialCases.lean}.
+    \texttt{AmbientLattice/SpecialCases/HighTemperature.lean}.
   \item \emph{$\mathbb{Z}^d$ concrete wraps}: 8 theorems in
-    \texttt{Concrete/LatticeGraphCorrelation.lean}, covering both
+    \texttt{Concrete/LatticeGraphCorrelation/HighTemperature.lean}, covering both
     the $\Lambda$-direct family on $\Lambda \subseteq \mathbb{Z}^d$
     and the along-exhaustion family on
     $\mathrm{Exhaustion}\,(\mathrm{Fin}\,d \to \mathbb{Z})$.
@@ -5202,7 +5210,10 @@ The convergence-radius condition $(1+t)^{|E|} < 2$ is exponentially
 restrictive in $|E|$; sharper polymer-density / Kotecky--Preiss
 estimates that depend on the maximum vertex degree of $G$ instead of
 $|E|$ remain deferred (they require chromatic-polynomial /
-matrix-tree machinery not yet available in Mathlib).
+matrix-tree machinery not yet available in Mathlib). The moved
+high-temperature child modules keep the named API available through the
+public umbrellas while allowing targeted imports to avoid the legacy
+monolith.
 
 \paragraph{Decay of correlations at $h=0$, all volume layers
 (\S18.7, Step~574 + PR~\#1570).} The
