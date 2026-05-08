@@ -14,6 +14,8 @@ joint analyticity wrappers live in
 `IsingModel.AmbientLattice.SpecialCases.JointAnalyticity`. General-graph
 Mayer analytic wrappers live in
 `IsingModel.AmbientLattice.SpecialCases.MayerAnalyticity`. General-graph
+Mayer edge-case identity and `polymerFreeEnergy = mayerPartialSum` wrappers live in
+`IsingModel.AmbientLattice.SpecialCases.MayerEdgeCases`. General-graph
 Mayer and `vdPolymerFamilies_sum` regularity wrappers live in
 `IsingModel.AmbientLattice.SpecialCases.MayerVdRegularity`. General-graph
 `polymerFreeEnergy` analytic wrappers live in
