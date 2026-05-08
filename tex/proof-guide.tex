@@ -4828,7 +4828,12 @@ $\mathrm{pFE}(G, 1) = \log |\mathrm{vdCompat}(G)|$,
 \texttt{log\_vdSum\_analyticAt}),
 \texttt{AnalyticOnNhd} over $[0,\infty)$, and the sandwich
 $0 \le \mathrm{pFE}(G, t) \le |E(G)| \cdot \log(1+t)$ for
-$t \ge 0$. 20 new thin direct-instantiation wrappers.
+$t \ge 0$. 20 new thin direct-instantiation wrappers. The
+along-exhaustion and $\mathbb{Z}^d$ analytic wrappers now live in
+\texttt{AmbientLattice/SpecialCases/PolymerFreeEnergyAnalyticity.lean}
+and
+\texttt{Concrete/LatticeGraphCorrelation/PolymerFreeEnergyAnalyticity.lean}
+(moved from the legacy modules in PR~\#1861).
 
 \paragraph{Mayer expansion edge-cases (zero) + $n = 2$ +
 \texttt{abs\_le}, all volume layers (\S18.5, PR~\#1597).}
@@ -5056,8 +5061,10 @@ are lifted to the four volume layers ($\Lambda$ /
 along-exhaustion / $\mathbb{Z}^d$ $\Lambda$ / $\mathbb{Z}^d$
 along-exhaustion), giving $16$ thin direct-instantiation wrappers
 in \texttt{IsingModel/AmbientLattice/Analyticity.lean},
-\texttt{AmbientLattice/SpecialCases.lean}, and
-\texttt{Concrete/LatticeGraphCorrelation.lean}.
+\texttt{AmbientLattice/SpecialCases/PolymerFreeEnergyAnalyticity.lean},
+and
+\texttt{Concrete/LatticeGraphCorrelation/PolymerFreeEnergyAnalyticity.lean}
+(moved from the legacy modules in PR~\#1861).
 
 \paragraph{\texttt{polymerFreeEnergy} regularity, all volume layers
 (\S18.5, PR~\#1576).} The four abstract regularity statements
