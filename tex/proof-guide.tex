@@ -4912,13 +4912,25 @@ edge-case Mayer identity statements
 \texttt{\_of\_edgeFinset\_empty} (Step~620),
 \texttt{\_of\_edgeFinset\_empty\_tanh} (Step~622)) are lifted to
 the four volume layers, giving $20$ thin direct-instantiation
-wrappers.
+wrappers. The along-exhaustion and concrete $\mathbb{Z}^d$
+wrappers now live in
+\texttt{AmbientLattice/SpecialCases/MayerTrivialCases.lean}
+and
+\texttt{Concrete/LatticeGraphCorrelation/MayerTrivialCases.lean};
+the $\Lambda$-layer wrappers remain in
+\texttt{IsingModel/AmbientLattice/Analyticity.lean}.
 
 \paragraph{\texttt{mayerPartialSum\_0} $\le$
 \texttt{polymerFreeEnergy} family, all volume layers (\S18.5,
 PR~\#1591).} The three abstract `mayerPartialSum 0 ≤
 polymerFreeEnergy' inequalities (Steps 654-656) are lifted to the
 four volume layers, giving $12$ thin direct-instantiation wrappers.
+The along-exhaustion and concrete $\mathbb{Z}^d$ wrappers now live in
+\texttt{AmbientLattice/SpecialCases/MayerTrivialCases.lean}
+and
+\texttt{Concrete/LatticeGraphCorrelation/MayerTrivialCases.lean};
+the $\Lambda$-layer wrappers remain in
+\texttt{IsingModel/AmbientLattice/Analyticity.lean}.
 
 \paragraph{Mayer identity polymer\_free\_energy variants, all
 volume layers (\S18.5, PR~\#1590).} The three abstract Mayer
