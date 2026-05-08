@@ -4927,7 +4927,13 @@ identity restatements
 \texttt{\_at\_beta\_zero\_polymer\_free\_energy} (Step~652),
 \texttt{\_at\_either\_zero\_polymer\_free\_energy} (Step~653))
 are lifted to the four volume layers, giving $12$ thin
-direct-instantiation wrappers.
+direct-instantiation wrappers. The along-exhaustion and concrete
+$\mathbb{Z}^d$ wrappers now live in
+\texttt{AmbientLattice/SpecialCases/MayerEdgeCases.lean}
+and
+\texttt{Concrete/LatticeGraphCorrelation/MayerEdgeCases.lean};
+the $\Lambda$-layer wrappers remain in
+\texttt{IsingModel/AmbientLattice/Analyticity.lean}.
 
 \paragraph{\texttt{polymerFreeEnergy\_eq\_mayerPartialSum} at
 edge-case parameter slices, all volume layers (\S18.5, PR~\#1589).}
@@ -4936,7 +4942,13 @@ The four abstract named-wrapper restatements
 (Step~611), \texttt{\_at\_betaJ\_zero},
 \texttt{\_at\_beta\_zero}, \texttt{\_at\_J\_zero}
 (Step~617 specialisations)) are lifted to the four volume layers,
-giving $16$ thin direct-instantiation wrappers.
+giving $16$ thin direct-instantiation wrappers. The
+along-exhaustion and concrete $\mathbb{Z}^d$ wrappers now live in
+\texttt{AmbientLattice/SpecialCases/MayerEdgeCases.lean}
+and
+\texttt{Concrete/LatticeGraphCorrelation/MayerEdgeCases.lean};
+the $\Lambda$-layer wrappers remain in
+\texttt{IsingModel/AmbientLattice/Analyticity.lean}.
 
 \paragraph{Mayer identity at edge-case parameter slices, all
 volume layers (\S18.5, PR~\#1588).} The four abstract Mayer identity
@@ -4945,10 +4957,13 @@ statements at trivial parameter slices
 \texttt{\_at\_betaJ\_zero}, \texttt{\_at\_beta\_zero},
 \texttt{\_at\_J\_zero} (Step~609 specialisations)) are lifted to
 the four volume layers, giving $16$ thin direct-instantiation
-wrappers in
-\texttt{IsingModel/AmbientLattice/Analyticity.lean},
-\texttt{AmbientLattice/SpecialCases.lean}, and
-\texttt{Concrete/LatticeGraphCorrelation.lean}.
+wrappers. The along-exhaustion and concrete $\mathbb{Z}^d$
+wrappers now live in
+\texttt{AmbientLattice/SpecialCases/MayerEdgeCases.lean}
+and
+\texttt{Concrete/LatticeGraphCorrelation/MayerEdgeCases.lean};
+the $\Lambda$-layer wrappers remain in
+\texttt{IsingModel/AmbientLattice/Analyticity.lean}.
 
 \paragraph{\texttt{log\_vdPolymerFamilies\_sum} analyticity, all
 volume layers (\S18.5, PR~\#1587).} The four abstract analyticity
