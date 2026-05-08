@@ -9,6 +9,9 @@ new narrow APIs should be added in dedicated child modules and re-exported
 here only when they belong to the public concrete correlation surface. For
 concrete `HasDerivAt` wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.Regularity` directly. For
+concrete joint `Continuous` / `Differentiable` / pointwise joint wrappers,
+import `IsingModel.Concrete.LatticeGraphCorrelation.JointRegularity`
+directly. For
 concrete J-direction `correlationAlongExhaustion` `ContinuousAt` /
 `DifferentiableAt` wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.PointwiseRegularity` directly. For
