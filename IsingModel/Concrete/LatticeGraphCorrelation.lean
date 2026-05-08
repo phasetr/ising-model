@@ -22,6 +22,8 @@ wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.MayerEdgeCases` directly. For
 concrete Mayer trivial/no-polymer comparison wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.MayerTrivialCases` directly. For
+concrete `vdPolymerFamilies_sum` iff characterization wrappers, import
+`IsingModel.Concrete.LatticeGraphCorrelation.MayerVdIff` directly. For
 concrete Mayer and `vdPolymerFamilies_sum` regularity wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.MayerVdRegularity` directly. For
 concrete J-direction `correlationAlongExhaustion` `ContinuousAt` /
