@@ -16,6 +16,9 @@ Mayer analytic wrappers live in
 `IsingModel.AmbientLattice.SpecialCases.MayerAnalyticity`. General-graph
 `polymerFreeEnergy` analytic wrappers live in
 `IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyAnalyticity`.
+General-graph `vdPolymerFamilies_sum` and `log_vdPolymerFamilies_sum`
+analytic wrappers live in
+`IsingModel.AmbientLattice.SpecialCases.VdPolymerFamiliesAnalyticity`.
 General-graph
 `partitionFunctionAlongExhaustion` / `freeEnergyAlongExhaustion` pointwise
 regularity wrappers live in
