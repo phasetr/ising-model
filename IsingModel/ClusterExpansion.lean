@@ -4882,7 +4882,7 @@ theorem partitionFunction_analyticAt_J_general_h
     unfold partitionFunction boltzmannWeight hamiltonian interactionEnergy
     refine Finset.sum_congr rfl (fun σ _ => ?_)
     congr 1
-    ring
+    ring_nf
   rw [h_eq]
   refine Finset.analyticAt_fun_sum _ (fun σ _ => ?_)
   refine analyticAt_rexp.comp ?_
@@ -4938,7 +4938,7 @@ theorem partitionFunction_analyticAt_h
     unfold partitionFunction boltzmannWeight hamiltonian externalFieldEnergy
     refine Finset.sum_congr rfl (fun σ _ => ?_)
     congr 1
-    ring
+    ring_nf
   rw [h_eq]
   refine Finset.analyticAt_fun_sum _ (fun σ _ => ?_)
   refine analyticAt_rexp.comp ?_
@@ -5111,7 +5111,7 @@ theorem correlation_numerator_analyticAt_joint
     refine Finset.sum_congr rfl (fun σ _ => ?_)
     unfold boltzmannWeight hamiltonian interactionEnergy externalFieldEnergy
     congr 1
-    ring
+    ring_nf
   rw [h_eq]
   refine Finset.analyticAt_fun_sum _ (fun σ _ => ?_)
   refine analyticAt_const.mul ?_
@@ -5377,7 +5377,7 @@ theorem gibbsExpectation_numerator_analyticAt_joint
     refine Finset.sum_congr rfl (fun σ _ => ?_)
     unfold boltzmannWeight hamiltonian interactionEnergy externalFieldEnergy
     congr 1
-    ring
+    ring_nf
   rw [h_eq]
   refine Finset.analyticAt_fun_sum _ (fun σ _ => ?_)
   refine analyticAt_const.mul ?_
