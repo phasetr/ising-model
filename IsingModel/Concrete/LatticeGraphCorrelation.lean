@@ -15,6 +15,8 @@ directly. For concrete joint `AnalyticAt` / `AnalyticOnNhd` wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.JointAnalyticity` directly. For
 concrete Mayer `AnalyticAt` / `AnalyticOnNhd` wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.MayerAnalyticity` directly. For
+concrete Mayer basic at-zero / at-one identity wrappers, import
+`IsingModel.Concrete.LatticeGraphCorrelation.MayerBasicIdentities` directly. For
 concrete Mayer edge-case identity and `polymerFreeEnergy = mayerPartialSum`
 wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.MayerEdgeCases` directly. For
