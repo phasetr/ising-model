@@ -11,7 +11,8 @@ concrete `HasDerivAt` wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.Regularity` directly. For
 concrete joint `Continuous` / `Differentiable` / pointwise joint wrappers,
 import `IsingModel.Concrete.LatticeGraphCorrelation.JointRegularity`
-directly. For
+directly. For concrete joint `AnalyticAt` / `AnalyticOnNhd` wrappers, import
+`IsingModel.Concrete.LatticeGraphCorrelation.JointAnalyticity` directly. For
 concrete J-direction `correlationAlongExhaustion` `ContinuousAt` /
 `DifferentiableAt` wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.PointwiseRegularity` directly. For

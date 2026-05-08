@@ -4136,7 +4136,12 @@ wrappers (along-ex + $\mathbb{Z}^d$)
 wrappers, each a thin instantiation of the existing $\Lambda$-layer
 \texttt{partitionFunction\LeanLambda\_*\_joint} /
 \texttt{freeEnergy\LeanLambda\_*\_joint} at
-$\Lambda := \Lambda.\mathrm{volume}\,n$.
+$\Lambda := \Lambda.\mathrm{volume}\,n$. The along-exhaustion wrappers
+now live in
+\texttt{AmbientLattice/SpecialCases/JointAnalyticity.lean}, and the
+$\mathbb{Z}^d$ wrappers live in
+\texttt{Concrete/LatticeGraphCorrelation/JointAnalyticity.lean}
+(moved from the legacy modules in PR~\#1860).
 
 \paragraph{Joint AnalyticAt + AnalyticOnNhd wrappers across
 all 4 layers (\S17.5--\S17.6, PR~\#1641).} Adds joint (in
@@ -4146,7 +4151,11 @@ $(\beta, J, h)$) AnalyticAt and AnalyticOnNhd wrappers for
 and $\mathbb{Z}^d$ concrete layers. 24 new theorems. The
 susceptibility joint AnalyticAt case is proved as
 \texttt{Finset.analyticAt\_fun\_sum} over the
-\texttt{truncated2} summands.
+\texttt{truncated2} summands. The along-exhaustion wrappers now live
+in \texttt{AmbientLattice/SpecialCases/JointAnalyticity.lean}, and the
+$\mathbb{Z}^d$ wrappers live in
+\texttt{Concrete/LatticeGraphCorrelation/JointAnalyticity.lean}
+(moved from the legacy modules in PR~\#1860).
 
 \paragraph{Joint ContinuousAt + DifferentiableAt wrappers across
 all 4 layers (\S17.5--\S17.6, PR~\#1640).} Adds joint pointwise
@@ -4155,7 +4164,11 @@ for \texttt{correlation}, \texttt{magnetization}, and
 \texttt{susceptibility} across abstract, $\Lambda$,
 along-exhaustion, and $\mathbb{Z}^d$ concrete layers. 30 new
 theorems, each derived from PR~\#1639 via
-\texttt{.continuousAt} / \texttt{.differentiableAt}.
+\texttt{.continuousAt} / \texttt{.differentiableAt}. The
+along-exhaustion and $\mathbb{Z}^d$ wrapper layers now live in
+\texttt{AmbientLattice/SpecialCases/JointRegularity.lean} and
+\texttt{Concrete/LatticeGraphCorrelation/JointRegularity.lean}
+(moved from the legacy modules in PR~\#1859).
 
 \paragraph{Joint Continuous + Differentiable wrappers across
 all 4 layers
@@ -4174,7 +4187,11 @@ $\Lambda$- and along-ex-layer
 (12). The susceptibility joint case is proved as a finite sum of
 \texttt{truncated2 = corr(\{i,j\}) - corr(\{i\})·corr(\{j\})},
 each Continuous / Differentiable joint via
-\texttt{correlation\_\{continuous, differentiable\}\_joint}.
+\texttt{correlation\_\{continuous, differentiable\}\_joint}. The
+along-exhaustion and $\mathbb{Z}^d$ wrapper layers now live in
+\texttt{AmbientLattice/SpecialCases/JointRegularity.lean} and
+\texttt{Concrete/LatticeGraphCorrelation/JointRegularity.lean}
+(moved from the legacy modules in PR~\#1859).
 
 \paragraph{$\mathbb{Z}^d$ concrete
 \texttt{partitionFunctionAlongExhaustion} /
