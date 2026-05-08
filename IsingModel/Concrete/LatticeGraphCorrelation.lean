@@ -15,6 +15,8 @@ directly. For concrete joint `AnalyticAt` / `AnalyticOnNhd` wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.JointAnalyticity` directly. For
 concrete Mayer `AnalyticAt` / `AnalyticOnNhd` wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.MayerAnalyticity` directly. For
+concrete Mayer and `vdPolymerFamilies_sum` regularity wrappers, import
+`IsingModel.Concrete.LatticeGraphCorrelation.MayerVdRegularity` directly. For
 concrete J-direction `correlationAlongExhaustion` `ContinuousAt` /
 `DifferentiableAt` wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.PointwiseRegularity` directly. For

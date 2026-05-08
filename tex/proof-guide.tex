@@ -4975,12 +4975,13 @@ abstract $\beta$/$J$ regularity statements
 (\texttt{vdPolymerFamilies\_sum\_tanh\_continuous\_\{beta,J\}},
 \texttt{\_differentiable\_\{beta,J\}},
 \texttt{\_analyticAt\_\{beta,J\}}, Steps 556, 559, 562) are lifted
-to the four volume layers, giving $24$ thin direct-instantiation
-wrappers in
-\texttt{IsingModel/AmbientLattice/Analyticity.lean},
-\texttt{AmbientLattice/SpecialCases.lean}, and
-\texttt{Concrete/LatticeGraphCorrelation.lean}. The along-exhaustion
-and concrete \texttt{AnalyticAt} wrappers from this family now live in
+across the four volume layers. The along-exhaustion
+and concrete \texttt{Continuous} / \texttt{Differentiable} wrappers from
+this family now live in
+\texttt{AmbientLattice/SpecialCases/MayerVdRegularity.lean}
+and
+\texttt{Concrete/LatticeGraphCorrelation/MayerVdRegularity.lean};
+the along-exhaustion and concrete \texttt{AnalyticAt} wrappers remain in
 \texttt{AmbientLattice/SpecialCases/VdPolymerFamiliesAnalyticity.lean}
 and
 \texttt{Concrete/LatticeGraphCorrelation/VdPolymerFamiliesAnalyticity.lean};
@@ -4994,12 +4995,14 @@ statements for the polymer-family sum
 (\texttt{vdPolymerFamilies\_sum\_continuous} (Step~555),
 \texttt{\_differentiable} (Step~558), \texttt{\_analyticAt}
 (Step~561), \texttt{\_hasDerivAt} with explicit polynomial
-derivative (Step~575)) are lifted to the four volume layers,
-giving $16$ thin direct-instantiation wrappers in
-\texttt{IsingModel/AmbientLattice/Analyticity.lean},
-\texttt{AmbientLattice/SpecialCases.lean}, and
-\texttt{Concrete/LatticeGraphCorrelation.lean}. The along-exhaustion
-and concrete \texttt{AnalyticAt} wrappers from this family now live in
+derivative (Step~575)) are lifted across the four volume layers.
+The along-exhaustion
+and concrete \texttt{Continuous} / \texttt{Differentiable} /
+\texttt{HasDerivAt} wrappers from this family now live in
+\texttt{AmbientLattice/SpecialCases/MayerVdRegularity.lean}
+and
+\texttt{Concrete/LatticeGraphCorrelation/MayerVdRegularity.lean};
+the along-exhaustion and concrete \texttt{AnalyticAt} wrappers remain in
 \texttt{AmbientLattice/SpecialCases/VdPolymerFamiliesAnalyticity.lean}
 and
 \texttt{Concrete/LatticeGraphCorrelation/VdPolymerFamiliesAnalyticity.lean};
@@ -5012,12 +5015,12 @@ the $\Lambda$-layer wrapper remains in
 abstract $\beta$/$J$ regularity statements (continuous,
 differentiable, analyticAt, each in $\beta$ and $J$) for
 \texttt{mayerExpansionTerm} composed with $\tanh(\beta J)$ are
-lifted to the four volume layers, giving $24$ thin
-direct-instantiation wrappers in
-\texttt{IsingModel/AmbientLattice/Analyticity.lean},
-\texttt{AmbientLattice/SpecialCases.lean}, and
-\texttt{Concrete/LatticeGraphCorrelation.lean}. The along-exhaustion
-and concrete analytic wrappers from this family now live in
+lifted across the four volume layers. The along-exhaustion
+and concrete \texttt{Continuous} / \texttt{Differentiable} wrappers from
+this family now live in
+\texttt{AmbientLattice/SpecialCases/MayerVdRegularity.lean} and
+\texttt{Concrete/LatticeGraphCorrelation/MayerVdRegularity.lean}; the
+along-exhaustion and concrete analytic wrappers remain in
 \texttt{AmbientLattice/SpecialCases/MayerAnalyticity.lean} and
 \texttt{Concrete/LatticeGraphCorrelation/MayerAnalyticity.lean}; the
 $\Lambda$-layer wrappers remain in
@@ -5029,11 +5032,12 @@ form), all volume layers (\S18.5, PR~\#1583).} The eight abstract
 $\beta$/$J$ regularity statements (continuous, differentiable,
 analyticAt, analyticOnNhd, each in $\beta$ and $J$) for
 \texttt{mayerPartialSum} composed with $\tanh(\beta J)$ are lifted
-to the four volume layers, giving $32$ thin direct-instantiation
-wrappers in \texttt{IsingModel/AmbientLattice/Analyticity.lean},
-\texttt{AmbientLattice/SpecialCases.lean}, and
-\texttt{Concrete/LatticeGraphCorrelation.lean}. The along-exhaustion
-and concrete analytic wrappers from this family now live in
+across the four volume layers. The along-exhaustion
+and concrete \texttt{Continuous} / \texttt{Differentiable} wrappers from
+this family now live in
+\texttt{AmbientLattice/SpecialCases/MayerVdRegularity.lean} and
+\texttt{Concrete/LatticeGraphCorrelation/MayerVdRegularity.lean}; the
+along-exhaustion and concrete analytic wrappers remain in
 \texttt{AmbientLattice/SpecialCases/MayerAnalyticity.lean} and
 \texttt{Concrete/LatticeGraphCorrelation/MayerAnalyticity.lean}; the
 $\Lambda$-layer wrappers remain in
@@ -5045,12 +5049,12 @@ $\Lambda$-layer wrappers remain in
 (\texttt{mayerExpansionTerm\_continuous} (Step~588),
 \texttt{\_differentiable} (Step~589),
 \texttt{\_analyticAt} and \texttt{\_analyticOnNhd} (Step~590)) are
-lifted to the four volume layers, giving $16$ thin
-direct-instantiation wrappers in
-\texttt{IsingModel/AmbientLattice/Analyticity.lean},
-\texttt{AmbientLattice/SpecialCases.lean}, and
-\texttt{Concrete/LatticeGraphCorrelation.lean}. The along-exhaustion
-and concrete analytic wrappers from this family now live in
+lifted across the four volume layers. The along-exhaustion
+and concrete \texttt{Continuous} / \texttt{Differentiable} wrappers from
+this family now live in
+\texttt{AmbientLattice/SpecialCases/MayerVdRegularity.lean} and
+\texttt{Concrete/LatticeGraphCorrelation/MayerVdRegularity.lean}; the
+along-exhaustion and concrete analytic wrappers remain in
 \texttt{AmbientLattice/SpecialCases/MayerAnalyticity.lean} and
 \texttt{Concrete/LatticeGraphCorrelation/MayerAnalyticity.lean}; the
 $\Lambda$-layer wrappers remain in
@@ -5062,12 +5066,13 @@ $\Lambda$-layer wrappers remain in
 (\texttt{mayerPartialSum\_continuous},
 \texttt{\_differentiable}, \texttt{\_analyticAt} (Step~591),
 \texttt{\_continuousOn}, \texttt{\_differentiableOn} (Step~628))
-are lifted to the four volume layers, giving $20$ thin
-direct-instantiation wrappers in
-\texttt{IsingModel/AmbientLattice/Analyticity.lean},
-\texttt{AmbientLattice/SpecialCases.lean}, and
-\texttt{Concrete/LatticeGraphCorrelation.lean}. The along-exhaustion
-and concrete \texttt{AnalyticAt} wrappers from this family now live in
+are lifted across the four volume layers. The along-exhaustion
+and concrete \texttt{Continuous} / \texttt{Differentiable} /
+\texttt{ContinuousOn} / \texttt{DifferentiableOn} wrappers from this
+family now live in
+\texttt{AmbientLattice/SpecialCases/MayerVdRegularity.lean} and
+\texttt{Concrete/LatticeGraphCorrelation/MayerVdRegularity.lean}; the
+along-exhaustion and concrete \texttt{AnalyticAt} wrappers remain in
 \texttt{AmbientLattice/SpecialCases/MayerAnalyticity.lean} and
 \texttt{Concrete/LatticeGraphCorrelation/MayerAnalyticity.lean}; the
 $\Lambda$-layer wrapper remains in
