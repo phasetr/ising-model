@@ -26,6 +26,9 @@ directly. For concrete per-parameter `partitionFunctionAlongExhaustion` /
 `IsingModel.Concrete.LatticeGraphCorrelation.PartitionFreeEnergyPointwiseRegularity`
 directly. For concrete `polymerFreeEnergy` analytic wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.PolymerFreeEnergyAnalyticity`
+directly. For concrete `vdPolymerFamilies_sum` and
+`log_vdPolymerFamilies_sum` analytic wrappers, import
+`IsingModel.Concrete.LatticeGraphCorrelation.VdPolymerFamiliesAnalyticity`
 directly. For concrete per-parameter `susceptibilityAlongExhaustion`
 pointwise wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.SusceptibilityPointwiseRegularity`

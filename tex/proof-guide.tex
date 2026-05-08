@@ -4779,7 +4779,15 @@ $\mathbb{Z}^d$ \textit{Lambda}, $\mathbb{Z}^d$ along-ex):
 \texttt{\_continuous}, \texttt{\_analyticAt},
 \texttt{\_lt\_one\_eventually}, and
 \texttt{allPolymers\_eq\_empty\_of\_edgeFinset\_empty}.
-28 new thin direct-instantiation wrappers.
+28 new thin direct-instantiation wrappers. The along-exhaustion and
+concrete \texttt{\_analyticAt} wrappers for
+\texttt{vdPolymerFamilies\_sum\_minus\_one} now live in
+\texttt{AmbientLattice/SpecialCases/VdPolymerFamiliesAnalyticity.lean}
+and
+\texttt{Concrete/LatticeGraphCorrelation/VdPolymerFamiliesAnalyticity.lean};
+the $\Lambda$-layer wrapper remains in
+\texttt{IsingModel/AmbientLattice/Analyticity.lean}
+(moved from the legacy modules in PR~\#1863).
 
 \paragraph{Mayer recurrence + \texttt{polymerFreeEnergy} hasSum +
 $\varepsilon(t) \to 0$ tendsto, all volume layers (\S18.5,
@@ -4946,7 +4954,14 @@ the four volume layers, giving $16$ thin direct-instantiation
 wrappers in
 \texttt{IsingModel/AmbientLattice/Analyticity.lean},
 \texttt{AmbientLattice/SpecialCases.lean}, and
-\texttt{Concrete/LatticeGraphCorrelation.lean}.
+\texttt{Concrete/LatticeGraphCorrelation.lean}. The along-exhaustion
+and concrete analytic wrappers from this family now live in
+\texttt{AmbientLattice/SpecialCases/VdPolymerFamiliesAnalyticity.lean}
+and
+\texttt{Concrete/LatticeGraphCorrelation/VdPolymerFamiliesAnalyticity.lean};
+the $\Lambda$-layer wrappers remain in
+\texttt{IsingModel/AmbientLattice/Analyticity.lean}
+(moved from the legacy modules in PR~\#1863).
 
 \paragraph{\texttt{vdPolymerFamilies\_sum} $\beta$ / $J$ regularity
 (tanh form), all volume layers (\S18.5, PR~\#1586).} The six
@@ -4958,7 +4973,14 @@ to the four volume layers, giving $24$ thin direct-instantiation
 wrappers in
 \texttt{IsingModel/AmbientLattice/Analyticity.lean},
 \texttt{AmbientLattice/SpecialCases.lean}, and
-\texttt{Concrete/LatticeGraphCorrelation.lean}.
+\texttt{Concrete/LatticeGraphCorrelation.lean}. The along-exhaustion
+and concrete \texttt{AnalyticAt} wrappers from this family now live in
+\texttt{AmbientLattice/SpecialCases/VdPolymerFamiliesAnalyticity.lean}
+and
+\texttt{Concrete/LatticeGraphCorrelation/VdPolymerFamiliesAnalyticity.lean};
+the $\Lambda$-layer wrappers remain in
+\texttt{IsingModel/AmbientLattice/Analyticity.lean}
+(moved from the legacy modules in PR~\#1863).
 
 \paragraph{\texttt{vdPolymerFamilies\_sum} regularity in $t$, all
 volume layers (\S18.5, PR~\#1585).} The four abstract regularity
@@ -4970,7 +4992,14 @@ derivative (Step~575)) are lifted to the four volume layers,
 giving $16$ thin direct-instantiation wrappers in
 \texttt{IsingModel/AmbientLattice/Analyticity.lean},
 \texttt{AmbientLattice/SpecialCases.lean}, and
-\texttt{Concrete/LatticeGraphCorrelation.lean}.
+\texttt{Concrete/LatticeGraphCorrelation.lean}. The along-exhaustion
+and concrete \texttt{AnalyticAt} wrappers from this family now live in
+\texttt{AmbientLattice/SpecialCases/VdPolymerFamiliesAnalyticity.lean}
+and
+\texttt{Concrete/LatticeGraphCorrelation/VdPolymerFamiliesAnalyticity.lean};
+the $\Lambda$-layer wrapper remains in
+\texttt{IsingModel/AmbientLattice/Analyticity.lean}
+(moved from the legacy modules in PR~\#1863).
 
 \paragraph{\texttt{mayerExpansionTerm} $\beta$ / $J$ regularity
 (tanh form), all volume layers (\S18.5, PR~\#1584).} The six
