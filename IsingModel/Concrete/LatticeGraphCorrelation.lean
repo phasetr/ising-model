@@ -31,7 +31,9 @@ directly. For concrete `vdPolymerFamilies_sum` and
 `IsingModel.Concrete.LatticeGraphCorrelation.VdPolymerFamiliesAnalyticity`
 directly. For concrete high-temperature convergence and correction wrappers,
 import `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperature`
-directly. For concrete per-parameter `susceptibilityAlongExhaustion`
+directly. For concrete high-temperature expansion and bound wrappers, import
+`IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBounds` directly.
+For concrete per-parameter `susceptibilityAlongExhaustion`
 pointwise wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.SusceptibilityPointwiseRegularity`
 directly.
