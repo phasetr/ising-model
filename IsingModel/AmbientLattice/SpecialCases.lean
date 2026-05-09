@@ -30,6 +30,8 @@ Mayer and `vdPolymerFamilies_sum` regularity wrappers live in
 `IsingModel.AmbientLattice.SpecialCases.MayerVdRegularity`. General-graph
 `polymerFreeEnergy` analytic wrappers live in
 `IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyAnalyticity`.
+General-graph basic `polymerFreeEnergy` at-zero / at-one / sandwich wrappers
+live in `IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBasic`.
 General-graph `polymerFreeEnergy` regularity and bound wrappers live in
 `IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBounds`.
 General-graph `vdPolymerFamilies_sum` and `log_vdPolymerFamilies_sum`

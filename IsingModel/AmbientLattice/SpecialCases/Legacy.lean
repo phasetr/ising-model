@@ -14,6 +14,7 @@ import IsingModel.AmbientLattice.SpecialCases.MayerVdIff
 import IsingModel.AmbientLattice.SpecialCases.MayerVdRegularity
 import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyPointwiseRegularity
 import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyAnalyticity
+import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBasic
 import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBounds
 import IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularity
 import IsingModel.AmbientLattice.SpecialCases.VdPolymerFamiliesAnalyticity
@@ -184,38 +185,6 @@ theorem partitionFunctionAlongExhaustion_monotone_abs_h
     partitionFunctionAlongExhaustion G Λ (⟨J, h₁, β⟩ : IsingParams ℝ) n
       ≤ partitionFunctionAlongExhaustion G Λ (⟨J, h₂, β⟩ : IsingParams ℝ) n :=
   partitionFunctionΛ_monotone_abs_h G (Λ.volume n) J β hJ hβ hh
-
-/-! ### §18.5 polymerFreeEnergy at-zero/at-one + sandwich
-along-ex -/
-
-/-- **Along-ex: polymerFreeEnergy at `t = 0`** = 0. -/
-theorem polymerFreeEnergyAlongExhaustion_at_zero
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet] (n : ℕ) :
-    IsingModel.polymerFreeEnergy
-        (inducedGraph G (Λ.volume n)) 0 = 0 :=
-  polymerFreeEnergy_Λ_at_zero G (Λ.volume n)
-
-/-- **Along-ex: polymerFreeEnergy at `t = 1`** =
-`log |vdCompatiblePolymerFamilies|`. -/
-theorem polymerFreeEnergyAlongExhaustion_at_one
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet] (n : ℕ) :
-    IsingModel.polymerFreeEnergy (inducedGraph G (Λ.volume n)) 1 =
-      Real.log (IsingModel.vdCompatiblePolymerFamilies
-        (inducedGraph G (Λ.volume n))).card :=
-  polymerFreeEnergy_Λ_at_one G (Λ.volume n)
-
-/-- **Along-ex: polymerFreeEnergy sandwich for `t ≥ 0`**. -/
-theorem polymerFreeEnergyAlongExhaustion_sandwich_of_nonneg
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    {t : ℝ} (ht : 0 ≤ t) (n : ℕ) :
-    0 ≤ IsingModel.polymerFreeEnergy (inducedGraph G (Λ.volume n)) t ∧
-    IsingModel.polymerFreeEnergy (inducedGraph G (Λ.volume n)) t ≤
-      (inducedGraph G (Λ.volume n)).edgeFinset.card *
-        Real.log (1 + t) :=
-  polymerFreeEnergy_Λ_sandwich_of_nonneg G (Λ.volume n) ht
 
 /-! ### §18.5 polymerFreeEnergy tanh-bound + ferro + hasDerivAt +
 eq_log_one_add along-ex wraps -/
