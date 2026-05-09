@@ -69,6 +69,9 @@ General-graph high-temperature convergence and correction wrappers live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperature`.
 General-graph high-temperature expansion and bound wrappers live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureBounds`.
+General-graph high-temperature partition-function/free-energy capstone
+wrappers live in
+`IsingModel.AmbientLattice.SpecialCases.HighTemperatureCapstones`.
 General-graph
 `partitionFunctionAlongExhaustion` / `freeEnergyAlongExhaustion` pointwise
 regularity wrappers live in
