@@ -7,7 +7,9 @@ This module is intentionally a thin re-export. The legacy monolithic
 implementation lives in `IsingModel.Concrete.LatticeGraphCorrelation.Legacy`;
 new narrow APIs should be added in dedicated child modules and re-exported
 here only when they belong to the public concrete correlation surface. For
-concrete `HasDerivAt` wrappers, import
+concrete free-energy per-direction analyticity wrappers, import
+`IsingModel.Concrete.LatticeGraphCorrelation.FreeEnergyAnalyticity` directly.
+For concrete `HasDerivAt` wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.Regularity` directly. For
 concrete joint `Continuous` / `Differentiable` / pointwise joint wrappers,
 import `IsingModel.Concrete.LatticeGraphCorrelation.JointRegularity`
