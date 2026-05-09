@@ -62,6 +62,9 @@ directly. For concrete per-parameter `partitionFunctionAlongExhaustion` /
 `IsingModel.Concrete.LatticeGraphCorrelation.PartitionFreeEnergyPointwiseRegularity`
 directly. For concrete partition-function regularity-at-zero-field wrappers,
 import `IsingModel.Concrete.LatticeGraphCorrelation.PartitionFunctionRegularity`
+directly. For concrete partition-function joint and general-h analyticity
+wrappers, import
+`IsingModel.Concrete.LatticeGraphCorrelation.PartitionFunctionGeneralAnalyticity`
 directly. For concrete `polymerFreeEnergy` analytic wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.PolymerFreeEnergyAnalyticity`
 directly. For concrete basic `polymerFreeEnergy` at-zero / at-one / sandwich
