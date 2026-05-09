@@ -23,7 +23,10 @@ wrappers, import
 concrete Mayer expansion `n = 2`, no-polymer, edgeless, and absolute-bound
 wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.MayerExpansionEdgeCases` directly. For
-concrete Mayer recurrence, `polymerFreeEnergy` `HasSum`, and
+concrete Mayer epsilon infrastructure, first-term sign, and edgeless
+`allPolymers` wrappers, import
+`IsingModel.Concrete.LatticeGraphCorrelation.MayerEpsilonInfrastructure`
+directly. For concrete Mayer recurrence, `polymerFreeEnergy` `HasSum`, and
 `vdPolymerFamilies_sum - 1` tendsto-zero wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.MayerRecurrenceHasSum`
 directly. For
