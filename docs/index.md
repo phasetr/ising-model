@@ -41,6 +41,8 @@ View* (2nd ed., 1987).
 > `freeEnergyAlongExhaustion` pointwise wrappers,
 > `IsingModel.Concrete.LatticeGraphCorrelation.PartitionFunctionRegularity`
 > for concrete partition-function regularity-at-zero-field wrappers,
+> `IsingModel.Concrete.LatticeGraphCorrelation.PartitionFreeEnergyRegularity`
+> for concrete partition/free-energy Continuous and Differentiable wrappers,
 > `IsingModel.Concrete.LatticeGraphCorrelation.PartitionFunctionGeneralAnalyticity`
 > for concrete partition-function joint and general-h analyticity wrappers,
 > `IsingModel.Concrete.LatticeGraphCorrelation.FreeEnergyAnalyticity`
@@ -173,6 +175,9 @@ View* (2nd ed., 1987).
 > `IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyPointwiseRegularity`
 > for ambient `partitionFunctionAlongExhaustion` / `freeEnergyAlongExhaustion`
 > pointwise wrappers, plus
+> `IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyRegularity`
+> for ambient `partitionFunctionAlongExhaustion` / `freeEnergyAlongExhaustion`
+> Continuous and Differentiable wrappers, plus
 > `IsingModel.AmbientLattice.SpecialCases.PartitionFunctionRegularity`
 > for ambient `partitionFunctionAlongExhaustion`
 > regularity-at-zero-field wrappers, plus
