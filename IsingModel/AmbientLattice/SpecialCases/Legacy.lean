@@ -9,6 +9,7 @@ import IsingModel.AmbientLattice.SpecialCases.MayerBasicIdentities
 import IsingModel.AmbientLattice.SpecialCases.MayerEdgeCases
 import IsingModel.AmbientLattice.SpecialCases.MayerExpansionEdgeCases
 import IsingModel.AmbientLattice.SpecialCases.MayerEpsilonInfrastructure
+import IsingModel.AmbientLattice.SpecialCases.MayerEpsilonPositivity
 import IsingModel.AmbientLattice.SpecialCases.MayerRecurrenceHasSum
 import IsingModel.AmbientLattice.SpecialCases.MayerTrivialCases
 import IsingModel.AmbientLattice.SpecialCases.MayerVdBounds
@@ -188,89 +189,6 @@ theorem partitionFunctionAlongExhaustion_monotone_abs_h
     partitionFunctionAlongExhaustion G Λ (⟨J, h₁, β⟩ : IsingParams ℝ) n
       ≤ partitionFunctionAlongExhaustion G Λ (⟨J, h₂, β⟩ : IsingParams ℝ) n :=
   partitionFunctionΛ_monotone_abs_h G (Λ.volume n) J β hJ hβ hh
-
-/-! ### §18.5 ε(t) / polymerFreeEnergy positivity-iff along-ex
-wraps -/
-
-/-- **Along-ex: 0 < ε(t) ↔ 0 < t ∧ allPolymers ≠ ∅** under `0 ≤ t`. -/
-theorem vdPolymerFamilies_sumAlongExhaustion_minus_one_pos_iff
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    {t : ℝ} (ht : 0 ≤ t) (n : ℕ) :
-    0 < (∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
-              (inducedGraph G (Λ.volume n))).erase ∅,
-            ∏ P ∈ Γ, t ^ P.card) ↔
-      0 < t ∧
-        (IsingModel.allPolymers
-          (inducedGraph G (Λ.volume n))).Nonempty :=
-  vdPolymerFamilies_sum_Λ_minus_one_pos_iff G (Λ.volume n) ht
-
-/-- **Along-ex: ε(t) = 0 ↔ t = 0 ∨ allPolymers = ∅**. -/
-theorem vdPolymerFamilies_sumAlongExhaustion_minus_one_eq_zero_iff
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    {t : ℝ} (ht : 0 ≤ t) (n : ℕ) :
-    (∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
-              (inducedGraph G (Λ.volume n))).erase ∅,
-          ∏ P ∈ Γ, t ^ P.card) = 0 ↔
-      t = 0 ∨
-        IsingModel.allPolymers
-          (inducedGraph G (Λ.volume n)) = ∅ :=
-  vdPolymerFamilies_sum_Λ_minus_one_eq_zero_iff G (Λ.volume n) ht
-
-/-- **Along-ex: 0 < ε(tanh) ↔ 0 < tanh ∧ allPolymers ≠ ∅**. -/
-theorem
-vdPolymerFamilies_sumAlongExhaustion_minus_one_tanh_pos_iff
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    {β J : ℝ} (hβJ : 0 ≤ β * J) (n : ℕ) :
-    0 < (∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
-              (inducedGraph G (Λ.volume n))).erase ∅,
-            ∏ P ∈ Γ, (Real.tanh (β * J)) ^ P.card) ↔
-      0 < Real.tanh (β * J) ∧
-        (IsingModel.allPolymers
-          (inducedGraph G (Λ.volume n))).Nonempty :=
-  vdPolymerFamilies_sum_Λ_minus_one_tanh_pos_iff G (Λ.volume n) hβJ
-
-/-- **Along-ex: ε(tanh) = 0 ↔ tanh = 0 ∨ allPolymers = ∅**. -/
-theorem
-vdPolymerFamilies_sumAlongExhaustion_minus_one_tanh_eq_zero_iff
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    {β J : ℝ} (hβJ : 0 ≤ β * J) (n : ℕ) :
-    (∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
-              (inducedGraph G (Λ.volume n))).erase ∅,
-          ∏ P ∈ Γ, (Real.tanh (β * J)) ^ P.card) = 0 ↔
-      Real.tanh (β * J) = 0 ∨
-        IsingModel.allPolymers
-          (inducedGraph G (Λ.volume n)) = ∅ :=
-  vdPolymerFamilies_sum_Λ_minus_one_tanh_eq_zero_iff
-    G (Λ.volume n) hβJ
-
-/-- **Along-ex: 0 < polymerFreeEnergy(tanh) ↔ 0 < tanh ∧
-allPolymers ≠ ∅**. -/
-theorem polymerFreeEnergyAlongExhaustion_tanh_pos_iff
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    {β J : ℝ} (hβJ : 0 ≤ β * J) (n : ℕ) :
-    0 < IsingModel.polymerFreeEnergy
-          (inducedGraph G (Λ.volume n)) (Real.tanh (β * J)) ↔
-      0 < Real.tanh (β * J) ∧
-        (IsingModel.allPolymers
-          (inducedGraph G (Λ.volume n))).Nonempty :=
-  polymerFreeEnergy_Λ_tanh_pos_iff G (Λ.volume n) hβJ
-
-/-- **Along-ex: polymerFreeEnergy(tanh) = 0 ↔ tanh = 0 ∨
-allPolymers = ∅**. -/
-theorem polymerFreeEnergyAlongExhaustion_tanh_eq_zero_iff
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    {β J : ℝ} (hβJ : 0 ≤ β * J) (n : ℕ) :
-    IsingModel.polymerFreeEnergy
-        (inducedGraph G (Λ.volume n)) (Real.tanh (β * J)) = 0 ↔
-      Real.tanh (β * J) = 0 ∨
-        IsingModel.allPolymers (inducedGraph G (Λ.volume n)) = ∅ :=
-  polymerFreeEnergy_Λ_tanh_eq_zero_iff G (Λ.volume n) hβJ
 
 /-! ### §18.5 strict-mono / strict-pos under polymers ≠ ∅ along-ex
 wraps -/
