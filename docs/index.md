@@ -49,6 +49,9 @@ View* (2nd ed., 1987).
 > concrete Mayer basic at-zero / at-one identity wrappers,
 > `IsingModel.Concrete.LatticeGraphCorrelation.MayerEdgeCases` for concrete
 > Mayer edge-case identity and `polymerFreeEnergy = mayerPartialSum` wrappers,
+> `IsingModel.Concrete.LatticeGraphCorrelation.MayerExpansionEdgeCases` for
+> concrete Mayer expansion `n = 2`, no-polymer, edgeless, and absolute-bound
+> wrappers,
 > `IsingModel.Concrete.LatticeGraphCorrelation.MayerTrivialCases` for concrete
 > Mayer trivial/no-polymer comparison wrappers,
 > `IsingModel.Concrete.LatticeGraphCorrelation.MayerVdBounds` for concrete
@@ -81,6 +84,9 @@ View* (2nd ed., 1987).
 > `IsingModel.AmbientLattice.SpecialCases.MayerEdgeCases` for ambient
 > along-exhaustion Mayer edge-case identity and
 > `polymerFreeEnergy = mayerPartialSum` wrappers,
+> `IsingModel.AmbientLattice.SpecialCases.MayerExpansionEdgeCases` for ambient
+> along-exhaustion Mayer expansion `n = 2`, no-polymer, edgeless, and
+> absolute-bound wrappers,
 > `IsingModel.AmbientLattice.SpecialCases.MayerTrivialCases` for ambient
 > along-exhaustion Mayer trivial/no-polymer comparison wrappers,
 > `IsingModel.AmbientLattice.SpecialCases.MayerVdBounds` for ambient

@@ -20,6 +20,9 @@ concrete Mayer basic at-zero / at-one identity wrappers, import
 concrete Mayer edge-case identity and `polymerFreeEnergy = mayerPartialSum`
 wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.MayerEdgeCases` directly. For
+concrete Mayer expansion `n = 2`, no-polymer, edgeless, and absolute-bound
+wrappers, import
+`IsingModel.Concrete.LatticeGraphCorrelation.MayerExpansionEdgeCases` directly. For
 concrete Mayer trivial/no-polymer comparison wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.MayerTrivialCases` directly. For
 concrete `vdPolymerFamilies_sum` bound wrappers, import
