@@ -4760,7 +4760,12 @@ $[0,\infty)$),
 (ℤ$^d$ along-ex \texttt{\_minus\_one\_tanh\_pos}) drops the
 second \texttt{\_of\_tanh\_pos\_} from its name to fit under the
 100-character linter budget; the hypothesis is preserved in the
-\texttt{h\_tanh\_pos} parameter.
+\texttt{h\_tanh\_pos} parameter. The along-exhaustion and concrete
+$\mathbb{Z}^d$ wrappers now live in
+\texttt{AmbientLattice/SpecialCases/MayerStrictPositivity.lean}
+and
+\texttt{Concrete/LatticeGraphCorrelation/MayerStrictPositivity.lean}
+(moved from the legacy modules in PR~\#1879).
 
 \paragraph{$\varepsilon(t)$ / \texttt{polymerFreeEnergy}
 positivity / zero iff family, all volume layers (\S18.5,

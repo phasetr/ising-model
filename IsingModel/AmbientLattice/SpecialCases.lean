@@ -28,7 +28,9 @@ live in `IsingModel.AmbientLattice.SpecialCases.MayerEpsilonPositivity`.
 General-graph Mayer recurrence, `polymerFreeEnergy` `HasSum`, and
 `vdPolymerFamilies_sum - 1` tendsto-zero wrappers live in
 `IsingModel.AmbientLattice.SpecialCases.MayerRecurrenceHasSum`.
-General-graph
+General-graph strict-monotonicity and strict-positivity wrappers under
+`allPolymers` nonempty hypotheses live in
+`IsingModel.AmbientLattice.SpecialCases.MayerStrictPositivity`. General-graph
 Mayer trivial/no-polymer comparison wrappers live in
 `IsingModel.AmbientLattice.SpecialCases.MayerTrivialCases`. General-graph
 `vdPolymerFamilies_sum` bound wrappers live in
