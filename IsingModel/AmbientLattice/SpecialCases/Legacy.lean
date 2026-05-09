@@ -8,6 +8,7 @@ import IsingModel.AmbientLattice.SpecialCases.MayerAnalyticity
 import IsingModel.AmbientLattice.SpecialCases.MayerBasicIdentities
 import IsingModel.AmbientLattice.SpecialCases.MayerEdgeCases
 import IsingModel.AmbientLattice.SpecialCases.MayerTrivialCases
+import IsingModel.AmbientLattice.SpecialCases.MayerVdBounds
 import IsingModel.AmbientLattice.SpecialCases.MayerVdIff
 import IsingModel.AmbientLattice.SpecialCases.MayerVdRegularity
 import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyPointwiseRegularity
@@ -182,87 +183,6 @@ theorem partitionFunctionAlongExhaustion_monotone_abs_h
     partitionFunctionAlongExhaustion G Λ (⟨J, h₁, β⟩ : IsingParams ℝ) n
       ≤ partitionFunctionAlongExhaustion G Λ (⟨J, h₂, β⟩ : IsingParams ℝ) n :=
   partitionFunctionΛ_monotone_abs_h G (Λ.volume n) J β hJ hβ hh
-
-/-! ### §18.5 vdPolymerFamilies_sum bound family along-ex wraps -/
-
-/-- **Along-ex: vdSum_tanh ≤ 2^|E|**. -/
-theorem vdPolymerFamilies_sumAlongExhaustion_le_two_pow
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    {β J : ℝ} (hβJ : 0 ≤ β * J) (n : ℕ) :
-    (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
-            (inducedGraph G (Λ.volume n)),
-        ∏ P ∈ Γ, Real.tanh (β * J) ^ P.card)
-      ≤ (2 : ℝ) ^ (inducedGraph G (Λ.volume n)).edgeFinset.card :=
-  vdPolymerFamilies_sum_Λ_le_two_pow G (Λ.volume n) hβJ
-
-/-- **Along-ex: vdSum_tanh ≤ (1+tanh)^|E|**. -/
-theorem vdPolymerFamilies_sumAlongExhaustion_le_one_plus_tanh_pow
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    {β J : ℝ} (hβJ : 0 ≤ β * J) (n : ℕ) :
-    (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
-            (inducedGraph G (Λ.volume n)),
-        ∏ P ∈ Γ, Real.tanh (β * J) ^ P.card)
-      ≤ (1 + Real.tanh (β * J)) ^
-          (inducedGraph G (Λ.volume n)).edgeFinset.card :=
-  vdPolymerFamilies_sum_Λ_le_one_plus_tanh_pow G (Λ.volume n) hβJ
-
-/-- **Along-ex: 1 ≤ vdSum_tanh**. -/
-theorem one_le_vdPolymerFamilies_sumAlongExhaustion
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    {β J : ℝ} (hβJ : 0 ≤ β * J) (n : ℕ) :
-    1 ≤ ∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
-              (inducedGraph G (Λ.volume n)),
-        ∏ P ∈ Γ, Real.tanh (β * J) ^ P.card :=
-  one_le_vdPolymerFamilies_sum_Λ G (Λ.volume n) hβJ
-
-/-! ### §18.5 vdPolymerFamilies_sum generic-t bounds along-ex -/
-
-/-- **Along-ex: 1 ≤ vdSum** under `0 ≤ t`. -/
-theorem vdPolymerFamilies_sumAlongExhaustion_ge_one_of_nonneg
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    {t : ℝ} (ht : 0 ≤ t) (n : ℕ) :
-    1 ≤ ∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
-              (inducedGraph G (Λ.volume n)),
-          ∏ P ∈ Γ, t ^ P.card :=
-  vdPolymerFamilies_sum_Λ_ge_one_of_nonneg G (Λ.volume n) ht
-
-/-- **Along-ex: vdSum ≤ (1+t)^|E|** under `0 ≤ t`. -/
-theorem vdPolymerFamilies_sumAlongExhaustion_le_one_plus_pow_of_nonneg
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    {t : ℝ} (ht : 0 ≤ t) (n : ℕ) :
-    (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
-              (inducedGraph G (Λ.volume n)),
-          ∏ P ∈ Γ, t ^ P.card)
-      ≤ (1 + t) ^ (inducedGraph G (Λ.volume n)).edgeFinset.card :=
-  vdPolymerFamilies_sum_Λ_le_one_plus_pow_of_nonneg G (Λ.volume n) ht
-
-/-- **Along-ex: 0 < vdSum** under `0 ≤ t`. -/
-theorem vdPolymerFamilies_sumAlongExhaustion_pos_of_nonneg
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    {t : ℝ} (ht : 0 ≤ t) (n : ℕ) :
-    0 < ∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
-              (inducedGraph G (Λ.volume n)),
-          ∏ P ∈ Γ, t ^ P.card :=
-  vdPolymerFamilies_sum_Λ_pos_of_nonneg G (Λ.volume n) ht
-
-/-- **Along-ex: vdSum = 1 + ε(t)** decomposition. -/
-theorem vdPolymerFamilies_sumAlongExhaustion_eq_one_add
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (t : ℝ) (n : ℕ) :
-    (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
-              (inducedGraph G (Λ.volume n)),
-          ∏ P ∈ Γ, t ^ P.card) =
-      1 + ∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
-              (inducedGraph G (Λ.volume n))).erase ∅,
-              ∏ P ∈ Γ, t ^ P.card :=
-  vdPolymerFamilies_sum_Λ_eq_one_add G (Λ.volume n) t
 
 /-! ### §18.5 Mayer expansion edge-cases + n=2 + abs_le along-ex -/
 
