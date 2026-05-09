@@ -4663,7 +4663,12 @@ four volume layers (\textit{Lambda}, along-ex, $\mathbb{Z}^d$
 direct-instantiation wrappers (8 abstracts $\times$ 4 layers).
 These provide the polymer-expansion-derived h-zero regularity of
 $Z(J, 0, \beta)$ in $\beta / J$ at every volume layer, alongside
-the existing general-$h$ wrappers.
+the existing general-$h$ wrappers. The along-exhaustion and concrete
+$\mathbb{Z}^d$ wrappers from this family now live in the matching
+\texttt{PartitionFunctionRegularity.lean} child modules under
+\texttt{AmbientLattice/SpecialCases} and
+\texttt{Concrete/LatticeGraphCorrelation}; the $\Lambda$-layer wrappers
+remain in \texttt{IsingModel/AmbientLattice/Analyticity.lean}.
 
 \paragraph{vdSum sandwich/monotone + $\varepsilon$ bound +
 \texttt{polymerFreeEnergy(tanh)} bound + $\log 2$, all volume
