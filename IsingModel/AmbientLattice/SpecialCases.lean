@@ -34,6 +34,9 @@ General-graph basic `polymerFreeEnergy` at-zero / at-one / sandwich wrappers
 live in `IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBasic`.
 General-graph `polymerFreeEnergy` regularity and bound wrappers live in
 `IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBounds`.
+General-graph `polymerFreeEnergy` tanh-bound, ferromagnetic, `HasDerivAt`,
+and `log(1 + eps)` wrappers live in
+`IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyTanhBounds`.
 General-graph `vdPolymerFamilies_sum` and `log_vdPolymerFamilies_sum`
 analytic wrappers live in
 `IsingModel.AmbientLattice.SpecialCases.VdPolymerFamiliesAnalyticity`.
