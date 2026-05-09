@@ -27,6 +27,8 @@ wrappers live in
 `IsingModel.AmbientLattice.SpecialCases.MayerEpsilonInfrastructure`.
 General-graph epsilon and `polymerFreeEnergy` positivity/zero iff wrappers
 live in `IsingModel.AmbientLattice.SpecialCases.MayerEpsilonPositivity`.
+General-graph Mayer filter-connected and epsilon-power wrappers live in
+`IsingModel.AmbientLattice.SpecialCases.MayerFilterConnected`.
 General-graph Mayer recurrence, `polymerFreeEnergy` `HasSum`, and
 `vdPolymerFamilies_sum - 1` tendsto-zero wrappers live in
 `IsingModel.AmbientLattice.SpecialCases.MayerRecurrenceHasSum`.
