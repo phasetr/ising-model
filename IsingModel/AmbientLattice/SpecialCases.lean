@@ -23,6 +23,8 @@ Mayer expansion `n = 2`, no-polymer, edgeless, and absolute-bound wrappers live 
 Mayer epsilon infrastructure, first-term sign, and edgeless `allPolymers`
 wrappers live in
 `IsingModel.AmbientLattice.SpecialCases.MayerEpsilonInfrastructure`.
+General-graph epsilon and `polymerFreeEnergy` positivity/zero iff wrappers
+live in `IsingModel.AmbientLattice.SpecialCases.MayerEpsilonPositivity`.
 General-graph Mayer recurrence, `polymerFreeEnergy` `HasSum`, and
 `vdPolymerFamilies_sum - 1` tendsto-zero wrappers live in
 `IsingModel.AmbientLattice.SpecialCases.MayerRecurrenceHasSum`.
