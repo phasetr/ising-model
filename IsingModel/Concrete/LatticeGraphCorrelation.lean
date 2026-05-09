@@ -31,6 +31,8 @@ concrete Mayer epsilon infrastructure, first-term sign, and edgeless
 directly. For concrete epsilon and `polymerFreeEnergy` positivity/zero iff
 wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.MayerEpsilonPositivity` directly.
+For concrete Mayer filter-connected and epsilon-power wrappers, import
+`IsingModel.Concrete.LatticeGraphCorrelation.MayerFilterConnected` directly.
 For concrete Mayer recurrence, `polymerFreeEnergy` `HasSum`, and
 `vdPolymerFamilies_sum - 1` tendsto-zero wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.MayerRecurrenceHasSum`
