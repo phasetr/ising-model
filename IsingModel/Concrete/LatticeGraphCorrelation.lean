@@ -70,6 +70,10 @@ For concrete epsilon nonnegativity and non-tanh `polymerFreeEnergy`
 sharpening wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.PolymerFreeEnergyEpsilonSharpening`
 directly.
+For concrete `vdPolymerFamilies_sum` high-temperature sandwich/monotone and
+`polymerFreeEnergy(tanh)` high-temperature bound wrappers, import
+`IsingModel.Concrete.LatticeGraphCorrelation.PolymerFreeEnergyHighTemperatureBounds`
+directly.
 For concrete `polymerFreeEnergy` tanh-bound, ferromagnetic, `HasDerivAt`,
 and `log(1 + eps)` wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.PolymerFreeEnergyTanhBounds`
