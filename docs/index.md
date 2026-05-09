@@ -104,6 +104,8 @@ View* (2nd ed., 1987).
 > high-temperature convergence and correction wrappers,
 > `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBounds` for
 > concrete high-temperature expansion and bound wrappers,
+> `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureCapstones` for
+> concrete high-temperature partition-function/free-energy capstone wrappers,
 > `IsingModel.Concrete.LatticeGraphCorrelation.SusceptibilityPointwiseRegularity`
 > for concrete per-parameter `susceptibilityAlongExhaustion` pointwise wrappers,
 > plus
@@ -172,6 +174,9 @@ View* (2nd ed., 1987).
 > along-exhaustion high-temperature convergence and correction wrappers,
 > `IsingModel.AmbientLattice.SpecialCases.HighTemperatureBounds` for ambient
 > along-exhaustion high-temperature expansion and bound wrappers,
+> `IsingModel.AmbientLattice.SpecialCases.HighTemperatureCapstones` for ambient
+> along-exhaustion high-temperature partition-function/free-energy capstone
+> wrappers,
 > `IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyPointwiseRegularity`
 > for ambient `partitionFunctionAlongExhaustion` / `freeEnergyAlongExhaustion`
 > pointwise wrappers, plus
