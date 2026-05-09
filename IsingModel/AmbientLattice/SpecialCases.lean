@@ -76,6 +76,9 @@ regularity wrappers live in
 general-graph `partitionFunctionAlongExhaustion` regularity-at-zero-field
 wrappers live in
 `IsingModel.AmbientLattice.SpecialCases.PartitionFunctionRegularity`,
+general-graph `partitionFunctionAlongExhaustion` joint and general-h
+analyticity wrappers live in
+`IsingModel.AmbientLattice.SpecialCases.PartitionFunctionGeneralAnalyticity`,
 and `susceptibilityAlongExhaustion` pointwise regularity wrappers live in
 `IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularity`.
 New narrow APIs should be added in dedicated child modules and re-exported here
