@@ -4827,7 +4827,12 @@ three under $0 \le J$ and $0 < \beta$), the
 $\log(1 + \varepsilon(t))$ decomposition
 \texttt{\_eq\_log\_one\_add\_eps}, and \texttt{\_hasDerivAt}
 giving the explicit log-derivative for $t \ge 0$. 24 new thin
-direct-instantiation wrappers. Most ferromagnetic ℤ$^d$ /
+direct-instantiation wrappers. The along-exhaustion and concrete
+$\mathbb{Z}^d$ wrappers now live in
+\texttt{AmbientLattice/SpecialCases/PolymerFreeEnergyTanhBounds.lean}
+and
+\texttt{Concrete/LatticeGraphCorrelation/PolymerFreeEnergyTanhBounds.lean}.
+Most ferromagnetic ℤ$^d$ /
 along-ex wrappers use the abbreviated \texttt{\_ferro} suffix
 to keep each declaration line under the 100-character linter
 budget.
