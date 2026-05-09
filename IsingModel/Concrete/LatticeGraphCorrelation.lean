@@ -33,6 +33,10 @@ For concrete Mayer recurrence, `polymerFreeEnergy` `HasSum`, and
 `vdPolymerFamilies_sum - 1` tendsto-zero wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.MayerRecurrenceHasSum`
 directly. For
+concrete strict-monotonicity and strict-positivity wrappers under
+`allPolymers` nonempty hypotheses, import
+`IsingModel.Concrete.LatticeGraphCorrelation.MayerStrictPositivity`
+directly. For
 concrete Mayer trivial/no-polymer comparison wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.MayerTrivialCases` directly. For
 concrete `vdPolymerFamilies_sum` bound wrappers, import
