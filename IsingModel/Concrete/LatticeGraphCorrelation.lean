@@ -37,6 +37,10 @@ concrete strict-monotonicity and strict-positivity wrappers under
 `allPolymers` nonempty hypotheses, import
 `IsingModel.Concrete.LatticeGraphCorrelation.MayerStrictPositivity`
 directly. For
+concrete ferromagnetic tanh iff wrappers for `polymerFreeEnergy` and
+`vdPolymerFamilies_sum`, import
+`IsingModel.Concrete.LatticeGraphCorrelation.MayerTanhFerromagneticIff`
+directly. For
 concrete Mayer trivial/no-polymer comparison wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.MayerTrivialCases` directly. For
 concrete `vdPolymerFamilies_sum` bound wrappers, import
