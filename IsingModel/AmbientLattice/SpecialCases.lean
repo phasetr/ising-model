@@ -6,7 +6,9 @@ import IsingModel.AmbientLattice.SpecialCases.Legacy
 This module is intentionally a thin re-export. The legacy monolithic body lives
 in `IsingModel.AmbientLattice.SpecialCases.Legacy`. Non-analytic free-energy
 special cases live in `IsingModel.AmbientLattice.SpecialCases.FreeEnergy`, and
-lightweight infinite-volume aliases live in
+general-graph free-energy per-direction analyticity wrappers live in
+`IsingModel.AmbientLattice.SpecialCases.FreeEnergyAnalyticity`. Lightweight
+infinite-volume aliases live in
 `IsingModel.AmbientLattice.SpecialCases.InfiniteVolume`. General-graph joint
 regularity wrappers live in
 `IsingModel.AmbientLattice.SpecialCases.JointRegularity`. General-graph
