@@ -4868,7 +4868,13 @@ on no-polymer / edgeless induced subgraphs, the `two' wrappers
 provide the explicit $n=2$ /$\,N=2$ formulas, and
 \texttt{abs\_le} gives the triangle-inequality bound
 $|\mathrm{mayerExpansionTerm}| \le \sum |\phi^T(\omega)| \cdot
-|z(t,\omega)|$.
+|z(t,\omega)|$. The along-exhaustion and concrete $\mathbb{Z}^d$
+wrappers now live in
+\texttt{AmbientLattice/SpecialCases/MayerExpansionEdgeCases.lean}
+and
+\texttt{Concrete/LatticeGraphCorrelation/MayerExpansionEdgeCases.lean};
+the $\Lambda$-layer wrappers remain in
+\texttt{IsingModel/AmbientLattice/Analyticity.lean}.
 
 \paragraph{\texttt{vdPolymerFamilies\_sum} generic-\textit{t}
 bounds + decomposition, all volume layers (\S18.5, PR~\#1596).}
