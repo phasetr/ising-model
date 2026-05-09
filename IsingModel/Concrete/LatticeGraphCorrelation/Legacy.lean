@@ -33,6 +33,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.MayerTrivialCases
 import IsingModel.Concrete.LatticeGraphCorrelation.MayerVdBounds
 import IsingModel.Concrete.LatticeGraphCorrelation.MayerVdIff
 import IsingModel.Concrete.LatticeGraphCorrelation.MayerVdRegularity
+import IsingModel.Concrete.LatticeGraphCorrelation.PartitionFunctionGeneralAnalyticity
 import IsingModel.Concrete.LatticeGraphCorrelation.PartitionFunctionRegularity
 import IsingModel.Concrete.LatticeGraphCorrelation.PartitionFreeEnergyPointwiseRegularity
 import IsingModel.Concrete.LatticeGraphCorrelation.PolymerFreeEnergyAnalyticity
@@ -3646,126 +3647,6 @@ theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_shift
           (Ambient.cubicExhaustion d) p :=
   freeEnergyInfinite_shift_eq (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) t p
-
-/-! ### §18.6 partitionFunction joint + general-h analyticity ℤ^d
-wraps -/
-
-/-- **ℤ^d Λ: partitionFunction jointly `Continuous` in `(β, J, h)`**. -/
-theorem partitionFunctionΛ_latticeGraph_continuous_joint
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet] :
-    Continuous (fun p : ℝ × ℝ × ℝ =>
-      Ambient.partitionFunctionΛ (IsingModel.latticeGraph d) Λ
-        ⟨p.2.1, p.2.2, p.1⟩) :=
-  Ambient.partitionFunctionΛ_continuous_joint
-    (IsingModel.latticeGraph d) Λ
-
-/-- **ℤ^d Λ: partitionFunction jointly `Differentiable ℝ` in
-`(β, J, h)`**. -/
-theorem partitionFunctionΛ_latticeGraph_differentiable_joint
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet] :
-    Differentiable ℝ (fun p : ℝ × ℝ × ℝ =>
-      Ambient.partitionFunctionΛ (IsingModel.latticeGraph d) Λ
-        ⟨p.2.1, p.2.2, p.1⟩) :=
-  Ambient.partitionFunctionΛ_differentiable_joint
-    (IsingModel.latticeGraph d) Λ
-
-/-- **ℤ^d Λ: partitionFunction `AnalyticAt ℝ` in `β` at general
-`h`**. -/
-theorem partitionFunctionΛ_latticeGraph_analyticAt_beta_general_h
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    (J h β : ℝ) :
-    AnalyticAt ℝ (fun β' : ℝ =>
-      Ambient.partitionFunctionΛ (IsingModel.latticeGraph d) Λ
-        ⟨J, h, β'⟩) β :=
-  Ambient.partitionFunctionΛ_analyticAt_beta_general_h
-    (IsingModel.latticeGraph d) Λ J h β
-
-/-- **ℤ^d Λ: partitionFunction `AnalyticAt ℝ` in `J` at general
-`h`**. -/
-theorem partitionFunctionΛ_latticeGraph_analyticAt_J_general_h
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    (β h J : ℝ) :
-    AnalyticAt ℝ (fun J' : ℝ =>
-      Ambient.partitionFunctionΛ (IsingModel.latticeGraph d) Λ
-        ⟨J', h, β⟩) J :=
-  Ambient.partitionFunctionΛ_analyticAt_J_general_h
-    (IsingModel.latticeGraph d) Λ β h J
-
-/-- **ℤ^d Λ: partitionFunction `AnalyticAt ℝ` in `h`**. -/
-theorem partitionFunctionΛ_latticeGraph_analyticAt_h
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    (J β h : ℝ) :
-    AnalyticAt ℝ (fun h' : ℝ =>
-      Ambient.partitionFunctionΛ (IsingModel.latticeGraph d) Λ
-        ⟨J, h', β⟩) h :=
-  Ambient.partitionFunctionΛ_analyticAt_h
-    (IsingModel.latticeGraph d) Λ J β h
-
-/-- **ℤ^d along-ex: partitionFunction jointly `Continuous`**. -/
-theorem partitionFunctionAlongExhaustion_latticeGraph_continuous_joint
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet] (n : ℕ) :
-    Continuous (fun p : ℝ × ℝ × ℝ =>
-      Ambient.partitionFunctionAlongExhaustion
-        (IsingModel.latticeGraph d) Λ ⟨p.2.1, p.2.2, p.1⟩ n) :=
-  Ambient.partitionFunctionAlongExhaustion_continuous_joint
-    (IsingModel.latticeGraph d) Λ n
-
-/-- **ℤ^d along-ex: partitionFunction jointly
-`Differentiable ℝ`**. -/
-theorem
-partitionFunctionAlongExhaustion_latticeGraph_differentiable_joint
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet] (n : ℕ) :
-    Differentiable ℝ (fun p : ℝ × ℝ × ℝ =>
-      Ambient.partitionFunctionAlongExhaustion
-        (IsingModel.latticeGraph d) Λ ⟨p.2.1, p.2.2, p.1⟩ n) :=
-  Ambient.partitionFunctionAlongExhaustion_differentiable_joint
-    (IsingModel.latticeGraph d) Λ n
-
-/-- **ℤ^d along-ex: partitionFunction `AnalyticAt ℝ` in `β` at
-general `h`**. -/
-theorem
-partitionFunctionAlongExhaustion_latticeGraph_analyticAt_beta_general_h
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet] (J h β : ℝ) (n : ℕ) :
-    AnalyticAt ℝ (fun β' : ℝ =>
-      Ambient.partitionFunctionAlongExhaustion
-        (IsingModel.latticeGraph d) Λ ⟨J, h, β'⟩ n) β :=
-  Ambient.partitionFunctionAlongExhaustion_analyticAt_beta_general_h
-    (IsingModel.latticeGraph d) Λ J h β n
-
-/-- **ℤ^d along-ex: partitionFunction `AnalyticAt ℝ` in `J` at
-general `h`**. -/
-theorem
-partitionFunctionAlongExhaustion_latticeGraph_analyticAt_J_general_h
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet] (β h J : ℝ) (n : ℕ) :
-    AnalyticAt ℝ (fun J' : ℝ =>
-      Ambient.partitionFunctionAlongExhaustion
-        (IsingModel.latticeGraph d) Λ ⟨J', h, β⟩ n) J :=
-  Ambient.partitionFunctionAlongExhaustion_analyticAt_J_general_h
-    (IsingModel.latticeGraph d) Λ β h J n
-
-/-- **ℤ^d along-ex: partitionFunction `AnalyticAt ℝ` in `h`**. -/
-theorem partitionFunctionAlongExhaustion_latticeGraph_analyticAt_h
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet] (J β h : ℝ) (n : ℕ) :
-    AnalyticAt ℝ (fun h' : ℝ =>
-      Ambient.partitionFunctionAlongExhaustion
-        (IsingModel.latticeGraph d) Λ ⟨J, h', β⟩ n) h :=
-  Ambient.partitionFunctionAlongExhaustion_analyticAt_h
-    (IsingModel.latticeGraph d) Λ J β h n
 
 /-! ### §18.6 partitionFunction/freeEnergy Continuous + Differentiable
 ℤ^d wraps -/
