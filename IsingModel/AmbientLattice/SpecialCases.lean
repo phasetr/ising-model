@@ -20,6 +20,10 @@ Mayer edge-case identity and `polymerFreeEnergy = mayerPartialSum` wrappers live
 `IsingModel.AmbientLattice.SpecialCases.MayerEdgeCases`. General-graph
 Mayer expansion `n = 2`, no-polymer, edgeless, and absolute-bound wrappers live in
 `IsingModel.AmbientLattice.SpecialCases.MayerExpansionEdgeCases`. General-graph
+Mayer recurrence, `polymerFreeEnergy` `HasSum`, and
+`vdPolymerFamilies_sum - 1` tendsto-zero wrappers live in
+`IsingModel.AmbientLattice.SpecialCases.MayerRecurrenceHasSum`.
+General-graph
 Mayer trivial/no-polymer comparison wrappers live in
 `IsingModel.AmbientLattice.SpecialCases.MayerTrivialCases`. General-graph
 `vdPolymerFamilies_sum` bound wrappers live in
