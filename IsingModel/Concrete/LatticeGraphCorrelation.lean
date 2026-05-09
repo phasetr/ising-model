@@ -66,6 +66,10 @@ wrappers, import
 For concrete `polymerFreeEnergy` regularity and bound wrappers,
 import `IsingModel.Concrete.LatticeGraphCorrelation.PolymerFreeEnergyBounds`
 directly.
+For concrete epsilon nonnegativity and non-tanh `polymerFreeEnergy`
+sharpening wrappers, import
+`IsingModel.Concrete.LatticeGraphCorrelation.PolymerFreeEnergyEpsilonSharpening`
+directly.
 For concrete `polymerFreeEnergy` tanh-bound, ferromagnetic, `HasDerivAt`,
 and `log(1 + eps)` wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.PolymerFreeEnergyTanhBounds`
