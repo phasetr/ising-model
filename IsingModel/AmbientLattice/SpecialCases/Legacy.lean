@@ -16,6 +16,7 @@ import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyPointwiseRegula
 import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyAnalyticity
 import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBasic
 import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBounds
+import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyTanhBounds
 import IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularity
 import IsingModel.AmbientLattice.SpecialCases.VdPolymerFamiliesAnalyticity
 import IsingModel.AmbientLattice.Analyticity
@@ -185,85 +186,6 @@ theorem partitionFunctionAlongExhaustion_monotone_abs_h
     partitionFunctionAlongExhaustion G Λ (⟨J, h₁, β⟩ : IsingParams ℝ) n
       ≤ partitionFunctionAlongExhaustion G Λ (⟨J, h₂, β⟩ : IsingParams ℝ) n :=
   partitionFunctionΛ_monotone_abs_h G (Λ.volume n) J β hJ hβ hh
-
-/-! ### §18.5 polymerFreeEnergy tanh-bound + ferro + hasDerivAt +
-eq_log_one_add along-ex wraps -/
-
-/-- **Along-ex: polymerFreeEnergy tanh ≤ |E| · tanh** under
-`0 ≤ β·J`. -/
-theorem polymerFreeEnergyAlongExhaustion_tanh_le_card_mul
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    {β J : ℝ} (hβJ : 0 ≤ β * J) (n : ℕ) :
-    IsingModel.polymerFreeEnergy (inducedGraph G (Λ.volume n))
-        (Real.tanh (β * J)) ≤
-      (inducedGraph G (Λ.volume n)).edgeFinset.card *
-        Real.tanh (β * J) :=
-  polymerFreeEnergy_Λ_tanh_le_card_mul G (Λ.volume n) hβJ
-
-/-- **Along-ex: ferromagnetic polymerFreeEnergy_tanh ≤ |E|·tanh**. -/
-theorem polymerFreeEnergyAlongExhaustion_tanh_le_card_mul_ferro
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ) :
-    IsingModel.polymerFreeEnergy (inducedGraph G (Λ.volume n))
-        (Real.tanh (β * J)) ≤
-      (inducedGraph G (Λ.volume n)).edgeFinset.card *
-        Real.tanh (β * J) :=
-  polymerFreeEnergy_Λ_tanh_le_card_mul_ferromagnetic
-    G (Λ.volume n) hJ hβ
-
-/-- **Along-ex: ferromagnetic polymerFreeEnergy_tanh sandwich**. -/
-theorem polymerFreeEnergyAlongExhaustion_tanh_sandwich_ferro
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ) :
-    0 ≤ IsingModel.polymerFreeEnergy (inducedGraph G (Λ.volume n))
-          (Real.tanh (β * J)) ∧
-    IsingModel.polymerFreeEnergy (inducedGraph G (Λ.volume n))
-        (Real.tanh (β * J)) ≤
-      (inducedGraph G (Λ.volume n)).edgeFinset.card *
-        Real.log (1 + Real.tanh (β * J)) :=
-  polymerFreeEnergy_Λ_tanh_sandwich_ferromagnetic
-    G (Λ.volume n) hJ hβ
-
-/-- **Along-ex: ferromagnetic polymerFreeEnergy_tanh ≤ |E|·log 2**. -/
-theorem polymerFreeEnergyAlongExhaustion_tanh_le_card_log_two_ferro
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ) :
-    IsingModel.polymerFreeEnergy (inducedGraph G (Λ.volume n))
-        (Real.tanh (β * J)) ≤
-      (inducedGraph G (Λ.volume n)).edgeFinset.card *
-        Real.log 2 :=
-  polymerFreeEnergy_Λ_tanh_le_card_log_two_ferro G (Λ.volume n) hJ hβ
-
-/-- **Along-ex: polymerFreeEnergy = log(1 + ε(t))** decomposition. -/
-theorem polymerFreeEnergyAlongExhaustion_eq_log_one_add_eps
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (t : ℝ) (n : ℕ) :
-    IsingModel.polymerFreeEnergy (inducedGraph G (Λ.volume n)) t =
-      Real.log (1 + ∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
-              (inducedGraph G (Λ.volume n))).erase ∅,
-              ∏ P ∈ Γ, t ^ P.card) :=
-  polymerFreeEnergy_Λ_eq_log_one_add_eps G (Λ.volume n) t
-
-/-- **Along-ex: polymerFreeEnergy hasDerivAt at `t ≥ 0`**. -/
-theorem polymerFreeEnergyAlongExhaustion_hasDerivAt
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    {t : ℝ} (ht : 0 ≤ t) (n : ℕ) :
-    HasDerivAt (fun s : ℝ => IsingModel.polymerFreeEnergy
-        (inducedGraph G (Λ.volume n)) s)
-      ((∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
-              (inducedGraph G (Λ.volume n)),
-          ∑ Q ∈ Γ, (∏ P ∈ Γ.erase Q, t ^ P.card) *
-            ((Q.card : ℝ) * t ^ (Q.card - 1))) /
-        (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
-              (inducedGraph G (Λ.volume n)),
-            ∏ P ∈ Γ, t ^ P.card)) t :=
-  polymerFreeEnergy_Λ_hasDerivAt G (Λ.volume n) ht
 
 /-! ### §18.5 Mayer recurrence + hasSum + tendsto along-ex wraps -/
 

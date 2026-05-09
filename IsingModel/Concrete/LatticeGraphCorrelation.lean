@@ -47,6 +47,10 @@ wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.PolymerFreeEnergyBasic` directly.
 For concrete `polymerFreeEnergy` regularity and bound wrappers,
 import `IsingModel.Concrete.LatticeGraphCorrelation.PolymerFreeEnergyBounds`
+directly.
+For concrete `polymerFreeEnergy` tanh-bound, ferromagnetic, `HasDerivAt`,
+and `log(1 + eps)` wrappers, import
+`IsingModel.Concrete.LatticeGraphCorrelation.PolymerFreeEnergyTanhBounds`
 directly. For concrete `vdPolymerFamilies_sum` and
 `log_vdPolymerFamilies_sum` analytic wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.VdPolymerFamiliesAnalyticity`
