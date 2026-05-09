@@ -17,6 +17,7 @@ import IsingModel.AmbientLattice.SpecialCases.MayerTrivialCases
 import IsingModel.AmbientLattice.SpecialCases.MayerVdBounds
 import IsingModel.AmbientLattice.SpecialCases.MayerVdIff
 import IsingModel.AmbientLattice.SpecialCases.MayerVdRegularity
+import IsingModel.AmbientLattice.SpecialCases.PartitionFunctionRegularity
 import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyPointwiseRegularity
 import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyAnalyticity
 import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBasic
@@ -194,84 +195,6 @@ theorem partitionFunctionAlongExhaustion_monotone_abs_h
     partitionFunctionAlongExhaustion G Λ (⟨J, h₁, β⟩ : IsingParams ℝ) n
       ≤ partitionFunctionAlongExhaustion G Λ (⟨J, h₂, β⟩ : IsingParams ℝ) n :=
   partitionFunctionΛ_monotone_abs_h G (Λ.volume n) J β hJ hβ hh
-
-/-! ### §18.6 partitionFunctionAlongExhaustion regularity at `h = 0`
-along-ex wraps -/
-
-/-- **Along-ex: partitionFunction Continuous in `β` at `h = 0`,
-per stage `n`**. -/
-theorem partitionFunctionAlongExhaustion_continuous_beta_h_zero
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J : ℝ) (n : ℕ) :
-    Continuous (fun β : ℝ =>
-      partitionFunctionAlongExhaustion G Λ ⟨J, 0, β⟩ n) :=
-  partitionFunctionΛ_continuous_beta_h_zero G (Λ.volume n) J
-
-/-- **Along-ex: partitionFunction Continuous in `J` at `h = 0`**. -/
-theorem partitionFunctionAlongExhaustion_continuous_J_h_zero
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (β : ℝ) (n : ℕ) :
-    Continuous (fun J : ℝ =>
-      partitionFunctionAlongExhaustion G Λ ⟨J, 0, β⟩ n) :=
-  partitionFunctionΛ_continuous_J_h_zero G (Λ.volume n) β
-
-/-- **Along-ex: partitionFunction Differentiable in `β` at `h = 0`**. -/
-theorem partitionFunctionAlongExhaustion_differentiable_beta_h_zero
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J : ℝ) (n : ℕ) :
-    Differentiable ℝ (fun β : ℝ =>
-      partitionFunctionAlongExhaustion G Λ ⟨J, 0, β⟩ n) :=
-  partitionFunctionΛ_differentiable_beta_h_zero G (Λ.volume n) J
-
-/-- **Along-ex: partitionFunction Differentiable in `J` at `h = 0`**. -/
-theorem partitionFunctionAlongExhaustion_differentiable_J_h_zero
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (β : ℝ) (n : ℕ) :
-    Differentiable ℝ (fun J : ℝ =>
-      partitionFunctionAlongExhaustion G Λ ⟨J, 0, β⟩ n) :=
-  partitionFunctionΛ_differentiable_J_h_zero G (Λ.volume n) β
-
-/-- **Along-ex: partitionFunction `AnalyticAt ℝ` in `β` at `h = 0`**. -/
-theorem partitionFunctionAlongExhaustion_analyticAt_beta_h_zero
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (n : ℕ) :
-    AnalyticAt ℝ (fun β' : ℝ =>
-      partitionFunctionAlongExhaustion G Λ ⟨J, 0, β'⟩ n) β :=
-  partitionFunctionΛ_analyticAt_beta_h_zero G (Λ.volume n) J β
-
-/-- **Along-ex: partitionFunction `AnalyticAt ℝ` in `J` at `h = 0`**. -/
-theorem partitionFunctionAlongExhaustion_analyticAt_J_h_zero
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (β J : ℝ) (n : ℕ) :
-    AnalyticAt ℝ (fun J' : ℝ =>
-      partitionFunctionAlongExhaustion G Λ ⟨J', 0, β⟩ n) J :=
-  partitionFunctionΛ_analyticAt_J_h_zero G (Λ.volume n) β J
-
-/-- **Along-ex: partitionFunction `AnalyticOnNhd ℝ _ Set.univ` in `β`
-at `h = 0`**. -/
-theorem partitionFunctionAlongExhaustion_analyticOnNhd_beta_h_zero
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J : ℝ) (n : ℕ) :
-    AnalyticOnNhd ℝ (fun β' : ℝ =>
-      partitionFunctionAlongExhaustion G Λ ⟨J, 0, β'⟩ n) Set.univ :=
-  partitionFunctionΛ_analyticOnNhd_beta_h_zero G (Λ.volume n) J
-
-/-- **Along-ex: partitionFunction `AnalyticOnNhd ℝ _ Set.univ` in `J`
-at `h = 0`**. -/
-theorem partitionFunctionAlongExhaustion_analyticOnNhd_J_h_zero
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (β : ℝ) (n : ℕ) :
-    AnalyticOnNhd ℝ (fun J' : ℝ =>
-      partitionFunctionAlongExhaustion G Λ ⟨J', 0, β⟩ n) Set.univ :=
-  partitionFunctionΛ_analyticOnNhd_J_h_zero G (Λ.volume n) β
 
 /-! ### §18.6 freeEnergyAlongExhaustion per-direction analyticity
 along-ex wraps -/

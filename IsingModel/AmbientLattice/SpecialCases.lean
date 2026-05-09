@@ -71,6 +71,9 @@ General-graph
 `partitionFunctionAlongExhaustion` / `freeEnergyAlongExhaustion` pointwise
 regularity wrappers live in
 `IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyPointwiseRegularity`,
+general-graph `partitionFunctionAlongExhaustion` regularity-at-zero-field
+wrappers live in
+`IsingModel.AmbientLattice.SpecialCases.PartitionFunctionRegularity`,
 and `susceptibilityAlongExhaustion` pointwise regularity wrappers live in
 `IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularity`.
 New narrow APIs should be added in dedicated child modules and re-exported here
