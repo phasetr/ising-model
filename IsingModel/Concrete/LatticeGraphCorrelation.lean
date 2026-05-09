@@ -42,7 +42,10 @@ directly. For concrete per-parameter `partitionFunctionAlongExhaustion` /
 `IsingModel.Concrete.LatticeGraphCorrelation.PartitionFreeEnergyPointwiseRegularity`
 directly. For concrete `polymerFreeEnergy` analytic wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.PolymerFreeEnergyAnalyticity`
-directly. For concrete `polymerFreeEnergy` regularity and bound wrappers,
+directly. For concrete basic `polymerFreeEnergy` at-zero / at-one / sandwich
+wrappers, import
+`IsingModel.Concrete.LatticeGraphCorrelation.PolymerFreeEnergyBasic` directly.
+For concrete `polymerFreeEnergy` regularity and bound wrappers,
 import `IsingModel.Concrete.LatticeGraphCorrelation.PolymerFreeEnergyBounds`
 directly. For concrete `vdPolymerFamilies_sum` and
 `log_vdPolymerFamilies_sum` analytic wrappers, import
