@@ -73,6 +73,9 @@ General-graph
 `partitionFunctionAlongExhaustion` / `freeEnergyAlongExhaustion` pointwise
 regularity wrappers live in
 `IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyPointwiseRegularity`,
+general-graph `partitionFunctionAlongExhaustion` / `freeEnergyAlongExhaustion`
+Continuous and Differentiable wrappers live in
+`IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyRegularity`,
 general-graph `partitionFunctionAlongExhaustion` regularity-at-zero-field
 wrappers live in
 `IsingModel.AmbientLattice.SpecialCases.PartitionFunctionRegularity`,
