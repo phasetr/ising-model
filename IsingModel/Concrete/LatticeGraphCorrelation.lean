@@ -69,6 +69,9 @@ directly.
 For concrete `polymerFreeEnergy` tanh-bound, ferromagnetic, `HasDerivAt`,
 and `log(1 + eps)` wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.PolymerFreeEnergyTanhBounds`
+directly. For concrete `polymerFreeEnergy` tanh sharpening and beta/J
+strict-mono wrappers, import
+`IsingModel.Concrete.LatticeGraphCorrelation.PolymerFreeEnergyTanhSharpening`
 directly. For concrete `vdPolymerFamilies_sum` and
 `log_vdPolymerFamilies_sum` analytic wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.VdPolymerFamiliesAnalyticity`
