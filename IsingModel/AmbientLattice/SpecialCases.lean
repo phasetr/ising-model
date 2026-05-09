@@ -51,6 +51,9 @@ General-graph `polymerFreeEnergy` regularity and bound wrappers live in
 General-graph epsilon nonnegativity and non-tanh `polymerFreeEnergy`
 sharpening wrappers live in
 `IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyEpsilonSharpening`.
+General-graph `vdPolymerFamilies_sum` high-temperature sandwich/monotone and
+`polymerFreeEnergy(tanh)` high-temperature bound wrappers live in
+`IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyHighTemperatureBounds`.
 General-graph `polymerFreeEnergy` tanh-bound, ferromagnetic, `HasDerivAt`,
 and `log(1 + eps)` wrappers live in
 `IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyTanhBounds`.
