@@ -79,6 +79,8 @@ View* (2nd ed., 1987).
 > `allPolymers` wrappers,
 > `IsingModel.Concrete.LatticeGraphCorrelation.MayerEpsilonPositivity` for
 > concrete epsilon and `polymerFreeEnergy` positivity/zero iff wrappers,
+> `IsingModel.Concrete.LatticeGraphCorrelation.MayerFilterConnected` for
+> concrete Mayer filter-connected and epsilon-power wrappers,
 > `IsingModel.Concrete.LatticeGraphCorrelation.MayerRecurrenceHasSum` for
 > concrete Mayer recurrence, `polymerFreeEnergy` `HasSum`, and
 > `vdPolymerFamilies_sum - 1` tendsto-zero wrappers,
@@ -130,6 +132,8 @@ View* (2nd ed., 1987).
 > edgeless `allPolymers` wrappers,
 > `IsingModel.AmbientLattice.SpecialCases.MayerEpsilonPositivity` for ambient
 > along-exhaustion epsilon and `polymerFreeEnergy` positivity/zero iff wrappers,
+> `IsingModel.AmbientLattice.SpecialCases.MayerFilterConnected` for ambient
+> along-exhaustion Mayer filter-connected and epsilon-power wrappers,
 > `IsingModel.AmbientLattice.SpecialCases.MayerRecurrenceHasSum` for ambient
 > along-exhaustion Mayer recurrence, `polymerFreeEnergy` `HasSum`, and
 > `vdPolymerFamilies_sum - 1` tendsto-zero wrappers,
