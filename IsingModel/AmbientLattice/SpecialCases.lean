@@ -51,6 +51,9 @@ General-graph `polymerFreeEnergy` regularity and bound wrappers live in
 General-graph `polymerFreeEnergy` tanh-bound, ferromagnetic, `HasDerivAt`,
 and `log(1 + eps)` wrappers live in
 `IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyTanhBounds`.
+General-graph `polymerFreeEnergy` tanh sharpening and beta/J strict-mono
+wrappers live in
+`IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyTanhSharpening`.
 General-graph `vdPolymerFamilies_sum` and `log_vdPolymerFamilies_sum`
 analytic wrappers live in
 `IsingModel.AmbientLattice.SpecialCases.VdPolymerFamiliesAnalyticity`.
