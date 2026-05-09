@@ -4696,6 +4696,12 @@ $\mathbb{Z}^d$ along-ex):
 \texttt{\_lt\_eps\_iff\_eps\_pos}, and
 \texttt{\_lt\_pow\_sub\_one\_of\_eps\_pos}. 24 new thin
 direct-instantiation wrappers.
+The along-exhaustion and concrete $\mathbb{Z}^d$ wrappers now live in the
+matching \texttt{PolymerFreeEnergyEpsilonSharpening.lean} child modules under
+\texttt{AmbientLattice/SpecialCases} and
+\texttt{Concrete/LatticeGraphCorrelation} (moved from the legacy modules in
+PR~\#1882); the $\Lambda$-layer wrappers remain in the existing
+\texttt{Analyticity.lean} module.
 
 \paragraph{\texttt{polymerFreeEnergy} tanh sharpening + $\beta/J$
 strict-mono under polymers $\ne \emptyset$, all volume layers
