@@ -120,8 +120,8 @@ concrete `vdPolymerFamilies_sum` iff characterization wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.MayerVdIff` directly. For
 concrete Mayer and `vdPolymerFamilies_sum` regularity wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.MayerVdRegularity` directly. For
-concrete J-direction `correlationAlongExhaustion` `ContinuousAt` /
-`DifferentiableAt` wrappers, import
+concrete β-direction `correlationAlongExhaustion` legacy-compatible regularity
+names and J-direction `ContinuousAt` / `DifferentiableAt` wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.PointwiseRegularity` directly. For
 concrete per-parameter `magnetizationAlongExhaustion` pointwise wrappers,
 import
@@ -184,8 +184,8 @@ directly. For concrete high-temperature expansion and bound wrappers, import
 For concrete high-temperature partition-function/free-energy capstone wrappers,
 import `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureCapstones`
 directly.
-For concrete per-parameter `susceptibilityAlongExhaustion`
-pointwise wrappers, import
+For concrete per-parameter `susceptibilityAlongExhaustion` pointwise wrappers
+and legacy-compatible finite-stage susceptibility regularity names, import
 `IsingModel.Concrete.LatticeGraphCorrelation.SusceptibilityPointwiseRegularity`
 directly.
 -/
