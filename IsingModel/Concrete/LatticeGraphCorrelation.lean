@@ -10,7 +10,8 @@ here only when they belong to the public concrete correlation surface. For
 concrete finite-volume graph, spin-algebra, bottom-graph, and Hamiltonian
 symmetry wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.FiniteVolumeBasics` directly. For
-concrete direct finite-volume partition-function wrappers, import
+concrete direct finite-volume `partitionFunction` monotonicity, trivial-slice,
+and negative-field symmetry wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.FiniteVolumePartition` directly. For
 concrete Peierls along-exhaustion wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.Peierls` directly. For
