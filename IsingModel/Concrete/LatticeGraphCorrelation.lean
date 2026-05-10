@@ -65,6 +65,9 @@ For concrete magnetization regularity wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.MagnetizationRegularity` directly.
 For concrete susceptibility convergence wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.SusceptibilityConvergence` directly.
+For concrete free-energy closed forms, monotonicity, h-symmetry, and
+bottom-graph comparison wrappers, import
+`IsingModel.Concrete.LatticeGraphCorrelation.FreeEnergySpecialCases` directly.
 For concrete partition-function closed-form wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.PartitionFunctionClosedForms`
 directly.
