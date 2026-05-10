@@ -71,6 +71,10 @@ import `IsingModel.Concrete.LatticeGraphCorrelation.CorrelationDecay` directly.
 For concrete §17 `HasExponentialDecay` and `latticeMass` foundation wrappers,
 import `IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassFoundation`
 directly.
+For concrete high-temperature lattice-mass, antitonicity, and tanh lower-bound
+wrappers, import
+`IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTemperature`
+directly.
 For concrete anchored cubic pseudo-mass abbreviations, transport lemmas, and
 tanh-profile predicates, import
 `IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassBasic` directly.
