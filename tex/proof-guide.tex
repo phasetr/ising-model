@@ -2215,6 +2215,11 @@ $\mathrm{latticeMass\_pos\_of\_high\_temp\_exhaustion}$ gives positive
 mass for $d \ge 1$ in the strict high-temperature regime. This discharges the
 exhaustion-uniform high-temperature decay transfer used by the
 Step~117l bridge.
+The finite-susceptibility and Lebowitz derivative bound declarations
+used by the subsequent Lipschitz layer now live in
+\texttt{Concrete/LatticeGraphCorrelation/LatticeMassLebowitzDerivative.lean}
+(moved from \texttt{Concrete/LatticeGraphCorrelation/Inequalities.lean}
+in PR~\#1928), while the legacy import path remains available.
 The comparison form
 $\mathrm{HasExponentialDecay\_pseudoMassFromParamsAtPair\_of\_le\_high\_temp\_rate}$
 then records the remaining order-theoretic step: if the concrete pair
