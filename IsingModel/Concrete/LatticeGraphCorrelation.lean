@@ -68,6 +68,12 @@ infinite-volume susceptibility / magnetization abs-h wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.CorrelationSymmetry` directly. For
 concrete §5.1 cluster-decay and high-temperature correlation-decay wrappers,
 import `IsingModel.Concrete.LatticeGraphCorrelation.CorrelationDecay` directly.
+For concrete anchored cubic pseudo-mass abbreviations, transport lemmas, and
+tanh-profile predicates, import
+`IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassBasic` directly.
+For concrete anchored cubic pseudo-mass lattice-mass, cluster, summability, and
+capstone wrappers, import
+`IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMass` directly.
 For
 concrete Peierls along-exhaustion wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.Peierls` directly. For
