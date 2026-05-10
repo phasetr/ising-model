@@ -68,6 +68,9 @@ For concrete susceptibility convergence wrappers, import
 For concrete partition-function closed-form wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.PartitionFunctionClosedForms`
 directly.
+For concrete partition-function h-symmetry and absolute-field wrappers, import
+`IsingModel.Concrete.LatticeGraphCorrelation.PartitionFunctionSymmetry`
+directly.
 For concrete per-parameter `partitionFunctionAlongExhaustion` /
 `freeEnergyAlongExhaustion` pointwise wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.PartitionFreeEnergyPointwiseRegularity`

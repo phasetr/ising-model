@@ -56,6 +56,9 @@ susceptibility convergence wrappers live in
 `IsingModel.AmbientLattice.SpecialCases.SusceptibilityConvergence`.
 General-graph along-exhaustion partition-function closed-form wrappers live in
 `IsingModel.AmbientLattice.SpecialCases.PartitionFunctionClosedForms`.
+General-graph along-exhaustion partition-function h-symmetry and absolute-field
+wrappers live in
+`IsingModel.AmbientLattice.SpecialCases.PartitionFunctionSymmetry`.
 General-graph
 `polymerFreeEnergy` analytic wrappers live in
 `IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyAnalyticity`.
