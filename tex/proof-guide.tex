@@ -1688,6 +1688,8 @@ $M_\Lambda = M(\mathrm{inducedGraph}\ G\ \Lambda)$. Bundled helpers
 ($\chi_\Lambda(-h) = \chi_\Lambda(h) - 2 M_\Lambda(h)$), and the
 $\mathbb{Z}^d$ wrapper
 \texttt{susceptibility\LeanLambda\_latticeGraph\_eq\_abs\_h} are included.
+The concrete wrapper now lives in
+\texttt{CorrelationSymmetry.lean}.
 \end{proof}
 
 \begin{definition}[\texttt{susceptibilityAlongExhaustion}, PR~\#777]
@@ -1736,7 +1738,9 @@ Bundled helpers: \texttt{susceptibilityAlongExhaustion\_apply},
 (ferromagnetic), \texttt{\_neg\_h}
 ($\chi_{\mathrm{along}}(-h) = \chi_{\mathrm{along}}(h) - 2 M_{\mathrm{along}}(h)$),
 and the $\mathbb Z^d$ wrapper
-\texttt{susceptibilityAlongExhaustion\_latticeGraph\_eq\_abs\_h}.
+\texttt{susceptibilityAlongExhaustion\_latticeGraph\_eq\_abs\_h}. The concrete
+wrapper now lives in
+\texttt{CorrelationSymmetry.lean}.
 \end{proof}
 
 \begin{theorem}[\texttt{susceptibilityAlongExhaustion\_le\_abs\_h},
@@ -1757,6 +1761,8 @@ $M_{\mathrm{along}}(|h|) \ge 0$. Via
 \texttt{magnetizationAlongExhaustion\_neg\_h}, $M_{\mathrm{along}}(h) = -M_{\mathrm{along}}(|h|) \le 0$.
 Thus the correction $M_{\mathrm{along}}(|h|) - M_{\mathrm{along}}(h) \ge 0$, and
 $\chi_{\mathrm{along}}(|h|) \ge \chi_{\mathrm{along}}(h)$.
+The concrete $\mathbb Z^d$ wrapper now lives in
+\texttt{CorrelationSymmetry.lean}.
 \end{proof}
 
 \begin{definition}[\texttt{susceptibilityInfinite}, PR~\#778]
