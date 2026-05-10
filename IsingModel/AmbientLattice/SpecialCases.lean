@@ -3,9 +3,10 @@ import IsingModel.AmbientLattice.SpecialCases.Legacy
 /-!
 # Ambient-lattice special cases umbrella
 
-This module is intentionally a thin re-export. The legacy monolithic body lives
-in `IsingModel.AmbientLattice.SpecialCases.Legacy`. Non-analytic free-energy
-special cases live in `IsingModel.AmbientLattice.SpecialCases.FreeEnergy`, and
+This module is intentionally a thin re-export. The compatibility shim
+`IsingModel.AmbientLattice.SpecialCases.Legacy` re-exports the split child
+modules for older import paths. Non-analytic free-energy special cases live in
+`IsingModel.AmbientLattice.SpecialCases.FreeEnergy`, and
 general-graph free-energy per-direction analyticity wrappers live in
 `IsingModel.AmbientLattice.SpecialCases.FreeEnergyAnalyticity`. Lightweight
 infinite-volume aliases live in

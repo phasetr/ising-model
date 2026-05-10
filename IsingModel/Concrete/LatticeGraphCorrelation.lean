@@ -3,10 +3,11 @@ import IsingModel.Concrete.LatticeGraphCorrelation.Legacy
 /-!
 # Concrete correlation umbrella for the ℤ^d Ising model
 
-This module is intentionally a thin re-export. The legacy monolithic
-implementation lives in `IsingModel.Concrete.LatticeGraphCorrelation.Legacy`;
-new narrow APIs should be added in dedicated child modules and re-exported
-here only when they belong to the public concrete correlation surface. For
+This module is intentionally a thin re-export. The compatibility shim
+`IsingModel.Concrete.LatticeGraphCorrelation.Legacy` re-exports the split child
+modules for older import paths. New narrow APIs should be added in dedicated
+child modules and re-exported here only when they belong to the public concrete
+correlation surface. For
 concrete finite-volume graph, spin-algebra, bottom-graph, and Hamiltonian
 symmetry wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.FiniteVolumeBasics` directly. For
