@@ -17,6 +17,9 @@ concrete direct finite-volume `partitionFunction` absolute-field, positivity,
 and ferromagnetic lower-bound wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.FiniteVolumePartitionBounds`
 directly. For
+concrete correlation, magnetization, and truncated-correlation h-symmetry /
+absolute-field wrappers, import
+`IsingModel.Concrete.LatticeGraphCorrelation.CorrelationSymmetry` directly. For
 concrete Peierls along-exhaustion wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.Peierls` directly. For
 concrete free-energy per-direction analyticity wrappers, import
