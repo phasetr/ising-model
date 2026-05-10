@@ -7,6 +7,8 @@ This module is intentionally a thin re-export. The legacy monolithic
 implementation lives in `IsingModel.Concrete.LatticeGraphCorrelation.Legacy`;
 new narrow APIs should be added in dedicated child modules and re-exported
 here only when they belong to the public concrete correlation surface. For
+concrete Peierls along-exhaustion wrappers, import
+`IsingModel.Concrete.LatticeGraphCorrelation.Peierls` directly. For
 concrete free-energy per-direction analyticity wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.FreeEnergyAnalyticity` directly.
 For concrete `HasDerivAt` wrappers, import
