@@ -78,8 +78,11 @@ directly.
 For concrete anchored cubic named-rate lattice-mass, interval, and decay
 wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassNamedRate` directly.
-For concrete anchored cubic pseudo-mass cluster, summability, product-sum, and
-capstone wrappers, import
+For concrete anchored cubic pseudo-mass cluster and product-summability wrappers,
+import
+`IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassClusterSummability`
+directly.
+For concrete anchored cubic pseudo-mass product-sum and capstone wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMass` directly.
 For
 concrete Peierls along-exhaustion wrappers, import
