@@ -1,4 +1,4 @@
-import IsingModel.Concrete.LatticeGraphCorrelation.CorrelationExhaustionLimits
+import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.AmbientLatticeSum
 
 /-!
