@@ -2324,8 +2324,9 @@ identification of \(\mathrm{pseudoMassFromParamsAtPair}\) with the anchored
 two-point function.
 
 \paragraph{Profile-compatible high-temperature lattice-mass corollaries
-(PR~\#1820).}
-The small module \path{Concrete/LatticeGraphCorrelation/CubicPseudoMass.lean}
+(PR~\#1820, moved to a narrower child module in PR~\#1921).}
+The small module
+\path{Concrete/LatticeGraphCorrelation/CubicPseudoMassTanhProfile.lean}
 records target-level corollaries under the same anchored cubic tanh-profile
 hypotheses.  The theorem
 \path{latticeMass_ge_neg_log_of_high_temp_exhaustion_of_cubic_tanh_profile}
@@ -2344,15 +2345,19 @@ direct new statements exposing the concrete
 so the concrete pseudo-mass comparison itself remains a separate follow-up.
 
 \paragraph{Anchored cubic pseudo-mass named-rate bridge (PR~\#1821).}
-The same module now names the concrete anchored cubic pseudo-mass at the pair
-\((0,z)\) as
+The basic cubic pseudo-mass module
+\path{Concrete/LatticeGraphCorrelation/CubicPseudoMassBasic.lean}
+names the concrete anchored cubic pseudo-mass at the pair \((0,z)\) as
 \path{cubicOriginPseudoMassFromParamsAtPair}, with arguments
 \(h_\alpha\), \(h_r\), \(\beta\), \(J\), and \(z\).
 The definition is accompanied by
 \path{cubicOriginPseudoMassFromParamsAtPair_eq} and
-\path{cubicOriginPseudoMassFromParamsAtPair_nonneg}.  The conditional bridge
+\path{cubicOriginPseudoMassFromParamsAtPair_nonneg}.  The capstone cubic
+pseudo-mass module
+\path{Concrete/LatticeGraphCorrelation/CubicPseudoMass.lean}
+contains the conditional bridge
 \path{HasExponentialDecay_cubicOriginPseudoMassFromParamsAtPair_of_le_high_temp_rate}
-states that, once this named rate is bounded by
+which states that, once this named rate is bounded by
 \(-\log(\beta J\,2d)\), it validates target-exhaustion exponential decay.
 Consequently
 \path{latticeMass_ge_cubicOriginPseudoMassFromParamsAtPair_of_le_high_temp_rate}
