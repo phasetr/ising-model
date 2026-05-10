@@ -10,6 +10,10 @@ here only when they belong to the public concrete correlation surface. For
 concrete finite-volume graph, spin-algebra, bottom-graph, and Hamiltonian
 symmetry wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.FiniteVolumeBasics` directly. For
+concrete finite-volume HNC, Gibbs-expectation, and correlation monotonicity /
+convergence wrappers, import
+`IsingModel.Concrete.LatticeGraphCorrelation.FiniteVolumeCorrelationMonotonicity`
+directly. For
 concrete finite-volume Boltzmann-weight, Hamiltonian, partition-function, and
 free-energy bound wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.FiniteVolumeEnergyBounds`
