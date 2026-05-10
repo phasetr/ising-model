@@ -36,6 +36,8 @@ View* (2nd ed., 1987).
 > concrete J-direction `correlationAlongExhaustion` pointwise wrappers,
 > `IsingModel.Concrete.LatticeGraphCorrelation.MagnetizationPointwiseRegularity`
 > for concrete per-parameter `magnetizationAlongExhaustion` pointwise wrappers,
+> `IsingModel.Concrete.LatticeGraphCorrelation.MagnetizationRegularity` for
+> concrete magnetization regularity wrappers,
 > `IsingModel.Concrete.LatticeGraphCorrelation.PartitionFreeEnergyPointwiseRegularity`
 > for concrete per-parameter `partitionFunctionAlongExhaustion` /
 > `freeEnergyAlongExhaustion` pointwise wrappers,
@@ -152,6 +154,8 @@ View* (2nd ed., 1987).
 > `IsingModel.AmbientLattice.SpecialCases.MayerVdRegularity` for ambient
 > along-exhaustion `mayerPartialSum` / `mayerExpansionTerm` /
 > `vdPolymerFamilies_sum` regularity wrappers,
+> `IsingModel.AmbientLattice.SpecialCases.MagnetizationRegularity` for ambient
+> along-exhaustion magnetization regularity wrappers,
 > `IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyAnalyticity` for
 > ambient along-exhaustion `polymerFreeEnergy` analytic wrappers,
 > `IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBasic` for ambient
