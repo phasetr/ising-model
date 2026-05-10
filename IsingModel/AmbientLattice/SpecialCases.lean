@@ -54,6 +54,8 @@ magnetization regularity wrappers live in
 General-graph
 susceptibility convergence wrappers live in
 `IsingModel.AmbientLattice.SpecialCases.SusceptibilityConvergence`.
+General-graph along-exhaustion partition-function closed-form wrappers live in
+`IsingModel.AmbientLattice.SpecialCases.PartitionFunctionClosedForms`.
 General-graph
 `polymerFreeEnergy` analytic wrappers live in
 `IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyAnalyticity`.
