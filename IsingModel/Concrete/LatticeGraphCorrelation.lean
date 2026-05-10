@@ -13,6 +13,9 @@ symmetry wrappers, import
 concrete finite-volume HNC, Gibbs-expectation, and correlation monotonicity /
 convergence wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.FiniteVolumeCorrelationMonotonicity`
+directly. For concrete Lambda-layer correlation and magnetization convergence /
+monotonicity wrappers, import
+`IsingModel.Concrete.LatticeGraphCorrelation.LambdaCorrelationMonotonicity`
 directly. For concrete finite-volume correlation and truncated-correlation
 inequality, odd-vanishing, and trivial-slice wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.FiniteVolumeCorrelationInequalities`
