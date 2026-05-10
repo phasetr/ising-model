@@ -1,4 +1,4 @@
-import IsingModel.Concrete.LatticeGraphCorrelation.Inequalities
+import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassFoundation
 
 /-!
 # Basic anchored cubic pseudo-mass names

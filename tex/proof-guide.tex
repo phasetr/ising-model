@@ -2117,7 +2117,8 @@ predicate:
       |U_2(i, j)| \le C \cdot e^{-\alpha\, d_{\mathrm{latt}}(i, j)}.
 \]
 ($\mathrm{IsingModel.Ambient.HasExponentialDecay}$, in
-\texttt{Concrete/LatticeGraphCorrelation.lean}.) Bundled
+\texttt{Concrete/LatticeGraphCorrelation/LatticeMassFoundation.lean}.)
+Bundled
 companions: $\mathrm{HasExponentialDecay\_beta\_zero}$ (at
 $\beta = 0$, witness $C = 0$ since $U_2 \equiv 0$),
 $\mathrm{HasExponentialDecay\_J\_zero}$ (at $J = 0$ ferromagnetic,
@@ -2177,6 +2178,11 @@ specialises this to a strictly positive rate and concludes
 $0 < \mathrm{latticeMass}(d,\Lambda,p)$. These package the
 $\mathrm{le\_sSup}$ argument needed in the later GJ \S17.5
 Lemma~17.5.2 lower-bound bridge.
+These foundation declarations were split from the legacy
+\texttt{Concrete/LatticeGraphCorrelation/Inequalities.lean} path into
+\texttt{Concrete/LatticeGraphCorrelation/LatticeMassFoundation.lean}
+in PR~\#1925; the legacy module still imports the child module for
+compatibility.
 The transfer theorem
 $\mathrm{HasExponentialDecay\_transfer\_exhaustion}$ records that,
 under ferromagnetic parameters, a validating rate for one exhaustion
