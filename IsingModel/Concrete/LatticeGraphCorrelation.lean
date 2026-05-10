@@ -17,6 +17,10 @@ directly. For
 concrete finite-volume Boltzmann-weight, Hamiltonian, partition-function, and
 free-energy bound wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.FiniteVolumeEnergyBounds`
+directly. For concrete finite-volume Hamiltonian closed forms, direct
+finite-volume energy / partition / free-energy bound wrappers, and spinProduct
+helper wrappers, import
+`IsingModel.Concrete.LatticeGraphCorrelation.EnergyClosedForms`
 directly. For
 concrete direct finite-volume `partitionFunction` monotonicity, trivial-slice,
 and negative-field symmetry wrappers, import
