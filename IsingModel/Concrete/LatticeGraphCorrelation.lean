@@ -75,6 +75,10 @@ For concrete high-temperature lattice-mass, antitonicity, and tanh lower-bound
 wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTemperature`
 directly.
+For concrete product-summability, critical inverse temperature, pseudo-mass
+transfer, and below-critical cluster wrappers, import
+`IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransfer`
+directly.
 For concrete anchored cubic pseudo-mass abbreviations, transport lemmas, and
 tanh-profile predicates, import
 `IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassBasic` directly.
