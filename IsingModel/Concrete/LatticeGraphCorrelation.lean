@@ -90,6 +90,10 @@ For concrete high-temperature zero-boundary, closed-interval, and half-open
 continuity / locally uniform convergence wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempZeroBoundary`
 directly.
+For concrete `truncated2Infinite` high-temperature regularity wrappers (Step
+185--187 / 239--240 / 241), import
+`IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassTruncated2HighTemp`
+directly.
 For concrete anchored cubic pseudo-mass abbreviations, transport lemmas, and
 tanh-profile predicates, import
 `IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassBasic` directly.
