@@ -52,6 +52,9 @@ General-graph
 magnetization regularity wrappers live in
 `IsingModel.AmbientLattice.SpecialCases.MagnetizationRegularity`.
 General-graph
+susceptibility convergence wrappers live in
+`IsingModel.AmbientLattice.SpecialCases.SusceptibilityConvergence`.
+General-graph
 `polymerFreeEnergy` analytic wrappers live in
 `IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyAnalyticity`.
 General-graph basic `polymerFreeEnergy` at-zero / at-one / sandwich wrappers
