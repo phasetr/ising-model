@@ -46,6 +46,9 @@ Mayer trivial/no-polymer comparison wrappers live in
 `IsingModel.AmbientLattice.SpecialCases.MayerVdIff`. General-graph
 Mayer and `vdPolymerFamilies_sum` regularity wrappers live in
 `IsingModel.AmbientLattice.SpecialCases.MayerVdRegularity`. General-graph
+magnetization convergence wrappers live in
+`IsingModel.AmbientLattice.SpecialCases.MagnetizationConvergence`.
+General-graph
 magnetization regularity wrappers live in
 `IsingModel.AmbientLattice.SpecialCases.MagnetizationRegularity`.
 General-graph
