@@ -2480,8 +2480,11 @@ summable_truncated2Infinite_prod_of_cubicNamedRate_corr_mem_le_high_temp_rate
 The proofs compose the named-rate decay bridges with
 \path{clusterProperty_latticeGraph_of_HasExponentialDecay} and the Step~127
 theorem \path{summable_truncated2Infinite_prod_of_hasExponentialDecay}.
-PR~\#1829 packages the corresponding explicit product-sum upper bounds.  Once
-the named rate \(m\) supplies a positive exponential-decay witness, Step~127
+PR~\#1829 packages the corresponding explicit product-sum upper bounds, moved
+to the narrower module
+\path{Concrete/LatticeGraphCorrelation/CubicPseudoMassProductSum.lean} in
+PR~\#1924.  Once the named rate \(m\) supplies a positive exponential-decay
+witness, Step~127
 \path{tsum_truncated2Infinite_prod_le} yields a constant \(C \ge 0\) such that
 \[
   \sum_w \operatorname{cubicTruncated2Product}(d,\beta,J,x,y,w)
