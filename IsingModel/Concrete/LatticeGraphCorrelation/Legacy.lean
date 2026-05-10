@@ -108,127 +108,6 @@ namespace IsingModel
 
 namespace Ambient
 
-/-- **ℤ^d correlationInfinite translation invariance** (any-Exhaustion):
-`correlationInfinite p (vaddFinset t A) = correlationInfinite p A`. -/
-theorem correlationInfinite_latticeGraph_vaddFinset_of_translationInvariant
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (t : Fin d → ℤ)
-    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet]
-    (p : IsingParams ℝ) (hf : Ferromagnetic p) (A : Finset (Fin d → ℤ)) :
-    correlationInfinite (IsingModel.latticeGraph d) Λ p (vaddFinset t A)
-      = correlationInfinite (IsingModel.latticeGraph d) Λ p A := by
-  classical
-  exact correlationInfinite_vaddFinset_of_translationInvariant
-    (IsingModel.latticeGraph d) Λ t p hf A
-
-/-- **ℤ^d spontaneousCorrelation translation invariance** (any-Exhaustion):
-for ferromagnetic `(J ≥ 0, β > 0)`,
-`spontaneousCorrelation J β (vaddFinset t A) = spontaneousCorrelation J β A`. -/
-theorem spontaneousCorrelation_latticeGraph_translation
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (t : Fin d → ℤ)
-    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet]
-    {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) (A : Finset (Fin d → ℤ)) :
-    spontaneousCorrelation (IsingModel.latticeGraph d) Λ J β (vaddFinset t A)
-      = spontaneousCorrelation (IsingModel.latticeGraph d) Λ J β A := by
-  classical
-  exact spontaneousCorrelation_translation
-    (IsingModel.latticeGraph d) Λ t hJ hβ A
-
-/-- **ℤ^d spontaneousMagnetization translation invariance** (any-Exhaustion):
-for ferromagnetic `(J ≥ 0, β > 0)`,
-`spontaneousMagnetization J β (t +ᵥ i) = spontaneousMagnetization J β i`. -/
-theorem spontaneousMagnetization_latticeGraph_translation
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (t : Fin d → ℤ)
-    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet]
-    {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) (i : Fin d → ℤ) :
-    spontaneousMagnetization (IsingModel.latticeGraph d) Λ J β (t +ᵥ i)
-      = spontaneousMagnetization (IsingModel.latticeGraph d) Λ J β i := by
-  classical
-  exact spontaneousMagnetization_translation
-    (IsingModel.latticeGraph d) Λ t hJ hβ i
-
-/-- **ℤ^d truncated2Infinite translation invariance** (any-Exhaustion):
-`U_2(t+i, t+j) = U_2(i, j)`. -/
-theorem truncated2Infinite_latticeGraph_translation
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (t : Fin d → ℤ)
-    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet]
-    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i j : Fin d → ℤ) :
-    truncated2Infinite (IsingModel.latticeGraph d) Λ p (t +ᵥ i) (t +ᵥ j)
-      = truncated2Infinite (IsingModel.latticeGraph d) Λ p i j := by
-  classical
-  exact truncated2Infinite_translation (IsingModel.latticeGraph d) Λ t p hf i j
-
-/-- **ℤ^d truncated3Infinite translation invariance** (any-Exhaustion):
-`U_3(t+i, t+j, t+k) = U_3(i, j, k)`. -/
-theorem truncated3Infinite_latticeGraph_translation
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (t : Fin d → ℤ)
-    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet]
-    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i j k : Fin d → ℤ) :
-    truncated3Infinite (IsingModel.latticeGraph d) Λ p
-        (t +ᵥ i) (t +ᵥ j) (t +ᵥ k)
-      = truncated3Infinite (IsingModel.latticeGraph d) Λ p i j k := by
-  classical
-  exact truncated3Infinite_translation (IsingModel.latticeGraph d) Λ t p hf i j k
-
-/-- **ℤ^d truncated4Infinite translation invariance** (any-Exhaustion):
-`U_4(t+i, t+j, t+k, t+l) = U_4(i, j, k, l)`. -/
-theorem truncated4Infinite_latticeGraph_translation
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (t : Fin d → ℤ)
-    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet]
-    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i j k l : Fin d → ℤ) :
-    truncated4Infinite (IsingModel.latticeGraph d) Λ p
-        (t +ᵥ i) (t +ᵥ j) (t +ᵥ k) (t +ᵥ l)
-      = truncated4Infinite (IsingModel.latticeGraph d) Λ p i j k l := by
-  classical
-  exact truncated4Infinite_translation
-    (IsingModel.latticeGraph d) Λ t p hf i j k l
-
-/-- **ℤ^d freeEnergyAlongExhaustion shift translation invariance**:
-`freeEnergyAlongExhaustion (Λ.shift t) n = freeEnergyAlongExhaustion Λ n`. -/
-theorem freeEnergyAlongExhaustion_latticeGraph_shift_eq
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (t : Fin d → ℤ)
-    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet]
-    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
-      ((Λ.shift t).volume n)).edgeSet]
-    (p : IsingParams ℝ) (n : ℕ) :
-    freeEnergyAlongExhaustion (IsingModel.latticeGraph d) (Λ.shift t) p n
-      = freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ p n :=
-  freeEnergyAlongExhaustion_shift_eq (IsingModel.latticeGraph d) Λ t p n
-
-/-- **ℤ^d freeEnergyInfinite shift translation invariance**:
-`freeEnergyInfinite (Λ.shift t) = freeEnergyInfinite Λ`. -/
-theorem freeEnergyInfinite_latticeGraph_shift_eq
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (t : Fin d → ℤ)
-    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet]
-    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
-      ((Λ.shift t).volume n)).edgeSet]
-    (p : IsingParams ℝ) :
-    freeEnergyInfinite (IsingModel.latticeGraph d) (Λ.shift t) p
-      = freeEnergyInfinite (IsingModel.latticeGraph d) Λ p :=
-  freeEnergyInfinite_shift_eq (IsingModel.latticeGraph d) Λ t p
-
-/-- **ℤ^d correlationAlongExhaustion shift translation invariance**:
-`correlationAlongExhaustion (Λ.shift t) (vaddFinset t A) n = correlationAlongExhaustion Λ A n`. -/
-theorem correlationAlongExhaustion_latticeGraph_shift_vaddFinset_eq
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (t : Fin d → ℤ)
-    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet]
-    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
-      ((Λ.shift t).volume n)).edgeSet]
-    (p : IsingParams ℝ) (A : Finset (Fin d → ℤ)) (n : ℕ) :
-    correlationAlongExhaustion (IsingModel.latticeGraph d) (Λ.shift t) p
-        (vaddFinset t A) n
-      = correlationAlongExhaustion (IsingModel.latticeGraph d) Λ p A n :=
-  correlationAlongExhaustion_shift_vaddFinset_eq
-    (IsingModel.latticeGraph d) Λ t p A n
-
 /-- **ℤ^d extendGraphFromΛ₁_le_induce**:
 `extendGraphFromΛ₁ (latticeGraph d) Λ₁ Λ₂ ≤ inducedGraph (latticeGraph d) Λ₂`. -/
 theorem extendGraphFromΛ₁_le_induce_latticeGraph
@@ -253,56 +132,6 @@ theorem correlationΛ_latticeGraph_extendGraph_eq
           (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ₁) p
           (Ambient.liftFinset A hA) :=
   Ambient.correlationΛ_extendGraph_eq (IsingModel.latticeGraph d) h12 p hA
-
-/-- **ℤ^d correlationΛ translation invariance**:
-`⟨σ^{vadd A}⟩_{t +ᵥ Λ}(p) = ⟨σ^A⟩_Λ(p)` on ℤ^d. -/
-theorem correlationΛ_latticeGraph_vaddFinset_eq
-    (d : ℕ) (t : Fin d → ℤ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    [Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
-      (vaddFinset t Λ)).edgeSet]
-    (p : IsingParams ℝ) (A : Finset (↑Λ : Type _)) :
-    correlationΛ (IsingModel.latticeGraph d) (vaddFinset t Λ) p
-        (A.map (vaddSubtypeEquiv t Λ).toEmbedding)
-      = correlationΛ (IsingModel.latticeGraph d) Λ p A :=
-  correlationΛ_vaddFinset_eq (IsingModel.latticeGraph d) t Λ p A
-
-/-- **ℤ^d partitionFunctionΛ translation invariance**:
-`Z_{t +ᵥ Λ}(p) = Z_Λ(p)` on ℤ^d. -/
-theorem partitionFunctionΛ_latticeGraph_vaddFinset_eq
-    (d : ℕ) (t : Fin d → ℤ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    [Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
-      (vaddFinset t Λ)).edgeSet]
-    (p : IsingParams ℝ) :
-    partitionFunctionΛ (IsingModel.latticeGraph d) (vaddFinset t Λ) p
-      = partitionFunctionΛ (IsingModel.latticeGraph d) Λ p :=
-  partitionFunctionΛ_vaddFinset_eq (IsingModel.latticeGraph d) t Λ p
-
-/-- **ℤ^d freeEnergyΛ translation invariance**:
-`f_{t +ᵥ Λ}(p) = f_Λ(p)` on ℤ^d. -/
-theorem freeEnergyΛ_latticeGraph_vaddFinset_eq
-    (d : ℕ) (t : Fin d → ℤ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    [Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
-      (vaddFinset t Λ)).edgeSet]
-    (p : IsingParams ℝ) :
-    freeEnergyΛ (IsingModel.latticeGraph d) (vaddFinset t Λ) p
-      = freeEnergyΛ (IsingModel.latticeGraph d) Λ p :=
-  freeEnergyΛ_vaddFinset_eq (IsingModel.latticeGraph d) t Λ p
-
-/-- **ℤ^d log_partitionFunctionΛ translation invariance**:
-`log Z_{t +ᵥ Λ}(p) = log Z_Λ(p)` on ℤ^d. -/
-theorem log_partitionFunctionΛ_latticeGraph_vaddFinset_eq
-    (d : ℕ) (t : Fin d → ℤ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    [Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
-      (vaddFinset t Λ)).edgeSet]
-    (p : IsingParams ℝ) :
-    Real.log (partitionFunctionΛ (IsingModel.latticeGraph d)
-        (vaddFinset t Λ) p)
-      = Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ p) := by
-  rw [partitionFunctionΛ_latticeGraph_vaddFinset_eq d t Λ p]
 
 /-- **ℤ^d per-stage explicit upper bound on freeEnergyAlongExhaustion**. -/
 theorem freeEnergyAlongExhaustion_latticeGraph_cubicExhaustion_upper_bound
@@ -889,18 +718,6 @@ theorem freeEnergyAlongExhaustion_latticeGraph_nonneg
     0 ≤ freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ p n :=
   freeEnergyAlongExhaustion_nonneg_of_ferromagnetic
     (IsingModel.latticeGraph d) Λ p hf hne
-
-/-- **ℤ^d free-energy shift invariance**:
-`freeEnergyInfinite (latticeGraph d) ((cubicExhaustion d).shift t) p
-  = freeEnergyInfinite (latticeGraph d) (cubicExhaustion d) p`. -/
-theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_shift
-    (d : ℕ) (t : Fin d → ℤ) (p : IsingParams ℝ) :
-    freeEnergyInfinite (IsingModel.latticeGraph d)
-        ((Ambient.cubicExhaustion d).shift t) p
-      = freeEnergyInfinite (IsingModel.latticeGraph d)
-          (Ambient.cubicExhaustion d) p :=
-  freeEnergyInfinite_shift_eq (IsingModel.latticeGraph d)
-    (Ambient.cubicExhaustion d) t p
 
 /-! ### susceptibility regularity ℤ^d wraps -/
 
