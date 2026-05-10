@@ -2232,6 +2232,17 @@ uniform convergence wrappers now live in
 \texttt{Concrete/LatticeGraphCorrelation/LatticeMassHighTempZeroBoundary.lean}
 (moved from \texttt{Concrete/LatticeGraphCorrelation/Inequalities.lean}
 in PR~\#1930), with the legacy import path preserved.
+The high-temperature regularity wrappers for the infinite-volume Ursell
+two-point function $\mathrm{truncated2Infinite}$ at $h = 0$ -- continuity on
+$\mathrm{Ioo}\,0\,\beta_c$, $\mathrm{Icc}\,0\,b$, and $\mathrm{Ico}\,0\,\beta_c$
+in $\beta$ (Step~185) and in $J$ (Step~239), Lipschitz / a.e.\
+differentiable / monotone wrappers in $\beta$ (Steps~186--187) and in $J$
+(Step~240), and full-neighborhood $\mathrm{ContinuousAt}$ wrappers at every
+interior point of $\mathrm{Ioo}\,0\,\beta_c$ and $\mathrm{Ioo}\,0\,J_c$
+(Step~241) -- now live in
+\texttt{Concrete/LatticeGraphCorrelation/LatticeMassTruncated2HighTemp.lean}
+(moved from \texttt{Concrete/LatticeGraphCorrelation/Inequalities.lean}
+in PR~\#1931), with the legacy import path preserved.
 The comparison form
 $\mathrm{HasExponentialDecay\_pseudoMassFromParamsAtPair\_of\_le\_high\_temp\_rate}$
 then records the remaining order-theoretic step: if the concrete pair
