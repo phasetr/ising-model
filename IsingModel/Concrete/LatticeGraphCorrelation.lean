@@ -66,6 +66,9 @@ concrete correlation, magnetization, and truncated-correlation h-symmetry /
 absolute-field wrappers, including finite-volume, along-exhaustion, and
 infinite-volume susceptibility / magnetization abs-h wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.CorrelationSymmetry` directly. For
+concrete §5.1 cluster-decay and high-temperature correlation-decay wrappers,
+import `IsingModel.Concrete.LatticeGraphCorrelation.CorrelationDecay` directly.
+For
 concrete Peierls along-exhaustion wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.Peierls` directly. For
 concrete free-energy per-direction analyticity wrappers, import

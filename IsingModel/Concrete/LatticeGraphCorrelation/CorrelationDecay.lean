@@ -1,14 +1,15 @@
 import IsingModel.AmbientLattice.CorrelationDecay
+import IsingModel.AmbientLattice.TruncatedFunctions
 import IsingModel.Lattice
 
 /-!
 # Lightweight concrete lattice correlation-decay wrappers
 
-This module exposes concrete `latticeGraph d` high-temperature
-correlation-decay wrappers without importing the legacy monolithic
-`LatticeGraphCorrelation.Legacy` implementation. It keeps incremental checks
-for thin correlation-decay API additions away from the heavy ambient
-analyticity and cluster-expansion import chain.
+This module exposes concrete `latticeGraph d` cluster-decay and
+high-temperature correlation-decay wrappers without importing the legacy
+monolithic `LatticeGraphCorrelation.Legacy` implementation. It keeps
+incremental checks for thin correlation-decay API additions away from the
+heavy ambient analyticity and cluster-expansion import chain.
 -/
 
 namespace IsingModel
@@ -22,6 +23,112 @@ noncomputable local instance fintype_induced_latticeGraph_edgeSet
     Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet := by
   classical
   exact SimpleGraph.fintypeEdgeSet _
+
+/-! ## ℤ^d wrapper for §5.1 conditional cluster decay (PR #779) -/
+
+/-- **ℤ^d conditional cluster decay (cofinite form)**: on ℤ^d, if the
+∞-volume Ursell 2-point function at a fixed site `i : Fin d → ℤ`,
+viewed as a function of the free site `j : Fin d → ℤ`, is summable,
+then it tends to `0` along `Filter.cofinite` (which on `Fin d → ℤ`
+coincides with the "|r| → ∞" filter). Concrete `latticeGraph d`
+wrapper for PR #779's
+`truncated2Infinite_tendsto_cofinite_zero_of_summable`.
+
+Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §5.1 pp. 72–74. -/
+theorem truncated2Infinite_latticeGraph_tendsto_cofinite_zero_of_summable
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (i : Fin d → ℤ)
+    (hsum : Summable (fun j : Fin d → ℤ =>
+      truncated2Infinite (IsingModel.latticeGraph d) Λ p i j)) :
+    Filter.Tendsto
+      (fun j : Fin d → ℤ =>
+        truncated2Infinite (IsingModel.latticeGraph d) Λ p i j)
+      Filter.cofinite (nhds 0) :=
+  truncated2Infinite_tendsto_cofinite_zero_of_summable
+    (IsingModel.latticeGraph d) Λ p i hsum
+
+/-! ## ℤ^d distance-based cluster decay capstone
+
+Combines PR #779's cofinite cluster decay with PR #782's proper-map
+property of `latticeDistance` (via the filter equality
+`comap_latticeDistance_atTop_eq_cofinite` from PR #783) to express
+the §5.1 cluster decay statement in its standard distance-based
+form. -/
+
+/-- **ℤ^d distance-based conditional cluster decay**: under
+summability of `j ↦ U_2(i, j)` at a fixed basepoint
+`i : Fin d → ℤ`, the ∞-volume Ursell 2-point function tends to `0`
+as the lattice distance `latticeDistance d i j` tends to infinity.
+
+Equivalent ε-N statement: for every `ε > 0` there exists `N : ℕ`
+such that `latticeDistance d i j ≥ N` implies
+`|truncated2Infinite (latticeGraph d) Λ p i j| < ε`.
+
+A `Summable`-conditioned corollary, not a standalone Glimm–Jaffe
+result: it presents the §5.1 cluster picture in its distance-based
+form, with the `Summable` hypothesis serving as a placeholder for
+the unconditional summability later supplied in high-temperature regimes by
+the Simon–Lieb stack (Friedli–Velenik Prop 9.31). This PR #783-era capstone
+of the §5.1 cluster-decay infrastructure stack (PR #779 + PR #781 + PR #782)
+remains the conditional distance-form wrapper. The proof is a one-line rewrite
+of the comap filter via `comap_latticeDistance_atTop_eq_cofinite`, followed by
+PR #779's cofinite version.
+
+References: Glimm–Jaffe *Quantum Physics* 2nd ed., §5.1
+pp. 76–79; Friedli–Velenik *Statistical Mechanics of Lattice
+Systems*, Prop 9.31 (Simon–Lieb inequality). -/
+theorem truncated2Infinite_latticeGraph_tendsto_atTop_zero_of_summable
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (i : Fin d → ℤ)
+    (hsum : Summable (fun j : Fin d → ℤ =>
+      truncated2Infinite (IsingModel.latticeGraph d) Λ p i j)) :
+    Filter.Tendsto
+      (fun j : Fin d → ℤ =>
+        truncated2Infinite (IsingModel.latticeGraph d) Λ p i j)
+      (Filter.comap (fun j : Fin d → ℤ =>
+        IsingModel.latticeDistance d i j) Filter.atTop) (nhds 0) := by
+  rw [IsingModel.comap_latticeDistance_atTop_eq_cofinite]
+  exact truncated2Infinite_latticeGraph_tendsto_cofinite_zero_of_summable
+    d Λ p i hsum
+
+/-! ## ℤ^d wrappers for §5.1 cluster property (PR #792 bundle) -/
+
+/-- **ℤ^d cluster property from per-site summability** (Glimm–Jaffe
+§5.1): on `latticeGraph d`, if the ∞-volume Ursell 2-point function
+`j ↦ U_2(i, j)` is `Summable` for every basepoint `i : Fin d → ℤ`,
+then the cluster property holds. Concrete `latticeGraph d` wrapper
+of the abstract `clusterProperty_of_summable`. -/
+theorem clusterProperty_latticeGraph_of_summable
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ)
+    (hsum : ∀ i : Fin d → ℤ,
+      Summable (fun j : Fin d → ℤ =>
+        truncated2Infinite (IsingModel.latticeGraph d) Λ p i j)) :
+    clusterProperty (IsingModel.latticeGraph d) Λ p :=
+  clusterProperty_of_summable (IsingModel.latticeGraph d) Λ p hsum
+
+/-- **ℤ^d cluster property at `J = 0` trivial slice (ferromagnetic)**:
+on `latticeGraph d`, for ferromagnetic `⟨0, h, β⟩` (`0 ≤ h, 0 < β`),
+the cluster property holds. Concrete `latticeGraph d` wrapper of
+`clusterProperty_J_zero`. -/
+theorem clusterProperty_latticeGraph_J_zero
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (h β : ℝ)
+    (hf : Ferromagnetic (⟨(0 : ℝ), h, β⟩ : IsingParams ℝ)) :
+    clusterProperty (IsingModel.latticeGraph d) Λ
+      (⟨0, h, β⟩ : IsingParams ℝ) :=
+  clusterProperty_J_zero (IsingModel.latticeGraph d) Λ h β hf
+
+/-- **ℤ^d cluster property at `β = 0` trivial slice**: on
+`latticeGraph d`, for any `⟨J, h, 0⟩`, the cluster property holds
+(no ferromagnetic hypothesis). Concrete `latticeGraph d` wrapper
+of `clusterProperty_beta_zero`. -/
+theorem clusterProperty_latticeGraph_beta_zero
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J h : ℝ) :
+    clusterProperty (IsingModel.latticeGraph d) Λ
+      (⟨J, h, 0⟩ : IsingParams ℝ) :=
+  clusterProperty_beta_zero (IsingModel.latticeGraph d) Λ J h
 
 /-- **ℤ^d Λ ferromagnetic §18.7 named-rate capstone**: under
 `0 ≤ J, 0 < β`, the finite-volume pair-correlation distance bound on
