@@ -1,5 +1,5 @@
 import IsingModel.BallBoundarySimonLieb
-import IsingModel.Concrete.LatticeGraphCorrelation.Inequalities
+import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassFoundation
 import IsingModel.Peierls
 import IsingModel.Concrete.CubicExhaustion
 
