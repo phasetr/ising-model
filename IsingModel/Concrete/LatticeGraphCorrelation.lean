@@ -65,6 +65,9 @@ concrete Peierls along-exhaustion wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.Peierls` directly. For
 concrete free-energy per-direction analyticity wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.FreeEnergyAnalyticity` directly.
+For concrete Lambda-layer susceptibility regularity and parameter-direction
+convergence wrappers, import
+`IsingModel.Concrete.LatticeGraphCorrelation.SusceptibilityLambda` directly.
 For concrete `HasDerivAt` wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.Regularity` directly. For
 concrete joint `Continuous` / `Differentiable` / pointwise joint wrappers,
