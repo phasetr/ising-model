@@ -63,7 +63,8 @@ and ferromagnetic lower-bound wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.FiniteVolumePartitionBounds`
 directly. For
 concrete correlation, magnetization, and truncated-correlation h-symmetry /
-absolute-field wrappers, import
+absolute-field wrappers, including finite-volume, along-exhaustion, and
+infinite-volume susceptibility / magnetization abs-h wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.CorrelationSymmetry` directly. For
 concrete Peierls along-exhaustion wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.Peierls` directly. For

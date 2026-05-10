@@ -2,6 +2,7 @@ import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.Concrete.IntLattice
 import IsingModel.Concrete.LatticeGraphCorrelation.TwoPoint
 import IsingModel.Concrete.LatticeGraphCorrelation.InfiniteVolumeCorrelationInequalities
+import IsingModel.Concrete.LatticeGraphCorrelation.CorrelationSymmetry
 import IsingModel.Concrete.LatticeGraphCorrelation.SiteIndepMag
 import IsingModel.TranslationInvariance
 import IsingModel.PhaseTransition
@@ -20,170 +21,14 @@ import Mathlib.Analysis.BoundedVariation
 
 ℤ^d wrappers for:
 1. GHS inequality (truncated3 ≤ 0) and Lebowitz inequality (truncated4 ≤ 0)
-2. §5.3 Z₂ h-symmetry and abs-h theorems
-3. §5.1 conditional and distance-based cluster decay
-4. §17.1/§17.5 lattice mass / correlation length
+2. §5.1 conditional and distance-based cluster decay
+3. §17.1/§17.5 lattice mass / correlation length
 -/
 
 open scoped symmDiff
 
 namespace IsingModel
 namespace Ambient
-
-/-! ## ℤ^d wrappers for §5.3 Z₂ h-symmetry abs-h theorems (issue #770 A-6) -/
-
-/-- **ℤ^d `|M_Λ(h)| = M_Λ(|h|)`** under ferromagnetism at `|h|`.
-Concrete `latticeGraph d` wrapper for PR #772's
-`abs_magnetizationΛ_eq_magnetizationΛ_abs_h`. -/
-theorem abs_magnetizationΛ_latticeGraph_eq_magnetizationΛ_latticeGraph_abs_h
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    (J h β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (i : ↑Λ) :
-    |magnetizationΛ (IsingModel.latticeGraph d) Λ
-        (⟨J, h, β⟩ : IsingParams ℝ) i|
-      = magnetizationΛ (IsingModel.latticeGraph d) Λ
-          (⟨J, |h|, β⟩ : IsingParams ℝ) i :=
-  abs_magnetizationΛ_eq_magnetizationΛ_abs_h
-    (IsingModel.latticeGraph d) Λ J h β hJ hβ i
-
-/-- **ℤ^d `M_along(-h) n = -M_along(h) n`** (any parameters). Concrete
-`latticeGraph d` wrapper for PR #773's
-`magnetizationAlongExhaustion_neg_h`. -/
-theorem magnetizationAlongExhaustion_latticeGraph_neg_h
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    (J h β : ℝ) (i : Fin d → ℤ) (n : ℕ) :
-    magnetizationAlongExhaustion (IsingModel.latticeGraph d) Λ
-        (⟨J, -h, β⟩ : IsingParams ℝ) i n
-      = -magnetizationAlongExhaustion (IsingModel.latticeGraph d) Λ
-          (⟨J, h, β⟩ : IsingParams ℝ) i n :=
-  magnetizationAlongExhaustion_neg_h (IsingModel.latticeGraph d) Λ J h β i n
-
-/-- **ℤ^d `|M_along(h) n| = M_along(|h|) n`** under ferromagnetism at
-`|h|`. Concrete `latticeGraph d` wrapper for PR #773's
-`abs_magnetizationAlongExhaustion_eq_magnetizationAlongExhaustion_abs_h`. -/
-theorem abs_magnetizationAlongExhaustion_latticeGraph_eq_abs_h
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    (J h β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (i : Fin d → ℤ) (n : ℕ) :
-    |magnetizationAlongExhaustion (IsingModel.latticeGraph d) Λ
-        (⟨J, h, β⟩ : IsingParams ℝ) i n|
-      = magnetizationAlongExhaustion (IsingModel.latticeGraph d) Λ
-          (⟨J, |h|, β⟩ : IsingParams ℝ) i n :=
-  abs_magnetizationAlongExhaustion_eq_magnetizationAlongExhaustion_abs_h
-    (IsingModel.latticeGraph d) Λ J h β hJ hβ i n
-
-/-- **ℤ^d ∞-volume one-sided `|M_∞(h)| ≤ M_∞(|h|)`** under ferromagnetism
-at `|h|`. Concrete `latticeGraph d` wrapper for PR #773's
-`abs_magnetizationInfinite_le_magnetizationInfinite_abs_h`. -/
-theorem abs_magnetizationInfinite_latticeGraph_le_magnetizationInfinite_latticeGraph_abs_h
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    (J h β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (i : Fin d → ℤ) :
-    |magnetizationInfinite (IsingModel.latticeGraph d) Λ
-        (⟨J, h, β⟩ : IsingParams ℝ) i|
-      ≤ magnetizationInfinite (IsingModel.latticeGraph d) Λ
-          (⟨J, |h|, β⟩ : IsingParams ℝ) i :=
-  abs_magnetizationInfinite_le_magnetizationInfinite_abs_h
-    (IsingModel.latticeGraph d) Λ J h β hJ hβ i
-
-/-- **ℤ^d `M_∞ ≤ 0` at `h ≤ 0`** under ferromagnetism. Concrete
-`latticeGraph d` wrapper for PR #774's
-`magnetizationInfinite_nonpos_of_nonpos_h`. -/
-theorem magnetizationInfinite_latticeGraph_nonpos_of_nonpos_h
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    (J h β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (hh : h ≤ 0)
-    (i : Fin d → ℤ) :
-    magnetizationInfinite (IsingModel.latticeGraph d) Λ
-        (⟨J, h, β⟩ : IsingParams ℝ) i ≤ 0 :=
-  magnetizationInfinite_nonpos_of_nonpos_h
-    (IsingModel.latticeGraph d) Λ J h β hJ hβ hh i
-
-/-- **ℤ^d `M_∞ = 0` at `h ≤ 0` when some stage misses `i`**.
-Concrete `latticeGraph d` wrapper for PR #774's
-`magnetizationInfinite_eq_zero_of_exists_stage_not_mem`. -/
-theorem magnetizationInfinite_latticeGraph_eq_zero_of_exists_stage_not_mem
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    (J h β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (hh : h ≤ 0)
-    (i : Fin d → ℤ) (hmiss : ∃ n, i ∉ Λ.volume n) :
-    magnetizationInfinite (IsingModel.latticeGraph d) Λ
-        (⟨J, h, β⟩ : IsingParams ℝ) i = 0 :=
-  magnetizationInfinite_eq_zero_of_exists_stage_not_mem
-    (IsingModel.latticeGraph d) Λ J h β hJ hβ hh i hmiss
-
-/-! ## ℤ^d wrapper for §5.3 A-4 `susceptibilityΛ_eq_abs_h` (issue #770) -/
-
-/-- **ℤ^d `χ_Λ(|h|) = χ_Λ(h) + M_Λ(|h|) − M_Λ(h)`** (no ferromagnetic
-hypothesis). Concrete `latticeGraph d` wrapper for PR #776's
-`susceptibilityΛ_eq_abs_h`.
-
-Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §5.3 pp. 77–80. -/
-theorem susceptibilityΛ_latticeGraph_eq_abs_h
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    (J h β : ℝ) (i : ↑Λ) :
-    susceptibilityΛ (IsingModel.latticeGraph d) Λ
-        (⟨J, |h|, β⟩ : IsingParams ℝ) i
-      = susceptibilityΛ (IsingModel.latticeGraph d) Λ
-            (⟨J, h, β⟩ : IsingParams ℝ) i
-          + magnetizationΛ (IsingModel.latticeGraph d) Λ
-            (⟨J, |h|, β⟩ : IsingParams ℝ) i
-          - magnetizationΛ (IsingModel.latticeGraph d) Λ
-            (⟨J, h, β⟩ : IsingParams ℝ) i :=
-  susceptibilityΛ_eq_abs_h (IsingModel.latticeGraph d) Λ J h β i
-
-/-! ## ℤ^d wrapper for §5.3 A-4b `susceptibilityAlongExhaustion_eq_abs_h`
-(issue #770) -/
-
-/-- **ℤ^d along-exhaustion `χ_along(|h|) = χ_along(h) + M_along(|h|) − M_along(h)`**
-(no ferromagnetic hypothesis). Concrete `latticeGraph d` wrapper for PR
-#777's `susceptibilityAlongExhaustion_eq_abs_h`.
-
-Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §5.3 pp. 77–80. -/
-theorem susceptibilityAlongExhaustion_latticeGraph_eq_abs_h
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    (J h β : ℝ) (i : Fin d → ℤ) (n : ℕ) :
-    susceptibilityAlongExhaustion (IsingModel.latticeGraph d) Λ
-        (⟨J, |h|, β⟩ : IsingParams ℝ) i n
-      = susceptibilityAlongExhaustion (IsingModel.latticeGraph d) Λ
-            (⟨J, h, β⟩ : IsingParams ℝ) i n
-          + magnetizationAlongExhaustion (IsingModel.latticeGraph d) Λ
-              (⟨J, |h|, β⟩ : IsingParams ℝ) i n
-          - magnetizationAlongExhaustion (IsingModel.latticeGraph d) Λ
-              (⟨J, h, β⟩ : IsingParams ℝ) i n :=
-  susceptibilityAlongExhaustion_eq_abs_h (IsingModel.latticeGraph d) Λ J h β i n
-
-/-! ## ℤ^d wrappers for §5.3 A-4c (pointwise) and A-5′
-(∞-volume one-sided under BddAbove) (issue #770) -/
-
-/-- **ℤ^d pointwise `χ_along(h) ≤ χ_along(|h|)`** under `0 ≤ J`, `0 < β`.
-Concrete `latticeGraph d` wrapper for PR #778's
-`susceptibilityAlongExhaustion_le_abs_h`.
-
-Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §5.3 pp. 77–80. -/
-theorem susceptibilityAlongExhaustion_latticeGraph_le_abs_h
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    (J h β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (i : Fin d → ℤ) (n : ℕ) :
-    susceptibilityAlongExhaustion (IsingModel.latticeGraph d) Λ
-        (⟨J, h, β⟩ : IsingParams ℝ) i n
-      ≤ susceptibilityAlongExhaustion (IsingModel.latticeGraph d) Λ
-          (⟨J, |h|, β⟩ : IsingParams ℝ) i n :=
-  susceptibilityAlongExhaustion_le_abs_h (IsingModel.latticeGraph d) Λ
-    J h β hJ hβ i n
-
-/-- **ℤ^d ∞-volume one-sided `χ_∞(h) ≤ χ_∞(|h|)`** (A-5′) under
-`0 ≤ J`, `0 < β`, and `BddAbove` of the `|h|`-side along-exhaustion
-sequence. Concrete `latticeGraph d` wrapper for PR #778's
-`susceptibilityInfinite_le_abs_h`.
-
-Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §5.3 pp. 77–80. -/
-theorem susceptibilityInfinite_latticeGraph_le_abs_h
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    (J h β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (i : Fin d → ℤ)
-    (hbd : BddAbove (Set.range fun n =>
-      susceptibilityAlongExhaustion (IsingModel.latticeGraph d) Λ
-        (⟨J, |h|, β⟩ : IsingParams ℝ) i n)) :
-    susceptibilityInfinite (IsingModel.latticeGraph d) Λ
-        (⟨J, h, β⟩ : IsingParams ℝ) i
-      ≤ susceptibilityInfinite (IsingModel.latticeGraph d) Λ
-          (⟨J, |h|, β⟩ : IsingParams ℝ) i :=
-  susceptibilityInfinite_le_abs_h (IsingModel.latticeGraph d) Λ
-    J h β hJ hβ i hbd
 
 /-! ## ℤ^d wrapper for §5.1 conditional cluster decay (PR #779) -/
 
