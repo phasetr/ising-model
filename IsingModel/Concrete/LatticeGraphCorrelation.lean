@@ -82,6 +82,10 @@ directly.
 For concrete finite-susceptibility and Lebowitz derivative wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassLebowitzDerivative`
 directly.
+For concrete high-temperature Lipschitz, continuity, uniform convergence, and
+a.e. differentiability wrappers, import
+`IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempLipschitz`
+directly.
 For concrete anchored cubic pseudo-mass abbreviations, transport lemmas, and
 tanh-profile predicates, import
 `IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassBasic` directly.
