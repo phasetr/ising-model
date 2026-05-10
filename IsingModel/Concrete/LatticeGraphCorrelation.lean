@@ -29,6 +29,10 @@ directly. For concrete partition-function along-exhaustion volume / parameter
 monotonicity, positivity, divergence, and infinite-volume free-energy
 positivity wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.PartitionExhaustionBounds`
+directly. For concrete free-energy along-exhaustion, log partition-function
+along-exhaustion, and Lambda-layer partition-function parameter monotonicity
+wrappers, import
+`IsingModel.Concrete.LatticeGraphCorrelation.PartitionFreeEnergyMonotonicity`
 directly. For concrete finite-volume correlation and truncated-correlation
 inequality, odd-vanishing, and trivial-slice wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.FiniteVolumeCorrelationInequalities`
