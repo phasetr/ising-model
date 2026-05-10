@@ -12,6 +12,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBounds
 import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureCapstones
 import IsingModel.Concrete.LatticeGraphCorrelation.JointAnalyticity
 import IsingModel.Concrete.LatticeGraphCorrelation.JointRegularity
+import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassBasic
 import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMass
 import IsingModel.Concrete.LatticeGraphCorrelation.TheoremEtaLe1
 import IsingModel.Concrete.LatticeGraphCorrelation.SiteIndepMag
