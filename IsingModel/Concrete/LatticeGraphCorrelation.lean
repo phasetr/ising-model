@@ -13,6 +13,10 @@ symmetry wrappers, import
 concrete direct finite-volume `partitionFunction` monotonicity, trivial-slice,
 and negative-field symmetry wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.FiniteVolumePartition` directly. For
+concrete direct finite-volume `partitionFunction` absolute-field, positivity,
+and ferromagnetic lower-bound wrappers, import
+`IsingModel.Concrete.LatticeGraphCorrelation.FiniteVolumePartitionBounds`
+directly. For
 concrete Peierls along-exhaustion wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.Peierls` directly. For
 concrete free-energy per-direction analyticity wrappers, import
