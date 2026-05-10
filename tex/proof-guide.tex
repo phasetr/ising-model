@@ -2200,7 +2200,11 @@ $\mathrm{latticeMass}$. The companion
 $\mathrm{latticeMass\_pos\_of\_pseudoMassFromParamsAtPair\_decay}$
 turns a positive validating pseudo-mass into $0 < \mathrm{latticeMass}$.
 The high-temperature Simon--Lieb estimate now has an exhaustion-uniform
-form:
+form.  The transfer, pseudo-mass comparison, critical-temperature, and
+product-summability bridge declarations in this paragraph were moved from
+\texttt{Concrete/LatticeGraphCorrelation/Inequalities.lean} to
+\texttt{Concrete/LatticeGraphCorrelation/LatticeMassPseudoMassTransfer.lean}
+in PR~\#1927 while preserving the legacy import path:
 $\mathrm{HasExponentialDecay\_transfer\_high\_temp}$ transfers the
 rate $-\log(\beta J\,2d)$ from the cubic exhaustion to any exhaustion,
 using the exhaustion-independence of the infinite-volume truncated
@@ -9209,7 +9213,7 @@ Summability follows from \texttt{summable\_exp\_neg\_dist} with rate $\alpha/2$.
 The tsum bound applies \texttt{lattice\_exp\_sum\_conv\_le} (Step~126) with rate $\alpha/2$.
 
 \noindent\textit{Status}: Complete (PR~\#943, Step 127, Issue~\#940 PR~N+2).
-File: \texttt{Concrete/LatticeGraphCorrelation/Inequalities.lean}.
+File: \texttt{Concrete/LatticeGraphCorrelation/LatticeMassPseudoMassTransfer.lean} (moved from \texttt{Concrete/LatticeGraphCorrelation/Inequalities.lean} in PR~\#1927; original PR~\#943).
 Reference: GJ 1st~ed., \S17.5, applying Lemma~17.5.2 (pp.~311--312).
 
 \subsection*{Step 128 -- Discrete polynomial HLS summability (Done)}
