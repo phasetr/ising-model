@@ -59,7 +59,9 @@ concrete J-direction `correlationAlongExhaustion` `ContinuousAt` /
 concrete per-parameter `magnetizationAlongExhaustion` pointwise wrappers,
 import
 `IsingModel.Concrete.LatticeGraphCorrelation.MagnetizationPointwiseRegularity`
-directly. For concrete magnetization regularity wrappers, import
+directly. For concrete magnetization convergence wrappers, import
+`IsingModel.Concrete.LatticeGraphCorrelation.MagnetizationConvergence` directly.
+For concrete magnetization regularity wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.MagnetizationRegularity` directly.
 For concrete per-parameter `partitionFunctionAlongExhaustion` /
 `freeEnergyAlongExhaustion` pointwise wrappers, import

@@ -35,6 +35,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.MayerTrivialCases
 import IsingModel.Concrete.LatticeGraphCorrelation.MayerVdBounds
 import IsingModel.Concrete.LatticeGraphCorrelation.MayerVdIff
 import IsingModel.Concrete.LatticeGraphCorrelation.MayerVdRegularity
+import IsingModel.Concrete.LatticeGraphCorrelation.MagnetizationConvergence
 import IsingModel.Concrete.LatticeGraphCorrelation.MagnetizationRegularity
 import IsingModel.Concrete.LatticeGraphCorrelation.PartitionFreeEnergyRegularity
 import IsingModel.Concrete.LatticeGraphCorrelation.PartitionFunctionGeneralAnalyticity
@@ -3651,54 +3652,6 @@ theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_shift
           (Ambient.cubicExhaustion d) p :=
   freeEnergyInfinite_shift_eq (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) t p
-
-/-! ### magnetization parameter-direction convergent (β/h/J → ∞)
-ℤ^d wraps. Λ-direct versions already exist as
-`magnetizationΛ_latticeGraph_convergent_{beta,h,J}` (in
-`correlationΛ` form) earlier in this file; this section adds the
-along-exhaustion versions only. -/
-
-/-- **ℤ^d along-ex: magnetization β → ∞ convergence**. -/
-theorem magnetizationAlongExhaustion_latticeGraph_convergent_beta
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet]
-    (J : ℝ) (hJ : 0 ≤ J) (h : ℝ) (hh : 0 ≤ h) (i : Fin d → ℤ) (n : ℕ) :
-    ∃ L : ℝ, Filter.Tendsto
-      (fun k : ℕ => Ambient.magnetizationAlongExhaustion
-        (IsingModel.latticeGraph d) Λ
-        (⟨J, h, (k + 1 : ℝ)⟩ : IsingParams ℝ) i n)
-      Filter.atTop (nhds L) :=
-  Ambient.magnetizationAlongExhaustion_convergent_beta
-    (IsingModel.latticeGraph d) Λ J hJ h hh i n
-
-/-- **ℤ^d along-ex: magnetization h → ∞ convergence**. -/
-theorem magnetizationAlongExhaustion_latticeGraph_convergent_h
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet]
-    (J : ℝ) (hJ : 0 ≤ J) (β : ℝ) (hβ : 0 < β) (i : Fin d → ℤ) (n : ℕ) :
-    ∃ L : ℝ, Filter.Tendsto
-      (fun k : ℕ => Ambient.magnetizationAlongExhaustion
-        (IsingModel.latticeGraph d) Λ
-        (⟨J, (k : ℝ), β⟩ : IsingParams ℝ) i n)
-      Filter.atTop (nhds L) :=
-  Ambient.magnetizationAlongExhaustion_convergent_h
-    (IsingModel.latticeGraph d) Λ J hJ β hβ i n
-
-/-- **ℤ^d along-ex: magnetization J → ∞ convergence**. -/
-theorem magnetizationAlongExhaustion_latticeGraph_convergent_J
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet]
-    (h : ℝ) (hh : 0 ≤ h) (β : ℝ) (hβ : 0 < β) (i : Fin d → ℤ) (n : ℕ) :
-    ∃ L : ℝ, Filter.Tendsto
-      (fun k : ℕ => Ambient.magnetizationAlongExhaustion
-        (IsingModel.latticeGraph d) Λ
-        (⟨(k : ℝ), h, β⟩ : IsingParams ℝ) i n)
-      Filter.atTop (nhds L) :=
-  Ambient.magnetizationAlongExhaustion_convergent_J
-    (IsingModel.latticeGraph d) Λ h hh β hβ i n
 
 /-! ### susceptibility regularity ℤ^d wraps -/
 
