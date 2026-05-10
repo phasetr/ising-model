@@ -16,6 +16,9 @@ convergence wrappers, import
 directly. For concrete Lambda-layer correlation and magnetization convergence /
 monotonicity wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.LambdaCorrelationMonotonicity`
+directly. For concrete along-exhaustion correlation boundedness, eventuality,
+and infinite-volume limit wrappers, import
+`IsingModel.Concrete.LatticeGraphCorrelation.CorrelationExhaustionLimits`
 directly. For concrete finite-volume correlation and truncated-correlation
 inequality, odd-vanishing, and trivial-slice wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.FiniteVolumeCorrelationInequalities`
