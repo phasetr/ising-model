@@ -2456,8 +2456,10 @@ or the corresponding half-open interval
 \((0,\mathrm{latticeMass}]\).  The proofs only pair the named-rate decay bridge
 with the PR~\#1826 interval package, leaving the tanh-profile reduction outside
 the new theorem statements.
-PR~\#1828 packages the downstream cluster and summability consequences.  The
-named summand
+PR~\#1828 packages the downstream cluster and summability consequences, moved
+to the narrower module
+\path{Concrete/LatticeGraphCorrelation/CubicPseudoMassClusterSummability.lean}
+in PR~\#1923.  The named summand
 \path{cubicTruncated2Product} abbreviates
 \[
   w \mapsto U_2(x,w)\,U_2(y,w)
