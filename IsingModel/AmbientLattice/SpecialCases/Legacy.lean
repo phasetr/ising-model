@@ -23,6 +23,7 @@ import IsingModel.AmbientLattice.SpecialCases.MayerVdRegularity
 import IsingModel.AmbientLattice.SpecialCases.MagnetizationConvergence
 import IsingModel.AmbientLattice.SpecialCases.MagnetizationRegularity
 import IsingModel.AmbientLattice.SpecialCases.PartitionFunctionClosedForms
+import IsingModel.AmbientLattice.SpecialCases.PartitionFunctionSymmetry
 import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyRegularity
 import IsingModel.AmbientLattice.SpecialCases.PartitionFunctionGeneralAnalyticity
 import IsingModel.AmbientLattice.SpecialCases.PartitionFunctionRegularity
@@ -59,51 +60,6 @@ open Finset Real
 open scoped symmDiff
 
 variable {V : Type*} [DecidableEq V]
-
-/-! ## h-symmetry / `|h|`-monotonicity along exhaustion
-
-Specializations of `IsingModel.freeEnergy_neg_h`, `freeEnergy_eq_abs_h`,
-and `freeEnergy_monotone_abs_h` (PRs #126–#127) to each stage of the
-exhaustion, via the `change` + definitional-unfolding pattern already
-used in this file. -/
-
-/-- **Along-exhaustion partition-function h-evenness**:
-`partitionFunctionAlongExhaustion G Λ ⟨J, -h, β⟩ n =
-partitionFunctionAlongExhaustion G Λ ⟨J, h, β⟩ n`. Per-stage lift of
-`IsingModel.partitionFunction_neg_h` via the flip involution. -/
-theorem partitionFunctionAlongExhaustion_neg_h
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J h β : ℝ) (n : ℕ) :
-    partitionFunctionAlongExhaustion G Λ (⟨J, -h, β⟩ : IsingParams ℝ) n
-      = partitionFunctionAlongExhaustion G Λ (⟨J, h, β⟩ : IsingParams ℝ) n :=
-  partitionFunctionΛ_neg_h G (Λ.volume n) J h β
-
-/-- **Along-exhaustion partition-function `|h|`-rewrite**:
-`partitionFunctionAlongExhaustion G Λ ⟨J, h, β⟩ n =
-partitionFunctionAlongExhaustion G Λ ⟨J, |h|, β⟩ n`. Per-stage lift of
-`partitionFunctionΛ_eq_abs_h`. -/
-theorem partitionFunctionAlongExhaustion_eq_abs_h
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J h β : ℝ) (n : ℕ) :
-    partitionFunctionAlongExhaustion G Λ (⟨J, h, β⟩ : IsingParams ℝ) n
-      = partitionFunctionAlongExhaustion G Λ (⟨J, |h|, β⟩ : IsingParams ℝ) n :=
-  partitionFunctionΛ_eq_abs_h G (Λ.volume n) J h β
-
-/-- **Along-exhaustion ferromagnetic `|h|`-monotonicity of partition
-function**: for `J ≥ 0`, `β > 0`, `|h₁| ≤ |h₂|`,
-`partitionFunctionAlongExhaustion G Λ ⟨J, h₁, β⟩ n ≤
-partitionFunctionAlongExhaustion G Λ ⟨J, h₂, β⟩ n`. Per-stage lift of
-`partitionFunctionΛ_monotone_abs_h`. -/
-theorem partitionFunctionAlongExhaustion_monotone_abs_h
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β)
-    {h₁ h₂ : ℝ} (hh : |h₁| ≤ |h₂|) (n : ℕ) :
-    partitionFunctionAlongExhaustion G Λ (⟨J, h₁, β⟩ : IsingParams ℝ) n
-      ≤ partitionFunctionAlongExhaustion G Λ (⟨J, h₂, β⟩ : IsingParams ℝ) n :=
-  partitionFunctionΛ_monotone_abs_h G (Λ.volume n) J β hJ hβ hh
 
 end Ambient
 end IsingModel
