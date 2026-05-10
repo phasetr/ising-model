@@ -79,6 +79,9 @@ For concrete product-summability, critical inverse temperature, pseudo-mass
 transfer, and below-critical cluster wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransfer`
 directly.
+For concrete finite-susceptibility and Lebowitz derivative wrappers, import
+`IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassLebowitzDerivative`
+directly.
 For concrete anchored cubic pseudo-mass abbreviations, transport lemmas, and
 tanh-profile predicates, import
 `IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassBasic` directly.
