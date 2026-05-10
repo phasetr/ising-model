@@ -21,10 +21,11 @@ View* (2nd ed., 1987).
 >
 > **Import note:** `IsingModel.Concrete.LatticeGraphCorrelation` and
 > `IsingModel.AmbientLattice.SpecialCases` are thin public re-exports. Their
-> pre-existing monolithic bodies live in
+> legacy compatibility shims are
 > `IsingModel.Concrete.LatticeGraphCorrelation.Legacy` and
-> `IsingModel.AmbientLattice.SpecialCases.Legacy`. New narrow APIs should
-> prefer dedicated child modules such as
+> `IsingModel.AmbientLattice.SpecialCases.Legacy`; those shims re-export the
+> split child modules for older import paths. New narrow APIs should prefer
+> dedicated child modules such as
 > `IsingModel.Concrete.LatticeGraphCorrelation.CorrelationDecay`,
 > `IsingModel.Concrete.LatticeGraphCorrelation.Peierls` for concrete Peierls
 > along-exhaustion wrappers,
