@@ -41,25 +41,10 @@ import IsingModel.AmbientLattice.SpecialCases.VdPolymerFamiliesAnalyticity
 import IsingModel.AmbientLattice.Analyticity
 
 /-!
-# Special-case closed forms, h-symmetry, and critical exponents
+# Ambient special-case legacy re-export
 
-Uniform upper bounds (BoundedEdgeDensity), closed forms for special
-parameter slices (β=0, J=h=0, J=0), h-symmetry / |h|-monotonicity
-along an exhaustion, and the critical exponent bounds η≥0, ζ≥0
-at infinite volume (GJ §17.7 Thm 17.7.1).
-
-## References
-
-* Glimm–Jaffe, *Quantum Physics*, §4.6, §17.7.
+This module is intentionally a compatibility shim. The former monolithic
+special-case theorem bodies have been split into child modules imported above.
+New code should import the narrow child modules or
+`IsingModel.AmbientLattice.SpecialCases`.
 -/
-
-namespace IsingModel
-namespace Ambient
-
-open Finset Real
-open scoped symmDiff
-
-variable {V : Type*} [DecidableEq V]
-
-end Ambient
-end IsingModel

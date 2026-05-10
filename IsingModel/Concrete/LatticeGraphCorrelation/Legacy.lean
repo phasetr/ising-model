@@ -80,38 +80,10 @@ import IsingModel.AmbientFKG
 import IsingModel.AmbientLattice.SpecialCases.Legacy
 
 /-!
-# Concrete translation invariance for the ℤ^d Ising correlation
+# Concrete lattice-graph correlation legacy re-export
 
-Apply the abstract `correlationInfinite_vaddFinset_of_translationInvariant`
-theorem (`TranslationInvariance.lean`, PR #251) to the physical
-`d`-dimensional Ising setup
-`(IsingModel.latticeGraph d, Ambient.cubicExhaustion d)`:
-
-* `isTranslationInvariant_latticeGraph` (PR #244) supplies the
-  `IsTranslationInvariant (Fin d → ℤ) (latticeGraph d)` instance.
-* `cubicExhaustion d` (PR #245) supplies the ambient exhaustion.
-* The `Fintype (inducedGraph (latticeGraph d) Λ).edgeSet` instance
-  (PR #246) supplies the Fintype hypothesis for arbitrary `Λ`.
-
-## Main theorems
-
-* `correlationInfinite_latticeGraph_cubicExhaustion_vaddFinset`:
-  `correlationInfinite (latticeGraph d) (cubicExhaustion d) p
-  (vaddFinset t A) = correlationInfinite ... p A` (ferromagnetic).
-* `magnetizationInfinite_latticeGraph_cubicExhaustion_translation`:
-  single-site specialization.
-
-## References
-
-* Glimm–Jaffe, *Quantum Physics* 2nd ed., §4.6, p. 68.
+This module is intentionally a compatibility shim. The former monolithic
+theorem bodies have been split into child modules imported above. New code
+should import the narrow child modules or
+`IsingModel.Concrete.LatticeGraphCorrelation`.
 -/
-
-open scoped symmDiff
-
-namespace IsingModel
-
-namespace Ambient
-
-end Ambient
-
-end IsingModel
