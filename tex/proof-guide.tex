@@ -4711,6 +4711,17 @@ modules; the general $\Lambda$-layer wrappers remain in
 \path{IsingModel/AmbientLattice/Defs.lean}, and the concrete $\Lambda$-direct
 wrappers remain in the legacy concrete module.
 
+{\raggedright
+The along-exhaustion partition-function trivial-slice closed forms now live in
+\path{IsingModel/AmbientLattice/SpecialCases/PartitionFunctionClosedForms.lean},
+with the concrete $\mathbb{Z}^d$ $\Lambda$-, cubic-, and along-exhaustion
+wrappers in
+\path{IsingModel/Concrete/LatticeGraphCorrelation/PartitionFunctionClosedForms.lean}.
+The lower $\Lambda$-level abstract closed forms remain in
+\path{IsingModel/AmbientLattice/Defs.lean} and the corresponding log
+$\Lambda$ forms remain in \path{IsingModel/AmbientLatticeSum.lean}.
+\par}
+
 The analogous \texttt{freeEnergy} per-direction analyticity wrappers
 now live in matching \texttt{FreeEnergyAnalyticity.lean} child modules;
 their $\Lambda$-layer wrappers remain in
