@@ -1,4 +1,5 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassBasic
+import IsingModel.Concrete.LatticeGraphCorrelation.Inequalities
 
 /-!
 # Cubic named-rate lattice-mass bridges
