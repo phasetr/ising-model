@@ -33,6 +33,9 @@ directly. For concrete free-energy along-exhaustion, log partition-function
 along-exhaustion, and Lambda-layer partition-function parameter monotonicity
 wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.PartitionFreeEnergyMonotonicity`
+directly. For concrete partition/free-energy lower bounds, nonnegativity,
+infinite-volume bridges, and uniform-bound wrappers, import
+`IsingModel.Concrete.LatticeGraphCorrelation.PartitionFreeEnergyBounds`
 directly. For concrete finite-volume correlation and truncated-correlation
 inequality, odd-vanishing, and trivial-slice wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.FiniteVolumeCorrelationInequalities`
