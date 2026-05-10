@@ -63,6 +63,8 @@ directly. For concrete magnetization convergence wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.MagnetizationConvergence` directly.
 For concrete magnetization regularity wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.MagnetizationRegularity` directly.
+For concrete susceptibility convergence wrappers, import
+`IsingModel.Concrete.LatticeGraphCorrelation.SusceptibilityConvergence` directly.
 For concrete per-parameter `partitionFunctionAlongExhaustion` /
 `freeEnergyAlongExhaustion` pointwise wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.PartitionFreeEnergyPointwiseRegularity`

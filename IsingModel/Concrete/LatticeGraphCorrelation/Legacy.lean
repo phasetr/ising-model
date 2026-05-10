@@ -48,6 +48,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.PolymerFreeEnergyEpsilonSharp
 import IsingModel.Concrete.LatticeGraphCorrelation.PolymerFreeEnergyHighTemperatureBounds
 import IsingModel.Concrete.LatticeGraphCorrelation.PolymerFreeEnergyTanhBounds
 import IsingModel.Concrete.LatticeGraphCorrelation.PolymerFreeEnergyTanhSharpening
+import IsingModel.Concrete.LatticeGraphCorrelation.SusceptibilityConvergence
 import IsingModel.Concrete.LatticeGraphCorrelation.SusceptibilityPointwiseRegularity
 import IsingModel.Concrete.LatticeGraphCorrelation.VdPolymerFamiliesAnalyticity
 import IsingModel.TranslationInvariance
@@ -3737,49 +3738,6 @@ theorem susceptibilityΛ_latticeGraph_convergent_J
       Filter.atTop (nhds L) :=
   Ambient.susceptibilityΛ_convergent_J
     (IsingModel.latticeGraph d) Λ h hh β hβ i
-
-/-- **ℤ^d along-ex: susceptibility β → ∞ convergence**. -/
-theorem susceptibilityAlongExhaustion_latticeGraph_convergent_beta_param
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet]
-    (J : ℝ) (hJ : 0 ≤ J) (h : ℝ) (hh : 0 ≤ h) (i : Fin d → ℤ) (n : ℕ) :
-    ∃ L : ℝ, Filter.Tendsto
-      (fun k : ℕ => Ambient.susceptibilityAlongExhaustion
-        (IsingModel.latticeGraph d) Λ
-        (⟨J, h, (k + 1 : ℝ)⟩ : IsingParams ℝ) i n)
-      Filter.atTop (nhds L) :=
-  Ambient.susceptibilityAlongExhaustion_convergent_beta_param
-    (IsingModel.latticeGraph d) Λ J hJ h hh i n
-
-/-- **ℤ^d along-ex: susceptibility h → ∞ convergence**. -/
-theorem susceptibilityAlongExhaustion_latticeGraph_convergent_h_param
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet]
-    (J : ℝ) (hJ : 0 ≤ J) (β : ℝ) (hβ : 0 < β) (i : Fin d → ℤ) (n : ℕ) :
-    ∃ L : ℝ, Filter.Tendsto
-      (fun k : ℕ => Ambient.susceptibilityAlongExhaustion
-        (IsingModel.latticeGraph d) Λ
-        (⟨J, (k : ℝ), β⟩ : IsingParams ℝ) i n)
-      Filter.atTop (nhds L) :=
-  Ambient.susceptibilityAlongExhaustion_convergent_h_param
-    (IsingModel.latticeGraph d) Λ J hJ β hβ i n
-
-/-- **ℤ^d along-ex: susceptibility J → ∞ convergence**. -/
-theorem susceptibilityAlongExhaustion_latticeGraph_convergent_J_param
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet]
-    (h : ℝ) (hh : 0 ≤ h) (β : ℝ) (hβ : 0 < β) (i : Fin d → ℤ) (n : ℕ) :
-    ∃ L : ℝ, Filter.Tendsto
-      (fun k : ℕ => Ambient.susceptibilityAlongExhaustion
-        (IsingModel.latticeGraph d) Λ
-        (⟨(k : ℝ), h, β⟩ : IsingParams ℝ) i n)
-      Filter.atTop (nhds L) :=
-  Ambient.susceptibilityAlongExhaustion_convergent_J_param
-    (IsingModel.latticeGraph d) Λ h hh β hβ i n
-
 
 end Ambient
 
