@@ -43,6 +43,9 @@ infinite-volume bridges, and uniform-bound wrappers, import
 directly. For concrete finite-volume correlation and truncated-correlation
 inequality, odd-vanishing, and trivial-slice wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.FiniteVolumeCorrelationInequalities`
+directly. For concrete infinite-volume GHS / Lebowitz two-point separation
+wrappers, import
+`IsingModel.Concrete.LatticeGraphCorrelation.InfiniteVolumeCorrelationInequalities`
 directly. For
 concrete finite-volume Boltzmann-weight, Hamiltonian, partition-function, and
 free-energy bound wrappers, import

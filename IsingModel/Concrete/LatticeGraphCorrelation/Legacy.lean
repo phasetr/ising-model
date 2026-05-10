@@ -5,6 +5,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.PerStage
 import IsingModel.Concrete.LatticeGraphCorrelation.Magnetization
 import IsingModel.Concrete.LatticeGraphCorrelation.TwoPoint
 import IsingModel.Concrete.LatticeGraphCorrelation.Translation
+import IsingModel.Concrete.LatticeGraphCorrelation.InfiniteVolumeCorrelationInequalities
 import IsingModel.Concrete.LatticeGraphCorrelation.Inequalities
 import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperature
 import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBounds
