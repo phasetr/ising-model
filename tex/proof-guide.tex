@@ -11,6 +11,7 @@
 
 \usepackage{microtype}  % character protrusion and font expansion for better line breaks
 \emergencystretch=3em
+\Urlmuskip=0mu plus 2mu
 
 % Allow hyphenation in tt font
 \usepackage{hyphenat}
@@ -1032,7 +1033,7 @@ For ferromagnetic $p$ and $G_1\le G_2$, $f_{G_1}\le f_{G_2}$.
 $|\iota|$ is fixed; apply $\log$ (monotone) to $Z_{G_1}\le Z_{G_2}$.
 \end{proof}
 
-\subsection{$\beta$-monotonicity and $\beta \to \infty$ convergence}
+\subsection{\texorpdfstring{$\beta$-monotonicity and $\beta \to \infty$ convergence}{beta-monotonicity and beta to infinity convergence}}
 
 Rescale identities:
 \[
@@ -1087,7 +1088,7 @@ Specializations to magnetization:
 \texttt{magnetization\_monotone\_beta},
 \texttt{magnetization\_convergent\_beta} (both via $A = \{i\}$).
 
-\subsection{Convergence as $h \to \infty$}
+\subsection{Convergence as \texorpdfstring{$h \to \infty$}{h to infinity}}
 
 \begin{theorem}[\texttt{correlation\_convergent\_h}]
 For $J \ge 0$, $\beta > 0$, the sequence
@@ -1502,7 +1503,7 @@ $M_+ = \lim_{h \downarrow 0} \langle\sigma_i\rangle_h > 0$ for $\beta > \beta_c$
 The concavity $d^2 M/dh^2 \le 0$ for $h \ge 0$ follows from the GHS inequality
 (Cor.~4.3.4), as noted on p.~80 of \cite{glimm-jaffe}.
 
-\subsubsection{$\mathbb{Z}_2$ $h$-symmetry across the tower}
+\subsubsection{\texorpdfstring{$\mathbb{Z}_2$ $h$-symmetry across the tower}{Z2 h-symmetry across the tower}}
 
 The reflection $h \mapsto -h$ combined with the global spin-flip
 $\sigma \mapsto -\sigma$ is a symmetry of the Ising Hamiltonian. The
@@ -2834,7 +2835,7 @@ For nonempty $\Lambda.\text{volume}\,n$,
 specialization of \texttt{freeEnergy\_upper\_bound} at each stage.
 \end{theorem}
 
-\subsection{Free-spin / one-body limit $(G = \bot)$}
+\subsection{Free-spin / one-body limit \texorpdfstring{$(G = \bot)$}{(G = bottom)}}
 
 Reference: Glimm--Jaffe, opening of \S 4 (free spin).
 Regardless of $J$, if the ambient graph is $\bot$ (no edges), the
@@ -3574,7 +3575,7 @@ The same lower bound holds at each nonempty stage.
 Specialization via \texttt{change} + definitional unfolding.
 \end{theorem}
 
-\subsection{Spin flip symmetry / $h$-even (PR \#126)}
+\subsection{Spin flip symmetry / \texorpdfstring{$h$}{h}-even (PR \#126)}
 
 \begin{theorem}[\texttt{hamiltonian\_neg\_h}]
 \[
@@ -3598,7 +3599,7 @@ $f(J, -h, \beta) = f(J, h, \beta)$.
 The free-energy density is an even function of $h$.
 \end{theorem}
 
-\subsection{$|h|$-monotonicity (PR \#127)}
+\subsection{\texorpdfstring{$|h|$}{|h|}-monotonicity (PR \#127)}
 
 \begin{theorem}[\texttt{freeEnergy\_eq\_abs\_h}]
 $f(J, h, \beta) = f(J, |h|, \beta)$.
@@ -4666,41 +4667,48 @@ $Z(J, 0, \beta)$ in $\beta / J$ at every volume layer, alongside
 the existing general-$h$ wrappers. The along-exhaustion and concrete
 $\mathbb{Z}^d$ wrappers from this family now live in the matching
 \texttt{PartitionFunctionRegularity.lean} child modules under
-\texttt{AmbientLattice/SpecialCases} and
-\texttt{Concrete/LatticeGraphCorrelation}; the $\Lambda$-layer wrappers
-remain in \texttt{IsingModel/AmbientLattice/Analyticity.lean}.
+\path{AmbientLattice/SpecialCases} and
+\path{Concrete/LatticeGraphCorrelation}; the $\Lambda$-layer wrappers
+remain in \path{IsingModel/AmbientLattice/Analyticity.lean}.
+
 The along-exhaustion and concrete $\mathbb{Z}^d$ joint/general-$h$
 \texttt{partitionFunction} wrappers now live in the matching
 \texttt{PartitionFunctionGeneralAnalyticity.lean} child modules; the
 $\Lambda$-layer wrappers remain in
-\texttt{IsingModel/AmbientLattice/Analyticity.lean}.
+\path{IsingModel/AmbientLattice/Analyticity.lean}.
+
 The along-exhaustion and concrete $\mathbb{Z}^d$
 \texttt{partitionFunction}/\texttt{freeEnergy} Continuous and Differentiable
 wrappers now live in matching \texttt{PartitionFreeEnergyRegularity.lean}
 child modules; the $\Lambda$-layer wrappers remain in
-\texttt{IsingModel/AmbientLattice/Analyticity.lean}.
+\path{IsingModel/AmbientLattice/Analyticity.lean}.
+
 The along-exhaustion and concrete $\mathbb{Z}^d$ high-temperature
 \texttt{partitionFunction}/\texttt{freeEnergy} capstone wrappers now live in
 matching \texttt{HighTemperatureCapstones.lean} child modules; the
 $\Lambda$-layer wrappers remain in
-\texttt{IsingModel/AmbientLattice/Analyticity.lean}.
+\path{IsingModel/AmbientLattice/Analyticity.lean}.
+
 The along-exhaustion and concrete $\mathbb{Z}^d$ Mayer filter-connected and
 epsilon-power wrappers now live in matching
 \texttt{MayerFilterConnected.lean} child modules; the $\Lambda$-layer wrappers
-remain in \texttt{IsingModel/AmbientLattice/Analyticity.lean}.
+remain in \path{IsingModel/AmbientLattice/Analyticity.lean}.
+
 The along-exhaustion and concrete $\mathbb{Z}^d$ magnetization regularity
 wrappers now live in matching \texttt{MagnetizationRegularity.lean} child
 modules; the $\Lambda$-layer wrappers remain in
-\texttt{IsingModel/AmbientLattice/Defs.lean}.
+\path{IsingModel/AmbientLattice/Defs.lean}.
+
 The along-exhaustion and concrete $\mathbb{Z}^d$ magnetization convergence
 wrappers now live in matching \texttt{MagnetizationConvergence.lean} child
 modules; the general $\Lambda$-layer wrappers remain in
-\texttt{IsingModel/AmbientLattice/Defs.lean}, and the concrete $\Lambda$-direct
+\path{IsingModel/AmbientLattice/Defs.lean}, and the concrete $\Lambda$-direct
 wrappers remain in the legacy concrete module.
+
 The analogous \texttt{freeEnergy} per-direction analyticity wrappers
 now live in matching \texttt{FreeEnergyAnalyticity.lean} child modules;
 their $\Lambda$-layer wrappers remain in
-\texttt{IsingModel/AmbientLattice/Analyticity.lean}.
+\path{IsingModel/AmbientLattice/Analyticity.lean}.
 
 \paragraph{vdSum sandwich/monotone + $\varepsilon$ bound +
 \texttt{polymerFreeEnergy(tanh)} bound + $\log 2$, all volume
@@ -5719,7 +5727,7 @@ Eventually $|\texttt{correlationAlongExhaustion}~G~\Lambda_\bullet~p~A~n|
 \le 1$, inherited from the finite-volume bound.
 \end{theorem}
 
-\subsection{Ambient subgraph monotonicity on $\Lambda$}
+\subsection{Ambient subgraph monotonicity on \texorpdfstring{$\Lambda$}{Lambda}}
 
 For a fixed finite volume $\Lambda : \texttt{Finset}~V$ and
 ferromagnetic parameters, the finite-volume quantities are monotone
@@ -5766,7 +5774,7 @@ direction of monotonicity, which requires a configuration
 factorization and is left for a follow-up.
 \end{remark}
 
-\subsection{Extension of a $\Lambda_1$-graph to $\Lambda_2$
+\subsection{Extension of a \texorpdfstring{$\Lambda_1$}{Lambda1}-graph to \texorpdfstring{$\Lambda_2$}{Lambda2}
   (foundations for volume monotonicity)}
 
 For $\Lambda_1 \subseteq \Lambda_2 : \texttt{Finset}\,V$,
@@ -6622,7 +6630,7 @@ Independent of $\Lambda$, using \texttt{correlationInfinite\_indep\_exhaustion}
 in seven places.
 \end{theorem}
 
-\subsection{Truncated 4-point correlation + $U_4 \le 0$ at $h = 0$}
+\subsection{Truncated 4-point correlation + \texorpdfstring{$U_4 \le 0$}{U4 <= 0} at \texorpdfstring{$h = 0$}{h = 0}}
 
 Reference: Glimm--Jaffe, \textit{Quantum Physics}, 2nd ed.\ (1987),
 \S 4.3 Corollary 4.3.3, pp.\ 68ff.
@@ -6811,7 +6819,7 @@ for empty $\Lambda_n$, $f_n = 0$ by definition. Hence
 $\max\{0, \log 2 + |\beta|(|J|c+|h|)\}$ is a uniform upper bound.
 \end{theorem}
 
-\subsection{Cor 4.3.5 (inductive n-point at $h = 0$) at infinite volume}
+\subsection{Cor 4.3.5 (inductive n-point at \texorpdfstring{$h = 0$}{h = 0}) at infinite volume}
 
 Reference: Glimm--Jaffe, \textit{Quantum Physics}, 2nd ed.\ (1987),
 \S 4.3 Corollary 4.3.5, p.\ 62.
@@ -7849,7 +7857,7 @@ $\mathrm{correlationInfinite}\,G\,\Lambda\,p\,A =
 \mathrm{correlationInfinite}\,G\,\Lambda\,p\,(t +_v A)$ when $G$
 is $\mathrm{IsTranslationInvariant}$.
 
-\section{Concrete $\mathbb Z^d$ Fekete toolkit for \S 4.6 Prop 4.6.1}
+\section{Concrete \texorpdfstring{$\mathbb Z^d$}{Z d} Fekete toolkit for \S 4.6 Prop 4.6.1}
 
 This section summarises the concrete $\mathbb Z^d$ Fekete toolkit
 (PRs \#638--\#667) that applies the generic-Finset Fekete framework
