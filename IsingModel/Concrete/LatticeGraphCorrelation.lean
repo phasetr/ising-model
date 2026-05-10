@@ -22,6 +22,10 @@ and infinite-volume limit wrappers, import
 directly. For concrete partition/free-energy disjoint-union monotonicity and
 superadditivity wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.PartitionFreeEnergySuperadditivity`
+directly. For concrete partition-function along-exhaustion volume / parameter
+monotonicity, positivity, divergence, and infinite-volume free-energy
+positivity wrappers, import
+`IsingModel.Concrete.LatticeGraphCorrelation.PartitionExhaustionBounds`
 directly. For concrete finite-volume correlation and truncated-correlation
 inequality, odd-vanishing, and trivial-slice wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.FiniteVolumeCorrelationInequalities`
