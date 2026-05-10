@@ -86,6 +86,10 @@ For concrete high-temperature Lipschitz, continuity, uniform convergence, and
 a.e. differentiability wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempLipschitz`
 directly.
+For concrete high-temperature zero-boundary, closed-interval, and half-open
+continuity / locally uniform convergence wrappers, import
+`IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempZeroBoundary`
+directly.
 For concrete anchored cubic pseudo-mass abbreviations, transport lemmas, and
 tanh-profile predicates, import
 `IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassBasic` directly.
