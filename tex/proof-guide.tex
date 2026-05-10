@@ -2344,7 +2344,8 @@ direct new statements exposing the concrete
 \(\mathrm{pseudoMassFromParamsAtPair}\) value still trigger heavy elaboration,
 so the concrete pseudo-mass comparison itself remains a separate follow-up.
 
-\paragraph{Anchored cubic pseudo-mass named-rate bridge (PR~\#1821).}
+\paragraph{Anchored cubic pseudo-mass named-rate bridge
+(PR~\#1821, moved to a narrower child module in PR~\#1922).}
 The basic cubic pseudo-mass module
 \path{Concrete/LatticeGraphCorrelation/CubicPseudoMassBasic.lean}
 names the concrete anchored cubic pseudo-mass at the pair \((0,z)\) as
@@ -2352,9 +2353,9 @@ names the concrete anchored cubic pseudo-mass at the pair \((0,z)\) as
 \(h_\alpha\), \(h_r\), \(\beta\), \(J\), and \(z\).
 The definition is accompanied by
 \path{cubicOriginPseudoMassFromParamsAtPair_eq} and
-\path{cubicOriginPseudoMassFromParamsAtPair_nonneg}.  The capstone cubic
-pseudo-mass module
-\path{Concrete/LatticeGraphCorrelation/CubicPseudoMass.lean}
+\path{cubicOriginPseudoMassFromParamsAtPair_nonneg}.  The cubic named-rate
+module
+\path{Concrete/LatticeGraphCorrelation/CubicPseudoMassNamedRate.lean}
 contains the conditional bridge
 \path{HasExponentialDecay_cubicOriginPseudoMassFromParamsAtPair_of_le_high_temp_rate}
 which states that, once this named rate is bounded by

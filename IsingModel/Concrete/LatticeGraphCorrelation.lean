@@ -75,7 +75,10 @@ For concrete anchored cubic tanh-profile active-range and high-temperature
 lattice-mass bridge wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassTanhProfile`
 directly.
-For concrete anchored cubic pseudo-mass lattice-mass, cluster, summability, and
+For concrete anchored cubic named-rate lattice-mass, interval, and decay
+wrappers, import
+`IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassNamedRate` directly.
+For concrete anchored cubic pseudo-mass cluster, summability, product-sum, and
 capstone wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMass` directly.
 For
