@@ -8,11 +8,12 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviation
 # Ambient alongExhaustion Z/f/log Z ratio sandwich / ratio bound wrappers at h = 0
 
 Narrow child module for the §18.3-§18.4 ambient alongExhaustion
-`ratio_sandwich` / `ratio_bound` / `triple_ratio_*` / `_of_nonempty`
-wrappers. 34 theorems for `partitionFunctionAlongExhaustion`,
-`freeEnergyAlongExhaustion`, and
-`log_partitionFunctionAlongExhaustion` with `J = 0` / `β = 0` / bundle /
-triple_* / `_of_nonempty` variants plus ferromagnetic counterparts. The
+`partitionFunctionAlongExhaustion` `ratio_sandwich` / `ratio_bound`
+wrappers (with `J = 0` / `β = 0` / bundle variants plus ferromagnetic
+counterparts). The log / freeEnergy ratio wrappers now live in
+`HighTemperatureBoundsRatioLogFe.lean` (split off in PR #1995); the
+`triple_ratio_*_bundle` wrappers now live in
+`HighTemperatureBoundsTripleRatio.lean` (split off in PR #1994). The
 theorem names are unchanged from the former `HighTemperatureBounds`
 declarations.
 -/

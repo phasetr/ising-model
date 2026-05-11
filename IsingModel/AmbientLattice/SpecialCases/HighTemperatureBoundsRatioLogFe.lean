@@ -11,8 +11,8 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioBounds
 Narrow child module for 17 §18.3-§18.4 ambient alongExhaustion
 `log_partitionFunction` and `freeEnergy` ratio_sandwich /
 ratio_bound (+ deviation_pos / pow_two_lt) wrappers at h = 0 (with
-J = 0 / β = 0 trivial slices and ferromagnetic variants). The
-theorem names are unchanged from the former
+J = 0 / β = 0 trivial slices and ferromagnetic variants). Theorem
+names are unchanged from the former
 `HighTemperatureBoundsRatioBounds` declarations.
 -/
 
