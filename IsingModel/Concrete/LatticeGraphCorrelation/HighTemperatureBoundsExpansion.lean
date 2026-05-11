@@ -9,10 +9,11 @@ Narrow child module for the §18.3-§18.4 high-temperature partition-function
 and free-energy expansion / closed-form / lower-bound / upper-bound /
 `lower_le_upper` wrappers on `latticeGraph d`, plus the
 `correlationΛ_latticeGraph_high_temp_h_zero_at_empty_A` consistency check.
-Sandwich, sharper-exp, ratio, deviation, and downstream wrappers remain in
-the parent `HighTemperatureBounds`. The theorem names are the same as the
-former declarations in `HighTemperatureBounds`, but callers can now import
-this child module directly.
+Sandwich, ratio, deviation, and downstream wrappers remain in the parent
+`HighTemperatureBounds`; sharper-exp wrappers were further split out into
+`HighTemperatureBoundsExpSharper` in PR #1935. The theorem names are the
+same as the former declarations in `HighTemperatureBounds`, but callers
+can now import this child module directly.
 -/
 
 namespace IsingModel
