@@ -5761,8 +5761,12 @@ $\mathrm{log}\,\mathrm{partitionFunction}$ at $h = 0$ with bundle
 counterparts) out of \texttt{HighTemperatureBounds.lean} into a new
 child module
 \texttt{HighTemperatureBoundsAlongExhaustionRatioBounds.lean} (under
-\texttt{Concrete/LatticeGraphCorrelation/}). The legacy import path is
-preserved.
+\texttt{Concrete/LatticeGraphCorrelation/}). PR~\#1996 subsequently
+narrows the 7 \texttt{triple\_ratio\_sandwich\_bundle} /
+\texttt{triple\_ratio\_bound\_bundle} wrappers (J = 0 / $\beta$ = 0 /
+ferromagnetic variants) out of that child into a separate
+\texttt{HighTemperatureBoundsAlongExhaustionTripleRatio.lean} under
+the same directory. The legacy import path is preserved.
 
 PR~\#1940 further splits the concrete §18.3--§18.4 alongExhaustion
 \texttt{deviation\_bound\_exp} / \texttt{continuity\_bundle} /
