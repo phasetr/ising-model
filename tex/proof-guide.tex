@@ -5620,8 +5620,10 @@ $\mathrm{correlation}\Lambda\_\mathrm{latticeGraph}\_\mathrm{high}\_\mathrm{temp
 \texttt{Concrete/LatticeGraphCorrelation/HighTemperatureBounds.lean} into a
 new child module
 \texttt{Concrete/LatticeGraphCorrelation/HighTemperatureBoundsExpansion.lean}.
-Sandwich, sharper-exp, ratio, deviation, and downstream wrappers remain in
-\texttt{HighTemperatureBounds}. The legacy import path is preserved.
+Sandwich, ratio, deviation, and downstream wrappers remain in
+\texttt{HighTemperatureBounds}; the sharper-exp wrappers were further
+split out into \texttt{HighTemperatureBoundsExpSharper} in PR~\#1935.
+The legacy import path is preserved.
 
 PR~\#1933 further splits the concrete §18.3--§18.4 basic
 $\mathrm{correlation}\Lambda\_\mathrm{latticeGraph}$ high-temperature
@@ -5630,6 +5632,17 @@ vanishings at $J = 0$ and $\beta = 0$, pair sandwich, singleton/pair
 ferromagnetic, singleton $= 0 \wedge \le 1$, pair+singleton bundle --
 11 theorems) out of \texttt{HighTemperatureBounds.lean} into a new child
 \texttt{Concrete/LatticeGraphCorrelation/HighTemperatureBoundsCorrelationBasic.lean}.
+The legacy import path is preserved.
+
+PR~\#1935 further splits the concrete §18.3--§18.4 sharper-exp
+upper-bound / sandwich / complete-summary wrappers at $h = 0$
+(17 theorems for the
+$\mathrm{partitionFunction}\Lambda\_\mathrm{latticeGraph}\_\mathrm{high}\_\mathrm{temp}\_\mathrm{expansion}\_h\_\mathrm{zero}\_*\_\mathrm{exp}$,
+$\mathrm{freeEnergy}\Lambda\_\mathrm{latticeGraph}\_\mathrm{high}\_\mathrm{temp}\_h\_\mathrm{zero}\_*\_\mathrm{exp}$, and
+$\mathrm{log}\_\mathrm{partitionFunction}\Lambda\_\mathrm{latticeGraph}\_\mathrm{high}\_\mathrm{temp}\_\mathrm{expansion}\_h\_\mathrm{zero}\_*\_\mathrm{exp}$
+families plus ferromagnetic variants) out of
+\texttt{HighTemperatureBounds.lean} into a new child
+\texttt{Concrete/LatticeGraphCorrelation/HighTemperatureBoundsExpSharper.lean}.
 The legacy import path is preserved.
 
 PR~\#1934 further splits the concrete §18.7 high-temperature

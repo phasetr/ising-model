@@ -231,14 +231,22 @@ wrappers at `h = 0` (plus the
 `correlationΛ_latticeGraph_high_temp_h_zero_at_empty_A` consistency check),
 import
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsExpansion`
-directly. Sandwich / sharper-exp / ratio / deviation wrappers remain in
+directly. Sandwich / ratio / deviation wrappers remain in
 `HighTemperatureBounds`.
 For concrete §18.3-§18.4 `correlationΛ_latticeGraph` basic high-temperature
 wrappers at `h = 0` (pair nonneg, pair `≤ 1`, singleton / pair trivial-slice
 vanishings at `J = 0` and `β = 0`, pair sandwich, singleton / pair
 ferromagnetic, singleton `= 0 ∧ ≤ 1`, pair+singleton bundle), import
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsCorrelationBasic`
-directly. For concrete §18.7 high-temperature pair-correlation
+directly. For concrete §18.3-§18.4 sharper-exp upper-bound / sandwich /
+complete-summary wrappers at `h = 0` (17 theorems for
+`partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_*_exp`,
+`freeEnergyΛ_latticeGraph_high_temp_h_zero_*_exp`, and
+`log_partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_*_exp`
+families with ferromagnetic variants), import
+`IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsExpSharper`
+directly.
+For concrete §18.7 high-temperature pair-correlation
 exponential-decay capstones (five capstone families `tanh_pow_dist` /
 `exp_rate_dist` / `exp_highTempExpRate_dist` / `exp_alpha_dist` /
 `exp_alpha_dist_of_le_highTempExpRate` for `correlationΛ_latticeGraph`
