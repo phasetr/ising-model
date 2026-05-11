@@ -5692,8 +5692,12 @@ bundle / triple / ferromagnetic variants) out of
 \texttt{AmbientLattice/SpecialCases/HighTemperatureBounds.lean} into
 a new child module
 \texttt{HighTemperatureBoundsRatioBounds.lean} (under
-\texttt{AmbientLattice/SpecialCases/}). The legacy import path is
-preserved.
+\texttt{AmbientLattice/SpecialCases/}). PR~\#1994 subsequently narrows
+the 7 \texttt{triple\_ratio\_sandwich\_bundle} /
+\texttt{triple\_ratio\_bound\_bundle} wrappers (J = 0 / $\beta$ = 0 /
+ferromagnetic variants) out of that child into a separate
+\texttt{HighTemperatureBoundsTripleRatio.lean} under the same
+directory. The legacy import path is preserved.
 
 PR~\#1945 further splits 20 ambient §18.3--§18.4 alongExhaustion
 \texttt{deviation\_bound\_exp} / \texttt{continuity\_bundle} /
