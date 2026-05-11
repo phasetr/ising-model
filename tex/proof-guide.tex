@@ -4934,8 +4934,9 @@ abbreviates the suffix \texttt{\_of\_betaJ\_nonneg} to
 The along-exhaustion and concrete $\mathbb{Z}^d$ wrappers now live in the
 matching \texttt{PolymerFreeEnergyHighTemperatureBounds.lean} child modules
 under \texttt{AmbientLattice/SpecialCases} and
-\texttt{Concrete/LatticeGraphCorrelation}; the $\Lambda$-layer wrappers remain
-in \texttt{IsingModel/AmbientLattice/Analyticity.lean}.
+\texttt{Concrete/LatticeGraphCorrelation}; the $\Lambda$-layer wrappers live
+in \texttt{IsingModel/AmbientLattice/AnalyticityLambdaPfeSharpening.lean}
+(narrowed out of \texttt{Analyticity.lean} in PR~\#1991).
 
 \paragraph{$\varepsilon(t)$ nonneg + non-tanh
 \texttt{polymerFreeEnergy} sharpening, all volume layers (\S18.5,
@@ -4955,8 +4956,9 @@ The along-exhaustion and concrete $\mathbb{Z}^d$ wrappers now live in the
 matching \texttt{PolymerFreeEnergyEpsilonSharpening.lean} child modules under
 \texttt{AmbientLattice/SpecialCases} and
 \texttt{Concrete/LatticeGraphCorrelation} (moved from the legacy modules in
-PR~\#1882); the $\Lambda$-layer wrappers remain in the existing
-\texttt{Analyticity.lean} module.
+PR~\#1882); the $\Lambda$-layer wrappers live in
+\texttt{IsingModel/AmbientLattice/AnalyticityLambdaPfeSharpening.lean}
+(narrowed out of \texttt{Analyticity.lean} in PR~\#1991).
 
 \paragraph{\texttt{polymerFreeEnergy} tanh sharpening + $\beta/J$
 strict-mono under polymers $\ne \emptyset$, all volume layers
@@ -4983,8 +4985,9 @@ The along-exhaustion and concrete $\mathbb{Z}^d$ wrappers now live in the
 matching \texttt{PolymerFreeEnergyTanhSharpening.lean} child modules under
 \texttt{AmbientLattice/SpecialCases} and
 \texttt{Concrete/LatticeGraphCorrelation} (moved from the legacy modules in
-PR~\#1881); the $\Lambda$-layer wrappers remain in the existing
-\texttt{Analyticity.lean} module.
+PR~\#1881); the $\Lambda$-layer wrappers live in
+\texttt{IsingModel/AmbientLattice/AnalyticityLambdaPfeSharpening.lean}
+(narrowed out of \texttt{Analyticity.lean} in PR~\#1991).
 
 \paragraph{\texttt{polymerFreeEnergy} / \texttt{vdSum} tanh
 ferromagnetic iff family, all volume layers (\S18.5, PR~\#1604).}
