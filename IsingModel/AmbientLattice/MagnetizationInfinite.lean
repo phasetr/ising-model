@@ -426,7 +426,7 @@ theorem magnetizationInfinite_eq_zero_of_exists_stage_not_mem
 
 /-! ## Moved: h_zero / J_zero / zero_params / tanh_pow wrappers
 
-The 9 h_zero / J_zero / zero_params / tanh_pow wrappers now live in
+The 8 h_zero / J_zero / zero_params / tanh_pow wrappers now live in
 `IsingModel.AmbientLattice.MagnetizationInfiniteHZeroJZero`.
 The legacy import path is preserved by re-importing the new child.
 The closely related `magnetizationInfinite_ge_tanh` stays here because
