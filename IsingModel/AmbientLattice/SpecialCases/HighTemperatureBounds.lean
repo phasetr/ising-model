@@ -4,6 +4,7 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansion
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharper
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviation
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioBounds
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsTripleRatio
 
 /-!
 # High-temperature expansion and bound wrappers along an exhaustion
@@ -64,13 +65,17 @@ The legacy import path is preserved by re-importing the new child.
 
 /-! ## Moved: alongExhaustion Z/f/log Z ratio sandwich/ratio bound wrappers
 
-The §18.3-§18.4 ambient alongExhaustion `ratio_sandwich` / `ratio_bound` /
-`triple_ratio_*` / `_of_nonempty` wrappers (34 theorems for
+The §18.3-§18.4 ambient alongExhaustion `ratio_sandwich` / `ratio_bound`
+/ `_of_nonempty` wrappers (28 theorems for
 `partitionFunctionAlongExhaustion`, `freeEnergyAlongExhaustion`, and
-`log_partitionFunctionAlongExhaustion` with bundle / triple_* /
-`_of_nonempty` variants plus ferromagnetic counterparts) now live in
+`log_partitionFunctionAlongExhaustion` with bundle / `_of_nonempty`
+variants plus ferromagnetic counterparts) now live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioBounds`.
-The legacy import path is preserved by re-importing the new child.
+The 7 `triple_ratio_*` wrappers (sandwich + bound bundles, J = 0 / β =
+0 / ferromagnetic variants) now live in
+`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsTripleRatio`
+(narrowed out of `HighTemperatureBoundsRatioBounds.lean` in PR #1994).
+The legacy import path is preserved by re-importing both children.
 -/
 
 
