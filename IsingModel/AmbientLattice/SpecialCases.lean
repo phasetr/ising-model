@@ -91,7 +91,12 @@ expansion / closed-form / lower-bound / upper-bound / sandwich /
 complete-summary wrappers (20 theorems, plus the
 `one_le_sum_pow_tanh_even_subgraph_alongExhaustion` helper) live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansion`
-(moved in PR #1943).
+(moved in PR #1943). The along-exhaustion sharper-exp upper-bound /
+sandwich / complete-summary wrappers (16 theorems for `partitionFunction`,
+`freeEnergy`, and `log_partitionFunction` along-exhaustion `_exp` family
+plus ferromagnetic variants) live in
+`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharper`
+(moved in PR #1944).
 General-graph high-temperature partition-function/free-energy capstone
 wrappers live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureCapstones`.
