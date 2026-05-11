@@ -4,6 +4,7 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansion
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharper
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviation
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioBounds
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFe
 
 /-!
 # Ambient alongExhaustion triple-ratio (Z + log Z + f) sandwich / bound wrappers at h = 0

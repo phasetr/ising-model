@@ -5,6 +5,7 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharper
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviation
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioBounds
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsTripleRatio
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFe
 
 /-!
 # High-temperature expansion and bound wrappers along an exhaustion
