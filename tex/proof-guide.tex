@@ -5632,6 +5632,18 @@ out into \texttt{HighTemperatureBoundsAlongExhaustionBasic} in
 PR~\#1938.
 The legacy import path is preserved.
 
+PR~\#1941 further splits the concrete §18.3--§18.4 alongExhaustion
+$\mathrm{ratio\_sandwich\_bundle}$ / $\mathrm{ratio\_bound}$ /
+$\mathrm{triple\_ratio\_*}$ wrappers (29 theorems for
+$\mathrm{partitionFunctionAlongExhaustion}\_\mathrm{latticeGraph}$,
+$\mathrm{freeEnergyAlongExhaustion}\_\mathrm{latticeGraph}$, and
+$\mathrm{log}\_\mathrm{partitionFunctionAlongExhaustion}\_\mathrm{latticeGraph}$
+with bundle / triple\_* / \texttt{\_of\_nonempty} variants plus
+ferromagnetic counterparts) out of \texttt{HighTemperatureBounds.lean}
+into a new child
+\texttt{Concrete/LatticeGraphCorrelation/HighTemperatureBoundsAlongExhaustionRatioBounds.lean}.
+The legacy import path is preserved.
+
 PR~\#1940 further splits the concrete §18.3--§18.4 alongExhaustion
 \texttt{deviation\_bound\_exp} / \texttt{continuity\_bundle} /
 \texttt{deviation\_sandwich} / \texttt{relative\_sandwich} /
