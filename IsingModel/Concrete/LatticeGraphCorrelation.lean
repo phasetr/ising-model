@@ -225,6 +225,10 @@ directly. For concrete high-temperature convergence and correction wrappers,
 import `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperature`
 directly. For concrete high-temperature expansion and bound wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBounds` directly.
+For concrete §18.3-§18.4 high-temperature partition-function and free-energy
+expansion / sandwich / bound wrappers at `h = 0`, import
+`IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsExpansion`
+directly.
 For concrete high-temperature partition-function/free-energy capstone wrappers,
 import `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureCapstones`
 directly.
