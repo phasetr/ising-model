@@ -2,6 +2,7 @@ import IsingModel.AmbientLattice.Defs
 import IsingModel.ClusterExpansion
 import IsingModel.AmbientLattice.AnalyticityLambdaJoint
 import IsingModel.AmbientLattice.AnalyticityLambdaMagSuscep
+import IsingModel.AmbientLattice.AnalyticityLambdaPerDirection
 
 /-!
 # Joint analyticity for AmbientLattice finite-volume Λ-restricted Ising
@@ -40,43 +41,14 @@ now live in
 The legacy import path is preserved by re-importing the new child.
 -/
 
-/-! ## Λ-layer partitionFunction per-direction regularity at general h -/
 
-/-- **partitionFunctionΛ Continuous in `β` at general h** (Λ-layer). -/
-theorem partitionFunctionΛ_continuous_beta_general_h (G : SimpleGraph V) (Λ : Finset V)
-    [Fintype (inducedGraph G Λ).edgeSet] (J h : ℝ) :
-    Continuous (fun β' : ℝ => partitionFunctionΛ G Λ ⟨J, h, β'⟩) :=
-  IsingModel.partitionFunction_continuous_beta_general_h (inducedGraph G Λ) J h
+/-! ## Moved: Λ partitionFunction per-direction regularity wrappers
 
-/-- **partitionFunctionΛ Differentiable in `β` at general h** (Λ-layer). -/
-theorem partitionFunctionΛ_differentiable_beta_general_h (G : SimpleGraph V) (Λ : Finset V)
-    [Fintype (inducedGraph G Λ).edgeSet] (J h : ℝ) :
-    Differentiable ℝ (fun β' : ℝ => partitionFunctionΛ G Λ ⟨J, h, β'⟩) :=
-  IsingModel.partitionFunction_differentiable_beta_general_h (inducedGraph G Λ) J h
-
-/-- **partitionFunctionΛ Continuous in `J` at general h** (Λ-layer). -/
-theorem partitionFunctionΛ_continuous_J_general_h (G : SimpleGraph V) (Λ : Finset V)
-    [Fintype (inducedGraph G Λ).edgeSet] (β h : ℝ) :
-    Continuous (fun J' : ℝ => partitionFunctionΛ G Λ ⟨J', h, β⟩) :=
-  IsingModel.partitionFunction_continuous_J_general_h (inducedGraph G Λ) β h
-
-/-- **partitionFunctionΛ Differentiable in `J` at general h** (Λ-layer). -/
-theorem partitionFunctionΛ_differentiable_J_general_h (G : SimpleGraph V) (Λ : Finset V)
-    [Fintype (inducedGraph G Λ).edgeSet] (β h : ℝ) :
-    Differentiable ℝ (fun J' : ℝ => partitionFunctionΛ G Λ ⟨J', h, β⟩) :=
-  IsingModel.partitionFunction_differentiable_J_general_h (inducedGraph G Λ) β h
-
-/-- **partitionFunctionΛ Continuous in `h`** (Λ-layer). -/
-theorem partitionFunctionΛ_continuous_h (G : SimpleGraph V) (Λ : Finset V)
-    [Fintype (inducedGraph G Λ).edgeSet] (J β : ℝ) :
-    Continuous (fun h' : ℝ => partitionFunctionΛ G Λ ⟨J, h', β⟩) :=
-  IsingModel.partitionFunction_continuous_h (inducedGraph G Λ) J β
-
-/-- **partitionFunctionΛ Differentiable in `h`** (Λ-layer). -/
-theorem partitionFunctionΛ_differentiable_h (G : SimpleGraph V) (Λ : Finset V)
-    [Fintype (inducedGraph G Λ).edgeSet] (J β : ℝ) :
-    Differentiable ℝ (fun h' : ℝ => partitionFunctionΛ G Λ ⟨J, h', β⟩) :=
-  IsingModel.partitionFunction_differentiable_h (inducedGraph G Λ) J β
+The 6 partitionFunctionΛ per-direction Continuous / Differentiable
+wrappers at general h now live in
+`IsingModel.AmbientLattice.AnalyticityLambdaPerDirection`.
+The legacy import path is preserved by re-importing the new child.
+-/
 
 /-! ## §18.4 polymerFreeEnergy / vdSum / ε iff Λ-layer wrappers
 
