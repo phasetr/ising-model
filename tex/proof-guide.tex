@@ -5632,6 +5632,16 @@ out into \texttt{HighTemperatureBoundsAlongExhaustionBasic} in
 PR~\#1938.
 The legacy import path is preserved.
 
+PR~\#1942 further splits the concrete §18.3--§18.4
+$\mathrm{freeEnergyInfinite}$ high-temperature wrappers on
+$\mathrm{latticeGraph}\,d$ (10 theorems with caller-supplied
+\texttt{Exhaustion} BED witness and $\mathrm{cubicExhaustion}\,d$ with
+the BED constant $c = d$) out of \texttt{HighTemperatureBounds.lean}
+into a new child module
+\texttt{HighTemperatureBoundsFreeEnergyInfinite.lean} (under
+\texttt{Concrete/LatticeGraphCorrelation/}). The legacy import path is
+preserved.
+
 PR~\#1941 further splits the concrete §18.3--§18.4 alongExhaustion
 $\mathrm{ratio\_sandwich\_bundle}$ / $\mathrm{ratio\_bound}$ /
 $\mathrm{triple\_ratio\_*}$ wrappers (29 theorems for the
