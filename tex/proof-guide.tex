@@ -5633,17 +5633,19 @@ ferromagnetic, singleton $= 0 \wedge \le 1$, pair+singleton bundle --
 The legacy import path is preserved.
 
 PR~\#1934 further splits the concrete §18.7 high-temperature
-pair-correlation exponential-decay capstones (16 theorems total: four
-capstone families
-\texttt{tanh\_pow\_dist} / \texttt{exp\_rate\_dist} /
-\texttt{exp\_alpha\_dist} /
-\texttt{exp\_alpha\_dist\_of\_le\_highTempExpRate}, each in
-$\mathrm{correlation}\Lambda\_\mathrm{latticeGraph}$ and
-$\mathrm{correlationAlongExhaustion}\_\mathrm{latticeGraph}$ versions plus
-ferromagnetic variants of both) out of
+pair-correlation exponential-decay capstones (16 theorems drawn from five
+capstone families \texttt{tanh\_pow\_dist} / \texttt{exp\_rate\_dist} /
+\texttt{exp\_highTempExpRate\_dist} / \texttt{exp\_alpha\_dist} /
+\texttt{exp\_alpha\_dist\_of\_le\_highTempExpRate} in their
+$\mathrm{correlation}\Lambda\_\mathrm{latticeGraph}$ /
+$\mathrm{correlationAlongExhaustion}\_\mathrm{latticeGraph}$ versions and
+the ferromagnetic variants that previously lived alongside them) out of
 \texttt{HighTemperatureBounds.lean} into a new child
 \texttt{Concrete/LatticeGraphCorrelation/HighTemperatureBoundsDecayCapstones.lean}.
-The legacy import path is preserved.
+Some named-rate / monotone-rate ferromagnetic variants of
+\texttt{exp\_highTempExpRate\_dist} continue to live in
+\texttt{Concrete/LatticeGraphCorrelation/CorrelationDecay.lean} and are
+intentionally not moved. The legacy import path is preserved.
 
 PR~\#1571 adds ferromagnetic ($0 \le J,\, 0 < \beta$) versions of
 all five layers; the bridge $0 \le \beta J$ follows from
