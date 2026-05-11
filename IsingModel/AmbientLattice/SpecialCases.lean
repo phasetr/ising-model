@@ -96,7 +96,7 @@ sandwich / complete-summary wrappers (16 theorems for `partitionFunction`,
 `freeEnergy`, and `log_partitionFunction` along-exhaustion `_exp` family
 plus ferromagnetic variants) live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharper`
-(moved in PR #1944). The along-exhaustion deviation_bound /
+(moved in PR #1944). The along-exhaustion deviation_bound_exp /
 continuity_bundle / deviation_sandwich / relative_sandwich /
 deviation_pos / pow_two_lt / strict_deviation_bundle wrappers (20
 theorems with ferromagnetic variants) live in
