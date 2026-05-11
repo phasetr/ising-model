@@ -5632,6 +5632,17 @@ out into \texttt{HighTemperatureBoundsAlongExhaustionBasic} in
 PR~\#1938.
 The legacy import path is preserved.
 
+PR~\#1943 further splits 20 ambient §18.3--§18.4 alongExhaustion
+partition function / free energy / log-partition / correlation
+expansion / closed-form / lower-bound / upper-bound / sandwich /
+complete-summary wrappers (plus the
+$\mathrm{one\_le\_sum\_pow\_tanh\_even\_subgraph\_alongExhaustion}$
+helper) out of \texttt{AmbientLattice/SpecialCases/HighTemperatureBounds.lean}
+into a new child module
+\texttt{HighTemperatureBoundsExpansion.lean} (under
+\texttt{AmbientLattice/SpecialCases/}). The legacy import path is
+preserved.
+
 PR~\#1942 further splits the concrete §18.3--§18.4
 $\mathrm{freeEnergyInfinite}$ high-temperature wrappers on
 $\mathrm{latticeGraph}\,d$ (10 theorems with caller-supplied
