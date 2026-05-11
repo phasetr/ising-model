@@ -61,11 +61,22 @@ wrappers at general h now live in
 The legacy import path is preserved by re-importing the new child.
 -/
 
-/-! ## §18.4 polymerFreeEnergy / vdSum / ε iff Λ-layer wrappers
+/-! ## §18.4-§18.5 polymerFreeEnergy / vdSum / ε wrappers (now split)
 
-Direct lifts of the iff / strict-mono / strict-pos GJ-命題-bundle from
-`IsingModel/ClusterExpansion.lean` (PRs #1547-#1562) to the
-finite-volume Λ-restricted setting via `inducedGraph G Λ`. -/
+The Λ-layer wrappers for the §18.4-§18.5 polymerFreeEnergy /
+vdPolymerFamilies_sum / mayerPartialSum / mayerExpansionTerm /
+ε(t) / log_vdPolymerFamilies_sum / Mayer identity / strict-mono /
+iff family bundles originally lived inline below this header. They
+have been refactored out into narrow child modules
+(`AnalyticityLambdaPolymer`, `AnalyticityLambdaSandwich`,
+`AnalyticityLambdaPolymerBounds`, `AnalyticityLambdaMayer`,
+`AnalyticityLambdaVdPolymer`, `AnalyticityLambdaMayerIdentity`,
+`AnalyticityLambdaBasicIdentities`,
+`AnalyticityLambdaMayerPfeEdgeBounds`,
+`AnalyticityLambdaMayerRecurrenceEpsilon`,
+`AnalyticityLambdaEpsilonIff`, ...) re-imported at the top of this
+file, so the legacy import path is preserved while the per-PR
+narrow Moved doc blocks below list the exact destinations. -/
 
 variable {V : Type*} [DecidableEq V]
 
