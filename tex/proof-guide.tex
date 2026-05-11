@@ -5620,9 +5620,11 @@ $\mathrm{correlation}\Lambda\_\mathrm{latticeGraph}\_\mathrm{high}\_\mathrm{temp
 \texttt{Concrete/LatticeGraphCorrelation/HighTemperatureBounds.lean} into a
 new child module
 \texttt{Concrete/LatticeGraphCorrelation/HighTemperatureBoundsExpansion.lean}.
-Sandwich, ratio, deviation, and downstream wrappers remain in
+Sandwich, ratio, and downstream wrappers remain in
 \texttt{HighTemperatureBounds}; the sharper-exp wrappers were further
-split out into \texttt{HighTemperatureBoundsExpSharper} in PR~\#1935.
+split out into \texttt{HighTemperatureBoundsExpSharper} in PR~\#1935;
+the deviation / continuity wrappers were further split out into
+\texttt{HighTemperatureBoundsDeviation} in PR~\#1936.
 The legacy import path is preserved.
 
 PR~\#1933 further splits the concrete §18.3--§18.4 basic

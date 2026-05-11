@@ -29,9 +29,10 @@ expansion / closed-form / lower-bound / upper-bound / `lower_le_upper`
 wrappers on `latticeGraph d`, plus
 `correlationΛ_latticeGraph_high_temp_h_zero_at_empty_A`, now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsExpansion`.
-Sandwich, ratio, deviation, and downstream wrappers continue to live in
-this module (sharper-exp wrappers were further moved to
-`HighTemperatureBoundsExpSharper` in PR #1935). The legacy import path is
+Sandwich, ratio, and downstream wrappers continue to live in this module
+(sharper-exp wrappers were further moved to `HighTemperatureBoundsExpSharper`
+in PR #1935; deviation / continuity wrappers were further moved to
+`HighTemperatureBoundsDeviation` in PR #1936). The legacy import path is
 preserved by re-importing the new child.
 -/
 

@@ -231,8 +231,9 @@ wrappers at `h = 0` (plus the
 `correlationΛ_latticeGraph_high_temp_h_zero_at_empty_A` consistency check),
 import
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsExpansion`
-directly. Sandwich / ratio / deviation wrappers remain in
-`HighTemperatureBounds`.
+directly. Sandwich / ratio wrappers remain in
+`HighTemperatureBounds` (deviation / continuity wrappers were further
+moved to `HighTemperatureBoundsDeviation` in PR #1936).
 For concrete §18.3-§18.4 `correlationΛ_latticeGraph` basic high-temperature
 wrappers at `h = 0` (pair nonneg, pair `≤ 1`, singleton / pair trivial-slice
 vanishings at `J = 0` and `β = 0`, pair sandwich, singleton / pair
