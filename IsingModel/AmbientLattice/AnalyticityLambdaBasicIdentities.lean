@@ -17,8 +17,8 @@ import IsingModel.AmbientLattice.AnalyticityLambdaMayerIdentity
 Narrow child module for 17 §18.5 Λ-layer wrappers covering basic
 `at_zero` / `at_one` identities for `vdPolymerFamilies_sum`,
 `mayerPartialSum`, and `mayerExpansionTerm`; tanh iff characterizations
-for `vdPolymerFamilies_sum_Λ` (`gt_one_iff`, `eq_one_iff`,
-`eq_one_iff_eps_zero`, `gt_one_iff_eps_pos`); the bound family
+for `vdPolymerFamilies_sum_Λ` (`tanh_gt_one_iff`, `tanh_eq_one_iff`);
+the bound family
 (`le_two_pow`, `le_one_plus_tanh_pow`, `one_le_vdPolymerFamilies_sum_Λ`);
 and generic-`t` bounds + `_eq_one_add` decomposition
 (`ge_one_of_nonneg`, `le_one_plus_pow_of_nonneg`, `pos_of_nonneg`,

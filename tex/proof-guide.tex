@@ -4164,8 +4164,9 @@ existed; this PR fills the bare-bound and `\geq 1` gaps. 12 new
 thin direct-instantiation wrappers (3 abstracts $\times$ 4
 layers). The along-exhaustion and concrete $\mathbb{Z}^d$ wrappers
 now live in the matching \texttt{MayerVdBounds.lean} child modules;
-the $\Lambda$-layer wrappers remain in
-\texttt{AmbientLattice/Analyticity.lean}.
+the $\Lambda$-layer wrappers live in
+\texttt{IsingModel/AmbientLattice/AnalyticityLambdaBasicIdentities.lean}
+(narrowed out of \texttt{Analyticity.lean} in PR~\#1986).
 
 \paragraph{\S17.5 Lemma 17.5.2 stub honest naming + docs cleanup
 (PR~\#1644).} The previously-named
@@ -5187,8 +5188,9 @@ theorems
 direct-instantiation wrappers (4 abstracts $\times$ 4 layers).
 The along-exhaustion and concrete $\mathbb{Z}^d$ wrappers now live in
 the matching \texttt{MayerVdBounds.lean} child modules; the
-$\Lambda$-layer wrappers remain in
-\texttt{AmbientLattice/Analyticity.lean}.
+$\Lambda$-layer wrappers live in
+\texttt{IsingModel/AmbientLattice/AnalyticityLambdaBasicIdentities.lean}
+(narrowed out of \texttt{Analyticity.lean} in PR~\#1986).
 The generic-\textit{t} bounds are the non-tanh ($t \geq 0$)
 counterparts of the tanh bound family from PR~\#1595; the
 \texttt{\_eq\_one\_add} decomposition expresses
@@ -5209,8 +5211,15 @@ The along-exhaustion and concrete $\mathbb{Z}^d$ wrappers now live in
 \path{IsingModel/AmbientLattice/SpecialCases/MayerVdIff.lean}
 and
 \path{IsingModel/Concrete/LatticeGraphCorrelation/MayerVdIff.lean};
-the $\Lambda$-layer wrappers remain in
-\path{IsingModel/AmbientLattice/Analyticity.lean}.
+the non-tanh $\Lambda$-layer wrappers
+(\texttt{\_eq\_one\_iff\_eps\_zero}, \texttt{\_gt\_one\_iff\_eps\_pos})
+live in
+\path{IsingModel/AmbientLattice/AnalyticityLambdaPolymer.lean}
+(narrowed out of \texttt{Analyticity.lean} in PR~\#1979);
+the tanh $\Lambda$-layer wrappers
+(\texttt{\_tanh\_gt\_one\_iff}, \texttt{\_tanh\_eq\_one\_iff}) live in
+\path{IsingModel/AmbientLattice/AnalyticityLambdaBasicIdentities.lean}
+(narrowed out of \texttt{Analyticity.lean} in PR~\#1986).
 
 \paragraph{Basic identities at\_zero / at\_one, all volume layers
 (\S18.5, PR~\#1593).} The eight abstract base-case identities
@@ -5225,8 +5234,9 @@ along-exhaustion and concrete $\mathbb{Z}^d$ wrappers now live in
 \path{IsingModel/AmbientLattice/SpecialCases/MayerBasicIdentities.lean}
 and
 \path{IsingModel/Concrete/LatticeGraphCorrelation/MayerBasicIdentities.lean};
-the $\Lambda$-layer wrappers remain in
-\path{IsingModel/AmbientLattice/Analyticity.lean}.
+the $\Lambda$-layer wrappers live in
+\path{IsingModel/AmbientLattice/AnalyticityLambdaBasicIdentities.lean}
+(narrowed out of \texttt{Analyticity.lean} in PR~\#1986).
 
 \paragraph{Mayer identity edge-cases (no polymers / trivial /
 edgeless), all volume layers (\S18.5, PR~\#1592).} The five abstract
