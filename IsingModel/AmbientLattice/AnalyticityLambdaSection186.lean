@@ -22,13 +22,12 @@ import IsingModel.AmbientLattice.AnalyticityLambdaPfeSharpening
 
 Narrow child module for 23 §18.6 Λ-layer wrappers covering:
 
-- partitionFunctionΛ regularity at `h = 0` (Continuous, Differentiable,
-  AnalyticAt, AnalyticOnNhd for β / J / `(β, J)` joint).
-- freeEnergyΛ per-direction analyticity at `h = 0` (Continuous,
-  Differentiable, AnalyticAt, AnalyticOnNhd for β / J / `(β, J)` joint).
-- partitionFunction joint + general-h analyticity Λ-layer wrappers
-  (AnalyticAt and AnalyticOnNhd for `(β, J, h)` joint and for the
-  general-h slice).
+- partitionFunctionΛ per-direction regularity at `h = 0` (β / J
+  Continuous, Differentiable, AnalyticAt, AnalyticOnNhd).
+- freeEnergyΛ per-direction `AnalyticAt` / `AnalyticOnNhd` analyticity
+  at `h = 0` (β / J).
+- partitionFunction joint + general-h `AnalyticAt` / `AnalyticOnNhd`
+  Λ-layer wrappers over `(β, J, h)` and at the general-h slice.
 
 The theorem names are unchanged from the former `Analyticity`
 declarations.
