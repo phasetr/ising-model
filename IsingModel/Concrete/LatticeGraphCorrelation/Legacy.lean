@@ -7,6 +7,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.ComplexContinuityNorm
 import IsingModel.Concrete.LatticeGraphCorrelation.ComplexBranches
 import IsingModel.Concrete.LatticeGraphCorrelation.ComplexSlitPlane
 import IsingModel.Concrete.LatticeGraphCorrelation.ComplexRestrictions
+import IsingModel.Concrete.LatticeGraphCorrelation.ComplexBranchEntire
 import IsingModel.Concrete.LatticeGraphCorrelation.PerStage
 import IsingModel.Concrete.LatticeGraphCorrelation.Magnetization
 import IsingModel.Concrete.LatticeGraphCorrelation.TwoPoint
