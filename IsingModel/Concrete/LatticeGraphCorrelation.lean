@@ -238,7 +238,15 @@ wrappers at `h = 0` (pair nonneg, pair `≤ 1`, singleton / pair trivial-slice
 vanishings at `J = 0` and `β = 0`, pair sandwich, singleton / pair
 ferromagnetic, singleton `= 0 ∧ ≤ 1`, pair+singleton bundle), import
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsCorrelationBasic`
-directly. For concrete §18.3-§18.4 sharper-exp upper-bound / sandwich /
+directly. For concrete §18.3-§18.4 f/Z/log Z deviation / continuity wrappers at
+`h = 0` (deviation_bound, continuity_bundle, deviation_sandwich,
+relative_sandwich, deviation_pos, pow_two_lt, strict_deviation_bundle for
+`freeEnergyΛ_latticeGraph`, `partitionFunctionΛ_latticeGraph`, and
+`log_partitionFunctionΛ_latticeGraph` plus ferromagnetic variants -- 18
+theorems), import
+`IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsDeviation`
+directly.
+For concrete §18.3-§18.4 sharper-exp upper-bound / sandwich /
 complete-summary wrappers at `h = 0` (17 theorems for
 `partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_*_exp`,
 `freeEnergyΛ_latticeGraph_high_temp_h_zero_*_exp`, and

@@ -5634,6 +5634,20 @@ ferromagnetic, singleton $= 0 \wedge \le 1$, pair+singleton bundle --
 \texttt{Concrete/LatticeGraphCorrelation/HighTemperatureBoundsCorrelationBasic.lean}.
 The legacy import path is preserved.
 
+PR~\#1936 further splits the concrete §18.3--§18.4 f/Z/log Z
+deviation / continuity wrappers at $h = 0$ (18 theorems:
+\texttt{deviation\_bound\_exp}, \texttt{continuity\_bundle},
+\texttt{deviation\_sandwich}, \texttt{relative\_sandwich},
+\texttt{deviation\_pos}, \texttt{pow\_two\_lt},
+\texttt{strict\_deviation\_bundle} for
+$\mathrm{freeEnergy}\Lambda\_\mathrm{latticeGraph}$,
+$\mathrm{partitionFunction}\Lambda\_\mathrm{latticeGraph}$, and
+$\mathrm{log}\_\mathrm{partitionFunction}\Lambda\_\mathrm{latticeGraph}$ plus
+ferromagnetic variants) out of \texttt{HighTemperatureBounds.lean} into
+a new child
+\texttt{Concrete/LatticeGraphCorrelation/HighTemperatureBoundsDeviation.lean}.
+The legacy import path is preserved.
+
 PR~\#1935 further splits the concrete §18.3--§18.4 sharper-exp
 upper-bound / sandwich / complete-summary wrappers at $h = 0$
 (17 theorems for the
