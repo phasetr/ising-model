@@ -5081,9 +5081,12 @@ now live in
 and
 \texttt{Concrete/LatticeGraphCorrelation/MayerEpsilonInfrastructure.lean}
 (moved from the legacy modules in PR~\#1877);
-the $\Lambda$-layer wrapper remains in
-\texttt{IsingModel/AmbientLattice/Analyticity.lean}
-(moved from the legacy modules in PR~\#1863).
+the $\Lambda$-layer wrappers live in
+\texttt{IsingModel/AmbientLattice/AnalyticityLambdaMayerRecurrenceEpsilon.lean}
+(narrowed out of \texttt{Analyticity.lean} in PR~\#1988); the
+\texttt{vdPolymerFamilies\_sum\_minus\_one\_analyticAt} Lambda-layer
+wrapper specifically was moved from the legacy modules in PR~\#1863
+before its current narrow location.
 
 \paragraph{Mayer recurrence + \texttt{polymerFreeEnergy} hasSum +
 $\varepsilon(t) \to 0$ tendsto, all volume layers (\S18.5,
@@ -5102,7 +5105,10 @@ direct-instantiation wrappers. The along-exhaustion and concrete
 $\mathbb{Z}^d$ wrappers now live in
 \texttt{AmbientLattice/SpecialCases/MayerRecurrenceHasSum.lean}
 and
-\texttt{Concrete/LatticeGraphCorrelation/MayerRecurrenceHasSum.lean}.
+\texttt{Concrete/LatticeGraphCorrelation/MayerRecurrenceHasSum.lean};
+the Lambda-layer wrappers live in
+\texttt{IsingModel/AmbientLattice/AnalyticityLambdaMayerRecurrenceEpsilon.lean}
+(narrowed out of \texttt{Analyticity.lean} in PR~\#1988).
 
 \paragraph{\texttt{polymerFreeEnergy} tanh-bound +
 ferromagnetic + \texttt{hasDerivAt} +
