@@ -12,10 +12,11 @@ import IsingModel.AmbientLattice.AnalyticityLambdaMayer
 /-!
 # AmbientLattice/Analyticity vdPolymerFamilies + log_vd wrappers
 
-Narrow child module for 14 §18.6 vdPolymerFamilies_sum_Λ +
+Narrow child module for 14 §18.5-18.6 vdPolymerFamilies_sum_Λ +
 log_vdPolymerFamilies_sum_Λ continuous / differentiable / analyticAt /
-hasDerivAt wrappers (raw and tanh variants). The theorem names are
-unchanged from the former `Analyticity` declarations.
+analyticOnNhd / hasDerivAt wrappers (raw and tanh-composed variants).
+The theorem names are unchanged from the former `Analyticity`
+declarations.
 -/
 
 namespace IsingModel
