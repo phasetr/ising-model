@@ -6,13 +6,14 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBounds
 # Concrete §18.7 high-temperature exponential decay capstone wrappers
 
 Narrow child module for the §18.7 high-temperature pair-correlation
-exponential-decay capstone wrappers on `latticeGraph d` at `h = 0`. Eight
-theorems: the `tanh_pow_dist` capstone, the rate-form `exp_rate_dist`
-capstone, the `exp_alpha_dist` capstone, and the
-`exp_alpha_dist_of_le_highTempExpRate` capstone, each in `correlationΛ`
-and `correlationAlongExhaustion` versions plus ferromagnetic variants.
-The theorem names are unchanged from the former `HighTemperatureBounds`
-declarations.
+exponential-decay capstone wrappers on `latticeGraph d` at `h = 0`. 16
+theorems total: four capstone families -- `tanh_pow_dist`, the rate-form
+`exp_rate_dist`, `exp_alpha_dist`, and
+`exp_alpha_dist_of_le_highTempExpRate` -- each in
+`correlationΛ_latticeGraph` and `correlationAlongExhaustion_latticeGraph`
+versions plus ferromagnetic variants of both (4 families × 4 variants =
+16 theorems). The theorem names are unchanged from the former
+`HighTemperatureBounds` declarations.
 -/
 
 namespace IsingModel

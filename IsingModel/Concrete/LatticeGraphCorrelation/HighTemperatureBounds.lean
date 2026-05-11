@@ -212,10 +212,11 @@ theorem
 /-! ## Moved: §18.7 high-temperature exponential decay capstones
 
 The §18.7 high-temperature pair-correlation exponential-decay capstone
-wrappers on `latticeGraph d` at `h = 0` (`tanh_pow_dist` /
-`exp_rate_dist` / `exp_alpha_dist` / `exp_alpha_dist_of_le_highTempExpRate`,
-in `correlationΛ` and `correlationAlongExhaustion` versions plus
-ferromagnetic variants -- 8 theorems) now live in
+wrappers on `latticeGraph d` at `h = 0` (16 theorems: four capstone
+families `tanh_pow_dist` / `exp_rate_dist` / `exp_alpha_dist` /
+`exp_alpha_dist_of_le_highTempExpRate`, each in
+`correlationΛ_latticeGraph` and `correlationAlongExhaustion_latticeGraph`
+versions plus ferromagnetic variants) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsDecayCapstones`.
 The legacy import path is preserved by re-importing the new child.
 -/
