@@ -6,14 +6,16 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBounds
 # Concrete alongExhaustion Z/f/log Z ratio sandwich and ratio bound wrappers at h = 0
 
 Narrow child module for the §18.3-§18.4 concrete alongExhaustion
-`ratio_sandwich_bundle` / `ratio_bound` / `triple_ratio_*` wrappers on
-`latticeGraph d` at `h = 0`. 29 theorems for
-`partitionFunctionAlongExhaustion_latticeGraph`,
+`ratio_sandwich_bundle` / `ratio_bound` wrappers on `latticeGraph d`
+at `h = 0` for `partitionFunctionAlongExhaustion_latticeGraph`,
 `freeEnergyAlongExhaustion_latticeGraph`, and
-`log_partitionFunctionAlongExhaustion_latticeGraph` with bundle /
-triple_* / `_of_nonempty` variants plus ferromagnetic counterparts. The
-theorem names are unchanged from the former `HighTemperatureBounds`
-declarations.
+`log_partitionFunctionAlongExhaustion_latticeGraph` (bundle /
+`_of_nonempty` variants plus ferromagnetic counterparts). The 7
+`triple_ratio_*` wrappers (sandwich + bound bundles, J = 0 / β = 0 /
+ferromagnetic variants) now live in
+`HighTemperatureBoundsAlongExhaustionTripleRatio.lean` (narrowed in
+PR #1996). Theorem names are unchanged from the former
+`HighTemperatureBounds` declarations.
 -/
 
 namespace IsingModel
