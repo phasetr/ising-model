@@ -233,6 +233,12 @@ import
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsExpansion`
 directly. Sandwich / sharper-exp / ratio / deviation wrappers remain in
 `HighTemperatureBounds`.
+For concrete §18.3-§18.4 `correlationΛ_latticeGraph` basic high-temperature
+wrappers at `h = 0` (pair nonneg, pair `≤ 1`, singleton / pair trivial-slice
+vanishings at `J = 0` and `β = 0`, pair sandwich, singleton / pair
+ferromagnetic, singleton `= 0 ∧ ≤ 1`, pair+singleton bundle), import
+`IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsCorrelationBasic`
+directly.
 For concrete high-temperature partition-function/free-energy capstone wrappers,
 import `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureCapstones`
 directly.

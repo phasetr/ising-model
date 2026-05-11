@@ -5623,6 +5623,15 @@ new child module
 Sandwich, sharper-exp, ratio, deviation, and downstream wrappers remain in
 \texttt{HighTemperatureBounds}. The legacy import path is preserved.
 
+PR~\#1933 further splits the concrete §18.3--§18.4 basic
+$\mathrm{correlation}\Lambda\_\mathrm{latticeGraph}$ high-temperature
+wrappers at $h = 0$ (pair nonneg, pair $\le 1$, singleton/pair trivial-slice
+vanishings at $J = 0$ and $\beta = 0$, pair sandwich, singleton/pair
+ferromagnetic, singleton $= 0 \wedge \le 1$, pair+singleton bundle --
+11 theorems) out of \texttt{HighTemperatureBounds.lean} into a new child
+\texttt{Concrete/LatticeGraphCorrelation/HighTemperatureBoundsCorrelationBasic.lean}.
+The legacy import path is preserved.
+
 PR~\#1571 adds ferromagnetic ($0 \le J,\, 0 < \beta$) versions of
 all five layers; the bridge $0 \le \beta J$ follows from
 \texttt{mul\_nonneg hbeta.le hJ}. The $\mathbb{Z}^d$ along-exhaustion form
