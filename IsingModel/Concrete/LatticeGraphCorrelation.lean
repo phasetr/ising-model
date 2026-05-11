@@ -78,6 +78,13 @@ directly.
 For concrete product-summability, critical inverse temperature, pseudo-mass
 transfer, and below-critical cluster wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransfer`
+directly. For concrete Step 127 summability bounds and
+criticalInverseTemp foundations (10 theorems for
+`summable_truncated2Infinite_prod_of_hasExponentialDecay`,
+`tsum_truncated2Infinite_prod_le`, `criticalInverseTemp_*`, and
+`latticeMass_eq_zero_of_criticalInverseTemp_lt` /
+`latticeMass_pos_of_lt_criticalInverseTemp`), import
+`IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferSummability`
 directly.
 For concrete finite-susceptibility and Lebowitz derivative wrappers, import
 `IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassLebowitzDerivative`
