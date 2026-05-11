@@ -5626,8 +5626,24 @@ split out into \texttt{HighTemperatureBoundsExpSharper} in PR~\#1935;
 the deviation / continuity wrappers were further split out into
 \texttt{HighTemperatureBoundsDeviation} in PR~\#1936; the
 ratio\_sandwich / ratio\_bound wrappers were further split out into
-\texttt{HighTemperatureBoundsRatioBounds} in PR~\#1937.
+\texttt{HighTemperatureBoundsRatioBounds} in PR~\#1937; the
+alongExhaustion correlation/sandwich basic wrappers were further split
+out into \texttt{HighTemperatureBoundsAlongExhaustionBasic} in
+PR~\#1938.
 The legacy import path is preserved.
+
+PR~\#1938 further splits the concrete §18.3--§18.4 alongExhaustion
+correlation / partition / free-energy / sandwich / pair-singleton basic
+wrappers (25 theorems for
+$\mathrm{correlationAlongExhaustion}\_\mathrm{latticeGraph}$,
+$\mathrm{partitionFunctionAlongExhaustion}\_\mathrm{latticeGraph}$, and
+$\mathrm{freeEnergyAlongExhaustion}\_\mathrm{latticeGraph}$ at $h = 0$)
+out of \texttt{HighTemperatureBounds.lean} into a new child
+\texttt{Concrete/LatticeGraphCorrelation/HighTemperatureBoundsAlongExhaustionBasic.lean}.
+The two \texttt{\_of\_latticeAdj} along-exhaustion variants stay in
+\texttt{HighTemperatureBounds} (they call the $\Lambda$-level
+\texttt{\_of\_latticeAdj} wrappers which also live there). The legacy
+import path is preserved.
 
 PR~\#1933 further splits the concrete §18.3--§18.4 basic
 $\mathrm{correlation}\Lambda\_\mathrm{latticeGraph}$ high-temperature
