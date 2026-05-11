@@ -241,7 +241,15 @@ wrappers at `h = 0` (pair nonneg, pair `≤ 1`, singleton / pair trivial-slice
 vanishings at `J = 0` and `β = 0`, pair sandwich, singleton / pair
 ferromagnetic, singleton `= 0 ∧ ≤ 1`, pair+singleton bundle), import
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsCorrelationBasic`
-directly. For concrete §18.3-§18.4 alongExhaustion correlation / sandwich /
+directly. For concrete §18.3-§18.4 alongExhaustion sharper-exp upper-bound /
+sandwich / complete-summary wrappers at `h = 0` (17 theorems for
+`partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_*_exp`,
+`freeEnergyAlongExhaustion_latticeGraph_high_temp_h_zero_*_exp`, and
+`log_partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_*_exp`
+families plus ferromagnetic variants), import
+`IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExhaustionExpSharper`
+directly.
+For concrete §18.3-§18.4 alongExhaustion correlation / sandwich /
 pair-singleton basic wrappers at `h = 0` (25 theorems for
 `correlationAlongExhaustion_latticeGraph` closed form / nonneg / sandwich /
 ferromagnetic / trivial-slice vanishings / pair_singleton_bundle /
