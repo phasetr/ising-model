@@ -5632,6 +5632,17 @@ out into \texttt{HighTemperatureBoundsAlongExhaustionBasic} in
 PR~\#1938.
 The legacy import path is preserved.
 
+PR~\#1939 further splits the concrete §18.3--§18.4 alongExhaustion
+sharper-exp upper-bound / sandwich / complete-summary wrappers at
+$h = 0$ (17 theorems for
+$\mathrm{partitionFunctionAlongExhaustion}\_\mathrm{latticeGraph}\_\mathrm{high}\_\mathrm{temp}\_\mathrm{expansion}\_h\_\mathrm{zero}\_*\_\mathrm{exp}$,
+$\mathrm{freeEnergyAlongExhaustion}\_\mathrm{latticeGraph}\_\mathrm{high}\_\mathrm{temp}\_h\_\mathrm{zero}\_*\_\mathrm{exp}$, and
+$\mathrm{log}\_\mathrm{partitionFunctionAlongExhaustion}\_\mathrm{latticeGraph}\_\mathrm{high}\_\mathrm{temp}\_\mathrm{expansion}\_h\_\mathrm{zero}\_*\_\mathrm{exp}$
+families plus ferromagnetic variants) out of
+\texttt{HighTemperatureBounds.lean} into a new child
+\texttt{Concrete/LatticeGraphCorrelation/HighTemperatureBoundsAlongExhaustionExpSharper.lean}.
+The legacy import path is preserved.
+
 PR~\#1938 further splits the concrete §18.3--§18.4 alongExhaustion
 correlation / partition / free-energy / sandwich / pair-singleton basic
 wrappers (25 theorems for
