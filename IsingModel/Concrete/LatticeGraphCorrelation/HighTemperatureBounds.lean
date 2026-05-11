@@ -8,6 +8,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsExpSharp
 import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsDeviation
 import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsRatioBounds
 import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsTripleRatio
+import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsRatioLogFe
 import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExhaustionBasic
 import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExhaustionExpSharper
 import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExhaustionDeviation
@@ -427,13 +428,18 @@ The legacy import path is preserved by re-importing the new child.
 
 /-! ## Moved: Λ-level Z/f/log Z ratio sandwich and ratio bound wrappers
 
-The §18.3-§18.4 concrete Λ-level `ratio_sandwich` / `ratio_bound` wrappers
-on `latticeGraph d` at `h = 0` (29 theorems for
-`partitionFunctionΛ_latticeGraph`, `freeEnergyΛ_latticeGraph`, and
-`log_partitionFunctionΛ_latticeGraph` with `J = 0` / `β = 0` / `bundle` /
-`triple_*` variants plus ferromagnetic counterparts) now live in
+The §18.3-§18.4 concrete Λ-level `ratio_sandwich` / `ratio_bound`
+wrappers on `latticeGraph d` at `h = 0` for
+`partitionFunctionΛ_latticeGraph` (with `J = 0` / `β = 0` / `bundle`
+variants plus ferromagnetic counterparts) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsRatioBounds`.
-The legacy import path is preserved by re-importing the new child.
+The 7 `triple_ratio_*` wrappers now live in
+`IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsTripleRatio`
+(narrowed in PR #1998), and the 12 `log_partitionFunctionΛ_latticeGraph`
+/ `freeEnergyΛ_latticeGraph` ratio wrappers now live in
+`IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsRatioLogFe`
+(narrowed in PR #1999). The legacy import path is preserved by
+re-importing all three children.
 -/
 
 
