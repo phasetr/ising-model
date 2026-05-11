@@ -1,0 +1,142 @@
+import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTemperature
+import IsingModel.Concrete.LatticeGraphCorrelation.InfiniteVolumeCorrelationInequalities
+import IsingModel.Concrete.LatticeGraphCorrelation.CorrelationSymmetry
+import IsingModel.Concrete.LatticeGraphCorrelation.CorrelationDecay
+import IsingModel.Concrete.LatticeGraphCorrelation.SiteIndepMag
+import IsingModel.TranslationInvariance
+import IsingModel.PhaseTransition
+import IsingModel.Inequalities.FKG
+import IsingModel.AmbientFKG
+import IsingModel.Inequalities.HighTemp
+import IsingModel.LatticeExpSum
+import IsingModel.PseudoMass
+import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferSummability
+
+/-!
+# Lattice-mass: HasExponentialDecay transfer + high-temp exhaustion
+
+Narrow child module for the §17.1 / §17.5 HasExponentialDecay transfer
+wrappers: `HasExponentialDecay_of_latticeMass_pos`,
+`HasExponentialDecay_transfer_exhaustion`,
+`HasExponentialDecay_transfer_high_temp`,
+`latticeMass_ge_neg_log_of_high_temp_exhaustion`, and
+`latticeMass_pos_of_high_temp_exhaustion`. The theorem names are
+unchanged from the former `LatticeMassPseudoMassTransfer`
+declarations.
+-/
+
+open scoped symmDiff
+
+namespace IsingModel
+namespace Ambient
+
+/-! ## §17.1 Cluster property below criticalInverseTemp (Step 146) -/
+
+/-- **Extract positive decay rate from positive lattice mass** (GJ §17.1):
+if `latticeMass d Λ p > 0`, there exists `α : NNReal` with `0 < (α : ℝ)` and
+`HasExponentialDecay d Λ p (α : ℝ)`.
+
+Proof: by `lt_sSup_iff`, a positive supremum of the image set contains some
+element `(α : ENNReal) > 0`; coercing via `ENNReal.coe_pos` and
+`NNReal.coe_pos` yields a positive real decay rate.
+
+**GJ §17.1 context**: the positivity of the lattice mass (= inverse correlation
+length) directly produces an exponential decay witness, connecting the abstract
+`latticeMass` definition to the `HasExponentialDecay` predicate. -/
+theorem HasExponentialDecay_of_latticeMass_pos
+    {d : ℕ} {Λ : Ambient.Exhaustion (Fin d → ℤ)} {p : IsingParams ℝ}
+    (h : 0 < latticeMass d Λ p) :
+    ∃ α : NNReal, 0 < (α : ℝ) ∧ HasExponentialDecay d Λ p (α : ℝ) := by
+  unfold latticeMass at h
+  rw [lt_sSup_iff] at h
+  obtain ⟨y, hy_mem, hy_pos⟩ := h
+  rw [Set.mem_image] at hy_mem
+  obtain ⟨α, hα_decay, hα_eq⟩ := hy_mem
+  rw [← hα_eq] at hy_pos
+  exact ⟨α, NNReal.coe_pos.mpr (ENNReal.coe_pos.mp hy_pos), hα_decay⟩
+
+/-- **Transfer `HasExponentialDecay` across exhaustions**:
+for ferromagnetic `p`, if `HasExponentialDecay d Λ p α` holds for some
+exhaustion `Λ`, then it holds for any other exhaustion `Λ'`.
+
+Proof: the truncated 2-point function is exhaustion-independent for ferromagnetic
+parameters (`truncated2Infinite_indep_exhaustion`), so the bound transfers directly
+from `Λ` to `Λ'` with the same constant `C` and rate `α`. -/
+theorem HasExponentialDecay_transfer_exhaustion
+    {d : ℕ} (Λ Λ' : Ambient.Exhaustion (Fin d → ℤ))
+    {p : IsingParams ℝ} {α : ℝ}
+    (hf : Ferromagnetic p)
+    (h : HasExponentialDecay d Λ p α) :
+    HasExponentialDecay d Λ' p α := by
+  obtain ⟨C, hC, hbound⟩ := h
+  refine ⟨C, hC, fun i j hij => ?_⟩
+  rw [truncated2Infinite_indep_exhaustion (IsingModel.latticeGraph d) Λ' Λ p hf i j]
+  exact hbound i j hij
+
+/-- **Uniform high-temperature exponential decay across exhaustions**:
+the Simon--Lieb high-temperature decay rate from `cubicExhaustion` transfers to any
+exhaustion `Λ` under ferromagnetic `h = 0` parameters.
+
+This is the reusable uniform-in-exhaustion form needed by the Step 117l
+pseudo-mass/lattice-mass bridge: the witness constant and rate are independent of
+the target exhaustion because `truncated2Infinite` is exhaustion-independent under
+ferromagnetic parameters.
+
+References: Glimm--Jaffe §5.1 pp. 74--75 and §17.5 Lemma 17.5.2, pp. 311--312;
+Friedli--Velenik Prop. 9.31 p. 428. -/
+theorem HasExponentialDecay_transfer_high_temp
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)
+    (hlt : β * J * ↑(2 * d) < 1) :
+    HasExponentialDecay d Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+        (-Real.log (β * J * ↑(2 * d))) :=
+  HasExponentialDecay_transfer_exhaustion (cubicExhaustion d) Λ
+    (p := (⟨J, 0, β⟩ : IsingParams ℝ))
+    ⟨hJ, le_refl 0, hβ⟩
+    (hasExponentialDecay_of_high_temp (mul_nonneg hβ.le hJ) hlt)
+
+/-- **Arbitrary-exhaustion high-temperature lattice-mass lower bound**:
+for any exhaustion `Λ`, the Simon--Lieb high-temperature rate
+`-log(βJ·2d)` belongs below `latticeMass d Λ ⟨J,0,β⟩`.
+
+This is the exhaustion-uniform version of `latticeMass_ge_neg_log_of_high_temp`;
+it combines `HasExponentialDecay_transfer_high_temp` with the `sSup` definition
+of `latticeMass`.
+
+References: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2, pp. 311--312. -/
+theorem latticeMass_ge_neg_log_of_high_temp_exhaustion
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)
+    (hlt : β * J * ↑(2 * d) < 1) :
+    ENNReal.ofReal (-Real.log (β * J * ↑(2 * d))) ≤
+    latticeMass d Λ (⟨J, 0, β⟩ : IsingParams ℝ) := by
+  have hβJD_nn : 0 ≤ β * J * ↑(2 * d) :=
+    mul_nonneg (mul_nonneg hβ.le hJ) (Nat.cast_nonneg _)
+  have hα_nn : 0 ≤ -Real.log (β * J * ↑(2 * d)) :=
+    neg_nonneg.mpr (Real.log_nonpos hβJD_nn hlt.le)
+  exact latticeMass_ge_of_HasExponentialDecay hα_nn
+    (HasExponentialDecay_transfer_high_temp Λ hJ hβ hlt)
+
+/-- **Arbitrary-exhaustion positive lattice mass in the high-temperature regime**:
+if `0 < βJ` and `βJ·2d < 1` with `d ≥ 1`, then every exhaustion has positive
+`latticeMass`.
+
+The proof uses the transferred high-temperature decay rate
+`-log(βJ·2d)`, which is strictly positive when `0 < βJ·2d < 1`.
+
+Reference: Glimm--Jaffe §17.5 pp. 304--306. -/
+theorem latticeMass_pos_of_high_temp_exhaustion
+    {d : ℕ} (hd : 1 ≤ d) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β) (hβJ : 0 < β * J)
+    (hlt : β * J * ↑(2 * d) < 1) :
+    0 < latticeMass d Λ (⟨J, 0, β⟩ : IsingParams ℝ) := by
+  have hβJD_pos : 0 < β * J * ↑(2 * d) :=
+    mul_pos hβJ (Nat.cast_pos.mpr (by omega))
+  have hα_pos : 0 < -Real.log (β * J * ↑(2 * d)) :=
+    neg_pos.mpr (Real.log_neg hβJD_pos hlt)
+  exact latticeMass_pos_of_HasExponentialDecay hα_pos
+    (HasExponentialDecay_transfer_high_temp Λ hJ hβ hlt)
+
+end Ambient
+
+end IsingModel
