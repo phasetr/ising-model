@@ -3,18 +3,18 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBounds
 
 /-!
-# Concrete Λ-level Z/f/log Z ratio sandwich and ratio bound wrappers at h = 0
+# Concrete Λ-level Z ratio sandwich and ratio bound wrappers at h = 0
 
-Narrow child module for the §18.3-§18.4 concrete Λ-level
-`ratio_sandwich` / `ratio_bound` wrappers on `latticeGraph d` at
-`h = 0` for `partitionFunctionΛ_latticeGraph`,
-`freeEnergyΛ_latticeGraph`, and `log_partitionFunctionΛ_latticeGraph`
-(with `J = 0` / `β = 0` / `bundle` variants plus ferromagnetic
-counterparts). The 7 `triple_ratio_*` wrappers (sandwich + bound
-bundles, J = 0 / β = 0 / ferromagnetic variants) now live in
-`HighTemperatureBoundsTripleRatio.lean` (narrowed in PR #1998).
-Theorem names are unchanged from the former `HighTemperatureBounds`
-declarations.
+Narrow child module for the 10 §18.3-§18.4 concrete Λ-level
+`partitionFunctionΛ_latticeGraph` `ratio_sandwich` / `ratio_bound`
+wrappers on `latticeGraph d` at `h = 0` (with `J = 0` / `β = 0` /
+`bundle` variants plus ferromagnetic counterparts). The 7
+`triple_ratio_*` wrappers now live in
+`HighTemperatureBoundsTripleRatio.lean` (narrowed in PR #1998); the
+12 `log_partitionFunctionΛ_latticeGraph` / `freeEnergyΛ_latticeGraph`
+ratio wrappers now live in `HighTemperatureBoundsRatioLogFe.lean`
+(narrowed in PR #1999). Theorem names are unchanged from the former
+`HighTemperatureBounds` declarations.
 -/
 
 namespace IsingModel
