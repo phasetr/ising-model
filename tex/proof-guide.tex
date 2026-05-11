@@ -5765,8 +5765,14 @@ child module
 narrows the 7 \texttt{triple\_ratio\_sandwich\_bundle} /
 \texttt{triple\_ratio\_bound\_bundle} wrappers (J = 0 / $\beta$ = 0 /
 ferromagnetic variants) out of that child into a separate
-\texttt{HighTemperatureBoundsAlongExhaustionTripleRatio.lean} under
-the same directory. The legacy import path is preserved.
+\texttt{HighTemperatureBoundsAlongExhaustionTripleRatio.lean}, and
+PR~\#1997 further narrows the 14
+\texttt{log\_partitionFunctionAlongExhaustion\_latticeGraph} and
+\texttt{freeEnergyAlongExhaustion\_latticeGraph} ratio (+
+\texttt{deviation\_pos} / \texttt{pow\_two\_lt}) wrappers out of the
+same child into
+\texttt{HighTemperatureBoundsAlongExhaustionRatioLogFe.lean}, both
+under the same directory. The legacy import path is preserved.
 
 PR~\#1940 further splits the concrete §18.3--§18.4 alongExhaustion
 \texttt{deviation\_bound\_exp} / \texttt{continuity\_bundle} /

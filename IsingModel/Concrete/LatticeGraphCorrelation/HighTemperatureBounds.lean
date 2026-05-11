@@ -622,17 +622,18 @@ The legacy import path is preserved by re-importing the new child.
 /-! ## Moved: alongExhaustion Z/f/log Z ratio sandwich/ratio bound wrappers
 
 The §18.3-§18.4 concrete alongExhaustion ratio_sandwich_bundle /
-ratio_bound wrappers on `latticeGraph d` at `h = 0` for
-`partitionFunctionAlongExhaustion_latticeGraph`,
-`freeEnergyAlongExhaustion_latticeGraph`, and
-`log_partitionFunctionAlongExhaustion_latticeGraph` (with bundle /
-`_of_nonempty` variants plus ferromagnetic counterparts) now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExhaustionRatioBounds`.
-The 7 `triple_ratio_*` wrappers (sandwich + bound bundles, J = 0 /
+ratio_bound wrappers on `latticeGraph d` at `h = 0` now live in three
+narrow children: the 8 residual `partitionFunctionAlongExhaustion_latticeGraph`
+Z ratio wrappers remain in
+`IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExhaustionRatioBounds`;
+the 7 `triple_ratio_*` wrappers (sandwich + bound bundles, J = 0 /
 β = 0 / ferromagnetic variants) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExhaustionTripleRatio`
-(narrowed in PR #1996). The legacy import path is preserved by
-re-importing both children.
+(narrowed in PR #1996); and the 14 `log_partitionFunction` /
+`freeEnergy` ratio wrappers now live in
+`IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExhaustionRatioLogFe`
+(narrowed in PR #1997). The legacy import path is preserved by
+re-importing all three children.
 -/
 
 /-- **ℤ^d along-exhaustion partition function high-temperature closed form (FV §3.7.3 eq. (3.45))**:
