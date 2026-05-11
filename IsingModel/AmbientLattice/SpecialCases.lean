@@ -85,7 +85,13 @@ analytic wrappers live in
 General-graph high-temperature convergence and correction wrappers live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperature`.
 General-graph high-temperature expansion and bound wrappers live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBounds`.
+`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBounds`. The
+along-exhaustion partition / free-energy / log-partition / correlation
+expansion / closed-form / lower-bound / upper-bound / sandwich /
+complete-summary wrappers (20 theorems, plus the
+`one_le_sum_pow_tanh_even_subgraph_alongExhaustion` helper) live in
+`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansion`
+(moved in PR #1943).
 General-graph high-temperature partition-function/free-energy capstone
 wrappers live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureCapstones`.
