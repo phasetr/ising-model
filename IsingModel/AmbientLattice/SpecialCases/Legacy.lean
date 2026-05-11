@@ -4,6 +4,7 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperature
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBounds
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansion
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharper
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviation
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureCapstones
 import IsingModel.AmbientLattice.SpecialCases.InfiniteVolume
 import IsingModel.AmbientLattice.SpecialCases.JointAnalyticity
