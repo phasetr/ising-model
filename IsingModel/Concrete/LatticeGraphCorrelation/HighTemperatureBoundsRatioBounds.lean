@@ -7,11 +7,14 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBounds
 
 Narrow child module for the §18.3-§18.4 concrete Λ-level
 `ratio_sandwich` / `ratio_bound` wrappers on `latticeGraph d` at
-`h = 0`. 29 theorems for `partitionFunctionΛ_latticeGraph`,
-`freeEnergyΛ_latticeGraph`, and `log_partitionFunctionΛ_latticeGraph`,
-with `J = 0` / `β = 0` / `bundle` / `triple_*` variants plus
-ferromagnetic counterparts. The theorem names are unchanged from the
-former `HighTemperatureBounds` declarations.
+`h = 0` for `partitionFunctionΛ_latticeGraph`,
+`freeEnergyΛ_latticeGraph`, and `log_partitionFunctionΛ_latticeGraph`
+(with `J = 0` / `β = 0` / `bundle` variants plus ferromagnetic
+counterparts). The 7 `triple_ratio_*` wrappers (sandwich + bound
+bundles, J = 0 / β = 0 / ferromagnetic variants) now live in
+`HighTemperatureBoundsTripleRatio.lean` (narrowed in PR #1998).
+Theorem names are unchanged from the former `HighTemperatureBounds`
+declarations.
 -/
 
 namespace IsingModel
