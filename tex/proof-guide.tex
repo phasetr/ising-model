@@ -5607,15 +5607,21 @@ and
 \texttt{correlationAlongExhaustion\_latticeGraph\_high\_temp\_h\_zero\_at\_pair\_le\_two\_pow\_edges\_mul\_tanh\_pow\_dist}
 in \texttt{Concrete/LatticeGraphCorrelation/HighTemperatureBounds.lean}.
 
-PR~\#1932 further splits the concrete partition-function and free-energy
-high-temperature expansion / sandwich / bound wrappers
-($\mathrm{partitionFunction}\Lambda\_\mathrm{latticeGraph}\_\mathrm{high}\_\mathrm{temp}\_\mathrm{expansion}$ family,
-$\mathrm{freeEnergy}\Lambda\_\mathrm{latticeGraph}\_\mathrm{high}\_\mathrm{temp}\_*$ family, and
-related along-exhaustion / log-partition / correlation-empty wrappers) out of
+PR~\#1932 further splits the concrete §18.3--§18.4 partition-function and
+free-energy high-temperature expansion / closed-form / lower-bound /
+upper-bound / \texttt{lower\_le\_upper} wrappers (22 theorems: the
+$\mathrm{partitionFunction}\Lambda\_\mathrm{latticeGraph}\_\mathrm{high}\_\mathrm{temp}\_\mathrm{expansion}$ /
+$\mathrm{partitionFunctionAlongExhaustion}\_\mathrm{latticeGraph}\_\mathrm{high}\_\mathrm{temp}\_\mathrm{expansion}$ /
+$\mathrm{freeEnergy}\Lambda\_\mathrm{latticeGraph}\_\mathrm{high}\_\mathrm{temp}\_*$ /
+$\mathrm{freeEnergyAlongExhaustion}\_\mathrm{latticeGraph}\_\mathrm{high}\_\mathrm{temp}\_*$ /
+$\mathrm{log}\_\mathrm{partitionFunction}\Lambda\_\mathrm{latticeGraph}\_\mathrm{high}\_\mathrm{temp}\_\mathrm{expansion}\_h\_\mathrm{zero}\_\mathrm{closed}$ /
+$\mathrm{log}\_\mathrm{partitionFunctionAlongExhaustion}\_\mathrm{latticeGraph}\_\mathrm{high}\_\mathrm{temp}\_\mathrm{expansion}\_h\_\mathrm{zero}\_\mathrm{closed}$ /
+$\mathrm{correlation}\Lambda\_\mathrm{latticeGraph}\_\mathrm{high}\_\mathrm{temp}\_h\_\mathrm{zero}\_\mathrm{at}\_\mathrm{empty}\_A$ wrappers) out of
 \texttt{Concrete/LatticeGraphCorrelation/HighTemperatureBounds.lean} into a
 new child module
 \texttt{Concrete/LatticeGraphCorrelation/HighTemperatureBoundsExpansion.lean}.
-The legacy import path is preserved.
+Sandwich, sharper-exp, ratio, deviation, and downstream wrappers remain in
+\texttt{HighTemperatureBounds}. The legacy import path is preserved.
 
 PR~\#1571 adds ferromagnetic ($0 \le J,\, 0 < \beta$) versions of
 all five layers; the bridge $0 \le \beta J$ follows from

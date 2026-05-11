@@ -20,11 +20,14 @@ open scoped symmDiff
 
 /-! ## Moved: high-temperature partition-function and free-energy expansion wrappers
 
-The §18.3-§18.4 high-temperature partition-function expansion, free-energy
-expansion, sandwich, and bound wrappers on `latticeGraph d` at `h = 0` now
-live in
+The §18.3-§18.4 high-temperature partition-function and free-energy
+expansion / closed-form / lower-bound / upper-bound / `lower_le_upper`
+wrappers on `latticeGraph d`, plus
+`correlationΛ_latticeGraph_high_temp_h_zero_at_empty_A`, now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsExpansion`.
-This module imports it to preserve the legacy import path.
+Sandwich, sharper-exp, ratio, deviation, and downstream wrappers continue to
+live in this module. The legacy import path is preserved by re-importing
+the new child.
 -/
 
 

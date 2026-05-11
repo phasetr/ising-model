@@ -6,10 +6,13 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBounds
 # Concrete high-temperature partition-function and free-energy expansion wrappers
 
 Narrow child module for the §18.3-§18.4 high-temperature partition-function
-expansion, free-energy expansion, sandwich, and bound wrappers on
-`latticeGraph d` at `h = 0`. The theorem names are the same as the former
-declarations in `HighTemperatureBounds`, but callers can now import this
-child module directly.
+and free-energy expansion / closed-form / lower-bound / upper-bound /
+`lower_le_upper` wrappers on `latticeGraph d`, plus the
+`correlationΛ_latticeGraph_high_temp_h_zero_at_empty_A` consistency check.
+Sandwich, sharper-exp, ratio, deviation, and downstream wrappers remain in
+the parent `HighTemperatureBounds`. The theorem names are the same as the
+former declarations in `HighTemperatureBounds`, but callers can now import
+this child module directly.
 -/
 
 namespace IsingModel
