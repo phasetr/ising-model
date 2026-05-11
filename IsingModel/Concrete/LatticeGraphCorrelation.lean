@@ -241,7 +241,12 @@ wrappers at `h = 0` (pair nonneg, pair `≤ 1`, singleton / pair trivial-slice
 vanishings at `J = 0` and `β = 0`, pair sandwich, singleton / pair
 ferromagnetic, singleton `= 0 ∧ ≤ 1`, pair+singleton bundle), import
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsCorrelationBasic`
-directly. For concrete §18.3-§18.4 `freeEnergyInfinite` high-temperature wrappers
+directly. For concrete per-direction real / complex analyticity wrappers
+(`partitionFunction*` / `freeEnergy*` `analyticAt`/`analyticOn` in
+`h`, `J`, `β`, plus joint analyticity -- 12 theorems), import
+`IsingModel.Concrete.LatticeGraphCorrelation.ComplexAnalyticityBasic`
+directly.
+For concrete §18.3-§18.4 `freeEnergyInfinite` high-temperature wrappers
 on `latticeGraph d` (10 theorems: `upper_bound_exp_uniform`,
 `upper_bound_exp`, `sandwich_exp`, `complete_summary_exp`,
 `deviation_bound_exp`, `continuity_at_J_zero`,
