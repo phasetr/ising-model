@@ -3,7 +3,7 @@ import IsingModel.AmbientLattice.MagnetizationInfiniteLambdaHSymmetry
 import IsingModel.AmbientLattice.MagnetizationInfiniteExhaustionHSymmetry
 
 /-!
-# Ambient susceptibilityInfinite + abs_magnetizationInfinite bound
+# Ambient susceptibilityInfinite definition + wrappers
 
 Narrow child module for the infinite-volume susceptibility definition
 `susceptibilityInfinite` and its 4 properties
