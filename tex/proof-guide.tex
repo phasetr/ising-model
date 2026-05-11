@@ -5632,6 +5632,17 @@ ferromagnetic, singleton $= 0 \wedge \le 1$, pair+singleton bundle --
 \texttt{Concrete/LatticeGraphCorrelation/HighTemperatureBoundsCorrelationBasic.lean}.
 The legacy import path is preserved.
 
+PR~\#1934 further splits the concrete §18.7 high-temperature
+pair-correlation exponential-decay capstones (8 theorems:
+$\mathrm{correlation}\Lambda\_\mathrm{latticeGraph}$ and
+$\mathrm{correlationAlongExhaustion}\_\mathrm{latticeGraph}$ versions of
+\texttt{tanh\_pow\_dist} / \texttt{exp\_rate\_dist} /
+\texttt{exp\_alpha\_dist} /
+\texttt{exp\_alpha\_dist\_of\_le\_highTempExpRate} plus ferromagnetic
+variants) out of \texttt{HighTemperatureBounds.lean} into a new child
+\texttt{Concrete/LatticeGraphCorrelation/HighTemperatureBoundsDecayCapstones.lean}.
+The legacy import path is preserved.
+
 PR~\#1571 adds ferromagnetic ($0 \le J,\, 0 < \beta$) versions of
 all five layers; the bridge $0 \le \beta J$ follows from
 \texttt{mul\_nonneg hbeta.le hJ}. The $\mathbb{Z}^d$ along-exhaustion form

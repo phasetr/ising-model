@@ -238,6 +238,12 @@ wrappers at `h = 0` (pair nonneg, pair `≤ 1`, singleton / pair trivial-slice
 vanishings at `J = 0` and `β = 0`, pair sandwich, singleton / pair
 ferromagnetic, singleton `= 0 ∧ ≤ 1`, pair+singleton bundle), import
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsCorrelationBasic`
+directly. For concrete §18.7 high-temperature pair-correlation
+exponential-decay capstones (`tanh_pow_dist` / `exp_rate_dist` /
+`exp_alpha_dist` / `exp_alpha_dist_of_le_highTempExpRate` for
+`correlationΛ_latticeGraph` and `correlationAlongExhaustion_latticeGraph`,
+plus ferromagnetic variants), import
+`IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsDecayCapstones`
 directly.
 For concrete high-temperature partition-function/free-energy capstone wrappers,
 import `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureCapstones`
