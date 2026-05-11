@@ -2,6 +2,7 @@ import IsingModel.AmbientLattice.SpecialCases.FreeEnergy
 import IsingModel.AmbientLattice.SpecialCases.FreeEnergyAnalyticity
 import IsingModel.AmbientLattice.SpecialCases.HighTemperature
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBounds
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansion
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureCapstones
 import IsingModel.AmbientLattice.SpecialCases.InfiniteVolume
 import IsingModel.AmbientLattice.SpecialCases.JointAnalyticity
