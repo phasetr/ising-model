@@ -1,6 +1,7 @@
 import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.Concrete.IntLattice
 import IsingModel.Concrete.LatticeGraphCorrelation.Complex
+import IsingModel.Concrete.LatticeGraphCorrelation.ComplexAnalyticityBasic
 import IsingModel.Concrete.LatticeGraphCorrelation.PerStage
 import IsingModel.Concrete.LatticeGraphCorrelation.Magnetization
 import IsingModel.Concrete.LatticeGraphCorrelation.TwoPoint
