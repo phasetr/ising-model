@@ -241,7 +241,12 @@ wrappers at `h = 0` (pair nonneg, pair `≤ 1`, singleton / pair trivial-slice
 vanishings at `J = 0` and `β = 0`, pair sandwich, singleton / pair
 ferromagnetic, singleton `= 0 ∧ ≤ 1`, pair+singleton bundle), import
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsCorrelationBasic`
-directly. For concrete continuity, `AnalyticOnNhd`, and norm-bound wrappers for
+directly. For concrete log Z / freeEnergyComplex local-branch construction
+wrappers on `latticeGraph d` (11 theorems including
+`partitionFunctionComplex_ne_zero_on_leeYangSubdomain`,
+`exists_logZ_*`, `exists_freeEnergyComplex_*`), import
+`IsingModel.Concrete.LatticeGraphCorrelation.ComplexBranches` directly.
+For concrete continuity, `AnalyticOnNhd`, and norm-bound wrappers for
 `partitionFunctionComplex` / `freeEnergyComplex` on `latticeGraph d` (15
 theorems including `continuous_partitionFunctionComplex_*`,
 `AnalyticOn_leeYangDomain/Subdomain` variants, and
