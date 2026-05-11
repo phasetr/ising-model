@@ -218,7 +218,10 @@ capstone families `tanh_pow_dist` / `exp_rate_dist` /
 `exp_alpha_dist_of_le_highTempExpRate`, in their
 `correlationΛ_latticeGraph` / `correlationAlongExhaustion_latticeGraph`
 versions and the ferromagnetic variants that previously lived alongside
-them) now live in
+them; some named-rate / monotone-rate ferromagnetic variants of
+`exp_highTempExpRate_dist` continue to live in
+`Concrete/LatticeGraphCorrelation/CorrelationDecay.lean` and are
+intentionally not moved) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsDecayCapstones`.
 The legacy import path is preserved by re-importing the new child.
 -/
