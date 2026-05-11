@@ -241,7 +241,13 @@ wrappers at `h = 0` (pair nonneg, pair `≤ 1`, singleton / pair trivial-slice
 vanishings at `J = 0` and `β = 0`, pair sandwich, singleton / pair
 ferromagnetic, singleton `= 0 ∧ ≤ 1`, pair+singleton bundle), import
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsCorrelationBasic`
-directly. For concrete analyticBranch + Differentiable ℂ entire wrappers
+directly. For concrete `isingEdgePoly` evaluations, `exp_neg_beta_hamiltonian_*`,
+`prod_exp_beta_J_edgeSpin_eq`, `exists_normalised_logZ_branch_on_ball`,
+`partitionFunctionComplex_ne_zero_not_iff_slitPlane`, and
+`norm_partitionFunctionComplex_eq_partitionFunction_at_real` wrappers
+(10 theorems), import
+`IsingModel.Concrete.LatticeGraphCorrelation.ComplexIsingPoly` directly.
+For concrete analyticBranch + Differentiable ℂ entire wrappers
 (`leeYangDomain_subset_branch_locus`,
 `freeEnergyComplex_exists_analyticBranch*`,
 `analyticBranch_freeEnergyComplex_*`,
