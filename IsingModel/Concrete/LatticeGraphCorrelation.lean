@@ -241,7 +241,13 @@ wrappers at `h = 0` (pair nonneg, pair `≤ 1`, singleton / pair trivial-slice
 vanishings at `J = 0` and `β = 0`, pair sandwich, singleton / pair
 ferromagnetic, singleton `= 0 ∧ ≤ 1`, pair+singleton bundle), import
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsCorrelationBasic`
-directly. For concrete per-direction real / complex analyticity wrappers
+directly. For concrete real-complex compatibility, Lee-Yang-domain
+non-vanishing / `re_pos`, `freeEnergyComplex_analyticAt_h_of_leeYangSubdomain`,
+real-axis restriction, `norm_partitionFunctionComplex_at_real`, and
+related wrappers (22 theorems), import
+`IsingModel.Concrete.LatticeGraphCorrelation.ComplexRealCompat`
+directly.
+For concrete per-direction real / complex analyticity wrappers
 (`partitionFunction*` / `freeEnergy*` `analyticAt`/`analyticOn` in
 `h`, `J`, `β`, plus joint analyticity -- 12 theorems), import
 `IsingModel.Concrete.LatticeGraphCorrelation.ComplexAnalyticityBasic`
