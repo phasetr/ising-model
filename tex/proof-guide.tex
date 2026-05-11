@@ -5632,6 +5632,19 @@ out into \texttt{HighTemperatureBoundsAlongExhaustionBasic} in
 PR~\#1938.
 The legacy import path is preserved.
 
+PR~\#1946 further splits 34 ambient §18.3--§18.4 alongExhaustion
+\texttt{ratio\_sandwich} / \texttt{ratio\_bound} /
+\texttt{triple\_ratio\_*} / \texttt{\_of\_nonempty} wrappers (for
+$\mathrm{partitionFunctionAlongExhaustion}$,
+$\mathrm{freeEnergyAlongExhaustion}$, and
+$\mathrm{log}\,\mathrm{partitionFunctionAlongExhaustion}$ with
+bundle / triple / ferromagnetic variants) out of
+\texttt{AmbientLattice/SpecialCases/HighTemperatureBounds.lean} into
+a new child module
+\texttt{HighTemperatureBoundsRatioBounds.lean} (under
+\texttt{AmbientLattice/SpecialCases/}). The legacy import path is
+preserved.
+
 PR~\#1945 further splits 20 ambient §18.3--§18.4 alongExhaustion
 \texttt{deviation\_bound\_exp} / \texttt{continuity\_bundle} /
 \texttt{deviation\_sandwich} / \texttt{relative\_sandwich} /

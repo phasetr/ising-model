@@ -101,7 +101,11 @@ continuity_bundle / deviation_sandwich / relative_sandwich /
 deviation_pos / pow_two_lt / strict_deviation_bundle wrappers (20
 theorems with ferromagnetic variants) live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviation`
-(moved in PR #1945).
+(moved in PR #1945). The along-exhaustion ratio_sandwich / ratio_bound /
+triple_ratio_* / `_of_nonempty` wrappers (34 theorems for `Z`, `f`,
+`log Z` with bundle/triple/ferromagnetic variants) live in
+`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioBounds`
+(moved in PR #1946).
 General-graph high-temperature partition-function/free-energy capstone
 wrappers live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureCapstones`.
