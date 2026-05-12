@@ -11,7 +11,7 @@ import IsingModel.AmbientFKG
 /-!
 # ℤ^d `uniformSpontaneousMagnetization` wrappers
 
-Narrow child module for the 9 ℤ^d `uniformSpontaneousMagnetization*`
+Narrow child module for the 10 ℤ^d `uniformSpontaneousMagnetization*`
 wrappers (`_apply`, `_eq_spontaneousMagnetization_any_exhaustion`,
 `_monotone_J`, `_monotone_beta`,
 `spontaneousMagnetization_latticeGraph_cubicExhaustion_eq_uniform`,
