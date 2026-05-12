@@ -5739,8 +5739,15 @@ ferromagnetic variants) out of
 \texttt{AmbientLattice/SpecialCases/HighTemperatureBounds.lean} into
 a new child module
 \texttt{HighTemperatureBoundsDeviation.lean} (under
-\texttt{AmbientLattice/SpecialCases/}). The legacy import path is
-preserved.
+\texttt{AmbientLattice/SpecialCases/}). PR~\#2018 subsequently
+narrows the 10 strict-deviation wrappers
+(\texttt{relative\_sandwich}, \texttt{deviation\_pos},
+\texttt{pow\_two\_lt},
+\texttt{log\_partitionFunctionAlongExhaustion\_*\_deviation\_pos},
+\texttt{\_strict\_deviation\_bundle} with ferromagnetic variants)
+out of that child into a separate
+\texttt{HighTemperatureBoundsDeviationStrict.lean} under the same
+directory. The legacy import path is preserved.
 
 PR~\#1944 further splits 16 ambient §18.3--§18.4 alongExhaustion
 sharper-exp upper-bound / sandwich / complete-summary wrappers
