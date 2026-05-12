@@ -12,8 +12,13 @@ continuity family on `latticeGraph d` at `h = 0`. The
 `deviation_sandwich` wrappers now live in
 `HighTemperatureBoundsAlongExDeviationSandwich.lean`; the
 `relative_sandwich` wrappers now live in
-`HighTemperatureBoundsAlongExRelativeSandwich.lean`. The remaining
-`deviation_pos` / `pow_two_lt` / `strict_deviation_bundle` wrappers for
+`HighTemperatureBoundsAlongExRelativeSandwich.lean`; the four
+`freeEnergyAlongExhaustion_*_deviation_pos`,
+`partitionFunctionAlongExhaustion_*_pow_two_lt`, and
+`log_partitionFunctionAlongExhaustion_*_deviation_pos` wrappers now
+live in `HighTemperatureBoundsAlongExDeviationPos.lean`. The remaining
+`strict_deviation_bundle` plus ferromagnetic
+`pow_two_lt_ferromagnetic` / `log_*_deviation_pos_ferromagnetic` wrappers for
 `freeEnergyAlongExhaustion_latticeGraph`,
 `partitionFunctionAlongExhaustion_latticeGraph`, and
 `log_partitionFunctionAlongExhaustion_latticeGraph` (with ferromagnetic
@@ -51,51 +56,14 @@ The two wrappers
 and `partitionFunctionAlongExhaustion_latticeGraph_h_zero_relative_sandwich_ferromagnetic`
 now live in `HighTemperatureBoundsAlongExRelativeSandwich.lean`. -/
 
+/-! ## Moved: alongExhaustion `deviation_pos` / `pow_two_lt` wrappers
 
-/-- **ℤ^d along-ex f strict deviation at stage `n`**. -/
-theorem freeEnergyAlongExhaustion_latticeGraph_high_temp_h_zero_deviation_pos
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
-    (hβJ : 0 < β * J) (n : ℕ) (hne : 0 < (Λ.volume n).card)
-    (hEpos : 0 <
-      (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card) :
-    0 < freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
-        (⟨J, 0, β⟩ : IsingParams ℝ) n - Real.log 2 :=
-  freeEnergyAlongExhaustion_high_temp_h_zero_deviation_pos
-    (IsingModel.latticeGraph d) Λ J β hβJ n hne hEpos
+The four wrappers
+`freeEnergyAlongExhaustion_latticeGraph_*_deviation_pos`,
+`partitionFunctionAlongExhaustion_latticeGraph_*_pow_two_lt`, and
+`log_partitionFunctionAlongExhaustion_latticeGraph_*_deviation_pos`
+now live in `HighTemperatureBoundsAlongExDeviationPos.lean`. -/
 
-/-- **ℤ^d along-ex ferromagnetic f strict deviation at stage `n`**. -/
-theorem freeEnergyAlongExhaustion_latticeGraph_high_temp_h_zero_deviation_pos_ferromagnetic
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
-    (hJ : 0 < J) (hβ : 0 < β) (n : ℕ) (hne : 0 < (Λ.volume n).card)
-    (hEpos : 0 <
-      (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card) :
-    0 < freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
-        (⟨J, 0, β⟩ : IsingParams ℝ) n - Real.log 2 :=
-  freeEnergyAlongExhaustion_high_temp_h_zero_deviation_pos_ferromagnetic
-    (IsingModel.latticeGraph d) Λ J β hJ hβ n hne hEpos
-
-/-- **ℤ^d along-ex Z strict deviation at stage `n`**. -/
-theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_pow_two_lt
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
-    (hβJ : 0 < β * J) (n : ℕ)
-    (hEpos : 0 <
-      (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card) :
-    (2 : ℝ) ^ (Λ.volume n).card
-      < partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
-          (⟨J, 0, β⟩ : IsingParams ℝ) n :=
-  partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_pow_two_lt
-    (IsingModel.latticeGraph d) Λ J β hβJ n hEpos
-
-/-- **ℤ^d along-ex log Z strict deviation at stage `n`**. -/
-theorem log_partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_deviation_pos
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
-    (hβJ : 0 < β * J) (n : ℕ)
-    (hEpos : 0 <
-      (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card) :
-    0 < Real.log (partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
-        (⟨J, 0, β⟩ : IsingParams ℝ) n) - ((Λ.volume n).card : ℝ) * Real.log 2 :=
-  log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_deviation_pos
-    (IsingModel.latticeGraph d) Λ J β hβJ n hEpos
 
 /-- **ℤ^d along-ex Z + log Z + f strict deviation bundle at stage `n`**. -/
 theorem
