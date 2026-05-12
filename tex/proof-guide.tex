@@ -4826,7 +4826,13 @@ wrappers (\texttt{\_le\_one}, \texttt{\_nonneg},
 \texttt{\_cubicExhaustion\_monotone\_h}, \texttt{\_beta}, \texttt{\_J},
 \texttt{\_gks\_second}) now live in
 \path{IsingModel/Concrete/LatticeGraphCorrelation/TwoPointCorrelationInfinite.lean}
-(narrowed out of \path{TwoPoint.lean} in PR~\#2025).
+(narrowed out of \path{TwoPoint.lean} in PR~\#2025). The 5
+$\mathbb{Z}^d$ magnetization monotonicity wrappers
+(\texttt{spontaneousMagnetization\_latticeGraph\_cubicExhaustion\_monotone\_\{J,beta\}},
+\texttt{magnetizationInfinite\_latticeGraph\_cubicExhaustion\_monotone\_\{J,h,beta\}})
+now live in
+\path{IsingModel/Concrete/LatticeGraphCorrelation/TwoPointMagnetizationMonotone.lean}
+(narrowed out of \path{TwoPoint.lean} in PR~\#2026).
 The corresponding ambient along-exhaustion closed forms and h-symmetry wrappers
 remain in \path{IsingModel/AmbientLattice/SpecialCases/FreeEnergy.lean}.
 \par}
