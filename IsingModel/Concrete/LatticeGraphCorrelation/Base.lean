@@ -136,39 +136,17 @@ theorem correlationInfinite_latticeGraph_empty
     correlationInfinite (IsingModel.latticeGraph d) Λ p ∅ = 1 :=
   correlationInfinite_empty (IsingModel.latticeGraph d) Λ p
 
-/-- **ℤ^d `correlationΛ` vanishes at `β = 0`** for nonempty `A : Finset ↑Λ`. -/
-theorem correlationΛ_latticeGraph_beta_zero_vanish_of_nonempty
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J h : ℝ)
-    (A : Finset (↑Λ : Type _)) (hA : A.Nonempty) :
-    correlationΛ (IsingModel.latticeGraph d) Λ
-        (⟨J, h, 0⟩ : IsingParams ℝ) A = 0 :=
-  correlationΛ_beta_zero_vanish_of_nonempty (IsingModel.latticeGraph d) Λ J h A hA
+/-! ## Moved: trivial-slice vanish wrappers
 
-/-- **ℤ^d `correlationΛ` vanishes at `J = h = 0`** for nonempty `A`. -/
-theorem correlationΛ_latticeGraph_zero_params_vanish_of_nonempty
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (β : ℝ)
-    (A : Finset (↑Λ : Type _)) (hA : A.Nonempty) :
-    correlationΛ (IsingModel.latticeGraph d) Λ
-        (⟨0, 0, β⟩ : IsingParams ℝ) A = 0 :=
-  correlationΛ_zero_params_vanish_of_nonempty (IsingModel.latticeGraph d) Λ β A hA
+The 4 ℤ^d wrappers
+`correlationΛ_latticeGraph_{beta_zero_vanish_of_nonempty,zero_params_vanish_of_nonempty}`
+and
+`correlationAlongExhaustion_latticeGraph_{beta_zero_vanish,zero_params_vanish}`
+now live in
+`IsingModel.Concrete.LatticeGraphCorrelation.BaseVanish`.
+The legacy import path is preserved by re-importing the new child.
+-/
 
-/-- **ℤ^d `correlationAlongExhaustion` vanishes at `β = 0`** per stage. -/
-theorem correlationAlongExhaustion_latticeGraph_beta_zero_vanish
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    (J h : ℝ) (A : Finset (Fin d → ℤ)) (hA : A.Nonempty) (n : ℕ) :
-    correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
-        (⟨J, h, 0⟩ : IsingParams ℝ) A n = 0 :=
-  correlationAlongExhaustion_beta_zero_vanish (IsingModel.latticeGraph d)
-    Λ J h A hA n
-
-/-- **ℤ^d `correlationAlongExhaustion` vanishes at `J = h = 0`** per stage. -/
-theorem correlationAlongExhaustion_latticeGraph_zero_params_vanish
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    (β : ℝ) (A : Finset (Fin d → ℤ)) (hA : A.Nonempty) (n : ℕ) :
-    correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
-        (⟨0, 0, β⟩ : IsingParams ℝ) A n = 0 :=
-  correlationAlongExhaustion_zero_params_vanish (IsingModel.latticeGraph d)
-    Λ β A hA n
 
 /-- **ℤ^d `partitionFunctionΛ_apply`** unfolding. -/
 theorem partitionFunctionΛ_latticeGraph_apply
