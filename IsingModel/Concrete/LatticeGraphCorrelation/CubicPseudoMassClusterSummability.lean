@@ -1,4 +1,5 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassNamedRate
+import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassNamedRateCorr
 
 /-!
 # Cubic named-rate cluster and summability wrappers
