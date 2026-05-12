@@ -104,75 +104,16 @@ theorem hasDerivAt_freeEnergyΛ_latticeGraph_field
   ⟨_, Ambient.hasDerivAt_freeEnergyΛ_field
     (IsingModel.latticeGraph d) Λ J h β⟩
 
-/-- **ℤ^d Λ: `partitionFunctionΛ` HasDerivAt in β**. -/
-theorem hasDerivAt_partitionFunctionΛ_latticeGraph_beta
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    (J h β : ℝ) :
-    ∃ c : ℝ, HasDerivAt (fun β' =>
-        Ambient.partitionFunctionΛ (IsingModel.latticeGraph d) Λ
-          (⟨J, h, β'⟩ : IsingParams ℝ)) c β :=
-  ⟨_, Ambient.hasDerivAt_partitionFunctionΛ_beta
-    (IsingModel.latticeGraph d) Λ J h β⟩
+/-! ## Moved: ℤ^d Λ-layer `partitionFunctionΛ`/`boltzmannWeightΛ` `hasDerivAt` wrappers
 
-/-- **ℤ^d Λ: `partitionFunctionΛ` HasDerivAt in J**. -/
-theorem hasDerivAt_partitionFunctionΛ_latticeGraph_J
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    (J h β : ℝ) :
-    ∃ c : ℝ, HasDerivAt (fun J' =>
-        Ambient.partitionFunctionΛ (IsingModel.latticeGraph d) Λ
-          (⟨J', h, β⟩ : IsingParams ℝ)) c J :=
-  ⟨_, Ambient.hasDerivAt_partitionFunctionΛ_J
-    (IsingModel.latticeGraph d) Λ J h β⟩
+The 6 ℤ^d Λ-layer
+`hasDerivAt_partitionFunctionΛ_latticeGraph_{beta,J,field}` and
+`hasDerivAt_boltzmannWeightΛ_latticeGraph_{beta,J,field}` wrappers
+now live in
+`IsingModel.Concrete.LatticeGraphCorrelation.RegularityPartitionBoltzmann`.
+The legacy import path is preserved by re-importing the new child.
+-/
 
-/-- **ℤ^d Λ: `partitionFunctionΛ` HasDerivAt in h**. -/
-theorem hasDerivAt_partitionFunctionΛ_latticeGraph_field
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    (J h β : ℝ) :
-    ∃ c : ℝ, HasDerivAt (fun h' =>
-        Ambient.partitionFunctionΛ (IsingModel.latticeGraph d) Λ
-          (⟨J, h', β⟩ : IsingParams ℝ)) c h :=
-  ⟨_, Ambient.hasDerivAt_partitionFunctionΛ_field
-    (IsingModel.latticeGraph d) Λ J h β⟩
-
-/-- **ℤ^d Λ: ambient-induced Boltzmann weight HasDerivAt in β**
-(per-configuration, lifted from `IsingModel.boltzmannWeight`). -/
-theorem hasDerivAt_boltzmannWeightΛ_latticeGraph_beta
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    (J h β : ℝ) (σ : Config (↑Λ : Type _)) :
-    ∃ c : ℝ, HasDerivAt (fun β' =>
-        IsingModel.boltzmannWeight
-          (inducedGraph (IsingModel.latticeGraph d) Λ)
-          (⟨J, h, β'⟩ : IsingParams ℝ) σ) c β :=
-  ⟨_, Ambient.hasDerivAt_boltzmannWeightΛ_beta
-    (IsingModel.latticeGraph d) Λ J h β σ⟩
-
-/-- **ℤ^d Λ: ambient-induced Boltzmann weight HasDerivAt in J**. -/
-theorem hasDerivAt_boltzmannWeightΛ_latticeGraph_J
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    (J h β : ℝ) (σ : Config (↑Λ : Type _)) :
-    ∃ c : ℝ, HasDerivAt (fun J' =>
-        IsingModel.boltzmannWeight
-          (inducedGraph (IsingModel.latticeGraph d) Λ)
-          (⟨J', h, β⟩ : IsingParams ℝ) σ) c J :=
-  ⟨_, Ambient.hasDerivAt_boltzmannWeightΛ_J
-    (IsingModel.latticeGraph d) Λ J h β σ⟩
-
-/-- **ℤ^d Λ: ambient-induced Boltzmann weight HasDerivAt in h**. -/
-theorem hasDerivAt_boltzmannWeightΛ_latticeGraph_field
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    (J h β : ℝ) (σ : Config (↑Λ : Type _)) :
-    ∃ c : ℝ, HasDerivAt (fun h' =>
-        IsingModel.boltzmannWeight
-          (inducedGraph (IsingModel.latticeGraph d) Λ)
-          (⟨J, h', β⟩ : IsingParams ℝ) σ) c h :=
-  ⟨_, Ambient.hasDerivAt_boltzmannWeightΛ_field
-    (IsingModel.latticeGraph d) Λ J h β σ⟩
 
 /-! ## Moved: ℤ^d Λ-layer `magnetizationΛ`/`susceptibilityΛ` `hasDerivAt` wrappers
 
