@@ -4,7 +4,7 @@ import IsingModel.AmbientLattice.SpecialCases.FreeEnergy
 /-!
 # Concrete ℤ^d `freeEnergyΛ` special-case wrappers
 
-Narrow child module for the 13 ℤ^d `freeEnergyΛ_latticeGraph_*`
+Narrow child module for the 12 ℤ^d `freeEnergyΛ_latticeGraph_*`
 wrappers (`ge_log_two_cosh`, `ge_log_two`, `nonneg`, `J_zero`,
 `beta_zero`, `zero_params`, `neg_h`, `eq_abs_h`, `monotone_abs_h`,
 `monotone_J`, `monotone_h`, `monotone_beta`) extracted from

@@ -237,7 +237,7 @@ theorem freeEnergy_bot_latticeGraph
 
 /-! ## Moved: ℤ^d `freeEnergyΛ` special-case wrappers
 
-The 13 ℤ^d `freeEnergyΛ_latticeGraph_*` wrappers
+The 12 ℤ^d `freeEnergyΛ_latticeGraph_*` wrappers
 (`ge_log_two_cosh`, `ge_log_two`, `nonneg`, `J_zero`, `beta_zero`,
 `zero_params`, `neg_h`, `eq_abs_h`, `monotone_abs_h`, `monotone_J`,
 `monotone_h`, `monotone_beta`) now live in
