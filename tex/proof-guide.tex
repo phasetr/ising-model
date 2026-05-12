@@ -4812,9 +4812,13 @@ including the corresponding log forms, now live in
 
 {\raggedright
 The concrete $\mathbb{Z}^d$ free-energy closed-form, lower-bound,
-monotonicity, h-symmetry, absolute-field, and bottom-graph comparison wrappers
+monotonicity, h-symmetry, and absolute-field wrappers
 now live in
 \path{IsingModel/Concrete/LatticeGraphCorrelation/FreeEnergySpecialCases.lean}.
+The bottom-graph (`⊥ ≤ latticeGraph d`) comparison wrappers and the
+matching `*_latticeGraph_monotone_ambient_subgraph` family now live in
+\path{IsingModel/Concrete/LatticeGraphCorrelation/TwoPointAmbientBot.lean}
+(narrowed out of \path{TwoPoint.lean} in PR~\#2009).
 The corresponding ambient along-exhaustion closed forms and h-symmetry wrappers
 remain in \path{IsingModel/AmbientLattice/SpecialCases/FreeEnergy.lean}.
 \par}
