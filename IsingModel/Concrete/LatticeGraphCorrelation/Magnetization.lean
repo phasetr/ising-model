@@ -3,19 +3,22 @@ import IsingModel.PhaseTransition
 import IsingModel.Inequalities.FKG
 
 /-!
-# Magnetization, susceptibility, and correlation forwarders at ℤ^d
+# Magnetization and correlation forwarders at ℤ^d
 
 ℤ^d forwarders for:
 
-1. **Magnetization / truncated-2 / susceptibility convergence** — `{J,h,β} → ∞`
-   convergence and subgraph-monotone convergence from `PhaseTransition.lean`.
-2. **Susceptibility (GJ §5.3)** — `susceptibility_apply`, nonneg, trivial slices,
-   and `{J,h,β} → ∞` subsequence convergence.
-3. **Site-level magnetization wrappers (GJ §5.3, pp. 77–80)** — bounds, vanishing
-   slices, monotonicity.
-4. **Correlation forwarders (bounds, trivial slices, empty A)** — these stay
-   here; the `HasNonnegCorrelations` / GKS / FKG family moved to the narrow
-   child `MagnetizationGksFkg.lean` (PR #2003).
+1. **Magnetization / truncated-2 convergence** — `{J,h,β} → ∞`
+   convergence and subgraph-monotone convergence from
+   `PhaseTransition.lean`.
+2. **Site-level magnetization wrappers (GJ §5.3, pp. 77–80)** — bounds,
+   vanishing slices, monotonicity.
+3. **Correlation forwarders (bounds, trivial slices, empty A)** —
+   basic correlation properties.
+
+The susceptibility / η family (with `truncated2_h_zero_latticeGraph`)
+moved to the narrow child `MagnetizationSusceptibility.lean`
+(PR #2004); the `HasNonnegCorrelations` / GKS / FKG family moved to
+the narrow child `MagnetizationGksFkg.lean` (PR #2003).
 
 ## References
 

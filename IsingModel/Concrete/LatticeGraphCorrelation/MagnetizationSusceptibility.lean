@@ -6,10 +6,13 @@ import IsingModel.Concrete.LatticeGraphCorrelation.Magnetization
 /-!
 # ℤ^d susceptibility + η wrappers on `latticeGraph d`
 
-Narrow child module for 11 ℤ^d
-`susceptibility_*_latticeGraph` and `eta_nonneg_finite_vol_latticeGraph`
-thin pass-throughs of the abstract susceptibility (GJ §5.3) and
-finite-volume η ≥ 0 wrappers on
+Narrow child module for 11 ℤ^d wrappers covering the
+`susceptibility_*_latticeGraph` family (apply, nonneg, trivial slices
+at `J = 0` / `β = 0`, h-symmetry, and `{J,h,β} → ∞` subsequence
+convergence), the supporting `truncated2_h_zero_latticeGraph`, and
+the finite-volume `eta_nonneg_finite_vol_latticeGraph` (GJ §17.7,
+Thm 17.7.1 finite-volume slice). All are thin pass-throughs of the
+corresponding abstract wrappers on
 `Ambient.inducedGraph (latticeGraph d) Λ`. Theorem names are
 unchanged from the former `Magnetization` declarations.
 -/
