@@ -1,6 +1,7 @@
 import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBounds
+import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExExpSharperSandwich
 
 /-!
 # Concrete alongExhaustion sharper-exp Z/f/log Z wrappers at h = 0
@@ -116,76 +117,16 @@ theorem freeEnergyAlongExhaustion_latticeGraph_high_temp_h_zero_upper_bound_exp_
   freeEnergyAlongExhaustion_high_temp_h_zero_upper_bound_exp_ferromagnetic
     (IsingModel.latticeGraph d) Λ J β hJ hβ n hne
 
-/-- **ℤ^d along-ex sharper Z high-temp sandwich at stage `n`**. -/
-theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_sandwich_exp
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
-    (hβJ : 0 ≤ β * J) (n : ℕ) :
-    (2 : ℝ) ^ (Λ.volume n).card *
-        Real.cosh (β * J) ^
-          (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card
-      ≤ partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
-          (⟨J, 0, β⟩ : IsingParams ℝ) n ∧
-    partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
-        (⟨J, 0, β⟩ : IsingParams ℝ) n
-      ≤ (2 : ℝ) ^ (Λ.volume n).card *
-          Real.exp (β * J *
-            (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card) :=
-  partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_sandwich_exp
-    (IsingModel.latticeGraph d) Λ J β hβJ n
+/-! ## Moved: ℤ^d HT AlongExhaustion sandwich_exp wrappers
 
-/-- **ℤ^d along-ex sharper f high-temp sandwich at stage `n`**. -/
-theorem freeEnergyAlongExhaustion_latticeGraph_high_temp_h_zero_sandwich_exp
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
-    (hβJ : 0 ≤ β * J) (n : ℕ) (hne : 0 < (Λ.volume n).card) :
-    Real.log 2 +
-        ((inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card : ℝ) /
-          (Λ.volume n).card * Real.log (Real.cosh (β * J))
-      ≤ freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
-          (⟨J, 0, β⟩ : IsingParams ℝ) n ∧
-    freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
-        (⟨J, 0, β⟩ : IsingParams ℝ) n
-      ≤ Real.log 2 +
-          β * J *
-            (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card /
-              (Λ.volume n).card :=
-  freeEnergyAlongExhaustion_high_temp_h_zero_sandwich_exp
-    (IsingModel.latticeGraph d) Λ J β hβJ n hne
-
-/-- **ℤ^d along-ex ferromagnetic Z sharper sandwich at stage `n`**. -/
-theorem
-partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_sandwich_exp_ferromagnetic
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
-    (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ) :
-    (2 : ℝ) ^ (Λ.volume n).card *
-        Real.cosh (β * J) ^
-          (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card
-      ≤ partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
-          (⟨J, 0, β⟩ : IsingParams ℝ) n ∧
-    partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
-        (⟨J, 0, β⟩ : IsingParams ℝ) n
-      ≤ (2 : ℝ) ^ (Λ.volume n).card *
-          Real.exp (β * J *
-            (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card) :=
-  partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_sandwich_exp_ferromagnetic
-    (IsingModel.latticeGraph d) Λ J β hJ hβ n
-
-/-- **ℤ^d along-ex ferromagnetic f sharper sandwich at stage `n`**. -/
-theorem freeEnergyAlongExhaustion_latticeGraph_high_temp_h_zero_sandwich_exp_ferromagnetic
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
-    (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ) (hne : 0 < (Λ.volume n).card) :
-    Real.log 2 +
-        ((inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card : ℝ) /
-          (Λ.volume n).card * Real.log (Real.cosh (β * J))
-      ≤ freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
-          (⟨J, 0, β⟩ : IsingParams ℝ) n ∧
-    freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
-        (⟨J, 0, β⟩ : IsingParams ℝ) n
-      ≤ Real.log 2 +
-          β * J *
-            (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card /
-              (Λ.volume n).card :=
-  freeEnergyAlongExhaustion_high_temp_h_zero_sandwich_exp_ferromagnetic
-    (IsingModel.latticeGraph d) Λ J β hJ hβ n hne
+The 4 ℤ^d along-exhaustion sandwich_exp HT wrappers
+(`partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_sandwich_exp`,
+`_ferromagnetic`,
+`freeEnergyAlongExhaustion_latticeGraph_high_temp_h_zero_sandwich_exp`,
+`_ferromagnetic`) now live in
+`IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExExpSharperSandwich`.
+The legacy import path is preserved by re-importing the new child.
+-/
 
 /-- **ℤ^d along-ex sharper f complete-summary exp bundle at stage `n`**. -/
 theorem freeEnergyAlongExhaustion_latticeGraph_high_temp_h_zero_complete_summary_exp
