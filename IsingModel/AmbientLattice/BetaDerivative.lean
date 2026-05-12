@@ -296,121 +296,15 @@ theorem correlationAlongExhaustion_differentiable_J_gen
     rw [heq]
     exact differentiable_const _
 
-/-! ## Step 213: magnetizationAlongExhaustion regularity (β/h/J directions) -/
+/-! ## Moved: magnetizationAlongExhaustion regularity wrappers
 
-/-- **magnetizationAlongExhaustion Continuous in β at h = 0** (Step 213, general G, Λ).
-Reduces to `correlationAlongExhaustion_continuous_beta_gen` at `A = {i}`. -/
-theorem magnetizationAlongExhaustion_continuous_beta_gen
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J : ℝ) (i : V) (n : ℕ) :
-    Continuous
-      (fun β' => magnetizationAlongExhaustion G Λ (⟨J, 0, β'⟩ : IsingParams ℝ) i n) := by
-  simp only [magnetizationAlongExhaustion_apply]
-  exact correlationAlongExhaustion_continuous_beta_gen G Λ J {i} n
+The 10 `magnetizationAlongExhaustion_*_gen` regularity wrappers
+(continuous + differentiable + differentiableAt + hasDerivAt in
+β / β_general_h / field / J directions) now live in
+`IsingModel.Ambient.BetaDerivativeMagnetization`
+(`AmbientLattice/BetaDerivativeMagnetization.lean`).
+-/
 
-/-- **magnetizationAlongExhaustion Differentiable in β at h = 0** (Step 213, general G, Λ). -/
-theorem magnetizationAlongExhaustion_differentiable_beta_gen
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J : ℝ) (i : V) (n : ℕ) :
-    Differentiable ℝ
-      (fun β' => magnetizationAlongExhaustion G Λ (⟨J, 0, β'⟩ : IsingParams ℝ) i n) := by
-  simp only [magnetizationAlongExhaustion_apply]
-  exact correlationAlongExhaustion_differentiable_beta_gen G Λ J {i} n
-
-/-- **magnetizationAlongExhaustion Continuous in β at general h** (Step 250, general G, Λ).
-Extends Step 213 from h = 0 to general h via Step 249. -/
-theorem magnetizationAlongExhaustion_continuous_beta_general_h_gen
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J h : ℝ) (i : V) (n : ℕ) :
-    Continuous
-      (fun β' => magnetizationAlongExhaustion G Λ (⟨J, h, β'⟩ : IsingParams ℝ) i n) := by
-  simp only [magnetizationAlongExhaustion_apply]
-  exact correlationAlongExhaustion_continuous_beta_general_h_gen G Λ J h {i} n
-
-/-- **magnetizationAlongExhaustion Differentiable in β at general h** (Step 250, general G, Λ). -/
-theorem magnetizationAlongExhaustion_differentiable_beta_general_h_gen
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J h : ℝ) (i : V) (n : ℕ) :
-    Differentiable ℝ
-      (fun β' => magnetizationAlongExhaustion G Λ (⟨J, h, β'⟩ : IsingParams ℝ) i n) := by
-  simp only [magnetizationAlongExhaustion_apply]
-  exact correlationAlongExhaustion_differentiable_beta_general_h_gen G Λ J h {i} n
-
-/-- **magnetizationAlongExhaustion Continuous in h** (Step 213, general G, Λ). -/
-theorem magnetizationAlongExhaustion_continuous_field_gen
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (i : V) (n : ℕ) :
-    Continuous
-      (fun h' => magnetizationAlongExhaustion G Λ (⟨J, h', β⟩ : IsingParams ℝ) i n) := by
-  simp only [magnetizationAlongExhaustion_apply]
-  exact correlationAlongExhaustion_continuous_field_gen G Λ J β {i} n
-
-/-- **magnetizationAlongExhaustion Differentiable in h** (Step 213, general G, Λ). -/
-theorem magnetizationAlongExhaustion_differentiable_field_gen
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (i : V) (n : ℕ) :
-    Differentiable ℝ
-      (fun h' => magnetizationAlongExhaustion G Λ (⟨J, h', β⟩ : IsingParams ℝ) i n) := by
-  simp only [magnetizationAlongExhaustion_apply]
-  exact correlationAlongExhaustion_differentiable_field_gen G Λ J β {i} n
-
-/-- **magnetizationAlongExhaustion Continuous in J** (Step 213, general G, Λ). -/
-theorem magnetizationAlongExhaustion_continuous_J_gen
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (h β : ℝ) (i : V) (n : ℕ) :
-    Continuous
-      (fun J' => magnetizationAlongExhaustion G Λ (⟨J', h, β⟩ : IsingParams ℝ) i n) := by
-  simp only [magnetizationAlongExhaustion_apply]
-  exact correlationAlongExhaustion_continuous_J_gen G Λ h β {i} n
-
-/-- **magnetizationAlongExhaustion Differentiable in J** (Step 213, general G, Λ). -/
-theorem magnetizationAlongExhaustion_differentiable_J_gen
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (h β : ℝ) (i : V) (n : ℕ) :
-    Differentiable ℝ
-      (fun J' => magnetizationAlongExhaustion G Λ (⟨J', h, β⟩ : IsingParams ℝ) i n) := by
-  simp only [magnetizationAlongExhaustion_apply]
-  exact correlationAlongExhaustion_differentiable_J_gen G Λ h β {i} n
-
-/-- **β-derivative of `magnetizationAlongExhaustion` at `h = 0`** (GJ §17.5):
-The function `fun β' => magnetizationAlongExhaustion G Λ ⟨J, 0, β'⟩ i n`
-has a derivative at `β`.
-
-Direct specialization of `correlationAlongExhaustion_hasDerivAt_beta` at
-`A = {i}`. -/
-theorem magnetizationAlongExhaustion_hasDerivAt_beta
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (i : V) (n : ℕ) :
-    ∃ d : ℝ, HasDerivAt
-      (fun β' => magnetizationAlongExhaustion G Λ
-          (⟨J, 0, β'⟩ : IsingParams ℝ) i n) d β := by
-  unfold magnetizationAlongExhaustion
-  exact correlationAlongExhaustion_hasDerivAt_beta G Λ J β {i} n
-
-/-- **β-derivative of `magnetizationAlongExhaustion` at general `h`** (GJ §17.5):
-The function `fun β' => magnetizationAlongExhaustion G Λ ⟨J, h, β'⟩ i n`
-has a derivative at `β`, at any `h`.
-
-Direct specialization of `correlationAlongExhaustion_hasDerivAt_beta_general_h_gen`
-at `A = {i}`. -/
-theorem magnetizationAlongExhaustion_hasDerivAt_beta_general_h_gen
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J h β : ℝ) (i : V) (n : ℕ) :
-    ∃ d : ℝ, HasDerivAt
-      (fun β' => magnetizationAlongExhaustion G Λ
-          (⟨J, h, β'⟩ : IsingParams ℝ) i n) d β := by
-  unfold magnetizationAlongExhaustion
-  exact correlationAlongExhaustion_hasDerivAt_beta_general_h_gen G Λ J h β {i} n
 
 /-- **β-derivative of `partitionFunctionAlongExhaustion`** (GJ §17.5):
 The function `fun β' => partitionFunctionAlongExhaustion G Λ ⟨J, h, β'⟩ n`

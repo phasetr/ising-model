@@ -1,5 +1,6 @@
 import IsingModel.Lattice
 import IsingModel.AmbientLattice.BetaDerivative
+import IsingModel.AmbientLattice.BetaDerivativeMagnetization
 
 /-!
 # Concrete pointwise regularity wrappers for lattice magnetization
