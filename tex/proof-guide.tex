@@ -2493,7 +2493,17 @@ Each theorem returns
 or the corresponding half-open interval
 \((0,\mathrm{latticeMass}]\).  The proofs only pair the named-rate decay bridge
 with the PR~\#1826 interval package, leaving the tanh-profile reduction outside
-the new theorem statements.
+the new theorem statements. PR~\#2002 narrows the
+\path{*_of_cubic_pseudoMassG_le_corr},
+\path{*_of_cubic_corr_mem_le_high_temp_rate},
+\path{cubicNamedRate_decay_mem_*_of_cubic_pseudoMassG_le_corr},
+\path{cubicNamedRate_decay_mem_*_of_le_high_temp_rate},
+\path{cubicNamedRate_decay_mem_Ioc_of_pos_le_high_temp_rate}, and
+\path{cubicNamedRate_decay_mem_Ioc_of_corr_mem_le_high_temp_rate}
+families (17 wrappers from the PR~\#1820/\#1821/\#1824/\#1825/\#1826/\#1827
+phases) into the narrower
+\path{Concrete/LatticeGraphCorrelation/CubicPseudoMassNamedRateCorr.lean}
+child module.  The legacy import path is preserved.
 PR~\#1828 packages the downstream cluster and summability consequences, moved
 to the narrower module
 \path{Concrete/LatticeGraphCorrelation/CubicPseudoMassClusterSummability.lean}

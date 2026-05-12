@@ -5,11 +5,14 @@ import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassNamedRate
 /-!
 # Cubic anchored pseudo-mass named-rate bridges via cubic-correlation lower bounds
 
-Narrow child module for 17 `*_of_cubic_pseudoMassG_le_corr` /
-`*_of_corr_mem_le_high_temp_rate` /
-`cubicNamedRate_decay_mem_*_of_cubic_pseudoMassG_le_corr` wrappers
-that feed the cubic-correlation lower bound through the named-rate
-bridge into exponential-decay / latticeMass / Icc / Ioc statements.
+Narrow child module for 17 named-rate / latticeMass / Icc / Ioc
+wrappers driven by cubic-correlation comparisons. Includes the
+`*_of_cubic_pseudoMassG_le_corr`,
+`*_of_cubic_corr_mem_le_high_temp_rate`,
+`cubicNamedRate_decay_mem_*_of_cubic_pseudoMassG_le_corr`,
+`cubicNamedRate_decay_mem_*_of_le_high_temp_rate`,
+`cubicNamedRate_decay_mem_Ioc_of_pos_le_high_temp_rate`, and
+`cubicNamedRate_decay_mem_Ioc_of_corr_mem_le_high_temp_rate` families.
 Theorem names are unchanged from the former
 `CubicPseudoMassNamedRate` declarations.
 -/

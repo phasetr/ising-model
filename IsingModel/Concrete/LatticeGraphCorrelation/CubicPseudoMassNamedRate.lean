@@ -467,10 +467,14 @@ theorem cubicNamedRate_decay_mem_Ioc_of_cubicOriginNamedRateLeHighTemp
 
 /-! ## Moved: cubic-correlation lower-bound named-rate bridges
 
-The 17 `*_of_cubic_pseudoMassG_le_corr` / `*_of_corr_mem_le_high_temp_rate` /
-`cubicNamedRate_decay_mem_*_of_cubic_pseudoMassG_le_corr` wrappers
-now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassNamedRateCorr`.
+The 17 named-rate / latticeMass / Icc / Ioc wrappers driven by
+cubic-correlation comparisons (`*_of_cubic_pseudoMassG_le_corr`,
+`*_of_cubic_corr_mem_le_high_temp_rate`,
+`cubicNamedRate_decay_mem_*_of_cubic_pseudoMassG_le_corr`,
+`cubicNamedRate_decay_mem_*_of_le_high_temp_rate`,
+`cubicNamedRate_decay_mem_Ioc_of_pos_le_high_temp_rate`,
+`cubicNamedRate_decay_mem_Ioc_of_corr_mem_le_high_temp_rate`) now live
+in `IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassNamedRateCorr`.
 The legacy import path is preserved by re-importing the new child.
 -/
 
