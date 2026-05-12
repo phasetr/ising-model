@@ -5908,6 +5908,12 @@ PR~\#2087 further carves the four \texttt{deviation\_pos} /
 \texttt{pow\_two\_lt} strict-deviation wrappers (free energy pair, $Z$
 \texttt{pow\_two\_lt}, $\log Z$ \texttt{deviation\_pos}) out into
 \texttt{Concrete/LatticeGraphCorrelation/HighTemperatureBoundsAlongExDeviationPos.lean}.
+PR~\#2088 further carves the remaining four wrappers
+(the two \texttt{strict\_deviation\_bundle}s plus
+\texttt{pow\_two\_lt\_ferromagnetic} and
+\texttt{log\_*\_deviation\_pos\_ferromagnetic}) out into
+\texttt{Concrete/LatticeGraphCorrelation/HighTemperatureBoundsAlongExStrictDeviation.lean},
+emptying the old parent of theorem bodies.
 
 PR~\#1939 further splits the concrete §18.3--§18.4 alongExhaustion
 sharper-exp upper-bound / sandwich / complete-summary wrappers at
