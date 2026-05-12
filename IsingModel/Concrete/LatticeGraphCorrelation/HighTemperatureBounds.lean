@@ -29,6 +29,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExD
 import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExStrictDeviation
 import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExRatioSandwichBundle
 import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExRatioBoundSlices
+import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExRatioBoundBundle
 import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExhaustionRatioBounds
 import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExhaustionTripleRatio
 import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExhaustionRatioLogFe
@@ -355,17 +356,18 @@ The legacy import path is preserved by re-importing both children.
 
 The §18.3-§18.4 concrete alongExhaustion ratio_sandwich_bundle /
 ratio_bound wrappers on `latticeGraph d` at `h = 0` now live across
-five narrow children: the 2 residual
-`partitionFunctionAlongExhaustion_latticeGraph_*_ratio_bound_bundle`
-wrappers (general and ferromagnetic) remain in
-`IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExhaustionRatioBounds`;
-the 4 J = 0 / β = 0 `ratio_bound` slice wrappers (general and
-ferromagnetic) live in
-`IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExRatioBoundSlices`
-(carved out in PR #2090); the 2 `ratio_sandwich_bundle` wrappers
-(general and ferromagnetic) live in
+five narrow children, while the old umbrella
+`IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExhaustionRatioBounds`
+acts as a backwards-compat shim. The 2 `ratio_sandwich_bundle`
+wrappers (general and ferromagnetic) live in
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExRatioSandwichBundle`
-(carved out in PR #2089); the 7 `triple_ratio_*` wrappers (sandwich +
+(carved out in PR #2089); the 4 J = 0 / β = 0 `ratio_bound` slice
+wrappers (general and ferromagnetic) live in
+`IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExRatioBoundSlices`
+(carved out in PR #2090); the 2 `ratio_bound_bundle` wrappers (general
+and ferromagnetic) live in
+`IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExRatioBoundBundle`
+(carved out in PR #2091); the 7 `triple_ratio_*` wrappers (sandwich +
 bound bundles, J = 0 / β = 0 / ferromagnetic variants) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExhaustionTripleRatio`
 (narrowed in PR #1996); and the 14 `log_partitionFunction` /
