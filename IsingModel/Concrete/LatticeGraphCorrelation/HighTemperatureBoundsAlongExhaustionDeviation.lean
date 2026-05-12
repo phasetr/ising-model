@@ -5,14 +5,18 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBounds
 /-!
 # Concrete alongExhaustion f/Z/log Z deviation / continuity wrappers at h = 0
 
-Narrow child module for the §18.3-§18.4 concrete alongExhaustion
-`deviation_bound_exp` / `continuity_bundle` / `deviation_sandwich` /
+Narrow parent for the §18.3-§18.4 concrete alongExhaustion deviation /
+continuity family on `latticeGraph d` at `h = 0`. The
+`deviation_bound_exp` and `continuity_bundle` wrappers now live in
+`HighTemperatureBoundsAlongExDeviationContinuity.lean`; the
+`deviation_sandwich` wrappers now live in
+`HighTemperatureBoundsAlongExDeviationSandwich.lean`. The remaining
 `relative_sandwich` / `deviation_pos` / `pow_two_lt` /
-`strict_deviation_bundle` wrappers on `latticeGraph d` at `h = 0`. 18
-theorems for `freeEnergyAlongExhaustion_latticeGraph`,
+`strict_deviation_bundle` wrappers for
+`freeEnergyAlongExhaustion_latticeGraph`,
 `partitionFunctionAlongExhaustion_latticeGraph`, and
-`log_partitionFunctionAlongExhaustion_latticeGraph` plus ferromagnetic
-variants. The theorem names are unchanged from the former
+`log_partitionFunctionAlongExhaustion_latticeGraph` (with ferromagnetic
+variants) stay here. The theorem names are unchanged from the former
 `HighTemperatureBounds` declarations.
 -/
 
