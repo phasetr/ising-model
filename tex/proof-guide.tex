@@ -4794,9 +4794,12 @@ wrappers remain in the legacy concrete module.
 {\raggedright
 The along-exhaustion partition-function trivial-slice closed forms now live in
 \path{IsingModel/AmbientLattice/SpecialCases/PartitionFunctionClosedForms.lean},
-with the concrete $\mathbb{Z}^d$ $\Lambda$-, cubic-, and along-exhaustion
+with the concrete $\mathbb{Z}^d$ $\Lambda$- and along-exhaustion
 wrappers in
-\path{IsingModel/Concrete/LatticeGraphCorrelation/PartitionFunctionClosedForms.lean}.
+\path{IsingModel/Concrete/LatticeGraphCorrelation/PartitionFunctionClosedForms.lean};
+PR~\#2095 carves the six cubicExhaustion-$\Lambda$ closed-form wrappers
+out into
+\path{IsingModel/Concrete/LatticeGraphCorrelation/PartitionFunctionClosedFormsCubicLambda.lean}.
 The lower $\Lambda$-level abstract closed forms remain in
 \path{IsingModel/AmbientLattice/Defs.lean} and the corresponding log
 $\Lambda$ forms remain in \path{IsingModel/AmbientLatticeSum.lean}.
