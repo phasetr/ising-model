@@ -53,68 +53,16 @@ theorem freeEnergyAlongExhaustion_high_temp_h_zero_deviation_bound_exp_ferromagn
   freeEnergyAlongExhaustion_high_temp_h_zero_deviation_bound_exp
     G Λ J β (mul_nonneg hβ.le hJ) n hne
 
-/-- **Along-ex f continuity at `J = 0` at stage `n`**. -/
-theorem freeEnergyAlongExhaustion_high_temp_h_zero_continuity_at_J_zero
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (hβJ : 0 ≤ β * J) (n : ℕ) (hne : 0 < (Λ.volume n).card) :
-    |freeEnergyAlongExhaustion G Λ (⟨J, 0, β⟩ : IsingParams ℝ) n
-        - freeEnergyAlongExhaustion G Λ (⟨0, 0, β⟩ : IsingParams ℝ) n|
-      ≤ β * J * (inducedGraph G (Λ.volume n)).edgeFinset.card /
-          (Λ.volume n).card := by
-  change |freeEnergyΛ G (Λ.volume n) (⟨J, 0, β⟩ : IsingParams ℝ)
-      - freeEnergyΛ G (Λ.volume n) (⟨0, 0, β⟩ : IsingParams ℝ)| ≤ _
-  exact freeEnergyΛ_high_temp_h_zero_continuity_at_J_zero
-    G (Λ.volume n) J β hβJ hne
+/-! ## Moved: f continuity wrappers
 
-/-- **Along-ex f continuity at `β = 0` at stage `n`**. -/
-theorem freeEnergyAlongExhaustion_high_temp_h_zero_continuity_at_beta_zero
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (hβJ : 0 ≤ β * J) (n : ℕ) (hne : 0 < (Λ.volume n).card) :
-    |freeEnergyAlongExhaustion G Λ (⟨J, 0, β⟩ : IsingParams ℝ) n
-        - freeEnergyAlongExhaustion G Λ (⟨J, 0, 0⟩ : IsingParams ℝ) n|
-      ≤ β * J * (inducedGraph G (Λ.volume n)).edgeFinset.card /
-          (Λ.volume n).card := by
-  change |freeEnergyΛ G (Λ.volume n) (⟨J, 0, β⟩ : IsingParams ℝ)
-      - freeEnergyΛ G (Λ.volume n) (⟨J, 0, 0⟩ : IsingParams ℝ)| ≤ _
-  exact freeEnergyΛ_high_temp_h_zero_continuity_at_beta_zero
-    G (Λ.volume n) J β hβJ hne
+The 4 ambient alongExhaustion `freeEnergyAlongExhaustion_high_temp_h_zero_continuity_*`
+wrappers (`_at_J_zero`, `_at_beta_zero`, `_bundle`,
+`_bundle_ferromagnetic`) now live in
+`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviationContinuity`.
+The legacy import path is preserved by re-importing the new child
+via the umbrella.
+-/
 
-/-- **Along-ex f continuity bundle at stage `n`**. -/
-theorem freeEnergyAlongExhaustion_high_temp_h_zero_continuity_bundle
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (hβJ : 0 ≤ β * J) (n : ℕ) (hne : 0 < (Λ.volume n).card) :
-    |freeEnergyAlongExhaustion G Λ (⟨J, 0, β⟩ : IsingParams ℝ) n
-        - freeEnergyAlongExhaustion G Λ (⟨0, 0, β⟩ : IsingParams ℝ) n|
-        ≤ β * J * (inducedGraph G (Λ.volume n)).edgeFinset.card /
-            (Λ.volume n).card ∧
-    |freeEnergyAlongExhaustion G Λ (⟨J, 0, β⟩ : IsingParams ℝ) n
-        - freeEnergyAlongExhaustion G Λ (⟨J, 0, 0⟩ : IsingParams ℝ) n|
-        ≤ β * J * (inducedGraph G (Λ.volume n)).edgeFinset.card /
-            (Λ.volume n).card :=
-  ⟨freeEnergyAlongExhaustion_high_temp_h_zero_continuity_at_J_zero
-      G Λ J β hβJ n hne,
-   freeEnergyAlongExhaustion_high_temp_h_zero_continuity_at_beta_zero
-      G Λ J β hβJ n hne⟩
-
-/-- **Along-ex ferromagnetic f continuity bundle at stage `n`**. -/
-theorem freeEnergyAlongExhaustion_high_temp_h_zero_continuity_bundle_ferromagnetic
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ)
-    (hne : 0 < (Λ.volume n).card) :
-    |freeEnergyAlongExhaustion G Λ (⟨J, 0, β⟩ : IsingParams ℝ) n
-        - freeEnergyAlongExhaustion G Λ (⟨0, 0, β⟩ : IsingParams ℝ) n|
-        ≤ β * J * (inducedGraph G (Λ.volume n)).edgeFinset.card /
-            (Λ.volume n).card ∧
-    |freeEnergyAlongExhaustion G Λ (⟨J, 0, β⟩ : IsingParams ℝ) n
-        - freeEnergyAlongExhaustion G Λ (⟨J, 0, 0⟩ : IsingParams ℝ) n|
-        ≤ β * J * (inducedGraph G (Λ.volume n)).edgeFinset.card /
-            (Λ.volume n).card :=
-  freeEnergyAlongExhaustion_high_temp_h_zero_continuity_bundle
-    G Λ J β (mul_nonneg hβ.le hJ) n hne
 
 /-- **Along-ex f deviation sandwich at stage `n`**. -/
 theorem freeEnergyAlongExhaustion_high_temp_h_zero_deviation_sandwich

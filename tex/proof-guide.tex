@@ -5747,7 +5747,13 @@ narrows the 10 strict-deviation wrappers
 \texttt{\_strict\_deviation\_bundle} with ferromagnetic variants)
 out of that child into a separate
 \texttt{HighTemperatureBoundsDeviationStrict.lean} under the same
-directory. The legacy import path is preserved.
+directory. PR~\#2024 further narrows the 4
+\texttt{freeEnergyAlongExhaustion\_*\_continuity\_*} wrappers
+(\texttt{\_at\_J\_zero}, \texttt{\_at\_beta\_zero},
+\texttt{\_bundle}, \texttt{\_bundle\_ferromagnetic}) out of the
+same child into
+\texttt{HighTemperatureBoundsDeviationContinuity.lean}. The legacy
+import path is preserved.
 
 PR~\#1944 further splits 16 ambient §18.3--§18.4 alongExhaustion
 sharper-exp upper-bound / sandwich / complete-summary wrappers
