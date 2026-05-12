@@ -3,6 +3,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.InfiniteVolumeCorrelationIneq
 import IsingModel.Concrete.LatticeGraphCorrelation.CorrelationSymmetry
 import IsingModel.Concrete.LatticeGraphCorrelation.CorrelationDecay
 import IsingModel.Concrete.LatticeGraphCorrelation.SiteIndepMag
+import IsingModel.Concrete.LatticeGraphCorrelation.SiteIndepMagTwoPoint
 import IsingModel.Concrete.LatticeGraphCorrelation.TwoPoint
 import IsingModel.TranslationInvariance
 import IsingModel.PhaseTransition
