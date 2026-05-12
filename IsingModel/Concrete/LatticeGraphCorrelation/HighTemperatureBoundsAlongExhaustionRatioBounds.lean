@@ -1,22 +1,27 @@
 import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBounds
+import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExRatioSandwichBundle
+import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExRatioBoundSlices
+import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExRatioBoundBundle
 
 /-!
 # Concrete alongExhaustion Z ratio sandwich and ratio bound wrappers at h = 0
 
-Narrow child module for the two residual §18.3-§18.4 concrete
-alongExhaustion `partitionFunctionAlongExhaustion_latticeGraph_*_ratio_bound_bundle`
-wrappers on `latticeGraph d` at `h = 0` (general and ferromagnetic).
-The four J = 0 / β = 0 slice wrappers now live in
-`HighTemperatureBoundsAlongExRatioBoundSlices.lean` (PR #2090). The
-two `ratio_sandwich_bundle` wrappers now live in
-`HighTemperatureBoundsAlongExRatioSandwichBundle.lean` (PR #2089). The
-7 `triple_ratio_*` wrappers now live in
-`HighTemperatureBoundsAlongExhaustionTripleRatio.lean` (narrowed in
-PR #1996), and the 14 `log_partitionFunction` / `freeEnergy` ratio
-wrappers now live in `HighTemperatureBoundsAlongExhaustionRatioLogFe.lean`
-(narrowed in PR #1997). Theorem names are unchanged from the former
+Backwards-compatibility shim. All eight ℤ^d alongExhaustion
+`partitionFunctionAlongExhaustion_latticeGraph_*` Z ratio wrappers
+that used to live here have been carved out into three narrower
+children:
+`HighTemperatureBoundsAlongExRatioSandwichBundle.lean` (PR #2089) for
+the two `ratio_sandwich_bundle` wrappers;
+`HighTemperatureBoundsAlongExRatioBoundSlices.lean` (PR #2090) for the
+four J = 0 / β = 0 `ratio_bound` slice wrappers; and
+`HighTemperatureBoundsAlongExRatioBoundBundle.lean` (PR #2091) for the
+two `ratio_bound_bundle` wrappers. The 7 `triple_ratio_*` wrappers
+live in `HighTemperatureBoundsAlongExhaustionTripleRatio.lean` (PR
+#1996) and the 14 `log_partitionFunction` / `freeEnergy` ratio
+wrappers live in `HighTemperatureBoundsAlongExhaustionRatioLogFe.lean`
+(PR #1997). The theorem names are unchanged from the former
 `HighTemperatureBounds` declarations.
 -/
 
@@ -42,43 +47,13 @@ The four wrappers
 `HighTemperatureBoundsAlongExRatioBoundSlices.lean`. -/
 
 
-/-- **ℤ^d along-ex Z ratio upper bound bundle at stage `n`**. -/
-theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_ratio_bound_bundle
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
-    (hβJ : 0 ≤ β * J) (n : ℕ) :
-    partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
-        (⟨J, 0, β⟩ : IsingParams ℝ) n /
-        partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
-          (⟨0, 0, β⟩ : IsingParams ℝ) n
-        ≤ Real.exp (β * J *
-            (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card) ∧
-    partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
-        (⟨J, 0, β⟩ : IsingParams ℝ) n /
-        partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
-          (⟨J, 0, 0⟩ : IsingParams ℝ) n
-        ≤ Real.exp (β * J *
-            (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card) :=
-  partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_bound_bundle
-    (IsingModel.latticeGraph d) Λ J β hβJ n
+/-! ## Moved: alongExhaustion Z `ratio_bound_bundle` wrappers
 
-/-- **ℤ^d along-ex ferromagnetic Z ratio upper bound bundle at stage `n`**. -/
-theorem partitionFunctionAlongExhaustion_latticeGraph_h_zero_ratio_bound_bundle_ferromagnetic
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
-    (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ) :
-    partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
-        (⟨J, 0, β⟩ : IsingParams ℝ) n /
-        partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
-          (⟨0, 0, β⟩ : IsingParams ℝ) n
-        ≤ Real.exp (β * J *
-            (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card) ∧
-    partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
-        (⟨J, 0, β⟩ : IsingParams ℝ) n /
-        partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
-          (⟨J, 0, 0⟩ : IsingParams ℝ) n
-        ≤ Real.exp (β * J *
-            (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card) :=
-  partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_bound_bundle_ferromagnetic
-    (IsingModel.latticeGraph d) Λ J β hJ hβ n
+The two wrappers
+`partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_ratio_bound_bundle`
+and `partitionFunctionAlongExhaustion_latticeGraph_h_zero_ratio_bound_bundle_ferromagnetic`
+now live in `HighTemperatureBoundsAlongExRatioBoundBundle.lean`. -/
+
 /-! ## Moved: ℤ^d log Z + freeEnergy ratio wrappers
 
 The 14 ℤ^d alongExhaustion `log_partitionFunction` and `freeEnergy`
