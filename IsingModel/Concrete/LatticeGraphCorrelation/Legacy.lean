@@ -10,6 +10,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.ComplexRestrictions
 import IsingModel.Concrete.LatticeGraphCorrelation.ComplexBranchEntire
 import IsingModel.Concrete.LatticeGraphCorrelation.ComplexIsingPoly
 import IsingModel.Concrete.LatticeGraphCorrelation.PerStage
+import IsingModel.Concrete.LatticeGraphCorrelation.PerStageSubgraph
 import IsingModel.Concrete.LatticeGraphCorrelation.Magnetization
 import IsingModel.Concrete.LatticeGraphCorrelation.MagnetizationConvergent
 import IsingModel.Concrete.LatticeGraphCorrelation.MagnetizationSiteLevel
