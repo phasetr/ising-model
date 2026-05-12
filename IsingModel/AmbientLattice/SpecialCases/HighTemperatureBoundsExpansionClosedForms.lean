@@ -1,6 +1,7 @@
 import IsingModel.AmbientLattice.SpecialCases.FreeEnergy
 import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansion
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansionLowerUpper
 
 /-!
 # Ambient alongExhaustion closed-form / sandwich / complete-summary wrappers at h = 0
