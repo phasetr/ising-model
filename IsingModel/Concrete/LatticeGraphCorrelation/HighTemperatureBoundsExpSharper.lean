@@ -1,6 +1,8 @@
 import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBounds
+import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsExpSharperCompleteSummary
+import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsExpSharperSandwich
 
 /-!
 # Concrete sharper-exp Z/f/log Z high-temperature bounds at h = 0
@@ -123,132 +125,14 @@ The 4 ℤ^d Λ-layer sandwich_exp HT wrappers
 The legacy import path is preserved by re-importing the new child.
 -/
 
-/-- **ℤ^d Λ sharper f complete-summary exp bundle**. -/
-theorem freeEnergyΛ_latticeGraph_high_temp_h_zero_complete_summary_exp
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
-    (hβJ : 0 ≤ β * J) (hne : 0 < Λ.card) :
-    Real.log 2 +
-        ((inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card : ℝ) /
-          Λ.card * Real.log (Real.cosh (β * J))
-      ≤ freeEnergyΛ (IsingModel.latticeGraph d) Λ
-          (⟨J, 0, β⟩ : IsingParams ℝ) ∧
-    freeEnergyΛ (IsingModel.latticeGraph d) Λ
-        (⟨J, 0, β⟩ : IsingParams ℝ)
-      ≤ Real.log 2 +
-          β * J *
-            (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card /
-              Λ.card ∧
-    freeEnergyΛ (IsingModel.latticeGraph d) Λ
-        (⟨0, 0, β⟩ : IsingParams ℝ) = Real.log 2 ∧
-    freeEnergyΛ (IsingModel.latticeGraph d) Λ
-        (⟨J, 0, 0⟩ : IsingParams ℝ) = Real.log 2 :=
-  freeEnergyΛ_high_temp_h_zero_complete_summary_exp
-    (IsingModel.latticeGraph d) Λ J β hβJ hne
+/-! ## Moved: ℤ^d HT Λ-layer complete_summary_exp wrappers
 
-/-- **ℤ^d Λ sharper Z complete-summary exp bundle**. -/
-theorem partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_complete_summary_exp
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ) (hβJ : 0 ≤ β * J) :
-    (2 : ℝ) ^ Λ.card *
-        Real.cosh (β * J) ^
-          (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card
-      ≤ partitionFunctionΛ (IsingModel.latticeGraph d) Λ
-          (⟨J, 0, β⟩ : IsingParams ℝ) ∧
-    partitionFunctionΛ (IsingModel.latticeGraph d) Λ
-        (⟨J, 0, β⟩ : IsingParams ℝ)
-      ≤ (2 : ℝ) ^ Λ.card *
-          Real.exp (β * J *
-            (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card) ∧
-    partitionFunctionΛ (IsingModel.latticeGraph d) Λ
-        (⟨0, 0, β⟩ : IsingParams ℝ) = (2 : ℝ) ^ Λ.card ∧
-    partitionFunctionΛ (IsingModel.latticeGraph d) Λ
-        (⟨J, 0, 0⟩ : IsingParams ℝ) = (2 : ℝ) ^ Λ.card :=
-  partitionFunctionΛ_high_temp_expansion_h_zero_complete_summary_exp
-    (IsingModel.latticeGraph d) Λ J β hβJ
-
-/-- **ℤ^d Λ sharper log Z complete-summary exp bundle**. -/
-theorem log_partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_complete_summary_exp
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ) (hβJ : 0 ≤ β * J) :
-    (Λ.card : ℝ) * Real.log 2
-        + ((inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card : ℝ) *
-            Real.log (Real.cosh (β * J))
-      ≤ Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
-          (⟨J, 0, β⟩ : IsingParams ℝ)) ∧
-    Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
-        (⟨J, 0, β⟩ : IsingParams ℝ))
-      ≤ (Λ.card : ℝ) * Real.log 2
-        + β * J *
-          (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card ∧
-    Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
-        (⟨0, 0, β⟩ : IsingParams ℝ)) = (Λ.card : ℝ) * Real.log 2 ∧
-    Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
-        (⟨J, 0, 0⟩ : IsingParams ℝ)) = (Λ.card : ℝ) * Real.log 2 :=
-  log_partitionFunctionΛ_high_temp_expansion_h_zero_complete_summary_exp
-    (IsingModel.latticeGraph d) Λ J β hβJ
-
-/-- **ℤ^d Λ ferromagnetic Z/logZ/f complete-summary exp bundles**. -/
-theorem
-partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_complete_summary_exp_ferromagnetic
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
-    (hJ : 0 ≤ J) (hβ : 0 < β) :
-    (2 : ℝ) ^ Λ.card *
-        Real.cosh (β * J) ^
-          (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card
-      ≤ partitionFunctionΛ (IsingModel.latticeGraph d) Λ
-          (⟨J, 0, β⟩ : IsingParams ℝ) ∧
-    partitionFunctionΛ (IsingModel.latticeGraph d) Λ
-        (⟨J, 0, β⟩ : IsingParams ℝ)
-      ≤ (2 : ℝ) ^ Λ.card *
-          Real.exp (β * J *
-            (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card) ∧
-    partitionFunctionΛ (IsingModel.latticeGraph d) Λ
-        (⟨0, 0, β⟩ : IsingParams ℝ) = (2 : ℝ) ^ Λ.card ∧
-    partitionFunctionΛ (IsingModel.latticeGraph d) Λ
-        (⟨J, 0, 0⟩ : IsingParams ℝ) = (2 : ℝ) ^ Λ.card :=
-  partitionFunctionΛ_high_temp_expansion_h_zero_complete_summary_exp_ferromagnetic
-    (IsingModel.latticeGraph d) Λ J β hJ hβ
-
-/-- **ℤ^d Λ ferromagnetic log Z complete-summary exp bundle**. -/
-theorem
-log_partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_complete_summary_exp_ferromagnetic
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
-    (hJ : 0 ≤ J) (hβ : 0 < β) :
-    (Λ.card : ℝ) * Real.log 2
-        + ((inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card : ℝ) *
-            Real.log (Real.cosh (β * J))
-      ≤ Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
-          (⟨J, 0, β⟩ : IsingParams ℝ)) ∧
-    Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
-        (⟨J, 0, β⟩ : IsingParams ℝ))
-      ≤ (Λ.card : ℝ) * Real.log 2
-        + β * J *
-          (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card ∧
-    Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
-        (⟨0, 0, β⟩ : IsingParams ℝ)) = (Λ.card : ℝ) * Real.log 2 ∧
-    Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
-        (⟨J, 0, 0⟩ : IsingParams ℝ)) = (Λ.card : ℝ) * Real.log 2 :=
-  log_partitionFunctionΛ_high_temp_expansion_h_zero_complete_summary_exp_ferromagnetic
-    (IsingModel.latticeGraph d) Λ J β hJ hβ
-
-/-- **ℤ^d Λ ferromagnetic f complete-summary exp bundle**. -/
-theorem freeEnergyΛ_latticeGraph_high_temp_h_zero_complete_summary_exp_ferromagnetic
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
-    (hJ : 0 ≤ J) (hβ : 0 < β) (hne : 0 < Λ.card) :
-    Real.log 2 +
-        ((inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card : ℝ) /
-          Λ.card * Real.log (Real.cosh (β * J))
-      ≤ freeEnergyΛ (IsingModel.latticeGraph d) Λ
-          (⟨J, 0, β⟩ : IsingParams ℝ) ∧
-    freeEnergyΛ (IsingModel.latticeGraph d) Λ (⟨J, 0, β⟩ : IsingParams ℝ)
-      ≤ Real.log 2 +
-          β * J *
-            (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card /
-              Λ.card ∧
-    freeEnergyΛ (IsingModel.latticeGraph d) Λ
-        (⟨0, 0, β⟩ : IsingParams ℝ) = Real.log 2 ∧
-    freeEnergyΛ (IsingModel.latticeGraph d) Λ
-        (⟨J, 0, 0⟩ : IsingParams ℝ) = Real.log 2 :=
-  freeEnergyΛ_high_temp_h_zero_complete_summary_exp_ferromagnetic
-    (IsingModel.latticeGraph d) Λ J β hJ hβ hne
+The 6 ℤ^d Λ-layer `*_complete_summary_exp` HT wrappers (3 base:
+`partitionFunctionΛ_*`, `freeEnergyΛ_*`, `log_partitionFunctionΛ_*`;
+plus 3 `_ferromagnetic` variants) now live in
+`IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsExpSharperCompleteSummary`.
+The legacy import path is preserved by re-importing the new child.
+-/
 
 end Ambient
 
