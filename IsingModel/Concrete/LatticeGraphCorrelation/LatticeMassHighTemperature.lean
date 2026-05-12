@@ -7,6 +7,7 @@ import IsingModel.PhaseTransition
 import IsingModel.Inequalities.FKG
 import IsingModel.AmbientFKG
 import IsingModel.Inequalities.HighTemp
+import IsingModel.Concrete.LatticeGraphCorrelation.TwoPointCorrelationInfinite
 
 /-!
 # High-temperature lattice-mass bounds at ℤ^d
