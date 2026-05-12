@@ -5,6 +5,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsExpansio
 import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsCorrelationBasic
 import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsCorrelationPair
 import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsPairSingletonBundle
+import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExCompleteSummary
 import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsDecayCapstones
 import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsExpSharper
 import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsDeviation
@@ -299,40 +300,22 @@ singleton, odd_card_eq_zero; plus `partitionFunctionAlongExhaustion_latticeGraph
 and `freeEnergyAlongExhaustion_latticeGraph` sandwich; plus the high-temp
 numerator filter helper) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExhaustionBasic`.
-The two `_of_latticeAdj` along-exhaustion variants stay below in this
-module because they directly invoke the Λ-level `_of_latticeAdj` versions
-(which also live here). The legacy import path is preserved by
+The two `_of_latticeAdj` along-exhaustion variants were narrowed in
+PR #2074 into
+`IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExCompleteSummary`
+(see the next Moved block). The legacy import path is preserved by
 re-importing the new child.
 -/
 
-/-- **ℤ^d along-ex pair single-edge tanh lower bound via lattice adjacency
-at stage `n`**: under `0 ≤ β·J` and `(latticeGraph d).Adj ↑i ↑j` for
-`i, j : ↑(Λ.volume n)`, the lifted pair correlation satisfies the
-single-edge tanh lower bound. -/
-theorem
-correlationAlongExhaustion_latticeGraph_h_zero_at_pair_ge_tanh_div_two_pow_edges_of_latticeAdj
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
-    (hβJ : 0 ≤ β * J) (n : ℕ) (i j : ↑(Λ.volume n))
-    (hij : (IsingModel.latticeGraph d).Adj ↑i ↑j) :
-    Real.tanh (β * J) /
-        (2 : ℝ) ^
-          (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card
-      ≤ correlationΛ (IsingModel.latticeGraph d) (Λ.volume n)
-          (⟨J, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset ↑(Λ.volume n)) :=
-  correlationΛ_latticeGraph_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges_of_latticeAdj
-    d (Λ.volume n) J β hβJ i j hij
+/-! ## Moved: ℤ^d HT AlongExhaustion latticeAdj wrappers
 
-/-- **ℤ^d along-ex pair strict positivity via lattice adjacency at stage `n`**:
-under `0 < β·J` and `(latticeGraph d).Adj ↑i ↑j`,
-`0 < ⟨σ_iσ_j⟩^{Λ_n}`. -/
-theorem correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_pair_pos_of_latticeAdj
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
-    (hβJ : 0 < β * J) (n : ℕ) (i j : ↑(Λ.volume n))
-    (hij : (IsingModel.latticeGraph d).Adj ↑i ↑j) :
-    0 < correlationΛ (IsingModel.latticeGraph d) (Λ.volume n)
-        (⟨J, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset ↑(Λ.volume n)) :=
-  correlationΛ_latticeGraph_high_temp_h_zero_at_pair_pos_of_latticeAdj
-    d (Λ.volume n) J β hβJ i j hij
+The 2 ℤ^d along-exhaustion latticeAdj wrappers
+(`correlationAlongExhaustion_latticeGraph_h_zero_at_pair_ge_tanh_div_two_pow_edges_of_latticeAdj`,
+`correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_pair_pos_of_latticeAdj`)
+now live alongside the 2 along-exhaustion complete_summary wrappers in
+`IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExCompleteSummary`.
+-/
+
 
 
 /-! ## Moved: ℤ^d HT AlongExhaustion subset / even-subgraph wrappers
@@ -347,58 +330,16 @@ now live in
 The legacy import path is preserved by re-importing the new child.
 -/
 
-/-- **ℤ^d along-ex Z complete-summary bundle at h = 0**: under `0 ≤ β·J`,
-at every stage `n` packages along-exhaustion Z lower bound, upper bound,
-and trivial-slice values at `J = 0` / `β = 0`. ℤ^d wrapper of
-`partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_complete_summary`. -/
-theorem
-    partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_complete_summary
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
-    (hβJ : 0 ≤ β * J) (n : ℕ) :
-    (2 : ℝ) ^ (Λ.volume n).card *
-        Real.cosh (β * J) ^
-          (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card
-      ≤ partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
-          (⟨J, 0, β⟩ : IsingParams ℝ) n ∧
-      partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
-          (⟨J, 0, β⟩ : IsingParams ℝ) n
-        ≤ (2 : ℝ) ^ ((Λ.volume n).card +
-              (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card) *
-            Real.cosh (β * J) ^
-              (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card ∧
-      partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
-          (⟨0, 0, β⟩ : IsingParams ℝ) n = (2 : ℝ) ^ (Λ.volume n).card ∧
-      partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
-          (⟨J, 0, 0⟩ : IsingParams ℝ) n = (2 : ℝ) ^ (Λ.volume n).card :=
-  partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_complete_summary
-    (IsingModel.latticeGraph d) Λ J β hβJ n
+/-! ## Moved: ℤ^d HT AlongExhaustion complete_summary wrappers
 
-/-- **ℤ^d along-ex freeEnergy complete-summary bundle at h = 0**: under
-`0 ≤ β·J` and `(Λ.volume n).Nonempty`, at every stage `n` packages
-along-exhaustion freeEnergy lower / upper bounds and trivial-slice
-values at `J = 0` / `β = 0` (both = `log 2`). ℤ^d wrapper of
-`freeEnergyAlongExhaustion_high_temp_h_zero_complete_summary`. -/
-theorem
-    freeEnergyAlongExhaustion_latticeGraph_high_temp_h_zero_complete_summary
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
-    (hβJ : 0 ≤ β * J) (n : ℕ) (hne : (Λ.volume n).Nonempty) :
-    Real.log 2 +
-        ((inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card : ℝ) /
-          (Λ.volume n).card * Real.log (Real.cosh (β * J))
-      ≤ freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
-          (⟨J, 0, β⟩ : IsingParams ℝ) n ∧
-      freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
-          (⟨J, 0, β⟩ : IsingParams ℝ) n
-        ≤ Real.log 2 +
-            ((inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card : ℝ) /
-              (Λ.volume n).card *
-                Real.log (2 * Real.cosh (β * J)) ∧
-      freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
-          (⟨0, 0, β⟩ : IsingParams ℝ) n = Real.log 2 ∧
-      freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
-          (⟨J, 0, 0⟩ : IsingParams ℝ) n = Real.log 2 :=
-  freeEnergyAlongExhaustion_high_temp_h_zero_complete_summary
-    (IsingModel.latticeGraph d) Λ J β hβJ n hne
+The 2 ℤ^d along-exhaustion complete_summary wrappers
+(`partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_complete_summary`,
+`freeEnergyAlongExhaustion_latticeGraph_high_temp_h_zero_complete_summary`)
+now live in
+`IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExCompleteSummary`.
+The legacy import path is preserved by re-importing the new child.
+-/
+
 
 
 /-! ## Moved: alongExhaustion sharper-exp Z/f/log Z wrappers at h = 0
