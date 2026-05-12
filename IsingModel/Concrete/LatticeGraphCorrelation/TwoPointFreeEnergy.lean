@@ -9,15 +9,15 @@ import IsingModel.AmbientLattice.SpecialCases.InfiniteVolume
 import IsingModel.Concrete.LatticeGraphCorrelation.TwoPoint
 
 /-!
-# ℤ^d freeEnergy / magnetizationInfinite cubicExhaustion wrappers
+# ℤ^d freeEnergyAlongExhaustion + freeEnergyInfinite cubicExhaustion wrappers
 
 Narrow child module for 34 ℤ^d `freeEnergyAlongExhaustion_latticeGraph`
 / `freeEnergyInfinite_latticeGraph` / cubicExhaustion convergence,
-trivial-slice, monotonicity, and `ge_log_two_cosh` /
-`ge_log_two` / `bounds` wrappers, plus the
-`magnetizationInfinite_latticeGraph_cubicExhaustion` cubicExhaustion-
-neg-h / abs-h variants. Theorem names are unchanged from the former
-`TwoPoint` declarations.
+trivial-slice, monotonicity, neg-h / abs-h, `ge_log_two_cosh` /
+`ge_log_two` / `bounds` wrappers, plus the two
+`spontaneousMagnetization_latticeGraph_cubicExhaustion_monotone_{J, beta}`
+variants. Theorem names are unchanged from the former `TwoPoint`
+declarations.
 -/
 
 namespace IsingModel

@@ -606,10 +606,12 @@ theorem twoPointFunction_J_zero_of_ne_zero
 
 The 34 ℤ^d `freeEnergyAlongExhaustion_latticeGraph` /
 `freeEnergyInfinite_latticeGraph` / cubicExhaustion convergence,
-trivial-slice, monotonicity, and bound wrappers, plus the
-`magnetizationInfinite_latticeGraph_cubicExhaustion` cubicExhaustion
-monotonicity variants, now live in
+trivial-slice, monotonicity, and bound wrappers (plus the two
+`spontaneousMagnetization_latticeGraph_cubicExhaustion_monotone_*`
+variants that proved them) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.TwoPointFreeEnergy`.
+The three `magnetizationInfinite_latticeGraph_cubicExhaustion_monotone_*`
+variants remain in this parent file.
 The legacy import path is preserved by re-importing the new child.
 -/
 
