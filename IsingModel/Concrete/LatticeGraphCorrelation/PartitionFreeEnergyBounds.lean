@@ -158,89 +158,14 @@ The legacy import path is preserved by re-importing the new child.
 -/
 
 
-/-- **ℤ^d BddAbove range of `freeEnergyAlongExhaustion`** (any-Exhaustion,
-caller-supplied BED). -/
-theorem BddAbove_freeEnergyAlongExhaustion_latticeGraph_range
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    (p : IsingParams ℝ)
-    (hBED : Ambient.BoundedEdgeDensity (IsingModel.latticeGraph d) Λ) :
-    BddAbove (Set.range (freeEnergyAlongExhaustion (IsingModel.latticeGraph d)
-      Λ p)) :=
-  BddAbove_freeEnergyAlongExhaustion_range (IsingModel.latticeGraph d) Λ p hBED
+/-! ## Moved: ℤ^d freeEnergyAlongExhaustion bridge / per-stage bound wrappers
 
-/-- **ℤ^d BddAbove range of `freeEnergyAlongExhaustion`**: via BED c=d. -/
-theorem BddAbove_freeEnergyAlongExhaustion_latticeGraph_cubicExhaustion
-    (d : ℕ) (p : IsingParams ℝ) :
-    BddAbove (Set.range (freeEnergyAlongExhaustion (IsingModel.latticeGraph d)
-      (Ambient.cubicExhaustion d) p)) :=
-  BddAbove_freeEnergyAlongExhaustion_range (IsingModel.latticeGraph d)
-    (Ambient.cubicExhaustion d) p
-    (boundedEdgeDensity_latticeGraph_cubicExhaustion d)
-
-/-- **ℤ^d per-stage freeEnergyAlongExhaustion upper bound** using BED c = d. -/
-theorem freeEnergyAlongExhaustion_latticeGraph_cubicExhaustion_le_uniform_upper_bound
-    (d : ℕ) (p : IsingParams ℝ) (n : ℕ)
-    (hne : ((Ambient.cubicExhaustion d).volume n).Nonempty) :
-    freeEnergyAlongExhaustion (IsingModel.latticeGraph d)
-        (Ambient.cubicExhaustion d) p n
-      ≤ Real.log 2 + |p.β| * (|p.J| * (d : ℝ) + |p.h|) := by
-  refine freeEnergyAlongExhaustion_le_uniform_upper_bound
-    (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d) p
-    (c := (d : ℝ)) ?_ n hne
-  intro n _
-  exact inducedLatticeGraph_card_edgeFinset_le d
-    ((Ambient.cubicExhaustion d).volume n)
-
-/-- **Per-stage lower bound on ℤ^d**: `log 2 ≤ freeEnergyAlongExhaustion` for
-ferromagnetic + nonempty stage. -/
-theorem freeEnergyAlongExhaustion_latticeGraph_cubicExhaustion_ge_log_two
-    (d : ℕ) {J h β : ℝ} (hJ : 0 ≤ J) (hh : 0 ≤ h) (hβ : 0 < β)
-    (n : ℕ) (hne : ((Ambient.cubicExhaustion d).volume n).Nonempty) :
-    Real.log 2 ≤ freeEnergyAlongExhaustion (IsingModel.latticeGraph d)
-      (Ambient.cubicExhaustion d) ⟨J, h, β⟩ n :=
-  freeEnergyAlongExhaustion_ge_log_two (IsingModel.latticeGraph d)
-    (Ambient.cubicExhaustion d) hJ hh hβ n hne
-
-/-- **Sharp per-stage lower bound on ℤ^d**:
-`log(2 cosh(βh)) ≤ freeEnergyAlongExhaustion`. -/
-theorem freeEnergyAlongExhaustion_latticeGraph_cubicExhaustion_ge_log_two_cosh
-    (d : ℕ) {J h β : ℝ} (hJ : 0 ≤ J) (hh : 0 ≤ h) (hβ : 0 < β)
-    (n : ℕ) (hne : ((Ambient.cubicExhaustion d).volume n).Nonempty) :
-    Real.log (2 * Real.cosh (β * h))
-      ≤ freeEnergyAlongExhaustion (IsingModel.latticeGraph d)
-        (Ambient.cubicExhaustion d) ⟨J, h, β⟩ n :=
-  freeEnergyAlongExhaustion_ge_log_two_cosh (IsingModel.latticeGraph d)
-    (Ambient.cubicExhaustion d) hJ hh hβ n hne
-
-/-- **ℤ^d per-stage `log 2 ≤ f_n`** (ferromagnetic, any Exhaustion). -/
-theorem freeEnergyAlongExhaustion_latticeGraph_ge_log_two
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    {J h β : ℝ} (hJ : 0 ≤ J) (hh : 0 ≤ h) (hβ : 0 < β)
-    (n : ℕ) (hne : (Λ.volume n).Nonempty) :
-    Real.log 2 ≤ freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
-      (⟨J, h, β⟩ : IsingParams ℝ) n :=
-  freeEnergyAlongExhaustion_ge_log_two (IsingModel.latticeGraph d) Λ
-    hJ hh hβ n hne
-
-/-- **ℤ^d per-stage `log(2 cosh(βh)) ≤ f_n`** (ferromagnetic, any Exhaustion). -/
-theorem freeEnergyAlongExhaustion_latticeGraph_ge_log_two_cosh
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    {J h β : ℝ} (hJ : 0 ≤ J) (hh : 0 ≤ h) (hβ : 0 < β)
-    (n : ℕ) (hne : (Λ.volume n).Nonempty) :
-    Real.log (2 * Real.cosh (β * h))
-      ≤ freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
-        (⟨J, h, β⟩ : IsingParams ℝ) n :=
-  freeEnergyAlongExhaustion_ge_log_two_cosh (IsingModel.latticeGraph d) Λ
-    hJ hh hβ n hne
-
-/-- **ℤ^d per-stage `0 ≤ f_n`** (ferromagnetic, nonempty stage, any Exhaustion). -/
-theorem freeEnergyAlongExhaustion_latticeGraph_nonneg
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    (p : IsingParams ℝ) (hf : Ferromagnetic p) {n : ℕ}
-    (hne : (Λ.volume n).Nonempty) :
-    0 ≤ freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ p n :=
-  freeEnergyAlongExhaustion_nonneg_of_ferromagnetic
-    (IsingModel.latticeGraph d) Λ p hf hne
+The 8 ℤ^d `freeEnergyAlongExhaustion_latticeGraph_*` BddAbove /
+per-stage upper-bound / per-stage `log 2` and `log(2 cosh)`
+lower-bound / ferromagnetic per-stage nonneg wrappers now live in
+`IsingModel.Concrete.LatticeGraphCorrelation.PartitionFreeEnergyBoundsAlongExBridges`.
+The legacy import path is preserved by re-importing the new child.
+-/
 
 end Ambient
 
