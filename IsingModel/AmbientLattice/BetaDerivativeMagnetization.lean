@@ -7,11 +7,13 @@ import IsingModel.FieldDerivative
 /-!
 # magnetizationAlongExhaustion regularity wrappers (Step 213, GJ §17.5)
 
-Narrow child module for the 10 `magnetizationAlongExhaustion_*_gen`
-regularity wrappers (continuous + differentiable + differentiableAt +
-hasDerivAt in β / β_general_h / field / J directions) extracted from
+Narrow child module for the 10 `magnetizationAlongExhaustion`
+regularity wrappers (9 with `_gen` suffix plus
+`magnetizationAlongExhaustion_hasDerivAt_beta`): continuous +
+differentiable + differentiableAt + hasDerivAt in
+β / β_general_h / field / J directions. Extracted from
 `BetaDerivative.lean` in PR #2063. Each is a thin pass-through to the
-corresponding `correlationAlongExhaustion_*_gen` lemma at `A = {i}`.
+corresponding `correlationAlongExhaustion_*` lemma at `A = {i}`.
 The theorem names are unchanged from the former `BetaDerivative`
 declarations.
 -/

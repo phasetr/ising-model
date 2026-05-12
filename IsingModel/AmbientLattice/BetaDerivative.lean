@@ -298,9 +298,10 @@ theorem correlationAlongExhaustion_differentiable_J_gen
 
 /-! ## Moved: magnetizationAlongExhaustion regularity wrappers
 
-The 10 `magnetizationAlongExhaustion_*_gen` regularity wrappers
-(continuous + differentiable + differentiableAt + hasDerivAt in
-β / β_general_h / field / J directions) now live in
+The 10 `magnetizationAlongExhaustion` regularity wrappers (9 with
+`_gen` suffix plus `magnetizationAlongExhaustion_hasDerivAt_beta`):
+continuous + differentiable + differentiableAt + hasDerivAt in
+β / β_general_h / field / J directions. They now live in
 `IsingModel.Ambient.BetaDerivativeMagnetization`
 (`AmbientLattice/BetaDerivativeMagnetization.lean`).
 -/
