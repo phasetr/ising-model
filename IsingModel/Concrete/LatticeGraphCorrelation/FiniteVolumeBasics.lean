@@ -79,58 +79,15 @@ theorem correlation_bot_closed_latticeGraph
       = Real.tanh (p.β * p.h) ^ A.card :=
   IsingModel.correlation_bot_closed p A
 
-/-- **ℤ^d sum_config_spinProduct_eq_zero at Λ-induced**:
-for nonempty `A`, `Σ_σ σ^A = 0`. -/
-theorem sum_config_spinProduct_eq_zero_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    (A : Finset (↑Λ : Type _)) (hA : A.Nonempty) :
-    ∑ σ : IsingModel.Config (↑Λ : Type _), IsingModel.spinProduct A σ = 0 :=
-  IsingModel.sum_config_spinProduct_eq_zero A hA
+/-! ## Moved: spinProduct + edgeSpin algebra wrappers
 
-/-- **ℤ^d sum_config_spinProduct_empty at Λ-induced**:
-`Σ_σ σ^∅ = |Config ↑Λ|`. -/
-theorem sum_config_spinProduct_empty_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) :
-    ∑ σ : IsingModel.Config (↑Λ : Type _), IsingModel.spinProduct ∅ σ
-      = (Fintype.card (IsingModel.Config (↑Λ : Type _)) : ℝ) :=
-  IsingModel.sum_config_spinProduct_empty
+The seven wrappers
+`sum_config_spinProduct_{eq_zero,empty}_latticeGraph`,
+`spinProduct_mul_latticeGraph`, `edgeSpin_sq_latticeGraph`,
+`one_sub_spinProduct_nonneg_latticeGraph`,
+`abs_spinProduct_{eq_one,le_one}_latticeGraph`
+now live in `FiniteVolumeBasicsSpin.lean`. -/
 
-/-- **ℤ^d spinProduct_mul at Λ-induced**:
-`σ^A · σ^C = σ^{A Δ C}`. -/
-theorem spinProduct_mul_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    (A C : Finset (↑Λ : Type _)) (σ : IsingModel.Config (↑Λ : Type _)) :
-    IsingModel.spinProduct A σ * IsingModel.spinProduct C σ
-      = IsingModel.spinProduct (symmDiff A C) σ :=
-  IsingModel.spinProduct_mul A C σ
-
-/-- **ℤ^d edgeSpin_sq at Λ-induced**: `edgeSpin σ e ^ 2 = 1`. -/
-theorem edgeSpin_sq_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    (σ : IsingModel.Config (↑Λ : Type _)) (e : Sym2 (↑Λ : Type _)) :
-    IsingModel.edgeSpin (K := ℝ) σ e ^ 2 = 1 :=
-  IsingModel.edgeSpin_sq σ e
-
-/-- **ℤ^d one_sub_spinProduct_nonneg at Λ-induced**: `0 ≤ 1 - σ^B`. -/
-theorem one_sub_spinProduct_nonneg_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    (B : Finset (↑Λ : Type _)) (σ : IsingModel.Config (↑Λ : Type _)) :
-    0 ≤ 1 - IsingModel.spinProduct B σ :=
-  IsingModel.one_sub_spinProduct_nonneg B σ
-
-/-- **ℤ^d abs_spinProduct_eq_one at Λ-induced**: `|σ^A| = 1`. -/
-theorem abs_spinProduct_eq_one_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    (A : Finset (↑Λ : Type _)) (σ : IsingModel.Config (↑Λ : Type _)) :
-    |IsingModel.spinProduct A σ| = 1 :=
-  IsingModel.abs_spinProduct_eq_one A σ
-
-/-- **ℤ^d abs_spinProduct_le_one at Λ-induced**: `|σ^A| ≤ 1`. -/
-theorem abs_spinProduct_le_one_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    (A : Finset (↑Λ : Type _)) (σ : IsingModel.Config (↑Λ : Type _)) :
-    |IsingModel.spinProduct A σ| ≤ 1 :=
-  IsingModel.abs_spinProduct_le_one A σ
 
 /-! ## Moved: Walsh basis + spin-config wrappers
 
