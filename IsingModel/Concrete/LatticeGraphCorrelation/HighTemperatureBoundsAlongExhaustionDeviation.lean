@@ -10,9 +10,10 @@ continuity family on `latticeGraph d` at `h = 0`. The
 `deviation_bound_exp` and `continuity_bundle` wrappers now live in
 `HighTemperatureBoundsAlongExDeviationContinuity.lean`; the
 `deviation_sandwich` wrappers now live in
-`HighTemperatureBoundsAlongExDeviationSandwich.lean`. The remaining
-`relative_sandwich` / `deviation_pos` / `pow_two_lt` /
-`strict_deviation_bundle` wrappers for
+`HighTemperatureBoundsAlongExDeviationSandwich.lean`; the
+`relative_sandwich` wrappers now live in
+`HighTemperatureBoundsAlongExRelativeSandwich.lean`. The remaining
+`deviation_pos` / `pow_two_lt` / `strict_deviation_bundle` wrappers for
 `freeEnergyAlongExhaustion_latticeGraph`,
 `partitionFunctionAlongExhaustion_latticeGraph`, and
 `log_partitionFunctionAlongExhaustion_latticeGraph` (with ferromagnetic
@@ -43,35 +44,13 @@ and `log_partitionFunctionAlongExhaustion_latticeGraph_*_deviation_sandwich`
 `HighTemperatureBoundsAlongExDeviationSandwich.lean`. -/
 
 
-/-- **ℤ^d along-ex Z relative-deviation sandwich at stage `n`**. -/
-theorem partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_relative_sandwich
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
-    (hβJ : 0 ≤ β * J) (n : ℕ) :
-    Real.cosh (β * J) ^
-        (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card
-      ≤ partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
-          (⟨J, 0, β⟩ : IsingParams ℝ) n / (2 : ℝ) ^ (Λ.volume n).card ∧
-    partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
-        (⟨J, 0, β⟩ : IsingParams ℝ) n / (2 : ℝ) ^ (Λ.volume n).card
-      ≤ Real.exp (β * J *
-          (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card) :=
-  partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_relative_sandwich
-    (IsingModel.latticeGraph d) Λ J β hβJ n
+/-! ## Moved: alongExhaustion Z `relative_sandwich` wrappers
 
-/-- **ℤ^d along-ex ferromagnetic Z relative-deviation sandwich at stage `n`**. -/
-theorem partitionFunctionAlongExhaustion_latticeGraph_h_zero_relative_sandwich_ferromagnetic
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
-    (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ) :
-    Real.cosh (β * J) ^
-        (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card
-      ≤ partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
-          (⟨J, 0, β⟩ : IsingParams ℝ) n / (2 : ℝ) ^ (Λ.volume n).card ∧
-    partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
-        (⟨J, 0, β⟩ : IsingParams ℝ) n / (2 : ℝ) ^ (Λ.volume n).card
-      ≤ Real.exp (β * J *
-          (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card) :=
-  partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_relative_sandwich_ferromagnetic
-    (IsingModel.latticeGraph d) Λ J β hJ hβ n
+The two wrappers
+`partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_relative_sandwich`
+and `partitionFunctionAlongExhaustion_latticeGraph_h_zero_relative_sandwich_ferromagnetic`
+now live in `HighTemperatureBoundsAlongExRelativeSandwich.lean`. -/
+
 
 /-- **ℤ^d along-ex f strict deviation at stage `n`**. -/
 theorem freeEnergyAlongExhaustion_latticeGraph_high_temp_h_zero_deviation_pos
