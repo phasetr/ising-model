@@ -63,14 +63,17 @@ The legacy import path is preserved by re-importing the new child.
 /-! ## Moved: alongExhaustion f/Z/log Z deviation / continuity wrappers
 
 The §18.3-§18.4 ambient alongExhaustion deviation_bound_exp /
-continuity_bundle / deviation_sandwich / relative_sandwich /
-deviation_pos / pow_two_lt / strict_deviation_bundle wrappers (20
-theorems for `freeEnergyAlongExhaustion`,
-`partitionFunctionAlongExhaustion`, and
+deviation_sandwich / relative_sandwich / deviation_pos / pow_two_lt /
+strict_deviation_bundle wrappers (20 theorems for
+`freeEnergyAlongExhaustion`, `partitionFunctionAlongExhaustion`, and
 `log_partitionFunctionAlongExhaustion` with ferromagnetic variants)
 now live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviation`.
-The legacy import path is preserved by re-importing the new child.
+`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviation`,
+with the 4 `freeEnergyAlongExhaustion_*_continuity_*` wrappers
+(`_at_J_zero`, `_at_beta_zero`, `_bundle`, `_bundle_ferromagnetic`)
+subsequently narrowed in PR #2024 into
+`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviationContinuity`.
+The legacy import path is preserved by re-importing both children.
 -/
 
 /-! ## Moved: alongExhaustion Z/f/log Z ratio sandwich/ratio bound wrappers

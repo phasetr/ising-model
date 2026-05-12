@@ -4,16 +4,18 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansion
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharper
 
 /-!
-# Ambient alongExhaustion f/Z/log Z deviation / continuity wrappers at h = 0
+# Ambient alongExhaustion f/Z/log Z deviation wrappers at h = 0
 
 Narrow child module for the §18.3-§18.4 ambient alongExhaustion
-deviation_bound_exp / continuity_bundle / deviation_sandwich /
-relative_sandwich / deviation_pos / pow_two_lt /
-strict_deviation_bundle wrappers. 20 theorems for
-`freeEnergyAlongExhaustion`, `partitionFunctionAlongExhaustion`, and
-`log_partitionFunctionAlongExhaustion` plus ferromagnetic variants. The
-theorem names are unchanged from the former `HighTemperatureBounds`
-declarations.
+`deviation_bound_exp` / `deviation_sandwich` wrappers (with
+ferromagnetic variants for f and log Z). The 4
+`freeEnergyAlongExhaustion_*_continuity_*` wrappers were further
+narrowed into `HighTemperatureBoundsDeviationContinuity` (PR #2024)
+and the 10 strict-deviation wrappers (`relative_sandwich`,
+`deviation_pos`, `pow_two_lt`, `_strict_deviation_bundle`) were
+further narrowed into `HighTemperatureBoundsDeviationStrict`
+(PR #2018). The theorem names are unchanged from the former
+`HighTemperatureBounds` declarations.
 -/
 
 namespace IsingModel
