@@ -7,6 +7,7 @@ import IsingModel.PhaseTransition
 import IsingModel.Inequalities.FKG
 import IsingModel.AmbientFKG
 import IsingModel.Concrete.LatticeGraphCorrelation.UniformMag
+import IsingModel.Concrete.LatticeGraphCorrelation.UniformMagRecasts
 
 /-!
 # ℤ^d truncated2TwoPoint bounds + correlation/magnetizationInfinite monotonicity wrappers
