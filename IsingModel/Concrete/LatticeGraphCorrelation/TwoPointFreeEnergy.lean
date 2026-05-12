@@ -122,60 +122,15 @@ theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_bounds
   · exact freeEnergyInfinite_le_uniform_upper_bound
       (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d) p hf hc
 
-/-- **`|h|`-monotonicity of `freeEnergyInfinite` on ℤ^d**:
-`|h₁| ≤ |h₂| ⇒ freeEnergyInfinite ⟨J, h₁, β⟩ ≤ freeEnergyInfinite ⟨J, h₂, β⟩`. -/
-theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_monotone_abs_h
-    (d : ℕ) [Nonempty (Fin d → ℤ)]
-    {J β : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)
-    {h₁ h₂ : ℝ} (hh : |h₁| ≤ |h₂|) :
-    freeEnergyInfinite (IsingModel.latticeGraph d)
-        (Ambient.cubicExhaustion d) (⟨J, h₁, β⟩ : IsingParams ℝ)
-      ≤ freeEnergyInfinite (IsingModel.latticeGraph d)
-          (Ambient.cubicExhaustion d) (⟨J, h₂, β⟩ : IsingParams ℝ) := by
-  refine freeEnergyInfinite_monotone_abs_h (IsingModel.latticeGraph d)
-    (Ambient.cubicExhaustion d) hJ hβ (c := (d : ℝ)) ?_ hh
-  intro n _
-  exact inducedLatticeGraph_card_edgeFinset_le d
-    ((Ambient.cubicExhaustion d).volume n)
+/-! ## Moved: ℤ^d freeEnergyInfinite h-symmetry wrappers
 
-/-- **h-evenness of `freeEnergyInfinite` on ℤ^d**:
-`freeEnergyInfinite ⟨J, -h, β⟩ = freeEnergyInfinite ⟨J, h, β⟩`. -/
-theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_neg_h
-    (d : ℕ) (J h β : ℝ) :
-    freeEnergyInfinite (IsingModel.latticeGraph d)
-        (Ambient.cubicExhaustion d) (⟨J, -h, β⟩ : IsingParams ℝ)
-      = freeEnergyInfinite (IsingModel.latticeGraph d)
-          (Ambient.cubicExhaustion d) (⟨J, h, β⟩ : IsingParams ℝ) :=
-  freeEnergyInfinite_neg_h (IsingModel.latticeGraph d)
-    (Ambient.cubicExhaustion d) J h β
+The 5 ℤ^d `freeEnergyInfinite_latticeGraph_*` h-symmetry / |h|-monotonicity
+wrappers (`cubicExhaustion_monotone_abs_h`, `cubicExhaustion_neg_h`,
+`cubicExhaustion_eq_abs_h`, `neg_h`, `eq_abs_h`) now live in
+`IsingModel.Concrete.LatticeGraphCorrelation.TwoPointFreeEnergyInfHSymmetry`.
+The legacy import path is preserved by re-importing the new child.
+-/
 
-/-- **`|h|`-form of `freeEnergyInfinite` on ℤ^d**. -/
-theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_eq_abs_h
-    (d : ℕ) (J h β : ℝ) :
-    freeEnergyInfinite (IsingModel.latticeGraph d)
-        (Ambient.cubicExhaustion d) (⟨J, h, β⟩ : IsingParams ℝ)
-      = freeEnergyInfinite (IsingModel.latticeGraph d)
-          (Ambient.cubicExhaustion d) (⟨J, |h|, β⟩ : IsingParams ℝ) :=
-  freeEnergyInfinite_eq_abs_h (IsingModel.latticeGraph d)
-    (Ambient.cubicExhaustion d) J h β
-
-/-- **h-evenness of `freeEnergyInfinite` on ℤ^d** (any Exhaustion). -/
-theorem freeEnergyInfinite_latticeGraph_neg_h
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J h β : ℝ) :
-    freeEnergyInfinite (IsingModel.latticeGraph d) Λ
-        (⟨J, -h, β⟩ : IsingParams ℝ)
-      = freeEnergyInfinite (IsingModel.latticeGraph d) Λ
-          (⟨J, h, β⟩ : IsingParams ℝ) :=
-  freeEnergyInfinite_neg_h (IsingModel.latticeGraph d) Λ J h β
-
-/-- **`|h|`-form of `freeEnergyInfinite` on ℤ^d** (any Exhaustion). -/
-theorem freeEnergyInfinite_latticeGraph_eq_abs_h
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J h β : ℝ) :
-    freeEnergyInfinite (IsingModel.latticeGraph d) Λ
-        (⟨J, h, β⟩ : IsingParams ℝ)
-      = freeEnergyInfinite (IsingModel.latticeGraph d) Λ
-          (⟨J, |h|, β⟩ : IsingParams ℝ) :=
-  freeEnergyInfinite_eq_abs_h (IsingModel.latticeGraph d) Λ J h β
 
 /-! ## Moved: ℤ^d freeEnergyInfinite monotonicity wrappers
 
