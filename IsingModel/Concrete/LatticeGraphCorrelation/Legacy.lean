@@ -83,6 +83,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.TheoremEtaLe1
 import IsingModel.Concrete.LatticeGraphCorrelation.SiteIndepMag
 import IsingModel.Concrete.LatticeGraphCorrelation.UniformMag
 import IsingModel.Concrete.LatticeGraphCorrelation.Base
+import IsingModel.Concrete.LatticeGraphCorrelation.BaseSpontaneousCorrelation
 import IsingModel.Concrete.LatticeGraphCorrelation.FiniteVolumeBasics
 import IsingModel.Concrete.LatticeGraphCorrelation.FiniteVolumeCorrelationMonotonicity
 import IsingModel.Concrete.LatticeGraphCorrelation.FiniteVolumeExtensions
