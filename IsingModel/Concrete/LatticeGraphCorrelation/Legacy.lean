@@ -81,6 +81,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassProductSum
 import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMass
 import IsingModel.Concrete.LatticeGraphCorrelation.TheoremEtaLe1
 import IsingModel.Concrete.LatticeGraphCorrelation.SiteIndepMag
+import IsingModel.Concrete.LatticeGraphCorrelation.SiteIndepMagSpontaneous
 import IsingModel.Concrete.LatticeGraphCorrelation.SiteIndepMagUniformSpontaneous
 import IsingModel.Concrete.LatticeGraphCorrelation.UniformMag
 import IsingModel.Concrete.LatticeGraphCorrelation.Base
