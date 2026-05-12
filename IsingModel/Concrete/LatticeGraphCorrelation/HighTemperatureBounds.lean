@@ -27,6 +27,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExD
 import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExRelativeSandwich
 import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExDeviationPos
 import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExStrictDeviation
+import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExRatioSandwichBundle
 import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExhaustionRatioBounds
 import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExhaustionTripleRatio
 import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExhaustionRatioLogFe
@@ -352,18 +353,22 @@ The legacy import path is preserved by re-importing both children.
 /-! ## Moved: alongExhaustion Z/f/log Z ratio sandwich/ratio bound wrappers
 
 The §18.3-§18.4 concrete alongExhaustion ratio_sandwich_bundle /
-ratio_bound wrappers on `latticeGraph d` at `h = 0` now live in three
-narrow children: the 8 residual `partitionFunctionAlongExhaustion_latticeGraph`
-Z ratio wrappers remain in
+ratio_bound wrappers on `latticeGraph d` at `h = 0` now live across
+four narrow children: the 6 residual
+`partitionFunctionAlongExhaustion_latticeGraph` Z ratio_bound wrappers
+remain in
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExhaustionRatioBounds`;
-the 7 `triple_ratio_*` wrappers (sandwich + bound bundles, J = 0 /
-β = 0 / ferromagnetic variants) now live in
+the 2 `ratio_sandwich_bundle` wrappers (general and ferromagnetic) live
+in
+`IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExRatioSandwichBundle`
+(carved out in PR #2089); the 7 `triple_ratio_*` wrappers (sandwich +
+bound bundles, J = 0 / β = 0 / ferromagnetic variants) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExhaustionTripleRatio`
 (narrowed in PR #1996); and the 14 `log_partitionFunction` /
 `freeEnergy` ratio wrappers now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExhaustionRatioLogFe`
 (narrowed in PR #1997). The legacy import path is preserved by
-re-importing all three children.
+re-importing all four children.
 -/
 
 /-! ## Moved: ℤ^d HT AlongExhaustion closed + lower-bound wrappers
