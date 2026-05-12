@@ -8,6 +8,7 @@ import IsingModel.Inequalities.FKG
 import IsingModel.AmbientFKG
 import IsingModel.Concrete.LatticeGraphCorrelation.UniformMag
 import IsingModel.Concrete.LatticeGraphCorrelation.UniformMagRecasts
+import IsingModel.Concrete.LatticeGraphCorrelation.TwoPointFunctionTrivialSlices
 
 /-!
 # ℤ^d truncated2TwoPoint bounds + correlation/magnetizationInfinite monotonicity wrappers
