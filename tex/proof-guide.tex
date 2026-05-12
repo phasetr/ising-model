@@ -4820,7 +4820,12 @@ The bottom-graph ($\bot \le \mathrm{latticeGraph}\,d$) comparison
 wrappers and the matching
 \texttt{*\_latticeGraph\_monotone\_ambient\_subgraph} family now live in
 \path{IsingModel/Concrete/LatticeGraphCorrelation/TwoPointAmbientBot.lean}
-(narrowed out of \path{TwoPoint.lean} in PR~\#2009). The 7
+(narrowed out of \path{TwoPoint.lean} in PR~\#2009); PR~\#2092 further
+carves the seven $\Lambda$ + along-exhaustion
+\texttt{\{free,partition\}Energy} / \texttt{correlation} /
+\texttt{log\_partitionFunction}$\Lambda$ \texttt{*\_bot\_le\_latticeGraph}
+wrappers out into
+\path{IsingModel/Concrete/LatticeGraphCorrelation/TwoPointAmbientBotLambda.lean}. The 7
 $\mathbb{Z}^d$ $\mathrm{correlationInfinite\_latticeGraph\_*}$
 wrappers (\texttt{\_le\_one}, \texttt{\_nonneg},
 \texttt{\_indep\_exhaustion},
