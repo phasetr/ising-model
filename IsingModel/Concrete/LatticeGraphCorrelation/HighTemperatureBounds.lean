@@ -300,9 +300,10 @@ singleton, odd_card_eq_zero; plus `partitionFunctionAlongExhaustion_latticeGraph
 and `freeEnergyAlongExhaustion_latticeGraph` sandwich; plus the high-temp
 numerator filter helper) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExhaustionBasic`.
-The two `_of_latticeAdj` along-exhaustion variants stay below in this
-module because they directly invoke the Λ-level `_of_latticeAdj` versions
-(which also live here). The legacy import path is preserved by
+The two `_of_latticeAdj` along-exhaustion variants were narrowed in
+PR #2074 into
+`IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExCompleteSummary`
+(see the next Moved block). The legacy import path is preserved by
 re-importing the new child.
 -/
 
