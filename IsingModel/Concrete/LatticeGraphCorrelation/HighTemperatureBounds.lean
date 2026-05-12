@@ -22,6 +22,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExh
 import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExExpSharperSandwich
 import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExExpSharperCompleteSummary
 import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExhaustionDeviation
+import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExDeviationContinuity
 import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExhaustionRatioBounds
 import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExhaustionTripleRatio
 import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExhaustionRatioLogFe
@@ -334,9 +335,13 @@ deviation_pos / pow_two_lt / strict_deviation_bundle wrappers on
 `freeEnergyAlongExhaustion_latticeGraph`,
 `partitionFunctionAlongExhaustion_latticeGraph`, and
 `log_partitionFunctionAlongExhaustion_latticeGraph` with ferromagnetic
-variants) now live in
+variants) live across two narrow children. The four
+`freeEnergyAlongExhaustion_latticeGraph_high_temp_h_zero_deviation_bound_exp`
+/ `continuity_bundle` wrappers (with ferromagnetic variants) now live in
+`IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExDeviationContinuity`.
+The remaining wrappers still live in
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExhaustionDeviation`.
-The legacy import path is preserved by re-importing the new child.
+The legacy import path is preserved by re-importing both children.
 -/
 
 
