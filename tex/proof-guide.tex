@@ -5653,6 +5653,10 @@ PR~\#2100 further carves the eight ℤ$^d$ ferromagnetic
 \texttt{vdPolymerFamilies\_sum*\_*\_\{ferromagnetic,ferro\}} wrappers
 out into
 \texttt{Concrete/LatticeGraphCorrelation/HighTemperatureFerromagnetic.lean}.
+PR~\#2101 further carves the four ℤ$^d$ non-ferromagnetic
+\texttt{vdPolymerFamilies\_sum\_\{$\Lambda$,AlongExhaustion\}\_latticeGraph\_sandwich(\_sharp)?}
+wrappers out into
+\texttt{Concrete/LatticeGraphCorrelation/HighTemperatureVDPolymer.lean}.
 
 \paragraph{Ferromagnetic polymer-family sum sandwich, all volume
 layers (\S18.5, PR~\#1574).} Under $0 \le J,\, 0 < \beta$ each of
@@ -5673,11 +5677,12 @@ $\Lambda$, and $\mathbb{Z}^d$ along-exhaustion layers --- $8$
 wrappers in total --- in
 \texttt{IsingModel/AmbientLattice/Analyticity.lean},
 \texttt{AmbientLattice/SpecialCases/HighTemperature.lean}, and
-\texttt{Concrete/LatticeGraphCorrelation/HighTemperature.lean}. Each is a thin
-direct-instantiation wrapper of the abstract theorem on the
-corresponding induced subgraph. These high-temperature sandwich wrappers
-now live in the dedicated child modules rather than the legacy monoliths
-(moved in PR~\#1864).
+\texttt{Concrete/LatticeGraphCorrelation/HighTemperatureVDPolymer.lean}
+(carved out of \texttt{Concrete/.../HighTemperature.lean} in PR~\#2101).
+Each is a thin direct-instantiation wrapper of the abstract theorem on
+the corresponding induced subgraph. These high-temperature sandwich
+wrappers were moved to the dedicated child modules from the legacy
+monoliths in PR~\#1864.
 
 \paragraph{Convergence radius at all volume layers (\S18.5,
 PR~\#1569).} The cluster-expansion convergence-radius statements
