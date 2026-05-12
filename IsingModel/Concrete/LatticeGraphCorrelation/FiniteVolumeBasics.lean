@@ -132,53 +132,13 @@ theorem abs_spinProduct_le_one_latticeGraph
     |IsingModel.spinProduct A σ| ≤ 1 :=
   IsingModel.abs_spinProduct_le_one A σ
 
-/-- **ℤ^d Walsh orthogonality at Λ-induced**. -/
-theorem walsh_orthogonality_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    (S T : Finset (↑Λ : Type _)) (hST : S ≠ T) :
-    ∑ σ : IsingModel.Config (↑Λ : Type _),
-      IsingModel.spinProduct S σ * IsingModel.spinProduct T σ = 0 :=
-  IsingModel.walsh_orthogonality S T hST
+/-! ## Moved: Walsh basis + spin-config wrappers
 
-/-- **ℤ^d Walsh completeness at Λ-induced**:
-`Σ_S σ^S(σ) σ^S(τ) = card · [σ = τ]`. -/
-theorem walsh_completeness_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    (σ τ : IsingModel.Config (↑Λ : Type _)) :
-    ∑ S : Finset (↑Λ : Type _),
-        IsingModel.spinProduct S σ * IsingModel.spinProduct S τ
-      = if σ = τ then (Fintype.card (IsingModel.Config (↑Λ : Type _)) : ℝ) else 0 :=
-  IsingModel.walsh_completeness σ τ
+The five wrappers
+`walsh_{orthogonality,completeness,fourier_inversion,normalization}_latticeGraph`
+and `card_config_eq_two_pow_latticeGraph` now live in
+`FiniteVolumeBasicsWalsh.lean`. -/
 
-/-- **ℤ^d Walsh Fourier inversion at Λ-induced**:
-`f(σ) = Σ_S ĉ_S σ^S` where `ĉ_S = card⁻¹ Σ_τ σ^S(τ) f(τ)`. -/
-theorem walsh_fourier_inversion_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    (f : IsingModel.Config (↑Λ : Type _) → ℝ)
-    (σ : IsingModel.Config (↑Λ : Type _)) :
-    f σ = ∑ S : Finset (↑Λ : Type _),
-      ((Fintype.card (IsingModel.Config (↑Λ : Type _)) : ℝ)⁻¹
-        * ∑ τ : IsingModel.Config (↑Λ : Type _),
-            IsingModel.spinProduct S τ * f τ)
-      * IsingModel.spinProduct S σ :=
-  IsingModel.walsh_fourier_inversion f σ
-
-/-- **ℤ^d Walsh normalization at Λ-induced**. -/
-theorem walsh_normalization_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    (S : Finset (↑Λ : Type _)) :
-    ∑ σ : IsingModel.Config (↑Λ : Type _),
-        IsingModel.spinProduct S σ * IsingModel.spinProduct S σ
-      = Fintype.card (IsingModel.Config (↑Λ : Type _)) :=
-  IsingModel.walsh_normalization S
-
-/-- **ℤ^d `card_config_eq_two_pow` at Λ**:
-`|Config ↑Λ| = 2^|Λ|`. -/
-theorem card_config_eq_two_pow_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) :
-    Fintype.card (IsingModel.Config (↑Λ : Type _))
-      = 2 ^ Fintype.card (↑Λ : Type _) :=
-  IsingModel.card_config_eq_two_pow
 
 /-- **ℤ^d edgeSpin_flip at Λ-induced**:
 `edgeSpin(σ.flip, e) = edgeSpin(σ, e)`. -/
