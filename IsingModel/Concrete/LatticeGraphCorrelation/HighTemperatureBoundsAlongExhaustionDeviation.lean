@@ -1,6 +1,11 @@
 import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBounds
+import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExDeviationContinuity
+import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExDeviationSandwich
+import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExRelativeSandwich
+import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExDeviationPos
+import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExStrictDeviation
 
 /-!
 # Concrete alongExhaustion f/Z/log Z deviation / continuity wrappers at h = 0
