@@ -606,64 +606,25 @@ theorem twoPointFunction_J_zero_of_ne_zero
 
 The 34 ℤ^d `freeEnergyAlongExhaustion_latticeGraph` /
 `freeEnergyInfinite_latticeGraph` / cubicExhaustion convergence,
-trivial-slice, monotonicity, and bound wrappers (plus the two
-`spontaneousMagnetization_latticeGraph_cubicExhaustion_monotone_*`
-variants that proved them) now live in
+trivial-slice, monotonicity, and bound wrappers now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.TwoPointFreeEnergy`.
-The three `magnetizationInfinite_latticeGraph_cubicExhaustion_monotone_*`
-variants remain in this parent file.
+The 2 `spontaneousMagnetization_latticeGraph_cubicExhaustion_monotone_*`
+and 3 `magnetizationInfinite_latticeGraph_cubicExhaustion_monotone_*`
+variants were further narrowed in PR #2026 into
+`IsingModel.Concrete.LatticeGraphCorrelation.TwoPointMagnetizationMonotone`
+(see the next Moved block).
 The legacy import path is preserved by re-importing the new child.
 -/
 
-/-- **J-monotonicity of `spontaneousMagnetization` on ℤ^d** at any site. -/
-theorem spontaneousMagnetization_latticeGraph_cubicExhaustion_monotone_J
-    (d : ℕ) {β : ℝ} (hβ : 0 < β) (i : Fin d → ℤ) :
-    MonotoneOn
-      (fun J : ℝ => spontaneousMagnetization (IsingModel.latticeGraph d)
-        (Ambient.cubicExhaustion d) J β i)
-      (Set.Ici 0) :=
-  spontaneousMagnetization_monotone_J (IsingModel.latticeGraph d)
-    (Ambient.cubicExhaustion d) hβ i
+/-! ## Moved: ℤ^d magnetization monotonicity wrappers
 
-/-- **β-monotonicity of `spontaneousMagnetization` on ℤ^d** at any site. -/
-theorem spontaneousMagnetization_latticeGraph_cubicExhaustion_monotone_beta
-    (d : ℕ) {J : ℝ} (hJ : 0 ≤ J) (i : Fin d → ℤ) :
-    MonotoneOn
-      (fun β : ℝ => spontaneousMagnetization (IsingModel.latticeGraph d)
-        (Ambient.cubicExhaustion d) J β i)
-      (Set.Ioi 0) :=
-  spontaneousMagnetization_monotone_beta (IsingModel.latticeGraph d)
-    (Ambient.cubicExhaustion d) hJ i
+The 5 concrete ℤ^d `spontaneousMagnetization_latticeGraph_cubicExhaustion_monotone_{J,beta}`
+and `magnetizationInfinite_latticeGraph_cubicExhaustion_monotone_{J,h,beta}`
+wrappers now live in
+`IsingModel.Concrete.LatticeGraphCorrelation.TwoPointMagnetizationMonotone`.
+The legacy import path is preserved by re-importing the new child.
+-/
 
-/-- **J-monotonicity of `magnetizationInfinite` on ℤ^d** at any site. -/
-theorem magnetizationInfinite_latticeGraph_cubicExhaustion_monotone_J
-    (d : ℕ) {h : ℝ} (hh : 0 ≤ h) {β : ℝ} (hβ : 0 < β) (i : Fin d → ℤ) :
-    MonotoneOn
-      (fun J : ℝ => magnetizationInfinite (IsingModel.latticeGraph d)
-        (Ambient.cubicExhaustion d) ⟨J, h, β⟩ i)
-      (Set.Ici 0) :=
-  magnetizationInfinite_monotone_J (IsingModel.latticeGraph d)
-    (Ambient.cubicExhaustion d) hh hβ i
-
-/-- **h-monotonicity of `magnetizationInfinite` on ℤ^d** at any site. -/
-theorem magnetizationInfinite_latticeGraph_cubicExhaustion_monotone_h
-    (d : ℕ) {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) (i : Fin d → ℤ) :
-    MonotoneOn
-      (fun h : ℝ => magnetizationInfinite (IsingModel.latticeGraph d)
-        (Ambient.cubicExhaustion d) ⟨J, h, β⟩ i)
-      (Set.Ici 0) :=
-  magnetizationInfinite_monotone_h (IsingModel.latticeGraph d)
-    (Ambient.cubicExhaustion d) hJ hβ i
-
-/-- **β-monotonicity of `magnetizationInfinite` on ℤ^d** at any site. -/
-theorem magnetizationInfinite_latticeGraph_cubicExhaustion_monotone_beta
-    (d : ℕ) {J : ℝ} (hJ : 0 ≤ J) {h : ℝ} (hh : 0 ≤ h) (i : Fin d → ℤ) :
-    MonotoneOn
-      (fun β : ℝ => magnetizationInfinite (IsingModel.latticeGraph d)
-        (Ambient.cubicExhaustion d) ⟨J, h, β⟩ i)
-      (Set.Ioi 0) :=
-  magnetizationInfinite_monotone_beta (IsingModel.latticeGraph d)
-    (Ambient.cubicExhaustion d) hJ hh i
 
 /-! ## Moved: ambient-subgraph monotonicity + bot wrappers
 
