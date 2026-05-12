@@ -1,0 +1,261 @@
+import IsingModel.Lattice
+import IsingModel.AmbientLattice.BetaDerivative
+import IsingModel.AmbientLattice.JDerivative
+import IsingModel.AmbientLattice.FieldDerivative
+
+/-!
+# Concrete ℤ^d along-exhaustion `hasDerivAt` wrappers (GJ §17.5–§17.6)
+
+Narrow child module for the 18 ℤ^d along-exhaustion `hasDerivAt`
+wrappers (`correlationAlongExhaustion`, `magnetizationAlongExhaustion`,
+`partitionFunctionAlongExhaustion`, `freeEnergyAlongExhaustion`,
+`susceptibilityAlongExhaustion` — in β/β_general_h/J/field directions)
+extracted from `Regularity.lean` in PR #2042. Each is a thin
+pass-through to the corresponding ambient along-exhaustion
+`hasDerivAt` lemma at `IsingModel.latticeGraph d`. All wrappers are
+stated in existence form `∃ d : ℝ, HasDerivAt _ d _`. The theorem
+names are unchanged from the former `Regularity` declarations.
+-/
+
+open scoped symmDiff
+
+namespace IsingModel
+namespace Ambient
+
+/-! ### ℤ^d along-exhaustion `hasDerivAt` wrappers (GJ §17.5–§17.6)
+
+Direct instantiations at `G := IsingModel.latticeGraph d` of the
+along-exhaustion `hasDerivAt` family
+(`AmbientLattice/BetaDerivative.lean`,
+`AmbientLattice/JDerivative.lean`,
+`AmbientLattice/FieldDerivative.lean`; PR #1628 + earlier). -/
+
+/-- **ℤ^d along-ex: `correlationAlongExhaustion` HasDerivAt in β at h = 0**. -/
+theorem correlationAlongExhaustion_latticeGraph_hasDerivAt_beta
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
+      (Λ.volume n)).edgeSet]
+    (J β : ℝ) (A : Finset (Fin d → ℤ)) (n : ℕ) :
+    ∃ c : ℝ, HasDerivAt (fun β' =>
+        Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β'⟩ : IsingParams ℝ) A n) c β :=
+  Ambient.correlationAlongExhaustion_hasDerivAt_beta
+    (IsingModel.latticeGraph d) Λ J β A n
+
+/-- **ℤ^d along-ex: `correlationAlongExhaustion` HasDerivAt in β at general h**. -/
+theorem correlationAlongExhaustion_latticeGraph_hasDerivAt_beta_general_h
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
+      (Λ.volume n)).edgeSet]
+    (J h β : ℝ) (A : Finset (Fin d → ℤ)) (n : ℕ) :
+    ∃ c : ℝ, HasDerivAt (fun β' =>
+        Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, h, β'⟩ : IsingParams ℝ) A n) c β :=
+  Ambient.correlationAlongExhaustion_hasDerivAt_beta_general_h_gen
+    (IsingModel.latticeGraph d) Λ J h β A n
+
+/-- **ℤ^d along-ex: `correlationAlongExhaustion` HasDerivAt in J**. -/
+theorem correlationAlongExhaustion_latticeGraph_hasDerivAt_J
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
+      (Λ.volume n)).edgeSet]
+    (J h β : ℝ) (A : Finset (Fin d → ℤ)) (n : ℕ) :
+    ∃ c : ℝ, HasDerivAt (fun J' =>
+        Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J', h, β⟩ : IsingParams ℝ) A n) c J :=
+  Ambient.correlationAlongExhaustion_hasDerivAt_J
+    (IsingModel.latticeGraph d) Λ J h β A n
+
+/-- **ℤ^d along-ex: `correlationAlongExhaustion` HasDerivAt in h**. -/
+theorem correlationAlongExhaustion_latticeGraph_hasDerivAt_field
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
+      (Λ.volume n)).edgeSet]
+    (J h β : ℝ) (A : Finset (Fin d → ℤ)) (n : ℕ) :
+    ∃ c : ℝ, HasDerivAt (fun h' =>
+        Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, h', β⟩ : IsingParams ℝ) A n) c h :=
+  Ambient.correlationAlongExhaustion_hasDerivAt_field
+    (IsingModel.latticeGraph d) Λ J h β A n
+
+/-- **ℤ^d along-ex: `magnetizationAlongExhaustion` HasDerivAt in β at h = 0**. -/
+theorem magnetizationAlongExhaustion_latticeGraph_hasDerivAt_beta
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
+      (Λ.volume n)).edgeSet]
+    (J β : ℝ) (i : Fin d → ℤ) (n : ℕ) :
+    ∃ c : ℝ, HasDerivAt (fun β' =>
+        Ambient.magnetizationAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β'⟩ : IsingParams ℝ) i n) c β :=
+  Ambient.magnetizationAlongExhaustion_hasDerivAt_beta
+    (IsingModel.latticeGraph d) Λ J β i n
+
+/-- **ℤ^d along-ex: `magnetizationAlongExhaustion` HasDerivAt in β at general h**. -/
+theorem magnetizationAlongExhaustion_latticeGraph_hasDerivAt_beta_general_h
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
+      (Λ.volume n)).edgeSet]
+    (J h β : ℝ) (i : Fin d → ℤ) (n : ℕ) :
+    ∃ c : ℝ, HasDerivAt (fun β' =>
+        Ambient.magnetizationAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, h, β'⟩ : IsingParams ℝ) i n) c β :=
+  Ambient.magnetizationAlongExhaustion_hasDerivAt_beta_general_h_gen
+    (IsingModel.latticeGraph d) Λ J h β i n
+
+/-- **ℤ^d along-ex: `magnetizationAlongExhaustion` HasDerivAt in J**. -/
+theorem magnetizationAlongExhaustion_latticeGraph_hasDerivAt_J
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
+      (Λ.volume n)).edgeSet]
+    (J h β : ℝ) (i : Fin d → ℤ) (n : ℕ) :
+    ∃ c : ℝ, HasDerivAt (fun J' =>
+        Ambient.magnetizationAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J', h, β⟩ : IsingParams ℝ) i n) c J :=
+  Ambient.magnetizationAlongExhaustion_hasDerivAt_J
+    (IsingModel.latticeGraph d) Λ J h β i n
+
+/-- **ℤ^d along-ex: `magnetizationAlongExhaustion` HasDerivAt in h**. -/
+theorem magnetizationAlongExhaustion_latticeGraph_hasDerivAt_field
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
+      (Λ.volume n)).edgeSet]
+    (J h β : ℝ) (i : Fin d → ℤ) (n : ℕ) :
+    ∃ c : ℝ, HasDerivAt (fun h' =>
+        Ambient.magnetizationAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, h', β⟩ : IsingParams ℝ) i n) c h :=
+  Ambient.magnetizationAlongExhaustion_hasDerivAt_field
+    (IsingModel.latticeGraph d) Λ J h β i n
+
+/-! ### ℤ^d along-ex `partitionFunctionAlongExhaustion` /
+`freeEnergyAlongExhaustion` `hasDerivAt` wrappers -/
+
+/-- **ℤ^d along-ex: `partitionFunctionAlongExhaustion` HasDerivAt in β**. -/
+theorem partitionFunctionAlongExhaustion_latticeGraph_hasDerivAt_beta
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
+      (Λ.volume n)).edgeSet]
+    (J h β : ℝ) (n : ℕ) :
+    ∃ c : ℝ, HasDerivAt (fun β' =>
+        Ambient.partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, h, β'⟩ : IsingParams ℝ) n) c β :=
+  Ambient.partitionFunctionAlongExhaustion_hasDerivAt_beta
+    (IsingModel.latticeGraph d) Λ J h β n
+
+/-- **ℤ^d along-ex: `partitionFunctionAlongExhaustion` HasDerivAt in J**. -/
+theorem partitionFunctionAlongExhaustion_latticeGraph_hasDerivAt_J
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
+      (Λ.volume n)).edgeSet]
+    (J h β : ℝ) (n : ℕ) :
+    ∃ c : ℝ, HasDerivAt (fun J' =>
+        Ambient.partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J', h, β⟩ : IsingParams ℝ) n) c J :=
+  Ambient.partitionFunctionAlongExhaustion_hasDerivAt_J
+    (IsingModel.latticeGraph d) Λ J h β n
+
+/-- **ℤ^d along-ex: `partitionFunctionAlongExhaustion` HasDerivAt in h**. -/
+theorem partitionFunctionAlongExhaustion_latticeGraph_hasDerivAt_field
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
+      (Λ.volume n)).edgeSet]
+    (J h β : ℝ) (n : ℕ) :
+    ∃ c : ℝ, HasDerivAt (fun h' =>
+        Ambient.partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, h', β⟩ : IsingParams ℝ) n) c h :=
+  Ambient.partitionFunctionAlongExhaustion_hasDerivAt_field
+    (IsingModel.latticeGraph d) Λ J h β n
+
+/-- **ℤ^d along-ex: `freeEnergyAlongExhaustion` HasDerivAt in β at general h**. -/
+theorem freeEnergyAlongExhaustion_latticeGraph_hasDerivAt_beta_general_h
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
+      (Λ.volume n)).edgeSet]
+    (J h β : ℝ) (n : ℕ) :
+    ∃ c : ℝ, HasDerivAt (fun β' =>
+        Ambient.freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, h, β'⟩ : IsingParams ℝ) n) c β :=
+  Ambient.freeEnergyAlongExhaustion_hasDerivAt_beta_general_h
+    (IsingModel.latticeGraph d) Λ J h β n
+
+/-- **ℤ^d along-ex: `freeEnergyAlongExhaustion` HasDerivAt in J**. -/
+theorem freeEnergyAlongExhaustion_latticeGraph_hasDerivAt_J
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
+      (Λ.volume n)).edgeSet]
+    (J h β : ℝ) (n : ℕ) :
+    ∃ c : ℝ, HasDerivAt (fun J' =>
+        Ambient.freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J', h, β⟩ : IsingParams ℝ) n) c J :=
+  Ambient.freeEnergyAlongExhaustion_hasDerivAt_J
+    (IsingModel.latticeGraph d) Λ J h β n
+
+/-- **ℤ^d along-ex: `freeEnergyAlongExhaustion` HasDerivAt in h**. -/
+theorem freeEnergyAlongExhaustion_latticeGraph_hasDerivAt_field
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
+      (Λ.volume n)).edgeSet]
+    (J h β : ℝ) (n : ℕ) :
+    ∃ c : ℝ, HasDerivAt (fun h' =>
+        Ambient.freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, h', β⟩ : IsingParams ℝ) n) c h :=
+  Ambient.freeEnergyAlongExhaustion_hasDerivAt_field
+    (IsingModel.latticeGraph d) Λ J h β n
+
+
+/-! ### ℤ^d along-ex `susceptibilityAlongExhaustion` `hasDerivAt`
+wrappers (GJ §17.5–§17.6) -/
+
+/-- **ℤ^d along-ex: `susceptibilityAlongExhaustion` HasDerivAt in β at h = 0**. -/
+theorem susceptibilityAlongExhaustion_latticeGraph_hasDerivAt_beta
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
+      (Λ.volume n)).edgeSet]
+    (J β : ℝ) (i : Fin d → ℤ) (n : ℕ) :
+    ∃ c : ℝ, HasDerivAt (fun β' =>
+        Ambient.susceptibilityAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β'⟩ : IsingParams ℝ) i n) c β :=
+  Ambient.susceptibilityAlongExhaustion_hasDerivAt_beta_gen
+    (IsingModel.latticeGraph d) Λ J β i n
+
+
+/-- **ℤ^d along-ex: `susceptibilityAlongExhaustion` HasDerivAt in β at general h**. -/
+theorem susceptibilityAlongExhaustion_latticeGraph_hasDerivAt_beta_general_h
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
+      (Λ.volume n)).edgeSet]
+    (J h β : ℝ) (i : Fin d → ℤ) (n : ℕ) :
+    ∃ c : ℝ, HasDerivAt (fun β' =>
+        Ambient.susceptibilityAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, h, β'⟩ : IsingParams ℝ) i n) c β :=
+  Ambient.susceptibilityAlongExhaustion_hasDerivAt_beta_general_h_gen
+    (IsingModel.latticeGraph d) Λ J h β i n
+
+/-- **ℤ^d along-ex: `susceptibilityAlongExhaustion` HasDerivAt in J**. -/
+theorem susceptibilityAlongExhaustion_latticeGraph_hasDerivAt_J
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
+      (Λ.volume n)).edgeSet]
+    (J h β : ℝ) (i : Fin d → ℤ) (n : ℕ) :
+    ∃ c : ℝ, HasDerivAt (fun J' =>
+        Ambient.susceptibilityAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J', h, β⟩ : IsingParams ℝ) i n) c J :=
+  Ambient.susceptibilityAlongExhaustion_hasDerivAt_J_gen
+    (IsingModel.latticeGraph d) Λ J h β i n
+
+/-- **ℤ^d along-ex: `susceptibilityAlongExhaustion` HasDerivAt in h**. -/
+theorem susceptibilityAlongExhaustion_latticeGraph_hasDerivAt_field
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
+      (Λ.volume n)).edgeSet]
+    (J h β : ℝ) (i : Fin d → ℤ) (n : ℕ) :
+    ∃ c : ℝ, HasDerivAt (fun h' =>
+        Ambient.susceptibilityAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, h', β⟩ : IsingParams ℝ) i n) c h :=
+  Ambient.susceptibilityAlongExhaustion_hasDerivAt_field_gen
+    (IsingModel.latticeGraph d) Λ J h β i n
+
+
+
+end Ambient
+
+end IsingModel
