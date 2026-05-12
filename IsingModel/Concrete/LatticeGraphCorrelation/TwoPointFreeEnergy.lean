@@ -37,95 +37,15 @@ convergence wrappers (`J_zero_tendsto_of_hcard_add`,
 The legacy import path is preserved by re-importing the new child.
 -/
 
-/-- **ℤ^d freeEnergyInfinite at β=0 under eventually-nonempty** (any-Exhaustion):
-`= log 2`. -/
-theorem freeEnergyInfinite_latticeGraph_beta_zero_of_eventually_nonempty
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    (J h : ℝ)
-    (hne : ∀ᶠ n in Filter.atTop, (Λ.volume n).Nonempty) :
-    freeEnergyInfinite (IsingModel.latticeGraph d) Λ
-        (⟨J, h, 0⟩ : IsingParams ℝ)
-      = Real.log 2 :=
-  freeEnergyInfinite_beta_zero_of_eventually_nonempty
-    (IsingModel.latticeGraph d) Λ J h hne
+/-! ## Moved: ℤ^d freeEnergyInfinite trivial-slice wrappers
 
-/-- **ℤ^d freeEnergyInfinite at J=h=0 under eventually-nonempty** (any-Exhaustion):
-`= log 2`. -/
-theorem freeEnergyInfinite_latticeGraph_zero_params_of_eventually_nonempty
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    (β : ℝ)
-    (hne : ∀ᶠ n in Filter.atTop, (Λ.volume n).Nonempty) :
-    freeEnergyInfinite (IsingModel.latticeGraph d) Λ
-        (⟨0, 0, β⟩ : IsingParams ℝ)
-      = Real.log 2 :=
-  freeEnergyInfinite_zero_params_of_eventually_nonempty
-    (IsingModel.latticeGraph d) Λ β hne
+The 9 ℤ^d `freeEnergyInfinite_latticeGraph_{beta_zero,zero_params,J_zero}_*`
+trivial-slice wrappers (3 `_of_eventually_nonempty` + 3 unconditional +
+3 `cubicExhaustion_*`) now live in
+`IsingModel.Concrete.LatticeGraphCorrelation.TwoPointFreeEnergyInfTrivialSlices`.
+The legacy import path is preserved by re-importing the new child.
+-/
 
-/-- **ℤ^d freeEnergyInfinite at J=0 under eventually-nonempty** (any-Exhaustion):
-`= log(2·cosh(β·h))`. -/
-theorem freeEnergyInfinite_latticeGraph_J_zero_of_eventually_nonempty
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    (h β : ℝ)
-    (hne : ∀ᶠ n in Filter.atTop, (Λ.volume n).Nonempty) :
-    freeEnergyInfinite (IsingModel.latticeGraph d) Λ
-        (⟨0, h, β⟩ : IsingParams ℝ)
-      = Real.log (2 * Real.cosh (β * h)) :=
-  freeEnergyInfinite_J_zero_of_eventually_nonempty
-    (IsingModel.latticeGraph d) Λ h β hne
-
-/-- **ℤ^d freeEnergyInfinite at β = 0** (any-Exhaustion): `= log 2`. -/
-theorem freeEnergyInfinite_latticeGraph_beta_zero
-    (d : ℕ) [Nonempty (Fin d → ℤ)]
-    (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J h : ℝ) :
-    freeEnergyInfinite (IsingModel.latticeGraph d) Λ
-        (⟨J, h, 0⟩ : IsingParams ℝ)
-      = Real.log 2 :=
-  freeEnergyInfinite_beta_zero_of_nonempty (IsingModel.latticeGraph d) Λ J h
-
-/-- **ℤ^d freeEnergyInfinite at J = h = 0** (any-Exhaustion): `= log 2`. -/
-theorem freeEnergyInfinite_latticeGraph_zero_params
-    (d : ℕ) [Nonempty (Fin d → ℤ)]
-    (Λ : Ambient.Exhaustion (Fin d → ℤ)) (β : ℝ) :
-    freeEnergyInfinite (IsingModel.latticeGraph d) Λ
-        (⟨0, 0, β⟩ : IsingParams ℝ)
-      = Real.log 2 :=
-  freeEnergyInfinite_zero_params_of_nonempty (IsingModel.latticeGraph d) Λ β
-
-/-- **ℤ^d freeEnergyInfinite at J = 0** (any-Exhaustion): `= log(2 cosh(β·h))`. -/
-theorem freeEnergyInfinite_latticeGraph_J_zero
-    (d : ℕ) [Nonempty (Fin d → ℤ)]
-    (Λ : Ambient.Exhaustion (Fin d → ℤ)) (h β : ℝ) :
-    freeEnergyInfinite (IsingModel.latticeGraph d) Λ
-        (⟨0, h, β⟩ : IsingParams ℝ)
-      = Real.log (2 * Real.cosh (β * h)) :=
-  freeEnergyInfinite_J_zero_of_nonempty (IsingModel.latticeGraph d) Λ h β
-
-/-- **ℤ^d freeEnergyInfinite at β = 0**: `= log 2`. -/
-theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_beta_zero
-    (d : ℕ) [Nonempty (Fin d → ℤ)] (J h : ℝ) :
-    freeEnergyInfinite (IsingModel.latticeGraph d)
-        (Ambient.cubicExhaustion d) (⟨J, h, 0⟩ : IsingParams ℝ)
-      = Real.log 2 :=
-  freeEnergyInfinite_beta_zero_of_nonempty (IsingModel.latticeGraph d)
-    (Ambient.cubicExhaustion d) J h
-
-/-- **ℤ^d freeEnergyInfinite at J = h = 0**: `= log 2`. -/
-theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_zero_params
-    (d : ℕ) [Nonempty (Fin d → ℤ)] (β : ℝ) :
-    freeEnergyInfinite (IsingModel.latticeGraph d)
-        (Ambient.cubicExhaustion d) (⟨0, 0, β⟩ : IsingParams ℝ)
-      = Real.log 2 :=
-  freeEnergyInfinite_zero_params_of_nonempty (IsingModel.latticeGraph d)
-    (Ambient.cubicExhaustion d) β
-
-/-- **ℤ^d freeEnergyInfinite at J = 0**: `= log(2 cosh(β·h))`. -/
-theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_J_zero
-    (d : ℕ) [Nonempty (Fin d → ℤ)] (h β : ℝ) :
-    freeEnergyInfinite (IsingModel.latticeGraph d)
-        (Ambient.cubicExhaustion d) (⟨0, h, β⟩ : IsingParams ℝ)
-      = Real.log (2 * Real.cosh (β * h)) :=
-  freeEnergyInfinite_J_zero_of_nonempty (IsingModel.latticeGraph d)
-    (Ambient.cubicExhaustion d) h β
 
 /-- **Sharp lower bound** `freeEnergyInfinite ≥ log(2 cosh(βh))` on ℤ^d. -/
 theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_ge_log_two_cosh
