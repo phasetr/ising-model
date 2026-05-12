@@ -6,20 +6,20 @@ import IsingModel.AmbientComplexAnalyticity
 # Concrete real-complex compatibility / Lee-Yang domain wrappers
 
 Narrow child module for concrete real-complex compatibility,
-Lee-Yang-domain non-vanishing, and related restriction wrappers on
-`latticeGraph d`. 22 theorems including
+Lee-Yang-domain non-vanishing, and analyticity restriction wrappers on
+`latticeGraph d`. Twelve theorems remain here including
 `partitionFunction_ofReal_eq_partitionFunctionComplex_latticeGraph`,
 `partitionFunctionComplex_mem_slitPlane_of_real_latticeGraph`,
 `freeEnergy_ofReal_eq_freeEnergyComplex_latticeGraph`,
 `partitionFunctionComplex_eq_normalization_mul_isingEdgePoly_latticeGraph`,
 `partitionFunctionComplex_ne_zero_on_leeYangDomain_latticeGraph`,
-`partitionFunctionComplex_re_pos_of_leeYangSubdomain_latticeGraph`,
-`freeEnergyComplex_analyticAt_h_of_leeYangSubdomain_latticeGraph`,
-`partitionFunctionComplex_at_real_pos_latticeGraph`,
-`freeEnergyComplex_at_real_latticeGraph`,
-`norm_partitionFunctionComplex_at_real_latticeGraph`, and related
-real-axis restriction lemmas. The theorem names are unchanged from the
-former `Complex` declarations.
+`partitionFunctionComplex_re_pos_of_leeYangSubdomain_latticeGraph`, and
+`freeEnergyComplex_analyticAt_h_of_leeYangSubdomain_latticeGraph`. The
+ten `*_at_real_latticeGraph` real-axis evaluation wrappers
+(`partitionFunctionComplex_at_real_pos`, `freeEnergyComplex_at_real`,
+`norm_partitionFunctionComplex_at_real`, etc.) were carved out into
+`ComplexRealCompatAtReal.lean` in PR #2121. Theorem names are
+unchanged from the former `Complex` declarations.
 -/
 
 namespace IsingModel
