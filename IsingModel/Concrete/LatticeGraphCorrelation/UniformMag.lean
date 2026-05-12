@@ -162,7 +162,7 @@ theorem truncated2TwoPoint_beta_zero
   ring
 /-! ## Moved: truncated2TwoPoint bounds + correlation/magnetizationInfinite monotonicity
 
-The 22 ℤ^d `truncated2TwoPoint_*` bounds + trivial slices,
+The 23 ℤ^d `truncated2TwoPoint_*` bounds + trivial slices,
 `spontaneousMagnetization_latticeGraph_indep_exhaustion`,
 `correlationInfinite_latticeGraph_*` trivial-slice + J/h/β monotone,
 `magnetizationInfinite_latticeGraph_*` bound + J/h/β monotone,
