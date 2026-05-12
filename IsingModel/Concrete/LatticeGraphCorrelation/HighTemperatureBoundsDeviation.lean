@@ -21,67 +21,14 @@ namespace Ambient
 open scoped symmDiff
 
 
-/-- **ℤ^d Λ sharper f deviation bound**. -/
-theorem freeEnergyΛ_latticeGraph_high_temp_h_zero_deviation_bound_exp
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
-    (hβJ : 0 ≤ β * J) (hne : 0 < Λ.card) :
-    freeEnergyΛ (IsingModel.latticeGraph d) Λ
-        (⟨J, 0, β⟩ : IsingParams ℝ) - Real.log 2
-      ≤ β * J *
-          (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card /
-            Λ.card :=
-  freeEnergyΛ_high_temp_h_zero_deviation_bound_exp
-    (IsingModel.latticeGraph d) Λ J β hβJ hne
+/-! ## Moved: ℤ^d HT Λ-layer deviation_bound + continuity wrappers
 
-/-- **ℤ^d Λ ferromagnetic f deviation bound**. -/
-theorem freeEnergyΛ_latticeGraph_high_temp_h_zero_deviation_bound_exp_ferromagnetic
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
-    (hJ : 0 ≤ J) (hβ : 0 < β) (hne : 0 < Λ.card) :
-    freeEnergyΛ (IsingModel.latticeGraph d) Λ
-        (⟨J, 0, β⟩ : IsingParams ℝ) - Real.log 2
-      ≤ β * J *
-          (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card /
-            Λ.card :=
-  freeEnergyΛ_high_temp_h_zero_deviation_bound_exp_ferromagnetic
-    (IsingModel.latticeGraph d) Λ J β hJ hβ hne
-
-/-- **ℤ^d Λ f continuity at trivial slices**. -/
-theorem freeEnergyΛ_latticeGraph_high_temp_h_zero_continuity_bundle
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
-    (hβJ : 0 ≤ β * J) (hne : 0 < Λ.card) :
-    |freeEnergyΛ (IsingModel.latticeGraph d) Λ (⟨J, 0, β⟩ : IsingParams ℝ)
-        - freeEnergyΛ (IsingModel.latticeGraph d) Λ
-            (⟨0, 0, β⟩ : IsingParams ℝ)|
-        ≤ β * J *
-          (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card /
-            Λ.card ∧
-    |freeEnergyΛ (IsingModel.latticeGraph d) Λ (⟨J, 0, β⟩ : IsingParams ℝ)
-        - freeEnergyΛ (IsingModel.latticeGraph d) Λ
-            (⟨J, 0, 0⟩ : IsingParams ℝ)|
-        ≤ β * J *
-          (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card /
-            Λ.card :=
-  freeEnergyΛ_high_temp_h_zero_continuity_bundle
-    (IsingModel.latticeGraph d) Λ J β hβJ hne
-
-/-- **ℤ^d Λ ferromagnetic f continuity bundle**. -/
-theorem freeEnergyΛ_latticeGraph_high_temp_h_zero_continuity_bundle_ferromagnetic
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
-    (hJ : 0 ≤ J) (hβ : 0 < β) (hne : 0 < Λ.card) :
-    |freeEnergyΛ (IsingModel.latticeGraph d) Λ (⟨J, 0, β⟩ : IsingParams ℝ)
-        - freeEnergyΛ (IsingModel.latticeGraph d) Λ
-            (⟨0, 0, β⟩ : IsingParams ℝ)|
-        ≤ β * J *
-          (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card /
-            Λ.card ∧
-    |freeEnergyΛ (IsingModel.latticeGraph d) Λ (⟨J, 0, β⟩ : IsingParams ℝ)
-        - freeEnergyΛ (IsingModel.latticeGraph d) Λ
-            (⟨J, 0, 0⟩ : IsingParams ℝ)|
-        ≤ β * J *
-          (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card /
-            Λ.card :=
-  freeEnergyΛ_high_temp_h_zero_continuity_bundle_ferromagnetic
-    (IsingModel.latticeGraph d) Λ J β hJ hβ hne
+The 4 ℤ^d Λ-layer `freeEnergyΛ_latticeGraph_high_temp_h_zero_*`
+wrappers (`deviation_bound_exp`, `deviation_bound_exp_ferromagnetic`,
+`continuity_bundle`, `continuity_bundle_ferromagnetic`) now live in
+`IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsDeviationContinuity`.
+The legacy import path is preserved by re-importing the new child.
+-/
 
 /-- **ℤ^d Λ f deviation sandwich**. -/
 theorem freeEnergyΛ_latticeGraph_high_temp_h_zero_deviation_sandwich
