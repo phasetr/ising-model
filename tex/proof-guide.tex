@@ -5775,8 +5775,17 @@ $\mathrm{one\_le\_sum\_pow\_tanh\_even\_subgraph\_alongExhaustion}$
 helper) out of \texttt{AmbientLattice/SpecialCases/HighTemperatureBounds.lean}
 into a new child module
 \texttt{HighTemperatureBoundsExpansion.lean} (under
-\texttt{AmbientLattice/SpecialCases/}). The legacy import path is
-preserved.
+\texttt{AmbientLattice/SpecialCases/}). PR~\#2020 subsequently
+narrows the 8 closed-form / sandwich / complete-summary wrappers
+(\texttt{partitionFunctionAlongExhaustion\_*\_closed\_at\_J\_zero},
+\texttt{\_closed\_at\_beta\_zero}, redundant \texttt{\_closed},
+\texttt{correlationAlongExhaustion\_*\_nonneg}, \texttt{\_closed},
+\texttt{partitionFunctionAlongExhaustion\_*\_sandwich},
+\texttt{partitionFunctionAlongExhaustion\_*\_complete\_summary},
+\texttt{freeEnergyAlongExhaustion\_*\_complete\_summary}) out of
+that child into a separate
+\texttt{HighTemperatureBoundsExpansionClosedForms.lean} under the
+same directory. The legacy import path is preserved.
 
 PR~\#1942 further splits the concrete §18.3--§18.4
 $\mathrm{freeEnergyInfinite}$ high-temperature wrappers on

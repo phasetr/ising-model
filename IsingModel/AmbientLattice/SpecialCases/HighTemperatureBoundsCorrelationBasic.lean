@@ -6,6 +6,7 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviation
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioBounds
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsTripleRatio
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFe
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansionClosedForms
 
 /-!
 # Ambient alongExhaustion correlation basic + bundle wrappers at h = 0
