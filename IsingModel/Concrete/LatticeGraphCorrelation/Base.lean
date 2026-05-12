@@ -56,27 +56,15 @@ theorem correlationΛ_latticeGraph_nonneg
     0 ≤ correlationΛ (IsingModel.latticeGraph d) Λ p A :=
   correlationΛ_nonneg (IsingModel.latticeGraph d) Λ p hf A
 
-/-- **ℤ^d freeEnergyAlongExhaustion_apply unfolding**. -/
-@[simp]
-theorem freeEnergyAlongExhaustion_latticeGraph_apply
-    (d : ℕ) (p : IsingParams ℝ) (n : ℕ) :
-    freeEnergyAlongExhaustion (IsingModel.latticeGraph d)
-        (Ambient.cubicExhaustion d) p n
-      = freeEnergyΛ (IsingModel.latticeGraph d)
-        ((Ambient.cubicExhaustion d).volume n) p :=
-  freeEnergyAlongExhaustion_apply (IsingModel.latticeGraph d)
-    (Ambient.cubicExhaustion d) p n
+/-! ## Moved: AlongExhaustion apply unfoldings
 
-/-- **ℤ^d partitionFunctionAlongExhaustion_apply unfolding**. -/
-@[simp]
-theorem partitionFunctionAlongExhaustion_latticeGraph_apply
-    (d : ℕ) (p : IsingParams ℝ) (n : ℕ) :
-    partitionFunctionAlongExhaustion (IsingModel.latticeGraph d)
-        (Ambient.cubicExhaustion d) p n
-      = partitionFunctionΛ (IsingModel.latticeGraph d)
-        ((Ambient.cubicExhaustion d).volume n) p :=
-  partitionFunctionAlongExhaustion_apply (IsingModel.latticeGraph d)
-    (Ambient.cubicExhaustion d) p n
+The 2 `@[simp]` ℤ^d `freeEnergyAlongExhaustion_latticeGraph_apply` and
+`partitionFunctionAlongExhaustion_latticeGraph_apply` wrappers now live
+alongside the Λ-layer apply unfoldings in
+`IsingModel.Concrete.LatticeGraphCorrelation.BaseApply`.
+The legacy import path is preserved by re-importing the new child.
+-/
+
 
 /-- **ℤ^d freeEnergyAlongExhaustion = log Z / |Λ|** (log-bridge). -/
 theorem freeEnergyAlongExhaustion_latticeGraph_cubicExhaustion_eq_log_div_card
@@ -148,30 +136,15 @@ The legacy import path is preserved by re-importing the new child.
 -/
 
 
-/-- **ℤ^d `partitionFunctionΛ_apply`** unfolding. -/
-theorem partitionFunctionΛ_latticeGraph_apply
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ) :
-    partitionFunctionΛ (IsingModel.latticeGraph d) Λ p
-      = IsingModel.partitionFunction
-          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p :=
-  partitionFunctionΛ_apply (IsingModel.latticeGraph d) Λ p
+/-! ## Moved: Λ-layer apply unfoldings
 
-/-- **ℤ^d `correlationΛ_apply`** unfolding. -/
-theorem correlationΛ_latticeGraph_apply
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ)
-    (A : Finset (↑Λ : Type _)) :
-    correlationΛ (IsingModel.latticeGraph d) Λ p A
-      = IsingModel.correlation
-          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p A :=
-  correlationΛ_apply (IsingModel.latticeGraph d) Λ p A
+The 3 ℤ^d `partitionFunctionΛ_latticeGraph_apply`,
+`correlationΛ_latticeGraph_apply`, and `freeEnergyΛ_latticeGraph_apply`
+wrappers now live in
+`IsingModel.Concrete.LatticeGraphCorrelation.BaseApply`.
+The legacy import path is preserved by re-importing the new child.
+-/
 
-/-- **ℤ^d `freeEnergyΛ_apply`** unfolding. -/
-theorem freeEnergyΛ_latticeGraph_apply
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ) :
-    freeEnergyΛ (IsingModel.latticeGraph d) Λ p
-      = IsingModel.freeEnergy
-          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p :=
-  freeEnergyΛ_apply (IsingModel.latticeGraph d) Λ p
 
 /-! ## Moved: magnetization* / spontaneousCorrelation monotone_ambient_subgraph wrappers
 
