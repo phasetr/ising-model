@@ -12,6 +12,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.ComplexIsingPoly
 import IsingModel.Concrete.LatticeGraphCorrelation.PerStage
 import IsingModel.Concrete.LatticeGraphCorrelation.Magnetization
 import IsingModel.Concrete.LatticeGraphCorrelation.MagnetizationGksFkg
+import IsingModel.Concrete.LatticeGraphCorrelation.MagnetizationSusceptibility
 import IsingModel.Concrete.LatticeGraphCorrelation.TwoPoint
 import IsingModel.Concrete.LatticeGraphCorrelation.Translation
 import IsingModel.Concrete.LatticeGraphCorrelation.InfiniteVolumeCorrelationInequalities
