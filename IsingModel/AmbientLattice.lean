@@ -12,6 +12,7 @@ import IsingModel.AmbientLattice.SpecialCases
 import IsingModel.AmbientLattice.BetaDerivative
 import IsingModel.AmbientLattice.BetaDerivativeFieldJ
 import IsingModel.AmbientLattice.BetaDerivativeMagnetization
+import IsingModel.AmbientLattice.BetaDerivativePartitionSusc
 import IsingModel.AmbientLattice.JDerivative
 import IsingModel.AmbientLattice.FieldDerivative
 import IsingModel.AmbientLattice.Analyticity
