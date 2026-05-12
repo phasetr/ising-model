@@ -5704,11 +5704,14 @@ lifted to every volume layer:
     \texttt{polymerFreeEnergyAlongExhaustion\_\{,tanh\_\}\{high\_temp\_sandwich,hasSum\_via\_log\_of\_pow\_lt\_two\}}
     (4 theorems, per stage $n$) in
     \texttt{AmbientLattice/SpecialCases/HighTemperature.lean}.
-  \item \emph{$\mathbb{Z}^d$ concrete wraps}: 8 theorems in
-    \texttt{Concrete/LatticeGraphCorrelation/HighTemperature.lean}, covering both
+  \item \emph{$\mathbb{Z}^d$ concrete wraps}: 8 theorems split across
     the $\Lambda$-direct family on $\Lambda \subseteq \mathbb{Z}^d$
-    and the along-exhaustion family on
-    $\mathrm{Exhaustion}\,(\mathrm{Fin}\,d \to \mathbb{Z})$.
+    in
+    \texttt{Concrete/LatticeGraphCorrelation/HighTemperature.lean} and
+    the along-exhaustion family on
+    $\mathrm{Exhaustion}\,(\mathrm{Fin}\,d \to \mathbb{Z})$ in
+    \texttt{Concrete/LatticeGraphCorrelation/HighTemperatureAlongEx.lean}
+    (carved out of \texttt{Concrete/.../HighTemperature.lean} in PR~\#2102).
 \end{itemize}
 The convergence-radius condition $(1+t)^{|E|} < 2$ is exponentially
 restrictive in $|E|$; sharper polymer-density / Kotecky--Preiss
