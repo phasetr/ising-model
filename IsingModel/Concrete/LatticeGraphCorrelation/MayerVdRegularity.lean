@@ -146,7 +146,7 @@ theorem mayerExpansionTermAlongExhaustion_latticeGraph_differentiable
 
 /-! ## Moved: ℤ^d Mayer tanh-variant regularity wrappers
 
-The 14 ℤ^d `mayerPartialSum_Λ_latticeGraph_tanh_*`,
+The 16 ℤ^d `mayerPartialSum_Λ_latticeGraph_tanh_*`,
 `mayerPartialSumAlongExhaustion_latticeGraph_tanh_*`,
 `mayerExpansionTerm_Λ_latticeGraph_tanh_*`, and
 `mayerExpansionTermAlongExhaustion_latticeGraph_tanh_*` wrappers

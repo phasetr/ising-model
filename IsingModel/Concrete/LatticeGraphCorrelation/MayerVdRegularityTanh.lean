@@ -4,7 +4,7 @@ import IsingModel.AmbientLattice.SpecialCases.MayerVdRegularity
 /-!
 # Concrete Mayer tanh-variant regularity wrappers
 
-Narrow child module for the 14 ℤ^d Mayer tanh-variant wrappers
+Narrow child module for the 16 ℤ^d Mayer tanh-variant wrappers
 (`mayerPartialSum_Λ_latticeGraph_tanh_*`,
 `mayerPartialSumAlongExhaustion_latticeGraph_tanh_*`,
 `mayerExpansionTerm_Λ_latticeGraph_tanh_*`,
