@@ -85,6 +85,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.UniformMag
 import IsingModel.Concrete.LatticeGraphCorrelation.Base
 import IsingModel.Concrete.LatticeGraphCorrelation.BaseBoundsTanh
 import IsingModel.Concrete.LatticeGraphCorrelation.BaseCorrelationAlongEx
+import IsingModel.Concrete.LatticeGraphCorrelation.BaseVanish
 import IsingModel.Concrete.LatticeGraphCorrelation.BaseMonotoneAmbientSubgraph
 import IsingModel.Concrete.LatticeGraphCorrelation.BaseSpontaneousCorrelation
 import IsingModel.Concrete.LatticeGraphCorrelation.FiniteVolumeBasics
