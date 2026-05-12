@@ -134,73 +134,18 @@ The 10 ℤ^d `uniformSpontaneousMagnetization*` wrappers
 The legacy import path is preserved by re-importing the new child.
 -/
 
-/-- **ℤ^d `spontaneousCorrelation` apply** (any-Exhaustion):
-`spontaneousCorrelation = ⨅ h ∈ Ioi 0, correlationInfinite ⟨J, h, β⟩ A`. -/
-theorem spontaneousCorrelation_latticeGraph_apply
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    (J β : ℝ) (A : Finset (Fin d → ℤ)) :
-    spontaneousCorrelation (IsingModel.latticeGraph d) Λ J β A
-      = ⨅ h : ↥(Set.Ioi (0 : ℝ)),
-          correlationInfinite (IsingModel.latticeGraph d) Λ ⟨J, h.val, β⟩ A :=
-  spontaneousCorrelation_apply (IsingModel.latticeGraph d) Λ J β A
+/-! ## Moved: ℤ^d `spontaneousCorrelation`/`spontaneousMagnetization_latticeGraph` wrappers
 
-/-- **ℤ^d `spontaneousMagnetization` apply** (any-Exhaustion):
-singleton specialization of `spontaneousCorrelation_apply`. -/
-theorem spontaneousMagnetization_latticeGraph_apply
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    (J β : ℝ) (i : Fin d → ℤ) :
-    spontaneousMagnetization (IsingModel.latticeGraph d) Λ J β i
-      = ⨅ h : ↥(Set.Ioi (0 : ℝ)),
-          magnetizationInfinite (IsingModel.latticeGraph d) Λ ⟨J, h.val, β⟩ i :=
-  spontaneousCorrelation_apply (IsingModel.latticeGraph d) Λ J β {i}
+The 8 ℤ^d wrappers `spontaneousCorrelation_latticeGraph_apply`,
+`spontaneousMagnetization_latticeGraph_apply`,
+`neg_one_le_spontaneousMagnetization_latticeGraph`,
+`abs_spontaneousMagnetization_latticeGraph_le_one`,
+`spontaneousMagnetization_latticeGraph_{nonneg,le_one,monotone_J,monotone_beta}`
+now live in
+`IsingModel.Concrete.LatticeGraphCorrelation.SiteIndepMagSpontaneous`.
+The legacy import path is preserved by re-importing the new child.
+-/
 
-/-- **ℤ^d `-1 ≤ spontaneousMagnetization`** (ferromagnetic). -/
-theorem neg_one_le_spontaneousMagnetization_latticeGraph
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) (i : Fin d → ℤ) :
-    -1 ≤ spontaneousMagnetization (IsingModel.latticeGraph d) Λ J β i :=
-  neg_one_le_spontaneousMagnetization (IsingModel.latticeGraph d) Λ hJ hβ i
-
-/-- **ℤ^d `|spontaneousMagnetization| ≤ 1`** (ferromagnetic). -/
-theorem abs_spontaneousMagnetization_latticeGraph_le_one
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) (i : Fin d → ℤ) :
-    |spontaneousMagnetization (IsingModel.latticeGraph d) Λ J β i| ≤ 1 :=
-  abs_spontaneousMagnetization_le_one (IsingModel.latticeGraph d) Λ hJ hβ i
-
-/-- **ℤ^d spontaneousMagnetization ≥ 0** (ferromagnetic). -/
-theorem spontaneousMagnetization_latticeGraph_nonneg
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) (i : Fin d → ℤ) :
-    0 ≤ spontaneousMagnetization (IsingModel.latticeGraph d) Λ J β i :=
-  spontaneousMagnetization_nonneg (IsingModel.latticeGraph d) Λ hJ hβ i
-
-/-- **ℤ^d spontaneousMagnetization ≤ 1** (ferromagnetic). -/
-theorem spontaneousMagnetization_latticeGraph_le_one
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) (i : Fin d → ℤ) :
-    spontaneousMagnetization (IsingModel.latticeGraph d) Λ J β i ≤ 1 :=
-  spontaneousMagnetization_le_one (IsingModel.latticeGraph d) Λ hJ hβ i
-
-/-- **ℤ^d J-direction monotonicity of `spontaneousMagnetization`**
-(ferromagnetic). -/
-theorem spontaneousMagnetization_latticeGraph_monotone_J
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    {β : ℝ} (hβ : 0 < β) (i : Fin d → ℤ) :
-    MonotoneOn
-      (fun J : ℝ => spontaneousMagnetization (IsingModel.latticeGraph d) Λ J β i)
-      (Set.Ici 0) :=
-  spontaneousMagnetization_monotone_J (IsingModel.latticeGraph d) Λ hβ i
-
-/-- **ℤ^d β-direction monotonicity of `spontaneousMagnetization`**
-(ferromagnetic). -/
-theorem spontaneousMagnetization_latticeGraph_monotone_beta
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    {J : ℝ} (hJ : 0 ≤ J) (i : Fin d → ℤ) :
-    MonotoneOn
-      (fun β : ℝ => spontaneousMagnetization (IsingModel.latticeGraph d) Λ J β i)
-      (Set.Ioi 0) :=
-  spontaneousMagnetization_monotone_beta (IsingModel.latticeGraph d) Λ hJ i
 
 /-- **`uniformMagnetization` at `β = 0`**:
 `uniformMagnetization d ⟨J, h, 0⟩ = 0`.
