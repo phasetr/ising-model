@@ -3,6 +3,7 @@ import IsingModel.Concrete.IntLattice
 import IsingModel.Concrete.LatticeGraphCorrelation.Complex
 import IsingModel.Concrete.LatticeGraphCorrelation.ComplexAnalyticityBasic
 import IsingModel.Concrete.LatticeGraphCorrelation.ComplexRealCompat
+import IsingModel.Concrete.LatticeGraphCorrelation.ComplexRealCompatAtReal
 import IsingModel.Concrete.LatticeGraphCorrelation.ComplexContinuityNorm
 import IsingModel.Concrete.LatticeGraphCorrelation.ComplexBranches
 import IsingModel.Concrete.LatticeGraphCorrelation.ComplexSlitPlane
