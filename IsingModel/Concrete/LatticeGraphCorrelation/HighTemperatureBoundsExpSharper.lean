@@ -112,72 +112,16 @@ theorem freeEnergyΛ_latticeGraph_high_temp_h_zero_upper_bound_exp_ferromagnetic
   freeEnergyΛ_high_temp_h_zero_upper_bound_exp_ferromagnetic
     (IsingModel.latticeGraph d) Λ J β hJ hβ hne
 
-/-- **ℤ^d Λ sharper Z high-temp sandwich**. -/
-theorem partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_sandwich_exp
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ) (hβJ : 0 ≤ β * J) :
-    (2 : ℝ) ^ Λ.card *
-        Real.cosh (β * J) ^
-          (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card
-      ≤ partitionFunctionΛ (IsingModel.latticeGraph d) Λ
-          (⟨J, 0, β⟩ : IsingParams ℝ) ∧
-    partitionFunctionΛ (IsingModel.latticeGraph d) Λ
-        (⟨J, 0, β⟩ : IsingParams ℝ)
-      ≤ (2 : ℝ) ^ Λ.card *
-          Real.exp (β * J *
-            (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card) :=
-  partitionFunctionΛ_high_temp_expansion_h_zero_sandwich_exp
-    (IsingModel.latticeGraph d) Λ J β hβJ
+/-! ## Moved: ℤ^d HT Λ-layer sandwich_exp wrappers
 
-/-- **ℤ^d Λ sharper f high-temp sandwich**. -/
-theorem freeEnergyΛ_latticeGraph_high_temp_h_zero_sandwich_exp
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
-    (hβJ : 0 ≤ β * J) (hne : 0 < Λ.card) :
-    Real.log 2 +
-        ((inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card : ℝ) /
-          Λ.card * Real.log (Real.cosh (β * J))
-      ≤ freeEnergyΛ (IsingModel.latticeGraph d) Λ
-          (⟨J, 0, β⟩ : IsingParams ℝ) ∧
-    freeEnergyΛ (IsingModel.latticeGraph d) Λ (⟨J, 0, β⟩ : IsingParams ℝ)
-      ≤ Real.log 2 +
-          β * J *
-            (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card /
-              Λ.card :=
-  freeEnergyΛ_high_temp_h_zero_sandwich_exp
-    (IsingModel.latticeGraph d) Λ J β hβJ hne
-
-/-- **ℤ^d Λ ferromagnetic Z sharper sandwich**. -/
-theorem partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_sandwich_exp_ferromagnetic
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
-    (hJ : 0 ≤ J) (hβ : 0 < β) :
-    (2 : ℝ) ^ Λ.card *
-        Real.cosh (β * J) ^
-          (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card
-      ≤ partitionFunctionΛ (IsingModel.latticeGraph d) Λ
-          (⟨J, 0, β⟩ : IsingParams ℝ) ∧
-    partitionFunctionΛ (IsingModel.latticeGraph d) Λ
-        (⟨J, 0, β⟩ : IsingParams ℝ)
-      ≤ (2 : ℝ) ^ Λ.card *
-          Real.exp (β * J *
-            (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card) :=
-  partitionFunctionΛ_high_temp_expansion_h_zero_sandwich_exp_ferromagnetic
-    (IsingModel.latticeGraph d) Λ J β hJ hβ
-
-/-- **ℤ^d Λ ferromagnetic f sharper sandwich**. -/
-theorem freeEnergyΛ_latticeGraph_high_temp_h_zero_sandwich_exp_ferromagnetic
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
-    (hJ : 0 ≤ J) (hβ : 0 < β) (hne : 0 < Λ.card) :
-    Real.log 2 +
-        ((inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card : ℝ) /
-          Λ.card * Real.log (Real.cosh (β * J))
-      ≤ freeEnergyΛ (IsingModel.latticeGraph d) Λ
-          (⟨J, 0, β⟩ : IsingParams ℝ) ∧
-    freeEnergyΛ (IsingModel.latticeGraph d) Λ (⟨J, 0, β⟩ : IsingParams ℝ)
-      ≤ Real.log 2 +
-          β * J *
-            (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card /
-              Λ.card :=
-  freeEnergyΛ_high_temp_h_zero_sandwich_exp_ferromagnetic
-    (IsingModel.latticeGraph d) Λ J β hJ hβ hne
+The 4 ℤ^d Λ-layer sandwich_exp HT wrappers
+(`partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_sandwich_exp`,
+`_ferromagnetic`,
+`freeEnergyΛ_latticeGraph_high_temp_h_zero_sandwich_exp`,
+`_ferromagnetic`) now live in
+`IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsExpSharperSandwich`.
+The legacy import path is preserved by re-importing the new child.
+-/
 
 /-- **ℤ^d Λ sharper f complete-summary exp bundle**. -/
 theorem freeEnergyΛ_latticeGraph_high_temp_h_zero_complete_summary_exp
