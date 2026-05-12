@@ -235,130 +235,15 @@ theorem freeEnergy_bot_latticeGraph
       = Real.log (2 * Real.cosh (p.β * p.h)) :=
   IsingModel.freeEnergy_bot p hne
 
-/-! ### ℤ^d `freeEnergyΛ` wrappers -/
+/-! ## Moved: ℤ^d `freeEnergyΛ` special-case wrappers
 
-/-- **ℤ^d freeEnergyΛ ≥ log(2 cosh βh)** (ferromagnetic, nonempty Λ). -/
-theorem freeEnergyΛ_latticeGraph_ge_log_two_cosh
-    (d : ℕ) {Λ : Finset (Fin d → ℤ)} (hne : Λ.Nonempty)
-    {J h β : ℝ} (hJ : 0 ≤ J) (hh : 0 ≤ h) (hβ : 0 < β) :
-    Real.log (2 * Real.cosh (β * h))
-      ≤ freeEnergyΛ (IsingModel.latticeGraph d) Λ
-          (⟨J, h, β⟩ : IsingParams ℝ) :=
-  freeEnergyΛ_ge_log_two_cosh (IsingModel.latticeGraph d) hne hJ hh hβ
-
-/-- **ℤ^d freeEnergyΛ ≥ log 2** (ferromagnetic, nonempty Λ). -/
-theorem freeEnergyΛ_latticeGraph_ge_log_two
-    (d : ℕ) {Λ : Finset (Fin d → ℤ)} (hne : Λ.Nonempty)
-    {J h β : ℝ} (hJ : 0 ≤ J) (hh : 0 ≤ h) (hβ : 0 < β) :
-    Real.log 2
-      ≤ freeEnergyΛ (IsingModel.latticeGraph d) Λ
-          (⟨J, h, β⟩ : IsingParams ℝ) :=
-  freeEnergyΛ_ge_log_two (IsingModel.latticeGraph d) hne hJ hh hβ
-
-/-- **ℤ^d freeEnergyΛ ≥ 0** (ferromagnetic, nonempty Λ). -/
-theorem freeEnergyΛ_latticeGraph_nonneg
-    (d : ℕ) {Λ : Finset (Fin d → ℤ)} (hne : Λ.Nonempty)
-    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
-    0 ≤ freeEnergyΛ (IsingModel.latticeGraph d) Λ p :=
-  freeEnergyΛ_nonneg_of_ferromagnetic (IsingModel.latticeGraph d) hne p hf
-
-/-- **ℤ^d freeEnergyΛ closed form at `J = 0`**:
-for nonempty `Λ` and any `h, β`,
-`freeEnergyΛ ⟨0, h, β⟩ = log(2·cosh(β·h))`. Concrete specialization of
-`freeEnergyΛ_J_zero`. -/
-theorem freeEnergyΛ_latticeGraph_J_zero
-    (d : ℕ) {Λ : Finset (Fin d → ℤ)} (hne : Λ.Nonempty) (h β : ℝ) :
-    freeEnergyΛ (IsingModel.latticeGraph d) Λ (⟨0, h, β⟩ : IsingParams ℝ)
-      = Real.log (2 * Real.cosh (β * h)) :=
-  freeEnergyΛ_J_zero (IsingModel.latticeGraph d) hne h β
-
-/-- **ℤ^d freeEnergyΛ closed form at `β = 0`**:
-for nonempty `Λ` and any `J, h`,
-`freeEnergyΛ ⟨J, h, 0⟩ = log 2`. Concrete specialization of
-`freeEnergyΛ_beta_zero`. -/
-theorem freeEnergyΛ_latticeGraph_beta_zero
-    (d : ℕ) {Λ : Finset (Fin d → ℤ)} (hne : Λ.Nonempty) (J h : ℝ) :
-    freeEnergyΛ (IsingModel.latticeGraph d) Λ (⟨J, h, 0⟩ : IsingParams ℝ)
-      = Real.log 2 :=
-  freeEnergyΛ_beta_zero (IsingModel.latticeGraph d) hne J h
-
-/-- **ℤ^d freeEnergyΛ closed form at `J = 0, h = 0`**:
-for nonempty `Λ` and any `β`,
-`freeEnergyΛ ⟨0, 0, β⟩ = log 2`. Concrete specialization of
-`freeEnergyΛ_zero_params`. -/
-theorem freeEnergyΛ_latticeGraph_zero_params
-    (d : ℕ) {Λ : Finset (Fin d → ℤ)} (hne : Λ.Nonempty) (β : ℝ) :
-    freeEnergyΛ (IsingModel.latticeGraph d) Λ (⟨0, 0, β⟩ : IsingParams ℝ)
-      = Real.log 2 :=
-  freeEnergyΛ_zero_params (IsingModel.latticeGraph d) hne β
-
-/-- **ℤ^d freeEnergyΛ h-evenness**:
-`freeEnergyΛ ⟨J,-h,β⟩ = freeEnergyΛ ⟨J,h,β⟩` on any ℤ^d-vertex Finset.
-Concrete specialization of `freeEnergyΛ_neg_h`. -/
-theorem freeEnergyΛ_latticeGraph_neg_h
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J h β : ℝ) :
-    freeEnergyΛ (IsingModel.latticeGraph d) Λ (⟨J, -h, β⟩ : IsingParams ℝ)
-      = freeEnergyΛ (IsingModel.latticeGraph d) Λ (⟨J, h, β⟩ : IsingParams ℝ) :=
-  freeEnergyΛ_neg_h (IsingModel.latticeGraph d) Λ J h β
-
-/-- **ℤ^d freeEnergyΛ `|h|`-rewrite**:
-`freeEnergyΛ ⟨J,h,β⟩ = freeEnergyΛ ⟨J,|h|,β⟩`. Concrete specialization of
-`freeEnergyΛ_eq_abs_h`. -/
-theorem freeEnergyΛ_latticeGraph_eq_abs_h
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J h β : ℝ) :
-    freeEnergyΛ (IsingModel.latticeGraph d) Λ (⟨J, h, β⟩ : IsingParams ℝ)
-      = freeEnergyΛ (IsingModel.latticeGraph d) Λ
-          (⟨J, |h|, β⟩ : IsingParams ℝ) :=
-  freeEnergyΛ_eq_abs_h (IsingModel.latticeGraph d) Λ J h β
-
-/-- **ℤ^d freeEnergyΛ ferromagnetic `|h|`-monotonicity**:
-for `J ≥ 0`, `β > 0` and `|h₁| ≤ |h₂|`,
-`freeEnergyΛ ⟨J, h₁, β⟩ ≤ freeEnergyΛ ⟨J, h₂, β⟩`. Concrete specialization
-of `freeEnergyΛ_monotone_abs_h`. -/
-theorem freeEnergyΛ_latticeGraph_monotone_abs_h
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β)
-    {h₁ h₂ : ℝ} (hh : |h₁| ≤ |h₂|) :
-    freeEnergyΛ (IsingModel.latticeGraph d) Λ (⟨J, h₁, β⟩ : IsingParams ℝ)
-      ≤ freeEnergyΛ (IsingModel.latticeGraph d) Λ
-          (⟨J, h₂, β⟩ : IsingParams ℝ) :=
-  freeEnergyΛ_monotone_abs_h (IsingModel.latticeGraph d) Λ J β hJ hβ hh
-
-/-- **ℤ^d freeEnergyΛ J-monotonicity**: for fixed `h ≥ 0`, `β > 0`,
-`freeEnergyΛ` is monotone in `J` on `[0, ∞)`. Concrete specialization
-of `freeEnergyΛ_monotone_J`. -/
-theorem freeEnergyΛ_latticeGraph_monotone_J
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    {h : ℝ} (hh : 0 ≤ h) {β : ℝ} (hβ : 0 < β) :
-    MonotoneOn
-      (fun J : ℝ => freeEnergyΛ (IsingModel.latticeGraph d) Λ
-        (⟨J, h, β⟩ : IsingParams ℝ))
-      (Set.Ici 0) :=
-  freeEnergyΛ_monotone_J (IsingModel.latticeGraph d) Λ hh hβ
-
-/-- **ℤ^d freeEnergyΛ h-monotonicity**: for fixed `J ≥ 0`, `β > 0`,
-`freeEnergyΛ` is monotone in `h` on `[0, ∞)`. Concrete specialization
-of `freeEnergyΛ_monotone_h`. -/
-theorem freeEnergyΛ_latticeGraph_monotone_h
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) :
-    MonotoneOn
-      (fun h : ℝ => freeEnergyΛ (IsingModel.latticeGraph d) Λ
-        (⟨J, h, β⟩ : IsingParams ℝ))
-      (Set.Ici 0) :=
-  freeEnergyΛ_monotone_h (IsingModel.latticeGraph d) Λ hJ hβ
-
-/-- **ℤ^d freeEnergyΛ β-monotonicity**: for fixed `J ≥ 0`, `h ≥ 0`,
-`freeEnergyΛ` is monotone in `β` on `(0, ∞)`. Concrete specialization
-of `freeEnergyΛ_monotone_beta`. -/
-theorem freeEnergyΛ_latticeGraph_monotone_beta
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    {J : ℝ} (hJ : 0 ≤ J) {h : ℝ} (hh : 0 ≤ h) :
-    MonotoneOn
-      (fun β : ℝ => freeEnergyΛ (IsingModel.latticeGraph d) Λ
-        (⟨J, h, β⟩ : IsingParams ℝ))
-      (Set.Ioi 0) :=
-  freeEnergyΛ_monotone_beta (IsingModel.latticeGraph d) Λ hJ hh
+The 13 ℤ^d `freeEnergyΛ_latticeGraph_*` wrappers
+(`ge_log_two_cosh`, `ge_log_two`, `nonneg`, `J_zero`, `beta_zero`,
+`zero_params`, `neg_h`, `eq_abs_h`, `monotone_abs_h`, `monotone_J`,
+`monotone_h`, `monotone_beta`) now live in
+`IsingModel.Concrete.LatticeGraphCorrelation.FreeEnergySpecialCasesLambda`.
+The legacy import path is preserved by re-importing the new child.
+-/
 
 /-! ### ℤ^d `freeEnergyAlongExhaustion` wrappers -/
 
