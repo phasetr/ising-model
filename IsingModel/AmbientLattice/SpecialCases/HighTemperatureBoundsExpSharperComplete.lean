@@ -1,0 +1,167 @@
+import IsingModel.AmbientLattice.SpecialCases.FreeEnergy
+import IsingModel.AmbientLattice.Analyticity
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansion
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharper
+
+/-!
+# Ambient alongExhaustion sharper-exp complete-summary wrappers at h = 0
+
+Narrow child module for 6 §18.3-§18.4 ambient alongExhaustion
+`complete_summary_exp` wrappers covering
+`freeEnergyAlongExhaustion`, `partitionFunctionAlongExhaustion`, and
+`log_partitionFunctionAlongExhaustion` complete-summary-exp bundles
+under `0 ≤ β·J` / `0 < |Λ_n|` with ferromagnetic variants under
+`0 ≤ J`, `0 < β`. Theorem names are unchanged from the former
+`HighTemperatureBoundsExpSharper` declarations.
+-/
+
+namespace IsingModel
+namespace Ambient
+
+open Finset Real
+open scoped symmDiff
+
+variable {V : Type*} [DecidableEq V]
+
+/-- **Along-ex sharper f complete-summary exp bundle at stage `n`**:
+under `0 ≤ β·J` and `0 < |Λ_n|`, single statement bundling sharper
+sandwich + trivial-slice values. -/
+theorem freeEnergyAlongExhaustion_high_temp_h_zero_complete_summary_exp
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (n : ℕ) (hne : (Λ.volume n).Nonempty) :
+    Real.log 2 +
+        ((inducedGraph G (Λ.volume n)).edgeFinset.card : ℝ) /
+          (Λ.volume n).card * Real.log (Real.cosh (β * J))
+      ≤ freeEnergyAlongExhaustion G Λ (⟨J, 0, β⟩ : IsingParams ℝ) n ∧
+    freeEnergyAlongExhaustion G Λ (⟨J, 0, β⟩ : IsingParams ℝ) n
+      ≤ Real.log 2 +
+          β * J * (inducedGraph G (Λ.volume n)).edgeFinset.card /
+            (Λ.volume n).card ∧
+    freeEnergyAlongExhaustion G Λ (⟨0, 0, β⟩ : IsingParams ℝ) n = Real.log 2 ∧
+    freeEnergyAlongExhaustion G Λ (⟨J, 0, 0⟩ : IsingParams ℝ) n = Real.log 2 := by
+  have hcard : 0 < (Λ.volume n).card := hne.card_pos
+  obtain ⟨h1, h2⟩ := freeEnergyAlongExhaustion_high_temp_h_zero_sandwich_exp
+    G Λ J β hβJ n hcard
+  refine ⟨h1, h2, ?_, ?_⟩
+  · exact freeEnergyAlongExhaustion_zero_params G Λ β n hne
+  · exact freeEnergyAlongExhaustion_beta_zero G Λ J 0 n hne
+
+/-- **Along-ex sharper Z complete-summary exp bundle at stage `n`**:
+under `0 ≤ β·J`, single statement bundling sharper sandwich +
+trivial-slice values. -/
+theorem partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_complete_summary_exp
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (n : ℕ) :
+    (2 : ℝ) ^ (Λ.volume n).card *
+        Real.cosh (β * J) ^ (inducedGraph G (Λ.volume n)).edgeFinset.card
+      ≤ partitionFunctionAlongExhaustion G Λ (⟨J, 0, β⟩ : IsingParams ℝ) n ∧
+    partitionFunctionAlongExhaustion G Λ (⟨J, 0, β⟩ : IsingParams ℝ) n
+      ≤ (2 : ℝ) ^ (Λ.volume n).card *
+          Real.exp (β * J * (inducedGraph G (Λ.volume n)).edgeFinset.card) ∧
+    partitionFunctionAlongExhaustion G Λ (⟨0, 0, β⟩ : IsingParams ℝ) n
+      = (2 : ℝ) ^ (Λ.volume n).card ∧
+    partitionFunctionAlongExhaustion G Λ (⟨J, 0, 0⟩ : IsingParams ℝ) n
+      = (2 : ℝ) ^ (Λ.volume n).card := by
+  obtain ⟨h1, h2⟩ :=
+    partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_sandwich_exp
+      G Λ J β hβJ n
+  exact ⟨h1, h2,
+    partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_closed_at_J_zero
+      G Λ β n,
+    partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_closed_at_beta_zero
+      G Λ J n⟩
+
+/-- **Along-ex sharper log Z complete-summary exp bundle at stage `n`**:
+under `0 ≤ β·J`, single statement bundling sharper sandwich +
+trivial-slice values. -/
+theorem log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_complete_summary_exp
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (n : ℕ) :
+    ((Λ.volume n).card : ℝ) * Real.log 2
+        + ((inducedGraph G (Λ.volume n)).edgeFinset.card : ℝ) *
+            Real.log (Real.cosh (β * J))
+      ≤ Real.log (partitionFunctionAlongExhaustion G Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) n) ∧
+    Real.log (partitionFunctionAlongExhaustion G Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) n)
+      ≤ ((Λ.volume n).card : ℝ) * Real.log 2
+        + β * J * (inducedGraph G (Λ.volume n)).edgeFinset.card ∧
+    Real.log (partitionFunctionAlongExhaustion G Λ
+        (⟨0, 0, β⟩ : IsingParams ℝ) n) = ((Λ.volume n).card : ℝ) * Real.log 2 ∧
+    Real.log (partitionFunctionAlongExhaustion G Λ
+        (⟨J, 0, 0⟩ : IsingParams ℝ) n) = ((Λ.volume n).card : ℝ) * Real.log 2 := by
+  change ((Λ.volume n).card : ℝ) * _ + _ * _ ≤
+      Real.log (partitionFunctionΛ G (Λ.volume n) (⟨J, 0, β⟩ : IsingParams ℝ)) ∧
+      Real.log (partitionFunctionΛ G (Λ.volume n) (⟨J, 0, β⟩ : IsingParams ℝ)) ≤ _
+        ∧ Real.log (partitionFunctionΛ G (Λ.volume n) (⟨0, 0, β⟩ : IsingParams ℝ)) = _
+        ∧ Real.log (partitionFunctionΛ G (Λ.volume n) (⟨J, 0, 0⟩ : IsingParams ℝ)) = _
+  exact log_partitionFunctionΛ_high_temp_expansion_h_zero_complete_summary_exp
+    G (Λ.volume n) J β hβJ
+
+/-- **Along-ex ferromagnetic Z complete-summary exp bundle at stage `n`**. -/
+theorem
+partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_complete_summary_exp_ferromagnetic
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ) :
+    (2 : ℝ) ^ (Λ.volume n).card *
+        Real.cosh (β * J) ^ (inducedGraph G (Λ.volume n)).edgeFinset.card
+      ≤ partitionFunctionAlongExhaustion G Λ (⟨J, 0, β⟩ : IsingParams ℝ) n ∧
+    partitionFunctionAlongExhaustion G Λ (⟨J, 0, β⟩ : IsingParams ℝ) n
+      ≤ (2 : ℝ) ^ (Λ.volume n).card *
+          Real.exp (β * J * (inducedGraph G (Λ.volume n)).edgeFinset.card) ∧
+    partitionFunctionAlongExhaustion G Λ (⟨0, 0, β⟩ : IsingParams ℝ) n
+      = (2 : ℝ) ^ (Λ.volume n).card ∧
+    partitionFunctionAlongExhaustion G Λ (⟨J, 0, 0⟩ : IsingParams ℝ) n
+      = (2 : ℝ) ^ (Λ.volume n).card :=
+  partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_complete_summary_exp
+    G Λ J β (mul_nonneg hβ.le hJ) n
+
+/-- **Along-ex ferromagnetic log Z complete-summary exp bundle at stage `n`**. -/
+theorem
+log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_complete_summary_exp_ferromagnetic
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ) :
+    ((Λ.volume n).card : ℝ) * Real.log 2
+        + ((inducedGraph G (Λ.volume n)).edgeFinset.card : ℝ) *
+            Real.log (Real.cosh (β * J))
+      ≤ Real.log (partitionFunctionAlongExhaustion G Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) n) ∧
+    Real.log (partitionFunctionAlongExhaustion G Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) n)
+      ≤ ((Λ.volume n).card : ℝ) * Real.log 2
+        + β * J * (inducedGraph G (Λ.volume n)).edgeFinset.card ∧
+    Real.log (partitionFunctionAlongExhaustion G Λ
+        (⟨0, 0, β⟩ : IsingParams ℝ) n) = ((Λ.volume n).card : ℝ) * Real.log 2 ∧
+    Real.log (partitionFunctionAlongExhaustion G Λ
+        (⟨J, 0, 0⟩ : IsingParams ℝ) n) = ((Λ.volume n).card : ℝ) * Real.log 2 :=
+  log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_complete_summary_exp
+    G Λ J β (mul_nonneg hβ.le hJ) n
+
+/-- **Along-ex ferromagnetic f complete-summary exp bundle at stage `n`**. -/
+theorem freeEnergyAlongExhaustion_high_temp_h_zero_complete_summary_exp_ferromagnetic
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ)
+    (hne : (Λ.volume n).Nonempty) :
+    Real.log 2 +
+        ((inducedGraph G (Λ.volume n)).edgeFinset.card : ℝ) /
+          (Λ.volume n).card * Real.log (Real.cosh (β * J))
+      ≤ freeEnergyAlongExhaustion G Λ (⟨J, 0, β⟩ : IsingParams ℝ) n ∧
+    freeEnergyAlongExhaustion G Λ (⟨J, 0, β⟩ : IsingParams ℝ) n
+      ≤ Real.log 2 +
+          β * J * (inducedGraph G (Λ.volume n)).edgeFinset.card /
+            (Λ.volume n).card ∧
+    freeEnergyAlongExhaustion G Λ (⟨0, 0, β⟩ : IsingParams ℝ) n = Real.log 2 ∧
+    freeEnergyAlongExhaustion G Λ (⟨J, 0, 0⟩ : IsingParams ℝ) n = Real.log 2 :=
+  freeEnergyAlongExhaustion_high_temp_h_zero_complete_summary_exp
+    G Λ J β (mul_nonneg hβ.le hJ) n hne
+
+
+end Ambient
+
+end IsingModel

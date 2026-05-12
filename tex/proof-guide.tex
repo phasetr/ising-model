@@ -5758,8 +5758,14 @@ plus ferromagnetic variants) out of
 \texttt{AmbientLattice/SpecialCases/HighTemperatureBounds.lean} into
 a new child module
 \texttt{HighTemperatureBoundsExpSharper.lean} (under
-\texttt{AmbientLattice/SpecialCases/}). The legacy import path is
-preserved.
+\texttt{AmbientLattice/SpecialCases/}). PR~\#2019 subsequently
+narrows the 6 \texttt{complete\_summary\_exp} wrappers
+(\texttt{freeEnergyAlongExhaustion},
+\texttt{partitionFunctionAlongExhaustion},
+\texttt{log\_partitionFunctionAlongExhaustion} with ferromagnetic
+variants) out of that child into a separate
+\texttt{HighTemperatureBoundsExpSharperComplete.lean} under the
+same directory. The legacy import path is preserved.
 
 PR~\#1943 further splits 20 ambient §18.3--§18.4 alongExhaustion
 partition function / free energy / log-partition / correlation
