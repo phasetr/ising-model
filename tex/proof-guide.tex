@@ -5894,7 +5894,10 @@ $\mathrm{log}\_\mathrm{partitionFunctionAlongExhaustion}\_\mathrm{latticeGraph}$
 plus ferromagnetic variants) out of
 \texttt{HighTemperatureBounds.lean} into a new child
 \texttt{Concrete/LatticeGraphCorrelation/HighTemperatureBoundsAlongExhaustionDeviation.lean}.
-The legacy import path is preserved.
+The legacy import path is preserved. PR~\#2084 further carves the four
+\texttt{deviation\_bound\_exp} and \texttt{continuity\_bundle} wrappers
+(each with a ferromagnetic variant) out into
+\texttt{Concrete/LatticeGraphCorrelation/HighTemperatureBoundsAlongExDeviationContinuity.lean}.
 
 PR~\#1939 further splits the concrete §18.3--§18.4 alongExhaustion
 sharper-exp upper-bound / sandwich / complete-summary wrappers at
