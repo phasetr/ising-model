@@ -83,65 +83,12 @@ The four wrappers
 `polymerFreeEnergy_Λ_latticeGraph_eq_mayerPartialSum_at_{zero,betaJ_zero,beta_zero,J_zero}`
 now live in `MayerEdgeCasesLambdaPolymer.lean`. -/
 
+/-! ## Moved: along-ex polymerFreeEnergy = mayerPartialSum edge cases
 
-/-- **ℤ^d along-ex: polymerFreeEnergy = mayerPartialSum at t = 0**. -/
-theorem
-polymerFreeEnergyAlongExhaustion_latticeGraph_eq_mayerPartialSum_at_zero
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet] (N : ℕ) (n : ℕ) :
-    IsingModel.polymerFreeEnergy
-        (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)) 0 =
-      IsingModel.mayerPartialSum
-        (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)) N 0 :=
-  Ambient.polymerFreeEnergyAlongExhaustion_eq_mayerPartialSum_at_zero
-    (IsingModel.latticeGraph d) Λ N n
+The four wrappers
+`polymerFreeEnergyAlongExhaustion_latticeGraph_eq_mayerPartialSum_at_{zero,betaJ_zero,beta_zero,J_zero}`
+now live in `MayerEdgeCasesAlongExPolymer.lean`. -/
 
-/-- **ℤ^d along-ex: polymerFreeEnergy = mayerPartialSum at β·J = 0**. -/
-theorem
-polymerFreeEnergyAlongExhaustion_latticeGraph_eq_mayerPartialSum_at_betaJ_zero
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet]
-    {β J : ℝ} (hβJ : β * J = 0) (N : ℕ) (n : ℕ) :
-    IsingModel.polymerFreeEnergy
-        (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
-        (Real.tanh (β * J)) =
-      IsingModel.mayerPartialSum
-        (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)) N
-        (Real.tanh (β * J)) :=
-  Ambient.polymerFreeEnergyAlongExhaustion_eq_mayerPartialSum_at_betaJ_zero
-    (IsingModel.latticeGraph d) Λ hβJ N n
-
-/-- **ℤ^d along-ex: polymerFreeEnergy = mayerPartialSum at β = 0**. -/
-theorem
-polymerFreeEnergyAlongExhaustion_latticeGraph_eq_mayerPartialSum_at_beta_zero
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet] (J : ℝ) (N : ℕ) (n : ℕ) :
-    IsingModel.polymerFreeEnergy
-        (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
-        (Real.tanh ((0 : ℝ) * J)) =
-      IsingModel.mayerPartialSum
-        (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)) N
-        (Real.tanh ((0 : ℝ) * J)) :=
-  Ambient.polymerFreeEnergyAlongExhaustion_eq_mayerPartialSum_at_beta_zero
-    (IsingModel.latticeGraph d) Λ J N n
-
-/-- **ℤ^d along-ex: polymerFreeEnergy = mayerPartialSum at J = 0**. -/
-theorem
-polymerFreeEnergyAlongExhaustion_latticeGraph_eq_mayerPartialSum_at_J_zero
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet] (β : ℝ) (N : ℕ) (n : ℕ) :
-    IsingModel.polymerFreeEnergy
-        (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
-        (Real.tanh (β * (0 : ℝ))) =
-      IsingModel.mayerPartialSum
-        (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)) N
-        (Real.tanh (β * (0 : ℝ))) :=
-  Ambient.polymerFreeEnergyAlongExhaustion_eq_mayerPartialSum_at_J_zero
-    (IsingModel.latticeGraph d) Λ β N n
 
 /-! ### §18.5 mayer_identity polymer_free_energy variants ℤ^d wraps -/
 
