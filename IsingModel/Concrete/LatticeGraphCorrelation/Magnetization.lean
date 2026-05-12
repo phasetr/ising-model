@@ -3,7 +3,7 @@ import IsingModel.PhaseTransition
 import IsingModel.Inequalities.FKG
 
 /-!
-# Magnetization, susceptibility, and FKG inequality at ℤ^d
+# Magnetization, susceptibility, and correlation forwarders at ℤ^d
 
 ℤ^d forwarders for:
 
@@ -12,9 +12,10 @@ import IsingModel.Inequalities.FKG
 2. **Susceptibility (GJ §5.3)** — `susceptibility_apply`, nonneg, trivial slices,
    and `{J,h,β} → ∞` subsequence convergence.
 3. **Site-level magnetization wrappers (GJ §5.3, pp. 77–80)** — bounds, vanishing
-   slices, monotonicity, `HasNonnegCorrelations` helpers.
-4. **GKS-I / GKS-II / FKG inequality (GJ §4.4)** — `gks_first`, `gks_second`,
-   `boltzmannWeight_log_supermodular`, `fkg_ising`.
+   slices, monotonicity.
+4. **Correlation forwarders (bounds, trivial slices, empty A)** — these stay
+   here; the `HasNonnegCorrelations` / GKS / FKG family moved to the narrow
+   child `MagnetizationGksFkg.lean` (PR #2003).
 
 ## References
 
