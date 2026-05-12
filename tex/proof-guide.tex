@@ -4819,7 +4819,14 @@ The bottom-graph ($\bot \le \mathrm{latticeGraph}\,d$) comparison
 wrappers and the matching
 \texttt{*\_latticeGraph\_monotone\_ambient\_subgraph} family now live in
 \path{IsingModel/Concrete/LatticeGraphCorrelation/TwoPointAmbientBot.lean}
-(narrowed out of \path{TwoPoint.lean} in PR~\#2009).
+(narrowed out of \path{TwoPoint.lean} in PR~\#2009). The 7
+$\mathbb{Z}^d$ $\mathrm{correlationInfinite\_latticeGraph\_*}$
+wrappers (\texttt{\_le\_one}, \texttt{\_nonneg},
+\texttt{\_indep\_exhaustion},
+\texttt{\_cubicExhaustion\_monotone\_h}, \texttt{\_beta}, \texttt{\_J},
+\texttt{\_gks\_second}) now live in
+\path{IsingModel/Concrete/LatticeGraphCorrelation/TwoPointCorrelationInfinite.lean}
+(narrowed out of \path{TwoPoint.lean} in PR~\#2025).
 The corresponding ambient along-exhaustion closed forms and h-symmetry wrappers
 remain in \path{IsingModel/AmbientLattice/SpecialCases/FreeEnergy.lean}.
 \par}
