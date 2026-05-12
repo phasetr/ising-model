@@ -86,6 +86,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.Base
 import IsingModel.Concrete.LatticeGraphCorrelation.BaseApply
 import IsingModel.Concrete.LatticeGraphCorrelation.BaseBoundsTanh
 import IsingModel.Concrete.LatticeGraphCorrelation.BaseCorrelationAlongEx
+import IsingModel.Concrete.LatticeGraphCorrelation.BaseCorrelationAlongExBounds
 import IsingModel.Concrete.LatticeGraphCorrelation.BaseVanish
 import IsingModel.Concrete.LatticeGraphCorrelation.BaseMonotoneAmbientSubgraph
 import IsingModel.Concrete.LatticeGraphCorrelation.BaseSpontaneousCorrelation
