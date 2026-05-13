@@ -84,41 +84,13 @@ theorem partitionFunctionComplex_analyticAt_beta_latticeGraph
   IsingModel.partitionFunctionComplex_analyticAt_beta
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h β₀
 
-/-- **ℤ^d `freeEnergyComplex` analytic in `h`** (Λ-induced), on
-`{Z ∈ slitPlane}`. -/
-theorem freeEnergyComplex_analyticAt_h_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β h₀ : ℂ)
-    (hZ : IsingModel.partitionFunctionComplex
-            (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h₀ β
-          ∈ Complex.slitPlane) :
-    AnalyticAt ℂ (fun h => IsingModel.freeEnergyComplex
-      (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h β) h₀ :=
-  IsingModel.freeEnergyComplex_analyticAt_h
-    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J β h₀ hZ
+/-! ## Moved: single-variable freeEnergyComplex wrappers
 
-/-- **ℤ^d `freeEnergyComplex` analytic in `J`** (Λ-induced), on
-`{Z ∈ slitPlane}`. -/
-theorem freeEnergyComplex_analyticAt_J_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (h β J₀ : ℂ)
-    (hZ : IsingModel.partitionFunctionComplex
-            (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J₀ h β
-          ∈ Complex.slitPlane) :
-    AnalyticAt ℂ (fun J => IsingModel.freeEnergyComplex
-      (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h β) J₀ :=
-  IsingModel.freeEnergyComplex_analyticAt_J
-    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) h β J₀ hZ
+The three single-variable
+`freeEnergyComplex_analyticAt_{h,J,beta}_latticeGraph` wrappers now live in
+`ComplexAnalyticityBasicFreeEnergySingle.lean`. -/
 
-/-- **ℤ^d `freeEnergyComplex` analytic in `β`** (Λ-induced), on
-`{Z ∈ slitPlane}`. -/
-theorem freeEnergyComplex_analyticAt_beta_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J h β₀ : ℂ)
-    (hZ : IsingModel.partitionFunctionComplex
-            (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h β₀
-          ∈ Complex.slitPlane) :
-    AnalyticAt ℂ (fun β => IsingModel.freeEnergyComplex
-      (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h β) β₀ :=
-  IsingModel.freeEnergyComplex_analyticAt_beta
-    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h β₀ hZ
+
 
 /-- **ℤ^d `partitionFunctionComplex` jointly entire in `(J, h, β)`**
 (Λ-induced). -/
