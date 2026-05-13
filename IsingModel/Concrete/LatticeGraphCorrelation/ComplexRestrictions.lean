@@ -121,35 +121,12 @@ theorem real_params_image_subset_analyticity_locus_joint_latticeGraph
   IsingModel.real_params_image_subset_analyticity_locus_joint
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
 
-/-- **ℤ^d `f_ℂ` `AnalyticAt` at real `h₀` (cast)** (Λ-induced). -/
-theorem freeEnergyComplex_analyticAt_h_real_coe_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ) (h₀ : ℝ) :
-    AnalyticAt ℂ
-      (fun h => IsingModel.freeEnergyComplex
-        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
-        (J : ℂ) h (β : ℂ)) (h₀ : ℂ) :=
-  IsingModel.freeEnergyComplex_analyticAt_h_real_coe
-    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J β h₀
+/-! ## Moved: freeEnergyComplex real-coe regularity wrappers
 
-/-- **ℤ^d `f_ℂ` `DifferentiableAt` at real `h₀` (cast)** (Λ-induced). -/
-theorem freeEnergyComplex_differentiableAt_h_real_coe_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ) (h₀ : ℝ) :
-    DifferentiableAt ℂ
-      (fun h => IsingModel.freeEnergyComplex
-        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
-        (J : ℂ) h (β : ℂ)) (h₀ : ℂ) :=
-  IsingModel.freeEnergyComplex_differentiableAt_h_real_coe
-    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J β h₀
+The three `freeEnergyComplex_{analyticAt,differentiableAt,continuousAt}_h_real_coe_latticeGraph`
+wrappers now live in `ComplexRestrictionsFreeEnergyRealCoe.lean`. -/
 
-/-- **ℤ^d `f_ℂ` `ContinuousAt` at real `h₀` (cast)** (Λ-induced). -/
-theorem freeEnergyComplex_continuousAt_h_real_coe_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ) (h₀ : ℝ) :
-    ContinuousAt
-      (fun h => IsingModel.freeEnergyComplex
-        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
-        (J : ℂ) h (β : ℂ)) (h₀ : ℂ) :=
-  IsingModel.freeEnergyComplex_continuousAt_h_real_coe
-    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J β h₀
+
 
 /-! ## Moved: restrict-real-axis wrappers
 
