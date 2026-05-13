@@ -347,8 +347,10 @@ lemma correlationInfinite_eq_zero_at_beta_zero
 
 The two wrappers
 `correlationInfinite_continuousOn_beta_of_high_temp_zero_closed`,
-`correlationInfinite_continuousOn_J_of_high_temp_zero_closed` now live
-in `LatticeMassHighTempZeroBoundaryContinuousOnClosed.lean`. -/
+`correlationInfinite_continuousOn_J_of_high_temp_zero_closed`,
+together with the helper lemma
+`correlationInfinite_eq_zero_at_J_zero`, now live in
+`LatticeMassHighTempZeroBoundaryContinuousOnClosed.lean`. -/
 
 
 /-! ## Moved: correlationAlongExhaustion uniform convergence on [0, b]
