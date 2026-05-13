@@ -1,5 +1,6 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempZeroBoundary
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempContinuousAt
+import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempZeroBoundaryContinuousOnClosed
 
 /-!
 # Continuity of corr_∞ on half-open `Ico 0 _c` high-temperature intervals at ℤ^d
