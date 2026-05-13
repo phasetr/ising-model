@@ -1,5 +1,6 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassTanhProfile
 import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassProductSum
+import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassNamedRatePos
 
 /-!
 # Cubic named-rate capstone wrappers
