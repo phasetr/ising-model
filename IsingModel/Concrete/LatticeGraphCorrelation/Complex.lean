@@ -5,6 +5,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.ComplexAnalyticityBasic
 import IsingModel.Concrete.LatticeGraphCorrelation.ComplexRealCompat
 import IsingModel.Concrete.LatticeGraphCorrelation.ComplexContinuityNorm
 import IsingModel.Concrete.LatticeGraphCorrelation.ComplexBranches
+import IsingModel.Concrete.LatticeGraphCorrelation.ComplexBranchesLogZ
 import IsingModel.Concrete.LatticeGraphCorrelation.ComplexSlitPlane
 import IsingModel.Concrete.LatticeGraphCorrelation.ComplexRestrictions
 import IsingModel.Concrete.LatticeGraphCorrelation.ComplexBranchEntire
