@@ -98,38 +98,13 @@ theorem partitionFunctionComplex_analyticOn_leeYangDomain_latticeGraph
   IsingModel.partitionFunctionComplex_analyticOn_leeYangDomain
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J β
 
-/-- **ℤ^d `freeEnergyComplex` `AnalyticOn` on `leeYangSubdomain`**
-(Λ-induced, ferromagnetic `β > 0`). -/
-theorem freeEnergyComplex_analyticOn_leeYangSubdomain_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    {β : ℝ} (hβ : 0 < β) (J : ℝ) :
-    AnalyticOn ℂ (fun h => IsingModel.freeEnergyComplex
-      (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) (J : ℂ) h (β : ℂ))
-      (IsingModel.leeYangSubdomain β (Fintype.card (↑Λ : Type _))) :=
-  IsingModel.freeEnergyComplex_analyticOn_leeYangSubdomain
-    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) hβ J
+/-! ## Moved: freeEnergyComplex leeYangSubdomain wrappers
 
-/-- **ℤ^d `freeEnergyComplex` `ContinuousOn` on `leeYangSubdomain`**
-(Λ-induced, ferromagnetic `β > 0`). -/
-theorem freeEnergyComplex_continuousOn_leeYangSubdomain_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    {β : ℝ} (hβ : 0 < β) (J : ℝ) :
-    ContinuousOn (fun h => IsingModel.freeEnergyComplex
-      (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) (J : ℂ) h (β : ℂ))
-      (IsingModel.leeYangSubdomain β (Fintype.card (↑Λ : Type _))) :=
-  IsingModel.freeEnergyComplex_continuousOn_leeYangSubdomain
-    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) hβ J
+The three `freeEnergyComplex_*_leeYangSubdomain_latticeGraph` wrappers
+(`analyticOn`, `continuousOn`, `differentiableOn`) now live in
+`ComplexContinuityNormFreeEnergyLeeYang.lean`. -/
 
-/-- **ℤ^d `freeEnergyComplex` `DifferentiableOn` on `leeYangSubdomain`**
-(Λ-induced, ferromagnetic `β > 0`): Vitali-compatible input. -/
-theorem freeEnergyComplex_differentiableOn_leeYangSubdomain_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    {β : ℝ} (hβ : 0 < β) (J : ℝ) :
-    DifferentiableOn ℂ (fun h' => IsingModel.freeEnergyComplex
-      (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) (J : ℂ) h' (β : ℂ))
-      (IsingModel.leeYangSubdomain β (Fintype.card (↑Λ : Type _))) :=
-  IsingModel.freeEnergyComplex_differentiableOn_leeYangSubdomain
-    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) hβ J
+
 
 /-! ## Moved: Complex norm-bound wrappers
 
