@@ -97,33 +97,13 @@ theorem truncated2Infinite_latticeGraph_le_correlationInfinite
       ≤ correlationInfinite (IsingModel.latticeGraph d) Λ p {i, j} :=
   truncated2Infinite_le_correlationInfinite (IsingModel.latticeGraph d) Λ p hf i j
 
-/-- **ℤ^d `truncated2Infinite ≤ 1`** (ferromagnetic). -/
-theorem truncated2Infinite_latticeGraph_le_one
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i j : Fin d → ℤ) :
-    truncated2Infinite (IsingModel.latticeGraph d) Λ p i j ≤ 1 :=
-  truncated2Infinite_le_one (IsingModel.latticeGraph d) Λ p hf i j
+/-! ## Moved: truncated2Infinite bound wrappers
 
-/-- **ℤ^d `-1 ≤ truncated2Infinite`** (ferromagnetic). -/
-theorem neg_one_le_truncated2Infinite_latticeGraph
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i j : Fin d → ℤ) :
-    -1 ≤ truncated2Infinite (IsingModel.latticeGraph d) Λ p i j :=
-  neg_one_le_truncated2Infinite (IsingModel.latticeGraph d) Λ p hf i j
+The four wrappers
+`{truncated2Infinite_latticeGraph_le_one,neg_one_le_truncated2Infinite_latticeGraph,
+abs_truncated2Infinite_latticeGraph_le_one,truncated2Infinite_latticeGraph_sq_le_one}`
+now live in `TwoPointTruncatedInfiniteBounds.lean`. -/
 
-/-- **ℤ^d `|truncated2Infinite| ≤ 1`** (ferromagnetic). -/
-theorem abs_truncated2Infinite_latticeGraph_le_one
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i j : Fin d → ℤ) :
-    |truncated2Infinite (IsingModel.latticeGraph d) Λ p i j| ≤ 1 :=
-  abs_truncated2Infinite_le_one (IsingModel.latticeGraph d) Λ p hf i j
-
-/-- **ℤ^d `truncated2Infinite² ≤ 1`** (ferromagnetic). -/
-theorem truncated2Infinite_latticeGraph_sq_le_one
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i j : Fin d → ℤ) :
-    truncated2Infinite (IsingModel.latticeGraph d) Λ p i j ^ 2 ≤ 1 :=
-  truncated2Infinite_sq_le_one (IsingModel.latticeGraph d) Λ p hf i j
 
 /-- **ℤ^d truncated 2-point function vanishes at `J = 0`, `i ≠ j`**
 (ferromagnetic). -/
