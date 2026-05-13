@@ -1,4 +1,5 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassLebowitzDerivative
+import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassLebowitzDerivativeHighTemp
 import Mathlib.Topology.UniformSpace.Dini
 import Mathlib.Analysis.BoundedVariation
 
