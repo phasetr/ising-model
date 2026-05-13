@@ -61,6 +61,7 @@ The six wrappers
 `{correlation,magnetization,susceptibility}AlongExhaustion_latticeGraph_analytic{At,OnNhd}_joint`
 now live in `JointAnalyticityAlongExCorr.lean`. -/
 
+/-- **ℤ^d along-ex: partitionFunctionAlongExhaustion jointly AnalyticAt**. -/
 theorem partitionFunctionAlongExhaustion_latticeGraph_analyticAt_joint
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
     [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
