@@ -4,13 +4,15 @@ import IsingModel.AmbientLattice.SpecialCases.MayerTrivialCases
 /-!
 # ℤ^d AlongExhaustion mayerPartialSum_zero ≤ polymerFreeEnergy wrappers
 
-Narrow child module for four ℤ^d AlongExhaustion mayerPartialSum_zero
+Narrow child module for three ℤ^d AlongExhaustion mayerPartialSum_zero
 ≤ polymerFreeEnergy wrappers extracted from `MayerTrivialCases.lean`:
 
-* `mayerPartialSum_zero_AlongExhaustion_latticeGraph_le_polymerFreeEnergy`,
-* `mayerPartialSum_zero_AlongExhaustion_latticeGraph_tanh_le_polymerFreeEnergy`,
-* `mayerPartialSum_zero_AlongExhaustion_latticeGraph_tanh_le_polymerFreeEnergy_ferro`,
-* (the third variant covers the ferro case at `0 < β`).
+* `mayerPartialSum_zero_AlongExhaustion_latticeGraph_le_polymerFreeEnergy`
+  (plain `t ≥ 0`),
+* `mayerPartialSum_zero_AlongExhaustion_latticeGraph_tanh_le_polymerFreeEnergy`
+  (tanh form, `0 ≤ β·J`),
+* `mayerPartialSum_zero_AlongExhaustion_latticeGraph_tanh_le_polymerFreeEnergy_ferro`
+  (ferro variant at `0 < β`).
 -/
 
 namespace IsingModel

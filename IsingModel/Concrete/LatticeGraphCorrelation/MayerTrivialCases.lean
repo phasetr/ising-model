@@ -61,7 +61,7 @@ mayerPartialSum_zero_Λ_latticeGraph_tanh_le_polymerFreeEnergy_ferro
 
 /-! ## Moved: AlongExhaustion mayerPartialSum_zero wrappers
 
-The four `mayerPartialSum_zero_AlongExhaustion_latticeGraph_*` wrappers
+The three `mayerPartialSum_zero_AlongExhaustion_latticeGraph_*` wrappers
 (plain, tanh, ferro variants) now live in `MayerTrivialCasesAlongEx.lean`. -/
 
 
