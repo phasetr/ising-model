@@ -71,45 +71,14 @@ theorem magnetizationInfinite_latticeGraph_cubicExhaustion_eq_uniform
       = uniformMagnetization d p :=
   magnetizationInfinite_latticeGraph_cubicExhaustion_eq d p hf i 0
 
-/-- **Nonnegativity of `uniformMagnetization`** (ferromagnetic).
-Specialization of the abstract `magnetizationInfinite_nonneg`. -/
-theorem uniformMagnetization_nonneg
-    (d : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p) :
-    0 ≤ uniformMagnetization d p :=
-  magnetizationInfinite_nonneg (IsingModel.latticeGraph d)
-    (Ambient.cubicExhaustion d) p hf 0
+/-! ## Moved: uniformMagnetization bound wrappers
 
-/-- **Upper bound on `uniformMagnetization`**:
-`uniformMagnetization d p ≤ 1`. -/
-theorem uniformMagnetization_le_one
-    (d : ℕ) (p : IsingParams ℝ) :
-    uniformMagnetization d p ≤ 1 :=
-  magnetizationInfinite_le_one (IsingModel.latticeGraph d)
-    (Ambient.cubicExhaustion d) p 0
+The five `uniformMagnetization_nonneg`, `uniformMagnetization_le_one`,
+`neg_one_le_uniformMagnetization`, `abs_uniformMagnetization_le_one`,
+`uniformMagnetization_sq_le_one` wrappers now live in
+`SiteIndepMagUniformBounds.lean`. -/
 
-/-- **`-1 ≤ uniformMagnetization`** unconditionally. Specialization of
-`neg_one_le_magnetizationInfinite` at site `0`. -/
-theorem neg_one_le_uniformMagnetization
-    (d : ℕ) (p : IsingParams ℝ) :
-    -1 ≤ uniformMagnetization d p :=
-  neg_one_le_magnetizationInfinite (IsingModel.latticeGraph d)
-    (Ambient.cubicExhaustion d) p 0
 
-/-- **`|uniformMagnetization| ≤ 1`** unconditionally. Specialization of
-`abs_magnetizationInfinite_le_one` at site `0`. -/
-theorem abs_uniformMagnetization_le_one
-    (d : ℕ) (p : IsingParams ℝ) :
-    |uniformMagnetization d p| ≤ 1 :=
-  abs_magnetizationInfinite_le_one (IsingModel.latticeGraph d)
-    (Ambient.cubicExhaustion d) p 0
-
-/-- **`uniformMagnetization² ≤ 1`** unconditionally. Specialization of
-`magnetizationInfinite_sq_le_one` at site `0`. -/
-theorem uniformMagnetization_sq_le_one
-    (d : ℕ) (p : IsingParams ℝ) :
-    uniformMagnetization d p ^ 2 ≤ 1 :=
-  magnetizationInfinite_sq_le_one (IsingModel.latticeGraph d)
-    (Ambient.cubicExhaustion d) p 0
 
 
 /-- **Uniform spontaneous magnetization on ℤ^d**: by site-independence
