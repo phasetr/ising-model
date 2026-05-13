@@ -1,4 +1,5 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempZeroBoundary
+import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempZeroBoundaryMonotoneClosed
 
 /-!
 # ℤ^d lipschitz-zero-closed correlationInfinite wrappers
