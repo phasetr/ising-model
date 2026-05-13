@@ -7,11 +7,11 @@ import IsingModel.AmbientComplexAnalyticity
 
 Narrow child module for concrete `leeYangDomain_subset_branch_locus`,
 `freeEnergyComplex_exists_analyticBranch*`, `analyticBranch_freeEnergyComplex_*`,
-`continuous_freeEnergyComplex_on_locus`,
-`continuousAt/differentiableAt_freeEnergyComplex_at_real_joint`, and
-`partitionFunctionComplex_entire_*` wrappers on `latticeGraph d`. 12
-theorems. The theorem names are unchanged from the former `Complex`
-declarations.
+`continuous_freeEnergyComplex_on_locus`, and
+`continuousAt/differentiableAt_freeEnergyComplex_at_real_joint` wrappers on
+`latticeGraph d`. The `partitionFunctionComplex_entire_*` wrappers now live
+in `ComplexBranchEntirePartition.lean`. The theorem names are unchanged
+from the former `Complex` declarations.
 -/
 
 namespace IsingModel
