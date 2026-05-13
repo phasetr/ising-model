@@ -129,39 +129,12 @@ theorem differentiableAt_freeEnergyComplex_at_real_joint_latticeGraph
   IsingModel.differentiableAt_freeEnergyComplex_at_real_joint
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p
 
-/-- **ℤ^d `Z_ℂ` entire in `h` (Differentiable ℂ)** (Λ-induced). -/
-theorem partitionFunctionComplex_entire_h_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℂ) :
-    Differentiable ℂ (fun h => IsingModel.partitionFunctionComplex
-      (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h β) :=
-  IsingModel.partitionFunctionComplex_entire_h
-    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J β
+/-! ## Moved: partitionFunctionComplex entire wrappers
 
-/-- **ℤ^d `Z_ℂ` entire in `J` (Differentiable ℂ)** (Λ-induced). -/
-theorem partitionFunctionComplex_entire_J_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (h β : ℂ) :
-    Differentiable ℂ (fun J => IsingModel.partitionFunctionComplex
-      (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h β) :=
-  IsingModel.partitionFunctionComplex_entire_J
-    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) h β
+The four `partitionFunctionComplex_entire_{h,J,beta,joint}_latticeGraph`
+wrappers now live in `ComplexBranchEntirePartition.lean`. -/
 
-/-- **ℤ^d `Z_ℂ` entire in `β` (Differentiable ℂ)** (Λ-induced). -/
-theorem partitionFunctionComplex_entire_beta_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J h : ℂ) :
-    Differentiable ℂ (fun β => IsingModel.partitionFunctionComplex
-      (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h β) :=
-  IsingModel.partitionFunctionComplex_entire_beta
-    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h
 
-/-- **ℤ^d `Z_ℂ` jointly entire on ℂ³ (Differentiable ℂ)**
-(Λ-induced). -/
-theorem partitionFunctionComplex_entire_joint_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) :
-    Differentiable ℂ
-      (fun z : ℂ × ℂ × ℂ => IsingModel.partitionFunctionComplex
-        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) z.1 z.2.1 z.2.2) :=
-  IsingModel.partitionFunctionComplex_entire_joint
-    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
 
 end Ambient
 
