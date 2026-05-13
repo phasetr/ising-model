@@ -6,7 +6,7 @@ import IsingModel.AmbientComplexAnalyticity
 # Concrete Complex log-branch construction wrappers
 
 Narrow child module for concrete log Z / freeEnergyComplex local-branch
-construction wrappers on `latticeGraph d`. 11 theorems including
+construction wrappers on `latticeGraph d`. Covers
 `partitionFunctionComplex_ne_zero_on_leeYangSubdomain_latticeGraph`,
 `partitionFunctionComplex_mapsTo_ne_zero_leeYangDomain_latticeGraph`,
 `freeEnergyComplex_analyticOnNhd_slitPlane_locus_latticeGraph`,
@@ -14,11 +14,11 @@ construction wrappers on `latticeGraph d`. 11 theorems including
 `exists_logZ_branch_on_ball_of_leeYangDomain_latticeGraph`,
 `exists_logZ_holomorphic_branch_on_ball_latticeGraph`,
 `exists_logZ_analytic_branch_on_ball_latticeGraph`,
-`exists_logZ_analyticAt_of_leeYangDomain_latticeGraph`,
-`exists_freeEnergyComplex_analyticAt_branch_of_leeYangDomain_latticeGraph`,
-`exists_freeEnergyComplex_analyticOnNhd_ball_latticeGraph`, and
-`exists_freeEnergyComplex_differentiableOn_ball_latticeGraph`. The
-theorem names are unchanged from the former `Complex` declarations.
+`exists_logZ_analyticAt_of_leeYangDomain_latticeGraph`, and
+`exists_freeEnergyComplex_analyticAt_branch_of_leeYangDomain_latticeGraph`.
+The `exists_freeEnergyComplex_{analyticOnNhd,differentiableOn}_ball_latticeGraph`
+ball wrappers now live in `ComplexBranchesFreeEnergyBall.lean`. The theorem
+names are unchanged from the former `Complex` declarations.
 -/
 
 namespace IsingModel
