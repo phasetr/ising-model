@@ -5,19 +5,17 @@ import IsingModel.AmbientComplexAnalyticity
 /-!
 # Concrete Complex slitPlane-locus wrappers + log-branch-on-ball wrappers
 
-Narrow child module for concrete slitPlane-locus continuity / analyticOn /
-differentiableOn wrappers and the log-branch-on-ball wrappers on
-`latticeGraph d`. 15 theorems including
-`partitionFunctionComplex_continuousAt_real_h_latticeGraph`,
-`freeEnergyComplex_continuousAt_real_pos_h_latticeGraph`,
-`analyticAt_freeEnergyComplex_of_slitPlane_h_latticeGraph`,
-`freeEnergyComplex_continuousOn/differentiableOn/analyticOn_slitPlane_locus_latticeGraph`,
-the joint variants, `logZ_branch_at_real_basepoint_latticeGraph`,
-`exp_card_mul_freeEnergyComplex_at_real_latticeGraph`,
-`exists_logZ_analyticOnNhd_ball_latticeGraph`,
-`continuous_logZ_branch_on_ball_latticeGraph`, and
-`exists_logZ_differentiableOn_ball_latticeGraph`. The theorem names
-are unchanged from the former `Complex` declarations.
+Narrow parent module for the residual ten ℤ^d slitPlane-locus
+continuity / analyticOn / differentiableOn wrappers on
+`latticeGraph d` (continuousAt at real `h`, slitPlane-locus
+continuousOn / differentiableOn / analyticOn / analyticOnNhd joint
+variants). The five log-branch-on-ball wrappers
+(`logZ_branch_at_real_basepoint`,
+`exp_card_mul_freeEnergyComplex_at_real`,
+`exists_logZ_analyticOnNhd_ball`, `continuous_logZ_branch_on_ball`,
+`exists_logZ_differentiableOn_ball`) were further carved out into
+`ComplexSlitPlaneLogZBranch.lean` in PR #2159. Theorem names are
+unchanged from the former `Complex` declarations.
 -/
 
 namespace IsingModel
