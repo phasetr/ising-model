@@ -4,12 +4,12 @@ import IsingModel.AmbientLattice.SpecialCases.MayerAnalyticity
 /-!
 # Concrete Mayer tanh-composed analyticity wrappers
 
-Narrow child module for twelve ℤ^d `*_tanh_analytic*` wrappers
-(`mayerPartialSum_*` / `mayerPartialSumAlongExhaustion_*` /
-`mayerExpansionTerm_*` / `mayerExpansionTermAlongExhaustion_*` at the
-tanh substitution). Each wrapper is a thin pass-through to the
-corresponding ambient `*_tanh_*` analyticAt / analyticOnNhd lemma at
-`IsingModel.latticeGraph d`.
+Narrow child module for ℤ^d `mayerPartialSum_*_tanh_analytic*` wrappers
+(`mayerPartialSum_Λ_*` / `mayerPartialSumAlongExhaustion_*` at the tanh
+substitution). Each wrapper is a thin pass-through to the corresponding
+ambient `*_tanh_*` analyticAt / analyticOnNhd lemma at
+`IsingModel.latticeGraph d`. The `mayerExpansionTerm_*_tanh_analyticAt_*`
+wrappers now live in `MayerAnalyticityTanhExpansionTerm.lean`.
 -/
 
 namespace IsingModel
