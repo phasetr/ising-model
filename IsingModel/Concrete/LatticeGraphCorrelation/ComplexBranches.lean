@@ -172,41 +172,12 @@ theorem exists_freeEnergyComplex_analyticAt_branch_of_leeYangDomain_latticeGraph
   IsingModel.exists_freeEnergyComplex_analyticAt_branch_of_leeYangDomain
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) hβ hJ hmem
 
-/-- **ℤ^d `freeEnergyComplex` local branch `AnalyticOnNhd ball`**
-(Λ-induced, nonempty `Λ`, ferromagnetic). -/
-theorem exists_freeEnergyComplex_analyticOnNhd_ball_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Nonempty (↑Λ : Type _)]
-    {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J)
-    {h₀ : ℂ} {r : ℝ} (hr : 0 < r)
-    (hsub : Metric.ball h₀ r ⊆ IsingModel.leeYangDomain) :
-    ∃ f : ℂ → ℂ,
-        AnalyticOnNhd ℂ f (Metric.ball h₀ r)
-      ∧ ∀ z ∈ Metric.ball h₀ r,
-          Complex.exp ((Fintype.card (↑Λ : Type _) : ℂ) * f z)
-            = IsingModel.partitionFunctionComplex
-                (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
-                (J : ℂ) z (β : ℂ) :=
-  IsingModel.exists_freeEnergyComplex_analyticOnNhd_ball
-    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) hβ hJ hr hsub
+/-! ## Moved: freeEnergyComplex local-branch ball wrappers
 
-/-- **ℤ^d `freeEnergyComplex` local branch `DifferentiableOn ball`**
-(Λ-induced, nonempty `Λ`, ferromagnetic). -/
-theorem exists_freeEnergyComplex_differentiableOn_ball_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Nonempty (↑Λ : Type _)]
-    {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J)
-    {h₀ : ℂ} {r : ℝ} (hr : 0 < r)
-    (hsub : Metric.ball h₀ r ⊆ IsingModel.leeYangDomain) :
-    ∃ f : ℂ → ℂ,
-        DifferentiableOn ℂ f (Metric.ball h₀ r)
-      ∧ ∀ z ∈ Metric.ball h₀ r,
-          Complex.exp ((Fintype.card (↑Λ : Type _) : ℂ) * f z)
-            = IsingModel.partitionFunctionComplex
-                (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
-                (J : ℂ) z (β : ℂ) :=
-  IsingModel.exists_freeEnergyComplex_differentiableOn_ball
-    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) hβ hJ hr hsub
+The two `exists_freeEnergyComplex_{analyticOnNhd,differentiableOn}_ball_latticeGraph`
+wrappers now live in `ComplexBranchesFreeEnergyBall.lean`. -/
+
+
 
 end Ambient
 
