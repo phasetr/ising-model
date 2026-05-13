@@ -1,4 +1,5 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassBasic
+import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassBasicIff
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransfer
 import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassNamedRateLeHighTempRate
 
