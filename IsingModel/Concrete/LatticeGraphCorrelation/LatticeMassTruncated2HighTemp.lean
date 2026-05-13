@@ -1,5 +1,6 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempZeroBoundary
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempIciZero
+import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempLipschitzContinuousOnOpen
 import IsingModel.AmbientLattice.TruncatedFunctions
 
 /-!
