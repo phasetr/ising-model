@@ -169,8 +169,10 @@ theorem polymerFreeEnergy_Λ_latticeGraph_le_of_le_strict_form
 /-! ## Moved: AlongExhaustion polymerFreeEnergy eq_zero / le wrappers
 
 The four wrappers
-`polymerFreeEnergyAlongExhaustion_latticeGraph_{eq_zero_of_no_polymers,eq_zero_of_edgeFinset_empty,le_of_le_of_nonneg,le_of_le_strict_form}`
-now live in `PolymerFreeEnergyBoundsAlongExZeroLe.lean`. -/
+`polymerFreeEnergyAlongExhaustion_latticeGraph_*` (`eq_zero_of_no_polymers`,
+`eq_zero_of_edgeFinset_empty`, `le_of_le_of_nonneg`,
+`le_of_le_strict_form`) now live in
+`PolymerFreeEnergyBoundsAlongExZeroLe.lean`. -/
 
 /-! ## Moved: ℤ^d polymerFreeEnergy tanh-bound wrappers
 
