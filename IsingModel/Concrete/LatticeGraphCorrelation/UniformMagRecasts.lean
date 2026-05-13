@@ -11,20 +11,18 @@ import IsingModel.Concrete.LatticeGraphCorrelation.UniformMag
 /-!
 # ℤ^d uniformMagnetization recasts + truncated zero_params + magnetization basic wrappers
 
-Narrow child module for 16 ℤ^d wrappers covering:
+Narrow parent module covering the residual ℤ^d wrappers:
 
 - `uniformMagnetization` recasts: `twoPointFunction_zero_eq_*`,
   `truncated2TwoPoint_eq_twoPointFunction_sub_*_sq`,
   `twoPointFunction_ge_*_sq`.
 - truncated zero_params: `truncated2/3/4TwoPoint_zero_params`,
   `truncated2TwoPoint_beta_zero`.
-- `magnetizationΛ_latticeGraph_{apply, le_one, abs_le_one, nonneg}`.
-- `magnetizationAlongExhaustion_latticeGraph_{apply, of_mem,
-  of_not_mem}`.
-- `magnetizationInfinite_latticeGraph_apply`.
-- `freeEnergyInfinite_latticeGraph_apply`.
 
-Theorem names are unchanged from the former `UniformMag`
+The `magnetizationΛ_/AlongExhaustion_/Infinite_latticeGraph_*` and
+`freeEnergyInfinite_latticeGraph_apply` apply/bound/unfolding wrappers
+were further carved out into `UniformMagRecastsMagnetization.lean` in
+PR #2142. Theorem names are unchanged from the former `UniformMag`
 declarations.
 -/
 
