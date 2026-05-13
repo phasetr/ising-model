@@ -4,6 +4,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.SiteIndepMag
 import IsingModel.Concrete.LatticeGraphCorrelation.SiteIndepMagTwoPoint
 import IsingModel.Concrete.LatticeGraphCorrelation.SiteIndepMagTwoPointNonnegAndGe
 import IsingModel.Concrete.LatticeGraphCorrelation.TwoPointZeroCollapse
+import IsingModel.Concrete.LatticeGraphCorrelation.TwoPointTruncated2EqSubMagSq
 import IsingModel.TranslationInvariance
 import IsingModel.PhaseTransition
 import IsingModel.Inequalities.FKG
