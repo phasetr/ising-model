@@ -11,13 +11,13 @@ import IsingModel.Concrete.LatticeGraphCorrelation.UniformMag
 /-!
 # ℤ^d susceptibilityInfinite + magnetizationInfinite J_zero regularity wrappers
 
-Narrow child module for 11 ℤ^d
-`susceptibilityInfinite_latticeGraph_*` and
-`magnetizationInfinite_latticeGraph_*` wrappers covering trivial
+Narrow child module for seven ℤ^d
+`susceptibilityInfinite_latticeGraph_*` wrappers covering trivial
 slices `J_zero` / `β_zero` / `zero_params` and the
 `continuousOn` / `differentiableOn` regularity in field /
-β-direction at `J = 0`. Theorem names are unchanged from the former
-`UniformMag` declarations.
+β-direction at `J = 0`. The four `magnetizationInfinite_latticeGraph_*_J_zero`
+wrappers now live in `UniformMagSusceptibilityInfiniteMagnetizationJZero.lean`.
+Theorem names are unchanged from the former `UniformMag` declarations.
 -/
 
 namespace IsingModel
