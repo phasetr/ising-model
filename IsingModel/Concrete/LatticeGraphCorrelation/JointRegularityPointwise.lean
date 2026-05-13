@@ -4,12 +4,12 @@ import IsingModel.AmbientLattice.SpecialCases.JointRegularity
 /-!
 # Concrete pointwise joint regularity wrappers
 
-Narrow child module for twelve ℤ^d pointwise `*_continuousAt_joint` /
-`*_differentiableAt_joint` wrappers for `correlation`, `magnetization`,
-and `susceptibility` on the Λ-layer and along-exhaustion variants. Each
-wrapper is a thin pass-through to the corresponding ambient
-`*_continuousAt_joint*` / `*_differentiableAt_joint*` lemma at
-`IsingModel.latticeGraph d`.
+Narrow child module for six ℤ^d Λ-layer pointwise
+`{correlation,magnetization,susceptibility}Λ_latticeGraph_*_joint`
+wrappers (with `continuousAt` and `differentiableAt`). Each wrapper is a
+thin pass-through to the corresponding ambient lemma at
+`IsingModel.latticeGraph d`. The six AlongExhaustion variants now live in
+`JointRegularityPointwiseAlongEx.lean`.
 -/
 
 namespace IsingModel
