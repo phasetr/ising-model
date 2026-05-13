@@ -15,6 +15,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.ComplexBranchEntire
 import IsingModel.Concrete.LatticeGraphCorrelation.ComplexIsingPoly
 import IsingModel.Concrete.LatticeGraphCorrelation.PerStage
 import IsingModel.Concrete.LatticeGraphCorrelation.PerStageComplex
+import IsingModel.Concrete.LatticeGraphCorrelation.PerStageComplexFreeEnergy
 import IsingModel.Concrete.LatticeGraphCorrelation.PerStageSubgraph
 import IsingModel.Concrete.LatticeGraphCorrelation.PerStageZetaEta
 import IsingModel.Concrete.LatticeGraphCorrelation.Magnetization

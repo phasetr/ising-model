@@ -10,23 +10,13 @@ import IsingModel.AmbientLattice.SpecialCases.InfiniteVolume
 /-!
 # Concrete ℤ^d per-stage complex analyticity wrappers
 
-Narrow child module for 12 ℤ^d per-stage complex analyticity /
-continuity / norm-bound wrappers
-(`partitionFunctionComplexAlongExhaustion_analyticAt_{h,J,beta,joint}_stage_latticeGraph`,
-`_continuous_h_stage_latticeGraph`,
-`freeEnergyComplexAlongExhaustion_analyticAt_h_stage_latticeGraph`,
-`_analyticOnNhd_leeYangSubdomain_stage_latticeGraph`,
-`_differentiableOn_leeYangSubdomain_stage_latticeGraph`,
-`_continuousOn_leeYangSubdomain_stage_latticeGraph`,
-`norm_partitionFunctionComplexAlongExhaustion_le_of_re_bound_stage_latticeGraph`,
-`partitionFunctionComplexAlongExhaustion_ne_zero_on_leeYangDomain_stage_latticeGraph`,
-`freeEnergyComplexAlongExhaustion_tendsto_at_real_of_disjointTowerHypotheses_latticeGraph`)
-extracted from `PerStage.lean` in PR #2051. Foundation for the Montel /
-Vitali extraction. Each is a thin pass-through to the corresponding
-ambient `partitionFunctionComplexAlongExhaustion_*` /
-`freeEnergyComplexAlongExhaustion_*` lemma at
-`IsingModel.latticeGraph d`. The theorem names are unchanged from the
-former `PerStage` declarations.
+Narrow child module for ℤ^d per-stage complex analyticity / continuity /
+norm-bound wrappers extracted from `PerStage.lean` in PR #2051. Foundation
+for the Montel / Vitali extraction. Each is a thin pass-through to the
+corresponding ambient `partitionFunctionComplexAlongExhaustion_*` /
+`freeEnergyComplexAlongExhaustion_*` lemma at `IsingModel.latticeGraph d`.
+The `freeEnergyComplexAlongExhaustion_*_stage_latticeGraph` Lee-Yang
+subdomain wrappers now live in `PerStageComplexFreeEnergy.lean`.
 -/
 
 namespace IsingModel
@@ -100,65 +90,14 @@ theorem partitionFunctionComplexAlongExhaustion_continuous_h_stage_latticeGraph
   Ambient.partitionFunctionComplexAlongExhaustion_continuous_h_stage
     (IsingModel.latticeGraph d) Λ J β n
 
-/-- **ℤ^d per-stage `AnalyticAt h₀` for `freeEnergyComplexAlongExhaustion`
-under `Z_{stage} ∈ slitPlane`**. -/
-theorem freeEnergyComplexAlongExhaustion_analyticAt_h_stage_latticeGraph
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    [∀ n, Fintype (Ambient.inducedGraph
-        (IsingModel.latticeGraph d) (Λ.volume n)).edgeSet]
-    (J β : ℂ) (n : ℕ) (h₀ : ℂ)
-    (hZ : Ambient.partitionFunctionComplexAlongExhaustion
-        (IsingModel.latticeGraph d) Λ J h₀ β n ∈ Complex.slitPlane) :
-    AnalyticAt ℂ
-      (fun h => Ambient.freeEnergyComplexAlongExhaustion
-        (IsingModel.latticeGraph d) Λ J h β n) h₀ :=
-  Ambient.freeEnergyComplexAlongExhaustion_analyticAt_h_stage
-    (IsingModel.latticeGraph d) Λ J β n h₀ hZ
+/-! ## Moved: per-stage freeEnergyComplexAlongExhaustion wrappers
 
-/-- **ℤ^d per-stage `AnalyticOnNhd` on Lee-Yang subdomain** for
-`freeEnergyComplexAlongExhaustion` (ferromagnetic). -/
-theorem freeEnergyComplexAlongExhaustion_analyticOnNhd_leeYangSubdomain_stage_latticeGraph
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    [∀ n, Fintype (Ambient.inducedGraph
-        (IsingModel.latticeGraph d) (Λ.volume n)).edgeSet]
-    {β : ℝ} (hβ : 0 < β) (J : ℝ) (n : ℕ) :
-    AnalyticOnNhd ℂ
-      (fun h => Ambient.freeEnergyComplexAlongExhaustion
-        (IsingModel.latticeGraph d) Λ (J : ℂ) h (β : ℂ) n)
-      (IsingModel.leeYangSubdomain β
-        (Fintype.card (↑(Λ.volume n) : Type _))) :=
-  Ambient.freeEnergyComplexAlongExhaustion_analyticOnNhd_leeYangSubdomain_stage
-    (IsingModel.latticeGraph d) Λ hβ J n
+The four `freeEnergyComplexAlongExhaustion_*_stage_latticeGraph` wrappers
+(`analyticAt_h`, `analyticOnNhd_leeYangSubdomain`,
+`differentiableOn_leeYangSubdomain`, `continuousOn_leeYangSubdomain`)
+now live in `PerStageComplexFreeEnergy.lean`. -/
 
-/-- **ℤ^d per-stage `DifferentiableOn` on Lee-Yang subdomain** for
-`freeEnergyComplexAlongExhaustion`. -/
-theorem freeEnergyComplexAlongExhaustion_differentiableOn_leeYangSubdomain_stage_latticeGraph
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    [∀ n, Fintype (Ambient.inducedGraph
-        (IsingModel.latticeGraph d) (Λ.volume n)).edgeSet]
-    {β : ℝ} (hβ : 0 < β) (J : ℝ) (n : ℕ) :
-    DifferentiableOn ℂ
-      (fun h => Ambient.freeEnergyComplexAlongExhaustion
-        (IsingModel.latticeGraph d) Λ (J : ℂ) h (β : ℂ) n)
-      (IsingModel.leeYangSubdomain β
-        (Fintype.card (↑(Λ.volume n) : Type _))) :=
-  Ambient.freeEnergyComplexAlongExhaustion_differentiableOn_leeYangSubdomain_stage
-    (IsingModel.latticeGraph d) Λ hβ J n
 
-/-- **ℤ^d per-stage `ContinuousOn` on Lee-Yang subdomain** for
-`freeEnergyComplexAlongExhaustion`. -/
-theorem freeEnergyComplexAlongExhaustion_continuousOn_leeYangSubdomain_stage_latticeGraph
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    [∀ n, Fintype (Ambient.inducedGraph
-        (IsingModel.latticeGraph d) (Λ.volume n)).edgeSet]
-    {β : ℝ} (hβ : 0 < β) (J : ℝ) (n : ℕ) :
-    ContinuousOn
-      (fun h => Ambient.freeEnergyComplexAlongExhaustion
-        (IsingModel.latticeGraph d) Λ (J : ℂ) h (β : ℂ) n)
-      (IsingModel.leeYangSubdomain β
-        (Fintype.card (↑(Λ.volume n) : Type _))) :=
-  Ambient.freeEnergyComplexAlongExhaustion_continuousOn_leeYangSubdomain_stage
-    (IsingModel.latticeGraph d) Λ hβ J n
 
 /-- **ℤ^d per-stage locally-uniform norm bound** for
 `partitionFunctionComplexAlongExhaustion`: `‖Z_ℂ_{Λ_n}‖ ≤ 2^|Λ_n| · exp(...)`
