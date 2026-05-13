@@ -1,5 +1,6 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempZeroBoundary
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempZeroBoundaryContinuousOnIco
+import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempZeroBoundaryTendstoUniformlyOnClosed
 
 /-!
 # Half-open Ico locally-uniform convergence wrappers at ℤ^d
