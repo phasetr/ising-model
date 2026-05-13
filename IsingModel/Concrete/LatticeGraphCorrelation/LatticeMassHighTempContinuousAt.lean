@@ -1,4 +1,5 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempLipschitz
+import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempLipschitzContinuousOnOpen
 
 /-!
 # correlationInfinite continuousAt wrappers on Ioo 0 _c
