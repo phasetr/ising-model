@@ -11,12 +11,11 @@ import IsingModel.Concrete.LatticeGraphCorrelation.TwoPoint
 /-!
 # ℤ^d truncatedInfinite_latticeGraph wrappers
 
-Narrow child module for 16 ℤ^d
-`truncated2Infinite_latticeGraph_*` wrappers (bounds, nonneg,
-symmetry, trivial slices `J_zero` / `β_zero` / `h_zero`),
-`truncated3Infinite_latticeGraph_apply`, and
-`truncated4Infinite_latticeGraph_apply`. Theorem names are unchanged
-from the former `TwoPoint` declarations.
+Narrow child module for ℤ^d
+`truncated{2,3,4}Infinite_latticeGraph_*` apply / nonneg / pointwise
+wrappers. Bound wrappers and trivial-slice / symmetry / h-zero
+wrappers now live in `TwoPointTruncatedInfiniteBounds.lean` and
+`TwoPointTruncatedInfiniteTrivialSlice.lean` respectively.
 -/
 
 namespace IsingModel
