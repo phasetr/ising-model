@@ -95,40 +95,14 @@ theorem freeEnergyΛ_latticeGraph_analyticAt_h
   Ambient.freeEnergyΛ_analyticAt_h
     (IsingModel.latticeGraph d) Λ J β h
 
-/-- **ℤ^d Λ: freeEnergy `AnalyticOnNhd ℝ _ Set.univ` in `β` at
-general `h`**. -/
-theorem freeEnergyΛ_latticeGraph_analyticOnNhd_beta_general_h
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    (J h : ℝ) :
-    AnalyticOnNhd ℝ (fun β' : ℝ =>
-      Ambient.freeEnergyΛ (IsingModel.latticeGraph d) Λ
-        ⟨J, h, β'⟩) Set.univ :=
-  Ambient.freeEnergyΛ_analyticOnNhd_beta_general_h
-    (IsingModel.latticeGraph d) Λ J h
+/-! ## Moved: freeEnergyΛ AnalyticOnNhd at general h
 
-/-- **ℤ^d Λ: freeEnergy `AnalyticOnNhd ℝ _ Set.univ` in `J` at
-general `h`**. -/
-theorem freeEnergyΛ_latticeGraph_analyticOnNhd_J_general_h
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    (β h : ℝ) :
-    AnalyticOnNhd ℝ (fun J' : ℝ =>
-      Ambient.freeEnergyΛ (IsingModel.latticeGraph d) Λ
-        ⟨J', h, β⟩) Set.univ :=
-  Ambient.freeEnergyΛ_analyticOnNhd_J_general_h
-    (IsingModel.latticeGraph d) Λ β h
+The three wrappers
+`freeEnergyΛ_latticeGraph_analyticOnNhd_beta_general_h`,
+`freeEnergyΛ_latticeGraph_analyticOnNhd_J_general_h`,
+`freeEnergyΛ_latticeGraph_analyticOnNhd_h` now live in
+`FreeEnergyAnalyticityOnNhdGeneralH.lean`. -/
 
-/-- **ℤ^d Λ: freeEnergy `AnalyticOnNhd ℝ _ Set.univ` in `h`**. -/
-theorem freeEnergyΛ_latticeGraph_analyticOnNhd_h
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    (J β : ℝ) :
-    AnalyticOnNhd ℝ (fun h' : ℝ =>
-      Ambient.freeEnergyΛ (IsingModel.latticeGraph d) Λ
-        ⟨J, h', β⟩) Set.univ :=
-  Ambient.freeEnergyΛ_analyticOnNhd_h
-    (IsingModel.latticeGraph d) Λ J β
 
 /-! ## Moved: along-ex free-energy analyticity wrappers
 
