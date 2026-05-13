@@ -60,57 +60,14 @@ theorem polymerFreeEnergy_Λ_latticeGraph_tanh_analyticOnNhd_J_Ici_zero
   Ambient.polymerFreeEnergy_Λ_tanh_analyticOnNhd_J_Ici_zero
     (IsingModel.latticeGraph d) Λ hβ
 
-/-- **ℤ^d along-ex: polymerFreeEnergy ∘ tanh ∘ (·*J) AnalyticAt in β**. -/
-theorem polymerFreeEnergyAlongExhaustion_latticeGraph_tanh_analyticAt_beta
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet]
-    (J β : ℝ) (hβJ : 0 ≤ β * J) (n : ℕ) :
-    AnalyticAt ℝ (fun β' : ℝ => IsingModel.polymerFreeEnergy
-        (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
-        (Real.tanh (β' * J))) β :=
-  Ambient.polymerFreeEnergyAlongExhaustion_tanh_analyticAt_beta
-    (IsingModel.latticeGraph d) Λ J β hβJ n
+/-! ## Moved: AlongExhaustion polymerFreeEnergy tanh analyticity wrappers
 
-/-- **ℤ^d along-ex: polymerFreeEnergy ∘ tanh ∘ (β*·) AnalyticAt in J**. -/
-theorem polymerFreeEnergyAlongExhaustion_latticeGraph_tanh_analyticAt_J
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet]
-    (β J : ℝ) (hβJ : 0 ≤ β * J) (n : ℕ) :
-    AnalyticAt ℝ (fun J' : ℝ => IsingModel.polymerFreeEnergy
-        (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
-        (Real.tanh (β * J'))) J :=
-  Ambient.polymerFreeEnergyAlongExhaustion_tanh_analyticAt_J
-    (IsingModel.latticeGraph d) Λ β J hβJ n
+The four `polymerFreeEnergyAlongExhaustion_latticeGraph_tanh_*` analyticity
+wrappers (`analyticAt_beta`, `analyticAt_J`,
+`analyticOnNhd_beta_Ici_zero`, `analyticOnNhd_J_Ici_zero`) now live in
+`PolymerFreeEnergyAnalyticityAlongExTanh.lean`. -/
 
-/-- **ℤ^d along-ex: polymerFreeEnergy ∘ tanh ∘ (·*J) AnalyticOnNhd
-on (Set.Ici 0) in β under `0 ≤ J`**. -/
-theorem
-polymerFreeEnergyAlongExhaustion_latticeGraph_tanh_analyticOnNhd_beta_Ici_zero
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet]
-    {J : ℝ} (hJ : 0 ≤ J) (n : ℕ) :
-    AnalyticOnNhd ℝ (fun β' : ℝ => IsingModel.polymerFreeEnergy
-        (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
-        (Real.tanh (β' * J))) (Set.Ici 0) :=
-  Ambient.polymerFreeEnergyAlongExhaustion_tanh_analyticOnNhd_beta_Ici_zero
-    (IsingModel.latticeGraph d) Λ hJ n
 
-/-- **ℤ^d along-ex: polymerFreeEnergy ∘ tanh ∘ (β*·) AnalyticOnNhd
-on (Set.Ici 0) in J under `0 ≤ β`**. -/
-theorem
-polymerFreeEnergyAlongExhaustion_latticeGraph_tanh_analyticOnNhd_J_Ici_zero
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet]
-    {β : ℝ} (hβ : 0 ≤ β) (n : ℕ) :
-    AnalyticOnNhd ℝ (fun J' : ℝ => IsingModel.polymerFreeEnergy
-        (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
-        (Real.tanh (β * J'))) (Set.Ici 0) :=
-  Ambient.polymerFreeEnergyAlongExhaustion_tanh_analyticOnNhd_J_Ici_zero
-    (IsingModel.latticeGraph d) Λ hβ n
 
 /-- **ℤ^d Λ: polymerFreeEnergy is `AnalyticAt ℝ` for `t ≥ 0`**. -/
 theorem polymerFreeEnergy_Λ_latticeGraph_analyticAt
