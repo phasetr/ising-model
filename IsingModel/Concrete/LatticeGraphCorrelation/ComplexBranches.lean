@@ -6,7 +6,7 @@ import IsingModel.AmbientComplexAnalyticity
 # Concrete Complex log-branch construction wrappers
 
 Narrow child module for concrete log Z / freeEnergyComplex local-branch
-construction wrappers on `latticeGraph d`. 11 theorems including
+construction wrappers on `latticeGraph d`. Covers
 `partitionFunctionComplex_ne_zero_on_leeYangSubdomain_latticeGraph`,
 `partitionFunctionComplex_mapsTo_ne_zero_leeYangDomain_latticeGraph`,
 `freeEnergyComplex_analyticOnNhd_slitPlane_locus_latticeGraph`,
@@ -14,11 +14,11 @@ construction wrappers on `latticeGraph d`. 11 theorems including
 `exists_logZ_branch_on_ball_of_leeYangDomain_latticeGraph`,
 `exists_logZ_holomorphic_branch_on_ball_latticeGraph`,
 `exists_logZ_analytic_branch_on_ball_latticeGraph`,
-`exists_logZ_analyticAt_of_leeYangDomain_latticeGraph`,
-`exists_freeEnergyComplex_analyticAt_branch_of_leeYangDomain_latticeGraph`,
-`exists_freeEnergyComplex_analyticOnNhd_ball_latticeGraph`, and
-`exists_freeEnergyComplex_differentiableOn_ball_latticeGraph`. The
-theorem names are unchanged from the former `Complex` declarations.
+`exists_logZ_analyticAt_of_leeYangDomain_latticeGraph`, and
+`exists_freeEnergyComplex_analyticAt_branch_of_leeYangDomain_latticeGraph`.
+The `exists_freeEnergyComplex_{analyticOnNhd,differentiableOn}_ball_latticeGraph`
+ball wrappers now live in `ComplexBranchesFreeEnergyBall.lean`. The theorem
+names are unchanged from the former `Complex` declarations.
 -/
 
 namespace IsingModel
@@ -172,41 +172,12 @@ theorem exists_freeEnergyComplex_analyticAt_branch_of_leeYangDomain_latticeGraph
   IsingModel.exists_freeEnergyComplex_analyticAt_branch_of_leeYangDomain
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) hβ hJ hmem
 
-/-- **ℤ^d `freeEnergyComplex` local branch `AnalyticOnNhd ball`**
-(Λ-induced, nonempty `Λ`, ferromagnetic). -/
-theorem exists_freeEnergyComplex_analyticOnNhd_ball_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Nonempty (↑Λ : Type _)]
-    {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J)
-    {h₀ : ℂ} {r : ℝ} (hr : 0 < r)
-    (hsub : Metric.ball h₀ r ⊆ IsingModel.leeYangDomain) :
-    ∃ f : ℂ → ℂ,
-        AnalyticOnNhd ℂ f (Metric.ball h₀ r)
-      ∧ ∀ z ∈ Metric.ball h₀ r,
-          Complex.exp ((Fintype.card (↑Λ : Type _) : ℂ) * f z)
-            = IsingModel.partitionFunctionComplex
-                (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
-                (J : ℂ) z (β : ℂ) :=
-  IsingModel.exists_freeEnergyComplex_analyticOnNhd_ball
-    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) hβ hJ hr hsub
+/-! ## Moved: freeEnergyComplex local-branch ball wrappers
 
-/-- **ℤ^d `freeEnergyComplex` local branch `DifferentiableOn ball`**
-(Λ-induced, nonempty `Λ`, ferromagnetic). -/
-theorem exists_freeEnergyComplex_differentiableOn_ball_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Nonempty (↑Λ : Type _)]
-    {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J)
-    {h₀ : ℂ} {r : ℝ} (hr : 0 < r)
-    (hsub : Metric.ball h₀ r ⊆ IsingModel.leeYangDomain) :
-    ∃ f : ℂ → ℂ,
-        DifferentiableOn ℂ f (Metric.ball h₀ r)
-      ∧ ∀ z ∈ Metric.ball h₀ r,
-          Complex.exp ((Fintype.card (↑Λ : Type _) : ℂ) * f z)
-            = IsingModel.partitionFunctionComplex
-                (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
-                (J : ℂ) z (β : ℂ) :=
-  IsingModel.exists_freeEnergyComplex_differentiableOn_ball
-    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) hβ hJ hr hsub
+The two `exists_freeEnergyComplex_{analyticOnNhd,differentiableOn}_ball_latticeGraph`
+wrappers now live in `ComplexBranchesFreeEnergyBall.lean`. -/
+
+
 
 end Ambient
 
