@@ -27,12 +27,11 @@ namespace Ambient
 The six wrappers `magnetization*_latticeGraph_monotone_{h,beta,J}` now
 live in `UniformMagMagnetizationTrivialMonotone.lean`. -/
 
-/-- **ℤ^d magnetizationΛ at h = 0 vanishes (Z₂)**. -/
-theorem magnetizationΛ_latticeGraph_h_zero
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ) (i : ↑Λ) :
-    magnetizationΛ (IsingModel.latticeGraph d) Λ
-        (⟨J, 0, β⟩ : IsingParams ℝ) i = 0 :=
-  magnetizationΛ_h_zero (IsingModel.latticeGraph d) Λ J β i
+/-! ## Moved: magnetizationΛ_latticeGraph_h_zero
+
+The Λ-direct h=0 wrapper now lives in
+`UniformMagMagnetizationTrivialLambdaTrivial.lean`. -/
+
 
 /-- **ℤ^d magnetizationAlongExhaustion at h = 0 vanishes (Z₂)** per stage. -/
 theorem magnetizationAlongExhaustion_latticeGraph_h_zero
@@ -42,12 +41,11 @@ theorem magnetizationAlongExhaustion_latticeGraph_h_zero
         (⟨J, 0, β⟩ : IsingParams ℝ) i n = 0 :=
   magnetizationAlongExhaustion_h_zero (IsingModel.latticeGraph d) Λ J β i n
 
-/-- **ℤ^d magnetizationΛ vanishes at β=0**. -/
-theorem magnetizationΛ_latticeGraph_beta_zero
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J h : ℝ) (i : ↑Λ) :
-    magnetizationΛ (IsingModel.latticeGraph d) Λ
-        (⟨J, h, 0⟩ : IsingParams ℝ) i = 0 :=
-  magnetizationΛ_beta_zero (IsingModel.latticeGraph d) Λ J h i
+/-! ## Moved: magnetizationΛ_latticeGraph_beta_zero
+
+The Λ-direct β=0 wrapper now lives in
+`UniformMagMagnetizationTrivialLambdaTrivial.lean`. -/
+
 
 /-- **ℤ^d magnetizationAlongExhaustion vanishes at β=0** per stage. -/
 theorem magnetizationAlongExhaustion_latticeGraph_beta_zero
@@ -57,12 +55,11 @@ theorem magnetizationAlongExhaustion_latticeGraph_beta_zero
         (⟨J, h, 0⟩ : IsingParams ℝ) i n = 0 :=
   magnetizationAlongExhaustion_beta_zero (IsingModel.latticeGraph d) Λ J h i n
 
-/-- **ℤ^d magnetizationΛ vanishes at J=h=0**. -/
-theorem magnetizationΛ_latticeGraph_zero_params
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (β : ℝ) (i : ↑Λ) :
-    magnetizationΛ (IsingModel.latticeGraph d) Λ
-        (⟨0, 0, β⟩ : IsingParams ℝ) i = 0 :=
-  magnetizationΛ_zero_params (IsingModel.latticeGraph d) Λ β i
+/-! ## Moved: magnetizationΛ_latticeGraph_zero_params
+
+The Λ-direct J=h=0 wrapper now lives in
+`UniformMagMagnetizationTrivialLambdaTrivial.lean`. -/
+
 
 /-- **ℤ^d magnetizationAlongExhaustion vanishes at J=h=0** per stage. -/
 theorem magnetizationAlongExhaustion_latticeGraph_zero_params
