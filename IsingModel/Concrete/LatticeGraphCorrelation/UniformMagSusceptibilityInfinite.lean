@@ -11,13 +11,13 @@ import IsingModel.Concrete.LatticeGraphCorrelation.UniformMag
 /-!
 # ℤ^d susceptibilityInfinite + magnetizationInfinite J_zero regularity wrappers
 
-Narrow child module for 11 ℤ^d
-`susceptibilityInfinite_latticeGraph_*` and
-`magnetizationInfinite_latticeGraph_*` wrappers covering trivial
+Narrow child module for seven ℤ^d
+`susceptibilityInfinite_latticeGraph_*` wrappers covering trivial
 slices `J_zero` / `β_zero` / `zero_params` and the
 `continuousOn` / `differentiableOn` regularity in field /
-β-direction at `J = 0`. Theorem names are unchanged from the former
-`UniformMag` declarations.
+β-direction at `J = 0`. The four `magnetizationInfinite_latticeGraph_*_J_zero`
+wrappers now live in `UniformMagSusceptibilityInfiniteMagnetizationJZero.lean`.
+Theorem names are unchanged from the former `UniformMag` declarations.
 -/
 
 namespace IsingModel
@@ -82,41 +82,12 @@ theorem susceptibilityInfinite_latticeGraph_differentiableOn_beta_J_zero
       (Set.Ioi (0 : ℝ)) :=
   susceptibilityInfinite_differentiableOn_beta_J_zero (IsingModel.latticeGraph d) Λ h hh_nn i
 
-/-- **ℤ^d magnetizationInfinite ContinuousOn h on Ici 0 at J = 0** (Step 267). -/
-theorem magnetizationInfinite_latticeGraph_continuousOn_field_J_zero
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (β : ℝ) (hβ : 0 < β)
-    (i : Fin d → ℤ) :
-    ContinuousOn
-      (fun h => magnetizationInfinite (IsingModel.latticeGraph d) Λ ⟨0, h, β⟩ i)
-      (Set.Ici (0 : ℝ)) :=
-  magnetizationInfinite_continuousOn_field_J_zero (IsingModel.latticeGraph d) Λ β hβ i
+/-! ## Moved: magnetizationInfinite J=0 regularity wrappers
 
-/-- **ℤ^d magnetizationInfinite ContinuousOn β on Ioi 0 at J = 0** (Step 267). -/
-theorem magnetizationInfinite_latticeGraph_continuousOn_beta_J_zero
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (h : ℝ) (hh_nn : 0 ≤ h)
-    (i : Fin d → ℤ) :
-    ContinuousOn
-      (fun β => magnetizationInfinite (IsingModel.latticeGraph d) Λ ⟨0, h, β⟩ i)
-      (Set.Ioi (0 : ℝ)) :=
-  magnetizationInfinite_continuousOn_beta_J_zero (IsingModel.latticeGraph d) Λ h hh_nn i
+The four `magnetizationInfinite_latticeGraph_{continuousOn,differentiableOn}_{field,beta}_J_zero`
+wrappers now live in `UniformMagSusceptibilityInfiniteMagnetizationJZero.lean`. -/
 
-/-- **ℤ^d magnetizationInfinite DifferentiableOn h on Ioi 0 at J = 0** (Step 267). -/
-theorem magnetizationInfinite_latticeGraph_differentiableOn_field_J_zero
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (β : ℝ) (hβ : 0 < β)
-    (i : Fin d → ℤ) :
-    DifferentiableOn ℝ
-      (fun h => magnetizationInfinite (IsingModel.latticeGraph d) Λ ⟨0, h, β⟩ i)
-      (Set.Ioi (0 : ℝ)) :=
-  magnetizationInfinite_differentiableOn_field_J_zero (IsingModel.latticeGraph d) Λ β hβ i
 
-/-- **ℤ^d magnetizationInfinite DifferentiableOn β on Ioi 0 at J = 0** (Step 267). -/
-theorem magnetizationInfinite_latticeGraph_differentiableOn_beta_J_zero
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (h : ℝ) (hh_nn : 0 ≤ h)
-    (i : Fin d → ℤ) :
-    DifferentiableOn ℝ
-      (fun β => magnetizationInfinite (IsingModel.latticeGraph d) Λ ⟨0, h, β⟩ i)
-      (Set.Ioi (0 : ℝ)) :=
-  magnetizationInfinite_differentiableOn_beta_J_zero (IsingModel.latticeGraph d) Λ h hh_nn i
 
 
 end Ambient
