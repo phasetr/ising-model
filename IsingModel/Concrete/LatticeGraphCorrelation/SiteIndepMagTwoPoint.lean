@@ -91,36 +91,10 @@ theorem truncated2TwoPoint_h_zero_at_zero (d : ℕ) (J β : ℝ) :
       magnetizationInfinite_zero_at_h_zero]
   ring
 
-/-- **J-monotonicity of `twoPointFunction`** (GJ Prop 4.2.1):
-for `0 ≤ h, 0 < β`, `twoPointFunction d ⟨J, h, β⟩ r` is monotone in
-`J` on `Ici 0`. Direct specialization of
-`correlationInfinite_latticeGraph_cubicExhaustion_monotone_J` at
-`A = {0, r}`. -/
-theorem twoPointFunction_monotone_J
-    (d : ℕ) {h : ℝ} (hh : 0 ≤ h) {β : ℝ} (hβ : 0 < β) (r : Fin d → ℤ) :
-    MonotoneOn (fun J : ℝ => twoPointFunction d ⟨J, h, β⟩ r) (Set.Ici 0) :=
-  correlationInfinite_latticeGraph_cubicExhaustion_monotone_J d hh hβ
-    {(0 : Fin d → ℤ), r}
+/-! ## Moved: twoPointFunction monotone wrappers
 
-/-- **h-monotonicity of `twoPointFunction`** (GJ Prop 4.2.4):
-for `0 ≤ J, 0 < β`, `twoPointFunction d ⟨J, h, β⟩ r` is monotone in
-`h` on `Ici 0`. Direct specialization of
-`correlationInfinite_latticeGraph_cubicExhaustion_monotone_h`. -/
-theorem twoPointFunction_monotone_h
-    (d : ℕ) {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) (r : Fin d → ℤ) :
-    MonotoneOn (fun h : ℝ => twoPointFunction d ⟨J, h, β⟩ r) (Set.Ici 0) :=
-  correlationInfinite_latticeGraph_cubicExhaustion_monotone_h d hJ hβ
-    {(0 : Fin d → ℤ), r}
-
-/-- **β-monotonicity of `twoPointFunction`** (GJ Prop 4.2.4):
-for `0 ≤ J, 0 ≤ h`, `twoPointFunction d ⟨J, h, β⟩ r` is monotone in
-`β` on `Ioi 0`. Direct specialization of
-`correlationInfinite_latticeGraph_cubicExhaustion_monotone_beta`. -/
-theorem twoPointFunction_monotone_beta
-    (d : ℕ) {J : ℝ} (hJ : 0 ≤ J) {h : ℝ} (hh : 0 ≤ h) (r : Fin d → ℤ) :
-    MonotoneOn (fun β : ℝ => twoPointFunction d ⟨J, h, β⟩ r) (Set.Ioi 0) :=
-  correlationInfinite_latticeGraph_cubicExhaustion_monotone_beta d hJ hh
-    {(0 : Fin d → ℤ), r}
+The three wrappers `twoPointFunction_monotone_{J,h,beta}` now live in
+`SiteIndepMagTwoPointMonotone.lean`. -/
 
 /-- **Nonnegativity of `truncated2TwoPoint`** (GKS-II).
 `0 ≤ truncated2TwoPoint d p r`. -/
