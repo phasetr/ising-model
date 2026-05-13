@@ -60,29 +60,14 @@ analyticity of `partitionFunctionComplex`, its `slitPlane`-conditioned
 `freeEnergyComplex` counterpart, and the real-complex compatibility
 identities. -/
 
-/-- **ℤ^d `partitionFunctionComplex` entire in `h`** (Λ-induced). -/
-theorem partitionFunctionComplex_analyticAt_h_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β h₀ : ℂ) :
-    AnalyticAt ℂ (fun h => IsingModel.partitionFunctionComplex
-      (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h β) h₀ :=
-  IsingModel.partitionFunctionComplex_analyticAt_h
-    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J β h₀
+/-! ## Moved: partitionFunctionComplex single-variable analyticAt wrappers
 
-/-- **ℤ^d `partitionFunctionComplex` entire in `J`** (Λ-induced). -/
-theorem partitionFunctionComplex_analyticAt_J_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (h β J₀ : ℂ) :
-    AnalyticAt ℂ (fun J => IsingModel.partitionFunctionComplex
-      (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h β) J₀ :=
-  IsingModel.partitionFunctionComplex_analyticAt_J
-    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) h β J₀
+The three single-variable wrappers
+`partitionFunctionComplex_analyticAt_h_latticeGraph`,
+`partitionFunctionComplex_analyticAt_J_latticeGraph`,
+`partitionFunctionComplex_analyticAt_beta_latticeGraph` now live in
+`ComplexAnalyticityBasicPartitionSingle.lean`. -/
 
-/-- **ℤ^d `partitionFunctionComplex` entire in `β`** (Λ-induced). -/
-theorem partitionFunctionComplex_analyticAt_beta_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J h β₀ : ℂ) :
-    AnalyticAt ℂ (fun β => IsingModel.partitionFunctionComplex
-      (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h β) β₀ :=
-  IsingModel.partitionFunctionComplex_analyticAt_beta
-    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h β₀
 
 /-! ## Moved: single-variable freeEnergyComplex wrappers
 
