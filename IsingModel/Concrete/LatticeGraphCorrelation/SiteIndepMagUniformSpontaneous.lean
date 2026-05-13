@@ -12,14 +12,15 @@ import IsingModel.AmbientFKG
 /-!
 # ℤ^d `uniformSpontaneousMagnetization` wrappers
 
-Narrow child module for the 10 ℤ^d `uniformSpontaneousMagnetization*`
-wrappers (`_apply`, `_eq_spontaneousMagnetization_any_exhaustion`,
-`_monotone_J`, `_monotone_beta`,
-`spontaneousMagnetization_latticeGraph_cubicExhaustion_eq_uniform`,
-`_nonneg`, `_le_one`, `neg_one_le_*`, `abs_*_le_one`, `_sq_le_one`)
+Narrow child module for ℤ^d `uniformSpontaneousMagnetization*` wrappers
+(`_apply`, `_eq_spontaneousMagnetization_any_exhaustion`, `_monotone_J`,
+`_monotone_beta`,
+`spontaneousMagnetization_latticeGraph_cubicExhaustion_eq_uniform`)
 extracted from `SiteIndepMag.lean` in PR #2047. Each is a thin
 pass-through to the corresponding `spontaneousMagnetization_*` lemma
-at `(latticeGraph d, cubicExhaustion d)`. The theorem names are
+at `(latticeGraph d, cubicExhaustion d)`. The bound wrappers (`_nonneg`,
+`_le_one`, `neg_one_le_*`, `abs_*_le_one`, `_sq_le_one`) now live in
+`SiteIndepMagUniformSpontaneousBounds.lean`. The theorem names are
 unchanged from the former `SiteIndepMag` declarations.
 -/
 
@@ -79,42 +80,13 @@ theorem spontaneousMagnetization_latticeGraph_cubicExhaustion_eq_uniform
       = uniformSpontaneousMagnetization d J β :=
   spontaneousMagnetization_latticeGraph_cubicExhaustion_eq d hJ hβ i 0
 
-/-- **Nonnegativity of `uniformSpontaneousMagnetization`**. -/
-theorem uniformSpontaneousMagnetization_nonneg
-    (d : ℕ) {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) :
-    0 ≤ uniformSpontaneousMagnetization d J β :=
-  spontaneousMagnetization_nonneg (IsingModel.latticeGraph d)
-    (Ambient.cubicExhaustion d) hJ hβ 0
+/-! ## Moved: uniformSpontaneousMagnetization bound wrappers
 
-/-- **Upper bound on `uniformSpontaneousMagnetization`**:
-`uniformSpontaneousMagnetization d J β ≤ 1`. -/
-theorem uniformSpontaneousMagnetization_le_one
-    (d : ℕ) {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) :
-    uniformSpontaneousMagnetization d J β ≤ 1 :=
-  spontaneousMagnetization_le_one (IsingModel.latticeGraph d)
-    (Ambient.cubicExhaustion d) hJ hβ 0
+The five `uniformSpontaneousMagnetization_*` bound wrappers (`nonneg`,
+`le_one`, `neg_one_le`, `abs_le_one`, `sq_le_one`) now live in
+`SiteIndepMagUniformSpontaneousBounds.lean`. -/
 
-/-- **`-1 ≤ uniformSpontaneousMagnetization`** (ferromagnetic).
-Direct from `uniformSpontaneousMagnetization_nonneg`. -/
-theorem neg_one_le_uniformSpontaneousMagnetization
-    (d : ℕ) {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) :
-    -1 ≤ uniformSpontaneousMagnetization d J β := by
-  have := uniformSpontaneousMagnetization_nonneg d hJ hβ
-  linarith
 
-/-- **`|uniformSpontaneousMagnetization| ≤ 1`** (ferromagnetic). -/
-theorem abs_uniformSpontaneousMagnetization_le_one
-    (d : ℕ) {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) :
-    |uniformSpontaneousMagnetization d J β| ≤ 1 :=
-  abs_le.mpr ⟨neg_one_le_uniformSpontaneousMagnetization d hJ hβ,
-    uniformSpontaneousMagnetization_le_one d hJ hβ⟩
-
-/-- **`uniformSpontaneousMagnetization² ≤ 1`** (ferromagnetic). -/
-theorem uniformSpontaneousMagnetization_sq_le_one
-    (d : ℕ) {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) :
-    uniformSpontaneousMagnetization d J β ^ 2 ≤ 1 :=
-  spontaneousMagnetization_sq_le_one (IsingModel.latticeGraph d)
-    (Ambient.cubicExhaustion d) hJ hβ 0
 
 
 end Ambient
