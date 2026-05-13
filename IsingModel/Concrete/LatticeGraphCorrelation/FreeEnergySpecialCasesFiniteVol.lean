@@ -81,42 +81,10 @@ theorem freeEnergy_J_zero_latticeGraph
   IsingModel.freeEnergy_J_zero
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) h β hne
 
-/-- **ℤ^d freeEnergy_neg_h at Λ-induced**. -/
-theorem freeEnergy_neg_h_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J h β : ℝ) :
-    IsingModel.freeEnergy
-        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
-        (⟨J, -h, β⟩ : IsingParams ℝ)
-      = IsingModel.freeEnergy
-          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
-          (⟨J, h, β⟩ : IsingParams ℝ) :=
-  IsingModel.freeEnergy_neg_h
-    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h β
+/-! ## Moved: freeEnergy h-symmetry wrappers
 
-/-- **ℤ^d freeEnergy_eq_abs_h at Λ-induced**. -/
-theorem freeEnergy_eq_abs_h_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J h β : ℝ) :
-    IsingModel.freeEnergy
-        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
-        (⟨J, h, β⟩ : IsingParams ℝ)
-      = IsingModel.freeEnergy
-          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
-          (⟨J, |h|, β⟩ : IsingParams ℝ) :=
-  IsingModel.freeEnergy_eq_abs_h
-    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h β
-
-/-- **ℤ^d freeEnergy_monotone_abs_h at Λ-induced** (ferromagnetic). -/
-theorem freeEnergy_monotone_abs_h_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β)
-    {h₁ h₂ : ℝ} (hh : |h₁| ≤ |h₂|) :
-    IsingModel.freeEnergy
-        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
-        (⟨J, h₁, β⟩ : IsingParams ℝ)
-      ≤ IsingModel.freeEnergy
-          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
-          (⟨J, h₂, β⟩ : IsingParams ℝ) :=
-  IsingModel.freeEnergy_monotone_abs_h
-    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J β hJ hβ hh
+The three wrappers `freeEnergy_{neg_h,eq_abs_h,monotone_abs_h}_latticeGraph`
+now live in `FreeEnergySpecialCasesFiniteVolAbsH.lean`. -/
 
 /-- **ℤ^d freeEnergy_eq_bot_at_J_zero at Λ-induced**. -/
 theorem freeEnergy_eq_bot_at_J_zero_latticeGraph
