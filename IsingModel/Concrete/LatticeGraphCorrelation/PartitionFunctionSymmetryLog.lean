@@ -82,36 +82,14 @@ theorem log_partitionFunctionAlongExhaustion_latticeGraph_monotone_abs_h
   log_partitionFunctionAlongExhaustion_monotone_abs_h
     (IsingModel.latticeGraph d) Λ J β hJ hβ hh n
 
-/-- **ℤ^d log_partitionFunctionAlongExhaustion h-evenness** per stage. -/
-theorem log_partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_neg_h
-    (d : ℕ) (J h β : ℝ) (n : ℕ) :
-    Real.log (partitionFunctionAlongExhaustion (IsingModel.latticeGraph d)
-        (Ambient.cubicExhaustion d) (⟨J, -h, β⟩ : IsingParams ℝ) n)
-      = Real.log (partitionFunctionAlongExhaustion (IsingModel.latticeGraph d)
-          (Ambient.cubicExhaustion d) (⟨J, h, β⟩ : IsingParams ℝ) n) :=
-  log_partitionFunctionAlongExhaustion_neg_h (IsingModel.latticeGraph d)
-    (Ambient.cubicExhaustion d) J h β n
+/-! ## Moved: log_partitionFunctionAlongEx cubicExhaustion |h| wrappers
 
-/-- **ℤ^d log_partitionFunctionAlongExhaustion `|h|`-rewrite** per stage. -/
-theorem log_partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_eq_abs_h
-    (d : ℕ) (J h β : ℝ) (n : ℕ) :
-    Real.log (partitionFunctionAlongExhaustion (IsingModel.latticeGraph d)
-        (Ambient.cubicExhaustion d) (⟨J, h, β⟩ : IsingParams ℝ) n)
-      = Real.log (partitionFunctionAlongExhaustion (IsingModel.latticeGraph d)
-          (Ambient.cubicExhaustion d) (⟨J, |h|, β⟩ : IsingParams ℝ) n) :=
-  log_partitionFunctionAlongExhaustion_eq_abs_h (IsingModel.latticeGraph d)
-    (Ambient.cubicExhaustion d) J h β n
+The three wrappers
+`log_partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_neg_h`,
+`log_partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_eq_abs_h`,
+`log_partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_monotone_abs_h`
+now live in `PartitionFunctionSymmetryLogCubic.lean`. -/
 
-/-- **ℤ^d log_partitionFunctionAlongExhaustion `|h|`-monotonicity** per stage. -/
-theorem log_partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_monotone_abs_h
-    (d : ℕ) (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β)
-    {h₁ h₂ : ℝ} (hh : |h₁| ≤ |h₂|) (n : ℕ) :
-    Real.log (partitionFunctionAlongExhaustion (IsingModel.latticeGraph d)
-        (Ambient.cubicExhaustion d) (⟨J, h₁, β⟩ : IsingParams ℝ) n)
-      ≤ Real.log (partitionFunctionAlongExhaustion (IsingModel.latticeGraph d)
-          (Ambient.cubicExhaustion d) (⟨J, h₂, β⟩ : IsingParams ℝ) n) :=
-  log_partitionFunctionAlongExhaustion_monotone_abs_h (IsingModel.latticeGraph d)
-    (Ambient.cubicExhaustion d) J β hJ hβ hh n
 
 end Ambient
 end IsingModel
