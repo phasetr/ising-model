@@ -1,13 +1,15 @@
 /- MagnetizationSiteLevel.lean
-Narrow child module for the 11 ℤ^d site-level magnetization wrappers
-extracted from `Magnetization.lean` in PR #2031. Theorems:
+Narrow child module for ℤ^d site-level magnetization wrappers extracted
+from `Magnetization.lean` in PR #2031. Theorems:
 `magnetization_apply_latticeGraph`,
-`{abs,_le_one,neg_one_le,nonneg,sq_le_one}_latticeGraph`,
-`{zero_at_h_zero,beta_zero,J_zero}_latticeGraph`,
-`{monotone_h,monotone_beta}_latticeGraph`. Each is a thin
-pass-through of the abstract `IsingModel.magnetization_*` at
-`Ambient.inducedGraph (latticeGraph d) Λ`. The theorem names are
-unchanged from the former `Magnetization` declarations.
+`{abs_magnetization_le_one,magnetization_le_one,neg_one_le_magnetization,
+magnetization_nonneg,magnetization_sq_le_one}_latticeGraph`. Each is a
+thin pass-through of the abstract `IsingModel.magnetization_*` at
+`Ambient.inducedGraph (latticeGraph d) Λ`. The trivial-slice /
+monotone wrappers
+(`{zero_at_h_zero,beta_zero,J_zero,monotone_h,monotone_beta}_latticeGraph`)
+now live in `MagnetizationSiteLevelTrivialAndMonotone.lean`. The
+theorem names are unchanged from the former `Magnetization` declarations.
 -/
 import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.PhaseTransition
