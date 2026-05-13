@@ -3,6 +3,7 @@ import IsingModel.ComplexAnalyticity
 import IsingModel.AmbientComplexAnalyticity
 import IsingModel.Concrete.LatticeGraphCorrelation.ComplexAnalyticityBasic
 import IsingModel.Concrete.LatticeGraphCorrelation.ComplexRealCompat
+import IsingModel.Concrete.LatticeGraphCorrelation.ComplexRealCompatLeeYangSubdomain
 import IsingModel.Concrete.LatticeGraphCorrelation.ComplexContinuityNorm
 import IsingModel.Concrete.LatticeGraphCorrelation.ComplexBranches
 import IsingModel.Concrete.LatticeGraphCorrelation.ComplexBranchesLogZ
