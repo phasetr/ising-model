@@ -1,4 +1,5 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempLipschitz
+import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempContinuousAt
 
 /-!
 # High-temperature zero-boundary and half-open wrappers at ℤ^d
