@@ -1,4 +1,5 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassLebowitzDerivative
+import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassLebowitzDerivativeSuscSq
 
 /-!
 # §17.5 high-temperature Lebowitz / β/J derivative wrappers
