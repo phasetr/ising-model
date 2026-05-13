@@ -108,31 +108,13 @@ theorem partitionFunctionAlongExhaustion_latticeGraph_monotone_abs_h
   partitionFunctionAlongExhaustion_monotone_abs_h (IsingModel.latticeGraph d) Λ
     J β hJ hβ hh n
 
-/-- **ℤ^d partitionFunctionAlongExhaustion `|h|`-rewrite** per stage:
-`Z(Λ_n; J, h, β) = Z(Λ_n; J, |h|, β)`. Concrete specialization of
-`partitionFunctionAlongExhaustion_eq_abs_h`. -/
-theorem partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_eq_abs_h
-    (d : ℕ) (J h β : ℝ) (n : ℕ) :
-    partitionFunctionAlongExhaustion (IsingModel.latticeGraph d)
-        (Ambient.cubicExhaustion d) (⟨J, h, β⟩ : IsingParams ℝ) n
-      = partitionFunctionAlongExhaustion (IsingModel.latticeGraph d)
-          (Ambient.cubicExhaustion d) (⟨J, |h|, β⟩ : IsingParams ℝ) n :=
-  partitionFunctionAlongExhaustion_eq_abs_h (IsingModel.latticeGraph d)
-    (Ambient.cubicExhaustion d) J h β n
+/-! ## Moved: cubicExhaustion abs-h wrappers
 
-/-- **ℤ^d partitionFunctionAlongExhaustion ferromagnetic `|h|`-monotonicity**
-per stage: for `J ≥ 0`, `β > 0`, `|h₁| ≤ |h₂|`,
-`Z(Λ_n; J, h₁, β) ≤ Z(Λ_n; J, h₂, β)`. Concrete specialization of
-`partitionFunctionAlongExhaustion_monotone_abs_h`. -/
-theorem partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_monotone_abs_h
-    (d : ℕ) (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β)
-    {h₁ h₂ : ℝ} (hh : |h₁| ≤ |h₂|) (n : ℕ) :
-    partitionFunctionAlongExhaustion (IsingModel.latticeGraph d)
-        (Ambient.cubicExhaustion d) (⟨J, h₁, β⟩ : IsingParams ℝ) n
-      ≤ partitionFunctionAlongExhaustion (IsingModel.latticeGraph d)
-          (Ambient.cubicExhaustion d) (⟨J, h₂, β⟩ : IsingParams ℝ) n :=
-  partitionFunctionAlongExhaustion_monotone_abs_h (IsingModel.latticeGraph d)
-    (Ambient.cubicExhaustion d) J β hJ hβ hh n
+The two
+`partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_{eq_abs_h,monotone_abs_h}`
+wrappers now live in `PartitionFunctionSymmetryCubicAbsH.lean`. -/
+
+
 
 /-! ## Moved: log partition-function h-symmetry wrappers
 
