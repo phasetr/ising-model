@@ -79,42 +79,13 @@ theorem spontaneousMagnetization_latticeGraph_cubicExhaustion_eq_uniform
       = uniformSpontaneousMagnetization d J β :=
   spontaneousMagnetization_latticeGraph_cubicExhaustion_eq d hJ hβ i 0
 
-/-- **Nonnegativity of `uniformSpontaneousMagnetization`**. -/
-theorem uniformSpontaneousMagnetization_nonneg
-    (d : ℕ) {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) :
-    0 ≤ uniformSpontaneousMagnetization d J β :=
-  spontaneousMagnetization_nonneg (IsingModel.latticeGraph d)
-    (Ambient.cubicExhaustion d) hJ hβ 0
+/-! ## Moved: uniformSpontaneousMagnetization bound wrappers
 
-/-- **Upper bound on `uniformSpontaneousMagnetization`**:
-`uniformSpontaneousMagnetization d J β ≤ 1`. -/
-theorem uniformSpontaneousMagnetization_le_one
-    (d : ℕ) {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) :
-    uniformSpontaneousMagnetization d J β ≤ 1 :=
-  spontaneousMagnetization_le_one (IsingModel.latticeGraph d)
-    (Ambient.cubicExhaustion d) hJ hβ 0
+The five `uniformSpontaneousMagnetization_*` bound wrappers (`nonneg`,
+`le_one`, `neg_one_le`, `abs_le_one`, `sq_le_one`) now live in
+`SiteIndepMagUniformSpontaneousBounds.lean`. -/
 
-/-- **`-1 ≤ uniformSpontaneousMagnetization`** (ferromagnetic).
-Direct from `uniformSpontaneousMagnetization_nonneg`. -/
-theorem neg_one_le_uniformSpontaneousMagnetization
-    (d : ℕ) {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) :
-    -1 ≤ uniformSpontaneousMagnetization d J β := by
-  have := uniformSpontaneousMagnetization_nonneg d hJ hβ
-  linarith
 
-/-- **`|uniformSpontaneousMagnetization| ≤ 1`** (ferromagnetic). -/
-theorem abs_uniformSpontaneousMagnetization_le_one
-    (d : ℕ) {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) :
-    |uniformSpontaneousMagnetization d J β| ≤ 1 :=
-  abs_le.mpr ⟨neg_one_le_uniformSpontaneousMagnetization d hJ hβ,
-    uniformSpontaneousMagnetization_le_one d hJ hβ⟩
-
-/-- **`uniformSpontaneousMagnetization² ≤ 1`** (ferromagnetic). -/
-theorem uniformSpontaneousMagnetization_sq_le_one
-    (d : ℕ) {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β) :
-    uniformSpontaneousMagnetization d J β ^ 2 ≤ 1 :=
-  spontaneousMagnetization_sq_le_one (IsingModel.latticeGraph d)
-    (Ambient.cubicExhaustion d) hJ hβ 0
 
 
 end Ambient
