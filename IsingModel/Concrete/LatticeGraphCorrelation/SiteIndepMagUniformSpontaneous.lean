@@ -12,14 +12,15 @@ import IsingModel.AmbientFKG
 /-!
 # ℤ^d `uniformSpontaneousMagnetization` wrappers
 
-Narrow child module for the 10 ℤ^d `uniformSpontaneousMagnetization*`
-wrappers (`_apply`, `_eq_spontaneousMagnetization_any_exhaustion`,
-`_monotone_J`, `_monotone_beta`,
-`spontaneousMagnetization_latticeGraph_cubicExhaustion_eq_uniform`,
-`_nonneg`, `_le_one`, `neg_one_le_*`, `abs_*_le_one`, `_sq_le_one`)
+Narrow child module for ℤ^d `uniformSpontaneousMagnetization*` wrappers
+(`_apply`, `_eq_spontaneousMagnetization_any_exhaustion`, `_monotone_J`,
+`_monotone_beta`,
+`spontaneousMagnetization_latticeGraph_cubicExhaustion_eq_uniform`)
 extracted from `SiteIndepMag.lean` in PR #2047. Each is a thin
 pass-through to the corresponding `spontaneousMagnetization_*` lemma
-at `(latticeGraph d, cubicExhaustion d)`. The theorem names are
+at `(latticeGraph d, cubicExhaustion d)`. The bound wrappers (`_nonneg`,
+`_le_one`, `neg_one_le_*`, `abs_*_le_one`, `_sq_le_one`) now live in
+`SiteIndepMagUniformSpontaneousBounds.lean`. The theorem names are
 unchanged from the former `SiteIndepMag` declarations.
 -/
 
