@@ -1,6 +1,7 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempLipschitz
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempContinuousAt
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempZeroBoundary
+import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempZeroBoundaryContinuousOnClosed
 
 /-!
 # correlationInfinite monotone / ae-diff on closed [0, b]

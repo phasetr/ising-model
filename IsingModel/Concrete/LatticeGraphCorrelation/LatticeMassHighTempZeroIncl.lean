@@ -1,4 +1,5 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempZeroBoundary
+import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempZeroBoundaryContinuousOnClosed
 
 /-!
 # correlationInfinite linear bounds on Icc [0, b] (β, J)
