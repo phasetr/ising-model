@@ -115,35 +115,13 @@ theorem freeEnergyAlongExhaustion_latticeGraph_J_zero
       = Real.log (2 * Real.cosh (β * h)) :=
   freeEnergyAlongExhaustion_J_zero (IsingModel.latticeGraph d) Λ h β n hne
 
-/-- **ℤ^d freeEnergyAlongExhaustion β=0 per-stage**: `= log 2`. -/
-theorem freeEnergyAlongExhaustion_latticeGraph_cubicExhaustion_beta_zero
-    (d : ℕ) (J h : ℝ) (n : ℕ)
-    (hne : ((Ambient.cubicExhaustion d).volume n).Nonempty) :
-    freeEnergyAlongExhaustion (IsingModel.latticeGraph d)
-        (Ambient.cubicExhaustion d) (⟨J, h, 0⟩ : IsingParams ℝ) n
-      = Real.log 2 :=
-  freeEnergyAlongExhaustion_beta_zero (IsingModel.latticeGraph d)
-    (Ambient.cubicExhaustion d) J h n hne
+/-! ## Moved: cubicExhaustion trivial-slice wrappers
 
-/-- **ℤ^d freeEnergyAlongExhaustion J=h=0 per-stage**: `= log 2`. -/
-theorem freeEnergyAlongExhaustion_latticeGraph_cubicExhaustion_zero_params
-    (d : ℕ) (β : ℝ) (n : ℕ)
-    (hne : ((Ambient.cubicExhaustion d).volume n).Nonempty) :
-    freeEnergyAlongExhaustion (IsingModel.latticeGraph d)
-        (Ambient.cubicExhaustion d) (⟨0, 0, β⟩ : IsingParams ℝ) n
-      = Real.log 2 :=
-  freeEnergyAlongExhaustion_zero_params (IsingModel.latticeGraph d)
-    (Ambient.cubicExhaustion d) β n hne
+The three `freeEnergyAlongExhaustion_latticeGraph_cubicExhaustion_*`
+trivial-slice wrappers (`beta_zero`, `zero_params`, `J_zero`) now live in
+`FreeEnergySpecialCasesAlongExCubicTrivialSlice.lean`. -/
 
-/-- **ℤ^d freeEnergyAlongExhaustion J=0 per-stage**: `= log(2·cosh(β·h))`. -/
-theorem freeEnergyAlongExhaustion_latticeGraph_cubicExhaustion_J_zero
-    (d : ℕ) (h β : ℝ) (n : ℕ)
-    (hne : ((Ambient.cubicExhaustion d).volume n).Nonempty) :
-    freeEnergyAlongExhaustion (IsingModel.latticeGraph d)
-        (Ambient.cubicExhaustion d) (⟨0, h, β⟩ : IsingParams ℝ) n
-      = Real.log (2 * Real.cosh (β * h)) :=
-  freeEnergyAlongExhaustion_J_zero (IsingModel.latticeGraph d)
-    (Ambient.cubicExhaustion d) h β n hne
+
 
 
 end Ambient
