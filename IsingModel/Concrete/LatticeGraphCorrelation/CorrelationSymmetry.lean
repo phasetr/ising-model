@@ -132,82 +132,16 @@ theorem correlationInfinite_eq_abs_h_of_even_card_latticeGraph
           (⟨J, |h|, β⟩ : IsingParams ℝ) A :=
   correlationInfinite_eq_abs_h_of_even_card (IsingModel.latticeGraph d) Λ J h β A heven
 
-/-! ### ℤ^d magnetization and susceptibility absolute-field wrappers -/
+/-! ## Moved: ℤ^d magnetization absolute-field wrappers
 
-/-- **ℤ^d `|M_Λ(h)| = M_Λ(|h|)`** under ferromagnetism at `|h|`.
-Concrete `latticeGraph d` wrapper for PR #772's
-`abs_magnetizationΛ_eq_magnetizationΛ_abs_h`. -/
-theorem abs_magnetizationΛ_latticeGraph_eq_magnetizationΛ_latticeGraph_abs_h
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    (J h β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (i : ↑Λ) :
-    |magnetizationΛ (IsingModel.latticeGraph d) Λ
-        (⟨J, h, β⟩ : IsingParams ℝ) i|
-      = magnetizationΛ (IsingModel.latticeGraph d) Λ
-          (⟨J, |h|, β⟩ : IsingParams ℝ) i :=
-  abs_magnetizationΛ_eq_magnetizationΛ_abs_h
-    (IsingModel.latticeGraph d) Λ J h β hJ hβ i
+The six magnetization absolute-field wrappers
+(`abs_magnetizationΛ_*`, `magnetizationAlongExhaustion_*_neg_h`,
+`abs_magnetizationAlongExhaustion_*_abs_h`,
+`abs_magnetizationInfinite_le_*_abs_h`,
+`magnetizationInfinite_*_nonpos_of_nonpos_h`,
+`magnetizationInfinite_*_eq_zero_of_exists_stage_not_mem`) now live in
+`CorrelationSymmetryMagnetization.lean`. -/
 
-/-- **ℤ^d `M_along(-h) n = -M_along(h) n`** (any parameters). Concrete
-`latticeGraph d` wrapper for PR #773's
-`magnetizationAlongExhaustion_neg_h`. -/
-theorem magnetizationAlongExhaustion_latticeGraph_neg_h
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    (J h β : ℝ) (i : Fin d → ℤ) (n : ℕ) :
-    magnetizationAlongExhaustion (IsingModel.latticeGraph d) Λ
-        (⟨J, -h, β⟩ : IsingParams ℝ) i n
-      = -magnetizationAlongExhaustion (IsingModel.latticeGraph d) Λ
-          (⟨J, h, β⟩ : IsingParams ℝ) i n :=
-  magnetizationAlongExhaustion_neg_h (IsingModel.latticeGraph d) Λ J h β i n
-
-/-- **ℤ^d `|M_along(h) n| = M_along(|h|) n`** under ferromagnetism at
-`|h|`. Concrete `latticeGraph d` wrapper for PR #773's
-`abs_magnetizationAlongExhaustion_eq_magnetizationAlongExhaustion_abs_h`. -/
-theorem abs_magnetizationAlongExhaustion_latticeGraph_eq_abs_h
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    (J h β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (i : Fin d → ℤ) (n : ℕ) :
-    |magnetizationAlongExhaustion (IsingModel.latticeGraph d) Λ
-        (⟨J, h, β⟩ : IsingParams ℝ) i n|
-      = magnetizationAlongExhaustion (IsingModel.latticeGraph d) Λ
-          (⟨J, |h|, β⟩ : IsingParams ℝ) i n :=
-  abs_magnetizationAlongExhaustion_eq_magnetizationAlongExhaustion_abs_h
-    (IsingModel.latticeGraph d) Λ J h β hJ hβ i n
-
-/-- **ℤ^d ∞-volume one-sided `|M_∞(h)| ≤ M_∞(|h|)`** under ferromagnetism
-at `|h|`. Concrete `latticeGraph d` wrapper for PR #773's
-`abs_magnetizationInfinite_le_magnetizationInfinite_abs_h`. -/
-theorem abs_magnetizationInfinite_latticeGraph_le_magnetizationInfinite_latticeGraph_abs_h
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    (J h β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (i : Fin d → ℤ) :
-    |magnetizationInfinite (IsingModel.latticeGraph d) Λ
-        (⟨J, h, β⟩ : IsingParams ℝ) i|
-      ≤ magnetizationInfinite (IsingModel.latticeGraph d) Λ
-          (⟨J, |h|, β⟩ : IsingParams ℝ) i :=
-  abs_magnetizationInfinite_le_magnetizationInfinite_abs_h
-    (IsingModel.latticeGraph d) Λ J h β hJ hβ i
-
-/-- **ℤ^d `M_∞ ≤ 0` at `h ≤ 0`** under ferromagnetism. Concrete
-`latticeGraph d` wrapper for PR #774's
-`magnetizationInfinite_nonpos_of_nonpos_h`. -/
-theorem magnetizationInfinite_latticeGraph_nonpos_of_nonpos_h
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    (J h β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (hh : h ≤ 0)
-    (i : Fin d → ℤ) :
-    magnetizationInfinite (IsingModel.latticeGraph d) Λ
-        (⟨J, h, β⟩ : IsingParams ℝ) i ≤ 0 :=
-  magnetizationInfinite_nonpos_of_nonpos_h
-    (IsingModel.latticeGraph d) Λ J h β hJ hβ hh i
-
-/-- **ℤ^d `M_∞ = 0` at `h ≤ 0` when some stage misses `i`**.
-Concrete `latticeGraph d` wrapper for PR #774's
-`magnetizationInfinite_eq_zero_of_exists_stage_not_mem`. -/
-theorem magnetizationInfinite_latticeGraph_eq_zero_of_exists_stage_not_mem
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    (J h β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (hh : h ≤ 0)
-    (i : Fin d → ℤ) (hmiss : ∃ n, i ∉ Λ.volume n) :
-    magnetizationInfinite (IsingModel.latticeGraph d) Λ
-        (⟨J, h, β⟩ : IsingParams ℝ) i = 0 :=
-  magnetizationInfinite_eq_zero_of_exists_stage_not_mem
-    (IsingModel.latticeGraph d) Λ J h β hJ hβ hh i hmiss
 
 /-! ## Moved: susceptibility h-symmetry wrappers
 
