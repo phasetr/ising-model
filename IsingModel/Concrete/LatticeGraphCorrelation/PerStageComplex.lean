@@ -10,23 +10,13 @@ import IsingModel.AmbientLattice.SpecialCases.InfiniteVolume
 /-!
 # Concrete ℤ^d per-stage complex analyticity wrappers
 
-Narrow child module for 12 ℤ^d per-stage complex analyticity /
-continuity / norm-bound wrappers
-(`partitionFunctionComplexAlongExhaustion_analyticAt_{h,J,beta,joint}_stage_latticeGraph`,
-`_continuous_h_stage_latticeGraph`,
-`freeEnergyComplexAlongExhaustion_analyticAt_h_stage_latticeGraph`,
-`_analyticOnNhd_leeYangSubdomain_stage_latticeGraph`,
-`_differentiableOn_leeYangSubdomain_stage_latticeGraph`,
-`_continuousOn_leeYangSubdomain_stage_latticeGraph`,
-`norm_partitionFunctionComplexAlongExhaustion_le_of_re_bound_stage_latticeGraph`,
-`partitionFunctionComplexAlongExhaustion_ne_zero_on_leeYangDomain_stage_latticeGraph`,
-`freeEnergyComplexAlongExhaustion_tendsto_at_real_of_disjointTowerHypotheses_latticeGraph`)
-extracted from `PerStage.lean` in PR #2051. Foundation for the Montel /
-Vitali extraction. Each is a thin pass-through to the corresponding
-ambient `partitionFunctionComplexAlongExhaustion_*` /
-`freeEnergyComplexAlongExhaustion_*` lemma at
-`IsingModel.latticeGraph d`. The theorem names are unchanged from the
-former `PerStage` declarations.
+Narrow child module for ℤ^d per-stage complex analyticity / continuity /
+norm-bound wrappers extracted from `PerStage.lean` in PR #2051. Foundation
+for the Montel / Vitali extraction. Each is a thin pass-through to the
+corresponding ambient `partitionFunctionComplexAlongExhaustion_*` /
+`freeEnergyComplexAlongExhaustion_*` lemma at `IsingModel.latticeGraph d`.
+The `freeEnergyComplexAlongExhaustion_*_stage_latticeGraph` Lee-Yang
+subdomain wrappers now live in `PerStageComplexFreeEnergy.lean`.
 -/
 
 namespace IsingModel
