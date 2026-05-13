@@ -71,23 +71,13 @@ theorem freeEnergyΛ_latticeGraph_nonneg_of_ferromagnetic
     0 ≤ freeEnergyΛ (IsingModel.latticeGraph d) Λ p :=
   freeEnergyΛ_nonneg_of_ferromagnetic (IsingModel.latticeGraph d) hne p hf
 
-/-- **ℤ^d partitionFunctionΛ ≥ (2 cosh βh)^|Λ|** (sharp, ferromagnetic). -/
-theorem partitionFunctionΛ_latticeGraph_ge_two_cosh_pow_card
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ)
-    (hf : Ferromagnetic p) :
-    (2 * Real.cosh (p.β * p.h)) ^ Λ.card
-      ≤ partitionFunctionΛ (IsingModel.latticeGraph d) Λ p :=
-  partitionFunctionΛ_ge_two_cosh_pow_card_of_ferromagnetic
-    (IsingModel.latticeGraph d) Λ p hf
+/-! ## Moved: ℤ^d partition (2 cosh)^|Λ| sharp bound wrappers
 
-/-- **ℤ^d sharp log Z_Λ bound**: `|Λ|·log(2 cosh βh) ≤ log Z_Λ` (ferromagnetic). -/
-theorem log_partitionFunctionΛ_latticeGraph_ge_card_mul_log_two_cosh
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
-    (Λ.card : ℝ) * Real.log (2 * Real.cosh (p.β * p.h))
-      ≤ Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ p) :=
-  log_partitionFunctionΛ_ge_card_mul_log_two_cosh_of_ferromagnetic
-    (IsingModel.latticeGraph d) Λ p hf
+The two wrappers
+`partitionFunctionΛ_latticeGraph_ge_two_cosh_pow_card`,
+`log_partitionFunctionΛ_latticeGraph_ge_card_mul_log_two_cosh` now live
+in `PartitionFreeEnergyBoundsCosh.lean`. -/
+
 
 /-! ## Moved: ℤ^d freeEnergyAlongExhaustion identity wrappers
 
