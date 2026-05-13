@@ -128,80 +128,13 @@ theorem magnetizationAlongExhaustion_latticeGraph_hasDerivAt_field
   Ambient.magnetizationAlongExhaustion_hasDerivAt_field
     (IsingModel.latticeGraph d) Λ J h β i n
 
-/-! ### ℤ^d along-ex `partitionFunctionAlongExhaustion` /
-`freeEnergyAlongExhaustion` `hasDerivAt` wrappers -/
+/-! ## Moved: partitionFunction / freeEnergy along-ex hasDerivAt wrappers
 
-/-- **ℤ^d along-ex: `partitionFunctionAlongExhaustion` HasDerivAt in β**. -/
-theorem partitionFunctionAlongExhaustion_latticeGraph_hasDerivAt_beta
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet]
-    (J h β : ℝ) (n : ℕ) :
-    ∃ c : ℝ, HasDerivAt (fun β' =>
-        Ambient.partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
-          (⟨J, h, β'⟩ : IsingParams ℝ) n) c β :=
-  Ambient.partitionFunctionAlongExhaustion_hasDerivAt_beta
-    (IsingModel.latticeGraph d) Λ J h β n
+The six wrappers
+`partitionFunctionAlongExhaustion_latticeGraph_hasDerivAt_{beta,J,field}` and
+`freeEnergyAlongExhaustion_latticeGraph_hasDerivAt_{beta_general_h,J,field}`
+now live in `RegularityAlongExPartitionFreeEnergy.lean`. -/
 
-/-- **ℤ^d along-ex: `partitionFunctionAlongExhaustion` HasDerivAt in J**. -/
-theorem partitionFunctionAlongExhaustion_latticeGraph_hasDerivAt_J
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet]
-    (J h β : ℝ) (n : ℕ) :
-    ∃ c : ℝ, HasDerivAt (fun J' =>
-        Ambient.partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
-          (⟨J', h, β⟩ : IsingParams ℝ) n) c J :=
-  Ambient.partitionFunctionAlongExhaustion_hasDerivAt_J
-    (IsingModel.latticeGraph d) Λ J h β n
-
-/-- **ℤ^d along-ex: `partitionFunctionAlongExhaustion` HasDerivAt in h**. -/
-theorem partitionFunctionAlongExhaustion_latticeGraph_hasDerivAt_field
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet]
-    (J h β : ℝ) (n : ℕ) :
-    ∃ c : ℝ, HasDerivAt (fun h' =>
-        Ambient.partitionFunctionAlongExhaustion (IsingModel.latticeGraph d) Λ
-          (⟨J, h', β⟩ : IsingParams ℝ) n) c h :=
-  Ambient.partitionFunctionAlongExhaustion_hasDerivAt_field
-    (IsingModel.latticeGraph d) Λ J h β n
-
-/-- **ℤ^d along-ex: `freeEnergyAlongExhaustion` HasDerivAt in β at general h**. -/
-theorem freeEnergyAlongExhaustion_latticeGraph_hasDerivAt_beta_general_h
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet]
-    (J h β : ℝ) (n : ℕ) :
-    ∃ c : ℝ, HasDerivAt (fun β' =>
-        Ambient.freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
-          (⟨J, h, β'⟩ : IsingParams ℝ) n) c β :=
-  Ambient.freeEnergyAlongExhaustion_hasDerivAt_beta_general_h
-    (IsingModel.latticeGraph d) Λ J h β n
-
-/-- **ℤ^d along-ex: `freeEnergyAlongExhaustion` HasDerivAt in J**. -/
-theorem freeEnergyAlongExhaustion_latticeGraph_hasDerivAt_J
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet]
-    (J h β : ℝ) (n : ℕ) :
-    ∃ c : ℝ, HasDerivAt (fun J' =>
-        Ambient.freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
-          (⟨J', h, β⟩ : IsingParams ℝ) n) c J :=
-  Ambient.freeEnergyAlongExhaustion_hasDerivAt_J
-    (IsingModel.latticeGraph d) Λ J h β n
-
-/-- **ℤ^d along-ex: `freeEnergyAlongExhaustion` HasDerivAt in h**. -/
-theorem freeEnergyAlongExhaustion_latticeGraph_hasDerivAt_field
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet]
-    (J h β : ℝ) (n : ℕ) :
-    ∃ c : ℝ, HasDerivAt (fun h' =>
-        Ambient.freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
-          (⟨J, h', β⟩ : IsingParams ℝ) n) c h :=
-  Ambient.freeEnergyAlongExhaustion_hasDerivAt_field
-    (IsingModel.latticeGraph d) Λ J h β n
 
 
 /-! ## Moved: susceptibility along-ex hasDerivAt wrappers
