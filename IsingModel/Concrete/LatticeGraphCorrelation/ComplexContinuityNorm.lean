@@ -3,17 +3,18 @@ import IsingModel.ComplexAnalyticity
 import IsingModel.AmbientComplexAnalyticity
 
 /-!
-# Concrete continuity / analyticOn / norm-bound wrappers for complex Z / f
+# Concrete continuity / analyticOn wrappers for complex Z / f
 
-Narrow child module for concrete continuity, `AnalyticOnNhd` / `AnalyticOn`,
-and norm-bound wrappers for `partitionFunctionComplex` /
-`freeEnergyComplex` on `latticeGraph d`. 15 theorems including
-`continuous_partitionFunctionComplex_h/J/beta/joint_latticeGraph`,
+Narrow parent module for the residual eleven ℤ^d continuity,
+`AnalyticOnNhd` / `AnalyticOn`, and leeYang-related wrappers for
+`partitionFunctionComplex` / `freeEnergyComplex` on `latticeGraph d`
+(`continuous_*_{h,J,beta,joint}_latticeGraph`,
 `partitionFunctionComplex_analyticOnNhd_univ_*`,
-`partitionFunctionComplex_continuousOn_leeYangDomain_latticeGraph`,
-`freeEnergyComplex_analyticOn/continuousOn/differentiableOn_leeYangSubdomain_latticeGraph`,
-and the various `norm_partitionFunctionComplex_le_*` /
-`norm_freeEnergyComplex_le_*` bound wrappers. The theorem names are
+`partitionFunctionComplex_{continuousOn,analyticOn}_leeYangDomain_latticeGraph`,
+`freeEnergyComplex_{analyticOn,continuousOn,differentiableOn}_leeYangSubdomain_latticeGraph`).
+The four `norm_partitionFunctionComplex_le_*` /
+`norm_freeEnergyComplex_le_*` bound wrappers were further carved out
+into `ComplexContinuityNormNorm.lean` in PR #2160. Theorem names are
 unchanged from the former `Complex` declarations.
 -/
 
