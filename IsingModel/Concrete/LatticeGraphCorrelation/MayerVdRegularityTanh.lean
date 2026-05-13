@@ -117,50 +117,13 @@ theorem mayerPartialSumAlongExhaustion_latticeGraph_tanh_differentiable_J
     (IsingModel.latticeGraph d) Λ N β n
 
 /-! ### §18.5 mayerExpansionTerm tanh β/J ℤ^d wraps -/
+/-! ## Moved: mayerExpansionTerm_Λ tanh regularity wrappers
 
-/-- **ℤ^d Λ: mayerExpansionTerm ∘ tanh ∘ (·*J) continuous in β**. -/
-theorem mayerExpansionTerm_Λ_latticeGraph_tanh_continuous_beta
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    (n : ℕ) (J : ℝ) :
-    Continuous (fun β' : ℝ => IsingModel.mayerExpansionTerm
-        (inducedGraph (IsingModel.latticeGraph d) Λ) n
-        (Real.tanh (β' * J))) :=
-  Ambient.mayerExpansionTerm_Λ_tanh_continuous_beta
-    (IsingModel.latticeGraph d) Λ n J
+The four wrappers
+`mayerExpansionTerm_Λ_latticeGraph_tanh_*` (`continuous_beta`,
+`continuous_J`, `differentiable_beta`, `differentiable_J`) now live in
+`MayerVdRegularityTanhExpansionTermLambda.lean`. -/
 
-/-- **ℤ^d Λ: mayerExpansionTerm ∘ tanh ∘ (β*·) continuous in J**. -/
-theorem mayerExpansionTerm_Λ_latticeGraph_tanh_continuous_J
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    (n : ℕ) (β : ℝ) :
-    Continuous (fun J' : ℝ => IsingModel.mayerExpansionTerm
-        (inducedGraph (IsingModel.latticeGraph d) Λ) n
-        (Real.tanh (β * J'))) :=
-  Ambient.mayerExpansionTerm_Λ_tanh_continuous_J
-    (IsingModel.latticeGraph d) Λ n β
-
-/-- **ℤ^d Λ: mayerExpansionTerm ∘ tanh ∘ (·*J) differentiable in β**. -/
-theorem mayerExpansionTerm_Λ_latticeGraph_tanh_differentiable_beta
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    (n : ℕ) (J : ℝ) :
-    Differentiable ℝ (fun β' : ℝ => IsingModel.mayerExpansionTerm
-        (inducedGraph (IsingModel.latticeGraph d) Λ) n
-        (Real.tanh (β' * J))) :=
-  Ambient.mayerExpansionTerm_Λ_tanh_differentiable_beta
-    (IsingModel.latticeGraph d) Λ n J
-
-/-- **ℤ^d Λ: mayerExpansionTerm ∘ tanh ∘ (β*·) differentiable in J**. -/
-theorem mayerExpansionTerm_Λ_latticeGraph_tanh_differentiable_J
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    (n : ℕ) (β : ℝ) :
-    Differentiable ℝ (fun J' : ℝ => IsingModel.mayerExpansionTerm
-        (inducedGraph (IsingModel.latticeGraph d) Λ) n
-        (Real.tanh (β * J'))) :=
-  Ambient.mayerExpansionTerm_Λ_tanh_differentiable_J
-    (IsingModel.latticeGraph d) Λ n β
 
 /-! ## Moved: mayerExpansionTermAlongExhaustion tanh regularity wrappers
 
