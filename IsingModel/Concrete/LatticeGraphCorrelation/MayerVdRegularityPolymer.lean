@@ -102,8 +102,11 @@ theorem vdPolymerFamilies_sumAlongExhaustion_latticeGraph_hasDerivAt
 /-! ### §18.5 vdPolymerFamilies_sum tanh β/J ℤ^d wraps -/
 /-! ## Moved: vdPolymerFamilies_sum tanh regularity wrappers
 
-The eight `vdPolymerFamilies_sum_{Λ,AlongExhaustion}_latticeGraph_tanh_{continuous,differentiable}_{beta,J}`
-wrappers now live in `MayerVdRegularityPolymerTanh.lean`. -/
+The eight wrappers
+`vdPolymerFamilies_sum_{Λ,AlongExhaustion}_latticeGraph_tanh_*`
+(`continuous_beta`, `continuous_J`, `differentiable_beta`,
+`differentiable_J` in each direction) now live in
+`MayerVdRegularityPolymerTanh.lean`. -/
 
 
 end Ambient
