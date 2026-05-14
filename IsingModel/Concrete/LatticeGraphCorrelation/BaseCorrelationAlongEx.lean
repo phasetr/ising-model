@@ -60,36 +60,14 @@ theorem correlationAlongExhaustion_latticeGraph_empty
   correlationAlongExhaustion_empty (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) p n
 
-/-- **ℤ^d correlationAlongExhaustion of_subset unfolding**. -/
-theorem correlationAlongExhaustion_latticeGraph_of_subset
-    (d : ℕ) (p : IsingParams ℝ)
-    {A : Finset (Fin d → ℤ)} {n : ℕ}
-    (hA : A ⊆ (Ambient.cubicExhaustion d).volume n) :
-    correlationAlongExhaustion (IsingModel.latticeGraph d)
-        (Ambient.cubicExhaustion d) p A n
-      = correlationΛ (IsingModel.latticeGraph d)
-        ((Ambient.cubicExhaustion d).volume n) p (liftFinset A hA) :=
-  correlationAlongExhaustion_of_subset (IsingModel.latticeGraph d)
-    (Ambient.cubicExhaustion d) p hA
+/-! ## Moved: subset / monotone wrappers
 
-/-- **ℤ^d correlationAlongExhaustion of_not_subset unfolding**. -/
-theorem correlationAlongExhaustion_latticeGraph_of_not_subset
-    (d : ℕ) (p : IsingParams ℝ)
-    {A : Finset (Fin d → ℤ)} {n : ℕ}
-    (hA : ¬ A ⊆ (Ambient.cubicExhaustion d).volume n) :
-    correlationAlongExhaustion (IsingModel.latticeGraph d)
-        (Ambient.cubicExhaustion d) p A n = 0 :=
-  correlationAlongExhaustion_of_not_subset (IsingModel.latticeGraph d)
-    (Ambient.cubicExhaustion d) p hA
+The three wrappers
+`correlationAlongExhaustion_latticeGraph_of_subset`,
+`correlationAlongExhaustion_latticeGraph_of_not_subset`,
+`correlationAlongExhaustion_latticeGraph_cubicExhaustion_monotone` now
+live in `BaseCorrelationAlongExSubsetMono.lean`. -/
 
-/-- **ℤ^d correlationAlongExhaustion stage-index Monotone**. -/
-theorem correlationAlongExhaustion_latticeGraph_cubicExhaustion_monotone
-    (d : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p)
-    (A : Finset (Fin d → ℤ)) :
-    Monotone (correlationAlongExhaustion (IsingModel.latticeGraph d)
-      (Ambient.cubicExhaustion d) p A) :=
-  correlationAlongExhaustion_monotone (IsingModel.latticeGraph d)
-    (Ambient.cubicExhaustion d) p hf A
 
 end Ambient
 
