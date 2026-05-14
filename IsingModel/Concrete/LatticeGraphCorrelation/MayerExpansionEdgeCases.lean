@@ -49,47 +49,14 @@ theorem mayerExpansionTerm_Λ_latticeGraph_two_filter
   Ambient.mayerExpansionTerm_Λ_two_filter
     (IsingModel.latticeGraph d) Λ t
 
-/-- **ℤ^d Λ: mayerPartialSum at `N = 2`**. -/
-theorem mayerPartialSum_Λ_latticeGraph_two
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    (t : ℝ) :
-    IsingModel.mayerPartialSum
-        (inducedGraph (IsingModel.latticeGraph d) Λ) 2 t =
-      (∑ P ∈ IsingModel.allPolymers
-              (inducedGraph (IsingModel.latticeGraph d) Λ),
-            t ^ P.card) +
-        (-1/2 : ℝ) *
-          ∑ pq ∈ ((IsingModel.allPolymers
-                    (inducedGraph (IsingModel.latticeGraph d) Λ)) ×ˢ
-                  (IsingModel.allPolymers
-                    (inducedGraph (IsingModel.latticeGraph d) Λ))).filter
-              (fun pq => IsingModel.PolymersIncompatible pq.1 pq.2),
-            (t ^ pq.1.card * t ^ pq.2.card) :=
-  Ambient.mayerPartialSum_Λ_two (IsingModel.latticeGraph d) Λ t
+/-! ## Moved: mayerPartialSum_Λ edge-case wrappers
 
-/-- **ℤ^d Λ: mayerPartialSum = 0 on no-polymer induced graphs**. -/
-theorem mayerPartialSum_Λ_latticeGraph_eq_zero_of_no_polymers
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    (h_no : IsingModel.allPolymers
-      (inducedGraph (IsingModel.latticeGraph d) Λ) = ∅)
-    (t : ℝ) (N : ℕ) :
-    IsingModel.mayerPartialSum
-        (inducedGraph (IsingModel.latticeGraph d) Λ) N t = 0 :=
-  Ambient.mayerPartialSum_Λ_eq_zero_of_no_polymers
-    (IsingModel.latticeGraph d) Λ h_no t N
+The three wrappers
+`mayerPartialSum_Λ_latticeGraph_two`,
+`mayerPartialSum_Λ_latticeGraph_eq_zero_of_no_polymers`,
+`mayerPartialSum_Λ_latticeGraph_eq_zero_of_edgeFinset_empty` now live
+in `MayerExpansionEdgeCasesPartialSum.lean`. -/
 
-/-- **ℤ^d Λ: mayerPartialSum = 0 on edgeless induced graphs**. -/
-theorem mayerPartialSum_Λ_latticeGraph_eq_zero_of_edgeFinset_empty
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    (h_empty : (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset
-      = ∅) (t : ℝ) (N : ℕ) :
-    IsingModel.mayerPartialSum
-        (inducedGraph (IsingModel.latticeGraph d) Λ) N t = 0 :=
-  Ambient.mayerPartialSum_Λ_eq_zero_of_edgeFinset_empty
-    (IsingModel.latticeGraph d) Λ h_empty t N
 
 /-- **ℤ^d Λ: mayerExpansionTerm absolute bound**. -/
 theorem mayerExpansionTerm_Λ_latticeGraph_abs_le
