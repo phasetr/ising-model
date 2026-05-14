@@ -84,34 +84,14 @@ log_partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_deviation_sandwi
   log_partitionFunctionΛ_high_temp_expansion_h_zero_deviation_sandwich_ferromagnetic
     (IsingModel.latticeGraph d) Λ J β hJ hβ
 
-/-- **ℤ^d Λ Z relative-deviation sandwich**. -/
-theorem partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_relative_sandwich
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ) (hβJ : 0 ≤ β * J) :
-    Real.cosh (β * J) ^
-        (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card
-      ≤ partitionFunctionΛ (IsingModel.latticeGraph d) Λ
-          (⟨J, 0, β⟩ : IsingParams ℝ) / (2 : ℝ) ^ Λ.card ∧
-    partitionFunctionΛ (IsingModel.latticeGraph d) Λ
-        (⟨J, 0, β⟩ : IsingParams ℝ) / (2 : ℝ) ^ Λ.card
-      ≤ Real.exp (β * J *
-          (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card) :=
-  partitionFunctionΛ_high_temp_expansion_h_zero_relative_sandwich
-    (IsingModel.latticeGraph d) Λ J β hβJ
+/-! ## Moved: Λ-direct partitionFunctionΛ relative-sandwich wrappers
 
-/-- **ℤ^d Λ ferromagnetic Z relative-deviation sandwich**. -/
-theorem partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_relative_sandwich_ferromagnetic
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
-    (hJ : 0 ≤ J) (hβ : 0 < β) :
-    Real.cosh (β * J) ^
-        (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card
-      ≤ partitionFunctionΛ (IsingModel.latticeGraph d) Λ
-          (⟨J, 0, β⟩ : IsingParams ℝ) / (2 : ℝ) ^ Λ.card ∧
-    partitionFunctionΛ (IsingModel.latticeGraph d) Λ
-        (⟨J, 0, β⟩ : IsingParams ℝ) / (2 : ℝ) ^ Λ.card
-      ≤ Real.exp (β * J *
-          (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card) :=
-  partitionFunctionΛ_high_temp_expansion_h_zero_relative_sandwich_ferromagnetic
-    (IsingModel.latticeGraph d) Λ J β hJ hβ
+The two Λ-direct
+`partitionFunctionΛ_*_relative_sandwich` wrappers (direct +
+`_ferromagnetic`) now live in
+`HighTemperatureBoundsDeviationRelative.lean`. -/
+
+
 
 /-! ## Moved: ℤ^d HT Λ-layer strict-deviation wrappers
 
