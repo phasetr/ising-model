@@ -2,6 +2,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassBasic
 import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassBasicIff
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransfer
 import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassNamedRateLeHighTempRate
+import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassNamedRateLeHighTempRatePos
 
 /-!
 # Cubic named-rate lattice-mass bridges
