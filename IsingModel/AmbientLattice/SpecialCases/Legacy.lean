@@ -23,6 +23,7 @@ import IsingModel.AmbientLattice.SpecialCases.InfiniteVolume
 import IsingModel.AmbientLattice.SpecialCases.JointAnalyticity
 import IsingModel.AmbientLattice.SpecialCases.JointRegularity
 import IsingModel.AmbientLattice.SpecialCases.MayerAnalyticity
+import IsingModel.AmbientLattice.SpecialCases.MayerAnalyticityExpansionTerm
 import IsingModel.AmbientLattice.SpecialCases.MayerBasicIdentities
 import IsingModel.AmbientLattice.SpecialCases.MayerEdgeCases
 import IsingModel.AmbientLattice.SpecialCases.MayerExpansionEdgeCases
