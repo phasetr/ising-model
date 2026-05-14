@@ -48,28 +48,14 @@ theorem log_partitionFunctionΛ_latticeGraph_nonneg
   log_partitionFunctionΛ_nonneg_of_ferromagnetic
     (IsingModel.latticeGraph d) Λ p hf
 
-/-- **ℤ^d `freeEnergyΛ = |↑Λ|⁻¹ · log Z_Λ`**. -/
-theorem freeEnergyΛ_latticeGraph_eq_inv_card_mul_log
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ) :
-    freeEnergyΛ (IsingModel.latticeGraph d) Λ p
-      = (Fintype.card (↑Λ : Type _) : ℝ)⁻¹
-        * Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ p) :=
-  freeEnergyΛ_eq_inv_card_mul_log (IsingModel.latticeGraph d) Λ p
+/-! ## Moved: ℤ^d freeEnergyΛ identity/nonneg wrappers
 
-/-- **ℤ^d `freeEnergyΛ = (Λ.card)⁻¹ · log Z_Λ`** (Finset-card form). -/
-theorem freeEnergyΛ_latticeGraph_eq_inv_Λcard_mul_log
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ) :
-    freeEnergyΛ (IsingModel.latticeGraph d) Λ p
-      = (Λ.card : ℝ)⁻¹
-        * Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ p) :=
-  freeEnergyΛ_eq_inv_Λcard_mul_log (IsingModel.latticeGraph d) Λ p
+The three wrappers
+`freeEnergyΛ_latticeGraph_eq_inv_card_mul_log`,
+`freeEnergyΛ_latticeGraph_eq_inv_Λcard_mul_log`,
+`freeEnergyΛ_latticeGraph_nonneg_of_ferromagnetic` now live in
+`PartitionFreeEnergyBoundsFreeEnergyLambda.lean`. -/
 
-/-- **ℤ^d `freeEnergyΛ ≥ 0`** (ferromagnetic, nonempty `Λ`). -/
-theorem freeEnergyΛ_latticeGraph_nonneg_of_ferromagnetic
-    (d : ℕ) {Λ : Finset (Fin d → ℤ)} (hne : Λ.Nonempty)
-    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
-    0 ≤ freeEnergyΛ (IsingModel.latticeGraph d) Λ p :=
-  freeEnergyΛ_nonneg_of_ferromagnetic (IsingModel.latticeGraph d) hne p hf
 
 /-! ## Moved: ℤ^d partition (2 cosh)^|Λ| sharp bound wrappers
 
