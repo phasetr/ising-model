@@ -15,22 +15,13 @@ pass-through to the corresponding ambient
 namespace IsingModel
 namespace Ambient
 
-/-- **ℤ^d correlationAlongExhaustion range is bddAbove**. -/
-theorem correlationAlongExhaustion_latticeGraph_cubicExhaustion_bddAbove
-    (d : ℕ) (p : IsingParams ℝ) (A : Finset (Fin d → ℤ)) :
-    BddAbove (Set.range (correlationAlongExhaustion (IsingModel.latticeGraph d)
-      (Ambient.cubicExhaustion d) p A)) :=
-  correlationAlongExhaustion_bddAbove (IsingModel.latticeGraph d)
-    (Ambient.cubicExhaustion d) p A
+/-! ## Moved: cubicExhaustion bddAbove + eventually_le_one wrappers
 
-/-- **ℤ^d `|correlationAlongExhaustion| ≤ 1` eventually**. -/
-theorem abs_correlationAlongExhaustion_latticeGraph_eventually_le_one
-    (d : ℕ) (p : IsingParams ℝ) (A : Finset (Fin d → ℤ)) :
-    ∀ᶠ n in Filter.atTop,
-      |correlationAlongExhaustion (IsingModel.latticeGraph d)
-        (Ambient.cubicExhaustion d) p A n| ≤ 1 :=
-  abs_correlationAlongExhaustion_eventually_le_one (IsingModel.latticeGraph d)
-    (Ambient.cubicExhaustion d) p A
+The two cubicExhaustion-specific wrappers
+`correlationAlongExhaustion_latticeGraph_cubicExhaustion_bddAbove` and
+`abs_correlationAlongExhaustion_latticeGraph_eventually_le_one` now
+live in `CorrelationExhaustionLimitsBoundsCubic.lean`. -/
+
 
 /-- **ℤ^d `correlationAlongExhaustion` eventually equals the lifted `correlationΛ`**
 (any-Exhaustion): for any finite `A`, eventually `A ⊆ Λ.volume n` and
@@ -53,23 +44,12 @@ theorem abs_correlationAlongExhaustion_latticeGraph_eventually_le_one_general
   abs_correlationAlongExhaustion_eventually_le_one
     (IsingModel.latticeGraph d) Λ p A
 
-/-- **ℤ^d correlationAlongExhaustion ≤ 1** per stage. -/
-theorem correlationAlongExhaustion_latticeGraph_cubicExhaustion_le_one
-    (d : ℕ) (p : IsingParams ℝ) (A : Finset (Fin d → ℤ)) (n : ℕ) :
-    correlationAlongExhaustion (IsingModel.latticeGraph d)
-        (Ambient.cubicExhaustion d) p A n ≤ 1 :=
-  correlationAlongExhaustion_le_one (IsingModel.latticeGraph d)
-    (Ambient.cubicExhaustion d) p A n
+/-! ## Moved: cubicExhaustion per-stage le_one + nonneg wrappers
 
-/-- **ℤ^d correlationAlongExhaustion ≥ 0** per stage (ferromagnetic). -/
-theorem correlationAlongExhaustion_latticeGraph_cubicExhaustion_nonneg
-    (d : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p)
-    (A : Finset (Fin d → ℤ)) (n : ℕ) :
-    0 ≤ correlationAlongExhaustion (IsingModel.latticeGraph d)
-      (Ambient.cubicExhaustion d) p A n :=
-  correlationAlongExhaustion_nonneg (IsingModel.latticeGraph d)
-    (Ambient.cubicExhaustion d) p hf A n
-
+The two cubicExhaustion-specific per-stage wrappers
+`correlationAlongExhaustion_latticeGraph_cubicExhaustion_le_one` and
+`correlationAlongExhaustion_latticeGraph_cubicExhaustion_nonneg` now
+live in `CorrelationExhaustionLimitsBoundsCubic.lean`. -/
 
 end Ambient
 end IsingModel
