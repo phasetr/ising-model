@@ -1,5 +1,6 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.TwoPoint
 import IsingModel.Concrete.LatticeGraphCorrelation.Translation
+import IsingModel.Concrete.LatticeGraphCorrelation.TranslationVaddTruncatedTranslation
 
 /-!
 # ℤ^d truncated{3,4}Infinite eq-separation wrappers
