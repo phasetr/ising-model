@@ -38,34 +38,14 @@ theorem partitionFunctionAlongExhaustion_latticeGraph_monotone_volume
   partitionFunctionAlongExhaustion_monotone_volume
     (IsingModel.latticeGraph d) Λ p hf n
 
-/-- **ℤ^d log partitionFunctionAlongExhaustion volume-monotonicity** (ferromagnetic). -/
-theorem log_partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_monotone_volume
-    (d : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p) (n : ℕ) :
-    Real.log (partitionFunctionAlongExhaustion (IsingModel.latticeGraph d)
-        (Ambient.cubicExhaustion d) p n)
-      ≤ Real.log (partitionFunctionAlongExhaustion (IsingModel.latticeGraph d)
-          (Ambient.cubicExhaustion d) p (n + 1)) :=
-  log_partitionFunctionAlongExhaustion_monotone_volume
-    (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d) p hf n
+/-! ## Moved: cubicEx volume monotone + pos wrappers
 
-/-- **ℤ^d partitionFunctionAlongExhaustion volume-monotonicity** (ferromagnetic):
-`partitionFunctionAlongExhaustion` at stage `n+1` is ≥ stage `n`. -/
-theorem partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_monotone_volume
-    (d : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p) (n : ℕ) :
-    partitionFunctionAlongExhaustion (IsingModel.latticeGraph d)
-        (Ambient.cubicExhaustion d) p n
-      ≤ partitionFunctionAlongExhaustion (IsingModel.latticeGraph d)
-          (Ambient.cubicExhaustion d) p (n + 1) :=
-  partitionFunctionAlongExhaustion_monotone_volume (IsingModel.latticeGraph d)
-    (Ambient.cubicExhaustion d) p hf n
+The three wrappers
+`log_partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_monotone_volume`,
+`partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_monotone_volume`,
+`partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_pos` now live
+in `PartitionExhaustionBoundsCubic.lean`. -/
 
-/-- **ℤ^d partitionFunctionAlongExhaustion positivity**. -/
-theorem partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_pos
-    (d : ℕ) (p : IsingParams ℝ) (n : ℕ) :
-    0 < partitionFunctionAlongExhaustion (IsingModel.latticeGraph d)
-      (Ambient.cubicExhaustion d) p n :=
-  partitionFunctionAlongExhaustion_pos (IsingModel.latticeGraph d)
-    (Ambient.cubicExhaustion d) p n
 
 /-- **ℤ^d partitionFunctionAlongExhaustion positivity** (any Exhaustion). -/
 theorem partitionFunctionAlongExhaustion_latticeGraph_pos
