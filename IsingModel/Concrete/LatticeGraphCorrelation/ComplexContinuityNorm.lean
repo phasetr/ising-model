@@ -21,42 +21,15 @@ unchanged from the former `Complex` declarations.
 namespace IsingModel
 namespace Ambient
 
-/-- **ℤ^d `Continuous` form of `partitionFunctionComplex` in `h`**
-(Λ-induced). -/
-theorem continuous_partitionFunctionComplex_h_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℂ) :
-    Continuous (fun h => IsingModel.partitionFunctionComplex
-      (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h β) :=
-  IsingModel.continuous_partitionFunctionComplex_h
-    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J β
+/-! ## Moved: continuous_partitionFunctionComplex wrappers
 
-/-- **ℤ^d `Continuous` form of `partitionFunctionComplex` in `J`**
-(Λ-induced). -/
-theorem continuous_partitionFunctionComplex_J_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (h β : ℂ) :
-    Continuous (fun J => IsingModel.partitionFunctionComplex
-      (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h β) :=
-  IsingModel.continuous_partitionFunctionComplex_J
-    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) h β
+The four wrappers
+`continuous_partitionFunctionComplex_h_latticeGraph`,
+`continuous_partitionFunctionComplex_J_latticeGraph`,
+`continuous_partitionFunctionComplex_beta_latticeGraph`,
+`continuous_partitionFunctionComplex_joint_latticeGraph` now live in
+`ComplexContinuityNormContinuous.lean`. -/
 
-/-- **ℤ^d `Continuous` form of `partitionFunctionComplex` in `β`**
-(Λ-induced). -/
-theorem continuous_partitionFunctionComplex_beta_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J h : ℂ) :
-    Continuous (fun β => IsingModel.partitionFunctionComplex
-      (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h β) :=
-  IsingModel.continuous_partitionFunctionComplex_beta
-    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h
-
-/-- **ℤ^d joint continuity of `partitionFunctionComplex`** (Λ-induced):
-`(J, h, β) : ℂ × ℂ × ℂ ↦ Z_ℂ` is continuous. -/
-theorem continuous_partitionFunctionComplex_joint_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) :
-    Continuous (fun z : ℂ × ℂ × ℂ =>
-      IsingModel.partitionFunctionComplex
-        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) z.1 z.2.1 z.2.2) :=
-  IsingModel.continuous_partitionFunctionComplex_joint
-    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
 
 /-- **ℤ^d `partitionFunctionComplex` `AnalyticOnNhd ℂ Set.univ` in `h`**
 (Λ-induced). -/
