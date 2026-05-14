@@ -1,6 +1,7 @@
 import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBoundsRegularity
+import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBoundsNonneg
 
 /-!
 # Polymer free-energy bound wrappers along an exhaustion
@@ -25,40 +26,14 @@ so downstream consumers continue to see the symbols. -/
 
 
 
-/-- **Along-ex: `polymerFreeEnergy ≥ 0` under `t ≥ 0`** (§18.5
-along-ex wrap). -/
-theorem polymerFreeEnergyAlongExhaustion_nonneg_of_nonneg
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    {t : ℝ} (ht : 0 ≤ t) (n : ℕ) :
-    0 ≤ IsingModel.polymerFreeEnergy
-        (inducedGraph G (Λ.volume n)) t :=
-  polymerFreeEnergy_Λ_nonneg_of_nonneg G (Λ.volume n) ht
+/-! ## Moved: polymerFreeEnergyAlongExhaustion `_of_nonneg` bound wrappers
 
-/-- **Along-ex: `polymerFreeEnergy ≤ |E| · log(1 + t)` under
-`t ≥ 0`** (§18.5 along-ex wrap). -/
-theorem
-polymerFreeEnergyAlongExhaustion_le_card_log_one_plus_of_nonneg
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    {t : ℝ} (ht : 0 ≤ t) (n : ℕ) :
-    IsingModel.polymerFreeEnergy
-        (inducedGraph G (Λ.volume n)) t ≤
-      (inducedGraph G (Λ.volume n)).edgeFinset.card *
-        Real.log (1 + t) :=
-  polymerFreeEnergy_Λ_le_card_log_one_plus_of_nonneg
-    G (Λ.volume n) ht
+The three `polymerFreeEnergyAlongExhaustion_*_of_nonneg` bound wrappers
+(`nonneg`, `le_card_log_one_plus`, `le_card_mul`) now live in
+`PolymerFreeEnergyBoundsNonneg.lean`. They are re-imported here so
+downstream consumers continue to see the symbols. -/
 
-/-- **Along-ex: `polymerFreeEnergy ≤ |E| · t` under `t ≥ 0`**
-(§18.5 along-ex wrap). -/
-theorem polymerFreeEnergyAlongExhaustion_le_card_mul_of_nonneg
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    {t : ℝ} (ht : 0 ≤ t) (n : ℕ) :
-    IsingModel.polymerFreeEnergy
-        (inducedGraph G (Λ.volume n)) t ≤
-      (inducedGraph G (Λ.volume n)).edgeFinset.card * t :=
-  polymerFreeEnergy_Λ_le_card_mul_of_nonneg G (Λ.volume n) ht
+
 
 /-- **Along-ex: `polymerFreeEnergy` is `MonotoneOn (Set.Ici 0)`**
 (§18.5 along-ex wrap). -/
