@@ -38,25 +38,14 @@ theorem correlationInfinite_latticeGraph_sq_le_one
     correlationInfinite (IsingModel.latticeGraph d) Λ p A ^ 2 ≤ 1 :=
   correlationInfinite_sq_le_one (IsingModel.latticeGraph d) Λ p A
 
-/-- **ℤ^d `-1 ≤ magnetizationΛ`**. -/
-theorem neg_one_le_magnetizationΛ_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ) (i : ↑Λ) :
-    -1 ≤ magnetizationΛ (IsingModel.latticeGraph d) Λ p i :=
-  neg_one_le_magnetizationΛ (IsingModel.latticeGraph d) Λ p i
+/-! ## Moved: `neg_one_le_magnetization*_latticeGraph` wrappers
 
-/-- **ℤ^d `-1 ≤ magnetizationAlongExhaustion`** per stage. -/
-theorem neg_one_le_magnetizationAlongExhaustion_latticeGraph
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    (p : IsingParams ℝ) (i : Fin d → ℤ) (n : ℕ) :
-    -1 ≤ magnetizationAlongExhaustion (IsingModel.latticeGraph d) Λ p i n :=
-  neg_one_le_magnetizationAlongExhaustion (IsingModel.latticeGraph d) Λ p i n
+The three wrappers
+`neg_one_le_magnetizationΛ_latticeGraph`,
+`neg_one_le_magnetizationAlongExhaustion_latticeGraph`,
+`neg_one_le_magnetizationInfinite_latticeGraph` now live in
+`UniformMagAbsBoundsNegOneMag.lean`. -/
 
-/-- **ℤ^d `-1 ≤ magnetizationInfinite`** (unconditional). -/
-theorem neg_one_le_magnetizationInfinite_latticeGraph
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    (p : IsingParams ℝ) (i : Fin d → ℤ) :
-    -1 ≤ magnetizationInfinite (IsingModel.latticeGraph d) Λ p i :=
-  neg_one_le_magnetizationInfinite (IsingModel.latticeGraph d) Λ p i
 
 end Ambient
 end IsingModel
