@@ -56,48 +56,13 @@ theorem vdPolymerFamilies_sum_Λ_latticeGraph_minus_one_le_of_nonneg
   Ambient.vdPolymerFamilies_sum_Λ_minus_one_le_of_nonneg
     (IsingModel.latticeGraph d) Λ ht
 
-/-- **ℤ^d Λ: pFE(tanh) ≤ ε(tanh) under `0 ≤ β·J`**. -/
-theorem polymerFreeEnergy_Λ_latticeGraph_tanh_le_eps_of_betaJ_nonneg
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    {β J : ℝ} (hβJ : 0 ≤ β * J) :
-    IsingModel.polymerFreeEnergy
-        (inducedGraph (IsingModel.latticeGraph d) Λ)
-        (Real.tanh (β * J)) ≤
-      ∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
-              (inducedGraph (IsingModel.latticeGraph d) Λ)).erase ∅,
-            ∏ P ∈ Γ, (Real.tanh (β * J)) ^ P.card :=
-  Ambient.polymerFreeEnergy_Λ_tanh_le_eps_of_betaJ_nonneg
-    (IsingModel.latticeGraph d) Λ hβJ
+/-! ## Moved: Λ-direct polymerFreeEnergy_Λ tanh bound wrappers
 
-/-- **ℤ^d Λ: pFE(tanh) ≤ (1+tanh)^|E| - 1 under `0 ≤ β·J`**. -/
-theorem
-polymerFreeEnergy_Λ_latticeGraph_tanh_le_pow_sub_one_of_betaJ_nonneg
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    {β J : ℝ} (hβJ : 0 ≤ β * J) :
-    IsingModel.polymerFreeEnergy
-        (inducedGraph (IsingModel.latticeGraph d) Λ)
-        (Real.tanh (β * J)) ≤
-      (1 + Real.tanh (β * J)) ^
-        (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card -
-        1 :=
-  Ambient.polymerFreeEnergy_Λ_tanh_le_pow_sub_one_of_betaJ_nonneg
-    (IsingModel.latticeGraph d) Λ hβJ
+The three Λ-direct `polymerFreeEnergy_Λ_latticeGraph_tanh_*` bound
+wrappers (`_le_eps`, `_le_pow_sub_one`, `_lt_log_two_of_pow_lt_two`)
+now live in `PolymerFreeEnergyHighTemperatureBoundsPFE.lean`. -/
 
-/-- **ℤ^d Λ: pFE(tanh) < log 2** under `(1+tanh)^|E| < 2`. -/
-theorem polymerFreeEnergy_Λ_latticeGraph_tanh_lt_log_two_of_pow_lt_two
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    {β J : ℝ} (hβJ : 0 ≤ β * J)
-    (h_pow : (1 + Real.tanh (β * J)) ^
-        (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card
-        < 2) :
-    IsingModel.polymerFreeEnergy
-        (inducedGraph (IsingModel.latticeGraph d) Λ)
-        (Real.tanh (β * J)) < Real.log 2 :=
-  Ambient.polymerFreeEnergy_Λ_tanh_lt_log_two_of_pow_lt_two
-    (IsingModel.latticeGraph d) Λ hβJ h_pow
+
 
 /-! ## Moved: AlongExhaustion polymer free-energy high-temperature bounds
 
