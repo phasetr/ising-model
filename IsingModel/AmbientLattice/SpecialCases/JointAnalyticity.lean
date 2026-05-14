@@ -1,5 +1,6 @@
 import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.MagnetizationAlongExhaustion
+import IsingModel.AmbientLattice.SpecialCases.JointAnalyticityPartitionFreeEnergy
 
 /-!
 # Joint analyticity wrappers along an exhaustion
@@ -86,41 +87,13 @@ theorem susceptibilityAlongExhaustion_analyticOnNhd_joint_gen
       susceptibilityAlongExhaustion G Λ ⟨p.2.1, p.2.2, p.1⟩ i n) Set.univ :=
   fun ⟨β, J, h⟩ _ => susceptibilityAlongExhaustion_analyticAt_joint_gen G Λ i n β J h
 
-/-- **Along-ex: partitionFunction jointly AnalyticAt**. -/
-theorem partitionFunctionAlongExhaustion_analyticAt_joint
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (n : ℕ) (β J h : ℝ) :
-    AnalyticAt ℝ (fun p : ℝ × ℝ × ℝ =>
-      partitionFunctionAlongExhaustion G Λ ⟨p.2.1, p.2.2, p.1⟩ n) (β, J, h) :=
-  partitionFunctionΛ_analyticAt_joint G (Λ.volume n) β J h
+/-! ## Moved: partitionFunction + freeEnergy joint analyticity wrappers
 
-/-- **Along-ex: partitionFunction jointly AnalyticOnNhd over Set.univ**. -/
-theorem partitionFunctionAlongExhaustion_analyticOnNhd_joint
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (n : ℕ) :
-    AnalyticOnNhd ℝ (fun p : ℝ × ℝ × ℝ =>
-      partitionFunctionAlongExhaustion G Λ ⟨p.2.1, p.2.2, p.1⟩ n) Set.univ :=
-  partitionFunctionΛ_analyticOnNhd_joint G (Λ.volume n)
+The four `{partitionFunction,freeEnergy}AlongExhaustion_analytic{At,OnNhd}_joint`
+wrappers now live in `JointAnalyticityPartitionFreeEnergy.lean`. They
+are re-imported here so downstream consumers continue to see the symbols. -/
 
-/-- **Along-ex: freeEnergy jointly AnalyticAt**. -/
-theorem freeEnergyAlongExhaustion_analyticAt_joint
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (n : ℕ) (β J h : ℝ) :
-    AnalyticAt ℝ (fun p : ℝ × ℝ × ℝ =>
-      freeEnergyAlongExhaustion G Λ ⟨p.2.1, p.2.2, p.1⟩ n) (β, J, h) :=
-  freeEnergyΛ_analyticAt_joint G (Λ.volume n) β J h
 
-/-- **Along-ex: freeEnergy jointly AnalyticOnNhd over Set.univ**. -/
-theorem freeEnergyAlongExhaustion_analyticOnNhd_joint
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (n : ℕ) :
-    AnalyticOnNhd ℝ (fun p : ℝ × ℝ × ℝ =>
-      freeEnergyAlongExhaustion G Λ ⟨p.2.1, p.2.2, p.1⟩ n) Set.univ :=
-  freeEnergyΛ_analyticOnNhd_joint G (Λ.volume n)
 
 end Ambient
 end IsingModel
