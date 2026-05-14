@@ -18,39 +18,12 @@ namespace Ambient
 
 /-! ### ℤ^d `freeEnergyAlongExhaustion` wrappers -/
 
-/-- **ℤ^d freeEnergyAlongExhaustion h-evenness** per stage:
-`f(Λ_n; J,-h,β) = f(Λ_n; J,h,β)`. Concrete specialization of
-`freeEnergyAlongExhaustion_neg_h`. -/
-theorem freeEnergyAlongExhaustion_latticeGraph_cubicExhaustion_neg_h
-    (d : ℕ) (J h β : ℝ) (n : ℕ) :
-    freeEnergyAlongExhaustion (IsingModel.latticeGraph d)
-        (Ambient.cubicExhaustion d) (⟨J, -h, β⟩ : IsingParams ℝ) n
-      = freeEnergyAlongExhaustion (IsingModel.latticeGraph d)
-          (Ambient.cubicExhaustion d) (⟨J, h, β⟩ : IsingParams ℝ) n :=
-  freeEnergyAlongExhaustion_neg_h (IsingModel.latticeGraph d)
-    (Ambient.cubicExhaustion d) J h β n
+/-! ## Moved: cubicExhaustion h-symmetry wrappers
 
-/-- **ℤ^d freeEnergyAlongExhaustion `|h|`-rewrite** per stage. -/
-theorem freeEnergyAlongExhaustion_latticeGraph_cubicExhaustion_eq_abs_h
-    (d : ℕ) (J h β : ℝ) (n : ℕ) :
-    freeEnergyAlongExhaustion (IsingModel.latticeGraph d)
-        (Ambient.cubicExhaustion d) (⟨J, h, β⟩ : IsingParams ℝ) n
-      = freeEnergyAlongExhaustion (IsingModel.latticeGraph d)
-          (Ambient.cubicExhaustion d) (⟨J, |h|, β⟩ : IsingParams ℝ) n :=
-  freeEnergyAlongExhaustion_eq_abs_h (IsingModel.latticeGraph d)
-    (Ambient.cubicExhaustion d) J h β n
+The three `freeEnergyAlongExhaustion_latticeGraph_cubicExhaustion_{neg_h,eq_abs_h,monotone_abs_h}`
+h-symmetry wrappers now live in
+`FreeEnergySpecialCasesAlongExCubicHSymmetry.lean`. -/
 
-/-- **ℤ^d freeEnergyAlongExhaustion ferromagnetic `|h|`-monotonicity**
-per stage. -/
-theorem freeEnergyAlongExhaustion_latticeGraph_cubicExhaustion_monotone_abs_h
-    (d : ℕ) (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β)
-    {h₁ h₂ : ℝ} (hh : |h₁| ≤ |h₂|) (n : ℕ) :
-    freeEnergyAlongExhaustion (IsingModel.latticeGraph d)
-        (Ambient.cubicExhaustion d) (⟨J, h₁, β⟩ : IsingParams ℝ) n
-      ≤ freeEnergyAlongExhaustion (IsingModel.latticeGraph d)
-          (Ambient.cubicExhaustion d) (⟨J, h₂, β⟩ : IsingParams ℝ) n :=
-  freeEnergyAlongExhaustion_monotone_abs_h (IsingModel.latticeGraph d)
-    (Ambient.cubicExhaustion d) J β hJ hβ hh n
 
 /-- **ℤ^d freeEnergyAlongExhaustion h-evenness** per stage (any Exhaustion). -/
 theorem freeEnergyAlongExhaustion_latticeGraph_neg_h
