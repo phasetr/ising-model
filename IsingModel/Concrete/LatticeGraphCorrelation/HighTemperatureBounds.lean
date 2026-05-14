@@ -67,57 +67,15 @@ child.
 -/
 
 
-/-- **ℤ^d Λ-level FV (3.46) numerator vanishes for odd-cardinality A**
-at `h = 0`: `∑_{X : ∂X = A} tanh(β J)^|X| = 0` for any `A` of odd
-cardinality. ℤ^d wrapper of `sum_high_temp_numerator_h_zero_odd_card_eq_zero_Λ`. -/
-theorem sum_high_temp_numerator_h_zero_odd_card_eq_zero_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
-    (A : Finset ↑Λ) (hA_odd : Odd A.card) :
-    ∑ X ∈ (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.powerset.filter
-        (fun X : Finset (Sym2 ↑Λ) => ∀ v : ↑Λ,
-          Even ((if v ∈ A then (1 : ℕ) else 0)
-                + (X.filter (v ∈ ·)).card)),
-        Real.tanh (β * J) ^ X.card = 0 :=
-  sum_high_temp_numerator_h_zero_odd_card_eq_zero_Λ
-    (IsingModel.latticeGraph d) Λ J β A hA_odd
+/-! ## Moved: FV (3.46) numerator and even-subgraph wrappers
 
-/-- **ℤ^d Λ-level correlation nonnegativity from FV (3.46)** at `h = 0`:
-under `0 ≤ β * J`, `0 ≤ correlationΛ (latticeGraph d) Λ ⟨J, 0, β⟩ A`.
-ℤ^d wrapper of `correlationΛ_high_temp_h_zero_nonneg`. -/
-theorem correlationΛ_latticeGraph_high_temp_h_zero_nonneg
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
-    (hβJ : 0 ≤ β * J) (A : Finset ↑Λ) :
-    0 ≤ correlationΛ (IsingModel.latticeGraph d) Λ
-        (⟨J, 0, β⟩ : IsingParams ℝ) A :=
-  correlationΛ_high_temp_h_zero_nonneg
-    (IsingModel.latticeGraph d) Λ J β hβJ A
+The four ℤ^d Λ-level FV (3.46) wrappers
+(`sum_high_temp_numerator_h_zero_odd_card_eq_zero_latticeGraph`,
+`correlationΛ_latticeGraph_high_temp_h_zero_nonneg`,
+`one_le_sum_pow_tanh_even_subgraph_latticeGraph`,
+`high_temp_numerator_filter_eq_empty_of_odd_card_latticeGraph`) now
+live in `HighTemperatureBoundsNumerator.lean`. -/
 
-/-- **ℤ^d high-temperature even-subgraph sum is `≥ 1`**: under
-`0 ≤ β * J`,
-`∑_{X ⊆ E_Λ, even-degree} tanh(β J)^|X| ≥ 1` on the ℤ^d induced
-subgraph. ℤ^d wrapper of `one_le_sum_pow_tanh_even_subgraph_Λ`. -/
-theorem one_le_sum_pow_tanh_even_subgraph_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ) (hβJ : 0 ≤ β * J) :
-    (1 : ℝ) ≤ ∑ X ∈
-        (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.powerset.filter
-          (fun X : Finset (Sym2 ↑Λ) =>
-            ∀ v : ↑Λ, Even ((X.filter (v ∈ ·)).card)),
-        Real.tanh (β * J) ^ X.card :=
-  one_le_sum_pow_tanh_even_subgraph_Λ
-    (IsingModel.latticeGraph d) Λ J β hβJ
-
-/-- **ℤ^d FV (3.46) numerator filter is empty for odd-cardinality A**:
-the filtered powerset is empty whenever `|A|` is odd.
-ℤ^d wrapper of `high_temp_numerator_filter_eq_empty_of_odd_card_Λ`. -/
-theorem high_temp_numerator_filter_eq_empty_of_odd_card_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    (A : Finset ↑Λ) (hA_odd : Odd A.card) :
-    (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.powerset.filter
-        (fun X : Finset (Sym2 ↑Λ) => ∀ v : ↑Λ,
-          Even ((if v ∈ A then (1 : ℕ) else 0)
-                + (X.filter (v ∈ ·)).card)) = ∅ :=
-  high_temp_numerator_filter_eq_empty_of_odd_card_Λ
-    (IsingModel.latticeGraph d) Λ A hA_odd
 
 /-- **ℤ^d Z high-temp sandwich (FV (3.45))**: under `0 ≤ β·J`,
 `2^|Λ| · cosh^|E_Λ| ≤ Z_Λ ≤ 2^(|Λ|+|E_Λ|) · cosh^|E_Λ|`. ℤ^d wrapper. -/
