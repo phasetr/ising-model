@@ -36,38 +36,13 @@ theorem mayerExpansionTerm_Λ_latticeGraph_two_nonpos_of_nonneg
   Ambient.mayerExpansionTerm_Λ_two_nonpos_of_nonneg
     (IsingModel.latticeGraph d) Λ ht
 
-/-- **ℤ^d Λ: ε(0) = 0**. -/
-theorem vdPolymerFamilies_sum_Λ_latticeGraph_minus_one_at_zero
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet] :
-    (∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
-              (inducedGraph (IsingModel.latticeGraph d) Λ)).erase ∅,
-        ∏ P ∈ Γ, (0 : ℝ) ^ P.card) = 0 :=
-  Ambient.vdPolymerFamilies_sum_Λ_minus_one_at_zero
-    (IsingModel.latticeGraph d) Λ
+/-! ## Moved: Λ-direct ε(t) infrastructure wrappers
 
-/-- **ℤ^d Λ: ε(t) is `Continuous`**. -/
-theorem vdPolymerFamilies_sum_Λ_latticeGraph_minus_one_continuous
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet] :
-    Continuous (fun t : ℝ =>
-      ∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
-              (inducedGraph (IsingModel.latticeGraph d) Λ)).erase ∅,
-        ∏ P ∈ Γ, t ^ P.card) :=
-  Ambient.vdPolymerFamilies_sum_Λ_minus_one_continuous
-    (IsingModel.latticeGraph d) Λ
+The three `vdPolymerFamilies_sum_Λ_latticeGraph_minus_one_*` wrappers
+(`_at_zero`, `_continuous`, `_lt_one_eventually`) now live in
+`MayerEpsilonInfrastructureVdSum.lean`. -/
 
-/-- **ℤ^d Λ: ε(t) < 1 eventually as t → 0**. -/
-theorem
-vdPolymerFamilies_sum_Λ_latticeGraph_minus_one_lt_one_eventually
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet] :
-    ∀ᶠ t : ℝ in nhds 0,
-      (∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
-              (inducedGraph (IsingModel.latticeGraph d) Λ)).erase ∅,
-          ∏ P ∈ Γ, t ^ P.card) < 1 :=
-  Ambient.vdPolymerFamilies_sum_Λ_minus_one_lt_one_eventually
-    (IsingModel.latticeGraph d) Λ
+
 
 /-- **ℤ^d Λ: allPolymers = ∅ on edgeless induced graphs**. -/
 theorem allPolymers_Λ_latticeGraph_eq_empty_of_edgeFinset_empty
