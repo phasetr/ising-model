@@ -51,51 +51,14 @@ partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_closed_evenSubgraphs
   Ambient.partitionFunctionΛ_high_temp_expansion_h_zero_closed_evenSubgraphs
     (IsingModel.latticeGraph d) Λ J β
 
-/-- **ℤ^d Λ: §18.6 freeEnergy decomposition**. -/
-theorem freeEnergyΛ_latticeGraph_eq_polymerFreeEnergy
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    (J β : ℝ) (hβJ : 0 ≤ β * J) (hne : Λ.Nonempty) :
-    Ambient.freeEnergyΛ (IsingModel.latticeGraph d) Λ ⟨J, 0, β⟩ =
-      Real.log 2 +
-        ((inducedGraph (IsingModel.latticeGraph d)
-            Λ).edgeFinset.card : ℝ) /
-            Fintype.card ↑(Λ : Finset (Fin d → ℤ)) *
-          Real.log (Real.cosh (β * J)) +
-        IsingModel.polymerFreeEnergy
-          (inducedGraph (IsingModel.latticeGraph d) Λ)
-          (Real.tanh (β * J)) /
-            Fintype.card ↑(Λ : Finset (Fin d → ℤ)) :=
-  Ambient.freeEnergyΛ_eq_polymerFreeEnergy
-    (IsingModel.latticeGraph d) Λ J β hβJ hne
+/-! ## Moved: Λ-direct freeEnergyΛ HT capstone wrappers
 
-/-- **ℤ^d Λ: §18.6 ferromagnetic freeEnergy decomposition**. -/
-theorem freeEnergyΛ_latticeGraph_eq_polymerFreeEnergy_ferromagnetic
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (hne : Λ.Nonempty) :
-    Ambient.freeEnergyΛ (IsingModel.latticeGraph d) Λ ⟨J, 0, β⟩ =
-      Real.log 2 +
-        ((inducedGraph (IsingModel.latticeGraph d)
-            Λ).edgeFinset.card : ℝ) /
-            Fintype.card ↑(Λ : Finset (Fin d → ℤ)) *
-          Real.log (Real.cosh (β * J)) +
-        IsingModel.polymerFreeEnergy
-          (inducedGraph (IsingModel.latticeGraph d) Λ)
-          (Real.tanh (β * J)) /
-            Fintype.card ↑(Λ : Finset (Fin d → ℤ)) :=
-  Ambient.freeEnergyΛ_eq_polymerFreeEnergy_ferromagnetic
-    (IsingModel.latticeGraph d) Λ J β hJ hβ hne
+The three Λ-direct `freeEnergyΛ_latticeGraph_*` capstone wrappers
+(`_eq_polymerFreeEnergy`, `_eq_polymerFreeEnergy_ferromagnetic`,
+`_eq_log_two_at_betaJ_zero`) now live in
+`HighTemperatureCapstonesFreeEnergy.lean`. -/
 
-/-- **ℤ^d Λ: freeEnergy = log 2 at `β·J = 0`**. -/
-theorem freeEnergyΛ_latticeGraph_eq_log_two_at_betaJ_zero
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    {β J : ℝ} (hβJ : β * J = 0) (hne : Λ.Nonempty) :
-    Ambient.freeEnergyΛ (IsingModel.latticeGraph d) Λ ⟨J, 0, β⟩ =
-      Real.log 2 :=
-  Ambient.freeEnergyΛ_eq_log_two_at_betaJ_zero
-    (IsingModel.latticeGraph d) Λ hβJ hne
+
 
 /-- **ℤ^d Λ: mayerPartialSum at N=1, t=1**. -/
 theorem mayerPartialSum_Λ_latticeGraph_one_at_one
