@@ -1,5 +1,6 @@
 import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLattice.SpecialCases.FreeEnergyAnalyticityHZero
 
 /-!
 # Ambient free-energy per-direction analyticity wrappers
@@ -17,43 +18,14 @@ variable {V : Type*} [DecidableEq V]
 
 /-! ### Along-exhaustion free-energy per-direction analyticity -/
 
-/-- **Along-ex: freeEnergy `AnalyticAt ℝ` in `β` at `h = 0`**. -/
-theorem freeEnergyAlongExhaustion_analyticAt_beta_h_zero
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (n : ℕ) :
-    AnalyticAt ℝ (fun β' : ℝ =>
-      freeEnergyAlongExhaustion G Λ ⟨J, 0, β'⟩ n) β :=
-  freeEnergyΛ_analyticAt_beta_h_zero G (Λ.volume n) J β
+/-! ## Moved: freeEnergyAlongExhaustion h=0 analyticity wrappers
 
-/-- **Along-ex: freeEnergy `AnalyticAt ℝ` in `J` at `h = 0`**. -/
-theorem freeEnergyAlongExhaustion_analyticAt_J_h_zero
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (β J : ℝ) (n : ℕ) :
-    AnalyticAt ℝ (fun J' : ℝ =>
-      freeEnergyAlongExhaustion G Λ ⟨J', 0, β⟩ n) J :=
-  freeEnergyΛ_analyticAt_J_h_zero G (Λ.volume n) β J
+The four `freeEnergyAlongExhaustion_analytic*_*_h_zero` wrappers
+(AnalyticAt × {beta,J}, AnalyticOnNhd × {beta,J}) now live in
+`FreeEnergyAnalyticityHZero.lean`. They are re-imported here so
+downstream consumers continue to see the symbols. -/
 
-/-- **Along-ex: freeEnergy `AnalyticOnNhd ℝ _ Set.univ` in `β` at
-`h = 0`**. -/
-theorem freeEnergyAlongExhaustion_analyticOnNhd_beta_h_zero
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J : ℝ) (n : ℕ) :
-    AnalyticOnNhd ℝ (fun β' : ℝ =>
-      freeEnergyAlongExhaustion G Λ ⟨J, 0, β'⟩ n) Set.univ :=
-  freeEnergyΛ_analyticOnNhd_beta_h_zero G (Λ.volume n) J
 
-/-- **Along-ex: freeEnergy `AnalyticOnNhd ℝ _ Set.univ` in `J` at
-`h = 0`**. -/
-theorem freeEnergyAlongExhaustion_analyticOnNhd_J_h_zero
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (β : ℝ) (n : ℕ) :
-    AnalyticOnNhd ℝ (fun J' : ℝ =>
-      freeEnergyAlongExhaustion G Λ ⟨J', 0, β⟩ n) Set.univ :=
-  freeEnergyΛ_analyticOnNhd_J_h_zero G (Λ.volume n) β
 
 /-- **Along-ex: freeEnergy `AnalyticAt ℝ` in `β` at general `h`**. -/
 theorem freeEnergyAlongExhaustion_analyticAt_beta_general_h
