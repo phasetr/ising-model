@@ -72,35 +72,12 @@ vdPolymerFamilies_sum_Λ_latticeGraph_minus_one_tanh_eq_zero_iff
   Ambient.vdPolymerFamilies_sum_Λ_minus_one_tanh_eq_zero_iff
     (IsingModel.latticeGraph d) Λ hβJ
 
-/-- **ℤ^d Λ: 0 < polymerFreeEnergy(tanh) ↔ 0 < tanh ∧
-allPolymers ≠ ∅**. -/
-theorem polymerFreeEnergy_Λ_latticeGraph_tanh_pos_iff
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    {β J : ℝ} (hβJ : 0 ≤ β * J) :
-    0 < IsingModel.polymerFreeEnergy
-          (inducedGraph (IsingModel.latticeGraph d) Λ)
-          (Real.tanh (β * J)) ↔
-      0 < Real.tanh (β * J) ∧
-        (IsingModel.allPolymers
-          (inducedGraph (IsingModel.latticeGraph d) Λ)).Nonempty :=
-  Ambient.polymerFreeEnergy_Λ_tanh_pos_iff
-    (IsingModel.latticeGraph d) Λ hβJ
+/-! ## Moved: polymerFreeEnergy_Λ_tanh _iff wrappers
 
-/-- **ℤ^d Λ: polymerFreeEnergy(tanh) = 0 ↔ tanh = 0 ∨
-allPolymers = ∅**. -/
-theorem polymerFreeEnergy_Λ_latticeGraph_tanh_eq_zero_iff
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    {β J : ℝ} (hβJ : 0 ≤ β * J) :
-    IsingModel.polymerFreeEnergy
-        (inducedGraph (IsingModel.latticeGraph d) Λ)
-        (Real.tanh (β * J)) = 0 ↔
-      Real.tanh (β * J) = 0 ∨
-        IsingModel.allPolymers
-          (inducedGraph (IsingModel.latticeGraph d) Λ) = ∅ :=
-  Ambient.polymerFreeEnergy_Λ_tanh_eq_zero_iff
-    (IsingModel.latticeGraph d) Λ hβJ
+The two Λ-direct `polymerFreeEnergy_Λ_latticeGraph_tanh_{pos,eq_zero}_iff`
+wrappers now live in `MayerEpsilonPositivityPFE.lean`. -/
+
+
 
 /-! ## Moved: AlongExhaustion mayer-epsilon positivity / equality wrappers
 
