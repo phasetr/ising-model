@@ -21,6 +21,7 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsCorrelationBa
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureCapstones
 import IsingModel.AmbientLattice.SpecialCases.InfiniteVolume
 import IsingModel.AmbientLattice.SpecialCases.JointAnalyticity
+import IsingModel.AmbientLattice.SpecialCases.JointAnalyticityPartitionFreeEnergy
 import IsingModel.AmbientLattice.SpecialCases.JointRegularity
 import IsingModel.AmbientLattice.SpecialCases.MayerAnalyticity
 import IsingModel.AmbientLattice.SpecialCases.MayerAnalyticityExpansionTerm
