@@ -28,35 +28,14 @@ theorem partitionFunction_eq_abs_h_latticeGraph
   IsingModel.partitionFunction_eq_abs_h
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h β
 
-/-- **ℤ^d partitionFunction_monotone_abs_h direct** at Λ-induced
-(ferromagnetic). -/
-theorem partitionFunction_monotone_abs_h_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β)
-    {h₁ h₂ : ℝ} (hh : |h₁| ≤ |h₂|) :
-    IsingModel.partitionFunction
-        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
-        (⟨J, h₁, β⟩ : IsingParams ℝ)
-      ≤ IsingModel.partitionFunction
-          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
-          (⟨J, h₂, β⟩ : IsingParams ℝ) :=
-  IsingModel.partitionFunction_monotone_abs_h
-    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J β hJ hβ hh
+/-! ## Moved: ferromagnetic / |h|-monotonicity wrappers
 
-/-- **ℤ^d partitionFunction_ge_one_of_ferromagnetic direct** (Λ-induced). -/
-theorem partitionFunction_ge_one_of_ferromagnetic_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ) (hf : Ferromagnetic p) :
-    (1 : ℝ) ≤ IsingModel.partitionFunction
-          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p :=
-  IsingModel.partitionFunction_ge_one_of_ferromagnetic
-    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p hf
+The three wrappers
+`partitionFunction_monotone_abs_h_latticeGraph`,
+`partitionFunction_ge_one_of_ferromagnetic_latticeGraph`, and
+`log_partitionFunction_nonneg_of_ferromagnetic_latticeGraph` now live
+in `FiniteVolumePartitionBoundsFerromagnetic.lean`. -/
 
-/-- **ℤ^d log_partitionFunction_nonneg_of_ferromagnetic direct** (Λ-induced). -/
-theorem log_partitionFunction_nonneg_of_ferromagnetic_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ) (hf : Ferromagnetic p) :
-    0 ≤ Real.log (IsingModel.partitionFunction
-          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p) :=
-  IsingModel.log_partitionFunction_nonneg_of_ferromagnetic
-    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p hf
 
 /-! ## Moved: ferromagnetic 2^|Λ| / (2 cosh)^|Λ| partition wrappers
 
