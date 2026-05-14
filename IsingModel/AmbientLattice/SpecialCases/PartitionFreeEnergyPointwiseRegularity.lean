@@ -2,6 +2,7 @@ import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyPointwiseRegularityHZero
 import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyPointwiseRegularityFE
+import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyPointwiseRegularityPartitionGeneralH
 
 /-!
 # Ambient partition/free-energy pointwise regularity wrappers
@@ -29,41 +30,14 @@ here so downstream consumers continue to see the symbols. -/
 
 
 
-/-- **partitionFunctionAlongExhaustion ContinuousAt β at general h**. -/
-theorem partitionFunctionAlongExhaustion_continuousAt_beta_general_h
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J h β : ℝ) (n : ℕ) :
-    ContinuousAt (fun β' : ℝ =>
-      partitionFunctionAlongExhaustion G Λ ⟨J, h, β'⟩ n) β :=
-  (partitionFunctionΛ_continuous_beta_general_h G (Λ.volume n) J h).continuousAt
+/-! ## Moved: partitionFunctionAlongExhaustion general-h pointwise wrappers
 
-/-- **partitionFunctionAlongExhaustion ContinuousAt J at general h**. -/
-theorem partitionFunctionAlongExhaustion_continuousAt_J_general_h
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J h β : ℝ) (n : ℕ) :
-    ContinuousAt (fun J' : ℝ =>
-      partitionFunctionAlongExhaustion G Λ ⟨J', h, β⟩ n) J :=
-  (partitionFunctionΛ_continuous_J_general_h G (Λ.volume n) β h).continuousAt
+The four `partitionFunctionAlongExhaustion_*_general_h` ContinuousAt /
+DifferentiableAt pointwise wrappers now live in
+`PartitionFreeEnergyPointwiseRegularityPartitionGeneralH.lean`. They are
+re-imported here so downstream consumers continue to see the symbols. -/
 
-/-- **partitionFunctionAlongExhaustion DifferentiableAt β at general h**. -/
-theorem partitionFunctionAlongExhaustion_differentiableAt_beta_general_h
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J h β : ℝ) (n : ℕ) :
-    DifferentiableAt ℝ (fun β' : ℝ =>
-      partitionFunctionAlongExhaustion G Λ ⟨J, h, β'⟩ n) β :=
-  (partitionFunctionΛ_differentiable_beta_general_h G (Λ.volume n) J h).differentiableAt
 
-/-- **partitionFunctionAlongExhaustion DifferentiableAt J at general h**. -/
-theorem partitionFunctionAlongExhaustion_differentiableAt_J_general_h
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J h β : ℝ) (n : ℕ) :
-    DifferentiableAt ℝ (fun J' : ℝ =>
-      partitionFunctionAlongExhaustion G Λ ⟨J', h, β⟩ n) J :=
-  (partitionFunctionΛ_differentiable_J_general_h G (Λ.volume n) β h).differentiableAt
 
 /-- **partitionFunctionAlongExhaustion ContinuousAt h**. -/
 theorem partitionFunctionAlongExhaustion_continuousAt_h
