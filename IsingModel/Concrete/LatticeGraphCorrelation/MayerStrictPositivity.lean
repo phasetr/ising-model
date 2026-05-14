@@ -46,17 +46,11 @@ vdPolymerFamilies_sum_Λ_latticeGraph_strictMonoOn_of_polymers_nonempty
   Ambient.vdPolymerFamilies_sum_Λ_strictMonoOn_of_polymers_nonempty
     (IsingModel.latticeGraph d) Λ h_poly
 
-/-- **ℤ^d Λ: 0 < pFE under `0 < t` and polymers exist**. -/
-theorem polymerFreeEnergy_Λ_latticeGraph_pos_of_t_pos_of_polymers_nonempty
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    {t : ℝ} (h_t_pos : 0 < t)
-    (h_poly : (IsingModel.allPolymers
-      (inducedGraph (IsingModel.latticeGraph d) Λ)).Nonempty) :
-    0 < IsingModel.polymerFreeEnergy
-        (inducedGraph (IsingModel.latticeGraph d) Λ) t :=
-  Ambient.polymerFreeEnergy_Λ_pos_of_t_pos_of_polymers_nonempty
-    (IsingModel.latticeGraph d) Λ h_t_pos h_poly
+/-! ## Moved: polymerFreeEnergy_Λ_pos_of_t_pos wrapper
+
+`polymerFreeEnergy_Λ_latticeGraph_pos_of_t_pos_of_polymers_nonempty`
+now lives in `MayerStrictPositivityPFE.lean`. -/
+
 
 /-- **ℤ^d Λ: 1 < vdSum under `0 < t` and polymers exist**. -/
 theorem
@@ -86,19 +80,11 @@ vdPolymerFamilies_sum_Λ_latticeGraph_minus_one_pos_of_t_pos_of_polymers_nonempt
   Ambient.vdPolymerFamilies_sum_Λ_minus_one_pos_of_t_pos_of_polymers_nonempty
     (IsingModel.latticeGraph d) Λ h_t_pos h_poly
 
-/-- **ℤ^d Λ: 0 < pFE(tanh) under `0 < tanh` and polymers exist**. -/
-theorem
-polymerFreeEnergy_Λ_latticeGraph_tanh_pos_of_tanh_pos_of_polymers_nonempty
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    {β J : ℝ} (h_tanh_pos : 0 < Real.tanh (β * J))
-    (h_poly : (IsingModel.allPolymers
-      (inducedGraph (IsingModel.latticeGraph d) Λ)).Nonempty) :
-    0 < IsingModel.polymerFreeEnergy
-          (inducedGraph (IsingModel.latticeGraph d) Λ)
-          (Real.tanh (β * J)) :=
-  Ambient.polymerFreeEnergy_Λ_tanh_pos_of_tanh_pos_of_polymers_nonempty
-    (IsingModel.latticeGraph d) Λ h_tanh_pos h_poly
+/-! ## Moved: polymerFreeEnergy_Λ_tanh_pos_of_tanh_pos wrapper
+
+`polymerFreeEnergy_Λ_latticeGraph_tanh_pos_of_tanh_pos_of_polymers_nonempty`
+now lives in `MayerStrictPositivityPFE.lean`. -/
+
 
 /-! ## Moved: Λ-tanh / strictMono mayer wrappers
 
