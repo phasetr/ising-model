@@ -99,69 +99,14 @@ theorem polymerFreeEnergy_Λ_latticeGraph_tanh_lt_pow_sub_one_of_eps_pos
   Ambient.polymerFreeEnergy_Λ_tanh_lt_pow_sub_one_of_eps_pos
     (IsingModel.latticeGraph d) Λ hβJ h_eps_pos
 
-/-- **ℤ^d Λ: pFE(tanh(β₁·J)) < pFE(tanh(β₂·J))** under `J > 0`,
-`0 ≤ β₁ < β₂`, polymers nonempty. -/
-theorem
-polymerFreeEnergy_Λ_latticeGraph_tanh_lt_of_lt_in_beta_of_polymers_nonempty
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    (h_poly : (IsingModel.allPolymers
-      (inducedGraph (IsingModel.latticeGraph d) Λ)).Nonempty)
-    {β₁ β₂ J : ℝ} (hβ₁ : 0 ≤ β₁) (hJ : 0 < J) (hβ : β₁ < β₂) :
-    IsingModel.polymerFreeEnergy
-        (inducedGraph (IsingModel.latticeGraph d) Λ)
-        (Real.tanh (β₁ * J)) <
-      IsingModel.polymerFreeEnergy
-        (inducedGraph (IsingModel.latticeGraph d) Λ)
-        (Real.tanh (β₂ * J)) :=
-  Ambient.polymerFreeEnergy_Λ_tanh_lt_of_lt_in_beta_of_polymers_nonempty
-    (IsingModel.latticeGraph d) Λ h_poly hβ₁ hJ hβ
+/-! ## Moved: Λ-direct tanh-sharpening monotone-in-(β,J) wrappers
 
-/-- **ℤ^d Λ: pFE(tanh(β·J₁)) < pFE(tanh(β·J₂))** under `β > 0`,
-`0 ≤ J₁ < J₂`, polymers nonempty. -/
-theorem
-polymerFreeEnergy_Λ_latticeGraph_tanh_lt_of_lt_in_J_of_polymers_nonempty
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    (h_poly : (IsingModel.allPolymers
-      (inducedGraph (IsingModel.latticeGraph d) Λ)).Nonempty)
-    {β J₁ J₂ : ℝ} (hJ₁ : 0 ≤ J₁) (hβ : 0 < β) (hJ : J₁ < J₂) :
-    IsingModel.polymerFreeEnergy
-        (inducedGraph (IsingModel.latticeGraph d) Λ)
-        (Real.tanh (β * J₁)) <
-      IsingModel.polymerFreeEnergy
-        (inducedGraph (IsingModel.latticeGraph d) Λ)
-        (Real.tanh (β * J₂)) :=
-  Ambient.polymerFreeEnergy_Λ_tanh_lt_of_lt_in_J_of_polymers_nonempty
-    (IsingModel.latticeGraph d) Λ h_poly hJ₁ hβ hJ
+The four Λ-direct monotone wrappers
+(`polymerFreeEnergy_Λ_latticeGraph_tanh_lt_of_lt_in_{beta,J}_of_polymers_nonempty`
+and `*_strictMonoOn_{beta,J}_of_polymers_nonempty`) now live in
+`PolymerFreeEnergyTanhSharpeningMonotone.lean`. -/
 
-/-- **ℤ^d Λ: pFE(tanh(β·J)) is `StrictMonoOn (Set.Ici 0)` in β**. -/
-theorem
-polymerFreeEnergy_Λ_latticeGraph_tanh_strictMonoOn_beta_of_polymers_nonempty
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    (h_poly : (IsingModel.allPolymers
-      (inducedGraph (IsingModel.latticeGraph d) Λ)).Nonempty)
-    {J : ℝ} (hJ : 0 < J) :
-    StrictMonoOn (fun β : ℝ => IsingModel.polymerFreeEnergy
-        (inducedGraph (IsingModel.latticeGraph d) Λ)
-        (Real.tanh (β * J))) (Set.Ici 0) :=
-  Ambient.polymerFreeEnergy_Λ_tanh_strictMonoOn_beta_of_polymers_nonempty
-    (IsingModel.latticeGraph d) Λ h_poly hJ
 
-/-- **ℤ^d Λ: pFE(tanh(β·J)) is `StrictMonoOn (Set.Ici 0)` in J**. -/
-theorem
-polymerFreeEnergy_Λ_latticeGraph_tanh_strictMonoOn_J_of_polymers_nonempty
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    (h_poly : (IsingModel.allPolymers
-      (inducedGraph (IsingModel.latticeGraph d) Λ)).Nonempty)
-    {β : ℝ} (hβ : 0 < β) :
-    StrictMonoOn (fun J : ℝ => IsingModel.polymerFreeEnergy
-        (inducedGraph (IsingModel.latticeGraph d) Λ)
-        (Real.tanh (β * J))) (Set.Ici 0) :=
-  Ambient.polymerFreeEnergy_Λ_tanh_strictMonoOn_J_of_polymers_nonempty
-    (IsingModel.latticeGraph d) Λ h_poly hβ
 
 /-! ## Moved: AlongExhaustion polymerFreeEnergy tanh sharpening wrappers
 
