@@ -43,45 +43,14 @@ theorem log_partitionFunctionΛ_latticeGraph_disjUnion_super_additive
   log_partitionFunctionΛ_disjUnion_super_additive
     (IsingModel.latticeGraph d) hd p hf
 
-/-- **ℤ^d `|Λ| · freeEnergyΛ = log Z_Λ`** for nonempty `Λ`. -/
-theorem card_mul_freeEnergyΛ_latticeGraph_eq_log_partitionFunctionΛ_of_nonempty
-    (d : ℕ) {Λ : Finset (Fin d → ℤ)} (hne : Λ.Nonempty)
-    (p : IsingParams ℝ) :
-    (Λ.card : ℝ) * freeEnergyΛ (IsingModel.latticeGraph d) Λ p
-      = Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ p) :=
-  card_mul_freeEnergyΛ_eq_log_partitionFunctionΛ_of_nonempty
-    (IsingModel.latticeGraph d) hne p
+/-! ## Moved: freeEnergyΛ superadditivity wrappers
 
-/-- **ℤ^d weighted monotonicity of `freeEnergyΛ` on disjoint unions**
-(ferromagnetic): `|Λ₁|·f_{Λ₁} ≤ |Λ₁ ∪ Λ₂|·f_{Λ₁ ∪ Λ₂}`. -/
-theorem card_mul_freeEnergyΛ_latticeGraph_le_of_disjoint_union
-    (d : ℕ) {Λ₁ Λ₂ : Finset (Fin d → ℤ)}
-    (hne₁ : Λ₁.Nonempty) (hd : Disjoint Λ₁ Λ₂)
-    [Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ₁).edgeSet]
-    [Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ₁ ∪ Λ₂)).edgeSet]
-    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
-    (Λ₁.card : ℝ) * freeEnergyΛ (IsingModel.latticeGraph d) Λ₁ p
-      ≤ ((Λ₁ ∪ Λ₂).card : ℝ)
-          * freeEnergyΛ (IsingModel.latticeGraph d) (Λ₁ ∪ Λ₂) p := by
-  classical
-  exact card_mul_freeEnergyΛ_le_of_disjoint_union
-    (IsingModel.latticeGraph d) hne₁ hd p hf
+The three wrappers
+`card_mul_freeEnergyΛ_latticeGraph_eq_log_partitionFunctionΛ_of_nonempty`,
+`card_mul_freeEnergyΛ_latticeGraph_le_of_disjoint_union`,
+`freeEnergyΛ_latticeGraph_weighted_super_additive_of_nonempty` now live
+in `PartitionFreeEnergySuperadditivityFE.lean`. -/
 
-/-- **ℤ^d weighted super-additivity of `freeEnergyΛ` on disjoint unions**
-(ferromagnetic). -/
-theorem freeEnergyΛ_latticeGraph_weighted_super_additive_of_nonempty
-    (d : ℕ) {Λ₁ Λ₂ : Finset (Fin d → ℤ)}
-    (hne₁ : Λ₁.Nonempty) (hne₂ : Λ₂.Nonempty) (hd : Disjoint Λ₁ Λ₂)
-    [Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ₁).edgeSet]
-    [Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ₂).edgeSet]
-    [Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ₁ ∪ Λ₂)).edgeSet]
-    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
-    (Λ₁.card : ℝ) * freeEnergyΛ (IsingModel.latticeGraph d) Λ₁ p
-      + (Λ₂.card : ℝ) * freeEnergyΛ (IsingModel.latticeGraph d) Λ₂ p
-    ≤ ((Λ₁ ∪ Λ₂).card : ℝ)
-        * freeEnergyΛ (IsingModel.latticeGraph d) (Λ₁ ∪ Λ₂) p :=
-  freeEnergyΛ_weighted_super_additive_of_nonempty
-    (IsingModel.latticeGraph d) hne₁ hne₂ hd p hf
 
 /-- **ℤ^d `partitionFunctionΛ` respects Finset equality**. -/
 theorem partitionFunctionΛ_latticeGraph_congr_finset
