@@ -3,6 +3,7 @@ import IsingModel.Concrete.IntLattice
 import IsingModel.Concrete.LatticeGraphCorrelation.SiteIndepMag
 import IsingModel.Concrete.LatticeGraphCorrelation.SiteIndepMagTrivialSlice
 import IsingModel.Concrete.LatticeGraphCorrelation.SiteIndepMagTwoPoint
+import IsingModel.Concrete.LatticeGraphCorrelation.SiteIndepMagTwoPointBounds
 import IsingModel.Concrete.LatticeGraphCorrelation.SiteIndepMagTwoPointNonnegAndGe
 import IsingModel.TranslationInvariance
 import IsingModel.PhaseTransition
