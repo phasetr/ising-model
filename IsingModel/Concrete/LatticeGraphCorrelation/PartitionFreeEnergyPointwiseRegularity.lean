@@ -64,53 +64,16 @@ theorem partitionFunctionAlongExhaustion_latticeGraph_differentiableAt_J_h_zero
   Ambient.partitionFunctionAlongExhaustion_differentiableAt_J_h_zero
     (IsingModel.latticeGraph d) Λ J β n
 
-/-- **ℤ^d along-ex: `partitionFunctionAlongExhaustion` ContinuousAt β at general h**. -/
-theorem partitionFunctionAlongExhaustion_latticeGraph_continuousAt_beta_general_h
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet]
-    (J h β : ℝ) (n : ℕ) :
-    ContinuousAt (fun β' : ℝ =>
-      Ambient.partitionFunctionAlongExhaustion (IsingModel.latticeGraph d)
-        Λ ⟨J, h, β'⟩ n) β :=
-  Ambient.partitionFunctionAlongExhaustion_continuousAt_beta_general_h
-    (IsingModel.latticeGraph d) Λ J h β n
+/-! ## Moved: partitionFunctionAlongEx continuousAt/diffAt general-h
 
-/-- **ℤ^d along-ex: `partitionFunctionAlongExhaustion` ContinuousAt J at general h**. -/
-theorem partitionFunctionAlongExhaustion_latticeGraph_continuousAt_J_general_h
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet]
-    (J h β : ℝ) (n : ℕ) :
-    ContinuousAt (fun J' : ℝ =>
-      Ambient.partitionFunctionAlongExhaustion (IsingModel.latticeGraph d)
-        Λ ⟨J', h, β⟩ n) J :=
-  Ambient.partitionFunctionAlongExhaustion_continuousAt_J_general_h
-    (IsingModel.latticeGraph d) Λ J h β n
+The four wrappers
+`partitionFunctionAlongExhaustion_latticeGraph_continuousAt_beta_general_h`,
+`partitionFunctionAlongExhaustion_latticeGraph_continuousAt_J_general_h`,
+`partitionFunctionAlongExhaustion_latticeGraph_differentiableAt_beta_general_h`,
+`partitionFunctionAlongExhaustion_latticeGraph_differentiableAt_J_general_h`
+now live in
+`PartitionFreeEnergyPointwiseRegularityGeneralH.lean`. -/
 
-/-- **ℤ^d along-ex: `partitionFunctionAlongExhaustion` DifferentiableAt β at general h**. -/
-theorem partitionFunctionAlongExhaustion_latticeGraph_differentiableAt_beta_general_h
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet]
-    (J h β : ℝ) (n : ℕ) :
-    DifferentiableAt ℝ (fun β' : ℝ =>
-      Ambient.partitionFunctionAlongExhaustion (IsingModel.latticeGraph d)
-        Λ ⟨J, h, β'⟩ n) β :=
-  Ambient.partitionFunctionAlongExhaustion_differentiableAt_beta_general_h
-    (IsingModel.latticeGraph d) Λ J h β n
-
-/-- **ℤ^d along-ex: `partitionFunctionAlongExhaustion` DifferentiableAt J at general h**. -/
-theorem partitionFunctionAlongExhaustion_latticeGraph_differentiableAt_J_general_h
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet]
-    (J h β : ℝ) (n : ℕ) :
-    DifferentiableAt ℝ (fun J' : ℝ =>
-      Ambient.partitionFunctionAlongExhaustion (IsingModel.latticeGraph d)
-        Λ ⟨J', h, β⟩ n) J :=
-  Ambient.partitionFunctionAlongExhaustion_differentiableAt_J_general_h
-    (IsingModel.latticeGraph d) Λ J h β n
 
 /-! ## Moved: partitionFunctionAlongExhaustion h / joint wrappers
 
