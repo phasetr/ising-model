@@ -69,31 +69,14 @@ theorem magnetizationAlongExhaustion_latticeGraph_zero_params
         (⟨0, 0, β⟩ : IsingParams ℝ) i n = 0 :=
   magnetizationAlongExhaustion_zero_params (IsingModel.latticeGraph d) Λ β i n
 
-/-- **ℤ^d magnetizationΛ at J=0 closed form**: `= tanh(β·h)`. -/
-theorem magnetizationΛ_latticeGraph_J_zero
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (h β : ℝ) (i : ↑Λ) :
-    magnetizationΛ (IsingModel.latticeGraph d) Λ
-        (⟨0, h, β⟩ : IsingParams ℝ) i = Real.tanh (β * h) :=
-  magnetizationΛ_J_zero (IsingModel.latticeGraph d) Λ h β i
+/-! ## Moved: magnetization J_zero wrappers
 
-/-- **ℤ^d magnetizationAlongExhaustion at J=0** per stage (on-stage):
-`i ∈ Λ.volume n ⇒ = tanh(β·h)`. -/
-theorem magnetizationAlongExhaustion_latticeGraph_J_zero_of_mem
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (h β : ℝ)
-    {i : Fin d → ℤ} {n : ℕ} (hi : i ∈ Λ.volume n) :
-    magnetizationAlongExhaustion (IsingModel.latticeGraph d) Λ
-        (⟨0, h, β⟩ : IsingParams ℝ) i n = Real.tanh (β * h) :=
-  magnetizationAlongExhaustion_J_zero_of_mem (IsingModel.latticeGraph d) Λ h β hi
+The three wrappers
+`magnetizationΛ_latticeGraph_J_zero`,
+`magnetizationAlongExhaustion_latticeGraph_J_zero_of_mem`,
+`magnetizationAlongExhaustion_latticeGraph_J_zero_eventually_eq` now
+live in `UniformMagMagnetizationTrivialJZero.lean`. -/
 
-/-- **ℤ^d magnetizationAlongExhaustion at J=0 is eventually `tanh(β·h)`**. -/
-theorem magnetizationAlongExhaustion_latticeGraph_J_zero_eventually_eq
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (h β : ℝ)
-    (i : Fin d → ℤ) :
-    ∀ᶠ n in Filter.atTop,
-      magnetizationAlongExhaustion (IsingModel.latticeGraph d) Λ
-          (⟨0, h, β⟩ : IsingParams ℝ) i n = Real.tanh (β * h) :=
-  magnetizationAlongExhaustion_J_zero_eventually_eq
-    (IsingModel.latticeGraph d) Λ h β i
 
 
 end Ambient
