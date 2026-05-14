@@ -63,55 +63,15 @@ theorem vdPolymerFamilies_sum_Λ_latticeGraph_tanh_differentiable_J
   Ambient.vdPolymerFamilies_sum_Λ_tanh_differentiable_J
     (IsingModel.latticeGraph d) Λ β
 
-/-- **ℤ^d along-ex: vdPolymerFamilies_sum ∘ tanh ∘ (·*J) continuous in β**. -/
-theorem vdPolymerFamilies_sumAlongExhaustion_latticeGraph_tanh_continuous_beta
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet] (J : ℝ) (n : ℕ) :
-    Continuous (fun β' : ℝ =>
-        ∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
-            (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)),
-          ∏ P ∈ Γ, Real.tanh (β' * J) ^ P.card) :=
-  Ambient.vdPolymerFamilies_sumAlongExhaustion_tanh_continuous_beta
-    (IsingModel.latticeGraph d) Λ J n
+/-! ## Moved: AlongEx vdPolymerFamilies tanh regularity wrappers
 
-/-- **ℤ^d along-ex: vdPolymerFamilies_sum ∘ tanh ∘ (β*·) continuous in J**. -/
-theorem vdPolymerFamilies_sumAlongExhaustion_latticeGraph_tanh_continuous_J
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet] (β : ℝ) (n : ℕ) :
-    Continuous (fun J' : ℝ =>
-        ∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
-            (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)),
-          ∏ P ∈ Γ, Real.tanh (β * J') ^ P.card) :=
-  Ambient.vdPolymerFamilies_sumAlongExhaustion_tanh_continuous_J
-    (IsingModel.latticeGraph d) Λ β n
+The four wrappers
+`vdPolymerFamilies_sumAlongExhaustion_latticeGraph_tanh_continuous_beta`,
+`vdPolymerFamilies_sumAlongExhaustion_latticeGraph_tanh_continuous_J`,
+`vdPolymerFamilies_sumAlongExhaustion_latticeGraph_tanh_differentiable_beta`,
+`vdPolymerFamilies_sumAlongExhaustion_latticeGraph_tanh_differentiable_J` now
+live in `MayerVdRegularityPolymerTanhAlongEx.lean`. -/
 
-/-- **ℤ^d along-ex: vdPolymerFamilies_sum ∘ tanh ∘ (·*J) differentiable in β**. -/
-theorem
-vdPolymerFamilies_sumAlongExhaustion_latticeGraph_tanh_differentiable_beta
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet] (J : ℝ) (n : ℕ) :
-    Differentiable ℝ (fun β' : ℝ =>
-        ∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
-            (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)),
-          ∏ P ∈ Γ, Real.tanh (β' * J) ^ P.card) :=
-  Ambient.vdPolymerFamilies_sumAlongExhaustion_tanh_differentiable_beta
-    (IsingModel.latticeGraph d) Λ J n
-
-/-- **ℤ^d along-ex: vdPolymerFamilies_sum ∘ tanh ∘ (β*·) differentiable in J**. -/
-theorem
-vdPolymerFamilies_sumAlongExhaustion_latticeGraph_tanh_differentiable_J
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet] (β : ℝ) (n : ℕ) :
-    Differentiable ℝ (fun J' : ℝ =>
-        ∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
-            (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)),
-          ∏ P ∈ Γ, Real.tanh (β * J') ^ P.card) :=
-  Ambient.vdPolymerFamilies_sumAlongExhaustion_tanh_differentiable_J
-    (IsingModel.latticeGraph d) Λ β n
 
 end Ambient
 end IsingModel
