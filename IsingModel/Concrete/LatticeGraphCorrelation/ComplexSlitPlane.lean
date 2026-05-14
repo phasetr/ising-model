@@ -52,39 +52,12 @@ theorem analyticAt_freeEnergyComplex_of_slitPlane_h_latticeGraph
   IsingModel.analyticAt_freeEnergyComplex_of_slitPlane_h
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J β hZ
 
-/-- **ℤ^d `f_ℂ` `ContinuousOn` slitPlane-locus in `h`** (Λ-induced). -/
-theorem freeEnergyComplex_continuousOn_slitPlane_locus_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℂ) :
-    ContinuousOn (fun h => IsingModel.freeEnergyComplex
-      (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h β)
-      {h : ℂ | IsingModel.partitionFunctionComplex
-          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h β
-        ∈ Complex.slitPlane} :=
-  IsingModel.freeEnergyComplex_continuousOn_slitPlane_locus
-    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J β
+/-! ## Moved: slitPlane-locus `*On`-style wrappers
 
-/-- **ℤ^d `f_ℂ` `DifferentiableOn` slitPlane-locus in `h`**
-(Λ-induced). -/
-theorem freeEnergyComplex_differentiableOn_slitPlane_locus_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℂ) :
-    DifferentiableOn ℂ (fun h => IsingModel.freeEnergyComplex
-      (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h β)
-      {h : ℂ | IsingModel.partitionFunctionComplex
-          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h β
-        ∈ Complex.slitPlane} :=
-  IsingModel.freeEnergyComplex_differentiableOn_slitPlane_locus
-    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J β
+The three slitPlane-locus
+`freeEnergyComplex_{continuousOn,differentiableOn,analyticOn}_slitPlane_locus_latticeGraph`
+wrappers now live in `ComplexSlitPlaneLocusOn.lean`. -/
 
-/-- **ℤ^d `f_ℂ` `AnalyticOn` slitPlane-locus in `h`** (Λ-induced). -/
-theorem freeEnergyComplex_analyticOn_slitPlane_locus_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℂ) :
-    AnalyticOn ℂ (fun h => IsingModel.freeEnergyComplex
-      (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h β)
-      {h : ℂ | IsingModel.partitionFunctionComplex
-          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h β
-        ∈ Complex.slitPlane} :=
-  IsingModel.freeEnergyComplex_analyticOn_slitPlane_locus
-    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J β
 
 /-! ## Moved: joint slitPlane-locus wrappers
 
