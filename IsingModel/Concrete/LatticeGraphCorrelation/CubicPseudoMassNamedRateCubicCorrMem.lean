@@ -2,6 +2,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassBasic
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransfer
 import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassNamedRateLeHighTempRate
 import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassNamedRate
+import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassNamedRateLatticeMass
 
 /-!
 # Cubic named-rate `_cubic_corr_mem` family
