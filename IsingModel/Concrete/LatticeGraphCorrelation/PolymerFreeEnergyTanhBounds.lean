@@ -29,47 +29,14 @@ theorem polymerFreeEnergy_Λ_latticeGraph_tanh_le_card_mul
   Ambient.polymerFreeEnergy_Λ_tanh_le_card_mul
     (IsingModel.latticeGraph d) Λ hβJ
 
-/-- **ℤ^d Λ: ferro polymerFreeEnergy_tanh ≤ |E|·tanh**. -/
-theorem polymerFreeEnergy_Λ_latticeGraph_tanh_le_card_mul_ferro
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β) :
-    IsingModel.polymerFreeEnergy
-        (inducedGraph (IsingModel.latticeGraph d) Λ)
-        (Real.tanh (β * J)) ≤
-      (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card *
-        Real.tanh (β * J) :=
-  Ambient.polymerFreeEnergy_Λ_tanh_le_card_mul_ferromagnetic
-    (IsingModel.latticeGraph d) Λ hJ hβ
+/-! ## Moved: ferromagnetic tanh-bound wrappers
 
-/-- **ℤ^d Λ: ferro polymerFreeEnergy_tanh sandwich**. -/
-theorem polymerFreeEnergy_Λ_latticeGraph_tanh_sandwich_ferro
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β) :
-    0 ≤ IsingModel.polymerFreeEnergy
-          (inducedGraph (IsingModel.latticeGraph d) Λ)
-          (Real.tanh (β * J)) ∧
-    IsingModel.polymerFreeEnergy
-        (inducedGraph (IsingModel.latticeGraph d) Λ)
-        (Real.tanh (β * J)) ≤
-      (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card *
-        Real.log (1 + Real.tanh (β * J)) :=
-  Ambient.polymerFreeEnergy_Λ_tanh_sandwich_ferromagnetic
-    (IsingModel.latticeGraph d) Λ hJ hβ
+The three ferromagnetic Λ-layer wrappers
+`polymerFreeEnergy_Λ_latticeGraph_tanh_le_card_mul_ferro`,
+`polymerFreeEnergy_Λ_latticeGraph_tanh_sandwich_ferro`,
+`polymerFreeEnergy_Λ_latticeGraph_tanh_le_card_log_two_ferro` now
+live in `PolymerFreeEnergyTanhBoundsFerro.lean`. -/
 
-/-- **ℤ^d Λ: ferro polymerFreeEnergy_tanh ≤ |E|·log 2**. -/
-theorem polymerFreeEnergy_Λ_latticeGraph_tanh_le_card_log_two_ferro
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β) :
-    IsingModel.polymerFreeEnergy
-        (inducedGraph (IsingModel.latticeGraph d) Λ)
-        (Real.tanh (β * J)) ≤
-      (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card *
-        Real.log 2 :=
-  Ambient.polymerFreeEnergy_Λ_tanh_le_card_log_two_ferro
-    (IsingModel.latticeGraph d) Λ hJ hβ
 
 /-- **ℤ^d Λ: polymerFreeEnergy = log(1 + ε(t))** decomposition. -/
 theorem polymerFreeEnergy_Λ_latticeGraph_eq_log_one_add_eps
