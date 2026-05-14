@@ -66,34 +66,14 @@ theorem mayerPartialSum_Λ_latticeGraph_at_zero
         (inducedGraph (IsingModel.latticeGraph d) Λ) N 0 = 0 :=
   Ambient.mayerPartialSum_Λ_at_zero (IsingModel.latticeGraph d) Λ N
 
-/-- **ℤ^d Λ: mayerExpansionTerm at n = 0 = 0**. -/
-theorem mayerExpansionTerm_Λ_latticeGraph_zero
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    (t : ℝ) :
-    IsingModel.mayerExpansionTerm
-        (inducedGraph (IsingModel.latticeGraph d) Λ) 0 t = 0 :=
-  Ambient.mayerExpansionTerm_Λ_zero (IsingModel.latticeGraph d) Λ t
+/-! ## Moved: mayerExpansionTerm_Λ_latticeGraph wrappers
 
-/-- **ℤ^d Λ: mayerExpansionTerm at n = 1**. -/
-theorem mayerExpansionTerm_Λ_latticeGraph_one
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    (t : ℝ) :
-    IsingModel.mayerExpansionTerm
-        (inducedGraph (IsingModel.latticeGraph d) Λ) 1 t =
-      ∑ P ∈ IsingModel.allPolymers
-            (inducedGraph (IsingModel.latticeGraph d) Λ), t ^ P.card :=
-  Ambient.mayerExpansionTerm_Λ_one (IsingModel.latticeGraph d) Λ t
+The three wrappers
+`mayerExpansionTerm_Λ_latticeGraph_zero`,
+`mayerExpansionTerm_Λ_latticeGraph_one`,
+`mayerExpansionTerm_Λ_latticeGraph_at_zero` now live in
+`MayerBasicIdentitiesMayerExpansionTerm.lean`. -/
 
-/-- **ℤ^d Λ: mayerExpansionTerm at t = 0 = 0**. -/
-theorem mayerExpansionTerm_Λ_latticeGraph_at_zero
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    (n : ℕ) :
-    IsingModel.mayerExpansionTerm
-        (inducedGraph (IsingModel.latticeGraph d) Λ) n 0 = 0 :=
-  Ambient.mayerExpansionTerm_Λ_at_zero (IsingModel.latticeGraph d) Λ n
 
 /-! ## Moved: AlongExhaustion Mayer basic identity wrappers
 
