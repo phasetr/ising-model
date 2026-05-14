@@ -44,44 +44,14 @@ theorem correlationInfinite_latticeGraph_indep_exhaustion
       = correlationInfinite (IsingModel.latticeGraph d) Λ' p A :=
   correlationInfinite_indep_exhaustion (IsingModel.latticeGraph d) Λ Λ' p hf A
 
-/-- **h-monotonicity of correlationInfinite on ℤ^d** (GJ Prop 4.2.4):
-for `0 ≤ J, 0 < β`, `correlationInfinite ⟨J, h, β⟩ A` is monotone on
-`h ∈ Ici 0`. -/
-theorem correlationInfinite_latticeGraph_cubicExhaustion_monotone_h
-    (d : ℕ) {J : ℝ} (hJ : 0 ≤ J) {β : ℝ} (hβ : 0 < β)
-    (A : Finset (Fin d → ℤ)) :
-    MonotoneOn
-      (fun h : ℝ => correlationInfinite (IsingModel.latticeGraph d)
-        (Ambient.cubicExhaustion d) ⟨J, h, β⟩ A)
-      (Set.Ici 0) :=
-  correlationInfinite_monotone_h (IsingModel.latticeGraph d)
-    (Ambient.cubicExhaustion d) hJ hβ A
+/-! ## Moved: cubicExhaustion monotone wrappers
 
-/-- **β-monotonicity of correlationInfinite on ℤ^d** (GJ Prop 4.2.4):
-for `0 ≤ J, 0 ≤ h`, `correlationInfinite ⟨J, h, β⟩ A` is monotone on
-`β ∈ Ioi 0`. -/
-theorem correlationInfinite_latticeGraph_cubicExhaustion_monotone_beta
-    (d : ℕ) {J : ℝ} (hJ : 0 ≤ J) {h : ℝ} (hh : 0 ≤ h)
-    (A : Finset (Fin d → ℤ)) :
-    MonotoneOn
-      (fun β : ℝ => correlationInfinite (IsingModel.latticeGraph d)
-        (Ambient.cubicExhaustion d) ⟨J, h, β⟩ A)
-      (Set.Ioi 0) :=
-  correlationInfinite_monotone_beta (IsingModel.latticeGraph d)
-    (Ambient.cubicExhaustion d) hJ hh A
+The three wrappers
+`correlationInfinite_latticeGraph_cubicExhaustion_monotone_h`,
+`correlationInfinite_latticeGraph_cubicExhaustion_monotone_beta`,
+`correlationInfinite_latticeGraph_cubicExhaustion_monotone_J` now
+live in `TwoPointCorrelationInfiniteMonotoneCubicEx.lean`. -/
 
-/-- **J-monotonicity of correlationInfinite on ℤ^d** (GJ Prop 4.2.1):
-for `0 ≤ h, 0 < β`, `correlationInfinite ⟨J, h, β⟩ A` is monotone on
-`J ∈ Ici 0`. -/
-theorem correlationInfinite_latticeGraph_cubicExhaustion_monotone_J
-    (d : ℕ) {h : ℝ} (hh : 0 ≤ h) {β : ℝ} (hβ : 0 < β)
-    (A : Finset (Fin d → ℤ)) :
-    MonotoneOn
-      (fun J : ℝ => correlationInfinite (IsingModel.latticeGraph d)
-        (Ambient.cubicExhaustion d) ⟨J, h, β⟩ A)
-      (Set.Ici 0) :=
-  correlationInfinite_monotone_J (IsingModel.latticeGraph d)
-    (Ambient.cubicExhaustion d) hh hβ A
 
 /-- **GKS-II at ∞-volume on ℤ^d**: for ferromagnetic `p` and any
 `A, B : Finset (Fin d → ℤ)`,
