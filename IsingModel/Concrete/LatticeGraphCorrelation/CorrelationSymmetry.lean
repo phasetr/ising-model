@@ -45,51 +45,14 @@ theorem magnetization_neg_h_latticeGraph
   IsingModel.magnetization_neg_h
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h β i
 
-/-- **ℤ^d truncated2_neg_h direct** at Λ-induced (i ≠ j).
-Concrete wrapper for `IsingModel.truncated2_neg_h` (#756). -/
-theorem truncated2_neg_h_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J h β : ℝ)
-    {i j : (↑Λ : Type _)} (hij : i ≠ j) :
-    IsingModel.truncated2
-        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
-        (⟨J, -h, β⟩ : IsingParams ℝ) i j
-      = IsingModel.truncated2
-          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
-          (⟨J, h, β⟩ : IsingParams ℝ) i j :=
-  IsingModel.truncated2_neg_h
-    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h β hij
+/-! ## Moved: truncated{2,3,4}_neg_h wrappers
 
-/-- **ℤ^d truncated3_neg_h direct** at Λ-induced (pairwise distinct):
-antisymmetric, `U_3(-h) = -U_3(h)`. Concrete wrapper for
-`IsingModel.truncated3_neg_h` (#758). -/
-theorem truncated3_neg_h_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J h β : ℝ)
-    {i j k : (↑Λ : Type _)} (hij : i ≠ j) (hjk : j ≠ k) (hik : i ≠ k) :
-    IsingModel.truncated3
-        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
-        (⟨J, -h, β⟩ : IsingParams ℝ) i j k
-      = -IsingModel.truncated3
-          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
-          (⟨J, h, β⟩ : IsingParams ℝ) i j k :=
-  IsingModel.truncated3_neg_h
-    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h β hij hjk hik
+The three wrappers
+`truncated2_neg_h_latticeGraph`,
+`truncated3_neg_h_latticeGraph`,
+`truncated4_neg_h_latticeGraph` now live in
+`CorrelationSymmetryTruncatedNegH.lean`. -/
 
-/-- **ℤ^d truncated4_neg_h direct** at Λ-induced (pairwise distinct):
-invariant under `h → -h`. Concrete wrapper for
-`IsingModel.truncated4_neg_h` (#757). -/
-theorem truncated4_neg_h_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J h β : ℝ)
-    {i j k l : (↑Λ : Type _)}
-    (hij : i ≠ j) (hik : i ≠ k) (hil : i ≠ l)
-    (hjk : j ≠ k) (hjl : j ≠ l) (hkl : k ≠ l) :
-    IsingModel.truncated4
-        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
-        (⟨J, -h, β⟩ : IsingParams ℝ) i j k l
-      = IsingModel.truncated4
-          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
-          (⟨J, h, β⟩ : IsingParams ℝ) i j k l :=
-  IsingModel.truncated4_neg_h
-    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h β hij hik hil hjk hjl hkl
 
 /-- **ℤ^d correlation_eq_abs_h_of_even_card direct** at Λ-induced:
 for `|A|` even, `correlation ⟨J, h, β⟩ A = correlation ⟨J, |h|, β⟩ A`.
