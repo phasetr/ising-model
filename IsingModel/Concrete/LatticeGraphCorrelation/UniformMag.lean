@@ -89,26 +89,14 @@ theorem spontaneousMagnetization_latticeGraph_beta_zero
     spontaneousMagnetization (IsingModel.latticeGraph d) Λ J 0 i = 0 :=
   spontaneousMagnetization_beta_zero (IsingModel.latticeGraph d) Λ J i
 
-/-- **ℤ^d spontaneousCorrelation at J = 0 general nonempty A** (Step 272). -/
-theorem spontaneousCorrelation_latticeGraph_J_zero
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) {β : ℝ} (hβ : 0 < β)
-    (A : Finset (Fin d → ℤ)) (hA : A.Nonempty) :
-    spontaneousCorrelation (IsingModel.latticeGraph d) Λ 0 β A = 0 :=
-  spontaneousCorrelation_J_zero (IsingModel.latticeGraph d) Λ hβ A hA
+/-! ## Moved: spontaneousCorrelation_latticeGraph wrappers
 
-/-- **ℤ^d spontaneousCorrelation at β = 0 general nonempty A** (Step 272). -/
-theorem spontaneousCorrelation_latticeGraph_beta_zero
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J : ℝ)
-    (A : Finset (Fin d → ℤ)) (hA : A.Nonempty) :
-    spontaneousCorrelation (IsingModel.latticeGraph d) Λ J 0 A = 0 :=
-  spontaneousCorrelation_beta_zero (IsingModel.latticeGraph d) Λ J A hA
+The three wrappers
+`spontaneousCorrelation_latticeGraph_J_zero`,
+`spontaneousCorrelation_latticeGraph_beta_zero`,
+`spontaneousCorrelation_latticeGraph_empty` now live in
+`UniformMagSpontaneousCorrelation.lean`. -/
 
-/-- **ℤ^d spontaneousCorrelation at empty A is 1** (Step 274). -/
-theorem spontaneousCorrelation_latticeGraph_empty
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ) :
-    spontaneousCorrelation (IsingModel.latticeGraph d) Λ J β
-        (∅ : Finset (Fin d → ℤ)) = 1 :=
-  spontaneousCorrelation_empty (IsingModel.latticeGraph d) Λ J β
 
 /-- **ℤ^d correlationInfinite at J = h = 0 vanishes for nonempty A** (Step 280). -/
 theorem correlationInfinite_latticeGraph_zero_params_vanish_of_nonempty_A
