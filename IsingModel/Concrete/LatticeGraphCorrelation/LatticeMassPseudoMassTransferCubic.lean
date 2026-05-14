@@ -14,6 +14,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransfer
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferExpDecay
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferBasic
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferExhaustion
+import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferExhaustionPos
 
 /-!
 # Lattice-mass: pseudoMassFromParamsAtPair cubic variants
