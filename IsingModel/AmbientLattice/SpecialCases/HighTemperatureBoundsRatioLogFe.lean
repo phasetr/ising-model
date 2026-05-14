@@ -5,6 +5,7 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharper
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviation
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviationStrict
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioBounds
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFeNonempty
 
 /-!
 # Ambient alongExhaustion log Z / freeEnergy ratio sandwich / bound wrappers at h = 0
@@ -254,40 +255,16 @@ theorem freeEnergyAlongExhaustion_high_temp_h_zero_ratio_bound_bundle_ferromagne
   freeEnergyAlongExhaustion_high_temp_h_zero_ratio_bound_bundle
     G Λ J β (mul_nonneg hβ.le hJ) n hne
 
-/-- **Along-ex f deviation bound under `(Λ.volume n).Nonempty`**:
-under `0 ≤ β·J` and `(Λ.volume n).Nonempty`,
-`f_n - log 2 ≤ β·J·|E_n|/|Λ_n|`. Bridges from the Nonempty hypothesis. -/
-theorem freeEnergyAlongExhaustion_high_temp_h_zero_deviation_bound_exp_of_nonempty
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (hβJ : 0 ≤ β * J) (n : ℕ) (hne : (Λ.volume n).Nonempty) :
-    freeEnergyAlongExhaustion G Λ (⟨J, 0, β⟩ : IsingParams ℝ) n - Real.log 2
-      ≤ β * J * (inducedGraph G (Λ.volume n)).edgeFinset.card /
-          (Λ.volume n).card :=
-  freeEnergyAlongExhaustion_high_temp_h_zero_deviation_bound_exp
-    G Λ J β hβJ n hne.card_pos
+/-! ## Moved: ratio-LogFe `_of_nonempty` wrappers
 
-/-- **Along-ex f strict deviation under nonempty volume**. -/
-theorem freeEnergyAlongExhaustion_high_temp_h_zero_deviation_pos_of_nonempty
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (hβJ : 0 < β * J) (n : ℕ) (hne : (Λ.volume n).Nonempty)
-    (hEpos : 0 < (inducedGraph G (Λ.volume n)).edgeFinset.card) :
-    0 < freeEnergyAlongExhaustion G Λ (⟨J, 0, β⟩ : IsingParams ℝ) n - Real.log 2 :=
-  freeEnergyAlongExhaustion_high_temp_h_zero_deviation_pos
-    G Λ J β hβJ n hne.card_pos hEpos
+The three `*AlongExhaustion_high_temp_*_of_nonempty` wrappers
+(`freeEnergyAlongExhaustion_*_deviation_bound_exp_of_nonempty`,
+`freeEnergyAlongExhaustion_*_deviation_pos_of_nonempty`,
+`partitionFunctionAlongExhaustion_*_pow_two_lt_of_nonempty`) now live
+in `HighTemperatureBoundsRatioLogFeNonempty.lean`. They are re-imported
+here so downstream consumers continue to see the symbols. -/
 
-/-- **Along-ex Z strict deviation under nonempty volume**. -/
-theorem partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_pow_two_lt_of_nonempty
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (hβJ : 0 < β * J) (n : ℕ)
-    (hEpos : 0 < (inducedGraph G (Λ.volume n)).edgeFinset.card) :
-    (2 : ℝ) ^ (Λ.volume n).card
-      < partitionFunctionAlongExhaustion G Λ
-          (⟨J, 0, β⟩ : IsingParams ℝ) n :=
-  partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_pow_two_lt
-    G Λ J β hβJ n hEpos
+
 
 /-- **Along-ex f ratio bound at J=0**. -/
 theorem freeEnergyAlongExhaustion_high_temp_h_zero_ratio_bound
