@@ -39,53 +39,15 @@ theorem correlationAlongExhaustion_latticeGraph_differentiable_joint
   Ambient.correlationAlongExhaustion_differentiable_joint_gen
     (IsingModel.latticeGraph d) Λ A n
 
-/-- **ℤ^d along-ex: magnetizationAlongExhaustion jointly Continuous in `(β, J, h)`**. -/
-theorem magnetizationAlongExhaustion_latticeGraph_continuous_joint
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet]
-    (i : Fin d → ℤ) (n : ℕ) :
-    Continuous (fun p : ℝ × ℝ × ℝ =>
-      Ambient.magnetizationAlongExhaustion (IsingModel.latticeGraph d) Λ
-        ⟨p.2.1, p.2.2, p.1⟩ i n) :=
-  Ambient.magnetizationAlongExhaustion_continuous_joint
-    (IsingModel.latticeGraph d) Λ i n
+/-! ## Moved: AlongEx joint mag + susc wrappers
 
-/-- **ℤ^d along-ex: magnetizationAlongExhaustion jointly Differentiable ℝ in `(β, J, h)`**. -/
-theorem magnetizationAlongExhaustion_latticeGraph_differentiable_joint
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet]
-    (i : Fin d → ℤ) (n : ℕ) :
-    Differentiable ℝ (fun p : ℝ × ℝ × ℝ =>
-      Ambient.magnetizationAlongExhaustion (IsingModel.latticeGraph d) Λ
-        ⟨p.2.1, p.2.2, p.1⟩ i n) :=
-  Ambient.magnetizationAlongExhaustion_differentiable_joint
-    (IsingModel.latticeGraph d) Λ i n
+The four wrappers
+`magnetizationAlongExhaustion_latticeGraph_continuous_joint`,
+`magnetizationAlongExhaustion_latticeGraph_differentiable_joint`,
+`susceptibilityAlongExhaustion_latticeGraph_continuous_joint`,
+`susceptibilityAlongExhaustion_latticeGraph_differentiable_joint` now
+live in `JointRegularityAlongExMagSusc.lean`. -/
 
-/-- **ℤ^d along-ex: susceptibilityAlongExhaustion jointly Continuous in `(β, J, h)`**. -/
-theorem susceptibilityAlongExhaustion_latticeGraph_continuous_joint
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet]
-    (i : Fin d → ℤ) (n : ℕ) :
-    Continuous (fun p : ℝ × ℝ × ℝ =>
-      Ambient.susceptibilityAlongExhaustion (IsingModel.latticeGraph d) Λ
-        ⟨p.2.1, p.2.2, p.1⟩ i n) :=
-  Ambient.susceptibilityAlongExhaustion_continuous_joint_gen
-    (IsingModel.latticeGraph d) Λ i n
-
-/-- **ℤ^d along-ex: susceptibilityAlongExhaustion jointly Differentiable ℝ in `(β, J, h)`**. -/
-theorem susceptibilityAlongExhaustion_latticeGraph_differentiable_joint
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet]
-    (i : Fin d → ℤ) (n : ℕ) :
-    Differentiable ℝ (fun p : ℝ × ℝ × ℝ =>
-      Ambient.susceptibilityAlongExhaustion (IsingModel.latticeGraph d) Λ
-        ⟨p.2.1, p.2.2, p.1⟩ i n) :=
-  Ambient.susceptibilityAlongExhaustion_differentiable_joint_gen
-    (IsingModel.latticeGraph d) Λ i n
 
 end Ambient
 end IsingModel
