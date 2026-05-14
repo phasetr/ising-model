@@ -271,6 +271,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.Base
 import IsingModel.Concrete.LatticeGraphCorrelation.BaseApply
 import IsingModel.Concrete.LatticeGraphCorrelation.BaseBoundsTanh
 import IsingModel.Concrete.LatticeGraphCorrelation.BaseCorrelationAlongEx
+import IsingModel.Concrete.LatticeGraphCorrelation.BaseCorrelationAlongExSubsetMono
 import IsingModel.Concrete.LatticeGraphCorrelation.BaseCorrelationAlongExBounds
 import IsingModel.Concrete.LatticeGraphCorrelation.BaseCorrelationBounds
 import IsingModel.Concrete.LatticeGraphCorrelation.BaseVanish
