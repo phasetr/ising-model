@@ -1,4 +1,5 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassNamedRateCorr
+import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassNamedRateCorrPos
 import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassNamedRateCorrMem
 
 /-!
