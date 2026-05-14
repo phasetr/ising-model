@@ -58,57 +58,14 @@ partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_closed_
   Ambient.partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_closed_evenSubgraphs
     (IsingModel.latticeGraph d) Λ J β n
 
-/-- **ℤ^d along-ex: §18.6 freeEnergy decomposition**. -/
-theorem freeEnergyAlongExhaustion_latticeGraph_eq_polymerFreeEnergy
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet] (J β : ℝ) (hβJ : 0 ≤ β * J) (n : ℕ)
-    (hne : (Λ.volume n).Nonempty) :
-    Ambient.freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
-        ⟨J, 0, β⟩ n =
-      Real.log 2 +
-        ((inducedGraph (IsingModel.latticeGraph d)
-            (Λ.volume n)).edgeFinset.card : ℝ) /
-            Fintype.card ↑(Λ.volume n : Finset (Fin d → ℤ)) *
-          Real.log (Real.cosh (β * J)) +
-        IsingModel.polymerFreeEnergy
-          (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
-          (Real.tanh (β * J)) /
-            Fintype.card ↑(Λ.volume n : Finset (Fin d → ℤ)) :=
-  Ambient.freeEnergyAlongExhaustion_eq_polymerFreeEnergy
-    (IsingModel.latticeGraph d) Λ J β hβJ n hne
+/-! ## Moved: along-ex freeEnergyAlongExhaustion HT capstone wrappers
 
-/-- **ℤ^d along-ex: §18.6 ferromagnetic freeEnergy decomposition**. -/
-theorem
-freeEnergyAlongExhaustion_latticeGraph_eq_polymerFreeEnergy_ferro
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet] (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β)
-    (n : ℕ) (hne : (Λ.volume n).Nonempty) :
-    Ambient.freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
-        ⟨J, 0, β⟩ n =
-      Real.log 2 +
-        ((inducedGraph (IsingModel.latticeGraph d)
-            (Λ.volume n)).edgeFinset.card : ℝ) /
-            Fintype.card ↑(Λ.volume n : Finset (Fin d → ℤ)) *
-          Real.log (Real.cosh (β * J)) +
-        IsingModel.polymerFreeEnergy
-          (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
-          (Real.tanh (β * J)) /
-            Fintype.card ↑(Λ.volume n : Finset (Fin d → ℤ)) :=
-  Ambient.freeEnergyAlongExhaustion_eq_polymerFreeEnergy_ferromagnetic
-    (IsingModel.latticeGraph d) Λ J β hJ hβ n hne
+The three along-ex `freeEnergyAlongExhaustion_latticeGraph_*` capstone
+wrappers (`_eq_polymerFreeEnergy`, `_eq_polymerFreeEnergy_ferro`,
+`_eq_log_two_at_betaJ_zero`) now live in
+`HighTemperatureCapstonesAlongExFreeEnergy.lean`. -/
 
-/-- **ℤ^d along-ex: freeEnergy = log 2 at `β·J = 0`**. -/
-theorem freeEnergyAlongExhaustion_latticeGraph_eq_log_two_at_betaJ_zero
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet]
-    {β J : ℝ} (hβJ : β * J = 0) (n : ℕ) (hne : (Λ.volume n).Nonempty) :
-    Ambient.freeEnergyAlongExhaustion (IsingModel.latticeGraph d) Λ
-        ⟨J, 0, β⟩ n = Real.log 2 :=
-  Ambient.freeEnergyAlongExhaustion_eq_log_two_at_betaJ_zero
-    (IsingModel.latticeGraph d) Λ hβJ n hne
+
 
 /-- **ℤ^d along-ex: mayerPartialSum at N=1, t=1**. -/
 theorem mayerPartialSumAlongExhaustion_latticeGraph_one_at_one
