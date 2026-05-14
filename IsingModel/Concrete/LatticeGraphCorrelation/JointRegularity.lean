@@ -34,41 +34,13 @@ theorem correlationΛ_latticeGraph_differentiable_joint
       Ambient.correlationΛ (IsingModel.latticeGraph d) Λ ⟨p.2.1, p.2.2, p.1⟩ A) :=
   Ambient.correlationΛ_differentiable_joint (IsingModel.latticeGraph d) Λ A
 
-/-- **ℤ^d Λ: magnetizationΛ jointly Continuous in `(β, J, h)`**. -/
-theorem magnetizationΛ_latticeGraph_continuous_joint
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    (i : ↑Λ) :
-    Continuous (fun p : ℝ × ℝ × ℝ =>
-      Ambient.magnetizationΛ (IsingModel.latticeGraph d) Λ ⟨p.2.1, p.2.2, p.1⟩ i) :=
-  Ambient.magnetizationΛ_continuous_joint (IsingModel.latticeGraph d) Λ i
+/-! ## Moved: ℤ^d Λ-layer mag + susc joint regularity wrappers
 
-/-- **ℤ^d Λ: magnetizationΛ jointly Differentiable ℝ in `(β, J, h)`**. -/
-theorem magnetizationΛ_latticeGraph_differentiable_joint
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    (i : ↑Λ) :
-    Differentiable ℝ (fun p : ℝ × ℝ × ℝ =>
-      Ambient.magnetizationΛ (IsingModel.latticeGraph d) Λ ⟨p.2.1, p.2.2, p.1⟩ i) :=
-  Ambient.magnetizationΛ_differentiable_joint (IsingModel.latticeGraph d) Λ i
+The four wrappers
+`magnetizationΛ_latticeGraph_{continuous,differentiable}_joint` and
+`susceptibilityΛ_latticeGraph_{continuous,differentiable}_joint`
+now live in `JointRegularityMagSusc.lean`. -/
 
-/-- **ℤ^d Λ: susceptibilityΛ jointly Continuous in `(β, J, h)`**. -/
-theorem susceptibilityΛ_latticeGraph_continuous_joint
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    (i : ↑Λ) :
-    Continuous (fun p : ℝ × ℝ × ℝ =>
-      Ambient.susceptibilityΛ (IsingModel.latticeGraph d) Λ ⟨p.2.1, p.2.2, p.1⟩ i) :=
-  Ambient.susceptibilityΛ_continuous_joint (IsingModel.latticeGraph d) Λ i
-
-/-- **ℤ^d Λ: susceptibilityΛ jointly Differentiable ℝ in `(β, J, h)`**. -/
-theorem susceptibilityΛ_latticeGraph_differentiable_joint
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    (i : ↑Λ) :
-    Differentiable ℝ (fun p : ℝ × ℝ × ℝ =>
-      Ambient.susceptibilityΛ (IsingModel.latticeGraph d) Λ ⟨p.2.1, p.2.2, p.1⟩ i) :=
-  Ambient.susceptibilityΛ_differentiable_joint (IsingModel.latticeGraph d) Λ i
 
 /-! ## Moved: along-exhaustion joint regularity wrappers
 
