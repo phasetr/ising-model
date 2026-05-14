@@ -1,0 +1,51 @@
+import IsingModel.Concrete.LatticeGraphBED
+import IsingModel.PhaseTransition
+import IsingModel.Inequalities.FKG
+
+/-!
+# ℤ^d magnetization Λ-induced trivial-slice wrappers
+
+Narrow child module for three ℤ^d Λ-induced
+`magnetization_*_latticeGraph` trivial-slice wrappers extracted from
+`MagnetizationSiteLevelTrivialAndMonotone.lean`:
+
+* `magnetization_zero_at_h_zero_latticeGraph`,
+* `magnetization_beta_zero_latticeGraph`,
+* `magnetization_J_zero_latticeGraph`.
+-/
+
+namespace IsingModel
+namespace Ambient
+
+/-- **ℤ^d magnetization_zero_at_h_zero direct** (Λ-induced):
+`M_i(J, 0, β) = 0` — Z₂ symmetry at `h = 0`. -/
+theorem magnetization_zero_at_h_zero_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ) (i : (↑Λ : Type _)) :
+    IsingModel.magnetization
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
+        ⟨J, 0, β⟩ i = 0 :=
+  IsingModel.magnetization_zero_at_h_zero
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J β i
+
+/-- **ℤ^d magnetization_beta_zero direct** (Λ-induced):
+`M_i(J, h, 0) = 0` — infinite-temperature slice. -/
+theorem magnetization_beta_zero_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J h : ℝ) (i : (↑Λ : Type _)) :
+    IsingModel.magnetization
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
+        ⟨J, h, 0⟩ i = 0 :=
+  IsingModel.magnetization_beta_zero
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h i
+
+/-- **ℤ^d magnetization_J_zero direct** (Λ-induced):
+`M_i(0, h, β) = tanh(β·h)` — non-interacting slice. -/
+theorem magnetization_J_zero_latticeGraph
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (h β : ℝ) (i : (↑Λ : Type _)) :
+    IsingModel.magnetization
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
+        (⟨0, h, β⟩ : IsingParams ℝ) i = Real.tanh (β * h) :=
+  IsingModel.magnetization_J_zero
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) h β i
+
+end Ambient
+end IsingModel
