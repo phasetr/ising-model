@@ -26,26 +26,14 @@ theorem inducedGraph_mono_latticeGraph
     Ambient.inducedGraph G₁ Λ ≤ Ambient.inducedGraph G₂ Λ :=
   Ambient.inducedGraph_mono h Λ
 
-/-- **ℤ^d `partitionFunction` of `⊥` at Λ**: closed form
-`Z_⊥ = (2 cosh(βh))^|Λ|`. -/
-theorem partitionFunction_bot_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ) :
-    IsingModel.partitionFunction (⊥ : SimpleGraph (↑Λ : Type _)) p
-      = (2 * Real.cosh (p.β * p.h)) ^ Fintype.card (↑Λ : Type _) :=
-  IsingModel.partitionFunction_bot (ι := (↑Λ : Type _)) p
+/-! ## Moved: partitionFunction_bot wrappers
 
-/-- **ℤ^d `partitionFunction (⊥) ≥ 1`** at Λ-induced subgraph. -/
-theorem partitionFunction_bot_latticeGraph_ge_one
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ) :
-    (1 : ℝ) ≤ IsingModel.partitionFunction (⊥ : SimpleGraph (↑Λ : Type _)) p :=
-  IsingModel.partitionFunction_bot_ge_one (ι := (↑Λ : Type _)) p
+The three wrappers
+`partitionFunction_bot_latticeGraph`,
+`partitionFunction_bot_latticeGraph_ge_one`,
+`partitionFunction_bot_latticeGraph_ge_two_pow_card` now live in
+`FiniteVolumeBasicsPartitionBot.lean`. -/
 
-/-- **ℤ^d `partitionFunction (⊥) ≥ 2^|Λ|`** at Λ-induced subgraph. -/
-theorem partitionFunction_bot_latticeGraph_ge_two_pow_card
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ) :
-    (2 : ℝ) ^ Fintype.card (↑Λ : Type _)
-      ≤ IsingModel.partitionFunction (⊥ : SimpleGraph (↑Λ : Type _)) p :=
-  IsingModel.partitionFunction_bot_ge_two_pow_card (ι := (↑Λ : Type _)) p
 
 /-- **ℤ^d `partitionFunction_eq_bot_at_J_zero`** at Λ-induced: at `J = 0`
 the partition function is graph-independent (equals the `⊥`-graph value). -/
