@@ -60,41 +60,14 @@ theorem hamiltonianΛ_latticeGraph_abs_le
   IsingModel.hamiltonian_abs_le
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p σ
 
-/-- **ℤ^d `freeEnergyΛ` upper bound** at nonempty Λ-induced subgraph:
-`f_Λ ≤ log 2 + |β|·(|J|·|E| + |h|·|Λ|) / |Λ|`. -/
-theorem freeEnergyΛ_latticeGraph_upper_bound
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ)
-    (hne : 0 < Fintype.card (↑Λ : Type _)) :
-    freeEnergyΛ (IsingModel.latticeGraph d) Λ p
-      ≤ Real.log 2 + |p.β| * (|p.J|
-          * (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card
-          + |p.h| * Fintype.card (↑Λ : Type _))
-        / Fintype.card (↑Λ : Type _) :=
-  IsingModel.freeEnergy_upper_bound
-    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p hne
+/-! ## Moved: freeEnergyΛ / partitionFunctionΛ upper / lower wrappers
 
-/-- **ℤ^d `partitionFunctionΛ` upper bound** at Λ-induced subgraph:
-`Z ≤ |Config| · exp(|β|·(|J|·|E| + |h|·|Λ|))`. -/
-theorem partitionFunctionΛ_latticeGraph_upper
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ) :
-    partitionFunctionΛ (IsingModel.latticeGraph d) Λ p
-      ≤ Fintype.card (IsingModel.Config (↑Λ : Type _))
-        * Real.exp (|p.β| * (|p.J|
-            * (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card
-          + |p.h| * Fintype.card (↑Λ : Type _))) :=
-  IsingModel.partitionFunction_upper
-    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p
+The three wrappers
+`freeEnergyΛ_latticeGraph_upper_bound`,
+`partitionFunctionΛ_latticeGraph_upper`,
+`partitionFunctionΛ_latticeGraph_lower` now live in
+`FiniteVolumeEnergyBoundsPartition.lean`. -/
 
-/-- **ℤ^d `partitionFunctionΛ` lower bound** at Λ-induced subgraph:
-`exp(-|β|·(|J|·|E| + |h|·|Λ|)) ≤ Z`. -/
-theorem partitionFunctionΛ_latticeGraph_lower
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ) :
-    Real.exp (-(|p.β| * (|p.J|
-          * (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card
-        + |p.h| * Fintype.card (↑Λ : Type _))))
-      ≤ partitionFunctionΛ (IsingModel.latticeGraph d) Λ p :=
-  IsingModel.partitionFunction_lower
-    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p
 
 end Ambient
 end IsingModel
