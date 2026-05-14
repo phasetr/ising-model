@@ -29,46 +29,15 @@ names are unchanged from the former `Complex` declarations.
 namespace IsingModel
 namespace Ambient
 
-/-- **ℤ^d `leeYangSubdomain ⊆ slitPlane_locus`** (Λ-induced,
-ferromagnetic `β > 0`). -/
-theorem leeYangSubdomain_subset_slitPlane_locus_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    {β : ℝ} (hβ : 0 < β) (J : ℝ) :
-    (IsingModel.leeYangSubdomain β (Fintype.card (↑Λ : Type _)))
-      ⊆ {h : ℂ | IsingModel.partitionFunctionComplex
-          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
-          (J : ℂ) h (β : ℂ) ∈ Complex.slitPlane} :=
-  IsingModel.leeYangSubdomain_subset_slitPlane_locus
-    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) hβ J
+/-! ## Moved: leeYang subset + slitPlane-locus openness wrappers
 
-/-- **ℤ^d `h ∈ leeYangSubdomain ⇒ Z_ℂ ∈ slitPlane`** (Λ-induced). -/
-theorem mem_slitPlane_locus_of_mem_leeYangSubdomain_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    {β : ℝ} (hβ : 0 < β) (J : ℝ) {h : ℂ}
-    (hh : h ∈ IsingModel.leeYangSubdomain β (Fintype.card (↑Λ : Type _))) :
-    IsingModel.partitionFunctionComplex
-        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
-        (J : ℂ) h (β : ℂ) ∈ Complex.slitPlane :=
-  IsingModel.mem_slitPlane_locus_of_mem_leeYangSubdomain
-    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) hβ J hh
+The four wrappers
+`leeYangSubdomain_subset_slitPlane_locus_latticeGraph`,
+`mem_slitPlane_locus_of_mem_leeYangSubdomain_latticeGraph`,
+`isOpen_logZ_slitPlane_locus_latticeGraph`, and
+`isOpen_slitPlane_locus_h_beta_latticeGraph` now live in
+`ComplexRestrictionsLeeYangIsOpen.lean`. -/
 
-/-- **ℤ^d `logZ` slitPlane-locus is open** (Λ-induced). -/
-theorem isOpen_logZ_slitPlane_locus_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℂ) :
-    IsOpen {h : ℂ | IsingModel.partitionFunctionComplex
-      (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h β
-        ∈ Complex.slitPlane} :=
-  IsingModel.isOpen_logZ_slitPlane_locus
-    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J β
-
-/-- **ℤ^d slitPlane-locus open in `(h, β)`** (Λ-induced). -/
-theorem isOpen_slitPlane_locus_h_beta_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J : ℂ) :
-    IsOpen {z : ℂ × ℂ | IsingModel.partitionFunctionComplex
-      (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J z.1 z.2
-        ∈ Complex.slitPlane} :=
-  IsingModel.isOpen_slitPlane_locus_h_beta
-    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J
 
 /-- **ℤ^d real `h₀` (cast) is in `slitPlane_locus`** (Λ-induced). -/
 theorem real_coe_mem_slitPlane_locus_h_latticeGraph
