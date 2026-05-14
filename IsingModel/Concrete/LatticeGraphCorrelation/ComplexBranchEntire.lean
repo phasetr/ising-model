@@ -96,38 +96,14 @@ theorem freeEnergyComplex_analyticOnNhd_of_leeYangSubdomain_latticeGraph
   IsingModel.freeEnergyComplex_analyticOnNhd_of_leeYangSubdomain
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) hβ J
 
-/-- **ℤ^d `ContinuousOn` joint slitPlane locus (packaged alias)**
-(Λ-induced). -/
-theorem continuous_freeEnergyComplex_on_locus_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) :
-    ContinuousOn
-      (fun z : ℂ × ℂ × ℂ => IsingModel.freeEnergyComplex
-        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) z.1 z.2.1 z.2.2)
-      {z : ℂ × ℂ × ℂ | IsingModel.partitionFunctionComplex
-          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) z.1 z.2.1 z.2.2
-        ∈ Complex.slitPlane} :=
-  IsingModel.continuous_freeEnergyComplex_on_locus
-    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
+/-! ## Moved: freeEnergyComplex continuity / differentiability wrappers
 
-/-- **ℤ^d joint `ContinuousAt` at real parameters** (Λ-induced). -/
-theorem continuousAt_freeEnergyComplex_at_real_joint_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ) :
-    ContinuousAt
-      (fun z : ℂ × ℂ × ℂ => IsingModel.freeEnergyComplex
-        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) z.1 z.2.1 z.2.2)
-      ((p.J : ℂ), (p.h : ℂ), (p.β : ℂ)) :=
-  IsingModel.continuousAt_freeEnergyComplex_at_real_joint
-    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p
+The three wrappers
+`continuous_freeEnergyComplex_on_locus_latticeGraph`,
+`continuousAt_freeEnergyComplex_at_real_joint_latticeGraph`,
+`differentiableAt_freeEnergyComplex_at_real_joint_latticeGraph`
+now live in `ComplexBranchEntireContinuity.lean`. -/
 
-/-- **ℤ^d joint `DifferentiableAt` at real parameters** (Λ-induced). -/
-theorem differentiableAt_freeEnergyComplex_at_real_joint_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ) :
-    DifferentiableAt ℂ
-      (fun z : ℂ × ℂ × ℂ => IsingModel.freeEnergyComplex
-        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) z.1 z.2.1 z.2.2)
-      ((p.J : ℂ), (p.h : ℂ), (p.β : ℂ)) :=
-  IsingModel.differentiableAt_freeEnergyComplex_at_real_joint
-    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p
 
 /-! ## Moved: partitionFunctionComplex entire wrappers
 

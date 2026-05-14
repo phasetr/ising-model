@@ -12,6 +12,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.ComplexSlitPlane
 import IsingModel.Concrete.LatticeGraphCorrelation.ComplexRestrictions
 import IsingModel.Concrete.LatticeGraphCorrelation.ComplexRestrictionsRealParams
 import IsingModel.Concrete.LatticeGraphCorrelation.ComplexBranchEntire
+import IsingModel.Concrete.LatticeGraphCorrelation.ComplexBranchEntireContinuity
 import IsingModel.Concrete.LatticeGraphCorrelation.ComplexIsingPoly
 
 /-!
