@@ -2,6 +2,7 @@ import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.Concrete.IntLattice
 import IsingModel.Concrete.LatticeGraphCorrelation.Complex
 import IsingModel.Concrete.LatticeGraphCorrelation.ComplexAnalyticityBasic
+import IsingModel.Concrete.LatticeGraphCorrelation.ComplexAnalyticityBasicReal
 import IsingModel.Concrete.LatticeGraphCorrelation.ComplexAnalyticityBasicPartitionSingle
 import IsingModel.Concrete.LatticeGraphCorrelation.ComplexAnalyticityBasicFreeEnergySingle
 import IsingModel.Concrete.LatticeGraphCorrelation.ComplexRealCompat
