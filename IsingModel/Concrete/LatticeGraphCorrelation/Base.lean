@@ -29,32 +29,15 @@ theorem correlationΛ_latticeGraph_monotone_volume
           (liftFinset A (hA.trans h12)) :=
   correlationΛ_monotone_volume (IsingModel.latticeGraph d) h12 p hf hA
 
-/-- **ℤ^d partitionFunctionΛ positivity** per finite volume. -/
-theorem partitionFunctionΛ_latticeGraph_pos
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ) :
-    0 < partitionFunctionΛ (IsingModel.latticeGraph d) Λ p :=
-  partitionFunctionΛ_pos (IsingModel.latticeGraph d) Λ p
+/-! ## Moved: correlationΛ / partitionFunctionΛ basic bound wrappers
 
-/-- **ℤ^d `|correlationΛ| ≤ 1`** per finite volume. -/
-theorem abs_correlationΛ_latticeGraph_le_one
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ)
-    (A : Finset (↑Λ : Type _)) :
-    |correlationΛ (IsingModel.latticeGraph d) Λ p A| ≤ 1 :=
-  abs_correlationΛ_le_one (IsingModel.latticeGraph d) Λ p A
+The four wrappers
+`partitionFunctionΛ_latticeGraph_pos`,
+`abs_correlationΛ_latticeGraph_le_one`,
+`correlationΛ_latticeGraph_le_one`,
+`correlationΛ_latticeGraph_nonneg` now live in
+`BaseCorrelationBounds.lean`. -/
 
-/-- **ℤ^d correlationΛ ≤ 1** per finite volume. -/
-theorem correlationΛ_latticeGraph_le_one
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ)
-    (A : Finset (↑Λ : Type _)) :
-    correlationΛ (IsingModel.latticeGraph d) Λ p A ≤ 1 :=
-  correlationΛ_le_one (IsingModel.latticeGraph d) Λ p A
-
-/-- **ℤ^d correlationΛ ≥ 0** per finite volume (ferromagnetic). -/
-theorem correlationΛ_latticeGraph_nonneg
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ)
-    (hf : Ferromagnetic p) (A : Finset (↑Λ : Type _)) :
-    0 ≤ correlationΛ (IsingModel.latticeGraph d) Λ p A :=
-  correlationΛ_nonneg (IsingModel.latticeGraph d) Λ p hf A
 
 /-! ## Moved: AlongExhaustion apply unfoldings
 
