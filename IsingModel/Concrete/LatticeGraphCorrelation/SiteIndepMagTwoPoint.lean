@@ -21,29 +21,14 @@ namespace Ambient
 
 /-! ## Basic bounds on the ℤ^d two-point functions -/
 
-/-- **Nonnegativity of `twoPointFunction`** (GKS-I).
-`0 ≤ twoPointFunction d p r`. -/
-theorem twoPointFunction_nonneg
-    (d : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p) (r : Fin d → ℤ) :
-    0 ≤ twoPointFunction d p r :=
-  correlationInfinite_nonneg (IsingModel.latticeGraph d)
-    (Ambient.cubicExhaustion d) p hf {(0 : Fin d → ℤ), r}
+/-! ## Moved: twoPointFunction basic bound wrappers
 
-/-- **Upper bound on `twoPointFunction`** (boundedness of correlation).
-`twoPointFunction d p r ≤ 1`. -/
-theorem twoPointFunction_le_one
-    (d : ℕ) (p : IsingParams ℝ) (r : Fin d → ℤ) :
-    twoPointFunction d p r ≤ 1 :=
-  correlationInfinite_le_one (IsingModel.latticeGraph d)
-    (Ambient.cubicExhaustion d) p {(0 : Fin d → ℤ), r}
+The three wrappers
+`twoPointFunction_nonneg`,
+`twoPointFunction_le_one`,
+`neg_one_le_twoPointFunction` now live in
+`SiteIndepMagTwoPointBounds.lean`. -/
 
-/-- **`-1 ≤ twoPointFunction`** unconditionally. Direct specialization
-of `neg_one_le_correlationInfinite` at `A = {0, r}`. -/
-theorem neg_one_le_twoPointFunction
-    (d : ℕ) (p : IsingParams ℝ) (r : Fin d → ℤ) :
-    -1 ≤ twoPointFunction d p r :=
-  neg_one_le_correlationInfinite (IsingModel.latticeGraph d)
-    (Ambient.cubicExhaustion d) p {(0 : Fin d → ℤ), r}
 
 /-- **ℤ^d `twoPointFunction ≥ tanh(β·h)²` for `r ≠ 0`** (ferromagnetic):
 specialization of `correlationInfinite_ge_tanh_pow_card` at `A = {0, r}`
