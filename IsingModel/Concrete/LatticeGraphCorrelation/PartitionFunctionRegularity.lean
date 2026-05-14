@@ -15,49 +15,15 @@ namespace Ambient
 
 /-! ### ℤ^d partition-function regularity at `h = 0` -/
 
-/-- **ℤ^d Λ: partitionFunction Continuous in `β` at `h = 0`**. -/
-theorem partitionFunctionΛ_latticeGraph_continuous_beta_h_zero
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    (J : ℝ) :
-    Continuous (fun β : ℝ =>
-      Ambient.partitionFunctionΛ (IsingModel.latticeGraph d) Λ
-        ⟨J, 0, β⟩) :=
-  Ambient.partitionFunctionΛ_continuous_beta_h_zero
-    (IsingModel.latticeGraph d) Λ J
+/-! ## Moved: partitionFunctionΛ continuous/diff h=0 wrappers
 
-/-- **ℤ^d Λ: partitionFunction Continuous in `J` at `h = 0`**. -/
-theorem partitionFunctionΛ_latticeGraph_continuous_J_h_zero
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    (β : ℝ) :
-    Continuous (fun J : ℝ =>
-      Ambient.partitionFunctionΛ (IsingModel.latticeGraph d) Λ
-        ⟨J, 0, β⟩) :=
-  Ambient.partitionFunctionΛ_continuous_J_h_zero
-    (IsingModel.latticeGraph d) Λ β
+The four wrappers
+`partitionFunctionΛ_latticeGraph_continuous_beta_h_zero`,
+`partitionFunctionΛ_latticeGraph_continuous_J_h_zero`,
+`partitionFunctionΛ_latticeGraph_differentiable_beta_h_zero`,
+`partitionFunctionΛ_latticeGraph_differentiable_J_h_zero` now live in
+`PartitionFunctionRegularityContinuousDiffHZero.lean`. -/
 
-/-- **ℤ^d Λ: partitionFunction Differentiable in `β` at `h = 0`**. -/
-theorem partitionFunctionΛ_latticeGraph_differentiable_beta_h_zero
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    (J : ℝ) :
-    Differentiable ℝ (fun β : ℝ =>
-      Ambient.partitionFunctionΛ (IsingModel.latticeGraph d) Λ
-        ⟨J, 0, β⟩) :=
-  Ambient.partitionFunctionΛ_differentiable_beta_h_zero
-    (IsingModel.latticeGraph d) Λ J
-
-/-- **ℤ^d Λ: partitionFunction Differentiable in `J` at `h = 0`**. -/
-theorem partitionFunctionΛ_latticeGraph_differentiable_J_h_zero
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    (β : ℝ) :
-    Differentiable ℝ (fun J : ℝ =>
-      Ambient.partitionFunctionΛ (IsingModel.latticeGraph d) Λ
-        ⟨J, 0, β⟩) :=
-  Ambient.partitionFunctionΛ_differentiable_J_h_zero
-    (IsingModel.latticeGraph d) Λ β
 
 /-- **ℤ^d Λ: partitionFunction `AnalyticAt ℝ` in `β` at `h = 0`**. -/
 theorem partitionFunctionΛ_latticeGraph_analyticAt_beta_h_zero
