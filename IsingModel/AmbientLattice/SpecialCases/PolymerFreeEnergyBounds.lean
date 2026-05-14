@@ -1,5 +1,6 @@
 import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBoundsRegularity
 
 /-!
 # Polymer free-energy bound wrappers along an exhaustion
@@ -14,47 +15,15 @@ namespace Ambient
 
 variable {V : Type*} [DecidableEq V]
 
-/-- **Along-exhaustion: `polymerFreeEnergy` is `ContinuousAt` for
-`t ≥ 0`** (§18.5 along-ex wrap). -/
-theorem polymerFreeEnergyAlongExhaustion_continuousAt
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    {t : ℝ} (ht : 0 ≤ t) (n : ℕ) :
-    ContinuousAt (fun s : ℝ =>
-        IsingModel.polymerFreeEnergy
-          (inducedGraph G (Λ.volume n)) s) t :=
-  polymerFreeEnergy_Λ_continuousAt G (Λ.volume n) ht
+/-! ## Moved: polymerFreeEnergyAlongExhaustion regularity wrappers
 
-/-- **Along-exhaustion: `polymerFreeEnergy` is `DifferentiableAt`
-for `t ≥ 0`** (§18.5 along-ex wrap). -/
-theorem polymerFreeEnergyAlongExhaustion_differentiableAt
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    {t : ℝ} (ht : 0 ≤ t) (n : ℕ) :
-    DifferentiableAt ℝ (fun s : ℝ =>
-        IsingModel.polymerFreeEnergy
-          (inducedGraph G (Λ.volume n)) s) t :=
-  polymerFreeEnergy_Λ_differentiableAt G (Λ.volume n) ht
+The four `polymerFreeEnergyAlongExhaustion_*` regularity wrappers
+(`continuousAt`, `differentiableAt`, `continuousOn_Ici_zero`,
+`differentiableOn_Ici_zero`) now live in
+`PolymerFreeEnergyBoundsRegularity.lean`. They are re-imported here
+so downstream consumers continue to see the symbols. -/
 
-/-- **Along-exhaustion: `polymerFreeEnergy` is
-`ContinuousOn (Set.Ici 0)`** (§18.5 along-ex wrap). -/
-theorem polymerFreeEnergyAlongExhaustion_continuousOn_Ici_zero
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet] (n : ℕ) :
-    ContinuousOn (fun s : ℝ =>
-        IsingModel.polymerFreeEnergy
-          (inducedGraph G (Λ.volume n)) s) (Set.Ici 0) :=
-  polymerFreeEnergy_Λ_continuousOn_Ici_zero G (Λ.volume n)
 
-/-- **Along-exhaustion: `polymerFreeEnergy` is
-`DifferentiableOn (Set.Ici 0)`** (§18.5 along-ex wrap). -/
-theorem polymerFreeEnergyAlongExhaustion_differentiableOn_Ici_zero
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet] (n : ℕ) :
-    DifferentiableOn ℝ (fun s : ℝ =>
-        IsingModel.polymerFreeEnergy
-          (inducedGraph G (Λ.volume n)) s) (Set.Ici 0) :=
-  polymerFreeEnergy_Λ_differentiableOn_Ici_zero G (Λ.volume n)
 
 /-- **Along-ex: `polymerFreeEnergy ≥ 0` under `t ≥ 0`** (§18.5
 along-ex wrap). -/
