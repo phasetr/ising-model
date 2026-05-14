@@ -42,32 +42,14 @@ theorem partitionFunctionΛ_latticeGraph_zero_params
       = (2 : ℝ) ^ Λ.card :=
   partitionFunctionΛ_zero_params (IsingModel.latticeGraph d) Λ β
 
-/-- **ℤ^d log partitionFunctionΛ closed form at `J = 0`** (any Finset):
-`log Z_Λ(⟨0, h, β⟩) = |Λ| · log(2·cosh(β·h))`. -/
-theorem log_partitionFunctionΛ_latticeGraph_J_zero
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (h β : ℝ) :
-    Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
-        (⟨0, h, β⟩ : IsingParams ℝ))
-      = (Λ.card : ℝ) * Real.log (2 * Real.cosh (β * h)) :=
-  by rw [partitionFunctionΛ_latticeGraph_J_zero, Real.log_pow]
+/-! ## Moved: log_partitionFunctionΛ closed-form wrappers
 
-/-- **ℤ^d log partitionFunctionΛ closed form at `β = 0`** (any Finset):
-`log Z_Λ(⟨J, h, 0⟩) = |Λ| · log 2`. -/
-theorem log_partitionFunctionΛ_latticeGraph_beta_zero
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J h : ℝ) :
-    Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
-        (⟨J, h, 0⟩ : IsingParams ℝ))
-      = (Λ.card : ℝ) * Real.log 2 :=
-  by rw [partitionFunctionΛ_latticeGraph_beta_zero, Real.log_pow]
+The three wrappers
+`log_partitionFunctionΛ_latticeGraph_J_zero`,
+`log_partitionFunctionΛ_latticeGraph_beta_zero`,
+`log_partitionFunctionΛ_latticeGraph_zero_params` now live in
+`PartitionFunctionClosedFormsLog.lean`. -/
 
-/-- **ℤ^d log partitionFunctionΛ closed form at `J = 0, h = 0`** (any Finset):
-`log Z_Λ(⟨0, 0, β⟩) = |Λ| · log 2`. -/
-theorem log_partitionFunctionΛ_latticeGraph_zero_params
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (β : ℝ) :
-    Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
-        (⟨0, 0, β⟩ : IsingParams ℝ))
-      = (Λ.card : ℝ) * Real.log 2 :=
-  by rw [partitionFunctionΛ_latticeGraph_zero_params, Real.log_pow]
 
 /-! ## Moved: cubicExhaustion-Λ closed-form wrappers
 
