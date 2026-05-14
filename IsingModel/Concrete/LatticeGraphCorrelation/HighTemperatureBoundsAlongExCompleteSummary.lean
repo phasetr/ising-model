@@ -2,6 +2,7 @@ import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBounds
 import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsCorrelationPair
+import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsCorrelationPairCorollaries
 
 /-!
 # Concrete HT AlongExhaustion complete_summary + latticeAdj wrappers
