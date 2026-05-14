@@ -49,20 +49,11 @@ vdPolymerFamilies_sumAlongExhaustion_latticeGraph_strictMonoOn_of_polymers_nonem
   Ambient.vdPolymerFamilies_sumAlongExhaustion_strictMonoOn_of_polymers_nonempty
     (IsingModel.latticeGraph d) Λ n h_poly
 
-/-- **ℤ^d along-ex: 0 < pFE under `0 < t` and polymers exist**. -/
-theorem
-polymerFreeEnergyAlongExhaustion_latticeGraph_pos_of_t_pos_of_polymers_nonempty
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet]
-    {t : ℝ} (h_t_pos : 0 < t) (n : ℕ)
-    (h_poly : (IsingModel.allPolymers
-      (inducedGraph (IsingModel.latticeGraph d)
-        (Λ.volume n))).Nonempty) :
-    0 < IsingModel.polymerFreeEnergy
-        (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)) t :=
-  Ambient.polymerFreeEnergyAlongExhaustion_pos_of_t_pos_of_polymers_nonempty
-    (IsingModel.latticeGraph d) Λ h_t_pos n h_poly
+/-! ## Moved: polymerFreeEnergyAlongExhaustion_pos_of_t_pos wrapper
+
+`polymerFreeEnergyAlongExhaustion_latticeGraph_pos_of_t_pos_of_polymers_nonempty`
+now lives in `MayerStrictPositivityAlongExPFE.lean`. -/
+
 
 /-- **ℤ^d along-ex: 1 < vdSum under `0 < t` and polymers exist**. -/
 theorem
@@ -97,22 +88,11 @@ vdPolymerFamilies_sumAlongExhaustion_latticeGraph_minus_one_pos_of_t_pos_of_poly
   Ambient.vdPolymerFamilies_sumAlongExhaustion_minus_one_pos_of_t_pos_of_polymers_nonempty
     (IsingModel.latticeGraph d) Λ h_t_pos n h_poly
 
-/-- **ℤ^d along-ex: 0 < pFE(tanh) under `0 < tanh` and polymers
-exist**. -/
-theorem
-polymerFreeEnergyAlongExhaustion_latticeGraph_tanh_pos_of_tanh_pos_of_polymers_nonempty
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet]
-    {β J : ℝ} (h_tanh_pos : 0 < Real.tanh (β * J)) (n : ℕ)
-    (h_poly : (IsingModel.allPolymers
-      (inducedGraph (IsingModel.latticeGraph d)
-        (Λ.volume n))).Nonempty) :
-    0 < IsingModel.polymerFreeEnergy
-          (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
-          (Real.tanh (β * J)) :=
-  Ambient.polymerFreeEnergyAlongExhaustion_tanh_pos_of_tanh_pos_of_polymers_nonempty
-    (IsingModel.latticeGraph d) Λ h_tanh_pos n h_poly
+/-! ## Moved: polymerFreeEnergyAlongExhaustion_tanh_pos wrapper
+
+`polymerFreeEnergyAlongExhaustion_latticeGraph_tanh_pos_of_tanh_pos_of_polymers_nonempty`
+now lives in `MayerStrictPositivityAlongExPFE.lean`. -/
+
 
 /-! ## Moved: AlongExhaustion tanh / strictMono mayer wrappers
 
