@@ -49,26 +49,14 @@ theorem edgeSpin_sq_latticeGraph
     IsingModel.edgeSpin (K := ℝ) σ e ^ 2 = 1 :=
   IsingModel.edgeSpin_sq σ e
 
-/-- **ℤ^d one_sub_spinProduct_nonneg at Λ-induced**: `0 ≤ 1 - σ^B`. -/
-theorem one_sub_spinProduct_nonneg_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    (B : Finset (↑Λ : Type _)) (σ : IsingModel.Config (↑Λ : Type _)) :
-    0 ≤ 1 - IsingModel.spinProduct B σ :=
-  IsingModel.one_sub_spinProduct_nonneg B σ
+/-! ## Moved: spinProduct nonneg / abs wrappers
 
-/-- **ℤ^d abs_spinProduct_eq_one at Λ-induced**: `|σ^A| = 1`. -/
-theorem abs_spinProduct_eq_one_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    (A : Finset (↑Λ : Type _)) (σ : IsingModel.Config (↑Λ : Type _)) :
-    |IsingModel.spinProduct A σ| = 1 :=
-  IsingModel.abs_spinProduct_eq_one A σ
+The three wrappers
+`one_sub_spinProduct_nonneg_latticeGraph`,
+`abs_spinProduct_eq_one_latticeGraph`,
+`abs_spinProduct_le_one_latticeGraph` now live in
+`FiniteVolumeBasicsSpinBounds.lean`. -/
 
-/-- **ℤ^d abs_spinProduct_le_one at Λ-induced**: `|σ^A| ≤ 1`. -/
-theorem abs_spinProduct_le_one_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    (A : Finset (↑Λ : Type _)) (σ : IsingModel.Config (↑Λ : Type _)) :
-    |IsingModel.spinProduct A σ| ≤ 1 :=
-  IsingModel.abs_spinProduct_le_one A σ
 
 end Ambient
 end IsingModel
