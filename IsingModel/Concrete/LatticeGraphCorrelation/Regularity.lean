@@ -71,38 +71,15 @@ theorem hasDerivAt_correlationΛ_latticeGraph_field
   ⟨_, Ambient.hasDerivAt_correlationΛ_field
     (IsingModel.latticeGraph d) Λ J h β A⟩
 
-/-- **ℤ^d Λ: `freeEnergyΛ` HasDerivAt in β at general h**. -/
-theorem hasDerivAt_freeEnergyΛ_latticeGraph_beta_general_h
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    (J h β : ℝ) :
-    ∃ c : ℝ, HasDerivAt (fun β' =>
-        Ambient.freeEnergyΛ (IsingModel.latticeGraph d) Λ
-          (⟨J, h, β'⟩ : IsingParams ℝ)) c β :=
-  ⟨_, Ambient.hasDerivAt_freeEnergyΛ_beta_general_h
-    (IsingModel.latticeGraph d) Λ J h β⟩
+/-! ## Moved: ℤ^d Λ-layer `freeEnergyΛ` `hasDerivAt` wrappers
 
-/-- **ℤ^d Λ: `freeEnergyΛ` HasDerivAt in J**. -/
-theorem hasDerivAt_freeEnergyΛ_latticeGraph_J
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    (J h β : ℝ) :
-    ∃ c : ℝ, HasDerivAt (fun J' =>
-        Ambient.freeEnergyΛ (IsingModel.latticeGraph d) Λ
-          (⟨J', h, β⟩ : IsingParams ℝ)) c J :=
-  ⟨_, Ambient.hasDerivAt_freeEnergyΛ_J
-    (IsingModel.latticeGraph d) Λ J h β⟩
+The three wrappers
+`hasDerivAt_freeEnergyΛ_latticeGraph_beta_general_h`,
+`hasDerivAt_freeEnergyΛ_latticeGraph_J`,
+`hasDerivAt_freeEnergyΛ_latticeGraph_field` now live in
+`IsingModel.Concrete.LatticeGraphCorrelation.RegularityFreeEnergyLambda`.
+The legacy import path is preserved by re-importing the new child. -/
 
-/-- **ℤ^d Λ: `freeEnergyΛ` HasDerivAt in h**. -/
-theorem hasDerivAt_freeEnergyΛ_latticeGraph_field
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    (J h β : ℝ) :
-    ∃ c : ℝ, HasDerivAt (fun h' =>
-        Ambient.freeEnergyΛ (IsingModel.latticeGraph d) Λ
-          (⟨J, h', β⟩ : IsingParams ℝ)) c h :=
-  ⟨_, Ambient.hasDerivAt_freeEnergyΛ_field
-    (IsingModel.latticeGraph d) Λ J h β⟩
 
 /-! ## Moved: ℤ^d Λ-layer `partitionFunctionΛ`/`boltzmannWeightΛ` `hasDerivAt` wrappers
 
