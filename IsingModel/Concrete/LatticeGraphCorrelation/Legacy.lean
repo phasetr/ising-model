@@ -270,6 +270,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.UniformMag
 import IsingModel.Concrete.LatticeGraphCorrelation.Base
 import IsingModel.Concrete.LatticeGraphCorrelation.BaseApply
 import IsingModel.Concrete.LatticeGraphCorrelation.BaseBoundsTanh
+import IsingModel.Concrete.LatticeGraphCorrelation.BaseBoundsTanhGe
 import IsingModel.Concrete.LatticeGraphCorrelation.BaseCorrelationAlongEx
 import IsingModel.Concrete.LatticeGraphCorrelation.BaseCorrelationAlongExSubsetMono
 import IsingModel.Concrete.LatticeGraphCorrelation.BaseCorrelationAlongExBounds
