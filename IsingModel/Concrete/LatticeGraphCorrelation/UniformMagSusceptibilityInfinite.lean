@@ -46,41 +46,15 @@ theorem susceptibilityInfinite_latticeGraph_zero_params
     susceptibilityInfinite (IsingModel.latticeGraph d) Λ ⟨0, 0, β⟩ i = 0 :=
   susceptibilityInfinite_zero_params (IsingModel.latticeGraph d) Λ β hβ i
 
-/-- **ℤ^d susceptibilityInfinite ContinuousOn h on Ici 0 at J = 0** (Step 265). -/
-theorem susceptibilityInfinite_latticeGraph_continuousOn_field_J_zero
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (β : ℝ) (hβ : 0 < β)
-    (i : Fin d → ℤ) :
-    ContinuousOn
-      (fun h => susceptibilityInfinite (IsingModel.latticeGraph d) Λ ⟨0, h, β⟩ i)
-      (Set.Ici (0 : ℝ)) :=
-  susceptibilityInfinite_continuousOn_field_J_zero (IsingModel.latticeGraph d) Λ β hβ i
+/-! ## Moved: susceptibilityInfinite J_zero regularity wrappers
 
-/-- **ℤ^d susceptibilityInfinite ContinuousOn β on Ioi 0 at J = 0** (Step 265). -/
-theorem susceptibilityInfinite_latticeGraph_continuousOn_beta_J_zero
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (h : ℝ) (hh_nn : 0 ≤ h)
-    (i : Fin d → ℤ) :
-    ContinuousOn
-      (fun β => susceptibilityInfinite (IsingModel.latticeGraph d) Λ ⟨0, h, β⟩ i)
-      (Set.Ioi (0 : ℝ)) :=
-  susceptibilityInfinite_continuousOn_beta_J_zero (IsingModel.latticeGraph d) Λ h hh_nn i
+The four wrappers
+`susceptibilityInfinite_latticeGraph_continuousOn_field_J_zero`,
+`susceptibilityInfinite_latticeGraph_continuousOn_beta_J_zero`,
+`susceptibilityInfinite_latticeGraph_differentiableOn_field_J_zero`,
+`susceptibilityInfinite_latticeGraph_differentiableOn_beta_J_zero`
+now live in `UniformMagSusceptibilityInfiniteRegJZero.lean`. -/
 
-/-- **ℤ^d susceptibilityInfinite DifferentiableOn h on Ioi 0 at J = 0** (Step 265). -/
-theorem susceptibilityInfinite_latticeGraph_differentiableOn_field_J_zero
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (β : ℝ) (hβ : 0 < β)
-    (i : Fin d → ℤ) :
-    DifferentiableOn ℝ
-      (fun h => susceptibilityInfinite (IsingModel.latticeGraph d) Λ ⟨0, h, β⟩ i)
-      (Set.Ioi (0 : ℝ)) :=
-  susceptibilityInfinite_differentiableOn_field_J_zero (IsingModel.latticeGraph d) Λ β hβ i
-
-/-- **ℤ^d susceptibilityInfinite DifferentiableOn β on Ioi 0 at J = 0** (Step 265). -/
-theorem susceptibilityInfinite_latticeGraph_differentiableOn_beta_J_zero
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (h : ℝ) (hh_nn : 0 ≤ h)
-    (i : Fin d → ℤ) :
-    DifferentiableOn ℝ
-      (fun β => susceptibilityInfinite (IsingModel.latticeGraph d) Λ ⟨0, h, β⟩ i)
-      (Set.Ioi (0 : ℝ)) :=
-  susceptibilityInfinite_differentiableOn_beta_J_zero (IsingModel.latticeGraph d) Λ h hh_nn i
 
 /-! ## Moved: magnetizationInfinite J=0 regularity wrappers
 
