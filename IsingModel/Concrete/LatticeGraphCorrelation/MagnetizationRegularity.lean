@@ -15,49 +15,15 @@ namespace Ambient
 
 /-! ### magnetization regularity ℤ^d wraps -/
 
-/-- **ℤ^d Λ: magnetization Continuous in `h`**. -/
-theorem magnetizationΛ_latticeGraph_continuous_field
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    (J β : ℝ) (i : ↑Λ) :
-    Continuous (fun h' =>
-      Ambient.magnetizationΛ (IsingModel.latticeGraph d) Λ
-        (⟨J, h', β⟩ : IsingParams ℝ) i) :=
-  Ambient.magnetizationΛ_continuous_field
-    (IsingModel.latticeGraph d) Λ J β i
+/-! ## Moved: magnetizationΛ Λ-direct regularity wrappers
 
-/-- **ℤ^d Λ: magnetization Differentiable in `h`**. -/
-theorem magnetizationΛ_latticeGraph_differentiable_field
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    (J β : ℝ) (i : ↑Λ) :
-    Differentiable ℝ (fun h' =>
-      Ambient.magnetizationΛ (IsingModel.latticeGraph d) Λ
-        (⟨J, h', β⟩ : IsingParams ℝ) i) :=
-  Ambient.magnetizationΛ_differentiable_field
-    (IsingModel.latticeGraph d) Λ J β i
+The four wrappers
+`magnetizationΛ_latticeGraph_continuous_field`,
+`magnetizationΛ_latticeGraph_differentiable_field`,
+`magnetizationΛ_latticeGraph_continuous_J`,
+`magnetizationΛ_latticeGraph_differentiable_J` now live in
+`MagnetizationRegularityLambda.lean`. -/
 
-/-- **ℤ^d Λ: magnetization Continuous in `J`**. -/
-theorem magnetizationΛ_latticeGraph_continuous_J
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    (h β : ℝ) (i : ↑Λ) :
-    Continuous (fun J' =>
-      Ambient.magnetizationΛ (IsingModel.latticeGraph d) Λ
-        (⟨J', h, β⟩ : IsingParams ℝ) i) :=
-  Ambient.magnetizationΛ_continuous_J
-    (IsingModel.latticeGraph d) Λ h β i
-
-/-- **ℤ^d Λ: magnetization Differentiable in `J`**. -/
-theorem magnetizationΛ_latticeGraph_differentiable_J
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    (h β : ℝ) (i : ↑Λ) :
-    Differentiable ℝ (fun J' =>
-      Ambient.magnetizationΛ (IsingModel.latticeGraph d) Λ
-        (⟨J', h, β⟩ : IsingParams ℝ) i) :=
-  Ambient.magnetizationΛ_differentiable_J
-    (IsingModel.latticeGraph d) Λ h β i
 
 /-- **ℤ^d along-ex: magnetization Continuous in `h`**. -/
 theorem magnetizationAlongExhaustion_latticeGraph_continuous_field
