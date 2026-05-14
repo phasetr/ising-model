@@ -1,0 +1,53 @@
+import IsingModel.Concrete.LatticeGraphBED
+import IsingModel.Lattice
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBounds
+
+/-!
+# ℤ^d along-ex correlation simple bound wrappers
+
+Narrow child module for three ℤ^d along-ex
+`correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_*`
+simple bound wrappers extracted from
+`HighTemperatureBoundsAlongExBasicCorrelation.lean`:
+
+* `_at_empty_A`,
+* `_at_pair_nonneg`,
+* `_at_singleton_ferromagnetic`.
+-/
+
+namespace IsingModel
+namespace Ambient
+
+/-- **ℤ^d along-exhaustion FV (3.46) at A = ∅ consistency check**:
+under `0 ≤ β·J`,
+`correlationAlongExhaustion (latticeGraph d) Λ ⟨J, 0, β⟩ ∅ n = 1`. -/
+theorem correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_empty_A
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
+    (hβJ : 0 ≤ β * J) (n : ℕ) :
+    correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) (∅ : Finset (Fin d → ℤ)) n = 1 :=
+  correlationAlongExhaustion_high_temp_h_zero_at_empty_A
+    (IsingModel.latticeGraph d) Λ J β hβJ n
+
+/-- **ℤ^d along-exhaustion pair correlation nonneg at h = 0**:
+under `0 ≤ β·J`, at every stage `n`,
+`0 ≤ correlationAlongExhaustion (latticeGraph d) Λ ⟨J, 0, β⟩ {i, j} n`. -/
+theorem correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_pair_nonneg
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
+    (hβJ : 0 ≤ β * J) (i j : Fin d → ℤ) (n : ℕ) :
+    0 ≤ correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset (Fin d → ℤ)) n :=
+  correlationAlongExhaustion_high_temp_h_zero_at_pair_nonneg
+    (IsingModel.latticeGraph d) Λ J β hβJ i j n
+
+/-- **ℤ^d along-ex singleton ferromagnetic vanish**. -/
+theorem correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_singleton_ferromagnetic
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
+    (hJ : 0 ≤ J) (hβ : 0 < β) (i : Fin d → ℤ) (n : ℕ) :
+    correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) ({i} : Finset (Fin d → ℤ)) n = 0 :=
+  correlationAlongExhaustion_high_temp_h_zero_at_singleton_ferromagnetic
+    (IsingModel.latticeGraph d) Λ J β hJ hβ i n
+
+end Ambient
+end IsingModel
