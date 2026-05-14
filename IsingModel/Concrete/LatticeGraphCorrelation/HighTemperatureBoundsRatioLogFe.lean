@@ -141,81 +141,15 @@ log_partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_ratio_sandwich_b
   log_partitionFunctionΛ_high_temp_expansion_h_zero_ratio_sandwich_bundle_ferromagnetic
     (IsingModel.latticeGraph d) Λ J β hJ hβ
 
-/-- **ℤ^d Λ log Z ratio bound bundle**. -/
-theorem log_partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_ratio_bound_bundle
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ) (hβJ : 0 ≤ β * J) :
-    Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
-        (⟨J, 0, β⟩ : IsingParams ℝ))
-        - Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
-            (⟨0, 0, β⟩ : IsingParams ℝ))
-        ≤ β * J *
-            (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card ∧
-    Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
-        (⟨J, 0, β⟩ : IsingParams ℝ))
-        - Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
-            (⟨J, 0, 0⟩ : IsingParams ℝ))
-        ≤ β * J *
-            (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card :=
-  log_partitionFunctionΛ_high_temp_expansion_h_zero_ratio_bound_bundle
-    (IsingModel.latticeGraph d) Λ J β hβJ
+/-! ## Moved: Λ-direct ratio_bound_bundle wrappers
 
-/-- **ℤ^d Λ ferromagnetic log Z ratio bound bundle**. -/
-theorem
-log_partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_ratio_bound_bundle_ferromagnetic
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
-    (hJ : 0 ≤ J) (hβ : 0 < β) :
-    Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
-        (⟨J, 0, β⟩ : IsingParams ℝ))
-        - Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
-            (⟨0, 0, β⟩ : IsingParams ℝ))
-        ≤ β * J *
-            (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card ∧
-    Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
-        (⟨J, 0, β⟩ : IsingParams ℝ))
-        - Real.log (partitionFunctionΛ (IsingModel.latticeGraph d) Λ
-            (⟨J, 0, 0⟩ : IsingParams ℝ))
-        ≤ β * J *
-            (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card :=
-  log_partitionFunctionΛ_high_temp_expansion_h_zero_ratio_bound_bundle_ferromagnetic
-    (IsingModel.latticeGraph d) Λ J β hJ hβ
+The four Λ-direct `ratio_bound_bundle` wrappers
+(`log_partitionFunctionΛ_latticeGraph_*_ratio_bound_bundle`
+and `freeEnergyΛ_latticeGraph_*_ratio_bound_bundle`,
+each with `_ferromagnetic` variants) now live in
+`HighTemperatureBoundsRatioBoundBundle.lean`. -/
 
-/-- **ℤ^d Λ f ratio bound bundle**. -/
-theorem freeEnergyΛ_latticeGraph_high_temp_h_zero_ratio_bound_bundle
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
-    (hβJ : 0 ≤ β * J) (hne : 0 < Λ.card) :
-    freeEnergyΛ (IsingModel.latticeGraph d) Λ (⟨J, 0, β⟩ : IsingParams ℝ)
-        - freeEnergyΛ (IsingModel.latticeGraph d) Λ
-            (⟨0, 0, β⟩ : IsingParams ℝ)
-        ≤ β * J *
-          (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card /
-            Λ.card ∧
-    freeEnergyΛ (IsingModel.latticeGraph d) Λ (⟨J, 0, β⟩ : IsingParams ℝ)
-        - freeEnergyΛ (IsingModel.latticeGraph d) Λ
-            (⟨J, 0, 0⟩ : IsingParams ℝ)
-        ≤ β * J *
-          (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card /
-            Λ.card :=
-  freeEnergyΛ_high_temp_h_zero_ratio_bound_bundle
-    (IsingModel.latticeGraph d) Λ J β hβJ hne
 
-/-- **ℤ^d Λ ferromagnetic f ratio bound bundle**. -/
-theorem freeEnergyΛ_latticeGraph_high_temp_h_zero_ratio_bound_bundle_ferromagnetic
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
-    (hJ : 0 ≤ J) (hβ : 0 < β) (hne : 0 < Λ.card) :
-    freeEnergyΛ (IsingModel.latticeGraph d) Λ (⟨J, 0, β⟩ : IsingParams ℝ)
-        - freeEnergyΛ (IsingModel.latticeGraph d) Λ
-            (⟨0, 0, β⟩ : IsingParams ℝ)
-        ≤ β * J *
-          (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card /
-            Λ.card ∧
-    freeEnergyΛ (IsingModel.latticeGraph d) Λ (⟨J, 0, β⟩ : IsingParams ℝ)
-        - freeEnergyΛ (IsingModel.latticeGraph d) Λ
-            (⟨J, 0, 0⟩ : IsingParams ℝ)
-        ≤ β * J *
-          (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card /
-            Λ.card :=
-  freeEnergyΛ_high_temp_h_zero_ratio_bound_bundle_ferromagnetic
-    (IsingModel.latticeGraph d) Λ J β hJ hβ hne
 
 /-! ## Moved: freeEnergyΛ ratio-bound wrappers
 
