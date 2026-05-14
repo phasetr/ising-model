@@ -20,41 +20,12 @@ the former `HighTemperatureBoundsAlongExhaustionBasic` declarations.
 namespace IsingModel
 namespace Ambient
 
-/-- **ℤ^d along-ex pair at J=0,h=0**: = 0. -/
-theorem correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_pair_J_zero
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (β : ℝ)
-    (i j : Fin d → ℤ) (n : ℕ) :
-    correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
-        (⟨0, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset (Fin d → ℤ)) n = 0 :=
-  correlationAlongExhaustion_high_temp_h_zero_at_pair_J_zero
-    (IsingModel.latticeGraph d) Λ β i j n
+/-! ## Moved: trivial-slice wrappers (J = 0, β = 0)
 
-/-- **ℤ^d along-ex pair at β=0,h=0**: = 0. -/
-theorem correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_pair_beta_zero
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J : ℝ)
-    (i j : Fin d → ℤ) (n : ℕ) :
-    correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
-        (⟨J, 0, 0⟩ : IsingParams ℝ) ({i, j} : Finset (Fin d → ℤ)) n = 0 :=
-  correlationAlongExhaustion_high_temp_h_zero_at_pair_beta_zero
-    (IsingModel.latticeGraph d) Λ J i j n
+The four `correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_*_{J,beta}_zero`
+trivial-slice wrappers (singleton/pair at J = 0 and β = 0) now live in
+`HighTemperatureBoundsAlongExBasicTrivialSlices.lean`. -/
 
-/-- **ℤ^d along-ex singleton at J=0,h=0**: = 0. -/
-theorem correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_singleton_J_zero
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (β : ℝ)
-    (i : Fin d → ℤ) (n : ℕ) :
-    correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
-        (⟨0, 0, β⟩ : IsingParams ℝ) ({i} : Finset (Fin d → ℤ)) n = 0 :=
-  correlationAlongExhaustion_high_temp_h_zero_at_singleton_J_zero
-    (IsingModel.latticeGraph d) Λ β i n
-
-/-- **ℤ^d along-ex singleton at β=0,h=0**: = 0. -/
-theorem correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_singleton_beta_zero
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J : ℝ)
-    (i : Fin d → ℤ) (n : ℕ) :
-    correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
-        (⟨J, 0, 0⟩ : IsingParams ℝ) ({i} : Finset (Fin d → ℤ)) n = 0 :=
-  correlationAlongExhaustion_high_temp_h_zero_at_singleton_beta_zero
-    (IsingModel.latticeGraph d) Λ J i n
 
 /-- **ℤ^d along-exhaustion magnetization vanishes at h = 0**: at every
 stage `n`,
