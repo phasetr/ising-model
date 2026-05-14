@@ -12,53 +12,15 @@ import this child module directly.
 namespace IsingModel
 namespace Ambient
 
-/-! ### §18.6 polymerFreeEnergy tanh analytic ℤ^d wraps -/
+/-! ## Moved: Λ-layer polymerFreeEnergy tanh analyticity wrappers
 
-/-- **ℤ^d Λ: polymerFreeEnergy ∘ tanh ∘ (·*J) AnalyticAt in β**. -/
-theorem polymerFreeEnergy_Λ_latticeGraph_tanh_analyticAt_beta
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    (J β : ℝ) (hβJ : 0 ≤ β * J) :
-    AnalyticAt ℝ (fun β' : ℝ => IsingModel.polymerFreeEnergy
-        (inducedGraph (IsingModel.latticeGraph d) Λ)
-        (Real.tanh (β' * J))) β :=
-  Ambient.polymerFreeEnergy_Λ_tanh_analyticAt_beta
-    (IsingModel.latticeGraph d) Λ J β hβJ
+The four wrappers
+`polymerFreeEnergy_Λ_latticeGraph_tanh_analyticAt_beta`,
+`polymerFreeEnergy_Λ_latticeGraph_tanh_analyticAt_J`,
+`polymerFreeEnergy_Λ_latticeGraph_tanh_analyticOnNhd_beta_Ici_zero`,
+`polymerFreeEnergy_Λ_latticeGraph_tanh_analyticOnNhd_J_Ici_zero` now
+live in `PolymerFreeEnergyAnalyticityLambdaTanh.lean`. -/
 
-/-- **ℤ^d Λ: polymerFreeEnergy ∘ tanh ∘ (β*·) AnalyticAt in J**. -/
-theorem polymerFreeEnergy_Λ_latticeGraph_tanh_analyticAt_J
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    (β J : ℝ) (hβJ : 0 ≤ β * J) :
-    AnalyticAt ℝ (fun J' : ℝ => IsingModel.polymerFreeEnergy
-        (inducedGraph (IsingModel.latticeGraph d) Λ)
-        (Real.tanh (β * J'))) J :=
-  Ambient.polymerFreeEnergy_Λ_tanh_analyticAt_J
-    (IsingModel.latticeGraph d) Λ β J hβJ
-
-/-- **ℤ^d Λ: polymerFreeEnergy ∘ tanh ∘ (·*J) AnalyticOnNhd
-on (Set.Ici 0) in β under `0 ≤ J`**. -/
-theorem polymerFreeEnergy_Λ_latticeGraph_tanh_analyticOnNhd_beta_Ici_zero
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    {J : ℝ} (hJ : 0 ≤ J) :
-    AnalyticOnNhd ℝ (fun β' : ℝ => IsingModel.polymerFreeEnergy
-        (inducedGraph (IsingModel.latticeGraph d) Λ)
-        (Real.tanh (β' * J))) (Set.Ici 0) :=
-  Ambient.polymerFreeEnergy_Λ_tanh_analyticOnNhd_beta_Ici_zero
-    (IsingModel.latticeGraph d) Λ hJ
-
-/-- **ℤ^d Λ: polymerFreeEnergy ∘ tanh ∘ (β*·) AnalyticOnNhd
-on (Set.Ici 0) in J under `0 ≤ β`**. -/
-theorem polymerFreeEnergy_Λ_latticeGraph_tanh_analyticOnNhd_J_Ici_zero
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    {β : ℝ} (hβ : 0 ≤ β) :
-    AnalyticOnNhd ℝ (fun J' : ℝ => IsingModel.polymerFreeEnergy
-        (inducedGraph (IsingModel.latticeGraph d) Λ)
-        (Real.tanh (β * J'))) (Set.Ici 0) :=
-  Ambient.polymerFreeEnergy_Λ_tanh_analyticOnNhd_J_Ici_zero
-    (IsingModel.latticeGraph d) Λ hβ
 
 /-! ## Moved: AlongExhaustion polymerFreeEnergy tanh analyticity wrappers
 
