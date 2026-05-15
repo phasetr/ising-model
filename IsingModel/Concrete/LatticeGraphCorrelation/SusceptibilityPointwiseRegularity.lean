@@ -65,9 +65,9 @@ theorem susceptibilityAlongExhaustion_differentiable_J
 
 /-! ## Moved: ℤ^d-specialized susceptibilityAlongExhaustion pointwise wrappers
 
-The six wrappers
-`susceptibilityAlongExhaustion_latticeGraph_{continuousAt,differentiableAt}_{beta_general_h,field,J}`
-now live in `SusceptibilityPointwiseRegularityLatticeGraph.lean`. -/
+The six `susceptibilityAlongExhaustion_latticeGraph_*` wrappers
+(`{continuousAt,differentiableAt}_{beta_general_h,field,J}`) now
+live in `SusceptibilityPointwiseRegularityLatticeGraph.lean`. -/
 
 
 end Ambient

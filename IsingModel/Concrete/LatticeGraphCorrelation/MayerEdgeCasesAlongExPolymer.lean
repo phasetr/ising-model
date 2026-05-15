@@ -5,8 +5,9 @@ import IsingModel.AmbientLattice.SpecialCases.MayerEdgeCases
 # Concrete along-ex polymerFreeEnergy = mayerPartialSum edge cases
 
 Narrow child module for four ℤ^d
-`polymerFreeEnergyAlongExhaustion_latticeGraph_eq_mayerPartialSum_at_{zero,betaJ_zero,beta_zero,J_zero}`
-wrappers. Each wrapper is a thin pass-through to the corresponding
+`polymerFreeEnergyAlongExhaustion_latticeGraph_eq_mayerPartialSum_at`
+wrappers (`{_zero, _betaJ_zero, _beta_zero, _J_zero}`).
+Each wrapper is a thin pass-through to the corresponding
 ambient `polymerFreeEnergyAlongExhaustion_eq_mayerPartialSum_at_*`
 lemma at `IsingModel.latticeGraph d`.
 -/

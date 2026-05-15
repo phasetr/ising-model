@@ -62,17 +62,20 @@ now live in `PartitionFunctionClosedFormsCubicLambda.lean`. -/
 /-! ## Moved: along-ex closed-form trivial-slice wrappers
 
 The six wrappers
-`{partitionFunction,log_partitionFunction}AlongExhaustion_latticeGraph_{beta_zero,zero_params,J_zero}`
-now live in `PartitionFunctionClosedFormsAlongEx.lean`. -/
+`{partitionFunction,log_partitionFunction}AlongExhaustion_latticeGraph_*`
+(`{_beta_zero, _zero_params, _J_zero}`) now live in
+`PartitionFunctionClosedFormsAlongEx.lean`. -/
 
 
 
 /-! ## Moved: cubicExhaustion-alongEx closed-form wrappers
 
 The six wrappers
-`partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_{J_zero,beta_zero,zero_params}`
-and `log_partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_{J_zero,beta_zero,zero_params}`
-now live in `PartitionFunctionClosedFormsCubicAlongEx.lean`. -/
+`partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_*`
+and
+`log_partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_*`
+(`{_J_zero, _beta_zero, _zero_params}` each) now live in
+`PartitionFunctionClosedFormsCubicAlongEx.lean`. -/
 
 
 end Ambient

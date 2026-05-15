@@ -31,7 +31,8 @@ of_not_mem}`, `magnetizationInfinite_latticeGraph_apply`, and
 The legacy import path is preserved by re-importing the new child.
 -/
 
-/-! ## Moved: magnetizationAlongExhaustion / correlationAlongExhaustion bounds + convergence wrappers
+/-! ## Moved: magnetizationAlongExhaustion / correlationAlongExhaustion
+bounds + convergence wrappers
 
 The 17 ℤ^d `magnetizationAlongExhaustion_latticeGraph_*` and
 `correlationAlongExhaustion_latticeGraph_*` bound / monotone /
