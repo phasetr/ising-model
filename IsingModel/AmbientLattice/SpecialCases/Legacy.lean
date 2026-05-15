@@ -63,6 +63,7 @@ import IsingModel.AmbientLattice.SpecialCases.MayerVdIff
 import IsingModel.AmbientLattice.SpecialCases.MayerVdRegularity
 import IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityTanh
 import IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityVdPolymer
+import IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityVdPolymerTanh
 import IsingModel.AmbientLattice.SpecialCases.MagnetizationConvergence
 import IsingModel.AmbientLattice.SpecialCases.MagnetizationRegularity
 import IsingModel.AmbientLattice.SpecialCases.MagnetizationRegularityAt
