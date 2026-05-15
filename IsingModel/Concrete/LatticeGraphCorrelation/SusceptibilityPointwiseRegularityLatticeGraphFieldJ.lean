@@ -1,6 +1,7 @@
 import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularity
+import IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularityAt
 
 /-!
 # ℤ^d `susceptibilityAlongExhaustion_latticeGraph_*At_{field,J}` wrappers
