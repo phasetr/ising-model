@@ -10,8 +10,10 @@ Narrow child module for two ℤ^d
 wrappers (Λ and AlongExhaustion variants) extracted from
 `HighTemperatureBoundsDecayCapstones.lean`:
 
-* `correlationΛ_latticeGraph_h_zero_at_pair_le_two_pow_edges_mul_exp_highTempExpRate_dist`,
-* `correlationAlongExhaustion_latticeGraph_h_zero_at_pair_le_two_pow_edges_mul_exp_highTempExpRate_dist`.
+* `correlationΛ_latticeGraph_*_two_pow_edges_mul_exp_highTempExpRate_dist`
+  (Λ variant),
+* `correlationAlongExhaustion_latticeGraph_*_two_pow_edges_mul_exp_highTempExpRate_dist`
+  (AlongExhaustion variant). Both at `_h_zero_at_pair_le_`.
 -/
 
 namespace IsingModel

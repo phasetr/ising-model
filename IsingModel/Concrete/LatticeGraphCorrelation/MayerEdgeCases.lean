@@ -39,9 +39,10 @@ now live in `MayerEdgeCasesLambdaPolymer.lean`. -/
 
 /-! ## Moved: along-ex polymerFreeEnergy = mayerPartialSum edge cases
 
-The four wrappers
-`polymerFreeEnergyAlongExhaustion_latticeGraph_eq_mayerPartialSum_at_{zero,betaJ_zero,beta_zero,J_zero}`
-now live in `MayerEdgeCasesAlongExPolymer.lean`. -/
+The four
+`polymerFreeEnergyAlongExhaustion_latticeGraph_eq_mayerPartialSum_at`
+wrappers (`{_zero, _betaJ_zero, _beta_zero, _J_zero}`) now live in
+`MayerEdgeCasesAlongExPolymer.lean`. -/
 
 
 /-! ## Moved: `mayer_identity_*_polymer_free_energy_*` edge cases
