@@ -1,5 +1,6 @@
 import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLattice.SpecialCases.MayerStrictPositivityVdSumPointwise
 
 /-!
 # `vdPolymerFamilies_sum` strict-positivity wrappers along an exhaustion
@@ -49,62 +50,17 @@ vdPolymerFamilies_sumAlongExhaustion_strictMonoOn_of_polymers_nonempty
   vdPolymerFamilies_sum_Λ_strictMonoOn_of_polymers_nonempty
     G (Λ.volume n) h_poly
 
-/-- **Along-ex: 1 < vdSum under `0 < t` and polymers exist**. -/
-theorem
-vdPolymerFamilies_sumAlongExhaustion_gt_one_of_t_pos_of_polymers_nonempty
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    {t : ℝ} (h_t_pos : 0 < t) (n : ℕ)
-    (h_poly : (IsingModel.allPolymers
-      (inducedGraph G (Λ.volume n))).Nonempty) :
-    1 < (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
-              (inducedGraph G (Λ.volume n)),
-            ∏ P ∈ Γ, t ^ P.card) :=
-  vdPolymerFamilies_sum_Λ_gt_one_of_t_pos_of_polymers_nonempty
-    G (Λ.volume n) h_t_pos h_poly
+/-! ## Moved: vdPolymerFamilies_sum pointwise positivity wrappers
 
-/-- **Along-ex: 0 < ε(t) under `0 < t` and polymers exist**. -/
-theorem
-vdPolymerFamilies_sumAlongExhaustion_minus_one_pos_of_t_pos_of_polymers_nonempty
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    {t : ℝ} (h_t_pos : 0 < t) (n : ℕ)
-    (h_poly : (IsingModel.allPolymers
-      (inducedGraph G (Λ.volume n))).Nonempty) :
-    0 < (∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
-              (inducedGraph G (Λ.volume n))).erase ∅,
-            ∏ P ∈ Γ, t ^ P.card) :=
-  vdPolymerFamilies_sum_Λ_minus_one_pos_of_t_pos_of_polymers_nonempty
-    G (Λ.volume n) h_t_pos h_poly
-
-/-- **Along-ex: 1 < vdSum(tanh) under `0 < tanh` and polymers
-exist**. -/
-theorem
-vdPolymerFamilies_sumAlongExhaustion_tanh_gt_one_of_tanh_pos_of_polymers_nonempty
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    {β J : ℝ} (h_tanh_pos : 0 < Real.tanh (β * J)) (n : ℕ)
-    (h_poly : (IsingModel.allPolymers
-      (inducedGraph G (Λ.volume n))).Nonempty) :
-    1 < (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
-              (inducedGraph G (Λ.volume n)),
-            ∏ P ∈ Γ, (Real.tanh (β * J)) ^ P.card) :=
-  vdPolymerFamilies_sum_Λ_tanh_gt_one_of_tanh_pos_of_polymers_nonempty
-    G (Λ.volume n) h_tanh_pos h_poly
-
-/-- **Along-ex: 0 < ε(tanh) under `0 < tanh` and polymers exist**. -/
-theorem
-vdPolymerFamilies_sumAlongExhaustion_minus_one_tanh_pos_of_tanh_pos_of_polymers_nonempty
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    {β J : ℝ} (h_tanh_pos : 0 < Real.tanh (β * J)) (n : ℕ)
-    (h_poly : (IsingModel.allPolymers
-      (inducedGraph G (Λ.volume n))).Nonempty) :
-    0 < (∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
-              (inducedGraph G (Λ.volume n))).erase ∅,
-            ∏ P ∈ Γ, (Real.tanh (β * J)) ^ P.card) :=
-  vdPolymerFamilies_sum_Λ_minus_one_tanh_pos_of_tanh_pos_of_polymers_nonempty
-    G (Λ.volume n) h_tanh_pos h_poly
+The four pointwise wrappers
+(`_gt_one_of_t_pos_of_polymers_nonempty`,
+`_minus_one_pos_of_t_pos_of_polymers_nonempty`,
+`_tanh_gt_one_of_tanh_pos_of_polymers_nonempty`,
+`_minus_one_tanh_pos_of_tanh_pos_of_polymers_nonempty`) now live in
+`IsingModel.AmbientLattice.SpecialCases.MayerStrictPositivityVdSumPointwise`.
+The legacy import path is preserved by re-exporting the new child
+from this parent module and from `Legacy.lean`.
+-/
 
 /-- **Along-ex: vdSum is `StrictMonoOn (Set.Ioi 0)`**. -/
 theorem
