@@ -1,4 +1,5 @@
 import IsingModel.AmbientLattice.SpontaneousMono
+import IsingModel.AmbientLattice.SpecialCases.FreeEnergyHSymmetry
 import IsingModel.AmbientLattice.SpecialCases.FreeEnergyTrivialSlices
 
 /-!
@@ -147,51 +148,14 @@ theorem freeEnergyAlongExhaustion_high_temp_h_zero_upper_bound_exp_uniform
     exact mul_le_mul_of_nonneg_left h_edgeRatio hβJ
   linarith
 
-/-! ## `h`-symmetry / `|h|` monotonicity along exhaustion -/
+/-! ## Moved: `h`-symmetry / `|h|`-monotonicity wrappers
 
-/-- **Along-exhaustion h-evenness**:
-`freeEnergyAlongExhaustion G Λ ⟨J, -h, β⟩ n = freeEnergyAlongExhaustion G Λ ⟨J, h, β⟩ n`. -/
-theorem freeEnergyAlongExhaustion_neg_h
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J h β : ℝ) (n : ℕ) :
-    freeEnergyAlongExhaustion G Λ (⟨J, -h, β⟩ : IsingParams ℝ) n
-      = freeEnergyAlongExhaustion G Λ (⟨J, h, β⟩ : IsingParams ℝ) n := by
-  change IsingModel.freeEnergy (inducedGraph G (Λ.volume n))
-      (⟨J, -h, β⟩ : IsingParams ℝ)
-    = IsingModel.freeEnergy (inducedGraph G (Λ.volume n))
-        (⟨J, h, β⟩ : IsingParams ℝ)
-  exact IsingModel.freeEnergy_neg_h _ J h β
-
-/-- **Along-exhaustion `|h|`-rewrite**:
-`freeEnergyAlongExhaustion G Λ ⟨J, h, β⟩ n = freeEnergyAlongExhaustion G Λ ⟨J, |h|, β⟩ n`. -/
-theorem freeEnergyAlongExhaustion_eq_abs_h
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J h β : ℝ) (n : ℕ) :
-    freeEnergyAlongExhaustion G Λ (⟨J, h, β⟩ : IsingParams ℝ) n
-      = freeEnergyAlongExhaustion G Λ (⟨J, |h|, β⟩ : IsingParams ℝ) n := by
-  change IsingModel.freeEnergy (inducedGraph G (Λ.volume n))
-      (⟨J, h, β⟩ : IsingParams ℝ)
-    = IsingModel.freeEnergy (inducedGraph G (Λ.volume n))
-        (⟨J, |h|, β⟩ : IsingParams ℝ)
-  exact IsingModel.freeEnergy_eq_abs_h _ J h β
-
-/-- **Along-exhaustion ferromagnetic `|h|`-monotonicity**:
-for `J ≥ 0`, `β > 0` and any real `h₁, h₂` with `|h₁| ≤ |h₂|`,
-`freeEnergyAlongExhaustion G Λ ⟨J, h₁, β⟩ n ≤ freeEnergyAlongExhaustion G Λ ⟨J, h₂, β⟩ n`. -/
-theorem freeEnergyAlongExhaustion_monotone_abs_h
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β)
-    {h₁ h₂ : ℝ} (hh : |h₁| ≤ |h₂|) (n : ℕ) :
-    freeEnergyAlongExhaustion G Λ (⟨J, h₁, β⟩ : IsingParams ℝ) n
-      ≤ freeEnergyAlongExhaustion G Λ (⟨J, h₂, β⟩ : IsingParams ℝ) n := by
-  change IsingModel.freeEnergy (inducedGraph G (Λ.volume n))
-      (⟨J, h₁, β⟩ : IsingParams ℝ)
-    ≤ IsingModel.freeEnergy (inducedGraph G (Λ.volume n))
-        (⟨J, h₂, β⟩ : IsingParams ℝ)
-  exact IsingModel.freeEnergy_monotone_abs_h _ J β hJ hβ hh
+The three `freeEnergyAlongExhaustion_{neg_h, eq_abs_h, monotone_abs_h}`
+wrappers now live in
+`IsingModel.AmbientLattice.SpecialCases.FreeEnergyHSymmetry`.
+The legacy import path is preserved by re-exporting the new child
+from this parent module and from `Legacy.lean`.
+-/
 
 /-- **BddAbove for `freeEnergyAlongExhaustion` under bounded edge density**:
 assuming `BoundedEdgeDensity G Λ`, the range of the exhaustion free energy

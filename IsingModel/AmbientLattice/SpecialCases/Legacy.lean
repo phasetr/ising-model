@@ -1,4 +1,5 @@
 import IsingModel.AmbientLattice.SpecialCases.FreeEnergy
+import IsingModel.AmbientLattice.SpecialCases.FreeEnergyHSymmetry
 import IsingModel.AmbientLattice.SpecialCases.FreeEnergyTrivialSlices
 import IsingModel.AmbientLattice.SpecialCases.FreeEnergyAnalyticity
 import IsingModel.AmbientLattice.SpecialCases.FreeEnergyAnalyticityHZero
