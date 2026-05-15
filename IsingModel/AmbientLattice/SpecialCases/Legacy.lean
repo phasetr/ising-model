@@ -51,6 +51,7 @@ import IsingModel.AmbientLattice.SpecialCases.MayerEdgeCases
 import IsingModel.AmbientLattice.SpecialCases.MayerEdgeCasesPFE
 import IsingModel.AmbientLattice.SpecialCases.MayerEdgeCasesPolymerFreeEnergy
 import IsingModel.AmbientLattice.SpecialCases.MayerExpansionEdgeCases
+import IsingModel.AmbientLattice.SpecialCases.MayerExpansionEdgeCasesTwo
 import IsingModel.AmbientLattice.SpecialCases.MayerEpsilonInfrastructure
 import IsingModel.AmbientLattice.SpecialCases.MayerEpsilonPositivity
 import IsingModel.AmbientLattice.SpecialCases.MayerFilterConnected
