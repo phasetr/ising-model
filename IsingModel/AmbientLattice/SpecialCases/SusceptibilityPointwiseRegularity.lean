@@ -107,65 +107,15 @@ theorem susceptibilityAlongExhaustion_differentiable_J_gen
   · simp only [hi, dif_neg, not_false_iff]
     exact differentiable_const _
 
-/-- **Along-ex: susceptibility ContinuousAt β** (general G, general h). -/
-theorem susceptibilityAlongExhaustion_continuousAt_beta_gen
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J h β : ℝ) (i : V) (n : ℕ) :
-    ContinuousAt
-      (fun β' => susceptibilityAlongExhaustion G Λ
-          (⟨J, h, β'⟩ : IsingParams ℝ) i n) β :=
-  (susceptibilityAlongExhaustion_continuous_beta_gen G Λ J h i n).continuousAt
+/-! ## Moved: ContinuousAt / DifferentiableAt along-ex susceptibility wrappers
 
-/-- **Along-ex: susceptibility DifferentiableAt β** (general G, general h). -/
-theorem susceptibilityAlongExhaustion_differentiableAt_beta_gen
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J h β : ℝ) (i : V) (n : ℕ) :
-    DifferentiableAt ℝ
-      (fun β' => susceptibilityAlongExhaustion G Λ
-          (⟨J, h, β'⟩ : IsingParams ℝ) i n) β :=
-  (susceptibilityAlongExhaustion_differentiable_beta_gen G Λ J h i n).differentiableAt
-
-/-- **Along-ex: susceptibility ContinuousAt h** (general G). -/
-theorem susceptibilityAlongExhaustion_continuousAt_field_gen
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J h β : ℝ) (i : V) (n : ℕ) :
-    ContinuousAt
-      (fun h' => susceptibilityAlongExhaustion G Λ
-          (⟨J, h', β⟩ : IsingParams ℝ) i n) h :=
-  (susceptibilityAlongExhaustion_continuous_field_gen G Λ J β i n).continuousAt
-
-/-- **Along-ex: susceptibility DifferentiableAt h** (general G). -/
-theorem susceptibilityAlongExhaustion_differentiableAt_field_gen
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J h β : ℝ) (i : V) (n : ℕ) :
-    DifferentiableAt ℝ
-      (fun h' => susceptibilityAlongExhaustion G Λ
-          (⟨J, h', β⟩ : IsingParams ℝ) i n) h :=
-  (susceptibilityAlongExhaustion_differentiable_field_gen G Λ J β i n).differentiableAt
-
-/-- **Along-ex: susceptibility ContinuousAt J** (general G). -/
-theorem susceptibilityAlongExhaustion_continuousAt_J_gen
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J h β : ℝ) (i : V) (n : ℕ) :
-    ContinuousAt
-      (fun J' => susceptibilityAlongExhaustion G Λ
-          (⟨J', h, β⟩ : IsingParams ℝ) i n) J :=
-  (susceptibilityAlongExhaustion_continuous_J_gen G Λ h β i n).continuousAt
-
-/-- **Along-ex: susceptibility DifferentiableAt J** (general G). -/
-theorem susceptibilityAlongExhaustion_differentiableAt_J_gen
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J h β : ℝ) (i : V) (n : ℕ) :
-    DifferentiableAt ℝ
-      (fun J' => susceptibilityAlongExhaustion G Λ
-          (⟨J', h, β⟩ : IsingParams ℝ) i n) J :=
-  (susceptibilityAlongExhaustion_differentiable_J_gen G Λ h β i n).differentiableAt
+The six `susceptibilityAlongExhaustion_{continuousAt,differentiableAt}_{beta,field,J}_gen`
+pointwise wrappers now live in
+`IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularityAt`.
+The legacy import path is preserved by re-exporting the new child
+from `Legacy.lean` and from each downstream consumer that previously
+imported only this parent.
+-/
 
 end Ambient
 end IsingModel
