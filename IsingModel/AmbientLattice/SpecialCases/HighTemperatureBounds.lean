@@ -17,6 +17,7 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFe
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFeFreeEnergyBound
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDecayCapstones
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsCorrelationBasic
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsCorrelationBasicSingletonBundle
 
 /-!
 # High-temperature expansion and bound wrappers along an exhaustion
