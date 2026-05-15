@@ -29,6 +29,7 @@ import IsingModel.AmbientLattice.SpecialCases.MayerAnalyticity
 import IsingModel.AmbientLattice.SpecialCases.MayerAnalyticityExpansionTerm
 import IsingModel.AmbientLattice.SpecialCases.MayerBasicIdentities
 import IsingModel.AmbientLattice.SpecialCases.MayerEdgeCases
+import IsingModel.AmbientLattice.SpecialCases.MayerEdgeCasesPolymerFreeEnergy
 import IsingModel.AmbientLattice.SpecialCases.MayerExpansionEdgeCases
 import IsingModel.AmbientLattice.SpecialCases.MayerEpsilonInfrastructure
 import IsingModel.AmbientLattice.SpecialCases.MayerEpsilonPositivity
