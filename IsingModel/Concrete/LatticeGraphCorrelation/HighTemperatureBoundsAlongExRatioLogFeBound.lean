@@ -7,8 +7,9 @@ import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExh
 # ℤ^d alongExhaustion freeEnergy ratio_bound wrappers at h = 0
 
 Narrow child module for four ℤ^d
-`freeEnergyAlongExhaustion_latticeGraph_high_temp_h_zero_ratio_bound{,_beta_zero,_ferromagnetic,_beta_zero_ferromagnetic}`
-wrappers. Each wrapper is a thin pass-through to the corresponding
+`freeEnergyAlongExhaustion_latticeGraph_high_temp_h_zero_ratio_bound`
+wrappers (`{,_beta_zero,_ferromagnetic,_beta_zero_ferromagnetic}`).
+Each wrapper is a thin pass-through to the corresponding
 ambient `freeEnergyAlongExhaustion_high_temp_h_zero_ratio_bound*`
 lemma at `IsingModel.latticeGraph d`.
 -/
