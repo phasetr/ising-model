@@ -48,6 +48,7 @@ import IsingModel.AmbientLattice.SpecialCases.MayerRecurrenceHasSum
 import IsingModel.AmbientLattice.SpecialCases.MayerStrictPositivity
 import IsingModel.AmbientLattice.SpecialCases.MayerStrictPositivityVdSum
 import IsingModel.AmbientLattice.SpecialCases.MayerTanhFerromagneticIff
+import IsingModel.AmbientLattice.SpecialCases.MayerTanhFerromagneticIffPFE
 import IsingModel.AmbientLattice.SpecialCases.MayerTrivialCases
 import IsingModel.AmbientLattice.SpecialCases.MayerVdBounds
 import IsingModel.AmbientLattice.SpecialCases.MayerVdIff
