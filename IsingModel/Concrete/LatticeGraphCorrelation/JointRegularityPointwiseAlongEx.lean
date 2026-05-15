@@ -1,5 +1,6 @@
 import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.JointRegularity
+import IsingModel.AmbientLattice.SpecialCases.JointRegularityAt
 
 /-!
 # ℤ^d AlongExhaustion joint pointwise regularity wrappers

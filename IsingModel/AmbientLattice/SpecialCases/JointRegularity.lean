@@ -103,59 +103,15 @@ theorem susceptibilityAlongExhaustion_differentiable_joint_gen
   · simp only [hi, dif_neg, not_false_iff]
     exact differentiable_const _
 
-/-- **Along-ex: correlation jointly ContinuousAt** (general G). -/
-theorem correlationAlongExhaustion_continuousAt_joint_gen
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (A : Finset V) (n : ℕ) (p : ℝ × ℝ × ℝ) :
-    ContinuousAt (fun q : ℝ × ℝ × ℝ =>
-      correlationAlongExhaustion G Λ ⟨q.2.1, q.2.2, q.1⟩ A n) p :=
-  (correlationAlongExhaustion_continuous_joint_gen G Λ A n).continuousAt
+/-! ## Moved: joint ContinuousAt / DifferentiableAt along-ex wrappers
 
-/-- **Along-ex: correlation jointly DifferentiableAt** (general G). -/
-theorem correlationAlongExhaustion_differentiableAt_joint_gen
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (A : Finset V) (n : ℕ) (p : ℝ × ℝ × ℝ) :
-    DifferentiableAt ℝ (fun q : ℝ × ℝ × ℝ =>
-      correlationAlongExhaustion G Λ ⟨q.2.1, q.2.2, q.1⟩ A n) p :=
-  (correlationAlongExhaustion_differentiable_joint_gen G Λ A n).differentiableAt
-
-/-- **Along-ex: magnetization jointly ContinuousAt** (general G). -/
-theorem magnetizationAlongExhaustion_continuousAt_joint
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (i : V) (n : ℕ) (p : ℝ × ℝ × ℝ) :
-    ContinuousAt (fun q : ℝ × ℝ × ℝ =>
-      magnetizationAlongExhaustion G Λ ⟨q.2.1, q.2.2, q.1⟩ i n) p :=
-  (magnetizationAlongExhaustion_continuous_joint G Λ i n).continuousAt
-
-/-- **Along-ex: magnetization jointly DifferentiableAt** (general G). -/
-theorem magnetizationAlongExhaustion_differentiableAt_joint
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (i : V) (n : ℕ) (p : ℝ × ℝ × ℝ) :
-    DifferentiableAt ℝ (fun q : ℝ × ℝ × ℝ =>
-      magnetizationAlongExhaustion G Λ ⟨q.2.1, q.2.2, q.1⟩ i n) p :=
-  (magnetizationAlongExhaustion_differentiable_joint G Λ i n).differentiableAt
-
-/-- **Along-ex: susceptibility jointly ContinuousAt** (general G). -/
-theorem susceptibilityAlongExhaustion_continuousAt_joint_gen
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (i : V) (n : ℕ) (p : ℝ × ℝ × ℝ) :
-    ContinuousAt (fun q : ℝ × ℝ × ℝ =>
-      susceptibilityAlongExhaustion G Λ ⟨q.2.1, q.2.2, q.1⟩ i n) p :=
-  (susceptibilityAlongExhaustion_continuous_joint_gen G Λ i n).continuousAt
-
-/-- **Along-ex: susceptibility jointly DifferentiableAt** (general G). -/
-theorem susceptibilityAlongExhaustion_differentiableAt_joint_gen
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (i : V) (n : ℕ) (p : ℝ × ℝ × ℝ) :
-    DifferentiableAt ℝ (fun q : ℝ × ℝ × ℝ =>
-      susceptibilityAlongExhaustion G Λ ⟨q.2.1, q.2.2, q.1⟩ i n) p :=
-  (susceptibilityAlongExhaustion_differentiable_joint_gen G Λ i n).differentiableAt
+The six joint `_continuousAt_joint*` / `_differentiableAt_joint*`
+wrappers for correlation, magnetization, and susceptibility now live
+in `IsingModel.AmbientLattice.SpecialCases.JointRegularityAt`. The
+legacy import path is preserved by re-exporting the new child from
+`Legacy.lean` and from each downstream consumer that previously
+imported only this parent.
+-/
 
 end Ambient
 end IsingModel
