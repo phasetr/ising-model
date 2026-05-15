@@ -66,6 +66,7 @@ import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyTanhSharpening
 import IsingModel.AmbientLattice.SpecialCases.SusceptibilityConvergence
 import IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularity
 import IsingModel.AmbientLattice.SpecialCases.VdPolymerFamiliesAnalyticity
+import IsingModel.AmbientLattice.SpecialCases.VdPolymerFamiliesAnalyticityLog
 import IsingModel.AmbientLattice.Analyticity
 
 /-!
