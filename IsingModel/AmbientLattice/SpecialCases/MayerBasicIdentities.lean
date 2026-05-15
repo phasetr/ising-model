@@ -1,5 +1,6 @@
 import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLattice.SpecialCases.MayerBasicIdentitiesExpansionTerm
 
 /-!
 # Mayer basic identity wrappers along an exhaustion
@@ -68,34 +69,14 @@ theorem mayerPartialSumAlongExhaustion_at_zero
         (inducedGraph G (Λ.volume n)) N 0 = 0 :=
   mayerPartialSum_Λ_at_zero G (Λ.volume n) N
 
-/-- **Along-ex: mayerExpansionTerm at n = 0 = 0**. -/
-theorem mayerExpansionTermAlongExhaustion_zero
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (t : ℝ) (n : ℕ) :
-    IsingModel.mayerExpansionTerm
-        (inducedGraph G (Λ.volume n)) 0 t = 0 :=
-  mayerExpansionTerm_Λ_zero G (Λ.volume n) t
+/-! ## Moved: mayerExpansionTermAlongExhaustion basic identity wrappers
 
-/-- **Along-ex: mayerExpansionTerm at n = 1 = ∑_P t^|P|**. -/
-theorem mayerExpansionTermAlongExhaustion_one
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (t : ℝ) (n : ℕ) :
-    IsingModel.mayerExpansionTerm
-        (inducedGraph G (Λ.volume n)) 1 t =
-      ∑ P ∈ IsingModel.allPolymers
-            (inducedGraph G (Λ.volume n)), t ^ P.card :=
-  mayerExpansionTerm_Λ_one G (Λ.volume n) t
+The three `mayerExpansionTermAlongExhaustion_*` basic identity wrappers
+(`zero`, `one`, `at_zero`) now live in
+`MayerBasicIdentitiesExpansionTerm.lean`. They are re-imported here so
+downstream consumers continue to see the symbols. -/
 
-/-- **Along-ex: mayerExpansionTerm at t = 0 = 0**. -/
-theorem mayerExpansionTermAlongExhaustion_at_zero
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (k : ℕ) (n : ℕ) :
-    IsingModel.mayerExpansionTerm
-        (inducedGraph G (Λ.volume n)) k 0 = 0 :=
-  mayerExpansionTerm_Λ_at_zero G (Λ.volume n) k
+
 
 end Ambient
 end IsingModel
