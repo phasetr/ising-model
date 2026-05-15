@@ -119,7 +119,8 @@ The legacy import path is preserved by re-importing the new child.
 
 /-! ## Moved: uniformMagnetization trivial-slice + monotonicity wrappers
 
-The seven wrappers `uniformMagnetization_{beta_zero,monotone_J,monotone_h,monotone_beta,J_zero,zero_params,zero_at_h_zero}`
+The seven `uniformMagnetization_*` wrappers
+(`{beta_zero,monotone_J,monotone_h,monotone_beta,J_zero,zero_params,zero_at_h_zero}`)
 now live in `SiteIndepMagTrivialSlice.lean`. -/
 
 
