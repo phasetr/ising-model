@@ -1,5 +1,6 @@
 import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityTanhExpansionTerm
 
 /-!
 # `mayerPartialSum` / `mayerExpansionTerm` tanh regularity wrappers along an exhaustion
@@ -63,51 +64,14 @@ theorem mayerPartialSumAlongExhaustion_tanh_differentiable_J
           (Real.tanh (β * J'))) :=
   mayerPartialSum_Λ_tanh_differentiable_J G (Λ.volume n) N β
 
-/-! ### §18.5 mayerExpansionTerm tanh β/J along-ex wraps -/
+/-! ## Moved: mayerExpansionTerm tanh β/J along-ex wraps
 
-/-- **Along-ex: mayerExpansionTerm ∘ tanh ∘ (·*J) continuous in β**. -/
-theorem mayerExpansionTermAlongExhaustion_tanh_continuous_beta
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (k : ℕ) (J : ℝ) (n : ℕ) :
-    Continuous (fun β' : ℝ =>
-        IsingModel.mayerExpansionTerm
-          (inducedGraph G (Λ.volume n)) k
-          (Real.tanh (β' * J))) :=
-  mayerExpansionTerm_Λ_tanh_continuous_beta G (Λ.volume n) k J
-
-/-- **Along-ex: mayerExpansionTerm ∘ tanh ∘ (β*·) continuous in J**. -/
-theorem mayerExpansionTermAlongExhaustion_tanh_continuous_J
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (k : ℕ) (β : ℝ) (n : ℕ) :
-    Continuous (fun J' : ℝ =>
-        IsingModel.mayerExpansionTerm
-          (inducedGraph G (Λ.volume n)) k
-          (Real.tanh (β * J'))) :=
-  mayerExpansionTerm_Λ_tanh_continuous_J G (Λ.volume n) k β
-
-/-- **Along-ex: mayerExpansionTerm ∘ tanh ∘ (·*J) differentiable in β**. -/
-theorem mayerExpansionTermAlongExhaustion_tanh_differentiable_beta
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (k : ℕ) (J : ℝ) (n : ℕ) :
-    Differentiable ℝ (fun β' : ℝ =>
-        IsingModel.mayerExpansionTerm
-          (inducedGraph G (Λ.volume n)) k
-          (Real.tanh (β' * J))) :=
-  mayerExpansionTerm_Λ_tanh_differentiable_beta G (Λ.volume n) k J
-
-/-- **Along-ex: mayerExpansionTerm ∘ tanh ∘ (β*·) differentiable in J**. -/
-theorem mayerExpansionTermAlongExhaustion_tanh_differentiable_J
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (k : ℕ) (β : ℝ) (n : ℕ) :
-    Differentiable ℝ (fun J' : ℝ =>
-        IsingModel.mayerExpansionTerm
-          (inducedGraph G (Λ.volume n)) k
-          (Real.tanh (β * J'))) :=
-  mayerExpansionTerm_Λ_tanh_differentiable_J G (Λ.volume n) k β
+The four `mayerExpansionTermAlongExhaustion_tanh_*` continuity /
+differentiability wrappers (in `β` and `J`) now live in
+`IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityTanhExpansionTerm`.
+The legacy import path is preserved by re-exporting the new child
+from this parent module and from `Legacy.lean`.
+-/
 
 end Ambient
 end IsingModel
