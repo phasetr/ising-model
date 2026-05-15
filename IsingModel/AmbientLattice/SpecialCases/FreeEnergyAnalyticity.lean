@@ -1,6 +1,7 @@
 import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.SpecialCases.FreeEnergyAnalyticityHZero
+import IsingModel.AmbientLattice.SpecialCases.FreeEnergyAnalyticityOnNhd
 
 /-!
 # Ambient free-energy per-direction analyticity wrappers
@@ -54,34 +55,13 @@ theorem freeEnergyAlongExhaustion_analyticAt_h
       freeEnergyAlongExhaustion G Λ ⟨J, h', β⟩ n) h :=
   freeEnergyΛ_analyticAt_h G (Λ.volume n) J β h
 
-/-- **Along-ex: freeEnergy `AnalyticOnNhd ℝ _ Set.univ` in `β` at
-general `h`**. -/
-theorem freeEnergyAlongExhaustion_analyticOnNhd_beta_general_h
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J h : ℝ) (n : ℕ) :
-    AnalyticOnNhd ℝ (fun β' : ℝ =>
-      freeEnergyAlongExhaustion G Λ ⟨J, h, β'⟩ n) Set.univ :=
-  freeEnergyΛ_analyticOnNhd_beta_general_h G (Λ.volume n) J h
+/-! ## Moved: freeEnergyAlongExhaustion AnalyticOnNhd general-h wrappers
 
-/-- **Along-ex: freeEnergy `AnalyticOnNhd ℝ _ Set.univ` in `J` at
-general `h`**. -/
-theorem freeEnergyAlongExhaustion_analyticOnNhd_J_general_h
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (β h : ℝ) (n : ℕ) :
-    AnalyticOnNhd ℝ (fun J' : ℝ =>
-      freeEnergyAlongExhaustion G Λ ⟨J', h, β⟩ n) Set.univ :=
-  freeEnergyΛ_analyticOnNhd_J_general_h G (Λ.volume n) β h
+The three `freeEnergyAlongExhaustion_analyticOnNhd_*` wrappers
+(beta_general_h, J_general_h, h) now live in
+`FreeEnergyAnalyticityOnNhd.lean`. They are re-imported here so
+downstream consumers continue to see the symbols. -/
 
-/-- **Along-ex: freeEnergy `AnalyticOnNhd ℝ _ Set.univ` in `h`**. -/
-theorem freeEnergyAlongExhaustion_analyticOnNhd_h
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (n : ℕ) :
-    AnalyticOnNhd ℝ (fun h' : ℝ =>
-      freeEnergyAlongExhaustion G Λ ⟨J, h', β⟩ n) Set.univ :=
-  freeEnergyΛ_analyticOnNhd_h G (Λ.volume n) J β
 
 end Ambient
 end IsingModel
