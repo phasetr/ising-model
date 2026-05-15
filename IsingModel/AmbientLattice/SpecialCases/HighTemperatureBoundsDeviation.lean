@@ -42,19 +42,6 @@ theorem freeEnergyAlongExhaustion_high_temp_h_zero_deviation_bound_exp
     G Λ J β hβJ n hne
   linarith
 
-/-- **Along-ex ferromagnetic f deviation bound at stage `n`**: under
-`0 ≤ J, 0 < β`, `f_n - log 2 ≤ β·J·|E_n|/|Λ_n|`. -/
-theorem freeEnergyAlongExhaustion_high_temp_h_zero_deviation_bound_exp_ferromagnetic
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ)
-    (hne : 0 < (Λ.volume n).card) :
-    freeEnergyAlongExhaustion G Λ (⟨J, 0, β⟩ : IsingParams ℝ) n - Real.log 2
-      ≤ β * J * (inducedGraph G (Λ.volume n)).edgeFinset.card /
-          (Λ.volume n).card :=
-  freeEnergyAlongExhaustion_high_temp_h_zero_deviation_bound_exp
-    G Λ J β (mul_nonneg hβ.le hJ) n hne
-
 /-! ## Moved: f continuity wrappers
 
 The 4 ambient alongExhaustion `freeEnergyAlongExhaustion_high_temp_h_zero_continuity_*`
@@ -81,19 +68,6 @@ theorem freeEnergyAlongExhaustion_high_temp_h_zero_deviation_sandwich
   exact freeEnergyΛ_high_temp_h_zero_deviation_sandwich
     G (Λ.volume n) J β hβJ hne
 
-/-- **Along-ex ferromagnetic f deviation sandwich at stage `n`**. -/
-theorem freeEnergyAlongExhaustion_high_temp_h_zero_deviation_sandwich_ferromagnetic
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ)
-    (hne : 0 < (Λ.volume n).card) :
-    0 ≤ freeEnergyAlongExhaustion G Λ (⟨J, 0, β⟩ : IsingParams ℝ) n - Real.log 2 ∧
-    freeEnergyAlongExhaustion G Λ (⟨J, 0, β⟩ : IsingParams ℝ) n - Real.log 2
-      ≤ β * J * (inducedGraph G (Λ.volume n)).edgeFinset.card /
-          (Λ.volume n).card :=
-  freeEnergyAlongExhaustion_high_temp_h_zero_deviation_sandwich
-    G Λ J β (mul_nonneg hβ.le hJ) n hne
-
 /-- **Along-ex log Z deviation sandwich at stage `n`**. -/
 theorem log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_deviation_sandwich
     (G : SimpleGraph V) (Λ : Exhaustion V)
@@ -112,21 +86,17 @@ theorem log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_deviatio
   exact log_partitionFunctionΛ_high_temp_expansion_h_zero_deviation_sandwich
     G (Λ.volume n) J β hβJ
 
-/-- **Along-ex ferromagnetic log Z deviation sandwich at stage `n`**. -/
-theorem
-log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_deviation_sandwich_ferromagnetic
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ) :
-    0 ≤ Real.log (partitionFunctionAlongExhaustion G Λ
-        (⟨J, 0, β⟩ : IsingParams ℝ) n)
-        - ((Λ.volume n).card : ℝ) * Real.log 2 ∧
-    Real.log (partitionFunctionAlongExhaustion G Λ
-        (⟨J, 0, β⟩ : IsingParams ℝ) n)
-        - ((Λ.volume n).card : ℝ) * Real.log 2
-      ≤ β * J * (inducedGraph G (Λ.volume n)).edgeFinset.card :=
-  log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_deviation_sandwich
-    G Λ J β (mul_nonneg hβ.le hJ) n
+/-! ## Moved: ferromagnetic deviation wrappers
+
+The three `*_deviation_*_ferromagnetic` wrappers
+(`freeEnergyAlongExhaustion_..._deviation_bound_exp_ferromagnetic`,
+`freeEnergyAlongExhaustion_..._deviation_sandwich_ferromagnetic`,
+`log_partitionFunctionAlongExhaustion_..._deviation_sandwich_ferromagnetic`)
+now live in
+`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviationFerro`.
+The legacy import path is preserved by re-exporting the new child
+from `Legacy.lean` and the umbrella `HighTemperatureBounds.lean`.
+-/
 
 /-! ## Moved: strict-deviation wrappers
 
