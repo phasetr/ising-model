@@ -17,8 +17,10 @@ namespace Ambient
 
 /-! ## Moved: `_of_le_high_temp_rate` family
 
-The six wrappers
-`{HasExponentialDecay,latticeMass_ge,cubicNamedRate_ofReal_mem_Icc_latticeMass,latticeMass_pos,cubicNamedRate_ofReal_mem_Ioc_latticeMass,latticeMass_ne_zero}_*_of_le_high_temp_rate`
+The six wrappers (each of form `<head>_*_of_le_high_temp_rate`,
+with heads `HasExponentialDecay`, `latticeMass_ge`,
+`cubicNamedRate_ofReal_mem_Icc_latticeMass`, `latticeMass_pos`,
+`cubicNamedRate_ofReal_mem_Ioc_latticeMass`, `latticeMass_ne_zero`)
 now live in `CubicPseudoMassNamedRateLeHighTempRate.lean`. -/
 
 /-- **Anchored cubic named-rate comparison from a cubic profile lower bound**:

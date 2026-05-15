@@ -70,9 +70,10 @@ wrappers (`ge_one_of_nonneg`, `le_one_plus_pow_of_nonneg`,
 
 /-! ## Moved: AlongEx vdPolymerFamilies_sum `_of_nonneg` family
 
-The four wrappers
-`vdPolymerFamilies_sumAlongExhaustion_latticeGraph_{ge_one,le_one_plus_pow,pos,eq_one_add}_of_nonneg`
-now live in `MayerVdBoundsAlongExNonneg.lean`. -/
+The four
+`vdPolymerFamilies_sumAlongExhaustion_latticeGraph_*_of_nonneg`
+wrappers (`{ge_one, le_one_plus_pow, pos, eq_one_add}`) now live
+in `MayerVdBoundsAlongExNonneg.lean`. -/
 
 
 end Ambient

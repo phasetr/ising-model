@@ -172,8 +172,9 @@ wrappers (`bound_exp_of_nonempty`, `pos_of_nonempty`) now live in
 
 /-! ## Moved: freeEnergyAlongEx ratio_bound wrappers
 
-The four wrappers
-`freeEnergyAlongExhaustion_latticeGraph_high_temp_h_zero_ratio_bound{,_beta_zero,_ferromagnetic,_beta_zero_ferromagnetic}`
+The four
+`freeEnergyAlongExhaustion_latticeGraph_high_temp_h_zero_ratio_bound`
+wrappers (`{,_beta_zero,_ferromagnetic,_beta_zero_ferromagnetic}`)
 now live in `HighTemperatureBoundsAlongExRatioLogFeBound.lean`. -/
 
 

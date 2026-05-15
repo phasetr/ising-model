@@ -7,8 +7,9 @@ import IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularityA
 # Concrete ℤ^d-specialized susceptibilityAlongExhaustion pointwise wrappers
 
 Narrow child module for six ℤ^d
-`susceptibilityAlongExhaustion_latticeGraph_{continuousAt,differentiableAt}_{beta_general_h,field,J}`
-wrappers, each a thin pass-through to the corresponding ambient
+`susceptibilityAlongExhaustion_latticeGraph_*` wrappers
+(`{continuousAt,differentiableAt}_{beta_general_h,field,J}`),
+each a thin pass-through to the corresponding ambient
 `susceptibilityAlongExhaustion_{continuousAt,differentiableAt}_*` lemma
 at `IsingModel.latticeGraph d`.
 -/
