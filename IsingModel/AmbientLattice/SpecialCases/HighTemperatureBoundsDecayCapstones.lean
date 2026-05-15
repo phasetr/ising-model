@@ -6,6 +6,7 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviation
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioBounds
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsTripleRatio
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFe
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDecayCapstonesDist
 
 /-!
 # Ambient alongExhaustion §18.7 high-temperature exponential-decay capstone wrappers
@@ -25,24 +26,19 @@ open Finset Real
 
 variable {V : Type*} [DecidableEq V]
 
-/-- **Along-ex §18.7 capstone: high-temperature exponential decay of
-the pair correlation in graph distance, at stage `n`**. Under
-`0 ≤ β·J`, for `i, j : ↑(Λ.volume n)`,
-`⟨σ_iσ_j⟩^{Λ_n}_{β,0} ≤ 2^{|E_{Λ_n}|} ·
-    tanh(β·J)^{(inducedGraph G (Λ.volume n)).dist i j}`.
-Stage-`n` Λ-level specialization of
-`correlationΛ_high_temp_h_zero_at_pair_le_two_pow_edges_mul_tanh_pow_dist`. -/
-theorem
-correlationAlongExhaustion_high_temp_h_zero_at_pair_le_two_pow_edges_mul_tanh_pow_dist
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (hβJ : 0 ≤ β * J) (n : ℕ) (i j : ↑(Λ.volume n)) :
-    correlationΛ G (Λ.volume n) (⟨J, 0, β⟩ : IsingParams ℝ)
-        ({i, j} : Finset ↑(Λ.volume n))
-      ≤ (2 : ℝ) ^ (inducedGraph G (Λ.volume n)).edgeFinset.card *
-        Real.tanh (β * J) ^ (inducedGraph G (Λ.volume n)).dist i j :=
-  correlationΛ_high_temp_h_zero_at_pair_le_two_pow_edges_mul_tanh_pow_dist
-    G (Λ.volume n) J β hβJ i j
+/-! ## Moved: distance-bound capstones
+
+The six distance-bound capstones
+(`_tanh_pow_dist`, `_exp_rate_dist`, `_exp_highTempExpRate_dist`,
+`_exp_alpha_dist`, `_exp_alpha_dist_of_le_highTempExpRate`,
+`_exp_alpha_dist_ferro`) now live in
+`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDecayCapstonesDist`.
+This parent re-imports the new child below so the remaining
+ferromagnetic wrappers (`_tanh_pow_dist_ferromagnetic`,
+`_exp_rate_dist_ferromagnetic`) continue to see them, and
+downstream consumers see all symbols via the parent and
+`Legacy.lean`.
+-/
 
 /-- **Along-ex §18.7 ferromagnetic capstone**: under `0 ≤ J, 0 < β`,
 the same exponential-decay bound at stage `n`. -/
@@ -57,22 +53,6 @@ correlationAlongExhaustion_high_temp_h_zero_at_pair_le_two_pow_edges_mul_tanh_po
         Real.tanh (β * J) ^ (inducedGraph G (Λ.volume n)).dist i j :=
   correlationAlongExhaustion_high_temp_h_zero_at_pair_le_two_pow_edges_mul_tanh_pow_dist
     G Λ J β (mul_nonneg hβ.le hJ) n i j
-
-/-- **Along-ex §18.7 rate-form capstone at stage `n`**: under
-`0 ≤ β·J`, the pair-correlation distance bound at `Λ.volume n` is
-written with the explicit decay rate `-log(tanh(β·J))`. -/
-theorem
-correlationAlongExhaustion_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_rate_dist
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (hβJ : 0 ≤ β * J) (n : ℕ) (i j : ↑(Λ.volume n)) :
-    correlationΛ G (Λ.volume n) (⟨J, 0, β⟩ : IsingParams ℝ)
-        ({i, j} : Finset ↑(Λ.volume n))
-      ≤ (2 : ℝ) ^ (inducedGraph G (Λ.volume n)).edgeFinset.card *
-        Real.exp (-(-Real.log (Real.tanh (β * J))) *
-          ((inducedGraph G (Λ.volume n)).dist i j : ℝ)) :=
-  correlationΛ_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_rate_dist
-    G (Λ.volume n) J β hβJ i j
 
 /-- **Along-ex ferromagnetic §18.7 rate-form capstone at stage `n`**:
 under `0 ≤ J, 0 < β`, the same explicit-rate pair-correlation bound
@@ -89,73 +69,6 @@ correlationAlongExhaustion_high_temp_h_zero_at_pair_le_exp_rate_dist_ferromagnet
           ((inducedGraph G (Λ.volume n)).dist i j : ℝ)) :=
   correlationAlongExhaustion_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_rate_dist
     G Λ J β (mul_nonneg hβ.le hJ) n i j
-
-/-- **Along-ex §18.7 named-rate capstone at stage `n`**: the stage-`n`
-pair-correlation distance bound written with `highTempExpRate`. -/
-theorem
-correlationAlongExhaustion_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_highTempExpRate_dist
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (hβJ : 0 ≤ β * J) (n : ℕ)
-    (i j : ↑(Λ.volume n)) :
-    correlationΛ G (Λ.volume n) (⟨J, 0, β⟩ : IsingParams ℝ)
-        ({i, j} : Finset ↑(Λ.volume n))
-      ≤ (2 : ℝ) ^ (inducedGraph G (Λ.volume n)).edgeFinset.card *
-        Real.exp (-(highTempExpRate β J) *
-          ((inducedGraph G (Λ.volume n)).dist i j : ℝ)) :=
-  correlationΛ_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_highTempExpRate_dist
-    G (Λ.volume n) J β hβJ i j
-
-/-- **Along-ex §18.7 monotone-rate capstone at stage `n`**: any
-`α ≤ -log(tanh(β·J))` may replace the exact high-temperature rate in the
-pair-correlation distance bound at `Λ.volume n`. -/
-theorem
-correlationAlongExhaustion_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_alpha_dist
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β α : ℝ) (hβJ : 0 ≤ β * J)
-    (hα : α ≤ -Real.log (Real.tanh (β * J))) (n : ℕ)
-    (i j : ↑(Λ.volume n)) :
-    correlationΛ G (Λ.volume n) (⟨J, 0, β⟩ : IsingParams ℝ)
-        ({i, j} : Finset ↑(Λ.volume n))
-      ≤ (2 : ℝ) ^ (inducedGraph G (Λ.volume n)).edgeFinset.card *
-        Real.exp (-α * ((inducedGraph G (Λ.volume n)).dist i j : ℝ)) :=
-  correlationΛ_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_alpha_dist
-    G (Λ.volume n) J β α hβJ hα i j
-
-/-- **Along-ex §18.7 named monotone-rate capstone at stage `n`**:
-any `α ≤ highTempExpRate β J` gives the stage-`n` pair-correlation
-distance bound with rate `α`. -/
-theorem
-correlationAlongExhaustion_high_temp_h_zero_at_pair_le_exp_alpha_dist_of_le_highTempExpRate
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β α : ℝ) (hβJ : 0 ≤ β * J)
-    (hα : α ≤ highTempExpRate β J) (n : ℕ)
-    (i j : ↑(Λ.volume n)) :
-    correlationΛ G (Λ.volume n) (⟨J, 0, β⟩ : IsingParams ℝ)
-        ({i, j} : Finset ↑(Λ.volume n))
-      ≤ (2 : ℝ) ^ (inducedGraph G (Λ.volume n)).edgeFinset.card *
-        Real.exp (-α * ((inducedGraph G (Λ.volume n)).dist i j : ℝ)) :=
-  correlationΛ_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_alpha_dist_of_le_highTempExpRate
-    G (Λ.volume n) J β α hβJ hα i j
-
-/-- **Along-ex ferromagnetic §18.7 monotone-rate capstone at stage `n`**:
-under `0 ≤ J, 0 < β`, any `α ≤ -log(tanh(β·J))` gives the stage-`n`
-pair-correlation distance bound with rate `α`. -/
-theorem
-correlationAlongExhaustion_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_alpha_dist_ferro
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β α : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β)
-    (hα : α ≤ -Real.log (Real.tanh (β * J))) (n : ℕ)
-    (i j : ↑(Λ.volume n)) :
-    correlationΛ G (Λ.volume n) (⟨J, 0, β⟩ : IsingParams ℝ)
-        ({i, j} : Finset ↑(Λ.volume n))
-      ≤ (2 : ℝ) ^ (inducedGraph G (Λ.volume n)).edgeFinset.card *
-        Real.exp (-α * ((inducedGraph G (Λ.volume n)).dist i j : ℝ)) :=
-  correlationAlongExhaustion_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_alpha_dist
-    G Λ J β α (mul_nonneg hβ.le hJ) hα n i j
 
 /-- **Along-ex pair correlation strict positivity under edge at stage `n` (GJ §18.3 / FV (3.46))**:
 under `0 < β·J` and an edge in the stage-`n` induced subgraph,
