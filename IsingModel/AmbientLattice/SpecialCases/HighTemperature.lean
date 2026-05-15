@@ -1,5 +1,6 @@
 import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureVdSandwichFE
 
 /-!
 # High-temperature convergence wrappers along an exhaustion
@@ -107,36 +108,15 @@ polymerFreeEnergyAlongExhaustion_tanh_hasSum_via_log_of_pow_lt_two
   polymerFreeEnergy_Λ_tanh_hasSum_via_log_of_pow_lt_two
     G (Λ.volume n) hβJ h_pow
 
-/-- **Along-exhaustion: VD polymer-family sum sandwich** (§18.5
-along-ex wrap of `vdPolymerFamilies_sum_sandwich`). -/
-theorem vdPolymerFamilies_sumAlongExhaustion_sandwich
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    {β J : ℝ} (hβJ : 0 ≤ β * J) (n : ℕ) :
-    1 ≤ (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
-            (inducedGraph G (Λ.volume n)),
-        ∏ P ∈ Γ, Real.tanh (β * J) ^ P.card) ∧
-    (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
-            (inducedGraph G (Λ.volume n)),
-        ∏ P ∈ Γ, Real.tanh (β * J) ^ P.card)
-      ≤ (2 : ℝ) ^ (inducedGraph G (Λ.volume n)).edgeFinset.card :=
-  vdPolymerFamilies_sum_Λ_sandwich G (Λ.volume n) hβJ
+/-! ## Moved: 4 vdPolymerFamilies_sum sandwich + 2 strict freeEnergy wrappers
 
-/-- **Along-exhaustion: VD polymer-family sum sharp sandwich** (§18.5
-along-ex wrap of `vdPolymerFamilies_sum_sandwich_sharp`). -/
-theorem vdPolymerFamilies_sumAlongExhaustion_sandwich_sharp
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    {β J : ℝ} (hβJ : 0 ≤ β * J) (n : ℕ) :
-    1 ≤ (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
-            (inducedGraph G (Λ.volume n)),
-        ∏ P ∈ Γ, Real.tanh (β * J) ^ P.card) ∧
-    (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
-            (inducedGraph G (Λ.volume n)),
-        ∏ P ∈ Γ, Real.tanh (β * J) ^ P.card)
-      ≤ (1 + Real.tanh (β * J)) ^
-        (inducedGraph G (Λ.volume n)).edgeFinset.card :=
-  vdPolymerFamilies_sum_Λ_sandwich_sharp G (Λ.volume n) hβJ
+The four `vdPolymerFamilies_sumAlongExhaustion_sandwich*` wrappers
+and the two `freeEnergyAlongExhaustion_lt_log_two_plus_high_temp_correction*`
+strict free-energy bounds now live in
+`IsingModel.AmbientLattice.SpecialCases.HighTemperatureVdSandwichFE`.
+The legacy import path is preserved by re-exporting the new child
+from this parent module and from `Legacy.lean`.
+-/
 
 /-- **Along-exhaustion: high-temperature sandwich for
 `polymerFreeEnergy` (ferromagnetic tanh form)** (§18.5 ferromagnetic
@@ -186,79 +166,6 @@ polymerFreeEnergyAlongExhaustion_tanh_hasSum_via_log_of_pow_lt_two_ferromagnetic
         (Real.tanh (β * J))) :=
   polymerFreeEnergy_Λ_tanh_hasSum_via_log_of_pow_lt_two_ferromagnetic
     G (Λ.volume n) hJ hβ h_pow
-
-/-- **Along-exhaustion: VD polymer-family sum sandwich
-(ferromagnetic)** (§18.5 ferromagnetic along-ex wrap). -/
-theorem vdPolymerFamilies_sumAlongExhaustion_sandwich_ferromagnetic
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ) :
-    1 ≤ (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
-            (inducedGraph G (Λ.volume n)),
-        ∏ P ∈ Γ, Real.tanh (β * J) ^ P.card) ∧
-    (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
-            (inducedGraph G (Λ.volume n)),
-        ∏ P ∈ Γ, Real.tanh (β * J) ^ P.card)
-      ≤ (2 : ℝ) ^ (inducedGraph G (Λ.volume n)).edgeFinset.card :=
-  vdPolymerFamilies_sum_Λ_sandwich_ferromagnetic G (Λ.volume n) hJ hβ
-
-/-- **Along-exhaustion: VD polymer-family sum sharp sandwich
-(ferromagnetic)** (§18.5 ferromagnetic along-ex wrap). -/
-theorem
-vdPolymerFamilies_sumAlongExhaustion_sandwich_sharp_ferromagnetic
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ) :
-    1 ≤ (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
-            (inducedGraph G (Λ.volume n)),
-        ∏ P ∈ Γ, Real.tanh (β * J) ^ P.card) ∧
-    (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
-            (inducedGraph G (Λ.volume n)),
-        ∏ P ∈ Γ, Real.tanh (β * J) ^ P.card)
-      ≤ (1 + Real.tanh (β * J)) ^
-        (inducedGraph G (Λ.volume n)).edgeFinset.card :=
-  vdPolymerFamilies_sum_Λ_sandwich_sharp_ferromagnetic
-    G (Λ.volume n) hJ hβ
-
-/-- **Along-exhaustion: strict `freeEnergyAlongExhaustion` upper
-bound in cluster-expansion convergence regime** (§18.5 along-ex
-wrap of #1527). -/
-theorem
-freeEnergyAlongExhaustion_lt_log_two_plus_high_temp_correction
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (hβJ : 0 ≤ β * J) (n : ℕ) (hne : 0 < (Λ.volume n).card)
-    (h_pow : (1 + Real.tanh (β * J)) ^
-        (inducedGraph G (Λ.volume n)).edgeFinset.card < 2) :
-    freeEnergyAlongExhaustion G Λ (⟨J, 0, β⟩ : IsingParams ℝ) n <
-      Real.log 2 +
-        ((inducedGraph G (Λ.volume n)).edgeFinset.card : ℝ) /
-          (Λ.volume n).card *
-          Real.log (Real.cosh (β * J)) +
-        Real.log 2 / (Λ.volume n).card := by
-  unfold freeEnergyAlongExhaustion
-  exact freeEnergyΛ_lt_log_two_plus_high_temp_correction
-    G (Λ.volume n) J β hβJ hne h_pow
-
-/-- **Along-exhaustion: strict `freeEnergyAlongExhaustion` upper
-bound in cluster-expansion convergence regime (ferromagnetic)**
-(§18.5 along-ex wrap, ferro). -/
-theorem
-freeEnergyAlongExhaustion_lt_log_two_plus_high_temp_correction_ferromagnetic
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ)
-    (hne : 0 < (Λ.volume n).card)
-    (h_pow : (1 + Real.tanh (β * J)) ^
-        (inducedGraph G (Λ.volume n)).edgeFinset.card < 2) :
-    freeEnergyAlongExhaustion G Λ (⟨J, 0, β⟩ : IsingParams ℝ) n <
-      Real.log 2 +
-        ((inducedGraph G (Λ.volume n)).edgeFinset.card : ℝ) /
-          (Λ.volume n).card *
-          Real.log (Real.cosh (β * J)) +
-        Real.log 2 / (Λ.volume n).card :=
-  freeEnergyAlongExhaustion_lt_log_two_plus_high_temp_correction
-    G Λ J β (mul_nonneg hβ.le hJ) n hne h_pow
 
 end Ambient
 end IsingModel
