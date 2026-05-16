@@ -38,33 +38,6 @@ theorem freeEnergyAlongExhaustion_beta_zero
       (⟨J, h, 0⟩ : IsingParams ℝ) = Real.log 2
   exact IsingModel.freeEnergy_beta_zero _ J h (Finset.Nonempty.fintype_card_coe_pos hne)
 
-/-- **Infinite-volume β=0 closed form**:
-under `∀ n, (Λ.volume n).Nonempty`, `freeEnergyInfinite G Λ ⟨J, h, 0⟩ = log 2`
-for any `J, h, G, Λ`.
-
-The sequence `n ↦ freeEnergyAlongExhaustion G Λ ⟨J, h, 0⟩ n` is constantly
-`log 2` by `freeEnergyAlongExhaustion_beta_zero`, so its `limsup` on
-`atTop` is `log 2` by `Filter.limsup_const`.
-
-Sanity check: the β = 0 slice of the §4.6 Prop 4.6.1 infinite-volume
-free energy is trivially the maximum-entropy value.
-
-A weakened version requiring only `∀ᶠ n in atTop, (Λ.volume n).Nonempty`
-is provided as `freeEnergyInfinite_beta_zero_of_eventually_nonempty`
-in `AmbientLatticeSum.lean`. -/
-theorem freeEnergyInfinite_beta_zero
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J h : ℝ) (hne : ∀ n, (Λ.volume n).Nonempty) :
-    freeEnergyInfinite G Λ (⟨J, h, 0⟩ : IsingParams ℝ) = Real.log 2 := by
-  unfold freeEnergyInfinite
-  have hconst : freeEnergyAlongExhaustion G Λ (⟨J, h, 0⟩ : IsingParams ℝ)
-      = fun _ : ℕ => Real.log 2 := by
-    funext n
-    exact freeEnergyAlongExhaustion_beta_zero G Λ J h n (hne n)
-  rw [hconst]
-  exact Filter.limsup_const (Real.log 2)
-
 /-- **Along-exhaustion J=h=0 closed form**:
 for nonempty `Λ.volume n` and any ambient graph `G, Λ` and any `β`,
 `freeEnergyAlongExhaustion G Λ ⟨0, 0, β⟩ n = log 2`.
@@ -82,33 +55,14 @@ theorem freeEnergyAlongExhaustion_zero_params
       (⟨0, 0, β⟩ : IsingParams ℝ) = Real.log 2
   exact IsingModel.freeEnergy_zero_params _ β (Finset.Nonempty.fintype_card_coe_pos hne)
 
-/-- **Infinite-volume J=h=0 closed form**:
-under `∀ n, (Λ.volume n).Nonempty`, `freeEnergyInfinite G Λ ⟨0, 0, β⟩ = log 2`
-for any `β, G, Λ`.
+/-! ## Moved: `freeEnergyInfinite_*` trivial-slice wrappers
 
-The sequence `n ↦ freeEnergyAlongExhaustion G Λ ⟨0, 0, β⟩ n` is constantly
-`log 2` by `freeEnergyAlongExhaustion_zero_params`, so its `limsup` on
-`atTop` is `log 2` by `Filter.limsup_const`.
-
-Companion to `freeEnergyInfinite_beta_zero`: both give the
-maximum-entropy value `log 2` from orthogonal degeneracies
-(β=0 vs. H ≡ 0).
-
-A weakened version requiring only `∀ᶠ n in atTop, (Λ.volume n).Nonempty`
-is provided as `freeEnergyInfinite_zero_params_of_eventually_nonempty`
-in `AmbientLatticeSum.lean`. -/
-theorem freeEnergyInfinite_zero_params
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (β : ℝ) (hne : ∀ n, (Λ.volume n).Nonempty) :
-    freeEnergyInfinite G Λ (⟨0, 0, β⟩ : IsingParams ℝ) = Real.log 2 := by
-  unfold freeEnergyInfinite
-  have hconst : freeEnergyAlongExhaustion G Λ (⟨0, 0, β⟩ : IsingParams ℝ)
-      = fun _ : ℕ => Real.log 2 := by
-    funext n
-    exact freeEnergyAlongExhaustion_zero_params G Λ β n (hne n)
-  rw [hconst]
-  exact Filter.limsup_const (Real.log 2)
+The two `freeEnergyInfinite_*` trivial-slice closed-form
+wrappers (`_beta_zero`, `_zero_params`) now live in
+`IsingModel.AmbientLattice.SpecialCases.FreeEnergyTrivialSlicesInfinite`.
+The legacy import path is preserved by re-exporting the new child
+from `Legacy.lean`.
+-/
 
 /-- **Along-exhaustion J=0 graph-independence**:
 `freeEnergyAlongExhaustion G Λ ⟨0, h, β⟩ n
