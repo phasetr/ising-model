@@ -1,14 +1,15 @@
 import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyHighTemperatureBoundsTanh
 
 /-!
 # Polymer free-energy high-temperature bound wrappers along an exhaustion
 
-Narrow child module for the §18.5 `vdPolymerFamilies_sum` sandwich/monotone,
-`ε(t)` bound, and `polymerFreeEnergy(tanh)` high-temperature bound wrappers
-along an exhaustion. The theorem names are the same as the former legacy
-declarations, but callers can now avoid importing the monolithic special-cases
-legacy module.
+Narrow child module for the §18.5 `vdPolymerFamilies_sum` sandwich,
+`MonotoneOn`, and `ε(t)` bound wrappers along an exhaustion. The
+theorem names are the same as the former legacy declarations, but
+callers can now avoid importing the monolithic special-cases legacy
+module.
 -/
 
 namespace IsingModel
@@ -53,42 +54,17 @@ theorem vdPolymerFamilies_sumAlongExhaustion_minus_one_le_of_nonneg
       (1 + t) ^ (inducedGraph G (Λ.volume n)).edgeFinset.card - 1 :=
   vdPolymerFamilies_sum_Λ_minus_one_le_of_nonneg G (Λ.volume n) ht
 
-/-- **Along-ex: pFE(tanh) ≤ ε(tanh) under `0 ≤ β·J`**. -/
-theorem polymerFreeEnergyAlongExhaustion_tanh_le_eps_of_betaJ_nonneg
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    {β J : ℝ} (hβJ : 0 ≤ β * J) (n : ℕ) :
-    IsingModel.polymerFreeEnergy (inducedGraph G (Λ.volume n))
-        (Real.tanh (β * J)) ≤
-      ∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
-              (inducedGraph G (Λ.volume n))).erase ∅,
-            ∏ P ∈ Γ, (Real.tanh (β * J)) ^ P.card :=
-  polymerFreeEnergy_Λ_tanh_le_eps_of_betaJ_nonneg G (Λ.volume n) hβJ
+/-! ## Moved: 3 polymerFreeEnergy_tanh high-temperature bound wrappers
 
-/-- **Along-ex: pFE(tanh) ≤ (1+tanh)^|E| - 1 under `0 ≤ β·J`**. -/
-theorem
-polymerFreeEnergyAlongExhaustion_tanh_le_pow_sub_one_of_betaJ_nonneg
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    {β J : ℝ} (hβJ : 0 ≤ β * J) (n : ℕ) :
-    IsingModel.polymerFreeEnergy (inducedGraph G (Λ.volume n))
-        (Real.tanh (β * J)) ≤
-      (1 + Real.tanh (β * J)) ^
-        (inducedGraph G (Λ.volume n)).edgeFinset.card - 1 :=
-  polymerFreeEnergy_Λ_tanh_le_pow_sub_one_of_betaJ_nonneg
-    G (Λ.volume n) hβJ
-
-/-- **Along-ex: pFE(tanh) < log 2** under `(1+tanh)^|E| < 2`. -/
-theorem polymerFreeEnergyAlongExhaustion_tanh_lt_log_two_of_pow_lt_two
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    {β J : ℝ} (hβJ : 0 ≤ β * J) (n : ℕ)
-    (h_pow : (1 + Real.tanh (β * J)) ^
-        (inducedGraph G (Λ.volume n)).edgeFinset.card < 2) :
-    IsingModel.polymerFreeEnergy (inducedGraph G (Λ.volume n))
-        (Real.tanh (β * J)) < Real.log 2 :=
-  polymerFreeEnergy_Λ_tanh_lt_log_two_of_pow_lt_two
-    G (Λ.volume n) hβJ h_pow
+The three §18.5 `polymerFreeEnergy_tanh_*` wrappers
+(`polymerFreeEnergyAlongExhaustion_tanh_le_eps_of_betaJ_nonneg`,
+`polymerFreeEnergyAlongExhaustion_tanh_le_pow_sub_one_of_betaJ_nonneg`,
+`polymerFreeEnergyAlongExhaustion_tanh_lt_log_two_of_pow_lt_two`)
+now live in
+`IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyHighTemperatureBoundsTanh`.
+The legacy import path is preserved by re-exporting the new child
+from this parent module and from `Legacy.lean`.
+-/
 
 end Ambient
 end IsingModel
