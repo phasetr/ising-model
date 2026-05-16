@@ -1,5 +1,6 @@
 import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLattice.SpecialCases.MayerVdIffTanh
 
 /-!
 # Mayer vd iff characterization wrappers along an exhaustion
@@ -44,31 +45,15 @@ theorem vdPolymerFamilies_sumAlongExhaustion_gt_one_iff_eps_pos
             ∏ P ∈ Γ, t ^ P.card :=
   vdPolymerFamilies_sum_Λ_gt_one_iff_eps_pos G (Λ.volume n) ht
 
-/-- **Along-ex: vdSum_tanh > 1 ↔ 0 < tanh ∧ allPolymers ≠ ∅**. -/
-theorem vdPolymerFamilies_sumAlongExhaustion_tanh_gt_one_iff
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    {β J : ℝ} (hβJ : 0 ≤ β * J) (n : ℕ) :
-    1 < (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
-            (inducedGraph G (Λ.volume n)),
-          ∏ P ∈ Γ, (Real.tanh (β * J)) ^ P.card) ↔
-      0 < Real.tanh (β * J) ∧
-        (IsingModel.allPolymers
-          (inducedGraph G (Λ.volume n))).Nonempty :=
-  vdPolymerFamilies_sum_Λ_tanh_gt_one_iff G (Λ.volume n) hβJ
+/-! ## Moved: 2 vd tanh iff wrappers
 
-/-- **Along-ex: vdSum_tanh = 1 ↔ tanh = 0 ∨ allPolymers = ∅**. -/
-theorem vdPolymerFamilies_sumAlongExhaustion_tanh_eq_one_iff
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    {β J : ℝ} (hβJ : 0 ≤ β * J) (n : ℕ) :
-    (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
-            (inducedGraph G (Λ.volume n)),
-        ∏ P ∈ Γ, (Real.tanh (β * J)) ^ P.card) = 1 ↔
-      Real.tanh (β * J) = 0 ∨
-        IsingModel.allPolymers
-          (inducedGraph G (Λ.volume n)) = ∅ :=
-  vdPolymerFamilies_sum_Λ_tanh_eq_one_iff G (Λ.volume n) hβJ
+The two `vdPolymerFamilies_sumAlongExhaustion_tanh_*_iff`
+characterization wrappers (`_tanh_gt_one_iff`, `_tanh_eq_one_iff`)
+now live in
+`IsingModel.AmbientLattice.SpecialCases.MayerVdIffTanh`.
+The legacy import path is preserved by re-exporting the new child
+from this parent module and from the umbrella.
+-/
 
 end Ambient
 end IsingModel
