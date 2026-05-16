@@ -1,5 +1,6 @@
 import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityDifferentiable
 import IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityTanh
 import IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityVdPolymer
 
@@ -29,16 +30,6 @@ theorem mayerPartialSumAlongExhaustion_continuous
           (inducedGraph G (Λ.volume n)) N t) :=
   mayerPartialSum_Λ_continuous G (Λ.volume n) N
 
-/-- **Along-ex: `mayerPartialSum` is `Differentiable ℝ`**. -/
-theorem mayerPartialSumAlongExhaustion_differentiable
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (N : ℕ) (n : ℕ) :
-    Differentiable ℝ (fun t : ℝ =>
-        IsingModel.mayerPartialSum
-          (inducedGraph G (Λ.volume n)) N t) :=
-  mayerPartialSum_Λ_differentiable G (Λ.volume n) N
-
 /-- **Along-ex: `mayerPartialSum` is `ContinuousOn`**. -/
 theorem mayerPartialSumAlongExhaustion_continuousOn
     (G : SimpleGraph V) (Λ : Exhaustion V)
@@ -48,16 +39,6 @@ theorem mayerPartialSumAlongExhaustion_continuousOn
         IsingModel.mayerPartialSum
           (inducedGraph G (Λ.volume n)) N t) s :=
   mayerPartialSum_Λ_continuousOn G (Λ.volume n) N s
-
-/-- **Along-ex: `mayerPartialSum` is `DifferentiableOn ℝ`**. -/
-theorem mayerPartialSumAlongExhaustion_differentiableOn
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (N : ℕ) (n : ℕ) (s : Set ℝ) :
-    DifferentiableOn ℝ (fun t : ℝ =>
-        IsingModel.mayerPartialSum
-          (inducedGraph G (Λ.volume n)) N t) s :=
-  mayerPartialSum_Λ_differentiableOn G (Λ.volume n) N s
 
 /-! ### §18.6 mayerExpansionTerm regularity along-ex wraps -/
 
@@ -71,15 +52,15 @@ theorem mayerExpansionTermAlongExhaustion_continuous
           (inducedGraph G (Λ.volume n)) k t) :=
   mayerExpansionTerm_Λ_continuous G (Λ.volume n) k
 
-/-- **Along-ex: `mayerExpansionTerm` is `Differentiable ℝ`**. -/
-theorem mayerExpansionTermAlongExhaustion_differentiable
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (k : ℕ) (n : ℕ) :
-    Differentiable ℝ (fun t : ℝ =>
-        IsingModel.mayerExpansionTerm
-          (inducedGraph G (Λ.volume n)) k t) :=
-  mayerExpansionTerm_Λ_differentiable G (Λ.volume n) k
+/-! ### Moved: `mayerPartialSum` / `mayerExpansionTerm` Differentiable wraps
+
+The three `mayer*AlongExhaustion_differentiable*` wrappers
+(`mayerPartialSum_differentiable`, `_differentiableOn`,
+`mayerExpansionTerm_differentiable`) now live in
+`IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityDifferentiable`.
+The legacy import path is preserved by re-exporting the new child
+from this parent module and from `Legacy.lean`.
+-/
 
 /-! ### Moved: `mayerPartialSum` / `mayerExpansionTerm` tanh along-ex wraps
 
