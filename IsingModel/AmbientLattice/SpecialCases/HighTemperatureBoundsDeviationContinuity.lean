@@ -2,6 +2,7 @@ import IsingModel.AmbientLattice.SpecialCases.FreeEnergy
 import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansion
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharper
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviationContinuityTrivial
 
 /-!
 # Ambient alongExhaustion freeEnergy continuity wrappers at h = 0
@@ -25,33 +26,17 @@ open scoped symmDiff
 
 variable {V : Type*} [DecidableEq V]
 
-/-- **Along-ex f continuity at `J = 0` at stage `n`**. -/
-theorem freeEnergyAlongExhaustion_high_temp_h_zero_continuity_at_J_zero
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (hβJ : 0 ≤ β * J) (n : ℕ) (hne : 0 < (Λ.volume n).card) :
-    |freeEnergyAlongExhaustion G Λ (⟨J, 0, β⟩ : IsingParams ℝ) n
-        - freeEnergyAlongExhaustion G Λ (⟨0, 0, β⟩ : IsingParams ℝ) n|
-      ≤ β * J * (inducedGraph G (Λ.volume n)).edgeFinset.card /
-          (Λ.volume n).card := by
-  change |freeEnergyΛ G (Λ.volume n) (⟨J, 0, β⟩ : IsingParams ℝ)
-      - freeEnergyΛ G (Λ.volume n) (⟨0, 0, β⟩ : IsingParams ℝ)| ≤ _
-  exact freeEnergyΛ_high_temp_h_zero_continuity_at_J_zero
-    G (Λ.volume n) J β hβJ hne
+/-! ## Moved: 2 trivial-slice continuity wrappers
 
-/-- **Along-ex f continuity at `β = 0` at stage `n`**. -/
-theorem freeEnergyAlongExhaustion_high_temp_h_zero_continuity_at_beta_zero
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (hβJ : 0 ≤ β * J) (n : ℕ) (hne : 0 < (Λ.volume n).card) :
-    |freeEnergyAlongExhaustion G Λ (⟨J, 0, β⟩ : IsingParams ℝ) n
-        - freeEnergyAlongExhaustion G Λ (⟨J, 0, 0⟩ : IsingParams ℝ) n|
-      ≤ β * J * (inducedGraph G (Λ.volume n)).edgeFinset.card /
-          (Λ.volume n).card := by
-  change |freeEnergyΛ G (Λ.volume n) (⟨J, 0, β⟩ : IsingParams ℝ)
-      - freeEnergyΛ G (Λ.volume n) (⟨J, 0, 0⟩ : IsingParams ℝ)| ≤ _
-  exact freeEnergyΛ_high_temp_h_zero_continuity_at_beta_zero
-    G (Λ.volume n) J β hβJ hne
+The two along-ex freeEnergy continuity wrappers at trivial
+parameter slices
+(`freeEnergyAlongExhaustion_high_temp_h_zero_continuity_at_J_zero`,
+`freeEnergyAlongExhaustion_high_temp_h_zero_continuity_at_beta_zero`)
+now live in
+`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviationContinuityTrivial`.
+The legacy import path is preserved by re-exporting the new child
+from this parent module and from `Legacy.lean`.
+-/
 
 /-- **Along-ex f continuity bundle at stage `n`**. -/
 theorem freeEnergyAlongExhaustion_high_temp_h_zero_continuity_bundle
