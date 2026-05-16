@@ -8,6 +8,7 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsTripleRatio
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFe
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansionClosedForms
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsCorrelationBasicPairTrivial
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsCorrelationBasicPairBase
 
 /-!
 # Ambient alongExhaustion correlation pair sandwich wrappers at h = 0
@@ -36,30 +37,16 @@ open Finset Real
 
 variable {V : Type*} [DecidableEq V]
 
-/-- **Along-ex pair correlation ≤ 1 at h = 0**: at every stage `n`,
-`correlationAlongExhaustion G Λ ⟨J, 0, β⟩ {i, j} n ≤ 1`. -/
-theorem correlationAlongExhaustion_high_temp_h_zero_at_pair_le_one
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (i j : V) (n : ℕ) :
-    correlationAlongExhaustion G Λ
-        (⟨J, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset V) n ≤ 1 := by
-  unfold correlationAlongExhaustion
-  by_cases hAn : ({i, j} : Finset V) ⊆ Λ.volume n
-  · rw [dif_pos hAn]
-    exact correlationΛ_le_one G (Λ.volume n) _ _
-  · rw [dif_neg hAn]; exact zero_le_one
+/-! ## Moved: 2 base pair wrappers
 
-/-- **Along-exhaustion pair correlation nonneg at h = 0**:
-under `0 ≤ β·J`, at every stage `n`,
-`0 ≤ correlationAlongExhaustion G Λ ⟨J, 0, β⟩ {i, j} n`. -/
-theorem correlationAlongExhaustion_high_temp_h_zero_at_pair_nonneg
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (hβJ : 0 ≤ β * J) (i j : V) (n : ℕ) :
-    0 ≤ correlationAlongExhaustion G Λ
-        (⟨J, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset V) n :=
-  correlationAlongExhaustion_high_temp_h_zero_nonneg G Λ J β hβJ {i, j} n
+The two base pair wrappers
+(`correlationAlongExhaustion_high_temp_h_zero_at_pair_le_one`,
+`correlationAlongExhaustion_high_temp_h_zero_at_pair_nonneg`) now
+live in
+`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsCorrelationBasicPairBase`.
+The legacy import path is preserved by re-exporting the new child
+from this parent module and from the umbrella.
+-/
 
 /-- **Along-ex pair sandwich at h = 0**: under `0 ≤ β·J`,
 `0 ≤ correlationAlongExhaustion G Λ ⟨J, 0, β⟩ {i, j} n ≤ 1`. -/
