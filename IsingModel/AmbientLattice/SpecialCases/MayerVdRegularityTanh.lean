@@ -1,6 +1,7 @@
 import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityTanhExpansionTerm
+import IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityTanhDifferentiable
 
 /-!
 # `mayerPartialSum` / `mayerExpansionTerm` tanh regularity wrappers along an exhaustion
@@ -42,27 +43,15 @@ theorem mayerPartialSumAlongExhaustion_tanh_continuous_J
           (Real.tanh (β * J'))) :=
   mayerPartialSum_Λ_tanh_continuous_J G (Λ.volume n) N β
 
-/-- **Along-ex: mayerPartialSum ∘ tanh ∘ (·*J) differentiable in β**. -/
-theorem mayerPartialSumAlongExhaustion_tanh_differentiable_beta
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (N : ℕ) (J : ℝ) (n : ℕ) :
-    Differentiable ℝ (fun β' : ℝ =>
-        IsingModel.mayerPartialSum
-          (inducedGraph G (Λ.volume n)) N
-          (Real.tanh (β' * J))) :=
-  mayerPartialSum_Λ_tanh_differentiable_beta G (Λ.volume n) N J
+/-! ## Moved: 2 mayerPartialSum tanh Differentiable wrappers
 
-/-- **Along-ex: mayerPartialSum ∘ tanh ∘ (β*·) differentiable in J**. -/
-theorem mayerPartialSumAlongExhaustion_tanh_differentiable_J
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (N : ℕ) (β : ℝ) (n : ℕ) :
-    Differentiable ℝ (fun J' : ℝ =>
-        IsingModel.mayerPartialSum
-          (inducedGraph G (Λ.volume n)) N
-          (Real.tanh (β * J'))) :=
-  mayerPartialSum_Λ_tanh_differentiable_J G (Λ.volume n) N β
+The two `mayerPartialSumAlongExhaustion_tanh_differentiable_*`
+wrappers (`_tanh_differentiable_beta`, `_tanh_differentiable_J`)
+now live in
+`IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityTanhDifferentiable`.
+The legacy import path is preserved by re-exporting the new child
+from this parent module and from the umbrella.
+-/
 
 /-! ## Moved: mayerExpansionTerm tanh β/J along-ex wraps
 
