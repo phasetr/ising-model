@@ -1,6 +1,7 @@
 import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.MagnetizationAlongExhaustion
 import IsingModel.AmbientLattice.SpecialCases.JointAnalyticityPartitionFreeEnergy
+import IsingModel.AmbientLattice.SpecialCases.JointAnalyticitySusceptibility
 
 /-!
 # Joint analyticity wrappers along an exhaustion
@@ -64,28 +65,16 @@ theorem magnetizationAlongExhaustion_analyticOnNhd_joint
       magnetizationAlongExhaustion G Λ ⟨p.2.1, p.2.2, p.1⟩ i n) Set.univ :=
   fun ⟨β, J, h⟩ _ => magnetizationAlongExhaustion_analyticAt_joint G Λ i n β J h
 
-/-- **Along-ex: susceptibility jointly AnalyticAt** (general G). -/
-theorem susceptibilityAlongExhaustion_analyticAt_joint_gen
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (i : V) (n : ℕ) (β J h : ℝ) :
-    AnalyticAt ℝ (fun p : ℝ × ℝ × ℝ =>
-      susceptibilityAlongExhaustion G Λ ⟨p.2.1, p.2.2, p.1⟩ i n) (β, J, h) := by
-  unfold susceptibilityAlongExhaustion
-  by_cases hi : i ∈ Λ.volume n
-  · simp only [hi, dif_pos]
-    exact susceptibilityΛ_analyticAt_joint G (Λ.volume n) ⟨i, hi⟩ β J h
-  · simp only [hi, dif_neg, not_false_iff]
-    exact analyticAt_const
+/-! ## Moved: 2 susceptibilityAlongExhaustion joint analyticity wrappers
 
-/-- **Along-ex: susceptibility jointly AnalyticOnNhd over Set.univ** (general G). -/
-theorem susceptibilityAlongExhaustion_analyticOnNhd_joint_gen
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (i : V) (n : ℕ) :
-    AnalyticOnNhd ℝ (fun p : ℝ × ℝ × ℝ =>
-      susceptibilityAlongExhaustion G Λ ⟨p.2.1, p.2.2, p.1⟩ i n) Set.univ :=
-  fun ⟨β, J, h⟩ _ => susceptibilityAlongExhaustion_analyticAt_joint_gen G Λ i n β J h
+The two `susceptibilityAlongExhaustion_*_joint_gen` general-graph
+joint-`(β, J, h)` analyticity wrappers
+(`susceptibilityAlongExhaustion_analyticAt_joint_gen`,
+`susceptibilityAlongExhaustion_analyticOnNhd_joint_gen`) now live in
+`IsingModel.AmbientLattice.SpecialCases.JointAnalyticitySusceptibility`.
+The legacy import path is preserved by re-exporting the new child
+from this parent module and from `Legacy.lean`.
+-/
 
 /-! ## Moved: partitionFunction + freeEnergy joint analyticity wrappers
 
