@@ -4,14 +4,17 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioBoundsBo
 /-!
 # Ambient alongExhaustion Z ratio_bound non-bundle wrappers at h = 0
 
-Narrow child module for the four §18.3-§18.4 ambient alongExhaustion
+Narrow child module for the two §18.3-§18.4 ambient alongExhaustion
+non-ferromagnetic
 `partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_bound*`
-non-bundle wrappers (`J = 0`, `β = 0`, plus their ferromagnetic
-counterparts). The non-ferromagnetic wrappers extract from
-`_ratio_sandwich*`; the ferromagnetic variants call their
-non-ferromagnetic siblings under `mul_nonneg hβ.le hJ`. Theorem
-names are unchanged from the former
-`HighTemperatureBoundsRatioBoundsBound` declarations.
+non-bundle wrappers (`J = 0`, `β = 0`). Each wrapper extracts the
+`.2`-projection of the corresponding `_ratio_sandwich*` bundle under
+the joint hypothesis `0 ≤ β * J`. The ferromagnetic counterparts now
+live in
+`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioBoundsBoundOnlyFerro`
+and are re-imported through this parent module. Theorem names are
+unchanged from the former `HighTemperatureBoundsRatioBoundsBound`
+declarations.
 -/
 
 namespace IsingModel
