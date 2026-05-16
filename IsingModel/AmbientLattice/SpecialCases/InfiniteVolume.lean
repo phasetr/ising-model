@@ -1,4 +1,5 @@
 import IsingModel.AmbientLattice.TruncatedFunctions
+import IsingModel.AmbientLattice.SpecialCases.InfiniteVolumeTruncated4
 
 /-!
 # Infinite-volume special-case aliases
@@ -37,34 +38,15 @@ theorem eta_nonneg_infinite_vol
     0 ≤ truncated2Infinite G Λ p i j :=
   truncated2Infinite_nonneg G Λ p hf i j
 
-/-- **ζ ≥ 0 at infinite volume** (GJ §17.7 Thm 17.7.1, infinite-volume
-lattice version, at `h = 0`). Explicit alias of
-`truncated4Infinite_nonpos_h_zero`: `U₄^∞ ≤ 0` for pairwise-distinct sites at
-`h = 0`. -/
-theorem zeta_nonneg_infinite_vol
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (hf : Ferromagnetic ⟨J, (0 : ℝ), β⟩)
-    {i j k l : V}
-    (hij : i ≠ j) (hik : i ≠ k) (hil : i ≠ l)
-    (hjk : j ≠ k) (hjl : j ≠ l) (hkl : k ≠ l) :
-    truncated4Infinite G Λ ⟨J, 0, β⟩ i j k l ≤ 0 :=
-  truncated4Infinite_nonpos_h_zero G Λ J β hf hij hik hil hjk hjl hkl
+/-! ## Moved: 2 `truncated4Infinite` ζ/U₄ aliases at `h = 0`
 
-/-- **Absence of even bound states, infinite-volume lattice form**
-(Glimm-Jaffe §17.2, pp. 311-313). Infinite-volume version of
-`IsingModel.absence_of_even_bound_states_finite_vol`: `U₄^∞(i,j,k,l) ≤ 0` for
-ferromagnetic `⟨J, 0, β⟩` and pairwise-distinct sites. Explicit alias of
-`truncated4Infinite_nonpos_h_zero`. -/
-theorem absence_of_even_bound_states_infinite_vol
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (hf : Ferromagnetic ⟨J, (0 : ℝ), β⟩)
-    {i j k l : V}
-    (hij : i ≠ j) (hik : i ≠ k) (hil : i ≠ l)
-    (hjk : j ≠ k) (hjl : j ≠ l) (hkl : k ≠ l) :
-    truncated4Infinite G Λ ⟨J, 0, β⟩ i j k l ≤ 0 :=
-  truncated4Infinite_nonpos_h_zero G Λ J β hf hij hik hil hjk hjl hkl
+The two `truncated4Infinite_nonpos_h_zero` aliases
+(`zeta_nonneg_infinite_vol`,
+`absence_of_even_bound_states_infinite_vol`) now live in
+`IsingModel.AmbientLattice.SpecialCases.InfiniteVolumeTruncated4`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
+-/
 
 end Ambient
 end IsingModel
