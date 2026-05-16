@@ -1,5 +1,6 @@
 import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLattice.SpecialCases.MayerRecurrenceHasSumLog
 
 /-!
 # Mayer recurrence and polymer free-energy HasSum wrappers along an exhaustion
@@ -41,35 +42,16 @@ theorem mayerExpansionTermAlongExhaustion_eq_mayerPartialSum_diff
         IsingModel.mayerPartialSum (inducedGraph G (Λ.volume n)) N t :=
   mayerExpansionTerm_Λ_eq_mayerPartialSum_diff G (Λ.volume n) N t
 
-/-- **Along-ex: polymerFreeEnergy hasSum via log under `|ε(t)| < 1`**. -/
-theorem polymerFreeEnergyAlongExhaustion_hasSum_via_log
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet] (n : ℕ) {t : ℝ}
-    (h_abs : |∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
-                        (inducedGraph G (Λ.volume n))).erase ∅,
-                ∏ P ∈ Γ, t ^ P.card| < 1) :
-    HasSum (fun k : ℕ =>
-        (-1 : ℝ) ^ k *
-          (∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
-                    (inducedGraph G (Λ.volume n))).erase ∅,
-              ∏ P ∈ Γ, t ^ P.card) ^ (k + 1) /
-          (k + 1))
-      (IsingModel.polymerFreeEnergy (inducedGraph G (Λ.volume n)) t) :=
-  polymerFreeEnergy_Λ_hasSum_via_log G (Λ.volume n) h_abs
+/-! ## Moved: 2 polymerFreeEnergy_hasSum_via_log wrappers
 
-/-- **Along-ex: polymerFreeEnergy hasSum eventually as `t → 0`**. -/
-theorem polymerFreeEnergyAlongExhaustion_hasSum_via_log_eventually
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet] (n : ℕ) :
-    ∀ᶠ t : ℝ in nhds 0,
-      HasSum (fun k : ℕ =>
-          (-1 : ℝ) ^ k *
-            (∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
-                      (inducedGraph G (Λ.volume n))).erase ∅,
-                ∏ P ∈ Γ, t ^ P.card) ^ (k + 1) /
-            (k + 1))
-        (IsingModel.polymerFreeEnergy (inducedGraph G (Λ.volume n)) t) :=
-  polymerFreeEnergy_Λ_hasSum_via_log_eventually G (Λ.volume n)
+The two along-ex polymer free-energy log-series `HasSum` wrappers
+(`polymerFreeEnergyAlongExhaustion_hasSum_via_log`,
+`polymerFreeEnergyAlongExhaustion_hasSum_via_log_eventually`) now
+live in
+`IsingModel.AmbientLattice.SpecialCases.MayerRecurrenceHasSumLog`.
+The legacy import path is preserved by re-exporting the new child
+from this parent module and from `Legacy.lean`.
+-/
 
 /-- **Along-ex: ε(t) → 0 as t → 0**. -/
 theorem vdPolymerFamilies_sumAlongExhaustion_minus_one_tendsto_zero
