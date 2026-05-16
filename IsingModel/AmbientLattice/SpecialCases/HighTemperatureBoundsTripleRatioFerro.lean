@@ -6,17 +6,26 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviation
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioBounds
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioBoundsBound
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFe
-import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsTripleRatioBoundBundle
-import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsTripleRatioFerro
 
 /-!
-# Ambient alongExhaustion triple-ratio (Z + log Z + f) sandwich / bound wrappers at h = 0
+# Ambient alongExhaustion ferromagnetic triple-ratio sandwich bundle wrappers at h = 0
 
-Narrow child module for 7 §18.3-§18.4 ambient alongExhaustion
-`triple_ratio_sandwich_bundle` and `triple_ratio_bound_bundle`
-wrappers (J = 0 trivial slice, β = 0 specialisation, ferromagnetic
-variants). The theorem names are unchanged from the former
-`HighTemperatureBoundsRatioBounds` declarations.
+Narrow child module for the two §18.3-§18.4 ambient alongExhaustion
+ferromagnetic `triple_ratio_sandwich_bundle*_ferromagnetic` wrappers
+extracted from `HighTemperatureBoundsTripleRatio.lean`:
+
+* `partitionFunctionAlongExhaustion_h_zero_triple_ratio_sandwich_bundle_beta_zero_ferromagnetic`
+  (β = 0 trivial slice, ferromagnetic specialisation)
+* `partitionFunctionAlongExhaustion_h_zero_triple_ratio_sandwich_bundle_ferromagnetic`
+  (J = 0 trivial slice, ferromagnetic specialisation)
+
+Each ferromagnetic wrapper derives `0 ≤ β * J` from `0 ≤ J` and
+`0 < β` and assembles the triple-bundle from the underlying
+`ratio_sandwich_bundle` / `log_partitionFunction_..._ratio_sandwich_bundle`
+/ `freeEnergy_..._ratio_sandwich_bundle` wrappers via the same
+anonymous-constructor `.1` / `.2` projections used by the
+non-ferromagnetic siblings. Theorem names are unchanged from the
+former `HighTemperatureBoundsRatioBounds` declarations.
 -/
 
 namespace IsingModel
@@ -27,54 +36,11 @@ open scoped symmDiff
 
 variable {V : Type*} [DecidableEq V]
 
-/-- **Along-ex triple (Z + log Z + f) ratio sandwich bundle at J=0, stage `n`**. -/
-theorem partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_triple_ratio_sandwich_bundle
+/-- **Along-ex ferromagnetic triple ratio sandwich bundle at β=0, stage `n`**. -/
+theorem partitionFunctionAlongExhaustion_h_zero_triple_ratio_sandwich_bundle_beta_zero_ferromagnetic
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (hβJ : 0 ≤ β * J) (n : ℕ) (hne : 0 < (Λ.volume n).card) :
-    (Real.cosh (β * J) ^ (inducedGraph G (Λ.volume n)).edgeFinset.card
-        ≤ partitionFunctionAlongExhaustion G Λ
-            (⟨J, 0, β⟩ : IsingParams ℝ) n /
-            partitionFunctionAlongExhaustion G Λ
-              (⟨0, 0, β⟩ : IsingParams ℝ) n ∧
-      partitionFunctionAlongExhaustion G Λ
-          (⟨J, 0, β⟩ : IsingParams ℝ) n /
-          partitionFunctionAlongExhaustion G Λ
-            (⟨0, 0, β⟩ : IsingParams ℝ) n
-          ≤ Real.exp (β * J *
-              (inducedGraph G (Λ.volume n)).edgeFinset.card)) ∧
-    (((inducedGraph G (Λ.volume n)).edgeFinset.card : ℝ) *
-        Real.log (Real.cosh (β * J))
-        ≤ Real.log (partitionFunctionAlongExhaustion G Λ
-            (⟨J, 0, β⟩ : IsingParams ℝ) n)
-            - Real.log (partitionFunctionAlongExhaustion G Λ
-                (⟨0, 0, β⟩ : IsingParams ℝ) n) ∧
-      Real.log (partitionFunctionAlongExhaustion G Λ
-          (⟨J, 0, β⟩ : IsingParams ℝ) n)
-          - Real.log (partitionFunctionAlongExhaustion G Λ
-              (⟨0, 0, β⟩ : IsingParams ℝ) n)
-          ≤ β * J * (inducedGraph G (Λ.volume n)).edgeFinset.card) ∧
-    (((inducedGraph G (Λ.volume n)).edgeFinset.card : ℝ) /
-        (Λ.volume n).card * Real.log (Real.cosh (β * J))
-        ≤ freeEnergyAlongExhaustion G Λ (⟨J, 0, β⟩ : IsingParams ℝ) n
-            - freeEnergyAlongExhaustion G Λ (⟨0, 0, β⟩ : IsingParams ℝ) n ∧
-      freeEnergyAlongExhaustion G Λ (⟨J, 0, β⟩ : IsingParams ℝ) n
-          - freeEnergyAlongExhaustion G Λ (⟨0, 0, β⟩ : IsingParams ℝ) n
-          ≤ β * J * (inducedGraph G (Λ.volume n)).edgeFinset.card /
-              (Λ.volume n).card) :=
-  ⟨(partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_sandwich_bundle
-      G Λ J β hβJ n).1,
-   (log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_sandwich_bundle
-      G Λ J β hβJ n).1,
-   (freeEnergyAlongExhaustion_high_temp_h_zero_ratio_sandwich_bundle
-      G Λ J β hβJ n hne).1⟩
-
-/-- **Along-ex triple ratio sandwich bundle at β=0, stage `n`**. -/
-theorem
-partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_triple_ratio_sandwich_bundle_beta_zero
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (hβJ : 0 ≤ β * J) (n : ℕ) (hne : 0 < (Λ.volume n).card) :
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ) (hne : 0 < (Λ.volume n).card) :
     (Real.cosh (β * J) ^ (inducedGraph G (Λ.volume n)).edgeFinset.card
         ≤ partitionFunctionAlongExhaustion G Λ
             (⟨J, 0, β⟩ : IsingParams ℝ) n /
@@ -106,32 +72,53 @@ partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_triple_ratio_sandwic
           ≤ β * J * (inducedGraph G (Λ.volume n)).edgeFinset.card /
               (Λ.volume n).card) :=
   ⟨(partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_sandwich_bundle
-      G Λ J β hβJ n).2,
+      G Λ J β (mul_nonneg hβ.le hJ) n).2,
    (log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_sandwich_bundle
-      G Λ J β hβJ n).2,
+      G Λ J β (mul_nonneg hβ.le hJ) n).2,
    (freeEnergyAlongExhaustion_high_temp_h_zero_ratio_sandwich_bundle
-      G Λ J β hβJ n hne).2⟩
+      G Λ J β (mul_nonneg hβ.le hJ) n hne).2⟩
 
-/-! ## Moved: 2 ferromagnetic triple ratio sandwich bundle wrappers
-
-The two ferromagnetic `triple_ratio_sandwich_bundle*_ferromagnetic`
-wrappers
-(`partitionFunctionAlongExhaustion_h_zero_triple_ratio_sandwich_bundle_beta_zero_ferromagnetic`,
-`partitionFunctionAlongExhaustion_h_zero_triple_ratio_sandwich_bundle_ferromagnetic`)
-now live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsTripleRatioFerro`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
--/
-
-/-! ## Moved: triple_ratio_bound_bundle wrappers
-
-The three `partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_triple_ratio_bound_bundle*`
-wrappers (general, `_beta_zero`, ferromagnetic) now live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsTripleRatioBoundBundle`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
--/
+/-- **Along-ex ferromagnetic triple ratio sandwich bundle at J=0, stage `n`**. -/
+theorem partitionFunctionAlongExhaustion_h_zero_triple_ratio_sandwich_bundle_ferromagnetic
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ) (hne : 0 < (Λ.volume n).card) :
+    (Real.cosh (β * J) ^ (inducedGraph G (Λ.volume n)).edgeFinset.card
+        ≤ partitionFunctionAlongExhaustion G Λ
+            (⟨J, 0, β⟩ : IsingParams ℝ) n /
+            partitionFunctionAlongExhaustion G Λ
+              (⟨0, 0, β⟩ : IsingParams ℝ) n ∧
+      partitionFunctionAlongExhaustion G Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) n /
+          partitionFunctionAlongExhaustion G Λ
+            (⟨0, 0, β⟩ : IsingParams ℝ) n
+          ≤ Real.exp (β * J *
+              (inducedGraph G (Λ.volume n)).edgeFinset.card)) ∧
+    (((inducedGraph G (Λ.volume n)).edgeFinset.card : ℝ) *
+        Real.log (Real.cosh (β * J))
+        ≤ Real.log (partitionFunctionAlongExhaustion G Λ
+            (⟨J, 0, β⟩ : IsingParams ℝ) n)
+            - Real.log (partitionFunctionAlongExhaustion G Λ
+                (⟨0, 0, β⟩ : IsingParams ℝ) n) ∧
+      Real.log (partitionFunctionAlongExhaustion G Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) n)
+          - Real.log (partitionFunctionAlongExhaustion G Λ
+              (⟨0, 0, β⟩ : IsingParams ℝ) n)
+          ≤ β * J * (inducedGraph G (Λ.volume n)).edgeFinset.card) ∧
+    (((inducedGraph G (Λ.volume n)).edgeFinset.card : ℝ) /
+        (Λ.volume n).card * Real.log (Real.cosh (β * J))
+        ≤ freeEnergyAlongExhaustion G Λ (⟨J, 0, β⟩ : IsingParams ℝ) n
+            - freeEnergyAlongExhaustion G Λ (⟨0, 0, β⟩ : IsingParams ℝ) n ∧
+      freeEnergyAlongExhaustion G Λ (⟨J, 0, β⟩ : IsingParams ℝ) n
+          - freeEnergyAlongExhaustion G Λ (⟨0, 0, β⟩ : IsingParams ℝ) n
+          ≤ β * J * (inducedGraph G (Λ.volume n)).edgeFinset.card /
+              (Λ.volume n).card) :=
+  ⟨(partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_sandwich_bundle
+      G Λ J β (mul_nonneg hβ.le hJ) n).1,
+   (log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_sandwich_bundle
+      G Λ J β (mul_nonneg hβ.le hJ) n).1,
+   (freeEnergyAlongExhaustion_high_temp_h_zero_ratio_sandwich_bundle
+      G Λ J β (mul_nonneg hβ.le hJ) n hne).1⟩
 
 end Ambient
 
