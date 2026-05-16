@@ -1,5 +1,6 @@
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviationStrict
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviationStrictFerroBundle
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviationStrictFerroZ
 
 /-!
 # Ambient alongExhaustion ferromagnetic strict-deviation wrappers at h = 0
@@ -56,29 +57,16 @@ The legacy import path is preserved by re-exporting the new child
 from this parent module and from `Legacy.lean`.
 -/
 
-/-- **Along-ex ferromagnetic Z strict deviation at stage `n`**. -/
-theorem partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_pow_two_lt_ferromagnetic
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (hJ : 0 < J) (hβ : 0 < β) (n : ℕ)
-    (hEpos : 0 < (inducedGraph G (Λ.volume n)).edgeFinset.card) :
-    (2 : ℝ) ^ (Λ.volume n).card
-      < partitionFunctionAlongExhaustion G Λ
-          (⟨J, 0, β⟩ : IsingParams ℝ) n :=
-  partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_pow_two_lt
-    G Λ J β (mul_pos hβ hJ) n hEpos
+/-! ## Moved: 2 ferromagnetic Z / log Z strict-deviation wrappers
 
-/-- **Along-ex ferromagnetic log Z strict deviation at stage `n`**. -/
-theorem log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_deviation_pos_ferromagnetic
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (hJ : 0 < J) (hβ : 0 < β) (n : ℕ)
-    (hEpos : 0 < (inducedGraph G (Λ.volume n)).edgeFinset.card) :
-    0 < Real.log (partitionFunctionAlongExhaustion G Λ
-        (⟨J, 0, β⟩ : IsingParams ℝ) n)
-        - ((Λ.volume n).card : ℝ) * Real.log 2 :=
-  log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_deviation_pos
-    G Λ J β (mul_pos hβ hJ) n hEpos
+The two ferromagnetic Z / log Z strict-deviation wrappers
+(`partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_pow_two_lt_ferromagnetic`,
+`log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_deviation_pos_ferromagnetic`)
+now live in
+`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviationStrictFerroZ`.
+The legacy import path is preserved by re-exporting the new child
+from this parent module and from the umbrella.
+-/
 
 end Ambient
 
