@@ -1,5 +1,6 @@
 import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLattice.SpecialCases.MayerTanhFerromagneticIffPFEIff
 
 /-!
 # Mayer ferromagnetic tanh iff wrappers for `polymerFreeEnergy`
@@ -16,70 +17,14 @@ namespace Ambient
 
 variable {V : Type*} [DecidableEq V]
 
-/-- **Along-ex: pFE(tanh) < ε(tanh) ↔ ε(tanh) > 0** (ferro). -/
-theorem polymerFreeEnergyAlongExhaustion_tanh_lt_eps_iff_eps_pos_ferro
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    {β J : ℝ} (hβ : 0 ≤ β) (hJ : 0 ≤ J) (n : ℕ) :
-    IsingModel.polymerFreeEnergy (inducedGraph G (Λ.volume n))
-        (Real.tanh (β * J)) <
-        ∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
-                (inducedGraph G (Λ.volume n))).erase ∅,
-              ∏ P ∈ Γ, (Real.tanh (β * J)) ^ P.card ↔
-      0 < ∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
-                (inducedGraph G (Λ.volume n))).erase ∅,
-            ∏ P ∈ Γ, (Real.tanh (β * J)) ^ P.card :=
-  polymerFreeEnergy_Λ_tanh_lt_eps_iff_eps_pos_ferro
-    G (Λ.volume n) hβ hJ
+/-! ## Moved: pFE tanh iff (ferro) wrappers
 
-/-- **Along-ex: pFE(tanh) = 0 ↔ ε(tanh) = 0** (ferro). -/
-theorem
-polymerFreeEnergyAlongExhaustion_tanh_eq_zero_iff_eps_eq_zero_ferro
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    {β J : ℝ} (hβ : 0 ≤ β) (hJ : 0 ≤ J) (n : ℕ) :
-    IsingModel.polymerFreeEnergy (inducedGraph G (Λ.volume n))
-        (Real.tanh (β * J)) = 0 ↔
-      (∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
-              (inducedGraph G (Λ.volume n))).erase ∅,
-          ∏ P ∈ Γ, (Real.tanh (β * J)) ^ P.card) = 0 :=
-  polymerFreeEnergy_Λ_tanh_eq_zero_iff_eps_eq_zero_ferro
-    G (Λ.volume n) hβ hJ
-
-/-- **Along-ex: 0 < pFE(tanh) ↔ 0 < ε(tanh)** (ferro). -/
-theorem polymerFreeEnergyAlongExhaustion_tanh_pos_iff_eps_pos_ferro
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    {β J : ℝ} (hβ : 0 ≤ β) (hJ : 0 ≤ J) (n : ℕ) :
-    0 < IsingModel.polymerFreeEnergy (inducedGraph G (Λ.volume n))
-          (Real.tanh (β * J)) ↔
-      0 < ∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
-                (inducedGraph G (Λ.volume n))).erase ∅,
-            ∏ P ∈ Γ, (Real.tanh (β * J)) ^ P.card :=
-  polymerFreeEnergy_Λ_tanh_pos_iff_eps_pos_ferro G (Λ.volume n) hβ hJ
-
-/-- **Along-ex: 0 < pFE(tanh) ↔ 0 < tanh ∧ allPolymers ≠ ∅** (ferro). -/
-theorem polymerFreeEnergyAlongExhaustion_tanh_pos_iff_ferro
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    {β J : ℝ} (hβ : 0 ≤ β) (hJ : 0 ≤ J) (n : ℕ) :
-    0 < IsingModel.polymerFreeEnergy (inducedGraph G (Λ.volume n))
-          (Real.tanh (β * J)) ↔
-      0 < Real.tanh (β * J) ∧
-        (IsingModel.allPolymers
-          (inducedGraph G (Λ.volume n))).Nonempty :=
-  polymerFreeEnergy_Λ_tanh_pos_iff_ferro G (Λ.volume n) hβ hJ
-
-/-- **Along-ex: pFE(tanh) = 0 ↔ tanh = 0 ∨ allPolymers = ∅** (ferro). -/
-theorem polymerFreeEnergyAlongExhaustion_tanh_eq_zero_iff_ferro
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    {β J : ℝ} (hβ : 0 ≤ β) (hJ : 0 ≤ J) (n : ℕ) :
-    IsingModel.polymerFreeEnergy (inducedGraph G (Λ.volume n))
-        (Real.tanh (β * J)) = 0 ↔
-      Real.tanh (β * J) = 0 ∨
-        IsingModel.allPolymers (inducedGraph G (Λ.volume n)) = ∅ :=
-  polymerFreeEnergy_Λ_tanh_eq_zero_iff_ferro G (Λ.volume n) hβ hJ
+The five `polymerFreeEnergyAlongExhaustion_tanh_*_iff_*_ferro`
+wrappers now live in
+`IsingModel.AmbientLattice.SpecialCases.MayerTanhFerromagneticIffPFEIff`.
+The legacy import path is preserved by re-exporting the new child
+from this parent module and from `Legacy.lean`.
+-/
 
 /-- **Along-ex: pFE(tanh) < (1+tanh)^|E| - 1** under ε(tanh) > 0
 (ferro). -/
