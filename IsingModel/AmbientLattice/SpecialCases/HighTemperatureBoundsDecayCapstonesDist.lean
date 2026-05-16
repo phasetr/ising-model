@@ -6,6 +6,7 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviation
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioBounds
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsTripleRatio
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFe
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDecayCapstonesAlpha
 
 /-!
 # Ambient alongExhaustion §18.7 distance-bound capstone wrappers at h = 0
@@ -77,56 +78,15 @@ correlationAlongExhaustion_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_hig
   correlationΛ_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_highTempExpRate_dist
     G (Λ.volume n) J β hβJ i j
 
-/-- **Along-ex §18.7 monotone-rate capstone at stage `n`**: any
-`α ≤ -log(tanh(β·J))` may replace the exact high-temperature rate in the
-pair-correlation distance bound at `Λ.volume n`. -/
-theorem
-correlationAlongExhaustion_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_alpha_dist
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β α : ℝ) (hβJ : 0 ≤ β * J)
-    (hα : α ≤ -Real.log (Real.tanh (β * J))) (n : ℕ)
-    (i j : ↑(Λ.volume n)) :
-    correlationΛ G (Λ.volume n) (⟨J, 0, β⟩ : IsingParams ℝ)
-        ({i, j} : Finset ↑(Λ.volume n))
-      ≤ (2 : ℝ) ^ (inducedGraph G (Λ.volume n)).edgeFinset.card *
-        Real.exp (-α * ((inducedGraph G (Λ.volume n)).dist i j : ℝ)) :=
-  correlationΛ_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_alpha_dist
-    G (Λ.volume n) J β α hβJ hα i j
+/-! ## Moved: alpha-rate distance-bound capstones
 
-/-- **Along-ex §18.7 named monotone-rate capstone at stage `n`**:
-any `α ≤ highTempExpRate β J` gives the stage-`n` pair-correlation
-distance bound with rate `α`. -/
-theorem
-correlationAlongExhaustion_high_temp_h_zero_at_pair_le_exp_alpha_dist_of_le_highTempExpRate
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β α : ℝ) (hβJ : 0 ≤ β * J)
-    (hα : α ≤ highTempExpRate β J) (n : ℕ)
-    (i j : ↑(Λ.volume n)) :
-    correlationΛ G (Λ.volume n) (⟨J, 0, β⟩ : IsingParams ℝ)
-        ({i, j} : Finset ↑(Λ.volume n))
-      ≤ (2 : ℝ) ^ (inducedGraph G (Λ.volume n)).edgeFinset.card *
-        Real.exp (-α * ((inducedGraph G (Λ.volume n)).dist i j : ℝ)) :=
-  correlationΛ_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_alpha_dist_of_le_highTempExpRate
-    G (Λ.volume n) J β α hβJ hα i j
-
-/-- **Along-ex ferromagnetic §18.7 monotone-rate capstone at stage `n`**:
-under `0 ≤ J, 0 < β`, any `α ≤ -log(tanh(β·J))` gives the stage-`n`
-pair-correlation distance bound with rate `α`. -/
-theorem
-correlationAlongExhaustion_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_alpha_dist_ferro
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β α : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β)
-    (hα : α ≤ -Real.log (Real.tanh (β * J))) (n : ℕ)
-    (i j : ↑(Λ.volume n)) :
-    correlationΛ G (Λ.volume n) (⟨J, 0, β⟩ : IsingParams ℝ)
-        ({i, j} : Finset ↑(Λ.volume n))
-      ≤ (2 : ℝ) ^ (inducedGraph G (Λ.volume n)).edgeFinset.card *
-        Real.exp (-α * ((inducedGraph G (Λ.volume n)).dist i j : ℝ)) :=
-  correlationAlongExhaustion_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_alpha_dist
-    G Λ J β α (mul_nonneg hβ.le hJ) hα n i j
+The three alpha-rate capstones (`_exp_alpha_dist`,
+`_exp_alpha_dist_of_le_highTempExpRate`, `_exp_alpha_dist_ferro`)
+now live in
+`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDecayCapstonesAlpha`.
+The legacy import path is preserved by re-exporting the new child
+from this parent module and from `Legacy.lean`.
+-/
 
 end Ambient
 
