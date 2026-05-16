@@ -2,6 +2,7 @@ import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.SpecialCases.MayerEdgeCasesPFE
 import IsingModel.AmbientLattice.SpecialCases.MayerEdgeCasesPolymerFreeEnergy
+import IsingModel.AmbientLattice.SpecialCases.MayerEdgeCasesTrivial
 
 /-!
 # Mayer edge-case wrappers along an exhaustion
@@ -43,31 +44,14 @@ theorem mayer_identity_at_betaJ_zero_AlongExhaustion
         (Real.tanh (β * J)) :=
   mayer_identity_at_betaJ_zero_Λ G (Λ.volume n) hβJ N
 
-/-- **Along-ex: Mayer identity at `β = 0`**. -/
-theorem mayer_identity_at_beta_zero_AlongExhaustion
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J : ℝ) (N : ℕ) (n : ℕ) :
-    Real.log (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
-                (inducedGraph G (Λ.volume n)),
-              ∏ P ∈ Γ, Real.tanh ((0 : ℝ) * J) ^ P.card) =
-      IsingModel.mayerPartialSum
-        (inducedGraph G (Λ.volume n)) N
-        (Real.tanh ((0 : ℝ) * J)) :=
-  mayer_identity_at_beta_zero_Λ G (Λ.volume n) J N
+/-! ## Moved: 2 trivial-slice Mayer identity wrappers
 
-/-- **Along-ex: Mayer identity at `J = 0`**. -/
-theorem mayer_identity_at_J_zero_AlongExhaustion
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (β : ℝ) (N : ℕ) (n : ℕ) :
-    Real.log (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
-                (inducedGraph G (Λ.volume n)),
-              ∏ P ∈ Γ, Real.tanh (β * (0 : ℝ)) ^ P.card) =
-      IsingModel.mayerPartialSum
-        (inducedGraph G (Λ.volume n)) N
-        (Real.tanh (β * (0 : ℝ))) :=
-  mayer_identity_at_J_zero_Λ G (Λ.volume n) β N
+The two along-ex `mayer_identity_at_*_zero_AlongExhaustion` trivial-slice
+wrappers (`_beta_zero`, `_J_zero`) now live in
+`IsingModel.AmbientLattice.SpecialCases.MayerEdgeCasesTrivial`.
+The legacy import path is preserved by re-exporting the new child
+from this parent module and from the umbrella.
+-/
 
 /-! ## Moved: polymerFreeEnergyAlongExhaustion eq mayerPartialSum wrappers
 
