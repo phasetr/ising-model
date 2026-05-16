@@ -1,13 +1,15 @@
 import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLattice.SpecialCases.MayerEpsilonInfrastructureVdSum
 
 /-!
-# Mayer epsilon infrastructure wrappers along an exhaustion
+# Mayer term sign wrappers and edgeless `allPolymers` along an exhaustion
 
-Narrow child module for along-exhaustion epsilon infrastructure wrappers,
-the first Mayer-term sign wrappers, and the edgeless `allPolymers` wrapper.
-This keeps callers that only need these forwarders out of the monolithic legacy
-special-cases module.
+Narrow child module for the first Mayer-term sign wrappers
+(`mayerExpansionTerm` at `n = 1`, `n = 2`) and the edgeless
+`allPolymers` wrapper along an exhaustion. This keeps callers that
+only need these forwarders out of the monolithic legacy special-cases
+module.
 -/
 
 namespace IsingModel
@@ -36,35 +38,15 @@ theorem mayerExpansionTermAlongExhaustion_two_nonpos_of_nonneg
       ≤ 0 :=
   mayerExpansionTerm_Λ_two_nonpos_of_nonneg G (Λ.volume n) ht
 
-/-- **Along-ex: ε(0) = 0**. -/
-theorem vdPolymerFamilies_sumAlongExhaustion_minus_one_at_zero
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet] (n : ℕ) :
-    (∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
-              (inducedGraph G (Λ.volume n))).erase ∅,
-        ∏ P ∈ Γ, (0 : ℝ) ^ P.card) = 0 :=
-  vdPolymerFamilies_sum_Λ_minus_one_at_zero G (Λ.volume n)
+/-! ## Moved: 3 ε(t) infrastructure wrappers
 
-/-- **Along-ex: ε(t) is `Continuous`**. -/
-theorem vdPolymerFamilies_sumAlongExhaustion_minus_one_continuous
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet] (n : ℕ) :
-    Continuous (fun t : ℝ =>
-      ∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
-              (inducedGraph G (Λ.volume n))).erase ∅,
-        ∏ P ∈ Γ, t ^ P.card) :=
-  vdPolymerFamilies_sum_Λ_minus_one_continuous G (Λ.volume n)
-
-/-- **Along-ex: ε(t) < 1 eventually as t → 0**. -/
-theorem
-vdPolymerFamilies_sumAlongExhaustion_minus_one_lt_one_eventually
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet] (n : ℕ) :
-    ∀ᶠ t : ℝ in nhds 0,
-      (∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
-              (inducedGraph G (Λ.volume n))).erase ∅,
-          ∏ P ∈ Γ, t ^ P.card) < 1 :=
-  vdPolymerFamilies_sum_Λ_minus_one_lt_one_eventually G (Λ.volume n)
+The three `vdPolymerFamilies_sumAlongExhaustion_minus_one_*` ε(t)
+infrastructure wrappers (`_at_zero`, `_continuous`,
+`_lt_one_eventually`) now live in
+`IsingModel.AmbientLattice.SpecialCases.MayerEpsilonInfrastructureVdSum`.
+The legacy import path is preserved by re-exporting the new child
+from this parent module and from `Legacy.lean`.
+-/
 
 /-- **Along-ex: allPolymers = ∅ on edgeless induced graphs**. -/
 theorem allPolymersAlongExhaustion_eq_empty_of_edgeFinset_empty
