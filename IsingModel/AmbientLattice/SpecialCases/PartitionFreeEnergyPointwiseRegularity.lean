@@ -3,6 +3,7 @@ import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyPointwiseRegularityHZero
 import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyPointwiseRegularityFE
 import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyPointwiseRegularityPartitionGeneralH
+import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyPointwiseRegularityJoint
 
 /-!
 # Ambient partition/free-energy pointwise regularity wrappers
@@ -57,23 +58,15 @@ theorem partitionFunctionAlongExhaustion_differentiableAt_h
       partitionFunctionAlongExhaustion G Λ ⟨J, h', β⟩ n) h :=
   (partitionFunctionΛ_differentiable_h G (Λ.volume n) J β).differentiableAt
 
-/-- **partitionFunctionAlongExhaustion jointly ContinuousAt**. -/
-theorem partitionFunctionAlongExhaustion_continuousAt_joint
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (n : ℕ) (p : ℝ × ℝ × ℝ) :
-    ContinuousAt (fun q : ℝ × ℝ × ℝ =>
-      partitionFunctionAlongExhaustion G Λ ⟨q.2.1, q.2.2, q.1⟩ n) p :=
-  (partitionFunctionΛ_continuous_joint G (Λ.volume n)).continuousAt
+/-! ## Moved: 2 joint pointwise wrappers
 
-/-- **partitionFunctionAlongExhaustion jointly DifferentiableAt**. -/
-theorem partitionFunctionAlongExhaustion_differentiableAt_joint
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (n : ℕ) (p : ℝ × ℝ × ℝ) :
-    DifferentiableAt ℝ (fun q : ℝ × ℝ × ℝ =>
-      partitionFunctionAlongExhaustion G Λ ⟨q.2.1, q.2.2, q.1⟩ n) p :=
-  (partitionFunctionΛ_differentiable_joint G (Λ.volume n)).differentiableAt
+The two `partitionFunctionAlongExhaustion_*_joint` joint pointwise
+wrappers (`_continuousAt_joint`, `_differentiableAt_joint`) now live
+in
+`IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyPointwiseRegularityJoint`.
+The legacy import path is preserved by re-exporting the new child
+from this parent module and from the umbrella.
+-/
 
 /-! ## Moved: freeEnergyAlongExhaustion pointwise wrappers
 
