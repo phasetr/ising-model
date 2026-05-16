@@ -1,5 +1,6 @@
 import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBoundsRegularityOn
 
 /-!
 # Ambient polymerFreeEnergyAlongExhaustion regularity wrappers
@@ -49,25 +50,16 @@ theorem polymerFreeEnergyAlongExhaustion_differentiableAt
           (inducedGraph G (Λ.volume n)) s) t :=
   polymerFreeEnergy_Λ_differentiableAt G (Λ.volume n) ht
 
-/-- **Along-exhaustion: `polymerFreeEnergy` is
-`ContinuousOn (Set.Ici 0)`** (§18.5 along-ex wrap). -/
-theorem polymerFreeEnergyAlongExhaustion_continuousOn_Ici_zero
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet] (n : ℕ) :
-    ContinuousOn (fun s : ℝ =>
-        IsingModel.polymerFreeEnergy
-          (inducedGraph G (Λ.volume n)) s) (Set.Ici 0) :=
-  polymerFreeEnergy_Λ_continuousOn_Ici_zero G (Λ.volume n)
+/-! ## Moved: 2 `_On_Ici_zero` regularity wrappers
 
-/-- **Along-exhaustion: `polymerFreeEnergy` is
-`DifferentiableOn (Set.Ici 0)`** (§18.5 along-ex wrap). -/
-theorem polymerFreeEnergyAlongExhaustion_differentiableOn_Ici_zero
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet] (n : ℕ) :
-    DifferentiableOn ℝ (fun s : ℝ =>
-        IsingModel.polymerFreeEnergy
-          (inducedGraph G (Λ.volume n)) s) (Set.Ici 0) :=
-  polymerFreeEnergy_Λ_differentiableOn_Ici_zero G (Λ.volume n)
+The two `_On_Ici_zero` regularity wrappers
+(`polymerFreeEnergyAlongExhaustion_continuousOn_Ici_zero`,
+`polymerFreeEnergyAlongExhaustion_differentiableOn_Ici_zero`) now
+live in
+`IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBoundsRegularityOn`.
+The legacy import path is preserved by re-exporting the new child
+from this parent module and from the umbrella.
+-/
 
 end Ambient
 end IsingModel
