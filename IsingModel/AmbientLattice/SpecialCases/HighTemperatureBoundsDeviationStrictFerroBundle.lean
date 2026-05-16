@@ -8,7 +8,8 @@ Narrow child module for the two §18.3-§18.4 ambient alongExhaustion
 `HighTemperatureBoundsDeviationStrictFerro.lean`:
 
 * `partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_strict_deviation_bundle`
-* `partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_strict_deviation_bundle_ferromagnetic`
+* `partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_`
+  `strict_deviation_bundle_ferromagnetic`
 
 The general bundle assembles three strict-positivity facts from
 `partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_pow_two_lt`,
