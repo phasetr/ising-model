@@ -1,13 +1,18 @@
 import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureCapstonesPartition
 
 /-!
 # High-temperature capstone wrappers along an exhaustion
 
-Narrow child module for the §18.4-§18.6 partition-function/free-energy
-capstone wrappers along an exhaustion. The theorem names are the same as the
-former legacy declarations, but callers can now avoid importing the
-monolithic special-cases legacy module.
+Narrow child module for the §18.6 free-energy capstone wrappers
+along an exhaustion: the two `freeEnergyAlongExhaustion =
+log 2 + cosh-correction + polymer correction` decompositions
+(general and ferromagnetic), the `freeEnergyAlongExhaustion = log 2`
+identity at `β · J = 0`, and the `mayerPartialSum_one_at_one`
+identity. Theorem names are the same as the former legacy
+declarations, but callers can now avoid importing the monolithic
+special-cases legacy module.
 -/
 
 namespace IsingModel
@@ -20,36 +25,17 @@ variable {V : Type*} [DecidableEq V]
 
 /-! ### §18.4-§18.6 capstones along-ex wraps -/
 
-/-- **Along-ex: §18.4 partitionFunction polymer-family form**. -/
-theorem
-partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_polymer_family
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (n : ℕ) :
-    partitionFunctionAlongExhaustion G Λ ⟨J, 0, β⟩ n =
-      (2 : ℝ) ^ Fintype.card ↑(Λ.volume n : Finset V) *
-        Real.cosh (β * J) ^
-          (inducedGraph G (Λ.volume n)).edgeFinset.card *
-        ∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
-                (inducedGraph G (Λ.volume n)),
-          ∏ P ∈ Γ, Real.tanh (β * J) ^ P.card :=
-  partitionFunctionΛ_high_temp_expansion_h_zero_polymer_family
-    G (Λ.volume n) J β
+/-! ## Moved: 2 partitionFunctionAlongExhaustion polymer/even-subgraph closed forms
 
-/-- **Along-ex: §18.4 partitionFunction even-subgraph form**. -/
-theorem
-partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_closed_evenSubgraphs
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (n : ℕ) :
-    partitionFunctionAlongExhaustion G Λ ⟨J, 0, β⟩ n =
-      (2 : ℝ) ^ Fintype.card ↑(Λ.volume n : Finset V) *
-        Real.cosh (β * J) ^
-          (inducedGraph G (Λ.volume n)).edgeFinset.card *
-        ∑ X ∈ IsingModel.evenSubgraphs (inducedGraph G (Λ.volume n)),
-          Real.tanh (β * J) ^ X.card :=
-  partitionFunctionΛ_high_temp_expansion_h_zero_closed_evenSubgraphs
-    G (Λ.volume n) J β
+The two §18.4 partition-function high-temperature expansion
+closed-form wrappers
+(`partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_polymer_family`,
+`partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_closed_evenSubgraphs`)
+now live in
+`IsingModel.AmbientLattice.SpecialCases.HighTemperatureCapstonesPartition`.
+The legacy import path is preserved by re-exporting the new child
+from this parent module and from `Legacy.lean`.
+-/
 
 /-- **Along-ex: §18.6 freeEnergy decomposition** under `0 ≤ β·J` and
 `(Λ.volume n).Nonempty`. -/
