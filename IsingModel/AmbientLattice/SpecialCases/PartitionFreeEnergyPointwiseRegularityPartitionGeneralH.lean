@@ -1,5 +1,6 @@
 import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyPointwiseRegularityPartitionGeneralHDifferentiableAt
 
 /-!
 # Ambient partitionFunctionAlongExhaustion general-h pointwise wrappers
@@ -45,23 +46,16 @@ theorem partitionFunctionAlongExhaustion_continuousAt_J_general_h
       partitionFunctionAlongExhaustion G Λ ⟨J', h, β⟩ n) J :=
   (partitionFunctionΛ_continuous_J_general_h G (Λ.volume n) β h).continuousAt
 
-/-- **partitionFunctionAlongExhaustion DifferentiableAt β at general h**. -/
-theorem partitionFunctionAlongExhaustion_differentiableAt_beta_general_h
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J h β : ℝ) (n : ℕ) :
-    DifferentiableAt ℝ (fun β' : ℝ =>
-      partitionFunctionAlongExhaustion G Λ ⟨J, h, β'⟩ n) β :=
-  (partitionFunctionΛ_differentiable_beta_general_h G (Λ.volume n) J h).differentiableAt
+/-! ## Moved: 2 partitionFunction_differentiableAt general-h wrappers
 
-/-- **partitionFunctionAlongExhaustion DifferentiableAt J at general h**. -/
-theorem partitionFunctionAlongExhaustion_differentiableAt_J_general_h
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J h β : ℝ) (n : ℕ) :
-    DifferentiableAt ℝ (fun J' : ℝ =>
-      partitionFunctionAlongExhaustion G Λ ⟨J', h, β⟩ n) J :=
-  (partitionFunctionΛ_differentiable_J_general_h G (Λ.volume n) β h).differentiableAt
+The two `DifferentiableAt ℝ` pointwise general-h wrappers
+(`partitionFunctionAlongExhaustion_differentiableAt_beta_general_h`,
+`partitionFunctionAlongExhaustion_differentiableAt_J_general_h`)
+now live in
+`IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyPointwiseRegularityPartitionGeneralHDifferentiableAt`.
+The legacy import path is preserved by re-exporting the new child
+from this parent module and from `Legacy.lean`.
+-/
 
 end Ambient
 end IsingModel
