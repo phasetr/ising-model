@@ -6,8 +6,8 @@ import IsingModel.AmbientLattice.Exhaustion
 
 Narrow child module for finite-stage partition-function h-symmetry and
 absolute-field wrappers along an exhaustion. The theorem names are the same as
-the former legacy declarations, but callers can now avoid importing the
-monolithic special-cases legacy module.
+the former declarations, but callers can now avoid importing the
+monolithic special-cases original module.
 -/
 
 namespace IsingModel

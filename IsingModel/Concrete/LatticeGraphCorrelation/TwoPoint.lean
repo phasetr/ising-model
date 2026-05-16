@@ -191,7 +191,7 @@ The 6 concrete ℤ^d `truncated3Infinite_latticeGraph_swap_{ij,jk,ik}`
 and `truncated4Infinite_latticeGraph_swap_{ij,jk,kl}` symmetry
 wrappers now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.TwoPointTruncatedSwaps`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -254,7 +254,7 @@ trivial-slice wrappers (`truncated3TwoPoint_h_zero_of_distinct`,
 `truncated4TwoPoint_beta_zero`, `truncated3TwoPoint_beta_zero`)
 now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.TwoPointTruncatedTrivialSlices`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -264,7 +264,7 @@ The 3 concrete ℤ^d `twoPointFunction_zero_params`,
 `twoPointFunction_beta_zero`, and `twoPointFunction_J_zero_of_ne_zero`
 trivial-slice wrappers now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.TwoPointFunctionTrivialSlices`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -279,7 +279,7 @@ and 3 `magnetizationInfinite_latticeGraph_cubicExhaustion_monotone_*`
 variants were further narrowed in PR #2026 into
 `IsingModel.Concrete.LatticeGraphCorrelation.TwoPointMagnetizationMonotone`
 (see the next Moved block).
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 /-! ## Moved: ℤ^d magnetization monotonicity wrappers
@@ -288,7 +288,7 @@ The 5 concrete ℤ^d `spontaneousMagnetization_latticeGraph_cubicExhaustion_mono
 and `magnetizationInfinite_latticeGraph_cubicExhaustion_monotone_{J,h,beta}`
 wrappers now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.TwoPointMagnetizationMonotone`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -301,7 +301,7 @@ The 24 ℤ^d wrappers covering ambient-subgraph monotonicity from
 `partitionFunction*`, `correlation*`, `magnetization*`,
 `spontaneous*`) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.TwoPointAmbientBot`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 /-! ## Moved: truncatedInfinite_latticeGraph wrappers
@@ -311,7 +311,7 @@ nonneg, symmetry, trivial slices `J_zero` / `β_zero` / `h_zero`),
 `truncated3Infinite_latticeGraph_apply`, and
 `truncated4Infinite_latticeGraph_apply` now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.TwoPointTruncatedInfinite`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 /-! ## Moved: truncated3/4Infinite_latticeGraph trivial-slice wrappers
@@ -320,7 +320,7 @@ The 18 ℤ^d `truncated3Infinite_latticeGraph_*` and
 `truncated4Infinite_latticeGraph_*` trivial-slice + nonpos +
 exhaustion-independence wrappers now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.TwoPointTruncatedHigher`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 /-! ## Moved: ℤ^d correlationInfinite wrappers
@@ -330,7 +330,7 @@ The 7 concrete ℤ^d `correlationInfinite_latticeGraph_*` wrappers
 `_cubicExhaustion_monotone_h`, `_beta`, `_J`, `_gks_second`) now
 live in
 `IsingModel.Concrete.LatticeGraphCorrelation.TwoPointCorrelationInfinite`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 

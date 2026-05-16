@@ -8,7 +8,7 @@ import IsingModel.AmbientLattice.SpecialCases.MayerTrivialCasesIdentity
 Narrow child module for along-exhaustion `mayerPartialSum 0 ≤ polymerFreeEnergy`
 comparisons and Mayer identity wrappers for no-polymer, trivial, and edgeless
 cases. This keeps callers that only need these forwarders out of the
-monolithic legacy special-cases module.
+monolithic original special-cases module.
 -/
 
 namespace IsingModel
@@ -62,8 +62,8 @@ mayerPartialSum_zero_AlongExhaustion_tanh_le_polymerFreeEnergy_ferromagnetic
 
 The five `mayer_identity_of_*_AlongExhaustion` wrappers now live in
 `IsingModel.AmbientLattice.SpecialCases.MayerTrivialCasesIdentity`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 end Ambient

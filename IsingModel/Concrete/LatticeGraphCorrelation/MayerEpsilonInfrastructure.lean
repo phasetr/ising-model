@@ -7,7 +7,7 @@ import IsingModel.AmbientLattice.SpecialCases.MayerEpsilonInfrastructure
 Narrow child module for concrete `ℤ^d` epsilon infrastructure wrappers,
 the first Mayer-term sign wrappers, and the edgeless `allPolymers` wrapper.
 This keeps callers that only need these forwarders out of the monolithic
-lattice-correlation legacy module.
+lattice-correlation module.
 -/
 
 namespace IsingModel

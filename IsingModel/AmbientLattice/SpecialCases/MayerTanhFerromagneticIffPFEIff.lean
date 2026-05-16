@@ -68,8 +68,8 @@ wrappers in the `allPolymers` form
 `polymerFreeEnergyAlongExhaustion_tanh_eq_zero_iff_ferro`) now
 live in
 `IsingModel.AmbientLattice.SpecialCases.MayerTanhFerromagneticIffPFEIffAllPolymers`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 end Ambient

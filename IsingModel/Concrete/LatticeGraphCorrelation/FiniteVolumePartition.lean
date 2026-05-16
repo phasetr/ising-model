@@ -7,8 +7,8 @@ import IsingModel.FreeEnergy
 
 Narrow child module for direct concrete `latticeGraph` finite-volume
 `partitionFunction` monotonicity, trivial-slice, and h-symmetry wrappers. The
-theorem names are the same as the former legacy declarations, but callers can
-now avoid importing the monolithic concrete legacy module.
+theorem names are the same as the former declarations, but callers can
+now avoid importing the monolithic concrete module.
 -/
 
 namespace IsingModel

@@ -45,7 +45,7 @@ The two `polymerFreeEnergyAlongExhaustion_*_log_two_*` upper bound
 wrappers (`_le_card_log_two_of_le_one`, `_tanh_le_card_log_two`)
 now live in
 `IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBoundsTanhLogTwo`.
-The legacy import path is preserved by re-exporting the new child
+The earlier import path is preserved by re-exporting the new child
 from this parent module and from the umbrella.
 -/
 

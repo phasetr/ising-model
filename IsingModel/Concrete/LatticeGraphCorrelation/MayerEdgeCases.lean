@@ -6,7 +6,7 @@ import IsingModel.AmbientLattice.SpecialCases.MayerEdgeCases
 
 Narrow child module for concrete `ℤ^d` Mayer identity edge cases and
 `polymerFreeEnergy = mayerPartialSum` forwarders. This keeps callers that only
-need these wrappers out of the monolithic lattice-correlation legacy module.
+need these wrappers out of the monolithic lattice-correlation module.
 -/
 
 namespace IsingModel

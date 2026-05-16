@@ -28,8 +28,8 @@ The four `partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_boun
 non-bundle wrappers (`J = 0`, `β = 0`, plus their ferromagnetic
 counterparts) now live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioBoundsBoundOnly`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 /-- **Along-ex Z ratio upper bound bundle at stage `n`**. -/

@@ -109,8 +109,8 @@ The three ferromagnetic `complete_summary_exp_ferromagnetic`
 wrappers (for `partitionFunction`, `log_partitionFunction`,
 `freeEnergy`) now live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharperCompleteFerro`.
-The legacy import path is preserved by re-exporting the new child
-from `Legacy.lean` and the umbrella `HighTemperatureBounds.lean`.
+The earlier import path is preserved by re-exporting the new child
+from the umbrella `HighTemperatureBounds.lean`.
 -/
 
 end Ambient

@@ -53,7 +53,7 @@ The two `mayerExpansionTermAlongExhaustion_tanh_analyticAt_*`
 wrappers (`_tanh_analyticAt_beta`, `_tanh_analyticAt_J`) now live
 in
 `IsingModel.AmbientLattice.SpecialCases.MayerAnalyticityExpansionTermTanh`.
-The legacy import path is preserved by re-exporting the new child
+The earlier import path is preserved by re-exporting the new child
 from this parent module and from the umbrella.
 -/
 

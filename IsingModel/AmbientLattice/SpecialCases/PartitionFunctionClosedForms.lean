@@ -6,8 +6,8 @@ import IsingModel.AmbientLattice.SpecialCases.PartitionFunctionClosedFormsPartit
 # Partition-function closed forms along an exhaustion
 
 Narrow child module for finite-stage partition-function closed forms along an
-exhaustion. The theorem names are the same as the former legacy declarations,
-but callers can now avoid importing the monolithic special-cases legacy module.
+exhaustion. The theorem names are the same as the former declarations,
+but callers can now avoid importing the monolithic special-cases original module.
 -/
 
 namespace IsingModel
@@ -22,8 +22,8 @@ variable {V : Type*} [DecidableEq V]
 The three `partitionFunctionAlongExhaustion_*` closed-form wrappers
 (`_beta_zero`, `_zero_params`, `_J_zero`) now live in
 `IsingModel.AmbientLattice.SpecialCases.PartitionFunctionClosedFormsPartition`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 /-! ## β = 0 closed form for `log_partitionFunctionAlongExhaustion` -/

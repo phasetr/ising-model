@@ -8,7 +8,7 @@ import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyRegularityDiffe
 
 This module contains general-graph `Continuous` and `Differentiable` APIs for
 per-stage `partitionFunctionAlongExhaustion` and `freeEnergyAlongExhaustion`.
-It is split out of the legacy ambient special-cases module so concrete
+It is split out of the original ambient special-cases module so concrete
 partition/free-energy wrappers can depend on a narrower child path.
 -/
 
@@ -44,8 +44,8 @@ The three `Differentiable ℝ` wrappers
 `partitionFunctionAlongExhaustion_differentiable_J_general_h`,
 `partitionFunctionAlongExhaustion_differentiable_h`) now live in
 `IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyRegularityDifferentiable`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 /-- **Along-ex: partitionFunction Continuous in `h`**. -/

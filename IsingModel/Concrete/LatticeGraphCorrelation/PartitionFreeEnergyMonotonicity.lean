@@ -5,7 +5,7 @@ import IsingModel.Concrete.LatticeGraphBED
 
 Thin `ℤ^d` specializations of finite-volume and along-exhaustion partition /
 free-energy monotonicity statements.  These wrappers keep downstream users from
-importing the legacy concrete correlation module when they only need parameter
+importing the original concrete correlation module when they only need parameter
 monotonicity or zero-parameter comparison facts.
 -/
 

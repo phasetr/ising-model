@@ -11,9 +11,9 @@ along an exhaustion: the two `freeEnergyAlongExhaustion =
 log 2 + cosh-correction + polymer correction` decompositions
 (general and ferromagnetic), the `freeEnergyAlongExhaustion = log 2`
 identity at `β · J = 0`, and the `mayerPartialSum_one_at_one`
-identity. Theorem names are the same as the former legacy
+identity. Theorem names are the same as the former
 declarations, but callers can now avoid importing the monolithic
-special-cases legacy module.
+special-cases original module.
 -/
 
 namespace IsingModel
@@ -34,8 +34,8 @@ closed-form wrappers
 `partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_closed_evenSubgraphs`)
 now live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureCapstonesPartition`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 /-! ## Moved: 2 freeEnergy decomposition wrappers
@@ -45,7 +45,7 @@ The two §18.6 free-energy decomposition wrappers
 `freeEnergyAlongExhaustion_eq_polymerFreeEnergy_ferromagnetic`)
 now live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureCapstonesFreeEnergy`.
-The legacy import path is preserved by re-exporting the new child
+The earlier import path is preserved by re-exporting the new child
 from this parent module and from the umbrella.
 -/
 

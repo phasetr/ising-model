@@ -8,7 +8,7 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureTanh
 
 Narrow child module for the §18.5 high-temperature sandwich, convergence-radius
 `HasSum`, polymer-family sandwich, and strict free-energy correction wrappers
-along an exhaustion. The theorem names are the same as the former legacy
+along an exhaustion. The theorem names are the same as the former
 declarations, but callers can now avoid importing the monolithic special-cases
 module.
 -/
@@ -71,8 +71,8 @@ The four along-exhaustion `tanh` wrappers
 `polymerFreeEnergyAlongExhaustion_tanh_hasSum_via_log_of_pow_lt_two_ferromagnetic`)
 now live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureTanh`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 /-! ## Moved: 4 vdPolymerFamilies_sum sandwich + 2 strict freeEnergy wrappers
@@ -81,8 +81,8 @@ The four `vdPolymerFamilies_sumAlongExhaustion_sandwich*` wrappers
 and the two `freeEnergyAlongExhaustion_lt_log_two_plus_high_temp_correction*`
 strict free-energy bounds now live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureVdSandwichFE`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 end Ambient

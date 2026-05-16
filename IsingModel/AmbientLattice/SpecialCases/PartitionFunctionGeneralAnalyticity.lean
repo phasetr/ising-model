@@ -7,7 +7,7 @@ import IsingModel.AmbientLattice.SpecialCases.PartitionFunctionGeneralAnalyticit
 
 This module contains general-graph joint `Continuous` / `Differentiable` APIs
 and general-h `AnalyticAt` APIs for per-stage
-`partitionFunctionAlongExhaustion`. It is split out of the legacy ambient
+`partitionFunctionAlongExhaustion`. It is split out of the original ambient
 special-cases module so concrete partition-function wrappers can depend on a
 narrower child path.
 -/
@@ -46,8 +46,8 @@ The three pointwise `AnalyticAt` wrappers
 `partitionFunctionAlongExhaustion_analyticAt_J_general_h`,
 `partitionFunctionAlongExhaustion_analyticAt_h`) now live in
 `IsingModel.AmbientLattice.SpecialCases.PartitionFunctionGeneralAnalyticityAnalyticAt`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 end Ambient

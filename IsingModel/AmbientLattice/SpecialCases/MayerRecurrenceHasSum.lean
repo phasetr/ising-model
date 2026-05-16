@@ -8,7 +8,7 @@ import IsingModel.AmbientLattice.SpecialCases.MayerRecurrenceHasSumLog
 Narrow child module for along-exhaustion Mayer recurrence wrappers,
 `polymerFreeEnergy` log-series `HasSum` wrappers, and the
 `vdPolymerFamilies_sum - 1` tendsto-zero wrapper. This keeps callers that only
-need these forwarders out of the monolithic legacy special-cases module.
+need these forwarders out of the monolithic original special-cases module.
 -/
 
 namespace IsingModel
@@ -49,8 +49,8 @@ The two along-ex polymer free-energy log-series `HasSum` wrappers
 `polymerFreeEnergyAlongExhaustion_hasSum_via_log_eventually`) now
 live in
 `IsingModel.AmbientLattice.SpecialCases.MayerRecurrenceHasSumLog`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 /-- **Along-ex: ε(t) → 0 as t → 0**. -/

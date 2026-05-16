@@ -36,8 +36,8 @@ The five `partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_closed*`
 and `correlationAlongExhaustion_high_temp_*_h_zero_{nonneg,closed}`
 wrappers now live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansionClosed`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 /-- **Along-exhaustion Z high-temp sandwich (FV (3.45))**: under

@@ -38,7 +38,7 @@ The 9 ℤ^d `magnetization_convergent_{J,h,beta}_latticeGraph`,
 `magnetization_total_convergent_subgraph_latticeGraph` wrappers
 now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.MagnetizationConvergent`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -47,7 +47,7 @@ The legacy import path is preserved by re-importing the new child.
 The 11 ℤ^d `susceptibility_*_latticeGraph` and
 `eta_nonneg_finite_vol_latticeGraph` wrappers now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.MagnetizationSusceptibility`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 /-! ## Moved: site-level magnetization wrappers (GJ §5.3, pp. 77-80)
@@ -59,7 +59,7 @@ The 11 ℤ^d site-level magnetization wrappers
 `magnetization_{zero_at_h_zero,beta_zero,J_zero}_latticeGraph`,
 `magnetization_{monotone_h,monotone_beta}_latticeGraph`) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.MagnetizationSiteLevel`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -68,7 +68,7 @@ The legacy import path is preserved by re-importing the new child.
 The 8 ℤ^d `correlation_*_latticeGraph` thin pass-throughs (bounds +
 trivial slices + `correlation_empty`) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.MagnetizationCorrelationBasic`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 /-! ## Moved: HNC / GKS / FKG wrappers
@@ -77,7 +77,7 @@ The 12 ℤ^d `hasNonnegCorrelations_*_latticeGraph` /
 `gks_*_latticeGraph` / `boltzmannWeight_*_latticeGraph` /
 `fkg_ising_latticeGraph` wrappers now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.MagnetizationGksFkg`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 

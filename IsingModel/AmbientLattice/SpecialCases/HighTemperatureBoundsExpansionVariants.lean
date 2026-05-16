@@ -49,7 +49,7 @@ The two general-h `partitionFunctionAlongExhaustion_high_temp_expansion*`
 wrappers (`_high_temp_expansion`, `_high_temp_expansion_subset_form`)
 now live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansionVariantsGeneralH`.
-The legacy import path is preserved by re-exporting the new child
+The earlier import path is preserved by re-exporting the new child
 from this parent module and from the umbrella.
 -/
 

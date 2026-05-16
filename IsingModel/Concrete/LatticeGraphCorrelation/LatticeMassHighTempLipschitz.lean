@@ -8,7 +8,7 @@ import Mathlib.Analysis.BoundedVariation
 # High-temperature Lipschitz and uniform convergence wrappers at ℤ^d
 
 This module contains the concrete §17.5 high-temperature Lipschitz layer split
-from the legacy `Inequalities` module: finite-stage β/J Lipschitz helpers,
+from the original `Inequalities` module: finite-stage β/J Lipschitz helpers,
 infinite-volume compact Lipschitz and continuity wrappers, compact uniform
 convergence, a.e. differentiability / locally bounded variation on compact and
 open high-temperature intervals, open-interval continuity, locally uniform

@@ -6,8 +6,8 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureCapstones
 
 Narrow child module for the §18.4-§18.6 high-temperature
 partition-function/free-energy capstone wrappers on the concrete lattice
-graph. The theorem names are the same as the former legacy declarations, but
-callers can now avoid importing the monolithic concrete legacy module.
+graph. The theorem names are the same as the former declarations, but
+callers can now avoid importing the monolithic concrete module.
 -/
 
 namespace IsingModel

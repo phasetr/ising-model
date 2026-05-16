@@ -10,7 +10,7 @@ import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyPointwiseRegula
 
 This module contains general-graph `ContinuousAt` and `DifferentiableAt` APIs
 for per-parameter and joint `partitionFunctionAlongExhaustion` /
-`freeEnergyAlongExhaustion` regularity. It is split out of the legacy ambient
+`freeEnergyAlongExhaustion` regularity. It is split out of the original ambient
 special-cases module so concrete partition/free-energy pointwise wrappers can
 depend on a narrower child path.
 -/
@@ -64,7 +64,7 @@ The two `partitionFunctionAlongExhaustion_*_joint` joint pointwise
 wrappers (`_continuousAt_joint`, `_differentiableAt_joint`) now live
 in
 `IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyPointwiseRegularityJoint`.
-The legacy import path is preserved by re-exporting the new child
+The earlier import path is preserved by re-exporting the new child
 from this parent module and from the umbrella.
 -/
 

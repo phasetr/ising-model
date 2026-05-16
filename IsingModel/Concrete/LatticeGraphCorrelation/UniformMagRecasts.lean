@@ -99,7 +99,7 @@ The 23 ℤ^d `truncated2TwoPoint_*` bounds + trivial slices,
 and `correlationAlongExhaustion_latticeGraph_*` J/h/β monotone
 wrappers now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.UniformMagBoundsMonotonicity`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 /-! ## Moved: magnetization apply / bound wrappers

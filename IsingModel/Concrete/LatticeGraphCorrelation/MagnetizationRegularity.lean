@@ -6,8 +6,8 @@ import IsingModel.AmbientLattice.SpecialCases.MagnetizationRegularity
 
 Narrow child module for concrete finite-stage magnetization `Continuous` and
 `Differentiable` wrappers on the lattice graph. The theorem names are the same
-as the former legacy declarations, but callers can now avoid importing the
-monolithic concrete legacy module.
+as the former declarations, but callers can now avoid importing the
+monolithic concrete module.
 -/
 
 namespace IsingModel

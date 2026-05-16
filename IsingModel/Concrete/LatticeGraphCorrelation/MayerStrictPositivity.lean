@@ -7,7 +7,7 @@ import IsingModel.AmbientLattice.SpecialCases.MayerStrictPositivity
 Narrow child module for concrete `ℤ^d` strict-monotonicity and strict
 positivity wrappers under `allPolymers` nonempty hypotheses. This keeps callers
 that only need these forwarders out of the monolithic lattice-correlation
-legacy module.
+original module.
 -/
 
 namespace IsingModel

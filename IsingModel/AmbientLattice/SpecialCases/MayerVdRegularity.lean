@@ -10,7 +10,7 @@ import IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityVdPolymer
 Narrow child module for along-exhaustion `mayerPartialSum`,
 `mayerExpansionTerm`, and `vdPolymerFamilies_sum` regularity and tanh
 wrappers. This keeps callers that only need these forwarders out of the
-monolithic legacy special-cases module.
+monolithic original special-cases module.
 -/
 
 namespace IsingModel
@@ -58,8 +58,8 @@ The three `mayer*AlongExhaustion_differentiable*` wrappers
 (`mayerPartialSum_differentiable`, `_differentiableOn`,
 `mayerExpansionTerm_differentiable`) now live in
 `IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityDifferentiable`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 /-! ### Moved: `mayerPartialSum` / `mayerExpansionTerm` tanh along-ex wraps
@@ -68,8 +68,8 @@ The eight `mayerPartialSumAlongExhaustion_tanh_*` and
 `mayerExpansionTermAlongExhaustion_tanh_*` continuity /
 differentiability wrappers (in `β` and `J`) now live in
 `IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityTanh`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 /-! ### §18.6 vdPolymerFamilies_sum regularity in t along-ex wraps -/
@@ -81,8 +81,8 @@ The seven `vdPolymerFamilies_sumAlongExhaustion_*` wrappers
 tanh-composed `_continuous_{beta,J}` / `_differentiable_{beta,J}`
 variants) now live in
 `IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityVdPolymer`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 end Ambient

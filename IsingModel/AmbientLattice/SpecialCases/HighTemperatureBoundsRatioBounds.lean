@@ -36,8 +36,8 @@ The two slice-singleton wrappers
 `partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_sandwich_beta_zero`
 [β = 0 trivial slice]) now live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioBoundsSingletons`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 /-- **Along-ex Z ratio sandwich bundle at stage `n`**. -/
@@ -106,8 +106,8 @@ The six ambient alongExhaustion `partitionFunctionAlongExhaustion`
 `β = 0` and ferromagnetic counterparts — and the two
 `ratio_bound_bundle` wrappers, general and ferromagnetic) now live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioBoundsBound`.
-The legacy import path is preserved by re-exporting the new child
-from `Legacy.lean` and the umbrella `HighTemperatureBounds.lean`.
+The earlier import path is preserved by re-exporting the new child
+from the umbrella `HighTemperatureBounds.lean`.
 -/
 
 /-! ## Moved: log Z + freeEnergy ratio wrappers
@@ -116,15 +116,15 @@ The 17 ambient alongExhaustion `log_partitionFunction` and
 `freeEnergy` ratio_sandwich / ratio_bound (+ deviation_pos /
 pow_two_lt) wrappers now live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFe`.
-The umbrella `HighTemperatureBounds.lean` and `Legacy.lean` re-import
-the new child so the legacy import paths and theorem names remain
+The umbrella `HighTemperatureBounds.lean` re-imports
+the new child so the import paths and theorem names remain
 unchanged.
 
 The 7 ambient alongExhaustion `triple_ratio_sandwich_bundle` and
 `triple_ratio_bound_bundle` wrappers (J = 0 / β = 0 trivial slices,
 ferromagnetic variants) now live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsTripleRatio`
-(narrowed in PR #1994). The legacy import path is preserved by
+(narrowed in PR #1994). The earlier import path is preserved by
 re-exporting both children from the umbrella module that aggregates
 them.
 -/

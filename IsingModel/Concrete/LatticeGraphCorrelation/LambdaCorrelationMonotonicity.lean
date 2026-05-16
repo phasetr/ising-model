@@ -6,8 +6,8 @@ import IsingModel.AmbientLattice.MagnetizationAlongExhaustion
 
 Narrow child module for concrete `latticeGraph` Lambda-layer correlation and
 magnetization convergence / monotonicity wrappers. The theorem names are the
-same as the former legacy declarations, but callers can now avoid importing the
-monolithic concrete legacy module.
+same as the former declarations, but callers can now avoid importing the
+monolithic concrete module.
 -/
 
 namespace IsingModel

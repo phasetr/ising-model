@@ -7,9 +7,9 @@ import IsingModel.AmbientLattice.FieldDerivative
 # Concrete regularity wrappers for the ℤ^d Ising correlation
 
 This module contains concrete `latticeGraph` specializations of ambient
-`HasDerivAt` APIs. It is split out of the legacy concrete correlation module
+`HasDerivAt` APIs. It is split out of the original concrete correlation module
 so future derivative-wrapper work can build a narrower child path instead of
-touching the monolithic legacy file.
+touching the monolithic original file.
 -/
 
 open scoped symmDiff
@@ -78,7 +78,7 @@ The three wrappers
 `hasDerivAt_freeEnergyΛ_latticeGraph_J`,
 `hasDerivAt_freeEnergyΛ_latticeGraph_field` now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.RegularityFreeEnergyLambda`.
-The legacy import path is preserved by re-importing the new child. -/
+The earlier import path is preserved by re-importing the new child. -/
 
 
 /-! ## Moved: ℤ^d Λ-layer `partitionFunctionΛ`/`boltzmannWeightΛ` `hasDerivAt` wrappers
@@ -88,7 +88,7 @@ The 6 ℤ^d Λ-layer
 `hasDerivAt_boltzmannWeightΛ_latticeGraph_{beta,J,field}` wrappers
 now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.RegularityPartitionBoltzmann`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -98,7 +98,7 @@ The 8 ℤ^d Λ-layer `magnetizationΛ_latticeGraph_hasDerivAt_*` and
 `susceptibilityΛ_latticeGraph_hasDerivAt_*` wrappers (in field/β/
 β_general_h/J directions) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.RegularityMagSusc`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -110,7 +110,7 @@ The 18 ℤ^d along-exhaustion `hasDerivAt` wrappers
 `susceptibilityAlongExhaustion` — in β/β_general_h/J/field
 directions) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.RegularityAlongEx`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 end Ambient

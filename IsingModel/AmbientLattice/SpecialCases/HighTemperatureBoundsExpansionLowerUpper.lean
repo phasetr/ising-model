@@ -73,8 +73,8 @@ The two `lower ≤ upper` bound consistency wrappers
 `freeEnergyAlongExhaustion_high_temp_h_zero_lower_le_upper`) now
 live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansionLowerUpperConsistency`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 /-- **Along-exhaustion partition function high-temperature lower bound**:

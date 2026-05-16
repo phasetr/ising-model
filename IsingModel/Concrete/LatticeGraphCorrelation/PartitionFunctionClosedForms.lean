@@ -6,8 +6,8 @@ import IsingModel.AmbientLattice.SpecialCases.PartitionFunctionClosedForms
 
 Narrow child module for concrete `latticeGraph` partition-function closed-form
 wrappers at trivial parameter slices. The theorem names are the same as the
-former legacy declarations, but callers can now avoid importing the monolithic
-concrete legacy module.
+former declarations, but callers can now avoid importing the monolithic
+concrete original module.
 -/
 
 namespace IsingModel

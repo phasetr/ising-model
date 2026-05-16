@@ -8,7 +8,7 @@ import IsingModel.AmbientLattice.JDerivative
 
 This module contains concrete `latticeGraph` specializations of ambient
 `ContinuousAt`, `DifferentiableAt`, `Continuous`, and `Differentiable` APIs for
-β- and J-direction along-exhaustion correlation. It is split out of the legacy
+β- and J-direction along-exhaustion correlation. It is split out of the original
 concrete correlation module so future pointwise regularity work can build a
 narrower child path.
 -/

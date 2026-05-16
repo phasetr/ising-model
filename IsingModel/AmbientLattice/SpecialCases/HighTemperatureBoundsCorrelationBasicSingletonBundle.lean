@@ -32,8 +32,8 @@ The four `correlationAlongExhaustion_high_temp_h_zero_at_singleton*`
 wrappers (`_J_zero`, `_beta_zero`, `_at_singleton`, `_eq_zero_le_one`)
 now live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsCorrelationBasicSingleton`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 /-- **Along-ex pair+singleton bundle at h=0**. -/
@@ -84,7 +84,7 @@ The two derived bundle wrappers
 now live in
 `IsingModel.AmbientLattice.SpecialCases.`
 `HighTemperatureBoundsCorrelationBasicSingletonBundleDerived`.
-The legacy import path is preserved by re-exporting the new child
+The earlier import path is preserved by re-exporting the new child
 from this parent module and from the umbrella.
 -/
 

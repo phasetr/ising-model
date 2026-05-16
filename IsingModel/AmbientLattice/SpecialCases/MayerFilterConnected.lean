@@ -7,8 +7,8 @@ import IsingModel.AmbientLattice.SpecialCases.MayerFilterConnectedBase
 
 Narrow child module for the §18.5 Mayer filter-connected and epsilon-power
 wrappers along an exhaustion. The theorem names are the same as the former
-legacy declarations, but callers can now avoid importing the monolithic
-special-cases legacy module.
+former declarations, but callers can now avoid importing the monolithic
+special-cases original module.
 -/
 
 namespace IsingModel
@@ -40,7 +40,7 @@ theorem vdPolymerFamilies_sumAlongExhaustion_minus_one_pow
 The two `mayerExpansionTermAlongExhaustion_filter_connected_{zero,one}`
 base-case wrappers now live in
 `IsingModel.AmbientLattice.SpecialCases.MayerFilterConnectedBase`.
-The legacy import path is preserved by re-exporting the new child
+The earlier import path is preserved by re-exporting the new child
 from this parent module and from the umbrella.
 -/
 

@@ -6,7 +6,7 @@ import IsingModel.AmbientLattice.SpecialCases.VdPolymerFamiliesAnalyticity
 
 Narrow child module for ℤ^d `vdPolymerFamilies_sum`,
 `log_vdPolymerFamilies_sum`, and epsilon analyticity wrappers. The theorem names
-are the same as the former legacy declarations, but callers can now import this
+are the same as the former declarations, but callers can now import this
 child module directly.
 -/
 

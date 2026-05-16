@@ -29,7 +29,7 @@ The two slice-singleton wrappers
 `log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_bound_beta_zero`
 [β = 0 trivial slice]) now live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFeLogBoundOnlySingletons`.
-The legacy import path is preserved by re-exporting the new child
+The earlier import path is preserved by re-exporting the new child
 from this parent module and from the umbrella.
 -/
 

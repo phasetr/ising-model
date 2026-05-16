@@ -54,7 +54,7 @@ The two along-ex tanh-positivity wrappers
 `vdPolymerFamilies_sumAlongExhaustion_minus_one_tanh_pos_of_tanh_pos_of_polymers_nonempty`)
 now live in
 `IsingModel.AmbientLattice.SpecialCases.MayerStrictPositivityVdSumPointwiseTanh`.
-The legacy import path is preserved by re-exporting the new child
+The earlier import path is preserved by re-exporting the new child
 from this parent module and from the umbrella.
 -/
 

@@ -57,7 +57,7 @@ The two `_On_Ici_zero` regularity wrappers
 `polymerFreeEnergyAlongExhaustion_differentiableOn_Ici_zero`) now
 live in
 `IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBoundsRegularityOn`.
-The legacy import path is preserved by re-exporting the new child
+The earlier import path is preserved by re-exporting the new child
 from this parent module and from the umbrella.
 -/
 

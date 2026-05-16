@@ -37,8 +37,8 @@ The three `DifferentiableAt ℝ` pointwise wrappers
 `magnetizationAlongExhaustion_differentiableAt_field`,
 `magnetizationAlongExhaustion_differentiableAt_J`) now live in
 `IsingModel.AmbientLattice.SpecialCases.MagnetizationRegularityAtDifferentiableAt`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 /-- **Along-ex: magnetization ContinuousAt h**. -/

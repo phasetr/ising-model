@@ -7,7 +7,7 @@ import IsingModel.AmbientLattice.SpecialCases.MayerExpansionEdgeCasesTwo
 
 Narrow child module for along-exhaustion Mayer expansion `n = 2`, no-polymer,
 edgeless, and absolute-bound wrappers. This keeps callers that only need these
-forwarders out of the monolithic legacy special-cases module.
+forwarders out of the monolithic original special-cases module.
 -/
 
 namespace IsingModel
@@ -24,8 +24,8 @@ variable {V : Type*} [DecidableEq V]
 The three `mayer*AlongExhaustion_two*` wrappers (`_two`,
 `_two_filter`, `mayerPartialSumAlongExhaustion_two`) now live in
 `IsingModel.AmbientLattice.SpecialCases.MayerExpansionEdgeCasesTwo`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 /-- **Along-ex: mayerPartialSum = 0 on no-polymer graphs**. -/

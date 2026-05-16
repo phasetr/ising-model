@@ -6,7 +6,7 @@ import IsingModel.AmbientLattice.SpecialCases.MayerEpsilonPositivity
 
 Narrow child module for concrete `ℤ^d` `ε(t)` and `polymerFreeEnergy`
 positivity/zero iff wrappers. This keeps callers that only need these
-forwarders out of the monolithic lattice-correlation legacy module.
+forwarders out of the monolithic lattice-correlation module.
 -/
 
 namespace IsingModel
