@@ -3,6 +3,7 @@ import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansion
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharper
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviation
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviationStrictZ
 
 /-!
 # Ambient alongExhaustion strict-deviation wrappers at h = 0
@@ -53,32 +54,16 @@ theorem freeEnergyAlongExhaustion_high_temp_h_zero_deviation_pos
   exact freeEnergyΛ_high_temp_h_zero_deviation_pos
     G (Λ.volume n) J β hβJ hne hEpos
 
-/-- **Along-ex Z strict deviation at stage `n`**. -/
-theorem partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_pow_two_lt
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (hβJ : 0 < β * J) (n : ℕ)
-    (hEpos : 0 < (inducedGraph G (Λ.volume n)).edgeFinset.card) :
-    (2 : ℝ) ^ (Λ.volume n).card
-      < partitionFunctionAlongExhaustion G Λ
-          (⟨J, 0, β⟩ : IsingParams ℝ) n := by
-  change _ < partitionFunctionΛ G (Λ.volume n) (⟨J, 0, β⟩ : IsingParams ℝ)
-  exact partitionFunctionΛ_high_temp_expansion_h_zero_pow_two_lt
-    G (Λ.volume n) J β hβJ hEpos
+/-! ## Moved: 2 Z / log Z strict-deviation wrappers
 
-/-- **Along-ex log Z strict deviation at stage `n`**. -/
-theorem log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_deviation_pos
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (hβJ : 0 < β * J) (n : ℕ)
-    (hEpos : 0 < (inducedGraph G (Λ.volume n)).edgeFinset.card) :
-    0 < Real.log (partitionFunctionAlongExhaustion G Λ
-        (⟨J, 0, β⟩ : IsingParams ℝ) n)
-        - ((Λ.volume n).card : ℝ) * Real.log 2 := by
-  change 0 < Real.log (partitionFunctionΛ G (Λ.volume n)
-      (⟨J, 0, β⟩ : IsingParams ℝ)) - _
-  exact log_partitionFunctionΛ_high_temp_expansion_h_zero_deviation_pos
-    G (Λ.volume n) J β hβJ hEpos
+The two Z and log Z strict-deviation wrappers
+(`partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_pow_two_lt`,
+`log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_deviation_pos`)
+now live in
+`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviationStrictZ`.
+The legacy import path is preserved by re-exporting the new child
+from this parent module and from the umbrella.
+-/
 
 /-! ## Moved: ferromagnetic + strict-deviation bundle wrappers
 
