@@ -1,5 +1,6 @@
 import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityVdPolymerTanhDifferentiable
 
 /-!
 # `vdPolymerFamilies_sum` tanh regularity wrappers along an exhaustion
@@ -41,27 +42,15 @@ theorem vdPolymerFamilies_sumAlongExhaustion_tanh_continuous_J
           ∏ P ∈ Γ, Real.tanh (β * J') ^ P.card) :=
   vdPolymerFamilies_sum_Λ_tanh_continuous_J G (Λ.volume n) β
 
-/-- **Along-ex: vdPolymerFamilies_sum ∘ tanh ∘ (·*J) differentiable in β**. -/
-theorem vdPolymerFamilies_sumAlongExhaustion_tanh_differentiable_beta
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J : ℝ) (n : ℕ) :
-    Differentiable ℝ (fun β' : ℝ =>
-        ∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
-            (inducedGraph G (Λ.volume n)),
-          ∏ P ∈ Γ, Real.tanh (β' * J) ^ P.card) :=
-  vdPolymerFamilies_sum_Λ_tanh_differentiable_beta G (Λ.volume n) J
+/-! ## Moved: 2 vdPolymerFamilies_sum tanh Differentiable wrappers
 
-/-- **Along-ex: vdPolymerFamilies_sum ∘ tanh ∘ (β*·) differentiable in J**. -/
-theorem vdPolymerFamilies_sumAlongExhaustion_tanh_differentiable_J
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (β : ℝ) (n : ℕ) :
-    Differentiable ℝ (fun J' : ℝ =>
-        ∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
-            (inducedGraph G (Λ.volume n)),
-          ∏ P ∈ Γ, Real.tanh (β * J') ^ P.card) :=
-  vdPolymerFamilies_sum_Λ_tanh_differentiable_J G (Λ.volume n) β
+The two `vdPolymerFamilies_sumAlongExhaustion_tanh_differentiable_*`
+wrappers (`_tanh_differentiable_beta`, `_tanh_differentiable_J`)
+now live in
+`IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityVdPolymerTanhDifferentiable`.
+The legacy import path is preserved by re-exporting the new child
+from this parent module and from the umbrella.
+-/
 
 end Ambient
 end IsingModel
