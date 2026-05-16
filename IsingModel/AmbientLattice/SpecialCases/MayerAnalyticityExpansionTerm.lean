@@ -1,5 +1,6 @@
 import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLattice.SpecialCases.MayerAnalyticityExpansionTermTanh
 
 /-!
 # Ambient mayerExpansionTermAlongExhaustion analyticity wrappers
@@ -46,30 +47,15 @@ theorem mayerExpansionTermAlongExhaustion_analyticOnNhd
           (inducedGraph G (Λ.volume n)) k s) Set.univ :=
   mayerExpansionTerm_Λ_analyticOnNhd G (Λ.volume n) k
 
-/-! ### `mayerExpansionTerm` tanh β/J analyticity along an exhaustion -/
+/-! ## Moved: 2 mayerExpansionTerm tanh AnalyticAt wrappers
 
-/-- **Along-ex: mayerExpansionTerm ∘ tanh ∘ (·*J) AnalyticAt in β**. -/
-theorem mayerExpansionTermAlongExhaustion_tanh_analyticAt_beta
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (k : ℕ) (J β : ℝ) (n : ℕ) :
-    AnalyticAt ℝ (fun β' : ℝ =>
-        IsingModel.mayerExpansionTerm
-          (inducedGraph G (Λ.volume n)) k
-          (Real.tanh (β' * J))) β :=
-  mayerExpansionTerm_Λ_tanh_analyticAt_beta G (Λ.volume n) k J β
-
-/-- **Along-ex: mayerExpansionTerm ∘ tanh ∘ (β*·) AnalyticAt in J**. -/
-theorem mayerExpansionTermAlongExhaustion_tanh_analyticAt_J
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (k : ℕ) (β J : ℝ) (n : ℕ) :
-    AnalyticAt ℝ (fun J' : ℝ =>
-        IsingModel.mayerExpansionTerm
-          (inducedGraph G (Λ.volume n)) k
-          (Real.tanh (β * J'))) J :=
-  mayerExpansionTerm_Λ_tanh_analyticAt_J G (Λ.volume n) k β J
-
+The two `mayerExpansionTermAlongExhaustion_tanh_analyticAt_*`
+wrappers (`_tanh_analyticAt_beta`, `_tanh_analyticAt_J`) now live
+in
+`IsingModel.AmbientLattice.SpecialCases.MayerAnalyticityExpansionTermTanh`.
+The legacy import path is preserved by re-exporting the new child
+from this parent module and from the umbrella.
+-/
 
 end Ambient
 end IsingModel
