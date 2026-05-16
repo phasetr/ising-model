@@ -1,6 +1,7 @@
 import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyRegularityFE
+import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyRegularityDifferentiable
 
 /-!
 # Ambient partition/free-energy regularity wrappers
@@ -36,25 +37,16 @@ theorem partitionFunctionAlongExhaustion_continuous_J_general_h
       partitionFunctionAlongExhaustion G Λ ⟨J', h, β⟩ n) :=
   partitionFunctionΛ_continuous_J_general_h G (Λ.volume n) β h
 
-/-- **Along-ex: partitionFunction Differentiable in `β` at general
-`h`**. -/
-theorem partitionFunctionAlongExhaustion_differentiable_beta_general_h
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J h : ℝ) (n : ℕ) :
-    Differentiable ℝ (fun β' : ℝ =>
-      partitionFunctionAlongExhaustion G Λ ⟨J, h, β'⟩ n) :=
-  partitionFunctionΛ_differentiable_beta_general_h G (Λ.volume n) J h
+/-! ## Moved: 3 partitionFunctionAlongExhaustion_differentiable_* wrappers
 
-/-- **Along-ex: partitionFunction Differentiable in `J` at general
-`h`**. -/
-theorem partitionFunctionAlongExhaustion_differentiable_J_general_h
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (β h : ℝ) (n : ℕ) :
-    Differentiable ℝ (fun J' : ℝ =>
-      partitionFunctionAlongExhaustion G Λ ⟨J', h, β⟩ n) :=
-  partitionFunctionΛ_differentiable_J_general_h G (Λ.volume n) β h
+The three `Differentiable ℝ` wrappers
+(`partitionFunctionAlongExhaustion_differentiable_beta_general_h`,
+`partitionFunctionAlongExhaustion_differentiable_J_general_h`,
+`partitionFunctionAlongExhaustion_differentiable_h`) now live in
+`IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyRegularityDifferentiable`.
+The legacy import path is preserved by re-exporting the new child
+from this parent module and from `Legacy.lean`.
+-/
 
 /-- **Along-ex: partitionFunction Continuous in `h`**. -/
 theorem partitionFunctionAlongExhaustion_continuous_h
@@ -64,15 +56,6 @@ theorem partitionFunctionAlongExhaustion_continuous_h
     Continuous (fun h' : ℝ =>
       partitionFunctionAlongExhaustion G Λ ⟨J, h', β⟩ n) :=
   partitionFunctionΛ_continuous_h G (Λ.volume n) J β
-
-/-- **Along-ex: partitionFunction Differentiable in `h`**. -/
-theorem partitionFunctionAlongExhaustion_differentiable_h
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (n : ℕ) :
-    Differentiable ℝ (fun h' : ℝ =>
-      partitionFunctionAlongExhaustion G Λ ⟨J, h', β⟩ n) :=
-  partitionFunctionΛ_differentiable_h G (Λ.volume n) J β
 
 /-! ## Moved: freeEnergyAlongExhaustion regularity wrappers
 
