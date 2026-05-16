@@ -38,7 +38,8 @@ The three `DifferentiableAt ℝ` non-joint pointwise wrappers
 (`freeEnergyAlongExhaustion_differentiableAt_beta`,
 `freeEnergyAlongExhaustion_differentiableAt_field`,
 `freeEnergyAlongExhaustion_differentiableAt_J`) now live in
-`IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyPointwiseRegularityFENonJointDifferentiableAt`.
+`IsingModel.AmbientLattice.SpecialCases.`
+`PartitionFreeEnergyPointwiseRegularityFENonJointDifferentiableAt`.
 The legacy import path is preserved by re-exporting the new child
 from this parent module and from `Legacy.lean`.
 -/

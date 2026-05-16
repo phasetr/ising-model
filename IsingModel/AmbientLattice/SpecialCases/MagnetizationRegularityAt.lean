@@ -1,14 +1,14 @@
 import IsingModel.AmbientLattice.SpecialCases.MagnetizationRegularity
+import IsingModel.AmbientLattice.SpecialCases.MagnetizationRegularityAtDifferentiableAt
 
 /-!
-# Magnetization `ContinuousAt` / `DifferentiableAt` along-ex wrappers
+# Magnetization `ContinuousAt` along-ex wrappers
 
-Narrow child module for the six pointwise `ContinuousAt` /
-`DifferentiableAt` wrappers along an exhaustion, obtained from the
-corresponding `Continuous` / `Differentiable` wrappers in the parent
-`MagnetizationRegularity` module via the `.continuousAt` /
-`.differentiableAt` projections. Theorem names are unchanged from
-the former `MagnetizationRegularity` declarations.
+Narrow child module for the three pointwise `ContinuousAt`
+wrappers along an exhaustion, obtained from the corresponding
+`Continuous` wrappers in the parent `MagnetizationRegularity`
+module via the `.continuousAt` projection. Theorem names are
+unchanged from the former `MagnetizationRegularity` declarations.
 -/
 
 namespace IsingModel
@@ -30,15 +30,16 @@ theorem magnetizationAlongExhaustion_continuousAt_beta
           (⟨J, h, β'⟩ : IsingParams ℝ) i n) β :=
   (magnetizationAlongExhaustion_continuous_beta G Λ J h i n).continuousAt
 
-/-- **Along-ex: magnetization DifferentiableAt β** (general h). -/
-theorem magnetizationAlongExhaustion_differentiableAt_beta
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J h β : ℝ) (i : V) (n : ℕ) :
-    DifferentiableAt ℝ
-      (fun β' => magnetizationAlongExhaustion G Λ
-          (⟨J, h, β'⟩ : IsingParams ℝ) i n) β :=
-  (magnetizationAlongExhaustion_differentiable_beta G Λ J h i n).differentiableAt
+/-! ## Moved: 3 magnetizationAlongExhaustion_differentiableAt_* wrappers
+
+The three `DifferentiableAt ℝ` pointwise wrappers
+(`magnetizationAlongExhaustion_differentiableAt_beta`,
+`magnetizationAlongExhaustion_differentiableAt_field`,
+`magnetizationAlongExhaustion_differentiableAt_J`) now live in
+`IsingModel.AmbientLattice.SpecialCases.MagnetizationRegularityAtDifferentiableAt`.
+The legacy import path is preserved by re-exporting the new child
+from this parent module and from `Legacy.lean`.
+-/
 
 /-- **Along-ex: magnetization ContinuousAt h**. -/
 theorem magnetizationAlongExhaustion_continuousAt_field
@@ -50,16 +51,6 @@ theorem magnetizationAlongExhaustion_continuousAt_field
           (⟨J, h', β⟩ : IsingParams ℝ) i n) h :=
   (magnetizationAlongExhaustion_continuous_field G Λ J β i n).continuousAt
 
-/-- **Along-ex: magnetization DifferentiableAt h**. -/
-theorem magnetizationAlongExhaustion_differentiableAt_field
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J h β : ℝ) (i : V) (n : ℕ) :
-    DifferentiableAt ℝ
-      (fun h' => magnetizationAlongExhaustion G Λ
-          (⟨J, h', β⟩ : IsingParams ℝ) i n) h :=
-  (magnetizationAlongExhaustion_differentiable_field G Λ J β i n).differentiableAt
-
 /-- **Along-ex: magnetization ContinuousAt J**. -/
 theorem magnetizationAlongExhaustion_continuousAt_J
     (G : SimpleGraph V) (Λ : Exhaustion V)
@@ -69,16 +60,6 @@ theorem magnetizationAlongExhaustion_continuousAt_J
       (fun J' => magnetizationAlongExhaustion G Λ
           (⟨J', h, β⟩ : IsingParams ℝ) i n) J :=
   (magnetizationAlongExhaustion_continuous_J G Λ h β i n).continuousAt
-
-/-- **Along-ex: magnetization DifferentiableAt J**. -/
-theorem magnetizationAlongExhaustion_differentiableAt_J
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J h β : ℝ) (i : V) (n : ℕ) :
-    DifferentiableAt ℝ
-      (fun J' => magnetizationAlongExhaustion G Λ
-          (⟨J', h, β⟩ : IsingParams ℝ) i n) J :=
-  (magnetizationAlongExhaustion_differentiable_J G Λ h β i n).differentiableAt
 
 end Ambient
 end IsingModel
