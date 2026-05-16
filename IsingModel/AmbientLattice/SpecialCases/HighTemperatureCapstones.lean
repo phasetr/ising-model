@@ -1,6 +1,7 @@
 import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureCapstonesPartition
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureCapstonesFreeEnergy
 
 /-!
 # High-temperature capstone wrappers along an exhaustion
@@ -37,38 +38,16 @@ The legacy import path is preserved by re-exporting the new child
 from this parent module and from `Legacy.lean`.
 -/
 
-/-- **Along-ex: §18.6 freeEnergy decomposition** under `0 ≤ β·J` and
-`(Λ.volume n).Nonempty`. -/
-theorem freeEnergyAlongExhaustion_eq_polymerFreeEnergy
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (hβJ : 0 ≤ β * J) (n : ℕ) (hne : (Λ.volume n).Nonempty) :
-    freeEnergyAlongExhaustion G Λ ⟨J, 0, β⟩ n =
-      Real.log 2 +
-        ((inducedGraph G (Λ.volume n)).edgeFinset.card : ℝ) /
-            Fintype.card ↑(Λ.volume n : Finset V) *
-          Real.log (Real.cosh (β * J)) +
-        IsingModel.polymerFreeEnergy (inducedGraph G (Λ.volume n))
-          (Real.tanh (β * J)) /
-            Fintype.card ↑(Λ.volume n : Finset V) :=
-  freeEnergyΛ_eq_polymerFreeEnergy G (Λ.volume n) J β hβJ hne
+/-! ## Moved: 2 freeEnergy decomposition wrappers
 
-/-- **Along-ex: §18.6 ferromagnetic freeEnergy decomposition**. -/
-theorem freeEnergyAlongExhaustion_eq_polymerFreeEnergy_ferromagnetic
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ)
-    (hne : (Λ.volume n).Nonempty) :
-    freeEnergyAlongExhaustion G Λ ⟨J, 0, β⟩ n =
-      Real.log 2 +
-        ((inducedGraph G (Λ.volume n)).edgeFinset.card : ℝ) /
-            Fintype.card ↑(Λ.volume n : Finset V) *
-          Real.log (Real.cosh (β * J)) +
-        IsingModel.polymerFreeEnergy (inducedGraph G (Λ.volume n))
-          (Real.tanh (β * J)) /
-            Fintype.card ↑(Λ.volume n : Finset V) :=
-  freeEnergyΛ_eq_polymerFreeEnergy_ferromagnetic
-    G (Λ.volume n) J β hJ hβ hne
+The two §18.6 free-energy decomposition wrappers
+(`freeEnergyAlongExhaustion_eq_polymerFreeEnergy`,
+`freeEnergyAlongExhaustion_eq_polymerFreeEnergy_ferromagnetic`)
+now live in
+`IsingModel.AmbientLattice.SpecialCases.HighTemperatureCapstonesFreeEnergy`.
+The legacy import path is preserved by re-exporting the new child
+from this parent module and from the umbrella.
+-/
 
 /-- **Along-ex: freeEnergy = log 2 at `β·J = 0`** under
 `(Λ.volume n).Nonempty`. -/
