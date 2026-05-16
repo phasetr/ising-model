@@ -1,6 +1,7 @@
 import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.SpecialCases.MayerBasicIdentitiesExpansionTerm
+import IsingModel.AmbientLattice.SpecialCases.MayerBasicIdentitiesVdSum
 
 /-!
 # Mayer basic identity wrappers along an exhaustion
@@ -20,25 +21,14 @@ variable {V : Type*} [DecidableEq V]
 
 /-! ### §18.5 basic identities at_zero / at_one along-ex wraps -/
 
-/-- **Along-ex: vdPolymerFamilies_sum at t = 0 = 1**. -/
-theorem vdPolymerFamilies_sumAlongExhaustion_at_zero
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet] (n : ℕ) :
-    (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
-            (inducedGraph G (Λ.volume n)),
-        ∏ P ∈ Γ, (0 : ℝ) ^ P.card) = 1 :=
-  vdPolymerFamilies_sum_Λ_at_zero G (Λ.volume n)
+/-! ## Moved: 2 vdPolymerFamilies_sumAlongExhaustion at-zero / at-one identities
 
-/-- **Along-ex: vdPolymerFamilies_sum at t = 1 = #vdCompatPoly**. -/
-theorem vdPolymerFamilies_sumAlongExhaustion_at_one
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet] (n : ℕ) :
-    (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
-            (inducedGraph G (Λ.volume n)),
-        ∏ P ∈ Γ, (1 : ℝ) ^ P.card) =
-      (IsingModel.vdCompatiblePolymerFamilies
-        (inducedGraph G (Λ.volume n))).card :=
-  vdPolymerFamilies_sum_Λ_at_one G (Λ.volume n)
+The two along-ex `vdPolymerFamilies_sumAlongExhaustion` evaluation
+identities (`_at_zero`, `_at_one`) now live in
+`IsingModel.AmbientLattice.SpecialCases.MayerBasicIdentitiesVdSum`.
+The legacy import path is preserved by re-exporting the new child
+from this parent module and from `Legacy.lean`.
+-/
 
 /-- **Along-ex: mayerPartialSum at N = 0 = 0**. -/
 theorem mayerPartialSumAlongExhaustion_zero
