@@ -1,5 +1,6 @@
 import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLattice.SpecialCases.MayerFilterConnectedBase
 
 /-!
 # Mayer filter-connected wrappers along an exhaustion
@@ -34,35 +35,14 @@ theorem vdPolymerFamilies_sumAlongExhaustion_minus_one_pow
         ∏ i : Fin k, ∏ P ∈ ω i, t ^ P.card :=
   vdPolymerFamilies_sum_Λ_minus_one_pow G (Λ.volume n) t k
 
-/-- **Along-ex: mayerExpansionTerm filter-connected at k=0 = ∅**. -/
-theorem mayerExpansionTermAlongExhaustion_filter_connected_zero
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (t : ℝ) (n : ℕ) :
-    (Fintype.piFinset
-        (fun _ : Fin 0 =>
-          IsingModel.allPolymers
-            (inducedGraph G (Λ.volume n)))).filter
-        (fun ω =>
-          (IsingModel.polymerSeqIncompatibilityGraph ω).Connected) = ∅ :=
-  mayerExpansionTerm_Λ_filter_connected_zero G (Λ.volume n) t
+/-! ## Moved: 2 filter_connected base-case wrappers
 
-/-- **Along-ex: mayerExpansionTerm filter-connected at k=1 = full
-piFinset**. -/
-theorem mayerExpansionTermAlongExhaustion_filter_connected_one
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet] (n : ℕ) :
-    (Fintype.piFinset
-        (fun _ : Fin 1 =>
-          IsingModel.allPolymers
-            (inducedGraph G (Λ.volume n)))).filter
-        (fun ω =>
-          (IsingModel.polymerSeqIncompatibilityGraph ω).Connected) =
-      Fintype.piFinset
-        (fun _ : Fin 1 =>
-          IsingModel.allPolymers
-            (inducedGraph G (Λ.volume n))) :=
-  mayerExpansionTerm_Λ_filter_connected_one G (Λ.volume n)
+The two `mayerExpansionTermAlongExhaustion_filter_connected_{zero,one}`
+base-case wrappers now live in
+`IsingModel.AmbientLattice.SpecialCases.MayerFilterConnectedBase`.
+The legacy import path is preserved by re-exporting the new child
+from this parent module and from the umbrella.
+-/
 
 /-- **Along-ex: filter-connected = filter-incompatible at k=2**. -/
 theorem mayerExpansionTermAlongExhaustion_two_filter_connected_eq_incompat
