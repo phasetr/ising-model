@@ -1,6 +1,7 @@
 import IsingModel.AmbientLattice.SpecialCases.FreeEnergy
 import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansionLowerUpperFE
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansionLowerUpperConsistency
 
 /-!
 # Ambient alongExhaustion expansion lower/upper-bound wrappers at h = 0
@@ -65,34 +66,16 @@ theorem partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_upper_bound
   exact partitionFunctionΛ_high_temp_expansion_h_zero_upper_bound
     G (Λ.volume n) J β hβJ
 
-omit [DecidableEq V] in
-/-- **Along-exhaustion Z bounds consistency**: lower ≤ upper. -/
-theorem partitionFunctionAlongExhaustion_high_temp_h_zero_lower_le_upper
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (n : ℕ) :
-    (2 : ℝ) ^ (Λ.volume n).card *
-        Real.cosh (β * J) ^
-          (inducedGraph G (Λ.volume n)).edgeFinset.card
-      ≤ (2 : ℝ) ^ ((Λ.volume n).card +
-            (inducedGraph G (Λ.volume n)).edgeFinset.card) *
-        Real.cosh (β * J) ^
-            (inducedGraph G (Λ.volume n)).edgeFinset.card :=
-  partitionFunctionΛ_high_temp_h_zero_lower_le_upper G (Λ.volume n) J β
+/-! ## Moved: 2 lower_le_upper consistency wrappers
 
-omit [DecidableEq V] in
-/-- **Along-exhaustion freeEnergy bounds consistency**: lower ≤ upper. -/
-theorem freeEnergyAlongExhaustion_high_temp_h_zero_lower_le_upper
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (hβJ : 0 ≤ β * J) (n : ℕ) :
-    Real.log 2 +
-        ((inducedGraph G (Λ.volume n)).edgeFinset.card : ℝ) /
-          (Λ.volume n).card * Real.log (Real.cosh (β * J))
-      ≤ Real.log 2
-        + ((inducedGraph G (Λ.volume n)).edgeFinset.card : ℝ) /
-            (Λ.volume n).card * Real.log (2 * Real.cosh (β * J)) :=
-  freeEnergyΛ_high_temp_h_zero_lower_le_upper G (Λ.volume n) J β hβJ
+The two `lower ≤ upper` bound consistency wrappers
+(`partitionFunctionAlongExhaustion_high_temp_h_zero_lower_le_upper`,
+`freeEnergyAlongExhaustion_high_temp_h_zero_lower_le_upper`) now
+live in
+`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansionLowerUpperConsistency`.
+The legacy import path is preserved by re-exporting the new child
+from this parent module and from `Legacy.lean`.
+-/
 
 /-- **Along-exhaustion partition function high-temperature lower bound**:
 under `0 ≤ β * J`, at every stage `n`,
