@@ -82,6 +82,7 @@ import IsingModel.AmbientLattice.SpecialCases.MayerBasicIdentitiesVdSum
 import IsingModel.AmbientLattice.SpecialCases.MayerEdgeCases
 import IsingModel.AmbientLattice.SpecialCases.MayerEdgeCasesPFE
 import IsingModel.AmbientLattice.SpecialCases.MayerEdgeCasesPolymerFreeEnergy
+import IsingModel.AmbientLattice.SpecialCases.MayerEdgeCasesTrivial
 import IsingModel.AmbientLattice.SpecialCases.MayerEpsilonInfrastructure
 import IsingModel.AmbientLattice.SpecialCases.MayerEpsilonInfrastructureVdSum
 import IsingModel.AmbientLattice.SpecialCases.MayerEpsilonPositivity
