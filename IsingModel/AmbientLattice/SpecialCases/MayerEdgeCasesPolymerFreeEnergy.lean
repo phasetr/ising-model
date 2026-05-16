@@ -1,5 +1,6 @@
 import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLattice.SpecialCases.MayerEdgeCasesPolymerFreeEnergyTrivial
 
 /-!
 # Ambient polymerFreeEnergyAlongExhaustion = mayerPartialSum edge-case wrappers
@@ -50,31 +51,16 @@ theorem polymerFreeEnergyAlongExhaustion_eq_mayerPartialSum_at_betaJ_zero
   polymerFreeEnergy_Λ_eq_mayerPartialSum_at_betaJ_zero
     G (Λ.volume n) hβJ N
 
-/-- **Along-ex: polymerFreeEnergy = mayerPartialSum at β = 0**. -/
-theorem polymerFreeEnergyAlongExhaustion_eq_mayerPartialSum_at_beta_zero
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J : ℝ) (N : ℕ) (n : ℕ) :
-    IsingModel.polymerFreeEnergy
-        (inducedGraph G (Λ.volume n)) (Real.tanh ((0 : ℝ) * J)) =
-      IsingModel.mayerPartialSum
-        (inducedGraph G (Λ.volume n)) N
-        (Real.tanh ((0 : ℝ) * J)) :=
-  polymerFreeEnergy_Λ_eq_mayerPartialSum_at_beta_zero
-    G (Λ.volume n) J N
+/-! ## Moved: 2 trivial-slice wrappers
 
-/-- **Along-ex: polymerFreeEnergy = mayerPartialSum at J = 0**. -/
-theorem polymerFreeEnergyAlongExhaustion_eq_mayerPartialSum_at_J_zero
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (β : ℝ) (N : ℕ) (n : ℕ) :
-    IsingModel.polymerFreeEnergy
-        (inducedGraph G (Λ.volume n)) (Real.tanh (β * (0 : ℝ))) =
-      IsingModel.mayerPartialSum
-        (inducedGraph G (Λ.volume n)) N
-        (Real.tanh (β * (0 : ℝ))) :=
-  polymerFreeEnergy_Λ_eq_mayerPartialSum_at_J_zero
-    G (Λ.volume n) β N
+The two trivial-slice wrappers
+(`polymerFreeEnergyAlongExhaustion_eq_mayerPartialSum_at_beta_zero`,
+`polymerFreeEnergyAlongExhaustion_eq_mayerPartialSum_at_J_zero`)
+now live in
+`IsingModel.AmbientLattice.SpecialCases.MayerEdgeCasesPolymerFreeEnergyTrivial`.
+The legacy import path is preserved by re-exporting the new child
+from this parent module and from the umbrella.
+-/
 
 end Ambient
 end IsingModel
