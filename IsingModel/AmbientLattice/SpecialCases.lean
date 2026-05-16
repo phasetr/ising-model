@@ -116,6 +116,7 @@ import IsingModel.AmbientLattice.SpecialCases.MayerTrivialCasesIdentityEdgeless
 import IsingModel.AmbientLattice.SpecialCases.MayerVdBounds
 import IsingModel.AmbientLattice.SpecialCases.MayerVdBoundsGeneric
 import IsingModel.AmbientLattice.SpecialCases.MayerVdIff
+import IsingModel.AmbientLattice.SpecialCases.MayerVdIffTanh
 import IsingModel.AmbientLattice.SpecialCases.MayerVdRegularity
 import IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityDifferentiable
 import IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityTanh
