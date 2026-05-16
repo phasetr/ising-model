@@ -4,6 +4,7 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansion
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharper
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviation
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioBoundsSingletons
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioBoundsFerro
 
 /-!
 # Ambient alongExhaustion Z/f/log Z ratio sandwich / ratio bound wrappers at h = 0
@@ -70,34 +71,15 @@ theorem partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_sandwi
    partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_sandwich_beta_zero
       G Λ J β hβJ n⟩
 
-/-- **Along-ex ferromagnetic Z ratio sandwich bundle at stage `n`**. -/
-theorem
-partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_sandwich_bundle_ferromagnetic
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ) :
-    (Real.cosh (β * J) ^ (inducedGraph G (Λ.volume n)).edgeFinset.card
-        ≤ partitionFunctionAlongExhaustion G Λ
-            (⟨J, 0, β⟩ : IsingParams ℝ) n /
-            partitionFunctionAlongExhaustion G Λ
-              (⟨0, 0, β⟩ : IsingParams ℝ) n ∧
-      partitionFunctionAlongExhaustion G Λ
-          (⟨J, 0, β⟩ : IsingParams ℝ) n /
-          partitionFunctionAlongExhaustion G Λ
-            (⟨0, 0, β⟩ : IsingParams ℝ) n
-        ≤ Real.exp (β * J * (inducedGraph G (Λ.volume n)).edgeFinset.card)) ∧
-    (Real.cosh (β * J) ^ (inducedGraph G (Λ.volume n)).edgeFinset.card
-        ≤ partitionFunctionAlongExhaustion G Λ
-            (⟨J, 0, β⟩ : IsingParams ℝ) n /
-            partitionFunctionAlongExhaustion G Λ
-              (⟨J, 0, 0⟩ : IsingParams ℝ) n ∧
-      partitionFunctionAlongExhaustion G Λ
-          (⟨J, 0, β⟩ : IsingParams ℝ) n /
-          partitionFunctionAlongExhaustion G Λ
-            (⟨J, 0, 0⟩ : IsingParams ℝ) n
-        ≤ Real.exp (β * J * (inducedGraph G (Λ.volume n)).edgeFinset.card)) :=
-  partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_sandwich_bundle
-    G Λ J β (mul_nonneg hβ.le hJ) n
+/-! ## Moved: 1 ferromagnetic Z ratio_sandwich_bundle wrapper
+
+The ferromagnetic
+`partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_sandwich_bundle_ferromagnetic`
+wrapper now lives in
+`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioBoundsFerro`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
+-/
 
 /-! ## Moved: Z `ratio_bound` (non-bundle and bundle) wrappers
 
