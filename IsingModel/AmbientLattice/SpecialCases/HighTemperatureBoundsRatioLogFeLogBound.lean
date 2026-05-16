@@ -64,8 +64,7 @@ theorem log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_sa
 
 /-! ## Moved: 1 ferromagnetic log Z ratio_sandwich_bundle wrapper
 
-The ferromagnetic
-`log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_sandwich_bundle_ferromagnetic`
+The ferromagnetic log Z `ratio_sandwich_bundle_ferromagnetic`
 wrapper now lives in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFeLogBoundFerro`.
 The earlier import path is preserved by re-exporting the new child

@@ -4,10 +4,11 @@ import IsingModel.AmbientLattice.SpecialCases.FreeEnergy
 # Ambient alongExhaustion ferromagnetic log Z ratio_sandwich_bundle wrapper at h = 0
 
 Narrow child module for the §18.3-§18.4 ambient alongExhaustion
-ferromagnetic
-`log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_sandwich_bundle_ferromagnetic`
-wrapper extracted from
-`HighTemperatureBoundsRatioLogFeLogBound.lean`.
+ferromagnetic log Z `ratio_sandwich_bundle_ferromagnetic` wrapper
+extracted from `HighTemperatureBoundsRatioLogFeLogBound.lean`. The
+wrapper's full Lean name is
+`log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_`
+`ratio_sandwich_bundle_ferromagnetic`.
 
 To avoid an import cycle, the proof inlines the same
 `change` + `log_partitionFunctionΛ_high_temp_expansion_h_zero_ratio_sandwich_bundle`
