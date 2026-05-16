@@ -1,4 +1,5 @@
 import IsingModel.AmbientLattice.SpecialCases.FreeEnergy
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFeLogBoundOnlySingletons
 
 /-!
 # Ambient alongExhaustion log Z ratio_bound wrappers at h = 0
@@ -20,39 +21,17 @@ open scoped symmDiff
 
 variable {V : Type*} [DecidableEq V]
 
-/-- **Along-ex log Z ratio bound at J=0, stage `n`**. -/
-theorem log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_bound
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (hβJ : 0 ≤ β * J) (n : ℕ) :
-    Real.log (partitionFunctionAlongExhaustion G Λ
-        (⟨J, 0, β⟩ : IsingParams ℝ) n)
-        - Real.log (partitionFunctionAlongExhaustion G Λ
-            (⟨0, 0, β⟩ : IsingParams ℝ) n)
-      ≤ β * J * (inducedGraph G (Λ.volume n)).edgeFinset.card := by
-  change Real.log (partitionFunctionΛ G (Λ.volume n)
-      (⟨J, 0, β⟩ : IsingParams ℝ))
-      - Real.log (partitionFunctionΛ G (Λ.volume n)
-          (⟨0, 0, β⟩ : IsingParams ℝ)) ≤ _
-  exact log_partitionFunctionΛ_high_temp_expansion_h_zero_ratio_bound
-    G (Λ.volume n) J β hβJ
+/-! ## Moved: 2 log Z ratio_bound singleton wrappers
 
-/-- **Along-ex log Z ratio bound at β=0, stage `n`**. -/
-theorem log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_bound_beta_zero
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (hβJ : 0 ≤ β * J) (n : ℕ) :
-    Real.log (partitionFunctionAlongExhaustion G Λ
-        (⟨J, 0, β⟩ : IsingParams ℝ) n)
-        - Real.log (partitionFunctionAlongExhaustion G Λ
-            (⟨J, 0, 0⟩ : IsingParams ℝ) n)
-      ≤ β * J * (inducedGraph G (Λ.volume n)).edgeFinset.card := by
-  change Real.log (partitionFunctionΛ G (Λ.volume n)
-      (⟨J, 0, β⟩ : IsingParams ℝ))
-      - Real.log (partitionFunctionΛ G (Λ.volume n)
-          (⟨J, 0, 0⟩ : IsingParams ℝ)) ≤ _
-  exact log_partitionFunctionΛ_high_temp_expansion_h_zero_ratio_bound_beta_zero
-    G (Λ.volume n) J β hβJ
+The two slice-singleton wrappers
+(`log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_bound`
+[J = 0 trivial slice],
+`log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_bound_beta_zero`
+[β = 0 trivial slice]) now live in
+`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFeLogBoundOnlySingletons`.
+The legacy import path is preserved by re-exporting the new child
+from this parent module and from the umbrella.
+-/
 
 /-- **Along-ex log Z ratio bound bundle at stage `n`**. -/
 theorem log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_bound_bundle
