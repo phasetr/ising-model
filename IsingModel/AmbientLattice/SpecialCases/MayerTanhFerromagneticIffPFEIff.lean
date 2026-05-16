@@ -1,5 +1,6 @@
 import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLattice.SpecialCases.MayerTanhFerromagneticIffPFEIffAllPolymers
 
 /-!
 # Mayer ferromagnetic tanh iff wrappers for `polymerFreeEnergy` (iff family)
@@ -59,28 +60,17 @@ theorem polymerFreeEnergyAlongExhaustion_tanh_pos_iff_eps_pos_ferro
             ∏ P ∈ Γ, (Real.tanh (β * J)) ^ P.card :=
   polymerFreeEnergy_Λ_tanh_pos_iff_eps_pos_ferro G (Λ.volume n) hβ hJ
 
-/-- **Along-ex: 0 < pFE(tanh) ↔ 0 < tanh ∧ allPolymers ≠ ∅** (ferro). -/
-theorem polymerFreeEnergyAlongExhaustion_tanh_pos_iff_ferro
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    {β J : ℝ} (hβ : 0 ≤ β) (hJ : 0 ≤ J) (n : ℕ) :
-    0 < IsingModel.polymerFreeEnergy (inducedGraph G (Λ.volume n))
-          (Real.tanh (β * J)) ↔
-      0 < Real.tanh (β * J) ∧
-        (IsingModel.allPolymers
-          (inducedGraph G (Λ.volume n))).Nonempty :=
-  polymerFreeEnergy_Λ_tanh_pos_iff_ferro G (Λ.volume n) hβ hJ
+/-! ## Moved: 2 allPolymers-form ferromagnetic pFE iff wrappers
 
-/-- **Along-ex: pFE(tanh) = 0 ↔ tanh = 0 ∨ allPolymers = ∅** (ferro). -/
-theorem polymerFreeEnergyAlongExhaustion_tanh_eq_zero_iff_ferro
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    {β J : ℝ} (hβ : 0 ≤ β) (hJ : 0 ≤ J) (n : ℕ) :
-    IsingModel.polymerFreeEnergy (inducedGraph G (Λ.volume n))
-        (Real.tanh (β * J)) = 0 ↔
-      Real.tanh (β * J) = 0 ∨
-        IsingModel.allPolymers (inducedGraph G (Λ.volume n)) = ∅ :=
-  polymerFreeEnergy_Λ_tanh_eq_zero_iff_ferro G (Λ.volume n) hβ hJ
+The two along-ex ferromagnetic `polymerFreeEnergy_*_iff_ferro`
+wrappers in the `allPolymers` form
+(`polymerFreeEnergyAlongExhaustion_tanh_pos_iff_ferro`,
+`polymerFreeEnergyAlongExhaustion_tanh_eq_zero_iff_ferro`) now
+live in
+`IsingModel.AmbientLattice.SpecialCases.MayerTanhFerromagneticIffPFEIffAllPolymers`.
+The legacy import path is preserved by re-exporting the new child
+from this parent module and from `Legacy.lean`.
+-/
 
 end Ambient
 end IsingModel
