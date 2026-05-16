@@ -3,6 +3,7 @@ import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBoundsRegularity
 import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBoundsNonneg
 import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBoundsTanh
+import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBoundsEdgeCases
 
 /-!
 # Polymer free-energy bound wrappers along an exhaustion
@@ -46,31 +47,16 @@ theorem polymerFreeEnergyAlongExhaustion_monotoneOn_Ici_zero
           (inducedGraph G (Λ.volume n)) t) (Set.Ici 0) :=
   polymerFreeEnergy_Λ_monotoneOn_Ici_zero G (Λ.volume n)
 
-/-- **Along-ex: `polymerFreeEnergy = 0` for empty-polymer induced
-graphs** (§18.5 along-ex wrap of Step 621). -/
-theorem polymerFreeEnergyAlongExhaustion_eq_zero_of_no_polymers
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (n : ℕ)
-    (h_no : IsingModel.allPolymers
-      (inducedGraph G (Λ.volume n)) = ∅) (t : ℝ) :
-    IsingModel.polymerFreeEnergy
-        (inducedGraph G (Λ.volume n)) t = 0 :=
-  polymerFreeEnergy_Λ_eq_zero_of_no_polymers G (Λ.volume n) h_no t
+/-! ## Moved: 2 `polymerFreeEnergy_eq_zero_of_*` edge-case wrappers
 
-/-- **Along-ex: `polymerFreeEnergy = 0` for edgeless induced
-graphs** (§18.5 along-ex wrap of Step 623). -/
-theorem
-polymerFreeEnergyAlongExhaustion_eq_zero_of_edgeFinset_empty
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (n : ℕ)
-    (h_empty : (inducedGraph G (Λ.volume n)).edgeFinset = ∅)
-    (t : ℝ) :
-    IsingModel.polymerFreeEnergy
-        (inducedGraph G (Λ.volume n)) t = 0 :=
-  polymerFreeEnergy_Λ_eq_zero_of_edgeFinset_empty
-    G (Λ.volume n) h_empty t
+The two §18.5 along-ex boundary-case vanishing wrappers
+(`polymerFreeEnergyAlongExhaustion_eq_zero_of_no_polymers`,
+`polymerFreeEnergyAlongExhaustion_eq_zero_of_edgeFinset_empty`) now
+live in
+`IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBoundsEdgeCases`.
+The legacy import path is preserved by re-exporting the new child
+from this parent module and from `Legacy.lean`.
+-/
 
 /-- **Along-ex: `polymerFreeEnergy` preserves order on `[0, ∞)`**
 (§18.5 along-ex wrap of Step 649). -/
