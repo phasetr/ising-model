@@ -1,6 +1,7 @@
 import IsingModel.AmbientLattice.SpecialCases.FreeEnergy
 import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansion
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansionVariantsGeneralH
 
 /-!
 # Ambient alongExhaustion high-temp expansion variant wrappers at h = 0
@@ -42,47 +43,15 @@ theorem partitionFunctionAlongExhaustion_high_temp_expansion_h_zero
   change partitionFunctionΛ G (Λ.volume n) (⟨J, 0, β⟩ : IsingParams ℝ) = _
   exact partitionFunctionΛ_high_temp_expansion_h_zero G (Λ.volume n) J β
 
-/-- **Along-exhaustion partition function high-temperature expansion (general h)**:
-at every stage `n`,
-`Z_n(p) = (cosh βJ)^|E_n| · ∑_σ ∏_e (1 + tanh(βJ) σ_iσ_j) · exp(βh ∑_i σ_i)`.
-Per-stage application of `partitionFunctionΛ_high_temp_expansion`
-(Step 311). -/
-theorem partitionFunctionAlongExhaustion_high_temp_expansion
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (p : IsingParams ℝ) (n : ℕ) :
-    partitionFunctionAlongExhaustion G Λ p n =
-      Real.cosh (p.β * p.J) ^
-          (inducedGraph G (Λ.volume n)).edgeFinset.card *
-      ∑ σ : Config ↑(Λ.volume n),
-        (∏ e ∈ (inducedGraph G (Λ.volume n)).edgeFinset,
-          (1 + Real.tanh (p.β * p.J) * edgeSpin σ e)) *
-        Real.exp (p.β * p.h *
-                  ∑ i : ↑(Λ.volume n), Spin.sign ℝ (σ i)) := by
-  change partitionFunctionΛ G (Λ.volume n) p = _
-  exact partitionFunctionΛ_high_temp_expansion G (Λ.volume n) p
+/-! ## Moved: 2 general-h expansion wrappers
 
-/-- **Along-exhaustion general-h subset expansion (GJ §18.3)**:
-at every stage `n`,
-`Z_n(p) = (cosh βJ)^|E_n| · ∑_X tanh(βJ)^|X| · ∑_σ (∏_{e ∈ X} σ_iσ_j) exp(βh ∑ σ_i)`.
-Per-stage application of `partitionFunctionΛ_high_temp_expansion_subset_form`
-(Step 301). -/
-theorem partitionFunctionAlongExhaustion_high_temp_expansion_subset_form
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (p : IsingParams ℝ) (n : ℕ) :
-    partitionFunctionAlongExhaustion G Λ p n =
-      Real.cosh (p.β * p.J) ^
-          (inducedGraph G (Λ.volume n)).edgeFinset.card *
-      ∑ X ∈ (inducedGraph G (Λ.volume n)).edgeFinset.powerset,
-        Real.tanh (p.β * p.J) ^ X.card *
-          ∑ σ : Config ↑(Λ.volume n),
-            (∏ e ∈ X, edgeSpin (K := ℝ) σ e) *
-            Real.exp (p.β * p.h *
-                      ∑ i : ↑(Λ.volume n), Spin.sign ℝ (σ i)) := by
-  change partitionFunctionΛ G (Λ.volume n) p = _
-  exact partitionFunctionΛ_high_temp_expansion_subset_form
-    G (Λ.volume n) p
+The two general-h `partitionFunctionAlongExhaustion_high_temp_expansion*`
+wrappers (`_high_temp_expansion`, `_high_temp_expansion_subset_form`)
+now live in
+`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansionVariantsGeneralH`.
+The legacy import path is preserved by re-exporting the new child
+from this parent module and from the umbrella.
+-/
 
 /-- **Along-exhaustion high-temperature even-subgraph sum is `≥ 1`**:
 under `0 ≤ β * J`, at every stage `n`,
