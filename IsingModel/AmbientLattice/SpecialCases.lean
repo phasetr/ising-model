@@ -2,6 +2,7 @@ import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.SpecialCases.FreeEnergy
 import IsingModel.AmbientLattice.SpecialCases.FreeEnergyAnalyticity
 import IsingModel.AmbientLattice.SpecialCases.FreeEnergyAnalyticityHZero
+import IsingModel.AmbientLattice.SpecialCases.FreeEnergyAnalyticityHZeroOnNhd
 import IsingModel.AmbientLattice.SpecialCases.FreeEnergyAnalyticityOnNhd
 import IsingModel.AmbientLattice.SpecialCases.FreeEnergyHighTempExp
 import IsingModel.AmbientLattice.SpecialCases.FreeEnergyHSymmetry
