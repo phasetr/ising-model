@@ -52,7 +52,8 @@ The two `DifferentiableAt ℝ` pointwise h = 0 wrappers
 (`partitionFunctionAlongExhaustion_differentiableAt_beta_h_zero`,
 `partitionFunctionAlongExhaustion_differentiableAt_J_h_zero`) now
 live in
-`IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyPointwiseRegularityHZeroDifferentiableAt`.
+`IsingModel.AmbientLattice.SpecialCases.`
+`PartitionFreeEnergyPointwiseRegularityHZeroDifferentiableAt`.
 The legacy import path is preserved by re-exporting the new child
 from this parent module and from `Legacy.lean`.
 -/

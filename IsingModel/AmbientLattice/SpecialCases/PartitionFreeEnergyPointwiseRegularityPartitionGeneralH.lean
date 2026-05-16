@@ -52,7 +52,8 @@ The two `DifferentiableAt ℝ` pointwise general-h wrappers
 (`partitionFunctionAlongExhaustion_differentiableAt_beta_general_h`,
 `partitionFunctionAlongExhaustion_differentiableAt_J_general_h`)
 now live in
-`IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyPointwiseRegularityPartitionGeneralHDifferentiableAt`.
+`IsingModel.AmbientLattice.SpecialCases.`
+`PartitionFreeEnergyPointwiseRegularityPartitionGeneralHDifferentiableAt`.
 The legacy import path is preserved by re-exporting the new child
 from this parent module and from `Legacy.lean`.
 -/
