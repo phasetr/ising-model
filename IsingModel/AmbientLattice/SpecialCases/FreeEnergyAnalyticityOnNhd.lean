@@ -1,20 +1,23 @@
 import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLattice.SpecialCases.FreeEnergyAnalyticityOnNhdH
 
 /-!
-# Ambient freeEnergyAlongExhaustion AnalyticOnNhd general-h wrappers
+# Ambient freeEnergyAlongExhaustion AnalyticOnNhd general-h β/J wrappers
 
-Narrow child module for 3 ambient
-`freeEnergyAlongExhaustion_analyticOnNhd_*` wrappers extracted from
-`FreeEnergyAnalyticity.lean`:
+Narrow child module for the two ambient
+`freeEnergyAlongExhaustion_analyticOnNhd_*_general_h` wrappers
+extracted from `FreeEnergyAnalyticity.lean`:
 
-* `freeEnergyAlongExhaustion_analyticOnNhd_beta_general_h`,
-* `freeEnergyAlongExhaustion_analyticOnNhd_J_general_h`,
-* `freeEnergyAlongExhaustion_analyticOnNhd_h`.
+* `freeEnergyAlongExhaustion_analyticOnNhd_beta_general_h`
+* `freeEnergyAlongExhaustion_analyticOnNhd_J_general_h`
 
-Each result is a thin pass-through of the corresponding Λ-level
-`freeEnergyΛ_analyticOnNhd_*` lemma. The theorem names are unchanged
-from the former `FreeEnergyAnalyticity` declarations.
+The corresponding `h`-direction wrapper now lives in
+`IsingModel.AmbientLattice.SpecialCases.FreeEnergyAnalyticityOnNhdH`
+and is re-imported through this parent module. Each result is a
+thin pass-through of the corresponding Λ-level
+`freeEnergyΛ_analyticOnNhd_*` lemma. The theorem names are
+unchanged from the former `FreeEnergyAnalyticity` declarations.
 -/
 
 namespace IsingModel
@@ -43,15 +46,14 @@ theorem freeEnergyAlongExhaustion_analyticOnNhd_J_general_h
       freeEnergyAlongExhaustion G Λ ⟨J', h, β⟩ n) Set.univ :=
   freeEnergyΛ_analyticOnNhd_J_general_h G (Λ.volume n) β h
 
-/-- **Along-ex: freeEnergy `AnalyticOnNhd ℝ _ Set.univ` in `h`**. -/
-theorem freeEnergyAlongExhaustion_analyticOnNhd_h
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (n : ℕ) :
-    AnalyticOnNhd ℝ (fun h' : ℝ =>
-      freeEnergyAlongExhaustion G Λ ⟨J, h', β⟩ n) Set.univ :=
-  freeEnergyΛ_analyticOnNhd_h G (Λ.volume n) J β
+/-! ## Moved: 1 AnalyticOnNhd `h` wrapper
 
+The `freeEnergyAlongExhaustion_analyticOnNhd_h` wrapper now lives
+in
+`IsingModel.AmbientLattice.SpecialCases.FreeEnergyAnalyticityOnNhdH`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
+-/
 
 end Ambient
 end IsingModel
