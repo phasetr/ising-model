@@ -7,7 +7,7 @@ import IsingModel.AmbientLattice.SpecialCases.MayerRecurrenceHasSum
 Narrow child module for concrete `ℤ^d` Mayer recurrence wrappers,
 `polymerFreeEnergy` log-series `HasSum` wrappers, and the
 `vdPolymerFamilies_sum - 1` tendsto-zero wrapper. This keeps callers that only
-need these forwarders out of the monolithic lattice-correlation legacy module.
+need these forwarders out of the monolithic lattice-correlation module.
 -/
 
 namespace IsingModel

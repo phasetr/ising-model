@@ -9,7 +9,7 @@ an exhaustion
 
 Narrow child module for along-exhaustion polymer free-energy
 `tanh sharpening + β/J strict-mono` wrappers. This keeps callers that
-only need these forwarders out of the monolithic legacy special-cases
+only need these forwarders out of the monolithic original special-cases
 module.
 -/
 
@@ -28,8 +28,8 @@ along-ex wraps -/
 The five `polymerFreeEnergyAlongExhaustion_tanh_*` iff /
 `_of_eps_pos` wrappers now live in
 `IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyTanhSharpeningIff`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 /-- **Along-ex: pFE(tanh(β₁·J)) < pFE(tanh(β₂·J))** under `J > 0`,
@@ -69,7 +69,7 @@ polymerFreeEnergyAlongExhaustion_tanh_lt_of_lt_in_J_of_polymers_nonempty
 The two along-ex `polymerFreeEnergyAlongExhaustion_tanh_strictMonoOn_*`
 wrappers (`_strictMonoOn_beta`, `_strictMonoOn_J`) now live in
 `IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyTanhSharpeningStrictMono`.
-The legacy import path is preserved by re-exporting the new child
+The earlier import path is preserved by re-exporting the new child
 from this parent module and from the umbrella.
 -/
 

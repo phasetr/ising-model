@@ -6,7 +6,7 @@ import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyRegularity
 
 This module contains concrete `latticeGraph` specializations of `Continuous`
 and `Differentiable` APIs for partition functions and free energies. It is
-split out of the legacy concrete correlation module so downstream users can
+split out of the original concrete correlation module so downstream users can
 depend on a narrower child path.
 -/
 

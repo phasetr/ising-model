@@ -5,7 +5,7 @@ import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyAnalyticity
 # Concrete polymer free-energy analyticity wrappers for the lattice graph
 
 Narrow child module for ℤ^d `polymerFreeEnergy` analytic wrappers. The theorem
-names are the same as the former legacy declarations, but callers can now
+names are the same as the former declarations, but callers can now
 import this child module directly.
 -/
 

@@ -88,8 +88,8 @@ ferromagnetic — and the four `ratio_bound` variants: `J = 0`,
 `β = 0`, `ratio_bound_bundle`, and
 `ratio_bound_bundle_ferromagnetic`) now live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFeLogBound`.
-The legacy import path is preserved by re-exporting the new child
-from `Legacy.lean`, the umbrella `HighTemperatureBounds.lean`, and
+The earlier import path is preserved by re-exporting the new child
+from the umbrellas `HighTemperatureBounds.lean` /
 this parent module (which now re-imports the new child below).
 -/
 
@@ -111,8 +111,8 @@ The six ambient alongExhaustion `freeEnergyAlongExhaustion`
 `β = 0` and ferromagnetic counterparts — and the two
 `ratio_bound_bundle` wrappers, general and ferromagnetic) now live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFeFreeEnergyBound`.
-The legacy import path is preserved by re-exporting the new child
-from `Legacy.lean`, the umbrella `HighTemperatureBounds.lean`, and
+The earlier import path is preserved by re-exporting the new child
+from the umbrellas `HighTemperatureBounds.lean` /
 this parent module (which now re-imports the new child below).
 -/
 

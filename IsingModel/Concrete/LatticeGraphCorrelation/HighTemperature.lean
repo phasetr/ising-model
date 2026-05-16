@@ -7,7 +7,7 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperature
 Narrow child module for the §18.5 high-temperature sandwich,
 convergence-radius `HasSum`, polymer-family sandwich, and strict free-energy
 correction wrappers on `latticeGraph d`. The theorem names are the same as the
-former legacy declarations, but callers can now import this child module
+former declarations, but callers can now import this child module
 directly.
 -/
 

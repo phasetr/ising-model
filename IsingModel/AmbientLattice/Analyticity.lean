@@ -42,7 +42,7 @@ The 10 Λ-level joint analyticity wrappers (partitionFunctionΛ +
 freeEnergyΛ + correlationΛ AnalyticAt / AnalyticOnNhd / Continuous /
 Differentiable joint) now live in
 `IsingModel.AmbientLattice.AnalyticityLambdaJoint`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -53,7 +53,7 @@ The 14 magnetizationΛ + susceptibilityΛ + correlationΛ
 continuousAt/differentiableAt/analyticAt/analyticOnNhd joint wrappers
 now live in
 `IsingModel.AmbientLattice.AnalyticityLambdaMagSuscep`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -62,7 +62,7 @@ The legacy import path is preserved by re-importing the new child.
 The 6 partitionFunctionΛ per-direction Continuous / Differentiable
 wrappers at general h now live in
 `IsingModel.AmbientLattice.AnalyticityLambdaPerDirection`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 /-! ## §18.4-§18.5 polymerFreeEnergy / vdSum / ε wrappers (now split)
@@ -79,7 +79,7 @@ have been refactored out into narrow child modules
 `AnalyticityLambdaMayerPfeEdgeBounds`,
 `AnalyticityLambdaMayerRecurrenceEpsilon`,
 `AnalyticityLambdaEpsilonIff`, ...) re-imported at the top of this
-file, so the legacy import path is preserved while the per-PR
+file, so the earlier import path is preserved while the per-PR
 narrow Moved doc blocks below list the exact destinations. -/
 
 /-! ## Moved: polymerFreeEnergy_Λ basic wrappers
@@ -87,7 +87,7 @@ narrow Moved doc blocks below list the exact destinations. -/
 The 16 §18.4 polymerFreeEnergy_Λ / vdPolymerFamilies_sum_Λ / mayer*_Λ
 basic wrappers now live in
 `IsingModel.AmbientLattice.AnalyticityLambdaPolymer`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -98,7 +98,7 @@ The 10 §18.4 / §18.5 polymerFreeEnergy_Λ high_temp_sandwich, tanh
 sandwich, hasSum_via_log, and vdPolymerFamilies_sum_Λ sandwich wrappers
 (with ferromagnetic variants) now live in
 `IsingModel.AmbientLattice.AnalyticityLambdaSandwich`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -108,7 +108,7 @@ The 10 Λ-layer freeEnergyΛ correction + polymerFreeEnergy_Λ
 continuous/differentiable + tanh analyticAt/analyticOnNhd wrappers
 now live in
 `IsingModel.AmbientLattice.AnalyticityLambdaRegularity`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -117,7 +117,7 @@ The legacy import path is preserved by re-importing the new child.
 The 12 Λ-layer polymerFreeEnergy_Λ nonneg / bounds / monotone / eq_zero
 / tanh sandwich / tanh double bound wrappers now live in
 `IsingModel.AmbientLattice.AnalyticityLambdaPolymerBounds`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -127,7 +127,7 @@ The 23 §18.6 mayerPartialSum_Λ + mayerExpansionTerm_Λ
 continuous/differentiable/analyticAt/analyticOnNhd wrappers (raw and
 tanh-composed variants) now live in
 `IsingModel.AmbientLattice.AnalyticityLambdaMayer`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 /-! ## Moved: vdPolymerFamilies_sum + log_vdPolymerFamilies_sum wrappers
@@ -136,7 +136,7 @@ The 14 §18.5-18.6 vdPolymerFamilies_sum_Λ + log_vdPolymerFamilies_sum_Λ
 continuous / differentiable / analyticAt / hasDerivAt wrappers
 (raw and tanh-composed variants) now live in
 `IsingModel.AmbientLattice.AnalyticityLambdaVdPolymer`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 /-! ## Moved: §18.5 Mayer identity edge-case wrappers
@@ -147,7 +147,7 @@ mayerPartialSum edge-case wrappers (parameter slices `t = 0`, `β·J =
 polymerFreeEnergy bounds; no-polymer / trivial / edgeless induced
 graphs) now live in
 `IsingModel.AmbientLattice.AnalyticityLambdaMayerIdentity`. The
-legacy import path is preserved by re-importing the new child.
+earlier import path is preserved by re-importing the new child.
 -/
 
 /-! ## Moved: §18.5 basic identities + bounds + iff wrappers
@@ -157,7 +157,7 @@ identities, tanh iff characterizations, the bound family
 (`le_two_pow`, `le_one_plus_tanh_pow`, `one_le_vdPolymerFamilies_sum_Λ`),
 and generic-`t` bounds + `_eq_one_add` decomposition now live in
 `IsingModel.AmbientLattice.AnalyticityLambdaBasicIdentities`. The
-legacy import path is preserved by re-importing the new child.
+earlier import path is preserved by re-importing the new child.
 -/
 
 /-! ## Moved: §18.5 Mayer expansion + polymerFreeEnergy bound wrappers
@@ -170,7 +170,7 @@ analyticAt + analyticOnNhd_Ici_zero + sandwich_of_nonneg, and
 polymerFreeEnergy tanh-bound + ferromagnetic + hasDerivAt +
 `_eq_log_one_add_eps` now live in
 `IsingModel.AmbientLattice.AnalyticityLambdaMayerPfeEdgeBounds`. The
-legacy import path is preserved by re-importing the new child.
+earlier import path is preserved by re-importing the new child.
 -/
 
 /-! ## Moved: §18.5 Mayer recurrence + ε infrastructure wrappers
@@ -185,7 +185,7 @@ The 12 §18.5 Λ-layer wrappers covering Mayer recurrence
 continuous, analyticAt, lt_one_eventually}`, and
 `allPolymers_Λ_eq_empty_of_edgeFinset_empty` now live in
 `IsingModel.AmbientLattice.AnalyticityLambdaMayerRecurrenceEpsilon`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 /-! ## Moved: §18.5 ε(t) positivity-iff + strict-mono wrappers
@@ -199,7 +199,7 @@ eq_zero_iff}`) and strict-mono / strict-pos under polymers ≠ ∅
 `_tanh_gt_one_of_tanh_pos`, `_minus_one_tanh_pos_of_tanh_pos`,
 `_strictMonoOn_Ioi_zero`, both for `polymerFreeEnergy_Λ` and
 `vdPolymerFamilies_sum_Λ`) now live in
-`IsingModel.AmbientLattice.AnalyticityLambdaEpsilonIff`. The legacy
+`IsingModel.AmbientLattice.AnalyticityLambdaEpsilonIff`. The earlier
 import path is preserved by re-importing the new child.
 -/
 
@@ -213,7 +213,7 @@ lt_pow_sub_one_of_eps_pos, lt_eps_of_eps_pos}_ferro` and
 `vdPolymerFamilies_sum_Λ_tanh_{gt_one_iff, eq_one_iff}_ferro`
 (under `0 ≤ β`, `0 ≤ J`) now live in
 `IsingModel.AmbientLattice.AnalyticityLambdaTanhFerroIff`. The
-legacy import path is preserved by re-importing the new child.
+earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -230,7 +230,7 @@ and pow_at_zero, non-tanh `polymerFreeEnergy_Λ` sharpening,
 `polymerFreeEnergy_Λ_tanh_{le_eps, le_pow_sub_one, lt_log_two}`)
 now live in
 `IsingModel.AmbientLattice.AnalyticityLambdaPfeSharpening`. The
-legacy import path is preserved by re-importing the new child.
+earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -239,7 +239,7 @@ legacy import path is preserved by re-importing the new child.
 The 23 §18.6 Λ-layer wrappers covering partitionFunctionΛ regularity
 at `h = 0`, freeEnergyΛ per-direction analyticity, and
 partitionFunction joint + general-h analyticity now live in
-`IsingModel.AmbientLattice.AnalyticityLambdaSection186`. The legacy
+`IsingModel.AmbientLattice.AnalyticityLambdaSection186`. The earlier
 import path is preserved by re-importing the new child.
 -/
 
@@ -251,7 +251,7 @@ The 11 Λ-layer wrappers covering §18.4-§18.6 capstones
 decomposition, freeEnergy = log 2 at β·J = 0,
 mayerPartialSum_one_at_one) and §18.5 Mayer filter-connected /
 ε^n / mayerPartialSum_analyticOnNhd now live in
-`IsingModel.AmbientLattice.AnalyticityLambdaCapstones`. The legacy
+`IsingModel.AmbientLattice.AnalyticityLambdaCapstones`. The earlier
 import path is preserved by re-importing the new child.
 -/
 

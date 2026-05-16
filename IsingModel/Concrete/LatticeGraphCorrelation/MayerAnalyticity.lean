@@ -5,7 +5,7 @@ import IsingModel.AmbientLattice.SpecialCases.MayerAnalyticity
 # Concrete Mayer analyticity wrappers for the lattice graph
 
 Narrow child module for ℤ^d `mayerPartialSum` and `mayerExpansionTerm`
-analytic wrappers. The theorem names are the same as the former legacy
+analytic wrappers. The theorem names are the same as the former
 declarations, but callers can now import this child module directly.
 -/
 

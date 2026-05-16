@@ -9,7 +9,7 @@ import IsingModel.AmbientLattice.SpecialCases.PartitionFunctionRegularityDiffere
 This module contains general-graph `Continuous`, `Differentiable`,
 `AnalyticAt`, and `AnalyticOnNhd` APIs for per-stage
 `partitionFunctionAlongExhaustion` at zero external field. It is split out of
-the legacy ambient special-cases module so concrete partition-function
+the original ambient special-cases module so concrete partition-function
 regularity wrappers can depend on a narrower child path.
 -/
 
@@ -46,7 +46,7 @@ The two `Differentiable ℝ` wrappers
 `partitionFunctionAlongExhaustion_differentiable_J_h_zero`) now live
 in
 `IsingModel.AmbientLattice.SpecialCases.PartitionFunctionRegularityDifferentiable`.
-The legacy import path is preserved by re-exporting the new child
+The earlier import path is preserved by re-exporting the new child
 from this parent module and from the umbrella.
 -/
 

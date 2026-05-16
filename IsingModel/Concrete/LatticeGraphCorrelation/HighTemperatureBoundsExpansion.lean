@@ -105,7 +105,7 @@ The 3 ℤ^d
 and `log_partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_closed`
 closed-form wrappers now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsExpansionCorrelationLogZ`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -119,7 +119,7 @@ The 5 ℤ^d HT partition-function / free-energy bound wrappers
 `partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_lower_bound`)
 now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsExpansionPartitionBounds`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -134,7 +134,7 @@ high-temperature wrappers
 `freeEnergyAlongExhaustion_high_temp_h_zero_upper_bound`,
 `freeEnergyΛ_high_temp_h_zero_lower_bound`) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsExpansionFreeEnergy`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 

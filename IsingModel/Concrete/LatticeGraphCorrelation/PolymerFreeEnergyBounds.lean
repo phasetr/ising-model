@@ -6,7 +6,7 @@ import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBounds
 
 Narrow child module for ℤ^d `polymerFreeEnergy` regularity, bounds,
 comparison, and edge-case wrappers. This keeps callers that only need these
-forwarders out of the monolithic concrete legacy module.
+forwarders out of the monolithic concrete module.
 -/
 
 namespace IsingModel
@@ -20,7 +20,7 @@ The 8 ℤ^d `polymerFreeEnergy_Λ_latticeGraph_*` and
 `differentiableOn_Ici_zero` in both Λ and AlongExhaustion forms) now
 live in
 `IsingModel.Concrete.LatticeGraphCorrelation.PolymerFreeEnergyBoundsRegularity`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 /-! ### §18.5 polymerFreeEnergy bound family ℤ^d wraps -/
@@ -104,7 +104,7 @@ and `polymerFreeEnergyAlongExhaustion_latticeGraph_{tanh_sandwich,
 le_card_log_two_of_le_one, tanh_le_card_log_two, tanh_double_bound}`)
 now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.PolymerFreeEnergyBoundsTanh`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 end Ambient

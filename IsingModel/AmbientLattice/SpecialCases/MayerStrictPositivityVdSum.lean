@@ -58,8 +58,8 @@ The four pointwise wrappers
 `_tanh_gt_one_of_tanh_pos_of_polymers_nonempty`,
 `_minus_one_tanh_pos_of_tanh_pos_of_polymers_nonempty`) now live in
 `IsingModel.AmbientLattice.SpecialCases.MayerStrictPositivityVdSumPointwise`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 /-- **Along-ex: vdSum is `StrictMonoOn (Set.Ioi 0)`**. -/

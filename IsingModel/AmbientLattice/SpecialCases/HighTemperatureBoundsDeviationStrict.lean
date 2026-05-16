@@ -61,7 +61,7 @@ The two Z and log Z strict-deviation wrappers
 `log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_deviation_pos`)
 now live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviationStrictZ`.
-The legacy import path is preserved by re-exporting the new child
+The earlier import path is preserved by re-exporting the new child
 from this parent module and from the umbrella.
 -/
 
@@ -73,8 +73,8 @@ The four ferromagnetic strict-deviation wrappers
 and the two strict-deviation bundles (`_strict_deviation_bundle`,
 `_strict_deviation_bundle_ferromagnetic`) now live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviationStrictFerro`.
-The legacy import path is preserved by re-exporting the new child
-from `Legacy.lean` and the umbrella `HighTemperatureBounds.lean`.
+The earlier import path is preserved by re-exporting the new child
+from the umbrella `HighTemperatureBounds.lean`.
 -/
 
 end Ambient

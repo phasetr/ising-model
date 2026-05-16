@@ -5,7 +5,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempContinuous
 # High-temperature zero-boundary and half-open wrappers at ℤ^d
 
 This module contains the concrete §17.5 high-temperature zero-boundary layer
-split from the legacy `Inequalities` module: β/J linear bounds at the zero
+split from the original `Inequalities` module: β/J linear bounds at the zero
 boundary, closed-interval continuity and uniform convergence, zero-included
 Lipschitz bounds, half-line a.e. differentiability, and half-open locally
 uniform convergence wrappers.

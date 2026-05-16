@@ -6,7 +6,7 @@ import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyPointwiseRegula
 
 This module contains concrete `latticeGraph` specializations of ambient
 `ContinuousAt` and `DifferentiableAt` APIs for along-exhaustion partition
-function and free energy. It is split out of the legacy concrete correlation
+function and free energy. It is split out of the original concrete correlation
 module so downstream users can depend on a narrower child path.
 -/
 

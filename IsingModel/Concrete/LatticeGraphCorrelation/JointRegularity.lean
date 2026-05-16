@@ -6,7 +6,7 @@ import IsingModel.AmbientLattice.SpecialCases.JointRegularity
 
 This module contains concrete `latticeGraph` specializations of joint
 `Continuous`, `Differentiable`, `ContinuousAt`, and `DifferentiableAt` APIs for
-correlation, magnetization, and susceptibility. It is split out of the legacy
+correlation, magnetization, and susceptibility. It is split out of the original
 concrete correlation module so downstream users can depend on a narrower child
 path.
 -/

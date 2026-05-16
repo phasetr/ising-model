@@ -58,7 +58,7 @@ The two ferromagnetic VD polymer-family sum sandwich wrappers
 `vdPolymerFamilies_sumAlongExhaustion_sandwich_sharp_ferromagnetic`)
 now live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureVdSandwichFEFerro`.
-The legacy import path is preserved by re-exporting the new child
+The earlier import path is preserved by re-exporting the new child
 from this parent module and from the umbrella.
 -/
 
@@ -69,8 +69,8 @@ The two strict free-energy upper bound wrappers
 `freeEnergyAlongExhaustion_lt_log_two_plus_high_temp_correction_ferromagnetic`)
 now live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureVdSandwichFreeEnergy`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 end Ambient

@@ -61,8 +61,8 @@ The four `vdPolymerFamilies_sumAlongExhaustion_tanh_*` wrappers
 (`_continuous_beta`, `_continuous_J`, `_differentiable_beta`,
 `_differentiable_J`) now live in
 `IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityVdPolymerTanh`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 end Ambient

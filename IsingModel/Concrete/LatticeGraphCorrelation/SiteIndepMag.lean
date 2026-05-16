@@ -101,7 +101,7 @@ The 10 ℤ^d `uniformSpontaneousMagnetization*` wrappers
 `_nonneg`, `_le_one`, `neg_one_le_*`,
 `abs_*_le_one`, `_sq_le_one`) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.SiteIndepMagUniformSpontaneous`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 /-! ## Moved: ℤ^d `spontaneousCorrelation`/`spontaneousMagnetization_latticeGraph` wrappers
@@ -113,7 +113,7 @@ The 8 ℤ^d wrappers `spontaneousCorrelation_latticeGraph_apply`,
 `spontaneousMagnetization_latticeGraph_{nonneg,le_one,monotone_J,monotone_beta}`
 now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.SiteIndepMagSpontaneous`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -166,7 +166,7 @@ The 17 ℤ^d `twoPointFunction_*` / `truncated2TwoPoint_*` /
 `truncated3TwoPoint_*` / `truncated4TwoPoint_*` bounds + symmetry
 wrappers now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.SiteIndepMagTwoPoint`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 

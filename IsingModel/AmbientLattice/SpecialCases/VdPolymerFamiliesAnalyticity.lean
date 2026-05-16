@@ -8,7 +8,7 @@ import IsingModel.AmbientLattice.SpecialCases.VdPolymerFamiliesAnalyticityTanh
 
 Narrow child module for along-exhaustion `vdPolymerFamilies_sum`,
 `log_vdPolymerFamilies_sum`, and epsilon analyticity wrappers. This keeps
-callers that only need these analytic forwarders out of the monolithic legacy
+callers that only need these analytic forwarders out of the monolithic
 special-cases module.
 -/
 
@@ -36,7 +36,7 @@ The two along-ex tanh-composition analyticity wrappers
 (`vdPolymerFamilies_sumAlongExhaustion_tanh_analyticAt_beta`,
 `vdPolymerFamilies_sumAlongExhaustion_tanh_analyticAt_J`) now live in
 `IsingModel.AmbientLattice.SpecialCases.VdPolymerFamiliesAnalyticityTanh`.
-The legacy import path is preserved by re-exporting the new child
+The earlier import path is preserved by re-exporting the new child
 from this parent module and from the umbrella.
 -/
 

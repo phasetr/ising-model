@@ -85,7 +85,7 @@ theorem log_partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_
 The three ferromagnetic alongExhaustion sharper-exp HT upper-bound
 wrappers now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExhaustionExpSharperFerro`.
-The legacy import path is preserved by re-importing the new child. -/
+The earlier import path is preserved by re-importing the new child. -/
 
 
 /-! ## Moved: ℤ^d HT AlongExhaustion sandwich_exp wrappers
@@ -96,7 +96,7 @@ The 4 ℤ^d along-exhaustion sandwich_exp HT wrappers
 `freeEnergyAlongExhaustion_latticeGraph_high_temp_h_zero_sandwich_exp`,
 `_ferromagnetic`) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExExpSharperSandwich`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 /-! ## Moved: ℤ^d HT AlongExhaustion complete_summary_exp wrappers
@@ -106,7 +106,7 @@ The 6 ℤ^d along-exhaustion `*_complete_summary_exp` HT wrappers
 `log_partitionFunctionAlongExhaustion_*`; plus 3 `_ferromagnetic`
 variants) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExExpSharperCompleteSummary`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 

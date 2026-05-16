@@ -8,7 +8,7 @@ import IsingModel.BetaDerivative
 # Finite susceptibility and Lebowitz derivative bounds at ℤ^d
 
 This module contains the concrete §17.1 finite-susceptibility wrapper and
-§17.5 Lebowitz derivative bound layer split from the legacy `Inequalities`
+§17.5 Lebowitz derivative bound layer split from the original `Inequalities`
 module: Step 149 finite susceptibility below the critical inverse temperature,
 Steps 157--166 finite-volume derivative bounds, finite-to-infinite correlation
 comparison, Lebowitz sum bounds, and high-temperature consequences.

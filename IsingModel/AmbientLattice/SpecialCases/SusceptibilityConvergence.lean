@@ -6,9 +6,9 @@ import IsingModel.AmbientLattice.MagnetizationAlongExhaustion
 # Susceptibility convergence wrappers along an exhaustion
 
 Narrow child module for finite-stage susceptibility convergence wrappers along
-an exhaustion. The theorem names are the same as the former legacy
+an exhaustion. The theorem names are the same as the former
 declarations, but callers can now avoid importing the monolithic special-cases
-legacy module.
+original module.
 -/
 
 namespace IsingModel

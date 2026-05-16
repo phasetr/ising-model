@@ -66,8 +66,8 @@ The two along-ex `polymerFreeEnergyAlongExhaustion_tanh_*_of_eps_pos`
 wrappers (`_lt_eps_of_eps_pos`, `_lt_pow_sub_one_of_eps_pos`) now
 live in
 `IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyTanhSharpeningIffEpsPos`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 end Ambient

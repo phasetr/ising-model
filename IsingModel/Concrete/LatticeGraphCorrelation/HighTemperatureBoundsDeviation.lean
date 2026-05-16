@@ -27,7 +27,7 @@ The 4 ℤ^d Λ-layer `freeEnergyΛ_latticeGraph_high_temp_h_zero_*`
 wrappers (`deviation_bound_exp`, `deviation_bound_exp_ferromagnetic`,
 `continuity_bundle`, `continuity_bundle_ferromagnetic`) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsDeviationContinuity`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 /-- **ℤ^d Λ f deviation sandwich**. -/
@@ -105,7 +105,7 @@ The 8 ℤ^d Λ-layer strict-deviation HT wrappers
 `partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_strict_deviation_bundle`,
 `_ferromagnetic`) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsDeviationStrict`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 end Ambient

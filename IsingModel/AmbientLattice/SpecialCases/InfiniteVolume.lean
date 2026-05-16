@@ -4,7 +4,7 @@ import IsingModel.AmbientLattice.TruncatedFunctions
 # Infinite-volume special-case aliases
 
 This module contains lightweight ambient special-case APIs that depend only on
-the infinite-volume truncated-correlation layer. Keeping them outside the legacy
+the infinite-volume truncated-correlation layer. Keeping them outside the original
 special-cases body lets concrete correlation modules use these aliases without
 importing the analytic or cluster-expansion stack.
 -/

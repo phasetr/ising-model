@@ -77,8 +77,8 @@ theorem correlationAlongExhaustion_high_temp_h_zero_at_empty_A
 The six `correlationAlongExhaustion_high_temp_h_zero_at_pair_*`
 wrappers now live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsCorrelationBasicPair`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 /-! ## Moved: correlation singleton + pair-singleton bundle wrappers
@@ -92,8 +92,8 @@ variants (`_at_pair_singleton_bundle`,
 `_at_pair_singleton_trivial_slices_bundle`,
 `_at_pair_singleton_bundle_ferromagnetic`) now live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsCorrelationBasicSingletonBundle`.
-The legacy import path is preserved by re-exporting the new child
-from `Legacy.lean` and the umbrella `HighTemperatureBounds.lean`.
+The earlier import path is preserved by re-exporting the new child
+from the umbrella `HighTemperatureBounds.lean`.
 -/
 
 end Ambient

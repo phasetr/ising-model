@@ -42,7 +42,7 @@ The four wrappers
 `partitionFunctionComplexAlongExhaustion_at_real_latticeGraph`,
 `freeEnergyComplexAlongExhaustion_at_real_latticeGraph` now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.PerStageComplexAlongEx`.
-The legacy import path is preserved by re-importing the new child. -/
+The earlier import path is preserved by re-importing the new child. -/
 
 
 /-! ## Moved: ℤ^d per-stage complex analyticity wrappers
@@ -60,7 +60,7 @@ wrappers
 `freeEnergyComplexAlongExhaustion_tendsto_at_real_of_disjointTowerHypotheses_latticeGraph`)
 now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.PerStageComplex`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -146,7 +146,7 @@ The 5 ℤ^d GJ §17.2/§17.7 critical-exponent wrappers
 `absence_of_even_bound_states_finite_vol_latticeGraph`,
 `absence_of_even_bound_states_infinite_vol_latticeGraph`) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.PerStageZetaEta`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -162,7 +162,7 @@ The 8 ℤ^d Λ-induced subgraph wrappers
 `twoPoint_convergent_subgraph_latticeGraph`,
 `freeEnergy_convergent_subgraph_latticeGraph`) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.PerStageSubgraph`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 end Ambient

@@ -69,8 +69,8 @@ The two along-ex edgeless Mayer identity wrappers
 `mayer_identity_of_edgeFinset_empty_tanh_AlongExhaustion`) now
 live in
 `IsingModel.AmbientLattice.SpecialCases.MayerTrivialCasesIdentityEdgeless`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 end Ambient

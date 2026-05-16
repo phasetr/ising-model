@@ -200,7 +200,7 @@ variable {V : Type*} [DecidableEq V]
 
 The 13 basic freeEnergyΛ / freeEnergyAlongExhaustion wrappers now live in
 `IsingModel.AmbientLatticeSumFreeEnergy`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -210,7 +210,7 @@ The legacy import path is preserved by re-importing the new child.
 The 12 partitionFunction / log_partitionFunction ferromagnetic lower-bound
 wrappers now live in
 `IsingModel.AmbientLatticeSumGeFerromagnetic`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -774,7 +774,7 @@ theorem freeEnergyAlongExhaustion_tendsto_of_disjointTowerHypotheses
 The 14 log_partitionFunctionΛ / log_partitionFunctionAlongExhaustion
 trivial-slice + monotonicity wrappers now live in
 `IsingModel.AmbientLatticeSumLogZ`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 /-- **Closed form for `log (partitionFunctionΛ G Λ ⟨0, 0, β⟩)`**:
@@ -1497,7 +1497,7 @@ theorem freeEnergyInfinite_monotone_ambient_subgraph
 
 The 6 freeEnergyInfinite h-symmetry + monotonicity wrappers now live in
 `IsingModel.AmbientLatticeSumFInfHSymMono`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 /-- **`log Z` tends to `∞` along any exhaustion of an infinite ambient

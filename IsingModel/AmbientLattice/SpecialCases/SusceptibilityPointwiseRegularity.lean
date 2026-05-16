@@ -6,7 +6,7 @@ import IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularityD
 
 This module contains general-graph `Continuous`, `Differentiable`,
 `ContinuousAt`, and `DifferentiableAt` APIs for per-parameter
-`susceptibilityAlongExhaustion` regularity. It is split out of the legacy
+`susceptibilityAlongExhaustion` regularity. It is split out of the original
 ambient special-cases module so concrete susceptibility pointwise wrappers can
 depend on a narrower child path.
 -/
@@ -68,8 +68,8 @@ theorem susceptibilityAlongExhaustion_continuous_J_gen
 The three `susceptibilityAlongExhaustion_differentiable_*_gen`
 wrappers (`_beta`, `_field`, `_J`) now live in
 `IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularityDifferentiable`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 /-! ## Moved: ContinuousAt / DifferentiableAt along-ex susceptibility wrappers
@@ -77,8 +77,8 @@ from this parent module and from `Legacy.lean`.
 The six `susceptibilityAlongExhaustion_{continuousAt,differentiableAt}_{beta,field,J}_gen`
 pointwise wrappers now live in
 `IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularityAt`.
-The legacy import path is preserved by re-exporting the new child
-from `Legacy.lean` and from each downstream consumer that previously
+The earlier import path is preserved by re-exporting the new child
+from the umbrella `SpecialCases.lean` and from each downstream consumer that previously
 imported only this parent.
 -/
 

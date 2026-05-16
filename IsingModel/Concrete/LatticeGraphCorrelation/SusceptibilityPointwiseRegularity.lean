@@ -5,10 +5,10 @@ import IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularity
 /-!
 # Concrete pointwise regularity wrappers for lattice susceptibility
 
-This module contains concrete `latticeGraph` specializations and legacy
+This module contains concrete `latticeGraph` specializations and compatibility-named
 compatibility names for ambient `ContinuousAt`, `DifferentiableAt`,
 `Continuous`, and `Differentiable` APIs for per-parameter
-`susceptibilityAlongExhaustion` regularity. It is split out of the legacy
+`susceptibilityAlongExhaustion` regularity. It is split out of the original
 concrete correlation module so future susceptibility pointwise work can build a
 narrower child path.
 -/
@@ -18,7 +18,7 @@ open scoped symmDiff
 namespace IsingModel
 namespace Ambient
 
-/-! ### Legacy-compatible ℤ^d along-ex susceptibility regularity names -/
+/-! ### Compatibility-named ℤ^d along-ex susceptibility regularity names -/
 
 /-! ## Moved: susceptibilityAlongExhaustion β-direction (h=0) wrappers
 

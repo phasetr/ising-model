@@ -6,7 +6,7 @@ import IsingModel.AmbientLattice.SpecialCases.JointAnalyticity
 
 Narrow child module for ℤ^d `AnalyticAt` / `AnalyticOnNhd` forwarders in the
 joint `(β, J, h)` parameters. The theorem names are the same as the former
-legacy declarations, but callers can now import this child module directly.
+former declarations, but callers can now import this child module directly.
 -/
 
 namespace IsingModel

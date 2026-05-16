@@ -8,7 +8,7 @@ import IsingModel.AmbientLattice.SpecialCases.JointRegularityDifferentiable
 
 This module contains general-graph joint `Continuous`, `Differentiable`,
 `ContinuousAt`, and `DifferentiableAt` APIs for along-exhaustion correlation,
-magnetization, and susceptibility. It is split out of the legacy ambient
+magnetization, and susceptibility. It is split out of the original ambient
 special-cases module so concrete joint wrappers can depend on a narrower child
 path.
 -/
@@ -67,8 +67,8 @@ theorem susceptibilityAlongExhaustion_continuous_joint_gen
 The three joint `_differentiable_joint*` wrappers (correlation,
 magnetization, susceptibility) now live in
 `IsingModel.AmbientLattice.SpecialCases.JointRegularityDifferentiable`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 /-! ## Moved: joint ContinuousAt / DifferentiableAt along-ex wrappers
@@ -76,8 +76,8 @@ from this parent module and from `Legacy.lean`.
 The six joint `_continuousAt_joint*` / `_differentiableAt_joint*`
 wrappers for correlation, magnetization, and susceptibility now live
 in `IsingModel.AmbientLattice.SpecialCases.JointRegularityAt`. The
-legacy import path is preserved by re-exporting the new child from
-`Legacy.lean` and from each downstream consumer that previously
+earlier import path is preserved by re-exporting the new child from
+the umbrella `SpecialCases.lean` and from each downstream consumer that previously
 imported only this parent.
 -/
 

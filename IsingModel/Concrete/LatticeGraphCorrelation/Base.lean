@@ -45,7 +45,7 @@ The 2 `@[simp]` ℤ^d `freeEnergyAlongExhaustion_latticeGraph_apply` and
 `partitionFunctionAlongExhaustion_latticeGraph_apply` wrappers now live
 alongside the Λ-layer apply unfoldings in
 `IsingModel.Concrete.LatticeGraphCorrelation.BaseApply`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -67,7 +67,7 @@ The 4 ℤ^d wrappers
 `_le_correlationInfinite_of_other`, `_le_correlationInfinite`,
 and `_nonneg` now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.BaseCorrelationAlongExBounds`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -87,7 +87,7 @@ and
 `correlationAlongExhaustion_latticeGraph_{beta_zero_vanish,zero_params_vanish}`
 now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.BaseVanish`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -97,7 +97,7 @@ The 3 ℤ^d `partitionFunctionΛ_latticeGraph_apply`,
 `correlationΛ_latticeGraph_apply`, and `freeEnergyΛ_latticeGraph_apply`
 wrappers now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.BaseApply`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -108,7 +108,7 @@ The 4 ℤ^d
 and `spontaneousCorrelation_latticeGraph_monotone_ambient_subgraph`
 wrappers now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.BaseMonotoneAmbientSubgraph`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -120,7 +120,7 @@ The 9 ℤ^d `spontaneousCorrelation_latticeGraph_*` wrappers
 plus the `spontaneousMagnetization_latticeGraph_monotone_ambient_subgraph`
 companion now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.BaseSpontaneousCorrelation`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 /-! ## Moved: magnetization sq_le_one + correlation J=0 / ge_tanh wrappers
@@ -131,7 +131,7 @@ The 8 ℤ^d wrappers
 `correlation{Λ,Infinite}_latticeGraph_ge_tanh_pow_card`, and
 `magnetization{Λ,Infinite}_latticeGraph_ge_tanh` now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.BaseBoundsTanh`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -143,7 +143,7 @@ The 7 ℤ^d wrappers
 `correlationAlongExhaustion_latticeGraph_{empty,of_subset,of_not_subset,cubicExhaustion_monotone}`
 now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.BaseCorrelationAlongEx`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 

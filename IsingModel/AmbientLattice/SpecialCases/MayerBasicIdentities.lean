@@ -9,7 +9,7 @@ import IsingModel.AmbientLattice.SpecialCases.MayerBasicIdentitiesVdSum
 Narrow child module for along-exhaustion at-zero and at-one identities for
 `vdPolymerFamilies_sum`, `mayerPartialSum`, and `mayerExpansionTerm`. This
 keeps callers that only need these basic forwarders out of the monolithic
-legacy special-cases module.
+original special-cases module.
 -/
 
 namespace IsingModel
@@ -26,8 +26,8 @@ variable {V : Type*} [DecidableEq V]
 The two along-ex `vdPolymerFamilies_sumAlongExhaustion` evaluation
 identities (`_at_zero`, `_at_one`) now live in
 `IsingModel.AmbientLattice.SpecialCases.MayerBasicIdentitiesVdSum`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 /-- **Along-ex: mayerPartialSum at N = 0 = 0**. -/

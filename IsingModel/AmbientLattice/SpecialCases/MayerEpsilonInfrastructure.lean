@@ -8,7 +8,7 @@ import IsingModel.AmbientLattice.SpecialCases.MayerEpsilonInfrastructureVdSum
 Narrow child module for the first Mayer-term sign wrappers
 (`mayerExpansionTerm` at `n = 1`, `n = 2`) and the edgeless
 `allPolymers` wrapper along an exhaustion. This keeps callers that
-only need these forwarders out of the monolithic legacy special-cases
+only need these forwarders out of the monolithic original special-cases
 module.
 -/
 
@@ -44,8 +44,8 @@ The three `vdPolymerFamilies_sumAlongExhaustion_minus_one_*` ε(t)
 infrastructure wrappers (`_at_zero`, `_continuous`,
 `_lt_one_eventually`) now live in
 `IsingModel.AmbientLattice.SpecialCases.MayerEpsilonInfrastructureVdSum`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 /-- **Along-ex: allPolymers = ∅ on edgeless induced graphs**. -/

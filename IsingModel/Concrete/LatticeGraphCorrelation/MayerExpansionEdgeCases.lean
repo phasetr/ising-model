@@ -6,7 +6,7 @@ import IsingModel.AmbientLattice.SpecialCases.MayerExpansionEdgeCases
 
 Narrow child module for concrete `ℤ^d` Mayer expansion `n = 2`, no-polymer,
 edgeless, and absolute-bound wrappers. This keeps callers that only need these
-forwarders out of the monolithic lattice-correlation legacy module.
+forwarders out of the monolithic lattice-correlation module.
 -/
 
 namespace IsingModel

@@ -9,8 +9,8 @@ import IsingModel.AmbientLattice.MagnetizationInfinite
 Narrow child module for concrete `latticeGraph` correlation, magnetization, and
 susceptibility h-symmetry / absolute-field wrappers, including finite-volume,
 along-exhaustion, and infinite-volume forms. The theorem names are the same as
-the former legacy declarations, but callers can now avoid importing the
-monolithic concrete legacy module.
+the former declarations, but callers can now avoid importing the
+monolithic concrete module.
 -/
 
 namespace IsingModel

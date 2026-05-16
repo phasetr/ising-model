@@ -136,8 +136,8 @@ now live in `HighTemperatureBoundsRatioBoundsBound.lean`. -/
 The 12 ℤ^d Λ-direct `log_partitionFunction` and `freeEnergy`
 ratio_sandwich / ratio_bound wrappers now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsRatioLogFe`.
-The umbrella `HighTemperatureBounds.lean` and `Legacy.lean` re-import
-the new child so the legacy import paths and theorem names remain
+The umbrella `HighTemperatureBounds.lean` re-imports
+the new child so the import paths and theorem names remain
 unchanged.
 -/
 
@@ -147,7 +147,7 @@ The 7 ℤ^d Λ-direct `triple_ratio_sandwich_bundle` and
 `triple_ratio_bound_bundle` wrappers (J = 0 / β = 0 trivial slices,
 ferromagnetic variants) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsTripleRatio`.
-The legacy import path is preserved by re-exporting the new child
+The earlier import path is preserved by re-exporting the new child
 from the umbrella module that aggregates both.
 -/
 
