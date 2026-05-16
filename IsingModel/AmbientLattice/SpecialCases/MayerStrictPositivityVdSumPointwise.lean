@@ -1,5 +1,6 @@
 import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLattice.SpecialCases.MayerStrictPositivityVdSumPointwiseTanh
 
 /-!
 # `vdPolymerFamilies_sum` pointwise positivity wrappers along an exhaustion
@@ -46,34 +47,16 @@ vdPolymerFamilies_sumAlongExhaustion_minus_one_pos_of_t_pos_of_polymers_nonempty
   vdPolymerFamilies_sum_Λ_minus_one_pos_of_t_pos_of_polymers_nonempty
     G (Λ.volume n) h_t_pos h_poly
 
-/-- **Along-ex: 1 < vdSum(tanh) under `0 < tanh` and polymers
-exist**. -/
-theorem
-vdPolymerFamilies_sumAlongExhaustion_tanh_gt_one_of_tanh_pos_of_polymers_nonempty
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    {β J : ℝ} (h_tanh_pos : 0 < Real.tanh (β * J)) (n : ℕ)
-    (h_poly : (IsingModel.allPolymers
-      (inducedGraph G (Λ.volume n))).Nonempty) :
-    1 < (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
-              (inducedGraph G (Λ.volume n)),
-            ∏ P ∈ Γ, (Real.tanh (β * J)) ^ P.card) :=
-  vdPolymerFamilies_sum_Λ_tanh_gt_one_of_tanh_pos_of_polymers_nonempty
-    G (Λ.volume n) h_tanh_pos h_poly
+/-! ## Moved: 2 vd_sum tanh-positivity wrappers
 
-/-- **Along-ex: 0 < ε(tanh) under `0 < tanh` and polymers exist**. -/
-theorem
-vdPolymerFamilies_sumAlongExhaustion_minus_one_tanh_pos_of_tanh_pos_of_polymers_nonempty
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    {β J : ℝ} (h_tanh_pos : 0 < Real.tanh (β * J)) (n : ℕ)
-    (h_poly : (IsingModel.allPolymers
-      (inducedGraph G (Λ.volume n))).Nonempty) :
-    0 < (∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
-              (inducedGraph G (Λ.volume n))).erase ∅,
-            ∏ P ∈ Γ, (Real.tanh (β * J)) ^ P.card) :=
-  vdPolymerFamilies_sum_Λ_minus_one_tanh_pos_of_tanh_pos_of_polymers_nonempty
-    G (Λ.volume n) h_tanh_pos h_poly
+The two along-ex tanh-positivity wrappers
+(`vdPolymerFamilies_sumAlongExhaustion_tanh_gt_one_of_tanh_pos_of_polymers_nonempty`,
+`vdPolymerFamilies_sumAlongExhaustion_minus_one_tanh_pos_of_tanh_pos_of_polymers_nonempty`)
+now live in
+`IsingModel.AmbientLattice.SpecialCases.MayerStrictPositivityVdSumPointwiseTanh`.
+The legacy import path is preserved by re-exporting the new child
+from this parent module and from the umbrella.
+-/
 
 end Ambient
 end IsingModel
