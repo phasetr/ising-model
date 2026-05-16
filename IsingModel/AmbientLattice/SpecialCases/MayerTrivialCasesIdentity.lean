@@ -1,5 +1,6 @@
 import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLattice.SpecialCases.MayerTrivialCasesIdentityEdgeless
 
 /-!
 # Mayer identity edge-case wrappers along an exhaustion
@@ -61,34 +62,16 @@ theorem mayer_identity_of_trivial_AlongExhaustion
         (Real.tanh (β * J)) :=
   mayer_identity_of_trivial_Λ G (Λ.volume n) h N
 
-/-- **Along-ex: Mayer identity for edgeless induced graphs**. -/
-theorem mayer_identity_of_edgeFinset_empty_AlongExhaustion
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (n : ℕ)
-    (h_empty : (inducedGraph G (Λ.volume n)).edgeFinset = ∅)
-    (t : ℝ) (N : ℕ) :
-    IsingModel.polymerFreeEnergy
-        (inducedGraph G (Λ.volume n)) t =
-      IsingModel.mayerPartialSum
-        (inducedGraph G (Λ.volume n)) N t :=
-  mayer_identity_of_edgeFinset_empty_Λ G (Λ.volume n) h_empty t N
+/-! ## Moved: 2 edgeless Mayer identity wrappers
 
-/-- **Along-ex: Mayer identity for edgeless induced graphs (tanh
-form)**. -/
-theorem mayer_identity_of_edgeFinset_empty_tanh_AlongExhaustion
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (n : ℕ)
-    (h_empty : (inducedGraph G (Λ.volume n)).edgeFinset = ∅)
-    (β J : ℝ) (N : ℕ) :
-    IsingModel.polymerFreeEnergy
-        (inducedGraph G (Λ.volume n)) (Real.tanh (β * J)) =
-      IsingModel.mayerPartialSum
-        (inducedGraph G (Λ.volume n)) N
-        (Real.tanh (β * J)) :=
-  mayer_identity_of_edgeFinset_empty_tanh_Λ
-    G (Λ.volume n) h_empty β J N
+The two along-ex edgeless Mayer identity wrappers
+(`mayer_identity_of_edgeFinset_empty_AlongExhaustion`,
+`mayer_identity_of_edgeFinset_empty_tanh_AlongExhaustion`) now
+live in
+`IsingModel.AmbientLattice.SpecialCases.MayerTrivialCasesIdentityEdgeless`.
+The legacy import path is preserved by re-exporting the new child
+from this parent module and from `Legacy.lean`.
+-/
 
 end Ambient
 end IsingModel
