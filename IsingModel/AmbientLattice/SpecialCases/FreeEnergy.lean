@@ -1,6 +1,7 @@
 import IsingModel.AmbientLattice.SpontaneousMono
 import IsingModel.AmbientLattice.SpecialCases.FreeEnergyHSymmetry
 import IsingModel.AmbientLattice.SpecialCases.FreeEnergyTrivialSlices
+import IsingModel.AmbientLattice.SpecialCases.FreeEnergyTrivialSlicesInfinite
 
 /-!
 # Non-analytic free-energy special cases
