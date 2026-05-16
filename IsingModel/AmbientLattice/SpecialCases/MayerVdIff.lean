@@ -7,7 +7,7 @@ import IsingModel.AmbientLattice.SpecialCases.MayerVdIffTanh
 
 Narrow child module for along-exhaustion iff characterizations of
 `vdPolymerFamilies_sum`. This keeps callers that only need the equivalence
-wrappers out of the monolithic legacy special-cases module.
+wrappers out of the monolithic original special-cases module.
 -/
 
 namespace IsingModel
@@ -51,7 +51,7 @@ The two `vdPolymerFamilies_sumAlongExhaustion_tanh_*_iff`
 characterization wrappers (`_tanh_gt_one_iff`, `_tanh_eq_one_iff`)
 now live in
 `IsingModel.AmbientLattice.SpecialCases.MayerVdIffTanh`.
-The legacy import path is preserved by re-exporting the new child
+The earlier import path is preserved by re-exporting the new child
 from this parent module and from the umbrella.
 -/
 

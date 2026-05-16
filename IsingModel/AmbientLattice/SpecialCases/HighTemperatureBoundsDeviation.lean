@@ -48,7 +48,7 @@ The 4 ambient alongExhaustion `freeEnergyAlongExhaustion_high_temp_h_zero_contin
 wrappers (`_at_J_zero`, `_at_beta_zero`, `_bundle`,
 `_bundle_ferromagnetic`) now live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviationContinuity`.
-The legacy import path is preserved by re-importing the new child
+The earlier import path is preserved by re-importing the new child
 via the umbrella.
 -/
 
@@ -94,8 +94,8 @@ The three `*_deviation_*_ferromagnetic` wrappers
 `log_partitionFunctionAlongExhaustion_..._deviation_sandwich_ferromagnetic`)
 now live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviationFerro`.
-The legacy import path is preserved by re-exporting the new child
-from `Legacy.lean` and the umbrella `HighTemperatureBounds.lean`.
+The earlier import path is preserved by re-exporting the new child
+from the umbrella `HighTemperatureBounds.lean`.
 -/
 
 /-! ## Moved: strict-deviation wrappers
@@ -106,7 +106,7 @@ The 10 ambient alongExhaustion strict-deviation wrappers covering
 `_strict_deviation_bundle` (with ferromagnetic variants) now live
 in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviationStrict`.
-The legacy import path is preserved by re-importing the new child
+The earlier import path is preserved by re-importing the new child
 via the umbrella.
 -/
 

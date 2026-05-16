@@ -50,7 +50,7 @@ The 12 concrete per-direction `analyticAt` / `analyticOn` wrappers
 for `partitionFunction*` / `freeEnergy*` in `h`, `J`, `β` (plus joint
 analyticity) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.ComplexAnalyticityBasic`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -61,7 +61,7 @@ The 22 concrete real-complex compatibility, Lee-Yang-domain
 non-vanishing, and related restriction wrappers on `latticeGraph d`
 now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.ComplexRealCompat`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -79,7 +79,7 @@ The 15 concrete continuity, `AnalyticOnNhd`/`AnalyticOn`, and
 norm-bound wrappers for `partitionFunctionComplex` / `freeEnergyComplex`
 on `latticeGraph d` now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.ComplexContinuityNorm`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -96,7 +96,7 @@ the finite-volume GJ §4.6 Thm 4.6.2 branch-form ingredients at ℤ^d. -/
 The 11 concrete log Z / freeEnergyComplex local-branch construction
 wrappers on `latticeGraph d` now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.ComplexBranches`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -112,7 +112,7 @@ ball restatements from `IsingModel/ComplexAnalyticity.lean`. -/
 The 15 concrete slitPlane-locus continuity / analyticOn / differentiableOn
 wrappers and log-branch-on-ball wrappers on `latticeGraph d` now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.ComplexSlitPlane`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 /-! ## Moved: leeYang inclusions + real-axis restriction wrappers
@@ -120,7 +120,7 @@ The legacy import path is preserved by re-importing the new child.
 The 16 concrete leeYangSubdomain ⊆ slitPlane locus inclusions and
 real-axis restriction identities now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.ComplexRestrictions`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 /-! ## Moved: analyticBranch + entire wrappers
@@ -132,7 +132,7 @@ The 12 concrete `leeYangDomain_subset_branch_locus`,
 `continuousAt/differentiableAt_freeEnergyComplex_at_real_joint`, and
 `partitionFunctionComplex_entire_*` wrappers now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.ComplexBranchEntire`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -145,7 +145,7 @@ The final 10 concrete `isingEdgePoly` evaluations,
 `norm_partitionFunctionComplex_eq_partitionFunction_at_real` wrappers
 now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.ComplexIsingPoly`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 end Ambient

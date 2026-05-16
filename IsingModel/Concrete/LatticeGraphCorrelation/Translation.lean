@@ -23,7 +23,7 @@ and `truncated{2,3,4}Infinite`,
 5 `*_latticeGraph_translation` for `spontaneousCorrelation`,
 `spontaneousMagnetization`, and `truncated{2,3,4}Infinite`) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.TranslationVadd`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 /-! ## Moved: ℤ^d shift / vaddFinset_eq wrappers
@@ -38,7 +38,7 @@ The 8 ℤ^d shift / vaddFinset_eq wrappers
 `freeEnergyΛ_latticeGraph_vaddFinset_eq`,
 `log_partitionFunctionΛ_latticeGraph_vaddFinset_eq`) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.TranslationShifts`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 /-! ## Concrete `spontaneousCorrelation` on ℤ^d -/

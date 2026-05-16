@@ -7,8 +7,8 @@ import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyHighTemperatureBo
 
 Narrow child module for the §18.5 `vdPolymerFamilies_sum` sandwich,
 `MonotoneOn`, and `ε(t)` bound wrappers along an exhaustion. The
-theorem names are the same as the former legacy declarations, but
-callers can now avoid importing the monolithic special-cases legacy
+theorem names are the same as the former declarations, but
+callers can now avoid importing the monolithic special-cases
 module.
 -/
 
@@ -62,8 +62,8 @@ The three §18.5 `polymerFreeEnergy_tanh_*` wrappers
 `polymerFreeEnergyAlongExhaustion_tanh_lt_log_two_of_pow_lt_two`)
 now live in
 `IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyHighTemperatureBoundsTanh`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 end Ambient

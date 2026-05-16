@@ -139,7 +139,7 @@ cubic-correlation comparisons (`*_of_cubic_pseudoMassG_le_corr`,
 `cubicNamedRate_decay_mem_Ioc_of_pos_le_high_temp_rate`,
 `cubicNamedRate_decay_mem_Ioc_of_corr_mem_le_high_temp_rate`) now live
 in `IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassNamedRateCorr`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 end Ambient

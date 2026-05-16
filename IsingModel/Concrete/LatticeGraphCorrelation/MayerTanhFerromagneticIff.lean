@@ -6,7 +6,7 @@ import IsingModel.AmbientLattice.SpecialCases.MayerTanhFerromagneticIff
 
 Narrow child module for concrete `Z^d` ferromagnetic tanh iff wrappers for
 `polymerFreeEnergy` and `vdPolymerFamilies_sum`. This keeps callers that only
-need these forwarders out of the monolithic lattice-correlation legacy module.
+need these forwarders out of the monolithic lattice-correlation module.
 -/
 
 namespace IsingModel

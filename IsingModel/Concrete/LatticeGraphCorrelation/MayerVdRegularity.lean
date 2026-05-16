@@ -7,7 +7,7 @@ import IsingModel.AmbientLattice.SpecialCases.MayerVdRegularity
 Narrow child module for concrete `ℤ^d` wrappers around `mayerPartialSum`,
 `mayerExpansionTerm`, and `vdPolymerFamilies_sum` regularity and tanh
 forwarders. This keeps callers that only need these wrappers out of the
-monolithic lattice-correlation legacy module.
+monolithic lattice-correlation module.
 -/
 
 namespace IsingModel
@@ -86,7 +86,7 @@ The 16 ℤ^d `mayerPartialSum_Λ_latticeGraph_tanh_*`,
 `mayerExpansionTermAlongExhaustion_latticeGraph_tanh_*` wrappers
 (continuous/differentiable in β/J) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.MayerVdRegularityTanh`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -97,7 +97,7 @@ The 12 ℤ^d `vdPolymerFamilies_sum_Λ_latticeGraph_*` and
 (Continuous/Differentiable/HasDerivAt in t, plus tanh-variants in
 β/J) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.MayerVdRegularityPolymer`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 end Ambient

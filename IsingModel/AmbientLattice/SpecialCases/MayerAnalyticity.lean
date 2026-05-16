@@ -8,7 +8,7 @@ import IsingModel.AmbientLattice.SpecialCases.MayerAnalyticityTanh
 
 Narrow child module for along-exhaustion `mayerPartialSum` and
 `mayerExpansionTerm` analytic wrappers. This keeps callers that only need
-these analytic forwarders out of the monolithic legacy special-cases module.
+these analytic forwarders out of the monolithic original special-cases module.
 -/
 
 namespace IsingModel
@@ -51,8 +51,8 @@ The four `mayerPartialSumAlongExhaustion_tanh_analytic*` wrappers
 (`_analyticAt_beta`, `_analyticAt_J`, `_analyticOnNhd_beta`,
 `_analyticOnNhd_J`) now live in
 `IsingModel.AmbientLattice.SpecialCases.MayerAnalyticityTanh`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 /-! ## Moved: mayerExpansionTermAlongExhaustion tanh analyticity wrappers

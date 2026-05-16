@@ -54,8 +54,8 @@ The two `DifferentiableAt ℝ` pointwise h = 0 wrappers
 live in
 `IsingModel.AmbientLattice.SpecialCases.`
 `PartitionFreeEnergyPointwiseRegularityHZeroDifferentiableAt`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 

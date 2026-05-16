@@ -38,7 +38,7 @@ This parent re-imports the new child below so the remaining
 ferromagnetic wrappers (`_tanh_pow_dist_ferromagnetic`,
 `_exp_rate_dist_ferromagnetic`) continue to see them, and
 downstream consumers see all symbols via the parent and
-`Legacy.lean`.
+the umbrella `SpecialCases.lean`.
 -/
 
 /-- **Along-ex §18.7 ferromagnetic capstone**: under `0 ≤ J, 0 < β`,
@@ -79,8 +79,8 @@ The three §18.3 / §18.7 edge-pair correlation capstone wrappers
 `correlationAlongExhaustion_high_temp_h_zero_at_pair_pos_of_edge_ferromagnetic`)
 now live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDecayCapstonesEdge`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 end Ambient

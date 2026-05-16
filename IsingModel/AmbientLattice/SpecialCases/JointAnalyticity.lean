@@ -9,7 +9,7 @@ import IsingModel.AmbientLattice.SpecialCases.JointAnalyticitySusceptibility
 
 Narrow child module for general-graph `AnalyticAt` / `AnalyticOnNhd` wrappers
 in the joint `(β, J, h)` parameters. This keeps callers that only need these
-along-exhaustion forwarders out of the monolithic legacy special-cases module.
+along-exhaustion forwarders out of the monolithic original special-cases module.
 -/
 
 namespace IsingModel
@@ -50,8 +50,8 @@ joint-`(β, J, h)` analyticity wrappers
 (`magnetizationAlongExhaustion_analyticAt_joint`,
 `magnetizationAlongExhaustion_analyticOnNhd_joint`) now live in
 `IsingModel.AmbientLattice.SpecialCases.JointAnalyticityMagnetization`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 /-! ## Moved: 2 susceptibilityAlongExhaustion joint analyticity wrappers
@@ -61,8 +61,8 @@ joint-`(β, J, h)` analyticity wrappers
 (`susceptibilityAlongExhaustion_analyticAt_joint_gen`,
 `susceptibilityAlongExhaustion_analyticOnNhd_joint_gen`) now live in
 `IsingModel.AmbientLattice.SpecialCases.JointAnalyticitySusceptibility`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 /-! ## Moved: partitionFunction + freeEnergy joint analyticity wrappers

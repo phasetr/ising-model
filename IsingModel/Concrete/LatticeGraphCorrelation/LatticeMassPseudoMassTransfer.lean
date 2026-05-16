@@ -24,7 +24,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransfer
 # Lattice-mass pseudo-mass transfer bridges at ℤ^d
 
 This module contains the concrete §17.1 / §17.5 bridge layer split from the
-legacy `Inequalities` module: Step 127 product summability bounds, critical
+original `Inequalities` module: Step 127 product summability bounds, critical
 inverse temperature wrappers, high-temperature decay transfer to arbitrary
 exhaustions, pseudo-mass comparison bridges, and below-critical cluster /
 summability consequences.
@@ -41,7 +41,7 @@ namespace Ambient
 The §17.5 Step 127 Lebowitz-exponential product summability bounds and
 §17.1 / §17.5 criticalInverseTemp foundations now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferSummability`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -50,7 +50,7 @@ The legacy import path is preserved by re-importing the new child.
 The 5 `HasExponentialDecay_*_transfer*` and
 `latticeMass_*_high_temp_exhaustion` wrappers now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferExpDecay`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -59,7 +59,7 @@ The legacy import path is preserved by re-importing the new child.
 The 7 basic §17.5 pseudoMassFromParamsAtPair comparison +
 latticeMass_ge / latticeMass_pos wrappers now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferBasic`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -67,7 +67,7 @@ The legacy import path is preserved by re-importing the new child.
 
 The 6 exhaustion-variant pseudoMassFromParamsAtPair wrappers now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferExhaustion`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -75,7 +75,7 @@ The legacy import path is preserved by re-importing the new child.
 
 The 6 cubic-variant pseudoMassFromParamsAtPair wrappers now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferCubic`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -84,7 +84,7 @@ The legacy import path is preserved by re-importing the new child.
 
 The 6 reference-variant pseudoMassFromParamsAtPair wrappers now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferReference`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -92,7 +92,7 @@ The legacy import path is preserved by re-importing the new child.
 
 The 6 cubic_pseudoMassFromParamsAtPair variant wrappers now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferCubicPseudoMass`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -101,7 +101,7 @@ The legacy import path is preserved by re-importing the new child.
 
 The 13 tanh-power profile + twoPointFunction bridge wrappers now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferTanhPowDist`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 /-- **Cluster property holds below the critical inverse temperature** (GJ §17.1):

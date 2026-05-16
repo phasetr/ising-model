@@ -49,7 +49,7 @@ The two `mayerPartialSumAlongExhaustion_tanh_differentiable_*`
 wrappers (`_tanh_differentiable_beta`, `_tanh_differentiable_J`)
 now live in
 `IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityTanhDifferentiable`.
-The legacy import path is preserved by re-exporting the new child
+The earlier import path is preserved by re-exporting the new child
 from this parent module and from the umbrella.
 -/
 
@@ -58,8 +58,8 @@ from this parent module and from the umbrella.
 The four `mayerExpansionTermAlongExhaustion_tanh_*` continuity /
 differentiability wrappers (in `β` and `J`) now live in
 `IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityTanhExpansionTerm`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 end Ambient

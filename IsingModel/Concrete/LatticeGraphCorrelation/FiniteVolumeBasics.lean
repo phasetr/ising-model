@@ -8,8 +8,8 @@ import IsingModel.FreeEnergy
 
 Narrow child module for concrete `latticeGraph` finite-volume graph, spin
 algebra, bottom-graph, and Hamiltonian symmetry wrappers. The theorem names are
-the same as the former legacy declarations, but callers can now avoid importing
-the monolithic concrete legacy module.
+the same as the former declarations, but callers can now avoid importing
+the monolithic concrete module.
 -/
 
 open scoped symmDiff

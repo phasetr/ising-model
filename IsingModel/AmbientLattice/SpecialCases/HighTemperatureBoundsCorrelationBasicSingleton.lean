@@ -33,7 +33,7 @@ The two trivial-parameter-slice singleton vanishing wrappers
 `correlationAlongExhaustion_high_temp_h_zero_at_singleton_beta_zero`)
 now live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsCorrelationBasicSingletonTrivial`.
-The legacy import path is preserved by re-exporting the new child
+The earlier import path is preserved by re-exporting the new child
 from this parent module and from the umbrella.
 -/
 

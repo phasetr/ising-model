@@ -261,7 +261,7 @@ theorem magnetizationInfinite_monotone_beta
 The 10 Λ-level h-symmetry, odd-vanish at h=0, J_zero, and tanh-power
 lower-bound wrappers now live in
 `IsingModel.AmbientLattice.MagnetizationInfiniteLambdaHSymmetry`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -270,7 +270,7 @@ The legacy import path is preserved by re-importing the new child.
 The 9 alongExhaustion / correlationInfinite h-symmetry wrappers now
 live in
 `IsingModel.AmbientLattice.MagnetizationInfiniteExhaustionHSymmetry`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -279,7 +279,7 @@ The legacy import path is preserved by re-importing the new child.
 The infinite-volume susceptibility definition `susceptibilityInfinite`
 and 4 of its properties now live in
 `IsingModel.AmbientLattice.MagnetizationInfiniteSusceptibility`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 The h-symmetry bound `abs_magnetizationInfinite_le_magnetizationInfinite_abs_h`
 remains here because it directly references `magnetizationInfinite`.
 -/
@@ -431,7 +431,7 @@ theorem magnetizationInfinite_eq_zero_of_exists_stage_not_mem
 
 The 8 h_zero / J_zero / zero_params / tanh_pow wrappers now live in
 `IsingModel.AmbientLattice.MagnetizationInfiniteHZeroJZero`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 The closely related `magnetizationInfinite_ge_tanh` stays here because
 it references `magnetizationInfinite` directly.
 -/
@@ -453,7 +453,7 @@ theorem magnetizationInfinite_ge_tanh
 
 The 9 empty / beta_zero_vanish / zero_params_vanish wrappers now live in
 `IsingModel.AmbientLattice.MagnetizationInfiniteEmptyTrivial`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -462,7 +462,7 @@ The legacy import path is preserved by re-importing the new child.
 The 7 magnetizationΛ / magnetizationAlongExhaustion trivial-slice
 wrappers now live in
 `IsingModel.AmbientLattice.MagnetizationInfiniteMagTrivial`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 /-- **β=0 infinite-volume magnetization vanishes**: at infinite
@@ -526,7 +526,7 @@ theorem magnetizationInfinite_zero_at_h_zero
 The 7 susceptibilityInfinite J = 0 closed form + trivial-slice +
 regularity-at-J=0 wrappers now live in
 `IsingModel.AmbientLattice.MagnetizationInfiniteSusceptibilityRegularity`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 /-- **`magnetizationInfinite` ContinuousOn h on Ici 0 at J = 0** (Step 266):

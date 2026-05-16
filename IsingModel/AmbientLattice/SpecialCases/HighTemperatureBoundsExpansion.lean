@@ -36,7 +36,7 @@ upper-bound, closed-form, and lower_le_upper consistency wrappers
 `freeEnergyAlongExhaustion_high_temp_h_zero_upper_bound`,
 `freeEnergyAlongExhaustion_high_temp_h_zero_lower_bound`) now live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansionLowerUpper`.
-The legacy import path is preserved by re-importing the new child
+The earlier import path is preserved by re-importing the new child
 via the umbrella.
 -/
 
@@ -47,7 +47,7 @@ The 4 ambient alongExhaustion `_high_temp_expansion_h_zero` /
 `one_le_sum_pow_tanh_even_subgraph_alongExhaustion` wrappers now
 live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansionVariants`.
-The legacy import path is preserved by re-importing the new child
+The earlier import path is preserved by re-importing the new child
 via the umbrella.
 -/
 
@@ -61,7 +61,7 @@ complete-summary wrappers (`*_closed_at_J_zero`,
 `*_sandwich`, `*_complete_summary`, freeEnergy
 complete_summary) now live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansionClosedForms`.
-The legacy import path is preserved by re-importing the new child
+The earlier import path is preserved by re-importing the new child
 via the umbrella.
 -/
 

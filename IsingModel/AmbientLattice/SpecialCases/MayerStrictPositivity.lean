@@ -7,7 +7,7 @@ import IsingModel.AmbientLattice.SpecialCases.MayerStrictPositivityVdSum
 
 Narrow child module for along-exhaustion strict-monotonicity and strict
 positivity wrappers under `allPolymers` nonempty hypotheses. This keeps callers
-that only need these forwarders out of the monolithic legacy special-cases
+that only need these forwarders out of the monolithic original special-cases
 module.
 -/
 
@@ -24,8 +24,8 @@ wraps -/
 The seven `vdPolymerFamilies_sumAlongExhaustion_*_of_polymers_nonempty`
 wrappers now live in
 `IsingModel.AmbientLattice.SpecialCases.MayerStrictPositivityVdSum`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 /-- **Along-ex: 0 < pFE under `0 < t` and polymers exist**. -/

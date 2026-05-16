@@ -30,8 +30,8 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsCorrelation
 
 Narrow child module for the §18.3-§18.4 high-temperature expansion,
 lower/upper bound, sandwich, correlation, and deviation wrappers along an
-exhaustion. The theorem names are the same as the former legacy declarations,
-but callers can now avoid importing the monolithic special-cases legacy module.
+exhaustion. The theorem names are the same as the former declarations,
+but callers can now avoid importing the monolithic special-cases original module.
 -/
 
 namespace IsingModel
@@ -53,7 +53,7 @@ complete-summary wrappers (20 theorems for
 forms, plus the `one_le_sum_pow_tanh_even_subgraph_alongExhaustion` helper)
 now live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansion`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -66,7 +66,7 @@ sandwich / complete-summary wrappers (16 theorems for
 `log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_*_exp`
 with ferromagnetic variants) now live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharper`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 /-! ## Moved: alongExhaustion f/Z/log Z deviation / continuity wrappers
@@ -82,7 +82,7 @@ with the 4 `freeEnergyAlongExhaustion_*_continuity_*` wrappers
 (`_at_J_zero`, `_at_beta_zero`, `_bundle`, `_bundle_ferromagnetic`)
 subsequently narrowed in PR #2024 into
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviationContinuity`.
-The legacy import path is preserved by re-importing both children.
+The earlier import path is preserved by re-importing both children.
 -/
 
 /-! ## Moved: alongExhaustion Z/f/log Z ratio sandwich/ratio bound wrappers
@@ -98,7 +98,7 @@ deviation_pos / pow_two_lt) wrappers now live in
 (narrowed in PR #1995). The 7 `triple_ratio_*` wrappers (sandwich +
 bound bundles, J = 0 / β = 0 / ferromagnetic variants) now live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsTripleRatio`
-(narrowed in PR #1994). The legacy import path is preserved by
+(narrowed in PR #1994). The earlier import path is preserved by
 re-importing all three children.
 -/
 
@@ -146,7 +146,7 @@ The 15 ambient alongExhaustion §18.3-§18.4 correlation basic /
 bundle wrappers (`correlationAlongExhaustion_high_temp_h_zero_at_*`)
 now live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsCorrelationBasic`.
-The legacy import path is preserved by re-importing the new child
+The earlier import path is preserved by re-importing the new child
 via the umbrella.
 -/
 
@@ -158,7 +158,7 @@ decay capstone wrappers (pair correlation `tanh_pow_dist` /
 `pos_of_edge` / `ge_tanh_div_two_pow_edges`, with ferromagnetic
 variants) now live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDecayCapstones`.
-The legacy import path is preserved by re-importing the new child
+The earlier import path is preserved by re-importing the new child
 via the umbrella.
 -/
 
@@ -170,8 +170,8 @@ The two umbrella-residue correlation wrappers
 `correlationAlongExhaustion_high_temp_h_zero_at_singleton_ferromagnetic`)
 now live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsCorrelation`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 end Ambient

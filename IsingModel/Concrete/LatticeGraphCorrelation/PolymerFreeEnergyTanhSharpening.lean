@@ -8,7 +8,7 @@ wrappers
 Narrow child module for concrete `ℤ^d` polymer free-energy
 `tanh sharpening + β/J strict-mono` wrappers. This keeps callers that
 only need these forwarders out of the monolithic lattice-correlation
-legacy module.
+original module.
 -/
 
 namespace IsingModel

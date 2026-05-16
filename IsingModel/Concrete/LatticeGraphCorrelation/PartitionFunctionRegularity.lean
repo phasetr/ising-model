@@ -6,7 +6,7 @@ import IsingModel.AmbientLattice.SpecialCases.PartitionFunctionRegularity
 
 This module contains concrete `latticeGraph` specializations of `Continuous`,
 `Differentiable`, `AnalyticAt`, and `AnalyticOnNhd` APIs for partition
-functions at zero external field. It is split out of the legacy concrete
+functions at zero external field. It is split out of the original concrete
 correlation module so downstream users can depend on a narrower child path.
 -/
 

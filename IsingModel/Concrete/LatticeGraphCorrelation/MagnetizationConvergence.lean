@@ -6,8 +6,8 @@ import IsingModel.AmbientLattice.SpecialCases.MagnetizationConvergence
 
 Narrow child module for concrete finite-stage magnetization convergence
 wrappers on the lattice graph. The theorem names are the same as the former
-legacy declarations, but callers can now avoid importing the monolithic
-concrete legacy module.
+former declarations, but callers can now avoid importing the monolithic
+concrete original module.
 -/
 
 namespace IsingModel
@@ -16,7 +16,7 @@ namespace Ambient
 /-! ### magnetization parameter-direction convergent (β/h/J → ∞)
 ℤ^d wraps. Λ-direct versions already exist as
 `magnetizationΛ_latticeGraph_convergent_{beta,h,J}` (in
-`correlationΛ` form) earlier in the legacy module; this section adds the
+`correlationΛ` form) earlier in the original module; this section adds the
 along-exhaustion versions only. -/
 
 /-- **ℤ^d along-ex: magnetization β → ∞ convergence**. -/

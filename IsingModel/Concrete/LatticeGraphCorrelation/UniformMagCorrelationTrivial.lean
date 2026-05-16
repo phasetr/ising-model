@@ -122,7 +122,7 @@ The 11 ℤ^d `susceptibilityInfinite_latticeGraph_*` and
 zero_params trivial-slice + continuousOn / differentiableOn
 regularity wrappers now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.UniformMagSusceptibilityInfinite`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 end Ambient

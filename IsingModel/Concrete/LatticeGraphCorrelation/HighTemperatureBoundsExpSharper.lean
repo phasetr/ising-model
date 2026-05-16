@@ -85,7 +85,7 @@ The three ferromagnetic Λ-layer sharper-exp HT upper-bound wrappers
 `freeEnergyΛ_latticeGraph_high_temp_h_zero_upper_bound_exp_ferromagnetic`
 now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsExpSharperFerro`.
-The legacy import path is preserved by re-importing the new child. -/
+The earlier import path is preserved by re-importing the new child. -/
 
 
 /-! ## Moved: ℤ^d HT Λ-layer sandwich_exp wrappers
@@ -96,7 +96,7 @@ The 4 ℤ^d Λ-layer sandwich_exp HT wrappers
 `freeEnergyΛ_latticeGraph_high_temp_h_zero_sandwich_exp`,
 `_ferromagnetic`) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsExpSharperSandwich`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 /-! ## Moved: ℤ^d HT Λ-layer complete_summary_exp wrappers
@@ -105,7 +105,7 @@ The 6 ℤ^d Λ-layer `*_complete_summary_exp` HT wrappers (3 base:
 `partitionFunctionΛ_*`, `freeEnergyΛ_*`, `log_partitionFunctionΛ_*`;
 plus 3 `_ferromagnetic` variants) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsExpSharperCompleteSummary`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 end Ambient

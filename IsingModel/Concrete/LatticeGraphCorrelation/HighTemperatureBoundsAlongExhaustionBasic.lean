@@ -108,7 +108,7 @@ The 8 ℤ^d along-exhaustion correlation bound wrappers
 `_at_pair_le_one`, `_at_pair_sandwich`, `_at_pair_singleton_bundle`)
 now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExBasicCorrelation`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 /-! ## Moved: along-ex pair+singleton bundle wrappers
@@ -157,7 +157,7 @@ wrappers
 `_at_pair_beta_zero`, `_at_singleton_J_zero`, `_at_singleton_beta_zero`,
 `_at_singleton`, `_odd_card_eq_zero`) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExBasicTrivial`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 end Ambient

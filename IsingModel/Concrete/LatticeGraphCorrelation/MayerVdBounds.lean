@@ -6,7 +6,7 @@ import IsingModel.AmbientLattice.SpecialCases.MayerVdBounds
 
 Narrow child module for concrete `ℤ^d` `vdPolymerFamilies_sum` bound
 wrappers. This keeps callers that only need these forwarders out of the
-monolithic lattice-correlation legacy module.
+monolithic lattice-correlation module.
 -/
 
 namespace IsingModel

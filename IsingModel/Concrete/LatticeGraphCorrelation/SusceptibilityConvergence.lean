@@ -6,15 +6,15 @@ import IsingModel.AmbientLattice.SpecialCases.SusceptibilityConvergence
 
 Narrow child module for concrete finite-stage susceptibility convergence
 wrappers on the lattice graph. The theorem names are the same as the former
-legacy declarations, but callers can now avoid importing the monolithic
-concrete legacy module.
+former declarations, but callers can now avoid importing the monolithic
+concrete original module.
 -/
 
 namespace IsingModel
 namespace Ambient
 
 /-! ### susceptibility parameter-direction convergent (β/h/J → ∞)
-ℤ^d wraps. Λ-direct versions remain in the legacy module because they sit with
+ℤ^d wraps. Λ-direct versions remain in the original module because they sit with
 the nearby Λ-level susceptibility regularity wrappers; this module contains the
 along-exhaustion versions only. -/
 

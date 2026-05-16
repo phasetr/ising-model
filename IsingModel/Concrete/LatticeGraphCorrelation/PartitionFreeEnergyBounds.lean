@@ -5,7 +5,7 @@ import IsingModel.Concrete.LatticeGraphBED
 
 Thin `ℤ^d` specializations of partition-function and free-energy bounds,
 nonnegativity facts, and infinite-volume bridge statements.  These wrappers keep
-downstream imports away from the legacy concrete correlation module when only
+downstream imports away from the original concrete correlation module when only
 order-theoretic or bound facts are needed.
 -/
 
@@ -72,7 +72,7 @@ identity / nonneg wrappers (`eq_inv_card_mul_log`,
 `eq_inv_Λcard_mul_log`, `nonneg_of_ferromagnetic`, `eq_log_div_card`)
 now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.PartitionFreeEnergyBoundsFeAlongExId`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -84,7 +84,7 @@ bound wrappers (`ge_one`, `ge_one_general`, `ge_two_pow_card`,
 `ge_two_cosh_pow_card`, `nonneg_general`, `nonneg`,
 `ge_card_mul_log_two`, `ge_card_mul_log_two_cosh`) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.PartitionFreeEnergyBoundsAlongEx`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -95,7 +95,7 @@ The 6 ℤ^d `freeEnergyInfinite_latticeGraph_*` bridge wrappers
 `cubicExhaustion_of_eventually_const`, `le_uniform_upper_bound`,
 `cubicExhaustion_le_uniform_upper_bound`) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.PartitionFreeEnergyBoundsInfinite`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -105,7 +105,7 @@ The 8 ℤ^d `freeEnergyAlongExhaustion_latticeGraph_*` BddAbove /
 per-stage upper-bound / per-stage `log 2` and `log(2 cosh)`
 lower-bound / ferromagnetic per-stage nonneg wrappers now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.PartitionFreeEnergyBoundsAlongExBridges`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 end Ambient

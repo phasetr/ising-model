@@ -10,7 +10,7 @@ import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBoundsEdgeCases
 
 Narrow child module for along-exhaustion `polymerFreeEnergy` regularity,
 bounds, comparison, and edge-case wrappers. This keeps callers that only need
-these forwarders out of the monolithic legacy special-cases module.
+these forwarders out of the monolithic original special-cases module.
 -/
 
 namespace IsingModel
@@ -54,8 +54,8 @@ The two §18.5 along-ex boundary-case vanishing wrappers
 `polymerFreeEnergyAlongExhaustion_eq_zero_of_edgeFinset_empty`) now
 live in
 `IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBoundsEdgeCases`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 /-- **Along-ex: `polymerFreeEnergy` preserves order on `[0, ∞)`**

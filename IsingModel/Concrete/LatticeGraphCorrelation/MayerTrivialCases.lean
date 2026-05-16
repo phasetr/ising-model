@@ -7,7 +7,7 @@ import IsingModel.AmbientLattice.SpecialCases.MayerTrivialCases
 Narrow child module for concrete `ℤ^d` `mayerPartialSum 0 ≤ polymerFreeEnergy`
 comparisons and Mayer identity wrappers for no-polymer, trivial, and edgeless
 cases. This keeps callers that only need these wrappers out of the monolithic
-lattice-correlation legacy module.
+lattice-correlation module.
 -/
 
 namespace IsingModel

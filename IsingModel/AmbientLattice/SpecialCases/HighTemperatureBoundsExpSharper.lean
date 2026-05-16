@@ -65,7 +65,7 @@ The 5 ambient alongExhaustion sharper-exp `_sandwich_exp` wrappers
 `freeEnergyAlongExhaustion_*_sandwich_exp`, plus ferromagnetic
 variants for Z and f) now live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharperSandwich`.
-The legacy import path is preserved by re-importing the new child
+The earlier import path is preserved by re-importing the new child
 via the umbrella.
 -/
 
@@ -76,8 +76,8 @@ The three `*AlongExhaustion_high_temp_*_h_zero_upper_bound_exp_ferromagnetic`
 wrappers (for `partitionFunction`, `log_partitionFunction`,
 `freeEnergy`) now live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharperFerro`.
-The legacy import path is preserved by re-exporting the new child
-from `Legacy.lean` and the umbrella `HighTemperatureBounds.lean`.
+The earlier import path is preserved by re-exporting the new child
+from the umbrella `HighTemperatureBounds.lean`.
 -/
 
 /-! ## Moved: complete_summary_exp wrappers
@@ -87,7 +87,7 @@ The 6 ambient alongExhaustion `complete_summary_exp` wrappers
 `log_partitionFunctionAlongExhaustion` with ferromagnetic variants)
 now live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharperComplete`.
-The legacy import path is preserved by re-importing the new child
+The earlier import path is preserved by re-importing the new child
 via the umbrella.
 -/
 

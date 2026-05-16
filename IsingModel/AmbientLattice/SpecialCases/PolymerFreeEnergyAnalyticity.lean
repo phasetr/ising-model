@@ -7,7 +7,7 @@ import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyAnalyticityTanh
 
 Narrow child module for along-exhaustion `polymerFreeEnergy` direct
 `s ↦ polymerFreeEnergy (·) s` analytic wrappers. This keeps callers
-that only need these analytic forwarders out of the monolithic legacy
+that only need these analytic forwarders out of the monolithic
 special-cases module.
 -/
 
@@ -25,8 +25,8 @@ The four §18.6 `polymerFreeEnergy ∘ tanh ∘ (·)` analytic wrappers
 `polymerFreeEnergyAlongExhaustion_tanh_analyticOnNhd_J_Ici_zero`)
 now live in
 `IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyAnalyticityTanh`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 /-- **Along-ex: polymerFreeEnergy is `AnalyticAt ℝ` for `t ≥ 0`**. -/

@@ -4,9 +4,9 @@ import IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularity
 import IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularityAt
 
 /-!
-# Legacy-compatible ℤ^d susceptibility β-direction (h=0) regularity wrappers
+# Compatibility-named ℤ^d susceptibility β-direction (h=0) regularity wrappers
 
-Narrow child module for four legacy-compatible ℤ^d
+Narrow child module for four compatibility-named ℤ^d
 `susceptibilityAlongExhaustion_*_beta` wrappers (at `h = 0`)
 extracted from `SusceptibilityPointwiseRegularity.lean`:
 

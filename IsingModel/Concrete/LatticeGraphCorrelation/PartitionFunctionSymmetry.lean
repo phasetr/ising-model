@@ -7,8 +7,8 @@ import IsingModel.AmbientLatticeSum
 
 Narrow child module for concrete `latticeGraph` partition-function h-symmetry,
 absolute-field rewrite, and absolute-field monotonicity wrappers. The theorem
-names are the same as the former legacy declarations, but callers can now avoid
-importing the monolithic concrete legacy module.
+names are the same as the former declarations, but callers can now avoid
+importing the monolithic concrete module.
 -/
 
 namespace IsingModel

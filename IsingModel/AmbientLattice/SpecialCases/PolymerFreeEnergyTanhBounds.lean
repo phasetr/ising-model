@@ -8,7 +8,7 @@ import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyTanhBoundsFerro
 Narrow child module for along-exhaustion `polymerFreeEnergy` general
 tanh bound, the `log(1 + eps)` decomposition, and the `HasDerivAt`
 wrapper. This keeps callers that only need these forwarders out of the
-monolithic legacy special-cases module.
+monolithic original special-cases module.
 -/
 
 namespace IsingModel
@@ -39,8 +39,8 @@ The three §18.5 ferromagnetic bound wrappers
 `polymerFreeEnergyAlongExhaustion_tanh_le_card_log_two_ferro`) now
 live in
 `IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyTanhBoundsFerro`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 /-- **Along-ex: polymerFreeEnergy = log(1 + ε(t))** decomposition. -/

@@ -7,7 +7,7 @@ import IsingModel.AmbientLattice.SpecialCases.MayerVdBoundsGeneric
 
 Narrow child module for along-exhaustion `vdPolymerFamilies_sum` bound
 wrappers. This keeps callers that only need these forwarders out of the
-monolithic legacy special-cases module.
+monolithic original special-cases module.
 -/
 
 namespace IsingModel
@@ -58,8 +58,8 @@ The four `vdPolymerFamilies_sumAlongExhaustion_*` generic-`t`
 wrappers (`_ge_one_of_nonneg`, `_le_one_plus_pow_of_nonneg`,
 `_pos_of_nonneg`, `_eq_one_add`) now live in
 `IsingModel.AmbientLattice.SpecialCases.MayerVdBoundsGeneric`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 end Ambient

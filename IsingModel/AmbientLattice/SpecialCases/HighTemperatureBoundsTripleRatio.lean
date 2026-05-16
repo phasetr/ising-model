@@ -120,8 +120,8 @@ wrappers
 `partitionFunctionAlongExhaustion_h_zero_triple_ratio_sandwich_bundle_ferromagnetic`)
 now live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsTripleRatioFerro`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 /-! ## Moved: triple_ratio_bound_bundle wrappers
@@ -129,8 +129,8 @@ from this parent module and from `Legacy.lean`.
 The three `partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_triple_ratio_bound_bundle*`
 wrappers (general, `_beta_zero`, ferromagnetic) now live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsTripleRatioBoundBundle`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 end Ambient

@@ -11,7 +11,7 @@ import IsingModel.AmbientLattice.TruncatedFunctions
 
 This module contains the concrete high-temperature regularity wrappers for the
 infinite-volume Ursell two-point function `truncated2Infinite` at `h = 0`,
-split from the legacy `Inequalities` module. Every wrapper reduces to the
+split from the original `Inequalities` module. Every wrapper reduces to the
 corresponding `correlationInfinite {r, s}` statement via
 `truncated2Infinite_h_zero`:
 

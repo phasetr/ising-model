@@ -35,8 +35,8 @@ The three `DifferentiableAt ℝ` pointwise wrappers
 `susceptibilityAlongExhaustion_differentiableAt_J_gen`) now live in
 `IsingModel.AmbientLattice.SpecialCases.`
 `SusceptibilityPointwiseRegularityAtDifferentiableAt`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 /-- **Along-ex: susceptibility ContinuousAt h** (general G). -/

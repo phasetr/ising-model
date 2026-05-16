@@ -7,8 +7,8 @@ import IsingModel.AmbientLattice.SpecialCases.MagnetizationRegularityDifferentia
 
 Narrow child module for finite-stage magnetization `Continuous` and
 `Differentiable` wrappers along an exhaustion. The theorem names are the same
-as the former legacy declarations, but callers can now avoid importing the
-monolithic special-cases legacy module.
+as the former declarations, but callers can now avoid importing the
+monolithic special-cases original module.
 -/
 
 namespace IsingModel
@@ -71,8 +71,8 @@ theorem magnetizationAlongExhaustion_continuous_beta
 The three `magnetizationAlongExhaustion_differentiable_*` wrappers
 (`_field`, `_J`, `_beta`) now live in
 `IsingModel.AmbientLattice.SpecialCases.MagnetizationRegularityDifferentiable`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 /-! ### Moved: ContinuousAt / DifferentiableAt along-ex wrappers
@@ -80,8 +80,8 @@ from this parent module and from `Legacy.lean`.
 The six `magnetizationAlongExhaustion_{continuousAt,differentiableAt}_{beta,field,J}`
 pointwise wrappers now live in
 `IsingModel.AmbientLattice.SpecialCases.MagnetizationRegularityAt`.
-The legacy import path is preserved by re-exporting the new child
-from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from the umbrella `SpecialCases.lean`.
 -/
 
 end Ambient

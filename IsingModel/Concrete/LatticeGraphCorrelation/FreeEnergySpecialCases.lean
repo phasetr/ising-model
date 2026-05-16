@@ -6,8 +6,8 @@ import IsingModel.AmbientLattice.SpecialCases.FreeEnergy
 
 Narrow child module for concrete `latticeGraph` free-energy closed forms,
 monotonicity wrappers, h-symmetry, and bottom-graph comparison wrappers. The
-theorem names are the same as the former legacy declarations, but callers can
-now avoid importing the monolithic concrete legacy module.
+theorem names are the same as the former declarations, but callers can
+now avoid importing the monolithic concrete module.
 -/
 
 namespace IsingModel
@@ -72,7 +72,7 @@ The 16 ℤ^d finite-volume `freeEnergy_*_latticeGraph` wrappers
 `ge_log_two_of_ferromagnetic`, `nonneg_of_ferromagnetic`, `bot`)
 now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.FreeEnergySpecialCasesFiniteVol`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -83,7 +83,7 @@ The 12 ℤ^d `freeEnergyΛ_latticeGraph_*` wrappers
 `zero_params`, `neg_h`, `eq_abs_h`, `monotone_abs_h`, `monotone_J`,
 `monotone_h`, `monotone_beta`) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.FreeEnergySpecialCasesLambda`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 /-! ## Moved: ℤ^d `freeEnergyAlongExhaustion` special-case wrappers
@@ -94,7 +94,7 @@ The 12 ℤ^d `freeEnergyAlongExhaustion_latticeGraph_*` wrappers
 `monotone_abs_h`, `beta_zero`, `zero_params`, `J_zero`, plus
 `cubicExhaustion_{beta_zero,zero_params,J_zero}`) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.FreeEnergySpecialCasesAlongEx`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 end Ambient
 end IsingModel

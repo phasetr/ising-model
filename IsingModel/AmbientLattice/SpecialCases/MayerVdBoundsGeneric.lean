@@ -29,7 +29,7 @@ The two sandwich bound wrappers
 `vdPolymerFamilies_sumAlongExhaustion_le_one_plus_pow_of_nonneg`)
 now live in
 `IsingModel.AmbientLattice.SpecialCases.MayerVdBoundsGenericSandwich`.
-The legacy import path is preserved by re-exporting the new child
+The earlier import path is preserved by re-exporting the new child
 from this parent module and from the umbrella.
 -/
 
