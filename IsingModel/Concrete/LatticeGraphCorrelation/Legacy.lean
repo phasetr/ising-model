@@ -569,7 +569,7 @@ import IsingModel.ComplexAnalyticity
 import IsingModel.Concrete.LatticeGraphCorrelation.Peierls
 import IsingModel.AmbientComplexAnalyticity
 import IsingModel.AmbientFKG
-import IsingModel.AmbientLattice.SpecialCases.Legacy
+import IsingModel.AmbientLattice.SpecialCases
 
 /-!
 # Concrete lattice-graph correlation legacy re-export
