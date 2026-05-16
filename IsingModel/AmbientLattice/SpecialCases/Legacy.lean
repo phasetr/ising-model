@@ -46,6 +46,7 @@ import IsingModel.AmbientLattice.SpecialCases.JointRegularityAt
 import IsingModel.AmbientLattice.SpecialCases.JointRegularityDifferentiable
 import IsingModel.AmbientLattice.SpecialCases.MayerAnalyticity
 import IsingModel.AmbientLattice.SpecialCases.MayerAnalyticityExpansionTerm
+import IsingModel.AmbientLattice.SpecialCases.MayerAnalyticityTanh
 import IsingModel.AmbientLattice.SpecialCases.MayerBasicIdentities
 import IsingModel.AmbientLattice.SpecialCases.MayerBasicIdentitiesExpansionTerm
 import IsingModel.AmbientLattice.SpecialCases.MayerEdgeCases
