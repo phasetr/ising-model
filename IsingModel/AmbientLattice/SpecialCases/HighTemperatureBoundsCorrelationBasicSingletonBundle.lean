@@ -1,5 +1,6 @@
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsCorrelationBasic
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsCorrelationBasicSingleton
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsCorrelationBasicSingletonBundleDerived
 
 /-!
 # Ambient alongExhaustion correlation singleton + pair-singleton bundle wrappers at h = 0
@@ -75,43 +76,17 @@ theorem correlationAlongExhaustion_high_temp_h_zero_at_pair_singleton_complete_s
    correlationAlongExhaustion_high_temp_h_zero_at_pair_J_zero G Λ β i j n,
    correlationAlongExhaustion_high_temp_h_zero_at_pair_beta_zero G Λ J i j n⟩
 
-/-- **Along-ex pair + singleton trivial-slices full bundle at h = 0**:
-at `J = 0` and `β = 0`, both pair and singleton correlations vanish at
-every stage `n`. Along-exhaustion wrapper of
-`correlation_high_temp_h_zero_at_pair_singleton_trivial_slices_bundle`. -/
-theorem correlationAlongExhaustion_high_temp_h_zero_at_pair_singleton_trivial_slices_bundle
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (i j : V) (n : ℕ) :
-    correlationAlongExhaustion G Λ
-        (⟨0, 0, β⟩ : IsingParams ℝ) ({i} : Finset V) n = 0 ∧
-      correlationAlongExhaustion G Λ
-        (⟨J, 0, 0⟩ : IsingParams ℝ) ({i} : Finset V) n = 0 ∧
-      correlationAlongExhaustion G Λ
-        (⟨0, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset V) n = 0 ∧
-      correlationAlongExhaustion G Λ
-        (⟨J, 0, 0⟩ : IsingParams ℝ) ({i, j} : Finset V) n = 0 :=
-  ⟨correlationAlongExhaustion_high_temp_h_zero_at_singleton_J_zero G Λ β i n,
-   correlationAlongExhaustion_high_temp_h_zero_at_singleton_beta_zero G Λ J i n,
-   correlationAlongExhaustion_high_temp_h_zero_at_pair_J_zero G Λ β i j n,
-   correlationAlongExhaustion_high_temp_h_zero_at_pair_beta_zero G Λ J i j n⟩
+/-! ## Moved: 2 derived pair+singleton bundle wrappers
 
-/-- **Along-ex pair+singleton bundle under ferromagnetic at h = 0**:
-under `0 ≤ J, 0 < β`, packages `⟨σ_i⟩ = 0`, `0 ≤ ⟨σ_iσ_j⟩`, and
-`⟨σ_iσ_j⟩ ≤ 1` at every stage `n`. Along-exhaustion wrapper of
-`correlation_high_temp_h_zero_at_pair_singleton_bundle_ferromagnetic`. -/
-theorem correlationAlongExhaustion_high_temp_h_zero_at_pair_singleton_bundle_ferromagnetic
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (i j : V) (n : ℕ) :
-    correlationAlongExhaustion G Λ
-        (⟨J, 0, β⟩ : IsingParams ℝ) ({i} : Finset V) n = 0 ∧
-      0 ≤ correlationAlongExhaustion G Λ
-          (⟨J, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset V) n ∧
-      correlationAlongExhaustion G Λ
-          (⟨J, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset V) n ≤ 1 :=
-  correlationAlongExhaustion_high_temp_h_zero_at_pair_singleton_bundle
-    G Λ J β (mul_nonneg hβ.le hJ) i j n
+The two derived bundle wrappers
+(`correlationAlongExhaustion_high_temp_h_zero_at_pair_singleton_trivial_slices_bundle`,
+`correlationAlongExhaustion_high_temp_h_zero_at_pair_singleton_bundle_ferromagnetic`)
+now live in
+`IsingModel.AmbientLattice.SpecialCases.`
+`HighTemperatureBoundsCorrelationBasicSingletonBundleDerived`.
+The legacy import path is preserved by re-exporting the new child
+from this parent module and from the umbrella.
+-/
 
 end Ambient
 
