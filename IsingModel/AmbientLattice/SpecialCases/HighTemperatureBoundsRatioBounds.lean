@@ -3,6 +3,7 @@ import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansion
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharper
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviation
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioBoundsSingletons
 
 /-!
 # Ambient alongExhaustion Z/f/log Z ratio sandwich / ratio bound wrappers at h = 0
@@ -27,49 +28,17 @@ open scoped symmDiff
 variable {V : Type*} [DecidableEq V]
 
 
-/-- **Along-ex Z ratio sandwich at stage `n`, J=0 trivial slice**. -/
-theorem partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_sandwich
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (hβJ : 0 ≤ β * J) (n : ℕ) :
-    Real.cosh (β * J) ^ (inducedGraph G (Λ.volume n)).edgeFinset.card
-      ≤ partitionFunctionAlongExhaustion G Λ
-          (⟨J, 0, β⟩ : IsingParams ℝ) n /
-          partitionFunctionAlongExhaustion G Λ
-            (⟨0, 0, β⟩ : IsingParams ℝ) n ∧
-    partitionFunctionAlongExhaustion G Λ
-        (⟨J, 0, β⟩ : IsingParams ℝ) n /
-        partitionFunctionAlongExhaustion G Λ
-          (⟨0, 0, β⟩ : IsingParams ℝ) n
-      ≤ Real.exp (β * J * (inducedGraph G (Λ.volume n)).edgeFinset.card) := by
-  change _ ≤ partitionFunctionΛ G (Λ.volume n) (⟨J, 0, β⟩ : IsingParams ℝ) /
-      partitionFunctionΛ G (Λ.volume n) (⟨0, 0, β⟩ : IsingParams ℝ) ∧
-      partitionFunctionΛ G (Λ.volume n) (⟨J, 0, β⟩ : IsingParams ℝ) /
-        partitionFunctionΛ G (Λ.volume n) (⟨0, 0, β⟩ : IsingParams ℝ) ≤ _
-  exact partitionFunctionΛ_high_temp_expansion_h_zero_ratio_sandwich
-    G (Λ.volume n) J β hβJ
+/-! ## Moved: 2 Z ratio sandwich singleton wrappers
 
-/-- **Along-ex Z ratio sandwich at β=0 trivial slice, stage `n`**. -/
-theorem partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_sandwich_beta_zero
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (hβJ : 0 ≤ β * J) (n : ℕ) :
-    Real.cosh (β * J) ^ (inducedGraph G (Λ.volume n)).edgeFinset.card
-      ≤ partitionFunctionAlongExhaustion G Λ
-          (⟨J, 0, β⟩ : IsingParams ℝ) n /
-          partitionFunctionAlongExhaustion G Λ
-            (⟨J, 0, 0⟩ : IsingParams ℝ) n ∧
-    partitionFunctionAlongExhaustion G Λ
-        (⟨J, 0, β⟩ : IsingParams ℝ) n /
-        partitionFunctionAlongExhaustion G Λ
-          (⟨J, 0, 0⟩ : IsingParams ℝ) n
-      ≤ Real.exp (β * J * (inducedGraph G (Λ.volume n)).edgeFinset.card) := by
-  change _ ≤ partitionFunctionΛ G (Λ.volume n) (⟨J, 0, β⟩ : IsingParams ℝ) /
-      partitionFunctionΛ G (Λ.volume n) (⟨J, 0, 0⟩ : IsingParams ℝ) ∧
-      partitionFunctionΛ G (Λ.volume n) (⟨J, 0, β⟩ : IsingParams ℝ) /
-        partitionFunctionΛ G (Λ.volume n) (⟨J, 0, 0⟩ : IsingParams ℝ) ≤ _
-  exact partitionFunctionΛ_high_temp_expansion_h_zero_ratio_sandwich_beta_zero
-    G (Λ.volume n) J β hβJ
+The two slice-singleton wrappers
+(`partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_sandwich`
+[J = 0 trivial slice],
+`partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_sandwich_beta_zero`
+[β = 0 trivial slice]) now live in
+`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioBoundsSingletons`.
+The legacy import path is preserved by re-exporting the new child
+from this parent module and from `Legacy.lean`.
+-/
 
 /-- **Along-ex Z ratio sandwich bundle at stage `n`**. -/
 theorem partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_sandwich_bundle
