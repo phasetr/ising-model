@@ -1,6 +1,7 @@
 import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyTanhSharpeningIff
+import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyTanhSharpeningStrictMono
 
 /-!
 # Polymer free-energy tanh sharpening + β/J strict-mono wrappers along
@@ -63,35 +64,14 @@ polymerFreeEnergyAlongExhaustion_tanh_lt_of_lt_in_J_of_polymers_nonempty
   polymerFreeEnergy_Λ_tanh_lt_of_lt_in_J_of_polymers_nonempty
     G (Λ.volume n) h_poly hJ₁ hβ hJ
 
-/-- **Along-ex: pFE(tanh(β·J)) is `StrictMonoOn (Set.Ici 0)` in β**
-under `J > 0` and polymers nonempty. -/
-theorem
-polymerFreeEnergyAlongExhaustion_tanh_strictMonoOn_beta_of_polymers_nonempty
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet] (n : ℕ)
-    (h_poly : (IsingModel.allPolymers
-      (inducedGraph G (Λ.volume n))).Nonempty)
-    {J : ℝ} (hJ : 0 < J) :
-    StrictMonoOn (fun β : ℝ => IsingModel.polymerFreeEnergy
-        (inducedGraph G (Λ.volume n)) (Real.tanh (β * J)))
-      (Set.Ici 0) :=
-  polymerFreeEnergy_Λ_tanh_strictMonoOn_beta_of_polymers_nonempty
-    G (Λ.volume n) h_poly hJ
+/-! ## Moved: 2 `_strictMonoOn_*` wrappers
 
-/-- **Along-ex: pFE(tanh(β·J)) is `StrictMonoOn (Set.Ici 0)` in J**
-under `β > 0` and polymers nonempty. -/
-theorem
-polymerFreeEnergyAlongExhaustion_tanh_strictMonoOn_J_of_polymers_nonempty
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet] (n : ℕ)
-    (h_poly : (IsingModel.allPolymers
-      (inducedGraph G (Λ.volume n))).Nonempty)
-    {β : ℝ} (hβ : 0 < β) :
-    StrictMonoOn (fun J : ℝ => IsingModel.polymerFreeEnergy
-        (inducedGraph G (Λ.volume n)) (Real.tanh (β * J)))
-      (Set.Ici 0) :=
-  polymerFreeEnergy_Λ_tanh_strictMonoOn_J_of_polymers_nonempty
-    G (Λ.volume n) h_poly hβ
+The two along-ex `polymerFreeEnergyAlongExhaustion_tanh_strictMonoOn_*`
+wrappers (`_strictMonoOn_beta`, `_strictMonoOn_J`) now live in
+`IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyTanhSharpeningStrictMono`.
+The legacy import path is preserved by re-exporting the new child
+from this parent module and from the umbrella.
+-/
 
 end Ambient
 end IsingModel
