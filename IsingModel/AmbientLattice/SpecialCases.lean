@@ -1,129 +1,163 @@
-import IsingModel.AmbientLattice.SpecialCases.Legacy
+import IsingModel.AmbientLattice.Analyticity
+import IsingModel.AmbientLattice.SpecialCases.FreeEnergy
+import IsingModel.AmbientLattice.SpecialCases.FreeEnergyAnalyticity
+import IsingModel.AmbientLattice.SpecialCases.FreeEnergyAnalyticityHZero
+import IsingModel.AmbientLattice.SpecialCases.FreeEnergyAnalyticityOnNhd
+import IsingModel.AmbientLattice.SpecialCases.FreeEnergyHighTempExp
+import IsingModel.AmbientLattice.SpecialCases.FreeEnergyHSymmetry
+import IsingModel.AmbientLattice.SpecialCases.FreeEnergyTrivialSlices
+import IsingModel.AmbientLattice.SpecialCases.FreeEnergyTrivialSlicesInfinite
+import IsingModel.AmbientLattice.SpecialCases.HighTemperature
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBounds
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsCorrelation
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsCorrelationBasic
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsCorrelationBasicPair
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsCorrelationBasicPairTrivial
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsCorrelationBasicSingleton
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsCorrelationBasicSingletonBundle
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDecayCapstones
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDecayCapstonesAlpha
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDecayCapstonesDist
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDecayCapstonesEdge
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviation
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviationContinuity
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviationContinuityTrivial
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviationFerro
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviationStrict
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviationStrictFerro
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviationStrictFerroBundle
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansion
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansionClosed
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansionClosedCorrelation
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansionClosedForms
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansionLowerUpper
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansionLowerUpperConsistency
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansionLowerUpperFE
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansionVariants
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharper
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharperComplete
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharperCompleteFerro
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharperFerro
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharperSandwich
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharperSandwichFerro
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioBounds
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioBoundsBound
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioBoundsBoundOnly
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioBoundsSingletons
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFe
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFeFreeEnergyBound
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFeFreeEnergyBoundOnly
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFeLogBound
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFeLogBoundOnly
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFeNonempty
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsTripleRatio
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsTripleRatioBoundBundle
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsTripleRatioFerro
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureCapstones
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureCapstonesPartition
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureTanh
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureVdSandwichFE
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureVdSandwichFreeEnergy
+import IsingModel.AmbientLattice.SpecialCases.InfiniteVolume
+import IsingModel.AmbientLattice.SpecialCases.JointAnalyticity
+import IsingModel.AmbientLattice.SpecialCases.JointAnalyticityMagnetization
+import IsingModel.AmbientLattice.SpecialCases.JointAnalyticityPartitionFreeEnergy
+import IsingModel.AmbientLattice.SpecialCases.JointAnalyticitySusceptibility
+import IsingModel.AmbientLattice.SpecialCases.JointRegularity
+import IsingModel.AmbientLattice.SpecialCases.JointRegularityAt
+import IsingModel.AmbientLattice.SpecialCases.JointRegularityAtDifferentiableAt
+import IsingModel.AmbientLattice.SpecialCases.JointRegularityDifferentiable
+import IsingModel.AmbientLattice.SpecialCases.MagnetizationConvergence
+import IsingModel.AmbientLattice.SpecialCases.MagnetizationRegularity
+import IsingModel.AmbientLattice.SpecialCases.MagnetizationRegularityAt
+import IsingModel.AmbientLattice.SpecialCases.MagnetizationRegularityAtDifferentiableAt
+import IsingModel.AmbientLattice.SpecialCases.MagnetizationRegularityDifferentiable
+import IsingModel.AmbientLattice.SpecialCases.MayerAnalyticity
+import IsingModel.AmbientLattice.SpecialCases.MayerAnalyticityExpansionTerm
+import IsingModel.AmbientLattice.SpecialCases.MayerAnalyticityTanh
+import IsingModel.AmbientLattice.SpecialCases.MayerBasicIdentities
+import IsingModel.AmbientLattice.SpecialCases.MayerBasicIdentitiesExpansionTerm
+import IsingModel.AmbientLattice.SpecialCases.MayerBasicIdentitiesVdSum
+import IsingModel.AmbientLattice.SpecialCases.MayerEdgeCases
+import IsingModel.AmbientLattice.SpecialCases.MayerEdgeCasesPFE
+import IsingModel.AmbientLattice.SpecialCases.MayerEdgeCasesPolymerFreeEnergy
+import IsingModel.AmbientLattice.SpecialCases.MayerEpsilonInfrastructure
+import IsingModel.AmbientLattice.SpecialCases.MayerEpsilonInfrastructureVdSum
+import IsingModel.AmbientLattice.SpecialCases.MayerEpsilonPositivity
+import IsingModel.AmbientLattice.SpecialCases.MayerEpsilonPositivityVdSum
+import IsingModel.AmbientLattice.SpecialCases.MayerExpansionEdgeCases
+import IsingModel.AmbientLattice.SpecialCases.MayerExpansionEdgeCasesTwo
+import IsingModel.AmbientLattice.SpecialCases.MayerFilterConnected
+import IsingModel.AmbientLattice.SpecialCases.MayerRecurrenceHasSum
+import IsingModel.AmbientLattice.SpecialCases.MayerRecurrenceHasSumLog
+import IsingModel.AmbientLattice.SpecialCases.MayerStrictPositivity
+import IsingModel.AmbientLattice.SpecialCases.MayerStrictPositivityVdSum
+import IsingModel.AmbientLattice.SpecialCases.MayerStrictPositivityVdSumPointwise
+import IsingModel.AmbientLattice.SpecialCases.MayerTanhFerromagneticIff
+import IsingModel.AmbientLattice.SpecialCases.MayerTanhFerromagneticIffPFE
+import IsingModel.AmbientLattice.SpecialCases.MayerTanhFerromagneticIffPFEIff
+import IsingModel.AmbientLattice.SpecialCases.MayerTanhFerromagneticIffPFEIffAllPolymers
+import IsingModel.AmbientLattice.SpecialCases.MayerTrivialCases
+import IsingModel.AmbientLattice.SpecialCases.MayerTrivialCasesIdentity
+import IsingModel.AmbientLattice.SpecialCases.MayerTrivialCasesIdentityEdgeless
+import IsingModel.AmbientLattice.SpecialCases.MayerVdBounds
+import IsingModel.AmbientLattice.SpecialCases.MayerVdBoundsGeneric
+import IsingModel.AmbientLattice.SpecialCases.MayerVdIff
+import IsingModel.AmbientLattice.SpecialCases.MayerVdRegularity
+import IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityDifferentiable
+import IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityTanh
+import IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityTanhExpansionTerm
+import IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityVdPolymer
+import IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityVdPolymerTanh
+import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyPointwiseRegularity
+import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyPointwiseRegularityFE
+import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyPointwiseRegularityFENonJoint
+import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyPointwiseRegularityFENonJointDifferentiableAt
+import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyPointwiseRegularityHZero
+import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyPointwiseRegularityHZeroDifferentiableAt
+import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyPointwiseRegularityPartitionGeneralH
+import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyPointwiseRegularityPartitionGeneralHDifferentiableAt
+import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyRegularity
+import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyRegularityDifferentiable
+import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyRegularityFE
+import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyRegularityFEDifferentiable
+import IsingModel.AmbientLattice.SpecialCases.PartitionFunctionClosedForms
+import IsingModel.AmbientLattice.SpecialCases.PartitionFunctionClosedFormsPartition
+import IsingModel.AmbientLattice.SpecialCases.PartitionFunctionGeneralAnalyticity
+import IsingModel.AmbientLattice.SpecialCases.PartitionFunctionGeneralAnalyticityAnalyticAt
+import IsingModel.AmbientLattice.SpecialCases.PartitionFunctionRegularity
+import IsingModel.AmbientLattice.SpecialCases.PartitionFunctionRegularityAnalytic
+import IsingModel.AmbientLattice.SpecialCases.PartitionFunctionSymmetry
+import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyAnalyticity
+import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyAnalyticityTanh
+import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBasic
+import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBounds
+import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBoundsEdgeCases
+import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBoundsNonneg
+import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBoundsRegularity
+import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBoundsTanh
+import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyEpsilonSharpening
+import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyEpsilonSharpeningPFE
+import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyHighTemperatureBounds
+import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyHighTemperatureBoundsTanh
+import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyTanhBounds
+import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyTanhBoundsFerro
+import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyTanhSharpening
+import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyTanhSharpeningIff
+import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyTanhSharpeningIffEpsPos
+import IsingModel.AmbientLattice.SpecialCases.SusceptibilityConvergence
+import IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularity
+import IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularityAt
+import IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularityAtDifferentiableAt
+import IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularityDifferentiable
+import IsingModel.AmbientLattice.SpecialCases.VdPolymerFamiliesAnalyticity
+import IsingModel.AmbientLattice.SpecialCases.VdPolymerFamiliesAnalyticityLog
 
 /-!
 # Ambient-lattice special cases umbrella
 
-This module is intentionally a thin re-export. The compatibility shim
-`IsingModel.AmbientLattice.SpecialCases.Legacy` re-exports the split child
-modules for older import paths. Non-analytic free-energy special cases live in
-`IsingModel.AmbientLattice.SpecialCases.FreeEnergy`, and
-general-graph free-energy per-direction analyticity wrappers live in
-`IsingModel.AmbientLattice.SpecialCases.FreeEnergyAnalyticity`. Lightweight
-infinite-volume aliases live in
-`IsingModel.AmbientLattice.SpecialCases.InfiniteVolume`. General-graph joint
-regularity wrappers live in
-`IsingModel.AmbientLattice.SpecialCases.JointRegularity`. General-graph
-joint analyticity wrappers live in
-`IsingModel.AmbientLattice.SpecialCases.JointAnalyticity`. General-graph
-Mayer analytic wrappers live in
-`IsingModel.AmbientLattice.SpecialCases.MayerAnalyticity`. General-graph
-Mayer basic at-zero / at-one identity wrappers live in
-`IsingModel.AmbientLattice.SpecialCases.MayerBasicIdentities`. General-graph
-Mayer edge-case identity and `polymerFreeEnergy = mayerPartialSum` wrappers live in
-`IsingModel.AmbientLattice.SpecialCases.MayerEdgeCases`. General-graph
-Mayer expansion `n = 2`, no-polymer, edgeless, and absolute-bound wrappers live in
-`IsingModel.AmbientLattice.SpecialCases.MayerExpansionEdgeCases`. General-graph
-Mayer epsilon infrastructure, first-term sign, and edgeless `allPolymers`
-wrappers live in
-`IsingModel.AmbientLattice.SpecialCases.MayerEpsilonInfrastructure`.
-General-graph epsilon and `polymerFreeEnergy` positivity/zero iff wrappers
-live in `IsingModel.AmbientLattice.SpecialCases.MayerEpsilonPositivity`.
-General-graph Mayer filter-connected and epsilon-power wrappers live in
-`IsingModel.AmbientLattice.SpecialCases.MayerFilterConnected`.
-General-graph Mayer recurrence, `polymerFreeEnergy` `HasSum`, and
-`vdPolymerFamilies_sum - 1` tendsto-zero wrappers live in
-`IsingModel.AmbientLattice.SpecialCases.MayerRecurrenceHasSum`.
-General-graph strict-monotonicity and strict-positivity wrappers under
-`allPolymers` nonempty hypotheses live in
-`IsingModel.AmbientLattice.SpecialCases.MayerStrictPositivity`. General-graph
-ferromagnetic tanh iff wrappers for `polymerFreeEnergy` and
-`vdPolymerFamilies_sum` live in
-`IsingModel.AmbientLattice.SpecialCases.MayerTanhFerromagneticIff`. General-graph
-Mayer trivial/no-polymer comparison wrappers live in
-`IsingModel.AmbientLattice.SpecialCases.MayerTrivialCases`. General-graph
-`vdPolymerFamilies_sum` bound wrappers live in
-`IsingModel.AmbientLattice.SpecialCases.MayerVdBounds`. General-graph
-`vdPolymerFamilies_sum` iff characterization wrappers live in
-`IsingModel.AmbientLattice.SpecialCases.MayerVdIff`. General-graph
-Mayer and `vdPolymerFamilies_sum` regularity wrappers live in
-`IsingModel.AmbientLattice.SpecialCases.MayerVdRegularity`. General-graph
-magnetization convergence wrappers live in
-`IsingModel.AmbientLattice.SpecialCases.MagnetizationConvergence`.
-General-graph
-magnetization regularity wrappers live in
-`IsingModel.AmbientLattice.SpecialCases.MagnetizationRegularity`.
-General-graph
-susceptibility convergence wrappers live in
-`IsingModel.AmbientLattice.SpecialCases.SusceptibilityConvergence`.
-General-graph along-exhaustion partition-function closed-form wrappers live in
-`IsingModel.AmbientLattice.SpecialCases.PartitionFunctionClosedForms`.
-General-graph along-exhaustion partition-function h-symmetry and absolute-field
-wrappers live in
-`IsingModel.AmbientLattice.SpecialCases.PartitionFunctionSymmetry`.
-General-graph
-`polymerFreeEnergy` analytic wrappers live in
-`IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyAnalyticity`.
-General-graph basic `polymerFreeEnergy` at-zero / at-one / sandwich wrappers
-live in `IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBasic`.
-General-graph `polymerFreeEnergy` regularity and bound wrappers live in
-`IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBounds`.
-General-graph epsilon nonnegativity and non-tanh `polymerFreeEnergy`
-sharpening wrappers live in
-`IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyEpsilonSharpening`.
-General-graph `vdPolymerFamilies_sum` high-temperature sandwich/monotone and
-`polymerFreeEnergy(tanh)` high-temperature bound wrappers live in
-`IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyHighTemperatureBounds`.
-General-graph `polymerFreeEnergy` tanh-bound, ferromagnetic, `HasDerivAt`,
-and `log(1 + eps)` wrappers live in
-`IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyTanhBounds`.
-General-graph `polymerFreeEnergy` tanh sharpening and beta/J strict-mono
-wrappers live in
-`IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyTanhSharpening`.
-General-graph `vdPolymerFamilies_sum` and `log_vdPolymerFamilies_sum`
-analytic wrappers live in
-`IsingModel.AmbientLattice.SpecialCases.VdPolymerFamiliesAnalyticity`.
-General-graph high-temperature convergence and correction wrappers live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperature`.
-General-graph high-temperature expansion and bound wrappers live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBounds`. The
-along-exhaustion partition / free-energy / log-partition / correlation
-expansion / closed-form / lower-bound / upper-bound / sandwich /
-complete-summary wrappers (20 theorems, plus the
-`one_le_sum_pow_tanh_even_subgraph_alongExhaustion` helper) live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansion`
-(moved in PR #1943). The along-exhaustion sharper-exp upper-bound /
-sandwich / complete-summary wrappers (16 theorems for `partitionFunction`,
-`freeEnergy`, and `log_partitionFunction` along-exhaustion `_exp` family
-plus ferromagnetic variants) live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharper`
-(moved in PR #1944). The along-exhaustion deviation_bound_exp /
-continuity_bundle / deviation_sandwich / relative_sandwich /
-deviation_pos / pow_two_lt / strict_deviation_bundle wrappers (20
-theorems with ferromagnetic variants) live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviation`
-(moved in PR #1945). The along-exhaustion ratio_sandwich / ratio_bound /
-triple_ratio_* / `_of_nonempty` wrappers (34 theorems for `Z`, `f`,
-`log Z` with bundle/triple/ferromagnetic variants) live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioBounds`
-(moved in PR #1946).
-General-graph high-temperature partition-function/free-energy capstone
-wrappers live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureCapstones`.
-General-graph
-`partitionFunctionAlongExhaustion` / `freeEnergyAlongExhaustion` pointwise
-regularity wrappers live in
-`IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyPointwiseRegularity`,
-general-graph `partitionFunctionAlongExhaustion` / `freeEnergyAlongExhaustion`
-Continuous and Differentiable wrappers live in
-`IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyRegularity`,
-general-graph `partitionFunctionAlongExhaustion` regularity-at-zero-field
-wrappers live in
-`IsingModel.AmbientLattice.SpecialCases.PartitionFunctionRegularity`,
-general-graph `partitionFunctionAlongExhaustion` joint and general-h
-analyticity wrappers live in
-`IsingModel.AmbientLattice.SpecialCases.PartitionFunctionGeneralAnalyticity`,
-and `susceptibilityAlongExhaustion` pointwise regularity wrappers live in
-`IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularity`.
-New narrow APIs should be added in dedicated child modules and re-exported here
+This module is intentionally a thin re-export aggregating every child
+module under `IsingModel.AmbientLattice.SpecialCases.*`. New narrow
+APIs should be added in dedicated child modules and re-exported here
 only when they belong to the public ambient special-cases surface.
 -/
