@@ -1,5 +1,6 @@
 import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBoundsTanhLogTwo
 
 /-!
 # Ambient polymerFreeEnergyAlongExhaustion tanh-form bound wrappers
@@ -38,30 +39,15 @@ theorem polymerFreeEnergyAlongExhaustion_tanh_sandwich
         Real.log (1 + Real.tanh (β * J)) :=
   polymerFreeEnergy_Λ_tanh_sandwich G (Λ.volume n) hβJ
 
-/-- **Along-ex: `polymerFreeEnergy ≤ |E|·log 2` for `0 ≤ t ≤ 1`**
-(§18.5 along-ex wrap of Step 642). -/
-theorem polymerFreeEnergyAlongExhaustion_le_card_log_two_of_le_one
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    {t : ℝ} (ht : 0 ≤ t) (ht1 : t ≤ 1) (n : ℕ) :
-    IsingModel.polymerFreeEnergy
-        (inducedGraph G (Λ.volume n)) t ≤
-      (inducedGraph G (Λ.volume n)).edgeFinset.card *
-        Real.log 2 :=
-  polymerFreeEnergy_Λ_le_card_log_two_of_le_one
-    G (Λ.volume n) ht ht1
+/-! ## Moved: 2 `≤ |E|·log 2` wrappers
 
-/-- **Along-ex: `polymerFreeEnergy_tanh ≤ |E|·log 2` under `0 ≤ β·J`**
-(§18.5 along-ex wrap of Step 643). -/
-theorem polymerFreeEnergyAlongExhaustion_tanh_le_card_log_two
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    {β J : ℝ} (hβJ : 0 ≤ β * J) (n : ℕ) :
-    IsingModel.polymerFreeEnergy
-        (inducedGraph G (Λ.volume n)) (Real.tanh (β * J)) ≤
-      (inducedGraph G (Λ.volume n)).edgeFinset.card *
-        Real.log 2 :=
-  polymerFreeEnergy_Λ_tanh_le_card_log_two G (Λ.volume n) hβJ
+The two `polymerFreeEnergyAlongExhaustion_*_log_two_*` upper bound
+wrappers (`_le_card_log_two_of_le_one`, `_tanh_le_card_log_two`)
+now live in
+`IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBoundsTanhLogTwo`.
+The legacy import path is preserved by re-exporting the new child
+from this parent module and from the umbrella.
+-/
 
 /-- **Along-ex: `polymerFreeEnergy_tanh` double bound** (§18.5
 along-ex wrap of Step 645). -/
