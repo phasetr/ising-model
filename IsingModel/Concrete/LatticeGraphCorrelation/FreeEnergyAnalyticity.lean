@@ -6,9 +6,9 @@ import IsingModel.AmbientLattice.SpecialCases.FreeEnergyAnalyticity
 
 This module contains `latticeGraph` wrappers for per-direction free-energy
 `AnalyticAt` and `AnalyticOnNhd` APIs at the finite-volume and
-along-exhaustion layers. It is split out of the legacy concrete correlation
+along-exhaustion layers. It is split out of the original concrete correlation
 module so downstream users can import the free-energy analyticity surface
-without pulling the whole legacy module.
+without pulling the whole original module.
 -/
 
 namespace IsingModel

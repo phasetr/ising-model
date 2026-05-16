@@ -22,8 +22,8 @@ variable {V : Type*} [DecidableEq V]
 The five `polymerFreeEnergyAlongExhaustion_tanh_*_iff_*_ferro`
 wrappers now live in
 `IsingModel.AmbientLattice.SpecialCases.MayerTanhFerromagneticIffPFEIff`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 /-- **Along-ex: pFE(tanh) < (1+tanh)^|E| - 1** under ε(tanh) > 0

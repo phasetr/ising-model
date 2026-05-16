@@ -11,7 +11,7 @@ This module contains the special-case free-energy APIs that do not depend on
 the analytic cluster-expansion stack: bounded edge density, trivial parameter
 slices, basic `h`-symmetry, and uniform exhaustion bounds.
 
-It is split from the legacy `AmbientLattice.SpecialCases` body so modules such
+It is split from the original `AmbientLattice.SpecialCases` body so modules such
 as `AmbientLatticeSum` can use these free-energy facts without importing
 `AmbientLattice.Analyticity`.
 -/
@@ -85,8 +85,8 @@ The six trivial-parameter-slice closed forms
 `freeEnergyAlongExhaustion_eq_bot_at_J_zero`,
 `freeEnergyAlongExhaustion_J_zero`) now live in
 `IsingModel.AmbientLattice.SpecialCases.FreeEnergyTrivialSlices`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 /-! ## Moved: 2 sharper high-temperature free-energy upper bounds
@@ -97,8 +97,8 @@ high-temperature upper bound wrappers
 `freeEnergyAlongExhaustion_high_temp_h_zero_upper_bound_exp_uniform`)
 now live in
 `IsingModel.AmbientLattice.SpecialCases.FreeEnergyHighTempExp`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 /-! ## Moved: `h`-symmetry / `|h|`-monotonicity wrappers
@@ -106,8 +106,8 @@ from this parent module and from `Legacy.lean`.
 The three `freeEnergyAlongExhaustion_{neg_h, eq_abs_h, monotone_abs_h}`
 wrappers now live in
 `IsingModel.AmbientLattice.SpecialCases.FreeEnergyHSymmetry`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 /-- **BddAbove for `freeEnergyAlongExhaustion` under bounded edge density**:

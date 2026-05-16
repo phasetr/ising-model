@@ -50,7 +50,7 @@ The two `AnalyticOnNhd ℝ _ Set.univ` wrappers
 `partitionFunctionAlongExhaustion_analyticOnNhd_J_h_zero`) now live
 in
 `IsingModel.AmbientLattice.SpecialCases.PartitionFunctionRegularityAnalyticOnNhd`.
-The legacy import path is preserved by re-exporting the new child
+The earlier import path is preserved by re-exporting the new child
 from this parent module and from the umbrella.
 -/
 

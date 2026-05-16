@@ -6,7 +6,7 @@ import IsingModel.AmbientLattice.Exhaustion
 
 Narrow child module for along-exhaustion `polymerFreeEnergy` at-zero, at-one,
 and nonnegative sandwich wrappers. This keeps callers that only need these
-forwarders out of the monolithic legacy special-cases module.
+forwarders out of the monolithic original special-cases module.
 -/
 
 namespace IsingModel

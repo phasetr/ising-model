@@ -6,8 +6,8 @@ import IsingModel.Concrete.LatticeGraphBED
 Narrow child module for concrete `latticeGraph` partition-function
 along-exhaustion volume / parameter monotonicity, positivity, divergence, and
 infinite-volume free-energy positivity wrappers. The theorem names are the same
-as the former legacy declarations, but callers can now avoid importing the
-monolithic concrete legacy module.
+as the former declarations, but callers can now avoid importing the
+monolithic concrete module.
 -/
 
 namespace IsingModel

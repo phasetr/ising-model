@@ -7,7 +7,7 @@ import IsingModel.AmbientLattice.BetaDerivativeMagnetization
 
 This module contains concrete `latticeGraph` specializations of ambient
 `ContinuousAt` and `DifferentiableAt` APIs for per-parameter
-`magnetizationAlongExhaustion` regularity. It is split out of the legacy
+`magnetizationAlongExhaustion` regularity. It is split out of the original
 concrete correlation module so future magnetization pointwise work can build a
 narrower child path.
 -/

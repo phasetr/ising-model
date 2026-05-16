@@ -34,8 +34,8 @@ parameter slices
 `freeEnergyAlongExhaustion_high_temp_h_zero_continuity_at_beta_zero`)
 now live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviationContinuityTrivial`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 /-- **Along-ex f continuity bundle at stage `n`**. -/

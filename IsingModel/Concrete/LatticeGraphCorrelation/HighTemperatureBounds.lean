@@ -40,7 +40,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsFreeEner
 
 Narrow child module for the §18.3-§18.4 high-temperature expansion,
 lower/upper bound, sandwich, correlation, and deviation wrappers on
-`latticeGraph d`. The theorem names are the same as the former legacy
+`latticeGraph d`. The theorem names are the same as the former
 declarations, but callers can now import this child module directly.
 -/
 
@@ -62,7 +62,7 @@ Sandwich and downstream wrappers continue to live in this module
 in PR #1935; deviation / continuity wrappers were further moved to
 `HighTemperatureBoundsDeviation` in PR #1936; ratio_sandwich / ratio_bound
 wrappers were further moved to `HighTemperatureBoundsRatioBounds` in
-PR #1937). The legacy import path is preserved by re-importing the new
+PR #1937). The earlier import path is preserved by re-importing the new
 child.
 -/
 
@@ -123,7 +123,7 @@ wrappers at `h = 0` (pair nonneg, pair `≤ 1`, singleton / pair trivial-slice
 vanishings at `J = 0` and `β = 0`, pair sandwich, singleton / pair
 ferromagnetic, singleton `= 0 ∧ ≤ 1`, pair+singleton bundle) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsCorrelationBasic`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -134,7 +134,7 @@ The 3 ℤ^d
 bundle wrappers (`_bundle_ferromagnetic`, `_complete_summary`,
 `_trivial_slices_bundle`) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsPairSingletonBundle`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 /-! ## Moved: §18.7 high-temperature exponential decay capstones
@@ -151,7 +151,7 @@ them; some named-rate / monotone-rate ferromagnetic variants of
 `Concrete/LatticeGraphCorrelation/CorrelationDecay.lean` and are
 intentionally not moved) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsDecayCapstones`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -166,7 +166,7 @@ The 8 ℤ^d Λ-level correlation pair/singleton wrappers
 `_at_pair_pos_of_latticeAdj`, `_at_singleton`, `_odd_card_eq_zero`)
 now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsCorrelationPair`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 /-! ## Moved: ℤ^d HT Λ-layer complete_summary wrappers
@@ -176,7 +176,7 @@ The 2 ℤ^d Λ-layer HT complete_summary wrappers
 `freeEnergyΛ_latticeGraph_high_temp_h_zero_complete_summary`)
 now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsLambdaCompleteSummary`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -189,7 +189,7 @@ wrappers on `latticeGraph d` at `h = 0` (17 theorems for
 `log_partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_*_exp` families,
 with ferromagnetic variants) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsExpSharper`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -202,7 +202,7 @@ for `freeEnergyΛ_latticeGraph`, `partitionFunctionΛ_latticeGraph`, and
 `log_partitionFunctionΛ_latticeGraph`, with ferromagnetic variants) now
 live in
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsDeviation`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -219,7 +219,7 @@ The 7 `triple_ratio_*` wrappers now live in
 (narrowed in PR #1998), and the 12 `log_partitionFunctionΛ_latticeGraph`
 / `freeEnergyΛ_latticeGraph` ratio wrappers now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsRatioLogFe`
-(narrowed in PR #1999). The legacy import path is preserved by
+(narrowed in PR #1999). The earlier import path is preserved by
 re-importing all three children.
 -/
 
@@ -238,7 +238,7 @@ numerator filter helper) now live in
 The two `_of_latticeAdj` along-exhaustion variants were narrowed in
 PR #2074 into
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExCompleteSummary`
-(see the next Moved block). The legacy import path is preserved by
+(see the next Moved block). The earlier import path is preserved by
 re-importing the new child.
 -/
 
@@ -262,7 +262,7 @@ The 4 ℤ^d along-exhaustion HT wrappers
 `partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_closed_at_beta_zero`)
 now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExSubset`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 /-! ## Moved: ℤ^d HT AlongExhaustion complete_summary wrappers
@@ -272,7 +272,7 @@ The 2 ℤ^d along-exhaustion complete_summary wrappers
 `freeEnergyAlongExhaustion_latticeGraph_high_temp_h_zero_complete_summary`)
 now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExCompleteSummary`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -287,7 +287,7 @@ sandwich / complete-summary wrappers on `latticeGraph d` at `h = 0`
 `log_partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_*_exp`
 with ferromagnetic variants) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExhaustionExpSharper`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -306,7 +306,7 @@ variants) live across two narrow children. The four
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExDeviationContinuity`.
 The remaining wrappers still live in
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExhaustionDeviation`.
-The legacy import path is preserved by re-importing both children.
+The earlier import path is preserved by re-importing both children.
 -/
 
 
@@ -331,7 +331,7 @@ bound bundles, J = 0 / β = 0 / ferromagnetic variants) now live in
 (narrowed in PR #1996); and the 14 `log_partitionFunction` /
 `freeEnergy` ratio wrappers now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExhaustionRatioLogFe`
-(narrowed in PR #1997). The legacy import path is preserved by
+(narrowed in PR #1997). The earlier import path is preserved by
 re-importing all five children.
 -/
 
@@ -344,7 +344,7 @@ The 4 ℤ^d along-exhaustion HT wrappers
 `freeEnergyAlongExhaustion_latticeGraph_high_temp_h_zero_lower_bound`)
 now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExClosedLower`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -359,7 +359,7 @@ on `cubicExhaustion d` (with the BED constant `c = d`) (10 theorems:
 `continuity_at_J_zero`, `continuity_at_beta_zero`, `continuity_bundle`,
 `deviation_sandwich_exp`, `ratio_bound_bundle`) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsFreeEnergyInfinite`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 end Ambient

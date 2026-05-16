@@ -78,7 +78,7 @@ The two §18.5 along-ex ferromagnetic tanh wrappers
 `polymerFreeEnergyAlongExhaustion_tanh_hasSum_via_log_of_pow_lt_two_ferromagnetic`)
 now live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureTanhFerro`.
-The legacy import path is preserved by re-exporting the new child
+The earlier import path is preserved by re-exporting the new child
 from this parent module and from the umbrella.
 -/
 

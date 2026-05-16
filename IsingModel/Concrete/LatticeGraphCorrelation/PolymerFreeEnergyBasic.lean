@@ -6,7 +6,7 @@ import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBasic
 
 Narrow child module for concrete `ℤ^d` `polymerFreeEnergy` at-zero, at-one,
 and nonnegative sandwich wrappers. This keeps callers that only need these
-forwarders out of the monolithic lattice-correlation legacy module.
+forwarders out of the monolithic lattice-correlation module.
 -/
 
 namespace IsingModel

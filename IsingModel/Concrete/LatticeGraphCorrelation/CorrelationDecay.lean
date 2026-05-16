@@ -6,8 +6,8 @@ import IsingModel.Lattice
 # Lightweight concrete lattice correlation-decay wrappers
 
 This module exposes concrete `latticeGraph d` cluster-decay and
-high-temperature correlation-decay wrappers without importing the legacy
-monolithic `LatticeGraphCorrelation.Legacy` implementation. It keeps
+high-temperature correlation-decay wrappers without importing the original
+monolithic special-cases module. It keeps
 incremental checks for thin correlation-decay API additions away from the
 heavy ambient analyticity and cluster-expansion import chain.
 -/

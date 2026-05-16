@@ -37,11 +37,11 @@ import Mathlib.Analysis.BoundedVariation
 
 This module also imports
 `IsingModel.Concrete.LatticeGraphCorrelation.CorrelationDecay` to preserve the
-legacy `Inequalities` import path for §5.1 conditional and distance-based
+original `Inequalities` import path for §5.1 conditional and distance-based
 cluster-decay wrappers, and
 `IsingModel.Concrete.LatticeGraphCorrelation.PointwiseRegularity` /
 `IsingModel.Concrete.LatticeGraphCorrelation.SusceptibilityPointwiseRegularity`
-to preserve the legacy path for finite-stage correlation and susceptibility
+to preserve the import path for finite-stage correlation and susceptibility
 regularity compatibility names. New code should import the narrower child
 modules directly for those declarations.
 -/
@@ -55,7 +55,7 @@ namespace Ambient
 
 The foundational `HasExponentialDecay` and `latticeMass` API now lives in
 `IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassFoundation`. This
-module imports it to preserve the legacy `Inequalities` import path.
+module imports it to preserve the original `Inequalities` import path.
 -/
 
 /-! ## §5.1 / §17.5 high-temperature lattice-mass bounds
@@ -63,7 +63,7 @@ module imports it to preserve the legacy `Inequalities` import path.
 The concrete high-temperature `HasExponentialDecay`, lattice-mass bounds,
 antitonicity, and tanh lower-bound API now lives in
 `IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTemperature`. This
-module imports it to preserve the legacy `Inequalities` import path.
+module imports it to preserve the original `Inequalities` import path.
 -/
 
 /-! ## §17.1 / §17.5 pseudo-mass transfer and critical-temperature bridges
@@ -71,7 +71,7 @@ module imports it to preserve the legacy `Inequalities` import path.
 The concrete product-summability, critical inverse temperature, pseudo-mass
 transfer, and below-critical cluster / summability bridge API now lives in
 `IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransfer`.
-This module imports it to preserve the legacy `Inequalities` import path.
+This module imports it to preserve the original `Inequalities` import path.
 -/
 
 /-! ## §17.1 d = 0 special case -/
@@ -168,7 +168,7 @@ theorem criticalInverseTemp_eq_top_of_J_zero (d : ℕ) :
 The concrete finite-susceptibility wrapper and Lebowitz derivative bound API
 now lives in
 `IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassLebowitzDerivative`.
-This module imports it to preserve the legacy `Inequalities` import path.
+This module imports it to preserve the original `Inequalities` import path.
 -/
 
 /-! ## §17.5 high-temperature Lipschitz and uniform convergence wrappers
@@ -177,7 +177,7 @@ The concrete high-temperature Lipschitz, continuity, uniform convergence,
 a.e. differentiability, locally bounded variation, locally uniform convergence,
 and interior-continuity API now lives in
 `IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempLipschitz`.
-This module imports it to preserve the legacy `Inequalities` import path.
+This module imports it to preserve the original `Inequalities` import path.
 -/
 
 /-! ## §17.5 high-temperature zero-boundary and half-open wrappers
@@ -187,7 +187,7 @@ continuity and uniform convergence wrappers, zero-included Lipschitz bounds,
 half-line a.e. differentiability wrappers, and half-open locally uniform
 convergence API now lives in
 `IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempZeroBoundary`.
-This module imports it to preserve the legacy `Inequalities` import path.
+This module imports it to preserve the original `Inequalities` import path.
 -/
 
 /-! ## §17.5 truncated2Infinite high-temperature wrappers
@@ -197,7 +197,7 @@ Ursell two-point function `truncated2Infinite` at `h = 0` (Step 185--187 in
 the β-direction, Step 239--240 in the J-direction, and Step 241 interior
 `ContinuousAt` wrappers) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassTruncated2HighTemp`.
-This module imports it to preserve the legacy `Inequalities` import path.
+This module imports it to preserve the original `Inequalities` import path.
 -/
 
 end Ambient

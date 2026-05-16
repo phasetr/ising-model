@@ -132,7 +132,7 @@ The 2 ℤ^d
 `freeEnergyInfinite_latticeGraph_cubicExhaustion_high_temp_h_zero_deviation_sandwich_exp`
 and `_ratio_bound_bundle` wrappers now live in
 `...HighTemperatureBoundsFreeEnergyInfiniteDeviationAndRatio`.
-The legacy import path is preserved by re-importing the new child. -/
+The earlier import path is preserved by re-importing the new child. -/
 
 
 

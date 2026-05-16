@@ -34,8 +34,8 @@ The three `DifferentiableAt ℝ` joint wrappers
 `susceptibilityAlongExhaustion_differentiableAt_joint_gen`) now
 live in
 `IsingModel.AmbientLattice.SpecialCases.JointRegularityAtDifferentiableAt`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 /-- **Along-ex: magnetization jointly ContinuousAt** (general G). -/

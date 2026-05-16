@@ -6,7 +6,7 @@ import IsingModel.AmbientLattice.SpecialCases.MayerVdIff
 
 Narrow child module for concrete `ℤ^d` iff characterizations of
 `vdPolymerFamilies_sum`. This keeps callers that only need these wrappers out
-of the monolithic lattice-correlation legacy module.
+of the monolithic lattice-correlation module.
 -/
 
 namespace IsingModel

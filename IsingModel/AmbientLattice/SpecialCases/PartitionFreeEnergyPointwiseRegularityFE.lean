@@ -38,8 +38,8 @@ variable {V : Type*} [DecidableEq V]
 The six `freeEnergyAlongExhaustion_{continuousAt,differentiableAt}_{beta,field,J}`
 non-joint pointwise wrappers now live in
 `IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyPointwiseRegularityFENonJoint`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 /-- **freeEnergyAlongExhaustion jointly ContinuousAt**. -/

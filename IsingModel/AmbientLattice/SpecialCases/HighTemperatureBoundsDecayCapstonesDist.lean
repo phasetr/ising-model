@@ -84,8 +84,8 @@ The three alpha-rate capstones (`_exp_alpha_dist`,
 `_exp_alpha_dist_of_le_highTempExpRate`, `_exp_alpha_dist_ferro`)
 now live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDecayCapstonesAlpha`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 end Ambient

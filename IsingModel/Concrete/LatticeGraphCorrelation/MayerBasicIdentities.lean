@@ -7,7 +7,7 @@ import IsingModel.AmbientLattice.SpecialCases.MayerBasicIdentities
 Narrow child module for concrete `ℤ^d` at-zero and at-one identities for
 `vdPolymerFamilies_sum`, `mayerPartialSum`, and `mayerExpansionTerm`. This
 keeps callers that only need these wrappers out of the monolithic
-lattice-correlation legacy module.
+lattice-correlation module.
 -/
 
 namespace IsingModel

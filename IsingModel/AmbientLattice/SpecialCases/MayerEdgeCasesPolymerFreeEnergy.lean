@@ -58,7 +58,7 @@ The two trivial-slice wrappers
 `polymerFreeEnergyAlongExhaustion_eq_mayerPartialSum_at_J_zero`)
 now live in
 `IsingModel.AmbientLattice.SpecialCases.MayerEdgeCasesPolymerFreeEnergyTrivial`.
-The legacy import path is preserved by re-exporting the new child
+The earlier import path is preserved by re-exporting the new child
 from this parent module and from the umbrella.
 -/
 

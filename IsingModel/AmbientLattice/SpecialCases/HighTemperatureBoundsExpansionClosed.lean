@@ -83,8 +83,8 @@ The two ambient alongExhaustion correlation wrappers
 `correlationAlongExhaustion_high_temp_expansion_h_zero_closed`)
 now live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansionClosedCorrelation`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 end Ambient

@@ -13,7 +13,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.TwoPointCorrelationInfinite
 # High-temperature lattice-mass bounds at ℤ^d
 
 This module contains the concrete high-temperature exponential-decay layer and
-§17.5 lattice-mass bounds split from the legacy `Inequalities` module:
+§17.5 lattice-mass bounds split from the original `Inequalities` module:
 Step 110 high-temperature decay, Step 111 positive/lower mass bounds,
 Step 112 antitonicity, Steps 113--114 tanh lower bounds, and Step 115 upper /
 two-sided mass bounds.

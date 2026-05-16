@@ -7,7 +7,7 @@ import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyTanhBounds
 Narrow child module for concrete `ℤ^d` `polymerFreeEnergy` tanh bounds,
 ferromagnetic bounds, the `log(1 + eps)` decomposition, and the `HasDerivAt`
 wrapper. This keeps callers that only need these forwarders out of the
-monolithic lattice-correlation legacy module.
+monolithic lattice-correlation module.
 -/
 
 namespace IsingModel

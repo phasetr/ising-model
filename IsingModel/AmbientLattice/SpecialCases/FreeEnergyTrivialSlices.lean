@@ -61,8 +61,8 @@ theorem freeEnergyAlongExhaustion_zero_params
 The two `freeEnergyInfinite_*` trivial-slice closed-form
 wrappers (`_beta_zero`, `_zero_params`) now live in
 `IsingModel.AmbientLattice.SpecialCases.FreeEnergyTrivialSlicesInfinite`.
-The legacy import path is preserved by re-exporting the new child
-from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from the umbrella `SpecialCases.lean`.
 -/
 
 /-! ## Moved: 2 `_J_zero` wrappers
@@ -71,7 +71,7 @@ The two J = 0 wrappers
 (`freeEnergyAlongExhaustion_eq_bot_at_J_zero`,
 `freeEnergyAlongExhaustion_J_zero`) now live in
 `IsingModel.AmbientLattice.SpecialCases.FreeEnergyTrivialSlicesJZero`.
-The legacy import path is preserved by re-exporting the new child
+The earlier import path is preserved by re-exporting the new child
 from this parent module and from the umbrella.
 -/
 

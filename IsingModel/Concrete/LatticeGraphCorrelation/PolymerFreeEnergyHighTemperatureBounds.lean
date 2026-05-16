@@ -6,7 +6,7 @@ import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyHighTemperatureBo
 
 Narrow child module for the §18.5 `vdPolymerFamilies_sum` sandwich/monotone,
 `ε(t)` bound, and `polymerFreeEnergy(tanh)` high-temperature bound wrappers on
-`latticeGraph d`. The theorem names are the same as the former legacy
+`latticeGraph d`. The theorem names are the same as the former
 declarations, but callers can now import this child module directly.
 -/
 

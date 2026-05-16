@@ -6,7 +6,7 @@ import IsingModel.AmbientLattice.SpecialCases.PartitionFunctionGeneralAnalyticit
 
 This module contains concrete `latticeGraph` specializations of joint
 `Continuous` / `Differentiable` APIs and general-h `AnalyticAt` APIs for
-partition functions. It is split out of the legacy concrete correlation module
+partition functions. It is split out of the original concrete correlation module
 so downstream users can depend on a narrower child path.
 -/
 

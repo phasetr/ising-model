@@ -41,8 +41,8 @@ The four `Differentiable ℝ` wrappers
 `freeEnergyAlongExhaustion_differentiable_field`,
 `freeEnergyAlongExhaustion_differentiable_J`) now live in
 `IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyRegularityFEDifferentiable`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 /-- **Along-ex: freeEnergy Continuous in β** (general h). -/

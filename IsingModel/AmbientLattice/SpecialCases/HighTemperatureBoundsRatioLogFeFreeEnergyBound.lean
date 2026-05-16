@@ -64,8 +64,8 @@ The four `freeEnergyAlongExhaustion_high_temp_h_zero_ratio_bound*`
 non-bundle wrappers (`J = 0`, `β = 0`, plus their ferromagnetic
 counterparts) now live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFeFreeEnergyBoundOnly`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 end Ambient

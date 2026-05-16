@@ -8,7 +8,7 @@ import IsingModel.AmbientLattice.SpecialCases.FreeEnergyAnalyticityOnNhd
 
 This module contains general-graph `AnalyticAt` and `AnalyticOnNhd` APIs
 for per-stage `freeEnergyAlongExhaustion` in the `β`, `J`, and `h`
-directions. It is split out of the legacy ambient special-cases module so
+directions. It is split out of the original ambient special-cases module so
 concrete free-energy analyticity wrappers can depend on a narrower child path.
 -/
 

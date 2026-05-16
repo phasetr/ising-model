@@ -34,7 +34,7 @@ convergence wrappers (`J_zero_tendsto_of_hcard_add`,
 `beta_zero_tendsto_of_eventually_nonempty`,
 `zero_params_tendsto_of_eventually_nonempty`) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.TwoPointFreeEnergyAlongExTendsto`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 /-! ## Moved: ℤ^d freeEnergyInfinite trivial-slice wrappers
@@ -43,7 +43,7 @@ The 9 ℤ^d `freeEnergyInfinite_latticeGraph_{beta_zero,zero_params,J_zero}_*`
 trivial-slice wrappers (3 `_of_eventually_nonempty` + 3 unconditional +
 3 `cubicExhaustion_*`) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.TwoPointFreeEnergyInfTrivialSlices`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -128,7 +128,7 @@ The 5 ℤ^d `freeEnergyInfinite_latticeGraph_*` h-symmetry / |h|-monotonicity
 wrappers (`cubicExhaustion_monotone_abs_h`, `cubicExhaustion_neg_h`,
 `cubicExhaustion_eq_abs_h`, `neg_h`, `eq_abs_h`) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.TwoPointFreeEnergyInfHSymmetry`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -138,7 +138,7 @@ The 7 ℤ^d `freeEnergyInfinite_latticeGraph_*monotone_*` wrappers
 (`monotone_J`, `monotone_h`, `monotone_beta`, `monotone_abs_h`, plus
 3 `cubicExhaustion_monotone_{J,h,beta}` variants) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.TwoPointFreeEnergyInfMonotone`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 end Ambient

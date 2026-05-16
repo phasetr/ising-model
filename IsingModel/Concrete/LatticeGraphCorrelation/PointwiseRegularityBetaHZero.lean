@@ -4,9 +4,9 @@ import IsingModel.AmbientLattice.BetaDerivative
 import IsingModel.AmbientLattice.JDerivative
 
 /-!
-# Legacy-compatible ℤ^d correlationAlongEx β-direction (h=0) wrappers
+# Compatibility-named ℤ^d correlationAlongEx β-direction (h=0) wrappers
 
-Narrow child module for four legacy-compatible ℤ^d
+Narrow child module for four compatibility-named ℤ^d
 `correlationAlongExhaustion_*_beta` wrappers (at `h = 0`)
 extracted from `PointwiseRegularity.lean`:
 

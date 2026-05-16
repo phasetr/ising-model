@@ -7,7 +7,7 @@ import IsingModel.AmbientLattice.SpecialCases.MayerTanhFerromagneticIffPFE
 
 Narrow child module for along-exhaustion ferromagnetic tanh iff wrappers for
 `polymerFreeEnergy` and `vdPolymerFamilies_sum`. This keeps callers that only
-need these forwarders out of the monolithic legacy special-cases module.
+need these forwarders out of the monolithic original special-cases module.
 -/
 
 namespace IsingModel
@@ -23,8 +23,8 @@ along-ex wraps -/
 The seven `polymerFreeEnergyAlongExhaustion_tanh_*_ferro` wrappers
 now live in
 `IsingModel.AmbientLattice.SpecialCases.MayerTanhFerromagneticIffPFE`.
-The legacy import path is preserved by re-exporting the new child
-from this parent module and from `Legacy.lean`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
 /-- **Along-ex: 1 < vdSum(tanh) ↔ 0 < tanh ∧ allPolymers ≠ ∅**

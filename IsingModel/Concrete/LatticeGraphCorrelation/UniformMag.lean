@@ -28,7 +28,7 @@ The 16 ℤ^d wrappers covering `uniformMagnetization` recasts,
 of_not_mem}`, `magnetizationInfinite_latticeGraph_apply`, and
 `freeEnergyInfinite_latticeGraph_apply` now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.UniformMagRecasts`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 /-! ## Moved: magnetizationAlongExhaustion / correlationAlongExhaustion
@@ -39,7 +39,7 @@ The 17 ℤ^d `magnetizationAlongExhaustion_latticeGraph_*` and
 convergent / bddAbove / bddBelow / `_le_*Infinite` /
 `_tendsto_ciSup` / `_eq_ciSup` wrappers now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.UniformMagAlongExConvergence`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
@@ -50,7 +50,7 @@ The 15 ℤ^d `magnetizationΛ_latticeGraph_*` and
 trivial-slice (h_zero, beta_zero, zero_params, J_zero variants)
 wrappers now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.UniformMagMagnetizationTrivial`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 /-! ## Moved: abs / neg / sq bounds wrappers
@@ -61,7 +61,7 @@ The 13 ℤ^d `abs_*_latticeGraph_le_one` /
 `correlationInfinite`, `magnetizationΛ`,
 `magnetizationAlongExhaustion`, `magnetizationInfinite`) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.UniformMagAbsBounds`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 /-! ## Moved: correlation trivial / GKS-II / FKG / h_zero / cor 4.3.5 wrappers
@@ -73,7 +73,7 @@ trivial slices, `correlationInfinite_latticeGraph_*` empty / GKS-II
 `correlationAlongExhaustion_latticeGraph_*_h_zero` wrappers now live
 in
 `IsingModel.Concrete.LatticeGraphCorrelation.UniformMagCorrelationTrivial`.
-The legacy import path is preserved by re-importing the new child.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 
