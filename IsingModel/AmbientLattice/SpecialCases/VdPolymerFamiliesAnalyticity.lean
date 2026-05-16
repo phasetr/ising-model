@@ -1,6 +1,7 @@
 import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.SpecialCases.VdPolymerFamiliesAnalyticityLog
+import IsingModel.AmbientLattice.SpecialCases.VdPolymerFamiliesAnalyticityTanh
 
 /-!
 # Polymer-family analyticity wrappers along an exhaustion
@@ -29,29 +30,15 @@ theorem vdPolymerFamilies_sumAlongExhaustion_analyticAt
           ∏ P ∈ Γ, s ^ P.card) t :=
   vdPolymerFamilies_sum_Λ_analyticAt G (Λ.volume n) t
 
-/-! ### `vdPolymerFamilies_sum` tanh β/J analyticity along an exhaustion -/
+/-! ## Moved: 2 tanh analyticity wrappers
 
-/-- **Along-ex: vdPolymerFamilies_sum ∘ tanh ∘ (·*J) AnalyticAt in β**. -/
-theorem vdPolymerFamilies_sumAlongExhaustion_tanh_analyticAt_beta
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (n : ℕ) :
-    AnalyticAt ℝ (fun β' : ℝ =>
-        ∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
-            (inducedGraph G (Λ.volume n)),
-          ∏ P ∈ Γ, Real.tanh (β' * J) ^ P.card) β :=
-  vdPolymerFamilies_sum_Λ_tanh_analyticAt_beta G (Λ.volume n) J β
-
-/-- **Along-ex: vdPolymerFamilies_sum ∘ tanh ∘ (β*·) AnalyticAt in J**. -/
-theorem vdPolymerFamilies_sumAlongExhaustion_tanh_analyticAt_J
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (β J : ℝ) (n : ℕ) :
-    AnalyticAt ℝ (fun J' : ℝ =>
-        ∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
-            (inducedGraph G (Λ.volume n)),
-          ∏ P ∈ Γ, Real.tanh (β * J') ^ P.card) J :=
-  vdPolymerFamilies_sum_Λ_tanh_analyticAt_J G (Λ.volume n) β J
+The two along-ex tanh-composition analyticity wrappers
+(`vdPolymerFamilies_sumAlongExhaustion_tanh_analyticAt_beta`,
+`vdPolymerFamilies_sumAlongExhaustion_tanh_analyticAt_J`) now live in
+`IsingModel.AmbientLattice.SpecialCases.VdPolymerFamiliesAnalyticityTanh`.
+The legacy import path is preserved by re-exporting the new child
+from this parent module and from the umbrella.
+-/
 
 /-! ## Moved: log_vdPolymerFamilies_sumAlongExhaustion analyticity wrappers
 

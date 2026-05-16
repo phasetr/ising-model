@@ -157,6 +157,7 @@ import IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularityA
 import IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularityDifferentiable
 import IsingModel.AmbientLattice.SpecialCases.VdPolymerFamiliesAnalyticity
 import IsingModel.AmbientLattice.SpecialCases.VdPolymerFamiliesAnalyticityLog
+import IsingModel.AmbientLattice.SpecialCases.VdPolymerFamiliesAnalyticityTanh
 
 /-!
 # Ambient-lattice special cases umbrella
