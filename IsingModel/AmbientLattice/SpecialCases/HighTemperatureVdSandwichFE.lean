@@ -1,19 +1,17 @@
 import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureVdSandwichFreeEnergy
 
 /-!
 # §18.5 cluster-expansion convergence sandwich wrappers along an exhaustion
 
-Narrow child module for the six §18.5 ambient alongExhaustion
-cluster-expansion convergence sandwich wrappers: four
-`vdPolymerFamilies_sumAlongExhaustion_sandwich*` variants (general,
-sharp, ferromagnetic, sharp ferromagnetic) and the two strict
-`freeEnergyAlongExhaustion_lt_log_two_plus_high_temp_correction*`
-bounds (general and ferromagnetic). Each wrapper is a thin
-pass-through to the corresponding `vdPolymerFamilies_sum_Λ_sandwich*`
-or `freeEnergyΛ_lt_log_two_plus_high_temp_correction*` ambient
-lemma. Theorem names are unchanged from the former
-`HighTemperature` declarations.
+Narrow child module for the four §18.5 ambient alongExhaustion
+`vdPolymerFamilies_sumAlongExhaustion_sandwich*` cluster-expansion
+convergence sandwich wrappers (general, sharp, ferromagnetic, sharp
+ferromagnetic). Each wrapper is a thin pass-through to the
+corresponding `vdPolymerFamilies_sum_Λ_sandwich*` ambient lemma.
+Theorem names are unchanged from the former `HighTemperature`
+declarations.
 -/
 
 namespace IsingModel
@@ -85,45 +83,16 @@ vdPolymerFamilies_sumAlongExhaustion_sandwich_sharp_ferromagnetic
   vdPolymerFamilies_sum_Λ_sandwich_sharp_ferromagnetic
     G (Λ.volume n) hJ hβ
 
-/-- **Along-exhaustion: strict `freeEnergyAlongExhaustion` upper
-bound in cluster-expansion convergence regime** (§18.5 along-ex
-wrap of #1527). -/
-theorem
-freeEnergyAlongExhaustion_lt_log_two_plus_high_temp_correction
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (hβJ : 0 ≤ β * J) (n : ℕ) (hne : 0 < (Λ.volume n).card)
-    (h_pow : (1 + Real.tanh (β * J)) ^
-        (inducedGraph G (Λ.volume n)).edgeFinset.card < 2) :
-    freeEnergyAlongExhaustion G Λ (⟨J, 0, β⟩ : IsingParams ℝ) n <
-      Real.log 2 +
-        ((inducedGraph G (Λ.volume n)).edgeFinset.card : ℝ) /
-          (Λ.volume n).card *
-          Real.log (Real.cosh (β * J)) +
-        Real.log 2 / (Λ.volume n).card := by
-  unfold freeEnergyAlongExhaustion
-  exact freeEnergyΛ_lt_log_two_plus_high_temp_correction
-    G (Λ.volume n) J β hβJ hne h_pow
+/-! ## Moved: 2 strict `freeEnergyAlongExhaustion` cluster-expansion bounds
 
-/-- **Along-exhaustion: strict `freeEnergyAlongExhaustion` upper
-bound in cluster-expansion convergence regime (ferromagnetic)**
-(§18.5 along-ex wrap, ferro). -/
-theorem
-freeEnergyAlongExhaustion_lt_log_two_plus_high_temp_correction_ferromagnetic
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ)
-    (hne : 0 < (Λ.volume n).card)
-    (h_pow : (1 + Real.tanh (β * J)) ^
-        (inducedGraph G (Λ.volume n)).edgeFinset.card < 2) :
-    freeEnergyAlongExhaustion G Λ (⟨J, 0, β⟩ : IsingParams ℝ) n <
-      Real.log 2 +
-        ((inducedGraph G (Λ.volume n)).edgeFinset.card : ℝ) /
-          (Λ.volume n).card *
-          Real.log (Real.cosh (β * J)) +
-        Real.log 2 / (Λ.volume n).card :=
-  freeEnergyAlongExhaustion_lt_log_two_plus_high_temp_correction
-    G Λ J β (mul_nonneg hβ.le hJ) n hne h_pow
+The two strict free-energy upper bound wrappers
+(`freeEnergyAlongExhaustion_lt_log_two_plus_high_temp_correction`,
+`freeEnergyAlongExhaustion_lt_log_two_plus_high_temp_correction_ferromagnetic`)
+now live in
+`IsingModel.AmbientLattice.SpecialCases.HighTemperatureVdSandwichFreeEnergy`.
+The legacy import path is preserved by re-exporting the new child
+from this parent module and from `Legacy.lean`.
+-/
 
 end Ambient
 end IsingModel
