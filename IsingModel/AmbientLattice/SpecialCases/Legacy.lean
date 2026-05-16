@@ -57,6 +57,7 @@ import IsingModel.AmbientLattice.SpecialCases.MayerExpansionEdgeCases
 import IsingModel.AmbientLattice.SpecialCases.MayerExpansionEdgeCasesTwo
 import IsingModel.AmbientLattice.SpecialCases.MayerEpsilonInfrastructure
 import IsingModel.AmbientLattice.SpecialCases.MayerEpsilonPositivity
+import IsingModel.AmbientLattice.SpecialCases.MayerEpsilonPositivityVdSum
 import IsingModel.AmbientLattice.SpecialCases.MayerFilterConnected
 import IsingModel.AmbientLattice.SpecialCases.MayerRecurrenceHasSum
 import IsingModel.AmbientLattice.SpecialCases.MayerStrictPositivity
