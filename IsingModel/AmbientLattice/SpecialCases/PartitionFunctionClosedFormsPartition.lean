@@ -1,14 +1,20 @@
 import IsingModel.AmbientLattice.Defs
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLattice.SpecialCases.PartitionFunctionClosedFormsPartitionJZero
 
 /-!
-# Partition-function closed forms along an exhaustion (partition only)
+# Partition-function `Z = 2^|Λ|` closed forms along an exhaustion
 
-Narrow child module for the three along-exhaustion
-`partitionFunctionAlongExhaustion_*` closed-form wrappers (β = 0,
-J = h = 0, J = 0). Each wrapper is a thin pass-through to the
-corresponding `IsingModel.partitionFunction_*` ambient lemma.
-Theorem names are unchanged from the former
+Narrow child module for the two along-exhaustion
+`partitionFunctionAlongExhaustion_*` closed-form wrappers whose
+right-hand side equals `2^|Λ.volume n|` (the `β = 0` slice and the
+`J = h = 0` zero-params slice). The corresponding `J = 0`
+closed-form wrapper (whose right-hand side depends on `h`) now
+lives in
+`IsingModel.AmbientLattice.SpecialCases.PartitionFunctionClosedFormsPartitionJZero`
+and is re-imported through this parent module. Each wrapper is a
+thin pass-through to the corresponding `IsingModel.partitionFunction_*`
+ambient lemma. Theorem names are unchanged from the former
 `PartitionFunctionClosedForms` declarations.
 -/
 
@@ -63,24 +69,13 @@ theorem partitionFunctionAlongExhaustion_zero_params
   push_cast
   rfl
 
-/-! ## J = 0 closed form for `partitionFunctionAlongExhaustion` -/
+/-! ## Moved: 1 J = 0 closed-form wrapper
 
-/-- **Along-exhaustion J=0 partition function closed form**:
-`partitionFunctionAlongExhaustion G Λ ⟨0, h, β⟩ n = (2·cosh(β·h))^|Λ.volume n|`
-for any `h, β` and any ambient graph `G, Λ`.
-
-Specialization of `IsingModel.partitionFunction_J_zero`
-(`Z_G ⟨0, h, β⟩ = (2·cosh(β·h))^|ι|`, graph-independent) with
-`Fintype.card_coe` (`|↑Λ| = |Λ|`). -/
-theorem partitionFunctionAlongExhaustion_J_zero
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (h β : ℝ) (n : ℕ) :
-    partitionFunctionAlongExhaustion G Λ (⟨0, h, β⟩ : IsingParams ℝ) n
-      = (2 * Real.cosh (β * h)) ^ (Λ.volume n).card := by
-  change partitionFunction (inducedGraph G (Λ.volume n))
-      (⟨0, h, β⟩ : IsingParams ℝ) = _
-  rw [IsingModel.partitionFunction_J_zero, Fintype.card_coe]
+The `partitionFunctionAlongExhaustion_J_zero` wrapper now lives in
+`IsingModel.AmbientLattice.SpecialCases.PartitionFunctionClosedFormsPartitionJZero`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
+-/
 
 end Ambient
 end IsingModel
