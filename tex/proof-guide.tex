@@ -4197,6 +4197,46 @@ gap explicitly identified as the missing concrete-to-abstract map
 $(d, \Lambda, p) \to (\alpha, r, c)$ and the exponential decay
 bounds on $\mathbb{Z}^d$ (Step 117h+).
 
+\paragraph{\S17.5 Lemma 17.5.2 conditional sandwich capstone
+(Step 117l, PR~\#2663).} The new module
+\texttt{Concrete/LatticeGraphCorrelation/Lemma\_17\_5\_2.lean}
+introduces the named capstone interface for
+Glimm--Jaffe \S17.5 Lemma~17.5.2 (2nd ed., pp.~311--312):
+\[
+m^-(\beta) \le m(\beta) \le C \cdot m^-(\beta),
+\]
+where $m^- := \mathrm{pseudoMassFromParamsAtPair}$ and
+$m := \mathrm{latticeMass}$.  Five named declarations are added:
+\begin{itemize}
+\item \texttt{Lemma\_17\_5\_2\_UpperBound} -- the \texttt{Prop}-valued
+  predicate naming the upper-bound side
+  $m \le C \cdot \mathrm{ofReal}\,m^-$ as a hypothesis.  Future
+  Lipschitz + HLS work (cf.\ \texttt{pseudoMass\_pow\_succ\_lipschitz}
+  and \texttt{discrete\_hls\_constant}) is intended to discharge it
+  unconditionally.
+\item \texttt{lemma\_17\_5\_2\_lower\_bound\_of\_decay} -- the
+  Lemma~17.5.2 lower-bound side, a renaming of the existing decay-based
+  bridge \texttt{latticeMass\_ge\_pseudoMassFromParamsAtPair\_of\_decay}
+  under the GJ-named identifier.
+\item \texttt{lemma\_17\_5\_2\_sandwich\_of\_decay\_and\_upper} -- the
+  conditional sandwich capstone, returning both inequalities once a
+  validating exponential decay rate and an upper-bound hypothesis are
+  supplied.
+\item \texttt{lemma\_17\_5\_2\_cubic\_high\_temp\_lower\_capstone} and
+  \texttt{lemma\_17\_5\_2\_cubic\_high\_temp\_latticeMass\_pos} -- the
+  Lemma~17.5.2 lower-bound side specialised to the cubic exhaustion at
+  high temperature $\beta J (2d) < 1$, derived from the existing
+  \texttt{cubicNamedRate\_capstone\_bundle\_of\_cubic\_corr\_mem\_Ioo\_and\_profile}
+  bundle.  These give an unconditional positivity statement on
+  $\mathrm{latticeMass}$ in the high-temperature regime.
+\item \texttt{lemma\_17\_5\_2\_constant\_existence} -- a strict-positivity
+  alias of \texttt{discrete\_hls\_constant} ($2\alpha > d$).
+\end{itemize}
+The lower-bound side of GJ~Lemma 17.5.2 is therefore now exposed under
+the named capstone API on the cubic exhaustion at high temperature; the
+upper-bound side remains a hypothesis pending the substantive
+Lipschitz~+~HLS argument of GJ~Theorem~17.5.1 (proof on p.~312).
+
 \paragraph{\S5.4 Prop 5.4.2 infinite-volume Peierls bound (liminf form)
 (PR~\#1643).} Adds the genuine infinite-volume lift of GJ Prop 5.4.2:
 under the per-stage hypotheses of \texttt{prop\_5\_4\_2\_along\_exhaustion},
