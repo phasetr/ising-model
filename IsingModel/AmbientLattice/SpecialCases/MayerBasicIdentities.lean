@@ -2,6 +2,7 @@ import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.SpecialCases.MayerBasicIdentitiesExpansionTerm
 import IsingModel.AmbientLattice.SpecialCases.MayerBasicIdentitiesVdSum
+import IsingModel.AmbientLattice.SpecialCases.MayerBasicIdentitiesAtZero
 
 /-!
 # Mayer basic identity wrappers along an exhaustion
@@ -50,14 +51,14 @@ theorem mayerPartialSumAlongExhaustion_one
             (inducedGraph G (Λ.volume n)), t ^ P.card :=
   mayerPartialSum_Λ_one G (Λ.volume n) t
 
-/-- **Along-ex: mayerPartialSum at t = 0 = 0**. -/
-theorem mayerPartialSumAlongExhaustion_at_zero
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (N : ℕ) (n : ℕ) :
-    IsingModel.mayerPartialSum
-        (inducedGraph G (Λ.volume n)) N 0 = 0 :=
-  mayerPartialSum_Λ_at_zero G (Λ.volume n) N
+/-! ## Moved: 1 mayerPartialSum at_zero wrapper
+
+The `mayerPartialSumAlongExhaustion_at_zero` wrapper (t=0) now
+lives in
+`IsingModel.AmbientLattice.SpecialCases.MayerBasicIdentitiesAtZero`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
+-/
 
 /-! ## Moved: mayerExpansionTermAlongExhaustion basic identity wrappers
 
