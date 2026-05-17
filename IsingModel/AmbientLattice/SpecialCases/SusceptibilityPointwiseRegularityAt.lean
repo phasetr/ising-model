@@ -1,5 +1,6 @@
 import IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularity
 import IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularityAtDifferentiableAt
+import IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularityAtContinuousAtBeta
 
 /-!
 # Susceptibility `ContinuousAt` along-ex wrappers
@@ -17,15 +18,14 @@ namespace Ambient
 
 variable {V : Type*} [DecidableEq V]
 
-/-- **Along-ex: susceptibility ContinuousAt β** (general G, general h). -/
-theorem susceptibilityAlongExhaustion_continuousAt_beta_gen
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J h β : ℝ) (i : V) (n : ℕ) :
-    ContinuousAt
-      (fun β' => susceptibilityAlongExhaustion G Λ
-          (⟨J, h, β'⟩ : IsingParams ℝ) i n) β :=
-  (susceptibilityAlongExhaustion_continuous_beta_gen G Λ J h i n).continuousAt
+/-! ## Moved: 1 ContinuousAt β wrapper
+
+The `susceptibilityAlongExhaustion_continuousAt_beta_gen` wrapper
+now lives in
+`IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularityAtContinuousAtBeta`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
+-/
 
 /-! ## Moved: 3 susceptibilityAlongExhaustion_differentiableAt_*_gen wrappers
 
