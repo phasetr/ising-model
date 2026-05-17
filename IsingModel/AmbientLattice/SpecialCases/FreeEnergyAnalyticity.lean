@@ -1,5 +1,6 @@
 import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLattice.SpecialCases.FreeEnergyAnalyticityAtH
 import IsingModel.AmbientLattice.SpecialCases.FreeEnergyAnalyticityHZero
 import IsingModel.AmbientLattice.SpecialCases.FreeEnergyAnalyticityOnNhd
 
@@ -46,14 +47,13 @@ theorem freeEnergyAlongExhaustion_analyticAt_J_general_h
       freeEnergyAlongExhaustion G Λ ⟨J', h, β⟩ n) J :=
   freeEnergyΛ_analyticAt_J_general_h G (Λ.volume n) β h J
 
-/-- **Along-ex: freeEnergy `AnalyticAt ℝ` in `h`**. -/
-theorem freeEnergyAlongExhaustion_analyticAt_h
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β h : ℝ) (n : ℕ) :
-    AnalyticAt ℝ (fun h' : ℝ =>
-      freeEnergyAlongExhaustion G Λ ⟨J, h', β⟩ n) h :=
-  freeEnergyΛ_analyticAt_h G (Λ.volume n) J β h
+/-! ## Moved: 1 AnalyticAt `h` wrapper
+
+The `freeEnergyAlongExhaustion_analyticAt_h` wrapper now lives in
+`IsingModel.AmbientLattice.SpecialCases.FreeEnergyAnalyticityAtH`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
+-/
 
 /-! ## Moved: freeEnergyAlongExhaustion AnalyticOnNhd general-h wrappers
 
