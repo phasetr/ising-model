@@ -1,6 +1,7 @@
 import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityVdPolymerTanh
+import IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityVdPolymerHasDerivAt
 
 /-!
 # `vdPolymerFamilies_sum` regularity wrappers along an exhaustion
@@ -40,20 +41,14 @@ theorem vdPolymerFamilies_sumAlongExhaustion_differentiable
           ∏ P ∈ Γ, t ^ P.card) :=
   vdPolymerFamilies_sum_Λ_differentiable G (Λ.volume n)
 
-/-- **Along-ex: `vdPolymerFamilies_sum` `HasDerivAt`**. -/
-theorem vdPolymerFamilies_sumAlongExhaustion_hasDerivAt
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (n : ℕ) (t : ℝ) :
-    HasDerivAt (fun s : ℝ =>
-        ∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
-            (inducedGraph G (Λ.volume n)),
-          ∏ P ∈ Γ, s ^ P.card)
-      (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
-            (inducedGraph G (Λ.volume n)),
-        ∑ Q ∈ Γ, (∏ P ∈ Γ.erase Q, t ^ P.card) *
-          ((Q.card : ℝ) * t ^ (Q.card - 1))) t :=
-  vdPolymerFamilies_sum_Λ_hasDerivAt G (Λ.volume n) t
+/-! ## Moved: 1 vdPolymerFamilies_sum HasDerivAt wrapper
+
+The `vdPolymerFamilies_sumAlongExhaustion_hasDerivAt` wrapper now
+lives in
+`IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityVdPolymerHasDerivAt`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
+-/
 
 /-! ## Moved: vdPolymerFamilies_sum tanh β/J along-ex wraps
 
