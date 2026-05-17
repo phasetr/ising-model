@@ -4206,7 +4206,8 @@ Glimm--Jaffe \S17.5 Lemma~17.5.2 (2nd ed., pp.~311--312):
 m^-(\beta) \le m(\beta) \le C \cdot m^-(\beta),
 \]
 where $m^- := \mathrm{pseudoMassFromParamsAtPair}$ and
-$m := \mathrm{latticeMass}$.  Five named declarations are added:
+$m := \mathrm{latticeMass}$.  The initial capstone adds five named
+declarations:
 \begin{itemize}
 \item \texttt{Lemma\_17\_5\_2\_UpperBound} -- the \texttt{Prop}-valued
   predicate naming the upper-bound side
@@ -4236,10 +4237,49 @@ $m := \mathrm{latticeMass}$.  Five named declarations are added:
 \item \texttt{lemma\_17\_5\_2\_constant\_existence} -- a strict-positivity
   alias of \texttt{discrete\_hls\_constant} ($2\alpha > d$).
 \end{itemize}
-The lower-bound side of GJ~Lemma 17.5.2 is therefore now exposed under
-the named capstone API on the cubic exhaustion at high temperature; the
-upper-bound side remains a hypothesis pending the substantive
-Lipschitz~+~HLS argument of GJ~Theorem~17.5.1 (proof on p.~312).
+The follow-up finite high-temperature bridge discharges the upper-bound
+predicate in the cubic active-range setting without adding an axiom.
+The theorem
+\texttt{lemma\_17\_5\_2\_cubic\_high\_temp\_upper\_bound\_of\_active\_range}
+uses the already-proved Step~115 bound
+\[
+  \mathrm{latticeMass}(d,\Lambda_{\mathrm{cubic}},\langle J,0,\beta\rangle)
+  \leq
+  \mathrm{ofReal}\bigl(-\log(\tanh(\beta J))\bigr)
+\]
+together with exhaustion-independence of \texttt{latticeMass} and the
+active-range positivity of
+\[
+  m^- :=
+  \texttt{cubicOriginPseudoMassFromParamsAtPair}\,\alpha\,r\,\beta\,J\,z.
+\]
+Since $m^- > 0$, the finite constant
+\[
+  C_{\mathrm{fin}} =
+  \frac{-\log(\tanh(\beta J))}{m^-}
+\]
+satisfies
+\[
+  \mathrm{latticeMass}(d,\Lambda,\langle J,0,\beta\rangle)
+  \leq C_{\mathrm{fin}}\,\mathrm{ofReal}(m^-).
+\]
+In Lean this last algebraic step is
+\texttt{ENNReal.ofReal\_div\_of\_pos} followed by
+\texttt{ENNReal.div\_mul\_cancel}.  The theorem
+\texttt{lemma\_17\_5\_2\_cubic\_high\_temp\_sandwich\_capstone}
+then combines this finite upper bridge with
+\texttt{lemma\_17\_5\_2\_cubic\_high\_temp\_lower\_capstone}, returning
+\texttt{HasExponentialDecay}, the lower inequality
+\[
+  \mathrm{ofReal}(m^-) \leq
+  \mathrm{latticeMass}(d,\Lambda,\langle J,0,\beta\rangle),
+\]
+and the finite upper inequality above.
+
+This finite constant is not the HLS-uniform constant from the proof of
+GJ~Theorem~17.5.1 (p.~312).  It closes the existing Lean upper-bound
+predicate in the high-temperature active-range regime using Step~115; the
+sharper HLS-uniform upper-bound proof remains a future refinement.
 
 \paragraph{\S5.4 Prop 5.4.2 infinite-volume Peierls bound (liminf form)
 (PR~\#1643).} Adds the genuine infinite-volume lift of GJ Prop 5.4.2:
