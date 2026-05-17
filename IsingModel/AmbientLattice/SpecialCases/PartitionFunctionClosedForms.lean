@@ -1,6 +1,7 @@
 import IsingModel.AmbientLattice.Defs
 import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.SpecialCases.PartitionFunctionClosedFormsPartition
+import IsingModel.AmbientLattice.SpecialCases.PartitionFunctionClosedFormsLogJZero
 
 /-!
 # Partition-function closed forms along an exhaustion
@@ -54,20 +55,14 @@ theorem log_partitionFunctionAlongExhaustion_zero_params
       = ((Λ.volume n).card : ℝ) * Real.log 2 := by
   rw [partitionFunctionAlongExhaustion_zero_params, Real.log_pow]
 
-/-! ## J = 0 closed form for `log_partitionFunctionAlongExhaustion` -/
+/-! ## Moved: 1 log-form J = 0 closed-form wrapper
 
-/-- **Log form**: `log (partitionFunctionAlongExhaustion G Λ ⟨0, h, β⟩ n)
-= |Λ.volume n| · log (2·cosh(β·h))`. Follows from
-`partitionFunctionAlongExhaustion_J_zero` via `Real.log_pow`
-(`2·cosh(β·h) > 0`). -/
-theorem log_partitionFunctionAlongExhaustion_J_zero
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (h β : ℝ) (n : ℕ) :
-    Real.log (partitionFunctionAlongExhaustion G Λ
-        (⟨0, h, β⟩ : IsingParams ℝ) n)
-      = ((Λ.volume n).card : ℝ) * Real.log (2 * Real.cosh (β * h)) := by
-  rw [partitionFunctionAlongExhaustion_J_zero, Real.log_pow]
+The `log_partitionFunctionAlongExhaustion_J_zero` wrapper now lives
+in
+`IsingModel.AmbientLattice.SpecialCases.PartitionFunctionClosedFormsLogJZero`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
+-/
 
 end Ambient
 end IsingModel
