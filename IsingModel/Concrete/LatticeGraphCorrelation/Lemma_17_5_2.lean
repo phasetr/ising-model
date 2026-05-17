@@ -2,7 +2,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassFoundation
 import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMass
 
 /-!
-# GJ §17.5 Lemma 17.5.2 capstone (Step 117l, conditional sandwich)
+# GJ §17.5 Lemma 17.5.2 capstone (Step 117l)
 
 This module bundles existing infrastructure into a named GJ Lemma 17.5.2
 capstone, providing:
@@ -13,10 +13,14 @@ capstone, providing:
   and an upper-bound hypothesis;
 * a Lemma 17.5.2 lower-bound named alias for downstream consumption;
 * an `ofReal`-valued `Prop` predicate naming the upper-bound side as a
-  hypothesis, to be discharged by a future Lipschitz + HLS PR (cf. GJ
-  §17.5 Theorem 17.5.1 proof on p.~312);
+  hypothesis. In the cubic active-range high-temperature setting this module
+  discharges the predicate with the finite Step 115 constant
+  `-log(tanh(βJ)) / m⁻`; the sharper HLS-uniform constant remains future work
+  (cf. GJ §17.5 Theorem 17.5.1 proof on p.~312);
 * a cubic-exhaustion + high-temperature unconditional lower-bound
   capstone derived from `cubicNamedRate_capstone_bundle_of_cubic_corr_mem_Ioo_and_profile`;
+* a finite cubic high-temperature sandwich capstone combining the lower-bound
+  capstone with the finite Step 115 upper bridge;
 * the existential form of the discrete HLS constant `C > 0` lifted from
   `discrete_hls_constant`.
 
