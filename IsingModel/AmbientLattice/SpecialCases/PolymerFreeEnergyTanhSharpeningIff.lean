@@ -1,6 +1,7 @@
 import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyTanhSharpeningIffEpsPos
+import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyTanhSharpeningIffLtEps
 
 /-!
 # Polymer free-energy tanh sharpening iff / eps_pos wrappers along an exhaustion
@@ -20,21 +21,14 @@ open Finset Real
 
 variable {V : Type*} [DecidableEq V]
 
-/-- **Along-ex: pFE(tanh) < ε(tanh) ↔ 0 < ε(tanh)** under
-`0 ≤ β·J`. -/
-theorem polymerFreeEnergyAlongExhaustion_tanh_lt_eps_iff_eps_pos
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    {β J : ℝ} (hβJ : 0 ≤ β * J) (n : ℕ) :
-    IsingModel.polymerFreeEnergy (inducedGraph G (Λ.volume n))
-        (Real.tanh (β * J)) <
-        ∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
-                (inducedGraph G (Λ.volume n))).erase ∅,
-              ∏ P ∈ Γ, (Real.tanh (β * J)) ^ P.card ↔
-      0 < ∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
-                (inducedGraph G (Λ.volume n))).erase ∅,
-            ∏ P ∈ Γ, (Real.tanh (β * J)) ^ P.card :=
-  polymerFreeEnergy_Λ_tanh_lt_eps_iff_eps_pos G (Λ.volume n) hβJ
+/-! ## Moved: 1 lt_eps_iff_eps_pos wrapper
+
+The `polymerFreeEnergyAlongExhaustion_tanh_lt_eps_iff_eps_pos`
+wrapper now lives in
+`IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyTanhSharpeningIffLtEps`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
+-/
 
 /-- **Along-ex: pFE(tanh) = 0 ↔ ε(tanh) = 0** under `0 ≤ β·J`. -/
 theorem polymerFreeEnergyAlongExhaustion_tanh_eq_zero_iff_eps_eq_zero
