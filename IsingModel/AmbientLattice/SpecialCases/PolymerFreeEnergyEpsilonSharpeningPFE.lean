@@ -1,19 +1,23 @@
 import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyEpsilonSharpeningPFELtPow
 
 /-!
-# Polymer free-energy ↔ ε(t) equivalence wrappers along an exhaustion
+# Polymer free-energy ↔ ε(t) equivalence iff wrappers along an exhaustion
 
-Narrow child module for the four §18.5 ambient alongExhaustion
-`polymerFreeEnergy_*_iff_eps_*` and `_lt_*_of_eps_pos` wrappers
-extracted from `PolymerFreeEnergyEpsilonSharpening.lean`:
+Narrow child module for the three §18.5 ambient alongExhaustion
+`polymerFreeEnergyAlongExhaustion_*_iff_eps_*` equivalence
+wrappers extracted from `PolymerFreeEnergyEpsilonSharpening.lean`:
 
 * `polymerFreeEnergyAlongExhaustion_eq_zero_iff_eps_eq_zero`
 * `polymerFreeEnergyAlongExhaustion_pos_iff_eps_pos`
 * `polymerFreeEnergyAlongExhaustion_lt_eps_iff_eps_pos`
-* `polymerFreeEnergyAlongExhaustion_lt_pow_sub_one_of_eps_pos`
 
-Each wrapper is a thin pass-through to the corresponding ambient
+The corresponding strict-inequality
+`_lt_pow_sub_one_of_eps_pos` wrapper now lives in
+`IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyEpsilonSharpeningPFELtPow`
+and is re-imported through this parent module. Each remaining
+wrapper is a thin pass-through to the corresponding ambient
 `polymerFreeEnergy_Λ_*` lemma. Theorem names are unchanged from
 the former `PolymerFreeEnergyEpsilonSharpening` declarations.
 -/
@@ -61,18 +65,14 @@ theorem polymerFreeEnergyAlongExhaustion_lt_eps_iff_eps_pos
             ∏ P ∈ Γ, t ^ P.card :=
   polymerFreeEnergy_Λ_lt_eps_iff_eps_pos G (Λ.volume n) ht
 
-/-- **Along-ex: pFE(t) < (1+t)^|E| - 1** under `0 ≤ t` and ε(t) > 0. -/
-theorem polymerFreeEnergyAlongExhaustion_lt_pow_sub_one_of_eps_pos
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    {t : ℝ} (ht : 0 ≤ t) (n : ℕ)
-    (h_eps_pos : 0 < ∑ Γ ∈ (IsingModel.vdCompatiblePolymerFamilies
-              (inducedGraph G (Λ.volume n))).erase ∅,
-            ∏ P ∈ Γ, t ^ P.card) :
-    IsingModel.polymerFreeEnergy (inducedGraph G (Λ.volume n)) t <
-      (1 + t) ^ (inducedGraph G (Λ.volume n)).edgeFinset.card - 1 :=
-  polymerFreeEnergy_Λ_lt_pow_sub_one_of_eps_pos
-    G (Λ.volume n) ht h_eps_pos
+/-! ## Moved: 1 lt_pow_sub_one_of_eps_pos wrapper
+
+The `polymerFreeEnergyAlongExhaustion_lt_pow_sub_one_of_eps_pos`
+wrapper now lives in
+`IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyEpsilonSharpeningPFELtPow`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
+-/
 
 end Ambient
 end IsingModel
