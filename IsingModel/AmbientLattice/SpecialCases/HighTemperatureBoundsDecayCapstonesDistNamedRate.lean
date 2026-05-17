@@ -11,10 +11,9 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFe
 # Ambient alongExhaustion §18.7 named-rate distance-bound capstone
 
 Narrow child module for the §18.7 alongExhaustion named-rate
-pair-correlation distance-bound capstone wrapper extracted from
-`HighTemperatureBoundsDecayCapstonesDist.lean`:
-
-* `correlationAlongExhaustion_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_highTempExpRate_dist`
+pair-correlation distance-bound capstone wrapper
+(`_..._exp_highTempExpRate_dist`) extracted from
+`HighTemperatureBoundsDecayCapstonesDist.lean`.
 
 The wrapper is a thin pass-through to the corresponding
 `correlationΛ_*` ambient lemma, written with the named
