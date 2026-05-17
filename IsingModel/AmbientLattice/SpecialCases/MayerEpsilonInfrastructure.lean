@@ -1,6 +1,7 @@
 import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.SpecialCases.MayerEpsilonInfrastructureVdSum
+import IsingModel.AmbientLattice.SpecialCases.MayerEpsilonInfrastructureAllPolymers
 
 /-!
 # Mayer term sign wrappers and edgeless `allPolymers` along an exhaustion
@@ -48,13 +49,14 @@ The earlier import path is preserved by re-exporting the new child
 from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
-/-- **Along-ex: allPolymers = ∅ on edgeless induced graphs**. -/
-theorem allPolymersAlongExhaustion_eq_empty_of_edgeFinset_empty
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet] (n : ℕ)
-    (h_empty : (inducedGraph G (Λ.volume n)).edgeFinset = ∅) :
-    IsingModel.allPolymers (inducedGraph G (Λ.volume n)) = ∅ :=
-  allPolymers_Λ_eq_empty_of_edgeFinset_empty G (Λ.volume n) h_empty
+/-! ## Moved: 1 allPolymers wrapper
+
+The `allPolymersAlongExhaustion_eq_empty_of_edgeFinset_empty`
+wrapper now lives in
+`IsingModel.AmbientLattice.SpecialCases.MayerEpsilonInfrastructureAllPolymers`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
+-/
 
 end Ambient
 end IsingModel
