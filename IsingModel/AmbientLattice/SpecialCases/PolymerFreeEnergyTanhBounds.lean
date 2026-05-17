@@ -1,6 +1,7 @@
 import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyTanhBoundsFerro
+import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyTanhBoundsHasDerivAt
 
 /-!
 # Polymer free-energy tanh-bound wrappers along an exhaustion
@@ -54,21 +55,14 @@ theorem polymerFreeEnergyAlongExhaustion_eq_log_one_add_eps
               ∏ P ∈ Γ, t ^ P.card) :=
   polymerFreeEnergy_Λ_eq_log_one_add_eps G (Λ.volume n) t
 
-/-- **Along-ex: polymerFreeEnergy hasDerivAt at `t ≥ 0`**. -/
-theorem polymerFreeEnergyAlongExhaustion_hasDerivAt
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    {t : ℝ} (ht : 0 ≤ t) (n : ℕ) :
-    HasDerivAt (fun s : ℝ => IsingModel.polymerFreeEnergy
-        (inducedGraph G (Λ.volume n)) s)
-      ((∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
-              (inducedGraph G (Λ.volume n)),
-          ∑ Q ∈ Γ, (∏ P ∈ Γ.erase Q, t ^ P.card) *
-            ((Q.card : ℝ) * t ^ (Q.card - 1))) /
-        (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
-              (inducedGraph G (Λ.volume n)),
-            ∏ P ∈ Γ, t ^ P.card)) t :=
-  polymerFreeEnergy_Λ_hasDerivAt G (Λ.volume n) ht
+/-! ## Moved: 1 hasDerivAt wrapper
+
+The `polymerFreeEnergyAlongExhaustion_hasDerivAt` wrapper now
+lives in
+`IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyTanhBoundsHasDerivAt`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
+-/
 
 end Ambient
 end IsingModel
