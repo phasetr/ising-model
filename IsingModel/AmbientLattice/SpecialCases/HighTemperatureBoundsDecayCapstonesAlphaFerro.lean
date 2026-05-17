@@ -12,7 +12,7 @@ pair-correlation distance-bound capstone extracted from
 The wrapper is a thin pass-through to its non-ferromagnetic sibling
 in the parent under `mul_nonneg hβ.le hJ`. The theorem name is
 unchanged from the former
-`HighTemperatureBoundsDecayCapstonesDist` declaration.
+`HighTemperatureBoundsDecayCapstonesAlpha` declaration.
 -/
 
 namespace IsingModel
