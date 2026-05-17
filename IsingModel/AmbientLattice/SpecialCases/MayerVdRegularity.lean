@@ -3,6 +3,7 @@ import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityDifferentiable
 import IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityTanh
 import IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityVdPolymer
+import IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityExpansionTerm
 
 /-!
 # Mayer and polymer-family regularity wrappers along an exhaustion
@@ -40,17 +41,14 @@ theorem mayerPartialSumAlongExhaustion_continuousOn
           (inducedGraph G (Λ.volume n)) N t) s :=
   mayerPartialSum_Λ_continuousOn G (Λ.volume n) N s
 
-/-! ### §18.6 mayerExpansionTerm regularity along-ex wraps -/
+/-! ## Moved: 1 `mayerExpansionTerm` Continuous wrapper
 
-/-- **Along-ex: `mayerExpansionTerm` is `Continuous`**. -/
-theorem mayerExpansionTermAlongExhaustion_continuous
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (k : ℕ) (n : ℕ) :
-    Continuous (fun t : ℝ =>
-        IsingModel.mayerExpansionTerm
-          (inducedGraph G (Λ.volume n)) k t) :=
-  mayerExpansionTerm_Λ_continuous G (Λ.volume n) k
+The `mayerExpansionTermAlongExhaustion_continuous` wrapper now
+lives in
+`IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityExpansionTerm`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
+-/
 
 /-! ### Moved: `mayerPartialSum` / `mayerExpansionTerm` Differentiable wraps
 
