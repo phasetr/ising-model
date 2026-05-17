@@ -1,4 +1,5 @@
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharperComplete
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharperCompleteFerroFE
 
 /-!
 # Ambient alongExhaustion sharper-exp complete-summary ferromagnetic wrappers at h = 0
@@ -62,24 +63,15 @@ log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_complete_summary
   log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_complete_summary_exp
     G Λ J β (mul_nonneg hβ.le hJ) n
 
-/-- **Along-ex ferromagnetic f complete-summary exp bundle at stage `n`**. -/
-theorem freeEnergyAlongExhaustion_high_temp_h_zero_complete_summary_exp_ferromagnetic
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (n : ℕ)
-    (hne : (Λ.volume n).Nonempty) :
-    Real.log 2 +
-        ((inducedGraph G (Λ.volume n)).edgeFinset.card : ℝ) /
-          (Λ.volume n).card * Real.log (Real.cosh (β * J))
-      ≤ freeEnergyAlongExhaustion G Λ (⟨J, 0, β⟩ : IsingParams ℝ) n ∧
-    freeEnergyAlongExhaustion G Λ (⟨J, 0, β⟩ : IsingParams ℝ) n
-      ≤ Real.log 2 +
-          β * J * (inducedGraph G (Λ.volume n)).edgeFinset.card /
-            (Λ.volume n).card ∧
-    freeEnergyAlongExhaustion G Λ (⟨0, 0, β⟩ : IsingParams ℝ) n = Real.log 2 ∧
-    freeEnergyAlongExhaustion G Λ (⟨J, 0, 0⟩ : IsingParams ℝ) n = Real.log 2 :=
-  freeEnergyAlongExhaustion_high_temp_h_zero_complete_summary_exp
-    G Λ J β (mul_nonneg hβ.le hJ) n hne
+/-! ## Moved: 1 ferromagnetic f complete-summary exp wrapper
+
+The
+`freeEnergyAlongExhaustion_high_temp_h_zero_complete_summary_exp_ferromagnetic`
+wrapper now lives in
+`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharperCompleteFerroFE`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
+-/
 
 end Ambient
 
