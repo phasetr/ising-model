@@ -4,6 +4,7 @@ import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBoundsRegularity
 import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBoundsNonneg
 import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBoundsTanh
 import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBoundsEdgeCases
+import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBoundsMonotoneOn
 
 /-!
 # Polymer free-energy bound wrappers along an exhaustion
@@ -37,15 +38,14 @@ downstream consumers continue to see the symbols. -/
 
 
 
-/-- **Along-ex: `polymerFreeEnergy` is `MonotoneOn (Set.Ici 0)`**
-(§18.5 along-ex wrap). -/
-theorem polymerFreeEnergyAlongExhaustion_monotoneOn_Ici_zero
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet] (n : ℕ) :
-    MonotoneOn (fun t : ℝ =>
-        IsingModel.polymerFreeEnergy
-          (inducedGraph G (Λ.volume n)) t) (Set.Ici 0) :=
-  polymerFreeEnergy_Λ_monotoneOn_Ici_zero G (Λ.volume n)
+/-! ## Moved: 1 `polymerFreeEnergy` MonotoneOn wrapper
+
+The `polymerFreeEnergyAlongExhaustion_monotoneOn_Ici_zero` wrapper
+now lives in
+`IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBoundsMonotoneOn`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
+-/
 
 /-! ## Moved: 2 `polymerFreeEnergy_eq_zero_of_*` edge-case wrappers
 
