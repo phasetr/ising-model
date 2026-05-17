@@ -239,4 +239,33 @@ theorem tsum_pow_neg_conv_le_const (d : ℕ) {α : ℝ} (hαd : (d : ℝ) < 2 * 
     _ = ∑' z, (1 + latticeDistance d 0 z : ℝ) ^ (-(2 * α)) := by
           rw [tsum_pow_neg_translate d x, tsum_pow_neg_translate d y]; ring
 
+/-- **Discrete HLS convolution constant** (Step 130C): if `2α > d`, the
+polynomial convolution kernel has a positive uniform bound
+```
+∑_z (1 + d(x,z))^{-α} * (1 + d(y,z))^{-α} ≤ C
+```
+for all `x, y : ℤ^d`.
+
+This packages `tsum_pow_neg_conv_le_const` with the explicit positive witness
+`C = ∑_z (1 + d(0,z))^{-2α}`. It is the concrete constant form consumed by the
+GJ §17.5 Lemma 17.5.2 upper-bound/Lipschitz pipeline.
+
+**Reference**: Glimm--Jaffe §17.5, pp.310--312. -/
+theorem discrete_hls_convolution_constant (α d : ℕ) (hαd : 2 * α > d) :
+    ∃ C : ℝ, 0 < C ∧
+      ∀ x y : Fin d → ℤ,
+        ∑' z : Fin d → ℤ,
+            (1 + latticeDistance d x z : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y z : ℝ) ^ (-(α : ℝ)) ≤ C := by
+  let C := ∑' z : Fin d → ℤ, (1 + latticeDistance d 0 z : ℝ) ^ (-(2 * (α : ℝ)))
+  have hγ : (d : ℝ) < 2 * (α : ℝ) := by
+    exact_mod_cast hαd
+  refine ⟨C, ?_, ?_⟩
+  · exact (summable_pow_neg_latticeDistance d hγ).tsum_pos
+      (fun z => by positivity)
+      (0 : Fin d → ℤ)
+      (by simp [latticeDistance])
+  · intro x y
+    exact tsum_pow_neg_conv_le_const d hγ x y
+
 end IsingModel
