@@ -6,10 +6,9 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFeFre
 # Ambient alongExhaustion ferromagnetic triple-ratio bound_bundle wrapper at h = 0
 
 Narrow child module for the §18.3-§18.4 ambient alongExhaustion
-ferromagnetic `triple_ratio_bound_bundle_ferromagnetic` wrapper
-extracted from `HighTemperatureBoundsTripleRatioBoundBundle.lean`:
-
-* `partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_triple_ratio_bound_bundle_ferromagnetic`
+ferromagnetic
+`triple_ratio_bound_bundle_ferromagnetic` Z bundle wrapper
+extracted from `HighTemperatureBoundsTripleRatioBoundBundle.lean`.
 
 To avoid an import cycle (the parent retains the non-ferromagnetic
 J=0 triple bundle that the ferromagnetic proof previously

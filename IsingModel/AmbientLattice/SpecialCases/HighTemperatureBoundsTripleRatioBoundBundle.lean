@@ -79,8 +79,7 @@ partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_triple_ratio_bound_b
 
 /-! ## Moved: 1 ferromagnetic triple ratio bound_bundle wrapper
 
-The
-`partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_triple_ratio_bound_bundle_ferromagnetic`
+The ferromagnetic `triple_ratio_bound_bundle_ferromagnetic` Z
 wrapper now lives in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsTripleRatioBoundBundleFerro`.
 The earlier import path is preserved by re-exporting the new child
