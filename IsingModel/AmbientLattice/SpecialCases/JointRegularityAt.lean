@@ -1,5 +1,6 @@
 import IsingModel.AmbientLattice.SpecialCases.JointRegularity
 import IsingModel.AmbientLattice.SpecialCases.JointRegularityAtDifferentiableAt
+import IsingModel.AmbientLattice.SpecialCases.JointRegularityAtContinuousSusceptibility
 
 /-!
 # Joint `ContinuousAt` along-ex wrappers
@@ -47,14 +48,14 @@ theorem magnetizationAlongExhaustion_continuousAt_joint
       magnetizationAlongExhaustion G Λ ⟨q.2.1, q.2.2, q.1⟩ i n) p :=
   (magnetizationAlongExhaustion_continuous_joint G Λ i n).continuousAt
 
-/-- **Along-ex: susceptibility jointly ContinuousAt** (general G). -/
-theorem susceptibilityAlongExhaustion_continuousAt_joint_gen
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (i : V) (n : ℕ) (p : ℝ × ℝ × ℝ) :
-    ContinuousAt (fun q : ℝ × ℝ × ℝ =>
-      susceptibilityAlongExhaustion G Λ ⟨q.2.1, q.2.2, q.1⟩ i n) p :=
-  (susceptibilityAlongExhaustion_continuous_joint_gen G Λ i n).continuousAt
+/-! ## Moved: 1 susceptibility joint ContinuousAt wrapper
+
+The `susceptibilityAlongExhaustion_continuousAt_joint_gen` wrapper
+now lives in
+`IsingModel.AmbientLattice.SpecialCases.JointRegularityAtContinuousSusceptibility`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
+-/
 
 end Ambient
 end IsingModel
