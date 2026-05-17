@@ -2,6 +2,7 @@ import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyRegularityFE
 import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyRegularityDifferentiable
+import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyRegularityH
 
 /-!
 # Ambient partition/free-energy regularity wrappers
@@ -48,14 +49,14 @@ The earlier import path is preserved by re-exporting the new child
 from this parent module and from the umbrella `SpecialCases.lean`.
 -/
 
-/-- **Along-ex: partitionFunction Continuous in `h`**. -/
-theorem partitionFunctionAlongExhaustion_continuous_h
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (n : ℕ) :
-    Continuous (fun h' : ℝ =>
-      partitionFunctionAlongExhaustion G Λ ⟨J, h', β⟩ n) :=
-  partitionFunctionΛ_continuous_h G (Λ.volume n) J β
+/-! ## Moved: 1 Continuous in `h` wrapper
+
+The `partitionFunctionAlongExhaustion_continuous_h` h-direction
+wrapper now lives in
+`IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyRegularityH`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
+-/
 
 /-! ## Moved: freeEnergyAlongExhaustion regularity wrappers
 
