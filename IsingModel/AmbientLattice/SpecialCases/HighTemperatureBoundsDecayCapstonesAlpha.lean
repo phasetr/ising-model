@@ -64,22 +64,17 @@ correlationAlongExhaustion_high_temp_h_zero_at_pair_le_exp_alpha_dist_of_le_high
   correlationΛ_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_alpha_dist_of_le_highTempExpRate
     G (Λ.volume n) J β α hβJ hα i j
 
-/-- **Along-ex ferromagnetic §18.7 monotone-rate capstone at stage `n`**:
-under `0 ≤ J, 0 < β`, any `α ≤ -log(tanh(β·J))` gives the stage-`n`
-pair-correlation distance bound with rate `α`. -/
-theorem
-correlationAlongExhaustion_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_alpha_dist_ferro
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β α : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β)
-    (hα : α ≤ -Real.log (Real.tanh (β * J))) (n : ℕ)
-    (i j : ↑(Λ.volume n)) :
-    correlationΛ G (Λ.volume n) (⟨J, 0, β⟩ : IsingParams ℝ)
-        ({i, j} : Finset ↑(Λ.volume n))
-      ≤ (2 : ℝ) ^ (inducedGraph G (Λ.volume n)).edgeFinset.card *
-        Real.exp (-α * ((inducedGraph G (Λ.volume n)).dist i j : ℝ)) :=
-  correlationAlongExhaustion_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_alpha_dist
-    G Λ J β α (mul_nonneg hβ.le hJ) hα n i j
+/-! ## Moved: 1 ferromagnetic §18.7 alpha-rate capstone
+
+The ferromagnetic alpha-rate
+`_..._exp_alpha_dist_ferro` capstone now lives in
+`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDecayCapstonesAlphaFerro`,
+which depends on this parent module. Downstream consumers reach
+the ferro wrapper through the umbrella `SpecialCases.lean` (which
+imports both children), or by importing the ferro child directly.
+This parent module does **not** re-import the ferro child, to avoid
+an import cycle.
+-/
 
 end Ambient
 
