@@ -1,19 +1,23 @@
 import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBoundsNonnegBase
 
 /-!
-# Ambient polymerFreeEnergyAlongExhaustion nonneg-conditioned bound wrappers
+# Ambient polymerFreeEnergyAlongExhaustion `≤` upper-bound wrappers
 
-Narrow child module for 3 ambient
-`polymerFreeEnergyAlongExhaustion_*_of_nonneg` bound wrappers extracted
-from `PolymerFreeEnergyBounds.lean`:
+Narrow child module for the two ambient
+`polymerFreeEnergyAlongExhaustion_le_*_of_nonneg` upper-bound
+wrappers extracted from `PolymerFreeEnergyBounds.lean`:
 
-* `polymerFreeEnergyAlongExhaustion_nonneg_of_nonneg`,
 * `polymerFreeEnergyAlongExhaustion_le_card_log_one_plus_of_nonneg`,
 * `polymerFreeEnergyAlongExhaustion_le_card_mul_of_nonneg`.
 
-Each result is a thin pass-through of the corresponding Λ-level
-`polymerFreeEnergy_Λ_*_of_nonneg` lemma. The theorem names are
+The corresponding base lower-bound wrapper
+(`_nonneg_of_nonneg`) now lives in
+`IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBoundsNonnegBase`
+and is re-imported through this parent module. Each wrapper is a
+thin pass-through of the corresponding Λ-level
+`polymerFreeEnergy_Λ_*_of_nonneg` lemma. Theorem names are
 unchanged from the former `PolymerFreeEnergyBounds` declarations.
 -/
 
@@ -23,15 +27,14 @@ namespace Ambient
 variable {V : Type*} [DecidableEq V]
 
 
-/-- **Along-ex: `polymerFreeEnergy ≥ 0` under `t ≥ 0`** (§18.5
-along-ex wrap). -/
-theorem polymerFreeEnergyAlongExhaustion_nonneg_of_nonneg
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    {t : ℝ} (ht : 0 ≤ t) (n : ℕ) :
-    0 ≤ IsingModel.polymerFreeEnergy
-        (inducedGraph G (Λ.volume n)) t :=
-  polymerFreeEnergy_Λ_nonneg_of_nonneg G (Λ.volume n) ht
+/-! ## Moved: 1 nonneg_of_nonneg wrapper
+
+The `polymerFreeEnergyAlongExhaustion_nonneg_of_nonneg` wrapper
+now lives in
+`IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBoundsNonnegBase`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
+-/
 
 /-- **Along-ex: `polymerFreeEnergy ≤ |E| · log(1 + t)` under
 `t ≥ 0`** (§18.5 along-ex wrap). -/
