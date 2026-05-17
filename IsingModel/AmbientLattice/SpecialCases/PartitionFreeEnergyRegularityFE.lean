@@ -1,20 +1,23 @@
 import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyRegularityFEDifferentiable
+import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyRegularityFEJoint
 
 /-!
-# Ambient freeEnergyAlongExhaustion `Continuous` regularity wrappers
+# Ambient freeEnergyAlongExhaustion `Continuous` per-direction wrappers
 
-Narrow child module for the four ambient
+Narrow child module for the three per-direction ambient
 `freeEnergyAlongExhaustion_continuous_*` regularity wrappers
 extracted from `PartitionFreeEnergyRegularity.lean`:
 
-* `freeEnergyAlongExhaustion_continuous_joint`
 * `freeEnergyAlongExhaustion_continuous_beta`
 * `freeEnergyAlongExhaustion_continuous_field`
 * `freeEnergyAlongExhaustion_continuous_J`
 
-Each result is a thin pass-through of the corresponding Λ-level
+The corresponding joint wrapper now lives in
+`IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyRegularityFEJoint`
+and is re-imported through this parent module. Each wrapper is a
+thin pass-through of the corresponding Λ-level
 `freeEnergyΛ_continuous_*` lemma. The theorem names are unchanged
 from the former `PartitionFreeEnergyRegularity` declarations.
 -/
@@ -25,13 +28,14 @@ namespace Ambient
 variable {V : Type*} [DecidableEq V]
 
 
-/-- **Along-ex: freeEnergy jointly Continuous**. -/
-theorem freeEnergyAlongExhaustion_continuous_joint
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet] (n : ℕ) :
-    Continuous (fun p : ℝ × ℝ × ℝ =>
-      freeEnergyAlongExhaustion G Λ ⟨p.2.1, p.2.2, p.1⟩ n) :=
-  freeEnergyΛ_continuous_joint G (Λ.volume n)
+/-! ## Moved: 1 freeEnergyAlongExhaustion_continuous_joint wrapper
+
+The `freeEnergyAlongExhaustion_continuous_joint` wrapper now lives
+in
+`IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyRegularityFEJoint`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
+-/
 
 /-! ## Moved: 4 freeEnergyAlongExhaustion_differentiable_* wrappers
 
