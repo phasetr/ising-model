@@ -1,14 +1,22 @@
 import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.MagnetizationAlongExhaustion
+import IsingModel.AmbientLattice.SpecialCases.JointRegularityDifferentiableSusceptibility
 
 /-!
-# Joint `Differentiable` along-ex wrappers
+# Joint `Differentiable` correlation / magnetization along-ex wrappers
 
-Narrow child module for the three along-exhaustion joint
-`Differentiable` wrappers (correlation, magnetization,
-susceptibility) extracted from `JointRegularity.lean`. Each wrapper
-is a thin pass-through to the corresponding `_differentiable_joint*`
+Narrow child module for the two along-exhaustion joint
+`Differentiable` wrappers in the correlation / magnetization
+observables:
+
+* `correlationAlongExhaustion_differentiable_joint_gen`
+* `magnetizationAlongExhaustion_differentiable_joint`
+
+The corresponding susceptibility wrapper now lives in
+`IsingModel.AmbientLattice.SpecialCases.JointRegularityDifferentiableSusceptibility`
+and is re-imported through this parent module. Each wrapper is a
+thin pass-through to the corresponding `_differentiable_joint*`
 ambient lemma via `unfold` + `by_cases`. Theorem names are
 unchanged from the former `JointRegularity` declarations.
 -/
@@ -46,19 +54,14 @@ theorem magnetizationAlongExhaustion_differentiable_joint
   · simp only [hi, dif_neg, not_false_iff]
     exact differentiable_const _
 
-/-- **Along-ex: susceptibility jointly Differentiable ℝ in `(β, J, h)`** (general G). -/
-theorem susceptibilityAlongExhaustion_differentiable_joint_gen
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (i : V) (n : ℕ) :
-    Differentiable ℝ (fun p : ℝ × ℝ × ℝ =>
-      susceptibilityAlongExhaustion G Λ ⟨p.2.1, p.2.2, p.1⟩ i n) := by
-  unfold susceptibilityAlongExhaustion
-  by_cases hi : i ∈ Λ.volume n
-  · simp only [hi, dif_pos]
-    exact susceptibilityΛ_differentiable_joint G (Λ.volume n) ⟨i, hi⟩
-  · simp only [hi, dif_neg, not_false_iff]
-    exact differentiable_const _
+/-! ## Moved: 1 susceptibility joint Differentiable wrapper
+
+The `susceptibilityAlongExhaustion_differentiable_joint_gen`
+wrapper now lives in
+`IsingModel.AmbientLattice.SpecialCases.JointRegularityDifferentiableSusceptibility`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
+-/
 
 end Ambient
 end IsingModel
