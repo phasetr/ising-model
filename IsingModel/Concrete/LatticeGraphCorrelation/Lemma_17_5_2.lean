@@ -1,5 +1,6 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassFoundation
 import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMass
+import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempLipschitz
 import IsingModel.PolyDecay
 
 /-!
@@ -25,7 +26,10 @@ capstone, providing:
 * the existential form of the discrete HLS constant `C > 0` lifted from
   `discrete_hls_constant`;
 * the uniform discrete HLS convolution constant packaged under the Lemma 17.5.2
-  namespace for the future Lipschitz/HLS upper-bound composition.
+  namespace for the future Lipschitz/HLS upper-bound composition;
+* the finite-stage high-temperature β-derivative absolute bound under the
+  Lemma 17.5.2 namespace, exposing the concrete Lebowitz/susceptibility input
+  for the HLS pseudo-mass derivative hypothesis.
 
 Tracking issue: <https://github.com/phasetr/ising-model/issues/1645>.
 
@@ -358,6 +362,34 @@ theorem lemma_17_5_2_hls_convolution_constant (α d : ℕ) (hαd : 2 * α > d) :
             (1 + latticeDistance d x w : ℝ) ^ (-(α : ℝ)) *
             (1 + latticeDistance d y w : ℝ) ^ (-(α : ℝ)) ≤ C :=
   IsingModel.discrete_hls_convolution_constant α d hαd
+
+/-- **GJ §17.5 Lemma 17.5.2 β-derivative absolute bound, finite-stage
+high-temperature form**: for `β ∈ [a,b]` with `0 < a ≤ b` and `bJ·2d < 1`,
+the finite-stage two-point β-derivative exists and is bounded in absolute value
+by the uniform Lebowitz/susceptibility constant
+`J * M^2 + J * 4d`, where `M = bJ·2d / (1 - bJ·2d)`.
+
+This is the concrete derivative input that must be compared with the HLS
+pseudo-mass denominator `K * c β / (m⁻ β)^(2α)` before applying
+`pseudoMass_power_deriv_le` / `pseudoMass_pow_succ_lipschitz`.
+
+References: Glimm--Jaffe §17.5, Theorem 17.5.1 proof and Lemma 17.5.2,
+pp.~311--312. -/
+theorem lemma_17_5_2_beta_deriv_abs_le_high_temp
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (hJ : 0 ≤ J)
+    (a b : ℝ) (ha : 0 < a) (hab : a ≤ b) (hlt : b * J * ↑(2 * d) < 1)
+    (n : ℕ) (r s : ↑(Λ.volume n)) (hrs : r ≠ s)
+    (β : ℝ) (hβ : β ∈ Set.Icc a b) :
+    let G := inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)
+    let M : ℝ := b * J * ↑(2 * d) / (1 - b * J * ↑(2 * d))
+    ∃ dval : ℝ,
+      HasDerivAt
+        (fun β' => IsingModel.correlation G (⟨J, 0, β'⟩ : IsingParams ℝ) {r, s})
+        dval β ∧
+      |dval| ≤ J * M ^ 2 + J * (4 * ↑d) :=
+  inducedLatticeGraph_beta_deriv_abs_le_high_temp Λ J hJ a b ha hab hlt
+    n r s hrs β hβ
 
 end Ambient
 end IsingModel
