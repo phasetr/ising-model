@@ -1,13 +1,21 @@
 import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLattice.SpecialCases.MayerEdgeCasesPFEEitherZero
 
 /-!
-# Mayer identity polymer_free_energy edge-case wrappers along an exhaustion
+# Mayer identity polymer_free_energy single-parameter edge-case wrappers
 
-Narrow child module for three §18.5 along-exhaustion Mayer identity
-edge-case wrappers in `polymer_free_energy` form (specializations
-at `J = 0`, `β = 0`, and `J = β = 0`). Each wrapper is a thin
-pass-through to the corresponding
+Narrow child module for the two §18.5 along-exhaustion Mayer
+identity single-parameter edge-case wrappers in
+`polymer_free_energy` form extracted from `MayerEdgeCases.lean`:
+
+* `mayer_identity_at_J_zero_polymer_free_energy_AlongExhaustion`
+* `mayer_identity_at_beta_zero_polymer_free_energy_AlongExhaustion`
+
+The corresponding double-zero (`J = β = 0`) wrapper now lives in
+`IsingModel.AmbientLattice.SpecialCases.MayerEdgeCasesPFEEitherZero`
+and is re-imported through this parent module. Each wrapper is a
+thin pass-through to the corresponding
 `mayer_identity_at_*_polymer_free_energy_Λ` ambient lemma. Theorem
 names are unchanged from the former `MayerEdgeCases` declarations.
 -/
@@ -45,19 +53,14 @@ mayer_identity_at_beta_zero_polymer_free_energy_AlongExhaustion
         (Real.tanh ((0 : ℝ) * J)) :=
   mayer_identity_at_beta_zero_polymer_free_energy_Λ G (Λ.volume n) J N
 
-/-- **Along-ex: Mayer identity at `J = β = 0` (polymer_free_energy form)**. -/
-theorem
-mayer_identity_at_either_zero_polymer_free_energy_AlongExhaustion
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (N : ℕ) (n : ℕ) :
-    IsingModel.polymerFreeEnergy
-        (inducedGraph G (Λ.volume n))
-        (Real.tanh ((0 : ℝ) * (0 : ℝ))) =
-      IsingModel.mayerPartialSum
-        (inducedGraph G (Λ.volume n)) N
-        (Real.tanh ((0 : ℝ) * (0 : ℝ))) :=
-  mayer_identity_at_either_zero_polymer_free_energy_Λ G (Λ.volume n) N
+/-! ## Moved: 1 either-zero polymer_free_energy wrapper
+
+The `mayer_identity_at_either_zero_polymer_free_energy_AlongExhaustion`
+wrapper now lives in
+`IsingModel.AmbientLattice.SpecialCases.MayerEdgeCasesPFEEitherZero`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
+-/
 
 end Ambient
 end IsingModel
