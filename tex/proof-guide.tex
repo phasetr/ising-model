@@ -4225,10 +4225,14 @@ $m := \mathrm{latticeMass}$.  Five named declarations are added:
 \item \texttt{lemma\_17\_5\_2\_cubic\_high\_temp\_lower\_capstone} and
   \texttt{lemma\_17\_5\_2\_cubic\_high\_temp\_latticeMass\_pos} -- the
   Lemma~17.5.2 lower-bound side specialised to the cubic exhaustion at
-  high temperature $\beta J (2d) < 1$, derived from the existing
+  high temperature $\beta J (2d) < 1$, derived as direct projections
+  of the existing
   \texttt{cubicNamedRate\_capstone\_bundle\_of\_cubic\_corr\_mem\_Ioo\_and\_profile}
-  bundle.  These give an unconditional positivity statement on
-  $\mathrm{latticeMass}$ in the high-temperature regime.
+  bundle.  These do not require any upper-bound hypothesis, but they
+  remain conditional on active-range membership of the anchored cubic
+  pair correlation $\langle\sigma_0\sigma_z\rangle_\infty$ in $(0,2)$
+  together with the tanh-power profile lower bound
+  $g_\alpha(-\log(\beta J\,2d)) \le \langle\sigma_0\sigma_z\rangle_\infty$.
 \item \texttt{lemma\_17\_5\_2\_constant\_existence} -- a strict-positivity
   alias of \texttt{discrete\_hls\_constant} ($2\alpha > d$).
 \end{itemize}
