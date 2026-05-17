@@ -4,6 +4,7 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansion
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansionLowerUpper
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharper
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharperSandwichFerro
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharperSandwichLogZ
 
 /-!
 # Ambient alongExhaustion sharper-exp sandwich wrappers at h = 0
@@ -24,26 +25,15 @@ open scoped symmDiff
 
 variable {V : Type*} [DecidableEq V]
 
-/-- **Along-ex sharper log Z sandwich at stage `n`**: under `0 ≤ β·J`,
-`|Λ_n|·log 2 + |E_n|·log cosh(β·J) ≤ log Z_n ≤ |Λ_n|·log 2 + β·J·|E_n|`. -/
-theorem log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_sandwich_exp
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (hβJ : 0 ≤ β * J) (n : ℕ) :
-    ((Λ.volume n).card : ℝ) * Real.log 2
-        + ((inducedGraph G (Λ.volume n)).edgeFinset.card : ℝ) *
-            Real.log (Real.cosh (β * J))
-      ≤ Real.log (partitionFunctionAlongExhaustion G Λ
-          (⟨J, 0, β⟩ : IsingParams ℝ) n) ∧
-    Real.log (partitionFunctionAlongExhaustion G Λ
-        (⟨J, 0, β⟩ : IsingParams ℝ) n)
-      ≤ ((Λ.volume n).card : ℝ) * Real.log 2
-        + β * J * (inducedGraph G (Λ.volume n)).edgeFinset.card := by
-  change ((Λ.volume n).card : ℝ) * _ + _ * _ ≤
-      Real.log (partitionFunctionΛ G (Λ.volume n)
-        (⟨J, 0, β⟩ : IsingParams ℝ)) ∧ _
-  exact log_partitionFunctionΛ_high_temp_expansion_h_zero_sandwich_exp
-    G (Λ.volume n) J β hβJ
+/-! ## Moved: 1 log Z sharper-exp sandwich wrapper
+
+The
+`log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_sandwich_exp`
+wrapper now lives in
+`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharperSandwichLogZ`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
+-/
 
 /-- **Along-ex sharper Z high-temp sandwich at stage `n`**: under `0 ≤ β·J`,
 `2^|Λ_n|·cosh^|E_n| ≤ Z_n ≤ 2^|Λ_n|·exp(β·J·|E_n|)`. -/
