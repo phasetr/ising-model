@@ -1,5 +1,6 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassFoundation
 import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMass
+import IsingModel.PolyDecay
 
 /-!
 # GJ §17.5 Lemma 17.5.2 capstone (Step 117l)
@@ -22,7 +23,9 @@ capstone, providing:
 * a finite cubic high-temperature sandwich capstone combining the lower-bound
   capstone with the finite Step 115 upper bridge;
 * the existential form of the discrete HLS constant `C > 0` lifted from
-  `discrete_hls_constant`.
+  `discrete_hls_constant`;
+* the uniform discrete HLS convolution constant packaged under the Lemma 17.5.2
+  namespace for the future Lipschitz/HLS upper-bound composition.
 
 Tracking issue: <https://github.com/phasetr/ising-model/issues/1645>.
 
@@ -335,6 +338,26 @@ References: Glimm--Jaffe §17.5, Lemma 17.5.2, pp.~311--312. -/
 theorem lemma_17_5_2_constant_existence (α d : ℕ) (hαd : 2 * α > d) :
     ∃ C : ℝ, 0 < C :=
   discrete_hls_constant α d hαd
+
+/-- **GJ §17.5 Lemma 17.5.2 HLS convolution constant**: under `2α > d`
+there is a positive constant uniformly bounding the polynomial convolution
+kernel
+`∑_w (1 + dist x w)^(-α) * (1 + dist y w)^(-α)`.
+
+This is the constant-form HLS input used in the upper-bound/Lipschitz side of
+Lemma 17.5.2. It is stronger than the bare existence alias
+`lemma_17_5_2_constant_existence`, because the returned constant carries the
+actual convolution inequality needed downstream.
+
+References: Glimm--Jaffe §17.5, Lemma 17.5.2 and Theorem 17.5.1 proof,
+pp.~311--312. -/
+theorem lemma_17_5_2_hls_convolution_constant (α d : ℕ) (hαd : 2 * α > d) :
+    ∃ C : ℝ, 0 < C ∧
+      ∀ x y : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y w : ℝ) ^ (-(α : ℝ)) ≤ C :=
+  IsingModel.discrete_hls_convolution_constant α d hαd
 
 end Ambient
 end IsingModel
