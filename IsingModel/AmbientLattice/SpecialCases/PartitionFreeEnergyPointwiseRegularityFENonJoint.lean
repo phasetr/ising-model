@@ -1,6 +1,7 @@
 import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyPointwiseRegularityFENonJointDifferentiableAt
+import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyPointwiseRegularityFENonJointBeta
 
 /-!
 # Ambient `freeEnergyAlongExhaustion` non-joint pointwise `ContinuousAt` wrappers
@@ -23,14 +24,14 @@ variable {V : Type*} [DecidableEq V]
 
 /-! ### Along-exhaustion free-energy pointwise wrappers -/
 
-/-- **freeEnergyAlongExhaustion ContinuousAt β** (general h). -/
-theorem freeEnergyAlongExhaustion_continuousAt_beta
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J h β : ℝ) (n : ℕ) :
-    ContinuousAt (fun β' : ℝ =>
-      freeEnergyAlongExhaustion G Λ ⟨J, h, β'⟩ n) β :=
-  (freeEnergyΛ_continuous_beta G (Λ.volume n) J h).continuousAt
+/-! ## Moved: 1 ContinuousAt β wrapper
+
+The `freeEnergyAlongExhaustion_continuousAt_beta` β-direction
+wrapper now lives in
+`IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyPointwiseRegularityFENonJointBeta`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
+-/
 
 /-! ## Moved: 3 freeEnergyAlongExhaustion_differentiableAt_* wrappers
 
