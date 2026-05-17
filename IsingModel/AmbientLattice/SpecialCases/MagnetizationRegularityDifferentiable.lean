@@ -1,14 +1,22 @@
 import IsingModel.AmbientLattice.Defs
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLattice.SpecialCases.MagnetizationRegularityDifferentiableBeta
 
 /-!
-# Magnetization `Differentiable` along-ex wrappers
+# Magnetization `Differentiable` in `h` / `J` along-ex wrappers
 
-Narrow child module for the three along-exhaustion magnetization
-`Differentiable` wrappers extracted from
-`MagnetizationRegularity.lean`. Each wrapper is a thin pass-through
-to the corresponding `magnetizationΛ_differentiable_*` ambient lemma
-via `unfold`/`by_cases`. Theorem names are unchanged from the former
+Narrow child module for the two along-exhaustion magnetization
+`Differentiable` wrappers in the field and coupling directions:
+
+* `magnetizationAlongExhaustion_differentiable_field`
+* `magnetizationAlongExhaustion_differentiable_J`
+
+The corresponding `β`-direction wrapper now lives in
+`IsingModel.AmbientLattice.SpecialCases.MagnetizationRegularityDifferentiableBeta`
+and is re-imported through this parent module. Each wrapper is a
+thin pass-through to the corresponding
+`magnetizationΛ_differentiable_*` ambient lemma via
+`unfold`/`by_cases`. Theorem names are unchanged from the former
 `MagnetizationRegularity` declarations.
 -/
 
@@ -49,20 +57,14 @@ theorem magnetizationAlongExhaustion_differentiable_J
   · simp only [hi, dif_neg, not_false_iff]
     exact differentiable_const _
 
-/-- **Along-ex: magnetization Differentiable in `β`** (general h). -/
-theorem magnetizationAlongExhaustion_differentiable_beta
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J h : ℝ) (i : V) (n : ℕ) :
-    Differentiable ℝ (fun β' =>
-      magnetizationAlongExhaustion G Λ
-        (⟨J, h, β'⟩ : IsingParams ℝ) i n) := by
-  unfold magnetizationAlongExhaustion correlationAlongExhaustion
-  by_cases hi : ({i} : Finset V) ⊆ Λ.volume n
-  · simp only [hi, dif_pos]
-    exact magnetizationΛ_differentiable_beta G (Λ.volume n) J h _
-  · simp only [hi, dif_neg, not_false_iff]
-    exact differentiable_const _
+/-! ## Moved: 1 Differentiable in `β` wrapper
+
+The `magnetizationAlongExhaustion_differentiable_beta` wrapper now
+lives in
+`IsingModel.AmbientLattice.SpecialCases.MagnetizationRegularityDifferentiableBeta`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
+-/
 
 end Ambient
 end IsingModel
