@@ -4206,7 +4206,7 @@ Glimm--Jaffe \S17.5 Lemma~17.5.2 (2nd ed., pp.~311--312):
 m^-(\beta) \le m(\beta) \le C \cdot m^-(\beta),
 \]
 where $m^- := \mathrm{pseudoMassFromParamsAtPair}$ and
-$m := \mathrm{latticeMass}$.  The initial capstone adds five named
+$m := \mathrm{latticeMass}$.  The capstone module exposes the following named
 declarations:
 \begin{itemize}
 \item \texttt{Lemma\_17\_5\_2\_UpperBound} -- the \texttt{Prop}-valued
@@ -4236,6 +4236,12 @@ declarations:
   $g_\alpha(-\log(\beta J\,2d)) \le \langle\sigma_0\sigma_z\rangle_\infty$.
 \item \texttt{lemma\_17\_5\_2\_constant\_existence} -- a strict-positivity
   alias of \texttt{discrete\_hls\_constant} ($2\alpha > d$).
+\item \texttt{lemma\_17\_5\_2\_hls\_convolution\_constant} -- the
+  positive constant form of the polynomial HLS convolution estimate.
+\item \texttt{lemma\_17\_5\_2\_beta\_deriv\_abs\_le\_high\_temp} -- the
+  finite-stage high-temperature beta-derivative absolute bound
+  $|c'|\le J M^2 + 4dJ$, exposing the concrete Lebowitz/susceptibility
+  input that must be compared with the HLS pseudo-mass denominator.
 \end{itemize}
 PR~\#2664 adds a finite high-temperature bridge discharging the upper-bound
 predicate in the cubic active-range setting without adding an axiom.
@@ -10021,6 +10027,10 @@ $|h'| = |c'|/|g'| \leq |c'|/(r \cdot c(\beta))$.
 The power bound follows by multiplying by $(h(\beta))^{2\alpha}$ and using the HLS hypothesis.
 The HLS hypothesis $|c'| \leq K \cdot c(\beta)/(h(\beta))^{2\alpha}$ is motivated by
 Step~130 (\texttt{tsum\_pow\_neg\_conv\_le\_const}) via Lebowitz's inequality.
+The concrete high-temperature finite-stage input is now exposed as
+\texttt{inducedLatticeGraph\_beta\_deriv\_abs\_le\_high\_temp}, with the
+GJ-named wrapper
+\texttt{lemma\_17\_5\_2\_beta\_deriv\_abs\_le\_high\_temp}.
 
 \noindent\textit{Status}: Complete (PR~\#947, Step 131).
 File: \texttt{IsingModel/PseudoMass.lean}.
