@@ -3,19 +3,23 @@ import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansion
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviation
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviationStrict
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFeNonemptyZ
 
 /-!
-# Ambient alongExhaustion ratio-LogFe `_of_nonempty` wrappers
+# Ambient alongExhaustion ratio-LogFe `_of_nonempty` freeEnergy wrappers
 
-Narrow child module for 3 ambient
-`*AlongExhaustion_high_temp_*_of_nonempty` wrappers extracted from
-`HighTemperatureBoundsRatioLogFe.lean`:
+Narrow child module for the two ambient
+`freeEnergyAlongExhaustion_high_temp_*_of_nonempty` wrappers
+extracted from `HighTemperatureBoundsRatioLogFe.lean`:
 
-* `freeEnergyAlongExhaustion_high_temp_h_zero_deviation_bound_exp_of_nonempty`,
-* `freeEnergyAlongExhaustion_high_temp_h_zero_deviation_pos_of_nonempty`,
-* `partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_pow_two_lt_of_nonempty`.
+* `freeEnergyAlongExhaustion_high_temp_h_zero_deviation_bound_exp_of_nonempty`
+* `freeEnergyAlongExhaustion_high_temp_h_zero_deviation_pos_of_nonempty`
 
-Each result is a thin pass-through of the corresponding `*_card_pos`
+The corresponding partition-function `_pow_two_lt_of_nonempty`
+wrapper now lives in
+`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFeNonemptyZ`
+and is re-imported through this parent module. Each remaining
+wrapper is a thin pass-through of the corresponding `*_card_pos`
 or related lemma. The theorem names are unchanged from the former
 `HighTemperatureBoundsRatioLogFe` declarations.
 -/
@@ -49,18 +53,15 @@ theorem freeEnergyAlongExhaustion_high_temp_h_zero_deviation_pos_of_nonempty
   freeEnergyAlongExhaustion_high_temp_h_zero_deviation_pos
     G Λ J β hβJ n hne.card_pos hEpos
 
-/-- **Along-ex Z strict deviation under nonempty volume**. -/
-theorem partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_pow_two_lt_of_nonempty
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (hβJ : 0 < β * J) (n : ℕ)
-    (hEpos : 0 < (inducedGraph G (Λ.volume n)).edgeFinset.card) :
-    (2 : ℝ) ^ (Λ.volume n).card
-      < partitionFunctionAlongExhaustion G Λ
-          (⟨J, 0, β⟩ : IsingParams ℝ) n :=
-  partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_pow_two_lt
-    G Λ J β hβJ n hEpos
+/-! ## Moved: 1 Z `pow_two_lt_of_nonempty` wrapper
 
+The
+`partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_pow_two_lt_of_nonempty`
+wrapper now lives in
+`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFeNonemptyZ`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
+-/
 
 end Ambient
 end IsingModel
