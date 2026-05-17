@@ -1,6 +1,7 @@
 import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.SpecialCases.MayerExpansionEdgeCasesTwo
+import IsingModel.AmbientLattice.SpecialCases.MayerExpansionEdgeCasesAbsLe
 
 /-!
 # Mayer expansion edge-case wrappers along an exhaustion
@@ -47,18 +48,14 @@ theorem mayerPartialSumAlongExhaustion_eq_zero_of_edgeFinset_empty
   mayerPartialSum_Λ_eq_zero_of_edgeFinset_empty
     G (Λ.volume n) h_empty t N
 
-/-- **Along-ex: mayerExpansionTerm absolute bound**. -/
-theorem mayerExpansionTermAlongExhaustion_abs_le
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (k : ℕ) (t : ℝ) (n : ℕ) :
-    |IsingModel.mayerExpansionTerm (inducedGraph G (Λ.volume n)) k t| ≤
-      ∑ ω ∈ Fintype.piFinset
-              (fun _ : Fin k => IsingModel.allPolymers
-                (inducedGraph G (Λ.volume n))),
-        |IsingModel.ursellCoefficient ω| *
-          |IsingModel.clusterSeqActivity t ω| :=
-  mayerExpansionTerm_Λ_abs_le G (Λ.volume n) k t
+/-! ## Moved: 1 mayerExpansionTerm abs_le wrapper
+
+The `mayerExpansionTermAlongExhaustion_abs_le` wrapper now lives
+in
+`IsingModel.AmbientLattice.SpecialCases.MayerExpansionEdgeCasesAbsLe`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
+-/
 
 end Ambient
 end IsingModel
