@@ -1,21 +1,25 @@
 import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLattice.SpecialCases.PartitionFunctionGeneralAnalyticityAnalyticAtH
 
 /-!
-# Ambient partition-function pointwise `AnalyticAt` general-h wrappers
+# Ambient partition-function pointwise `AnalyticAt` β/J general-h wrappers
 
-Narrow child module for the three ambient
-`partitionFunctionAlongExhaustion_analyticAt_*` general-h pointwise
+Narrow child module for the two ambient
+`partitionFunctionAlongExhaustion_analyticAt_*_general_h` pointwise
 analyticity wrappers extracted from
 `PartitionFunctionGeneralAnalyticity.lean`:
 
 * `partitionFunctionAlongExhaustion_analyticAt_beta_general_h`
 * `partitionFunctionAlongExhaustion_analyticAt_J_general_h`
-* `partitionFunctionAlongExhaustion_analyticAt_h`
 
-Each wrapper is a thin pass-through to the corresponding Λ-level
-`partitionFunctionΛ_analyticAt_*` lemma. Theorem names are unchanged
-from the former `PartitionFunctionGeneralAnalyticity` declarations.
+The corresponding `h`-direction wrapper now lives in
+`IsingModel.AmbientLattice.SpecialCases.PartitionFunctionGeneralAnalyticityAnalyticAtH`
+and is re-imported through this parent module. Each wrapper is a
+thin pass-through to the corresponding Λ-level
+`partitionFunctionΛ_analyticAt_*` lemma. Theorem names are
+unchanged from the former `PartitionFunctionGeneralAnalyticity`
+declarations.
 -/
 
 namespace IsingModel
@@ -43,14 +47,14 @@ theorem partitionFunctionAlongExhaustion_analyticAt_J_general_h
       partitionFunctionAlongExhaustion G Λ ⟨J', h, β⟩ n) J :=
   partitionFunctionΛ_analyticAt_J_general_h G (Λ.volume n) β h J
 
-/-- **Along-ex: partitionFunction `AnalyticAt ℝ` in `h`**. -/
-theorem partitionFunctionAlongExhaustion_analyticAt_h
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β h : ℝ) (n : ℕ) :
-    AnalyticAt ℝ (fun h' : ℝ =>
-      partitionFunctionAlongExhaustion G Λ ⟨J, h', β⟩ n) h :=
-  partitionFunctionΛ_analyticAt_h G (Λ.volume n) J β h
+/-! ## Moved: 1 AnalyticAt h wrapper
+
+The `partitionFunctionAlongExhaustion_analyticAt_h` h-direction
+wrapper now lives in
+`IsingModel.AmbientLattice.SpecialCases.PartitionFunctionGeneralAnalyticityAnalyticAtH`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
+-/
 
 end Ambient
 end IsingModel
