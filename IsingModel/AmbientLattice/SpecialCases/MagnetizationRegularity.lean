@@ -1,6 +1,7 @@
 import IsingModel.AmbientLattice.Defs
 import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.SpecialCases.MagnetizationRegularityDifferentiable
+import IsingModel.AmbientLattice.SpecialCases.MagnetizationRegularityContinuousBeta
 
 /-!
 # Magnetization regularity wrappers along an exhaustion
@@ -51,20 +52,14 @@ theorem magnetizationAlongExhaustion_continuous_J
   · simp only [hi, dif_neg, not_false_iff]
     exact continuous_const
 
-/-- **Along-ex: magnetization Continuous in `β`** (general h). -/
-theorem magnetizationAlongExhaustion_continuous_beta
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J h : ℝ) (i : V) (n : ℕ) :
-    Continuous (fun β' =>
-      magnetizationAlongExhaustion G Λ
-        (⟨J, h, β'⟩ : IsingParams ℝ) i n) := by
-  unfold magnetizationAlongExhaustion correlationAlongExhaustion
-  by_cases hi : ({i} : Finset V) ⊆ Λ.volume n
-  · simp only [hi, dif_pos]
-    exact magnetizationΛ_continuous_beta G (Λ.volume n) J h _
-  · simp only [hi, dif_neg, not_false_iff]
-    exact continuous_const
+/-! ## Moved: 1 Continuous in `β` wrapper
+
+The `magnetizationAlongExhaustion_continuous_beta` wrapper now
+lives in
+`IsingModel.AmbientLattice.SpecialCases.MagnetizationRegularityContinuousBeta`.
+The earlier import path is preserved by re-exporting the new child
+from this parent module and from the umbrella `SpecialCases.lean`.
+-/
 
 /-! ### Moved: Differentiable along-ex wrappers
 
