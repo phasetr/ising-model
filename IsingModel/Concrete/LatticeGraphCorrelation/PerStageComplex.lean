@@ -219,6 +219,24 @@ theorem partitionFunctionComplexAlongExhaustion_ne_zero_on_leeYangDomain_stage_l
   Ambient.partitionFunctionComplexAlongExhaustion_ne_zero_on_leeYangDomain_stage
     (IsingModel.latticeGraph d) Λ hβ hJ n hh
 
+/-- **ℤ^d compact-field upper normalised-log bound on Lee-Yang compact sets**:
+on compact subsets of `leeYangDomain`, Lee-Yang nonvanishing discharges the
+nonzero hypothesis in the compact upper normalised-log handoff. -/
+theorem exists_log_norm_partitionFunctionComplexAlongExhaustion_div_card_le_ly_latticeGraph
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph
+        (IsingModel.latticeGraph d) (Λ.volume n)).edgeSet]
+    [∀ n, Nonempty (↑(Λ.volume n) : Type _)]
+    (hBED : Ambient.BoundedEdgeDensity (IsingModel.latticeGraph d) Λ)
+    {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J)
+    {K : Set ℂ} (hK : IsCompact K) (hKsub : K ⊆ IsingModel.leeYangDomain) :
+    ∃ C : ℝ, ∀ n, ∀ h ∈ K,
+      Real.log ‖Ambient.partitionFunctionComplexAlongExhaustion
+          (IsingModel.latticeGraph d) Λ (J : ℂ) h (β : ℂ) n‖
+        / (Fintype.card (↑(Λ.volume n) : Type _) : ℝ) ≤ C :=
+  Ambient.exists_log_norm_partitionFunctionComplexAlongExhaustion_div_card_le_leeYangDomain
+    (IsingModel.latticeGraph d) Λ hBED hβ hJ hK hKsub
+
 /-! #### Per-stage Lee-Yang branch wrappers -/
 
 /-- **ℤ^d per-stage Lee-Yang local branch** for
