@@ -3508,6 +3508,38 @@ future normal-family/Montel argument must satisfy.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Compact-uniform complex partition-function bound; PR \#2678]
+The theorem
+\texttt{exists\_abs\_re\_le\_on\_isCompact} records the elementary
+compactness input needed for the Montel side of the Lee--Yang argument: for
+every compact set $K\subseteq\mathbb C$ there is a real number $R\ge 0$ such
+that
+\[
+  |\mathrm{Re}\,h|\le R\qquad (h\in K).
+\]
+Combining this with the stage-wise estimate from PR \#630 gives
+\[
+  \|Z_{\Lambda_n}(J,h,\beta)\|
+  \le
+  2^{|\Lambda_n|}
+  \exp\!\left(|\beta|\left(|J|\,|E_{\Lambda_n}|+R|\Lambda_n|\right)\right)
+\]
+for all stages $n$ and all $h\in K$.  In Lean this packaged form is
+\[
+  \texttt{norm\_partitionFunctionComplexAlongExhaustion\_le\_on\_isCompact\_stage}.
+\]
+The concrete $\mathbb Z^d$ wrapper
+\texttt{norm\_partitionFunctionComplexAlongExhaustion\_le\_on\_isCompact\_stage\_latticeGraph}
+lives in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+
+This is a compact-field envelope for the partition functions themselves: it is
+uniform in $h\in K$, but the right-hand side still depends on $|\Lambda_n|$ and
+$|E_{\Lambda_n}|$.  It is therefore an input to later normalised logarithmic
+or free-energy estimates, not a standalone stage-uniform Montel bound and not
+yet a construction of coherent locally uniformly convergent branches.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{remark}[Status of PR \#200 — merged 2026-04-19, \texttt{52ea2f1}]
 PR \#200 was squash-merged into \texttt{main} on 2026-04-19 as
 commit \texttt{52ea2f1}. Items now present in \texttt{main}:
