@@ -3747,6 +3747,45 @@ perform diagonal coherent local-cover extraction, or patch a full
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Open-cover local-patching handoff; PR \#2699]
+The open-cover differentiable patching step is formalised by
+\begin{Verbatim}
+exists_differentiableOn_iUnion_of_eqOn
+\end{Verbatim}
+and its Lee--Yang open-cover wrapper
+\begin{Verbatim}
+Ambient.freeEnergyComplexAlongExhaustion_branchFamily_openCover_patch
+\end{Verbatim}
+Let \(s_i\subset\mathbb C\) be an arbitrary family of open sets and let
+\(f_i\) be differentiable on \(s_i\).  If the local functions are pairwise
+compatible,
+\[
+  f_i=f_j \quad\text{on}\quad s_i\cap s_j ,
+\]
+then there is a single function \(g\) on \(\mathbb C\) such that \(g=f_i\) on
+each \(s_i\), and \(g\) is differentiable on \(\bigcup_i s_i\).
+
+The proof defines \(g(z)\) by choosing one index \(i\) with \(z\in s_i\) when
+\(z\) lies in the union, and using \(0\) outside the union.  Pairwise
+compatibility proves that this choice agrees with every local function on its
+own open set.  For differentiability, if \(z\in s_i\), then \(s_i\) is a
+neighbourhood of \(z\); on that neighbourhood the patched function is
+eventually equal to \(f_i\), so differentiability transfers from \(f_i\) to
+\(g\).
+
+For a Lee--Yang open cover, the ambient theorem first applies the Vitali
+handoff on each cover member to obtain differentiable local limits, then
+applies the open-cover patching theorem.  If the cover contains
+\(\texttt{leeYangDomain}\), the resulting patched function is differentiable on
+\(\texttt{leeYangDomain}\).  The concrete \(\mathbb Z^d\) wrapper is in
+\texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+
+This is still a conditional handoff.  It assumes the compatible local-cover
+limits explicitly, and does not prove coherent branch selection, Montel
+compactness, or diagonal coherent local-cover extraction.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[Compact Lee--Yang fugacity gap; PR \#2684]
 The theorems
 \texttt{exists\_leeYangFugacity\_norm\_le\_lt\_one\_on\_isCompact}
