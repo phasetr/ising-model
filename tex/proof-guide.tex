@@ -3593,8 +3593,51 @@ at every finite stage.  The concrete $\mathbb Z^d$ wrapper lives in
 
 This is still an upper normalised-log estimate only.  It does not prove the
 lower control on $\log\|Z_{\Lambda_n}\|$ needed to turn the result into the
-absolute normalised-log hypothesis used by PR \#2679 and PR \#2680.
+absolute normalised-log hypothesis used by PR \#2679, PR \#2680, and
+PR \#2683.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
+\begin{theorem}[Lee--Yang lower log to locally bounded handoff; PR \#2683]
+The theorem
+\texttt{exists\_abs\_log\_norm\_partitionFunctionComplexAlongExhaustion\_div\_card\_le\_lower\_leeYang}
+combines the compact Lee--Yang upper normalised-log bound of PR \#2682 with a
+remaining lower normalised-log hypothesis.  Assume $\beta>0$, $J>0$, all
+stages are nonempty, the exhaustion has bounded edge density, and
+$K\subseteq\texttt{leeYangDomain}$ is compact.  If there is a constant $L$
+such that
+\[
+  -L \le
+  \frac{\log\|Z_{\Lambda_n}(J,h,\beta)\|}{|\Lambda_n|}
+  \qquad(n\in\mathbb N,\ h\in K),
+\]
+then there is a constant $C$ such that
+\[
+  \frac{\left|\log\|Z_{\Lambda_n}(J,h,\beta)\|\right|}{|\Lambda_n|}
+  \le C
+  \qquad(n\in\mathbb N,\ h\in K).
+\]
+The proof takes the maximum of the lower-control constant and the automatic
+Lee--Yang upper-control constant, then applies the elementary two-sided
+absolute-value bridge
+\texttt{abs\_log\_norm\_partitionFunctionComplexAlongExhaustion\_div\_card\_le\_of\_two\_sided\_on\_set}.
+
+The companion theorem
+\texttt{exists\_norm\_freeEnergyComplexAlongExhaustion\_le\_lower\_log\_leeYang}
+immediately feeds this absolute normalised-log bound into PR \#2680, giving a
+constant $C$ with
+\[
+  \|f_n(h)\|\le C+\pi
+  \qquad(n\in\mathbb N,\ h\in K).
+\]
+The concrete $\mathbb Z^d$ wrappers are
+\texttt{exists\_abs\_log\_norm\_div\_card\_le\_lower\_ly\_latticeGraph}
+and
+\texttt{exists\_norm\_freeEnergyComplexAlongExhaustion\_le\_lower\_log\_ly\_latticeGraph}.
+
+This is still conditional: the lower normalised-log control is isolated as an
+explicit hypothesis rather than proved.  Reference: Glimm--Jaffe
+\cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
 \begin{theorem}[Normalised log bound handoff; PR \#2679]

@@ -615,6 +615,48 @@ theorem norm_freeEnergyComplexAlongExhaustion_le_of_abs_log_norm_bound_on_set_un
     linarith
   exact hstage.trans hpi_step
 
+/-- **Absolute normalised-log control from two-sided control**:
+if `Real.log ‖Z_{Λ_n}(h)‖ / |Λ_n|` is bounded above by `C` and below by
+`-C` on a set `K`, then
+`|Real.log ‖Z_{Λ_n}(h)‖| / |Λ_n| ≤ C` there. This is the elementary bridge
+from separate upper/lower logarithmic estimates to the normalised absolute-log
+hypothesis consumed by the free-energy bounds. -/
+theorem abs_log_norm_partitionFunctionComplexAlongExhaustion_div_card_le_of_two_sided_on_set
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    [∀ n, Nonempty (↑(Λ.volume n) : Type _)]
+    (β J : ℝ) {K : Set ℂ} {C : ℝ}
+    (hlo : ∀ n, ∀ h ∈ K,
+      -C ≤ Real.log ‖partitionFunctionComplexAlongExhaustion G Λ (J : ℂ) h (β : ℂ) n‖
+        / (Fintype.card (↑(Λ.volume n) : Type _) : ℝ))
+    (hhi : ∀ n, ∀ h ∈ K,
+      Real.log ‖partitionFunctionComplexAlongExhaustion G Λ (J : ℂ) h (β : ℂ) n‖
+        / (Fintype.card (↑(Λ.volume n) : Type _) : ℝ) ≤ C) :
+    ∀ n, ∀ h ∈ K,
+      |Real.log ‖partitionFunctionComplexAlongExhaustion G Λ (J : ℂ) h (β : ℂ) n‖|
+        / (Fintype.card (↑(Λ.volume n) : Type _) : ℝ) ≤ C := by
+  intro n h hh
+  have hcard_pos : (0 : ℝ) < (Fintype.card (↑(Λ.volume n) : Type _) : ℝ) := by
+    exact_mod_cast (Fintype.card_pos : 0 < Fintype.card (↑(Λ.volume n) : Type _))
+  have habs :
+      |Real.log ‖partitionFunctionComplexAlongExhaustion G Λ (J : ℂ) h (β : ℂ) n‖
+          / (Fintype.card (↑(Λ.volume n) : Type _) : ℝ)| ≤ C :=
+    abs_le.mpr ⟨hlo n h hh, hhi n h hh⟩
+  have hrewrite :
+      |Real.log ‖partitionFunctionComplexAlongExhaustion G Λ (J : ℂ) h (β : ℂ) n‖
+          / (Fintype.card (↑(Λ.volume n) : Type _) : ℝ)|
+        =
+      |Real.log ‖partitionFunctionComplexAlongExhaustion G Λ (J : ℂ) h (β : ℂ) n‖|
+        / (Fintype.card (↑(Λ.volume n) : Type _) : ℝ) := by
+    rw [abs_div, abs_of_pos hcard_pos]
+  calc
+    |Real.log ‖partitionFunctionComplexAlongExhaustion G Λ (J : ℂ) h (β : ℂ) n‖|
+        / (Fintype.card (↑(Λ.volume n) : Type _) : ℝ)
+        =
+      |Real.log ‖partitionFunctionComplexAlongExhaustion G Λ (J : ℂ) h (β : ℂ) n‖
+          / (Fintype.card (↑(Λ.volume n) : Type _) : ℝ)| := hrewrite.symm
+    _ ≤ C := habs
+
 /-- **Per-stage `Z_ℂ ≠ 0 on leeYangDomain`** for
 `partitionFunctionComplexAlongExhaustion` (ferromagnetic). -/
 theorem partitionFunctionComplexAlongExhaustion_ne_zero_on_leeYangDomain_stage
@@ -648,6 +690,55 @@ theorem exists_log_norm_partitionFunctionComplexAlongExhaustion_div_card_le_leeY
       intro n h hh
       exact partitionFunctionComplexAlongExhaustion_ne_zero_on_leeYangDomain_stage
         G Λ hβ hJ n (hKsub hh))
+
+/-- **Lee-Yang compact absolute normalised-log handoff from lower control**:
+on compact `K ⊆ leeYangDomain`, the automatic Lee-Yang upper bound and a
+remaining lower normalised-log hypothesis combine into the absolute
+normalised-log hypothesis consumed by the free-energy bounds. -/
+theorem exists_abs_log_norm_partitionFunctionComplexAlongExhaustion_div_card_le_lower_leeYang
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    [∀ n, Nonempty (↑(Λ.volume n) : Type _)]
+    (hBED : BoundedEdgeDensity G Λ) {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J)
+    {K : Set ℂ} (hK : IsCompact K) (hKsub : K ⊆ IsingModel.leeYangDomain)
+    (hLower : ∃ L : ℝ, ∀ n, ∀ h ∈ K,
+      -L ≤ Real.log ‖partitionFunctionComplexAlongExhaustion G Λ (J : ℂ) h (β : ℂ) n‖
+        / (Fintype.card (↑(Λ.volume n) : Type _) : ℝ)) :
+    ∃ C : ℝ, ∀ n, ∀ h ∈ K,
+      |Real.log ‖partitionFunctionComplexAlongExhaustion G Λ (J : ℂ) h (β : ℂ) n‖|
+        / (Fintype.card (↑(Λ.volume n) : Type _) : ℝ) ≤ C := by
+  rcases hLower with ⟨L, hL⟩
+  rcases exists_log_norm_partitionFunctionComplexAlongExhaustion_div_card_le_leeYangDomain
+      G Λ hBED hβ hJ hK hKsub with ⟨U, hU⟩
+  refine ⟨max L U, ?_⟩
+  exact abs_log_norm_partitionFunctionComplexAlongExhaustion_div_card_le_of_two_sided_on_set
+    G Λ β J
+    (by
+      intro n h hh
+      exact (neg_le_neg (le_max_left L U)).trans (hL n h hh))
+    (by
+      intro n h hh
+      exact (hU n h hh).trans (le_max_right L U))
+
+/-- **Lee-Yang compact locally bounded free-energy family from lower control**:
+on compact `K ⊆ leeYangDomain`, once a stage-uniform lower normalised-log
+bound is available, the Lee-Yang compact upper bound supplies the absolute-log
+control and hence a stage-independent free-energy bound `‖f_n(h)‖ ≤ C + π`. -/
+theorem exists_norm_freeEnergyComplexAlongExhaustion_le_lower_log_leeYang
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    [∀ n, Nonempty (↑(Λ.volume n) : Type _)]
+    (hBED : BoundedEdgeDensity G Λ) {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J)
+    {K : Set ℂ} (hK : IsCompact K) (hKsub : K ⊆ IsingModel.leeYangDomain)
+    (hLower : ∃ L : ℝ, ∀ n, ∀ h ∈ K,
+      -L ≤ Real.log ‖partitionFunctionComplexAlongExhaustion G Λ (J : ℂ) h (β : ℂ) n‖
+        / (Fintype.card (↑(Λ.volume n) : Type _) : ℝ)) :
+    ∃ C : ℝ, ∀ n, ∀ h ∈ K,
+      ‖freeEnergyComplexAlongExhaustion G Λ (J : ℂ) h (β : ℂ) n‖ ≤ C + Real.pi := by
+  rcases exists_abs_log_norm_partitionFunctionComplexAlongExhaustion_div_card_le_lower_leeYang
+      G Λ hBED hβ hJ hK hKsub hLower with ⟨C, hC⟩
+  exact ⟨C, norm_freeEnergyComplexAlongExhaustion_le_of_abs_log_norm_bound_on_set_uniform
+    G Λ β J hC⟩
 
 /-! ## Real-axis convergence to `freeEnergyInfinite`
 
