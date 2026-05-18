@@ -3424,6 +3424,50 @@ future normal-family/Vitali argument can consume.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Local branch-family Vitali assembly on Lee--Yang balls; PR \#2676]
+The theorem
+\texttt{freeEnergyComplexAlongExhaustion\_branchFamily\_vitali\_bridge\_ball}
+packages the local Vitali handoff for a chosen branch family.  Let
+$F_n:\mathbb C\to\mathbb C$ be functions on a ball $B(h_0,r)$ such that each
+$F_n$ is analytic on a neighbourhood of the ball, satisfies the ball-wide
+branch identity
+\[
+  \forall z\in B(h_0,r),\qquad
+  \exp(|\Lambda_n|\,F_n(z))=Z_{\Lambda_n}(z),
+\]
+and is normalised at the centre by
+\[
+  F_n(h_0)=
+  \texttt{freeEnergyComplexAlongExhaustion}\,G\,\Lambda\,J\,h_0\,\beta\,n .
+\]
+If $F_n$ converges locally uniformly on $B(h_0,r)$ to $f$, then $f$ is
+holomorphic on $B(h_0,r)$.  The proof is the existing
+\texttt{vitali\_bridge} applied to the analytic part of the branch witness.
+
+The centre-identification theorem
+\texttt{freeEnergyComplexAlongExhaustion\_branchFamily\_vitali\_ball\_identified\_at\_center}
+specialises the centre to a real parameter $h_0=p.h$.  Local uniform
+convergence gives $F_n(p.h)\to f(p.h)$, while the normalisation above rewrites
+this sequence to the principal stage free energies.  The real-axis Fekete
+theorem
+\texttt{freeEnergyComplexAlongExhaustion\_tendsto\_at\_real\_of\_disjointTowerHypotheses}
+then gives convergence to
+\[
+  \texttt{freeEnergyInfinite}\,G\,\Lambda\,p .
+\]
+Uniqueness of limits identifies
+\[
+  f(p.h)=\texttt{freeEnergyInfinite}\,G\,\Lambda\,p .
+\]
+The concrete $\mathbb Z^d$ wrappers live in
+\texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+
+This result does not construct the coherent branch family or prove its local
+uniform convergence.  It records the exact local theorem that can consume that
+future normal-family/Montel output.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{remark}[Status of PR \#200 — merged 2026-04-19, \texttt{52ea2f1}]
 PR \#200 was squash-merged into \texttt{main} on 2026-04-19 as
 commit \texttt{52ea2f1}. Items now present in \texttt{main}:
