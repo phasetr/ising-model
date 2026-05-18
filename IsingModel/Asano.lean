@@ -39,6 +39,19 @@ abbrev MultilinPoly (ι : Type*) [Fintype ι] := Finset ι → ℂ
 noncomputable def MultilinPoly.eval (p : MultilinPoly ι) (z : ι → ℂ) : ℂ :=
   ∑ X : Finset ι, p X * ∏ i ∈ X, z i
 
+omit [DecidableEq ι] in
+/-- Multilinear polynomial evaluation is continuous in the site variables. -/
+theorem MultilinPoly.continuous_eval (p : MultilinPoly ι) :
+    Continuous (fun z : ι → ℂ => p.eval z) := by
+  unfold MultilinPoly.eval
+  apply continuous_finset_sum
+  intro X _
+  exact continuous_const.mul
+    (by
+      apply continuous_finset_prod
+      intro i _
+      exact continuous_apply i)
+
 /-! ## Asano contraction -/
 
 /-- Asano contraction: given a polynomial `p` on `ι` and two distinct variables
