@@ -13,6 +13,8 @@ capstone, providing:
   `ofReal m⁻ ≤ latticeMass ≤ C · ofReal m⁻`
   parameterised by a validating exponential decay rate (lower-bound input)
   and an upper-bound hypothesis;
+* an order-theoretic upper-bound assembly turning a uniform bound on every
+  validating decay rate into the named upper-bound predicate and sandwich;
 * a Lemma 17.5.2 lower-bound named alias for downstream consumption;
 * an `ofReal`-valued `Prop` predicate naming the upper-bound side as a
   hypothesis. In the cubic active-range high-temperature setting this module
@@ -70,6 +72,35 @@ def Lemma_17_5_2_UpperBound {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     C * ENNReal.ofReal
       (pseudoMassFromParamsAtPair hα hr d Λ
         (⟨J, 0, β⟩ : IsingParams ℝ) x z)
+
+/-- **GJ §17.5 Lemma 17.5.2 upper-bound assembly from all decay rates**:
+because `latticeMass` is the `sSup` of all validating nonnegative exponential
+decay rates, the upper-bound predicate follows once every admissible rate
+`a : NNReal` is bounded by `C · ofReal m⁻`.
+
+This is the order-theoretic final step of the HLS upper-bound side.  The
+analytic work still lies in proving the hypothesis, typically from the
+infinite-volume HLS denominator comparison and the Lipschitz machinery.
+
+References: Glimm--Jaffe §17.5, Lemma 17.5.2 and Theorem 17.5.1 proof,
+pp.~311--312. -/
+theorem lemma_17_5_2_upper_bound_of_all_decay_rates_le
+    {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (J β : ℝ) (x z : Fin d → ℤ) (C : ENNReal)
+    (hdecay_le : ∀ a : NNReal,
+      HasExponentialDecay d Λ (⟨J, 0, β⟩ : IsingParams ℝ) (a : ℝ) →
+        (a : ENNReal) ≤
+          C * ENNReal.ofReal
+            (pseudoMassFromParamsAtPair hα hr d Λ
+              (⟨J, 0, β⟩ : IsingParams ℝ) x z)) :
+    Lemma_17_5_2_UpperBound hα hr Λ J β x z C := by
+  dsimp [Lemma_17_5_2_UpperBound, latticeMass]
+  apply sSup_le
+  rintro b ⟨a, ha, rfl⟩
+  exact hdecay_le a ha
 
 /-- **GJ §17.5 Lemma 17.5.2 lower-bound side (named alias)**: if the concrete
 pseudo-mass associated to the pair `(x, z)` at `h = 0` validates exponential
@@ -130,6 +161,42 @@ theorem lemma_17_5_2_sandwich_of_decay_and_upper
         (pseudoMassFromParamsAtPair hα hr d Λ
           (⟨J, 0, β⟩ : IsingParams ℝ) x z) :=
   ⟨lemma_17_5_2_lower_bound_of_decay hα hr hdecay, hupper⟩
+
+/-- **GJ §17.5 Lemma 17.5.2 sandwich from lower decay and all-rate upper
+assembly**: a validating pseudo-mass decay rate gives the lower bound, while a
+uniform bound on every validating decay rate by `C · ofReal m⁻` gives the named
+upper-bound side by `sSup_le`.
+
+This theorem packages the final non-analytic assembly shape for the future HLS
+upper-bound proof: downstream work only has to prove the all-decay-rate bound.
+
+References: Glimm--Jaffe §17.5, Lemma 17.5.2 and Theorem 17.5.1 proof,
+pp.~311--312. -/
+theorem lemma_17_5_2_sandwich_of_decay_and_all_decay_rates_le
+    {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    {Λ : Ambient.Exhaustion (Fin d → ℤ)}
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    {J β : ℝ} {x z : Fin d → ℤ} {C : ENNReal}
+    (hdecay : HasExponentialDecay d Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+      (pseudoMassFromParamsAtPair hα hr d Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) x z))
+    (hdecay_le : ∀ a : NNReal,
+      HasExponentialDecay d Λ (⟨J, 0, β⟩ : IsingParams ℝ) (a : ℝ) →
+        (a : ENNReal) ≤
+          C * ENNReal.ofReal
+            (pseudoMassFromParamsAtPair hα hr d Λ
+              (⟨J, 0, β⟩ : IsingParams ℝ) x z)) :
+    ENNReal.ofReal
+        (pseudoMassFromParamsAtPair hα hr d Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) x z)
+      ≤ latticeMass d Λ (⟨J, 0, β⟩ : IsingParams ℝ) ∧
+    latticeMass d Λ (⟨J, 0, β⟩ : IsingParams ℝ) ≤
+      C * ENNReal.ofReal
+        (pseudoMassFromParamsAtPair hα hr d Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) x z) :=
+  lemma_17_5_2_sandwich_of_decay_and_upper hα hr hdecay
+    (lemma_17_5_2_upper_bound_of_all_decay_rates_le hα hr Λ J β x z C hdecay_le)
 
 /-- **GJ §17.5 Lemma 17.5.2 lower-bound capstone, cubic high-temperature
 form**: on the cubic exhaustion at high temperature `β·J·(2d) < 1`,
