@@ -1594,6 +1594,97 @@ theorem freeEnergyComplexAlongExhaustion_branchFamily_compactOpen_vitali_ball_re
       G Λ p hBED hd hr hσ hbranch_sub hconv
   exact ⟨σ, hσ, f, ⟨fc, hfcA, hf_agree⟩, hconv, hcenter.1, hcenter.2⟩
 
+/-- **Two-ball compact-open diagonal extraction plus subsequence Vitali
+bridge**: if branch families on two Lee-Yang balls are represented by
+continuous maps whose ranges lie in compact subsets of the corresponding
+compact-open function spaces, then a single strictly increasing subsequence can
+be chosen so that both branch families converge locally uniformly on their
+balls and both limits are holomorphic there. This is the two-ball base case for
+finite local-cover diagonal extraction; it does not assert overlap
+compatibility of the two limits. -/
+theorem freeEnergyComplexAlongExhaustion_branchFamily_compactOpen_vitali_two_ball
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℂ) {h01 h02 : ℂ} {r1 r2 : ℝ}
+    {F1 F2 : ℕ → ℂ → ℂ}
+    {A1 : Set C(Metric.ball h01 r1, ℂ)}
+    {A2 : Set C(Metric.ball h02 r2, ℂ)}
+    {Fc1 : ℕ → C(Metric.ball h01 r1, ℂ)}
+    {Fc2 : ℕ → C(Metric.ball h02 r2, ℂ)}
+    (hA1 : IsCompact A1) (hA2 : IsCompact A2)
+    (hFc1_mem : ∀ n, Fc1 n ∈ A1)
+    (hFc2_mem : ∀ n, Fc2 n ∈ A2)
+    (hFres1 : ∀ n z (hz : z ∈ Metric.ball h01 r1),
+      F1 n z = Fc1 n ⟨z, hz⟩)
+    (hFres2 : ∀ n z (hz : z ∈ Metric.ball h02 r2),
+      F2 n z = Fc2 n ⟨z, hz⟩)
+    (hbranch1 : ∀ n,
+      AnalyticOnNhd ℂ (F1 n) (Metric.ball h01 r1)
+        ∧ (∀ z ∈ Metric.ball h01 r1,
+            Complex.exp ((Fintype.card (↑(Λ.volume n) : Type _) : ℂ) * F1 n z)
+              = partitionFunctionComplexAlongExhaustion G Λ J z β n)
+        ∧ F1 n h01 = freeEnergyComplexAlongExhaustion G Λ J h01 β n)
+    (hbranch2 : ∀ n,
+      AnalyticOnNhd ℂ (F2 n) (Metric.ball h02 r2)
+        ∧ (∀ z ∈ Metric.ball h02 r2,
+            Complex.exp ((Fintype.card (↑(Λ.volume n) : Type _) : ℂ) * F2 n z)
+              = partitionFunctionComplexAlongExhaustion G Λ J z β n)
+        ∧ F2 n h02 = freeEnergyComplexAlongExhaustion G Λ J h02 β n) :
+    ∃ σ : ℕ → ℕ, StrictMono σ ∧
+      (∃ f1 : ℂ → ℂ,
+        (∃ fc1 : C(Metric.ball h01 r1, ℂ),
+          fc1 ∈ A1 ∧ ∀ z (hz : z ∈ Metric.ball h01 r1), f1 z = fc1 ⟨z, hz⟩) ∧
+        TendstoLocallyUniformlyOn
+          (fun m z => F1 (σ m) z) f1 Filter.atTop (Metric.ball h01 r1) ∧
+        DifferentiableOn ℂ f1 (Metric.ball h01 r1)) ∧
+      (∃ f2 : ℂ → ℂ,
+        (∃ fc2 : C(Metric.ball h02 r2, ℂ),
+          fc2 ∈ A2 ∧ ∀ z (hz : z ∈ Metric.ball h02 r2), f2 z = fc2 ⟨z, hz⟩) ∧
+        TendstoLocallyUniformlyOn
+          (fun m z => F2 (σ m) z) f2 Filter.atTop (Metric.ball h02 r2) ∧
+        DifferentiableOn ℂ f2 (Metric.ball h02 r2)) := by
+  haveI : LocallyCompactSpace (Metric.ball h01 r1) :=
+    Metric.isOpen_ball.locallyCompactSpace
+  haveI : LocallyCompactSpace (Metric.ball h02 r2) :=
+    Metric.isOpen_ball.locallyCompactSpace
+  rcases IsingModel.exists_subseq_two_tendstoLocallyUniformlyOn_of_isCompact_compactOpen
+      Metric.isOpen_ball Metric.isOpen_ball hA1 hA2 hFc1_mem hFc2_mem
+      hFres1 hFres2 with
+    ⟨σ, hσ, hlim1, hlim2⟩
+  rcases hlim1 with ⟨fc1, f1, hfc1A, hf1_agree, hconv1⟩
+  rcases hlim2 with ⟨fc2, f2, hfc2A, hf2_agree, hconv2⟩
+  have hbranch1_sub : ∀ m,
+      AnalyticOnNhd ℂ ((fun m z => F1 (σ m) z) m) (Metric.ball h01 r1)
+        ∧ (∀ z ∈ Metric.ball h01 r1,
+            Complex.exp
+              ((Fintype.card (↑(Λ.volume (σ m)) : Type _) : ℂ) *
+                (fun m z => F1 (σ m) z) m z)
+              = partitionFunctionComplexAlongExhaustion G Λ J z β (σ m))
+        ∧ (fun m z => F1 (σ m) z) m h01
+            = freeEnergyComplexAlongExhaustion G Λ J h01 β (σ m) := by
+    intro m
+    simpa using hbranch1 (σ m)
+  have hbranch2_sub : ∀ m,
+      AnalyticOnNhd ℂ ((fun m z => F2 (σ m) z) m) (Metric.ball h02 r2)
+        ∧ (∀ z ∈ Metric.ball h02 r2,
+            Complex.exp
+              ((Fintype.card (↑(Λ.volume (σ m)) : Type _) : ℂ) *
+                (fun m z => F2 (σ m) z) m z)
+              = partitionFunctionComplexAlongExhaustion G Λ J z β (σ m))
+        ∧ (fun m z => F2 (σ m) z) m h02
+            = freeEnergyComplexAlongExhaustion G Λ J h02 β (σ m) := by
+    intro m
+    simpa using hbranch2 (σ m)
+  have hdiff1 :=
+    freeEnergyComplexAlongExhaustion_subseq_branchFamily_vitali_bridge_ball
+      G Λ J β (σ := σ) hbranch1_sub hconv1
+  have hdiff2 :=
+    freeEnergyComplexAlongExhaustion_subseq_branchFamily_vitali_bridge_ball
+      G Λ J β (σ := σ) hbranch2_sub hconv2
+  exact ⟨σ, hσ,
+    ⟨f1, ⟨fc1, hfc1A, hf1_agree⟩, hconv1, hdiff1⟩,
+    ⟨f2, ⟨fc2, hfc2A, hf2_agree⟩, hconv2, hdiff2⟩⟩
+
 end Ambient
 
 end IsingModel

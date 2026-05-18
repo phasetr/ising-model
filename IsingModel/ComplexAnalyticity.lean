@@ -1568,6 +1568,61 @@ theorem exists_subseq_tendstoLocallyUniformlyOn_of_isCompact_compactOpen
       (by simpa [Function.comp_def] using hconv)
   exact ⟨σ, hσ, fc, f, hfcA, hf, hconv_lu⟩
 
+omit [Fintype ι] [DecidableEq ι] in
+/-- **Locally uniform convergence is stable under a strictly increasing
+subsequence of stages**. This is the small diagonal-extraction utility used
+when a later compact-open extraction refines a previously chosen subsequence. -/
+theorem tendstoLocallyUniformlyOn_subseq_of_strictMono
+    {s : Set ℂ} {F : ℕ → ℂ → ℂ} {f : ℂ → ℂ} {σ : ℕ → ℕ}
+    (hconv : TendstoLocallyUniformlyOn F f Filter.atTop s)
+    (hσ : StrictMono σ) :
+    TendstoLocallyUniformlyOn (fun m z => F (σ m) z) f Filter.atTop s := by
+  intro u hu x hx
+  rcases hconv u hu x hx with ⟨t, ht, hF⟩
+  exact ⟨t, ht, hσ.tendsto_atTop.eventually hF⟩
+
+omit [Fintype ι] [DecidableEq ι] in
+/-- **Two-set compact-open diagonal extraction**: if two families of continuous
+restrictions lie in compact subsets of their compact-open function spaces, then
+a single strictly increasing subsequence can be chosen so that both total
+families converge locally uniformly on their respective open sets. This is the
+finite-diagonal base case for later local-cover extraction. -/
+theorem exists_subseq_two_tendstoLocallyUniformlyOn_of_isCompact_compactOpen
+    {s1 s2 : Set ℂ} (hs1 : IsOpen s1) (hs2 : IsOpen s2)
+    [FirstCountableTopology C(s1, ℂ)] [FirstCountableTopology C(s2, ℂ)]
+    {A1 : Set C(s1, ℂ)} {A2 : Set C(s2, ℂ)}
+    (hA1 : IsCompact A1) (hA2 : IsCompact A2)
+    {Fc1 : ℕ → C(s1, ℂ)} {Fc2 : ℕ → C(s2, ℂ)}
+    (hFc1_mem : ∀ n, Fc1 n ∈ A1)
+    (hFc2_mem : ∀ n, Fc2 n ∈ A2)
+    {F1 F2 : ℕ → ℂ → ℂ}
+    (hF1 : ∀ n z (hz : z ∈ s1), F1 n z = Fc1 n ⟨z, hz⟩)
+    (hF2 : ∀ n z (hz : z ∈ s2), F2 n z = Fc2 n ⟨z, hz⟩) :
+    ∃ σ : ℕ → ℕ, StrictMono σ ∧
+      (∃ fc1 : C(s1, ℂ), ∃ f1 : ℂ → ℂ,
+        fc1 ∈ A1 ∧
+          (∀ z (hz : z ∈ s1), f1 z = fc1 ⟨z, hz⟩) ∧
+          TendstoLocallyUniformlyOn
+            (fun m z => F1 (σ m) z) f1 Filter.atTop s1) ∧
+      (∃ fc2 : C(s2, ℂ), ∃ f2 : ℂ → ℂ,
+        fc2 ∈ A2 ∧
+          (∀ z (hz : z ∈ s2), f2 z = fc2 ⟨z, hz⟩) ∧
+          TendstoLocallyUniformlyOn
+            (fun m z => F2 (σ m) z) f2 Filter.atTop s2) := by
+  rcases exists_subseq_tendstoLocallyUniformlyOn_of_isCompact_compactOpen
+      hs1 hA1 hFc1_mem hF1 with
+    ⟨σ1, hσ1, fc1, f1, hfc1A, hf1_agree, hconv1⟩
+  rcases exists_subseq_tendstoLocallyUniformlyOn_of_isCompact_compactOpen
+      hs2 hA2 (fun m => hFc2_mem (σ1 m))
+      (F := fun m z => F2 (σ1 m) z)
+      (fun m z hz => hF2 (σ1 m) z hz) with
+    ⟨τ, hτ, fc2, f2, hfc2A, hf2_agree, hconv2⟩
+  refine ⟨fun m => σ1 (τ m), hσ1.comp hτ, ?_, ?_⟩
+  · exact ⟨fc1, f1, hfc1A, hf1_agree,
+      tendstoLocallyUniformlyOn_subseq_of_strictMono
+        (F := fun m z => F1 (σ1 m) z) hconv1 hτ⟩
+  · exact ⟨fc2, f2, hfc2A, hf2_agree, hconv2⟩
+
 /-- **Modulus bound for `partitionFunctionComplex` via the real Ising
 partition function (statement, proof deferred)**. For real `β`, real `J`,
 complex `h`:
