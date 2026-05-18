@@ -3892,6 +3892,46 @@ inputs.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Packaged Lee--Yang local-cover branch-limit family; PR \#2703]
+The structure
+\begin{Verbatim}
+Ambient.LeeYangLocalBranchLimitFamily
+\end{Verbatim}
+bundles the full compatible local-cover endpoint expected from the later
+coherent extraction: for each point of \(\texttt{leeYangDomain}\) it contains a
+\texttt{LeeYangLocalBranchLimit} package, and it also contains the pairwise
+compatibility proof that the packaged local limits agree on all corresponding
+ball overlaps.
+
+The theorem
+\begin{Verbatim}
+Ambient.freeEnergyComplexAlongExhaustion_branchLimitFamily_localCover_patch
+\end{Verbatim}
+is the one-argument version of the PR \#2701 data patching theorem: from a
+compatible family it obtains a function \(g\) agreeing with every packaged
+local limit on its ball and differentiable on \(\texttt{leeYangDomain}\).  The
+real-centre wrapper
+\begin{Verbatim}
+Ambient.freeEnergyComplexAlongExhaustion_branchLimitFamily_localCover_real
+\end{Verbatim}
+adds the PR \#2702 conclusion: if the package at a real Lee--Yang centre is
+normalised to the finite-volume free-energy sequence, then
+\[
+  g(p.h)=\texttt{freeEnergyInfinite}.
+\]
+The concrete \(\mathbb Z^d\) wrappers are
+\begin{Verbatim}
+freeEnergyComplexAlongExhaustion_branchLimitFamily_localCover_patch_latticeGraph
+freeEnergyComplexAlongExhaustion_branchLimitFamily_localCover_real_latticeGraph
+\end{Verbatim}
+in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+
+This remains conditional and post-extraction.  The new structure removes the
+last loose compatibility argument from downstream APIs, but it does not prove
+Montel compactness or construct the coherent compatible family.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[Compact Lee--Yang fugacity gap; PR \#2684]
 The theorems
 \texttt{exists\_leeYangFugacity\_norm\_le\_lt\_one\_on\_isCompact}
