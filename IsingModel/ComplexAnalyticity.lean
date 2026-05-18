@@ -1623,6 +1623,59 @@ theorem exists_subseq_two_tendstoLocallyUniformlyOn_of_isCompact_compactOpen
         (F := fun m z => F1 (σ1 m) z) hconv1 hτ⟩
   · exact ⟨fc2, f2, hfc2A, hf2_agree, hconv2⟩
 
+omit [Fintype ι] [DecidableEq ι] in
+/-- **Finite compact-open diagonal extraction over `Fin n`**: for a finite
+family of open complex sets, if each restricted branch family takes values in a
+compact subset of the corresponding compact-open continuous-map space, then a
+single strictly increasing subsequence can be chosen so that every family
+converges locally uniformly on its open set. This is the finite-cover
+extraction handoff; it does not assert compatibility of the resulting local
+limits on overlaps. -/
+theorem exists_subseq_fin_tendstoLocallyUniformlyOn_of_isCompact_compactOpen
+    (n : ℕ)
+    {s : Fin n → Set ℂ} (hs : ∀ i, IsOpen (s i))
+    [∀ i, FirstCountableTopology C(s i, ℂ)]
+    {A : ∀ i, Set C(s i, ℂ)} (hA : ∀ i, IsCompact (A i))
+    {Fc : ∀ i, ℕ → C(s i, ℂ)}
+    (hFc_mem : ∀ i m, Fc i m ∈ A i)
+    {F : Fin n → ℕ → ℂ → ℂ}
+    (hF : ∀ i m z (hz : z ∈ s i), F i m z = Fc i m ⟨z, hz⟩) :
+    ∃ σ : ℕ → ℕ, StrictMono σ ∧
+      ∀ i, ∃ fc : C(s i, ℂ), ∃ f : ℂ → ℂ,
+        fc ∈ A i ∧
+          (∀ z (hz : z ∈ s i), f z = fc ⟨z, hz⟩) ∧
+          TendstoLocallyUniformlyOn
+            (fun m z => F i (σ m) z) f Filter.atTop (s i) := by
+  classical
+  induction n with
+  | zero =>
+      refine ⟨id, strictMono_id, ?_⟩
+      intro i
+      exact Fin.elim0 i
+  | succ n ih =>
+      rcases exists_subseq_tendstoLocallyUniformlyOn_of_isCompact_compactOpen
+          (hs 0) (hA 0) (hFc_mem 0) (hF 0) with
+        ⟨σ0, hσ0, fc0, f0, hfc0A, hf0_agree, hconv0⟩
+      letI : ∀ i : Fin n, FirstCountableTopology C(s i.succ, ℂ) :=
+        fun _ => inferInstance
+      rcases ih (s := fun i : Fin n => s i.succ)
+          (hs := fun i => hs i.succ)
+          (A := fun i : Fin n => A i.succ)
+          (hA := fun i => hA i.succ)
+          (Fc := fun i m => Fc i.succ (σ0 m))
+          (hFc_mem := fun i m => hFc_mem i.succ (σ0 m))
+          (F := fun i m z => F i.succ (σ0 m) z)
+          (hF := fun i m z hz => hF i.succ (σ0 m) z hz) with
+        ⟨τ, hτ, htail⟩
+      refine ⟨fun m => σ0 (τ m), hσ0.comp hτ, ?_⟩
+      intro i
+      refine Fin.cases ?_ ?_ i
+      · exact ⟨fc0, f0, hfc0A, hf0_agree,
+          tendstoLocallyUniformlyOn_subseq_of_strictMono
+            (F := fun m z => F 0 (σ0 m) z) hconv0 hτ⟩
+      · intro j
+        exact htail j
+
 /-- **Modulus bound for `partitionFunctionComplex` via the real Ising
 partition function (statement, proof deferred)**. For real `β`, real `J`,
 complex `h`:
