@@ -489,6 +489,41 @@ theorem leeYangNormalization_mul_isingEdgePoly_eval_ne_zero
   mul_ne_zero (leeYangNormalization_ne_zero _ _ _ _ _)
     (isingEdgePoly_eval_leeYangFugacityVec_ne_zero G ht₀ ht₁ hβ hh)
 
+/-- **Finite-volume compact lower bound for the Lee-Yang polynomial factor**:
+on a compact subset of the Lee-Yang domain, the finite-volume polynomial factor
+at the uniform fugacity has a positive lower bound.
+
+This is a compactness consequence of continuity and finite-volume Lee-Yang
+nonvanishing. The constant is finite-volume dependent; this theorem does not
+provide stage-uniform lower normalised-log control. -/
+theorem exists_pos_le_norm_isingEdgePoly_eval_leeYangFugacityVec_on_isCompact
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {t : ℝ} (ht₀ : 0 ≤ t) (ht₁ : t < 1)
+    {β : ℝ} (hβ : 0 < β) {K : Set ℂ}
+    (hK : IsCompact K) (hKsub : K ⊆ leeYangDomain) :
+    ∃ ε : ℝ, 0 < ε ∧
+      ∀ h ∈ K,
+        ε ≤ ‖(isingEdgePoly (graphToEdgeList G t)).eval
+          (leeYangFugacityVec (β : ℂ) h)‖ := by
+  let F : ℂ → ℝ := fun h =>
+    ‖(isingEdgePoly (graphToEdgeList G t)).eval (leeYangFugacityVec (β : ℂ) h)‖
+  have hcont : ContinuousOn F K := by
+    have hvec : Continuous (fun h : ℂ => (leeYangFugacityVec (β : ℂ) h : ι → ℂ)) := by
+      exact continuous_pi (fun i => by
+        simpa [leeYangFugacityVec] using continuous_leeYangFugacity (β : ℂ))
+    exact ((MultilinPoly.continuous_eval (isingEdgePoly (graphToEdgeList G t))).comp
+      hvec).norm.continuousOn
+  by_cases hne : K.Nonempty
+  · rcases hK.exists_isMinOn hne hcont with ⟨h₀, hh₀, hmin⟩
+    refine ⟨F h₀, ?_, ?_⟩
+    · exact norm_pos_iff.mpr
+        (isingEdgePoly_eval_leeYangFugacityVec_ne_zero G ht₀ ht₁ hβ (hKsub hh₀))
+    · intro h hh
+      exact hmin hh
+  · refine ⟨1, zero_lt_one, ?_⟩
+    intro h hh
+    exact False.elim (hne ⟨h, hh⟩)
+
 /-- Per-site factorisation of the external-field exponential.
 For `σ : Config ι` with down-spin set `X = configToFinset σ`, at each site `i`:
 `exp(β·h·σ_i) = exp(β·h) · (i ∈ X ? leeYangFugacity β h : 1)`.
