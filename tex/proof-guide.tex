@@ -3590,6 +3590,39 @@ Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70, and
 Friedli--Velenik \cite{friedli-velenik}, (3.63)--(3.65), pp.~122--123.
 \end{theorem}
 
+\begin{theorem}[Polynomial lower witnesses to lower normalised-log bridge; PR \#2687]
+The theorem
+\texttt{real\_log\_norm\_partitionFunctionComplexAlongExhaustion\_div\_card\_ge\_of\_poly\_lower\_stage}
+records the stagewise logarithmic consequence of the preceding lower bound.
+If \(0\le\beta\), \(0\le J\), \(|\Re h|\le R\), and
+\[
+  \epsilon \le
+  \left\|P_{E_n}\bigl(\texttt{leeYangFugacityVec}(\beta,h)\bigr)\right\|,
+\]
+then
+\[
+  \frac{\log \epsilon}{|\Lambda_n|}-\beta R
+    \le
+  \frac{\log \left\|Z_{\Lambda_n}(J,h,\beta)\right\|}{|\Lambda_n|}.
+\]
+
+The existential handoff
+\texttt{exists\_lower\_log\_norm\_partitionFunctionComplexAlongExhaustion\_of\_poly\_lower}
+says that if these polynomial lower witnesses satisfy a uniform lower
+normalised-log estimate, then the partition functions satisfy the lower
+normalised-log hypothesis consumed by the Lee--Yang locally bounded family
+handoff of PR \#2683.  The concrete
+\(\mathbb Z^d\) wrapper is
+\texttt{exists\_lower\_log\_norm\_partitionFunctionComplexAlongExhaustion\_of\_poly\_lower\_latticeGraph}.
+
+This is still conditional.  It moves the missing lower bound from
+\(\left\|Z_{\Lambda_n}\right\|\) to the polynomial witnesses
+\(\epsilon_n(h)\), but it does not prove a stage-uniform lower
+normalised-log bound for those witnesses.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70, and
+Friedli--Velenik \cite{friedli-velenik}, (3.63)--(3.65), pp.~122--123.
+\end{theorem}
+
 \begin{theorem}[Compact-uniform complex partition-function bound; PR \#2678]
 The theorem
 \texttt{exists\_abs\_re\_le\_on\_isCompact} records the elementary
