@@ -3726,6 +3726,83 @@ Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70, and
 Friedli--Velenik \cite{friedli-velenik}, (3.63)--(3.65), pp.~122--123.
 \end{theorem}
 
+\begin{theorem}[Root-product Lee--Yang polynomial lower-log bound; PR \#2692]
+The definitions and theorems
+\texttt{MultilinPoly.uniformPolynomial},
+\texttt{MultilinPoly.uniformPolynomial\_eval}, and
+\texttt{MultilinPoly.uniformPolynomial\_natDegree\_le\_card} specialize a
+multilinear polynomial \(P\) to the one-variable polynomial
+\[
+  q(w)=P(w,\ldots,w),
+  \qquad \deg q\le |V|.
+\]
+The general root-product estimate
+\path|Polynomial.one_sub_radius_pow_natDegree_le_norm_eval_of_roots_norm_ge_one|
+says that if \(q(0)=1\) and every root \(a\) of \(q\) satisfies
+\(|a|\ge 1\), then for \(0\le r<1\) and \(|w|\le r\),
+\[
+  (1-r)^{\deg q} \le |q(w)|.
+\]
+Indeed, writing \(q(w)=c\prod_a (w-a)\), the identity \(q(0)=1\) gives
+\(|c|\prod_a |a|=1\).  Since \(|a|\ge 1\) and \(|w|\le r\),
+\[
+  |w-a|\ge |a|-|w|\ge |a|-r\ge (1-r)|a|,
+\]
+and multiplying the factors proves the displayed bound.
+
+For the Ising Lee--Yang polynomial the theorem
+\texttt{isingEdgePoly\_uniformPolynomial\_roots\_norm\_ge\_one} supplies the
+root condition.  If a root had \(|a|<1\), evaluating the multivariable
+Lee--Yang polynomial at the constant vector \(z_i=a\) would contradict the
+finite-volume Lee--Yang nonvanishing theorem.  The constant term theorem
+\texttt{isingEdgePoly\_uniformPolynomial\_eval\_zero} gives \(q(0)=1\).
+Consequently
+\path|one_sub_radius_pow_card_le_norm_isingEdgePoly_eval_leeYangFugacityVec|
+proves
+\[
+  (1-r)^{|V|}
+    \le
+  \left|P_E\bigl(\texttt{leeYangFugacityVec}(\beta,h)\bigr)\right|
+  \qquad
+  (|\exp(-2\beta h)|\le r<1).
+\]
+The exponent is \(|V|\), not \(\deg q\), because
+\(\deg q\le |V|\) and \(0\le 1-r\le 1\), so
+\((1-r)^{|V|}\le (1-r)^{\deg q}\).
+
+On a compact \(K\subseteq\texttt{leeYangDomain}\), the compact fugacity gap
+provides \(r<1\) such that \(|\exp(-2\beta h)|\le r\) for every \(h\in K\).
+The theorem
+\path|Ambient.exists_poly_lower_norm_isingEdgePoly_eval_leeYangFugacityVec_on_isCompact|
+therefore takes
+\[
+  \epsilon_n=(1-r)^{|\Lambda_n|}.
+\]
+Since
+\[
+  \frac{\log \epsilon_n}{|\Lambda_n|}=\log(1-r),
+\]
+these witnesses have a stage-uniform lower normalised-log bound.  Composing
+with the PR \#2687 polynomial-to-\(Z\) bridge yields the compact lower-log
+theorem, and the locally bounded wrappers remove the former polynomial-witness
+hypothesis from the compact, ball-local, and point-local statements:
+\begin{Verbatim}[breaklines=true,fontsize=\small]
+Ambient.exists_lower_log_norm_partitionFunctionComplexAlongExhaustion_leeYang_of_isCompact
+Ambient.exists_norm_freeEnergyComplexAlongExhaustion_le_leeYang_of_isCompact
+Ambient.exists_norm_freeEnergyComplexAlongExhaustion_le_leeYang_on_ball
+Ambient.exists_norm_freeEnergyComplexAlongExhaustion_le_leeYang_around
+\end{Verbatim}
+The corresponding \(\mathbb Z^d\) wrappers live in
+\texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+
+This completes the lower normalised-log side of the Lee--Yang Vitali input.
+The remaining task for GJ \S 4.6 is the coherent locally-uniform branch-family
+or Montel construction and the global branch patching.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70, and
+Friedli--Velenik \cite{friedli-velenik}, Theorem 3.43, pp.~122--127 and
+(3.63)--(3.65), pp.~122--123.
+\end{theorem}
+
 \begin{theorem}[Compact-uniform complex partition-function bound; PR \#2678]
 The theorem
 \texttt{exists\_abs\_re\_le\_on\_isCompact} records the elementary
