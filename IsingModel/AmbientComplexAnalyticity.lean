@@ -1288,6 +1288,38 @@ theorem freeEnergyComplexAlongExhaustion_branchFamily_vitali_localCover
   exact (hdiff_ball.differentiableAt
     (Metric.isOpen_ball.mem_nhds (Metric.mem_ball_self hr))).differentiableWithinAt
 
+/-- **Open-cover branch-family patching handoff on `leeYangDomain`**:
+if a Lee-Yang open cover carries local branch-family limits which are
+compatible on overlaps, then the local limits patch to one function
+differentiable on `leeYangDomain`. This is the cover-level patching analogue of
+the local-cover Vitali handoff; the coherent cover and compatibility data
+remain explicit hypotheses. -/
+theorem freeEnergyComplexAlongExhaustion_branchFamily_openCover_patch
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℂ) {α : Type*} {U : α → Set ℂ}
+    {F : α → ℕ → ℂ → ℂ} {f : α → ℂ → ℂ}
+    (hUopen : ∀ i, IsOpen (U i))
+    (hcover : IsingModel.leeYangDomain ⊆ ⋃ i, U i)
+    (hbranch : ∀ i n,
+      AnalyticOnNhd ℂ (F i n) (U i)
+        ∧ (∀ z ∈ U i,
+            Complex.exp ((Fintype.card (↑(Λ.volume n) : Type _) : ℂ) * F i n z)
+              = partitionFunctionComplexAlongExhaustion G Λ J z β n))
+    (hconv : ∀ i, TendstoLocallyUniformlyOn (F i) (f i) Filter.atTop (U i))
+    (hcompat : ∀ i j, Set.EqOn (f i) (f j) (U i ∩ U j)) :
+    ∃ g : ℂ → ℂ,
+      (∀ i, Set.EqOn g (f i) (U i)) ∧
+      DifferentiableOn ℂ g IsingModel.leeYangDomain := by
+  have hdiff : ∀ i, DifferentiableOn ℂ (f i) (U i) := by
+    intro i
+    exact IsingModel.vitali_bridge (hUopen i)
+      (fun n => (hbranch i n).1.differentiableOn) (hconv i)
+  rcases IsingModel.exists_differentiableOn_iUnion_of_eqOn
+      (s := U) (f := f) hUopen hdiff hcompat with
+    ⟨g, hg_eq, hg_diff⟩
+  exact ⟨g, hg_eq, hg_diff.mono hcover⟩
+
 /-- **Local-cover branch-family Vitali bridge with real-axis
 identification**: a coherent local cover of Lee-Yang balls whose branch
 families converge locally uniformly to a common `f` makes `f` holomorphic on

@@ -1788,6 +1788,46 @@ theorem exists_differentiableOn_iUnion_of_finite_eqOn
           · exact Or.inl hzi
           · exact Or.inr (Set.mem_iUnion.mpr ⟨j, hzi⟩)
 
+omit [Fintype ι] [DecidableEq ι] in
+/-- **Open-cover patching for differentiable local functions**: a family of
+differentiable functions on open sets, compatible on all pairwise overlaps,
+patches to one function on the union. The patched function agrees with each
+local function on its own open set and is differentiable on the whole union. -/
+theorem exists_differentiableOn_iUnion_of_eqOn
+    {α : Type*}
+    {s : α → Set ℂ}
+    {f : α → ℂ → ℂ}
+    (hs : ∀ i, IsOpen (s i))
+    (hdiff : ∀ i, DifferentiableOn ℂ (f i) (s i))
+    (hcompat : ∀ i j, Set.EqOn (f i) (f j) (s i ∩ s j)) :
+    ∃ g : ℂ → ℂ,
+      (∀ i, Set.EqOn g (f i) (s i)) ∧
+      DifferentiableOn ℂ g (⋃ i, s i) := by
+  classical
+  let g : ℂ → ℂ := fun z =>
+    if hz : z ∈ ⋃ i, s i then
+      f (Classical.choose (Set.mem_iUnion.mp hz)) z
+    else 0
+  have hg_eq : ∀ i, Set.EqOn g (f i) (s i) := by
+    intro i z hz
+    have hzU : z ∈ ⋃ i, s i := Set.mem_iUnion.mpr ⟨i, hz⟩
+    let j : α := Classical.choose (Set.mem_iUnion.mp hzU)
+    have hzj : z ∈ s j := Classical.choose_spec (Set.mem_iUnion.mp hzU)
+    have hji : f j z = f i z := hcompat j i ⟨hzj, hz⟩
+    change (if hzU' : z ∈ ⋃ i, s i then
+        f (Classical.choose (Set.mem_iUnion.mp hzU')) z else 0) = f i z
+    rw [dif_pos hzU]
+    exact hji
+  have hg_diff : DifferentiableOn ℂ g (⋃ i, s i) := by
+    intro z hzU
+    rcases Set.mem_iUnion.mp hzU with ⟨i, hzi⟩
+    have h_eventually : g =ᶠ[nhds z] f i := by
+      filter_upwards [((hs i).mem_nhds hzi)] with y hy
+      exact hg_eq i hy
+    exact ((hdiff i).differentiableAt ((hs i).mem_nhds hzi)).congr_of_eventuallyEq
+      h_eventually |>.differentiableWithinAt
+  exact ⟨g, hg_eq, hg_diff⟩
+
 /-- **Modulus bound for `partitionFunctionComplex` via the real Ising
 partition function (statement, proof deferred)**. For real `β`, real `J`,
 complex `h`:
