@@ -4198,7 +4198,7 @@ $(d, \Lambda, p) \to (\alpha, r, c)$ and the exponential decay
 bounds on $\mathbb{Z}^d$ (Step 117h+).
 
 \paragraph{\S17.5 Lemma 17.5.2 conditional sandwich capstone
-(Step 117l, PRs~\#2663--\#2671).} The new module
+(Step 117l, PRs~\#2663--\#2672).} The new module
 \texttt{Concrete/LatticeGraphCorrelation/Lemma\_17\_5\_2.lean}
 introduces the named capstone interface for
 Glimm--Jaffe \S17.5 Lemma~17.5.2 (2nd ed., pp.~311--312):
@@ -4223,6 +4223,14 @@ declarations:
   conditional sandwich capstone, returning both inequalities once a
   validating exponential decay rate and an upper-bound hypothesis are
   supplied.
+\item \texttt{lemma\_17\_5\_2\_upper\_bound\_of\_all\_decay\_rates\_le} --
+  the final order-theoretic upper-bound assembly: since
+  \texttt{latticeMass} is an \texttt{sSup} over validating decay rates, a
+  uniform bound on every admissible rate by $C\,\mathrm{ofReal}(m^-)$ gives
+  the named \texttt{Lemma\_17\_5\_2\_UpperBound}.
+\item \texttt{lemma\_17\_5\_2\_sandwich\_of\_decay\_and\_all\_decay\_rates\_le}
+  -- the corresponding sandwich wrapper combining the lower validating
+  pseudo-mass decay input with the all-decay-rate upper assembly.
 \item \texttt{lemma\_17\_5\_2\_cubic\_high\_temp\_lower\_capstone} and
   \texttt{lemma\_17\_5\_2\_cubic\_high\_temp\_latticeMass\_pos} -- the
   Lemma~17.5.2 lower-bound side specialised to the cubic exhaustion at
