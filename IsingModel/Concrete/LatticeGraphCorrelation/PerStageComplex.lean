@@ -139,6 +139,28 @@ theorem norm_freeEnergyComplexAlongExhaustion_le_of_abs_log_norm_bound_on_set_la
   Ambient.norm_freeEnergyComplexAlongExhaustion_le_of_abs_log_norm_bound_on_set
     (IsingModel.latticeGraph d) Λ β J hC
 
+/-- **ℤ^d stage-independent setwise free-energy bound from normalised
+absolute-log control**: if one constant `C` bounds
+`|log ‖Z_{Λ_n}(h)‖| / |Λ_n|` for every nonempty stage and every `h ∈ K`, then
+the ℤ^d along-exhaustion principal free energies are bounded on `K` by the
+single constant `C + π`. -/
+theorem norm_freeEnergyComplexAlongExhaustion_le_of_abs_log_norm_bound_on_set_uniform_latticeGraph
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph
+        (IsingModel.latticeGraph d) (Λ.volume n)).edgeSet]
+    [∀ n, Nonempty (↑(Λ.volume n) : Type _)]
+    (β J : ℝ) {K : Set ℂ} {C : ℝ}
+    (hC : ∀ n, ∀ h ∈ K,
+      |Real.log ‖Ambient.partitionFunctionComplexAlongExhaustion
+          (IsingModel.latticeGraph d) Λ (J : ℂ) h (β : ℂ) n‖|
+        / (Fintype.card (↑(Λ.volume n) : Type _) : ℝ) ≤ C) :
+    ∀ n, ∀ h ∈ K,
+      ‖Ambient.freeEnergyComplexAlongExhaustion
+          (IsingModel.latticeGraph d) Λ (J : ℂ) h (β : ℂ) n‖
+        ≤ C + Real.pi :=
+  Ambient.norm_freeEnergyComplexAlongExhaustion_le_of_abs_log_norm_bound_on_set_uniform
+    (IsingModel.latticeGraph d) Λ β J hC
+
 /-- **ℤ^d per-stage `Z_ℂ ≠ 0 on leeYangDomain`** for
 `partitionFunctionComplexAlongExhaustion` (ferromagnetic). -/
 theorem partitionFunctionComplexAlongExhaustion_ne_zero_on_leeYangDomain_stage_latticeGraph

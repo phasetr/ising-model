@@ -460,6 +460,42 @@ theorem norm_freeEnergyComplexAlongExhaustion_le_of_abs_log_norm_bound_on_set
   exact norm_freeEnergyComplexAlongExhaustion_le_of_abs_log_norm_bound_stage
     G Λ β J n (hC n h hh)
 
+/-- **Stage-independent setwise free-energy bound from normalised
+absolute-log control**: if one constant `C` bounds
+`|log ‖Z_{Λ_n}(h)‖| / |Λ_n|` for every nonempty stage and every `h ∈ K`, then
+the along-exhaustion principal free energies are bounded on `K` by the single
+stage-independent constant `C + π`. This is the locally bounded family shape
+needed by a later Montel/normal-family argument. -/
+theorem norm_freeEnergyComplexAlongExhaustion_le_of_abs_log_norm_bound_on_set_uniform
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    [∀ n, Nonempty (↑(Λ.volume n) : Type _)]
+    (β J : ℝ) {K : Set ℂ} {C : ℝ}
+    (hC : ∀ n, ∀ h ∈ K,
+      |Real.log ‖partitionFunctionComplexAlongExhaustion G Λ (J : ℂ) h (β : ℂ) n‖|
+        / (Fintype.card (↑(Λ.volume n) : Type _) : ℝ) ≤ C) :
+    ∀ n, ∀ h ∈ K,
+      ‖freeEnergyComplexAlongExhaustion G Λ (J : ℂ) h (β : ℂ) n‖
+        ≤ C + Real.pi := by
+  intro n h hh
+  have hstage :=
+    norm_freeEnergyComplexAlongExhaustion_le_of_abs_log_norm_bound_on_set
+      G Λ β J hC n h hh
+  have hcard_pos : (0 : ℝ) < (Fintype.card (↑(Λ.volume n) : Type _) : ℝ) := by
+    exact_mod_cast (Fintype.card_pos : 0 < Fintype.card (↑(Λ.volume n) : Type _))
+  have hcard_ge_one : (1 : ℝ) ≤ (Fintype.card (↑(Λ.volume n) : Type _) : ℝ) := by
+    exact_mod_cast
+      (Nat.succ_le_iff.mp (Fintype.card_pos : 0 < Fintype.card (↑(Λ.volume n) : Type _)))
+  have hpi :
+      Real.pi / (Fintype.card (↑(Λ.volume n) : Type _) : ℝ) ≤ Real.pi := by
+    rw [div_le_iff₀ hcard_pos]
+    nlinarith [Real.pi_nonneg, hcard_ge_one]
+  have hpi_step :
+      C + Real.pi / (Fintype.card (↑(Λ.volume n) : Type _) : ℝ)
+        ≤ C + Real.pi := by
+    linarith
+  exact hstage.trans hpi_step
+
 /-- **Per-stage `Z_ℂ ≠ 0 on leeYangDomain`** for
 `partitionFunctionComplexAlongExhaustion` (ferromagnetic). -/
 theorem partitionFunctionComplexAlongExhaustion_ne_zero_on_leeYangDomain_stage
