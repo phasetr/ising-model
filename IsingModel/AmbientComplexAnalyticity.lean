@@ -1685,6 +1685,68 @@ theorem freeEnergyComplexAlongExhaustion_branchFamily_compactOpen_vitali_two_bal
     ⟨f1, ⟨fc1, hfc1A, hf1_agree⟩, hconv1, hdiff1⟩,
     ⟨f2, ⟨fc2, hfc2A, hf2_agree⟩, hconv2, hdiff2⟩⟩
 
+/-- **Finite-ball compact-open diagonal extraction plus subsequence Vitali
+bridge**: for finitely many Lee-Yang balls indexed by `Fin n`, compact-open
+compactness of each restricted branch family yields one common strictly
+increasing subsequence, locally uniform convergence on every ball, and a
+holomorphic limit on every ball. This is the finite local-cover diagonal
+handoff; it does not assert overlap compatibility of the local limits. -/
+theorem freeEnergyComplexAlongExhaustion_branchFamily_compactOpen_vitali_fin_ball
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℂ) (n : ℕ) {h0 : Fin n → ℂ} {r : Fin n → ℝ}
+    {F : Fin n → ℕ → ℂ → ℂ}
+    {A : ∀ i : Fin n, Set C(Metric.ball (h0 i) (r i), ℂ)}
+    {Fc : ∀ i : Fin n, ℕ → C(Metric.ball (h0 i) (r i), ℂ)}
+    (hA : ∀ i, IsCompact (A i))
+    (hFc_mem : ∀ i m, Fc i m ∈ A i)
+    (hFres : ∀ i m z (hz : z ∈ Metric.ball (h0 i) (r i)),
+      F i m z = Fc i m ⟨z, hz⟩)
+    (hbranch : ∀ i m,
+      AnalyticOnNhd ℂ (F i m) (Metric.ball (h0 i) (r i))
+        ∧ (∀ z ∈ Metric.ball (h0 i) (r i),
+            Complex.exp ((Fintype.card (↑(Λ.volume m) : Type _) : ℂ) * F i m z)
+              = partitionFunctionComplexAlongExhaustion G Λ J z β m)
+        ∧ F i m (h0 i) = freeEnergyComplexAlongExhaustion G Λ J (h0 i) β m) :
+    ∃ σ : ℕ → ℕ, StrictMono σ ∧
+      ∀ i, ∃ f : ℂ → ℂ,
+        (∃ fc : C(Metric.ball (h0 i) (r i), ℂ),
+          fc ∈ A i ∧
+            ∀ z (hz : z ∈ Metric.ball (h0 i) (r i)), f z = fc ⟨z, hz⟩) ∧
+        TendstoLocallyUniformlyOn
+          (fun m z => F i (σ m) z) f Filter.atTop (Metric.ball (h0 i) (r i)) ∧
+        DifferentiableOn ℂ f (Metric.ball (h0 i) (r i)) := by
+  letI : ∀ i : Fin n, LocallyCompactSpace (Metric.ball (h0 i) (r i)) :=
+    fun _ => Metric.isOpen_ball.locallyCompactSpace
+  letI : ∀ i : Fin n, FirstCountableTopology C(Metric.ball (h0 i) (r i), ℂ) :=
+    fun _ => inferInstance
+  rcases IsingModel.exists_subseq_fin_tendstoLocallyUniformlyOn_of_isCompact_compactOpen
+      n (s := fun i : Fin n => Metric.ball (h0 i) (r i))
+      (hs := fun _ => Metric.isOpen_ball)
+      (A := A) (hA := hA) (Fc := Fc) (hFc_mem := hFc_mem)
+      (F := F) (hF := hFres) with
+    ⟨σ, hσ, hlim⟩
+  refine ⟨σ, hσ, ?_⟩
+  intro i
+  rcases hlim i with ⟨fc, f, hfcA, hf_agree, hconv⟩
+  haveI : LocallyCompactSpace (Metric.ball (h0 i) (r i)) :=
+    Metric.isOpen_ball.locallyCompactSpace
+  have hbranch_sub : ∀ m,
+      AnalyticOnNhd ℂ ((fun m z => F i (σ m) z) m) (Metric.ball (h0 i) (r i))
+        ∧ (∀ z ∈ Metric.ball (h0 i) (r i),
+            Complex.exp
+              ((Fintype.card (↑(Λ.volume (σ m)) : Type _) : ℂ) *
+                (fun m z => F i (σ m) z) m z)
+              = partitionFunctionComplexAlongExhaustion G Λ J z β (σ m))
+        ∧ (fun m z => F i (σ m) z) m (h0 i)
+            = freeEnergyComplexAlongExhaustion G Λ J (h0 i) β (σ m) := by
+    intro m
+    simpa using hbranch i (σ m)
+  have hdiff :=
+    freeEnergyComplexAlongExhaustion_subseq_branchFamily_vitali_bridge_ball
+      G Λ J β (σ := σ) hbranch_sub hconv
+  exact ⟨f, ⟨fc, hfcA, hf_agree⟩, hconv, hdiff⟩
+
 end Ambient
 
 end IsingModel

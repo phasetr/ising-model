@@ -3629,9 +3629,43 @@ Vitali bridge on each ball, producing holomorphic local limits on both balls.
 The concrete \(\mathbb Z^d\) wrapper is in
 \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
 
-This is only the two-ball base case for diagonal extraction.  It does not prove
-Montel compactness, arbitrary finite-cover extraction, compatibility of the two
-limits on overlaps, or global patching on \(\texttt{leeYangDomain}\).
+This is the two-ball base case for the finite diagonal extraction theorem.  By
+itself it does not prove Montel compactness, compatibility of the two limits on
+overlaps, or global patching on \(\texttt{leeYangDomain}\).
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
+\begin{theorem}[Finite compact-open diagonal handoff; PR \#2696]
+The arbitrary finite extraction step is formalised by
+\begin{Verbatim}
+exists_subseq_fin_tendstoLocallyUniformlyOn_of_isCompact_compactOpen
+\end{Verbatim}
+and its Lee--Yang wrapper
+\begin{Verbatim}
+Ambient.freeEnergyComplexAlongExhaustion_branchFamily_compactOpen_vitali_fin_ball
+\end{Verbatim}
+For a finite family \(i:\mathrm{Fin}\,n\) of open sets \(s_i\subset\mathbb C\),
+compact subsets of \(C(s_i,\mathbb C)\), and total branch families whose
+continuous restrictions lie in those compact subsets, the theorem produces one
+strictly increasing \(\sigma:\mathbb N\to\mathbb N\) such that every
+\(F_{i,\sigma(m)}\) converges locally uniformly on \(s_i\).
+
+The proof is induction over \(n\).  At the successor step one extracts on the
+head open set, applies the induction hypothesis to the tail families already
+restricted to that head subsequence, and uses
+\begin{Verbatim}
+tendstoLocallyUniformlyOn_subseq_of_strictMono
+\end{Verbatim}
+to preserve the head convergence under the final tail refinement.  For finitely
+many Lee--Yang balls the ambient theorem then applies the PR \#2693 subsequence
+Vitali bridge on every ball, producing holomorphic local limits for the whole
+finite family.  The concrete \(\mathbb Z^d\) wrapper is in
+\texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+
+This result still assumes compact-open compactness for each branch family.  It
+does not prove Montel compactness, compatibility of the local limits on
+overlaps, coherent local-cover extraction, or global patching on
+\(\texttt{leeYangDomain}\).
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
