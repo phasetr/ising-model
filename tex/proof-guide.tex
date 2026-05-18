@@ -4249,6 +4249,13 @@ declarations:
 \item \texttt{lemma\_17\_5\_2\_beta\_hls\_derivative\_hypothesis\_of\_high\_temp}
   -- the finite-stage high-temperature package combining the preceding
   beta-derivative bound with that HLS denominator comparison.
+\item \texttt{lemma\_17\_5\_2\_beta\_pseudoMass\_power\_deriv\_le\_of\_high\_temp\_bound}
+  -- the finite-stage concrete handoff from the HLS derivative hypothesis to
+  \texttt{pseudoMass\_power\_deriv\_le}, giving
+  $(h(\beta))^{2\alpha}|h'(\beta)|\le K/\rho$.
+\item \texttt{lemma\_17\_5\_2\_beta\_pseudoMass\_pow\_succ\_deriv\_bound\_of\_high\_temp\_bound}
+  -- the corresponding finite-stage derivative bound for
+  $\beta\mapsto(h(\beta))^{2\alpha+1}$.
 \end{itemize}
 PR~\#2664 adds a finite high-temperature bridge discharging the upper-bound
 predicate in the cubic active-range setting without adding an axiom.

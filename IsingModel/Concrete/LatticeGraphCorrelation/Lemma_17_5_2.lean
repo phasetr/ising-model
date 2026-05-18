@@ -29,7 +29,9 @@ capstone, providing:
   namespace for the future Lipschitz/HLS upper-bound composition;
 * the finite-stage high-temperature β-derivative absolute bound under the
   Lemma 17.5.2 namespace, exposing the concrete Lebowitz/susceptibility input
-  for the HLS pseudo-mass derivative hypothesis.
+  for the HLS pseudo-mass derivative hypothesis;
+* finite-stage concrete wrappers feeding the HLS derivative hypothesis into
+  `pseudoMass_power_deriv_le` and `pseudoMass_pow_succ_deriv_bound`.
 
 Tracking issue: <https://github.com/phasetr/ising-model/issues/1645>.
 
@@ -445,6 +447,98 @@ theorem lemma_17_5_2_beta_hls_derivative_hypothesis_of_high_temp_bound
     lemma_17_5_2_beta_deriv_abs_le_high_temp Λ J hJ a b ha hab hlt
       n r s hrs β hβ
   exact ⟨dval, hdval, habs.trans (by simpa using hcomp)⟩
+
+/-- **GJ §17.5 Lemma 17.5.2 finite-stage pseudo-mass power derivative
+bound**: once the finite-stage high-temperature derivative bound has been
+compared with the HLS denominator, the abstract pseudo-mass calculus gives
+`(h β)^(2α) * |h'| ≤ K / rho`.
+
+This is the concrete Lemma 17.5.2 handoff from the finite-volume
+Lebowitz/HLS derivative estimate to `pseudoMass_power_deriv_le`.
+
+References: Glimm--Jaffe §17.5, Theorem 17.5.1 proof and Lemma 17.5.2,
+pp.~311--312. -/
+theorem lemma_17_5_2_beta_pseudoMass_power_deriv_le_of_high_temp_bound
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (hJ : 0 ≤ J)
+    (a b : ℝ) (ha : 0 < a) (hab : a ≤ b) (hlt : b * J * ↑(2 * d) < 1)
+    (n : ℕ) (r s : ↑(Λ.volume n)) (hrs : r ≠ s)
+    (β : ℝ) (hβ : β ∈ Set.Icc a b)
+    {α : ℕ} {rho K : ℝ} (hrho : 0 < rho)
+    {h : ℝ → ℝ} {h' : ℝ}
+    (hh : HasDerivAt h h' β)
+    (hh_nonneg : 0 ≤ h β)
+    (hg_eq : ∀ β',
+      pseudoMassG α rho (h β') =
+        IsingModel.correlation
+          (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+          (⟨J, 0, β'⟩ : IsingParams ℝ) {r, s})
+    (hh_pos : 0 < h β)
+    (hc_pos :
+      0 <
+        IsingModel.correlation
+          (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+          (⟨J, 0, β⟩ : IsingParams ℝ) {r, s})
+    (hcomp :
+      let M : ℝ := b * J * ↑(2 * d) / (1 - b * J * ↑(2 * d))
+      J * M ^ 2 + J * (4 * ↑d) ≤
+        K *
+          IsingModel.correlation
+            (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+            (⟨J, 0, β⟩ : IsingParams ℝ) {r, s} /
+          (h β) ^ (2 * α)) :
+    (h β) ^ (2 * α) * |h'| ≤ K / rho := by
+  obtain ⟨c', hc', hc_der⟩ :=
+    lemma_17_5_2_beta_hls_derivative_hypothesis_of_high_temp_bound
+      Λ J hJ a b ha hab hlt n r s hrs β hβ (α := α) (K := K) (h := h) hcomp
+  exact pseudoMass_power_deriv_le α hrho hh hc' hh_nonneg hg_eq hh_pos hc_pos hc_der
+
+/-- **GJ §17.5 Lemma 17.5.2 finite-stage derivative bound for
+`(m⁻)^(2α+1)`**: after the HLS denominator comparison, the concrete finite-stage
+correlation derivative feeds the abstract pseudo-mass chain-rule theorem and
+returns the derivative estimate for `β ↦ (h β)^(2α+1)`.
+
+This is the finite-volume concrete form of the derivative bound underlying the
+Lipschitz estimate in `pseudoMass_pow_succ_lipschitz`.
+
+References: Glimm--Jaffe §17.5, Theorem 17.5.1 proof and Lemma 17.5.2,
+pp.~311--312. -/
+theorem lemma_17_5_2_beta_pseudoMass_pow_succ_deriv_bound_of_high_temp_bound
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (hJ : 0 ≤ J)
+    (a b : ℝ) (ha : 0 < a) (hab : a ≤ b) (hlt : b * J * ↑(2 * d) < 1)
+    (n : ℕ) (r s : ↑(Λ.volume n)) (hrs : r ≠ s)
+    (β : ℝ) (hβ : β ∈ Set.Icc a b)
+    {α : ℕ} {rho K : ℝ} (hrho : 0 < rho)
+    {h : ℝ → ℝ} {h' : ℝ}
+    (hh : HasDerivAt h h' β)
+    (hh_nonneg : 0 ≤ h β)
+    (hg_eq : ∀ β',
+      pseudoMassG α rho (h β') =
+        IsingModel.correlation
+          (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+          (⟨J, 0, β'⟩ : IsingParams ℝ) {r, s})
+    (hh_pos : 0 < h β)
+    (hc_pos :
+      0 <
+        IsingModel.correlation
+          (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+          (⟨J, 0, β⟩ : IsingParams ℝ) {r, s})
+    (hcomp :
+      let M : ℝ := b * J * ↑(2 * d) / (1 - b * J * ↑(2 * d))
+      J * M ^ 2 + J * (4 * ↑d) ≤
+        K *
+          IsingModel.correlation
+            (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+            (⟨J, 0, β⟩ : IsingParams ℝ) {r, s} /
+          (h β) ^ (2 * α)) :
+    ∃ dval : ℝ,
+      HasDerivAt (fun β' => (h β') ^ (2 * α + 1)) dval β ∧
+      |dval| ≤ ↑(2 * α + 1) * K / rho := by
+  obtain ⟨c', hc', hc_der⟩ :=
+    lemma_17_5_2_beta_hls_derivative_hypothesis_of_high_temp_bound
+      Λ J hJ a b ha hab hlt n r s hrs β hβ (α := α) (K := K) (h := h) hcomp
+  exact pseudoMass_pow_succ_deriv_bound α hrho hh hc' hh_nonneg hg_eq hh_pos hc_pos hc_der
 
 end Ambient
 end IsingModel
