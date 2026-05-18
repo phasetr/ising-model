@@ -3813,6 +3813,33 @@ branch choices, or a full \(\texttt{leeYangDomain}\)-cover.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Finite compact-open extraction to a patched finite family; PR
+\#2708]
+The theorem
+\begin{Verbatim}
+Ambient.freeEnergyComplexAlongExhaustion_finiteSubseqBranchLimitFamily_compactOpen_patch
+\end{Verbatim}
+composes the PR \#2705 finite compact-open package extraction with the packaged
+finite patch.  Its hypotheses are compactness of each branch family in
+\(C(B(h_i,r_i),\mathbb C)\), the restriction identity between total stage
+functions and their continuous restrictions, the Lee--Yang stage branch
+identities, and eventual equality on every pairwise ball overlap.  The
+conclusion returns both the extracted
+\texttt{Ambient.LeeYangFiniteSubseqBranchLimitFamily} and a patched function on
+\(\bigcup_i B(h_i,r_i)\) that agrees with every packaged local limit and is
+differentiable on that finite union.  The concrete \(\mathbb Z^d\) wrapper is
+\begin{Verbatim}
+freeEnergyComplexAlongExhaustion_finiteCompactOpenBranchLimitFamily_patch_latticeGraph
+\end{Verbatim}
+in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+
+This remains a finite, explicit-hypothesis handoff.  It removes the separate
+manual step of first extracting a packaged finite family and then applying the
+finite patch, but it does not prove Montel compactness, coherent branch
+choices, or a full \(\texttt{leeYangDomain}\)-cover.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[Finite local-patching handoff; PR \#2698]
 The finite differentiable patching step is formalised by
 \begin{Verbatim}

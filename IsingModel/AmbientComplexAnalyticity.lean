@@ -2275,6 +2275,42 @@ theorem freeEnergyComplexAlongExhaustion_finiteSubseqBranchLimitFamily_patch_rea
     hg_eq i₀ hcenter_mem
   exact ⟨g, hg_eq, hg_diff, hg_center.trans hidentified.2⟩
 
+/-- **Finite compact-open extraction to a patched finite family**:
+compact-open compactness on finitely many balls and eventual stage-level
+overlap equality produce both a packaged finite subsequence branch-limit family
+and a patched function on the finite union of balls. -/
+theorem freeEnergyComplexAlongExhaustion_finiteSubseqBranchLimitFamily_compactOpen_patch
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℂ) (n : ℕ) {h0 : Fin n → ℂ} {r : Fin n → ℝ}
+    {F : Fin n → ℕ → ℂ → ℂ}
+    {A : ∀ i : Fin n, Set C(Metric.ball (h0 i) (r i), ℂ)}
+    {Fc : ∀ i : Fin n, ℕ → C(Metric.ball (h0 i) (r i), ℂ)}
+    (hA : ∀ i, IsCompact (A i))
+    (hFc_mem : ∀ i m, Fc i m ∈ A i)
+    (hFres : ∀ i m z (hz : z ∈ Metric.ball (h0 i) (r i)),
+      F i m z = Fc i m ⟨z, hz⟩)
+    (hbranch : ∀ i m,
+      AnalyticOnNhd ℂ (F i m) (Metric.ball (h0 i) (r i))
+        ∧ (∀ z ∈ Metric.ball (h0 i) (r i),
+            Complex.exp
+              ((Fintype.card (↑(Λ.volume m) : Type _) : ℂ) * F i m z)
+              = partitionFunctionComplexAlongExhaustion G Λ J z β m)
+        ∧ F i m (h0 i) = freeEnergyComplexAlongExhaustion G Λ J (h0 i) β m)
+    (hoverlap : ∀ i j, ∀ᶠ m in Filter.atTop,
+      Set.EqOn (F i m) (F j m)
+        (Metric.ball (h0 i) (r i) ∩ Metric.ball (h0 j) (r j))) :
+    ∃ family : LeeYangFiniteSubseqBranchLimitFamily G Λ J β n h0 r,
+      ∃ g : ℂ → ℂ,
+        (∀ i, Set.EqOn g (family.limitFun i) (Metric.ball (h0 i) (r i))) ∧
+        DifferentiableOn ℂ g (⋃ i : Fin n, Metric.ball (h0 i) (r i)) := by
+  rcases freeEnergyComplexAlongExhaustion_finiteSubseqBranchLimitFamily_compactOpen
+      G Λ J β n hA hFc_mem hFres hbranch hoverlap with
+    ⟨family⟩
+  exact ⟨family,
+    freeEnergyComplexAlongExhaustion_finiteSubseqBranchLimitFamily_patch
+      G Λ J β n family⟩
+
 /-- **Finite compact-open extraction to a real-centre patch**: compact-open
 compactness on finitely many balls, eventual stage-level overlap equality, and
 a selected ball centred at the real field `p.h` produce a patched function on
