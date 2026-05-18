@@ -626,6 +626,29 @@ theorem partitionFunctionComplexAlongExhaustion_ne_zero_on_leeYangDomain_stage
   IsingModel.partitionFunctionComplex_ne_zero_on_leeYangDomain
     (inducedGraph G (Λ.volume n)) hβ hJ hh
 
+/-- **Compact-field upper normalised-log bound on Lee-Yang compact sets**:
+on compact subsets of `leeYangDomain`, the Lee-Yang nonvanishing theorem
+discharges the nonzero hypothesis in
+`exists_real_log_norm_partitionFunctionComplexAlongExhaustion_div_card_le_on_isCompact`.
+Thus, under bounded edge density and nonempty stages,
+`Real.log ‖Z_{Λ_n}(h)‖ / |Λ_n|` has one stage-independent upper bound on
+`K ⊆ leeYangDomain`. This is still only the upper half of the absolute
+normalised-log input. -/
+theorem exists_log_norm_partitionFunctionComplexAlongExhaustion_div_card_le_leeYangDomain
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    [∀ n, Nonempty (↑(Λ.volume n) : Type _)]
+    (hBED : BoundedEdgeDensity G Λ) {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J)
+    {K : Set ℂ} (hK : IsCompact K) (hKsub : K ⊆ IsingModel.leeYangDomain) :
+    ∃ C : ℝ, ∀ n, ∀ h ∈ K,
+      Real.log ‖partitionFunctionComplexAlongExhaustion G Λ (J : ℂ) h (β : ℂ) n‖
+        / (Fintype.card (↑(Λ.volume n) : Type _) : ℝ) ≤ C :=
+  exists_real_log_norm_partitionFunctionComplexAlongExhaustion_div_card_le_on_isCompact
+    G Λ hBED β J hK (by
+      intro n h hh
+      exact partitionFunctionComplexAlongExhaustion_ne_zero_on_leeYangDomain_stage
+        G Λ hβ hJ n (hKsub hh))
+
 /-! ## Real-axis convergence to `freeEnergyInfinite`
 
 The real-axis half of the Vitali identification: at real parameters,
