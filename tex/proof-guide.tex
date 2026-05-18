@@ -3786,6 +3786,43 @@ compactness, or diagonal coherent local-cover extraction.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Pointed Lee--Yang local-cover patching assembly; PR \#2700]
+The theorem
+\begin{Verbatim}
+Ambient.freeEnergyComplexAlongExhaustion_branchFamily_localCover_patch
+\end{Verbatim}
+specialises the open-cover patching handoff to the canonical cover of
+\(\texttt{leeYangDomain}\) by balls centred at its own points.  For each
+point \(h_0\in\texttt{leeYangDomain}\), assume a positive radius \(r(h_0)\)
+whose ball is contained in \(\texttt{leeYangDomain}\), a branch family
+\(F_{h_0,n}\), and a local limit \(f_{h_0}\).  If \(F_{h_0,n}\) is
+holomorphic on the ball, satisfies the finite-stage exponential partition
+function identity there, and converges locally uniformly to \(f_{h_0}\), then
+the PR \#2699 open-cover theorem supplies differentiability of each local
+limit.
+
+The remaining hypothesis is pairwise compatibility:
+\[
+  f_{h_0}=f_{h_1}
+  \quad\text{on}\quad
+  B(h_0,r(h_0))\cap B(h_1,r(h_1)).
+\]
+Under this condition the local limits patch to a single function \(g\) on
+\(\mathbb C\), agreeing with each \(f_{h_0}\) on its ball, and \(g\) is
+differentiable on \(\texttt{leeYangDomain}\).  The proof uses the subtype of
+Lee--Yang points as the open-cover index and covers a point \(z\) by the ball
+centred at \(z\) itself.  The concrete \(\mathbb Z^d\) wrapper is
+\begin{Verbatim}
+freeEnergyComplexAlongExhaustion_branchFamily_localCover_patch_latticeGraph
+\end{Verbatim}
+in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+
+This is still a conditional post-extraction handoff.  It packages the pointed
+Lee--Yang ball cover, but it does not prove coherent branch selection, Montel
+compactness, or diagonal coherent local-cover extraction.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[Compact Lee--Yang fugacity gap; PR \#2684]
 The theorems
 \texttt{exists\_leeYangFugacity\_norm\_le\_lt\_one\_on\_isCompact}

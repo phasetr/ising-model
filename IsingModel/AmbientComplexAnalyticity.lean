@@ -1320,6 +1320,54 @@ theorem freeEnergyComplexAlongExhaustion_branchFamily_openCover_patch
     ⟨g, hg_eq, hg_diff⟩
   exact ⟨g, hg_eq, hg_diff.mono hcover⟩
 
+/-- **Pointed local-cover branch-family patching handoff on `leeYangDomain`**:
+if every Lee-Yang point carries a ball, a branch family on that ball, a local
+limit, and the local limits are compatible on all ball overlaps, then these
+pointed local limits patch to one function differentiable on the whole
+Lee-Yang domain. This is a convenience assembly wrapper around the open-cover
+patching handoff, using the balls centred at the points of `leeYangDomain` as
+the cover. -/
+theorem freeEnergyComplexAlongExhaustion_branchFamily_localCover_patch
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℂ)
+    {F : (h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain}) → ℕ → ℂ → ℂ}
+    {f : (h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain}) → ℂ → ℂ}
+    {r : (h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain}) → ℝ}
+    (hr : ∀ h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain}, 0 < r h₀)
+    (hsub : ∀ h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain},
+      Metric.ball (h₀ : ℂ) (r h₀) ⊆ IsingModel.leeYangDomain)
+    (hbranch : ∀ h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain}, ∀ n,
+      AnalyticOnNhd ℂ (F h₀ n) (Metric.ball (h₀ : ℂ) (r h₀))
+        ∧ (∀ z ∈ Metric.ball (h₀ : ℂ) (r h₀),
+            Complex.exp ((Fintype.card (↑(Λ.volume n) : Type _) : ℂ) * F h₀ n z)
+              = partitionFunctionComplexAlongExhaustion G Λ J z β n))
+    (hconv : ∀ h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain},
+      TendstoLocallyUniformlyOn (F h₀) (f h₀) Filter.atTop
+        (Metric.ball (h₀ : ℂ) (r h₀)))
+    (hcompat : ∀ h₀ h₁ : {h : ℂ // h ∈ IsingModel.leeYangDomain},
+      Set.EqOn (f h₀) (f h₁)
+        (Metric.ball (h₀ : ℂ) (r h₀) ∩ Metric.ball (h₁ : ℂ) (r h₁))) :
+    ∃ g : ℂ → ℂ,
+      (∀ h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain},
+        Set.EqOn g (f h₀) (Metric.ball (h₀ : ℂ) (r h₀))) ∧
+      DifferentiableOn ℂ g IsingModel.leeYangDomain := by
+  classical
+  exact freeEnergyComplexAlongExhaustion_branchFamily_openCover_patch
+    (G := G) (Λ := Λ) (J := J) (β := β)
+    (U := fun h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain} =>
+      Metric.ball (h₀ : ℂ) (r h₀))
+    (F := F) (f := f)
+    (fun _ => Metric.isOpen_ball)
+    (by
+      intro z hz
+      let hcenter : {h : ℂ // h ∈ IsingModel.leeYangDomain} := ⟨z, hz⟩
+      have hball : z ∈ Metric.ball (hcenter : ℂ) (r hcenter) :=
+        Metric.mem_ball_self (hr hcenter)
+      have _hz_domain : z ∈ IsingModel.leeYangDomain := hsub hcenter hball
+      exact Set.mem_iUnion.mpr ⟨hcenter, hball⟩)
+    hbranch hconv hcompat
+
 /-- **Local-cover branch-family Vitali bridge with real-axis
 identification**: a coherent local cover of Lee-Yang balls whose branch
 families converge locally uniformly to a common `f` makes `f` holomorphic on
