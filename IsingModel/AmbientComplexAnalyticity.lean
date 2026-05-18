@@ -746,6 +746,78 @@ theorem exists_lower_log_norm_partitionFunctionComplexAlongExhaustion_of_poly_lo
       G Λ hβ hJ n (hR h hh) hε_pos hpoly
   linarith
 
+/-- **Compact Lee-Yang polynomial lower witnesses**: compact containment in
+`leeYangDomain` gives a stage-uniform lower normalised-log bound for the
+positive Lee-Yang polynomial witnesses. The witness is
+`ε_n = (1-r)^{|Λ_n|}`, where `r < 1` is the compact fugacity gap. -/
+theorem exists_poly_lower_norm_isingEdgePoly_eval_leeYangFugacityVec_on_isCompact
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    [∀ n, Nonempty (↑(Λ.volume n) : Type _)]
+    {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J)
+    {K : Set ℂ} (hK : IsCompact K) (hKsub : K ⊆ IsingModel.leeYangDomain) :
+    ∃ Lε : ℝ, ∀ n, ∀ h ∈ K,
+      ∃ ε : ℝ, 0 < ε ∧
+        ε ≤ ‖(IsingModel.isingEdgePoly
+          (IsingModel.graphToEdgeList (inducedGraph G (Λ.volume n))
+            (Real.exp (-2 * β * J)))).eval
+          (IsingModel.leeYangFugacityVec (β : ℂ) h)‖ ∧
+        -Lε ≤ Real.log ε / (Fintype.card (↑(Λ.volume n) : Type _) : ℝ) := by
+  rcases IsingModel.exists_leeYangFugacity_norm_le_lt_one_on_isCompact hβ hK hKsub
+    with ⟨r, hr_lt, hrbound⟩
+  let s : ℝ := max r 0
+  have hs0 : 0 ≤ s := le_max_right r 0
+  have hs1 : s < 1 := max_lt hr_lt zero_lt_one
+  have hspos : 0 < 1 - s := by linarith
+  refine ⟨-Real.log (1 - s), ?_⟩
+  intro n h hh
+  let ε : ℝ := (1 - s) ^ Fintype.card (↑(Λ.volume n) : Type _)
+  have hε_pos : 0 < ε := by
+    exact pow_pos hspos _
+  have ht₀ : 0 ≤ Real.exp (-2 * β * J) := (Real.exp_pos _).le
+  have ht₁ : Real.exp (-2 * β * J) < 1 := by
+    refine Real.exp_lt_one_iff.mpr ?_
+    have : 0 < 2 * β * J := by positivity
+    linarith
+  have hz : ‖IsingModel.leeYangFugacity (β : ℂ) h‖ ≤ s :=
+    (hrbound h hh).trans (le_max_left r 0)
+  have hpoly :
+      ε ≤ ‖(IsingModel.isingEdgePoly
+          (IsingModel.graphToEdgeList (inducedGraph G (Λ.volume n))
+            (Real.exp (-2 * β * J)))).eval
+          (IsingModel.leeYangFugacityVec (β : ℂ) h)‖ := by
+    simpa [ε] using
+      IsingModel.one_sub_radius_pow_card_le_norm_isingEdgePoly_eval_leeYangFugacityVec
+        (G := inducedGraph G (Λ.volume n)) ht₀ ht₁ hs0 hs1 hz
+  have hcard_pos : (0 : ℝ) < (Fintype.card (↑(Λ.volume n) : Type _) : ℝ) := by
+    exact_mod_cast (Fintype.card_pos : 0 < Fintype.card (↑(Λ.volume n) : Type _))
+  have hlogε :
+      Real.log ε / (Fintype.card (↑(Λ.volume n) : Type _) : ℝ) =
+        Real.log (1 - s) := by
+    unfold ε
+    rw [Real.log_pow]
+    field_simp [hcard_pos.ne']
+  exact ⟨ε, hε_pos, hpoly, by rw [hlogε]; simp⟩
+
+/-- **Compact Lee-Yang lower normalised-log bound**: the quantitative
+root-product lower bound for the Lee-Yang polynomial supplies the lower-log
+hypothesis for the complex partition functions on any compact
+`K ⊆ leeYangDomain`. -/
+theorem exists_lower_log_norm_partitionFunctionComplexAlongExhaustion_leeYang_of_isCompact
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    [∀ n, Nonempty (↑(Λ.volume n) : Type _)]
+    {β J R : ℝ} (hβ : 0 < β) (hJ : 0 < J)
+    {K : Set ℂ} (hK : IsCompact K) (hKsub : K ⊆ IsingModel.leeYangDomain)
+    (hR : ∀ h ∈ K, |h.re| ≤ R) :
+    ∃ L : ℝ, ∀ n, ∀ h ∈ K,
+      -L ≤ Real.log ‖partitionFunctionComplexAlongExhaustion G Λ (J : ℂ) h (β : ℂ) n‖
+        / (Fintype.card (↑(Λ.volume n) : Type _) : ℝ) :=
+  exists_lower_log_norm_partitionFunctionComplexAlongExhaustion_of_poly_lower
+    G Λ hβ.le hJ.le hR
+    (exists_poly_lower_norm_isingEdgePoly_eval_leeYangFugacityVec_on_isCompact
+      G Λ hβ hJ hK hKsub)
+
 /-- **Per-stage `Z_ℂ ≠ 0 on leeYangDomain`** for
 `partitionFunctionComplexAlongExhaustion` (ferromagnetic). -/
 theorem partitionFunctionComplexAlongExhaustion_ne_zero_on_leeYangDomain_stage
@@ -934,6 +1006,56 @@ theorem exists_norm_freeEnergyComplexAlongExhaustion_le_poly_lower_leeYang_aroun
   rcases IsingModel.leeYangDomain_closedBall_subset hmem with ⟨ρ, hρ, hsub⟩
   rcases exists_norm_freeEnergyComplexAlongExhaustion_le_poly_lower_leeYang_on_ball
       G Λ hBED hβ hJ hsub (hPolyLower ρ hρ hsub) with ⟨C, hC⟩
+  exact ⟨ρ, hρ, C, hC⟩
+
+/-- **Compact Lee-Yang locally bounded family**: on compact
+`K ⊆ leeYangDomain`, the root-product polynomial lower bound removes the
+previous explicit polynomial-witness hypothesis and yields the uniform
+free-energy bound `‖f_n(h)‖ ≤ C + π`. -/
+theorem exists_norm_freeEnergyComplexAlongExhaustion_le_leeYang_of_isCompact
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    [∀ n, Nonempty (↑(Λ.volume n) : Type _)]
+    (hBED : BoundedEdgeDensity G Λ) {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J)
+    {K : Set ℂ} (hK : IsCompact K) (hKsub : K ⊆ IsingModel.leeYangDomain) :
+    ∃ C : ℝ, ∀ n, ∀ h ∈ K,
+      ‖freeEnergyComplexAlongExhaustion G Λ (J : ℂ) h (β : ℂ) n‖ ≤ C + Real.pi := by
+  rcases exists_abs_re_le_on_isCompact hK with ⟨R, _hR_nonneg, hR⟩
+  exact exists_norm_freeEnergyComplexAlongExhaustion_le_lower_log_leeYang
+    G Λ hBED hβ hJ hK hKsub
+    (exists_lower_log_norm_partitionFunctionComplexAlongExhaustion_leeYang_of_isCompact
+      G Λ hβ hJ hK hKsub hR)
+
+/-- **Ball-local Lee-Yang locally bounded family**: a closed ball contained in
+`leeYangDomain` gives a uniform free-energy bound on the corresponding open
+ball, with no remaining polynomial-witness hypothesis. -/
+theorem exists_norm_freeEnergyComplexAlongExhaustion_le_leeYang_on_ball
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    [∀ n, Nonempty (↑(Λ.volume n) : Type _)]
+    (hBED : BoundedEdgeDensity G Λ) {β J ρ : ℝ} (hβ : 0 < β) (hJ : 0 < J)
+    {h₀ : ℂ} (hsub : Metric.closedBall h₀ ρ ⊆ IsingModel.leeYangDomain) :
+    ∃ C : ℝ, ∀ n, ∀ h ∈ Metric.ball h₀ ρ,
+      ‖freeEnergyComplexAlongExhaustion G Λ (J : ℂ) h (β : ℂ) n‖ ≤ C + Real.pi := by
+  rcases exists_norm_freeEnergyComplexAlongExhaustion_le_leeYang_of_isCompact
+      G Λ hBED hβ hJ (isCompact_closedBall h₀ ρ) hsub with ⟨C, hC⟩
+  exact ⟨C, fun n h hh => hC n h (Metric.ball_subset_closedBall hh)⟩
+
+/-- **Point-local Lee-Yang locally bounded family**: every point of
+`leeYangDomain` has a ball on which the free-energy family is uniformly
+bounded, with the polynomial lower normalised-log input discharged by the
+root-product estimate. -/
+theorem exists_norm_freeEnergyComplexAlongExhaustion_le_leeYang_around
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    [∀ n, Nonempty (↑(Λ.volume n) : Type _)]
+    (hBED : BoundedEdgeDensity G Λ) {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J)
+    {h₀ : ℂ} (hmem : h₀ ∈ IsingModel.leeYangDomain) :
+    ∃ ρ : ℝ, 0 < ρ ∧ ∃ C : ℝ, ∀ n, ∀ h ∈ Metric.ball h₀ ρ,
+      ‖freeEnergyComplexAlongExhaustion G Λ (J : ℂ) h (β : ℂ) n‖ ≤ C + Real.pi := by
+  rcases IsingModel.leeYangDomain_closedBall_subset hmem with ⟨ρ, hρ, hsub⟩
+  rcases exists_norm_freeEnergyComplexAlongExhaustion_le_leeYang_on_ball
+      G Λ hBED hβ hJ hsub with ⟨C, hC⟩
   exact ⟨ρ, hρ, C, hC⟩
 
 /-! ## Real-axis convergence to `freeEnergyInfinite`
