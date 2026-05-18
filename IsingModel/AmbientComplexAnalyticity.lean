@@ -1372,6 +1372,27 @@ structure LeeYangLocalBranchLimitFamily
       (Metric.ball (h₀ : ℂ) (data h₀).radius
         ∩ Metric.ball (h₁ : ℂ) (data h₁).radius)
 
+/-- **Real-centred compatible structured local-cover branch-limit family**:
+for real parameters `p`, this packages a compatible Lee-Yang local-cover
+branch-limit family together with membership of the real centre `p.h` in the
+Lee-Yang domain and the centre normalisation needed to identify the patched
+limit with `freeEnergyInfinite`. -/
+structure LeeYangRealBranchLimitFamily
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) where
+  /-- The real centre belongs to `leeYangDomain`. -/
+  centre_mem : (p.h : ℂ) ∈ IsingModel.leeYangDomain
+  /-- Compatible structured local-cover branch-limit data at the real
+  parameters. -/
+  family : LeeYangLocalBranchLimitFamily G Λ (p.J : ℂ) (p.β : ℂ)
+  /-- The branch family centred at the real field is normalised to the
+  finite-volume free-energy sequence at that centre. -/
+  centre_normalized : ∀ n,
+    (family.data ⟨(p.h : ℂ), centre_mem⟩).branchFamily n (p.h : ℂ)
+      = freeEnergyComplexAlongExhaustion G Λ
+          (p.J : ℂ) (p.h : ℂ) (p.β : ℂ) n
+
 /-- **Pointed local-cover branch-family patching handoff on `leeYangDomain`**:
 if every Lee-Yang point carries a ball, a branch family on that ball, a local
 limit, and the local limits are compatible on all ball overlaps, then these
@@ -1548,6 +1569,27 @@ theorem freeEnergyComplexAlongExhaustion_branchLimitFamily_localCover_real
       g (p.h : ℂ) = ((freeEnergyInfinite G Λ p : ℝ) : ℂ) :=
   freeEnergyComplexAlongExhaustion_branchLimitData_localCover_real
     G Λ p hBED hd hp family.data hcenter family.compatible
+
+/-- **Real-centred packaged structured local-cover branch-limit endpoint**:
+a `LeeYangRealBranchLimitFamily` patches to a differentiable function on
+`leeYangDomain`, and the packaged centre normalisation identifies its value at
+the real centre with the real infinite-volume free energy. This is the
+single-input endpoint expected after the coherent local-cover extraction. -/
+theorem freeEnergyComplexAlongExhaustion_realBranchLimitFamily_localCover_real
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ)
+    (hBED : BoundedEdgeDensity G Λ)
+    (hd : DisjointTowerHypotheses G Λ p)
+    (realFamily : LeeYangRealBranchLimitFamily G Λ p) :
+    ∃ g : ℂ → ℂ,
+      (∀ h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain},
+        Set.EqOn g (realFamily.family.data h₀).limitFun
+          (Metric.ball (h₀ : ℂ) (realFamily.family.data h₀).radius)) ∧
+      DifferentiableOn ℂ g IsingModel.leeYangDomain ∧
+      g (p.h : ℂ) = ((freeEnergyInfinite G Λ p : ℝ) : ℂ) :=
+  freeEnergyComplexAlongExhaustion_branchLimitFamily_localCover_real
+    G Λ p hBED hd realFamily.centre_mem realFamily.family realFamily.centre_normalized
 
 /-- **Local-cover branch-family Vitali bridge with real-axis
 identification**: a coherent local cover of Lee-Yang balls whose branch

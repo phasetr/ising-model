@@ -3932,6 +3932,47 @@ Montel compactness or construct the coherent compatible family.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Real-centred packaged Lee--Yang local-cover family; PR \#2704]
+The structure
+\begin{Verbatim}
+Ambient.LeeYangRealBranchLimitFamily
+\end{Verbatim}
+adds the real-axis endpoint data to the compatible family package.  For real
+parameters \(p\), it contains:
+\begin{itemize}
+\item the membership \((p.h:\mathbb C)\in\texttt{leeYangDomain}\);
+\item a compatible \texttt{LeeYangLocalBranchLimitFamily} at
+  \((p.J,p.\beta)\);
+\item the centre normalisation
+\[
+  F_n(p.h)=f_{\Lambda_n}(p.J,p.h,p.\beta)
+\]
+for the branch family attached to the ball centred at \(p.h\).
+\end{itemize}
+
+The theorem
+\begin{Verbatim}
+Ambient.freeEnergyComplexAlongExhaustion_realBranchLimitFamily_localCover_real
+\end{Verbatim}
+feeds this package into the PR \#2703 real wrapper.  Therefore a single
+real-centred family package gives a function \(g\) which agrees with every
+packaged local limit on its Lee--Yang ball, is differentiable on
+\(\texttt{leeYangDomain}\), and satisfies
+\[
+  g(p.h)=\texttt{freeEnergyInfinite}.
+\]
+The concrete \(\mathbb Z^d\) wrapper is
+\begin{Verbatim}
+freeEnergyComplexAlongExhaustion_realBranchLimitFamily_localCover_real_latticeGraph
+\end{Verbatim}
+in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+
+This is still a conditional post-extraction handoff.  It does not prove
+Montel compactness or construct the family; it names the exact real-centred
+object that a later coherent local-cover extraction should provide.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[Compact Lee--Yang fugacity gap; PR \#2684]
 The theorems
 \texttt{exists\_leeYangFugacity\_norm\_le\_lt\_one\_on\_isCompact}
