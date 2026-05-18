@@ -583,6 +583,72 @@ theorem freeEnergyComplexAlongExhaustion_branchFamily_vitali_ball_identified_at_
       G Λ p hBED hd
   exact ⟨hdiff, tendsto_nhds_unique hpoint hreal⟩
 
+/-- **Local-cover branch-family Vitali bridge on `leeYangDomain`**:
+if every Lee-Yang point has a ball on which a chosen branch family converges
+locally uniformly to the same function `f`, then `f` is holomorphic on the
+whole Lee-Yang domain. This globalises the PR #2676 ball handoff while leaving
+the coherent local branch construction as an explicit hypothesis. -/
+theorem freeEnergyComplexAlongExhaustion_branchFamily_vitali_localCover
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℂ) {f : ℂ → ℂ}
+    (hlocal : ∀ h₀ ∈ IsingModel.leeYangDomain,
+      ∃ r : ℝ, 0 < r ∧ Metric.ball h₀ r ⊆ IsingModel.leeYangDomain ∧
+        ∃ F : ℕ → ℂ → ℂ,
+          (∀ n,
+            AnalyticOnNhd ℂ (F n) (Metric.ball h₀ r)
+              ∧ (∀ z ∈ Metric.ball h₀ r,
+                  Complex.exp
+                    ((Fintype.card (↑(Λ.volume n) : Type _) : ℂ) * F n z)
+                    = partitionFunctionComplexAlongExhaustion G Λ J z β n)
+              ∧ F n h₀ = freeEnergyComplexAlongExhaustion G Λ J h₀ β n)
+          ∧ TendstoLocallyUniformlyOn F f Filter.atTop (Metric.ball h₀ r)) :
+    DifferentiableOn ℂ f IsingModel.leeYangDomain := by
+  intro h₀ hmem
+  rcases hlocal h₀ hmem with ⟨r, hr, _hsub, F, hbranch, hconv⟩
+  have hdiff_ball :=
+    freeEnergyComplexAlongExhaustion_branchFamily_vitali_bridge_ball
+      G Λ J β hbranch hconv
+  exact (hdiff_ball.differentiableAt
+    (Metric.isOpen_ball.mem_nhds (Metric.mem_ball_self hr))).differentiableWithinAt
+
+/-- **Local-cover branch-family Vitali bridge with real-axis
+identification**: a coherent local cover of Lee-Yang balls whose branch
+families converge locally uniformly to a common `f` makes `f` holomorphic on
+`leeYangDomain`; at a real Lee-Yang centre it agrees with the real
+infinite-volume free energy. -/
+theorem freeEnergyComplexAlongExhaustion_branchFamily_vitali_localCover_real
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ)
+    (hBED : BoundedEdgeDensity G Λ)
+    (hd : DisjointTowerHypotheses G Λ p)
+    {f : ℂ → ℂ}
+    (hp : (p.h : ℂ) ∈ IsingModel.leeYangDomain)
+    (hlocal : ∀ h₀ ∈ IsingModel.leeYangDomain,
+      ∃ r : ℝ, 0 < r ∧ Metric.ball h₀ r ⊆ IsingModel.leeYangDomain ∧
+        ∃ F : ℕ → ℂ → ℂ,
+          (∀ n,
+            AnalyticOnNhd ℂ (F n) (Metric.ball h₀ r)
+              ∧ (∀ z ∈ Metric.ball h₀ r,
+                  Complex.exp
+                    ((Fintype.card (↑(Λ.volume n) : Type _) : ℂ) * F n z)
+                    = partitionFunctionComplexAlongExhaustion G Λ
+                        (p.J : ℂ) z (p.β : ℂ) n)
+              ∧ F n h₀ = freeEnergyComplexAlongExhaustion G Λ
+                  (p.J : ℂ) h₀ (p.β : ℂ) n)
+          ∧ TendstoLocallyUniformlyOn F f Filter.atTop (Metric.ball h₀ r)) :
+    DifferentiableOn ℂ f IsingModel.leeYangDomain ∧
+      f (p.h : ℂ) = ((freeEnergyInfinite G Λ p : ℝ) : ℂ) := by
+  have hdiff :=
+    freeEnergyComplexAlongExhaustion_branchFamily_vitali_localCover
+      G Λ (p.J : ℂ) (p.β : ℂ) hlocal
+  rcases hlocal (p.h : ℂ) hp with ⟨r, hr, _hsub, F, hbranch, hconv⟩
+  have hcenter :=
+    freeEnergyComplexAlongExhaustion_branchFamily_vitali_ball_identified_at_center
+      G Λ p hBED hd hr hbranch hconv
+  exact ⟨hdiff, hcenter.2⟩
+
 end Ambient
 
 end IsingModel
