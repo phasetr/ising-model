@@ -3578,6 +3578,34 @@ needs control of the absolute logarithm, including lower control on
 \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Locally bounded family from normalised log control; PR \#2680]
+The theorem
+\texttt{norm\_freeEnergyComplexAlongExhaustion\_le\_of\_abs\_log\_norm\_bound\_on\_set\_uniform}
+turns the PR \#2679 stagewise estimate into a stage-independent local bound.
+Assume that all stages are nonempty and that a set $K\subseteq\mathbb C$ has a
+common normalised-log bound
+\[
+  \frac{\left|\log\|Z_{\Lambda_n}(J,h,\beta)\|\right|}{|\Lambda_n|}
+  \le C
+  \qquad (n\in\mathbb N,\ h\in K).
+\]
+Then, for every stage and every $h\in K$,
+\[
+  \|f_n(h)\|\le C+\pi .
+\]
+The proof composes PR \#2679 with the elementary consequence of nonemptiness
+\[
+  \frac{\pi}{|\Lambda_n|}\le \pi ,
+\]
+using \texttt{Fintype.card\_pos} in Lean.  The concrete $\mathbb Z^d$ wrapper
+lives in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+
+This theorem packages the exact locally bounded family shape that a later
+Montel/normal-family argument can consume.  It remains conditional on the
+normalised-log estimate; no lower control on $Z_{\Lambda_n}$ is proved here.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{remark}[Status of PR \#200 — merged 2026-04-19, \texttt{52ea2f1}]
 PR \#200 was squash-merged into \texttt{main} on 2026-04-19 as
 commit \texttt{52ea2f1}. Items now present in \texttt{main}:
