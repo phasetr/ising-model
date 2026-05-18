@@ -4198,7 +4198,7 @@ $(d, \Lambda, p) \to (\alpha, r, c)$ and the exponential decay
 bounds on $\mathbb{Z}^d$ (Step 117h+).
 
 \paragraph{\S17.5 Lemma 17.5.2 conditional sandwich capstone
-(Step 117l, PRs~\#2663--\#2669).} The new module
+(Step 117l, PRs~\#2663--\#2670).} The new module
 \texttt{Concrete/LatticeGraphCorrelation/Lemma\_17\_5\_2.lean}
 introduces the named capstone interface for
 Glimm--Jaffe \S17.5 Lemma~17.5.2 (2nd ed., pp.~311--312):
@@ -4238,6 +4238,10 @@ declarations:
   alias of \texttt{discrete\_hls\_constant} ($2\alpha > d$).
 \item \texttt{lemma\_17\_5\_2\_hls\_convolution\_constant} -- the
   positive constant form of the polynomial HLS convolution estimate.
+\item \texttt{Lemma\_17\_5\_2\_HLSDenominatorComparison} -- the named
+  finite-stage scalar comparison between the high-temperature
+  Lebowitz/susceptibility derivative bound and the HLS denominator
+  $Kc(\beta)/(h(\beta))^{2\alpha}$.
 \item \texttt{lemma\_17\_5\_2\_beta\_deriv\_abs\_le\_high\_temp} -- the
   finite-stage high-temperature beta-derivative absolute bound
   $|c'|\le J M^2 + 4dJ$, exposing the concrete Lebowitz/susceptibility
@@ -4253,13 +4257,22 @@ declarations:
   -- the finite-stage concrete handoff from the HLS derivative hypothesis to
   \texttt{pseudoMass\_power\_deriv\_le}, giving
   $(h(\beta))^{2\alpha}|h'(\beta)|\le K/\rho$.
+\item \texttt{lemma\_17\_5\_2\_beta\_pseudoMass\_power\_deriv\_le\_of\_hls\_constant}
+  -- the existential HLS-constant version of the preceding power-derivative
+  estimate.
 \item \texttt{lemma\_17\_5\_2\_beta\_pseudoMass\_pow\_succ\_deriv\_bound\_of\_high\_temp\_bound}
   -- the corresponding finite-stage derivative bound for
   $\beta\mapsto(h(\beta))^{2\alpha+1}$.
+\item \texttt{lemma\_17\_5\_2\_beta\_pseudoMass\_pow\_succ\_deriv\_bound\_of\_hls\_constant}
+  -- the HLS-constant existential version of the pointwise
+  $(h(\beta))^{2\alpha+1}$ derivative bound.
 \item \texttt{lemma\_17\_5\_2\_beta\_pseudoMass\_pow\_succ\_lipschitz\_of\_high\_temp\_bound}
   -- the finite-stage interval Lipschitz estimate for
   $\beta\mapsto(h(\beta))^{2\alpha+1}$, obtained by applying the MVT to the
   pointwise concrete pseudo-mass power derivative bound.
+\item \texttt{lemma\_17\_5\_2\_beta\_pseudoMass\_pow\_succ\_lipschitz\_of\_hls\_constant}
+  -- the corresponding HLS-constant existential interval estimate, still
+  conditional on the pointwise denominator comparison.
 \end{itemize}
 PR~\#2664 adds a finite high-temperature bridge discharging the upper-bound
 predicate in the cubic active-range setting without adding an axiom.
