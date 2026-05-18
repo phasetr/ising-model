@@ -2275,6 +2275,52 @@ theorem freeEnergyComplexAlongExhaustion_finiteSubseqBranchLimitFamily_patch_rea
     hg_eq i₀ hcenter_mem
   exact ⟨g, hg_eq, hg_diff, hg_center.trans hidentified.2⟩
 
+/-- **Finite compact-open extraction to a real-centre patch**: compact-open
+compactness on finitely many balls, eventual stage-level overlap equality, and
+a selected ball centred at the real field `p.h` produce a patched function on
+the finite union of balls whose value at `p.h` is `↑freeEnergyInfinite`. -/
+theorem freeEnergyComplexAlongExhaustion_finiteSubseqBranchLimitFamily_compactOpen_patch_real
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ)
+    (hBED : BoundedEdgeDensity G Λ)
+    (hd : DisjointTowerHypotheses G Λ p)
+    (n : ℕ) {h0 : Fin n → ℂ} {r : Fin n → ℝ}
+    {F : Fin n → ℕ → ℂ → ℂ}
+    {A : ∀ i : Fin n, Set C(Metric.ball (h0 i) (r i), ℂ)}
+    {Fc : ∀ i : Fin n, ℕ → C(Metric.ball (h0 i) (r i), ℂ)}
+    (hA : ∀ i, IsCompact (A i))
+    (hFc_mem : ∀ i m, Fc i m ∈ A i)
+    (hFres : ∀ i m z (hz : z ∈ Metric.ball (h0 i) (r i)),
+      F i m z = Fc i m ⟨z, hz⟩)
+    (hbranch : ∀ i m,
+      AnalyticOnNhd ℂ (F i m) (Metric.ball (h0 i) (r i))
+        ∧ (∀ z ∈ Metric.ball (h0 i) (r i),
+            Complex.exp
+              ((Fintype.card (↑(Λ.volume m) : Type _) : ℂ) * F i m z)
+              = partitionFunctionComplexAlongExhaustion G Λ
+                  (p.J : ℂ) z (p.β : ℂ) m)
+        ∧ F i m (h0 i) = freeEnergyComplexAlongExhaustion G Λ
+            (p.J : ℂ) (h0 i) (p.β : ℂ) m)
+    (hoverlap : ∀ i j, ∀ᶠ m in Filter.atTop,
+      Set.EqOn (F i m) (F j m)
+        (Metric.ball (h0 i) (r i) ∩ Metric.ball (h0 j) (r j)))
+    (i₀ : Fin n)
+    (hcenter : h0 i₀ = (p.h : ℂ))
+    (hr : 0 < r i₀) :
+    ∃ family : LeeYangFiniteSubseqBranchLimitFamily G Λ
+        (p.J : ℂ) (p.β : ℂ) n h0 r,
+      ∃ g : ℂ → ℂ,
+        (∀ i, Set.EqOn g (family.limitFun i) (Metric.ball (h0 i) (r i))) ∧
+        DifferentiableOn ℂ g (⋃ i : Fin n, Metric.ball (h0 i) (r i)) ∧
+        g (p.h : ℂ) = ((freeEnergyInfinite G Λ p : ℝ) : ℂ) := by
+  rcases freeEnergyComplexAlongExhaustion_finiteSubseqBranchLimitFamily_compactOpen
+      G Λ (p.J : ℂ) (p.β : ℂ) n hA hFc_mem hFres hbranch hoverlap with
+    ⟨family⟩
+  exact ⟨family,
+    freeEnergyComplexAlongExhaustion_finiteSubseqBranchLimitFamily_patch_real
+      G Λ p hBED hd n family i₀ hcenter hr⟩
+
 /-- **Finite-ball compact-open diagonal extraction with local patching**:
 if the finite Lee-Yang local limits obtained from compact-open extraction are
 compatible on all pairwise ball overlaps, then they patch to one function on
