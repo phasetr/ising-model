@@ -3788,11 +3788,12 @@ The theorem
 Ambient.freeEnergyComplexAlongExhaustion_finiteSubseqBranchLimitFamily_compactOpen_patch_real
 \end{Verbatim}
 composes the PR \#2705 finite compact-open package extraction with the PR
-\#2706 finite real-centre patch.  Its hypotheses are compactness of each
+\#2706 finite real-centre patch.  Its hypotheses include compactness of each
 branch family in \(C(B(h_i,r_i),\mathbb C)\), the restriction identity between
 the total stage functions and their continuous restrictions, the Lee--Yang
-stage branch identities, eventual equality on every pairwise ball overlap, and
-a selected ball \(i_0\) with \(h_{i_0}=p.h\) and \(0<r_{i_0}\).  The conclusion
+stage branch identities, eventual equality on every pairwise ball overlap,
+bounded edge density, disjoint-tower hypotheses for the real parameter, and a
+selected ball \(i_0\) with \(h_{i_0}=p.h\) and \(0<r_{i_0}\).  The conclusion
 simultaneously returns the extracted
 \texttt{Ambient.LeeYangFiniteSubseqBranchLimitFamily} and a patched function
 on \(\bigcup_i B(h_i,r_i)\) satisfying
@@ -3801,7 +3802,7 @@ on \(\bigcup_i B(h_i,r_i)\) satisfying
 \]
 The concrete \(\mathbb Z^d\) wrapper is
 \begin{Verbatim}
-freeEnergyComplexAlongExhaustion_finiteSubseqBranchLimitFamily_compactOpen_patch_real_latticeGraph
+freeEnergyComplexAlongExhaustion_finiteCompactOpenBranchLimitFamily_realPatch_latticeGraph
 \end{Verbatim}
 in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
 

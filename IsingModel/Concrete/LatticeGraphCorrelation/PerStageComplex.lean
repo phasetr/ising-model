@@ -1488,13 +1488,12 @@ theorem freeEnergyComplexAlongExhaustion_finiteSubseqBranchLimitFamily_patch_rea
   Ambient.freeEnergyComplexAlongExhaustion_finiteSubseqBranchLimitFamily_patch_real
     (IsingModel.latticeGraph d) Λ p hBED hd n family i₀ hcenter hr
 
-set_option linter.style.longLine false in
 /-- **ℤ^d finite compact-open extraction to a real-centre patch**:
 compact-open compactness on finitely many balls, eventual stage-level overlap
 equality, and a selected ball centred at the real field `p.h` produce a
 patched function on the finite union of balls whose value at `p.h` is
 `↑Ambient.freeEnergyInfinite`. -/
-theorem freeEnergyComplexAlongExhaustion_finiteSubseqBranchLimitFamily_compactOpen_patch_real_latticeGraph
+theorem freeEnergyComplexAlongExhaustion_finiteCompactOpenBranchLimitFamily_realPatch_latticeGraph
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
     [∀ n, Fintype (Ambient.inducedGraph
         (IsingModel.latticeGraph d) (Λ.volume n)).edgeSet]
