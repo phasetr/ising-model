@@ -553,10 +553,14 @@ theorem lemma_17_5_2_beta_pseudoMass_power_deriv_le_of_hls_constant
           (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
           (⟨J, 0, β⟩ : IsingParams ℝ) {r, s}) :
     ∃ K : ℝ, 0 < K ∧
+      (∀ x y : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
       (Lemma_17_5_2_HLSDenominatorComparison Λ J b n r s β α K h →
         (h β) ^ (2 * α) * |h'| ≤ K / rho) := by
-  obtain ⟨K, hK, _hK_conv⟩ := lemma_17_5_2_hls_convolution_constant α d hαd
-  refine ⟨K, hK, fun hcomp => ?_⟩
+  obtain ⟨K, hK, hK_conv⟩ := lemma_17_5_2_hls_convolution_constant α d hαd
+  refine ⟨K, hK, hK_conv, fun hcomp => ?_⟩
   exact lemma_17_5_2_beta_pseudoMass_power_deriv_le_of_high_temp_bound
     Λ J hJ a b ha hab hlt n r s hrs β hβ (α := α) (rho := rho) (K := K) hrho
     hh hh_nonneg hg_eq hh_pos hc_pos
@@ -643,12 +647,16 @@ theorem lemma_17_5_2_beta_pseudoMass_pow_succ_deriv_bound_of_hls_constant
           (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
           (⟨J, 0, β⟩ : IsingParams ℝ) {r, s}) :
     ∃ K : ℝ, 0 < K ∧
+      (∀ x y : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
       (Lemma_17_5_2_HLSDenominatorComparison Λ J b n r s β α K h →
         ∃ dval : ℝ,
           HasDerivAt (fun β' => (h β') ^ (2 * α + 1)) dval β ∧
           |dval| ≤ ↑(2 * α + 1) * K / rho) := by
-  obtain ⟨K, hK, _hK_conv⟩ := lemma_17_5_2_hls_convolution_constant α d hαd
-  refine ⟨K, hK, fun hcomp => ?_⟩
+  obtain ⟨K, hK, hK_conv⟩ := lemma_17_5_2_hls_convolution_constant α d hαd
+  refine ⟨K, hK, hK_conv, fun hcomp => ?_⟩
   exact lemma_17_5_2_beta_pseudoMass_pow_succ_deriv_bound_of_high_temp_bound
     Λ J hJ a b ha hab hlt n r s hrs β hβ (α := α) (rho := rho) (K := K) hrho
     hh hh_nonneg hg_eq hh_pos hc_pos
@@ -764,12 +772,16 @@ theorem lemma_17_5_2_beta_pseudoMass_pow_succ_lipschitz_of_hls_constant
           (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
           (⟨J, 0, β'⟩ : IsingParams ℝ) {r, s}) :
     ∃ K : ℝ, 0 < K ∧
+      (∀ x y : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
       ((∀ β' ∈ Set.Icc β₁ β₂,
           Lemma_17_5_2_HLSDenominatorComparison Λ J b n r s β' α K h) →
         |(h β₂) ^ (2 * α + 1) - (h β₁) ^ (2 * α + 1)| ≤
           ↑(2 * α + 1) * K / rho * (β₂ - β₁)) := by
-  obtain ⟨K, hK, _hK_conv⟩ := lemma_17_5_2_hls_convolution_constant α d hαd
-  refine ⟨K, hK, fun hcomp => ?_⟩
+  obtain ⟨K, hK, hK_conv⟩ := lemma_17_5_2_hls_convolution_constant α d hαd
+  refine ⟨K, hK, hK_conv, fun hcomp => ?_⟩
   exact lemma_17_5_2_beta_pseudoMass_pow_succ_lipschitz_of_high_temp_bound
     Λ J hJ a b ha hab hlt n r s hrs hβ₁₂ hβ_mem
     (α := α) (rho := rho) (K := K) hrho
