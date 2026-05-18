@@ -3823,6 +3823,39 @@ compactness, or diagonal coherent local-cover extraction.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Structured Lee--Yang local-cover data patching; PR \#2701]
+The structure
+\begin{Verbatim}
+Ambient.LeeYangLocalBranchLimit
+\end{Verbatim}
+packages the data attached to one point of the Lee--Yang domain: a positive
+radius, containment of the corresponding ball in \(\texttt{leeYangDomain}\), a
+per-stage branch family, a local limit, the finite-stage exponential
+partition-function identity on the ball, and locally uniform convergence to
+that limit.
+
+The theorem
+\begin{Verbatim}
+Ambient.freeEnergyComplexAlongExhaustion_branchLimitData_localCover_patch
+\end{Verbatim}
+takes a point-indexed family of such data and a pairwise compatibility
+hypothesis for the packaged local limits on ball overlaps.  It extracts the
+radius, branch family, limit, and convergence fields and feeds them into the
+PR \#2700 pointed local-cover patching assembly.  Consequently there is a
+single function \(g\) on \(\mathbb C\), agreeing with every packaged local
+limit on its own ball, and \(g\) is differentiable on
+\(\texttt{leeYangDomain}\).  The concrete \(\mathbb Z^d\) wrapper is
+\begin{Verbatim}
+freeEnergyComplexAlongExhaustion_branchLimitData_localCover_patch_latticeGraph
+\end{Verbatim}
+in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+
+This is still a conditional post-extraction handoff.  It makes the local-cover
+input easier to pass around, but it does not prove coherent branch selection,
+Montel compactness, or diagonal coherent local-cover extraction.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[Compact Lee--Yang fugacity gap; PR \#2684]
 The theorems
 \texttt{exists\_leeYangFugacity\_norm\_le\_lt\_one\_on\_isCompact}
