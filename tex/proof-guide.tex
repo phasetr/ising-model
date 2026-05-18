@@ -3704,6 +3704,51 @@ global function on \(\texttt{leeYangDomain}\).
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Packaged finite subsequence branch-limit family; PR \#2705]
+The structure
+\begin{Verbatim}
+Ambient.LeeYangFiniteSubseqBranchLimitFamily
+\end{Verbatim}
+packages the finite compact-open diagonal and overlap output.  For a finite
+family of balls \(B(h_i,r_i)\), it contains:
+\begin{itemize}
+\item a strictly increasing stage map
+  \(\sigma:\mathbb N\to\mathbb N\);
+\item per-ball branch families \(F_{i,m}\) indexed by the selected stages;
+\item local limits \(f_i\);
+\item the stage-\(\sigma(m)\) exponential partition-function identity on each
+  ball;
+\item centre normalisation
+  \(F_{i,m}(h_i)=f_{\Lambda_{\sigma(m)}}(J,h_i,\beta)\);
+\item locally uniform convergence \(F_{i,m}\to f_i\), differentiability of
+  \(f_i\), and pairwise compatibility on ball overlaps.
+\end{itemize}
+
+The theorem
+\begin{Verbatim}
+Ambient.freeEnergyComplexAlongExhaustion_finiteSubseqBranchLimitFamily_compactOpen
+\end{Verbatim}
+constructs such a package from the PR \#2697 finite compact-open/overlap
+handoff.  The theorem
+\begin{Verbatim}
+Ambient.freeEnergyComplexAlongExhaustion_finiteSubseqBranchLimitFamily_patch
+\end{Verbatim}
+then consumes the packaged compatibility and patches the local limits to a
+single function differentiable on the finite union of balls.  The concrete
+\(\mathbb Z^d\) wrappers are
+\begin{Verbatim}
+freeEnergyComplexAlongExhaustion_finiteSubseqBranchLimitFamily_compactOpen_latticeGraph
+freeEnergyComplexAlongExhaustion_finiteSubseqBranchLimitFamily_patch_latticeGraph
+\end{Verbatim}
+in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+
+This is still a finite, explicit-hypothesis handoff.  It does not prove Montel
+compactness or construct a coherent \(\texttt{leeYangDomain}\)-cover; it only
+records the finite post-extraction output in the same structured style as the
+later local-cover packages.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[Finite local-patching handoff; PR \#2698]
 The finite differentiable patching step is formalised by
 \begin{Verbatim}
