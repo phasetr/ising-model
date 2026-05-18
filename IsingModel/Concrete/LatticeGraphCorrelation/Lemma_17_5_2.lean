@@ -30,6 +30,9 @@ capstone, providing:
 * the finite-stage high-temperature β-derivative absolute bound under the
   Lemma 17.5.2 namespace, exposing the concrete Lebowitz/susceptibility input
   for the HLS pseudo-mass derivative hypothesis;
+* a named finite-stage HLS denominator-comparison predicate plus existential
+  wrappers choosing the positive HLS convolution constant and feeding that
+  comparison into the derivative and interval Lipschitz estimates;
 * finite-stage concrete wrappers feeding the HLS derivative hypothesis into
   `pseudoMass_power_deriv_le`, `pseudoMass_pow_succ_deriv_bound`, and the
   corresponding interval Lipschitz estimate.
@@ -366,6 +369,27 @@ theorem lemma_17_5_2_hls_convolution_constant (α d : ℕ) (hαd : 2 * α > d) :
             (1 + latticeDistance d y w : ℝ) ^ (-(α : ℝ)) ≤ C :=
   IsingModel.discrete_hls_convolution_constant α d hαd
 
+/-- **GJ §17.5 Lemma 17.5.2 finite-stage HLS denominator comparison**:
+the named scalar comparison between the concrete high-temperature
+Lebowitz/susceptibility derivative bound and the HLS pseudo-mass denominator
+term.  The constant `K` is intended to be chosen by
+`lemma_17_5_2_hls_convolution_constant`; this predicate names the remaining
+pointwise comparison needed before applying the pseudo-mass calculus.
+
+References: Glimm--Jaffe §17.5, Theorem 17.5.1 proof and Lemma 17.5.2,
+pp.~311--312. -/
+def Lemma_17_5_2_HLSDenominatorComparison
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J b : ℝ) (n : ℕ) (r s : ↑(Λ.volume n))
+    (β : ℝ) (α : ℕ) (K : ℝ) (h : ℝ → ℝ) : Prop :=
+  let M : ℝ := b * J * ↑(2 * d) / (1 - b * J * ↑(2 * d))
+  J * M ^ 2 + J * (4 * ↑d) ≤
+    K *
+      IsingModel.correlation
+        (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+        (⟨J, 0, β⟩ : IsingParams ℝ) {r, s} /
+      (h β) ^ (2 * α)
+
 /-- **GJ §17.5 Lemma 17.5.2 β-derivative absolute bound, finite-stage
 high-temperature form**: for `β ∈ [a,b]` with `0 < a ≤ b` and `bJ·2d < 1`,
 the finite-stage two-point β-derivative exists and is bounded in absolute value
@@ -494,6 +518,50 @@ theorem lemma_17_5_2_beta_pseudoMass_power_deriv_le_of_high_temp_bound
       Λ J hJ a b ha hab hlt n r s hrs β hβ (α := α) (K := K) (h := h) hcomp
   exact pseudoMass_power_deriv_le α hrho hh hc' hh_nonneg hg_eq hh_pos hc_pos hc_der
 
+/-- **GJ §17.5 Lemma 17.5.2 HLS-constant pseudo-mass power derivative
+bridge**: under the HLS exponent condition `2α > d`, choose a positive HLS
+convolution constant `K`.  If the finite-stage denominator comparison holds
+for this `K` at `β`, then the concrete pseudo-mass power derivative estimate
+`(h β)^(2α) * |h'| ≤ K / rho` follows.
+
+This packages the positive constant from
+`lemma_17_5_2_hls_convolution_constant` into the pointwise
+`pseudoMass_power_deriv_le` handoff.
+
+References: Glimm--Jaffe §17.5, Theorem 17.5.1 proof and Lemma 17.5.2,
+pp.~311--312. -/
+theorem lemma_17_5_2_beta_pseudoMass_power_deriv_le_of_hls_constant
+    {d α : ℕ} (hαd : 2 * α > d)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (hJ : 0 ≤ J)
+    (a b : ℝ) (ha : 0 < a) (hab : a ≤ b) (hlt : b * J * ↑(2 * d) < 1)
+    (n : ℕ) (r s : ↑(Λ.volume n)) (hrs : r ≠ s)
+    (β : ℝ) (hβ : β ∈ Set.Icc a b)
+    {rho : ℝ} (hrho : 0 < rho)
+    {h : ℝ → ℝ} {h' : ℝ}
+    (hh : HasDerivAt h h' β)
+    (hh_nonneg : 0 ≤ h β)
+    (hg_eq : ∀ β',
+      pseudoMassG α rho (h β') =
+        IsingModel.correlation
+          (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+          (⟨J, 0, β'⟩ : IsingParams ℝ) {r, s})
+    (hh_pos : 0 < h β)
+    (hc_pos :
+      0 <
+        IsingModel.correlation
+          (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+          (⟨J, 0, β⟩ : IsingParams ℝ) {r, s}) :
+    ∃ K : ℝ, 0 < K ∧
+      (Lemma_17_5_2_HLSDenominatorComparison Λ J b n r s β α K h →
+        (h β) ^ (2 * α) * |h'| ≤ K / rho) := by
+  obtain ⟨K, hK, _hK_conv⟩ := lemma_17_5_2_hls_convolution_constant α d hαd
+  refine ⟨K, hK, fun hcomp => ?_⟩
+  exact lemma_17_5_2_beta_pseudoMass_power_deriv_le_of_high_temp_bound
+    Λ J hJ a b ha hab hlt n r s hrs β hβ (α := α) (rho := rho) (K := K) hrho
+    hh hh_nonneg hg_eq hh_pos hc_pos
+    (by simpa [Lemma_17_5_2_HLSDenominatorComparison] using hcomp)
+
 /-- **GJ §17.5 Lemma 17.5.2 finite-stage derivative bound for
 `(m⁻)^(2α+1)`**: after the HLS denominator comparison, the concrete finite-stage
 correlation derivative feeds the abstract pseudo-mass chain-rule theorem and
@@ -540,6 +608,51 @@ theorem lemma_17_5_2_beta_pseudoMass_pow_succ_deriv_bound_of_high_temp_bound
     lemma_17_5_2_beta_hls_derivative_hypothesis_of_high_temp_bound
       Λ J hJ a b ha hab hlt n r s hrs β hβ (α := α) (K := K) (h := h) hcomp
   exact pseudoMass_pow_succ_deriv_bound α hrho hh hc' hh_nonneg hg_eq hh_pos hc_pos hc_der
+
+/-- **GJ §17.5 Lemma 17.5.2 HLS-constant derivative bound for
+`(m⁻)^(2α+1)`**: under `2α > d`, choose a positive HLS convolution constant
+`K`.  If the finite-stage denominator comparison holds for this `K`, then
+`β ↦ (h β)^(2α+1)` has a derivative at `β` bounded by
+`(2α+1) * K / rho`.
+
+This is the pointwise chain-rule companion to
+`lemma_17_5_2_beta_pseudoMass_power_deriv_le_of_hls_constant`.
+
+References: Glimm--Jaffe §17.5, Theorem 17.5.1 proof and Lemma 17.5.2,
+pp.~311--312. -/
+theorem lemma_17_5_2_beta_pseudoMass_pow_succ_deriv_bound_of_hls_constant
+    {d α : ℕ} (hαd : 2 * α > d)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (hJ : 0 ≤ J)
+    (a b : ℝ) (ha : 0 < a) (hab : a ≤ b) (hlt : b * J * ↑(2 * d) < 1)
+    (n : ℕ) (r s : ↑(Λ.volume n)) (hrs : r ≠ s)
+    (β : ℝ) (hβ : β ∈ Set.Icc a b)
+    {rho : ℝ} (hrho : 0 < rho)
+    {h : ℝ → ℝ} {h' : ℝ}
+    (hh : HasDerivAt h h' β)
+    (hh_nonneg : 0 ≤ h β)
+    (hg_eq : ∀ β',
+      pseudoMassG α rho (h β') =
+        IsingModel.correlation
+          (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+          (⟨J, 0, β'⟩ : IsingParams ℝ) {r, s})
+    (hh_pos : 0 < h β)
+    (hc_pos :
+      0 <
+        IsingModel.correlation
+          (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+          (⟨J, 0, β⟩ : IsingParams ℝ) {r, s}) :
+    ∃ K : ℝ, 0 < K ∧
+      (Lemma_17_5_2_HLSDenominatorComparison Λ J b n r s β α K h →
+        ∃ dval : ℝ,
+          HasDerivAt (fun β' => (h β') ^ (2 * α + 1)) dval β ∧
+          |dval| ≤ ↑(2 * α + 1) * K / rho) := by
+  obtain ⟨K, hK, _hK_conv⟩ := lemma_17_5_2_hls_convolution_constant α d hαd
+  refine ⟨K, hK, fun hcomp => ?_⟩
+  exact lemma_17_5_2_beta_pseudoMass_pow_succ_deriv_bound_of_high_temp_bound
+    Λ J hJ a b ha hab hlt n r s hrs β hβ (α := α) (rho := rho) (K := K) hrho
+    hh hh_nonneg hg_eq hh_pos hc_pos
+    (by simpa [Lemma_17_5_2_HLSDenominatorComparison] using hcomp)
 
 /-- **GJ §17.5 Lemma 17.5.2 finite-stage pseudo-mass Lipschitz bound**:
 on an interval contained in the high-temperature window `[a,b]`, pointwise HLS
@@ -613,6 +726,56 @@ theorem lemma_17_5_2_beta_pseudoMass_pow_succ_lipschitz_of_high_temp_bound
         _ = ↑(2 * α + 1) * K / rho := by ring)
   have hmem : β₂ ∈ Set.Icc β₁ β₂ := Set.right_mem_Icc.mpr hβ₁₂
   simpa using hMVT β₂ hmem
+
+/-- **GJ §17.5 Lemma 17.5.2 HLS-constant interval Lipschitz bridge**:
+under the HLS exponent condition `2α > d`, choose a positive HLS convolution
+constant `K`.  If the finite-stage HLS denominator comparison holds for this
+same `K` at every point of `[β₁, β₂]`, then the concrete interval Lipschitz
+estimate for `β ↦ (h β)^(2α+1)` follows.
+
+This packages the HLS constant into the interval version of the finite-volume
+pseudo-mass calculus.  It remains conditional on the pointwise denominator
+comparison; the final infinite-volume `latticeMass` upper-bound assembly is a
+separate downstream step.
+
+References: Glimm--Jaffe §17.5, Theorem 17.5.1 proof and Lemma 17.5.2,
+pp.~311--312. -/
+theorem lemma_17_5_2_beta_pseudoMass_pow_succ_lipschitz_of_hls_constant
+    {d α : ℕ} (hαd : 2 * α > d)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (hJ : 0 ≤ J)
+    (a b : ℝ) (ha : 0 < a) (hab : a ≤ b) (hlt : b * J * ↑(2 * d) < 1)
+    (n : ℕ) (r s : ↑(Λ.volume n)) (hrs : r ≠ s)
+    {β₁ β₂ : ℝ} (hβ₁₂ : β₁ ≤ β₂)
+    (hβ_mem : ∀ β' ∈ Set.Icc β₁ β₂, β' ∈ Set.Icc a b)
+    {rho : ℝ} (hrho : 0 < rho)
+    {h : ℝ → ℝ}
+    (hh_diff : ∀ β' ∈ Set.Icc β₁ β₂, HasDerivAt h (deriv h β') β')
+    (hh_nonneg : ∀ β' ∈ Set.Icc β₁ β₂, 0 ≤ h β')
+    (hg_eq : ∀ β',
+      pseudoMassG α rho (h β') =
+        IsingModel.correlation
+          (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+          (⟨J, 0, β'⟩ : IsingParams ℝ) {r, s})
+    (hh_pos : ∀ β' ∈ Set.Icc β₁ β₂, 0 < h β')
+    (hc_pos : ∀ β' ∈ Set.Icc β₁ β₂,
+      0 <
+        IsingModel.correlation
+          (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+          (⟨J, 0, β'⟩ : IsingParams ℝ) {r, s}) :
+    ∃ K : ℝ, 0 < K ∧
+      ((∀ β' ∈ Set.Icc β₁ β₂,
+          Lemma_17_5_2_HLSDenominatorComparison Λ J b n r s β' α K h) →
+        |(h β₂) ^ (2 * α + 1) - (h β₁) ^ (2 * α + 1)| ≤
+          ↑(2 * α + 1) * K / rho * (β₂ - β₁)) := by
+  obtain ⟨K, hK, _hK_conv⟩ := lemma_17_5_2_hls_convolution_constant α d hαd
+  refine ⟨K, hK, fun hcomp => ?_⟩
+  exact lemma_17_5_2_beta_pseudoMass_pow_succ_lipschitz_of_high_temp_bound
+    Λ J hJ a b ha hab hlt n r s hrs hβ₁₂ hβ_mem
+    (α := α) (rho := rho) (K := K) hrho
+    hh_diff hh_nonneg hg_eq hh_pos hc_pos
+    (fun β' hβ' => by
+      simpa [Lemma_17_5_2_HLSDenominatorComparison] using hcomp β' hβ')
 
 end Ambient
 end IsingModel
