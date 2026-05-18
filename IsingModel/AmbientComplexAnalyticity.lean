@@ -255,11 +255,29 @@ theorem freeEnergyComplexAlongExhaustion_analyticBranch_leeYangDomain_stage
     freeEnergyComplexAlongExhaustion_exists_analyticAt_branch_leeYangDomain_stage
       G Λ hβ hJ n hmem
 
+/-- **Per-stage Lee-Yang local branch on a ball** for
+`freeEnergyComplexAlongExhaustion`: at any nonempty stage and any ball
+contained in `leeYangDomain`, there is an analytic branch on that ball whose
+exponential recovers the stage partition function throughout the ball. -/
+theorem freeEnergyComplexAlongExhaustion_exists_analyticOnNhd_branch_ball_stage
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J) (n : ℕ)
+    [Nonempty (↑(Λ.volume n) : Type _)]
+    {h₀ : ℂ} {r : ℝ} (hr : 0 < r)
+    (hsub : Metric.ball h₀ r ⊆ IsingModel.leeYangDomain) :
+    ∃ f : ℂ → ℂ,
+        AnalyticOnNhd ℂ f (Metric.ball h₀ r)
+      ∧ ∀ z ∈ Metric.ball h₀ r,
+          Complex.exp ((Fintype.card (↑(Λ.volume n) : Type _) : ℂ) * f z)
+            = partitionFunctionComplexAlongExhaustion G Λ (J : ℂ) z (β : ℂ) n :=
+  IsingModel.exists_freeEnergyComplex_analyticOnNhd_ball
+    (inducedGraph G (Λ.volume n)) hβ hJ hr hsub
+
 /-- **All-stages Lee-Yang branch family** for
 `freeEnergyComplexAlongExhaustion`: if every stage of the exhaustion is
 nonempty, then every stage admits the finite-volume local branch form on
-the full Lee-Yang domain. This is the branch-family input shape needed
-before the infinite-volume Vitali convergence step. -/
+the full Lee-Yang domain in pointwise basepoint form. -/
 theorem freeEnergyComplexAlongExhaustion_analyticBranch_leeYangDomain_all_stages
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
@@ -274,6 +292,28 @@ theorem freeEnergyComplexAlongExhaustion_analyticBranch_leeYangDomain_all_stages
   fun n =>
     freeEnergyComplexAlongExhaustion_analyticBranch_leeYangDomain_stage
       G Λ hβ hJ n
+
+/-- **All-stages Lee-Yang local branches on balls** for
+`freeEnergyComplexAlongExhaustion`: if every stage is nonempty, then every
+stage admits a local analytic branch on each ball contained in `leeYangDomain`,
+with the exponential identity holding throughout the ball. This is the
+branch-family input shape for the later normal-family/Vitali convergence step. -/
+theorem freeEnergyComplexAlongExhaustion_analyticOnNhd_branch_ball_all_stages
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    [∀ n, Nonempty (↑(Λ.volume n) : Type _)]
+    {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J) :
+    ∀ n, ∀ {h₀ : ℂ} {r : ℝ}, 0 < r →
+      Metric.ball h₀ r ⊆ IsingModel.leeYangDomain →
+      ∃ f : ℂ → ℂ,
+          AnalyticOnNhd ℂ f (Metric.ball h₀ r)
+        ∧ ∀ z ∈ Metric.ball h₀ r,
+            Complex.exp ((Fintype.card (↑(Λ.volume n) : Type _) : ℂ) * f z)
+              = partitionFunctionComplexAlongExhaustion G Λ (J : ℂ) z (β : ℂ) n :=
+by
+  intro n h₀ r hr hsub
+  exact freeEnergyComplexAlongExhaustion_exists_analyticOnNhd_branch_ball_stage
+    G Λ hβ hJ n hr hsub
 
 /-- **Per-stage locally-uniform norm bound** for
 `partitionFunctionComplexAlongExhaustion` under `|Re h| ≤ R`. Montel input. -/
