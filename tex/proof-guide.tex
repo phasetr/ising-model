@@ -3647,6 +3647,30 @@ Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70, and
 Friedli--Velenik \cite{friedli-velenik}, (3.63)--(3.65), pp.~122--123.
 \end{theorem}
 
+\begin{theorem}[Compact locally bounded family from polynomial witnesses; PR \#2689]
+The theorem
+\texttt{exists\_norm\_freeEnergyComplexAlongExhaustion\_le\_poly\_lower\_leeYang\_of\_isCompact}
+is the compact-set wrapper for PR \#2688.  Since every compact
+\(K\subseteq\mathbb C\) has a uniform real-part bound
+\(|\Re h|\le R\), the explicit \(R\)-hypothesis in the PR \#2688 handoff can
+be discharged from compactness.  Thus, on compact
+\(K\subseteq\texttt{leeYangDomain}\), bounded edge density, nonempty stages,
+\(\beta>0\), \(J>0\), and a stage-uniform lower normalised-log estimate for
+positive polynomial witnesses \(\epsilon_n(h)\) imply
+\[
+  \left\|f_n(h)\right\| \le C+\pi
+  \qquad(n\in\mathbb N,\ h\in K).
+\]
+The \(\mathbb Z^d\) wrapper is
+\texttt{exists\_norm\_freeEnergyComplexAlongExhaustion\_le\_poly\_lower\_ly\_latticeGraph\_of\_isCompact}.
+
+The polynomial-witness lower normalised-log estimate remains an explicit
+hypothesis.  The wrapper only removes the bookkeeping real-part bound from the
+statement consumed by later normal-family or Vitali inputs.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70, and
+Friedli--Velenik \cite{friedli-velenik}, (3.63)--(3.65), pp.~122--123.
+\end{theorem}
+
 \begin{theorem}[Compact-uniform complex partition-function bound; PR \#2678]
 The theorem
 \texttt{exists\_abs\_re\_le\_on\_isCompact} records the elementary
