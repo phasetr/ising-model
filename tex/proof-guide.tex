@@ -3856,6 +3856,42 @@ Montel compactness, or diagonal coherent local-cover extraction.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Structured Lee--Yang local-cover data with real-axis
+identification; PR \#2702]
+The theorem
+\begin{Verbatim}
+Ambient.freeEnergyComplexAlongExhaustion_branchLimitData_localCover_real
+\end{Verbatim}
+combines the PR \#2701 structured data patching theorem with the real-axis
+Fekete convergence theorem.  Its input is a compatible point-indexed family of
+\texttt{Ambient.LeeYangLocalBranchLimit} data for the real parameters
+\((p.J,p.\beta)\), together with a real Lee--Yang centre \(p.h\) and a centre
+normalisation hypothesis
+\[
+  F_n(p.h)=f_{\Lambda_n}(p.J,p.h,p.\beta).
+\]
+The PR \#2701 theorem first patches the packaged local limits to a function
+\(g\) differentiable on \(\texttt{leeYangDomain}\).  The locally uniform
+convergence field in the package centred at \(p.h\) gives pointwise convergence
+of \(F_n(p.h)\).  The centre normalisation rewrites this sequence as the real
+finite-volume free-energy sequence, and the existing real-axis Fekete theorem
+identifies the limit with \(\texttt{freeEnergyInfinite}\).  Since \(g\) agrees
+with the packaged local limit on the centre ball, the theorem concludes
+\[
+  g(p.h)=\texttt{freeEnergyInfinite}.
+\]
+The concrete \(\mathbb Z^d\) wrapper is
+\begin{Verbatim}
+freeEnergyComplexAlongExhaustion_branchLimitData_localCover_real_latticeGraph
+\end{Verbatim}
+in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+
+This is still a conditional post-extraction handoff: compatibility of the
+packaged local limits and the coherent local-cover extraction remain external
+inputs.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[Compact Lee--Yang fugacity gap; PR \#2684]
 The theorems
 \texttt{exists\_leeYangFugacity\_norm\_le\_lt\_one\_on\_isCompact}
