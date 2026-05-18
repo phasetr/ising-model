@@ -3508,6 +3508,56 @@ future normal-family/Montel argument must satisfy.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Subsequence local-cover branch-family Vitali handoff; PR \#2693]
+The PR \#2676 and PR \#2677 handoffs are also recorded in the form produced by
+a Montel-style subsequence extraction.  Let
+\(\sigma:\mathbb N\to\mathbb N\) be a strictly increasing stage map.  On a
+Lee--Yang ball \(B(h_0,r)\), suppose a branch family \(F_m\) satisfies
+\[
+  F_m\text{ analytic on }B(h_0,r),\qquad
+  \exp(|\Lambda_{\sigma(m)}|F_m(z))=Z_{\Lambda_{\sigma(m)}}(z),
+\]
+\[
+  F_m(h_0)=
+  \texttt{freeEnergyComplexAlongExhaustion}\,G\,\Lambda\,J\,h_0\,\beta\,
+    \sigma(m),
+\]
+and \(F_m\to f\) locally uniformly on the ball.  Then the theorem
+\begin{Verbatim}
+Ambient.freeEnergyComplexAlongExhaustion_subseq_branchFamily_vitali_bridge_ball
+\end{Verbatim}
+gives holomorphicity of \(f\) on the ball.
+
+At a real centre \(h_0=p.h\), the corresponding centre-identification theorem
+(the same name ending in \texttt{\_ball\_identified\_at\_center}) also identifies
+the centre value:
+\[
+  f(p.h)=\texttt{freeEnergyInfinite}\,G\,\Lambda\,p .
+\]
+The proof is the same uniqueness-of-limits argument as PR \#2676, with one
+additional step: the real-axis convergence
+\[
+  f_{\Lambda_n}(p.h)\to f_\infty(p)
+\]
+is composed with \(\sigma\).  Since \(\sigma\) is strictly increasing,
+\(\sigma(m)\to\infty\), so the subsequence has the same real-axis limit.
+
+The local-cover theorem
+\begin{Verbatim}
+Ambient.freeEnergyComplexAlongExhaustion_subseq_branchFamily_vitali_localCover_real
+\end{Verbatim}
+globalises this post-extraction handoff on \(\texttt{leeYangDomain}\).  If each
+Lee--Yang point has such a local subsequence branch family and all local
+families converge to the same \(f\), then \(f\) is holomorphic on the
+Lee--Yang domain and agrees with the real infinite-volume free energy at real
+Lee--Yang centres.  The corresponding \(\mathbb Z^d\) wrappers live in
+\texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+
+This theorem does not prove Montel extraction.  It records the exact
+post-extraction target consumed by the remaining normal-family construction.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[Compact Lee--Yang fugacity gap; PR \#2684]
 The theorems
 \texttt{exists\_leeYangFugacity\_norm\_le\_lt\_one\_on\_isCompact}
