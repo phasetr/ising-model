@@ -405,6 +405,125 @@ theorem norm_partitionFunctionComplexAlongExhaustion_le_on_isCompact_stage
   exact norm_partitionFunctionComplexAlongExhaustion_le_of_re_bound_stage
     G Λ β J n (hR h hh)
 
+/-- **Per-stage upper bound on the normalised real logarithm of `‖Z_ℂ‖`**:
+under `|Re h| ≤ R` and nonvanishing of the complex partition function, the
+compact-envelope estimate gives an upper bound for
+`log ‖Z_{Λ_n}(h)‖ / |Λ_n|`. This is only the upper half of the later
+normalised absolute-log control; it does not provide lower control on
+`‖Z_{Λ_n}(h)‖`. -/
+theorem real_log_norm_partitionFunctionComplexAlongExhaustion_div_card_le_of_re_bound_stage
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (β J : ℝ) (n : ℕ) [Nonempty (↑(Λ.volume n) : Type _)] {R : ℝ} {h : ℂ}
+    (hZ : partitionFunctionComplexAlongExhaustion G Λ (J : ℂ) h (β : ℂ) n ≠ 0)
+    (hh : |h.re| ≤ R) :
+    Real.log ‖partitionFunctionComplexAlongExhaustion G Λ (J : ℂ) h (β : ℂ) n‖
+        / (Fintype.card (↑(Λ.volume n) : Type _) : ℝ)
+      ≤ Real.log 2 +
+        |β| * (|J| * (inducedGraph G (Λ.volume n)).edgeFinset.card
+          + R * Fintype.card (↑(Λ.volume n) : Type _))
+          / (Fintype.card (↑(Λ.volume n) : Type _) : ℝ) := by
+  set A : ℝ :=
+    |β| * (|J| * (inducedGraph G (Λ.volume n)).edgeFinset.card
+      + R * Fintype.card (↑(Λ.volume n) : Type _))
+  have hcard_pos : (0 : ℝ) < (Fintype.card (↑(Λ.volume n) : Type _) : ℝ) := by
+    exact_mod_cast (Fintype.card_pos : 0 < Fintype.card (↑(Λ.volume n) : Type _))
+  have hconfig_pos :
+      (0 : ℝ) < (Fintype.card (IsingModel.Config (↑(Λ.volume n) : Type _)) : ℝ) := by
+    rw [card_config_eq_two_pow]
+    positivity
+  have hexp_pos : (0 : ℝ) < Real.exp A := Real.exp_pos _
+  have hnorm_pos :
+      0 < ‖partitionFunctionComplexAlongExhaustion G Λ (J : ℂ) h (β : ℂ) n‖ :=
+    norm_pos_iff.mpr hZ
+  have hlog :
+      Real.log ‖partitionFunctionComplexAlongExhaustion G Λ (J : ℂ) h (β : ℂ) n‖
+        ≤ (Fintype.card (↑(Λ.volume n) : Type _) : ℝ) * Real.log 2 + A := by
+    calc
+      Real.log ‖partitionFunctionComplexAlongExhaustion G Λ (J : ℂ) h (β : ℂ) n‖
+          ≤ Real.log
+              ((Fintype.card (IsingModel.Config (↑(Λ.volume n) : Type _)) : ℝ)
+                * Real.exp A) := by
+            refine (Real.log_le_log_iff hnorm_pos
+              (mul_pos hconfig_pos hexp_pos)).mpr ?_
+            simpa [A] using
+              norm_partitionFunctionComplexAlongExhaustion_le_of_re_bound_stage
+                G Λ β J n hh
+      _ = Real.log
+              (Fintype.card (IsingModel.Config (↑(Λ.volume n) : Type _)) : ℝ)
+            + A := by
+            rw [Real.log_mul hconfig_pos.ne' hexp_pos.ne', Real.log_exp]
+      _ = (Fintype.card (↑(Λ.volume n) : Type _) : ℝ) * Real.log 2 + A := by
+            rw [card_config_eq_two_pow]
+            push_cast
+            rw [Real.log_pow]
+  calc
+    Real.log ‖partitionFunctionComplexAlongExhaustion G Λ (J : ℂ) h (β : ℂ) n‖
+        / (Fintype.card (↑(Λ.volume n) : Type _) : ℝ)
+        = (Fintype.card (↑(Λ.volume n) : Type _) : ℝ)⁻¹ *
+          Real.log ‖partitionFunctionComplexAlongExhaustion G Λ (J : ℂ) h (β : ℂ) n‖ := by
+            field_simp
+    _ ≤ (Fintype.card (↑(Λ.volume n) : Type _) : ℝ)⁻¹ *
+        ((Fintype.card (↑(Λ.volume n) : Type _) : ℝ) * Real.log 2 + A) :=
+          mul_le_mul_of_nonneg_left hlog (inv_nonneg.mpr hcard_pos.le)
+    _ = Real.log 2 + A / (Fintype.card (↑(Λ.volume n) : Type _) : ℝ) := by
+          field_simp
+    _ = Real.log 2 +
+        |β| * (|J| * (inducedGraph G (Λ.volume n)).edgeFinset.card
+          + R * Fintype.card (↑(Λ.volume n) : Type _))
+          / (Fintype.card (↑(Λ.volume n) : Type _) : ℝ) := by
+          simp [A]
+
+/-- **Compact-field upper normalised-log handoff under bounded edge density**:
+if `K` is compact, the exhaustion has bounded edge density, every stage is
+nonempty, and `Z_{Λ_n}(h)` is nonzero on `K`, then
+`Real.log ‖Z_{Λ_n}(h)‖ / |Λ_n|` has one stage-independent upper bound on
+`K`. This packages the upper half of the normalised-log input for the later
+normal-family argument; the lower control needed for `|log ‖Z‖|` remains
+separate. -/
+theorem exists_real_log_norm_partitionFunctionComplexAlongExhaustion_div_card_le_on_isCompact
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    [∀ n, Nonempty (↑(Λ.volume n) : Type _)]
+    (hBED : BoundedEdgeDensity G Λ) (β J : ℝ) {K : Set ℂ} (hK : IsCompact K)
+    (hZ : ∀ n, ∀ h ∈ K,
+      partitionFunctionComplexAlongExhaustion G Λ (J : ℂ) h (β : ℂ) n ≠ 0) :
+    ∃ C : ℝ, ∀ n, ∀ h ∈ K,
+      Real.log ‖partitionFunctionComplexAlongExhaustion G Λ (J : ℂ) h (β : ℂ) n‖
+        / (Fintype.card (↑(Λ.volume n) : Type _) : ℝ) ≤ C := by
+  rcases hBED with ⟨c, hc⟩
+  rcases exists_abs_re_le_on_isCompact hK with ⟨R, _hR_nonneg, hR⟩
+  refine ⟨Real.log 2 + |β| * (|J| * c + R), ?_⟩
+  intro n h hh
+  have hstage :=
+    real_log_norm_partitionFunctionComplexAlongExhaustion_div_card_le_of_re_bound_stage
+      G Λ β J n (hZ n h hh) (hR h hh)
+  have hcard_pos_nat : 0 < Fintype.card (↑(Λ.volume n) : Type _) :=
+    Fintype.card_pos
+  have hvol_nonempty : (Λ.volume n).Nonempty := by
+    exact Finset.card_pos.mp (by
+      simpa [Fintype.card_coe] using hcard_pos_nat)
+  have hcard_pos : (0 : ℝ) < (Fintype.card (↑(Λ.volume n) : Type _) : ℝ) := by
+    exact_mod_cast hcard_pos_nat
+  have hratio :
+      ((inducedGraph G (Λ.volume n)).edgeFinset.card : ℝ) /
+          (Fintype.card (↑(Λ.volume n) : Type _) : ℝ) ≤ c :=
+    (div_le_iff₀ hcard_pos).mpr (hc n hvol_nonempty)
+  calc
+    Real.log ‖partitionFunctionComplexAlongExhaustion G Λ (J : ℂ) h (β : ℂ) n‖
+        / (Fintype.card (↑(Λ.volume n) : Type _) : ℝ)
+        ≤ Real.log 2 +
+          |β| * (|J| * (inducedGraph G (Λ.volume n)).edgeFinset.card
+            + R * Fintype.card (↑(Λ.volume n) : Type _))
+            / (Fintype.card (↑(Λ.volume n) : Type _) : ℝ) := hstage
+    _ = Real.log 2 +
+          |β| * (|J| *
+              (((inducedGraph G (Λ.volume n)).edgeFinset.card : ℝ) /
+                (Fintype.card (↑(Λ.volume n) : Type _) : ℝ)) + R) := by
+          field_simp
+    _ ≤ Real.log 2 + |β| * (|J| * c + R) := by
+          gcongr
+
 /-- **Stage free-energy bound from a normalised absolute-log bound**:
 if the normalised quantity
 `|log ‖Z_{Λ_n}(h)‖| / |Λ_n|` is bounded by `C` at a nonempty stage, then the
