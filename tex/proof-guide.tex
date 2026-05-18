@@ -4198,7 +4198,7 @@ $(d, \Lambda, p) \to (\alpha, r, c)$ and the exponential decay
 bounds on $\mathbb{Z}^d$ (Step 117h+).
 
 \paragraph{\S17.5 Lemma 17.5.2 conditional sandwich capstone
-(Step 117l, PRs~\#2663--\#2668).} The new module
+(Step 117l, PRs~\#2663--\#2669).} The new module
 \texttt{Concrete/LatticeGraphCorrelation/Lemma\_17\_5\_2.lean}
 introduces the named capstone interface for
 Glimm--Jaffe \S17.5 Lemma~17.5.2 (2nd ed., pp.~311--312):
@@ -4256,6 +4256,10 @@ declarations:
 \item \texttt{lemma\_17\_5\_2\_beta\_pseudoMass\_pow\_succ\_deriv\_bound\_of\_high\_temp\_bound}
   -- the corresponding finite-stage derivative bound for
   $\beta\mapsto(h(\beta))^{2\alpha+1}$.
+\item \texttt{lemma\_17\_5\_2\_beta\_pseudoMass\_pow\_succ\_lipschitz\_of\_high\_temp\_bound}
+  -- the finite-stage interval Lipschitz estimate for
+  $\beta\mapsto(h(\beta))^{2\alpha+1}$, obtained by applying the MVT to the
+  pointwise concrete pseudo-mass power derivative bound.
 \end{itemize}
 PR~\#2664 adds a finite high-temperature bridge discharging the upper-bound
 predicate in the cubic active-range setting without adding an axiom.
