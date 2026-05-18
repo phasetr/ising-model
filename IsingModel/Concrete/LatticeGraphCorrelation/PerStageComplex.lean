@@ -99,6 +99,51 @@ theorem norm_partitionFunctionComplexAlongExhaustion_le_on_isCompact_stage_latti
   Ambient.norm_partitionFunctionComplexAlongExhaustion_le_on_isCompact_stage
     (IsingModel.latticeGraph d) Λ β J hK
 
+/-- **ℤ^d per-stage upper bound on normalised `Real.log ‖Z_ℂ‖`**:
+under `|Re h| ≤ R` and nonvanishing, the complex partition-function envelope
+gives the corresponding upper bound for
+`Real.log ‖Z_{Λ_n}(h)‖ / |Λ_n|`. -/
+theorem real_log_norm_partitionFunctionComplexAlongExhaustion_div_card_le_stage_latticeGraph
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph
+        (IsingModel.latticeGraph d) (Λ.volume n)).edgeSet]
+    (β J : ℝ) (n : ℕ) [Nonempty (↑(Λ.volume n) : Type _)] {R : ℝ} {h : ℂ}
+    (hZ : Ambient.partitionFunctionComplexAlongExhaustion
+        (IsingModel.latticeGraph d) Λ (J : ℂ) h (β : ℂ) n ≠ 0)
+    (hh : |h.re| ≤ R) :
+    Real.log ‖Ambient.partitionFunctionComplexAlongExhaustion
+        (IsingModel.latticeGraph d) Λ (J : ℂ) h (β : ℂ) n‖
+        / (Fintype.card (↑(Λ.volume n) : Type _) : ℝ)
+      ≤ Real.log 2 +
+        |β| * (|J| * (Ambient.inducedGraph
+            (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card
+          + R * Fintype.card (↑(Λ.volume n) : Type _))
+          / (Fintype.card (↑(Λ.volume n) : Type _) : ℝ) :=
+  Ambient.real_log_norm_partitionFunctionComplexAlongExhaustion_div_card_le_of_re_bound_stage
+    (IsingModel.latticeGraph d) Λ β J n hZ hh
+
+/-- **ℤ^d compact-field upper normalised-log handoff under bounded edge density**:
+if `K` is compact, the exhaustion has bounded edge density, every stage is
+nonempty, and `Z_{Λ_n}(h)` is nonzero on `K`, then
+`Real.log ‖Z_{Λ_n}(h)‖ / |Λ_n|` has one stage-independent upper bound on `K`.
+This is only the upper half of the later normalised absolute-log input. -/
+theorem exists_real_log_norm_partitionFunctionComplexAlongExhaustion_div_card_le_latticeGraph
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph
+        (IsingModel.latticeGraph d) (Λ.volume n)).edgeSet]
+    [∀ n, Nonempty (↑(Λ.volume n) : Type _)]
+    (hBED : Ambient.BoundedEdgeDensity (IsingModel.latticeGraph d) Λ)
+    (β J : ℝ) {K : Set ℂ} (hK : IsCompact K)
+    (hZ : ∀ n, ∀ h ∈ K,
+      Ambient.partitionFunctionComplexAlongExhaustion
+          (IsingModel.latticeGraph d) Λ (J : ℂ) h (β : ℂ) n ≠ 0) :
+    ∃ C : ℝ, ∀ n, ∀ h ∈ K,
+      Real.log ‖Ambient.partitionFunctionComplexAlongExhaustion
+          (IsingModel.latticeGraph d) Λ (J : ℂ) h (β : ℂ) n‖
+        / (Fintype.card (↑(Λ.volume n) : Type _) : ℝ) ≤ C :=
+  Ambient.exists_real_log_norm_partitionFunctionComplexAlongExhaustion_div_card_le_on_isCompact
+    (IsingModel.latticeGraph d) Λ hBED β J hK hZ
+
 /-- **ℤ^d stage free-energy bound from a normalised absolute-log bound**:
 if `|log ‖Z_{Λ_n}(h)‖| / |Λ_n| ≤ C` at a nonempty stage, then the principal
 complex free energy is bounded by `C + π / |Λ_n|`. This records the exact
