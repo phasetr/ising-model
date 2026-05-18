@@ -369,6 +369,40 @@ theorem leeYangFugacityVec_norm_lt_one
     ‖(leeYangFugacityVec (β : ℂ) h : ι → ℂ) k‖ < 1 := by
   exact norm_leeYangFugacity_lt_one hβ hh
 
+/-- **Compact-uniform Lee-Yang fugacity gap**: on compact subsets of
+`leeYangDomain`, the scalar fugacity `h ↦ exp (-2βh)` is uniformly separated
+from the unit circle. This packages the compactness step needed before turning
+Lee-Yang polynomial nonvanishing into quantitative lower logarithmic control. -/
+theorem exists_leeYangFugacity_norm_le_lt_one_on_isCompact
+    {β : ℝ} (hβ : 0 < β) {K : Set ℂ}
+    (hK : IsCompact K) (hKsub : K ⊆ leeYangDomain) :
+    ∃ r : ℝ, r < 1 ∧ ∀ h ∈ K, ‖leeYangFugacity (β : ℂ) h‖ ≤ r := by
+  by_cases hne : K.Nonempty
+  · rcases hK.exists_isMaxOn hne
+        ((continuous_leeYangFugacity (β : ℂ)).norm.continuousOn)
+      with ⟨h₀, hh₀, hmax⟩
+    refine ⟨‖leeYangFugacity (β : ℂ) h₀‖,
+      norm_leeYangFugacity_lt_one hβ (hKsub hh₀), ?_⟩
+    intro h hh
+    exact hmax hh
+  · refine ⟨0, zero_lt_one, ?_⟩
+    intro h hh
+    exact False.elim (hne ⟨h, hh⟩)
+
+omit [Fintype ι] [DecidableEq ι] in
+/-- **Compact-uniform Lee-Yang fugacity-vector gap**: the scalar compact gap
+also bounds every coordinate of the constant site-level fugacity vector. -/
+theorem exists_leeYangFugacityVec_norm_le_lt_one_on_isCompact
+    {β : ℝ} (hβ : 0 < β) {K : Set ℂ}
+    (hK : IsCompact K) (hKsub : K ⊆ leeYangDomain) :
+    ∃ r : ℝ, r < 1 ∧
+      ∀ h ∈ K, ∀ k : ι, ‖(leeYangFugacityVec (β : ℂ) h : ι → ℂ) k‖ ≤ r := by
+  rcases exists_leeYangFugacity_norm_le_lt_one_on_isCompact hβ hK hKsub
+    with ⟨r, hr, hbound⟩
+  refine ⟨r, hr, ?_⟩
+  intro h hh k
+  simpa [leeYangFugacityVec] using hbound h hh
+
 /-- **Lee-Yang normalization factor**: `exp(β·J·|E| + β·h·|ι|)`.
 
 The Ising partition function factorises (Friedli–Velenik (3.63)) as
