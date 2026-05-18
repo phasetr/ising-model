@@ -9,6 +9,9 @@ import Mathlib.Analysis.SpecialFunctions.Complex.Log
 import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 import Mathlib.Analysis.Complex.HasPrimitives
 import Mathlib.Analysis.Complex.LocallyUniformLimit
+import Mathlib.Analysis.Complex.Polynomial.Basic
+import Mathlib.Analysis.Normed.Unbundled.RingSeminorm
+import Mathlib.Algebra.Polynomial.BigOperators
 
 /-!
 # Complex analyticity of the Ising partition function (finite volume)
@@ -30,6 +33,131 @@ namespace IsingModel
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
 open scoped Complex
+
+/-! ## Uniform one-variable specialisation of multilinear polynomials -/
+
+/-- Specialise a multilinear polynomial to one variable by setting all
+coordinates equal to the same complex number. -/
+noncomputable def MultilinPoly.uniformPolynomial (p : MultilinPoly ι) : Polynomial ℂ :=
+  ∑ X : Finset ι, Polynomial.monomial X.card (p X)
+
+omit [DecidableEq ι] in
+/-- Evaluating the one-variable specialisation agrees with evaluating the
+multilinear polynomial at a constant vector. -/
+theorem MultilinPoly.uniformPolynomial_eval (p : MultilinPoly ι) (z : ℂ) :
+    p.uniformPolynomial.eval z = p.eval (fun _ : ι => z) := by
+  unfold MultilinPoly.uniformPolynomial MultilinPoly.eval
+  rw [Polynomial.eval_finset_sum]
+  refine Finset.sum_congr rfl ?_
+  intro X _
+  rw [Polynomial.eval_monomial]
+  simp [Finset.prod_const]
+
+omit [DecidableEq ι] in
+/-- The one-variable specialisation has degree at most the number of variables. -/
+theorem MultilinPoly.uniformPolynomial_natDegree_le_card (p : MultilinPoly ι) :
+    p.uniformPolynomial.natDegree ≤ Fintype.card ι := by
+  unfold MultilinPoly.uniformPolynomial
+  refine Polynomial.natDegree_sum_le_of_forall_le _ _ ?_
+  intro X _
+  exact (Polynomial.natDegree_monomial_le (p X)).trans X.card_le_univ
+
+omit [DecidableEq ι] in
+/-- A multilinear polynomial evaluated at the zero vector gives its constant
+coefficient. -/
+theorem MultilinPoly.eval_const_zero (p : MultilinPoly ι) :
+    p.eval (fun _ : ι => (0 : ℂ)) = p ∅ := by
+  classical
+  unfold MultilinPoly.eval
+  simpa using
+    (Finset.sum_eq_single (s := (Finset.univ : Finset (Finset ι))) (a := (∅ : Finset ι))
+      (f := fun X : Finset ι => p X * ∏ i ∈ X, (fun _ : ι => (0 : ℂ)) i)
+      (by
+        intro X _ hX
+        have hne : X.Nonempty := Finset.nonempty_iff_ne_empty.mpr hX
+        rcases hne with ⟨i, hi⟩
+        have hprod : (∏ i ∈ X, (fun _ : ι => (0 : ℂ)) i) = 0 :=
+          Finset.prod_eq_zero hi rfl
+        simp [hprod])
+      (by intro hmem; simp at hmem))
+
+/-! ## One-variable root-product lower bound -/
+
+/-- If a complex polynomial has value `1` at `0` and all roots have modulus at
+least one, then on `‖z‖ ≤ r < 1` its value is bounded below by
+`(1 - r)^natDegree`. -/
+theorem Polynomial.one_sub_radius_pow_natDegree_le_norm_eval_of_roots_norm_ge_one
+    (p : Polynomial ℂ) {r : ℝ} (hr0 : 0 ≤ r) (hr1 : r < 1)
+    (hp0 : p.eval 0 = 1)
+    (hroots : ∀ a ∈ p.roots, 1 ≤ ‖a‖) {z : ℂ} (hz : ‖z‖ ≤ r) :
+    (1 - r) ^ p.natDegree ≤ ‖p.eval z‖ := by
+  have hsplit : p.Splits := IsAlgClosed.splits p
+  have hcard : p.roots.card = p.natDegree := hsplit.natDegree_eq_card_roots.symm
+  have h1r_nonneg : 0 ≤ 1 - r := by linarith
+  have h_eval_z := hsplit.eval_eq_prod_roots z
+  have h_eval_0 := hsplit.eval_eq_prod_roots (0 : ℂ)
+  have hnorm_prod_z :
+      ‖(p.roots.map (fun a => z - a)).prod‖ =
+        (p.roots.map (fun a => ‖z - a‖)).prod := by
+    change (NormedField.toMulRingNorm ℂ) (p.roots.map (fun a => z - a)).prod =
+      (p.roots.map (fun a => (NormedField.toMulRingNorm ℂ) (z - a))).prod
+    exact (p.roots.prod_hom' (NormedField.toMulRingNorm ℂ) (fun a : ℂ => z - a)).symm
+  have hnorm_prod_0' :
+      ‖(p.roots.map (fun a => (0 : ℂ) - a)).prod‖ =
+        (p.roots.map (fun a => ‖(0 : ℂ) - a‖)).prod := by
+    change (NormedField.toMulRingNorm ℂ) (p.roots.map (fun a => (0 : ℂ) - a)).prod =
+      (p.roots.map (fun a => (NormedField.toMulRingNorm ℂ) ((0 : ℂ) - a))).prod
+    exact
+      (p.roots.prod_hom' (NormedField.toMulRingNorm ℂ)
+        (fun a : ℂ => (0 : ℂ) - a)).symm
+  have hnorm_prod_0 :
+      ‖(p.roots.map (fun a => (0 : ℂ) - a)).prod‖ =
+        (p.roots.map (fun a => ‖a‖)).prod := by
+    rw [hnorm_prod_0']
+    congr 1
+    ext a
+    simp
+  have hnorm_z :
+      ‖p.eval z‖ = ‖p.leadingCoeff‖ * (p.roots.map (fun a => ‖z - a‖)).prod := by
+    rw [h_eval_z, norm_mul, hnorm_prod_z]
+  have hnorm0 : ‖p.leadingCoeff‖ * (p.roots.map (fun a => ‖a‖)).prod = 1 := by
+    have := congrArg norm hp0
+    rw [h_eval_0, norm_mul, hnorm_prod_0, norm_one] at this
+    exact this
+  have hfactor_le :
+      (p.roots.map (fun a => (1 - r) * ‖a‖)).prod
+        ≤ (p.roots.map (fun a => ‖z - a‖)).prod := by
+    refine Multiset.prod_map_le_prod_map₀
+      (fun a => (1 - r) * ‖a‖) (fun a => ‖z - a‖) ?_ ?_
+    · intro a _
+      exact mul_nonneg h1r_nonneg (norm_nonneg a)
+    · intro a ha
+      have ha1 : 1 ≤ ‖a‖ := hroots a ha
+      have hsub : ‖a‖ - ‖z‖ ≤ ‖z - a‖ := by
+        simpa [norm_sub_rev] using norm_sub_norm_le a z
+      calc
+        (1 - r) * ‖a‖ = ‖a‖ - r * ‖a‖ := by ring
+        _ ≤ ‖a‖ - r := by
+          gcongr
+          exact le_mul_of_one_le_right hr0 ha1
+        _ ≤ ‖a‖ - ‖z‖ := by gcongr
+        _ ≤ ‖z - a‖ := hsub
+  have hfactor_eq :
+      (p.roots.map (fun a => (1 - r) * ‖a‖)).prod =
+        (1 - r) ^ p.roots.card * (p.roots.map (fun a => ‖a‖)).prod := by
+    rw [Multiset.prod_map_mul]
+    simp [Multiset.prod_replicate]
+  calc
+    (1 - r) ^ p.natDegree
+        = (1 - r) ^ p.roots.card * 1 := by rw [hcard, mul_one]
+    _ = (1 - r) ^ p.roots.card *
+          (‖p.leadingCoeff‖ * (p.roots.map (fun a => ‖a‖)).prod) := by rw [hnorm0]
+    _ = ‖p.leadingCoeff‖ *
+          ((1 - r) ^ p.roots.card * (p.roots.map (fun a => ‖a‖)).prod) := by ring
+    _ ≤ ‖p.leadingCoeff‖ * (p.roots.map (fun a => ‖z - a‖)).prod := by
+      gcongr
+      rwa [← hfactor_eq]
+    _ = ‖p.eval z‖ := hnorm_z.symm
 
 /-- Per-edge spin product with values in `ℂ`. -/
 noncomputable def edgeSpinComplex (σ : Config ι) (e : Sym2 ι) : ℂ :=
@@ -523,6 +651,84 @@ theorem exists_pos_le_norm_isingEdgePoly_eval_leeYangFugacityVec_on_isCompact
   · refine ⟨1, zero_lt_one, ?_⟩
     intro h hh
     exact False.elim (hne ⟨h, hh⟩)
+
+/-- The one-variable Lee-Yang polynomial associated to an Ising edge
+polynomial has value `1` at the origin. -/
+theorem isingEdgePoly_uniformPolynomial_eval_zero (edges : List (ι × ι × ℝ)) :
+    (isingEdgePoly edges).uniformPolynomial.eval 0 = 1 := by
+  rw [MultilinPoly.uniformPolynomial_eval, MultilinPoly.eval_const_zero]
+  simp [isingEdgePoly, edgeWeight]
+
+/-- Roots of the one-variable specialisation of the Ising Lee-Yang polynomial
+lie outside the open unit disk. -/
+theorem isingEdgePoly_uniformPolynomial_roots_norm_ge_one
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {t : ℝ} (ht₀ : 0 ≤ t) (ht₁ : t < 1) :
+    ∀ a ∈ (isingEdgePoly (graphToEdgeList G t)).uniformPolynomial.roots,
+      1 ≤ ‖a‖ := by
+  classical
+  let q : Polynomial ℂ := (isingEdgePoly (graphToEdgeList G t)).uniformPolynomial
+  have hq0 : q.eval 0 = 1 := by
+    simpa [q] using isingEdgePoly_uniformPolynomial_eval_zero (graphToEdgeList G t)
+  have hq_ne : q ≠ 0 := by
+    intro hq
+    have hzero : q.eval 0 = 0 := by simp [hq]
+    linarith [show (q.eval 0).re = 1 by rw [hq0]; simp,
+      show (q.eval 0).re = 0 by rw [hzero]; simp]
+  intro a ha
+  by_contra hbad
+  have ha_lt : ‖a‖ < 1 := lt_of_not_ge hbad
+  have hroot : q.eval a = 0 := (Polynomial.mem_roots hq_ne).mp ha
+  have hnonzero : q.eval a ≠ 0 := by
+    rw [MultilinPoly.uniformPolynomial_eval]
+    exact isingEdgePoly_nonvanishing_of_graph G t ht₀ ht₁
+      (fun _ : ι => a) (fun _ => ha_lt)
+  exact hnonzero hroot
+
+/-- Quantitative one-variable Lee-Yang lower bound: if `‖z‖ ≤ r < 1`, then
+the uniform-fugacity Lee-Yang polynomial is bounded below by `(1-r)^|ι|`. -/
+theorem one_sub_radius_pow_card_le_norm_isingEdgePoly_eval_const
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {t r : ℝ} (ht₀ : 0 ≤ t) (ht₁ : t < 1)
+    (hr0 : 0 ≤ r) (hr1 : r < 1) {z : ℂ} (hz : ‖z‖ ≤ r) :
+    (1 - r) ^ Fintype.card ι
+      ≤ ‖(isingEdgePoly (graphToEdgeList G t)).eval (fun _ : ι => z)‖ := by
+  let q : Polynomial ℂ := (isingEdgePoly (graphToEdgeList G t)).uniformPolynomial
+  have hq0 : q.eval 0 = 1 := by
+    simpa [q] using isingEdgePoly_uniformPolynomial_eval_zero (graphToEdgeList G t)
+  have hroots : ∀ a ∈ q.roots, 1 ≤ ‖a‖ := by
+    simpa [q] using isingEdgePoly_uniformPolynomial_roots_norm_ge_one (G := G) ht₀ ht₁
+  have hdeg : q.natDegree ≤ Fintype.card ι := by
+    simpa [q] using
+      (MultilinPoly.uniformPolynomial_natDegree_le_card
+        (isingEdgePoly (graphToEdgeList G t) : MultilinPoly ι))
+  have hbase_nonneg : 0 ≤ 1 - r := by linarith
+  have hbase_le_one : 1 - r ≤ 1 := by linarith
+  have hpow_card_le : (1 - r) ^ Fintype.card ι ≤ (1 - r) ^ q.natDegree :=
+    pow_le_pow_of_le_one hbase_nonneg hbase_le_one hdeg
+  have hlower :
+      (1 - r) ^ q.natDegree ≤ ‖q.eval z‖ :=
+    Polynomial.one_sub_radius_pow_natDegree_le_norm_eval_of_roots_norm_ge_one
+      q hr0 hr1 hq0 hroots hz
+  calc
+    (1 - r) ^ Fintype.card ι ≤ (1 - r) ^ q.natDegree := hpow_card_le
+    _ ≤ ‖q.eval z‖ := hlower
+    _ = ‖(isingEdgePoly (graphToEdgeList G t)).eval (fun _ : ι => z)‖ := by
+      rw [MultilinPoly.uniformPolynomial_eval]
+
+/-- Quantitative Lee-Yang lower bound for the uniform fugacity vector
+`leeYangFugacityVec`. -/
+theorem one_sub_radius_pow_card_le_norm_isingEdgePoly_eval_leeYangFugacityVec
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {t r : ℝ} (ht₀ : 0 ≤ t) (ht₁ : t < 1)
+    {β h : ℂ} (hr0 : 0 ≤ r) (hr1 : r < 1)
+    (hz : ‖leeYangFugacity β h‖ ≤ r) :
+    (1 - r) ^ Fintype.card ι
+      ≤ ‖(isingEdgePoly (graphToEdgeList G t)).eval
+          (leeYangFugacityVec β h)‖ := by
+  simpa [leeYangFugacityVec] using
+    one_sub_radius_pow_card_le_norm_isingEdgePoly_eval_const
+      (G := G) ht₀ ht₁ hr0 hr1 (z := leeYangFugacity β h) hz
 
 /-- Per-site factorisation of the external-field exponential.
 For `σ : Config ι` with down-spin set `X = configToFinset σ`, at each site `i`:
