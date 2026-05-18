@@ -391,5 +391,60 @@ theorem lemma_17_5_2_beta_deriv_abs_le_high_temp
   inducedLatticeGraph_beta_deriv_abs_le_high_temp Λ J hJ a b ha hab hlt
     n r s hrs β hβ
 
+/-- **GJ §17.5 Lemma 17.5.2 HLS derivative-hypothesis bridge**:
+an absolute derivative bound implies the exact HLS denominator hypothesis used by
+`pseudoMass_power_deriv_le`, once the concrete bound has been compared with
+`K * c β / (h β)^(2α)`.
+
+This isolates the final scalar comparison from the pseudo-mass calculus API.
+
+References: Glimm--Jaffe §17.5, Theorem 17.5.1 proof and Lemma 17.5.2,
+pp.~311--312. -/
+theorem lemma_17_5_2_hls_derivative_hypothesis_of_abs_bound
+    {α : ℕ} {K B : ℝ} {h c : ℝ → ℝ} {c' β : ℝ}
+    (habs : |c'| ≤ B)
+    (hcomp : B ≤ K * c β / (h β) ^ (2 * α)) :
+    |c'| ≤ K * c β / (h β) ^ (2 * α) :=
+  habs.trans hcomp
+
+/-- **GJ §17.5 Lemma 17.5.2 finite-stage HLS derivative hypothesis**:
+the high-temperature finite-volume β-derivative estimate supplies the exact
+HLS denominator hypothesis needed by `pseudoMass_power_deriv_le`, provided the
+uniform Lebowitz/susceptibility constant has been compared with
+`K * c(β) / (h β)^(2α)`.
+
+This is the finite-stage packaging of the comparison step following the HLS
+convolution bound in the proof of the pseudo-mass Lipschitz estimate.
+
+References: Glimm--Jaffe §17.5, Theorem 17.5.1 proof and Lemma 17.5.2,
+pp.~311--312. -/
+theorem lemma_17_5_2_beta_hls_derivative_hypothesis_of_high_temp_bound
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (hJ : 0 ≤ J)
+    (a b : ℝ) (ha : 0 < a) (hab : a ≤ b) (hlt : b * J * ↑(2 * d) < 1)
+    (n : ℕ) (r s : ↑(Λ.volume n)) (hrs : r ≠ s)
+    (β : ℝ) (hβ : β ∈ Set.Icc a b)
+    {α : ℕ} {K : ℝ} {h : ℝ → ℝ}
+    (hcomp :
+      let M : ℝ := b * J * ↑(2 * d) / (1 - b * J * ↑(2 * d))
+      J * M ^ 2 + J * (4 * ↑d) ≤
+        K *
+          IsingModel.correlation
+            (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+            (⟨J, 0, β⟩ : IsingParams ℝ) {r, s} /
+          (h β) ^ (2 * α)) :
+    let G := inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)
+    ∃ dval : ℝ,
+      HasDerivAt
+        (fun β' => IsingModel.correlation G (⟨J, 0, β'⟩ : IsingParams ℝ) {r, s})
+        dval β ∧
+      |dval| ≤
+        K * IsingModel.correlation G (⟨J, 0, β⟩ : IsingParams ℝ) {r, s} /
+          (h β) ^ (2 * α) := by
+  obtain ⟨dval, hdval, habs⟩ :=
+    lemma_17_5_2_beta_deriv_abs_le_high_temp Λ J hJ a b ha hab hlt
+      n r s hrs β hβ
+  exact ⟨dval, hdval, habs.trans (by simpa using hcomp)⟩
+
 end Ambient
 end IsingModel
