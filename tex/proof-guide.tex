@@ -3533,6 +3533,29 @@ Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70, and
 Friedli--Velenik \cite{friedli-velenik}, Theorem 3.43, pp.~122--127.
 \end{theorem}
 
+\begin{theorem}[Finite-stage compact Lee--Yang polynomial lower bound; PR \#2685]
+The theorem
+\texttt{exists\_pos\_le\_norm\_isingEdgePoly\_eval\_leeYangFugacityVec\_on\_isCompact}
+records the finite-volume compact lower bound for the Lee--Yang polynomial
+factor.  If $\beta>0$, $0\le t<1$, $K$ is compact, and
+$K\subseteq\texttt{leeYangDomain}$, then there is $\epsilon>0$ such that
+\[
+  \epsilon \le
+  \left\|P_E\bigl(\texttt{leeYangFugacityVec}(\beta,h)\bigr)\right\|
+  \qquad(h\in K).
+\]
+The proof first records the general continuity theorem
+\texttt{MultilinPoly.continuous\_eval}.  The composed map
+$h\mapsto P_E(z(h))$ is continuous, hence its norm has a minimum on compact
+$K$.  At a minimiser the finite-volume Lee--Yang theorem gives nonvanishing,
+so the minimum is positive.  If $K$ is empty one takes $\epsilon=1$.
+
+This is only a finite-volume compact lower bound: the constant depends on the
+finite graph.  It is not lower normalised-log control uniform in an exhaustion.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70, and
+Friedli--Velenik \cite{friedli-velenik}, Theorem 3.43, pp.~122--127.
+\end{theorem}
+
 \begin{theorem}[Compact-uniform complex partition-function bound; PR \#2678]
 The theorem
 \texttt{exists\_abs\_re\_le\_on\_isCompact} records the elementary
