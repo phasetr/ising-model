@@ -921,7 +921,8 @@ theorem freeEnergyComplexAlongExhaustion_subseq_branchFamily_vitali_bridge_ball_
 identification**: for a ball centred at the real parameter `p.h`, a locally
 uniform limit of subsequence branch witnesses is holomorphic on the ball and
 agrees at the centre with the real infinite-volume free energy. -/
-theorem freeEnergyComplexAlongExhaustion_subseq_branchFamily_vitali_ball_real_latticeGraph
+theorem
+freeEnergyComplexAlongExhaustion_subseq_branchFamily_vitali_ball_identified_at_center_latticeGraph
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
     [∀ n, Fintype (Ambient.inducedGraph
         (IsingModel.latticeGraph d) (Λ.volume n)).edgeSet]
