@@ -3297,6 +3297,40 @@ apply \texttt{vitali\_bridge\_leeYangDomain} to obtain analyticity of
 the infinite-volume limit $f_\infty$.
 \end{theorem}
 
+\begin{theorem}[Conditional $\infty$-volume Vitali assembly for GJ \S 4.6 Thm 4.6.2; PR \#2673]
+Let $G$ be an ambient graph with exhaustion $\Lambda_n$, and let
+\[
+  F_n(h)=\texttt{freeEnergyComplexAlongExhaustion}\,G\,\Lambda\,J\,h\,\beta\,n .
+\]
+The Lean theorem
+\texttt{freeEnergyComplexAlongExhaustion\_vitali\_bridge} states that,
+on any open set $U\subseteq\mathbb C$, if every $F_n$ is holomorphic on
+$U$ and $F_n\to f$ locally uniformly on $U$, then $f$ is holomorphic on
+$U$. The specialization
+\texttt{freeEnergyComplexAlongExhaustion\_vitali\_bridge\_leeYangDomain}
+sets $U=\texttt{leeYangDomain}$.
+
+The companion theorem
+\texttt{freeEnergyComplexAlongExhaustion\_limit\_eq\_freeEnergyInfinite\_at\_real}
+adds the real-axis identification. If
+\[
+  F_n(h)\to f(h)
+\]
+locally uniformly on the Lee-Yang domain, and the real parameters satisfy
+the existing \texttt{DisjointTowerHypotheses} and
+\texttt{BoundedEdgeDensity} assumptions, then at a real point
+$p.h\in\texttt{leeYangDomain}$,
+\[
+  f(p.h)=
+  \bigl(\texttt{freeEnergyInfinite}\,G\,\Lambda\,p:\mathbb R\bigr):\mathbb C .
+\]
+The proof uses mathlib's pointwise consequence
+\texttt{TendstoLocallyUniformlyOn.tendsto\_at}, the previously
+formalised real-axis convergence of
+\texttt{freeEnergyComplexAlongExhaustion}, and uniqueness of limits in
+the Hausdorff space $\mathbb C$.
+\end{theorem}
+
 \begin{remark}[Status of PR \#200 — merged 2026-04-19, \texttt{52ea2f1}]
 PR \#200 was squash-merged into \texttt{main} on 2026-04-19 as
 commit \texttt{52ea2f1}. Items now present in \texttt{main}:
