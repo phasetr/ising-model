@@ -829,6 +829,40 @@ theorem exists_norm_freeEnergyComplexAlongExhaustion_le_lower_log_leeYang
   exact ⟨C, norm_freeEnergyComplexAlongExhaustion_le_of_abs_log_norm_bound_on_set_uniform
     G Λ β J hC⟩
 
+/-- **Lee-Yang locally bounded family from polynomial-factor lower witnesses**:
+on compact `K ⊆ leeYangDomain`, a stage-uniform lower normalised-log bound for
+positive Lee-Yang polynomial-factor witnesses supplies the lower-log hypothesis
+for `Z_ℂ`; combining this with the Lee-Yang upper bound gives a single
+stage-independent free-energy bound `‖f_n(h)‖ ≤ C + π`.
+
+This remains conditional on the polynomial-witness lower normalised-log input;
+it only packages the route from that input to the locally bounded family. -/
+theorem exists_norm_freeEnergyComplexAlongExhaustion_le_poly_lower_leeYang
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    [∀ n, Nonempty (↑(Λ.volume n) : Type _)]
+    (hBED : BoundedEdgeDensity G Λ) {β J R : ℝ} (hβ : 0 < β) (hJ : 0 < J)
+    {K : Set ℂ} (hK : IsCompact K) (hKsub : K ⊆ IsingModel.leeYangDomain)
+    (hR : ∀ h ∈ K, |h.re| ≤ R)
+    (hPolyLower : ∃ Lε : ℝ, ∀ n, ∀ h ∈ K,
+      ∃ ε : ℝ, 0 < ε ∧
+        ε ≤ ‖(IsingModel.isingEdgePoly
+          (IsingModel.graphToEdgeList (inducedGraph G (Λ.volume n))
+            (Real.exp (-2 * β * J)))).eval
+          (IsingModel.leeYangFugacityVec (β : ℂ) h)‖ ∧
+        -Lε ≤ Real.log ε / (Fintype.card (↑(Λ.volume n) : Type _) : ℝ)) :
+    ∃ C : ℝ, ∀ n, ∀ h ∈ K,
+      ‖freeEnergyComplexAlongExhaustion G Λ (J : ℂ) h (β : ℂ) n‖ ≤ C + Real.pi := by
+  have hLower :
+      ∃ L : ℝ, ∀ n, ∀ h ∈ K,
+        -L ≤ Real.log ‖partitionFunctionComplexAlongExhaustion
+            G Λ (J : ℂ) h (β : ℂ) n‖
+          / (Fintype.card (↑(Λ.volume n) : Type _) : ℝ) :=
+    exists_lower_log_norm_partitionFunctionComplexAlongExhaustion_of_poly_lower
+      G Λ hβ.le hJ.le hR hPolyLower
+  exact exists_norm_freeEnergyComplexAlongExhaustion_le_lower_log_leeYang
+    G Λ hBED hβ hJ hK hKsub hLower
+
 /-! ## Real-axis convergence to `freeEnergyInfinite`
 
 The real-axis half of the Vitali identification: at real parameters,
