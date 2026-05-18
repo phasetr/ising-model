@@ -3331,6 +3331,58 @@ formalised real-axis convergence of
 the Hausdorff space $\mathbb C$.
 \end{theorem}
 
+\begin{theorem}[Per-stage Lee-Yang local branches for the Vitali input; PR \#2674]
+Let $G$ be an ambient graph with exhaustion $\Lambda_n$, and assume
+that the induced edge set at each finite stage is finite.  For real
+ferromagnetic parameters $\beta>0$ and $J>0$, the Lean theorem
+\texttt{freeEnergyComplexAlongExhaustion\_exists\_analyticAt\_branch\_leeYangDomain\_stage}
+states that every nonempty stage $\Lambda_n$ inherits the finite-volume
+Lee-Yang local branch theorem from PR \#200.  More explicitly, for each
+$h_0\in\texttt{leeYangDomain}$ there is a function
+$f:\mathbb C\to\mathbb C$ such that
+\[
+  f \text{ is analytic at } h_0,\qquad
+  \exp(|\Lambda_n|\,f(h_0)) = Z_{\Lambda_n}(h_0),
+\]
+and
+\[
+  f(h_0)=
+  \texttt{freeEnergyComplexAlongExhaustion}\,G\,\Lambda\,J\,h_0\,\beta\,n .
+\]
+The wrapper
+\texttt{freeEnergyComplexAlongExhaustion\_analyticBranch\_leeYangDomain\_stage}
+packages this in pointwise
+$\forall h_0\in\texttt{leeYangDomain}$ form, and
+\texttt{freeEnergyComplexAlongExhaustion\_analyticBranch\_leeYangDomain\_all\_stages}
+packages the same statement for all stages under
+$\forall n,\ \Lambda_n\ne\emptyset$.
+
+The stronger ball-level wrapper
+\texttt{freeEnergyComplexAlongExhaustion\_exists\_analyticOnNhd\_branch\_ball\_stage}
+is the usable local-branch input for Vitali.  If
+$B(h_0,r)\subseteq\texttt{leeYangDomain}$ and $r>0$, it gives
+$f:\mathbb C\to\mathbb C$ such that $f$ is analytic on a neighbourhood
+of the ball and
+\[
+  \forall z\in B(h_0,r),\qquad
+  \exp(|\Lambda_n|\,f(z))=Z_{\Lambda_n}(z).
+\]
+The all-stages form
+\texttt{freeEnergyComplexAlongExhaustion\_analyticOnNhd\_branch\_ball\_all\_stages}
+packages this for every nonempty stage.  The concrete $\mathbb Z^d$
+specializations are recorded in
+\texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+
+These are local branch inputs for the normal-family/Vitali part of
+GJ \S 4.6 Thm 4.6.2; they do not by themselves choose a coherent
+global branch family or prove local uniform convergence of the chosen
+branches.  The pointwise branch agrees with the principal
+\texttt{freeEnergyComplexAlongExhaustion} value at the basepoint $h_0$,
+while the local analytic representative may differ from the principal
+\texttt{Complex.log} branch away from $h_0$.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{remark}[Status of PR \#200 — merged 2026-04-19, \texttt{52ea2f1}]
 PR \#200 was squash-merged into \texttt{main} on 2026-04-19 as
 commit \texttt{52ea2f1}. Items now present in \texttt{main}:
