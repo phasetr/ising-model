@@ -4198,7 +4198,7 @@ $(d, \Lambda, p) \to (\alpha, r, c)$ and the exponential decay
 bounds on $\mathbb{Z}^d$ (Step 117h+).
 
 \paragraph{\S17.5 Lemma 17.5.2 conditional sandwich capstone
-(Step 117l, PRs~\#2663--\#2670).} The new module
+(Step 117l, PRs~\#2663--\#2671).} The new module
 \texttt{Concrete/LatticeGraphCorrelation/Lemma\_17\_5\_2.lean}
 introduces the named capstone interface for
 Glimm--Jaffe \S17.5 Lemma~17.5.2 (2nd ed., pp.~311--312):
@@ -4242,6 +4242,10 @@ declarations:
   finite-stage scalar comparison between the high-temperature
   Lebowitz/susceptibility derivative bound and the HLS denominator
   $Kc(\beta)/(h(\beta))^{2\alpha}$.
+\item \texttt{Lemma\_17\_5\_2\_InfiniteHLSDenominatorComparison} -- the
+  infinite-volume derivative comparison
+  $|c'(\beta)|\le Kc(\beta)/(h(\beta))^{2\alpha}$ for
+  $c(\beta)=\langle\sigma_x\sigma_z\rangle_\infty$.
 \item \texttt{lemma\_17\_5\_2\_beta\_deriv\_abs\_le\_high\_temp} -- the
   finite-stage high-temperature beta-derivative absolute bound
   $|c'|\le J M^2 + 4dJ$, exposing the concrete Lebowitz/susceptibility
@@ -4273,6 +4277,12 @@ declarations:
 \item \texttt{lemma\_17\_5\_2\_beta\_pseudoMass\_pow\_succ\_lipschitz\_of\_hls\_constant}
   -- the corresponding HLS-constant existential interval estimate, still
   conditional on the pointwise denominator comparison.
+\item \texttt{lemma\_17\_5\_2\_infinite\_pseudoMass\_pow\_succ\_deriv\_bound\_of\_hls\_constant}
+  and
+  \texttt{lemma\_17\_5\_2\_infinite\_pseudoMass\_pow\_succ\_lipschitz\_of\_hls\_constant}
+  -- the corresponding infinite-volume pointwise derivative and interval
+  Lipschitz handoffs, retaining the HLS convolution inequality for the chosen
+  constant and using the exact infinite-volume denominator comparison.
 \end{itemize}
 PR~\#2664 adds a finite high-temperature bridge discharging the upper-bound
 predicate in the cubic active-range setting without adding an axiom.

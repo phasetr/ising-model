@@ -33,6 +33,9 @@ capstone, providing:
 * a named finite-stage HLS denominator-comparison predicate plus existential
   wrappers choosing the positive HLS convolution constant and feeding that
   comparison into the derivative and interval Lipschitz estimates;
+* infinite-volume analogues of the HLS denominator-comparison predicate and
+  HLS-constant derivative/Lipschitz wrappers, stated directly for
+  `correlationInfinite`;
 * finite-stage concrete wrappers feeding the HLS derivative hypothesis into
   `pseudoMass_power_deriv_le`, `pseudoMass_pow_succ_deriv_bound`, and the
   corresponding interval Lipschitz estimate.
@@ -388,6 +391,30 @@ def Lemma_17_5_2_HLSDenominatorComparison
       IsingModel.correlation
         (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
         (⟨J, 0, β⟩ : IsingParams ℝ) {r, s} /
+      (h β) ^ (2 * α)
+
+/-- **GJ §17.5 Lemma 17.5.2 infinite-volume HLS derivative comparison**:
+the exact denominator comparison needed by the abstract pseudo-mass calculus,
+with `c(β) := correlationInfinite (latticeGraph d) Λ ⟨J,0,β⟩ {x,z}`:
+`|c'(β)| ≤ K * c(β) / (h β)^(2α)`.
+
+This is the infinite-volume counterpart of the finite-stage comparison after
+the concrete derivative estimate has already been passed to the HLS denominator
+shape.  It is intentionally still a hypothesis: proving it from Lebowitz plus
+HLS and limits is the remaining substantive upper-bound step.
+
+References: Glimm--Jaffe §17.5, Theorem 17.5.1 proof and Lemma 17.5.2,
+pp.~311--312. -/
+def Lemma_17_5_2_InfiniteHLSDenominatorComparison
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (x z : Fin d → ℤ)
+    (β : ℝ) (α : ℕ) (K : ℝ) (h : ℝ → ℝ) : Prop :=
+  |deriv (fun β' =>
+      Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z}) β| ≤
+    K *
+      Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} /
       (h β) ^ (2 * α)
 
 /-- **GJ §17.5 Lemma 17.5.2 β-derivative absolute bound, finite-stage
@@ -788,6 +815,112 @@ theorem lemma_17_5_2_beta_pseudoMass_pow_succ_lipschitz_of_hls_constant
     hh_diff hh_nonneg hg_eq hh_pos hc_pos
     (fun β' hβ' => by
       simpa [Lemma_17_5_2_HLSDenominatorComparison] using hcomp β' hβ')
+
+/-- **GJ §17.5 Lemma 17.5.2 infinite-volume HLS-constant derivative bound
+for `(m⁻)^(2α+1)`**: under `2α > d`, choose a positive HLS convolution constant
+`K` carrying the uniform convolution inequality.  If the infinite-volume HLS
+denominator comparison holds for this `K` at `β`, then the abstract pseudo-mass
+chain rule gives a derivative bound for `β ↦ (h β)^(2α+1)`.
+
+This is the `correlationInfinite` analogue of
+`lemma_17_5_2_beta_pseudoMass_pow_succ_deriv_bound_of_hls_constant`; it is
+conditional on differentiability of the infinite-volume correlation profile and
+on the named denominator comparison.
+
+References: Glimm--Jaffe §17.5, Theorem 17.5.1 proof and Lemma 17.5.2,
+pp.~311--312. -/
+theorem lemma_17_5_2_infinite_pseudoMass_pow_succ_deriv_bound_of_hls_constant
+    {d α : ℕ} (hαd : 2 * α > d)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (x z : Fin d → ℤ)
+    (β : ℝ) {rho : ℝ} (hrho : 0 < rho)
+    {h : ℝ → ℝ} {h' : ℝ}
+    (hh : HasDerivAt h h' β)
+    (hc : HasDerivAt
+      (fun β' =>
+        Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z})
+      (deriv (fun β' =>
+        Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z}) β) β)
+    (hh_nonneg : 0 ≤ h β)
+    (hg_eq : ∀ β',
+      pseudoMassG α rho (h β') =
+        Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z})
+    (hh_pos : 0 < h β)
+    (hc_pos :
+      0 <
+        Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) {x, z}) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      (Lemma_17_5_2_InfiniteHLSDenominatorComparison Λ J x z β α K h →
+        ∃ dval : ℝ,
+          HasDerivAt (fun β' => (h β') ^ (2 * α + 1)) dval β ∧
+          |dval| ≤ ↑(2 * α + 1) * K / rho) := by
+  obtain ⟨K, hK, hK_conv⟩ := lemma_17_5_2_hls_convolution_constant α d hαd
+  refine ⟨K, hK, hK_conv, fun hcomp => ?_⟩
+  exact pseudoMass_pow_succ_deriv_bound α hrho hh hc hh_nonneg hg_eq hh_pos hc_pos
+    (by simpa [Lemma_17_5_2_InfiniteHLSDenominatorComparison] using hcomp)
+
+/-- **GJ §17.5 Lemma 17.5.2 infinite-volume HLS-constant interval Lipschitz
+bridge**: under `2α > d`, choose a positive HLS convolution constant `K`
+carrying the uniform convolution inequality.  If the infinite-volume HLS
+denominator comparison holds for this same `K` on `[β₁, β₂]`, then the abstract
+MVT pseudo-mass argument gives the interval Lipschitz estimate for
+`β ↦ (h β)^(2α+1)`.
+
+This is the infinite-volume handoff immediately preceding the future
+`latticeMass` upper-bound assembly.  It does not prove the denominator
+comparison or the final `latticeMass ≤ C · m⁻` inequality.
+
+References: Glimm--Jaffe §17.5, Theorem 17.5.1 proof and Lemma 17.5.2,
+pp.~311--312. -/
+theorem lemma_17_5_2_infinite_pseudoMass_pow_succ_lipschitz_of_hls_constant
+    {d α : ℕ} (hαd : 2 * α > d)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (x z : Fin d → ℤ)
+    {β₁ β₂ : ℝ} (hβ₁₂ : β₁ ≤ β₂)
+    {rho : ℝ} (hrho : 0 < rho)
+    {h : ℝ → ℝ}
+    (hh_diff : ∀ β' ∈ Set.Icc β₁ β₂, HasDerivAt h (deriv h β') β')
+    (hc_diff : ∀ β' ∈ Set.Icc β₁ β₂,
+      HasDerivAt
+        (fun β'' =>
+          Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, β''⟩ : IsingParams ℝ) {x, z})
+        (deriv (fun β'' =>
+          Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, β''⟩ : IsingParams ℝ) {x, z}) β') β')
+    (hh_nonneg : ∀ β' ∈ Set.Icc β₁ β₂, 0 ≤ h β')
+    (hg_eq : ∀ β',
+      pseudoMassG α rho (h β') =
+        Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z})
+    (hh_pos : ∀ β' ∈ Set.Icc β₁ β₂, 0 < h β')
+    (hc_pos : ∀ β' ∈ Set.Icc β₁ β₂,
+      0 <
+        Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z}) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      ((∀ β' ∈ Set.Icc β₁ β₂,
+          Lemma_17_5_2_InfiniteHLSDenominatorComparison Λ J x z β' α K h) →
+        |(h β₂) ^ (2 * α + 1) - (h β₁) ^ (2 * α + 1)| ≤
+          ↑(2 * α + 1) * K / rho * (β₂ - β₁)) := by
+  obtain ⟨K, hK, hK_conv⟩ := lemma_17_5_2_hls_convolution_constant α d hαd
+  refine ⟨K, hK, hK_conv, fun hcomp => ?_⟩
+  exact pseudoMass_pow_succ_lipschitz α hrho hβ₁₂ hh_diff hc_diff hh_nonneg
+    hg_eq hh_pos hc_pos
+    (fun β' hβ' => by
+      simpa [Lemma_17_5_2_InfiniteHLSDenominatorComparison] using hcomp β' hβ')
 
 end Ambient
 end IsingModel
