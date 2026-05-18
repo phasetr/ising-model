@@ -3468,6 +3468,43 @@ future normal-family/Montel output.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Local-cover branch-family Vitali handoff on Lee--Yang; PR \#2677]
+The theorem
+\texttt{freeEnergyComplexAlongExhaustion\_branchFamily\_vitali\_localCover}
+packages the passage from local balls to the full Lee--Yang domain.  Suppose
+that for every $h_0\in\texttt{leeYangDomain}$ there is a radius $r>0$ with
+$B(h_0,r)\subseteq\texttt{leeYangDomain}$ and a branch family $F_n$ on that
+ball satisfying the PR \#2676 hypotheses:
+\[
+  F_n\text{ analytic on }B(h_0,r),\qquad
+  \exp(|\Lambda_n|F_n(z))=Z_{\Lambda_n}(z),
+\]
+\[
+  F_n(h_0)=
+  \texttt{freeEnergyComplexAlongExhaustion}\,G\,\Lambda\,J\,h_0\,\beta\,n,
+\]
+and $F_n\to f$ locally uniformly on $B(h_0,r)$, with the same limiting
+function $f$ for all centres.  Then $f$ is holomorphic on
+\texttt{leeYangDomain}.  The proof applies the ball-level theorem at each
+point and converts holomorphicity on the containing ball into
+within-domain differentiability.
+
+The real-centre theorem
+\texttt{freeEnergyComplexAlongExhaustion\_branchFamily\_vitali\_localCover\_real}
+adds the Fekete identification at a real Lee--Yang point $p.h$:
+\[
+  f(p.h)=\texttt{freeEnergyInfinite}\,G\,\Lambda\,p .
+\]
+It selects the local ball supplied by the cover at $p.h$ and reuses the
+PR \#2676 centre-identification theorem.  The concrete $\mathbb Z^d$ wrappers
+live in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+
+This result still does not construct the coherent local cover or prove local
+uniform convergence; it records the global conditional handoff that such a
+future normal-family/Montel argument must satisfy.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{remark}[Status of PR \#200 — merged 2026-04-19, \texttt{52ea2f1}]
 PR \#200 was squash-merged into \texttt{main} on 2026-04-19 as
 commit \texttt{52ea2f1}. Items now present in \texttt{main}:
