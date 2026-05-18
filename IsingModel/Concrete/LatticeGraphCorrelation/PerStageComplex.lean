@@ -1187,7 +1187,7 @@ theorem freeEnergyComplexAlongExhaustion_branchFamily_compactOpen_vitali_fin_bal
 compatibility**: if the stage branches in the finite-ball compact-open handoff
 are eventually equal on every pairwise overlap, the extracted holomorphic local
 limits are pairwise equal on those overlaps. -/
-theorem freeEnergyComplexAlongExhaustion_branchFamily_compactOpen_vitali_fin_ball_overlap_Zd
+theorem freeEnergyComplexAlongExhaustion_branchFamily_compactOpen_fin_ball_overlap_latticeGraph
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
     [∀ n, Fintype (Ambient.inducedGraph
         (IsingModel.latticeGraph d) (Λ.volume n)).edgeSet]
