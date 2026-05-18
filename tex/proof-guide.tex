@@ -3558,6 +3558,52 @@ post-extraction target consumed by the remaining normal-family construction.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Compact-open ball extraction handoff; PR \#2694]
+The compact-open topology supplies the next formal handoff after local
+compactness of a branch family has been established.  The generic theorem
+\begin{Verbatim}
+exists_subseq_tendstoLocallyUniformlyOn_of_isCompact_compactOpen
+\end{Verbatim}
+states the following.  Let \(s\subset\mathbb C\) be open, let
+\(\widehat F_n\in C(s,\mathbb C)\), and suppose \(\widehat F_n\in A\) for all
+\(n\), where \(A\subset C(s,\mathbb C)\) is compact.  If total functions
+\(F_n:\mathbb C\to\mathbb C\) agree with \(\widehat F_n\) on \(s\), then there
+are a strictly increasing \(\sigma:\mathbb N\to\mathbb N\), a compact-open
+limit \(\widehat f\in A\), and a total \(f:\mathbb C\to\mathbb C\) agreeing
+with \(\widehat f\) on \(s\), such that
+\[
+  F_{\sigma(m)}\longrightarrow f
+  \quad\hbox{locally uniformly on }s .
+\]
+The proof combines \texttt{IsCompact.tendsto\_subseq} in the compact-open
+function space with mathlib's equivalence between compact-open convergence and
+locally uniform convergence for continuous maps on weakly locally compact
+domains.
+
+For a Lee--Yang ball, the ambient theorem
+\begin{Verbatim}
+Ambient.freeEnergyComplexAlongExhaustion_branchFamily_compactOpen_vitali_bridge_ball
+\end{Verbatim}
+uses this extraction on the continuous restrictions of the branch witnesses and
+then applies the PR \#2693 subsequence Vitali bridge.  Thus compactness of the
+local branch family in \(C(B(h_0,r),\mathbb C)\) yields a subsequence whose
+limit is holomorphic on \(B(h_0,r)\).
+
+At a real centre, the theorem ending in \texttt{\_ball\_real} additionally
+identifies the centre value with the real infinite-volume free energy:
+\[
+  f(p.h)=\texttt{freeEnergyInfinite}\,G\,\Lambda\,p .
+\]
+The concrete \(\mathbb Z^d\) wrappers live in
+\texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+
+This result still does not prove Montel compactness of the branch family, nor
+does it perform the diagonal extraction needed for a coherent local cover of
+\(\texttt{leeYangDomain}\).  It isolates the compactness-to-subsequence step
+that the remaining normal-family argument must feed.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[Compact Lee--Yang fugacity gap; PR \#2684]
 The theorems
 \texttt{exists\_leeYangFugacity\_norm\_le\_lt\_one\_on\_isCompact}

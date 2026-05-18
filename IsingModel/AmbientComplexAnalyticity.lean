@@ -1473,6 +1473,127 @@ theorem freeEnergyComplexAlongExhaustion_subseq_branchFamily_vitali_localCover_r
       G Λ p hBED hd hr hσ hbranch hconv
   exact ⟨hdiff, hcenter.2⟩
 
+/-! ## Compact-open extraction handoff on Lee-Yang balls
+
+The previous subsequence handoffs start after a locally uniformly convergent
+subsequence of branch witnesses has already been selected. The next wrappers
+package the standard topological extraction step available once the local
+branch witnesses are known to lie in a compact subset of the compact-open
+function space on a ball. This still does not prove Montel compactness of the
+branch family; compactness is an explicit hypothesis. -/
+
+/-- **Compact-open extraction plus subsequence Vitali bridge on a ball**:
+if a local branch family on a ball is represented by continuous maps whose
+range lies in a compact subset of `C(ball, ℂ)`, then a subsequence converges
+locally uniformly on the ball and its limit is holomorphic there. This is the
+post-Montel compactness-to-Vitali handoff. -/
+theorem freeEnergyComplexAlongExhaustion_branchFamily_compactOpen_vitali_bridge_ball
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℂ) {h₀ : ℂ} {r : ℝ}
+    {F : ℕ → ℂ → ℂ}
+    {A : Set C(Metric.ball h₀ r, ℂ)}
+    {Fc : ℕ → C(Metric.ball h₀ r, ℂ)}
+    (hA : IsCompact A)
+    (hFc_mem : ∀ n, Fc n ∈ A)
+    (hFres : ∀ n z (hz : z ∈ Metric.ball h₀ r),
+      F n z = Fc n ⟨z, hz⟩)
+    (hbranch : ∀ n,
+      AnalyticOnNhd ℂ (F n) (Metric.ball h₀ r)
+        ∧ (∀ z ∈ Metric.ball h₀ r,
+            Complex.exp ((Fintype.card (↑(Λ.volume n) : Type _) : ℂ) * F n z)
+              = partitionFunctionComplexAlongExhaustion G Λ J z β n)
+        ∧ F n h₀ = freeEnergyComplexAlongExhaustion G Λ J h₀ β n) :
+    ∃ σ : ℕ → ℕ, StrictMono σ ∧
+      ∃ f : ℂ → ℂ,
+        (∃ fc : C(Metric.ball h₀ r, ℂ),
+          fc ∈ A ∧ ∀ z (hz : z ∈ Metric.ball h₀ r), f z = fc ⟨z, hz⟩) ∧
+        TendstoLocallyUniformlyOn
+          (fun m z => F (σ m) z) f Filter.atTop (Metric.ball h₀ r) ∧
+        DifferentiableOn ℂ f (Metric.ball h₀ r) := by
+  haveI : LocallyCompactSpace (Metric.ball h₀ r) :=
+    Metric.isOpen_ball.locallyCompactSpace
+  rcases IsingModel.exists_subseq_tendstoLocallyUniformlyOn_of_isCompact_compactOpen
+      Metric.isOpen_ball hA hFc_mem hFres with
+    ⟨σ, hσ, fc, f, hfcA, hf_agree, hconv⟩
+  have hbranch_sub : ∀ m,
+      AnalyticOnNhd ℂ ((fun m z => F (σ m) z) m) (Metric.ball h₀ r)
+        ∧ (∀ z ∈ Metric.ball h₀ r,
+            Complex.exp
+              ((Fintype.card (↑(Λ.volume (σ m)) : Type _) : ℂ) *
+                (fun m z => F (σ m) z) m z)
+              = partitionFunctionComplexAlongExhaustion G Λ J z β (σ m))
+        ∧ (fun m z => F (σ m) z) m h₀
+            = freeEnergyComplexAlongExhaustion G Λ J h₀ β (σ m) := by
+    intro m
+    simpa using hbranch (σ m)
+  have hdiff :=
+    freeEnergyComplexAlongExhaustion_subseq_branchFamily_vitali_bridge_ball
+      G Λ J β (σ := σ) hbranch_sub hconv
+  exact ⟨σ, hσ, f, ⟨fc, hfcA, hf_agree⟩, hconv, hdiff⟩
+
+/-- **Compact-open extraction plus subsequence Vitali bridge with centre
+identification**: for a ball centred at a real Lee-Yang parameter, compactness
+of the branch family in the compact-open topology yields a locally uniformly
+convergent subsequence; the PR #2693 subsequence handoff makes the limit
+holomorphic and identifies its centre value with `↑freeEnergyInfinite`. -/
+theorem freeEnergyComplexAlongExhaustion_branchFamily_compactOpen_vitali_ball_real
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ)
+    (hBED : BoundedEdgeDensity G Λ)
+    (hd : DisjointTowerHypotheses G Λ p)
+    {r : ℝ} (hr : 0 < r)
+    {F : ℕ → ℂ → ℂ}
+    {A : Set C(Metric.ball (p.h : ℂ) r, ℂ)}
+    {Fc : ℕ → C(Metric.ball (p.h : ℂ) r, ℂ)}
+    (hA : IsCompact A)
+    (hFc_mem : ∀ n, Fc n ∈ A)
+    (hFres : ∀ n z (hz : z ∈ Metric.ball (p.h : ℂ) r),
+      F n z = Fc n ⟨z, hz⟩)
+    (hbranch : ∀ n,
+      AnalyticOnNhd ℂ (F n) (Metric.ball (p.h : ℂ) r)
+        ∧ (∀ z ∈ Metric.ball (p.h : ℂ) r,
+            Complex.exp
+              ((Fintype.card (↑(Λ.volume n) : Type _) : ℂ) * F n z)
+              = partitionFunctionComplexAlongExhaustion G Λ
+                  (p.J : ℂ) z (p.β : ℂ) n)
+        ∧ F n (p.h : ℂ)
+            = freeEnergyComplexAlongExhaustion G Λ
+                (p.J : ℂ) (p.h : ℂ) (p.β : ℂ) n) :
+    ∃ σ : ℕ → ℕ, StrictMono σ ∧
+      ∃ f : ℂ → ℂ,
+        (∃ fc : C(Metric.ball (p.h : ℂ) r, ℂ),
+          fc ∈ A ∧
+            ∀ z (hz : z ∈ Metric.ball (p.h : ℂ) r), f z = fc ⟨z, hz⟩) ∧
+        TendstoLocallyUniformlyOn
+          (fun m z => F (σ m) z) f Filter.atTop (Metric.ball (p.h : ℂ) r) ∧
+        DifferentiableOn ℂ f (Metric.ball (p.h : ℂ) r) ∧
+        f (p.h : ℂ) = ((freeEnergyInfinite G Λ p : ℝ) : ℂ) := by
+  haveI : LocallyCompactSpace (Metric.ball (p.h : ℂ) r) :=
+    Metric.isOpen_ball.locallyCompactSpace
+  rcases IsingModel.exists_subseq_tendstoLocallyUniformlyOn_of_isCompact_compactOpen
+      Metric.isOpen_ball hA hFc_mem hFres with
+    ⟨σ, hσ, fc, f, hfcA, hf_agree, hconv⟩
+  have hbranch_sub : ∀ m,
+      AnalyticOnNhd ℂ ((fun m z => F (σ m) z) m)
+          (Metric.ball (p.h : ℂ) r)
+        ∧ (∀ z ∈ Metric.ball (p.h : ℂ) r,
+            Complex.exp
+              ((Fintype.card (↑(Λ.volume (σ m)) : Type _) : ℂ) *
+                (fun m z => F (σ m) z) m z)
+              = partitionFunctionComplexAlongExhaustion G Λ
+                  (p.J : ℂ) z (p.β : ℂ) (σ m))
+        ∧ (fun m z => F (σ m) z) m (p.h : ℂ)
+            = freeEnergyComplexAlongExhaustion G Λ
+                (p.J : ℂ) (p.h : ℂ) (p.β : ℂ) (σ m) := by
+    intro m
+    simpa using hbranch (σ m)
+  have hcenter :=
+    freeEnergyComplexAlongExhaustion_subseq_branchFamily_vitali_ball_identified_at_center
+      G Λ p hBED hd hr hσ hbranch_sub hconv
+  exact ⟨σ, hσ, f, ⟨fc, hfcA, hf_agree⟩, hconv, hcenter.1, hcenter.2⟩
+
 end Ambient
 
 end IsingModel
