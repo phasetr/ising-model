@@ -3571,6 +3571,32 @@ separate normal-family input.  Reference: Glimm--Jaffe \cite{glimm-jaffe},
 \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Lee--Yang compact upper normalised log bound; PR \#2682]
+The theorem
+\texttt{exists\_log\_norm\_partitionFunctionComplexAlongExhaustion\_div\_card\_le\_leeYangDomain}
+specialises PR \#2681 to compact subsets of the Lee--Yang domain.  Assume
+$\beta>0$, $J>0$, all stages are nonempty, the exhaustion has bounded edge
+density, and $K\subseteq\texttt{leeYangDomain}$ is compact.  Then there is a
+constant $C$ such that
+\[
+  \frac{\log\|Z_{\Lambda_n}(J,h,\beta)\|}{|\Lambda_n|}\le C
+  \qquad(n\in\mathbb N,\ h\in K).
+\]
+The only new step beyond PR \#2681 is to discharge the nonvanishing hypothesis:
+Lee--Yang gives
+\[
+  Z_{\Lambda_n}(J,h,\beta)\ne 0
+  \qquad(h\in K\subseteq\texttt{leeYangDomain})
+\]
+at every finite stage.  The concrete $\mathbb Z^d$ wrapper lives in
+\texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+
+This is still an upper normalised-log estimate only.  It does not prove the
+lower control on $\log\|Z_{\Lambda_n}\|$ needed to turn the result into the
+absolute normalised-log hypothesis used by PR \#2679 and PR \#2680.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[Normalised log bound handoff; PR \#2679]
 The theorem
 \texttt{norm\_freeEnergyComplexAlongExhaustion\_le\_of\_abs\_log\_norm\_bound\_stage}
