@@ -371,6 +371,39 @@ theorem norm_partitionFunctionComplexAlongExhaustion_le_of_re_bound_stage
   IsingModel.norm_partitionFunctionComplex_le_of_re_bound
     (inducedGraph G (Λ.volume n)) β J hh
 
+/-- **Compact real-part bound** for complex fields: every compact set of
+fields has a uniform bound on `|Re h|`. This is the topological input that
+turns the pointwise `|Re h| ≤ R` partition-function estimate into a
+compact-uniform estimate. -/
+theorem exists_abs_re_le_on_isCompact {K : Set ℂ} (hK : IsCompact K) :
+    ∃ R : ℝ, 0 ≤ R ∧ ∀ h ∈ K, |h.re| ≤ R := by
+  rcases hK.bddAbove_image (by fun_prop : ContinuousOn (fun h : ℂ => |h.re|) K) with
+    ⟨R₀, hR₀⟩
+  refine ⟨max R₀ 0, le_max_right _ _, ?_⟩
+  intro h hh
+  exact (hR₀ ⟨h, hh, rfl⟩).trans (le_max_left _ _)
+
+/-- **Per-stage compact-uniform norm bound** for
+`partitionFunctionComplexAlongExhaustion`: on any compact field set `K`,
+there is a single real-part bound `R` that works for every `h ∈ K` and every
+stage estimate. This packages the Montel boundedness input in the
+along-exhaustion shape. -/
+theorem norm_partitionFunctionComplexAlongExhaustion_le_on_isCompact_stage
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (β J : ℝ) {K : Set ℂ} (hK : IsCompact K) :
+    ∃ R : ℝ, 0 ≤ R ∧ ∀ n, ∀ h ∈ K,
+      ‖partitionFunctionComplexAlongExhaustion G Λ (J : ℂ) h (β : ℂ) n‖
+        ≤ Fintype.card (IsingModel.Config (↑(Λ.volume n) : Type _)) *
+            Real.exp (|β| *
+              (|J| * (inducedGraph G (Λ.volume n)).edgeFinset.card
+                + R * Fintype.card (↑(Λ.volume n) : Type _))) := by
+  rcases exists_abs_re_le_on_isCompact hK with ⟨R, hR_nonneg, hR⟩
+  refine ⟨R, hR_nonneg, ?_⟩
+  intro n h hh
+  exact norm_partitionFunctionComplexAlongExhaustion_le_of_re_bound_stage
+    G Λ β J n (hR h hh)
+
 /-- **Per-stage `Z_ℂ ≠ 0 on leeYangDomain`** for
 `partitionFunctionComplexAlongExhaustion` (ferromagnetic). -/
 theorem partitionFunctionComplexAlongExhaustion_ne_zero_on_leeYangDomain_stage
