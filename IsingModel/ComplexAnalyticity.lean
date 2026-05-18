@@ -1676,6 +1676,41 @@ theorem exists_subseq_fin_tendstoLocallyUniformlyOn_of_isCompact_compactOpen
       · intro j
         exact htail j
 
+omit [Fintype ι] [DecidableEq ι] in
+/-- **Overlap uniqueness for locally uniform limits**: if two sequences converge
+locally uniformly on open sets `s` and `t`, and their stage functions are
+eventually equal on the overlap `s ∩ t`, then their limits agree on that
+overlap. -/
+theorem eqOn_of_tendstoLocallyUniformlyOn_of_eventuallyEqOn
+    {s t : Set ℂ} {F G : ℕ → ℂ → ℂ} {f g : ℂ → ℂ}
+    (hF : TendstoLocallyUniformlyOn F f Filter.atTop s)
+    (hG : TendstoLocallyUniformlyOn G g Filter.atTop t)
+    (hEq : ∀ᶠ n in Filter.atTop, Set.EqOn (F n) (G n) (s ∩ t)) :
+    Set.EqOn f g (s ∩ t) := by
+  intro z hz
+  exact tendsto_nhds_unique_of_eventuallyEq
+    (hF.tendsto_at hz.1)
+    (hG.tendsto_at hz.2)
+    (hEq.mono fun n hn => hn hz)
+
+omit [Fintype ι] [DecidableEq ι] in
+/-- **Finite-family overlap compatibility for locally uniform limits**: for a
+finite family of locally uniformly convergent sequences, pairwise eventual
+equality of the stage functions on pairwise overlaps implies pairwise equality
+of the limiting functions on those overlaps. -/
+theorem pairwise_eqOn_of_tendstoLocallyUniformlyOn_of_eventuallyEqOn
+    (n : ℕ)
+    {s : Fin n → Set ℂ}
+    {F : Fin n → ℕ → ℂ → ℂ}
+    {f : Fin n → ℂ → ℂ}
+    (hconv : ∀ i, TendstoLocallyUniformlyOn (F i) (f i) Filter.atTop (s i))
+    (hoverlap : ∀ i j, ∀ᶠ m in Filter.atTop,
+      Set.EqOn (F i m) (F j m) (s i ∩ s j)) :
+    ∀ i j, Set.EqOn (f i) (f j) (s i ∩ s j) := by
+  intro i j
+  exact eqOn_of_tendstoLocallyUniformlyOn_of_eventuallyEqOn
+    (hconv i) (hconv j) (hoverlap i j)
+
 /-- **Modulus bound for `partitionFunctionComplex` via the real Ising
 partition function (statement, proof deferred)**. For real `β`, real `J`,
 complex `h`:
