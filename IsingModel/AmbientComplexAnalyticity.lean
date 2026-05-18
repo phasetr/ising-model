@@ -509,6 +509,80 @@ theorem freeEnergyComplexAlongExhaustion_vitali_bridge_leeYangDomain_identified_
     freeEnergyComplexAlongExhaustion_limit_eq_freeEnergyInfinite_at_real
       G Λ p hBED hd hp hconv⟩
 
+/-! ## Local branch-family Vitali assembly
+
+The preceding Lee-Yang-domain bridge is phrased for the principal
+`freeEnergyComplexAlongExhaustion` sequence. The full Lee-Yang proof uses
+locally chosen logarithm branches instead. The next wrappers package the
+local handoff: once a coherent branch family on a Lee-Yang ball is known to
+converge locally uniformly, Vitali gives holomorphicity of the local limit,
+and the PR #2675 basepoint normalisation identifies the centre value with the
+real-axis Fekete limit. -/
+
+/-- **Local branch-family Vitali bridge on a ball**: if a chosen per-stage
+branch family is analytic on a ball and converges locally uniformly there,
+then its limit is holomorphic on that ball. The exponential and basepoint
+clauses are retained in `hbranch` so the hypothesis matches the strong
+Lee-Yang branch witnesses used in the later normal-family step. -/
+theorem freeEnergyComplexAlongExhaustion_branchFamily_vitali_bridge_ball
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℂ) {h₀ : ℂ} {r : ℝ}
+    {F : ℕ → ℂ → ℂ} {f : ℂ → ℂ}
+    (hbranch : ∀ n,
+      AnalyticOnNhd ℂ (F n) (Metric.ball h₀ r)
+        ∧ (∀ z ∈ Metric.ball h₀ r,
+            Complex.exp ((Fintype.card (↑(Λ.volume n) : Type _) : ℂ) * F n z)
+              = partitionFunctionComplexAlongExhaustion G Λ J z β n)
+        ∧ F n h₀ = freeEnergyComplexAlongExhaustion G Λ J h₀ β n)
+    (hconv : TendstoLocallyUniformlyOn F f Filter.atTop (Metric.ball h₀ r)) :
+    DifferentiableOn ℂ f (Metric.ball h₀ r) :=
+  IsingModel.vitali_bridge Metric.isOpen_ball
+    (fun n => (hbranch n).1.differentiableOn) hconv
+
+/-- **Local branch-family Vitali bridge with centre identification**:
+for a ball centred at the real parameter `p.h`, a locally-uniform limit of
+normalised branch witnesses is holomorphic on the ball and agrees at the
+centre with the real infinite-volume free energy. The remaining external
+input is the coherent locally-uniform convergence of the chosen branches. -/
+theorem freeEnergyComplexAlongExhaustion_branchFamily_vitali_ball_identified_at_center
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ)
+    (hBED : BoundedEdgeDensity G Λ)
+    (hd : DisjointTowerHypotheses G Λ p)
+    {r : ℝ} (hr : 0 < r)
+    {F : ℕ → ℂ → ℂ} {f : ℂ → ℂ}
+    (hbranch : ∀ n,
+      AnalyticOnNhd ℂ (F n) (Metric.ball (p.h : ℂ) r)
+        ∧ (∀ z ∈ Metric.ball (p.h : ℂ) r,
+            Complex.exp ((Fintype.card (↑(Λ.volume n) : Type _) : ℂ) * F n z)
+              = partitionFunctionComplexAlongExhaustion G Λ
+                  (p.J : ℂ) z (p.β : ℂ) n)
+        ∧ F n (p.h : ℂ)
+            = freeEnergyComplexAlongExhaustion G Λ
+                (p.J : ℂ) (p.h : ℂ) (p.β : ℂ) n)
+    (hconv : TendstoLocallyUniformlyOn F f Filter.atTop
+      (Metric.ball (p.h : ℂ) r)) :
+    DifferentiableOn ℂ f (Metric.ball (p.h : ℂ) r) ∧
+      f (p.h : ℂ) = ((freeEnergyInfinite G Λ p : ℝ) : ℂ) := by
+  have hdiff :=
+    freeEnergyComplexAlongExhaustion_branchFamily_vitali_bridge_ball
+      G Λ (p.J : ℂ) (p.β : ℂ) hbranch hconv
+  have hcenter : (p.h : ℂ) ∈ Metric.ball (p.h : ℂ) r := Metric.mem_ball_self hr
+  have hpoint := TendstoLocallyUniformlyOn.tendsto_at hconv hcenter
+  have hbranch_eq :
+      (fun n => F n (p.h : ℂ))
+        = fun n => freeEnergyComplexAlongExhaustion G Λ
+            (p.J : ℂ) (p.h : ℂ) (p.β : ℂ) n := by
+    funext n
+    exact (hbranch n).2.2
+  rw [hbranch_eq] at hpoint
+  have hreal :=
+    freeEnergyComplexAlongExhaustion_tendsto_at_real_of_disjointTowerHypotheses
+      G Λ p hBED hd
+  exact ⟨hdiff, tendsto_nhds_unique hpoint hreal⟩
+
 end Ambient
 
 end IsingModel
