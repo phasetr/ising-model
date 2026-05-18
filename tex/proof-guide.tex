@@ -3695,6 +3695,37 @@ Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70, and
 Friedli--Velenik \cite{friedli-velenik}, (3.63)--(3.65), pp.~122--123.
 \end{theorem}
 
+\begin{theorem}[Point-local bound from polynomial witnesses; PR \#2691]
+The theorem \texttt{leeYangDomain\_closedBall\_subset} records the elementary
+local compactness fact used by the Lee--Yang cover: every
+\(h_0\in\texttt{leeYangDomain}\) admits a radius \(\rho>0\) such that
+\[
+  \overline B(h_0,\rho)\subseteq\texttt{leeYangDomain}.
+\]
+It follows from the openness of \texttt{leeYangDomain} by first taking an open
+ball \(B(h_0,r)\subseteq\texttt{leeYangDomain}\) and then using the half-radius
+closed ball \(\overline B(h_0,r/2)\subseteq B(h_0,r)\).
+
+The theorem
+\texttt{exists\_norm\_freeEnergyComplexAlongExhaustion\_le\_poly\_lower\_leeYang\_around}
+combines this radius choice with PR \#2690.  If the polynomial witnesses have a
+stage-uniform lower normalised-log estimate on each closed Lee--Yang ball
+chosen around \(h_0\), then for some \(\rho>0\) there is a constant \(C\) with
+\[
+  \left\|f_n(h)\right\| \le C+\pi
+  \qquad(n\in\mathbb N,\ h\in B(h_0,\rho)).
+\]
+The \(\mathbb Z^d\) wrapper is
+\texttt{exists\_norm\_freeEnergyComplexAlongExhaustion\_le\_poly\_lower\_ly\_latticeGraph\_around}.
+
+This remains conditional on the polynomial-witness lower normalised-log
+estimate.  The wrapper supplies the point-local bounded-family shape needed by
+later local-cover arguments; it does not prove the normal-family extraction or
+global branch patching.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70, and
+Friedli--Velenik \cite{friedli-velenik}, (3.63)--(3.65), pp.~122--123.
+\end{theorem}
+
 \begin{theorem}[Compact-uniform complex partition-function bound; PR \#2678]
 The theorem
 \texttt{exists\_abs\_re\_le\_on\_isCompact} records the elementary
