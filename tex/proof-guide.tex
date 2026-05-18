@@ -3704,6 +3704,49 @@ global function on \(\texttt{leeYangDomain}\).
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Finite local-patching handoff; PR \#2698]
+The finite differentiable patching step is formalised by
+\begin{Verbatim}
+exists_differentiableOn_iUnion_of_finite_eqOn
+\end{Verbatim}
+and its Lee--Yang finite-ball wrapper
+\begin{Verbatim}
+Ambient.freeEnergyComplexAlongExhaustion_branchFamily_compactOpen_vitali_fin_ball_patch
+\end{Verbatim}
+Suppose \(s_i\subset\mathbb C\) is a finite family of open sets and
+\(f_i\) is differentiable on \(s_i\).  If the local functions are pairwise
+compatible,
+\[
+  f_i=f_j \quad\text{on}\quad s_i\cap s_j ,
+\]
+then there is a single function \(g\) on \(\mathbb C\) such that
+\[
+  g=f_i \quad\text{on}\quad s_i
+\]
+for every \(i\), and \(g\) is differentiable on the finite union
+\(\bigcup_i s_i\).
+
+The proof is induction over the finite index.  At the successor step, patch the
+tail by the induction hypothesis, define the new function by
+\texttt{Set.piecewise} using the head open set, and use pairwise compatibility
+to show that this piecewise function agrees with the head branch on the head
+and with the tail patch on the tail union.  Differentiability on the final
+union follows from \texttt{DifferentiableOn.union\_of\_isOpen}.
+
+For finitely many Lee--Yang balls, the ambient theorem composes this patching
+lemma with the PR \#2697 overlap handoff.  It produces the extracted local
+limits \(f_i\), a patched function \(g\) on the finite union of balls, local
+agreement \(g=f_i\) on each ball, and differentiability of \(g\) on that finite
+union.  The concrete \(\mathbb Z^d\) wrapper is in
+\texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+
+This is still a finite, explicit-hypothesis handoff.  It does not construct the
+coherent stage branches that supply overlap equality, prove Montel compactness,
+perform diagonal coherent local-cover extraction, or patch a full
+\(\texttt{leeYangDomain}\)-cover.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[Compact Lee--Yang fugacity gap; PR \#2684]
 The theorems
 \texttt{exists\_leeYangFugacity\_norm\_le\_lt\_one\_on\_isCompact}
