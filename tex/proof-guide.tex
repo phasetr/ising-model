@@ -3604,6 +3604,37 @@ that the remaining normal-family argument must feed.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Two-ball compact-open diagonal handoff; PR \#2695]
+The first finite-diagonal step is formalised by
+\begin{Verbatim}
+exists_subseq_two_tendstoLocallyUniformlyOn_of_isCompact_compactOpen
+\end{Verbatim}
+and its Lee--Yang wrapper
+\begin{Verbatim}
+Ambient.freeEnergyComplexAlongExhaustion_branchFamily_compactOpen_vitali_two_ball
+\end{Verbatim}
+Given two open sets \(s_1,s_2\subset\mathbb C\), two compact subsets of
+\(C(s_i,\mathbb C)\), and two branch families whose continuous restrictions
+lie in those compact subsets, one first extracts a subsequence on \(s_1\), then
+extracts a further subsequence on \(s_2\).  The auxiliary lemma
+\begin{Verbatim}
+tendstoLocallyUniformlyOn_subseq_of_strictMono
+\end{Verbatim}
+shows that locally uniform convergence on \(s_1\) is preserved by the second
+strictly increasing reindexing.  Thus a single strictly increasing
+\(\sigma:\mathbb N\to\mathbb N\) works on both balls.
+
+For two Lee--Yang balls the ambient theorem applies the PR \#2693 subsequence
+Vitali bridge on each ball, producing holomorphic local limits on both balls.
+The concrete \(\mathbb Z^d\) wrapper is in
+\texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+
+This is only the two-ball base case for diagonal extraction.  It does not prove
+Montel compactness, arbitrary finite-cover extraction, compatibility of the two
+limits on overlaps, or global patching on \(\texttt{leeYangDomain}\).
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[Compact Lee--Yang fugacity gap; PR \#2684]
 The theorems
 \texttt{exists\_leeYangFugacity\_norm\_le\_lt\_one\_on\_isCompact}
