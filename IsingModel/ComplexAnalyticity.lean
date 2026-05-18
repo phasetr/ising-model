@@ -12,6 +12,7 @@ import Mathlib.Analysis.Complex.LocallyUniformLimit
 import Mathlib.Analysis.Complex.Polynomial.Basic
 import Mathlib.Analysis.Normed.Unbundled.RingSeminorm
 import Mathlib.Algebra.Polynomial.BigOperators
+import Mathlib.Topology.UniformSpace.CompactConvergence
 
 /-!
 # Complex analyticity of the Ising partition function (finite volume)
@@ -1503,6 +1504,69 @@ theorem vitali_bridge_leeYangDomain
     (hconv : TendstoLocallyUniformlyOn F f Filter.atTop leeYangDomain) :
     DifferentiableOn ℂ f leeYangDomain :=
   vitali_bridge isOpen_leeYangDomain hF hconv
+
+omit [Fintype ι] [DecidableEq ι] in
+/-- **Compact-open convergence to locally uniform convergence on an open
+complex set**: if continuous maps on `s` converge in the compact-open
+topology and total functions `F n`, `f` agree with those maps on `s`, then
+`F n → f` locally uniformly on `s`. This is the topology bridge used after a
+Montel / compactness input has produced compact-open convergence. -/
+theorem continuousMap_tendsto_compactOpen_to_tendstoLocallyUniformlyOn
+    {s : Set ℂ} (hs : IsOpen s)
+    {Fc : ℕ → C(s, ℂ)} {fc : C(s, ℂ)}
+    {F : ℕ → ℂ → ℂ} {f : ℂ → ℂ}
+    (hF : ∀ n z (hz : z ∈ s), F n z = Fc n ⟨z, hz⟩)
+    (hf : ∀ z (hz : z ∈ s), f z = fc ⟨z, hz⟩)
+    (hconv : Filter.Tendsto Fc Filter.atTop (nhds fc)) :
+    TendstoLocallyUniformlyOn F f Filter.atTop s := by
+  haveI : LocallyCompactSpace s := hs.locallyCompactSpace
+  have hloc :
+      TendstoLocallyUniformly (fun n x => Fc n x) (fun x => fc x) Filter.atTop :=
+    ContinuousMap.tendsto_iff_tendstoLocallyUniformly.mp hconv
+  rw [tendstoLocallyUniformlyOn_iff_tendstoLocallyUniformly_comp_coe]
+  have hF_eq : (fun n (z : s) => F n z) = fun n (z : s) => Fc n z := by
+    funext n z
+    exact hF n z z.property
+  have hf_eq : (f ∘ ((↑) : s → ℂ)) = fun z : s => fc z := by
+    funext z
+    exact hf z z.property
+  simpa [hF_eq, hf_eq] using hloc
+
+omit [Fintype ι] [DecidableEq ι] in
+/-- **Compact-open subsequence extraction on an open complex set**: if the
+restrictions of a sequence of total functions to `s` lie in a compact subset
+of `C(s, ℂ)`, then a subsequence converges locally uniformly on `s` to a total
+function agreeing on `s` with the compact-open limit. This is the abstract
+post-Montel extraction handoff; compactness of the family is an explicit
+hypothesis. -/
+theorem exists_subseq_tendstoLocallyUniformlyOn_of_isCompact_compactOpen
+    {s : Set ℂ} (hs : IsOpen s)
+    [FirstCountableTopology C(s, ℂ)]
+    {A : Set C(s, ℂ)} (hA : IsCompact A)
+    {Fc : ℕ → C(s, ℂ)} (hFc_mem : ∀ n, Fc n ∈ A)
+    {F : ℕ → ℂ → ℂ}
+    (hF : ∀ n z (hz : z ∈ s), F n z = Fc n ⟨z, hz⟩) :
+    ∃ σ : ℕ → ℕ, StrictMono σ ∧
+      ∃ fc : C(s, ℂ), ∃ f : ℂ → ℂ,
+        fc ∈ A ∧
+          (∀ z (hz : z ∈ s), f z = fc ⟨z, hz⟩) ∧
+          TendstoLocallyUniformlyOn
+            (fun m z => F (σ m) z) f Filter.atTop s := by
+  classical
+  rcases hA.tendsto_subseq hFc_mem with ⟨fc, hfcA, σ, hσ, hconv⟩
+  let f : ℂ → ℂ := fun z => if hz : z ∈ s then fc ⟨z, hz⟩ else 0
+  have hf : ∀ z (hz : z ∈ s), f z = fc ⟨z, hz⟩ := by
+    intro z hz
+    simp [f, hz]
+  have hconv_lu :
+      TendstoLocallyUniformlyOn
+        (fun m z => F (σ m) z) f Filter.atTop s :=
+    continuousMap_tendsto_compactOpen_to_tendstoLocallyUniformlyOn hs
+      (Fc := fun m => Fc (σ m)) (fc := fc)
+      (F := fun m z => F (σ m) z) (f := f)
+      (fun m z hz => hF (σ m) z hz) hf
+      (by simpa [Function.comp_def] using hconv)
+  exact ⟨σ, hσ, fc, f, hfcA, hf, hconv_lu⟩
 
 /-- **Modulus bound for `partitionFunctionComplex` via the real Ising
 partition function (statement, proof deferred)**. For real `β`, real `J`,
