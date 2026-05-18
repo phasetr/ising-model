@@ -2217,6 +2217,64 @@ theorem freeEnergyComplexAlongExhaustion_finiteSubseqBranchLimitFamily_patch
     ⟨g, hg_eq, hg_diff⟩
   exact ⟨g, hg_eq, hg_diff⟩
 
+/-- **Packaged finite subsequence branch-limit patching with real-centre
+identification**: if one finite-cover ball is centred at the real field
+`p.h`, then a compatible `LeeYangFiniteSubseqBranchLimitFamily` patches on the
+finite union of balls and the patched value at that real centre agrees with
+`↑freeEnergyInfinite`. -/
+theorem freeEnergyComplexAlongExhaustion_finiteSubseqBranchLimitFamily_patch_real
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ)
+    (hBED : BoundedEdgeDensity G Λ)
+    (hd : DisjointTowerHypotheses G Λ p)
+    (n : ℕ) {h0 : Fin n → ℂ} {r : Fin n → ℝ}
+    (family : LeeYangFiniteSubseqBranchLimitFamily G Λ (p.J : ℂ) (p.β : ℂ) n h0 r)
+    (i₀ : Fin n)
+    (hcenter : h0 i₀ = (p.h : ℂ))
+    (hr : 0 < r i₀) :
+    ∃ g : ℂ → ℂ,
+      (∀ i, Set.EqOn g (family.limitFun i) (Metric.ball (h0 i) (r i))) ∧
+      DifferentiableOn ℂ g (⋃ i : Fin n, Metric.ball (h0 i) (r i)) ∧
+      g (p.h : ℂ) = ((freeEnergyInfinite G Λ p : ℝ) : ℂ) := by
+  rcases freeEnergyComplexAlongExhaustion_finiteSubseqBranchLimitFamily_patch
+      G Λ (p.J : ℂ) (p.β : ℂ) n family with
+    ⟨g, hg_eq, hg_diff⟩
+  have hbranch : ∀ m,
+      AnalyticOnNhd ℂ (family.branchFamily i₀ m)
+          (Metric.ball (p.h : ℂ) (r i₀))
+        ∧ (∀ z ∈ Metric.ball (p.h : ℂ) (r i₀),
+            Complex.exp
+              ((Fintype.card (↑(Λ.volume (family.stage m)) : Type _) : ℂ) *
+                family.branchFamily i₀ m z)
+              = partitionFunctionComplexAlongExhaustion G Λ
+                  (p.J : ℂ) z (p.β : ℂ) (family.stage m))
+        ∧ family.branchFamily i₀ m (p.h : ℂ)
+            = freeEnergyComplexAlongExhaustion G Λ
+                (p.J : ℂ) (p.h : ℂ) (p.β : ℂ) (family.stage m) := by
+    intro m
+    rcases family.branch_spec i₀ m with ⟨han, hexp⟩
+    refine ⟨?_, ?_, ?_⟩
+    · simpa [hcenter] using han
+    · intro z hz
+      exact hexp z (by simpa [hcenter] using hz)
+    · simpa [hcenter] using family.centre_normalized i₀ m
+  have hconv :
+      TendstoLocallyUniformlyOn (family.branchFamily i₀) (family.limitFun i₀)
+        Filter.atTop (Metric.ball (p.h : ℂ) (r i₀)) := by
+    simpa [hcenter] using family.tendsto i₀
+  have hidentified :=
+    freeEnergyComplexAlongExhaustion_subseq_branchFamily_vitali_ball_identified_at_center
+      G Λ p hBED hd hr family.stage_strict hbranch hconv
+  have hcenter_mem :
+      (p.h : ℂ) ∈ Metric.ball (h0 i₀) (r i₀) := by
+    have hself : (p.h : ℂ) ∈ Metric.ball (p.h : ℂ) (r i₀) :=
+      Metric.mem_ball_self hr
+    simpa [hcenter] using hself
+  have hg_center : g (p.h : ℂ) = family.limitFun i₀ (p.h : ℂ) :=
+    hg_eq i₀ hcenter_mem
+  exact ⟨g, hg_eq, hg_diff, hg_center.trans hidentified.2⟩
+
 /-- **Finite-ball compact-open diagonal extraction with local patching**:
 if the finite Lee-Yang local limits obtained from compact-open extraction are
 compatible on all pairwise ball overlaps, then they patch to one function on

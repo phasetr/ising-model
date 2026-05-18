@@ -3749,6 +3749,38 @@ later local-cover packages.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Packaged finite subsequence branch-limit real-centre
+identification; PR \#2706]
+The theorem
+\begin{Verbatim}
+Ambient.freeEnergyComplexAlongExhaustion_finiteSubseqBranchLimitFamily_patch_real
+\end{Verbatim}
+adds the real-centre conclusion to the PR \#2705 finite package.  Its input is
+a compatible \texttt{Ambient.LeeYangFiniteSubseqBranchLimitFamily} for real
+parameters \((p.J,p.\beta)\), an index \(i_0:\mathrm{Fin}\,n\), the centre
+identity \(h_{i_0}=p.h\), and \(0<r_{i_0}\).  The theorem first patches the
+finite family on \(\bigcup_i B(h_i,r_i)\).  It then applies the existing
+subsequence real-centre identification theorem to the selected component
+\(i_0\): the branch identities are indexed by the package's strict stage map,
+and centre normalisation rewrites the selected branch values as the real
+finite-volume free-energy sequence along that subsequence.  Therefore the
+patched function satisfies
+\[
+  g(p.h)=\texttt{freeEnergyInfinite}.
+\]
+The concrete \(\mathbb Z^d\) wrapper is
+\begin{Verbatim}
+freeEnergyComplexAlongExhaustion_finiteSubseqBranchLimitFamily_patch_real_latticeGraph
+\end{Verbatim}
+in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+
+This remains a finite, conditional handoff.  It identifies the real centre for
+a selected ball in a packaged finite family, but it does not construct Montel
+compactness, coherent branch choices, or a full
+\(\texttt{leeYangDomain}\)-cover.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[Finite local-patching handoff; PR \#2698]
 The finite differentiable patching step is formalised by
 \begin{Verbatim}
