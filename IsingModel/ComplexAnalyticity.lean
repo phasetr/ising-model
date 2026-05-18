@@ -2331,6 +2331,45 @@ theorem norm_leeYangNormalization_real_beta
   congr 1
   ring_nf
 
+/-- **Finite-volume `Z_ℂ` lower bound from the Lee-Yang polynomial factor**:
+if the Lee-Yang polynomial factor is bounded below by `ε` at `h`, and
+`|Re h| ≤ R`, then the Friedli-Velenik factorisation gives the corresponding
+finite-volume lower bound on the complex partition function.
+
+The bound is finite-graph dependent through `ε`; it is not a stage-uniform
+lower normalised-log estimate along an exhaustion. -/
+theorem norm_partitionFunctionComplex_ge_exp_mul_isingEdgePoly_lower
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J R ε : ℝ} (hβ : 0 ≤ β) (hJ : 0 ≤ J) {h : ℂ}
+    (hR : |h.re| ≤ R) (hε : 0 ≤ ε)
+    (hpoly :
+      ε ≤ ‖(isingEdgePoly (graphToEdgeList G (Real.exp (-2 * β * J)))).eval
+          (leeYangFugacityVec (β : ℂ) h)‖) :
+    Real.exp (-β * R * Fintype.card ι) * ε
+      ≤ ‖partitionFunctionComplex G (J : ℂ) h (β : ℂ)‖ := by
+  rw [partitionFunctionComplex_eq_normalization_mul_isingEdgePoly G β J h]
+  rw [norm_mul]
+  have hR_lower : -R ≤ h.re := by
+    exact neg_le.mp (neg_le_abs h.re |>.trans hR)
+  have hnorm :
+      Real.exp (-β * R * Fintype.card ι)
+        ≤ ‖leeYangNormalization (β : ℂ) (J : ℂ) h
+            G.edgeFinset.card (Fintype.card ι)‖ := by
+    rw [norm_leeYangNormalization_real_beta]
+    refine Real.exp_le_exp.mpr ?_
+    have hcast :
+        (β * ((J : ℂ) * (G.edgeFinset.card : ℂ)
+              + h * (Fintype.card ι : ℂ))).re
+          =
+        β * (J * G.edgeFinset.card + h.re * Fintype.card ι) := by
+      simp [Complex.mul_re, Complex.add_re]
+    rw [hcast]
+    have hJedge : 0 ≤ J * (G.edgeFinset.card : ℝ) := by positivity
+    have hfield : -R * (Fintype.card ι : ℝ) ≤ h.re * (Fintype.card ι : ℝ) := by
+      exact mul_le_mul_of_nonneg_right hR_lower (by positivity)
+    nlinarith [mul_le_mul_of_nonneg_left hfield hβ, mul_nonneg hβ hJedge]
+  exact mul_le_mul hnorm hpoly hε (norm_nonneg _)
+
 /-- At real `β, J, h`, `leeYangNormalization` is a positive real number
 (cast). -/
 theorem leeYangNormalization_ofReal_eq (β J h : ℝ) (edgeCount siteCount : ℕ) :
