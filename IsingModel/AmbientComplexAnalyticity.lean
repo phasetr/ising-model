@@ -1393,6 +1393,48 @@ structure LeeYangRealBranchLimitFamily
       = freeEnergyComplexAlongExhaustion G Λ
           (p.J : ℂ) (p.h : ℂ) (p.β : ℂ) n
 
+/-- **Finite compact-open subsequence branch-limit family**: for finitely many
+Lee-Yang balls, this packages the output expected after a finite compact-open
+diagonal extraction: one strictly increasing stage map, a local branch family
+and locally uniform limit on every ball, centre normalisation along the
+subsequence, and pairwise compatibility of the local limits on overlaps. -/
+structure LeeYangFiniteSubseqBranchLimitFamily
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℂ) (n : ℕ) (h0 : Fin n → ℂ) (r : Fin n → ℝ) where
+  /-- Strictly increasing subsequence of finite-volume stages. -/
+  stage : ℕ → ℕ
+  /-- The selected stage map tends to infinity. -/
+  stage_strict : StrictMono stage
+  /-- Per-ball local branch family indexed by the extracted stages. -/
+  branchFamily : Fin n → ℕ → ℂ → ℂ
+  /-- Per-ball locally uniform branch limit. -/
+  limitFun : Fin n → ℂ → ℂ
+  /-- Per-stage holomorphicity and exponential partition-function identity on
+  each finite-cover ball, with the selected stage index. -/
+  branch_spec : ∀ i m,
+    AnalyticOnNhd ℂ (branchFamily i m) (Metric.ball (h0 i) (r i))
+      ∧ (∀ z ∈ Metric.ball (h0 i) (r i),
+          Complex.exp
+            ((Fintype.card (↑(Λ.volume (stage m)) : Type _) : ℂ) *
+              branchFamily i m z)
+            = partitionFunctionComplexAlongExhaustion G Λ J z β (stage m))
+  /-- The branch family is normalised at each ball centre along the selected
+  stage map. -/
+  centre_normalized : ∀ i m,
+    branchFamily i m (h0 i)
+      = freeEnergyComplexAlongExhaustion G Λ J (h0 i) β (stage m)
+  /-- Locally uniform convergence on every finite-cover ball. -/
+  tendsto : ∀ i,
+    TendstoLocallyUniformlyOn (branchFamily i) (limitFun i) Filter.atTop
+      (Metric.ball (h0 i) (r i))
+  /-- Holomorphicity of every local limit on its ball. -/
+  differentiable : ∀ i, DifferentiableOn ℂ (limitFun i) (Metric.ball (h0 i) (r i))
+  /-- Pairwise compatibility of the local limits on ball overlaps. -/
+  compatible : ∀ i j,
+    Set.EqOn (limitFun i) (limitFun j)
+      (Metric.ball (h0 i) (r i) ∩ Metric.ball (h0 j) (r j))
+
 /-- **Pointed local-cover branch-family patching handoff on `leeYangDomain`**:
 if every Lee-Yang point carries a ball, a branch family on that ball, a local
 limit, and the local limits are compatible on all ball overlaps, then these
@@ -2104,6 +2146,76 @@ theorem freeEnergyComplexAlongExhaustion_branchFamily_compactOpen_vitali_fin_bal
     exact (hf i).2.1
   · intro i j
     exact hσ.tendsto_atTop.eventually (hoverlap i j)
+
+/-- **Packaged finite compact-open subsequence branch-limit family**: compact
+open compactness on finitely many balls, plus eventual stage-level overlap
+equality, produces a structured finite subsequence branch-limit family. This
+packages the output of
+`freeEnergyComplexAlongExhaustion_branchFamily_compactOpen_vitali_fin_ball_overlap`
+for later coherent local-cover extraction steps. -/
+theorem freeEnergyComplexAlongExhaustion_finiteSubseqBranchLimitFamily_compactOpen
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℂ) (n : ℕ) {h0 : Fin n → ℂ} {r : Fin n → ℝ}
+    {F : Fin n → ℕ → ℂ → ℂ}
+    {A : ∀ i : Fin n, Set C(Metric.ball (h0 i) (r i), ℂ)}
+    {Fc : ∀ i : Fin n, ℕ → C(Metric.ball (h0 i) (r i), ℂ)}
+    (hA : ∀ i, IsCompact (A i))
+    (hFc_mem : ∀ i m, Fc i m ∈ A i)
+    (hFres : ∀ i m z (hz : z ∈ Metric.ball (h0 i) (r i)),
+      F i m z = Fc i m ⟨z, hz⟩)
+    (hbranch : ∀ i m,
+      AnalyticOnNhd ℂ (F i m) (Metric.ball (h0 i) (r i))
+        ∧ (∀ z ∈ Metric.ball (h0 i) (r i),
+            Complex.exp ((Fintype.card (↑(Λ.volume m) : Type _) : ℂ) * F i m z)
+              = partitionFunctionComplexAlongExhaustion G Λ J z β m)
+        ∧ F i m (h0 i) = freeEnergyComplexAlongExhaustion G Λ J (h0 i) β m)
+    (hoverlap : ∀ i j, ∀ᶠ m in Filter.atTop,
+      Set.EqOn (F i m) (F j m)
+        (Metric.ball (h0 i) (r i) ∩ Metric.ball (h0 j) (r j))) :
+    Nonempty (LeeYangFiniteSubseqBranchLimitFamily G Λ J β n h0 r) := by
+  rcases freeEnergyComplexAlongExhaustion_branchFamily_compactOpen_vitali_fin_ball_overlap
+      G Λ J β n hA hFc_mem hFres hbranch hoverlap with
+    ⟨σ, hσ, f, hlocal, hcompat⟩
+  exact ⟨{
+    stage := σ
+    stage_strict := hσ
+    branchFamily := fun i m z => F i (σ m) z
+    limitFun := f
+    branch_spec := by
+      intro i m
+      rcases hbranch i (σ m) with ⟨han, hexp, _hcenter⟩
+      exact ⟨han, hexp⟩
+    centre_normalized := by
+      intro i m
+      exact (hbranch i (σ m)).2.2
+    tendsto := by
+      intro i
+      exact (hlocal i).2.1
+    differentiable := by
+      intro i
+      exact (hlocal i).2.2
+    compatible := hcompat }⟩
+
+/-- **Packaged finite subsequence branch-limit patching**: a compatible
+`LeeYangFiniteSubseqBranchLimitFamily` patches to one function differentiable
+on the finite union of its balls. -/
+theorem freeEnergyComplexAlongExhaustion_finiteSubseqBranchLimitFamily_patch
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℂ) (n : ℕ) {h0 : Fin n → ℂ} {r : Fin n → ℝ}
+    (family : LeeYangFiniteSubseqBranchLimitFamily G Λ J β n h0 r) :
+    ∃ g : ℂ → ℂ,
+      (∀ i, Set.EqOn g (family.limitFun i) (Metric.ball (h0 i) (r i))) ∧
+      DifferentiableOn ℂ g (⋃ i : Fin n, Metric.ball (h0 i) (r i)) := by
+  rcases IsingModel.exists_differentiableOn_iUnion_of_finite_eqOn
+      n (s := fun i : Fin n => Metric.ball (h0 i) (r i))
+      (f := family.limitFun)
+      (hs := fun _ => Metric.isOpen_ball)
+      (hdiff := family.differentiable)
+      (hcompat := family.compatible) with
+    ⟨g, hg_eq, hg_diff⟩
+  exact ⟨g, hg_eq, hg_diff⟩
 
 /-- **Finite-ball compact-open diagonal extraction with local patching**:
 if the finite Lee-Yang local limits obtained from compact-open extraction are
