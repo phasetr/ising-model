@@ -3861,9 +3861,9 @@ The concrete $\mathbb Z^d$ wrappers live in
 
 This is not yet the absolute normalised-log bound used by PR \#2679 and
 PR \#2680: it supplies only an upper bound for
-$\log\|Z_{\Lambda_n}\|$.  A lower bound for $\log\|Z_{\Lambda_n}\|$ remains a
-separate normal-family input.  Reference: Glimm--Jaffe \cite{glimm-jaffe},
-\S 4.6, pp.~67--70.
+$\log\|Z_{\Lambda_n}\|$.  The matching compact Lee--Yang lower bound is supplied
+later by PR \#2692 through the root-product polynomial estimate.  Reference:
+Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
 \begin{theorem}[Lee--Yang compact upper normalised log bound; PR \#2682]
@@ -3886,10 +3886,9 @@ Lee--Yang gives
 at every finite stage.  The concrete $\mathbb Z^d$ wrapper lives in
 \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
 
-This is still an upper normalised-log estimate only.  It does not prove the
-lower control on $\log\|Z_{\Lambda_n}\|$ needed to turn the result into the
-absolute normalised-log hypothesis used by PR \#2679, PR \#2680, and
-PR \#2683.
+This is an upper normalised-log estimate only.  PR \#2692 supplies the matching
+compact Lee--Yang lower control needed to turn this into the absolute
+normalised-log hypothesis used by PR \#2679, PR \#2680, and PR \#2683.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
@@ -3930,8 +3929,9 @@ The concrete $\mathbb Z^d$ wrappers are
 and
 \texttt{exists\_norm\_freeEnergyComplexAlongExhaustion\_le\_lower\_log\_ly\_latticeGraph}.
 
-This is still conditional: the lower normalised-log control is isolated as an
-explicit hypothesis rather than proved.  Reference: Glimm--Jaffe
+In this handoff theorem the lower normalised-log control is isolated as an
+explicit hypothesis; PR \#2692 supplies that hypothesis on compact Lee--Yang
+sets via the root-product polynomial lower bound.  Reference: Glimm--Jaffe
 \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
