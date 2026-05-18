@@ -3540,6 +3540,44 @@ yet a construction of coherent locally uniformly convergent branches.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Normalised log bound handoff; PR \#2679]
+The theorem
+\texttt{norm\_freeEnergyComplexAlongExhaustion\_le\_of\_abs\_log\_norm\_bound\_stage}
+records the exact elementary step from normalised logarithmic control to a
+finite-stage complex free-energy bound.  If the stage $\Lambda_n$ is nonempty
+and
+\[
+  \frac{\left|\log\|Z_{\Lambda_n}(J,h,\beta)\|\right|}{|\Lambda_n|}
+  \le C,
+\]
+then
+\[
+  \|f_n(h)\|
+  \le
+  C+\frac{\pi}{|\Lambda_n|},
+\]
+where $f_n$ is the principal complex free energy
+\texttt{freeEnergyComplexAlongExhaustion}.  The proof is a direct
+specialisation of
+\texttt{norm\_freeEnergyComplex\_le\_trivial\_bound} to the induced graph on
+$\Lambda_n$, using the principal-log estimate
+\[
+  \|\log z\|\le |\log\|z\||+\pi .
+\]
+The setwise companion
+\texttt{norm\_freeEnergyComplexAlongExhaustion\_le\_of\_abs\_log\_norm\_bound\_on\_set}
+packages one constant $C$ for all stages and all fields in a set $K$.  The
+concrete $\mathbb Z^d$ wrappers live in
+\texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+
+This is intentionally a conditional handoff.  It identifies the missing
+normal-family input after the compact $Z$ envelope of PR \#2678: one still
+needs control of the absolute logarithm, including lower control on
+\(\|Z_{\Lambda_n}\|\), not merely an upper envelope for
+\(\|Z_{\Lambda_n}\|\).  Reference: Glimm--Jaffe \cite{glimm-jaffe},
+\S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{remark}[Status of PR \#200 — merged 2026-04-19, \texttt{52ea2f1}]
 PR \#200 was squash-merged into \texttt{main} on 2026-04-19 as
 commit \texttt{52ea2f1}. Items now present in \texttt{main}:

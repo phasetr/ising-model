@@ -405,6 +405,61 @@ theorem norm_partitionFunctionComplexAlongExhaustion_le_on_isCompact_stage
   exact norm_partitionFunctionComplexAlongExhaustion_le_of_re_bound_stage
     G Λ β J n (hR h hh)
 
+/-- **Stage free-energy bound from a normalised absolute-log bound**:
+if the normalised quantity
+`|log ‖Z_{Λ_n}(h)‖| / |Λ_n|` is bounded by `C` at a nonempty stage, then the
+principal complex free energy is bounded by `C + π / |Λ_n|`. This is the
+precise handoff from normalised logarithmic control to the free-energy bound
+needed by the later normal-family step; it does not assert that the
+partition-function upper envelope alone supplies the hypothesis. -/
+theorem norm_freeEnergyComplexAlongExhaustion_le_of_abs_log_norm_bound_stage
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (β J : ℝ) (n : ℕ) [Nonempty (↑(Λ.volume n) : Type _)] {h : ℂ} {C : ℝ}
+    (hC :
+      |Real.log ‖partitionFunctionComplexAlongExhaustion G Λ (J : ℂ) h (β : ℂ) n‖|
+        / (Fintype.card (↑(Λ.volume n) : Type _) : ℝ) ≤ C) :
+    ‖freeEnergyComplexAlongExhaustion G Λ (J : ℂ) h (β : ℂ) n‖
+      ≤ C + Real.pi / (Fintype.card (↑(Λ.volume n) : Type _) : ℝ) := by
+  have hbase :=
+    IsingModel.norm_freeEnergyComplex_le_trivial_bound
+      (inducedGraph G (Λ.volume n)) β J h
+  have hC' :
+      |Real.log ‖partitionFunctionComplex
+          (inducedGraph G (Λ.volume n)) (J : ℂ) h (β : ℂ)‖|
+        / (Fintype.card (↑(Λ.volume n) : Type _) : ℝ) ≤ C := by
+    simpa [partitionFunctionComplexAlongExhaustion] using hC
+  have hstep :
+      |Real.log ‖partitionFunctionComplex
+          (inducedGraph G (Λ.volume n)) (J : ℂ) h (β : ℂ)‖|
+        / (Fintype.card (↑(Λ.volume n) : Type _) : ℝ)
+          + Real.pi / (Fintype.card (↑(Λ.volume n) : Type _) : ℝ)
+        ≤ C + Real.pi / (Fintype.card (↑(Λ.volume n) : Type _) : ℝ) := by
+    linarith
+  simpa [freeEnergyComplexAlongExhaustion,
+    partitionFunctionComplexAlongExhaustion] using hbase.trans hstep
+
+/-- **Setwise free-energy bound from normalised absolute-log control**:
+if one constant `C` bounds
+`|log ‖Z_{Λ_n}(h)‖| / |Λ_n|` for every stage and every `h` in a set `K`, then
+the along-exhaustion principal free energies satisfy the corresponding
+stagewise bound on `K`. This packages the exact remaining analytic input for
+the Montel/Vitali normal-family step. -/
+theorem norm_freeEnergyComplexAlongExhaustion_le_of_abs_log_norm_bound_on_set
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    [∀ n, Nonempty (↑(Λ.volume n) : Type _)]
+    (β J : ℝ) {K : Set ℂ} {C : ℝ}
+    (hC : ∀ n, ∀ h ∈ K,
+      |Real.log ‖partitionFunctionComplexAlongExhaustion G Λ (J : ℂ) h (β : ℂ) n‖|
+        / (Fintype.card (↑(Λ.volume n) : Type _) : ℝ) ≤ C) :
+    ∀ n, ∀ h ∈ K,
+      ‖freeEnergyComplexAlongExhaustion G Λ (J : ℂ) h (β : ℂ) n‖
+        ≤ C + Real.pi / (Fintype.card (↑(Λ.volume n) : Type _) : ℝ) := by
+  intro n h hh
+  exact norm_freeEnergyComplexAlongExhaustion_le_of_abs_log_norm_bound_stage
+    G Λ β J n (hC n h hh)
+
 /-- **Per-stage `Z_ℂ ≠ 0 on leeYangDomain`** for
 `partitionFunctionComplexAlongExhaustion` (ferromagnetic). -/
 theorem partitionFunctionComplexAlongExhaustion_ne_zero_on_leeYangDomain_stage

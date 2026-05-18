@@ -1315,12 +1315,11 @@ theorem norm_complex_log_le (z : ℂ) :
         Complex.norm_le_abs_re_add_abs_im _
     _ ≤ |Real.log ‖z‖| + Real.pi := by rw [h_re]; linarith [h_im_abs]
 
-/-- **Uniform upper bound on `‖freeEnergyComplex‖`** for `[Nonempty ι]`:
-`‖f(J, h, β)‖ ≤ log 2 + |β|·(|J|·|E|/|ι| + |Re h|) + π/|ι|`.
-Derived from `norm_partitionFunctionComplex_le_trivial_bound` and
-`norm_complex_log_le`. Together with `BoundedEdgeDensity` (edge/vertex
-ratio uniform), this gives a uniform-on-compacts bound needed for the
-∞-vol Vitali lift. -/
+/-- **Principal complex free-energy log-norm bound** for `[Nonempty ι]`:
+`‖f(J, h, β)‖ ≤ |log ‖Z_ℂ(J,h,β)‖| / |ι| + π/|ι|`. This follows from
+`norm_complex_log_le` and records the exact normalised absolute-log input
+needed for later infinite-volume bounds. A separate lower control on
+`‖Z_ℂ‖` is needed before this becomes a Montel-style uniform bound. -/
 theorem norm_freeEnergyComplex_le_trivial_bound
     (G : SimpleGraph ι) [Fintype G.edgeSet] [Nonempty ι]
     (β J : ℝ) (h : ℂ) :
