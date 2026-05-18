@@ -544,7 +544,8 @@ packages finite compact-open diagonal/overlap output as
 finite union of balls. PR #2706 adds the corresponding finite packaged
 real-centre identification wrapper. PR #2707 composes the compact-open finite
 package extraction directly with that real-centre patch. PR #2708 adds the
-corresponding non-real compact-open extraction-to-patch wrapper.
+corresponding compact-open extraction-to-patch wrapper without the real-centre
+identification conclusion.
 
 **Not yet formalized** (future PRs):
 - Montel-style locally uniform convergence/subsequence extraction of local
