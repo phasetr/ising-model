@@ -3663,9 +3663,44 @@ finite family.  The concrete \(\mathbb Z^d\) wrapper is in
 \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
 
 This result still assumes compact-open compactness for each branch family.  It
-does not prove Montel compactness, compatibility of the local limits on
+does not prove Montel compactness, compatibility of arbitrary branch choices on
 overlaps, coherent local-cover extraction, or global patching on
 \(\texttt{leeYangDomain}\).
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
+\begin{theorem}[Finite overlap-compatibility handoff; PR \#2697]
+The generic overlap uniqueness step is formalised by
+\begin{Verbatim}
+eqOn_of_tendstoLocallyUniformlyOn_of_eventuallyEqOn
+pairwise_eqOn_of_tendstoLocallyUniformlyOn_of_eventuallyEqOn
+\end{Verbatim}
+and its Lee--Yang finite-ball wrapper
+\begin{Verbatim}
+Ambient.freeEnergyComplexAlongExhaustion_branchFamily_compactOpen_vitali_fin_ball_overlap
+\end{Verbatim}
+If two stage families converge locally uniformly on open sets \(s\) and \(t\),
+and the stage functions are eventually equal on \(s\cap t\), then Hausdorff
+uniqueness of pointwise limits gives equality of the two limiting functions on
+the overlap.  The finite-family theorem applies this argument pairwise over
+\(\mathrm{Fin}\,n\).
+
+For finitely many Lee--Yang balls, the ambient theorem combines this overlap
+lemma with the PR \#2696 compact-open finite diagonal extraction.  It returns a
+single strictly increasing subsequence \(\sigma:\mathbb N\to\mathbb N\), a
+family of holomorphic local limits \(f_i\), and pairwise equalities
+\[
+  f_i = f_j \quad\text{on}\quad
+  B(h_i,r_i)\cap B(h_j,r_j)
+\]
+whenever the selected stage branches are eventually equal on the same
+overlaps.  The concrete \(\mathbb Z^d\) wrapper is in
+\texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+
+This is an explicit-hypothesis compatibility handoff.  It does not construct
+coherent branch choices, prove that arbitrary local logarithm branches agree on
+overlaps, prove Montel compactness, or patch the resulting local limits to a
+global function on \(\texttt{leeYangDomain}\).
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
