@@ -3623,6 +3623,30 @@ Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70, and
 Friedli--Velenik \cite{friedli-velenik}, (3.63)--(3.65), pp.~122--123.
 \end{theorem}
 
+\begin{theorem}[Locally bounded family from polynomial lower witnesses; PR \#2688]
+The theorem
+\texttt{exists\_norm\_freeEnergyComplexAlongExhaustion\_le\_poly\_lower\_leeYang}
+composes the polynomial-witness lower-log bridge of PR \#2687 with the
+Lee--Yang upper/lower-log handoff of PR \#2683.  On a compact
+\(K\subseteq\texttt{leeYangDomain}\), assume bounded edge density, nonempty
+stages, \(\beta>0\), \(J>0\), a real-part bound \(|\Re h|\le R\), and a
+stage-uniform lower normalised-log estimate for positive polynomial witnesses
+\(\epsilon_n(h)\).  Then there is \(C\) such that
+\[
+  \left\|f_n(h)\right\| \le C+\pi
+  \qquad(n\in\mathbb N,\ h\in K).
+\]
+The \(\mathbb Z^d\) wrapper is
+\texttt{exists\_norm\_freeEnergyComplexAlongExhaustion\_le\_poly\_lower\_ly\_latticeGraph}.
+
+This theorem still does not prove the lower normalised-log estimate for the
+polynomial witnesses.  It packages the exact route from that remaining input
+to the locally bounded family condition needed by the later normal-family or
+Vitali construction.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70, and
+Friedli--Velenik \cite{friedli-velenik}, (3.63)--(3.65), pp.~122--123.
+\end{theorem}
+
 \begin{theorem}[Compact-uniform complex partition-function bound; PR \#2678]
 The theorem
 \texttt{exists\_abs\_re\_le\_on\_isCompact} records the elementary
