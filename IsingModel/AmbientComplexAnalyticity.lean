@@ -863,6 +863,29 @@ theorem exists_norm_freeEnergyComplexAlongExhaustion_le_poly_lower_leeYang
   exact exists_norm_freeEnergyComplexAlongExhaustion_le_lower_log_leeYang
     G Λ hBED hβ hJ hK hKsub hLower
 
+/-- **Compact Lee-Yang locally bounded family from polynomial lower witnesses**:
+compactness supplies the real-part bound consumed by
+`exists_norm_freeEnergyComplexAlongExhaustion_le_poly_lower_leeYang`. The
+polynomial-witness lower normalised-log input remains an explicit hypothesis. -/
+theorem exists_norm_freeEnergyComplexAlongExhaustion_le_poly_lower_leeYang_of_isCompact
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    [∀ n, Nonempty (↑(Λ.volume n) : Type _)]
+    (hBED : BoundedEdgeDensity G Λ) {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J)
+    {K : Set ℂ} (hK : IsCompact K) (hKsub : K ⊆ IsingModel.leeYangDomain)
+    (hPolyLower : ∃ Lε : ℝ, ∀ n, ∀ h ∈ K,
+      ∃ ε : ℝ, 0 < ε ∧
+        ε ≤ ‖(IsingModel.isingEdgePoly
+          (IsingModel.graphToEdgeList (inducedGraph G (Λ.volume n))
+            (Real.exp (-2 * β * J)))).eval
+          (IsingModel.leeYangFugacityVec (β : ℂ) h)‖ ∧
+        -Lε ≤ Real.log ε / (Fintype.card (↑(Λ.volume n) : Type _) : ℝ)) :
+    ∃ C : ℝ, ∀ n, ∀ h ∈ K,
+      ‖freeEnergyComplexAlongExhaustion G Λ (J : ℂ) h (β : ℂ) n‖ ≤ C + Real.pi := by
+  rcases exists_abs_re_le_on_isCompact hK with ⟨R, _hR_nonneg, hR⟩
+  exact exists_norm_freeEnergyComplexAlongExhaustion_le_poly_lower_leeYang
+    G Λ hBED hβ hJ hK hKsub hR hPolyLower
+
 /-! ## Real-axis convergence to `freeEnergyInfinite`
 
 The real-axis half of the Vitali identification: at real parameters,
