@@ -910,6 +910,32 @@ theorem exists_norm_freeEnergyComplexAlongExhaustion_le_poly_lower_leeYang_on_ba
       G Λ hBED hβ hJ (isCompact_closedBall h₀ ρ) hsub hPolyLower with ⟨C, hC⟩
   exact ⟨C, fun n h hh => hC n h (Metric.ball_subset_closedBall hh)⟩
 
+/-- **Point-local Lee-Yang locally bounded family from polynomial lower
+witnesses**: around any Lee-Yang point, choose a positive closed ball inside
+`leeYangDomain`; a radius-dependent polynomial-witness lower normalised-log
+input on that closed ball gives a bound on the corresponding open ball. -/
+theorem exists_norm_freeEnergyComplexAlongExhaustion_le_poly_lower_leeYang_around
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    [∀ n, Nonempty (↑(Λ.volume n) : Type _)]
+    (hBED : BoundedEdgeDensity G Λ) {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J)
+    {h₀ : ℂ} (hmem : h₀ ∈ IsingModel.leeYangDomain)
+    (hPolyLower : ∀ ρ : ℝ, 0 < ρ →
+      Metric.closedBall h₀ ρ ⊆ IsingModel.leeYangDomain →
+      ∃ Lε : ℝ, ∀ n, ∀ h ∈ Metric.closedBall h₀ ρ,
+        ∃ ε : ℝ, 0 < ε ∧
+          ε ≤ ‖(IsingModel.isingEdgePoly
+            (IsingModel.graphToEdgeList (inducedGraph G (Λ.volume n))
+              (Real.exp (-2 * β * J)))).eval
+            (IsingModel.leeYangFugacityVec (β : ℂ) h)‖ ∧
+          -Lε ≤ Real.log ε / (Fintype.card (↑(Λ.volume n) : Type _) : ℝ)) :
+    ∃ ρ : ℝ, 0 < ρ ∧ ∃ C : ℝ, ∀ n, ∀ h ∈ Metric.ball h₀ ρ,
+      ‖freeEnergyComplexAlongExhaustion G Λ (J : ℂ) h (β : ℂ) n‖ ≤ C + Real.pi := by
+  rcases IsingModel.leeYangDomain_closedBall_subset hmem with ⟨ρ, hρ, hsub⟩
+  rcases exists_norm_freeEnergyComplexAlongExhaustion_le_poly_lower_leeYang_on_ball
+      G Λ hBED hβ hJ hsub (hPolyLower ρ hρ hsub) with ⟨C, hC⟩
+  exact ⟨ρ, hρ, C, hC⟩
+
 /-! ## Real-axis convergence to `freeEnergyInfinite`
 
 The real-axis half of the Vitali identification: at real parameters,

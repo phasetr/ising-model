@@ -1545,6 +1545,14 @@ theorem leeYangDomain_ball_subset {h₀ : ℂ} (hmem : h₀ ∈ leeYangDomain) :
     ∃ r : ℝ, 0 < r ∧ Metric.ball h₀ r ⊆ leeYangDomain :=
   Metric.isOpen_iff.mp isOpen_leeYangDomain h₀ hmem
 
+/-- `leeYangDomain` contains a positive-radius closed ball around each of its
+points. This half-radius form is convenient for local compactness handoffs. -/
+theorem leeYangDomain_closedBall_subset {h₀ : ℂ} (hmem : h₀ ∈ leeYangDomain) :
+    ∃ ρ : ℝ, 0 < ρ ∧ Metric.closedBall h₀ ρ ⊆ leeYangDomain := by
+  rcases leeYangDomain_ball_subset hmem with ⟨r, hr, hsub⟩
+  refine ⟨r / 2, half_pos hr, ?_⟩
+  exact (Metric.closedBall_subset_ball (half_lt_self hr)).trans hsub
+
 /-- `leeYangSubdomain` is non-empty for `β ≥ 0` (contains `(1 : ℂ)`). -/
 theorem leeYangSubdomain_nonempty (β : ℝ) (N : ℕ) :
     (leeYangSubdomain β N).Nonempty :=
