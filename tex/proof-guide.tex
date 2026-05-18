@@ -3387,7 +3387,8 @@ Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 The finite-volume theorem
 \texttt{exists\_freeEnergyComplex\_analyticOnNhd\_branch\_ball\_strong}
 strengthens the ball-level branch statement by keeping the centre
-normalisation in the same witness.  If
+normalisation in the same witness.  For real ferromagnetic parameters
+$\beta>0$, $J>0$, and nonempty finite volume, if
 $B(h_0,r)\subseteq\texttt{leeYangDomain}$ and $r>0$, then there is
 $f:\mathbb C\to\mathbb C$ such that
 \[
@@ -3411,8 +3412,9 @@ The along-exhaustion wrappers
 \texttt{freeEnergyComplexAlongExhaustion\_exists\_analyticOnNhd\_branch\_ball\_stage\_strong}
 and
 \texttt{freeEnergyComplexAlongExhaustion\_analyticOnNhd\_branch\_ball\_all\_stages\_strong}
-apply this theorem to the induced graph on $\Lambda_n$.  Thus, at every
-nonempty stage, the same local witness carries analyticity on the ball,
+apply this theorem to the induced graph on $\Lambda_n$ for the same real
+ferromagnetic parameter range.  Thus, at every nonempty stage, the same
+local witness carries analyticity on the ball,
 the ball-wide exponential identity for $Z_{\Lambda_n}$, and agreement
 with the principal \texttt{freeEnergyComplexAlongExhaustion} value at
 the centre.  This still does not prove coherent branch selection or
