@@ -274,6 +274,101 @@ theorem freeEnergyComplexAlongExhaustion_tendsto_at_real_of_disjointTowerHypothe
   rw [h_eq]
   exact (Complex.continuous_ofReal.tendsto _).comp h_real
 
+/-! ## Conditional Vitali assembly
+
+The next statements package the final Vitali handoff for the
+along-exhaustion complex free energy. The hard analytic input remains
+the locally uniform convergence of the finite-volume branch family; once
+that input is supplied, these lemmas turn it into holomorphicity of the
+infinite-volume candidate and identify the real-positive slice with the
+Fekete `freeEnergyInfinite` limit. -/
+
+/-- **Conditional Vitali assembly on an open set** for
+`freeEnergyComplexAlongExhaustion`: a locally uniform limit of
+per-stage holomorphic complex free energies is holomorphic on the same
+open set. This is the along-exhaustion specialization of
+`IsingModel.vitali_bridge`. -/
+theorem freeEnergyComplexAlongExhaustion_vitali_bridge
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {U : Set ℂ} (hU : IsOpen U) (J β : ℂ) {f : ℂ → ℂ}
+    (hF : ∀ n, DifferentiableOn ℂ
+      (fun h => freeEnergyComplexAlongExhaustion G Λ J h β n) U)
+    (hconv : TendstoLocallyUniformlyOn
+      (fun n h => freeEnergyComplexAlongExhaustion G Λ J h β n)
+      f Filter.atTop U) :
+    DifferentiableOn ℂ f U :=
+  IsingModel.vitali_bridge hU hF hconv
+
+/-- **Conditional Vitali assembly on `leeYangDomain`** for
+`freeEnergyComplexAlongExhaustion`. This is the named Step 5 handoff in
+the infinite-volume proof of GJ §4.6 Thm 4.6.2: after the branch-family
+locally-uniform convergence is available on the Lee-Yang domain, the
+limit is holomorphic there. -/
+theorem freeEnergyComplexAlongExhaustion_vitali_bridge_leeYangDomain
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℂ) {f : ℂ → ℂ}
+    (hF : ∀ n, DifferentiableOn ℂ
+      (fun h => freeEnergyComplexAlongExhaustion G Λ J h β n)
+      IsingModel.leeYangDomain)
+    (hconv : TendstoLocallyUniformlyOn
+      (fun n h => freeEnergyComplexAlongExhaustion G Λ J h β n)
+      f Filter.atTop IsingModel.leeYangDomain) :
+    DifferentiableOn ℂ f IsingModel.leeYangDomain :=
+  IsingModel.vitali_bridge_leeYangDomain hF hconv
+
+/-- **Real-axis identification of a locally uniform Vitali limit**:
+if the complex along-exhaustion free energies converge locally uniformly
+on `leeYangDomain` to `f`, then at any real parameter `p.h` belonging to
+`leeYangDomain`, the value of `f` is the cast of the real
+`freeEnergyInfinite` limit. -/
+theorem freeEnergyComplexAlongExhaustion_limit_eq_freeEnergyInfinite_at_real
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ)
+    (hBED : BoundedEdgeDensity G Λ)
+    (hd : DisjointTowerHypotheses G Λ p)
+    {f : ℂ → ℂ}
+    (hp : (p.h : ℂ) ∈ IsingModel.leeYangDomain)
+    (hconv : TendstoLocallyUniformlyOn
+      (fun n h => freeEnergyComplexAlongExhaustion G Λ
+        (p.J : ℂ) h (p.β : ℂ) n)
+      f Filter.atTop IsingModel.leeYangDomain) :
+    f (p.h : ℂ) = ((freeEnergyInfinite G Λ p : ℝ) : ℂ) := by
+  have hpoint := TendstoLocallyUniformlyOn.tendsto_at hconv hp
+  have hreal :=
+    freeEnergyComplexAlongExhaustion_tendsto_at_real_of_disjointTowerHypotheses
+      G Λ p hBED hd
+  exact tendsto_nhds_unique hpoint hreal
+
+/-- **Conditional Vitali assembly with real-axis identification**:
+combines holomorphicity of the locally uniform Lee-Yang limit with its
+identification on the real-positive slice via the real
+`freeEnergyInfinite` limit. -/
+theorem freeEnergyComplexAlongExhaustion_vitali_bridge_leeYangDomain_identified_at_real
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ)
+    (hBED : BoundedEdgeDensity G Λ)
+    (hd : DisjointTowerHypotheses G Λ p)
+    {f : ℂ → ℂ}
+    (hF : ∀ n, DifferentiableOn ℂ
+      (fun h => freeEnergyComplexAlongExhaustion G Λ
+        (p.J : ℂ) h (p.β : ℂ) n)
+      IsingModel.leeYangDomain)
+    (hp : (p.h : ℂ) ∈ IsingModel.leeYangDomain)
+    (hconv : TendstoLocallyUniformlyOn
+      (fun n h => freeEnergyComplexAlongExhaustion G Λ
+        (p.J : ℂ) h (p.β : ℂ) n)
+      f Filter.atTop IsingModel.leeYangDomain) :
+    DifferentiableOn ℂ f IsingModel.leeYangDomain ∧
+      f (p.h : ℂ) = ((freeEnergyInfinite G Λ p : ℝ) : ℂ) :=
+  ⟨freeEnergyComplexAlongExhaustion_vitali_bridge_leeYangDomain
+      G Λ (p.J : ℂ) (p.β : ℂ) hF hconv,
+    freeEnergyComplexAlongExhaustion_limit_eq_freeEnergyInfinite_at_real
+      G Λ p hBED hd hp hconv⟩
+
 end Ambient
 
 end IsingModel
