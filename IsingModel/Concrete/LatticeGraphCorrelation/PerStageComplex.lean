@@ -79,6 +79,26 @@ theorem norm_partitionFunctionComplexAlongExhaustion_le_of_re_bound_stage_lattic
   Ambient.norm_partitionFunctionComplexAlongExhaustion_le_of_re_bound_stage
     (IsingModel.latticeGraph d) Λ β J n hh
 
+/-- **ℤ^d per-stage compact-uniform norm bound** for
+`partitionFunctionComplexAlongExhaustion`: on any compact field set `K`, a
+single real-part bound `R` feeds all stage-wise `Z_ℂ` norm estimates. The
+bound remains stage-dependent and is an envelope for later normalised estimates. -/
+theorem norm_partitionFunctionComplexAlongExhaustion_le_on_isCompact_stage_latticeGraph
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph
+        (IsingModel.latticeGraph d) (Λ.volume n)).edgeSet]
+    (β J : ℝ) {K : Set ℂ} (hK : IsCompact K) :
+    ∃ R : ℝ, 0 ≤ R ∧ ∀ n, ∀ h ∈ K,
+      ‖Ambient.partitionFunctionComplexAlongExhaustion
+          (IsingModel.latticeGraph d) Λ (J : ℂ) h (β : ℂ) n‖
+        ≤ Fintype.card (IsingModel.Config (↑(Λ.volume n) : Type _)) *
+            Real.exp (|β| *
+              (|J| * (Ambient.inducedGraph
+                  (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card
+                + R * Fintype.card (↑(Λ.volume n) : Type _))) :=
+  Ambient.norm_partitionFunctionComplexAlongExhaustion_le_on_isCompact_stage
+    (IsingModel.latticeGraph d) Λ β J hK
+
 /-- **ℤ^d per-stage `Z_ℂ ≠ 0 on leeYangDomain`** for
 `partitionFunctionComplexAlongExhaustion` (ferromagnetic). -/
 theorem partitionFunctionComplexAlongExhaustion_ne_zero_on_leeYangDomain_stage_latticeGraph
