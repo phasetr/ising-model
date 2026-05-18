@@ -2007,6 +2007,34 @@ theorem exists_freeEnergyComplex_analyticOnNhd_ball
     rw [hmul]
     exact hg_exp z hz
 
+/-- **Strong free-energy local branch on a ball**: the branch is
+`AnalyticOnNhd` on the ball, its exponential recovers `Z` throughout the
+ball, and its value at the centre agrees with the principal
+`freeEnergyComplex`. -/
+theorem exists_freeEnergyComplex_analyticOnNhd_branch_ball_strong
+    (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J) [Nonempty ι]
+    {h₀ : ℂ} {r : ℝ} (hr : 0 < r)
+    (hsub : Metric.ball h₀ r ⊆ leeYangDomain) :
+    ∃ f : ℂ → ℂ,
+        AnalyticOnNhd ℂ f (Metric.ball h₀ r)
+      ∧ (∀ z ∈ Metric.ball h₀ r,
+          Complex.exp ((Fintype.card ι : ℂ) * f z)
+            = partitionFunctionComplex G (J : ℂ) z (β : ℂ))
+      ∧ f h₀ = freeEnergyComplex G (J : ℂ) h₀ (β : ℂ) := by
+  obtain ⟨g, hg_exp, hg_base, hg_ana⟩ :=
+    exists_logZ_analytic_branch_on_ball G hβ hJ hr hsub
+  refine ⟨fun z => ((Fintype.card ι : ℂ))⁻¹ * g z, ?_, ?_, ?_⟩
+  · exact analyticOnNhd_const.mul hg_ana
+  · intro z hz
+    have hNℕ : 0 < Fintype.card ι := Fintype.card_pos
+    have hN : (Fintype.card ι : ℂ) ≠ 0 := by exact_mod_cast hNℕ.ne'
+    have hmul : (Fintype.card ι : ℂ) * ((Fintype.card ι : ℂ)⁻¹ * g z) = g z := by
+      field_simp
+    rw [hmul]
+    exact hg_exp z hz
+  · simp [freeEnergyComplex, hg_base]
+
 /-- **DifferentiableOn form** of the local freeEnergyComplex branch. -/
 theorem exists_freeEnergyComplex_differentiableOn_ball
     (G : SimpleGraph ι) [Fintype G.edgeSet]

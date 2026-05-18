@@ -3383,6 +3383,47 @@ while the local analytic representative may differ from the principal
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Normalised Lee-Yang branch-ball witnesses for the Vitali input; PR \#2675]
+The finite-volume theorem
+\texttt{exists\_freeEnergyComplex\_analyticOnNhd\_branch\_ball\_strong}
+strengthens the ball-level branch statement by keeping the centre
+normalisation in the same witness.  For real ferromagnetic parameters
+$\beta>0$, $J>0$, and nonempty finite volume, if
+$B(h_0,r)\subseteq\texttt{leeYangDomain}$ and $r>0$, then there is
+$f:\mathbb C\to\mathbb C$ such that
+\[
+  f \text{ is analytic on a neighbourhood of } B(h_0,r),
+\]
+\[
+  \forall z\in B(h_0,r),\qquad
+  \exp(|\iota|\,f(z))=Z(z),
+\]
+and
+\[
+  f(h_0)=\texttt{freeEnergyComplex}\,G\,J\,h_0\,\beta .
+\]
+The proof applies the Morera-built log branch
+\texttt{exists\_logZ\_analytic\_branch\_on\_ball} and sets
+$f(z)=g(z)/|\iota|$; the nonempty-volume hypothesis gives
+$|\iota|\ne 0$, while the basepoint equality follows from the stored
+normalisation $g(h_0)=\log Z(h_0)$.
+
+The along-exhaustion wrappers
+\texttt{freeEnergyComplexAlongExhaustion\_exists\_analyticOnNhd\_branch\_ball\_stage\_strong}
+and
+\texttt{freeEnergyComplexAlongExhaustion\_analyticOnNhd\_branch\_ball\_all\_stages\_strong}
+apply this theorem to the induced graph on $\Lambda_n$ for the same real
+ferromagnetic parameter range.  Thus, at every nonempty stage, the same
+local witness carries analyticity on the ball,
+the ball-wide exponential identity for $Z_{\Lambda_n}$, and agreement
+with the principal \texttt{freeEnergyComplexAlongExhaustion} value at
+the centre.  This still does not prove coherent branch selection or
+locally uniform convergence; it fixes the normalised local input that a
+future normal-family/Vitali argument can consume.
+
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{remark}[Status of PR \#200 — merged 2026-04-19, \texttt{52ea2f1}]
 PR \#200 was squash-merged into \texttt{main} on 2026-04-19 as
 commit \texttt{52ea2f1}. Items now present in \texttt{main}:
