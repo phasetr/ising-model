@@ -428,7 +428,7 @@ Named specializations at `A = {i}`:
 | `norm_partitionFunctionComplex_le_partitionFunction` + `norm_partitionFunctionComplex_le_trivial_bound` + `norm_complex_log_le` + `norm_freeEnergyComplex_le_trivial_bound` | **Finite-volume complex Ising modulus estimates**: `|Z(J, h, β)| ≤ Z(J, Re h, β)` (real Ising partition function), then combined with `partitionFunction_upper` gives `|Z| ≤ 2^|ι| · exp(|β|·(|J|·|E| + |Re h|·|ι|))`, and with `‖Complex.log z‖ ≤ |Real.log ‖z‖| + π` gives `‖f_complex‖ ≤ (|log ‖Z‖| + π)/|ι|`. The free-energy bound still requires control of the absolute logarithm, including lower control on `‖Z‖`; it is a finite-volume estimate, not by itself a Montel bound for the infinite-volume sequence. | `ComplexAnalyticity.lean` | ∞-vol Vitali (finite-volume bound input) |
 | `logDeriv_partitionFunctionComplex_analyticOnNhd_leeYangDomain` + `exists_logZ_branch_on_ball_of_leeYangDomain` + `exists_normalised_logZ_branch_on_ball` + `exists_logZ_holomorphic_branch_on_ball` + `exists_logZ_analytic_branch_on_ball` + `exists_logZ_analyticAt_of_leeYangDomain` + `exists_freeEnergyComplex_analyticAt_branch_of_leeYangDomain` + `analyticBranch_freeEnergyComplex_leeYangDomain` | **Full Lee-Yang domain finite-volume log branch** (local branch form of GJ §4.6 Thm 4.6.2). For real ferromagnetic `β > 0`, `J > 0`, `[Nonempty ι]`: at every `h₀ ∈ leeYangDomain`, there is an analytic `f : ℂ → ℂ` with `exp(|ι|·f(h₀)) = Z(h₀)` and `f(h₀) = Complex.log(Z(h₀))/|ι|`. Construction via Morera (`DifferentiableOn.isExactOn_ball`) on a ball around `h₀`, giving a primitive `g` of `Z'/Z`; then `F(z) := exp(g(z))/Z(z)` has derivative `0` by chain + quotient rules, constant on the convex ball, value `1` at centre ⇒ `exp(g) = Z` pointwise on the ball; `g` analytic via `DifferentiableOn.analyticOnNhd`. The principal-branch `freeEnergyComplex` may differ from `f` by a locally-constant `2πi·k/|ι|` shift where `Z` crosses the negative real axis; the local branch `f` is continuous across such crossings. | `ComplexAnalyticity.lean` | Complex finite (full Lee-Yang via local branch) |
 
-**Status (as of PR #2693).** The
+**Status (as of PR #2698).** The
 local-branch form of GJ Thm 4.6.2 finite-volume analyticity is
 formalised: `exists_freeEnergyComplex_analyticAt_branch_of_leeYangDomain`
 gives, at every `h₀ ∈ leeYangDomain`, an analytic function `f` with
@@ -508,14 +508,24 @@ wrappers
 `Ambient.exists_norm_freeEnergyComplexAlongExhaustion_le_leeYang_on_ball`, and
 `Ambient.exists_norm_freeEnergyComplexAlongExhaustion_le_leeYang_around`, plus
 their ℤ^d wrappers in `PerStageComplex.lean`, now supply the local boundedness
-input needed for the remaining normal-family/Vitali branch construction.
+input needed for the remaining normal-family/Vitali branch construction. PRs
+#2694-#2696 package the compact-open extraction handoff on one ball, then on
+two balls, then on a finite family of Lee-Yang balls, producing one common
+strictly increasing subsequence and local differentiable limits under explicit
+compact-open compactness hypotheses. PR #2697 adds the explicit-overlap
+handoff: if the selected stage branches are eventually equal on every pairwise
+overlap, then the extracted local limits agree pairwise on those overlaps. PR
+#2698 adds the finite local-patching handoff, patching such compatible local
+limits to one differentiable function on the finite union of balls.
 
 **Not yet formalized** (future PRs):
 - Montel-style locally uniform convergence/subsequence extraction of local
   Lee-Yang branch families from the now-unconditional local boundedness plus
-  real-axis Fekete and the branch-family identity theorem; PR #2693 provides
-  the post-extraction handoff, but mathlib still lacks a direct Montel theorem.
-- Coherent branch-family construction and global branch patching.
+  real-axis Fekete and the branch-family identity theorem; PRs #2694-#2698
+  provide finite post-extraction and patching handoffs, but mathlib still lacks
+  a direct Montel theorem.
+- Coherent branch-family construction giving the explicit overlap hypothesis,
+  diagonal coherent local-cover extraction, and global Lee-Yang-domain patching.
 - Note: the principal-branch `freeEnergyComplex` may be discontinuous
   where `Z` crosses the negative real axis; the local-branch form
   is the mathematically correct statement of GJ Thm 4.6.2.
