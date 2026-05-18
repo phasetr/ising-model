@@ -1711,6 +1711,83 @@ theorem pairwise_eqOn_of_tendstoLocallyUniformlyOn_of_eventuallyEqOn
   exact eqOn_of_tendstoLocallyUniformlyOn_of_eventuallyEqOn
     (hconv i) (hconv j) (hoverlap i j)
 
+omit [Fintype ι] [DecidableEq ι] in
+/-- **Finite open-cover patching for differentiable local functions**: a finite
+family of differentiable functions on open sets, compatible on all pairwise
+overlaps, patches to one function on the finite union.  The patched function
+agrees with each local function on its own open set and is differentiable on
+the whole union. -/
+theorem exists_differentiableOn_iUnion_of_finite_eqOn
+    (n : ℕ)
+    {s : Fin n → Set ℂ}
+    {f : Fin n → ℂ → ℂ}
+    (hs : ∀ i, IsOpen (s i))
+    (hdiff : ∀ i, DifferentiableOn ℂ (f i) (s i))
+    (hcompat : ∀ i j, Set.EqOn (f i) (f j) (s i ∩ s j)) :
+    ∃ g : ℂ → ℂ,
+      (∀ i, Set.EqOn g (f i) (s i)) ∧
+      DifferentiableOn ℂ g (⋃ i, s i) := by
+  classical
+  induction n with
+  | zero =>
+      refine ⟨fun _ => 0, ?_, ?_⟩
+      · intro i
+        exact Fin.elim0 i
+      · intro z hz
+        simp at hz
+  | succ n ih =>
+      rcases ih
+          (s := fun i : Fin n => s i.succ)
+          (f := fun i : Fin n => f i.succ)
+          (hs := fun i => hs i.succ)
+          (hdiff := fun i => hdiff i.succ)
+          (hcompat := fun i j => hcompat i.succ j.succ) with
+        ⟨gTail, hgTail_eq, hgTail_diff⟩
+      let tail : Set ℂ := ⋃ i : Fin n, s i.succ
+      let g : ℂ → ℂ := Set.piecewise (s 0) (f 0) gTail
+      have htail_open : IsOpen tail := isOpen_iUnion (fun i : Fin n => hs i.succ)
+      have hg_head : Set.EqOn g (f 0) (s 0) := by
+        intro z hz
+        simp [g, hz]
+      have hg_tail : ∀ i : Fin n, Set.EqOn g (f i.succ) (s i.succ) := by
+        intro i z hz
+        by_cases hz0 : z ∈ s 0
+        · have h0i : f 0 z = f i.succ z := hcompat 0 i.succ ⟨hz0, hz⟩
+          simpa [g, hz0] using h0i
+        · have htail_i : gTail z = f i.succ z := hgTail_eq i hz
+          simpa [g, hz0] using htail_i
+      have hg_tail_union : Set.EqOn g gTail tail := by
+        intro z hz
+        rcases Set.mem_iUnion.mp hz with ⟨i, hzi⟩
+        by_cases hz0 : z ∈ s 0
+        · have h0i : f 0 z = f i.succ z := hcompat 0 i.succ ⟨hz0, hzi⟩
+          have htail_i : gTail z = f i.succ z := hgTail_eq i hzi
+          calc
+            g z = f 0 z := by simp [g, hz0]
+            _ = f i.succ z := h0i
+            _ = gTail z := htail_i.symm
+        · simp [g, hz0]
+      have hg_diff_head : DifferentiableOn ℂ g (s 0) :=
+        (hdiff 0).congr hg_head
+      have hg_diff_tail : DifferentiableOn ℂ g tail :=
+        hgTail_diff.congr hg_tail_union
+      have hg_diff_union : DifferentiableOn ℂ g (s 0 ∪ tail) :=
+        DifferentiableOn.union_of_isOpen hg_diff_head hg_diff_tail (hs 0) htail_open
+      refine ⟨g, ?_, ?_⟩
+      · intro i
+        refine Fin.cases ?_ ?_ i
+        · exact hg_head
+        · intro j
+          exact hg_tail j
+      · refine hg_diff_union.congr_mono ?_ ?_
+        · intro z hz
+          rfl
+        · intro z hz
+          rcases Set.mem_iUnion.mp hz with ⟨i, hzi⟩
+          obtain rfl | ⟨j, rfl⟩ := Fin.eq_zero_or_eq_succ i
+          · exact Or.inl hzi
+          · exact Or.inr (Set.mem_iUnion.mpr ⟨j, hzi⟩)
+
 /-- **Modulus bound for `partitionFunctionComplex` via the real Ising
 partition function (statement, proof deferred)**. For real `β`, real `J`,
 complex `h`:

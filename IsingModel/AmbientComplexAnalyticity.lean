@@ -1802,6 +1802,57 @@ theorem freeEnergyComplexAlongExhaustion_branchFamily_compactOpen_vitali_fin_bal
   · intro i j
     exact hσ.tendsto_atTop.eventually (hoverlap i j)
 
+/-- **Finite-ball compact-open diagonal extraction with local patching**:
+if the finite Lee-Yang local limits obtained from compact-open extraction are
+compatible on all pairwise ball overlaps, then they patch to one function on
+the finite union of balls.  The stage-level overlap equality remains an
+explicit hypothesis, inherited from
+`freeEnergyComplexAlongExhaustion_branchFamily_compactOpen_vitali_fin_ball_overlap`. -/
+theorem freeEnergyComplexAlongExhaustion_branchFamily_compactOpen_vitali_fin_ball_patch
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℂ) (n : ℕ) {h0 : Fin n → ℂ} {r : Fin n → ℝ}
+    {F : Fin n → ℕ → ℂ → ℂ}
+    {A : ∀ i : Fin n, Set C(Metric.ball (h0 i) (r i), ℂ)}
+    {Fc : ∀ i : Fin n, ℕ → C(Metric.ball (h0 i) (r i), ℂ)}
+    (hA : ∀ i, IsCompact (A i))
+    (hFc_mem : ∀ i m, Fc i m ∈ A i)
+    (hFres : ∀ i m z (hz : z ∈ Metric.ball (h0 i) (r i)),
+      F i m z = Fc i m ⟨z, hz⟩)
+    (hbranch : ∀ i m,
+      AnalyticOnNhd ℂ (F i m) (Metric.ball (h0 i) (r i))
+        ∧ (∀ z ∈ Metric.ball (h0 i) (r i),
+            Complex.exp ((Fintype.card (↑(Λ.volume m) : Type _) : ℂ) * F i m z)
+              = partitionFunctionComplexAlongExhaustion G Λ J z β m)
+        ∧ F i m (h0 i) = freeEnergyComplexAlongExhaustion G Λ J (h0 i) β m)
+    (hoverlap : ∀ i j, ∀ᶠ m in Filter.atTop,
+      Set.EqOn (F i m) (F j m)
+        (Metric.ball (h0 i) (r i) ∩ Metric.ball (h0 j) (r j))) :
+    ∃ σ : ℕ → ℕ, StrictMono σ ∧
+      ∃ f : Fin n → ℂ → ℂ, ∃ g : ℂ → ℂ,
+        (∀ i,
+          (∃ fc : C(Metric.ball (h0 i) (r i), ℂ),
+            fc ∈ A i ∧
+              ∀ z (hz : z ∈ Metric.ball (h0 i) (r i)), f i z = fc ⟨z, hz⟩) ∧
+          TendstoLocallyUniformlyOn
+            (fun m z => F i (σ m) z) (f i) Filter.atTop
+              (Metric.ball (h0 i) (r i)) ∧
+          DifferentiableOn ℂ (f i) (Metric.ball (h0 i) (r i))) ∧
+        (∀ i, Set.EqOn g (f i) (Metric.ball (h0 i) (r i))) ∧
+        DifferentiableOn ℂ g (⋃ i : Fin n, Metric.ball (h0 i) (r i)) ∧
+        ∀ i j, Set.EqOn (f i) (f j)
+          (Metric.ball (h0 i) (r i) ∩ Metric.ball (h0 j) (r j)) := by
+  rcases freeEnergyComplexAlongExhaustion_branchFamily_compactOpen_vitali_fin_ball_overlap
+      G Λ J β n hA hFc_mem hFres hbranch hoverlap with
+    ⟨σ, hσ, f, hlocal, hcompat⟩
+  rcases IsingModel.exists_differentiableOn_iUnion_of_finite_eqOn
+      n (s := fun i : Fin n => Metric.ball (h0 i) (r i)) (f := f)
+      (hs := fun _ => Metric.isOpen_ball)
+      (hdiff := fun i => (hlocal i).2.2)
+      (hcompat := hcompat) with
+    ⟨g, hg_eq, hg_diff⟩
+  exact ⟨σ, hσ, f, g, hlocal, hg_eq, hg_diff, hcompat⟩
+
 end Ambient
 
 end IsingModel
