@@ -524,11 +524,12 @@ with an arbitrary compatible open cover whose union covers `leeYangDomain`.
 **Not yet formalized** (future PRs):
 - Montel-style locally uniform convergence/subsequence extraction of local
   Lee-Yang branch families from the now-unconditional local boundedness plus
-  real-axis Fekete and the branch-family identity theorem; PRs #2694-#2698
-  provide finite post-extraction and patching handoffs, but mathlib still lacks
-  a direct Montel theorem.
+  real-axis Fekete and the branch-family identity theorem; PRs #2694-#2699
+  provide post-extraction and conditional patching handoffs through arbitrary
+  open covers, but mathlib still lacks a direct Montel theorem.
 - Coherent branch-family construction giving the explicit overlap hypothesis,
-  diagonal coherent local-cover extraction, and global Lee-Yang-domain patching.
+  and diagonal coherent local-cover extraction supplying the compatible
+  open-cover input.
 - Note: the principal-branch `freeEnergyComplex` may be discontinuous
   where `Z` crosses the negative real axis; the local-branch form
   is the mathematically correct statement of GJ Thm 4.6.2.
