@@ -3508,6 +3508,31 @@ future normal-family/Montel argument must satisfy.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Compact Lee--Yang fugacity gap; PR \#2684]
+The theorems
+\texttt{exists\_leeYangFugacity\_norm\_le\_lt\_one\_on\_isCompact}
+and
+\texttt{exists\_leeYangFugacityVec\_norm\_le\_lt\_one\_on\_isCompact}
+record the compactness gap for the Lee--Yang fugacity.  If $\beta>0$,
+$K$ is compact, and $K\subseteq\texttt{leeYangDomain}$, then there is
+$r<1$ such that
+\[
+  |\exp(-2\beta h)|\le r \qquad(h\in K).
+\]
+The vector form gives the same bound for every coordinate of
+\texttt{leeYangFugacityVec}.
+
+The proof uses continuity of $h\mapsto |\exp(-2\beta h)|$ and the extreme
+value theorem on the compact set $K$.  At a maximiser $h_0$, the pointwise
+Lee--Yang bound gives $|\exp(-2\beta h_0)|<1$; if $K$ is empty one takes
+$r=0$.
+
+This is preparatory for quantitative Lee--Yang polynomial lower bounds.
+It does not prove lower normalised-log control or Montel convergence.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70, and
+Friedli--Velenik \cite{friedli-velenik}, Theorem 3.43, pp.~122--127.
+\end{theorem}
+
 \begin{theorem}[Compact-uniform complex partition-function bound; PR \#2678]
 The theorem
 \texttt{exists\_abs\_re\_le\_on\_isCompact} records the elementary
