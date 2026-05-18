@@ -3540,6 +3540,37 @@ yet a construction of coherent locally uniformly convergent branches.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Upper normalised log bound from compact envelope; PR \#2681]
+The theorem
+\texttt{exists\_real\_log\_norm\_partitionFunctionComplexAlongExhaustion\_div\_card\_le\_on\_isCompact}
+records the upper half of the normalised-log input.  Assume that $K$ is compact,
+all stages are nonempty, the exhaustion has bounded edge density
+$|E_{\Lambda_n}|\le c|\Lambda_n|$, and
+$Z_{\Lambda_n}(J,h,\beta)\ne 0$ for $h\in K$.  Then there is a constant $C$
+such that
+\[
+  \frac{\log\|Z_{\Lambda_n}(J,h,\beta)\|}{|\Lambda_n|}\le C
+  \qquad(n\in\mathbb N,\ h\in K).
+\]
+The proof first uses the compact real-part bound $|\mathrm{Re}\,h|\le R$ and
+the envelope of PR \#2678 to get the per-stage estimate
+\[
+  \frac{\log\|Z_{\Lambda_n}(J,h,\beta)\|}{|\Lambda_n|}
+  \le
+  \log 2+
+  |\beta|\left(|J|\,\frac{|E_{\Lambda_n}|}{|\Lambda_n|}+R\right).
+\]
+Bounded edge density replaces the edge ratio by the single constant $c$.
+The concrete $\mathbb Z^d$ wrappers live in
+\texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+
+This is not yet the absolute normalised-log bound used by PR \#2679 and
+PR \#2680: it supplies only an upper bound for
+$\log\|Z_{\Lambda_n}\|$.  A lower bound for $\log\|Z_{\Lambda_n}\|$ remains a
+separate normal-family input.  Reference: Glimm--Jaffe \cite{glimm-jaffe},
+\S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[Normalised log bound handoff; PR \#2679]
 The theorem
 \texttt{norm\_freeEnergyComplexAlongExhaustion\_le\_of\_abs\_log\_norm\_bound\_stage}
