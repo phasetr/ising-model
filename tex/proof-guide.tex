@@ -3671,6 +3671,30 @@ Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70, and
 Friedli--Velenik \cite{friedli-velenik}, (3.63)--(3.65), pp.~122--123.
 \end{theorem}
 
+\begin{theorem}[Ball-local bound from polynomial witnesses; PR \#2690]
+The theorem
+\texttt{exists\_norm\_freeEnergyComplexAlongExhaustion\_le\_poly\_lower\_leeYang\_on\_ball}
+puts the compact wrapper of PR \#2689 into the local-cover form.  Assume that
+the closed ball \(\overline B(h_0,\rho)\) is contained in
+\texttt{leeYangDomain} and that the positive polynomial witnesses on this
+closed ball satisfy a stage-uniform lower normalised-log estimate.  Since
+\(\overline B(h_0,\rho)\) is compact, PR \#2689 gives a constant \(C\) with
+\[
+  \left\|f_n(h)\right\| \le C+\pi
+  \qquad(n\in\mathbb N,\ h\in\overline B(h_0,\rho)).
+\]
+Restricting along \(B(h_0,\rho)\subseteq\overline B(h_0,\rho)\) yields the
+same estimate on the open ball.  The \(\mathbb Z^d\) wrapper is
+\texttt{exists\_norm\_freeEnergyComplexAlongExhaustion\_le\_poly\_lower\_ly\_latticeGraph\_on\_ball}.
+
+This is still conditional on the polynomial-witness lower normalised-log
+estimate.  It does not construct the Montel subsequence or coherent
+locally-uniform branch family; it only gives the ball-local bounded-family
+input those later steps consume.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70, and
+Friedli--Velenik \cite{friedli-velenik}, (3.63)--(3.65), pp.~122--123.
+\end{theorem}
+
 \begin{theorem}[Compact-uniform complex partition-function bound; PR \#2678]
 The theorem
 \texttt{exists\_abs\_re\_le\_on\_isCompact} records the elementary
