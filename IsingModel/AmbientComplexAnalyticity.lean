@@ -274,6 +274,26 @@ theorem freeEnergyComplexAlongExhaustion_exists_analyticOnNhd_branch_ball_stage
   IsingModel.exists_freeEnergyComplex_analyticOnNhd_ball
     (inducedGraph G (Λ.volume n)) hβ hJ hr hsub
 
+/-- **Strong per-stage Lee-Yang local branch on a ball** for
+`freeEnergyComplexAlongExhaustion`: the branch is analytic on the ball,
+its exponential recovers the stage partition function throughout the ball,
+and its basepoint value agrees with the stage principal free energy. -/
+theorem freeEnergyComplexAlongExhaustion_exists_analyticOnNhd_branch_ball_stage_strong
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J) (n : ℕ)
+    [Nonempty (↑(Λ.volume n) : Type _)]
+    {h₀ : ℂ} {r : ℝ} (hr : 0 < r)
+    (hsub : Metric.ball h₀ r ⊆ IsingModel.leeYangDomain) :
+    ∃ f : ℂ → ℂ,
+        AnalyticOnNhd ℂ f (Metric.ball h₀ r)
+      ∧ (∀ z ∈ Metric.ball h₀ r,
+          Complex.exp ((Fintype.card (↑(Λ.volume n) : Type _) : ℂ) * f z)
+            = partitionFunctionComplexAlongExhaustion G Λ (J : ℂ) z (β : ℂ) n)
+      ∧ f h₀ = freeEnergyComplexAlongExhaustion G Λ (J : ℂ) h₀ (β : ℂ) n :=
+  IsingModel.exists_freeEnergyComplex_analyticOnNhd_branch_ball_strong
+    (inducedGraph G (Λ.volume n)) hβ hJ hr hsub
+
 /-- **All-stages Lee-Yang branch family** for
 `freeEnergyComplexAlongExhaustion`: if every stage of the exhaustion is
 nonempty, then every stage admits the finite-volume local branch form on
@@ -313,6 +333,28 @@ theorem freeEnergyComplexAlongExhaustion_analyticOnNhd_branch_ball_all_stages
 by
   intro n h₀ r hr hsub
   exact freeEnergyComplexAlongExhaustion_exists_analyticOnNhd_branch_ball_stage
+    G Λ hβ hJ n hr hsub
+
+/-- **Strong all-stages Lee-Yang local branches on balls** for
+`freeEnergyComplexAlongExhaustion`: every nonempty stage admits a local
+analytic branch on each Lee-Yang ball, with the ball-wide exponential
+identity and basepoint principal-value agreement in the same witness. -/
+theorem freeEnergyComplexAlongExhaustion_analyticOnNhd_branch_ball_all_stages_strong
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    [∀ n, Nonempty (↑(Λ.volume n) : Type _)]
+    {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J) :
+    ∀ n, ∀ {h₀ : ℂ} {r : ℝ}, 0 < r →
+      Metric.ball h₀ r ⊆ IsingModel.leeYangDomain →
+      ∃ f : ℂ → ℂ,
+          AnalyticOnNhd ℂ f (Metric.ball h₀ r)
+        ∧ (∀ z ∈ Metric.ball h₀ r,
+            Complex.exp ((Fintype.card (↑(Λ.volume n) : Type _) : ℂ) * f z)
+              = partitionFunctionComplexAlongExhaustion G Λ (J : ℂ) z (β : ℂ) n)
+        ∧ f h₀ = freeEnergyComplexAlongExhaustion G Λ (J : ℂ) h₀ (β : ℂ) n :=
+by
+  intro n h₀ r hr hsub
+  exact freeEnergyComplexAlongExhaustion_exists_analyticOnNhd_branch_ball_stage_strong
     G Λ hβ hJ n hr hsub
 
 /-- **Per-stage locally-uniform norm bound** for
