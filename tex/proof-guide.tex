@@ -3532,10 +3532,11 @@ The concrete $\mathbb Z^d$ wrapper
 \texttt{norm\_partitionFunctionComplexAlongExhaustion\_le\_on\_isCompact\_stage\_latticeGraph}
 lives in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
 
-This is a compact-uniform bound for the partition functions themselves.  It
-is one boundedness input for the future normal-family/Montel construction of
-coherent locally uniformly convergent logarithmic branches; it does not yet
-prove that construction.
+This is a compact-field envelope for the partition functions themselves: it is
+uniform in $h\in K$, but the right-hand side still depends on $|\Lambda_n|$ and
+$|E_{\Lambda_n}|$.  It is therefore an input to later normalised logarithmic
+or free-energy estimates, not a standalone stage-uniform Montel bound and not
+yet a construction of coherent locally uniformly convergent branches.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 

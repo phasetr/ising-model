@@ -81,7 +81,8 @@ theorem norm_partitionFunctionComplexAlongExhaustion_le_of_re_bound_stage_lattic
 
 /-- **ℤ^d per-stage compact-uniform norm bound** for
 `partitionFunctionComplexAlongExhaustion`: on any compact field set `K`, a
-single real-part bound `R` feeds all stage-wise `Z_ℂ` norm estimates. -/
+single real-part bound `R` feeds all stage-wise `Z_ℂ` norm estimates. The
+bound remains stage-dependent and is an envelope for later normalised estimates. -/
 theorem norm_partitionFunctionComplexAlongExhaustion_le_on_isCompact_stage_latticeGraph
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
     [∀ n, Fintype (Ambient.inducedGraph

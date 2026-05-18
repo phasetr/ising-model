@@ -386,8 +386,9 @@ theorem exists_abs_re_le_on_isCompact {K : Set ℂ} (hK : IsCompact K) :
 /-- **Per-stage compact-uniform norm bound** for
 `partitionFunctionComplexAlongExhaustion`: on any compact field set `K`,
 there is a single real-part bound `R` that works for every `h ∈ K` and every
-stage estimate. This packages the Montel boundedness input in the
-along-exhaustion shape. -/
+stage estimate. The right-hand side still depends on the stage size; this
+packages the compact-field envelope needed by later normalised logarithmic
+estimates rather than a stage-uniform Montel bound by itself. -/
 theorem norm_partitionFunctionComplexAlongExhaustion_le_on_isCompact_stage
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
