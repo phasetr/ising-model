@@ -4563,6 +4563,52 @@ boundedness.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[All-stage range norm-bounded Arzelà--Ascoli bridge; PR \#2736]
+The generic theorems
+\begin{Verbatim}[fontsize=\footnotesize]
+isCompact_toFun_range_complex_of_isClosed_norm_le
+isCompact_compactOpen_range_complex_of_isClosed_norm_le_equicontinuous
+\end{Verbatim}
+specialise the PR \#2735 norm-bounded bridge to carriers of the form
+\(\operatorname{range}(F)\), where \(F : \alpha \to C(X,\mathbb C)\).
+If the \(\texttt{ContinuousMap.toFun}\) image of this range is closed and
+the stagewise bounds \(\|F(a)(x)\|\le R(x)\) hold, then every carrier element
+satisfies the carrier-wide norm bound by range membership.  The previous
+closed-ball and Arzelà--Ascoli bridges then give compactness of the pointwise
+image, and compact-open compactness under equicontinuity.
+
+The ambient structure and conversion
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.LeeYangPointwiseNormAllStageCompactRealRangeNormBoundedAscoliData
+Ambient.LeeYangPointwiseNormAllStageCompactRealRangeNormBoundedAscoliData.toNormBoundedData
+\end{Verbatim}
+fix each selected carrier to be the range of the continuous stage
+restrictions.  The conversion produces
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.LeeYangPointwiseNormAllStageCompactRealNormBoundedAscoliData
+\end{Verbatim}
+by using the range witness for membership and then reuses the PR \#2735,
+PR \#2734, PR \#2733, and PR \#2732 bridges.
+
+The ambient patch endpoints are
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.freeEnergyComplexAlongExhaustion_allStageRangeNormBoundedAscoliData_patch
+Ambient.freeEnergyComplexAlongExhaustion_allStageRangeNormBoundedAscoliData_patch_of_isCompact
+\end{Verbatim}
+and the concrete \(\mathbb Z^d\) wrappers are
+\begin{Verbatim}[fontsize=\footnotesize]
+freeEnergyComplexAlongExhaustion_allStageRangeNormBoundedAscoliData_patch_latticeGraph
+freeEnergyComplexAlongExhaustion_allStageRangeNormBoundedAscoliData_patch_isCompact_latticeGraph
+\end{Verbatim}
+in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+
+This removes the separate carrier and membership bookkeeping from the
+norm-bounded Ascoli input.  It still does not derive closedness of the range
+pointwise images, stage restriction norm bounds, equicontinuity, or coherent
+overlap equality from holomorphy and local boundedness.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[Raw Lee--Yang local-cover branch-data packaging; PR \#2715]
 The theorems
 \begin{Verbatim}

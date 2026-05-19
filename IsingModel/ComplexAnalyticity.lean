@@ -116,6 +116,41 @@ theorem isCompact_compactOpen_complex_of_isClosed_norm_le_equicontinuous
     (isCompact_toFun_image_complex_of_isClosed_norm_le R hclosed hnorm)
     hSeq
 
+/-- **Range norm-bounded pointwise compactness handoff**: if the selected
+carrier is the range of a sequence of continuous maps, then stagewise
+pointwise norm bounds give the carrier-wide norm bounds needed for the
+closed-ball pointwise compactness criterion. -/
+theorem isCompact_toFun_range_complex_of_isClosed_norm_le
+    {X : Type*} [TopologicalSpace X] {α : Type*}
+    (F : α → C(X, ℂ))
+    (R : X → ℝ)
+    (hclosed : IsClosed (ContinuousMap.toFun '' Set.range F))
+    (hnorm : ∀ a, ∀ x, ‖F a x‖ ≤ R x) :
+    IsCompact (ContinuousMap.toFun '' Set.range F) :=
+  isCompact_toFun_image_complex_of_isClosed_norm_le R hclosed
+    (fun f hf x => by
+      rcases hf with ⟨a, rfl⟩
+      exact hnorm a x)
+
+/-- **Range norm-bounded closed-product Arzelà-Ascoli handoff**: closedness of
+the pointwise image of the range, stagewise pointwise norm bounds, and
+equicontinuity of the range imply compactness of the range in the compact-open
+topology. -/
+theorem isCompact_compactOpen_range_complex_of_isClosed_norm_le_equicontinuous
+    {X : Type*} [TopologicalSpace X] {α : Type*}
+    (F : α → C(X, ℂ))
+    (R : X → ℝ)
+    (hclosed : IsClosed (ContinuousMap.toFun '' Set.range F))
+    (hnorm : ∀ a, ∀ x, ‖F a x‖ ≤ R x)
+    (hSeq : Equicontinuous ((↑) : Set.range F → X → ℂ)) :
+    IsCompact (Set.range F) :=
+  isCompact_compactOpen_complex_of_isClosed_norm_le_equicontinuous
+    R hclosed
+    (fun f hf x => by
+      rcases hf with ⟨a, rfl⟩
+      exact hnorm a x)
+    hSeq
+
 /-! ## Uniform one-variable specialisation of multilinear polynomials -/
 
 /-- Specialise a multilinear polynomial to one variable by setting all
