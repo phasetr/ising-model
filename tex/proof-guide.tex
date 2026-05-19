@@ -4355,7 +4355,7 @@ Ambient.LeeYangCompactFiniteRealCoverBranchLimitFamily
 and restricts differentiability of the patch to \(K\).
 
 The concrete \(\mathbb Z^d\) wrappers are
-\begin{Verbatim}
+\begin{Verbatim}[fontsize=\footnotesize]
 freeEnergyComplexAlongExhaustion_pointwiseNormAllStageData_finRealCOpen_patch_latticeGraph
 freeEnergyComplexAlongExhaustion_pointwiseNormAllStageData_compactRealCOpen_patch_latticeGraph
 \end{Verbatim}
@@ -4367,6 +4367,42 @@ stage-level equality on pairwise overlaps, a selected real-centre index, and a
 finite selected-ball cover of \(K\).  It does not prove Montel compactness,
 construct coherent branch choices, or extract a compact finite subcover from
 the point-indexed all-stage cover.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
+\begin{theorem}[Pointwise-normalised all-stage compact finite subcover
+geometry; PR \#2731]
+The structure and theorems
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.LeeYangPointwiseNormAllStageCompactRealFinGeometry
+Ambient.exists_finset_cover_of_isCompact_pointwiseNormAllStageData
+Ambient.exists_finset_cover_of_isCompact_pointwiseNormAllStageData_real
+Ambient.exists_pointwiseNormAllStageCompactRealFinGeometry_of_isCompact
+Ambient.freeEnergyComplexAlongExhaustion_pointwiseNormAllStageData_compactRealCOpen_patch_geom
+\end{Verbatim}
+extract the finite compact geometry that PR \#2730 previously required as an
+explicit input.  If \(K\) is compact, \(K\subseteq\texttt{leeYangDomain}\), and
+\(p.h\in K\), the point-indexed all-stage Lee--Yang balls stored in
+\texttt{LeeYangPointwiseNormalisedAllStageBranchData} have a finite subcover
+of \(K\).  The real-centred variant inserts the centre \(p.h\), enumerates the
+finite set by \(\texttt{Fin}\ n\), records positivity and Lee--Yang-domain
+containment of the selected radii, and stores the real-centre index.
+
+The final wrapper takes this compact finite geometry, compact-open compactness
+for the selected continuous branch restrictions, and explicit eventual
+stage-level equality on pairwise selected overlaps, then feeds the data to the
+PR \#2730 compact real-cover patch bridge.
+
+The concrete \(\mathbb Z^d\) wrappers are
+\begin{Verbatim}[fontsize=\footnotesize]
+exists_pointwiseNormAllStageCompactRealFinGeometry_of_isCompact_latticeGraph
+freeEnergyComplexAlongExhaustion_pointwiseNormAllStage_compactRealCOpen_patch_geom_latticeGraph
+\end{Verbatim}
+in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+
+This closes the compact finite-subcover extraction layer for all-stage
+point-indexed data.  It still does not prove Montel compactness, locally
+uniform subsequential convergence, or coherent branch selection.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
