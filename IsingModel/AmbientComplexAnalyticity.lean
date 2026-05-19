@@ -1393,6 +1393,50 @@ structure LeeYangRealBranchLimitFamily
       = freeEnergyComplexAlongExhaustion G Λ
           (p.J : ℂ) (p.h : ℂ) (p.β : ℂ) n
 
+/-- **All-stage Lee-Yang local branch data**: the pre-Montel branch-choice
+package. It records a Lee-Yang ball at every centre and a selected analytic
+finite-stage logarithm branch on that ball for every stage, but does not yet
+assert locally uniform convergence or overlap coherence. -/
+structure LeeYangAllStageBranchData
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℂ) where
+  /-- Radius of the point-indexed Lee-Yang ball. -/
+  radius : (h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain}) → ℝ
+  /-- Every local-cover radius is positive. -/
+  radius_pos : ∀ h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain}, 0 < radius h₀
+  /-- Every local-cover ball stays inside `leeYangDomain`. -/
+  ball_subset : ∀ h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain},
+    Metric.ball (h₀ : ℂ) (radius h₀) ⊆ IsingModel.leeYangDomain
+  /-- Per-centre, per-stage selected local branch family. -/
+  branchFamily :
+    (h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain}) → ℕ → ℂ → ℂ
+  /-- Per-stage holomorphicity and exponential partition-function identity on
+  every selected local-cover ball. -/
+  branch_spec : ∀ h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain}, ∀ n,
+    AnalyticOnNhd ℂ (branchFamily h₀ n) (Metric.ball (h₀ : ℂ) (radius h₀))
+      ∧ (∀ z ∈ Metric.ball (h₀ : ℂ) (radius h₀),
+          Complex.exp
+            ((Fintype.card (↑(Λ.volume n) : Type _) : ℂ) * branchFamily h₀ n z)
+            = partitionFunctionComplexAlongExhaustion G Λ J z β n)
+
+/-- **Pointwise-normalised all-stage Lee-Yang local branch data**: all-stage
+branch-choice data whose selected branch at every Lee-Yang centre agrees with
+the principal finite-volume free-energy value at that centre. This is the
+unconditional pre-Montel input that the later normal-family/diagonal step must
+turn into locally uniform limits and coherent overlap data. -/
+structure LeeYangPointwiseNormalisedAllStageBranchData
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℂ) where
+  /-- The underlying all-stage local branch choices. -/
+  branchData : LeeYangAllStageBranchData G Λ J β
+  /-- Every Lee-Yang centre is normalised to the corresponding finite-volume
+  free-energy value. -/
+  centre_normalized : ∀ h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain}, ∀ n,
+    branchData.branchFamily h₀ n (h₀ : ℂ)
+      = freeEnergyComplexAlongExhaustion G Λ J (h₀ : ℂ) β n
+
 /-- **Eventual-overlap Lee-Yang local-cover branch data**: a structured
 input package for the post-Montel local-cover endpoint. It contains the
 point-indexed Lee-Yang balls, the selected per-stage branches, their local
@@ -1481,6 +1525,50 @@ structure LeeYangRealPointwiseNormalisedEventualOverlapBranchData
   real parameters. -/
   pointwiseData :
     LeeYangPointwiseNormalisedEventualOverlapBranchData G Λ (p.J : ℂ) (p.β : ℂ)
+
+/-- **Pointwise-normalised all-stage branch data from positive real
+parameters**: for ferromagnetic real `J` and positive real `β`, the finite
+Lee-Yang logarithm branch theorem supplies a selected normalised local branch
+at every Lee-Yang centre and every stage. This constructs the pre-Montel data
+package; locally uniform subsequential limits and coherent overlap equality
+remain separate inputs. -/
+theorem exists_leeYangPointwiseNormalisedAllStageBranchData_of_positive_real
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    [∀ n, Nonempty (↑(Λ.volume n) : Type _)]
+    {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J) :
+    Nonempty
+      (LeeYangPointwiseNormalisedAllStageBranchData G Λ (J : ℂ) (β : ℂ)) := by
+  classical
+  choose r hr hsub using
+    fun h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain} =>
+      IsingModel.leeYangDomain_ball_subset h₀.property
+  have hbranch_exists :
+      ∀ h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain}, ∀ n,
+        ∃ f : ℂ → ℂ,
+            AnalyticOnNhd ℂ f (Metric.ball (h₀ : ℂ) (r h₀))
+          ∧ (∀ z ∈ Metric.ball (h₀ : ℂ) (r h₀),
+              Complex.exp ((Fintype.card (↑(Λ.volume n) : Type _) : ℂ) * f z)
+                = partitionFunctionComplexAlongExhaustion G Λ (J : ℂ) z (β : ℂ) n)
+          ∧ f (h₀ : ℂ)
+              = freeEnergyComplexAlongExhaustion G Λ (J : ℂ) (h₀ : ℂ) (β : ℂ) n := by
+    intro h₀ n
+    exact
+      freeEnergyComplexAlongExhaustion_analyticOnNhd_branch_ball_all_stages_strong
+        G Λ hβ hJ n (h₀ := (h₀ : ℂ)) (r := r h₀) (hr h₀) (hsub h₀)
+  choose F hF using hbranch_exists
+  refine ⟨
+    { branchData :=
+        { radius := r
+          radius_pos := hr
+          ball_subset := hsub
+          branchFamily := F
+          branch_spec := ?_ }
+      centre_normalized := ?_ }⟩
+  · intro h₀ n
+    exact ⟨(hF h₀ n).1, (hF h₀ n).2.1⟩
+  · intro h₀ n
+    exact (hF h₀ n).2.2
 
 /-- **Finite compact-open subsequence branch-limit family**: for finitely many
 Lee-Yang balls, this packages the output expected after a finite compact-open
