@@ -3880,6 +3880,42 @@ stage-level branch choices.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Finite real-centred Lee--Yang cover package; PR \#2710]
+The structure
+\begin{Verbatim}
+Ambient.LeeYangFiniteRealCoverBranchLimitFamily
+\end{Verbatim}
+packages the PR \#2709 finite Lee--Yang cover branch-limit family together
+with the selected finite-cover index whose centre is the real field \(p.h\).
+Thus the real-centre witness needed by the finite-union patch is carried by a
+single data object rather than by separate arguments.
+
+The wrapper
+\begin{Verbatim}
+Ambient.freeEnergyComplexAlongExhaustion_finiteRealCoverFamily_patch
+\end{Verbatim}
+patches such a bundled finite real cover and identifies the selected
+real-centre value with \(\texttt{freeEnergyInfinite}\).  The compact-open
+wrapper
+\begin{Verbatim}
+Ambient.freeEnergyComplexAlongExhaustion_finiteRealCoverFamily_compactOpen_patch
+\end{Verbatim}
+combines compact-open extraction, eventual stage-level overlap equality, the
+finite Lee--Yang cover package, and the finite real-centre patch into one
+real-centred finite-cover endpoint.  The concrete \(\mathbb Z^d\) wrappers are
+\begin{Verbatim}
+freeEnergyComplexAlongExhaustion_finiteRealCoverFamily_patch_latticeGraph
+freeEnergyComplexAlongExhaustion_finiteRealCoverFamily_compactOpen_patch_latticeGraph
+\end{Verbatim}
+in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+
+This remains a finite, conditional endpoint.  It records the real-centred
+finite-cover shape expected from the later local-cover extraction, but it does
+not prove Montel compactness, coherent branch selection, or the diagonal
+coherent local-cover construction.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[Finite local-patching handoff; PR \#2698]
 The finite differentiable patching step is formalised by
 \begin{Verbatim}
