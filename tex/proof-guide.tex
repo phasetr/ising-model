@@ -4221,6 +4221,49 @@ object that a later coherent local-cover extraction should provide.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Pre-Montel all-stage Lee--Yang branch-choice package; PR \#2727]
+The structures
+\begin{Verbatim}
+Ambient.LeeYangAllStageBranchData
+Ambient.LeeYangPointwiseNormalisedAllStageBranchData
+\end{Verbatim}
+record the finite-stage branch-choice data before the Montel and diagonal
+steps.  For every point \(h_0\in\texttt{leeYangDomain}\) they store a radius
+\(r(h_0)>0\) with
+\[
+  B(h_0,r(h_0))\subset\texttt{leeYangDomain},
+\]
+and for every stage \(n\) a selected analytic logarithm branch
+\(F_{h_0,n}\) on that ball satisfying
+\[
+  \exp(|\Lambda_n|F_{h_0,n}(z))
+    = Z_{\Lambda_n}(J,z,\beta).
+\]
+The pointwise-normalised structure additionally records
+\[
+  F_{h_0,n}(h_0)=f_{\Lambda_n}(J,h_0,\beta)
+\]
+at every Lee--Yang centre and every stage.
+
+The constructor
+\begin{Verbatim}
+Ambient.exists_leeYangPointwiseNormalisedAllStageBranchData_of_positive_real
+\end{Verbatim}
+builds this package for positive real \(\beta,J\).  It combines openness of
+\(\texttt{leeYangDomain}\) with the strong all-stage finite Lee--Yang branch
+witness, and uses choice only to select one ball and one branch witness for
+each centre and stage.  The concrete \(\mathbb Z^d\) wrapper is
+\begin{Verbatim}
+exists_leeYangPointwiseNormalisedAllStageBranchData_of_positive_real_latticeGraph
+\end{Verbatim}
+in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+
+This is an unconditional pre-Montel package.  It still does not provide
+locally uniform subsequential limits, compactness of the branch families, or
+coherent eventual equality on overlaps.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[Raw Lee--Yang local-cover branch-data packaging; PR \#2715]
 The theorems
 \begin{Verbatim}
