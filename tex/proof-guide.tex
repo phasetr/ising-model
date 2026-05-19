@@ -4275,6 +4275,45 @@ that suffices for the real-centred packaged local-cover endpoint.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Eventual-overlap Lee--Yang local-cover packaging; PR \#2716]
+The generic theorem
+\begin{Verbatim}
+pairwise_eqOn_of_tendstoLocallyUniformlyOn_of_eventuallyEqOn_indexed
+\end{Verbatim}
+extends the finite overlap-compatibility handoff to arbitrary index types.  If
+\(F_{i,n}\to f_i\) locally uniformly on open sets \(U_i\), and for every pair
+\(i,j\)
+\[
+  F_{i,n}=F_{j,n}
+  \quad\hbox{eventually on}\quad U_i\cap U_j,
+\]
+then \(f_i=f_j\) on \(U_i\cap U_j\).
+
+The ambient constructors
+\begin{Verbatim}
+Ambient.exists_leeYangLocalBranchLimitFamily_of_branchData_eventuallyEqOn
+Ambient.exists_leeYangRealBranchLimitFamily_of_branchData_eventuallyEqOn
+\end{Verbatim}
+apply this theorem to the full point-indexed Lee--Yang ball cover.  Thus the
+raw branch-data package no longer needs limit compatibility as a separate
+input; it is derived from locally uniform convergence and eventual
+stage-level overlap equality.  The real patching wrapper
+\begin{Verbatim}
+Ambient.freeEnergyComplexAlongExhaustion_branchData_eventuallyEqOn_localCover_real
+\end{Verbatim}
+then invokes the PR \#2715 raw-data endpoint and returns the same real-centred
+global patch conclusion.
+
+The concrete \(\mathbb Z^d\) wrappers are the corresponding
+\texttt{\_latticeGraph} theorems in
+\texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+
+This is still a conditional coherent-overlap handoff.  It does not construct
+the coherent branch choices, prove Montel compactness, or perform the
+diagonal local-cover extraction.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[Compact local-cover finite subcover extraction; PR \#2712]
 The theorems
 \begin{Verbatim}
