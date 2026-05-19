@@ -1834,6 +1834,19 @@ def LeeYangRealEventualOverlapBranchData.ofPointwiseNormalised
       exact data.pointwiseData.centre_normalized
         ⟨(p.h : ℂ), data.centre_mem⟩ n }
 
+/-- **Real-centred packaged local-cover branch-limit family from
+pointwise-normalised eventual-overlap branch data**: pointwise-normalised real
+eventual-overlap data projects to the structured real eventual-overlap package,
+then packages into `LeeYangRealBranchLimitFamily`. -/
+theorem exists_leeYangRealBranchLimitFamily_of_pointwiseNormEventualData
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ)
+    (data : LeeYangRealPointwiseNormalisedEventualOverlapBranchData G Λ p) :
+    Nonempty (LeeYangRealBranchLimitFamily G Λ p) :=
+  exists_leeYangRealBranchLimitFamily_of_realEventualOverlapBranchData
+    G Λ p (LeeYangRealEventualOverlapBranchData.ofPointwiseNormalised G Λ p data)
+
 /-- **Pointed local-cover branch-family patching handoff on `leeYangDomain`**:
 if every Lee-Yang point carries a ball, a branch family on that ball, a local
 limit, and the local limits are compatible on all ball overlaps, then these
