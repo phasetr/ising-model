@@ -4221,6 +4221,60 @@ object that a later coherent local-cover extraction should provide.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Raw Lee--Yang local-cover branch-data packaging; PR \#2715]
+The theorems
+\begin{Verbatim}
+Ambient.exists_leeYangLocalBranchLimitFamily_of_branchData
+Ambient.exists_leeYangRealBranchLimitFamily_of_branchData
+\end{Verbatim}
+turn the raw data expected from a coherent local-cover Montel extraction into
+the packaged endpoint.  The input consists, for each
+\(h_0\in\texttt{leeYangDomain}\), of a radius \(r(h_0)>0\), containment
+\[
+  B(h_0,r(h_0))\subset\texttt{leeYangDomain},
+\]
+branch functions \(F_{h_0,n}\), local limits \(f_{h_0}\), branch identities
+\[
+  \exp(|\Lambda_n|F_{h_0,n}(z))
+    = Z_{\Lambda_n}(p.J,z,p.\beta),
+\]
+locally uniform convergence \(F_{h_0,n}\to f_{h_0}\) on the ball, and
+compatibility
+\[
+  f_{h_0}=f_{h_1}
+  \quad\hbox{on}\quad
+  B(h_0,r(h_0))\cap B(h_1,r(h_1)).
+\]
+The real-centred constructor additionally assumes
+\((p.h:\mathbb C)\in\texttt{leeYangDomain}\) and the normalisation
+\[
+  F_{p.h,n}(p.h)
+    = f_{\Lambda_n}(p.J,p.h,p.\beta).
+\]
+
+The wrapper
+\begin{Verbatim}
+Ambient.freeEnergyComplexAlongExhaustion_branchData_localCover_real
+\end{Verbatim}
+then composes this packaging with the PR \#2704 real-centred endpoint.  It
+returns a \texttt{LeeYangRealBranchLimitFamily} and a differentiable global
+patch on \texttt{leeYangDomain}; the patch agrees directly with each raw
+local limit \(f_{h_0}\) on \(B(h_0,r(h_0))\), agrees with the packaged
+local limits, and has value \texttt{freeEnergyInfinite} at \(p.h\).  The
+concrete \(\mathbb Z^d\) wrappers are
+\begin{Verbatim}
+exists_leeYangLocalBranchLimitFamily_of_branchData_latticeGraph
+exists_leeYangRealBranchLimitFamily_of_branchData_latticeGraph
+freeEnergyComplexAlongExhaustion_branchData_localCover_real_latticeGraph
+\end{Verbatim}
+in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+
+This is still post-Montel.  It does not prove compactness, diagonal
+extraction, or coherent branch selection; it records the exact raw-data shape
+that suffices for the real-centred packaged local-cover endpoint.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[Compact local-cover finite subcover extraction; PR \#2712]
 The theorems
 \begin{Verbatim}
