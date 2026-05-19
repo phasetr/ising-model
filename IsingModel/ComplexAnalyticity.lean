@@ -49,6 +49,40 @@ theorem isCompact_compactOpen_complex_of_isCompact_toFun_image_equicontinuous
     IsCompact S :=
   ArzelaAscoli.isCompact_of_equicontinuous S hSfun hSeq
 
+/-- **Closed-product pointwise compactness handoff**: if the image of a family
+of continuous maps in the pointwise function space is closed and every point
+evaluation lands in a compact target set, then the pointwise image is compact.
+This is a Tychonoff-style bridge used before the compact-open Arzelà-Ascoli
+handoff. -/
+theorem isCompact_toFun_image_complex_of_isClosed_subset_pi_compacts
+    {X : Type*} [TopologicalSpace X]
+    {S : Set C(X, ℂ)}
+    (K : X → Set ℂ)
+    (hK : ∀ x, IsCompact (K x))
+    (hclosed : IsClosed (ContinuousMap.toFun '' S))
+    (hmem : ∀ f ∈ S, ∀ x, f x ∈ K x) :
+    IsCompact (ContinuousMap.toFun '' S) := by
+  refine IsCompact.of_isClosed_subset (isCompact_univ_pi hK) hclosed ?_
+  rintro _ ⟨f, hf, rfl⟩
+  exact Set.mem_pi.mpr (fun x _ => hmem f hf x)
+
+/-- **Closed-product Arzelà-Ascoli handoff**: closedness of the pointwise
+function-space image, compact pointwise target sets, and equicontinuity imply
+compactness in the compact-open topology. -/
+theorem isCompact_compactOpen_complex_of_isClosed_subset_pi_compacts_equicontinuous
+    {X : Type*} [TopologicalSpace X]
+    {S : Set C(X, ℂ)}
+    (K : X → Set ℂ)
+    (hK : ∀ x, IsCompact (K x))
+    (hclosed : IsClosed (ContinuousMap.toFun '' S))
+    (hmem : ∀ f ∈ S, ∀ x, f x ∈ K x)
+    (hSeq : Equicontinuous ((↑) : S → X → ℂ)) :
+    IsCompact S :=
+  isCompact_compactOpen_complex_of_isCompact_toFun_image_equicontinuous
+    (isCompact_toFun_image_complex_of_isClosed_subset_pi_compacts
+      K hK hclosed hmem)
+    hSeq
+
 /-! ## Uniform one-variable specialisation of multilinear polynomials -/
 
 /-- Specialise a multilinear polynomial to one variable by setting all
