@@ -3429,6 +3429,83 @@ theorem freeEnergyComplexAlongExhaustion_pointwiseNormAllStageData_finCompactOpe
     freeEnergyComplexAlongExhaustion_finiteSubseqBranchLimitFamily_patch
       G Λ J β n family⟩
 
+/-- **Pointwise-normalised all-stage data to finite Lee-Yang cover package**:
+restrict pre-Montel all-stage branch choices to finitely many Lee-Yang centres.
+Under compact-open compactness and explicit eventual overlap equality, this
+builds the finite Lee-Yang cover branch-limit package by adding the all-stage
+radius positivity and Lee-Yang-domain ball containment data. -/
+theorem freeEnergyComplexAlongExhaustion_pointwiseNormAllStageData_finCoverCOpen
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℂ) (n : ℕ)
+    (center : Fin n → {h : ℂ // h ∈ IsingModel.leeYangDomain})
+    (data : LeeYangPointwiseNormalisedAllStageBranchData G Λ J β)
+    {A : ∀ i : Fin n,
+      Set C(Metric.ball (center i : ℂ) (data.branchData.radius (center i)), ℂ)}
+    {Fc : ∀ i : Fin n, ℕ →
+      C(Metric.ball (center i : ℂ) (data.branchData.radius (center i)), ℂ)}
+    (hA : ∀ i, IsCompact (A i))
+    (hFc_mem : ∀ i m, Fc i m ∈ A i)
+    (hFres : ∀ i m z
+      (hz : z ∈ Metric.ball (center i : ℂ) (data.branchData.radius (center i))),
+      data.branchData.branchFamily (center i) m z = Fc i m ⟨z, hz⟩)
+    (hoverlap : ∀ i j, ∀ᶠ m in Filter.atTop,
+      Set.EqOn
+        (data.branchData.branchFamily (center i) m)
+        (data.branchData.branchFamily (center j) m)
+        (Metric.ball (center i : ℂ) (data.branchData.radius (center i))
+          ∩ Metric.ball (center j : ℂ) (data.branchData.radius (center j)))) :
+    Nonempty (LeeYangFiniteCoverBranchLimitFamily G Λ J β n center
+      (fun i => data.branchData.radius (center i))) := by
+  rcases freeEnergyComplexAlongExhaustion_pointwiseNormAllStageData_finCompactOpen
+      G Λ J β n center data hA hFc_mem hFres hoverlap with
+    ⟨family⟩
+  exact ⟨{
+    radius_pos := fun i => data.branchData.radius_pos (center i)
+    ball_subset := fun i => data.branchData.ball_subset (center i)
+    family := family }⟩
+
+/-- **Pointwise-normalised all-stage data to finite Lee-Yang cover patch**:
+restrict pre-Montel all-stage branch choices to finitely many Lee-Yang centres.
+Under compact-open compactness and explicit eventual overlap equality, this
+builds the finite Lee-Yang cover package and patches its compatible local
+limits on the finite union of the selected Lee-Yang balls. -/
+theorem freeEnergyComplexAlongExhaustion_pointwiseNormAllStageData_finCoverCOpen_patch
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℂ) (n : ℕ)
+    (center : Fin n → {h : ℂ // h ∈ IsingModel.leeYangDomain})
+    (data : LeeYangPointwiseNormalisedAllStageBranchData G Λ J β)
+    {A : ∀ i : Fin n,
+      Set C(Metric.ball (center i : ℂ) (data.branchData.radius (center i)), ℂ)}
+    {Fc : ∀ i : Fin n, ℕ →
+      C(Metric.ball (center i : ℂ) (data.branchData.radius (center i)), ℂ)}
+    (hA : ∀ i, IsCompact (A i))
+    (hFc_mem : ∀ i m, Fc i m ∈ A i)
+    (hFres : ∀ i m z
+      (hz : z ∈ Metric.ball (center i : ℂ) (data.branchData.radius (center i))),
+      data.branchData.branchFamily (center i) m z = Fc i m ⟨z, hz⟩)
+    (hoverlap : ∀ i j, ∀ᶠ m in Filter.atTop,
+      Set.EqOn
+        (data.branchData.branchFamily (center i) m)
+        (data.branchData.branchFamily (center j) m)
+        (Metric.ball (center i : ℂ) (data.branchData.radius (center i))
+          ∩ Metric.ball (center j : ℂ) (data.branchData.radius (center j)))) :
+    ∃ cover : LeeYangFiniteCoverBranchLimitFamily G Λ J β n center
+        (fun i => data.branchData.radius (center i)),
+      ∃ g : ℂ → ℂ,
+        (∀ i, Set.EqOn g (cover.family.limitFun i)
+          (Metric.ball (center i : ℂ) (data.branchData.radius (center i)))) ∧
+        DifferentiableOn ℂ g
+          (⋃ i : Fin n,
+            Metric.ball (center i : ℂ) (data.branchData.radius (center i))) := by
+  rcases freeEnergyComplexAlongExhaustion_pointwiseNormAllStageData_finCoverCOpen
+      G Λ J β n center data hA hFc_mem hFres hoverlap with
+    ⟨cover⟩
+  exact ⟨cover,
+    freeEnergyComplexAlongExhaustion_finiteCoverBranchLimitFamily_patch
+      G Λ J β n cover⟩
+
 /-- **Finite compact-open extraction to a real-centre patch**: compact-open
 compactness on finitely many balls, eventual stage-level overlap equality, and
 a selected ball centred at the real field `p.h` produce a patched function on
