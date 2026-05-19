@@ -660,6 +660,21 @@ theorem freeEnergyComplexAlongExhaustion_analyticOnNhd_branch_ball_all_stages_st
   Ambient.freeEnergyComplexAlongExhaustion_analyticOnNhd_branch_ball_all_stages_strong
     (IsingModel.latticeGraph d) Λ hβ hJ
 
+/-- **ℤ^d pointwise-normalised all-stage Lee-Yang branch data from positive
+real parameters**: pass-through of the ambient pre-Montel branch-choice
+package constructor at `latticeGraph d`. -/
+theorem exists_leeYangPointwiseNormalisedAllStageBranchData_of_positive_real_latticeGraph
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph
+        (IsingModel.latticeGraph d) (Λ.volume n)).edgeSet]
+    [∀ n, Nonempty (↑(Λ.volume n) : Type _)]
+    {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J) :
+    Nonempty
+      (Ambient.LeeYangPointwiseNormalisedAllStageBranchData
+        (IsingModel.latticeGraph d) Λ (J : ℂ) (β : ℂ)) :=
+  Ambient.exists_leeYangPointwiseNormalisedAllStageBranchData_of_positive_real
+    (IsingModel.latticeGraph d) Λ hβ hJ
+
 /-- **ℤ^d real-axis convergence of `freeEnergyComplexAlongExhaustion`**
 (under `DisjointTowerHypotheses` + `BoundedEdgeDensity`): at real
 parameters, the complex along-exhaustion sequence converges (in `ℂ`) to
