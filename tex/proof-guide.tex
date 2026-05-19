@@ -4221,6 +4221,39 @@ object that a later coherent local-cover extraction should provide.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Compact local-cover finite subcover extraction; PR \#2712]
+The theorems
+\begin{Verbatim}
+Ambient.exists_finset_cover_of_isCompact_leeYangLocalBranchLimitFamily
+Ambient.exists_finset_cover_of_isCompact_leeYangRealBranchLimitFamily
+\end{Verbatim}
+extract finite subcovers from the packaged Lee--Yang local-cover endpoint.  If
+\(K\) is compact and \(K\subset\texttt{leeYangDomain}\), then the balls carried
+by a compatible \texttt{LeeYangLocalBranchLimitFamily} have a finite
+\texttt{Finset} of centres \(t\) such that
+\[
+  K \subset \bigcup_{h_0\in t} B(h_0,r(h_0)).
+\]
+For a real-centred package, when \((p.h:\mathbb C)\in K\), the finite set is
+chosen after inserting the real centre
+\(\langle p.h,\texttt{centre\_mem}\rangle\).  Thus the compact target is
+covered by finitely many packaged local-cover balls and the real-centre witness
+is retained.
+
+The concrete \(\mathbb Z^d\) wrappers are
+\begin{Verbatim}
+exists_finset_cover_of_isCompact_leeYangLocalBranchLimitFamily_latticeGraph
+exists_finset_cover_of_isCompact_leeYangRealBranchLimitFamily_latticeGraph
+\end{Verbatim}
+in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+
+This is the compactness finite-subcover step for an already packaged local
+cover.  It does not prove Montel compactness, coherent branch choices,
+stage-level overlap equality, or conversion of the \texttt{Finset} subcover
+into the existing \texttt{Fin n} compact finite real-cover package.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[Compact Lee--Yang fugacity gap; PR \#2684]
 The theorems
 \texttt{exists\_leeYangFugacity\_norm\_le\_lt\_one\_on\_isCompact}
