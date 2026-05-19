@@ -3745,6 +3745,62 @@ structure LeeYangPointwiseNormAllStageCompactRealAscoliData
         ∩ Metric.ball (geom.center j : ℂ)
           (data.branchData.radius (geom.center j)))
 
+/-- **Pointwise-normalised all-stage closed-product Ascoli data**: a
+Tychonoff-style refinement of the Ascoli input on selected all-stage Lee-Yang
+balls.  Instead of directly assuming compactness of the `ContinuousMap.toFun`
+image, it records compact pointwise target sets, closedness of the function
+image inside the pointwise product, and equicontinuity.  This is still a
+pre-Montel input: it does not prove closedness, equicontinuity, or the compact
+pointwise bounds from holomorphy and local boundedness. -/
+structure LeeYangPointwiseNormAllStageCompactRealClosedProductAscoliData
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (K : Set ℂ)
+    (data : LeeYangPointwiseNormalisedAllStageBranchData
+      G Λ (p.J : ℂ) (p.β : ℂ))
+    (geom : LeeYangPointwiseNormAllStageCompactRealFinGeometry
+      G Λ p K data) where
+  /-- Carrier of selected continuous restrictions. -/
+  carrier : ∀ i : Fin geom.n,
+    Set C(Metric.ball (geom.center i : ℂ)
+      (data.branchData.radius (geom.center i)), ℂ)
+  /-- Continuous restrictions of each stage branch on the selected ball. -/
+  restricted : ∀ i : Fin geom.n, ℕ →
+    C(Metric.ball (geom.center i : ℂ)
+      (data.branchData.radius (geom.center i)), ℂ)
+  /-- Compact pointwise target set at each point of every selected ball. -/
+  valueCompact : ∀ i : Fin geom.n,
+    Metric.ball (geom.center i : ℂ)
+      (data.branchData.radius (geom.center i)) → Set ℂ
+  /-- Every pointwise target set is compact. -/
+  valueCompact_isCompact : ∀ i x, IsCompact (valueCompact i x)
+  /-- The pointwise function-space image of every carrier is closed. -/
+  toFun_image_closed : ∀ i, IsClosed (ContinuousMap.toFun '' carrier i)
+  /-- Every carrier element lands in the selected pointwise compact target. -/
+  value_mem : ∀ i f, f ∈ carrier i → ∀ x, f x ∈ valueCompact i x
+  /-- Every carrier is equicontinuous. -/
+  equicontinuous : ∀ i,
+    Equicontinuous
+      ((↑) : carrier i →
+        Metric.ball (geom.center i : ℂ)
+          (data.branchData.radius (geom.center i)) → ℂ)
+  /-- Every stage restriction lies in the selected carrier. -/
+  mem : ∀ i m, restricted i m ∈ carrier i
+  /-- The continuous restriction agrees with the original branch family. -/
+  restrict_eq : ∀ i m z
+    (hz : z ∈ Metric.ball (geom.center i : ℂ)
+      (data.branchData.radius (geom.center i))),
+    data.branchData.branchFamily (geom.center i) m z =
+      restricted i m ⟨z, hz⟩
+  /-- Selected branch families are eventually equal on pairwise overlaps. -/
+  overlap_eventually : ∀ i j, ∀ᶠ m in Filter.atTop,
+    Set.EqOn
+      (data.branchData.branchFamily (geom.center i) m)
+      (data.branchData.branchFamily (geom.center j) m)
+      (Metric.ball (geom.center i : ℂ) (data.branchData.radius (geom.center i))
+        ∩ Metric.ball (geom.center j : ℂ)
+          (data.branchData.radius (geom.center j)))
+
 /-- Convert all-stage Arzelà-Ascoli data into direct compact-open data by
 applying the project-local compact-open Arzelà-Ascoli handoff on each selected
 ball. -/
@@ -3766,6 +3822,33 @@ def LeeYangPointwiseNormAllStageCompactRealAscoliData.toCOpenData
   mem := ascoli.mem
   restrict_eq := ascoli.restrict_eq
   overlap_eventually := ascoli.overlap_eventually
+
+/-- Convert all-stage closed-product Ascoli data into direct Ascoli data by
+using Tychonoff compactness for the closed pointwise function-space image on
+each selected ball. -/
+def LeeYangPointwiseNormAllStageCompactRealClosedProductAscoliData.toAscoliData
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (K : Set ℂ)
+    (data : LeeYangPointwiseNormalisedAllStageBranchData
+      G Λ (p.J : ℂ) (p.β : ℂ))
+    (geom : LeeYangPointwiseNormAllStageCompactRealFinGeometry G Λ p K data)
+    (closedProduct :
+      LeeYangPointwiseNormAllStageCompactRealClosedProductAscoliData
+        G Λ p K data geom) :
+    LeeYangPointwiseNormAllStageCompactRealAscoliData G Λ p K data geom where
+  carrier := closedProduct.carrier
+  restricted := closedProduct.restricted
+  toFun_image_compact := fun i =>
+    IsingModel.isCompact_toFun_image_complex_of_isClosed_subset_pi_compacts
+      (closedProduct.valueCompact i)
+      (closedProduct.valueCompact_isCompact i)
+      (closedProduct.toFun_image_closed i)
+      (closedProduct.value_mem i)
+  equicontinuous := closedProduct.equicontinuous
+  mem := closedProduct.mem
+  restrict_eq := closedProduct.restrict_eq
+  overlap_eventually := closedProduct.overlap_eventually
 
 /-- **Compact finite subcover from pointwise-normalised all-stage data**:
 on a compact target `K ⊆ leeYangDomain`, the point-indexed all-stage
@@ -4042,6 +4125,74 @@ theorem freeEnergyComplexAlongExhaustion_allStageAscoliData_patch_of_isCompact
   exact ⟨geom, fun ascoli =>
     freeEnergyComplexAlongExhaustion_allStageAscoliData_patch
       G Λ p hBED hd data geom ascoli⟩
+
+/-- **Pointwise-normalised all-stage closed-product Ascoli data to a compact
+real-cover patch**: compact pointwise target sets plus closedness of the
+pointwise function-space image and equicontinuity supply the Ascoli data, which
+then feeds the compact real-cover patch bridge. -/
+theorem freeEnergyComplexAlongExhaustion_allStageClosedProductAscoliData_patch
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ)
+    (hBED : BoundedEdgeDensity G Λ)
+    (hd : DisjointTowerHypotheses G Λ p)
+    {K : Set ℂ}
+    (data : LeeYangPointwiseNormalisedAllStageBranchData
+      G Λ (p.J : ℂ) (p.β : ℂ))
+    (geom : LeeYangPointwiseNormAllStageCompactRealFinGeometry G Λ p K data)
+    (closedProduct :
+      LeeYangPointwiseNormAllStageCompactRealClosedProductAscoliData
+        G Λ p K data geom) :
+    ∃ compactCover : LeeYangCompactFiniteRealCoverBranchLimitFamily
+        G Λ p K geom.n geom.center
+        (fun i => data.branchData.radius (geom.center i)),
+      ∃ g : ℂ → ℂ,
+        (∀ i, Set.EqOn g (compactCover.realCover.cover.family.limitFun i)
+          (Metric.ball (geom.center i : ℂ)
+            (data.branchData.radius (geom.center i)))) ∧
+        DifferentiableOn ℂ g K ∧
+        g (p.h : ℂ) = ((freeEnergyInfinite G Λ p : ℝ) : ℂ) :=
+  freeEnergyComplexAlongExhaustion_allStageAscoliData_patch
+    G Λ p hBED hd data geom
+    (LeeYangPointwiseNormAllStageCompactRealClosedProductAscoliData.toAscoliData
+      G Λ p K data geom closedProduct)
+
+/-- **Compact target to all-stage closed-product Ascoli patch input**:
+compactness of `K` extracts the finite all-stage geometry, after which compact
+pointwise targets, closed pointwise image, equicontinuity, restriction
+identities, and coherent overlap equality for that geometry suffice to obtain
+the compact real-cover patch endpoint. -/
+theorem
+    freeEnergyComplexAlongExhaustion_allStageClosedProductAscoliData_patch_of_isCompact
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ)
+    (hBED : BoundedEdgeDensity G Λ)
+    (hd : DisjointTowerHypotheses G Λ p)
+    {K : Set ℂ}
+    (hK : IsCompact K)
+    (hKsub : K ⊆ IsingModel.leeYangDomain)
+    (hpK : (p.h : ℂ) ∈ K)
+    (data : LeeYangPointwiseNormalisedAllStageBranchData
+      G Λ (p.J : ℂ) (p.β : ℂ)) :
+    ∃ geom : LeeYangPointwiseNormAllStageCompactRealFinGeometry G Λ p K data,
+      LeeYangPointwiseNormAllStageCompactRealClosedProductAscoliData
+          G Λ p K data geom →
+        ∃ compactCover : LeeYangCompactFiniteRealCoverBranchLimitFamily
+            G Λ p K geom.n geom.center
+            (fun i => data.branchData.radius (geom.center i)),
+          ∃ g : ℂ → ℂ,
+            (∀ i, Set.EqOn g (compactCover.realCover.cover.family.limitFun i)
+              (Metric.ball (geom.center i : ℂ)
+                (data.branchData.radius (geom.center i)))) ∧
+            DifferentiableOn ℂ g K ∧
+            g (p.h : ℂ) = ((freeEnergyInfinite G Λ p : ℝ) : ℂ) := by
+  rcases exists_pointwiseNormAllStageCompactRealFinGeometry_of_isCompact
+      G Λ p hK hKsub hpK data with
+    ⟨geom⟩
+  exact ⟨geom, fun closedProduct =>
+    freeEnergyComplexAlongExhaustion_allStageClosedProductAscoliData_patch
+      G Λ p hBED hd data geom closedProduct⟩
 
 /-- **Finite compact-open extraction to a real-centre patch**: compact-open
 compactness on finitely many balls, eventual stage-level overlap equality, and
