@@ -4406,6 +4406,40 @@ uniform subsequential convergence, or coherent branch selection.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Pointwise-normalised all-stage compact-open data package;
+PR \#2732]
+The structure and theorems
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.LeeYangPointwiseNormAllStageCompactRealCOpenData
+Ambient.freeEnergyComplexAlongExhaustion_allStageCOpenData_patch
+Ambient.freeEnergyComplexAlongExhaustion_allStageCOpenData_patch_of_isCompact
+\end{Verbatim}
+package the compact-open data expected from a Montel extraction over the
+selected all-stage compact finite geometry of PR \#2731.  For each selected
+Lee--Yang ball the package records a compact set of continuous restrictions, a
+continuous restriction for every stage, membership of each restriction in that
+compact set, agreement with the original pointwise-normalised branch family,
+and eventual stage-level equality on pairwise selected overlaps.
+
+The first wrapper consumes this packaged compact-open data directly and invokes
+the compact real-cover patch endpoint.  The second wrapper starts only from a
+compact target \(K\subseteq\texttt{leeYangDomain}\) with \(p.h\in K\), extracts
+the finite all-stage geometry, and then takes the packaged compact-open data
+for that geometry as the remaining input.
+
+The concrete \(\mathbb Z^d\) wrappers are
+\begin{Verbatim}[fontsize=\footnotesize]
+freeEnergyComplexAlongExhaustion_allStageCOpenData_patch_latticeGraph
+freeEnergyComplexAlongExhaustion_allStageCOpenData_patch_of_isCompact_latticeGraph
+\end{Verbatim}
+in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+
+This packages the compact-target Montel/coherence output shape but still does
+not prove Montel compactness, locally uniform subsequential convergence, or
+coherent branch selection.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[Raw Lee--Yang local-cover branch-data packaging; PR \#2715]
 The theorems
 \begin{Verbatim}
