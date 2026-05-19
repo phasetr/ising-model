@@ -4445,6 +4445,35 @@ branch families, or perform diagonal extraction.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Pointwise-normalised eventual-overlap local-cover patch; PR \#2721]
+The theorem
+\begin{Verbatim}
+Ambient.freeEnergyComplexAlongExhaustion_pointwiseNormEventualData_localCover_real
+\end{Verbatim}
+uses the pointwise-normalised real eventual-overlap package before any compact
+target or compact-open extraction is selected.  It projects the pointwise data
+to the structured real eventual-overlap package and invokes the local-cover
+patch endpoint, returning a real-centred packaged local-cover family and a
+single function \(g\) differentiable on \(\mathtt{leeYangDomain}\).  The
+patched function agrees with the pointwise data's local limits on each
+Lee--Yang ball and satisfies
+\[
+  g(p.h) = \texttt{freeEnergyInfinite}.
+\]
+
+The concrete \(\mathbb Z^d\) wrapper is
+\begin{Verbatim}
+freeEnergyComplexAlongExhaustion_pointwiseNormEventualData_localCover_real_latticeGraph
+\end{Verbatim}
+in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+
+This remains conditional and post-Montel.  It narrows the local-cover endpoint
+for future pointwise-normalised extraction output, but does not construct
+coherent branches, prove compactness of branch families, or perform diagonal
+extraction.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[Compact local-cover finite subcover extraction; PR \#2712]
 The theorems
 \begin{Verbatim}

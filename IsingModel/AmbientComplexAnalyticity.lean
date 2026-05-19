@@ -2177,6 +2177,35 @@ theorem freeEnergyComplexAlongExhaustion_realEventualOverlapBranchData_localCove
     data.branchData.branch_spec data.branchData.tendsto
     data.branchData.overlap_eventually data.centre_normalized
 
+/-- **Pointwise-normalised eventual-overlap data local-cover patching with
+real-axis identification**: pointwise-normalised eventual-overlap data projects
+to the real-centred structured package, then patches to a function
+differentiable on `leeYangDomain` and identified at the real centre.  The
+pointwise normalisation supplies the real-centre normalisation needed by the
+structured endpoint. -/
+theorem freeEnergyComplexAlongExhaustion_pointwiseNormEventualData_localCover_real
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ)
+    (hBED : BoundedEdgeDensity G Λ)
+    (hd : DisjointTowerHypotheses G Λ p)
+    (data : LeeYangRealPointwiseNormalisedEventualOverlapBranchData G Λ p) :
+    ∃ realFamily : LeeYangRealBranchLimitFamily G Λ p,
+      ∃ g : ℂ → ℂ,
+        (∀ h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain},
+          Set.EqOn g (data.pointwiseData.branchData.limitFun h₀)
+            (Metric.ball (h₀ : ℂ) (data.pointwiseData.branchData.radius h₀))) ∧
+        (∀ h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain},
+          Set.EqOn g (realFamily.family.data h₀).limitFun
+            (Metric.ball (h₀ : ℂ) (realFamily.family.data h₀).radius)) ∧
+        DifferentiableOn ℂ g IsingModel.leeYangDomain ∧
+        g (p.h : ℂ) = ((freeEnergyInfinite G Λ p : ℝ) : ℂ) := by
+  let realData : LeeYangRealEventualOverlapBranchData G Λ p :=
+    LeeYangRealEventualOverlapBranchData.ofPointwiseNormalised G Λ p data
+  simpa [realData, LeeYangRealEventualOverlapBranchData.ofPointwiseNormalised] using
+    freeEnergyComplexAlongExhaustion_realEventualOverlapBranchData_localCover_real
+      G Λ p hBED hd realData
+
 /-- **Compact finite subcover from a packaged Lee-Yang local-cover family**:
 on a compact target `K ⊆ leeYangDomain`, the open Lee-Yang balls carried by a
 compatible `LeeYangLocalBranchLimitFamily` have a finite `Finset` subcover.
