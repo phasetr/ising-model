@@ -3840,6 +3840,46 @@ choices, or a full \(\texttt{leeYangDomain}\)-cover.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Finite Lee--Yang cover branch-limit package; PR \#2709]
+The structure
+\begin{Verbatim}
+Ambient.LeeYangFiniteCoverBranchLimitFamily
+\end{Verbatim}
+records the finite-cover geometry needed by the later diagonal local-cover
+extraction: centres \(h_i\in\mathcal D_{\mathrm{LY}}\), positive radii
+\(r_i\), ball containment \(B(h_i,r_i)\subseteq\mathcal D_{\mathrm{LY}}\),
+and the compatible finite subsequence branch-limit family on those balls.
+The wrapper
+\begin{Verbatim}
+Ambient.freeEnergyComplexAlongExhaustion_finiteCoverBranchLimitFamily_compactOpen
+\end{Verbatim}
+packages the finite compact-open extraction into this Lee--Yang-cover shape
+under the same compactness, restriction, branch-identity, and eventual
+overlap-equality hypotheses as the finite compact-open handoff.
+
+The patching wrappers
+\begin{Verbatim}
+Ambient.freeEnergyComplexAlongExhaustion_finiteCoverBranchLimitFamily_patch
+Ambient.freeEnergyComplexAlongExhaustion_finiteCoverBranchLimitFamily_patch_real
+Ambient.freeEnergyComplexAlongExhaustion_finiteCoverBranchLimitFamily_compactOpen_patch
+Ambient.freeEnergyComplexAlongExhaustion_finiteCoverBranchLimitFamily_compactOpen_patch_real
+\end{Verbatim}
+then patch the finite Lee--Yang cover and, when one selected centre is the real
+field \(p.h\), identify the patched value with
+\(\texttt{freeEnergyInfinite}\).  The concrete \(\mathbb Z^d\) wrappers live in
+\texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}, including
+\begin{Verbatim}
+freeEnergyComplexAlongExhaustion_finiteCoverBranchLimitFamily_realPatch_latticeGraph
+\end{Verbatim}
+for the real-centre compact-open conclusion.
+
+This remains a finite, post-Montel handoff.  It aligns the finite extraction
+output with the eventual Lee--Yang local-cover endpoint, but it does not prove
+the compact-open compactness of the branch family or construct coherent
+stage-level branch choices.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[Finite local-patching handoff; PR \#2698]
 The finite differentiable patching step is formalised by
 \begin{Verbatim}
