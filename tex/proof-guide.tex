@@ -4379,6 +4379,40 @@ the diagonal extraction.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Structured eventual-overlap compact-open patch; PR \#2719]
+The theorem
+\begin{Verbatim}
+Ambient.freeEnergyComplexAlongExhaustion_realEventualOverlapBranchData_cOpenPatch
+\end{Verbatim}
+composes the PR \#2718 compact-geometry extraction with the PR \#2714
+compact local-cover \texttt{Fin n} compact-open patch endpoint.  It first
+extracts a
+\begin{Verbatim}
+Ambient.LeeYangCompactLocalCoverFinGeometry
+\end{Verbatim}
+from structured real eventual-overlap data over a compact
+\(K\subset\texttt{leeYangDomain}\) containing the real centre.  For the
+selected centres of that geometry, compact-open compactness of the data's
+branch-family restrictions plus an explicit selected-centre normalisation
+hypothesis then produce a compact finite real-centred Lee--Yang cover package
+and a patch differentiable on \(K\), with the real-centre value identified as
+\(\texttt{freeEnergyInfinite}\).  The structured data supplies the stage-level
+eventual overlap equality.
+
+The concrete \(\mathbb Z^d\) wrapper is
+\begin{Verbatim}
+freeEnergyComplexAlongExhaustion_realEventualOverlapBranchData_cOpenPatch_latticeGraph
+\end{Verbatim}
+in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+
+This remains conditional and post-Montel.  It still assumes coherent
+eventual-overlap data, compact-open compactness of the selected branch-family
+restrictions, and the extra selected-centre normalisation; it does not
+construct coherent branches, prove compactness of branch families, or perform
+the diagonal extraction.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[Compact local-cover finite subcover extraction; PR \#2712]
 The theorems
 \begin{Verbatim}
