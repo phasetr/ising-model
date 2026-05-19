@@ -83,6 +83,39 @@ theorem isCompact_compactOpen_complex_of_isClosed_subset_pi_compacts_equicontinu
       K hK hclosed hmem)
     hSeq
 
+/-- **Norm-bounded pointwise compactness handoff**: if the pointwise
+function-space image is closed and every point evaluation is bounded by a
+chosen real radius, then the pointwise image is compact.  The compact
+pointwise targets are the closed complex balls `Metric.closedBall 0 (R x)`. -/
+theorem isCompact_toFun_image_complex_of_isClosed_norm_le
+    {X : Type*} [TopologicalSpace X]
+    {S : Set C(X, ℂ)}
+    (R : X → ℝ)
+    (hclosed : IsClosed (ContinuousMap.toFun '' S))
+    (hnorm : ∀ f ∈ S, ∀ x, ‖f x‖ ≤ R x) :
+    IsCompact (ContinuousMap.toFun '' S) :=
+  isCompact_toFun_image_complex_of_isClosed_subset_pi_compacts
+    (fun x => Metric.closedBall (0 : ℂ) (R x))
+    (fun x => isCompact_closedBall (0 : ℂ) (R x))
+    hclosed
+    (fun f hf x => by
+      simpa [Metric.mem_closedBall, dist_eq_norm] using hnorm f hf x)
+
+/-- **Norm-bounded closed-product Arzelà-Ascoli handoff**: closedness of the
+pointwise image, pointwise norm bounds, and equicontinuity imply compactness
+in the compact-open topology. -/
+theorem isCompact_compactOpen_complex_of_isClosed_norm_le_equicontinuous
+    {X : Type*} [TopologicalSpace X]
+    {S : Set C(X, ℂ)}
+    (R : X → ℝ)
+    (hclosed : IsClosed (ContinuousMap.toFun '' S))
+    (hnorm : ∀ f ∈ S, ∀ x, ‖f x‖ ≤ R x)
+    (hSeq : Equicontinuous ((↑) : S → X → ℂ)) :
+    IsCompact S :=
+  isCompact_compactOpen_complex_of_isCompact_toFun_image_equicontinuous
+    (isCompact_toFun_image_complex_of_isClosed_norm_le R hclosed hnorm)
+    hSeq
+
 /-! ## Uniform one-variable specialisation of multilinear polynomials -/
 
 /-- Specialise a multilinear polynomial to one variable by setting all
