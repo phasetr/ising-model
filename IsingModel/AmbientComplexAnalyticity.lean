@@ -3007,6 +3007,77 @@ theorem freeEnergyComplexAlongExhaustion_compactFiniteRealCover_cOpenPatch
       realCover := realCover }
   exact ⟨compactCover, g, hg_eq, hg_diff.mono hKcover, hg_real⟩
 
+/-- **Compact local-cover `Fin n` geometry compact-open extraction to a
+compact-target patch**: once a compact local-cover finite geometry has been
+enumerated, compact-open compactness and eventual stage-level overlap equality
+produce the compact finite real-centred Lee-Yang cover package and a patch
+differentiable on the compact target. This is a one-input geometry wrapper
+around `freeEnergyComplexAlongExhaustion_compactFiniteRealCover_cOpenPatch`. -/
+theorem freeEnergyComplexAlongExhaustion_compactLocalCoverFinGeometry_cOpenPatch
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ)
+    (hBED : BoundedEdgeDensity G Λ)
+    (hd : DisjointTowerHypotheses G Λ p)
+    (K : Set ℂ)
+    (geometry : LeeYangCompactLocalCoverFinGeometry G Λ p K)
+    {F : Fin geometry.n → ℕ → ℂ → ℂ}
+    {A : ∀ i : Fin geometry.n,
+      Set C(Metric.ball
+        ((geometry.center i : {h : ℂ // h ∈ IsingModel.leeYangDomain}) : ℂ)
+          (geometry.r i), ℂ)}
+    {Fc : ∀ i : Fin geometry.n, ℕ →
+      C(Metric.ball
+        ((geometry.center i : {h : ℂ // h ∈ IsingModel.leeYangDomain}) : ℂ)
+          (geometry.r i), ℂ)}
+    (hA : ∀ i, IsCompact (A i))
+    (hFc_mem : ∀ i m, Fc i m ∈ A i)
+    (hFres : ∀ i m z
+      (hz : z ∈ Metric.ball
+        ((geometry.center i : {h : ℂ // h ∈ IsingModel.leeYangDomain}) : ℂ)
+          (geometry.r i)),
+      F i m z = Fc i m ⟨z, hz⟩)
+    (hbranch : ∀ i m,
+      AnalyticOnNhd ℂ (F i m)
+          (Metric.ball
+            ((geometry.center i : {h : ℂ // h ∈ IsingModel.leeYangDomain}) : ℂ)
+              (geometry.r i))
+        ∧ (∀ z ∈ Metric.ball
+              ((geometry.center i : {h : ℂ // h ∈ IsingModel.leeYangDomain}) : ℂ)
+                (geometry.r i),
+            Complex.exp
+              ((Fintype.card (↑(Λ.volume m) : Type _) : ℂ) * F i m z)
+              = partitionFunctionComplexAlongExhaustion G Λ
+                  (p.J : ℂ) z (p.β : ℂ) m)
+        ∧ F i m
+            ((geometry.center i : {h : ℂ // h ∈ IsingModel.leeYangDomain}) : ℂ)
+            = freeEnergyComplexAlongExhaustion G Λ
+                (p.J : ℂ)
+                ((geometry.center i : {h : ℂ // h ∈ IsingModel.leeYangDomain}) : ℂ)
+                (p.β : ℂ) m)
+    (hoverlap : ∀ i j, ∀ᶠ m in Filter.atTop,
+      Set.EqOn (F i m) (F j m)
+        (Metric.ball
+            ((geometry.center i : {h : ℂ // h ∈ IsingModel.leeYangDomain}) : ℂ)
+              (geometry.r i)
+          ∩ Metric.ball
+            ((geometry.center j : {h : ℂ // h ∈ IsingModel.leeYangDomain}) : ℂ)
+              (geometry.r j))) :
+    ∃ compactCover :
+        LeeYangCompactFiniteRealCoverBranchLimitFamily G Λ p K
+          geometry.n geometry.center geometry.r,
+      ∃ g : ℂ → ℂ,
+        (∀ i, Set.EqOn g (compactCover.realCover.cover.family.limitFun i)
+          (Metric.ball
+            ((geometry.center i : {h : ℂ // h ∈ IsingModel.leeYangDomain}) : ℂ)
+              (geometry.r i))) ∧
+        DifferentiableOn ℂ g K ∧
+        g (p.h : ℂ) = ((freeEnergyInfinite G Λ p : ℝ) : ℂ) :=
+  freeEnergyComplexAlongExhaustion_compactFiniteRealCover_cOpenPatch
+    G Λ p hBED hd K geometry.n geometry.isCompact geometry.subset_domain
+    geometry.real_mem geometry.cover_subset geometry.radius_pos geometry.ball_subset
+    hA hFc_mem hFres hbranch hoverlap geometry.realIndex geometry.real_center
+
 /-- **Finite-ball compact-open diagonal extraction with local patching**:
 if the finite Lee-Yang local limits obtained from compact-open extraction are
 compatible on all pairwise ball overlaps, then they patch to one function on
