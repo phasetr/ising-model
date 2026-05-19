@@ -3134,6 +3134,49 @@ theorem freeEnergyComplexAlongExhaustion_finiteSubseqBranchLimitFamily_compactOp
       exact (hlocal i).2.2
     compatible := hcompat }⟩
 
+/-- **Pointwise-normalised all-stage data to finite compact-open subsequence
+package**: restrict pre-Montel all-stage branch choices to finitely many
+Lee-Yang centres. Under compact-open compactness for the restricted branch
+families and explicit eventual overlap equality, the existing finite
+compact-open diagonal handoff produces a packaged finite subsequence
+branch-limit family. -/
+theorem freeEnergyComplexAlongExhaustion_pointwiseNormAllStageData_finCompactOpen
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℂ) (n : ℕ)
+    (center : Fin n → {h : ℂ // h ∈ IsingModel.leeYangDomain})
+    (data : LeeYangPointwiseNormalisedAllStageBranchData G Λ J β)
+    {A : ∀ i : Fin n,
+      Set C(Metric.ball (center i : ℂ) (data.branchData.radius (center i)), ℂ)}
+    {Fc : ∀ i : Fin n, ℕ →
+      C(Metric.ball (center i : ℂ) (data.branchData.radius (center i)), ℂ)}
+    (hA : ∀ i, IsCompact (A i))
+    (hFc_mem : ∀ i m, Fc i m ∈ A i)
+    (hFres : ∀ i m z
+      (hz : z ∈ Metric.ball (center i : ℂ) (data.branchData.radius (center i))),
+      data.branchData.branchFamily (center i) m z = Fc i m ⟨z, hz⟩)
+    (hoverlap : ∀ i j, ∀ᶠ m in Filter.atTop,
+      Set.EqOn
+        (data.branchData.branchFamily (center i) m)
+        (data.branchData.branchFamily (center j) m)
+        (Metric.ball (center i : ℂ) (data.branchData.radius (center i))
+          ∩ Metric.ball (center j : ℂ) (data.branchData.radius (center j)))) :
+    Nonempty (LeeYangFiniteSubseqBranchLimitFamily G Λ J β n
+      (fun i => (center i : ℂ))
+      (fun i => data.branchData.radius (center i))) := by
+  exact freeEnergyComplexAlongExhaustion_finiteSubseqBranchLimitFamily_compactOpen
+    G Λ J β n
+    (h0 := fun i => (center i : ℂ))
+    (r := fun i => data.branchData.radius (center i))
+    (F := fun i m z => data.branchData.branchFamily (center i) m z)
+    hA hFc_mem hFres
+    (by
+      intro i m
+      exact ⟨(data.branchData.branch_spec (center i) m).1,
+        (data.branchData.branch_spec (center i) m).2,
+        data.centre_normalized (center i) m⟩)
+    hoverlap
+
 /-- **Packaged finite subsequence branch-limit patching**: a compatible
 `LeeYangFiniteSubseqBranchLimitFamily` patches to one function differentiable
 on the finite union of its balls. -/
@@ -3338,6 +3381,49 @@ theorem freeEnergyComplexAlongExhaustion_finiteSubseqBranchLimitFamily_compactOp
         DifferentiableOn ℂ g (⋃ i : Fin n, Metric.ball (h0 i) (r i)) := by
   rcases freeEnergyComplexAlongExhaustion_finiteSubseqBranchLimitFamily_compactOpen
       G Λ J β n hA hFc_mem hFres hbranch hoverlap with
+    ⟨family⟩
+  exact ⟨family,
+    freeEnergyComplexAlongExhaustion_finiteSubseqBranchLimitFamily_patch
+      G Λ J β n family⟩
+
+/-- **Pointwise-normalised all-stage data to finite compact-open patch**:
+restrict pre-Montel all-stage branch choices to finitely many Lee-Yang centres.
+Under compact-open compactness and explicit eventual overlap equality, this
+builds the finite subsequence branch-limit package and patches its compatible
+local limits on the finite union of the selected balls. -/
+theorem freeEnergyComplexAlongExhaustion_pointwiseNormAllStageData_finCompactOpen_patch
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℂ) (n : ℕ)
+    (center : Fin n → {h : ℂ // h ∈ IsingModel.leeYangDomain})
+    (data : LeeYangPointwiseNormalisedAllStageBranchData G Λ J β)
+    {A : ∀ i : Fin n,
+      Set C(Metric.ball (center i : ℂ) (data.branchData.radius (center i)), ℂ)}
+    {Fc : ∀ i : Fin n, ℕ →
+      C(Metric.ball (center i : ℂ) (data.branchData.radius (center i)), ℂ)}
+    (hA : ∀ i, IsCompact (A i))
+    (hFc_mem : ∀ i m, Fc i m ∈ A i)
+    (hFres : ∀ i m z
+      (hz : z ∈ Metric.ball (center i : ℂ) (data.branchData.radius (center i))),
+      data.branchData.branchFamily (center i) m z = Fc i m ⟨z, hz⟩)
+    (hoverlap : ∀ i j, ∀ᶠ m in Filter.atTop,
+      Set.EqOn
+        (data.branchData.branchFamily (center i) m)
+        (data.branchData.branchFamily (center j) m)
+        (Metric.ball (center i : ℂ) (data.branchData.radius (center i))
+          ∩ Metric.ball (center j : ℂ) (data.branchData.radius (center j)))) :
+    ∃ family : LeeYangFiniteSubseqBranchLimitFamily G Λ J β n
+        (fun i => (center i : ℂ))
+        (fun i => data.branchData.radius (center i)),
+      ∃ g : ℂ → ℂ,
+        (∀ i, Set.EqOn g (family.limitFun i)
+          (Metric.ball (center i : ℂ) (data.branchData.radius (center i)))) ∧
+        DifferentiableOn ℂ g
+          (⋃ i : Fin n,
+            Metric.ball (center i : ℂ) (data.branchData.radius (center i))) := by
+  rcases
+    freeEnergyComplexAlongExhaustion_pointwiseNormAllStageData_finCompactOpen
+      G Λ J β n center data hA hFc_mem hFres hoverlap with
     ⟨family⟩
   exact ⟨family,
     freeEnergyComplexAlongExhaustion_finiteSubseqBranchLimitFamily_patch

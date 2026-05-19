@@ -4264,6 +4264,39 @@ coherent eventual equality on overlaps.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Pointwise-normalised all-stage finite compact-open bridge; PR
+\#2728]
+The theorems
+\begin{Verbatim}
+Ambient.freeEnergyComplexAlongExhaustion_pointwiseNormAllStageData_finCompactOpen
+Ambient.freeEnergyComplexAlongExhaustion_pointwiseNormAllStageData_finCompactOpen_patch
+\end{Verbatim}
+restrict a \texttt{LeeYangPointwiseNormalisedAllStageBranchData} package to
+finitely many selected Lee--Yang centres and feed those selected branch
+families into the finite compact-open diagonal/overlap extraction.
+
+The first theorem returns a
+\begin{Verbatim}
+Ambient.LeeYangFiniteSubseqBranchLimitFamily
+\end{Verbatim}
+for the selected centres.  The patched variant immediately composes this
+package with the finite local patching theorem, producing one differentiable
+function on the finite union of the selected balls.
+
+The concrete \(\mathbb Z^d\) wrappers are
+\begin{Verbatim}
+freeEnergyComplexAlongExhaustion_pointwiseNormAllStageData_finCompactOpen_latticeGraph
+freeEnergyComplexAlongExhaustion_pointwiseNormAllStageData_finCompactOpen_patch_latticeGraph
+\end{Verbatim}
+in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+
+This bridge remains finite and conditional.  It assumes compact-open
+compactness of the selected continuous restrictions and explicit eventual
+stage-level equality on pairwise overlaps.  It does not prove Montel
+compactness or construct coherent branch choices.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[Raw Lee--Yang local-cover branch-data packaging; PR \#2715]
 The theorems
 \begin{Verbatim}
