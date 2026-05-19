@@ -2333,7 +2333,8 @@ theorem freeEnergyComplexAlongExhaustion_pointwiseNormAllStageData_finCoverCOpen
 Lee-Yang cover patch**: restricts all-stage branch choices to finitely many
 Lee-Yang centres and uses a selected real-centre index to identify the patched
 value with `↑Ambient.freeEnergyInfinite`. -/
-theorem freeEnergyComplexAlongExhaustion_allStageData_finRealCover_patch_latticeGraph
+theorem
+    freeEnergyComplexAlongExhaustion_pointwiseNormAllStageData_finRealCOpen_patch_latticeGraph
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
     [∀ n, Fintype (Ambient.inducedGraph
         (IsingModel.latticeGraph d) (Λ.volume n)).edgeSet]
@@ -2381,7 +2382,8 @@ theorem freeEnergyComplexAlongExhaustion_allStageData_finRealCover_patch_lattice
 Lee-Yang cover patch**: for a compact target covered by finitely many selected
 all-stage Lee-Yang balls, produces the compact finite real-centred cover
 package and a patch differentiable on the compact target. -/
-theorem freeEnergyComplexAlongExhaustion_allStageData_compactRealCover_patch_latticeGraph
+theorem
+    freeEnergyComplexAlongExhaustion_pointwiseNormAllStageData_compactRealCOpen_patch_latticeGraph
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
     [∀ n, Fintype (Ambient.inducedGraph
         (IsingModel.latticeGraph d) (Λ.volume n)).edgeSet]
