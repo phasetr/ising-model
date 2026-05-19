@@ -4331,6 +4331,45 @@ compactness or construct coherent branch choices.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Pointwise-normalised all-stage real-centred compact cover
+patch; PR \#2730]
+The theorems
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.freeEnergyComplexAlongExhaustion_pointwiseNormAllStageData_finRealCoverCOpen_patch
+Ambient.freeEnergyComplexAlongExhaustion_pointwiseNormAllStageData_compactRealCoverCOpen_patch
+\end{Verbatim}
+add the real-centred and compact-target layers to the PR \#2729 all-stage
+finite Lee--Yang cover bridge.  The finite real-centred wrapper uses a
+selected index whose centre is the real field \(p.h\), producing a
+\begin{Verbatim}
+Ambient.LeeYangFiniteRealCoverBranchLimitFamily
+\end{Verbatim}
+and a patched function on the finite union of selected balls whose value at
+\(p.h\) is \(\uparrow\)\texttt{freeEnergyInfinite}.  The compact wrapper adds
+a compact target \(K\), the hypotheses \(K\subseteq\texttt{leeYangDomain}\) and
+\(p.h\in K\), and a supplied cover of \(K\) by the same finite selected balls.
+It returns a
+\begin{Verbatim}
+Ambient.LeeYangCompactFiniteRealCoverBranchLimitFamily
+\end{Verbatim}
+and restricts differentiability of the patch to \(K\).
+
+The concrete \(\mathbb Z^d\) wrappers are
+\begin{Verbatim}
+freeEnergyComplexAlongExhaustion_pointwiseNormAllStageData_finRealCOpen_patch_latticeGraph
+freeEnergyComplexAlongExhaustion_pointwiseNormAllStageData_compactRealCOpen_patch_latticeGraph
+\end{Verbatim}
+in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+
+This bridge remains finite and conditional.  It assumes compact-open
+compactness of the selected continuous restrictions, explicit eventual
+stage-level equality on pairwise overlaps, a selected real-centre index, and a
+finite selected-ball cover of \(K\).  It does not prove Montel compactness,
+construct coherent branch choices, or extract a compact finite subcover from
+the point-indexed all-stage cover.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[Raw Lee--Yang local-cover branch-data packaging; PR \#2715]
 The theorems
 \begin{Verbatim}
