@@ -12,6 +12,7 @@ import Mathlib.Analysis.Complex.LocallyUniformLimit
 import Mathlib.Analysis.Complex.Polynomial.Basic
 import Mathlib.Analysis.Normed.Unbundled.RingSeminorm
 import Mathlib.Algebra.Polynomial.BigOperators
+import Mathlib.Topology.UniformSpace.Ascoli
 import Mathlib.Topology.UniformSpace.CompactConvergence
 
 /-!
@@ -34,6 +35,19 @@ namespace IsingModel
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
 open scoped Complex
+
+/-- **Compact-open Arzelà-Ascoli handoff**: if a set of continuous maps has
+compact image in the pointwise function space and is equicontinuous, then it is
+compact for the compact-open topology on continuous maps. This is a thin
+project-local wrapper around mathlib's general `ArzelaAscoli` theorem, used as
+the topological target for later Montel-style compactness inputs. -/
+theorem isCompact_compactOpen_complex_of_isCompact_toFun_image_equicontinuous
+    {X : Type*} [TopologicalSpace X]
+    {S : Set C(X, ℂ)}
+    (hSfun : IsCompact (ContinuousMap.toFun '' S))
+    (hSeq : Equicontinuous ((↑) : S → X → ℂ)) :
+    IsCompact S :=
+  ArzelaAscoli.isCompact_of_equicontinuous S hSfun hSeq
 
 /-! ## Uniform one-variable specialisation of multilinear polynomials -/
 

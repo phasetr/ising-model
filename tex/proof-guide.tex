@@ -4440,6 +4440,45 @@ coherent branch selection.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[All-stage Arzelà--Ascoli compact-open bridge; PR \#2733]
+The generic theorem
+\begin{Verbatim}[fontsize=\footnotesize]
+isCompact_compactOpen_complex_of_isCompact_toFun_image_equicontinuous
+\end{Verbatim}
+wraps mathlib's Arzelà--Ascoli theorem for complex-valued continuous maps:
+compactness of the pointwise function-space image, together with
+equicontinuity, implies compactness in the compact-open topology.
+
+The ambient structure and wrappers
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.LeeYangPointwiseNormAllStageCompactRealAscoliData
+Ambient.LeeYangPointwiseNormAllStageCompactRealAscoliData.toCOpenData
+Ambient.freeEnergyComplexAlongExhaustion_allStageAscoliData_patch
+Ambient.freeEnergyComplexAlongExhaustion_allStageAscoliData_patch_of_isCompact
+\end{Verbatim}
+apply this theorem to the selected all-stage compact finite geometry from
+PR \#2731.  For each selected Lee--Yang ball, the Ascoli data records a carrier
+of continuous restrictions, compactness of its image under
+\(\texttt{ContinuousMap.toFun}\), equicontinuity, membership of every stage
+restriction, agreement with the original branch family, and eventual equality
+on pairwise selected overlaps.  The conversion theorem supplies the compact
+open data of PR \#2732, after which the compact real-cover patch endpoint is
+invoked.
+
+The concrete \(\mathbb Z^d\) wrappers are
+\begin{Verbatim}[fontsize=\footnotesize]
+freeEnergyComplexAlongExhaustion_allStageAscoliData_patch_latticeGraph
+freeEnergyComplexAlongExhaustion_allStageAscoliData_patch_of_isCompact_latticeGraph
+\end{Verbatim}
+in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+
+This narrows the remaining Montel input to pointwise compactness and
+equicontinuity of the selected branch restrictions, plus coherent overlap
+equality.  It still does not derive those inputs from holomorphy and local
+boundedness.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[Raw Lee--Yang local-cover branch-data packaging; PR \#2715]
 The theorems
 \begin{Verbatim}
