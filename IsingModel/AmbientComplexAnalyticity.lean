@@ -2335,6 +2335,23 @@ theorem exists_compactLocalCoverFinGeometry_of_realEventualOverlapBranchData
   exact exists_compactLocalCoverFinGeometry_of_leeYangRealBranchLimitFamily
     G Λ p hK hKsub hpK realFamily
 
+/-- **Compact local-cover `Fin n` geometry from pointwise-normalised
+eventual-overlap branch data**: pointwise-normalised real eventual-overlap data
+projects to the structured real eventual-overlap package, then compactness
+extracts and enumerates a finite local-cover geometry over `K`. -/
+theorem exists_compactLocalCoverFinGeometry_of_pointwiseNormEventualData
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) {K : Set ℂ}
+    (hK : IsCompact K)
+    (hKsub : K ⊆ IsingModel.leeYangDomain)
+    (hpK : (p.h : ℂ) ∈ K)
+    (data : LeeYangRealPointwiseNormalisedEventualOverlapBranchData G Λ p) :
+    Nonempty (LeeYangCompactLocalCoverFinGeometry G Λ p K) :=
+  exists_compactLocalCoverFinGeometry_of_realEventualOverlapBranchData
+    G Λ p hK hKsub hpK
+      (LeeYangRealEventualOverlapBranchData.ofPointwiseNormalised G Λ p data)
+
 /-- **Local-cover branch-family Vitali bridge with real-axis
 identification**: a coherent local cover of Lee-Yang balls whose branch
 families converge locally uniformly to a common `f` makes `f` holomorphic on
