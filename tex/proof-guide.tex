@@ -4522,6 +4522,47 @@ inputs from holomorphy and local boundedness.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[All-stage norm-bounded Arzelà--Ascoli bridge; PR \#2735]
+The generic theorems
+\begin{Verbatim}[fontsize=\footnotesize]
+isCompact_toFun_image_complex_of_isClosed_norm_le
+isCompact_compactOpen_complex_of_isClosed_norm_le_equicontinuous
+\end{Verbatim}
+specialise the PR \#2734 closed-product compactness bridge.  If the
+\(\texttt{ContinuousMap.toFun}\) image of a carrier is closed in the pointwise
+function space and every carrier element satisfies a pointwise norm bound
+\(\|f(x)\|\le R(x)\), then the compact pointwise target at \(x\) is taken to
+be the closed complex ball \(\overline B(0,R(x))\).  Tychonoff compactness
+gives compactness of the pointwise image, and equicontinuity then gives
+compactness in the compact-open topology by Arzelà--Ascoli.
+
+The ambient structure and wrappers
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.LeeYangPointwiseNormAllStageCompactRealNormBoundedAscoliData
+Ambient.LeeYangPointwiseNormAllStageCompactRealNormBoundedAscoliData.toClosedProductData
+Ambient.freeEnergyComplexAlongExhaustion_allStageNormBoundedAscoliData_patch
+Ambient.freeEnergyComplexAlongExhaustion_allStageNormBoundedAscoliData_patch_of_isCompact
+\end{Verbatim}
+apply this norm-bounded input to the selected all-stage compact finite
+geometry from PR \#2731.  The conversion builds the PR \#2734
+closed-product data by setting each pointwise compact target to
+\(\overline B(0,R_i(x))\), then reuses the PR \#2734, PR \#2733, and
+PR \#2732 bridges to reach the compact real-cover patch endpoint.
+
+The concrete \(\mathbb Z^d\) wrappers are
+\begin{Verbatim}[fontsize=\footnotesize]
+freeEnergyComplexAlongExhaustion_allStageNormBoundedAscoliData_patch_latticeGraph
+freeEnergyComplexAlongExhaustion_allStageNormBoundedAscoliData_patch_of_isCompact_latticeGraph
+\end{Verbatim}
+in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+
+This removes the separately supplied compact pointwise target sets from the
+closed-product input.  It still does not derive the closedness, pointwise norm
+bounds, equicontinuity, or coherent overlap equality from holomorphy and local
+boundedness.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[Raw Lee--Yang local-cover branch-data packaging; PR \#2715]
 The theorems
 \begin{Verbatim}
