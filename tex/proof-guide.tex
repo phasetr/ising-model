@@ -4352,6 +4352,32 @@ or performing the diagonal local-cover extraction.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Pointwise-normalised eventual-overlap local-family package; PR \#2724]
+The theorem
+\begin{Verbatim}
+Ambient.exists_leeYangLocalBranchLimitFamily_of_pointwiseNormEventualData
+\end{Verbatim}
+exposes the non-real-centred packaged local-cover family endpoint for the
+pointwise-normalised package.  It reuses the underlying structured
+eventual-overlap branch data and invokes the structured local-family
+constructor, producing a
+\begin{Verbatim}
+Ambient.LeeYangLocalBranchLimitFamily
+\end{Verbatim}
+without adding any real-centre or compact-target assumptions.
+
+The concrete \(\mathbb Z^d\) wrapper is
+\begin{Verbatim}
+exists_leeYangLocalBranchLimitFamily_of_pointwiseNormEventualData_latticeGraph
+\end{Verbatim}
+in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+
+This remains conditional and post-Montel.  It packages already supplied
+coherent eventual-overlap data, but does not construct coherent branches,
+prove compactness of branch families, or perform diagonal extraction.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[Pointwise-normalised eventual-overlap branch-family package; PR \#2723]
 The theorem
 \begin{Verbatim}
