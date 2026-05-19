@@ -1200,6 +1200,22 @@ theorem exists_leeYangLocalBranchLimitFamily_of_eventualOverlapBranchData_lattic
   Ambient.exists_leeYangLocalBranchLimitFamily_of_eventualOverlapBranchData
     (IsingModel.latticeGraph d) Λ J β data
 
+/-- **ℤ^d packaged local-cover branch-limit family from pointwise-normalised
+eventual-overlap branch data**: the pointwise-normalised package exposes the
+underlying structured eventual-overlap branch data, which packages directly
+into `Ambient.LeeYangLocalBranchLimitFamily`. -/
+theorem exists_leeYangLocalBranchLimitFamily_of_pointwiseNormEventualData_latticeGraph
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph
+        (IsingModel.latticeGraph d) (Λ.volume n)).edgeSet]
+    (J β : ℂ)
+    (data : Ambient.LeeYangPointwiseNormalisedEventualOverlapBranchData
+      (IsingModel.latticeGraph d) Λ J β) :
+    Nonempty (Ambient.LeeYangLocalBranchLimitFamily
+      (IsingModel.latticeGraph d) Λ J β) :=
+  Ambient.exists_leeYangLocalBranchLimitFamily_of_pointwiseNormEventualData
+    (IsingModel.latticeGraph d) Λ J β data
+
 /-- **ℤ^d real-centred packaged local-cover branch-limit family from
 structured eventual-overlap branch data**: the real-centred structured
 local-cover input packages directly into `Ambient.LeeYangRealBranchLimitFamily`.

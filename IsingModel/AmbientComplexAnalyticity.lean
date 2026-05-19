@@ -1802,6 +1802,19 @@ theorem exists_leeYangLocalBranchLimitFamily_of_eventualOverlapBranchData
     G Λ J β data.radius_pos data.ball_subset data.branch_spec data.tendsto
     data.overlap_eventually
 
+/-- **Packaged local-cover branch-limit family from pointwise-normalised
+eventual-overlap branch data**: the pointwise-normalised package exposes the
+underlying structured eventual-overlap branch data, which packages directly
+into `LeeYangLocalBranchLimitFamily`. -/
+theorem exists_leeYangLocalBranchLimitFamily_of_pointwiseNormEventualData
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℂ)
+    (data : LeeYangPointwiseNormalisedEventualOverlapBranchData G Λ J β) :
+    Nonempty (LeeYangLocalBranchLimitFamily G Λ J β) :=
+  exists_leeYangLocalBranchLimitFamily_of_eventualOverlapBranchData
+    G Λ J β data.branchData
+
 /-- **Real-centred packaged local-cover branch-limit family from structured
 eventual-overlap branch data**: the real-centred structured local-cover input
 `LeeYangRealEventualOverlapBranchData` packages directly into
