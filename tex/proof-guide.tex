@@ -4297,6 +4297,40 @@ compactness or construct coherent branch choices.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Pointwise-normalised all-stage finite Lee--Yang cover bridge;
+PR \#2729]
+The theorems
+\begin{Verbatim}
+Ambient.freeEnergyComplexAlongExhaustion_pointwiseNormAllStageData_finCoverCOpen
+Ambient.freeEnergyComplexAlongExhaustion_pointwiseNormAllStageData_finCoverCOpen_patch
+\end{Verbatim}
+upgrade the PR \#2728 finite compact-open bridge to the finite Lee--Yang cover
+package.  The extra geometric data is already stored in the all-stage package:
+each selected centre has a positive radius and its ball is contained in
+\texttt{leeYangDomain}.
+
+The first theorem returns a
+\begin{Verbatim}
+Ambient.LeeYangFiniteCoverBranchLimitFamily
+\end{Verbatim}
+for the selected centres.  The patched variant then applies the finite
+Lee--Yang cover patching theorem, producing one differentiable function on the
+finite union of the selected Lee--Yang balls.
+
+The concrete \(\mathbb Z^d\) wrappers are
+\begin{Verbatim}
+freeEnergyComplexAlongExhaustion_pointwiseNormAllStageData_finCoverCOpen_latticeGraph
+freeEnergyComplexAlongExhaustion_pointwiseNormAllStageData_finCoverCOpen_patch_latticeGraph
+\end{Verbatim}
+in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+
+This bridge remains finite and conditional.  It assumes compact-open
+compactness of the selected continuous restrictions and explicit eventual
+stage-level equality on pairwise overlaps.  It does not prove Montel
+compactness or construct coherent branch choices.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[Raw Lee--Yang local-cover branch-data packaging; PR \#2715]
 The theorems
 \begin{Verbatim}
