@@ -1082,6 +1082,25 @@ theorem exists_finset_cover_of_isCompact_leeYangRealBranchLimitFamily_latticeGra
   Ambient.exists_finset_cover_of_isCompact_leeYangRealBranchLimitFamily
     (IsingModel.latticeGraph d) Λ p hK hKsub hpK realFamily
 
+/-- **ℤ^d compact local-cover finite geometry from a real-centred packaged
+Lee-Yang local cover**: the finite subcover of a compact target is enumerated
+over `Fin n`, retaining positive radii, Lee-Yang ball containment, target
+coverage, and a selected real-centre index. -/
+theorem exists_compactLocalCoverFinGeometry_of_leeYangRealBranchLimitFamily_latticeGraph
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph
+        (IsingModel.latticeGraph d) (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) {K : Set ℂ}
+    (hK : IsCompact K)
+    (hKsub : K ⊆ IsingModel.leeYangDomain)
+    (hpK : (p.h : ℂ) ∈ K)
+    (realFamily : Ambient.LeeYangRealBranchLimitFamily
+      (IsingModel.latticeGraph d) Λ p) :
+    Nonempty (Ambient.LeeYangCompactLocalCoverFinGeometry
+      (IsingModel.latticeGraph d) Λ p K) :=
+  Ambient.exists_compactLocalCoverFinGeometry_of_leeYangRealBranchLimitFamily
+    (IsingModel.latticeGraph d) Λ p hK hKsub hpK realFamily
+
 /-- **ℤ^d local-cover branch-family Vitali bridge with real-axis
 identification**: a coherent local Lee-Yang ball cover with locally-uniform
 convergence to a common `f` makes `f` holomorphic on `leeYangDomain`, and at a
