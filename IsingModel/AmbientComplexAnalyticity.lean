@@ -1451,6 +1451,37 @@ structure LeeYangRealEventualOverlapBranchData
       = freeEnergyComplexAlongExhaustion G Λ
           (p.J : ℂ) (p.h : ℂ) (p.β : ℂ) n
 
+/-- **Pointwise-normalised eventual-overlap Lee-Yang local-cover branch data**:
+a structured eventual-overlap input whose selected branch at every Lee-Yang
+centre is normalised to the finite-volume free-energy value at that centre.
+This is stronger than the real-centred package, which only normalises the real
+field. -/
+structure LeeYangPointwiseNormalisedEventualOverlapBranchData
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℂ) where
+  /-- The underlying coherent eventual-overlap branch data. -/
+  branchData : LeeYangEventualOverlapBranchData G Λ J β
+  /-- Every Lee-Yang centre is normalised to the corresponding finite-volume
+  free-energy value. -/
+  centre_normalized : ∀ h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain}, ∀ n,
+    branchData.branchFamily h₀ n (h₀ : ℂ)
+      = freeEnergyComplexAlongExhaustion G Λ J (h₀ : ℂ) β n
+
+/-- **Real pointwise-normalised eventual-overlap Lee-Yang local-cover branch
+data**: pointwise-normalised eventual-overlap branch data at real parameters,
+together with membership of the real field in the Lee-Yang domain. -/
+structure LeeYangRealPointwiseNormalisedEventualOverlapBranchData
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) where
+  /-- The real centre belongs to `leeYangDomain`. -/
+  centre_mem : (p.h : ℂ) ∈ IsingModel.leeYangDomain
+  /-- The pointwise-normalised structured eventual-overlap branch data at the
+  real parameters. -/
+  pointwiseData :
+    LeeYangPointwiseNormalisedEventualOverlapBranchData G Λ (p.J : ℂ) (p.β : ℂ)
+
 /-- **Finite compact-open subsequence branch-limit family**: for finitely many
 Lee-Yang balls, this packages the output expected after a finite compact-open
 diagonal extraction: one strictly increasing stage map, a local branch family
@@ -1786,6 +1817,22 @@ theorem exists_leeYangRealBranchLimitFamily_of_realEventualOverlapBranchData
     data.branchData.radius_pos data.branchData.ball_subset
     data.branchData.branch_spec data.branchData.tendsto
     data.branchData.overlap_eventually data.centre_normalized
+
+/-- **Real-centred eventual-overlap data from pointwise-normalised data**:
+pointwise normalisation at every Lee-Yang centre supplies the real-centre
+normalisation required by `LeeYangRealEventualOverlapBranchData`. -/
+def LeeYangRealEventualOverlapBranchData.ofPointwiseNormalised
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ)
+    (data : LeeYangRealPointwiseNormalisedEventualOverlapBranchData G Λ p) :
+    LeeYangRealEventualOverlapBranchData G Λ p :=
+  { centre_mem := data.centre_mem
+    branchData := data.pointwiseData.branchData
+    centre_normalized := by
+      intro n
+      exact data.pointwiseData.centre_normalized
+        ⟨(p.h : ℂ), data.centre_mem⟩ n }
 
 /-- **Pointed local-cover branch-family patching handoff on `leeYangDomain`**:
 if every Lee-Yang point carries a ball, a branch family on that ball, a local
@@ -3652,6 +3699,61 @@ theorem freeEnergyComplexAlongExhaustion_realEventualOverlapBranchData_cOpenPatc
       data.branchData.overlap_eventually (geometry.center i) (geometry.center j)
   exact freeEnergyComplexAlongExhaustion_compactLocalCoverFinGeometry_cOpenPatch
     G Λ p hBED hd K geometry hA hFc_mem hFres hbranch hoverlap
+
+/-- **Pointwise-normalised eventual-overlap data to compact-open compact-target
+patch**: the pointwise-normalised package supplies the selected-centre
+normalisation required by
+`freeEnergyComplexAlongExhaustion_realEventualOverlapBranchData_cOpenPatch`.
+Thus only compact-open compactness of the selected branch-family restrictions
+and their continuous representatives remain as explicit compact-open inputs. -/
+theorem freeEnergyComplexAlongExhaustion_pointwiseNormEventualData_cOpenPatch
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ)
+    (hBED : BoundedEdgeDensity G Λ)
+    (hd : DisjointTowerHypotheses G Λ p)
+    {K : Set ℂ}
+    (hK : IsCompact K)
+    (hKsub : K ⊆ IsingModel.leeYangDomain)
+    (hpK : (p.h : ℂ) ∈ K)
+    (data : LeeYangRealPointwiseNormalisedEventualOverlapBranchData G Λ p) :
+    ∃ geometry : LeeYangCompactLocalCoverFinGeometry G Λ p K,
+      ∀ {A : ∀ i : Fin geometry.n,
+          Set C(Metric.ball
+            ((geometry.center i : {h : ℂ // h ∈ IsingModel.leeYangDomain}) : ℂ)
+              (geometry.r i), ℂ)}
+        {Fc : ∀ i : Fin geometry.n, ℕ →
+          C(Metric.ball
+            ((geometry.center i : {h : ℂ // h ∈ IsingModel.leeYangDomain}) : ℂ)
+              (geometry.r i), ℂ)},
+        (∀ i, IsCompact (A i)) →
+        (∀ i m, Fc i m ∈ A i) →
+        (∀ i m z
+          (hz : z ∈ Metric.ball
+            ((geometry.center i : {h : ℂ // h ∈ IsingModel.leeYangDomain}) : ℂ)
+              (geometry.r i)),
+          data.pointwiseData.branchData.branchFamily (geometry.center i) m z =
+            Fc i m ⟨z, hz⟩) →
+        ∃ compactCover :
+            LeeYangCompactFiniteRealCoverBranchLimitFamily G Λ p K
+              geometry.n geometry.center geometry.r,
+          ∃ g : ℂ → ℂ,
+            (∀ i, Set.EqOn g (compactCover.realCover.cover.family.limitFun i)
+              (Metric.ball
+                ((geometry.center i : {h : ℂ // h ∈ IsingModel.leeYangDomain}) : ℂ)
+                  (geometry.r i))) ∧
+            DifferentiableOn ℂ g K ∧
+            g (p.h : ℂ) = ((freeEnergyInfinite G Λ p : ℝ) : ℂ) := by
+  let realData : LeeYangRealEventualOverlapBranchData G Λ p :=
+    LeeYangRealEventualOverlapBranchData.ofPointwiseNormalised G Λ p data
+  rcases freeEnergyComplexAlongExhaustion_realEventualOverlapBranchData_cOpenPatch
+      G Λ p hBED hd hK hKsub hpK realData with
+    ⟨geometry, hgeometry⟩
+  refine ⟨geometry, ?_⟩
+  intro A Fc hA hFc_mem hFres
+  refine hgeometry hA hFc_mem hFres ?_
+  intro i m
+  exact data.pointwiseData.centre_normalized (geometry.center i) m
 
 /-- **Finite-ball compact-open diagonal extraction with local patching**:
 if the finite Lee-Yang local limits obtained from compact-open extraction are
