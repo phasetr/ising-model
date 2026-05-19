@@ -552,10 +552,11 @@ identification conclusion.
 **Not yet formalized** (future PRs):
 - Montel-style locally uniform convergence/subsequence extraction of local
   Lee-Yang branch families from the now-unconditional local boundedness plus
-  real-axis Fekete and the branch-family identity theorem; PRs #2694-#2708
-  provide post-extraction and conditional patching handoffs through arbitrary
-  open covers, the pointed Lee-Yang ball cover, and structured local-cover
-  branch-limit data, but mathlib still lacks a direct Montel theorem.
+  real-axis Fekete and the branch-family identity theorem; PRs #2694-#2710
+  provide post-extraction and conditional patching handoffs through finite
+  Lee-Yang covers, finite real-centred cover packages, arbitrary open covers,
+  the pointed Lee-Yang ball cover, and structured local-cover branch-limit
+  data, but mathlib still lacks a direct Montel theorem.
 - Coherent branch-family construction giving the explicit overlap hypothesis,
   and diagonal coherent local-cover extraction supplying the compatible
   open-cover input.
