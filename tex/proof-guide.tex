@@ -4295,6 +4295,50 @@ Montel compactness, coherent branch choices, or stage-level overlap equality.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Compact local-cover \texttt{Fin n} compact-open patch; PR
+\#2714]
+The theorem
+\begin{Verbatim}
+Ambient.freeEnergyComplexAlongExhaustion_compactLocalCoverFinGeometry_cOpenPatch
+\end{Verbatim}
+uses a package
+\[
+  \mathcal G :
+  \texttt{LeeYangCompactLocalCoverFinGeometry}
+\]
+as the finite geometry input for the compact finite real-cover compact-open
+patch endpoint.  Its fields supply compactness of \(K\), containment
+\(K\subset\Omega_{\mathrm{LY}}\), real-centre membership, the finite
+\(\texttt{Fin n}\)-indexed centres and radii, positive-radius and
+ball-containment proofs, the cover
+\[
+  K\subset \bigcup_{i:\texttt{Fin n}} B(c_i,r_i),
+\]
+and the selected real-centre index \(i_0\) with \(c_{i_0}=p.h\).
+
+Given the same finite compact-open compactness data and eventual stage-level
+overlap equality used by the earlier compact finite real-cover endpoint, the
+wrapper returns
+\begin{Verbatim}
+LeeYangCompactFiniteRealCoverBranchLimitFamily
+\end{Verbatim}
+and a patch differentiable on \(K\), with value
+\[
+  g(p.h)=\texttt{freeEnergyInfinite}(G,\Lambda,p).
+\]
+The concrete \(\mathbb Z^d\) wrapper is
+\begin{Verbatim}
+freeEnergyComplexAlongExhaustion_compactLocalCoverFinGeometry_cOpenPatch_latticeGraph
+\end{Verbatim}
+in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+
+This is a packaging bridge from compact local-cover finite geometry to the
+compact finite real-cover compact-open patch theorem.  It does not prove
+Montel compactness, coherent branch choices, diagonal extraction, or
+stage-level overlap equality.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[Compact Lee--Yang fugacity gap; PR \#2684]
 The theorems
 \texttt{exists\_leeYangFugacity\_norm\_le\_lt\_one\_on\_isCompact}
