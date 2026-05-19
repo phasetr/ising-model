@@ -1185,6 +1185,37 @@ theorem exists_leeYangRealBranchLimitFamily_of_branchData_eventuallyEqOn_lattice
   Ambient.exists_leeYangRealBranchLimitFamily_of_branchData_eventuallyEqOn
     (IsingModel.latticeGraph d) Λ p hp hr hsub hbranch hconv hoverlap hcenter
 
+/-- **ℤ^d packaged local-cover branch-limit family from structured
+eventual-overlap branch data**: the structured local-cover input packages
+directly into `Ambient.LeeYangLocalBranchLimitFamily`. -/
+theorem exists_leeYangLocalBranchLimitFamily_of_eventualOverlapBranchData_latticeGraph
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph
+        (IsingModel.latticeGraph d) (Λ.volume n)).edgeSet]
+    (J β : ℂ)
+    (data : Ambient.LeeYangEventualOverlapBranchData
+      (IsingModel.latticeGraph d) Λ J β) :
+    Nonempty (Ambient.LeeYangLocalBranchLimitFamily
+      (IsingModel.latticeGraph d) Λ J β) :=
+  Ambient.exists_leeYangLocalBranchLimitFamily_of_eventualOverlapBranchData
+    (IsingModel.latticeGraph d) Λ J β data
+
+/-- **ℤ^d real-centred packaged local-cover branch-limit family from
+structured eventual-overlap branch data**: the real-centred structured
+local-cover input packages directly into `Ambient.LeeYangRealBranchLimitFamily`.
+-/
+theorem exists_leeYangRealBranchLimitFamily_of_realEventualOverlapBranchData_latticeGraph
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph
+        (IsingModel.latticeGraph d) (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ)
+    (data : Ambient.LeeYangRealEventualOverlapBranchData
+      (IsingModel.latticeGraph d) Λ p) :
+    Nonempty (Ambient.LeeYangRealBranchLimitFamily
+      (IsingModel.latticeGraph d) Λ p) :=
+  Ambient.exists_leeYangRealBranchLimitFamily_of_realEventualOverlapBranchData
+    (IsingModel.latticeGraph d) Λ p data
+
 /-- **ℤ^d raw branch-data local-cover patching with real-axis
 identification**: raw coherent local-cover branch data package into
 `LeeYangRealBranchLimitFamily`, then patch to a function differentiable on
@@ -1283,6 +1314,34 @@ theorem freeEnergyComplexAlongExhaustion_branchData_eventuallyEqOn_localCover_re
           ((Ambient.freeEnergyInfinite (IsingModel.latticeGraph d) Λ p : ℝ) : ℂ) :=
   Ambient.freeEnergyComplexAlongExhaustion_branchData_eventuallyEqOn_localCover_real
     (IsingModel.latticeGraph d) Λ p hBED hd hp hr hsub hbranch hconv hoverlap hcenter
+
+/-- **ℤ^d structured eventual-overlap branch-data local-cover patching with
+real-axis identification**: a real-centred structured local-cover package is
+converted to `Ambient.LeeYangRealBranchLimitFamily`, then patched and
+identified at the real centre. -/
+theorem freeEnergyComplexAlongExhaustion_realEventualOverlapBranchData_localCover_real_latticeGraph
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph
+        (IsingModel.latticeGraph d) (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ)
+    (hBED : Ambient.BoundedEdgeDensity (IsingModel.latticeGraph d) Λ)
+    (hd : Ambient.DisjointTowerHypotheses (IsingModel.latticeGraph d) Λ p)
+    (data : Ambient.LeeYangRealEventualOverlapBranchData
+      (IsingModel.latticeGraph d) Λ p) :
+    ∃ realFamily : Ambient.LeeYangRealBranchLimitFamily
+        (IsingModel.latticeGraph d) Λ p,
+      ∃ g : ℂ → ℂ,
+        (∀ h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain},
+          Set.EqOn g (data.branchData.limitFun h₀)
+            (Metric.ball (h₀ : ℂ) (data.branchData.radius h₀))) ∧
+        (∀ h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain},
+          Set.EqOn g (realFamily.family.data h₀).limitFun
+            (Metric.ball (h₀ : ℂ) (realFamily.family.data h₀).radius)) ∧
+        DifferentiableOn ℂ g IsingModel.leeYangDomain ∧
+        g (p.h : ℂ) =
+          ((Ambient.freeEnergyInfinite (IsingModel.latticeGraph d) Λ p : ℝ) : ℂ) :=
+  Ambient.freeEnergyComplexAlongExhaustion_realEventualOverlapBranchData_localCover_real
+    (IsingModel.latticeGraph d) Λ p hBED hd data
 
 /-- **ℤ^d compact finite subcover from a packaged Lee-Yang local-cover
 family**: a compact target in `leeYangDomain` is covered by finitely many of

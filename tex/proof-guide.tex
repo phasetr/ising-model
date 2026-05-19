@@ -4314,6 +4314,44 @@ diagonal local-cover extraction.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Structured eventual-overlap branch data; PR \#2717]
+The structures
+\begin{Verbatim}
+Ambient.LeeYangEventualOverlapBranchData
+Ambient.LeeYangRealEventualOverlapBranchData
+\end{Verbatim}
+bundle the full point-indexed Lee--Yang local-cover input expected after a
+coherent extraction: the radii, containment of the balls in
+\texttt{leeYangDomain}, the selected per-stage branches, their local limits,
+locally uniform convergence, coherent eventual stage-level equality on
+overlaps, and, in the real-centred structure, centre membership and
+normalisation to the finite-volume free energy sequence.
+
+The constructors
+\begin{Verbatim}
+Ambient.exists_leeYangLocalBranchLimitFamily_of_eventualOverlapBranchData
+Ambient.exists_leeYangRealBranchLimitFamily_of_realEventualOverlapBranchData
+\end{Verbatim}
+consume these structures directly and produce the packaged
+\texttt{LeeYangLocalBranchLimitFamily} and
+\texttt{LeeYangRealBranchLimitFamily} endpoints.  The real patching wrapper
+\begin{Verbatim}
+Ambient.freeEnergyComplexAlongExhaustion_realEventualOverlapBranchData_localCover_real
+\end{Verbatim}
+then invokes the PR \#2716 eventual-overlap endpoint and returns a global
+patch differentiable on \texttt{leeYangDomain}, together with the real-centre
+identification.
+
+The concrete \(\mathbb Z^d\) wrappers are the corresponding
+\texttt{\_latticeGraph} theorems in
+\texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+
+This is still a conditional post-Montel package.  It records the coherent
+data shape without constructing coherent branches, proving Montel compactness,
+or performing the diagonal local-cover extraction.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[Compact local-cover finite subcover extraction; PR \#2712]
 The theorems
 \begin{Verbatim}
