@@ -4254,6 +4254,47 @@ into the existing \texttt{Fin n} compact finite real-cover package.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Compact local-cover \texttt{Fin n} geometry enumeration; PR
+\#2713]
+The structure
+\begin{Verbatim}
+Ambient.LeeYangCompactLocalCoverFinGeometry
+\end{Verbatim}
+records the \(\texttt{Fin n}\)-indexed geometry obtained from a compact
+finite subcover of a real-centred packaged Lee--Yang local-cover family.  It
+contains the compact target \(K\), the source
+\texttt{LeeYangRealBranchLimitFamily}, an integer \(n\), selected centres
+\[
+  c : \texttt{Fin n}\to\texttt{leeYangDomain},
+\]
+radii \(r_i\) equal to the radii in the source local-cover data, positive
+radius and ball-containment proofs, a cover
+\[
+  K \subset \bigcup_{i:\texttt{Fin n}} B(c_i,r_i),
+\]
+and a selected real-centre index \(i_0\) with \(c_{i_0}=p.h\).
+
+The theorem
+\begin{Verbatim}
+Ambient.exists_compactLocalCoverFinGeometry_of_leeYangRealBranchLimitFamily
+\end{Verbatim}
+constructs this package by applying PR \#2712 to obtain a finite
+\texttt{Finset} \(t\), then enumerating \(t\) using
+\(\texttt{t.equivFin}\).  The real-centre index is the image of
+\(\langle p.h,\texttt{centre\_mem}\rangle\) under this equivalence.  The
+concrete \(\mathbb Z^d\) wrapper is
+\begin{Verbatim}
+exists_compactLocalCoverFinGeometry_of_leeYangRealBranchLimitFamily_latticeGraph
+\end{Verbatim}
+in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+
+This remains a geometry-only enumeration step.  It does not construct the
+finite subsequence branch-limit family needed by
+\texttt{LeeYangCompactFiniteRealCoverBranchLimitFamily}, nor does it prove
+Montel compactness, coherent branch choices, or stage-level overlap equality.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[Compact Lee--Yang fugacity gap; PR \#2684]
 The theorems
 \texttt{exists\_leeYangFugacity\_norm\_le\_lt\_one\_on\_isCompact}

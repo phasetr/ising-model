@@ -1499,6 +1499,44 @@ structure LeeYangCompactFiniteRealCoverBranchLimitFamily
   /-- The underlying finite real-centred Lee-Yang cover package. -/
   realCover : LeeYangFiniteRealCoverBranchLimitFamily G Λ p n center r
 
+/-- **Compact local-cover finite geometry**: a compact target, a real-centred
+packaged Lee-Yang local-cover family, and a `Fin n` enumeration of finitely
+many of its local-cover balls covering the target. This is the enumerated
+geometry obtained from compactness before a later construction of finite
+branch-limit package data. -/
+structure LeeYangCompactLocalCoverFinGeometry
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (K : Set ℂ) where
+  /-- The compact target set. -/
+  isCompact : IsCompact K
+  /-- The compact target stays inside the Lee-Yang domain. -/
+  subset_domain : K ⊆ IsingModel.leeYangDomain
+  /-- The real field belongs to the compact target. -/
+  real_mem : (p.h : ℂ) ∈ K
+  /-- The source real-centred packaged local-cover family. -/
+  realFamily : LeeYangRealBranchLimitFamily G Λ p
+  /-- Number of selected centres in the finite subcover. -/
+  n : ℕ
+  /-- Selected Lee-Yang centres, indexed by `Fin n`. -/
+  center : Fin n → {h : ℂ // h ∈ IsingModel.leeYangDomain}
+  /-- Selected radii, indexed by `Fin n`. -/
+  r : Fin n → ℝ
+  /-- The selected radii are exactly the radii from the source local-cover
+  package at the selected centres. -/
+  radius_eq : ∀ i, r i = (realFamily.family.data (center i)).radius
+  /-- Every selected ball has positive radius. -/
+  radius_pos : ∀ i, 0 < r i
+  /-- Every selected ball stays inside the Lee-Yang domain. -/
+  ball_subset : ∀ i,
+    Metric.ball (center i : ℂ) (r i) ⊆ IsingModel.leeYangDomain
+  /-- The selected finite balls cover the compact target. -/
+  cover_subset : K ⊆ ⋃ i : Fin n, Metric.ball (center i : ℂ) (r i)
+  /-- The selected finite-cover index centred at the real field. -/
+  realIndex : Fin n
+  /-- The selected finite-cover centre is the real field `p.h`. -/
+  real_center : (center realIndex : ℂ) = (p.h : ℂ)
+
 /-- **Pointed local-cover branch-family patching handoff on `leeYangDomain`**:
 if every Lee-Yang point carries a ball, a branch family on that ball, a local
 limit, and the local limits are compatible on all ball overlaps, then these
@@ -1749,6 +1787,63 @@ theorem exists_finset_cover_of_isCompact_leeYangRealBranchLimitFamily
   rcases Set.mem_iUnion.mp hz with ⟨h₀_mem, hz_ball⟩
   exact Set.mem_iUnion.mpr
     ⟨h₀, Set.mem_iUnion.mpr ⟨Finset.mem_insert_of_mem h₀_mem, hz_ball⟩⟩
+
+/-- **Enumerated compact local-cover finite geometry from a real-centred
+packaged Lee-Yang local cover**: the finite `Finset` subcover supplied by
+compactness can be enumerated by `Fin n`, retaining positive radii, ball
+containment in `leeYangDomain`, the compact target cover, and a selected
+real-centre index. -/
+theorem exists_compactLocalCoverFinGeometry_of_leeYangRealBranchLimitFamily
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) {K : Set ℂ}
+    (hK : IsCompact K)
+    (hKsub : K ⊆ IsingModel.leeYangDomain)
+    (hpK : (p.h : ℂ) ∈ K)
+    (realFamily : LeeYangRealBranchLimitFamily G Λ p) :
+    Nonempty (LeeYangCompactLocalCoverFinGeometry G Λ p K) := by
+  classical
+  rcases exists_finset_cover_of_isCompact_leeYangRealBranchLimitFamily
+      G Λ p hK hKsub hpK realFamily with
+    ⟨t, ht_real, ht_cover⟩
+  let center : Fin t.card → {h : ℂ // h ∈ IsingModel.leeYangDomain} :=
+    fun i => ((t.equivFin).symm i).1
+  let r : Fin t.card → ℝ :=
+    fun i => (realFamily.family.data (center i)).radius
+  let realIndex : Fin t.card := t.equivFin ⟨⟨(p.h : ℂ), realFamily.centre_mem⟩, ht_real⟩
+  refine ⟨
+    { isCompact := hK
+      subset_domain := hKsub
+      real_mem := hpK
+      realFamily := realFamily
+      n := t.card
+      center := center
+      r := r
+      radius_eq := ?_
+      radius_pos := ?_
+      ball_subset := ?_
+      cover_subset := ?_
+      realIndex := realIndex
+      real_center := ?_ }⟩
+  · intro i
+    rfl
+  · intro i
+    exact (realFamily.family.data (center i)).radius_pos
+  · intro i
+    exact (realFamily.family.data (center i)).ball_subset
+  · intro z hzK
+    rcases Set.mem_iUnion.mp (ht_cover hzK) with ⟨h₀, hz⟩
+    rcases Set.mem_iUnion.mp hz with ⟨h₀_mem, hz_ball⟩
+    let h₀' : t := ⟨h₀, h₀_mem⟩
+    let i : Fin t.card := t.equivFin h₀'
+    have hcenter : center i = h₀ := by
+      simp [center, i, h₀']
+    exact Set.mem_iUnion.mpr
+      ⟨i, by
+        dsimp [r]
+        rw [hcenter]
+        exact hz_ball⟩
+  · simp [center, realIndex]
 
 /-- **Local-cover branch-family Vitali bridge with real-axis
 identification**: a coherent local cover of Lee-Yang balls whose branch
