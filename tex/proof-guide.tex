@@ -4352,6 +4352,33 @@ or performing the diagonal local-cover extraction.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Structured eventual-overlap compact geometry; PR \#2718]
+The theorem
+\begin{Verbatim}
+Ambient.exists_compactLocalCoverFinGeometry_of_realEventualOverlapBranchData
+\end{Verbatim}
+composes the PR \#2717 structured real eventual-overlap data package with the
+compact local-cover finite-geometry extraction from PR \#2713.  Given a
+compact \(K\subset\texttt{leeYangDomain}\) containing the real centre, it
+produces a
+\begin{Verbatim}
+Ambient.LeeYangCompactLocalCoverFinGeometry
+\end{Verbatim}
+directly from the structured coherent eventual-overlap local-cover data.
+
+The concrete \(\mathbb Z^d\) wrapper is
+\begin{Verbatim}
+exists_compactLocalCoverFinGeometry_of_realEventualOverlapBranchData_latticeGraph
+\end{Verbatim}
+in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+
+This remains conditional and post-Montel.  It extracts finite compact
+geometry from already supplied coherent eventual-overlap data; it does not
+construct coherent branches, prove compactness of branch families, or perform
+the diagonal extraction.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[Compact local-cover finite subcover extraction; PR \#2712]
 The theorems
 \begin{Verbatim}
