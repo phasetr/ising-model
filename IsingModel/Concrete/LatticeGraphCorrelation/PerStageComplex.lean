@@ -2796,13 +2796,11 @@ theorem
   Ambient.freeEnergyComplexAlongExhaustion_allStageRangeNormBoundedAscoliData_patch
     (IsingModel.latticeGraph d) Λ p hBED hd data geom rangeBounded
 
-set_option linter.style.longLine false
-
 /-- **ℤ^d compact target to all-stage range norm-bounded Ascoli patch input**:
 compactness of `K` extracts the finite all-stage geometry, and range
 norm-bounded Ascoli data for that geometry yields the compact real-cover patch. -/
 theorem
-    freeEnergyComplexAlongExhaustion_allStageRangeNormBoundedAscoliData_patch_of_isCompact_latticeGraph
+    freeEnergyComplexAlongExhaustion_allStageRangeNormBoundedAscoliData_patch_isCompact_latticeGraph
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
     [∀ n, Fintype (Ambient.inducedGraph
         (IsingModel.latticeGraph d) (Λ.volume n)).edgeSet]
@@ -2832,8 +2830,6 @@ theorem
                 (IsingModel.latticeGraph d) Λ p : ℝ) : ℂ) :=
   Ambient.freeEnergyComplexAlongExhaustion_allStageRangeNormBoundedAscoliData_patch_of_isCompact
     (IsingModel.latticeGraph d) Λ p hBED hd hK hKsub hpK data
-
-set_option linter.style.longLine true
 
 /-- **ℤ^d finite compact-open extraction to a real-centre patch**:
 compact-open compactness on finitely many balls, eventual stage-level overlap
