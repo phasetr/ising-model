@@ -1393,6 +1393,64 @@ structure LeeYangRealBranchLimitFamily
       = freeEnergyComplexAlongExhaustion G Λ
           (p.J : ℂ) (p.h : ℂ) (p.β : ℂ) n
 
+/-- **Eventual-overlap Lee-Yang local-cover branch data**: a structured
+input package for the post-Montel local-cover endpoint. It contains the
+point-indexed Lee-Yang balls, the selected per-stage branches, their local
+limits, locally uniform convergence, and coherent eventual stage-level overlap
+equality. -/
+structure LeeYangEventualOverlapBranchData
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℂ) where
+  /-- Radius of the point-indexed Lee-Yang ball. -/
+  radius : (h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain}) → ℝ
+  /-- Every local-cover radius is positive. -/
+  radius_pos : ∀ h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain}, 0 < radius h₀
+  /-- Every local-cover ball stays inside `leeYangDomain`. -/
+  ball_subset : ∀ h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain},
+    Metric.ball (h₀ : ℂ) (radius h₀) ⊆ IsingModel.leeYangDomain
+  /-- Per-centre, per-stage local branch family. -/
+  branchFamily :
+    (h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain}) → ℕ → ℂ → ℂ
+  /-- Per-centre locally uniform limit. -/
+  limitFun : (h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain}) → ℂ → ℂ
+  /-- Per-stage holomorphicity and exponential partition-function identity on
+  every local-cover ball. -/
+  branch_spec : ∀ h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain}, ∀ n,
+    AnalyticOnNhd ℂ (branchFamily h₀ n) (Metric.ball (h₀ : ℂ) (radius h₀))
+      ∧ (∀ z ∈ Metric.ball (h₀ : ℂ) (radius h₀),
+          Complex.exp
+            ((Fintype.card (↑(Λ.volume n) : Type _) : ℂ) * branchFamily h₀ n z)
+            = partitionFunctionComplexAlongExhaustion G Λ J z β n)
+  /-- Locally uniform convergence on every local-cover ball. -/
+  tendsto : ∀ h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain},
+    TendstoLocallyUniformlyOn (branchFamily h₀) (limitFun h₀) Filter.atTop
+      (Metric.ball (h₀ : ℂ) (radius h₀))
+  /-- Coherent eventual stage-level equality on every pairwise ball overlap. -/
+  overlap_eventually : ∀ h₀ h₁ : {h : ℂ // h ∈ IsingModel.leeYangDomain},
+    ∀ᶠ n in Filter.atTop,
+      Set.EqOn (branchFamily h₀ n) (branchFamily h₁ n)
+        (Metric.ball (h₀ : ℂ) (radius h₀) ∩ Metric.ball (h₁ : ℂ) (radius h₁))
+
+/-- **Real-centred eventual-overlap Lee-Yang local-cover branch data**:
+eventual-overlap local-cover branch data at real parameters, together with
+membership of the real centre in `leeYangDomain` and centre normalisation to
+the finite-volume free-energy sequence. -/
+structure LeeYangRealEventualOverlapBranchData
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) where
+  /-- The real centre belongs to `leeYangDomain`. -/
+  centre_mem : (p.h : ℂ) ∈ IsingModel.leeYangDomain
+  /-- The structured eventual-overlap branch data at the real parameters. -/
+  branchData : LeeYangEventualOverlapBranchData G Λ (p.J : ℂ) (p.β : ℂ)
+  /-- The branch family centred at the real field is normalised to the
+  finite-volume free-energy sequence at that centre. -/
+  centre_normalized : ∀ n,
+    branchData.branchFamily ⟨(p.h : ℂ), centre_mem⟩ n (p.h : ℂ)
+      = freeEnergyComplexAlongExhaustion G Λ
+          (p.J : ℂ) (p.h : ℂ) (p.β : ℂ) n
+
 /-- **Finite compact-open subsequence branch-limit family**: for finitely many
 Lee-Yang balls, this packages the output expected after a finite compact-open
 diagonal extraction: one strictly increasing stage map, a local branch family
@@ -1698,6 +1756,36 @@ theorem exists_leeYangRealBranchLimitFamily_of_branchData_eventuallyEqOn
         Metric.ball (h₀ : ℂ) (r h₀))
       (F := F) (f := f) hconv hoverlap)
     hcenter
+
+/-- **Packaged local-cover branch-limit family from structured
+eventual-overlap branch data**: the structured local-cover input
+`LeeYangEventualOverlapBranchData` packages directly into
+`LeeYangLocalBranchLimitFamily`. -/
+theorem exists_leeYangLocalBranchLimitFamily_of_eventualOverlapBranchData
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℂ)
+    (data : LeeYangEventualOverlapBranchData G Λ J β) :
+    Nonempty (LeeYangLocalBranchLimitFamily G Λ J β) := by
+  exact exists_leeYangLocalBranchLimitFamily_of_branchData_eventuallyEqOn
+    G Λ J β data.radius_pos data.ball_subset data.branch_spec data.tendsto
+    data.overlap_eventually
+
+/-- **Real-centred packaged local-cover branch-limit family from structured
+eventual-overlap branch data**: the real-centred structured local-cover input
+`LeeYangRealEventualOverlapBranchData` packages directly into
+`LeeYangRealBranchLimitFamily`. -/
+theorem exists_leeYangRealBranchLimitFamily_of_realEventualOverlapBranchData
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ)
+    (data : LeeYangRealEventualOverlapBranchData G Λ p) :
+    Nonempty (LeeYangRealBranchLimitFamily G Λ p) := by
+  exact exists_leeYangRealBranchLimitFamily_of_branchData_eventuallyEqOn
+    G Λ p data.centre_mem
+    data.branchData.radius_pos data.branchData.ball_subset
+    data.branchData.branch_spec data.branchData.tendsto
+    data.branchData.overlap_eventually data.centre_normalized
 
 /-- **Pointed local-cover branch-family patching handoff on `leeYangDomain`**:
 if every Lee-Yang point carries a ball, a branch family on that ball, a local
@@ -2013,6 +2101,34 @@ theorem freeEnergyComplexAlongExhaustion_branchData_eventuallyEqOn_localCover_re
         Metric.ball (h₀ : ℂ) (r h₀))
       (F := F) (f := f) hconv hoverlap)
     hcenter
+
+/-- **Structured eventual-overlap branch-data local-cover patching with
+real-axis identification**: a real-centred
+`LeeYangRealEventualOverlapBranchData` package is converted to
+`LeeYangRealBranchLimitFamily`, then patched to a function differentiable on
+`leeYangDomain` and identified at the real centre. -/
+theorem freeEnergyComplexAlongExhaustion_realEventualOverlapBranchData_localCover_real
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ)
+    (hBED : BoundedEdgeDensity G Λ)
+    (hd : DisjointTowerHypotheses G Λ p)
+    (data : LeeYangRealEventualOverlapBranchData G Λ p) :
+    ∃ realFamily : LeeYangRealBranchLimitFamily G Λ p,
+      ∃ g : ℂ → ℂ,
+        (∀ h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain},
+          Set.EqOn g (data.branchData.limitFun h₀)
+            (Metric.ball (h₀ : ℂ) (data.branchData.radius h₀))) ∧
+        (∀ h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain},
+          Set.EqOn g (realFamily.family.data h₀).limitFun
+            (Metric.ball (h₀ : ℂ) (realFamily.family.data h₀).radius)) ∧
+        DifferentiableOn ℂ g IsingModel.leeYangDomain ∧
+        g (p.h : ℂ) = ((freeEnergyInfinite G Λ p : ℝ) : ℂ) := by
+  exact freeEnergyComplexAlongExhaustion_branchData_eventuallyEqOn_localCover_real
+    G Λ p hBED hd data.centre_mem
+    data.branchData.radius_pos data.branchData.ball_subset
+    data.branchData.branch_spec data.branchData.tendsto
+    data.branchData.overlap_eventually data.centre_normalized
 
 /-- **Compact finite subcover from a packaged Lee-Yang local-cover family**:
 on a compact target `K ⊆ leeYangDomain`, the open Lee-Yang balls carried by a
