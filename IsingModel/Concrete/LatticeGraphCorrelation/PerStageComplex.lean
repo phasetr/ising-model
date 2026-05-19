@@ -2459,8 +2459,10 @@ theorem freeEnergyComplexAlongExhaustion_compactLocalCoverFinGeometry_cOpenPatch
 /-- **ℤ^d structured eventual-overlap data to compact-open compact-target
 patch**: structured real eventual-overlap data first yields a compact
 local-cover `Fin n` geometry over `K`; for that geometry, compact-open
-compactness and eventual stage-level overlap equality produce a compact finite
-real-centred Lee-Yang cover package and a patch differentiable on `K`. -/
+compactness of the selected restrictions of the data's branch family, together
+with centre normalisation at every selected finite-cover centre, produces a
+compact finite real-centred Lee-Yang cover package and a patch differentiable
+on `K`. -/
 theorem freeEnergyComplexAlongExhaustion_realEventualOverlapBranchData_cOpenPatch_latticeGraph
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
     [∀ n, Fintype (Ambient.inducedGraph
@@ -2477,8 +2479,7 @@ theorem freeEnergyComplexAlongExhaustion_realEventualOverlapBranchData_cOpenPatc
     ∃ geometry :
         Ambient.LeeYangCompactLocalCoverFinGeometry
           (IsingModel.latticeGraph d) Λ p K,
-      ∀ {F : Fin geometry.n → ℕ → ℂ → ℂ}
-        {A : ∀ i : Fin geometry.n,
+      ∀ {A : ∀ i : Fin geometry.n,
           Set C(Metric.ball
             ((geometry.center i : {h : ℂ // h ∈ IsingModel.leeYangDomain}) : ℂ)
               (geometry.r i), ℂ)}
@@ -2492,34 +2493,16 @@ theorem freeEnergyComplexAlongExhaustion_realEventualOverlapBranchData_cOpenPatc
           (hz : z ∈ Metric.ball
             ((geometry.center i : {h : ℂ // h ∈ IsingModel.leeYangDomain}) : ℂ)
               (geometry.r i)),
-          F i m z = Fc i m ⟨z, hz⟩) →
+          data.branchData.branchFamily (geometry.center i) m z =
+            Fc i m ⟨z, hz⟩) →
         (∀ i m,
-          AnalyticOnNhd ℂ (F i m)
-              (Metric.ball
+          data.branchData.branchFamily (geometry.center i) m
+              ((geometry.center i : {h : ℂ // h ∈ IsingModel.leeYangDomain}) : ℂ)
+            = Ambient.freeEnergyComplexAlongExhaustion
+                (IsingModel.latticeGraph d) Λ
+                (p.J : ℂ)
                 ((geometry.center i : {h : ℂ // h ∈ IsingModel.leeYangDomain}) : ℂ)
-                  (geometry.r i))
-            ∧ (∀ z ∈ Metric.ball
-                  ((geometry.center i : {h : ℂ // h ∈ IsingModel.leeYangDomain}) : ℂ)
-                    (geometry.r i),
-                Complex.exp
-                  ((Fintype.card (↑(Λ.volume m) : Type _) : ℂ) * F i m z)
-                  = Ambient.partitionFunctionComplexAlongExhaustion
-                      (IsingModel.latticeGraph d) Λ (p.J : ℂ) z (p.β : ℂ) m)
-            ∧ F i m
-                ((geometry.center i : {h : ℂ // h ∈ IsingModel.leeYangDomain}) : ℂ)
-                = Ambient.freeEnergyComplexAlongExhaustion
-                    (IsingModel.latticeGraph d) Λ
-                    (p.J : ℂ)
-                    ((geometry.center i : {h : ℂ // h ∈ IsingModel.leeYangDomain}) : ℂ)
-                    (p.β : ℂ) m) →
-        (∀ i j, ∀ᶠ m in Filter.atTop,
-          Set.EqOn (F i m) (F j m)
-            (Metric.ball
-                ((geometry.center i : {h : ℂ // h ∈ IsingModel.leeYangDomain}) : ℂ)
-                  (geometry.r i)
-              ∩ Metric.ball
-                ((geometry.center j : {h : ℂ // h ∈ IsingModel.leeYangDomain}) : ℂ)
-                  (geometry.r j))) →
+                (p.β : ℂ) m) →
         ∃ compactCover :
             Ambient.LeeYangCompactFiniteRealCoverBranchLimitFamily
               (IsingModel.latticeGraph d) Λ p K geometry.n geometry.center geometry.r,
