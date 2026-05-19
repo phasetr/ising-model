@@ -1712,6 +1712,24 @@ theorem pairwise_eqOn_of_tendstoLocallyUniformlyOn_of_eventuallyEqOn
     (hconv i) (hconv j) (hoverlap i j)
 
 omit [Fintype ι] [DecidableEq ι] in
+/-- **Indexed-family overlap compatibility for locally uniform limits**: for an
+arbitrary indexed family of locally uniformly convergent sequences, pairwise
+eventual equality of the stage functions on pairwise overlaps implies pairwise
+equality of the limiting functions on those overlaps. -/
+theorem pairwise_eqOn_of_tendstoLocallyUniformlyOn_of_eventuallyEqOn_indexed
+    {α : Type*}
+    {s : α → Set ℂ}
+    {F : α → ℕ → ℂ → ℂ}
+    {f : α → ℂ → ℂ}
+    (hconv : ∀ i, TendstoLocallyUniformlyOn (F i) (f i) Filter.atTop (s i))
+    (hoverlap : ∀ i j, ∀ᶠ m in Filter.atTop,
+      Set.EqOn (F i m) (F j m) (s i ∩ s j)) :
+    ∀ i j, Set.EqOn (f i) (f j) (s i ∩ s j) := by
+  intro i j
+  exact eqOn_of_tendstoLocallyUniformlyOn_of_eventuallyEqOn
+    (hconv i) (hconv j) (hoverlap i j)
+
+omit [Fintype ι] [DecidableEq ι] in
 /-- **Finite open-cover patching for differentiable local functions**: a finite
 family of differentiable functions on open sets, compatible on all pairwise
 overlaps, patches to one function on the finite union.  The patched function
