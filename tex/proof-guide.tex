@@ -3916,6 +3916,42 @@ coherent local-cover construction.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Compact finite real-centred Lee--Yang cover package; PR \#2711]
+The structure
+\begin{Verbatim}
+Ambient.LeeYangCompactFiniteRealCoverBranchLimitFamily
+\end{Verbatim}
+extends the PR \#2710 finite real-centred cover by a compact target
+\(K\subset\mathcal D_{\mathrm{LY}}\), a proof that the real field \(p.h\)
+belongs to \(K\), and a proof that \(K\) is covered by the finite Lee--Yang
+balls.  This is the compact-target finite-cover shape needed before a later
+finite-subcover extraction from a genuine local cover.
+
+The wrapper
+\begin{Verbatim}
+Ambient.freeEnergyComplexAlongExhaustion_compactFiniteRealCover_patch
+\end{Verbatim}
+patches the underlying finite real cover and then restricts differentiability
+from the finite union of balls to \(K\).  It still identifies the selected real
+centre with \(\texttt{freeEnergyInfinite}\).  The compact-open wrapper
+\begin{Verbatim}
+Ambient.freeEnergyComplexAlongExhaustion_compactFiniteRealCover_cOpenPatch
+\end{Verbatim}
+also packages compact-open extraction and eventual stage-level overlap
+equality into the compact finite real-cover object.  The concrete
+\(\mathbb Z^d\) wrappers are
+\begin{Verbatim}
+freeEnergyComplexAlongExhaustion_compactFiniteRealCover_patch_latticeGraph
+freeEnergyComplexAlongExhaustion_compactFiniteRealCover_cOpenPatch_latticeGraph
+\end{Verbatim}
+in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+
+This remains a finite, explicit-hypothesis handoff.  It does not prove Montel
+compactness, coherent branch choices, finite-subcover extraction from an
+arbitrary local cover, or diagonal coherent local-cover extraction.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[Finite local-patching handoff; PR \#2698]
 The finite differentiable patching step is formalised by
 \begin{Verbatim}
