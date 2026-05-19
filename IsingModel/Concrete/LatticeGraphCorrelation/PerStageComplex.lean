@@ -2564,8 +2564,9 @@ theorem
     (IsingModel.latticeGraph d) Λ p hBED hd hK hKsub hpK data
 
 /-- **ℤ^d pointwise-normalised all-stage Arzelà-Ascoli data to compact
-real-cover patch**: pointwise compactness and equicontinuity for the selected
-all-stage geometry supply compact-open compactness via Arzelà-Ascoli. -/
+real-cover patch**: compactness of the pointwise function-space image and
+equicontinuity for the selected all-stage geometry supply compact-open
+compactness via Arzelà-Ascoli. -/
 theorem freeEnergyComplexAlongExhaustion_allStageAscoliData_patch_latticeGraph
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
     [∀ n, Fintype (Ambient.inducedGraph

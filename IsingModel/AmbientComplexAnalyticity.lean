@@ -3698,10 +3698,11 @@ structure LeeYangPointwiseNormAllStageCompactRealCOpenData
 /-- **Pointwise-normalised all-stage Arzelà-Ascoli data**: an Ascoli-style
 replacement for direct compact-open compactness on the selected all-stage
 Lee-Yang balls.  For each selected ball it stores a compact-open carrier of
-continuous restrictions together with compactness of its pointwise image and
-equicontinuity; mathlib's Arzelà-Ascoli theorem then supplies compact-open
-compactness.  This is still a pre-Montel input: it does not prove the
-equicontinuity or pointwise compactness from holomorphy and local boundedness. -/
+continuous restrictions together with compactness of its pointwise
+function-space image and equicontinuity; mathlib's Arzelà-Ascoli theorem then
+supplies compact-open compactness.  This is still a pre-Montel input: it does
+not prove the equicontinuity or compactness of the pointwise function-space
+image from holomorphy and local boundedness. -/
 structure LeeYangPointwiseNormAllStageCompactRealAscoliData
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
@@ -3718,7 +3719,7 @@ structure LeeYangPointwiseNormAllStageCompactRealAscoliData
   restricted : ∀ i : Fin geom.n, ℕ →
     C(Metric.ball (geom.center i : ℂ)
       (data.branchData.radius (geom.center i)), ℂ)
-  /-- The pointwise image of every carrier is compact. -/
+  /-- The pointwise function-space image of every carrier is compact. -/
   toFun_image_compact : ∀ i,
     IsCompact (ContinuousMap.toFun '' carrier i)
   /-- Every carrier is equicontinuous. -/
@@ -3977,9 +3978,10 @@ theorem freeEnergyComplexAlongExhaustion_allStageCOpenData_patch_of_isCompact
       G Λ p hBED hd data geom cOpen⟩
 
 /-- **Pointwise-normalised all-stage Arzelà-Ascoli data to a compact real-cover
-patch**: pointwise compactness plus equicontinuity on the selected all-stage
-compact finite geometry supply compact-open compactness via Arzelà-Ascoli, and
-the resulting compact-open package feeds the compact real-cover patch bridge. -/
+patch**: compactness of the pointwise function-space image plus equicontinuity
+on the selected all-stage compact finite geometry supply compact-open
+compactness via Arzelà-Ascoli, and the resulting compact-open package feeds the
+compact real-cover patch bridge. -/
 theorem freeEnergyComplexAlongExhaustion_allStageAscoliData_patch
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
@@ -4007,9 +4009,10 @@ theorem freeEnergyComplexAlongExhaustion_allStageAscoliData_patch
       G Λ p K data geom ascoli)
 
 /-- **Compact target to all-stage Arzelà-Ascoli patch input**: compactness of
-`K` extracts the finite all-stage geometry, after which pointwise compactness,
-equicontinuity, restriction identities, and coherent overlap equality for that
-geometry suffice to obtain the compact real-cover patch endpoint. -/
+`K` extracts the finite all-stage geometry, after which compactness of the
+pointwise function-space image, equicontinuity, restriction identities, and
+coherent overlap equality for that geometry suffice to obtain the compact
+real-cover patch endpoint. -/
 theorem freeEnergyComplexAlongExhaustion_allStageAscoliData_patch_of_isCompact
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]

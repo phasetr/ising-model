@@ -4472,10 +4472,11 @@ freeEnergyComplexAlongExhaustion_allStageAscoliData_patch_of_isCompact_latticeGr
 \end{Verbatim}
 in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
 
-This narrows the remaining Montel input to pointwise compactness and
-equicontinuity of the selected branch restrictions, plus coherent overlap
-equality.  It still does not derive those inputs from holomorphy and local
-boundedness.
+This narrows the remaining Montel input to compactness of the selected
+\(\texttt{ContinuousMap.toFun}\) images in the pointwise function-space
+topology, equicontinuity of the selected branch restrictions, and coherent
+overlap equality.  It still does not derive those inputs from holomorphy and
+local boundedness.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
