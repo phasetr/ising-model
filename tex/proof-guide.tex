@@ -4405,6 +4405,37 @@ prove compactness of branch families, or perform diagonal extraction.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Pointwise-normalised eventual-overlap local-family patch package; PR \#2726]
+The theorems
+\begin{Verbatim}
+Ambient.freeEnergyComplexAlongExhaustion_eventualOverlapBranchData_localCover_family_patch
+Ambient.freeEnergyComplexAlongExhaustion_pointwiseNormEventualData_localCover_family_patch
+\end{Verbatim}
+return both the compatible local-cover family and the patched function for
+the non-real local-cover endpoint.  The structured wrapper derives
+compatibility of the local limits from locally uniform convergence plus
+coherent eventual stage-level equality, builds
+\begin{Verbatim}
+Ambient.LeeYangLocalBranchLimitFamily
+\end{Verbatim}
+from the same data, and invokes the packaged family patching theorem.  The
+pointwise-normalised wrapper delegates through the underlying structured
+eventual-overlap package.
+
+The concrete \(\mathbb Z^d\) wrappers are
+\begin{Verbatim}
+freeEnergyComplexAlongExhaustion_eventualOverlapBranchData_localCover_family_patch_latticeGraph
+freeEnergyComplexAlongExhaustion_pointwiseNormEventualData_localCover_family_patch_latticeGraph
+\end{Verbatim}
+in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+
+This remains conditional and post-Montel.  It packages and patches already
+supplied coherent eventual-overlap data, but does not construct coherent
+branches, prove compactness of branch families, or perform diagonal
+extraction.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[Pointwise-normalised eventual-overlap branch-family package; PR \#2723]
 The theorem
 \begin{Verbatim}

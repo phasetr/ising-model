@@ -1998,6 +1998,69 @@ theorem freeEnergyComplexAlongExhaustion_pointwiseNormEventualData_localCover_pa
   freeEnergyComplexAlongExhaustion_eventualOverlapBranchData_localCover_patch
     G Λ J β data.branchData
 
+/-- **Structured eventual-overlap local-cover family and patching handoff on
+`leeYangDomain`**: a structured eventual-overlap package first produces the
+compatible `LeeYangLocalBranchLimitFamily`, then patches the same local limits
+to one differentiable function on `leeYangDomain`. -/
+theorem freeEnergyComplexAlongExhaustion_eventualOverlapBranchData_localCover_family_patch
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℂ)
+    (data : LeeYangEventualOverlapBranchData G Λ J β) :
+    ∃ family : LeeYangLocalBranchLimitFamily G Λ J β,
+      ∃ g : ℂ → ℂ,
+        (∀ h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain},
+          Set.EqOn g (data.limitFun h₀)
+            (Metric.ball (h₀ : ℂ) (data.radius h₀))) ∧
+        (∀ h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain},
+          Set.EqOn g (family.data h₀).limitFun
+            (Metric.ball (h₀ : ℂ) (family.data h₀).radius)) ∧
+        DifferentiableOn ℂ g IsingModel.leeYangDomain := by
+  let hcompat : ∀ h₀ h₁ : {h : ℂ // h ∈ IsingModel.leeYangDomain},
+      Set.EqOn (data.limitFun h₀) (data.limitFun h₁)
+        (Metric.ball (h₀ : ℂ) (data.radius h₀)
+          ∩ Metric.ball (h₁ : ℂ) (data.radius h₁)) :=
+    IsingModel.pairwise_eqOn_of_tendstoLocallyUniformlyOn_of_eventuallyEqOn_indexed
+      (s := fun h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain} =>
+        Metric.ball (h₀ : ℂ) (data.radius h₀))
+      (F := data.branchFamily) (f := data.limitFun)
+      data.tendsto data.overlap_eventually
+  let family : LeeYangLocalBranchLimitFamily G Λ J β :=
+    { data := fun h₀ =>
+        { radius := data.radius h₀
+          radius_pos := data.radius_pos h₀
+          ball_subset := data.ball_subset h₀
+          branchFamily := data.branchFamily h₀
+          limitFun := data.limitFun h₀
+          branch_spec := data.branch_spec h₀
+          tendsto := data.tendsto h₀ }
+      compatible := hcompat }
+  rcases freeEnergyComplexAlongExhaustion_branchLimitFamily_localCover_patch
+      G Λ J β family with
+    ⟨g, hg_eq, hg_diff⟩
+  exact ⟨family, g, by simpa [family] using hg_eq, hg_eq, hg_diff⟩
+
+/-- **Pointwise-normalised eventual-overlap local-cover family and patching
+handoff on `leeYangDomain`**: the pointwise-normalised package exposes the
+underlying structured eventual-overlap data, which produces the compatible
+local-cover family and the patched differentiable function. -/
+theorem freeEnergyComplexAlongExhaustion_pointwiseNormEventualData_localCover_family_patch
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℂ)
+    (data : LeeYangPointwiseNormalisedEventualOverlapBranchData G Λ J β) :
+    ∃ family : LeeYangLocalBranchLimitFamily G Λ J β,
+      ∃ g : ℂ → ℂ,
+        (∀ h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain},
+          Set.EqOn g (data.branchData.limitFun h₀)
+            (Metric.ball (h₀ : ℂ) (data.branchData.radius h₀))) ∧
+        (∀ h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain},
+          Set.EqOn g (family.data h₀).limitFun
+            (Metric.ball (h₀ : ℂ) (family.data h₀).radius)) ∧
+        DifferentiableOn ℂ g IsingModel.leeYangDomain :=
+  freeEnergyComplexAlongExhaustion_eventualOverlapBranchData_localCover_family_patch
+    G Λ J β data.branchData
+
 /-- **Structured local-cover branch-limit patching with real-axis
 identification**: if the packaged local-cover data are compatible and the
 package centred at a real Lee-Yang field is normalised to the finite-volume
