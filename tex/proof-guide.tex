@@ -4480,6 +4480,48 @@ local boundedness.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[All-stage closed-product Arzelà--Ascoli bridge; PR \#2734]
+The generic theorems
+\begin{Verbatim}[fontsize=\footnotesize]
+isCompact_toFun_image_complex_of_isClosed_subset_pi_compacts
+isCompact_compactOpen_complex_of_isClosed_subset_pi_compacts_equicontinuous
+\end{Verbatim}
+wrap Tychonoff compactness for complex-valued function spaces.  If the
+\(\texttt{ContinuousMap.toFun}\) image of a carrier is closed in the pointwise
+function space and every point evaluation lands in a compact target set, then
+the image is compact.  With equicontinuity, the PR \#2733 Arzelà--Ascoli bridge
+then gives compactness in the compact-open topology.
+
+The ambient structure and wrappers
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.LeeYangPointwiseNormAllStageCompactRealClosedProductAscoliData
+Ambient.LeeYangPointwiseNormAllStageCompactRealClosedProductAscoliData.toAscoliData
+Ambient.freeEnergyComplexAlongExhaustion_allStageClosedProductAscoliData_patch
+Ambient.freeEnergyComplexAlongExhaustion_allStageClosedProductAscoliData_patch_of_isCompact
+\end{Verbatim}
+apply this closed-product input to the selected all-stage compact finite
+geometry from PR \#2731.  For each selected Lee--Yang ball, the data records a
+carrier of continuous restrictions, compact pointwise target sets, closedness
+of the pointwise function-space image, membership of every carrier element in
+the pointwise targets, equicontinuity, stage membership, restriction
+identities, and eventual equality on pairwise selected overlaps.  The
+conversion supplies the PR \#2733 Ascoli data, then the PR \#2732 compact-open
+data, and finally the compact real-cover patch endpoint.
+
+The concrete \(\mathbb Z^d\) wrappers are
+\begin{Verbatim}[fontsize=\footnotesize]
+freeEnergyComplexAlongExhaustion_allStageClosedProductAscoliData_patch_latticeGraph
+freeEnergyComplexAlongExhaustion_allStageClosedProductAscoliData_patch_of_isCompact_latticeGraph
+\end{Verbatim}
+in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+
+This splits the remaining normal-family input into closedness of the
+pointwise function-space image, compact pointwise target bounds,
+equicontinuity, and coherent overlap equality.  It still does not derive those
+inputs from holomorphy and local boundedness.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[Raw Lee--Yang local-cover branch-data packaging; PR \#2715]
 The theorems
 \begin{Verbatim}
