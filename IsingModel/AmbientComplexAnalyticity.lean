@@ -3654,6 +3654,47 @@ structure LeeYangPointwiseNormAllStageCompactRealFinGeometry
   /-- The selected finite-cover centre is the real field `p.h`. -/
   real_center : (center realIndex : ℂ) = (p.h : ℂ)
 
+/-- **Pointwise-normalised all-stage compact-open data**: the exact finite
+compact-open package expected from a Montel extraction on the selected
+all-stage Lee-Yang balls. It stores compact sets of continuous restrictions,
+stage membership, the restriction identities back to the branch family, and
+the coherent eventual equality on overlaps. The structure deliberately keeps
+Montel compactness and coherent branch selection as inputs. -/
+structure LeeYangPointwiseNormAllStageCompactRealCOpenData
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (K : Set ℂ)
+    (data : LeeYangPointwiseNormalisedAllStageBranchData
+      G Λ (p.J : ℂ) (p.β : ℂ))
+    (geom : LeeYangPointwiseNormAllStageCompactRealFinGeometry
+      G Λ p K data) where
+  /-- Compact-open carrier for the restrictions on the selected ball. -/
+  carrier : ∀ i : Fin geom.n,
+    Set C(Metric.ball (geom.center i : ℂ)
+      (data.branchData.radius (geom.center i)), ℂ)
+  /-- Continuous restrictions of each stage branch on the selected ball. -/
+  restricted : ∀ i : Fin geom.n, ℕ →
+    C(Metric.ball (geom.center i : ℂ)
+      (data.branchData.radius (geom.center i)), ℂ)
+  /-- Compactness of every selected compact-open carrier. -/
+  isCompact : ∀ i, IsCompact (carrier i)
+  /-- Every stage restriction lies in the selected compact-open carrier. -/
+  mem : ∀ i m, restricted i m ∈ carrier i
+  /-- The continuous restriction agrees with the original branch family. -/
+  restrict_eq : ∀ i m z
+    (hz : z ∈ Metric.ball (geom.center i : ℂ)
+      (data.branchData.radius (geom.center i))),
+    data.branchData.branchFamily (geom.center i) m z =
+      restricted i m ⟨z, hz⟩
+  /-- Selected branch families are eventually equal on pairwise overlaps. -/
+  overlap_eventually : ∀ i j, ∀ᶠ m in Filter.atTop,
+    Set.EqOn
+      (data.branchData.branchFamily (geom.center i) m)
+      (data.branchData.branchFamily (geom.center j) m)
+      (Metric.ball (geom.center i : ℂ) (data.branchData.radius (geom.center i))
+        ∩ Metric.ball (geom.center j : ℂ)
+          (data.branchData.radius (geom.center j)))
+
 /-- **Compact finite subcover from pointwise-normalised all-stage data**:
 on a compact target `K ⊆ leeYangDomain`, the point-indexed all-stage
 Lee-Yang balls have a finite `Finset` subcover. -/
@@ -3802,6 +3843,67 @@ theorem
     G Λ p hBED hd K geom.n geom.center data geom.isCompact geom.subset_domain
     geom.real_mem geom.cover_subset hA hFc_mem hFres hoverlap geom.realIndex
     geom.real_center
+
+/-- **Pointwise-normalised all-stage compact-open data to a compact real-cover
+patch**: packaged compact-open data for the selected all-stage geometry feeds
+the compact real-cover patch bridge directly. -/
+theorem freeEnergyComplexAlongExhaustion_allStageCOpenData_patch
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ)
+    (hBED : BoundedEdgeDensity G Λ)
+    (hd : DisjointTowerHypotheses G Λ p)
+    {K : Set ℂ}
+    (data : LeeYangPointwiseNormalisedAllStageBranchData
+      G Λ (p.J : ℂ) (p.β : ℂ))
+    (geom : LeeYangPointwiseNormAllStageCompactRealFinGeometry G Λ p K data)
+    (cOpen : LeeYangPointwiseNormAllStageCompactRealCOpenData
+      G Λ p K data geom) :
+    ∃ compactCover : LeeYangCompactFiniteRealCoverBranchLimitFamily
+        G Λ p K geom.n geom.center
+        (fun i => data.branchData.radius (geom.center i)),
+      ∃ g : ℂ → ℂ,
+        (∀ i, Set.EqOn g (compactCover.realCover.cover.family.limitFun i)
+          (Metric.ball (geom.center i : ℂ)
+            (data.branchData.radius (geom.center i)))) ∧
+        DifferentiableOn ℂ g K ∧
+        g (p.h : ℂ) = ((freeEnergyInfinite G Λ p : ℝ) : ℂ) :=
+  freeEnergyComplexAlongExhaustion_pointwiseNormAllStageData_compactRealCOpen_patch_geom
+    G Λ p hBED hd data geom cOpen.isCompact cOpen.mem cOpen.restrict_eq
+    cOpen.overlap_eventually
+
+/-- **Compact target to packaged compact-open patch input**: compactness of `K`
+extracts the finite all-stage geometry, after which a packaged compact-open
+data input is enough to obtain the compact real-cover patch endpoint. -/
+theorem freeEnergyComplexAlongExhaustion_allStageCOpenData_patch_of_isCompact
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ)
+    (hBED : BoundedEdgeDensity G Λ)
+    (hd : DisjointTowerHypotheses G Λ p)
+    {K : Set ℂ}
+    (hK : IsCompact K)
+    (hKsub : K ⊆ IsingModel.leeYangDomain)
+    (hpK : (p.h : ℂ) ∈ K)
+    (data : LeeYangPointwiseNormalisedAllStageBranchData
+      G Λ (p.J : ℂ) (p.β : ℂ)) :
+    ∃ geom : LeeYangPointwiseNormAllStageCompactRealFinGeometry G Λ p K data,
+      LeeYangPointwiseNormAllStageCompactRealCOpenData G Λ p K data geom →
+        ∃ compactCover : LeeYangCompactFiniteRealCoverBranchLimitFamily
+            G Λ p K geom.n geom.center
+            (fun i => data.branchData.radius (geom.center i)),
+          ∃ g : ℂ → ℂ,
+            (∀ i, Set.EqOn g (compactCover.realCover.cover.family.limitFun i)
+              (Metric.ball (geom.center i : ℂ)
+                (data.branchData.radius (geom.center i)))) ∧
+            DifferentiableOn ℂ g K ∧
+            g (p.h : ℂ) = ((freeEnergyInfinite G Λ p : ℝ) : ℂ) := by
+  rcases exists_pointwiseNormAllStageCompactRealFinGeometry_of_isCompact
+      G Λ p hK hKsub hpK data with
+    ⟨geom⟩
+  exact ⟨geom, fun cOpen =>
+    freeEnergyComplexAlongExhaustion_allStageCOpenData_patch
+      G Λ p hBED hd data geom cOpen⟩
 
 /-- **Finite compact-open extraction to a real-centre patch**: compact-open
 compactness on finitely many balls, eventual stage-level overlap equality, and
