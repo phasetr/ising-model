@@ -1537,6 +1537,91 @@ structure LeeYangCompactLocalCoverFinGeometry
   /-- The selected finite-cover centre is the real field `p.h`. -/
   real_center : (center realIndex : ℂ) = (p.h : ℂ)
 
+/-- **Packaged local-cover branch-limit family from raw branch data**: raw
+pointwise Lee-Yang local-cover branch data with locally uniform limits and
+pairwise overlap compatibility can be bundled into
+`LeeYangLocalBranchLimitFamily`. This is the direct packaging shape expected
+from a later coherent Montel/diagonal extraction. -/
+theorem exists_leeYangLocalBranchLimitFamily_of_branchData
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℂ)
+    {r : (h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain}) → ℝ}
+    {F : (h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain}) → ℕ → ℂ → ℂ}
+    {f : (h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain}) → ℂ → ℂ}
+    (hr : ∀ h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain}, 0 < r h₀)
+    (hsub : ∀ h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain},
+      Metric.ball (h₀ : ℂ) (r h₀) ⊆ IsingModel.leeYangDomain)
+    (hbranch : ∀ h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain}, ∀ n,
+      AnalyticOnNhd ℂ (F h₀ n) (Metric.ball (h₀ : ℂ) (r h₀))
+        ∧ (∀ z ∈ Metric.ball (h₀ : ℂ) (r h₀),
+            Complex.exp ((Fintype.card (↑(Λ.volume n) : Type _) : ℂ) * F h₀ n z)
+              = partitionFunctionComplexAlongExhaustion G Λ J z β n))
+    (hconv : ∀ h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain},
+      TendstoLocallyUniformlyOn (F h₀) (f h₀) Filter.atTop
+        (Metric.ball (h₀ : ℂ) (r h₀)))
+    (hcompat : ∀ h₀ h₁ : {h : ℂ // h ∈ IsingModel.leeYangDomain},
+      Set.EqOn (f h₀) (f h₁)
+        (Metric.ball (h₀ : ℂ) (r h₀) ∩ Metric.ball (h₁ : ℂ) (r h₁))) :
+    Nonempty (LeeYangLocalBranchLimitFamily G Λ J β) := by
+  refine ⟨
+    { data := fun h₀ =>
+        { radius := r h₀
+          radius_pos := hr h₀
+          ball_subset := hsub h₀
+          branchFamily := F h₀
+          limitFun := f h₀
+          branch_spec := hbranch h₀
+          tendsto := hconv h₀ }
+      compatible := hcompat }⟩
+
+/-- **Real-centred packaged local-cover branch-limit family from raw branch
+data**: raw coherent Lee-Yang local-cover branch data, together with real
+centre membership and centre normalisation, can be bundled into
+`LeeYangRealBranchLimitFamily`. -/
+theorem exists_leeYangRealBranchLimitFamily_of_branchData
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ)
+    (hp : (p.h : ℂ) ∈ IsingModel.leeYangDomain)
+    {r : (h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain}) → ℝ}
+    {F : (h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain}) → ℕ → ℂ → ℂ}
+    {f : (h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain}) → ℂ → ℂ}
+    (hr : ∀ h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain}, 0 < r h₀)
+    (hsub : ∀ h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain},
+      Metric.ball (h₀ : ℂ) (r h₀) ⊆ IsingModel.leeYangDomain)
+    (hbranch : ∀ h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain}, ∀ n,
+      AnalyticOnNhd ℂ (F h₀ n) (Metric.ball (h₀ : ℂ) (r h₀))
+        ∧ (∀ z ∈ Metric.ball (h₀ : ℂ) (r h₀),
+            Complex.exp
+              ((Fintype.card (↑(Λ.volume n) : Type _) : ℂ) * F h₀ n z)
+              = partitionFunctionComplexAlongExhaustion G Λ
+                  (p.J : ℂ) z (p.β : ℂ) n))
+    (hconv : ∀ h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain},
+      TendstoLocallyUniformlyOn (F h₀) (f h₀) Filter.atTop
+        (Metric.ball (h₀ : ℂ) (r h₀)))
+    (hcompat : ∀ h₀ h₁ : {h : ℂ // h ∈ IsingModel.leeYangDomain},
+      Set.EqOn (f h₀) (f h₁)
+        (Metric.ball (h₀ : ℂ) (r h₀) ∩ Metric.ball (h₁ : ℂ) (r h₁)))
+    (hcenter : ∀ n,
+      F ⟨(p.h : ℂ), hp⟩ n (p.h : ℂ)
+        = freeEnergyComplexAlongExhaustion G Λ
+            (p.J : ℂ) (p.h : ℂ) (p.β : ℂ) n) :
+    Nonempty (LeeYangRealBranchLimitFamily G Λ p) := by
+  exact ⟨
+    { centre_mem := hp
+      family :=
+        { data := fun h₀ =>
+            { radius := r h₀
+              radius_pos := hr h₀
+              ball_subset := hsub h₀
+              branchFamily := F h₀
+              limitFun := f h₀
+              branch_spec := hbranch h₀
+              tendsto := hconv h₀ }
+          compatible := hcompat }
+      centre_normalized := hcenter }⟩
+
 /-- **Pointed local-cover branch-family patching handoff on `leeYangDomain`**:
 if every Lee-Yang point carries a ball, a branch family on that ball, a local
 limit, and the local limits are compatible on all ball overlaps, then these
@@ -1734,6 +1819,70 @@ theorem freeEnergyComplexAlongExhaustion_realBranchLimitFamily_localCover_real
       g (p.h : ℂ) = ((freeEnergyInfinite G Λ p : ℝ) : ℂ) :=
   freeEnergyComplexAlongExhaustion_branchLimitFamily_localCover_real
     G Λ p hBED hd realFamily.centre_mem realFamily.family realFamily.centre_normalized
+
+/-- **Raw branch-data local-cover patching with real-axis identification**:
+raw coherent local-cover branch data package into
+`LeeYangRealBranchLimitFamily`, then the packaged endpoint patches the local
+limits to one differentiable function on `leeYangDomain` and identifies its
+real-centre value with `↑freeEnergyInfinite`. -/
+theorem freeEnergyComplexAlongExhaustion_branchData_localCover_real
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ)
+    (hBED : BoundedEdgeDensity G Λ)
+    (hd : DisjointTowerHypotheses G Λ p)
+    (hp : (p.h : ℂ) ∈ IsingModel.leeYangDomain)
+    {r : (h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain}) → ℝ}
+    {F : (h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain}) → ℕ → ℂ → ℂ}
+    {f : (h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain}) → ℂ → ℂ}
+    (hr : ∀ h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain}, 0 < r h₀)
+    (hsub : ∀ h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain},
+      Metric.ball (h₀ : ℂ) (r h₀) ⊆ IsingModel.leeYangDomain)
+    (hbranch : ∀ h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain}, ∀ n,
+      AnalyticOnNhd ℂ (F h₀ n) (Metric.ball (h₀ : ℂ) (r h₀))
+        ∧ (∀ z ∈ Metric.ball (h₀ : ℂ) (r h₀),
+            Complex.exp
+              ((Fintype.card (↑(Λ.volume n) : Type _) : ℂ) * F h₀ n z)
+              = partitionFunctionComplexAlongExhaustion G Λ
+                  (p.J : ℂ) z (p.β : ℂ) n))
+    (hconv : ∀ h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain},
+      TendstoLocallyUniformlyOn (F h₀) (f h₀) Filter.atTop
+        (Metric.ball (h₀ : ℂ) (r h₀)))
+    (hcompat : ∀ h₀ h₁ : {h : ℂ // h ∈ IsingModel.leeYangDomain},
+      Set.EqOn (f h₀) (f h₁)
+        (Metric.ball (h₀ : ℂ) (r h₀) ∩ Metric.ball (h₁ : ℂ) (r h₁)))
+    (hcenter : ∀ n,
+      F ⟨(p.h : ℂ), hp⟩ n (p.h : ℂ)
+        = freeEnergyComplexAlongExhaustion G Λ
+            (p.J : ℂ) (p.h : ℂ) (p.β : ℂ) n) :
+    ∃ realFamily : LeeYangRealBranchLimitFamily G Λ p,
+      ∃ g : ℂ → ℂ,
+        (∀ h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain},
+          Set.EqOn g (f h₀) (Metric.ball (h₀ : ℂ) (r h₀))) ∧
+        (∀ h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain},
+          Set.EqOn g (realFamily.family.data h₀).limitFun
+            (Metric.ball (h₀ : ℂ) (realFamily.family.data h₀).radius)) ∧
+        DifferentiableOn ℂ g IsingModel.leeYangDomain ∧
+        g (p.h : ℂ) = ((freeEnergyInfinite G Λ p : ℝ) : ℂ) := by
+  let realFamily : LeeYangRealBranchLimitFamily G Λ p :=
+    { centre_mem := hp
+      family :=
+        { data := fun h₀ =>
+            { radius := r h₀
+              radius_pos := hr h₀
+              ball_subset := hsub h₀
+              branchFamily := F h₀
+              limitFun := f h₀
+              branch_spec := hbranch h₀
+              tendsto := hconv h₀ }
+          compatible := hcompat }
+      centre_normalized := hcenter }
+  rcases freeEnergyComplexAlongExhaustion_realBranchLimitFamily_localCover_real
+      G Λ p hBED hd realFamily with
+    ⟨g, hpatch, hdiff, hvalue⟩
+  refine ⟨realFamily, g, ?_, hpatch, hdiff, hvalue⟩
+  intro h₀
+  simpa [realFamily] using hpatch h₀
 
 /-- **Compact finite subcover from a packaged Lee-Yang local-cover family**:
 on a compact target `K ⊆ leeYangDomain`, the open Lee-Yang balls carried by a
