@@ -1565,6 +1565,31 @@ theorem freeEnergyComplexAlongExhaustion_finiteRealCoverFamily_patch_latticeGrap
   Ambient.freeEnergyComplexAlongExhaustion_finiteRealCoverFamily_patch
     (IsingModel.latticeGraph d) Λ p hBED hd n realCover
 
+/-- **ℤ^d compact finite real-centred Lee-Yang cover patching**: a compact
+target set covered by a finite real-centred Lee-Yang cover inherits the
+finite-cover patch, restricted to differentiability on the compact target,
+while preserving the real-centre identification. -/
+theorem freeEnergyComplexAlongExhaustion_compactFiniteRealCover_patch_latticeGraph
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph
+        (IsingModel.latticeGraph d) (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ)
+    (hBED : Ambient.BoundedEdgeDensity (IsingModel.latticeGraph d) Λ)
+    (hd : Ambient.DisjointTowerHypotheses (IsingModel.latticeGraph d) Λ p)
+    (K : Set ℂ) (n : ℕ)
+    {center : Fin n → {h : ℂ // h ∈ IsingModel.leeYangDomain}}
+    {r : Fin n → ℝ}
+    (compactCover : Ambient.LeeYangCompactFiniteRealCoverBranchLimitFamily
+      (IsingModel.latticeGraph d) Λ p K n center r) :
+    ∃ g : ℂ → ℂ,
+      (∀ i, Set.EqOn g (compactCover.realCover.cover.family.limitFun i)
+        (Metric.ball ((center i : {h : ℂ // h ∈ IsingModel.leeYangDomain}) : ℂ) (r i))) ∧
+      DifferentiableOn ℂ g K ∧
+      g (p.h : ℂ) =
+        ((Ambient.freeEnergyInfinite (IsingModel.latticeGraph d) Λ p : ℝ) : ℂ) :=
+  Ambient.freeEnergyComplexAlongExhaustion_compactFiniteRealCover_patch
+    (IsingModel.latticeGraph d) Λ p hBED hd K n compactCover
+
 /-- **ℤ^d finite compact-open extraction to a patched finite family**:
 compact-open compactness on finitely many balls and eventual stage-level
 overlap equality produce both a packaged finite subsequence branch-limit family
@@ -1905,6 +1930,81 @@ theorem freeEnergyComplexAlongExhaustion_finiteRealCoverFamily_compactOpen_patch
   Ambient.freeEnergyComplexAlongExhaustion_finiteRealCoverFamily_compactOpen_patch
     (IsingModel.latticeGraph d) Λ p hBED hd n hr hsub hA hFc_mem hFres
     hbranch hoverlap i₀ hcenter
+
+/-- **ℤ^d compact finite Lee-Yang cover compact-open extraction to a
+real-centred package and compact-target patch**: compact-open compactness and
+eventual stage-level overlap equality produce a compact finite real-centred
+Lee-Yang cover package and a patch differentiable on the compact target. -/
+theorem freeEnergyComplexAlongExhaustion_compactFiniteRealCover_cOpenPatch_latticeGraph
+    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph
+        (IsingModel.latticeGraph d) (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ)
+    (hBED : Ambient.BoundedEdgeDensity (IsingModel.latticeGraph d) Λ)
+    (hd : Ambient.DisjointTowerHypotheses (IsingModel.latticeGraph d) Λ p)
+    (K : Set ℂ) (n : ℕ)
+    {center : Fin n → {h : ℂ // h ∈ IsingModel.leeYangDomain}}
+    {r : Fin n → ℝ}
+    {F : Fin n → ℕ → ℂ → ℂ}
+    {A : ∀ i : Fin n,
+      Set C(Metric.ball
+        ((center i : {h : ℂ // h ∈ IsingModel.leeYangDomain}) : ℂ) (r i), ℂ)}
+    {Fc : ∀ i : Fin n, ℕ →
+      C(Metric.ball
+        ((center i : {h : ℂ // h ∈ IsingModel.leeYangDomain}) : ℂ) (r i), ℂ)}
+    (hK : IsCompact K)
+    (hKsub : K ⊆ IsingModel.leeYangDomain)
+    (hpK : (p.h : ℂ) ∈ K)
+    (hKcover : K ⊆
+      ⋃ i : Fin n,
+        Metric.ball ((center i : {h : ℂ // h ∈ IsingModel.leeYangDomain}) : ℂ) (r i))
+    (hr : ∀ i, 0 < r i)
+    (hsub : ∀ i,
+      Metric.ball ((center i : {h : ℂ // h ∈ IsingModel.leeYangDomain}) : ℂ) (r i)
+        ⊆ IsingModel.leeYangDomain)
+    (hA : ∀ i, IsCompact (A i))
+    (hFc_mem : ∀ i m, Fc i m ∈ A i)
+    (hFres : ∀ i m z
+      (hz : z ∈ Metric.ball
+        ((center i : {h : ℂ // h ∈ IsingModel.leeYangDomain}) : ℂ) (r i)),
+      F i m z = Fc i m ⟨z, hz⟩)
+    (hbranch : ∀ i m,
+      AnalyticOnNhd ℂ (F i m)
+          (Metric.ball
+            ((center i : {h : ℂ // h ∈ IsingModel.leeYangDomain}) : ℂ) (r i))
+        ∧ (∀ z ∈ Metric.ball
+              ((center i : {h : ℂ // h ∈ IsingModel.leeYangDomain}) : ℂ) (r i),
+            Complex.exp
+              ((Fintype.card (↑(Λ.volume m) : Type _) : ℂ) * F i m z)
+              = Ambient.partitionFunctionComplexAlongExhaustion
+                  (IsingModel.latticeGraph d) Λ (p.J : ℂ) z (p.β : ℂ) m)
+        ∧ F i m ((center i : {h : ℂ // h ∈ IsingModel.leeYangDomain}) : ℂ)
+            = Ambient.freeEnergyComplexAlongExhaustion
+                (IsingModel.latticeGraph d) Λ
+                (p.J : ℂ)
+                ((center i : {h : ℂ // h ∈ IsingModel.leeYangDomain}) : ℂ)
+                (p.β : ℂ) m)
+    (hoverlap : ∀ i j, ∀ᶠ m in Filter.atTop,
+      Set.EqOn (F i m) (F j m)
+        (Metric.ball
+            ((center i : {h : ℂ // h ∈ IsingModel.leeYangDomain}) : ℂ) (r i)
+          ∩ Metric.ball
+            ((center j : {h : ℂ // h ∈ IsingModel.leeYangDomain}) : ℂ) (r j)))
+    (i₀ : Fin n)
+    (hcenter :
+      ((center i₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain}) : ℂ) = (p.h : ℂ)) :
+    ∃ compactCover : Ambient.LeeYangCompactFiniteRealCoverBranchLimitFamily
+        (IsingModel.latticeGraph d) Λ p K n center r,
+      ∃ g : ℂ → ℂ,
+        (∀ i, Set.EqOn g (compactCover.realCover.cover.family.limitFun i)
+          (Metric.ball
+            ((center i : {h : ℂ // h ∈ IsingModel.leeYangDomain}) : ℂ) (r i))) ∧
+        DifferentiableOn ℂ g K ∧
+        g (p.h : ℂ) =
+          ((Ambient.freeEnergyInfinite (IsingModel.latticeGraph d) Λ p : ℝ) : ℂ) :=
+  Ambient.freeEnergyComplexAlongExhaustion_compactFiniteRealCover_cOpenPatch
+    (IsingModel.latticeGraph d) Λ p hBED hd K n hK hKsub hpK hKcover hr hsub
+    hA hFc_mem hFres hbranch hoverlap i₀ hcenter
 
 /-- **ℤ^d finite-ball compact-open diagonal extraction with local patching**:
 if the selected stage branches are eventually equal on every pairwise overlap,
