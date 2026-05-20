@@ -4768,6 +4768,25 @@ branch local bounds, closedness, equicontinuity, and coherent overlap equality.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Closed-ball branch-deviation to branch-local bridge; PR \#2750]
+The conversion
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.LeeYangPointwiseNormAllStageCompactRealClosedBallBranchDeviationAscoliData.toClosedBallBranchLocallyBoundedData
+\end{Verbatim}
+recovers closed-ball branch locally bounded Ascoli data from closed-ball
+branch-deviation Ascoli data.  On each selected Lee--Yang ball, the
+closed-ball Lee--Yang principal free-energy bound controls the principal
+finite-volume free energy, while the supplied deviation bound controls the
+difference between the selected branch and that principal value.  The triangle
+inequality gives a branch-family local bound.
+
+The conversion preserves the same restriction, closedness, equicontinuity, and
+coherent overlap fields.  It does not prove the branch-deviation estimate or
+the Ascoli side conditions; it only exposes the automatic passage from
+closed-ball deviation data to the branch-local boundary.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[All-stage Arzelà--Ascoli compact-open bridge; PR \#2733]
 The generic theorem
 \begin{Verbatim}[fontsize=\footnotesize]
