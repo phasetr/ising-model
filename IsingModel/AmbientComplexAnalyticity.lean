@@ -4953,6 +4953,29 @@ noncomputable def toRangeRelCompactData_closedBallLocal_direct
     (toClosedBallBranchLocallyBoundedData
       G Λ p hBED hβ hJ K closedData geom closedBallDeviation)
 
+/-- Direct-route alias for the closed-ball branch-deviation Ascoli data to
+relatively compact range data conversion.  This keeps the public name parallel
+to `LeeYangClosedBallBranchLocallyBoundedAscoliData.toRangeRelCompactData_direct`
+while using the same branch-local route. -/
+noncomputable def toRangeRelCompactData_direct
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    [∀ n, Nonempty (↑(Λ.volume n) : Type _)]
+    (p : IsingParams ℝ) (hBED : BoundedEdgeDensity G Λ)
+    (hβ : 0 < p.β) (hJ : 0 < p.J) (K : Set ℂ)
+    (closedData :
+      LeeYangClosedBallPointwiseNormalisedAllStageBranchData
+        G Λ (p.J : ℂ) (p.β : ℂ))
+    (geom : LeeYangPointwiseNormAllStageCompactRealFinGeometry
+      G Λ p K closedData.data)
+    (closedBallDeviation :
+      LeeYangPointwiseNormAllStageCompactRealClosedBallBranchDeviationAscoliData
+        G Λ p K closedData geom) :
+    LeeYangPointwiseNormAllStageCompactRealRangeRelCompactCOpenData
+      G Λ p K closedData.data geom :=
+  toRangeRelCompactData_closedBallLocal_direct
+    G Λ p hBED hβ hJ K closedData geom closedBallDeviation
+
 end LeeYangPointwiseNormAllStageCompactRealClosedBallBranchDeviationAscoliData
 
 /-- **Compact finite subcover from pointwise-normalised all-stage data**:
@@ -6321,7 +6344,7 @@ theorem
         g (p.h : ℂ) = ((freeEnergyInfinite G Λ p : ℝ) : ℂ) :=
   freeEnergyComplexAlongExhaustion_allStageRangeRelCompactCOpenData_patch
     G Λ p hBED hd closedData.data geom
-    (LeeYangPointwiseNormAllStageCompactRealClosedBallBranchDeviationAscoliData.toRangeRelCompactData_closedBallLocal_direct
+    (LeeYangPointwiseNormAllStageCompactRealClosedBallBranchDeviationAscoliData.toRangeRelCompactData_direct
       G Λ p hBED hβ hJ K closedData geom closedBallDeviation)
 
 set_option linter.style.longLine false in

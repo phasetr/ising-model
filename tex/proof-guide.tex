@@ -4841,13 +4841,16 @@ Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 The conversion
 \begin{Verbatim}[fontsize=\footnotesize]
 Ambient.LeeYangPointwiseNormAllStageCompactRealClosedBallBranchDeviationAscoliData.toRangeRelCompactData_closedBallLocal_direct
+Ambient.LeeYangPointwiseNormAllStageCompactRealClosedBallBranchDeviationAscoliData.toRangeRelCompactData_direct
 \end{Verbatim}
 maps closed-ball branch-deviation Ascoli data directly to relatively compact
 range data through the branch-local boundary.  It first applies the PR \#2750
 conversion from closed-ball branch-deviation data to closed-ball branch
 locally bounded Ascoli data, then applies the PR \#2749 direct conversion from
 closed-ball branch locally bounded Ascoli data to relatively compact range
-data.
+data.  PR \#2757 adds the direct-route alias
+\texttt{toRangeRelCompactData\_direct} so this data boundary matches the
+closed-ball branch-local direct conversion naming.
 
 This is a composition bridge.  It adds no new analytic side condition beyond
 the closed-ball Lee--Yang principal free-energy hypotheses already needed for
@@ -4890,8 +4893,8 @@ Ambient.freeEnergyComplexAlongExhaustion_posRealClosedBallDeviation_directRange_
 expose the PR \#2751 direct range conversion at the compact patch boundary
 under the same direct-range naming used by the generic branch-deviation bridge.
 Given closed-ball branch-deviation Ascoli data, the endpoint first constructs
-the relatively compact range data through the branch-local route, then applies
-the all-stage relatively compact range patch theorem.
+the relatively compact range data through the PR \#2757 direct-route data
+alias, then applies the all-stage relatively compact range patch theorem.
 
 The concrete \(\mathbb Z^d\) wrappers are
 \begin{Verbatim}[fontsize=\footnotesize]
