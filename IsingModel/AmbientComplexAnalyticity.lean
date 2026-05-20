@@ -5748,6 +5748,50 @@ theorem
     freeEnergyComplexAlongExhaustion_closedBallBranchDeviationRelCompact_patch
       G Λ p hBED hd hβ hJ closedData geom closedBallDeviation⟩
 
+/-- **Positive-real compact target to closed-ball branch-deviation relatively
+compact patch input**: positive real ferromagnetic parameters construct the
+closed-ball pointwise-normalised all-stage branch data, compactness of `K`
+extracts the finite geometry, and closed-ball branch-deviation data then feeds
+the PR #2745 closed-ball relative-compactness bridge. -/
+theorem
+    freeEnergyComplexAlongExhaustion_posRealClosedBallDeviation_patch_of_isCompact
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    [∀ n, Nonempty (↑(Λ.volume n) : Type _)]
+    (p : IsingParams ℝ)
+    (hBED : BoundedEdgeDensity G Λ)
+    (hd : DisjointTowerHypotheses G Λ p)
+    (hβ : 0 < p.β)
+    (hJ : 0 < p.J)
+    {K : Set ℂ}
+    (hK : IsCompact K)
+    (hKsub : K ⊆ IsingModel.leeYangDomain)
+    (hpK : (p.h : ℂ) ∈ K) :
+    ∃ closedData :
+        LeeYangClosedBallPointwiseNormalisedAllStageBranchData
+          G Λ (p.J : ℂ) (p.β : ℂ),
+      ∃ geom : LeeYangPointwiseNormAllStageCompactRealFinGeometry
+          G Λ p K closedData.data,
+        LeeYangPointwiseNormAllStageCompactRealClosedBallBranchDeviationAscoliData
+            G Λ p K closedData geom →
+          ∃ compactCover : LeeYangCompactFiniteRealCoverBranchLimitFamily
+              G Λ p K geom.n geom.center
+              (fun i => closedData.data.branchData.radius (geom.center i)),
+            ∃ g : ℂ → ℂ,
+              (∀ i, Set.EqOn g (compactCover.realCover.cover.family.limitFun i)
+                (Metric.ball (geom.center i : ℂ)
+                  (closedData.data.branchData.radius (geom.center i)))) ∧
+              DifferentiableOn ℂ g K ∧
+              g (p.h : ℂ) = ((freeEnergyInfinite G Λ p : ℝ) : ℂ) := by
+  rcases exists_leeYangClosedBallPointwiseNormalisedAllStageBranchData_of_positive_real
+      G Λ hβ hJ with
+    ⟨closedData⟩
+  rcases
+      freeEnergyComplexAlongExhaustion_closedBallBranchDeviationRelCompact_patch_of_isCompact
+        G Λ p hBED hd hβ hJ hK hKsub hpK closedData with
+    ⟨geom, hgeom⟩
+  exact ⟨closedData, geom, hgeom⟩
+
 /-- **Pointwise-normalised all-stage branch norm-bounded Ascoli data to a
 compact real-cover patch**: branch-family pointwise norm bounds are
 transported through the selected restriction identities and then fed to the
