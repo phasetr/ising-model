@@ -4638,6 +4638,45 @@ closedness, equicontinuity, or restriction identities.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Eventual-overlap closed-ball branch-local direct range bridge; PR \#2760]
+The closed-ball eventual-overlap package
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.LeeYangClosedBallPointwiseNormalisedEventualOverlapBranchData
+Ambient.LeeYangClosedBallPointwiseNormalisedEventualOverlapBranchData.toClosedBallAllStageData
+\end{Verbatim}
+forgets locally uniform limits and eventual-overlap fields to the closed-ball
+all-stage branch package while preserving the closed-ball containment input.
+The Ascoli package and conversions
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.LeeYangPointwiseNormAllStageCompactRealEventualOverlapClosedBallBranchLocallyBoundedAscoliData
+Ambient.LeeYangPointwiseNormAllStageCompactRealEventualOverlapClosedBallBranchLocallyBoundedAscoliData.toClosedBallBranchLocallyBoundedData
+Ambient.LeeYangPointwiseNormAllStageCompactRealEventualOverlapClosedBallBranchLocallyBoundedAscoliData.toRangeRelCompactData_direct
+\end{Verbatim}
+then supply the ordinary closed-ball branch-local overlap field from the
+underlying pointwise-normalised eventual-overlap data.
+
+The direct-range patch endpoints
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.freeEnergyComplexAlongExhaustion_eventualOverlapClosedBallBranchLocallyBoundedRelCompact_directRange_patch
+Ambient.freeEnergyComplexAlongExhaustion_eventualOverlapClosedBallBranchLocallyBoundedRelCompact_directRange_patch_of_isCompact
+\end{Verbatim}
+convert through the direct closed-ball branch-local relatively compact range
+route and invoke the all-stage relatively compact range patch theorem.
+
+The concrete \(\mathbb Z^d\) wrappers are
+\begin{Verbatim}[fontsize=\footnotesize]
+freeEnergyComplexAlongExhaustion_eventualOverlapClosedBallBranchLocallyBoundedRelCompact_directRange_patch_latticeGraph
+freeEnergyComplexAlongExhaustion_eventualOverlapClosedBallBranchLocallyBoundedRelCompact_directRange_patch_isCompact_latticeGraph
+\end{Verbatim}
+in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.  This
+removes the selected-overlap field from the closed-ball branch-local Ascoli
+boundary once pointwise-normalised eventual-overlap data is available.  It
+still does not construct that eventual-overlap data, prove closed-ball
+containment, or prove the branch local bounds, closedness, equicontinuity, or
+restriction identities.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[Branch-deviation locally bounded bridge; PR \#2744]
 The structure
 \begin{Verbatim}[fontsize=\footnotesize]

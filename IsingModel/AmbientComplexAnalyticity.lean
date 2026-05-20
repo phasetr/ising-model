@@ -1530,6 +1530,26 @@ structure LeeYangClosedBallPointwiseNormalisedAllStageBranchData
       Metric.closedBall (h₀ : ℂ) (data.branchData.radius h₀) ⊆
         IsingModel.leeYangDomain
 
+/-- **Closed-ball pointwise-normalised eventual-overlap branch data**:
+pointwise-normalised eventual-overlap branch data whose selected radii also
+have closed balls contained in `leeYangDomain`.  This is the post-Montel
+closed-ball analogue of
+`LeeYangClosedBallPointwiseNormalisedAllStageBranchData`; it keeps the
+closed-ball containment input explicit while carrying coherent eventual
+overlap data. -/
+structure LeeYangClosedBallPointwiseNormalisedEventualOverlapBranchData
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℂ) where
+  /-- The underlying pointwise-normalised eventual-overlap branch package. -/
+  pointwiseData : LeeYangPointwiseNormalisedEventualOverlapBranchData G Λ J β
+  /-- Every selected eventual-overlap branch radius has its closed ball inside
+  `leeYangDomain`. -/
+  closedBall_subset :
+    ∀ h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain},
+      Metric.closedBall (h₀ : ℂ) (pointwiseData.branchData.radius h₀) ⊆
+        IsingModel.leeYangDomain
+
 /-- **Real pointwise-normalised eventual-overlap Lee-Yang local-cover branch
 data**: pointwise-normalised eventual-overlap branch data at real parameters,
 together with membership of the real field in the Lee-Yang domain. -/
@@ -2032,6 +2052,21 @@ def LeeYangRealPointwiseNormalisedEventualOverlapBranchData.toAllStageData
     LeeYangPointwiseNormalisedAllStageBranchData G Λ (p.J : ℂ) (p.β : ℂ) :=
   LeeYangPointwiseNormalisedEventualOverlapBranchData.toAllStageData
     G Λ (p.J : ℂ) (p.β : ℂ) data.pointwiseData
+
+/-- Forget locally uniform limits and coherent eventual-overlap fields from
+closed-ball pointwise-normalised eventual-overlap data, retaining the
+closed-ball all-stage branch package. -/
+def LeeYangClosedBallPointwiseNormalisedEventualOverlapBranchData.toClosedBallAllStageData
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℂ)
+    (data :
+      LeeYangClosedBallPointwiseNormalisedEventualOverlapBranchData G Λ J β) :
+    LeeYangClosedBallPointwiseNormalisedAllStageBranchData G Λ J β where
+  data :=
+    LeeYangPointwiseNormalisedEventualOverlapBranchData.toAllStageData
+      G Λ J β data.pointwiseData
+  closedBall_subset := data.closedBall_subset
 
 /-- **Real-centred packaged local-cover branch-limit family from
 pointwise-normalised eventual-overlap branch data**: pointwise-normalised real
@@ -4469,6 +4504,51 @@ structure
         ∩ Metric.ball (geom.center j : ℂ)
           (closedData.data.branchData.radius (geom.center j)))
 
+/-- **Eventual-overlap closed-ball branch locally bounded Ascoli data**:
+a closed-ball branch-local Ascoli input whose coherent selected-overlap field
+is supplied by pointwise-normalised eventual-overlap data.  The closed-ball
+containment, branch local bounds, and remaining Ascoli side conditions are
+still explicit. -/
+structure
+    LeeYangPointwiseNormAllStageCompactRealEventualOverlapClosedBallBranchLocallyBoundedAscoliData
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (K : Set ℂ)
+    (closedEventualData :
+      LeeYangClosedBallPointwiseNormalisedEventualOverlapBranchData
+        G Λ (p.J : ℂ) (p.β : ℂ))
+    (geom : LeeYangPointwiseNormAllStageCompactRealFinGeometry G Λ p K
+      (LeeYangClosedBallPointwiseNormalisedEventualOverlapBranchData.toClosedBallAllStageData
+        G Λ (p.J : ℂ) (p.β : ℂ) closedEventualData).data) where
+  /-- Continuous restrictions of each selected stage branch on the selected
+  ball. -/
+  restricted : ∀ i : Fin geom.n, ℕ →
+    C(Metric.ball (geom.center i : ℂ)
+      (closedEventualData.pointwiseData.branchData.radius (geom.center i)), ℂ)
+  /-- The pointwise function-space image of every selected range carrier is
+  closed. -/
+  toFun_image_closed : ∀ i,
+    IsClosed (ContinuousMap.toFun '' Set.range (restricted i))
+  /-- The selected closed-ball branch family is uniformly bounded on each
+  selected ball. -/
+  branch_bound : ∀ i : Fin geom.n, ∃ C : ℝ, ∀ m z
+    (_hz : z ∈ Metric.ball (geom.center i : ℂ)
+      (closedEventualData.pointwiseData.branchData.radius (geom.center i))),
+    ‖closedEventualData.pointwiseData.branchData.branchFamily (geom.center i) m z‖ ≤ C
+  /-- Every selected range carrier is equicontinuous. -/
+  equicontinuous : ∀ i,
+    Equicontinuous
+      ((↑) : Set.range (restricted i) →
+        Metric.ball (geom.center i : ℂ)
+          (closedEventualData.pointwiseData.branchData.radius (geom.center i)) → ℂ)
+  /-- The continuous restriction agrees with the original eventual-overlap
+  branch family. -/
+  restrict_eq : ∀ i m z
+    (hz : z ∈ Metric.ball (geom.center i : ℂ)
+      (closedEventualData.pointwiseData.branchData.radius (geom.center i))),
+    closedEventualData.pointwiseData.branchData.branchFamily (geom.center i) m z =
+      restricted i m ⟨z, hz⟩
+
 /-- Convert all-stage range-closure compact-open data into direct compact-open
 data by taking the carrier to be the compact closure of the restriction range.
 -/
@@ -5185,6 +5265,76 @@ noncomputable def toRangeRelCompactData
       G Λ p hBED hβ hJ K closedData geom closedBallLocal)
 
 end LeeYangClosedBallBranchLocallyBoundedAscoliData
+
+set_option linter.style.longLine false in
+/-- Convert eventual-overlap closed-ball branch local boundedness into the
+ordinary closed-ball branch locally bounded package by taking the coherent
+selected-overlap field from the underlying pointwise-normalised
+eventual-overlap data. -/
+noncomputable def
+    LeeYangPointwiseNormAllStageCompactRealEventualOverlapClosedBallBranchLocallyBoundedAscoliData.toClosedBallBranchLocallyBoundedData
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (K : Set ℂ)
+    (closedEventualData :
+      LeeYangClosedBallPointwiseNormalisedEventualOverlapBranchData
+        G Λ (p.J : ℂ) (p.β : ℂ))
+    (geom : LeeYangPointwiseNormAllStageCompactRealFinGeometry G Λ p K
+      (LeeYangClosedBallPointwiseNormalisedEventualOverlapBranchData.toClosedBallAllStageData
+        G Λ (p.J : ℂ) (p.β : ℂ) closedEventualData).data)
+    (closedEventualLocal :
+      LeeYangPointwiseNormAllStageCompactRealEventualOverlapClosedBallBranchLocallyBoundedAscoliData
+        G Λ p K closedEventualData geom) :
+    LeeYangClosedBallBranchLocallyBoundedAscoliData G Λ p K
+      (LeeYangClosedBallPointwiseNormalisedEventualOverlapBranchData.toClosedBallAllStageData
+        G Λ (p.J : ℂ) (p.β : ℂ) closedEventualData) geom where
+  restricted := closedEventualLocal.restricted
+  toFun_image_closed := closedEventualLocal.toFun_image_closed
+  branch_bound := by
+    simpa [LeeYangClosedBallPointwiseNormalisedEventualOverlapBranchData.toClosedBallAllStageData,
+      LeeYangPointwiseNormalisedEventualOverlapBranchData.toAllStageData] using
+      closedEventualLocal.branch_bound
+  equicontinuous := closedEventualLocal.equicontinuous
+  restrict_eq := by
+    simpa [LeeYangClosedBallPointwiseNormalisedEventualOverlapBranchData.toClosedBallAllStageData,
+      LeeYangPointwiseNormalisedEventualOverlapBranchData.toAllStageData] using
+      closedEventualLocal.restrict_eq
+  overlap_eventually := by
+    intro i j
+    simpa [LeeYangClosedBallPointwiseNormalisedEventualOverlapBranchData.toClosedBallAllStageData,
+      LeeYangPointwiseNormalisedEventualOverlapBranchData.toAllStageData] using
+      closedEventualData.pointwiseData.branchData.overlap_eventually
+        (geom.center i) (geom.center j)
+
+set_option linter.style.longLine false in
+/-- Convert eventual-overlap closed-ball branch local boundedness directly
+into relatively compact range data by first deriving the ordinary closed-ball
+branch locally bounded package with its overlap field supplied from
+eventual-overlap data. -/
+noncomputable def
+    LeeYangPointwiseNormAllStageCompactRealEventualOverlapClosedBallBranchLocallyBoundedAscoliData.toRangeRelCompactData_direct
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (K : Set ℂ)
+    (closedEventualData :
+      LeeYangClosedBallPointwiseNormalisedEventualOverlapBranchData
+        G Λ (p.J : ℂ) (p.β : ℂ))
+    (geom : LeeYangPointwiseNormAllStageCompactRealFinGeometry G Λ p K
+      (LeeYangClosedBallPointwiseNormalisedEventualOverlapBranchData.toClosedBallAllStageData
+        G Λ (p.J : ℂ) (p.β : ℂ) closedEventualData).data)
+    (closedEventualLocal :
+      LeeYangPointwiseNormAllStageCompactRealEventualOverlapClosedBallBranchLocallyBoundedAscoliData
+        G Λ p K closedEventualData geom) :
+    LeeYangPointwiseNormAllStageCompactRealRangeRelCompactCOpenData
+      G Λ p K
+        (LeeYangClosedBallPointwiseNormalisedEventualOverlapBranchData.toClosedBallAllStageData
+          G Λ (p.J : ℂ) (p.β : ℂ) closedEventualData).data geom :=
+  LeeYangClosedBallBranchLocallyBoundedAscoliData.toRangeRelCompactData_direct
+    G Λ p K
+      (LeeYangClosedBallPointwiseNormalisedEventualOverlapBranchData.toClosedBallAllStageData
+        G Λ (p.J : ℂ) (p.β : ℂ) closedEventualData) geom
+    (LeeYangPointwiseNormAllStageCompactRealEventualOverlapClosedBallBranchLocallyBoundedAscoliData.toClosedBallBranchLocallyBoundedData
+      G Λ p K closedEventualData geom closedEventualLocal)
 
 namespace LeeYangPointwiseNormAllStageCompactRealClosedBallBranchDeviationAscoliData
 
@@ -7168,6 +7318,93 @@ theorem
   exact ⟨geom, fun closedBallLocal =>
     freeEnergyComplexAlongExhaustion_closedBallBranchLocallyBoundedRelCompact_directRange_patch
       G Λ p hBED hd closedData geom closedBallLocal⟩
+
+set_option linter.style.longLine false in
+/-- **Eventual-overlap closed-ball branch local boundedness to direct-range
+relatively compact patch**: closed-ball branch local boundedness data is
+converted directly to relatively compact range data, with coherent
+selected-overlap equality supplied by the pointwise-normalised
+eventual-overlap package. -/
+theorem
+    freeEnergyComplexAlongExhaustion_eventualOverlapClosedBallBranchLocallyBoundedRelCompact_directRange_patch
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ)
+    (hBED : BoundedEdgeDensity G Λ)
+    (hd : DisjointTowerHypotheses G Λ p)
+    {K : Set ℂ}
+    (closedEventualData :
+      LeeYangClosedBallPointwiseNormalisedEventualOverlapBranchData
+        G Λ (p.J : ℂ) (p.β : ℂ))
+    (geom : LeeYangPointwiseNormAllStageCompactRealFinGeometry G Λ p K
+      (LeeYangClosedBallPointwiseNormalisedEventualOverlapBranchData.toClosedBallAllStageData
+        G Λ (p.J : ℂ) (p.β : ℂ) closedEventualData).data)
+    (closedEventualLocal :
+      LeeYangPointwiseNormAllStageCompactRealEventualOverlapClosedBallBranchLocallyBoundedAscoliData
+        G Λ p K closedEventualData geom) :
+    ∃ compactCover : LeeYangCompactFiniteRealCoverBranchLimitFamily
+        G Λ p K geom.n geom.center
+        (fun i =>
+          closedEventualData.pointwiseData.branchData.radius (geom.center i)),
+      ∃ g : ℂ → ℂ,
+        (∀ i, Set.EqOn g (compactCover.realCover.cover.family.limitFun i)
+          (Metric.ball (geom.center i : ℂ)
+            (closedEventualData.pointwiseData.branchData.radius
+              (geom.center i)))) ∧
+        DifferentiableOn ℂ g K ∧
+        g (p.h : ℂ) = ((freeEnergyInfinite G Λ p : ℝ) : ℂ) :=
+  freeEnergyComplexAlongExhaustion_allStageRangeRelCompactCOpenData_patch
+    G Λ p hBED hd
+      (LeeYangClosedBallPointwiseNormalisedEventualOverlapBranchData.toClosedBallAllStageData
+        G Λ (p.J : ℂ) (p.β : ℂ) closedEventualData).data geom
+    (LeeYangPointwiseNormAllStageCompactRealEventualOverlapClosedBallBranchLocallyBoundedAscoliData.toRangeRelCompactData_direct
+      G Λ p K closedEventualData geom closedEventualLocal)
+
+set_option linter.style.longLine false in
+/-- **Compact target to eventual-overlap closed-ball branch-local direct-range
+patch input**: compactness extracts finite all-stage geometry from the
+closed-ball all-stage data underlying the pointwise-normalised
+eventual-overlap package; the eventual-overlap package then supplies the
+selected overlap field for the closed-ball branch-local route. -/
+theorem
+    freeEnergyComplexAlongExhaustion_eventualOverlapClosedBallBranchLocallyBoundedRelCompact_directRange_patch_of_isCompact
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ)
+    (hBED : BoundedEdgeDensity G Λ)
+    (hd : DisjointTowerHypotheses G Λ p)
+    {K : Set ℂ}
+    (hK : IsCompact K)
+    (hKsub : K ⊆ IsingModel.leeYangDomain)
+    (hpK : (p.h : ℂ) ∈ K)
+    (closedEventualData :
+      LeeYangClosedBallPointwiseNormalisedEventualOverlapBranchData
+        G Λ (p.J : ℂ) (p.β : ℂ)) :
+    ∃ geom : LeeYangPointwiseNormAllStageCompactRealFinGeometry G Λ p K
+        (LeeYangClosedBallPointwiseNormalisedEventualOverlapBranchData.toClosedBallAllStageData
+          G Λ (p.J : ℂ) (p.β : ℂ) closedEventualData).data,
+      LeeYangPointwiseNormAllStageCompactRealEventualOverlapClosedBallBranchLocallyBoundedAscoliData
+          G Λ p K closedEventualData geom →
+        ∃ compactCover : LeeYangCompactFiniteRealCoverBranchLimitFamily
+            G Λ p K geom.n geom.center
+            (fun i =>
+              closedEventualData.pointwiseData.branchData.radius
+                (geom.center i)),
+          ∃ g : ℂ → ℂ,
+            (∀ i, Set.EqOn g (compactCover.realCover.cover.family.limitFun i)
+              (Metric.ball (geom.center i : ℂ)
+                (closedEventualData.pointwiseData.branchData.radius
+                  (geom.center i)))) ∧
+            DifferentiableOn ℂ g K ∧
+            g (p.h : ℂ) = ((freeEnergyInfinite G Λ p : ℝ) : ℂ) := by
+  rcases exists_pointwiseNormAllStageCompactRealFinGeometry_of_isCompact
+      G Λ p hK hKsub hpK
+        (LeeYangClosedBallPointwiseNormalisedEventualOverlapBranchData.toClosedBallAllStageData
+          G Λ (p.J : ℂ) (p.β : ℂ) closedEventualData).data with
+    ⟨geom⟩
+  exact ⟨geom, fun closedEventualLocal =>
+    freeEnergyComplexAlongExhaustion_eventualOverlapClosedBallBranchLocallyBoundedRelCompact_directRange_patch
+      G Λ p hBED hd closedEventualData geom closedEventualLocal⟩
 
 set_option linter.style.longLine false in
 /-- **Positive-real compact target to direct-range closed-ball branch
