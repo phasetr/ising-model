@@ -5973,6 +5973,73 @@ theorem
     freeEnergyComplexAlongExhaustion_branchDeviationRelCompact_patch
       G Λ p hBED hd data geom deviationBounded⟩
 
+set_option linter.style.longLine false in
+/-- **Branch-deviation Ascoli data to a direct-range relatively compact
+patch**: branch-deviation data is converted directly to relatively compact
+range data before applying the all-stage range patch endpoint. -/
+theorem freeEnergyComplexAlongExhaustion_branchDeviationRelCompact_directRange_patch
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ)
+    (hBED : BoundedEdgeDensity G Λ)
+    (hd : DisjointTowerHypotheses G Λ p)
+    {K : Set ℂ}
+    (data : LeeYangPointwiseNormalisedAllStageBranchData
+      G Λ (p.J : ℂ) (p.β : ℂ))
+    (geom : LeeYangPointwiseNormAllStageCompactRealFinGeometry G Λ p K data)
+    (deviationBounded :
+      LeeYangPointwiseNormAllStageCompactRealBranchDeviationAscoliData
+        G Λ p K data geom) :
+    ∃ compactCover : LeeYangCompactFiniteRealCoverBranchLimitFamily
+        G Λ p K geom.n geom.center
+        (fun i => data.branchData.radius (geom.center i)),
+      ∃ g : ℂ → ℂ,
+        (∀ i, Set.EqOn g (compactCover.realCover.cover.family.limitFun i)
+          (Metric.ball (geom.center i : ℂ)
+            (data.branchData.radius (geom.center i)))) ∧
+        DifferentiableOn ℂ g K ∧
+        g (p.h : ℂ) = ((freeEnergyInfinite G Λ p : ℝ) : ℂ) :=
+  freeEnergyComplexAlongExhaustion_allStageRangeRelCompactCOpenData_patch
+    G Λ p hBED hd data geom
+    (LeeYangPointwiseNormAllStageCompactRealBranchDeviationAscoliData.toRangeRelCompactData
+      G Λ p K data geom deviationBounded)
+
+set_option linter.style.longLine false in
+/-- **Compact target to direct-range branch-deviation patch input**:
+compactness of `K` extracts the finite all-stage geometry; branch-deviation
+Ascoli data then feeds the direct relatively compact range route. -/
+theorem
+    freeEnergyComplexAlongExhaustion_branchDeviationRelCompact_directRange_patch_of_isCompact
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ)
+    (hBED : BoundedEdgeDensity G Λ)
+    (hd : DisjointTowerHypotheses G Λ p)
+    {K : Set ℂ}
+    (hK : IsCompact K)
+    (hKsub : K ⊆ IsingModel.leeYangDomain)
+    (hpK : (p.h : ℂ) ∈ K)
+    (data : LeeYangPointwiseNormalisedAllStageBranchData
+      G Λ (p.J : ℂ) (p.β : ℂ)) :
+    ∃ geom : LeeYangPointwiseNormAllStageCompactRealFinGeometry G Λ p K data,
+      LeeYangPointwiseNormAllStageCompactRealBranchDeviationAscoliData
+          G Λ p K data geom →
+        ∃ compactCover : LeeYangCompactFiniteRealCoverBranchLimitFamily
+            G Λ p K geom.n geom.center
+            (fun i => data.branchData.radius (geom.center i)),
+          ∃ g : ℂ → ℂ,
+            (∀ i, Set.EqOn g (compactCover.realCover.cover.family.limitFun i)
+              (Metric.ball (geom.center i : ℂ)
+                (data.branchData.radius (geom.center i)))) ∧
+            DifferentiableOn ℂ g K ∧
+            g (p.h : ℂ) = ((freeEnergyInfinite G Λ p : ℝ) : ℂ) := by
+  rcases exists_pointwiseNormAllStageCompactRealFinGeometry_of_isCompact
+      G Λ p hK hKsub hpK data with
+    ⟨geom⟩
+  exact ⟨geom, fun deviationBounded =>
+    freeEnergyComplexAlongExhaustion_branchDeviationRelCompact_directRange_patch
+      G Λ p hBED hd data geom deviationBounded⟩
+
 /-- **Closed-ball branch-deviation data to a relatively compact range patch**:
 closed-ball all-stage branch data supplies the Lee-Yang local compactness
 needed to bound the principal finite-volume free energies on each selected
