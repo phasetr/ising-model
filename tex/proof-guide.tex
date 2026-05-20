@@ -4580,6 +4580,44 @@ equicontinuity, and coherent overlap equality as hypotheses.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Branch-deviation locally bounded bridge; PR \#2744]
+The structure
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.LeeYangPointwiseNormAllStageCompactRealBranchDeviationAscoliData
+\end{Verbatim}
+splits the remaining branch-family local boundedness input into two pieces:
+local boundedness of the principal finite-volume free energy on each selected
+Lee--Yang ball, and a uniform bound on the deviation between the selected
+logarithm branch and that principal value.  The conversion
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.LeeYangPointwiseNormAllStageCompactRealBranchDeviationAscoliData.toBranchLocallyBoundedData
+\end{Verbatim}
+combines these two estimates by the triangle inequality, producing the branch
+locally bounded Ascoli package of PR \#2739.  The further conversion
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.LeeYangPointwiseNormAllStageCompactRealBranchDeviationAscoliData.toRangeRelCompactData
+\end{Verbatim}
+then feeds the PR \#2743 relative-compactness bridge.
+
+The ambient patch endpoints are
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.freeEnergyComplexAlongExhaustion_branchDeviationRelCompact_patch
+Ambient.freeEnergyComplexAlongExhaustion_branchDeviationRelCompact_patch_of_isCompact
+\end{Verbatim}
+and the concrete \(\mathbb Z^d\) wrappers are
+\begin{Verbatim}[fontsize=\footnotesize]
+freeEnergyComplexAlongExhaustion_branchDeviationRelCompact_patch_latticeGraph
+freeEnergyComplexAlongExhaustion_branchDeviationRelCompact_patch_isCompact_latticeGraph
+\end{Verbatim}
+in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+
+This isolates the branch-choice deviation estimate needed to turn the existing
+Lee--Yang local bounded free-energy bounds into branch-family Montel input.
+Closedness, equicontinuity, branch-deviation bounds, and coherent overlap
+equality remain explicit hypotheses.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[All-stage Arzelà--Ascoli compact-open bridge; PR \#2733]
 The generic theorem
 \begin{Verbatim}[fontsize=\footnotesize]
