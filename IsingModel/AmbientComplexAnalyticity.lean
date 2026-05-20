@@ -3951,6 +3951,53 @@ structure LeeYangPointwiseNormAllStageCompactRealBranchNormBoundedAscoliData
         ∩ Metric.ball (geom.center j : ℂ)
           (data.branchData.radius (geom.center j)))
 
+/-- **Pointwise-normalised all-stage branch constant norm-bounded Ascoli data**:
+a constant-bound version of the branch norm-bounded Ascoli input.  It asks for
+one real norm bound on each selected Lee--Yang ball, rather than a bound
+function depending on the point of the ball. -/
+structure LeeYangPointwiseNormAllStageCompactRealBranchConstNormBoundedAscoliData
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (K : Set ℂ)
+    (data : LeeYangPointwiseNormalisedAllStageBranchData
+      G Λ (p.J : ℂ) (p.β : ℂ))
+    (geom : LeeYangPointwiseNormAllStageCompactRealFinGeometry
+      G Λ p K data) where
+  /-- Continuous restrictions of each stage branch on the selected ball. -/
+  restricted : ∀ i : Fin geom.n, ℕ →
+    C(Metric.ball (geom.center i : ℂ)
+      (data.branchData.radius (geom.center i)), ℂ)
+  /-- One real-valued norm bound for each selected ball. -/
+  bound : Fin geom.n → ℝ
+  /-- The pointwise function-space image of every range carrier is closed. -/
+  toFun_image_closed : ∀ i,
+    IsClosed (ContinuousMap.toFun '' Set.range (restricted i))
+  /-- Every original branch function satisfies the selected ballwise norm bound. -/
+  branch_norm_le : ∀ i m z
+    (_hz : z ∈ Metric.ball (geom.center i : ℂ)
+      (data.branchData.radius (geom.center i))),
+    ‖data.branchData.branchFamily (geom.center i) m z‖ ≤ bound i
+  /-- Every range carrier is equicontinuous. -/
+  equicontinuous : ∀ i,
+    Equicontinuous
+      ((↑) : Set.range (restricted i) →
+        Metric.ball (geom.center i : ℂ)
+          (data.branchData.radius (geom.center i)) → ℂ)
+  /-- The continuous restriction agrees with the original branch family. -/
+  restrict_eq : ∀ i m z
+    (hz : z ∈ Metric.ball (geom.center i : ℂ)
+      (data.branchData.radius (geom.center i))),
+    data.branchData.branchFamily (geom.center i) m z =
+      restricted i m ⟨z, hz⟩
+  /-- Selected branch families are eventually equal on pairwise overlaps. -/
+  overlap_eventually : ∀ i j, ∀ᶠ m in Filter.atTop,
+    Set.EqOn
+      (data.branchData.branchFamily (geom.center i) m)
+      (data.branchData.branchFamily (geom.center j) m)
+      (Metric.ball (geom.center i : ℂ) (data.branchData.radius (geom.center i))
+        ∩ Metric.ball (geom.center j : ℂ)
+          (data.branchData.radius (geom.center j)))
+
 /-- Convert all-stage Arzelà-Ascoli data into direct compact-open data by
 applying the project-local compact-open Arzelà-Ascoli handoff on each selected
 ball. -/
@@ -4081,6 +4128,30 @@ def
   equicontinuous := branchBounded.equicontinuous
   restrict_eq := branchBounded.restrict_eq
   overlap_eventually := branchBounded.overlap_eventually
+
+/-- Convert all-stage branch constant norm-bounded Ascoli data into the
+branch norm-bounded package by turning each selected ball's constant bound into
+a pointwise constant bound function. -/
+def
+    LeeYangPointwiseNormAllStageCompactRealBranchConstNormBoundedAscoliData.toBranchNormBoundedData
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (K : Set ℂ)
+    (data : LeeYangPointwiseNormalisedAllStageBranchData
+      G Λ (p.J : ℂ) (p.β : ℂ))
+    (geom : LeeYangPointwiseNormAllStageCompactRealFinGeometry G Λ p K data)
+    (constBounded :
+      LeeYangPointwiseNormAllStageCompactRealBranchConstNormBoundedAscoliData
+        G Λ p K data geom) :
+    LeeYangPointwiseNormAllStageCompactRealBranchNormBoundedAscoliData
+      G Λ p K data geom where
+  restricted := constBounded.restricted
+  bound := fun i _ => constBounded.bound i
+  toFun_image_closed := constBounded.toFun_image_closed
+  branch_norm_le := fun i m z hz => constBounded.branch_norm_le i m z hz
+  equicontinuous := constBounded.equicontinuous
+  restrict_eq := constBounded.restrict_eq
+  overlap_eventually := constBounded.overlap_eventually
 
 /-- **Compact finite subcover from pointwise-normalised all-stage data**:
 on a compact target `K ⊆ leeYangDomain`, the point-indexed all-stage
@@ -4630,6 +4701,74 @@ theorem
   exact ⟨geom, fun branchBounded =>
     freeEnergyComplexAlongExhaustion_allStageBranchNormBoundedAscoliData_patch
       G Λ p hBED hd data geom branchBounded⟩
+
+/-- **Pointwise-normalised all-stage branch constant norm-bounded Ascoli data
+to a compact real-cover patch**: ballwise constant branch-family norm bounds
+are turned into pointwise constant bounds and then fed to the branch
+norm-bounded Ascoli package. -/
+theorem
+    freeEnergyComplexAlongExhaustion_allStageBranchConstNormBoundedAscoliData_patch
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ)
+    (hBED : BoundedEdgeDensity G Λ)
+    (hd : DisjointTowerHypotheses G Λ p)
+    {K : Set ℂ}
+    (data : LeeYangPointwiseNormalisedAllStageBranchData
+      G Λ (p.J : ℂ) (p.β : ℂ))
+    (geom : LeeYangPointwiseNormAllStageCompactRealFinGeometry G Λ p K data)
+    (constBounded :
+      LeeYangPointwiseNormAllStageCompactRealBranchConstNormBoundedAscoliData
+        G Λ p K data geom) :
+    ∃ compactCover : LeeYangCompactFiniteRealCoverBranchLimitFamily
+        G Λ p K geom.n geom.center
+        (fun i => data.branchData.radius (geom.center i)),
+      ∃ g : ℂ → ℂ,
+        (∀ i, Set.EqOn g (compactCover.realCover.cover.family.limitFun i)
+          (Metric.ball (geom.center i : ℂ)
+            (data.branchData.radius (geom.center i)))) ∧
+        DifferentiableOn ℂ g K ∧
+        g (p.h : ℂ) = ((freeEnergyInfinite G Λ p : ℝ) : ℂ) :=
+  freeEnergyComplexAlongExhaustion_allStageBranchNormBoundedAscoliData_patch
+    G Λ p hBED hd data geom
+    (LeeYangPointwiseNormAllStageCompactRealBranchConstNormBoundedAscoliData.toBranchNormBoundedData
+      G Λ p K data geom constBounded)
+
+/-- **Compact target to all-stage branch constant norm-bounded Ascoli patch
+input**: compactness of `K` extracts the finite all-stage geometry; branch
+constant norm-bounded Ascoli data for that geometry then yields the compact
+real-cover patch endpoint. -/
+theorem
+    freeEnergyComplexAlongExhaustion_allStageBranchConstNormBoundedAscoliData_patch_of_isCompact
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ)
+    (hBED : BoundedEdgeDensity G Λ)
+    (hd : DisjointTowerHypotheses G Λ p)
+    {K : Set ℂ}
+    (hK : IsCompact K)
+    (hKsub : K ⊆ IsingModel.leeYangDomain)
+    (hpK : (p.h : ℂ) ∈ K)
+    (data : LeeYangPointwiseNormalisedAllStageBranchData
+      G Λ (p.J : ℂ) (p.β : ℂ)) :
+    ∃ geom : LeeYangPointwiseNormAllStageCompactRealFinGeometry G Λ p K data,
+      LeeYangPointwiseNormAllStageCompactRealBranchConstNormBoundedAscoliData
+          G Λ p K data geom →
+        ∃ compactCover : LeeYangCompactFiniteRealCoverBranchLimitFamily
+            G Λ p K geom.n geom.center
+            (fun i => data.branchData.radius (geom.center i)),
+          ∃ g : ℂ → ℂ,
+            (∀ i, Set.EqOn g (compactCover.realCover.cover.family.limitFun i)
+              (Metric.ball (geom.center i : ℂ)
+                (data.branchData.radius (geom.center i)))) ∧
+            DifferentiableOn ℂ g K ∧
+            g (p.h : ℂ) = ((freeEnergyInfinite G Λ p : ℝ) : ℂ) := by
+  rcases exists_pointwiseNormAllStageCompactRealFinGeometry_of_isCompact
+      G Λ p hK hKsub hpK data with
+    ⟨geom⟩
+  exact ⟨geom, fun constBounded =>
+    freeEnergyComplexAlongExhaustion_allStageBranchConstNormBoundedAscoliData_patch
+      G Λ p hBED hd data geom constBounded⟩
 
 /-- **Finite compact-open extraction to a real-centre patch**: compact-open
 compactness on finitely many balls, eventual stage-level overlap equality, and
