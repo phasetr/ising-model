@@ -3442,7 +3442,7 @@ branch-family local bounds combine with the closed-ball Lee-Yang principal
 free-energy bound to supply branch-deviation input, then feed the closed-ball
 relative-compactness bridge. -/
 theorem
-freeEnergyComplexAlongExhaustion_closedBallBranchLocalBoundRelCompact_patch_latticeGraph
+freeEnergyComplexAlongExhaustion_closedBallBranchLocallyBoundedRelCompact_patch_latticeGraph
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
     [∀ n, Fintype (Ambient.inducedGraph
         (IsingModel.latticeGraph d) (Λ.volume n)).edgeSet]
@@ -3471,15 +3471,16 @@ freeEnergyComplexAlongExhaustion_closedBallBranchLocalBoundRelCompact_patch_latt
         DifferentiableOn ℂ g K ∧
         g (p.h : ℂ) =
           ((Ambient.freeEnergyInfinite (IsingModel.latticeGraph d) Λ p : ℝ) : ℂ) :=
-  Ambient.freeEnergyComplexAlongExhaustion_closedBallBranchLocalBoundRelCompact_patch
+  Ambient.freeEnergyComplexAlongExhaustion_closedBallBranchLocallyBoundedRelCompact_patch
     (IsingModel.latticeGraph d) Λ p hBED hd hβ hJ closedData geom closedBallLocal
 
+set_option linter.style.longLine false in
 /-- **ℤ^d compact target to closed-ball branch local-boundedness patch input**:
 compactness extracts the finite all-stage geometry from closed-ball branch
 data; branch-family local boundedness then supplies the relative-compactness
 patch input. -/
 theorem
-freeEnergyComplexAlongExhaustion_closedBallBranchLocalBoundRelCompact_patch_isCompact_latticeGraph
+freeEnergyComplexAlongExhaustion_closedBallBranchLocallyBoundedRelCompact_patch_isCompact_latticeGraph
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
     [∀ n, Fintype (Ambient.inducedGraph
         (IsingModel.latticeGraph d) (Λ.volume n)).edgeSet]
@@ -3511,7 +3512,7 @@ freeEnergyComplexAlongExhaustion_closedBallBranchLocalBoundRelCompact_patch_isCo
             g (p.h : ℂ) =
               ((Ambient.freeEnergyInfinite
                 (IsingModel.latticeGraph d) Λ p : ℝ) : ℂ) :=
-  Ambient.freeEnergyComplexAlongExhaustion_closedBallBranchLocalBoundRelCompact_patch_of_isCompact
+  Ambient.freeEnergyComplexAlongExhaustion_closedBallBranchLocallyBoundedRelCompact_patch_of_isCompact
     (IsingModel.latticeGraph d) Λ p hBED hd hβ hJ hK hKsub hpK closedData
 
 /-- **ℤ^d positive-real compact target to closed-ball branch local-boundedness
@@ -3519,7 +3520,7 @@ patch input**: positive real ferromagnetic parameters construct the closed-ball
 all-stage branch data, compactness extracts finite geometry, and branch local
 boundedness supplies the relative-compactness input. -/
 theorem
-freeEnergyComplexAlongExhaustion_posRealClosedBallBranchLocalBound_patch_isCompact_latticeGraph
+freeEnergyComplexAlongExhaustion_posRealClosedBallBranchLocallyBounded_patch_isCompact_latticeGraph
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
     [∀ n, Fintype (Ambient.inducedGraph
         (IsingModel.latticeGraph d) (Λ.volume n)).edgeSet]
@@ -3551,7 +3552,7 @@ freeEnergyComplexAlongExhaustion_posRealClosedBallBranchLocalBound_patch_isCompa
               g (p.h : ℂ) =
                 ((Ambient.freeEnergyInfinite
                   (IsingModel.latticeGraph d) Λ p : ℝ) : ℂ) :=
-  Ambient.freeEnergyComplexAlongExhaustion_posRealClosedBallBranchLocalBound_patch_of_isCompact
+  Ambient.freeEnergyComplexAlongExhaustion_posRealClosedBallBranchLocallyBounded_patch_of_isCompact
     (IsingModel.latticeGraph d) Λ p hBED hd hβ hJ hK hKsub hpK
 
 /-- **ℤ^d pointwise-normalised all-stage branch norm-bounded Ascoli data to

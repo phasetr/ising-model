@@ -5914,7 +5914,7 @@ theorem
 branch-family local bounds combine with the closed-ball Lee-Yang principal
 free-energy bound to supply the branch-deviation input, then feed the PR #2745
 closed-ball relative-compactness bridge. -/
-theorem freeEnergyComplexAlongExhaustion_closedBallBranchLocalBoundRelCompact_patch
+theorem freeEnergyComplexAlongExhaustion_closedBallBranchLocallyBoundedRelCompact_patch
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
     [∀ n, Nonempty (↑(Λ.volume n) : Type _)]
@@ -5951,7 +5951,7 @@ compactness extracts the finite all-stage geometry from closed-ball branch
 data; branch-family local boundedness for that geometry then supplies the
 closed-ball branch-deviation relative-compactness patch. -/
 theorem
-    freeEnergyComplexAlongExhaustion_closedBallBranchLocalBoundRelCompact_patch_of_isCompact
+    freeEnergyComplexAlongExhaustion_closedBallBranchLocallyBoundedRelCompact_patch_of_isCompact
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
     [∀ n, Nonempty (↑(Λ.volume n) : Type _)]
@@ -5984,7 +5984,7 @@ theorem
       G Λ p hK hKsub hpK closedData.data with
     ⟨geom⟩
   exact ⟨geom, fun closedBallLocal =>
-    freeEnergyComplexAlongExhaustion_closedBallBranchLocalBoundRelCompact_patch
+    freeEnergyComplexAlongExhaustion_closedBallBranchLocallyBoundedRelCompact_patch
       G Λ p hBED hd hβ hJ closedData geom closedBallLocal⟩
 
 /-- **Positive-real compact target to closed-ball branch local-boundedness
@@ -5992,7 +5992,7 @@ patch input**: positive real ferromagnetic parameters construct the closed-ball
 all-stage branch data, compactness extracts the finite geometry, and branch
 local boundedness then feeds the closed-ball relative-compactness bridge. -/
 theorem
-    freeEnergyComplexAlongExhaustion_posRealClosedBallBranchLocalBound_patch_of_isCompact
+    freeEnergyComplexAlongExhaustion_posRealClosedBallBranchLocallyBounded_patch_of_isCompact
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
     [∀ n, Nonempty (↑(Λ.volume n) : Type _)]
@@ -6025,7 +6025,7 @@ theorem
       G Λ hβ hJ with
     ⟨closedData⟩
   rcases
-      freeEnergyComplexAlongExhaustion_closedBallBranchLocalBoundRelCompact_patch_of_isCompact
+      freeEnergyComplexAlongExhaustion_closedBallBranchLocallyBoundedRelCompact_patch_of_isCompact
         G Λ p hBED hd hβ hJ hK hKsub hpK closedData with
     ⟨geom, hgeom⟩
   exact ⟨closedData, geom, hgeom⟩
