@@ -4643,6 +4643,31 @@ equality remain explicit hypotheses.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Branch-deviation direct range patch bridge; PR \#2755]
+The direct-range patch endpoints
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.freeEnergyComplexAlongExhaustion_branchDeviationRelCompact_directRange_patch
+Ambient.freeEnergyComplexAlongExhaustion_branchDeviationRelCompact_directRange_patch_of_isCompact
+\end{Verbatim}
+expose the existing branch-deviation Ascoli data-to-relatively compact range
+conversion at the compact patch boundary.  Given
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.LeeYangPointwiseNormAllStageCompactRealBranchDeviationAscoliData
+\end{Verbatim}
+the endpoint first constructs the relatively compact range data directly, then
+applies the all-stage relatively compact range patch theorem.
+
+The concrete \(\mathbb Z^d\) wrappers are
+\begin{Verbatim}[fontsize=\footnotesize]
+freeEnergyComplexAlongExhaustion_branchDeviationRelCompact_directRange_patch_latticeGraph
+freeEnergyComplexAlongExhaustion_branchDeviationRelCompact_directRange_patch_isCompact_latticeGraph
+\end{Verbatim}
+in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.  This is a
+composition bridge; branch-deviation bounds, closedness, equicontinuity, and
+coherent overlap inputs remain explicit.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[Closed-ball free-energy bound bridge; PR \#2745]
 The structure
 \begin{Verbatim}[fontsize=\footnotesize]
