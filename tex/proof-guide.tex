@@ -4880,6 +4880,31 @@ coherent overlap inputs remain explicit.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Closed-ball branch-deviation direct range patch bridge; PR \#2756]
+The direct-range patch endpoints
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.freeEnergyComplexAlongExhaustion_closedBallBranchDeviationRelCompact_directRange_patch
+Ambient.freeEnergyComplexAlongExhaustion_closedBallBranchDeviationRelCompact_directRange_patch_of_isCompact
+Ambient.freeEnergyComplexAlongExhaustion_posRealClosedBallDeviation_directRange_patch_of_isCompact
+\end{Verbatim}
+expose the PR \#2751 direct range conversion at the compact patch boundary
+under the same direct-range naming used by the generic branch-deviation bridge.
+Given closed-ball branch-deviation Ascoli data, the endpoint first constructs
+the relatively compact range data through the branch-local route, then applies
+the all-stage relatively compact range patch theorem.
+
+The concrete \(\mathbb Z^d\) wrappers are
+\begin{Verbatim}[fontsize=\footnotesize]
+freeEnergyComplexAlongExhaustion_closedBallBranchDeviationRelCompact_directRange_patch_latticeGraph
+freeEnergyComplexAlongExhaustion_closedBallBranchDeviationRelCompact_directRange_patch_isCompact_latticeGraph
+freeEnergyComplexAlongExhaustion_posRealClosedBallDeviation_directRange_patch_isCompact_latticeGraph
+\end{Verbatim}
+in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.  This is a
+composition bridge; branch-deviation bounds, closedness, equicontinuity, and
+coherent overlap inputs remain explicit.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[Closed-ball branch-local direct range patch bridge; PR \#2753]
 The direct-range patch endpoints
 \begin{Verbatim}[fontsize=\footnotesize]
