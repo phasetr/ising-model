@@ -4750,6 +4750,24 @@ coherent overlap equality.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Direct closed-ball branch range relative-compact conversion; PR \#2749]
+The conversion
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.LeeYangClosedBallBranchLocallyBoundedAscoliData.toRangeRelCompactData_direct
+\end{Verbatim}
+composes the PR \#2748 direct closed-ball-to-branch-locally-bounded
+conversion with PR \#2743's branch locally bounded relative-compactness data
+conversion.  It therefore produces the relative-compact range package directly
+from closed-ball branch locally bounded Ascoli data, without first constructing
+closed-ball branch-deviation data.
+
+This is a data-level bridge, so it avoids the auxiliary positivity and
+nonempty-volume hypotheses that were needed only by the older route through the
+closed-ball Lee--Yang principal free-energy bound.  The remaining inputs are
+branch local bounds, closedness, equicontinuity, and coherent overlap equality.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[All-stage Arzelà--Ascoli compact-open bridge; PR \#2733]
 The generic theorem
 \begin{Verbatim}[fontsize=\footnotesize]
