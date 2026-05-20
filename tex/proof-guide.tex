@@ -4609,6 +4609,45 @@ overlap equality from holomorphy and local boundedness.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[All-stage branch norm-bounded Arzelà--Ascoli bridge; PR \#2737]
+The ambient structure and conversion
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.LeeYangPointwiseNormAllStageCompactRealBranchNormBoundedAscoliData
+Ambient.LeeYangPointwiseNormAllStageCompactRealBranchNormBoundedAscoliData.toRangeNormBoundedData
+\end{Verbatim}
+move the pointwise norm-bound input one step closer to the original
+Glimm--Jaffe branch family.  Instead of requiring
+\[
+  \|\widetilde F_{i,m}(x)\| \le R_i(x)
+\]
+for the auxiliary continuous restriction, the branch package assumes
+\[
+  \|F_{i,m}(z)\| \le R_i(z)
+\]
+for the selected branch function
+\(\texttt{data.branchData.branchFamily}(\texttt{geom.center}\ i)\ m\).
+The recorded identity \(F_{i,m}(z)=\widetilde F_{i,m}(z)\) on the selected
+ball transports this estimate to the PR \#2736 range norm-bounded package.
+
+The ambient patch endpoints are
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.freeEnergyComplexAlongExhaustion_allStageBranchNormBoundedAscoliData_patch
+Ambient.freeEnergyComplexAlongExhaustion_allStageBranchNormBoundedAscoliData_patch_of_isCompact
+\end{Verbatim}
+and the concrete \(\mathbb Z^d\) wrappers are
+\begin{Verbatim}[fontsize=\footnotesize]
+freeEnergyComplexAlongExhaustion_allStageBranchNormBoundedAscoliData_patch_latticeGraph
+freeEnergyComplexAlongExhaustion_allStageBranchNormBoundedAscoliData_patch_of_isCompact_latticeGraph
+\end{Verbatim}
+in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+
+This removes the need to state norm bounds directly on the continuous
+restrictions.  It still does not derive the branch-family norm bounds,
+closedness of the range pointwise images, equicontinuity, or coherent overlap
+equality from holomorphy and local boundedness.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[Raw Lee--Yang local-cover branch-data packaging; PR \#2715]
 The theorems
 \begin{Verbatim}
