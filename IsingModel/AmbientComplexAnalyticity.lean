@@ -4769,12 +4769,12 @@ noncomputable def
     (LeeYangPointwiseNormAllStageCompactRealClosedBallBranchDeviationAscoliData.toDeviationData
       G Λ p hBED hβ hJ K closedData geom closedBallDeviation)
 
-set_option linter.style.longLine false in
+namespace LeeYangPointwiseNormAllStageCompactRealClosedBallBranchDeviationAscoliData
+
 /-- Convert closed-ball branch-deviation Ascoli data into closed-ball branch
 locally bounded Ascoli data by combining the automatic closed-ball principal
 free-energy bound with the supplied branch-deviation bound. -/
-noncomputable def
-    LeeYangPointwiseNormAllStageCompactRealClosedBallBranchDeviationAscoliData.toClosedBallBranchLocallyBoundedData
+noncomputable def toClosedBallBranchLocallyBoundedData
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
     [∀ n, Nonempty (↑(Λ.volume n) : Type _)]
@@ -4810,6 +4810,8 @@ noncomputable def
   equicontinuous := closedBallDeviation.equicontinuous
   restrict_eq := closedBallDeviation.restrict_eq
   overlap_eventually := closedBallDeviation.overlap_eventually
+
+end LeeYangPointwiseNormAllStageCompactRealClosedBallBranchDeviationAscoliData
 
 namespace LeeYangClosedBallBranchLocallyBoundedAscoliData
 
