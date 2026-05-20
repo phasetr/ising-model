@@ -3402,7 +3402,7 @@ construct the closed-ball all-stage branch data, compactness extracts the
 finite geometry, and the remaining branch-deviation data supplies the
 relative-compactness input. -/
 theorem
-freeEnergyComplexAlongExhaustion_posRealClosedBallDeviation_isCompact_latticeGraph
+freeEnergyComplexAlongExhaustion_posRealClosedBallDeviation_patch_isCompact_latticeGraph
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
     [∀ n, Fintype (Ambient.inducedGraph
         (IsingModel.latticeGraph d) (Λ.volume n)).edgeSet]
