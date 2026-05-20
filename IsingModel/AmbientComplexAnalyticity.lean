@@ -2004,6 +2004,35 @@ def LeeYangRealEventualOverlapBranchData.ofPointwiseNormalised
       exact data.pointwiseData.centre_normalized
         ⟨(p.h : ℂ), data.centre_mem⟩ n }
 
+/-- Forget the locally uniform limits and coherent eventual-overlap fields of
+pointwise-normalised eventual-overlap data, retaining only the underlying
+pointwise-normalised all-stage branch choices. -/
+def LeeYangPointwiseNormalisedEventualOverlapBranchData.toAllStageData
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℂ)
+    (data : LeeYangPointwiseNormalisedEventualOverlapBranchData G Λ J β) :
+    LeeYangPointwiseNormalisedAllStageBranchData G Λ J β where
+  branchData :=
+    { radius := data.branchData.radius
+      radius_pos := data.branchData.radius_pos
+      ball_subset := data.branchData.ball_subset
+      branchFamily := data.branchData.branchFamily
+      branch_spec := data.branchData.branch_spec }
+  centre_normalized := data.centre_normalized
+
+/-- Forget the locally uniform limits, coherent eventual-overlap fields, and
+real-centre membership of real pointwise-normalised eventual-overlap data,
+retaining the underlying pointwise-normalised all-stage branch choices. -/
+def LeeYangRealPointwiseNormalisedEventualOverlapBranchData.toAllStageData
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ)
+    (data : LeeYangRealPointwiseNormalisedEventualOverlapBranchData G Λ p) :
+    LeeYangPointwiseNormalisedAllStageBranchData G Λ (p.J : ℂ) (p.β : ℂ) :=
+  LeeYangPointwiseNormalisedEventualOverlapBranchData.toAllStageData
+    G Λ (p.J : ℂ) (p.β : ℂ) data.pointwiseData
+
 /-- **Real-centred packaged local-cover branch-limit family from
 pointwise-normalised eventual-overlap branch data**: pointwise-normalised real
 eventual-overlap data projects to the structured real eventual-overlap package,
@@ -4244,6 +4273,57 @@ structure
         ∩ Metric.ball (geom.center j : ℂ)
           (data.branchData.radius (geom.center j)))
 
+/-- **Eventual-overlap branch-deviation Ascoli data**: a variant of
+`LeeYangPointwiseNormAllStageCompactRealBranchDeviationAscoliData` whose
+coherent selected-overlap input is supplied by pointwise-normalised
+eventual-overlap data.  The remaining Ascoli side conditions and deviation
+estimates are still explicit. -/
+structure
+    LeeYangPointwiseNormAllStageCompactRealEventualOverlapBranchDeviationAscoliData
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (K : Set ℂ)
+    (eventualData :
+      LeeYangRealPointwiseNormalisedEventualOverlapBranchData G Λ p)
+    (geom : LeeYangPointwiseNormAllStageCompactRealFinGeometry G Λ p K
+      (LeeYangRealPointwiseNormalisedEventualOverlapBranchData.toAllStageData
+        G Λ p eventualData)) where
+  /-- Continuous restrictions of each selected stage branch on the selected
+  ball. -/
+  restricted : ∀ i : Fin geom.n, ℕ →
+    C(Metric.ball (geom.center i : ℂ)
+      (eventualData.pointwiseData.branchData.radius (geom.center i)), ℂ)
+  /-- The pointwise function-space image of every selected range carrier is
+  closed. -/
+  toFun_image_closed : ∀ i,
+    IsClosed (ContinuousMap.toFun '' Set.range (restricted i))
+  /-- The principal finite-volume free energies are uniformly bounded on each
+  selected ball. -/
+  freeEnergy_bound : ∀ i : Fin geom.n, ∃ C : ℝ, ∀ m z
+    (_hz : z ∈ Metric.ball (geom.center i : ℂ)
+      (eventualData.pointwiseData.branchData.radius (geom.center i))),
+    ‖freeEnergyComplexAlongExhaustion G Λ (p.J : ℂ) z (p.β : ℂ) m‖ ≤ C
+  /-- The selected local branch differs from the principal finite-volume
+  free energy by a uniformly bounded amount on each selected ball. -/
+  branch_deviation_bound : ∀ i : Fin geom.n, ∃ D : ℝ, ∀ m z
+    (_hz : z ∈ Metric.ball (geom.center i : ℂ)
+      (eventualData.pointwiseData.branchData.radius (geom.center i))),
+    ‖eventualData.pointwiseData.branchData.branchFamily (geom.center i) m z
+        - freeEnergyComplexAlongExhaustion G Λ (p.J : ℂ) z (p.β : ℂ) m‖ ≤ D
+  /-- Every selected range carrier is equicontinuous. -/
+  equicontinuous : ∀ i,
+    Equicontinuous
+      ((↑) : Set.range (restricted i) →
+        Metric.ball (geom.center i : ℂ)
+          (eventualData.pointwiseData.branchData.radius (geom.center i)) → ℂ)
+  /-- The continuous restriction agrees with the original eventual-overlap
+  branch family. -/
+  restrict_eq : ∀ i m z
+    (hz : z ∈ Metric.ball (geom.center i : ℂ)
+      (eventualData.pointwiseData.branchData.radius (geom.center i))),
+    eventualData.pointwiseData.branchData.branchFamily (geom.center i) m z =
+      restricted i m ⟨z, hz⟩
+
 /-- **Closed-ball branch-deviation Ascoli data**: a variant of
 `LeeYangPointwiseNormAllStageCompactRealBranchDeviationAscoliData` for
 closed-ball all-stage branch choices.  It keeps the closed-ball containment
@@ -4710,6 +4790,74 @@ noncomputable def
     G Λ p K data geom
     (LeeYangPointwiseNormAllStageCompactRealBranchDeviationAscoliData.toBranchLocallyBoundedData
       G Λ p K data geom deviationBounded)
+
+namespace LeeYangPointwiseNormAllStageCompactRealEventualOverlapBranchDeviationAscoliData
+
+/-- Convert eventual-overlap branch-deviation Ascoli data into the ordinary
+branch-deviation Ascoli package by taking the coherent selected-overlap field
+from the underlying pointwise-normalised eventual-overlap data. -/
+noncomputable def toBranchDeviationData
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (K : Set ℂ)
+    (eventualData :
+      LeeYangRealPointwiseNormalisedEventualOverlapBranchData G Λ p)
+    (geom : LeeYangPointwiseNormAllStageCompactRealFinGeometry G Λ p K
+      (LeeYangRealPointwiseNormalisedEventualOverlapBranchData.toAllStageData
+        G Λ p eventualData))
+    (eventualDeviation :
+      LeeYangPointwiseNormAllStageCompactRealEventualOverlapBranchDeviationAscoliData
+        G Λ p K eventualData geom) :
+    LeeYangPointwiseNormAllStageCompactRealBranchDeviationAscoliData
+      G Λ p K
+        (LeeYangRealPointwiseNormalisedEventualOverlapBranchData.toAllStageData
+          G Λ p eventualData) geom where
+  restricted := eventualDeviation.restricted
+  toFun_image_closed := eventualDeviation.toFun_image_closed
+  freeEnergy_bound := eventualDeviation.freeEnergy_bound
+  branch_deviation_bound := by
+    simpa [LeeYangRealPointwiseNormalisedEventualOverlapBranchData.toAllStageData,
+      LeeYangPointwiseNormalisedEventualOverlapBranchData.toAllStageData] using
+      eventualDeviation.branch_deviation_bound
+  equicontinuous := eventualDeviation.equicontinuous
+  restrict_eq := by
+    simpa [LeeYangRealPointwiseNormalisedEventualOverlapBranchData.toAllStageData,
+      LeeYangPointwiseNormalisedEventualOverlapBranchData.toAllStageData] using
+      eventualDeviation.restrict_eq
+  overlap_eventually := by
+    intro i j
+    simpa [LeeYangRealPointwiseNormalisedEventualOverlapBranchData.toAllStageData,
+      LeeYangPointwiseNormalisedEventualOverlapBranchData.toAllStageData] using
+      eventualData.pointwiseData.branchData.overlap_eventually
+        (geom.center i) (geom.center j)
+
+/-- Convert eventual-overlap branch-deviation Ascoli data into relatively
+compact range data by first deriving the ordinary branch-deviation package
+with its overlap field supplied from the eventual-overlap input. -/
+noncomputable def toRangeRelCompactData
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (K : Set ℂ)
+    (eventualData :
+      LeeYangRealPointwiseNormalisedEventualOverlapBranchData G Λ p)
+    (geom : LeeYangPointwiseNormAllStageCompactRealFinGeometry G Λ p K
+      (LeeYangRealPointwiseNormalisedEventualOverlapBranchData.toAllStageData
+        G Λ p eventualData))
+    (eventualDeviation :
+      LeeYangPointwiseNormAllStageCompactRealEventualOverlapBranchDeviationAscoliData
+        G Λ p K eventualData geom) :
+    LeeYangPointwiseNormAllStageCompactRealRangeRelCompactCOpenData
+      G Λ p K
+        (LeeYangRealPointwiseNormalisedEventualOverlapBranchData.toAllStageData
+        G Λ p eventualData) geom :=
+  LeeYangPointwiseNormAllStageCompactRealBranchDeviationAscoliData.toRangeRelCompactData
+    G Λ p K
+      (LeeYangRealPointwiseNormalisedEventualOverlapBranchData.toAllStageData
+        G Λ p eventualData) geom
+    (toBranchDeviationData
+      G Λ p K eventualData geom eventualDeviation)
+
+end LeeYangPointwiseNormAllStageCompactRealEventualOverlapBranchDeviationAscoliData
 
 /-- Convert closed-ball branch-deviation Ascoli data into the PR #2744
 branch-deviation package by supplying the principal finite-volume free-energy
@@ -6062,6 +6210,88 @@ theorem
   exact ⟨geom, fun deviationBounded =>
     freeEnergyComplexAlongExhaustion_branchDeviationRelCompact_directRange_patch
       G Λ p hBED hd data geom deviationBounded⟩
+
+set_option linter.style.longLine false in
+/-- **Eventual-overlap branch-deviation Ascoli data to a direct-range
+relatively compact patch**: the eventual-overlap package supplies coherent
+selected-overlap equality, while the remaining branch-deviation Ascoli inputs
+are converted directly to relatively compact range data before applying the
+all-stage range patch endpoint. -/
+theorem
+    freeEnergyComplexAlongExhaustion_eventualOverlapBranchDeviationRelCompact_directRange_patch
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ)
+    (hBED : BoundedEdgeDensity G Λ)
+    (hd : DisjointTowerHypotheses G Λ p)
+    {K : Set ℂ}
+    (eventualData :
+      LeeYangRealPointwiseNormalisedEventualOverlapBranchData G Λ p)
+    (geom : LeeYangPointwiseNormAllStageCompactRealFinGeometry G Λ p K
+      (LeeYangRealPointwiseNormalisedEventualOverlapBranchData.toAllStageData
+        G Λ p eventualData))
+    (eventualDeviation :
+      LeeYangPointwiseNormAllStageCompactRealEventualOverlapBranchDeviationAscoliData
+        G Λ p K eventualData geom) :
+    ∃ compactCover : LeeYangCompactFiniteRealCoverBranchLimitFamily
+        G Λ p K geom.n geom.center
+        (fun i =>
+          eventualData.pointwiseData.branchData.radius (geom.center i)),
+      ∃ g : ℂ → ℂ,
+        (∀ i, Set.EqOn g (compactCover.realCover.cover.family.limitFun i)
+          (Metric.ball (geom.center i : ℂ)
+            (eventualData.pointwiseData.branchData.radius (geom.center i)))) ∧
+        DifferentiableOn ℂ g K ∧
+        g (p.h : ℂ) = ((freeEnergyInfinite G Λ p : ℝ) : ℂ) :=
+  freeEnergyComplexAlongExhaustion_allStageRangeRelCompactCOpenData_patch
+    G Λ p hBED hd
+      (LeeYangRealPointwiseNormalisedEventualOverlapBranchData.toAllStageData
+        G Λ p eventualData) geom
+    (LeeYangPointwiseNormAllStageCompactRealEventualOverlapBranchDeviationAscoliData.toRangeRelCompactData
+      G Λ p K eventualData geom eventualDeviation)
+
+set_option linter.style.longLine false in
+/-- **Compact target to eventual-overlap branch-deviation direct-range patch
+input**: compactness extracts the finite all-stage geometry from the all-stage
+data underlying the pointwise-normalised eventual-overlap package; the
+eventual-overlap package then supplies the selected overlap field for the
+branch-deviation Ascoli route. -/
+theorem
+    freeEnergyComplexAlongExhaustion_eventualOverlapBranchDeviationRelCompact_directRange_patch_of_isCompact
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ)
+    (hBED : BoundedEdgeDensity G Λ)
+    (hd : DisjointTowerHypotheses G Λ p)
+    {K : Set ℂ}
+    (hK : IsCompact K)
+    (hKsub : K ⊆ IsingModel.leeYangDomain)
+    (hpK : (p.h : ℂ) ∈ K)
+    (eventualData :
+      LeeYangRealPointwiseNormalisedEventualOverlapBranchData G Λ p) :
+    ∃ geom : LeeYangPointwiseNormAllStageCompactRealFinGeometry G Λ p K
+        (LeeYangRealPointwiseNormalisedEventualOverlapBranchData.toAllStageData
+          G Λ p eventualData),
+      LeeYangPointwiseNormAllStageCompactRealEventualOverlapBranchDeviationAscoliData
+          G Λ p K eventualData geom →
+        ∃ compactCover : LeeYangCompactFiniteRealCoverBranchLimitFamily
+            G Λ p K geom.n geom.center
+            (fun i =>
+              eventualData.pointwiseData.branchData.radius (geom.center i)),
+          ∃ g : ℂ → ℂ,
+            (∀ i, Set.EqOn g (compactCover.realCover.cover.family.limitFun i)
+              (Metric.ball (geom.center i : ℂ)
+                (eventualData.pointwiseData.branchData.radius (geom.center i)))) ∧
+            DifferentiableOn ℂ g K ∧
+            g (p.h : ℂ) = ((freeEnergyInfinite G Λ p : ℝ) : ℂ) := by
+  rcases exists_pointwiseNormAllStageCompactRealFinGeometry_of_isCompact
+      G Λ p hK hKsub hpK
+        (LeeYangRealPointwiseNormalisedEventualOverlapBranchData.toAllStageData
+          G Λ p eventualData) with
+    ⟨geom⟩
+  exact ⟨geom, fun eventualDeviation =>
+    freeEnergyComplexAlongExhaustion_eventualOverlapBranchDeviationRelCompact_directRange_patch
+      G Λ p hBED hd eventualData geom eventualDeviation⟩
 
 /-- **Closed-ball branch-deviation data to a relatively compact range patch**:
 closed-ball all-stage branch data supplies the Lee-Yang local compactness
