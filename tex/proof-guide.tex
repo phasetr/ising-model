@@ -4618,6 +4618,52 @@ equality remain explicit hypotheses.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Closed-ball free-energy bound bridge; PR \#2745]
+The structure
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.LeeYangClosedBallPointwiseNormalisedAllStageBranchData
+\end{Verbatim}
+is a closed-ball variant of the pre-Montel all-stage branch-choice package.
+It carries the usual pointwise-normalised branch family and also records that
+each selected radius has its closed ball contained in
+\texttt{leeYangDomain}.  For positive real ferromagnetic parameters, the
+constructor
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.exists_leeYangClosedBallPointwiseNormalisedAllStageBranchData_of_positive_real
+\end{Verbatim}
+chooses those radii from the closed-ball Lee--Yang domain lemma and then uses
+the corresponding open balls for the finite-stage logarithm branches.
+
+The structure
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.LeeYangPointwiseNormAllStageCompactRealClosedBallBranchDeviationAscoliData
+\end{Verbatim}
+keeps the closed-ball all-stage data and the branch-deviation, closedness,
+equicontinuity, restriction, and overlap inputs.  Its conversion
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.LeeYangPointwiseNormAllStageCompactRealClosedBallBranchDeviationAscoliData.toDeviationData
+\end{Verbatim}
+fills the principal finite-volume free-energy bound required by PR \#2744
+using the closed-ball Lee--Yang locally bounded free-energy theorem.  The
+ambient patch endpoints are
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.freeEnergyComplexAlongExhaustion_closedBallBranchDeviationRelCompact_patch
+Ambient.freeEnergyComplexAlongExhaustion_closedBallBranchDeviationRelCompact_patch_of_isCompact
+\end{Verbatim}
+with concrete \(\mathbb Z^d\) wrappers in
+\texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}, including
+\begin{Verbatim}[fontsize=\footnotesize]
+exists_leeYangClosedBallPointwiseNormalisedAllStageBranchData_of_positive_real_latticeGraph
+\end{Verbatim}
+for the closed-ball data constructor.
+
+Thus the principal free-energy boundedness input is no longer separate once
+closed-ball branch radii are available.  The remaining analytic inputs are the
+branch-deviation bound, closedness, equicontinuity, and coherent overlap
+equality.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[All-stage Arzelà--Ascoli compact-open bridge; PR \#2733]
 The generic theorem
 \begin{Verbatim}[fontsize=\footnotesize]
