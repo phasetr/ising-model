@@ -4268,6 +4268,32 @@ def
   restrict_eq := rangeBounded.restrict_eq
   overlap_eventually := rangeBounded.overlap_eventually
 
+/-- Convert all-stage range norm-bounded Ascoli data into relatively compact
+range data by using the actual range as the compact carrier. -/
+def
+    LeeYangPointwiseNormAllStageCompactRealRangeNormBoundedAscoliData.toRangeRelCompactData
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (K : Set ℂ)
+    (data : LeeYangPointwiseNormalisedAllStageBranchData
+      G Λ (p.J : ℂ) (p.β : ℂ))
+    (geom : LeeYangPointwiseNormAllStageCompactRealFinGeometry G Λ p K data)
+    (rangeBounded :
+      LeeYangPointwiseNormAllStageCompactRealRangeNormBoundedAscoliData
+        G Λ p K data geom) :
+    LeeYangPointwiseNormAllStageCompactRealRangeRelCompactCOpenData
+      G Λ p K data geom where
+  carrier := fun i => Set.range (rangeBounded.restricted i)
+  restricted := rangeBounded.restricted
+  isCompact_carrier := fun i =>
+    IsingModel.isCompact_compactOpen_range_complex_of_isClosed_norm_le_equicontinuous
+      (rangeBounded.restricted i) (rangeBounded.bound i)
+      (rangeBounded.toFun_image_closed i) (rangeBounded.norm_le i)
+      (rangeBounded.equicontinuous i)
+  range_subset := fun _ => subset_rfl
+  restrict_eq := rangeBounded.restrict_eq
+  overlap_eventually := rangeBounded.overlap_eventually
+
 /-- Convert all-stage branch norm-bounded Ascoli data into the range
 norm-bounded package by transporting branch-family norm bounds across the
 selected restriction identities. -/
@@ -4957,6 +4983,75 @@ theorem
     ⟨geom⟩
   exact ⟨geom, fun rangeBounded =>
     freeEnergyComplexAlongExhaustion_allStageRangeNormBoundedAscoliData_patch
+      G Λ p hBED hd data geom rangeBounded⟩
+
+/-- **Pointwise-normalised all-stage range norm-bounded Ascoli data to a
+relatively compact range patch**: closedness of the pointwise range image,
+stagewise pointwise norm bounds, and equicontinuity make the actual
+stage-restriction range a compact compact-open carrier, so the PR #2741
+relatively compact range bridge applies. -/
+theorem
+    freeEnergyComplexAlongExhaustion_allStageRangeNormBoundedRelCompact_patch
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ)
+    (hBED : BoundedEdgeDensity G Λ)
+    (hd : DisjointTowerHypotheses G Λ p)
+    {K : Set ℂ}
+    (data : LeeYangPointwiseNormalisedAllStageBranchData
+      G Λ (p.J : ℂ) (p.β : ℂ))
+    (geom : LeeYangPointwiseNormAllStageCompactRealFinGeometry G Λ p K data)
+    (rangeBounded :
+      LeeYangPointwiseNormAllStageCompactRealRangeNormBoundedAscoliData
+        G Λ p K data geom) :
+    ∃ compactCover : LeeYangCompactFiniteRealCoverBranchLimitFamily
+        G Λ p K geom.n geom.center
+        (fun i => data.branchData.radius (geom.center i)),
+      ∃ g : ℂ → ℂ,
+        (∀ i, Set.EqOn g (compactCover.realCover.cover.family.limitFun i)
+          (Metric.ball (geom.center i : ℂ)
+            (data.branchData.radius (geom.center i)))) ∧
+        DifferentiableOn ℂ g K ∧
+        g (p.h : ℂ) = ((freeEnergyInfinite G Λ p : ℝ) : ℂ) :=
+  freeEnergyComplexAlongExhaustion_allStageRangeRelCompactCOpenData_patch
+    G Λ p hBED hd data geom
+    (LeeYangPointwiseNormAllStageCompactRealRangeNormBoundedAscoliData.toRangeRelCompactData
+      G Λ p K data geom rangeBounded)
+
+/-- **Compact target to all-stage range norm-bounded relatively compact patch
+input**: compactness of `K` extracts the finite all-stage geometry; range
+norm-bounded Ascoli data then supplies the compact carrier input required by
+the relatively compact range bridge. -/
+theorem
+    freeEnergyComplexAlongExhaustion_allStageRangeNormBoundedRelCompact_patch_of_isCompact
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ)
+    (hBED : BoundedEdgeDensity G Λ)
+    (hd : DisjointTowerHypotheses G Λ p)
+    {K : Set ℂ}
+    (hK : IsCompact K)
+    (hKsub : K ⊆ IsingModel.leeYangDomain)
+    (hpK : (p.h : ℂ) ∈ K)
+    (data : LeeYangPointwiseNormalisedAllStageBranchData
+      G Λ (p.J : ℂ) (p.β : ℂ)) :
+    ∃ geom : LeeYangPointwiseNormAllStageCompactRealFinGeometry G Λ p K data,
+      LeeYangPointwiseNormAllStageCompactRealRangeNormBoundedAscoliData
+          G Λ p K data geom →
+        ∃ compactCover : LeeYangCompactFiniteRealCoverBranchLimitFamily
+            G Λ p K geom.n geom.center
+            (fun i => data.branchData.radius (geom.center i)),
+          ∃ g : ℂ → ℂ,
+            (∀ i, Set.EqOn g (compactCover.realCover.cover.family.limitFun i)
+              (Metric.ball (geom.center i : ℂ)
+                (data.branchData.radius (geom.center i)))) ∧
+            DifferentiableOn ℂ g K ∧
+            g (p.h : ℂ) = ((freeEnergyInfinite G Λ p : ℝ) : ℂ) := by
+  rcases exists_pointwiseNormAllStageCompactRealFinGeometry_of_isCompact
+      G Λ p hK hKsub hpK data with
+    ⟨geom⟩
+  exact ⟨geom, fun rangeBounded =>
+    freeEnergyComplexAlongExhaustion_allStageRangeNormBoundedRelCompact_patch
       G Λ p hBED hd data geom rangeBounded⟩
 
 /-- **Pointwise-normalised all-stage branch norm-bounded Ascoli data to a
