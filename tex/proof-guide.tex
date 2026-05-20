@@ -4476,6 +4476,42 @@ eventual overlap equality.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[All-stage relatively compact range bridge; PR \#2741]
+The structure and conversion
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.LeeYangPointwiseNormAllStageCompactRealRangeRelCompactCOpenData
+Ambient.LeeYangPointwiseNormAllStageCompactRealRangeRelCompactCOpenData.toRangeClosureData
+\end{Verbatim}
+replace the direct compactness assumption on
+\[
+  \overline{\operatorname{range}(\widetilde F_i)}
+\]
+from PR \#2740 by a compact compact-open carrier \(C_i\) containing the actual
+stage-restriction range.  The conversion proves compactness of the range
+closure as a closed subset of \(C_i\): the range inclusion gives
+\(\overline{\operatorname{range}(\widetilde F_i)}\subseteq C_i\) by
+\texttt{closure\_minimal}, while compact subsets of the continuous-map space
+are closed.  The resulting range-closure data then feeds the PR \#2740 bridge.
+
+The ambient patch endpoints are
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.freeEnergyComplexAlongExhaustion_allStageRangeRelCompactCOpenData_patch
+Ambient.freeEnergyComplexAlongExhaustion_allStageRangeRelCompactCOpenData_patch_of_isCompact
+\end{Verbatim}
+and the concrete \(\mathbb Z^d\) wrappers are
+\begin{Verbatim}[fontsize=\footnotesize]
+freeEnergyComplexAlongExhaustion_allStageRangeRelCompactCOpen_patch_latticeGraph
+freeEnergyComplexAlongExhaustion_allStageRangeRelCompact_patch_isCompact_latticeGraph
+\end{Verbatim}
+in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+
+This is the standard relative-compactness input shape for the Montel layer:
+the compact carrier can be supplied by a later normal-family or Ascoli
+argument, while coherent eventual overlap equality remains a separate
+hypothesis.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[All-stage Arzelà--Ascoli compact-open bridge; PR \#2733]
 The generic theorem
 \begin{Verbatim}[fontsize=\footnotesize]
