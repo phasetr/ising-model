@@ -4648,6 +4648,41 @@ equality from holomorphy and local boundedness.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[All-stage branch constant norm-bounded Arzelà--Ascoli bridge; PR \#2738]
+The ambient structure and conversion
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.LeeYangPointwiseNormAllStageCompactRealBranchConstNormBoundedAscoliData
+Ambient.LeeYangPointwiseNormAllStageCompactRealBranchConstNormBoundedAscoliData.toBranchNormBoundedData
+\end{Verbatim}
+specialise the PR \#2737 branch norm-bounded package to the case where each
+selected Lee--Yang ball has a single real norm bound \(C_i\).  The package
+assumes
+\[
+  \|F_{i,m}(z)\| \le C_i
+\]
+for every stage \(m\) and every \(z\) in the selected ball.  The conversion
+uses the pointwise constant function \(x\mapsto C_i\) as the bound required by
+the branch norm-bounded Ascoli package.
+
+The ambient patch endpoints are
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.freeEnergyComplexAlongExhaustion_allStageBranchConstNormBoundedAscoliData_patch
+Ambient.freeEnergyComplexAlongExhaustion_allStageBranchConstNormBoundedAscoliData_patch_of_isCompact
+\end{Verbatim}
+and the concrete \(\mathbb Z^d\) wrappers are
+\begin{Verbatim}[fontsize=\footnotesize]
+freeEnergyComplexAlongExhaustion_allStageBranchConstNormBoundedAscoliData_patch_latticeGraph
+freeEnergyComplexAlongExhaustion_allStageBranchConstAscoli_patch_isCompact_latticeGraph
+\end{Verbatim}
+in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+
+This narrows the branch-family norm-bound input to ballwise uniform estimates.
+It still does not derive those estimates, closedness of the range pointwise
+images, equicontinuity, or coherent overlap equality from holomorphy and local
+boundedness.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[Raw Lee--Yang local-cover branch-data packaging; PR \#2715]
 The theorems
 \begin{Verbatim}
