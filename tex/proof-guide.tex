@@ -4440,6 +4440,42 @@ coherent branch selection.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[All-stage range-closure compact-open bridge; PR \#2740]
+The structure and conversion
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.LeeYangPointwiseNormAllStageCompactRealRangeClosureCOpenData
+Ambient.LeeYangPointwiseNormAllStageCompactRealRangeClosureCOpenData.toCOpenData
+\end{Verbatim}
+specialise the PR \#2732 compact-open package to carriers of the form
+\[
+  \overline{\operatorname{range}(\widetilde F_i)}
+\]
+in the compact-open topology on continuous maps over each selected
+Lee--Yang ball.  For each selected ball the input records only the continuous
+stage restrictions, compactness of this range closure, the restriction
+identity back to the original branch family, and eventual stage-level equality
+on pairwise selected overlaps.  The conversion sets the compact-open carrier
+to the closure of the range and supplies stage membership by the elementary
+\texttt{subset\_closure} inclusion.
+
+The ambient patch endpoints are
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.freeEnergyComplexAlongExhaustion_allStageRangeClosureCOpenData_patch
+Ambient.freeEnergyComplexAlongExhaustion_allStageRangeClosureCOpenData_patch_of_isCompact
+\end{Verbatim}
+and the concrete \(\mathbb Z^d\) wrappers are
+\begin{Verbatim}[fontsize=\footnotesize]
+freeEnergyComplexAlongExhaustion_allStageRangeClosureCOpenData_patch_latticeGraph
+freeEnergyComplexAlongExhaustion_allStageRangeClosureCOpenData_patch_isCompact_latticeGraph
+\end{Verbatim}
+in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+
+This matches the relative-compactness form naturally expected from a Montel
+argument, but it still assumes compactness of the range closure and coherent
+eventual overlap equality.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[All-stage Arzelà--Ascoli compact-open bridge; PR \#2733]
 The generic theorem
 \begin{Verbatim}[fontsize=\footnotesize]
@@ -6594,7 +6630,7 @@ $\mathbb{Z}^d$ wraps for the three abstract bound theorems
 \texttt{\_le\_one\_plus\_tanh\_pow}, and
 \texttt{one\_le\_vdPolymerFamilies\_sum} (which had no wrappers
 before). The Lambda wrappers for the four sandwich abstracts already
-existed; this PR fills the bare-bound and `\geq 1` gaps. 12 new
+existed; this PR fills the bare-bound and \(\geq 1\) gaps. 12 new
 thin direct-instantiation wrappers (3 abstracts $\times$ 4
 layers). The along-exhaustion and concrete $\mathbb{Z}^d$ wrappers
 now live in the matching \texttt{MayerVdBounds.lean} child modules;
@@ -8343,8 +8379,8 @@ ratio\_sandwich / ratio\_bound wrappers were further split out into
 $\Lambda$-direct \texttt{triple\_ratio\_*} wrappers subsequently
 narrowed into \texttt{HighTemperatureBoundsTripleRatio} in PR~\#1998
 and the 12 $\Lambda$-direct
-\texttt{log\_partitionFunctionΛ\_latticeGraph} /
-\texttt{freeEnergyΛ\_latticeGraph} ratio wrappers narrowed into
+\texttt{log\_partitionFunction\LeanLambda\_latticeGraph} /
+\texttt{freeEnergy\LeanLambda\_latticeGraph} ratio wrappers narrowed into
 \texttt{HighTemperatureBoundsRatioLogFe} in PR~\#1999); the
 alongExhaustion correlation/sandwich basic wrappers
 were further split out into
@@ -10864,7 +10900,7 @@ $0 \le 1 - \langle \sigma_{i_n} \rangle_{+}^{G_n, B_n} \le
 \exp(-c\beta)$. Apply mathlib's
 \texttt{Filter.limsup\_le\_of\_le}: the eventually-uniform upper
 bound $\exp(-c\beta)$ holds pointwise, and the
-\texttt{IsCoboundedUnder (\cdot \le \cdot)} side condition is
+\(\texttt{IsCoboundedUnder}~(\cdot \le \cdot)\) side condition is
 satisfied by the pointwise lower bound $0$
 (\texttt{isCoboundedUnder\_le\_of\_eventually\_le} with $x = 0$).
 Reference: Glimm--Jaffe \cite{glimm-jaffe} \S 5.4 Prop 5.4.2,

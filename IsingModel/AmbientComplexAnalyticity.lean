@@ -3695,6 +3695,41 @@ structure LeeYangPointwiseNormAllStageCompactRealCOpenData
         ∩ Metric.ball (geom.center j : ℂ)
           (data.branchData.radius (geom.center j)))
 
+/-- **Pointwise-normalised all-stage range-closure compact-open data**: a
+compact-open package in which the selected carrier is fixed to be the closure
+of the actual stage-restriction range.  This is the direct compact-open shape
+expected from a Montel relative-compactness statement: compactness is supplied
+for the closure of the range, and stage membership follows automatically. -/
+structure LeeYangPointwiseNormAllStageCompactRealRangeClosureCOpenData
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (K : Set ℂ)
+    (data : LeeYangPointwiseNormalisedAllStageBranchData
+      G Λ (p.J : ℂ) (p.β : ℂ))
+    (geom : LeeYangPointwiseNormAllStageCompactRealFinGeometry
+      G Λ p K data) where
+  /-- Continuous restrictions of each stage branch on the selected ball. -/
+  restricted : ∀ i : Fin geom.n, ℕ →
+    C(Metric.ball (geom.center i : ℂ)
+      (data.branchData.radius (geom.center i)), ℂ)
+  /-- Compactness of the compact-open closure of the actual restriction range. -/
+  isCompact_closure : ∀ i,
+    IsCompact (closure (Set.range (restricted i)))
+  /-- The continuous restriction agrees with the original branch family. -/
+  restrict_eq : ∀ i m z
+    (hz : z ∈ Metric.ball (geom.center i : ℂ)
+      (data.branchData.radius (geom.center i))),
+    data.branchData.branchFamily (geom.center i) m z =
+      restricted i m ⟨z, hz⟩
+  /-- Selected branch families are eventually equal on pairwise overlaps. -/
+  overlap_eventually : ∀ i j, ∀ᶠ m in Filter.atTop,
+    Set.EqOn
+      (data.branchData.branchFamily (geom.center i) m)
+      (data.branchData.branchFamily (geom.center j) m)
+      (Metric.ball (geom.center i : ℂ) (data.branchData.radius (geom.center i))
+        ∩ Metric.ball (geom.center j : ℂ)
+          (data.branchData.radius (geom.center j)))
+
 /-- **Pointwise-normalised all-stage Arzelà-Ascoli data**: an Ascoli-style
 replacement for direct compact-open compactness on the selected all-stage
 Lee-Yang balls.  For each selected ball it stores a compact-open carrier of
@@ -4043,6 +4078,27 @@ structure LeeYangPointwiseNormAllStageCompactRealBranchLocallyBoundedAscoliData
       (Metric.ball (geom.center i : ℂ) (data.branchData.radius (geom.center i))
         ∩ Metric.ball (geom.center j : ℂ)
           (data.branchData.radius (geom.center j)))
+
+/-- Convert all-stage range-closure compact-open data into direct compact-open
+data by taking the carrier to be the compact closure of the restriction range.
+-/
+def LeeYangPointwiseNormAllStageCompactRealRangeClosureCOpenData.toCOpenData
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (K : Set ℂ)
+    (data : LeeYangPointwiseNormalisedAllStageBranchData
+      G Λ (p.J : ℂ) (p.β : ℂ))
+    (geom : LeeYangPointwiseNormAllStageCompactRealFinGeometry G Λ p K data)
+    (rangeClosure :
+      LeeYangPointwiseNormAllStageCompactRealRangeClosureCOpenData
+        G Λ p K data geom) :
+    LeeYangPointwiseNormAllStageCompactRealCOpenData G Λ p K data geom where
+  carrier := fun i => closure (Set.range (rangeClosure.restricted i))
+  restricted := rangeClosure.restricted
+  isCompact := rangeClosure.isCompact_closure
+  mem := fun _ m => subset_closure ⟨m, rfl⟩
+  restrict_eq := rangeClosure.restrict_eq
+  overlap_eventually := rangeClosure.overlap_eventually
 
 /-- Convert all-stage Arzelà-Ascoli data into direct compact-open data by
 applying the project-local compact-open Arzelà-Ascoli handoff on each selected
@@ -4432,6 +4488,74 @@ theorem freeEnergyComplexAlongExhaustion_allStageCOpenData_patch_of_isCompact
   exact ⟨geom, fun cOpen =>
     freeEnergyComplexAlongExhaustion_allStageCOpenData_patch
       G Λ p hBED hd data geom cOpen⟩
+
+/-- **Pointwise-normalised all-stage range-closure compact-open data to a
+compact real-cover patch**: compactness of the closure of the selected
+stage-restriction range supplies the compact-open carrier membership required
+by the packaged compact-open patch bridge. -/
+theorem freeEnergyComplexAlongExhaustion_allStageRangeClosureCOpenData_patch
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ)
+    (hBED : BoundedEdgeDensity G Λ)
+    (hd : DisjointTowerHypotheses G Λ p)
+    {K : Set ℂ}
+    (data : LeeYangPointwiseNormalisedAllStageBranchData
+      G Λ (p.J : ℂ) (p.β : ℂ))
+    (geom : LeeYangPointwiseNormAllStageCompactRealFinGeometry G Λ p K data)
+    (rangeClosure :
+      LeeYangPointwiseNormAllStageCompactRealRangeClosureCOpenData
+        G Λ p K data geom) :
+    ∃ compactCover : LeeYangCompactFiniteRealCoverBranchLimitFamily
+        G Λ p K geom.n geom.center
+        (fun i => data.branchData.radius (geom.center i)),
+      ∃ g : ℂ → ℂ,
+        (∀ i, Set.EqOn g (compactCover.realCover.cover.family.limitFun i)
+          (Metric.ball (geom.center i : ℂ)
+            (data.branchData.radius (geom.center i)))) ∧
+        DifferentiableOn ℂ g K ∧
+        g (p.h : ℂ) = ((freeEnergyInfinite G Λ p : ℝ) : ℂ) :=
+  freeEnergyComplexAlongExhaustion_allStageCOpenData_patch
+    G Λ p hBED hd data geom
+    (LeeYangPointwiseNormAllStageCompactRealRangeClosureCOpenData.toCOpenData
+      G Λ p K data geom rangeClosure)
+
+/-- **Compact target to all-stage range-closure compact-open patch input**:
+compactness of `K` extracts the finite all-stage geometry, after which
+compactness of each closure of the actual stage-restriction range, restriction
+identities, and coherent overlap equality suffice for the compact real-cover
+patch endpoint. -/
+theorem
+    freeEnergyComplexAlongExhaustion_allStageRangeClosureCOpenData_patch_of_isCompact
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ)
+    (hBED : BoundedEdgeDensity G Λ)
+    (hd : DisjointTowerHypotheses G Λ p)
+    {K : Set ℂ}
+    (hK : IsCompact K)
+    (hKsub : K ⊆ IsingModel.leeYangDomain)
+    (hpK : (p.h : ℂ) ∈ K)
+    (data : LeeYangPointwiseNormalisedAllStageBranchData
+      G Λ (p.J : ℂ) (p.β : ℂ)) :
+    ∃ geom : LeeYangPointwiseNormAllStageCompactRealFinGeometry G Λ p K data,
+      LeeYangPointwiseNormAllStageCompactRealRangeClosureCOpenData
+          G Λ p K data geom →
+        ∃ compactCover : LeeYangCompactFiniteRealCoverBranchLimitFamily
+            G Λ p K geom.n geom.center
+            (fun i => data.branchData.radius (geom.center i)),
+          ∃ g : ℂ → ℂ,
+            (∀ i, Set.EqOn g (compactCover.realCover.cover.family.limitFun i)
+              (Metric.ball (geom.center i : ℂ)
+                (data.branchData.radius (geom.center i)))) ∧
+            DifferentiableOn ℂ g K ∧
+            g (p.h : ℂ) = ((freeEnergyInfinite G Λ p : ℝ) : ℂ) := by
+  rcases exists_pointwiseNormAllStageCompactRealFinGeometry_of_isCompact
+      G Λ p hK hKsub hpK data with
+    ⟨geom⟩
+  exact ⟨geom, fun rangeClosure =>
+    freeEnergyComplexAlongExhaustion_allStageRangeClosureCOpenData_patch
+      G Λ p hBED hd data geom rangeClosure⟩
 
 /-- **Pointwise-normalised all-stage Arzelà-Ascoli data to a compact real-cover
 patch**: compactness of the pointwise function-space image plus equicontinuity
