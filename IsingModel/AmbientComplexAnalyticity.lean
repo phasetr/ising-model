@@ -4796,6 +4796,28 @@ noncomputable def toBranchLocallyBoundedData
   restrict_eq := closedBallLocal.restrict_eq
   overlap_eventually := closedBallLocal.overlap_eventually
 
+/-- Convert closed-ball branch local boundedness directly into relatively
+compact range data by forgetting the closed-ball containment data and reusing
+the underlying branch locally bounded Ascoli conversion. -/
+noncomputable def toRangeRelCompactData_direct
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (K : Set ℂ)
+    (closedData :
+      LeeYangClosedBallPointwiseNormalisedAllStageBranchData
+        G Λ (p.J : ℂ) (p.β : ℂ))
+    (geom : LeeYangPointwiseNormAllStageCompactRealFinGeometry
+      G Λ p K closedData.data)
+    (closedBallLocal :
+      LeeYangClosedBallBranchLocallyBoundedAscoliData
+        G Λ p K closedData geom) :
+    LeeYangPointwiseNormAllStageCompactRealRangeRelCompactCOpenData
+      G Λ p K closedData.data geom :=
+  LeeYangPointwiseNormAllStageCompactRealBranchLocallyBoundedAscoliData.toRangeRelCompactData
+    G Λ p K closedData.data geom
+    (toBranchLocallyBoundedData
+      G Λ p K closedData geom closedBallLocal)
+
 /-- Convert closed-ball branch local boundedness into closed-ball
 branch-deviation data.  The deviation estimate follows from the local branch
 bound and the closed-ball Lee-Yang principal free-energy bound. -/
