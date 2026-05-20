@@ -4787,6 +4787,25 @@ closed-ball deviation data to the branch-local boundary.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Closed-ball branch-deviation direct range bridge; PR \#2751]
+The conversion
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.LeeYangPointwiseNormAllStageCompactRealClosedBallBranchDeviationAscoliData.toRangeRelCompactData_closedBallLocal_direct
+\end{Verbatim}
+maps closed-ball branch-deviation Ascoli data directly to relatively compact
+range data through the branch-local boundary.  It first applies the PR \#2750
+conversion from closed-ball branch-deviation data to closed-ball branch
+locally bounded Ascoli data, then applies the PR \#2749 direct conversion from
+closed-ball branch locally bounded Ascoli data to relatively compact range
+data.
+
+This is a composition bridge.  It adds no new analytic side condition beyond
+the closed-ball Lee--Yang principal free-energy hypotheses already needed for
+PR \#2750.  Restriction, closedness, equicontinuity, branch-deviation, and
+coherent overlap inputs remain explicit.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[All-stage Arzelà--Ascoli compact-open bridge; PR \#2733]
 The generic theorem
 \begin{Verbatim}[fontsize=\footnotesize]
