@@ -4664,6 +4664,34 @@ equality.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Positive-real closed-ball branch-data bridge; PR \#2746]
+The compact-target endpoint
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.freeEnergyComplexAlongExhaustion_posRealClosedBallDeviation_patch_of_isCompact
+\end{Verbatim}
+packages the positive-real branch-data construction from PR \#2745 into the
+closed-ball branch-deviation patch.  Under positive real ferromagnetic
+parameters, compactness of \(K\), \(K\subseteq\texttt{leeYangDomain}\), and
+membership of the real field in \(K\), the theorem first constructs
+\[
+  \texttt{LeeYangClosedBallPointwiseNormalisedAllStageBranchData}
+\]
+and then extracts the finite compact all-stage geometry from that branch data.
+The resulting existential package consumes only the remaining closed-ball
+branch-deviation Ascoli data and returns the same compact finite-cover patch
+conclusion as PR \#2745.
+
+The concrete \(\mathbb Z^d\) wrapper is
+\begin{Verbatim}[fontsize=\footnotesize]
+freeEnergyComplexAlongExhaustion_posRealClosedBallDeviation_patch_isCompact_latticeGraph
+\end{Verbatim}
+in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.  This
+removes the separate caller-supplied closed-ball branch-data input at the
+compact-target boundary.  Closedness, equicontinuity, branch-deviation bounds,
+and coherent overlap equality remain explicit hypotheses.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[All-stage Arzelà--Ascoli compact-open bridge; PR \#2733]
 The generic theorem
 \begin{Verbatim}[fontsize=\footnotesize]
