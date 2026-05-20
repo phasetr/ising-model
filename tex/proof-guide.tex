@@ -4692,6 +4692,38 @@ and coherent overlap equality remain explicit hypotheses.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Closed-ball branch local-boundedness bridge; PR \#2747]
+The structure
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.LeeYangClosedBallBranchLocallyBoundedAscoliData
+\end{Verbatim}
+replaces the explicit closed-ball branch-deviation estimate by local
+boundedness of the selected branch family on each selected Lee--Yang ball.
+Its conversion
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.LeeYangClosedBallBranchLocallyBoundedAscoliData.toClosedBallDeviationData
+\end{Verbatim}
+uses the closed-ball Lee--Yang principal free-energy bound and the triangle
+inequality to produce the PR \#2745 closed-ball branch-deviation package.
+The compact-target endpoint
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.freeEnergyComplexAlongExhaustion_posRealClosedBallBranchLocallyBounded_patch_of_isCompact
+\end{Verbatim}
+also constructs the closed-ball all-stage branch data from positive real
+ferromagnetic parameters before extracting the finite compact geometry.
+
+The concrete \(\mathbb Z^d\) wrappers include
+\begin{Verbatim}[fontsize=\footnotesize]
+freeEnergyComplexAlongExhaustion_closedBallBranchLocallyBoundedRelCompact_patch_latticeGraph
+freeEnergyComplexAlongExhaustion_closedBallBranchLocallyBoundedRelCompact_patch_isCompact_latticeGraph
+freeEnergyComplexAlongExhaustion_posRealClosedBallBranchLocallyBounded_patch_isCompact_latticeGraph
+\end{Verbatim}
+in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.  The
+remaining inputs are branch local bounds, closedness, equicontinuity, and
+coherent overlap equality.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[All-stage Arzelà--Ascoli compact-open bridge; PR \#2733]
 The generic theorem
 \begin{Verbatim}[fontsize=\footnotesize]
