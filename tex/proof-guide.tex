@@ -4683,6 +4683,42 @@ boundedness.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[All-stage branch locally bounded Ascoli bridge; PR \#2739]
+The structure
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.LeeYangPointwiseNormAllStageCompactRealBranchLocallyBoundedAscoliData
+\end{Verbatim}
+is the locally bounded variant of the PR \#2738 branch constant norm-bounded
+Ascoli input.  For each selected Lee--Yang ball it assumes
+\[
+  \exists C_i,\ \forall m,\ \forall z\in B_i,\quad
+    \|F_{i,m}(z)\| \le C_i .
+\]
+The conversion
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.LeeYangPointwiseNormAllStageCompactRealBranchLocallyBoundedAscoliData.toConstData
+\end{Verbatim}
+chooses these constants and feeds them to the PR \#2738 constant norm-bounded
+package.
+
+The ambient patch endpoints are
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.freeEnergyComplexAlongExhaustion_allStageBranchLocallyBoundedAscoliData_patch
+Ambient.freeEnergyComplexAlongExhaustion_allStageBranchLocallyBoundedAscoliData_patch_of_isCompact
+\end{Verbatim}
+and the concrete \(\mathbb Z^d\) wrappers are
+\begin{Verbatim}[fontsize=\footnotesize]
+freeEnergyComplexAlongExhaustion_allStageBranchLocallyBoundedAscoliData_patch_latticeGraph
+freeEnergyComplexAlongExhaustion_allStageBranchLocallyBoundedAscoli_patch_isCompact_latticeGraph
+\end{Verbatim}
+in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+
+This narrows the branch-family norm-bound input to local boundedness witnesses
+on each selected ball.  It still does not prove those witnesses, closedness of
+the range pointwise images, equicontinuity, or coherent overlap equality.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[Raw Lee--Yang local-cover branch-data packaging; PR \#2715]
 The theorems
 \begin{Verbatim}
