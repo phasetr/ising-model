@@ -4724,6 +4724,32 @@ coherent overlap equality.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Direct closed-ball branch local-boundedness bridge; PR \#2748]
+The conversion
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.LeeYangClosedBallBranchLocallyBoundedAscoliData.toBranchLocallyBoundedData
+\end{Verbatim}
+forgets only the closed-ball containment data and produces the underlying
+pointwise-normalised branch locally bounded Ascoli package.  Therefore the
+direct endpoint
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.freeEnergyComplexAlongExhaustion_posRealClosedBallBranchLocallyBounded_direct_patch_of_isCompact
+\end{Verbatim}
+feeds PR \#2743's branch locally bounded relative-compactness bridge without
+first building a closed-ball branch-deviation package.
+
+The concrete \(\mathbb Z^d\) wrappers include
+\begin{Verbatim}[fontsize=\footnotesize]
+freeEnergyComplexAlongExhaustion_closedBallBranchLocallyBoundedRelCompact_direct_patch_latticeGraph
+freeEnergyComplexAlongExhaustion_closedBallBranchLocallyBoundedRelCompact_direct_patch_isCompact_latticeGraph
+freeEnergyComplexAlongExhaustion_posRealClosedBallBranchLocallyBounded_direct_patch_isCompact_latticeGraph
+\end{Verbatim}
+in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.  The
+remaining inputs are branch local bounds, closedness, equicontinuity, and
+coherent overlap equality.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[All-stage Arzelà--Ascoli compact-open bridge; PR \#2733]
 The generic theorem
 \begin{Verbatim}[fontsize=\footnotesize]
