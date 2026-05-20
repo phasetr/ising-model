@@ -4512,6 +4512,41 @@ hypothesis.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Range norm-bounded relatively compact bridge; PR \#2742]
+The conversion
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.LeeYangPointwiseNormAllStageCompactRealRangeNormBoundedAscoliData.toRangeRelCompactData
+\end{Verbatim}
+turns the range norm-bounded Ascoli input into the relative-compactness
+package of PR \#2741.  For each selected Lee--Yang ball it takes
+\[
+  C_i=\operatorname{range}(\widetilde F_i)
+\]
+as the compact carrier.  Compactness of this carrier in the compact-open
+topology is supplied by the existing range Ascoli helper from PR \#2736, using
+closedness of the pointwise image
+\(\texttt{ContinuousMap.toFun}'' C_i\), the stagewise pointwise norm bounds,
+and equicontinuity of the range carrier.
+
+The ambient patch endpoints are
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.freeEnergyComplexAlongExhaustion_allStageRangeNormBoundedRelCompact_patch
+Ambient.freeEnergyComplexAlongExhaustion_allStageRangeNormBoundedRelCompact_patch_of_isCompact
+\end{Verbatim}
+and the concrete \(\mathbb Z^d\) wrappers are
+\begin{Verbatim}[fontsize=\footnotesize]
+freeEnergyComplexAlongExhaustion_allStageRangeNormBoundedRelCompact_patch_latticeGraph
+freeEnergyComplexAlongExhaustion_allStageRangeNormBoundedRelCompact_patch_isCompact_latticeGraph
+\end{Verbatim}
+in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+
+This exposes the compact carrier produced by the range norm-bounded Ascoli
+layer in the relative-compactness shape used by Montel.  It still leaves
+closedness of the pointwise range image, the stage-restriction norm bounds,
+equicontinuity, and coherent overlap equality as hypotheses.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[All-stage Arzelà--Ascoli compact-open bridge; PR \#2733]
 The generic theorem
 \begin{Verbatim}[fontsize=\footnotesize]
