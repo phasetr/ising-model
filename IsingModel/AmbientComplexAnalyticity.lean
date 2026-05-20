@@ -4119,6 +4119,62 @@ structure LeeYangPointwiseNormAllStageCompactRealBranchLocallyBoundedAscoliData
         ∩ Metric.ball (geom.center j : ℂ)
           (data.branchData.radius (geom.center j)))
 
+/-- **Pointwise-normalised all-stage branch-deviation locally bounded Ascoli
+data**: a bridge input that separates local boundedness of the selected branch
+family into two estimates: local boundedness of the principal finite-volume
+free energy on the selected ball, and a uniform bound on the deviation of the
+chosen local logarithm branch from that principal value.  Together these imply
+the branch locally bounded Ascoli package. -/
+structure
+    LeeYangPointwiseNormAllStageCompactRealBranchDeviationAscoliData
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (K : Set ℂ)
+    (data : LeeYangPointwiseNormalisedAllStageBranchData
+      G Λ (p.J : ℂ) (p.β : ℂ))
+    (geom : LeeYangPointwiseNormAllStageCompactRealFinGeometry
+      G Λ p K data) where
+  /-- Continuous restrictions of each stage branch on the selected ball. -/
+  restricted : ∀ i : Fin geom.n, ℕ →
+    C(Metric.ball (geom.center i : ℂ)
+      (data.branchData.radius (geom.center i)), ℂ)
+  /-- The pointwise function-space image of every range carrier is closed. -/
+  toFun_image_closed : ∀ i,
+    IsClosed (ContinuousMap.toFun '' Set.range (restricted i))
+  /-- The principal finite-volume free energies are uniformly bounded on each
+  selected ball. -/
+  freeEnergy_bound : ∀ i : Fin geom.n, ∃ C : ℝ, ∀ m z
+    (_hz : z ∈ Metric.ball (geom.center i : ℂ)
+      (data.branchData.radius (geom.center i))),
+    ‖freeEnergyComplexAlongExhaustion G Λ (p.J : ℂ) z (p.β : ℂ) m‖ ≤ C
+  /-- The selected local branch differs from the principal finite-volume
+  free energy by a uniformly bounded amount on each selected ball. -/
+  branch_deviation_bound : ∀ i : Fin geom.n, ∃ D : ℝ, ∀ m z
+    (_hz : z ∈ Metric.ball (geom.center i : ℂ)
+      (data.branchData.radius (geom.center i))),
+    ‖data.branchData.branchFamily (geom.center i) m z
+        - freeEnergyComplexAlongExhaustion G Λ (p.J : ℂ) z (p.β : ℂ) m‖ ≤ D
+  /-- Every range carrier is equicontinuous. -/
+  equicontinuous : ∀ i,
+    Equicontinuous
+      ((↑) : Set.range (restricted i) →
+        Metric.ball (geom.center i : ℂ)
+          (data.branchData.radius (geom.center i)) → ℂ)
+  /-- The continuous restriction agrees with the original branch family. -/
+  restrict_eq : ∀ i m z
+    (hz : z ∈ Metric.ball (geom.center i : ℂ)
+      (data.branchData.radius (geom.center i))),
+    data.branchData.branchFamily (geom.center i) m z =
+      restricted i m ⟨z, hz⟩
+  /-- Selected branch families are eventually equal on pairwise overlaps. -/
+  overlap_eventually : ∀ i j, ∀ᶠ m in Filter.atTop,
+    Set.EqOn
+      (data.branchData.branchFamily (geom.center i) m)
+      (data.branchData.branchFamily (geom.center j) m)
+      (Metric.ball (geom.center i : ℂ) (data.branchData.radius (geom.center i))
+        ∩ Metric.ball (geom.center j : ℂ)
+          (data.branchData.radius (geom.center j)))
+
 /-- Convert all-stage range-closure compact-open data into direct compact-open
 data by taking the carrier to be the compact closure of the restriction range.
 -/
@@ -4428,6 +4484,61 @@ noncomputable def
     G Λ p K data geom
     (LeeYangPointwiseNormAllStageCompactRealBranchLocallyBoundedAscoliData.toConstData
       G Λ p K data geom locallyBounded)
+
+/-- Convert all-stage branch-deviation locally bounded Ascoli data into branch
+locally bounded Ascoli data by combining the principal free-energy bound and
+the branch-deviation bound with the triangle inequality. -/
+noncomputable def
+    LeeYangPointwiseNormAllStageCompactRealBranchDeviationAscoliData.toBranchLocallyBoundedData
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (K : Set ℂ)
+    (data : LeeYangPointwiseNormalisedAllStageBranchData
+      G Λ (p.J : ℂ) (p.β : ℂ))
+    (geom : LeeYangPointwiseNormAllStageCompactRealFinGeometry G Λ p K data)
+    (deviationBounded :
+      LeeYangPointwiseNormAllStageCompactRealBranchDeviationAscoliData
+        G Λ p K data geom) :
+    LeeYangPointwiseNormAllStageCompactRealBranchLocallyBoundedAscoliData
+      G Λ p K data geom where
+  restricted := deviationBounded.restricted
+  toFun_image_closed := deviationBounded.toFun_image_closed
+  branch_bound := fun i => by
+    rcases deviationBounded.freeEnergy_bound i with ⟨C, hC⟩
+    rcases deviationBounded.branch_deviation_bound i with ⟨D, hD⟩
+    refine ⟨D + C, ?_⟩
+    intro m z hz
+    let F := freeEnergyComplexAlongExhaustion G Λ (p.J : ℂ) z (p.β : ℂ) m
+    calc
+      ‖data.branchData.branchFamily (geom.center i) m z‖ =
+          ‖(data.branchData.branchFamily (geom.center i) m z - F) + F‖ := by
+            rw [sub_add_cancel]
+      _ ≤ ‖data.branchData.branchFamily (geom.center i) m z - F‖ + ‖F‖ :=
+          norm_add_le _ _
+      _ ≤ D + C := add_le_add (hD m z hz) (hC m z hz)
+  equicontinuous := deviationBounded.equicontinuous
+  restrict_eq := deviationBounded.restrict_eq
+  overlap_eventually := deviationBounded.overlap_eventually
+
+/-- Convert all-stage branch-deviation locally bounded Ascoli data into
+relatively compact range data by first deriving branch local boundedness. -/
+noncomputable def
+    LeeYangPointwiseNormAllStageCompactRealBranchDeviationAscoliData.toRangeRelCompactData
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (K : Set ℂ)
+    (data : LeeYangPointwiseNormalisedAllStageBranchData
+      G Λ (p.J : ℂ) (p.β : ℂ))
+    (geom : LeeYangPointwiseNormAllStageCompactRealFinGeometry G Λ p K data)
+    (deviationBounded :
+      LeeYangPointwiseNormAllStageCompactRealBranchDeviationAscoliData
+        G Λ p K data geom) :
+    LeeYangPointwiseNormAllStageCompactRealRangeRelCompactCOpenData
+      G Λ p K data geom :=
+  LeeYangPointwiseNormAllStageCompactRealBranchLocallyBoundedAscoliData.toRangeRelCompactData
+    G Λ p K data geom
+    (LeeYangPointwiseNormAllStageCompactRealBranchDeviationAscoliData.toBranchLocallyBoundedData
+      G Λ p K data geom deviationBounded)
 
 /-- **Compact finite subcover from pointwise-normalised all-stage data**:
 on a compact target `K ⊆ leeYangDomain`, the point-indexed all-stage
@@ -5311,6 +5422,73 @@ theorem
   exact ⟨geom, fun locallyBounded =>
     freeEnergyComplexAlongExhaustion_branchLocallyBoundedRelCompact_patch
       G Λ p hBED hd data geom locallyBounded⟩
+
+/-- **Branch-deviation locally bounded Ascoli data to a relatively compact
+range patch**: local boundedness of the principal finite-volume free energy,
+together with a uniform branch-deviation bound, gives the branch local
+boundedness input and hence the relative-compactness patch. -/
+theorem freeEnergyComplexAlongExhaustion_branchDeviationRelCompact_patch
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ)
+    (hBED : BoundedEdgeDensity G Λ)
+    (hd : DisjointTowerHypotheses G Λ p)
+    {K : Set ℂ}
+    (data : LeeYangPointwiseNormalisedAllStageBranchData
+      G Λ (p.J : ℂ) (p.β : ℂ))
+    (geom : LeeYangPointwiseNormAllStageCompactRealFinGeometry G Λ p K data)
+    (deviationBounded :
+      LeeYangPointwiseNormAllStageCompactRealBranchDeviationAscoliData
+        G Λ p K data geom) :
+    ∃ compactCover : LeeYangCompactFiniteRealCoverBranchLimitFamily
+        G Λ p K geom.n geom.center
+        (fun i => data.branchData.radius (geom.center i)),
+      ∃ g : ℂ → ℂ,
+        (∀ i, Set.EqOn g (compactCover.realCover.cover.family.limitFun i)
+          (Metric.ball (geom.center i : ℂ)
+            (data.branchData.radius (geom.center i)))) ∧
+        DifferentiableOn ℂ g K ∧
+        g (p.h : ℂ) = ((freeEnergyInfinite G Λ p : ℝ) : ℂ) :=
+  freeEnergyComplexAlongExhaustion_branchLocallyBoundedRelCompact_patch
+    G Λ p hBED hd data geom
+    (LeeYangPointwiseNormAllStageCompactRealBranchDeviationAscoliData.toBranchLocallyBoundedData
+      G Λ p K data geom deviationBounded)
+
+/-- **Compact target to branch-deviation locally bounded relatively compact
+patch input**: compactness of `K` extracts the finite all-stage geometry; the
+branch-deviation locally bounded data then supplies the relative-compactness
+input. -/
+theorem
+    freeEnergyComplexAlongExhaustion_branchDeviationRelCompact_patch_of_isCompact
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ)
+    (hBED : BoundedEdgeDensity G Λ)
+    (hd : DisjointTowerHypotheses G Λ p)
+    {K : Set ℂ}
+    (hK : IsCompact K)
+    (hKsub : K ⊆ IsingModel.leeYangDomain)
+    (hpK : (p.h : ℂ) ∈ K)
+    (data : LeeYangPointwiseNormalisedAllStageBranchData
+      G Λ (p.J : ℂ) (p.β : ℂ)) :
+    ∃ geom : LeeYangPointwiseNormAllStageCompactRealFinGeometry G Λ p K data,
+      LeeYangPointwiseNormAllStageCompactRealBranchDeviationAscoliData
+          G Λ p K data geom →
+        ∃ compactCover : LeeYangCompactFiniteRealCoverBranchLimitFamily
+            G Λ p K geom.n geom.center
+            (fun i => data.branchData.radius (geom.center i)),
+          ∃ g : ℂ → ℂ,
+            (∀ i, Set.EqOn g (compactCover.realCover.cover.family.limitFun i)
+              (Metric.ball (geom.center i : ℂ)
+                (data.branchData.radius (geom.center i)))) ∧
+            DifferentiableOn ℂ g K ∧
+            g (p.h : ℂ) = ((freeEnergyInfinite G Λ p : ℝ) : ℂ) := by
+  rcases exists_pointwiseNormAllStageCompactRealFinGeometry_of_isCompact
+      G Λ p hK hKsub hpK data with
+    ⟨geom⟩
+  exact ⟨geom, fun deviationBounded =>
+    freeEnergyComplexAlongExhaustion_branchDeviationRelCompact_patch
+      G Λ p hBED hd data geom deviationBounded⟩
 
 /-- **Pointwise-normalised all-stage branch norm-bounded Ascoli data to a
 compact real-cover patch**: branch-family pointwise norm bounds are
