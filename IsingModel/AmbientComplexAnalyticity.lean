@@ -4928,6 +4928,33 @@ noncomputable def toRangeRelCompactData
 
 end LeeYangClosedBallBranchLocallyBoundedAscoliData
 
+namespace LeeYangPointwiseNormAllStageCompactRealClosedBallBranchDeviationAscoliData
+
+/-- Convert closed-ball branch-deviation Ascoli data into relatively compact
+range data through the direct closed-ball branch-local route. -/
+noncomputable def toRangeRelCompactData_closedBallLocal_direct
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    [∀ n, Nonempty (↑(Λ.volume n) : Type _)]
+    (p : IsingParams ℝ) (hBED : BoundedEdgeDensity G Λ)
+    (hβ : 0 < p.β) (hJ : 0 < p.J) (K : Set ℂ)
+    (closedData :
+      LeeYangClosedBallPointwiseNormalisedAllStageBranchData
+        G Λ (p.J : ℂ) (p.β : ℂ))
+    (geom : LeeYangPointwiseNormAllStageCompactRealFinGeometry
+      G Λ p K closedData.data)
+    (closedBallDeviation :
+      LeeYangPointwiseNormAllStageCompactRealClosedBallBranchDeviationAscoliData
+        G Λ p K closedData geom) :
+    LeeYangPointwiseNormAllStageCompactRealRangeRelCompactCOpenData
+      G Λ p K closedData.data geom :=
+  LeeYangClosedBallBranchLocallyBoundedAscoliData.toRangeRelCompactData_direct
+    G Λ p K closedData geom
+    (toClosedBallBranchLocallyBoundedData
+      G Λ p hBED hβ hJ K closedData geom closedBallDeviation)
+
+end LeeYangPointwiseNormAllStageCompactRealClosedBallBranchDeviationAscoliData
+
 /-- **Compact finite subcover from pointwise-normalised all-stage data**:
 on a compact target `K ⊆ leeYangDomain`, the point-indexed all-stage
 Lee-Yang balls have a finite `Finset` subcover. -/
