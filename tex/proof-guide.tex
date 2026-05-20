@@ -4580,6 +4580,31 @@ equicontinuity, and coherent overlap equality as hypotheses.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Branch-local direct range patch bridge; PR \#2754]
+The direct-range patch endpoints
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.freeEnergyComplexAlongExhaustion_branchLocallyBoundedRelCompact_directRange_patch
+Ambient.freeEnergyComplexAlongExhaustion_branchLocallyBoundedRelCompact_directRange_patch_of_isCompact
+\end{Verbatim}
+expose the existing branch locally bounded Ascoli data-to-relatively compact
+range conversion at the compact patch boundary.  Given
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.LeeYangPointwiseNormAllStageCompactRealBranchLocallyBoundedAscoliData
+\end{Verbatim}
+the endpoint first constructs the relatively compact range data directly, then
+applies the all-stage relatively compact range patch theorem.
+
+The concrete \(\mathbb Z^d\) wrappers are
+\begin{Verbatim}[fontsize=\footnotesize]
+freeEnergyComplexAlongExhaustion_branchLocallyBoundedRelCompact_directRange_patch_latticeGraph
+freeEnergyComplexAlongExhaustion_branchLocallyBoundedRelCompact_directRange_patch_isCompact_latticeGraph
+\end{Verbatim}
+in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.  This is a
+composition bridge; branch local bounds, closedness, equicontinuity, and
+coherent overlap inputs remain explicit.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[Branch-deviation locally bounded bridge; PR \#2744]
 The structure
 \begin{Verbatim}[fontsize=\footnotesize]
