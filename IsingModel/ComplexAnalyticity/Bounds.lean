@@ -1,4 +1,5 @@
 import IsingModel.ComplexAnalyticity.Vitali
+import IsingModel.Conditioning.Bounds
 
 /-!
 # Complex Free-Energy Bounds

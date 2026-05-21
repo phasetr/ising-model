@@ -1,7 +1,5 @@
 import IsingModel.GibbsMeasure
 import IsingModel.FreeEnergy
-import IsingModel.LeeYang
-import IsingModel.Conditioning
 import Mathlib.Analysis.Analytic.Constructions
 import Mathlib.Analysis.Analytic.Linear
 import Mathlib.Analysis.SpecialFunctions.Complex.Analytic
