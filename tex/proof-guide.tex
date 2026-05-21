@@ -4875,6 +4875,32 @@ remain explicit inputs.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Positive-real ordinary branch-deviation compact-target wrappers; PR \#2770]
+The positive-real compact-target endpoints
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.freeEnergyComplexAlongExhaustion_posRealBranchDeviationRelCompact_patch_of_isCompact
+Ambient.freeEnergyComplexAlongExhaustion_posRealBranchDeviation_directRange_patch_of_isCompact
+Ambient.freeEnergyComplexAlongExhaustion_posRealBranchDeviationViaLocal_directRange_patch_of_isCompact
+\end{Verbatim}
+construct pointwise-normalised all-stage branch data from positive real
+ferromagnetic parameters, extract the compact finite all-stage geometry, and
+delegate respectively to the ordinary branch-deviation relative-compactness,
+direct-range, and named via-local direct-range endpoints.  The concrete
+\(\mathbb Z^d\) wrappers are
+\begin{Verbatim}[fontsize=\footnotesize]
+freeEnergyComplexAlongExhaustion_posRealBranchDeviationRelCompact_patch_isCompact_latticeGraph
+freeEnergyComplexAlongExhaustion_posRealBranchDeviation_directRange_patch_isCompact_latticeGraph
+freeEnergyComplexAlongExhaustion_posRealBranchDeviationViaLocal_directRange_patch_isCompact_latticeGraph
+\end{Verbatim}
+in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+
+These wrappers add no compactness step.  Principal free-energy bounds,
+branch-deviation bounds, closedness, equicontinuity, restriction identities,
+and ordinary coherent overlap equality remain explicit through the supplied
+branch-deviation Ascoli data.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[Eventual-overlap branch-deviation direct range bridge; PR \#2758]
 The forgetful conversions
 \begin{Verbatim}[fontsize=\footnotesize]
