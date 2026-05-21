@@ -4883,6 +4883,40 @@ closedness, equicontinuity, or restriction identities.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Eventual-overlap branch-deviation via-local bridge; PR \#2764]
+The conversions
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.LeeYangPointwiseNormAllStageCompactRealEventualOverlapBranchDeviationAscoliData.toBranchLocallyBoundedData
+Ambient.LeeYangPointwiseNormAllStageCompactRealEventualOverlapBranchDeviationAscoliData.toRangeRelCompactData_viaLocal
+\end{Verbatim}
+turn branch-deviation data into branch-local boundedness in the
+eventual-overlap setting.  The proof combines the explicit principal
+free-energy bound and the branch-deviation bound already carried by
+\texttt{LeeYangPointwiseNormAllStageCompactRealEventualOverlapBranchDeviationAscoliData}
+with the triangle inequality.  The selected-overlap field remains supplied by
+\texttt{LeeYangRealPointwiseNormalisedEventualOverlapBranchData}.
+
+The patch endpoints
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.freeEnergyComplexAlongExhaustion_eventualOverlapBranchDeviationViaLocalRelCompact_directRange_patch
+Ambient.freeEnergyComplexAlongExhaustion_eventualOverlapBranchDeviationViaLocalRelCompact_directRange_patch_of_isCompact
+\end{Verbatim}
+then reuse the PR \#2759 direct eventual-overlap branch-local relatively
+compact range route.
+
+The concrete \(\mathbb Z^d\) wrappers are
+\begin{Verbatim}[fontsize=\footnotesize]
+freeEnergyComplexAlongExhaustion_eventualOverlapBranchDeviationViaLocalRelCompact_directRange_patch_latticeGraph
+freeEnergyComplexAlongExhaustion_eventualOverlapBranchDeviationViaLocalRelCompact_directRange_patch_isCompact_latticeGraph
+\end{Verbatim}
+in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.  This
+records the non-closed-ball eventual-overlap analogue of the
+deviation-to-local-bound triangle-inequality route.  It still does not
+construct eventual-overlap data or prove principal free-energy bounds,
+branch-deviation bounds, closedness, equicontinuity, or restriction identities.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[Closed-ball free-energy bound bridge; PR \#2745]
 The structure
 \begin{Verbatim}[fontsize=\footnotesize]
