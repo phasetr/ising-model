@@ -4745,6 +4745,39 @@ branch local bounds, closedness, equicontinuity, or restriction identities.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Eventual-overlap closed-ball branch-deviation via-local bridge; PR \#2763]
+The conversions
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.LeeYangPointwiseNormAllStageCompactRealEventualOverlapClosedBallBranchDeviationAscoliData.toClosedBallBranchLocallyBoundedData
+Ambient.LeeYangPointwiseNormAllStageCompactRealEventualOverlapClosedBallBranchDeviationAscoliData.toRangeRelCompactData_viaLocal_direct
+\end{Verbatim}
+turn closed-ball branch-deviation data into branch-local boundedness in the
+eventual-overlap setting.  The proof uses the closed-ball Lee--Yang principal
+free-energy bound and the triangle inequality, while the selected-overlap field
+remains supplied by
+\texttt{LeeYangClosedBallPointwiseNormalisedEventualOverlapBranchData}.
+
+The patch endpoints
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.freeEnergyComplexAlongExhaustion_eventualOverlapClosedBallBranchDeviationViaLocalRelCompact_directRange_patch
+Ambient.freeEnergyComplexAlongExhaustion_eventualOverlapClosedBallBranchDeviationViaLocalRelCompact_directRange_patch_of_isCompact
+\end{Verbatim}
+then reuse the PR \#2760 direct closed-ball branch-local relatively compact
+range route.
+
+The concrete \(\mathbb Z^d\) wrappers are
+\begin{Verbatim}[fontsize=\footnotesize]
+freeEnergyComplexAlongExhaustion_eventualOverlapClosedBallBranchDeviationViaLocalRelCompact_directRange_patch_latticeGraph
+freeEnergyComplexAlongExhaustion_eventualOverlapClosedBallBranchDeviationViaLocalRelCompact_directRange_patch_isCompact_latticeGraph
+\end{Verbatim}
+in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.  This
+records the closed-ball analogue of the deviation-to-local-bound
+triangle-inequality route for the eventual-overlap boundary.  It still does
+not construct eventual-overlap data, prove closed-ball containment, or prove
+branch-deviation bounds, closedness, equicontinuity, or restriction identities.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[Branch-deviation locally bounded bridge; PR \#2744]
 The structure
 \begin{Verbatim}[fontsize=\footnotesize]
