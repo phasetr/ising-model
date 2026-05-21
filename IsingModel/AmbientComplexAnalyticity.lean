@@ -7335,6 +7335,132 @@ theorem
       G Λ p hBED hd data geom deviationBounded⟩
 
 set_option linter.style.longLine false in
+/-- **Positive-real compact target to branch-deviation relatively compact
+patch input**: positive real ferromagnetic parameters construct the all-stage
+branch data, compactness extracts the finite geometry, and branch-deviation
+Ascoli data then feeds the relative-compactness route. -/
+theorem
+    freeEnergyComplexAlongExhaustion_posRealBranchDeviationRelCompact_patch_of_isCompact
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    [∀ n, Nonempty (↑(Λ.volume n) : Type _)]
+    (p : IsingParams ℝ)
+    (hBED : BoundedEdgeDensity G Λ)
+    (hd : DisjointTowerHypotheses G Λ p)
+    (hβ : 0 < p.β)
+    (hJ : 0 < p.J)
+    {K : Set ℂ}
+    (hK : IsCompact K)
+    (hKsub : K ⊆ IsingModel.leeYangDomain)
+    (hpK : (p.h : ℂ) ∈ K) :
+    ∃ data : LeeYangPointwiseNormalisedAllStageBranchData
+        G Λ (p.J : ℂ) (p.β : ℂ),
+      ∃ geom : LeeYangPointwiseNormAllStageCompactRealFinGeometry G Λ p K data,
+        LeeYangPointwiseNormAllStageCompactRealBranchDeviationAscoliData
+            G Λ p K data geom →
+          ∃ compactCover : LeeYangCompactFiniteRealCoverBranchLimitFamily
+              G Λ p K geom.n geom.center
+              (fun i => data.branchData.radius (geom.center i)),
+            ∃ g : ℂ → ℂ,
+              (∀ i, Set.EqOn g (compactCover.realCover.cover.family.limitFun i)
+                (Metric.ball (geom.center i : ℂ)
+                  (data.branchData.radius (geom.center i)))) ∧
+              DifferentiableOn ℂ g K ∧
+              g (p.h : ℂ) = ((freeEnergyInfinite G Λ p : ℝ) : ℂ) := by
+  rcases exists_leeYangPointwiseNormalisedAllStageBranchData_of_positive_real
+      G Λ hβ hJ with
+    ⟨data⟩
+  rcases
+      freeEnergyComplexAlongExhaustion_branchDeviationRelCompact_patch_of_isCompact
+        G Λ p hBED hd hK hKsub hpK data with
+    ⟨geom, hgeom⟩
+  exact ⟨data, geom, hgeom⟩
+
+set_option linter.style.longLine false in
+/-- **Positive-real compact target to direct-range branch-deviation patch
+input**: positive real ferromagnetic parameters construct the all-stage branch
+data, compactness extracts the finite geometry, and branch-deviation Ascoli
+data then feeds the direct relatively compact range route. -/
+theorem
+    freeEnergyComplexAlongExhaustion_posRealBranchDeviation_directRange_patch_of_isCompact
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    [∀ n, Nonempty (↑(Λ.volume n) : Type _)]
+    (p : IsingParams ℝ)
+    (hBED : BoundedEdgeDensity G Λ)
+    (hd : DisjointTowerHypotheses G Λ p)
+    (hβ : 0 < p.β)
+    (hJ : 0 < p.J)
+    {K : Set ℂ}
+    (hK : IsCompact K)
+    (hKsub : K ⊆ IsingModel.leeYangDomain)
+    (hpK : (p.h : ℂ) ∈ K) :
+    ∃ data : LeeYangPointwiseNormalisedAllStageBranchData
+        G Λ (p.J : ℂ) (p.β : ℂ),
+      ∃ geom : LeeYangPointwiseNormAllStageCompactRealFinGeometry G Λ p K data,
+        LeeYangPointwiseNormAllStageCompactRealBranchDeviationAscoliData
+            G Λ p K data geom →
+          ∃ compactCover : LeeYangCompactFiniteRealCoverBranchLimitFamily
+              G Λ p K geom.n geom.center
+              (fun i => data.branchData.radius (geom.center i)),
+            ∃ g : ℂ → ℂ,
+              (∀ i, Set.EqOn g (compactCover.realCover.cover.family.limitFun i)
+                (Metric.ball (geom.center i : ℂ)
+                  (data.branchData.radius (geom.center i)))) ∧
+              DifferentiableOn ℂ g K ∧
+              g (p.h : ℂ) = ((freeEnergyInfinite G Λ p : ℝ) : ℂ) := by
+  rcases exists_leeYangPointwiseNormalisedAllStageBranchData_of_positive_real
+      G Λ hβ hJ with
+    ⟨data⟩
+  rcases
+      freeEnergyComplexAlongExhaustion_branchDeviationRelCompact_directRange_patch_of_isCompact
+        G Λ p hBED hd hK hKsub hpK data with
+    ⟨geom, hgeom⟩
+  exact ⟨data, geom, hgeom⟩
+
+set_option linter.style.longLine false in
+/-- **Positive-real compact target to named via-local branch-deviation
+direct-range patch input**: positive real ferromagnetic parameters construct
+the all-stage branch data, compactness extracts the finite geometry, and
+branch-deviation Ascoli data then feeds the named via-local range route. -/
+theorem
+    freeEnergyComplexAlongExhaustion_posRealBranchDeviationViaLocal_directRange_patch_of_isCompact
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    [∀ n, Nonempty (↑(Λ.volume n) : Type _)]
+    (p : IsingParams ℝ)
+    (hBED : BoundedEdgeDensity G Λ)
+    (hd : DisjointTowerHypotheses G Λ p)
+    (hβ : 0 < p.β)
+    (hJ : 0 < p.J)
+    {K : Set ℂ}
+    (hK : IsCompact K)
+    (hKsub : K ⊆ IsingModel.leeYangDomain)
+    (hpK : (p.h : ℂ) ∈ K) :
+    ∃ data : LeeYangPointwiseNormalisedAllStageBranchData
+        G Λ (p.J : ℂ) (p.β : ℂ),
+      ∃ geom : LeeYangPointwiseNormAllStageCompactRealFinGeometry G Λ p K data,
+        LeeYangPointwiseNormAllStageCompactRealBranchDeviationAscoliData
+            G Λ p K data geom →
+          ∃ compactCover : LeeYangCompactFiniteRealCoverBranchLimitFamily
+              G Λ p K geom.n geom.center
+              (fun i => data.branchData.radius (geom.center i)),
+            ∃ g : ℂ → ℂ,
+              (∀ i, Set.EqOn g (compactCover.realCover.cover.family.limitFun i)
+                (Metric.ball (geom.center i : ℂ)
+                  (data.branchData.radius (geom.center i)))) ∧
+              DifferentiableOn ℂ g K ∧
+              g (p.h : ℂ) = ((freeEnergyInfinite G Λ p : ℝ) : ℂ) := by
+  rcases exists_leeYangPointwiseNormalisedAllStageBranchData_of_positive_real
+      G Λ hβ hJ with
+    ⟨data⟩
+  rcases
+      freeEnergyComplexAlongExhaustion_branchDeviationViaLocalRelCompact_directRange_patch_of_isCompact
+        G Λ p hBED hd hK hKsub hpK data with
+    ⟨geom, hgeom⟩
+  exact ⟨data, geom, hgeom⟩
+
+set_option linter.style.longLine false in
 /-- **Eventual-overlap branch-deviation Ascoli data to a direct-range
 relatively compact patch**: the eventual-overlap package supplies coherent
 selected-overlap equality, while the remaining branch-deviation Ascoli inputs
