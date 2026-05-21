@@ -4917,6 +4917,60 @@ branch-deviation bounds, closedness, equicontinuity, or restriction identities.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Eventual-overlap branch-local via-deviation bridge; PR \#2765]
+The non-closed-ball branch-local input can also be routed through the
+branch-deviation boundary when the principal finite-volume free energy is
+locally bounded on every selected Lee--Yang ball.  The all-stage conversion
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.LeeYangPointwiseNormAllStageCompactRealBranchLocallyBoundedAscoliData.toBranchDeviationData
+Ambient.LeeYangPointwiseNormAllStageCompactRealBranchLocallyBoundedAscoliData.toRangeRelCompactData_viaDeviation
+\end{Verbatim}
+takes the usual branch-local Ascoli data together with an explicit
+\texttt{freeEnergy\_bound} field.  On a selected ball the triangle inequality
+gives
+\[
+  \|b_{i,m}(z)-F_m(z)\|
+  \le \|b_{i,m}(z)\|+\|F_m(z)\|,
+\]
+so a branch-local bound and the principal free-energy bound produce the
+branch-deviation estimate required by the PR \#2744 branch-deviation package.
+Closedness, equicontinuity, restrictions, and overlap equality are preserved
+from the branch-local input.
+
+For pointwise-normalised eventual-overlap data, the parallel conversion
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.LeeYangPointwiseNormAllStageCompactRealEventualOverlapBranchLocallyBoundedAscoliData.toBranchDeviationData
+Ambient.LeeYangPointwiseNormAllStageCompactRealEventualOverlapBranchLocallyBoundedAscoliData.toRangeRelCompactData_viaDeviation
+\end{Verbatim}
+preserves the same branch-local Ascoli fields and records the derived
+branch-deviation bound.  The coherent selected-overlap input is still supplied
+by the eventual-overlap package when the downstream ordinary branch-deviation
+route is formed.
+
+The resulting abstract patch endpoints are
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.freeEnergyComplexAlongExhaustion_branchLocalViaDeviationRelCompact_directRange_patch
+Ambient.freeEnergyComplexAlongExhaustion_branchLocalViaDeviationRelCompact_directRange_patch_of_isCompact
+Ambient.freeEnergyComplexAlongExhaustion_eventualOverlapBranchLocalViaDeviationRelCompact_directRange_patch
+Ambient.freeEnergyComplexAlongExhaustion_eventualOverlapBranchLocalViaDeviationRelCompact_directRange_patch_of_isCompact
+\end{Verbatim}
+and the concrete \(\mathbb Z^d\) wrappers are
+\begin{Verbatim}[fontsize=\footnotesize]
+freeEnergyComplexAlongExhaustion_branchLocalViaDeviationRelCompact_directRange_patch_latticeGraph
+freeEnergyComplexAlongExhaustion_branchLocalViaDeviationRelCompact_directRange_patch_isCompact_latticeGraph
+freeEnergyComplexAlongExhaustion_eventualOverlapBranchLocalViaDeviationRelCompact_directRange_patch_latticeGraph
+freeEnergyComplexAlongExhaustion_eventualOverlapBranchLocalViaDeviationRelCompact_directRange_patch_isCompact_latticeGraph
+\end{Verbatim}
+in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.  This
+records the non-closed-ball analogue of the PR \#2762 closed-ball
+branch-local to branch-deviation route, with the principal free-energy bound
+kept as an explicit input rather than supplied automatically by closed-ball
+containment.  It still does not construct eventual-overlap data or prove
+principal free-energy bounds, branch-local bounds, closedness,
+equicontinuity, or restriction identities.  Reference: Glimm--Jaffe
+\cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[Closed-ball free-energy bound bridge; PR \#2745]
 The structure
 \begin{Verbatim}[fontsize=\footnotesize]
