@@ -5027,6 +5027,28 @@ noncomputable def
     (LeeYangPointwiseNormAllStageCompactRealBranchDeviationAscoliData.toBranchLocallyBoundedData
       G Λ p K data geom deviationBounded)
 
+set_option linter.style.longLine false in
+/-- Convert all-stage branch-deviation Ascoli data into relatively compact
+range data through the named branch-local route.  This restates the existing
+branch-deviation range conversion with the intermediate route exposed. -/
+noncomputable def
+    LeeYangPointwiseNormAllStageCompactRealBranchDeviationAscoliData.toRangeRelCompactData_viaLocal
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (K : Set ℂ)
+    (data : LeeYangPointwiseNormalisedAllStageBranchData
+      G Λ (p.J : ℂ) (p.β : ℂ))
+    (geom : LeeYangPointwiseNormAllStageCompactRealFinGeometry G Λ p K data)
+    (deviationBounded :
+      LeeYangPointwiseNormAllStageCompactRealBranchDeviationAscoliData
+        G Λ p K data geom) :
+    LeeYangPointwiseNormAllStageCompactRealRangeRelCompactCOpenData
+      G Λ p K data geom :=
+  LeeYangPointwiseNormAllStageCompactRealBranchLocallyBoundedAscoliData.toRangeRelCompactData
+    G Λ p K data geom
+    (LeeYangPointwiseNormAllStageCompactRealBranchDeviationAscoliData.toBranchLocallyBoundedData
+      G Λ p K data geom deviationBounded)
+
 namespace LeeYangPointwiseNormAllStageCompactRealBranchLocallyBoundedAscoliData
 
 /-- Convert all-stage branch locally bounded Ascoli data into branch-deviation
@@ -7217,6 +7239,75 @@ theorem
     ⟨geom⟩
   exact ⟨geom, fun deviationBounded =>
     freeEnergyComplexAlongExhaustion_branchDeviationRelCompact_directRange_patch
+      G Λ p hBED hd data geom deviationBounded⟩
+
+set_option linter.style.longLine false in
+/-- **Branch-deviation Ascoli data through the named branch-local relatively
+compact patch route**: branch-deviation data first derives branch-local
+boundedness, then uses the branch-local range conversion before applying the
+all-stage range patch endpoint. -/
+theorem freeEnergyComplexAlongExhaustion_branchDeviationViaLocalRelCompact_directRange_patch
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ)
+    (hBED : BoundedEdgeDensity G Λ)
+    (hd : DisjointTowerHypotheses G Λ p)
+    {K : Set ℂ}
+    (data : LeeYangPointwiseNormalisedAllStageBranchData
+      G Λ (p.J : ℂ) (p.β : ℂ))
+    (geom : LeeYangPointwiseNormAllStageCompactRealFinGeometry G Λ p K data)
+    (deviationBounded :
+      LeeYangPointwiseNormAllStageCompactRealBranchDeviationAscoliData
+        G Λ p K data geom) :
+    ∃ compactCover : LeeYangCompactFiniteRealCoverBranchLimitFamily
+        G Λ p K geom.n geom.center
+        (fun i => data.branchData.radius (geom.center i)),
+      ∃ g : ℂ → ℂ,
+        (∀ i, Set.EqOn g (compactCover.realCover.cover.family.limitFun i)
+          (Metric.ball (geom.center i : ℂ)
+            (data.branchData.radius (geom.center i)))) ∧
+        DifferentiableOn ℂ g K ∧
+        g (p.h : ℂ) = ((freeEnergyInfinite G Λ p : ℝ) : ℂ) :=
+  freeEnergyComplexAlongExhaustion_allStageRangeRelCompactCOpenData_patch
+    G Λ p hBED hd data geom
+    (LeeYangPointwiseNormAllStageCompactRealBranchDeviationAscoliData.toRangeRelCompactData_viaLocal
+      G Λ p K data geom deviationBounded)
+
+set_option linter.style.longLine false in
+/-- **Compact target to branch-deviation named via-local patch input**:
+compactness of `K` extracts the finite all-stage geometry; branch-deviation
+Ascoli data then feeds the named branch-local relatively compact range route.
+-/
+theorem
+    freeEnergyComplexAlongExhaustion_branchDeviationViaLocalRelCompact_directRange_patch_of_isCompact
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ)
+    (hBED : BoundedEdgeDensity G Λ)
+    (hd : DisjointTowerHypotheses G Λ p)
+    {K : Set ℂ}
+    (hK : IsCompact K)
+    (hKsub : K ⊆ IsingModel.leeYangDomain)
+    (hpK : (p.h : ℂ) ∈ K)
+    (data : LeeYangPointwiseNormalisedAllStageBranchData
+      G Λ (p.J : ℂ) (p.β : ℂ)) :
+    ∃ geom : LeeYangPointwiseNormAllStageCompactRealFinGeometry G Λ p K data,
+      LeeYangPointwiseNormAllStageCompactRealBranchDeviationAscoliData
+          G Λ p K data geom →
+        ∃ compactCover : LeeYangCompactFiniteRealCoverBranchLimitFamily
+            G Λ p K geom.n geom.center
+            (fun i => data.branchData.radius (geom.center i)),
+          ∃ g : ℂ → ℂ,
+            (∀ i, Set.EqOn g (compactCover.realCover.cover.family.limitFun i)
+              (Metric.ball (geom.center i : ℂ)
+                (data.branchData.radius (geom.center i)))) ∧
+            DifferentiableOn ℂ g K ∧
+            g (p.h : ℂ) = ((freeEnergyInfinite G Λ p : ℝ) : ℂ) := by
+  rcases exists_pointwiseNormAllStageCompactRealFinGeometry_of_isCompact
+      G Λ p hK hKsub hpK data with
+    ⟨geom⟩
+  exact ⟨geom, fun deviationBounded =>
+    freeEnergyComplexAlongExhaustion_branchDeviationViaLocalRelCompact_directRange_patch
       G Λ p hBED hd data geom deviationBounded⟩
 
 set_option linter.style.longLine false in
