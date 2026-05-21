@@ -5239,6 +5239,37 @@ coherent overlap inputs remain explicit.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Closed-ball branch-local via-deviation direct range bridge; PR \#2766]
+The data conversion
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.LeeYangClosedBallBranchLocallyBoundedAscoliData.toRangeRelCompactData_viaDeviation_direct
+\end{Verbatim}
+and the patch endpoints
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.freeEnergyComplexAlongExhaustion_closedBallBranchLocalViaDeviationRelCompact_directRange_patch
+Ambient.freeEnergyComplexAlongExhaustion_closedBallBranchLocalViaDeviationRelCompact_directRange_patch_of_isCompact
+Ambient.freeEnergyComplexAlongExhaustion_posRealClosedBallBranchLocalViaDeviation_directRange_patch_of_isCompact
+\end{Verbatim}
+expose the closed-ball branch-local to branch-deviation route at the
+direct-range patch boundary.  The conversion first applies
+\texttt{LeeYangClosedBallBranchLocallyBoundedAscoliData.toClosedBallDeviationData},
+using the automatic closed-ball Lee--Yang principal free-energy bound and the
+triangle inequality, and then reuses the direct closed-ball branch-deviation
+range route.
+
+The concrete \(\mathbb Z^d\) wrappers are
+\begin{Verbatim}[fontsize=\footnotesize]
+freeEnergyComplexAlongExhaustion_closedBallBranchLocalViaDeviationRelCompact_directRange_patch_latticeGraph
+freeEnergyComplexAlongExhaustion_closedBallBranchLocalViaDeviationRelCompact_directRange_patch_isCompact_latticeGraph
+freeEnergyComplexAlongExhaustion_posRealClosedBallBranchLocalViaDeviation_directRange_patch_isCompact_latticeGraph
+\end{Verbatim}
+in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.  This is a
+composition bridge; closed-ball containment, branch local bounds, closedness,
+equicontinuity, restriction identities, and coherent overlap inputs remain
+explicit.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[All-stage Arzelà--Ascoli compact-open bridge; PR \#2733]
 The generic theorem
 \begin{Verbatim}[fontsize=\footnotesize]
