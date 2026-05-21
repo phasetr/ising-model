@@ -5200,6 +5200,39 @@ coherent overlap inputs remain explicit.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Closed-ball branch-deviation named via-local direct range route; PR \#2768]
+The conversion
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.LeeYangPointwiseNormAllStageCompactRealClosedBallBranchDeviationAscoliData.toRangeRelCompactData_viaLocal_direct
+\end{Verbatim}
+names the ordinary closed-ball route that first turns closed-ball
+branch-deviation Ascoli data into closed-ball branch-local bounded Ascoli data,
+then feeds the direct closed-ball branch-local relatively compact conversion.
+This is a named restatement of the PR \#2751/PR \#2757 closed-ball
+branch-deviation range conversion, with the branch-local intermediate exposed
+under the same via-local naming used by the eventual-overlap closed-ball route.
+
+The ambient patch endpoints are
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.freeEnergyComplexAlongExhaustion_closedBallBranchDeviationViaLocalRelCompact_directRange_patch
+Ambient.freeEnergyComplexAlongExhaustion_closedBallBranchDeviationViaLocalRelCompact_directRange_patch_of_isCompact
+\end{Verbatim}
+and the concrete \(\mathbb Z^d\) wrappers are
+\begin{Verbatim}[fontsize=\footnotesize]
+freeEnergyComplexAlongExhaustion_closedBallBranchDeviationViaLocalRelCompact_directRange_patch_latticeGraph
+freeEnergyComplexAlongExhaustion_closedBallBranchDeviationViaLocalRelCompact_directRange_patch_isCompact_latticeGraph
+\end{Verbatim}
+in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+
+The named route adds no new compactness step.  Closed-ball containment and
+branch-deviation bounds recover branch-local boundedness through the existing
+closed-ball triangle-inequality conversion, after which the direct closed-ball
+branch-local range conversion supplies relatively compact range data.
+Closedness, equicontinuity, restriction identities, and ordinary coherent
+overlap equality remain explicit inputs.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[Closed-ball branch-deviation direct patch bridge; PR \#2752]
 The direct patch endpoints
 \begin{Verbatim}[fontsize=\footnotesize]
