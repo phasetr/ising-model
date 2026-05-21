@@ -4965,9 +4965,13 @@ in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.  This
 records the non-closed-ball analogue of the PR \#2762 closed-ball
 branch-local to branch-deviation route, with the principal free-energy bound
 kept as an explicit input rather than supplied automatically by closed-ball
-containment.  It still does not construct eventual-overlap data or prove
-principal free-energy bounds, branch-local bounds, closedness,
-equicontinuity, or restriction identities.  Reference: Glimm--Jaffe
+containment.  The all-stage endpoint keeps coherent overlap equality as an
+ordinary branch-local input, while the eventual-overlap endpoint fills selected
+overlap from eventual-overlap data.  It still does not construct
+eventual-overlap data or prove principal free-energy bounds, branch-local
+bounds, closedness, equicontinuity, restriction identities, or ordinary
+all-stage coherent overlap equality where eventual-overlap data is not used.
+Reference: Glimm--Jaffe
 \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
