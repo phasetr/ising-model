@@ -1,4 +1,5 @@
 import IsingModel.ComplexAnalyticity.Branches
+import IsingModel.ComplexAnalyticity.Compactness
 
 /-!
 # Vitali and Compact-Open Handoffs

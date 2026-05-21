@@ -1,4 +1,4 @@
-import IsingModel.ComplexAnalyticity.Compactness
+import IsingModel.ComplexAnalyticity.Basic
 
 /-!
 # Polynomial Lower Bounds

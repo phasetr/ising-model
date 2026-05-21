@@ -1,4 +1,5 @@
 import IsingModel.ComplexAnalyticity.LeeYangDomain
+import IsingModel.ComplexAnalyticity.Polynomial
 
 /-!
 # Lee-Yang Normalization and Polynomial Bounds
