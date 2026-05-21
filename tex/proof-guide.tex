@@ -4841,6 +4841,40 @@ coherent overlap inputs remain explicit.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Branch-deviation named via-local direct range route; PR \#2767]
+The conversion
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.LeeYangPointwiseNormAllStageCompactRealBranchDeviationAscoliData.toRangeRelCompactData_viaLocal
+\end{Verbatim}
+names the ordinary all-stage route that first turns branch-deviation Ascoli
+data into branch-local bounded Ascoli data, then feeds the branch-local
+direct-range relatively compact conversion.  This is a named restatement of
+the existing branch-deviation range conversion, with the branch-local
+intermediate exposed at the same directRange boundary as the direct
+branch-deviation endpoint of PR \#2755.
+
+The ambient patch endpoints are
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.freeEnergyComplexAlongExhaustion_branchDeviationViaLocalRelCompact_directRange_patch
+Ambient.freeEnergyComplexAlongExhaustion_branchDeviationViaLocalRelCompact_directRange_patch_of_isCompact
+\end{Verbatim}
+and the concrete \(\mathbb Z^d\) wrappers are
+\begin{Verbatim}[fontsize=\footnotesize]
+freeEnergyComplexAlongExhaustion_branchDeviationViaLocalRelCompact_directRange_patch_latticeGraph
+freeEnergyComplexAlongExhaustion_branchDeviationViaLocalRelCompact_directRange_patch_isCompact_latticeGraph
+\end{Verbatim}
+in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+
+The named route is a composition result: the principal finite-volume
+free-energy bound and branch-deviation bound are combined by the triangle
+inequality to recover branch-local boundedness, after which the direct
+branch-local range conversion supplies relatively compact range data.
+Principal free-energy bounds, branch-deviation bounds, closedness,
+equicontinuity, restriction identities, and ordinary coherent overlap equality
+remain explicit inputs.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[Eventual-overlap branch-deviation direct range bridge; PR \#2758]
 The forgetful conversions
 \begin{Verbatim}[fontsize=\footnotesize]
