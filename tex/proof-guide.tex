@@ -5233,6 +5233,27 @@ overlap equality remain explicit inputs.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Positive-real closed-ball branch-deviation via-local wrapper; PR \#2769]
+The positive-real compact-target endpoint
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.freeEnergyComplexAlongExhaustion_posRealClosedBallDeviationViaLocal_directRange_patch_of_isCompact
+\end{Verbatim}
+constructs closed-ball all-stage branch data from positive real ferromagnetic
+parameters, extracts the compact finite all-stage geometry, and delegates to
+the PR \#2768 named via-local closed-ball branch-deviation direct-range
+endpoint.  The concrete \(\mathbb Z^d\) wrapper is
+\begin{Verbatim}[fontsize=\footnotesize]
+freeEnergyComplexAlongExhaustion_posRealClosedBallDeviationViaLocal_directRange_patch_isCompact_latticeGraph
+\end{Verbatim}
+in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+
+This is a positive-real wrapper for the named via-local route, not a new
+compactness step.  Closed-ball branch-deviation bounds, closedness,
+equicontinuity, restriction identities, and ordinary coherent overlap equality
+remain explicit inputs.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[Closed-ball branch-deviation direct patch bridge; PR \#2752]
 The direct patch endpoints
 \begin{Verbatim}[fontsize=\footnotesize]
