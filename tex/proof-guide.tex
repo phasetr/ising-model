@@ -4677,6 +4677,41 @@ restriction identities.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
+\begin{theorem}[Eventual-overlap closed-ball branch-deviation direct range bridge; PR \#2761]
+The Ascoli package and conversions
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.LeeYangPointwiseNormAllStageCompactRealEventualOverlapClosedBallBranchDeviationAscoliData
+Ambient.LeeYangPointwiseNormAllStageCompactRealEventualOverlapClosedBallBranchDeviationAscoliData.toClosedBallBranchDeviationData
+Ambient.LeeYangPointwiseNormAllStageCompactRealEventualOverlapClosedBallBranchDeviationAscoliData.toRangeRelCompactData_direct
+\end{Verbatim}
+package the closed-ball branch-deviation Ascoli inputs with no separate
+selected overlap field.  The conversion uses
+\texttt{LeeYangClosedBallPointwiseNormalisedEventualOverlapBranchData} and
+supplies the ordinary closed-ball branch-deviation overlap field from the
+underlying pointwise-normalised eventual-overlap data.
+
+The direct-range patch endpoints
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.freeEnergyComplexAlongExhaustion_eventualOverlapClosedBallBranchDeviationRelCompact_directRange_patch
+Ambient.freeEnergyComplexAlongExhaustion_eventualOverlapClosedBallBranchDeviationRelCompact_directRange_patch_of_isCompact
+\end{Verbatim}
+convert through the direct closed-ball branch-deviation relatively compact
+range route and invoke the all-stage relatively compact range patch theorem.
+
+The concrete \(\mathbb Z^d\) wrappers are
+\begin{Verbatim}[fontsize=\footnotesize]
+freeEnergyComplexAlongExhaustion_eventualOverlapClosedBallBranchDeviationRelCompact_directRange_patch_latticeGraph
+freeEnergyComplexAlongExhaustion_eventualOverlapClosedBallBranchDeviationRelCompact_directRange_patch_isCompact_latticeGraph
+\end{Verbatim}
+in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.  This
+removes the selected-overlap field from the closed-ball branch-deviation Ascoli
+boundary once pointwise-normalised eventual-overlap data is available.  It
+still does not construct that eventual-overlap data, prove closed-ball
+containment, or prove the branch-deviation bounds, closedness,
+equicontinuity, or restriction identities.
+Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
+\end{theorem}
+
 \begin{theorem}[Branch-deviation locally bounded bridge; PR \#2744]
 The structure
 \begin{Verbatim}[fontsize=\footnotesize]
