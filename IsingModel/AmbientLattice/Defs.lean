@@ -1,3 +1,4 @@
+import IsingModel.AmbientLattice.Defs.HighTempCorrelation
 import IsingModel.AmbientLattice.Defs.Regularity
 
 /-!
