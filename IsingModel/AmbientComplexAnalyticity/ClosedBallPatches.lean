@@ -784,7 +784,6 @@ theorem
     ⟨geom, hgeom⟩
   exact ⟨closedData, geom, hgeom⟩
 
-
 end Ambient
 
 end IsingModel

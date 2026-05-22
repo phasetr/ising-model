@@ -787,7 +787,6 @@ theorem
     freeEnergyComplexAlongExhaustion_allStageBranchLocallyBoundedAscoliData_patch
       G Λ p hBED hd data geom locallyBounded⟩
 
-
 end Ambient
 
 end IsingModel

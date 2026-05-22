@@ -504,7 +504,6 @@ theorem
     freeEnergyComplexAlongExhaustion_eventualOverlapBranchDeviationViaLocalRelCompact_directRange_patch
       G Λ p hBED hd eventualData geom eventualDeviation⟩
 
-
 end Ambient
 
 end IsingModel

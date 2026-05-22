@@ -739,7 +739,6 @@ theorem freeEnergyComplexAlongExhaustion_branchFamily_compactOpen_vitali_fin_bal
     ⟨g, hg_eq, hg_diff⟩
   exact ⟨σ, hσ, f, g, hlocal, hg_eq, hg_diff, hcompat⟩
 
-
 end Ambient
 
 end IsingModel
