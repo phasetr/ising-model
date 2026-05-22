@@ -1,7 +1,7 @@
 import IsingModel.InfiniteVolume
 import IsingModel.FreeEnergy
 import IsingModel.Inequalities.GHS
-import IsingModel.Conditioning
+import IsingModel.Conditioning.Bounds
 import IsingModel.PhaseTransition
 import IsingModel.FieldDerivative
 

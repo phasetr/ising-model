@@ -1,5 +1,6 @@
 import IsingModel.AmbientLattice.Defs.HighTempPartition
 import IsingModel.AmbientLattice.Defs.Correlation
+import IsingModel.Conditioning.CorrelationRates
 
 /-!
 # Ambient lattice high-temperature correlations
