@@ -1,0 +1,279 @@
+import IsingModel.AmbientLattice.Defs.HighTempPartition.ExpSummary
+
+namespace IsingModel
+namespace Ambient
+
+open Finset Real
+open scoped symmDiff
+
+variable {V : Type*} [DecidableEq V]
+
+/-- **Λ-level sharper f deviation bound**: under `0 < |Λ|`, `0 ≤ β·J`,
+`f_Λ - log 2 ≤ β·J·|E_Λ|/|Λ|`. -/
+theorem freeEnergyΛ_high_temp_h_zero_deviation_bound_exp
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (hne : 0 < Λ.card) :
+    freeEnergyΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) - Real.log 2
+      ≤ β * J * (inducedGraph G Λ).edgeFinset.card / Λ.card := by
+  have h := freeEnergyΛ_high_temp_h_zero_upper_bound_exp
+    G Λ J β hβJ hne
+  linarith
+
+/-- **Λ-level ferromagnetic f deviation bound**: under `0 ≤ J, 0 < β`,
+`f_Λ - log 2 ≤ β·J·|E_Λ|/|Λ|`. -/
+theorem freeEnergyΛ_high_temp_h_zero_deviation_bound_exp_ferromagnetic
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (hne : 0 < Λ.card) :
+    freeEnergyΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) - Real.log 2
+      ≤ β * J * (inducedGraph G Λ).edgeFinset.card / Λ.card :=
+  freeEnergyΛ_high_temp_h_zero_deviation_bound_exp
+    G Λ J β (mul_nonneg hβ.le hJ) hne
+
+/-- **Λ-level f continuity at `J = 0`**: under `0 < |Λ|` and `0 ≤ β·J`,
+`|f_Λ(⟨J,0,β⟩) - f_Λ(⟨0,0,β⟩)| ≤ β·J·|E_Λ|/|Λ|`. -/
+theorem freeEnergyΛ_high_temp_h_zero_continuity_at_J_zero
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (hne : 0 < Λ.card) :
+    |freeEnergyΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+        - freeEnergyΛ G Λ (⟨0, 0, β⟩ : IsingParams ℝ)|
+      ≤ β * J * (inducedGraph G Λ).edgeFinset.card / Λ.card := by
+  have hcard : 0 < Fintype.card (↑Λ : Type _) := by
+    rw [Fintype.card_coe]; exact hne
+  rw [freeEnergyΛ_apply, freeEnergyΛ_apply, ← Fintype.card_coe (s := Λ)]
+  exact IsingModel.freeEnergy_high_temp_h_zero_continuity_at_J_zero
+    (inducedGraph G Λ) J β hβJ hcard
+
+/-- **Λ-level f continuity at `β = 0`**. -/
+theorem freeEnergyΛ_high_temp_h_zero_continuity_at_beta_zero
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (hne : 0 < Λ.card) :
+    |freeEnergyΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+        - freeEnergyΛ G Λ (⟨J, 0, 0⟩ : IsingParams ℝ)|
+      ≤ β * J * (inducedGraph G Λ).edgeFinset.card / Λ.card := by
+  have hcard : 0 < Fintype.card (↑Λ : Type _) := by
+    rw [Fintype.card_coe]; exact hne
+  rw [freeEnergyΛ_apply, freeEnergyΛ_apply, ← Fintype.card_coe (s := Λ)]
+  exact IsingModel.freeEnergy_high_temp_h_zero_continuity_at_beta_zero
+    (inducedGraph G Λ) J β hβJ hcard
+
+/-- **Λ-level f continuity bundle at trivial slices**. -/
+theorem freeEnergyΛ_high_temp_h_zero_continuity_bundle
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (hne : 0 < Λ.card) :
+    |freeEnergyΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+        - freeEnergyΛ G Λ (⟨0, 0, β⟩ : IsingParams ℝ)|
+        ≤ β * J * (inducedGraph G Λ).edgeFinset.card / Λ.card ∧
+    |freeEnergyΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+        - freeEnergyΛ G Λ (⟨J, 0, 0⟩ : IsingParams ℝ)|
+        ≤ β * J * (inducedGraph G Λ).edgeFinset.card / Λ.card :=
+  ⟨freeEnergyΛ_high_temp_h_zero_continuity_at_J_zero G Λ J β hβJ hne,
+   freeEnergyΛ_high_temp_h_zero_continuity_at_beta_zero G Λ J β hβJ hne⟩
+
+/-- **Λ-level ferromagnetic f continuity bundle**: under `0 ≤ J, 0 < β`
+and `0 < |Λ|`. -/
+theorem freeEnergyΛ_high_temp_h_zero_continuity_bundle_ferromagnetic
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (hne : 0 < Λ.card) :
+    |freeEnergyΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+        - freeEnergyΛ G Λ (⟨0, 0, β⟩ : IsingParams ℝ)|
+        ≤ β * J * (inducedGraph G Λ).edgeFinset.card / Λ.card ∧
+    |freeEnergyΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+        - freeEnergyΛ G Λ (⟨J, 0, 0⟩ : IsingParams ℝ)|
+        ≤ β * J * (inducedGraph G Λ).edgeFinset.card / Λ.card :=
+  freeEnergyΛ_high_temp_h_zero_continuity_bundle
+    G Λ J β (mul_nonneg hβ.le hJ) hne
+
+/-- **Λ-level f deviation sandwich**: under `0 < |Λ|` and `0 ≤ β·J`,
+`0 ≤ f_Λ - log 2 ≤ β·J·|E_Λ|/|Λ|`. -/
+theorem freeEnergyΛ_high_temp_h_zero_deviation_sandwich
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) (hne : 0 < Λ.card) :
+    0 ≤ freeEnergyΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) - Real.log 2 ∧
+    freeEnergyΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) - Real.log 2
+      ≤ β * J * (inducedGraph G Λ).edgeFinset.card / Λ.card := by
+  have hcard : 0 < Fintype.card (↑Λ : Type _) := by
+    rw [Fintype.card_coe]; exact hne
+  rw [freeEnergyΛ_apply, ← Fintype.card_coe (s := Λ)]
+  exact IsingModel.freeEnergy_high_temp_h_zero_deviation_sandwich
+    (inducedGraph G Λ) J β hβJ hcard
+
+/-- **Λ-level ferromagnetic f deviation sandwich**. -/
+theorem freeEnergyΛ_high_temp_h_zero_deviation_sandwich_ferromagnetic
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (hne : 0 < Λ.card) :
+    0 ≤ freeEnergyΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) - Real.log 2 ∧
+    freeEnergyΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) - Real.log 2
+      ≤ β * J * (inducedGraph G Λ).edgeFinset.card / Λ.card :=
+  freeEnergyΛ_high_temp_h_zero_deviation_sandwich
+    G Λ J β (mul_nonneg hβ.le hJ) hne
+
+/-- **Λ-level log Z deviation sandwich**. -/
+theorem log_partitionFunctionΛ_high_temp_expansion_h_zero_deviation_sandwich
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) :
+    0 ≤ Real.log (partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ))
+        - (Λ.card : ℝ) * Real.log 2 ∧
+    Real.log (partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ))
+        - (Λ.card : ℝ) * Real.log 2
+      ≤ β * J * (inducedGraph G Λ).edgeFinset.card := by
+  rw [partitionFunctionΛ_apply, ← Fintype.card_coe (s := Λ)]
+  exact IsingModel.log_partitionFunction_high_temp_expansion_h_zero_deviation_sandwich
+    (inducedGraph G Λ) J β hβJ
+
+/-- **Λ-level ferromagnetic log Z deviation sandwich**. -/
+theorem log_partitionFunctionΛ_high_temp_expansion_h_zero_deviation_sandwich_ferromagnetic
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) :
+    0 ≤ Real.log (partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ))
+        - (Λ.card : ℝ) * Real.log 2 ∧
+    Real.log (partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ))
+        - (Λ.card : ℝ) * Real.log 2
+      ≤ β * J * (inducedGraph G Λ).edgeFinset.card :=
+  log_partitionFunctionΛ_high_temp_expansion_h_zero_deviation_sandwich
+    G Λ J β (mul_nonneg hβ.le hJ)
+
+/-- **Λ-level Z relative-deviation sandwich**. -/
+theorem partitionFunctionΛ_high_temp_expansion_h_zero_relative_sandwich
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hβJ : 0 ≤ β * J) :
+    Real.cosh (β * J) ^ (inducedGraph G Λ).edgeFinset.card
+      ≤ partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) /
+          (2 : ℝ) ^ Λ.card ∧
+    partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) /
+        (2 : ℝ) ^ Λ.card
+      ≤ Real.exp (β * J * (inducedGraph G Λ).edgeFinset.card) := by
+  rw [partitionFunctionΛ_apply, ← Fintype.card_coe (s := Λ)]
+  exact IsingModel.partitionFunction_high_temp_expansion_h_zero_relative_sandwich
+    (inducedGraph G Λ) J β hβJ
+
+/-- **Λ-level ferromagnetic Z relative-deviation sandwich**. -/
+theorem partitionFunctionΛ_high_temp_expansion_h_zero_relative_sandwich_ferromagnetic
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) :
+    Real.cosh (β * J) ^ (inducedGraph G Λ).edgeFinset.card
+      ≤ partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) /
+          (2 : ℝ) ^ Λ.card ∧
+    partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) /
+        (2 : ℝ) ^ Λ.card
+      ≤ Real.exp (β * J * (inducedGraph G Λ).edgeFinset.card) :=
+  partitionFunctionΛ_high_temp_expansion_h_zero_relative_sandwich
+    G Λ J β (mul_nonneg hβ.le hJ)
+
+/-- **Λ-level f strict deviation**: under `0 < β·J`, `0 < |Λ|`,
+`0 < |E_Λ|`, `0 < f_Λ - log 2`. -/
+theorem freeEnergyΛ_high_temp_h_zero_deviation_pos
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hβJ : 0 < β * J) (hne : 0 < Λ.card)
+    (hEpos : 0 < (inducedGraph G Λ).edgeFinset.card) :
+    0 < freeEnergyΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) - Real.log 2 := by
+  have hcard : 0 < Fintype.card (↑Λ : Type _) := by
+    rw [Fintype.card_coe]; exact hne
+  rw [freeEnergyΛ_apply]
+  exact IsingModel.freeEnergy_high_temp_h_zero_deviation_pos
+    (inducedGraph G Λ) J β hβJ hcard hEpos
+
+/-- **Λ-level ferromagnetic f strict deviation**. -/
+theorem freeEnergyΛ_high_temp_h_zero_deviation_pos_ferromagnetic
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hJ : 0 < J) (hβ : 0 < β) (hne : 0 < Λ.card)
+    (hEpos : 0 < (inducedGraph G Λ).edgeFinset.card) :
+    0 < freeEnergyΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) - Real.log 2 :=
+  freeEnergyΛ_high_temp_h_zero_deviation_pos
+    G Λ J β (mul_pos hβ hJ) hne hEpos
+
+/-- **Λ-level Z strict deviation**: under `0 < β·J`, `0 < |E_Λ|`,
+`2^|Λ| < Z_Λ`. -/
+theorem partitionFunctionΛ_high_temp_expansion_h_zero_pow_two_lt
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hβJ : 0 < β * J)
+    (hEpos : 0 < (inducedGraph G Λ).edgeFinset.card) :
+    (2 : ℝ) ^ Λ.card
+      < partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) := by
+  rw [partitionFunctionΛ_apply, ← Fintype.card_coe (s := Λ)]
+  exact IsingModel.partitionFunction_high_temp_expansion_h_zero_pow_two_lt
+    (inducedGraph G Λ) J β hβJ hEpos
+
+/-- **Λ-level log Z strict deviation**: under `0 < β·J`, `0 < |E_Λ|`,
+`0 < log Z_Λ - |Λ|·log 2`. -/
+theorem log_partitionFunctionΛ_high_temp_expansion_h_zero_deviation_pos
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hβJ : 0 < β * J)
+    (hEpos : 0 < (inducedGraph G Λ).edgeFinset.card) :
+    0 < Real.log (partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ))
+        - (Λ.card : ℝ) * Real.log 2 := by
+  rw [partitionFunctionΛ_apply, ← Fintype.card_coe (s := Λ)]
+  exact IsingModel.log_partitionFunction_high_temp_expansion_h_zero_deviation_pos
+    (inducedGraph G Λ) J β hβJ hEpos
+
+/-- **Λ-level Z + log Z + f strict deviation bundle**: under `0 < β·J`,
+`0 < |E_Λ|`, `0 < |Λ|`, single statement bundling all three strict deviations. -/
+theorem partitionFunctionΛ_high_temp_expansion_h_zero_strict_deviation_bundle
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hβJ : 0 < β * J) (hne : 0 < Λ.card)
+    (hEpos : 0 < (inducedGraph G Λ).edgeFinset.card) :
+    (2 : ℝ) ^ Λ.card < partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) ∧
+    0 < Real.log (partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ))
+        - (Λ.card : ℝ) * Real.log 2 ∧
+    0 < freeEnergyΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) - Real.log 2 :=
+  ⟨partitionFunctionΛ_high_temp_expansion_h_zero_pow_two_lt G Λ J β hβJ hEpos,
+   log_partitionFunctionΛ_high_temp_expansion_h_zero_deviation_pos
+     G Λ J β hβJ hEpos,
+   freeEnergyΛ_high_temp_h_zero_deviation_pos G Λ J β hβJ hne hEpos⟩
+
+/-- **Λ-level ferromagnetic Z + log Z + f strict deviation bundle**:
+under `0 < J, 0 < β`, the same triple via `mul_pos hβ hJ`. -/
+theorem partitionFunctionΛ_high_temp_expansion_h_zero_strict_deviation_bundle_ferromagnetic
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hJ : 0 < J) (hβ : 0 < β) (hne : 0 < Λ.card)
+    (hEpos : 0 < (inducedGraph G Λ).edgeFinset.card) :
+    (2 : ℝ) ^ Λ.card < partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) ∧
+    0 < Real.log (partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ))
+        - (Λ.card : ℝ) * Real.log 2 ∧
+    0 < freeEnergyΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) - Real.log 2 :=
+  partitionFunctionΛ_high_temp_expansion_h_zero_strict_deviation_bundle
+    G Λ J β (mul_pos hβ hJ) hne hEpos
+
+/-- **Λ-level ferromagnetic Z strict deviation**. -/
+theorem partitionFunctionΛ_high_temp_expansion_h_zero_pow_two_lt_ferromagnetic
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hJ : 0 < J) (hβ : 0 < β)
+    (hEpos : 0 < (inducedGraph G Λ).edgeFinset.card) :
+    (2 : ℝ) ^ Λ.card
+      < partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) :=
+  partitionFunctionΛ_high_temp_expansion_h_zero_pow_two_lt
+    G Λ J β (mul_pos hβ hJ) hEpos
+
+/-- **Λ-level ferromagnetic log Z strict deviation**. -/
+theorem log_partitionFunctionΛ_high_temp_expansion_h_zero_deviation_pos_ferromagnetic
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (J β : ℝ) (hJ : 0 < J) (hβ : 0 < β)
+    (hEpos : 0 < (inducedGraph G Λ).edgeFinset.card) :
+    0 < Real.log (partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ))
+        - (Λ.card : ℝ) * Real.log 2 :=
+  log_partitionFunctionΛ_high_temp_expansion_h_zero_deviation_pos
+    G Λ J β (mul_pos hβ hJ) hEpos
+
+
+end Ambient
+
+end IsingModel
