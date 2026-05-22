@@ -1,4 +1,4 @@
-import IsingModel.AmbientLattice.Defs.Correlation
+import IsingModel.AmbientLattice.Defs.HighTempCorrelation
 
 /-!
 # Ambient lattice finite-volume regularity wrappers

@@ -1,4 +1,4 @@
-import IsingModel.AmbientLattice.Defs.HighTempCorrelation
+import IsingModel.AmbientLattice.Defs.Core
 
 /-!
 # Ambient lattice correlation and magnetization bounds
@@ -14,6 +14,20 @@ open Finset Real
 open scoped symmDiff
 
 variable {V : Type*} [DecidableEq V]
+
+/-- The correlation on `Λ` is bounded: `|⟨σ^A⟩| ≤ 1`. -/
+theorem abs_correlationΛ_le_one (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (p : IsingParams ℝ)
+    (A : Finset (↑Λ : Type _)) :
+    |correlationΛ G Λ p A| ≤ 1 :=
+  IsingModel.abs_correlation_le_one _ _ _
+
+/-- The correlation on `Λ` is at most `1`. -/
+theorem correlationΛ_le_one (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] (p : IsingParams ℝ)
+    (A : Finset (↑Λ : Type _)) :
+    correlationΛ G Λ p A ≤ 1 :=
+  IsingModel.correlation_le_one _ _ _
 
 /-- The correlation on `Λ` is at least `-1`. Lower side of
 `abs_correlationΛ_le_one`. -/

@@ -1,4 +1,5 @@
 import IsingModel.AmbientLattice.Defs.HighTempPartition
+import IsingModel.AmbientLattice.Defs.Correlation
 
 /-!
 # Ambient lattice high-temperature correlations
@@ -251,20 +252,6 @@ theorem correlationΛ_high_temp_h_zero_at_singleton
     correlationΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) ({i} : Finset ↑Λ) = 0 := by
   refine correlationΛ_high_temp_h_zero_odd_card_eq_zero G Λ J β {i} ?_
   rw [Finset.card_singleton]; exact ⟨0, rfl⟩
-
-/-- The correlation on `Λ` is bounded: `|⟨σ^A⟩| ≤ 1`. -/
-theorem abs_correlationΛ_le_one (G : SimpleGraph V) (Λ : Finset V)
-    [Fintype (inducedGraph G Λ).edgeSet] (p : IsingParams ℝ)
-    (A : Finset (↑Λ : Type _)) :
-    |correlationΛ G Λ p A| ≤ 1 :=
-  IsingModel.abs_correlation_le_one _ _ _
-
-/-- The correlation on `Λ` is at most `1`. -/
-theorem correlationΛ_le_one (G : SimpleGraph V) (Λ : Finset V)
-    [Fintype (inducedGraph G Λ).edgeSet] (p : IsingParams ℝ)
-    (A : Finset (↑Λ : Type _)) :
-    correlationΛ G Λ p A ≤ 1 :=
-  IsingModel.correlation_le_one _ _ _
 
 /-- **Λ-level pair correlation nonneg at h = 0**:
 under `0 ≤ β·J`, `0 ≤ correlationΛ G Λ ⟨J, 0, β⟩ {i, j}`. -/
