@@ -1,4 +1,5 @@
 import IsingModel.ClusterExpansion.Incompatibility
+import IsingModel.Conditioning.HighTempClosed
 
 /-!
 # Cluster expansion compatible families and polymer sums

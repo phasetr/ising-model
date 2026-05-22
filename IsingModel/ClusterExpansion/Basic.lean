@@ -1,4 +1,3 @@
-import IsingModel.Conditioning
 import IsingModel.PhaseTransition
 import Mathlib.Combinatorics.SimpleGraph.Hasse
 import Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite
