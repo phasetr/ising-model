@@ -19,7 +19,6 @@ import IsingModel.AmbientLattice.Analyticity
 import IsingModel.InfiniteVolume
 import IsingModel.FreeEnergy
 import IsingModel.Inequalities.GHS
-import IsingModel.Conditioning
 import IsingModel.PhaseTransition
 import IsingModel.FieldDerivative
 
