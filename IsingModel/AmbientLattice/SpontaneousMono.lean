@@ -1,4 +1,5 @@
 import IsingModel.AmbientLattice.TruncatedFunctions
+import IsingModel.Conditioning.FreeEnergyBound
 
 /-!
 # Parameter monotonicity of spontaneous observables + Cor 4.3.5 at ∞-volume
