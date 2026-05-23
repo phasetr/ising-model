@@ -20,7 +20,7 @@ Gibbs expectation vanishes. -/
 
 omit [Fintype ι] [DecidableEq ι] in
 /-- Spin product under global flip: `σ^A(flip σ) = (-1)^|A| · σ^A(σ)`. -/
-theorem spinProduct_flip (A : Finset ι) (σ : Config ι) :
+private theorem spinProduct_flip (A : Finset ι) (σ : Config ι) :
     spinProduct A σ.flip = (-1) ^ A.card * spinProduct A σ := by
   simp only [spinProduct, Config.flip]
   simp_rw [Spin.toSign_flip, Int.cast_neg]
