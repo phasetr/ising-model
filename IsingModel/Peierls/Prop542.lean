@@ -125,7 +125,6 @@ and `S ∩ B = ∅` imply `∅ ≠ S ≠ V`. -/
 theorem prop_5_4_2_complete (G : SimpleGraph ι) [DecidableRel G.Adj]
     [Fintype G.edgeSet] (J β : ℝ) (hβ : 0 < β) (hJ : 0 < J)
     (B : Finset ι) (i : ι)
-    
     (hcut : ∀ S : Finset ι, i ∈ S → Disjoint S B → 1 ≤ (cutEdges G S).card) :
     0 ≤ 1 - plusGibbsExpectation G ⟨J, 0, β⟩ B (fun σ => Spin.sign ℝ (σ i)) ∧
     1 - plusGibbsExpectation G ⟨J, 0, β⟩ B (fun σ => Spin.sign ℝ (σ i)) ≤
@@ -168,7 +167,6 @@ For any `0 < c < 2J`, such `β₀` exists since `2^(|V|+1) · exp(-(2J-c)β) →
 theorem prop_5_4_2_exp (G : SimpleGraph ι) [DecidableRel G.Adj]
     [Fintype G.edgeSet] (J β c : ℝ) (hβ : 0 < β) (hJ : 0 < J)
     (B : Finset ι) (i : ι)
-    
     (hcut : ∀ S : Finset ι, i ∈ S → Disjoint S B → 1 ≤ (cutEdges G S).card)
     (hexp : 2 * (2 ^ Fintype.card ι) * Real.exp (-2 * β * J) ≤
       Real.exp (-c * β)) :
