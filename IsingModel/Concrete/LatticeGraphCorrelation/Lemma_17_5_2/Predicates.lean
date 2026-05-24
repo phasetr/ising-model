@@ -73,6 +73,38 @@ theorem lemma_17_5_2_upper_bound_of_all_decay_rates_le
   rintro b ⟨a, ha, rfl⟩
   exact hdecay_le a ha
 
+/-- **GJ §17.5 Lemma 17.5.2 upper-bound equivalence**: the named upper-bound
+predicate is equivalent to bounding every validating nonnegative exponential
+decay rate by `C · ofReal m⁻`.
+
+This exposes the exact target shape needed by the future HLS argument: prove
+the all-rate estimate, and the `latticeMass` upper-bound side follows by the
+`sSup` definition; conversely, any closed upper-bound predicate immediately
+controls every admissible decay rate. -/
+theorem lemma_17_5_2_upper_bound_iff_all_decay_rates_le
+    {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (J β : ℝ) (x z : Fin d → ℤ) (C : ENNReal) :
+    Lemma_17_5_2_UpperBound hα hr Λ J β x z C ↔
+      ∀ a : NNReal,
+        HasExponentialDecay d Λ (⟨J, 0, β⟩ : IsingParams ℝ) (a : ℝ) →
+          (a : ENNReal) ≤
+            C * ENNReal.ofReal
+              (pseudoMassFromParamsAtPair hα hr d Λ
+                (⟨J, 0, β⟩ : IsingParams ℝ) x z) := by
+  constructor
+  · intro hupper a hdecay
+    have ha_mass :
+        (a : ENNReal) ≤ latticeMass d Λ (⟨J, 0, β⟩ : IsingParams ℝ) := by
+      simpa [ENNReal.ofReal_coe_nnreal] using
+        latticeMass_ge_of_HasExponentialDecay (show 0 ≤ (a : ℝ) from a.2) hdecay
+    exact ha_mass.trans hupper
+  · intro hdecay_le
+    exact lemma_17_5_2_upper_bound_of_all_decay_rates_le
+      hα hr Λ J β x z C hdecay_le
+
 /-- **GJ §17.5 Lemma 17.5.2 lower-bound side (named alias)**: if the concrete
 pseudo-mass associated to the pair `(x, z)` at `h = 0` validates exponential
 decay of `truncated2Infinite`, then `ENNReal.ofReal m⁻ ≤ latticeMass`.
