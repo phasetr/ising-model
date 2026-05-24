@@ -288,5 +288,51 @@ theorem lemma_17_5_2_hls_upper_bound_of_all_decay_rates_le
   exact lemma_17_5_2_upper_bound_of_all_decay_rates_le hα hr Λ J β x z
     (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / r)) hdecay_le
 
+/-- **GJ §17.5 Lemma 17.5.2 HLS-constant sandwich package**: once the
+pseudo-mass rate itself validates exponential decay, the same HLS convolution
+constant package reduces the full sandwich to the all-admissible-decay-rate
+upper estimate.
+
+This is the direct capstone shape for the remaining HLS proof: provide the
+all-rate premise for the returned constant `K`, and this theorem returns
+`ofReal m⁻ ≤ latticeMass ≤ ((2α+1)K/r) · ofReal m⁻`. -/
+theorem lemma_17_5_2_hls_sandwich_of_decay_and_all_decay_rates_le
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d)
+    {r : ℝ} (hr : 0 < r)
+    {Λ : Ambient.Exhaustion (Fin d → ℤ)}
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    {J β : ℝ} {x z : Fin d → ℤ}
+    (hdecay : HasExponentialDecay d Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+      (pseudoMassFromParamsAtPair hα hr d Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) x z)) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      ((∀ a : NNReal,
+          HasExponentialDecay d Λ (⟨J, 0, β⟩ : IsingParams ℝ) (a : ℝ) →
+            (a : ENNReal) ≤
+              ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / r) *
+                ENNReal.ofReal
+                  (pseudoMassFromParamsAtPair hα hr d Λ
+                    (⟨J, 0, β⟩ : IsingParams ℝ) x z)) →
+        ENNReal.ofReal
+            (pseudoMassFromParamsAtPair hα hr d Λ
+              (⟨J, 0, β⟩ : IsingParams ℝ) x z)
+          ≤ latticeMass d Λ (⟨J, 0, β⟩ : IsingParams ℝ) ∧
+        latticeMass d Λ (⟨J, 0, β⟩ : IsingParams ℝ) ≤
+          ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / r) *
+            ENNReal.ofReal
+              (pseudoMassFromParamsAtPair hα hr d Λ
+                (⟨J, 0, β⟩ : IsingParams ℝ) x z)) := by
+  obtain ⟨K, hK, hK_conv, hupper⟩ :=
+    lemma_17_5_2_hls_upper_bound_of_all_decay_rates_le
+      hα hαd hr Λ J β x z
+  refine ⟨K, hK, hK_conv, fun hdecay_le => ?_⟩
+  exact lemma_17_5_2_sandwich_of_decay_and_upper hα hr hdecay
+    (hupper hdecay_le)
+
 end Ambient
 end IsingModel
