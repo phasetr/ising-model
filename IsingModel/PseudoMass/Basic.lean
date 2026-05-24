@@ -100,9 +100,10 @@ theorem pseudoMass_eq_iff {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) {c 
 
 /-! ## Implicit differentiation of the defining equation -/
 
-/-- If `h` satisfies the pseudo-mass defining equation `pseudoMassG α r (h β) = c β`
-and is differentiable at `β`, then its derivative equals `c'(β) / g'(h(β))`,
-where `g' = d/dt pseudoMassG α r`.
+/-- If `h` satisfies the pseudo-mass defining equation
+`pseudoMassG α r (h ·) = c` locally near `β` and is differentiable at `β`,
+then its derivative equals `c'(β) / g'(h(β))`, where
+`g' = d/dt pseudoMassG α r`.
 This is the key implicit differentiation step for the GJ §17.5 Lipschitz estimate. -/
 theorem pseudoMass_deriv_formula
     (α : ℕ) {r : ℝ} (hr : 0 < r)
