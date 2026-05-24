@@ -222,5 +222,85 @@ theorem lemma_17_5_2_infinite_hls_denominator_comparison_of_finite_deriv_bounds
   exact lemma_17_5_2_infinite_hls_denominator_comparison_of_deriv_limit_bound
     hd Λ J hJ_pos x z hxz β K hβ h g' hderiv_lim hbound
 
+/-- **GJ §17.5 Lemma 17.5.2 interval finite-HLS limit bridge**: if an interval
+lies in the open high-temperature region, the finite-volume β-derivatives
+converge locally uniformly there, and the finite-stage HLS derivative bound
+holds eventually at each point of the interval, then the infinite HLS
+denominator comparison holds at every point of the interval.
+
+This is the interval-shaped input consumed by the infinite HLS Lipschitz
+bridge. -/
+theorem
+    lemma_17_5_2_infinite_hls_denominator_comparison_on_Icc_of_finite_deriv_bounds
+    {d α : ℕ} (hd : 1 ≤ d)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (hJ_pos : 0 < J)
+    (x z : Fin d → ℤ) (hxz : x ≠ z)
+    (β₁ β₂ K : ℝ)
+    (hIcc :
+      Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (h : ℝ → ℝ) (g' : ℝ → ℝ)
+    (hderiv_lim :
+      TendstoLocallyUniformlyOn
+        (fun n β =>
+          deriv (fun β' =>
+            Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
+        g' Filter.atTop (Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d)))))
+    (hfinite :
+      ∀ β ∈ Set.Icc β₁ β₂,
+        ∀ᶠ n in Filter.atTop,
+          |deriv (fun β' =>
+            Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β| ≤
+            K *
+              Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} n /
+              (h β) ^ (2 * α)) :
+    ∀ β ∈ Set.Icc β₁ β₂,
+      Lemma_17_5_2_InfiniteHLSDenominatorComparison Λ J x z β α K h := by
+  intro β hβ
+  exact lemma_17_5_2_infinite_hls_denominator_comparison_of_finite_deriv_bounds
+    hd Λ J hJ_pos x z hxz β K (hIcc hβ) h g' hderiv_lim (hfinite β hβ)
+
+/-- **GJ §17.5 Lemma 17.5.2 interval finite-HLS limit bridge, uniform-eventual
+form**: a single eventual finite-stage HLS derivative bound, uniform over the
+closed interval, is enough to provide the interval family of infinite HLS
+denominator comparisons. -/
+theorem
+    lemma_17_5_2_infinite_hls_denominator_comparison_on_Icc_of_uniform_finite_deriv_bounds
+    {d α : ℕ} (hd : 1 ≤ d)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (hJ_pos : 0 < J)
+    (x z : Fin d → ℤ) (hxz : x ≠ z)
+    (β₁ β₂ K : ℝ)
+    (hIcc :
+      Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (h : ℝ → ℝ) (g' : ℝ → ℝ)
+    (hderiv_lim :
+      TendstoLocallyUniformlyOn
+        (fun n β =>
+          deriv (fun β' =>
+            Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
+        g' Filter.atTop (Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d)))))
+    (hfinite :
+      ∀ᶠ n in Filter.atTop,
+        ∀ β ∈ Set.Icc β₁ β₂,
+          |deriv (fun β' =>
+            Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β| ≤
+            K *
+              Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} n /
+              (h β) ^ (2 * α)) :
+    ∀ β ∈ Set.Icc β₁ β₂,
+      Lemma_17_5_2_InfiniteHLSDenominatorComparison Λ J x z β α K h := by
+  refine
+    lemma_17_5_2_infinite_hls_denominator_comparison_on_Icc_of_finite_deriv_bounds
+      hd Λ J hJ_pos x z hxz β₁ β₂ K hIcc h g' hderiv_lim ?_
+  intro β hβ
+  exact hfinite.mono fun n hn => hn β hβ
+
 end Ambient
 end IsingModel

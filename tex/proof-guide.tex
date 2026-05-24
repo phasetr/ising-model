@@ -7891,6 +7891,22 @@ infinite derivative inequality: it is enough to prove locally uniform
 convergence of the finite derivative profiles and eventual finite-stage HLS
 derivative bounds for the chosen constant.
 
+The interval versions align this handoff with the Lipschitz layer.  If
+\([\beta_1,\beta_2]\) is contained in the open high-temperature interval, then
+\texttt{lemma\_17\_5\_2\_infinite\_hls\_denominator\_comparison\_on\_Icc\_of\_finite\_deriv\_bounds}
+turns pointwise eventual finite-HLS derivative bounds on every
+\(\beta\in[\beta_1,\beta_2]\) into
+\[
+  \forall\beta\in[\beta_1,\beta_2],\quad
+  \texttt{Lemma\_17\_5\_2\_InfiniteHLSDenominatorComparison}(\beta).
+\]
+The companion
+\texttt{lemma\_17\_5\_2\_infinite\_hls\_denominator\_comparison\_on\_Icc\_of\_uniform\_finite\_deriv\_bounds}
+uses a single eventual finite-stage bound uniform over the closed interval.
+This is the exact shape needed before applying the infinite HLS Lipschitz
+bridge, whose premise asks for the denominator comparison throughout
+\([\beta_1,\beta_2]\).
+
 \paragraph{\S5.4 Prop 5.4.2 infinite-volume Peierls bound (liminf form)
 (PR~\#1643).} Adds the genuine infinite-volume lift of GJ Prop 5.4.2:
 under the per-stage hypotheses of \texttt{prop\_5\_4\_2\_along\_exhaustion},
