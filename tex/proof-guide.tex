@@ -8206,6 +8206,16 @@ derives the same lower-side input from the endpoint profile inequality
 \]
 Both wrappers then reuse the concrete compact upper-bound theorem and return
 the same two-sided sandwich for \(\mathrm{latticeMass}\).
+The capstone variants
+\texttt{lemma\_17\_5\_2\_capstone\_of\_concrete\_pseudoMass\_compact\_bounds\_and\_le\_high\_temp\_rate}
+and
+\texttt{lemma\_17\_5\_2\_capstone\_of\_concrete\_pseudoMass\_compact\_bounds\_and\_profile\_lower},
+together with their \texttt{\_on\_Icc} and \texttt{\_on\_self\_Icc} forms,
+repackage these sandwiches with the matching named
+\texttt{Lemma\_17\_5\_2\_UpperBound} predicate for the same HLS constant
+\(K\).  Thus downstream callers can consume the general concrete
+high-temperature package in the same-constant capstone shape as the
+anchored cubic wrappers below.
 The helper
 \texttt{lemma\_17\_5\_2\_endpoint\_high\_temp\_of\_Icc\_subset\_high\_temp}
 extracts \(0<\beta_2\) and \(\beta_2J\,2d<1\) from the interval inclusion
