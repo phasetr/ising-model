@@ -7799,13 +7799,13 @@ handoff to the final all-admissible-rate input.  The predicate
 interval Lipschitz estimate
 \[
   |h(\beta_2)^{2\alpha+1}-h(\beta_1)^{2\alpha+1}|
-  \le {2\alpha+1 \over r}K(\beta_2-\beta_1)
+  \le \frac{2\alpha+1}{r}K(\beta_2-\beta_1)
 \]
 obtained from the infinite HLS denominator comparison implies, at the endpoint
 \(\beta_2\), the bound
 \[
   a \le
-  \mathrm{ofReal}\!\left({(2\alpha+1)K\over r}\right)
+  \mathrm{ofReal}\!\left(\frac{(2\alpha+1)K}{r}\right)
   \mathrm{ofReal}\bigl(m^-_{\Lambda}(x,z;\beta_2)\bigr)
 \]
 for every nonnegative validating exponential-decay rate \(a\).  The theorem
@@ -7848,7 +7848,7 @@ HLS denominator comparison is now isolated in
 uses Mathlib's uniform-limits-of-derivatives theorem: if the finite-volume
 derivative profiles
 \[
-  \beta \mapsto {d\over d\beta}\,
+  \beta \mapsto \frac{d}{d\beta}\,
   \texttt{correlationAlongExhaustion}_{n}(\beta)
 \]
 converge locally uniformly on the open high-temperature interval
@@ -7867,6 +7867,29 @@ denominator comparison.  This does not prove derivative convergence itself;
 it packages exactly that remaining analytic input so the HLS/Lebowitz
 upper-bound path can consume it without restating the uniform-limit
 machinery.
+
+The follow-up finite-HLS limit bridge records how the finite-stage HLS
+derivative estimates pass through this limit.  The theorem
+\texttt{lemma\_17\_5\_2\_infinite\_hls\_deriv\_bound\_of\_finite\_profile\_bounds}
+uses \texttt{le\_of\_tendsto\_of\_tendsto}: if
+\[
+  d_n(\beta)\to g'(\beta),\qquad c_n(\beta)\to c_\infty(\beta),
+\]
+and eventually
+\[
+  |d_n(\beta)|\le \frac{Kc_n(\beta)}{h(\beta)^{2\alpha}},
+\]
+then
+\[
+  |g'(\beta)|\le \frac{Kc_\infty(\beta)}{h(\beta)^{2\alpha}}.
+\]
+The theorem
+\texttt{lemma\_17\_5\_2\_infinite\_hls\_denominator\_comparison\_of\_finite\_deriv\_bounds}
+combines this order/topology handoff with the locally uniform derivative-limit
+bridge above.  Thus the remaining upper-bound input is no longer a raw
+infinite derivative inequality: it is enough to prove locally uniform
+convergence of the finite derivative profiles and eventual finite-stage HLS
+derivative bounds for the chosen constant.
 
 \paragraph{\S5.4 Prop 5.4.2 infinite-volume Peierls bound (liminf form)
 (PR~\#1643).} Adds the genuine infinite-volume lift of GJ Prop 5.4.2:

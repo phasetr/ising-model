@@ -135,5 +135,92 @@ theorem lemma_17_5_2_infinite_hls_denominator_comparison_of_deriv_limit_bound
   exact lemma_17_5_2_infinite_hls_denominator_comparison_of_deriv_bound
     Λ J x z β K h hdiff hbound
 
+/-- **GJ §17.5 Lemma 17.5.2 finite HLS derivative bounds pass to the
+infinite derivative limit**: if the finite-volume derivative profiles converge
+at `β` to the limiting derivative value, the finite-volume correlations
+converge at `β` to `corr_∞`, and the finite HLS derivative bound holds
+eventually in the exhaustion, then the same HLS bound holds for the limiting
+derivative.
+
+This is the order/topology handoff behind the infinite HLS denominator
+comparison.  The substantive analytic inputs are the derivative convergence and
+the eventual finite-stage HLS bounds. -/
+theorem lemma_17_5_2_infinite_hls_deriv_bound_of_finite_profile_bounds
+    {d α : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (x z : Fin d → ℤ)
+    (β K : ℝ) (h : ℝ → ℝ) (g' : ℝ → ℝ)
+    (hderiv_point :
+      Filter.Tendsto
+        (fun n =>
+          deriv (fun β' =>
+            Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
+        Filter.atTop (nhds (g' β)))
+    (hcorr_point :
+      Filter.Tendsto
+        (fun n =>
+          Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} n)
+        Filter.atTop
+        (nhds
+          (Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, β⟩ : IsingParams ℝ) {x, z})))
+    (hfinite :
+      ∀ᶠ n in Filter.atTop,
+        |deriv (fun β' =>
+          Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β| ≤
+          K *
+            Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} n /
+            (h β) ^ (2 * α)) :
+      |g' β| ≤
+        K *
+          Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} /
+          (h β) ^ (2 * α) := by
+  refine le_of_tendsto_of_tendsto ?_ ?_ hfinite
+  · exact (continuous_abs.tendsto (g' β)).comp hderiv_point
+  · exact (tendsto_const_nhds.mul hcorr_point).div_const ((h β) ^ (2 * α))
+
+/-- **GJ §17.5 Lemma 17.5.2 infinite HLS denominator comparison from finite
+HLS derivative bounds**: local uniform convergence of finite-volume
+β-derivatives identifies the infinite derivative, while eventual finite-stage
+HLS derivative bounds pass to the limit and discharge the named infinite
+denominator comparison. -/
+theorem lemma_17_5_2_infinite_hls_denominator_comparison_of_finite_deriv_bounds
+    {d α : ℕ} (hd : 1 ≤ d)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (hJ_pos : 0 < J)
+    (x z : Fin d → ℤ) (hxz : x ≠ z)
+    (β K : ℝ) (hβ : β ∈ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (h : ℝ → ℝ) (g' : ℝ → ℝ)
+    (hderiv_lim :
+      TendstoLocallyUniformlyOn
+        (fun n β =>
+          deriv (fun β' =>
+            Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
+        g' Filter.atTop (Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d)))))
+    (hfinite :
+      ∀ᶠ n in Filter.atTop,
+        |deriv (fun β' =>
+          Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β| ≤
+          K *
+            Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} n /
+            (h β) ^ (2 * α)) :
+    Lemma_17_5_2_InfiniteHLSDenominatorComparison Λ J x z β α K h := by
+  have hcorr_lim :=
+    correlationAlongExhaustion_tendstoLocallyUniformlyOn_beta_of_high_temp_open
+      hd Λ x z hxz J hJ_pos
+  have hbound :=
+    lemma_17_5_2_infinite_hls_deriv_bound_of_finite_profile_bounds
+      Λ J x z β K h g' (hderiv_lim.tendsto_at hβ) (hcorr_lim.tendsto_at hβ)
+      hfinite
+  exact lemma_17_5_2_infinite_hls_denominator_comparison_of_deriv_limit_bound
+    hd Λ J hJ_pos x z hxz β K hβ h g' hderiv_lim hbound
+
 end Ambient
 end IsingModel
