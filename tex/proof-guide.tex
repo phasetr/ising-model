@@ -7972,6 +7972,18 @@ therefore close the conditional upper and sandwich assemblies without a
 separate path-rate scalar premise, still conditional on the finite derivative
 bound for the enlarged constant.
 
+The derivative-provider wrappers remove that final call-site premise.  The
+theorems
+\texttt{lemma\_17\_5\_2\_upper\_bound\_of\_enlarged\_finite\_hls\_lipschitz\_package\_and\_deriv\_provider}
+and
+\texttt{lemma\_17\_5\_2\_sandwich\_of\_enlarged\_finite\_hls\_lipschitz\_package\_and\_deriv\_provider}
+take a provider that supplies an interval-uniform eventual finite-stage HLS
+derivative bound for every positive HLS convolution constant returned by the
+enlarged package.  After the package chooses its enlarged \(K\), the wrapper
+feeds the HLS convolution estimate for that same \(K\) back to the provider and
+closes the named upper-bound predicate; the sandwich variant then composes with
+the validating pseudo-mass decay lower side.
+
 \paragraph{\S5.4 Prop 5.4.2 infinite-volume Peierls bound (liminf form)
 (PR~\#1643).} Adds the genuine infinite-volume lift of GJ Prop 5.4.2:
 under the per-stage hypotheses of \texttt{prop\_5\_4\_2\_along\_exhaustion},
