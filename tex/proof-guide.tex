@@ -7792,6 +7792,33 @@ the target-exhaustion pseudo-mass
 each validating target-exhaustion decay rate to \(\Lambda_{\mathrm{cubic}}\)
 and applying the all-rate Step~115 path bound.
 
+\paragraph{\S17.5 Lemma 17.5.2 infinite HLS Lipschitz to all-rate bridge
+(Issue~\#1645).} The infinite-volume HLS/Lipschitz layer now has a named
+handoff to the final all-admissible-rate input.  The predicate
+\texttt{Lemma\_17\_5\_2\_InfiniteHLSLipschitzAllRateBridge} says that the
+interval Lipschitz estimate
+\[
+  |h(\beta_2)^{2\alpha+1}-h(\beta_1)^{2\alpha+1}|
+  \le {2\alpha+1 \over r}K(\beta_2-\beta_1)
+\]
+obtained from the infinite HLS denominator comparison implies, at the endpoint
+\(\beta_2\), the bound
+\[
+  a \le
+  \mathrm{ofReal}\!\left({(2\alpha+1)K\over r}\right)
+  \mathrm{ofReal}\bigl(m^-_{\Lambda}(x,z;\beta_2)\bigr)
+\]
+for every nonnegative validating exponential-decay rate \(a\).  The theorem
+\texttt{lemma\_17\_5\_2\_upper\_bound\_of\_infinite\_hls\_lipschitz\_all\_rate\_bridge}
+feeds this named bridge into the existing \texttt{sSup} assembly
+\texttt{lemma\_17\_5\_2\_upper\_bound\_of\_all\_decay\_rates\_le}; the
+companion
+\texttt{lemma\_17\_5\_2\_sandwich\_of\_infinite\_hls\_lipschitz\_all\_rate\_bridge}
+adds the lower validating-decay input and returns the conditional sandwich.
+This is not yet the final HLS-uniform upper-bound theorem: the substantive
+remaining step is to prove the named all-rate bridge from the
+HLS/Lebowitz derivative analysis.
+
 \paragraph{\S5.4 Prop 5.4.2 infinite-volume Peierls bound (liminf form)
 (PR~\#1643).} Adds the genuine infinite-volume lift of GJ Prop 5.4.2:
 under the per-stage hypotheses of \texttt{prop\_5\_4\_2\_along\_exhaustion},
