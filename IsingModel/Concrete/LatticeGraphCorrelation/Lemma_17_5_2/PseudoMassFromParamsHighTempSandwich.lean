@@ -614,6 +614,312 @@ theorem
       (fun β hβ => hβ) hrho g' hcorr hderiv_lim hprofile
 
 set_option maxHeartbeats 2000000 in
+-- Wrapper elaboration reuses the large concrete sandwich package.
+/-- **GJ §17.5 Lemma 17.5.2 concrete high-temperature sandwich from a rate
+comparison, with automatic active range**: derives the interval active-range
+premise from the high-temperature inclusion and keeps the derivative-limit and
+endpoint rate-comparison inputs explicit. -/
+theorem
+    lemma_17_5_2_sandwich_le_high_temp_rate_auto_active
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    {Λ : Ambient.Exhaustion (Fin d → ℤ)}
+    {J : ℝ} (hJ_pos : 0 < J)
+    {x z : Fin d → ℤ} (hxz : x ≠ z)
+    {β₁ β₂ a b : ℝ} (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc :
+      Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (ha : 0 < a) (hab : a ≤ b) (hlt : b * J * ↑(2 * d) < 1)
+    (hβ_mem : ∀ β ∈ Set.Icc β₁ β₂, β ∈ Set.Icc a b)
+    {rho : ℝ} (hrho : 0 < rho) (g' : ℝ → ℝ)
+    (hderiv_lim :
+      TendstoLocallyUniformlyOn
+        (fun n β =>
+          deriv (fun β' =>
+            Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
+        g' Filter.atTop (Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d)))))
+    (hβ₂_pos : 0 < β₂)
+    (hβ₂_lt : β₂ * J * ↑(2 * d) < 1)
+    (hle :
+      pseudoMassFromParamsAtPair hα hrho d Λ
+          (⟨J, 0, β₂⟩ : IsingParams ℝ) x z
+        ≤ -Real.log (β₂ * J * ↑(2 * d))) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      ENNReal.ofReal
+          (pseudoMassFromParamsAtPair hα hrho d Λ
+            (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
+        ≤ latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ∧
+      latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ≤
+        ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho) *
+          ENNReal.ofReal
+            (pseudoMassFromParamsAtPair hα hrho d Λ
+              (⟨J, 0, β₂⟩ : IsingParams ℝ) x z) := by
+  exact
+    lemma_17_5_2_sandwich_of_concrete_pseudoMass_compact_bounds_and_le_high_temp_rate
+      (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
+      (β₁ := β₁) (β₂ := β₂) (a := a) (b := b) (rho := rho)
+      hα hαd hd hJ_pos hxz hβ₁₂ hIcc ha hab hlt hβ_mem hrho g'
+      (lemma_17_5_2_active_range_on_Icc_of_high_temp_pair Λ hJ_pos hxz hIcc)
+      hderiv_lim hβ₂_pos hβ₂_lt hle
+
+set_option maxHeartbeats 2000000 in
+-- Wrapper elaboration reuses the large concrete sandwich package.
+/-- **GJ §17.5 Lemma 17.5.2 interval high-temperature sandwich from a rate
+comparison, with automatic active range**: derives both endpoint scalar
+hypotheses and the interval active-range premise from the high-temperature
+inclusion. -/
+theorem
+    lemma_17_5_2_sandwich_le_high_temp_rate_on_Icc_auto_active
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    {Λ : Ambient.Exhaustion (Fin d → ℤ)}
+    {J : ℝ} (hJ_pos : 0 < J)
+    {x z : Fin d → ℤ} (hxz : x ≠ z)
+    {β₁ β₂ a b : ℝ} (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc :
+      Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (ha : 0 < a) (hab : a ≤ b) (hlt : b * J * ↑(2 * d) < 1)
+    (hβ_mem : ∀ β ∈ Set.Icc β₁ β₂, β ∈ Set.Icc a b)
+    {rho : ℝ} (hrho : 0 < rho) (g' : ℝ → ℝ)
+    (hderiv_lim :
+      TendstoLocallyUniformlyOn
+        (fun n β =>
+          deriv (fun β' =>
+            Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
+        g' Filter.atTop (Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d)))))
+    (hle :
+      pseudoMassFromParamsAtPair hα hrho d Λ
+          (⟨J, 0, β₂⟩ : IsingParams ℝ) x z
+        ≤ -Real.log (β₂ * J * ↑(2 * d))) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      ENNReal.ofReal
+          (pseudoMassFromParamsAtPair hα hrho d Λ
+            (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
+        ≤ latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ∧
+      latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ≤
+        ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho) *
+          ENNReal.ofReal
+            (pseudoMassFromParamsAtPair hα hrho d Λ
+              (⟨J, 0, β₂⟩ : IsingParams ℝ) x z) := by
+  exact
+    lemma_17_5_2_sandwich_of_concrete_pseudoMass_compact_bounds_and_le_high_temp_rate_on_Icc
+      (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
+      (β₁ := β₁) (β₂ := β₂) (a := a) (b := b) (rho := rho)
+      hα hαd hd hJ_pos hxz hβ₁₂ hIcc ha hab hlt hβ_mem hrho g'
+      (lemma_17_5_2_active_range_on_Icc_of_high_temp_pair Λ hJ_pos hxz hIcc)
+      hderiv_lim hle
+
+set_option maxHeartbeats 2000000 in
+-- Wrapper elaboration reuses the large concrete sandwich package.
+/-- **GJ §17.5 Lemma 17.5.2 self-interval high-temperature sandwich from a rate
+comparison, with automatic active range**: specializes the auxiliary compact
+interval to `[β₁, β₂]` and derives active range from the high-temperature
+inclusion. -/
+theorem
+    lemma_17_5_2_sandwich_le_high_temp_rate_on_self_Icc_auto_active
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    {Λ : Ambient.Exhaustion (Fin d → ℤ)}
+    {J : ℝ} (hJ_pos : 0 < J)
+    {x z : Fin d → ℤ} (hxz : x ≠ z)
+    {β₁ β₂ : ℝ} (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc :
+      Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    {rho : ℝ} (hrho : 0 < rho) (g' : ℝ → ℝ)
+    (hderiv_lim :
+      TendstoLocallyUniformlyOn
+        (fun n β =>
+          deriv (fun β' =>
+            Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
+        g' Filter.atTop (Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d)))))
+    (hle :
+      pseudoMassFromParamsAtPair hα hrho d Λ
+          (⟨J, 0, β₂⟩ : IsingParams ℝ) x z
+        ≤ -Real.log (β₂ * J * ↑(2 * d))) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      ENNReal.ofReal
+          (pseudoMassFromParamsAtPair hα hrho d Λ
+            (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
+        ≤ latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ∧
+      latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ≤
+        ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho) *
+          ENNReal.ofReal
+            (pseudoMassFromParamsAtPair hα hrho d Λ
+              (⟨J, 0, β₂⟩ : IsingParams ℝ) x z) := by
+  exact
+    lemma_17_5_2_sandwich_of_concrete_pseudoMass_compact_bounds_and_le_high_temp_rate_on_self_Icc
+      (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
+      (β₁ := β₁) (β₂ := β₂) (rho := rho)
+      hα hαd hd hJ_pos hxz hβ₁₂ hIcc hrho g'
+      (lemma_17_5_2_active_range_on_Icc_of_high_temp_pair Λ hJ_pos hxz hIcc)
+      hderiv_lim hle
+
+set_option maxHeartbeats 2000000 in
+-- Wrapper elaboration reuses the large concrete sandwich package.
+/-- **GJ §17.5 Lemma 17.5.2 concrete high-temperature sandwich from a profile
+lower bound, with automatic active range**: derives the interval active-range
+premise from the high-temperature inclusion and keeps the derivative-limit and
+endpoint profile-lower inputs explicit. -/
+theorem
+    lemma_17_5_2_sandwich_profile_lower_auto_active
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    {Λ : Ambient.Exhaustion (Fin d → ℤ)}
+    {J : ℝ} (hJ_pos : 0 < J)
+    {x z : Fin d → ℤ} (hxz : x ≠ z)
+    {β₁ β₂ a b : ℝ} (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc :
+      Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (ha : 0 < a) (hab : a ≤ b) (hlt : b * J * ↑(2 * d) < 1)
+    (hβ_mem : ∀ β ∈ Set.Icc β₁ β₂, β ∈ Set.Icc a b)
+    {rho : ℝ} (hrho : 0 < rho) (g' : ℝ → ℝ)
+    (hderiv_lim :
+      TendstoLocallyUniformlyOn
+        (fun n β =>
+          deriv (fun β' =>
+            Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
+        g' Filter.atTop (Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d)))))
+    (hβ₂_pos : 0 < β₂)
+    (hβ₂_lt : β₂ * J * ↑(2 * d) < 1)
+    (hprofile :
+      pseudoMassG α rho (-Real.log (β₂ * J * ↑(2 * d))) ≤
+        Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β₂⟩ : IsingParams ℝ) {x, z}) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      ENNReal.ofReal
+          (pseudoMassFromParamsAtPair hα hrho d Λ
+            (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
+        ≤ latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ∧
+      latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ≤
+        ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho) *
+          ENNReal.ofReal
+            (pseudoMassFromParamsAtPair hα hrho d Λ
+              (⟨J, 0, β₂⟩ : IsingParams ℝ) x z) := by
+  exact
+    lemma_17_5_2_sandwich_of_concrete_pseudoMass_compact_bounds_and_profile_lower
+      (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
+      (β₁ := β₁) (β₂ := β₂) (a := a) (b := b) (rho := rho)
+      hα hαd hd hJ_pos hxz hβ₁₂ hIcc ha hab hlt hβ_mem hrho g'
+      (lemma_17_5_2_active_range_on_Icc_of_high_temp_pair Λ hJ_pos hxz hIcc)
+      hderiv_lim hβ₂_pos hβ₂_lt hprofile
+
+set_option maxHeartbeats 2000000 in
+-- Wrapper elaboration reuses the large concrete sandwich package.
+/-- **GJ §17.5 Lemma 17.5.2 interval high-temperature sandwich from a profile
+lower bound, with automatic active range**: derives both endpoint scalar
+hypotheses and the interval active-range premise from the high-temperature
+inclusion. -/
+theorem
+    lemma_17_5_2_sandwich_profile_lower_on_Icc_auto_active
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    {Λ : Ambient.Exhaustion (Fin d → ℤ)}
+    {J : ℝ} (hJ_pos : 0 < J)
+    {x z : Fin d → ℤ} (hxz : x ≠ z)
+    {β₁ β₂ a b : ℝ} (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc :
+      Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (ha : 0 < a) (hab : a ≤ b) (hlt : b * J * ↑(2 * d) < 1)
+    (hβ_mem : ∀ β ∈ Set.Icc β₁ β₂, β ∈ Set.Icc a b)
+    {rho : ℝ} (hrho : 0 < rho) (g' : ℝ → ℝ)
+    (hderiv_lim :
+      TendstoLocallyUniformlyOn
+        (fun n β =>
+          deriv (fun β' =>
+            Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
+        g' Filter.atTop (Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d)))))
+    (hprofile :
+      pseudoMassG α rho (-Real.log (β₂ * J * ↑(2 * d))) ≤
+        Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β₂⟩ : IsingParams ℝ) {x, z}) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      ENNReal.ofReal
+          (pseudoMassFromParamsAtPair hα hrho d Λ
+            (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
+        ≤ latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ∧
+      latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ≤
+        ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho) *
+          ENNReal.ofReal
+            (pseudoMassFromParamsAtPair hα hrho d Λ
+              (⟨J, 0, β₂⟩ : IsingParams ℝ) x z) := by
+  exact
+    lemma_17_5_2_sandwich_of_concrete_pseudoMass_compact_bounds_and_profile_lower_on_Icc
+      (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
+      (β₁ := β₁) (β₂ := β₂) (a := a) (b := b) (rho := rho)
+      hα hαd hd hJ_pos hxz hβ₁₂ hIcc ha hab hlt hβ_mem hrho g'
+      (lemma_17_5_2_active_range_on_Icc_of_high_temp_pair Λ hJ_pos hxz hIcc)
+      hderiv_lim hprofile
+
+set_option maxHeartbeats 2000000 in
+-- Wrapper elaboration reuses the large concrete sandwich package.
+/-- **GJ §17.5 Lemma 17.5.2 self-interval high-temperature sandwich from a
+profile lower bound, with automatic active range**: specializes the auxiliary
+compact interval to `[β₁, β₂]` and derives active range from the
+high-temperature inclusion. -/
+theorem
+    lemma_17_5_2_sandwich_profile_lower_on_self_Icc_auto_active
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    {Λ : Ambient.Exhaustion (Fin d → ℤ)}
+    {J : ℝ} (hJ_pos : 0 < J)
+    {x z : Fin d → ℤ} (hxz : x ≠ z)
+    {β₁ β₂ : ℝ} (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc :
+      Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    {rho : ℝ} (hrho : 0 < rho) (g' : ℝ → ℝ)
+    (hderiv_lim :
+      TendstoLocallyUniformlyOn
+        (fun n β =>
+          deriv (fun β' =>
+            Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
+        g' Filter.atTop (Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d)))))
+    (hprofile :
+      pseudoMassG α rho (-Real.log (β₂ * J * ↑(2 * d))) ≤
+        Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β₂⟩ : IsingParams ℝ) {x, z}) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      ENNReal.ofReal
+          (pseudoMassFromParamsAtPair hα hrho d Λ
+            (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
+        ≤ latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ∧
+      latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ≤
+        ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho) *
+          ENNReal.ofReal
+            (pseudoMassFromParamsAtPair hα hrho d Λ
+              (⟨J, 0, β₂⟩ : IsingParams ℝ) x z) := by
+  exact
+    lemma_17_5_2_sandwich_of_concrete_pseudoMass_compact_bounds_and_profile_lower_on_self_Icc
+      (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
+      (β₁ := β₁) (β₂ := β₂) (rho := rho)
+      hα hαd hd hJ_pos hxz hβ₁₂ hIcc hrho g'
+      (lemma_17_5_2_active_range_on_Icc_of_high_temp_pair Λ hJ_pos hxz hIcc)
+      hderiv_lim hprofile
+
+set_option maxHeartbeats 2000000 in
 -- Repackages the rate-comparison sandwich with the matching named upper-bound
 -- predicate for the same HLS constant.
 /-- **GJ §17.5 Lemma 17.5.2 concrete high-temperature capstone from a rate
