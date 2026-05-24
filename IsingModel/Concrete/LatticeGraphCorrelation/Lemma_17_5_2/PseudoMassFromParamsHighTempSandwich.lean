@@ -1,4 +1,5 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.PseudoMassFromParamsCompactPackage
+import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTemperature
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferBasic
 
 /-!
@@ -30,6 +31,76 @@ theorem lemma_17_5_2_endpoint_high_temp_of_Icc_subset_high_temp
     lemma_17_5_2_interval_endpoints_of_Icc_subset_high_temp
       hd hJ_pos hβ₁₂ hIcc
   exact ⟨hβ₂_pos, hβ₂_lt⟩
+
+/-- **GJ §17.5 Lemma 17.5.2 active range from the high-temperature path lower
+bound**: for distinct lattice sites and `J, β > 0`, the infinite-volume
+two-point function lies in `(0,2)`.  Positivity comes from the translated
+cubic path lower bound `tanh(βJ)^dist ≤ corr_∞`; the upper side is the
+unconditional `corr_∞ < 2`. -/
+theorem lemma_17_5_2_active_range_of_high_temp_pair
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    {J β : ℝ} (hJ_pos : 0 < J) (hβ_pos : 0 < β)
+    {x z : Fin d → ℤ} (hxz : x ≠ z) :
+    Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} ∈ Set.Ioo (0 : ℝ) 2 := by
+  let p : IsingParams ℝ := ⟨J, 0, β⟩
+  have hf : Ferromagnetic p := ⟨hJ_pos.le, le_refl 0, hβ_pos⟩
+  have hsep : z - x ≠ 0 := by
+    intro hzero
+    exact hxz (sub_eq_zero.mp hzero).symm
+  have htanh_pos : 0 < Real.tanh (β * J) :=
+    by
+      rw [Real.tanh_eq_sinh_div_cosh]
+      exact div_pos (Real.sinh_pos_iff.mpr (mul_pos hβ_pos hJ_pos))
+        (Real.cosh_pos _)
+  have hpow_pos :
+      0 < Real.tanh (β * J) ^ IsingModel.latticeDistance d 0 (z - x) :=
+    pow_pos htanh_pos _
+  have hpath :
+      Real.tanh (β * J) ^ IsingModel.latticeDistance d 0 (z - x) ≤
+        Ambient.twoPointFunction d p (z - x) :=
+    twoPointFunction_ge_tanh_betaJ_pow_dist hJ_pos.le hβ_pos hsep
+  have htwo_pos : 0 < Ambient.twoPointFunction d p (z - x) :=
+    hpow_pos.trans_le hpath
+  have hcubic :
+      Ambient.correlationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) p {x, z}
+        = Ambient.twoPointFunction d p (z - x) :=
+    correlationInfinite_latticeGraph_pair_eq_twoPointFunction d p hf x z
+  have hpos_cubic :
+      0 <
+        Ambient.correlationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) p {x, z} := by
+    rwa [hcubic]
+  have hindep :
+      Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ p {x, z} =
+        Ambient.correlationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) p {x, z} :=
+    correlationInfinite_indep_exhaustion (IsingModel.latticeGraph d)
+      Λ (Ambient.cubicExhaustion d) p hf {x, z}
+  have hpos :
+      0 < Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ p {x, z} := by
+    rwa [hindep]
+  exact correlationInfinite_mem_Ioo_zero_two_of_pos
+    (IsingModel.latticeGraph d) Λ p hf {x, z} hpos
+
+/-- **GJ §17.5 Lemma 17.5.2 interval active range from a high-temperature
+inclusion**: if `Icc β₁ β₂` lies in the open high-temperature interval, then
+the infinite two-point correlation for every `β ∈ Icc β₁ β₂` lies in `(0,2)`.
+-/
+theorem lemma_17_5_2_active_range_on_Icc_of_high_temp_pair
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    {J : ℝ} (hJ_pos : 0 < J)
+    {x z : Fin d → ℤ} (hxz : x ≠ z)
+    {β₁ β₂ : ℝ}
+    (hIcc :
+      Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d)))) :
+    ∀ β ∈ Set.Icc β₁ β₂,
+      Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} ∈ Set.Ioo (0 : ℝ) 2 := by
+  intro β hβ
+  exact lemma_17_5_2_active_range_of_high_temp_pair
+    Λ hJ_pos (hIcc hβ).1 hxz
 
 set_option maxHeartbeats 2000000 in
 -- The statement composes the concrete upper package with the lower
@@ -721,6 +792,201 @@ theorem
       (β₁ := β₁) (β₂ := β₂) (a := β₁) (b := β₂) (rho := rho)
       hα hαd hd hJ_pos hxz hβ₁₂ hIcc hβ₁_pos hβ₁₂ hβ₂_lt
       (fun β hβ => hβ) hrho g' hcorr hderiv_lim hprofile
+
+/-- **GJ §17.5 Lemma 17.5.2 interval capstone from a rate comparison, with
+automatic active range**: the high-temperature interval inclusion supplies the
+active-range hypothesis for the concrete pseudo-mass profile, leaving only the
+derivative-limit and endpoint rate-comparison inputs. -/
+theorem lemma_17_5_2_capstone_le_high_temp_rate_on_Icc_auto_active
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    {Λ : Ambient.Exhaustion (Fin d → ℤ)}
+    {J : ℝ} (hJ_pos : 0 < J)
+    {x z : Fin d → ℤ} (hxz : x ≠ z)
+    {β₁ β₂ a b : ℝ} (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc :
+      Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (ha : 0 < a) (hab : a ≤ b) (hlt : b * J * ↑(2 * d) < 1)
+    (hβ_mem : ∀ β ∈ Set.Icc β₁ β₂, β ∈ Set.Icc a b)
+    {rho : ℝ} (hrho : 0 < rho) (g' : ℝ → ℝ)
+    (hderiv_lim :
+      TendstoLocallyUniformlyOn
+        (fun n β =>
+          deriv (fun β' =>
+            Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
+        g' Filter.atTop (Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d)))))
+    (hle :
+      pseudoMassFromParamsAtPair hα hrho d Λ
+          (⟨J, 0, β₂⟩ : IsingParams ℝ) x z
+        ≤ -Real.log (β₂ * J * ↑(2 * d))) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      Lemma_17_5_2_UpperBound hα hrho Λ J β₂ x z
+        (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho)) ∧
+      ENNReal.ofReal
+          (pseudoMassFromParamsAtPair hα hrho d Λ
+            (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
+        ≤ latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ∧
+      latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ≤
+        ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho) *
+          ENNReal.ofReal
+            (pseudoMassFromParamsAtPair hα hrho d Λ
+              (⟨J, 0, β₂⟩ : IsingParams ℝ) x z) := by
+  exact
+    lemma_17_5_2_capstone_of_concrete_pseudoMass_compact_bounds_and_le_high_temp_rate_on_Icc
+      (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
+      (β₁ := β₁) (β₂ := β₂) (a := a) (b := b) (rho := rho)
+      hα hαd hd hJ_pos hxz hβ₁₂ hIcc ha hab hlt hβ_mem hrho g'
+      (lemma_17_5_2_active_range_on_Icc_of_high_temp_pair Λ hJ_pos hxz hIcc)
+      hderiv_lim hle
+
+/-- **GJ §17.5 Lemma 17.5.2 self-interval capstone from a rate comparison,
+with automatic active range**: specializes the auxiliary compact interval to
+`[β₁, β₂]` and derives active range from the high-temperature inclusion. -/
+theorem lemma_17_5_2_capstone_le_high_temp_rate_on_self_Icc_auto_active
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    {Λ : Ambient.Exhaustion (Fin d → ℤ)}
+    {J : ℝ} (hJ_pos : 0 < J)
+    {x z : Fin d → ℤ} (hxz : x ≠ z)
+    {β₁ β₂ : ℝ} (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc :
+      Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    {rho : ℝ} (hrho : 0 < rho) (g' : ℝ → ℝ)
+    (hderiv_lim :
+      TendstoLocallyUniformlyOn
+        (fun n β =>
+          deriv (fun β' =>
+            Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
+        g' Filter.atTop (Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d)))))
+    (hle :
+      pseudoMassFromParamsAtPair hα hrho d Λ
+          (⟨J, 0, β₂⟩ : IsingParams ℝ) x z
+        ≤ -Real.log (β₂ * J * ↑(2 * d))) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      Lemma_17_5_2_UpperBound hα hrho Λ J β₂ x z
+        (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho)) ∧
+      ENNReal.ofReal
+          (pseudoMassFromParamsAtPair hα hrho d Λ
+            (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
+        ≤ latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ∧
+      latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ≤
+        ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho) *
+          ENNReal.ofReal
+            (pseudoMassFromParamsAtPair hα hrho d Λ
+              (⟨J, 0, β₂⟩ : IsingParams ℝ) x z) := by
+  exact
+    lemma_17_5_2_capstone_of_concrete_pseudoMass_compact_bounds_and_le_high_temp_rate_on_self_Icc
+      (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
+      (β₁ := β₁) (β₂ := β₂) (rho := rho)
+      hα hαd hd hJ_pos hxz hβ₁₂ hIcc hrho g'
+      (lemma_17_5_2_active_range_on_Icc_of_high_temp_pair Λ hJ_pos hxz hIcc)
+      hderiv_lim hle
+
+/-- **GJ §17.5 Lemma 17.5.2 interval capstone from a profile lower bound, with
+automatic active range**: active range is obtained from the high-temperature
+path lower bound, and the endpoint profile lower bound supplies the lower
+validating decay rate. -/
+theorem lemma_17_5_2_capstone_profile_lower_on_Icc_auto_active
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    {Λ : Ambient.Exhaustion (Fin d → ℤ)}
+    {J : ℝ} (hJ_pos : 0 < J)
+    {x z : Fin d → ℤ} (hxz : x ≠ z)
+    {β₁ β₂ a b : ℝ} (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc :
+      Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (ha : 0 < a) (hab : a ≤ b) (hlt : b * J * ↑(2 * d) < 1)
+    (hβ_mem : ∀ β ∈ Set.Icc β₁ β₂, β ∈ Set.Icc a b)
+    {rho : ℝ} (hrho : 0 < rho) (g' : ℝ → ℝ)
+    (hderiv_lim :
+      TendstoLocallyUniformlyOn
+        (fun n β =>
+          deriv (fun β' =>
+            Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
+        g' Filter.atTop (Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d)))))
+    (hprofile :
+      pseudoMassG α rho (-Real.log (β₂ * J * ↑(2 * d))) ≤
+        Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β₂⟩ : IsingParams ℝ) {x, z}) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      Lemma_17_5_2_UpperBound hα hrho Λ J β₂ x z
+        (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho)) ∧
+      ENNReal.ofReal
+          (pseudoMassFromParamsAtPair hα hrho d Λ
+            (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
+        ≤ latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ∧
+      latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ≤
+        ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho) *
+          ENNReal.ofReal
+            (pseudoMassFromParamsAtPair hα hrho d Λ
+              (⟨J, 0, β₂⟩ : IsingParams ℝ) x z) := by
+  exact
+    lemma_17_5_2_capstone_of_concrete_pseudoMass_compact_bounds_and_profile_lower_on_Icc
+      (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
+      (β₁ := β₁) (β₂ := β₂) (a := a) (b := b) (rho := rho)
+      hα hαd hd hJ_pos hxz hβ₁₂ hIcc ha hab hlt hβ_mem hrho g'
+      (lemma_17_5_2_active_range_on_Icc_of_high_temp_pair Λ hJ_pos hxz hIcc)
+      hderiv_lim hprofile
+
+/-- **GJ §17.5 Lemma 17.5.2 self-interval capstone from a profile lower
+bound, with automatic active range**: derives active range and the auxiliary
+compact interval hypotheses from the same high-temperature interval inclusion.
+-/
+theorem lemma_17_5_2_capstone_profile_lower_on_self_Icc_auto_active
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    {Λ : Ambient.Exhaustion (Fin d → ℤ)}
+    {J : ℝ} (hJ_pos : 0 < J)
+    {x z : Fin d → ℤ} (hxz : x ≠ z)
+    {β₁ β₂ : ℝ} (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc :
+      Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    {rho : ℝ} (hrho : 0 < rho) (g' : ℝ → ℝ)
+    (hderiv_lim :
+      TendstoLocallyUniformlyOn
+        (fun n β =>
+          deriv (fun β' =>
+            Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
+        g' Filter.atTop (Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d)))))
+    (hprofile :
+      pseudoMassG α rho (-Real.log (β₂ * J * ↑(2 * d))) ≤
+        Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β₂⟩ : IsingParams ℝ) {x, z}) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      Lemma_17_5_2_UpperBound hα hrho Λ J β₂ x z
+        (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho)) ∧
+      ENNReal.ofReal
+          (pseudoMassFromParamsAtPair hα hrho d Λ
+            (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
+        ≤ latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ∧
+      latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ≤
+        ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho) *
+          ENNReal.ofReal
+            (pseudoMassFromParamsAtPair hα hrho d Λ
+              (⟨J, 0, β₂⟩ : IsingParams ℝ) x z) := by
+  exact
+    lemma_17_5_2_capstone_of_concrete_pseudoMass_compact_bounds_and_profile_lower_on_self_Icc
+      (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
+      (β₁ := β₁) (β₂ := β₂) (rho := rho)
+      hα hαd hd hJ_pos hxz hβ₁₂ hIcc hrho g'
+      (lemma_17_5_2_active_range_on_Icc_of_high_temp_pair Λ hJ_pos hxz hIcc)
+      hderiv_lim hprofile
 
 end Ambient
 
