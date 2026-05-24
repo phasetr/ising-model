@@ -103,18 +103,20 @@ theorem pseudoMass_deriv_abs_le
     (hh : HasDerivAt h h' β)
     (hc : HasDerivAt c c' β)
     (hβ : 0 ≤ h β)
-    (hg_eq : ∀ β', pseudoMassG α r (h β') = c β')
+    (hg_eq : (fun β' => pseudoMassG α r (h β')) =ᶠ[nhds β] c)
     (hm_pos : 0 < h β)
     (hc_pos : 0 < c β) :
     |h'| ≤ |c'| / (r * c β) := by
   set g' := (-2 * r * Real.exp (-(h β * r)) * (1 + (h β * r) ^ α) -
       2 * Real.exp (-(h β * r)) * (↑α * (h β * r) ^ (α - 1) * r)) /
      (1 + (h β * r) ^ α) ^ 2 with hg'_def
-  have hform : h' = c' / g' := pseudoMass_deriv_formula α hr hh hc hβ hg_eq hm_pos
+  have hform : h' = c' / g' :=
+    pseudoMass_deriv_formula α hr hh hc hβ hg_eq hm_pos
   have hg'_neg : g' < 0 := pseudoMassG_deriv_neg α hm_pos hr
   have hge : r * c β ≤ |g'| := by
     have h1 := pseudoMassG_deriv_abs_ge α hβ hr
-    rwa [hg_eq β] at h1
+    have hg_at : pseudoMassG α r (h β) = c β := hg_eq.eq_of_nhds
+    rwa [hg_at] at h1
   have hrc_pos : 0 < r * c β := mul_pos hr hc_pos
   have hg'_pos : 0 < |g'| := lt_of_lt_of_le hrc_pos hge
   rw [hform, abs_div]
@@ -136,7 +138,7 @@ theorem pseudoMass_power_deriv_le
     (hh : HasDerivAt h h' β)
     (hc : HasDerivAt c c' β)
     (hβ : 0 ≤ h β)
-    (hg_eq : ∀ β', pseudoMassG α r (h β') = c β')
+    (hg_eq : (fun β' => pseudoMassG α r (h β')) =ᶠ[nhds β] c)
     (hm_pos : 0 < h β)
     (hc_pos : 0 < c β)
     (hc_der : |c'| ≤ K * c β / (h β) ^ (2 * α)) :
@@ -173,7 +175,7 @@ theorem pseudoMass_pow_succ_deriv_bound
     (hh : HasDerivAt h h' β)
     (hc : HasDerivAt c c' β)
     (hβ : 0 ≤ h β)
-    (hg_eq : ∀ β', pseudoMassG α r (h β') = c β')
+    (hg_eq : (fun β' => pseudoMassG α r (h β')) =ᶠ[nhds β] c)
     (hm_pos : 0 < h β)
     (hc_pos : 0 < c β)
     (hc_der : |c'| ≤ K * c β / (h β) ^ (2 * α)) :
@@ -195,7 +197,8 @@ theorem pseudoMass_pow_succ_deriv_bound
     _ = ↑(2 * α + 1) * K / r := by ring
 
 /-- **GJ §17.5 Theorem 17.5.1 (abstract Lipschitz)** (Step 134):
-`|(h β₂)^(2α+1) − (h β₁)^(2α+1)| ≤ ↑(2α+1)·K/r · (β₂ − β₁)` for β₁ ≤ β₂.
+`|(h β₂)^(2α+1) − (h β₁)^(2α+1)| ≤ ↑(2α+1)·K/r · (β₂ − β₁)`
+for `β₁ ≤ β₂`.
 
 This is the abstract Lipschitz continuity of GJ §17.5 Theorem 17.5.1 (p.312):
 `m⁻(σ)^{2α+1}` is Lipschitz in σ with constant `(2α+1)·K/r`, uniform in Λ.
@@ -211,7 +214,8 @@ theorem pseudoMass_pow_succ_lipschitz
     (hh_diff : ∀ β' ∈ Set.Icc β₁ β₂, HasDerivAt h (deriv h β') β')
     (hc_diff : ∀ β' ∈ Set.Icc β₁ β₂, HasDerivAt c (deriv c β') β')
     (hβ_nn : ∀ β' ∈ Set.Icc β₁ β₂, 0 ≤ h β')
-    (hg_eq : ∀ β', pseudoMassG α r (h β') = c β')
+    (hg_eq : ∀ β' ∈ Set.Icc β₁ β₂,
+      (fun γ => pseudoMassG α r (h γ)) =ᶠ[nhds β'] c)
     (hm_pos : ∀ β' ∈ Set.Icc β₁ β₂, 0 < h β')
     (hc_pos : ∀ β' ∈ Set.Icc β₁ β₂, 0 < c β')
     (hc_der : ∀ β' ∈ Set.Icc β₁ β₂,
@@ -232,7 +236,7 @@ theorem pseudoMass_pow_succ_lipschitz
       have hβ'_mem : β' ∈ Set.Icc β₁ β₂ := Set.Ico_subset_Icc_self hβ'
       have h1 := pseudoMass_power_deriv_le α hr
         (hh_diff β' hβ'_mem) (hc_diff β' hβ'_mem)
-        (hβ_nn β' hβ'_mem) hg_eq
+        (hβ_nn β' hβ'_mem) (hg_eq β' hβ'_mem)
         (hm_pos β' hβ'_mem) (hc_pos β' hβ'_mem) (hc_der β' hβ'_mem)
       have hpow_pos : (0 : ℝ) < ↑(2 * α + 1) := by exact_mod_cast Nat.succ_pos (2 * α)
       have hm_pow_pos : 0 < (h β') ^ (2 * α) := pow_pos (hm_pos β' hβ'_mem) _
