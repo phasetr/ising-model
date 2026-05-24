@@ -8123,6 +8123,12 @@ packages with the concrete \texttt{pseudoMassFromParamsAtPair} beta profile.
 The active-range hypothesis for the infinite correlation provides the
 pseudo-mass positivity and local defining equations, while the derivative-limit
 hypothesis provides the MVT-ready derivative input.
+The helper
+\texttt{lemma\_17\_5\_2\_interval\_endpoints\_of\_Icc\_subset\_high\_temp}
+extracts \(0<\beta_1\), \(0<\beta_2\), and \(\beta_2J\,2d<1\) from
+\([\beta_1,\beta_2]\subset(0,(J\,2d)^{-1})\).  Consequently the
+\texttt{\_on\_self\_Icc} compact-package variants take the closed beta
+interval itself as the auxiliary compact interval \(a=\beta_1\), \(b=\beta_2\).
 
 The high-temperature sandwich package removes the lower-side decay premise in
 two endpoint forms.  The theorem
@@ -8148,6 +8154,9 @@ extracts \(0<\beta_2\) and \(\beta_2J\,2d<1\) from the interval inclusion
 \([\beta_1,\beta_2]\subset(0,(J\,2d)^{-1})\).  The \texttt{\_on\_Icc}
 variants of the two sandwich wrappers use this helper, so callers do not need
 to restate those endpoint scalar hypotheses separately.
+The corresponding \texttt{\_on\_self\_Icc} variants also use the beta interval
+itself as the compact auxiliary interval, removing the remaining \(a,b\) and
+membership-shell hypotheses from the high-temperature sandwich callers.
 
 \paragraph{\S5.4 Prop 5.4.2 infinite-volume Peierls bound (liminf form)
 (PR~\#1643).} Adds the genuine infinite-volume lift of GJ Prop 5.4.2:

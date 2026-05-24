@@ -18,6 +18,29 @@ open Set
 
 namespace Ambient
 
+/-- **Endpoint scalar bounds from a high-temperature interval inclusion**:
+if the closed beta interval is contained in the high-temperature region, then
+both endpoints are positive and the right endpoint satisfies `β₂ * J * 2d < 1`.
+-/
+theorem lemma_17_5_2_interval_endpoints_of_Icc_subset_high_temp
+    {d : ℕ} (hd : 1 ≤ d) {J β₁ β₂ : ℝ} (hJ_pos : 0 < J)
+    (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc :
+      Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d)))) :
+    0 < β₁ ∧ 0 < β₂ ∧ β₂ * J * ↑(2 * d) < 1 := by
+  have hβ₁_open : β₁ ∈ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) :=
+    hIcc (Set.left_mem_Icc.mpr hβ₁₂)
+  have hβ₂_open : β₂ ∈ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) :=
+    hIcc (Set.right_mem_Icc.mpr hβ₁₂)
+  refine ⟨hβ₁_open.1, hβ₂_open.1, ?_⟩
+  have h2d_pos : 0 < (↑(2 * d) : ℝ) := by
+    have h2d_nat : 0 < 2 * d := Nat.mul_pos (by norm_num) hd
+    exact_mod_cast h2d_nat
+  have hJ2d_pos : 0 < J * ↑(2 * d) := mul_pos hJ_pos h2d_pos
+  have hlt : β₂ * (J * ↑(2 * d)) < 1 := by
+    exact (lt_div_iff₀ hJ2d_pos).mp hβ₂_open.2
+  simpa [mul_assoc] using hlt
+
 /-- **GJ §17.5 Lemma 17.5.2 concrete pseudo-mass compact ratio bounds**:
 for the concrete `pseudoMassFromParamsAtPair` beta profile, active-range
 membership of the infinite correlation supplies pseudo-mass continuity and
@@ -173,6 +196,50 @@ theorem lemma_17_5_2_upper_bound_of_concrete_pseudoMass_compact_ratio_bounds
       hh_diff hh_cont hh_nonneg hg_eq hh_pos hc_pos hm_pos hderiv_lim
 
 set_option maxHeartbeats 2000000 in
+-- Specializes the auxiliary compact interval to the beta interval itself.
+/-- **GJ §17.5 Lemma 17.5.2 concrete upper bound on its own beta interval**:
+the high-temperature interval inclusion supplies the endpoint and auxiliary
+interval scalar hypotheses for
+`lemma_17_5_2_upper_bound_of_concrete_pseudoMass_compact_ratio_bounds` with
+`a = β₁` and `b = β₂`. -/
+theorem
+    lemma_17_5_2_upper_bound_of_concrete_pseudoMass_compact_ratio_bounds_on_self_Icc
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    {J : ℝ} (hJ_pos : 0 < J)
+    {x z : Fin d → ℤ} (hxz : x ≠ z)
+    {β₁ β₂ : ℝ} (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc :
+      Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    {rho : ℝ} (hrho : 0 < rho) (g' : ℝ → ℝ)
+    (hcorr : ∀ β ∈ Set.Icc β₁ β₂,
+      Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} ∈ Set.Ioo (0 : ℝ) 2)
+    (hderiv_lim :
+      TendstoLocallyUniformlyOn
+        (fun n β =>
+          deriv (fun β' =>
+            Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
+        g' Filter.atTop (Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      Lemma_17_5_2_UpperBound hα hrho Λ J β₂ x z
+        (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho)) := by
+  obtain ⟨hβ₁_pos, _hβ₂_pos, hβ₂_lt⟩ :=
+    lemma_17_5_2_interval_endpoints_of_Icc_subset_high_temp
+      hd hJ_pos hβ₁₂ hIcc
+  exact
+    lemma_17_5_2_upper_bound_of_concrete_pseudoMass_compact_ratio_bounds
+      (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
+      (β₁ := β₁) (β₂ := β₂) (a := β₁) (b := β₂) (rho := rho)
+      hα hαd hd hJ_pos hxz hβ₁₂ hIcc hβ₁_pos hβ₁₂ hβ₂_lt
+      (fun β hβ => hβ) hrho g' hcorr hderiv_lim
+
+set_option maxHeartbeats 2000000 in
 -- Reuses the concrete upper-bound wrapper and then adds the validating-decay
 -- lower side.
 /-- **GJ §17.5 Lemma 17.5.2 sandwich for the concrete pseudo-mass profile**:
@@ -222,6 +289,56 @@ theorem lemma_17_5_2_sandwich_of_concrete_pseudoMass_compact_ratio_bounds
       (β₁ := β₁) (β₂ := β₂) (a := a) (b := b) (rho := rho)
       hα hαd hd hJ_pos hxz hβ₁₂ hIcc ha hab hlt hβ_mem hrho g'
       hcorr hderiv_lim
+  exact ⟨K, hK, hK_conv,
+    lemma_17_5_2_sandwich_of_decay_and_upper hα hrho hdecay hupper⟩
+
+set_option maxHeartbeats 2000000 in
+-- Specializes the auxiliary compact interval to the beta interval itself.
+/-- **GJ §17.5 Lemma 17.5.2 concrete sandwich on its own beta interval**:
+the high-temperature interval inclusion supplies the auxiliary interval scalar
+hypotheses for the compact sandwich wrapper with `a = β₁` and `b = β₂`. -/
+theorem
+    lemma_17_5_2_sandwich_of_concrete_pseudoMass_compact_ratio_bounds_on_self_Icc
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    {Λ : Ambient.Exhaustion (Fin d → ℤ)}
+    {J : ℝ} (hJ_pos : 0 < J)
+    {x z : Fin d → ℤ} (hxz : x ≠ z)
+    {β₁ β₂ : ℝ} (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc :
+      Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    {rho : ℝ} (hrho : 0 < rho) (g' : ℝ → ℝ)
+    (hcorr : ∀ β ∈ Set.Icc β₁ β₂,
+      Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} ∈ Set.Ioo (0 : ℝ) 2)
+    (hderiv_lim :
+      TendstoLocallyUniformlyOn
+        (fun n β =>
+          deriv (fun β' =>
+            Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
+        g' Filter.atTop (Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d)))))
+    (hdecay : HasExponentialDecay d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ)
+      (pseudoMassFromParamsAtPair hα hrho d Λ
+        (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      ENNReal.ofReal
+          (pseudoMassFromParamsAtPair hα hrho d Λ
+            (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
+        ≤ latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ∧
+      latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ≤
+        ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho) *
+          ENNReal.ofReal
+            (pseudoMassFromParamsAtPair hα hrho d Λ
+              (⟨J, 0, β₂⟩ : IsingParams ℝ) x z) := by
+  obtain ⟨K, hK, hK_conv, hupper⟩ :=
+    lemma_17_5_2_upper_bound_of_concrete_pseudoMass_compact_ratio_bounds_on_self_Icc
+      (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
+      (β₁ := β₁) (β₂ := β₂) (rho := rho)
+      hα hαd hd hJ_pos hxz hβ₁₂ hIcc hrho g' hcorr hderiv_lim
   exact ⟨K, hK, hK_conv,
     lemma_17_5_2_sandwich_of_decay_and_upper hα hrho hdecay hupper⟩
 
