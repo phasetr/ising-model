@@ -1,5 +1,4 @@
-import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.InfiniteDerivativeLimit
-import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.Lipschitz
+import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.FiniteHLSLipschitzPackage
 
 /-!
 # GJ §17.5 Lemma 17.5.2 capstone

@@ -7907,6 +7907,29 @@ This is the exact shape needed before applying the infinite HLS Lipschitz
 bridge, whose premise asks for the denominator comparison throughout
 \([\beta_1,\beta_2]\).
 
+The finite-HLS-to-infinite-Lipschitz package then composes the interval
+handoff with the existing pseudo-mass MVT theorem.  Under \(2\alpha>d\), the
+theorem
+\texttt{lemma\_17\_5\_2\_infinite\_pseudoMass\_pow\_succ\_lipschitz\_of\_uniform\_finite\_deriv\_bounds}
+chooses the HLS convolution constant \(K\).  For that same \(K\), locally
+uniform convergence of the finite derivative profiles plus one eventual
+finite-stage HLS derivative bound uniform over \([\beta_1,\beta_2]\) gives
+\[
+  |h(\beta_2)^{2\alpha+1}-h(\beta_1)^{2\alpha+1}|
+  \le \frac{(2\alpha+1)K}{\rho}(\beta_2-\beta_1).
+\]
+Thus the remaining book-level upper-bound input is no longer an unstructured
+finite-to-infinite passage: it is the named all-admissible-rate bridge from
+this infinite HLS Lipschitz estimate to the \texttt{latticeMass} upper-bound
+predicate.  The companion theorems
+\texttt{lemma\_17\_5\_2\_upper\_bound\_of\_finite\_hls\_lipschitz\_package}
+and
+\texttt{lemma\_17\_5\_2\_sandwich\_of\_finite\_hls\_lipschitz\_package}
+perform that final conditional assembly: given the named all-rate bridge (and,
+for the sandwich, the lower validating pseudo-mass decay input), the same
+finite-HLS package closes the upper-bound predicate and the conditional
+two-sided Lemma~17.5.2 statement for the selected HLS constant.
+
 \paragraph{\S5.4 Prop 5.4.2 infinite-volume Peierls bound (liminf form)
 (PR~\#1643).} Adds the genuine infinite-volume lift of GJ Prop 5.4.2:
 under the per-stage hypotheses of \texttt{prop\_5\_4\_2\_along\_exhaustion},
