@@ -41,11 +41,12 @@ theorem lemma_17_5_2_beta_pseudoMass_pow_succ_lipschitz_of_high_temp_bound
     {h : ℝ → ℝ}
     (hh_diff : ∀ β' ∈ Set.Icc β₁ β₂, HasDerivAt h (deriv h β') β')
     (hh_nonneg : ∀ β' ∈ Set.Icc β₁ β₂, 0 ≤ h β')
-    (hg_eq : ∀ β',
-      pseudoMassG α rho (h β') =
-        IsingModel.correlation
-          (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
-          (⟨J, 0, β'⟩ : IsingParams ℝ) {r, s})
+    (hg_eq : ∀ β' ∈ Set.Icc β₁ β₂,
+      (fun γ => pseudoMassG α rho (h γ)) =ᶠ[nhds β']
+        (fun γ =>
+          IsingModel.correlation
+            (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+            (⟨J, 0, γ⟩ : IsingParams ℝ) {r, s}))
     (hh_pos : ∀ β' ∈ Set.Icc β₁ β₂, 0 < h β')
     (hc_pos : ∀ β' ∈ Set.Icc β₁ β₂,
       0 <
@@ -79,7 +80,7 @@ theorem lemma_17_5_2_beta_pseudoMass_pow_succ_lipschitz_of_high_temp_bound
         lemma_17_5_2_beta_pseudoMass_power_deriv_le_of_high_temp_bound
           Λ J hJ a b ha hab hlt n r s hrs β' (hβ_mem β' hβ'_mem)
           (α := α) (rho := rho) (K := K) hrho
-          (hh_diff β' hβ'_mem) (hh_nonneg β' hβ'_mem) hg_eq
+          (hh_diff β' hβ'_mem) (hh_nonneg β' hβ'_mem) (hg_eq β' hβ'_mem)
           (hh_pos β' hβ'_mem) (hc_pos β' hβ'_mem) (hcomp β' hβ'_mem)
       have hpow_pos : (0 : ℝ) < ↑(2 * α + 1) := by
         exact_mod_cast Nat.succ_pos (2 * α)
@@ -117,11 +118,12 @@ theorem lemma_17_5_2_beta_pseudoMass_pow_succ_lipschitz_of_hls_constant
     {h : ℝ → ℝ}
     (hh_diff : ∀ β' ∈ Set.Icc β₁ β₂, HasDerivAt h (deriv h β') β')
     (hh_nonneg : ∀ β' ∈ Set.Icc β₁ β₂, 0 ≤ h β')
-    (hg_eq : ∀ β',
-      pseudoMassG α rho (h β') =
-        IsingModel.correlation
-          (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
-          (⟨J, 0, β'⟩ : IsingParams ℝ) {r, s})
+    (hg_eq : ∀ β' ∈ Set.Icc β₁ β₂,
+      (fun γ => pseudoMassG α rho (h γ)) =ᶠ[nhds β']
+        (fun γ =>
+          IsingModel.correlation
+            (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+            (⟨J, 0, γ⟩ : IsingParams ℝ) {r, s}))
     (hh_pos : ∀ β' ∈ Set.Icc β₁ β₂, 0 < h β')
     (hc_pos : ∀ β' ∈ Set.Icc β₁ β₂,
       0 <
@@ -174,10 +176,11 @@ theorem lemma_17_5_2_infinite_pseudoMass_pow_succ_deriv_bound_of_hls_constant
         Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
           (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z}) β) β)
     (hh_nonneg : 0 ≤ h β)
-    (hg_eq : ∀ β',
-      pseudoMassG α rho (h β') =
-        Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
-          (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z})
+    (hg_eq :
+      (fun β' => pseudoMassG α rho (h β')) =ᶠ[nhds β]
+        (fun β' =>
+          Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z}))
     (hh_pos : 0 < h β)
     (hc_pos :
       0 <
@@ -227,10 +230,11 @@ theorem lemma_17_5_2_infinite_pseudoMass_pow_succ_lipschitz_of_hls_constant
           Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
             (⟨J, 0, β''⟩ : IsingParams ℝ) {x, z}) β') β')
     (hh_nonneg : ∀ β' ∈ Set.Icc β₁ β₂, 0 ≤ h β')
-    (hg_eq : ∀ β',
-      pseudoMassG α rho (h β') =
-        Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
-          (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z})
+    (hg_eq : ∀ β' ∈ Set.Icc β₁ β₂,
+      (fun γ => pseudoMassG α rho (h γ)) =ᶠ[nhds β']
+        (fun γ =>
+          Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, γ⟩ : IsingParams ℝ) {x, z}))
     (hh_pos : ∀ β' ∈ Set.Icc β₁ β₂, 0 < h β')
     (hc_pos : ∀ β' ∈ Set.Icc β₁ β₂,
       0 <

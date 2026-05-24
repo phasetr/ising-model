@@ -100,9 +100,10 @@ theorem pseudoMass_eq_iff {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) {c 
 
 /-! ## Implicit differentiation of the defining equation -/
 
-/-- If `h` satisfies the pseudo-mass defining equation `pseudoMassG α r (h β) = c β`
-and is differentiable at `β`, then its derivative equals `c'(β) / g'(h(β))`,
-where `g' = d/dt pseudoMassG α r`.
+/-- If `h` satisfies the pseudo-mass defining equation
+`pseudoMassG α r (h ·) = c` locally near `β` and is differentiable at `β`,
+then its derivative equals `c'(β) / g'(h(β))`, where
+`g' = d/dt pseudoMassG α r`.
 This is the key implicit differentiation step for the GJ §17.5 Lipschitz estimate. -/
 theorem pseudoMass_deriv_formula
     (α : ℕ) {r : ℝ} (hr : 0 < r)
@@ -110,7 +111,7 @@ theorem pseudoMass_deriv_formula
     (hh : HasDerivAt h h' β)
     (hc : HasDerivAt c c' β)
     (hβ : 0 ≤ h β)
-    (hg_eq : ∀ β, pseudoMassG α r (h β) = c β)
+    (hg_eq : (fun β' => pseudoMassG α r (h β')) =ᶠ[nhds β] c)
     (hg' : 0 < h β) :
     h' = c' / ((-2 * r * Real.exp (-(h β * r)) * (1 + (h β * r) ^ α) -
         2 * Real.exp (-(h β * r)) * (↑α * (h β * r) ^ (α - 1) * r)) /
@@ -126,10 +127,9 @@ theorem pseudoMass_deriv_formula
     pseudoMassG_hasDerivAt α hβ hr
   -- Chain rule: HasDerivAt (pseudoMassG α r ∘ h) (g' * h') β
   have hcomp := hgd.comp β hh
-  -- But pseudoMassG α r ∘ h = c (by hg_eq)
+  -- But `pseudoMassG α r ∘ h` agrees with `c` near `β` (by `hg_eq`).
   have hcomp' : HasDerivAt c (g' * h') β := by
-    have : (pseudoMassG α r ∘ h) = c := funext hg_eq
-    exact this ▸ hcomp
+    exact hcomp.congr_of_eventuallyEq hg_eq.symm
   -- By uniqueness of derivatives: g' * h' = c'
   have huniq : g' * h' = c' := hcomp'.unique hc
   -- Conclude h' = c' / g'
@@ -154,8 +154,7 @@ theorem pseudoMass_deriv_formula_corollary
         (↑α * (pseudoMass hα hr hc_mem * r) ^ (α - 1) * r)) /
        (1 + (pseudoMass hα hr hc_mem * r) ^ α) ^ 2) := by
   apply pseudoMass_deriv_formula α hr hm_diff hc (pseudoMass_nonneg hα hr hc_mem) _ hm_pos
-  intro β'
-  exact pseudoMass_spec hα hr (hc_fam β')
+  exact Filter.Eventually.of_forall fun β' => pseudoMass_spec hα hr (hc_fam β')
 
 /-! ## Derivation lemma for the Lipschitz estimate (Step 117f partial) -/
 
