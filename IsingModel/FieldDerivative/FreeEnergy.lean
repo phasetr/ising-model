@@ -1,4 +1,5 @@
-import IsingModel.FieldDerivative.CorrelationRegularity
+import IsingModel.FieldDerivative.Basic
+import IsingModel.FreeEnergy.Basic
 
 /-!
 # Field derivative of free energy

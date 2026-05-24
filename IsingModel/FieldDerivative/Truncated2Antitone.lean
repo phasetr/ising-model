@@ -1,4 +1,5 @@
 import IsingModel.FieldDerivative.CorrelationMonotonicity
+import IsingModel.Inequalities.GHS.GHSInequality
 
 /-!
 # Field antitonicity of truncated two-point functions

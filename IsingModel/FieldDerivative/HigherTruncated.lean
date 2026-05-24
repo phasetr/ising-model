@@ -1,4 +1,5 @@
-import IsingModel.FieldDerivative.FreeEnergy
+import IsingModel.FieldDerivative.CorrelationRegularity
+import IsingModel.Inequalities.GHS.Truncated4
 
 /-!
 # Field regularity for higher truncated correlations

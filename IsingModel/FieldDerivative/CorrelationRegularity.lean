@@ -1,4 +1,5 @@
-import IsingModel.FieldDerivative.Truncated2Antitone
+import IsingModel.FieldDerivative.Basic
+import IsingModel.Inequalities.GHS.TruncatedDefs
 
 /-!
 # Field regularity for correlations and truncated two-point functions

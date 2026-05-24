@@ -1,4 +1,5 @@
 import IsingModel.FieldDerivative.Basic
+import IsingModel.Inequalities.GKS
 
 /-!
 # Field monotonicity of correlations

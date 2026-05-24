@@ -1,8 +1,4 @@
 import IsingModel.GibbsMeasure
-import IsingModel.FreeEnergy
-import IsingModel.Inequalities.NonnegCorrelations
-import IsingModel.Inequalities.GKS
-import IsingModel.Inequalities.GHS
 import Mathlib.Analysis.Calculus.Deriv.Add
 import Mathlib.Analysis.Calculus.Deriv.Inv
 import Mathlib.Analysis.Calculus.Deriv.Mul

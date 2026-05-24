@@ -1,3 +1,5 @@
+import IsingModel.FieldDerivative.Truncated2Antitone
+import IsingModel.FieldDerivative.FreeEnergy
 import IsingModel.FieldDerivative.HigherTruncated
 
 /-!
