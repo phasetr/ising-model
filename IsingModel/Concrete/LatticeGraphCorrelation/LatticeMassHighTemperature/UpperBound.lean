@@ -25,32 +25,22 @@ private lemma latticeDistance_coord_eq {d : ℕ} (hd : 0 < d) (n : ℕ) :
   simp
 
 open IsingModel in
-/-- **Upper bound on the lattice mass** (GJ §17.5 pp. 304–306):
-for `d ≥ 1`, `J > 0`, `β > 0` at `h = 0`,
-`latticeMass d (cubicExhaustion d) ⟨J,0,β⟩ ≤ ENNReal.ofReal (-log(tanh(βJ)))`.
+/-- **All admissible high-temperature decay rates are bounded by the path rate**:
+for `d ≥ 1`, `J > 0`, `β > 0` at `h = 0`, any nonnegative rate validating
+`HasExponentialDecay` is at most `-log(tanh(βJ))`.
 
-Combined with the lower bound from Step 111, this gives the two-sided bound
-`-log(βJD) ≤ latticeMass ≤ -log(tanh(βJ))` in the high-temperature regime.
-
-Proof: for each `α : NNReal` with `HasExponentialDecay` at rate `α` and witness `C`, we show
-`α ≤ -log(tanh(βJ))` by contradiction. Set `ε := log(tanh(βJ)) + α > 0`. By Archimedean,
-find `n₀ : ℕ` with `C < ε * n₀`. The axis point `r_n = (n₀,0,...,0)` satisfies
-`dist(0, r_n) = n₀`. Step 114 gives `tanh(βJ)^n₀ ≤ twoPointFunction d p r_n = |truncated2|
-≤ C * exp(-α * n₀)`. Rearranging: `exp(ε * n₀) ≤ C`. But `exp(ε * n₀) ≥ ε * n₀ + 1 > C`.
-Contradiction.
-
-Reference: Glimm–Jaffe §17.5 pp. 304–306 (2nd ed.). -/
-theorem latticeMass_le_neg_log_tanh_betaJ
-    {d : ℕ} (hd : 0 < d) {J β : ℝ} (hJ : 0 < J) (hβ : 0 < β) :
-    latticeMass d (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ)
-      ≤ ENNReal.ofReal (-Real.log (Real.tanh (β * J))) := by
+This is the all-rate form used internally by `latticeMass_le_neg_log_tanh_betaJ`.
+It exposes the `sSup`-free estimate needed by later Lemma 17.5.2 upper-bound
+assemblies. -/
+theorem HasExponentialDecay_rate_le_neg_log_tanh_betaJ
+    {d : ℕ} (hd : 0 < d) {J β : ℝ} (hJ : 0 < J) (hβ : 0 < β)
+    {α : NNReal}
+    (hα_dec : HasExponentialDecay d (Ambient.cubicExhaustion d)
+      (⟨J, 0, β⟩ : IsingParams ℝ) (α : ℝ)) :
+    (α : ENNReal) ≤ ENNReal.ofReal (-Real.log (Real.tanh (β * J))) := by
   have htanh_pos : 0 < Real.tanh (β * J) := by
     rw [Real.tanh_eq_sinh_div_cosh]
     exact div_pos (Real.sinh_pos_iff.mpr (mul_pos hβ hJ)) (Real.cosh_pos _)
-  unfold latticeMass
-  apply sSup_le
-  rintro b ⟨α, hα_dec, rfl⟩
-  change (↑α : ENNReal) ≤ ENNReal.ofReal (-Real.log (Real.tanh (β * J)))
   obtain ⟨C, hC, hbound⟩ := hα_dec
   suffices h_le : (α : ℝ) ≤ -Real.log (Real.tanh (β * J)) by
     rw [← ENNReal.ofReal_coe_nnreal]
@@ -103,6 +93,27 @@ theorem latticeMass_le_neg_log_tanh_betaJ
             have h0 : -(↑α : ℝ) * ↑n₀ + (↑α : ℝ) * ↑n₀ = 0 := by ring
             rw [h0, Real.exp_zero, mul_one]
   linarith [Real.add_one_le_exp (ε * ↑n₀)]
+
+/-- **Upper bound on the lattice mass** (GJ §17.5 pp. 304–306):
+for `d ≥ 1`, `J > 0`, `β > 0` at `h = 0`,
+`latticeMass d (cubicExhaustion d) ⟨J,0,β⟩ ≤ ENNReal.ofReal (-log(tanh(βJ)))`.
+
+Combined with the lower bound from Step 111, this gives the two-sided bound
+`-log(βJD) ≤ latticeMass ≤ -log(tanh(βJ))` in the high-temperature regime.
+
+Proof: every admissible nonnegative decay rate is bounded by the path rate
+`-log(tanh(βJ))` via `HasExponentialDecay_rate_le_neg_log_tanh_betaJ`, so the
+same bound holds for the supremum defining `latticeMass`.
+
+Reference: Glimm–Jaffe §17.5 pp. 304–306 (2nd ed.). -/
+theorem latticeMass_le_neg_log_tanh_betaJ
+    {d : ℕ} (hd : 0 < d) {J β : ℝ} (hJ : 0 < J) (hβ : 0 < β) :
+    latticeMass d (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ)
+      ≤ ENNReal.ofReal (-Real.log (Real.tanh (β * J))) := by
+  unfold latticeMass
+  apply sSup_le
+  rintro b ⟨α, hα_dec, rfl⟩
+  exact HasExponentialDecay_rate_le_neg_log_tanh_betaJ hd hJ hβ hα_dec
 
 /-- **Lattice mass two-sided bound** (Step 153, GJ §17.5 pp. 304–306):
 in the high-temperature regime (`d ≥ 1`, `0 < J`, `0 < β`, `βJ·2d < 1`):
