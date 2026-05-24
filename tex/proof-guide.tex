@@ -8092,6 +8092,19 @@ specialize it to the infinite-volume correlation profile and package the
 interval-local \texttt{EventuallyEq} premise needed by the localized MVT
 step.
 
+The concrete regularity package supplies the matching \(h\)-profile inputs.
+Theorems
+\texttt{pseudoMassFromParamsAtPair\_beta\_continuousAt\_of\_corr\_continuousAt},
+\texttt{pseudoMassFromParamsAtPair\_beta\_differentiableAt\_of\_corr\_differentiableAt},
+\texttt{pseudoMassFromParamsAtPair\_beta\_hasDerivAt\_deriv\_of\_corr\_differentiableAt},
+\texttt{pseudoMassFromParamsAtPair\_beta\_continuousOn\_Icc\_of\_corr\_continuousAt},
+and
+\texttt{pseudoMassFromParamsAtPair\_beta\_hasDerivAt\_deriv\_on\_Icc\_of\_corr\_differentiableAt}
+transport pointwise and interval regularity of the infinite correlation
+profile through \texttt{pseudoMassExt} on the active range.  These are the
+forms required by the compact ratio-bounds and localized MVT packages when
+\(h(\beta)\) is the concrete \texttt{pseudoMassFromParamsAtPair} profile.
+
 \paragraph{\S5.4 Prop 5.4.2 infinite-volume Peierls bound (liminf form)
 (PR~\#1643).} Adds the genuine infinite-volume lift of GJ Prop 5.4.2:
 under the per-stage hypotheses of \texttt{prop\_5\_4\_2\_along\_exhaustion},
