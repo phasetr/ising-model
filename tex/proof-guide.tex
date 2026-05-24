@@ -7906,6 +7906,17 @@ bridge above.  Thus the remaining upper-bound input is no longer a raw
 infinite derivative inequality: it is enough to prove locally uniform
 convergence of the finite derivative profiles and eventual finite-stage HLS
 derivative bounds for the chosen constant.
+The finite derivative-profile bound itself is now named separately:
+\texttt{lemma\_17\_5\_2\_finite\_deriv\_abs\_le\_high\_temp\_on\_Icc}
+shows that, after the exhaustion contains the pair \(\{x,z\}\), the finite
+profiles satisfy the interval-uniform estimate
+\[
+  |d_n(\beta)| \le J M^2 + 4Jd,\qquad
+  M=\frac{bJ\,2d}{1-bJ\,2d},
+\]
+for every \(\beta\in[\beta_1,\beta_2]\subset[a,b]\) with \(bJ\,2d<1\).
+The high-temperature scalar-provider package reuses this bound before comparing
+the Lebowitz/susceptibility constant with the HLS denominator.
 
 The interval versions align this handoff with the Lipschitz layer.  If
 \([\beta_1,\beta_2]\) is contained in the open high-temperature interval, then
