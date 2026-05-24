@@ -8158,7 +8158,28 @@ The corresponding \texttt{\_on\_self\_Icc} variants also use the beta interval
 itself as the compact auxiliary interval, removing the remaining \(a,b\) and
 membership-shell hypotheses from the high-temperature sandwich callers.
 Finally, the anchored cubic self-interval package connects these concrete
-wrappers to the existing cubic inputs.  Theorems
+wrappers to the existing cubic inputs.  For the upper-bound side, theorem
+\texttt{lemma\_17\_5\_2\_cubic\_origin\_upper\_bound\_on\_self\_Icc}
+specializes the concrete self-interval upper-bound package to the cubic
+exhaustion and anchored pair \(\{0,z\}\).  The companion
+\texttt{lemma\_17\_5\_2\_cubic\_origin\_latticeMass\_le\_on\_self\_Icc}
+unfolds the named \texttt{Lemma\_17\_5\_2\_UpperBound} predicate into the
+displayed inequality
+\[
+  \mathrm{latticeMass}(\beta_2)
+  \le
+  \texttt{ofReal}\!\left(\frac{(2\alpha+1)K}{\rho}\right)\,
+  \texttt{ofReal}\!\left(m^{-}(\beta_2)\right).
+\]
+The interval tanh-profile forms
+\texttt{lemma\_17\_5\_2\_cubic\_origin\_upper\_bound\_of\_cubicTanhProfileBound\_on\_Icc}
+and
+\texttt{lemma\_17\_5\_2\_cubic\_origin\_latticeMass\_le\_of\_cubicTanhProfileBound\_on\_Icc}
+derive the needed active-range hypothesis from pointwise
+\texttt{cubicTanhProfileBound} on \([\beta_1,\beta_2]\) before applying the
+cubic self-interval upper-bound wrapper.
+
+For the sandwich side, theorems
 \texttt{lemma\_17\_5\_2\_cubic\_origin\_sandwich\_of\_named\_rate\_on\_self\_Icc},
 \texttt{lemma\_17\_5\_2\_cubic\_origin\_sandwich\_of\_profile\_lower\_on\_self\_Icc},
 and
