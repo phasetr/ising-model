@@ -8113,6 +8113,17 @@ profile through \texttt{pseudoMassExt} on the active range.  These are the
 forms required by the compact ratio-bounds and localized MVT packages when
 \(h(\beta)\) is the concrete \texttt{pseudoMassFromParamsAtPair} profile.
 
+The concrete compact package then consumes these bridges.  Theorems
+\texttt{lemma\_17\_5\_2\_concrete\_pseudoMass\_compact\_ratio\_bounds\_on\_beta\_interval},
+\texttt{lemma\_17\_5\_2\_upper\_bound\_of\_concrete\_pseudoMass\_compact\_ratio\_bounds},
+and
+\texttt{lemma\_17\_5\_2\_sandwich\_of\_concrete\_pseudoMass\_compact\_ratio\_bounds}
+instantiate the compact ratio-bounds and high-temperature upper/sandwich
+packages with the concrete \texttt{pseudoMassFromParamsAtPair} beta profile.
+The active-range hypothesis for the infinite correlation provides the
+pseudo-mass positivity and local defining equations, while the derivative-limit
+hypothesis provides the MVT-ready derivative input.
+
 \paragraph{\S5.4 Prop 5.4.2 infinite-volume Peierls bound (liminf form)
 (PR~\#1643).} Adds the genuine infinite-volume lift of GJ Prop 5.4.2:
 under the per-stage hypotheses of \texttt{prop\_5\_4\_2\_along\_exhaustion},
