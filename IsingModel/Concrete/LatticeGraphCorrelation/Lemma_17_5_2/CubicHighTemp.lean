@@ -157,6 +157,58 @@ theorem lemma_17_5_2_cubic_high_temp_upper_bound_of_active_range
         ENNReal.ofReal (cubicOriginPseudoMassFromParamsAtPair hα hr β J z) :=
           hmul.symm
 
+/-- **GJ §17.5 Lemma 17.5.2 finite all-rate upper bridge, cubic
+high-temperature form**: the finite Step 115 upper-bound bridge also controls
+every admissible nonnegative exponential decay rate. This is the all-rate
+target shape consumed by the order-theoretic upper-bound assembly.
+
+The constant is the finite high-temperature constant
+`-log(tanh(βJ)) / m⁻`, not the HLS-uniform constant from the book. -/
+theorem lemma_17_5_2_cubic_high_temp_all_decay_rates_le_of_active_range
+    {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (hd : 0 < d)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      ((Ambient.cubicExhaustion d).volume n)).edgeSet]
+    {β J : ℝ} (hJ : 0 < J) (hβ : 0 < β) {z : Fin d → ℤ}
+    (hcorr_cubic :
+      Ambient.correlationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ)
+            {(0 : Fin d → ℤ), z} ∈ Set.Ioo (0 : ℝ) 2)
+    (a : NNReal)
+    (hdecay : HasExponentialDecay d Λ (⟨J, 0, β⟩ : IsingParams ℝ) (a : ℝ)) :
+    (a : ENNReal) ≤
+      ENNReal.ofReal
+          (-Real.log (Real.tanh (β * J)) /
+            cubicOriginPseudoMassFromParamsAtPair hα hr β J z) *
+        ENNReal.ofReal (cubicOriginPseudoMassFromParamsAtPair hα hr β J z) := by
+  have hf : Ferromagnetic (⟨J, 0, β⟩ : IsingParams ℝ) := ⟨hJ.le, le_refl 0, hβ⟩
+  have hpm_eq :
+      pseudoMassFromParamsAtPair hα hr d Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) (0 : Fin d → ℤ) z =
+        cubicOriginPseudoMassFromParamsAtPair hα hr β J z := by
+    calc
+      pseudoMassFromParamsAtPair hα hr d Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) (0 : Fin d → ℤ) z =
+        pseudoMassFromParamsAtPair hα hr d (Ambient.cubicExhaustion d)
+          (⟨J, 0, β⟩ : IsingParams ℝ) (0 : Fin d → ℤ) z :=
+          pseudoMassFromParamsAtPair_indep_exhaustion hα hr d Λ
+            (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) hf
+            (0 : Fin d → ℤ) z
+      _ = cubicOriginPseudoMassFromParamsAtPair hα hr β J z :=
+          (cubicOriginPseudoMassFromParamsAtPair_eq hα hr β J z).symm
+  have hupper :=
+    lemma_17_5_2_cubic_high_temp_upper_bound_of_active_range
+      hα hr hd Λ hJ hβ hcorr_cubic
+  have hall :=
+    (lemma_17_5_2_upper_bound_iff_all_decay_rates_le hα hr Λ J β
+      (0 : Fin d → ℤ) z
+      (ENNReal.ofReal
+        (-Real.log (Real.tanh (β * J)) /
+          cubicOriginPseudoMassFromParamsAtPair hα hr β J z))).mp hupper
+  have hres := hall a hdecay
+  rw [hpm_eq] at hres
+  simpa using hres
+
 /-- **GJ §17.5 Lemma 17.5.2 finite sandwich capstone, cubic high-temperature
 form**: combining the existing cubic lower-bound capstone with the finite
 Step 115 upper-bound bridge gives an actual two-sided sandwich
