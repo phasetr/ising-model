@@ -7984,6 +7984,27 @@ feeds the HLS convolution estimate for that same \(K\) back to the provider and
 closes the named upper-bound predicate; the sandwich variant then composes with
 the validating pseudo-mass decay lower side.
 
+The next wrapper derives that provider from the concrete high-temperature
+finite-stage derivative estimate.  The theorem
+\texttt{lemma\_17\_5\_2\_finite\_deriv\_provider\_of\_high\_temp\_scalar\_provider}
+uses the uniform bound
+\[
+  |c_n'(\beta)| \le J M^2 + 4Jd
+\]
+on every sufficiently large stage containing the pair \(\{x,z\}\).  If a
+scalar provider compares this Lebowitz/susceptibility constant with
+\[
+  K\,c_n(\beta)/(h(\beta))^{2\alpha}
+\]
+for every positive HLS convolution constant returned downstream, it supplies
+the finite derivative provider required above.  The direct upper and sandwich
+assemblies are
+\texttt{lemma\_17\_5\_2\_upper\_bound\_of\_enlarged\_finite\_hls\_lipschitz\_package\_and\_high\_temp\_scalar\_provider}
+and
+\texttt{lemma\_17\_5\_2\_sandwich\_of\_enlarged\_finite\_hls\_lipschitz\_package\_and\_high\_temp\_scalar\_provider}.
+They leave the remaining scalar HLS comparison explicit while eliminating the
+finite derivative-bound premise from the final callers.
+
 \paragraph{\S5.4 Prop 5.4.2 infinite-volume Peierls bound (liminf form)
 (PR~\#1643).} Adds the genuine infinite-volume lift of GJ Prop 5.4.2:
 under the per-stage hypotheses of \texttt{prop\_5\_4\_2\_along\_exhaustion},
