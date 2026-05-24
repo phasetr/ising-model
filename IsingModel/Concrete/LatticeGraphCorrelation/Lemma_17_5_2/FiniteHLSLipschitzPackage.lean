@@ -800,60 +800,14 @@ theorem lemma_17_5_2_finite_deriv_bound_of_high_temp_scalar_bound
           Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
             (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β| ≤
           K *
-            Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
-              (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} n /
-            (h β) ^ (2 * α) := by
-  obtain ⟨N, hN⟩ := Λ.exhaust ({x, z} : Finset (Fin d → ℤ))
-  filter_upwards [Filter.eventually_ge_atTop N, hscalar] with n hn hscalar_n β hβ
-  have hsub : ({x, z} : Finset (Fin d → ℤ)) ⊆ Λ.volume n := hN n hn
-  have hx_mem : x ∈ Λ.volume n := hsub (by simp)
-  have hz_mem : z ∈ Λ.volume n := hsub (by simp)
-  let rx : ↑(Λ.volume n) := ⟨x, hx_mem⟩
-  let rz : ↑(Λ.volume n) := ⟨z, hz_mem⟩
-  have hrxz : rx ≠ rz := by
-    intro heq
-    exact hxz (congrArg Subtype.val heq)
-  have hlift :
-      Ambient.liftFinset ({x, z} : Finset (Fin d → ℤ)) hsub =
-        ({rx, rz} : Finset (↑(Λ.volume n))) := by
-    ext u
-    simp [Ambient.mem_liftFinset, rx, rz, Subtype.ext_iff]
-  obtain ⟨dval, hdval, habs⟩ :=
-    lemma_17_5_2_beta_deriv_abs_le_high_temp
-      Λ J hJ a b ha hab hlt n rx rz hrxz β (hβ_mem β hβ)
-  let fAlong : ℝ → ℝ := fun β' =>
-    Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
-      (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n
-  let fFinite : ℝ → ℝ := fun β' =>
-    IsingModel.correlation
-      (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
-      (⟨J, 0, β'⟩ : IsingParams ℝ) {rx, rz}
-  have hf_eq : fAlong = fFinite := by
-    funext β'
-    simp only [fAlong, fFinite]
-    rw [Ambient.correlationAlongExhaustion_of_subset
-      (G := IsingModel.latticeGraph d) (Λ := Λ)
-      (p := (⟨J, 0, β'⟩ : IsingParams ℝ)) hsub, Ambient.correlationΛ_apply,
-      hlift]
-  have hderiv_along : HasDerivAt fAlong dval β := by
-    simpa [fAlong, fFinite, hf_eq] using hdval
-  have hderiv_eq :
-      deriv (fun β' =>
-        Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
-          (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β = dval := by
-    simpa [fAlong] using hderiv_along.deriv
-  calc
-    |deriv (fun β' =>
-        Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
-          (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β|
-        = |dval| := by rw [hderiv_eq]
-    _ ≤ J * (b * J * ↑(2 * d) / (1 - b * J * ↑(2 * d))) ^ 2 + J * (4 * ↑d) :=
-      habs
-    _ ≤ K *
         Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
           (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} n /
         (h β) ^ (2 * α) := by
-      simpa using hscalar_n β hβ
+  have habs :=
+    lemma_17_5_2_finite_deriv_abs_le_high_temp_on_Icc
+      (d := d) Λ J hJ ha hab hlt hβ_mem hxz
+  filter_upwards [habs, hscalar] with n habs_n hscalar_n β hβ
+  exact (habs_n β hβ).trans (by simpa using hscalar_n β hβ)
 
 /-- **GJ §17.5 Lemma 17.5.2 finite derivative provider from high-temperature
 scalar comparisons**: the uniform high-temperature finite-stage β-derivative
