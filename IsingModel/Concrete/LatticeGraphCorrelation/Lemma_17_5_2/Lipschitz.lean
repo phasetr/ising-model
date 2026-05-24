@@ -958,5 +958,134 @@ theorem lemma_17_5_2_cubic_high_temp_enlarged_hls_sandwich_of_named_rate_on_Icc
       hα hαd hr (Nat.succ_le_iff.mp hd) Λ hJ hβ₂_open.1 hlt hcorr_cubic
       hnamed
 
+set_option maxHeartbeats 2000000 in
+-- Repackages the named-rate finite HLS-style sandwich with the matching named
+-- upper-bound predicate for the same enlarged HLS constant.
+/-- **GJ §17.5 Lemma 17.5.2 named-rate finite HLS-style capstone**:
+the endpoint named-rate sandwich wrapper also supplies the matching
+`Lemma_17_5_2_UpperBound` predicate for the same enlarged HLS constant `K`.
+
+The displayed sandwich is stated with the target-exhaustion
+`pseudoMassFromParamsAtPair`; exhaustion-independence identifies it with the
+anchored cubic pseudo-mass used by the named-rate input.  As in the underlying
+sandwich theorem, the enlarged constant is finite Step 115/HLS-style data and
+may depend on the endpoint parameters and anchored pair. -/
+theorem lemma_17_5_2_cubic_high_temp_enlarged_hls_capstone_of_named_rate
+    {α d : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) {r : ℝ} (hr : 0 < r)
+    (hd : 0 < d) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      ((Ambient.cubicExhaustion d).volume n)).edgeSet]
+    {β J : ℝ} (hJ : 0 < J) (hβ : 0 < β)
+    (hlt : β * J * ↑(2 * d) < 1) {z : Fin d → ℤ}
+    (hcorr_cubic :
+      Ambient.correlationInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ)
+          {(0 : Fin d → ℤ), z} ∈ Set.Ioo (0 : ℝ) 2)
+    (hnamed : cubicOriginNamedRateLeHighTemp hα hr β J z) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      Lemma_17_5_2_UpperBound hα hr Λ J β (0 : Fin d → ℤ) z
+        (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / r)) ∧
+      HasExponentialDecay d Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+          (pseudoMassFromParamsAtPair hα hr d Λ
+            (⟨J, 0, β⟩ : IsingParams ℝ) (0 : Fin d → ℤ) z) ∧
+      ENNReal.ofReal
+          (pseudoMassFromParamsAtPair hα hr d Λ
+            (⟨J, 0, β⟩ : IsingParams ℝ) (0 : Fin d → ℤ) z) ≤
+        latticeMass d Λ (⟨J, 0, β⟩ : IsingParams ℝ) ∧
+      latticeMass d Λ (⟨J, 0, β⟩ : IsingParams ℝ) ≤
+        ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / r) *
+          ENNReal.ofReal
+            (pseudoMassFromParamsAtPair hα hr d Λ
+              (⟨J, 0, β⟩ : IsingParams ℝ) (0 : Fin d → ℤ) z) := by
+  obtain ⟨K, hK_pos, hconv, hdecay, hlower, hupper_ineq⟩ :=
+    lemma_17_5_2_cubic_high_temp_enlarged_hls_sandwich_of_named_rate
+      (α := α) (d := d) (r := r) (β := β) (J := J) (z := z)
+      hα hαd hr hd Λ hJ hβ hlt hcorr_cubic hnamed
+  have hf : Ferromagnetic (⟨J, 0, β⟩ : IsingParams ℝ) := ⟨hJ.le, le_refl 0, hβ⟩
+  have hpm_eq :
+      pseudoMassFromParamsAtPair hα hr d Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) (0 : Fin d → ℤ) z =
+        cubicOriginPseudoMassFromParamsAtPair hα hr β J z := by
+    calc
+      pseudoMassFromParamsAtPair hα hr d Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) (0 : Fin d → ℤ) z =
+        pseudoMassFromParamsAtPair hα hr d (Ambient.cubicExhaustion d)
+          (⟨J, 0, β⟩ : IsingParams ℝ) (0 : Fin d → ℤ) z :=
+          pseudoMassFromParamsAtPair_indep_exhaustion hα hr d Λ
+            (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) hf
+            (0 : Fin d → ℤ) z
+      _ = cubicOriginPseudoMassFromParamsAtPair hα hr β J z :=
+          (cubicOriginPseudoMassFromParamsAtPair_eq hα hr β J z).symm
+  have hupper :
+      Lemma_17_5_2_UpperBound hα hr Λ J β (0 : Fin d → ℤ) z
+        (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / r)) := by
+    dsimp [Lemma_17_5_2_UpperBound]
+    simpa [hpm_eq] using hupper_ineq
+  refine ⟨K, hK_pos, hconv, hupper, ?_, ?_, ?_⟩
+  · simpa [hpm_eq] using hdecay
+  · simpa [hpm_eq] using hlower
+  · simpa [hpm_eq] using hupper_ineq
+
+set_option maxHeartbeats 2000000 in
+-- Interval capstone form: the interval inclusion supplies the endpoint
+-- high-temperature scalars for the named-rate finite HLS capstone.
+/-- **GJ §17.5 Lemma 17.5.2 interval named-rate finite HLS-style capstone**:
+the closed-interval high-temperature inclusion supplies the endpoint scalar
+inputs, so the endpoint named-rate capstone returns the HLS convolution
+constant, the matching `Lemma_17_5_2_UpperBound` predicate, and the displayed
+two-sided sandwich at `β₂`. -/
+theorem lemma_17_5_2_cubic_high_temp_enlarged_hls_capstone_of_named_rate_on_Icc
+    {α d : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    {r : ℝ} (hr : 0 < r) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      ((Ambient.cubicExhaustion d).volume n)).edgeSet]
+    {β₁ β₂ J : ℝ} (hJ : 0 < J) (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc :
+      Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    {z : Fin d → ℤ}
+    (hcorr_cubic :
+      Ambient.correlationInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) (⟨J, 0, β₂⟩ : IsingParams ℝ)
+          {(0 : Fin d → ℤ), z} ∈ Set.Ioo (0 : ℝ) 2)
+    (hnamed : cubicOriginNamedRateLeHighTemp hα hr β₂ J z) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      Lemma_17_5_2_UpperBound hα hr Λ J β₂ (0 : Fin d → ℤ) z
+        (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / r)) ∧
+      HasExponentialDecay d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ)
+          (pseudoMassFromParamsAtPair hα hr d Λ
+            (⟨J, 0, β₂⟩ : IsingParams ℝ) (0 : Fin d → ℤ) z) ∧
+      ENNReal.ofReal
+          (pseudoMassFromParamsAtPair hα hr d Λ
+            (⟨J, 0, β₂⟩ : IsingParams ℝ) (0 : Fin d → ℤ) z) ≤
+        latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ∧
+      latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ≤
+        ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / r) *
+          ENNReal.ofReal
+            (pseudoMassFromParamsAtPair hα hr d Λ
+              (⟨J, 0, β₂⟩ : IsingParams ℝ) (0 : Fin d → ℤ) z) := by
+  have hβ₂_open : β₂ ∈ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) :=
+    hIcc (Set.right_mem_Icc.mpr hβ₁₂)
+  have h2d_pos : 0 < (↑(2 * d) : ℝ) := by
+    have h2d_nat : 0 < 2 * d := Nat.mul_pos (by norm_num) hd
+    exact_mod_cast h2d_nat
+  have hJ2d_pos : 0 < J * ↑(2 * d) := mul_pos hJ h2d_pos
+  have hlt : β₂ * J * ↑(2 * d) < 1 := by
+    have hlt' : β₂ * (J * ↑(2 * d)) < 1 :=
+      (lt_div_iff₀ hJ2d_pos).mp hβ₂_open.2
+    simpa [mul_assoc] using hlt'
+  exact
+    lemma_17_5_2_cubic_high_temp_enlarged_hls_capstone_of_named_rate
+      (α := α) (d := d) (r := r) (β := β₂) (J := J) (z := z)
+      hα hαd hr (Nat.succ_le_iff.mp hd) Λ hJ hβ₂_open.1 hlt hcorr_cubic
+      hnamed
+
 end Ambient
 end IsingModel
