@@ -38,6 +38,18 @@ theorem pseudoMassExt_of_not_mem {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 <
   unfold pseudoMassExt
   rw [dif_neg hc]
 
+/-- **Local defining equation for the totalized pseudo-mass**: if a profile
+`c` stays in `Ioo 0 2` near `β`, then `pseudoMassExt hα hr ∘ c` satisfies the
+implicit pseudo-mass equation near `β`. -/
+theorem pseudoMassG_pseudoMassExt_eventuallyEq_of_eventually_mem
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    {c : ℝ → ℝ} {β : ℝ}
+    (hc : ∀ᶠ β' in nhds β, c β' ∈ Set.Ioo (0 : ℝ) 2) :
+    (fun β' => pseudoMassG α r (pseudoMassExt hα hr (c β'))) =ᶠ[nhds β] c := by
+  filter_upwards [hc] with β' hβ'
+  rw [pseudoMassExt_of_mem hα hr hβ']
+  exact pseudoMass_spec hα hr hβ'
+
 /-- **`pseudoMassExt` non-negative**. -/
 theorem pseudoMassExt_nonneg {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (c : ℝ) :
     0 ≤ pseudoMassExt hα hr c := by
