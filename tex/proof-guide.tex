@@ -8142,6 +8142,12 @@ derives the same lower-side input from the endpoint profile inequality
 \]
 Both wrappers then reuse the concrete compact upper-bound theorem and return
 the same two-sided sandwich for \(\mathrm{latticeMass}\).
+The helper
+\texttt{lemma\_17\_5\_2\_endpoint\_high\_temp\_of\_Icc\_subset\_high\_temp}
+extracts \(0<\beta_2\) and \(\beta_2J\,2d<1\) from the interval inclusion
+\([\beta_1,\beta_2]\subset(0,(J\,2d)^{-1})\).  The \texttt{\_on\_Icc}
+variants of the two sandwich wrappers use this helper, so callers do not need
+to restate those endpoint scalar hypotheses separately.
 
 \paragraph{\S5.4 Prop 5.4.2 infinite-volume Peierls bound (liminf form)
 (PR~\#1643).} Adds the genuine infinite-volume lift of GJ Prop 5.4.2:
