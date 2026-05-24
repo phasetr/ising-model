@@ -865,6 +865,119 @@ theorem lemma_17_5_2_cubic_pair_high_temp_enlarged_hls_capstone
     exact hupper_ineq
   exact ⟨K, hK, hK_conv, hupper, hdecay, hlower, hupper_ineq⟩
 
+/-- **GJ §17.5 Lemma 17.5.2 interval finite high-temperature HLS-style
+sandwich for an arbitrary cubic pair**: the closed-interval high-temperature
+inclusion supplies the endpoint scalar hypotheses at `β₂`, then the endpoint
+arbitrary-pair enlarged-HLS sandwich returns the target-exhaustion displayed
+sandwich for `{x,z}`. -/
+theorem lemma_17_5_2_cubic_pair_high_temp_enlarged_hls_sandwich_on_Icc
+    {α d : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    {r : ℝ} (hr : 0 < r) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      ((Ambient.cubicExhaustion d).volume n)).edgeSet]
+    {β₁ β₂ J : ℝ} (hJ : 0 < J) (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc :
+      Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    {x z : Fin d → ℤ}
+    (hinputs :
+      Ambient.correlationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) (⟨J, 0, β₂⟩ : IsingParams ℝ) {x, z}
+            ∈ Set.Ioo (0 : ℝ) 2 ∧
+        pseudoMassG α r (-Real.log (β₂ * J * ↑(2 * d))) ≤
+          Ambient.correlationInfinite (IsingModel.latticeGraph d)
+            (Ambient.cubicExhaustion d) (⟨J, 0, β₂⟩ : IsingParams ℝ) {x, z}) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      HasExponentialDecay d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ)
+          (pseudoMassFromParamsAtPair hα hr d Λ
+            (⟨J, 0, β₂⟩ : IsingParams ℝ) x z) ∧
+      ENNReal.ofReal
+          (pseudoMassFromParamsAtPair hα hr d Λ
+            (⟨J, 0, β₂⟩ : IsingParams ℝ) x z) ≤
+        latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ∧
+      latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ≤
+        ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / r) *
+          ENNReal.ofReal
+            (pseudoMassFromParamsAtPair hα hr d Λ
+              (⟨J, 0, β₂⟩ : IsingParams ℝ) x z) := by
+  have hβ₂_open : β₂ ∈ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) :=
+    hIcc (Set.right_mem_Icc.mpr hβ₁₂)
+  have h2d_pos : 0 < (↑(2 * d) : ℝ) := by
+    have h2d_nat : 0 < 2 * d := Nat.mul_pos (by norm_num) hd
+    exact_mod_cast h2d_nat
+  have hJ2d_pos : 0 < J * ↑(2 * d) := mul_pos hJ h2d_pos
+  have hlt : β₂ * J * ↑(2 * d) < 1 := by
+    have hlt' : β₂ * (J * ↑(2 * d)) < 1 :=
+      (lt_div_iff₀ hJ2d_pos).mp hβ₂_open.2
+    simpa [mul_assoc] using hlt'
+  exact
+    lemma_17_5_2_cubic_pair_high_temp_enlarged_hls_sandwich
+      (α := α) (d := d) (r := r) (β := β₂) (J := J) (x := x) (z := z)
+      hα hαd hr (Nat.succ_le_iff.mp hd) Λ hJ hβ₂_open.1 hlt hinputs
+
+/-- **GJ §17.5 Lemma 17.5.2 interval finite high-temperature HLS-style
+capstone for an arbitrary cubic pair**: the interval high-temperature inclusion
+supplies `0 < β₂` and `β₂ * J * 2d < 1`, and the endpoint arbitrary-pair
+capstone then returns the same-constant HLS convolution witness, named upper
+predicate, target-exhaustion validating decay, and displayed two-sided
+sandwich. -/
+theorem lemma_17_5_2_cubic_pair_high_temp_enlarged_hls_capstone_on_Icc
+    {α d : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    {r : ℝ} (hr : 0 < r) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      ((Ambient.cubicExhaustion d).volume n)).edgeSet]
+    {β₁ β₂ J : ℝ} (hJ : 0 < J) (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc :
+      Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    {x z : Fin d → ℤ}
+    (hinputs :
+      Ambient.correlationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) (⟨J, 0, β₂⟩ : IsingParams ℝ) {x, z}
+            ∈ Set.Ioo (0 : ℝ) 2 ∧
+        pseudoMassG α r (-Real.log (β₂ * J * ↑(2 * d))) ≤
+          Ambient.correlationInfinite (IsingModel.latticeGraph d)
+            (Ambient.cubicExhaustion d) (⟨J, 0, β₂⟩ : IsingParams ℝ) {x, z}) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      Lemma_17_5_2_UpperBound hα hr Λ J β₂ x z
+        (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / r)) ∧
+      HasExponentialDecay d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ)
+          (pseudoMassFromParamsAtPair hα hr d Λ
+            (⟨J, 0, β₂⟩ : IsingParams ℝ) x z) ∧
+      ENNReal.ofReal
+          (pseudoMassFromParamsAtPair hα hr d Λ
+            (⟨J, 0, β₂⟩ : IsingParams ℝ) x z) ≤
+        latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ∧
+      latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ≤
+        ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / r) *
+          ENNReal.ofReal
+            (pseudoMassFromParamsAtPair hα hr d Λ
+              (⟨J, 0, β₂⟩ : IsingParams ℝ) x z) := by
+  have hβ₂_open : β₂ ∈ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) :=
+    hIcc (Set.right_mem_Icc.mpr hβ₁₂)
+  have h2d_pos : 0 < (↑(2 * d) : ℝ) := by
+    have h2d_nat : 0 < 2 * d := Nat.mul_pos (by norm_num) hd
+    exact_mod_cast h2d_nat
+  have hJ2d_pos : 0 < J * ↑(2 * d) := mul_pos hJ h2d_pos
+  have hlt : β₂ * J * ↑(2 * d) < 1 := by
+    have hlt' : β₂ * (J * ↑(2 * d)) < 1 :=
+      (lt_div_iff₀ hJ2d_pos).mp hβ₂_open.2
+    simpa [mul_assoc] using hlt'
+  exact
+    lemma_17_5_2_cubic_pair_high_temp_enlarged_hls_capstone
+      (α := α) (d := d) (r := r) (β := β₂) (J := J) (x := x) (z := z)
+      hα hαd hr (Nat.succ_le_iff.mp hd) Λ hJ hβ₂_open.1 hlt hinputs
+
 set_option maxHeartbeats 2000000 in
 -- Named-rate entry point for the finite high-temperature enlarged-HLS
 -- sandwich package; this avoids unfolding the heavier tanh-profile predicate.
