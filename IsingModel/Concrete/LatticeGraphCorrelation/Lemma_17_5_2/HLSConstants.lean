@@ -98,5 +98,40 @@ def Lemma_17_5_2_InfiniteHLSDenominatorComparison
         (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} /
       (h β) ^ (2 * α)
 
+/-- **GJ §17.5 Lemma 17.5.2 infinite-volume HLS Lipschitz to all-rate bridge**:
+the named remaining analytic bridge from the HLS Lipschitz estimate for
+`β ↦ (h β)^(2α+1)` to the all-admissible exponential-decay-rate estimate
+needed by the `latticeMass` upper-bound assembly.
+
+For a fixed HLS constant `K`, this predicate says that once the interval
+Lipschitz estimate produced from the infinite-volume HLS denominator comparison
+is available, every nonnegative validating exponential-decay rate at the right
+endpoint `β₂` is bounded by `((2α+1)K/r) · m⁻(β₂)`.
+
+This is intentionally a `Prop` hypothesis: proving it is the substantive
+analytic step that remains between the current HLS/Lipschitz machinery and the
+full HLS-uniform Lemma 17.5.2 upper bound.
+
+References: Glimm--Jaffe §17.5, Theorem 17.5.1 proof and Lemma 17.5.2,
+pp.~311--312. -/
+def Lemma_17_5_2_InfiniteHLSLipschitzAllRateBridge
+    {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (J : ℝ) (x z : Fin d → ℤ)
+    (β₁ β₂ : ℝ) (K : ℝ) (h : ℝ → ℝ) : Prop :=
+  ((∀ β' ∈ Set.Icc β₁ β₂,
+      Lemma_17_5_2_InfiniteHLSDenominatorComparison Λ J x z β' α K h) →
+    |(h β₂) ^ (2 * α + 1) - (h β₁) ^ (2 * α + 1)| ≤
+      ↑(2 * α + 1) * K / r * (β₂ - β₁)) →
+  ∀ a : NNReal,
+    HasExponentialDecay d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) (a : ℝ) →
+      (a : ENNReal) ≤
+        ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / r) *
+          ENNReal.ofReal
+            (pseudoMassFromParamsAtPair hα hr d Λ
+              (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
+
 end Ambient
 end IsingModel
