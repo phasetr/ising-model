@@ -252,6 +252,83 @@ theorem lemma_17_5_2_infinite_pseudoMass_pow_succ_lipschitz_of_hls_constant
     (fun β' hβ' => by
       simpa [Lemma_17_5_2_InfiniteHLSDenominatorComparison] using hcomp β' hβ')
 
+/-- **GJ §17.5 Lemma 17.5.2 upper bound from an infinite-volume HLS Lipschitz
+all-rate bridge**: once the HLS/Lipschitz layer has produced the interval
+Lipschitz estimate for `β ↦ (h β)^(2α+1)`, the named bridge
+`Lemma_17_5_2_InfiniteHLSLipschitzAllRateBridge` converts it into the
+all-admissible-rate estimate, and the order-theoretic upper-bound assembly
+closes `Lemma_17_5_2_UpperBound`.
+
+This theorem deliberately does not re-prove the interval Lipschitz estimate;
+that is supplied by
+`lemma_17_5_2_infinite_pseudoMass_pow_succ_lipschitz_of_hls_constant`.
+
+References: Glimm--Jaffe §17.5, Theorem 17.5.1 proof and Lemma 17.5.2,
+pp.~311--312. -/
+theorem lemma_17_5_2_upper_bound_of_infinite_hls_lipschitz_all_rate_bridge
+    {d α : ℕ} (hα : 1 ≤ α)
+    {r : ℝ} (hr : 0 < r)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (J : ℝ) (x z : Fin d → ℤ) (β₁ β₂ K : ℝ) (h : ℝ → ℝ)
+    (hlip :
+      (∀ β' ∈ Set.Icc β₁ β₂,
+          Lemma_17_5_2_InfiniteHLSDenominatorComparison Λ J x z β' α K h) →
+        |(h β₂) ^ (2 * α + 1) - (h β₁) ^ (2 * α + 1)| ≤
+          ↑(2 * α + 1) * K / r * (β₂ - β₁))
+    (hbridge :
+      Lemma_17_5_2_InfiniteHLSLipschitzAllRateBridge
+        hα hr Λ J x z β₁ β₂ K h) :
+    Lemma_17_5_2_UpperBound hα hr Λ J β₂ x z
+      (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / r)) := by
+  exact lemma_17_5_2_upper_bound_of_all_decay_rates_le hα hr Λ J β₂ x z
+    (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / r)) (hbridge hlip)
+
+/-- **GJ §17.5 Lemma 17.5.2 sandwich from an infinite-volume HLS Lipschitz
+all-rate bridge**: once the lower pseudo-mass decay side is available at
+`β₂`, the preceding upper-bound bridge gives the full conditional sandwich.
+
+The theorem keeps the last analytic step explicit as
+`Lemma_17_5_2_InfiniteHLSLipschitzAllRateBridge`, but removes all remaining
+order-theoretic assembly from downstream work.
+
+References: Glimm--Jaffe §17.5, Theorem 17.5.1 proof and Lemma 17.5.2,
+pp.~311--312. -/
+theorem lemma_17_5_2_sandwich_of_infinite_hls_lipschitz_all_rate_bridge
+    {d α : ℕ} (hα : 1 ≤ α)
+    {r : ℝ} (hr : 0 < r)
+    {Λ : Ambient.Exhaustion (Fin d → ℤ)}
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    {J : ℝ} {x z : Fin d → ℤ} {β₁ β₂ K : ℝ} {h : ℝ → ℝ}
+    (hlip :
+      (∀ β' ∈ Set.Icc β₁ β₂,
+          Lemma_17_5_2_InfiniteHLSDenominatorComparison Λ J x z β' α K h) →
+        |(h β₂) ^ (2 * α + 1) - (h β₁) ^ (2 * α + 1)| ≤
+          ↑(2 * α + 1) * K / r * (β₂ - β₁))
+    (hbridge :
+      Lemma_17_5_2_InfiniteHLSLipschitzAllRateBridge
+        hα hr Λ J x z β₁ β₂ K h)
+    (hdecay : HasExponentialDecay d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ)
+      (pseudoMassFromParamsAtPair hα hr d Λ
+        (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)) :
+    ENNReal.ofReal
+        (pseudoMassFromParamsAtPair hα hr d Λ
+          (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
+      ≤ latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ∧
+    latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ≤
+      ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / r) *
+        ENNReal.ofReal
+          (pseudoMassFromParamsAtPair hα hr d Λ
+            (⟨J, 0, β₂⟩ : IsingParams ℝ) x z) := by
+  have hupper :
+      Lemma_17_5_2_UpperBound hα hr Λ J β₂ x z
+        (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / r)) :=
+    lemma_17_5_2_upper_bound_of_infinite_hls_lipschitz_all_rate_bridge
+      hα hr Λ J x z β₁ β₂ K h hlip hbridge
+  exact lemma_17_5_2_sandwich_of_decay_and_upper hα hr hdecay hupper
+
 /-- **GJ §17.5 Lemma 17.5.2 HLS-constant upper-bound package**: under the
 HLS exponent condition, choose a positive convolution constant `K`. If every
 admissible nonnegative exponential-decay rate is bounded by the HLS Lipschitz
