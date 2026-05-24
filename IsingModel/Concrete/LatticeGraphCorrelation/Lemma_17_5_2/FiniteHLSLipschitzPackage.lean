@@ -639,5 +639,149 @@ theorem lemma_17_5_2_sandwich_of_enlarged_finite_hls_lipschitz_package
   exact lemma_17_5_2_sandwich_of_decay_and_upper hα hrho hdecay
     (hupper hfinite)
 
+/-- **GJ §17.5 Lemma 17.5.2 upper bound from an enlarged finite-HLS package
+and a uniform finite derivative-bound provider**: once the finite HLS derivative
+estimate is available for every admissible returned convolution constant, the
+enlarged package closes the named upper-bound predicate directly. -/
+theorem
+    lemma_17_5_2_upper_bound_of_enlarged_finite_hls_lipschitz_package_and_deriv_provider
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    {J : ℝ} (hJ_pos : 0 < J)
+    {x z : Fin d → ℤ} (hxz : x ≠ z)
+    {β₁ β₂ : ℝ} (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc :
+      Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    {rho : ℝ} (hrho : 0 < rho)
+    {h : ℝ → ℝ} (g' : ℝ → ℝ)
+    (hh_diff : ∀ β' ∈ Set.Icc β₁ β₂, HasDerivAt h (deriv h β') β')
+    (hh_nonneg : ∀ β' ∈ Set.Icc β₁ β₂, 0 ≤ h β')
+    (hg_eq : ∀ β',
+      pseudoMassG α rho (h β') =
+        Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z})
+    (hh_pos : ∀ β' ∈ Set.Icc β₁ β₂, 0 < h β')
+    (hc_pos : ∀ β' ∈ Set.Icc β₁ β₂,
+      0 <
+        Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z})
+    (hm_pos :
+      0 <
+        pseudoMassFromParamsAtPair hα hrho d Λ
+          (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
+    (hderiv_lim :
+      TendstoLocallyUniformlyOn
+        (fun n β =>
+          deriv (fun β' =>
+            Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
+        g' Filter.atTop (Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d)))))
+    (hfinite_provider :
+      ∀ K : ℝ, 0 < K →
+        (∀ x' y' : Fin d → ℤ,
+          ∑' w : Fin d → ℤ,
+              (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+              (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) →
+        ∀ᶠ n in Filter.atTop,
+          ∀ β ∈ Set.Icc β₁ β₂,
+            |deriv (fun β' =>
+              Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β| ≤
+              K *
+                Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                  (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} n /
+                (h β) ^ (2 * α)) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      Lemma_17_5_2_UpperBound hα hrho Λ J β₂ x z
+        (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho)) := by
+  obtain ⟨K, hK, hK_conv, hupper⟩ :=
+    lemma_17_5_2_upper_bound_of_enlarged_finite_hls_lipschitz_package
+      (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
+      (β₁ := β₁) (β₂ := β₂) (rho := rho) (h := h)
+      hα hαd hd hJ_pos hxz hβ₁₂ hIcc hrho g'
+      hh_diff hh_nonneg hg_eq hh_pos hc_pos hm_pos hderiv_lim
+  exact ⟨K, hK, hK_conv, hupper (hfinite_provider K hK hK_conv)⟩
+
+/-- **GJ §17.5 Lemma 17.5.2 sandwich from an enlarged finite-HLS package and
+a uniform finite derivative-bound provider**: add the lower validating
+pseudo-mass decay input to the preceding direct upper-bound assembly. -/
+theorem
+    lemma_17_5_2_sandwich_of_enlarged_finite_hls_lipschitz_package_and_deriv_provider
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    {Λ : Ambient.Exhaustion (Fin d → ℤ)}
+    {J : ℝ} (hJ_pos : 0 < J)
+    {x z : Fin d → ℤ} (hxz : x ≠ z)
+    {β₁ β₂ : ℝ} (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc :
+      Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    {rho : ℝ} (hrho : 0 < rho)
+    {h : ℝ → ℝ} (g' : ℝ → ℝ)
+    (hh_diff : ∀ β' ∈ Set.Icc β₁ β₂, HasDerivAt h (deriv h β') β')
+    (hh_nonneg : ∀ β' ∈ Set.Icc β₁ β₂, 0 ≤ h β')
+    (hg_eq : ∀ β',
+      pseudoMassG α rho (h β') =
+        Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z})
+    (hh_pos : ∀ β' ∈ Set.Icc β₁ β₂, 0 < h β')
+    (hc_pos : ∀ β' ∈ Set.Icc β₁ β₂,
+      0 <
+        Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z})
+    (hm_pos :
+      0 <
+        pseudoMassFromParamsAtPair hα hrho d Λ
+          (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
+    (hderiv_lim :
+      TendstoLocallyUniformlyOn
+        (fun n β =>
+          deriv (fun β' =>
+            Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
+        g' Filter.atTop (Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d)))))
+    (hdecay : HasExponentialDecay d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ)
+      (pseudoMassFromParamsAtPair hα hrho d Λ
+        (⟨J, 0, β₂⟩ : IsingParams ℝ) x z))
+    (hfinite_provider :
+      ∀ K : ℝ, 0 < K →
+        (∀ x' y' : Fin d → ℤ,
+          ∑' w : Fin d → ℤ,
+              (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+              (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) →
+        ∀ᶠ n in Filter.atTop,
+          ∀ β ∈ Set.Icc β₁ β₂,
+            |deriv (fun β' =>
+              Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β| ≤
+              K *
+                Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                  (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} n /
+                (h β) ^ (2 * α)) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      ENNReal.ofReal
+          (pseudoMassFromParamsAtPair hα hrho d Λ
+            (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
+        ≤ latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ∧
+      latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ≤
+        ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho) *
+          ENNReal.ofReal
+            (pseudoMassFromParamsAtPair hα hrho d Λ
+              (⟨J, 0, β₂⟩ : IsingParams ℝ) x z) := by
+  obtain ⟨K, hK, hK_conv, hupper⟩ :=
+    lemma_17_5_2_upper_bound_of_enlarged_finite_hls_lipschitz_package_and_deriv_provider
+      (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
+      (β₁ := β₁) (β₂ := β₂) (rho := rho) (h := h)
+      hα hαd hd hJ_pos hxz hβ₁₂ hIcc hrho g'
+      hh_diff hh_nonneg hg_eq hh_pos hc_pos hm_pos hderiv_lim hfinite_provider
+  exact ⟨K, hK, hK_conv,
+    lemma_17_5_2_sandwich_of_decay_and_upper hα hrho hdecay hupper⟩
+
 end Ambient
 end IsingModel
