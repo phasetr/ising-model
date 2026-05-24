@@ -6,7 +6,7 @@ namespace Ambient
 open Finset Real
 open scoped symmDiff
 
-variable {V : Type*} [DecidableEq V]
+variable {V : Type*}
 
 /-! ## Extension of a Λ₁-graph to Λ₂ (for volume-direction monotonicity)
 
@@ -24,7 +24,6 @@ giving an equality of correlations on the extended graph with those
 on `inducedGraph G Λ₁`).  This PR establishes the extension graph
 and its subgraph relation, which are the first technical ingredients. -/
 
-omit [DecidableEq V] in
 /-- The extension of `G.induce Λ₁` to `SimpleGraph (↑Λ₂)`:
 edges are pairs `u, v : ↑Λ₂` with both endpoints in `Λ₁` and
 adjacent in the ambient `G`. -/
@@ -34,7 +33,6 @@ noncomputable def extendGraphFromΛ₁ (G : SimpleGraph V)
   symm := fun _ _ ⟨hu, hv, hadj⟩ => ⟨hv, hu, hadj.symm⟩
   loopless := ⟨fun _ ⟨_, _, hadj⟩ => hadj.ne rfl⟩
 
-omit [DecidableEq V] in
 /-- The extended Λ₁-graph is a subgraph of `inducedGraph G Λ₂`. -/
 theorem extendGraphFromΛ₁_le_induce (G : SimpleGraph V)
     (Λ₁ Λ₂ : Finset V) :
@@ -55,13 +53,11 @@ when `Λ₁ ⊆ Λ₂`:
 These are used to transport between configuration spaces in the
 config-factorization proof of volume-direction monotonicity. -/
 
-omit [DecidableEq V] in
 /-- The canonical injection `↑Λ₁ → ↑Λ₂` when `Λ₁ ⊆ Λ₂`. -/
 def subtypeIncl {Λ₁ Λ₂ : Finset V} (h12 : Λ₁ ⊆ Λ₂) :
     (↑Λ₁ : Type _) → (↑Λ₂ : Type _) :=
   fun x => ⟨x.val, h12 x.property⟩
 
-omit [DecidableEq V] in
 /-- `subtypeIncl h12` is injective. -/
 theorem subtypeIncl_injective {Λ₁ Λ₂ : Finset V} (h12 : Λ₁ ⊆ Λ₂) :
     Function.Injective (subtypeIncl h12) := by
@@ -71,13 +67,11 @@ theorem subtypeIncl_injective {Λ₁ Λ₂ : Finset V} (h12 : Λ₁ ⊆ Λ₂) :
     simpa [subtypeIncl] using this
   exact Subtype.ext this
 
-omit [DecidableEq V] in
 /-- Restriction of a `↑Λ₂`-configuration to a `↑Λ₁`-configuration. -/
 def restrictConfig {Λ₁ Λ₂ : Finset V} (h12 : Λ₁ ⊆ Λ₂)
     (σ : (↑Λ₂ : Type _) → Spin) : (↑Λ₁ : Type _) → Spin :=
   σ ∘ subtypeIncl h12
 
-omit [DecidableEq V] in
 /-- The equivalence `{x : ↑Λ₂ // x.val ∈ Λ₁} ≃ ↑Λ₁`
 when `Λ₁ ⊆ Λ₂`.  The inverse reuses `subtypeIncl`. -/
 def Λ₁subtypeEquiv {Λ₁ Λ₂ : Finset V} (h12 : Λ₁ ⊆ Λ₂) :
@@ -87,13 +81,15 @@ def Λ₁subtypeEquiv {Λ₁ Λ₂ : Finset V} (h12 : Λ₁ ⊆ Λ₂) :
   left_inv := fun _ => rfl
   right_inv := fun _ => rfl
 
-omit [DecidableEq V] in
+/-- The forward equivalence from the `Λ₁` subtype inside `↑Λ₂` returns the
+underlying ambient vertex. -/
 @[simp]
 theorem Λ₁subtypeEquiv_apply {Λ₁ Λ₂ : Finset V} (h12 : Λ₁ ⊆ Λ₂)
     (x : {x : (↑Λ₂ : Type _) // x.val ∈ Λ₁}) :
     (Λ₁subtypeEquiv h12 x : V) = x.val.val := rfl
 
-omit [DecidableEq V] in
+/-- The inverse equivalence from `↑Λ₁` to the matching subtype inside `↑Λ₂`
+is the canonical subtype inclusion. -/
 @[simp]
 theorem Λ₁subtypeEquiv_symm_apply {Λ₁ Λ₂ : Finset V} (h12 : Λ₁ ⊆ Λ₂)
     (y : (↑Λ₁ : Type _)) :
@@ -117,7 +113,8 @@ Uses `Equiv.piEquivPiSubtypeProd` (mathlib) on the predicate
 for `Λ₁ ⊆ Λ₂`.  Constructed by composing
 `Equiv.piEquivPiSubtypeProd` (on the predicate `x.val ∈ Λ₁`) with
 `Λ₁subtypeEquiv` on the first component. -/
-noncomputable def configEquivSubtypeProd {Λ₁ Λ₂ : Finset V} (h12 : Λ₁ ⊆ Λ₂) :
+noncomputable def configEquivSubtypeProd [DecidableEq V]
+    {Λ₁ Λ₂ : Finset V} (h12 : Λ₁ ⊆ Λ₂) :
     ((↑Λ₂ : Type _) → Spin) ≃
       (((↑Λ₁ : Type _) → Spin) ×
         ({x : (↑Λ₂ : Type _) // x.val ∉ Λ₁} → Spin)) :=
@@ -130,7 +127,8 @@ noncomputable def configEquivSubtypeProd {Λ₁ Λ₂ : Finset V} (h12 : Λ₁ �
 
 /-- The first component of `configEquivSubtypeProd h12 σ` is the
 restriction of `σ` to `↑Λ₁`. -/
-theorem configEquivSubtypeProd_fst {Λ₁ Λ₂ : Finset V} (h12 : Λ₁ ⊆ Λ₂)
+theorem configEquivSubtypeProd_fst [DecidableEq V]
+    {Λ₁ Λ₂ : Finset V} (h12 : Λ₁ ⊆ Λ₂)
     (σ : (↑Λ₂ : Type _) → Spin) :
     (configEquivSubtypeProd h12 σ).1 = restrictConfig h12 σ := by
   ext v
@@ -146,7 +144,6 @@ is an edge on `↑Λ₂` with the same endpoint values.  Hence the
 This is the pointwise identity underlying the eventual edge-sum
 equality for the Boltzmann-weight factoring. -/
 
-omit [DecidableEq V] in
 /-- Pointwise edge-spin preservation:
 `edgeSpin σ (Sym2.map (subtypeIncl h12) e) = edgeSpin (restrictConfig h12 σ) e`.
 
@@ -170,7 +167,6 @@ Combined with `Finset.sum_bij` (or `sum_map`) and
 `edgeSpin_subtypeIncl`, this yields the edge-sum equality underlying
 the Boltzmann factoring. -/
 
-omit [DecidableEq V] in
 /-- The image of an induced-graph edge under `Sym2.map (subtypeIncl h12)`
 is an edge of `extendGraphFromΛ₁`. -/
 theorem mem_extendGraph_edgeSet_of_mem_induce
@@ -182,7 +178,6 @@ theorem mem_extendGraph_edgeSet_of_mem_induce
   rw [SimpleGraph.mem_edgeSet] at he
   exact ⟨u.property, v.property, he⟩
 
-omit [DecidableEq V] in
 /-- Conversely, every `extendGraphFromΛ₁` edge comes from a unique
 induced-graph edge via `Sym2.map (subtypeIncl h12)`. -/
 theorem exists_induce_edge_of_extendGraph
