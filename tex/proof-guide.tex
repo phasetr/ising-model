@@ -8178,6 +8178,12 @@ and
 \texttt{lemma\_17\_5\_2\_sandwich\_of\_concrete\_pseudoMass\_compact\_ratio\_bounds}
 instantiate the compact ratio-bounds and high-temperature upper/sandwich
 packages with the concrete \texttt{pseudoMassFromParamsAtPair} beta profile.
+The capstone wrappers
+\texttt{lemma\_17\_5\_2\_capstone\_of\_concrete\_pseudoMass\_compact\_ratio\_bounds}
+and
+\texttt{lemma\_17\_5\_2\_capstone\_of\_concrete\_pseudoMass\_compact\_ratio\_bounds\_on\_self\_Icc}
+return the same HLS convolution witness, named upper-bound predicate, and
+displayed sandwich for one constant \(K\).
 The active-range hypothesis for the infinite correlation provides the
 pseudo-mass positivity and local defining equations, while the derivative-limit
 hypothesis provides the MVT-ready derivative input.
@@ -8247,7 +8253,11 @@ for every point of the compact beta interval.  The compact-ratio wrappers
 and
 \texttt{lemma\_17\_5\_2\_sandwich\_of\_concrete\_pseudoMass\_compact\_ratio\_bounds\_\{,on\_self\_Icc\}\_auto\_active}
 feed this interval active range into the concrete compact-ratio upper and
-sandwich packages.  The shorter high-temperature sandwich wrappers
+sandwich packages.  The matching capstone wrappers
+\texttt{lemma\_17\_5\_2\_capstone\_of\_concrete\_pseudoMass\_compact\_ratio\_bounds\_\{,on\_self\_Icc\}\_auto\_active}
+return the same HLS convolution witness, named upper-bound predicate, and
+displayed sandwich while deriving the active range in the same way.  The
+shorter high-temperature sandwich wrappers
 \texttt{lemma\_17\_5\_2\_sandwich\_le\_high\_temp\_rate\_\{,on\_Icc,on\_self\_Icc\}\_auto\_active}
 and
 \texttt{lemma\_17\_5\_2\_sandwich\_profile\_lower\_\{,on\_Icc,on\_self\_Icc\}\_auto\_active}
