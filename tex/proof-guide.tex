@@ -8225,6 +8225,29 @@ to restate those endpoint scalar hypotheses separately.
 The corresponding \texttt{\_on\_self\_Icc} variants also use the beta interval
 itself as the compact auxiliary interval, removing the remaining \(a,b\) and
 membership-shell hypotheses from the high-temperature sandwich callers.
+
+The active-range premise for these concrete capstones can now be supplied
+internally in the high-temperature pair case.  The theorem
+\texttt{lemma\_17\_5\_2\_active\_range\_of\_high\_temp\_pair}
+uses the GJ \S17.5 path lower bound
+\[
+  \tanh(\beta J)^{\operatorname{dist}(0,z-x)}
+  \le
+  \langle\sigma_0\sigma_{z-x}\rangle_\infty(\beta)
+\]
+together with translation invariance and exhaustion-independence to show
+\(\langle\sigma_x\sigma_z\rangle_\infty(\beta)>0\) for \(x\ne z\),
+\(J>0\), and \(\beta>0\).  The upper side
+\(\langle\sigma_x\sigma_z\rangle_\infty(\beta)<2\) is the unconditional
+bound \(\mathrm{corr}_\infty\le 1<2\).  Its interval form
+\texttt{lemma\_17\_5\_2\_active\_range\_on\_Icc\_of\_high\_temp\_pair}
+uses \([\beta_1,\beta_2]\subset(0,(J\,2d)^{-1})\) to obtain the active range
+for every point of the compact beta interval.  The four
+\texttt{\_auto\_active} capstones then feed this interval active range into the
+rate-comparison and profile-lower high-temperature capstones, so the remaining
+external analytic input is again the derivative-profile locally uniform
+convergence.
+
 Finally, the anchored cubic self-interval package connects these concrete
 wrappers to the existing cubic inputs.  For the upper-bound side, theorem
 \texttt{lemma\_17\_5\_2\_cubic\_origin\_upper\_bound\_on\_self\_Icc}
