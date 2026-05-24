@@ -814,5 +814,149 @@ theorem lemma_17_5_2_cubic_pair_high_temp_enlarged_hls_sandwich
               (⟨J, 0, β⟩ : IsingParams ℝ) x z) := by
         simp [N, m₀, p, hm_eq]
 
+set_option maxHeartbeats 2000000 in
+-- Named-rate entry point for the finite high-temperature enlarged-HLS
+-- sandwich package; this avoids unfolding the heavier tanh-profile predicate.
+/-- **GJ §17.5 Lemma 17.5.2 finite high-temperature HLS-style sandwich from the
+anchored cubic named rate**: active-range membership supplies positivity of the
+anchored cubic pseudo-mass, while `cubicOriginNamedRateLeHighTemp` supplies the
+lower validating decay input.  The upper side enlarges an HLS convolution
+constant enough to dominate the Step 115 path rate.
+
+This is still the finite Step 115/HLS-style package: the enlarged constant may
+depend on the current high-temperature parameters and anchored pair. -/
+theorem lemma_17_5_2_cubic_high_temp_enlarged_hls_sandwich_of_named_rate
+    {α d : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) {r : ℝ} (hr : 0 < r)
+    (hd : 0 < d) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      ((Ambient.cubicExhaustion d).volume n)).edgeSet]
+    {β J : ℝ} (hJ : 0 < J) (hβ : 0 < β)
+    (hlt : β * J * ↑(2 * d) < 1) {z : Fin d → ℤ}
+    (hcorr_cubic :
+      Ambient.correlationInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ)
+          {(0 : Fin d → ℤ), z} ∈ Set.Ioo (0 : ℝ) 2)
+    (hnamed : cubicOriginNamedRateLeHighTemp hα hr β J z) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      HasExponentialDecay d Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+          (cubicOriginPseudoMassFromParamsAtPair hα hr β J z) ∧
+      ENNReal.ofReal (cubicOriginPseudoMassFromParamsAtPair hα hr β J z) ≤
+        latticeMass d Λ (⟨J, 0, β⟩ : IsingParams ℝ) ∧
+      latticeMass d Λ (⟨J, 0, β⟩ : IsingParams ℝ) ≤
+        ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / r) *
+          ENNReal.ofReal
+            (cubicOriginPseudoMassFromParamsAtPair hα hr β J z) := by
+  obtain ⟨K₀, hK₀, hK₀_conv⟩ := lemma_17_5_2_hls_convolution_constant α d hαd
+  let N : ℝ := ((2 * α + 1 : ℕ) : ℝ)
+  let m : ℝ := cubicOriginPseudoMassFromParamsAtPair hα hr β J z
+  let path : ℝ := -Real.log (Real.tanh (β * J))
+  let K : ℝ := max K₀ (path * r / (N * m))
+  have hN_pos : 0 < N := by
+    dsimp [N]
+    exact_mod_cast Nat.succ_pos (2 * α)
+  have hm_pos : 0 < m := by
+    dsimp [m]
+    exact cubicOriginPseudoMassFromParamsAtPair_pos_of_cubic_corr_mem hα hr hcorr_cubic
+  have hK_pos : 0 < K := hK₀.trans_le (le_max_left _ _)
+  have hK_conv : ∀ x' y' : Fin d → ℤ,
+      ∑' w : Fin d → ℤ,
+          (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+          (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K := by
+    intro x' y'
+    exact (hK₀_conv x' y').trans (le_max_left _ _)
+  have hpath_real : path ≤ (N * K / r) * m := by
+    have hNm_pos : 0 < N * m := mul_pos hN_pos hm_pos
+    have hscale_le : path * r / (N * m) ≤ K := le_max_right _ _
+    have hmul_le : path * r ≤ K * (N * m) := by
+      have h := mul_le_mul_of_nonneg_right hscale_le hNm_pos.le
+      rwa [div_mul_cancel₀ (path * r) hNm_pos.ne'] at h
+    have hdiv_le : path ≤ K * (N * m) / r := by
+      have h := div_le_div_of_nonneg_right hmul_le hr.le
+      rwa [mul_div_cancel_right₀ path hr.ne'] at h
+    calc
+      path ≤ K * (N * m) / r := hdiv_le
+      _ = (N * K / r) * m := by ring
+  have hpath_enn :
+      ENNReal.ofReal path ≤
+        ENNReal.ofReal (N * K / r) * ENNReal.ofReal m := by
+    have hcoeff_nonneg : 0 ≤ N * K / r :=
+      div_nonneg (mul_nonneg hN_pos.le hK_pos.le) hr.le
+    have h := ENNReal.ofReal_le_ofReal hpath_real
+    rw [ENNReal.ofReal_mul hcoeff_nonneg] at h
+    exact h
+  have hlower :=
+    cubicNamedRate_capstone_bundle_of_cubicOriginNamedRateLeHighTemp_cubic_corr_mem
+      hα hr Λ hJ.le hβ hlt hcorr_cubic hnamed (0 : Fin d → ℤ) z
+  refine ⟨K, hK_pos, hK_conv, hlower.1, hlower.2.1.2, ?_⟩
+  dsimp [latticeMass]
+  apply sSup_le
+  rintro b ⟨a, ha, rfl⟩
+  have hf : Ferromagnetic (⟨J, 0, β⟩ : IsingParams ℝ) := ⟨hJ.le, le_refl 0, hβ⟩
+  have ha_cubic :
+      HasExponentialDecay d (Ambient.cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) (a : ℝ) :=
+    HasExponentialDecay_transfer_exhaustion Λ (Ambient.cubicExhaustion d) hf ha
+  calc
+    (a : ENNReal) ≤ ENNReal.ofReal path :=
+      HasExponentialDecay_rate_le_neg_log_tanh_betaJ hd hJ hβ ha_cubic
+    _ ≤ ENNReal.ofReal (N * K / r) * ENNReal.ofReal m := hpath_enn
+    _ = ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / r) *
+        ENNReal.ofReal (cubicOriginPseudoMassFromParamsAtPair hα hr β J z) := by
+      simp [N, m]
+
+set_option maxHeartbeats 2000000 in
+-- Interval named-rate entry point: the interval inclusion supplies the endpoint
+-- high-temperature scalars for the named-rate enlarged-HLS sandwich.
+/-- **GJ §17.5 Lemma 17.5.2 finite high-temperature HLS-style sandwich from an
+interval endpoint named rate**: the closed-interval high-temperature inclusion
+supplies `0 < β₂` and `β₂ * J * 2d < 1`, so callers only provide the endpoint
+active-range and `cubicOriginNamedRateLeHighTemp` inputs at `β₂`. -/
+theorem lemma_17_5_2_cubic_high_temp_enlarged_hls_sandwich_of_named_rate_on_Icc
+    {α d : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    {r : ℝ} (hr : 0 < r) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      ((Ambient.cubicExhaustion d).volume n)).edgeSet]
+    {β₁ β₂ J : ℝ} (hJ : 0 < J) (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc :
+      Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    {z : Fin d → ℤ}
+    (hcorr_cubic :
+      Ambient.correlationInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) (⟨J, 0, β₂⟩ : IsingParams ℝ)
+          {(0 : Fin d → ℤ), z} ∈ Set.Ioo (0 : ℝ) 2)
+    (hnamed : cubicOriginNamedRateLeHighTemp hα hr β₂ J z) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      HasExponentialDecay d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ)
+          (cubicOriginPseudoMassFromParamsAtPair hα hr β₂ J z) ∧
+      ENNReal.ofReal (cubicOriginPseudoMassFromParamsAtPair hα hr β₂ J z) ≤
+        latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ∧
+      latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ≤
+        ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / r) *
+          ENNReal.ofReal
+            (cubicOriginPseudoMassFromParamsAtPair hα hr β₂ J z) := by
+  have hβ₂_open : β₂ ∈ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) :=
+    hIcc (Set.right_mem_Icc.mpr hβ₁₂)
+  have h2d_pos : 0 < (↑(2 * d) : ℝ) := by
+    have h2d_nat : 0 < 2 * d := Nat.mul_pos (by norm_num) hd
+    exact_mod_cast h2d_nat
+  have hJ2d_pos : 0 < J * ↑(2 * d) := mul_pos hJ h2d_pos
+  have hlt : β₂ * J * ↑(2 * d) < 1 := by
+    have hlt' : β₂ * (J * ↑(2 * d)) < 1 :=
+      (lt_div_iff₀ hJ2d_pos).mp hβ₂_open.2
+    simpa [mul_assoc] using hlt'
+  exact
+    lemma_17_5_2_cubic_high_temp_enlarged_hls_sandwich_of_named_rate
+      (α := α) (d := d) (r := r) (β := β₂) (J := J) (z := z)
+      hα hαd hr (Nat.succ_le_iff.mp hd) Λ hJ hβ₂_open.1 hlt hcorr_cubic
+      hnamed
+
 end Ambient
 end IsingModel
