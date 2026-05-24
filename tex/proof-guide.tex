@@ -7819,6 +7819,27 @@ This is not yet the final HLS-uniform upper-bound theorem: the substantive
 remaining step is to prove the named all-rate bridge from the
 HLS/Lebowitz derivative analysis.
 
+\paragraph{\S17.5 Lemma 17.5.2 existential infinite HLS Lipschitz package
+(Issue~\#1645).} The HLS-constant infinite Lipschitz output can now be consumed
+without re-stating its differentiability hypotheses.  The theorem
+\texttt{lemma\_17\_5\_2\_upper\_bound\_of\_exists\_infinite\_hls\_lipschitz\_bridge}
+takes the existential package
+\[
+  \exists K>0,\quad
+  K \text{ satisfies the HLS convolution bound and gives the interval
+  Lipschitz estimate,}
+\]
+and returns the same selected constant \(K\) together with an implication from
+\texttt{Lemma\_17\_5\_2\_InfiniteHLSLipschitzAllRateBridge} for \(K\) to the
+named upper-bound predicate \texttt{Lemma\_17\_5\_2\_UpperBound}.  The companion
+\texttt{lemma\_17\_5\_2\_sandwich\_of\_exists\_infinite\_hls\_lipschitz\_bridge}
+adds the lower validating pseudo-mass decay input and packages the analogous
+conditional sandwich implication for the same HLS constant.  This keeps the
+build path narrow: callers pass the existing output of
+\texttt{lemma\_17\_5\_2\_infinite\_pseudoMass\_pow\_succ\_lipschitz\_of\_hls\_constant}
+instead of forcing Lean to elaborate the full differentiability context again.
+The final all-rate bridge remains the open analytic input.
+
 \paragraph{\S5.4 Prop 5.4.2 infinite-volume Peierls bound (liminf form)
 (PR~\#1643).} Adds the genuine infinite-volume lift of GJ Prop 5.4.2:
 under the per-stage hypotheses of \texttt{prop\_5\_4\_2\_along\_exhaustion},
