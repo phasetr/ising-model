@@ -334,5 +334,58 @@ theorem lemma_17_5_2_hls_sandwich_of_decay_and_all_decay_rates_le
   exact lemma_17_5_2_sandwich_of_decay_and_upper hα hr hdecay
     (hupper hdecay_le)
 
+/-- **GJ §17.5 Lemma 17.5.2 cubic high-temperature HLS-constant conditional
+sandwich**: combine the existing cubic high-temperature lower-bound capstone
+with the HLS convolution constant package. The remaining HLS input is exactly
+the all-admissible-decay-rate estimate for the returned constant `K`.
+
+This is the concrete cubic-exhaustion version of the HLS route toward the full
+Lemma 17.5.2 sandwich. It keeps the final analytic/HLS all-rate estimate as an
+explicit premise, rather than claiming the book's HLS-uniform upper side is
+already proved. -/
+theorem lemma_17_5_2_cubic_high_temp_hls_conditional_sandwich
+    {α d : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) {r : ℝ} (hr : 0 < r)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      ((Ambient.cubicExhaustion d).volume n)).edgeSet]
+    {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)
+    (hlt : β * J * ↑(2 * d) < 1) {z : Fin d → ℤ}
+    (hinputs :
+      Ambient.correlationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ)
+            {(0 : Fin d → ℤ), z} ∈ Set.Ioo (0 : ℝ) 2 ∧
+        pseudoMassG α r (-Real.log (β * J * ↑(2 * d))) ≤
+          Ambient.correlationInfinite (IsingModel.latticeGraph d)
+            (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ)
+              {(0 : Fin d → ℤ), z}) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      ((∀ a : NNReal,
+          HasExponentialDecay d Λ (⟨J, 0, β⟩ : IsingParams ℝ) (a : ℝ) →
+            (a : ENNReal) ≤
+              ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / r) *
+                ENNReal.ofReal
+                  (cubicOriginPseudoMassFromParamsAtPair hα hr β J z)) →
+        HasExponentialDecay d Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+            (cubicOriginPseudoMassFromParamsAtPair hα hr β J z) ∧
+        ENNReal.ofReal (cubicOriginPseudoMassFromParamsAtPair hα hr β J z) ≤
+          latticeMass d Λ (⟨J, 0, β⟩ : IsingParams ℝ) ∧
+        latticeMass d Λ (⟨J, 0, β⟩ : IsingParams ℝ) ≤
+          ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / r) *
+            ENNReal.ofReal
+              (cubicOriginPseudoMassFromParamsAtPair hα hr β J z)) := by
+  obtain ⟨K, hK, hK_conv⟩ := lemma_17_5_2_hls_convolution_constant α d hαd
+  refine ⟨K, hK, hK_conv, fun hdecay_le => ?_⟩
+  have hlower :=
+    lemma_17_5_2_cubic_high_temp_lower_capstone hα hr Λ hJ hβ hlt hinputs
+  refine ⟨hlower.1, hlower.2.2, ?_⟩
+  dsimp [latticeMass]
+  apply sSup_le
+  rintro b ⟨a, ha, rfl⟩
+  exact hdecay_le a ha
+
 end Ambient
 end IsingModel
