@@ -462,6 +462,242 @@ theorem
       (rho := rho) hα hαd hd hJ_pos hz hβ₁₂ hIcc hrho g' hcorr
       hderiv_lim (hprofile_tanh β₂ (Set.right_mem_Icc.mpr hβ₁₂))
 
+set_option maxHeartbeats 2000000 in
+-- Repackages the full named-rate sandwich conclusion together with the matching
+-- named upper-bound predicate, preserving the same HLS constant.
+/-- **GJ §17.5 Lemma 17.5.2 anchored cubic capstone from the named rate**:
+the named-rate sandwich wrapper also supplies the matching named upper-bound
+predicate for the same HLS constant `K`. -/
+theorem lemma_17_5_2_cubic_origin_capstone_of_named_rate_on_self_Icc
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    {J : ℝ} (hJ_pos : 0 < J)
+    {z : Fin d → ℤ} (hz : z ≠ 0)
+    {β₁ β₂ : ℝ} (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc :
+      Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    {rho : ℝ} (hrho : 0 < rho) (g' : ℝ → ℝ)
+    (hcorr : ∀ β ∈ Set.Icc β₁ β₂,
+      Ambient.correlationInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ)
+          {(0 : Fin d → ℤ), z} ∈ Set.Ioo (0 : ℝ) 2)
+    (hderiv_lim :
+      TendstoLocallyUniformlyOn
+        (fun n β =>
+          deriv (fun β' =>
+            Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d)
+              (Ambient.cubicExhaustion d)
+              (⟨J, 0, β'⟩ : IsingParams ℝ) {(0 : Fin d → ℤ), z} n) β)
+        g' Filter.atTop (Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d)))))
+    (hnamed : cubicOriginNamedRateLeHighTemp hα hrho β₂ J z) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      Lemma_17_5_2_UpperBound hα hrho (Ambient.cubicExhaustion d) J β₂
+        (0 : Fin d → ℤ) z
+        (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho)) ∧
+      ENNReal.ofReal
+          (pseudoMassFromParamsAtPair hα hrho d (Ambient.cubicExhaustion d)
+            (⟨J, 0, β₂⟩ : IsingParams ℝ) (0 : Fin d → ℤ) z)
+        ≤ latticeMass d (Ambient.cubicExhaustion d)
+            (⟨J, 0, β₂⟩ : IsingParams ℝ) ∧
+      latticeMass d (Ambient.cubicExhaustion d)
+          (⟨J, 0, β₂⟩ : IsingParams ℝ) ≤
+        ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho) *
+          ENNReal.ofReal
+            (pseudoMassFromParamsAtPair hα hrho d (Ambient.cubicExhaustion d)
+              (⟨J, 0, β₂⟩ : IsingParams ℝ) (0 : Fin d → ℤ) z) := by
+  obtain ⟨K, hK_pos, hconv, hlower, hupper_ineq⟩ :=
+    lemma_17_5_2_cubic_origin_sandwich_of_named_rate_on_self_Icc
+      (d := d) (α := α) (J := J) (z := z) (β₁ := β₁) (β₂ := β₂)
+      (rho := rho) hα hαd hd hJ_pos hz hβ₁₂ hIcc hrho g' hcorr
+      hderiv_lim hnamed
+  have hupper :
+      Lemma_17_5_2_UpperBound hα hrho (Ambient.cubicExhaustion d) J β₂
+        (0 : Fin d → ℤ) z
+        (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho)) := by
+    simpa [Lemma_17_5_2_UpperBound] using hupper_ineq
+  exact ⟨K, hK_pos, hconv, hupper, hlower, hupper_ineq⟩
+
+set_option maxHeartbeats 2000000 in
+-- Repackages the endpoint profile-lower sandwich conclusion together with the
+-- matching named upper-bound predicate, preserving the same HLS constant.
+/-- **GJ §17.5 Lemma 17.5.2 anchored cubic capstone from a profile lower bound**:
+the endpoint cubic profile-lower sandwich wrapper also supplies the matching
+named upper-bound predicate for the same HLS constant `K`. -/
+theorem lemma_17_5_2_cubic_origin_capstone_of_profile_lower_on_self_Icc
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    {J : ℝ} (hJ_pos : 0 < J)
+    {z : Fin d → ℤ} (hz : z ≠ 0)
+    {β₁ β₂ : ℝ} (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc :
+      Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    {rho : ℝ} (hrho : 0 < rho) (g' : ℝ → ℝ)
+    (hcorr : ∀ β ∈ Set.Icc β₁ β₂,
+      Ambient.correlationInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ)
+          {(0 : Fin d → ℤ), z} ∈ Set.Ioo (0 : ℝ) 2)
+    (hderiv_lim :
+      TendstoLocallyUniformlyOn
+        (fun n β =>
+          deriv (fun β' =>
+            Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d)
+              (Ambient.cubicExhaustion d)
+              (⟨J, 0, β'⟩ : IsingParams ℝ) {(0 : Fin d → ℤ), z} n) β)
+        g' Filter.atTop (Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d)))))
+    (hprofile :
+      pseudoMassG α rho (-Real.log (β₂ * J * ↑(2 * d))) ≤
+        Ambient.correlationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) (⟨J, 0, β₂⟩ : IsingParams ℝ)
+            {(0 : Fin d → ℤ), z}) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      Lemma_17_5_2_UpperBound hα hrho (Ambient.cubicExhaustion d) J β₂
+        (0 : Fin d → ℤ) z
+        (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho)) ∧
+      ENNReal.ofReal
+          (pseudoMassFromParamsAtPair hα hrho d (Ambient.cubicExhaustion d)
+            (⟨J, 0, β₂⟩ : IsingParams ℝ) (0 : Fin d → ℤ) z)
+        ≤ latticeMass d (Ambient.cubicExhaustion d)
+            (⟨J, 0, β₂⟩ : IsingParams ℝ) ∧
+      latticeMass d (Ambient.cubicExhaustion d)
+          (⟨J, 0, β₂⟩ : IsingParams ℝ) ≤
+        ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho) *
+          ENNReal.ofReal
+            (pseudoMassFromParamsAtPair hα hrho d (Ambient.cubicExhaustion d)
+              (⟨J, 0, β₂⟩ : IsingParams ℝ) (0 : Fin d → ℤ) z) := by
+  obtain ⟨K, hK_pos, hconv, hlower, hupper_ineq⟩ :=
+    lemma_17_5_2_cubic_origin_sandwich_of_profile_lower_on_self_Icc
+      (d := d) (α := α) (J := J) (z := z) (β₁ := β₁) (β₂ := β₂)
+      (rho := rho) hα hαd hd hJ_pos hz hβ₁₂ hIcc hrho g' hcorr
+      hderiv_lim hprofile
+  have hupper :
+      Lemma_17_5_2_UpperBound hα hrho (Ambient.cubicExhaustion d) J β₂
+        (0 : Fin d → ℤ) z
+        (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho)) := by
+    simpa [Lemma_17_5_2_UpperBound] using hupper_ineq
+  exact ⟨K, hK_pos, hconv, hupper, hlower, hupper_ineq⟩
+
+set_option maxHeartbeats 2000000 in
+-- Repackages the endpoint tanh-profile sandwich conclusion together with the
+-- matching named upper-bound predicate, preserving the same HLS constant.
+/-- **GJ §17.5 Lemma 17.5.2 anchored cubic capstone from the tanh profile**:
+the endpoint `cubicTanhProfileBound` sandwich wrapper also supplies the matching
+named upper-bound predicate for the same HLS constant `K`. -/
+theorem
+    lemma_17_5_2_cubic_origin_capstone_of_cubicTanhProfileBound_on_self_Icc
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    {J : ℝ} (hJ_pos : 0 < J)
+    {z : Fin d → ℤ} (hz : z ≠ 0)
+    {β₁ β₂ : ℝ} (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc :
+      Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    {rho : ℝ} (hrho : 0 < rho) (g' : ℝ → ℝ)
+    (hcorr : ∀ β ∈ Set.Icc β₁ β₂,
+      Ambient.correlationInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ)
+          {(0 : Fin d → ℤ), z} ∈ Set.Ioo (0 : ℝ) 2)
+    (hderiv_lim :
+      TendstoLocallyUniformlyOn
+        (fun n β =>
+          deriv (fun β' =>
+            Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d)
+              (Ambient.cubicExhaustion d)
+              (⟨J, 0, β'⟩ : IsingParams ℝ) {(0 : Fin d → ℤ), z} n) β)
+        g' Filter.atTop (Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d)))))
+    (hprofile_tanh : cubicTanhProfileBound α d rho β₂ J z) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      Lemma_17_5_2_UpperBound hα hrho (Ambient.cubicExhaustion d) J β₂
+        (0 : Fin d → ℤ) z
+        (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho)) ∧
+      ENNReal.ofReal
+          (pseudoMassFromParamsAtPair hα hrho d (Ambient.cubicExhaustion d)
+            (⟨J, 0, β₂⟩ : IsingParams ℝ) (0 : Fin d → ℤ) z)
+        ≤ latticeMass d (Ambient.cubicExhaustion d)
+            (⟨J, 0, β₂⟩ : IsingParams ℝ) ∧
+      latticeMass d (Ambient.cubicExhaustion d)
+          (⟨J, 0, β₂⟩ : IsingParams ℝ) ≤
+        ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho) *
+          ENNReal.ofReal
+            (pseudoMassFromParamsAtPair hα hrho d (Ambient.cubicExhaustion d)
+              (⟨J, 0, β₂⟩ : IsingParams ℝ) (0 : Fin d → ℤ) z) := by
+  obtain ⟨K, hK_pos, hconv, hlower, hupper_ineq⟩ :=
+    lemma_17_5_2_cubic_origin_sandwich_of_cubicTanhProfileBound_on_self_Icc
+      (d := d) (α := α) (J := J) (z := z) (β₁ := β₁) (β₂ := β₂)
+      (rho := rho) hα hαd hd hJ_pos hz hβ₁₂ hIcc hrho g' hcorr
+      hderiv_lim hprofile_tanh
+  have hupper :
+      Lemma_17_5_2_UpperBound hα hrho (Ambient.cubicExhaustion d) J β₂
+        (0 : Fin d → ℤ) z
+        (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho)) := by
+    simpa [Lemma_17_5_2_UpperBound] using hupper_ineq
+  exact ⟨K, hK_pos, hconv, hupper, hlower, hupper_ineq⟩
+
+set_option maxHeartbeats 2000000 in
+-- Repackages the interval tanh-profile sandwich conclusion together with the
+-- matching named upper-bound predicate, preserving the same HLS constant.
+/-- **GJ §17.5 Lemma 17.5.2 anchored cubic interval tanh-profile capstone**:
+pointwise `cubicTanhProfileBound` on the beta interval supplies both the
+active-range/lower-side sandwich inputs and the matching named upper-bound
+predicate for the same HLS constant `K`. -/
+theorem
+    lemma_17_5_2_cubic_origin_capstone_of_cubicTanhProfileBound_on_Icc
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    {J : ℝ} (hJ_pos : 0 < J)
+    {z : Fin d → ℤ} (hz : z ≠ 0)
+    {β₁ β₂ : ℝ} (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc :
+      Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    {rho : ℝ} (hrho : 0 < rho) (g' : ℝ → ℝ)
+    (hderiv_lim :
+      TendstoLocallyUniformlyOn
+        (fun n β =>
+          deriv (fun β' =>
+            Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d)
+              (Ambient.cubicExhaustion d)
+              (⟨J, 0, β'⟩ : IsingParams ℝ) {(0 : Fin d → ℤ), z} n) β)
+        g' Filter.atTop (Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d)))))
+    (hprofile_tanh : ∀ β ∈ Set.Icc β₁ β₂,
+      cubicTanhProfileBound α d rho β J z) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      Lemma_17_5_2_UpperBound hα hrho (Ambient.cubicExhaustion d) J β₂
+        (0 : Fin d → ℤ) z
+        (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho)) ∧
+      ENNReal.ofReal
+          (pseudoMassFromParamsAtPair hα hrho d (Ambient.cubicExhaustion d)
+            (⟨J, 0, β₂⟩ : IsingParams ℝ) (0 : Fin d → ℤ) z)
+        ≤ latticeMass d (Ambient.cubicExhaustion d)
+            (⟨J, 0, β₂⟩ : IsingParams ℝ) ∧
+      latticeMass d (Ambient.cubicExhaustion d)
+          (⟨J, 0, β₂⟩ : IsingParams ℝ) ≤
+        ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho) *
+          ENNReal.ofReal
+            (pseudoMassFromParamsAtPair hα hrho d (Ambient.cubicExhaustion d)
+              (⟨J, 0, β₂⟩ : IsingParams ℝ) (0 : Fin d → ℤ) z) := by
+  obtain ⟨K, hK_pos, hconv, hlower, hupper_ineq⟩ :=
+    lemma_17_5_2_cubic_origin_sandwich_of_cubicTanhProfileBound_on_Icc
+      (d := d) (α := α) (J := J) (z := z) (β₁ := β₁) (β₂ := β₂)
+      (rho := rho) hα hαd hd hJ_pos hz hβ₁₂ hIcc hrho g' hderiv_lim
+      hprofile_tanh
+  have hupper :
+      Lemma_17_5_2_UpperBound hα hrho (Ambient.cubicExhaustion d) J β₂
+        (0 : Fin d → ℤ) z
+        (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho)) := by
+    simpa [Lemma_17_5_2_UpperBound] using hupper_ineq
+  exact ⟨K, hK_pos, hconv, hupper, hlower, hupper_ineq⟩
+
 end Ambient
 
 end IsingModel
