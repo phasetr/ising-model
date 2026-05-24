@@ -15,7 +15,7 @@ variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 /-! ## Ball-boundary inequality -/
 
 /-- The derivative bound constant for the ball-boundary inequality. -/
-private noncomputable def derivBound (G : SimpleGraph ι) [Fintype G.edgeSet]
+noncomputable def derivBound (G : SimpleGraph ι) [Fintype G.edgeSet]
     (E₀ : Finset (Sym2 ι)) (p : IsingParams ℝ) (r s : ι) : ℝ :=
   p.β * p.J * ∑ e ∈ E₀,
     Sym2.lift ⟨fun k l =>

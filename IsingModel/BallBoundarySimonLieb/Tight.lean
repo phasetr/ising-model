@@ -105,7 +105,7 @@ theorem summand_le_lebowitz_of_disjoint_scaled (G : SimpleGraph ι) [Fintype G.e
   linarith
 
 /-- The tight derivative bound constant (no extra `⟨σ_r σ_s⟩·⟨σ_k σ_l⟩` term). -/
-private noncomputable def derivBoundTight (G : SimpleGraph ι) [Fintype G.edgeSet]
+noncomputable def derivBoundTight (G : SimpleGraph ι) [Fintype G.edgeSet]
     (E₀ : Finset (Sym2 ι)) (p : IsingParams ℝ) (r s : ι) : ℝ :=
   p.β * p.J * ∑ e ∈ E₀,
     Sym2.lift ⟨fun k l =>

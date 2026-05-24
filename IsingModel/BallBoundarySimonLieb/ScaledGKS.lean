@@ -192,6 +192,8 @@ private theorem scaledBoltzmannWeight_duplicate_eq (G : SimpleGraph ι) [Fintype
 
 /-! ## Non-negativity of the scaled modified weight -/
 
+/-- The scaled modified weight has non-negative correlations under ferromagnetic
+parameters and `s ≥ 0`. -/
 private theorem scaledModifiedWeight_nonneg_corr (G : SimpleGraph ι) [Fintype G.edgeSet]
     (E₀ : Finset (Sym2 ι)) (p : IsingParams ℝ) (hf : Ferromagnetic p)
     (s : ℝ) (hs : 0 ≤ s) (t : Config ι) :
@@ -217,11 +219,13 @@ private theorem scaledModifiedWeight_nonneg_corr (G : SimpleGraph ι) [Fintype G
 
 /-! ## GKS-II for the scaled model -/
 
+/-- The duplicate sum after reindexing by the spin-product change of variables. -/
 private noncomputable def scaledDuplicateSumChanged (G : SimpleGraph ι) [Fintype G.edgeSet]
     (E₀ : Finset (Sym2 ι)) (p : IsingParams ℝ) (s : ℝ) (A B : Finset ι) : ℝ :=
   ∑ t : Config ι, (1 - spinProduct B t) *
     ∑ ω : Config ι, spinProduct (symmDiff A B) ω * scaledModifiedWeight G E₀ p s t ω
 
+/-- The original scaled duplicate sum equals the changed-variable duplicate sum. -/
 private theorem scaledDuplicateSum_eq_changed (G : SimpleGraph ι) [Fintype G.edgeSet]
     (E₀ : Finset (Sym2 ι)) (hE₀_sub : E₀ ⊆ G.edgeFinset)
     (p : IsingParams ℝ) (s : ℝ) (A B : Finset ι) :
@@ -258,6 +262,8 @@ private theorem scaledDuplicateSum_eq_changed (G : SimpleGraph ι) [Fintype G.ed
   apply Finset.sum_congr rfl; intro t _
   rw [← Finset.mul_sum]
 
+/-- The changed-variable scaled duplicate sum is non-negative under
+ferromagnetic parameters and `s ≥ 0`. -/
 private theorem scaledDuplicateSumChanged_nonneg (G : SimpleGraph ι) [Fintype G.edgeSet]
     (E₀ : Finset (Sym2 ι)) (p : IsingParams ℝ) (hf : Ferromagnetic p)
     (s : ℝ) (hs : 0 ≤ s) (A B : Finset ι) :
