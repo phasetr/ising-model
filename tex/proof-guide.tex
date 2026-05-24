@@ -7840,6 +7840,34 @@ build path narrow: callers pass the existing output of
 instead of forcing Lean to elaborate the full differentiability context again.
 The final all-rate bridge remains the open analytic input.
 
+\paragraph{\S17.5 Lemma 17.5.2 infinite derivative-limit bridge
+(Issue~\#1645).} The finite-to-infinite differentiability handoff for the
+HLS denominator comparison is now isolated in
+\texttt{Lemma\_17\_5\_2/InfiniteDerivativeLimit.lean}.  The theorem
+\texttt{correlationInfinite\_hasDerivAt\_beta\_of\_tendstoLocallyUniformlyOn\_deriv}
+uses Mathlib's uniform-limits-of-derivatives theorem: if the finite-volume
+derivative profiles
+\[
+  \beta \mapsto {d\over d\beta}\,
+  \texttt{correlationAlongExhaustion}_{n}(\beta)
+\]
+converge locally uniformly on the open high-temperature interval
+\((0,(J\,2d)^{-1})\), then the already-proved locally uniform convergence
+\(\texttt{corr}_{n}\to\texttt{corr}_{\infty}\) upgrades to a
+\texttt{HasDerivAt} statement for
+\(\beta\mapsto\texttt{correlationInfinite}(\langle J,0,\beta\rangle)\).
+
+The theorem
+\texttt{lemma\_17\_5\_2\_infinite\_hls\_denominator\_comparison\_of\_deriv\_bound}
+then rewrites the identified derivative into the named predicate
+\texttt{Lemma\_17\_5\_2\_InfiniteHLSDenominatorComparison}.  The combined
+\texttt{...\_of\_deriv\_limit\_bound} theorem says that a pointwise HLS bound
+on the locally uniform derivative limit directly supplies the infinite-volume
+denominator comparison.  This does not prove derivative convergence itself;
+it packages exactly that remaining analytic input so the HLS/Lebowitz
+upper-bound path can consume it without restating the uniform-limit
+machinery.
+
 \paragraph{\S5.4 Prop 5.4.2 infinite-volume Peierls bound (liminf form)
 (PR~\#1643).} Adds the genuine infinite-volume lift of GJ Prop 5.4.2:
 under the per-stage hypotheses of \texttt{prop\_5\_4\_2\_along\_exhaustion},
