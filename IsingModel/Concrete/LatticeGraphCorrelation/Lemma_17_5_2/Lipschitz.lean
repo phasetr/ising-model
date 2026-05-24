@@ -1087,5 +1087,55 @@ theorem lemma_17_5_2_cubic_high_temp_enlarged_hls_capstone_of_named_rate_on_Icc
       hα hαd hr (Nat.succ_le_iff.mp hd) Λ hJ hβ₂_open.1 hlt hcorr_cubic
       hnamed
 
+set_option maxHeartbeats 2000000 in
+-- Profile-lower capstone form: the cubic profile comparison supplies the
+-- lightweight named-rate premise consumed by the finite HLS capstone.
+/-- **GJ §17.5 Lemma 17.5.2 finite HLS-style capstone from a cubic profile
+lower bound**: active-range membership and the endpoint cubic profile lower
+bound prove the named-rate premise, then the named-rate finite HLS capstone
+returns the matching upper-bound predicate and displayed sandwich. -/
+theorem lemma_17_5_2_cubic_high_temp_enlarged_hls_capstone_of_profile_lower
+    {α d : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) {r : ℝ} (hr : 0 < r)
+    (hd : 0 < d) (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      ((Ambient.cubicExhaustion d).volume n)).edgeSet]
+    {β J : ℝ} (hJ : 0 < J) (hβ : 0 < β)
+    (hlt : β * J * ↑(2 * d) < 1) {z : Fin d → ℤ}
+    (hcorr_cubic :
+      Ambient.correlationInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ)
+          {(0 : Fin d → ℤ), z} ∈ Set.Ioo (0 : ℝ) 2)
+    (hprofile_cubic :
+      pseudoMassG α r (-Real.log (β * J * ↑(2 * d))) ≤
+        Ambient.correlationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ)
+            {(0 : Fin d → ℤ), z}) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      Lemma_17_5_2_UpperBound hα hr Λ J β (0 : Fin d → ℤ) z
+        (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / r)) ∧
+      HasExponentialDecay d Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+          (pseudoMassFromParamsAtPair hα hr d Λ
+            (⟨J, 0, β⟩ : IsingParams ℝ) (0 : Fin d → ℤ) z) ∧
+      ENNReal.ofReal
+          (pseudoMassFromParamsAtPair hα hr d Λ
+            (⟨J, 0, β⟩ : IsingParams ℝ) (0 : Fin d → ℤ) z) ≤
+        latticeMass d Λ (⟨J, 0, β⟩ : IsingParams ℝ) ∧
+      latticeMass d Λ (⟨J, 0, β⟩ : IsingParams ℝ) ≤
+        ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / r) *
+          ENNReal.ofReal
+            (pseudoMassFromParamsAtPair hα hr d Λ
+              (⟨J, 0, β⟩ : IsingParams ℝ) (0 : Fin d → ℤ) z) := by
+  have hnamed : cubicOriginNamedRateLeHighTemp hα hr β J z :=
+    cubicOriginNamedRateLeHighTemp_of_cubic_pseudoMassG_le_corr
+      hα hr hJ.le hβ hlt hcorr_cubic hprofile_cubic
+  exact
+    lemma_17_5_2_cubic_high_temp_enlarged_hls_capstone_of_named_rate
+      (α := α) (d := d) (r := r) (β := β) (J := J) (z := z)
+      hα hαd hr hd Λ hJ hβ hlt hcorr_cubic hnamed
+
 end Ambient
 end IsingModel
