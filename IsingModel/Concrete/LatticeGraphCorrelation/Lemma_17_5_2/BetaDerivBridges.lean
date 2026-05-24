@@ -122,11 +122,12 @@ theorem lemma_17_5_2_beta_pseudoMass_power_deriv_le_of_high_temp_bound
     {h : ℝ → ℝ} {h' : ℝ}
     (hh : HasDerivAt h h' β)
     (hh_nonneg : 0 ≤ h β)
-    (hg_eq : ∀ β',
-      pseudoMassG α rho (h β') =
-        IsingModel.correlation
-          (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
-          (⟨J, 0, β'⟩ : IsingParams ℝ) {r, s})
+    (hg_eq :
+      (fun β' => pseudoMassG α rho (h β')) =ᶠ[nhds β]
+        (fun β' =>
+          IsingModel.correlation
+            (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+            (⟨J, 0, β'⟩ : IsingParams ℝ) {r, s}))
     (hh_pos : 0 < h β)
     (hc_pos :
       0 <
@@ -170,11 +171,12 @@ theorem lemma_17_5_2_beta_pseudoMass_power_deriv_le_of_hls_constant
     {h : ℝ → ℝ} {h' : ℝ}
     (hh : HasDerivAt h h' β)
     (hh_nonneg : 0 ≤ h β)
-    (hg_eq : ∀ β',
-      pseudoMassG α rho (h β') =
-        IsingModel.correlation
-          (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
-          (⟨J, 0, β'⟩ : IsingParams ℝ) {r, s})
+    (hg_eq :
+      (fun β' => pseudoMassG α rho (h β')) =ᶠ[nhds β]
+        (fun β' =>
+          IsingModel.correlation
+            (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+            (⟨J, 0, β'⟩ : IsingParams ℝ) {r, s}))
     (hh_pos : 0 < h β)
     (hc_pos :
       0 <
@@ -215,11 +217,12 @@ theorem lemma_17_5_2_beta_pseudoMass_pow_succ_deriv_bound_of_high_temp_bound
     {h : ℝ → ℝ} {h' : ℝ}
     (hh : HasDerivAt h h' β)
     (hh_nonneg : 0 ≤ h β)
-    (hg_eq : ∀ β',
-      pseudoMassG α rho (h β') =
-        IsingModel.correlation
-          (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
-          (⟨J, 0, β'⟩ : IsingParams ℝ) {r, s})
+    (hg_eq :
+      (fun β' => pseudoMassG α rho (h β')) =ᶠ[nhds β]
+        (fun β' =>
+          IsingModel.correlation
+            (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+            (⟨J, 0, β'⟩ : IsingParams ℝ) {r, s}))
     (hh_pos : 0 < h β)
     (hc_pos :
       0 <
@@ -264,11 +267,12 @@ theorem lemma_17_5_2_beta_pseudoMass_pow_succ_deriv_bound_of_hls_constant
     {h : ℝ → ℝ} {h' : ℝ}
     (hh : HasDerivAt h h' β)
     (hh_nonneg : 0 ≤ h β)
-    (hg_eq : ∀ β',
-      pseudoMassG α rho (h β') =
-        IsingModel.correlation
-          (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
-          (⟨J, 0, β'⟩ : IsingParams ℝ) {r, s})
+    (hg_eq :
+      (fun β' => pseudoMassG α rho (h β')) =ᶠ[nhds β]
+        (fun β' =>
+          IsingModel.correlation
+            (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+            (⟨J, 0, β'⟩ : IsingParams ℝ) {r, s}))
     (hh_pos : 0 < h β)
     (hc_pos :
       0 <
