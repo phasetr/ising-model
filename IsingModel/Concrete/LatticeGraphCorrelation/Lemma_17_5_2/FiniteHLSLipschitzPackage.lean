@@ -1152,6 +1152,80 @@ theorem lemma_17_5_2_ratio_lower_of_uniform_correlation_on_beta_interval
           (⟨J, 0, β⟩ : IsingParams ℝ) {x, z})
       (h := h) hC_pos hH_pos hconv hcInf_lower hdenom_pos hdenom_bound
 
+/-- **GJ §17.5 Lemma 17.5.2 compact positive lower bound**: a continuous
+positive real-valued function on a nonempty closed interval has a positive
+uniform lower bound. -/
+theorem lemma_17_5_2_compact_pos_lower_bound_on_Icc
+    {f : ℝ → ℝ} {β₁ β₂ : ℝ} (hβ₁₂ : β₁ ≤ β₂)
+    (hf_cont : ContinuousOn f (Set.Icc β₁ β₂))
+    (hf_pos : ∀ β ∈ Set.Icc β₁ β₂, 0 < f β) :
+    ∃ C : ℝ, 0 < C ∧ ∀ β ∈ Set.Icc β₁ β₂, C ≤ f β := by
+  obtain ⟨β₀, hβ₀, hmin⟩ :=
+    isCompact_Icc.exists_isMinOn (Set.nonempty_Icc.2 hβ₁₂) hf_cont
+  refine ⟨f β₀, hf_pos β₀ hβ₀, ?_⟩
+  exact isMinOn_iff.mp hmin
+
+/-- **GJ §17.5 Lemma 17.5.2 compact denominator upper bound**: a continuous
+nonnegative pseudo-mass profile on a nonempty closed interval has a positive
+uniform upper bound for `h^(2α)`. -/
+theorem lemma_17_5_2_compact_pow_upper_bound_on_Icc
+    {α : ℕ} {h : ℝ → ℝ} {β₁ β₂ : ℝ} (hβ₁₂ : β₁ ≤ β₂)
+    (hh_cont : ContinuousOn h (Set.Icc β₁ β₂))
+    (hh_nonneg : ∀ β ∈ Set.Icc β₁ β₂, 0 ≤ h β) :
+    ∃ H : ℝ, 0 < H ∧ ∀ β ∈ Set.Icc β₁ β₂, (h β) ^ (2 * α) ≤ H := by
+  have hpow_cont : ContinuousOn (fun β => (h β) ^ (2 * α)) (Set.Icc β₁ β₂) :=
+    hh_cont.pow (2 * α)
+  obtain ⟨β₀, hβ₀, hmax⟩ :=
+    isCompact_Icc.exists_isMaxOn (Set.nonempty_Icc.2 hβ₁₂) hpow_cont
+  let H : ℝ := (h β₀) ^ (2 * α) + 1
+  have hpow_nonneg : 0 ≤ (h β₀) ^ (2 * α) := pow_nonneg (hh_nonneg β₀ hβ₀) _
+  refine ⟨H, by linarith, ?_⟩
+  intro β hβ
+  have hle : (h β) ^ (2 * α) ≤ (h β₀) ^ (2 * α) := isMaxOn_iff.mp hmax β hβ
+  dsimp [H]
+  linarith
+
+/-- **GJ §17.5 Lemma 17.5.2 compact interval bounds for the ratio lower**:
+on a closed beta interval inside the high-temperature region, continuity and
+pointwise positivity of `corr_infty` provide the positive lower bound `C`, while
+continuity and nonnegativity of the denominator profile provide the positive
+upper bound `H` for `h^(2α)`. -/
+theorem lemma_17_5_2_compact_ratio_bounds_on_beta_interval
+    {d α : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (hJ : 0 ≤ J)
+    {x z : Fin d → ℤ} (hxz : x ≠ z)
+    {β₁ β₂ a b : ℝ} (hβ₁₂ : β₁ ≤ β₂)
+    (ha : 0 < a) (hab : a ≤ b) (hlt : b * J * ↑(2 * d) < 1)
+    (hβ_mem : ∀ β ∈ Set.Icc β₁ β₂, β ∈ Set.Icc a b)
+    {h : ℝ → ℝ}
+    (hh_cont : ContinuousOn h (Set.Icc β₁ β₂))
+    (hh_nonneg : ∀ β ∈ Set.Icc β₁ β₂, 0 ≤ h β)
+    (hc_pos : ∀ β ∈ Set.Icc β₁ β₂,
+      0 <
+        Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) {x, z}) :
+    ∃ C H : ℝ, 0 < C ∧ 0 < H ∧
+      (∀ β ∈ Set.Icc β₁ β₂,
+        C ≤
+          Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, β⟩ : IsingParams ℝ) {x, z}) ∧
+      (∀ β ∈ Set.Icc β₁ β₂, (h β) ^ (2 * α) ≤ H) := by
+  have hc_cont_ab :=
+    correlationInfinite_continuousOn_beta_of_high_temp
+      Λ x z hxz J hJ a b ha hab hlt
+  have hc_cont :
+      ContinuousOn
+        (fun β =>
+          Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, β⟩ : IsingParams ℝ) {x, z})
+        (Set.Icc β₁ β₂) :=
+    hc_cont_ab.mono hβ_mem
+  obtain ⟨C, hC_pos, hc_lower⟩ :=
+    lemma_17_5_2_compact_pos_lower_bound_on_Icc hβ₁₂ hc_cont hc_pos
+  obtain ⟨H, hH_pos, hdenom_bound⟩ :=
+    lemma_17_5_2_compact_pow_upper_bound_on_Icc (α := α) hβ₁₂ hh_cont hh_nonneg
+  exact ⟨C, H, hC_pos, hH_pos, hc_lower, hdenom_bound⟩
+
 set_option maxHeartbeats 2000000 in
 -- The package selects one enlarged constant and normalizes several large
 -- interval-uniform derivative and all-rate premises at once.
@@ -1546,6 +1620,137 @@ theorem lemma_17_5_2_sandwich_of_high_temp_uniform_correlation_lower
       hα hαd hd hJ_pos hxz hβ₁₂ hIcc ha hab hlt hβ_mem hrho g'
       hh_diff hh_nonneg hg_eq hh_pos hc_pos hm_pos hderiv_lim hC_pos hH_pos
       hcInf_lower hdenom_bound
+  exact ⟨K, hK, hK_conv,
+    lemma_17_5_2_sandwich_of_decay_and_upper hα hrho hdecay hupper⟩
+
+set_option maxHeartbeats 2000000 in
+-- This wrapper obtains the `C` and `H` ratio-lower witnesses by compactness,
+-- then delegates to the uniform-correlation lower package.
+/-- **GJ §17.5 Lemma 17.5.2 upper bound from compact ratio bounds**:
+continuity on the closed beta interval turns pointwise positivity of the
+infinite correlation into the uniform `C` lower bound, and turns denominator
+continuity/nonnegativity into the uniform `H` upper bound.  These witnesses are
+then fed into `lemma_17_5_2_upper_bound_of_high_temp_uniform_correlation_lower`.
+-/
+theorem lemma_17_5_2_upper_bound_of_high_temp_compact_ratio_bounds
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    {J : ℝ} (hJ_pos : 0 < J)
+    {x z : Fin d → ℤ} (hxz : x ≠ z)
+    {β₁ β₂ a b : ℝ} (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc :
+      Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (ha : 0 < a) (hab : a ≤ b) (hlt : b * J * ↑(2 * d) < 1)
+    (hβ_mem : ∀ β ∈ Set.Icc β₁ β₂, β ∈ Set.Icc a b)
+    {rho : ℝ} (hrho : 0 < rho)
+    {h : ℝ → ℝ} (g' : ℝ → ℝ)
+    (hh_diff : ∀ β' ∈ Set.Icc β₁ β₂, HasDerivAt h (deriv h β') β')
+    (hh_cont : ContinuousOn h (Set.Icc β₁ β₂))
+    (hh_nonneg : ∀ β' ∈ Set.Icc β₁ β₂, 0 ≤ h β')
+    (hg_eq : ∀ β',
+      pseudoMassG α rho (h β') =
+        Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z})
+    (hh_pos : ∀ β' ∈ Set.Icc β₁ β₂, 0 < h β')
+    (hc_pos : ∀ β' ∈ Set.Icc β₁ β₂,
+      0 <
+        Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z})
+    (hm_pos :
+      0 <
+        pseudoMassFromParamsAtPair hα hrho d Λ
+          (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
+    (hderiv_lim :
+      TendstoLocallyUniformlyOn
+        (fun n β =>
+          deriv (fun β' =>
+            Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
+        g' Filter.atTop (Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      Lemma_17_5_2_UpperBound hα hrho Λ J β₂ x z
+        (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho)) := by
+  obtain ⟨C, H, hC_pos, hH_pos, hc_lower, hdenom_bound⟩ :=
+    lemma_17_5_2_compact_ratio_bounds_on_beta_interval
+      (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
+      (β₁ := β₁) (β₂ := β₂) (a := a) (b := b) (h := h)
+      hJ_pos.le hxz hβ₁₂ ha hab hlt hβ_mem hh_cont hh_nonneg hc_pos
+  exact
+    lemma_17_5_2_upper_bound_of_high_temp_uniform_correlation_lower
+      (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
+      (β₁ := β₁) (β₂ := β₂) (a := a) (b := b) (rho := rho) (h := h)
+      hα hαd hd hJ_pos hxz hβ₁₂ hIcc ha hab hlt hβ_mem hrho g'
+      hh_diff hh_nonneg hg_eq hh_pos hc_pos hm_pos hderiv_lim hC_pos hH_pos
+      hc_lower hdenom_bound
+
+set_option maxHeartbeats 2000000 in
+-- Compactness supplies the ratio-lower witnesses; the lower side is the
+-- existing validating pseudo-mass decay hypothesis.
+/-- **GJ §17.5 Lemma 17.5.2 sandwich from compact ratio bounds**: add the
+validating pseudo-mass decay lower side to
+`lemma_17_5_2_upper_bound_of_high_temp_compact_ratio_bounds`. -/
+theorem lemma_17_5_2_sandwich_of_high_temp_compact_ratio_bounds
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    {Λ : Ambient.Exhaustion (Fin d → ℤ)}
+    {J : ℝ} (hJ_pos : 0 < J)
+    {x z : Fin d → ℤ} (hxz : x ≠ z)
+    {β₁ β₂ a b : ℝ} (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc :
+      Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (ha : 0 < a) (hab : a ≤ b) (hlt : b * J * ↑(2 * d) < 1)
+    (hβ_mem : ∀ β ∈ Set.Icc β₁ β₂, β ∈ Set.Icc a b)
+    {rho : ℝ} (hrho : 0 < rho)
+    {h : ℝ → ℝ} (g' : ℝ → ℝ)
+    (hh_diff : ∀ β' ∈ Set.Icc β₁ β₂, HasDerivAt h (deriv h β') β')
+    (hh_cont : ContinuousOn h (Set.Icc β₁ β₂))
+    (hh_nonneg : ∀ β' ∈ Set.Icc β₁ β₂, 0 ≤ h β')
+    (hg_eq : ∀ β',
+      pseudoMassG α rho (h β') =
+        Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z})
+    (hh_pos : ∀ β' ∈ Set.Icc β₁ β₂, 0 < h β')
+    (hc_pos : ∀ β' ∈ Set.Icc β₁ β₂,
+      0 <
+        Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z})
+    (hm_pos :
+      0 <
+        pseudoMassFromParamsAtPair hα hrho d Λ
+          (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
+    (hderiv_lim :
+      TendstoLocallyUniformlyOn
+        (fun n β =>
+          deriv (fun β' =>
+            Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
+        g' Filter.atTop (Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d)))))
+    (hdecay : HasExponentialDecay d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ)
+      (pseudoMassFromParamsAtPair hα hrho d Λ
+        (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      ENNReal.ofReal
+          (pseudoMassFromParamsAtPair hα hrho d Λ
+            (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
+        ≤ latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ∧
+      latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ≤
+        ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho) *
+          ENNReal.ofReal
+            (pseudoMassFromParamsAtPair hα hrho d Λ
+              (⟨J, 0, β₂⟩ : IsingParams ℝ) x z) := by
+  obtain ⟨K, hK, hK_conv, hupper⟩ :=
+    lemma_17_5_2_upper_bound_of_high_temp_compact_ratio_bounds
+      (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
+      (β₁ := β₁) (β₂ := β₂) (a := a) (b := b) (rho := rho) (h := h)
+      hα hαd hd hJ_pos hxz hβ₁₂ hIcc ha hab hlt hβ_mem hrho g'
+      hh_diff hh_cont hh_nonneg hg_eq hh_pos hc_pos hm_pos hderiv_lim
   exact ⟨K, hK, hK_conv,
     lemma_17_5_2_sandwich_of_decay_and_upper hα hrho hdecay hupper⟩
 
