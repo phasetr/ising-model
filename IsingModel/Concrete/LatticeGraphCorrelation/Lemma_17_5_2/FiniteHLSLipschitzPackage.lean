@@ -42,10 +42,11 @@ theorem
     {h : ℝ → ℝ} (g' : ℝ → ℝ)
     (hh_diff : ∀ β' ∈ Set.Icc β₁ β₂, HasDerivAt h (deriv h β') β')
     (hh_nonneg : ∀ β' ∈ Set.Icc β₁ β₂, 0 ≤ h β')
-    (hg_eq : ∀ β',
-      pseudoMassG α rho (h β') =
-        Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
-          (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z})
+    (hg_eq : ∀ β' ∈ Set.Icc β₁ β₂,
+      (fun γ => pseudoMassG α rho (h γ)) =ᶠ[nhds β']
+        (fun γ =>
+          Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, γ⟩ : IsingParams ℝ) {x, z}))
     (hh_pos : ∀ β' ∈ Set.Icc β₁ β₂, 0 < h β')
     (hc_pos : ∀ β' ∈ Set.Icc β₁ β₂,
       0 <
@@ -88,7 +89,7 @@ theorem
   obtain ⟨K, hK, hK_conv, hlip⟩ :=
     lemma_17_5_2_infinite_pseudoMass_pow_succ_lipschitz_of_hls_constant
       hαd Λ J x z hβ₁₂ hrho hh_diff hc_diff hh_nonneg
-      (fun β hβ => Filter.Eventually.of_forall fun γ => hg_eq γ) hh_pos hc_pos
+      hg_eq hh_pos hc_pos
   refine ⟨K, hK, hK_conv, fun hfinite => ?_⟩
   exact hlip
     (lemma_17_5_2_infinite_hls_denominator_comparison_on_Icc_of_uniform_finite_deriv_bounds
@@ -396,10 +397,11 @@ theorem
     {h : ℝ → ℝ} (g' : ℝ → ℝ)
     (hh_diff : ∀ β' ∈ Set.Icc β₁ β₂, HasDerivAt h (deriv h β') β')
     (hh_nonneg : ∀ β' ∈ Set.Icc β₁ β₂, 0 ≤ h β')
-    (hg_eq : ∀ β',
-      pseudoMassG α rho (h β') =
-        Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
-          (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z})
+    (hg_eq : ∀ β' ∈ Set.Icc β₁ β₂,
+      (fun γ => pseudoMassG α rho (h γ)) =ᶠ[nhds β']
+        (fun γ =>
+          Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, γ⟩ : IsingParams ℝ) {x, z}))
     (hh_pos : ∀ β' ∈ Set.Icc β₁ β₂, 0 < h β')
     (hc_pos : ∀ β' ∈ Set.Icc β₁ β₂,
       0 <
@@ -491,7 +493,7 @@ theorem
   refine ⟨K, hK_pos, hK_conv, ?_, ?_⟩
   · intro hfinite
     exact pseudoMass_pow_succ_lipschitz α hrho hβ₁₂ hh_diff hc_diff hh_nonneg
-      (fun β hβ => Filter.Eventually.of_forall fun γ => hg_eq γ) hh_pos hc_pos
+      hg_eq hh_pos hc_pos
       (lemma_17_5_2_infinite_hls_denominator_comparison_on_Icc_of_uniform_finite_deriv_bounds
         hd Λ J hJ_pos x z hxz β₁ β₂ K hIcc h g' hderiv_lim hfinite)
   · simpa [N, m, path] using hpath_enn
@@ -514,10 +516,11 @@ theorem lemma_17_5_2_upper_bound_of_enlarged_finite_hls_lipschitz_package
     {h : ℝ → ℝ} (g' : ℝ → ℝ)
     (hh_diff : ∀ β' ∈ Set.Icc β₁ β₂, HasDerivAt h (deriv h β') β')
     (hh_nonneg : ∀ β' ∈ Set.Icc β₁ β₂, 0 ≤ h β')
-    (hg_eq : ∀ β',
-      pseudoMassG α rho (h β') =
-        Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
-          (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z})
+    (hg_eq : ∀ β' ∈ Set.Icc β₁ β₂,
+      (fun γ => pseudoMassG α rho (h γ)) =ᶠ[nhds β']
+        (fun γ =>
+          Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, γ⟩ : IsingParams ℝ) {x, z}))
     (hh_pos : ∀ β' ∈ Set.Icc β₁ β₂, 0 < h β')
     (hc_pos : ∀ β' ∈ Set.Icc β₁ β₂,
       0 <
@@ -585,10 +588,11 @@ theorem lemma_17_5_2_sandwich_of_enlarged_finite_hls_lipschitz_package
     {h : ℝ → ℝ} (g' : ℝ → ℝ)
     (hh_diff : ∀ β' ∈ Set.Icc β₁ β₂, HasDerivAt h (deriv h β') β')
     (hh_nonneg : ∀ β' ∈ Set.Icc β₁ β₂, 0 ≤ h β')
-    (hg_eq : ∀ β',
-      pseudoMassG α rho (h β') =
-        Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
-          (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z})
+    (hg_eq : ∀ β' ∈ Set.Icc β₁ β₂,
+      (fun γ => pseudoMassG α rho (h γ)) =ᶠ[nhds β']
+        (fun γ =>
+          Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, γ⟩ : IsingParams ℝ) {x, z}))
     (hh_pos : ∀ β' ∈ Set.Icc β₁ β₂, 0 < h β')
     (hc_pos : ∀ β' ∈ Set.Icc β₁ β₂,
       0 <
@@ -787,10 +791,11 @@ theorem
     {h : ℝ → ℝ} (g' : ℝ → ℝ)
     (hh_diff : ∀ β' ∈ Set.Icc β₁ β₂, HasDerivAt h (deriv h β') β')
     (hh_nonneg : ∀ β' ∈ Set.Icc β₁ β₂, 0 ≤ h β')
-    (hg_eq : ∀ β',
-      pseudoMassG α rho (h β') =
-        Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
-          (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z})
+    (hg_eq : ∀ β' ∈ Set.Icc β₁ β₂,
+      (fun γ => pseudoMassG α rho (h γ)) =ᶠ[nhds β']
+        (fun γ =>
+          Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, γ⟩ : IsingParams ℝ) {x, z}))
     (hh_pos : ∀ β' ∈ Set.Icc β₁ β₂, 0 < h β')
     (hc_pos : ∀ β' ∈ Set.Icc β₁ β₂,
       0 <
@@ -853,10 +858,11 @@ theorem
     {h : ℝ → ℝ} (g' : ℝ → ℝ)
     (hh_diff : ∀ β' ∈ Set.Icc β₁ β₂, HasDerivAt h (deriv h β') β')
     (hh_nonneg : ∀ β' ∈ Set.Icc β₁ β₂, 0 ≤ h β')
-    (hg_eq : ∀ β',
-      pseudoMassG α rho (h β') =
-        Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
-          (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z})
+    (hg_eq : ∀ β' ∈ Set.Icc β₁ β₂,
+      (fun γ => pseudoMassG α rho (h γ)) =ᶠ[nhds β']
+        (fun γ =>
+          Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, γ⟩ : IsingParams ℝ) {x, z}))
     (hh_pos : ∀ β' ∈ Set.Icc β₁ β₂, 0 < h β')
     (hc_pos : ∀ β' ∈ Set.Icc β₁ β₂,
       0 <
@@ -933,10 +939,11 @@ theorem
     {h : ℝ → ℝ} (g' : ℝ → ℝ)
     (hh_diff : ∀ β' ∈ Set.Icc β₁ β₂, HasDerivAt h (deriv h β') β')
     (hh_nonneg : ∀ β' ∈ Set.Icc β₁ β₂, 0 ≤ h β')
-    (hg_eq : ∀ β',
-      pseudoMassG α rho (h β') =
-        Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
-          (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z})
+    (hg_eq : ∀ β' ∈ Set.Icc β₁ β₂,
+      (fun γ => pseudoMassG α rho (h γ)) =ᶠ[nhds β']
+        (fun γ =>
+          Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, γ⟩ : IsingParams ℝ) {x, z}))
     (hh_pos : ∀ β' ∈ Set.Icc β₁ β₂, 0 < h β')
     (hc_pos : ∀ β' ∈ Set.Icc β₁ β₂,
       0 <
@@ -1003,10 +1010,11 @@ theorem
     {h : ℝ → ℝ} (g' : ℝ → ℝ)
     (hh_diff : ∀ β' ∈ Set.Icc β₁ β₂, HasDerivAt h (deriv h β') β')
     (hh_nonneg : ∀ β' ∈ Set.Icc β₁ β₂, 0 ≤ h β')
-    (hg_eq : ∀ β',
-      pseudoMassG α rho (h β') =
-        Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
-          (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z})
+    (hg_eq : ∀ β' ∈ Set.Icc β₁ β₂,
+      (fun γ => pseudoMassG α rho (h γ)) =ᶠ[nhds β']
+        (fun γ =>
+          Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, γ⟩ : IsingParams ℝ) {x, z}))
     (hh_pos : ∀ β' ∈ Set.Icc β₁ β₂, 0 < h β')
     (hc_pos : ∀ β' ∈ Set.Icc β₁ β₂,
       0 <
@@ -1249,10 +1257,11 @@ theorem lemma_17_5_2_upper_bound_of_high_temp_ratio_lower
     {h : ℝ → ℝ} (g' : ℝ → ℝ)
     (hh_diff : ∀ β' ∈ Set.Icc β₁ β₂, HasDerivAt h (deriv h β') β')
     (hh_nonneg : ∀ β' ∈ Set.Icc β₁ β₂, 0 ≤ h β')
-    (hg_eq : ∀ β',
-      pseudoMassG α rho (h β') =
-        Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
-          (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z})
+    (hg_eq : ∀ β' ∈ Set.Icc β₁ β₂,
+      (fun γ => pseudoMassG α rho (h γ)) =ᶠ[nhds β']
+        (fun γ =>
+          Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, γ⟩ : IsingParams ℝ) {x, z}))
     (hh_pos : ∀ β' ∈ Set.Icc β₁ β₂, 0 < h β')
     (hc_pos : ∀ β' ∈ Set.Icc β₁ β₂,
       0 <
@@ -1394,7 +1403,7 @@ theorem lemma_17_5_2_upper_bound_of_high_temp_ratio_lower
           ↑(2 * α + 1) * K / rho * (β₂ - β₁) := by
     intro hfinite'
     exact pseudoMass_pow_succ_lipschitz α hrho hβ₁₂ hh_diff hc_diff hh_nonneg
-      (fun β hβ => Filter.Eventually.of_forall fun γ => hg_eq γ) hh_pos hc_pos
+      hg_eq hh_pos hc_pos
       (lemma_17_5_2_infinite_hls_denominator_comparison_on_Icc_of_uniform_finite_deriv_bounds
         hd Λ J hJ_pos x z hxz β₁ β₂ K hIcc h g' hderiv_lim hfinite')
   have hβ₂_pos : 0 < β₂ := (hIcc (Set.right_mem_Icc.mpr hβ₁₂)).1
@@ -1429,10 +1438,11 @@ theorem lemma_17_5_2_sandwich_of_high_temp_ratio_lower
     {h : ℝ → ℝ} (g' : ℝ → ℝ)
     (hh_diff : ∀ β' ∈ Set.Icc β₁ β₂, HasDerivAt h (deriv h β') β')
     (hh_nonneg : ∀ β' ∈ Set.Icc β₁ β₂, 0 ≤ h β')
-    (hg_eq : ∀ β',
-      pseudoMassG α rho (h β') =
-        Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
-          (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z})
+    (hg_eq : ∀ β' ∈ Set.Icc β₁ β₂,
+      (fun γ => pseudoMassG α rho (h γ)) =ᶠ[nhds β']
+        (fun γ =>
+          Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, γ⟩ : IsingParams ℝ) {x, z}))
     (hh_pos : ∀ β' ∈ Set.Icc β₁ β₂, 0 < h β')
     (hc_pos : ∀ β' ∈ Set.Icc β₁ β₂,
       0 <
@@ -1505,10 +1515,11 @@ theorem lemma_17_5_2_upper_bound_of_high_temp_uniform_correlation_lower
     {h : ℝ → ℝ} (g' : ℝ → ℝ)
     (hh_diff : ∀ β' ∈ Set.Icc β₁ β₂, HasDerivAt h (deriv h β') β')
     (hh_nonneg : ∀ β' ∈ Set.Icc β₁ β₂, 0 ≤ h β')
-    (hg_eq : ∀ β',
-      pseudoMassG α rho (h β') =
-        Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
-          (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z})
+    (hg_eq : ∀ β' ∈ Set.Icc β₁ β₂,
+      (fun γ => pseudoMassG α rho (h γ)) =ᶠ[nhds β']
+        (fun γ =>
+          Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, γ⟩ : IsingParams ℝ) {x, z}))
     (hh_pos : ∀ β' ∈ Set.Icc β₁ β₂, 0 < h β')
     (hc_pos : ∀ β' ∈ Set.Icc β₁ β₂,
       0 <
@@ -1571,10 +1582,11 @@ theorem lemma_17_5_2_sandwich_of_high_temp_uniform_correlation_lower
     {h : ℝ → ℝ} (g' : ℝ → ℝ)
     (hh_diff : ∀ β' ∈ Set.Icc β₁ β₂, HasDerivAt h (deriv h β') β')
     (hh_nonneg : ∀ β' ∈ Set.Icc β₁ β₂, 0 ≤ h β')
-    (hg_eq : ∀ β',
-      pseudoMassG α rho (h β') =
-        Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
-          (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z})
+    (hg_eq : ∀ β' ∈ Set.Icc β₁ β₂,
+      (fun γ => pseudoMassG α rho (h γ)) =ᶠ[nhds β']
+        (fun γ =>
+          Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, γ⟩ : IsingParams ℝ) {x, z}))
     (hh_pos : ∀ β' ∈ Set.Icc β₁ β₂, 0 < h β')
     (hc_pos : ∀ β' ∈ Set.Icc β₁ β₂,
       0 <
@@ -1648,10 +1660,11 @@ theorem lemma_17_5_2_upper_bound_of_high_temp_compact_ratio_bounds
     (hh_diff : ∀ β' ∈ Set.Icc β₁ β₂, HasDerivAt h (deriv h β') β')
     (hh_cont : ContinuousOn h (Set.Icc β₁ β₂))
     (hh_nonneg : ∀ β' ∈ Set.Icc β₁ β₂, 0 ≤ h β')
-    (hg_eq : ∀ β',
-      pseudoMassG α rho (h β') =
-        Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
-          (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z})
+    (hg_eq : ∀ β' ∈ Set.Icc β₁ β₂,
+      (fun γ => pseudoMassG α rho (h γ)) =ᶠ[nhds β']
+        (fun γ =>
+          Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, γ⟩ : IsingParams ℝ) {x, z}))
     (hh_pos : ∀ β' ∈ Set.Icc β₁ β₂, 0 < h β')
     (hc_pos : ∀ β' ∈ Set.Icc β₁ β₂,
       0 <
@@ -1709,10 +1722,11 @@ theorem lemma_17_5_2_sandwich_of_high_temp_compact_ratio_bounds
     (hh_diff : ∀ β' ∈ Set.Icc β₁ β₂, HasDerivAt h (deriv h β') β')
     (hh_cont : ContinuousOn h (Set.Icc β₁ β₂))
     (hh_nonneg : ∀ β' ∈ Set.Icc β₁ β₂, 0 ≤ h β')
-    (hg_eq : ∀ β',
-      pseudoMassG α rho (h β') =
-        Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
-          (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z})
+    (hg_eq : ∀ β' ∈ Set.Icc β₁ β₂,
+      (fun γ => pseudoMassG α rho (h γ)) =ᶠ[nhds β']
+        (fun γ =>
+          Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, γ⟩ : IsingParams ℝ) {x, z}))
     (hh_pos : ∀ β' ∈ Set.Icc β₁ β₂, 0 < h β')
     (hc_pos : ∀ β' ∈ Set.Icc β₁ β₂,
       0 <
