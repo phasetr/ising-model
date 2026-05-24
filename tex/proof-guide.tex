@@ -8026,6 +8026,27 @@ validating pseudo-mass decay lower side.  Thus the remaining scalar HLS input
 is now the concrete ratio lower bound \(L\le c_n(\beta)/(h(\beta))^{2\alpha}\),
 not a provider for every positive returned HLS constant.
 
+The concrete ratio-lower premise can itself be obtained from uniform
+finite-volume convergence.  The theorem
+\texttt{lemma\_17\_5\_2\_ratio\_lower\_of\_uniform\_correlation\_limit}
+is the scalar bridge: if \(c_n\to c_\infty\) uniformly on the interval,
+\(C\le c_\infty(\beta)\) with \(C>0\), and
+\((h(\beta))^{2\alpha}\le H\) with \(H>0\), then eventually and uniformly
+\[
+  (C/2)/H \le c_n(\beta)/(h(\beta))^{2\alpha}.
+\]
+The lattice beta-interval specialization
+\texttt{lemma\_17\_5\_2\_ratio\_lower\_of\_uniform\_correlation\_on\_beta\_interval}
+uses the existing high-temperature Dini theorem
+\texttt{correlationAlongExhaustion\_tendstoUniformlyOn\_beta}.  The direct
+assemblies
+\texttt{lemma\_17\_5\_2\_upper\_bound\_of\_high\_temp\_uniform\_correlation\_lower}
+and
+\texttt{lemma\_17\_5\_2\_sandwich\_of\_high\_temp\_uniform\_correlation\_lower}
+feed this \(L\) into the high-temperature ratio-lower package above.  Thus the
+finite ratio-lower premise has been reduced to two interval bounds on the
+infinite correlation and the pseudo-mass denominator.
+
 \paragraph{\S5.4 Prop 5.4.2 infinite-volume Peierls bound (liminf form)
 (PR~\#1643).} Adds the genuine infinite-volume lift of GJ Prop 5.4.2:
 under the per-stage hypotheses of \texttt{prop\_5\_4\_2\_along\_exhaustion},
