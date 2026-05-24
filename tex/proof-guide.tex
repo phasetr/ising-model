@@ -8005,6 +8005,27 @@ and
 They leave the remaining scalar HLS comparison explicit while eliminating the
 finite derivative-bound premise from the final callers.
 
+The scalar-provider requirement has also been narrowed to a ratio-lower
+package.  First,
+\texttt{lemma\_17\_5\_2\_finite\_deriv\_bound\_of\_high\_temp\_scalar\_bound}
+factors out the fixed-\(K\) version of the high-temperature derivative handoff.
+Then
+\texttt{lemma\_17\_5\_2\_upper\_bound\_of\_high\_temp\_ratio\_lower}
+chooses one enlarged constant
+\[
+  K=\max\{K_0,\max\{ \mathrm{path}\,r/((2\alpha+1)m^-), B/L\}\},
+  \qquad B=J M^2+4Jd,
+\]
+where \(L>0\) is an eventual interval-uniform lower bound for
+\(c_n(\beta)/(h(\beta))^{2\alpha}\).  The same \(K\) keeps the HLS convolution
+bound, discharges the Step~115 path-rate comparison, and converts the
+Lebowitz/susceptibility bound into the finite derivative estimate.  The
+companion
+\texttt{lemma\_17\_5\_2\_sandwich\_of\_high\_temp\_ratio\_lower} adds the
+validating pseudo-mass decay lower side.  Thus the remaining scalar HLS input
+is now the concrete ratio lower bound \(L\le c_n(\beta)/(h(\beta))^{2\alpha}\),
+not a provider for every positive returned HLS constant.
+
 \paragraph{\S5.4 Prop 5.4.2 infinite-volume Peierls bound (liminf form)
 (PR~\#1643).} Adds the genuine infinite-volume lift of GJ Prop 5.4.2:
 under the per-stage hypotheses of \texttt{prop\_5\_4\_2\_along\_exhaustion},
