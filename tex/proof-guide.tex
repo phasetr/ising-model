@@ -8124,6 +8124,25 @@ The active-range hypothesis for the infinite correlation provides the
 pseudo-mass positivity and local defining equations, while the derivative-limit
 hypothesis provides the MVT-ready derivative input.
 
+The high-temperature sandwich package removes the lower-side decay premise in
+two endpoint forms.  The theorem
+\texttt{lemma\_17\_5\_2\_sandwich\_of\_concrete\_pseudoMass\_compact\_bounds\_and\_le\_high\_temp\_rate}
+uses the comparison
+\[
+  \texttt{pseudoMassFromParamsAtPair}(\beta_2)
+  \le -\log(\beta_2 J\,2d)
+\]
+to generate the validating exponential-decay input through the existing
+high-temperature transfer bridge.  The companion
+\texttt{lemma\_17\_5\_2\_sandwich\_of\_concrete\_pseudoMass\_compact\_bounds\_and\_profile\_lower}
+derives the same lower-side input from the endpoint profile inequality
+\[
+  \texttt{pseudoMassG}\,\alpha\,\rho\,(-\log(\beta_2 J\,2d))
+  \le \mathrm{corr}_\infty(\beta_2).
+\]
+Both wrappers then reuse the concrete compact upper-bound theorem and return
+the same two-sided sandwich for \(\mathrm{latticeMass}\).
+
 \paragraph{\S5.4 Prop 5.4.2 infinite-volume Peierls bound (liminf form)
 (PR~\#1643).} Adds the genuine infinite-volume lift of GJ Prop 5.4.2:
 under the per-stage hypotheses of \texttt{prop\_5\_4\_2\_along\_exhaustion},
