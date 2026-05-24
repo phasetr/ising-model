@@ -87,7 +87,8 @@ theorem
     simpa [cInf, hderiv_eq] using hcdiff_g
   obtain ⟨K, hK, hK_conv, hlip⟩ :=
     lemma_17_5_2_infinite_pseudoMass_pow_succ_lipschitz_of_hls_constant
-      hαd Λ J x z hβ₁₂ hrho hh_diff hc_diff hh_nonneg hg_eq hh_pos hc_pos
+      hαd Λ J x z hβ₁₂ hrho hh_diff hc_diff hh_nonneg
+      (fun β hβ => Filter.Eventually.of_forall fun γ => hg_eq γ) hh_pos hc_pos
   refine ⟨K, hK, hK_conv, fun hfinite => ?_⟩
   exact hlip
     (lemma_17_5_2_infinite_hls_denominator_comparison_on_Icc_of_uniform_finite_deriv_bounds
@@ -490,7 +491,7 @@ theorem
   refine ⟨K, hK_pos, hK_conv, ?_, ?_⟩
   · intro hfinite
     exact pseudoMass_pow_succ_lipschitz α hrho hβ₁₂ hh_diff hc_diff hh_nonneg
-      hg_eq hh_pos hc_pos
+      (fun β hβ => Filter.Eventually.of_forall fun γ => hg_eq γ) hh_pos hc_pos
       (lemma_17_5_2_infinite_hls_denominator_comparison_on_Icc_of_uniform_finite_deriv_bounds
         hd Λ J hJ_pos x z hxz β₁ β₂ K hIcc h g' hderiv_lim hfinite)
   · simpa [N, m, path] using hpath_enn
@@ -1393,7 +1394,7 @@ theorem lemma_17_5_2_upper_bound_of_high_temp_ratio_lower
           ↑(2 * α + 1) * K / rho * (β₂ - β₁) := by
     intro hfinite'
     exact pseudoMass_pow_succ_lipschitz α hrho hβ₁₂ hh_diff hc_diff hh_nonneg
-      hg_eq hh_pos hc_pos
+      (fun β hβ => Filter.Eventually.of_forall fun γ => hg_eq γ) hh_pos hc_pos
       (lemma_17_5_2_infinite_hls_denominator_comparison_on_Icc_of_uniform_finite_deriv_bounds
         hd Λ J hJ_pos x z hxz β₁ β₂ K hIcc h g' hderiv_lim hfinite')
   have hβ₂_pos : 0 < β₂ := (hIcc (Set.right_mem_Icc.mpr hβ₁₂)).1

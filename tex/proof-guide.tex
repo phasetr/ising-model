@@ -8062,6 +8062,22 @@ and
 \texttt{lemma\_17\_5\_2\_sandwich\_of\_high\_temp\_compact\_ratio\_bounds}
 feed these compact witnesses into the uniform-correlation lower package.
 
+The pseudo-mass Lipschitz layer has been adjusted to the locality actually
+needed by differentiation.  Theorems
+\texttt{pseudoMass\_deriv\_formula},
+\texttt{pseudoMass\_deriv\_abs\_le},
+\texttt{pseudoMass\_power\_deriv\_le},
+\texttt{pseudoMass\_pow\_succ\_deriv\_bound}, and
+\texttt{pseudoMass\_pow\_succ\_lipschitz} no longer require a global identity
+\(\texttt{pseudoMassG}\,\alpha\,r\,(h\beta)=c(\beta)\).  They require the
+identity as a neighborhood-local \texttt{EventuallyEq} at the differentiated
+point, and pointwise over the closed interval for the MVT package.  The finite
+and infinite Lemma~17.5.2 Lipschitz wrappers carry the same weaker premise.
+This is the shape needed for the concrete
+\texttt{pseudoMassFromParamsAtPair} profile, where the defining equation is
+available on neighborhoods whose correlations stay inside \((0,2)\), not on
+the entire real line.
+
 \paragraph{\S5.4 Prop 5.4.2 infinite-volume Peierls bound (liminf form)
 (PR~\#1643).} Adds the genuine infinite-volume lift of GJ Prop 5.4.2:
 under the per-stage hypotheses of \texttt{prop\_5\_4\_2\_along\_exhaustion},
