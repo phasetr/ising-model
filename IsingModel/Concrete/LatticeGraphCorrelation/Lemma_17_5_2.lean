@@ -1,4 +1,5 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.PseudoMassFromParamsLocalEq
+import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.PseudoMassFromParamsRegularity
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.FiniteHLSLipschitzPackage
 
 /-!
