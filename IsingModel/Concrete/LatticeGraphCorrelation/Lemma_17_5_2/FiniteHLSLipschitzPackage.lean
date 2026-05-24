@@ -213,5 +213,162 @@ theorem lemma_17_5_2_sandwich_of_finite_hls_lipschitz_package
   exact lemma_17_5_2_sandwich_of_decay_and_upper hα hr hdecay
     (hupper hfinite hbridge)
 
+/-- **GJ §17.5 Lemma 17.5.2 all-rate bridge from the Step 115 path-rate
+comparison**: the named infinite HLS Lipschitz all-rate bridge follows once the
+Step 115 path rate `-log(tanh(β₂J))` is bounded by the HLS Lipschitz
+coefficient times the endpoint pseudo-mass.
+
+The proof transfers any target-exhaustion validating decay rate to the cubic
+exhaustion, applies the all-rate Step 115 bound, and then uses the supplied
+scalar comparison. -/
+theorem lemma_17_5_2_infinite_hls_lipschitz_all_rate_bridge_of_path_rate_le_hls
+    {α d : ℕ} (hα : 1 ≤ α)
+    {r : ℝ} (hr : 0 < r) (hd : 0 < d)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    {J : ℝ} (hJ : 0 < J) {β₁ β₂ K : ℝ} (hβ₂ : 0 < β₂)
+    (x z : Fin d → ℤ) (h : ℝ → ℝ)
+    (hpath_le :
+      ENNReal.ofReal (-Real.log (Real.tanh (β₂ * J))) ≤
+        ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / r) *
+          ENNReal.ofReal
+            (pseudoMassFromParamsAtPair hα hr d Λ
+              (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)) :
+    Lemma_17_5_2_InfiniteHLSLipschitzAllRateBridge
+      hα hr Λ J x z β₁ β₂ K h := by
+  intro _hlip a ha
+  have hf : Ferromagnetic (⟨J, 0, β₂⟩ : IsingParams ℝ) := ⟨hJ.le, le_refl 0, hβ₂⟩
+  have ha_cubic :
+      HasExponentialDecay d (Ambient.cubicExhaustion d)
+        (⟨J, 0, β₂⟩ : IsingParams ℝ) (a : ℝ) :=
+    HasExponentialDecay_transfer_exhaustion Λ (Ambient.cubicExhaustion d) hf ha
+  exact (HasExponentialDecay_rate_le_neg_log_tanh_betaJ hd hJ hβ₂ ha_cubic).trans
+    hpath_le
+
+/-- **GJ §17.5 Lemma 17.5.2 upper bound from finite-HLS Lipschitz and
+path-rate comparison**: after the finite HLS derivative estimates have produced
+the infinite Lipschitz package, the scalar Step 115 path-rate comparison
+discharges the named all-rate bridge and closes the upper-bound predicate. -/
+theorem lemma_17_5_2_upper_bound_of_finite_hls_lipschitz_package_and_path_rate_le
+    {d α : ℕ} (hα : 1 ≤ α) (hd : 0 < d)
+    {r : ℝ} (hr : 0 < r)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    {J : ℝ} (hJ : 0 < J) {x z : Fin d → ℤ} {β₁ β₂ : ℝ}
+    (hβ₂ : 0 < β₂) {h : ℝ → ℝ}
+    (hpkg :
+      ∃ K : ℝ, 0 < K ∧
+        (∀ x' y' : Fin d → ℤ,
+          ∑' w : Fin d → ℤ,
+              (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+              (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+        ((∀ᶠ n in Filter.atTop,
+            ∀ β ∈ Set.Icc β₁ β₂,
+              |deriv (fun β' =>
+                Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                  (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β| ≤
+                K *
+                  Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                    (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} n /
+                  (h β) ^ (2 * α)) →
+          |(h β₂) ^ (2 * α + 1) - (h β₁) ^ (2 * α + 1)| ≤
+            ↑(2 * α + 1) * K / r * (β₂ - β₁))) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      ((∀ᶠ n in Filter.atTop,
+          ∀ β ∈ Set.Icc β₁ β₂,
+            |deriv (fun β' =>
+              Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β| ≤
+              K *
+                Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                  (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} n /
+                (h β) ^ (2 * α)) →
+        ENNReal.ofReal (-Real.log (Real.tanh (β₂ * J))) ≤
+          ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / r) *
+            ENNReal.ofReal
+              (pseudoMassFromParamsAtPair hα hr d Λ
+                (⟨J, 0, β₂⟩ : IsingParams ℝ) x z) →
+          Lemma_17_5_2_UpperBound hα hr Λ J β₂ x z
+            (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / r))) := by
+  obtain ⟨K, hK, hK_conv, hupper⟩ :=
+    lemma_17_5_2_upper_bound_of_finite_hls_lipschitz_package
+      hα hr Λ J x z β₁ β₂ h hpkg
+  refine ⟨K, hK, hK_conv, fun hfinite hpath_le => ?_⟩
+  exact hupper hfinite
+    (lemma_17_5_2_infinite_hls_lipschitz_all_rate_bridge_of_path_rate_le_hls
+      hα hr hd Λ hJ hβ₂ x z h hpath_le)
+
+/-- **GJ §17.5 Lemma 17.5.2 conditional sandwich from finite-HLS Lipschitz and
+path-rate comparison**: combine the preceding path-rate discharge of the
+all-rate bridge with the lower validating pseudo-mass decay input. -/
+theorem lemma_17_5_2_sandwich_of_finite_hls_lipschitz_package_and_path_rate_le
+    {d α : ℕ} (hα : 1 ≤ α) (hd : 0 < d)
+    {r : ℝ} (hr : 0 < r)
+    {Λ : Ambient.Exhaustion (Fin d → ℤ)}
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    {J : ℝ} (hJ : 0 < J) {x z : Fin d → ℤ} {β₁ β₂ : ℝ}
+    (hβ₂ : 0 < β₂) {h : ℝ → ℝ}
+    (hpkg :
+      ∃ K : ℝ, 0 < K ∧
+        (∀ x' y' : Fin d → ℤ,
+          ∑' w : Fin d → ℤ,
+              (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+              (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+        ((∀ᶠ n in Filter.atTop,
+            ∀ β ∈ Set.Icc β₁ β₂,
+              |deriv (fun β' =>
+                Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                  (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β| ≤
+                K *
+                  Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                    (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} n /
+                  (h β) ^ (2 * α)) →
+          |(h β₂) ^ (2 * α + 1) - (h β₁) ^ (2 * α + 1)| ≤
+            ↑(2 * α + 1) * K / r * (β₂ - β₁)))
+    (hdecay : HasExponentialDecay d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ)
+      (pseudoMassFromParamsAtPair hα hr d Λ
+        (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      ((∀ᶠ n in Filter.atTop,
+          ∀ β ∈ Set.Icc β₁ β₂,
+            |deriv (fun β' =>
+              Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β| ≤
+              K *
+                Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                  (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} n /
+                (h β) ^ (2 * α)) →
+        ENNReal.ofReal (-Real.log (Real.tanh (β₂ * J))) ≤
+          ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / r) *
+            ENNReal.ofReal
+              (pseudoMassFromParamsAtPair hα hr d Λ
+                (⟨J, 0, β₂⟩ : IsingParams ℝ) x z) →
+          ENNReal.ofReal
+              (pseudoMassFromParamsAtPair hα hr d Λ
+                (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
+            ≤ latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ∧
+          latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ≤
+            ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / r) *
+              ENNReal.ofReal
+                (pseudoMassFromParamsAtPair hα hr d Λ
+                  (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)) := by
+  obtain ⟨K, hK, hK_conv, hupper⟩ :=
+    lemma_17_5_2_upper_bound_of_finite_hls_lipschitz_package_and_path_rate_le
+      hα hd hr Λ hJ hβ₂ hpkg
+  refine ⟨K, hK, hK_conv, fun hfinite hpath_le => ?_⟩
+  exact lemma_17_5_2_sandwich_of_decay_and_upper hα hr hdecay
+    (hupper hfinite hpath_le)
+
 end Ambient
 end IsingModel
