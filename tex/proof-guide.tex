@@ -8047,6 +8047,21 @@ feed this \(L\) into the high-temperature ratio-lower package above.  Thus the
 finite ratio-lower premise has been reduced to interval positivity and upper
 bounds for the infinite correlation and the pseudo-mass denominator.
 
+The compact-bounds layer supplies those interval constants from closed-interval
+continuity.  The helpers
+\texttt{lemma\_17\_5\_2\_compact\_pos\_lower\_bound\_on\_Icc} and
+\texttt{lemma\_17\_5\_2\_compact\_pow\_upper\_bound\_on\_Icc} are the scalar
+extreme-value steps: a continuous positive function on \([\beta_1,\beta_2]\)
+has a positive lower bound, and a continuous nonnegative denominator profile
+has a positive upper bound for \(h(\beta)^{2\alpha}\).  The lattice wrapper
+\texttt{lemma\_17\_5\_2\_compact\_ratio\_bounds\_on\_beta\_interval} applies
+\texttt{correlationInfinite\_continuousOn\_beta\_of\_high\_temp} to the
+infinite correlation and packages the resulting \(C,H\).  The assemblies
+\texttt{lemma\_17\_5\_2\_upper\_bound\_of\_high\_temp\_compact\_ratio\_bounds}
+and
+\texttt{lemma\_17\_5\_2\_sandwich\_of\_high\_temp\_compact\_ratio\_bounds}
+feed these compact witnesses into the uniform-correlation lower package.
+
 \paragraph{\S5.4 Prop 5.4.2 infinite-volume Peierls bound (liminf form)
 (PR~\#1643).} Adds the genuine infinite-volume lift of GJ Prop 5.4.2:
 under the per-stage hypotheses of \texttt{prop\_5\_4\_2\_along\_exhaustion},
