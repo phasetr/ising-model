@@ -62,6 +62,177 @@ theorem lemma_17_5_2_cubic_origin_active_range_of_cubicTanhProfileBound_on_Icc
       hrho hJ_pos.le hβ_pos hβ_lt hz (hprofile_tanh β hβ_mem)
 
 set_option maxHeartbeats 2000000 in
+-- Specializes the concrete self-interval upper-bound wrapper to the anchored
+-- cubic exhaustion and pair.
+/-- **GJ §17.5 Lemma 17.5.2 anchored cubic self-interval upper bound**:
+active-range membership and the derivative-limit hypothesis supply the concrete
+upper-bound predicate for the cubic exhaustion and anchored pair `{0,z}`. -/
+theorem lemma_17_5_2_cubic_origin_upper_bound_on_self_Icc
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    {J : ℝ} (hJ_pos : 0 < J)
+    {z : Fin d → ℤ} (hz : z ≠ 0)
+    {β₁ β₂ : ℝ} (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc :
+      Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    {rho : ℝ} (hrho : 0 < rho) (g' : ℝ → ℝ)
+    (hcorr : ∀ β ∈ Set.Icc β₁ β₂,
+      Ambient.correlationInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ)
+          {(0 : Fin d → ℤ), z} ∈ Set.Ioo (0 : ℝ) 2)
+    (hderiv_lim :
+      TendstoLocallyUniformlyOn
+        (fun n β =>
+          deriv (fun β' =>
+            Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d)
+              (Ambient.cubicExhaustion d)
+              (⟨J, 0, β'⟩ : IsingParams ℝ) {(0 : Fin d → ℤ), z} n) β)
+        g' Filter.atTop (Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      Lemma_17_5_2_UpperBound hα hrho (Ambient.cubicExhaustion d) J β₂
+        (0 : Fin d → ℤ) z
+        (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho)) := by
+  have hxz : (0 : Fin d → ℤ) ≠ z := fun h => hz h.symm
+  exact
+    lemma_17_5_2_upper_bound_of_concrete_pseudoMass_compact_ratio_bounds_on_self_Icc
+      (d := d) (α := α) (Λ := Ambient.cubicExhaustion d) (J := J)
+      (x := (0 : Fin d → ℤ)) (z := z) (β₁ := β₁) (β₂ := β₂)
+      (rho := rho) hα hαd hd hJ_pos hxz hβ₁₂ hIcc hrho g' hcorr
+      hderiv_lim
+
+set_option maxHeartbeats 2000000 in
+-- Unfolds the named upper-bound predicate into the displayed latticeMass
+-- inequality for the same anchored cubic self-interval inputs.
+/-- **GJ §17.5 Lemma 17.5.2 anchored cubic self-interval upper inequality**:
+the self-interval upper-bound predicate gives the displayed
+`latticeMass ≤ C * ofReal m^-` form for the cubic exhaustion. -/
+theorem lemma_17_5_2_cubic_origin_latticeMass_le_on_self_Icc
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    {J : ℝ} (hJ_pos : 0 < J)
+    {z : Fin d → ℤ} (hz : z ≠ 0)
+    {β₁ β₂ : ℝ} (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc :
+      Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    {rho : ℝ} (hrho : 0 < rho) (g' : ℝ → ℝ)
+    (hcorr : ∀ β ∈ Set.Icc β₁ β₂,
+      Ambient.correlationInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ)
+          {(0 : Fin d → ℤ), z} ∈ Set.Ioo (0 : ℝ) 2)
+    (hderiv_lim :
+      TendstoLocallyUniformlyOn
+        (fun n β =>
+          deriv (fun β' =>
+            Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d)
+              (Ambient.cubicExhaustion d)
+              (⟨J, 0, β'⟩ : IsingParams ℝ) {(0 : Fin d → ℤ), z} n) β)
+        g' Filter.atTop (Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      latticeMass d (Ambient.cubicExhaustion d) (⟨J, 0, β₂⟩ : IsingParams ℝ) ≤
+        ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho) *
+          ENNReal.ofReal
+            (pseudoMassFromParamsAtPair hα hrho d (Ambient.cubicExhaustion d)
+              (⟨J, 0, β₂⟩ : IsingParams ℝ) (0 : Fin d → ℤ) z) := by
+  obtain ⟨K, hK_pos, hconv, hupper⟩ :=
+    lemma_17_5_2_cubic_origin_upper_bound_on_self_Icc
+      (d := d) (α := α) (J := J) (z := z) (β₁ := β₁) (β₂ := β₂)
+      (rho := rho) hα hαd hd hJ_pos hz hβ₁₂ hIcc hrho g' hcorr
+      hderiv_lim
+  refine ⟨K, hK_pos, hconv, ?_⟩
+  simpa [Lemma_17_5_2_UpperBound] using hupper
+
+set_option maxHeartbeats 2000000 in
+-- Uses interval-wide named tanh-profile bounds to supply the active-range
+-- hypothesis for the anchored cubic upper-bound predicate.
+/-- **GJ §17.5 Lemma 17.5.2 anchored cubic interval tanh-profile upper bound**:
+pointwise `cubicTanhProfileBound` on the beta interval supplies the active-range
+hypothesis for the cubic self-interval upper-bound predicate. -/
+theorem
+    lemma_17_5_2_cubic_origin_upper_bound_of_cubicTanhProfileBound_on_Icc
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    {J : ℝ} (hJ_pos : 0 < J)
+    {z : Fin d → ℤ} (hz : z ≠ 0)
+    {β₁ β₂ : ℝ} (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc :
+      Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    {rho : ℝ} (hrho : 0 < rho) (g' : ℝ → ℝ)
+    (hderiv_lim :
+      TendstoLocallyUniformlyOn
+        (fun n β =>
+          deriv (fun β' =>
+            Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d)
+              (Ambient.cubicExhaustion d)
+              (⟨J, 0, β'⟩ : IsingParams ℝ) {(0 : Fin d → ℤ), z} n) β)
+        g' Filter.atTop (Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d)))))
+    (hprofile_tanh : ∀ β ∈ Set.Icc β₁ β₂,
+      cubicTanhProfileBound α d rho β J z) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      Lemma_17_5_2_UpperBound hα hrho (Ambient.cubicExhaustion d) J β₂
+        (0 : Fin d → ℤ) z
+        (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho)) := by
+  have hcorr :=
+    lemma_17_5_2_cubic_origin_active_range_of_cubicTanhProfileBound_on_Icc
+      hd hJ_pos hz hIcc hrho hprofile_tanh
+  exact
+    lemma_17_5_2_cubic_origin_upper_bound_on_self_Icc
+      (d := d) (α := α) (J := J) (z := z) (β₁ := β₁) (β₂ := β₂)
+      (rho := rho) hα hαd hd hJ_pos hz hβ₁₂ hIcc hrho g' hcorr
+      hderiv_lim
+
+set_option maxHeartbeats 2000000 in
+-- Unfolds the interval tanh-profile upper-bound predicate into the displayed
+-- latticeMass inequality.
+/-- **GJ §17.5 Lemma 17.5.2 anchored cubic interval tanh-profile upper
+inequality**: pointwise `cubicTanhProfileBound` on the beta interval gives the
+displayed `latticeMass ≤ C * ofReal m^-` upper-bound side. -/
+theorem
+    lemma_17_5_2_cubic_origin_latticeMass_le_of_cubicTanhProfileBound_on_Icc
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    {J : ℝ} (hJ_pos : 0 < J)
+    {z : Fin d → ℤ} (hz : z ≠ 0)
+    {β₁ β₂ : ℝ} (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc :
+      Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    {rho : ℝ} (hrho : 0 < rho) (g' : ℝ → ℝ)
+    (hderiv_lim :
+      TendstoLocallyUniformlyOn
+        (fun n β =>
+          deriv (fun β' =>
+            Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d)
+              (Ambient.cubicExhaustion d)
+              (⟨J, 0, β'⟩ : IsingParams ℝ) {(0 : Fin d → ℤ), z} n) β)
+        g' Filter.atTop (Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d)))))
+    (hprofile_tanh : ∀ β ∈ Set.Icc β₁ β₂,
+      cubicTanhProfileBound α d rho β J z) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      latticeMass d (Ambient.cubicExhaustion d) (⟨J, 0, β₂⟩ : IsingParams ℝ) ≤
+        ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho) *
+          ENNReal.ofReal
+            (pseudoMassFromParamsAtPair hα hrho d (Ambient.cubicExhaustion d)
+              (⟨J, 0, β₂⟩ : IsingParams ℝ) (0 : Fin d → ℤ) z) := by
+  obtain ⟨K, hK_pos, hconv, hupper⟩ :=
+    lemma_17_5_2_cubic_origin_upper_bound_of_cubicTanhProfileBound_on_Icc
+      (d := d) (α := α) (J := J) (z := z) (β₁ := β₁) (β₂ := β₂)
+      (rho := rho) hα hαd hd hJ_pos hz hβ₁₂ hIcc hrho g' hderiv_lim
+      hprofile_tanh
+  refine ⟨K, hK_pos, hconv, ?_⟩
+  simpa [Lemma_17_5_2_UpperBound] using hupper
+
+set_option maxHeartbeats 2000000 in
 -- Specializes the self-interval rate-comparison wrapper to the anchored cubic
 -- named-rate proposition.
 /-- **GJ §17.5 Lemma 17.5.2 anchored cubic self-interval sandwich from the
