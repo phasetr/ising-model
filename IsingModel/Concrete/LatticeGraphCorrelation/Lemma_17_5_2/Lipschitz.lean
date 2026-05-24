@@ -329,6 +329,93 @@ theorem lemma_17_5_2_sandwich_of_infinite_hls_lipschitz_all_rate_bridge
       hα hr Λ J x z β₁ β₂ K h hlip hbridge
   exact lemma_17_5_2_sandwich_of_decay_and_upper hα hr hdecay hupper
 
+/-- **GJ §17.5 Lemma 17.5.2 upper bound from an existential infinite HLS
+Lipschitz package and all-rate bridge**: if the infinite-volume HLS/Lipschitz
+layer has produced an existential HLS constant package, and the named
+all-rate bridge is available for the returned constant, then the named
+`latticeMass` upper-bound predicate follows.
+
+This avoids re-elaborating the heavy differentiability hypotheses of
+`lemma_17_5_2_infinite_pseudoMass_pow_succ_lipschitz_of_hls_constant`; callers
+pass that theorem's existential output directly. -/
+theorem lemma_17_5_2_upper_bound_of_exists_infinite_hls_lipschitz_bridge
+    {d α : ℕ} (hα : 1 ≤ α)
+    {r : ℝ} (hr : 0 < r)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (J : ℝ) (x z : Fin d → ℤ)
+    (β₁ β₂ : ℝ) (h : ℝ → ℝ)
+    (hpkg :
+      ∃ K : ℝ, 0 < K ∧
+        (∀ x' y' : Fin d → ℤ,
+          ∑' w : Fin d → ℤ,
+              (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+              (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+        ((∀ β' ∈ Set.Icc β₁ β₂,
+            Lemma_17_5_2_InfiniteHLSDenominatorComparison Λ J x z β' α K h) →
+          |(h β₂) ^ (2 * α + 1) - (h β₁) ^ (2 * α + 1)| ≤
+            ↑(2 * α + 1) * K / r * (β₂ - β₁))) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      (Lemma_17_5_2_InfiniteHLSLipschitzAllRateBridge
+          hα hr Λ J x z β₁ β₂ K h →
+        Lemma_17_5_2_UpperBound hα hr Λ J β₂ x z
+          (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / r))) := by
+  obtain ⟨K, hK, hK_conv, hlip⟩ := hpkg
+  refine ⟨K, hK, hK_conv, fun hbridge => ?_⟩
+  exact lemma_17_5_2_upper_bound_of_infinite_hls_lipschitz_all_rate_bridge
+    hα hr Λ J x z β₁ β₂ K h hlip hbridge
+
+/-- **GJ §17.5 Lemma 17.5.2 sandwich from an existential infinite HLS
+Lipschitz package and all-rate bridge**: combine the preceding existential
+upper-bound package with the lower pseudo-mass decay input. -/
+theorem lemma_17_5_2_sandwich_of_exists_infinite_hls_lipschitz_bridge
+    {d α : ℕ} (hα : 1 ≤ α)
+    {r : ℝ} (hr : 0 < r)
+    {Λ : Ambient.Exhaustion (Fin d → ℤ)}
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    {J : ℝ} {x z : Fin d → ℤ}
+    {β₁ β₂ : ℝ} {h : ℝ → ℝ}
+    (hpkg :
+      ∃ K : ℝ, 0 < K ∧
+        (∀ x' y' : Fin d → ℤ,
+          ∑' w : Fin d → ℤ,
+              (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+              (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+        ((∀ β' ∈ Set.Icc β₁ β₂,
+            Lemma_17_5_2_InfiniteHLSDenominatorComparison Λ J x z β' α K h) →
+          |(h β₂) ^ (2 * α + 1) - (h β₁) ^ (2 * α + 1)| ≤
+            ↑(2 * α + 1) * K / r * (β₂ - β₁)))
+    (hdecay : HasExponentialDecay d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ)
+      (pseudoMassFromParamsAtPair hα hr d Λ
+        (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      (Lemma_17_5_2_InfiniteHLSLipschitzAllRateBridge
+          hα hr Λ J x z β₁ β₂ K h →
+        ENNReal.ofReal
+            (pseudoMassFromParamsAtPair hα hr d Λ
+              (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
+          ≤ latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ∧
+        latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ≤
+          ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / r) *
+            ENNReal.ofReal
+              (pseudoMassFromParamsAtPair hα hr d Λ
+                (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)) := by
+  obtain ⟨K, hK, hK_conv, hupper⟩ :=
+    lemma_17_5_2_upper_bound_of_exists_infinite_hls_lipschitz_bridge
+      hα hr Λ J x z β₁ β₂ h hpkg
+  refine ⟨K, hK, hK_conv, fun hbridge => ?_⟩
+  exact lemma_17_5_2_sandwich_of_decay_and_upper hα hr hdecay (hupper hbridge)
+
 /-- **GJ §17.5 Lemma 17.5.2 HLS-constant upper-bound package**: under the
 HLS exponent condition, choose a positive convolution constant `K`. If every
 admissible nonnegative exponential-decay rate is bounded by the HLS Lipschitz
