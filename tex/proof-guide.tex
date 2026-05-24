@@ -7951,6 +7951,27 @@ combine this scalar comparison with the finite-HLS Lipschitz package, so the
 remaining high-temperature HLS upper side is reduced to the finite derivative
 inputs plus this explicit path-rate-to-HLS comparison.
 
+There is also an enlarged-constant finite-HLS package that absorbs this scalar
+comparison.  The theorem
+\texttt{lemma\_17\_5\_2\_enlarged\_finite\_hls\_lipschitz\_package\_with\_path\_rate}
+starts from the interval derivative-limit and finite-HLS derivative inputs, but
+chooses
+\[
+  K=\max\!\left(K_0,\,
+      \frac{(-\log(\tanh(\beta_2J)))\,r}{(2\alpha+1)m^-_{\Lambda}(x,z;\beta_2)}
+    \right)
+\]
+under the positivity assumption \(m^-_{\Lambda}(x,z;\beta_2)>0\).  This
+constant still dominates the HLS convolution constant \(K_0\), so it remains a
+valid HLS convolution constant, while the displayed maximum gives the Step~115
+path-rate comparison automatically.  Theorems
+\texttt{lemma\_17\_5\_2\_upper\_bound\_of\_enlarged\_finite\_hls\_lipschitz\_package}
+and
+\texttt{lemma\_17\_5\_2\_sandwich\_of\_enlarged\_finite\_hls\_lipschitz\_package}
+therefore close the conditional upper and sandwich assemblies without a
+separate path-rate scalar premise, still conditional on the finite derivative
+bound for the enlarged constant.
+
 \paragraph{\S5.4 Prop 5.4.2 infinite-volume Peierls bound (liminf form)
 (PR~\#1643).} Adds the genuine infinite-volume lift of GJ Prop 5.4.2:
 under the per-stage hypotheses of \texttt{prop\_5\_4\_2\_along\_exhaustion},
