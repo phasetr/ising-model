@@ -47,6 +47,69 @@ theorem lemma_17_5_2_beta_deriv_abs_le_high_temp
   inducedLatticeGraph_beta_deriv_abs_le_high_temp Λ J hJ a b ha hab hlt
     n r s hrs β hβ
 
+/-- **GJ §17.5 Lemma 17.5.2 finite derivative-profile absolute bound on a
+closed beta interval**: after the exhaustion contains the target pair, every
+finite-volume two-point beta-derivative profile is bounded uniformly on
+`[β₁, β₂]` by the high-temperature Lebowitz/susceptibility constant
+`J * M^2 + J * 4d`, where `M = bJ·2d / (1 - bJ·2d)`.
+
+This is the interval-uniform finite derivative-profile estimate used before
+passing to the infinite derivative limit in the HLS upper-bound route. -/
+theorem lemma_17_5_2_finite_deriv_abs_le_high_temp_on_Icc
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (hJ : 0 ≤ J)
+    {a b β₁ β₂ : ℝ} (ha : 0 < a) (hab : a ≤ b)
+    (hlt : b * J * ↑(2 * d) < 1)
+    (hβ_mem : ∀ β ∈ Set.Icc β₁ β₂, β ∈ Set.Icc a b)
+    {x z : Fin d → ℤ} (hxz : x ≠ z) :
+    ∀ᶠ n in Filter.atTop,
+      ∀ β ∈ Set.Icc β₁ β₂,
+        |deriv (fun β' =>
+          Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β| ≤
+          J * (b * J * ↑(2 * d) / (1 - b * J * ↑(2 * d))) ^ 2 +
+            J * (4 * ↑d) := by
+  obtain ⟨N, hN⟩ := Λ.exhaust ({x, z} : Finset (Fin d → ℤ))
+  filter_upwards [Filter.eventually_ge_atTop N] with n hn β hβ
+  have hsub : ({x, z} : Finset (Fin d → ℤ)) ⊆ Λ.volume n := hN n hn
+  have hx_mem : x ∈ Λ.volume n := hsub (by simp)
+  have hz_mem : z ∈ Λ.volume n := hsub (by simp)
+  let rx : ↑(Λ.volume n) := ⟨x, hx_mem⟩
+  let rz : ↑(Λ.volume n) := ⟨z, hz_mem⟩
+  have hrxz : rx ≠ rz := by
+    intro heq
+    exact hxz (congrArg Subtype.val heq)
+  have hlift :
+      Ambient.liftFinset ({x, z} : Finset (Fin d → ℤ)) hsub =
+        ({rx, rz} : Finset (↑(Λ.volume n))) := by
+    ext u
+    simp [Ambient.mem_liftFinset, rx, rz, Subtype.ext_iff]
+  obtain ⟨dval, hdval, habs⟩ :=
+    lemma_17_5_2_beta_deriv_abs_le_high_temp
+      Λ J hJ a b ha hab hlt n rx rz hrxz β (hβ_mem β hβ)
+  let fAlong : ℝ → ℝ := fun β' =>
+    Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+      (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n
+  let fFinite : ℝ → ℝ := fun β' =>
+    IsingModel.correlation
+      (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+      (⟨J, 0, β'⟩ : IsingParams ℝ) {rx, rz}
+  have hf_eq : fAlong = fFinite := by
+    funext β'
+    simp only [fAlong, fFinite]
+    rw [Ambient.correlationAlongExhaustion_of_subset
+      (G := IsingModel.latticeGraph d) (Λ := Λ)
+      (p := (⟨J, 0, β'⟩ : IsingParams ℝ)) hsub, Ambient.correlationΛ_apply,
+      hlift]
+  have hderiv_along : HasDerivAt fAlong dval β := by
+    simpa [fAlong, fFinite, hf_eq] using hdval
+  have hderiv_eq :
+      deriv (fun β' =>
+        Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β = dval := by
+    simpa [fAlong] using hderiv_along.deriv
+  simpa [hderiv_eq] using habs
+
 /-- **GJ §17.5 Lemma 17.5.2 HLS derivative-hypothesis bridge**:
 an absolute derivative bound implies the exact HLS denominator hypothesis used by
 `pseudoMass_power_deriv_le`, once the concrete bound has been compared with
