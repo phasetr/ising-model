@@ -373,6 +373,133 @@ theorem lemma_17_5_2_sandwich_of_finite_hls_lipschitz_package_and_path_rate_le
   exact lemma_17_5_2_sandwich_of_decay_and_upper hα hr hdecay
     (hupper hfinite hpath_le)
 
+/-- **GJ §17.5 Lemma 17.5.2 interval upper bound from finite-HLS Lipschitz and
+path-rate comparison**: the closed-interval high-temperature inclusion supplies
+the endpoint positivity needed by the path-rate all-rate bridge, so callers can
+use the same interval hypothesis as the later enlarged finite-HLS packages. -/
+theorem
+    lemma_17_5_2_upper_bound_of_finite_hls_lipschitz_package_and_path_rate_le_on_Icc
+    {d α : ℕ} (hα : 1 ≤ α) (hd : 1 ≤ d)
+    {r : ℝ} (hr : 0 < r)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    {J : ℝ} (hJ : 0 < J) {x z : Fin d → ℤ} {β₁ β₂ : ℝ}
+    (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc :
+      Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    {h : ℝ → ℝ}
+    (hpkg :
+      ∃ K : ℝ, 0 < K ∧
+        (∀ x' y' : Fin d → ℤ,
+          ∑' w : Fin d → ℤ,
+              (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+              (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+        ((∀ᶠ n in Filter.atTop,
+            ∀ β ∈ Set.Icc β₁ β₂,
+              |deriv (fun β' =>
+                Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                  (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β| ≤
+                K *
+                  Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                    (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} n /
+                  (h β) ^ (2 * α)) →
+          |(h β₂) ^ (2 * α + 1) - (h β₁) ^ (2 * α + 1)| ≤
+            ↑(2 * α + 1) * K / r * (β₂ - β₁))) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      ((∀ᶠ n in Filter.atTop,
+          ∀ β ∈ Set.Icc β₁ β₂,
+            |deriv (fun β' =>
+              Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β| ≤
+              K *
+                Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                  (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} n /
+                (h β) ^ (2 * α)) →
+        ENNReal.ofReal (-Real.log (Real.tanh (β₂ * J))) ≤
+          ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / r) *
+            ENNReal.ofReal
+              (pseudoMassFromParamsAtPair hα hr d Λ
+                (⟨J, 0, β₂⟩ : IsingParams ℝ) x z) →
+          Lemma_17_5_2_UpperBound hα hr Λ J β₂ x z
+            (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / r))) := by
+  have hβ₂_pos : 0 < β₂ := (hIcc (Set.right_mem_Icc.mpr hβ₁₂)).1
+  exact
+    lemma_17_5_2_upper_bound_of_finite_hls_lipschitz_package_and_path_rate_le
+      hα (Nat.succ_le_iff.mp hd) hr Λ hJ hβ₂_pos hpkg
+
+/-- **GJ §17.5 Lemma 17.5.2 interval sandwich from finite-HLS Lipschitz and
+path-rate comparison**: combine the interval-facing upper wrapper with the
+lower validating pseudo-mass decay input. -/
+theorem
+    lemma_17_5_2_sandwich_of_finite_hls_lipschitz_package_and_path_rate_le_on_Icc
+    {d α : ℕ} (hα : 1 ≤ α) (hd : 1 ≤ d)
+    {r : ℝ} (hr : 0 < r)
+    {Λ : Ambient.Exhaustion (Fin d → ℤ)}
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    {J : ℝ} (hJ : 0 < J) {x z : Fin d → ℤ} {β₁ β₂ : ℝ}
+    (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc :
+      Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    {h : ℝ → ℝ}
+    (hpkg :
+      ∃ K : ℝ, 0 < K ∧
+        (∀ x' y' : Fin d → ℤ,
+          ∑' w : Fin d → ℤ,
+              (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+              (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+        ((∀ᶠ n in Filter.atTop,
+            ∀ β ∈ Set.Icc β₁ β₂,
+              |deriv (fun β' =>
+                Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                  (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β| ≤
+                K *
+                  Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                    (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} n /
+                  (h β) ^ (2 * α)) →
+          |(h β₂) ^ (2 * α + 1) - (h β₁) ^ (2 * α + 1)| ≤
+            ↑(2 * α + 1) * K / r * (β₂ - β₁)))
+    (hdecay : HasExponentialDecay d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ)
+      (pseudoMassFromParamsAtPair hα hr d Λ
+        (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      ((∀ᶠ n in Filter.atTop,
+          ∀ β ∈ Set.Icc β₁ β₂,
+            |deriv (fun β' =>
+              Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β| ≤
+              K *
+                Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                  (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} n /
+                (h β) ^ (2 * α)) →
+        ENNReal.ofReal (-Real.log (Real.tanh (β₂ * J))) ≤
+          ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / r) *
+            ENNReal.ofReal
+              (pseudoMassFromParamsAtPair hα hr d Λ
+                (⟨J, 0, β₂⟩ : IsingParams ℝ) x z) →
+          ENNReal.ofReal
+              (pseudoMassFromParamsAtPair hα hr d Λ
+                (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
+            ≤ latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ∧
+          latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ≤
+            ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / r) *
+              ENNReal.ofReal
+                (pseudoMassFromParamsAtPair hα hr d Λ
+                  (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)) := by
+  have hβ₂_pos : 0 < β₂ := (hIcc (Set.right_mem_Icc.mpr hβ₁₂)).1
+  exact
+    lemma_17_5_2_sandwich_of_finite_hls_lipschitz_package_and_path_rate_le
+      hα (Nat.succ_le_iff.mp hd) hr hJ hβ₂_pos hpkg hdecay
+
 set_option maxHeartbeats 2000000 in
 -- The package statement carries the full interval-uniform derivative-limit
 -- bridge and an enlarged scalar comparison in one existential.
