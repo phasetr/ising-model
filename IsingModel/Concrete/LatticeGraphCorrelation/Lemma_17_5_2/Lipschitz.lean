@@ -252,5 +252,41 @@ theorem lemma_17_5_2_infinite_pseudoMass_pow_succ_lipschitz_of_hls_constant
     (fun β' hβ' => by
       simpa [Lemma_17_5_2_InfiniteHLSDenominatorComparison] using hcomp β' hβ')
 
+/-- **GJ §17.5 Lemma 17.5.2 HLS-constant upper-bound package**: under the
+HLS exponent condition, choose a positive convolution constant `K`. If every
+admissible nonnegative exponential-decay rate is bounded by the HLS Lipschitz
+coefficient `(2α+1)K/r` times the concrete pseudo-mass, then the named
+Lemma 17.5.2 upper-bound predicate follows.
+
+This fixes the exact all-rate target for the remaining analytic/HLS proof:
+the future work should prove the premise for the returned HLS constant `K`,
+then this theorem closes the `latticeMass` upper side by the order-theoretic
+assembly in `Predicates`. -/
+theorem lemma_17_5_2_hls_upper_bound_of_all_decay_rates_le
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d)
+    {r : ℝ} (hr : 0 < r)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (J β : ℝ) (x z : Fin d → ℤ) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      ((∀ a : NNReal,
+          HasExponentialDecay d Λ (⟨J, 0, β⟩ : IsingParams ℝ) (a : ℝ) →
+            (a : ENNReal) ≤
+              ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / r) *
+                ENNReal.ofReal
+                  (pseudoMassFromParamsAtPair hα hr d Λ
+                    (⟨J, 0, β⟩ : IsingParams ℝ) x z)) →
+        Lemma_17_5_2_UpperBound hα hr Λ J β x z
+          (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / r))) := by
+  obtain ⟨K, hK, hK_conv⟩ := lemma_17_5_2_hls_convolution_constant α d hαd
+  refine ⟨K, hK, hK_conv, fun hdecay_le => ?_⟩
+  exact lemma_17_5_2_upper_bound_of_all_decay_rates_le hα hr Λ J β x z
+    (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / r)) hdecay_le
+
 end Ambient
 end IsingModel
