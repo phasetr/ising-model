@@ -536,5 +536,74 @@ theorem lemma_17_5_2_capstone_of_poly_geometric_increments_on_covered_stages
       hα hαd hd hrho hJ_pos hxz hβ₁₂ hIcc hβ₁ hβ₁₂ hlt
       (fun β hβ => hβ) hprovider hdecay
 
+/-- **GJ §17.5 Lemma 17.5.2 fully-concrete capstone from a polynomial-prefactor
+geometric increment bound and a pseudo-mass high-temperature rate bound**: the
+realistic-form analogue of
+`lemma_17_5_2_capstone_of_geometric_increments_on_covered_stages_and_pseudoMass_le_rate`.
+Both sides of the Lemma 17.5.2 sandwich are driven by concrete scalar inputs: the
+boundary-prefactored geometric β-derivative increment bound
+`|F_{k+1}−F_k| ≤ M·(2k+3)^d·ratio^k` (upper) and `m⁻(β₂) ≤ -log(β₂ J · 2d)`
+(lower), the latter validating the endpoint pseudo-mass as a decay rate via
+`HasExponentialDecay_pseudoMassFromParamsAtPair_of_le_high_temp_rate`.  Part of
+Issue #2931. -/
+theorem lemma_17_5_2_capstone_of_poly_geometric_increments_on_covered_stages_and_pseudoMass_le_rate
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    {rho : ℝ} (hrho : 0 < rho)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (hJ_pos : 0 < J)
+    (x z : Fin d → ℤ) (hxz : x ≠ z)
+    {β₁ β₂ : ℝ} (hβ₁ : 0 < β₁) (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (M ratio : ℝ) (hratio0 : 0 ≤ ratio) (hratio1 : ratio < 1)
+    (hincr :
+      ∀ γ₁ γ₂ : ℝ,
+        Set.Icc γ₁ γ₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
+          ∀ k : ℕ, ({x, z} : Finset (Fin d → ℤ)) ⊆ Λ.volume k →
+            ∀ β ∈ Set.Icc γ₁ γ₂,
+              dist
+                (deriv (fun β' =>
+                  Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                    (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} k) β)
+                (deriv (fun β' =>
+                  Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                    (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} (k + 1)) β) ≤
+                M * (((2 * k + 3 : ℕ) : ℝ) ^ d * ratio ^ k))
+    (hle :
+      pseudoMassFromParamsAtPair hα hrho d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) x z ≤
+        -Real.log (β₂ * J * ↑(2 * d))) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      Lemma_17_5_2_UpperBound hα hrho Λ J β₂ x z
+        (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho)) ∧
+      ENNReal.ofReal
+          (pseudoMassFromParamsAtPair hα hrho d Λ
+            (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
+        ≤ latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ∧
+      latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ≤
+        ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho) *
+          ENNReal.ofReal
+            (pseudoMassFromParamsAtPair hα hrho d Λ
+              (⟨J, 0, β₂⟩ : IsingParams ℝ) x z) := by
+  have hβ₂ : 0 < β₂ := (hIcc ⟨hβ₁₂, le_rfl⟩).1
+  have hd_pos : (0 : ℝ) < ↑(2 * d) := by
+    have : 0 < 2 * d := by omega
+    exact_mod_cast this
+  have hJ2d : 0 < J * ↑(2 * d) := mul_pos hJ_pos hd_pos
+  have hβ₂_lt : β₂ < 1 / (J * ↑(2 * d)) := (hIcc ⟨hβ₁₂, le_rfl⟩).2
+  have hlt : β₂ * J * ↑(2 * d) < 1 := by
+    have h := (lt_div_iff₀ hJ2d).1 hβ₂_lt
+    calc β₂ * J * ↑(2 * d) = β₂ * (J * ↑(2 * d)) := by ring
+      _ < 1 := h
+  have hdecay :=
+    HasExponentialDecay_pseudoMassFromParamsAtPair_of_le_high_temp_rate
+      hα hrho Λ hJ_pos.le hβ₂ hlt hle
+  exact
+    lemma_17_5_2_capstone_of_poly_geometric_increments_on_covered_stages
+      hα hαd hd hrho Λ J hJ_pos x z hxz hβ₁ hβ₁₂ hIcc M ratio hratio0 hratio1
+      hincr hdecay
+
 end Ambient
 end IsingModel
