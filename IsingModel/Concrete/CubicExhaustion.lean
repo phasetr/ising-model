@@ -143,6 +143,33 @@ theorem latticeDistance_ge_of_mem_cubicBox_succ_not_mem
       _ = latticeDistance d p w := by rw [latticeDistance]
   exact le_trans hterm hmem_term
 
+/-- **ℓ¹-distance lower bound to a neighbour of a fresh cubic-box vertex**: a
+vertex `v` adjacent (in `latticeGraph d`) to a fresh stage-`n+1` vertex `w`
+still lies at lattice ℓ¹-distance at least `n - R` from a reference point `p` in
+the radius-`R` cube (with `R ≤ n`).
+
+Adjacency in `latticeGraph d` is exactly unit ℓ¹-distance, so a neighbour of a
+fresh vertex can be no more than one step closer to `p`; the boundary-distance
+lower bound therefore only loses one unit.  This extends the fresh-vertex
+distance bound to the edges touching the boundary, the form needed when the
+finite-volume β-derivative increment is expanded over the fresh boundary edges
+(Issue #2931, Phase 3). -/
+theorem latticeDistance_ge_of_adj_mem_cubicBox_succ_not_mem
+    {d n R : ℕ} {p w v : Fin d → ℤ}
+    (hp : p ∈ cubicBox d R) (hRn : R ≤ n)
+    (hmem : w ∈ cubicBox d (n + 1)) (hnot : w ∉ cubicBox d n)
+    (hadj : (latticeGraph d).Adj w v) :
+    n - R ≤ latticeDistance d p v := by
+  have hpw : n + 1 - R ≤ latticeDistance d p w :=
+    latticeDistance_ge_of_mem_cubicBox_succ_not_mem hp hRn hmem hnot
+  have hwv : latticeDistance d w v = 1 :=
+    (latticeGraph_adj_iff_latticeDistance_eq_one d w v).mp hadj
+  have hvw : latticeDistance d v w = 1 := by
+    rw [latticeDistance_comm]; exact hwv
+  have htri : latticeDistance d p w ≤ latticeDistance d p v + latticeDistance d v w :=
+    latticeDistance_triangle d p v w
+  omega
+
 /-- **Exhaustion property for `cubicBox`**: any finite set
 `A ⊆ Fin d → ℤ` is contained in some sufficiently large cube.
 
