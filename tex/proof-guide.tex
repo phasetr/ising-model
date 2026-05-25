@@ -8375,13 +8375,14 @@ chain also no longer need to name the limiting derivative profile \(g'\), while
 the remaining analytic work is unchanged.
 
 The compact-Cauchy inputs are also named at the finite-HLS assembly boundary.
-\texttt{CauchyFiniteHLS.lean} names the compact-interval metric Cauchy
-hypothesis and the pointwise derivative-profile limit hypothesis, proves the
-corresponding provider helper, and feeds that provider into the scalar-provider,
-ratio-lower, uniform-correlation-lower, and compact-ratio-bounds
-upper/sandwich assemblies.  This keeps the concrete Cauchy estimate as the
-remaining analytic input while making it directly consumable by the finite-HLS
-capstone wrappers.
+\texttt{DerivativeProfileInputs.lean} names the compact-interval metric Cauchy
+hypothesis and the pointwise derivative-profile limit hypothesis used by both
+the Cauchy and Dini provider routes.  \texttt{CauchyFiniteHLS.lean} proves the
+corresponding Cauchy provider helper and feeds that provider into the
+scalar-provider, ratio-lower, uniform-correlation-lower, and
+compact-ratio-bounds upper/sandwich assemblies.  This keeps the concrete
+Cauchy estimate as the remaining analytic input while making it directly
+consumable by the finite-HLS capstone wrappers.
 
 The Dini inputs are wired to the same finite-HLS assembly boundary.
 \texttt{DiniProvider.lean} names the stagewise monotone-or-antitone
