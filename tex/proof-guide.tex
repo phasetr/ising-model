@@ -8381,6 +8381,15 @@ high-temperature capstones.  Thus downstream callers can work directly with
 the Cauchy-shaped analytic hypotheses while keeping the endpoint rate or
 profile lower input visible.
 
+The Dini route is wired to the same concrete capstone interface.
+\texttt{DiniConcreteCapstone.lean} names the stagewise monotone-or-antitone
+derivative-profile input, combines it with pointwise convergence and
+continuity of the limiting derivative profile to build the derivative-limit
+provider, and then feeds that provider into the same ten automatic-active
+upper, sandwich, and capstone wrappers.  This makes the Dini-shaped analytic
+hypotheses directly consumable by the concrete capstone layer while keeping
+the remaining stagewise order and endpoint rate/profile inputs explicit.
+
 Finally, the anchored cubic self-interval package connects these concrete
 wrappers to the existing cubic inputs.  For the upper-bound side, theorem
 \texttt{lemma\_17\_5\_2\_cubic\_origin\_upper\_bound\_on\_self\_Icc}
