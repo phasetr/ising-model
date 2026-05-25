@@ -8399,7 +8399,16 @@ For \(m\le n\) the polygon inequality gives
 \(S_N=\sum_{k<N}c_k\); since \(c\) is summable the partial sums \((S_N)\) are
 Cauchy, so \(S_n-S_m\le|S_n-S_m|<\varepsilon\) uniformly in \(\beta\) once
 \(m,n\ge N\).  Hence the finite-volume derivative profiles are uniformly Cauchy
-on each closed interval and the provider follows.  The Lean criterion is
+on each closed interval and the provider follows.  Only an eventual bound is
+needed: if the increment estimate holds for all \(k\ge N_0\), raising the
+metric-Cauchy threshold to \(\max(N,N_0)\) keeps every telescoped index at or
+above \(N_0\), so the finitely many uncontrolled head increments never enter.
+This eventual form matches the actual finite-volume structure, since for a fixed
+pair \(\{x,z\}\) the derivative profiles vanish before the exhaustion stage
+contains the pair, so any concrete convergence-rate control begins only past a
+containment/cluster onset stage.  The Lean criteria are
+\texttt{lemma\_17\_5\_2\_derivative\_limit\_provider\_of\_summable\_increments\_eventually}
+and its all-stage (\(N_0=0\)) corollary
 \texttt{lemma\_17\_5\_2\_derivative\_limit\_provider\_of\_summable\_increments};
 the geometric specialization
 \texttt{lemma\_17\_5\_2\_derivative\_limit\_provider\_of\_geometric\_increments}
