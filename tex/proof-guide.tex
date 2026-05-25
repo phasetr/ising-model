@@ -8431,10 +8431,11 @@ with no need to locate the onset index.  The increment magnitude is controlled
 uniformly: on a closed high-temperature interval the triangle inequality applied
 to the all-stage finite derivative bound gives
 \(|F_{k+1}-F_k|\le 2\,(J\,M^2+4dJ)\) uniformly in the stage \(k\), with
-\(M=\beta_2 J\,2d/(1-\beta_2 J\,2d)\)
-(\texttt{lemma\_17\_5\_2\_finite\_derivative\_increment\_abs\_le\_high\_temp\_on\_Icc\_all\_stages}
-and its self-interval form
-\texttt{lemma\_17\_5\_2\_finite\_derivative\_increment\_abs\_le\_high\_temp\_on\_self\_Icc}).
+\(M=b\,J\,2d/(1-b\,J\,2d)\) for the auxiliary upper end \(b\)
+(\texttt{lemma\_17\_5\_2\_finite\_derivative\_increment\_abs\_le\_high\_temp\_on\_Icc\_all\_stages});
+the self-interval form
+\texttt{lemma\_17\_5\_2\_finite\_derivative\_increment\_abs\_le\_high\_temp\_on\_self\_Icc}
+specializes to \(b=\beta_2\).
 This uniform bound is not yet summable; sharpening it to a summable (geometric)
 bound from the finite-volume convergence rate is the substantive remaining
 input.  At the baseline correlation level the
