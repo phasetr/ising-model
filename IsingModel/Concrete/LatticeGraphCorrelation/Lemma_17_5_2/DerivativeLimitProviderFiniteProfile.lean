@@ -366,6 +366,59 @@ theorem lemma_17_5_2_correlationInfinite_deriv_continuousOn_high_temp
     (correlationInfinite_hasDerivAt_beta_of_tendstoLocallyUniformlyOn_deriv
       hd Λ x z hxz J hJ_pos g' hderiv_lim β hβ).deriv
 
+/-- **GJ §17.5 Lemma 17.5.2 infinite beta differentiability**: under a
+derivative-limit provider, the infinite-volume two-point function is
+differentiable throughout the open high-temperature region. -/
+theorem lemma_17_5_2_correlationInfinite_differentiableOn_high_temp
+    {d : ℕ} (hd : 1 ≤ d)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (hJ_pos : 0 < J)
+    {x z : Fin d → ℤ} (hxz : x ≠ z)
+    (hprovider : Lemma_17_5_2_DerivativeLimitProvider Λ J x z) :
+    DifferentiableOn ℝ
+      (fun β =>
+        Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) {x, z})
+      (Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d)))) := by
+  obtain ⟨g', hderiv_lim⟩ := hprovider
+  intro β hβ
+  exact
+    (correlationInfinite_hasDerivAt_beta_of_tendstoLocallyUniformlyOn_deriv
+      hd Λ x z hxz J hJ_pos g' hderiv_lim β hβ).differentiableAt
+      |>.differentiableWithinAt
+
+/-- **GJ §17.5 Lemma 17.5.2 infinite `C^1` beta regularity**: under a
+derivative-limit provider, the infinite-volume two-point function is `C^1` on
+the open high-temperature region. -/
+theorem lemma_17_5_2_correlationInfinite_contDiffOn_one_high_temp
+    {d : ℕ} (hd : 1 ≤ d)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (hJ_pos : 0 < J)
+    {x z : Fin d → ℤ} (hxz : x ≠ z)
+    (hprovider : Lemma_17_5_2_DerivativeLimitProvider Λ J x z) :
+    ContDiffOn ℝ 1
+      (fun β =>
+        Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) {x, z})
+      (Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d)))) := by
+  let s : Set ℝ := Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d)))
+  let f : ℝ → ℝ := fun β =>
+    Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+      (⟨J, 0, β⟩ : IsingParams ℝ) {x, z}
+  have hs : IsOpen s := isOpen_Ioo
+  change ContDiffOn ℝ ((0 : WithTop ℕ∞) + 1) f s
+  rw [contDiffOn_succ_iff_deriv_of_isOpen hs]
+  refine ⟨?_, ?_, ?_⟩
+  · exact
+      lemma_17_5_2_correlationInfinite_differentiableOn_high_temp
+        hd Λ J hJ_pos hxz hprovider
+  · intro hzero
+    cases hzero
+  · rw [contDiffOn_zero]
+    exact
+      lemma_17_5_2_correlationInfinite_deriv_continuousOn_high_temp
+        hd Λ J hJ_pos hxz hprovider
+
 /-- Monotone Dini-provider criterion with the finite derivative-profile
 continuity input discharged by
 `lemma_17_5_2_finite_derivative_profile_continuous_beta`. -/
