@@ -8299,22 +8299,25 @@ convergence.
 The derivative-limit input is also available in a provider-shaped form.  The
 predicate \texttt{Lemma\_17\_5\_2\_DerivativeLimitProvider} states that the
 finite-volume beta-derivative profiles converge locally uniformly on
-\((0,(J\,2d)^{-1})\) to some limiting derivative profile.  The extraction
-lemmas
+\((0,(J\,2d)^{-1})\) to some limiting derivative profile.  Its entry-point
+package contains ten wrappers, all with suffix
+\texttt{\_of\_derivative\_limit\_provider}.  Two wrappers feed the witness into
+the automatic-active compact upper-bound layer, four wrappers feed it into the
+rate-comparison and profile-lower sandwich layer, and four wrappers feed it
+into the matching high-temperature capstone layer.  Thus upper-bound,
+sandwich, and capstone callers no longer need to name the limiting derivative
+function \(g'\) directly; the substantive analytic work is proving the provider
+itself in the desired high-temperature regime.
+
+The Cauchy/criteria layer also extracts closed-interval consequences from the
+provider.  The lemmas
 \texttt{lemma\_17\_5\_2\_derivative\_limit\_provider\_tendstoUniformlyOn\_Icc},
 \texttt{lemma\_17\_5\_2\_derivative\_limit\_provider\_uniformCauchySeqOn\_Icc},
 and
 \texttt{lemma\_17\_5\_2\_derivative\_limit\_provider\_metricCauchy\_on\_Icc}
 turn this local-uniform provider into closed-interval uniform convergence,
-uniform Cauchy, and epsilon--\(N\) metric-Cauchy consequences.  Its entry-point
-package also contains ten wrappers, all with suffix
-\texttt{\_of\_derivative\_limit\_provider}.  Two wrappers feed the witness into
-the automatic-active compact upper-bound layer, four wrappers feed it into the
-rate-comparison and profile-lower sandwich layer, and four wrappers feed it
-into the matching high-temperature capstone layer.  Thus upper-bound,
-sandwich, capstone, and compact-Cauchy callers no longer need to name the
-limiting derivative function \(g'\) directly; the substantive analytic work is
-proving the provider itself in the desired high-temperature regime.
+uniform Cauchy, and epsilon--\(N\) metric-Cauchy consequences while keeping
+the core provider module free of the metric-Cauchy import.
 
 The provider proof has a Dini-style criterion.  If the finite-volume
 beta-derivative profiles converge pointwise on \((0,(J\,2d)^{-1})\) to a
@@ -8340,7 +8343,11 @@ criteria are
 its metric epsilon--eventual form, and the corresponding
 \texttt{\_on\_Icc} closed-interval variants.  These statements provide a
 non-Dini route to the same provider, suitable for future derivative-profile
-Cauchy estimates.
+Cauchy estimates.  Conversely,
+\texttt{lemma\_17\_5\_2\_named\_metricCauchy\_on\_Icc\_of\_derivative\_limit\_provider}
+feeds any established provider back into the named closed-interval Cauchy
+input, so downstream code can switch between the provider-shaped and
+Cauchy-shaped abstractions without reopening the limiting profile.
 
 The finite derivative-profile continuity input is now discharged.  For each
 exhaustion stage, the beta derivative of the finite two-point function is
