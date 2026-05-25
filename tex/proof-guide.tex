@@ -7915,8 +7915,14 @@ profiles satisfy the interval-uniform estimate
   M=\frac{bJ\,2d}{1-bJ\,2d},
 \]
 for every \(\beta\in[\beta_1,\beta_2]\subset[a,b]\) with \(bJ\,2d<1\).
-The high-temperature scalar-provider package reuses this bound before comparing
-the Lebowitz/susceptibility constant with the HLS denominator.
+The all-stage strengthening
+\texttt{lemma\_17\_5\_2\_finite\_deriv\_abs\_le\_high\_temp\_on\_Icc\_all\_stages}
+combines this covered-stage estimate with the zero derivative formula before
+containment, so the finite-profile bound holds for every exhaustion stage.
+The high-temperature scalar-provider package reuses the covered-stage bound
+before comparing the Lebowitz/susceptibility constant with the HLS
+denominator, while the all-stage theorem records the sharper finite-profile
+form needed before any eventual containment reduction.
 
 The interval versions align this handoff with the Lipschitz layer.  If
 \([\beta_1,\beta_2]\) is contained in the open high-temperature interval, then
@@ -8358,6 +8364,12 @@ edge sum over the induced graph.  The companion theorem
 \texttt{lemma\_17\_5\_2\_finite\_derivative\_profile\_eq\_zero\_of\_not\_subset}
 covers the pre-containment stages, where the along-exhaustion correlation is
 identically zero and its beta derivative is zero.  These formulas feed
+\texttt{lemma\_17\_5\_2\_finite\_deriv\_abs\_le\_high\_temp\_on\_Icc\_all\_stages},
+which proves the closed-interval high-temperature absolute derivative bound
+for every exhaustion stage: covered stages use the finite Lebowitz and
+susceptibility estimate, while uncovered stages use the zero derivative
+formula.  Thus the finite-profile bound itself no longer needs an eventual
+containment restriction.  The same formulas also feed
 \texttt{lemma\_17\_5\_2\_finite\_derivative\_profile\_continuous\_beta}, which
 proves continuity of the finite derivative profile at every exhaustion stage.
 The strengthened monotone and antitone Dini criteria feed this continuity in
