@@ -7964,25 +7964,33 @@ finite-HLS package closes the upper-bound predicate and the conditional
 two-sided Lemma~17.5.2 statement for the selected HLS constant.
 
 The all-rate bridge itself now has a concrete Step~115 discharge.  The theorem
-\texttt{lemma\_17\_5\_2\_infinite\_hls\_lipschitz\_all\_rate\_bridge\_of\_path\_rate\_le\_hls}
-shows that
+\texttt{lemma\_17\_5\_2\_all\_decay\_rates\_le\_of\_path\_rate\_le}
+first proves the direct all-decay-rate estimate: if
 \[
   \operatorname{ofReal}(-\log(\tanh(\beta_2J)))
   \le
-  \operatorname{ofReal}\!\left(\frac{(2\alpha+1)K}{r}\right)
+  C\,
   \operatorname{ofReal}(m^-_{\Lambda}(x,z;\beta_2))
 \]
-is enough to prove
-\texttt{Lemma\_17\_5\_2\_InfiniteHLSLipschitzAllRateBridge}.  Indeed, any
-validating target-exhaustion decay rate transfers to the cubic exhaustion,
-where Step~115 gives the all-rate bound by \(-\log(\tanh(\beta_2J))\).  The
-theorems
+then every validating target-exhaustion decay rate is bounded by
+\(C\,\operatorname{ofReal}(m^-_{\Lambda}(x,z;\beta_2))\).  The proof transfers
+the decay rate to the cubic exhaustion, where Step~115 bounds it by
+\(-\log(\tanh(\beta_2J))\).  The theorems
+\texttt{lemma\_17\_5\_2\_upper\_bound\_of\_path\_rate\_le} and
+\texttt{lemma\_17\_5\_2\_sandwich\_of\_decay\_and\_path\_rate\_le} feed this
+direct all-decay-rate estimate into the named upper-bound predicate and the
+conditional sandwich.  The HLS-shaped theorem
+\texttt{lemma\_17\_5\_2\_infinite\_hls\_lipschitz\_all\_rate\_bridge\_of\_path\_rate\_le\_hls}
+specializes this result to
+\(C=\operatorname{ofReal}((2\alpha+1)K/r)\), discharging
+\texttt{Lemma\_17\_5\_2\_InfiniteHLSLipschitzAllRateBridge}.  The theorems
 \texttt{lemma\_17\_5\_2\_upper\_bound\_of\_exists\_infinite\_hls\_lipschitz\_and\_path\_rate\_le}
 and
 \texttt{lemma\_17\_5\_2\_sandwich\_of\_exists\_infinite\_hls\_lipschitz\_and\_path\_rate\_le}
 combine this scalar comparison with the existential infinite-HLS Lipschitz
-package itself, closing the upper-bound predicate or conditional sandwich for
-the returned HLS constant without importing the finite derivative-limit package.
+package itself, using the direct path-rate upper/sandwich theorem to close the
+upper-bound predicate or conditional sandwich for the returned HLS constant
+without importing the finite derivative-limit package.
 The finite-stage versions
 \texttt{lemma\_17\_5\_2\_upper\_bound\_of\_finite\_hls\_lipschitz\_package\_and\_path\_rate\_le}
 and
