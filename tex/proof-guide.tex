@@ -8372,6 +8372,16 @@ upper/sandwich assemblies.  This keeps the concrete Cauchy estimate as the
 remaining analytic input while making it directly consumable by the finite-HLS
 capstone wrappers.
 
+The Dini inputs are wired to the same finite-HLS assembly boundary.
+\texttt{DiniProvider.lean} names the stagewise monotone-or-antitone
+derivative-profile input and packages it with pointwise convergence plus
+continuity of the limiting derivative profile as a derivative-limit provider.
+\texttt{DiniFiniteHLS.lean} then feeds that provider into the scalar-provider,
+ratio-lower, uniform-correlation-lower, and compact-ratio-bounds
+upper/sandwich assemblies.  This gives the finite-HLS layer the same direct
+Dini-shaped API already available through the provider-shaped and
+Cauchy-shaped entry points.
+
 The same named Cauchy inputs are now wired to the concrete capstone interface.
 \texttt{CauchyConcreteCapstone.lean} passes the compact-interval metric Cauchy
 and pointwise derivative-profile convergence hypotheses through the provider
@@ -8382,13 +8392,11 @@ the Cauchy-shaped analytic hypotheses while keeping the endpoint rate or
 profile lower input visible.
 
 The Dini route is wired to the same concrete capstone interface.
-\texttt{DiniConcreteCapstone.lean} names the stagewise monotone-or-antitone
-derivative-profile input, combines it with pointwise convergence and
-continuity of the limiting derivative profile to build the derivative-limit
-provider, and then feeds that provider into the same ten automatic-active
-upper, sandwich, and capstone wrappers.  This makes the Dini-shaped analytic
-hypotheses directly consumable by the concrete capstone layer while keeping
-the remaining stagewise order and endpoint rate/profile inputs explicit.
+\texttt{DiniConcreteCapstone.lean} feeds the named Dini provider into the same
+ten automatic-active upper, sandwich, and capstone wrappers.  This makes the
+Dini-shaped analytic hypotheses directly consumable by the concrete capstone
+layer while keeping the remaining stagewise order and endpoint rate/profile
+inputs explicit.
 
 Finally, the anchored cubic self-interval package connects these concrete
 wrappers to the existing cubic inputs.  For the upper-bound side, theorem
