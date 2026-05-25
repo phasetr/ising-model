@@ -18,29 +18,6 @@ open Set
 
 namespace Ambient
 
-/-- **Endpoint scalar bounds from a high-temperature interval inclusion**:
-if the closed beta interval is contained in the high-temperature region, then
-both endpoints are positive and the right endpoint satisfies `β₂ * J * 2d < 1`.
--/
-theorem lemma_17_5_2_interval_endpoints_of_Icc_subset_high_temp
-    {d : ℕ} (hd : 1 ≤ d) {J β₁ β₂ : ℝ} (hJ_pos : 0 < J)
-    (hβ₁₂ : β₁ ≤ β₂)
-    (hIcc :
-      Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d)))) :
-    0 < β₁ ∧ 0 < β₂ ∧ β₂ * J * ↑(2 * d) < 1 := by
-  have hβ₁_open : β₁ ∈ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) :=
-    hIcc (Set.left_mem_Icc.mpr hβ₁₂)
-  have hβ₂_open : β₂ ∈ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) :=
-    hIcc (Set.right_mem_Icc.mpr hβ₁₂)
-  refine ⟨hβ₁_open.1, hβ₂_open.1, ?_⟩
-  have h2d_pos : 0 < (↑(2 * d) : ℝ) := by
-    have h2d_nat : 0 < 2 * d := Nat.mul_pos (by norm_num) hd
-    exact_mod_cast h2d_nat
-  have hJ2d_pos : 0 < J * ↑(2 * d) := mul_pos hJ_pos h2d_pos
-  have hlt : β₂ * (J * ↑(2 * d)) < 1 := by
-    exact (lt_div_iff₀ hJ2d_pos).mp hβ₂_open.2
-  simpa [mul_assoc] using hlt
-
 /-- **GJ §17.5 Lemma 17.5.2 concrete pseudo-mass compact ratio bounds**:
 for the concrete `pseudoMassFromParamsAtPair` beta profile, active-range
 membership of the infinite correlation supplies pseudo-mass continuity and
