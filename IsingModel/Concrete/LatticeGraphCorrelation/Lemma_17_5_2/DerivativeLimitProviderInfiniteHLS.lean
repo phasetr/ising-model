@@ -157,7 +157,7 @@ theorem
 /-- **GJ §17.5 Lemma 17.5.2 finite HLS bounds to infinite Lipschitz from a
 derivative-limit provider**. -/
 theorem
-    lemma_17_5_2_infinite_pseudoMass_lipschitz_of_finite_deriv_bounds_provider
+    lemma_17_5_2_infinite_pseudoMass_pow_succ_lipschitz_of_finite_deriv_bounds_provider
     {d α : ℕ} (hαd : 2 * α > d) (hd : 1 ≤ d)
     (Λ : Ambient.Exhaustion (Fin d → ℤ))
     (J : ℝ) (hJ_pos : 0 < J)
