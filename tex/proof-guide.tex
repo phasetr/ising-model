@@ -8381,10 +8381,16 @@ derivative bound for \(\partial_\beta\langle\sigma_x\sigma_z\rangle_\infty\)
 on the closed interval.  The same formulas also feed
 \texttt{lemma\_17\_5\_2\_finite\_derivative\_profile\_continuous\_beta}, which
 proves continuity of the finite derivative profile at every exhaustion stage.
-The strengthened monotone and antitone Dini criteria feed this continuity in
-automatically, leaving only the stagewise order direction, pointwise
-convergence, and continuity of the limiting derivative profile as external
-provider inputs.
+The limiting-profile continuity theorems
+\texttt{lemma\_17\_5\_2\_derivative\_limit\_profile\_continuousOn\_high\_temp}
+and
+\texttt{lemma\_17\_5\_2\_derivative\_limit\_profile\_continuousOn\_Icc}
+then use locally uniform and uniform convergence of the finite derivative
+profiles to pass this continuity to the provider witness on the open
+high-temperature region and on each closed subinterval.  The strengthened
+monotone and antitone Dini criteria feed this continuity in automatically,
+leaving only the stagewise order direction, pointwise convergence, and
+continuity of the limiting derivative profile as external provider inputs.
 
 The provider is also connected one layer lower, at the infinite derivative and
 infinite-HLS bridge interface.  Thirty-one entry points feed
