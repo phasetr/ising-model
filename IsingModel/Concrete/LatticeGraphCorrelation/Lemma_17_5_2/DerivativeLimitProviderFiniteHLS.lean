@@ -7,7 +7,8 @@ This module connects the derivative-limit provider introduced for
 Lemma 17.5.2 to the larger finite-HLS high-temperature assemblies.  The
 substantive analytic theorem remains the proof of
 `Lemma_17_5_2_DerivativeLimitProvider`; these entry points keep downstream
-callers from naming the limiting derivative profile `g'`.
+callers from naming the limiting derivative profile `g'`, including the
+concrete finite-derivative-provider capstone route.
 
 References:
 
@@ -228,6 +229,148 @@ theorem
       hα hαd hd hJ_pos hxz hβ₁₂ hIcc hrho g'
       hh_diff hh_nonneg hg_eq hh_pos hc_pos hm_pos hderiv_lim
       hdecay hfinite_provider
+
+/-- **GJ §17.5 Lemma 17.5.2 concrete capstone from a finite
+derivative-bound provider, a derivative-limit provider, and a rate
+comparison**: the rate comparison supplies the lower validating decay, while
+the finite derivative-bound provider supplies the concrete HLS upper side. -/
+theorem
+    lemma_17_5_2_capstone_le_high_temp_rate_of_concrete_finite_deriv_provider
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    {Λ : Ambient.Exhaustion (Fin d → ℤ)}
+    {J : ℝ} (hJ_pos : 0 < J)
+    {x z : Fin d → ℤ} (hxz : x ≠ z)
+    {β₁ β₂ : ℝ} (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc :
+      Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    {rho : ℝ} (hrho : 0 < rho)
+    (hderiv_provider : Lemma_17_5_2_DerivativeLimitProvider Λ J x z)
+    (hle :
+      pseudoMassFromParamsAtPair hα hrho d Λ
+          (⟨J, 0, β₂⟩ : IsingParams ℝ) x z
+        ≤ -Real.log (β₂ * J * ↑(2 * d)))
+    (hfinite_provider :
+      ∀ K : ℝ, 0 < K →
+        (∀ x' y' : Fin d → ℤ,
+          ∑' w : Fin d → ℤ,
+              (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+              (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) →
+        ∀ᶠ n in Filter.atTop,
+          ∀ β ∈ Set.Icc β₁ β₂,
+            |deriv (fun β' =>
+              Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β| ≤
+              K *
+                Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                  (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} n /
+                (pseudoMassFromParamsAtPair hα hrho d Λ
+                  (⟨J, 0, β⟩ : IsingParams ℝ) x z) ^ (2 * α)) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      Lemma_17_5_2_UpperBound hα hrho Λ J β₂ x z
+        (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho)) ∧
+      ENNReal.ofReal
+          (pseudoMassFromParamsAtPair hα hrho d Λ
+            (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
+        ≤ latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ∧
+      latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ≤
+        ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho) *
+          ENNReal.ofReal
+            (pseudoMassFromParamsAtPair hα hrho d Λ
+              (⟨J, 0, β₂⟩ : IsingParams ℝ) x z) := by
+  obtain ⟨hβ₂_pos, hβ₂_lt⟩ :=
+    lemma_17_5_2_endpoint_high_temp_of_Icc_subset_high_temp
+      hd hJ_pos hβ₁₂ hIcc
+  have hdecay :
+      HasExponentialDecay d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ)
+        (pseudoMassFromParamsAtPair hα hrho d Λ
+          (⟨J, 0, β₂⟩ : IsingParams ℝ) x z) :=
+    HasExponentialDecay_pseudoMassFromParamsAtPair_of_le_high_temp_rate
+      hα hrho Λ hJ_pos.le hβ₂_pos hβ₂_lt hle
+  obtain ⟨K, hK_pos, hK_conv, hupper⟩ :=
+    lemma_17_5_2_upper_bound_of_concrete_finite_deriv_provider_of_derivative_limit_provider
+      (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
+      (β₁ := β₁) (β₂ := β₂) (rho := rho)
+      hα hαd hd hJ_pos hxz hβ₁₂ hIcc hrho
+      hderiv_provider hfinite_provider
+  exact ⟨K, hK_pos, hK_conv, hupper,
+    lemma_17_5_2_sandwich_of_decay_and_upper hα hrho hdecay hupper⟩
+
+/-- **GJ §17.5 Lemma 17.5.2 concrete capstone from a finite
+derivative-bound provider, a derivative-limit provider, and an endpoint
+profile lower bound**: the profile lower bound supplies the rate comparison,
+and the finite derivative-bound provider supplies the HLS upper side. -/
+theorem
+    lemma_17_5_2_capstone_profile_lower_of_concrete_finite_deriv_provider
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    {Λ : Ambient.Exhaustion (Fin d → ℤ)}
+    {J : ℝ} (hJ_pos : 0 < J)
+    {x z : Fin d → ℤ} (hxz : x ≠ z)
+    {β₁ β₂ : ℝ} (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc :
+      Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    {rho : ℝ} (hrho : 0 < rho)
+    (hderiv_provider : Lemma_17_5_2_DerivativeLimitProvider Λ J x z)
+    (hprofile :
+      pseudoMassG α rho (-Real.log (β₂ * J * ↑(2 * d))) ≤
+        Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β₂⟩ : IsingParams ℝ) {x, z})
+    (hfinite_provider :
+      ∀ K : ℝ, 0 < K →
+        (∀ x' y' : Fin d → ℤ,
+          ∑' w : Fin d → ℤ,
+              (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+              (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) →
+        ∀ᶠ n in Filter.atTop,
+          ∀ β ∈ Set.Icc β₁ β₂,
+            |deriv (fun β' =>
+              Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β| ≤
+              K *
+                Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                  (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} n /
+                (pseudoMassFromParamsAtPair hα hrho d Λ
+                  (⟨J, 0, β⟩ : IsingParams ℝ) x z) ^ (2 * α)) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      Lemma_17_5_2_UpperBound hα hrho Λ J β₂ x z
+        (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho)) ∧
+      ENNReal.ofReal
+          (pseudoMassFromParamsAtPair hα hrho d Λ
+            (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
+        ≤ latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ∧
+      latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ≤
+        ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho) *
+          ENNReal.ofReal
+            (pseudoMassFromParamsAtPair hα hrho d Λ
+              (⟨J, 0, β₂⟩ : IsingParams ℝ) x z) := by
+  obtain ⟨hβ₂_pos, hβ₂_lt⟩ :=
+    lemma_17_5_2_endpoint_high_temp_of_Icc_subset_high_temp
+      hd hJ_pos hβ₁₂ hIcc
+  have hcorr :
+      Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β₂⟩ : IsingParams ℝ) {x, z} ∈ Set.Ioo (0 : ℝ) 2 :=
+    lemma_17_5_2_active_range_of_high_temp_pair Λ hJ_pos hβ₂_pos hxz
+  have hdecay :
+      HasExponentialDecay d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ)
+        (pseudoMassFromParamsAtPair hα hrho d Λ
+          (⟨J, 0, β₂⟩ : IsingParams ℝ) x z) :=
+    HasExponentialDecay_pseudoMassFromParamsAtPair_of_pseudoMassG_le_corr
+      hα hrho Λ hJ_pos.le hβ₂_pos hβ₂_lt hcorr hprofile
+  obtain ⟨K, hK_pos, hK_conv, hupper⟩ :=
+    lemma_17_5_2_upper_bound_of_concrete_finite_deriv_provider_of_derivative_limit_provider
+      (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
+      (β₁ := β₁) (β₂ := β₂) (rho := rho)
+      hα hαd hd hJ_pos hxz hβ₁₂ hIcc hrho
+      hderiv_provider hfinite_provider
+  exact ⟨K, hK_pos, hK_conv, hupper,
+    lemma_17_5_2_sandwich_of_decay_and_upper hα hrho hdecay hupper⟩
 
 /-- **GJ §17.5 Lemma 17.5.2 upper bound from a uniform finite derivative-bound
 provider and a derivative-limit provider**: the derivative-limit provider
