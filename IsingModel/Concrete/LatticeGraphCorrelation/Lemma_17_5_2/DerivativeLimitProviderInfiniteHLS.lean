@@ -754,6 +754,116 @@ theorem lemma_17_5_2_sandwich_of_concrete_infinite_hls_ratio_lower_provider
   refine ⟨K, hK, hK_conv, ?_⟩
   exact lemma_17_5_2_sandwich_of_decay_and_upper hα hrho hdecay hupper
 
+set_option maxHeartbeats 1200000 in
+-- Uniform infinite-correlation and denominator bounds imply the ratio-lower
+-- premise consumed by the preceding concrete infinite-HLS bridge.
+/-- **GJ §17.5 Lemma 17.5.2 concrete upper bound from a uniform infinite
+correlation lower bound**: a positive uniform lower bound for the infinite
+two-point function and a concrete pseudo-mass denominator upper bound supply the
+ratio-lower input for the concrete infinite-HLS upper-bound bridge. -/
+theorem
+    lemma_17_5_2_upper_bound_of_concrete_infinite_hls_uniform_correlation_lower_provider
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    {rho : ℝ} (hrho : 0 < rho)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (hJ_pos : 0 < J)
+    (x z : Fin d → ℤ) (hxz : x ≠ z)
+    {β₁ β₂ a b : ℝ} (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (ha : 0 < a) (hab : a ≤ b) (hlt : b * J * ↑(2 * d) < 1)
+    (hβ_mem : ∀ β ∈ Set.Icc β₁ β₂, β ∈ Set.Icc a b)
+    (hderiv_provider : Lemma_17_5_2_DerivativeLimitProvider Λ J x z)
+    {C H : ℝ} (hC_pos : 0 < C) (hH_pos : 0 < H)
+    (hcInf_lower : ∀ β ∈ Set.Icc β₁ β₂,
+      C ≤
+        Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) {x, z})
+    (hdenom_bound : ∀ β ∈ Set.Icc β₁ β₂,
+      (lemma_17_5_2_concretePseudoMassBetaProfile hα hrho Λ J x z β) ^
+        (2 * α) ≤ H) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      Lemma_17_5_2_UpperBound hα hrho Λ J β₂ x z
+        (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho)) := by
+  have hcorr : ∀ β ∈ Set.Icc β₁ β₂,
+      Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} ∈ Set.Ioo (0 : ℝ) 2 :=
+    lemma_17_5_2_active_range_on_Icc_of_high_temp_pair Λ hJ_pos hxz hIcc
+  have hh_pos : ∀ β ∈ Set.Icc β₁ β₂,
+      0 < lemma_17_5_2_concretePseudoMassBetaProfile hα hrho Λ J x z β := by
+    intro β hβ
+    exact pseudoMassFromParamsAtPair_pos_of_corr_mem hα hrho d Λ
+      (⟨J, 0, β⟩ : IsingParams ℝ) x z (hcorr β hβ)
+  obtain ⟨L, hL_pos, hratio⟩ :=
+    lemma_17_5_2_ratio_lower_of_uniform_correlation_on_beta_interval
+      (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
+      (β₁ := β₁) (β₂ := β₂) (a := a) (b := b)
+      (h := lemma_17_5_2_concretePseudoMassBetaProfile hα hrho Λ J x z)
+      hJ_pos.le hxz ha hab hlt hβ_mem hC_pos hH_pos hcInf_lower
+      (fun β hβ => pow_pos (hh_pos β hβ) (2 * α)) hdenom_bound
+  exact
+    lemma_17_5_2_upper_bound_of_concrete_infinite_hls_ratio_lower_provider
+      (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
+      (β₁ := β₁) (β₂ := β₂) (a := a) (b := b) (rho := rho)
+      hα hαd hd hrho hJ_pos hxz hβ₁₂ hIcc ha hab hlt hβ_mem
+      hderiv_provider hL_pos hratio
+
+set_option maxHeartbeats 1200000 in
+-- Add the validating pseudo-mass decay lower side to the preceding upper-bound
+-- package.
+/-- **GJ §17.5 Lemma 17.5.2 concrete sandwich from a uniform infinite
+correlation lower bound**: the uniform lower/denominator bounds supply the
+concrete infinite-HLS upper-bound side, while the validating pseudo-mass decay
+input supplies the lower side. -/
+theorem
+    lemma_17_5_2_sandwich_of_concrete_infinite_hls_uniform_correlation_lower_provider
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    {rho : ℝ} (hrho : 0 < rho)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (hJ_pos : 0 < J)
+    (x z : Fin d → ℤ) (hxz : x ≠ z)
+    {β₁ β₂ a b : ℝ} (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (ha : 0 < a) (hab : a ≤ b) (hlt : b * J * ↑(2 * d) < 1)
+    (hβ_mem : ∀ β ∈ Set.Icc β₁ β₂, β ∈ Set.Icc a b)
+    (hderiv_provider : Lemma_17_5_2_DerivativeLimitProvider Λ J x z)
+    (hdecay : HasExponentialDecay d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ)
+      (pseudoMassFromParamsAtPair hα hrho d Λ
+        (⟨J, 0, β₂⟩ : IsingParams ℝ) x z))
+    {C H : ℝ} (hC_pos : 0 < C) (hH_pos : 0 < H)
+    (hcInf_lower : ∀ β ∈ Set.Icc β₁ β₂,
+      C ≤
+        Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) {x, z})
+    (hdenom_bound : ∀ β ∈ Set.Icc β₁ β₂,
+      (lemma_17_5_2_concretePseudoMassBetaProfile hα hrho Λ J x z β) ^
+        (2 * α) ≤ H) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      ENNReal.ofReal
+          (pseudoMassFromParamsAtPair hα hrho d Λ
+            (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
+        ≤ latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ∧
+      latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ≤
+        ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho) *
+          ENNReal.ofReal
+            (pseudoMassFromParamsAtPair hα hrho d Λ
+              (⟨J, 0, β₂⟩ : IsingParams ℝ) x z) := by
+  obtain ⟨K, hK, hK_conv, hupper⟩ :=
+    lemma_17_5_2_upper_bound_of_concrete_infinite_hls_uniform_correlation_lower_provider
+      (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
+      (β₁ := β₁) (β₂ := β₂) (a := a) (b := b) (rho := rho)
+      hα hαd hd hrho hJ_pos hxz hβ₁₂ hIcc ha hab hlt hβ_mem
+      hderiv_provider hC_pos hH_pos hcInf_lower hdenom_bound
+  refine ⟨K, hK, hK_conv, ?_⟩
+  exact lemma_17_5_2_sandwich_of_decay_and_upper hα hrho hdecay hupper
+
 set_option maxHeartbeats 800000 in
 -- The statement combines two existential HLS packages with the concrete
 -- pseudo-mass endpoint, which needs extra elaboration budget.
