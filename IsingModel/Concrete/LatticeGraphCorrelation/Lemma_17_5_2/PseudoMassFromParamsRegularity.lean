@@ -122,6 +122,76 @@ theorem pseudoMassFromParamsAtPair_beta_hasDerivAt_deriv_of_corr_differentiableA
   (pseudoMassFromParamsAtPair_beta_differentiableAt_of_corr_differentiableAt
     hα hr Λ J x z hc_diff hcorr).hasDerivAt
 
+/-- **Concrete pseudo-mass beta derivative formula**: once the infinite
+correlation beta profile is differentiable and lies in the active range, the
+concrete pseudo-mass profile satisfies the implicit derivative formula coming
+from `pseudoMassG(m⁻) = correlationInfinite`. -/
+theorem pseudoMassFromParamsAtPair_beta_deriv_formula_of_corr_hasDerivAt
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) {d : ℕ}
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (J : ℝ) (x z : Fin d → ℤ) {β c' : ℝ}
+    (hc_deriv :
+      HasDerivAt
+        (fun β' =>
+          Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z})
+        c' β)
+    (hcorr :
+      Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} ∈ Set.Ioo (0 : ℝ) 2) :
+    deriv
+        (fun β' =>
+          pseudoMassFromParamsAtPair hα hr d Λ
+            (⟨J, 0, β'⟩ : IsingParams ℝ) x z)
+        β =
+      c' /
+        ((-2 * r *
+              Real.exp
+                (-(pseudoMassFromParamsAtPair hα hr d Λ
+                    (⟨J, 0, β⟩ : IsingParams ℝ) x z * r)) *
+              (1 +
+                (pseudoMassFromParamsAtPair hα hr d Λ
+                    (⟨J, 0, β⟩ : IsingParams ℝ) x z * r) ^ α) -
+            2 *
+              Real.exp
+                (-(pseudoMassFromParamsAtPair hα hr d Λ
+                    (⟨J, 0, β⟩ : IsingParams ℝ) x z * r)) *
+              (↑α *
+                (pseudoMassFromParamsAtPair hα hr d Λ
+                    (⟨J, 0, β⟩ : IsingParams ℝ) x z * r) ^ (α - 1) *
+                  r)) /
+          (1 +
+              (pseudoMassFromParamsAtPair hα hr d Λ
+                  (⟨J, 0, β⟩ : IsingParams ℝ) x z * r) ^ α) ^
+            2) := by
+  let h : ℝ → ℝ := fun β' =>
+    pseudoMassFromParamsAtPair hα hr d Λ
+      (⟨J, 0, β'⟩ : IsingParams ℝ) x z
+  let c : ℝ → ℝ := fun β' =>
+    Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+      (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z}
+  have hh_deriv : HasDerivAt h (deriv h β) β := by
+    simpa [h, c] using
+      pseudoMassFromParamsAtPair_beta_hasDerivAt_deriv_of_corr_differentiableAt
+        hα hr Λ J x z hc_deriv.differentiableAt hcorr
+  have hh_nonneg : 0 ≤ h β := by
+    simpa [h] using
+      pseudoMassFromParamsAtPair_nonneg hα hr d Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) x z
+  have hg_eq : (fun β' => pseudoMassG α r (h β')) =ᶠ[nhds β] c := by
+    simpa [h, c] using
+      pseudoMassFromParamsAtPair_beta_pseudoMassG_eventuallyEq_of_corr_continuousAt
+        hα hr Λ J x z hc_deriv.continuousAt hcorr
+  have hh_pos : 0 < h β := by
+    simpa [h] using
+      pseudoMassFromParamsAtPair_pos_of_corr_mem hα hr d Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) x z hcorr
+  have hformula := pseudoMass_deriv_formula α hr hh_deriv
+    (by simpa [c] using hc_deriv) hh_nonneg hg_eq hh_pos
+  simpa [h] using hformula
+
 /-- **Concrete pseudo-mass beta profile is continuous on a closed interval**:
 pointwise `ContinuousAt` of the infinite correlation profile and active-range
 membership give the `ContinuousOn` denominator input used by the compact
@@ -181,6 +251,60 @@ theorem pseudoMassFromParamsAtPair_beta_hasDerivAt_deriv_on_Icc_of_corr_differen
   intro β hβ
   exact pseudoMassFromParamsAtPair_beta_hasDerivAt_deriv_of_corr_differentiableAt
     hα hr Λ J x z (hc_diff β hβ) (hcorr β hβ)
+
+/-- **Closed-interval concrete pseudo-mass beta derivative formula**: pointwise
+differentiability of the infinite correlation profile and active-range
+membership on a compact beta interval give the implicit derivative formula for
+the concrete pseudo-mass profile at every point of the interval. -/
+theorem pseudoMassFromParamsAtPair_beta_deriv_formula_on_Icc_of_corr_differentiableAt
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) {d : ℕ}
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (J : ℝ) (x z : Fin d → ℤ) {β₁ β₂ : ℝ}
+    (hc_diff : ∀ β ∈ Set.Icc β₁ β₂,
+      DifferentiableAt ℝ
+        (fun β' =>
+          Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z})
+        β)
+    (hcorr : ∀ β ∈ Set.Icc β₁ β₂,
+      Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} ∈ Set.Ioo (0 : ℝ) 2) :
+    ∀ β ∈ Set.Icc β₁ β₂,
+      deriv
+          (fun β' =>
+            pseudoMassFromParamsAtPair hα hr d Λ
+              (⟨J, 0, β'⟩ : IsingParams ℝ) x z)
+          β =
+        deriv
+            (fun β' =>
+              Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+                (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z})
+            β /
+          ((-2 * r *
+                Real.exp
+                  (-(pseudoMassFromParamsAtPair hα hr d Λ
+                      (⟨J, 0, β⟩ : IsingParams ℝ) x z * r)) *
+                (1 +
+                  (pseudoMassFromParamsAtPair hα hr d Λ
+                      (⟨J, 0, β⟩ : IsingParams ℝ) x z * r) ^ α) -
+              2 *
+                Real.exp
+                  (-(pseudoMassFromParamsAtPair hα hr d Λ
+                      (⟨J, 0, β⟩ : IsingParams ℝ) x z * r)) *
+                (↑α *
+                  (pseudoMassFromParamsAtPair hα hr d Λ
+                      (⟨J, 0, β⟩ : IsingParams ℝ) x z * r) ^ (α - 1) *
+                    r)) /
+            (1 +
+                (pseudoMassFromParamsAtPair hα hr d Λ
+                    (⟨J, 0, β⟩ : IsingParams ℝ) x z * r) ^ α) ^
+              2) := by
+  intro β hβ
+  exact
+    pseudoMassFromParamsAtPair_beta_deriv_formula_of_corr_hasDerivAt
+      hα hr Λ J x z (hc_diff β hβ).hasDerivAt (hcorr β hβ)
 
 end Ambient
 
