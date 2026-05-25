@@ -823,6 +823,68 @@ theorem lemma_17_5_2_sandwich_of_concrete_infinite_hls_path_rate_dini
       (β₁ := β₁) (β₂ := β₂) (rho := rho)
       hα hαd hd hrho hJ_pos hxz hβ₁₂ hIcc hprovider hdecay
 
+/-- **GJ §17.5 Lemma 17.5.2 capstone from Dini concrete infinite-HLS and
+path-rate inputs**: returns the concrete HLS witness and, under the same
+denominator-comparison and path-rate premises, both the named upper-bound
+predicate and endpoint sandwich for one constant. -/
+theorem lemma_17_5_2_capstone_of_concrete_infinite_hls_path_rate_dini
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    {rho : ℝ} (hrho : 0 < rho)
+    {Λ : Ambient.Exhaustion (Fin d → ℤ)}
+    {J : ℝ} (hJ_pos : 0 < J)
+    {x z : Fin d → ℤ} (hxz : x ≠ z)
+    {β₁ β₂ : ℝ} (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (g' : ℝ → ℝ)
+    (horder : Lemma_17_5_2_DerivativeProfileDiniOrder Λ J x z)
+    (hg_cont : ContinuousOn g' (Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d)))))
+    (hpoint :
+      ∀ β ∈ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))),
+        Filter.Tendsto
+          (fun n =>
+            deriv (fun β' =>
+              Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
+          Filter.atTop (nhds (g' β)))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (hdecay : HasExponentialDecay d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ)
+      (pseudoMassFromParamsAtPair hα hrho d Λ
+        (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      ((∀ β' ∈ Set.Icc β₁ β₂,
+          Lemma_17_5_2_InfiniteHLSDenominatorComparison Λ J x z β' α K
+            (lemma_17_5_2_concretePseudoMassBetaProfile hα hrho Λ J x z)) →
+        ENNReal.ofReal (-Real.log (Real.tanh (β₂ * J))) ≤
+          ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho) *
+            ENNReal.ofReal
+              (pseudoMassFromParamsAtPair hα hrho d Λ
+                (⟨J, 0, β₂⟩ : IsingParams ℝ) x z) →
+        Lemma_17_5_2_UpperBound hα hrho Λ J β₂ x z
+          (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho)) ∧
+        ENNReal.ofReal
+            (pseudoMassFromParamsAtPair hα hrho d Λ
+              (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
+          ≤ latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ∧
+        latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ≤
+          ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho) *
+            ENNReal.ofReal
+              (pseudoMassFromParamsAtPair hα hrho d Λ
+                (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)) := by
+  have hprovider :
+      Lemma_17_5_2_DerivativeLimitProvider Λ J x z :=
+    lemma_17_5_2_derivative_limit_provider_of_dini_order_finite_continuous
+      Λ J x z g' horder hg_cont hpoint
+  exact
+    lemma_17_5_2_capstone_of_concrete_infinite_hls_path_rate_provider
+      (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
+      (β₁ := β₁) (β₂ := β₂) (rho := rho)
+      hα hαd hd hrho hJ_pos hxz hβ₁₂ hIcc hprovider hdecay
+
 /-- **GJ §17.5 Lemma 17.5.2 enlarged finite-HLS package from Dini provider
 inputs**: Dini-order convergence supplies the provider needed by the
 path-rate enlarged finite-HLS package. -/
