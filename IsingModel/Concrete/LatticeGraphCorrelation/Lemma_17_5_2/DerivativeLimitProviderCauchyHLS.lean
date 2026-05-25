@@ -268,6 +268,243 @@ theorem
       (β₁ := β₁) (β₂ := β₂) (rho := rho)
       hα hαd hd hJ_pos hxz hβ₁₂ hIcc hrho hprovider
 
+set_option maxHeartbeats 1200000 in
+-- The Cauchy provider inputs feed the compact-ratio infinite-HLS upper-bound
+-- wrapper added at the provider layer.
+/-- **GJ §17.5 Lemma 17.5.2 compact-ratio infinite-HLS upper bound from
+Cauchy provider inputs**: compact Cauchy derivative-profile control supplies
+the derivative-limit provider, and the concrete compact-ratio package supplies
+the interval ratio witnesses used by the infinite-HLS upper-bound bridge. -/
+theorem
+    lemma_17_5_2_upper_bound_of_concrete_infinite_hls_compact_ratio_bounds_cauchy
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    {rho : ℝ} (hrho : 0 < rho)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (hJ_pos : 0 < J)
+    (x z : Fin d → ℤ) (hxz : x ≠ z)
+    {β₁ β₂ a b : ℝ} (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (ha : 0 < a) (hab : a ≤ b) (hlt : b * J * ↑(2 * d) < 1)
+    (hβ_mem : ∀ β ∈ Set.Icc β₁ β₂, β ∈ Set.Icc a b)
+    (g' : ℝ → ℝ)
+    (hcauchy :
+      ∀ a b : ℝ,
+        Set.Icc a b ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
+          ∀ ε > (0 : ℝ), ∃ N : ℕ, ∀ m ≥ N, ∀ n ≥ N,
+            ∀ β ∈ Set.Icc a b,
+              dist
+                (deriv (fun β' =>
+                  Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                    (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} m) β)
+                (deriv (fun β' =>
+                  Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                    (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β) < ε)
+    (hpoint :
+      ∀ β ∈ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))),
+        Filter.Tendsto
+          (fun n =>
+            deriv (fun β' =>
+              Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
+          Filter.atTop (nhds (g' β))) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      Lemma_17_5_2_UpperBound hα hrho Λ J β₂ x z
+        (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho)) := by
+  have hprovider :
+      Lemma_17_5_2_DerivativeLimitProvider Λ J x z :=
+    lemma_17_5_2_derivative_limit_provider_of_metricCauchy_on_Icc
+      Λ J x z g' hcauchy hpoint
+  exact
+    lemma_17_5_2_upper_bound_of_concrete_infinite_hls_compact_ratio_bounds_provider
+      (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
+      (β₁ := β₁) (β₂ := β₂) (a := a) (b := b) (rho := rho)
+      hα hαd hd hrho hJ_pos hxz hβ₁₂ hIcc ha hab hlt hβ_mem hprovider
+
+set_option maxHeartbeats 1200000 in
+-- Adds the lower validating pseudo-mass decay side to the Cauchy
+-- compact-ratio infinite-HLS upper-bound wrapper.
+/-- **GJ §17.5 Lemma 17.5.2 compact-ratio infinite-HLS sandwich from Cauchy
+provider inputs**: the Cauchy derivative-profile inputs provide the
+derivative-limit provider, while the validating endpoint pseudo-mass decay
+input supplies the lower side of the displayed sandwich. -/
+theorem
+    lemma_17_5_2_sandwich_of_concrete_infinite_hls_compact_ratio_bounds_cauchy
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    {rho : ℝ} (hrho : 0 < rho)
+    {Λ : Ambient.Exhaustion (Fin d → ℤ)}
+    {J : ℝ} (hJ_pos : 0 < J)
+    {x z : Fin d → ℤ} (hxz : x ≠ z)
+    {β₁ β₂ a b : ℝ} (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (ha : 0 < a) (hab : a ≤ b) (hlt : b * J * ↑(2 * d) < 1)
+    (hβ_mem : ∀ β ∈ Set.Icc β₁ β₂, β ∈ Set.Icc a b)
+    (g' : ℝ → ℝ)
+    (hcauchy :
+      ∀ a b : ℝ,
+        Set.Icc a b ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
+          ∀ ε > (0 : ℝ), ∃ N : ℕ, ∀ m ≥ N, ∀ n ≥ N,
+            ∀ β ∈ Set.Icc a b,
+              dist
+                (deriv (fun β' =>
+                  Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                    (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} m) β)
+                (deriv (fun β' =>
+                  Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                    (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β) < ε)
+    (hpoint :
+      ∀ β ∈ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))),
+        Filter.Tendsto
+          (fun n =>
+            deriv (fun β' =>
+              Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
+          Filter.atTop (nhds (g' β)))
+    (hdecay : HasExponentialDecay d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ)
+      (pseudoMassFromParamsAtPair hα hrho d Λ
+        (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      ENNReal.ofReal
+          (pseudoMassFromParamsAtPair hα hrho d Λ
+            (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
+        ≤ latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ∧
+      latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ≤
+        ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho) *
+          ENNReal.ofReal
+            (pseudoMassFromParamsAtPair hα hrho d Λ
+              (⟨J, 0, β₂⟩ : IsingParams ℝ) x z) := by
+  have hprovider :
+      Lemma_17_5_2_DerivativeLimitProvider Λ J x z :=
+    lemma_17_5_2_derivative_limit_provider_of_metricCauchy_on_Icc
+      Λ J x z g' hcauchy hpoint
+  exact
+    lemma_17_5_2_sandwich_of_concrete_infinite_hls_compact_ratio_bounds_provider
+      (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
+      (β₁ := β₁) (β₂ := β₂) (a := a) (b := b) (rho := rho)
+      hα hαd hd hrho hJ_pos hxz hβ₁₂ hIcc ha hab hlt hβ_mem hprovider
+      hdecay
+
+set_option maxHeartbeats 1200000 in
+-- Self-interval Cauchy wrapper for the compact-ratio infinite-HLS upper bound.
+/-- **GJ §17.5 Lemma 17.5.2 self-interval compact-ratio infinite-HLS upper
+bound from Cauchy provider inputs**: specializes the auxiliary compact
+interval to the beta interval itself. -/
+theorem
+    lemma_17_5_2_upper_bound_of_concrete_infinite_hls_compact_ratio_bounds_on_self_Icc_cauchy
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    {rho : ℝ} (hrho : 0 < rho)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (hJ_pos : 0 < J)
+    (x z : Fin d → ℤ) (hxz : x ≠ z)
+    {β₁ β₂ : ℝ} (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (g' : ℝ → ℝ)
+    (hcauchy :
+      ∀ a b : ℝ,
+        Set.Icc a b ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
+          ∀ ε > (0 : ℝ), ∃ N : ℕ, ∀ m ≥ N, ∀ n ≥ N,
+            ∀ β ∈ Set.Icc a b,
+              dist
+                (deriv (fun β' =>
+                  Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                    (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} m) β)
+                (deriv (fun β' =>
+                  Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                    (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β) < ε)
+    (hpoint :
+      ∀ β ∈ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))),
+        Filter.Tendsto
+          (fun n =>
+            deriv (fun β' =>
+              Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
+          Filter.atTop (nhds (g' β))) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      Lemma_17_5_2_UpperBound hα hrho Λ J β₂ x z
+        (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho)) := by
+  have hprovider :
+      Lemma_17_5_2_DerivativeLimitProvider Λ J x z :=
+    lemma_17_5_2_derivative_limit_provider_of_metricCauchy_on_Icc
+      Λ J x z g' hcauchy hpoint
+  exact
+    lemma_17_5_2_upper_bound_of_concrete_infinite_hls_compact_ratio_bounds_provider_on_self_Icc
+      (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
+      (β₁ := β₁) (β₂ := β₂) (rho := rho)
+      hα hαd hd hrho hJ_pos hxz hβ₁₂ hIcc hprovider
+
+set_option maxHeartbeats 1200000 in
+-- Self-interval Cauchy wrapper adding the validating-decay lower side.
+/-- **GJ §17.5 Lemma 17.5.2 self-interval compact-ratio infinite-HLS sandwich
+from Cauchy provider inputs**: specializes the compact-ratio sandwich bridge to
+the beta interval itself. -/
+theorem
+    lemma_17_5_2_sandwich_of_concrete_infinite_hls_compact_ratio_bounds_on_self_Icc_cauchy
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    {rho : ℝ} (hrho : 0 < rho)
+    {Λ : Ambient.Exhaustion (Fin d → ℤ)}
+    {J : ℝ} (hJ_pos : 0 < J)
+    {x z : Fin d → ℤ} (hxz : x ≠ z)
+    {β₁ β₂ : ℝ} (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (g' : ℝ → ℝ)
+    (hcauchy :
+      ∀ a b : ℝ,
+        Set.Icc a b ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
+          ∀ ε > (0 : ℝ), ∃ N : ℕ, ∀ m ≥ N, ∀ n ≥ N,
+            ∀ β ∈ Set.Icc a b,
+              dist
+                (deriv (fun β' =>
+                  Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                    (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} m) β)
+                (deriv (fun β' =>
+                  Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                    (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β) < ε)
+    (hpoint :
+      ∀ β ∈ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))),
+        Filter.Tendsto
+          (fun n =>
+            deriv (fun β' =>
+              Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
+          Filter.atTop (nhds (g' β)))
+    (hdecay : HasExponentialDecay d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ)
+      (pseudoMassFromParamsAtPair hα hrho d Λ
+        (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      ENNReal.ofReal
+          (pseudoMassFromParamsAtPair hα hrho d Λ
+            (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
+        ≤ latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ∧
+      latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ≤
+        ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho) *
+          ENNReal.ofReal
+            (pseudoMassFromParamsAtPair hα hrho d Λ
+              (⟨J, 0, β₂⟩ : IsingParams ℝ) x z) := by
+  have hprovider :
+      Lemma_17_5_2_DerivativeLimitProvider Λ J x z :=
+    lemma_17_5_2_derivative_limit_provider_of_metricCauchy_on_Icc
+      Λ J x z g' hcauchy hpoint
+  exact
+    lemma_17_5_2_sandwich_of_concrete_infinite_hls_compact_ratio_bounds_provider_on_self_Icc
+      (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
+      (β₁ := β₁) (β₂ := β₂) (rho := rho)
+      hα hαd hd hrho hJ_pos hxz hβ₁₂ hIcc hprovider hdecay
+
 set_option maxHeartbeats 800000 in
 -- The Cauchy statement combines the long derivative-profile input with the
 -- concrete HLS/path-rate upper-bound package.
