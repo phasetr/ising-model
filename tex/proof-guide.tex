@@ -8496,7 +8496,14 @@ endpoint pseudo-mass as a decay rate, so both sides of the sandwich are driven b
 concrete scalar inputs---the geometric \(\beta\)-derivative increment decay
 (upper) and the pseudo-mass high-temperature rate bound (lower)
 (\texttt{lemma\_17\_5\_2\_sandwich\_of\_geometric\_increments\_on\_covered\_stages\_and\_pseudoMass\_le\_rate}
-and its capstone counterpart).
+and its capstone counterpart).  The polynomial-prefactor forms take the realistic
+increment bound \(|F_{k+1}-F_k|\le M\,(2k+3)^d\rho^k\) carrying the
+boundary-cardinality prefactor \((2k+3)^d\); since the prefactored geometric
+sequence is summable, the provider and the full upper bound / sandwich still
+follow (\texttt{lemma\_17\_5\_2\_upper\_bound\_of\_poly\_geometric\_increments\_on\_covered\_stages}
+and \texttt{lemma\_17\_5\_2\_capstone\_of\_poly\_geometric\_increments\_on\_covered\_stages}).
+This matches the shape a boundary-distance decay estimate would produce: the
+fresh-vertex count times a per-vertex exponential decay.
 
 The finite derivative-profile formula and continuity input are now discharged.
 The theorem
