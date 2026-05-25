@@ -459,20 +459,20 @@ theorem
         K *
           Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
             (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} /
-          (pseudoMassFromParamsAtPair hα hr d Λ
-            (⟨J, 0, β⟩ : IsingParams ℝ) x z) ^ (2 * α)) :
-      ∀ β ∈ Set.Icc β₁ β₂,
-        ∃ dval : ℝ,
-          HasDerivAt
-            (fun β' =>
-              (pseudoMassFromParamsAtPair hα hr d Λ
-                (⟨J, 0, β'⟩ : IsingParams ℝ) x z) ^ (2 * α + 1))
-            dval β ∧
-          |dval| ≤ ↑(2 * α + 1) * K / r := by
-    intro β hβ
-    exact
-      pseudoMassFromParamsAtPair_beta_pow_succ_deriv_bound_of_corr_hasDerivAt
-        hα hr Λ J x z (hc_diff β hβ).hasDerivAt (hcorr β hβ) (hcomp β hβ)
+            (pseudoMassFromParamsAtPair hα hr d Λ
+              (⟨J, 0, β⟩ : IsingParams ℝ) x z) ^ (2 * α)) :
+    ∀ β ∈ Set.Icc β₁ β₂,
+      ∃ dval : ℝ,
+        HasDerivAt
+          (fun β' =>
+            (pseudoMassFromParamsAtPair hα hr d Λ
+              (⟨J, 0, β'⟩ : IsingParams ℝ) x z) ^ (2 * α + 1))
+          dval β ∧
+        |dval| ≤ ↑(2 * α + 1) * K / r := by
+  intro β hβ
+  exact
+    pseudoMassFromParamsAtPair_beta_pow_succ_deriv_bound_of_corr_hasDerivAt
+      hα hr Λ J x z (hc_diff β hβ).hasDerivAt (hcorr β hβ) (hcomp β hβ)
 
 /-- **Closed-interval concrete pseudo-mass power-chain Lipschitz bound**:
 pointwise differentiability of the infinite correlation profile, active-range

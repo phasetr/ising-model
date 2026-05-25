@@ -317,11 +317,11 @@ theorem
     exact correlationInfinite_continuousAt_beta_of_high_temp
       hd Λ x z hxz J hJ_pos β (hIcc hβ)
   have hc_diff : ∀ β ∈ Set.Icc β₁ β₂,
-      DifferentiableAt ℝ
-        (fun β' =>
-          Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
-            (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z})
-      β := by
+        DifferentiableAt ℝ
+          (fun β' =>
+            Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z})
+          β := by
     intro β hβ
     exact (correlationInfinite_hasDerivAt_beta_of_tendstoLocallyUniformlyOn_deriv
       (d := d) (Λ := Λ) (r_val := x) (s_val := z) (J := J) (g' := g')
