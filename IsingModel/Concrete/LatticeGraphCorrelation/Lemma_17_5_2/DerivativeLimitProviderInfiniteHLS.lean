@@ -359,6 +359,154 @@ theorem
       hh_diff hh_nonneg hg_eq hh_pos hc_pos hprovider
 
 set_option maxHeartbeats 1200000 in
+-- This fixed-constant form repeats the concrete pseudo-mass regularity
+-- normalization from the existential HLS package.
+/-- **GJ §17.5 Lemma 17.5.2 fixed-constant concrete infinite-HLS Lipschitz
+bridge from a derivative-limit provider**: once the concrete infinite-HLS
+denominator comparison is available for a chosen constant `K`, the concrete
+pseudo-mass profile satisfies the endpoint Lipschitz estimate for that same
+constant. -/
+theorem
+    lemma_17_5_2_infinite_pseudoMass_pow_succ_lipschitz_of_concrete_hls_comparison_provider
+    {d α : ℕ} (hα : 1 ≤ α) (hd : 1 ≤ d)
+    {rho : ℝ} (hrho : 0 < rho)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (hJ_pos : 0 < J)
+    (x z : Fin d → ℤ) (hxz : x ≠ z)
+    {β₁ β₂ K : ℝ} (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (hderiv_provider : Lemma_17_5_2_DerivativeLimitProvider Λ J x z)
+    (hcomp : ∀ β ∈ Set.Icc β₁ β₂,
+      Lemma_17_5_2_InfiniteHLSDenominatorComparison Λ J x z β α K
+        (lemma_17_5_2_concretePseudoMassBetaProfile hα hrho Λ J x z)) :
+    |(pseudoMassFromParamsAtPair hα hrho d Λ
+          (⟨J, 0, β₂⟩ : IsingParams ℝ) x z) ^ (2 * α + 1) -
+        (pseudoMassFromParamsAtPair hα hrho d Λ
+          (⟨J, 0, β₁⟩ : IsingParams ℝ) x z) ^ (2 * α + 1)| ≤
+      ↑(2 * α + 1) * K / rho * (β₂ - β₁) := by
+  obtain ⟨g', hderiv_lim⟩ := hderiv_provider
+  let h : ℝ → ℝ := lemma_17_5_2_concretePseudoMassBetaProfile hα hrho Λ J x z
+  have hcorr : ∀ β ∈ Set.Icc β₁ β₂,
+      Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} ∈ Set.Ioo (0 : ℝ) 2 :=
+    lemma_17_5_2_active_range_on_Icc_of_high_temp_pair Λ hJ_pos hxz hIcc
+  have hc_cont : ∀ β ∈ Set.Icc β₁ β₂,
+      ContinuousAt
+        (fun β' =>
+          Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z})
+        β := by
+    intro β hβ
+    exact correlationInfinite_continuousAt_beta_of_high_temp
+      hd Λ x z hxz J hJ_pos β (hIcc hβ)
+  have hc_diff : ∀ β ∈ Set.Icc β₁ β₂,
+      DifferentiableAt ℝ
+        (fun β' =>
+          Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z})
+        β := by
+    intro β hβ
+    exact (correlationInfinite_hasDerivAt_beta_of_tendstoLocallyUniformlyOn_deriv
+      (d := d) (Λ := Λ) (r_val := x) (s_val := z) (J := J) (g' := g')
+      hd hxz hJ_pos hderiv_lim β (hIcc hβ)).differentiableAt
+  have hc_deriv : ∀ β ∈ Set.Icc β₁ β₂,
+      HasDerivAt
+        (fun β' =>
+          Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z})
+        (deriv (fun β' =>
+          Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z}) β) β := by
+    intro β hβ
+    have hc :=
+      correlationInfinite_hasDerivAt_beta_of_tendstoLocallyUniformlyOn_deriv
+        (d := d) (Λ := Λ) (r_val := x) (s_val := z) (J := J) (g' := g')
+        hd hxz hJ_pos hderiv_lim β (hIcc hβ)
+    have hderiv :
+        deriv (fun β' =>
+          Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z}) β = g' β :=
+      hc.deriv
+    simpa [hderiv] using hc
+  have hh_diff : ∀ β ∈ Set.Icc β₁ β₂, HasDerivAt h (deriv h β) β := by
+    simpa [h, lemma_17_5_2_concretePseudoMassBetaProfile] using
+      pseudoMassFromParamsAtPair_beta_hasDerivAt_deriv_on_Icc_of_corr_differentiableAt
+        hα hrho Λ J x z hc_diff hcorr
+  have hh_nonneg : ∀ β ∈ Set.Icc β₁ β₂, 0 ≤ h β := by
+    intro β _hβ
+    exact pseudoMassFromParamsAtPair_nonneg hα hrho d Λ
+      (⟨J, 0, β⟩ : IsingParams ℝ) x z
+  have hg_eq : ∀ β ∈ Set.Icc β₁ β₂,
+      (fun γ => pseudoMassG α rho (h γ)) =ᶠ[nhds β]
+        (fun γ =>
+          Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, γ⟩ : IsingParams ℝ) {x, z}) := by
+    simpa [h, lemma_17_5_2_concretePseudoMassBetaProfile] using
+      pseudoMassFromParamsAtPair_beta_pseudoMassG_eventuallyEq_on_Icc_of_corr_continuousAt
+        hα hrho Λ J x z hc_cont hcorr
+  have hh_pos : ∀ β ∈ Set.Icc β₁ β₂, 0 < h β := by
+    intro β hβ
+    exact pseudoMassFromParamsAtPair_pos_of_corr_mem hα hrho d Λ
+      (⟨J, 0, β⟩ : IsingParams ℝ) x z (hcorr β hβ)
+  have hc_pos : ∀ β ∈ Set.Icc β₁ β₂,
+      0 <
+        Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} := by
+    intro β hβ
+    exact (hcorr β hβ).1
+  simpa [h, lemma_17_5_2_concretePseudoMassBetaProfile] using
+    pseudoMass_pow_succ_lipschitz α hrho hβ₁₂
+      hh_diff hc_deriv hh_nonneg hg_eq hh_pos hc_pos hcomp
+
+set_option maxHeartbeats 1200000 in
+-- The theorem combines the fixed-constant concrete Lipschitz bridge with the
+-- path-rate all-rate bridge for the same HLS constant.
+/-- **GJ §17.5 Lemma 17.5.2 upper bound from fixed concrete infinite-HLS and
+path-rate inputs**: if one constant carries the concrete interval denominator
+comparisons and the endpoint path-rate comparison, the provider-shaped
+upper-bound predicate closes for that same constant. -/
+theorem lemma_17_5_2_upper_bound_of_concrete_infinite_hls_inputs_provider
+    {d α : ℕ} (hα : 1 ≤ α) (hd : 1 ≤ d)
+    {rho : ℝ} (hrho : 0 < rho)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (hJ_pos : 0 < J)
+    (x z : Fin d → ℤ) (hxz : x ≠ z)
+    {β₁ β₂ K : ℝ} (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (hderiv_provider : Lemma_17_5_2_DerivativeLimitProvider Λ J x z)
+    (hpath :
+      ENNReal.ofReal (-Real.log (Real.tanh (β₂ * J))) ≤
+        ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho) *
+          ENNReal.ofReal
+            (pseudoMassFromParamsAtPair hα hrho d Λ
+              (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)) :
+    Lemma_17_5_2_UpperBound hα hrho Λ J β₂ x z
+      (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho)) := by
+  have hβ₂ : 0 < β₂ := (hIcc ⟨hβ₁₂, le_rfl⟩).1
+  have hd_pos : 0 < d := lt_of_lt_of_le Nat.zero_lt_one hd
+  let h : ℝ → ℝ := lemma_17_5_2_concretePseudoMassBetaProfile hα hrho Λ J x z
+  have hlip :
+      (∀ β' ∈ Set.Icc β₁ β₂,
+          Lemma_17_5_2_InfiniteHLSDenominatorComparison Λ J x z β' α K h) →
+        |(h β₂) ^ (2 * α + 1) - (h β₁) ^ (2 * α + 1)| ≤
+          ↑(2 * α + 1) * K / rho * (β₂ - β₁) := by
+    intro hcomp'
+    simpa [h, lemma_17_5_2_concretePseudoMassBetaProfile] using
+      lemma_17_5_2_infinite_pseudoMass_pow_succ_lipschitz_of_concrete_hls_comparison_provider
+        (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
+        (β₁ := β₁) (β₂ := β₂) (K := K) (rho := rho)
+        hα hd hrho hJ_pos hxz hβ₁₂ hIcc hderiv_provider hcomp'
+  have hbridge :
+      Lemma_17_5_2_InfiniteHLSLipschitzAllRateBridge
+        hα hrho Λ J x z β₁ β₂ K h :=
+    lemma_17_5_2_infinite_hls_lipschitz_all_rate_bridge_of_path_rate_le_hls
+      hα hrho hd_pos Λ hJ_pos hβ₂ x z h
+      (by simpa [h, lemma_17_5_2_concretePseudoMassBetaProfile] using hpath)
+  exact
+    lemma_17_5_2_upper_bound_of_infinite_hls_lipschitz_all_rate_bridge
+      hα hrho Λ J x z β₁ β₂ K h hlip hbridge
+
+set_option maxHeartbeats 1200000 in
 -- The proof chooses one enlarged HLS constant and normalizes both finite
 -- ratio-lower and endpoint path-rate inequalities for the concrete profile.
 /-- **GJ §17.5 Lemma 17.5.2 concrete infinite-HLS comparison from a
@@ -506,6 +654,53 @@ theorem
       (h := lemma_17_5_2_concretePseudoMassBetaProfile hα hrho Λ J x z)
       hd hJ_pos hxz hIcc hderiv_provider hfinite
   exact ⟨K, hK_pos, hK_conv, hcomp, by simpa [N, m, path] using hpath_enn⟩
+
+set_option maxHeartbeats 1200000 in
+-- This combines the ratio-lower comparison package with the fixed-constant
+-- concrete upper-bound bridge.
+/-- **GJ §17.5 Lemma 17.5.2 concrete upper bound from a high-temperature ratio
+lower bound**: the finite-stage ratio lower bound supplies the concrete
+interval denominator comparisons and endpoint path-rate comparison; the
+fixed-constant concrete bridge then closes the named upper-bound predicate. -/
+theorem lemma_17_5_2_upper_bound_of_concrete_infinite_hls_ratio_lower_provider
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    {rho : ℝ} (hrho : 0 < rho)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (hJ_pos : 0 < J)
+    (x z : Fin d → ℤ) (hxz : x ≠ z)
+    {β₁ β₂ a b : ℝ} (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (ha : 0 < a) (hab : a ≤ b) (hlt : b * J * ↑(2 * d) < 1)
+    (hβ_mem : ∀ β ∈ Set.Icc β₁ β₂, β ∈ Set.Icc a b)
+    (hderiv_provider : Lemma_17_5_2_DerivativeLimitProvider Λ J x z)
+    {L : ℝ} (hL_pos : 0 < L)
+    (hratio :
+      ∀ᶠ n in Filter.atTop,
+        ∀ β ∈ Set.Icc β₁ β₂,
+          L ≤
+            Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} n /
+            (lemma_17_5_2_concretePseudoMassBetaProfile hα hrho Λ J x z β) ^
+              (2 * α)) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      Lemma_17_5_2_UpperBound hα hrho Λ J β₂ x z
+        (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho)) := by
+  obtain ⟨K, hK, hK_conv, _hcomp, hpath⟩ :=
+    lemma_17_5_2_concrete_infinite_hls_path_rate_inputs_of_high_temp_ratio_lower_provider
+      (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
+      (β₁ := β₁) (β₂ := β₂) (a := a) (b := b) (rho := rho)
+      hα hαd hd hrho hJ_pos hxz hβ₁₂ hIcc ha hab hlt hβ_mem
+      hderiv_provider hL_pos hratio
+  refine ⟨K, hK, hK_conv, ?_⟩
+  exact
+    lemma_17_5_2_upper_bound_of_concrete_infinite_hls_inputs_provider
+      (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
+      (β₁ := β₁) (β₂ := β₂) (K := K) (rho := rho)
+      hα hd hrho hJ_pos hxz hβ₁₂ hIcc hderiv_provider hpath
 
 set_option maxHeartbeats 800000 in
 -- The statement combines two existential HLS packages with the concrete
