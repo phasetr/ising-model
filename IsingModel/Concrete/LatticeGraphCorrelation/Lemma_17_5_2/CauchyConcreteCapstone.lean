@@ -6,9 +6,9 @@ import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.DerivativeLimitP
 
 This module connects the named compact-interval Cauchy derivative-profile
 inputs to the concrete automatic-active upper, sandwich, and capstone wrappers.
-The Cauchy and pointwise hypotheses first build
-`Lemma_17_5_2_DerivativeLimitProvider`; the provider is then passed to the
-concrete high-temperature capstone layer.
+The Cauchy hypothesis first builds `Lemma_17_5_2_DerivativeLimitProvider` by
+constructing pointwise derivative limits from completeness of `ℝ`; the provider
+is then passed to the concrete high-temperature capstone layer.
 
 References:
 
@@ -34,9 +34,7 @@ theorem lemma_17_5_2_upper_bound_compact_auto_active_of_cauchy
     (ha : 0 < a) (hab : a ≤ b) (hlt : b * J * ↑(2 * d) < 1)
     (hβ_mem : ∀ β ∈ Set.Icc β₁ β₂, β ∈ Set.Icc a b)
     {rho : ℝ} (hrho : 0 < rho)
-    (g' : ℝ → ℝ)
-    (hcauchy : Lemma_17_5_2_DerivativeProfileMetricCauchyOnIcc Λ J x z)
-    (hpoint : Lemma_17_5_2_DerivativeProfilePointwiseLimit Λ J x z g') :
+    (hcauchy : Lemma_17_5_2_DerivativeProfileMetricCauchyOnIcc Λ J x z) :
     ∃ K : ℝ, 0 < K ∧
       (∀ x' y' : Fin d → ℤ,
         ∑' w : Fin d → ℤ,
@@ -49,8 +47,8 @@ theorem lemma_17_5_2_upper_bound_compact_auto_active_of_cauchy
       (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
       (β₁ := β₁) (β₂ := β₂) (a := a) (b := b) (rho := rho)
       hα hαd hd hJ_pos hxz hβ₁₂ hIcc ha hab hlt hβ_mem hrho
-      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc
-        Λ J x z g' hcauchy hpoint)
+      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc_complete
+        Λ J x z hcauchy)
 
 /-- **GJ §17.5 Lemma 17.5.2 self-interval automatic active-range upper bound
 from named Cauchy inputs**. -/
@@ -63,9 +61,7 @@ theorem lemma_17_5_2_upper_bound_compact_self_Icc_auto_active_of_cauchy
     (hIcc :
       Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
     {rho : ℝ} (hrho : 0 < rho)
-    (g' : ℝ → ℝ)
-    (hcauchy : Lemma_17_5_2_DerivativeProfileMetricCauchyOnIcc Λ J x z)
-    (hpoint : Lemma_17_5_2_DerivativeProfilePointwiseLimit Λ J x z g') :
+    (hcauchy : Lemma_17_5_2_DerivativeProfileMetricCauchyOnIcc Λ J x z) :
     ∃ K : ℝ, 0 < K ∧
       (∀ x' y' : Fin d → ℤ,
         ∑' w : Fin d → ℤ,
@@ -78,8 +74,8 @@ theorem lemma_17_5_2_upper_bound_compact_self_Icc_auto_active_of_cauchy
       (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
       (β₁ := β₁) (β₂ := β₂) (rho := rho)
       hα hαd hd hJ_pos hxz hβ₁₂ hIcc hrho
-      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc
-        Λ J x z g' hcauchy hpoint)
+      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc_complete
+        Λ J x z hcauchy)
 
 /-- **GJ §17.5 Lemma 17.5.2 interval sandwich from a rate comparison and named
 Cauchy inputs**. -/
@@ -94,9 +90,7 @@ theorem lemma_17_5_2_sandwich_le_high_temp_rate_on_Icc_of_cauchy
     (ha : 0 < a) (hab : a ≤ b) (hlt : b * J * ↑(2 * d) < 1)
     (hβ_mem : ∀ β ∈ Set.Icc β₁ β₂, β ∈ Set.Icc a b)
     {rho : ℝ} (hrho : 0 < rho)
-    (g' : ℝ → ℝ)
     (hcauchy : Lemma_17_5_2_DerivativeProfileMetricCauchyOnIcc Λ J x z)
-    (hpoint : Lemma_17_5_2_DerivativeProfilePointwiseLimit Λ J x z g')
     (hle :
       pseudoMassFromParamsAtPair hα hrho d Λ
           (⟨J, 0, β₂⟩ : IsingParams ℝ) x z
@@ -120,8 +114,8 @@ theorem lemma_17_5_2_sandwich_le_high_temp_rate_on_Icc_of_cauchy
       (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
       (β₁ := β₁) (β₂ := β₂) (a := a) (b := b) (rho := rho)
       hα hαd hd hJ_pos hxz hβ₁₂ hIcc ha hab hlt hβ_mem hrho
-      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc
-        Λ J x z g' hcauchy hpoint)
+      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc_complete
+        Λ J x z hcauchy)
       hle
 
 /-- **GJ §17.5 Lemma 17.5.2 self-interval sandwich from a rate comparison and
@@ -135,9 +129,7 @@ theorem lemma_17_5_2_sandwich_le_high_temp_rate_on_self_Icc_of_cauchy
     (hIcc :
       Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
     {rho : ℝ} (hrho : 0 < rho)
-    (g' : ℝ → ℝ)
     (hcauchy : Lemma_17_5_2_DerivativeProfileMetricCauchyOnIcc Λ J x z)
-    (hpoint : Lemma_17_5_2_DerivativeProfilePointwiseLimit Λ J x z g')
     (hle :
       pseudoMassFromParamsAtPair hα hrho d Λ
           (⟨J, 0, β₂⟩ : IsingParams ℝ) x z
@@ -161,8 +153,8 @@ theorem lemma_17_5_2_sandwich_le_high_temp_rate_on_self_Icc_of_cauchy
       (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
       (β₁ := β₁) (β₂ := β₂) (rho := rho)
       hα hαd hd hJ_pos hxz hβ₁₂ hIcc hrho
-      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc
-        Λ J x z g' hcauchy hpoint)
+      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc_complete
+        Λ J x z hcauchy)
       hle
 
 /-- **GJ §17.5 Lemma 17.5.2 interval sandwich from an endpoint profile lower
@@ -178,9 +170,7 @@ theorem lemma_17_5_2_sandwich_profile_lower_on_Icc_of_cauchy
     (ha : 0 < a) (hab : a ≤ b) (hlt : b * J * ↑(2 * d) < 1)
     (hβ_mem : ∀ β ∈ Set.Icc β₁ β₂, β ∈ Set.Icc a b)
     {rho : ℝ} (hrho : 0 < rho)
-    (g' : ℝ → ℝ)
     (hcauchy : Lemma_17_5_2_DerivativeProfileMetricCauchyOnIcc Λ J x z)
-    (hpoint : Lemma_17_5_2_DerivativeProfilePointwiseLimit Λ J x z g')
     (hprofile :
       pseudoMassG α rho (-Real.log (β₂ * J * ↑(2 * d))) ≤
         Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
@@ -204,8 +194,8 @@ theorem lemma_17_5_2_sandwich_profile_lower_on_Icc_of_cauchy
       (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
       (β₁ := β₁) (β₂ := β₂) (a := a) (b := b) (rho := rho)
       hα hαd hd hJ_pos hxz hβ₁₂ hIcc ha hab hlt hβ_mem hrho
-      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc
-        Λ J x z g' hcauchy hpoint)
+      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc_complete
+        Λ J x z hcauchy)
       hprofile
 
 /-- **GJ §17.5 Lemma 17.5.2 self-interval sandwich from an endpoint profile
@@ -219,9 +209,7 @@ theorem lemma_17_5_2_sandwich_profile_lower_on_self_Icc_of_cauchy
     (hIcc :
       Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
     {rho : ℝ} (hrho : 0 < rho)
-    (g' : ℝ → ℝ)
     (hcauchy : Lemma_17_5_2_DerivativeProfileMetricCauchyOnIcc Λ J x z)
-    (hpoint : Lemma_17_5_2_DerivativeProfilePointwiseLimit Λ J x z g')
     (hprofile :
       pseudoMassG α rho (-Real.log (β₂ * J * ↑(2 * d))) ≤
         Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
@@ -245,8 +233,8 @@ theorem lemma_17_5_2_sandwich_profile_lower_on_self_Icc_of_cauchy
       (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
       (β₁ := β₁) (β₂ := β₂) (rho := rho)
       hα hαd hd hJ_pos hxz hβ₁₂ hIcc hrho
-      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc
-        Λ J x z g' hcauchy hpoint)
+      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc_complete
+        Λ J x z hcauchy)
       hprofile
 
 /-- **GJ §17.5 Lemma 17.5.2 interval capstone from a rate comparison and named
@@ -262,9 +250,7 @@ theorem lemma_17_5_2_capstone_le_high_temp_rate_on_Icc_of_cauchy
     (ha : 0 < a) (hab : a ≤ b) (hlt : b * J * ↑(2 * d) < 1)
     (hβ_mem : ∀ β ∈ Set.Icc β₁ β₂, β ∈ Set.Icc a b)
     {rho : ℝ} (hrho : 0 < rho)
-    (g' : ℝ → ℝ)
     (hcauchy : Lemma_17_5_2_DerivativeProfileMetricCauchyOnIcc Λ J x z)
-    (hpoint : Lemma_17_5_2_DerivativeProfilePointwiseLimit Λ J x z g')
     (hle :
       pseudoMassFromParamsAtPair hα hrho d Λ
           (⟨J, 0, β₂⟩ : IsingParams ℝ) x z
@@ -290,8 +276,8 @@ theorem lemma_17_5_2_capstone_le_high_temp_rate_on_Icc_of_cauchy
       (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
       (β₁ := β₁) (β₂ := β₂) (a := a) (b := b) (rho := rho)
       hα hαd hd hJ_pos hxz hβ₁₂ hIcc ha hab hlt hβ_mem hrho
-      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc
-        Λ J x z g' hcauchy hpoint)
+      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc_complete
+        Λ J x z hcauchy)
       hle
 
 /-- **GJ §17.5 Lemma 17.5.2 self-interval capstone from a rate comparison and
@@ -305,9 +291,7 @@ theorem lemma_17_5_2_capstone_le_high_temp_rate_on_self_Icc_of_cauchy
     (hIcc :
       Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
     {rho : ℝ} (hrho : 0 < rho)
-    (g' : ℝ → ℝ)
     (hcauchy : Lemma_17_5_2_DerivativeProfileMetricCauchyOnIcc Λ J x z)
-    (hpoint : Lemma_17_5_2_DerivativeProfilePointwiseLimit Λ J x z g')
     (hle :
       pseudoMassFromParamsAtPair hα hrho d Λ
           (⟨J, 0, β₂⟩ : IsingParams ℝ) x z
@@ -333,8 +317,8 @@ theorem lemma_17_5_2_capstone_le_high_temp_rate_on_self_Icc_of_cauchy
       (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
       (β₁ := β₁) (β₂ := β₂) (rho := rho)
       hα hαd hd hJ_pos hxz hβ₁₂ hIcc hrho
-      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc
-        Λ J x z g' hcauchy hpoint)
+      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc_complete
+        Λ J x z hcauchy)
       hle
 
 /-- **GJ §17.5 Lemma 17.5.2 interval capstone from an endpoint profile lower
@@ -350,9 +334,7 @@ theorem lemma_17_5_2_capstone_profile_lower_on_Icc_of_cauchy
     (ha : 0 < a) (hab : a ≤ b) (hlt : b * J * ↑(2 * d) < 1)
     (hβ_mem : ∀ β ∈ Set.Icc β₁ β₂, β ∈ Set.Icc a b)
     {rho : ℝ} (hrho : 0 < rho)
-    (g' : ℝ → ℝ)
     (hcauchy : Lemma_17_5_2_DerivativeProfileMetricCauchyOnIcc Λ J x z)
-    (hpoint : Lemma_17_5_2_DerivativeProfilePointwiseLimit Λ J x z g')
     (hprofile :
       pseudoMassG α rho (-Real.log (β₂ * J * ↑(2 * d))) ≤
         Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
@@ -378,8 +360,8 @@ theorem lemma_17_5_2_capstone_profile_lower_on_Icc_of_cauchy
       (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
       (β₁ := β₁) (β₂ := β₂) (a := a) (b := b) (rho := rho)
       hα hαd hd hJ_pos hxz hβ₁₂ hIcc ha hab hlt hβ_mem hrho
-      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc
-        Λ J x z g' hcauchy hpoint)
+      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc_complete
+        Λ J x z hcauchy)
       hprofile
 
 /-- **GJ §17.5 Lemma 17.5.2 self-interval capstone from an endpoint profile
@@ -393,9 +375,7 @@ theorem lemma_17_5_2_capstone_profile_lower_on_self_Icc_of_cauchy
     (hIcc :
       Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
     {rho : ℝ} (hrho : 0 < rho)
-    (g' : ℝ → ℝ)
     (hcauchy : Lemma_17_5_2_DerivativeProfileMetricCauchyOnIcc Λ J x z)
-    (hpoint : Lemma_17_5_2_DerivativeProfilePointwiseLimit Λ J x z g')
     (hprofile :
       pseudoMassG α rho (-Real.log (β₂ * J * ↑(2 * d))) ≤
         Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
@@ -421,8 +401,8 @@ theorem lemma_17_5_2_capstone_profile_lower_on_self_Icc_of_cauchy
       (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
       (β₁ := β₁) (β₂ := β₂) (rho := rho)
       hα hαd hd hJ_pos hxz hβ₁₂ hIcc hrho
-      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc
-        Λ J x z g' hcauchy hpoint)
+      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc_complete
+        Λ J x z hcauchy)
       hprofile
 
 end Ambient

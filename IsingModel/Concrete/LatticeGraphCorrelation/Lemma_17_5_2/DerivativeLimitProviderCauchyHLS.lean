@@ -5,9 +5,9 @@ import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.DerivativeLimitP
 # GJ §17.5 Lemma 17.5.2 capstone — Cauchy-provider infinite-HLS bridges
 
 This module connects the compact-Cauchy derivative-provider criteria to the
-infinite-HLS bridge layer.  The statements consume the Cauchy and pointwise
-derivative-profile inputs directly, then reuse the provider-based infinite-HLS
-assembly.
+infinite-HLS bridge layer.  The statements consume the Cauchy derivative-profile
+input directly; pointwise derivative limits are constructed by completeness of
+`ℝ`, then the provider-based infinite-HLS assembly is reused.
 
 References:
 
@@ -19,10 +19,9 @@ namespace IsingModel
 namespace Ambient
 
 /-- **GJ §17.5 Lemma 17.5.2 infinite HLS comparison from Cauchy provider
-inputs**: compact-interval metric Cauchy control and pointwise convergence of
-the finite derivative profiles supply the derivative-limit provider, so a
-uniform finite derivative bound on the interval yields the infinite HLS
-denominator comparison at every beta in the interval. -/
+inputs**: compact-interval metric Cauchy control supplies the derivative-limit
+provider, so a uniform finite derivative bound on the interval yields the
+infinite HLS denominator comparison at every beta in the interval. -/
 theorem
     lemma_17_5_2_infinite_hls_comparison_on_Icc_of_uniform_finite_deriv_bounds_cauchy
     {d α : ℕ} (hd : 1 ≤ d)
@@ -31,7 +30,7 @@ theorem
     (x z : Fin d → ℤ) (hxz : x ≠ z)
     (β₁ β₂ K : ℝ)
     (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
-    (h : ℝ → ℝ) (g' : ℝ → ℝ)
+    (h : ℝ → ℝ)
     (hcauchy :
       ∀ a b : ℝ,
         Set.Icc a b ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
@@ -44,14 +43,6 @@ theorem
                 (deriv (fun β' =>
                   Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
                     (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β) < ε)
-    (hpoint :
-      ∀ β ∈ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))),
-        Filter.Tendsto
-          (fun n =>
-            deriv (fun β' =>
-              Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
-                (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
-          Filter.atTop (nhds (g' β)))
     (hfinite :
       ∀ᶠ n in Filter.atTop,
         ∀ β ∈ Set.Icc β₁ β₂,
@@ -66,8 +57,8 @@ theorem
       Lemma_17_5_2_InfiniteHLSDenominatorComparison Λ J x z β α K h := by
   have hprovider :
       Lemma_17_5_2_DerivativeLimitProvider Λ J x z :=
-    lemma_17_5_2_derivative_limit_provider_of_metricCauchy_on_Icc
-      Λ J x z g' hcauchy hpoint
+    lemma_17_5_2_derivative_limit_provider_of_metricCauchy_on_Icc_complete
+      Λ J x z hcauchy
   exact
     lemma_17_5_2_infinite_hls_comparison_on_Icc_of_uniform_finite_deriv_bounds_provider
       hd Λ J hJ_pos x z hxz β₁ β₂ K hIcc h hprovider hfinite
@@ -84,7 +75,7 @@ theorem
     {β₁ β₂ : ℝ} (hβ₁₂ : β₁ ≤ β₂)
     (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
     {rho : ℝ} (hrho : 0 < rho)
-    {h : ℝ → ℝ} (g' : ℝ → ℝ)
+    {h : ℝ → ℝ}
     (hh_diff : ∀ β' ∈ Set.Icc β₁ β₂, HasDerivAt h (deriv h β') β')
     (hh_nonneg : ∀ β' ∈ Set.Icc β₁ β₂, 0 ≤ h β')
     (hg_eq : ∀ β' ∈ Set.Icc β₁ β₂,
@@ -108,15 +99,7 @@ theorem
                     (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} m) β)
                 (deriv (fun β' =>
                   Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
-                    (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β) < ε)
-    (hpoint :
-      ∀ β ∈ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))),
-        Filter.Tendsto
-          (fun n =>
-            deriv (fun β' =>
-              Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
-                (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
-          Filter.atTop (nhds (g' β))) :
+                    (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β) < ε) :
     ∃ K : ℝ, 0 < K ∧
       (∀ x' y' : Fin d → ℤ,
         ∑' w : Fin d → ℤ,
@@ -135,8 +118,8 @@ theorem
           ↑(2 * α + 1) * K / rho * (β₂ - β₁)) := by
   have hprovider :
       Lemma_17_5_2_DerivativeLimitProvider Λ J x z :=
-    lemma_17_5_2_derivative_limit_provider_of_metricCauchy_on_Icc
-      Λ J x z g' hcauchy hpoint
+    lemma_17_5_2_derivative_limit_provider_of_metricCauchy_on_Icc_complete
+      Λ J x z hcauchy
   exact
     lemma_17_5_2_infinite_pseudoMass_pow_succ_lipschitz_of_finite_deriv_bounds_provider
       (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
@@ -157,7 +140,7 @@ theorem
     {β₁ β₂ : ℝ} (hβ₁₂ : β₁ ≤ β₂)
     (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
     {rho : ℝ} (hrho : 0 < rho)
-    {h : ℝ → ℝ} (g' : ℝ → ℝ)
+    {h : ℝ → ℝ}
     (hh_diff : ∀ β' ∈ Set.Icc β₁ β₂, HasDerivAt h (deriv h β') β')
     (hh_nonneg : ∀ β' ∈ Set.Icc β₁ β₂, 0 ≤ h β')
     (hg_eq : ∀ β' ∈ Set.Icc β₁ β₂,
@@ -181,15 +164,7 @@ theorem
                     (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} m) β)
                 (deriv (fun β' =>
                   Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
-                    (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β) < ε)
-    (hpoint :
-      ∀ β ∈ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))),
-        Filter.Tendsto
-          (fun n =>
-            deriv (fun β' =>
-              Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
-                (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
-          Filter.atTop (nhds (g' β))) :
+                    (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β) < ε) :
     ∃ K : ℝ, 0 < K ∧
       (∀ x' y' : Fin d → ℤ,
         ∑' w : Fin d → ℤ,
@@ -201,8 +176,8 @@ theorem
           ↑(2 * α + 1) * K / rho * (β₂ - β₁)) := by
   have hprovider :
       Lemma_17_5_2_DerivativeLimitProvider Λ J x z :=
-    lemma_17_5_2_derivative_limit_provider_of_metricCauchy_on_Icc
-      Λ J x z g' hcauchy hpoint
+    lemma_17_5_2_derivative_limit_provider_of_metricCauchy_on_Icc_complete
+      Λ J x z hcauchy
   exact
     lemma_17_5_2_infinite_pseudoMass_pow_succ_lipschitz_of_hls_constant_provider
       (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
@@ -222,7 +197,6 @@ theorem
     {β₁ β₂ : ℝ} (hβ₁₂ : β₁ ≤ β₂)
     (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
     {rho : ℝ} (hrho : 0 < rho)
-    (g' : ℝ → ℝ)
     (hcauchy :
       ∀ a b : ℝ,
         Set.Icc a b ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
@@ -234,15 +208,7 @@ theorem
                     (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} m) β)
                 (deriv (fun β' =>
                   Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
-                    (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β) < ε)
-    (hpoint :
-      ∀ β ∈ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))),
-        Filter.Tendsto
-          (fun n =>
-            deriv (fun β' =>
-              Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
-                (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
-          Filter.atTop (nhds (g' β))) :
+                    (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β) < ε) :
     ∃ K : ℝ, 0 < K ∧
       (∀ x' y' : Fin d → ℤ,
         ∑' w : Fin d → ℤ,
@@ -260,8 +226,8 @@ theorem
           ↑(2 * α + 1) * K / rho * (β₂ - β₁)) := by
   have hprovider :
       Lemma_17_5_2_DerivativeLimitProvider Λ J x z :=
-    lemma_17_5_2_derivative_limit_provider_of_metricCauchy_on_Icc
-      Λ J x z g' hcauchy hpoint
+    lemma_17_5_2_derivative_limit_provider_of_metricCauchy_on_Icc_complete
+      Λ J x z hcauchy
   exact
     lemma_17_5_2_infinite_pseudoMass_pow_succ_lipschitz_of_concrete_hls_constant_provider
       (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
@@ -285,7 +251,6 @@ theorem
     (x z : Fin d → ℤ) (hxz : x ≠ z)
     {β₁ β₂ : ℝ} (hβ₁₂ : β₁ ≤ β₂)
     (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
-    (g' : ℝ → ℝ)
     (hcauchy :
       ∀ a b : ℝ,
         Set.Icc a b ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
@@ -298,14 +263,6 @@ theorem
                 (deriv (fun β' =>
                   Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
                     (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β) < ε)
-    (hpoint :
-      ∀ β ∈ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))),
-        Filter.Tendsto
-          (fun n =>
-            deriv (fun β' =>
-              Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
-                (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
-          Filter.atTop (nhds (g' β)))
     {C H : ℝ} (hC_pos : 0 < C) (hH_pos : 0 < H)
     (hcInf_lower : ∀ β ∈ Set.Icc β₁ β₂,
       C ≤
@@ -323,8 +280,8 @@ theorem
         (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho)) := by
   have hprovider :
       Lemma_17_5_2_DerivativeLimitProvider Λ J x z :=
-    lemma_17_5_2_derivative_limit_provider_of_metricCauchy_on_Icc
-      Λ J x z g' hcauchy hpoint
+    lemma_17_5_2_derivative_limit_provider_of_metricCauchy_on_Icc_complete
+      Λ J x z hcauchy
   exact
     lemma_17_5_2_upper_bound_of_concrete_infinite_hls_uniform_correlation_lower_provider_on_self_Icc
       (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
@@ -348,7 +305,6 @@ theorem
     {x z : Fin d → ℤ} (hxz : x ≠ z)
     {β₁ β₂ : ℝ} (hβ₁₂ : β₁ ≤ β₂)
     (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
-    (g' : ℝ → ℝ)
     (hcauchy :
       ∀ a b : ℝ,
         Set.Icc a b ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
@@ -361,14 +317,6 @@ theorem
                 (deriv (fun β' =>
                   Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
                     (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β) < ε)
-    (hpoint :
-      ∀ β ∈ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))),
-        Filter.Tendsto
-          (fun n =>
-            deriv (fun β' =>
-              Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
-                (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
-          Filter.atTop (nhds (g' β)))
     (hdecay : HasExponentialDecay d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ)
       (pseudoMassFromParamsAtPair hα hrho d Λ
         (⟨J, 0, β₂⟩ : IsingParams ℝ) x z))
@@ -396,8 +344,8 @@ theorem
               (⟨J, 0, β₂⟩ : IsingParams ℝ) x z) := by
   have hprovider :
       Lemma_17_5_2_DerivativeLimitProvider Λ J x z :=
-    lemma_17_5_2_derivative_limit_provider_of_metricCauchy_on_Icc
-      Λ J x z g' hcauchy hpoint
+    lemma_17_5_2_derivative_limit_provider_of_metricCauchy_on_Icc_complete
+      Λ J x z hcauchy
   exact
     lemma_17_5_2_sandwich_of_concrete_infinite_hls_uniform_correlation_lower_provider_on_self_Icc
       (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
@@ -417,7 +365,6 @@ theorem
     {x z : Fin d → ℤ} (hxz : x ≠ z)
     {β₁ β₂ : ℝ} (hβ₁₂ : β₁ ≤ β₂)
     (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
-    (g' : ℝ → ℝ)
     (hcauchy :
       ∀ a b : ℝ,
         Set.Icc a b ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
@@ -430,14 +377,6 @@ theorem
                 (deriv (fun β' =>
                   Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
                     (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β) < ε)
-    (hpoint :
-      ∀ β ∈ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))),
-        Filter.Tendsto
-          (fun n =>
-            deriv (fun β' =>
-              Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
-                (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
-          Filter.atTop (nhds (g' β)))
     (hdecay : HasExponentialDecay d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ)
       (pseudoMassFromParamsAtPair hα hrho d Λ
         (⟨J, 0, β₂⟩ : IsingParams ℝ) x z))
@@ -467,8 +406,8 @@ theorem
               (⟨J, 0, β₂⟩ : IsingParams ℝ) x z) := by
   have hprovider :
       Lemma_17_5_2_DerivativeLimitProvider Λ J x z :=
-    lemma_17_5_2_derivative_limit_provider_of_metricCauchy_on_Icc
-      Λ J x z g' hcauchy hpoint
+    lemma_17_5_2_derivative_limit_provider_of_metricCauchy_on_Icc_complete
+      Λ J x z hcauchy
   exact
     lemma_17_5_2_capstone_of_concrete_infinite_hls_uniform_correlation_lower_provider_on_self_Icc
       (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
@@ -494,7 +433,6 @@ theorem
     (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
     (ha : 0 < a) (hab : a ≤ b) (hlt : b * J * ↑(2 * d) < 1)
     (hβ_mem : ∀ β ∈ Set.Icc β₁ β₂, β ∈ Set.Icc a b)
-    (g' : ℝ → ℝ)
     (hcauchy :
       ∀ a b : ℝ,
         Set.Icc a b ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
@@ -506,15 +444,7 @@ theorem
                     (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} m) β)
                 (deriv (fun β' =>
                   Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
-                    (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β) < ε)
-    (hpoint :
-      ∀ β ∈ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))),
-        Filter.Tendsto
-          (fun n =>
-            deriv (fun β' =>
-              Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
-                (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
-          Filter.atTop (nhds (g' β))) :
+                    (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β) < ε) :
     ∃ K : ℝ, 0 < K ∧
       (∀ x' y' : Fin d → ℤ,
         ∑' w : Fin d → ℤ,
@@ -524,8 +454,8 @@ theorem
         (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho)) := by
   have hprovider :
       Lemma_17_5_2_DerivativeLimitProvider Λ J x z :=
-    lemma_17_5_2_derivative_limit_provider_of_metricCauchy_on_Icc
-      Λ J x z g' hcauchy hpoint
+    lemma_17_5_2_derivative_limit_provider_of_metricCauchy_on_Icc_complete
+      Λ J x z hcauchy
   exact
     lemma_17_5_2_upper_bound_of_concrete_infinite_hls_compact_ratio_bounds_provider
       (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
@@ -550,7 +480,6 @@ theorem
     (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
     (ha : 0 < a) (hab : a ≤ b) (hlt : b * J * ↑(2 * d) < 1)
     (hβ_mem : ∀ β ∈ Set.Icc β₁ β₂, β ∈ Set.Icc a b)
-    (g' : ℝ → ℝ)
     (hcauchy :
       ∀ a b : ℝ,
         Set.Icc a b ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
@@ -563,14 +492,6 @@ theorem
                 (deriv (fun β' =>
                   Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
                     (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β) < ε)
-    (hpoint :
-      ∀ β ∈ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))),
-        Filter.Tendsto
-          (fun n =>
-            deriv (fun β' =>
-              Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
-                (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
-          Filter.atTop (nhds (g' β)))
     (hdecay : HasExponentialDecay d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ)
       (pseudoMassFromParamsAtPair hα hrho d Λ
         (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)) :
@@ -590,8 +511,8 @@ theorem
               (⟨J, 0, β₂⟩ : IsingParams ℝ) x z) := by
   have hprovider :
       Lemma_17_5_2_DerivativeLimitProvider Λ J x z :=
-    lemma_17_5_2_derivative_limit_provider_of_metricCauchy_on_Icc
-      Λ J x z g' hcauchy hpoint
+    lemma_17_5_2_derivative_limit_provider_of_metricCauchy_on_Icc_complete
+      Λ J x z hcauchy
   exact
     lemma_17_5_2_sandwich_of_concrete_infinite_hls_compact_ratio_bounds_provider
       (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
@@ -613,7 +534,6 @@ theorem
     (x z : Fin d → ℤ) (hxz : x ≠ z)
     {β₁ β₂ : ℝ} (hβ₁₂ : β₁ ≤ β₂)
     (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
-    (g' : ℝ → ℝ)
     (hcauchy :
       ∀ a b : ℝ,
         Set.Icc a b ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
@@ -625,15 +545,7 @@ theorem
                     (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} m) β)
                 (deriv (fun β' =>
                   Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
-                    (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β) < ε)
-    (hpoint :
-      ∀ β ∈ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))),
-        Filter.Tendsto
-          (fun n =>
-            deriv (fun β' =>
-              Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
-                (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
-          Filter.atTop (nhds (g' β))) :
+                    (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β) < ε) :
     ∃ K : ℝ, 0 < K ∧
       (∀ x' y' : Fin d → ℤ,
         ∑' w : Fin d → ℤ,
@@ -643,8 +555,8 @@ theorem
         (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho)) := by
   have hprovider :
       Lemma_17_5_2_DerivativeLimitProvider Λ J x z :=
-    lemma_17_5_2_derivative_limit_provider_of_metricCauchy_on_Icc
-      Λ J x z g' hcauchy hpoint
+    lemma_17_5_2_derivative_limit_provider_of_metricCauchy_on_Icc_complete
+      Λ J x z hcauchy
   exact
     lemma_17_5_2_upper_bound_of_concrete_infinite_hls_compact_ratio_bounds_provider_on_self_Icc
       (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
@@ -665,7 +577,6 @@ theorem
     {x z : Fin d → ℤ} (hxz : x ≠ z)
     {β₁ β₂ : ℝ} (hβ₁₂ : β₁ ≤ β₂)
     (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
-    (g' : ℝ → ℝ)
     (hcauchy :
       ∀ a b : ℝ,
         Set.Icc a b ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
@@ -678,14 +589,6 @@ theorem
                 (deriv (fun β' =>
                   Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
                     (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β) < ε)
-    (hpoint :
-      ∀ β ∈ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))),
-        Filter.Tendsto
-          (fun n =>
-            deriv (fun β' =>
-              Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
-                (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
-          Filter.atTop (nhds (g' β)))
     (hdecay : HasExponentialDecay d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ)
       (pseudoMassFromParamsAtPair hα hrho d Λ
         (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)) :
@@ -705,8 +608,8 @@ theorem
               (⟨J, 0, β₂⟩ : IsingParams ℝ) x z) := by
   have hprovider :
       Lemma_17_5_2_DerivativeLimitProvider Λ J x z :=
-    lemma_17_5_2_derivative_limit_provider_of_metricCauchy_on_Icc
-      Λ J x z g' hcauchy hpoint
+    lemma_17_5_2_derivative_limit_provider_of_metricCauchy_on_Icc_complete
+      Λ J x z hcauchy
   exact
     lemma_17_5_2_sandwich_of_concrete_infinite_hls_compact_ratio_bounds_provider_on_self_Icc
       (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
@@ -727,7 +630,6 @@ theorem
     (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
     (ha : 0 < a) (hab : a ≤ b) (hlt : b * J * ↑(2 * d) < 1)
     (hβ_mem : ∀ β ∈ Set.Icc β₁ β₂, β ∈ Set.Icc a b)
-    (g' : ℝ → ℝ)
     (hcauchy :
       ∀ a b : ℝ,
         Set.Icc a b ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
@@ -740,14 +642,6 @@ theorem
                 (deriv (fun β' =>
                   Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
                     (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β) < ε)
-    (hpoint :
-      ∀ β ∈ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))),
-        Filter.Tendsto
-          (fun n =>
-            deriv (fun β' =>
-              Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
-                (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
-          Filter.atTop (nhds (g' β)))
     (hdecay : HasExponentialDecay d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ)
       (pseudoMassFromParamsAtPair hα hrho d Λ
         (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)) :
@@ -769,8 +663,8 @@ theorem
               (⟨J, 0, β₂⟩ : IsingParams ℝ) x z) := by
   have hprovider :
       Lemma_17_5_2_DerivativeLimitProvider Λ J x z :=
-    lemma_17_5_2_derivative_limit_provider_of_metricCauchy_on_Icc
-      Λ J x z g' hcauchy hpoint
+    lemma_17_5_2_derivative_limit_provider_of_metricCauchy_on_Icc_complete
+      Λ J x z hcauchy
   exact
     lemma_17_5_2_capstone_of_concrete_infinite_hls_compact_ratio_bounds_provider
       (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
@@ -789,7 +683,6 @@ theorem
     {x z : Fin d → ℤ} (hxz : x ≠ z)
     {β₁ β₂ : ℝ} (hβ₁₂ : β₁ ≤ β₂)
     (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
-    (g' : ℝ → ℝ)
     (hcauchy :
       ∀ a b : ℝ,
         Set.Icc a b ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
@@ -802,14 +695,6 @@ theorem
                 (deriv (fun β' =>
                   Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
                     (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β) < ε)
-    (hpoint :
-      ∀ β ∈ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))),
-        Filter.Tendsto
-          (fun n =>
-            deriv (fun β' =>
-              Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
-                (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
-          Filter.atTop (nhds (g' β)))
     (hdecay : HasExponentialDecay d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ)
       (pseudoMassFromParamsAtPair hα hrho d Λ
         (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)) :
@@ -831,8 +716,8 @@ theorem
               (⟨J, 0, β₂⟩ : IsingParams ℝ) x z) := by
   have hprovider :
       Lemma_17_5_2_DerivativeLimitProvider Λ J x z :=
-    lemma_17_5_2_derivative_limit_provider_of_metricCauchy_on_Icc
-      Λ J x z g' hcauchy hpoint
+    lemma_17_5_2_derivative_limit_provider_of_metricCauchy_on_Icc_complete
+      Λ J x z hcauchy
   exact
     lemma_17_5_2_capstone_of_concrete_infinite_hls_compact_ratio_bounds_provider_on_self_Icc
       (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
@@ -854,7 +739,6 @@ theorem lemma_17_5_2_upper_bound_of_concrete_infinite_hls_path_rate_cauchy
     (x z : Fin d → ℤ) (hxz : x ≠ z)
     {β₁ β₂ : ℝ} (hβ₁₂ : β₁ ≤ β₂)
     (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
-    (g' : ℝ → ℝ)
     (hcauchy :
       ∀ a b : ℝ,
         Set.Icc a b ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
@@ -867,14 +751,6 @@ theorem lemma_17_5_2_upper_bound_of_concrete_infinite_hls_path_rate_cauchy
                 (deriv (fun β' =>
                   Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
                     (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β) < ε)
-    (hpoint :
-      ∀ β ∈ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))),
-        Filter.Tendsto
-          (fun n =>
-            deriv (fun β' =>
-              Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
-                (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
-          Filter.atTop (nhds (g' β)))
     [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
                       (Λ.volume n)).edgeSet] :
     ∃ K : ℝ, 0 < K ∧
@@ -894,8 +770,8 @@ theorem lemma_17_5_2_upper_bound_of_concrete_infinite_hls_path_rate_cauchy
           (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho))) := by
   have hprovider :
       Lemma_17_5_2_DerivativeLimitProvider Λ J x z :=
-    lemma_17_5_2_derivative_limit_provider_of_metricCauchy_on_Icc
-      Λ J x z g' hcauchy hpoint
+    lemma_17_5_2_derivative_limit_provider_of_metricCauchy_on_Icc_complete
+      Λ J x z hcauchy
   exact
     lemma_17_5_2_upper_bound_of_concrete_infinite_hls_path_rate_provider
       (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
@@ -916,7 +792,6 @@ theorem lemma_17_5_2_sandwich_of_concrete_infinite_hls_path_rate_cauchy
     {x z : Fin d → ℤ} (hxz : x ≠ z)
     {β₁ β₂ : ℝ} (hβ₁₂ : β₁ ≤ β₂)
     (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
-    (g' : ℝ → ℝ)
     (hcauchy :
       ∀ a b : ℝ,
         Set.Icc a b ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
@@ -929,14 +804,6 @@ theorem lemma_17_5_2_sandwich_of_concrete_infinite_hls_path_rate_cauchy
                 (deriv (fun β' =>
                   Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
                     (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β) < ε)
-    (hpoint :
-      ∀ β ∈ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))),
-        Filter.Tendsto
-          (fun n =>
-            deriv (fun β' =>
-              Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
-                (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
-          Filter.atTop (nhds (g' β)))
     [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
                       (Λ.volume n)).edgeSet]
     (hdecay : HasExponentialDecay d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ)
@@ -966,8 +833,8 @@ theorem lemma_17_5_2_sandwich_of_concrete_infinite_hls_path_rate_cauchy
                 (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)) := by
   have hprovider :
       Lemma_17_5_2_DerivativeLimitProvider Λ J x z :=
-    lemma_17_5_2_derivative_limit_provider_of_metricCauchy_on_Icc
-      Λ J x z g' hcauchy hpoint
+    lemma_17_5_2_derivative_limit_provider_of_metricCauchy_on_Icc_complete
+      Λ J x z hcauchy
   exact
     lemma_17_5_2_sandwich_of_concrete_infinite_hls_path_rate_provider
       (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
@@ -986,7 +853,6 @@ theorem lemma_17_5_2_capstone_of_concrete_infinite_hls_path_rate_cauchy
     {x z : Fin d → ℤ} (hxz : x ≠ z)
     {β₁ β₂ : ℝ} (hβ₁₂ : β₁ ≤ β₂)
     (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
-    (g' : ℝ → ℝ)
     (hcauchy :
       ∀ a b : ℝ,
         Set.Icc a b ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
@@ -999,14 +865,6 @@ theorem lemma_17_5_2_capstone_of_concrete_infinite_hls_path_rate_cauchy
                 (deriv (fun β' =>
                   Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
                     (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β) < ε)
-    (hpoint :
-      ∀ β ∈ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))),
-        Filter.Tendsto
-          (fun n =>
-            deriv (fun β' =>
-              Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
-                (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
-          Filter.atTop (nhds (g' β)))
     [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
                       (Λ.volume n)).edgeSet]
     (hdecay : HasExponentialDecay d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ)
@@ -1038,8 +896,8 @@ theorem lemma_17_5_2_capstone_of_concrete_infinite_hls_path_rate_cauchy
                 (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)) := by
   have hprovider :
       Lemma_17_5_2_DerivativeLimitProvider Λ J x z :=
-    lemma_17_5_2_derivative_limit_provider_of_metricCauchy_on_Icc
-      Λ J x z g' hcauchy hpoint
+    lemma_17_5_2_derivative_limit_provider_of_metricCauchy_on_Icc_complete
+      Λ J x z hcauchy
   exact
     lemma_17_5_2_capstone_of_concrete_infinite_hls_path_rate_provider
       (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
@@ -1058,7 +916,7 @@ theorem
     {β₁ β₂ : ℝ} (hβ₁₂ : β₁ ≤ β₂)
     (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
     {rho : ℝ} (hrho : 0 < rho)
-    {h : ℝ → ℝ} (g' : ℝ → ℝ)
+    {h : ℝ → ℝ}
     (hh_diff : ∀ β' ∈ Set.Icc β₁ β₂, HasDerivAt h (deriv h β') β')
     (hh_nonneg : ∀ β' ∈ Set.Icc β₁ β₂, 0 ≤ h β')
     (hg_eq : ∀ β' ∈ Set.Icc β₁ β₂,
@@ -1086,15 +944,7 @@ theorem
                     (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} m) β)
                 (deriv (fun β' =>
                   Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
-                    (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β) < ε)
-    (hpoint :
-      ∀ β ∈ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))),
-        Filter.Tendsto
-          (fun n =>
-            deriv (fun β' =>
-              Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
-                (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
-          Filter.atTop (nhds (g' β))) :
+                    (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β) < ε) :
     ∃ K : ℝ, 0 < K ∧
       (∀ x' y' : Fin d → ℤ,
         ∑' w : Fin d → ℤ,
@@ -1118,8 +968,8 @@ theorem
               (⟨J, 0, β₂⟩ : IsingParams ℝ) x z) := by
   have hprovider :
       Lemma_17_5_2_DerivativeLimitProvider Λ J x z :=
-    lemma_17_5_2_derivative_limit_provider_of_metricCauchy_on_Icc
-      Λ J x z g' hcauchy hpoint
+    lemma_17_5_2_derivative_limit_provider_of_metricCauchy_on_Icc_complete
+      Λ J x z hcauchy
   exact
     lemma_17_5_2_enlarged_finite_hls_lipschitz_package_with_path_rate_of_derivative_limit_provider
       (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
@@ -1139,7 +989,7 @@ theorem
     {β₁ β₂ : ℝ} (hβ₁₂ : β₁ ≤ β₂)
     (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
     {rho : ℝ} (hrho : 0 < rho)
-    {h : ℝ → ℝ} (g' : ℝ → ℝ)
+    {h : ℝ → ℝ}
     (hh_diff : ∀ β' ∈ Set.Icc β₁ β₂, HasDerivAt h (deriv h β') β')
     (hh_nonneg : ∀ β' ∈ Set.Icc β₁ β₂, 0 ≤ h β')
     (hg_eq : ∀ β' ∈ Set.Icc β₁ β₂,
@@ -1167,15 +1017,7 @@ theorem
                     (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} m) β)
                 (deriv (fun β' =>
                   Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
-                    (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β) < ε)
-    (hpoint :
-      ∀ β ∈ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))),
-        Filter.Tendsto
-          (fun n =>
-            deriv (fun β' =>
-              Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
-                (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
-          Filter.atTop (nhds (g' β))) :
+                    (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β) < ε) :
     ∃ K : ℝ, 0 < K ∧
       (∀ x' y' : Fin d → ℤ,
         ∑' w : Fin d → ℤ,
@@ -1194,8 +1036,8 @@ theorem
             (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho))) := by
   have hprovider :
       Lemma_17_5_2_DerivativeLimitProvider Λ J x z :=
-    lemma_17_5_2_derivative_limit_provider_of_metricCauchy_on_Icc
-      Λ J x z g' hcauchy hpoint
+    lemma_17_5_2_derivative_limit_provider_of_metricCauchy_on_Icc_complete
+      Λ J x z hcauchy
   exact
     lemma_17_5_2_upper_bound_of_enlarged_finite_hls_lipschitz_package_of_derivative_limit_provider
       (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
@@ -1215,7 +1057,7 @@ theorem
     {β₁ β₂ : ℝ} (hβ₁₂ : β₁ ≤ β₂)
     (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
     {rho : ℝ} (hrho : 0 < rho)
-    {h : ℝ → ℝ} (g' : ℝ → ℝ)
+    {h : ℝ → ℝ}
     (hh_diff : ∀ β' ∈ Set.Icc β₁ β₂, HasDerivAt h (deriv h β') β')
     (hh_nonneg : ∀ β' ∈ Set.Icc β₁ β₂, 0 ≤ h β')
     (hg_eq : ∀ β' ∈ Set.Icc β₁ β₂,
@@ -1244,14 +1086,6 @@ theorem
                 (deriv (fun β' =>
                   Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
                     (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β) < ε)
-    (hpoint :
-      ∀ β ∈ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))),
-        Filter.Tendsto
-          (fun n =>
-            deriv (fun β' =>
-              Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
-                (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
-          Filter.atTop (nhds (g' β)))
     (hdecay : HasExponentialDecay d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ)
       (pseudoMassFromParamsAtPair hα hrho d Λ
         (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)) :
@@ -1280,8 +1114,8 @@ theorem
                   (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)) := by
   have hprovider :
       Lemma_17_5_2_DerivativeLimitProvider Λ J x z :=
-    lemma_17_5_2_derivative_limit_provider_of_metricCauchy_on_Icc
-      Λ J x z g' hcauchy hpoint
+    lemma_17_5_2_derivative_limit_provider_of_metricCauchy_on_Icc_complete
+      Λ J x z hcauchy
   exact
     lemma_17_5_2_sandwich_of_enlarged_finite_hls_lipschitz_package_of_derivative_limit_provider
       (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)

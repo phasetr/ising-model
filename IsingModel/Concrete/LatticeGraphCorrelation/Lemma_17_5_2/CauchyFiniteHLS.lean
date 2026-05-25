@@ -5,11 +5,12 @@ import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.DerivativeLimitP
 # GJ §17.5 Lemma 17.5.2 capstone — Cauchy-provider finite-HLS assemblies
 
 This module connects compact-interval Cauchy derivative-profile inputs to the
-larger finite-HLS assembly layer.  The Cauchy and pointwise hypotheses first
-build `Lemma_17_5_2_DerivativeLimitProvider`; the resulting provider is then
-fed into the scalar-provider, ratio-lower, uniform-correlation-lower, and
-compact-ratio-bounds upper/sandwich assemblies, and into the concrete
-finite-derivative-provider capstones.
+larger finite-HLS assembly layer.  The Cauchy hypothesis first constructs the
+pointwise derivative limits by completeness of `ℝ` and builds
+`Lemma_17_5_2_DerivativeLimitProvider`; the resulting provider is then fed into
+the scalar-provider, ratio-lower, uniform-correlation-lower, and
+compact-ratio-bounds upper/sandwich assemblies, and into the concrete finite
+derivative-provider capstones.
 
 References:
 
@@ -31,9 +32,7 @@ theorem lemma_17_5_2_upper_bound_of_concrete_finite_deriv_provider_of_cauchy
     (hIcc :
       Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
     {rho : ℝ} (hrho : 0 < rho)
-    (g' : ℝ → ℝ)
     (hcauchy : Lemma_17_5_2_DerivativeProfileMetricCauchyOnIcc Λ J x z)
-    (hpoint : Lemma_17_5_2_DerivativeProfilePointwiseLimit Λ J x z g')
     (hfinite_provider :
       ∀ K : ℝ, 0 < K →
         (∀ x' y' : Fin d → ℤ,
@@ -62,8 +61,8 @@ theorem lemma_17_5_2_upper_bound_of_concrete_finite_deriv_provider_of_cauchy
       (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
       (β₁ := β₁) (β₂ := β₂) (rho := rho)
       hα hαd hd hJ_pos hxz hβ₁₂ hIcc hrho
-      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc
-        Λ J x z g' hcauchy hpoint)
+      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc_complete
+        Λ J x z hcauchy)
       hfinite_provider
 
 /-- **GJ §17.5 Lemma 17.5.2 concrete sandwich from a finite
@@ -77,9 +76,7 @@ theorem lemma_17_5_2_sandwich_of_concrete_finite_deriv_provider_of_cauchy
     (hIcc :
       Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
     {rho : ℝ} (hrho : 0 < rho)
-    (g' : ℝ → ℝ)
     (hcauchy : Lemma_17_5_2_DerivativeProfileMetricCauchyOnIcc Λ J x z)
-    (hpoint : Lemma_17_5_2_DerivativeProfilePointwiseLimit Λ J x z g')
     (hdecay : HasExponentialDecay d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ)
       (pseudoMassFromParamsAtPair hα hrho d Λ
         (⟨J, 0, β₂⟩ : IsingParams ℝ) x z))
@@ -118,8 +115,8 @@ theorem lemma_17_5_2_sandwich_of_concrete_finite_deriv_provider_of_cauchy
       (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
       (β₁ := β₁) (β₂ := β₂) (rho := rho)
       hα hαd hd hJ_pos hxz hβ₁₂ hIcc hrho
-      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc
-        Λ J x z g' hcauchy hpoint)
+      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc_complete
+        Λ J x z hcauchy)
       hdecay hfinite_provider
 
 /-- **GJ §17.5 Lemma 17.5.2 concrete capstone from a finite
@@ -135,9 +132,7 @@ theorem
     (hIcc :
       Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
     {rho : ℝ} (hrho : 0 < rho)
-    (g' : ℝ → ℝ)
     (hcauchy : Lemma_17_5_2_DerivativeProfileMetricCauchyOnIcc Λ J x z)
-    (hpoint : Lemma_17_5_2_DerivativeProfilePointwiseLimit Λ J x z g')
     (hle :
       pseudoMassFromParamsAtPair hα hrho d Λ
           (⟨J, 0, β₂⟩ : IsingParams ℝ) x z
@@ -179,8 +174,8 @@ theorem
       (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
       (β₁ := β₁) (β₂ := β₂) (rho := rho)
       hα hαd hd hJ_pos hxz hβ₁₂ hIcc hrho
-      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc
-        Λ J x z g' hcauchy hpoint)
+      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc_complete
+        Λ J x z hcauchy)
       hle hfinite_provider
 
 /-- **GJ §17.5 Lemma 17.5.2 concrete capstone from a finite
@@ -196,9 +191,7 @@ theorem
     (hIcc :
       Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
     {rho : ℝ} (hrho : 0 < rho)
-    (g' : ℝ → ℝ)
     (hcauchy : Lemma_17_5_2_DerivativeProfileMetricCauchyOnIcc Λ J x z)
-    (hpoint : Lemma_17_5_2_DerivativeProfilePointwiseLimit Λ J x z g')
     (hprofile :
       pseudoMassG α rho (-Real.log (β₂ * J * ↑(2 * d))) ≤
         Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
@@ -240,8 +233,8 @@ theorem
       (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
       (β₁ := β₁) (β₂ := β₂) (rho := rho)
       hα hαd hd hJ_pos hxz hβ₁₂ hIcc hrho
-      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc
-        Λ J x z g' hcauchy hpoint)
+      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc_complete
+        Λ J x z hcauchy)
       hprofile hfinite_provider
 
 /-- **GJ §17.5 Lemma 17.5.2 upper bound from a uniform finite derivative-bound
@@ -272,9 +265,7 @@ theorem lemma_17_5_2_upper_bound_of_finite_deriv_provider_of_cauchy
       0 <
         pseudoMassFromParamsAtPair hα hrho d Λ
           (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
-    (g' : ℝ → ℝ)
     (hcauchy : Lemma_17_5_2_DerivativeProfileMetricCauchyOnIcc Λ J x z)
-    (hpoint : Lemma_17_5_2_DerivativeProfilePointwiseLimit Λ J x z g')
     (hfinite_provider :
       ∀ K : ℝ, 0 < K →
         (∀ x' y' : Fin d → ℤ,
@@ -303,8 +294,8 @@ theorem lemma_17_5_2_upper_bound_of_finite_deriv_provider_of_cauchy
       (β₁ := β₁) (β₂ := β₂) (rho := rho) (h := h)
       hα hαd hd hJ_pos hxz hβ₁₂ hIcc hrho
       hh_diff hh_nonneg hg_eq hh_pos hc_pos hm_pos
-      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc
-        Λ J x z g' hcauchy hpoint)
+      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc_complete
+        Λ J x z hcauchy)
       hfinite_provider
 
 /-- **GJ §17.5 Lemma 17.5.2 sandwich from a uniform finite derivative-bound
@@ -335,9 +326,7 @@ theorem lemma_17_5_2_sandwich_of_finite_deriv_provider_of_cauchy
       0 <
         pseudoMassFromParamsAtPair hα hrho d Λ
           (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
-    (g' : ℝ → ℝ)
     (hcauchy : Lemma_17_5_2_DerivativeProfileMetricCauchyOnIcc Λ J x z)
-    (hpoint : Lemma_17_5_2_DerivativeProfilePointwiseLimit Λ J x z g')
     (hdecay : HasExponentialDecay d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ)
       (pseudoMassFromParamsAtPair hα hrho d Λ
         (⟨J, 0, β₂⟩ : IsingParams ℝ) x z))
@@ -376,8 +365,8 @@ theorem lemma_17_5_2_sandwich_of_finite_deriv_provider_of_cauchy
       (β₁ := β₁) (β₂ := β₂) (rho := rho) (h := h)
       hα hαd hd hJ_pos hxz hβ₁₂ hIcc hrho
       hh_diff hh_nonneg hg_eq hh_pos hc_pos hm_pos
-      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc
-        Λ J x z g' hcauchy hpoint)
+      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc_complete
+        Λ J x z hcauchy)
       hdecay hfinite_provider
 
 /-- **GJ §17.5 Lemma 17.5.2 upper bound from high-temperature scalar providers
@@ -395,7 +384,7 @@ theorem lemma_17_5_2_upper_bound_high_temp_scalar_provider_of_cauchy
     (ha : 0 < a) (hab : a ≤ b) (hlt : b * J * ↑(2 * d) < 1)
     (hβ_mem : ∀ β ∈ Set.Icc β₁ β₂, β ∈ Set.Icc a b)
     {rho : ℝ} (hrho : 0 < rho)
-    {h : ℝ → ℝ} (g' : ℝ → ℝ)
+    {h : ℝ → ℝ}
     (hh_diff : ∀ β' ∈ Set.Icc β₁ β₂, HasDerivAt h (deriv h β') β')
     (hh_nonneg : ∀ β' ∈ Set.Icc β₁ β₂, 0 ≤ h β')
     (hg_eq : ∀ β' ∈ Set.Icc β₁ β₂,
@@ -413,7 +402,6 @@ theorem lemma_17_5_2_upper_bound_high_temp_scalar_provider_of_cauchy
         pseudoMassFromParamsAtPair hα hrho d Λ
           (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
     (hcauchy : Lemma_17_5_2_DerivativeProfileMetricCauchyOnIcc Λ J x z)
-    (hpoint : Lemma_17_5_2_DerivativeProfilePointwiseLimit Λ J x z g')
     (hscalar_provider :
       ∀ K : ℝ, 0 < K →
         (∀ x' y' : Fin d → ℤ,
@@ -441,8 +429,8 @@ theorem lemma_17_5_2_upper_bound_high_temp_scalar_provider_of_cauchy
       (β₁ := β₁) (β₂ := β₂) (a := a) (b := b) (rho := rho) (h := h)
       hα hαd hd hJ_pos hxz hβ₁₂ hIcc ha hab hlt hβ_mem hrho
       hh_diff hh_nonneg hg_eq hh_pos hc_pos hm_pos
-      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc
-        Λ J x z g' hcauchy hpoint)
+      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc_complete
+        Λ J x z hcauchy)
       hscalar_provider
 
 /-- **GJ §17.5 Lemma 17.5.2 sandwich from high-temperature scalar providers
@@ -459,7 +447,7 @@ theorem lemma_17_5_2_sandwich_high_temp_scalar_provider_of_cauchy
     (ha : 0 < a) (hab : a ≤ b) (hlt : b * J * ↑(2 * d) < 1)
     (hβ_mem : ∀ β ∈ Set.Icc β₁ β₂, β ∈ Set.Icc a b)
     {rho : ℝ} (hrho : 0 < rho)
-    {h : ℝ → ℝ} (g' : ℝ → ℝ)
+    {h : ℝ → ℝ}
     (hh_diff : ∀ β' ∈ Set.Icc β₁ β₂, HasDerivAt h (deriv h β') β')
     (hh_nonneg : ∀ β' ∈ Set.Icc β₁ β₂, 0 ≤ h β')
     (hg_eq : ∀ β' ∈ Set.Icc β₁ β₂,
@@ -477,7 +465,6 @@ theorem lemma_17_5_2_sandwich_high_temp_scalar_provider_of_cauchy
         pseudoMassFromParamsAtPair hα hrho d Λ
           (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
     (hcauchy : Lemma_17_5_2_DerivativeProfileMetricCauchyOnIcc Λ J x z)
-    (hpoint : Lemma_17_5_2_DerivativeProfilePointwiseLimit Λ J x z g')
     (hdecay : HasExponentialDecay d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ)
       (pseudoMassFromParamsAtPair hα hrho d Λ
         (⟨J, 0, β₂⟩ : IsingParams ℝ) x z))
@@ -515,8 +502,8 @@ theorem lemma_17_5_2_sandwich_high_temp_scalar_provider_of_cauchy
       (β₁ := β₁) (β₂ := β₂) (a := a) (b := b) (rho := rho) (h := h)
       hα hαd hd hJ_pos hxz hβ₁₂ hIcc ha hab hlt hβ_mem hrho
       hh_diff hh_nonneg hg_eq hh_pos hc_pos hm_pos
-      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc
-        Λ J x z g' hcauchy hpoint)
+      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc_complete
+        Λ J x z hcauchy)
       hdecay hscalar_provider
 
 /-- **GJ §17.5 Lemma 17.5.2 upper bound from a high-temperature ratio lower
@@ -532,7 +519,7 @@ theorem lemma_17_5_2_upper_bound_of_high_temp_ratio_lower_of_cauchy
     (ha : 0 < a) (hab : a ≤ b) (hlt : b * J * ↑(2 * d) < 1)
     (hβ_mem : ∀ β ∈ Set.Icc β₁ β₂, β ∈ Set.Icc a b)
     {rho : ℝ} (hrho : 0 < rho)
-    {h : ℝ → ℝ} (g' : ℝ → ℝ)
+    {h : ℝ → ℝ}
     (hh_diff : ∀ β' ∈ Set.Icc β₁ β₂, HasDerivAt h (deriv h β') β')
     (hh_nonneg : ∀ β' ∈ Set.Icc β₁ β₂, 0 ≤ h β')
     (hg_eq : ∀ β' ∈ Set.Icc β₁ β₂,
@@ -550,7 +537,6 @@ theorem lemma_17_5_2_upper_bound_of_high_temp_ratio_lower_of_cauchy
         pseudoMassFromParamsAtPair hα hrho d Λ
           (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
     (hcauchy : Lemma_17_5_2_DerivativeProfileMetricCauchyOnIcc Λ J x z)
-    (hpoint : Lemma_17_5_2_DerivativeProfilePointwiseLimit Λ J x z g')
     {L : ℝ} (hL_pos : 0 < L)
     (hratio :
       ∀ᶠ n in Filter.atTop,
@@ -572,8 +558,8 @@ theorem lemma_17_5_2_upper_bound_of_high_temp_ratio_lower_of_cauchy
       (β₁ := β₁) (β₂ := β₂) (a := a) (b := b) (rho := rho) (h := h)
       hα hαd hd hJ_pos hxz hβ₁₂ hIcc ha hab hlt hβ_mem hrho
       hh_diff hh_nonneg hg_eq hh_pos hc_pos hm_pos
-      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc
-        Λ J x z g' hcauchy hpoint)
+      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc_complete
+        Λ J x z hcauchy)
       hL_pos hratio
 
 /-- **GJ §17.5 Lemma 17.5.2 sandwich from a high-temperature ratio lower and
@@ -589,7 +575,7 @@ theorem lemma_17_5_2_sandwich_of_high_temp_ratio_lower_of_cauchy
     (ha : 0 < a) (hab : a ≤ b) (hlt : b * J * ↑(2 * d) < 1)
     (hβ_mem : ∀ β ∈ Set.Icc β₁ β₂, β ∈ Set.Icc a b)
     {rho : ℝ} (hrho : 0 < rho)
-    {h : ℝ → ℝ} (g' : ℝ → ℝ)
+    {h : ℝ → ℝ}
     (hh_diff : ∀ β' ∈ Set.Icc β₁ β₂, HasDerivAt h (deriv h β') β')
     (hh_nonneg : ∀ β' ∈ Set.Icc β₁ β₂, 0 ≤ h β')
     (hg_eq : ∀ β' ∈ Set.Icc β₁ β₂,
@@ -607,7 +593,6 @@ theorem lemma_17_5_2_sandwich_of_high_temp_ratio_lower_of_cauchy
         pseudoMassFromParamsAtPair hα hrho d Λ
           (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
     (hcauchy : Lemma_17_5_2_DerivativeProfileMetricCauchyOnIcc Λ J x z)
-    (hpoint : Lemma_17_5_2_DerivativeProfilePointwiseLimit Λ J x z g')
     (hdecay : HasExponentialDecay d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ)
       (pseudoMassFromParamsAtPair hα hrho d Λ
         (⟨J, 0, β₂⟩ : IsingParams ℝ) x z))
@@ -639,8 +624,8 @@ theorem lemma_17_5_2_sandwich_of_high_temp_ratio_lower_of_cauchy
       (β₁ := β₁) (β₂ := β₂) (a := a) (b := b) (rho := rho) (h := h)
       hα hαd hd hJ_pos hxz hβ₁₂ hIcc ha hab hlt hβ_mem hrho
       hh_diff hh_nonneg hg_eq hh_pos hc_pos hm_pos
-      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc
-        Λ J x z g' hcauchy hpoint)
+      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc_complete
+        Λ J x z hcauchy)
       hdecay hL_pos hratio
 
 /-- **GJ §17.5 Lemma 17.5.2 upper bound from a uniform infinite-correlation
@@ -656,7 +641,7 @@ theorem lemma_17_5_2_upper_bound_of_high_temp_uniform_correlation_lower_of_cauch
     (ha : 0 < a) (hab : a ≤ b) (hlt : b * J * ↑(2 * d) < 1)
     (hβ_mem : ∀ β ∈ Set.Icc β₁ β₂, β ∈ Set.Icc a b)
     {rho : ℝ} (hrho : 0 < rho)
-    {h : ℝ → ℝ} (g' : ℝ → ℝ)
+    {h : ℝ → ℝ}
     (hh_diff : ∀ β' ∈ Set.Icc β₁ β₂, HasDerivAt h (deriv h β') β')
     (hh_nonneg : ∀ β' ∈ Set.Icc β₁ β₂, 0 ≤ h β')
     (hg_eq : ∀ β' ∈ Set.Icc β₁ β₂,
@@ -674,7 +659,6 @@ theorem lemma_17_5_2_upper_bound_of_high_temp_uniform_correlation_lower_of_cauch
         pseudoMassFromParamsAtPair hα hrho d Λ
           (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
     (hcauchy : Lemma_17_5_2_DerivativeProfileMetricCauchyOnIcc Λ J x z)
-    (hpoint : Lemma_17_5_2_DerivativeProfilePointwiseLimit Λ J x z g')
     {C H : ℝ} (hC_pos : 0 < C) (hH_pos : 0 < H)
     (hcInf_lower : ∀ β ∈ Set.Icc β₁ β₂,
       C ≤
@@ -694,8 +678,8 @@ theorem lemma_17_5_2_upper_bound_of_high_temp_uniform_correlation_lower_of_cauch
       (β₁ := β₁) (β₂ := β₂) (a := a) (b := b) (rho := rho) (h := h)
       hα hαd hd hJ_pos hxz hβ₁₂ hIcc ha hab hlt hβ_mem hrho
       hh_diff hh_nonneg hg_eq hh_pos hc_pos hm_pos
-      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc
-        Λ J x z g' hcauchy hpoint)
+      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc_complete
+        Λ J x z hcauchy)
       hC_pos hH_pos hcInf_lower hdenom_bound
 
 /-- **GJ §17.5 Lemma 17.5.2 sandwich from a uniform infinite-correlation lower
@@ -711,7 +695,7 @@ theorem lemma_17_5_2_sandwich_of_high_temp_uniform_correlation_lower_of_cauchy
     (ha : 0 < a) (hab : a ≤ b) (hlt : b * J * ↑(2 * d) < 1)
     (hβ_mem : ∀ β ∈ Set.Icc β₁ β₂, β ∈ Set.Icc a b)
     {rho : ℝ} (hrho : 0 < rho)
-    {h : ℝ → ℝ} (g' : ℝ → ℝ)
+    {h : ℝ → ℝ}
     (hh_diff : ∀ β' ∈ Set.Icc β₁ β₂, HasDerivAt h (deriv h β') β')
     (hh_nonneg : ∀ β' ∈ Set.Icc β₁ β₂, 0 ≤ h β')
     (hg_eq : ∀ β' ∈ Set.Icc β₁ β₂,
@@ -729,7 +713,6 @@ theorem lemma_17_5_2_sandwich_of_high_temp_uniform_correlation_lower_of_cauchy
         pseudoMassFromParamsAtPair hα hrho d Λ
           (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
     (hcauchy : Lemma_17_5_2_DerivativeProfileMetricCauchyOnIcc Λ J x z)
-    (hpoint : Lemma_17_5_2_DerivativeProfilePointwiseLimit Λ J x z g')
     (hdecay : HasExponentialDecay d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ)
       (pseudoMassFromParamsAtPair hα hrho d Λ
         (⟨J, 0, β₂⟩ : IsingParams ℝ) x z))
@@ -759,8 +742,8 @@ theorem lemma_17_5_2_sandwich_of_high_temp_uniform_correlation_lower_of_cauchy
       (β₁ := β₁) (β₂ := β₂) (a := a) (b := b) (rho := rho) (h := h)
       hα hαd hd hJ_pos hxz hβ₁₂ hIcc ha hab hlt hβ_mem hrho
       hh_diff hh_nonneg hg_eq hh_pos hc_pos hm_pos
-      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc
-        Λ J x z g' hcauchy hpoint)
+      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc_complete
+        Λ J x z hcauchy)
       hdecay hC_pos hH_pos hcInf_lower hdenom_bound
 
 /-- **GJ §17.5 Lemma 17.5.2 self-interval upper bound from a uniform
@@ -774,7 +757,7 @@ theorem lemma_17_5_2_upper_bound_of_uniform_correlation_lower_on_self_Icc_of_cau
     (hIcc :
       Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
     {rho : ℝ} (hrho : 0 < rho)
-    {h : ℝ → ℝ} (g' : ℝ → ℝ)
+    {h : ℝ → ℝ}
     (hh_diff : ∀ β' ∈ Set.Icc β₁ β₂, HasDerivAt h (deriv h β') β')
     (hh_nonneg : ∀ β' ∈ Set.Icc β₁ β₂, 0 ≤ h β')
     (hg_eq : ∀ β' ∈ Set.Icc β₁ β₂,
@@ -792,7 +775,6 @@ theorem lemma_17_5_2_upper_bound_of_uniform_correlation_lower_on_self_Icc_of_cau
         pseudoMassFromParamsAtPair hα hrho d Λ
           (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
     (hcauchy : Lemma_17_5_2_DerivativeProfileMetricCauchyOnIcc Λ J x z)
-    (hpoint : Lemma_17_5_2_DerivativeProfilePointwiseLimit Λ J x z g')
     {C H : ℝ} (hC_pos : 0 < C) (hH_pos : 0 < H)
     (hcInf_lower : ∀ β ∈ Set.Icc β₁ β₂,
       C ≤
@@ -812,8 +794,8 @@ theorem lemma_17_5_2_upper_bound_of_uniform_correlation_lower_on_self_Icc_of_cau
       (β₁ := β₁) (β₂ := β₂) (rho := rho) (h := h)
       hα hαd hd hJ_pos hxz hβ₁₂ hIcc hrho
       hh_diff hh_nonneg hg_eq hh_pos hc_pos hm_pos
-      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc
-        Λ J x z g' hcauchy hpoint)
+      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc_complete
+        Λ J x z hcauchy)
       hC_pos hH_pos hcInf_lower hdenom_bound
 
 /-- **GJ §17.5 Lemma 17.5.2 self-interval sandwich from a uniform
@@ -827,7 +809,7 @@ theorem lemma_17_5_2_sandwich_of_uniform_correlation_lower_on_self_Icc_of_cauchy
     (hIcc :
       Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
     {rho : ℝ} (hrho : 0 < rho)
-    {h : ℝ → ℝ} (g' : ℝ → ℝ)
+    {h : ℝ → ℝ}
     (hh_diff : ∀ β' ∈ Set.Icc β₁ β₂, HasDerivAt h (deriv h β') β')
     (hh_nonneg : ∀ β' ∈ Set.Icc β₁ β₂, 0 ≤ h β')
     (hg_eq : ∀ β' ∈ Set.Icc β₁ β₂,
@@ -845,7 +827,6 @@ theorem lemma_17_5_2_sandwich_of_uniform_correlation_lower_on_self_Icc_of_cauchy
         pseudoMassFromParamsAtPair hα hrho d Λ
           (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
     (hcauchy : Lemma_17_5_2_DerivativeProfileMetricCauchyOnIcc Λ J x z)
-    (hpoint : Lemma_17_5_2_DerivativeProfilePointwiseLimit Λ J x z g')
     (hdecay : HasExponentialDecay d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ)
       (pseudoMassFromParamsAtPair hα hrho d Λ
         (⟨J, 0, β₂⟩ : IsingParams ℝ) x z))
@@ -875,8 +856,8 @@ theorem lemma_17_5_2_sandwich_of_uniform_correlation_lower_on_self_Icc_of_cauchy
       (β₁ := β₁) (β₂ := β₂) (rho := rho) (h := h)
       hα hαd hd hJ_pos hxz hβ₁₂ hIcc hrho
       hh_diff hh_nonneg hg_eq hh_pos hc_pos hm_pos
-      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc
-        Λ J x z g' hcauchy hpoint)
+      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc_complete
+        Λ J x z hcauchy)
       hdecay hC_pos hH_pos hcInf_lower hdenom_bound
 
 /-- **GJ §17.5 Lemma 17.5.2 uniform-correlation finite-HLS capstone from
@@ -893,7 +874,7 @@ theorem lemma_17_5_2_capstone_of_high_temp_uniform_correlation_lower_of_cauchy
     (ha : 0 < a) (hab : a ≤ b) (hlt : b * J * ↑(2 * d) < 1)
     (hβ_mem : ∀ β ∈ Set.Icc β₁ β₂, β ∈ Set.Icc a b)
     {rho : ℝ} (hrho : 0 < rho)
-    {h : ℝ → ℝ} (g' : ℝ → ℝ)
+    {h : ℝ → ℝ}
     (hh_diff : ∀ β' ∈ Set.Icc β₁ β₂, HasDerivAt h (deriv h β') β')
     (hh_nonneg : ∀ β' ∈ Set.Icc β₁ β₂, 0 ≤ h β')
     (hg_eq : ∀ β' ∈ Set.Icc β₁ β₂,
@@ -911,7 +892,6 @@ theorem lemma_17_5_2_capstone_of_high_temp_uniform_correlation_lower_of_cauchy
         pseudoMassFromParamsAtPair hα hrho d Λ
           (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
     (hcauchy : Lemma_17_5_2_DerivativeProfileMetricCauchyOnIcc Λ J x z)
-    (hpoint : Lemma_17_5_2_DerivativeProfilePointwiseLimit Λ J x z g')
     (hdecay : HasExponentialDecay d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ)
       (pseudoMassFromParamsAtPair hα hrho d Λ
         (⟨J, 0, β₂⟩ : IsingParams ℝ) x z))
@@ -943,8 +923,8 @@ theorem lemma_17_5_2_capstone_of_high_temp_uniform_correlation_lower_of_cauchy
       (β₁ := β₁) (β₂ := β₂) (a := a) (b := b) (rho := rho) (h := h)
       hα hαd hd hJ_pos hxz hβ₁₂ hIcc ha hab hlt hβ_mem hrho
       hh_diff hh_nonneg hg_eq hh_pos hc_pos hm_pos
-      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc
-        Λ J x z g' hcauchy hpoint)
+      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc_complete
+        Λ J x z hcauchy)
       hdecay hC_pos hH_pos hcInf_lower hdenom_bound
 
 /-- **GJ §17.5 Lemma 17.5.2 self-interval uniform-correlation finite-HLS
@@ -958,7 +938,7 @@ theorem lemma_17_5_2_capstone_of_uniform_correlation_lower_self_Icc_of_cauchy
     (hIcc :
       Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
     {rho : ℝ} (hrho : 0 < rho)
-    {h : ℝ → ℝ} (g' : ℝ → ℝ)
+    {h : ℝ → ℝ}
     (hh_diff : ∀ β' ∈ Set.Icc β₁ β₂, HasDerivAt h (deriv h β') β')
     (hh_nonneg : ∀ β' ∈ Set.Icc β₁ β₂, 0 ≤ h β')
     (hg_eq : ∀ β' ∈ Set.Icc β₁ β₂,
@@ -976,7 +956,6 @@ theorem lemma_17_5_2_capstone_of_uniform_correlation_lower_self_Icc_of_cauchy
         pseudoMassFromParamsAtPair hα hrho d Λ
           (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
     (hcauchy : Lemma_17_5_2_DerivativeProfileMetricCauchyOnIcc Λ J x z)
-    (hpoint : Lemma_17_5_2_DerivativeProfilePointwiseLimit Λ J x z g')
     (hdecay : HasExponentialDecay d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ)
       (pseudoMassFromParamsAtPair hα hrho d Λ
         (⟨J, 0, β₂⟩ : IsingParams ℝ) x z))
@@ -1008,8 +987,8 @@ theorem lemma_17_5_2_capstone_of_uniform_correlation_lower_self_Icc_of_cauchy
       (β₁ := β₁) (β₂ := β₂) (rho := rho) (h := h)
       hα hαd hd hJ_pos hxz hβ₁₂ hIcc hrho hh_diff hh_nonneg hg_eq
       hh_pos hc_pos hm_pos
-      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc
-        Λ J x z g' hcauchy hpoint)
+      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc_complete
+        Λ J x z hcauchy)
       hdecay hC_pos hH_pos hcInf_lower hdenom_bound
 
 /-- **GJ §17.5 Lemma 17.5.2 upper bound from compact ratio bounds and Cauchy
@@ -1025,7 +1004,7 @@ theorem lemma_17_5_2_upper_bound_of_high_temp_compact_ratio_bounds_of_cauchy
     (ha : 0 < a) (hab : a ≤ b) (hlt : b * J * ↑(2 * d) < 1)
     (hβ_mem : ∀ β ∈ Set.Icc β₁ β₂, β ∈ Set.Icc a b)
     {rho : ℝ} (hrho : 0 < rho)
-    {h : ℝ → ℝ} (g' : ℝ → ℝ)
+    {h : ℝ → ℝ}
     (hh_diff : ∀ β' ∈ Set.Icc β₁ β₂, HasDerivAt h (deriv h β') β')
     (hh_cont : ContinuousOn h (Set.Icc β₁ β₂))
     (hh_nonneg : ∀ β' ∈ Set.Icc β₁ β₂, 0 ≤ h β')
@@ -1043,8 +1022,7 @@ theorem lemma_17_5_2_upper_bound_of_high_temp_compact_ratio_bounds_of_cauchy
       0 <
         pseudoMassFromParamsAtPair hα hrho d Λ
           (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
-    (hcauchy : Lemma_17_5_2_DerivativeProfileMetricCauchyOnIcc Λ J x z)
-    (hpoint : Lemma_17_5_2_DerivativeProfilePointwiseLimit Λ J x z g') :
+    (hcauchy : Lemma_17_5_2_DerivativeProfileMetricCauchyOnIcc Λ J x z) :
     ∃ K : ℝ, 0 < K ∧
       (∀ x' y' : Fin d → ℤ,
         ∑' w : Fin d → ℤ,
@@ -1058,8 +1036,8 @@ theorem lemma_17_5_2_upper_bound_of_high_temp_compact_ratio_bounds_of_cauchy
       (β₁ := β₁) (β₂ := β₂) (a := a) (b := b) (rho := rho) (h := h)
       hα hαd hd hJ_pos hxz hβ₁₂ hIcc ha hab hlt hβ_mem hrho
       hh_diff hh_cont hh_nonneg hg_eq hh_pos hc_pos hm_pos
-      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc
-        Λ J x z g' hcauchy hpoint)
+      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc_complete
+        Λ J x z hcauchy)
 
 /-- **GJ §17.5 Lemma 17.5.2 sandwich from compact ratio bounds and Cauchy
 derivative-profile inputs**. -/
@@ -1074,7 +1052,7 @@ theorem lemma_17_5_2_sandwich_of_high_temp_compact_ratio_bounds_of_cauchy
     (ha : 0 < a) (hab : a ≤ b) (hlt : b * J * ↑(2 * d) < 1)
     (hβ_mem : ∀ β ∈ Set.Icc β₁ β₂, β ∈ Set.Icc a b)
     {rho : ℝ} (hrho : 0 < rho)
-    {h : ℝ → ℝ} (g' : ℝ → ℝ)
+    {h : ℝ → ℝ}
     (hh_diff : ∀ β' ∈ Set.Icc β₁ β₂, HasDerivAt h (deriv h β') β')
     (hh_cont : ContinuousOn h (Set.Icc β₁ β₂))
     (hh_nonneg : ∀ β' ∈ Set.Icc β₁ β₂, 0 ≤ h β')
@@ -1093,7 +1071,6 @@ theorem lemma_17_5_2_sandwich_of_high_temp_compact_ratio_bounds_of_cauchy
         pseudoMassFromParamsAtPair hα hrho d Λ
           (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
     (hcauchy : Lemma_17_5_2_DerivativeProfileMetricCauchyOnIcc Λ J x z)
-    (hpoint : Lemma_17_5_2_DerivativeProfilePointwiseLimit Λ J x z g')
     (hdecay : HasExponentialDecay d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ)
       (pseudoMassFromParamsAtPair hα hrho d Λ
         (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)) :
@@ -1117,8 +1094,8 @@ theorem lemma_17_5_2_sandwich_of_high_temp_compact_ratio_bounds_of_cauchy
       (β₁ := β₁) (β₂ := β₂) (a := a) (b := b) (rho := rho) (h := h)
       hα hαd hd hJ_pos hxz hβ₁₂ hIcc ha hab hlt hβ_mem hrho
       hh_diff hh_cont hh_nonneg hg_eq hh_pos hc_pos hm_pos
-      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc
-        Λ J x z g' hcauchy hpoint)
+      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc_complete
+        Λ J x z hcauchy)
       hdecay
 
 /-- **GJ §17.5 Lemma 17.5.2 upper bound from compact ratio bounds on the beta
@@ -1133,7 +1110,7 @@ theorem
     (hIcc :
       Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
     {rho : ℝ} (hrho : 0 < rho)
-    {h : ℝ → ℝ} (g' : ℝ → ℝ)
+    {h : ℝ → ℝ}
     (hh_diff : ∀ β' ∈ Set.Icc β₁ β₂, HasDerivAt h (deriv h β') β')
     (hh_cont : ContinuousOn h (Set.Icc β₁ β₂))
     (hh_nonneg : ∀ β' ∈ Set.Icc β₁ β₂, 0 ≤ h β')
@@ -1151,8 +1128,7 @@ theorem
       0 <
         pseudoMassFromParamsAtPair hα hrho d Λ
           (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
-    (hcauchy : Lemma_17_5_2_DerivativeProfileMetricCauchyOnIcc Λ J x z)
-    (hpoint : Lemma_17_5_2_DerivativeProfilePointwiseLimit Λ J x z g') :
+    (hcauchy : Lemma_17_5_2_DerivativeProfileMetricCauchyOnIcc Λ J x z) :
     ∃ K : ℝ, 0 < K ∧
       (∀ x' y' : Fin d → ℤ,
         ∑' w : Fin d → ℤ,
@@ -1166,8 +1142,8 @@ theorem
       (β₁ := β₁) (β₂ := β₂) (rho := rho) (h := h)
       hα hαd hd hJ_pos hxz hβ₁₂ hIcc hrho hh_diff hh_cont hh_nonneg
       hg_eq hh_pos hc_pos hm_pos
-      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc
-        Λ J x z g' hcauchy hpoint)
+      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc_complete
+        Λ J x z hcauchy)
 
 /-- **GJ §17.5 Lemma 17.5.2 sandwich from compact ratio bounds on the beta
 interval itself and Cauchy derivative-profile inputs**. -/
@@ -1181,7 +1157,7 @@ theorem
     (hIcc :
       Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
     {rho : ℝ} (hrho : 0 < rho)
-    {h : ℝ → ℝ} (g' : ℝ → ℝ)
+    {h : ℝ → ℝ}
     (hh_diff : ∀ β' ∈ Set.Icc β₁ β₂, HasDerivAt h (deriv h β') β')
     (hh_cont : ContinuousOn h (Set.Icc β₁ β₂))
     (hh_nonneg : ∀ β' ∈ Set.Icc β₁ β₂, 0 ≤ h β')
@@ -1200,7 +1176,6 @@ theorem
         pseudoMassFromParamsAtPair hα hrho d Λ
           (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
     (hcauchy : Lemma_17_5_2_DerivativeProfileMetricCauchyOnIcc Λ J x z)
-    (hpoint : Lemma_17_5_2_DerivativeProfilePointwiseLimit Λ J x z g')
     (hdecay : HasExponentialDecay d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ)
       (pseudoMassFromParamsAtPair hα hrho d Λ
         (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)) :
@@ -1224,8 +1199,8 @@ theorem
       (β₁ := β₁) (β₂ := β₂) (rho := rho) (h := h)
       hα hαd hd hJ_pos hxz hβ₁₂ hIcc hrho hh_diff hh_cont hh_nonneg
       hg_eq hh_pos hc_pos hm_pos
-      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc
-        Λ J x z g' hcauchy hpoint)
+      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc_complete
+        Λ J x z hcauchy)
       hdecay
 
 /-- **GJ §17.5 Lemma 17.5.2 compact-ratio finite-HLS capstone from Cauchy
@@ -1242,7 +1217,7 @@ theorem lemma_17_5_2_capstone_of_high_temp_compact_ratio_bounds_of_cauchy
     (ha : 0 < a) (hab : a ≤ b) (hlt : b * J * ↑(2 * d) < 1)
     (hβ_mem : ∀ β ∈ Set.Icc β₁ β₂, β ∈ Set.Icc a b)
     {rho : ℝ} (hrho : 0 < rho)
-    {h : ℝ → ℝ} (g' : ℝ → ℝ)
+    {h : ℝ → ℝ}
     (hh_diff : ∀ β' ∈ Set.Icc β₁ β₂, HasDerivAt h (deriv h β') β')
     (hh_cont : ContinuousOn h (Set.Icc β₁ β₂))
     (hh_nonneg : ∀ β' ∈ Set.Icc β₁ β₂, 0 ≤ h β')
@@ -1261,7 +1236,6 @@ theorem lemma_17_5_2_capstone_of_high_temp_compact_ratio_bounds_of_cauchy
         pseudoMassFromParamsAtPair hα hrho d Λ
           (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
     (hcauchy : Lemma_17_5_2_DerivativeProfileMetricCauchyOnIcc Λ J x z)
-    (hpoint : Lemma_17_5_2_DerivativeProfilePointwiseLimit Λ J x z g')
     (hdecay : HasExponentialDecay d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ)
       (pseudoMassFromParamsAtPair hα hrho d Λ
         (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)) :
@@ -1287,8 +1261,8 @@ theorem lemma_17_5_2_capstone_of_high_temp_compact_ratio_bounds_of_cauchy
       (β₁ := β₁) (β₂ := β₂) (a := a) (b := b) (rho := rho) (h := h)
       hα hαd hd hJ_pos hxz hβ₁₂ hIcc ha hab hlt hβ_mem hrho
       hh_diff hh_cont hh_nonneg hg_eq hh_pos hc_pos hm_pos
-      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc
-        Λ J x z g' hcauchy hpoint)
+      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc_complete
+        Λ J x z hcauchy)
       hdecay
 
 /-- **GJ §17.5 Lemma 17.5.2 self-interval compact-ratio finite-HLS capstone
@@ -1302,7 +1276,7 @@ theorem lemma_17_5_2_capstone_of_compact_ratio_bounds_self_Icc_of_cauchy
     (hIcc :
       Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
     {rho : ℝ} (hrho : 0 < rho)
-    {h : ℝ → ℝ} (g' : ℝ → ℝ)
+    {h : ℝ → ℝ}
     (hh_diff : ∀ β' ∈ Set.Icc β₁ β₂, HasDerivAt h (deriv h β') β')
     (hh_cont : ContinuousOn h (Set.Icc β₁ β₂))
     (hh_nonneg : ∀ β' ∈ Set.Icc β₁ β₂, 0 ≤ h β')
@@ -1321,7 +1295,6 @@ theorem lemma_17_5_2_capstone_of_compact_ratio_bounds_self_Icc_of_cauchy
         pseudoMassFromParamsAtPair hα hrho d Λ
           (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
     (hcauchy : Lemma_17_5_2_DerivativeProfileMetricCauchyOnIcc Λ J x z)
-    (hpoint : Lemma_17_5_2_DerivativeProfilePointwiseLimit Λ J x z g')
     (hdecay : HasExponentialDecay d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ)
       (pseudoMassFromParamsAtPair hα hrho d Λ
         (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)) :
@@ -1347,8 +1320,8 @@ theorem lemma_17_5_2_capstone_of_compact_ratio_bounds_self_Icc_of_cauchy
       (β₁ := β₁) (β₂ := β₂) (rho := rho) (h := h)
       hα hαd hd hJ_pos hxz hβ₁₂ hIcc hrho hh_diff hh_cont hh_nonneg
       hg_eq hh_pos hc_pos hm_pos
-      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc
-        Λ J x z g' hcauchy hpoint)
+      (lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc_complete
+        Λ J x z hcauchy)
       hdecay
 
 end Ambient
