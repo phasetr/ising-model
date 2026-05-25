@@ -8336,14 +8336,15 @@ direction, pointwise convergence, and continuity of the limiting derivative
 profile as external provider inputs.
 
 The provider is also connected one layer lower, at the infinite derivative and
-infinite-HLS bridge interface.  Nine entry points feed
+infinite-HLS bridge interface.  Ten entry points feed
 \texttt{Lemma\_17\_5\_2\_DerivativeLimitProvider} into thermodynamic-limit
 beta differentiability, pointwise and interval infinite HLS denominator
-comparisons from finite derivative bounds, the finite-HLS-to-infinite Lipschitz
-package, and the enlarged upper/sandwich packages.  This keeps the bridge layer
-aligned with the provider-shaped capstone API: callers moving from finite
-derivative bounds into the infinite-HLS pipeline no longer need to name the
-limiting derivative profile \(g'\).
+comparisons from finite derivative bounds, the HLS-denominator-comparison to
+infinite-Lipschitz package, the finite-HLS-to-infinite Lipschitz package, and
+the enlarged upper/sandwich packages.  This keeps the bridge layer aligned
+with the provider-shaped capstone API: callers moving from finite derivative
+bounds or the infinite HLS denominator comparison into the infinite-HLS
+pipeline no longer need to name the limiting derivative profile \(g'\).
 
 The compact-Cauchy criteria are also wired directly to that bridge layer.
 \texttt{DerivativeLimitProviderCauchyHLS.lean} packages five entry points that
