@@ -398,7 +398,7 @@ theorem lemma_17_5_2_derivative_limit_provider_of_summable_increments
 geometric-increment form**: the special case of
 `lemma_17_5_2_derivative_limit_provider_of_summable_increments` in which the
 consecutive-stage finite-volume beta-derivative differences are bounded by a
-geometric sequence `M · ratio ^ k` with `0 ≤ M` and `0 ≤ ratio < 1`.
+geometric sequence `M · ratio ^ k` with `0 ≤ ratio < 1`.
 
 This matches the geometric (exponential) finite-to-infinite convergence rate
 produced by cluster-expansion estimates: the geometric series is summable, so
