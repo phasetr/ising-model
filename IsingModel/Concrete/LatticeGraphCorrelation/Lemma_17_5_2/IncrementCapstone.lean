@@ -1,5 +1,6 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.DerivativeLimitProviderFiniteProfile
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.DerivativeLimitProviderInfiniteHLS
+import IsingModel.Concrete.CubicExhaustion
 
 /-!
 # GJ §17.5 Lemma 17.5.2 capstone — geometric increment upper bound
@@ -376,6 +377,164 @@ theorem lemma_17_5_2_capstone_of_geometric_increments_on_covered_stages_and_pseu
     lemma_17_5_2_capstone_of_geometric_increments_on_covered_stages
       hα hαd hd hrho Λ J hJ_pos x z hxz hβ₁ hβ₁₂ hIcc M ratio hratio0 hratio1
       hincr hdecay
+
+/-! ### Polynomial-prefactor geometric increment bounds
+
+The realistic form of the finite-volume β-derivative increment estimate carries
+a polynomial boundary-cardinality prefactor `(2k+3)^d` (the number of fresh
+vertices added at stage `k+1` on the cubic exhaustion) times the geometric
+distance-decay factor `ratio^k`.  By
+`summable_cubicBox_boundary_card_mul_geometric` this prefactored geometric
+sequence is still summable, so the covered-stage criterion still produces the
+derivative-limit provider and the full Lemma 17.5.2 upper bound / sandwich. -/
+
+/-- **GJ §17.5 Lemma 17.5.2 derivative-limit provider from a polynomial-prefactor
+geometric increment bound on covered stages**: if the consecutive-stage
+β-derivative increments over the covered exhaustion stages are bounded by
+`M · (2k+3)^d · ratio^k` with `0 ≤ ratio < 1`, then the derivative-limit provider
+holds.  The prefactored geometric sequence is summable
+(`summable_cubicBox_boundary_card_mul_geometric`), so this is the
+boundary-count-aware specialization of
+`lemma_17_5_2_derivative_limit_provider_of_summable_increments_on_covered_stages`.
+Part of Issue #2931. -/
+theorem lemma_17_5_2_derivative_limit_provider_of_poly_geometric_increments_on_covered_stages
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (x z : Fin d → ℤ) (M ratio : ℝ)
+    (hratio0 : 0 ≤ ratio) (hratio1 : ratio < 1)
+    (hincr :
+      ∀ β₁ β₂ : ℝ,
+        Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
+          ∀ k : ℕ, ({x, z} : Finset (Fin d → ℤ)) ⊆ Λ.volume k →
+            ∀ β ∈ Set.Icc β₁ β₂,
+              dist
+                (deriv (fun β' =>
+                  Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                    (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} k) β)
+                (deriv (fun β' =>
+                  Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                    (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} (k + 1)) β) ≤
+                M * (((2 * k + 3 : ℕ) : ℝ) ^ d * ratio ^ k)) :
+    Lemma_17_5_2_DerivativeLimitProvider Λ J x z :=
+  lemma_17_5_2_derivative_limit_provider_of_summable_increments_on_covered_stages
+    Λ J x z (fun k => M * (((2 * k + 3 : ℕ) : ℝ) ^ d * ratio ^ k))
+    ((summable_cubicBox_boundary_card_mul_geometric d hratio0 hratio1).mul_left M) hincr
+
+/-- **GJ §17.5 Lemma 17.5.2 upper bound from a polynomial-prefactor geometric
+increment bound on covered stages**: the end-to-end conditional capstone whose
+single quantitative input carries the realistic boundary-cardinality prefactor
+`(2k+3)^d`.  Builds the derivative-limit provider via
+`lemma_17_5_2_derivative_limit_provider_of_poly_geometric_increments_on_covered_stages`
+and feeds it into the concrete compact-ratio infinite-HLS upper-bound assembly.
+Part of Issue #2931. -/
+theorem lemma_17_5_2_upper_bound_of_poly_geometric_increments_on_covered_stages
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    {rho : ℝ} (hrho : 0 < rho)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (hJ_pos : 0 < J)
+    (x z : Fin d → ℤ) (hxz : x ≠ z)
+    {β₁ β₂ : ℝ} (hβ₁ : 0 < β₁) (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (M ratio : ℝ) (hratio0 : 0 ≤ ratio) (hratio1 : ratio < 1)
+    (hincr :
+      ∀ γ₁ γ₂ : ℝ,
+        Set.Icc γ₁ γ₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
+          ∀ k : ℕ, ({x, z} : Finset (Fin d → ℤ)) ⊆ Λ.volume k →
+            ∀ β ∈ Set.Icc γ₁ γ₂,
+              dist
+                (deriv (fun β' =>
+                  Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                    (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} k) β)
+                (deriv (fun β' =>
+                  Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                    (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} (k + 1)) β) ≤
+                M * (((2 * k + 3 : ℕ) : ℝ) ^ d * ratio ^ k)) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      Lemma_17_5_2_UpperBound hα hrho Λ J β₂ x z
+        (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho)) := by
+  have hprovider : Lemma_17_5_2_DerivativeLimitProvider Λ J x z :=
+    lemma_17_5_2_derivative_limit_provider_of_poly_geometric_increments_on_covered_stages
+      Λ J x z M ratio hratio0 hratio1 hincr
+  have hd_pos : (0 : ℝ) < ↑(2 * d) := by
+    have : 0 < 2 * d := by omega
+    exact_mod_cast this
+  have hJ2d : 0 < J * ↑(2 * d) := mul_pos hJ_pos hd_pos
+  have hβ₂_lt : β₂ < 1 / (J * ↑(2 * d)) := (hIcc ⟨hβ₁₂, le_rfl⟩).2
+  have hlt : β₂ * J * ↑(2 * d) < 1 := by
+    have h := (lt_div_iff₀ hJ2d).1 hβ₂_lt
+    calc β₂ * J * ↑(2 * d) = β₂ * (J * ↑(2 * d)) := by ring
+      _ < 1 := h
+  exact
+    lemma_17_5_2_upper_bound_of_concrete_infinite_hls_compact_ratio_bounds_provider
+      hα hαd hd hrho Λ J hJ_pos x z hxz hβ₁₂ hIcc hβ₁ hβ₁₂ hlt
+      (fun β hβ => hβ) hprovider
+
+/-- **GJ §17.5 Lemma 17.5.2 capstone from a polynomial-prefactor geometric
+increment bound on covered stages**: returns the HLS witness, the named
+upper-bound predicate, and the displayed two-sided `latticeMass` sandwich for one
+HLS constant, from the realistic boundary-prefactored increment bound (upper
+side) and a validating endpoint pseudo-mass decay (lower side).  Part of Issue
+#2931. -/
+theorem lemma_17_5_2_capstone_of_poly_geometric_increments_on_covered_stages
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    {rho : ℝ} (hrho : 0 < rho)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (hJ_pos : 0 < J)
+    (x z : Fin d → ℤ) (hxz : x ≠ z)
+    {β₁ β₂ : ℝ} (hβ₁ : 0 < β₁) (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (M ratio : ℝ) (hratio0 : 0 ≤ ratio) (hratio1 : ratio < 1)
+    (hincr :
+      ∀ γ₁ γ₂ : ℝ,
+        Set.Icc γ₁ γ₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
+          ∀ k : ℕ, ({x, z} : Finset (Fin d → ℤ)) ⊆ Λ.volume k →
+            ∀ β ∈ Set.Icc γ₁ γ₂,
+              dist
+                (deriv (fun β' =>
+                  Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                    (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} k) β)
+                (deriv (fun β' =>
+                  Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                    (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} (k + 1)) β) ≤
+                M * (((2 * k + 3 : ℕ) : ℝ) ^ d * ratio ^ k))
+    (hdecay : HasExponentialDecay d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ)
+      (pseudoMassFromParamsAtPair hα hrho d Λ
+        (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      Lemma_17_5_2_UpperBound hα hrho Λ J β₂ x z
+        (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho)) ∧
+      ENNReal.ofReal
+          (pseudoMassFromParamsAtPair hα hrho d Λ
+            (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
+        ≤ latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ∧
+      latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ≤
+        ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho) *
+          ENNReal.ofReal
+            (pseudoMassFromParamsAtPair hα hrho d Λ
+              (⟨J, 0, β₂⟩ : IsingParams ℝ) x z) := by
+  have hprovider : Lemma_17_5_2_DerivativeLimitProvider Λ J x z :=
+    lemma_17_5_2_derivative_limit_provider_of_poly_geometric_increments_on_covered_stages
+      Λ J x z M ratio hratio0 hratio1 hincr
+  have hd_pos : (0 : ℝ) < ↑(2 * d) := by
+    have : 0 < 2 * d := by omega
+    exact_mod_cast this
+  have hJ2d : 0 < J * ↑(2 * d) := mul_pos hJ_pos hd_pos
+  have hβ₂_lt : β₂ < 1 / (J * ↑(2 * d)) := (hIcc ⟨hβ₁₂, le_rfl⟩).2
+  have hlt : β₂ * J * ↑(2 * d) < 1 := by
+    have h := (lt_div_iff₀ hJ2d).1 hβ₂_lt
+    calc β₂ * J * ↑(2 * d) = β₂ * (J * ↑(2 * d)) := by ring
+      _ < 1 := h
+  exact
+    lemma_17_5_2_capstone_of_concrete_infinite_hls_compact_ratio_bounds_provider
+      hα hαd hd hrho hJ_pos hxz hβ₁₂ hIcc hβ₁ hβ₁₂ hlt
+      (fun β hβ => hβ) hprovider hdecay
 
 end Ambient
 end IsingModel
