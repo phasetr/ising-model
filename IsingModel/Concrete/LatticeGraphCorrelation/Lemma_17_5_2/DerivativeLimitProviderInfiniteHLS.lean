@@ -1,4 +1,5 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.DerivativeLimitProvider
+import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.BetaDerivBridges
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.PathRateBridge
 
 /-!
@@ -356,6 +357,155 @@ theorem
       (β₁ := β₁) (β₂ := β₂) (rho := rho) (h := h)
       hαd hd hJ_pos hxz hβ₁₂ hIcc hrho
       hh_diff hh_nonneg hg_eq hh_pos hc_pos hprovider
+
+set_option maxHeartbeats 1200000 in
+-- The proof chooses one enlarged HLS constant and normalizes both finite
+-- ratio-lower and endpoint path-rate inequalities for the concrete profile.
+/-- **GJ §17.5 Lemma 17.5.2 concrete infinite-HLS comparison from a
+high-temperature ratio lower bound**: under a finite-stage ratio lower bound
+for `correlationAlongExhaustion / (m⁻)^(2α)`, choose one enlarged HLS constant
+that carries the convolution inequality, the interval infinite-HLS denominator
+comparison for the concrete pseudo-mass profile, and the endpoint Step 115
+path-rate comparison. -/
+theorem
+    lemma_17_5_2_concrete_infinite_hls_path_rate_inputs_of_high_temp_ratio_lower_provider
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    {rho : ℝ} (hrho : 0 < rho)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (hJ_pos : 0 < J)
+    (x z : Fin d → ℤ) (hxz : x ≠ z)
+    {β₁ β₂ a b : ℝ} (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (ha : 0 < a) (hab : a ≤ b) (hlt : b * J * ↑(2 * d) < 1)
+    (hβ_mem : ∀ β ∈ Set.Icc β₁ β₂, β ∈ Set.Icc a b)
+    (hderiv_provider : Lemma_17_5_2_DerivativeLimitProvider Λ J x z)
+    {L : ℝ} (hL_pos : 0 < L)
+    (hratio :
+      ∀ᶠ n in Filter.atTop,
+        ∀ β ∈ Set.Icc β₁ β₂,
+          L ≤
+            Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} n /
+            (lemma_17_5_2_concretePseudoMassBetaProfile hα hrho Λ J x z β) ^
+              (2 * α)) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      (∀ β ∈ Set.Icc β₁ β₂,
+        Lemma_17_5_2_InfiniteHLSDenominatorComparison Λ J x z β α K
+          (lemma_17_5_2_concretePseudoMassBetaProfile hα hrho Λ J x z)) ∧
+      ENNReal.ofReal (-Real.log (Real.tanh (β₂ * J))) ≤
+        ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho) *
+          ENNReal.ofReal
+            (pseudoMassFromParamsAtPair hα hrho d Λ
+              (⟨J, 0, β₂⟩ : IsingParams ℝ) x z) := by
+  obtain ⟨K₀, hK₀, hK₀_conv⟩ := lemma_17_5_2_hls_convolution_constant α d hαd
+  let N : ℝ := ((2 * α + 1 : ℕ) : ℝ)
+  let m : ℝ :=
+    pseudoMassFromParamsAtPair hα hrho d Λ
+      (⟨J, 0, β₂⟩ : IsingParams ℝ) x z
+  let path : ℝ := -Real.log (Real.tanh (β₂ * J))
+  let M : ℝ := b * J * ↑(2 * d) / (1 - b * J * ↑(2 * d))
+  let B : ℝ := J * M ^ 2 + J * (4 * ↑d)
+  let K : ℝ := max K₀ (max (path * rho / (N * m)) (B / L))
+  have hβ₂_mem : β₂ ∈ Set.Icc β₁ β₂ := ⟨hβ₁₂, le_rfl⟩
+  have hcorrβ₂ :
+      Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β₂⟩ : IsingParams ℝ) {x, z} ∈ Set.Ioo (0 : ℝ) 2 :=
+    lemma_17_5_2_active_range_on_Icc_of_high_temp_pair Λ hJ_pos hxz hIcc β₂ hβ₂_mem
+  have hN_pos : 0 < N := by
+    dsimp [N]
+    exact_mod_cast Nat.succ_pos (2 * α)
+  have hm_pos : 0 < m := by
+    dsimp [m]
+    exact pseudoMassFromParamsAtPair_pos_of_corr_mem hα hrho d Λ
+      (⟨J, 0, β₂⟩ : IsingParams ℝ) x z hcorrβ₂
+  have hK_pos : 0 < K := hK₀.trans_le (le_max_left _ _)
+  have hK_conv : ∀ x' y' : Fin d → ℤ,
+      ∑' w : Fin d → ℤ,
+          (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+          (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K := by
+    intro x' y'
+    exact (hK₀_conv x' y').trans (le_max_left _ _)
+  have hpath_scale : path * rho / (N * m) ≤ K :=
+    (le_max_left _ _).trans (le_max_right _ _)
+  have hpath_real : path ≤ (N * K / rho) * m := by
+    have hNm_pos : 0 < N * m := mul_pos hN_pos hm_pos
+    have hmul_le : path * rho ≤ K * (N * m) := by
+      have h := mul_le_mul_of_nonneg_right hpath_scale hNm_pos.le
+      rwa [div_mul_cancel₀ (path * rho) hNm_pos.ne'] at h
+    have hdiv_le : path ≤ K * (N * m) / rho := by
+      have h := div_le_div_of_nonneg_right hmul_le hrho.le
+      rwa [mul_div_cancel_right₀ path hrho.ne'] at h
+    calc
+      path ≤ K * (N * m) / rho := hdiv_le
+      _ = (N * K / rho) * m := by ring
+  have hpath_enn :
+      ENNReal.ofReal path ≤ ENNReal.ofReal (N * K / rho) * ENNReal.ofReal m := by
+    have hcoeff_nonneg : 0 ≤ N * K / rho :=
+      div_nonneg (mul_nonneg hN_pos.le hK_pos.le) hrho.le
+    have h := ENNReal.ofReal_le_ofReal hpath_real
+    rw [ENNReal.ofReal_mul hcoeff_nonneg] at h
+    exact h
+  have hB_le_KL : B ≤ K * L := by
+    have hscale : B / L ≤ K :=
+      (le_max_right _ _).trans (le_max_right _ _)
+    have h := mul_le_mul_of_nonneg_right hscale hL_pos.le
+    rwa [div_mul_cancel₀ B hL_pos.ne'] at h
+  have habs :=
+    lemma_17_5_2_finite_deriv_abs_le_high_temp_on_Icc
+      (d := d) Λ J hJ_pos.le ha hab hlt hβ_mem hxz
+  have hscalar :
+      ∀ᶠ n in Filter.atTop,
+        ∀ β ∈ Set.Icc β₁ β₂,
+          let M : ℝ := b * J * ↑(2 * d) / (1 - b * J * ↑(2 * d))
+          J * M ^ 2 + J * (4 * ↑d) ≤
+            K *
+              Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} n /
+              (lemma_17_5_2_concretePseudoMassBetaProfile hα hrho Λ J x z β) ^
+                (2 * α) := by
+    filter_upwards [hratio] with n hratio_n β hβ
+    calc
+      J * (b * J * ↑(2 * d) / (1 - b * J * ↑(2 * d))) ^ 2 + J * (4 * ↑d)
+          = B := by rfl
+      _ ≤ K * L := hB_le_KL
+      _ ≤ K *
+          (Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} n /
+            (lemma_17_5_2_concretePseudoMassBetaProfile hα hrho Λ J x z β) ^
+              (2 * α)) :=
+          mul_le_mul_of_nonneg_left (hratio_n β hβ) hK_pos.le
+      _ = K *
+          Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} n /
+          (lemma_17_5_2_concretePseudoMassBetaProfile hα hrho Λ J x z β) ^
+            (2 * α) := by ring
+  have hfinite :
+      ∀ᶠ n in Filter.atTop,
+        ∀ β ∈ Set.Icc β₁ β₂,
+          |deriv (fun β' =>
+            Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β| ≤
+            K *
+              Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} n /
+              (lemma_17_5_2_concretePseudoMassBetaProfile hα hrho Λ J x z β) ^
+                (2 * α) := by
+    filter_upwards [habs, hscalar] with n habs_n hscalar_n β hβ
+    exact (habs_n β hβ).trans (by simpa using hscalar_n β hβ)
+  have hcomp :
+      ∀ β ∈ Set.Icc β₁ β₂,
+        Lemma_17_5_2_InfiniteHLSDenominatorComparison Λ J x z β α K
+          (lemma_17_5_2_concretePseudoMassBetaProfile hα hrho Λ J x z) :=
+    lemma_17_5_2_infinite_hls_comparison_on_Icc_of_uniform_finite_deriv_bounds_provider
+      (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
+      (β₁ := β₁) (β₂ := β₂) (K := K)
+      (h := lemma_17_5_2_concretePseudoMassBetaProfile hα hrho Λ J x z)
+      hd hJ_pos hxz hIcc hderiv_provider hfinite
+  exact ⟨K, hK_pos, hK_conv, hcomp, by simpa [N, m, path] using hpath_enn⟩
 
 set_option maxHeartbeats 800000 in
 -- The statement combines two existential HLS packages with the concrete
