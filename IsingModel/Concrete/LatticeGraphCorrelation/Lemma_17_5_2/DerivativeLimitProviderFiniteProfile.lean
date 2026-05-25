@@ -81,6 +81,86 @@ theorem lemma_17_5_2_finite_derivative_profile_eq_zero_of_not_subset
   rw [hfun]
   simp
 
+/-- **GJ §17.5 Lemma 17.5.2 all-stage finite derivative-profile bound**:
+on a closed high-temperature beta interval, the finite beta-derivative profile
+is bounded by the Lebowitz/susceptibility constant at every exhaustion stage.
+
+The covered-stage branch uses the finite-volume high-temperature derivative
+estimate.  The uncovered-stage branch is new here: the zero formula
+`lemma_17_5_2_finite_derivative_profile_eq_zero_of_not_subset` makes the bound
+immediate, so no eventual containment restriction is needed for this finite
+profile estimate. -/
+theorem lemma_17_5_2_finite_deriv_abs_le_high_temp_on_Icc_all_stages
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (hJ : 0 ≤ J)
+    {a b β₁ β₂ : ℝ} (ha : 0 < a) (hab : a ≤ b)
+    (hlt : b * J * ↑(2 * d) < 1)
+    (hβ_mem : ∀ β ∈ Set.Icc β₁ β₂, β ∈ Set.Icc a b)
+    {x z : Fin d → ℤ} (hxz : x ≠ z) :
+    ∀ n, ∀ β ∈ Set.Icc β₁ β₂,
+      |deriv (fun β' =>
+        Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β| ≤
+        J * (b * J * ↑(2 * d) / (1 - b * J * ↑(2 * d))) ^ 2 +
+          J * (4 * ↑d) := by
+  intro n β hβ
+  by_cases hsub : ({x, z} : Finset (Fin d → ℤ)) ⊆ Λ.volume n
+  · have hx_mem : x ∈ Λ.volume n := hsub (by simp)
+    have hz_mem : z ∈ Λ.volume n := hsub (by simp)
+    let rx : ↑(Λ.volume n) := ⟨x, hx_mem⟩
+    let rz : ↑(Λ.volume n) := ⟨z, hz_mem⟩
+    have hrxz : rx ≠ rz := by
+      intro heq
+      exact hxz (congrArg Subtype.val heq)
+    have hlift :
+        Ambient.liftFinset ({x, z} : Finset (Fin d → ℤ)) hsub =
+          ({rx, rz} : Finset (↑(Λ.volume n))) := by
+      ext u
+      simp [Ambient.mem_liftFinset, rx, rz, Subtype.ext_iff]
+    obtain ⟨dval, hdval, habs⟩ :=
+      lemma_17_5_2_beta_deriv_abs_le_high_temp
+        Λ J hJ a b ha hab hlt n rx rz hrxz β (hβ_mem β hβ)
+    let fAlong : ℝ → ℝ := fun β' =>
+      Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n
+    let fFinite : ℝ → ℝ := fun β' =>
+      IsingModel.correlation
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+        (⟨J, 0, β'⟩ : IsingParams ℝ) {rx, rz}
+    have hf_eq : fAlong = fFinite := by
+      funext β'
+      simp only [fAlong, fFinite]
+      rw [Ambient.correlationAlongExhaustion_of_subset
+        (G := IsingModel.latticeGraph d) (Λ := Λ)
+        (p := (⟨J, 0, β'⟩ : IsingParams ℝ)) hsub, Ambient.correlationΛ_apply,
+        hlift]
+    have hderiv_along : HasDerivAt fAlong dval β := by
+      simpa [fAlong, fFinite, hf_eq] using hdval
+    have hderiv_eq :
+        deriv (fun β' =>
+          Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β = dval := by
+      simpa [fAlong] using hderiv_along.deriv
+    simpa [hderiv_eq] using habs
+  · have hzero :=
+      lemma_17_5_2_finite_derivative_profile_eq_zero_of_not_subset
+        Λ J x z hsub β
+    have hdenom_b : 0 < 1 - b * J * ↑(2 * d) := by
+      linarith
+    have hb_pos : 0 < b := ha.trans_le hab
+    have hM_nn :
+        0 ≤ b * J * ↑(2 * d) / (1 - b * J * ↑(2 * d)) :=
+      div_nonneg
+        (mul_nonneg (mul_nonneg hb_pos.le hJ) (Nat.cast_nonneg _))
+        hdenom_b.le
+    have hC_nn :
+        0 ≤ J * (b * J * ↑(2 * d) / (1 - b * J * ↑(2 * d))) ^ 2 +
+            J * (4 * ↑d) :=
+      add_nonneg
+        (mul_nonneg hJ (pow_nonneg hM_nn 2))
+        (mul_nonneg hJ (mul_nonneg (by norm_num) (Nat.cast_nonneg _)))
+    simpa [hzero] using hC_nn
+
 /-- **GJ §17.5 Lemma 17.5.2 finite derivative-profile continuity**:
 for each exhaustion stage, the beta-derivative profile of the finite-volume
 two-point function is continuous in beta.  In the stage before `{x,z}` is
