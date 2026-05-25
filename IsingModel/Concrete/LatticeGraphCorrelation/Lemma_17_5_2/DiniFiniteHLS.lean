@@ -8,7 +8,8 @@ This module connects Dini-style derivative-profile inputs to the
 larger finite-HLS assembly layer.  The Dini-order and pointwise hypotheses first
 build `Lemma_17_5_2_DerivativeLimitProvider`; the resulting provider is then
 fed into the scalar-provider, ratio-lower, uniform-correlation-lower, and
-compact-ratio-bounds upper/sandwich assemblies.
+compact-ratio-bounds upper/sandwich assemblies, and into the concrete
+finite-derivative-provider capstones.
 
 References:
 
@@ -122,6 +123,129 @@ theorem lemma_17_5_2_sandwich_of_concrete_finite_deriv_provider_of_dini_order
       (lemma_17_5_2_derivative_limit_provider_of_dini_order_finite_continuous
         Λ J x z g' horder hg_cont hpoint)
       hdecay hfinite_provider
+
+/-- **GJ §17.5 Lemma 17.5.2 concrete capstone from a finite
+derivative-bound provider, Dini-order inputs, and a rate comparison**. -/
+theorem
+    lemma_17_5_2_capstone_le_high_temp_rate_of_concrete_finite_deriv_provider_of_dini_order
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    {Λ : Ambient.Exhaustion (Fin d → ℤ)}
+    {J : ℝ} (hJ_pos : 0 < J)
+    {x z : Fin d → ℤ} (hxz : x ≠ z)
+    {β₁ β₂ : ℝ} (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc :
+      Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    {rho : ℝ} (hrho : 0 < rho)
+    (g' : ℝ → ℝ)
+    (horder : Lemma_17_5_2_DerivativeProfileDiniOrder Λ J x z)
+    (hg_cont : ContinuousOn g' (Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d)))))
+    (hpoint : Lemma_17_5_2_DerivativeProfilePointwiseLimit Λ J x z g')
+    (hle :
+      pseudoMassFromParamsAtPair hα hrho d Λ
+          (⟨J, 0, β₂⟩ : IsingParams ℝ) x z
+        ≤ -Real.log (β₂ * J * ↑(2 * d)))
+    (hfinite_provider :
+      ∀ K : ℝ, 0 < K →
+        (∀ x' y' : Fin d → ℤ,
+          ∑' w : Fin d → ℤ,
+              (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+              (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) →
+        ∀ᶠ n in Filter.atTop,
+          ∀ β ∈ Set.Icc β₁ β₂,
+            |deriv (fun β' =>
+              Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β| ≤
+              K *
+                Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                  (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} n /
+                (pseudoMassFromParamsAtPair hα hrho d Λ
+                  (⟨J, 0, β⟩ : IsingParams ℝ) x z) ^ (2 * α)) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      Lemma_17_5_2_UpperBound hα hrho Λ J β₂ x z
+        (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho)) ∧
+      ENNReal.ofReal
+          (pseudoMassFromParamsAtPair hα hrho d Λ
+            (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
+        ≤ latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ∧
+      latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ≤
+        ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho) *
+          ENNReal.ofReal
+            (pseudoMassFromParamsAtPair hα hrho d Λ
+              (⟨J, 0, β₂⟩ : IsingParams ℝ) x z) := by
+  exact
+    lemma_17_5_2_capstone_le_high_temp_rate_of_concrete_finite_deriv_provider
+      (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
+      (β₁ := β₁) (β₂ := β₂) (rho := rho)
+      hα hαd hd hJ_pos hxz hβ₁₂ hIcc hrho
+      (lemma_17_5_2_derivative_limit_provider_of_dini_order_finite_continuous
+        Λ J x z g' horder hg_cont hpoint)
+      hle hfinite_provider
+
+/-- **GJ §17.5 Lemma 17.5.2 concrete capstone from a finite
+derivative-bound provider, Dini-order inputs, and an endpoint profile lower
+bound**. -/
+theorem
+    lemma_17_5_2_capstone_profile_lower_of_concrete_finite_deriv_provider_of_dini_order
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    {Λ : Ambient.Exhaustion (Fin d → ℤ)}
+    {J : ℝ} (hJ_pos : 0 < J)
+    {x z : Fin d → ℤ} (hxz : x ≠ z)
+    {β₁ β₂ : ℝ} (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc :
+      Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    {rho : ℝ} (hrho : 0 < rho)
+    (g' : ℝ → ℝ)
+    (horder : Lemma_17_5_2_DerivativeProfileDiniOrder Λ J x z)
+    (hg_cont : ContinuousOn g' (Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d)))))
+    (hpoint : Lemma_17_5_2_DerivativeProfilePointwiseLimit Λ J x z g')
+    (hprofile :
+      pseudoMassG α rho (-Real.log (β₂ * J * ↑(2 * d))) ≤
+        Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β₂⟩ : IsingParams ℝ) {x, z})
+    (hfinite_provider :
+      ∀ K : ℝ, 0 < K →
+        (∀ x' y' : Fin d → ℤ,
+          ∑' w : Fin d → ℤ,
+              (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+              (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) →
+        ∀ᶠ n in Filter.atTop,
+          ∀ β ∈ Set.Icc β₁ β₂,
+            |deriv (fun β' =>
+              Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β| ≤
+              K *
+                Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                  (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} n /
+                (pseudoMassFromParamsAtPair hα hrho d Λ
+                  (⟨J, 0, β⟩ : IsingParams ℝ) x z) ^ (2 * α)) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      Lemma_17_5_2_UpperBound hα hrho Λ J β₂ x z
+        (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho)) ∧
+      ENNReal.ofReal
+          (pseudoMassFromParamsAtPair hα hrho d Λ
+            (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
+        ≤ latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ∧
+      latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ≤
+        ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho) *
+          ENNReal.ofReal
+            (pseudoMassFromParamsAtPair hα hrho d Λ
+              (⟨J, 0, β₂⟩ : IsingParams ℝ) x z) := by
+  exact
+    lemma_17_5_2_capstone_profile_lower_of_concrete_finite_deriv_provider
+      (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
+      (β₁ := β₁) (β₂ := β₂) (rho := rho)
+      hα hαd hd hJ_pos hxz hβ₁₂ hIcc hrho
+      (lemma_17_5_2_derivative_limit_provider_of_dini_order_finite_continuous
+        Λ J x z g' horder hg_cont hpoint)
+      hprofile hfinite_provider
 
 /-- **GJ §17.5 Lemma 17.5.2 upper bound from a uniform finite derivative-bound
 provider and Dini-order inputs**. -/
