@@ -8299,6 +8299,16 @@ sandwich, and capstone callers no longer need to name the limiting derivative
 function \(g'\) directly; the substantive analytic work is proving the provider
 itself in the desired high-temperature regime.
 
+The provider proof has a Dini-style criterion.  If the finite-volume
+beta-derivative profiles converge pointwise on \((0,(J\,2d)^{-1})\) to a
+continuous limiting derivative profile, each derivative profile is continuous
+on that interval, and the profiles are stagewise monotone (or antitone), then
+\texttt{lemma\_17\_5\_2\_derivative\_limit\_provider\_of\_monotone\_deriv\_profiles}
+and its antitone analogue upgrade the pointwise convergence to the required
+locally uniform convergence by Dini's theorem.  This reduces the remaining
+provider proof to concrete derivative-profile continuity, monotonicity, and
+pointwise-convergence inputs.
+
 The provider is also connected one layer lower, at the infinite derivative and
 infinite-HLS bridge interface.  Nine entry points feed
 \texttt{Lemma\_17\_5\_2\_DerivativeLimitProvider} into thermodynamic-limit
