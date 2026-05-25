@@ -8417,6 +8417,28 @@ geometric (exponential) finite-to-infinite convergence rate produced by
 cluster-expansion estimates, with summability supplied by the geometric-series
 criterion.
 
+The increment structure localizes the convergence-rate task to the covered
+stages.  For a fixed pair \(\{x,z\}\) the finite \(\beta\)-derivative profile
+vanishes before the exhaustion stage contains the pair, so by monotonicity of
+the exhaustion the consecutive increment \(F_{k+1}-F_k\) vanishes whenever stage
+\(k+1\) does not yet contain \(\{x,z\}\)
+(\texttt{lemma\_17\_5\_2\_finite\_derivative\_increment\_eq\_zero\_of\_not\_subset}).
+Since \texttt{Exhaustion.exhaust} guarantees that all stages past some onset
+index are covered, a summable bound on the increments over the covered stages
+already supplies the eventual hypothesis above
+(\texttt{lemma\_17\_5\_2\_derivative\_limit\_provider\_of\_summable\_increments\_on\_covered\_stages}),
+with no need to locate the onset index.  At the baseline correlation level the
+increment series is automatically summable by monotone convergence: the
+consecutive correlation differences are nonnegative by GKS
+(\texttt{correlationAlongExhaustion\_increment\_nonneg}) and their partial sums
+telescope to \(\langle\sigma_x\sigma_z\rangle_{\Lambda_n}-\langle\sigma_x\sigma_z\rangle_{\Lambda_0}\),
+bounded above by
+\(\langle\sigma_x\sigma_z\rangle^\infty-\langle\sigma_x\sigma_z\rangle_{\Lambda_0}\),
+hence the series is summable
+(\texttt{correlationAlongExhaustion\_increment\_summable}).
+Obtaining the analogous quantitative summable bound for the \(\beta\)-derivative
+increments is the substantive remaining convergence-rate input.
+
 The finite derivative-profile formula and continuity input are now discharged.
 The theorem
 \texttt{lemma\_17\_5\_2\_finite\_derivative\_profile\_eq\_beta\_edge\_sum}
