@@ -1,4 +1,4 @@
-import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.DerivativeProfileInputs
+import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.CauchyProvider
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.DerivativeLimitProviderFiniteHLS
 
 /-!
@@ -18,18 +18,6 @@ References:
 
 namespace IsingModel
 namespace Ambient
-
-/-- **GJ §17.5 Lemma 17.5.2 derivative-limit provider from named Cauchy
-inputs**: the named compact-interval metric Cauchy and pointwise convergence
-inputs supply the provider used by the finite-HLS assembly layer. -/
-theorem lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc
-    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    (J : ℝ) (x z : Fin d → ℤ) (g' : ℝ → ℝ)
-    (hcauchy : Lemma_17_5_2_DerivativeProfileMetricCauchyOnIcc Λ J x z)
-    (hpoint : Lemma_17_5_2_DerivativeProfilePointwiseLimit Λ J x z g') :
-    Lemma_17_5_2_DerivativeLimitProvider Λ J x z :=
-  lemma_17_5_2_derivative_limit_provider_of_metricCauchy_on_Icc
-    Λ J x z g' hcauchy hpoint
 
 /-- **GJ §17.5 Lemma 17.5.2 upper bound from high-temperature scalar providers
 and Cauchy derivative-profile inputs**: compact-interval metric Cauchy control
