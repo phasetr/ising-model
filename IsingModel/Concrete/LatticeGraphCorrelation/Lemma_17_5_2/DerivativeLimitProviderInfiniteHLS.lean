@@ -317,11 +317,11 @@ theorem
     exact correlationInfinite_continuousAt_beta_of_high_temp
       hd Λ x z hxz J hJ_pos β (hIcc hβ)
   have hc_diff : ∀ β ∈ Set.Icc β₁ β₂,
-      DifferentiableAt ℝ
-        (fun β' =>
-          Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
-            (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z})
-        β := by
+        DifferentiableAt ℝ
+          (fun β' =>
+            Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z})
+          β := by
     intro β hβ
     exact (correlationInfinite_hasDerivAt_beta_of_tendstoLocallyUniformlyOn_deriv
       (d := d) (Λ := Λ) (r_val := x) (s_val := z) (J := J) (g' := g')
@@ -391,73 +391,33 @@ theorem
       Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
         (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} ∈ Set.Ioo (0 : ℝ) 2 :=
     lemma_17_5_2_active_range_on_Icc_of_high_temp_pair Λ hJ_pos hxz hIcc
-  have hc_cont : ∀ β ∈ Set.Icc β₁ β₂,
-      ContinuousAt
-        (fun β' =>
-          Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
-            (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z})
-        β := by
-    intro β hβ
-    exact correlationInfinite_continuousAt_beta_of_high_temp
-      hd Λ x z hxz J hJ_pos β (hIcc hβ)
   have hc_diff : ∀ β ∈ Set.Icc β₁ β₂,
       DifferentiableAt ℝ
         (fun β' =>
           Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
             (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z})
         β := by
-    intro β hβ
-    exact (correlationInfinite_hasDerivAt_beta_of_tendstoLocallyUniformlyOn_deriv
-      (d := d) (Λ := Λ) (r_val := x) (s_val := z) (J := J) (g' := g')
-      hd hxz hJ_pos hderiv_lim β (hIcc hβ)).differentiableAt
-  have hc_deriv : ∀ β ∈ Set.Icc β₁ β₂,
-      HasDerivAt
+      intro β hβ
+      exact (correlationInfinite_hasDerivAt_beta_of_tendstoLocallyUniformlyOn_deriv
+        (d := d) (Λ := Λ) (r_val := x) (s_val := z) (J := J) (g' := g')
+        hd hxz hJ_pos hderiv_lim β (hIcc hβ)).differentiableAt
+  have hcomp' : ∀ β ∈ Set.Icc β₁ β₂,
+      |deriv
         (fun β' =>
           Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
             (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z})
-        (deriv (fun β' =>
+        β| ≤
+        K *
           Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
-            (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z}) β) β := by
+            (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} /
+          (pseudoMassFromParamsAtPair hα hrho d Λ
+            (⟨J, 0, β⟩ : IsingParams ℝ) x z) ^ (2 * α) := by
     intro β hβ
-    have hc :=
-      correlationInfinite_hasDerivAt_beta_of_tendstoLocallyUniformlyOn_deriv
-        (d := d) (Λ := Λ) (r_val := x) (s_val := z) (J := J) (g' := g')
-        hd hxz hJ_pos hderiv_lim β (hIcc hβ)
-    have hderiv :
-        deriv (fun β' =>
-          Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
-            (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z}) β = g' β :=
-      hc.deriv
-    simpa [hderiv] using hc
-  have hh_diff : ∀ β ∈ Set.Icc β₁ β₂, HasDerivAt h (deriv h β) β := by
-    simpa [h, lemma_17_5_2_concretePseudoMassBetaProfile] using
-      pseudoMassFromParamsAtPair_beta_hasDerivAt_deriv_on_Icc_of_corr_differentiableAt
-        hα hrho Λ J x z hc_diff hcorr
-  have hh_nonneg : ∀ β ∈ Set.Icc β₁ β₂, 0 ≤ h β := by
-    intro β _hβ
-    exact pseudoMassFromParamsAtPair_nonneg hα hrho d Λ
-      (⟨J, 0, β⟩ : IsingParams ℝ) x z
-  have hg_eq : ∀ β ∈ Set.Icc β₁ β₂,
-      (fun γ => pseudoMassG α rho (h γ)) =ᶠ[nhds β]
-        (fun γ =>
-          Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
-            (⟨J, 0, γ⟩ : IsingParams ℝ) {x, z}) := by
-    simpa [h, lemma_17_5_2_concretePseudoMassBetaProfile] using
-      pseudoMassFromParamsAtPair_beta_pseudoMassG_eventuallyEq_on_Icc_of_corr_continuousAt
-        hα hrho Λ J x z hc_cont hcorr
-  have hh_pos : ∀ β ∈ Set.Icc β₁ β₂, 0 < h β := by
-    intro β hβ
-    exact pseudoMassFromParamsAtPair_pos_of_corr_mem hα hrho d Λ
-      (⟨J, 0, β⟩ : IsingParams ℝ) x z (hcorr β hβ)
-  have hc_pos : ∀ β ∈ Set.Icc β₁ β₂,
-      0 <
-        Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
-          (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} := by
-    intro β hβ
-    exact (hcorr β hβ).1
+    simpa [Lemma_17_5_2_InfiniteHLSDenominatorComparison,
+      lemma_17_5_2_concretePseudoMassBetaProfile] using hcomp β hβ
   simpa [h, lemma_17_5_2_concretePseudoMassBetaProfile] using
-    pseudoMass_pow_succ_lipschitz α hrho hβ₁₂
-      hh_diff hc_deriv hh_nonneg hg_eq hh_pos hc_pos hcomp
+    pseudoMassFromParamsAtPair_beta_pow_succ_lipschitz_on_Icc_of_corr_differentiableAt
+      hα hrho Λ J x z hβ₁₂ hc_diff hcorr hcomp'
 
 set_option maxHeartbeats 1200000 in
 -- The theorem combines the fixed-constant concrete Lipschitz bridge with the

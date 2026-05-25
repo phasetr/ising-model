@@ -459,8 +459,8 @@ theorem
         K *
           Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
             (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} /
-          (pseudoMassFromParamsAtPair hα hr d Λ
-            (⟨J, 0, β⟩ : IsingParams ℝ) x z) ^ (2 * α)) :
+            (pseudoMassFromParamsAtPair hα hr d Λ
+              (⟨J, 0, β⟩ : IsingParams ℝ) x z) ^ (2 * α)) :
     ∀ β ∈ Set.Icc β₁ β₂,
       ∃ dval : ℝ,
         HasDerivAt
@@ -473,6 +473,81 @@ theorem
   exact
     pseudoMassFromParamsAtPair_beta_pow_succ_deriv_bound_of_corr_hasDerivAt
       hα hr Λ J x z (hc_diff β hβ).hasDerivAt (hcorr β hβ) (hcomp β hβ)
+
+/-- **Closed-interval concrete pseudo-mass power-chain Lipschitz bound**:
+pointwise differentiability of the infinite correlation profile, active-range
+membership, and the HLS denominator comparison imply the interval Lipschitz
+estimate for `β ↦ (m⁻ β)^(2α+1)`. -/
+theorem
+    pseudoMassFromParamsAtPair_beta_pow_succ_lipschitz_on_Icc_of_corr_differentiableAt
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) {d : ℕ}
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (J : ℝ) (x z : Fin d → ℤ) {β₁ β₂ K : ℝ}
+    (hβ₁₂ : β₁ ≤ β₂)
+    (hc_diff : ∀ β ∈ Set.Icc β₁ β₂,
+      DifferentiableAt ℝ
+        (fun β' =>
+          Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z})
+        β)
+    (hcorr : ∀ β ∈ Set.Icc β₁ β₂,
+      Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} ∈ Set.Ioo (0 : ℝ) 2)
+    (hcomp : ∀ β ∈ Set.Icc β₁ β₂,
+      |deriv
+        (fun β' =>
+          Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z})
+        β| ≤
+        K *
+          Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} /
+          (pseudoMassFromParamsAtPair hα hr d Λ
+            (⟨J, 0, β⟩ : IsingParams ℝ) x z) ^ (2 * α)) :
+    |(pseudoMassFromParamsAtPair hα hr d Λ
+          (⟨J, 0, β₂⟩ : IsingParams ℝ) x z) ^ (2 * α + 1) -
+        (pseudoMassFromParamsAtPair hα hr d Λ
+          (⟨J, 0, β₁⟩ : IsingParams ℝ) x z) ^ (2 * α + 1)| ≤
+      ↑(2 * α + 1) * K / r * (β₂ - β₁) := by
+  let h : ℝ → ℝ := fun β =>
+    pseudoMassFromParamsAtPair hα hr d Λ
+      (⟨J, 0, β⟩ : IsingParams ℝ) x z
+  let c : ℝ → ℝ := fun β =>
+    Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+      (⟨J, 0, β⟩ : IsingParams ℝ) {x, z}
+  have hh_diff : ∀ β ∈ Set.Icc β₁ β₂, HasDerivAt h (deriv h β) β := by
+    simpa [h] using
+      pseudoMassFromParamsAtPair_beta_hasDerivAt_deriv_on_Icc_of_corr_differentiableAt
+        hα hr Λ J x z hc_diff hcorr
+  have hc_deriv : ∀ β ∈ Set.Icc β₁ β₂, HasDerivAt c (deriv c β) β := by
+    intro β hβ
+    exact (hc_diff β hβ).hasDerivAt
+  have hh_nonneg : ∀ β ∈ Set.Icc β₁ β₂, 0 ≤ h β := by
+    intro β _hβ
+    exact pseudoMassFromParamsAtPair_nonneg hα hr d Λ
+      (⟨J, 0, β⟩ : IsingParams ℝ) x z
+  have hg_eq : ∀ β ∈ Set.Icc β₁ β₂,
+      (fun γ => pseudoMassG α r (h γ)) =ᶠ[nhds β] c := by
+    simpa [h, c] using
+      pseudoMassFromParamsAtPair_beta_pseudoMassG_eventuallyEq_on_Icc_of_corr_continuousAt
+        hα hr Λ J x z
+        (fun β hβ => (hc_diff β hβ).continuousAt) hcorr
+  have hh_pos : ∀ β ∈ Set.Icc β₁ β₂, 0 < h β := by
+    intro β hβ
+    exact pseudoMassFromParamsAtPair_pos_of_corr_mem hα hr d Λ
+      (⟨J, 0, β⟩ : IsingParams ℝ) x z (hcorr β hβ)
+  have hc_pos : ∀ β ∈ Set.Icc β₁ β₂, 0 < c β := by
+    intro β hβ
+    exact (hcorr β hβ).1
+  have hcomp' : ∀ β ∈ Set.Icc β₁ β₂,
+      |deriv c β| ≤ K * c β / (h β) ^ (2 * α) := by
+    intro β hβ
+    simpa [h, c] using hcomp β hβ
+  simpa [h, c] using
+    pseudoMass_pow_succ_lipschitz α hr hβ₁₂
+      hh_diff hc_deriv hh_nonneg hg_eq hh_pos hc_pos hcomp'
 
 end Ambient
 
