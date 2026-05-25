@@ -203,6 +203,59 @@ theorem
       hαd hd hJ_pos hxz hβ₁₂ hIcc hrho g'
       hh_diff hh_nonneg hg_eq hh_pos hc_pos hderiv_lim
 
+/-- **GJ §17.5 Lemma 17.5.2 infinite-HLS Lipschitz package from a
+derivative-limit provider**: the provider supplies the differentiability of the
+infinite-volume correlation profile, leaving only the interval HLS denominator
+comparison as the analytic input to the Lipschitz step. -/
+theorem
+    lemma_17_5_2_infinite_pseudoMass_pow_succ_lipschitz_of_hls_constant_provider
+    {d α : ℕ} (hαd : 2 * α > d) (hd : 1 ≤ d)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (hJ_pos : 0 < J)
+    (x z : Fin d → ℤ) (hxz : x ≠ z)
+    {β₁ β₂ : ℝ} (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    {rho : ℝ} (hrho : 0 < rho)
+    {h : ℝ → ℝ}
+    (hh_diff : ∀ β' ∈ Set.Icc β₁ β₂, HasDerivAt h (deriv h β') β')
+    (hh_nonneg : ∀ β' ∈ Set.Icc β₁ β₂, 0 ≤ h β')
+    (hg_eq : ∀ β' ∈ Set.Icc β₁ β₂,
+      (fun γ => pseudoMassG α rho (h γ)) =ᶠ[nhds β']
+        (fun γ =>
+          Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, γ⟩ : IsingParams ℝ) {x, z}))
+    (hh_pos : ∀ β' ∈ Set.Icc β₁ β₂, 0 < h β')
+    (hc_pos : ∀ β' ∈ Set.Icc β₁ β₂,
+      0 <
+        Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z})
+    (hderiv_provider : Lemma_17_5_2_DerivativeLimitProvider Λ J x z) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      ((∀ β' ∈ Set.Icc β₁ β₂,
+          Lemma_17_5_2_InfiniteHLSDenominatorComparison Λ J x z β' α K h) →
+        |(h β₂) ^ (2 * α + 1) - (h β₁) ^ (2 * α + 1)| ≤
+          ↑(2 * α + 1) * K / rho * (β₂ - β₁)) := by
+  obtain ⟨g', hderiv_lim⟩ := hderiv_provider
+  let cInf : ℝ → ℝ := fun β' =>
+    Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+      (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z}
+  have hc_diff : ∀ β' ∈ Set.Icc β₁ β₂,
+      HasDerivAt cInf (deriv cInf β') β' := by
+    intro β hβ
+    have hcdiff_g :=
+      correlationInfinite_hasDerivAt_beta_of_tendstoLocallyUniformlyOn_deriv
+        hd Λ x z hxz J hJ_pos g' hderiv_lim β (hIcc hβ)
+    have hderiv_eq : deriv cInf β = g' β := hcdiff_g.deriv
+    simpa [cInf, hderiv_eq] using hcdiff_g
+  exact
+    lemma_17_5_2_infinite_pseudoMass_pow_succ_lipschitz_of_hls_constant
+      hαd Λ J x z hβ₁₂ hrho hh_diff hc_diff hh_nonneg
+      hg_eq hh_pos hc_pos
+
 /-- **GJ §17.5 Lemma 17.5.2 enlarged finite-HLS package with path-rate bound
 from a derivative-limit provider**. -/
 theorem
