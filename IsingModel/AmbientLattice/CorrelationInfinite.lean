@@ -1,4 +1,5 @@
 import IsingModel.AmbientLattice.CorrelationInfinite.GKSSecondPrelude
+import IsingModel.AmbientLattice.CorrelationInfinite.Increments
 
 /-!
 # Infinite-volume correlation compatibility module
