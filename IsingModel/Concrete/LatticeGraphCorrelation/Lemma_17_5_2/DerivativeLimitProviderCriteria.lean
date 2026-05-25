@@ -9,7 +9,9 @@ This module records Dini-style sufficient criteria for the
 `Lemma_17_5_2_DerivativeLimitProvider` input.  The criteria reduce the provider
 proof to pointwise convergence of the finite-volume beta-derivative profiles
 plus either a monotonicity direction and continuity of the limiting derivative
-profile, or compact-uniform Cauchy control of the derivative profiles.
+profile, compact-uniform Cauchy control plus pointwise convergence, or
+closed-interval metric Cauchy control alone.  In the last case, completeness of
+`ℝ` constructs the pointwise derivative-profile limit.
 
 References:
 
@@ -249,6 +251,82 @@ theorem lemma_17_5_2_derivative_limit_provider_of_metricCauchy_on_Icc
       Λ J x z g' ?_ hpoint
   intro β₁ β₂ hIcc
   exact Metric.uniformCauchySeqOn_iff.2 (hcauchy β₁ β₂ hIcc)
+
+/-- **GJ §17.5 Lemma 17.5.2 derivative-limit provider criterion,
+metric closed-interval Cauchy form with constructed pointwise limit**: closed
+interval metric Cauchy control alone supplies the derivative-limit provider.
+
+For each beta in the open high-temperature interval, the closed-interval Cauchy
+input gives a Cauchy sequence of finite-volume derivative values at that beta;
+completeness of `ℝ` supplies its pointwise limit.  The existing
+closed-interval Cauchy criterion then upgrades those pointwise limits to local
+uniform convergence. -/
+theorem lemma_17_5_2_derivative_limit_provider_of_metricCauchy_on_Icc_complete
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (x z : Fin d → ℤ)
+    (hcauchy :
+      ∀ β₁ β₂ : ℝ,
+        Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
+          ∀ ε > (0 : ℝ), ∃ N : ℕ, ∀ m ≥ N, ∀ n ≥ N,
+            ∀ β ∈ Set.Icc β₁ β₂,
+              dist
+                (deriv (fun β' =>
+                  Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                    (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} m) β)
+                (deriv (fun β' =>
+                  Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                    (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β) < ε) :
+    Lemma_17_5_2_DerivativeLimitProvider Λ J x z := by
+  let F : ℕ → ℝ → ℝ := fun n β =>
+    deriv (fun β' =>
+      Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β
+  have hpoint_exists :
+      ∀ β ∈ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))),
+        ∃ gβ : ℝ, Filter.Tendsto (fun n => F n β) Filter.atTop (nhds gβ) := by
+    intro β hβ
+    let B : ℝ := 1 / (J * ↑(2 * d))
+    let β₁ : ℝ := β / 2
+    let β₂ : ℝ := (β + B) / 2
+    have hβ₁β : β₁ < β := by
+      dsimp [β₁]
+      linarith [hβ.1]
+    have hββ₂ : β < β₂ := by
+      dsimp [β₂, B]
+      linarith [hβ.2]
+    have hβ_mem : β ∈ Set.Icc β₁ β₂ := ⟨hβ₁β.le, hββ₂.le⟩
+    have hIcc :
+        Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) := by
+      intro γ hγ
+      have hβ₁_pos : 0 < β₁ := by
+        dsimp [β₁]
+        linarith [hβ.1]
+      have hβ₂_lt : β₂ < B := by
+        dsimp [β₂, B]
+        linarith [hβ.2]
+      exact ⟨lt_of_lt_of_le hβ₁_pos hγ.1, lt_of_le_of_lt hγ.2 hβ₂_lt⟩
+    have huc :
+        UniformCauchySeqOn F Filter.atTop (Set.Icc β₁ β₂) := by
+      exact Metric.uniformCauchySeqOn_iff.2 (by simpa [F] using hcauchy β₁ β₂ hIcc)
+    exact cauchySeq_tendsto_of_complete (huc.cauchySeq hβ_mem)
+  let g' : ℝ → ℝ := fun β =>
+    if hβ : β ∈ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) then
+      Classical.choose (hpoint_exists β hβ)
+    else 0
+  have hg' :
+      ∀ β ∈ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))),
+        Filter.Tendsto (fun n => F n β) Filter.atTop (nhds (g' β)) := by
+    intro β hβ
+    have hchosen := (Classical.choose_spec (hpoint_exists β hβ))
+    have hgeq :
+        g' β = Classical.choose (hpoint_exists β hβ) := by
+      exact dif_pos hβ
+    simpa [hgeq] using hchosen
+  exact
+    lemma_17_5_2_derivative_limit_provider_of_metricCauchy_on_Icc
+      Λ J x z g' hcauchy (by
+        intro β hβ
+        simpa [F] using hg' β hβ)
 
 /-- **GJ §17.5 Lemma 17.5.2 derivative-limit provider criterion,
 monotone form**: pointwise convergence of the finite-volume beta-derivative

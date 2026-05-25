@@ -8368,17 +8368,21 @@ The same provider also has compact-uniform-Cauchy criteria.  If the finite
 beta-derivative profiles are uniformly Cauchy on every compact subset of
 \((0,(J\,2d)^{-1})\), and converge pointwise there to \(g'\), then the
 standard uniform-Cauchy theorem gives uniform convergence on each compact
-subset.  Equivalently, it is enough to verify the Cauchy property on every
-closed interval contained in the high-temperature interval: around each
-\(\beta\) one chooses
+subset.  The closed-interval metric-Cauchy route now also constructs the
+pointwise limit itself: for each \(\beta\), completeness of \(\mathbb{R}\)
+turns the Cauchy derivative-value sequence into a limit \(g'(\beta)\).
+Equivalently, it is enough to verify the Cauchy property on every closed
+interval contained in the high-temperature interval: around each \(\beta\) one
+chooses
 \([\,\beta/2,(\beta+(J\,2d)^{-1})/2\,]\subset (0,(J\,2d)^{-1})\), obtaining
 the local neighborhood required for locally uniform convergence.  The Lean
 criteria are
 \texttt{lemma\_17\_5\_2\_derivative\_limit\_provider\_of\_uniformCauchy\_on\_compacts},
 its metric epsilon--eventual form, and the corresponding
-\texttt{\_on\_Icc} closed-interval variants.  These statements provide a
-non-Dini route to the same provider, suitable for future derivative-profile
-Cauchy estimates.  Conversely,
+\texttt{\_on\_Icc} closed-interval variants, together with
+\texttt{lemma\_17\_5\_2\_derivative\_limit\_provider\_of\_metricCauchy\_on\_Icc\_complete}.
+These statements provide a non-Dini route to the same provider, suitable for
+future derivative-profile Cauchy estimates.  Conversely,
 \texttt{lemma\_17\_5\_2\_named\_metricCauchy\_on\_Icc\_of\_derivative\_limit\_provider}
 feeds any established provider back into the named closed-interval Cauchy
 input, so downstream code can switch between the provider-shaped and
@@ -8460,8 +8464,9 @@ The compact-Cauchy criteria are also wired directly to that bridge layer.
 \texttt{DerivativeLimitProviderCauchyHLS.lean} packages nineteen entry points
 that
 first construct \texttt{Lemma\_17\_5\_2\_DerivativeLimitProvider} from
-pointwise derivative-profile convergence plus compact-interval metric Cauchy
-control, then feed the provider into the interval infinite-HLS comparison,
+compact-interval metric Cauchy control alone, using completeness of
+\(\mathbb{R}\) to construct the pointwise derivative-profile limit, then feed
+the provider into the interval infinite-HLS comparison,
 the HLS-denominator-comparison to infinite-Lipschitz packages,
 concrete uniform-correlation-lower upper/sandwich/capstone wrappers on the self
 interval, concrete compact-ratio upper/sandwich/capstone wrappers and their
@@ -8505,10 +8510,10 @@ unchanged.
 
 The compact-Cauchy inputs are also named at the finite-HLS assembly boundary.
 \texttt{DerivativeProfileInputs.lean} names the compact-interval metric Cauchy
-hypothesis and the pointwise derivative-profile limit hypothesis used by both
-the Cauchy and Dini provider routes.  \texttt{CauchyProvider.lean} proves the
-corresponding Cauchy provider helper without importing downstream HLS assembly
-layers.  \texttt{CauchyFiniteHLS.lean} then feeds that provider into the
+hypothesis and keeps the pointwise derivative-profile limit hypothesis for
+legacy and Dini-facing callers.  \texttt{CauchyProvider.lean} proves the
+complete-metric Cauchy provider helper without importing downstream HLS
+assembly layers.  \texttt{CauchyFiniteHLS.lean} then feeds that provider into the
 concrete pseudo-mass finite-derivative-provider, direct abstract
 finite-derivative-provider, scalar-provider, ratio-lower,
 uniform-correlation-lower upper/sandwich/capstones and their self-interval variants,
@@ -8536,12 +8541,12 @@ available through the provider-shaped and Cauchy-shaped entry points.
 
 The same named Cauchy inputs are now wired to the concrete capstone interface.
 \texttt{CauchyConcreteCapstone.lean} passes the compact-interval metric Cauchy
-and pointwise derivative-profile convergence hypotheses through the provider
-helper and into ten concrete automatic-active entry points: compact upper
-bounds, rate-comparison sandwiches, profile-lower sandwiches, and the matching
-high-temperature capstones.  Thus downstream callers can work directly with
-the Cauchy-shaped analytic hypotheses while keeping the endpoint rate or
-profile lower input visible.
+hypothesis through the complete-metric provider helper and into ten concrete
+automatic-active entry points: compact upper bounds, rate-comparison
+sandwiches, profile-lower sandwiches, and the matching high-temperature
+capstones.  Thus downstream callers can work directly with the Cauchy-shaped
+analytic hypothesis while keeping the endpoint rate or profile lower input
+visible.
 
 The Dini route is wired to the same concrete capstone interface.
 \texttt{DiniConcreteCapstone.lean} feeds the named Dini provider into the same
