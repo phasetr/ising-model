@@ -8369,7 +8369,16 @@ which proves the closed-interval high-temperature absolute derivative bound
 for every exhaustion stage: covered stages use the finite Lebowitz and
 susceptibility estimate, while uncovered stages use the zero derivative
 formula.  Thus the finite-profile bound itself no longer needs an eventual
-containment restriction.  The same formulas also feed
+containment restriction.  With a derivative-limit provider, this all-stage
+bound passes to the limiting derivative profile by
+\texttt{lemma\_17\_5\_2\_derivative\_limit\_profile\_abs\_le\_high\_temp\_on\_Icc}:
+pointwise convergence from the locally uniform provider and
+\texttt{le\_of\_tendsto} transport the finite bound to the limit.  The theorem
+\texttt{lemma\_17\_5\_2\_correlationInfinite\_deriv\_abs\_le\_high\_temp\_on\_Icc}
+then identifies the limiting profile with the beta derivative of the
+infinite-volume two-point function and gives the same high-temperature absolute
+derivative bound for \(\partial_\beta\langle\sigma_x\sigma_z\rangle_\infty\)
+on the closed interval.  The same formulas also feed
 \texttt{lemma\_17\_5\_2\_finite\_derivative\_profile\_continuous\_beta}, which
 proves continuity of the finite derivative profile at every exhaustion stage.
 The strengthened monotone and antitone Dini criteria feed this continuity in
