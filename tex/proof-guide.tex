@@ -8309,6 +8309,22 @@ locally uniform convergence by Dini's theorem.  This reduces the remaining
 provider proof to concrete derivative-profile continuity, monotonicity, and
 pointwise-convergence inputs.
 
+The same provider also has compact-uniform-Cauchy criteria.  If the finite
+beta-derivative profiles are uniformly Cauchy on every compact subset of
+\((0,(J\,2d)^{-1})\), and converge pointwise there to \(g'\), then the
+standard uniform-Cauchy theorem gives uniform convergence on each compact
+subset.  Equivalently, it is enough to verify the Cauchy property on every
+closed interval contained in the high-temperature interval: around each
+\(\beta\) one chooses
+\([\,\beta/2,(\beta+(J\,2d)^{-1})/2\,]\subset (0,(J\,2d)^{-1})\), obtaining
+the local neighborhood required for locally uniform convergence.  The Lean
+criteria are
+\texttt{lemma\_17\_5\_2\_derivative\_limit\_provider\_of\_uniformCauchy\_on\_compacts},
+its metric epsilon--eventual form, and the corresponding
+\texttt{\_on\_Icc} closed-interval variants.  These statements provide a
+non-Dini route to the same provider, suitable for future derivative-profile
+Cauchy estimates.
+
 The finite derivative-profile continuity input is now discharged.  For each
 exhaustion stage, the beta derivative of the finite two-point function is
 continuous in beta: before \(\{x,z\}\) is contained in the stage volume the
