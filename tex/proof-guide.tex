@@ -8372,6 +8372,15 @@ upper/sandwich assemblies.  This keeps the concrete Cauchy estimate as the
 remaining analytic input while making it directly consumable by the finite-HLS
 capstone wrappers.
 
+The same named Cauchy inputs are now wired to the concrete capstone interface.
+\texttt{CauchyConcreteCapstone.lean} passes the compact-interval metric Cauchy
+and pointwise derivative-profile convergence hypotheses through the provider
+helper and into ten concrete automatic-active entry points: compact upper
+bounds, rate-comparison sandwiches, profile-lower sandwiches, and the matching
+high-temperature capstones.  Thus downstream callers can work directly with
+the Cauchy-shaped analytic hypotheses while keeping the endpoint rate or
+profile lower input visible.
+
 Finally, the anchored cubic self-interval package connects these concrete
 wrappers to the existing cubic inputs.  For the upper-bound side, theorem
 \texttt{lemma\_17\_5\_2\_cubic\_origin\_upper\_bound\_on\_self\_Icc}
