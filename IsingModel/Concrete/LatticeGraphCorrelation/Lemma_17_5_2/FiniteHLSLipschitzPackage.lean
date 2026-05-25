@@ -1,5 +1,6 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.InfiniteDerivativeLimit
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.Lipschitz
+import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.PathRateBridge
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempLipschitz.UniformDiff
 
 /-!
@@ -215,39 +216,6 @@ theorem lemma_17_5_2_sandwich_of_finite_hls_lipschitz_package
   refine ⟨K, hK, hK_conv, fun hfinite hbridge => ?_⟩
   exact lemma_17_5_2_sandwich_of_decay_and_upper hα hr hdecay
     (hupper hfinite hbridge)
-
-/-- **GJ §17.5 Lemma 17.5.2 all-rate bridge from the Step 115 path-rate
-comparison**: the named infinite HLS Lipschitz all-rate bridge follows once the
-Step 115 path rate `-log(tanh(β₂J))` is bounded by the HLS Lipschitz
-coefficient times the endpoint pseudo-mass.
-
-The proof transfers any target-exhaustion validating decay rate to the cubic
-exhaustion, applies the all-rate Step 115 bound, and then uses the supplied
-scalar comparison. -/
-theorem lemma_17_5_2_infinite_hls_lipschitz_all_rate_bridge_of_path_rate_le_hls
-    {α d : ℕ} (hα : 1 ≤ α)
-    {r : ℝ} (hr : 0 < r) (hd : 0 < d)
-    (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
-                      (Λ.volume n)).edgeSet]
-    {J : ℝ} (hJ : 0 < J) {β₁ β₂ K : ℝ} (hβ₂ : 0 < β₂)
-    (x z : Fin d → ℤ) (h : ℝ → ℝ)
-    (hpath_le :
-      ENNReal.ofReal (-Real.log (Real.tanh (β₂ * J))) ≤
-        ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / r) *
-          ENNReal.ofReal
-            (pseudoMassFromParamsAtPair hα hr d Λ
-              (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)) :
-    Lemma_17_5_2_InfiniteHLSLipschitzAllRateBridge
-      hα hr Λ J x z β₁ β₂ K h := by
-  intro _hlip a ha
-  have hf : Ferromagnetic (⟨J, 0, β₂⟩ : IsingParams ℝ) := ⟨hJ.le, le_refl 0, hβ₂⟩
-  have ha_cubic :
-      HasExponentialDecay d (Ambient.cubicExhaustion d)
-        (⟨J, 0, β₂⟩ : IsingParams ℝ) (a : ℝ) :=
-    HasExponentialDecay_transfer_exhaustion Λ (Ambient.cubicExhaustion d) hf ha
-  exact (HasExponentialDecay_rate_le_neg_log_tanh_betaJ hd hJ hβ₂ ha_cubic).trans
-    hpath_le
 
 /-- **GJ §17.5 Lemma 17.5.2 upper bound from finite-HLS Lipschitz and
 path-rate comparison**: after the finite HLS derivative estimates have produced
