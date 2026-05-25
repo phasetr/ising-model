@@ -284,8 +284,59 @@ theorem lemma_17_5_2_finite_derivative_profile_continuous_beta
             Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
               (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β = 0 := by
       exact lemma_17_5_2_finite_derivative_profile_eq_zero_of_not_subset
-        Λ J x z hsub
+        (Λ := Λ) (J := J) (x := x) (z := z) (n := n) hsub
     exact continuous_const.congr fun β => (hderiv_eq β).symm
+
+/-- **GJ §17.5 Lemma 17.5.2 limiting derivative-profile continuity**:
+under a derivative-limit provider, the locally uniform limit of the finite
+beta-derivative profiles is continuous on the open high-temperature region.
+
+The finite-profile continuity input is the concrete theorem
+`lemma_17_5_2_finite_derivative_profile_continuous_beta`; the passage to the
+limit uses the standard locally-uniform-limit continuity theorem. -/
+theorem lemma_17_5_2_derivative_limit_profile_continuousOn_high_temp
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (x z : Fin d → ℤ)
+    (hprovider : Lemma_17_5_2_DerivativeLimitProvider Λ J x z) :
+    ∃ g' : ℝ → ℝ,
+      TendstoLocallyUniformlyOn
+        (fun n β =>
+          deriv (fun β' =>
+            Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
+        g' Filter.atTop (Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d)))) ∧
+      ContinuousOn g' (Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d)))) := by
+  obtain ⟨g', hderiv_lim⟩ := hprovider
+  refine ⟨g', hderiv_lim, hderiv_lim.continuousOn ?_⟩
+  exact Filter.Frequently.of_forall fun n =>
+    (lemma_17_5_2_finite_derivative_profile_continuous_beta Λ J x z n).continuousOn
+
+/-- **GJ §17.5 Lemma 17.5.2 limiting derivative-profile continuity,
+closed-interval form**: on each closed beta interval inside the
+high-temperature region, the derivative-limit provider gives a uniformly
+convergent finite derivative-profile sequence whose limit is continuous on that
+closed interval. -/
+theorem lemma_17_5_2_derivative_limit_profile_continuousOn_Icc
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (x z : Fin d → ℤ)
+    {β₁ β₂ : ℝ}
+    (hprovider : Lemma_17_5_2_DerivativeLimitProvider Λ J x z)
+    (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d)))) :
+    ∃ g' : ℝ → ℝ,
+      TendstoUniformlyOn
+        (fun n β =>
+          deriv (fun β' =>
+            Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
+        g' Filter.atTop (Set.Icc β₁ β₂) ∧
+      ContinuousOn g' (Set.Icc β₁ β₂) := by
+  obtain ⟨g', htend⟩ :=
+    lemma_17_5_2_derivative_limit_provider_tendstoUniformlyOn_Icc
+      (Λ := Λ) (J := J) (x := x) (z := z)
+      (β₁ := β₁) (β₂ := β₂) hprovider hIcc
+  refine ⟨g', htend, htend.continuousOn ?_⟩
+  exact Filter.Frequently.of_forall fun n =>
+    (lemma_17_5_2_finite_derivative_profile_continuous_beta Λ J x z n).continuousOn
 
 /-- Monotone Dini-provider criterion with the finite derivative-profile
 continuity input discharged by
