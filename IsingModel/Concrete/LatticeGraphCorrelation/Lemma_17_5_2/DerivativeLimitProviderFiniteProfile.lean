@@ -161,6 +161,80 @@ theorem lemma_17_5_2_finite_deriv_abs_le_high_temp_on_Icc_all_stages
         (mul_nonneg hJ (mul_nonneg (by norm_num) (Nat.cast_nonneg _)))
     simpa [hzero] using hC_nn
 
+/-- **GJ §17.5 Lemma 17.5.2 limiting derivative-profile bound**:
+if the finite derivative profiles have a derivative-limit provider, then the
+all-stage finite high-temperature derivative estimate passes to the limiting
+derivative profile on the same closed beta interval. -/
+theorem lemma_17_5_2_derivative_limit_profile_abs_le_high_temp_on_Icc
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (hJ : 0 ≤ J)
+    {a b β₁ β₂ : ℝ} (ha : 0 < a) (hab : a ≤ b)
+    (hlt : b * J * ↑(2 * d) < 1)
+    (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (hβ_mem : ∀ β ∈ Set.Icc β₁ β₂, β ∈ Set.Icc a b)
+    {x z : Fin d → ℤ} (hxz : x ≠ z)
+    (hprovider : Lemma_17_5_2_DerivativeLimitProvider Λ J x z) :
+    ∃ g' : ℝ → ℝ,
+      TendstoLocallyUniformlyOn
+        (fun n β =>
+          deriv (fun β' =>
+            Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
+        g' Filter.atTop (Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d)))) ∧
+      ∀ β ∈ Set.Icc β₁ β₂,
+        |g' β| ≤
+          J * (b * J * ↑(2 * d) / (1 - b * J * ↑(2 * d))) ^ 2 +
+            J * (4 * ↑d) := by
+  obtain ⟨g', hderiv_lim⟩ := hprovider
+  refine ⟨g', hderiv_lim, ?_⟩
+  intro β hβ
+  have hpoint :
+      Filter.Tendsto
+        (fun n =>
+          deriv (fun β' =>
+            Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
+        Filter.atTop (nhds (g' β)) :=
+    hderiv_lim.tendsto_at (hIcc hβ)
+  refine le_of_tendsto ((continuous_abs.tendsto (g' β)).comp hpoint) ?_
+  exact Filter.Eventually.of_forall fun n =>
+    lemma_17_5_2_finite_deriv_abs_le_high_temp_on_Icc_all_stages
+      Λ J hJ ha hab hlt hβ_mem hxz n β hβ
+
+/-- **GJ §17.5 Lemma 17.5.2 infinite beta-derivative bound**:
+under a derivative-limit provider, the finite all-stage high-temperature
+derivative estimate gives the same absolute bound for the beta derivative of
+the infinite-volume two-point function on the closed interval. -/
+theorem lemma_17_5_2_correlationInfinite_deriv_abs_le_high_temp_on_Icc
+    {d : ℕ} (hd : 1 ≤ d)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (hJ_pos : 0 < J)
+    {a b β₁ β₂ : ℝ} (ha : 0 < a) (hab : a ≤ b)
+    (hlt : b * J * ↑(2 * d) < 1)
+    (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (hβ_mem : ∀ β ∈ Set.Icc β₁ β₂, β ∈ Set.Icc a b)
+    {x z : Fin d → ℤ} (hxz : x ≠ z)
+    (hprovider : Lemma_17_5_2_DerivativeLimitProvider Λ J x z) :
+    ∀ β ∈ Set.Icc β₁ β₂,
+      |deriv (fun β' =>
+        Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z}) β| ≤
+        J * (b * J * ↑(2 * d) / (1 - b * J * ↑(2 * d))) ^ 2 +
+          J * (4 * ↑d) := by
+  obtain ⟨g', hderiv_lim, hbound⟩ :=
+    lemma_17_5_2_derivative_limit_profile_abs_le_high_temp_on_Icc
+      Λ J hJ_pos.le ha hab hlt hIcc hβ_mem hxz hprovider
+  intro β hβ
+  have hdiff :=
+    correlationInfinite_hasDerivAt_beta_of_tendstoLocallyUniformlyOn_deriv
+      hd Λ x z hxz J hJ_pos g' hderiv_lim β (hIcc hβ)
+  have hderiv :
+      deriv (fun β' =>
+        Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z}) β = g' β :=
+    hdiff.deriv
+  simpa [hderiv] using hbound β hβ
+
 /-- **GJ §17.5 Lemma 17.5.2 finite derivative-profile continuity**:
 for each exhaustion stage, the beta-derivative profile of the finite-volume
 two-point function is continuous in beta.  In the stage before `{x,z}` is
