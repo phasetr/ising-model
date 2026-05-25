@@ -170,6 +170,85 @@ theorem latticeDistance_ge_of_adj_mem_cubicBox_succ_not_mem
     latticeDistance_triangle d p v w
   omega
 
+/-- **Cardinality of `cubicBox`**: the stage-`n` cube `[-n, n]^d` has exactly
+`(2n + 1)^d` lattice points, since each of the `d` coordinate intervals
+`Icc (-n) n` contains `2n + 1` integers. -/
+theorem card_cubicBox (d n : ℕ) :
+    (cubicBox d n).card = (2 * n + 1) ^ d := by
+  unfold cubicBox
+  rw [Fintype.card_piFinset]
+  have hIcc : ∀ _ : Fin d, (Finset.Icc (-(n : ℤ)) n).card = 2 * n + 1 := by
+    intro _
+    rw [Int.card_Icc]
+    have : ((n : ℤ) + 1 - -(n : ℤ)) = ((2 * n + 1 : ℕ) : ℤ) := by push_cast; ring
+    rw [this, Int.toNat_natCast]
+  rw [Finset.prod_congr rfl (fun i _ => hIcc i)]
+  rw [Finset.prod_const, Finset.card_univ, Fintype.card_fin]
+
+/-- **Polynomial growth of the fresh cubic-box boundary set**: the set of
+vertices freshly added at stage `n + 1` has cardinality at most `(2n + 3)^d`,
+the cardinality of the stage-`n+1` cube.  Combined with exponential decay of the
+boundary contributions, this polynomial growth is what keeps the boundary sums
+summable (Issue #2931, Phase 3). -/
+theorem card_cubicBox_sdiff_succ_le (d n : ℕ) :
+    (cubicBox d (n + 1) \ cubicBox d n).card ≤ (2 * n + 3) ^ d := by
+  calc (cubicBox d (n + 1) \ cubicBox d n).card
+      ≤ (cubicBox d (n + 1)).card := Finset.card_le_card Finset.sdiff_subset
+    _ = (2 * (n + 1) + 1) ^ d := card_cubicBox d (n + 1)
+    _ = (2 * n + 3) ^ d := by ring_nf
+
+/-- **Geometric summability of the polynomially-growing boundary cardinalities**:
+for `0 ≤ ratio < 1`, the sequence `n ↦ (2n + 3)^d · ratio^n` is summable.  This
+is the summability skeleton for the boundary-distance decay argument: the fresh
+boundary set grows polynomially in the stage while each contribution decays
+geometrically (Issue #2931, Phase 3). -/
+theorem summable_cubicBox_boundary_card_mul_geometric
+    (d : ℕ) {ratio : ℝ} (hratio0 : 0 ≤ ratio) (hratio1 : ratio < 1) :
+    Summable (fun n : ℕ => ((2 * n + 3 : ℕ) : ℝ) ^ d * ratio ^ n) := by
+  have hr_norm : ‖ratio‖ < 1 := by
+    rw [Real.norm_eq_abs, abs_of_nonneg hratio0]; exact hratio1
+  have hsum_pow : Summable (fun n : ℕ => (n : ℝ) ^ d * ratio ^ n) :=
+    summable_pow_mul_geometric_of_norm_lt_one d hr_norm
+  have hsum_geom : Summable (fun n : ℕ => ratio ^ n) :=
+    summable_geometric_of_lt_one hratio0 hratio1
+  -- Majorant `6^d·(n^d·ratio^n) + 6^d·ratio^n`, summable as a sum of summables.
+  have hg : Summable
+      (fun n : ℕ => (6 : ℝ) ^ d * ((n : ℝ) ^ d * ratio ^ n) + (6 : ℝ) ^ d * ratio ^ n) :=
+    (hsum_pow.mul_left _).add (hsum_geom.mul_left _)
+  refine Summable.of_nonneg_of_le (fun n => by positivity) (fun n => ?_) hg
+  have hrn : 0 ≤ ratio ^ n := pow_nonneg hratio0 n
+  have hbase0 : (0 : ℝ) ≤ ((2 * n + 3 : ℕ) : ℝ) := by positivity
+  have hbase : ((2 * n + 3 : ℕ) : ℝ) ≤ 3 * ((n : ℝ) + 1) := by push_cast; linarith
+  have hpow : ((2 * n + 3 : ℕ) : ℝ) ^ d ≤ (3 * ((n : ℝ) + 1)) ^ d :=
+    pow_le_pow_left₀ hbase0 hbase d
+  have hn1 : ((n : ℝ) + 1) ^ d ≤ (2 : ℝ) ^ d * ((n : ℝ) ^ d + 1) := by
+    rcases Nat.eq_zero_or_pos n with hn0 | hnpos
+    · subst hn0
+      simp only [Nat.cast_zero, zero_add, one_pow]
+      have h2 : (1 : ℝ) ≤ (2 : ℝ) ^ d := one_le_pow₀ (by norm_num)
+      have h3 : (1 : ℝ) ≤ (0 : ℝ) ^ d + 1 := by
+        have h0 : (0 : ℝ) ≤ (0 : ℝ) ^ d := pow_nonneg le_rfl d
+        linarith
+      exact le_trans h2 (le_mul_of_one_le_right (by positivity) h3)
+    · have hn1' : (1 : ℝ) ≤ (n : ℝ) := by exact_mod_cast hnpos
+      calc ((n : ℝ) + 1) ^ d
+          ≤ (2 * (n : ℝ)) ^ d := pow_le_pow_left₀ (by positivity) (by linarith) d
+        _ = (2 : ℝ) ^ d * (n : ℝ) ^ d := by rw [mul_pow]
+        _ ≤ (2 : ℝ) ^ d * ((n : ℝ) ^ d + 1) := by
+            have hle : (n : ℝ) ^ d ≤ (n : ℝ) ^ d + 1 := by linarith
+            exact mul_le_mul_of_nonneg_left hle (by positivity)
+  have hstep : ((2 * n + 3 : ℕ) : ℝ) ^ d ≤ (6 : ℝ) ^ d * ((n : ℝ) ^ d + 1) := by
+    calc ((2 * n + 3 : ℕ) : ℝ) ^ d
+        ≤ (3 * ((n : ℝ) + 1)) ^ d := hpow
+      _ = (3 : ℝ) ^ d * ((n : ℝ) + 1) ^ d := by rw [mul_pow]
+      _ ≤ (3 : ℝ) ^ d * ((2 : ℝ) ^ d * ((n : ℝ) ^ d + 1)) :=
+          mul_le_mul_of_nonneg_left hn1 (by positivity)
+      _ = (6 : ℝ) ^ d * ((n : ℝ) ^ d + 1) := by rw [← mul_assoc, ← mul_pow]; norm_num
+  calc ((2 * n + 3 : ℕ) : ℝ) ^ d * ratio ^ n
+      ≤ ((6 : ℝ) ^ d * ((n : ℝ) ^ d + 1)) * ratio ^ n :=
+        mul_le_mul_of_nonneg_right hstep hrn
+    _ = (6 : ℝ) ^ d * ((n : ℝ) ^ d * ratio ^ n) + (6 : ℝ) ^ d * ratio ^ n := by ring
+
 /-- **Exhaustion property for `cubicBox`**: any finite set
 `A ⊆ Fin d → ℤ` is contained in some sufficiently large cube.
 

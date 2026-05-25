@@ -8461,7 +8461,14 @@ adjacency is unit \(\ell^1\)-distance, so the bound carries to the edges touchin
 the boundary.  Fresh exhaustion vertices and their incident edges thus recede
 from any fixed pair at unit speed in the exhaustion stage, which is the
 boundary-distance growth driving the (still to be formalized) exponential decay
-of the increment contributions.
+of the increment contributions.  The cardinality side is also in place: the
+stage-\(n\) cube has \((2n+1)^d\) points (\texttt{card\_cubicBox}), so the fresh
+boundary set has at most \((2n+3)^d\) vertices
+(\texttt{card\_cubicBox\_sdiff\_succ\_le}), and this polynomial growth is
+geometrically summable, \(\sum_n (2n+3)^d\rho^n<\infty\) for \(0\le\rho<1\)
+(\texttt{summable\_cubicBox\_boundary\_card\_mul\_geometric}).  This is the
+summability skeleton---polynomial boundary growth against geometric decay---for
+the eventual increment bound.
 
 These pieces assemble into an end-to-end conditional capstone for the
 upper-bound side of Lemma~17.5.2.  Assuming a geometric decay bound
