@@ -1,4 +1,7 @@
-import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.CubicHighTemp
+import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassFoundation
+import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempLipschitz.DerivBound
+import IsingModel.PolyDecay
+import IsingModel.PseudoMass.FromParamsBasic.BasicSlices
 
 /-!
 # GJ §17.5 Lemma 17.5.2 capstone — HLS constants and denominator comparisons
