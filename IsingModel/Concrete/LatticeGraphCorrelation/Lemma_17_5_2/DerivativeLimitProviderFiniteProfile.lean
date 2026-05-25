@@ -338,6 +338,34 @@ theorem lemma_17_5_2_derivative_limit_profile_continuousOn_Icc
   exact Filter.Frequently.of_forall fun n =>
     (lemma_17_5_2_finite_derivative_profile_continuous_beta Λ J x z n).continuousOn
 
+/-- **GJ §17.5 Lemma 17.5.2 infinite beta-derivative continuity**:
+under a derivative-limit provider, the beta derivative of the infinite-volume
+two-point function is continuous throughout the open high-temperature region.
+
+The proof first passes finite derivative-profile continuity to the provider
+witness, then identifies that witness pointwise with the infinite-volume beta
+derivative. -/
+theorem lemma_17_5_2_correlationInfinite_deriv_continuousOn_high_temp
+    {d : ℕ} (hd : 1 ≤ d)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (hJ_pos : 0 < J)
+    {x z : Fin d → ℤ} (hxz : x ≠ z)
+    (hprovider : Lemma_17_5_2_DerivativeLimitProvider Λ J x z) :
+    ContinuousOn
+      (fun β =>
+        deriv (fun β' =>
+          Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z}) β)
+      (Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d)))) := by
+  obtain ⟨g', hderiv_lim, hg_cont⟩ :=
+    lemma_17_5_2_derivative_limit_profile_continuousOn_high_temp
+      Λ J x z hprovider
+  refine hg_cont.congr ?_
+  intro β hβ
+  exact
+    (correlationInfinite_hasDerivAt_beta_of_tendstoLocallyUniformlyOn_deriv
+      hd Λ x z hxz J hJ_pos g' hderiv_lim β hβ).deriv
+
 /-- Monotone Dini-provider criterion with the finite derivative-profile
 continuity input discharged by
 `lemma_17_5_2_finite_derivative_profile_continuous_beta`. -/
