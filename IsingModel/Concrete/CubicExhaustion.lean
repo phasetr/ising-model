@@ -70,6 +70,79 @@ theorem cubicBox_mono (d : ℕ) : Monotone (cubicBox d) := by
   · linarith [hle, hmn']
   · linarith [hge, hmn']
 
+/-- **Boundary coordinate of a fresh cubic-box vertex**: a vertex that lies in
+the stage-`n+1` cube but not in the stage-`n` cube has at least one coordinate of
+absolute value exactly `n + 1`.
+
+This pins fresh vertices of the cubic exhaustion to the sup-norm sphere of radius
+`n + 1`, the geometric input for boundary-distance decay arguments (Issue
+#2931). -/
+theorem exists_coord_natAbs_eq_of_mem_cubicBox_succ_not_mem
+    {d n : ℕ} {x : Fin d → ℤ}
+    (hmem : x ∈ cubicBox d (n + 1)) (hnot : x ∉ cubicBox d n) :
+    ∃ i, (x i).natAbs = n + 1 := by
+  rw [mem_cubicBox] at hmem
+  -- From `x ∉ cubicBox d n` extract a coordinate exceeding `n` in absolute value.
+  have hex : ∃ i, ¬ (-(n : ℤ) ≤ x i ∧ x i ≤ n) := by
+    by_contra h
+    exact hnot (mem_cubicBox.mpr (fun i => not_not.mp (not_exists.mp h i)))
+  obtain ⟨i, hi⟩ := hex
+  refine ⟨i, ?_⟩
+  -- Bound the same coordinate by `n + 1` from membership in the larger cube.
+  obtain ⟨hle1, hge1⟩ := hmem i
+  have hle1' : -((n : ℤ) + 1) ≤ x i := by push_cast at hle1; linarith
+  have hge1' : x i ≤ (n : ℤ) + 1 := by push_cast at hge1; linarith
+  -- The fresh coordinate sits at sup-norm exactly `n + 1`.
+  rcases not_and_or.mp hi with h | h
+  · have hlt := not_le.mp h
+    omega
+  · have hlt := not_le.mp h
+    omega
+
+/-- **ℓ¹-distance lower bound to a fresh cubic-box vertex**: if a reference point
+`p` lies in the radius-`R` cube and `w` is a fresh vertex of the stage-`n+1` cube
+(in the stage-`n+1` cube but not the stage-`n` cube) with `R ≤ n`, then the
+lattice ℓ¹-distance from `p` to `w` is at least `n + 1 - R`.
+
+A fresh vertex has a coordinate of absolute value `n + 1`, while every coordinate
+of `p` has absolute value at most `R`; that single coordinate already contributes
+at least `n + 1 - R` to the coordinatewise-sum distance.  This is the
+boundary-distance growth used by the finite-volume convergence-rate program
+(Issue #2931): fresh vertices recede from any fixed pair at unit speed in the
+exhaustion stage. -/
+theorem latticeDistance_ge_of_mem_cubicBox_succ_not_mem
+    {d n R : ℕ} {p w : Fin d → ℤ}
+    (hp : p ∈ cubicBox d R) (hRn : R ≤ n)
+    (hmem : w ∈ cubicBox d (n + 1)) (hnot : w ∉ cubicBox d n) :
+    n + 1 - R ≤ latticeDistance d p w := by
+  obtain ⟨i, hi⟩ := exists_coord_natAbs_eq_of_mem_cubicBox_succ_not_mem hmem hnot
+  rw [mem_cubicBox] at hp
+  -- The `i`-th coordinate of `p` has absolute value at most `R`.
+  have hpi : (p i).natAbs ≤ R := by
+    have habs : |p i| ≤ (R : ℤ) := abs_le.mpr (hp i)
+    have hcast : ((p i).natAbs : ℤ) ≤ (R : ℤ) := by rwa [← Int.abs_eq_natAbs]
+    exact_mod_cast hcast
+  -- A single coordinate's contribution lower-bounds the ℓ¹ distance.
+  have hterm : (n + 1) - R ≤ (p i - w i).natAbs := by
+    have htri : (w i).natAbs ≤ (p i).natAbs + (p i - w i).natAbs := by
+      have : w i = p i - (p i - w i) := by ring
+      calc (w i).natAbs = (p i - (p i - w i)).natAbs := by rw [← this]
+        _ ≤ (p i).natAbs + (p i - w i).natAbs := by
+            have := Int.natAbs_sub_le (p i) (p i - w i)
+            simpa using this
+    omega
+  -- That coordinate term is one summand of `latticeDistance`.
+  have hmem_term : (p i - w i).natAbs ≤ latticeDistance d p w := by
+    unfold latticeDistance
+    have hsum := Finset.single_le_sum
+      (f := fun j : Fin d => (p j - w j).natAbs)
+      (fun j _ => Nat.zero_le _) (Finset.mem_univ i)
+    -- `latticeDistance` is the sum of `|p j - w j|` over `j`; compare with one term.
+    calc (p i - w i).natAbs ≤ ∑ j : Fin d, (p j - w j).natAbs := by
+            simpa using hsum
+      _ = latticeDistance d p w := by rw [latticeDistance]
+  exact le_trans hterm hmem_term
+
 /-- **Exhaustion property for `cubicBox`**: any finite set
 `A ⊆ Fin d → ℤ` is contained in some sufficiently large cube.
 
