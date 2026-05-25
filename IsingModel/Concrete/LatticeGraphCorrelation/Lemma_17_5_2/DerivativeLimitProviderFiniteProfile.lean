@@ -17,6 +17,70 @@ namespace Ambient
 
 open scoped symmDiff
 
+/-- **GJ §17.5 Lemma 17.5.2 finite derivative-profile formula**: once the
+exhaustion stage contains the target pair `{x,z}`, the beta derivative of the
+finite-exhaustion two-point function is the explicit finite Lebowitz edge sum.
+
+This is the concrete finite-volume derivative calculation used before the
+derivative-limit provider and HLS denominator comparison are applied. -/
+theorem lemma_17_5_2_finite_derivative_profile_eq_beta_edge_sum
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (x z : Fin d → ℤ) {n : ℕ}
+    (hsub : ({x, z} : Finset (Fin d → ℤ)) ⊆ Λ.volume n) :
+    ∀ β : ℝ,
+      let G := inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)
+      let A : Finset (↑(Λ.volume n) : Type _) :=
+        liftFinset ({x, z} : Finset _) hsub
+      deriv (fun β' =>
+          Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β =
+        J * ∑ e ∈ G.edgeFinset,
+          Sym2.lift ⟨fun u v =>
+            IsingModel.correlation G (⟨J, 0, β⟩ : IsingParams ℝ)
+                (symmDiff A {u, v}) -
+              IsingModel.correlation G (⟨J, 0, β⟩ : IsingParams ℝ) A *
+                IsingModel.correlation G (⟨J, 0, β⟩ : IsingParams ℝ) {u, v},
+            fun u v => by simp [Finset.pair_comm v u]⟩ e := by
+  intro β
+  let G := inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)
+  let A : Finset (↑(Λ.volume n) : Type _) := liftFinset ({x, z} : Finset _) hsub
+  have hfun :
+      (fun β' =>
+        Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) =
+        fun β' => IsingModel.correlation G
+          (⟨J, 0, β'⟩ : IsingParams ℝ) A := by
+    funext β'
+    rw [correlationAlongExhaustion_of_subset (IsingModel.latticeGraph d) Λ _ hsub,
+      correlationΛ_apply]
+  have hd := (IsingModel.hasDerivAt_correlation_beta G J β A).deriv
+  rw [hfun]
+  simpa [G, A]
+    using hd
+
+/-- **GJ §17.5 Lemma 17.5.2 finite derivative-profile zero formula**: before
+the exhaustion stage contains the target pair `{x,z}`, the finite-exhaustion
+two-point function is identically zero, hence its beta derivative is zero. -/
+theorem lemma_17_5_2_finite_derivative_profile_eq_zero_of_not_subset
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (x z : Fin d → ℤ) {n : ℕ}
+    (hsub : ¬ ({x, z} : Finset (Fin d → ℤ)) ⊆ Λ.volume n) :
+    ∀ β : ℝ,
+      deriv (fun β' =>
+        Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β = 0 := by
+  intro β
+  have hfun :
+      (fun β' =>
+        Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) =
+        fun _ => 0 := by
+    funext β'
+    exact correlationAlongExhaustion_of_not_subset
+      (IsingModel.latticeGraph d) Λ _ hsub
+  rw [hfun]
+  simp
+
 /-- **GJ §17.5 Lemma 17.5.2 finite derivative-profile continuity**:
 for each exhaustion stage, the beta-derivative profile of the finite-volume
 two-point function is continuous in beta.  In the stage before `{x,z}` is
@@ -42,24 +106,14 @@ theorem lemma_17_5_2_finite_derivative_profile_continuous_beta
             IsingModel.correlation G (⟨J, 0, β⟩ : IsingParams ℝ) A *
               IsingModel.correlation G (⟨J, 0, β⟩ : IsingParams ℝ) {u, v},
           fun u v => by simp [Finset.pair_comm v u]⟩ e
-    have hderiv_eq :
-        ∀ β,
-          deriv (fun β' =>
-            Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
-              (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β = rhs β := by
+    have hderiv_eq : ∀ β,
+        deriv (fun β' =>
+          Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β = rhs β := by
       intro β
-      have hfun :
-          (fun β' =>
-            Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
-              (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) =
-            fun β' => IsingModel.correlation G
-              (⟨J, 0, β'⟩ : IsingParams ℝ) A := by
-        funext β'
-        rw [correlationAlongExhaustion_of_subset (IsingModel.latticeGraph d) Λ _ hsub,
-          correlationΛ_apply]
-      have hd := (IsingModel.hasDerivAt_correlation_beta G J β A).deriv
-      rw [hfun]
-      simpa [rhs, G, A] using hd
+      simpa [rhs, G, A] using
+        lemma_17_5_2_finite_derivative_profile_eq_beta_edge_sum
+          Λ J x z hsub β
     have hrhs_cont : Continuous rhs := by
       dsimp [rhs]
       refine continuous_const.mul (continuous_finset_sum G.edgeFinset ?_)
@@ -75,17 +129,8 @@ theorem lemma_17_5_2_finite_derivative_profile_continuous_beta
           deriv (fun β' =>
             Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
               (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β = 0 := by
-      intro β
-      have hfun :
-          (fun β' =>
-            Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
-              (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) =
-            fun _ => 0 := by
-        funext β'
-        exact correlationAlongExhaustion_of_not_subset
-          (IsingModel.latticeGraph d) Λ _ hsub
-      rw [hfun]
-      simp
+      exact lemma_17_5_2_finite_derivative_profile_eq_zero_of_not_subset
+        Λ J x z hsub
     exact continuous_const.congr fun β => (hderiv_eq β).symm
 
 /-- Monotone Dini-provider criterion with the finite derivative-profile
