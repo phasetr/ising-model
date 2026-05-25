@@ -8349,15 +8349,21 @@ feeds any established provider back into the named closed-interval Cauchy
 input, so downstream code can switch between the provider-shaped and
 Cauchy-shaped abstractions without reopening the limiting profile.
 
-The finite derivative-profile continuity input is now discharged.  For each
-exhaustion stage, the beta derivative of the finite two-point function is
-continuous in beta: before \(\{x,z\}\) is contained in the stage volume the
-along-exhaustion correlation is identically zero, and afterward the derivative
-is the explicit finite-volume beta-derivative formula, a finite sum of
-continuous correlations.  The strengthened monotone and antitone Dini criteria
-feed this continuity in automatically, leaving only the stagewise order
-direction, pointwise convergence, and continuity of the limiting derivative
-profile as external provider inputs.
+The finite derivative-profile formula and continuity input are now discharged.
+The theorem
+\texttt{lemma\_17\_5\_2\_finite\_derivative\_profile\_eq\_beta\_edge\_sum}
+states that, once \(\{x,z\}\) is contained in the stage volume, the beta
+derivative of the finite two-point function is the explicit finite Lebowitz
+edge sum over the induced graph.  The companion theorem
+\texttt{lemma\_17\_5\_2\_finite\_derivative\_profile\_eq\_zero\_of\_not\_subset}
+covers the pre-containment stages, where the along-exhaustion correlation is
+identically zero and its beta derivative is zero.  These formulas feed
+\texttt{lemma\_17\_5\_2\_finite\_derivative\_profile\_continuous\_beta}, which
+proves continuity of the finite derivative profile at every exhaustion stage.
+The strengthened monotone and antitone Dini criteria feed this continuity in
+automatically, leaving only the stagewise order direction, pointwise
+convergence, and continuity of the limiting derivative profile as external
+provider inputs.
 
 The provider is also connected one layer lower, at the infinite derivative and
 infinite-HLS bridge interface.  Thirty-one entry points feed
