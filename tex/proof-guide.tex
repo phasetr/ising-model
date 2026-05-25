@@ -8455,10 +8455,13 @@ stage-\(n\) cube has a coordinate of absolute value exactly \(n+1\)
 reference point \(p\) in the radius-\(R\) cube and a fresh stage-\(n+1\) vertex
 \(w\) with \(R\le n\), the \(\ell^1\) lattice distance obeys
 \(n+1-R\le\mathrm{latticeDistance}(p,w)\)
-(\texttt{latticeDistance\_ge\_of\_mem\_cubicBox\_succ\_not\_mem}).  Fresh
-exhaustion vertices thus recede from any fixed pair at unit speed in the
-exhaustion stage, which is the boundary-distance growth driving the (still to be
-formalized) exponential decay of the increment contributions.
+(\texttt{latticeDistance\_ge\_of\_mem\_cubicBox\_succ\_not\_mem}).  A vertex adjacent to a fresh vertex stays at distance at least \(n-R\)
+(\texttt{latticeDistance\_ge\_of\_adj\_mem\_cubicBox\_succ\_not\_mem}), since
+adjacency is unit \(\ell^1\)-distance, so the bound carries to the edges touching
+the boundary.  Fresh exhaustion vertices and their incident edges thus recede
+from any fixed pair at unit speed in the exhaustion stage, which is the
+boundary-distance growth driving the (still to be formalized) exponential decay
+of the increment contributions.
 
 These pieces assemble into an end-to-end conditional capstone for the
 upper-bound side of Lemma~17.5.2.  Assuming a geometric decay bound
