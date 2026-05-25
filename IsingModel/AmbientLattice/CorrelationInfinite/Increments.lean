@@ -10,8 +10,9 @@ stage (GKS) and bounded above by `1`, hence convergent to
 `correlationInfinite G Λ p A`.  This file records the basic structure of the
 consecutive-stage increments
 `correlationAlongExhaustion G Λ p A (n + 1) - correlationAlongExhaustion G Λ p A n`:
-they are nonnegative and (pointwise in the model data) summable, with total
-mass `correlationInfinite - correlationAlongExhaustion G Λ p A 0`.
+they are nonnegative and (pointwise in the model data) summable, their partial
+sums telescoping to `correlationAlongExhaustion G Λ p A n - correlationAlongExhaustion G Λ p A 0`,
+bounded above by `correlationInfinite - correlationAlongExhaustion G Λ p A 0`.
 
 This is the baseline increment-structure layer for the finite-volume
 convergence-rate program (Issue #2931): for correlations the increment series

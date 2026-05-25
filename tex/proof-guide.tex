@@ -8431,8 +8431,11 @@ with no need to locate the onset index.  At the baseline correlation level the
 increment series is automatically summable by monotone convergence: the
 consecutive correlation differences are nonnegative by GKS
 (\texttt{correlationAlongExhaustion\_increment\_nonneg}) and their partial sums
-telescope to \(\langle\sigma_x\sigma_z\rangle^\infty-\langle\sigma_x\sigma_z\rangle_{\Lambda_0}\),
-hence are summable (\texttt{correlationAlongExhaustion\_increment\_summable}).
+telescope to \(\langle\sigma_x\sigma_z\rangle_{\Lambda_n}-\langle\sigma_x\sigma_z\rangle_{\Lambda_0}\),
+bounded above by
+\(\langle\sigma_x\sigma_z\rangle^\infty-\langle\sigma_x\sigma_z\rangle_{\Lambda_0}\),
+hence the series is summable
+(\texttt{correlationAlongExhaustion\_increment\_summable}).
 Obtaining the analogous quantitative summable bound for the \(\beta\)-derivative
 increments is the substantive remaining convergence-rate input.
 

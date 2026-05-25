@@ -512,13 +512,15 @@ whose volume already contains the pair `{x,z}`, then the derivative-limit
 provider holds.
 
 The exhaustion eventually covers `{x,z}` (`Exhaustion.exhaust`), so all stages
-beyond some onset index are covered; the bound on covered stages therefore
+beyond some onset index `N` are covered; the bound on covered stages therefore
 supplies the eventual increment hypothesis of
-`lemma_17_5_2_derivative_limit_provider_of_summable_increments_eventually`, and
-the finitely many pre-coverage increments (which vanish, by
-`lemma_17_5_2_finite_derivative_increment_eq_zero_of_not_subset`) need no
-control.  This lets the convergence-rate analysis address only the covered
-stages without locating the onset index.  Part of Issue #2931. -/
+`lemma_17_5_2_derivative_limit_provider_of_summable_increments_eventually` with
+`N₀ = N`, and the finitely many head increments below `N` need no control once
+the metric-Cauchy threshold is raised past `N`.  (Stages whose successor is
+still uncovered contribute a zero increment, by
+`lemma_17_5_2_finite_derivative_increment_eq_zero_of_not_subset`.)  This lets the
+convergence-rate analysis address only the covered stages without locating the
+onset index.  Part of Issue #2931. -/
 theorem lemma_17_5_2_derivative_limit_provider_of_summable_increments_on_covered_stages
     {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
     (J : ℝ) (x z : Fin d → ℤ) (c : ℕ → ℝ) (hc : Summable c)
