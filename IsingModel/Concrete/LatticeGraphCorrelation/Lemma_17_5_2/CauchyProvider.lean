@@ -42,5 +42,17 @@ theorem lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc
   lemma_17_5_2_derivative_limit_provider_of_metricCauchy_on_Icc
     Λ J x z g' hcauchy hpoint
 
+/-- **GJ §17.5 Lemma 17.5.2 derivative-limit provider from named Cauchy
+input alone**: the named compact-interval metric Cauchy input constructs the
+pointwise derivative-profile limit by completeness of `ℝ`, then upgrades the
+result to the locally uniform derivative-limit provider. -/
+theorem lemma_17_5_2_derivative_limit_provider_of_named_metricCauchy_on_Icc_complete
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (x z : Fin d → ℤ)
+    (hcauchy : Lemma_17_5_2_DerivativeProfileMetricCauchyOnIcc Λ J x z) :
+    Lemma_17_5_2_DerivativeLimitProvider Λ J x z :=
+  lemma_17_5_2_derivative_limit_provider_of_metricCauchy_on_Icc_complete
+    Λ J x z hcauchy
+
 end Ambient
 end IsingModel
