@@ -256,6 +256,97 @@ theorem
       hαd Λ J x z hβ₁₂ hrho hh_diff hc_diff hh_nonneg
       hg_eq hh_pos hc_pos
 
+/-- **GJ §17.5 Lemma 17.5.2 concrete infinite-HLS Lipschitz package from a
+derivative-limit provider**: specialize the abstract profile `h` in the
+provider-shaped infinite-HLS package to the concrete pseudo-mass profile
+`pseudoMassFromParamsAtPair`. -/
+theorem
+    lemma_17_5_2_infinite_pseudoMass_pow_succ_lipschitz_of_concrete_hls_constant_provider
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (hJ_pos : 0 < J)
+    (x z : Fin d → ℤ) (hxz : x ≠ z)
+    {β₁ β₂ : ℝ} (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    {rho : ℝ} (hrho : 0 < rho)
+    (hderiv_provider : Lemma_17_5_2_DerivativeLimitProvider Λ J x z) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      ((∀ β' ∈ Set.Icc β₁ β₂,
+          Lemma_17_5_2_InfiniteHLSDenominatorComparison Λ J x z β' α K
+            (fun β =>
+              pseudoMassFromParamsAtPair hα hrho d Λ
+                (⟨J, 0, β⟩ : IsingParams ℝ) x z)) →
+        |(pseudoMassFromParamsAtPair hα hrho d Λ
+              (⟨J, 0, β₂⟩ : IsingParams ℝ) x z) ^ (2 * α + 1) -
+            (pseudoMassFromParamsAtPair hα hrho d Λ
+              (⟨J, 0, β₁⟩ : IsingParams ℝ) x z) ^ (2 * α + 1)| ≤
+          ↑(2 * α + 1) * K / rho * (β₂ - β₁)) := by
+  obtain ⟨g', hderiv_lim⟩ := hderiv_provider
+  let h : ℝ → ℝ := fun β =>
+    pseudoMassFromParamsAtPair hα hrho d Λ
+      (⟨J, 0, β⟩ : IsingParams ℝ) x z
+  have hprovider :
+      Lemma_17_5_2_DerivativeLimitProvider Λ J x z := ⟨g', hderiv_lim⟩
+  have hcorr : ∀ β ∈ Set.Icc β₁ β₂,
+      Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} ∈ Set.Ioo (0 : ℝ) 2 :=
+    lemma_17_5_2_active_range_on_Icc_of_high_temp_pair Λ hJ_pos hxz hIcc
+  have hc_cont : ∀ β ∈ Set.Icc β₁ β₂,
+      ContinuousAt
+        (fun β' =>
+          Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z})
+        β := by
+    intro β hβ
+    exact correlationInfinite_continuousAt_beta_of_high_temp
+      hd Λ x z hxz J hJ_pos β (hIcc hβ)
+  have hc_diff : ∀ β ∈ Set.Icc β₁ β₂,
+      DifferentiableAt ℝ
+        (fun β' =>
+          Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z})
+        β := by
+    intro β hβ
+    exact (correlationInfinite_hasDerivAt_beta_of_tendstoLocallyUniformlyOn_deriv
+      (d := d) (Λ := Λ) (r_val := x) (s_val := z) (J := J) (g' := g')
+      hd hxz hJ_pos hderiv_lim β (hIcc hβ)).differentiableAt
+  have hh_diff : ∀ β ∈ Set.Icc β₁ β₂, HasDerivAt h (deriv h β) β := by
+    simpa [h] using
+      pseudoMassFromParamsAtPair_beta_hasDerivAt_deriv_on_Icc_of_corr_differentiableAt
+        hα hrho Λ J x z hc_diff hcorr
+  have hh_nonneg : ∀ β ∈ Set.Icc β₁ β₂, 0 ≤ h β := by
+    intro β _hβ
+    exact pseudoMassFromParamsAtPair_nonneg hα hrho d Λ
+      (⟨J, 0, β⟩ : IsingParams ℝ) x z
+  have hg_eq : ∀ β ∈ Set.Icc β₁ β₂,
+      (fun γ => pseudoMassG α rho (h γ)) =ᶠ[nhds β]
+        (fun γ =>
+          Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, γ⟩ : IsingParams ℝ) {x, z}) := by
+    simpa [h] using
+      pseudoMassFromParamsAtPair_beta_pseudoMassG_eventuallyEq_on_Icc_of_corr_continuousAt
+        hα hrho Λ J x z hc_cont hcorr
+  have hh_pos : ∀ β ∈ Set.Icc β₁ β₂, 0 < h β := by
+    intro β hβ
+    exact pseudoMassFromParamsAtPair_pos_of_corr_mem hα hrho d Λ
+      (⟨J, 0, β⟩ : IsingParams ℝ) x z (hcorr β hβ)
+  have hc_pos : ∀ β ∈ Set.Icc β₁ β₂,
+      0 <
+        Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} := by
+    intro β hβ
+    exact (hcorr β hβ).1
+  simpa [h] using
+    lemma_17_5_2_infinite_pseudoMass_pow_succ_lipschitz_of_hls_constant_provider
+      (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
+      (β₁ := β₁) (β₂ := β₂) (rho := rho) (h := h)
+      hαd hd hJ_pos hxz hβ₁₂ hIcc hrho
+      hh_diff hh_nonneg hg_eq hh_pos hc_pos hprovider
+
 /-- **GJ §17.5 Lemma 17.5.2 enlarged finite-HLS package with path-rate bound
 from a derivative-limit provider**. -/
 theorem
