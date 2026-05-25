@@ -8450,6 +8450,23 @@ hence the series is summable
 Obtaining the analogous quantitative summable bound for the \(\beta\)-derivative
 increments is the substantive remaining convergence-rate input.
 
+These pieces assemble into an end-to-end conditional capstone for the
+upper-bound side of Lemma~17.5.2.  Assuming a geometric decay bound
+\(|F_{k+1}(\beta)-F_k(\beta)|\le M\,\rho^k\) with \(0\le\rho<1\) over the covered
+exhaustion stages, the geometric series is summable, so the covered-stage
+criterion builds the derivative-limit provider
+(\texttt{lemma\_17\_5\_2\_derivative\_limit\_provider\_of\_geometric\_increments\_on\_covered\_stages});
+feeding the provider into the concrete compact-ratio infinite-HLS upper-bound
+assembly then yields the named \(\mathrm{latticeMass}\) upper bound at the right
+endpoint \(\beta_2\)
+(\texttt{lemma\_17\_5\_2\_upper\_bound\_of\_geometric\_increments\_on\_covered\_stages}).
+This pins the entire remaining analytic task of the upper-bound side to a single
+quantitative estimate---a geometric (summable) convergence-rate bound on the
+finite-volume \(\beta\)-derivative increments---with all remaining hypotheses,
+besides the discrete HLS dimension condition \(2\alpha>d\), the dimension
+condition \(1\le d\), and the distinct-pair condition \(x\neq z\), being
+positivity and high-temperature range conditions.
+
 The finite derivative-profile formula and continuity input are now discharged.
 The theorem
 \texttt{lemma\_17\_5\_2\_finite\_derivative\_profile\_eq\_beta\_edge\_sum}
