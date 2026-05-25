@@ -8345,6 +8345,16 @@ aligned with the provider-shaped capstone API: callers moving from finite
 derivative bounds into the infinite-HLS pipeline no longer need to name the
 limiting derivative profile \(g'\).
 
+The compact-Cauchy criteria are also wired directly to that bridge layer.
+\texttt{DerivativeLimitProviderCauchyHLS.lean} packages five entry points that
+first construct \texttt{Lemma\_17\_5\_2\_DerivativeLimitProvider} from
+pointwise derivative-profile convergence plus compact-interval metric Cauchy
+control, then feed the provider into the interval infinite-HLS comparison,
+finite-HLS-to-infinite Lipschitz package, path-rate enlarged package, and the
+enlarged upper/sandwich assemblies.  Thus a future concrete Cauchy estimate for
+the beta-derivative profiles can be consumed by the HLS-uniform capstone path
+without separately naming the intermediate provider witness.
+
 The same provider is now connected to the larger finite-HLS assembly layer.
 Eight entry points feed \texttt{Lemma\_17\_5\_2\_DerivativeLimitProvider} into
 the scalar-provider, ratio-lower, uniform-correlation-lower, and
