@@ -1455,6 +1455,76 @@ theorem lemma_17_5_2_sandwich_of_concrete_infinite_hls_path_rate_provider
   refine ⟨K, hK, hK_conv, fun hcomp hpath_le => ?_⟩
   exact hfinish hcomp hpath_le
 
+/-- **GJ §17.5 Lemma 17.5.2 capstone from a concrete infinite-HLS package and
+path-rate comparison**: returns the concrete HLS witness and, under the same
+denominator-comparison and path-rate premises, both the named upper-bound
+predicate and the displayed two-sided endpoint sandwich for one constant. -/
+theorem lemma_17_5_2_capstone_of_concrete_infinite_hls_path_rate_provider
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    {rho : ℝ} (hrho : 0 < rho)
+    {Λ : Ambient.Exhaustion (Fin d → ℤ)}
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    {J : ℝ} (hJ_pos : 0 < J)
+    {x z : Fin d → ℤ} (hxz : x ≠ z)
+    {β₁ β₂ : ℝ} (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (hderiv_provider : Lemma_17_5_2_DerivativeLimitProvider Λ J x z)
+    (hdecay : HasExponentialDecay d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ)
+      (pseudoMassFromParamsAtPair hα hrho d Λ
+        (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      ((∀ β' ∈ Set.Icc β₁ β₂,
+          Lemma_17_5_2_InfiniteHLSDenominatorComparison Λ J x z β' α K
+            (lemma_17_5_2_concretePseudoMassBetaProfile hα hrho Λ J x z)) →
+        ENNReal.ofReal (-Real.log (Real.tanh (β₂ * J))) ≤
+          ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho) *
+            ENNReal.ofReal
+              (pseudoMassFromParamsAtPair hα hrho d Λ
+                (⟨J, 0, β₂⟩ : IsingParams ℝ) x z) →
+        Lemma_17_5_2_UpperBound hα hrho Λ J β₂ x z
+          (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho)) ∧
+        ENNReal.ofReal
+            (pseudoMassFromParamsAtPair hα hrho d Λ
+              (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
+          ≤ latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ∧
+        latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ≤
+          ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho) *
+            ENNReal.ofReal
+              (pseudoMassFromParamsAtPair hα hrho d Λ
+                (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)) := by
+  have hβ₂ : 0 < β₂ := (hIcc ⟨hβ₁₂, le_rfl⟩).1
+  have hpkg :=
+    lemma_17_5_2_infinite_pseudoMass_pow_succ_lipschitz_of_concrete_hls_constant_provider
+      (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
+      (β₁ := β₁) (β₂ := β₂) (rho := rho)
+      hα hαd hd hJ_pos hxz hβ₁₂ hIcc hrho hderiv_provider
+  have hpkg' :
+      ∃ K : ℝ, 0 < K ∧
+        (∀ x' y' : Fin d → ℤ,
+          ∑' w : Fin d → ℤ,
+              (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+              (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+        ((∀ β' ∈ Set.Icc β₁ β₂,
+            Lemma_17_5_2_InfiniteHLSDenominatorComparison Λ J x z β' α K
+              (lemma_17_5_2_concretePseudoMassBetaProfile hα hrho Λ J x z)) →
+          |(lemma_17_5_2_concretePseudoMassBetaProfile hα hrho Λ J x z β₂) ^
+              (2 * α + 1) -
+              (lemma_17_5_2_concretePseudoMassBetaProfile hα hrho Λ J x z β₁) ^
+                (2 * α + 1)| ≤
+            ↑(2 * α + 1) * K / rho * (β₂ - β₁)) := by
+    simpa [lemma_17_5_2_concretePseudoMassBetaProfile] using hpkg
+  exact
+    lemma_17_5_2_capstone_of_exists_infinite_hls_lipschitz_and_path_rate_le
+      (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
+      (β₁ := β₁) (β₂ := β₂) (r := rho)
+      (h := lemma_17_5_2_concretePseudoMassBetaProfile hα hrho Λ J x z)
+      hα hd hrho hJ_pos hβ₂ hpkg' hdecay
+
 /-- **GJ §17.5 Lemma 17.5.2 enlarged finite-HLS package with path-rate bound
 from a derivative-limit provider**. -/
 theorem
