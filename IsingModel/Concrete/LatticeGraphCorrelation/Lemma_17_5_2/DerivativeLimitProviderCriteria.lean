@@ -1,4 +1,5 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.DerivativeLimitProvider
+import Mathlib.Topology.MetricSpace.Cauchy
 import Mathlib.Topology.UniformSpace.Dini
 
 /-!
@@ -7,7 +8,8 @@ import Mathlib.Topology.UniformSpace.Dini
 This module records Dini-style sufficient criteria for the
 `Lemma_17_5_2_DerivativeLimitProvider` input.  The criteria reduce the provider
 proof to pointwise convergence of the finite-volume beta-derivative profiles
-plus a monotonicity direction and continuity of the limiting derivative profile.
+plus either a monotonicity direction and continuity of the limiting derivative
+profile, or compact-uniform Cauchy control of the derivative profiles.
 
 References:
 
@@ -17,6 +19,157 @@ References:
 
 namespace IsingModel
 namespace Ambient
+
+/-- **GJ §17.5 Lemma 17.5.2 derivative-limit provider criterion,
+compact-uniform Cauchy form**: if the finite-volume beta-derivative profiles
+are uniformly Cauchy on every compact subset of the open high-temperature
+interval, and they converge pointwise to `g'`, then they converge locally
+uniformly there and hence supply the derivative-limit provider. -/
+theorem lemma_17_5_2_derivative_limit_provider_of_uniformCauchy_on_compacts
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (x z : Fin d → ℤ) (g' : ℝ → ℝ)
+    (hcauchy :
+      ∀ K : Set ℝ,
+        K ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
+          IsCompact K →
+            UniformCauchySeqOn
+              (fun n β =>
+                deriv (fun β' =>
+                  Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                    (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
+              Filter.atTop K)
+    (hpoint :
+      ∀ β ∈ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))),
+        Filter.Tendsto
+          (fun n =>
+            deriv (fun β' =>
+              Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
+          Filter.atTop (nhds (g' β))) :
+    Lemma_17_5_2_DerivativeLimitProvider Λ J x z := by
+  refine ⟨g', ?_⟩
+  rw [tendstoLocallyUniformlyOn_iff_forall_isCompact isOpen_Ioo]
+  intro K hK_sub hK_compact
+  exact (hcauchy K hK_sub hK_compact).tendstoUniformlyOn_of_tendsto
+    fun β hβ => hpoint β (hK_sub hβ)
+
+/-- **GJ §17.5 Lemma 17.5.2 derivative-limit provider criterion,
+metric compact Cauchy form**: an epsilon--eventual version of
+`lemma_17_5_2_derivative_limit_provider_of_uniformCauchy_on_compacts`. -/
+theorem lemma_17_5_2_derivative_limit_provider_of_metricCauchy_on_compacts
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (x z : Fin d → ℤ) (g' : ℝ → ℝ)
+    (hcauchy :
+      ∀ K : Set ℝ,
+        K ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
+          IsCompact K →
+            ∀ ε > (0 : ℝ), ∃ N : ℕ, ∀ m ≥ N, ∀ n ≥ N, ∀ β ∈ K,
+              dist
+                (deriv (fun β' =>
+                  Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                    (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} m) β)
+                (deriv (fun β' =>
+                  Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                    (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β) < ε)
+    (hpoint :
+      ∀ β ∈ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))),
+        Filter.Tendsto
+          (fun n =>
+            deriv (fun β' =>
+              Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
+          Filter.atTop (nhds (g' β))) :
+    Lemma_17_5_2_DerivativeLimitProvider Λ J x z := by
+  refine
+    lemma_17_5_2_derivative_limit_provider_of_uniformCauchy_on_compacts
+      Λ J x z g' ?_ hpoint
+  intro K hK_sub hK_compact
+  exact Metric.uniformCauchySeqOn_iff.2 (hcauchy K hK_sub hK_compact)
+
+/-- **GJ §17.5 Lemma 17.5.2 derivative-limit provider criterion,
+closed-interval Cauchy form**: it is enough to prove uniform Cauchy control of
+the finite-volume beta-derivative profiles on every closed interval contained
+in the open high-temperature interval, together with pointwise convergence on
+the open interval. -/
+theorem lemma_17_5_2_derivative_limit_provider_of_uniformCauchy_on_Icc
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (x z : Fin d → ℤ) (g' : ℝ → ℝ)
+    (hcauchy :
+      ∀ β₁ β₂ : ℝ,
+        Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
+          UniformCauchySeqOn
+            (fun n β =>
+              deriv (fun β' =>
+                Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                  (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
+            Filter.atTop (Set.Icc β₁ β₂))
+    (hpoint :
+      ∀ β ∈ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))),
+        Filter.Tendsto
+          (fun n =>
+            deriv (fun β' =>
+              Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
+          Filter.atTop (nhds (g' β))) :
+    Lemma_17_5_2_DerivativeLimitProvider Λ J x z := by
+  refine ⟨g', ?_⟩
+  refine tendstoLocallyUniformlyOn_of_forall_exists_nhds ?_
+  intro β hβ
+  let B : ℝ := 1 / (J * ↑(2 * d))
+  let β₁ : ℝ := β / 2
+  let β₂ : ℝ := (β + B) / 2
+  have hβ₁β : β₁ < β := by
+    dsimp [β₁]
+    linarith [hβ.1]
+  have hββ₂ : β < β₂ := by
+    dsimp [β₂, B]
+    linarith [hβ.2]
+  have hIcc :
+      Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) := by
+    intro γ hγ
+    have hβ₁_pos : 0 < β₁ := by
+      dsimp [β₁]
+      linarith [hβ.1]
+    have hβ₂_lt : β₂ < B := by
+      dsimp [β₂, B]
+      linarith [hβ.2]
+    exact ⟨lt_of_lt_of_le hβ₁_pos hγ.1, lt_of_le_of_lt hγ.2 hβ₂_lt⟩
+  refine ⟨Set.Icc β₁ β₂, nhdsWithin_le_nhds (Icc_mem_nhds hβ₁β hββ₂), ?_⟩
+  exact (hcauchy β₁ β₂ hIcc).tendstoUniformlyOn_of_tendsto
+    fun γ hγ => hpoint γ (hIcc hγ)
+
+/-- **GJ §17.5 Lemma 17.5.2 derivative-limit provider criterion,
+metric closed-interval Cauchy form**: an epsilon--eventual version of
+`lemma_17_5_2_derivative_limit_provider_of_uniformCauchy_on_Icc`. -/
+theorem lemma_17_5_2_derivative_limit_provider_of_metricCauchy_on_Icc
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (x z : Fin d → ℤ) (g' : ℝ → ℝ)
+    (hcauchy :
+      ∀ β₁ β₂ : ℝ,
+        Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
+          ∀ ε > (0 : ℝ), ∃ N : ℕ, ∀ m ≥ N, ∀ n ≥ N,
+            ∀ β ∈ Set.Icc β₁ β₂,
+              dist
+                (deriv (fun β' =>
+                  Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                    (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} m) β)
+                (deriv (fun β' =>
+                  Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                    (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β) < ε)
+    (hpoint :
+      ∀ β ∈ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))),
+        Filter.Tendsto
+          (fun n =>
+            deriv (fun β' =>
+              Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
+          Filter.atTop (nhds (g' β))) :
+    Lemma_17_5_2_DerivativeLimitProvider Λ J x z := by
+  refine
+    lemma_17_5_2_derivative_limit_provider_of_uniformCauchy_on_Icc
+      Λ J x z g' ?_ hpoint
+  intro β₁ β₂ hIcc
+  exact Metric.uniformCauchySeqOn_iff.2 (hcauchy β₁ β₂ hIcc)
 
 /-- **GJ §17.5 Lemma 17.5.2 derivative-limit provider criterion,
 monotone form**: pointwise convergence of the finite-volume beta-derivative
