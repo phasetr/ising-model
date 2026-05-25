@@ -8115,14 +8115,24 @@ is the scalar bridge: if \(c_n\to c_\infty\) uniformly on the interval,
 The lattice beta-interval specialization
 \texttt{lemma\_17\_5\_2\_ratio\_lower\_of\_uniform\_correlation\_on\_beta\_interval}
 uses the existing high-temperature Dini theorem
-\texttt{correlationAlongExhaustion\_tendstoUniformlyOn\_beta}.  The direct
+\texttt{correlationAlongExhaustion\_tendstoUniformlyOn\_beta}.  The
+self-interval form
+\texttt{lemma\_17\_5\_2\_ratio\_lower\_of\_uniform\_correlation\_on\_self\_Icc}
+uses \([\beta_1,\beta_2]\) itself as the compact high-temperature interval,
+deriving \(0<\beta_1\) and \(\beta_2J(2d)<1\) from the interval inclusion.
+The direct
 assemblies
 \texttt{lemma\_17\_5\_2\_upper\_bound\_of\_high\_temp\_uniform\_correlation\_lower}
 and
 \texttt{lemma\_17\_5\_2\_sandwich\_of\_high\_temp\_uniform\_correlation\_lower}
-feed this \(L\) into the high-temperature ratio-lower package above.  Thus the
-finite ratio-lower premise has been reduced to interval positivity and upper
-bounds for the infinite correlation and the pseudo-mass denominator.
+feed this \(L\) into the high-temperature ratio-lower package above; the
+matching self-interval wrappers
+\texttt{lemma\_17\_5\_2\_upper\_bound\_of\_uniform\_correlation\_lower\_on\_self\_Icc}
+and
+\texttt{lemma\_17\_5\_2\_sandwich\_of\_uniform\_correlation\_lower\_on\_self\_Icc}
+remove the auxiliary \(a,b\) shell from the same assembly.  Thus the finite
+ratio-lower premise has been reduced to interval positivity and upper bounds
+for the infinite correlation and the pseudo-mass denominator.
 
 The compact-bounds layer supplies those interval constants from closed-interval
 continuity.  The helpers
