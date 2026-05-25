@@ -8427,7 +8427,18 @@ Since \texttt{Exhaustion.exhaust} guarantees that all stages past some onset
 index are covered, a summable bound on the increments over the covered stages
 already supplies the eventual hypothesis above
 (\texttt{lemma\_17\_5\_2\_derivative\_limit\_provider\_of\_summable\_increments\_on\_covered\_stages}),
-with no need to locate the onset index.  At the baseline correlation level the
+with no need to locate the onset index.  The increment magnitude is controlled
+uniformly: on a closed high-temperature interval the triangle inequality applied
+to the all-stage finite derivative bound gives
+\(|F_{k+1}-F_k|\le 2\,(J\,M^2+4dJ)\) uniformly in the stage \(k\), with
+\(M=b\,J\,2d/(1-b\,J\,2d)\) for the auxiliary upper end \(b\)
+(\texttt{lemma\_17\_5\_2\_finite\_derivative\_increment\_abs\_le\_high\_temp\_on\_Icc\_all\_stages});
+the self-interval form
+\texttt{lemma\_17\_5\_2\_finite\_derivative\_increment\_abs\_le\_high\_temp\_on\_self\_Icc}
+specializes to \(b=\beta_2\).
+This uniform bound is not yet summable; sharpening it to a summable (geometric)
+bound from the finite-volume convergence rate is the substantive remaining
+input.  At the baseline correlation level the
 increment series is automatically summable by monotone convergence: the
 consecutive correlation differences are nonnegative by GKS
 (\texttt{correlationAlongExhaustion\_increment\_nonneg}) and their partial sums
