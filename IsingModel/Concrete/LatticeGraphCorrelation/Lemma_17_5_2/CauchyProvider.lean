@@ -16,6 +16,19 @@ References:
 namespace IsingModel
 namespace Ambient
 
+/-- **GJ §17.5 Lemma 17.5.2 named Cauchy input extracted from a provider**:
+the locally uniform derivative-limit provider supplies the closed-interval
+metric Cauchy input used by the named Cauchy-provider route. -/
+theorem lemma_17_5_2_named_metricCauchy_on_Icc_of_derivative_limit_provider
+    {d : ℕ} {Λ : Ambient.Exhaustion (Fin d → ℤ)}
+    {J : ℝ} {x z : Fin d → ℤ}
+    (hprovider : Lemma_17_5_2_DerivativeLimitProvider Λ J x z) :
+    Lemma_17_5_2_DerivativeProfileMetricCauchyOnIcc Λ J x z := by
+  intro β₁ β₂ hIcc
+  exact
+    lemma_17_5_2_derivative_limit_provider_metricCauchy_on_Icc
+      (Λ := Λ) (J := J) (x := x) (z := z) hprovider hIcc
+
 /-- **GJ §17.5 Lemma 17.5.2 derivative-limit provider from named Cauchy
 inputs**: the named compact-interval metric Cauchy and pointwise convergence
 inputs supply the provider used by downstream HLS and concrete capstone layers.
