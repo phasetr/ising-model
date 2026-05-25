@@ -1,6 +1,7 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.DerivativeLimitProvider
 import Mathlib.Topology.MetricSpace.Cauchy
 import Mathlib.Topology.UniformSpace.Dini
+import Mathlib.Analysis.SpecificLimits.Basic
 
 /-!
 # GJ §17.5 Lemma 17.5.2 capstone — derivative-limit provider criteria
@@ -11,7 +12,11 @@ proof to pointwise convergence of the finite-volume beta-derivative profiles
 plus either a monotonicity direction and continuity of the limiting derivative
 profile, compact-uniform Cauchy control plus pointwise convergence, or
 closed-interval metric Cauchy control alone.  In the last case, completeness of
-`ℝ` constructs the pointwise derivative-profile limit.
+`ℝ` constructs the pointwise derivative-profile limit.  A further pair of
+criteria discharges that closed-interval metric Cauchy control from a concrete
+convergence-rate bound on consecutive finite-volume stages: a summable bound on
+the consecutive-stage derivative differences (telescoping/summable-tail), and
+its geometric specialization matching cluster-expansion convergence rates.
 
 References:
 
@@ -327,6 +332,98 @@ theorem lemma_17_5_2_derivative_limit_provider_of_metricCauchy_on_Icc_complete
       Λ J x z g' hcauchy (by
         intro β hβ
         simpa [F] using hg' β hβ)
+
+/-- **GJ §17.5 Lemma 17.5.2 derivative-limit provider criterion,
+summable-increment form**: if there is a summable sequence `c : ℕ → ℝ` such
+that on every closed interval inside the open high-temperature region the
+consecutive-stage finite-volume beta-derivative differences are uniformly
+bounded by `c k`, then the finite-volume derivative profiles are uniformly
+Cauchy on each such interval, and completeness of `ℝ` supplies the
+derivative-limit provider.
+
+The proof is a telescoping/summable-tail argument: on a fixed closed interval
+the polygon inequality `dist_le_Ico_sum_of_dist_le` bounds `dist (F m β) (F n β)`
+by `∑_{Ico m n} c`, which equals the difference of partial sums of `c`; since
+`c` is summable, the partial sums form a Cauchy sequence, so that difference is
+below any `ε` uniformly in `β` once both indices are large.  This packages the
+remaining derivative-limit input as a concrete convergence-rate hypothesis. -/
+theorem lemma_17_5_2_derivative_limit_provider_of_summable_increments
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (x z : Fin d → ℤ) (c : ℕ → ℝ) (hc : Summable c)
+    (hincr :
+      ∀ β₁ β₂ : ℝ,
+        Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
+          ∀ k : ℕ, ∀ β ∈ Set.Icc β₁ β₂,
+            dist
+              (deriv (fun β' =>
+                Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                  (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} k) β)
+              (deriv (fun β' =>
+                Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                  (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} (k + 1)) β) ≤ c k) :
+    Lemma_17_5_2_DerivativeLimitProvider Λ J x z := by
+  -- The partial sums of `c` form a Cauchy sequence by summability.
+  have hScauchy :
+      CauchySeq (fun N => ∑ i ∈ Finset.range N, c i) :=
+    hc.hasSum.tendsto_sum_nat.cauchySeq
+  apply lemma_17_5_2_derivative_limit_provider_of_metricCauchy_on_Icc_complete
+  intro β₁ β₂ hIcc ε hε
+  obtain ⟨N, hN⟩ := Metric.cauchySeq_iff.1 hScauchy ε hε
+  refine ⟨N, fun m hm n hn β hβ => ?_⟩
+  -- Abbreviate the stagewise derivative profile at the fixed point `β`.
+  set f : ℕ → ℝ := fun k =>
+    deriv (fun β' =>
+      Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} k) β with hf
+  -- A monotone-index estimate, then symmetrize.
+  have hbound :
+      ∀ p q : ℕ, p ≤ q → N ≤ p → N ≤ q → dist (f p) (f q) < ε := by
+    intro p q hpq hNp hNq
+    calc
+      dist (f p) (f q)
+          ≤ ∑ i ∈ Finset.Ico p q, c i :=
+            dist_le_Ico_sum_of_dist_le hpq fun {k} _ _ => hincr β₁ β₂ hIcc k β hβ
+      _ = (∑ i ∈ Finset.range q, c i) - ∑ i ∈ Finset.range p, c i :=
+            Finset.sum_Ico_eq_sub c hpq
+      _ ≤ |(∑ i ∈ Finset.range q, c i) - ∑ i ∈ Finset.range p, c i| :=
+            le_abs_self _
+      _ = dist (∑ i ∈ Finset.range q, c i) (∑ i ∈ Finset.range p, c i) :=
+            (Real.dist_eq _ _).symm
+      _ < ε := hN q hNq p hNp
+  rcases le_total m n with hmn | hnm
+  · exact hbound m n hmn hm hn
+  · simpa [dist_comm] using hbound n m hnm hn hm
+
+/-- **GJ §17.5 Lemma 17.5.2 derivative-limit provider criterion,
+geometric-increment form**: the special case of
+`lemma_17_5_2_derivative_limit_provider_of_summable_increments` in which the
+consecutive-stage finite-volume beta-derivative differences are bounded by a
+geometric sequence `M · ratio ^ k` with `0 ≤ M` and `0 ≤ ratio < 1`.
+
+This matches the geometric (exponential) finite-to-infinite convergence rate
+produced by cluster-expansion estimates: the geometric series is summable, so
+the summable-increment criterion applies directly. -/
+theorem lemma_17_5_2_derivative_limit_provider_of_geometric_increments
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (x z : Fin d → ℤ) (M ratio : ℝ)
+    (hratio0 : 0 ≤ ratio) (hratio1 : ratio < 1)
+    (hincr :
+      ∀ β₁ β₂ : ℝ,
+        Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
+          ∀ k : ℕ, ∀ β ∈ Set.Icc β₁ β₂,
+            dist
+              (deriv (fun β' =>
+                Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                  (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} k) β)
+              (deriv (fun β' =>
+                Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                  (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} (k + 1)) β) ≤
+              M * ratio ^ k) :
+    Lemma_17_5_2_DerivativeLimitProvider Λ J x z := by
+  have hsummable : Summable (fun k => M * ratio ^ k) :=
+    (summable_geometric_of_lt_one hratio0 hratio1).mul_left M
+  exact lemma_17_5_2_derivative_limit_provider_of_summable_increments
+    Λ J x z (fun k => M * ratio ^ k) hsummable hincr
 
 /-- **GJ §17.5 Lemma 17.5.2 derivative-limit provider criterion,
 monotone form**: pointwise convergence of the finite-volume beta-derivative

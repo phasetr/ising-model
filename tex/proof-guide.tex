@@ -8388,6 +8388,26 @@ feeds any established provider back into the named closed-interval Cauchy
 input, so downstream code can switch between the provider-shaped and
 Cauchy-shaped abstractions without reopening the limiting profile.
 
+The closed-interval metric-Cauchy hypothesis is in turn discharged from a
+concrete convergence-rate bound on consecutive finite-volume stages.  Suppose
+there is a summable sequence \(c:\mathbb{N}\to\mathbb{R}\) such that, on every
+closed interval \([\beta_1,\beta_2]\subset(0,(J\,2d)^{-1})\) and for every
+\(\beta\) there, \(|F_{k+1}(\beta)-F_k(\beta)|\le c_k\), where
+\(F_n(\beta)=\partial_\beta\langle\sigma_x\sigma_z\rangle_{\Lambda_n}(\beta)\).
+For \(m\le n\) the polygon inequality gives
+\(|F_m(\beta)-F_n(\beta)|\le\sum_{k=m}^{n-1}c_k=S_n-S_m\) with
+\(S_N=\sum_{k<N}c_k\); since \(c\) is summable the partial sums \((S_N)\) are
+Cauchy, so \(S_n-S_m\le|S_n-S_m|<\varepsilon\) uniformly in \(\beta\) once
+\(m,n\ge N\).  Hence the finite-volume derivative profiles are uniformly Cauchy
+on each closed interval and the provider follows.  The Lean criterion is
+\texttt{lemma\_17\_5\_2\_derivative\_limit\_provider\_of\_summable\_increments};
+the geometric specialization
+\texttt{lemma\_17\_5\_2\_derivative\_limit\_provider\_of\_geometric\_increments}
+takes \(c_k=M\,\rho^k\) with \(0\le M\) and \(0\le\rho<1\), matching the
+geometric (exponential) finite-to-infinite convergence rate produced by
+cluster-expansion estimates, with summability supplied by the geometric-series
+criterion.
+
 The finite derivative-profile formula and continuity input are now discharged.
 The theorem
 \texttt{lemma\_17\_5\_2\_finite\_derivative\_profile\_eq\_beta\_edge\_sum}
