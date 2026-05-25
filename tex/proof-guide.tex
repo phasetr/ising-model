@@ -8355,6 +8355,17 @@ enlarged upper/sandwich assemblies.  Thus a future concrete Cauchy estimate for
 the beta-derivative profiles can be consumed by the HLS-uniform capstone path
 without separately naming the intermediate provider witness.
 
+The Dini criteria are wired to the same infinite-HLS bridge layer.
+\texttt{DerivativeLimitProviderDiniHLS.lean} packages five entry points that
+first construct \texttt{Lemma\_17\_5\_2\_DerivativeLimitProvider} from the
+named Dini-order derivative-profile input, pointwise convergence, and
+continuity of the limiting derivative profile, then feed that provider into the
+interval infinite-HLS comparison, finite-HLS-to-infinite Lipschitz package,
+path-rate enlarged package, and enlarged upper/sandwich assemblies.  This makes
+the Dini route directly consumable by the HLS-uniform capstone path while
+leaving the stagewise order, pointwise convergence, limiting-profile
+continuity, and finite derivative/HLS inputs visible.
+
 The same provider is now connected to the larger finite-HLS assembly layer.
 Eight entry points feed \texttt{Lemma\_17\_5\_2\_DerivativeLimitProvider} into
 the scalar-provider, ratio-lower, uniform-correlation-lower, and
