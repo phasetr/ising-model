@@ -8470,6 +8470,13 @@ endpoint pseudo-mass exponential-decay hypothesis upgrades this to the two-sided
 \(\mathrm{latticeMass}\) sandwich \(m^-(\beta_2)\le m(\beta_2)\le C\,m^-(\beta_2)\)
 (\texttt{lemma\_17\_5\_2\_sandwich\_of\_geometric\_increments\_on\_covered\_stages}
 and \texttt{lemma\_17\_5\_2\_capstone\_of\_geometric\_increments\_on\_covered\_stages}).
+The fully-concrete variants replace that abstract decay hypothesis by the
+scalar condition \(m^-(\beta_2)\le-\log(\beta_2 J\,2d)\), which validates the
+endpoint pseudo-mass as a decay rate, so both sides of the sandwich are driven by
+concrete scalar inputs---the geometric \(\beta\)-derivative increment decay
+(upper) and the pseudo-mass high-temperature rate bound (lower)
+(\texttt{lemma\_17\_5\_2\_sandwich\_of\_geometric\_increments\_on\_covered\_stages\_and\_pseudoMass\_le\_rate}
+and its capstone counterpart).
 
 The finite derivative-profile formula and continuity input are now discharged.
 The theorem
