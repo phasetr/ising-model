@@ -20,6 +20,85 @@ References:
 namespace IsingModel
 namespace Ambient
 
+/-- **GJ §17.5 Lemma 17.5.2 derivative-limit provider extraction, closed
+interval form**: a provider gives a limiting derivative profile whose
+finite-volume beta-derivative profiles converge uniformly on every closed
+interval contained in the open high-temperature region.
+
+This is the direct closed-interval consequence of the locally uniform provider
+and is the form consumed by compact-Cauchy and finite-HLS follow-up arguments.
+-/
+theorem lemma_17_5_2_derivative_limit_provider_tendstoUniformlyOn_Icc
+    {d : ℕ} {Λ : Ambient.Exhaustion (Fin d → ℤ)}
+    {J : ℝ} {x z : Fin d → ℤ}
+    {β₁ β₂ : ℝ}
+    (hprovider : Lemma_17_5_2_DerivativeLimitProvider Λ J x z)
+    (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d)))) :
+    ∃ g' : ℝ → ℝ,
+      TendstoUniformlyOn
+        (fun n β =>
+          deriv (fun β' =>
+            Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
+        g' Filter.atTop (Set.Icc β₁ β₂) := by
+  obtain ⟨g', hloc⟩ := hprovider
+  rw [tendstoLocallyUniformlyOn_iff_forall_isCompact isOpen_Ioo] at hloc
+  exact ⟨g', hloc (Set.Icc β₁ β₂) hIcc isCompact_Icc⟩
+
+/-- **GJ §17.5 Lemma 17.5.2 derivative-limit provider extraction, uniform
+Cauchy form**: on every closed beta interval inside the high-temperature
+region, a derivative-limit provider makes the finite-volume derivative
+profiles uniformly Cauchy.
+
+This exposes the provider as exactly the compact-Cauchy datum used by the
+closed-interval Cauchy route, without requiring downstream callers to unpack
+the limiting derivative profile. -/
+theorem lemma_17_5_2_derivative_limit_provider_uniformCauchySeqOn_Icc
+    {d : ℕ} {Λ : Ambient.Exhaustion (Fin d → ℤ)}
+    {J : ℝ} {x z : Fin d → ℤ}
+    {β₁ β₂ : ℝ}
+    (hprovider : Lemma_17_5_2_DerivativeLimitProvider Λ J x z)
+    (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d)))) :
+    UniformCauchySeqOn
+      (fun n β =>
+        deriv (fun β' =>
+          Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
+      Filter.atTop (Set.Icc β₁ β₂) := by
+  obtain ⟨_, htend⟩ :=
+    lemma_17_5_2_derivative_limit_provider_tendstoUniformlyOn_Icc
+      (Λ := Λ) (J := J) (x := x) (z := z)
+      (β₁ := β₁) (β₂ := β₂) hprovider hIcc
+  exact htend.uniformCauchySeqOn
+
+/-- **GJ §17.5 Lemma 17.5.2 derivative-limit provider extraction, metric
+Cauchy form**: an epsilon--`N` restatement of the preceding uniform-Cauchy
+closed-interval consequence.
+
+This is deliberately aligned with
+`Lemma_17_5_2_DerivativeProfileMetricCauchyOnIcc`, while avoiding a reverse
+import from the provider module to the named-input module. -/
+theorem lemma_17_5_2_derivative_limit_provider_metricCauchy_on_Icc
+    {d : ℕ} {Λ : Ambient.Exhaustion (Fin d → ℤ)}
+    {J : ℝ} {x z : Fin d → ℤ}
+    {β₁ β₂ : ℝ}
+    (hprovider : Lemma_17_5_2_DerivativeLimitProvider Λ J x z)
+    (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d)))) :
+    ∀ ε > (0 : ℝ), ∃ N : ℕ, ∀ m ≥ N, ∀ n ≥ N,
+      ∀ β ∈ Set.Icc β₁ β₂,
+        dist
+          (deriv (fun β' =>
+            Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} m) β)
+          (deriv (fun β' =>
+            Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β) < ε := by
+  have hcauchy :=
+    lemma_17_5_2_derivative_limit_provider_uniformCauchySeqOn_Icc
+      (Λ := Λ) (J := J) (x := x) (z := z)
+      (β₁ := β₁) (β₂ := β₂) hprovider hIcc
+  exact Metric.uniformCauchySeqOn_iff.mp hcauchy
+
 /-- **GJ §17.5 Lemma 17.5.2 derivative-limit provider criterion,
 compact-uniform Cauchy form**: if the finite-volume beta-derivative profiles
 are uniformly Cauchy on every compact subset of the open high-temperature
