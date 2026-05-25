@@ -504,6 +504,97 @@ theorem lemma_17_5_2_finite_derivative_increment_eq_zero_of_not_subset
     ⟨lemma_17_5_2_finite_derivative_profile_eq_zero_of_not_subset Λ J x z hk β,
       lemma_17_5_2_finite_derivative_profile_eq_zero_of_not_subset Λ J x z hsub β⟩
 
+/-- **GJ §17.5 Lemma 17.5.2 uniform increment bound for the finite
+β-derivative profiles**: on a closed high-temperature interval the
+consecutive-stage increment `F_{k+1} - F_k` is bounded in absolute value by
+twice the all-stage finite high-temperature derivative bound, uniformly in the
+stage `k` and the point `β`.
+
+This is the explicit (stage-uniform) magnitude control of the derivative
+increments: it follows from the all-stage finite high-temperature derivative
+bound `lemma_17_5_2_finite_deriv_abs_le_high_temp_on_Icc_all_stages` at stages
+`k` and `k + 1` and the triangle inequality.  The bound is uniform but not yet
+summable; sharpening it to a summable (geometric) bound via the finite-volume
+convergence rate is the substantive remaining input tracked by Issue #2931. -/
+theorem lemma_17_5_2_finite_derivative_increment_abs_le_high_temp_on_Icc_all_stages
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (hJ : 0 ≤ J)
+    {a b β₁ β₂ : ℝ} (ha : 0 < a) (hab : a ≤ b)
+    (hlt : b * J * ↑(2 * d) < 1)
+    (hβ_mem : ∀ β ∈ Set.Icc β₁ β₂, β ∈ Set.Icc a b)
+    {x z : Fin d → ℤ} (hxz : x ≠ z) :
+    ∀ k, ∀ β ∈ Set.Icc β₁ β₂,
+      |deriv (fun β' =>
+          Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} (k + 1)) β -
+        deriv (fun β' =>
+          Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} k) β| ≤
+        2 * (J * (b * J * ↑(2 * d) / (1 - b * J * ↑(2 * d))) ^ 2 +
+          J * (4 * ↑d)) := by
+  intro k β hβ
+  have hbound :=
+    lemma_17_5_2_finite_deriv_abs_le_high_temp_on_Icc_all_stages
+      Λ J hJ ha hab hlt hβ_mem hxz
+  have hk1 := hbound (k + 1) β hβ
+  have hk := hbound k β hβ
+  calc
+    |deriv (fun β' =>
+        Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} (k + 1)) β -
+      deriv (fun β' =>
+        Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} k) β|
+        ≤ |deriv (fun β' =>
+            Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} (k + 1)) β| +
+          |deriv (fun β' =>
+            Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} k) β| := abs_sub _ _
+    _ ≤ (J * (b * J * ↑(2 * d) / (1 - b * J * ↑(2 * d))) ^ 2 + J * (4 * ↑d)) +
+          (J * (b * J * ↑(2 * d) / (1 - b * J * ↑(2 * d))) ^ 2 + J * (4 * ↑d)) :=
+        add_le_add hk1 hk
+    _ = 2 * (J * (b * J * ↑(2 * d) / (1 - b * J * ↑(2 * d))) ^ 2 +
+          J * (4 * ↑d)) := by ring
+
+/-- **GJ §17.5 Lemma 17.5.2 uniform increment bound, self-interval form**:
+the consumable specialization of
+`lemma_17_5_2_finite_derivative_increment_abs_le_high_temp_on_Icc_all_stages`
+in which the auxiliary parameter interval `[a, b]` is the beta interval
+`[β₁, β₂]` itself.  Given that `[β₁, β₂]` lies inside the open high-temperature
+region `Ioo 0 (1 / (J · 2d))`, the consecutive-stage increment `F_{k+1} - F_k`
+is bounded in absolute value by `2 · (J · M² + 4dJ)` with
+`M = β₂ J · 2d / (1 - β₂ J · 2d)`, uniformly in the stage `k` and the point `β`.
+
+This is the form matching the closed-interval high-temperature data carried by
+the derivative-limit provider machinery.  Part of Issue #2931. -/
+theorem lemma_17_5_2_finite_derivative_increment_abs_le_high_temp_on_self_Icc
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (hJ : 0 < J) (hd : 1 ≤ d)
+    {β₁ β₂ : ℝ} (hβ₁ : 0 < β₁) (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    {x z : Fin d → ℤ} (hxz : x ≠ z) :
+    ∀ k, ∀ β ∈ Set.Icc β₁ β₂,
+      |deriv (fun β' =>
+          Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} (k + 1)) β -
+        deriv (fun β' =>
+          Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} k) β| ≤
+        2 * (J * (β₂ * J * ↑(2 * d) / (1 - β₂ * J * ↑(2 * d))) ^ 2 +
+          J * (4 * ↑d)) := by
+  have hd_pos : (0 : ℝ) < ↑(2 * d) := by
+    have : 0 < 2 * d := by omega
+    exact_mod_cast this
+  have hJ2d : 0 < J * ↑(2 * d) := mul_pos hJ hd_pos
+  have hβ₂_lt : β₂ < 1 / (J * ↑(2 * d)) := (hIcc ⟨hβ₁₂, le_rfl⟩).2
+  have hlt : β₂ * J * ↑(2 * d) < 1 := by
+    have h := (lt_div_iff₀ hJ2d).1 hβ₂_lt
+    calc β₂ * J * ↑(2 * d) = β₂ * (J * ↑(2 * d)) := by ring
+      _ < 1 := h
+  exact lemma_17_5_2_finite_derivative_increment_abs_le_high_temp_on_Icc_all_stages
+    Λ J hJ.le hβ₁ hβ₁₂ hlt (fun β hβ => hβ) hxz
+
 /-- **GJ §17.5 Lemma 17.5.2 derivative-limit provider criterion, covered-stage
 form**: if there is a summable sequence `c : ℕ → ℝ` such that on every closed
 interval inside the open high-temperature region the consecutive-stage
