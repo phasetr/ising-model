@@ -8346,7 +8346,7 @@ direction, pointwise convergence, and continuity of the limiting derivative
 profile as external provider inputs.
 
 The provider is also connected one layer lower, at the infinite derivative and
-infinite-HLS bridge interface.  Thirty entry points feed
+infinite-HLS bridge interface.  Thirty-one entry points feed
 \texttt{Lemma\_17\_5\_2\_DerivativeLimitProvider} into thermodynamic-limit
 beta differentiability, pointwise and interval infinite HLS denominator
 comparisons from finite derivative bounds, the HLS-denominator-comparison to
@@ -8359,8 +8359,8 @@ ratio-lower-to-sandwich wrappers, uniform-infinite-correlation-lower
 upper/sandwich/capstone wrappers and their self-interval variants,
 compact-ratio-bounds provider
 upper/sandwich/capstone wrappers and their self-interval variants,
-concrete infinite-HLS/path-rate upper-bound
-and sandwich packages, the
+concrete infinite-HLS/path-rate upper-bound,
+sandwich, and capstone packages, the
 finite-HLS-to-infinite Lipschitz package, and the enlarged upper/sandwich
 packages.  This keeps the bridge layer aligned with
 the provider-shaped capstone API: callers moving from finite derivative bounds,
@@ -8369,7 +8369,7 @@ the infinite-HLS pipeline no longer need to name the limiting derivative
 profile \(g'\).
 
 The compact-Cauchy criteria are also wired directly to that bridge layer.
-\texttt{DerivativeLimitProviderCauchyHLS.lean} packages eighteen entry points
+\texttt{DerivativeLimitProviderCauchyHLS.lean} packages nineteen entry points
 that
 first construct \texttt{Lemma\_17\_5\_2\_DerivativeLimitProvider} from
 pointwise derivative-profile convergence plus compact-interval metric Cauchy
@@ -8377,14 +8377,14 @@ control, then feed the provider into the interval infinite-HLS comparison,
 the HLS-denominator-comparison to infinite-Lipschitz packages,
 concrete uniform-correlation-lower upper/sandwich/capstone wrappers on the self
 interval, concrete compact-ratio upper/sandwich/capstone wrappers and their
-self-interval variants, concrete path-rate upper/sandwich packages,
+self-interval variants, concrete path-rate upper/sandwich/capstone packages,
 finite-HLS-to-infinite Lipschitz package, path-rate enlarged package, and the
 enlarged upper/sandwich assemblies.  Thus a future concrete Cauchy estimate
 for the beta-derivative profiles can be consumed by the HLS-uniform capstone
 path without separately naming the intermediate provider witness.
 
 The Dini criteria are wired to the same infinite-HLS bridge layer.
-\texttt{DerivativeLimitProviderDiniHLS.lean} packages eighteen entry points
+\texttt{DerivativeLimitProviderDiniHLS.lean} packages nineteen entry points
 that
 first construct \texttt{Lemma\_17\_5\_2\_DerivativeLimitProvider} from the
 named Dini-order derivative-profile input, pointwise convergence, and
@@ -8393,8 +8393,8 @@ interval infinite-HLS comparison, the HLS-denominator-comparison to
 infinite-Lipschitz packages, concrete uniform-correlation-lower
 upper/sandwich/capstone wrappers on the self interval, concrete compact-ratio
 upper/sandwich/capstone
-wrappers and their self-interval variants, concrete path-rate upper/sandwich
-packages,
+wrappers and their self-interval variants, concrete path-rate
+upper/sandwich/capstone packages,
 finite-HLS-to-infinite Lipschitz package, path-rate enlarged package, and
 enlarged upper/sandwich assemblies.  This makes the Dini route directly
 consumable by the HLS-uniform capstone path while leaving the stagewise order,
