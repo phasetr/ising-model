@@ -8213,6 +8213,15 @@ then apply the local defining equation and
 \texttt{pseudoMass\_deriv\_formula} to identify \(\partial_\beta m^-\) with
 the infinite-correlation beta derivative divided by the explicit
 \(\texttt{pseudoMassG}\) derivative at \(m^-\).
+The HLS derivative handoffs
+\texttt{pseudoMassFromParamsAtPair\_beta\_power\_deriv\_le\_of\_corr\_hasDerivAt},
+\texttt{pseudoMassFromParamsAtPair\_beta\_pow\_succ\_deriv\_bound\_of\_corr\_hasDerivAt},
+and
+\texttt{pseudoMassFromParamsAtPair\_beta\_pow\_succ\_deriv\_bound\_on\_Icc\_of\_corr\_differentiableAt}
+then turn the infinite-correlation derivative denominator comparison into the
+concrete bounds
+\((m^-)^{2\alpha}|\partial_\beta m^-|\le K/r\) and
+\(|\partial_\beta (m^-)^{2\alpha+1}|\le (2\alpha+1)K/r\).
 
 The concrete compact package then consumes these bridges.  Theorems
 \texttt{lemma\_17\_5\_2\_concrete\_pseudoMass\_compact\_ratio\_bounds\_on\_beta\_interval},
