@@ -8367,8 +8367,9 @@ leaving the stagewise order, pointwise convergence, limiting-profile
 continuity, and finite derivative/HLS inputs visible.
 
 The same provider is now connected to the larger finite-HLS assembly layer.
-Ten entry points feed \texttt{Lemma\_17\_5\_2\_DerivativeLimitProvider} into
-the direct finite-derivative-provider, scalar-provider, ratio-lower,
+Twelve entry points feed \texttt{Lemma\_17\_5\_2\_DerivativeLimitProvider}
+into the concrete pseudo-mass finite-derivative-provider, direct abstract
+finite-derivative-provider, scalar-provider, ratio-lower,
 uniform-correlation-lower, and compact-ratio-bounds upper/sandwich wrappers.
 This extends the provider-shaped interface below the concrete capstones:
 callers of the enlarged finite-HLS chain also no longer need to name the
@@ -8381,7 +8382,8 @@ hypothesis and the pointwise derivative-profile limit hypothesis used by both
 the Cauchy and Dini provider routes.  \texttt{CauchyProvider.lean} proves the
 corresponding Cauchy provider helper without importing downstream HLS assembly
 layers.  \texttt{CauchyFiniteHLS.lean} then feeds that provider into the
-direct finite-derivative-provider, scalar-provider, ratio-lower,
+concrete pseudo-mass finite-derivative-provider, direct abstract
+finite-derivative-provider, scalar-provider, ratio-lower,
 uniform-correlation-lower, and compact-ratio-bounds upper/sandwich assemblies.
 This keeps the concrete Cauchy estimate as the remaining analytic input while
 making it directly consumable by the finite-HLS capstone wrappers.
@@ -8390,7 +8392,8 @@ The Dini inputs are wired to the same finite-HLS assembly boundary.
 \texttt{DiniProvider.lean} names the stagewise monotone-or-antitone
 derivative-profile input and packages it with pointwise convergence plus
 continuity of the limiting derivative profile as a derivative-limit provider.
-\texttt{DiniFiniteHLS.lean} then feeds that provider into the direct
+\texttt{DiniFiniteHLS.lean} then feeds that provider into the concrete
+pseudo-mass finite-derivative-provider, direct abstract
 finite-derivative-provider, scalar-provider, ratio-lower,
 uniform-correlation-lower, and compact-ratio-bounds upper/sandwich assemblies.
 This gives the finite-HLS layer the same direct Dini-shaped API already
