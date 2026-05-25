@@ -67,8 +67,10 @@ named `latticeMass` upper-bound predicate of Lemma 17.5.2 at the right endpoint
 This pins the single remaining analytic input of the GJ §17.5 Lemma 17.5.2
 upper-bound side to one quantitative estimate: a summable (here geometric)
 convergence-rate bound on the finite-volume β-derivative increments (Issue
-#2931, Phase 3).  All other hypotheses are positivity / high-temperature
-range conditions. -/
+#2931, Phase 3).  Besides the standard discrete HLS dimension condition
+`2α > d`, the dimension condition `1 ≤ d`, and the distinct-pair condition
+`x ≠ z`, all other hypotheses are positivity / high-temperature range
+conditions. -/
 theorem lemma_17_5_2_upper_bound_of_geometric_increments_on_covered_stages
     {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
     {rho : ℝ} (hrho : 0 < rho)
