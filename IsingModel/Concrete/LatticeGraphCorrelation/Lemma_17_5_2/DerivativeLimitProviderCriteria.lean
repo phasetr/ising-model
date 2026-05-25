@@ -12,11 +12,13 @@ proof to pointwise convergence of the finite-volume beta-derivative profiles
 plus either a monotonicity direction and continuity of the limiting derivative
 profile, compact-uniform Cauchy control plus pointwise convergence, or
 closed-interval metric Cauchy control alone.  In the last case, completeness of
-`ℝ` constructs the pointwise derivative-profile limit.  A further pair of
+`ℝ` constructs the pointwise derivative-profile limit.  A further family of
 criteria discharges that closed-interval metric Cauchy control from a concrete
-convergence-rate bound on consecutive finite-volume stages: a summable bound on
-the consecutive-stage derivative differences (telescoping/summable-tail), and
-its geometric specialization matching cluster-expansion convergence rates.
+convergence-rate bound on consecutive finite-volume stages: an eventual summable
+bound on the consecutive-stage derivative differences (telescoping/summable-tail,
+requiring control only past a containment/cluster onset index), its all-stage
+corollary, and a geometric specialization matching cluster-expansion convergence
+rates.
 
 References:
 
@@ -333,27 +335,32 @@ theorem lemma_17_5_2_derivative_limit_provider_of_metricCauchy_on_Icc_complete
         intro β hβ
         simpa [F] using hg' β hβ)
 
-/-- **GJ §17.5 Lemma 17.5.2 derivative-limit provider criterion,
-summable-increment form**: if there is a summable sequence `c : ℕ → ℝ` such
-that on every closed interval inside the open high-temperature region the
-consecutive-stage finite-volume beta-derivative differences are uniformly
-bounded by `c k`, then the finite-volume derivative profiles are uniformly
-Cauchy on each such interval, and completeness of `ℝ` supplies the
-derivative-limit provider.
+/-- **GJ §17.5 Lemma 17.5.2 derivative-limit provider criterion, eventual
+summable-increment form**: if there is a summable sequence `c : ℕ → ℝ` and an
+onset index `N₀` such that on every closed interval inside the open
+high-temperature region the consecutive-stage finite-volume beta-derivative
+differences are uniformly bounded by `c k` for all `k ≥ N₀`, then the
+finite-volume derivative profiles are uniformly Cauchy on each such interval,
+and completeness of `ℝ` supplies the derivative-limit provider.
 
-The proof is a telescoping/summable-tail argument: on a fixed closed interval
-the polygon inequality `dist_le_Ico_sum_of_dist_le` bounds `dist (F m β) (F n β)`
-by `∑_{Ico m n} c`, which equals the difference of partial sums of `c`; since
-`c` is summable, the partial sums form a Cauchy sequence, so that difference is
-below any `ε` uniformly in `β` once both indices are large.  This packages the
-remaining derivative-limit input as a concrete convergence-rate hypothesis. -/
-theorem lemma_17_5_2_derivative_limit_provider_of_summable_increments
+The eventual form matches the actual finite-volume structure: for a fixed pair
+`{x,z}` the derivative profiles vanish before the exhaustion stage contains the
+pair, so any concrete convergence-rate control of the increments only begins
+past a containment/cluster onset stage.  The proof is a telescoping/summable-tail
+argument: on a fixed closed interval the polygon inequality
+`dist_le_Ico_sum_of_dist_le` bounds `dist (F m β) (F n β)` by `∑_{Ico m n} c`,
+which equals the difference of partial sums of `c`; since `c` is summable, the
+partial sums form a Cauchy sequence, so that difference is below any `ε`
+uniformly in `β` once both indices are large.  Restricting the metric-Cauchy
+index threshold to `max N N₀` keeps every telescoped index at or above `N₀`, so
+the finitely many uncontrolled head increments never enter. -/
+theorem lemma_17_5_2_derivative_limit_provider_of_summable_increments_eventually
     {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    (J : ℝ) (x z : Fin d → ℤ) (c : ℕ → ℝ) (hc : Summable c)
+    (J : ℝ) (x z : Fin d → ℤ) (c : ℕ → ℝ) (hc : Summable c) (N₀ : ℕ)
     (hincr :
       ∀ β₁ β₂ : ℝ,
         Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
-          ∀ k : ℕ, ∀ β ∈ Set.Icc β₁ β₂,
+          ∀ k : ℕ, N₀ ≤ k → ∀ β ∈ Set.Icc β₁ β₂,
             dist
               (deriv (fun β' =>
                 Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
@@ -369,7 +376,9 @@ theorem lemma_17_5_2_derivative_limit_provider_of_summable_increments
   apply lemma_17_5_2_derivative_limit_provider_of_metricCauchy_on_Icc_complete
   intro β₁ β₂ hIcc ε hε
   obtain ⟨N, hN⟩ := Metric.cauchySeq_iff.1 hScauchy ε hε
-  refine ⟨N, fun m hm n hn β hβ => ?_⟩
+  -- Raise the threshold past the onset index so every telescoped increment is
+  -- controlled.
+  refine ⟨max N N₀, fun m hm n hn β hβ => ?_⟩
   -- Abbreviate the stagewise derivative profile at the fixed point `β`.
   set f : ℕ → ℝ := fun k =>
     deriv (fun β' =>
@@ -377,22 +386,52 @@ theorem lemma_17_5_2_derivative_limit_provider_of_summable_increments
         (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} k) β with hf
   -- A monotone-index estimate, then symmetrize.
   have hbound :
-      ∀ p q : ℕ, p ≤ q → N ≤ p → N ≤ q → dist (f p) (f q) < ε := by
+      ∀ p q : ℕ, p ≤ q → max N N₀ ≤ p → max N N₀ ≤ q → dist (f p) (f q) < ε := by
     intro p q hpq hNp hNq
+    have hN₀p : N₀ ≤ p := le_trans (le_max_right N N₀) hNp
     calc
       dist (f p) (f q)
           ≤ ∑ i ∈ Finset.Ico p q, c i :=
-            dist_le_Ico_sum_of_dist_le hpq fun {k} _ _ => hincr β₁ β₂ hIcc k β hβ
+            dist_le_Ico_sum_of_dist_le hpq fun {k} hk _ =>
+              hincr β₁ β₂ hIcc k (le_trans hN₀p hk) β hβ
       _ = (∑ i ∈ Finset.range q, c i) - ∑ i ∈ Finset.range p, c i :=
             Finset.sum_Ico_eq_sub c hpq
       _ ≤ |(∑ i ∈ Finset.range q, c i) - ∑ i ∈ Finset.range p, c i| :=
             le_abs_self _
       _ = dist (∑ i ∈ Finset.range q, c i) (∑ i ∈ Finset.range p, c i) :=
             (Real.dist_eq _ _).symm
-      _ < ε := hN q hNq p hNp
+      _ < ε :=
+            hN q (le_trans (le_max_left N N₀) hNq) p (le_trans (le_max_left N N₀) hNp)
   rcases le_total m n with hmn | hnm
   · exact hbound m n hmn hm hn
   · simpa [dist_comm] using hbound n m hnm hn hm
+
+/-- **GJ §17.5 Lemma 17.5.2 derivative-limit provider criterion,
+summable-increment form**: if there is a summable sequence `c : ℕ → ℝ` such
+that on every closed interval inside the open high-temperature region the
+consecutive-stage finite-volume beta-derivative differences are uniformly
+bounded by `c k`, then completeness of `ℝ` supplies the derivative-limit
+provider.
+
+This is the all-stage (`N₀ = 0`) corollary of
+`lemma_17_5_2_derivative_limit_provider_of_summable_increments_eventually`. -/
+theorem lemma_17_5_2_derivative_limit_provider_of_summable_increments
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (x z : Fin d → ℤ) (c : ℕ → ℝ) (hc : Summable c)
+    (hincr :
+      ∀ β₁ β₂ : ℝ,
+        Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
+          ∀ k : ℕ, ∀ β ∈ Set.Icc β₁ β₂,
+            dist
+              (deriv (fun β' =>
+                Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                  (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} k) β)
+              (deriv (fun β' =>
+                Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                  (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} (k + 1)) β) ≤ c k) :
+    Lemma_17_5_2_DerivativeLimitProvider Λ J x z :=
+  lemma_17_5_2_derivative_limit_provider_of_summable_increments_eventually
+    Λ J x z c hc 0 (fun β₁ β₂ hIcc k _ β hβ => hincr β₁ β₂ hIcc k β hβ)
 
 /-- **GJ §17.5 Lemma 17.5.2 derivative-limit provider criterion,
 geometric-increment form**: the special case of
