@@ -144,6 +144,72 @@ theorem
       hαd hd hJ_pos hxz hβ₁₂ hIcc hrho
       hh_diff hh_nonneg hg_eq hh_pos hc_pos hprovider
 
+/-- **GJ §17.5 Lemma 17.5.2 infinite-HLS Lipschitz package from Cauchy
+provider inputs**: compact-interval Cauchy control supplies the provider used
+to derive the infinite-volume correlation differentiability input, leaving the
+interval HLS denominator comparison as the remaining analytic premise. -/
+theorem
+    lemma_17_5_2_infinite_pseudoMass_pow_succ_lipschitz_of_hls_constant_cauchy
+    {d α : ℕ} (hαd : 2 * α > d) (hd : 1 ≤ d)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (hJ_pos : 0 < J)
+    (x z : Fin d → ℤ) (hxz : x ≠ z)
+    {β₁ β₂ : ℝ} (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    {rho : ℝ} (hrho : 0 < rho)
+    {h : ℝ → ℝ} (g' : ℝ → ℝ)
+    (hh_diff : ∀ β' ∈ Set.Icc β₁ β₂, HasDerivAt h (deriv h β') β')
+    (hh_nonneg : ∀ β' ∈ Set.Icc β₁ β₂, 0 ≤ h β')
+    (hg_eq : ∀ β' ∈ Set.Icc β₁ β₂,
+      (fun γ => pseudoMassG α rho (h γ)) =ᶠ[nhds β']
+        (fun γ =>
+          Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, γ⟩ : IsingParams ℝ) {x, z}))
+    (hh_pos : ∀ β' ∈ Set.Icc β₁ β₂, 0 < h β')
+    (hc_pos : ∀ β' ∈ Set.Icc β₁ β₂,
+      0 <
+        Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z})
+    (hcauchy :
+      ∀ a b : ℝ,
+        Set.Icc a b ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
+          ∀ ε > (0 : ℝ), ∃ N : ℕ, ∀ m ≥ N, ∀ n ≥ N,
+            ∀ β ∈ Set.Icc a b,
+              dist
+                (deriv (fun β' =>
+                  Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                    (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} m) β)
+                (deriv (fun β' =>
+                  Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                    (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β) < ε)
+    (hpoint :
+      ∀ β ∈ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))),
+        Filter.Tendsto
+          (fun n =>
+            deriv (fun β' =>
+              Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
+          Filter.atTop (nhds (g' β))) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      ((∀ β' ∈ Set.Icc β₁ β₂,
+          Lemma_17_5_2_InfiniteHLSDenominatorComparison Λ J x z β' α K h) →
+        |(h β₂) ^ (2 * α + 1) - (h β₁) ^ (2 * α + 1)| ≤
+          ↑(2 * α + 1) * K / rho * (β₂ - β₁)) := by
+  have hprovider :
+      Lemma_17_5_2_DerivativeLimitProvider Λ J x z :=
+    lemma_17_5_2_derivative_limit_provider_of_metricCauchy_on_Icc
+      Λ J x z g' hcauchy hpoint
+  exact
+    lemma_17_5_2_infinite_pseudoMass_pow_succ_lipschitz_of_hls_constant_provider
+      (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
+      (β₁ := β₁) (β₂ := β₂) (rho := rho) (h := h)
+      hαd hd hJ_pos hxz hβ₁₂ hIcc hrho
+      hh_diff hh_nonneg hg_eq hh_pos hc_pos hprovider
+
 /-- **GJ §17.5 Lemma 17.5.2 enlarged finite-HLS package from Cauchy provider
 inputs**: compact-interval Cauchy control supplies the provider needed by the
 path-rate enlarged finite-HLS package. -/
