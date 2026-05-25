@@ -21,6 +21,29 @@ References:
 namespace IsingModel
 namespace Ambient
 
+/-- **Endpoint scalar bounds from a high-temperature interval inclusion**:
+if the closed beta interval is contained in the high-temperature region, then
+both endpoints are positive and the right endpoint satisfies `β₂ * J * 2d < 1`.
+-/
+theorem lemma_17_5_2_interval_endpoints_of_Icc_subset_high_temp
+    {d : ℕ} (hd : 1 ≤ d) {J β₁ β₂ : ℝ} (hJ_pos : 0 < J)
+    (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc :
+      Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d)))) :
+    0 < β₁ ∧ 0 < β₂ ∧ β₂ * J * ↑(2 * d) < 1 := by
+  have hβ₁_open : β₁ ∈ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) :=
+    hIcc (Set.left_mem_Icc.mpr hβ₁₂)
+  have hβ₂_open : β₂ ∈ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) :=
+    hIcc (Set.right_mem_Icc.mpr hβ₁₂)
+  refine ⟨hβ₁_open.1, hβ₂_open.1, ?_⟩
+  have h2d_pos : 0 < (↑(2 * d) : ℝ) := by
+    have h2d_nat : 0 < 2 * d := Nat.mul_pos (by norm_num) hd
+    exact_mod_cast h2d_nat
+  have hJ2d_pos : 0 < J * ↑(2 * d) := mul_pos hJ_pos h2d_pos
+  have hlt : β₂ * (J * ↑(2 * d)) < 1 := by
+    exact (lt_div_iff₀ hJ2d_pos).mp hβ₂_open.2
+  simpa [mul_assoc] using hlt
+
 /-- **GJ §17.5 Lemma 17.5.2 finite HLS bounds to infinite Lipschitz package**:
 under the HLS exponent condition, choose the HLS convolution constant `K`.
 If the finite-volume β-derivative profiles converge locally uniformly on the
@@ -1210,6 +1233,41 @@ theorem lemma_17_5_2_ratio_lower_of_uniform_correlation_on_beta_interval
           (⟨J, 0, β⟩ : IsingParams ℝ) {x, z})
       (h := h) hC_pos hH_pos hconv hcInf_lower hdenom_pos hdenom_bound
 
+/-- **GJ §17.5 Lemma 17.5.2 self-interval concrete ratio lower from a
+uniform infinite-correlation lower bound**: the beta interval itself supplies
+the compact high-temperature interval used to turn uniform convergence into
+the eventual finite ratio lower bound. -/
+theorem lemma_17_5_2_ratio_lower_of_uniform_correlation_on_self_Icc
+    {d α : ℕ} (hd : 1 ≤ d)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (hJ_pos : 0 < J)
+    {x z : Fin d → ℤ} (hxz : x ≠ z)
+    {β₁ β₂ : ℝ} (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    {h : ℝ → ℝ} {C H : ℝ} (hC_pos : 0 < C) (hH_pos : 0 < H)
+    (hcInf_lower : ∀ β ∈ Set.Icc β₁ β₂,
+      C ≤
+        Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) {x, z})
+    (hdenom_pos : ∀ β ∈ Set.Icc β₁ β₂, 0 < (h β) ^ (2 * α))
+    (hdenom_bound : ∀ β ∈ Set.Icc β₁ β₂, (h β) ^ (2 * α) ≤ H) :
+    ∃ L : ℝ, 0 < L ∧
+      ∀ᶠ n in Filter.atTop,
+        ∀ β ∈ Set.Icc β₁ β₂,
+          L ≤
+            Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} n /
+            (h β) ^ (2 * α) := by
+  obtain ⟨hβ₁_pos, _hβ₂_pos, hβ₂_lt⟩ :=
+    lemma_17_5_2_interval_endpoints_of_Icc_subset_high_temp
+      hd hJ_pos hβ₁₂ hIcc
+  exact
+    lemma_17_5_2_ratio_lower_of_uniform_correlation_on_beta_interval
+      (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
+      (β₁ := β₁) (β₂ := β₂) (a := β₁) (b := β₂) (h := h)
+      hJ_pos.le hxz hβ₁_pos hβ₁₂ hβ₂_lt (fun β hβ => hβ)
+      hC_pos hH_pos hcInf_lower hdenom_pos hdenom_bound
+
 /-- **GJ §17.5 Lemma 17.5.2 compact positive lower bound**: a continuous
 positive real-valued function on a nonempty closed interval has a positive
 uniform lower bound. -/
@@ -1682,6 +1740,141 @@ theorem lemma_17_5_2_sandwich_of_high_temp_uniform_correlation_lower
       hα hαd hd hJ_pos hxz hβ₁₂ hIcc ha hab hlt hβ_mem hrho g'
       hh_diff hh_nonneg hg_eq hh_pos hc_pos hm_pos hderiv_lim hC_pos hH_pos
       hcInf_lower hdenom_bound
+  exact ⟨K, hK, hK_conv,
+    lemma_17_5_2_sandwich_of_decay_and_upper hα hrho hdecay hupper⟩
+
+set_option maxHeartbeats 2000000 in
+-- Self-interval form of the uniform-correlation-lower upper-bound package.
+/-- **GJ §17.5 Lemma 17.5.2 self-interval upper bound from a uniform
+infinite-correlation lower bound**: specializes the auxiliary compact
+high-temperature interval in
+`lemma_17_5_2_upper_bound_of_high_temp_uniform_correlation_lower` to the beta
+interval itself. -/
+theorem lemma_17_5_2_upper_bound_of_uniform_correlation_lower_on_self_Icc
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    {J : ℝ} (hJ_pos : 0 < J)
+    {x z : Fin d → ℤ} (hxz : x ≠ z)
+    {β₁ β₂ : ℝ} (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc :
+      Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    {rho : ℝ} (hrho : 0 < rho)
+    {h : ℝ → ℝ} (g' : ℝ → ℝ)
+    (hh_diff : ∀ β' ∈ Set.Icc β₁ β₂, HasDerivAt h (deriv h β') β')
+    (hh_nonneg : ∀ β' ∈ Set.Icc β₁ β₂, 0 ≤ h β')
+    (hg_eq : ∀ β' ∈ Set.Icc β₁ β₂,
+      (fun γ => pseudoMassG α rho (h γ)) =ᶠ[nhds β']
+        (fun γ =>
+          Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, γ⟩ : IsingParams ℝ) {x, z}))
+    (hh_pos : ∀ β' ∈ Set.Icc β₁ β₂, 0 < h β')
+    (hc_pos : ∀ β' ∈ Set.Icc β₁ β₂,
+      0 <
+        Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z})
+    (hm_pos :
+      0 <
+        pseudoMassFromParamsAtPair hα hrho d Λ
+          (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
+    (hderiv_lim :
+      TendstoLocallyUniformlyOn
+        (fun n β =>
+          deriv (fun β' =>
+            Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
+        g' Filter.atTop (Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d)))))
+    {C H : ℝ} (hC_pos : 0 < C) (hH_pos : 0 < H)
+    (hcInf_lower : ∀ β ∈ Set.Icc β₁ β₂,
+      C ≤
+        Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) {x, z})
+    (hdenom_bound : ∀ β ∈ Set.Icc β₁ β₂, (h β) ^ (2 * α) ≤ H) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      Lemma_17_5_2_UpperBound hα hrho Λ J β₂ x z
+        (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho)) := by
+  obtain ⟨hβ₁_pos, _hβ₂_pos, hβ₂_lt⟩ :=
+    lemma_17_5_2_interval_endpoints_of_Icc_subset_high_temp
+      hd hJ_pos hβ₁₂ hIcc
+  exact
+    lemma_17_5_2_upper_bound_of_high_temp_uniform_correlation_lower
+      (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
+      (β₁ := β₁) (β₂ := β₂) (a := β₁) (b := β₂) (rho := rho) (h := h)
+      hα hαd hd hJ_pos hxz hβ₁₂ hIcc hβ₁_pos hβ₁₂ hβ₂_lt
+      (fun β hβ => hβ) hrho g' hh_diff hh_nonneg hg_eq hh_pos hc_pos
+      hm_pos hderiv_lim hC_pos hH_pos hcInf_lower hdenom_bound
+
+set_option maxHeartbeats 2000000 in
+-- Self-interval form of the uniform-correlation-lower sandwich package.
+/-- **GJ §17.5 Lemma 17.5.2 self-interval sandwich from a uniform
+infinite-correlation lower bound**: adds the validating pseudo-mass decay
+lower side to
+`lemma_17_5_2_upper_bound_of_uniform_correlation_lower_on_self_Icc`. -/
+theorem lemma_17_5_2_sandwich_of_uniform_correlation_lower_on_self_Icc
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    {Λ : Ambient.Exhaustion (Fin d → ℤ)}
+    {J : ℝ} (hJ_pos : 0 < J)
+    {x z : Fin d → ℤ} (hxz : x ≠ z)
+    {β₁ β₂ : ℝ} (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc :
+      Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    {rho : ℝ} (hrho : 0 < rho)
+    {h : ℝ → ℝ} (g' : ℝ → ℝ)
+    (hh_diff : ∀ β' ∈ Set.Icc β₁ β₂, HasDerivAt h (deriv h β') β')
+    (hh_nonneg : ∀ β' ∈ Set.Icc β₁ β₂, 0 ≤ h β')
+    (hg_eq : ∀ β' ∈ Set.Icc β₁ β₂,
+      (fun γ => pseudoMassG α rho (h γ)) =ᶠ[nhds β']
+        (fun γ =>
+          Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+            (⟨J, 0, γ⟩ : IsingParams ℝ) {x, z}))
+    (hh_pos : ∀ β' ∈ Set.Icc β₁ β₂, 0 < h β')
+    (hc_pos : ∀ β' ∈ Set.Icc β₁ β₂,
+      0 <
+        Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z})
+    (hm_pos :
+      0 <
+        pseudoMassFromParamsAtPair hα hrho d Λ
+          (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
+    (hderiv_lim :
+      TendstoLocallyUniformlyOn
+        (fun n β =>
+          deriv (fun β' =>
+            Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
+        g' Filter.atTop (Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d)))))
+    (hdecay : HasExponentialDecay d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ)
+      (pseudoMassFromParamsAtPair hα hrho d Λ
+        (⟨J, 0, β₂⟩ : IsingParams ℝ) x z))
+    {C H : ℝ} (hC_pos : 0 < C) (hH_pos : 0 < H)
+    (hcInf_lower : ∀ β ∈ Set.Icc β₁ β₂,
+      C ≤
+        Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) {x, z})
+    (hdenom_bound : ∀ β ∈ Set.Icc β₁ β₂, (h β) ^ (2 * α) ≤ H) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      ENNReal.ofReal
+          (pseudoMassFromParamsAtPair hα hrho d Λ
+            (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
+        ≤ latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ∧
+      latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ≤
+        ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho) *
+          ENNReal.ofReal
+            (pseudoMassFromParamsAtPair hα hrho d Λ
+              (⟨J, 0, β₂⟩ : IsingParams ℝ) x z) := by
+  obtain ⟨K, hK, hK_conv, hupper⟩ :=
+    lemma_17_5_2_upper_bound_of_uniform_correlation_lower_on_self_Icc
+      (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
+      (β₁ := β₁) (β₂ := β₂) (rho := rho) (h := h)
+      hα hαd hd hJ_pos hxz hβ₁₂ hIcc hrho g' hh_diff hh_nonneg hg_eq
+      hh_pos hc_pos hm_pos hderiv_lim hC_pos hH_pos hcInf_lower hdenom_bound
   exact ⟨K, hK, hK_conv,
     lemma_17_5_2_sandwich_of_decay_and_upper hα hrho hdecay hupper⟩
 
