@@ -1,4 +1,4 @@
-import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.CauchyFiniteHLS
+import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.DerivativeProfileInputs
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.DerivativeLimitProviderFiniteProfile
 
 /-!
