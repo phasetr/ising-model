@@ -479,5 +479,68 @@ theorem
       (lemma_17_5_2_finite_derivative_profile_continuous_beta Λ J x z n).continuousOn)
     hanti hg_cont hpoint
 
+/-- **GJ §17.5 Lemma 17.5.2 finite β-derivative increment vanishes before
+coverage**: if the exhaustion stage `k + 1` does not yet contain the pair
+`{x,z}`, then neither does stage `k` (by monotonicity of the exhaustion), so
+both finite β-derivative profiles vanish identically and their consecutive-stage
+increment is zero.
+
+This pins down the support of the derivative increments: any concrete
+convergence-rate control of `|F_{k+1} - F_k|` only needs to address the stages
+that already contain the pair.  Part of Issue #2931. -/
+theorem lemma_17_5_2_finite_derivative_increment_eq_zero_of_not_subset
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (x z : Fin d → ℤ) {k : ℕ}
+    (hsub : ¬ ({x, z} : Finset (Fin d → ℤ)) ⊆ Λ.volume (k + 1)) (β : ℝ) :
+    deriv (fun β' =>
+        Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} k) β = 0 ∧
+    deriv (fun β' =>
+        Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} (k + 1)) β = 0 := by
+  have hk : ¬ ({x, z} : Finset (Fin d → ℤ)) ⊆ Λ.volume k :=
+    fun h => hsub (h.trans (Λ.mono (Nat.le_succ k)))
+  exact
+    ⟨lemma_17_5_2_finite_derivative_profile_eq_zero_of_not_subset Λ J x z hk β,
+      lemma_17_5_2_finite_derivative_profile_eq_zero_of_not_subset Λ J x z hsub β⟩
+
+/-- **GJ §17.5 Lemma 17.5.2 derivative-limit provider criterion, covered-stage
+form**: if there is a summable sequence `c : ℕ → ℝ` such that on every closed
+interval inside the open high-temperature region the consecutive-stage
+finite-volume β-derivative differences are bounded by `c k` for every stage `k`
+whose volume already contains the pair `{x,z}`, then the derivative-limit
+provider holds.
+
+The exhaustion eventually covers `{x,z}` (`Exhaustion.exhaust`), so all stages
+beyond some onset index `N` are covered; the bound on covered stages therefore
+supplies the eventual increment hypothesis of
+`lemma_17_5_2_derivative_limit_provider_of_summable_increments_eventually` with
+`N₀ = N`, and the finitely many head increments below `N` need no control once
+the metric-Cauchy threshold is raised past `N`.  (Stages whose successor is
+still uncovered contribute a zero increment, by
+`lemma_17_5_2_finite_derivative_increment_eq_zero_of_not_subset`.)  This lets the
+convergence-rate analysis address only the covered stages without locating the
+onset index.  Part of Issue #2931. -/
+theorem lemma_17_5_2_derivative_limit_provider_of_summable_increments_on_covered_stages
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (x z : Fin d → ℤ) (c : ℕ → ℝ) (hc : Summable c)
+    (hincr :
+      ∀ β₁ β₂ : ℝ,
+        Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
+          ∀ k : ℕ, ({x, z} : Finset (Fin d → ℤ)) ⊆ Λ.volume k →
+            ∀ β ∈ Set.Icc β₁ β₂,
+              dist
+                (deriv (fun β' =>
+                  Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                    (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} k) β)
+                (deriv (fun β' =>
+                  Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+                    (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} (k + 1)) β) ≤ c k) :
+    Lemma_17_5_2_DerivativeLimitProvider Λ J x z := by
+  obtain ⟨N, hN⟩ := Λ.exhaust ({x, z} : Finset (Fin d → ℤ))
+  refine lemma_17_5_2_derivative_limit_provider_of_summable_increments_eventually
+    Λ J x z c hc N (fun β₁ β₂ hIcc k hk β hβ => ?_)
+  exact hincr β₁ β₂ hIcc k (hN k hk) β hβ
+
 end Ambient
 end IsingModel
