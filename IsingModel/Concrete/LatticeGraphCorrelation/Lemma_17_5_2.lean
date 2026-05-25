@@ -10,6 +10,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.DerivativeLimitP
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.DerivativeLimitProviderFiniteHLS
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.DerivativeLimitProviderCauchyHLS
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.CauchyFiniteHLS
+import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.CauchyConcreteCapstone
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.PseudoMassFromParamsCubicSandwich
 
 /-!
