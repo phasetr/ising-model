@@ -75,5 +75,58 @@ theorem correlationAlongExhaustion_increment_summable
   have hle := correlationAlongExhaustion_le_correlationInfinite G Λ p A n
   linarith
 
+/-! ## Convergence tail structure
+
+The convergence-rate program (Issue #2931) studies how fast
+`correlationAlongExhaustion G Λ p A n` approaches its infinite-volume limit
+`correlationInfinite G Λ p A`.  The tail `correlationInfinite - correlationAlongExhaustion … n`
+is the nonnegative, antitone quantity tending to `0` whose decay rate is the
+substantive remaining input.  These lemmas record its structure (the rate
+itself is not yet quantified). -/
+
+/-- **Nonnegativity of the convergence tail**: the gap between the
+infinite-volume correlation and the stage-`n` finite-volume correlation is
+nonnegative, by the pointwise upper bound. -/
+theorem correlationInfinite_sub_correlationAlongExhaustion_nonneg
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (A : Finset V) (n : ℕ) :
+    0 ≤ correlationInfinite G Λ p A - correlationAlongExhaustion G Λ p A n := by
+  have hle := correlationAlongExhaustion_le_correlationInfinite G Λ p A n
+  linarith
+
+/-- **Antitonicity of the convergence tail**: for a ferromagnetic model the tail
+`n ↦ correlationInfinite - correlationAlongExhaustion … n` is antitone (it only
+decreases as the volume grows), since `correlationAlongExhaustion` is monotone in
+the stage index by GKS. -/
+theorem correlationInfinite_sub_correlationAlongExhaustion_antitone
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    (A : Finset V) :
+    Antitone (fun n =>
+      correlationInfinite G Λ p A - correlationAlongExhaustion G Λ p A n) := by
+  intro m n hmn
+  have hmono := correlationAlongExhaustion_monotone G Λ p hf A hmn
+  dsimp only
+  linarith
+
+/-- **The convergence tail tends to zero**: for a ferromagnetic model the gap
+`correlationInfinite - correlationAlongExhaustion … n` tends to `0` as `n → ∞`,
+since `correlationAlongExhaustion` converges to `correlationInfinite`.  Its rate
+of decay is the substantive remaining convergence-rate input (Issue #2931). -/
+theorem tendsto_correlationInfinite_sub_correlationAlongExhaustion_zero
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    (A : Finset V) :
+    Filter.Tendsto
+      (fun n => correlationInfinite G Λ p A - correlationAlongExhaustion G Λ p A n)
+      Filter.atTop (nhds 0) := by
+  have htend := tendsto_correlationAlongExhaustion_correlationInfinite G Λ p hf A
+  have := (tendsto_const_nhds (x := correlationInfinite G Λ p A)
+    (f := Filter.atTop (α := ℕ))).sub htend
+  simpa using this
+
 end Ambient
 end IsingModel
