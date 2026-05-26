@@ -165,4 +165,28 @@ theorem induce_sum_map_sumCompl_eq_deleteEdges (p : V → Prop) [DecidablePred p
     · exact ⟨Sum.inl ⟨a, hp⟩, Sum.inl ⟨b, hiff.mp hp⟩, hadj, rfl, rfl⟩
     · exact ⟨Sum.inr ⟨a, hp⟩, Sum.inr ⟨b, fun h => hp (hiff.mpr h)⟩, hadj, rfl, rfl⟩
 
+/-- The "straddle" deleted set (edges with endpoints on different sides of `p`)
+of `induce_sum_map_sumCompl_eq_deleteEdges` contains no edge whose endpoints lie
+on the *same* side of `p`. Hence removing it never deletes an edge internal to a
+side — the hypothesis required by `inducedGraph_deleteEdges_eq_of_not_internal`. -/
+theorem straddle_not_mem_of_same_side (p : V → Prop) {a b : V} (h : p a ↔ p b) :
+    s(a, b) ∉ {e : Sym2 V |
+      ¬ Sym2.lift ⟨fun a b => (p a ↔ p b), fun a b => by simp [iff_comm]⟩ e} := by
+  simp only [Set.mem_setOf_eq, Sym2.lift_mk, not_not]
+  exact h
+
+/-- The bond-deleted (straddle-removed) graph has no edge between the two sides of
+`p`: deleting the cut edges disconnects `{a | p a}` from `{a | ¬ p a}`. This is
+the no-cross hypothesis required by `correlation_inducedGraph_union_inl_of_no_cross`
+applied to `G.deleteEdges {straddling edges}`. -/
+theorem deleteEdges_straddle_no_cross (G : SimpleGraph V) (p : V → Prop)
+    {a b : V} (ha : p a) (hb : ¬ p b) :
+    ¬ (G.deleteEdges {e : Sym2 V |
+        ¬ Sym2.lift ⟨fun a b => (p a ↔ p b), fun a b => by simp [iff_comm]⟩ e}).Adj a b := by
+  rw [SimpleGraph.deleteEdges_adj]
+  rintro ⟨_, hmem⟩
+  refine hmem ?_
+  simp only [Set.mem_setOf_eq, Sym2.lift_mk]
+  exact fun h => hb (h.mp ha)
+
 end SimpleGraph
