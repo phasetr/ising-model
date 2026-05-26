@@ -12707,6 +12707,35 @@ the remaining gap to the numeric increment is only the discharge of the
 ball-boundary hypotheses for the straddle-edge finset.
 \end{proposition}
 
+\begin{theorem}[\texttt{IsingModel.correlation\_pair\_sub\_inducedGraph\_le\_derivBound}
+(numeric per-stage correlation increment, Issue \#2965 Phase A)]
+For $r,s\in S$, $r\neq s$, ferromagnetic parameters at $h=0$, with $r,s$ on no
+cut (straddle) edge,
+\[
+  \langle\sigma_r\sigma_s\rangle_{G}
+    - \langle\sigma_r\sigma_s\rangle_{\mathrm{inducedGraph}\,G\,S}
+  \le \mathrm{derivBound}\,G\,(G.\mathrm{edgeFinset.filter}\,\mathrm{straddle})\,r\,s,
+\]
+i.e.\ the full-model pair correlation exceeds the isolated induced-subgraph pair
+correlation by at most the ball-boundary $\mathrm{derivBound}$ over the cut edges.
+\end{theorem}
+
+\begin{proof}
+Apply the ball-boundary bond-deletion increment
+\texttt{correlation\_sub\_deleteEdges\_le\_derivBound} with
+$E_0=G.\mathrm{edgeFinset.filter}\,\mathrm{straddle}$ (its hypotheses: edges are
+non-diagonal, $E_0\subseteq G.\mathrm{edgeFinset}$, and the interior hypothesis
+that $r,s$ avoid the cut), then rewrite the bond-deleted correlation via
+\texttt{correlation\_deleteEdges\_filter\_pair\_eq}: by
+\texttt{deleteEdges\_filter\_edgeFinset\_eq} the filtered-finset deletion equals
+the straddle-set deletion, \texttt{correlation\_congr\_all} matches the
+correlations, and \texttt{triple\_map\_subtypeUnivEquiv\_eq} /
+\texttt{pair\_map\_val\_eq} identify the pair observable, so the
+component-factorization capstone applies. Marking the straddle predicate
+\texttt{@[reducible]} and stating the bridge as a separate lemma keeps the
+elaboration within the heartbeat budget.
+\end{proof}
+
 \begin{theorem}[\texttt{IsingModel.correlation\_inducedGraph\_deleteEdges\_union\_inl}
 (Phase A component-factorization capstone, Finset route)]
 For a region $S\subseteq W$, deleting the cut edges between $S$ and its complement
