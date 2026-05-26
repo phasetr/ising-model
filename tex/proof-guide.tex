@@ -8555,8 +8555,13 @@ connecting the mass gap to the central Lemma~17.5.2 quantity.  Composing the mas
 gap with the Step~127 convolution summability gives, unconditionally at high
 temperature, the boundary-product summability
 \(\sum_z\langle\sigma_x\sigma_z\rangle^\infty\langle\sigma_y\sigma_z\rangle^\infty<\infty\)
-(\texttt{summable\_truncated2Infinite\_prod\_of\_high\_temp}), the boundary-sum
-ingredient for the finite-volume\(\to\)infinite-volume convergence-rate coupling
+(\texttt{summable\_truncated2Infinite\_prod\_of\_high\_temp}); via Step~127's
+quantitative bound this strengthens to exponential decay of the convolution in
+\(\mathrm{dist}(x,y)\),
+\(\sum_z\langle\sigma_x\sigma_z\rangle^\infty\langle\sigma_y\sigma_z\rangle^\infty
+\le C\,e^{-(\mathrm{rate}/2)\,\mathrm{dist}(x,y)/2}\)
+(\texttt{tsum\_truncated2Infinite\_prod\_decay\_of\_high\_temp}), the boundary-sum
+ingredients for the finite-volume\(\to\)infinite-volume convergence-rate coupling
 (Issue \#2965).
 The remaining gap is instead the distinct \emph{volume-convergence} rate of the
 finite-volume \(\beta\)-derivative increments, related to this spatial decay by
