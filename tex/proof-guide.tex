@@ -12537,6 +12537,25 @@ equality above this is the component-factorization bridge from a fully separated
 finite-volume system to the isolated-component correlation.
 \end{proposition}
 
+\begin{proposition}[\texttt{IsingModel.correlation\_inducedGraph\_union\_inl\_of\_no\_cross}]
+Under the no-cross hypothesis, the same factorization holds directly on the
+induced subgraph of the union:
+\[
+  \langle\sigma^{A}\rangle_{\mathrm{inducedGraph}\,G\,(\Lambda_1\cup\Lambda_2)}
+  = \langle\sigma^{A}\rangle_{\mathrm{inducedGraph}\,G\,\Lambda_1}.
+\]
+\end{proposition}
+
+\begin{proof}
+Transport the previous proposition across the graph equality
+\texttt{inducedGraph\_sum\_map\_eq\_union\_of\_no\_cross} using
+\texttt{correlation\_congr\_of\_eq}: correlation is invariant under graph
+equality even across distinct \texttt{Fintype edgeSet} instances, since
+$\mathrm{edgeFinset}$ coerces to the instance-free $\mathrm{edgeSet}$. This
+absorbs the \texttt{Fintype} motive obstruction that blocks a direct
+\texttt{rw}.
+\end{proof}
+
 \paragraph{Closing Prop 4.6.1.} Combined with the uniform upper
 bound (PR \#122, \#123), Fekete's lemma now yields
 convergence of $f_\Lambda = (\log Z_\Lambda)/|\Lambda|$ along
