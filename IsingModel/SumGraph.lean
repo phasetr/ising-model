@@ -189,4 +189,22 @@ theorem deleteEdges_straddle_no_cross (G : SimpleGraph V) (p : V → Prop)
   simp only [Set.mem_setOf_eq, Sym2.lift_mk]
   exact fun h => hb (h.mp ha)
 
+/-- **Deleting an edge-filter Finset equals deleting the corresponding Set**:
+`G.deleteEdges ↑(G.edgeFinset.filter p) = G.deleteEdges {e | p e}`. Since
+`deleteEdges` ignores non-edges (`deleteEdges_eq_inter_edgeSet`), removing only
+the *edges* satisfying `p` (the filtered finset) yields the same graph as
+removing every `Sym2` satisfying `p`. This bridges the `Finset`-edge-set form of
+the ball-boundary bond-deletion increment (`correlation_sub_deleteEdges_le_derivBound`,
+which takes `E₀ : Finset (Sym2 V)`) and the `Set`-predicate form of the
+component-factorization capstone (Issue #2965, Phase A per-stage increment). -/
+theorem deleteEdges_filter_edgeFinset_eq (G : SimpleGraph V)
+    [Fintype G.edgeSet] (p : Sym2 V → Prop) [DecidablePred p] :
+    G.deleteEdges (↑(G.edgeFinset.filter p)) = G.deleteEdges {e : Sym2 V | p e} := by
+  conv_rhs => rw [G.deleteEdges_eq_inter_edgeSet {e : Sym2 V | p e}]
+  congr 1
+  ext e
+  simp only [Finset.mem_coe, Finset.mem_filter, SimpleGraph.mem_edgeFinset,
+    Set.mem_inter_iff, Set.mem_setOf_eq]
+  tauto
+
 end SimpleGraph
