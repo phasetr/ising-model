@@ -12708,6 +12708,22 @@ ball-boundary hypotheses for the straddle-edge finset (now carried out in the
 theorem below).
 \end{proposition}
 
+\begin{proposition}[\texttt{IsingModel.inducedGraph\_induce\_preimage\_map\_eq}]
+For $S\subseteq T$, the nested induced subgraph equals the direct one up to the
+nested-subtype relabeling $\{x:\uparrow T\mid x.\mathrm{val}\in S\}\simeq\uparrow S$:
+\[
+  \bigl((\mathrm{inducedGraph}\,G\,T).\mathrm{induce}\,\{x\mid x.\mathrm{val}\in S\}\bigr)
+    .\mathrm{map}\,\mathrm{nestedSubtypeEquiv}
+  = \mathrm{inducedGraph}\,G\,S.
+\]
+An edge survives iff its (deep) endpoints are $G$-adjacent and both in $S$. This
+is the graph-level foundation for instantiating the per-stage increment on cubic
+exhaustion stages $\mathrm{box}_k\subseteq\mathrm{box}_{k+1}$ (Issue \#2965); the
+correlation-level transport across this iso is a follow-up (it currently hits a
+\texttt{whnf} elaboration wall in \texttt{correlation\_map\_equiv} on the
+nested-subtype graph, needing a lighter sum-level encoding).
+\end{proposition}
+
 \begin{theorem}[\texttt{IsingModel.correlation\_pair\_sub\_inducedGraph\_le\_derivBound}
 (numeric per-stage correlation increment, Issue \#2965 Phase A)]
 For $r,s\in S$, $r\neq s$, ferromagnetic parameters at $h=0$, with $r,s$ on no
