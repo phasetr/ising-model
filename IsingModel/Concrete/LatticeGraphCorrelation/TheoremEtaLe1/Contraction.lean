@@ -561,13 +561,14 @@ theorem correlationInfinite_latticeGraph_tendsto_cofinite_zero_of_high_temp
 /-- **Fully explicit unconditional high-temperature distance decay**: in the
 regime `H := βJ · 2 · (d · (2(r+1)+1)^d) < 1`, every distinct pair satisfies
 `⟨σ_iσ_j⟩^∞ ≤ H^{dist(i,j)/(r+2)}` — a prefactor-free geometric decay with an
-explicit base `H` depending only on `βJ`, `d`, `r` (no contraction factor and no
-polynomial-decay hypothesis).
+explicit base `H` depending only on `βJ`, `d`, `r` (no contraction factor in the statement and
+no polynomial-decay hypothesis; the underlying ball-boundary shell-contraction
+axiom `shellSup_contraction` is still used).
 
 The contraction factor is bounded by `H` (`contractionFactor_le_high_temp_const`)
 and is `< 1` (`contractionFactor_lt_one_of_high_temp`), so the per-pair bound
 `correlationInfinite_latticeGraph_le_contractionFactor_pow_dist_pair` composes
-with base monotonicity `cf^q ≤ H^q` (`pow_le_pow_left`).  Part of Issue #2931,
+with base monotonicity `cf^q ≤ H^q` (`pow_le_pow_left₀`).  Part of Issue #2931,
 Phase 3a. -/
 theorem correlationInfinite_latticeGraph_le_explicit_pow_dist
     (d : ℕ) (hd : 1 ≤ d) (r : ℕ)
