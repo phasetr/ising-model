@@ -300,5 +300,41 @@ theorem correlationInfinite_latticeGraph_uniform_decay_of_contractionFactor_lt_o
       _ ≤ (contractionFactor d Λ p r) ^ m := hmono
       _ ≤ ε := hm.le
 
+/-- **The infinite-volume correlation kernel vanishes at infinity (cofinite)**:
+when the contraction factor is `< 1`, `y ↦ ⟨σ_0σ_y⟩^∞` tends to `0` along the
+cofinite filter on `ℤ^d`.
+
+This is the `C₀`/clustering form of the uniform large-distance decay: for every
+`ε > 0` the exceptional set `{y : ε ≤ ⟨σ_0σ_y⟩^∞}` is contained in the finite
+lattice ball `{y : dist(0,y) ≤ R}` (by
+`correlationInfinite_latticeGraph_uniform_decay_of_contractionFactor_lt_one` and
+the finiteness of lattice balls `latticeDistance_le_finite`), hence finite, so
+the values are eventually below `ε`.  Part of Issue #2931. -/
+theorem correlationInfinite_latticeGraph_tendsto_cofinite_zero
+    (d : ℕ) (hd : 1 ≤ d) (r : ℕ)
+    (Λ : Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (hh : p.h = 0)
+    (hα : contractionFactor d Λ p r < 1) :
+    Filter.Tendsto
+      (fun y => correlationInfinite (IsingModel.latticeGraph d) Λ p {(0 : Fin d → ℤ), y})
+      Filter.cofinite (nhds 0) := by
+  rw [Metric.tendsto_nhds]
+  intro ε hε
+  obtain ⟨R, hR⟩ :=
+    correlationInfinite_latticeGraph_uniform_decay_of_contractionFactor_lt_one
+      d hd r Λ p hf hh hα (ε / 2) (by linarith)
+  rw [Filter.eventually_cofinite]
+  refine Set.Finite.subset (IsingModel.latticeDistance_le_finite d 0 R) ?_
+  intro y hy
+  simp only [Set.mem_setOf_eq] at hy ⊢
+  by_contra hcontra
+  have hge : R ≤ IsingModel.latticeDistance d 0 y := le_of_lt (not_le.mp hcontra)
+  have hcorr_le := hR 0 y hge
+  have hcorr_nn := correlationInfinite_nonneg (IsingModel.latticeGraph d) Λ p hf
+    {(0 : Fin d → ℤ), y}
+  apply hy
+  rw [Real.dist_eq, sub_zero, abs_of_nonneg hcorr_nn]
+  linarith
+
 end Ambient
 end IsingModel
