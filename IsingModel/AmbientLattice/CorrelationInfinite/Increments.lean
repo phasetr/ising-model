@@ -175,5 +175,40 @@ theorem correlationAlongExhaustion_increment_tsum_eq
       (correlationAlongExhaustion G Λ p A 0)
   exact tendsto_nhds_unique h1 h2
 
+/-- **Stage-`n` convergence tail as the increment tail-sum**: for a ferromagnetic
+model the gap between the infinite-volume correlation and the stage-`n`
+finite-volume correlation equals the sum of all consecutive-stage increments from
+stage `n` onward:
+`correlationInfinite … - correlationAlongExhaustion … n
+   = ∑' k, (correlationAlongExhaustion … (k+n+1) - correlationAlongExhaustion … (k+n))`.
+
+This expresses the convergence tail directly as the increment tail series: a
+quantitative (summable/geometric) bound on the increments from stage `n` would
+control this tail's decay rate (Issue #2931).  It follows from
+`Summable.sum_add_tsum_nat_add` and the total-mass identity. -/
+theorem correlationAlongExhaustion_tail_eq_tsum_increment_shift
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    (A : Finset V) (n : ℕ) :
+    correlationInfinite G Λ p A - correlationAlongExhaustion G Λ p A n
+      = ∑' k, (correlationAlongExhaustion G Λ p A (k + n + 1) -
+          correlationAlongExhaustion G Λ p A (k + n)) := by
+  have hsum := correlationAlongExhaustion_increment_summable G Λ p hf A
+  have hsplit := hsum.sum_add_tsum_nat_add n
+  have hrange :
+      ∑ i ∈ Finset.range n,
+          (correlationAlongExhaustion G Λ p A (i + 1) -
+            correlationAlongExhaustion G Λ p A i)
+        = correlationAlongExhaustion G Λ p A n - correlationAlongExhaustion G Λ p A 0 :=
+    Finset.sum_range_sub (correlationAlongExhaustion G Λ p A) n
+  have htotal :
+      ∑' i, (correlationAlongExhaustion G Λ p A (i + 1) -
+          correlationAlongExhaustion G Λ p A i)
+        = correlationInfinite G Λ p A - correlationAlongExhaustion G Λ p A 0 :=
+    correlationAlongExhaustion_increment_tsum_eq G Λ p hf A
+  rw [hrange, htotal] at hsplit
+  linarith [hsplit]
+
 end Ambient
 end IsingModel
