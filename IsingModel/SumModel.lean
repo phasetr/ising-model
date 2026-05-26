@@ -237,4 +237,91 @@ theorem log_partitionFunction_add_le_of_sum_le
   rw [← log_partitionFunction_sum]
   exact log_partitionFunction_monotone_subgraph hle p hf
 
+/-! ## Correlation factorization on the disjoint sum graph -/
+
+/-- The spin product of an `inl`-supported observable evaluated on a
+`Sum.elim`-assembled configuration depends only on the first component. -/
+theorem spinProduct_map_inl (A : Finset ι) (σ₁ : Config ι) (σ₂ : Config ι') :
+    spinProduct (A.map ⟨Sum.inl, Sum.inl_injective⟩) (Sum.elim σ₁ σ₂)
+      = spinProduct A σ₁ := by
+  unfold spinProduct
+  rw [Finset.prod_map]
+  simp only [Function.Embedding.coeFn_mk, Sum.elim_inl]
+
+/-- The spin product of an `inr`-supported observable evaluated on a
+`Sum.elim`-assembled configuration depends only on the second component. -/
+theorem spinProduct_map_inr (B : Finset ι') (σ₁ : Config ι) (σ₂ : Config ι') :
+    spinProduct (B.map ⟨Sum.inr, Sum.inr_injective⟩) (Sum.elim σ₁ σ₂)
+      = spinProduct B σ₂ := by
+  unfold spinProduct
+  rw [Finset.prod_map]
+  simp only [Function.Embedding.coeFn_mk, Sum.elim_inr]
+
+/-- **Correlation factorization on the disjoint sum graph (`inl` side)**: an
+observable supported on the first component sees only the first model, so its
+correlation in the disjoint sum `G ⊕g H` equals its correlation in `G` alone.
+The second-component factor cancels between numerator and partition function.
+
+This is the component-factorization core: an observable inside one connected
+component is unaffected by the disjoint other component (Issue #2965, Phase A). -/
+theorem correlation_sum_inl
+    [Fintype ι] [Fintype ι'] [DecidableEq ι] [DecidableEq ι']
+    (G : SimpleGraph ι) (H : SimpleGraph ι')
+    [Fintype G.edgeSet] [Fintype H.edgeSet]
+    (p : IsingParams ℝ) (A : Finset ι) :
+    correlation (G.sum H) p (A.map ⟨Sum.inl, Sum.inl_injective⟩) = correlation G p A := by
+  unfold correlation gibbsExpectation
+  rw [partitionFunction_sum]
+  have hstep : ∀ (σ₁ : Config ι) (σ₂ : Config ι'),
+      spinProduct (A.map ⟨Sum.inl, Sum.inl_injective⟩) (Config.sumEquiv.symm (σ₁, σ₂))
+          * boltzmannWeight (G.sum H) p (Config.sumEquiv.symm (σ₁, σ₂))
+        = (spinProduct A σ₁ * boltzmannWeight G p σ₁) * boltzmannWeight H p σ₂ := by
+    intro σ₁ σ₂
+    simp only [Config.sumEquiv_symm, boltzmannWeight, hamiltonian_sum, mul_add,
+               Real.exp_add, spinProduct_map_inl]
+    ring
+  have hnum : (∑ σ : Config (ι ⊕ ι'),
+        spinProduct (A.map ⟨Sum.inl, Sum.inl_injective⟩) σ * boltzmannWeight (G.sum H) p σ)
+      = (∑ σ₁ : Config ι, spinProduct A σ₁ * boltzmannWeight G p σ₁)
+        * partitionFunction H p := by
+    rw [← Equiv.sum_comp Config.sumEquiv.symm
+          (fun σ => spinProduct (A.map ⟨Sum.inl, Sum.inl_injective⟩) σ
+            * boltzmannWeight (G.sum H) p σ)]
+    rw [Fintype.sum_prod_type]
+    simp_rw [hstep]
+    rw [← Finset.sum_mul_sum, partitionFunction]
+  rw [hnum, mul_inv]
+  field_simp [partitionFunction_ne_zero H p]
+
+/-- **Correlation factorization on the disjoint sum graph (`inr` side)**: an
+observable supported on the second component sees only the second model. -/
+theorem correlation_sum_inr
+    [Fintype ι] [Fintype ι'] [DecidableEq ι] [DecidableEq ι']
+    (G : SimpleGraph ι) (H : SimpleGraph ι')
+    [Fintype G.edgeSet] [Fintype H.edgeSet]
+    (p : IsingParams ℝ) (B : Finset ι') :
+    correlation (G.sum H) p (B.map ⟨Sum.inr, Sum.inr_injective⟩) = correlation H p B := by
+  unfold correlation gibbsExpectation
+  rw [partitionFunction_sum]
+  have hstep : ∀ (σ₁ : Config ι) (σ₂ : Config ι'),
+      spinProduct (B.map ⟨Sum.inr, Sum.inr_injective⟩) (Config.sumEquiv.symm (σ₁, σ₂))
+          * boltzmannWeight (G.sum H) p (Config.sumEquiv.symm (σ₁, σ₂))
+        = boltzmannWeight G p σ₁ * (spinProduct B σ₂ * boltzmannWeight H p σ₂) := by
+    intro σ₁ σ₂
+    simp only [Config.sumEquiv_symm, boltzmannWeight, hamiltonian_sum, mul_add,
+               Real.exp_add, spinProduct_map_inr]
+    ring
+  have hnum : (∑ σ : Config (ι ⊕ ι'),
+        spinProduct (B.map ⟨Sum.inr, Sum.inr_injective⟩) σ * boltzmannWeight (G.sum H) p σ)
+      = partitionFunction G p
+        * (∑ σ₂ : Config ι', spinProduct B σ₂ * boltzmannWeight H p σ₂) := by
+    rw [← Equiv.sum_comp Config.sumEquiv.symm
+          (fun σ => spinProduct (B.map ⟨Sum.inr, Sum.inr_injective⟩) σ
+            * boltzmannWeight (G.sum H) p σ)]
+    rw [Fintype.sum_prod_type]
+    simp_rw [hstep]
+    rw [← Finset.sum_mul_sum, partitionFunction]
+  rw [hnum, mul_inv]
+  field_simp [partitionFunction_ne_zero G p]
+
 end IsingModel
