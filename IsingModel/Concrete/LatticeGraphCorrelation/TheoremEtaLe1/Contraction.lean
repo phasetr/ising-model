@@ -1,4 +1,5 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.TheoremEtaLe1.BallDefs
+import IsingModel.LatticeExpSum
 
 /-!
 # Theorem eta-le-1 split — Phases 5-7 contraction factor and iterated contraction bound
@@ -335,6 +336,82 @@ theorem correlationInfinite_latticeGraph_tendsto_cofinite_zero
   apply hy
   rw [Real.dist_eq, sub_zero, abs_of_nonneg hcorr_nn]
   linarith
+
+/-- **Finite susceptibility from the contraction factor**: when
+`0 < contractionFactor d Λ p r < 1`, the infinite-volume correlation kernel
+`y ↦ ⟨σ_0σ_y⟩^∞` is summable over `ℤ^d`, i.e. the magnetic susceptibility
+`χ = ∑_y ⟨σ_0σ_y⟩^∞` is finite.
+
+The per-pair spatial decay `⟨σ_0σ_y⟩^∞ ≤ (contractionFactor)^{dist(0,y)/(r+2)}`
+is dominated by `(1/contractionFactor)·exp(-m·dist(0,y))` with
+`m = -log(contractionFactor)/(r+2) > 0` (using
+`(cf)^{⌊dist/(r+2)⌋} ≤ (cf)^{dist/(r+2)-1} = (1/cf)·exp(-m·dist)`), and the
+exponential kernel is summable over the lattice by `summable_exp_neg_dist`; the
+comparison test concludes.  Part of Issue #2931. -/
+theorem correlationInfinite_latticeGraph_susceptibility_summable
+    (d : ℕ) (hd : 1 ≤ d) (r : ℕ)
+    (Λ : Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (hh : p.h = 0)
+    (hcf_pos : 0 < contractionFactor d Λ p r) (hα : contractionFactor d Λ p r < 1) :
+    Summable
+      (fun y => correlationInfinite (IsingModel.latticeGraph d) Λ p {(0 : Fin d → ℤ), y}) := by
+  set cf := contractionFactor d Λ p r with hcfdef
+  set m := -Real.log cf / (r + 2 : ℝ) with hmdef
+  have hr2_pos : (0 : ℝ) < (r + 2 : ℝ) := by positivity
+  have hlog_neg : Real.log cf < 0 := Real.log_neg hcf_pos hα
+  have hm_pos : 0 < m := by
+    rw [hmdef]; exact div_pos (by linarith [hlog_neg]) hr2_pos
+  have hmaj_sum :
+      Summable (fun y : Fin d → ℤ =>
+        (1 / cf) * Real.exp (-m * (IsingModel.latticeDistance d 0 y : ℝ))) :=
+    (summable_exp_neg_dist hm_pos d 0).mul_left (1 / cf)
+  refine Summable.of_nonneg_of_le
+    (fun y => correlationInfinite_nonneg (IsingModel.latticeGraph d) Λ p hf _)
+    (fun y => ?_) hmaj_sum
+  by_cases hy : y = 0
+  · -- `dist(0,0) = 0`: majorant is `1/cf ≥ 1 ≥ correlation`.
+    subst hy
+    have hone : correlationInfinite (IsingModel.latticeGraph d) Λ p {(0 : Fin d → ℤ), 0} ≤ 1 :=
+      correlationInfinite_le_one (IsingModel.latticeGraph d) Λ p _
+    have hinv : (1 : ℝ) ≤ 1 / cf := by
+      rw [le_div_iff₀ hcf_pos]; linarith
+    have hdist0 : IsingModel.latticeDistance d 0 (0 : Fin d → ℤ) = 0 :=
+      IsingModel.latticeDistance_self d 0
+    rw [hdist0]
+    simp only [Nat.cast_zero, mul_zero, Real.exp_zero, mul_one]
+    linarith
+  · have hbound :=
+      correlationInfinite_latticeGraph_le_contractionFactor_pow_dist d hd r Λ p hf hh hα hy
+    -- `cf^q ≤ (1/cf)·exp(-m·dist)` with `q = dist/(r+2)`.
+    set n := IsingModel.latticeDistance d 0 y with hndef
+    have hq_real : ((n / (r + 2) : ℕ) : ℝ) ≥ (n : ℝ) / (r + 2 : ℝ) - 1 := by
+      have hlt : n < (n / (r + 2) + 1) * (r + 2) := by
+        have hmod := Nat.mod_lt n (show 0 < r + 2 by omega)
+        have hdm := Nat.div_add_mod n (r + 2)
+        nlinarith [hmod, hdm]
+      have hlt' : (n : ℝ) < ((n / (r + 2) : ℕ) : ℝ) * (r + 2 : ℝ) + (r + 2 : ℝ) := by
+        have := (Nat.cast_lt (α := ℝ)).2 hlt
+        push_cast at this ⊢; nlinarith [this]
+      rw [ge_iff_le, sub_le_iff_le_add, div_le_iff₀ hr2_pos]
+      nlinarith [hlt']
+    have hcfle1 : cf ≤ 1 := hα.le
+    -- `cf^(q:ℕ) = cf^(q:ℝ) ≤ cf^((n/(r+2)) - 1)` (base in (0,1], exponent larger).
+    have hstep1 :
+        cf ^ (n / (r + 2)) ≤ cf ^ ((n : ℝ) / (r + 2 : ℝ) - 1) := by
+      rw [← Real.rpow_natCast cf (n / (r + 2))]
+      exact Real.rpow_le_rpow_of_exponent_ge hcf_pos hcfle1 hq_real
+    have hstep2 :
+        cf ^ ((n : ℝ) / (r + 2 : ℝ) - 1)
+          = (1 / cf) * Real.exp (-m * (n : ℝ)) := by
+      rw [Real.rpow_sub hcf_pos, Real.rpow_one, Real.rpow_def_of_pos hcf_pos,
+        one_div, div_eq_mul_inv, mul_comm (cf⁻¹) (Real.exp (-m * (n : ℝ)))]
+      congr 1
+      congr 1
+      rw [hmdef]; ring
+    calc correlationInfinite (IsingModel.latticeGraph d) Λ p {(0 : Fin d → ℤ), y}
+        ≤ cf ^ (n / (r + 2)) := hbound
+      _ ≤ cf ^ ((n : ℝ) / (r + 2 : ℝ) - 1) := hstep1
+      _ = (1 / cf) * Real.exp (-m * (n : ℝ)) := hstep2
 
 end Ambient
 end IsingModel
