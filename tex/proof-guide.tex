@@ -12646,6 +12646,33 @@ graph in the per-stage-increment assembly. Same proof scheme as
 \texttt{correlation\_induce\_univ}.
 \end{proposition}
 
+\begin{proposition}[\texttt{IsingModel.correlation\_congr\_all}]
+If $G_1=G_2$ then
+$\langle\sigma^{A}\rangle_{G_1}=\langle\sigma^{A}\rangle_{G_2}$ regardless of the
+vertex \texttt{Fintype} and \texttt{edgeSet Fintype} instances, since
+\texttt{Fintype} is a \texttt{Subsingleton} (\texttt{Fintype.subsingleton}):
+after \texttt{subst}, \texttt{Subsingleton.elim} equates the residual instances.
+Strengthens \texttt{correlation\_congr\_of\_eq} and bridges the
+\texttt{Finset.Subtype.fintype} (from \texttt{inducedGraph}) against the
+\texttt{Set}-induce vertex \texttt{Fintype}.
+\end{proposition}
+
+\begin{theorem}[\texttt{IsingModel.correlation\_deleteEdges\_straddle\_eq\_inducedGraph}
+(per-stage-increment form)]
+For $S\subseteq V$ and an $S$-supported observable $A$,
+\[
+  \langle\sigma^{A}\rangle_{G.\mathrm{deleteEdges}\,\{\text{straddle }S\}}
+    = \langle\sigma^{A}\rangle_{\mathrm{inducedGraph}\,G\,S},
+\]
+i.e.\ the \emph{raw} bond-deleted graph's correlation of an $S$-internal
+observable equals the isolated induced-subgraph correlation. Composes
+\texttt{correlation\_induce\_of\_forall\_mem} (on the full set
+$\uparrow(S\cup S^{c})$), \texttt{correlation\_congr\_all}, and the
+component-factorization capstone below. Paired with the ball-boundary increment
+\texttt{correlation\_sub\_deleteEdges\_le\_derivBound} it gives the per-stage
+exhaustion increment bound.
+\end{theorem}
+
 \begin{theorem}[\texttt{IsingModel.correlation\_inducedGraph\_deleteEdges\_union\_inl}
 (Phase A component-factorization capstone, Finset route)]
 For a region $S\subseteq W$, deleting the cut edges between $S$ and its complement
