@@ -85,5 +85,58 @@ theorem hasExponentialDecay_latticeGraph_of_high_temp
       ≤ H ^ (n / (r + 2)) := hdecay
     _ ≤ (1 / H) * Real.exp (-rate * (n : ℝ)) := hstep
 
+/-- **Positivity of the high-temperature decay rate**: for `β, J > 0` and
+`H := βJ · 2 · (d · (2(r+1)+1)^d) < 1`, the mass-gap rate `-log(H)/(r+2)` is
+strictly positive. -/
+private theorem highTemp_rate_pos
+    (d : ℕ) (hd : 1 ≤ d) (r : ℕ) {J β : ℝ} (hJ_pos : 0 < J) (hβ_pos : 0 < β)
+    (hht : β * J * (2 * ((d : ℝ) * (((2 * (r + 1) + 1) ^ d : ℕ) : ℝ))) < 1) :
+    0 < -Real.log (β * J * (2 * ((d : ℝ) * (((2 * (r + 1) + 1) ^ d : ℕ) : ℝ)))) /
+        (r + 2 : ℝ) := by
+  have hd_pos : (0 : ℝ) < (d : ℝ) := by exact_mod_cast hd
+  have hpow_pos : (0 : ℝ) < (((2 * (r + 1) + 1) ^ d : ℕ) : ℝ) := by
+    have : 0 < (2 * (r + 1) + 1) ^ d := pow_pos (by omega) d
+    exact_mod_cast this
+  have hH_pos : 0 < β * J * (2 * ((d : ℝ) * (((2 * (r + 1) + 1) ^ d : ℕ) : ℝ))) :=
+    mul_pos (mul_pos hβ_pos hJ_pos)
+      (mul_pos (by norm_num) (mul_pos hd_pos hpow_pos))
+  have hlogH_neg : Real.log (β * J * (2 * ((d : ℝ) *
+      (((2 * (r + 1) + 1) ^ d : ℕ) : ℝ)))) < 0 := Real.log_neg hH_pos hht
+  exact div_pos (by linarith) (by positivity)
+
+/-- **Explicit unconditional high-temperature lower bound on `latticeMass`**: for
+`β, J > 0` and `H := βJ · 2 · (d · (2(r+1)+1)^d) < 1`, the lattice mass dominates
+the mass-gap rate, `ENNReal.ofReal (-log(H)/(r+2)) ≤ latticeMass d Λ ⟨J,0,β⟩`.
+
+This connects the ball-boundary mass gap (`hasExponentialDecay_latticeGraph_of_high_temp`)
+to the supremum definition of `latticeMass` (the central quantity of Lemma 17.5.2)
+via `latticeMass_ge_of_HasExponentialDecay`, with no polynomial-decay hypothesis.
+Part of Issue #2931, Phase 3a. -/
+theorem latticeMass_ge_explicit_of_high_temp
+    (d : ℕ) (hd : 1 ≤ d) (r : ℕ) (Λ : Exhaustion (Fin d → ℤ))
+    {J β : ℝ} (hJ_pos : 0 < J) (hβ_pos : 0 < β)
+    (hht : β * J * (2 * ((d : ℝ) * (((2 * (r + 1) + 1) ^ d : ℕ) : ℝ))) < 1) :
+    ENNReal.ofReal
+        (-Real.log (β * J * (2 * ((d : ℝ) * (((2 * (r + 1) + 1) ^ d : ℕ) : ℝ)))) /
+          (r + 2 : ℝ))
+      ≤ latticeMass d Λ (⟨J, 0, β⟩ : IsingParams ℝ) :=
+  latticeMass_ge_of_HasExponentialDecay
+    (highTemp_rate_pos d hd r hJ_pos hβ_pos hht).le
+    (hasExponentialDecay_latticeGraph_of_high_temp d hd r Λ hJ_pos hβ_pos hht)
+
+/-- **Positive lattice mass at strong high temperature, unconditionally**: for
+`β, J > 0` and `H := βJ · 2 · (d · (2(r+1)+1)^d) < 1`,
+`0 < latticeMass d Λ ⟨J,0,β⟩`, from the positive mass-gap rate and
+`latticeMass_pos_of_HasExponentialDecay` (no polynomial-decay hypothesis).  Part
+of Issue #2931, Phase 3a. -/
+theorem latticeMass_pos_of_high_temp_mass_gap
+    (d : ℕ) (hd : 1 ≤ d) (r : ℕ) (Λ : Exhaustion (Fin d → ℤ))
+    {J β : ℝ} (hJ_pos : 0 < J) (hβ_pos : 0 < β)
+    (hht : β * J * (2 * ((d : ℝ) * (((2 * (r + 1) + 1) ^ d : ℕ) : ℝ))) < 1) :
+    0 < latticeMass d Λ (⟨J, 0, β⟩ : IsingParams ℝ) :=
+  latticeMass_pos_of_HasExponentialDecay
+    (highTemp_rate_pos d hd r hJ_pos hβ_pos hht)
+    (hasExponentialDecay_latticeGraph_of_high_temp d hd r Λ hJ_pos hβ_pos hht)
+
 end Ambient
 end IsingModel
