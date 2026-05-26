@@ -12249,6 +12249,23 @@ fully separated (bond-deleted) finite-volume Ising system: cutting all bonds
 across a partition yields two independent subsystems.
 \end{proof}
 
+\begin{proposition}[\texttt{straddle\_not\_mem\_of\_same\_side} /
+\texttt{deleteEdges\_straddle\_no\_cross}]
+The straddle set contains no same-side edge: if $p\,a \leftrightarrow p\,b$ then
+$s(a,b)$ is not deleted (feeds
+\texttt{inducedGraph\_deleteEdges\_eq\_of\_not\_internal}). Dually, the
+bond-deleted graph has no edge between the two sides: if $p\,a$ and $\neg p\,b$
+then $G.\mathrm{deleteEdges}\,\{\text{straddle}\}$ has no $a\sim b$ edge (the
+no-cross hypothesis for \texttt{correlation\_inducedGraph\_union\_inl\_of\_no\_cross}
+applied to the bond-deleted graph).
+\end{proposition}
+
+\begin{proof}
+Both unfold the straddle membership $s(a,b)\in\{e\mid\neg(p\!\leftrightarrow\!p)(e)\}
+\Leftrightarrow \neg(p\,a\leftrightarrow p\,b)$ and the deleteEdges adjacency
+$\mathrm{Adj}\wedge s(a,b)\notin\{\dots\}$.
+\end{proof}
+
 \paragraph{Context.} This file is the combinatorial Step~1 toward the
 Glimm--Jaffe \S 4.6 super-additivity proof of thermodynamic-limit
 convergence of the free-energy density. Subsequent steps
