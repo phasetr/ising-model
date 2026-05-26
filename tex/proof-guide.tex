@@ -14518,6 +14518,18 @@ The MVT via \texttt{norm\_image\_sub\_le\_of\_norm\_deriv\_le\_segment\_01'} con
   free-boundary correlation on $G.\mathrm{deleteEdges}\,E_0$ (proved via
   \texttt{SimpleGraph.edgeFinset\_deleteEdges} and \texttt{Finset.sum\_sdiff}). This
   makes the ball-boundary disconnection concrete.
+\item \texttt{correlation\_sub\_deleteEdges\_le\_derivBound}: combining the
+  mean-value bound with the bond-deleted identification, the increment is
+  $\langle\sigma_r\sigma_s\rangle_G-\langle\sigma_r\sigma_s\rangle_{G\setminus E_0}
+  \le\mathrm{derivBound}$ (adding the bonds $E_0$ raises $\langle\sigma_r\sigma_s\rangle$
+  by at most $\mathrm{derivBound}$), in standard-correlation terms.
+\item \texttt{correlation\_deleteEdges\_le}: GKS bond-monotonicity --- deleting bonds
+  cannot increase a correlation, so the increment is nonnegative.
+\item \texttt{derivBound\_le\_card} ($\mathrm{derivBound}\le\beta J\cdot 3|E_0|$, each
+  correlation product $\le 1$) and \texttt{correlation\_sub\_deleteEdges\_le\_card}:
+  the coarse a-priori cardinality bound
+  $\langle\sigma_r\sigma_s\rangle_G-\langle\sigma_r\sigma_s\rangle_{G\setminus E_0}
+  \le\beta J\cdot 3|E_0|$.
 \end{itemize}
 
 \noindent\textbf{Proof sketch.}
