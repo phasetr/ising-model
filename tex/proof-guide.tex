@@ -12226,6 +12226,29 @@ with \texttt{Finset.card\_map} applied to the injective
 $\mathrm{Embedding.sym2Map}$.
 \end{proof}
 
+\begin{proposition}[\texttt{SimpleGraph.induce\_sum\_map\_sumCompl\_eq\_deleteEdges} (Issue \#2965)]
+For a predicate $p$ on the vertices, deleting every edge whose endpoints lie on
+different sides of $p$ decomposes $G$ into the disjoint sum of the two induced
+subgraphs, up to the relabeling $\mathrm{Equiv.sumCompl}\,p
+: \{a\mid p\,a\}\oplus\{a\mid\neg p\,a\}\simeq V$:
+\[
+  \bigl((G\,\mathrm{induce}\,\{a\mid p\,a\})
+    \oplus_g (G\,\mathrm{induce}\,\{a\mid\neg p\,a\})\bigr)
+    .\mathrm{map}\,(\mathrm{Equiv.sumCompl}\,p)
+  = G.\mathrm{deleteEdges}\,\{e\mid e\text{ straddles }p\}.
+\]
+\end{proposition}
+
+\begin{proof}
+By edge extensionality: an edge $a\sim b$ survives the deletion iff
+$G.\mathrm{Adj}\,a\,b$ and $a,b$ are on the same side of $p$, which is exactly
+the adjacency of the transported disjoint sum (the $\mathrm{inl}$/$\mathrm{inr}$
+arms of \texttt{SimpleGraph.sum} for same-side pairs, and $\bot$ for straddling
+pairs). This is the structural identity behind the component factorization of a
+fully separated (bond-deleted) finite-volume Ising system: cutting all bonds
+across a partition yields two independent subsystems.
+\end{proof}
+
 \paragraph{Context.} This file is the combinatorial Step~1 toward the
 Glimm--Jaffe \S 4.6 super-additivity proof of thermodynamic-limit
 convergence of the free-energy density. Subsequent steps
