@@ -8465,7 +8465,16 @@ tail is the increment tail-sum
 (\texttt{correlationAlongExhaustion\_tail\_eq\_tsum\_increment\_shift}), so a
 quantitative bound on the increments from stage \(n\) controls the tail's decay.
 Obtaining the analogous quantitative summable bound for the \(\beta\)-derivative
-increments is the substantive remaining convergence-rate input.  Its geometric
+increments is the substantive remaining convergence-rate input.  The
+prefactor-free distance-decay iteration that will produce the geometric factor
+has its inductive step in place: for a non-adjacent pair \(i\neq j\) on
+\(\mathbb{Z}^d\), if every neighbour \(k\) of \(i\) satisfies
+\(\langle\sigma_k\sigma_j\rangle^\infty\le C\) with \(C\ge0\), then the
+Simon--Lieb peeling inequality and the degree bound
+\(\deg i\le 2d\) give \(\langle\sigma_i\sigma_j\rangle^\infty\le\beta J\,2d\,C\)
+(\texttt{correlationInfinite\_latticeGraph\_le\_of\_neighbors\_le}); iterating
+over the lattice distance yields \((\beta J\,2d)^{\mathrm{dist}}\) without the
+volume-dependent prefactor of the naive finite-volume bound.  Its geometric
 foundation is in place: a vertex lying in the stage-\(n+1\) cube but not the
 stage-\(n\) cube has a coordinate of absolute value exactly \(n+1\)
 (\texttt{exists\_coord\_natAbs\_eq\_of\_mem\_cubicBox\_succ\_not\_mem}), so for a
