@@ -11,8 +11,16 @@ single-step Simon--Lieb peeling inequality
 correlation by `βJ` times the sum of the neighbour correlations of one endpoint.
 Combined with the degree bound `latticeGraph_degree_le` (degree `≤ 2d`), a
 uniform bound `C` on the neighbour correlations gives the clean one-step estimate
-`⟨σ_iσ_j⟩^∞ ≤ βJ · 2d · C`, the inductive step that iterates (over the lattice
-distance) to the prefactor-free exponential decay `⟨σ_iσ_j⟩^∞ ≤ (βJ·2d)^{dist}`.
+`⟨σ_iσ_j⟩^∞ ≤ βJ · 2d · C`.
+
+Note that naive single-vertex neighbour peeling does **not** itself iterate to a
+genuine distance decay: at distance `2` it still only yields `βJ·2d` (a neighbour
+adjacent to `j` contributes a correlation that can only be bounded by `1`), and
+no `≤ βJ·2d` bound holds for adjacent pairs.  Prefactor-free exponential distance
+decay instead requires the separating-surface (ball-boundary) Simon--Lieb
+argument `ball_boundary_simon_lieb`, which peels an entire separating edge set at
+once; assembling that for cubic shells is the remaining Phase-3a work
+(Issue #2931).  The estimates here are the single-vertex building blocks.
 
 References:
 
@@ -31,13 +39,11 @@ non-adjacent pair `i ≠ j` on `ℤ^d`, if every neighbour `k` of `i` satisfies
 degree bound `degree i ≤ 2d` give
 `⟨σ_iσ_j⟩^∞ ≤ βJ · 2d · C`.
 
-This lemma proves only the single-step estimate.  It is *intended* as the
-inductive step of a prefactor-free distance-decay iteration — a bound on the
-distance-`n` shell around `j` would propagate inward to the distance-`(n+1)`
-shell with one extra factor `βJ·2d`, so that iterating `dist(i,j)` times would
-yield `(βJ·2d)^{dist(i,j)}` without the volume-dependent prefactor of the naive
-finite-volume bound — but that full distance induction is not proved here and
-remains the substantive remaining work (Issue #2931, Phase 3a). -/
+This lemma proves only the single-vertex one-step estimate.  It does not by
+itself give genuine distance decay (single-vertex peeling stalls at `βJ·2d`);
+the prefactor-free exponential decay requires the separating-surface
+`ball_boundary_simon_lieb` argument applied to cubic shells, which is the
+remaining Phase-3a work (Issue #2931). -/
 theorem correlationInfinite_latticeGraph_le_of_neighbors_le
     {d : ℕ} {β J : ℝ} (hβJ : 0 ≤ β * J)
     {i j : Fin d → ℤ} (hij : i ≠ j) (hnadj : ¬ (latticeGraph d).Adj i j)
