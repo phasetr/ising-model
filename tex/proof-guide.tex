@@ -12614,6 +12614,25 @@ intact, and the bond-deleted graph then has no cross edges, so
 \texttt{correlation\_inducedGraph\_union\_inl\_of\_no\_cross} applies to it.
 \end{proof}
 
+\begin{proposition}[\texttt{IsingModel.correlation\_induce\_univ}]
+Since $G.\mathrm{induce}\,\mathrm{univ}\simeq_g G$ (mathlib \texttt{induceUnivIso},
+via \texttt{Equiv.Set.univ}), pushing an observable along that relabeling
+preserves the correlation:
+\[
+  \langle\sigma^{A}\rangle_{G.\mathrm{induce}\,\mathrm{univ}}
+    = \langle\sigma^{A.\mathrm{map}\,e}\rangle_{G},\qquad e=\texttt{Equiv.Set.univ}.
+\]
+This connects the $\mathrm{inducedGraph}\,\_\,\mathrm{univ}$ left side of the
+capstone below back to the raw graph $G$ (the form of the ball-boundary
+increment), for the per-stage increment assembly.
+\end{proposition}
+
+\begin{proof}
+The graph equality $(G.\mathrm{induce}\,\mathrm{univ}).\mathrm{map}\,e = G$ holds
+by edge extensionality (the iso adjacency); then compose
+\texttt{correlation\_map\_equiv} with \texttt{correlation\_congr\_of\_eq}.
+\end{proof}
+
 \begin{theorem}[\texttt{IsingModel.correlation\_inducedGraph\_deleteEdges\_union\_inl}
 (Phase A component-factorization capstone, Finset route)]
 For a region $S\subseteq W$, deleting the cut edges between $S$ and its complement
