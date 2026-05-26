@@ -248,4 +248,56 @@ theorem correlation_inducedGraph_sum_map_inl (G : SimpleGraph V)
       = correlation (inducedGraph G Λ₁) p A := by
   rw [correlation_map_equiv, correlation_sum_inl]
 
+/-- **Correlation is invariant under graph equality**, regardless of which
+`Fintype edgeSet` instance is used: if `G₁ = G₂` then their correlations agree.
+Correlation depends on the graph only through `edgeFinset` (inside the
+Hamiltonian's interaction energy), and `edgeFinset` is instance-independent
+since it coerces to `edgeSet`. This lets one transport correlations across the
+graph equalities of this file (e.g. `inducedGraph_sum_map_eq_union_of_no_cross`)
+without the `Fintype` motive obstruction that blocks `rw`. -/
+theorem correlation_congr_of_eq {W : Type*} [Fintype W] [DecidableEq W]
+    {G₁ G₂ : SimpleGraph W}
+    [inst₁ : Fintype G₁.edgeSet] [inst₂ : Fintype G₂.edgeSet]
+    (h : G₁ = G₂) (p : IsingParams ℝ) (A : Finset W) :
+    correlation G₁ p A = correlation G₂ p A := by
+  subst h
+  -- After `subst`, both sides are the same graph; the only residual difference is
+  -- the `Fintype G₁.edgeSet` instance the Hamiltonian's interaction energy feeds to
+  -- `edgeFinset`. Since `edgeFinset` coerces to the instance-free `edgeSet`, the two
+  -- edge finsets are equal, which `simp` propagates through `correlation`.
+  have hef : @SimpleGraph.edgeFinset _ G₁ inst₁ = @SimpleGraph.edgeFinset _ G₁ inst₂ := by
+    apply Finset.coe_injective
+    rw [SimpleGraph.coe_edgeFinset, SimpleGraph.coe_edgeFinset]
+  simp only [correlation, gibbsExpectation, partitionFunction, boltzmannWeight,
+    hamiltonian, interactionEnergy, hef]
+
+set_option linter.unusedFintypeInType false in
+/-- **Component factorization of an induced-union correlation (union form)**:
+the bridge of `correlation_inducedGraph_sum_map_inl` transported onto
+`inducedGraph G (Λ₁ ∪ Λ₂)` itself, via `inducedGraph_sum_map_eq_union_of_no_cross`
+and `correlation_congr_of_eq` (which absorbs the `Fintype` instance change). For
+disjoint `Λ₁, Λ₂` with no `G`-edge between them, an observable supported on `Λ₁`
+has the same correlation in the induced subgraph on the union as in the induced
+subgraph on `Λ₁` alone — the component-factorization bridge in the form directly
+usable for exhaustion stages (Issue #2965, Phase A). -/
+theorem correlation_inducedGraph_union_inl_of_no_cross (G : SimpleGraph V)
+    {Λ₁ Λ₂ : Finset V} (hd : Disjoint Λ₁ Λ₂)
+    (hcross : ∀ a ∈ Λ₁, ∀ b ∈ Λ₂, ¬ G.Adj a b)
+    [Fintype (inducedGraph G Λ₁).edgeSet]
+    [Fintype (inducedGraph G Λ₂).edgeSet]
+    [Fintype (((inducedGraph G Λ₁).sum (inducedGraph G Λ₂)).map
+      (Equiv.Finset.union Λ₁ Λ₂ hd).toEmbedding).edgeSet]
+    [Fintype (inducedGraph G (Λ₁ ∪ Λ₂)).edgeSet]
+    (p : IsingParams ℝ) (A : Finset (↑Λ₁ : Type _)) :
+    correlation (inducedGraph G (Λ₁ ∪ Λ₂)) p
+        ((A.map ⟨Sum.inl, Sum.inl_injective⟩).map
+          (Equiv.Finset.union Λ₁ Λ₂ hd).toEmbedding)
+      = correlation (inducedGraph G Λ₁) p A :=
+  Eq.trans
+    (correlation_congr_of_eq
+      (inducedGraph_sum_map_eq_union_of_no_cross G hd hcross).symm p
+      ((A.map ⟨Sum.inl, Sum.inl_injective⟩).map
+        (Equiv.Finset.union Λ₁ Λ₂ hd).toEmbedding))
+    (correlation_inducedGraph_sum_map_inl G hd p A)
+
 end IsingModel
