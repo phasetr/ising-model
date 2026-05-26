@@ -321,4 +321,53 @@ theorem inducedGraph_deleteEdges_eq_of_not_internal (G : SimpleGraph V)
   exact ⟨fun h => h.1,
     fun h => ⟨h, hD _ (Finset.mem_coe.mp a.2) _ (Finset.mem_coe.mp b.2)⟩⟩
 
+set_option linter.unusedFintypeInType false in
+/-- **Bond-deleted correlation equals isolated induced-subgraph correlation
+(Finset route)**: for a region `S ⊆ W`, deleting the cut edges between `S` and
+its complement leaves an `S`-supported observable with the same correlation in
+the induced subgraph on `S ∪ Sᶜ` of the bond-deleted model as in the induced
+subgraph on `S` of the *original* model. Assembled entirely from the working
+`inducedGraph`/no-cross machinery:
+`correlation_inducedGraph_union_inl_of_no_cross` (the bond-deleted graph has no
+cross edges by `deleteEdges_straddle_no_cross`) composed with
+`correlation_congr_of_eq` of `inducedGraph_deleteEdges_eq_of_not_internal`
+(deleting cut edges leaves the within-`S` induced subgraph unchanged, by
+`straddle_not_mem_of_same_side`). This is the component-factorization bridge for
+the finite-volume coupling step (Issue #2965, Phase A), realized via the Finset
+route that sidesteps the `Equiv.sumCompl` instance pathology (Issue #2980). -/
+theorem correlation_inducedGraph_deleteEdges_union_inl [Fintype V] (G : SimpleGraph V)
+    (S : Finset V)
+    [Fintype (inducedGraph (G.deleteEdges {e : Sym2 V |
+      ¬ Sym2.lift ⟨fun a b => ((a ∈ S) ↔ (b ∈ S)), fun a b => by simp [iff_comm]⟩ e}) S).edgeSet]
+    [Fintype (inducedGraph (G.deleteEdges {e : Sym2 V |
+      ¬ Sym2.lift ⟨fun a b => ((a ∈ S) ↔ (b ∈ S)), fun a b => by simp [iff_comm]⟩ e}) Sᶜ).edgeSet]
+    [Fintype (((inducedGraph (G.deleteEdges {e : Sym2 V |
+        ¬ Sym2.lift ⟨fun a b => ((a ∈ S) ↔ (b ∈ S)), fun a b => by simp [iff_comm]⟩ e}) S).sum
+        (inducedGraph (G.deleteEdges {e : Sym2 V |
+        ¬ Sym2.lift ⟨fun a b => ((a ∈ S) ↔ (b ∈ S)), fun a b => by simp [iff_comm]⟩ e}) Sᶜ)).map
+      (Equiv.Finset.union S Sᶜ disjoint_compl_right).toEmbedding).edgeSet]
+    [Fintype (inducedGraph (G.deleteEdges {e : Sym2 V |
+      ¬ Sym2.lift ⟨fun a b => ((a ∈ S) ↔ (b ∈ S)), fun a b => by simp [iff_comm]⟩ e})
+      (S ∪ Sᶜ)).edgeSet]
+    [Fintype (inducedGraph G S).edgeSet]
+    (params : IsingParams ℝ) (A : Finset (↑S : Type _)) :
+    correlation (inducedGraph (G.deleteEdges {e : Sym2 V |
+        ¬ Sym2.lift ⟨fun a b => ((a ∈ S) ↔ (b ∈ S)), fun a b => by simp [iff_comm]⟩ e})
+        (S ∪ Sᶜ)) params
+        ((A.map ⟨Sum.inl, Sum.inl_injective⟩).map
+          (Equiv.Finset.union S Sᶜ disjoint_compl_right).toEmbedding)
+      = correlation (inducedGraph G S) params A := by
+  have hcross : ∀ a ∈ S, ∀ b ∈ Sᶜ,
+      ¬ (G.deleteEdges {e : Sym2 V |
+        ¬ Sym2.lift ⟨fun a b => ((a ∈ S) ↔ (b ∈ S)), fun a b => by simp [iff_comm]⟩ e}).Adj a b :=
+    fun a ha b hb =>
+      SimpleGraph.deleteEdges_straddle_no_cross G (· ∈ S) ha (Finset.mem_compl.mp hb)
+  have hD : ∀ a ∈ S, ∀ b ∈ S, s(a, b) ∉ {e : Sym2 V |
+      ¬ Sym2.lift ⟨fun a b => ((a ∈ S) ↔ (b ∈ S)), fun a b => by simp [iff_comm]⟩ e} :=
+    fun a ha b hb => SimpleGraph.straddle_not_mem_of_same_side (· ∈ S) (iff_of_true ha hb)
+  exact (correlation_inducedGraph_union_inl_of_no_cross _ disjoint_compl_right hcross
+        params A).trans
+    (correlation_congr_of_eq
+      (inducedGraph_deleteEdges_eq_of_not_internal G _ S hD) params A)
+
 end IsingModel

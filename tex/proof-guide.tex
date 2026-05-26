@@ -12614,6 +12614,32 @@ intact, and the bond-deleted graph then has no cross edges, so
 \texttt{correlation\_inducedGraph\_union\_inl\_of\_no\_cross} applies to it.
 \end{proof}
 
+\begin{theorem}[\texttt{IsingModel.correlation\_inducedGraph\_deleteEdges\_union\_inl}
+(Phase A component-factorization capstone, Finset route)]
+For a region $S\subseteq W$, deleting the cut edges between $S$ and its complement
+gives, for any $S$-supported observable $A$,
+\[
+  \langle\sigma^{A}\rangle_{\mathrm{inducedGraph}\,(G.\mathrm{deleteEdges}\,\{\text{straddle }S\})\,(S\cup S^{c})}
+    = \langle\sigma^{A}\rangle_{\mathrm{inducedGraph}\,G\,S},
+\]
+i.e.\ the bond-deleted model's correlation of an $S$-internal observable equals
+the correlation in the isolated induced subgraph on $S$ of the \emph{original}
+model.
+\end{theorem}
+
+\begin{proof}
+Compose \texttt{correlation\_inducedGraph\_union\_inl\_of\_no\_cross} (the
+bond-deleted graph has no cross edges, by \texttt{deleteEdges\_straddle\_no\_cross})
+with \texttt{correlation\_congr\_of\_eq} of
+\texttt{inducedGraph\_deleteEdges\_eq\_of\_not\_internal} (deleting the cut leaves
+the within-$S$ induced subgraph unchanged, by
+\texttt{straddle\_not\_mem\_of\_same\_side}). This realizes the component
+factorization via the Finset/\texttt{inducedGraph} route, sidestepping the
+\texttt{Equiv.sumCompl} instance pathology. Combined with the ball-boundary
+bond-deletion increment \texttt{correlation\_sub\_deleteEdges\_le\_derivBound}, it
+yields the per-stage exhaustion increment bound (Issue \#2965, Phase A).
+\end{proof}
+
 \paragraph{Closing Prop 4.6.1.} Combined with the uniform upper
 bound (PR \#122, \#123), Fekete's lemma now yields
 convergence of $f_\Lambda = (\log Z_\Lambda)/|\Lambda|$ along
