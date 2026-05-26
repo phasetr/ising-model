@@ -190,4 +190,62 @@ theorem partitionFunction_inducedGraph_le_of_disjoint_union
     (partitionFunction_pos _ _)).mp
     (log_partitionFunction_inducedGraph_le_of_disjoint_union G hd p hf)
 
+/-- **Induced union splits as a disjoint sum when there are no cross edges**:
+for disjoint `Λ₁, Λ₂ : Finset V` with no `G`-edge between `Λ₁` and `Λ₂`, the
+induced subgraph on the union equals the transported disjoint sum of the two
+induced subgraphs. Upgrades `inducedGraph_sum_map_le_union` to an equality: the
+`≤` direction is that lemma; the `≥` direction holds because, with no cross
+edges, every edge of `inducedGraph G (Λ₁ ∪ Λ₂)` has both endpoints in the same
+part. This is the structural fact behind the component factorization of a
+bond-deleted (fully separated) finite-volume system (Issue #2965, Phase A). -/
+theorem inducedGraph_sum_map_eq_union_of_no_cross (G : SimpleGraph V)
+    {Λ₁ Λ₂ : Finset V} (hd : Disjoint Λ₁ Λ₂)
+    (hcross : ∀ a ∈ Λ₁, ∀ b ∈ Λ₂, ¬ G.Adj a b) :
+    ((inducedGraph G Λ₁).sum (inducedGraph G Λ₂)).map
+        (Equiv.Finset.union Λ₁ Λ₂ hd).toEmbedding
+      = inducedGraph G (Λ₁ ∪ Λ₂) := by
+  refine le_antisymm (inducedGraph_sum_map_le_union G hd) ?_
+  intro a b hab
+  have hGadj : G.Adj (a : V) (b : V) := hab
+  rw [SimpleGraph.map_adj]
+  rcases Finset.mem_union.mp a.2 with ha | ha <;>
+    rcases Finset.mem_union.mp b.2 with hb | hb
+  · exact ⟨Sum.inl ⟨↑a, ha⟩, Sum.inl ⟨↑b, hb⟩, by
+      simpa [SimpleGraph.sum_adj, inducedGraph, SimpleGraph.induce] using hGadj,
+      by simp, by simp⟩
+  · exact absurd hGadj (hcross _ ha _ hb)
+  · exact absurd hGadj.symm (hcross _ hb _ ha)
+  · exact ⟨Sum.inr ⟨↑a, ha⟩, Sum.inr ⟨↑b, hb⟩, by
+      simpa [SimpleGraph.sum_adj, inducedGraph, SimpleGraph.induce] using hGadj,
+      by simp, by simp⟩
+
+set_option linter.unusedFintypeInType false in
+/-- **Component factorization of an induced-union correlation under no cross
+edges** (stated on the transported disjoint sum): for disjoint `Λ₁, Λ₂` with no
+`G`-edge between them, an observable supported on `Λ₁` has the same correlation
+in the transported disjoint sum (which equals `inducedGraph G (Λ₁ ∪ Λ₂)` by
+`inducedGraph_sum_map_eq_union_of_no_cross`) as in the induced subgraph on `Λ₁`
+alone. Combines `correlation_map_equiv` (iso transport) with
+`correlation_sum_inl` (disjoint-sum factorization).
+
+This is the bridge from a fully separated (bond-deleted) finite-volume system to
+the isolated-component correlation (Issue #2965, Phase A). The result is stated
+on `(... ).map (Equiv.Finset.union ...)` rather than directly on
+`inducedGraph G (Λ₁ ∪ Λ₂)` because rewriting the graph through the equality would
+require transporting the `Fintype edgeSet` instance; the equality lemma above
+records that the two graphs coincide. -/
+theorem correlation_inducedGraph_sum_map_inl (G : SimpleGraph V)
+    {Λ₁ Λ₂ : Finset V} (hd : Disjoint Λ₁ Λ₂)
+    [Fintype (inducedGraph G Λ₁).edgeSet]
+    [Fintype (inducedGraph G Λ₂).edgeSet]
+    [Fintype (((inducedGraph G Λ₁).sum (inducedGraph G Λ₂)).map
+      (Equiv.Finset.union Λ₁ Λ₂ hd).toEmbedding).edgeSet]
+    (p : IsingParams ℝ) (A : Finset (↑Λ₁ : Type _)) :
+    correlation (((inducedGraph G Λ₁).sum (inducedGraph G Λ₂)).map
+        (Equiv.Finset.union Λ₁ Λ₂ hd).toEmbedding) p
+        ((A.map ⟨Sum.inl, Sum.inl_injective⟩).map
+          (Equiv.Finset.union Λ₁ Λ₂ hd).toEmbedding)
+      = correlation (inducedGraph G Λ₁) p A := by
+  rw [correlation_map_equiv, correlation_sum_inl]
+
 end IsingModel
