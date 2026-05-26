@@ -526,5 +526,37 @@ theorem correlationInfinite_latticeGraph_susceptibility_summable_basepoint
     (f := fun z => correlationInfinite (IsingModel.latticeGraph d) Λ p
       {(0 : Fin d → ℤ), z})).mpr hbase
 
+/-- **Unconditional strong-high-temperature uniform clustering**: in the explicit
+regime `βJ · 2 · (d · (2(r+1)+1)^d) < 1`, the infinite-volume correlation is
+uniformly small at large distance — for every `ε > 0` there is `R` with
+`⟨σ_iσ_j⟩^∞ ≤ ε` for all pairs at distance `≥ R` — with no polynomial-decay
+hypothesis (the contraction factor is `< 1` by
+`contractionFactor_lt_one_of_high_temp`).  Part of Issue #2931, Phase 3a. -/
+theorem correlationInfinite_latticeGraph_uniform_decay_of_high_temp
+    (d : ℕ) (hd : 1 ≤ d) (r : ℕ)
+    (Λ : Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (hh : p.h = 0)
+    (hht : p.β * p.J * (2 * ((d : ℝ) * (((2 * (r + 1) + 1) ^ d : ℕ) : ℝ))) < 1) :
+    ∀ ε > (0 : ℝ), ∃ R : ℕ, ∀ i j : Fin d → ℤ,
+      R ≤ IsingModel.latticeDistance d i j →
+        correlationInfinite (IsingModel.latticeGraph d) Λ p {i, j} ≤ ε :=
+  correlationInfinite_latticeGraph_uniform_decay_of_contractionFactor_lt_one
+    d hd r Λ p hf hh (contractionFactor_lt_one_of_high_temp d Λ p hf r hht)
+
+/-- **Unconditional strong-high-temperature clustering (cofinite form)**: in the
+explicit regime `βJ · 2 · (d · (2(r+1)+1)^d) < 1`, the correlation kernel
+`y ↦ ⟨σ_0σ_y⟩^∞` tends to `0` along the cofinite filter, with no polynomial-decay
+hypothesis.  Part of Issue #2931, Phase 3a. -/
+theorem correlationInfinite_latticeGraph_tendsto_cofinite_zero_of_high_temp
+    (d : ℕ) (hd : 1 ≤ d) (r : ℕ)
+    (Λ : Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (hh : p.h = 0)
+    (hht : p.β * p.J * (2 * ((d : ℝ) * (((2 * (r + 1) + 1) ^ d : ℕ) : ℝ))) < 1) :
+    Filter.Tendsto
+      (fun y => correlationInfinite (IsingModel.latticeGraph d) Λ p {(0 : Fin d → ℤ), y})
+      Filter.cofinite (nhds 0) :=
+  correlationInfinite_latticeGraph_tendsto_cofinite_zero
+    d hd r Λ p hf hh (contractionFactor_lt_one_of_high_temp d Λ p hf r hht)
+
 end Ambient
 end IsingModel
