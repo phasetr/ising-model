@@ -12668,9 +12668,10 @@ i.e.\ the \emph{raw} bond-deleted graph's correlation of an $S$-internal
 observable equals the isolated induced-subgraph correlation. Composes
 \texttt{correlation\_induce\_of\_forall\_mem} (on the full set
 $\uparrow(S\cup S^{c})$), \texttt{correlation\_congr\_all}, and the
-component-factorization capstone below. Paired with the ball-boundary increment
-\texttt{correlation\_sub\_deleteEdges\_le\_derivBound} it gives the per-stage
-exhaustion increment bound.
+component-factorization capstone below. It is intended to pair with the
+ball-boundary increment \texttt{correlation\_sub\_deleteEdges\_le\_derivBound}
+toward the per-stage exhaustion increment bound; that composition (finite
+edge-set, observable reduction to the pair $\{r,s\}$) is not yet formalized here.
 \end{theorem}
 
 \begin{theorem}[\texttt{IsingModel.correlation\_inducedGraph\_deleteEdges\_union\_inl}
