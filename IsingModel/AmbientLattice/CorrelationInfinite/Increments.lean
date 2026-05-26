@@ -234,5 +234,37 @@ theorem correlationInfinite_sub_correlationAlongExhaustion_le_tsum_shift_of_incr
       (correlationAlongExhaustion_increment_summable G Λ p hf A)).tsum_le_tsum
     (fun k => hincr (k + n)) ((summable_nat_add_iff n).2 hg)
 
+/-- **Explicit geometric volume-convergence rate**: if the consecutive-stage
+correlation increments are bounded geometrically, `c_{k+1} − c_k ≤ M·ratio^k`
+with `0 ≤ ratio < 1`, then the stage-`n` convergence tail decays geometrically:
+`correlationInfinite − correlationAlongExhaustion … n ≤ M·ratio^n / (1 − ratio)`.
+
+This is the explicit-rate specialization of
+`correlationInfinite_sub_correlationAlongExhaustion_le_tsum_shift_of_increment_le`:
+the geometric increment tail sums (`tsum_geometric_of_lt_one`) to
+`M·ratio^n/(1−ratio)`.  Part of Issue #2965 (Phase C). -/
+theorem correlationInfinite_sub_correlationAlongExhaustion_le_geometric
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (A : Finset V)
+    {M ratio : ℝ} (hr0 : 0 ≤ ratio) (hr1 : ratio < 1)
+    (hincr : ∀ k, correlationAlongExhaustion G Λ p A (k + 1) -
+        correlationAlongExhaustion G Λ p A k ≤ M * ratio ^ k)
+    (n : ℕ) :
+    correlationInfinite G Λ p A - correlationAlongExhaustion G Λ p A n
+      ≤ M * ratio ^ n / (1 - ratio) := by
+  have hg_sum : Summable (fun k => M * ratio ^ k) :=
+    (summable_geometric_of_lt_one hr0 hr1).mul_left M
+  have h := correlationInfinite_sub_correlationAlongExhaustion_le_tsum_shift_of_increment_le
+    G Λ p hf A hg_sum hincr n
+  have htsum : ∑' k, M * ratio ^ (k + n) = M * ratio ^ n / (1 - ratio) := by
+    calc ∑' k, M * ratio ^ (k + n)
+        = ∑' k, (M * ratio ^ n) * ratio ^ k := by
+          congr 1; funext k; rw [pow_add]; ring
+      _ = (M * ratio ^ n) * ∑' k, ratio ^ k := tsum_mul_left
+      _ = (M * ratio ^ n) * (1 - ratio)⁻¹ := by rw [tsum_geometric_of_lt_one hr0 hr1]
+      _ = M * ratio ^ n / (1 - ratio) := by rw [div_eq_mul_inv]
+  rwa [htsum] at h
+
 end Ambient
 end IsingModel
