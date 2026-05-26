@@ -148,5 +148,60 @@ theorem ball_boundary_simon_lieb (G : SimpleGraph ι) [Fintype G.edgeSet]
       Real.norm_of_nonneg (derivBound_nonneg G E₀ p hf r s)] at hmvt
   linarith
 
+/-- **Ball-boundary scaled-correlation difference bound** (the mean-value step of
+`ball_boundary_simon_lieb`, without the separation/vanishing hypothesis): for a
+ferromagnetic model at `h = 0` and an edge subset `E₀` avoiding the pair `{r,s}`,
+the difference between the full pair correlation (`s = 1`) and the
+boundary-removed scaled correlation (`s = 0`) is bounded by the boundary edge sum:
+
+  `scaledCorrelation G E₀ p 1 {r,s} − scaledCorrelation G E₀ p 0 {r,s}
+     ≤ derivBound G E₀ p r s`.
+
+This is exactly the MVT estimate inside `ball_boundary_simon_lieb` before the
+disconnection step is used; it bounds the *difference* of two systems that
+differ only on the boundary edges `E₀` — the finite-volume coupling step for the
+volume-convergence rate (Issue #2965, Phase A), without requiring `r, s` to be
+disconnected at `s = 0`. -/
+theorem scaledCorrelation_one_sub_zero_le_derivBound (G : SimpleGraph ι)
+    [Fintype G.edgeSet] (E₀ : Finset (Sym2 ι)) (hE₀_nd : ∀ e ∈ E₀, ¬e.IsDiag)
+    (hE₀_sub : E₀ ⊆ G.edgeFinset)
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (hh : p.h = 0)
+    (r s : ι) (hrs : r ≠ s)
+    (hE₀_sep : ∀ e ∈ E₀, ¬ Sym2.Mem r e ∧ ¬ Sym2.Mem s e) :
+    scaledCorrelation G E₀ p 1 {r, s} - scaledCorrelation G E₀ p 0 {r, s}
+      ≤ derivBound G E₀ p r s := by
+  have hderiv : ∀ t ∈ Set.Icc (0 : ℝ) 1,
+      HasDerivWithinAt (fun s' => scaledCorrelation G E₀ p s' {r, s})
+        (p.β * p.J * ∑ e ∈ E₀,
+          Sym2.lift ⟨fun u v =>
+            scaledCorrelation G E₀ p t (symmDiff {r, s} {u, v}) -
+            scaledCorrelation G E₀ p t {r, s} *
+            scaledCorrelation G E₀ p t {u, v},
+          fun u v => by simp [Finset.pair_comm v u]⟩ e)
+        (Set.Icc 0 1) t :=
+    fun t _ => (hasDerivAt_scaledCorrelation G E₀ hE₀_nd p t {r, s}).hasDerivWithinAt
+  have hbound : ∀ t ∈ Set.Ico (0 : ℝ) 1,
+      ‖p.β * p.J * ∑ e ∈ E₀,
+          Sym2.lift ⟨fun u v =>
+            scaledCorrelation G E₀ p t (symmDiff {r, s} {u, v}) -
+            scaledCorrelation G E₀ p t {r, s} *
+            scaledCorrelation G E₀ p t {u, v},
+          fun u v => by simp [Finset.pair_comm v u]⟩ e‖ ≤
+      ‖derivBound G E₀ p r s‖ := by
+    intro t ht
+    rw [Real.norm_of_nonneg
+          (scaledCorrelation_deriv_nonneg' G E₀ hE₀_nd hE₀_sub p hf t ht.1 {r, s}),
+        Real.norm_of_nonneg (derivBound_nonneg G E₀ p hf r s)]
+    exact scaledCorrelation_pair_deriv_le_derivBound G E₀ hE₀_nd hE₀_sub p hf hh r s hrs
+      hE₀_sep t ht.1 ht.2.le
+  have hmvt := norm_image_sub_le_of_norm_deriv_le_segment_01' hderiv hbound
+  rw [Real.norm_of_nonneg (derivBound_nonneg G E₀ p hf r s)] at hmvt
+  calc scaledCorrelation G E₀ p 1 {r, s} - scaledCorrelation G E₀ p 0 {r, s}
+      ≤ |scaledCorrelation G E₀ p 1 {r, s} - scaledCorrelation G E₀ p 0 {r, s}| :=
+        le_abs_self _
+    _ = ‖scaledCorrelation G E₀ p 1 {r, s} - scaledCorrelation G E₀ p 0 {r, s}‖ :=
+        (Real.norm_eq_abs _).symm
+    _ ≤ derivBound G E₀ p r s := hmvt
+
 
 end IsingModel

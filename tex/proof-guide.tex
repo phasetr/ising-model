@@ -14495,6 +14495,12 @@ The MVT via \texttt{norm\_image\_sub\_le\_of\_norm\_deriv\_le\_segment\_01'} con
 \item \texttt{ball\_boundary\_simon\_lieb\_tight}: tight ball-boundary bound
   (no extra $\langle\sigma_r\sigma_s\rangle\cdot\langle\sigma_k\sigma_l\rangle$ term),
   using \texttt{cor\_4\_3\_3\_scaled}.
+\item \texttt{scaledCorrelation\_one\_sub\_zero\_le\_derivBound}: the mean-value step of
+  \texttt{ball\_boundary\_simon\_lieb} extracted without the disconnection/vanishing
+  hypothesis, $\langle\sigma_r\sigma_s\rangle_{s=1}-\langle\sigma_r\sigma_s\rangle_{s=0}
+  \le \mathrm{derivBound}$, bounding the difference between two finite-volume systems
+  differing only on the boundary edges $E_0$ (the finite-volume coupling step toward
+  the per-stage correlation increment for the volume-convergence rate, Issue \#2965).
 \item \texttt{scaledCorrelation\_at\_zero\_of\_sep} (axiom): when $E_0$ separates $r$ from $s$
   and $h=0$, $\langle\sigma_r\sigma_s\rangle_{s=0}=0$.
 \item \texttt{latticeBall d r}, \texttt{latticeBallBoundaryEdges d r}: lattice ball and
