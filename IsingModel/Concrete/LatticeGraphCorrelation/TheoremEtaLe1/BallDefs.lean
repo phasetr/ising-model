@@ -97,6 +97,21 @@ theorem latticeBallBoundaryEdges_nonDiag (d r : ℕ) :
   subst hdiag
   simp only [Sym2.lift_mk, ne_eq, not_true] at hne
 
+/-- **Cardinality bound for `latticeBallBoundaryEdges`**: the ball-boundary edge
+set has at most as many edges as the induced graph on the cube `cubicBox d (r+1)`,
+since it is a filtered image of that graph's edge finset.
+
+This bounds the size of the separating surface `E₀` in the ball-boundary
+Simon--Lieb inequality by the (polynomially-growing) edge count of the cube,
+the input needed to control the contraction factor (Issue #2931, Phase 3a). -/
+theorem latticeBallBoundaryEdges_card_le (d r : ℕ) :
+    (latticeBallBoundaryEdges d r).card
+      ≤ (inducedGraph (IsingModel.latticeGraph d)
+          (cubicBox d (r + 1))).edgeFinset.card := by
+  classical
+  refine le_trans (Finset.card_filter_le _ _) ?_
+  exact Finset.card_image_le
+
 /-! ## Phase 3: Polynomial decay hypothesis -/
 
 /-- **Polynomial decay of the two-point function**: the infinite-volume

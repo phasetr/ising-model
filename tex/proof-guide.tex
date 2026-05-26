@@ -8504,6 +8504,10 @@ per-pair decay is dominated by \((1/\text{cf})\,e^{-m\,\mathrm{dist}}\) with
 \(m=-\log(\text{cf})/(r+2)>0\), summable by \texttt{summable\_exp\_neg\_dist}; by
 translation invariance the same finiteness holds from any basepoint
 (\texttt{correlationInfinite\_latticeGraph\_susceptibility\_summable\_basepoint}).
+The ball-boundary separating edge set has at most the edge count of the cube
+\(\mathrm{cubicBox}\,d\,(r+1)\) (being a filtered image of its edge finset,
+\texttt{latticeBallBoundaryEdges\_card\_le}), bounding the size of the Simon--Lieb
+separating surface used to control the contraction factor.
 The remaining gap is instead the distinct \emph{volume-convergence} rate of the
 finite-volume \(\beta\)-derivative increments, related to this spatial decay by
 the boundary-effect estimate.  Its geometric foundation is in place: a vertex lying in the stage-\(n+1\) cube but not the
