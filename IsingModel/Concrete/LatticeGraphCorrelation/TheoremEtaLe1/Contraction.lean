@@ -36,6 +36,38 @@ noncomputable def contractionFactor (d : ℕ) (Λ : Exhaustion (Fin d → ℤ))
         + correlationInfinite (IsingModel.latticeGraph d) Λ p {(0 : Fin d → ℤ), l},
     fun k l => by ring⟩ e
 
+/-- **Cardinality bound for the contraction factor**: each boundary-edge summand
+`⟨σ_0σ_k⟩^∞ + ⟨σ_0σ_l⟩^∞` is at most `2` (correlations are `≤ 1`), so
+`contractionFactor d Λ p r ≤ βJ · 2 · |latticeBallBoundaryEdges d r|`.
+
+Together with `latticeBallBoundaryEdges_card_le` this bounds the contraction
+factor by `βJ` times (twice) the cube edge count, the estimate used to make the
+contraction factor `< 1` in a strong high-temperature regime (Issue #2931,
+Phase 3a). -/
+theorem contractionFactor_le_card (d : ℕ) (Λ : Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (r : ℕ) :
+    contractionFactor d Λ p r
+      ≤ p.β * p.J * (2 * ((latticeBallBoundaryEdges d r).card : ℝ)) := by
+  unfold contractionFactor
+  have hβJ : 0 ≤ p.β * p.J := mul_nonneg hf.hβ.le hf.hJ
+  refine mul_le_mul_of_nonneg_left ?_ hβJ
+  calc ∑ e ∈ latticeBallBoundaryEdges d r,
+        Sym2.lift ⟨fun k l =>
+          correlationInfinite (IsingModel.latticeGraph d) Λ p {(0 : Fin d → ℤ), k}
+            + correlationInfinite (IsingModel.latticeGraph d) Λ p {(0 : Fin d → ℤ), l},
+        fun k l => by ring⟩ e
+      ≤ ∑ _e ∈ latticeBallBoundaryEdges d r, (2 : ℝ) := by
+        refine Finset.sum_le_sum (fun e _ => ?_)
+        obtain ⟨⟨k, l⟩, rfl⟩ := Quot.exists_rep e
+        simp only [Sym2.lift_mk]
+        have hk := correlationInfinite_le_one (IsingModel.latticeGraph d) Λ p
+          {(0 : Fin d → ℤ), k}
+        have hl := correlationInfinite_le_one (IsingModel.latticeGraph d) Λ p
+          {(0 : Fin d → ℤ), l}
+        linarith
+    _ = 2 * ((latticeBallBoundaryEdges d r).card : ℝ) := by
+        rw [Finset.sum_const, nsmul_eq_mul]; ring
+
 /-- **The contraction factor is non-negative**: `0 ≤ contractionFactor d Λ p r`.
 
 Follows from `p.β * p.J ≥ 0` (ferromagnetic) and
