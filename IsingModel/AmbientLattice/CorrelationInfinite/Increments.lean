@@ -266,5 +266,31 @@ theorem correlationInfinite_sub_correlationAlongExhaustion_le_geometric
       _ = M * ratio ^ n / (1 - ratio) := by rw [div_eq_mul_inv]
   rwa [htsum] at h
 
+/-- **Quantitative geometric Cauchy rate for the finite-volume correlations**:
+under a geometric increment bound `c_{k+1} − c_k ≤ M·ratio^k` (`0 ≤ ratio < 1`),
+for any two stages `m, n`
+`correlationAlongExhaustion … n − correlationAlongExhaustion … m ≤ M·ratio^m/(1−ratio)`
+(the meaningful case is `m ≤ n`).
+
+Any stage value is below the infinite-volume value, so the stage gap is bounded
+by the stage-`m` convergence tail
+`correlationInfinite_sub_correlationAlongExhaustion_le_geometric`.  This is the
+geometric (uniform) Cauchy rate of the finite-volume correlation sequence
+(Issue #2965, Phase C). -/
+theorem correlationAlongExhaustion_sub_le_geometric
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (A : Finset V)
+    {M ratio : ℝ} (hr0 : 0 ≤ ratio) (hr1 : ratio < 1)
+    (hincr : ∀ k, correlationAlongExhaustion G Λ p A (k + 1) -
+        correlationAlongExhaustion G Λ p A k ≤ M * ratio ^ k)
+    (m n : ℕ) :
+    correlationAlongExhaustion G Λ p A n - correlationAlongExhaustion G Λ p A m
+      ≤ M * ratio ^ m / (1 - ratio) := by
+  have hle := correlationAlongExhaustion_le_correlationInfinite G Λ p A n
+  have htail := correlationInfinite_sub_correlationAlongExhaustion_le_geometric
+    G Λ p hf A hr0 hr1 hincr m
+  linarith
+
 end Ambient
 end IsingModel
