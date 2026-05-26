@@ -12266,6 +12266,22 @@ Both unfold the straddle membership $s(a,b)\in\{e\mid\neg(p\!\leftrightarrow\!p)
 $\mathrm{Adj}\wedge s(a,b)\notin\{\dots\}$.
 \end{proof}
 
+\begin{proposition}[\texttt{SimpleGraph.deleteEdges\_filter\_edgeFinset\_eq}]
+$G.\mathrm{deleteEdges}\,\uparrow(G.\mathrm{edgeFinset.filter}\,p)
+  = G.\mathrm{deleteEdges}\,\{e\mid p\,e\}$: deleting only the \emph{edges}
+satisfying $p$ equals deleting every $\mathrm{Sym}^2$ satisfying $p$, since
+$\mathrm{deleteEdges}$ ignores non-edges (\texttt{deleteEdges\_eq\_inter\_edgeSet}).
+This bridges the $\mathrm{Finset}$-edge-set form of the ball-boundary increment
+(which takes $E_0:\mathrm{Finset}$) and the $\mathrm{Set}$-predicate form of the
+component-factorization capstone, toward the per-stage exhaustion increment.
+\end{proposition}
+
+\begin{proof}
+By \texttt{deleteEdges\_eq\_inter\_edgeSet} on the right, then edge extensionality:
+$e\in\uparrow(G.\mathrm{edgeFinset.filter}\,p)\Leftrightarrow e\in G.\mathrm{edgeSet}\wedge p\,e
+\Leftrightarrow e\in\{e\mid p\,e\}\cap G.\mathrm{edgeSet}$.
+\end{proof}
+
 \paragraph{Context.} This file is the combinatorial Step~1 toward the
 Glimm--Jaffe \S 4.6 super-additivity proof of thermodynamic-limit
 convergence of the free-energy density. Subsequent steps
