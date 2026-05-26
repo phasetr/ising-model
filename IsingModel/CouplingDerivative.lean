@@ -1,5 +1,6 @@
 import IsingModel.GibbsMeasure
 import IsingModel.BetaDerivative
+import Mathlib.Combinatorics.SimpleGraph.DeleteEdges
 import Mathlib.Analysis.Calculus.Deriv.Add
 import Mathlib.Analysis.Calculus.Deriv.Mul
 import Mathlib.Analysis.Calculus.Deriv.Comp
@@ -97,6 +98,61 @@ theorem scaledCorrelation_one (G : SimpleGraph ι) [Fintype G.edgeSet]
     scaledCorrelation G E₀ p 1 A = correlation G p A := by
   simp [scaledCorrelation, scaledGibbsExpectation, scaledPartitionFunction,
         scaledBoltzmannWeight_one, correlation, gibbsExpectation, partitionFunction]
+
+/-! ## The `s = 0` system is the bond-deleted model -/
+
+omit [DecidableEq ι] in
+/-- At `s = 0`: the scaled Boltzmann weight equals the Boltzmann weight of the
+**bond-deleted** graph `G.deleteEdges ↑E₀` (the `E₀` couplings switched off).
+The scaling factor `exp(−β·J·∑_{e∈E₀} σ_e)` exactly cancels the `E₀` edges'
+contribution to the Hamiltonian, since `E₀ ⊆ G.edgeFinset`. -/
+theorem scaledBoltzmannWeight_zero (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (E₀ : Finset (Sym2 ι)) (hE₀_sub : E₀ ⊆ G.edgeFinset)
+    (p : IsingParams ℝ) (σ : Config ι)
+    [Fintype (G.deleteEdges ↑E₀).edgeSet] :
+    scaledBoltzmannWeight G E₀ p 0 σ = boltzmannWeight (G.deleteEdges ↑E₀) p σ := by
+  classical
+  have hsum : (∑ e ∈ (G.deleteEdges ↑E₀).edgeFinset, edgeSpin (K := ℝ) σ e)
+      + ∑ e ∈ E₀, edgeSpin (K := ℝ) σ e
+      = ∑ e ∈ G.edgeFinset, edgeSpin (K := ℝ) σ e := by
+    rw [SimpleGraph.edgeFinset_deleteEdges]
+    exact Finset.sum_sdiff hE₀_sub
+  rw [scaledBoltzmannWeight, boltzmannWeight, boltzmannWeight, ← Real.exp_add]
+  congr 1
+  simp only [hamiltonian, interactionEnergy, externalFieldEnergy]
+  linear_combination (-(p.β * p.J)) * hsum
+
+/-- At `s = 0`: the scaled partition function equals the partition function of the
+bond-deleted graph `G.deleteEdges ↑E₀`. -/
+theorem scaledPartitionFunction_zero (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (E₀ : Finset (Sym2 ι)) (hE₀_sub : E₀ ⊆ G.edgeFinset)
+    (p : IsingParams ℝ) [Fintype (G.deleteEdges ↑E₀).edgeSet] :
+    scaledPartitionFunction G E₀ p 0 = partitionFunction (G.deleteEdges ↑E₀) p := by
+  unfold scaledPartitionFunction partitionFunction
+  exact Finset.sum_congr rfl fun σ _ => scaledBoltzmannWeight_zero G E₀ hE₀_sub p σ
+
+/-- At `s = 0`: the scaled Gibbs expectation equals the Gibbs expectation of the
+bond-deleted graph `G.deleteEdges ↑E₀`. -/
+theorem scaledGibbsExpectation_zero (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (E₀ : Finset (Sym2 ι)) (hE₀_sub : E₀ ⊆ G.edgeFinset)
+    (p : IsingParams ℝ) (F : Config ι → ℝ) [Fintype (G.deleteEdges ↑E₀).edgeSet] :
+    scaledGibbsExpectation G E₀ p 0 F = gibbsExpectation (G.deleteEdges ↑E₀) p F := by
+  unfold scaledGibbsExpectation gibbsExpectation
+  rw [scaledPartitionFunction_zero G E₀ hE₀_sub p]
+  congr 1
+  exact Finset.sum_congr rfl fun σ _ => by
+    rw [scaledBoltzmannWeight_zero G E₀ hE₀_sub p σ]
+
+/-- At `s = 0`: the scaled correlation equals the correlation of the bond-deleted
+graph `G.deleteEdges ↑E₀`. This makes the `s = 0` system concrete: removing the
+`E₀` bonds yields the free-boundary model on the sub-graph, the conceptual basis
+for the ball-boundary disconnection arguments. -/
+theorem scaledCorrelation_zero (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (E₀ : Finset (Sym2 ι)) (hE₀_sub : E₀ ⊆ G.edgeFinset)
+    (p : IsingParams ℝ) (A : Finset ι) [Fintype (G.deleteEdges ↑E₀).edgeSet] :
+    scaledCorrelation G E₀ p 0 A = correlation (G.deleteEdges ↑E₀) p A := by
+  unfold scaledCorrelation correlation
+  exact scaledGibbsExpectation_zero G E₀ hE₀_sub p (spinProduct A)
 
 /-! ## Derivative of Boltzmann weight -/
 

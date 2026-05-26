@@ -14490,6 +14490,15 @@ The MVT via \texttt{norm\_image\_sub\_le\_of\_norm\_deriv\_le\_segment\_01'} con
 \begin{itemize}
 \item \texttt{scaledCorrelation\_odd\_vanish}: at $h=0$, odd-cardinality scaled correlations
   vanish (global spin-flip symmetry for the scaled model).
+\item \texttt{scaledCorrelation\_zero} (with \texttt{scaledBoltzmannWeight\_zero},
+  \texttt{scaledPartitionFunction\_zero}, \texttt{scaledGibbsExpectation\_zero}): the
+  $s=0$ system is the \emph{bond-deleted} model. For $E_0\subseteq G.\mathrm{edgeFinset}$
+  the scaling factor $\exp(-\beta J\sum_{e\in E_0}\sigma_e)$ exactly cancels the $E_0$
+  edges' Hamiltonian contribution, so
+  $\langle\sigma^A\rangle_{s=0}=\langle\sigma^A\rangle_{G\setminus E_0}$, i.e.\ the
+  free-boundary correlation on $G.\mathrm{deleteEdges}\,E_0$ (proved via
+  \texttt{SimpleGraph.edgeFinset\_deleteEdges} and \texttt{Finset.sum\_sdiff}). This
+  makes the ball-boundary disconnection concrete (Issue \#2965).
 \item \texttt{cor\_4\_3\_3\_scaled} (axiom): Lebowitz 4-site inequality for the scaled model
   (proved via $\phi^4$ approximation, same structure as \texttt{lebowitz\_four}).
 \item \texttt{ball\_boundary\_simon\_lieb\_tight}: tight ball-boundary bound
