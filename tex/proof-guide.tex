@@ -8488,7 +8488,11 @@ is in fact already available via the shell iteration
 for every \(y\neq0\), prefactor-free with contraction factor \(<1\); by
 translation invariance this extends to every distinct pair,
 \(\langle\sigma_i\sigma_j\rangle^\infty\le(\text{contractionFactor})^{\lfloor\mathrm{dist}(i,j)/(r+2)\rfloor}\)
-(\texttt{correlationInfinite\_latticeGraph\_le\_contractionFactor\_pow\_dist\_pair}).
+(\texttt{correlationInfinite\_latticeGraph\_le\_contractionFactor\_pow\_dist\_pair}),
+which yields uniform clustering: for every \(\varepsilon>0\) there is \(R\) with
+\(\langle\sigma_i\sigma_j\rangle^\infty\le\varepsilon\) whenever
+\(\mathrm{dist}(i,j)\ge R\)
+(\texttt{correlationInfinite\_latticeGraph\_uniform\_decay\_of\_contractionFactor\_lt\_one}).
 The remaining gap is instead the distinct \emph{volume-convergence} rate of the
 finite-volume \(\beta\)-derivative increments, related to this spatial decay by
 the boundary-effect estimate.  Its geometric foundation is in place: a vertex lying in the stage-\(n+1\) cube but not the
