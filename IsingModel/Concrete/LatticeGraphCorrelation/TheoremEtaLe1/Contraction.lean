@@ -592,5 +592,83 @@ theorem correlationInfinite_latticeGraph_le_explicit_pow_dist
       (contractionFactor_le_high_temp_const d Λ p hf r) _
   exact hbound.trans hmono
 
+/-- **Summability of the floor-power geometric lattice kernel**: for `0 < c < 1`,
+the function `y ↦ c^{⌊dist(0,y)/(r+2)⌋}` is summable over `ℤ^d`.
+
+It is dominated by `(1/c)·exp(-m·dist(0,y))` with `m = -log(c)/(r+2) > 0` (using
+`c^{⌊q⌋} ≤ c^{q-1} = (1/c)·exp(-m·dist)`), and the exponential kernel is summable
+by `summable_exp_neg_dist`.  This is the reusable core behind both the
+contraction-factor and explicit-base susceptibility bounds (Issue #2931). -/
+theorem summable_pow_div_latticeDistance (d r : ℕ) {c : ℝ} (hc0 : 0 < c) (hc1 : c < 1) :
+    Summable (fun y : Fin d → ℤ => c ^ (IsingModel.latticeDistance d 0 y / (r + 2))) := by
+  set m := -Real.log c / (r + 2 : ℝ) with hmdef
+  have hr2_pos : (0 : ℝ) < (r + 2 : ℝ) := by positivity
+  have hlog_neg : Real.log c < 0 := Real.log_neg hc0 hc1
+  have hm_pos : 0 < m := by rw [hmdef]; exact div_pos (by linarith [hlog_neg]) hr2_pos
+  have hmaj_sum :
+      Summable (fun y : Fin d → ℤ =>
+        (1 / c) * Real.exp (-m * (IsingModel.latticeDistance d 0 y : ℝ))) :=
+    (summable_exp_neg_dist hm_pos d 0).mul_left (1 / c)
+  refine Summable.of_nonneg_of_le (fun y => pow_nonneg hc0.le _) (fun y => ?_) hmaj_sum
+  set n := IsingModel.latticeDistance d 0 y with hndef
+  have hq_real : ((n / (r + 2) : ℕ) : ℝ) ≥ (n : ℝ) / (r + 2 : ℝ) - 1 := by
+    have hlt : n < (n / (r + 2) + 1) * (r + 2) := by
+      have hmod := Nat.mod_lt n (show 0 < r + 2 by omega)
+      have hdm := Nat.div_add_mod n (r + 2)
+      nlinarith [hmod, hdm]
+    have hcast : (n : ℝ) < (((n / (r + 2) : ℕ) : ℝ) + 1) * ((r : ℝ) + 2) := by
+      have := (Nat.cast_lt (α := ℝ)).2 hlt
+      push_cast at this; linarith [this]
+    rw [ge_iff_le, sub_le_iff_le_add, div_le_iff₀ hr2_pos]
+    nlinarith [hcast]
+  have hstep1 : c ^ (n / (r + 2)) ≤ c ^ ((n : ℝ) / (r + 2 : ℝ) - 1) := by
+    rw [← Real.rpow_natCast c (n / (r + 2))]
+    exact Real.rpow_le_rpow_of_exponent_ge hc0 hc1.le hq_real
+  have hstep2 :
+      c ^ ((n : ℝ) / (r + 2 : ℝ) - 1) = (1 / c) * Real.exp (-m * (n : ℝ)) := by
+    rw [Real.rpow_sub hc0, Real.rpow_one, Real.rpow_def_of_pos hc0,
+      one_div, div_eq_mul_inv, mul_comm (c⁻¹) (Real.exp (-m * (n : ℝ)))]
+    congr 1
+    congr 1
+    rw [hmdef]; ring
+  calc c ^ (n / (r + 2)) ≤ c ^ ((n : ℝ) / (r + 2 : ℝ) - 1) := hstep1
+    _ = (1 / c) * Real.exp (-m * (n : ℝ)) := hstep2
+
+/-- **Unconditional finite susceptibility at strong high temperature**: under
+`0 < βJ` and the explicit condition `H := βJ · 2 · (d · (2(r+1)+1)^d) < 1`, the
+correlation kernel `y ↦ ⟨σ_0σ_y⟩^∞` is summable (finite susceptibility), with no
+polynomial-decay hypothesis and no contraction-factor positivity.
+
+The explicit decay `correlationInfinite_latticeGraph_le_explicit_pow_dist`
+dominates the kernel by `H^{dist(0,y)/(r+2)}` with `0 < H < 1`, which is summable
+by `summable_pow_div_latticeDistance`.  Part of Issue #2931, Phase 3a. -/
+theorem correlationInfinite_latticeGraph_susceptibility_summable_high_temp
+    (d : ℕ) (hd : 1 ≤ d) (r : ℕ)
+    (Λ : Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (hh : p.h = 0)
+    (hβJ_pos : 0 < p.β * p.J)
+    (hht : p.β * p.J * (2 * ((d : ℝ) * (((2 * (r + 1) + 1) ^ d : ℕ) : ℝ))) < 1) :
+    Summable
+      (fun y => correlationInfinite (IsingModel.latticeGraph d) Λ p {(0 : Fin d → ℤ), y}) := by
+  set H := p.β * p.J * (2 * ((d : ℝ) * (((2 * (r + 1) + 1) ^ d : ℕ) : ℝ))) with hHdef
+  have hH_pos : 0 < H := by
+    rw [hHdef]
+    have : (0 : ℝ) < 2 * ((d : ℝ) * (((2 * (r + 1) + 1) ^ d : ℕ) : ℝ)) := by positivity
+    exact mul_pos hβJ_pos this
+  have hmaj : Summable (fun y : Fin d → ℤ =>
+      H ^ (IsingModel.latticeDistance d 0 y / (r + 2))) :=
+    summable_pow_div_latticeDistance d r hH_pos hht
+  refine Summable.of_nonneg_of_le
+    (fun y => correlationInfinite_nonneg (IsingModel.latticeGraph d) Λ p hf _)
+    (fun y => ?_) hmaj
+  by_cases hy : y = 0
+  · subst hy
+    have hone : correlationInfinite (IsingModel.latticeGraph d) Λ p {(0 : Fin d → ℤ), 0} ≤ 1 :=
+      correlationInfinite_le_one (IsingModel.latticeGraph d) Λ p _
+    rw [IsingModel.latticeDistance_self]
+    simpa using hone
+  · exact correlationInfinite_latticeGraph_le_explicit_pow_dist d hd r Λ p hf hh hht
+      (Ne.symm hy)
+
 end Ambient
 end IsingModel
