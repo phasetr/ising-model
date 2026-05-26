@@ -12684,10 +12684,10 @@ i.e.\ the \emph{raw} bond-deleted graph's correlation of an $S$-internal
 observable equals the isolated induced-subgraph correlation. Composes
 \texttt{correlation\_induce\_of\_forall\_mem} (on the full set
 $\uparrow(S\cup S^{c})$), \texttt{correlation\_congr\_all}, and the
-component-factorization capstone below. It is intended to pair with the
-ball-boundary increment \texttt{correlation\_sub\_deleteEdges\_le\_derivBound}
-toward the per-stage exhaustion increment bound; that composition (finite
-edge-set, observable reduction to the pair $\{r,s\}$) is not yet formalized here.
+component-factorization capstone below. It pairs with the ball-boundary
+increment \texttt{correlation\_sub\_deleteEdges\_le\_derivBound} to give the
+numeric per-stage increment
+\texttt{correlation\_pair\_sub\_inducedGraph\_le\_derivBound} (below).
 \end{theorem}
 
 \begin{proposition}[\texttt{IsingModel.triple\_map\_subtypeUnivEquiv\_eq}]
@@ -12704,7 +12704,8 @@ $V$-vertex observable (e.g.\ $\{r,s\}$ for the pair), supplying the observable
 match for the per-stage increment; together with
 \texttt{deleteEdges\_filter\_edgeFinset\_eq} and \texttt{correlation\_congr\_all}
 the remaining gap to the numeric increment is only the discharge of the
-ball-boundary hypotheses for the straddle-edge finset.
+ball-boundary hypotheses for the straddle-edge finset (now carried out in the
+theorem below).
 \end{proposition}
 
 \begin{theorem}[\texttt{IsingModel.correlation\_pair\_sub\_inducedGraph\_le\_derivBound}
