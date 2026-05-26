@@ -508,4 +508,31 @@ theorem triple_map_subtypeUnivEquiv_eq [Fintype V] (S : Finset V)
   rw [Finset.map_map, Finset.map_map]
   congr 1
 
+/-- The nested-subtype relabeling `{x : ↥T // x.val ∈ S} ≃ ↥S` for `S ⊆ T`. -/
+def nestedSubtypeEquiv {S T : Finset V} (hST : S ⊆ T) :
+    {x : (↑T : Type _) // x.val ∈ S} ≃ (↑S : Type _) :=
+  Equiv.subtypeSubtypeEquivSubtype (fun {_x} h => hST h)
+
+omit [DecidableEq V] in
+/-- **Nested induced subgraph equals direct induced subgraph (graph form)**: for
+`S ⊆ T`, pushing the induced subgraph of `inducedGraph G T` over the preimage of
+`S` forward along `nestedSubtypeEquiv` recovers the direct induced subgraph
+`inducedGraph G S`. An edge survives iff its (deep) endpoints are `G`-adjacent and
+both in `S`. This is the graph-level foundation for instantiating the per-stage
+increment on cubic exhaustion stages `box_k ⊆ box_{k+1}` (Issue #2965, Phase A);
+the correlation-level transport is a follow-up. -/
+theorem inducedGraph_induce_preimage_map_eq (G : SimpleGraph V) {S T : Finset V}
+    (hST : S ⊆ T) :
+    ((inducedGraph G T).induce {x : (↑T : Type _) | x.val ∈ S}).map
+        (nestedSubtypeEquiv hST).toEmbedding
+      = inducedGraph G S := by
+  ext a b
+  simp only [SimpleGraph.map_adj, inducedGraph_apply, SimpleGraph.induce_adj]
+  constructor
+  · rintro ⟨x, y, hxy, rfl, rfl⟩
+    exact hxy
+  · intro h
+    exact ⟨(nestedSubtypeEquiv hST).symm a, (nestedSubtypeEquiv hST).symm b,
+      by simpa using h, by simp, by simp⟩
+
 end IsingModel
