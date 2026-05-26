@@ -12439,6 +12439,24 @@ spin pullback along $\mathrm{Sym}^2$-map) and invariance of the
 external-field energy (\texttt{Fintype.sum\_equiv}).
 \end{proof}
 
+\begin{proposition}[\texttt{IsingModel.correlation\_map\_equiv}]
+Under the same hypotheses, pushing both the graph and the observable forward
+along $e$ leaves the correlation unchanged:
+\[
+  \langle\sigma^{A.\mathrm{map}\,e}\rangle_{G.\mathrm{map}\,e}(p)
+    = \langle\sigma^{A}\rangle_{G}(p).
+\]
+\end{proposition}
+
+\begin{proof}
+As for $Z$, reindex the numerator via \texttt{Equiv.arrowCongr}; the spin
+product transports by \texttt{spinProduct\_map\_equiv}
+($\sigma^{A.\mathrm{map}\,e}(\sigma\circ e^{-1})=\sigma^{A}(\sigma)$) and the
+Boltzmann weight by \texttt{hamiltonian\_map\_equiv}, while the partition
+function is invariant by \texttt{partitionFunction\_map\_equiv}; the
+$Z^{-1}$ factors then match.
+\end{proof}
+
 \paragraph{Purpose.} This is infrastructure for transporting an
 \texttt{inducedGraph} on a disjoint Finset union
 $\Lambda_1 \cup \Lambda_2$ back to a graph on the disjoint sum
