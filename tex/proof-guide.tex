@@ -8507,7 +8507,11 @@ translation invariance the same finiteness holds from any basepoint
 The ball-boundary separating edge set has at most the edge count of the cube
 \(\mathrm{cubicBox}\,d\,(r+1)\) (being a filtered image of its edge finset,
 \texttt{latticeBallBoundaryEdges\_card\_le}), bounding the size of the Simon--Lieb
-separating surface used to control the contraction factor.
+separating surface, and the contraction factor itself is bounded,
+\(\text{contractionFactor}\,d\,\Lambda\,p\,r\le\beta J\cdot 2\,|\partial E_r|\)
+(each boundary-edge summand \(\langle\sigma_0\sigma_k\rangle^\infty+\langle\sigma_0\sigma_l\rangle^\infty\le2\),
+\texttt{contractionFactor\_le\_card}), the estimate used to make the contraction
+factor \(<1\) in a strong high-temperature regime.
 The remaining gap is instead the distinct \emph{volume-convergence} rate of the
 finite-volume \(\beta\)-derivative increments, related to this spatial decay by
 the boundary-effect estimate.  Its geometric foundation is in place: a vertex lying in the stage-\(n+1\) cube but not the
