@@ -86,10 +86,10 @@ bound with the universal correlation bound `⟨σ_kσ_j⟩^∞ ≤ 1` gives, for
 non-adjacent pair `i ≠ j` on `ℤ^d`,
 `⟨σ_iσ_j⟩^∞ ≤ βJ · 2d`.
 
-In the strict high-temperature regime `βJ·2d < 1` this already improves the
-universal `≤ 1` bound to a contraction factor `βJ·2d < 1` for every non-adjacent
-pair; it is the first quantitative decay step of the prefactor-free iteration
-(Issue #2931, Phase 3a). -/
+The bound holds under the standing hypothesis `0 ≤ βJ`; in the strict
+high-temperature regime `0 ≤ βJ·2d < 1` it improves the universal `≤ 1` bound to
+a contraction factor `< 1` for every non-adjacent pair, the first quantitative
+decay step of the prefactor-free iteration (Issue #2931, Phase 3a). -/
 theorem correlationInfinite_latticeGraph_le_betaJ_two_d_of_not_adj
     {d : ℕ} {β J : ℝ} (hβJ : 0 ≤ β * J)
     {i j : Fin d → ℤ} (hij : i ≠ j) (hnadj : ¬ (latticeGraph d).Adj i j) :
