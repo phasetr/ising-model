@@ -214,5 +214,46 @@ theorem correlationInfinite_latticeGraph_le_contractionFactor_pow_dist
     le_ciSup hbdd ⟨y, le_rfl, hy⟩
   exact hle.trans hbound
 
+/-- **Pointwise spatial exponential decay for an arbitrary pair**: translation
+invariance extends the anchored bound to any distinct pair `i ≠ j`,
+`⟨σ_iσ_j⟩^∞ ≤ (contractionFactor d Λ p r)^{dist(i,j) / (r+2)}`.
+
+The correlation is translation invariant
+(`correlationInfinite_vaddFinset_of_translationInvariant`), so
+`⟨σ_iσ_j⟩^∞ = ⟨σ_0σ_{j-i}⟩^∞`, and the ℓ¹ lattice distance is likewise
+translation invariant, `dist(i,j) = dist(0, j-i)`; the anchored bound
+`correlationInfinite_latticeGraph_le_contractionFactor_pow_dist` then applies at
+`y = j - i ≠ 0`.  This is the per-pair prefactor-free spatial decay used by the
+finite-volume convergence-rate program (Issue #2931, Phase 3a/3b′). -/
+theorem correlationInfinite_latticeGraph_le_contractionFactor_pow_dist_pair
+    (d : ℕ) (hd : 1 ≤ d) (r : ℕ)
+    (Λ : Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (hh : p.h = 0)
+    (hα : contractionFactor d Λ p r < 1) {i j : Fin d → ℤ} (hij : i ≠ j) :
+    correlationInfinite (IsingModel.latticeGraph d) Λ p {i, j}
+      ≤ (contractionFactor d Λ p r) ^ (IsingModel.latticeDistance d i j / (r + 2)) := by
+  -- Translation invariance: `⟨σ_iσ_j⟩^∞ = ⟨σ_0σ_{j-i}⟩^∞`.
+  have htrans :
+      correlationInfinite (IsingModel.latticeGraph d) Λ p {i, j}
+        = correlationInfinite (IsingModel.latticeGraph d) Λ p {(0 : Fin d → ℤ), j - i} := by
+    rw [show ({i, j} : Finset (Fin d → ℤ)) = vaddFinset i {(0 : Fin d → ℤ), j - i} from by
+      rw [vaddFinset_pair]; simp [vadd_eq_add]]
+    exact correlationInfinite_vaddFinset_of_translationInvariant
+      (IsingModel.latticeGraph d) Λ i p hf {(0 : Fin d → ℤ), j - i}
+  -- The ℓ¹ distance is translation invariant: `dist(i,j) = dist(0, j-i)`.
+  have hdist : IsingModel.latticeDistance d i j
+      = IsingModel.latticeDistance d 0 (j - i) := by
+    unfold IsingModel.latticeDistance
+    refine Finset.sum_congr rfl (fun k _ => ?_)
+    simp only [Pi.zero_apply, zero_sub, Pi.sub_apply]
+    congr 1; ring
+  -- `j - i ≠ 0` since `i ≠ j`.
+  have hjmi_ne : j - i ≠ 0 := fun h => hij (by
+    have hji : j = i + (j - i) := by abel
+    rw [h, add_zero] at hji; exact hji.symm)
+  rw [htrans, hdist]
+  exact correlationInfinite_latticeGraph_le_contractionFactor_pow_dist
+    d hd r Λ p hf hh hα hjmi_ne
+
 end Ambient
 end IsingModel

@@ -8485,8 +8485,11 @@ is in fact already available via the shell iteration
 \texttt{shellSup\_iterated\_bound}; its pointwise form
 \texttt{correlationInfinite\_latticeGraph\_le\_contractionFactor\_pow\_dist} gives
 \(\langle\sigma_0\sigma_y\rangle^\infty\le(\text{contractionFactor})^{\lfloor\mathrm{dist}(0,y)/(r+2)\rfloor}\)
-for every \(y\neq0\), prefactor-free with contraction factor \(<1\).  The
-remaining gap is instead the distinct \emph{volume-convergence} rate of the
+for every \(y\neq0\), prefactor-free with contraction factor \(<1\); by
+translation invariance this extends to every distinct pair,
+\(\langle\sigma_i\sigma_j\rangle^\infty\le(\text{contractionFactor})^{\lfloor\mathrm{dist}(i,j)/(r+2)\rfloor}\)
+(\texttt{correlationInfinite\_latticeGraph\_le\_contractionFactor\_pow\_dist\_pair}).
+The remaining gap is instead the distinct \emph{volume-convergence} rate of the
 finite-volume \(\beta\)-derivative increments, related to this spatial decay by
 the boundary-effect estimate.  Its geometric foundation is in place: a vertex lying in the stage-\(n+1\) cube but not the
 stage-\(n\) cube has a coordinate of absolute value exactly \(n+1\)
