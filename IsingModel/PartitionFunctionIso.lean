@@ -130,4 +130,44 @@ theorem log_partitionFunction_map_equiv
       = Real.log (partitionFunction G p) := by
   rw [partitionFunction_map_equiv]
 
+/-- The spin product transports under the site relabeling `e : V ≃ W`:
+`spinProduct (A.map e.toEmbedding) (σ ∘ e.symm) = spinProduct A σ`, since the
+pushed-forward observable evaluated on the reindexed configuration recovers the
+original product term by term. -/
+theorem spinProduct_map_equiv (e : V ≃ W) (A : Finset V) (σ : Config V) :
+    spinProduct (A.map e.toEmbedding) (σ ∘ e.symm) = spinProduct A σ := by
+  unfold spinProduct
+  rw [Finset.prod_map]
+  apply Finset.prod_congr rfl
+  intro v _
+  simp
+
+/-- **Correlation invariance under graph iso transport**: for a type equivalence
+`e : V ≃ W` and finite simple graph `G : SimpleGraph V`, pushing both the graph
+and the observable forward along `e` leaves the correlation unchanged:
+`correlation (G.map e.toEmbedding) p (A.map e.toEmbedding) = correlation G p A`.
+Companion to `partitionFunction_map_equiv` for the correlation functional. -/
+theorem correlation_map_equiv
+    [Fintype V] [Fintype W] [DecidableEq V] [DecidableEq W]
+    (e : V ≃ W) (G : SimpleGraph V)
+    [Fintype G.edgeSet] [Fintype (G.map e.toEmbedding).edgeSet]
+    (p : IsingParams ℝ) (A : Finset V) :
+    correlation (G.map e.toEmbedding) p (A.map e.toEmbedding) = correlation G p A := by
+  unfold correlation gibbsExpectation
+  rw [partitionFunction_map_equiv]
+  congr 1
+  rw [← Equiv.sum_comp (Equiv.arrowCongr e (Equiv.refl Spin))
+        (fun τ : Config W =>
+          spinProduct (A.map e.toEmbedding) τ * boltzmannWeight (G.map e.toEmbedding) p τ)]
+  apply Finset.sum_congr rfl
+  intro σ _
+  have hτ : (Equiv.arrowCongr e (Equiv.refl Spin)) σ = σ ∘ e.symm := by
+    funext w; simp [Equiv.arrowCongr]
+  rw [hτ]
+  have hcomp : (σ ∘ ⇑e.symm) ∘ e = σ := by funext v; simp
+  have hbw : boltzmannWeight (G.map e.toEmbedding) p (σ ∘ e.symm) = boltzmannWeight G p σ := by
+    unfold boltzmannWeight
+    rw [hamiltonian_map_equiv e G p (σ ∘ e.symm), hcomp]
+  rw [hbw, spinProduct_map_equiv e A σ]
+
 end IsingModel
