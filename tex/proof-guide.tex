@@ -14507,6 +14507,19 @@ The MVT via \texttt{norm\_image\_sub\_le\_of\_norm\_deriv\_le\_segment\_01'} con
   boundary bond set definitions.
 \end{itemize}
 
+\noindent\textbf{The $s=0$ system as the bond-deleted model (Issue \#2965).}
+\begin{itemize}
+\item \texttt{scaledCorrelation\_zero} (with \texttt{scaledBoltzmannWeight\_zero},
+  \texttt{scaledPartitionFunction\_zero}, \texttt{scaledGibbsExpectation\_zero}): the
+  $s=0$ system is the \emph{bond-deleted} model. For $E_0\subseteq G.\mathrm{edgeFinset}$
+  the scaling factor $\exp(-\beta J\sum_{e\in E_0}\sigma_e)$ exactly cancels the $E_0$
+  edges' Hamiltonian contribution, so
+  $\langle\sigma^A\rangle_{s=0}=\langle\sigma^A\rangle_{G\setminus E_0}$, i.e.\ the
+  free-boundary correlation on $G.\mathrm{deleteEdges}\,E_0$ (proved via
+  \texttt{SimpleGraph.edgeFinset\_deleteEdges} and \texttt{Finset.sum\_sdiff}). This
+  makes the ball-boundary disconnection concrete.
+\end{itemize}
+
 \noindent\textbf{Proof sketch.}
 Choose $R$ large so that $\alpha^{-1}:=\beta J\sum_{k\in\partial B_R}\langle\sigma_0\sigma_k\rangle_\infty<1$
 (possible by polynomial decay). Apply \texttt{scaledCorrelation\_at\_zero\_of\_sep} (origin inside $B_R$,
