@@ -8524,7 +8524,13 @@ unconditional uniform large-distance decay
 cofinite vanishing
 (\texttt{correlationInfinite\_latticeGraph\_tendsto\_cofinite\_zero\_of\_high\_temp})
 directly from the explicit high-temperature condition, with no polynomial-decay
-hypothesis.
+hypothesis.  Moreover the fully explicit prefactor-free geometric decay
+\(\langle\sigma_i\sigma_j\rangle^\infty\le H^{\lfloor\mathrm{dist}(i,j)/(r+2)\rfloor}\)
+with base \(H=\beta J\cdot2\,(d\,(2(r+1)+1)^d)<1\) holds with no contraction
+factor in the statement and no polynomial-decay hypothesis (the ball-boundary
+shell-contraction axiom \texttt{shellSup\_contraction} is still used)
+(\texttt{correlationInfinite\_latticeGraph\_le\_explicit\_pow\_dist}), via
+\(\text{cf}\le H\) and base monotonicity.
 The remaining gap is instead the distinct \emph{volume-convergence} rate of the
 finite-volume \(\beta\)-derivative increments, related to this spatial decay by
 the boundary-effect estimate.  Its geometric foundation is in place: a vertex lying in the stage-\(n+1\) cube but not the
