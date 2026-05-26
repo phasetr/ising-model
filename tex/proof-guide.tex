@@ -12579,6 +12579,24 @@ absorbs the \texttt{Fintype} motive obstruction that blocks a direct
 \texttt{rw}.
 \end{proof}
 
+\begin{proposition}[\texttt{IsingModel.inducedGraph\_deleteEdges\_eq\_of\_not\_internal}]
+If no edge of the deleted set $D$ has both endpoints in $S$, then
+\[
+  \mathrm{inducedGraph}\,(G.\mathrm{deleteEdges}\,D)\,S
+    = \mathrm{inducedGraph}\,G\,S.
+\]
+\end{proposition}
+
+\begin{proof}
+An edge of the induced subgraph on $S$ joins two vertices of $S$, hence lies
+inside $S$ and is never among $D$ (by hypothesis); so the induce-adjacency is
+unchanged by the deletion. This is the Finset route to the bond-deletion
+$\to$ isolated-component bridge: deleting the cut edges between $S$ and its
+complement leaves the within-$S$ induced subgraph (hence its correlations)
+intact, and the bond-deleted graph then has no cross edges, so
+\texttt{correlation\_inducedGraph\_union\_inl\_of\_no\_cross} applies to it.
+\end{proof}
+
 \paragraph{Closing Prop 4.6.1.} Combined with the uniform upper
 bound (PR \#122, \#123), Fekete's lemma now yields
 convergence of $f_\Lambda = (\log Z_\Lambda)/|\Lambda|$ along
