@@ -12690,6 +12690,23 @@ toward the per-stage exhaustion increment bound; that composition (finite
 edge-set, observable reduction to the pair $\{r,s\}$) is not yet formalized here.
 \end{theorem}
 
+\begin{proposition}[\texttt{IsingModel.triple\_map\_subtypeUnivEquiv\_eq}]
+The triple-mapped $S$-observable equals the raw subtype-inclusion image:
+\[
+  ((A.\mathrm{map}\,\mathrm{inl}).\mathrm{map}\,\mathrm{union})
+    .\mathrm{map}\,\mathrm{subtypeUnivEquiv}
+  = A.\mathrm{map}\,\langle\mathrm{Subtype.val},\cdot\rangle.
+\]
+By \texttt{Finset.map\_map} the three embeddings compose to the inclusion
+$\uparrow S\hookrightarrow V$. This identifies the observable of
+\texttt{correlation\_deleteEdges\_straddle\_eq\_inducedGraph} with the plain
+$V$-vertex observable (e.g.\ $\{r,s\}$ for the pair), supplying the observable
+match for the per-stage increment; together with
+\texttt{deleteEdges\_filter\_edgeFinset\_eq} and \texttt{correlation\_congr\_all}
+the remaining gap to the numeric increment is only the discharge of the
+ball-boundary hypotheses for the straddle-edge finset.
+\end{proposition}
+
 \begin{theorem}[\texttt{IsingModel.correlation\_inducedGraph\_deleteEdges\_union\_inl}
 (Phase A component-factorization capstone, Finset route)]
 For a region $S\subseteq W$, deleting the cut edges between $S$ and its complement

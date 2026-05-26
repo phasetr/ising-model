@@ -490,4 +490,22 @@ theorem correlation_deleteEdges_straddle_eq_inducedGraph [Fintype V] (G : Simple
         (Equiv.Finset.union S Sᶜ disjoint_compl_right).toEmbedding)).trans
       (correlation_inducedGraph_deleteEdges_union_inl G S params A))
 
+/-- **The triple-mapped `S`-observable is the raw `val`-image observable**: pushing
+a `Finset ↥S` through `Sum.inl`, the `Equiv.Finset.union S Sᶜ` relabeling, and the
+`Equiv.subtypeUnivEquiv` to `V` recovers exactly the image of `A` under the
+subtype inclusion `↥S → V`. This identifies the observable appearing in
+`correlation_deleteEdges_straddle_eq_inducedGraph` with the plain `V`-vertex
+observable — e.g. for `A = {⟨r,_⟩, ⟨s,_⟩}` it is the pair `{r, s}`, matching the
+ball-boundary increment `correlation_sub_deleteEdges_le_derivBound` (Issue #2965,
+Phase A per-stage increment). -/
+theorem triple_map_subtypeUnivEquiv_eq [Fintype V] (S : Finset V)
+    (A : Finset (↑S : Type _)) :
+    ((A.map ⟨Sum.inl, Sum.inl_injective⟩).map
+        (Equiv.Finset.union S Sᶜ disjoint_compl_right).toEmbedding).map
+      (Equiv.subtypeUnivEquiv (p := fun x => x ∈ (↑(S ∪ Sᶜ) : Set V))
+        (fun x => by rw [Finset.union_compl, Finset.coe_univ]; exact Set.mem_univ x)).toEmbedding
+      = A.map ⟨Subtype.val, Subtype.val_injective⟩ := by
+  rw [Finset.map_map, Finset.map_map]
+  congr 1
+
 end IsingModel
