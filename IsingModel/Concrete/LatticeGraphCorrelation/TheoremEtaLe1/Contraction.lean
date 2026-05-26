@@ -670,5 +670,37 @@ theorem correlationInfinite_latticeGraph_susceptibility_summable_high_temp
   · exact correlationInfinite_latticeGraph_le_explicit_pow_dist d hd r Λ p hf hh hht
       (Ne.symm hy)
 
+/-- **Unconditional finite susceptibility from any basepoint at high
+temperature**: by translation invariance, the correlation kernel
+`y ↦ ⟨σ_xσ_y⟩^∞` is summable for every basepoint `x` under `0 < βJ` and
+`H := βJ · 2 · (d · (2(r+1)+1)^d) < 1`.  The susceptibility is finite and
+basepoint-independent, with no polynomial-decay hypothesis.  Part of Issue #2931,
+Phase 3a. -/
+theorem correlationInfinite_latticeGraph_susceptibility_summable_high_temp_basepoint
+    (d : ℕ) (hd : 1 ≤ d) (r : ℕ)
+    (Λ : Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (hh : p.h = 0)
+    (hβJ_pos : 0 < p.β * p.J)
+    (hht : p.β * p.J * (2 * ((d : ℝ) * (((2 * (r + 1) + 1) ^ d : ℕ) : ℝ))) < 1)
+    (x : Fin d → ℤ) :
+    Summable
+      (fun y => correlationInfinite (IsingModel.latticeGraph d) Λ p {x, y}) := by
+  have hbase :=
+    correlationInfinite_latticeGraph_susceptibility_summable_high_temp
+      d hd r Λ p hf hh hβJ_pos hht
+  have heq :
+      (fun y => correlationInfinite (IsingModel.latticeGraph d) Λ p {x, y})
+        = (fun y =>
+            correlationInfinite (IsingModel.latticeGraph d) Λ p {(0 : Fin d → ℤ), y - x}) := by
+    funext y
+    rw [show ({x, y} : Finset (Fin d → ℤ)) = vaddFinset x {(0 : Fin d → ℤ), y - x} from by
+      rw [vaddFinset_pair]; simp [vadd_eq_add]]
+    exact (correlationInfinite_vaddFinset_of_translationInvariant
+      (IsingModel.latticeGraph d) Λ x p hf {(0 : Fin d → ℤ), y - x})
+  rw [heq]
+  exact ((Equiv.subRight x).summable_iff
+    (f := fun z => correlationInfinite (IsingModel.latticeGraph d) Λ p
+      {(0 : Fin d → ℤ), z})).mpr hbase
+
 end Ambient
 end IsingModel
