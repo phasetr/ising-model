@@ -8463,7 +8463,12 @@ tail is the increment tail-sum
 \(\langle\sigma_x\sigma_z\rangle^\infty-\langle\sigma_x\sigma_z\rangle_{\Lambda_n}
 =\sum_k(\langle\sigma_x\sigma_z\rangle_{\Lambda_{k+n+1}}-\langle\sigma_x\sigma_z\rangle_{\Lambda_{k+n}})\)
 (\texttt{correlationAlongExhaustion\_tail\_eq\_tsum\_increment\_shift}), so a
-quantitative bound on the increments from stage \(n\) controls the tail's decay.
+quantitative bound on the increments from stage \(n\) controls the tail's decay:
+if the increments are dominated by a summable \(g\), then
+\(\langle\sigma_x\sigma_z\rangle^\infty-\langle\sigma_x\sigma_z\rangle_{\Lambda_n}
+\le\sum_k g(k+n)\)
+(\texttt{correlationInfinite\_sub\_correlationAlongExhaustion\_le\_tsum\_shift\_of\_increment\_le},
+the Phase A\(\to\)C bridge of Issue \#2965).
 Obtaining the analogous quantitative summable bound for the \(\beta\)-derivative
 increments is the substantive remaining convergence-rate input.  The
 single-vertex Simon--Lieb building blocks are in place: for a non-adjacent pair
