@@ -370,4 +370,32 @@ theorem correlation_inducedGraph_deleteEdges_union_inl [Fintype V] (G : SimpleGr
     (correlation_congr_of_eq
       (inducedGraph_deleteEdges_eq_of_not_internal G _ S hD) params A)
 
+set_option linter.unusedFintypeInType false in
+/-- **Correlation on the full-vertex induced subgraph equals correlation on the
+graph itself**: since `G.induce Set.univ ≃g G` (mathlib `induceUnivIso`, via
+`Equiv.Set.univ`), pushing an observable forward along that relabeling leaves the
+correlation unchanged. This connects `inducedGraph`-based statements (e.g. the
+component-factorization capstone `correlation_inducedGraph_deleteEdges_union_inl`,
+whose left side lives on `inducedGraph _ univ`) back to the raw graph `G` (e.g.
+the ball-boundary increment `correlation_sub_deleteEdges_le_derivBound`)
+(Issue #2965, Phase A). -/
+theorem correlation_induce_univ [Fintype V] (G : SimpleGraph V)
+    [Fintype (G.induce (Set.univ : Set V)).edgeSet] [Fintype G.edgeSet]
+    (params : IsingParams ℝ) (A : Finset ↥(Set.univ : Set V)) :
+    correlation (G.induce (Set.univ : Set V)) params A
+      = correlation G params (A.map (Equiv.Set.univ V).toEmbedding) := by
+  have hmap : (G.induce (Set.univ : Set V)).map (Equiv.Set.univ V).toEmbedding = G := by
+    ext x y
+    rw [SimpleGraph.map_adj]
+    constructor
+    · rintro ⟨a, b, hab, rfl, rfl⟩
+      exact hab
+    · intro h
+      exact ⟨(Equiv.Set.univ V).symm x, (Equiv.Set.univ V).symm y, by simpa using h,
+        by simp, by simp⟩
+  haveI : Fintype ((G.induce (Set.univ : Set V)).map
+      (Equiv.Set.univ V).toEmbedding).edgeSet := hmap.symm ▸ (inferInstance : Fintype G.edgeSet)
+  exact (correlation_map_equiv (Equiv.Set.univ V) (G.induce (Set.univ : Set V)) params A).symm.trans
+    (correlation_congr_of_eq hmap params (A.map (Equiv.Set.univ V).toEmbedding))
+
 end IsingModel
