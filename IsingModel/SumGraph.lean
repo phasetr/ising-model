@@ -1,5 +1,7 @@
 import Mathlib.Combinatorics.SimpleGraph.Sum
 import Mathlib.Combinatorics.SimpleGraph.Finite
+import Mathlib.Combinatorics.SimpleGraph.DeleteEdges
+import Mathlib.Logic.Equiv.Sum
 
 /-!
 # Edge-set decomposition for the disjoint sum graph
@@ -134,5 +136,33 @@ theorem card_edgeFinset_sum [Fintype G.edgeSet] [Fintype H.edgeSet] :
   rw [edgeFinset_sum,
       Finset.card_union_of_disjoint (disjoint_inl_inr_edgeFinset G H),
       Finset.card_map, Finset.card_map]
+
+/-- **Deleting the edges that straddle a predicate `p` decomposes `G` into a
+disjoint sum of the two induced subgraphs.** Up to the relabeling
+`Equiv.sumCompl p : {a // p a} ⊕ {a // ¬p a} ≃ V`, the graph obtained by removing
+every edge whose endpoints lie on different sides of `p` equals the disjoint sum
+`G.induce {a | p a} ⊕g G.induce {a | ¬p a}`.
+
+This is the structural identity behind the component factorization of a fully
+separated (bond-deleted) finite-volume Ising system: deleting the bonds across a
+cut yields two independent subsystems (Issue #2965, Phase A). -/
+theorem induce_sum_map_sumCompl_eq_deleteEdges (p : V → Prop) [DecidablePred p] :
+    ((G.induce {a | p a}).sum (G.induce {a | ¬ p a})).map (Equiv.sumCompl p).toEmbedding
+      = G.deleteEdges {e : Sym2 V |
+          ¬ Sym2.lift ⟨fun a b => (p a ↔ p b), fun a b => by simp [iff_comm]⟩ e} := by
+  ext a b
+  rw [SimpleGraph.map_adj, SimpleGraph.deleteEdges_adj]
+  simp only [Set.mem_setOf_eq, Sym2.lift_mk, not_not]
+  constructor
+  · rintro ⟨x, y, hxy, rfl, rfl⟩
+    rcases x with ⟨x, hx⟩ | ⟨x, hx⟩ <;> rcases y with ⟨y, hy⟩ | ⟨y, hy⟩
+    · exact ⟨hxy, iff_of_true hx hy⟩
+    · exact Bool.noConfusion hxy
+    · exact Bool.noConfusion hxy
+    · exact ⟨hxy, iff_of_false hx hy⟩
+  · rintro ⟨hadj, hiff⟩
+    by_cases hp : p a
+    · exact ⟨Sum.inl ⟨a, hp⟩, Sum.inl ⟨b, hiff.mp hp⟩, hadj, rfl, rfl⟩
+    · exact ⟨Sum.inr ⟨a, hp⟩, Sum.inr ⟨b, fun h => hp (hiff.mpr h)⟩, hadj, rfl, rfl⟩
 
 end SimpleGraph
