@@ -398,4 +398,33 @@ theorem correlation_induce_univ [Fintype V] (G : SimpleGraph V)
   exact (correlation_map_equiv (Equiv.Set.univ V) (G.induce (Set.univ : Set V)) params A).symm.trans
     (correlation_congr_of_eq hmap params (A.map (Equiv.Set.univ V).toEmbedding))
 
+set_option linter.unusedFintypeInType false in
+/-- **Correlation on an induced subgraph over a full set equals correlation on
+the graph itself**: if `s : Set V` contains every vertex (`hs : ∀ x, x ∈ s`),
+then `G.induce s ≃g G` via `Equiv.subtypeUnivEquiv hs`, so pushing an observable
+along that relabeling preserves the correlation. Generalizes
+`correlation_induce_univ` from `Set.univ` to any full set — in particular to
+`↑(S ∪ Sᶜ)` (full by `Finset.union_compl`), which lets the component-factorization
+capstone's `inducedGraph _ (S ∪ Sᶜ)` left side connect to the raw bond-deleted
+graph without forcing the propositional Finset equality `S ∪ Sᶜ = univ` at the
+type level (Issue #2965, Phase A per-stage increment assembly). -/
+theorem correlation_induce_of_forall_mem [Fintype V] (G : SimpleGraph V)
+    (s : Set V) (hs : ∀ x, x ∈ s) [Fintype s]
+    [Fintype (G.induce s).edgeSet] [Fintype G.edgeSet]
+    (params : IsingParams ℝ) (A : Finset ↥s) :
+    correlation (G.induce s) params A
+      = correlation G params (A.map (Equiv.subtypeUnivEquiv hs).toEmbedding) := by
+  have hmap : (G.induce s).map (Equiv.subtypeUnivEquiv hs).toEmbedding = G := by
+    ext x y
+    rw [SimpleGraph.map_adj]
+    constructor
+    · rintro ⟨a, b, hab, rfl, rfl⟩
+      exact hab
+    · intro h
+      exact ⟨⟨x, hs x⟩, ⟨y, hs y⟩, by simpa using h, rfl, rfl⟩
+  haveI : Fintype ((G.induce s).map (Equiv.subtypeUnivEquiv hs).toEmbedding).edgeSet :=
+    hmap.symm ▸ (inferInstance : Fintype G.edgeSet)
+  exact (correlation_map_equiv (Equiv.subtypeUnivEquiv hs) (G.induce s) params A).symm.trans
+    (correlation_congr_of_eq hmap params (A.map (Equiv.subtypeUnivEquiv hs).toEmbedding))
+
 end IsingModel
