@@ -210,5 +210,29 @@ theorem correlationAlongExhaustion_tail_eq_tsum_increment_shift
   rw [hrange, htotal] at hsplit
   linarith [hsplit]
 
+/-- **Volume-convergence tail bounded by an increment-bound tail**: if the
+consecutive-stage correlation increments are dominated by a summable sequence
+`g`, then the stage-`n` convergence tail `correlationInfinite − correlationAlongExhaustion … n`
+is bounded by the corresponding shifted tail `∑' k, g (k + n)`.
+
+Combining the tail identity `correlationAlongExhaustion_tail_eq_tsum_increment_shift`
+with `tsum_le_tsum` turns a per-stage increment bound (e.g. a geometric
+convergence rate) into a quantitative bound on the finite-volume → infinite-volume
+convergence rate.  Part of Issue #2965 (Phase A→C bridge). -/
+theorem correlationInfinite_sub_correlationAlongExhaustion_le_tsum_shift_of_increment_le
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (A : Finset V)
+    {g : ℕ → ℝ} (hg : Summable g)
+    (hincr : ∀ k, correlationAlongExhaustion G Λ p A (k + 1) -
+        correlationAlongExhaustion G Λ p A k ≤ g k)
+    (n : ℕ) :
+    correlationInfinite G Λ p A - correlationAlongExhaustion G Λ p A n
+      ≤ ∑' k, g (k + n) := by
+  rw [correlationAlongExhaustion_tail_eq_tsum_increment_shift G Λ p hf A n]
+  exact ((summable_nat_add_iff n).2
+      (correlationAlongExhaustion_increment_summable G Λ p hf A)).tsum_le_tsum
+    (fun k => hincr (k + n)) ((summable_nat_add_iff n).2 hg)
+
 end Ambient
 end IsingModel
