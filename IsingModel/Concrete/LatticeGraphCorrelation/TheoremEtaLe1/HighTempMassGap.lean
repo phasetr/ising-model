@@ -1,6 +1,7 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.TheoremEtaLe1.Contraction
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassFoundation
 import IsingModel.AmbientLattice.TruncatedFunctions.TwoPoint
+import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferSummability
 
 /-!
 # GJ §17.5 / §17.8 — unconditional high-temperature mass gap on `ℤ^d`
@@ -137,6 +138,32 @@ theorem latticeMass_pos_of_high_temp_mass_gap
   latticeMass_pos_of_HasExponentialDecay
     (highTemp_rate_pos d hd r hJ_pos hβ_pos hht)
     (hasExponentialDecay_latticeGraph_of_high_temp d hd r Λ hJ_pos hβ_pos hht)
+
+/-- **Unconditional high-temperature convolution summability of the two-point
+function**: for `β, J > 0` and `H := βJ · 2 · (d · (2(r+1)+1)^d) < 1`, the
+boundary-product kernel `z ↦ ⟨σ_xσ_z⟩^∞ · ⟨σ_yσ_z⟩^∞` (Ursell two-point at
+`h = 0`) is summable over `ℤ^d` for the cubic exhaustion.
+
+This composes the unconditional high-temperature mass gap
+(`hasExponentialDecay_latticeGraph_of_high_temp`) with the exponential-decay
+convolution summability `summable_truncated2Infinite_prod_of_hasExponentialDecay`
+(GJ §17.5 Step 127), with no polynomial-decay hypothesis.  It is the
+boundary-sum summability ingredient for the finite-volume → infinite-volume
+convergence-rate coupling (Issue #2965, Phase B). -/
+theorem summable_truncated2Infinite_prod_of_high_temp
+    (d : ℕ) (hd : 1 ≤ d) (r : ℕ) {J β : ℝ} (hJ_pos : 0 < J) (hβ_pos : 0 < β)
+    (hht : β * J * (2 * ((d : ℝ) * (((2 * (r + 1) + 1) ^ d : ℕ) : ℝ))) < 1)
+    (x y : Fin d → ℤ) :
+    Summable (fun z : Fin d → ℤ =>
+        truncated2Infinite (IsingModel.latticeGraph d) (cubicExhaustion d)
+          (⟨J, 0, β⟩ : IsingParams ℝ) x z *
+        truncated2Infinite (IsingModel.latticeGraph d) (cubicExhaustion d)
+          (⟨J, 0, β⟩ : IsingParams ℝ) y z) :=
+  summable_truncated2Infinite_prod_of_hasExponentialDecay hJ_pos.le hβ_pos
+    (highTemp_rate_pos d hd r hJ_pos hβ_pos hht)
+    (hasExponentialDecay_latticeGraph_of_high_temp d hd r (cubicExhaustion d)
+      hJ_pos hβ_pos hht)
+    x y
 
 end Ambient
 end IsingModel
