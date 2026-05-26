@@ -8458,7 +8458,12 @@ it is the quantity whose decay rate is the substantive remaining input; the
 increment series sums telescopically to it,
 \(\sum_n(\langle\sigma_x\sigma_z\rangle_{\Lambda_{n+1}}-\langle\sigma_x\sigma_z\rangle_{\Lambda_n})
 =\langle\sigma_x\sigma_z\rangle^\infty-\langle\sigma_x\sigma_z\rangle_{\Lambda_0}\)
-(\texttt{correlationAlongExhaustion\_increment\_tsum\_eq}).
+(\texttt{correlationAlongExhaustion\_increment\_tsum\_eq}), and the stage-\(n\)
+tail is the increment tail-sum
+\(\langle\sigma_x\sigma_z\rangle^\infty-\langle\sigma_x\sigma_z\rangle_{\Lambda_n}
+=\sum_k(\langle\sigma_x\sigma_z\rangle_{\Lambda_{k+n+1}}-\langle\sigma_x\sigma_z\rangle_{\Lambda_{k+n}})\)
+(\texttt{correlationAlongExhaustion\_tail\_eq\_tsum\_increment\_shift}), so a
+quantitative bound on the increments from stage \(n\) controls the tail's decay.
 Obtaining the analogous quantitative summable bound for the \(\beta\)-derivative
 increments is the substantive remaining convergence-rate input.  Its geometric
 foundation is in place: a vertex lying in the stage-\(n+1\) cube but not the
