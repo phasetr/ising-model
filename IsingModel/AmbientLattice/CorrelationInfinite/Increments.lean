@@ -128,5 +128,52 @@ theorem tendsto_correlationInfinite_sub_correlationAlongExhaustion_zero
     (f := Filter.atTop (α := ℕ))).sub htend
   simpa using this
 
+/-- **Total mass of the correlation increment series**: for a ferromagnetic
+model the consecutive-stage increments sum (telescopically) to the full gap
+between the infinite-volume correlation and the initial stage:
+`∑' n, (correlationAlongExhaustion … (n+1) - correlationAlongExhaustion … n)
+   = correlationInfinite … - correlationAlongExhaustion … 0`.
+
+The partial sums telescope to `correlationAlongExhaustion … n - correlationAlongExhaustion … 0`
+and converge to `correlationInfinite … - correlationAlongExhaustion … 0`; since
+the increment series is summable, uniqueness of limits identifies the `tsum`. -/
+theorem correlationAlongExhaustion_increment_tsum_eq
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    (A : Finset V) :
+    ∑' n, (correlationAlongExhaustion G Λ p A (n + 1) -
+        correlationAlongExhaustion G Λ p A n)
+      = correlationInfinite G Λ p A - correlationAlongExhaustion G Λ p A 0 := by
+  have hsum := correlationAlongExhaustion_increment_summable G Λ p hf A
+  have h1 :
+      Filter.Tendsto
+        (fun n => ∑ k ∈ Finset.range n,
+          (correlationAlongExhaustion G Λ p A (k + 1) -
+            correlationAlongExhaustion G Λ p A k))
+        Filter.atTop
+        (nhds (∑' n, (correlationAlongExhaustion G Λ p A (n + 1) -
+          correlationAlongExhaustion G Λ p A n))) :=
+    hsum.hasSum.tendsto_sum_nat
+  have h2 :
+      Filter.Tendsto
+        (fun n => ∑ k ∈ Finset.range n,
+          (correlationAlongExhaustion G Λ p A (k + 1) -
+            correlationAlongExhaustion G Λ p A k))
+        Filter.atTop
+        (nhds (correlationInfinite G Λ p A - correlationAlongExhaustion G Λ p A 0)) := by
+    have hfun :
+        (fun n => ∑ k ∈ Finset.range n,
+          (correlationAlongExhaustion G Λ p A (k + 1) -
+            correlationAlongExhaustion G Λ p A k))
+          = fun n => correlationAlongExhaustion G Λ p A n -
+              correlationAlongExhaustion G Λ p A 0 := by
+      funext n
+      exact Finset.sum_range_sub (correlationAlongExhaustion G Λ p A) n
+    rw [hfun]
+    exact (tendsto_correlationAlongExhaustion_correlationInfinite G Λ p hf A).sub_const
+      (correlationAlongExhaustion G Λ p A 0)
+  exact tendsto_nhds_unique h1 h2
+
 end Ambient
 end IsingModel
