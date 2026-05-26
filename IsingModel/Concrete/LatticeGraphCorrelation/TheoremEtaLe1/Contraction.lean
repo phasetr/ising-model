@@ -68,6 +68,57 @@ theorem contractionFactor_le_card (d : ℕ) (Λ : Exhaustion (Fin d → ℤ))
     _ = 2 * ((latticeBallBoundaryEdges d r).card : ℝ) := by
         rw [Finset.sum_const, nsmul_eq_mul]; ring
 
+/-- **Explicit high-temperature bound for the contraction factor**: chaining the
+boundary-edge cardinality bound `latticeBallBoundaryEdges_card_le`, the induced
+cube edge count `inducedLatticeGraph_card_edgeFinset_le`, and the cube cardinality
+`card_cubicBox`, the contraction factor is bounded by
+`βJ · 2 · (d · (2(r+1)+1)^d)`.
+
+This makes the contraction factor explicitly controlled by `βJ` times a fixed
+(volume-independent) combinatorial constant depending only on `d` and `r`, the
+input for an unconditional strong-high-temperature `contractionFactor < 1`
+(Issue #2931, Phase 3a). -/
+theorem contractionFactor_le_high_temp_const (d : ℕ) (Λ : Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (r : ℕ) :
+    contractionFactor d Λ p r
+      ≤ p.β * p.J * (2 * ((d : ℝ) * (((2 * (r + 1) + 1) ^ d : ℕ) : ℝ))) := by
+  have hβJ : 0 ≤ p.β * p.J := mul_nonneg hf.hβ.le hf.hJ
+  have hcard : ((latticeBallBoundaryEdges d r).card : ℝ)
+      ≤ ((inducedGraph (IsingModel.latticeGraph d)
+          (cubicBox d (r + 1))).edgeFinset.card : ℝ) := by
+    exact_mod_cast latticeBallBoundaryEdges_card_le d r
+  have hedge := inducedLatticeGraph_card_edgeFinset_le d (cubicBox d (r + 1))
+  have hbox : Fintype.card (↑(cubicBox d (r + 1)) : Type _)
+      = (2 * (r + 1) + 1) ^ d := by
+    rw [Fintype.card_coe]; exact card_cubicBox d (r + 1)
+  rw [hbox] at hedge
+  calc contractionFactor d Λ p r
+      ≤ p.β * p.J * (2 * ((latticeBallBoundaryEdges d r).card : ℝ)) :=
+        contractionFactor_le_card d Λ p hf r
+    _ ≤ p.β * p.J *
+          (2 * ((inducedGraph (IsingModel.latticeGraph d)
+            (cubicBox d (r + 1))).edgeFinset.card : ℝ)) := by
+        apply mul_le_mul_of_nonneg_left _ hβJ
+        exact mul_le_mul_of_nonneg_left hcard (by norm_num)
+    _ ≤ p.β * p.J * (2 * ((d : ℝ) * (((2 * (r + 1) + 1) ^ d : ℕ) : ℝ))) := by
+        apply mul_le_mul_of_nonneg_left _ hβJ
+        apply mul_le_mul_of_nonneg_left _ (by norm_num)
+        exact_mod_cast hedge
+
+/-- **Unconditional strong-high-temperature contraction**: if `βJ` is small
+enough that `βJ · 2 · (d · (2(r+1)+1)^d) < 1`, then `contractionFactor d Λ p r < 1`
+outright — no polynomial-decay hypothesis needed.
+
+This discharges the `contractionFactor < 1` hypothesis of the spatial-decay /
+susceptibility layer in an explicit (volume-independent) strong-high-temperature
+regime, via `contractionFactor_le_high_temp_const`.  Part of Issue #2931,
+Phase 3a. -/
+theorem contractionFactor_lt_one_of_high_temp (d : ℕ) (Λ : Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (r : ℕ)
+    (hht : p.β * p.J * (2 * ((d : ℝ) * (((2 * (r + 1) + 1) ^ d : ℕ) : ℝ))) < 1) :
+    contractionFactor d Λ p r < 1 :=
+  lt_of_le_of_lt (contractionFactor_le_high_temp_const d Λ p hf r) hht
+
 /-- **The contraction factor is non-negative**: `0 ≤ contractionFactor d Λ p r`.
 
 Follows from `p.β * p.J ≥ 0` (ferromagnetic) and
