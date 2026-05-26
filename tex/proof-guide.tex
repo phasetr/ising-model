@@ -8551,7 +8551,13 @@ unconditional bounds
 \(\mathrm{ofReal}(-\log(H)/(r+2))\le\mathrm{latticeMass}\,d\,\Lambda\,\langle J,0,\beta\rangle\)
 (\texttt{latticeMass\_ge\_explicit\_of\_high\_temp}) and
 \(0<\mathrm{latticeMass}\) (\texttt{latticeMass\_pos\_of\_high\_temp\_mass\_gap}),
-connecting the mass gap to the central Lemma~17.5.2 quantity.
+connecting the mass gap to the central Lemma~17.5.2 quantity.  Composing the mass
+gap with the Step~127 convolution summability gives, unconditionally at high
+temperature, the boundary-product summability
+\(\sum_z\langle\sigma_x\sigma_z\rangle^\infty\langle\sigma_y\sigma_z\rangle^\infty<\infty\)
+(\texttt{summable\_truncated2Infinite\_prod\_of\_high\_temp}), the boundary-sum
+ingredient for the finite-volume\(\to\)infinite-volume convergence-rate coupling
+(Issue \#2965).
 The remaining gap is instead the distinct \emph{volume-convergence} rate of the
 finite-volume \(\beta\)-derivative increments, related to this spatial decay by
 the boundary-effect estimate.  Its geometric foundation is in place: a vertex lying in the stage-\(n+1\) cube but not the
