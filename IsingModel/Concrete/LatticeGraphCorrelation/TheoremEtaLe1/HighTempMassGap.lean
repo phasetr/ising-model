@@ -204,5 +204,52 @@ theorem tsum_truncated2Infinite_prod_decay_of_high_temp
     nlinarith [hsum_nn, this]
   · exact tsum_truncated2Infinite_prod_le hJ_pos.le hβ_pos hrate_pos hC' hbound x y
 
+/-- **Boundary partial-sum exponential decay**: for `β, J > 0` and `H < 1`, the
+two-point convolution restricted to **any** finite vertex set `S` is bounded by
+the same exponential decay in `dist(x,y)`:
+`∑_{b ∈ S} ⟨σ_xσ_b⟩^∞ · ⟨σ_yσ_b⟩^∞ ≤ C · exp(-(rate/2)·dist(x,y)/2)`.
+
+The summands are nonnegative, so the finite partial sum is bounded by the full
+`tsum` (`Summable.sum_le_tsum`), which decays by
+`tsum_truncated2Infinite_prod_decay_of_high_temp`.  This is the boundary-sum
+estimate (uniform over the choice of separating surface `S`) needed for the
+finite-volume → infinite-volume convergence-rate coupling (Issue #2965, Phase
+A/B). -/
+theorem truncated2Infinite_prod_finset_sum_decay_of_high_temp
+    (d : ℕ) (hd : 1 ≤ d) (r : ℕ) {J β : ℝ} (hJ_pos : 0 < J) (hβ_pos : 0 < β)
+    (hht : β * J * (2 * ((d : ℝ) * (((2 * (r + 1) + 1) ^ d : ℕ) : ℝ))) < 1) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ (x y : Fin d → ℤ) (S : Finset (Fin d → ℤ)),
+      (∑ b ∈ S,
+          truncated2Infinite (IsingModel.latticeGraph d) (cubicExhaustion d)
+            (⟨J, 0, β⟩ : IsingParams ℝ) x b *
+          truncated2Infinite (IsingModel.latticeGraph d) (cubicExhaustion d)
+            (⟨J, 0, β⟩ : IsingParams ℝ) y b)
+        ≤ C * Real.exp (-(
+            (-Real.log (β * J * (2 * ((d : ℝ) * (((2 * (r + 1) + 1) ^ d : ℕ) : ℝ)))) /
+              (r + 2 : ℝ)) / 2) * (IsingModel.latticeDistance d x y : ℝ) / 2) := by
+  obtain ⟨C, hC, hdecay⟩ :=
+    tsum_truncated2Infinite_prod_decay_of_high_temp d hd r hJ_pos hβ_pos hht
+  have hf : Ferromagnetic (⟨J, 0, β⟩ : IsingParams ℝ) := ⟨hJ_pos.le, le_refl 0, hβ_pos⟩
+  refine ⟨C, hC, fun x y S => ?_⟩
+  have hsum := summable_truncated2Infinite_prod_of_high_temp d hd r hJ_pos hβ_pos hht x y
+  have hpartial :
+      (∑ b ∈ S,
+          truncated2Infinite (IsingModel.latticeGraph d) (cubicExhaustion d)
+            (⟨J, 0, β⟩ : IsingParams ℝ) x b *
+          truncated2Infinite (IsingModel.latticeGraph d) (cubicExhaustion d)
+            (⟨J, 0, β⟩ : IsingParams ℝ) y b)
+        ≤ ∑' b : Fin d → ℤ,
+          truncated2Infinite (IsingModel.latticeGraph d) (cubicExhaustion d)
+            (⟨J, 0, β⟩ : IsingParams ℝ) x b *
+          truncated2Infinite (IsingModel.latticeGraph d) (cubicExhaustion d)
+            (⟨J, 0, β⟩ : IsingParams ℝ) y b :=
+    hsum.sum_le_tsum S
+      (fun b _ => mul_nonneg
+        (Ambient.truncated2Infinite_nonneg (IsingModel.latticeGraph d)
+          (cubicExhaustion d) _ hf x b)
+        (Ambient.truncated2Infinite_nonneg (IsingModel.latticeGraph d)
+          (cubicExhaustion d) _ hf y b))
+  exact hpartial.trans (hdecay x y)
+
 end Ambient
 end IsingModel
