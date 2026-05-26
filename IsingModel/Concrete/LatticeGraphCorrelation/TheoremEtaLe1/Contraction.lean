@@ -176,6 +176,43 @@ theorem shellSup_iterated_bound (d : ℕ) (hd : 1 ≤ d) (r : ℕ)
           mul_le_mul_of_nonneg_left (ih (n - r - 1) hstep) (contractionFactor_nonneg d Λ p hf r)
       _ = (contractionFactor d Λ p r) ^ (k + 1) := by rw [pow_succ]; ring
 
+/-- **Pointwise spatial exponential decay of the infinite-volume correlation**:
+the shell-iterated bound specializes to a per-point estimate
+`⟨σ_0σ_y⟩^∞ ≤ (contractionFactor d Λ p r)^{dist(0,y) / (r+2)}` for every `y ≠ 0`,
+where the exponent is the natural-number division `dist(0,y) / (r+2)`.
+
+Since `(dist(0,y) / (r+2)) · (r+2) ≤ dist(0,y)`, the point `y` lies in the
+distance-`dist(0,y)` shell, so its correlation is bounded by the shell supremum,
+which `shellSup_iterated_bound` controls by `(contractionFactor)^{dist/(r+2)}`.
+This is the prefactor-free spatial exponential decay in the form used by the
+finite-volume convergence-rate program (Issue #2931, Phase 3a/3b′). -/
+theorem correlationInfinite_latticeGraph_le_contractionFactor_pow_dist
+    (d : ℕ) (hd : 1 ≤ d) (r : ℕ)
+    (Λ : Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (hh : p.h = 0)
+    (hα : contractionFactor d Λ p r < 1) {y : Fin d → ℤ} (hy : y ≠ 0) :
+    correlationInfinite (IsingModel.latticeGraph d) Λ p {(0 : Fin d → ℤ), y}
+      ≤ (contractionFactor d Λ p r) ^ (IsingModel.latticeDistance d 0 y / (r + 2)) := by
+  set k := IsingModel.latticeDistance d 0 y / (r + 2) with hk
+  have hkr : k * (r + 2) ≤ IsingModel.latticeDistance d 0 y := Nat.div_mul_le_self _ _
+  have hbound :=
+    shellSup_iterated_bound d hd r Λ p hf hh hα k (IsingModel.latticeDistance d 0 y) hkr
+  have hbdd :
+      BddAbove (Set.range (fun z : {z : Fin d → ℤ //
+          IsingModel.latticeDistance d 0 y ≤ IsingModel.latticeDistance d 0 z ∧ z ≠ 0} =>
+        correlationInfinite (IsingModel.latticeGraph d) Λ p
+          {(0 : Fin d → ℤ), z.val})) := by
+    refine ⟨1, ?_⟩
+    rintro x ⟨z, rfl⟩
+    exact correlationInfinite_le_one (IsingModel.latticeGraph d) Λ p _
+  have hle :
+      correlationInfinite (IsingModel.latticeGraph d) Λ p {(0 : Fin d → ℤ), y}
+        ≤ ⨆ (z : {z : Fin d → ℤ //
+            IsingModel.latticeDistance d 0 y ≤ IsingModel.latticeDistance d 0 z ∧ z ≠ 0}),
+          correlationInfinite (IsingModel.latticeGraph d) Λ p
+            {(0 : Fin d → ℤ), z.val} :=
+    le_ciSup hbdd ⟨y, le_rfl, hy⟩
+  exact hle.trans hbound
 
 end Ambient
 end IsingModel
