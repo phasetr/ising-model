@@ -12633,6 +12633,19 @@ by edge extensionality (the iso adjacency); then compose
 \texttt{correlation\_map\_equiv} with \texttt{correlation\_congr\_of\_eq}.
 \end{proof}
 
+\begin{proposition}[\texttt{IsingModel.correlation\_induce\_of\_forall\_mem}]
+If $s$ contains every vertex ($\forall x,\ x\in s$), then
+$\langle\sigma^{A}\rangle_{G.\mathrm{induce}\,s}
+  = \langle\sigma^{A.\mathrm{map}\,e}\rangle_{G}$ with
+$e=\texttt{Equiv.subtypeUnivEquiv}$. Generalizes the previous proposition from
+$\mathrm{univ}$ to any full set, in particular $s=\uparrow(S\cup S^{c})$ (full by
+\texttt{Finset.union\_compl}); this avoids forcing the propositional Finset
+equality $S\cup S^{c}=\mathrm{univ}$ at the type level when connecting the
+capstone's $\mathrm{inducedGraph}\,\_\,(S\cup S^{c})$ side to the raw bond-deleted
+graph in the per-stage-increment assembly. Same proof scheme as
+\texttt{correlation\_induce\_univ}.
+\end{proposition}
+
 \begin{theorem}[\texttt{IsingModel.correlation\_inducedGraph\_deleteEdges\_union\_inl}
 (Phase A component-factorization capstone, Finset route)]
 For a region $S\subseteq W$, deleting the cut edges between $S$ and its complement
