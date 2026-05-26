@@ -8545,7 +8545,13 @@ The explicit decay also upgrades, at \(h=0\), to the named
 (\texttt{hasExponentialDecay\_latticeGraph\_of\_high\_temp}): a positive mass gap
 holds unconditionally for \(\beta,J>0\) and \(H<1\) (no polynomial-decay
 hypothesis), connecting the ball-boundary spatial decay to the established decay
-predicate used by the lower-bound machinery.
+predicate used by the lower-bound machinery.  Composing with
+\texttt{latticeMass\_ge\_of\_HasExponentialDecay} yields the explicit
+unconditional bounds
+\(\mathrm{ofReal}(-\log(H)/(r+2))\le\mathrm{latticeMass}\,d\,\Lambda\,\langle J,0,\beta\rangle\)
+(\texttt{latticeMass\_ge\_explicit\_of\_high\_temp}) and
+\(0<\mathrm{latticeMass}\) (\texttt{latticeMass\_pos\_of\_high\_temp\_mass\_gap}),
+connecting the mass gap to the central Lemma~17.5.2 quantity.
 The remaining gap is instead the distinct \emph{volume-convergence} rate of the
 finite-volume \(\beta\)-derivative increments, related to this spatial decay by
 the boundary-effect estimate.  Its geometric foundation is in place: a vertex lying in the stage-\(n+1\) cube but not the
