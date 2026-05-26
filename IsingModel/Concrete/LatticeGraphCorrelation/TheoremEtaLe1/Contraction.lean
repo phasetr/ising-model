@@ -413,5 +413,35 @@ theorem correlationInfinite_latticeGraph_susceptibility_summable
       _ ≤ cf ^ ((n : ℝ) / (r + 2 : ℝ) - 1) := hstep1
       _ = (1 / cf) * Real.exp (-m * (n : ℝ)) := hstep2
 
+/-- **Finite susceptibility from any basepoint**: by translation invariance, the
+correlation kernel `y ↦ ⟨σ_xσ_y⟩^∞` is summable over `ℤ^d` for every basepoint
+`x` (when `0 < contractionFactor < 1`).  The susceptibility
+`∑_y ⟨σ_xσ_y⟩^∞` is finite and independent of the basepoint, since
+`⟨σ_xσ_y⟩^∞ = ⟨σ_0σ_{y-x}⟩^∞` and summability is invariant under the
+reindexing `y ↦ y - x`.  Part of Issue #2931. -/
+theorem correlationInfinite_latticeGraph_susceptibility_summable_basepoint
+    (d : ℕ) (hd : 1 ≤ d) (r : ℕ)
+    (Λ : Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (hh : p.h = 0)
+    (hcf_pos : 0 < contractionFactor d Λ p r) (hα : contractionFactor d Λ p r < 1)
+    (x : Fin d → ℤ) :
+    Summable
+      (fun y => correlationInfinite (IsingModel.latticeGraph d) Λ p {x, y}) := by
+  have hbase :=
+    correlationInfinite_latticeGraph_susceptibility_summable d hd r Λ p hf hh hcf_pos hα
+  have heq :
+      (fun y => correlationInfinite (IsingModel.latticeGraph d) Λ p {x, y})
+        = (fun y =>
+            correlationInfinite (IsingModel.latticeGraph d) Λ p {(0 : Fin d → ℤ), y - x}) := by
+    funext y
+    rw [show ({x, y} : Finset (Fin d → ℤ)) = vaddFinset x {(0 : Fin d → ℤ), y - x} from by
+      rw [vaddFinset_pair]; simp [vadd_eq_add]]
+    exact (correlationInfinite_vaddFinset_of_translationInvariant
+      (IsingModel.latticeGraph d) Λ x p hf {(0 : Fin d → ℤ), y - x})
+  rw [heq]
+  exact ((Equiv.subRight x).summable_iff
+    (f := fun z => correlationInfinite (IsingModel.latticeGraph d) Λ p
+      {(0 : Fin d → ℤ), z})).mpr hbase
+
 end Ambient
 end IsingModel
