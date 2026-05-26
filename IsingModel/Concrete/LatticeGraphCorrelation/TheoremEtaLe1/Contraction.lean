@@ -255,5 +255,50 @@ theorem correlationInfinite_latticeGraph_le_contractionFactor_pow_dist_pair
   exact correlationInfinite_latticeGraph_le_contractionFactor_pow_dist
     d hd r Λ p hf hh hα hjmi_ne
 
+/-- **Uniform clustering at large distance**: when the contraction factor is
+`< 1`, the infinite-volume pair correlation is uniformly small at large lattice
+distance — for every `ε > 0` there is `R` such that
+`⟨σ_iσ_j⟩^∞ ≤ ε` for all pairs with `dist(i,j) ≥ R`.
+
+Since `contractionFactor d Λ p r < 1`, some power `(contractionFactor)^m < ε`;
+taking `R = (m+1)(r+2)` forces `dist(i,j)/(r+2) ≥ m`, so the per-pair spatial
+decay bound `correlationInfinite_latticeGraph_le_contractionFactor_pow_dist_pair`
+gives `⟨σ_iσ_j⟩^∞ ≤ (contractionFactor)^{dist/(r+2)} ≤ (contractionFactor)^m < ε`.
+This is the uniform clustering property of the infinite-volume measure
+(Issue #2931, Phase 3a). -/
+theorem correlationInfinite_latticeGraph_uniform_decay_of_contractionFactor_lt_one
+    (d : ℕ) (hd : 1 ≤ d) (r : ℕ)
+    (Λ : Exhaustion (Fin d → ℤ))
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (hh : p.h = 0)
+    (hα : contractionFactor d Λ p r < 1) :
+    ∀ ε > (0 : ℝ), ∃ R : ℕ, ∀ i j : Fin d → ℤ,
+      R ≤ IsingModel.latticeDistance d i j →
+        correlationInfinite (IsingModel.latticeGraph d) Λ p {i, j} ≤ ε := by
+  intro ε hε
+  have hcf0 : 0 ≤ contractionFactor d Λ p r := contractionFactor_nonneg d Λ p hf r
+  obtain ⟨m, hm⟩ := exists_pow_lt_of_lt_one hε hα
+  refine ⟨(m + 1) * (r + 2), fun i j hR => ?_⟩
+  by_cases hij : i = j
+  · exfalso
+    rw [hij, IsingModel.latticeDistance_self] at hR
+    have : 0 < (m + 1) * (r + 2) := Nat.mul_pos (Nat.succ_pos m) (by omega)
+    omega
+  · have hbound :=
+      correlationInfinite_latticeGraph_le_contractionFactor_pow_dist_pair
+        d hd r Λ p hf hh hα hij
+    have hexp : m ≤ IsingModel.latticeDistance d i j / (r + 2) := by
+      have hge : (m + 1) ≤ IsingModel.latticeDistance d i j / (r + 2) := by
+        rw [Nat.le_div_iff_mul_le (by omega : 0 < r + 2)]
+        exact hR
+      omega
+    have hmono :
+        (contractionFactor d Λ p r) ^ (IsingModel.latticeDistance d i j / (r + 2))
+          ≤ (contractionFactor d Λ p r) ^ m :=
+      pow_le_pow_of_le_one hcf0 hα.le hexp
+    calc correlationInfinite (IsingModel.latticeGraph d) Λ p {i, j}
+        ≤ (contractionFactor d Λ p r) ^ (IsingModel.latticeDistance d i j / (r + 2)) := hbound
+      _ ≤ (contractionFactor d Λ p r) ^ m := hmono
+      _ ≤ ε := hm.le
+
 end Ambient
 end IsingModel
