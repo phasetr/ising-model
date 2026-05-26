@@ -12395,11 +12395,13 @@ $(\sum_{\sigma_1}\sigma^{A}\,e^{-\beta H_G})\cdot Z_H$, and dividing by
 $Z_{G\oplus_g H}=Z_G\cdot Z_H$ cancels $Z_H$.
 \end{proof}
 
-This is the component-factorization core: it identifies the correlation of a
-bond-deleted system on a fully separated region with the correlation of the
-isolated component, the bridge needed to translate the bond-deletion increment
+This is the disjoint-sum factorization step. It is stated for the explicit
+disjoint sum $G\oplus_g H$ (a single $\mathrm{inl}$/$\mathrm{inr}$ summand, which
+need not itself be connected). Translating the bond-deletion increment
 (\texttt{correlation\_sub\_deleteEdges\_le\_derivBound}) into a finite-volume
-exhaustion-stage increment.
+exhaustion-stage increment additionally requires identifying a separating
+\texttt{deleteEdges} graph with such a box/exterior disjoint sum (a graph
+isomorphism), which remains a separate step.
 
 \paragraph{Closing Step 5.} Combining this super-additivity with the
 uniform upper bound (PR \#122, \#123) and Fekete's lemma produces
