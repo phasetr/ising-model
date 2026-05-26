@@ -12502,6 +12502,41 @@ or an $\mathrm{inr}$-image edge (both in $\Lambda_2$), and in either
 case it is an edge of $\mathrm{inducedGraph}\,G\,(\Lambda_1 \cup \Lambda_2)$.
 \end{proof}
 
+\paragraph{Exact split with no cross edges (Issue \#2965).}
+When in addition there is no $G$-edge between $\Lambda_1$ and $\Lambda_2$, the
+subgraph relation becomes an equality.
+
+\begin{proposition}[\texttt{IsingModel.inducedGraph\_sum\_map\_eq\_union\_of\_no\_cross}]
+For disjoint $\Lambda_1,\Lambda_2$ with $\neg\,G.\mathrm{Adj}\,a\,b$ for all
+$a\in\Lambda_1,b\in\Lambda_2$,
+\[
+  (\mathrm{inducedGraph}\,\Lambda_1\oplus_g\mathrm{inducedGraph}\,\Lambda_2)
+    \,.\mathrm{map}\,e
+  = \mathrm{inducedGraph}\,G\,(\Lambda_1\cup\Lambda_2).
+\]
+\end{proposition}
+
+\begin{proof}
+The $\le$ direction is \texttt{inducedGraph\_sum\_map\_le\_union}; for $\ge$, an
+edge $a\sim b$ of the induced union gives $G.\mathrm{Adj}\,a\,b$ with
+$a,b\in\Lambda_1\cup\Lambda_2$, and the no-cross hypothesis rules out the split
+cases, so both endpoints lie in the same part and the edge is an
+$\mathrm{inl}$/$\mathrm{inr}$-image.
+\end{proof}
+
+\begin{proposition}[\texttt{IsingModel.correlation\_inducedGraph\_sum\_map\_inl}]
+For an observable $A$ supported on $\Lambda_1$,
+\[
+  \langle\sigma^{A}\rangle_{(\mathrm{inducedGraph}\,\Lambda_1
+    \oplus_g\mathrm{inducedGraph}\,\Lambda_2).\mathrm{map}\,e}
+  = \langle\sigma^{A}\rangle_{\mathrm{inducedGraph}\,\Lambda_1},
+\]
+by \texttt{correlation\_map\_equiv} (iso transport) and
+\texttt{correlation\_sum\_inl} (disjoint-sum factorization). Together with the
+equality above this is the component-factorization bridge from a fully separated
+finite-volume system to the isolated-component correlation.
+\end{proposition}
+
 \paragraph{Closing Prop 4.6.1.} Combined with the uniform upper
 bound (PR \#122, \#123), Fekete's lemma now yields
 convergence of $f_\Lambda = (\log Z_\Lambda)/|\Lambda|$ along
