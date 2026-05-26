@@ -81,5 +81,27 @@ theorem correlationInfinite_latticeGraph_le_of_neighbors_le
         mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_right hcard hC0) hβJ
     _ = β * J * (2 * d) * C := by ring
 
+/-- **Uniform one-step decay for non-adjacent pairs**: applying the one-step
+bound with the universal correlation bound `⟨σ_kσ_j⟩^∞ ≤ 1` gives, for any
+non-adjacent pair `i ≠ j` on `ℤ^d`,
+`⟨σ_iσ_j⟩^∞ ≤ βJ · 2d`.
+
+In the strict high-temperature regime `βJ·2d < 1` this already improves the
+universal `≤ 1` bound to a contraction factor `βJ·2d < 1` for every non-adjacent
+pair; it is the first quantitative decay step of the prefactor-free iteration
+(Issue #2931, Phase 3a). -/
+theorem correlationInfinite_latticeGraph_le_betaJ_two_d_of_not_adj
+    {d : ℕ} {β J : ℝ} (hβJ : 0 ≤ β * J)
+    {i j : Fin d → ℤ} (hij : i ≠ j) (hnadj : ¬ (latticeGraph d).Adj i j) :
+    correlationInfinite (latticeGraph d) (cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) {i, j}
+      ≤ β * J * (2 * d) := by
+  have h :=
+    correlationInfinite_latticeGraph_le_of_neighbors_le hβJ hij hnadj (C := 1)
+      (by norm_num)
+      (fun k _ => correlationInfinite_le_one (latticeGraph d) (cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) {k, j})
+  simpa using h
+
 end Ambient
 end IsingModel
