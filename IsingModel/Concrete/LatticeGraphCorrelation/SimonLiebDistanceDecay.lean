@@ -31,11 +31,13 @@ non-adjacent pair `i ≠ j` on `ℤ^d`, if every neighbour `k` of `i` satisfies
 degree bound `degree i ≤ 2d` give
 `⟨σ_iσ_j⟩^∞ ≤ βJ · 2d · C`.
 
-This is the inductive step of the prefactor-free distance-decay iteration: a bound
-holding on the distance-`(n)` shell around `j` propagates inward to the
-distance-`(n+1)` shell with one extra factor `βJ·2d`, so that `dist(i,j)` steps
+This lemma proves only the single-step estimate.  It is *intended* as the
+inductive step of a prefactor-free distance-decay iteration — a bound on the
+distance-`n` shell around `j` would propagate inward to the distance-`(n+1)`
+shell with one extra factor `βJ·2d`, so that iterating `dist(i,j)` times would
 yield `(βJ·2d)^{dist(i,j)}` without the volume-dependent prefactor of the naive
-finite-volume bound (Issue #2931, Phase 3a). -/
+finite-volume bound — but that full distance induction is not proved here and
+remains the substantive remaining work (Issue #2931, Phase 3a). -/
 theorem correlationInfinite_latticeGraph_le_of_neighbors_le
     {d : ℕ} {β J : ℝ} (hβJ : 0 ≤ β * J)
     {i j : Fin d → ℤ} (hij : i ≠ j) (hnadj : ¬ (latticeGraph d).Adj i j)

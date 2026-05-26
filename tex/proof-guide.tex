@@ -8472,10 +8472,11 @@ has its inductive step in place: for a non-adjacent pair \(i\neq j\) on
 \(\langle\sigma_k\sigma_j\rangle^\infty\le C\) with \(C\ge0\), then the
 Simon--Lieb peeling inequality and the degree bound
 \(\deg i\le 2d\) give \(\langle\sigma_i\sigma_j\rangle^\infty\le\beta J\,2d\,C\)
-(\texttt{correlationInfinite\_latticeGraph\_le\_of\_neighbors\_le}); iterating
-over the lattice distance yields \((\beta J\,2d)^{\mathrm{dist}}\) without the
-volume-dependent prefactor of the naive finite-volume bound.  Its geometric
-foundation is in place: a vertex lying in the stage-\(n+1\) cube but not the
+(\texttt{correlationInfinite\_latticeGraph\_le\_of\_neighbors\_le}).  Only this
+single step is proved; iterating it over the lattice distance is *intended* to
+yield \((\beta J\,2d)^{\mathrm{dist}}\) without the volume-dependent prefactor of
+the naive finite-volume bound, but that full distance induction is not yet
+formalized.  Its geometric foundation is in place: a vertex lying in the stage-\(n+1\) cube but not the
 stage-\(n\) cube has a coordinate of absolute value exactly \(n+1\)
 (\texttt{exists\_coord\_natAbs\_eq\_of\_mem\_cubicBox\_succ\_not\_mem}), so for a
 reference point \(p\) in the radius-\(R\) cube and a fresh stage-\(n+1\) vertex
