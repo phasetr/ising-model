@@ -8454,7 +8454,11 @@ in \(n\) by GKS
 (\texttt{correlationInfinite\_sub\_correlationAlongExhaustion\_antitone}), and
 tends to \(0\)
 (\texttt{tendsto\_correlationInfinite\_sub\_correlationAlongExhaustion\_zero});
-it is the quantity whose decay rate is the substantive remaining input.
+it is the quantity whose decay rate is the substantive remaining input; the
+increment series sums telescopically to it,
+\(\sum_n(\langle\sigma_x\sigma_z\rangle_{\Lambda_{n+1}}-\langle\sigma_x\sigma_z\rangle_{\Lambda_n})
+=\langle\sigma_x\sigma_z\rangle^\infty-\langle\sigma_x\sigma_z\rangle_{\Lambda_0}\)
+(\texttt{correlationAlongExhaustion\_increment\_tsum\_eq}).
 Obtaining the analogous quantitative summable bound for the \(\beta\)-derivative
 increments is the substantive remaining convergence-rate input.  Its geometric
 foundation is in place: a vertex lying in the stage-\(n+1\) cube but not the
