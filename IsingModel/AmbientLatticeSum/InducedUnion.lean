@@ -300,4 +300,25 @@ theorem correlation_inducedGraph_union_inl_of_no_cross (G : SimpleGraph V)
         (Equiv.Finset.union Λ₁ Λ₂ hd).toEmbedding))
     (correlation_inducedGraph_sum_map_inl G hd p A)
 
+omit [DecidableEq V] in
+/-- **Deleting non-internal edges leaves the induced subgraph unchanged**: if no
+edge in the deleted set `D` has both endpoints in `S`, then
+`inducedGraph (G.deleteEdges D) S = inducedGraph G S`. An edge of the induced
+subgraph on `S` joins two vertices of `S`, so it lies inside `S` and is never
+among the deleted edges `D`.
+
+For the finite-volume coupling step (Issue #2965, Phase A): deleting the cut
+(cross) edges between a region `S` and its complement does not alter the
+correlations *inside* `S`, so the induced subgraph on `S` of the bond-deleted
+model coincides with the induced subgraph on `S` of the original model. -/
+theorem inducedGraph_deleteEdges_eq_of_not_internal (G : SimpleGraph V)
+    (D : Set (Sym2 V)) (S : Finset V)
+    (hD : ∀ a ∈ S, ∀ b ∈ S, s(a, b) ∉ D) :
+    inducedGraph (G.deleteEdges D) S = inducedGraph G S := by
+  ext a b
+  rw [inducedGraph_apply, inducedGraph_apply, SimpleGraph.induce_adj,
+      SimpleGraph.induce_adj, SimpleGraph.deleteEdges_adj]
+  exact ⟨fun h => h.1,
+    fun h => ⟨h, hD _ (Finset.mem_coe.mp a.2) _ (Finset.mem_coe.mp b.2)⟩⟩
+
 end IsingModel
