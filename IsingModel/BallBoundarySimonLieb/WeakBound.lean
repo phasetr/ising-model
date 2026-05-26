@@ -1,4 +1,5 @@
 import IsingModel.BallBoundarySimonLieb.Monotonicity
+import IsingModel.InfiniteVolume.MonotoneH
 
 /-!
 # Ball-boundary Simon-Lieb weak bound wrappers
@@ -202,6 +203,89 @@ theorem scaledCorrelation_one_sub_zero_le_derivBound (G : SimpleGraph ι)
     _ = ‖scaledCorrelation G E₀ p 1 {r, s} - scaledCorrelation G E₀ p 0 {r, s}‖ :=
         (Real.norm_eq_abs _).symm
     _ ≤ derivBound G E₀ p r s := hmvt
+
+/-! ## Concrete bond-deletion correlation increment -/
+
+/-- **Concrete bond-deletion correlation increment**: combining the ball-boundary
+mean-value bound `scaledCorrelation_one_sub_zero_le_derivBound` with the `s = 0`
+bond-deleted identification `scaledCorrelation_zero`, adding the bond set `E₀`
+raises the pair correlation `⟨σ_r σ_s⟩` by at most `derivBound`:
+
+  `correlation G p {r,s} − correlation (G.deleteEdges ↑E₀) p {r,s}
+     ≤ derivBound G E₀ p r s`.
+
+This expresses the finite-volume coupling step entirely in terms of standard
+correlations of the full and bond-deleted models (Issue #2965, Phase A). -/
+theorem correlation_sub_deleteEdges_le_derivBound (G : SimpleGraph ι)
+    [Fintype G.edgeSet] (E₀ : Finset (Sym2 ι)) (hE₀_nd : ∀ e ∈ E₀, ¬e.IsDiag)
+    (hE₀_sub : E₀ ⊆ G.edgeFinset) (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    (hh : p.h = 0) (r s : ι) (hrs : r ≠ s)
+    (hE₀_sep : ∀ e ∈ E₀, ¬ Sym2.Mem r e ∧ ¬ Sym2.Mem s e)
+    [Fintype (G.deleteEdges ↑E₀).edgeSet] :
+    correlation G p {r, s} - correlation (G.deleteEdges ↑E₀) p {r, s}
+      ≤ derivBound G E₀ p r s := by
+  have h := scaledCorrelation_one_sub_zero_le_derivBound G E₀ hE₀_nd hE₀_sub p hf hh
+    r s hrs hE₀_sep
+  rwa [scaledCorrelation_one, scaledCorrelation_zero G E₀ hE₀_sub p {r, s}] at h
+
+/-- **GKS bond-monotonicity**: deleting the bonds `E₀` (with `E₀ ⊆ G.edgeFinset`)
+cannot increase a correlation. Specialization of `scaledCorrelation_monotoneOn`
+at `0 ≤ 1` via the `s = 0`/`s = 1` identifications. -/
+theorem correlation_deleteEdges_le (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (E₀ : Finset (Sym2 ι)) (hE₀_nd : ∀ e ∈ E₀, ¬e.IsDiag)
+    (hE₀_sub : E₀ ⊆ G.edgeFinset) (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    (A : Finset ι) [Fintype (G.deleteEdges ↑E₀).edgeSet] :
+    correlation (G.deleteEdges ↑E₀) p A ≤ correlation G p A := by
+  have h : scaledCorrelation G E₀ p 0 A ≤ scaledCorrelation G E₀ p 1 A :=
+    scaledCorrelation_monotoneOn G E₀ hE₀_nd hE₀_sub p hf A
+      (Set.mem_Ici.mpr le_rfl) (Set.mem_Ici.mpr zero_le_one) zero_le_one
+  rwa [scaledCorrelation_zero G E₀ hE₀_sub p A, scaledCorrelation_one] at h
+
+/-- The ball-boundary derivative bound is at most `β·J·(3·|E₀|)`: each of the three
+correlation products in a summand is at most `1` (each factor lies in `[0,1]` by
+`gks_first` and `correlation_le_one`). -/
+theorem derivBound_le_card (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (E₀ : Finset (Sym2 ι)) (p : IsingParams ℝ) (hf : Ferromagnetic p) (r s : ι) :
+    derivBound G E₀ p r s ≤ p.β * p.J * (3 * E₀.card) := by
+  unfold derivBound
+  apply mul_le_mul_of_nonneg_left _ (mul_nonneg hf.hβ.le hf.hJ)
+  calc ∑ e ∈ E₀, Sym2.lift ⟨fun k l =>
+          correlation G p {r, k} * correlation G p {s, l} +
+          correlation G p {r, l} * correlation G p {s, k} +
+          correlation G p {r, s} * correlation G p {k, l},
+        fun k l => by simp [Finset.pair_comm k l]; ring⟩ e
+      ≤ ∑ _e ∈ E₀, (3 : ℝ) := by
+        apply Finset.sum_le_sum
+        intro e _
+        obtain ⟨⟨k, l⟩, rfl⟩ := Quot.exists_rep e
+        simp only [Sym2.lift_mk]
+        have h1 : correlation G p {r, k} * correlation G p {s, l} ≤ 1 :=
+          mul_le_one₀ (correlation_le_one G p _) (gks_first G p hf _)
+            (correlation_le_one G p _)
+        have h2 : correlation G p {r, l} * correlation G p {s, k} ≤ 1 :=
+          mul_le_one₀ (correlation_le_one G p _) (gks_first G p hf _)
+            (correlation_le_one G p _)
+        have h3 : correlation G p {r, s} * correlation G p {k, l} ≤ 1 :=
+          mul_le_one₀ (correlation_le_one G p _) (gks_first G p hf _)
+            (correlation_le_one G p _)
+        linarith
+    _ = 3 * E₀.card := by rw [Finset.sum_const, nsmul_eq_mul]; ring
+
+/-- **Concrete bond-deletion increment cardinality bound**: combining
+`correlation_sub_deleteEdges_le_derivBound` with `derivBound_le_card`, adding the
+bond set `E₀` raises `⟨σ_r σ_s⟩` by at most `β·J·(3·|E₀|)` — a coarse a-priori
+bound on the finite-volume coupling step (Issue #2965, Phase A). -/
+theorem correlation_sub_deleteEdges_le_card (G : SimpleGraph ι)
+    [Fintype G.edgeSet] (E₀ : Finset (Sym2 ι)) (hE₀_nd : ∀ e ∈ E₀, ¬e.IsDiag)
+    (hE₀_sub : E₀ ⊆ G.edgeFinset) (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    (hh : p.h = 0) (r s : ι) (hrs : r ≠ s)
+    (hE₀_sep : ∀ e ∈ E₀, ¬ Sym2.Mem r e ∧ ¬ Sym2.Mem s e)
+    [Fintype (G.deleteEdges ↑E₀).edgeSet] :
+    correlation G p {r, s} - correlation (G.deleteEdges ↑E₀) p {r, s}
+      ≤ p.β * p.J * (3 * E₀.card) :=
+  le_trans
+    (correlation_sub_deleteEdges_le_derivBound G E₀ hE₀_nd hE₀_sub p hf hh r s hrs hE₀_sep)
+    (derivBound_le_card G E₀ p hf r s)
 
 
 end IsingModel
