@@ -165,5 +165,44 @@ theorem summable_truncated2Infinite_prod_of_high_temp
       hJ_pos hβ_pos hht)
     x y
 
+/-- **Unconditional high-temperature exponential decay of the two-point
+convolution**: for `β, J > 0` and `H := βJ · 2 · (d · (2(r+1)+1)^d) < 1`, there is
+a finite constant `C ≥ 0` with
+`∑_z ⟨σ_xσ_z⟩^∞ · ⟨σ_yσ_z⟩^∞ ≤ C · exp(-(rate/2)·dist(x,y)/2)` for all `x, y`,
+where `rate = -log(H)/(r+2)`.
+
+This composes the unconditional mass gap with the GJ §17.5 Step 127 quantitative
+convolution bound `tsum_truncated2Infinite_prod_le`: the boundary convolution
+itself decays exponentially in `dist(x,y)`, with no polynomial-decay hypothesis.
+The constant `C = (C'+1)^2 · 2·∑_z exp(-(rate/2)·dist(0,z))` absorbs the finite
+single-site exponential sum.  Part of Issue #2965, Phase B. -/
+theorem tsum_truncated2Infinite_prod_decay_of_high_temp
+    (d : ℕ) (hd : 1 ≤ d) (r : ℕ) {J β : ℝ} (hJ_pos : 0 < J) (hβ_pos : 0 < β)
+    (hht : β * J * (2 * ((d : ℝ) * (((2 * (r + 1) + 1) ^ d : ℕ) : ℝ))) < 1) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ x y : Fin d → ℤ,
+      (∑' z : Fin d → ℤ,
+          truncated2Infinite (IsingModel.latticeGraph d) (cubicExhaustion d)
+            (⟨J, 0, β⟩ : IsingParams ℝ) x z *
+          truncated2Infinite (IsingModel.latticeGraph d) (cubicExhaustion d)
+            (⟨J, 0, β⟩ : IsingParams ℝ) y z)
+        ≤ C * Real.exp (-(
+            (-Real.log (β * J * (2 * ((d : ℝ) * (((2 * (r + 1) + 1) ^ d : ℕ) : ℝ)))) /
+              (r + 2 : ℝ)) / 2) * (IsingModel.latticeDistance d x y : ℝ) / 2) := by
+  set rate := -Real.log (β * J * (2 * ((d : ℝ) * (((2 * (r + 1) + 1) ^ d : ℕ) : ℝ)))) /
+    (r + 2 : ℝ) with hrate
+  have hrate_pos : 0 < rate := highTemp_rate_pos d hd r hJ_pos hβ_pos hht
+  obtain ⟨C', hC', hbound⟩ :=
+    hasExponentialDecay_latticeGraph_of_high_temp d hd r (cubicExhaustion d)
+      hJ_pos hβ_pos hht
+  refine ⟨(C' + 1) ^ 2 *
+      (2 * ∑' z : Fin d → ℤ, Real.exp (-(rate / 2) * (IsingModel.latticeDistance d 0 z : ℝ))),
+    ?_, fun x y => ?_⟩
+  · have hsum_nn : 0 ≤ ∑' z : Fin d → ℤ,
+        Real.exp (-(rate / 2) * (IsingModel.latticeDistance d 0 z : ℝ)) :=
+      tsum_nonneg (fun z => (Real.exp_pos _).le)
+    have : 0 ≤ (C' + 1) ^ 2 := sq_nonneg _
+    nlinarith [hsum_nn, this]
+  · exact tsum_truncated2Infinite_prod_le hJ_pos.le hβ_pos hrate_pos hC' hbound x y
+
 end Ambient
 end IsingModel
