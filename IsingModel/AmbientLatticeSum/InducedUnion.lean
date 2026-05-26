@@ -427,4 +427,67 @@ theorem correlation_induce_of_forall_mem [Fintype V] (G : SimpleGraph V)
   exact (correlation_map_equiv (Equiv.subtypeUnivEquiv hs) (G.induce s) params A).symm.trans
     (correlation_congr_of_eq hmap params (A.map (Equiv.subtypeUnivEquiv hs).toEmbedding))
 
+/-- **Correlation is invariant under graph equality across *all* instances**:
+strengthens `correlation_congr_of_eq` to also absorb differences in the vertex
+`Fintype` and `edgeSet Fintype` instances, since `Fintype` is a `Subsingleton`
+(mathlib `Fintype.subsingleton`). For propositionally equal graphs `G₁ = G₂` on
+the same vertex type, the correlations agree regardless of which `Fintype ι`,
+`Fintype Gᵢ.edgeSet` instances are in play. This is the tool that bridges the
+`Finset.Subtype.fintype` (used by `inducedGraph`) and the `Set`-induce vertex
+`Fintype` in the per-stage-increment assembly (Issue #2965, Phase A). -/
+theorem correlation_congr_all {ι : Type*} [DecidableEq ι] {inst₁ inst₂ : Fintype ι}
+    {G₁ G₂ : SimpleGraph ι} {e₁ : Fintype G₁.edgeSet} {e₂ : Fintype G₂.edgeSet}
+    (hG : G₁ = G₂) (params : IsingParams ℝ) (A : Finset ι) :
+    @correlation ι inst₁ _ G₁ e₁ params A = @correlation ι inst₂ _ G₂ e₂ params A := by
+  subst hG
+  rw [Subsingleton.elim inst₁ inst₂, Subsingleton.elim e₁ e₂]
+
+set_option linter.unusedFintypeInType false in
+/-- **Bond-deleted raw correlation equals isolated induced-subgraph correlation**:
+combining the component-factorization capstone
+`correlation_inducedGraph_deleteEdges_union_inl` with
+`correlation_induce_of_forall_mem` (on the full set `↑(S ∪ Sᶜ)`) and the
+all-instance bridge `correlation_congr_all`, an `S`-supported observable has the
+same correlation in the *raw* bond-deleted graph `G.deleteEdges {straddle S}` as
+in the isolated induced subgraph on `S` of the original model. This is the
+per-stage-increment form that pairs directly with the ball-boundary bond-deletion
+increment `correlation_sub_deleteEdges_le_derivBound` (Issue #2965, Phase A). -/
+theorem correlation_deleteEdges_straddle_eq_inducedGraph [Fintype V] (G : SimpleGraph V)
+    (S : Finset V)
+    [Fintype (inducedGraph (G.deleteEdges {e : Sym2 V |
+      ¬ Sym2.lift ⟨fun a b => ((a ∈ S) ↔ (b ∈ S)), fun a b => by simp [iff_comm]⟩ e}) S).edgeSet]
+    [Fintype (inducedGraph (G.deleteEdges {e : Sym2 V |
+      ¬ Sym2.lift ⟨fun a b => ((a ∈ S) ↔ (b ∈ S)), fun a b => by simp [iff_comm]⟩ e}) Sᶜ).edgeSet]
+    [Fintype (((inducedGraph (G.deleteEdges {e : Sym2 V |
+        ¬ Sym2.lift ⟨fun a b => ((a ∈ S) ↔ (b ∈ S)), fun a b => by simp [iff_comm]⟩ e}) S).sum
+        (inducedGraph (G.deleteEdges {e : Sym2 V |
+        ¬ Sym2.lift ⟨fun a b => ((a ∈ S) ↔ (b ∈ S)), fun a b => by simp [iff_comm]⟩ e}) Sᶜ)).map
+      (Equiv.Finset.union S Sᶜ disjoint_compl_right).toEmbedding).edgeSet]
+    [Fintype (inducedGraph (G.deleteEdges {e : Sym2 V |
+      ¬ Sym2.lift ⟨fun a b => ((a ∈ S) ↔ (b ∈ S)), fun a b => by simp [iff_comm]⟩ e})
+      (S ∪ Sᶜ)).edgeSet]
+    [Fintype ((G.deleteEdges {e : Sym2 V |
+      ¬ Sym2.lift ⟨fun a b => ((a ∈ S) ↔ (b ∈ S)), fun a b => by simp [iff_comm]⟩ e}).induce
+      (↑(S ∪ Sᶜ) : Set V)).edgeSet]
+    [Fintype (G.deleteEdges {e : Sym2 V |
+      ¬ Sym2.lift ⟨fun a b => ((a ∈ S) ↔ (b ∈ S)), fun a b => by simp [iff_comm]⟩ e}).edgeSet]
+    [Fintype (inducedGraph G S).edgeSet]
+    (params : IsingParams ℝ) (A : Finset (↑S : Type _)) :
+    correlation (G.deleteEdges {e : Sym2 V |
+        ¬ Sym2.lift ⟨fun a b => ((a ∈ S) ↔ (b ∈ S)), fun a b => by simp [iff_comm]⟩ e}) params
+        ((((A.map ⟨Sum.inl, Sum.inl_injective⟩).map
+            (Equiv.Finset.union S Sᶜ disjoint_compl_right).toEmbedding).map
+          (Equiv.subtypeUnivEquiv (p := fun x => x ∈ (↑(S ∪ Sᶜ) : Set V))
+            (fun x => by
+              rw [Finset.union_compl, Finset.coe_univ]; exact Set.mem_univ x)).toEmbedding))
+      = correlation (inducedGraph G S) params A := by
+  refine (correlation_induce_of_forall_mem _ (↑(S ∪ Sᶜ) : Set V)
+    (fun x => by rw [Finset.union_compl, Finset.coe_univ]; exact Set.mem_univ x) params
+    ((A.map ⟨Sum.inl, Sum.inl_injective⟩).map
+      (Equiv.Finset.union S Sᶜ disjoint_compl_right).toEmbedding)).symm.trans
+    ((correlation_congr_all rfl params
+      ((A.map ⟨Sum.inl, Sum.inl_injective⟩).map
+        (Equiv.Finset.union S Sᶜ disjoint_compl_right).toEmbedding)).trans
+      (correlation_inducedGraph_deleteEdges_union_inl G S params A))
+
 end IsingModel
