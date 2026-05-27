@@ -526,9 +526,10 @@ by GKS bond-monotonicity (`correlation_deleteEdges_le`: bond-deleted ≤ full
 correlation), the `s=0` covariance is bounded by the **full-graph** Lebowitz cross
 `⟨σ_xσ_u⟩_G⟨σ_zσ_v⟩_G + ⟨σ_xσ_v⟩_G⟨σ_zσ_u⟩_G`. This puts each summand of the
 localized shell term of the β-derivative increment in terms of the full-graph
-two-point functions, which (on the cubic exhaustion) are bounded by the
-infinite-volume correlations and decay spatially — so the localized shell term is
-geometric, reusing the correlation-side Part-B machinery. -/
+two-point functions. This can later be combined, in the high-temperature cubic
+shell setting (contraction factor `cf < 1`, fresh-shell geometry), with the
+infinite-volume correlation decay to make the localized shell term geometric,
+reusing the correlation-side Part-B machinery. -/
 theorem scaledCovariance_zero_edgeSpin_le_lebowitz_full (G : SimpleGraph ι)
     [Fintype G.edgeSet] (E₀ : Finset (Sym2 ι)) (hE₀_nd : ∀ e ∈ E₀, ¬ e.IsDiag)
     (hE₀_sub : E₀ ⊆ G.edgeFinset) (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β)
