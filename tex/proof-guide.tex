@@ -13107,6 +13107,20 @@ increment as a shell sum (no interior edges, avoiding the stage-edge
 correspondence).
 \end{proposition}
 
+\begin{proposition}[\texttt{IsingModel.hasDerivAt\_scaledGibbsExpectation\_beta} and
+\texttt{hasDerivAt\_scaledCorrelation\_beta} (Issue \#2965 Phase C, chain complete)]
+With the per-configuration $\beta$-log-derivative of the weight
+$D(\sigma)=-H(\sigma)-(1-s)J\sum_{E_0}\sigma_e$, the quotient rule gives
+$\partial_\beta\langle F\rangle_s=\langle F\,D\rangle_s-\langle F\rangle_s\langle
+D\rangle_s$, and specialising $F=\sigma^A$,
+$\partial_\beta\langle\sigma^A\rangle_s=\langle\sigma^A
+D\rangle_s-\langle\sigma^A\rangle_s\langle D\rangle_s$. This completes the
+scaled-correlation $\beta$-derivative chain, the inner $\beta$-derivative used to
+bound the finite-volume $\beta$-derivative increment
+$g_k'(\beta)=\int_0^1\partial_\beta\partial_s\,\mathrm{scaledCorrelation}\,ds$ as a
+shell sum.
+\end{proposition}
+
 \begin{theorem}[\texttt{IsingModel.Ambient.ursell\_shell\_sum\_le\_card\_pow}
 (geometric bound on the new-shell-edge Ursell sum, Issue \#2965 Phase C, Part B)]
 For $d\ge1$, ferromagnetic $h=0$, high temperature ($\mathrm{cf}<1$), interior
