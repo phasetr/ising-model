@@ -239,10 +239,13 @@ bond-deleted correlation, via `scaledCorrelation_one`/`scaledCorrelation_zero`) 
 (`hasDerivAt_scaledCorrelation_beta` at `s=1` and `s=0`), with `D_s = betaLogDeriv`
 (`D_1 = -H`, `D_0 = -H - J·∑_{E₀}σ_e`):
 `g'(β) = [⟨σ^A·D_1⟩_1 − ⟨σ^A⟩_1⟨D_1⟩_1] − [⟨σ^A·D_0⟩_0 − ⟨σ^A⟩_0⟨D_0⟩_0]`.
-This is the explicit per-stage β-derivative increment `F_{k+1}(β) − F_k(β)`
-(`s=1`/`s=0` identifying the full box and bond-deleted/inner-box correlations); its
-bound — controlled by the shell cancellation of the full-energy terms — is the
-remaining quantitative input of the GJ §17.5 Lemma 17.5.2 capstone (`hincr`). -/
+Stated for an arbitrary `E₀`. In the per-stage shell application (`E₀ = ` cut shell,
+`E₀ ⊆ G.edgeFinset`, plus the `s=0` bond-deleted identification
+`scaledCorrelation_zero`) this is the explicit β-derivative increment
+`F_{k+1}(β) − F_k(β)` of the finite-volume derivative profiles; bounding it then
+requires (at the application level) the shell cancellation of the full-energy
+`⟨σ^A·H⟩` covariance terms between the two systems — the remaining quantitative
+input of the GJ §17.5 Lemma 17.5.2 capstone (`hincr`). -/
 theorem hasDerivAt_scaledCorrelation_increment_beta (G : SimpleGraph ι) [Fintype G.edgeSet]
     (E₀ : Finset (Sym2 ι)) (J β : ℝ) (A : Finset ι) :
     HasDerivAt (fun β' => scaledCorrelation G E₀ (⟨J, 0, β'⟩ : IsingParams ℝ) 1 A
