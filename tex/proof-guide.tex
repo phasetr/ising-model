@@ -12955,6 +12955,35 @@ $\mathrm{cf}$-powers are nonnegative. The cross-product-only (tight) structure i
 what guarantees every factor genuinely decays.
 \end{proof}
 
+\begin{theorem}[\texttt{IsingModel.Ambient.derivBoundTight\_cubic\_shell\_le\_card\_pow}
+(geometric per-stage bound, Issue \#2965 Phase B)]
+For $d\ge1$, ferromagnetic zero-field parameters, high temperature
+($\mathrm{cf}=\mathrm{contractionFactor}\,d\,(\mathrm{cubicExhaustion}\,d)\,p\,r_0<1$),
+and a pair $r,s\in\mathrm{box}_R$ with $R\le k$ on no cut edge of the
+$\mathrm{box}_k$-slice,
+\[
+  \mathrm{derivBoundTight}\,(\mathrm{inducedGraph}\,(\mathrm{latticeGraph}\,d)\,
+    \mathrm{box}_{k+1})\,(\mathrm{shell})\,\langle r\rangle\,\langle s\rangle
+  \le \beta J\cdot\bigl(|\mathrm{shell}|\cdot 2\,\mathrm{cf}^{\,(k+1-R)/(r_0+2)}\bigr).
+\]
+\end{theorem}
+
+\begin{proof}
+Each straddle edge of the $\mathrm{box}_k$-slice has an endpoint outside
+$\mathrm{box}_k$ (\texttt{straddle\_fresh\_vertex}), a fresh vertex of
+$\mathrm{box}_{k+1}\setminus\mathrm{box}_k$, whose $\ell^1$ distance to $r$ (and to
+$s$) is at least $k+1-R$
+(\texttt{latticeDistance\_ge\_of\_mem\_cubicBox\_succ\_not\_mem}); hence its decay
+factor is $\le\mathrm{cf}^{\,(k+1-R)/(r_0+2)}$
+(\texttt{cf\_pow\_fresh\_le}, via \texttt{pow\_le\_pow\_of\_le\_one}) while the
+partner factor is $\le1$. Each summand of
+\texttt{derivBoundTight\_inducedGraph\_cubic\_le\_decay\_sum} is thus
+$\le 2\,\mathrm{cf}^{\,(k+1-R)/(r_0+2)}$; summing the uniform bound over the shell
+(\texttt{Finset.sum\_le\_card\_nsmul}) gives the cardinality factor. With
+$|\mathrm{shell}|$ polynomial in $k$ and $\mathrm{cf}<1$, the per-stage increment is
+summable.
+\end{proof}
+
 \begin{theorem}[\texttt{IsingModel.correlation\_inducedGraph\_deleteEdges\_union\_inl}
 (Phase A component-factorization capstone, Finset route)]
 For a region $S\subseteq W$, deleting the cut edges between $S$ and its complement
