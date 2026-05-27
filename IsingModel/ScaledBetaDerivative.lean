@@ -578,6 +578,58 @@ theorem scaledCovariance_spinProduct_hamiltonian_eq_neg_J_edge_sum (G : SimpleGr
     simp [hamiltonian, interactionEnergy, externalFieldEnergy]
   rw [hH, scaledCovariance_const_mul_right, scaledCovariance_sum_right]
 
+/-- **Per-edge covariance as a scaled-correlation truncated function** (Issue #2965,
+Phase C). For a non-degenerate edge `s(u,v)` (`u ≠ v`), the scaled covariance of
+`σ^A` with the edge spin `σ_uσ_v` is the truncated two-point function in scaled
+correlations:
+`Cov_s(σ^A, σ_uσ_v) = ⟨σ^{A△{u,v}}⟩_s − ⟨σ^A⟩_s·⟨σ_uσ_v⟩_s`.
+Uses `edgeSpin = spinProduct {u,v}` (`edgeSpin_quot_eq_spinProduct'`) and the spin
+product fusion `spinProduct_mul` (`σ^A·σ^{u,v} = σ^{A△{u,v}}`). This expresses every
+per-edge summand of the coupling-difference sum
+(`scaledCovariance_coupling_difference_eq_neg_J_edge_sum`) purely in terms of scaled
+correlations, connecting the hard core to the bond-adding correlation increments
+whose decay is established by the Part-A/B machinery. -/
+theorem scaledCovariance_spinProduct_edgeSpin_eq_scaledCorrelation (G : SimpleGraph ι)
+    [Fintype G.edgeSet] (E₀ : Finset (Sym2 ι)) (p : IsingParams ℝ) (s : ℝ) (A : Finset ι)
+    {u v : ι} (huv : u ≠ v) :
+    scaledCovariance G E₀ p s (spinProduct A)
+        (fun σ => edgeSpin (K := ℝ) σ (Quot.mk _ (u, v)))
+      = scaledCorrelation G E₀ p s (symmDiff A {u, v})
+        - scaledCorrelation G E₀ p s A * scaledCorrelation G E₀ p s {u, v} := by
+  unfold scaledCovariance scaledCorrelation
+  have hfk : (fun σ => spinProduct A σ * edgeSpin (K := ℝ) σ (Quot.mk _ (u, v)))
+      = spinProduct (symmDiff A {u, v}) := by
+    funext σ
+    rw [edgeSpin_quot_eq_spinProduct' huv, spinProduct_mul]
+  have hk : (fun σ => edgeSpin (K := ℝ) σ (Quot.mk _ (u, v))) = spinProduct {u, v} := by
+    funext σ; rw [edgeSpin_quot_eq_spinProduct' huv]
+  rw [hfk, hk]
+
+/-- **Per-edge coupling-difference summand in scaled correlations** (Issue #2965,
+Phase C). Each summand of the coupling-difference sum, the `s=0` vs `s=1` covariance
+difference of `σ^A` with an edge spin `σ_uσ_v`, is the difference of two
+scaled-correlation truncated functions:
+`Cov_0(σ^A,σ_uσ_v) − Cov_1(σ^A,σ_uσ_v) =
+  [⟨σ^{A△{u,v}}⟩_0 − ⟨σ^A⟩_0⟨σ_uσ_v⟩_0] − [⟨σ^{A△{u,v}}⟩_1 − ⟨σ^A⟩_1⟨σ_uσ_v⟩_1]`.
+Substitutes `scaledCovariance_spinProduct_edgeSpin_eq_scaledCorrelation` at the two
+endpoints `s=0,1`. The scaled correlations `⟨·⟩_1` (full) and `⟨·⟩_0` (bond-deleted)
+differ by the bond-adding increment over the cut set, so this rewrites each
+coupling-difference summand in terms of correlation increments — the objects whose
+geometric decay is established by the Part-A/B per-stage increment machinery. -/
+theorem scaledCovariance_edgeSpin_zero_sub_one_eq_scaledCorrelation (G : SimpleGraph ι)
+    [Fintype G.edgeSet] (E₀ : Finset (Sym2 ι)) (p : IsingParams ℝ) (A : Finset ι)
+    {u v : ι} (huv : u ≠ v) :
+    scaledCovariance G E₀ p 0 (spinProduct A)
+          (fun σ => edgeSpin (K := ℝ) σ (Quot.mk _ (u, v))) -
+        scaledCovariance G E₀ p 1 (spinProduct A)
+          (fun σ => edgeSpin (K := ℝ) σ (Quot.mk _ (u, v)))
+      = (scaledCorrelation G E₀ p 0 (symmDiff A {u, v})
+            - scaledCorrelation G E₀ p 0 A * scaledCorrelation G E₀ p 0 {u, v})
+        - (scaledCorrelation G E₀ p 1 (symmDiff A {u, v})
+            - scaledCorrelation G E₀ p 1 A * scaledCorrelation G E₀ p 1 {u, v}) := by
+  rw [scaledCovariance_spinProduct_edgeSpin_eq_scaledCorrelation G E₀ p 0 A huv,
+    scaledCovariance_spinProduct_edgeSpin_eq_scaledCorrelation G E₀ p 1 A huv]
+
 /-- **Coupling difference as a per-edge covariance-difference sum** (Issue #2965,
 Phase C, `h=0`). The hard core of the β-derivative increment decomposition,
 `[Cov_0(σ^A, H) − Cov_1(σ^A, H)]`, equals
