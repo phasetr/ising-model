@@ -13076,6 +13076,23 @@ monotone since the correlations are nonnegative (\texttt{gks\_first},
 \texttt{correlationInfinite\_nonneg}). The incident-edge error term is unchanged.
 \end{proof}
 
+\begin{proposition}[\texttt{IsingModel.Ambient.lemma\_17\_5\_2\_finite\_derivative\_increment\_eq}
+(explicit $\beta$-derivative increment on covered stages, Issue \#2965 Phase C)]
+For consecutive stages $k\subseteq k+1$ both containing $\{x,z\}$,
+\[
+  F_{k+1}(\beta)-F_k(\beta)
+    = J\!\!\sum_{e\in E(\mathrm{box}_{k+1})}\!\!\mathrm{Ursell}^{(k+1)}_e
+      - J\!\!\sum_{e\in E(\mathrm{box}_k)}\!\!\mathrm{Ursell}^{(k)}_e,
+\]
+where $\mathrm{Ursell}_e=\langle\sigma^{A\,\triangle\,\{u,v\}}\rangle
+-\langle\sigma^A\rangle\langle\sigma_u\sigma_v\rangle$ ($A=\{x,z\}$). Immediate from
+\texttt{lemma\_17\_5\_2\_finite\_derivative\_profile\_eq\_beta\_edge\_sum} at both
+stages. The explicit starting point for the per-stage increment bound: the
+difference splits into the new shell edges of stage $k+1$ (decaying Ursell, far
+from $\{x,z\}$) and the interior edges shared with stage $k$ (Ursell differing only
+by the inter-stage correlation differences).
+\end{proposition}
+
 \begin{theorem}[\texttt{IsingModel.correlation\_inducedGraph\_deleteEdges\_union\_inl}
 (Phase A component-factorization capstone, Finset route)]
 For a region $S\subseteq W$, deleting the cut edges between $S$ and its complement
