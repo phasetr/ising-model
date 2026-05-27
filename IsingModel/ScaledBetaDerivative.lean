@@ -69,4 +69,96 @@ theorem hasDerivAt_scaledPartitionFunction_beta (G : SimpleGraph ι) [Fintype G.
   exact HasDerivAt.fun_sum
     (fun σ _ => hasDerivAt_scaledBoltzmannWeight_beta G E₀ J s β σ)
 
+/-- Weighted scaled-Boltzmann sum is differentiable in β. -/
+private theorem hasDerivAt_weightedScaledBoltzmannSum_beta (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (E₀ : Finset (Sym2 ι)) (J s β : ℝ) (F : Config ι → ℝ) :
+    HasDerivAt
+      (fun β' => ∑ σ : Config ι, F σ * scaledBoltzmannWeight G E₀ (⟨J, 0, β'⟩ : IsingParams ℝ) s σ)
+      (∑ σ : Config ι, F σ *
+        ((- hamiltonian G (⟨J, 0, β⟩ : IsingParams ℝ) σ
+            - (1 - s) * J * (∑ e ∈ E₀, edgeSpin (K := ℝ) σ e)) *
+          scaledBoltzmannWeight G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) s σ)) β :=
+  HasDerivAt.fun_sum (fun σ _ =>
+    (hasDerivAt_scaledBoltzmannWeight_beta G E₀ J s β σ).const_mul (F σ))
+
+/-- **β-derivative of the scaled Gibbs expectation** (quotient rule): with the
+per-configuration β-log-derivative of the weight `D σ = -H σ - (1-s)J·∑_{E₀}σ_e`
+(`H` the Hamiltonian),
+`∂_β ⟨F⟩_s = ⟨F·D⟩_s − ⟨F⟩_s·⟨D⟩_s`. Third piece of the scaled-correlation
+β-derivative chain (Issue #2965, Phase C). -/
+theorem hasDerivAt_scaledGibbsExpectation_beta (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (E₀ : Finset (Sym2 ι)) (J s β : ℝ) (F : Config ι → ℝ) :
+    HasDerivAt
+      (fun β' => scaledGibbsExpectation G E₀ (⟨J, 0, β'⟩ : IsingParams ℝ) s F)
+      (scaledGibbsExpectation G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) s
+            (fun σ => F σ * (- hamiltonian G (⟨J, 0, β⟩ : IsingParams ℝ) σ
+              - (1 - s) * J * (∑ e ∈ E₀, edgeSpin (K := ℝ) σ e))) -
+       scaledGibbsExpectation G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) s F *
+       scaledGibbsExpectation G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) s
+            (fun σ => - hamiltonian G (⟨J, 0, β⟩ : IsingParams ℝ) σ
+              - (1 - s) * J * (∑ e ∈ E₀, edgeSpin (K := ℝ) σ e)))
+      β := by
+  have hZpos : 0 < scaledPartitionFunction G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) s :=
+    scaledPartitionFunction_pos G E₀ _ s
+  have hZne : scaledPartitionFunction G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) s ≠ 0 := hZpos.ne'
+  set Zs : ℝ → ℝ := fun β' => scaledPartitionFunction G E₀ (⟨J, 0, β'⟩ : IsingParams ℝ) s
+    with hZs_def
+  set Ns : ℝ → ℝ :=
+    fun β' => ∑ σ : Config ι, F σ * scaledBoltzmannWeight G E₀ (⟨J, 0, β'⟩ : IsingParams ℝ) s σ
+    with hNs_def
+  have hge_eq : ∀ β', scaledGibbsExpectation G E₀ (⟨J, 0, β'⟩ : IsingParams ℝ) s F
+      = (Zs β')⁻¹ * Ns β' := fun _ => rfl
+  simp_rw [hge_eq]
+  have hZderiv : HasDerivAt Zs
+      (∑ σ : Config ι,
+        (- hamiltonian G (⟨J, 0, β⟩ : IsingParams ℝ) σ
+            - (1 - s) * J * (∑ e ∈ E₀, edgeSpin (K := ℝ) σ e)) *
+          scaledBoltzmannWeight G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) s σ) β :=
+    hasDerivAt_scaledPartitionFunction_beta G E₀ J s β
+  have hZinv := hZderiv.inv hZne
+  have hNderiv : HasDerivAt Ns
+      (∑ σ : Config ι, F σ *
+        ((- hamiltonian G (⟨J, 0, β⟩ : IsingParams ℝ) σ
+            - (1 - s) * J * (∑ e ∈ E₀, edgeSpin (K := ℝ) σ e)) *
+          scaledBoltzmannWeight G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) s σ)) β :=
+    hasDerivAt_weightedScaledBoltzmannSum_beta G E₀ J s β F
+  have hprod := hZinv.mul hNderiv
+  convert hprod using 1
+  simp only [scaledGibbsExpectation, hZs_def, hNs_def]
+  set D : Config ι → ℝ := fun σ => - hamiltonian G (⟨J, 0, β⟩ : IsingParams ℝ) σ
+    - (1 - s) * J * (∑ e ∈ E₀, edgeSpin (K := ℝ) σ e) with hD_def
+  set w : Config ι → ℝ := fun σ => scaledBoltzmannWeight G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) s σ
+    with hw_def
+  set Z := scaledPartitionFunction G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) s with hZ_def
+  set NF : ℝ := ∑ σ : Config ι, F σ * w σ with hNF_def
+  set ND : ℝ := ∑ σ : Config ι, D σ * w σ with hND_def
+  set NFD : ℝ := ∑ σ : Config ι, F σ * (D σ * w σ) with hNFD_def
+  have hNFD' : ∑ σ : Config ι, F σ * D σ * w σ = NFD :=
+    Finset.sum_congr rfl (fun σ _ => by ring)
+  rw [hNFD']
+  simp only [Pi.inv_apply]
+  rw [← hZ_def]
+  field_simp [hZne]
+  ring
+
+/-- **β-derivative of the scaled correlation**: specialising the scaled Gibbs
+β-derivative to `F = spinProduct A`,
+`∂_β ⟨σ^A⟩_s = ⟨σ^A·D⟩_s − ⟨σ^A⟩_s·⟨D⟩_s` with the β-log-derivative of the weight
+`D σ = -H σ - (1-s)J·∑_{E₀}σ_e`. Final piece of the scaled-correlation β-derivative
+chain (Issue #2965, Phase C, mixed `∂_β∂_s` route): the inner `β`-derivative used
+to bound the finite-volume β-derivative increment `g_k'(β) = ∫₀¹ ∂_β∂_s
+scaledCorrelation ds` as a shell sum. -/
+theorem hasDerivAt_scaledCorrelation_beta (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (E₀ : Finset (Sym2 ι)) (J s β : ℝ) (A : Finset ι) :
+    HasDerivAt (fun β' => scaledCorrelation G E₀ (⟨J, 0, β'⟩ : IsingParams ℝ) s A)
+      (scaledGibbsExpectation G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) s
+            (fun σ => spinProduct A σ * (- hamiltonian G (⟨J, 0, β⟩ : IsingParams ℝ) σ
+              - (1 - s) * J * (∑ e ∈ E₀, edgeSpin (K := ℝ) σ e))) -
+       scaledGibbsExpectation G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) s (spinProduct A) *
+       scaledGibbsExpectation G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) s
+            (fun σ => - hamiltonian G (⟨J, 0, β⟩ : IsingParams ℝ) σ
+              - (1 - s) * J * (∑ e ∈ E₀, edgeSpin (K := ℝ) σ e)))
+      β :=
+  hasDerivAt_scaledGibbsExpectation_beta G E₀ J s β (spinProduct A)
+
 end IsingModel
