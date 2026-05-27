@@ -520,7 +520,7 @@ omit [DecidableEq V] in
 `inducedGraph G S`. An edge survives iff its (deep) endpoints are `G`-adjacent and
 both in `S`. This is the graph-level foundation for instantiating the per-stage
 increment on cubic exhaustion stages `box_k ⊆ box_{k+1}` (Issue #2965, Phase A);
-the correlation-level transport is a follow-up. -/
+the correlation-level transport is `correlation_inducedGraph_induce_preimage` below. -/
 theorem inducedGraph_induce_preimage_map_eq (G : SimpleGraph V) {S T : Finset V}
     (hST : S ⊆ T) :
     ((inducedGraph G T).induce {x : (↑T : Type _) | x.val ∈ S}).map
@@ -534,5 +534,37 @@ theorem inducedGraph_induce_preimage_map_eq (G : SimpleGraph V) {S T : Finset V}
   · intro h
     exact ⟨(nestedSubtypeEquiv hST).symm a, (nestedSubtypeEquiv hST).symm b,
       by simpa using h, by simp, by simp⟩
+
+set_option linter.unusedFintypeInType false in
+/-- **Nested induced subgraph correlation = direct induced subgraph correlation**:
+the correlation-level companion to `inducedGraph_induce_preimage_map_eq`. Proved by
+applying `correlation_map_equiv` to the *direct* graph `inducedGraph G S` with the
+inverse relabeling `nestedSubtypeEquiv.symm` (so the heavy nested-subtype graph
+appears only as the map *result*, never as the graph `correlation_map_equiv`
+operates on), then bridging via `correlation_congr_all` and the graph equality.
+Instantiates the per-stage increment on cubic exhaustion stages `box_k ⊆ box_{k+1}`
+(Issue #2965). -/
+theorem correlation_inducedGraph_induce_preimage (G : SimpleGraph V) {S T : Finset V}
+    (hST : S ⊆ T)
+    [Fintype (inducedGraph G S).edgeSet]
+    [Fintype ((inducedGraph G S).map (nestedSubtypeEquiv hST).symm.toEmbedding).edgeSet]
+    [Fintype ((inducedGraph G T).induce {x : (↑T : Type _) | x.val ∈ S}).edgeSet]
+    (p : IsingParams ℝ) (A : Finset (↑S : Type _)) :
+    correlation ((inducedGraph G T).induce {x : (↑T : Type _) | x.val ∈ S}) p
+        (A.map (nestedSubtypeEquiv hST).symm.toEmbedding)
+      = correlation (inducedGraph G S) p A := by
+  have hmap2 : (inducedGraph G S).map (nestedSubtypeEquiv hST).symm.toEmbedding
+      = (inducedGraph G T).induce {x : (↑T : Type _) | x.val ∈ S} := by
+    ext a b
+    simp only [SimpleGraph.map_adj, inducedGraph_apply, SimpleGraph.induce_adj]
+    constructor
+    · rintro ⟨x, y, hxy, rfl, rfl⟩
+      exact hxy
+    · intro h
+      refine ⟨nestedSubtypeEquiv hST a, nestedSubtypeEquiv hST b, ?_, by simp, by simp⟩
+      simpa [nestedSubtypeEquiv, Equiv.subtypeSubtypeEquivSubtype] using h
+  have key := correlation_map_equiv (nestedSubtypeEquiv hST).symm (inducedGraph G S) p A
+  rw [correlation_congr_all hmap2 p (A.map (nestedSubtypeEquiv hST).symm.toEmbedding)] at key
+  exact key
 
 end IsingModel
