@@ -167,6 +167,26 @@ noncomputable def betaLogDeriv (G : SimpleGraph ι) [Fintype G.edgeSet]
     (E₀ : Finset (Sym2 ι)) (J s β : ℝ) (σ : Config ι) : ℝ :=
   - hamiltonian G (⟨J, 0, β⟩ : IsingParams ℝ) σ - (1 - s) * J * (∑ e ∈ E₀, edgeSpin (K := ℝ) σ e)
 
+omit [DecidableEq ι] in
+/-- At `s = 1` (full, unscaled) the β-log-derivative is just minus the Hamiltonian:
+`betaLogDeriv … 1 … = -H` (the `(1-s)` scaling term vanishes). -/
+theorem betaLogDeriv_one (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (E₀ : Finset (Sym2 ι)) (J β : ℝ) :
+    betaLogDeriv G E₀ J 1 β = fun σ => - hamiltonian G (⟨J, 0, β⟩ : IsingParams ℝ) σ := by
+  funext σ; simp [betaLogDeriv]
+
+omit [DecidableEq ι] in
+/-- At `s = 0` (fully bond-deleted) the β-log-derivative is minus the Hamiltonian
+plus the full `E₀`-bond energy: `betaLogDeriv … 0 … = -H - J·∑_{E₀}σ_e`. With
+`E₀ ⊆ G.edgeFinset` this equals minus the bond-deleted Hamiltonian
+`-(H_{G.deleteEdges E₀})`. -/
+theorem betaLogDeriv_zero (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (E₀ : Finset (Sym2 ι)) (J β : ℝ) :
+    betaLogDeriv G E₀ J 0 β
+      = fun σ => - hamiltonian G (⟨J, 0, β⟩ : IsingParams ℝ) σ
+          - J * (∑ e ∈ E₀, edgeSpin (K := ℝ) σ e) := by
+  funext σ; simp only [betaLogDeriv]; ring
+
 /-- **β-derivative of one scaled-correlation truncated (Ursell-like) summand**:
 `∂_β [⟨σ^B⟩_s − ⟨σ^A⟩_s·⟨σ^C⟩_s]
    = ⟨σ^B·D⟩_s − ⟨σ^B⟩_s⟨D⟩_s
