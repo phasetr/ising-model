@@ -161,4 +161,44 @@ theorem hasDerivAt_scaledCorrelation_beta (G : SimpleGraph ι) [Fintype G.edgeSe
       β :=
   hasDerivAt_scaledGibbsExpectation_beta G E₀ J s β (spinProduct A)
 
+/-- Abbreviation: the per-configuration β-log-derivative of the scaled weight,
+`D σ = -H σ - (1-s)J·∑_{E₀} σ_e`. -/
+private noncomputable def betaLogDeriv (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (E₀ : Finset (Sym2 ι)) (J s β : ℝ) (σ : Config ι) : ℝ :=
+  - hamiltonian G (⟨J, 0, β⟩ : IsingParams ℝ) σ - (1 - s) * J * (∑ e ∈ E₀, edgeSpin (K := ℝ) σ e)
+
+/-- **β-derivative of one scaled-correlation truncated (Ursell-like) summand**:
+`∂_β [⟨σ^B⟩_s − ⟨σ^A⟩_s·⟨σ^C⟩_s]
+   = ⟨σ^B·D⟩_s − ⟨σ^B⟩_s⟨D⟩_s
+     − [(⟨σ^A·D⟩_s − ⟨σ^A⟩_s⟨D⟩_s)·⟨σ^C⟩_s + ⟨σ^A⟩_s·(⟨σ^C·D⟩_s − ⟨σ^C⟩_s⟨D⟩_s)]`,
+with `D = betaLogDeriv` the β-log-derivative of the weight. Built from
+`hasDerivAt_scaledCorrelation_beta` (at `B`, `A`, `C`) via the difference and
+product rules. The per-edge building block of the mixed `∂_β∂_s` derivative for the
+β-derivative increment (Issue #2965, Phase C, mixed route). -/
+theorem hasDerivAt_scaledCorrelation_truncated_beta (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (E₀ : Finset (Sym2 ι)) (J s β : ℝ) (A B C : Finset ι) :
+    HasDerivAt (fun β' => scaledCorrelation G E₀ (⟨J, 0, β'⟩ : IsingParams ℝ) s B
+        - scaledCorrelation G E₀ (⟨J, 0, β'⟩ : IsingParams ℝ) s A *
+          scaledCorrelation G E₀ (⟨J, 0, β'⟩ : IsingParams ℝ) s C)
+      ((scaledGibbsExpectation G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) s
+            (fun σ => spinProduct B σ * betaLogDeriv G E₀ J s β σ) -
+          scaledCorrelation G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) s B *
+            scaledGibbsExpectation G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) s (betaLogDeriv G E₀ J s β)) -
+        ((scaledGibbsExpectation G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) s
+              (fun σ => spinProduct A σ * betaLogDeriv G E₀ J s β σ) -
+            scaledCorrelation G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) s A *
+              scaledGibbsExpectation G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) s
+                (betaLogDeriv G E₀ J s β)) *
+            scaledCorrelation G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) s C +
+          scaledCorrelation G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) s A *
+            (scaledGibbsExpectation G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) s
+                (fun σ => spinProduct C σ * betaLogDeriv G E₀ J s β σ) -
+              scaledCorrelation G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) s C *
+                scaledGibbsExpectation G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) s
+                  (betaLogDeriv G E₀ J s β)))) β := by
+  have hB := hasDerivAt_scaledCorrelation_beta G E₀ J s β B
+  have hA := hasDerivAt_scaledCorrelation_beta G E₀ J s β A
+  have hC := hasDerivAt_scaledCorrelation_beta G E₀ J s β C
+  exact hB.sub (hA.mul hC)
+
 end IsingModel
