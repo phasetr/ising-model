@@ -1,6 +1,7 @@
 import IsingModel.CouplingDerivative
 import IsingModel.BetaDerivative.CorrelationFormulas
 import IsingModel.BetaDerivative.Lebowitz
+import IsingModel.BallBoundarySimonLieb.WeakBound
 
 /-!
 # β-derivative of the scaled Boltzmann weight (Issue #2965, Phase C)
@@ -518,5 +519,39 @@ theorem scaledCovariance_zero_edgeSpin_le_lebowitz (G : SimpleGraph ι) [Fintype
   rw [scaledCovariance_zero_edgeSpin_eq_bondDeleted_ursell G E₀ hE₀_sub _ {x, z} huv]
   exact summand_le_lebowitz_of_disjoint (G.deleteEdges ↑E₀) J β
     ⟨hJ, le_refl 0, hβ⟩ x z u v hxz hxu hxv hzu hzv huv
+
+/-- **Per-edge shell covariance bounded by the full-graph Lebowitz cross**
+(Issue #2965, Phase C): strengthening `scaledCovariance_zero_edgeSpin_le_lebowitz`
+by GKS bond-monotonicity (`correlation_deleteEdges_le`: bond-deleted ≤ full
+correlation), the `s=0` covariance is bounded by the **full-graph** Lebowitz cross
+`⟨σ_xσ_u⟩_G⟨σ_zσ_v⟩_G + ⟨σ_xσ_v⟩_G⟨σ_zσ_u⟩_G`. This puts each summand of the
+localized shell term of the β-derivative increment in terms of the full-graph
+two-point functions. This can later be combined, in the high-temperature cubic
+shell setting (contraction factor `cf < 1`, fresh-shell geometry), with the
+infinite-volume correlation decay to make the localized shell term geometric,
+reusing the correlation-side Part-B machinery. -/
+theorem scaledCovariance_zero_edgeSpin_le_lebowitz_full (G : SimpleGraph ι)
+    [Fintype G.edgeSet] (E₀ : Finset (Sym2 ι)) (hE₀_nd : ∀ e ∈ E₀, ¬ e.IsDiag)
+    (hE₀_sub : E₀ ⊆ G.edgeFinset) (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β)
+    (x z : ι) {u v : ι} (hxz : x ≠ z) (hxu : x ≠ u) (hxv : x ≠ v) (hzu : z ≠ u)
+    (hzv : z ≠ v) (huv : u ≠ v) :
+    scaledCovariance G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) 0 (spinProduct {x, z})
+        (fun σ => edgeSpin (K := ℝ) σ (Quot.mk _ (u, v)))
+      ≤ correlation G (⟨J, 0, β⟩ : IsingParams ℝ) {x, u} *
+            correlation G (⟨J, 0, β⟩ : IsingParams ℝ) {z, v} +
+          correlation G (⟨J, 0, β⟩ : IsingParams ℝ) {x, v} *
+            correlation G (⟨J, 0, β⟩ : IsingParams ℝ) {z, u} := by
+  haveI : Fintype (G.deleteEdges ↑E₀).edgeSet :=
+    ((Set.toFinite G.edgeSet).subset
+      (SimpleGraph.edgeSet_subset_edgeSet.mpr (G.deleteEdges_le _))).fintype
+  have hf : Ferromagnetic (⟨J, 0, β⟩ : IsingParams ℝ) := ⟨hJ, le_refl 0, hβ⟩
+  refine (scaledCovariance_zero_edgeSpin_le_lebowitz G E₀ hE₀_sub J β hJ hβ x z
+    hxz hxu hxv hzu hzv huv).trans ?_
+  have hbd : ∀ A, correlation (G.deleteEdges ↑E₀) (⟨J, 0, β⟩ : IsingParams ℝ) A
+      ≤ correlation G (⟨J, 0, β⟩ : IsingParams ℝ) A :=
+    fun A => correlation_deleteEdges_le G E₀ hE₀_nd hE₀_sub _ hf A
+  exact add_le_add
+    (mul_le_mul (hbd {x, u}) (hbd {z, v}) (gks_first _ _ hf _) (gks_first _ _ hf _))
+    (mul_le_mul (hbd {x, v}) (hbd {z, u}) (gks_first _ _ hf _) (gks_first _ _ hf _))
 
 end IsingModel
