@@ -13234,6 +13234,25 @@ $J\sum_{e\in E_0}\mathrm{Cov}_0(\sigma^{\{x,z\}},\sigma_e)$, reusing the correla
 Part-B machinery.
 \end{theorem}
 
+\begin{theorem}[\texttt{IsingModel.Ambient.scaledCovariance\_shell\_sum\_le\_card\_pow}
+(geometric bound on the cubic shell covariance sum, Issue \#2965 Phase C)]
+For $d\ge1$, ferromagnetic $h=0$, high temperature ($\mathrm{cf}<1$), interior sites
+$x,z\in\mathrm{box}_R$ ($R\le k$, $x\ne z$) on no cut edge of the shell,
+\[
+  \sum_{e\in\mathrm{shell}}\mathrm{Cov}_0\!\bigl(\sigma^{\{x,z\}},\sigma_e\bigr)
+    \le |\mathrm{shell}|\cdot 2\,\mathrm{cf}^{\lfloor(k+1-R)/(r_0+2)\rfloor}.
+\]
+Sums the per-edge bound
+\texttt{scaledCovariance\_zero\_edgeSpin\_le\_infiniteVolume\_cross} over the cut shell:
+each straddle edge has a fresh endpoint (\texttt{straddle\_fresh\_vertex}) carrying the
+geometric infinite-volume decay (\texttt{correlationInfinite\_fresh\_le}), the partner
+factor $\le1$. This is the shell (Part-B-type) contribution to the per-stage
+$\beta$-derivative increment bound, mirroring the correlation-side
+\texttt{ursell\_shell\_sum\_le\_card\_pow}; combined with
+\texttt{scaledCovariance\_sum\_right} it bounds the localized shell term
+$J\,\mathrm{Cov}_0(\sigma^A,\sum_{E_0}\sigma_e)$ of the increment decomposition.
+\end{theorem}
+
 \begin{theorem}[\texttt{IsingModel.Ambient.ursell\_shell\_sum\_le\_card\_pow}
 (geometric bound on the new-shell-edge Ursell sum, Issue \#2965 Phase C, Part B)]
 For $d\ge1$, ferromagnetic $h=0$, high temperature ($\mathrm{cf}<1$), interior
