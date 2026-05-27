@@ -282,4 +282,41 @@ theorem hasDerivAt_scaledCorrelation_increment_beta (G : SimpleGraph ι) [Fintyp
   (hasDerivAt_scaledCorrelation_beta G E₀ J 1 β A).sub
     (hasDerivAt_scaledCorrelation_beta G E₀ J 0 β A)
 
+/-- **Additivity of the scaled Gibbs expectation in the observable**:
+`⟨F₁ + F₂⟩_s = ⟨F₁⟩_s + ⟨F₂⟩_s` (the normalised sum `Z_s⁻¹·∑_σ · w_s` is linear). -/
+theorem scaledGibbsExpectation_add (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (E₀ : Finset (Sym2 ι)) (p : IsingParams ℝ) (s : ℝ) (F₁ F₂ : Config ι → ℝ) :
+    scaledGibbsExpectation G E₀ p s (fun σ => F₁ σ + F₂ σ)
+      = scaledGibbsExpectation G E₀ p s F₁ + scaledGibbsExpectation G E₀ p s F₂ := by
+  unfold scaledGibbsExpectation
+  have h : ∑ σ : Config ι, (F₁ σ + F₂ σ) * scaledBoltzmannWeight G E₀ p s σ
+      = (∑ σ : Config ι, F₁ σ * scaledBoltzmannWeight G E₀ p s σ)
+        + ∑ σ : Config ι, F₂ σ * scaledBoltzmannWeight G E₀ p s σ := by
+    rw [← Finset.sum_add_distrib]; apply Finset.sum_congr rfl; intro σ _; ring
+  rw [h, mul_add]
+
+/-- **Scalar homogeneity of the scaled Gibbs expectation**: `⟨c·F⟩_s = c·⟨F⟩_s`. -/
+theorem scaledGibbsExpectation_const_mul (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (E₀ : Finset (Sym2 ι)) (p : IsingParams ℝ) (s : ℝ) (c : ℝ) (F : Config ι → ℝ) :
+    scaledGibbsExpectation G E₀ p s (fun σ => c * F σ)
+      = c * scaledGibbsExpectation G E₀ p s F := by
+  unfold scaledGibbsExpectation
+  have h : ∑ σ : Config ι, c * F σ * scaledBoltzmannWeight G E₀ p s σ
+      = c * ∑ σ : Config ι, F σ * scaledBoltzmannWeight G E₀ p s σ := by
+    rw [Finset.mul_sum]; apply Finset.sum_congr rfl; intro σ _; ring
+  rw [h]; ring
+
+/-- **Subtractivity of the scaled Gibbs expectation in the observable**:
+`⟨F₁ − F₂⟩_s = ⟨F₁⟩_s − ⟨F₂⟩_s`. -/
+theorem scaledGibbsExpectation_sub (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (E₀ : Finset (Sym2 ι)) (p : IsingParams ℝ) (s : ℝ) (F₁ F₂ : Config ι → ℝ) :
+    scaledGibbsExpectation G E₀ p s (fun σ => F₁ σ - F₂ σ)
+      = scaledGibbsExpectation G E₀ p s F₁ - scaledGibbsExpectation G E₀ p s F₂ := by
+  unfold scaledGibbsExpectation
+  have h : ∑ σ : Config ι, (F₁ σ - F₂ σ) * scaledBoltzmannWeight G E₀ p s σ
+      = (∑ σ : Config ι, F₁ σ * scaledBoltzmannWeight G E₀ p s σ)
+        - ∑ σ : Config ι, F₂ σ * scaledBoltzmannWeight G E₀ p s σ := by
+    rw [← Finset.sum_sub_distrib]; apply Finset.sum_congr rfl; intro σ _; ring
+  rw [h, mul_sub]
+
 end IsingModel
