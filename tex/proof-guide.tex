@@ -13214,6 +13214,26 @@ geometric using the correlation-side Part-B machinery, without requiring Part B 
 bond-deleted graph.
 \end{theorem}
 
+\begin{theorem}[\texttt{IsingModel.Ambient.scaledCovariance\_zero\_edgeSpin\_le\_infiniteVolume\_cross}
+(cubic shell covariance bounded by the infinite-volume Lebowitz cross, Issue \#2965 Phase C)]
+On the induced lattice graph over the cubic box $(\mathrm{cubicExhaustion}\,d).\mathrm{volume}\,n$,
+for ferromagnetic $h=0$ and four distinct box vertices $x,z,u,v$,
+\[
+  \mathrm{Cov}_0\!\bigl(\sigma^{\{x,z\}},\sigma_u\sigma_v\bigr)
+    \le g\{x,u\}\,g\{z,v\} + g\{x,v\}\,g\{z,u\},
+\]
+$g=\mathrm{correlationInfinite}$. Composes the abstract full-graph bound
+\texttt{scaledCovariance\_zero\_edgeSpin\_le\_lebowitz\_full} with the
+finite-to-infinite bridge \texttt{correlation\_inducedGraph\_cubic\_le\_correlationInfinite}
+(applied to each of the four cross factors, nonnegativity from \texttt{gks\_first} /
+\texttt{correlationInfinite\_nonneg}), mirroring the correlation-side
+\texttt{ursell\_cubic\_le\_infiniteVolume\_cross}. For a cut edge $\{u,v\}$ straddling the
+shell a fresh endpoint carries the infinite-volume spatial decay, so summing over the
+cubic shell gives a geometric bound on the localized shell term
+$J\sum_{e\in E_0}\mathrm{Cov}_0(\sigma^{\{x,z\}},\sigma_e)$, reusing the correlation-side
+Part-B machinery.
+\end{theorem}
+
 \begin{theorem}[\texttt{IsingModel.Ambient.ursell\_shell\_sum\_le\_card\_pow}
 (geometric bound on the new-shell-edge Ursell sum, Issue \#2965 Phase C, Part B)]
 For $d\ge1$, ferromagnetic $h=0$, high temperature ($\mathrm{cf}<1$), interior
