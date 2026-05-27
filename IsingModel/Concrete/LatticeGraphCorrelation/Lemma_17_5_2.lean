@@ -21,6 +21,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.PseudoMassFromPa
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.IncrementCapstone
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.CubicDerivativeProfileLebowitz
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.CubicDerivativeProfileInfiniteVolume
+import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.DerivativeIncrementFormula
 
 /-!
 # GJ §17.5 Lemma 17.5.2 capstone
