@@ -30,8 +30,9 @@ namespace Ambient
 open Complex Metric
 
 /-- **Capstone per-stage β-derivative increment from complex inputs** (Issue #3026).
-For a lattice exhaustion `Λ`, a real coupling `J`, a pair `{x, z}` covered at stages `k`
-and `k+1`, and a real inverse temperature `β`: if both finite-volume complex partition
+For a lattice exhaustion `Λ`, a real coupling `J`, a pair `{x, z}` covered at stage `k`
+(coverage at `k+1` follows by exhaustion monotonicity), and a real inverse temperature
+`β`: if both finite-volume complex partition
 functions (on the induced graphs over `Λ.volume k` and `Λ.volume (k+1)`) are nonzero on
 the closed disc `closedBall β R` (`R > 0`), and the complex correlation value increment is
 bounded by `B` on the boundary circle `sphere β R`, then `dist(∂_β c_k, ∂_β c_{k+1}) ≤
@@ -49,7 +50,6 @@ theorem dist_deriv_correlationAlongExhaustion_le_of_complex_circle_bound {d : �
     [hinst : ∀ n, Fintype (inducedGraph (latticeGraph d) (Λ.volume n)).edgeSet]
     (J : ℝ) (x z : Fin d → ℤ) (k : ℕ) (β : ℝ) {R B : ℝ} (hR : 0 < R)
     (hk : ({x, z} : Finset (Fin d → ℤ)) ⊆ Λ.volume k)
-    (hk1 : ({x, z} : Finset (Fin d → ℤ)) ⊆ Λ.volume (k + 1))
     (hZk : ∀ w ∈ closedBall (β : ℂ) R,
       partitionFunctionComplex (inducedGraph (latticeGraph d) (Λ.volume k))
         (J : ℂ) (0 : ℂ) w ≠ 0)
@@ -60,13 +60,16 @@ theorem dist_deriv_correlationAlongExhaustion_le_of_complex_circle_bound {d : �
       ‖correlationComplex (inducedGraph (latticeGraph d) (Λ.volume k))
             (liftFinset {x, z} hk) (J : ℂ) (0 : ℂ) w -
           correlationComplex (inducedGraph (latticeGraph d) (Λ.volume (k + 1)))
-            (liftFinset {x, z} hk1) (J : ℂ) (0 : ℂ) w‖ ≤ B) :
+            (liftFinset {x, z} (hk.trans (Λ.mono (Nat.le_succ k)))) (J : ℂ) (0 : ℂ) w‖ ≤ B) :
     dist (deriv (fun β' =>
             correlationAlongExhaustion (latticeGraph d) Λ (⟨J, 0, β'⟩ : IsingParams ℝ)
               {x, z} k) β)
         (deriv (fun β' =>
             correlationAlongExhaustion (latticeGraph d) Λ (⟨J, 0, β'⟩ : IsingParams ℝ)
               {x, z} (k + 1)) β) ≤ B / R := by
+  -- Coverage at stage `k+1` follows from coverage at `k` by exhaustion monotonicity.
+  have hk1 : ({x, z} : Finset (Fin d → ℤ)) ⊆ Λ.volume (k + 1) :=
+    hk.trans (Λ.mono (Nat.le_succ k))
   rw [deriv_correlationAlongExhaustion_eq_inducedGraph (latticeGraph d) Λ J 0 {x, z} k hk,
     deriv_correlationAlongExhaustion_eq_inducedGraph (latticeGraph d) Λ J 0 {x, z} (k + 1) hk1]
   -- Real-part agreement of a complex correlation extension (at `h = 0`) with the real
