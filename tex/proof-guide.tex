@@ -12771,6 +12771,54 @@ component-factorization capstone applies. Marking the straddle predicate
 elaboration within the heartbeat budget.
 \end{proof}
 
+\begin{proposition}[\texttt{IsingModel.correlation\_inducedGraph\_nested\_finset}]
+For nested finsets $T_1\subseteq T_2$ and an observable $A$ on $\uparrow T_1$,
+\[
+  \langle\sigma^{A.\mathrm{map}\,e^{-1}}\rangle_{\mathrm{inducedGraph}\,
+    (\mathrm{inducedGraph}\,G\,T_2)\,(T_1.\mathrm{subtype}\,(\cdot\in T_2))}
+  = \langle\sigma^{A}\rangle_{\mathrm{inducedGraph}\,G\,T_1},
+\]
+where $e=\mathrm{nestedFinsetEquiv}\colon \uparrow(T_1.\mathrm{subtype}\,(\cdot\in
+T_2))\simeq\uparrow T_1$ is the double-subtype relabeling. This is the
+concrete-layer companion of \texttt{correlation\_inducedGraph\_induce\_preimage}:
+it uses the \texttt{Finset.subtype} slice $T_1.\mathrm{subtype}\,(\cdot\in T_2)$
+rather than the $\mathrm{Set}$-predicate $\{x\mid x.\mathrm{val}\in T_1\}$, so it
+matches the $S:\mathrm{Finset}\,\uparrow T_2$ region of the single-box increment
+directly, sidestepping the $\uparrow S$ versus $\{x\mathbin{/\!/}x.\mathrm{val}\in
+T_1\}$ subtype-type mismatch. Same proof scheme: apply
+\texttt{correlation\_map\_equiv} to the \emph{direct} graph
+$\mathrm{inducedGraph}\,G\,T_1$ with $e^{-1}$, then bridge via
+\texttt{correlation\_congr\_all} and the graph equality (an edge survives the
+double induce iff its deep endpoints are $G$-adjacent and both in $T_1$).
+\end{proposition}
+
+\begin{theorem}[\texttt{IsingModel.correlation\_pair\_two\_box\_le\_derivBound}
+(two-box per-stage increment, Issue \#2965 Phase A)]
+For nested finsets $T_1\subseteq T_2$, a pair $r,s\in T_1$ with $r\neq s$,
+ferromagnetic parameters at $h=0$, and $r,s$ on no cut edge of the $T_1$-slice,
+\[
+  \langle\sigma_r\sigma_s\rangle_{\mathrm{inducedGraph}\,G\,T_2}
+    - \langle\sigma_r\sigma_s\rangle_{\mathrm{inducedGraph}\,G\,T_1}
+  \le \mathrm{derivBound}\,(\mathrm{inducedGraph}\,G\,T_2)\,
+    (\mathrm{filter}\,\mathrm{straddle})\,r\,s,
+\]
+i.e.\ enlarging the box from $T_1$ to $T_2$ increases the pair correlation by at
+most the ball-boundary $\mathrm{derivBound}$ over the cut edges of the slice. This
+is the form instantiated on cubic exhaustion stages $\mathrm{box}_k\subseteq
+\mathrm{box}_{k+1}$ to bound the per-stage difference $c_{k+1}-c_k$.
+\end{theorem}
+
+\begin{proof}
+Apply the single-box increment
+\texttt{correlation\_pair\_sub\_inducedGraph\_le\_derivBound} to
+$G'=\mathrm{inducedGraph}\,G\,T_2$ with region
+$S=T_1.\mathrm{subtype}\,(\cdot\in T_2)$ and pair $\langle r,\_\rangle,
+\langle s,\_\rangle$ (in $S$ since their values lie in $T_1$, by
+\texttt{Finset.mem\_subtype}). Then identify the inner-box correlation via
+\texttt{correlation\_inducedGraph\_nested\_finset}, rewriting the pair observable
+along $e^{-1}$ with \texttt{pair\_map\_nestedFinsetEquiv\_symm}.
+\end{proof}
+
 \begin{theorem}[\texttt{IsingModel.correlation\_inducedGraph\_deleteEdges\_union\_inl}
 (Phase A component-factorization capstone, Finset route)]
 For a region $S\subseteq W$, deleting the cut edges between $S$ and its complement
