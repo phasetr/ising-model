@@ -8495,8 +8495,15 @@ shows naive peeling \emph{does} iterate once the separation is large enough: for
 \(\mathrm{dist}(i,j)\ge3\) every neighbour \(k\) of \(i\) has
 \(\mathrm{dist}(k,j)\ge\mathrm{dist}(i,j)-1\ge2\), hence is non-adjacent to \(j\) and
 obeys \(\langle\sigma_k\sigma_j\rangle^\infty\le\beta J\,2d\), giving
-\(\langle\sigma_i\sigma_j\rangle^\infty\le(\beta J\,2d)^2\).  The same reverse-triangle
-step continues while the separation from \(j\) stays \(\ge2\); the obstruction is the
+\(\langle\sigma_i\sigma_j\rangle^\infty\le(\beta J\,2d)^2\).  Iterating fully,
+\texttt{correlationInfinite\_latticeGraph\_le\_betaJ\_two\_d\_pow\_of\_dist\_gt} gives
+\(\langle\sigma_i\sigma_j\rangle^\infty\le(\beta J\,2d)^n\) whenever
+\(\mathrm{dist}(i,j)\ge n+1\), i.e.\ \((\beta J\,2d)^{\mathrm{dist}(i,j)-1}\) ---
+prefactor-free geometric decay with explicit base \(\beta J\,2d\) (no contraction-factor
+abstraction and no ball-boundary shell axiom), by induction on \(n\) (base \(n=0\) bounds
+by \(1\); each step peels via \texttt{\_le\_of\_neighbors\_le} with \(C=(\beta J\,2d)^n\)).
+The same reverse-triangle step continues while the separation from \(j\) stays \(\ge2\);
+the obstruction is the
 distance-\(2\) base case (a neighbour can be \emph{adjacent} to \(j\), bounded only by
 \(1\), with no \(\le\beta J\,2d\) bound for adjacent pairs), which caps the gain near
 \(j\).  A clean prefactor-free
