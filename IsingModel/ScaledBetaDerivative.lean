@@ -359,4 +359,24 @@ theorem scaledCovariance_sub_right (G : SimpleGraph ι) [Fintype G.edgeSet]
     funext σ; ring
   rw [hFK, scaledGibbsExpectation_sub, scaledGibbsExpectation_sub, mul_sub]; ring
 
+/-- **Additivity of the scaled covariance over a Finset sum in the second
+observable**: `Cov_s(F, ∑_{e∈S} K_e) = ∑_{e∈S} Cov_s(F, K_e)`. By `Finset.induction`
+from `scaledCovariance_add_right` (and `Cov_s(F, 0) = 0`). This expresses the
+covariance of an energy/edge sum as a sum of per-edge covariances — used to localize
+the shell term `J·Cov_0(σ^A, ∑_{E₀}σ_e) = J·∑_{e∈E₀} Cov_0(σ^A, σ_e)` of the
+β-derivative increment decomposition (Issue #2965, Phase C). -/
+theorem scaledCovariance_sum_right {κ : Type*} (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (E₀ : Finset (Sym2 ι)) (p : IsingParams ℝ) (s : ℝ) (F : Config ι → ℝ)
+    (S : Finset κ) (K : κ → Config ι → ℝ) :
+    scaledCovariance G E₀ p s F (fun σ => ∑ e ∈ S, K e σ)
+      = ∑ e ∈ S, scaledCovariance G E₀ p s F (K e) := by
+  classical
+  induction S using Finset.induction with
+  | empty => simp [scaledCovariance, scaledGibbsExpectation]
+  | insert a S ha ih =>
+    rw [Finset.sum_insert ha, ← ih]
+    rw [show (fun σ => ∑ e ∈ insert a S, K e σ)
+        = (fun σ => K a σ + ∑ e ∈ S, K e σ) from by funext σ; rw [Finset.sum_insert ha],
+      scaledCovariance_add_right]
+
 end IsingModel
