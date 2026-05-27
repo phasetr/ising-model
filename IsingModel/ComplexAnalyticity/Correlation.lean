@@ -9,9 +9,11 @@ partition function, and proves it is analytic in the inverse temperature `β` wh
 the partition function is nonzero, agreeing with the real correlation on the real axis.
 
 This supplies the complex-analytic extension required by the Cauchy-estimate derivative
-bridge (`abs_deriv_le_of_complex_extension`, Issue #3026): the value increment
-`c_k − c_{k+1}` of finite-volume correlations extends complex-analytically in `β`, so
-its derivative is controlled by a complex boundary bound via Cauchy's estimate.
+bridge (`abs_deriv_le_of_complex_extension`, Issue #3026): on any β-neighborhood where
+the relevant finite-volume partition functions are nonzero (in particular near the real
+axis, where the real partition function is positive), the value increment
+`c_k − c_{k+1}` of finite-volume correlations extends complex-analytically, so its
+derivative is controlled by a complex boundary bound via Cauchy's estimate.
 
 References:
 
