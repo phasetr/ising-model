@@ -12829,8 +12829,10 @@ the stage $\mathrm{box}_k$ (on no cut edge of the $\mathrm{box}_k$-slice),
     \mathrm{box}_{k+1})\,(\mathrm{filter}\,\mathrm{straddle})\,r\,s,
 \]
 where $c_n=\texttt{correlationAlongExhaustion}\,(\mathrm{latticeGraph}\,d)\,
-(\mathrm{cubicExhaustion}\,d)\,p\,\{r,s\}\,n$. This is the per-stage difference bound
-feeding the volume-convergence rate of GJ Lemma~17.5.2.
+(\mathrm{cubicExhaustion}\,d)\,p\,\{r,s\}\,n$. This is the correlation-side
+per-stage difference bound, one input toward the volume-convergence rate program
+of GJ Lemma~17.5.2 (distinct from the $\beta$-derivative provider that program also
+requires).
 \end{theorem}
 
 \begin{proof}

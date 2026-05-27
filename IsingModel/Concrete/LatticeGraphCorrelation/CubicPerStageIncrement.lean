@@ -14,8 +14,9 @@ cut edge of the `box_k`-slice), the successive correlation difference is bounded
   − correlationAlongExhaustion (latticeGraph d) (cubicExhaustion d) p {r,s} k
   ≤ derivBound (inducedGraph (latticeGraph d) (box_{k+1})) (filter straddle) p ⟨r,_⟩ ⟨s,_⟩`.
 
-This is the `c_{k+1} − c_k` bound feeding the volume-convergence rate of GJ
-Lemma 17.5.2.
+This is the correlation-side `c_{k+1} − c_k` bound, one input toward the
+volume-convergence rate program of GJ Lemma 17.5.2 (distinct from the
+β-derivative provider that program also requires).
 
 ## Main declaration
 
