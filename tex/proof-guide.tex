@@ -8508,7 +8508,12 @@ Rewriting \((\beta J\,2d)^{\mathrm{dist}-1}=(1/\beta J\,2d)\exp(\log(\beta J\,2d
 \(\mathrm{HasExponentialDecay}\,d\,(\mathrm{cubicExhaustion}\,d)\,\langle J,0,\beta\rangle\,
 (-\log(\beta J\,2d))\) --- an axiom-free high-temperature mass gap under the elementary
 condition \(\beta J\,2d<1\) (no \((2(r+1)+1)^d\) boundary factor, no shell-contraction
-axiom), at the cost of the cruder per-step base.
+axiom), at the cost of the cruder per-step base.  Composing with
+\texttt{latticeMass\_ge\_of\_HasExponentialDecay}, \texttt{latticeMass\_ge\_of\_betaJ\_two\_d\_lt\_one}
+gives the axiom-free lower bound
+\(\mathrm{ENNReal.ofReal}(-\log(\beta J\,2d))\le\mathrm{latticeMass}\,d\,(\mathrm{cubicExhaustion}\,d)\,\langle J,0,\beta\rangle\),
+and \texttt{latticeMass\_pos\_of\_betaJ\_two\_d\_lt\_one} the axiom-free positive mass gap
+\(0<\mathrm{latticeMass}\), both under the elementary \(\beta J\,2d<1\).
 The same reverse-triangle step continues while the separation from \(j\) stays \(\ge2\);
 the obstruction is the
 distance-\(2\) base case (a neighbour can be \emph{adjacent} to \(j\), bounded only by
