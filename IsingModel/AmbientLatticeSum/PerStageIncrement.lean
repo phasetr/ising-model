@@ -38,7 +38,7 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
 endpoints lie on different sides of `· ∈ S`. Marked `@[reducible]` so it unfolds
 during instance synthesis / unification to match the inline straddle set of the
 component-factorization lemmas. -/
-@[reducible] private def straddlePred (S : Finset V) : Sym2 V → Prop :=
+@[reducible] def straddlePred (S : Finset V) : Sym2 V → Prop :=
   fun e => ¬ Sym2.lift ⟨fun a b => ((a ∈ S) ↔ (b ∈ S)), fun a b => by simp [iff_comm]⟩ e
 
 noncomputable instance (S : Finset V) : DecidablePred (straddlePred S) :=
