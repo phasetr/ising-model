@@ -13232,11 +13232,11 @@ C/R$ by \texttt{Complex.abs\_re\_le\_norm} and Cauchy's estimate
 corollary gives $\mathrm{dist}(f'(\beta),h'(\beta))\le C/R$ when $f-h$ has such an
 extension. This is the analytic device of the \emph{Cauchy-estimate route} to the
 capstone $\mathtt{hincr}$: the $\beta$-derivative increment
-$\mathrm{dist}(\partial_\beta c_k,\partial_\beta c_{k+1})=|\partial_\beta(c_k-c_{k+1})|$,
-and the value increment $c_k-c_{k+1}$ extends complex-analytically with a
-$\mathrm{poly}\cdot\mathrm{geometric}$ bound on a $\beta$-neighborhood, so its derivative
-inherits the same bound — converting the established \emph{value}-increment estimate into
-the required \emph{derivative}-increment estimate.
+$\mathrm{dist}(\partial_\beta c_k,\partial_\beta c_{k+1})=|\partial_\beta(c_k-c_{k+1})|$.
+Applying the bridge still requires a \emph{complex} uniform bound $C$ on the value
+increment $c_k-c_{k+1}$ over the boundary circle $\partial B(\beta,R)$ (a subsequent step;
+the real-axis value-increment estimate alone does not suffice for Cauchy); given such a
+complex bound the lemma yields the \emph{derivative}-increment bound $C/R$.
 \end{theorem}
 
 \begin{theorem}[\texttt{IsingModel.scaledCovariance\_edgeSpin\_zero\_sub\_one\_eq\_increment\_combination}

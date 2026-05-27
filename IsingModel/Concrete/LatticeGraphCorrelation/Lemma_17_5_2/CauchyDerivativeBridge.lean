@@ -14,11 +14,11 @@ the boundary circle, then by Cauchy's estimate the real derivative is bounded:
 
 This is the analytic device of the **Cauchy-estimate route** to the capstone
 `hincr`: the β-derivative increment `dist(∂_β c_k, ∂_β c_{k+1})` equals
-`|∂_β (c_k − c_{k+1})|`, and the value increment `c_k − c_{k+1}` extends
-complex-analytically with a `poly·geometric` bound on a β-neighborhood, so its
-derivative inherits the same `poly·geometric` bound. This converts the (already
-established) *value*-increment estimate into the required *derivative*-increment
-estimate without a direct higher-order covariance analysis.
+`|∂_β (c_k − c_{k+1})|`. To apply this bridge one still needs a *complex* uniform
+bound `C` on the value increment `c_k − c_{k+1}` over the boundary circle
+`sphere β R` (a subsequent step — the real-axis value-increment estimate alone is
+not enough); given such a complex bound this lemma yields the derivative-increment
+bound `C/R` without a direct higher-order covariance analysis.
 
 References:
 
