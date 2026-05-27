@@ -13191,6 +13191,28 @@ covariance second-observable linearity (\texttt{scaledCovariance\_sub\_right},
 \texttt{\_neg\_right}, \texttt{\_const\_mul\_right}); conclude by \texttt{ring}.
 \end{proof}
 
+\begin{theorem}[\texttt{IsingModel.scaledCovariance\_zero\_edgeSpin\_le\_lebowitz}
+and \texttt{\_full} (per-edge shell covariance bounds, Issue \#2965 Phase C)]
+For ferromagnetic $h=0$ and four distinct sites $x,z,u,v$, the $s=0$ summand of the
+localized shell term satisfies
+\[
+  \mathrm{Cov}_0\!\bigl(\sigma^{\{x,z\}},\sigma_u\sigma_v\bigr)
+    \le \langle\sigma_x\sigma_u\rangle_{\mathrm{bd}}\langle\sigma_z\sigma_v\rangle_{\mathrm{bd}}
+      + \langle\sigma_x\sigma_v\rangle_{\mathrm{bd}}\langle\sigma_z\sigma_u\rangle_{\mathrm{bd}}
+    \le \langle\sigma_x\sigma_u\rangle_G\langle\sigma_z\sigma_v\rangle_G
+      + \langle\sigma_x\sigma_v\rangle_G\langle\sigma_z\sigma_u\rangle_G,
+\]
+where $\mathrm{bd}=G\setminus E_0$ is the bond-deleted graph. The first inequality is
+the Lebowitz / $\mathrm{cor}\,4.3.3$ bound applied on the bond-deleted graph (via
+\texttt{scaledCovariance\_zero\_edgeSpin\_eq\_bondDeleted\_ursell}); the second is GKS
+bond-monotonicity \texttt{correlation\_deleteEdges\_le} ($\langle\cdot\rangle_{\mathrm{bd}}
+\le\langle\cdot\rangle_G$, products of nonnegative correlations monotone). On the cubic
+exhaustion the full-graph two-point functions are bounded by the infinite-volume
+correlations and decay spatially, so the localized shell term
+$J\sum_{e\in E_0}\mathrm{Cov}_0(\sigma^{\{x,z\}},\sigma_e)$ is geometric using the
+correlation-side Part-B machinery, without requiring Part B on the bond-deleted graph.
+\end{theorem}
+
 \begin{theorem}[\texttt{IsingModel.Ambient.ursell\_shell\_sum\_le\_card\_pow}
 (geometric bound on the new-shell-edge Ursell sum, Issue \#2965 Phase C, Part B)]
 For $d\ge1$, ferromagnetic $h=0$, high temperature ($\mathrm{cf}<1$), interior
