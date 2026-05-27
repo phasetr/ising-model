@@ -13076,6 +13076,22 @@ monotone since the correlations are nonnegative (\texttt{gks\_first},
 \texttt{correlationInfinite\_nonneg}). The incident-edge error term is unchanged.
 \end{proof}
 
+\begin{proposition}[\texttt{IsingModel.Ambient.ursell\_cubic\_le\_infiniteVolume\_cross}
+(per-edge Ursell summand bound, Issue \#2965 Phase C)]
+For a non-degenerate edge $\{u,v\}$ of $\mathrm{inducedGraph}\,(\mathrm{latticeGraph}\,d)\,
+(\mathrm{volume}\,n)$ with endpoints distinct from the lifted sites
+$\langle x\rangle,\langle z\rangle$,
+\[
+  \langle\sigma^{A\,\triangle\,\{u,v\}}\rangle-\langle\sigma^A\rangle\langle\sigma_u\sigma_v\rangle
+    \le g(x,u)\,g(z,v)+g(x,v)\,g(z,u),\qquad A=\{x,z\},
+\]
+$g$ the infinite-volume two-point function. Composes the finite-volume Lebowitz
+summand bound \texttt{summand\_le\_lebowitz\_of\_disjoint} with the termwise
+finite $\le$ infinite bridge. This is the per-edge handle for summing the Ursell
+terms over the new shell edges of a stage (far from $x,z$, so the cross products
+decay) in the $\beta$-derivative increment analysis.
+\end{proposition}
+
 \begin{proposition}[\texttt{IsingModel.Ambient.lemma\_17\_5\_2\_finite\_derivative\_increment\_eq}
 (explicit $\beta$-derivative increment on covered stages, Issue \#2965 Phase C)]
 For consecutive stages $k\subseteq k+1$ both containing $\{x,z\}$,

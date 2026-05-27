@@ -83,5 +83,55 @@ theorem derivative_profile_cubic_le_infiniteVolume_lebowitz (d : ℕ) (J β : �
     (mul_le_mul bxu bzv (gks_first _ _ hf _) (correlationInfinite_nonneg _ _ _ hf _))
     (mul_le_mul bxv bzu (gks_first _ _ hf _) (correlationInfinite_nonneg _ _ _ hf _))
 
+/-- **Per-edge Ursell summand bounded by an infinite-volume cross product** (Issue
+#2965, Phase C): for a non-degenerate edge `{u,v}` of `inducedGraph (latticeGraph d)
+(volume n)` whose endpoints are distinct from the lifted sites `⟨x⟩, ⟨z⟩`, the
+Ursell summand of the β-derivative profile is bounded by the infinite-volume
+Lebowitz cross product
+`g{x,u}g{z,v} + g{x,v}g{z,u}`, where `g{a,b} = correlationInfinite …`. Composes the
+finite-volume Lebowitz summand bound `summand_le_lebowitz_of_disjoint` with the
+termwise finite ≤ infinite bridge `correlation_inducedGraph_cubic_le_correlationInfinite`.
+This is the per-edge handle used to sum the Ursell terms over the *new shell edges*
+of a stage (which are far from `x, z`, so the cross products decay) in the
+β-derivative increment analysis. -/
+theorem ursell_cubic_le_infiniteVolume_cross (d : ℕ) (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β)
+    {n : ℕ} {x z : Fin d → ℤ} (hx : x ∈ (cubicExhaustion d).volume n)
+    (hz : z ∈ (cubicExhaustion d).volume n) (u v : (↑((cubicExhaustion d).volume n) : Type _))
+    (hxz : (⟨x, hx⟩ : (↑((cubicExhaustion d).volume n) : Type _)) ≠ ⟨z, hz⟩)
+    (hxu : (⟨x, hx⟩ : (↑((cubicExhaustion d).volume n) : Type _)) ≠ u)
+    (hxv : (⟨x, hx⟩ : (↑((cubicExhaustion d).volume n) : Type _)) ≠ v)
+    (hzu : (⟨z, hz⟩ : (↑((cubicExhaustion d).volume n) : Type _)) ≠ u)
+    (hzv : (⟨z, hz⟩ : (↑((cubicExhaustion d).volume n) : Type _)) ≠ v)
+    (huv : u ≠ v) :
+    correlation (inducedGraph (latticeGraph d) ((cubicExhaustion d).volume n))
+          (⟨J, 0, β⟩ : IsingParams ℝ) (symmDiff {⟨x, hx⟩, ⟨z, hz⟩} {u, v}) -
+        correlation (inducedGraph (latticeGraph d) ((cubicExhaustion d).volume n))
+          (⟨J, 0, β⟩ : IsingParams ℝ) {⟨x, hx⟩, ⟨z, hz⟩} *
+          correlation (inducedGraph (latticeGraph d) ((cubicExhaustion d).volume n))
+            (⟨J, 0, β⟩ : IsingParams ℝ) {u, v}
+      ≤ correlationInfinite (latticeGraph d) (cubicExhaustion d)
+            (⟨J, 0, β⟩ : IsingParams ℝ) {x, u.val} *
+          correlationInfinite (latticeGraph d) (cubicExhaustion d)
+            (⟨J, 0, β⟩ : IsingParams ℝ) {z, v.val} +
+        correlationInfinite (latticeGraph d) (cubicExhaustion d)
+            (⟨J, 0, β⟩ : IsingParams ℝ) {x, v.val} *
+          correlationInfinite (latticeGraph d) (cubicExhaustion d)
+            (⟨J, 0, β⟩ : IsingParams ℝ) {z, u.val} := by
+  have hf : Ferromagnetic (⟨J, 0, β⟩ : IsingParams ℝ) := ⟨hJ, le_refl 0, hβ⟩
+  refine (summand_le_lebowitz_of_disjoint
+    (inducedGraph (latticeGraph d) ((cubicExhaustion d).volume n)) J β hf
+    ⟨x, hx⟩ ⟨z, hz⟩ u v hxz hxu hxv hzu hzv huv).trans ?_
+  have bxu := correlation_inducedGraph_cubic_le_correlationInfinite d
+    (⟨J, 0, β⟩ : IsingParams ℝ) n ⟨x, hx⟩ u
+  have bzv := correlation_inducedGraph_cubic_le_correlationInfinite d
+    (⟨J, 0, β⟩ : IsingParams ℝ) n ⟨z, hz⟩ v
+  have bxv := correlation_inducedGraph_cubic_le_correlationInfinite d
+    (⟨J, 0, β⟩ : IsingParams ℝ) n ⟨x, hx⟩ v
+  have bzu := correlation_inducedGraph_cubic_le_correlationInfinite d
+    (⟨J, 0, β⟩ : IsingParams ℝ) n ⟨z, hz⟩ u
+  exact add_le_add
+    (mul_le_mul bxu bzv (gks_first _ _ hf _) (correlationInfinite_nonneg _ _ _ hf _))
+    (mul_le_mul bxv bzu (gks_first _ _ hf _) (correlationInfinite_nonneg _ _ _ hf _))
+
 end Ambient
 end IsingModel
