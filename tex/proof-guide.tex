@@ -13029,6 +13029,30 @@ graphs while the fallback still covers the inner \texttt{deleteEdges}/\texttt{su
 graphs.
 \end{proof}
 
+\begin{theorem}[\texttt{IsingModel.Ambient.derivative\_profile\_cubic\_le\_lebowitz\_tight}
+(tight Lebowitz bound for the cubic $\beta$-derivative profile, Issue \#2965 Phase C)]
+For $0\le J$, $0<\beta$, distinct sites $x\neq z$ with
+$\{x,z\}\subseteq\mathrm{volume}\,n$, the $\beta$-derivative of the finite-volume
+two-point profile $c_n$ satisfies
+\[
+  \partial_\beta c_n \le J\sum_{\{u,v\}\in E}
+    \bigl(\langle\sigma_x\sigma_u\rangle\langle\sigma_z\sigma_v\rangle
+      +\langle\sigma_x\sigma_v\rangle\langle\sigma_z\sigma_u\rangle\bigr)
+    + J\,|\{e\in E : \langle x\rangle\in e\ \lor\ \langle z\rangle\in e\}|,
+\]
+the error term counting only edges incident to $x$ or $z$ ($O(1)$ in $n$), and the
+cross sum being the two-point object governed by the Phase A--B spatial decay.
+\end{theorem}
+
+\begin{proof}
+Identify the profile with the induced-graph correlation of the lifted pair via
+\texttt{correlationAlongExhaustion\_of\_subset}, \texttt{correlation$\Lambda$\_apply}
+and \texttt{liftFinset\_pair}, then apply
+\texttt{correlation\_beta\_deriv\_le\_lebowitz\_tight} to
+$\mathrm{inducedGraph}\,(\mathrm{latticeGraph}\,d)\,(\mathrm{volume}\,n)$; the
+profile's derivative is the \texttt{HasDerivAt} value, which that lemma bounds.
+\end{proof}
+
 \begin{theorem}[\texttt{IsingModel.correlation\_inducedGraph\_deleteEdges\_union\_inl}
 (Phase A component-factorization capstone, Finset route)]
 For a region $S\subseteq W$, deleting the cut edges between $S$ and its complement
