@@ -86,7 +86,7 @@ geometrically in the stage.** For `x ∈ box_R`, `w ∈ box_{k+1} \ box_k`, `R �
 and `cf = contractionFactor … r₀ < 1`, the decay power `cf^{d(x,w)/(r₀+2)}` is at
 most `cf^{(k+1−R)/(r₀+2)}` (the fresh vertex recedes from `x` at unit speed, so its
 distance is `≥ k+1−R`, and `cf ≤ 1` is decreasing in the exponent). -/
-private theorem cf_pow_fresh_le {d : ℕ} {r₀ k R : ℕ} (p : IsingParams ℝ)
+theorem cf_pow_fresh_le {d : ℕ} {r₀ k R : ℕ} (p : IsingParams ℝ)
     (hf : Ferromagnetic p)
     (hα : contractionFactor d (cubicExhaustion d) p r₀ < 1)
     {x w : Fin d → ℤ} (hx : x ∈ cubicBox d R) (hRk : R ≤ k)
@@ -101,7 +101,7 @@ private theorem cf_pow_fresh_le {d : ℕ} {r₀ k R : ℕ} (p : IsingParams ℝ)
 `box_k` (hence a fresh vertex of `box_{k+1} \ box_k`): the straddle predicate says
 the two endpoints lie on opposite sides of `· ∈ box_k`, so they cannot both be in
 `box_k`. -/
-private theorem straddle_fresh_vertex {d k : ℕ} {a b : (↑(cubicBox d (k + 1)) : Type _)}
+theorem straddle_fresh_vertex {d k : ℕ} {a b : (↑(cubicBox d (k + 1)) : Type _)}
     (hstr : straddlePred ((cubicBox d k).subtype (· ∈ cubicBox d (k + 1)))
       (Quot.mk (Sym2.Rel _) (a, b))) :
     a.val ∉ cubicBox d k ∨ b.val ∉ cubicBox d k := by
