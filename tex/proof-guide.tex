@@ -13092,6 +13092,24 @@ terms over the new shell edges of a stage (far from $x,z$, so the cross products
 decay) in the $\beta$-derivative increment analysis.
 \end{proposition}
 
+\begin{theorem}[\texttt{IsingModel.Ambient.ursell\_shell\_sum\_le\_card\_pow}
+(geometric bound on the new-shell-edge Ursell sum, Issue \#2965 Phase C, Part B)]
+For $d\ge1$, ferromagnetic $h=0$, high temperature ($\mathrm{cf}<1$), interior
+sites $x,z\in\mathrm{box}_R$ ($R\le k$, $x\neq z$) on no cut edge of the
+$\mathrm{box}_k$-slice,
+\[
+  \sum_{e\in\mathrm{shell}}\mathrm{Ursell}^{(k+1)}_e
+    \le |\mathrm{shell}|\cdot 2\,\mathrm{cf}^{\,(k+1-R)/(r_0+2)}.
+\]
+Each straddle edge has a fresh endpoint
+(\texttt{straddle\_fresh\_vertex}) whose infinite-volume correlation to $x,z$ decays
+as $\mathrm{cf}^{\,(k+1-R)/(r_0+2)}$ (\texttt{correlationInfinite\_fresh\_le}), the
+partner factor being $\le1$; \texttt{ursell\_cubic\_le\_infiniteVolume\_cross} bounds
+each Ursell summand by the infinite-volume cross product. This is the Part B (shell)
+contribution to the per-stage $\beta$-derivative increment, mirroring the
+correlation-side \texttt{derivBoundTight\_cubic\_shell\_le\_card\_pow}.
+\end{theorem}
+
 \begin{proposition}[\texttt{IsingModel.Ambient.lemma\_17\_5\_2\_finite\_derivative\_increment\_eq}
 (explicit $\beta$-derivative increment on covered stages, Issue \#2965 Phase C)]
 For consecutive stages $k\subseteq k+1$ both containing $\{x,z\}$,
