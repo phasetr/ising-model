@@ -1,5 +1,6 @@
 import IsingModel.CouplingDerivative
 import IsingModel.BetaDerivative.CorrelationFormulas
+import IsingModel.BetaDerivative.Lebowitz
 
 /-!
 # β-derivative of the scaled Boltzmann weight (Issue #2965, Phase C)
@@ -493,5 +494,29 @@ theorem scaledCovariance_zero_edgeSpin_eq_bondDeleted_ursell (G : SimpleGraph ι
     funext σ; rw [edgeSpin_quot_eq_spinProduct' huv]
   rw [hfk, hk]
   rfl
+
+/-- **Per-edge shell covariance bounded by the bond-deleted Lebowitz cross**
+(Issue #2965, Phase C): for a ferromagnetic zero-field model and four distinct
+sites `x, z, u, v`, the `s=0` covariance of `σ^{x,z}` with the edge spin `σ_uσ_v` is
+bounded by the bond-deleted Lebowitz cross product
+`⟨σ_xσ_u⟩_{bd}⟨σ_zσ_v⟩_{bd} + ⟨σ_xσ_v⟩_{bd}⟨σ_zσ_u⟩_{bd}`. Composes
+`scaledCovariance_zero_edgeSpin_eq_bondDeleted_ursell` (the covariance is the
+bond-deleted Ursell function) with `summand_le_lebowitz_of_disjoint` on the
+bond-deleted graph (Lebowitz / `cor_4_3_3`). For a cut edge `{u,v}` far from
+`{x,z}`, the cross product decays (Part-B spatial decay on the bond-deleted graph),
+so the localized shell term of the β-derivative increment is geometric. -/
+theorem scaledCovariance_zero_edgeSpin_le_lebowitz (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (E₀ : Finset (Sym2 ι)) (hE₀_sub : E₀ ⊆ G.edgeFinset) (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β)
+    (x z : ι) {u v : ι} (hxz : x ≠ z) (hxu : x ≠ u) (hxv : x ≠ v) (hzu : z ≠ u)
+    (hzv : z ≠ v) (huv : u ≠ v) [Fintype (G.deleteEdges ↑E₀).edgeSet] :
+    scaledCovariance G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) 0 (spinProduct {x, z})
+        (fun σ => edgeSpin (K := ℝ) σ (Quot.mk _ (u, v)))
+      ≤ correlation (G.deleteEdges ↑E₀) (⟨J, 0, β⟩ : IsingParams ℝ) {x, u} *
+            correlation (G.deleteEdges ↑E₀) (⟨J, 0, β⟩ : IsingParams ℝ) {z, v} +
+          correlation (G.deleteEdges ↑E₀) (⟨J, 0, β⟩ : IsingParams ℝ) {x, v} *
+            correlation (G.deleteEdges ↑E₀) (⟨J, 0, β⟩ : IsingParams ℝ) {z, u} := by
+  rw [scaledCovariance_zero_edgeSpin_eq_bondDeleted_ursell G E₀ hE₀_sub _ {x, z} huv]
+  exact summand_le_lebowitz_of_disjoint (G.deleteEdges ↑E₀) J β
+    ⟨hJ, le_refl 0, hβ⟩ x z u v hxz hxu hxv hzu hzv huv
 
 end IsingModel
