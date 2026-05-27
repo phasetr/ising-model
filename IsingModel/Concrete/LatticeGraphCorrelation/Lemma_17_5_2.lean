@@ -27,6 +27,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.ShellCovarianceI
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.ShellCovarianceShellSum
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.CauchyDerivativeBridge
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.CorrelationDerivativeIncrementBridge
+import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.CorrelationAlongExhaustionDeriv
 
 /-!
 # GJ §17.5 Lemma 17.5.2 capstone
