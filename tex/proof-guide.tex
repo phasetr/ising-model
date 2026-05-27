@@ -12928,6 +12928,31 @@ $g$ the infinite-volume correlation, on which the Phase B spatial decay yields a
 geometric rate.
 \end{remark}
 
+\begin{theorem}[\texttt{IsingModel.Ambient.derivBoundTight\_inducedGraph\_cubic\_le\_decay\_sum}
+(cubic-shell decay-sum bound, Issue \#2965 Phase B)]
+In the high-temperature regime $\mathrm{contractionFactor}\,d\,(\mathrm{cubicExhaustion}\,d)\,p\,r_0<1$,
+for $r,s\in\mathrm{box}_n$ on no edge of $E_0$,
+\[
+  \mathrm{derivBoundTight}\,\dots\,E_0\,\langle r\rangle\,\langle s\rangle
+  \le \beta J\!\!\sum_{\{a,b\}\in E_0}\!\!\bigl(\mathrm{cf}^{\,d(r,a)/(r_0+2)}\mathrm{cf}^{\,d(s,b)/(r_0+2)}
+    +\mathrm{cf}^{\,d(r,b)/(r_0+2)}\mathrm{cf}^{\,d(s,a)/(r_0+2)}\bigr),
+\]
+where $\mathrm{cf}=\mathrm{contractionFactor}\,d\,(\mathrm{cubicExhaustion}\,d)\,p\,r_0$
+and $d(x,y)$ is the $\ell^1$ lattice distance.
+\end{theorem}
+
+\begin{proof}
+Chain the diagonal-free infinite-volume bound
+\texttt{derivBoundTight\_inducedGraph\_cubic\_le\_infiniteVolume\_sum} with the
+per-pair spatial decay
+\texttt{correlationInfinite\_latticeGraph\_le\_contractionFactor\_pow\_dist\_pair}
+applied termwise: each factor $g(x,y)\le\mathrm{cf}^{\,d(x,y)/(r_0+2)}$ (distinctness
+$r\neq a$, etc.\ from the hypothesis that $r,s$ lie on no $E_0$-edge, via
+\texttt{Sym2.mem\_iff}), and the products are monotone since correlations and
+$\mathrm{cf}$-powers are nonnegative. The cross-product-only (tight) structure is
+what guarantees every factor genuinely decays.
+\end{proof}
+
 \begin{theorem}[\texttt{IsingModel.correlation\_inducedGraph\_deleteEdges\_union\_inl}
 (Phase A component-factorization capstone, Finset route)]
 For a region $S\subseteq W$, deleting the cut edges between $S$ and its complement
