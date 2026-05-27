@@ -12718,11 +12718,29 @@ nested-subtype relabeling $\{x:\uparrow T\mid x.\mathrm{val}\in S\}\simeq\uparro
 \]
 An edge survives iff its (deep) endpoints are $G$-adjacent and both in $S$. This
 is the graph-level foundation for instantiating the per-stage increment on cubic
-exhaustion stages $\mathrm{box}_k\subseteq\mathrm{box}_{k+1}$ (Issue \#2965); the
-correlation-level transport across this iso is a follow-up (it currently hits a
-\texttt{whnf} elaboration wall in \texttt{correlation\_map\_equiv} on the
-nested-subtype graph, needing a lighter sum-level encoding).
+exhaustion stages $\mathrm{box}_k\subseteq\mathrm{box}_{k+1}$ (Issue \#2965).
 \end{proposition}
+
+\begin{proposition}[\texttt{IsingModel.correlation\_inducedGraph\_induce\_preimage}]
+The correlation companion: for $S\subseteq T$,
+\[
+  \langle\sigma^{A.\mathrm{map}\,e^{-1}}\rangle_{(\mathrm{inducedGraph}\,G\,T).\mathrm{induce}\,\{x\mid x.\mathrm{val}\in S\}}
+  = \langle\sigma^{A}\rangle_{\mathrm{inducedGraph}\,G\,S},
+  \qquad e=\mathrm{nestedSubtypeEquiv}.
+\]
+\end{proposition}
+
+\begin{proof}
+Apply \texttt{correlation\_map\_equiv} to the \emph{direct} graph
+$\mathrm{inducedGraph}\,G\,S$ with the inverse relabeling $e^{-1}$ (so the heavy
+nested-subtype graph appears only as the map \emph{result}, never as the graph
+the lemma operates on, which sidesteps the earlier \texttt{whnf} wall), then
+bridge via \texttt{correlation\_congr\_all} and the graph equality
+$(\mathrm{inducedGraph}\,G\,S).\mathrm{map}\,e^{-1}
+= (\mathrm{inducedGraph}\,G\,T).\mathrm{induce}\,\{x\mid x.\mathrm{val}\in S\}$.
+This supplies the $c_k$-side identity for the cubic-exhaustion per-stage
+increment.
+\end{proof}
 
 \begin{theorem}[\texttt{IsingModel.correlation\_pair\_sub\_inducedGraph\_le\_derivBound}
 (numeric per-stage correlation increment, Issue \#2965 Phase A)]
