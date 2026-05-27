@@ -13139,6 +13139,18 @@ the per-edge building block of the mixed $\partial_\beta\partial_s$ derivative o
 the cut shell.
 \end{proposition}
 
+\begin{proposition}[\texttt{IsingModel.hasDerivAt\_scaledGibbs\_truncated\_beta}
+(Issue \#2965 Phase C, mixed route)]
+For arbitrary observables, $\partial_\beta[\langle F_1\rangle_s-\langle
+F_2\rangle_s\langle F_3\rangle_s]$ is given by
+\texttt{hasDerivAt\_scaledGibbsExpectation\_beta} and the difference/product rules.
+Specialised to $F_1=\sigma^A W$, $F_2=\sigma^A$, $F_3=W$ ($W=\sum_{E_0}\sigma_e$) it
+is the inner factor of the mixed $\partial_\beta\partial_s$ derivative, since
+$\partial_s\,\mathrm{scaledCorrelation}=\beta J(\langle\sigma^A
+W\rangle_s-\langle\sigma^A\rangle_s\langle W\rangle_s)$ --- the gibbs-covariance
+form avoiding the $\mathrm{Sym2.lift}$ edge sum.
+\end{proposition}
+
 \begin{theorem}[\texttt{IsingModel.Ambient.ursell\_shell\_sum\_le\_card\_pow}
 (geometric bound on the new-shell-edge Ursell sum, Issue \#2965 Phase C, Part B)]
 For $d\ge1$, ferromagnetic $h=0$, high temperature ($\mathrm{cf}<1$), interior
