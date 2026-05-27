@@ -448,4 +448,21 @@ theorem hasDerivAt_scaledCorrelation_increment_beta_decomposed_sum (G : SimpleGr
   rwa [scaledCovariance_sum_right G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) 0 (spinProduct A) E₀
     (fun e σ => edgeSpin (K := ℝ) σ e)] at h
 
+/-- **The `s=0` scaled covariance is the bond-deleted covariance** (Issue #2965,
+Phase C): since `scaledGibbsExpectation … 0 = gibbsExpectation (G.deleteEdges E₀)`
+(`scaledGibbsExpectation_zero`), `Cov_0(F,K)` equals the truncated correlation
+`⟨F·K⟩_{bd} − ⟨F⟩_{bd}⟨K⟩_{bd}` of the bond-deleted graph `G.deleteEdges ↑E₀`. This
+moves the localized shell term `J·∑_{e∈E₀} Cov_0(σ^A, σ_e)` of the β-derivative
+increment onto the standard (bond-deleted) correlation machinery, where the
+Lebowitz / spatial-decay (Part B) bounds apply. -/
+theorem scaledCovariance_zero_eq_bondDeleted (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (E₀ : Finset (Sym2 ι)) (hE₀_sub : E₀ ⊆ G.edgeFinset) (p : IsingParams ℝ)
+    (F K : Config ι → ℝ) [Fintype (G.deleteEdges ↑E₀).edgeSet] :
+    scaledCovariance G E₀ p 0 F K
+      = gibbsExpectation (G.deleteEdges ↑E₀) p (fun σ => F σ * K σ)
+        - gibbsExpectation (G.deleteEdges ↑E₀) p F * gibbsExpectation (G.deleteEdges ↑E₀) p K := by
+  unfold scaledCovariance
+  rw [scaledGibbsExpectation_zero G E₀ hE₀_sub, scaledGibbsExpectation_zero G E₀ hE₀_sub,
+    scaledGibbsExpectation_zero G E₀ hE₀_sub]
+
 end IsingModel
