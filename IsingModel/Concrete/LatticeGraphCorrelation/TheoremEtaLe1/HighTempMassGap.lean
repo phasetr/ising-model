@@ -301,5 +301,38 @@ theorem hasExponentialDecay_latticeGraph_of_betaJ_two_d_lt_one
     rw [← hexp, hBn]; field_simp
   exact hdecay.trans_eq heq
 
+/-- **Axiom-free `latticeMass` lower bound under `βJ·2d < 1`**: composing the axiom-free
+exponential decay `hasExponentialDecay_latticeGraph_of_betaJ_two_d_lt_one` with
+`latticeMass_ge_of_HasExponentialDecay` gives, for `β, J > 0`, `d ≥ 1`, and
+`βJ·2d < 1`,
+`ENNReal.ofReal (−log(βJ·2d)) ≤ latticeMass d (cubicExhaustion d) ⟨J,0,β⟩`.
+This bounds the central GJ §17.5 Lemma 17.5.2 correlation-length quantity from below by
+the explicit elementary high-temperature rate, with no ball-boundary shell-contraction
+axiom and no `(2(r+1)+1)^d` boundary factor. -/
+theorem latticeMass_ge_of_betaJ_two_d_lt_one
+    (d : ℕ) (hd : 1 ≤ d) {J β : ℝ} (hJ_pos : 0 < J) (hβ_pos : 0 < β)
+    (hht : β * J * (2 * d) < 1) :
+    ENNReal.ofReal (-Real.log (β * J * (2 * d)))
+      ≤ latticeMass d (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) := by
+  obtain ⟨hrate_pos, hdecay⟩ :=
+    hasExponentialDecay_latticeGraph_of_betaJ_two_d_lt_one d hd hJ_pos hβ_pos hht
+  exact latticeMass_ge_of_HasExponentialDecay hrate_pos.le hdecay
+
+/-- **Axiom-free positive `latticeMass` (mass gap) under `βJ·2d < 1`**: since the rate
+`−log(βJ·2d)` is strictly positive in the elementary high-temperature regime
+`βJ·2d < 1`, the lower bound `latticeMass_ge_of_betaJ_two_d_lt_one` gives a strictly
+positive lattice mass `0 < latticeMass d (cubicExhaustion d) ⟨J,0,β⟩` — an axiom-free
+positive correlation-length / mass gap. -/
+theorem latticeMass_pos_of_betaJ_two_d_lt_one
+    (d : ℕ) (hd : 1 ≤ d) {J β : ℝ} (hJ_pos : 0 < J) (hβ_pos : 0 < β)
+    (hht : β * J * (2 * d) < 1) :
+    0 < latticeMass d (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) := by
+  have hβJ_pos : 0 < β * J := mul_pos hβ_pos hJ_pos
+  have hB_pos : 0 < β * J * (2 * d) := mul_pos hβJ_pos (by positivity)
+  have hrate_pos : 0 < -Real.log (β * J * (2 * d)) :=
+    neg_pos.mpr (Real.log_neg hB_pos hht)
+  exact lt_of_lt_of_le (ENNReal.ofReal_pos.mpr hrate_pos)
+    (latticeMass_ge_of_betaJ_two_d_lt_one d hd hJ_pos hβ_pos hht)
+
 end Ambient
 end IsingModel
