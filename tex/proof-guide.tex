@@ -12984,6 +12984,29 @@ $|\mathrm{shell}|$ polynomial in $k$ and $\mathrm{cf}<1$, the per-stage incremen
 summable.
 \end{proof}
 
+\begin{theorem}[\texttt{IsingModel.Ambient.derivBoundTight\_cubic\_shell\_le\_poly\_pow}
+(polynomial $\times$ geometric shell bound, Issue \#2965 Phase B)]
+Under the hypotheses of the geometric per-stage bound,
+\[
+  \mathrm{derivBoundTight}\,(\mathrm{inducedGraph}\,(\mathrm{latticeGraph}\,d)\,
+    \mathrm{box}_{k+1})\,(\mathrm{shell})\,\langle r\rangle\,\langle s\rangle
+  \le \beta J\cdot\bigl(2\,d\,(2(k+1)+1)^d\,\mathrm{cf}^{\,(k+1-R)/(r_0+2)}\bigr),
+\]
+the $M\,(2k+3)^d\,\mathrm{ratio}^k$ shape required by the volume-convergence-rate
+capstone. The shell cardinality bound $|\mathrm{shell}|\le d\,(2(k+1)+1)^d$
+(\texttt{cubic\_shell\_card\_le}) follows from the handshake edge count
+\texttt{inducedLatticeGraph\_card\_edgeFinset\_le} and \texttt{card\_cubicBox}.
+\end{theorem}
+
+\begin{proof}
+Chain \texttt{derivBoundTight\_cubic\_shell\_le\_card\_pow} with
+\texttt{cubic\_shell\_card\_le}, bounding $|\mathrm{shell}|\cdot
+2\,\mathrm{cf}^{\dots}$ by $d\,(2(k+1)+1)^d\cdot 2\,\mathrm{cf}^{\dots}$. (Composition
+with the tight per-stage correlation increment is deferred pending a single shared
+\texttt{Fintype} edge-set instance: the two lemmas currently use distinct file-local
+instances, so the shell terms are only \texttt{Subsingleton}-equal.)
+\end{proof}
+
 \begin{theorem}[\texttt{IsingModel.correlation\_inducedGraph\_deleteEdges\_union\_inl}
 (Phase A component-factorization capstone, Finset route)]
 For a region $S\subseteq W$, deleting the cut edges between $S$ and its complement
