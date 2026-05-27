@@ -13151,6 +13151,23 @@ W\rangle_s-\langle\sigma^A\rangle_s\langle W\rangle_s)$ --- the gibbs-covariance
 form avoiding the $\mathrm{Sym2.lift}$ edge sum.
 \end{proposition}
 
+\begin{proposition}[\texttt{IsingModel.hasDerivAt\_scaledCorrelation\_increment\_beta}
+(Issue \#2965 Phase C)]
+The bond-adding increment $g(\beta)=\langle\sigma^A\rangle_{s=1}-\langle\sigma^A\rangle_{s=0}$
+(full minus bond-deleted correlation) has $\beta$-derivative the difference of the
+two $\beta$-derivatives (\texttt{hasDerivAt\_scaledCorrelation\_beta} at $s=1,0$),
+with $D_1=-H$, $D_0=-H-J\sum_{E_0}\sigma_e$:
+\[
+  g'(\beta)=\bigl[\langle\sigma^A D_1\rangle_1-\langle\sigma^A\rangle_1\langle D_1\rangle_1\bigr]
+    -\bigl[\langle\sigma^A D_0\rangle_0-\langle\sigma^A\rangle_0\langle D_0\rangle_0\bigr].
+\]
+Stated for arbitrary $E_0$; in the per-stage shell application ($E_0=$ cut shell,
+plus the $s=0$ bond-deleted identification) this is the explicit $\beta$-derivative
+increment $F_{k+1}(\beta)-F_k(\beta)$, whose bound then requires the shell
+cancellation of the full-energy $\langle\sigma^A H\rangle$ terms between the two
+systems --- the remaining quantitative input of the capstone.
+\end{proposition}
+
 \begin{theorem}[\texttt{IsingModel.Ambient.ursell\_shell\_sum\_le\_card\_pow}
 (geometric bound on the new-shell-edge Ursell sum, Issue \#2965 Phase C, Part B)]
 For $d\ge1$, ferromagnetic $h=0$, high temperature ($\mathrm{cf}<1$), interior
