@@ -630,6 +630,34 @@ theorem scaledCovariance_edgeSpin_zero_sub_one_eq_scaledCorrelation (G : SimpleG
   rw [scaledCovariance_spinProduct_edgeSpin_eq_scaledCorrelation G E₀ p 0 A huv,
     scaledCovariance_spinProduct_edgeSpin_eq_scaledCorrelation G E₀ p 1 A huv]
 
+/-- **Coupling-difference summand as a correlation-increment combination** (Issue
+#2965, Phase C). Writing `Δ(S) := ⟨σ^S⟩_0 − ⟨σ^S⟩_1` for the (negated) bond-adding
+correlation increment over the cut set, each per-edge coupling-difference summand
+decomposes as
+`Cov_0(σ^A,σ_uσ_v) − Cov_1(σ^A,σ_uσ_v) = Δ(A△{u,v}) − Δ(A)·⟨σ_uσ_v⟩_0 − ⟨σ^A⟩_1·Δ({u,v})`.
+Pure algebra (`ring`) from
+`scaledCovariance_edgeSpin_zero_sub_one_eq_scaledCorrelation` by adding and
+subtracting `⟨σ^A⟩_1⟨σ_uσ_v⟩_0`. The correlation coefficients `⟨σ_uσ_v⟩_0` and
+`⟨σ^A⟩_1` are bounded by `1`, so this reduces the coupling-difference bound to
+bounding the three correlation increments `Δ(A△{u,v})`, `Δ(A)`, `Δ({u,v})` — each the
+bond-adding increment over the cut set, controlled by the Part-A/B per-stage
+increment-decay machinery. -/
+theorem scaledCovariance_edgeSpin_zero_sub_one_eq_increment_combination (G : SimpleGraph ι)
+    [Fintype G.edgeSet] (E₀ : Finset (Sym2 ι)) (p : IsingParams ℝ) (A : Finset ι)
+    {u v : ι} (huv : u ≠ v) :
+    scaledCovariance G E₀ p 0 (spinProduct A)
+          (fun σ => edgeSpin (K := ℝ) σ (Quot.mk _ (u, v))) -
+        scaledCovariance G E₀ p 1 (spinProduct A)
+          (fun σ => edgeSpin (K := ℝ) σ (Quot.mk _ (u, v)))
+      = (scaledCorrelation G E₀ p 0 (symmDiff A {u, v})
+            - scaledCorrelation G E₀ p 1 (symmDiff A {u, v}))
+        - (scaledCorrelation G E₀ p 0 A - scaledCorrelation G E₀ p 1 A)
+            * scaledCorrelation G E₀ p 0 {u, v}
+        - scaledCorrelation G E₀ p 1 A
+            * (scaledCorrelation G E₀ p 0 {u, v} - scaledCorrelation G E₀ p 1 {u, v}) := by
+  rw [scaledCovariance_edgeSpin_zero_sub_one_eq_scaledCorrelation G E₀ p A huv]
+  ring
+
 /-- **Coupling difference as a per-edge covariance-difference sum** (Issue #2965,
 Phase C, `h=0`). The hard core of the β-derivative increment decomposition,
 `[Cov_0(σ^A, H) − Cov_1(σ^A, H)]`, equals

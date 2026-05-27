@@ -13217,6 +13217,26 @@ coupling-difference summand in terms of correlation increments, the objects whos
 geometric decay is established by the Part-A/B per-stage increment machinery.
 \end{theorem}
 
+\begin{theorem}[\texttt{IsingModel.scaledCovariance\_edgeSpin\_zero\_sub\_one\_eq\_increment\_combination}
+(coupling-difference summand as a correlation-increment combination, Issue \#2965 Phase C)]
+Writing $\Delta(S):=\langle\sigma^S\rangle_0-\langle\sigma^S\rangle_1$ for the (negated)
+bond-adding correlation increment over the cut set, each per-edge coupling-difference
+summand decomposes as
+\[
+  \mathrm{Cov}_0(\sigma^A,\sigma_u\sigma_v)-\mathrm{Cov}_1(\sigma^A,\sigma_u\sigma_v)
+    = \Delta(A\triangle\{u,v\}) - \Delta(A)\,\langle\sigma_u\sigma_v\rangle_0
+      - \langle\sigma^A\rangle_1\,\Delta(\{u,v\}).
+\]
+Pure algebra (\texttt{ring}) from
+\texttt{scaledCovariance\_edgeSpin\_zero\_sub\_one\_eq\_scaledCorrelation} by adding and
+subtracting $\langle\sigma^A\rangle_1\langle\sigma_u\sigma_v\rangle_0$. The correlation
+coefficients $\langle\sigma_u\sigma_v\rangle_0,\langle\sigma^A\rangle_1$ are bounded by
+$1$, so this reduces the coupling-difference bound to bounding the three correlation
+increments $\Delta(A\triangle\{u,v\}),\Delta(A),\Delta(\{u,v\})$ — each the bond-adding
+increment over the cut set, controlled by the Part-A/B per-stage increment-decay
+machinery.
+\end{theorem}
+
 \begin{theorem}[\texttt{IsingModel.scaledCovariance\_spinProduct\_hamiltonian\_eq\_neg\_J\_edge\_sum}
 and \texttt{\_coupling\_difference\_eq\_neg\_J\_edge\_sum} (energy covariance as a per-edge
 sum, Issue \#2965 Phase C, $h=0$)]
