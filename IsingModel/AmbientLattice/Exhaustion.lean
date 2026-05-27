@@ -159,6 +159,15 @@ theorem liftFinset_insert {Λ : Finset V} {A : Finset V} {a : V}
     · exact Or.inl (Subtype.ext rfl)
     · exact Or.inr hx
 
+/-- **`liftFinset` of a pair**: for `r, s ∈ Λ`, lifting the pair `{r, s}`
+yields the explicit subtype pair `{⟨r, hr⟩, ⟨s, hs⟩}`. -/
+theorem liftFinset_pair {Λ : Finset V} {r s : V} (h : ({r, s} : Finset V) ⊆ Λ)
+    (hr : r ∈ Λ) (hs : s ∈ Λ) :
+    liftFinset ({r, s} : Finset V) h
+      = ({⟨r, hr⟩, ⟨s, hs⟩} : Finset (↑Λ : Type _)) := by
+  ext x
+  simp only [mem_liftFinset, Finset.mem_insert, Finset.mem_singleton, Subtype.ext_iff]
+
 /-- `liftFinset` commutes with `sdiff` (set difference): if `A, B ⊆ Λ` then
 `liftFinset A hA \ liftFinset B hB = liftFinset (A \ B) h_sdiff`. -/
 theorem liftFinset_sdiff {Λ : Finset V} {A B : Finset V}

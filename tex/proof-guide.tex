@@ -12819,6 +12819,34 @@ $S=T_1.\mathrm{subtype}\,(\cdot\in T_2)$ and pair $\langle r,\_\rangle,
 along $e^{-1}$ with \texttt{pair\_map\_nestedFinsetEquiv\_symm}.
 \end{proof}
 
+\begin{theorem}[\texttt{IsingModel.Ambient.correlationAlongExhaustion\_cubic\_succ\_sub\_le\_derivBound}
+(cubic-exhaustion per-stage increment, Issue \#2965 Phase A)]
+For the cubic exhaustion of $\mathrm{latticeGraph}\,d$ and a pair $r,s$ interior to
+the stage $\mathrm{box}_k$ (on no cut edge of the $\mathrm{box}_k$-slice),
+\[
+  c_{k+1}-c_k
+  \le \mathrm{derivBound}\,(\mathrm{inducedGraph}\,(\mathrm{latticeGraph}\,d)\,
+    \mathrm{box}_{k+1})\,(\mathrm{filter}\,\mathrm{straddle})\,r\,s,
+\]
+where $c_n=\texttt{correlationAlongExhaustion}\,(\mathrm{latticeGraph}\,d)\,
+(\mathrm{cubicExhaustion}\,d)\,p\,\{r,s\}\,n$. This is the correlation-side
+per-stage difference bound, one input toward the volume-convergence rate program
+of GJ Lemma~17.5.2 (distinct from the $\beta$-derivative provider that program also
+requires).
+\end{theorem}
+
+\begin{proof}
+Instantiate the two-box increment
+\texttt{correlation\_pair\_two\_box\_le\_derivBound} with
+$G=\mathrm{latticeGraph}\,d$, $T_1=\mathrm{box}_k\subseteq T_2=\mathrm{box}_{k+1}$
+(nested by \texttt{cubicBox\_mono}). Unfold \texttt{correlationAlongExhaustion} on
+both stages: the observable subsets $\{r,s\}\subseteq\mathrm{box}_k\subseteq
+\mathrm{box}_{k+1}$ select the \texttt{dite} ``then'' branch, and
+\texttt{liftFinset\_pair} identifies the lifted pair observable with the explicit
+subtype pair. The edge-set \texttt{Fintype} hypotheses of the abstract increment are
+discharged from finiteness of the box subtype (\texttt{Fintype.ofFinite}).
+\end{proof}
+
 \begin{theorem}[\texttt{IsingModel.correlation\_inducedGraph\_deleteEdges\_union\_inl}
 (Phase A component-factorization capstone, Finset route)]
 For a region $S\subseteq W$, deleting the cut edges between $S$ and its complement
