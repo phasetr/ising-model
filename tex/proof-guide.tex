@@ -13255,6 +13255,26 @@ $\langle\sigma^A\rangle_{\mathbb{C}}$ \texttt{DiffContOnCl} on $B(\uparrow\!p.\b
 concrete disc on which the Cauchy bridge applies.
 \end{theorem}
 
+\begin{theorem}[\texttt{IsingModel.Ambient.dist\_deriv\_correlation\_le\_of\_complex\_circle\_bound}
+(derivative-increment bridge from a complex circle bound, Issue \#3026)]
+For two finite-volume Ising correlations on graphs $G_1,G_2$ at real parameters $J,h$ and a
+real inverse temperature $\beta$, if both complex partition functions are nonzero on the
+closed disc $\overline{B}(\beta,R)$ ($R>0$) and the complex correlation difference is bounded
+by $B$ on the boundary circle $\partial B(\beta,R)$, then
+\[
+  \mathrm{dist}\bigl(\partial_\beta\langle\sigma^A\rangle_{G_1},
+    \partial_\beta\langle\sigma^A\rangle_{G_2}\bigr) \le B/R.
+\]
+Assembles \texttt{correlationComplex\_diffContOnCl\_beta} (with \texttt{DiffContOnCl.sub}),
+the real-part agreement \texttt{correlation\_ofReal\_eq\_correlationComplex},
+differentiability from \texttt{correlationComplex\_analyticAt\_beta}, and the Cauchy bridge
+\texttt{dist\_deriv\_le\_of\_complex\_extension}. This reduces the capstone $\mathtt{hincr}$
+to its remaining \emph{complex} inputs: a zero-free closed disc $\overline{B}(\beta,R)$ of a
+usable radius $R$ (uniform across the stages; real-axis positivity gives only local,
+graph-dependent zero-freeness) together with a boundary-circle bound $B$ on the value
+increment (a complex / Lee--Yang-region Simon--Lieb estimate).
+\end{theorem}
+
 \begin{theorem}[\texttt{IsingModel.Ambient.abs\_deriv\_le\_of\_complex\_extension} and
 \texttt{dist\_deriv\_le\_of\_complex\_extension} (Cauchy-estimate derivative bridge, Issue \#3026)]
 If a real function $g:\mathbb{R}\to\mathbb{R}$ is the real part of a complex-analytic
