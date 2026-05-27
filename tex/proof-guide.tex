@@ -12871,6 +12871,34 @@ the edge sums termwise; on each edge $\{k,l\}$ apply $\mathtt{mul\_le\_mul}$ to 
 the three products using $0\le\langle\cdot\rangle\le c$.
 \end{proof}
 
+\begin{theorem}[\texttt{IsingModel.Ambient.derivBound\_inducedGraph\_cubic\_le\_infiniteVolume\_sum}
+(cubic-shell \texttt{derivBound} infinite-volume bound, Issue \#2965 Phase A$\to$B)]
+For sites $r,s\in\mathrm{box}_n$ and any edge set $E_0$ of
+$\mathrm{inducedGraph}\,(\mathrm{latticeGraph}\,d)\,\mathrm{box}_n$,
+\[
+  \mathrm{derivBound}\,\dots\,E_0\,\langle r\rangle\,\langle s\rangle
+  \le \beta J\sum_{\{a,b\}\in E_0}\bigl(g(r,a)g(s,b)+g(r,b)g(s,a)+g(r,s)g(a,b)\bigr),
+\]
+where $g(x,y)=\texttt{correlationInfinite}\,(\mathrm{latticeGraph}\,d)\,
+(\mathrm{cubicExhaustion}\,d)\,p\,\{x,y\}$ is the infinite-volume two-point
+function. Combined with the per-stage increment
+\texttt{correlationAlongExhaustion\_cubic\_succ\_sub\_le\_derivBound}, it bounds
+$c_{k+1}-c_k$ by an infinite-volume boundary sum.
+\end{theorem}
+
+\begin{proof}
+Instantiate \texttt{derivBound\_le\_of\_correlation\_le} with
+$c(\alpha,\beta)=g(\alpha,\beta)$: symmetric by \texttt{Finset.pair\_comm},
+nonnegative by \texttt{correlationInfinite\_nonneg}, and dominating the
+finite-volume correlations by the bridge
+\texttt{correlation\_inducedGraph\_cubic\_le\_correlationInfinite}. The bridge in
+turn specialises \texttt{correlationAlongExhaustion\_le\_correlationInfinite}
+(unfolding \texttt{correlationAlongExhaustion} on the box, with the observable
+subset holding because both endpoints lie in $\mathrm{box}_n$, and matching the
+lifted pair via \texttt{liftFinset\_pair}). This isolates the
+divergent-prefactor-sensitive spatial-decay analysis (Phase B) downstream.
+\end{proof}
+
 \begin{theorem}[\texttt{IsingModel.correlation\_inducedGraph\_deleteEdges\_union\_inl}
 (Phase A component-factorization capstone, Finset route)]
 For a region $S\subseteq W$, deleting the cut edges between $S$ and its complement
