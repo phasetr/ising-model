@@ -13087,10 +13087,13 @@ For consecutive stages $k\subseteq k+1$ both containing $\{x,z\}$,
 where $\mathrm{Ursell}_e=\langle\sigma^{A\,\triangle\,\{u,v\}}\rangle
 -\langle\sigma^A\rangle\langle\sigma_u\sigma_v\rangle$ ($A=\{x,z\}$). Immediate from
 \texttt{lemma\_17\_5\_2\_finite\_derivative\_profile\_eq\_beta\_edge\_sum} at both
-stages. The explicit starting point for the per-stage increment bound: the
-difference splits into the new shell edges of stage $k+1$ (decaying Ursell, far
-from $\{x,z\}$) and the interior edges shared with stage $k$ (Ursell differing only
-by the inter-stage correlation differences).
+stages (here $E(\cdot)$ is over $\Lambda.\mathrm{volume}\,k$ and
+$\Lambda.\mathrm{volume}\,(k+1)$ for an arbitrary exhaustion $\Lambda$). The
+explicit starting point for the per-stage increment bound: the difference splits
+algebraically into edges new to stage $k+1$ and edges shared with stage $k$. For
+the cubic exhaustion the new edges form a shell far from $\{x,z\}$ (decaying Ursell)
+and the shared interior Ursell terms differ only by the inter-stage correlation
+differences — the intended later specialization.
 \end{proposition}
 
 \begin{theorem}[\texttt{IsingModel.correlation\_inducedGraph\_deleteEdges\_union\_inl}

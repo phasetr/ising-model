@@ -9,11 +9,14 @@ two-point profiles is the difference of the two finite Lebowitz/Ursell edge sums
 (`lemma_17_5_2_finite_derivative_profile_eq_beta_edge_sum` applied at `k` and
 `k+1`).
 
+Stated for an arbitrary exhaustion `Λ` (RHS over `Λ.volume k`, `Λ.volume (k+1)`).
 This is the explicit starting point for the per-stage β-derivative increment bound
-required by the GJ §17.5 Lemma 17.5.2 capstone: the difference decomposes into the
-new shell edges of stage `k+1` (whose Ursell terms decay, being far from `{x,z}`)
-and the interior edges shared with stage `k` (whose Ursell terms differ only by the
-inter-stage correlation differences).
+required by the GJ §17.5 Lemma 17.5.2 capstone: the difference splits algebraically
+into the edges new to stage `k+1` and the edges shared with stage `k`. For the
+cubic exhaustion specifically, the new edges form a shell far from `{x,z}` (so their
+Ursell terms decay) and the shared interior edges' Ursell terms differ only by the
+inter-stage correlation differences — but that geometric interpretation is the
+intended later specialization, not part of this general formula.
 
 ## Main declaration
 
