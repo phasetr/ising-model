@@ -13053,6 +13053,29 @@ $\mathrm{inducedGraph}\,(\mathrm{latticeGraph}\,d)\,(\mathrm{volume}\,n)$; the
 profile's derivative is the \texttt{HasDerivAt} value, which that lemma bounds.
 \end{proof}
 
+\begin{theorem}[\texttt{IsingModel.Ambient.derivative\_profile\_cubic\_le\_infiniteVolume\_lebowitz}
+(infinite-volume Lebowitz bound for the cubic $\beta$-derivative profile, Issue \#2965 Phase C)]
+Under the same hypotheses,
+\[
+  \partial_\beta c_n \le J\sum_{\{u,v\}\in E}
+    \bigl(g(x,u)\,g(z,v)+g(x,v)\,g(z,u)\bigr) + J\,|\mathrm{incident}|,
+\]
+where $g(a,b)=\texttt{correlationInfinite}\,(\mathrm{latticeGraph}\,d)\,
+(\mathrm{cubicExhaustion}\,d)\,\langle J,0,\beta\rangle\,\{a,b\}$ is the
+infinite-volume pair-set correlation (a two-point function for distinct sites).
+Since these cross products decay spatially
+(Phase B) and the susceptibility is summable, $F_n$ is controlled by a single
+infinite-volume object.
+\end{theorem}
+
+\begin{proof}
+Compose \texttt{derivative\_profile\_cubic\_le\_lebowitz\_tight} with the termwise
+finite-volume $\le$ infinite-volume bridge
+\texttt{correlation\_inducedGraph\_cubic\_le\_correlationInfinite}; the products are
+monotone since the correlations are nonnegative (\texttt{gks\_first},
+\texttt{correlationInfinite\_nonneg}). The incident-edge error term is unchanged.
+\end{proof}
+
 \begin{theorem}[\texttt{IsingModel.correlation\_inducedGraph\_deleteEdges\_union\_inl}
 (Phase A component-factorization capstone, Finset route)]
 For a region $S\subseteq W$, deleting the cut edges between $S$ and its complement
