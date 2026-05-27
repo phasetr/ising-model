@@ -371,5 +371,38 @@ theorem correlationInfinite_latticeGraph_susceptibility_summable_betaJ_two_d
       (d := d) hβJ_pos.le (IsingModel.latticeDistance d 0 y - 1) 0 y (by omega)).trans ?_
     exact pow_le_pow_of_le_one hB_pos.le hht.le (by omega)
 
+/-- **Axiom-free finite susceptibility from any basepoint under `βJ·2d < 1`**: by
+translation invariance of the infinite-volume correlation, the kernel
+`y ↦ ⟨σ_xσ_y⟩^∞` is summable for every basepoint `x` (the susceptibility is
+basepoint-independent), under `β, J > 0`, `d ≥ 1`, `βJ·2d < 1`, with no shell axiom.
+
+Reduces to the origin susceptibility
+`correlationInfinite_latticeGraph_susceptibility_summable_betaJ_two_d` via
+`correlationInfinite_vaddFinset_of_translationInvariant` (`{x,y} = x +ᵥ {0, y−x}`) and the
+shift bijection `Equiv.subRight x`. -/
+theorem correlationInfinite_latticeGraph_susceptibility_summable_betaJ_two_d_basepoint
+    (d : ℕ) (hd : 1 ≤ d) {J β : ℝ} (hJ_pos : 0 < J) (hβ_pos : 0 < β)
+    (hht : β * J * (2 * d) < 1) (x : Fin d → ℤ) :
+    Summable (fun y => correlationInfinite (IsingModel.latticeGraph d) (cubicExhaustion d)
+      (⟨J, 0, β⟩ : IsingParams ℝ) {x, y}) := by
+  have hf : Ferromagnetic (⟨J, 0, β⟩ : IsingParams ℝ) := ⟨hJ_pos.le, le_refl 0, hβ_pos⟩
+  have hbase := correlationInfinite_latticeGraph_susceptibility_summable_betaJ_two_d
+    d hd hJ_pos hβ_pos hht
+  have heq :
+      (fun y => correlationInfinite (IsingModel.latticeGraph d) (cubicExhaustion d)
+          (⟨J, 0, β⟩ : IsingParams ℝ) {x, y})
+        = (fun y => correlationInfinite (IsingModel.latticeGraph d) (cubicExhaustion d)
+            (⟨J, 0, β⟩ : IsingParams ℝ) {(0 : Fin d → ℤ), y - x}) := by
+    funext y
+    rw [show ({x, y} : Finset (Fin d → ℤ)) = vaddFinset x {(0 : Fin d → ℤ), y - x} from by
+      rw [vaddFinset_pair]; simp [vadd_eq_add]]
+    exact correlationInfinite_vaddFinset_of_translationInvariant
+      (IsingModel.latticeGraph d) (cubicExhaustion d) x (⟨J, 0, β⟩ : IsingParams ℝ) hf
+      {(0 : Fin d → ℤ), y - x}
+  rw [heq]
+  exact ((Equiv.subRight x).summable_iff
+    (f := fun z => correlationInfinite (IsingModel.latticeGraph d) (cubicExhaustion d)
+      (⟨J, 0, β⟩ : IsingParams ℝ) {(0 : Fin d → ℤ), z})).mpr hbase
+
 end Ambient
 end IsingModel
