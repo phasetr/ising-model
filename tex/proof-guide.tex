@@ -13191,6 +13191,32 @@ covariance second-observable linearity (\texttt{scaledCovariance\_sub\_right},
 \texttt{\_neg\_right}, \texttt{\_const\_mul\_right}); conclude by \texttt{ring}.
 \end{proof}
 
+\begin{theorem}[\texttt{IsingModel.scaledCovariance\_spinProduct\_edgeSpin\_eq\_scaledCorrelation}
+and \texttt{\_edgeSpin\_zero\_sub\_one\_eq\_scaledCorrelation} (per-edge covariance as a
+scaled-correlation truncated function, Issue \#2965 Phase C)]
+For a non-degenerate edge $\{u,v\}$ ($u\ne v$),
+\[
+  \mathrm{Cov}_s(\sigma^A,\sigma_u\sigma_v)
+    = \langle\sigma^{A\triangle\{u,v\}}\rangle_s
+      - \langle\sigma^A\rangle_s\,\langle\sigma_u\sigma_v\rangle_s,
+\]
+using $\sigma_e=\mathrm{spinProduct}\{u,v\}$
+(\texttt{edgeSpin\_quot\_eq\_spinProduct'}) and the spin-product fusion
+$\sigma^A\sigma^{\{u,v\}}=\sigma^{A\triangle\{u,v\}}$ (\texttt{spinProduct\_mul}).
+Substituting at the endpoints $s=0,1$ expresses each coupling-difference summand as
+\[
+  \mathrm{Cov}_0(\sigma^A,\sigma_u\sigma_v)-\mathrm{Cov}_1(\sigma^A,\sigma_u\sigma_v)
+    = \bigl[\langle\sigma^{A\triangle\{u,v\}}\rangle_0
+        -\langle\sigma^A\rangle_0\langle\sigma_u\sigma_v\rangle_0\bigr]
+      - \bigl[\langle\sigma^{A\triangle\{u,v\}}\rangle_1
+        -\langle\sigma^A\rangle_1\langle\sigma_u\sigma_v\rangle_1\bigr].
+\]
+Since the scaled correlations $\langle\cdot\rangle_1$ (full) and $\langle\cdot\rangle_0$
+(bond-deleted) differ by the bond-adding increment over the cut set, this rewrites each
+coupling-difference summand in terms of correlation increments, the objects whose
+geometric decay is established by the Part-A/B per-stage increment machinery.
+\end{theorem}
+
 \begin{theorem}[\texttt{IsingModel.scaledCovariance\_spinProduct\_hamiltonian\_eq\_neg\_J\_edge\_sum}
 and \texttt{\_coupling\_difference\_eq\_neg\_J\_edge\_sum} (energy covariance as a per-edge
 sum, Issue \#2965 Phase C, $h=0$)]
