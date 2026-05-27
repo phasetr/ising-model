@@ -8525,7 +8525,11 @@ gives the same axiom-free finite susceptibility from any basepoint \(x\).
 \texttt{correlationInfinite\_latticeGraph\_uniform\_decay\_of\_betaJ\_two\_d\_lt\_one} records
 the axiom-free uniform clustering: for every \(\varepsilon>0\) there is \(R\) with
 \(\langle\sigma_i\sigma_j\rangle^\infty\le\varepsilon\) whenever \(\mathrm{dist}(i,j)\ge R\)
-(via \texttt{exists\_pow\_lt\_of\_lt\_one} on \((\beta J\,2d)^{\mathrm{dist}-1}\)).
+(via \texttt{exists\_pow\_lt\_of\_lt\_one} on \((\beta J\,2d)^{\mathrm{dist}-1}\)).  Its
+topological form
+\texttt{correlationInfinite\_latticeGraph\_tendsto\_cofinite\_zero\_of\_betaJ\_two\_d\_lt\_one}
+states that \(y\mapsto\langle\sigma_0\sigma_y\rangle^\infty\) tends to \(0\) along the
+cofinite filter (the \(C_0\) clustering property), via finiteness of lattice balls.
 The same reverse-triangle step continues while the separation from \(j\) stays \(\ge2\);
 the obstruction is the
 distance-\(2\) base case (a neighbour can be \emph{adjacent} to \(j\), bounded only by

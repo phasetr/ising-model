@@ -431,5 +431,40 @@ theorem correlationInfinite_latticeGraph_uniform_decay_of_betaJ_two_d_lt_one
     (d := d) hβJ_pos.le (IsingModel.latticeDistance d i j - 1) i j (by omega)).trans ?_
   exact (pow_le_pow_of_le_one hB_pos.le hht.le (by omega)).trans hK.le
 
+/-- **Axiom-free cofinite clustering under `βJ·2d < 1`**: in the elementary
+high-temperature regime `βJ·2d < 1` (with `β, J > 0`, `d ≥ 1`), the infinite-volume
+correlation kernel `y ↦ ⟨σ_0σ_y⟩^∞` over the cubic exhaustion tends to `0` along the
+cofinite filter (the `C₀` clustering property): for every `ε > 0` only finitely many `y`
+have `⟨σ_0σ_y⟩^∞ ≥ ε`.
+
+From the axiom-free uniform decay
+`correlationInfinite_latticeGraph_uniform_decay_of_betaJ_two_d_lt_one`, the set
+`{y | ⟨σ_0σ_y⟩^∞ ≥ ε}` is contained in the finite lattice ball
+`{y | dist(0,y) < R}` (`latticeDistance_le_finite`). No shell-contraction axiom. -/
+theorem correlationInfinite_latticeGraph_tendsto_cofinite_zero_of_betaJ_two_d_lt_one
+    (d : ℕ) (hd : 1 ≤ d) {J β : ℝ} (hJ_pos : 0 < J) (hβ_pos : 0 < β)
+    (hht : β * J * (2 * d) < 1) :
+    Filter.Tendsto
+      (fun y => correlationInfinite (IsingModel.latticeGraph d) (cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) {(0 : Fin d → ℤ), y})
+      Filter.cofinite (nhds 0) := by
+  have hf : Ferromagnetic (⟨J, 0, β⟩ : IsingParams ℝ) := ⟨hJ_pos.le, le_refl 0, hβ_pos⟩
+  rw [Metric.tendsto_nhds]
+  intro ε hε
+  obtain ⟨R, hR⟩ := correlationInfinite_latticeGraph_uniform_decay_of_betaJ_two_d_lt_one
+    d hd hJ_pos hβ_pos hht (ε / 2) (by linarith)
+  rw [Filter.eventually_cofinite]
+  refine Set.Finite.subset (IsingModel.latticeDistance_le_finite d 0 R) ?_
+  intro y hy
+  simp only [Set.mem_setOf_eq] at hy ⊢
+  by_contra hcontra
+  have hge : R ≤ IsingModel.latticeDistance d 0 y := le_of_lt (not_le.mp hcontra)
+  have hcorr_le := hR 0 y hge
+  have hcorr_nn := correlationInfinite_nonneg (IsingModel.latticeGraph d) (cubicExhaustion d)
+    (⟨J, 0, β⟩ : IsingParams ℝ) hf {(0 : Fin d → ℤ), y}
+  apply hy
+  rw [Real.dist_eq, sub_zero, abs_of_nonneg hcorr_nn]
+  linarith
+
 end Ambient
 end IsingModel
