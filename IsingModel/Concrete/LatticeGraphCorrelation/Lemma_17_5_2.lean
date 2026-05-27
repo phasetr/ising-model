@@ -19,6 +19,8 @@ import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.DiniFiniteHLS
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.DiniConcreteCapstone
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.PseudoMassFromParamsCubicSandwich
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.IncrementCapstone
+import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.CubicDerivativeProfileLebowitz
+import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.CubicDerivativeProfileInfiniteVolume
 
 /-!
 # GJ §17.5 Lemma 17.5.2 capstone
