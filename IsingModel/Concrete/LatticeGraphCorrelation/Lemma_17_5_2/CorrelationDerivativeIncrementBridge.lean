@@ -14,8 +14,10 @@ boundary circle, then their real β-derivatives differ by at most `B / R`:
 `dist(∂_β ⟨σ^A⟩_{G₁}, ∂_β ⟨σ^A⟩_{G₂}) ≤ B / R`.
 
 This reduces the GJ §17.5 Lemma 17.5.2 capstone `hincr` (the β-derivative increment over
-consecutive cubic-exhaustion stages) to its single remaining hard core: a **complex
-boundary-circle bound** `B` on the value increment `⟨σ^A⟩_{G₁} − ⟨σ^A⟩_{G₂}` (a
+consecutive cubic-exhaustion stages) to its remaining **complex** inputs: a zero-free
+closed disc `closedBall β R` of a usable radius `R` (uniform across the stages — real-axis
+positivity gives only local, graph-dependent zero-freeness) **together with** a
+boundary-circle bound `B` on the value increment `⟨σ^A⟩_{G₁} − ⟨σ^A⟩_{G₂}` (a
 complex/Lee-Yang-region Simon-Lieb estimate).
 
 References:
