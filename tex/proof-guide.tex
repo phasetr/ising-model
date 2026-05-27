@@ -13092,6 +13092,21 @@ terms over the new shell edges of a stage (far from $x,z$, so the cross products
 decay) in the $\beta$-derivative increment analysis.
 \end{proposition}
 
+\begin{proposition}[\texttt{IsingModel.hasDerivAt\_scaledBoltzmannWeight\_beta} and
+\texttt{hasDerivAt\_scaledPartitionFunction\_beta} (Issue \#2965 Phase C, mixed
+$\partial_\beta\partial_s$ route)]
+The $s$-coupling-scaled Boltzmann weight
+$\mathrm{scaledBoltzmannWeight}\,G\,E_0\,\langle J,0,\beta\rangle\,s\,\sigma
+=\mathrm{boltzmannWeight}\cdot\exp(-\beta(1-s)J\sum_{E_0}\sigma_e)$ depends on
+$\beta$ through both factors; by the product rule its $\beta$-derivative is
+$(-H-(1-s)J\sum_e\sigma_e)\cdot\mathrm{scaledBoltzmannWeight}$, $H$ the Hamiltonian.
+The scaled partition function's $\beta$-derivative is the termwise sum. These are
+the first two pieces of the scaled-correlation $\beta$-derivative chain — the mixed
+$\partial_\beta\partial_s$ route expressing the finite-volume $\beta$-derivative
+increment as a shell sum (no interior edges, avoiding the stage-edge
+correspondence).
+\end{proposition}
+
 \begin{theorem}[\texttt{IsingModel.Ambient.ursell\_shell\_sum\_le\_card\_pow}
 (geometric bound on the new-shell-edge Ursell sum, Issue \#2965 Phase C, Part B)]
 For $d\ge1$, ferromagnetic $h=0$, high temperature ($\mathrm{cf}<1$), interior
