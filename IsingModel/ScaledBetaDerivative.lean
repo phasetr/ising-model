@@ -562,8 +562,9 @@ the per-edge covariance sum
 (`scaledCovariance_const_mul_right`, `scaledCovariance_sum_right`). This is the
 structural input for the coupling-difference term `[Cov_0 − Cov_1](σ^A, H)` of the
 β-derivative increment decomposition: it rewrites that hard core as a sum over all
-edges of per-edge covariance differences `Cov_0(σ^A,σ_e) − Cov_1(σ^A,σ_e)`, whose
-bulk contributions cancel. -/
+edges of per-edge covariance differences `Cov_0(σ^A,σ_e) − Cov_1(σ^A,σ_e)`. In the
+intended cut-set application the bulk contributions are expected to cancel between
+`s=0` and `s=1` (a later quantitative step, not established by this lemma). -/
 theorem scaledCovariance_spinProduct_hamiltonian_eq_neg_J_edge_sum (G : SimpleGraph ι)
     [Fintype G.edgeSet] (E₀ : Finset (Sym2 ι)) (J β : ℝ) (s : ℝ) (A : Finset ι) :
     scaledCovariance G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) s (spinProduct A)
@@ -582,9 +583,11 @@ Phase C, `h=0`). The hard core of the β-derivative increment decomposition,
 `[Cov_0(σ^A, H) − Cov_1(σ^A, H)]`, equals
 `−J·∑_{e∈edges} [Cov_0(σ^A,σ_e) − Cov_1(σ^A,σ_e)]`. Subtracting the per-edge sum
 representation `scaledCovariance_spinProduct_hamiltonian_eq_neg_J_edge_sum` at the two
-endpoints `s=0` (bond-deleted) and `s=1` (full). The bulk edges (far from the cut
-shell) cancel between `s=0` and `s=1`, leaving a shell-localized contribution — the
-remaining quantitative input toward the geometric per-stage β-derivative increment. -/
+endpoints `s=0` and `s=1` (in the intended bond-deletion application, `s=0` is the
+bond-deleted graph and `s=1` the full graph). In that application the bulk edges (far
+from the cut shell) are expected to cancel between `s=0` and `s=1`, leaving a
+shell-localized contribution — the remaining quantitative input (not established here)
+toward the geometric per-stage β-derivative increment. -/
 theorem scaledCovariance_coupling_difference_eq_neg_J_edge_sum (G : SimpleGraph ι)
     [Fintype G.edgeSet] (E₀ : Finset (Sym2 ι)) (J β : ℝ) (A : Finset ι) :
     scaledCovariance G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) 0 (spinProduct A)
