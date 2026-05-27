@@ -12847,6 +12847,30 @@ subtype pair. The edge-set \texttt{Fintype} hypotheses of the abstract increment
 discharged from finiteness of the box subtype (\texttt{Fintype.ofFinite}).
 \end{proof}
 
+\begin{proposition}[\texttt{IsingModel.derivBound\_le\_of\_correlation\_le}
+(Phase A$\to$B link, Issue \#2965)]
+If a symmetric, nonnegative $c\colon\iota\times\iota\to\mathbb{R}$ dominates every
+two-point correlation, $\langle\sigma_a\sigma_b\rangle_G\le c(a,b)$, then
+\[
+  \mathrm{derivBound}\,G\,E_0\,r\,s
+  \le \beta J\sum_{\{k,l\}\in E_0}\bigl(c(r,k)c(s,l)+c(r,l)c(s,k)+c(r,s)c(k,l)\bigr).
+\]
+Each summand of $\mathrm{derivBound}$ is a sum of three products of nonnegative
+correlations (\texttt{gks\_first}), so the products are monotone under the pointwise
+bound. This separates the boundary-sum decay step: one may later substitute
+$c(a,b)=$ an infinite-volume decay bound (through the finite-volume $\le$
+infinite-volume monotonicity
+\texttt{correlationAlongExhaustion\_le\_correlationInfinite}) without re-touching the
+$\mathrm{derivBound}$ edge-sum algebra, isolating the divergent-prefactor-sensitive
+decay analysis downstream.
+\end{proposition}
+
+\begin{proof}
+Unfold $\mathrm{derivBound}$, pull out the nonnegative factor $\beta J$, and compare
+the edge sums termwise; on each edge $\{k,l\}$ apply $\mathtt{mul\_le\_mul}$ to each of
+the three products using $0\le\langle\cdot\rangle\le c$.
+\end{proof}
+
 \begin{theorem}[\texttt{IsingModel.correlation\_inducedGraph\_deleteEdges\_union\_inl}
 (Phase A component-factorization capstone, Finset route)]
 For a region $S\subseteq W$, deleting the cut edges between $S$ and its complement

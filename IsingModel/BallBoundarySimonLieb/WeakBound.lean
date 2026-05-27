@@ -271,6 +271,35 @@ theorem derivBound_le_card (G : SimpleGraph ι) [Fintype G.edgeSet]
         linarith
     _ = 3 * E₀.card := by rw [Finset.sum_const, nsmul_eq_mul]; ring
 
+/-- **`derivBound` monotonicity under correlation upper bounds**: if a symmetric,
+nonnegative function `c : ι → ι → ℝ` dominates every two-point correlation
+(`correlation G p {a,b} ≤ c a b`), then `derivBound` is dominated by the same
+edge sum with each correlation replaced by `c`. Each summand is a sum of three
+products of correlations, all nonnegative (`gks_first`), so the products are
+monotone under the pointwise bound. This separates the boundary-sum decay step
+(Issue #2965, Phase A→B link): one may later substitute `c a b =` an
+infinite-volume decay bound (via finite-volume ≤ infinite-volume monotonicity)
+without re-touching the `derivBound` algebra. -/
+theorem derivBound_le_of_correlation_le (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (E₀ : Finset (Sym2 ι)) (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    (r s : ι) (c : ι → ι → ℝ) (hcsymm : ∀ a b, c a b = c b a)
+    (hc_nonneg : ∀ a b, 0 ≤ c a b)
+    (hcorr : ∀ a b, correlation G p {a, b} ≤ c a b) :
+    derivBound G E₀ p r s
+      ≤ p.β * p.J * ∑ e ∈ E₀, Sym2.lift ⟨fun k l =>
+          c r k * c s l + c r l * c s k + c r s * c k l,
+          fun k l => by simp only [hcsymm k l]; ring⟩ e := by
+  unfold derivBound
+  apply mul_le_mul_of_nonneg_left _ (mul_nonneg hf.hβ.le hf.hJ)
+  apply Finset.sum_le_sum
+  intro e _he
+  obtain ⟨⟨k, l⟩, rfl⟩ := Quot.exists_rep e
+  simp only [Sym2.lift_mk]
+  refine add_le_add (add_le_add ?_ ?_) ?_
+  · exact mul_le_mul (hcorr r k) (hcorr s l) (gks_first G p hf _) (hc_nonneg r k)
+  · exact mul_le_mul (hcorr r l) (hcorr s k) (gks_first G p hf _) (hc_nonneg r l)
+  · exact mul_le_mul (hcorr r s) (hcorr k l) (gks_first G p hf _) (hc_nonneg r s)
+
 /-- **Concrete bond-deletion increment cardinality bound**: combining
 `correlation_sub_deleteEdges_le_derivBound` with `derivBound_le_card`, adding the
 bond set `E₀` raises `⟨σ_r σ_s⟩` by at most `β·J·(3·|E₀|)` — a coarse a-priori
