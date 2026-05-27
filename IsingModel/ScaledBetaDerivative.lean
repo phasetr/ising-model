@@ -554,4 +554,53 @@ theorem scaledCovariance_zero_edgeSpin_le_lebowitz_full (G : SimpleGraph ι)
     (mul_le_mul (hbd {x, u}) (hbd {z, v}) (gks_first _ _ hf _) (gks_first _ _ hf _))
     (mul_le_mul (hbd {x, v}) (hbd {z, u}) (gks_first _ _ hf _) (gks_first _ _ hf _))
 
+/-- **Energy covariance as a per-edge covariance sum** (Issue #2965, Phase C, `h=0`).
+For zero external field the Hamiltonian is the pure interaction energy
+`H = −J·∑_{e∈edges} σ_e`, so the scaled covariance of `σ^A` with `H` decomposes into
+the per-edge covariance sum
+`Cov_s(σ^A, H) = −J·∑_{e∈edges} Cov_s(σ^A, σ_e)`. Pure linearity
+(`scaledCovariance_const_mul_right`, `scaledCovariance_sum_right`). This is the
+structural input for the coupling-difference term `[Cov_0 − Cov_1](σ^A, H)` of the
+β-derivative increment decomposition: it rewrites that hard core as a sum over all
+edges of per-edge covariance differences `Cov_0(σ^A,σ_e) − Cov_1(σ^A,σ_e)`. In the
+intended cut-set application the bulk contributions are expected to cancel between
+`s=0` and `s=1` (a later quantitative step, not established by this lemma). -/
+theorem scaledCovariance_spinProduct_hamiltonian_eq_neg_J_edge_sum (G : SimpleGraph ι)
+    [Fintype G.edgeSet] (E₀ : Finset (Sym2 ι)) (J β : ℝ) (s : ℝ) (A : Finset ι) :
+    scaledCovariance G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) s (spinProduct A)
+        (hamiltonian G (⟨J, 0, β⟩ : IsingParams ℝ))
+      = -J * ∑ e ∈ G.edgeFinset,
+          scaledCovariance G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) s (spinProduct A)
+            (fun σ => edgeSpin (K := ℝ) σ e) := by
+  have hH : hamiltonian G (⟨J, 0, β⟩ : IsingParams ℝ)
+      = fun σ => -J * ∑ e ∈ G.edgeFinset, edgeSpin (K := ℝ) σ e := by
+    funext σ
+    simp [hamiltonian, interactionEnergy, externalFieldEnergy]
+  rw [hH, scaledCovariance_const_mul_right, scaledCovariance_sum_right]
+
+/-- **Coupling difference as a per-edge covariance-difference sum** (Issue #2965,
+Phase C, `h=0`). The hard core of the β-derivative increment decomposition,
+`[Cov_0(σ^A, H) − Cov_1(σ^A, H)]`, equals
+`−J·∑_{e∈edges} [Cov_0(σ^A,σ_e) − Cov_1(σ^A,σ_e)]`. Subtracting the per-edge sum
+representation `scaledCovariance_spinProduct_hamiltonian_eq_neg_J_edge_sum` at the two
+endpoints `s=0` and `s=1` (in the intended bond-deletion application, `s=0` is the
+bond-deleted graph and `s=1` the full graph). In that application the bulk edges (far
+from the cut shell) are expected to cancel between `s=0` and `s=1`, leaving a
+shell-localized contribution — the remaining quantitative input (not established here)
+toward the geometric per-stage β-derivative increment. -/
+theorem scaledCovariance_coupling_difference_eq_neg_J_edge_sum (G : SimpleGraph ι)
+    [Fintype G.edgeSet] (E₀ : Finset (Sym2 ι)) (J β : ℝ) (A : Finset ι) :
+    scaledCovariance G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) 0 (spinProduct A)
+          (hamiltonian G (⟨J, 0, β⟩ : IsingParams ℝ)) -
+        scaledCovariance G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) 1 (spinProduct A)
+          (hamiltonian G (⟨J, 0, β⟩ : IsingParams ℝ))
+      = -J * ∑ e ∈ G.edgeFinset,
+          (scaledCovariance G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) 0 (spinProduct A)
+              (fun σ => edgeSpin (K := ℝ) σ e) -
+            scaledCovariance G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) 1 (spinProduct A)
+              (fun σ => edgeSpin (K := ℝ) σ e)) := by
+  rw [scaledCovariance_spinProduct_hamiltonian_eq_neg_J_edge_sum,
+    scaledCovariance_spinProduct_hamiltonian_eq_neg_J_edge_sum,
+    Finset.sum_sub_distrib, mul_sub]
+
 end IsingModel
