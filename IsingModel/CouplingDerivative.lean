@@ -284,6 +284,8 @@ private theorem hasDerivAt_scaledGibbsExpectation (G : SimpleGraph ι) [Fintype 
 /-! ## Helper lemmas -/
 
 omit [Fintype ι] in
+/-- **Edge spin as a pair spin product**: for distinct endpoints `i ≠ j`, the edge
+spin `edgeSpin σ s(i,j)` equals the spin product `spinProduct {i,j} σ = σ_i·σ_j`. -/
 lemma edgeSpin_quot_eq_spinProduct'
     {i j : ι} (hij : i ≠ j) (σ : Config ι) :
     edgeSpin (K := ℝ) σ (Quot.mk _ (i, j) : Sym2 ι) = spinProduct {i, j} σ := by
