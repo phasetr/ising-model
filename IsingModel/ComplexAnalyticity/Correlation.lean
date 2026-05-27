@@ -1,4 +1,5 @@
 import IsingModel.ComplexAnalyticity.Basic
+import Mathlib.Analysis.Calculus.DiffContOnCl
 
 /-!
 # Complex-parameter correlation function and its β-analyticity (Issue #3026)
@@ -103,5 +104,44 @@ theorem correlation_ofReal_eq_correlationComplex
   rw [Complex.ofReal_mul, Complex.ofReal_inv,
     partitionFunction_ofReal_eq_partitionFunctionComplex G p,
     gibbsNumerator_ofReal_eq_gibbsNumeratorComplex G p A]
+
+open Metric in
+/-- **`correlationComplex` is `DiffContOnCl` on a disc where the partition function is
+nonvanishing** (Issue #3026). If the complex partition function is nonzero on the closed
+disc `closedBall β₀ R` (`R > 0`), then `correlationComplex` is differentiable on the open
+disc and continuous up to the boundary, i.e. `DiffContOnCl ℂ · (ball β₀ R)` — the exact
+hypothesis of the Cauchy-estimate derivative bridge `abs_deriv_le_of_complex_extension`.
+Follows from `correlationComplex_analyticAt_beta` at each point of the closed disc and
+`DifferentiableOn.diffContOnCl` (`closure (ball) = closedBall`). -/
+theorem correlationComplex_diffContOnCl_beta (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (A : Finset ι) (J h : ℂ) (β₀ : ℂ) {R : ℝ} (hR : 0 < R)
+    (hZ : ∀ z ∈ closedBall β₀ R, partitionFunctionComplex G J h z ≠ 0) :
+    DiffContOnCl ℂ (fun β => correlationComplex G A J h β) (ball β₀ R) := by
+  apply DifferentiableOn.diffContOnCl
+  rw [closure_ball β₀ (ne_of_gt hR)]
+  intro z hz
+  exact (correlationComplex_analyticAt_beta G A J h z (hZ z hz)).differentiableAt
+    |>.differentiableWithinAt
+
+open Metric in
+/-- **`correlationComplex` is `DiffContOnCl` on a small disc centered at a real
+inverse temperature** (Issue #3026). At real parameters `p : IsingParams ℝ` the complex
+partition function at `↑p.β` equals `↑(partitionFunction G p) ≠ 0`; by continuity it is
+nonvanishing on a small closed disc, so `correlationComplex` is `DiffContOnCl` there.
+This produces a concrete disc on which the Cauchy-estimate derivative bridge applies. -/
+theorem correlationComplex_diffContOnCl_beta_of_real (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (A : Finset ι) (p : IsingParams ℝ) :
+    ∃ R > 0, DiffContOnCl ℂ (fun β => correlationComplex G A (p.J : ℂ) (p.h : ℂ) β)
+      (ball (p.β : ℂ) R) := by
+  have hZ0 : partitionFunctionComplex G (p.J : ℂ) (p.h : ℂ) (p.β : ℂ) ≠ 0 := by
+    rw [← partitionFunction_ofReal_eq_partitionFunctionComplex G p]
+    exact Complex.ofReal_ne_zero.mpr (partitionFunction_ne_zero G p)
+  have hcont : ContinuousAt (fun β => partitionFunctionComplex G (p.J : ℂ) (p.h : ℂ) β)
+      (p.β : ℂ) :=
+    (partitionFunctionComplex_analyticAt_beta G (p.J : ℂ) (p.h : ℂ) (p.β : ℂ)).continuousAt
+  have hev : ∀ᶠ z in nhds (p.β : ℂ), partitionFunctionComplex G (p.J : ℂ) (p.h : ℂ) z ≠ 0 :=
+    hcont.eventually_ne hZ0
+  obtain ⟨R, hR, hball⟩ := Metric.nhds_basis_closedBall.eventually_iff.mp hev
+  exact ⟨R, hR, correlationComplex_diffContOnCl_beta G A (p.J : ℂ) (p.h : ℂ) (p.β : ℂ) hR hball⟩
 
 end IsingModel

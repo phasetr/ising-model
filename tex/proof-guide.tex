@@ -13240,6 +13240,21 @@ $Z>0$), the finite-volume correlation, hence the value increment $c_k-c_{k+1}$,
 extends complex-analytically in $\beta$.
 \end{theorem}
 
+\begin{theorem}[\texttt{IsingModel.correlationComplex\_diffContOnCl\_beta} and
+\texttt{\_of\_real} (complex correlation is \texttt{DiffContOnCl} on a nonvanishing disc,
+Issue \#3026)]
+If $Z_{\mathbb{C}}\ne0$ on the closed disc $\overline{B}(\beta_0,R)$ ($R>0$), then
+$\langle\sigma^A\rangle_{\mathbb{C}}$ is \texttt{DiffContOnCl}~$\mathbb{C}$ on
+$B(\beta_0,R)$ (differentiable on the open disc, continuous up to the boundary) — exactly
+the hypothesis of the Cauchy bridge \texttt{abs\_deriv\_le\_of\_complex\_extension}, via
+\texttt{correlationComplex\_analyticAt\_beta} at each point of the closed disc and
+\texttt{DifferentiableOn.diffContOnCl} ($\overline{B(\beta_0,R)}=\overline{B}(\beta_0,R)$).
+The real-axis corollary: at real parameters $p$, since
+$Z_{\mathbb{C}}(\uparrow\!p.\beta)=\uparrow\!(Z\,p)\ne0$, by continuity there is $R>0$ with
+$\langle\sigma^A\rangle_{\mathbb{C}}$ \texttt{DiffContOnCl} on $B(\uparrow\!p.\beta,R)$ — a
+concrete disc on which the Cauchy bridge applies.
+\end{theorem}
+
 \begin{theorem}[\texttt{IsingModel.Ambient.abs\_deriv\_le\_of\_complex\_extension} and
 \texttt{dist\_deriv\_le\_of\_complex\_extension} (Cauchy-estimate derivative bridge, Issue \#3026)]
 If a real function $g:\mathbb{R}\to\mathbb{R}$ is the real part of a complex-analytic
