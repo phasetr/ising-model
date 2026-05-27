@@ -13121,6 +13121,24 @@ $g_k'(\beta)=\int_0^1\partial_\beta\partial_s\,\mathrm{scaledCorrelation}\,ds$ a
 shell sum.
 \end{proposition}
 
+\begin{proposition}[\texttt{IsingModel.hasDerivAt\_scaledCorrelation\_truncated\_beta}
+(Issue \#2965 Phase C, mixed route)]
+With the $\beta$-log-derivative $D(\sigma)=-H(\sigma)-(1-s)J\sum_{E_0}\sigma_e$, the
+$\beta$-derivative of one scaled truncated (Ursell-like) summand is
+\[
+  \partial_\beta\bigl[\langle\sigma^B\rangle_s-\langle\sigma^A\rangle_s\langle\sigma^C\rangle_s\bigr]
+  = \bigl(\langle\sigma^B D\rangle_s-\langle\sigma^B\rangle_s\langle D\rangle_s\bigr)
+    -\bigl[(\langle\sigma^A D\rangle_s-\langle\sigma^A\rangle_s\langle D\rangle_s)\langle\sigma^C\rangle_s
+      +\langle\sigma^A\rangle_s(\langle\sigma^C D\rangle_s-\langle\sigma^C\rangle_s\langle D\rangle_s)\bigr],
+\]
+from \texttt{hasDerivAt\_scaledCorrelation\_beta} at $B,A,C$ via the difference and
+product rules. Each summand of
+$\partial_s\,\mathrm{scaledCorrelation}=\beta J\sum_{E_0}[\langle\sigma^{A\triangle\{u,v\}}\rangle_s
+-\langle\sigma^A\rangle_s\langle\sigma_u\sigma_v\rangle_s]$ has this form, so this is
+the per-edge building block of the mixed $\partial_\beta\partial_s$ derivative over
+the cut shell.
+\end{proposition}
+
 \begin{theorem}[\texttt{IsingModel.Ambient.ursell\_shell\_sum\_le\_card\_pow}
 (geometric bound on the new-shell-edge Ursell sum, Issue \#2965 Phase C, Part B)]
 For $d\ge1$, ferromagnetic $h=0$, high temperature ($\mathrm{cf}<1$), interior
