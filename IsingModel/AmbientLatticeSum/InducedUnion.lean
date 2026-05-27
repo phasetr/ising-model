@@ -520,7 +520,7 @@ omit [DecidableEq V] in
 `inducedGraph G S`. An edge survives iff its (deep) endpoints are `G`-adjacent and
 both in `S`. This is the graph-level foundation for instantiating the per-stage
 increment on cubic exhaustion stages `box_k ⊆ box_{k+1}` (Issue #2965, Phase A);
-the correlation-level transport is a follow-up. -/
+the correlation-level transport is `correlation_inducedGraph_induce_preimage` below. -/
 theorem inducedGraph_induce_preimage_map_eq (G : SimpleGraph V) {S T : Finset V}
     (hST : S ⊆ T) :
     ((inducedGraph G T).induce {x : (↑T : Type _) | x.val ∈ S}).map
