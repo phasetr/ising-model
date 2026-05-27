@@ -465,4 +465,33 @@ theorem scaledCovariance_zero_eq_bondDeleted (G : SimpleGraph ι) [Fintype G.edg
   rw [scaledGibbsExpectation_zero G E₀ hE₀_sub, scaledGibbsExpectation_zero G E₀ hE₀_sub,
     scaledGibbsExpectation_zero G E₀ hE₀_sub]
 
+/-- **Per-edge shell covariance equals the bond-deleted Ursell function** (Issue
+#2965, Phase C): for a non-degenerate edge `s(u,v)` (`u ≠ v`), the `s=0` covariance
+of `σ^A` with the edge spin is the truncated two-point/Ursell function of the
+bond-deleted graph:
+`Cov_0(σ^A, σ_uσ_v) = ⟨σ^{A △ {u,v}}⟩_{bd} − ⟨σ^A⟩_{bd}·⟨σ_uσ_v⟩_{bd}`.
+Composes `scaledCovariance_zero_eq_bondDeleted` (#3017), `edgeSpin = spinProduct`,
+`spinProduct_mul` (`σ^A·σ_{u,v} = σ^{A△{u,v}}`), and `correlation =
+gibbsExpectation ∘ spinProduct`. This puts each summand of the localized shell term
+`J·∑_{e∈E₀} Cov_0(σ^A, σ_e)` into the standard truncated-correlation form, where the
+Lebowitz cross bound (`summand_le_lebowitz_of_disjoint`) and the Part-B spatial
+decay apply on the bond-deleted graph. -/
+theorem scaledCovariance_zero_edgeSpin_eq_bondDeleted_ursell (G : SimpleGraph ι)
+    [Fintype G.edgeSet] (E₀ : Finset (Sym2 ι)) (hE₀_sub : E₀ ⊆ G.edgeFinset)
+    (p : IsingParams ℝ) (A : Finset ι) {u v : ι} (huv : u ≠ v)
+    [Fintype (G.deleteEdges ↑E₀).edgeSet] :
+    scaledCovariance G E₀ p 0 (spinProduct A)
+        (fun σ => edgeSpin (K := ℝ) σ (Quot.mk _ (u, v)))
+      = correlation (G.deleteEdges ↑E₀) p (symmDiff A {u, v})
+        - correlation (G.deleteEdges ↑E₀) p A * correlation (G.deleteEdges ↑E₀) p {u, v} := by
+  rw [scaledCovariance_zero_eq_bondDeleted G E₀ hE₀_sub]
+  have hfk : (fun σ => spinProduct A σ * edgeSpin (K := ℝ) σ (Quot.mk _ (u, v)))
+      = spinProduct (symmDiff A {u, v}) := by
+    funext σ
+    rw [edgeSpin_quot_eq_spinProduct' huv, spinProduct_mul]
+  have hk : (fun σ => edgeSpin (K := ℝ) σ (Quot.mk _ (u, v))) = spinProduct {u, v} := by
+    funext σ; rw [edgeSpin_quot_eq_spinProduct' huv]
+  rw [hfk, hk]
+  rfl
+
 end IsingModel
