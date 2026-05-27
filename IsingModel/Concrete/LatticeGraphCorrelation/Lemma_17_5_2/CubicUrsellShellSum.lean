@@ -50,7 +50,6 @@ theorem correlationInfinite_fresh_le (d : ℕ) (hd : 1 ≤ d) (r₀ : ℕ) (J β
     (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) hf rfl hα hxw).trans
     (cf_pow_fresh_le (⟨J, 0, β⟩ : IsingParams ℝ) hf hα hx hRk hw1 hw2)
 
-set_option linter.unusedVariables false in
 /-- **Geometric bound on the new-shell-edge Ursell sum** (Issue #2965, Phase C):
 for `d ≥ 1`, ferromagnetic `h = 0`, high temperature (`cf < 1`), interior sites
 `x, z ∈ box_R` (`R ≤ k`, `x ≠ z`) lying on no cut edge of the `box_k`-slice, the sum
@@ -88,7 +87,7 @@ theorem ursell_shell_sum_le_card_pow (d : ℕ) (hd : 1 ≤ d) (r₀ : ℕ) (J β
           (straddlePred ((cubicBox d k).subtype (· ∈ cubicBox d (k + 1))))).card •
         (2 * contractionFactor d (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) r₀ ^
           ((k + 1 - R) / (r₀ + 2))) := by
-  set cf := contractionFactor d (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) r₀ with hcf
+  set cf := contractionFactor d (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) r₀
   have hxk1 : x ∈ cubicBox d (k + 1) := cubicBox_mono d (by omega) hx
   have hzk1 : z ∈ cubicBox d (k + 1) := cubicBox_mono d (by omega) hz
   have hle1 : ∀ a b : Fin d → ℤ,
