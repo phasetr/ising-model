@@ -8535,7 +8535,13 @@ axiom-free boundary two-point convolution summability
 \(\sum_z\langle\sigma_x\sigma_z\rangle^\infty\langle\sigma_y\sigma_z\rangle^\infty<\infty\)
 (the GJ §17.5 boundary-sum ingredient for the convergence-rate coupling, Issue \#2965
 Phase B), composing the axiom-free decay with the generic
-\texttt{summable\_truncated2Infinite\_prod\_of\_hasExponentialDecay}.
+\texttt{summable\_truncated2Infinite\_prod\_of\_hasExponentialDecay}.  The quantitative form
+\texttt{tsum\_truncated2Infinite\_prod\_decay\_of\_betaJ\_two\_d\_lt\_one} strengthens this to
+exponential decay of the convolution in \(\mathrm{dist}(x,y)\):
+\(\sum_z\langle\sigma_x\sigma_z\rangle^\infty\langle\sigma_y\sigma_z\rangle^\infty
+\le C\exp(-(\mathrm{rate}/2)\,\mathrm{dist}(x,y)/2)\) with
+\(\mathrm{rate}=-\log(\beta J\,2d)\), via the Step 127 bound
+\texttt{tsum\_truncated2Infinite\_prod\_le}.
 The same reverse-triangle step continues while the separation from \(j\) stays \(\ge2\);
 the obstruction is the
 distance-\(2\) base case (a neighbour can be \emph{adjacent} to \(j\), bounded only by
