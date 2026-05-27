@@ -1,4 +1,5 @@
 import IsingModel.BallBoundarySimonLieb.WeakBound
+import IsingModel.BallBoundarySimonLieb.Tight
 import IsingModel.AmbientLatticeSum.InducedUnion
 
 /-!
@@ -235,6 +236,97 @@ theorem correlation_pair_two_box_le_derivBound (G : SimpleGraph V) {T₁ T₂ : 
   have hrs' : (⟨r, hsub hr₁⟩ : (↑T₂ : Type _)) ≠ ⟨s, hsub hs₁⟩ := by
     simpa [Subtype.ext_iff] using hrs
   have h1 := correlation_pair_sub_inducedGraph_le_derivBound (inducedGraph G T₂)
+    (T₁.subtype (· ∈ T₂)) p hf hh ⟨r, hsub hr₁⟩ ⟨s, hsub hs₁⟩
+    (Finset.mem_subtype.mpr hr₁) (Finset.mem_subtype.mpr hs₁) hrs' hsep
+  rw [← pair_map_nestedFinsetEquiv_symm hsub hr₁ hs₁,
+    correlation_inducedGraph_nested_finset G hsub p {⟨r, hr₁⟩, ⟨s, hs₁⟩}] at h1
+  exact h1
+
+set_option linter.unusedFintypeInType false in
+/-- **Tight numeric per-stage correlation increment**: tight analogue of
+`correlation_pair_sub_inducedGraph_le_derivBound` bounding the same single-box
+increment by the *tight* `derivBoundTight` (cross products only, no diagonal
+`⟨σ_r σ_s⟩·⟨σ_k σ_l⟩` term). Composes `correlation_sub_deleteEdges_le_derivBoundTight`
+with `correlation_deleteEdges_filter_pair_eq`. Dropping the diagonal term is what
+makes the per-stage exhaustion increment summable under spatial decay (Issue #2965,
+Phase A→B). -/
+theorem correlation_pair_sub_inducedGraph_le_derivBoundTight (G : SimpleGraph V)
+    [Fintype G.edgeSet] (S : Finset V) (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    (hh : p.h = 0) (r s : V) (hr : r ∈ S) (hs : s ∈ S) (hrs : r ≠ s)
+    (hsep : ∀ e ∈ G.edgeFinset.filter (straddlePred S),
+      ¬ Sym2.Mem r e ∧ ¬ Sym2.Mem s e)
+    [Fintype (G.deleteEdges ↑(G.edgeFinset.filter (straddlePred S))).edgeSet]
+    [Fintype (G.deleteEdges {e : Sym2 V | straddlePred S e}).edgeSet]
+    [Fintype (inducedGraph (G.deleteEdges {e : Sym2 V | straddlePred S e}) S).edgeSet]
+    [Fintype (inducedGraph (G.deleteEdges {e : Sym2 V | straddlePred S e}) Sᶜ).edgeSet]
+    [Fintype (((inducedGraph (G.deleteEdges {e : Sym2 V | straddlePred S e}) S).sum
+        (inducedGraph (G.deleteEdges {e : Sym2 V | straddlePred S e}) Sᶜ)).map
+      (Equiv.Finset.union S Sᶜ disjoint_compl_right).toEmbedding).edgeSet]
+    [Fintype (inducedGraph (G.deleteEdges {e : Sym2 V | straddlePred S e}) (S ∪ Sᶜ)).edgeSet]
+    [Fintype ((G.deleteEdges {e : Sym2 V | straddlePred S e}).induce
+      (↑(S ∪ Sᶜ) : Set V)).edgeSet]
+    [Fintype (inducedGraph G S).edgeSet] :
+    correlation G p {r, s}
+        - correlation (inducedGraph G S) p {⟨r, hr⟩, ⟨s, hs⟩}
+      ≤ derivBoundTight G (G.edgeFinset.filter (straddlePred S)) p r s := by
+  have hnd : ∀ e ∈ G.edgeFinset.filter (straddlePred S), ¬ e.IsDiag := fun e he =>
+    G.not_isDiag_of_mem_edgeFinset (Finset.mem_of_mem_filter e he)
+  have h1 := correlation_sub_deleteEdges_le_derivBoundTight G
+    (G.edgeFinset.filter (straddlePred S)) hnd (Finset.filter_subset _ _) p hf hh r s hrs hsep
+  rwa [correlation_deleteEdges_filter_pair_eq G S p hr hs] at h1
+
+set_option linter.unusedFintypeInType false in
+omit [Fintype V] in
+/-- **Tight two-box per-stage correlation increment** (Issue #2965, Phase A→B):
+tight analogue of `correlation_pair_two_box_le_derivBound`, bounding the nested-box
+pair correlation increment by the *tight* `derivBoundTight` over the cut edges of
+the `T₁`-slice. Composes the tight single-box increment
+`correlation_pair_sub_inducedGraph_le_derivBoundTight` with the double-induce
+identification `correlation_inducedGraph_nested_finset`. The cross-product-only
+`derivBoundTight` is what makes the cubic per-stage increment summable. -/
+theorem correlation_pair_two_box_le_derivBoundTight (G : SimpleGraph V) {T₁ T₂ : Finset V}
+    (hsub : T₁ ⊆ T₂) (p : IsingParams ℝ) (hf : Ferromagnetic p) (hh : p.h = 0)
+    {r s : V} (hr₁ : r ∈ T₁) (hs₁ : s ∈ T₁) (hrs : r ≠ s)
+    [Fintype (inducedGraph G T₂).edgeSet]
+    (hsep : ∀ e ∈ (inducedGraph G T₂).edgeFinset.filter
+        (straddlePred (T₁.subtype (· ∈ T₂))),
+      ¬ Sym2.Mem (⟨r, hsub hr₁⟩ : (↑T₂ : Type _)) e ∧
+        ¬ Sym2.Mem (⟨s, hsub hs₁⟩ : (↑T₂ : Type _)) e)
+    [Fintype ((inducedGraph G T₂).deleteEdges
+      ↑((inducedGraph G T₂).edgeFinset.filter
+        (straddlePred (T₁.subtype (· ∈ T₂))))).edgeSet]
+    [Fintype ((inducedGraph G T₂).deleteEdges
+      {e : Sym2 (↑T₂ : Type _) | straddlePred (T₁.subtype (· ∈ T₂)) e}).edgeSet]
+    [Fintype (inducedGraph ((inducedGraph G T₂).deleteEdges
+      {e : Sym2 (↑T₂ : Type _) | straddlePred (T₁.subtype (· ∈ T₂)) e})
+        (T₁.subtype (· ∈ T₂))).edgeSet]
+    [Fintype (inducedGraph ((inducedGraph G T₂).deleteEdges
+      {e : Sym2 (↑T₂ : Type _) | straddlePred (T₁.subtype (· ∈ T₂)) e})
+        (T₁.subtype (· ∈ T₂))ᶜ).edgeSet]
+    [Fintype (((inducedGraph ((inducedGraph G T₂).deleteEdges
+      {e : Sym2 (↑T₂ : Type _) | straddlePred (T₁.subtype (· ∈ T₂)) e})
+        (T₁.subtype (· ∈ T₂))).sum
+      (inducedGraph ((inducedGraph G T₂).deleteEdges
+        {e : Sym2 (↑T₂ : Type _) | straddlePred (T₁.subtype (· ∈ T₂)) e})
+          (T₁.subtype (· ∈ T₂))ᶜ)).map
+      (Equiv.Finset.union (T₁.subtype (· ∈ T₂)) (T₁.subtype (· ∈ T₂))ᶜ
+        disjoint_compl_right).toEmbedding).edgeSet]
+    [Fintype (inducedGraph ((inducedGraph G T₂).deleteEdges
+      {e : Sym2 (↑T₂ : Type _) | straddlePred (T₁.subtype (· ∈ T₂)) e})
+        ((T₁.subtype (· ∈ T₂)) ∪ (T₁.subtype (· ∈ T₂))ᶜ)).edgeSet]
+    [Fintype (((inducedGraph G T₂).deleteEdges
+      {e : Sym2 (↑T₂ : Type _) | straddlePred (T₁.subtype (· ∈ T₂)) e}).induce
+      (↑((T₁.subtype (· ∈ T₂)) ∪ (T₁.subtype (· ∈ T₂))ᶜ) : Set (↑T₂ : Type _))).edgeSet]
+    [Fintype (inducedGraph (inducedGraph G T₂) (T₁.subtype (· ∈ T₂))).edgeSet]
+    [Fintype (inducedGraph G T₁).edgeSet]
+    [Fintype ((inducedGraph G T₁).map (nestedFinsetEquiv hsub).symm.toEmbedding).edgeSet] :
+    correlation (inducedGraph G T₂) p {⟨r, hsub hr₁⟩, ⟨s, hsub hs₁⟩}
+        - correlation (inducedGraph G T₁) p {⟨r, hr₁⟩, ⟨s, hs₁⟩}
+      ≤ derivBoundTight (inducedGraph G T₂) ((inducedGraph G T₂).edgeFinset.filter
+          (straddlePred (T₁.subtype (· ∈ T₂)))) p ⟨r, hsub hr₁⟩ ⟨s, hsub hs₁⟩ := by
+  have hrs' : (⟨r, hsub hr₁⟩ : (↑T₂ : Type _)) ≠ ⟨s, hsub hs₁⟩ := by
+    simpa [Subtype.ext_iff] using hrs
+  have h1 := correlation_pair_sub_inducedGraph_le_derivBoundTight (inducedGraph G T₂)
     (T₁.subtype (· ∈ T₂)) p hf hh ⟨r, hsub hr₁⟩ ⟨s, hsub hs₁⟩
     (Finset.mem_subtype.mpr hr₁) (Finset.mem_subtype.mpr hs₁) hrs' hsep
   rw [← pair_map_nestedFinsetEquiv_symm hsub hr₁ hs₁,
