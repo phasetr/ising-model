@@ -92,5 +92,34 @@ theorem derivBound_inducedGraph_cubic_le_infiniteVolume_sum (d : ℕ)
     (fun α β => correlationInfinite_nonneg (latticeGraph d) (cubicExhaustion d) p hf _)
     (fun α β => correlation_inducedGraph_cubic_le_correlationInfinite d p n α β)
 
+/-- **Tight cubic-shell `derivBoundTight` bounded by an infinite-volume cross sum**
+(Issue #2965, Phase A→B): tight analogue of
+`derivBound_inducedGraph_cubic_le_infiniteVolume_sum` using the
+cross-product-only `derivBoundTight`. For sites `r, s ∈ box_n` and any edge set
+`E₀`, `derivBoundTight … E₀ … ⟨r,_⟩ ⟨s,_⟩` is bounded by `β·J` times the edge sum
+of the infinite-volume cross products `g{r,a}·g{s,b} + g{r,b}·g{s,a}` (no diagonal
+`g{r,s}·g{a,b}` term). Combined with the tight per-stage increment
+`correlationAlongExhaustion_cubic_succ_sub_le_derivBoundTight`, this gives
+`c_{k+1} − c_k` bounded by a **summable** infinite-volume cross boundary sum — the
+diagonal-free form on which the Phase B spatial decay yields a geometric rate. -/
+theorem derivBoundTight_inducedGraph_cubic_le_infiniteVolume_sum (d : ℕ)
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (n : ℕ)
+    (E₀ : Finset (Sym2 (↑(cubicBox d n) : Type _)))
+    {r s : Fin d → ℤ} (hr : r ∈ cubicBox d n) (hs : s ∈ cubicBox d n) :
+    derivBoundTight (inducedGraph (latticeGraph d) (cubicBox d n)) E₀ p ⟨r, hr⟩ ⟨s, hs⟩
+      ≤ p.β * p.J * ∑ e ∈ E₀, Sym2.lift ⟨fun a b =>
+          correlationInfinite (latticeGraph d) (cubicExhaustion d) p {r, a.val} *
+              correlationInfinite (latticeGraph d) (cubicExhaustion d) p {s, b.val} +
+            correlationInfinite (latticeGraph d) (cubicExhaustion d) p {r, b.val} *
+              correlationInfinite (latticeGraph d) (cubicExhaustion d) p {s, a.val},
+          fun a b => by
+            change _ * _ + _ * _ = _ * _ + _ * _
+            ring⟩ e := by
+  exact derivBoundTight_le_of_correlation_le (inducedGraph (latticeGraph d) (cubicBox d n)) E₀ p hf
+    ⟨r, hr⟩ ⟨s, hs⟩
+    (fun α β => correlationInfinite (latticeGraph d) (cubicExhaustion d) p {α.val, β.val})
+    (fun α β => correlationInfinite_nonneg (latticeGraph d) (cubicExhaustion d) p hf _)
+    (fun α β => correlation_inducedGraph_cubic_le_correlationInfinite d p n α β)
+
 end Ambient
 end IsingModel

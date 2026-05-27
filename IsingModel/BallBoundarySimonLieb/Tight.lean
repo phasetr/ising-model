@@ -245,4 +245,111 @@ theorem ball_boundary_simon_lieb_tight (G : SimpleGraph ι) [Fintype G.edgeSet]
       Real.norm_of_nonneg (derivBoundTight_nonneg G E₀ p hf r s)] at hmvt
   linarith
 
+/-- **Tight finite-volume coupling difference bound**: the `s = 1` minus `s = 0`
+scaled-correlation difference is at most the *tight* ball-boundary derivative
+bound `derivBoundTight` (no extra `⟨σ_r σ_s⟩·⟨σ_k σ_l⟩` diagonal term). This is the
+tight analogue of `scaledCorrelation_one_sub_zero_le_derivBound`
+(`WeakBound.lean`); same mean-value argument, but the per-`t` derivative is bounded
+by `derivBoundTight` via `scaledCorrelation_pair_deriv_le_derivBoundTight` (which
+drops the diagonal term using `cor_4_3_3_scaled`). Dropping the diagonal term is
+what makes the resulting per-stage increment *summable* over an exhaustion's cut
+edges (Issue #2965, Phase A→B). -/
+theorem scaledCorrelation_one_sub_zero_le_derivBoundTight (G : SimpleGraph ι)
+    [Fintype G.edgeSet] (E₀ : Finset (Sym2 ι)) (hE₀_nd : ∀ e ∈ E₀, ¬e.IsDiag)
+    (hE₀_sub : E₀ ⊆ G.edgeFinset)
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (hh : p.h = 0)
+    (r s : ι) (hrs : r ≠ s)
+    (hE₀_sep : ∀ e ∈ E₀, ¬ Sym2.Mem r e ∧ ¬ Sym2.Mem s e) :
+    scaledCorrelation G E₀ p 1 {r, s} - scaledCorrelation G E₀ p 0 {r, s}
+      ≤ derivBoundTight G E₀ p r s := by
+  have hderiv : ∀ t ∈ Set.Icc (0 : ℝ) 1,
+      HasDerivWithinAt (fun s' => scaledCorrelation G E₀ p s' {r, s})
+        (p.β * p.J * ∑ e ∈ E₀,
+          Sym2.lift ⟨fun u v =>
+            scaledCorrelation G E₀ p t (symmDiff {r, s} {u, v}) -
+            scaledCorrelation G E₀ p t {r, s} *
+            scaledCorrelation G E₀ p t {u, v},
+          fun u v => by simp [Finset.pair_comm v u]⟩ e)
+        (Set.Icc 0 1) t :=
+    fun t _ => (hasDerivAt_scaledCorrelation G E₀ hE₀_nd p t {r, s}).hasDerivWithinAt
+  have hbound : ∀ t ∈ Set.Ico (0 : ℝ) 1,
+      ‖p.β * p.J * ∑ e ∈ E₀,
+          Sym2.lift ⟨fun u v =>
+            scaledCorrelation G E₀ p t (symmDiff {r, s} {u, v}) -
+            scaledCorrelation G E₀ p t {r, s} *
+            scaledCorrelation G E₀ p t {u, v},
+          fun u v => by simp [Finset.pair_comm v u]⟩ e‖ ≤
+      ‖derivBoundTight G E₀ p r s‖ := by
+    intro t ht
+    rw [Real.norm_of_nonneg
+          (scaledCorrelation_deriv_nonneg' G E₀ hE₀_nd hE₀_sub p hf t ht.1 {r, s}),
+        Real.norm_of_nonneg (derivBoundTight_nonneg G E₀ p hf r s)]
+    exact scaledCorrelation_pair_deriv_le_derivBoundTight G E₀ hE₀_nd hE₀_sub p hf hh r s hrs
+      hE₀_sep t ht.1 ht.2.le
+  have hmvt := norm_image_sub_le_of_norm_deriv_le_segment_01' hderiv hbound
+  rw [Real.norm_of_nonneg (derivBoundTight_nonneg G E₀ p hf r s)] at hmvt
+  calc scaledCorrelation G E₀ p 1 {r, s} - scaledCorrelation G E₀ p 0 {r, s}
+      ≤ |scaledCorrelation G E₀ p 1 {r, s} - scaledCorrelation G E₀ p 0 {r, s}| :=
+        le_abs_self _
+    _ = ‖scaledCorrelation G E₀ p 1 {r, s} - scaledCorrelation G E₀ p 0 {r, s}‖ :=
+        (Real.norm_eq_abs _).symm
+    _ ≤ derivBoundTight G E₀ p r s := hmvt
+
+/-- **Tight bond-deletion correlation increment**: adding the bond set `E₀`
+(with `r, s` on no `E₀`-edge) raises the pair correlation `⟨σ_r σ_s⟩` by at most the
+*tight* ball-boundary derivative bound `derivBoundTight` (cross terms only):
+
+  `correlation G p {r,s} − correlation (G.deleteEdges ↑E₀) p {r,s}
+     ≤ derivBoundTight G E₀ p r s`.
+
+Tight analogue of `correlation_sub_deleteEdges_le_derivBound` (`WeakBound.lean`):
+combines the tight mean-value difference bound with the `s = 0` bond-deleted
+identification `scaledCorrelation_zero`. Because `derivBoundTight` carries only the
+cross products `⟨σ_r σ_k⟩·⟨σ_s σ_l⟩ + ⟨σ_r σ_l⟩·⟨σ_s σ_k⟩` (no diagonal
+`⟨σ_r σ_s⟩·⟨σ_k σ_l⟩` term), the resulting per-stage exhaustion increment is
+summable under spatial decay — the form needed for the volume-convergence rate
+(Issue #2965, Phase A→B). -/
+theorem correlation_sub_deleteEdges_le_derivBoundTight (G : SimpleGraph ι)
+    [Fintype G.edgeSet] (E₀ : Finset (Sym2 ι)) (hE₀_nd : ∀ e ∈ E₀, ¬e.IsDiag)
+    (hE₀_sub : E₀ ⊆ G.edgeFinset) (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    (hh : p.h = 0) (r s : ι) (hrs : r ≠ s)
+    (hE₀_sep : ∀ e ∈ E₀, ¬ Sym2.Mem r e ∧ ¬ Sym2.Mem s e)
+    [Fintype (G.deleteEdges ↑E₀).edgeSet] :
+    correlation G p {r, s} - correlation (G.deleteEdges ↑E₀) p {r, s}
+      ≤ derivBoundTight G E₀ p r s := by
+  have h := scaledCorrelation_one_sub_zero_le_derivBoundTight G E₀ hE₀_nd hE₀_sub p hf hh
+    r s hrs hE₀_sep
+  rwa [scaledCorrelation_one, scaledCorrelation_zero G E₀ hE₀_sub p {r, s}] at h
+
+/-- **`derivBoundTight` monotonicity under correlation upper bounds**: tight
+analogue of `derivBound_le_of_correlation_le`. If a nonnegative
+`c : ι → ι → ℝ` dominates every two-point correlation, then `derivBoundTight` is
+dominated by the same edge sum (cross products only) with each correlation replaced
+by `c`. Each summand is a sum of two products of nonnegative correlations
+(`gks_first`), monotone under the pointwise bound (no symmetry of `c` is needed:
+the cross-product summand is symmetric in `k, l` by `+`-commutativity alone).
+Separates the boundary-sum decay step (Issue #2965, Phase A→B): one may substitute
+`c a b =` an infinite-volume decay bound without re-touching the `derivBoundTight`
+algebra. -/
+theorem derivBoundTight_le_of_correlation_le (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (E₀ : Finset (Sym2 ι)) (p : IsingParams ℝ) (hf : Ferromagnetic p)
+    (r s : ι) (c : ι → ι → ℝ)
+    (hc_nonneg : ∀ a b, 0 ≤ c a b)
+    (hcorr : ∀ a b, correlation G p {a, b} ≤ c a b) :
+    derivBoundTight G E₀ p r s
+      ≤ p.β * p.J * ∑ e ∈ E₀, Sym2.lift ⟨fun k l =>
+          c r k * c s l + c r l * c s k,
+          fun k l => by
+            change c r k * c s l + c r l * c s k = c r l * c s k + c r k * c s l
+            ring⟩ e := by
+  unfold derivBoundTight
+  apply mul_le_mul_of_nonneg_left _ (mul_nonneg hf.hβ.le hf.hJ)
+  apply Finset.sum_le_sum
+  intro e _he
+  obtain ⟨⟨k, l⟩, rfl⟩ := Quot.exists_rep e
+  simp only [Sym2.lift_mk]
+  refine add_le_add ?_ ?_
+  · exact mul_le_mul (hcorr r k) (hcorr s l) (gks_first G p hf _) (hc_nonneg r k)
+  · exact mul_le_mul (hcorr r l) (hcorr s k) (gks_first G p hf _) (hc_nonneg r l)
+
 end IsingModel
