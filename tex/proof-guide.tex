@@ -12901,6 +12901,32 @@ lifted pair via \texttt{liftFinset\_pair}). This isolates the
 divergent-prefactor-sensitive spatial-decay analysis (Phase B) downstream.
 \end{proof}
 
+\begin{remark}[Tight (diagonal-free) per-stage increment chain, Issue \#2965]
+The weak \texttt{derivBound} carries a diagonal term
+$\langle\sigma_r\sigma_s\rangle\langle\sigma_k\sigma_l\rangle$ whose shell sum is
+$\langle\sigma_r\sigma_s\rangle\cdot O(|\partial\mathrm{box}_k|)$, which
+\emph{diverges} with the shell size and so cannot prove convergence of $c_k$. The
+entire increment chain is therefore re-derived with the \emph{tight} ball-boundary
+Simon--Lieb bound \texttt{derivBoundTight} (cross products
+$\langle\sigma_r\sigma_k\rangle\langle\sigma_s\sigma_l\rangle
++\langle\sigma_r\sigma_l\rangle\langle\sigma_s\sigma_k\rangle$ only, via
+\texttt{cor\_4\_3\_3\_scaled}):
+\texttt{scaledCorrelation\_one\_sub\_zero\_le\_derivBoundTight}
+$\to$ \texttt{correlation\_sub\_deleteEdges\_le\_derivBoundTight}
+$\to$ \texttt{correlation\_pair\_sub\_inducedGraph\_le\_derivBoundTight}
+$\to$ \texttt{correlation\_pair\_two\_box\_le\_derivBoundTight}
+$\to$ \texttt{correlationAlongExhaustion\_cubic\_succ\_sub\_le\_derivBoundTight},
+together with \texttt{derivBoundTight\_le\_of\_correlation\_le}
+$\to$ \texttt{derivBoundTight\_inducedGraph\_cubic\_le\_infiniteVolume\_sum}. The
+net diagonal-free bound is
+\[
+  c_{k+1}-c_k \le \beta J\sum_{\{a,b\}\in\text{shell}}
+    \bigl(g(r,a)g(s,b)+g(r,b)g(s,a)\bigr),
+\]
+$g$ the infinite-volume correlation, on which the Phase B spatial decay yields a
+geometric rate.
+\end{remark}
+
 \begin{theorem}[\texttt{IsingModel.correlation\_inducedGraph\_deleteEdges\_union\_inl}
 (Phase A component-factorization capstone, Finset route)]
 For a region $S\subseteq W$, deleting the cut edges between $S$ and its complement
