@@ -109,5 +109,47 @@ theorem correlationInfinite_latticeGraph_le_betaJ_two_d_of_not_adj
         (⟨J, 0, β⟩ : IsingParams ℝ) {k, j})
   simpa using h
 
+/-- **Two-step decay for far pairs**: for a pair `i, j` on `ℤ^d` at lattice distance
+`≥ 3`, applying the one-step bound with the neighbour bound `⟨σ_kσ_j⟩^∞ ≤ βJ·2d`
+(every neighbour `k` of `i` is still non-adjacent to `j`, since
+`dist(k,j) ≥ dist(i,j) − 1 ≥ 2`) gives
+`⟨σ_iσ_j⟩^∞ ≤ (βJ·2d)²`.
+
+This is the second iterate of the prefactor-free Simon–Lieb spatial decay: in the
+strict high-temperature regime `0 ≤ βJ·2d < 1` it squares the contraction factor for
+pairs separated by distance `≥ 3`, the next quantitative decay step toward the
+volume-convergence rate (GJ §17.5, Issue #2931 Phase 3a). -/
+theorem correlationInfinite_latticeGraph_le_betaJ_two_d_sq_of_dist_ge_three
+    {d : ℕ} {β J : ℝ} (hβJ : 0 ≤ β * J)
+    {i j : Fin d → ℤ} (hdist : 3 ≤ latticeDistance d i j) :
+    correlationInfinite (latticeGraph d) (cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) {i, j}
+      ≤ (β * J * (2 * d)) ^ 2 := by
+  have hij : i ≠ j := by
+    intro h; rw [h, latticeDistance_self] at hdist; omega
+  have hnadj : ¬ (latticeGraph d).Adj i j := by
+    rw [latticeGraph_adj_iff_latticeDistance_eq_one]; omega
+  have hC0 : (0 : ℝ) ≤ β * J * (2 * d) := mul_nonneg hβJ (by positivity)
+  have hC : ∀ k ∈ (latticeGraph d).neighborFinset i,
+      correlationInfinite (latticeGraph d) (cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) {k, j} ≤ β * J * (2 * d) := by
+    intro k hk
+    rw [SimpleGraph.mem_neighborFinset] at hk
+    have hik1 : latticeDistance d i k = 1 :=
+      (latticeGraph_adj_iff_latticeDistance_eq_one d i k).mp hk
+    have htri : latticeDistance d i j
+        ≤ latticeDistance d i k + latticeDistance d k j :=
+      latticeDistance_triangle d i k j
+    have hkj : k ≠ j := by
+      intro h; rw [h] at hik1; omega
+    have hknadj : ¬ (latticeGraph d).Adj k j := by
+      rw [latticeGraph_adj_iff_latticeDistance_eq_one]; omega
+    exact correlationInfinite_latticeGraph_le_betaJ_two_d_of_not_adj hβJ hkj hknadj
+  have h := correlationInfinite_latticeGraph_le_of_neighbors_le hβJ hij hnadj hC0 hC
+  calc correlationInfinite (latticeGraph d) (cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) {i, j}
+      ≤ β * J * (2 * d) * (β * J * (2 * d)) := h
+    _ = (β * J * (2 * d)) ^ 2 := by ring
+
 end Ambient
 end IsingModel
