@@ -13168,6 +13168,29 @@ cancellation of the full-energy $\langle\sigma^A H\rangle$ terms between the two
 systems --- the remaining quantitative input of the capstone.
 \end{proposition}
 
+\begin{theorem}[\texttt{IsingModel.hasDerivAt\_scaledCorrelation\_increment\_beta\_decomposed}
+(shell-cancellation decomposition of the $\beta$-derivative increment, Issue \#2965 Phase C)]
+The bond-adding increment $g(\beta)=\langle\sigma^A\rangle_{s=1}-\langle\sigma^A\rangle_{s=0}$
+has $\beta$-derivative
+\[
+  g'(\beta) = \bigl[\mathrm{Cov}_0(\sigma^A,H)-\mathrm{Cov}_1(\sigma^A,H)\bigr]
+    + J\,\mathrm{Cov}_0\!\Bigl(\sigma^A,\textstyle\sum_{E_0}\sigma_e\Bigr),
+\]
+$H$ the full Hamiltonian, $\mathrm{Cov}_s$ the scaled covariance. The second term is
+localized to the cut set $E_0$ (a per-edge truncated-correlation sum,
+\texttt{scaledCovariance\_sum\_right}, bounded by the Part-B shell decay); the first
+is the full-vs-bond-deleted ($s=1$ vs $s=0$) coupling difference of the same energy
+covariance, whose bulk cancels.
+\end{theorem}
+
+\begin{proof}
+Fold \texttt{hasDerivAt\_scaledCorrelation\_increment\_beta} into covariance form,
+apply the endpoint $\beta$-log-derivatives \texttt{betaLogDeriv\_one}
+($D_1=-H$), \texttt{betaLogDeriv\_zero} ($D_0=-H-J\sum_{E_0}\sigma_e$), and the
+covariance second-observable linearity (\texttt{scaledCovariance\_sub\_right},
+\texttt{\_neg\_right}, \texttt{\_const\_mul\_right}); conclude by \texttt{ring}.
+\end{proof}
+
 \begin{theorem}[\texttt{IsingModel.Ambient.ursell\_shell\_sum\_le\_card\_pow}
 (geometric bound on the new-shell-edge Ursell sum, Issue \#2965 Phase C, Part B)]
 For $d\ge1$, ferromagnetic $h=0$, high temperature ($\mathrm{cf}<1$), interior

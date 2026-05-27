@@ -379,4 +379,49 @@ theorem scaledCovariance_sum_right {κ : Type*} (G : SimpleGraph ι) [Fintype G.
         = (fun σ => K a σ + ∑ e ∈ S, K e σ) from by funext σ; rw [Finset.sum_insert ha],
       scaledCovariance_add_right]
 
+/-- **Negation in the second observable of the scaled covariance**:
+`Cov_s(F, -K) = -Cov_s(F, K)`. -/
+theorem scaledCovariance_neg_right (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (E₀ : Finset (Sym2 ι)) (p : IsingParams ℝ) (s : ℝ) (F K : Config ι → ℝ) :
+    scaledCovariance G E₀ p s F (fun σ => - K σ) = - scaledCovariance G E₀ p s F K := by
+  rw [show (fun σ => - K σ) = (fun σ => (-1 : ℝ) * K σ) from by funext σ; ring,
+    scaledCovariance_const_mul_right]
+  ring
+
+/-- **Shell-cancellation decomposition of the β-derivative increment** (Issue #2965,
+Phase C): the bond-adding increment `g(β) = ⟨σ^A⟩_{s=1} − ⟨σ^A⟩_{s=0}` has
+β-derivative
+`g'(β) = [Cov_0(σ^A, H) − Cov_1(σ^A, H)] + J·Cov_0(σ^A, ∑_{E₀}σ_e)`,
+where `H` is the (full) Hamiltonian and `Cov_s` the scaled covariance. The second
+term is localized to the cut set `E₀` (`Cov_0` of the `E₀`-bond energy — a per-edge
+truncated-correlation sum via `scaledCovariance_sum_right`); the first is the
+full-vs-bond-deleted (`s=1` vs `s=0`) coupling difference of the *same* energy
+covariance. Obtained from `hasDerivAt_scaledCorrelation_increment_beta` by folding
+into covariance form, the endpoint β-log-derivatives (`betaLogDeriv_one`,
+`betaLogDeriv_zero`) and the covariance second-observable linearity. The structural
+form on which the capstone's `hincr` bound is built. -/
+theorem hasDerivAt_scaledCorrelation_increment_beta_decomposed (G : SimpleGraph ι)
+    [Fintype G.edgeSet] (E₀ : Finset (Sym2 ι)) (J β : ℝ) (A : Finset ι) :
+    HasDerivAt (fun β' => scaledCorrelation G E₀ (⟨J, 0, β'⟩ : IsingParams ℝ) 1 A
+        - scaledCorrelation G E₀ (⟨J, 0, β'⟩ : IsingParams ℝ) 0 A)
+      ((scaledCovariance G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) 0 (spinProduct A)
+            (fun σ => hamiltonian G (⟨J, 0, β⟩ : IsingParams ℝ) σ) -
+          scaledCovariance G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) 1 (spinProduct A)
+            (fun σ => hamiltonian G (⟨J, 0, β⟩ : IsingParams ℝ) σ)) +
+        J * scaledCovariance G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) 0 (spinProduct A)
+          (fun σ => ∑ e ∈ E₀, edgeSpin (K := ℝ) σ e)) β := by
+  convert hasDerivAt_scaledCorrelation_increment_beta G E₀ J β A using 1
+  change _ = scaledCovariance G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) 1 (spinProduct A)
+        (betaLogDeriv G E₀ J 1 β) -
+      scaledCovariance G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) 0 (spinProduct A)
+        (betaLogDeriv G E₀ J 0 β)
+  rw [betaLogDeriv_one, betaLogDeriv_zero,
+    show (fun σ => - hamiltonian G (⟨J, 0, β⟩ : IsingParams ℝ) σ
+          - J * (∑ e ∈ E₀, edgeSpin (K := ℝ) σ e))
+        = (fun σ => (- hamiltonian G (⟨J, 0, β⟩ : IsingParams ℝ) σ)
+          - (fun σ' => J * (∑ e ∈ E₀, edgeSpin (K := ℝ) σ' e)) σ) from rfl,
+    scaledCovariance_sub_right, scaledCovariance_neg_right, scaledCovariance_neg_right,
+    scaledCovariance_const_mul_right]
+  ring
+
 end IsingModel
