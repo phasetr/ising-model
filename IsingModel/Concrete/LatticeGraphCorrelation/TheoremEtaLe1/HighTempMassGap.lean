@@ -466,5 +466,29 @@ theorem correlationInfinite_latticeGraph_tendsto_cofinite_zero_of_betaJ_two_d_lt
   rw [Real.dist_eq, sub_zero, abs_of_nonneg hcorr_nn]
   linarith
 
+/-- **Axiom-free boundary two-point convolution summability under `βJ·2d < 1`**: for
+`β, J > 0`, `d ≥ 1`, and the elementary condition `βJ·2d < 1`, the boundary product
+`z ↦ ⟨σ_xσ_z⟩^∞ · ⟨σ_yσ_z⟩^∞` (Ursell two-point functions at `h = 0`) is summable over
+`ℤ^d` for all `x, y` — the GJ §17.5 boundary-sum ingredient for the
+finite-volume→infinite-volume convergence-rate coupling (Issue #2965, Phase B).
+
+Composes the axiom-free exponential decay
+`hasExponentialDecay_latticeGraph_of_betaJ_two_d_lt_one` (which supplies both the positive
+rate and the `HasExponentialDecay` predicate) with the generic
+`summable_truncated2Infinite_prod_of_hasExponentialDecay`. No ball-boundary
+shell-contraction axiom and no `(2(r+1)+1)^d` boundary factor. -/
+theorem summable_truncated2Infinite_prod_of_betaJ_two_d_lt_one
+    (d : ℕ) (hd : 1 ≤ d) {J β : ℝ} (hJ_pos : 0 < J) (hβ_pos : 0 < β)
+    (hht : β * J * (2 * d) < 1) (x y : Fin d → ℤ) :
+    Summable (fun z : Fin d → ℤ =>
+        truncated2Infinite (IsingModel.latticeGraph d) (cubicExhaustion d)
+          (⟨J, 0, β⟩ : IsingParams ℝ) x z *
+        truncated2Infinite (IsingModel.latticeGraph d) (cubicExhaustion d)
+          (⟨J, 0, β⟩ : IsingParams ℝ) y z) := by
+  obtain ⟨hrate_pos, hdecay⟩ :=
+    hasExponentialDecay_latticeGraph_of_betaJ_two_d_lt_one d hd hJ_pos hβ_pos hht
+  exact summable_truncated2Infinite_prod_of_hasExponentialDecay hJ_pos.le hβ_pos
+    hrate_pos hdecay x y
+
 end Ambient
 end IsingModel
