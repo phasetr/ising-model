@@ -14,9 +14,18 @@ subgraph on `S`:
 `correlation G p {r,s} − correlation (inducedGraph G S) p {⟨r,_⟩,⟨s,_⟩}
   ≤ derivBound G (G.edgeFinset.filter straddle) p r s`.
 
-## Main declaration
+It then instantiates this on nested finsets `T₁ ⊆ T₂` (via the double-subtype
+relabeling `nestedFinsetEquiv` and the double-induce identification
+`correlation_inducedGraph_nested_finset`) to obtain the two-box per-stage
+increment, the form used on cubic exhaustion stages `box_k ⊆ box_{k+1}` to bound
+`c_{k+1} − c_k`.
 
-* `IsingModel.correlation_pair_sub_inducedGraph_le_derivBound`.
+## Main declarations
+
+* `IsingModel.correlation_pair_sub_inducedGraph_le_derivBound` (single-box).
+* `IsingModel.nestedFinsetEquiv` and
+  `IsingModel.correlation_inducedGraph_nested_finset` (double-induce identification).
+* `IsingModel.correlation_pair_two_box_le_derivBound` (two-box increment).
 -/
 
 namespace IsingModel
