@@ -12880,8 +12880,10 @@ $\mathrm{inducedGraph}\,(\mathrm{latticeGraph}\,d)\,\mathrm{box}_n$,
   \le \beta J\sum_{\{a,b\}\in E_0}\bigl(g(r,a)g(s,b)+g(r,b)g(s,a)+g(r,s)g(a,b)\bigr),
 \]
 where $g(x,y)=\texttt{correlationInfinite}\,(\mathrm{latticeGraph}\,d)\,
-(\mathrm{cubicExhaustion}\,d)\,p\,\{x,y\}$ is the infinite-volume two-point
-function. Combined with the per-stage increment
+(\mathrm{cubicExhaustion}\,d)\,p\,\{x,y\}$ is the infinite-volume pair-set
+correlation (a two-point function for distinct sites; the $\mathrm{Finset}$ pair
+$\{x,y\}$ collapses to a one-site correlation when $x=y$). Combined with the
+per-stage increment
 \texttt{correlationAlongExhaustion\_cubic\_succ\_sub\_le\_derivBound}, it bounds
 $c_{k+1}-c_k$ by an infinite-volume boundary sum.
 \end{theorem}

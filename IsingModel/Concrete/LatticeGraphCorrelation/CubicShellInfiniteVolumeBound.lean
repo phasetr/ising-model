@@ -7,7 +7,9 @@ import IsingModel.Concrete.LatticeGraphCorrelation.UniformMagAlongExConvergenceC
 Bounds the ball-boundary `derivBound` over a cubic-box edge set, evaluated on
 finite-volume correlations of `inducedGraph (latticeGraph d) box_n`, by the same
 edge sum with each finite-volume correlation replaced by its **infinite-volume**
-two-point function `correlationInfinite (latticeGraph d) (cubicExhaustion d)`.
+pair-set correlation `correlationInfinite (latticeGraph d) (cubicExhaustion d)`
+(a two-point function when the two sites are distinct; the `Finset` pair `{x,y}`
+collapses to the one-site correlation when `x = y`).
 
 Composes the abstract monotonicity `derivBound_le_of_correlation_le`
 (`WeakBound.lean`) with the finite-volume ≤ infinite-volume bridge
@@ -59,7 +61,8 @@ theorem correlation_inducedGraph_cubic_le_correlationInfinite (d : ℕ)
 `derivBound … E₀ … ⟨r,_⟩ ⟨s,_⟩` is bounded by `β·J` times the edge sum of the
 infinite-volume Lebowitz products
 `g{r,a}·g{s,b} + g{r,b}·g{s,a} + g{r,s}·g{a,b}`, where
-`g{x,y} = correlationInfinite (latticeGraph d) (cubicExhaustion d) p {x,y}`.
+`g{x,y} = correlationInfinite (latticeGraph d) (cubicExhaustion d) p {x,y}`
+(the infinite-volume pair-set correlation; a two-point function for distinct sites).
 Instantiates `derivBound_le_of_correlation_le` with the infinite-volume bound
 `c α β = g{α.val, β.val}` (symmetric by `Finset.pair_comm`, nonnegative by
 `correlationInfinite_nonneg`, dominating finite-volume correlations by
