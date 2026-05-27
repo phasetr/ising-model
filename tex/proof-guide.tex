@@ -13191,6 +13191,28 @@ covariance second-observable linearity (\texttt{scaledCovariance\_sub\_right},
 \texttt{\_neg\_right}, \texttt{\_const\_mul\_right}); conclude by \texttt{ring}.
 \end{proof}
 
+\begin{theorem}[\texttt{IsingModel.scaledCovariance\_spinProduct\_hamiltonian\_eq\_neg\_J\_edge\_sum}
+and \texttt{\_coupling\_difference\_eq\_neg\_J\_edge\_sum} (energy covariance as a per-edge
+sum, Issue \#2965 Phase C, $h=0$)]
+For zero external field the Hamiltonian is the pure interaction energy
+$H=-J\sum_{e\in\mathrm{edges}}\sigma_e$, so
+\[
+  \mathrm{Cov}_s(\sigma^A,H) = -J\sum_{e\in\mathrm{edges}}\mathrm{Cov}_s(\sigma^A,\sigma_e),
+\]
+and subtracting at the endpoints $s=0$ (bond-deleted) and $s=1$ (full) gives the
+coupling difference
+\[
+  \mathrm{Cov}_0(\sigma^A,H)-\mathrm{Cov}_1(\sigma^A,H)
+    = -J\sum_{e\in\mathrm{edges}}\bigl[\mathrm{Cov}_0(\sigma^A,\sigma_e)
+        -\mathrm{Cov}_1(\sigma^A,\sigma_e)\bigr].
+\]
+Pure second-observable linearity (\texttt{scaledCovariance\_const\_mul\_right},
+\texttt{\_sum\_right}, \texttt{Finset.sum\_sub\_distrib}). This rewrites the hard core of
+the $\beta$-derivative increment decomposition as a sum over all edges of per-edge
+covariance differences, whose bulk contributions (edges far from the cut shell) cancel
+between $s=0$ and $s=1$, leaving a shell-localized contribution.
+\end{theorem}
+
 \begin{theorem}[\texttt{IsingModel.scaledCovariance\_zero\_edgeSpin\_le\_lebowitz}
 and \texttt{\_full} (per-edge shell covariance bounds, Issue \#2965 Phase C)]
 For ferromagnetic $h=0$ and four distinct sites $x,z,u,v$, the $s=0$ summand of the
