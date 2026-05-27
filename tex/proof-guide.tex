@@ -13217,6 +13217,29 @@ coupling-difference summand in terms of correlation increments, the objects whos
 geometric decay is established by the Part-A/B per-stage increment machinery.
 \end{theorem}
 
+\begin{theorem}[\texttt{IsingModel.correlationComplex} and
+\texttt{correlationComplex\_analyticAt\_beta},
+\texttt{correlation\_ofReal\_eq\_correlationComplex} (complex correlation and its
+$\beta$-analyticity, Issue \#3026)]
+The complex-parameter correlation
+\[
+  \langle\sigma^A\rangle_{\mathbb{C}}(J,h,\beta)
+    := Z_{\mathbb{C}}(J,h,\beta)^{-1}\sum_\sigma \sigma^A\,
+        \exp\!\bigl(-\beta\,H_{\mathbb{C}}(\sigma;J,h)\bigr)
+\]
+is analytic in $\beta$ wherever $Z_{\mathbb{C}}\ne0$ (\texttt{AnalyticAt.inv} of
+\texttt{partitionFunctionComplex\_analyticAt\_beta} times the entire numerator
+\texttt{gibbsNumeratorComplex\_analyticAt\_beta}), and agrees with the real correlation on
+the real axis, $\langle\sigma^A\rangle_{\mathbb{C}}(J,h,\beta)=
+\langle\sigma^A\rangle(J,h,\beta)$ (as a real-embedded complex number) for real
+parameters (via \texttt{partitionFunction\_ofReal\_eq\_partitionFunctionComplex} and the
+numerator analogue). This supplies the complex-analytic extension required by the Cauchy-estimate
+derivative bridge: on any $\beta$-neighborhood where the relevant finite-volume
+partition functions are nonzero (in particular near the real axis, where the real
+$Z>0$), the finite-volume correlation, hence the value increment $c_k-c_{k+1}$,
+extends complex-analytically in $\beta$.
+\end{theorem}
+
 \begin{theorem}[\texttt{IsingModel.Ambient.abs\_deriv\_le\_of\_complex\_extension} and
 \texttt{dist\_deriv\_le\_of\_complex\_extension} (Cauchy-estimate derivative bridge, Issue \#3026)]
 If a real function $g:\mathbb{R}\to\mathbb{R}$ is the real part of a complex-analytic
