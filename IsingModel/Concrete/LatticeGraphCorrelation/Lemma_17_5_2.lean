@@ -24,6 +24,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.CubicDerivativeP
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.DerivativeIncrementFormula
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.CubicUrsellShellSum
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.ShellCovarianceInfiniteVolume
+import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.ShellCovarianceShellSum
 
 /-!
 # GJ §17.5 Lemma 17.5.2 capstone
