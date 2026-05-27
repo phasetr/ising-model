@@ -13255,6 +13255,23 @@ $\langle\sigma^A\rangle_{\mathbb{C}}$ \texttt{DiffContOnCl} on $B(\uparrow\!p.\b
 concrete disc on which the Cauchy bridge applies.
 \end{theorem}
 
+\begin{theorem}[\texttt{IsingModel.Ambient.correlationAlongExhaustion\_eq\_correlation\_inducedGraph}
+and \texttt{deriv\_correlationAlongExhaustion\_eq\_inducedGraph} (covered-stage exhaustion
+correlation derivative identity, Issue \#3026)]
+For a covered stage $A\subseteq\Lambda.\mathrm{volume}\,n$,
+\[
+  \mathrm{correlationAlongExhaustion}\,G\,\Lambda\,p\,A\,n
+    = \langle\sigma^{A}\rangle_{\mathrm{inducedGraph}\,G\,(\Lambda.\mathrm{volume}\,n)},
+\]
+the $A\subseteq\Lambda.\mathrm{volume}\,n$ branch (\texttt{dif\_pos}) with $\mathrm{correlation}_\Lambda$
+definitionally the induced-graph correlation. As the coverage condition is independent of
+$\beta$, the identity holds for the $\beta$-family and hence its $\beta$-derivative. This
+rewrites the capstone $\mathtt{hincr}$ — phrased with
+$\mathrm{deriv}(\mathrm{correlationAlongExhaustion}\dots)$ — into the bare induced-graph
+correlation derivatives on the cubic boxes, the form on which
+\texttt{dist\_deriv\_correlation\_le\_of\_complex\_circle\_bound} operates.
+\end{theorem}
+
 \begin{theorem}[\texttt{IsingModel.Ambient.dist\_deriv\_correlation\_le\_of\_complex\_circle\_bound}
 (derivative-increment bridge from a complex circle bound, Issue \#3026)]
 For two finite-volume Ising correlations on graphs $G_1,G_2$ at real parameters $J,h$ and a
