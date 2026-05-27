@@ -13001,10 +13001,32 @@ capstone. The shell cardinality bound $|\mathrm{shell}|\le d\,(2(k+1)+1)^d$
 \begin{proof}
 Chain \texttt{derivBoundTight\_cubic\_shell\_le\_card\_pow} with
 \texttt{cubic\_shell\_card\_le}, bounding $|\mathrm{shell}|\cdot
-2\,\mathrm{cf}^{\dots}$ by $d\,(2(k+1)+1)^d\cdot 2\,\mathrm{cf}^{\dots}$. (Composition
-with the tight per-stage correlation increment is deferred pending a single shared
-\texttt{Fintype} edge-set instance: the two lemmas currently use distinct file-local
-instances, so the shell terms are only \texttt{Subsingleton}-equal.)
+2\,\mathrm{cf}^{\dots}$ by $d\,(2(k+1)+1)^d\cdot 2\,\mathrm{cf}^{\dots}$.
+\end{proof}
+
+\begin{theorem}[\texttt{IsingModel.Ambient.correlationAlongExhaustion\_cubic\_succ\_sub\_le\_poly\_pow}
+(polynomial $\times$ geometric per-stage correlation increment, Issue \#2965 Phase B)]
+Under the same hypotheses, the successive correlation difference along the cubic
+exhaustion satisfies
+\[
+  c_{k+1}-c_k \le \beta J\cdot\bigl(2\,d\,(2(k+1)+1)^d\,\mathrm{cf}^{\,(k+1-R)/(r_0+2)}\bigr),
+\]
+$c_n=\texttt{correlationAlongExhaustion}\,(\mathrm{latticeGraph}\,d)\,
+(\mathrm{cubicExhaustion}\,d)\,p\,\{r,s\}\,n$ — the correlation-side
+$M\,(2k+3)^d\,\mathrm{ratio}^k$ per-stage rate.
+\end{theorem}
+
+\begin{proof}
+Compose the tight per-stage increment
+\texttt{correlationAlongExhaustion\_cubic\_succ\_sub\_le\_derivBoundTight} with
+\texttt{derivBoundTight\_cubic\_shell\_le\_poly\_pow}. The two
+$\mathrm{derivBoundTight}$ shell terms now share the canonical
+$\mathrm{inducedGraph}\,(\mathrm{latticeGraph}\,d)\,\Lambda$ edge-set instance
+(\texttt{LatticeBoundaryBED}): the broad fallback \texttt{Fintype} edge-set instances
+in \texttt{CubicPerStageIncrement}/\texttt{CubicShellInfiniteVolumeBound} are given
+lower priority so the canonical instance is used for the outer induced lattice
+graphs while the fallback still covers the inner \texttt{deleteEdges}/\texttt{sum}
+graphs.
 \end{proof}
 
 \begin{theorem}[\texttt{IsingModel.correlation\_inducedGraph\_deleteEdges\_union\_inl}

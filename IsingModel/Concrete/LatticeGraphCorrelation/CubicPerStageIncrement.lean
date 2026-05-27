@@ -1,5 +1,6 @@
 import IsingModel.AmbientLatticeSum.PerStageIncrement
 import IsingModel.Concrete.CubicExhaustion
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
 # Cubic-exhaustion per-stage correlation increment (Issue #2965, Phase A)
@@ -31,8 +32,13 @@ open Finset
 /-- Edge sets of induced/derived subgraphs over a cubic box subtype are finite
 (the vertex type is a `Fintype`, hence `Sym2` of it is finite). Local instance
 supplying the `Fintype edgeSet` hypotheses of the abstract two-box increment in
-the concrete cubic setting, where they are not synthesised automatically. -/
-noncomputable local instance fintype_edgeSet_of_finite {W : Type*} [Finite W]
+the concrete cubic setting, where they are not synthesised automatically. Given a
+lower priority than the canonical `inducedGraph (latticeGraph d) Λ` edge-set
+instance (`LatticeBoundaryBED`), so the canonical instance is used for the outer
+induced lattice graphs (keeping the per-stage increment's shell coherent with the
+shell-bound lemmas) while this broad fallback still covers the inner
+`deleteEdges`/`sum`/`map` graphs of the abstract increment. -/
+noncomputable local instance (priority := 100) fintype_edgeSet_of_finite {W : Type*} [Finite W]
     (G : SimpleGraph W) : Fintype G.edgeSet :=
   Fintype.ofFinite _
 
