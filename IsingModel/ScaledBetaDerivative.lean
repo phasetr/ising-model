@@ -424,4 +424,28 @@ theorem hasDerivAt_scaledCorrelation_increment_beta_decomposed (G : SimpleGraph 
     scaledCovariance_const_mul_right]
   ring
 
+/-- **β-derivative increment with the shell term as a per-edge covariance sum**
+(Issue #2965, Phase C): expanding the localized cut term of
+`hasDerivAt_scaledCorrelation_increment_beta_decomposed` over the edges
+(`scaledCovariance_sum_right`),
+`g'(β) = [Cov_0(σ^A, H) − Cov_1(σ^A, H)] + J·∑_{e∈E₀} Cov_0(σ^A, σ_e)`.
+The shell term is now a sum of per-edge `s=0` truncated correlations
+`Cov_0(σ^A, σ_e) = ⟨σ^A σ_e⟩_0 − ⟨σ^A⟩_0⟨σ_e⟩_0` over the cut set — directly
+amenable to the Part-B spatial-decay bound (each cut edge has an endpoint far from
+`A = {x,z}`). The first bracket remains the full-vs-bond-deleted coupling
+difference. -/
+theorem hasDerivAt_scaledCorrelation_increment_beta_decomposed_sum (G : SimpleGraph ι)
+    [Fintype G.edgeSet] (E₀ : Finset (Sym2 ι)) (J β : ℝ) (A : Finset ι) :
+    HasDerivAt (fun β' => scaledCorrelation G E₀ (⟨J, 0, β'⟩ : IsingParams ℝ) 1 A
+        - scaledCorrelation G E₀ (⟨J, 0, β'⟩ : IsingParams ℝ) 0 A)
+      ((scaledCovariance G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) 0 (spinProduct A)
+            (fun σ => hamiltonian G (⟨J, 0, β⟩ : IsingParams ℝ) σ) -
+          scaledCovariance G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) 1 (spinProduct A)
+            (fun σ => hamiltonian G (⟨J, 0, β⟩ : IsingParams ℝ) σ)) +
+        J * ∑ e ∈ E₀, scaledCovariance G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) 0 (spinProduct A)
+          (fun σ => edgeSpin (K := ℝ) σ e)) β := by
+  have h := hasDerivAt_scaledCorrelation_increment_beta_decomposed G E₀ J β A
+  rwa [scaledCovariance_sum_right G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) 0 (spinProduct A) E₀
+    (fun e σ => edgeSpin (K := ℝ) σ e)] at h
+
 end IsingModel
