@@ -2,6 +2,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.TheoremEtaLe1.Contraction
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassFoundation
 import IsingModel.AmbientLattice.TruncatedFunctions.TwoPoint
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferSummability
+import IsingModel.Concrete.LatticeGraphCorrelation.SimonLiebDistanceDecay
 
 /-!
 # GJ §17.5 / §17.8 — unconditional high-temperature mass gap on `ℤ^d`
@@ -250,6 +251,55 @@ theorem truncated2Infinite_prod_finset_sum_decay_of_high_temp
         (Ambient.truncated2Infinite_nonneg (IsingModel.latticeGraph d)
           (cubicExhaustion d) _ hf y b))
   exact hpartial.trans (hdecay x y)
+
+/-- **Axiom-free high-temperature exponential decay on `ℤ^d` from `βJ·2d < 1`**: in the
+elementary high-temperature regime `0 < βJ·2d < 1` (with `d ≥ 1`), the infinite-volume
+two-point truncated function over the cubic exhaustion decays exponentially with rate
+`−log(βJ·2d) > 0`:
+`HasExponentialDecay d (cubicExhaustion d) ⟨J,0,β⟩ (−log(βJ·2d))`.
+
+Uses only the iterated naive Simon–Lieb peeling bound
+`correlationInfinite_latticeGraph_le_betaJ_two_d_pow_of_dist_gt`
+(`⟨σ_iσ_j⟩^∞ ≤ (βJ·2d)^{dist−1}`) — no ball-boundary shell-contraction axiom — together
+with `truncated2Infinite_h_zero` (at `h=0` the truncated function is the bare correlation)
+and `correlationInfinite_nonneg`. Rewriting `(βJ·2d)^{dist−1} = (1/βJ·2d)·exp(log(βJ·2d)·dist)`
+gives the constant `C = 1/(βJ·2d)` and rate `−log(βJ·2d)`. This is a cleaner, weaker
+high-temperature condition than the shell-based `hasExponentialDecay_latticeGraph_of_high_temp`
+(no `(2(r+1)+1)^d` boundary factor, no axiom). -/
+theorem hasExponentialDecay_latticeGraph_of_betaJ_two_d_lt_one
+    (d : ℕ) (hd : 1 ≤ d) {J β : ℝ} (hJ_pos : 0 < J) (hβ_pos : 0 < β)
+    (hht : β * J * (2 * d) < 1) :
+    0 < -Real.log (β * J * (2 * d)) ∧
+      HasExponentialDecay d (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ)
+        (-Real.log (β * J * (2 * d))) := by
+  have hf : Ferromagnetic (⟨J, 0, β⟩ : IsingParams ℝ) := ⟨hJ_pos.le, le_refl 0, hβ_pos⟩
+  have hβJ_pos : 0 < β * J := mul_pos hβ_pos hJ_pos
+  have hB_pos : 0 < β * J * (2 * d) := mul_pos hβJ_pos (by positivity)
+  refine ⟨neg_pos.mpr (Real.log_neg hB_pos hht), 1 / (β * J * (2 * d)),
+    by positivity, fun i j hij => ?_⟩
+  have htr : truncated2Infinite (IsingModel.latticeGraph d) (cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) i j
+      = correlationInfinite (IsingModel.latticeGraph d) (cubicExhaustion d)
+          (⟨J, 0, β⟩ : IsingParams ℝ) {i, j} :=
+    truncated2Infinite_h_zero (IsingModel.latticeGraph d) (cubicExhaustion d) J β i j
+  rw [htr, abs_of_nonneg (correlationInfinite_nonneg (IsingModel.latticeGraph d)
+    (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) hf {i, j})]
+  set n := IsingModel.latticeDistance d i j with hn
+  have hn1 : 1 ≤ n :=
+    Nat.pos_of_ne_zero (fun h => hij ((latticeDistance_eq_zero_iff d i j).mp h))
+  have hdecay := correlationInfinite_latticeGraph_le_betaJ_two_d_pow_of_dist_gt
+    (d := d) hβJ_pos.le (n - 1) i j (by omega)
+  have hBn : (β * J * (2 * d)) ^ n
+      = (β * J * (2 * d)) ^ (n - 1) * (β * J * (2 * d)) := by
+    conv_lhs => rw [show n = (n - 1) + 1 by omega]
+    rw [pow_succ]
+  have hexp : (β * J * (2 * d)) ^ n
+      = Real.exp (-(-Real.log (β * J * (2 * d))) * (n : ℝ)) := by
+    rw [neg_neg, ← Real.rpow_natCast (β * J * (2 * d)) n, Real.rpow_def_of_pos hB_pos]
+  have heq : (β * J * (2 * d)) ^ (n - 1)
+      = 1 / (β * J * (2 * d)) * Real.exp (-(-Real.log (β * J * (2 * d))) * (n : ℝ)) := by
+    rw [← hexp, hBn]; field_simp
+  exact hdecay.trans_eq heq
 
 end Ambient
 end IsingModel

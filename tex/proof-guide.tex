@@ -8502,6 +8502,13 @@ obeys \(\langle\sigma_k\sigma_j\rangle^\infty\le\beta J\,2d\), giving
 prefactor-free geometric decay with explicit base \(\beta J\,2d\) (no contraction-factor
 abstraction and no ball-boundary shell axiom), by induction on \(n\) (base \(n=0\) bounds
 by \(1\); each step peels via \texttt{\_le\_of\_neighbors\_le} with \(C=(\beta J\,2d)^n\)).
+Rewriting \((\beta J\,2d)^{\mathrm{dist}-1}=(1/\beta J\,2d)\exp(\log(\beta J\,2d)\,\mathrm{dist})\),
+\texttt{hasExponentialDecay\_latticeGraph\_of\_betaJ\_two\_d\_lt\_one} packages this (for
+\(\beta,J>0\), \(d\ge1\), \(\beta J\,2d<1\)) as both \(0<-\log(\beta J\,2d)\) and
+\(\mathrm{HasExponentialDecay}\,d\,(\mathrm{cubicExhaustion}\,d)\,\langle J,0,\beta\rangle\,
+(-\log(\beta J\,2d))\) --- an axiom-free high-temperature mass gap under the elementary
+condition \(\beta J\,2d<1\) (no \((2(r+1)+1)^d\) boundary factor, no shell-contraction
+axiom), at the cost of the cruder per-step base.
 The same reverse-triangle step continues while the separation from \(j\) stays \(\ge2\);
 the obstruction is the
 distance-\(2\) base case (a neighbour can be \emph{adjacent} to \(j\), bounded only by
