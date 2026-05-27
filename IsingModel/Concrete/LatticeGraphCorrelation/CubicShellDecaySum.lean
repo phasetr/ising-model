@@ -180,5 +180,69 @@ theorem derivBoundTight_cubic_shell_le_card_pow (d : ℕ) (hd : 1 ≤ d) (r₀ :
             (mul_le_mul hrb (hle1 s a.val) (hpow_nonneg _) (hpow_nonneg _))
       _ = 2 * cf ^ ((k + 1 - R) / (r₀ + 2)) := by ring
 
+/-- **Cubic shell edge-count bound**: the number of cut edges of the `box_k`-slice
+inside `box_{k+1}` is at most `d·(2(k+1)+1)^d` (the shell is a subset of the
+induced-graph edge set, which the handshake bound
+`inducedLatticeGraph_card_edgeFinset_le` controls by `d·|box_{k+1}|`, and
+`|box_{k+1}| = (2(k+1)+1)^d` by `card_cubicBox`). -/
+theorem cubic_shell_card_le (d k : ℕ) :
+    (((inducedGraph (latticeGraph d) (cubicBox d (k + 1))).edgeFinset.filter
+        (straddlePred ((cubicBox d k).subtype (· ∈ cubicBox d (k + 1))))).card : ℝ)
+      ≤ (d : ℝ) * (2 * (k + 1) + 1) ^ d := by
+  calc (((inducedGraph (latticeGraph d) (cubicBox d (k + 1))).edgeFinset.filter
+          (straddlePred ((cubicBox d k).subtype (· ∈ cubicBox d (k + 1))))).card : ℝ)
+      ≤ ((inducedGraph (latticeGraph d) (cubicBox d (k + 1))).edgeFinset.card : ℝ) := by
+        exact_mod_cast Finset.card_filter_le _ _
+    _ ≤ (d : ℝ) * Fintype.card (↑(cubicBox d (k + 1)) : Type _) :=
+        inducedLatticeGraph_card_edgeFinset_le d (cubicBox d (k + 1))
+    _ = (d : ℝ) * (2 * (k + 1) + 1) ^ d := by
+        rw [Fintype.card_coe, card_cubicBox]; push_cast; ring
+
+/-- **Geometric per-stage shell bound in polynomial × geometric form** (Issue
+#2965, Phase B): combining the geometric shell bound
+`derivBoundTight_cubic_shell_le_card_pow` with the shell edge-count bound
+`cubic_shell_card_le`, the tight ball-boundary derivative bound over the cubic shell
+is at most `β·J · 2·d·(2(k+1)+1)^d · cf^{(k+1−R)/(r₀+2)}` — a fixed polynomial in
+`k` times a geometric factor `cf^{·/(r₀+2)}` with `cf < 1`, the `M·(2k+3)^d·ratio^k`
+shape required by the volume-convergence-rate capstone. (The downstream chaining
+with the tight per-stage correlation increment
+`correlationAlongExhaustion_cubic_succ_sub_le_derivBoundTight` is deferred pending a
+single shared `Fintype (inducedGraph (latticeGraph d) Λ).edgeSet` instance: that
+lemma and the present file currently introduce distinct file-local instances, so the
+two `derivBoundTight` shell terms are only `Subsingleton`-equal, not syntactically
+composable.) -/
+theorem derivBoundTight_cubic_shell_le_poly_pow (d : ℕ) (hd : 1 ≤ d)
+    (r₀ : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p) (hh : p.h = 0)
+    (hα : contractionFactor d (cubicExhaustion d) p r₀ < 1)
+    (k R : ℕ) (hRk : R ≤ k)
+    {r s : Fin d → ℤ} (hr : r ∈ cubicBox d R) (hs : s ∈ cubicBox d R)
+    (hsep : ∀ e ∈ (inducedGraph (latticeGraph d) (cubicBox d (k + 1))).edgeFinset.filter
+        (straddlePred ((cubicBox d k).subtype (· ∈ cubicBox d (k + 1)))),
+      ¬ Sym2.Mem (⟨r, cubicBox_mono d (by omega) hr⟩ : (↑(cubicBox d (k + 1)) : Type _)) e ∧
+        ¬ Sym2.Mem (⟨s, cubicBox_mono d (by omega) hs⟩ :
+          (↑(cubicBox d (k + 1)) : Type _)) e) :
+    derivBoundTight (inducedGraph (latticeGraph d) (cubicBox d (k + 1)))
+        ((inducedGraph (latticeGraph d) (cubicBox d (k + 1))).edgeFinset.filter
+          (straddlePred ((cubicBox d k).subtype (· ∈ cubicBox d (k + 1))))) p
+        ⟨r, cubicBox_mono d (by omega) hr⟩ ⟨s, cubicBox_mono d (by omega) hs⟩
+      ≤ p.β * p.J * (2 * (d * (2 * (k + 1) + 1) ^ d) *
+          contractionFactor d (cubicExhaustion d) p r₀ ^ ((k + 1 - R) / (r₀ + 2))) := by
+  have h2 := derivBoundTight_cubic_shell_le_card_pow d hd r₀ p hf hh hα k R hRk hr hs hsep
+  have hcard := cubic_shell_card_le d k
+  have hpow_nonneg : 0 ≤ 2 * contractionFactor d (cubicExhaustion d) p r₀ ^
+      ((k + 1 - R) / (r₀ + 2)) :=
+    mul_nonneg (by norm_num)
+      (pow_nonneg (contractionFactor_nonneg d (cubicExhaustion d) p hf r₀) _)
+  have hβJ : 0 ≤ p.β * p.J := mul_nonneg hf.hβ.le hf.hJ
+  refine h2.trans ?_
+  rw [nsmul_eq_mul]
+  apply mul_le_mul_of_nonneg_left _ hβJ
+  calc _
+      ≤ ((d : ℝ) * (2 * (k + 1) + 1) ^ d) *
+          (2 * contractionFactor d (cubicExhaustion d) p r₀ ^ ((k + 1 - R) / (r₀ + 2))) :=
+        mul_le_mul_of_nonneg_right hcard hpow_nonneg
+    _ = 2 * ((d : ℝ) * (2 * (k + 1) + 1) ^ d) *
+          contractionFactor d (cubicExhaustion d) p r₀ ^ ((k + 1 - R) / (r₀ + 2)) := by ring
+
 end Ambient
 end IsingModel
