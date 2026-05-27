@@ -319,4 +319,44 @@ theorem scaledGibbsExpectation_sub (G : SimpleGraph ι) [Fintype G.edgeSet]
     rw [← Finset.sum_sub_distrib]; apply Finset.sum_congr rfl; intro σ _; ring
   rw [h, mul_sub]
 
+/-- **Scaled covariance** of two observables: `Cov_s(F,K) = ⟨F·K⟩_s − ⟨F⟩_s·⟨K⟩_s`.
+The β-derivative of a scaled correlation/Gibbs expectation is `Cov_s(σ^A, D)` with
+`D = betaLogDeriv`, so the β-derivative increment decomposes through covariances. -/
+noncomputable def scaledCovariance (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (E₀ : Finset (Sym2 ι)) (p : IsingParams ℝ) (s : ℝ) (F K : Config ι → ℝ) : ℝ :=
+  scaledGibbsExpectation G E₀ p s (fun σ => F σ * K σ)
+    - scaledGibbsExpectation G E₀ p s F * scaledGibbsExpectation G E₀ p s K
+
+/-- **Additivity of the scaled covariance in the second observable**:
+`Cov_s(F, K₁ + K₂) = Cov_s(F, K₁) + Cov_s(F, K₂)`. -/
+theorem scaledCovariance_add_right (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (E₀ : Finset (Sym2 ι)) (p : IsingParams ℝ) (s : ℝ) (F K₁ K₂ : Config ι → ℝ) :
+    scaledCovariance G E₀ p s F (fun σ => K₁ σ + K₂ σ)
+      = scaledCovariance G E₀ p s F K₁ + scaledCovariance G E₀ p s F K₂ := by
+  unfold scaledCovariance
+  have hFK : (fun σ => F σ * (K₁ σ + K₂ σ)) = (fun σ => F σ * K₁ σ + F σ * K₂ σ) := by
+    funext σ; ring
+  rw [hFK, scaledGibbsExpectation_add, scaledGibbsExpectation_add, mul_add]; ring
+
+/-- **Scalar homogeneity of the scaled covariance in the second observable**:
+`Cov_s(F, c·K) = c·Cov_s(F, K)`. -/
+theorem scaledCovariance_const_mul_right (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (E₀ : Finset (Sym2 ι)) (p : IsingParams ℝ) (s : ℝ) (c : ℝ) (F K : Config ι → ℝ) :
+    scaledCovariance G E₀ p s F (fun σ => c * K σ)
+      = c * scaledCovariance G E₀ p s F K := by
+  unfold scaledCovariance
+  have hFK : (fun σ => F σ * (c * K σ)) = (fun σ => c * (F σ * K σ)) := by funext σ; ring
+  rw [hFK, scaledGibbsExpectation_const_mul, scaledGibbsExpectation_const_mul, mul_sub]; ring
+
+/-- **Subtractivity of the scaled covariance in the second observable**:
+`Cov_s(F, K₁ − K₂) = Cov_s(F, K₁) − Cov_s(F, K₂)`. -/
+theorem scaledCovariance_sub_right (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (E₀ : Finset (Sym2 ι)) (p : IsingParams ℝ) (s : ℝ) (F K₁ K₂ : Config ι → ℝ) :
+    scaledCovariance G E₀ p s F (fun σ => K₁ σ - K₂ σ)
+      = scaledCovariance G E₀ p s F K₁ - scaledCovariance G E₀ p s F K₂ := by
+  unfold scaledCovariance
+  have hFK : (fun σ => F σ * (K₁ σ - K₂ σ)) = (fun σ => F σ * K₁ σ - F σ * K₂ σ) := by
+    funext σ; ring
+  rw [hFK, scaledGibbsExpectation_sub, scaledGibbsExpectation_sub, mul_sub]; ring
+
 end IsingModel
