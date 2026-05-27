@@ -163,7 +163,7 @@ theorem hasDerivAt_scaledCorrelation_beta (G : SimpleGraph ι) [Fintype G.edgeSe
 
 /-- Abbreviation: the per-configuration β-log-derivative of the scaled weight,
 `D σ = -H σ - (1-s)J·∑_{E₀} σ_e`. -/
-private noncomputable def betaLogDeriv (G : SimpleGraph ι) [Fintype G.edgeSet]
+noncomputable def betaLogDeriv (G : SimpleGraph ι) [Fintype G.edgeSet]
     (E₀ : Finset (Sym2 ι)) (J s β : ℝ) (σ : Config ι) : ℝ :=
   - hamiltonian G (⟨J, 0, β⟩ : IsingParams ℝ) σ - (1 - s) * J * (∑ e ∈ E₀, edgeSpin (K := ℝ) σ e)
 
@@ -200,5 +200,36 @@ theorem hasDerivAt_scaledCorrelation_truncated_beta (G : SimpleGraph ι) [Fintyp
   have hA := hasDerivAt_scaledCorrelation_beta G E₀ J s β A
   have hC := hasDerivAt_scaledCorrelation_beta G E₀ J s β C
   exact hB.sub (hA.mul hC)
+
+/-- **β-derivative of a truncated scaled Gibbs expression** `⟨F₁⟩_s − ⟨F₂⟩_s·⟨F₃⟩_s`
+for arbitrary observables, via `hasDerivAt_scaledGibbsExpectation_beta` and the
+difference/product rules (`D = betaLogDeriv`). Generalises
+`hasDerivAt_scaledCorrelation_truncated_beta`; specialised to `F₁ = σ^A·W`,
+`F₂ = σ^A`, `F₃ = W` (`W = ∑_{E₀}σ_e`) it is the inner factor of the mixed
+`∂_β∂_s` derivative, since the `s`-derivative of the scaled correlation is
+`βJ·(⟨σ^A·W⟩_s − ⟨σ^A⟩_s⟨W⟩_s)`. -/
+theorem hasDerivAt_scaledGibbs_truncated_beta (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (E₀ : Finset (Sym2 ι)) (J s β : ℝ) (F₁ F₂ F₃ : Config ι → ℝ) :
+    HasDerivAt (fun β' => scaledGibbsExpectation G E₀ (⟨J, 0, β'⟩ : IsingParams ℝ) s F₁
+        - scaledGibbsExpectation G E₀ (⟨J, 0, β'⟩ : IsingParams ℝ) s F₂ *
+          scaledGibbsExpectation G E₀ (⟨J, 0, β'⟩ : IsingParams ℝ) s F₃)
+      ((scaledGibbsExpectation G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) s
+            (fun σ => F₁ σ * betaLogDeriv G E₀ J s β σ) -
+          scaledGibbsExpectation G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) s F₁ *
+            scaledGibbsExpectation G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) s (betaLogDeriv G E₀ J s β)) -
+        ((scaledGibbsExpectation G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) s
+              (fun σ => F₂ σ * betaLogDeriv G E₀ J s β σ) -
+            scaledGibbsExpectation G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) s F₂ *
+              scaledGibbsExpectation G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) s (betaLogDeriv G E₀ J s β)) *
+            scaledGibbsExpectation G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) s F₃ +
+          scaledGibbsExpectation G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) s F₂ *
+            (scaledGibbsExpectation G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) s
+                (fun σ => F₃ σ * betaLogDeriv G E₀ J s β σ) -
+              scaledGibbsExpectation G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) s F₃ *
+                scaledGibbsExpectation G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) s
+                  (betaLogDeriv G E₀ J s β)))) β :=
+  (hasDerivAt_scaledGibbsExpectation_beta G E₀ J s β F₁).sub
+    ((hasDerivAt_scaledGibbsExpectation_beta G E₀ J s β F₂).mul
+      (hasDerivAt_scaledGibbsExpectation_beta G E₀ J s β F₃))
 
 end IsingModel
