@@ -8489,9 +8489,17 @@ Simon--Lieb peeling inequality and the degree bound
 non-adjacent pair under \(0\le\beta J\)
 (\texttt{correlationInfinite\_latticeGraph\_le\_betaJ\_two\_d\_of\_not\_adj}), a
 contraction factor \(<1\) in the strict high-temperature regime
-\(0\le\beta J\,2d<1\).  Naive single-vertex peeling does \emph{not} iterate to a
-genuine distance decay (at distance \(2\) it still only yields \(\beta J\,2d\),
-and no \(\le\beta J\,2d\) bound holds for adjacent pairs); prefactor-free
+\(0\le\beta J\,2d<1\).  The second iterate
+(\texttt{correlationInfinite\_latticeGraph\_le\_betaJ\_two\_d\_sq\_of\_dist\_ge\_three})
+shows naive peeling \emph{does} iterate once the separation is large enough: for
+\(\mathrm{dist}(i,j)\ge3\) every neighbour \(k\) of \(i\) has
+\(\mathrm{dist}(k,j)\ge\mathrm{dist}(i,j)-1\ge2\), hence is non-adjacent to \(j\) and
+obeys \(\langle\sigma_k\sigma_j\rangle^\infty\le\beta J\,2d\), giving
+\(\langle\sigma_i\sigma_j\rangle^\infty\le(\beta J\,2d)^2\).  The same reverse-triangle
+step continues while the separation from \(j\) stays \(\ge2\); the obstruction is the
+distance-\(2\) base case (a neighbour can be \emph{adjacent} to \(j\), bounded only by
+\(1\), with no \(\le\beta J\,2d\) bound for adjacent pairs), which caps the gain near
+\(j\).  A clean prefactor-free
 exponential distance decay instead requires the separating-surface
 (ball-boundary) Simon--Lieb argument applied to cubic shells.  That spatial decay
 is in fact already available via the shell iteration
