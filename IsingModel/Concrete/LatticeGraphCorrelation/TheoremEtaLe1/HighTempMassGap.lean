@@ -404,5 +404,32 @@ theorem correlationInfinite_latticeGraph_susceptibility_summable_betaJ_two_d_bas
     (f := fun z => correlationInfinite (IsingModel.latticeGraph d) (cubicExhaustion d)
       (⟨J, 0, β⟩ : IsingParams ℝ) {(0 : Fin d → ℤ), z})).mpr hbase
 
+/-- **Axiom-free uniform clustering decay under `βJ·2d < 1`**: in the elementary
+high-temperature regime `βJ·2d < 1` (with `β, J > 0`, `d ≥ 1`), the infinite-volume
+two-point function decays uniformly in the separation — for every `ε > 0` there is a
+radius `R` with `⟨σ_iσ_j⟩^∞ ≤ ε` whenever `dist(i,j) ≥ R`.
+
+Since `0 ≤ βJ·2d < 1`, `exists_pow_lt_of_lt_one` provides `K` with `(βJ·2d)^K < ε`;
+taking `R = K + 1`, any pair with `dist ≥ R` has `dist − 1 ≥ K` and `i ≠ j`, so the
+iterated peeling bound `correlationInfinite_latticeGraph_le_betaJ_two_d_pow_of_dist_gt`
+gives `⟨σ_iσ_j⟩^∞ ≤ (βJ·2d)^{dist−1} ≤ (βJ·2d)^K < ε`. No shell-contraction axiom. -/
+theorem correlationInfinite_latticeGraph_uniform_decay_of_betaJ_two_d_lt_one
+    (d : ℕ) (hd : 1 ≤ d) {J β : ℝ} (hJ_pos : 0 < J) (hβ_pos : 0 < β)
+    (hht : β * J * (2 * d) < 1) :
+    ∀ ε > (0 : ℝ), ∃ R : ℕ, ∀ i j : Fin d → ℤ,
+      R ≤ IsingModel.latticeDistance d i j →
+        correlationInfinite (IsingModel.latticeGraph d) (cubicExhaustion d)
+          (⟨J, 0, β⟩ : IsingParams ℝ) {i, j} ≤ ε := by
+  have hβJ_pos : 0 < β * J := mul_pos hβ_pos hJ_pos
+  have hB_pos : 0 < β * J * (2 * d) := mul_pos hβJ_pos (by positivity)
+  intro ε hε
+  obtain ⟨K, hK⟩ := exists_pow_lt_of_lt_one hε hht
+  refine ⟨K + 1, fun i j hdist => ?_⟩
+  have hij : i ≠ j := fun h => by
+    rw [h, IsingModel.latticeDistance_self] at hdist; omega
+  refine (correlationInfinite_latticeGraph_le_betaJ_two_d_pow_of_dist_gt
+    (d := d) hβJ_pos.le (IsingModel.latticeDistance d i j - 1) i j (by omega)).trans ?_
+  exact (pow_le_pow_of_le_one hB_pos.le hht.le (by omega)).trans hK.le
+
 end Ambient
 end IsingModel
