@@ -151,5 +151,59 @@ theorem correlationInfinite_latticeGraph_le_betaJ_two_d_sq_of_dist_ge_three
       ≤ β * J * (2 * d) * (β * J * (2 * d)) := h
     _ = (β * J * (2 * d)) ^ 2 := by ring
 
+/-- **Iterated naive Simon–Lieb geometric decay**: for any `n` and a pair `i, j` on
+`ℤ^d` at lattice distance `≥ n + 1`,
+`⟨σ_iσ_j⟩^∞ ≤ (βJ·2d)^n`.
+Equivalently, `⟨σ_iσ_j⟩^∞ ≤ (βJ·2d)^{dist(i,j) − 1}`: the naive single-vertex peeling
+iterates `dist − 1` times, the final step (a neighbour at distance `1` from `j`, i.e.
+adjacent) contributing the base factor `1` rather than `βJ·2d`.
+
+Proof by induction on `n`. Base `n = 0`: `(βJ·2d)^0 = 1` bounds every correlation. Step:
+for `dist(i,j) ≥ n + 2`, each neighbour `k` of `i` has `dist(k,j) ≥ n + 1` (reverse
+triangle), so the inductive hypothesis gives `⟨σ_kσ_j⟩^∞ ≤ (βJ·2d)^n`; the one-step
+peeling bound `correlationInfinite_latticeGraph_le_of_neighbors_le` with `C = (βJ·2d)^n`
+then yields `(βJ·2d)^{n+1}`.
+
+This is the prefactor-free geometric decay obtained purely from the integer-lattice
+Simon–Lieb peeling, with explicit base `βJ·2d` (no contraction-factor abstraction and no
+ball-boundary shell-contraction axiom); in the strict high-temperature regime
+`0 ≤ βJ·2d < 1` it is genuine exponential distance decay (GJ §17.5, Issue #2931). -/
+theorem correlationInfinite_latticeGraph_le_betaJ_two_d_pow_of_dist_gt
+    {d : ℕ} {β J : ℝ} (hβJ : 0 ≤ β * J) :
+    ∀ (n : ℕ) (i j : Fin d → ℤ), n + 1 ≤ latticeDistance d i j →
+      correlationInfinite (latticeGraph d) (cubicExhaustion d)
+          (⟨J, 0, β⟩ : IsingParams ℝ) {i, j}
+        ≤ (β * J * (2 * d)) ^ n := by
+  have hbase : (0 : ℝ) ≤ β * J * (2 * d) := mul_nonneg hβJ (by positivity)
+  intro n
+  induction n with
+  | zero =>
+    intro i j _
+    simpa using correlationInfinite_le_one (latticeGraph d) (cubicExhaustion d)
+      (⟨J, 0, β⟩ : IsingParams ℝ) {i, j}
+  | succ m ih =>
+    intro i j hdist
+    have hij : i ≠ j := by
+      intro h; rw [h, latticeDistance_self] at hdist; omega
+    have hnadj : ¬ (latticeGraph d).Adj i j := by
+      rw [latticeGraph_adj_iff_latticeDistance_eq_one]; omega
+    have hC : ∀ k ∈ (latticeGraph d).neighborFinset i,
+        correlationInfinite (latticeGraph d) (cubicExhaustion d)
+          (⟨J, 0, β⟩ : IsingParams ℝ) {k, j} ≤ (β * J * (2 * d)) ^ m := by
+      intro k hk
+      rw [SimpleGraph.mem_neighborFinset] at hk
+      have hik1 : latticeDistance d i k = 1 :=
+        (latticeGraph_adj_iff_latticeDistance_eq_one d i k).mp hk
+      have htri : latticeDistance d i j
+          ≤ latticeDistance d i k + latticeDistance d k j :=
+        latticeDistance_triangle d i k j
+      exact ih k j (by omega)
+    have h := correlationInfinite_latticeGraph_le_of_neighbors_le hβJ hij hnadj
+      (pow_nonneg hbase m) hC
+    calc correlationInfinite (latticeGraph d) (cubicExhaustion d)
+          (⟨J, 0, β⟩ : IsingParams ℝ) {i, j}
+        ≤ β * J * (2 * d) * (β * J * (2 * d)) ^ m := h
+      _ = (β * J * (2 * d)) ^ (m + 1) := by rw [pow_succ]; ring
+
 end Ambient
 end IsingModel
