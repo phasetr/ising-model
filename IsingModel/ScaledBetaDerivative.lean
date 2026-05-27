@@ -232,4 +232,31 @@ theorem hasDerivAt_scaledGibbs_truncated_beta (G : SimpleGraph ι) [Fintype G.ed
     ((hasDerivAt_scaledGibbsExpectation_beta G E₀ J s β F₂).mul
       (hasDerivAt_scaledGibbsExpectation_beta G E₀ J s β F₃))
 
+/-- **β-derivative of the bond-adding (`s=1` minus `s=0`) scaled-correlation
+increment**: the increment `g(β) = ⟨σ^A⟩_{s=1} − ⟨σ^A⟩_{s=0}` (full minus
+bond-deleted correlation, via `scaledCorrelation_one`/`scaledCorrelation_zero`) has
+β-derivative the difference of the two β-derivatives
+(`hasDerivAt_scaledCorrelation_beta` at `s=1` and `s=0`), with `D_s = betaLogDeriv`
+(`D_1 = -H`, `D_0 = -H - J·∑_{E₀}σ_e`):
+`g'(β) = [⟨σ^A·D_1⟩_1 − ⟨σ^A⟩_1⟨D_1⟩_1] − [⟨σ^A·D_0⟩_0 − ⟨σ^A⟩_0⟨D_0⟩_0]`.
+This is the explicit per-stage β-derivative increment `F_{k+1}(β) − F_k(β)`
+(`s=1`/`s=0` identifying the full box and bond-deleted/inner-box correlations); its
+bound — controlled by the shell cancellation of the full-energy terms — is the
+remaining quantitative input of the GJ §17.5 Lemma 17.5.2 capstone (`hincr`). -/
+theorem hasDerivAt_scaledCorrelation_increment_beta (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (E₀ : Finset (Sym2 ι)) (J β : ℝ) (A : Finset ι) :
+    HasDerivAt (fun β' => scaledCorrelation G E₀ (⟨J, 0, β'⟩ : IsingParams ℝ) 1 A
+        - scaledCorrelation G E₀ (⟨J, 0, β'⟩ : IsingParams ℝ) 0 A)
+      ((scaledGibbsExpectation G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) 1
+            (fun σ => spinProduct A σ * betaLogDeriv G E₀ J 1 β σ) -
+          scaledCorrelation G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) 1 A *
+            scaledGibbsExpectation G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) 1 (betaLogDeriv G E₀ J 1 β)) -
+        (scaledGibbsExpectation G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) 0
+            (fun σ => spinProduct A σ * betaLogDeriv G E₀ J 0 β σ) -
+          scaledCorrelation G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) 0 A *
+            scaledGibbsExpectation G E₀ (⟨J, 0, β⟩ : IsingParams ℝ) 0
+              (betaLogDeriv G E₀ J 0 β))) β :=
+  (hasDerivAt_scaledCorrelation_beta G E₀ J 1 β A).sub
+    (hasDerivAt_scaledCorrelation_beta G E₀ J 0 β A)
+
 end IsingModel
