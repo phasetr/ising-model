@@ -334,5 +334,42 @@ theorem latticeMass_pos_of_betaJ_two_d_lt_one
   exact lt_of_lt_of_le (ENNReal.ofReal_pos.mpr hrate_pos)
     (latticeMass_ge_of_betaJ_two_d_lt_one d hd hJ_pos hβ_pos hht)
 
+/-- **Axiom-free finite susceptibility under `βJ·2d < 1`**: for `β, J > 0`, `d ≥ 1`, and
+the elementary high-temperature condition `βJ·2d < 1`, the infinite-volume correlation
+kernel `y ↦ ⟨σ_0σ_y⟩^∞` over the cubic exhaustion is summable over `ℤ^d`
+(finite magnetic susceptibility `χ = ∑_y ⟨σ_0σ_y⟩^∞`).
+
+The iterated naive Simon–Lieb decay
+`correlationInfinite_latticeGraph_le_betaJ_two_d_pow_of_dist_gt`
+(`⟨σ_0σ_y⟩^∞ ≤ (βJ·2d)^{dist−1}` for `y ≠ 0`) is dominated by the summable majorant
+`(βJ·2d)^{⌊dist/2⌋}` (`summable_pow_div_latticeDistance d 0`), using
+`⌊dist/2⌋ ≤ dist − 1` for `dist ≥ 1` and `βJ·2d ≤ 1`; the `y = 0` term is `≤ 1 = (βJ·2d)^0`.
+No ball-boundary shell-contraction axiom and no `(2(r+1)+1)^d` boundary factor. -/
+theorem correlationInfinite_latticeGraph_susceptibility_summable_betaJ_two_d
+    (d : ℕ) (hd : 1 ≤ d) {J β : ℝ} (hJ_pos : 0 < J) (hβ_pos : 0 < β)
+    (hht : β * J * (2 * d) < 1) :
+    Summable (fun y => correlationInfinite (IsingModel.latticeGraph d) (cubicExhaustion d)
+      (⟨J, 0, β⟩ : IsingParams ℝ) {(0 : Fin d → ℤ), y}) := by
+  have hf : Ferromagnetic (⟨J, 0, β⟩ : IsingParams ℝ) := ⟨hJ_pos.le, le_refl 0, hβ_pos⟩
+  have hβJ_pos : 0 < β * J := mul_pos hβ_pos hJ_pos
+  have hB_pos : 0 < β * J * (2 * d) := mul_pos hβJ_pos (by positivity)
+  have hmaj : Summable (fun y : Fin d → ℤ =>
+      (β * J * (2 * d)) ^ (IsingModel.latticeDistance d 0 y / (0 + 2))) :=
+    summable_pow_div_latticeDistance d 0 hB_pos hht
+  refine Summable.of_nonneg_of_le
+    (fun y => correlationInfinite_nonneg (IsingModel.latticeGraph d) (cubicExhaustion d)
+      (⟨J, 0, β⟩ : IsingParams ℝ) hf _)
+    (fun y => ?_) hmaj
+  by_cases hy : y = 0
+  · subst hy
+    rw [IsingModel.latticeDistance_self]
+    simpa using correlationInfinite_le_one (IsingModel.latticeGraph d) (cubicExhaustion d)
+      (⟨J, 0, β⟩ : IsingParams ℝ) {(0 : Fin d → ℤ), (0 : Fin d → ℤ)}
+  · have hn1 : 1 ≤ IsingModel.latticeDistance d 0 y :=
+      Nat.pos_of_ne_zero (fun h => hy ((latticeDistance_eq_zero_iff d 0 y).mp h).symm)
+    refine (correlationInfinite_latticeGraph_le_betaJ_two_d_pow_of_dist_gt
+      (d := d) hβJ_pos.le (IsingModel.latticeDistance d 0 y - 1) 0 y (by omega)).trans ?_
+    exact pow_le_pow_of_le_one hB_pos.le hht.le (by omega)
+
 end Ambient
 end IsingModel
