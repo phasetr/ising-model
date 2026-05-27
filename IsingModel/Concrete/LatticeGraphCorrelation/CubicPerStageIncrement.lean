@@ -73,5 +73,40 @@ theorem correlationAlongExhaustion_cubic_succ_sub_le_derivBound (d : ℕ)
   exact correlation_pair_two_box_le_derivBound (latticeGraph d)
     (cubicBox_mono d (Nat.le_succ k)) p hf hh hr hs hrs hsep
 
+/-- **Tight cubic-exhaustion per-stage correlation increment** (Issue #2965,
+Phase A→B): tight analogue of `correlationAlongExhaustion_cubic_succ_sub_le_derivBound`
+bounding the successive correlation difference by the *tight* `derivBoundTight`
+(cross products only) over the cut edges of the `box_k`-slice. Instantiates the
+tight two-box increment `correlation_pair_two_box_le_derivBoundTight` on
+`box_k ⊆ box_{k+1}`. The cross-product-only form is what makes `c_{k+1} − c_k`
+summable under the infinite-volume spatial decay. -/
+theorem correlationAlongExhaustion_cubic_succ_sub_le_derivBoundTight (d : ℕ)
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) (hh : p.h = 0)
+    {r s : Fin d → ℤ} (hrs : r ≠ s) (k : ℕ)
+    (hr : r ∈ cubicBox d k) (hs : s ∈ cubicBox d k)
+    (hsep : ∀ e ∈ (inducedGraph (latticeGraph d) (cubicBox d (k + 1))).edgeFinset.filter
+        (straddlePred ((cubicBox d k).subtype (· ∈ cubicBox d (k + 1)))),
+      ¬ Sym2.Mem (⟨r, cubicBox_mono d (Nat.le_succ k) hr⟩ : (↑(cubicBox d (k + 1)) : Type _)) e ∧
+        ¬ Sym2.Mem (⟨s, cubicBox_mono d (Nat.le_succ k) hs⟩ :
+          (↑(cubicBox d (k + 1)) : Type _)) e) :
+    correlationAlongExhaustion (latticeGraph d) (cubicExhaustion d) p {r, s} (k + 1)
+        - correlationAlongExhaustion (latticeGraph d) (cubicExhaustion d) p {r, s} k
+      ≤ derivBoundTight (inducedGraph (latticeGraph d) (cubicBox d (k + 1)))
+          ((inducedGraph (latticeGraph d) (cubicBox d (k + 1))).edgeFinset.filter
+            (straddlePred ((cubicBox d k).subtype (· ∈ cubicBox d (k + 1))))) p
+          ⟨r, cubicBox_mono d (Nat.le_succ k) hr⟩ ⟨s, cubicBox_mono d (Nat.le_succ k) hs⟩ := by
+  have hsubk : ({r, s} : Finset (Fin d → ℤ)) ⊆ (cubicExhaustion d).volume k := by
+    change ({r, s} : Finset (Fin d → ℤ)) ⊆ cubicBox d k
+    rw [Finset.insert_subset_iff, Finset.singleton_subset_iff]; exact ⟨hr, hs⟩
+  have hsubk1 : ({r, s} : Finset (Fin d → ℤ)) ⊆ (cubicExhaustion d).volume (k + 1) :=
+    hsubk.trans (cubicBox_mono d (Nat.le_succ k))
+  rw [correlationAlongExhaustion, correlationAlongExhaustion,
+    dif_pos hsubk1, dif_pos hsubk, correlationΛ, correlationΛ,
+    liftFinset_pair hsubk1 (cubicBox_mono d (Nat.le_succ k) hr)
+      (cubicBox_mono d (Nat.le_succ k) hs),
+    liftFinset_pair hsubk hr hs]
+  exact correlation_pair_two_box_le_derivBoundTight (latticeGraph d)
+    (cubicBox_mono d (Nat.le_succ k)) p hf hh hr hs hrs hsep
+
 end Ambient
 end IsingModel
