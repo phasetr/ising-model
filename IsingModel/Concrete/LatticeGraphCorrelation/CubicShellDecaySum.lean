@@ -204,13 +204,11 @@ theorem cubic_shell_card_le (d k : ℕ) :
 `cubic_shell_card_le`, the tight ball-boundary derivative bound over the cubic shell
 is at most `β·J · 2·d·(2(k+1)+1)^d · cf^{(k+1−R)/(r₀+2)}` — a fixed polynomial in
 `k` times a geometric factor `cf^{·/(r₀+2)}` with `cf < 1`, the `M·(2k+3)^d·ratio^k`
-shape required by the volume-convergence-rate capstone. (The downstream chaining
-with the tight per-stage correlation increment
-`correlationAlongExhaustion_cubic_succ_sub_le_derivBoundTight` is deferred pending a
-single shared `Fintype (inducedGraph (latticeGraph d) Λ).edgeSet` instance: that
-lemma and the present file currently introduce distinct file-local instances, so the
-two `derivBoundTight` shell terms are only `Subsingleton`-equal, not syntactically
-composable.) -/
+shape required by the volume-convergence-rate capstone. Chains directly with the
+tight per-stage correlation increment
+`correlationAlongExhaustion_cubic_succ_sub_le_derivBoundTight` (see
+`correlationAlongExhaustion_cubic_succ_sub_le_poly_pow`) now that the outer
+induced-lattice-graph edge-set instance is the shared canonical one. -/
 theorem derivBoundTight_cubic_shell_le_poly_pow (d : ℕ) (hd : 1 ≤ d)
     (r₀ : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p) (hh : p.h = 0)
     (hα : contractionFactor d (cubicExhaustion d) p r₀ < 1)
@@ -243,6 +241,35 @@ theorem derivBoundTight_cubic_shell_le_poly_pow (d : ℕ) (hd : 1 ≤ d)
         mul_le_mul_of_nonneg_right hcard hpow_nonneg
     _ = 2 * ((d : ℝ) * (2 * (k + 1) + 1) ^ d) *
           contractionFactor d (cubicExhaustion d) p r₀ ^ ((k + 1 - R) / (r₀ + 2)) := by ring
+
+/-- **Polynomial × geometric per-stage correlation increment** (Issue #2965,
+Phase B): combining the tight cubic per-stage increment
+`correlationAlongExhaustion_cubic_succ_sub_le_derivBoundTight` with the
+polynomial × geometric shell bound `derivBoundTight_cubic_shell_le_poly_pow`, the
+successive correlation difference along the cubic exhaustion is bounded by
+`β·J · 2·d·(2(k+1)+1)^d · cf^{(k+1−R)/(r₀+2)}` — a fixed polynomial in `k` times a
+geometric factor `cf^{·/(r₀+2)}` with `cf < 1`, i.e. the `M·(2k+3)^d·ratio^k` form
+of the per-stage increment. (The two shell terms compose directly now that the
+outer induced-lattice-graph edge-set instance is the shared canonical one; see the
+lowered-priority `Fintype edgeSet` fallback instances in `CubicPerStageIncrement`
+and `CubicShellInfiniteVolumeBound`.) -/
+theorem correlationAlongExhaustion_cubic_succ_sub_le_poly_pow (d : ℕ) (hd : 1 ≤ d)
+    (r₀ : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p) (hh : p.h = 0)
+    (hα : contractionFactor d (cubicExhaustion d) p r₀ < 1)
+    (k R : ℕ) (hRk : R ≤ k)
+    {r s : Fin d → ℤ} (hrs : r ≠ s) (hr : r ∈ cubicBox d R) (hs : s ∈ cubicBox d R)
+    (hsep : ∀ e ∈ (inducedGraph (latticeGraph d) (cubicBox d (k + 1))).edgeFinset.filter
+        (straddlePred ((cubicBox d k).subtype (· ∈ cubicBox d (k + 1)))),
+      ¬ Sym2.Mem (⟨r, cubicBox_mono d (by omega) hr⟩ : (↑(cubicBox d (k + 1)) : Type _)) e ∧
+        ¬ Sym2.Mem (⟨s, cubicBox_mono d (by omega) hs⟩ :
+          (↑(cubicBox d (k + 1)) : Type _)) e) :
+    correlationAlongExhaustion (latticeGraph d) (cubicExhaustion d) p {r, s} (k + 1)
+        - correlationAlongExhaustion (latticeGraph d) (cubicExhaustion d) p {r, s} k
+      ≤ p.β * p.J * (2 * (d * (2 * (k + 1) + 1) ^ d) *
+          contractionFactor d (cubicExhaustion d) p r₀ ^ ((k + 1 - R) / (r₀ + 2))) :=
+  (correlationAlongExhaustion_cubic_succ_sub_le_derivBoundTight d p hf hh hrs k
+    (cubicBox_mono d hRk hr) (cubicBox_mono d hRk hs) hsep).trans
+    (derivBoundTight_cubic_shell_le_poly_pow d hd r₀ p hf hh hα k R hRk hr hs hsep)
 
 end Ambient
 end IsingModel

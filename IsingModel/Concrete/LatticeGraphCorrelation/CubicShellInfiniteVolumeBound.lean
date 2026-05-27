@@ -31,8 +31,11 @@ open Finset
 /-- Edge sets of subgraphs over a cubic box subtype are finite (`Sym2` of a
 `Fintype` is finite). Local instance supplying the `Fintype edgeSet` /
 `∀ n, Fintype …` hypotheses of the abstract increment and of `correlationInfinite`
-in the concrete cubic setting. -/
-noncomputable local instance fintype_edgeSet_of_finite_ib {W : Type*} [Finite W]
+in the concrete cubic setting. Lower priority than the canonical
+`inducedGraph (latticeGraph d) Λ` edge-set instance so the canonical instance wins
+for the outer induced lattice graphs (keeping shell terms coherent across files),
+while this broad fallback covers the inner `deleteEdges`/`sum`/`map` graphs. -/
+noncomputable local instance (priority := 100) fintype_edgeSet_of_finite_ib {W : Type*} [Finite W]
     (G : SimpleGraph W) : Fintype G.edgeSet :=
   Fintype.ofFinite _
 
