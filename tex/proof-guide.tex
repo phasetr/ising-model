@@ -13255,6 +13255,29 @@ $\langle\sigma^A\rangle_{\mathbb{C}}$ \texttt{DiffContOnCl} on $B(\uparrow\!p.\b
 concrete disc on which the Cauchy bridge applies.
 \end{theorem}
 
+\begin{theorem}[\texttt{IsingModel.Ambient.dist\_deriv\_correlationAlongExhaustion\_le\_of\_complex\_circle\_bound}
+(capstone per-stage $\beta$-derivative increment from complex inputs, Issue \#3026)]
+For consecutive covered exhaustion stages $k,k+1$: if both finite-volume complex partition
+functions (on the induced graphs over $\Lambda.\mathrm{volume}\,k$ and
+$\Lambda.\mathrm{volume}\,(k{+}1)$) are nonzero on the closed disc $\overline{B}(\beta,R)$
+($R>0$), and the complex correlation value increment is bounded by $B$ on the boundary
+circle $\partial B(\beta,R)$, then
+\[
+  \mathrm{dist}(\partial_\beta c_k,\partial_\beta c_{k+1}) \le B/R,
+  \qquad c_k=\mathrm{correlationAlongExhaustion}\dots k.
+\]
+Assembles \texttt{deriv\_correlationAlongExhaustion\_eq\_inducedGraph}, the real
+$\beta$-derivative \texttt{hasDerivAt\_correlationΛ\_latticeGraph\_beta} (differentiability),
+the real-part agreement \texttt{correlation\_ofReal\_eq\_correlationComplex},
+\texttt{correlationComplex\_diffContOnCl\_beta} with \texttt{DiffContOnCl.sub}, and the
+Cauchy bridge \texttt{dist\_deriv\_le\_of\_complex\_extension}; the edge-set \texttt{Fintype}
+instances are pinned to the exhaustion-stage instances to keep resolution coherent. This is
+the conditional reduction feeding the capstone $\mathtt{hincr}$: once a stage-uniform
+zero-free radius $R$ and a $\mathrm{poly}\cdot\mathrm{geometric}$ boundary bound $B$ are
+supplied (the remaining complex/Lee--Yang-region hard core), the full Lemma 17.5.2 upper
+bound / sandwich follows.
+\end{theorem}
+
 \begin{theorem}[\texttt{IsingModel.Ambient.correlationAlongExhaustion\_eq\_correlation\_inducedGraph}
 and \texttt{deriv\_correlationAlongExhaustion\_eq\_inducedGraph} (covered-stage exhaustion
 correlation derivative identity, Issue \#3026)]
