@@ -155,4 +155,121 @@ theorem partitionFunctionComplex_high_temp_expansion_h_zero_polymer_family_near_
   rw [Metric.eventually_nhds_iff_ball]
   exact ⟨r, hr, fun β hβ => h_eqOn hβ⟩
 
+/-- **Complex partition function is bounded below by `ε > 0` on a closed
+complex ball at `β = 0` for fixed real coupling `J`** (Issue #3054). Composition
+of the analytic-continued high-temp identity
+(`partitionFunctionComplex_high_temp_expansion_h_zero_polymer_family_near_zero_beta`)
+with the polymer-tanh-sum closedBall lower bound
+(`vdPolymerFamilies_sum_tanh_complex_norm_ge_eps_on_closedBall_at_zero_beta`)
+and `cosh` continuity near `β = 0` (giving `|Complex.cosh (β·J)| > 0`).
+
+For each `(G, J : ℝ)` there exist `r > 0, ε > 0` such that
+`ε ≤ ‖partitionFunctionComplex G (J:ℂ) 0 β‖` for all
+`β ∈ Metric.closedBall (0 : ℂ) r`. The per-fixed-volume version of the Lemma
+17.5.2 `hZ` provider via the cluster-expansion route; both `r` and `ε` depend on
+`G` (volume `ι`) and `J`. Volume-uniformity remains the research-level open
+hard core. -/
+theorem partitionFunctionComplex_norm_ge_eps_on_closedBall_at_zero_beta_real_J
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J : ℝ) :
+    ∃ r > 0, ∃ ε > 0, ∀ β ∈ Metric.closedBall (0 : ℂ) r,
+      ε ≤ ‖partitionFunctionComplex G (J : ℂ) 0 β‖ := by
+  classical
+  -- Pick a radius r₁ > 0 and ε₁ > 0 with polymer-tanh-sum norm ≥ ε₁ on closedBall (0) r₁.
+  obtain ⟨r₁, hr₁, ε₁, hε₁, h_poly⟩ :=
+    vdPolymerFamilies_sum_tanh_complex_norm_ge_eps_on_closedBall_at_zero_beta G (J : ℂ)
+  -- Pick a radius r₂ > 0 with cosh(β·J) ≠ 0 on Metric.ball (0) r₂.
+  have hcont_cosh : Continuous (fun β : ℂ => Complex.cosh (β * (J : ℂ))) :=
+    Complex.continuous_cosh.comp (continuous_id.mul continuous_const)
+  have h_cosh0 : Complex.cosh ((0 : ℂ) * (J : ℂ)) ≠ 0 := by
+    rw [zero_mul, Complex.cosh_zero]; exact one_ne_zero
+  have h_cosh_ev : ∀ᶠ β in 𝓝 (0 : ℂ), Complex.cosh (β * (J : ℂ)) ≠ 0 :=
+    hcont_cosh.continuousAt.eventually_ne h_cosh0
+  rw [Metric.eventually_nhds_iff_ball] at h_cosh_ev
+  obtain ⟨r₂, hr₂, h_cosh_ne⟩ := h_cosh_ev
+  -- Identity holds eventually near 0; extract a ball-form radius r₃.
+  have h_id := partitionFunctionComplex_high_temp_expansion_h_zero_polymer_family_near_zero_beta G J
+  rw [Metric.eventually_nhds_iff_ball] at h_id
+  obtain ⟨r₃, hr₃, h_id_ball⟩ := h_id
+  -- Compactness for cosh: get a min lower bound on closedBall (0) (min(r₂,r₃)/2).
+  set r₄ : ℝ := min r₂ r₃ / 2 with hr₄_def
+  have hr₄_pos : 0 < r₄ := by
+    have : 0 < min r₂ r₃ := lt_min hr₂ hr₃
+    simp only [hr₄_def]; linarith
+  have hr₄_lt_r2 : r₄ < r₂ := by
+    have : min r₂ r₃ ≤ r₂ := min_le_left _ _
+    simp only [hr₄_def]; linarith
+  have hr₄_lt_r3 : r₄ < r₃ := by
+    have : min r₂ r₃ ≤ r₃ := min_le_right _ _
+    simp only [hr₄_def]; linarith
+  have h_sub2 : Metric.closedBall (0 : ℂ) r₄ ⊆ Metric.ball (0 : ℂ) r₂ := by
+    intro β hβ
+    rw [Metric.mem_closedBall] at hβ
+    rw [Metric.mem_ball]; linarith
+  have h_sub3 : Metric.closedBall (0 : ℂ) r₄ ⊆ Metric.ball (0 : ℂ) r₃ := by
+    intro β hβ
+    rw [Metric.mem_closedBall] at hβ
+    rw [Metric.mem_ball]; linarith
+  -- Min of |cosh(β·J)| on closedBall (0) r₄.
+  have h_norm_cosh_cont :
+      ContinuousOn (fun β : ℂ => ‖Complex.cosh (β * (J : ℂ))‖)
+        (Metric.closedBall (0 : ℂ) r₄) := hcont_cosh.continuousOn.norm
+  have h_compact : IsCompact (Metric.closedBall (0 : ℂ) r₄) :=
+    isCompact_closedBall _ _
+  have h_nonempty : (Metric.closedBall (0 : ℂ) r₄).Nonempty :=
+    ⟨0, Metric.mem_closedBall_self hr₄_pos.le⟩
+  obtain ⟨β_min, hβ_min, h_min⟩ :=
+    h_compact.exists_isMinOn h_nonempty h_norm_cosh_cont
+  set δ := ‖Complex.cosh (β_min * (J : ℂ))‖
+  have h_cosh_ne_min : Complex.cosh (β_min * (J : ℂ)) ≠ 0 :=
+    h_cosh_ne β_min (h_sub2 hβ_min)
+  have h_δ_pos : 0 < δ := norm_pos_iff.mpr h_cosh_ne_min
+  -- Take the further min of r₄ and r₁.
+  set r : ℝ := min r₁ r₄ / 2 with hr_def
+  have hmin_pos : 0 < min r₁ r₄ := lt_min hr₁ hr₄_pos
+  have hr_pos : 0 < r := by simp only [hr_def]; linarith
+  have hr_lt_r1 : r < r₁ := by
+    have : min r₁ r₄ ≤ r₁ := min_le_left _ _
+    simp only [hr_def]; linarith
+  have hr_le_r4 : r ≤ r₄ := by
+    have : min r₁ r₄ ≤ r₄ := min_le_right _ _
+    simp only [hr_def]; linarith
+  refine ⟨r, hr_pos, (2 : ℝ) ^ Fintype.card ι * δ ^ G.edgeFinset.card * ε₁,
+    by positivity, ?_⟩
+  intro β hβ
+  rw [Metric.mem_closedBall] at hβ
+  -- β ∈ closedBall (0) r, hence in closedBall (0) r₁ and closedBall (0) r₄.
+  have hβ_b1 : β ∈ Metric.closedBall (0 : ℂ) r₁ := by
+    rw [Metric.mem_closedBall]; linarith
+  have hβ_b4 : β ∈ Metric.closedBall (0 : ℂ) r₄ := by
+    rw [Metric.mem_closedBall]; linarith
+  have hβ_b3 : β ∈ Metric.ball (0 : ℂ) r₃ := h_sub3 hβ_b4
+  -- Use the identity.
+  have h_eq := h_id_ball β hβ_b3
+  rw [h_eq]
+  -- ‖2^|ι| · cosh^|E| · sum‖ = 2^|ι| · |cosh|^|E| · |sum| (using 2^|ι| ≥ 0).
+  simp only [norm_mul, norm_pow, Complex.norm_ofNat]
+  have h_sum_norm :=
+    h_poly β hβ_b1
+  have h_cosh_norm : δ ≤ ‖Complex.cosh (β * (J : ℂ))‖ := h_min hβ_b4
+  have h_two_pos : (0 : ℝ) ≤ (2 : ℝ) ^ Fintype.card ι := by positivity
+  have h_cosh_pow_pos : (0 : ℝ) ≤ ‖Complex.cosh (β * (J : ℂ))‖ ^ G.edgeFinset.card := by
+    positivity
+  have h_eps_pos : (0 : ℝ) ≤ ε₁ := le_of_lt hε₁
+  have h_two_cosh_pos : (0 : ℝ) ≤
+      (2 : ℝ) ^ Fintype.card ι *
+        ‖Complex.cosh (β * (J : ℂ))‖ ^ G.edgeFinset.card := by
+    positivity
+  -- Combine: 2^|ι| · δ^|E| · ε₁ ≤ 2^|ι| · |cosh(β·J)|^|E| · |sum|.
+  have h_step1 : (2 : ℝ) ^ Fintype.card ι * δ ^ G.edgeFinset.card * ε₁ ≤
+      (2 : ℝ) ^ Fintype.card ι * ‖Complex.cosh (β * (J : ℂ))‖ ^ G.edgeFinset.card * ε₁ := by
+    apply mul_le_mul_of_nonneg_right _ h_eps_pos
+    apply mul_le_mul_of_nonneg_left _ h_two_pos
+    exact pow_le_pow_left₀ (le_of_lt h_δ_pos) h_cosh_norm _
+  have h_step2 : (2 : ℝ) ^ Fintype.card ι * ‖Complex.cosh (β * (J : ℂ))‖ ^ G.edgeFinset.card * ε₁ ≤
+      (2 : ℝ) ^ Fintype.card ι * ‖Complex.cosh (β * (J : ℂ))‖ ^ G.edgeFinset.card *
+        ‖∑ Γ ∈ vdCompatiblePolymerFamilies G,
+            ∏ P ∈ Γ, Complex.tanh (β * (J : ℂ)) ^ P.card‖ :=
+    mul_le_mul_of_nonneg_left h_sum_norm h_two_cosh_pos
+  linarith [h_step1, h_step2]
+
 end IsingModel
