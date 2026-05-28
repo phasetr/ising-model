@@ -9500,6 +9500,15 @@ Lemma 17.5.2 \texttt{hZ} provider (Issue \#3044).
 \(\cosh z\ne0\), via \(\mathrm{tanh}=\sinh/\cosh\) and \texttt{AnalyticAt.div} of the entire
 \texttt{Complex.sinh}, \texttt{Complex.cosh} (the complex-\(\tanh\) analyticity for the
 substitution \(t=\mathrm{tanh}((\beta J:\mathbb{C}))\) in the polymer expansion).
+\texttt{vdPolymerFamilies\_sum\_tanh\_analyticAt\_complex\_beta} / \texttt{\_J}
+(Issue \#3054, complex analogue of
+\texttt{vdPolymerFamilies\_sum\_tanh\_analyticAt\_beta} / \texttt{\_J}) chain-rule-compose
+the polymer-sum complex analyticity with \texttt{analyticAt\_complex\_tanh} and the
+entire linear factor \(\beta\mapsto\beta J\) (resp.\ \(J\mapsto\beta J\)), exhibiting
+\(\beta'\mapsto\sum_{\Gamma}\prod_{P\in\Gamma}(\mathrm{tanh}(\beta'J))^{|P|}\)
+(resp.\ \(J'\mapsto\sum_{\Gamma}\prod_{P\in\Gamma}(\mathrm{tanh}(\beta J'))^{|P|}\))
+as complex-analytic at every \(\beta\) (resp.\ \(J\)) with
+\(\cosh(\beta J)\ne0\).
 \end{theorem}
 
 The along-exhaustion and concrete $\mathbb{Z}^d$
