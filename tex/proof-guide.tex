@@ -9514,6 +9514,16 @@ as complex-analytic at every \(\beta\) (resp.\ \(J\)) with
 \(\sum_\Gamma\prod_P(0:\mathbb{C})^{|P|}=1\) — only the empty family
 \(\Gamma=\emptyset\) contributes, providing the foundational point for local
 non-vanishing of the polymer expansion in a complex disc.
+\texttt{vdPolymerFamilies\_sum\_tanh\_complex\_at\_zero\_beta} (Issue \#3054)
+evaluates the \texttt{tanh}-substituted complex polymer-family sum at
+\(\beta=0\): equals \(1\) via \(\tanh 0=0\) and the previous lemma.
+\texttt{vdPolymerFamilies\_sum\_tanh\_complex\_eventually\_ne\_zero\_at\_zero\_beta}
+(Issue \#3054) combines this with the chain-rule complex analyticity
+(\texttt{vdPolymerFamilies\_sum\_tanh\_analyticAt\_complex\_beta} at
+\(\cosh0=1\ne0\)) and \texttt{ContinuousAt.eventually\_ne} to give: the
+\texttt{tanh}-substituted polymer-family sum is non-zero in a complex
+neighborhood of \(\beta=0\) — the first step in the eventual zero-free disc
+for the volume-uniform \(Z_{\mathbb{C}}\) lower bound (Issue \#3044).
 \end{theorem}
 
 The along-exhaustion and concrete $\mathbb{Z}^d$
