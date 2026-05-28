@@ -13348,6 +13348,13 @@ differentiable and \(\|\partial\langle\sigma^A\rangle_{\mathbb{C}}\|\le C\) on \
 the deviation from the real-axis value
 \(\|\langle\sigma^A\rangle_{\mathbb{C}}(\beta)-\uparrow\!(\text{real correlation})\|
 \le C\,|\beta.\mathrm{im}|\) (the conditional Lipschitz transfer ingredient).
+\texttt{correlationComplex\_diff\_norm\_le\_real\_diff\_plus\_lipschitz} combines this with
+the triangle inequality through the real-axis values to yield the central connection:
+\(\|\langle\sigma^A\rangle_{\mathbb{C}}(G_1;\beta)-\langle\sigma^A\rangle_{\mathbb{C}}(G_2;\beta)\|
+\le|\langle\sigma^A\rangle_{\mathbb{R}}(G_1;\beta.\mathrm{re})-\langle\sigma^A\rangle_{\mathbb{R}}(G_2;\beta.\mathrm{re})|
++(C_1+C_2)\,\|\beta-\uparrow\!\beta.\mathrm{re}\|\) ---
+combining the real-axis value increment (poly\(\cdot\)geometric under \(\beta J\,2d<1\),
+axiom-free) with the Lipschitz transfer.
 \end{theorem}
 
 \begin{theorem}[\texttt{IsingModel.correlationComplex\_diffContOnCl\_beta} and
