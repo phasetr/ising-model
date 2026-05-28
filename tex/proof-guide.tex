@@ -9558,6 +9558,15 @@ open disc \texttt{Metric.ball 0 r} where \(\cosh(\beta J)\ne0\); LHS entire,
 RHS analytic via the \(\beta\)-chain rule from Issue \#3054; accumulation
 through real points \((1/(n+1):\mathbb{R}):\mathbb{C}\to0\) using the at-real
 seed.
+\texttt{partitionFunctionComplex\_norm\_ge\_eps\_on\_closedBall\_at\_zero\_beta\_real\_J}
+(Issue \#3054, same file) composes the identity with the polymer-\(\tanh\) sum
+closed-ball \(\varepsilon\)-bound and \(\cosh\) compactness to give a
+quantitative complex-\(Z\) lower bound on a closed ball around \(\beta=0\):
+\(\exists r>0,\varepsilon>0,\forall\beta\in\overline{B}(0,r),\,
+\varepsilon\le\|Z_{\mathbb{C}}(G,\uparrow J,0,\beta)\|\). The per-fixed-volume
+version of the Lemma 17.5.2 \texttt{hZ} provider via the cluster-expansion
+route; both \(r\) and \(\varepsilon\) depend on \(G\) and \(J\). Volume-uniformity
+remains the research-level open hard core (Issue \#3044).
 \end{theorem}
 
 The along-exhaustion and concrete $\mathbb{Z}^d$
