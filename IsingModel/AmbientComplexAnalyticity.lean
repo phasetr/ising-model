@@ -1,5 +1,6 @@
 import IsingModel.AmbientComplexAnalyticity.CoverPatches
 import IsingModel.AmbientComplexAnalyticity.HighTempExpansion
+import IsingModel.AmbientComplexAnalyticity.VolumeUniformHZ
 
 /-!
 # Ambient complex analyticity
