@@ -29,6 +29,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.CauchyDerivative
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.CorrelationDerivativeIncrementBridge
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.CorrelationAlongExhaustionDeriv
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.CapstoneIncrementFromComplexBound
+import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.CEConditionalCapstone
 
 /-!
 # GJ §17.5 Lemma 17.5.2 capstone
