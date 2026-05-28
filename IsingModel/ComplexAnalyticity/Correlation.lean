@@ -453,4 +453,25 @@ theorem correlationComplex_diff_norm_le_from_real_bound
     G₁ G₂ A p β h₁ h₂).trans ?_
   linarith
 
+/-- **Cauchy-estimate derivative bound for the complex correlation** (Issue #3044): if
+`correlationComplex` is `DiffContOnCl` on `ball β₀ R` (`R > 0`) and bounded by `M` on the
+boundary circle `sphere β₀ R`, then its derivative at the center satisfies
+`‖deriv corrComplex β₀‖ ≤ M / R`.
+
+Thin wrapper around `Complex.norm_deriv_le_of_forall_mem_sphere_norm_le`. Composed with
+the norm bound `correlationComplex_norm_le_of_second_moment_le` (#3048) and a
+`DiffContOnCl` provider (`correlationComplex_diffContOnCl_beta`, requires `Z_ℂ ≠ 0` on
+the closed disc), this produces the **conditional `C` input** (volume-uniform derivative
+bound from a uniform second-moment input) for the Lipschitz hypothesis in
+`correlationComplex_norm_sub_le_of_norm_deriv_le` and the triangle decomposition #3050. -/
+theorem correlationComplex_norm_deriv_le_of_norm_le_on_sphere
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (A : Finset ι) (p : IsingParams ℝ)
+    {β₀ : ℂ} {R M : ℝ} (hR : 0 < R)
+    (hdiff : DiffContOnCl ℂ (fun z => correlationComplex G A (p.J : ℂ) (p.h : ℂ) z)
+      (Metric.ball β₀ R))
+    (hM : ∀ z ∈ Metric.sphere β₀ R,
+      ‖correlationComplex G A (p.J : ℂ) (p.h : ℂ) z‖ ≤ M) :
+    ‖deriv (fun z => correlationComplex G A (p.J : ℂ) (p.h : ℂ) z) β₀‖ ≤ M / R :=
+  Complex.norm_deriv_le_of_forall_mem_sphere_norm_le hR hdiff hM
+
 end IsingModel

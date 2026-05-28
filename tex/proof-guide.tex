@@ -13360,6 +13360,12 @@ explicit real-axis bound \(B_{\text{real}}\) and Lipschitz constants \(C_1,C_2\)
 \(\|\langle\sigma^A\rangle_{\mathbb{C}}(G_1;\beta)-\langle\sigma^A\rangle_{\mathbb{C}}(G_2;\beta)\|
 \le B_{\text{real}}+(C_1+C_2)\,\|\beta-\uparrow\!\beta.\mathrm{re}\|\) ---
 the conditional reduction feeding the \texttt{hB} provider of the Cauchy bridge.
+The complementary \texttt{correlationComplex\_norm\_deriv\_le\_of\_norm\_le\_on\_sphere}
+(Cauchy-estimate wrapper) gives
+\(\|\partial\langle\sigma^A\rangle_{\mathbb{C}}(\beta_0)\|\le M/R\) from
+\texttt{DiffContOnCl} + sphere norm bound \(M\), completing the \(C\)-input pipeline:
+sphere norm bound (from the second-moment input \(Q\)) + Cauchy estimate yields the
+Lipschitz constant \(C\) for the triangle composition.
 \end{theorem}
 
 \begin{theorem}[\texttt{IsingModel.correlationComplex\_diffContOnCl\_beta} and
