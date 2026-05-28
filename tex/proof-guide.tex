@@ -9483,6 +9483,20 @@ $\Lambda$-layer wrappers live in
 \path{IsingModel/AmbientLattice/AnalyticityLambdaSection186.lean}
 (narrowed out of \texttt{Analyticity.lean} in PR~\#1992).
 
+\begin{theorem}[\texttt{IsingModel.vdPolymerFamilies\_sum\_continuous\_complex} /
+\texttt{\_differentiable\_complex} / \texttt{\_analyticAt\_complex} (polymer-family sum
+complex extension, Issue \#3054)]
+The polymer-family sum
+\(t\mapsto\sum_{\Gamma}\prod_{P\in\Gamma} t^{|P|}\), viewed as a function
+\(\mathbb{C}\to\mathbb{C}\), is \texttt{Continuous}, \texttt{Differentiable}~\(\mathbb{C}\),
+and \texttt{AnalyticAt}~\(\mathbb{C}\) at every \(t\in\mathbb{C}\) (a polynomial in \(t\),
+hence entire over \(\mathbb{C}\)).  The induction helper
+\texttt{analyticAt\_prod\_pow\_complex} mirrors \texttt{analyticAt\_prod\_pow}.
+First foundational step for extending the cluster expansion to a complex disc in
+\(\beta\)/\(J\), en route to the volume-uniform \(Z_{\mathbb{C}}\) lower bound for the
+Lemma 17.5.2 \texttt{hZ} provider (Issue \#3044).
+\end{theorem}
+
 The along-exhaustion and concrete $\mathbb{Z}^d$
 \texttt{partitionFunction}/\texttt{freeEnergy} Continuous and Differentiable
 wrappers now live in matching \texttt{PartitionFreeEnergyRegularity.lean}
