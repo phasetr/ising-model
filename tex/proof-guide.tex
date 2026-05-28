@@ -13340,6 +13340,14 @@ smallness \((\beta.\mathrm{im})^2/2\cdot Q<Z_{\mathbb{R}}(\beta.\mathrm{re})\),
 and \(\|\langle\sigma^A\rangle_{\mathbb{C}}(\beta)\|\le Z_{\mathbb{R}}(\beta.\mathrm{re})/
 (Z_{\mathbb{R}}(\beta.\mathrm{re})-(\beta.\mathrm{im})^2/2\cdot Q)\).  The remaining input
 is the uniform \(Q\) bound (cluster expansion at high temperature).
+\texttt{correlationComplex\_norm\_sub\_le\_of\_norm\_deriv\_le} adds the mean-value
+Lipschitz form: on a convex \(s\subseteq\mathbb{C}\) with \(\langle\sigma^A\rangle_{\mathbb{C}}\)
+differentiable and \(\|\partial\langle\sigma^A\rangle_{\mathbb{C}}\|\le C\) on \(s\),
+\(\|\langle\sigma^A\rangle_{\mathbb{C}}(\beta)-\langle\sigma^A\rangle_{\mathbb{C}}(\beta')\|
+\le C\,\|\beta-\beta'\|\); specialising \(\beta'=\uparrow\!\beta.\mathrm{re}\), this gives
+the deviation from the real-axis value
+\(\|\langle\sigma^A\rangle_{\mathbb{C}}(\beta)-\uparrow\!(\text{real correlation})\|
+\le C\,|\beta.\mathrm{im}|\) (the conditional Lipschitz transfer ingredient).
 \end{theorem}
 
 \begin{theorem}[\texttt{IsingModel.correlationComplex\_diffContOnCl\_beta} and

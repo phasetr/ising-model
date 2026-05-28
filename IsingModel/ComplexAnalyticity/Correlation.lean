@@ -1,5 +1,6 @@
 import IsingModel.ComplexAnalyticity.Basic
 import Mathlib.Analysis.Calculus.DiffContOnCl
+import Mathlib.Analysis.Calculus.MeanValue
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Bounds
 
 /-!
@@ -339,5 +340,29 @@ theorem correlationComplex_norm_le_of_second_moment_le
   have hcorr := correlationComplex_norm_le_ratio G A p β
   refine hcorr.trans ?_
   exact div_le_div_of_nonneg_left (partitionFunction_pos G _).le hZpos hZbound
+
+/-- **Lipschitz bound on the complex correlation along a convex disc** (Issue #3044): if
+the complex correlation is complex-differentiable on a convex set `s ⊆ ℂ` with derivative
+bounded by `C`, then for any two points `β, β' ∈ s`,
+`‖⟨σ^A⟩_ℂ(β) − ⟨σ^A⟩_ℂ(β')‖ ≤ C · ‖β − β'‖`.
+
+Thin wrapper around the mean value theorem `Convex.norm_image_sub_le_of_norm_deriv_le`.
+Specialising `β' = ↑β.re` and `s` containing both gives the deviation from the real-axis
+value, `‖⟨σ^A⟩_ℂ(β) − ↑(correlation real)‖ ≤ C · |β.im|`. The derivative bound `C`
+(volume-uniform via Cauchy's estimate on a slightly larger disc with the norm bound from
+`correlationComplex_norm_le_of_second_moment_le`) is the remaining input. -/
+theorem correlationComplex_norm_sub_le_of_norm_deriv_le
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (A : Finset ι) (p : IsingParams ℝ)
+    {s : Set ℂ} (hs : Convex ℝ s)
+    (hdiff : ∀ w ∈ s,
+      DifferentiableAt ℂ (fun z => correlationComplex G A (p.J : ℂ) (p.h : ℂ) z) w)
+    {C : ℝ}
+    (hC : ∀ w ∈ s,
+      ‖deriv (fun z => correlationComplex G A (p.J : ℂ) (p.h : ℂ) z) w‖ ≤ C)
+    {β β' : ℂ} (hβ : β ∈ s) (hβ' : β' ∈ s) :
+    ‖correlationComplex G A (p.J : ℂ) (p.h : ℂ) β
+        - correlationComplex G A (p.J : ℂ) (p.h : ℂ) β'‖
+      ≤ C * ‖β - β'‖ :=
+  hs.norm_image_sub_le_of_norm_deriv_le hdiff hC hβ' hβ
 
 end IsingModel
