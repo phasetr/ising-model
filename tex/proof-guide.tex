@@ -9603,6 +9603,18 @@ unfolds the along-exhaustion wrapper to
 \texttt{dist\_deriv\_correlationAlongExhaustion\_le\_of\_complex\_circle\_bound}
 (PR \#3032) for the Lemma 17.5.2 capstone, specialised to the centred disc at
 \(\beta=0\).
+\textbf{Lemma 17.5.2 CE-route conditional capstone at \(\beta=0\)} (Issue
+\#3054,
+\texttt{Concrete/LatticeGraphCorrelation/Lemma\_17\_5\_2/CEConditionalCapstone.lean}):
+\texttt{dist\_deriv\_correlationAlongExhaustion\_le\_at\_zero\_beta\_of\_volume\_uniform}
+composes the volume-uniform \(Z_{\mathbb{C}}\ne0\) bridge with PR \#3032's
+capstone-coordinate conditional reduction. For each covered stage \(k\), given
+a complex circle bound \(B\), the consecutive \(\beta\)-derivative increment
+\(d(\partial_\beta c_k,\partial_\beta c_{k+1})\le B/R\) at \(\beta=0\), with
+\(R\) volume-uniform. The remaining open inputs are: (a) the two CE-route
+structural \texttt{Prop}s (cluster-expansion convergence in complex,
+Issue \#3054); (b) the volume-uniform circle bound \(B\) (complex Simon-Lieb,
+Issue \#3044).
 Both inputs remain open at the volume-uniform level (complex cluster-expansion
 convergence is research-level).
 \end{theorem}
