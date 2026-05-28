@@ -144,4 +144,89 @@ theorem correlationComplex_diffContOnCl_beta_of_real (G : SimpleGraph ι) [Finty
   obtain ⟨R, hR, hball⟩ := Metric.nhds_basis_closedBall.eventually_iff.mp hev
   exact ⟨R, hR, correlationComplex_diffContOnCl_beta G A (p.J : ℂ) (p.h : ℂ) (p.β : ℂ) hR hball⟩
 
+omit [DecidableEq ι] in
+/-- **Complex Hamiltonian at real parameters is the real-cast of the real Hamiltonian**
+(Issue #3044, foundational complex/real cast). For real `J, h` and any spin
+configuration, the complex Hamiltonian coincides with `ℝ → ℂ` of the real one. -/
+theorem hamiltonianComplex_ofReal_eq (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (p : IsingParams ℝ) (σ : Config ι) :
+    hamiltonianComplex G (p.J : ℂ) (p.h : ℂ) σ = ((hamiltonian G p σ : ℝ) : ℂ) := by
+  unfold hamiltonianComplex hamiltonian interactionEnergyComplex interactionEnergy
+    externalFieldEnergyComplex externalFieldEnergy
+  push_cast
+  have hspin : ∀ i : ι, ((Spin.sign ℝ (σ i) : ℝ) : ℂ) = Spin.sign ℂ (σ i) := by
+    intro i; simp [Spin.sign]
+  have hedge : ∀ e : Sym2 ι,
+      ((edgeSpin (K := ℝ) σ e : ℝ) : ℂ) = edgeSpinComplex σ e :=
+    edgeSpin_ofReal_eq_edgeSpinComplex σ
+  push_cast [← hspin, ← hedge]
+  ring
+
+omit [DecidableEq ι] in
+/-- **Modulus of a complex Boltzmann weight at real parameters** (Issue #3044): for any
+complex inverse temperature `β` and real parameters `J, h`,
+`‖exp(-β · H_ℂ(σ))‖ = exp(-β.re · H_ℝ(σ))`, where `H_ℂ = hamiltonianComplex G ↑J ↑h` is
+the real-cast of the real Hamiltonian. This is the foundational identity behind the
+complex partition-function and correlation modulus bounds. -/
+theorem norm_exp_neg_beta_hamiltonianComplex (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (p : IsingParams ℝ) (β : ℂ) (σ : Config ι) :
+    ‖Complex.exp (-β * hamiltonianComplex G (p.J : ℂ) (p.h : ℂ) σ)‖
+      = Real.exp (-β.re * hamiltonian G p σ) := by
+  rw [hamiltonianComplex_ofReal_eq G p σ, Complex.norm_exp]
+  simp [Complex.neg_re, Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im]
+
+/-- **Norm bound for the complex partition function at real parameters** (Issue #3044):
+for real `J, h` and complex `β`, `‖Z_ℂ(β)‖ ≤ Z_ℝ(β.re)` — the modulus of the complex
+partition function is dominated by the real partition function at the real part of `β`.
+Sum-of-moduli + `norm_exp_neg_beta_hamiltonianComplex`. -/
+theorem partitionFunctionComplex_norm_le_real (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (p : IsingParams ℝ) (β : ℂ) :
+    ‖partitionFunctionComplex G (p.J : ℂ) (p.h : ℂ) β‖
+      ≤ partitionFunction G (⟨p.J, p.h, β.re⟩ : IsingParams ℝ) := by
+  unfold partitionFunctionComplex partitionFunction boltzmannWeight
+  refine (norm_sum_le _ _).trans ?_
+  refine Finset.sum_le_sum (fun σ _ => ?_)
+  rw [norm_exp_neg_beta_hamiltonianComplex G p β σ]
+  exact le_refl _
+
+/-- **Norm bound for the complex Gibbs numerator at real parameters** (Issue #3044): for
+real `J, h` and complex `β`,
+`‖∑_σ σ^A · exp(-β H_ℂ(σ))‖ ≤ Z_ℝ(β.re)`, since `|σ^A| = 1` (spin product) and each
+Boltzmann modulus is dominated by the real value. -/
+theorem gibbsNumeratorComplex_norm_le_real (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (A : Finset ι) (p : IsingParams ℝ) (β : ℂ) :
+    ‖gibbsNumeratorComplex G A (p.J : ℂ) (p.h : ℂ) β‖
+      ≤ partitionFunction G (⟨p.J, p.h, β.re⟩ : IsingParams ℝ) := by
+  unfold gibbsNumeratorComplex partitionFunction boltzmannWeight
+  refine (norm_sum_le _ _).trans ?_
+  refine Finset.sum_le_sum (fun σ _ => ?_)
+  rw [norm_mul, norm_exp_neg_beta_hamiltonianComplex G p β σ]
+  -- ‖spinProductComplex A σ‖ * exp(-β.re * H_ℝ σ) ≤ exp(-β.re * H_ℝ σ); needs ‖spinProduct‖ ≤ 1
+  have hspin_norm : ‖spinProductComplex A σ‖ ≤ 1 := by
+    unfold spinProductComplex
+    rw [norm_prod]
+    refine Finset.prod_le_one (fun i _ => norm_nonneg _) (fun i _ => ?_)
+    rcases σ i with hp | hn
+    · simp [Spin.toSign]
+    · simp [Spin.toSign]
+  have hexp_nn : 0 ≤ Real.exp (-β.re * hamiltonian G p σ) := (Real.exp_pos _).le
+  exact (mul_le_of_le_one_left hexp_nn hspin_norm)
+
+/-- **Norm bound for the complex correlation at real parameters** (Issue #3044): for real
+`J, h` and complex `β` with `Z_ℂ(β) ≠ 0`,
+`‖⟨σ^A⟩_ℂ(β)‖ ≤ Z_ℝ(β.re) / ‖Z_ℂ(β)‖`, the modulus of the complex correlation is bounded
+by the ratio of the real partition function at `β.re` to the modulus of the complex
+partition function at `β`. The denominator's volume-uniform lower bound (cluster
+expansion / Lee-Yang) is the genuine remaining input. -/
+theorem correlationComplex_norm_le_ratio (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (A : Finset ι) (p : IsingParams ℝ) (β : ℂ) :
+    ‖correlationComplex G A (p.J : ℂ) (p.h : ℂ) β‖
+      ≤ partitionFunction G (⟨p.J, p.h, β.re⟩ : IsingParams ℝ)
+        / ‖partitionFunctionComplex G (p.J : ℂ) (p.h : ℂ) β‖ := by
+  unfold correlationComplex
+  rw [norm_mul, norm_inv]
+  rw [div_eq_inv_mul]
+  refine mul_le_mul_of_nonneg_left (gibbsNumeratorComplex_norm_le_real G A p β) ?_
+  exact inv_nonneg.mpr (norm_nonneg _)
+
 end IsingModel
