@@ -296,4 +296,48 @@ theorem partitionFunctionComplex_re_ge_deficit (G : SimpleGraph ι) [Fintype G.e
           (1 - (β.im * hamiltonian G p σ) ^ 2 / 2) from by ring]
   exact mul_le_mul_of_nonneg_left Real.one_sub_sq_div_two_le_cos (Real.exp_pos _).le
 
+/-- **Norm lower bound for `Z_ℂ` from a second-moment input** (Issue #3044): given an
+upper bound `Q` on the Boltzmann-weighted second moment
+`∑_σ exp(-β.re·H_ℝ(σ))·H_ℝ(σ)² ≤ Q`, the complex partition-function norm is bounded
+below by
+`‖Z_ℂ(β)‖ ≥ Z_ℝ(β.re) − (β.im)²/2 · Q`.
+
+Combines `partitionFunctionComplex_re_le_norm` and
+`partitionFunctionComplex_re_ge_deficit`. The input `Q` is the volume-uniformity carrier
+(Mayer / cluster-expansion bound at high temperature). -/
+theorem partitionFunctionComplex_norm_ge_of_second_moment_le
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (p : IsingParams ℝ) (β : ℂ) {Q : ℝ}
+    (hQ : (∑ σ : Config ι, Real.exp (-β.re * hamiltonian G p σ) * hamiltonian G p σ ^ 2) ≤ Q) :
+    partitionFunction G (⟨p.J, p.h, β.re⟩ : IsingParams ℝ) - β.im ^ 2 / 2 * Q
+      ≤ ‖partitionFunctionComplex G (p.J : ℂ) (p.h : ℂ) β‖ := by
+  refine le_trans ?_ (partitionFunctionComplex_re_le_norm G p β)
+  refine le_trans ?_ (partitionFunctionComplex_re_ge_deficit G p β)
+  have hβim_sq : (0 : ℝ) ≤ β.im ^ 2 / 2 := by positivity
+  exact sub_le_sub_left (mul_le_mul_of_nonneg_left hQ hβim_sq) _
+
+/-- **Conditional norm bound for the complex correlation from a second-moment input**
+(Issue #3044): given the second-moment upper bound `Q` and the smallness condition
+`(β.im)²/2 · Q < Z_ℝ(β.re)`, the complex correlation norm satisfies
+`‖⟨σ^A⟩_ℂ(β)‖ ≤ Z_ℝ(β.re) / (Z_ℝ(β.re) − (β.im)²/2 · Q)`.
+
+Composes `correlationComplex_norm_le_ratio` with the `Z_ℂ` lower bound. The smallness
+condition is the explicit disc radius cutoff for non-vanishing of the complex partition
+function (volume-dependent via `Q`; uniform via cluster expansion). -/
+theorem correlationComplex_norm_le_of_second_moment_le
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (A : Finset ι) (p : IsingParams ℝ) (β : ℂ)
+    {Q : ℝ}
+    (hQ : (∑ σ : Config ι, Real.exp (-β.re * hamiltonian G p σ) * hamiltonian G p σ ^ 2) ≤ Q)
+    (hdisc : β.im ^ 2 / 2 * Q < partitionFunction G (⟨p.J, p.h, β.re⟩ : IsingParams ℝ)) :
+    ‖correlationComplex G A (p.J : ℂ) (p.h : ℂ) β‖
+      ≤ partitionFunction G (⟨p.J, p.h, β.re⟩ : IsingParams ℝ)
+        / (partitionFunction G (⟨p.J, p.h, β.re⟩ : IsingParams ℝ) - β.im ^ 2 / 2 * Q) := by
+  have hZbound : partitionFunction G (⟨p.J, p.h, β.re⟩ : IsingParams ℝ) - β.im ^ 2 / 2 * Q
+      ≤ ‖partitionFunctionComplex G (p.J : ℂ) (p.h : ℂ) β‖ :=
+    partitionFunctionComplex_norm_ge_of_second_moment_le G p β hQ
+  have hZpos : 0 < partitionFunction G (⟨p.J, p.h, β.re⟩ : IsingParams ℝ)
+      - β.im ^ 2 / 2 * Q := by linarith
+  have hcorr := correlationComplex_norm_le_ratio G A p β
+  refine hcorr.trans ?_
+  exact div_le_div_of_nonneg_left (partitionFunction_pos G _).le hZpos hZbound
+
 end IsingModel
