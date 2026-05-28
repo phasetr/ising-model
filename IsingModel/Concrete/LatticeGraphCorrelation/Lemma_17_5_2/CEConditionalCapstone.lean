@@ -1,4 +1,5 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.CapstoneIncrementFromComplexBound
+import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.IncrementCapstone
 import IsingModel.AmbientComplexAnalyticity.VolumeUniformHZ
 
 /-!
@@ -139,6 +140,96 @@ theorem dist_deriv_correlationAlongExhaustion_le_at_real_beta_of_volume_uniform
   · intro w hw
     exact hne (k + 1) w hw
   · exact hB
+
+/-- **Structural bundle: CE-route geometric increment criterion on an `Icc`**
+(Issue #3054). For *every* `β` in a closed sub-interval of the high-temperature
+open interval and every covered stage `k`, the bundle supplies a single radius
+`R > 0`, a circle bound `B`, the volume-uniform `Z_ℂ ≠ 0` for stages `k` and
+`k+1`, and the value-increment circle bound `B` on `sphere ((β:ℝ):ℂ) R` with
+`B / R ≤ M · ratio^k`. This is the exact form to feed
+`dist_deriv_correlationAlongExhaustion_le_of_complex_circle_bound` (PR #3032)
+per (β, k) and through to
+`lemma_17_5_2_derivative_limit_provider_of_geometric_increments_on_covered_stages`. -/
+def CERouteIccGeometricIncrement
+    {d : ℕ} (Λ : Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype
+      (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeSet]
+    (J : ℝ) (x z : Fin d → ℤ) (M ratio : ℝ) : Prop :=
+  ∀ β₁ β₂ : ℝ,
+    Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
+      ∀ β ∈ Set.Icc β₁ β₂,
+        ∀ k : ℕ, (hk : ({x, z} : Finset (Fin d → ℤ)) ⊆ Λ.volume k) →
+          ∃ R > 0, ∃ B : ℝ,
+            B / R ≤ M * ratio ^ k ∧
+            (∀ w ∈ Metric.closedBall ((β : ℝ) : ℂ) R,
+              partitionFunctionComplex
+                  (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                    (Λ.volume k))
+                  (J : ℂ) 0 w ≠ 0) ∧
+            (∀ w ∈ Metric.closedBall ((β : ℝ) : ℂ) R,
+              partitionFunctionComplex
+                  (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                    (Λ.volume (k + 1)))
+                  (J : ℂ) 0 w ≠ 0) ∧
+            (∀ w ∈ Metric.sphere ((β : ℝ) : ℂ) R,
+              ‖correlationComplex
+                    (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume k))
+                    (Ambient.liftFinset {x, z} hk) (J : ℂ) 0 w -
+                  correlationComplex
+                    (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume (k + 1)))
+                    (Ambient.liftFinset {x, z}
+                      (hk.trans (Λ.mono (Nat.le_succ k))))
+                    (J : ℂ) 0 w‖ ≤ B)
+
+/-- **CE-route geometric increment provides the increment `hincr`**
+(Issue #3054). Converts a `CERouteIccGeometricIncrement` package directly into
+the `hincr` predicate of
+`lemma_17_5_2_derivative_limit_provider_of_geometric_increments_on_covered_stages`.
+
+Direct composition with
+`dist_deriv_correlationAlongExhaustion_le_of_complex_circle_bound` (PR #3032)
+per (β, k), then chain `dist ≤ B/R ≤ M · ratio^k`. -/
+theorem hincr_of_CERouteIccGeometricIncrement
+    {d : ℕ} (Λ : Exhaustion (Fin d → ℤ))
+    [hinst : ∀ n, Fintype
+      (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeSet]
+    (J : ℝ) (x z : Fin d → ℤ) (M ratio : ℝ)
+    (h : CERouteIccGeometricIncrement Λ J x z M ratio) :
+    ∀ β₁ β₂ : ℝ,
+      Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
+        ∀ k : ℕ, ({x, z} : Finset (Fin d → ℤ)) ⊆ Λ.volume k →
+          ∀ β ∈ Set.Icc β₁ β₂,
+            dist
+              (deriv (fun β' : ℝ => Ambient.correlationAlongExhaustion
+                (IsingModel.latticeGraph d) Λ
+                (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} k) β)
+              (deriv (fun β' : ℝ => Ambient.correlationAlongExhaustion
+                (IsingModel.latticeGraph d) Λ
+                (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} (k + 1)) β)
+              ≤ M * ratio ^ k := by
+  intro β₁ β₂ hIcc k hk β hβ
+  obtain ⟨R, hR, B, hBR, hZk, hZk1, hBsphere⟩ := h β₁ β₂ hIcc β hβ k hk
+  have hdist : dist
+      (deriv (fun β' : ℝ => Ambient.correlationAlongExhaustion
+        (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} k) β)
+      (deriv (fun β' : ℝ => Ambient.correlationAlongExhaustion
+        (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} (k + 1)) β)
+      ≤ B / R :=
+    dist_deriv_correlationAlongExhaustion_le_of_complex_circle_bound
+      Λ J x z k (β := β) (R := R) (B := B) hR hk hZk hZk1 hBsphere
+  exact hdist.trans hBR
+
+-- (The end-to-end composition into `Lemma_17_5_2_DerivativeLimitProvider`
+-- is deferred to a follow-up PR pending diagnosis of a whnf/elaboration
+-- timeout when chaining `hincr_of_CERouteIccGeometricIncrement` directly
+-- into `lemma_17_5_2_derivative_limit_provider_of_geometric_increments_on_covered_stages`;
+-- the latter elaborates the `Lemma_17_5_2_DerivativeLimitProvider` definition
+-- heavily. The hincr-shape composition (this module) is the relevant
+-- structural reduction; the final wrap is mechanical.)
 
 end Ambient
 end IsingModel
