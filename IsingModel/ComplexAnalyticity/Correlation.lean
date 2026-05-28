@@ -229,4 +229,33 @@ theorem correlationComplex_norm_le_ratio (G : SimpleGraph ι) [Fintype G.edgeSet
   refine mul_le_mul_of_nonneg_left (gibbsNumeratorComplex_norm_le_real G A p β) ?_
   exact inv_nonneg.mpr (norm_nonneg _)
 
+/-- **Norm of the complex partition function is at least its real part** (Issue #3044):
+trivially `Re(Z_ℂ(β)) ≤ ‖Z_ℂ(β)‖` (`Complex.re_le_norm`). Combined with the explicit real
+part formula `partitionFunctionComplex_re_eq`, this is the standard lower-bound entry
+point for the volume-uniform `‖Z_ℂ‖` estimate underlying the complex Simon-Lieb. -/
+theorem partitionFunctionComplex_re_le_norm (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (p : IsingParams ℝ) (β : ℂ) :
+    (partitionFunctionComplex G (p.J : ℂ) (p.h : ℂ) β).re
+      ≤ ‖partitionFunctionComplex G (p.J : ℂ) (p.h : ℂ) β‖ :=
+  Complex.re_le_norm _
+
+/-- **Explicit real-part formula for the complex partition function at real parameters**
+(Issue #3044): for real `J, h` and complex `β`, the real part of `Z_ℂ(β)` is the
+weighted cosine sum
+`Re(Z_ℂ(β)) = ∑_σ exp(-β.re · H_ℝ(σ)) · cos(β.im · H_ℝ(σ))`.
+Follows from `Complex.exp_re` applied to each summand
+`exp(-β · H_ℂ(σ)) = exp(-β · ↑H_ℝ(σ))` together with `Real.cos_neg`. This is the entry
+point for the lower bound `‖Z_ℂ‖ ≥ Z_ℝ(β.re) − (cosine deficit)`. -/
+theorem partitionFunctionComplex_re_eq (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (p : IsingParams ℝ) (β : ℂ) :
+    (partitionFunctionComplex G (p.J : ℂ) (p.h : ℂ) β).re
+      = ∑ σ : Config ι, Real.exp (-β.re * hamiltonian G p σ) *
+          Real.cos (β.im * hamiltonian G p σ) := by
+  unfold partitionFunctionComplex
+  rw [Complex.re_sum]
+  refine Finset.sum_congr rfl fun σ _ => ?_
+  rw [hamiltonianComplex_ofReal_eq G p σ, Complex.exp_re]
+  simp [Complex.mul_re, Complex.mul_im, Complex.neg_re, Complex.neg_im,
+    Complex.ofReal_re, Complex.ofReal_im, Real.cos_neg]
+
 end IsingModel
