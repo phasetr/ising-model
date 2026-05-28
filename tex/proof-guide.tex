@@ -9625,6 +9625,19 @@ mirror the \(\beta=0\) chain at an arbitrary real centre \(\beta_0\);
 \texttt{dist\_deriv\_correlationAlongExhaustion\_le\_at\_real\_beta\_of\_volume\_uniform}
 is the CE-route conditional capstone at general real \(\beta_0\), feeding the
 Lemma 17.5.2 increment infrastructure at any high-temperature reference point.
+\textbf{Icc-uniform geometric-increment bundle} (Issue \#3054,
+\texttt{CEConditionalCapstone.lean}):
+\texttt{CERouteIccGeometricIncrement} \(\Lambda\,J\,x\,z\,M\,\mathrm{ratio}\)
+packages, for every \(\beta\) in a high-temperature closed interval and every
+covered stage \(k\), a single radius \(R\), ne-zero hypotheses for stages \(k\)
+and \(k+1\) on \(\overline{B}((\beta{:}\mathbb{R}){:}\mathbb{C}, R)\), and a
+circle bound \(B\) on the sphere with \(B/R\le M\cdot\mathrm{ratio}^k\).
+\texttt{hincr\_of\_CERouteIccGeometricIncrement} converts the bundle into the
+\texttt{hincr} shape of
+\texttt{lemma\_17\_5\_2\_derivative\_limit\_provider\_of\_geometric\_increments\_on\_covered\_stages}
+(the increment hypothesis of the existing Lemma 17.5.2 capstone), via direct
+application of \texttt{dist\_deriv\_correlationAlongExhaustion\_le\_of\_complex\_circle\_bound}
+(PR \#3032) per \((\beta,k)\).
 Both inputs remain open at the volume-uniform level (complex cluster-expansion
 convergence is research-level).
 \end{theorem}
