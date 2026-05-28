@@ -9550,6 +9550,14 @@ Cast of \texttt{partitionFunction\_high\_temp\_expansion\_h\_zero\_polymer\_fami
 via \texttt{partitionFunction\_ofReal\_eq\_partitionFunctionComplex} and
 \texttt{Complex.ofReal\_\{cosh,tanh\}}. Analytic-continuation seed for the
 general \((J,\beta)\in\mathbb{C}\times\mathbb{C}\) complex identity.
+\texttt{partitionFunctionComplex\_high\_temp\_expansion\_h\_zero\_polymer\_family\_near\_zero\_beta}
+(Issue \#3054, same file) upgrades to a complex \(\beta\) neighborhood of \(0\)
+(for fixed real \(J\)): proof via the identity theorem
+\texttt{AnalyticOnNhd.eqOn\_of\_preconnected\_of\_frequently\_eq} on a small
+open disc \texttt{Metric.ball 0 r} where \(\cosh(\beta J)\ne0\); LHS entire,
+RHS analytic via the \(\beta\)-chain rule from Issue \#3054; accumulation
+through real points \((1/(n+1):\mathbb{R}):\mathbb{C}\to0\) using the at-real
+seed.
 \end{theorem}
 
 The along-exhaustion and concrete $\mathbb{Z}^d$
