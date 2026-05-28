@@ -131,4 +131,72 @@ theorem partitionFunctionComplex_ne_zero_of_im_lt_h_zero
   rw [h_p_eq, h_h_eq] at h_pos
   exact norm_pos_iff.mp h_pos
 
+/-- **Unconditional per-fixed-volume `Z_ℂ ≠ 0` on a complex closedBall around
+`β = 0` at `h = 0`** (Issue #3054 / #3044). Direct quantitative consequence of
+`partitionFunctionComplex_ne_zero_of_im_lt_h_zero` combined with the trivial
+inequality `|β.im| ≤ ‖β‖ ≤ r`. For `r * (|J|·|E|) < √2`, the complex partition
+function at `h = 0` is non-zero on the entire `Metric.closedBall (0:ℂ) r` —
+without any cluster-expansion assumption. The radius `√2 / (|J|·|E|)` shrinks
+with volume; volume-uniform requires sharper Q-bounds (cluster expansion). -/
+theorem partitionFunctionComplex_ne_zero_on_closedBall_h_zero_at_zero
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J : ℝ) {r : ℝ}
+    (hr_small : r * (|J| * G.edgeFinset.card) < Real.sqrt 2) :
+    ∀ β ∈ Metric.closedBall (0 : ℂ) r,
+      partitionFunctionComplex G (J : ℂ) 0 β ≠ 0 := by
+  intro β hβ
+  rw [Metric.mem_closedBall] at hβ
+  -- dist β 0 ≤ r ⇒ ‖β‖ ≤ r ⇒ |β.im| ≤ ‖β‖ ≤ r.
+  have h_norm_le : ‖β‖ ≤ r := by
+    simpa [dist_zero_right] using hβ
+  have h_im_le : |β.im| ≤ r := by
+    have h_im_abs_le_norm : |β.im| ≤ ‖β‖ := Complex.abs_im_le_norm β
+    linarith
+  have hJE_nn : (0 : ℝ) ≤ |J| * G.edgeFinset.card := by positivity
+  -- Apply the partitionFunctionComplex_ne_zero_of_im_lt_h_zero predicate.
+  apply partitionFunctionComplex_ne_zero_of_im_lt_h_zero G J β
+  -- Smallness: β.im² / 2 * ((|J|*|E|)² * Z_ℝ) < Z_ℝ.
+  have hZpos : 0 < partitionFunction G (⟨J, 0, β.re⟩ : IsingParams ℝ) :=
+    partitionFunction_pos G _
+  -- Reduce to β.im² · (|J|·|E|)² < 2.
+  -- |β.im| ≤ r and r · (|J|·|E|) < √2; squaring: β.im² ≤ r² ≤ (√2/(|J|·|E|))² = 2/(|J|·|E|)².
+  -- More directly: β.im² · (|J|·|E|)² = (|β.im| · (|J|·|E|))² ≤ (r · (|J|·|E|))² < 2.
+  by_cases hJE_pos : 0 < |J| * G.edgeFinset.card
+  · have h_im_JE_le_r_JE : |β.im| * (|J| * G.edgeFinset.card) ≤
+        r * (|J| * G.edgeFinset.card) :=
+      mul_le_mul_of_nonneg_right h_im_le hJE_nn
+    have h_im_JE_lt_sqrt2 : |β.im| * (|J| * G.edgeFinset.card) < Real.sqrt 2 :=
+      lt_of_le_of_lt h_im_JE_le_r_JE hr_small
+    have h_im_JE_nn : (0 : ℝ) ≤ |β.im| * (|J| * G.edgeFinset.card) := by positivity
+    -- Square both sides.
+    have h_sq_lt : (|β.im| * (|J| * G.edgeFinset.card)) ^ 2 < 2 := by
+      have : (|β.im| * (|J| * G.edgeFinset.card)) ^ 2 < (Real.sqrt 2) ^ 2 :=
+        pow_lt_pow_left₀ h_im_JE_lt_sqrt2 h_im_JE_nn (by norm_num)
+      have hsqrt_sq : (Real.sqrt 2) ^ 2 = 2 := by
+        rw [sq, Real.mul_self_sqrt (by norm_num : (0 : ℝ) ≤ 2)]
+      linarith
+    -- (|β.im|·(|J|·|E|))² = β.im²·(|J|·|E|)².
+    have h_rewrite : (|β.im| * (|J| * G.edgeFinset.card)) ^ 2 =
+        β.im ^ 2 * (|J| * G.edgeFinset.card) ^ 2 := by
+      rw [mul_pow, sq_abs]
+    rw [h_rewrite] at h_sq_lt
+    -- Want β.im²/2 * ((|J|·|E|)² · Z_ℝ) < Z_ℝ.
+    -- Equivalent (Z_ℝ > 0) to β.im²/2 * (|J|·|E|)² < 1, i.e., β.im² · (|J|·|E|)² < 2.
+    have h_step : β.im ^ 2 / 2 * ((|J| * G.edgeFinset.card) ^ 2 *
+        partitionFunction G (⟨J, 0, β.re⟩ : IsingParams ℝ)) =
+        (β.im ^ 2 * (|J| * G.edgeFinset.card) ^ 2 / 2) *
+          partitionFunction G (⟨J, 0, β.re⟩ : IsingParams ℝ) := by ring
+    rw [h_step]
+    have h_factor_lt : β.im ^ 2 * (|J| * G.edgeFinset.card) ^ 2 / 2 < 1 := by
+      linarith
+    have h_lt_one_mul : β.im ^ 2 * (|J| * G.edgeFinset.card) ^ 2 / 2 *
+        partitionFunction G (⟨J, 0, β.re⟩ : IsingParams ℝ) <
+        1 * partitionFunction G (⟨J, 0, β.re⟩ : IsingParams ℝ) :=
+      mul_lt_mul_of_pos_right h_factor_lt hZpos
+    linarith
+  · -- |J| * |E| = 0, so the (|J|·|E|)² factor is 0 and the LHS is 0 < Z_ℝ trivially.
+    have hJE_le_zero : |J| * G.edgeFinset.card ≤ 0 := not_lt.mp hJE_pos
+    have hJE_zero : |J| * G.edgeFinset.card = 0 := le_antisymm hJE_le_zero hJE_nn
+    rw [hJE_zero]
+    simp [hZpos]
+
 end IsingModel
