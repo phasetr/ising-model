@@ -9709,6 +9709,18 @@ unconditional per-stage
 conditional on the user-supplied circle bound \(B\) on
 \(\partial B((0:\mathbb{R}):\mathbb{C},r)\). The explicit smallness
 \(r\cdot(|J||E_k|)<\sqrt{2}\) (and same for stage \(k+1\)) is \textbf{unconditional}.
+\textbf{General-\(\beta_0\) ne-zero} (Issue \#3054):
+\texttt{partitionFunctionComplex\_ne\_zero\_on\_closedBall\_h\_zero\_at\_real\_beta}
+generalises PR \#3081 to a closedBall centred at any real \(\beta_0\); the
+smallness on \(\beta.\mathrm{im}\) is independent of \(\beta.\mathrm{re}\), so
+shifting the centre is free.
+\textbf{Auto-assembling Cauchy bundle constructor}:
+\texttt{CERouteIccGeometricIncrement\_of\_trivial\_Q\_smallness\_h\_zero} uses
+the general-\(\beta_0\) ne-zero to auto-supply the per-stage
+\texttt{hZk}/\texttt{hZk1} parts of the bundle from explicit
+\(r\cdot(|J||E_k|)<\sqrt{2}\) smallness conditions; the user only supplies
+\((r,B,\text{smallness},\text{sphere bound})\) — \textbf{no cluster expansion
+required for ne-zero}.
 Both inputs remain open at the volume-uniform level (complex cluster-expansion
 convergence is research-level).
 \end{theorem}
