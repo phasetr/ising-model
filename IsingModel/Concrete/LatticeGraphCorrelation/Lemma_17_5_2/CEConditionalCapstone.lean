@@ -152,8 +152,6 @@ per (β, k) and through to
 `lemma_17_5_2_derivative_limit_provider_of_geometric_increments_on_covered_stages`. -/
 def CERouteIccGeometricIncrement
     {d : ℕ} (Λ : Exhaustion (Fin d → ℤ))
-    [∀ n, Fintype
-      (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeSet]
     (J : ℝ) (x z : Fin d → ℤ) (M ratio : ℝ) : Prop :=
   ∀ β₁ β₂ : ℝ,
     Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
@@ -193,8 +191,6 @@ Direct composition with
 per (β, k), then chain `dist ≤ B/R ≤ M · ratio^k`. -/
 theorem hincr_of_CERouteIccGeometricIncrement
     {d : ℕ} (Λ : Exhaustion (Fin d → ℤ))
-    [hinst : ∀ n, Fintype
-      (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeSet]
     (J : ℝ) (x z : Fin d → ℤ) (M ratio : ℝ)
     (h : CERouteIccGeometricIncrement Λ J x z M ratio) :
     ∀ β₁ β₂ : ℝ,
@@ -223,13 +219,24 @@ theorem hincr_of_CERouteIccGeometricIncrement
       Λ J x z k (β := β) (R := R) (B := B) hR hk hZk hZk1 hBsphere
   exact hdist.trans hBR
 
--- (The end-to-end composition into `Lemma_17_5_2_DerivativeLimitProvider`
--- is deferred to a follow-up PR pending diagnosis of a whnf/elaboration
--- timeout when chaining `hincr_of_CERouteIccGeometricIncrement` directly
--- into `lemma_17_5_2_derivative_limit_provider_of_geometric_increments_on_covered_stages`;
--- the latter elaborates the `Lemma_17_5_2_DerivativeLimitProvider` definition
--- heavily. The hincr-shape composition (this module) is the relevant
--- structural reduction; the final wrap is mechanical.)
+/-- **End-to-end CE-route Lemma 17.5.2 derivative-limit provider** (Issue
+#3054): the `CERouteIccGeometricIncrement` package immediately produces the
+`Lemma_17_5_2_DerivativeLimitProvider` via composition of
+`hincr_of_CERouteIccGeometricIncrement` with
+`lemma_17_5_2_derivative_limit_provider_of_geometric_increments_on_covered_stages`.
+
+Needs an increased `maxHeartbeats` budget because the consumer's
+`Lemma_17_5_2_DerivativeLimitProvider` Prop and the deep
+`correlationAlongExhaustion` lambda elaborate heavily. -/
+theorem lemma_17_5_2_derivative_limit_provider_of_CERouteIccGeometricIncrement
+    {d : ℕ} (Λ : Exhaustion (Fin d → ℤ))
+    (J : ℝ) (x z : Fin d → ℤ) (M ratio : ℝ)
+    (hratio0 : 0 ≤ ratio) (hratio1 : ratio < 1)
+    (h : CERouteIccGeometricIncrement Λ J x z M ratio) :
+    Lemma_17_5_2_DerivativeLimitProvider Λ J x z :=
+  lemma_17_5_2_derivative_limit_provider_of_geometric_increments_on_covered_stages
+    Λ J x z M ratio hratio0 hratio1
+    (hincr_of_CERouteIccGeometricIncrement Λ J x z M ratio h)
 
 end Ambient
 end IsingModel
