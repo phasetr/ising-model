@@ -306,5 +306,78 @@ theorem lemma_17_5_2_sandwich_of_CERouteIccGeometricIncrement
     hα hαd hd hrho Λ J hJ_pos x z hxz hβ₁ hβ₁₂ hIcc M ratio hratio0 hratio1
     (hincr_of_CERouteIccGeometricIncrement Λ J x z M ratio h) hdecay
 
+/-- **Structural bridge: CE-route volume-uniform Props (per-β) + circle bound →
+`CERouteIccGeometricIncrement` bundle** (Issue #3054). Given the volume-uniform
+CE-route Props `VolumeUniformComplexHTBoundAtReal` and
+`VolumeUniformZComplexIdentityAtReal` available for every `β ∈ Icc β₁ β₂` in
+the high-temperature open interval, together with an `Icc`-uniform geometric
+circle-bound assembler `hcircle` that supplies, per (β, k), a radius `R > 0`
+(constrained to fit inside the per-β ne-zero disc) and a circle bound `B` on
+`sphere ((β:ℝ):ℂ) R` with `B / R ≤ M · ratio^k`, produce the
+`CERouteIccGeometricIncrement` bundle.
+
+This is the structural composition that converts the *Props level* of the
+CE-route framework into the *bundle level* required by the Lemma 17.5.2
+upper-bound / sandwich consumer wrappers (PR #3075). The composition uses the
+per-β ne-zero bridge
+`partitionFunctionComplex_inducedGraph_ne_zero_on_ball_at_real_beta_of_volume_uniform`
+(PR #3072) to convert the CE-route Props at `β` into the bundle's per-stage
+ne-zero hypotheses, intersected with the user-supplied radius from `hcircle`. -/
+theorem CERouteIccGeometricIncrement_of_Props_and_circle
+    {d : ℕ} (Λ : Exhaustion (Fin d → ℤ))
+    (J : ℝ) (x z : Fin d → ℤ) (M ratio : ℝ)
+    (hProps : ∀ β₁ β₂ : ℝ,
+      Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
+        ∀ β ∈ Set.Icc β₁ β₂,
+          Ambient.VolumeUniformComplexHTBoundAtReal
+            (IsingModel.latticeGraph d) Λ J β ∧
+          Ambient.VolumeUniformZComplexIdentityAtReal
+            (IsingModel.latticeGraph d) Λ J β)
+    (hcircle : ∀ β₁ β₂ : ℝ,
+      Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
+        ∀ β ∈ Set.Icc β₁ β₂,
+          ∀ k : ℕ, (hk : ({x, z} : Finset (Fin d → ℤ)) ⊆ Λ.volume k) →
+            ∀ R₀ : ℝ, 0 < R₀ →
+              (∀ n : ℕ, ∀ w ∈ Metric.closedBall ((β : ℝ) : ℂ) R₀,
+                partitionFunctionComplex
+                    (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n))
+                    (J : ℂ) 0 w ≠ 0) →
+              ∃ R > 0, R ≤ R₀ ∧ ∃ B : ℝ,
+                B / R ≤ M * ratio ^ k ∧
+                (∀ w ∈ Metric.sphere ((β : ℝ) : ℂ) R,
+                  ‖correlationComplex
+                        (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                          (Λ.volume k))
+                        (Ambient.liftFinset {x, z} hk) (J : ℂ) 0 w -
+                      correlationComplex
+                        (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                          (Λ.volume (k + 1)))
+                        (Ambient.liftFinset {x, z}
+                          (hk.trans (Λ.mono (Nat.le_succ k))))
+                        (J : ℂ) 0 w‖ ≤ B)) :
+    CERouteIccGeometricIncrement Λ J x z M ratio := by
+  intro β₁ β₂ hIcc β hβ k hk
+  -- Extract the per-β CE-route Props.
+  obtain ⟨hHT, hid⟩ := hProps β₁ β₂ hIcc β hβ
+  -- Get the per-β ne-zero disc from the Props.
+  obtain ⟨R₀, hR₀, hne⟩ :=
+    Ambient.partitionFunctionComplex_inducedGraph_ne_zero_on_ball_at_real_beta_of_volume_uniform
+      (IsingModel.latticeGraph d) Λ J β hHT hid
+  -- Apply the circle assembler with R₀ and the ne-zero hypothesis.
+  obtain ⟨R, hR, hR_le, B, hBR, hBsphere⟩ :=
+    hcircle β₁ β₂ hIcc β hβ k hk R₀ hR₀ hne
+  refine ⟨R, hR, B, hBR, ?_, ?_, hBsphere⟩
+  · intro w hw
+    have hw₀ : w ∈ Metric.closedBall ((β : ℝ) : ℂ) R₀ := by
+      rw [Metric.mem_closedBall] at hw ⊢
+      linarith
+    exact hne k w hw₀
+  · intro w hw
+    have hw₀ : w ∈ Metric.closedBall ((β : ℝ) : ℂ) R₀ := by
+      rw [Metric.mem_closedBall] at hw ⊢
+      linarith
+    exact hne (k + 1) w hw₀
+
 end Ambient
 end IsingModel
