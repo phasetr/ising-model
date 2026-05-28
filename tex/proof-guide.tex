@@ -13322,9 +13322,16 @@ genuine remaining input.  The complementary
 \texttt{partitionFunctionComplex\_re\_le\_norm} (trivial \((Z_{\mathbb{C}}).\mathrm{re}\le\|Z_{\mathbb{C}}\|\))
 and \texttt{partitionFunctionComplex\_re\_eq} (explicit cosine formula
 \(\mathrm{Re}(Z_{\mathbb{C}}(\beta))=\sum_\sigma\exp(-\beta.\mathrm{re}\,H_{\mathbb{R}}(\sigma))\cos(\beta.\mathrm{im}\,H_{\mathbb{R}}(\sigma))\)
-via \texttt{Complex.exp\_re} and \texttt{Real.cos\_neg}) supply the lower-bound entry:
-\(\|Z_{\mathbb{C}}\|\ge\mathrm{Re}(Z_{\mathbb{C}})=Z_{\mathbb{R}}(\beta.\mathrm{re})-(\text{cosine deficit})\),
-with the volume-uniform control on the deficit being the remaining quantitative step.
+via \texttt{Complex.exp\_re} and \texttt{Real.cos\_neg}) supply the lower-bound entry.  The quantitative form
+\texttt{partitionFunctionComplex\_re\_ge\_deficit} makes the deficit explicit via the
+cosine lower bound \(1-x^2/2\le\cos x\)
+(\texttt{Real.one\_sub\_sq\_div\_two\_le\_cos}):
+\[
+  \mathrm{Re}(Z_{\mathbb{C}}(\beta)) \ge Z_{\mathbb{R}}(\beta.\mathrm{re})
+    - \frac{(\beta.\mathrm{im})^2}{2}\sum_\sigma e^{-\beta.\mathrm{re}\,H_{\mathbb{R}}(\sigma)}\,H_{\mathbb{R}}(\sigma)^2.
+\]
+The deficit is volume-dependent through the second-moment sum (extensive \(H_{\mathbb{R}}\));
+volume-uniform control requires cluster-expansion / Mayer-series ingredients.
 \end{theorem}
 
 \begin{theorem}[\texttt{IsingModel.correlationComplex\_diffContOnCl\_beta} and
