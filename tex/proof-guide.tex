@@ -9522,8 +9522,13 @@ evaluates the \texttt{tanh}-substituted complex polymer-family sum at
 (\texttt{vdPolymerFamilies\_sum\_tanh\_analyticAt\_complex\_beta} at
 \(\cosh0=1\ne0\)) and \texttt{ContinuousAt.eventually\_ne} to give: the
 \texttt{tanh}-substituted polymer-family sum is non-zero in a complex
-neighborhood of \(\beta=0\) — the first step in the eventual zero-free disc
-for the volume-uniform \(Z_{\mathbb{C}}\) lower bound (Issue \#3044).
+neighborhood of \(\beta=0\).
+\texttt{vdPolymerFamilies\_sum\_tanh\_complex\_ne\_zero\_on\_ball\_at\_zero\_beta}
+(Issue \#3054) upgrades the \(\forall^\flat\) form to a quantitative ball:
+\(\exists r>0,\forall\beta\in B(0,r),\ \dots\ne0\), via
+\texttt{Metric.eventually\_nhds\_iff\_ball}. The radius \(r\) depends on
+\(G\) and \(J\); volume-uniformity is the next step toward the volume-uniform
+\(Z_{\mathbb{C}}\) lower bound (Issue \#3044).
 \end{theorem}
 
 The along-exhaustion and concrete $\mathbb{Z}^d$
