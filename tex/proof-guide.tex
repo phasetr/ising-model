@@ -13364,8 +13364,14 @@ The complementary \texttt{correlationComplex\_norm\_deriv\_le\_of\_norm\_le\_on\
 (Cauchy-estimate wrapper) gives
 \(\|\partial\langle\sigma^A\rangle_{\mathbb{C}}(\beta_0)\|\le M/R\) from
 \texttt{DiffContOnCl} + sphere norm bound \(M\), completing the \(C\)-input pipeline:
-sphere norm bound (from the second-moment input \(Q\)) + Cauchy estimate yields the
-Lipschitz constant \(C\) for the triangle composition.
+sphere norm bound (from the second-moment input \(Q\), or directly from a
+\(Z_{\mathbb{C}}\) lower bound) + Cauchy estimate yields the Lipschitz constant \(C\) for
+the triangle composition.  The direct alternative
+\texttt{correlationComplex\_norm\_le\_of\_partition\_norm\_ge} bypasses the second-moment
+route: given \(0<z_{\min}\le\|Z_{\mathbb{C}}(\beta)\|\),
+\(\|\langle\sigma^A\rangle_{\mathbb{C}}(\beta)\|\le Z_{\mathbb{R}}(\beta.\mathrm{re})/z_{\min}\)
+--- the cleanest entry point when a uniform \(Z_{\mathbb{C}}\) lower bound is supplied
+(e.g., cluster-expansion analyticity of \(\log Z\) on a complex disc).
 \end{theorem}
 
 \begin{theorem}[\texttt{IsingModel.correlationComplex\_diffContOnCl\_beta} and
