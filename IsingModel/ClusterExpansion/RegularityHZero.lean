@@ -506,4 +506,52 @@ theorem analyticAt_complex_tanh (z : ℂ) (hz : Complex.cosh z ≠ 0) :
     Complex.analyticOnNhd_cosh (s := Set.univ) z (Set.mem_univ _)
   exact hsinh.div hcosh hz
 
+/-- **VD polymer-family sum (complex), substituted at `tanh(β·J)` is `AnalyticAt ℂ` in
+`β`** (Issue #3054). Chain-rule composition of `vdPolymerFamilies_sum_analyticAt_complex`
+with `analyticAt_complex_tanh` and the entire linear factor `β ↦ β * J`. The polymer
+expansion in the complex cluster-expansion regime uses the substitution
+`t := Complex.tanh ((β · J : ℂ))`; this lemma exhibits the resulting compound
+`β ↦ ∑_Γ ∏_{P∈Γ} (Complex.tanh (β·J))^|P|` as complex-analytic at every `β` with
+`Complex.cosh (β·J) ≠ 0`. Complex analogue of `vdPolymerFamilies_sum_tanh_analyticAt_beta`
+(§18.6). -/
+theorem vdPolymerFamilies_sum_tanh_analyticAt_complex_beta
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J β : ℂ)
+    (hcosh : Complex.cosh (β * J) ≠ 0) :
+    AnalyticAt ℂ (fun β' : ℂ =>
+      ∑ Γ ∈ vdCompatiblePolymerFamilies G,
+        ∏ P ∈ Γ, Complex.tanh (β' * J) ^ P.card) β := by
+  have h_mul : AnalyticAt ℂ (fun β' : ℂ => β' * J) β :=
+    analyticAt_id.mul analyticAt_const
+  have h_tanh : AnalyticAt ℂ (Complex.tanh ∘ (fun β' : ℂ => β' * J)) β := by
+    refine AnalyticAt.comp ?_ h_mul
+    exact analyticAt_complex_tanh _ hcosh
+  have h_final : AnalyticAt ℂ ((fun s : ℂ =>
+      ∑ Γ ∈ vdCompatiblePolymerFamilies G, ∏ P ∈ Γ, s ^ P.card) ∘
+        (Complex.tanh ∘ (fun β' : ℂ => β' * J))) β :=
+    (vdPolymerFamilies_sum_analyticAt_complex G _).comp h_tanh
+  exact h_final
+
+/-- **VD polymer-family sum (complex), substituted at `tanh(β·J)` is `AnalyticAt ℂ` in
+`J`** (Issue #3054). Chain-rule composition of `vdPolymerFamilies_sum_analyticAt_complex`
+with `analyticAt_complex_tanh` and the entire linear factor `J ↦ β * J`. Complex analogue
+of `vdPolymerFamilies_sum_tanh_analyticAt_J` (§18.6). -/
+theorem vdPolymerFamilies_sum_tanh_analyticAt_complex_J
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (β J : ℂ)
+    (hcosh : Complex.cosh (β * J) ≠ 0) :
+    AnalyticAt ℂ (fun J' : ℂ =>
+      ∑ Γ ∈ vdCompatiblePolymerFamilies G,
+        ∏ P ∈ Γ, Complex.tanh (β * J') ^ P.card) J := by
+  have h_mul : AnalyticAt ℂ (fun J' : ℂ => β * J') J :=
+    analyticAt_const.mul analyticAt_id
+  have h_tanh : AnalyticAt ℂ (Complex.tanh ∘ (fun J' : ℂ => β * J')) J := by
+    refine AnalyticAt.comp ?_ h_mul
+    exact analyticAt_complex_tanh _ hcosh
+  have h_final : AnalyticAt ℂ ((fun s : ℂ =>
+      ∑ Γ ∈ vdCompatiblePolymerFamilies G, ∏ P ∈ Γ, s ^ P.card) ∘
+        (Complex.tanh ∘ (fun J' : ℂ => β * J'))) J :=
+    (vdPolymerFamilies_sum_analyticAt_complex G _).comp h_tanh
+  exact h_final
+
 end IsingModel
