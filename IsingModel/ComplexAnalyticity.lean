@@ -1,5 +1,6 @@
 import IsingModel.ComplexAnalyticity.RealAxis
 import IsingModel.ComplexAnalyticity.Correlation
+import IsingModel.ComplexAnalyticity.HighTempExpansion
 
 /-!
 # Complex analyticity of finite-volume Ising functions
