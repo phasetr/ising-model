@@ -762,5 +762,55 @@ theorem dist_deriv_correlationAlongExhaustion_le_at_zero_beta_unconditional
       J hr_small_k1 w hw₀
   · exact hB
 
+/-- **Unconditional Cauchy-route bundle constructor at general real β** (Issue
+#3054). The user supplies, per (β ∈ Icc β₁ β₂, k covered), a radius `r > 0`
+satisfying the explicit unconditional smallness
+`r * (|J| · |E_k|) < √2` for both stages `k` and `k+1`, plus a circle bound `B`
+with `B / r ≤ M · ratio^k`. The ne-zero hypotheses are auto-supplied via
+`partitionFunctionComplex_ne_zero_on_closedBall_h_zero_at_real_beta` (PR #3083) —
+no cluster-expansion assumption needed for ne-zero. Produces the standard
+`CERouteIccGeometricIncrement` bundle ready to feed
+`lemma_17_5_2_{upper_bound,sandwich}_of_CERouteIccGeometricIncrement` (PR #3075). -/
+theorem CERouteIccGeometricIncrement_of_trivial_Q_smallness_h_zero
+    {d : ℕ} (Λ : Exhaustion (Fin d → ℤ))
+    (J : ℝ) (x z : Fin d → ℤ) (M ratio : ℝ)
+    (hcircle : ∀ β₁ β₂ : ℝ,
+      Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
+        ∀ β ∈ Set.Icc β₁ β₂,
+          ∀ k : ℕ, (hk : ({x, z} : Finset (Fin d → ℤ)) ⊆ Λ.volume k) →
+            ∃ r > 0, ∃ B : ℝ,
+              B / r ≤ M * ratio ^ k ∧
+              r * (|J| *
+                (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                  (Λ.volume k)).edgeFinset.card) < Real.sqrt 2 ∧
+              r * (|J| *
+                (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                  (Λ.volume (k + 1))).edgeFinset.card) < Real.sqrt 2 ∧
+              (∀ w ∈ Metric.sphere ((β : ℝ) : ℂ) r,
+                ‖correlationComplex
+                      (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                        (Λ.volume k))
+                      (Ambient.liftFinset {x, z} hk) (J : ℂ) 0 w -
+                    correlationComplex
+                      (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                        (Λ.volume (k + 1)))
+                      (Ambient.liftFinset {x, z}
+                        (hk.trans (Λ.mono (Nat.le_succ k))))
+                      (J : ℂ) 0 w‖ ≤ B)) :
+    CERouteIccGeometricIncrement Λ J x z M ratio := by
+  intro β₁ β₂ hIcc β hβ k hk
+  obtain ⟨r, hr, B, hBR, hr_small_k, hr_small_k1, hBsphere⟩ :=
+    hcircle β₁ β₂ hIcc β hβ k hk
+  refine ⟨r, hr, B, hBR, ?_, ?_, hBsphere⟩
+  · -- Stage k ne-zero from #3083 with smallness at β.
+    intro w hw
+    exact IsingModel.partitionFunctionComplex_ne_zero_on_closedBall_h_zero_at_real_beta
+      (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume k))
+      J β hr_small_k w hw
+  · intro w hw
+    exact IsingModel.partitionFunctionComplex_ne_zero_on_closedBall_h_zero_at_real_beta
+      (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume (k + 1)))
+      J β hr_small_k1 w hw
+
 end Ambient
 end IsingModel
