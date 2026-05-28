@@ -379,5 +379,128 @@ theorem CERouteIccGeometricIncrement_of_Props_and_circle
       linarith
     exact hne (k + 1) w hw₀
 
+/-- **One-step CE-route Lemma 17.5.2 upper bound from Props + circle**
+(Issue #3054). Composition of `CERouteIccGeometricIncrement_of_Props_and_circle`
+(PR #3076) with `lemma_17_5_2_upper_bound_of_CERouteIccGeometricIncrement`
+(PR #3075). Delivers the named `Lemma_17_5_2_UpperBound` predicate directly
+from the per-β CE-route volume-uniform Props and an Icc-uniform circle
+assembler — eliminating the explicit bundle step. -/
+theorem lemma_17_5_2_upper_bound_of_CERouteProps_and_circle
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    {rho : ℝ} (hrho : 0 < rho)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (hJ_pos : 0 < J)
+    (x z : Fin d → ℤ) (hxz : x ≠ z)
+    {β₁ β₂ : ℝ} (hβ₁ : 0 < β₁) (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (M ratio : ℝ) (hratio0 : 0 ≤ ratio) (hratio1 : ratio < 1)
+    (hProps : ∀ β₁' β₂' : ℝ,
+      Set.Icc β₁' β₂' ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
+        ∀ β ∈ Set.Icc β₁' β₂',
+          Ambient.VolumeUniformComplexHTBoundAtReal
+            (IsingModel.latticeGraph d) Λ J β ∧
+          Ambient.VolumeUniformZComplexIdentityAtReal
+            (IsingModel.latticeGraph d) Λ J β)
+    (hcircle : ∀ β₁' β₂' : ℝ,
+      Set.Icc β₁' β₂' ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
+        ∀ β ∈ Set.Icc β₁' β₂',
+          ∀ k : ℕ, (hk : ({x, z} : Finset (Fin d → ℤ)) ⊆ Λ.volume k) →
+            ∀ R₀ : ℝ, 0 < R₀ →
+              (∀ n : ℕ, ∀ w ∈ Metric.closedBall ((β : ℝ) : ℂ) R₀,
+                partitionFunctionComplex
+                    (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n))
+                    (J : ℂ) 0 w ≠ 0) →
+              ∃ R > 0, R ≤ R₀ ∧ ∃ B : ℝ,
+                B / R ≤ M * ratio ^ k ∧
+                (∀ w ∈ Metric.sphere ((β : ℝ) : ℂ) R,
+                  ‖correlationComplex
+                        (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                          (Λ.volume k))
+                        (Ambient.liftFinset {x, z} hk) (J : ℂ) 0 w -
+                      correlationComplex
+                        (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                          (Λ.volume (k + 1)))
+                        (Ambient.liftFinset {x, z}
+                          (hk.trans (Λ.mono (Nat.le_succ k))))
+                        (J : ℂ) 0 w‖ ≤ B)) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      Lemma_17_5_2_UpperBound hα hrho Λ J β₂ x z
+        (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho)) :=
+  lemma_17_5_2_upper_bound_of_CERouteIccGeometricIncrement
+    hα hαd hd hrho Λ J hJ_pos x z hxz hβ₁ hβ₁₂ hIcc M ratio hratio0 hratio1
+    (CERouteIccGeometricIncrement_of_Props_and_circle Λ J x z M ratio hProps hcircle)
+
+/-- **One-step CE-route Lemma 17.5.2 sandwich from Props + circle + decay**
+(Issue #3054). Composition of `CERouteIccGeometricIncrement_of_Props_and_circle`
+(PR #3076) with `lemma_17_5_2_sandwich_of_CERouteIccGeometricIncrement`
+(PR #3075). Delivers the displayed two-sided sandwich
+`m⁻(β₂) ≤ m(β₂) ≤ C · m⁻(β₂)` directly from the per-β CE-route Props, the
+circle assembler, and a validating endpoint pseudo-mass decay. -/
+theorem lemma_17_5_2_sandwich_of_CERouteProps_and_circle
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    {rho : ℝ} (hrho : 0 < rho)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (hJ_pos : 0 < J)
+    (x z : Fin d → ℤ) (hxz : x ≠ z)
+    {β₁ β₂ : ℝ} (hβ₁ : 0 < β₁) (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (M ratio : ℝ) (hratio0 : 0 ≤ ratio) (hratio1 : ratio < 1)
+    (hProps : ∀ β₁' β₂' : ℝ,
+      Set.Icc β₁' β₂' ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
+        ∀ β ∈ Set.Icc β₁' β₂',
+          Ambient.VolumeUniformComplexHTBoundAtReal
+            (IsingModel.latticeGraph d) Λ J β ∧
+          Ambient.VolumeUniformZComplexIdentityAtReal
+            (IsingModel.latticeGraph d) Λ J β)
+    (hcircle : ∀ β₁' β₂' : ℝ,
+      Set.Icc β₁' β₂' ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
+        ∀ β ∈ Set.Icc β₁' β₂',
+          ∀ k : ℕ, (hk : ({x, z} : Finset (Fin d → ℤ)) ⊆ Λ.volume k) →
+            ∀ R₀ : ℝ, 0 < R₀ →
+              (∀ n : ℕ, ∀ w ∈ Metric.closedBall ((β : ℝ) : ℂ) R₀,
+                partitionFunctionComplex
+                    (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n))
+                    (J : ℂ) 0 w ≠ 0) →
+              ∃ R > 0, R ≤ R₀ ∧ ∃ B : ℝ,
+                B / R ≤ M * ratio ^ k ∧
+                (∀ w ∈ Metric.sphere ((β : ℝ) : ℂ) R,
+                  ‖correlationComplex
+                        (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                          (Λ.volume k))
+                        (Ambient.liftFinset {x, z} hk) (J : ℂ) 0 w -
+                      correlationComplex
+                        (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                          (Λ.volume (k + 1)))
+                        (Ambient.liftFinset {x, z}
+                          (hk.trans (Λ.mono (Nat.le_succ k))))
+                        (J : ℂ) 0 w‖ ≤ B))
+    (hdecay : HasExponentialDecay d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ)
+      (pseudoMassFromParamsAtPair hα hrho d Λ
+        (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      ENNReal.ofReal
+          (pseudoMassFromParamsAtPair hα hrho d Λ
+            (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
+        ≤ latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ∧
+      latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ≤
+        ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho) *
+          ENNReal.ofReal
+            (pseudoMassFromParamsAtPair hα hrho d Λ
+              (⟨J, 0, β₂⟩ : IsingParams ℝ) x z) :=
+  lemma_17_5_2_sandwich_of_CERouteIccGeometricIncrement
+    hα hαd hd hrho Λ J hJ_pos x z hxz hβ₁ hβ₁₂ hIcc M ratio hratio0 hratio1
+    (CERouteIccGeometricIncrement_of_Props_and_circle Λ J x z M ratio hProps hcircle)
+    hdecay
+
 end Ambient
 end IsingModel
