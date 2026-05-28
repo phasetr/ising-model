@@ -13332,6 +13332,14 @@ cosine lower bound \(1-x^2/2\le\cos x\)
 \]
 The deficit is volume-dependent through the second-moment sum (extensive \(H_{\mathbb{R}}\));
 volume-uniform control requires cluster-expansion / Mayer-series ingredients.
+\texttt{partitionFunctionComplex\_norm\_ge\_of\_second\_moment\_le} and
+\texttt{correlationComplex\_norm\_le\_of\_second\_moment\_le} package this into the
+conditional reduction: given an upper bound \(Q\) on the second-moment sum and the
+smallness \((\beta.\mathrm{im})^2/2\cdot Q<Z_{\mathbb{R}}(\beta.\mathrm{re})\),
+\(\|Z_{\mathbb{C}}(\beta)\|\ge Z_{\mathbb{R}}(\beta.\mathrm{re})-(\beta.\mathrm{im})^2/2\cdot Q\)
+and \(\|\langle\sigma^A\rangle_{\mathbb{C}}(\beta)\|\le Z_{\mathbb{R}}(\beta.\mathrm{re})/
+(Z_{\mathbb{R}}(\beta.\mathrm{re})-(\beta.\mathrm{im})^2/2\cdot Q)\).  The remaining input
+is the uniform \(Q\) bound (cluster expansion at high temperature).
 \end{theorem}
 
 \begin{theorem}[\texttt{IsingModel.correlationComplex\_diffContOnCl\_beta} and
