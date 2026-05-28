@@ -9721,6 +9721,13 @@ the general-\(\beta_0\) ne-zero to auto-supply the per-stage
 \(r\cdot(|J||E_k|)<\sqrt{2}\) smallness conditions; the user only supplies
 \((r,B,\text{smallness},\text{sphere bound})\) — \textbf{no cluster expansion
 required for ne-zero}.
+\textbf{One-step Lemma 17.5.2 from trivial-Q smallness + circle} (Issue \#3054):
+\texttt{lemma\_17\_5\_2\_upper\_bound\_of\_trivial\_Q\_smallness\_h\_zero} and
+\texttt{lemma\_17\_5\_2\_sandwich\_of\_trivial\_Q\_smallness\_h\_zero} directly
+compose the auto-assembling bundle with the final-capstone wrappers, delivering
+\texttt{Lemma\_17\_5\_2\_UpperBound} / two-sided sandwich
+\textbf{fully unconditional in the ne-zero direction}; only the Simon-Lieb
+sphere circle bound \(B\) (Issue \#3044) remains as an external input.
 Both inputs remain open at the volume-uniform level (complex cluster-expansion
 convergence is research-level).
 \end{theorem}
