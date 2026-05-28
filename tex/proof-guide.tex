@@ -13318,7 +13318,13 @@ Sum-of-moduli together with the spin-product norm bound \(\|\sigma^A\|=1\) give
 \]
 These are the foundational modulus bounds for the complex Simon--Lieb development; the
 denominator's volume-uniform lower bound (cluster expansion / Lee--Yang region) is the
-genuine remaining input.
+genuine remaining input.  The complementary
+\texttt{partitionFunctionComplex\_re\_le\_norm} (trivial \((Z_{\mathbb{C}}).\mathrm{re}\le\|Z_{\mathbb{C}}\|\))
+and \texttt{partitionFunctionComplex\_re\_eq} (explicit cosine formula
+\(\mathrm{Re}(Z_{\mathbb{C}}(\beta))=\sum_\sigma\exp(-\beta.\mathrm{re}\,H_{\mathbb{R}}(\sigma))\cos(\beta.\mathrm{im}\,H_{\mathbb{R}}(\sigma))\)
+via \texttt{Complex.exp\_re} and \texttt{Real.cos\_neg}) supply the lower-bound entry:
+\(\|Z_{\mathbb{C}}\|\ge\mathrm{Re}(Z_{\mathbb{C}})=Z_{\mathbb{R}}(\beta.\mathrm{re})-(\text{cosine deficit})\),
+with the volume-uniform control on the deficit being the remaining quantitative step.
 \end{theorem}
 
 \begin{theorem}[\texttt{IsingModel.correlationComplex\_diffContOnCl\_beta} and
