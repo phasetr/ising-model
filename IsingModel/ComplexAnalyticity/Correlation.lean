@@ -1,5 +1,6 @@
 import IsingModel.ComplexAnalyticity.Basic
 import Mathlib.Analysis.Calculus.DiffContOnCl
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Bounds
 
 /-!
 # Complex-parameter correlation function and its β-analyticity (Issue #3026)
@@ -257,5 +258,42 @@ theorem partitionFunctionComplex_re_eq (G : SimpleGraph ι) [Fintype G.edgeSet]
   rw [hamiltonianComplex_ofReal_eq G p σ, Complex.exp_re]
   simp [Complex.mul_re, Complex.mul_im, Complex.neg_re, Complex.neg_im,
     Complex.ofReal_re, Complex.ofReal_im, Real.cos_neg]
+
+/-- **Quantitative cosine-deficit lower bound for `Re(Z_ℂ)`** (Issue #3044): for real
+parameters `J, h` and complex `β`,
+`Re(Z_ℂ(β)) ≥ Z_ℝ(β.re) − (β.im)²/2 · ∑_σ exp(-β.re · H_ℝ(σ)) · (H_ℝ(σ))²`.
+
+Applies the cosine lower bound `Real.one_sub_sq_div_two_le_cos`
+(`1 − x²/2 ≤ cos x`) per-σ inside the cosine sum
+`Re(Z_ℂ) = ∑_σ exp(-β.re · H_ℝ) · cos(β.im · H_ℝ)` and rewrites the resulting Boltzmann-
+weighted second-moment sum as `(β.im)²/2 · ∑_σ exp · H²`. Combined with
+`re_le_norm`, gives the lower bound
+`‖Z_ℂ(β)‖ ≥ Z_ℝ(β.re) − (β.im)²/2 · ∑_σ exp(-β.re · H_ℝ) · H_ℝ²`.
+
+The deficit is volume-dependent through the second-moment sum (extensive `H_ℝ`), giving
+a non-uniform disc radius; the volume-uniform refinement requires cluster-expansion
+control on the second moment (the remaining Lee-Yang / Mayer ingredient). -/
+theorem partitionFunctionComplex_re_ge_deficit (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (p : IsingParams ℝ) (β : ℂ) :
+    partitionFunction G (⟨p.J, p.h, β.re⟩ : IsingParams ℝ)
+        - β.im ^ 2 / 2 *
+          (∑ σ : Config ι, Real.exp (-β.re * hamiltonian G p σ) * hamiltonian G p σ ^ 2)
+      ≤ (partitionFunctionComplex G (p.J : ℂ) (p.h : ℂ) β).re := by
+  rw [partitionFunctionComplex_re_eq]
+  have hPF : partitionFunction G (⟨p.J, p.h, β.re⟩ : IsingParams ℝ)
+      = ∑ σ : Config ι, Real.exp (-β.re * hamiltonian G p σ) := by
+    unfold partitionFunction boltzmannWeight; rfl
+  rw [hPF, show β.im ^ 2 / 2 *
+        (∑ σ : Config ι, Real.exp (-β.re * hamiltonian G p σ) * hamiltonian G p σ ^ 2)
+      = ∑ σ : Config ι, Real.exp (-β.re * hamiltonian G p σ) *
+          (β.im * hamiltonian G p σ) ^ 2 / 2 from by
+    rw [Finset.mul_sum]; refine Finset.sum_congr rfl fun σ _ => by ring]
+  rw [← Finset.sum_sub_distrib]
+  refine Finset.sum_le_sum (fun σ _ => ?_)
+  rw [show Real.exp (-β.re * hamiltonian G p σ)
+        - Real.exp (-β.re * hamiltonian G p σ) * (β.im * hamiltonian G p σ) ^ 2 / 2
+      = Real.exp (-β.re * hamiltonian G p σ) *
+          (1 - (β.im * hamiltonian G p σ) ^ 2 / 2) from by ring]
+  exact mul_le_mul_of_nonneg_left Real.one_sub_sq_div_two_le_cos (Real.exp_pos _).le
 
 end IsingModel
