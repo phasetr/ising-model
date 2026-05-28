@@ -13299,6 +13299,28 @@ $Z>0$), the finite-volume correlation, hence the value increment $c_k-c_{k+1}$,
 extends complex-analytically in $\beta$.
 \end{theorem}
 
+\begin{theorem}[\texttt{IsingModel.hamiltonianComplex\_ofReal\_eq},
+\texttt{norm\_exp\_neg\_beta\_hamiltonianComplex}, and the partition-function/correlation
+norm bounds (Issue \#3044, foundational complex/real cast)]
+At real parameters \(J,h\) the complex Hamiltonian coincides with the real-cast of the real
+Hamiltonian: \(H_\mathbb{C}(\sigma;J_\mathbb{R},h_\mathbb{R})=\overline{(H_\mathbb{R}(\sigma))}\)
+(\texttt{hamiltonianComplex\_ofReal\_eq}).  Consequently, for any complex \(\beta\),
+\[
+  \bigl\|\exp(-\beta\,H_\mathbb{C}(\sigma))\bigr\| = \exp(-\beta.\mathrm{re}\,H_\mathbb{R}(\sigma)),
+\]
+via \texttt{Complex.norm\_exp} and \((-\beta\,\overline{H_\mathbb{R}}).\mathrm{re}=-\beta.\mathrm{re}\,H_\mathbb{R}\).
+Sum-of-moduli together with the spin-product norm bound \(\|\sigma^A\|=1\) give
+\(\|Z_\mathbb{C}(\beta)\|\le Z_\mathbb{R}(\beta.\mathrm{re})\) and
+\(\|N_\mathbb{C}(\beta)\|\le Z_\mathbb{R}(\beta.\mathrm{re})\), hence
+\[
+  \|\langle\sigma^A\rangle_\mathbb{C}(\beta)\| \le
+    \frac{Z_\mathbb{R}(\beta.\mathrm{re})}{\|Z_\mathbb{C}(\beta)\|}.
+\]
+These are the foundational modulus bounds for the complex Simon--Lieb development; the
+denominator's volume-uniform lower bound (cluster expansion / Lee--Yang region) is the
+genuine remaining input.
+\end{theorem}
+
 \begin{theorem}[\texttt{IsingModel.correlationComplex\_diffContOnCl\_beta} and
 \texttt{\_of\_real} (complex correlation is \texttt{DiffContOnCl} on a nonvanishing disc,
 Issue \#3026)]
