@@ -9646,6 +9646,14 @@ to deliver \texttt{Lemma\_17\_5\_2\_DerivativeLimitProvider}\(\,\Lambda\,J\,x\,z
 The Fintype instance binders were dropped to use the global noncomputable
 instance from \texttt{LatticeBoundaryBED.lean} (the consumer relies on global
 resolution; instance-coherence requires the same path).
+\textbf{CE-route \(\to\) Lemma 17.5.2 final-capstone wrappers} (Issue \#3054):
+\texttt{lemma\_17\_5\_2\_upper\_bound\_of\_CERouteIccGeometricIncrement}
+delivers the named upper-bound predicate directly from the CE-route bundle via
+\texttt{lemma\_17\_5\_2\_upper\_bound\_of\_geometric\_increments\_on\_covered\_stages};
+\texttt{lemma\_17\_5\_2\_sandwich\_of\_CERouteIccGeometricIncrement} additionally
+consumes a validating endpoint pseudo-mass exponential-decay hypothesis and
+returns the displayed two-sided \(\overline{m}^-\le m \le C\,\overline{m}^-\)
+sandwich for one HLS constant.
 Both inputs remain open at the volume-uniform level (complex cluster-expansion
 convergence is research-level).
 \end{theorem}
