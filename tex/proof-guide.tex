@@ -9495,6 +9495,11 @@ hence entire over \(\mathbb{C}\)).  The induction helper
 First foundational step for extending the cluster expansion to a complex disc in
 \(\beta\)/\(J\), en route to the volume-uniform \(Z_{\mathbb{C}}\) lower bound for the
 Lemma 17.5.2 \texttt{hZ} provider (Issue \#3044).
+\texttt{analyticAt\_complex\_tanh} (project-local helper, Issue \#3054) gives
+\(\mathrm{AnalyticAt}\,\mathbb{C}\,\mathrm{tanh}\,z\) whenever
+\(\cosh z\ne0\), via \(\mathrm{tanh}=\sinh/\cosh\) and \texttt{AnalyticAt.div} of the entire
+\texttt{Complex.sinh}, \texttt{Complex.cosh} (the complex-\(\tanh\) analyticity for the
+substitution \(t=\mathrm{tanh}((\beta J:\mathbb{C}))\) in the polymer expansion).
 \end{theorem}
 
 The along-exhaustion and concrete $\mathbb{Z}^d$
