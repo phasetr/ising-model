@@ -365,4 +365,60 @@ theorem correlationComplex_norm_sub_le_of_norm_deriv_le
       ≤ C * ‖β - β'‖ :=
   hs.norm_image_sub_le_of_norm_deriv_le hdiff hC hβ' hβ
 
+/-- **Complex value-increment triangle decomposition** (Issue #3044): for two graphs
+`G₁, G₂`, given Lipschitz constants `C₁, C₂` connecting each complex correlation at `β`
+to its real-axis value at `↑β.re`, the complex value-increment is bounded by the real
+value-increment plus `(C₁ + C₂) · ‖β − ↑β.re‖`:
+`‖⟨σ^A⟩_ℂ(G₁; β) − ⟨σ^A⟩_ℂ(G₂; β)‖
+  ≤ |⟨σ^A⟩_ℝ(G₁; β.re) − ⟨σ^A⟩_ℝ(G₂; β.re)| + (C₁ + C₂) · ‖β − ↑β.re‖`.
+
+Triangle inequality `‖a − d‖ ≤ ‖a − b‖ + ‖b − c‖ + ‖c − d‖` with `a = corrComplex G₁ β`,
+`b = ↑(real corr G₁)`, `c = ↑(real corr G₂)`, `d = corrComplex G₂ β`, using
+`correlation_ofReal_eq_correlationComplex` to identify `b = corrComplex G₁ ↑β.re` and
+similarly for `c`, then the Lipschitz hypotheses. Provides the **central connection**
+of the complex Simon-Lieb development: the real-axis value increment (poly·geometric
+under high-temperature βJ·2d < 1, axiom-free in #3033–#3043) plus a Lipschitz transfer
+controlling the complex deviation. -/
+theorem correlationComplex_diff_norm_le_real_diff_plus_lipschitz
+    (G₁ G₂ : SimpleGraph ι) [Fintype G₁.edgeSet] [Fintype G₂.edgeSet]
+    (A : Finset ι) (p : IsingParams ℝ) (β : ℂ) {C₁ C₂ : ℝ}
+    (h₁ : ‖correlationComplex G₁ A (p.J : ℂ) (p.h : ℂ) β
+            - correlationComplex G₁ A (p.J : ℂ) (p.h : ℂ) ((β.re : ℝ) : ℂ)‖
+          ≤ C₁ * ‖β - ((β.re : ℝ) : ℂ)‖)
+    (h₂ : ‖correlationComplex G₂ A (p.J : ℂ) (p.h : ℂ) β
+            - correlationComplex G₂ A (p.J : ℂ) (p.h : ℂ) ((β.re : ℝ) : ℂ)‖
+          ≤ C₂ * ‖β - ((β.re : ℝ) : ℂ)‖) :
+    ‖correlationComplex G₁ A (p.J : ℂ) (p.h : ℂ) β
+        - correlationComplex G₂ A (p.J : ℂ) (p.h : ℂ) β‖
+      ≤ |correlation G₁ (⟨p.J, p.h, β.re⟩ : IsingParams ℝ) A
+            - correlation G₂ (⟨p.J, p.h, β.re⟩ : IsingParams ℝ) A|
+        + (C₁ + C₂) * ‖β - ((β.re : ℝ) : ℂ)‖ := by
+  set a := correlationComplex G₁ A (p.J : ℂ) (p.h : ℂ) β
+  set b := correlationComplex G₁ A (p.J : ℂ) (p.h : ℂ) ((β.re : ℝ) : ℂ)
+  set c := correlationComplex G₂ A (p.J : ℂ) (p.h : ℂ) ((β.re : ℝ) : ℂ)
+  set d := correlationComplex G₂ A (p.J : ℂ) (p.h : ℂ) β
+  have h_ad_ac_cd : ‖a - d‖ ≤ ‖a - c‖ + ‖c - d‖ := by
+    have : a - d = (a - c) + (c - d) := by ring
+    rw [this]; exact norm_add_le _ _
+  have h_ac_ab_bc : ‖a - c‖ ≤ ‖a - b‖ + ‖b - c‖ := by
+    have : a - c = (a - b) + (b - c) := by ring
+    rw [this]; exact norm_add_le _ _
+  have htri : ‖a - d‖ ≤ ‖a - b‖ + ‖b - c‖ + ‖c - d‖ := by linarith
+  have hb_real : b = ((correlation G₁ (⟨p.J, p.h, β.re⟩ : IsingParams ℝ) A : ℝ) : ℂ) := by
+    change correlationComplex G₁ A (p.J : ℂ) (p.h : ℂ) ((β.re : ℝ) : ℂ) = _
+    rw [← correlation_ofReal_eq_correlationComplex G₁
+      (⟨p.J, p.h, β.re⟩ : IsingParams ℝ) A]
+  have hc_real : c = ((correlation G₂ (⟨p.J, p.h, β.re⟩ : IsingParams ℝ) A : ℝ) : ℂ) := by
+    change correlationComplex G₂ A (p.J : ℂ) (p.h : ℂ) ((β.re : ℝ) : ℂ) = _
+    rw [← correlation_ofReal_eq_correlationComplex G₂
+      (⟨p.J, p.h, β.re⟩ : IsingParams ℝ) A]
+  have hbc_real : ‖b - c‖
+      = |correlation G₁ (⟨p.J, p.h, β.re⟩ : IsingParams ℝ) A
+          - correlation G₂ (⟨p.J, p.h, β.re⟩ : IsingParams ℝ) A| := by
+    rw [hb_real, hc_real, ← Complex.ofReal_sub, Complex.norm_real, Real.norm_eq_abs]
+  have h_cd : ‖c - d‖ = ‖d - c‖ := norm_sub_rev _ _
+  rw [hbc_real] at htri
+  rw [h_cd] at htri
+  linarith
+
 end IsingModel
