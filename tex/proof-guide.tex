@@ -9584,6 +9584,16 @@ specializes to \(G=\texttt{latticeGraph}\,d\) (\(\mathbb{Z}^d\) concrete case).
 expansion holds in a complex neighborhood of \(J=0\) (identity theorem on
 \texttt{Metric.ball 0 r} where \(\cosh((\beta:\mathbb{C})J)\ne0\); accumulation
 through real points using the at-real seed).
+\textbf{Volume-uniform \texttt{hZ} conditional reduction} (Issue \#3054,
+\texttt{AmbientComplexAnalyticity/VolumeUniformHZ.lean}): defines two
+structural inputs
+\texttt{VolumeUniformZComplexIdentity} (single radius \(r\) for the identity
+to hold at every stage) and \texttt{VolumeUniformComplexHTBound} (single
+\((r,\varepsilon)\) lower bound on the polymer-expansion RHS at every stage),
+and proves \texttt{volume\_uniform\_hZ\_provider\_of\_HT\_bound\_and\_identity}
+to derive the volume-uniform \(Z_{\mathbb{C}}\) lower bound across all stages.
+Both inputs remain open at the volume-uniform level (complex cluster-expansion
+convergence is research-level).
 \end{theorem}
 
 The along-exhaustion and concrete $\mathbb{Z}^d$
