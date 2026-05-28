@@ -115,5 +115,76 @@ theorem volume_uniform_hZ_provider_of_HT_bound_and_identity
   rw [h_id n β hβ_id]
   exact h_HT n β hβ_HT
 
+/-- **Volume-uniform `Z_ℂ ≠ 0` bridge for the `hZ` slot of #3032**
+(Issue #3054): converts the lower-bound form
+`ε ≤ ‖Z_ℂ_{Λ_n}(↑J, 0, β)‖` into the non-vanishing form
+`Z_ℂ_{Λ_n}(↑J, 0, β) ≠ 0` required by
+`dist_deriv_correlationAlongExhaustion_le_of_complex_circle_bound` (PR #3032,
+`hZk` / `hZk1` hypotheses). Composes
+`volume_uniform_hZ_provider_of_HT_bound_and_identity` with the trivial
+implication `0 < ε ≤ ‖·‖ ⇒ · ≠ 0`. -/
+theorem volume_uniform_Z_ne_zero_of_HT_bound_and_identity
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (Ambient.inducedGraph G (Λ.volume n)).edgeSet]
+    (J : ℝ)
+    (hHT : VolumeUniformComplexHTBound G Λ J)
+    (hid : VolumeUniformZComplexIdentity G Λ J) :
+    ∃ r > 0, ∀ n : ℕ, ∀ β ∈ Metric.closedBall (0 : ℂ) r,
+      Ambient.partitionFunctionComplexAlongExhaustion
+          G Λ (J : ℂ) 0 β n ≠ 0 := by
+  obtain ⟨r, hr, ε, hε, hbound⟩ :=
+    volume_uniform_hZ_provider_of_HT_bound_and_identity G Λ J hHT hid
+  refine ⟨r, hr, ?_⟩
+  intro n β hβ
+  have h := hbound n β hβ
+  -- `0 < ε ≤ ‖Z_ℂ‖` ⇒ `‖Z_ℂ‖ ≠ 0` ⇒ `Z_ℂ ≠ 0`.
+  have h_norm_pos : 0 < ‖Ambient.partitionFunctionComplexAlongExhaustion
+      G Λ (J : ℂ) 0 β n‖ := lt_of_lt_of_le hε h
+  exact norm_pos_iff.mp h_norm_pos
+
+/-- **Per-stage `Z_ℂ ≠ 0` form at a single stage from the volume-uniform
+bound** (Issue #3054): the volume-uniform non-vanishing, evaluated at a fixed
+stage `n`, gives a single disc around `β = 0` on which `Z_ℂ_{Λ_n}` is non-zero.
+This matches the `hZk` hypothesis format of #3032 specialized to the centered
+`β = 0` case. -/
+theorem partitionFunctionComplexAlongExhaustion_ne_zero_on_ball_at_zero_of_volume_uniform
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (Ambient.inducedGraph G (Λ.volume n)).edgeSet]
+    (J : ℝ)
+    (hHT : VolumeUniformComplexHTBound G Λ J)
+    (hid : VolumeUniformZComplexIdentity G Λ J) (n : ℕ) :
+    ∃ r > 0, ∀ β ∈ Metric.closedBall (0 : ℂ) r,
+      Ambient.partitionFunctionComplexAlongExhaustion
+          G Λ (J : ℂ) 0 β n ≠ 0 := by
+  obtain ⟨r, hr, h⟩ :=
+    volume_uniform_Z_ne_zero_of_HT_bound_and_identity G Λ J hHT hid
+  exact ⟨r, hr, h n⟩
+
+/-- **Per-stage `partitionFunctionComplex` ≠ 0 form (raw, unfolded)** (Issue
+#3054): unfolded version of
+`partitionFunctionComplexAlongExhaustion_ne_zero_on_ball_at_zero_of_volume_uniform`
+expressed directly in terms of `partitionFunctionComplex` on
+`inducedGraph G (Λ.volume n)` — the exact shape required by the `hZk` / `hZk1`
+hypotheses of the Lemma 17.5.2 capstone
+`dist_deriv_correlationAlongExhaustion_le_of_complex_circle_bound` (PR #3032). -/
+theorem partitionFunctionComplex_inducedGraph_ne_zero_on_ball_at_zero_of_volume_uniform
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (Ambient.inducedGraph G (Λ.volume n)).edgeSet]
+    (J : ℝ)
+    (hHT : VolumeUniformComplexHTBound G Λ J)
+    (hid : VolumeUniformZComplexIdentity G Λ J) :
+    ∃ r > 0, ∀ n : ℕ, ∀ β ∈ Metric.closedBall (0 : ℂ) r,
+      partitionFunctionComplex (Ambient.inducedGraph G (Λ.volume n))
+          (J : ℂ) 0 β ≠ 0 := by
+  obtain ⟨r, hr, h⟩ :=
+    volume_uniform_Z_ne_zero_of_HT_bound_and_identity G Λ J hHT hid
+  refine ⟨r, hr, ?_⟩
+  intro n β hβ
+  have := h n β hβ
+  -- Unfold `partitionFunctionComplexAlongExhaustion` to
+  -- `partitionFunctionComplex` on the induced subgraph.
+  rw [Ambient.partitionFunctionComplexAlongExhaustion_apply] at this
+  exact this
+
 end Ambient
 end IsingModel
