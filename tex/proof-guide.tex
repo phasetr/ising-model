@@ -9685,6 +9685,17 @@ Cauchy-style route an equally valid entry point to the same CE-route bundle.
 one-step wrappers, allowing a single Q-circle assembler (with ne-zero parts
 assembled from Q-bounds) to deliver the named upper-bound predicate or the
 displayed two-sided sandwich directly.
+\textbf{Unconditional per-fixed-volume Cauchy Q-bound} (Issue \#3054,
+\texttt{ComplexAnalyticity/SecondMomentBounds.lean}):
+\texttt{hamiltonian\_sq\_le} gives the trivial pointwise bound
+\(H(\sigma;G,p)^2\le(|J||E|+|h||\iota|)^2\) via \texttt{hamiltonian\_abs\_le};
+\texttt{second\_moment\_bound\_trivial} upgrades to the Boltzmann-weighted form
+\(\sum_\sigma\exp(-\beta_{\mathrm{re}}H)\,H^2\le(|J||E|+|h||\iota|)^2\,Z_{\mathbb{R}}\);
+\texttt{partitionFunctionComplex\_ne\_zero\_of\_im\_lt\_h\_zero} composes with
+PR \#3048 to give an unconditional per-fixed-volume \(Z_{\mathbb{C}}\ne0\) on a
+complex disc of explicit radius \(\sqrt{2}/(|J||E|)\) at \(h=0\). Closes the
+Cauchy-route at the per-fixed-volume level unconditionally; volume-uniform
+requires sharper connected-correlation Q-bounds (cluster expansion).
 Both inputs remain open at the volume-uniform level (complex cluster-expansion
 convergence is research-level).
 \end{theorem}
