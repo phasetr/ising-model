@@ -492,4 +492,18 @@ theorem vdPolymerFamilies_sum_analyticAt_complex
       rw [h_step]
       exact (analyticAt_prod_pow_complex Γ t).add ih
 
+/-- **`Complex.tanh` is `AnalyticAt ℂ` where `cosh ≠ 0`** (Issue #3054, project-local
+helper). Rewrite via `Complex.tanh_eq_sinh_div_cosh` and `AnalyticAt.div` of the entire
+`Complex.sinh` and `Complex.cosh` (`Complex.analyticOnNhd_sinh / _cosh`). Provides the
+complex-`tanh` analyticity for the cluster-expansion complex extension — the relevant
+substitution is `Complex.tanh ((β·J : ℂ))` in the polymer expansion. -/
+theorem analyticAt_complex_tanh (z : ℂ) (hz : Complex.cosh z ≠ 0) :
+    AnalyticAt ℂ Complex.tanh z := by
+  change AnalyticAt ℂ (fun w : ℂ => Complex.sinh w / Complex.cosh w) z
+  have hsinh : AnalyticAt ℂ Complex.sinh z :=
+    Complex.analyticOnNhd_sinh (s := Set.univ) z (Set.mem_univ _)
+  have hcosh : AnalyticAt ℂ Complex.cosh z :=
+    Complex.analyticOnNhd_cosh (s := Set.univ) z (Set.mem_univ _)
+  exact hsinh.div hcosh hz
+
 end IsingModel
