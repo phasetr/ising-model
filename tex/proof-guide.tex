@@ -9526,9 +9526,16 @@ neighborhood of \(\beta=0\).
 \texttt{vdPolymerFamilies\_sum\_tanh\_complex\_ne\_zero\_on\_ball\_at\_zero\_beta}
 (Issue \#3054) upgrades the \(\forall^\flat\) form to a quantitative ball:
 \(\exists r>0,\forall\beta\in B(0,r),\ \dots\ne0\), via
-\texttt{Metric.eventually\_nhds\_iff\_ball}. The radius \(r\) depends on
-\(G\) and \(J\); volume-uniformity is the next step toward the volume-uniform
-\(Z_{\mathbb{C}}\) lower bound (Issue \#3044).
+\texttt{Metric.eventually\_nhds\_iff\_ball}.
+\texttt{vdPolymerFamilies\_sum\_tanh\_complex\_norm\_ge\_eps\_on\_closedBall\_at\_zero\_beta}
+(Issue \#3054) strengthens the ball-form to a uniform lower bound
+\(\|\cdot\|\ge\varepsilon>0\) on a closed sub-ball: shrink the radius so that both
+\(\cosh(\beta J)\ne0\) (for \(\tanh\) continuity) and the polymer-\(\tanh\) sum
+is non-zero throughout; on the resulting compact closed ball, the continuous
+norm function attains a positive minimum (\texttt{IsCompact.exists\_isMinOn}).
+The radius \(r\) and \(\varepsilon\) depend on \(G\) and \(J\); volume-uniformity
+is the next step toward the volume-uniform \(Z_{\mathbb{C}}\) lower bound
+(Issue \#3044).
 \end{theorem}
 
 The along-exhaustion and concrete $\mathbb{Z}^d$

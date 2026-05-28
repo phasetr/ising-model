@@ -648,4 +648,94 @@ theorem vdPolymerFamilies_sum_tanh_complex_ne_zero_on_ball_at_zero_beta
   obtain ⟨r, hr_pos, hr⟩ := h
   exact ⟨r, hr_pos, hr⟩
 
+/-- **Polymer-family sum with `Complex.tanh` is bounded below by `ε > 0` on a
+closed complex ball at `β = 0`** (Issue #3054). Compactness + continuity
+upgrade of the ball-form non-vanishing
+`vdPolymerFamilies_sum_tanh_complex_ne_zero_on_ball_at_zero_beta`: pick a
+strictly smaller closed sub-ball, where the continuous norm function attains
+its minimum (which is `> 0` since the sum is non-zero on the larger open ball).
+
+The dependence of both `r` and `ε` on `G`/`J` is not yet quantified — this is
+the per-fixed-volume version. Volume-uniformity is the open hard core for the
+Lemma 17.5.2 `hZ` provider (Issue #3044). -/
+theorem vdPolymerFamilies_sum_tanh_complex_norm_ge_eps_on_closedBall_at_zero_beta
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J : ℂ) :
+    ∃ r > 0, ∃ ε > 0, ∀ β ∈ Metric.closedBall (0 : ℂ) r,
+      ε ≤ ‖∑ Γ ∈ vdCompatiblePolymerFamilies G,
+         ∏ P ∈ Γ, Complex.tanh (β * J) ^ P.card‖ := by
+  classical
+  -- Open ball where polymer-tanh sum is non-zero (#3060).
+  obtain ⟨r₁, hr₁, h_ne⟩ :=
+    vdPolymerFamilies_sum_tanh_complex_ne_zero_on_ball_at_zero_beta G J
+  -- Open ball where cosh (β·J) ≠ 0 (needed for tanh continuity).
+  have hcont_cosh : Continuous (fun β : ℂ => Complex.cosh (β * J)) :=
+    Complex.continuous_cosh.comp (continuous_id.mul continuous_const)
+  have h_cosh0 : Complex.cosh ((0 : ℂ) * J) ≠ 0 := by
+    rw [zero_mul, Complex.cosh_zero]; exact one_ne_zero
+  have h_cosh_ev : ∀ᶠ β in 𝓝 (0 : ℂ), Complex.cosh (β * J) ≠ 0 :=
+    hcont_cosh.continuousAt.eventually_ne h_cosh0
+  rw [Metric.eventually_nhds_iff_ball] at h_cosh_ev
+  obtain ⟨r₂, hr₂, h_cosh_ne⟩ := h_cosh_ev
+  -- Take r := min(r₁, r₂) / 2 so closedBall (0) r ⊂ ball (0) r₁ ∩ ball (0) r₂.
+  set r : ℝ := min r₁ r₂ / 2 with hr_def
+  have hr_pos : 0 < r := by
+    have hmin : 0 < min r₁ r₂ := lt_min hr₁ hr₂
+    simp only [hr_def]; linarith
+  refine ⟨r, hr_pos, ?_⟩
+  have hmin_pos : 0 < min r₁ r₂ := lt_min hr₁ hr₂
+  have hr_lt_r1 : r < r₁ := by
+    have : min r₁ r₂ ≤ r₁ := min_le_left _ _
+    simp only [hr_def]; linarith
+  have hr_lt_r2 : r < r₂ := by
+    have : min r₁ r₂ ≤ r₂ := min_le_right _ _
+    simp only [hr_def]; linarith
+  have h_sub_b1 : Metric.closedBall (0 : ℂ) r ⊆ Metric.ball (0 : ℂ) r₁ := by
+    intro β hβ
+    rw [Metric.mem_closedBall] at hβ
+    rw [Metric.mem_ball]; linarith
+  have h_sub_b2 : Metric.closedBall (0 : ℂ) r ⊆ Metric.ball (0 : ℂ) r₂ := by
+    intro β hβ
+    rw [Metric.mem_closedBall] at hβ
+    rw [Metric.mem_ball]; linarith
+  -- Continuity of `Complex.tanh (β·J)` on closedBall (0) r.
+  have h_tanh_cont :
+      ContinuousOn (fun β : ℂ => Complex.tanh (β * J))
+        (Metric.closedBall (0 : ℂ) r) := by
+    refine ContinuousOn.div ?_ ?_ ?_
+    · exact (Complex.continuous_sinh.comp
+        (continuous_id.mul continuous_const)).continuousOn
+    · exact hcont_cosh.continuousOn
+    · intro β hβ
+      exact h_cosh_ne β (h_sub_b2 hβ)
+  -- Continuity of the polymer-tanh sum on closedBall.
+  have h_sum_cont :
+      ContinuousOn (fun β : ℂ =>
+        ∑ Γ ∈ vdCompatiblePolymerFamilies G,
+          ∏ P ∈ Γ, Complex.tanh (β * J) ^ P.card)
+        (Metric.closedBall (0 : ℂ) r) :=
+    continuousOn_finset_sum _ (fun Γ _ =>
+      continuousOn_finset_prod _ (fun P _ => h_tanh_cont.pow _))
+  have h_norm_cont :
+      ContinuousOn (fun β : ℂ =>
+        ‖∑ Γ ∈ vdCompatiblePolymerFamilies G,
+            ∏ P ∈ Γ, Complex.tanh (β * J) ^ P.card‖)
+        (Metric.closedBall (0 : ℂ) r) :=
+    h_sum_cont.norm
+  have h_compact : IsCompact (Metric.closedBall (0 : ℂ) r) :=
+    isCompact_closedBall _ _
+  have h_nonempty : (Metric.closedBall (0 : ℂ) r).Nonempty :=
+    ⟨0, Metric.mem_closedBall_self hr_pos.le⟩
+  obtain ⟨β_min, hβ_min, h_min⟩ :=
+    h_compact.exists_isMinOn h_nonempty h_norm_cont
+  set ε := ‖∑ Γ ∈ vdCompatiblePolymerFamilies G,
+       ∏ P ∈ Γ, Complex.tanh (β_min * J) ^ P.card‖
+  have h_ne_val : ∑ Γ ∈ vdCompatiblePolymerFamilies G,
+       ∏ P ∈ Γ, Complex.tanh (β_min * J) ^ P.card ≠ 0 :=
+    h_ne β_min (h_sub_b1 hβ_min)
+  have h_eps_pos : 0 < ε := norm_pos_iff.mpr h_ne_val
+  refine ⟨ε, h_eps_pos, ?_⟩
+  intro β hβ
+  exact h_min hβ
+
 end IsingModel
