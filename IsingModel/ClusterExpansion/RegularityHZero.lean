@@ -630,4 +630,22 @@ theorem vdPolymerFamilies_sum_tanh_complex_eventually_ne_zero_at_zero_beta
     rw [h_at_zero]; exact one_ne_zero
   exact h_continuousAt.eventually_ne h_ne
 
+/-- **Polymer-family sum with `Complex.tanh` is non-zero on a complex ball at
+`β = 0`** (Issue #3054). Quantitative ball-form of
+`vdPolymerFamilies_sum_tanh_complex_eventually_ne_zero_at_zero_beta`: there
+exists a radius `r > 0` such that the `tanh`-substituted complex polymer-family
+sum is non-zero on the entire `Metric.ball (0 : ℂ) r`. Derived from
+`Metric.eventually_nhds_iff_ball` applied to the `Eventually` form. The radius
+`r` depends on `G` and `J`; volume-uniformity is the next step. -/
+theorem vdPolymerFamilies_sum_tanh_complex_ne_zero_on_ball_at_zero_beta
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J : ℂ) :
+    ∃ r > 0, ∀ β ∈ Metric.ball (0 : ℂ) r,
+      (∑ Γ ∈ vdCompatiblePolymerFamilies G,
+         ∏ P ∈ Γ, Complex.tanh (β * J) ^ P.card) ≠ 0 := by
+  have h := vdPolymerFamilies_sum_tanh_complex_eventually_ne_zero_at_zero_beta G J
+  rw [Metric.eventually_nhds_iff_ball] at h
+  obtain ⟨r, hr_pos, hr⟩ := h
+  exact ⟨r, hr_pos, hr⟩
+
 end IsingModel
