@@ -9693,9 +9693,14 @@ displayed two-sided sandwich directly.
 \(\sum_\sigma\exp(-\beta_{\mathrm{re}}H)\,H^2\le(|J||E|+|h||\iota|)^2\,Z_{\mathbb{R}}\);
 \texttt{partitionFunctionComplex\_ne\_zero\_of\_im\_lt\_h\_zero} composes with
 PR \#3048 to give an unconditional per-fixed-volume \(Z_{\mathbb{C}}\ne0\) on a
-complex disc of explicit radius \(\sqrt{2}/(|J||E|)\) at \(h=0\). Closes the
-Cauchy-route at the per-fixed-volume level unconditionally; volume-uniform
-requires sharper connected-correlation Q-bounds (cluster expansion).
+complex disc of explicit radius \(\sqrt{2}/(|J||E|)\) at \(h=0\).
+\texttt{partitionFunctionComplex\_ne\_zero\_on\_closedBall\_h\_zero\_at\_zero}
+packages the explicit form: for
+\(r\cdot(|J||E|)<\sqrt{2}\), \(Z_{\mathbb{C}}\ne0\) on the entire
+\(\overline{B}(0,r)\) — the exact \texttt{hZk}/\texttt{hZk1} shape required by
+PR \#3032 with explicit unconditional radius. Closes the Cauchy-route at the
+per-fixed-volume level unconditionally; volume-uniform requires sharper
+connected-correlation Q-bounds (cluster expansion).
 Both inputs remain open at the volume-uniform level (complex cluster-expansion
 convergence is research-level).
 \end{theorem}
