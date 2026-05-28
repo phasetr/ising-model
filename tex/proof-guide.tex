@@ -9540,6 +9540,16 @@ The four \(J\)-direction analogues
 \texttt{vdPolymerFamilies\_sum\_tanh\_complex\_\{at\_zero,eventually\_ne\_zero\_at\_zero,ne\_zero\_on\_ball\_at\_zero,norm\_ge\_eps\_on\_closedBall\_at\_zero\}\_J}
 (Issue \#3054) mirror the \(\beta\) variants with \(\beta\) fixed and \(J\) the
 variable (cosh continuity uses \texttt{continuous\_const.mul continuous\_id}).
+\texttt{partitionFunctionComplex\_high\_temp\_expansion\_h\_zero\_polymer\_family\_at\_real}
+(Issue \#3054, \texttt{ComplexAnalyticity/HighTempExpansion.lean}) is the complex
+\(Z\) formula at real parameters \(J,\beta\) (coerced to \(\mathbb{C}\)):
+\(Z_{\mathbb{C}}(G,\uparrow J,0,\uparrow\beta)
+=2^{|\iota|}\,\cosh(\uparrow\beta\uparrow J)^{|E|}\,
+\sum_\Gamma\prod_P\tanh(\uparrow\beta\uparrow J)^{|P|}\).
+Cast of \texttt{partitionFunction\_high\_temp\_expansion\_h\_zero\_polymer\_family}
+via \texttt{partitionFunction\_ofReal\_eq\_partitionFunctionComplex} and
+\texttt{Complex.ofReal\_\{cosh,tanh\}}. Analytic-continuation seed for the
+general \((J,\beta)\in\mathbb{C}\times\mathbb{C}\) complex identity.
 \end{theorem}
 
 The along-exhaustion and concrete $\mathbb{Z}^d$
