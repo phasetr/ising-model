@@ -272,4 +272,96 @@ theorem partitionFunctionComplex_norm_ge_eps_on_closedBall_at_zero_beta_real_J
     mul_le_mul_of_nonneg_left h_sum_norm h_two_cosh_pos
   linarith [h_step1, h_step2]
 
+/-- **Complex `Z` high-temperature polymer-family expansion holds eventually
+near `J = 0` for real `β`** (Issue #3054, `J`-direction analogue of
+`partitionFunctionComplex_high_temp_expansion_h_zero_polymer_family_near_zero_beta`):
+for fixed real `β`, the complex high-temperature expansion holds in a complex
+neighborhood of `J = 0`.
+
+Proof via the identity theorem on a small open disc `U = Metric.ball 0 r`:
+both LHS and RHS are analytic on `U` (LHS entire in `J`, RHS analytic where
+`Complex.cosh ((β:ℂ)·J) ≠ 0`); they agree at the real points
+`((1/(n+1) : ℝ) : ℂ)` (cast of the at-real seed, PR #3063), which accumulate
+to `0`. -/
+theorem partitionFunctionComplex_high_temp_expansion_h_zero_polymer_family_near_zero_J
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (β : ℝ) :
+    ∀ᶠ J : ℂ in 𝓝 (0 : ℂ),
+      partitionFunctionComplex G J 0 (β : ℂ) =
+        (2 : ℂ) ^ Fintype.card ι *
+          Complex.cosh ((β : ℂ) * J) ^ G.edgeFinset.card *
+          ∑ Γ ∈ vdCompatiblePolymerFamilies G,
+            ∏ P ∈ Γ, Complex.tanh ((β : ℂ) * J) ^ P.card := by
+  classical
+  -- Pick a complex disc around 0 where Complex.cosh ((β:ℂ)·J) ≠ 0.
+  have hcont_cosh : Continuous (fun J : ℂ => Complex.cosh ((β : ℂ) * J)) :=
+    Complex.continuous_cosh.comp (continuous_const.mul continuous_id)
+  have h_cosh0 : Complex.cosh ((β : ℂ) * (0 : ℂ)) ≠ 0 := by
+    rw [mul_zero, Complex.cosh_zero]; exact one_ne_zero
+  have h_cosh_ev : ∀ᶠ J in 𝓝 (0 : ℂ), Complex.cosh ((β : ℂ) * J) ≠ 0 :=
+    hcont_cosh.continuousAt.eventually_ne h_cosh0
+  rw [Metric.eventually_nhds_iff_ball] at h_cosh_ev
+  obtain ⟨r, hr, h_cosh_ne⟩ := h_cosh_ev
+  -- The identity theorem on the open disc `U := Metric.ball 0 r`.
+  set f : ℂ → ℂ := fun J => partitionFunctionComplex G J 0 (β : ℂ) with hf_def
+  set g : ℂ → ℂ := fun J => (2 : ℂ) ^ Fintype.card ι *
+        Complex.cosh ((β : ℂ) * J) ^ G.edgeFinset.card *
+        ∑ Γ ∈ vdCompatiblePolymerFamilies G,
+          ∏ P ∈ Γ, Complex.tanh ((β : ℂ) * J) ^ P.card with hg_def
+  set U : Set ℂ := Metric.ball (0 : ℂ) r with hU_def
+  have hU_preconn : IsPreconnected U :=
+    (convex_ball (0 : ℂ) r).isPreconnected
+  have h_zero_in_U : (0 : ℂ) ∈ U := Metric.mem_ball_self hr
+  have hf_anal : AnalyticOnNhd ℂ f U := by
+    intro J _
+    exact partitionFunctionComplex_analyticAt_J G 0 (β : ℂ) J
+  have hg_anal : AnalyticOnNhd ℂ g U := by
+    intro J hJ
+    have hcosh_J : Complex.cosh ((β : ℂ) * J) ≠ 0 := h_cosh_ne J hJ
+    have h_poly_tanh :
+        AnalyticAt ℂ (fun J' : ℂ =>
+          ∑ Γ ∈ vdCompatiblePolymerFamilies G,
+            ∏ P ∈ Γ, Complex.tanh ((β : ℂ) * J') ^ P.card) J :=
+      vdPolymerFamilies_sum_tanh_analyticAt_complex_J G (β : ℂ) J hcosh_J
+    have h_cosh_pow :
+        AnalyticAt ℂ (fun J' : ℂ =>
+          Complex.cosh ((β : ℂ) * J') ^ G.edgeFinset.card) J := by
+      have h_mul : AnalyticAt ℂ (fun J' : ℂ => (β : ℂ) * J') J :=
+        analyticAt_const.mul analyticAt_id
+      have h_cosh_at : AnalyticAt ℂ Complex.cosh ((β : ℂ) * J) :=
+        Complex.analyticOnNhd_cosh (s := Set.univ) ((β : ℂ) * J) (Set.mem_univ _)
+      have h_comp : AnalyticAt ℂ (Complex.cosh ∘ (fun J' : ℂ => (β : ℂ) * J')) J := by
+        refine AnalyticAt.comp ?_ h_mul
+        exact h_cosh_at
+      exact h_comp.pow _
+    have h_two_pow : AnalyticAt ℂ
+        (fun _ : ℂ => (2 : ℂ) ^ Fintype.card ι) J := analyticAt_const
+    exact (h_two_pow.mul h_cosh_pow).mul h_poly_tanh
+  have h_real_eq : ∀ x : ℝ, f (x : ℂ) = g (x : ℂ) := fun x => by
+    simp only [hf_def, hg_def]
+    have h_seed := partitionFunctionComplex_high_temp_expansion_h_zero_polymer_family_at_real G x β
+    convert h_seed using 2
+  have h_frequently : ∃ᶠ z in 𝓝[≠] (0 : ℂ), f z = g z := by
+    have h_tendsto : Filter.Tendsto
+        (fun n : ℕ => ((1 / (n + 1 : ℝ) : ℝ) : ℂ)) Filter.atTop (𝓝 (0 : ℂ)) := by
+      have h1 : Filter.Tendsto (fun n : ℕ => (1 / (n + 1 : ℝ) : ℝ))
+          Filter.atTop (𝓝 (0 : ℝ)) := tendsto_one_div_add_atTop_nhds_zero_nat
+      exact (Complex.continuous_ofReal.tendsto _).comp h1
+    have h_ne : ∀ n : ℕ, ((1 / (n + 1 : ℝ) : ℝ) : ℂ) ≠ 0 := fun n => by
+      have hpos : (0 : ℝ) < 1 / (n + 1 : ℝ) :=
+        one_div_pos.mpr (by positivity)
+      exact_mod_cast hpos.ne'
+    have h_principal : Filter.Tendsto
+        (fun n : ℕ => ((1 / (n + 1 : ℝ) : ℝ) : ℂ)) Filter.atTop (𝓝[≠] (0 : ℂ)) := by
+      rw [tendsto_nhdsWithin_iff]
+      exact ⟨h_tendsto, Filter.Eventually.of_forall (fun n => h_ne n)⟩
+    have h_freq_atTop :
+        ∃ᶠ n : ℕ in Filter.atTop, f (((1 / ((n : ℝ) + 1) : ℝ)) : ℂ) =
+            g (((1 / ((n : ℝ) + 1) : ℝ)) : ℂ) :=
+      (Filter.Eventually.of_forall (fun n : ℕ => h_real_eq _)).frequently
+    exact h_principal.frequently h_freq_atTop
+  have h_eqOn : Set.EqOn f g U :=
+    hf_anal.eqOn_of_preconnected_of_frequently_eq hg_anal hU_preconn h_zero_in_U h_frequently
+  rw [Metric.eventually_nhds_iff_ball]
+  exact ⟨r, hr, fun J hJ => h_eqOn hJ⟩
+
 end IsingModel
