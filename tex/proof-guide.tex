@@ -9701,6 +9701,14 @@ packages the explicit form: for
 PR \#3032 with explicit unconditional radius. Closes the Cauchy-route at the
 per-fixed-volume level unconditionally; volume-uniform requires sharper
 connected-correlation Q-bounds (cluster expansion).
+\textbf{Unconditional per-stage dist composition} (Issue \#3054):
+\texttt{dist\_deriv\_correlationAlongExhaustion\_le\_at\_zero\_beta\_unconditional}
+directly composes the unconditional ne-zero with PR \#3032 to give an
+unconditional per-stage
+\(d(\partial_\beta c_k,\partial_\beta c_{k+1})\le B/r\) at \(\beta=0\) — only
+conditional on the user-supplied circle bound \(B\) on
+\(\partial B((0:\mathbb{R}):\mathbb{C},r)\). The explicit smallness
+\(r\cdot(|J||E_k|)<\sqrt{2}\) (and same for stage \(k+1\)) is \textbf{unconditional}.
 Both inputs remain open at the volume-uniform level (complex cluster-expansion
 convergence is research-level).
 \end{theorem}
