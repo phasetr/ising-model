@@ -1,4 +1,5 @@
 import IsingModel.AmbientComplexAnalyticity.CoverPatches
+import IsingModel.AmbientComplexAnalyticity.HighTempExpansion
 
 /-!
 # Ambient complex analyticity
