@@ -474,4 +474,22 @@ theorem correlationComplex_norm_deriv_le_of_norm_le_on_sphere
     ‖deriv (fun z => correlationComplex G A (p.J : ℂ) (p.h : ℂ) z) β₀‖ ≤ M / R :=
   Complex.norm_deriv_le_of_forall_mem_sphere_norm_le hR hdiff hM
 
+/-- **Direct correlation norm bound from a complex partition function lower bound** (Issue
+#3044): if `0 < z_min ≤ ‖Z_ℂ(β)‖`, then `‖⟨σ^A⟩_ℂ(β)‖ ≤ Z_ℝ(β.re) / z_min`.
+
+A direct alternative to `correlationComplex_norm_le_of_second_moment_le` (#3048): bypasses
+the second-moment / cosine-deficit route when a `Z_ℂ` lower bound is supplied directly
+(e.g., from cluster-expansion analyticity of `log Z` on a complex disc at high
+temperature, which gives volume-uniform non-vanishing). Composes
+`correlationComplex_norm_le_ratio` with the explicit lower bound `z_min` on the
+denominator. -/
+theorem correlationComplex_norm_le_of_partition_norm_ge
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (A : Finset ι) (p : IsingParams ℝ) (β : ℂ)
+    {z_min : ℝ} (hzpos : 0 < z_min)
+    (hZ : z_min ≤ ‖partitionFunctionComplex G (p.J : ℂ) (p.h : ℂ) β‖) :
+    ‖correlationComplex G A (p.J : ℂ) (p.h : ℂ) β‖
+      ≤ partitionFunction G (⟨p.J, p.h, β.re⟩ : IsingParams ℝ) / z_min := by
+  refine (correlationComplex_norm_le_ratio G A p β).trans ?_
+  exact div_le_div_of_nonneg_left (partitionFunction_pos G _).le hzpos hZ
+
 end IsingModel
