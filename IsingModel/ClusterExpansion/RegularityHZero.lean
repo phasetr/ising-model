@@ -554,4 +554,38 @@ theorem vdPolymerFamilies_sum_tanh_analyticAt_complex_J
     (vdPolymerFamilies_sum_analyticAt_complex G _).comp h_tanh
   exact h_final
 
+/-- **Polymer-family sum (complex) at `t = 0`** (Issue #3054): the
+`∑_Γ ∏_P t^|P|` evaluated at the complex zero equals `1`. Mirror of
+`vdPolymerFamilies_sum_at_zero` — only the empty family `Γ = ∅` contributes
+(its empty product equals `1`); any non-empty `Γ` contains a polymer with
+`|P| ≥ 1`, so `(0 : ℂ)^|P| = 0` and the product vanishes. Provides the
+constant term of the polymer-family sum at `t = 0`, the foundational point for
+local non-vanishing of the polymer expansion in a complex disc (en route to the
+volume-uniform `Z_ℂ` lower bound for the Lemma 17.5.2 `hZ` provider, Issue
+#3044). -/
+theorem vdPolymerFamilies_sum_complex_at_zero
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    (∑ Γ ∈ vdCompatiblePolymerFamilies G,
+        ∏ P ∈ Γ, (0 : ℂ) ^ P.card) = 1 := by
+  classical
+  have h_empty_in :
+      (∅ : Finset (Finset (Sym2 ι))) ∈ vdCompatiblePolymerFamilies G := by
+    rw [mem_vdCompatiblePolymerFamilies]
+    exact ⟨Finset.empty_subset _, IsCompatiblePolymerFamilyVertexDisjoint.empty G⟩
+  have h_nonempty_zero : ∀ Γ ∈ vdCompatiblePolymerFamilies G,
+      Γ ≠ ∅ → (∏ P ∈ Γ, (0 : ℂ) ^ P.card) = 0 := by
+    intro Γ hΓ hne
+    rw [mem_vdCompatiblePolymerFamilies] at hΓ
+    obtain ⟨P, hP⟩ := Finset.nonempty_iff_ne_empty.mpr hne
+    have hP_polymer : IsPolymer G P := mem_allPolymers.mp (hΓ.1 hP)
+    have hP_pos : 0 < P.card := hP_polymer.nonempty.card_pos
+    exact Finset.prod_eq_zero hP (zero_pow hP_pos.ne')
+  rw [Finset.sum_eq_single ∅]
+  · rw [Finset.prod_empty]
+  · intro Γ hΓ hne
+    exact h_nonempty_zero Γ hΓ hne
+  · intro h
+    exact absurd h_empty_in h
+
 end IsingModel
