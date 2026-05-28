@@ -425,4 +425,71 @@ theorem freeEnergy_analyticOnNhd_J_h_zero
     AnalyticOnNhd ℝ (fun J' : ℝ => freeEnergy G ⟨J', 0, β⟩) Set.univ :=
   fun J _ => freeEnergy_analyticAt_J_h_zero G β J
 
+/-- **VD polymer-family sum is continuous in `t : ℂ`** (Issue #3054). The same
+polynomial in `t` as `vdPolymerFamilies_sum_continuous`, viewed as a function `ℂ → ℂ`.
+Foundation for the §18.6 complex analyticity of the polymer expansion. -/
+theorem vdPolymerFamilies_sum_continuous_complex
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    Continuous (fun t : ℂ =>
+      ∑ Γ ∈ vdCompatiblePolymerFamilies G, ∏ P ∈ Γ, t ^ P.card) := by
+  refine continuous_finset_sum _ ?_
+  intro Γ _
+  refine continuous_finset_prod _ ?_
+  intro P _
+  exact continuous_id.pow _
+
+/-- **VD polymer-family sum is `Differentiable ℂ` in `t`** (Issue #3054). A polynomial in
+`t : ℂ`, hence complex-differentiable everywhere. Strengthens
+`vdPolymerFamilies_sum_continuous_complex` and prepares the complex analyticity
+statement. -/
+theorem vdPolymerFamilies_sum_differentiable_complex
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    Differentiable ℂ (fun t : ℂ =>
+      ∑ Γ ∈ vdCompatiblePolymerFamilies G, ∏ P ∈ Γ, t ^ P.card) := by
+  refine Differentiable.fun_sum (fun Γ _ => ?_)
+  refine Differentiable.fun_finset_prod (fun P _ => ?_)
+  exact (differentiable_id (𝕜 := ℂ)).pow _
+
+/-- **Complex-analytic factored product `∏ s^|P|`** (Issue #3054): induction helper
+mirroring `analyticAt_prod_pow` for `t : ℂ`. -/
+theorem analyticAt_prod_pow_complex
+    {ι : Type*} (Γ : Finset (Finset (Sym2 ι))) (t : ℂ) :
+    AnalyticAt ℂ (fun s : ℂ => ∏ P ∈ Γ, s ^ P.card) t := by
+  classical
+  induction Γ using Finset.induction_on with
+  | empty =>
+      simpa using (analyticAt_const : AnalyticAt ℂ (fun _ : ℂ => (1 : ℂ)) t)
+  | insert P Γ hP ih =>
+      have h_step : (fun s : ℂ => ∏ P' ∈ insert P Γ, s ^ P'.card) =
+          (fun s : ℂ => s ^ P.card * ∏ P' ∈ Γ, s ^ P'.card) := by
+        funext s
+        exact Finset.prod_insert hP
+      rw [h_step]
+      exact (analyticAt_id.pow P.card).mul ih
+
+/-- **VD polymer-family sum is `AnalyticAt ℂ`** (Issue #3054). A polynomial in `t : ℂ`,
+hence complex-analytic at every point. The foundational complex extension of the real
+analyticity `vdPolymerFamilies_sum_analyticAt` (§18.6), first step in extending the
+cluster expansion to a complex `β`/`J` disc for the volume-uniform `Z_ℂ` lower bound
+(Lemma 17.5.2 hZ provider, Issue #3044 / Issue #3026). -/
+theorem vdPolymerFamilies_sum_analyticAt_complex
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (t : ℂ) :
+    AnalyticAt ℂ (fun s : ℂ =>
+      ∑ Γ ∈ vdCompatiblePolymerFamilies G, ∏ P ∈ Γ, s ^ P.card) t := by
+  classical
+  induction (vdCompatiblePolymerFamilies G) using Finset.induction_on with
+  | empty =>
+      simpa using (analyticAt_const : AnalyticAt ℂ (fun _ : ℂ => (0 : ℂ)) t)
+  | insert Γ S hΓ ih =>
+      have h_step : (fun s : ℂ => ∑ Γ' ∈ insert Γ S, ∏ P ∈ Γ', s ^ P.card) =
+          (fun s : ℂ => (∏ P ∈ Γ, s ^ P.card) +
+            ∑ Γ' ∈ S, ∏ P ∈ Γ', s ^ P.card) := by
+        funext s
+        exact Finset.sum_insert hΓ
+      rw [h_step]
+      exact (analyticAt_prod_pow_complex Γ t).add ih
+
 end IsingModel
