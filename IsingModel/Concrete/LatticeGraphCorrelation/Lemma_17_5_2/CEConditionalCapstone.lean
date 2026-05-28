@@ -1,6 +1,7 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.CapstoneIncrementFromComplexBound
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.IncrementCapstone
 import IsingModel.AmbientComplexAnalyticity.VolumeUniformHZ
+import IsingModel.ComplexAnalyticity.SecondMomentBounds
 
 /-!
 # Lemma 17.5.2: conditional capstone via the CE route (centred at `β = 0`)
@@ -693,6 +694,73 @@ theorem lemma_17_5_2_sandwich_of_Q_and_circle
     hα hαd hd hrho Λ J hJ_pos x z hxz hβ₁ hβ₁₂ hIcc M ratio hratio0 hratio1
     (CERouteIccGeometricIncrement_of_Q_and_circle Λ J x z M ratio hcircle)
     hdecay
+
+/-- **Unconditional per-stage dist bound from the trivial Q-bound** (Issue
+#3054): direct composition of the unconditional
+`partitionFunctionComplex_ne_zero_on_closedBall_h_zero_at_zero` (PR #3081)
+with PR #3032's capstone-coordinate conditional reduction
+`dist_deriv_correlationAlongExhaustion_le_of_complex_circle_bound`.
+
+For each covered stage `k`, for any radius `r > 0` satisfying the explicit
+**unconditional** smallness bound `r * (|J| · |E_k|) < √2` AND
+`r * (|J| · |E_{k+1}|) < √2`, and any circle bound `B` on
+`Metric.sphere ((0:ℝ):ℂ) r` for the value increment, the consecutive
+β-derivative increment satisfies
+`dist(∂_β c_k, ∂_β c_{k+1}) ≤ B / r` at `β = 0`.
+
+The radius bound is **explicit and unconditional** — no cluster-expansion
+assumption — but shrinks with the per-stage edge counts. Volume-uniform `r`
+requires sharper Q-bounds (research-level). The complementary `B` (circle
+bound on the correlation value increment) is the volume-uniform Simon-Lieb
+input from Issue #3044. -/
+theorem dist_deriv_correlationAlongExhaustion_le_at_zero_beta_unconditional
+    {d : ℕ} (Λ : Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype
+      (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeSet]
+    (J : ℝ) (x z : Fin d → ℤ) (k : ℕ) (r : ℝ) (hr_pos : 0 < r)
+    (hr_small_k : r * (|J| *
+      (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume k)).edgeFinset.card)
+        < Real.sqrt 2)
+    (hr_small_k1 : r * (|J| *
+      (Ambient.inducedGraph (IsingModel.latticeGraph d)
+        (Λ.volume (k + 1))).edgeFinset.card) < Real.sqrt 2)
+    (hk : ({x, z} : Finset (Fin d → ℤ)) ⊆ Λ.volume k)
+    {B : ℝ}
+    (hB : ∀ w ∈ Metric.sphere ((0 : ℝ) : ℂ) r,
+        ‖correlationComplex
+              (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume k))
+              (Ambient.liftFinset {x, z} hk) (J : ℂ) (0 : ℂ) w -
+            correlationComplex
+              (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume (k + 1)))
+              (Ambient.liftFinset {x, z} (hk.trans (Λ.mono (Nat.le_succ k))))
+              (J : ℂ) (0 : ℂ) w‖ ≤ B) :
+    dist
+      (deriv (fun β : ℝ => Ambient.correlationAlongExhaustion
+        (IsingModel.latticeGraph d) Λ ⟨J, 0, β⟩ {x, z} k) 0)
+      (deriv (fun β : ℝ => Ambient.correlationAlongExhaustion
+        (IsingModel.latticeGraph d) Λ ⟨J, 0, β⟩ {x, z} (k + 1)) 0)
+      ≤ B / r := by
+  refine dist_deriv_correlationAlongExhaustion_le_of_complex_circle_bound
+    Λ J x z k (β := 0) (R := r) (B := B) hr_pos hk ?_ ?_ ?_
+  · -- hZk slot: Z_ℂ ≠ 0 on closedBall ((0:ℝ):ℂ) r at stage k.
+    intro w hw
+    have hw₀ : w ∈ Metric.closedBall (0 : ℂ) r := by
+      rw [Metric.mem_closedBall] at hw
+      simp only [Complex.ofReal_zero] at hw
+      rw [Metric.mem_closedBall]; exact hw
+    exact IsingModel.partitionFunctionComplex_ne_zero_on_closedBall_h_zero_at_zero
+      (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume k))
+      J hr_small_k w hw₀
+  · -- hZk1 slot at stage k+1.
+    intro w hw
+    have hw₀ : w ∈ Metric.closedBall (0 : ℂ) r := by
+      rw [Metric.mem_closedBall] at hw
+      simp only [Complex.ofReal_zero] at hw
+      rw [Metric.mem_closedBall]; exact hw
+    exact IsingModel.partitionFunctionComplex_ne_zero_on_closedBall_h_zero_at_zero
+      (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume (k + 1)))
+      J hr_small_k1 w hw₀
+  · exact hB
 
 end Ambient
 end IsingModel
