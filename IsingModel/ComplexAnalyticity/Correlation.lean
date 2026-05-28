@@ -421,4 +421,36 @@ theorem correlationComplex_diff_norm_le_real_diff_plus_lipschitz
   rw [h_cd] at htri
   linarith
 
+/-- **Complex value-increment full conditional bound** (Issue #3044, final composition).
+Combining the triangle decomposition `correlationComplex_diff_norm_le_real_diff_plus_lipschitz`
+with an explicit real-axis value-increment bound `B_real` and the per-graph Lipschitz
+constants `C₁, C₂`:
+`‖⟨σ^A⟩_ℂ(G₁; β) − ⟨σ^A⟩_ℂ(G₂; β)‖ ≤ B_real + (C₁+C₂) · ‖β − ↑β.re‖`.
+
+This is the **end-to-end conditional reduction** for the complex value-increment bound on
+a small disc: feed (a) the real-axis value-increment bound (poly·geometric under
+high-temperature `βJ·2d < 1`, axiom-free in #3033–#3043), (b) per-graph Lipschitz
+constants (from `correlationComplex_norm_sub_le_of_norm_deriv_le` with derivative bounds
+from Cauchy's estimate on a slightly larger disc using
+`correlationComplex_norm_le_of_second_moment_le`), and obtain the complex value-increment
+poly·geometric bound feeding the Cauchy bridge `hB` provider for Lemma 17.5.2. -/
+theorem correlationComplex_diff_norm_le_from_real_bound
+    (G₁ G₂ : SimpleGraph ι) [Fintype G₁.edgeSet] [Fintype G₂.edgeSet]
+    (A : Finset ι) (p : IsingParams ℝ) (β : ℂ) {C₁ C₂ B_real : ℝ}
+    (h_real : |correlation G₁ (⟨p.J, p.h, β.re⟩ : IsingParams ℝ) A
+            - correlation G₂ (⟨p.J, p.h, β.re⟩ : IsingParams ℝ) A|
+          ≤ B_real)
+    (h₁ : ‖correlationComplex G₁ A (p.J : ℂ) (p.h : ℂ) β
+            - correlationComplex G₁ A (p.J : ℂ) (p.h : ℂ) ((β.re : ℝ) : ℂ)‖
+          ≤ C₁ * ‖β - ((β.re : ℝ) : ℂ)‖)
+    (h₂ : ‖correlationComplex G₂ A (p.J : ℂ) (p.h : ℂ) β
+            - correlationComplex G₂ A (p.J : ℂ) (p.h : ℂ) ((β.re : ℝ) : ℂ)‖
+          ≤ C₂ * ‖β - ((β.re : ℝ) : ℂ)‖) :
+    ‖correlationComplex G₁ A (p.J : ℂ) (p.h : ℂ) β
+        - correlationComplex G₂ A (p.J : ℂ) (p.h : ℂ) β‖
+      ≤ B_real + (C₁ + C₂) * ‖β - ((β.re : ℝ) : ℂ)‖ := by
+  refine (correlationComplex_diff_norm_le_real_diff_plus_lipschitz
+    G₁ G₂ A p β h₁ h₂).trans ?_
+  linarith
+
 end IsingModel
