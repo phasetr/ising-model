@@ -9,6 +9,7 @@ Mechanical child split from `ClusterExpansion.lean`.
 namespace IsingModel
 
 open Finset
+open scoped Topology
 
 /-- **Lattice Ising polymer partition function**: the polymer model
 partition function `polymerPartition` evaluated at the universe of all
@@ -587,5 +588,46 @@ theorem vdPolymerFamilies_sum_complex_at_zero
     exact h_nonempty_zero Γ hΓ hne
   · intro h
     exact absurd h_empty_in h
+
+/-- **Polymer-family sum with `Complex.tanh` evaluated at `β = 0` equals `1`**
+(Issue #3054): immediate from `Complex.tanh_zero` (`tanh 0 = 0`) and
+`vdPolymerFamilies_sum_complex_at_zero`. -/
+theorem vdPolymerFamilies_sum_tanh_complex_at_zero_beta
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J : ℂ) :
+    (∑ Γ ∈ vdCompatiblePolymerFamilies G,
+        ∏ P ∈ Γ, Complex.tanh ((0 : ℂ) * J) ^ P.card) = 1 := by
+  simp [Complex.tanh_zero, vdPolymerFamilies_sum_complex_at_zero]
+
+/-- **Polymer-family sum with `Complex.tanh` is eventually non-zero near
+`β = 0`** (Issue #3054). At `β = 0` the sum equals `1` (via
+`vdPolymerFamilies_sum_tanh_complex_at_zero_beta`); by complex-analytic continuity
+(`vdPolymerFamilies_sum_tanh_analyticAt_complex_beta`, using `Complex.cosh 0 = 1
+≠ 0`), the sum stays non-zero in a complex neighborhood of `β = 0`. The complex
+analogue of the local non-vanishing point for the polymer expansion — the first
+step in the eventual zero-free disc for the volume-uniform `Z_ℂ` lower bound of
+the Lemma 17.5.2 `hZ` provider (#3044). -/
+theorem vdPolymerFamilies_sum_tanh_complex_eventually_ne_zero_at_zero_beta
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J : ℂ) :
+    ∀ᶠ β : ℂ in 𝓝 (0 : ℂ),
+      (∑ Γ ∈ vdCompatiblePolymerFamilies G,
+         ∏ P ∈ Γ, Complex.tanh (β * J) ^ P.card) ≠ 0 := by
+  have hcosh0 : Complex.cosh ((0 : ℂ) * J) ≠ 0 := by
+    rw [zero_mul, Complex.cosh_zero]; exact one_ne_zero
+  have h_analyticAt :
+      AnalyticAt ℂ (fun β : ℂ =>
+        ∑ Γ ∈ vdCompatiblePolymerFamilies G,
+          ∏ P ∈ Γ, Complex.tanh (β * J) ^ P.card) 0 :=
+    vdPolymerFamilies_sum_tanh_analyticAt_complex_beta G J 0 hcosh0
+  have h_continuousAt := h_analyticAt.continuousAt
+  have h_at_zero :
+      (fun β : ℂ => ∑ Γ ∈ vdCompatiblePolymerFamilies G,
+          ∏ P ∈ Γ, Complex.tanh (β * J) ^ P.card) 0 = 1 :=
+    vdPolymerFamilies_sum_tanh_complex_at_zero_beta G J
+  have h_ne : (fun β : ℂ => ∑ Γ ∈ vdCompatiblePolymerFamilies G,
+          ∏ P ∈ Γ, Complex.tanh (β * J) ^ P.card) 0 ≠ 0 := by
+    rw [h_at_zero]; exact one_ne_zero
+  exact h_continuousAt.eventually_ne h_ne
 
 end IsingModel
