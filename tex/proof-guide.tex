@@ -9567,6 +9567,13 @@ quantitative complex-\(Z\) lower bound on a closed ball around \(\beta=0\):
 version of the Lemma 17.5.2 \texttt{hZ} provider via the cluster-expansion
 route; both \(r\) and \(\varepsilon\) depend on \(G\) and \(J\). Volume-uniformity
 remains the research-level open hard core (Issue \#3044).
+\texttt{Ambient.partitionFunctionComplexAlongExhaustion\_norm\_ge\_eps\_on\_closedBall\_at\_zero\_beta\_real\_J}
+(Issue \#3054, \texttt{AmbientComplexAnalyticity/HighTempExpansion.lean}) is the
+per-stage \(\Lambda\)-layer lift via \texttt{partitionFunctionComplexAlongExhaustion\_apply}:
+for each exhaustion stage \(n\), the closed-ball lower bound holds for
+\(Z_{\mathbb{C}}{}_{\Lambda_n}(\uparrow J, 0, \beta)\) (per-stage
+\(r_n,\varepsilon_n\) depending on the induced subgraph; cross-stage uniformity
+is the volume-uniform open problem).
 \end{theorem}
 
 The along-exhaustion and concrete $\mathbb{Z}^d$
