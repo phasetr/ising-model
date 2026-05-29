@@ -1510,3 +1510,13 @@ formalized**, per the full inventory above:
 - Fernández, R., Fröhlich, J., and Sokal, A.D., *Random Walks,
   Critical Phenomena, and Triviality in Quantum Field Theory*,
   Springer, 1992
+- Tasaki, H., *Physics and Mathematics of Quantum Many-Body Systems*,
+  Graduate Texts in Physics, Springer, 2020
+
+## Tasaki Ch 2 quantum spin formalisation
+
+Beginning formalisation of Tasaki's quantum many-body systems textbook from the
+front. Ch 2.1 (single quantum spin, S=1/2): `IsingModel/Quantum/SingleSpin.lean`
+defines the Pauli matrices `pauliX`, `pauliY`, `pauliZ` (Tasaki 2.1.8) and the
+spin-1/2 operators `spinOp1Half_x`, `spinOp1Half_y`, `spinOp1Half_z` as
+`(1/2) · σ^(α)` (Tasaki 2.1.7). Proves `(σ^(α))² = I` for α = x, y, z.
