@@ -351,5 +351,80 @@ theorem abs_correlation_inducedGraph_cubic_succ_sub_le_poly_pow (d : ℕ) (hd : 
   exact abs_correlationAlongExhaustion_cubic_succ_sub_le_poly_pow d hd r₀
     (⟨J, 0, β⟩ : IsingParams ℝ) hf rfl hα k R hRk hrs hr hs hsep
 
+/-- **High-temperature simplification of the cubic abs increment** (Issue #3054).
+Under the high-temperature condition `β · J · 2 · d ≤ 1`, the `β · J · 2 · d`
+prefactor in `abs_correlation_inducedGraph_cubic_succ_sub_le_poly_pow` is
+absorbed, leaving the clean poly·geometric bound
+`(2k+3)^d · cf^{(k+1-R)/(r₀+2)}`. This is the form directly compatible with
+the `R_inc_seq k := (2k+3)^d · ratio^k` shape required by the poly-geometric
+CE-route bundle constructors (PRs #3099-#3105). Positivity of the right-hand
+side uses `contractionFactor_nonneg`. -/
+theorem abs_correlation_inducedGraph_cubic_succ_sub_le_poly_pow_high_temp (d : ℕ) (hd : 1 ≤ d)
+    (r₀ : ℕ) (J β : ℝ)
+    (hβJ2d : β * J * (2 * d) ≤ 1)
+    (hf : Ferromagnetic (⟨J, 0, β⟩ : IsingParams ℝ))
+    (hα : contractionFactor d (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) r₀ < 1)
+    (k R : ℕ) (hRk : R ≤ k)
+    {r s : Fin d → ℤ} (hrs : r ≠ s) (hr : r ∈ cubicBox d R) (hs : s ∈ cubicBox d R)
+    (hsep : ∀ e ∈ (inducedGraph (latticeGraph d) (cubicBox d (k + 1))).edgeFinset.filter
+        (straddlePred ((cubicBox d k).subtype (· ∈ cubicBox d (k + 1)))),
+      ¬ Sym2.Mem (⟨r, cubicBox_mono d (by omega) hr⟩ : (↑(cubicBox d (k + 1)) : Type _)) e ∧
+        ¬ Sym2.Mem (⟨s, cubicBox_mono d (by omega) hs⟩ :
+          (↑(cubicBox d (k + 1)) : Type _)) e)
+    (hcov_k : ({r, s} : Finset (Fin d → ℤ)) ⊆ (cubicExhaustion d).volume k) :
+    |correlation (inducedGraph (latticeGraph d) ((cubicExhaustion d).volume k))
+          (⟨J, 0, β⟩ : IsingParams ℝ) (liftFinset {r, s} hcov_k) -
+        correlation (inducedGraph (latticeGraph d) ((cubicExhaustion d).volume (k + 1)))
+          (⟨J, 0, β⟩ : IsingParams ℝ)
+          (liftFinset {r, s} (hcov_k.trans ((cubicExhaustion d).mono (Nat.le_succ k))))|
+      ≤ ((2 * k + 3 : ℕ) : ℝ) ^ d *
+        contractionFactor d (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) r₀ ^
+          ((k + 1 - R) / (r₀ + 2)) := by
+  have hbound :=
+    abs_correlation_inducedGraph_cubic_succ_sub_le_poly_pow d hd r₀ J β hf hα k R hRk hrs hr hs hsep
+      hcov_k
+  have hcf_nn :
+      (0 : ℝ) ≤ contractionFactor d (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) r₀ :=
+    contractionFactor_nonneg d (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) hf r₀
+  -- Simplify the indexing: (2 * ((k : ℝ) + 1) + 1) = ((2 * k + 3 : ℕ) : ℝ)
+  have hidx : (2 * ((k : ℝ) + 1) + 1) = ((2 * k + 3 : ℕ) : ℝ) := by push_cast; ring
+  -- Build the simplification inequality.
+  have hcf_pow_nn :
+      0 ≤ contractionFactor d (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) r₀ ^
+            ((k + 1 - R) / (r₀ + 2)) :=
+    pow_nonneg hcf_nn _
+  have hpow_nn : (0 : ℝ) ≤ ((2 * k + 3 : ℕ) : ℝ) ^ d := pow_nonneg (by positivity) _
+  have hprod_nn :
+      (0 : ℝ) ≤ ((2 * k + 3 : ℕ) : ℝ) ^ d *
+            contractionFactor d (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) r₀ ^
+              ((k + 1 - R) / (r₀ + 2)) := mul_nonneg hpow_nn hcf_pow_nn
+  -- Rearrange the cubic bound RHS to extract β·J·2·d factor and the matching prefactor.
+  -- p.β · p.J · (2 · (d · (2(k+1)+1)^d) · cf^...)
+  --   = (β · J · 2 · d) · ((2k+3)^d · cf^...)
+  refine hbound.trans ?_
+  -- Show: β * J * (2 * (d * (2(k+1)+1)^d) * cf^...) ≤ (2k+3)^d * cf^...
+  have hrhs_eq :
+      β * J * (2 * ((d : ℝ) * (2 * ((k : ℝ) + 1) + 1) ^ d) *
+            contractionFactor d (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) r₀ ^
+              ((k + 1 - R) / (r₀ + 2)))
+      = (β * J * (2 * d)) *
+          (((2 * k + 3 : ℕ) : ℝ) ^ d *
+            contractionFactor d (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) r₀ ^
+              ((k + 1 - R) / (r₀ + 2))) := by
+    rw [hidx]; ring
+  rw [hrhs_eq]
+  calc β * J * (2 * (d : ℝ)) *
+          (((2 * k + 3 : ℕ) : ℝ) ^ d *
+            contractionFactor d (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) r₀ ^
+              ((k + 1 - R) / (r₀ + 2)))
+      ≤ 1 *
+          (((2 * k + 3 : ℕ) : ℝ) ^ d *
+            contractionFactor d (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) r₀ ^
+              ((k + 1 - R) / (r₀ + 2))) :=
+        mul_le_mul_of_nonneg_right hβJ2d hprod_nn
+    _ = ((2 * k + 3 : ℕ) : ℝ) ^ d *
+            contractionFactor d (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) r₀ ^
+              ((k + 1 - R) / (r₀ + 2)) := one_mul _
+
 end Ambient
 end IsingModel

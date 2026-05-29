@@ -9889,6 +9889,10 @@ rewrites the same bound in the direct
 \texttt{correlation (inducedGraph (latticeGraph d) (cubicBox d \_)) \(\langle\)J, 0, \(\beta\rangle\) ...}
 shape required by the \(h_{\mathrm{real\_inc}}\) slots of the poly-geometric
 CE-route bundle constructors.
+\textbf{High-temperature simplification} (Issue \#3054):
+\texttt{abs\_correlation\_inducedGraph\_cubic\_succ\_sub\_le\_poly\_pow\_high\_temp}
+absorbs the \(\beta J\cdot 2d\) prefactor under \(\beta J\cdot 2d \le 1\),
+leaving the clean \((2k+3)^d \cdot \mathrm{cf}^{(k+1-R)/(r_0+2)}\) form.
 Both inputs remain open at the volume-uniform level (complex cluster-expansion
 convergence is research-level).
 \end{theorem}
