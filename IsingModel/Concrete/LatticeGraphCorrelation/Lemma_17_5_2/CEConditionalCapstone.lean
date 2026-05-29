@@ -1041,5 +1041,100 @@ theorem CERouteIccGeometricIncrement_of_canonical_radius_circle
     canonicalTrivialQRadiusPair_smallness_k Λ J k,
     canonicalTrivialQRadiusPair_smallness_k1 Λ J k, hBsphere⟩
 
+/-- **One-step Lemma 17.5.2 upper bound from canonical-radius circle bound**
+(Issue #3054). Composition of `CERouteIccGeometricIncrement_of_canonical_radius_circle`
+(PR #3086) with `lemma_17_5_2_upper_bound_of_CERouteIccGeometricIncrement`
+(PR #3075). Delivers `Lemma_17_5_2_UpperBound` directly from a single
+per-(β, k) sphere circle bound at the canonical pair-stage radius — no
+smallness witness, no ne-zero hypothesis required. -/
+theorem lemma_17_5_2_upper_bound_of_canonical_radius_circle
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    {rho : ℝ} (hrho : 0 < rho)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (hJ_pos : 0 < J)
+    (x z : Fin d → ℤ) (hxz : x ≠ z)
+    {β₁ β₂ : ℝ} (hβ₁ : 0 < β₁) (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (M ratio : ℝ) (hratio0 : 0 ≤ ratio) (hratio1 : ratio < 1)
+    (hcircle : ∀ β₁' β₂' : ℝ,
+      Set.Icc β₁' β₂' ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
+        ∀ β ∈ Set.Icc β₁' β₂',
+          ∀ k : ℕ, (hk : ({x, z} : Finset (Fin d → ℤ)) ⊆ Λ.volume k) →
+            ∃ B : ℝ,
+              B / canonicalTrivialQRadiusPair Λ J k ≤ M * ratio ^ k ∧
+              (∀ w ∈ Metric.sphere ((β : ℝ) : ℂ)
+                    (canonicalTrivialQRadiusPair Λ J k),
+                ‖correlationComplex
+                      (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                        (Λ.volume k))
+                      (Ambient.liftFinset {x, z} hk) (J : ℂ) 0 w -
+                    correlationComplex
+                      (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                        (Λ.volume (k + 1)))
+                      (Ambient.liftFinset {x, z}
+                        (hk.trans (Λ.mono (Nat.le_succ k))))
+                      (J : ℂ) 0 w‖ ≤ B)) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      Lemma_17_5_2_UpperBound hα hrho Λ J β₂ x z
+        (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho)) :=
+  lemma_17_5_2_upper_bound_of_CERouteIccGeometricIncrement
+    hα hαd hd hrho Λ J hJ_pos x z hxz hβ₁ hβ₁₂ hIcc M ratio hratio0 hratio1
+    (CERouteIccGeometricIncrement_of_canonical_radius_circle Λ J x z M ratio hcircle)
+
+/-- **One-step Lemma 17.5.2 sandwich from canonical-radius circle bound + decay**
+(Issue #3054). Sandwich analogue of `lemma_17_5_2_upper_bound_of_canonical_radius_circle`. -/
+theorem lemma_17_5_2_sandwich_of_canonical_radius_circle
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    {rho : ℝ} (hrho : 0 < rho)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (hJ_pos : 0 < J)
+    (x z : Fin d → ℤ) (hxz : x ≠ z)
+    {β₁ β₂ : ℝ} (hβ₁ : 0 < β₁) (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (M ratio : ℝ) (hratio0 : 0 ≤ ratio) (hratio1 : ratio < 1)
+    (hcircle : ∀ β₁' β₂' : ℝ,
+      Set.Icc β₁' β₂' ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
+        ∀ β ∈ Set.Icc β₁' β₂',
+          ∀ k : ℕ, (hk : ({x, z} : Finset (Fin d → ℤ)) ⊆ Λ.volume k) →
+            ∃ B : ℝ,
+              B / canonicalTrivialQRadiusPair Λ J k ≤ M * ratio ^ k ∧
+              (∀ w ∈ Metric.sphere ((β : ℝ) : ℂ)
+                    (canonicalTrivialQRadiusPair Λ J k),
+                ‖correlationComplex
+                      (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                        (Λ.volume k))
+                      (Ambient.liftFinset {x, z} hk) (J : ℂ) 0 w -
+                    correlationComplex
+                      (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                        (Λ.volume (k + 1)))
+                      (Ambient.liftFinset {x, z}
+                        (hk.trans (Λ.mono (Nat.le_succ k))))
+                      (J : ℂ) 0 w‖ ≤ B))
+    (hdecay : HasExponentialDecay d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ)
+      (pseudoMassFromParamsAtPair hα hrho d Λ
+        (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      ENNReal.ofReal
+          (pseudoMassFromParamsAtPair hα hrho d Λ
+            (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
+        ≤ latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ∧
+      latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ≤
+        ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho) *
+          ENNReal.ofReal
+            (pseudoMassFromParamsAtPair hα hrho d Λ
+              (⟨J, 0, β₂⟩ : IsingParams ℝ) x z) :=
+  lemma_17_5_2_sandwich_of_CERouteIccGeometricIncrement
+    hα hαd hd hrho Λ J hJ_pos x z hxz hβ₁ hβ₁₂ hIcc M ratio hratio0 hratio1
+    (CERouteIccGeometricIncrement_of_canonical_radius_circle Λ J x z M ratio hcircle)
+    hdecay
+
 end Ambient
 end IsingModel

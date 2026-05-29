@@ -9740,6 +9740,12 @@ sphere circle bound \(B\) (Issue \#3044) remains as an external input.
 satisfies smallness for both stages \(k\) and \(k+1\) simultaneously;
 \texttt{CERouteIccGeometricIncrement\_of\_canonical\_radius\_circle}
 auto-supplies the radius and smallness from this canonical choice.
+\textbf{One-step canonical-radius Lemma 17.5.2 wrappers} (Issue \#3054):
+\texttt{lemma\_17\_5\_2\_upper\_bound\_of\_canonical\_radius\_circle} and
+\texttt{lemma\_17\_5\_2\_sandwich\_of\_canonical\_radius\_circle} compose the
+auto-radius bundle constructor with the upper-bound/sandwich consumers; the
+user supplies only the canonical-radius sphere circle bound \(B\) (and, for
+sandwich, the endpoint pseudo-mass decay).
 Both inputs remain open at the volume-uniform level (complex cluster-expansion
 convergence is research-level).
 \end{theorem}
