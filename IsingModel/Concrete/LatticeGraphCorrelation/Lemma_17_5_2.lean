@@ -31,6 +31,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.CorrelationAlong
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.CapstoneIncrementFromComplexBound
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.CEDirectAPI
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.CEConditionalCapstone
+import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.CEConditionalCapstonePseudoMassLeRate
 
 /-!
 # GJ §17.5 Lemma 17.5.2 capstone
