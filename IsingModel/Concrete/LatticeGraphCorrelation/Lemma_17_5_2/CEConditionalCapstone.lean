@@ -922,5 +922,124 @@ theorem lemma_17_5_2_sandwich_of_trivial_Q_smallness_h_zero
       Λ J x z M ratio hcircle)
     hdecay
 
+/-- **Canonical pair-stage trivial-Q radius** (Issue #3054): for the
+consecutive stages `k` and `k+1`, the minimum of the two canonical
+`trivialQRadius` values, which satisfies the unconditional smallness for both
+stages simultaneously. -/
+noncomputable def canonicalTrivialQRadiusPair
+    {d : ℕ} (Λ : Exhaustion (Fin d → ℤ)) (J : ℝ) (k : ℕ) : ℝ :=
+  min
+    (IsingModel.trivialQRadius
+      (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume k)) J)
+    (IsingModel.trivialQRadius
+      (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume (k + 1))) J)
+
+/-- `canonicalTrivialQRadiusPair` is positive. -/
+lemma canonicalTrivialQRadiusPair_pos
+    {d : ℕ} (Λ : Exhaustion (Fin d → ℤ)) (J : ℝ) (k : ℕ) :
+    0 < canonicalTrivialQRadiusPair Λ J k := by
+  unfold canonicalTrivialQRadiusPair
+  exact lt_min
+    (IsingModel.trivialQRadius_pos
+      (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume k)) J)
+    (IsingModel.trivialQRadius_pos
+      (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume (k + 1))) J)
+
+/-- `canonicalTrivialQRadiusPair` satisfies the trivial-Q smallness at stage k. -/
+lemma canonicalTrivialQRadiusPair_smallness_k
+    {d : ℕ} (Λ : Exhaustion (Fin d → ℤ)) (J : ℝ) (k : ℕ) :
+    canonicalTrivialQRadiusPair Λ J k *
+        (|J| *
+          (Ambient.inducedGraph (IsingModel.latticeGraph d)
+            (Λ.volume k)).edgeFinset.card) < Real.sqrt 2 := by
+  have h_le : canonicalTrivialQRadiusPair Λ J k ≤
+      IsingModel.trivialQRadius
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume k)) J :=
+    min_le_left _ _
+  have h_nn : (0 : ℝ) ≤ |J| *
+      (Ambient.inducedGraph (IsingModel.latticeGraph d)
+        (Λ.volume k)).edgeFinset.card := by positivity
+  calc canonicalTrivialQRadiusPair Λ J k *
+        (|J| *
+          (Ambient.inducedGraph (IsingModel.latticeGraph d)
+            (Λ.volume k)).edgeFinset.card)
+      ≤ IsingModel.trivialQRadius
+            (Ambient.inducedGraph (IsingModel.latticeGraph d)
+              (Λ.volume k)) J *
+          (|J| *
+            (Ambient.inducedGraph (IsingModel.latticeGraph d)
+              (Λ.volume k)).edgeFinset.card) :=
+        mul_le_mul_of_nonneg_right h_le h_nn
+    _ < Real.sqrt 2 :=
+        IsingModel.trivialQRadius_smallness
+          (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume k)) J
+
+/-- `canonicalTrivialQRadiusPair` satisfies the trivial-Q smallness at stage k+1. -/
+lemma canonicalTrivialQRadiusPair_smallness_k1
+    {d : ℕ} (Λ : Exhaustion (Fin d → ℤ)) (J : ℝ) (k : ℕ) :
+    canonicalTrivialQRadiusPair Λ J k *
+        (|J| *
+          (Ambient.inducedGraph (IsingModel.latticeGraph d)
+            (Λ.volume (k + 1))).edgeFinset.card) < Real.sqrt 2 := by
+  have h_le : canonicalTrivialQRadiusPair Λ J k ≤
+      IsingModel.trivialQRadius
+        (Ambient.inducedGraph (IsingModel.latticeGraph d)
+          (Λ.volume (k + 1))) J :=
+    min_le_right _ _
+  have h_nn : (0 : ℝ) ≤ |J| *
+      (Ambient.inducedGraph (IsingModel.latticeGraph d)
+        (Λ.volume (k + 1))).edgeFinset.card := by positivity
+  calc canonicalTrivialQRadiusPair Λ J k *
+        (|J| *
+          (Ambient.inducedGraph (IsingModel.latticeGraph d)
+            (Λ.volume (k + 1))).edgeFinset.card)
+      ≤ IsingModel.trivialQRadius
+            (Ambient.inducedGraph (IsingModel.latticeGraph d)
+              (Λ.volume (k + 1))) J *
+          (|J| *
+            (Ambient.inducedGraph (IsingModel.latticeGraph d)
+              (Λ.volume (k + 1))).edgeFinset.card) :=
+        mul_le_mul_of_nonneg_right h_le h_nn
+    _ < Real.sqrt 2 :=
+        IsingModel.trivialQRadius_smallness
+          (Ambient.inducedGraph (IsingModel.latticeGraph d)
+            (Λ.volume (k + 1))) J
+
+/-- **Auto-radius bundle constructor with canonical trivial-Q radius**
+(Issue #3054). User supplies only the per-(β, k) sphere circle bound `B` with
+`B / canonicalTrivialQRadiusPair Λ J k ≤ M · ratio^k`; the radius itself and
+the per-stage smallness witnesses are **canonical** (no user input). Produces
+the `CERouteIccGeometricIncrement` bundle. -/
+theorem CERouteIccGeometricIncrement_of_canonical_radius_circle
+    {d : ℕ} (Λ : Exhaustion (Fin d → ℤ))
+    (J : ℝ) (x z : Fin d → ℤ) (M ratio : ℝ)
+    (hcircle : ∀ β₁ β₂ : ℝ,
+      Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
+        ∀ β ∈ Set.Icc β₁ β₂,
+          ∀ k : ℕ, (hk : ({x, z} : Finset (Fin d → ℤ)) ⊆ Λ.volume k) →
+            ∃ B : ℝ,
+              B / canonicalTrivialQRadiusPair Λ J k ≤ M * ratio ^ k ∧
+              (∀ w ∈ Metric.sphere ((β : ℝ) : ℂ)
+                    (canonicalTrivialQRadiusPair Λ J k),
+                ‖correlationComplex
+                      (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                        (Λ.volume k))
+                      (Ambient.liftFinset {x, z} hk) (J : ℂ) 0 w -
+                    correlationComplex
+                      (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                        (Λ.volume (k + 1)))
+                      (Ambient.liftFinset {x, z}
+                        (hk.trans (Λ.mono (Nat.le_succ k))))
+                      (J : ℂ) 0 w‖ ≤ B)) :
+    CERouteIccGeometricIncrement Λ J x z M ratio := by
+  refine CERouteIccGeometricIncrement_of_trivial_Q_smallness_h_zero
+    Λ J x z M ratio ?_
+  intro β₁ β₂ hIcc β hβ k hk
+  obtain ⟨B, hBR, hBsphere⟩ := hcircle β₁ β₂ hIcc β hβ k hk
+  refine ⟨canonicalTrivialQRadiusPair Λ J k,
+    canonicalTrivialQRadiusPair_pos Λ J k, B, hBR,
+    canonicalTrivialQRadiusPair_smallness_k Λ J k,
+    canonicalTrivialQRadiusPair_smallness_k1 Λ J k, hBsphere⟩
+
 end Ambient
 end IsingModel

@@ -9735,6 +9735,11 @@ compose the auto-assembling bundle with the final-capstone wrappers, delivering
 \texttt{Lemma\_17\_5\_2\_UpperBound} / two-sided sandwich
 \textbf{fully unconditional in the ne-zero direction}; only the Simon-Lieb
 sphere circle bound \(B\) (Issue \#3044) remains as an external input.
+\textbf{Auto-radius via canonical pair-stage trivial-Q radius} (Issue \#3054):
+\texttt{canonicalTrivialQRadiusPair}\(\Lambda\,J\,k:=\min(\texttt{trivialQRadius}\,G_k\,J,\texttt{trivialQRadius}\,G_{k+1}\,J)\)
+satisfies smallness for both stages \(k\) and \(k+1\) simultaneously;
+\texttt{CERouteIccGeometricIncrement\_of\_canonical\_radius\_circle}
+auto-supplies the radius and smallness from this canonical choice.
 Both inputs remain open at the volume-uniform level (complex cluster-expansion
 convergence is research-level).
 \end{theorem}
