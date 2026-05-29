@@ -515,6 +515,71 @@ theorem not_sym2_mem_straddle_of_cubicBox_R_succ_le_k
       · exact ha_notk ha_in_k
       · exact hb_notk (hbv ▸ hr_in_k)
 
+/-- **Floor-power → geometric bound** (Issue #3054, Step A). For `0 < cf < 1`
+and `m ≥ 1`, the natural-power `cf^⌊n/m⌋` is bounded above by `(1/cf) · ρ^n`
+where `ρ := cf^(1/m)` (real power) — i.e., a clean geometric upper bound with
+ratio `ρ < 1`. The floor adjustment costs at most a factor `1/cf`.
+
+Key conversion needed to translate the cubic real-axis increment bound
+`cf^⌊(k+1-R)/(r₀+2)⌋` (step-wise geometric in `k`) into the `ratio^k` shape
+required by the poly-geometric CE-route bundle constructors. -/
+theorem cf_pow_natDiv_le_geometric (cf : ℝ) (hcf_pos : 0 < cf) (hcf_lt_one : cf < 1)
+    (m : ℕ) (hm : 0 < m) :
+    let ρ := cf ^ ((1 : ℝ) / m)
+    0 < ρ ∧ ρ < 1 ∧ ∀ n : ℕ, cf ^ (n / m) ≤ (1 / cf) * ρ ^ n := by
+  -- Set ρ := cf^(1/m), M := 1/cf.
+  refine ⟨?_, ?_, ?_⟩
+  · -- 0 < cf^(1/m)
+    exact Real.rpow_pos_of_pos hcf_pos _
+  · -- cf^(1/m) < 1
+    have hm_pos : (0 : ℝ) < 1 / m := by
+      have hm_pos' : (0 : ℝ) < m := by exact_mod_cast hm
+      positivity
+    exact Real.rpow_lt_one hcf_pos.le hcf_lt_one hm_pos
+  · intro n
+    -- Strategy: cf^(n/m : ℕ) = Real.rpow cf (n/m : ℕ : ℝ)
+    --        ≤ Real.rpow cf ((n : ℝ)/m - 1) since (n/m : ℕ : ℝ) ≥ (n : ℝ)/m - 1
+    --        = cf⁻¹ * Real.rpow cf ((n : ℝ)/m)
+    --        = cf⁻¹ * (cf^(1/m))^n
+    --        = (1/cf) * ρ^n
+    have hm_pos_real : (0 : ℝ) < m := by exact_mod_cast hm
+    have h_floor_le : ((n : ℝ) / m - 1) ≤ ((n / m : ℕ) : ℝ) := by
+      -- (n/m : ℕ) * m + (n % m) = n, n % m < m, so (n/m : ℕ) * m > n - m, i.e.,
+      -- (n/m : ℕ) > n/m - 1 (real).
+      have h_div_add : (n / m : ℕ) * m + n % m = n := by
+        rw [Nat.mul_comm]; exact Nat.div_add_mod n m
+      have h_mod_lt : (n % m : ℕ) < m := Nat.mod_lt n hm
+      have h_div_real : ((n / m : ℕ) : ℝ) * m = (n : ℝ) - ((n % m : ℕ) : ℝ) := by
+        have hcast : (((n / m : ℕ) * m + n % m : ℕ) : ℝ) = (n : ℝ) := by exact_mod_cast h_div_add
+        push_cast at hcast
+        linarith
+      have h_mod_lt_real : ((n % m : ℕ) : ℝ) < (m : ℝ) := by exact_mod_cast h_mod_lt
+      -- Want: (n : ℝ)/m - 1 ≤ ((n / m : ℕ) : ℝ)
+      -- Equivalently: ((n : ℝ)/m - 1) * m ≤ ((n / m : ℕ) : ℝ) * m
+      -- LHS = (n : ℝ) - m, RHS = (n : ℝ) - (n % m : ℝ) > (n : ℝ) - m. ✓
+      have hgoal : ((n : ℝ) / m - 1) * m ≤ ((n / m : ℕ) : ℝ) * m := by
+        rw [h_div_real]
+        have : ((n : ℝ) / m - 1) * m = (n : ℝ) - m := by field_simp
+        rw [this]
+        linarith
+      exact le_of_mul_le_mul_right hgoal hm_pos_real
+    -- Use rpow_natCast to convert nat-power to rpow.
+    rw [show cf ^ (n / m) = (cf : ℝ) ^ ((n / m : ℕ) : ℝ) by rw [Real.rpow_natCast]]
+    -- Apply rpow monotonicity (decreasing for cf < 1)
+    have h_step1 :
+        (cf : ℝ) ^ ((n / m : ℕ) : ℝ) ≤ cf ^ ((n : ℝ) / m - 1) :=
+      Real.rpow_le_rpow_of_exponent_ge hcf_pos hcf_lt_one.le h_floor_le
+    refine h_step1.trans ?_
+    -- cf^((n:ℝ)/m - 1) = (1/cf) * cf^((n:ℝ)/m) = (1/cf) * (cf^(1/m))^n
+    have h_rhs :
+        cf ^ ((n : ℝ) / m - 1) = (1 / cf) * (cf ^ ((1 : ℝ) / m)) ^ n := by
+      rw [Real.rpow_sub hcf_pos, Real.rpow_one]
+      rw [show ((n : ℝ) / m) = ((1 : ℝ) / m) * n by ring]
+      rw [Real.rpow_mul hcf_pos.le]
+      rw [Real.rpow_natCast]
+      ring
+    rw [h_rhs]
+
 /-- **Pair separation from `R + 1 ≤ k`** (Issue #3054, Step B capstone). The
 exact `hsep` hypothesis shape required by the cubic per-stage increment bounds
 (`abs_correlation_inducedGraph_cubic_succ_sub_le_poly_pow_high_temp`). Combines
