@@ -9746,6 +9746,17 @@ auto-supplies the radius and smallness from this canonical choice.
 auto-radius bundle constructor with the upper-bound/sandwich consumers; the
 user supplies only the canonical-radius sphere circle bound \(B\) (and, for
 sandwich, the endpoint pseudo-mass decay).
+\textbf{Sphere circle bound via direct triangle inequality} (Issue \#3054):
+\texttt{sphere\_circle\_bound\_of\_real\_inc\_and\_lipschitz} supplies
+\(\|\mathrm{corr}_{\mathbb{C}}\,G_k(w)-\mathrm{corr}_{\mathbb{C}}\,G_{k+1}(w)\|
+\le R_{\mathrm{inc}}+(C_k+C_{k+1})\,r\) from a real-axis value increment bound
+\(R_{\mathrm{inc}}\) on \([\beta_0-r,\beta_0+r]\) and per-stage Lipschitz
+hypotheses \(C_k,C_{k+1}\). Bypasses the vertex-type incompatibility that
+prevents direct use of
+\texttt{correlationComplex\_diff\_norm\_le\_real\_diff\_plus\_lipschitz}
+(PR \#3050) by manual triangle inequality + per-graph real-axis cast
+(\texttt{correlation\_ofReal\_eq\_correlationComplex} with
+\((0{:}\mathbb{R}){:}\mathbb{C}\to(0{:}\mathbb{C})\) simp normalisation).
 Both inputs remain open at the volume-uniform level (complex cluster-expansion
 convergence is research-level).
 \end{theorem}

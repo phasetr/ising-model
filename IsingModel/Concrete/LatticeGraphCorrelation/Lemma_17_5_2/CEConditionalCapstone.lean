@@ -1136,5 +1136,184 @@ theorem lemma_17_5_2_sandwich_of_canonical_radius_circle
     (CERouteIccGeometricIncrement_of_canonical_radius_circle Λ J x z M ratio hcircle)
     hdecay
 
+/-- **Sphere circle bound via direct triangle inequality with per-stage
+Lipschitz and real-axis values** (Issue #3054). For each `w` on
+`Metric.sphere ((β₀:ℝ):ℂ) r`, the cross-stage value increment satisfies:
+`‖corr_ℂ G_k(w) - corr_ℂ G_{k+1}(w)‖ ≤ R_inc + (C_k + C_k1) · r`.
+
+Proof: direct triangle inequality
+`‖a - d‖ ≤ ‖a - b‖ + ‖b - c‖ + ‖c - d‖`
+where `a := corr_ℂ G_k(w)`, `b := corr_ℂ G_k(w.re)`,
+`c := corr_ℂ G_{k+1}(w.re)`, `d := corr_ℂ G_{k+1}(w)`. Per-stage Lipschitz
+hypotheses bound `‖a - b‖` and `‖c - d‖`; the real-axis identity
+`corr_ℂ G((w.re:ℝ):ℂ) = (correlation G ⟨J,0,w.re⟩ : ℂ)` makes `b - c` a cast
+of a real difference, with `‖b - c‖` equal to the absolute value of the real
+increment; sphere geometry gives `‖w - w.re‖ ≤ r`. Bypasses vertex-type
+incompatibility that prevents direct use of
+`correlationComplex_diff_norm_le_real_diff_plus_lipschitz` (#3050). -/
+theorem sphere_circle_bound_of_real_inc_and_lipschitz
+    {d : ℕ} (Λ : Exhaustion (Fin d → ℤ))
+    (J : ℝ) (x z : Fin d → ℤ) (k : ℕ)
+    (hk : ({x, z} : Finset (Fin d → ℤ)) ⊆ Λ.volume k)
+    (β₀ r R_inc C_k C_k1 : ℝ)
+    (h_real_inc : ∀ β_re : ℝ, β_re ∈ Set.Icc (β₀ - r) (β₀ + r) →
+      |correlation
+            (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume k))
+            (⟨J, 0, β_re⟩ : IsingParams ℝ)
+            (Ambient.liftFinset {x, z} hk) -
+          correlation
+            (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume (k + 1)))
+            (⟨J, 0, β_re⟩ : IsingParams ℝ)
+            (Ambient.liftFinset {x, z}
+              (hk.trans (Λ.mono (Nat.le_succ k))))| ≤ R_inc)
+    (h_lip_k : ∀ β ∈ Metric.sphere ((β₀ : ℝ) : ℂ) r,
+      ‖correlationComplex
+            (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume k))
+            (Ambient.liftFinset {x, z} hk) (J : ℂ) 0 β -
+          correlationComplex
+            (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume k))
+            (Ambient.liftFinset {x, z} hk) (J : ℂ) 0 ((β.re : ℝ) : ℂ)‖
+        ≤ C_k * ‖β - ((β.re : ℝ) : ℂ)‖)
+    (h_lip_k1 : ∀ β ∈ Metric.sphere ((β₀ : ℝ) : ℂ) r,
+      ‖correlationComplex
+            (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume (k + 1)))
+            (Ambient.liftFinset {x, z}
+              (hk.trans (Λ.mono (Nat.le_succ k)))) (J : ℂ) 0 β -
+          correlationComplex
+            (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume (k + 1)))
+            (Ambient.liftFinset {x, z}
+              (hk.trans (Λ.mono (Nat.le_succ k)))) (J : ℂ) 0 ((β.re : ℝ) : ℂ)‖
+        ≤ C_k1 * ‖β - ((β.re : ℝ) : ℂ)‖)
+    (hC_k_nn : 0 ≤ C_k) (hC_k1_nn : 0 ≤ C_k1) :
+    ∀ w ∈ Metric.sphere ((β₀ : ℝ) : ℂ) r,
+      ‖correlationComplex
+            (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume k))
+            (Ambient.liftFinset {x, z} hk) (J : ℂ) 0 w -
+          correlationComplex
+            (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume (k + 1)))
+            (Ambient.liftFinset {x, z}
+              (hk.trans (Λ.mono (Nat.le_succ k))))
+            (J : ℂ) 0 w‖ ≤ R_inc + (C_k + C_k1) * r := by
+  intro w hw
+  have hb_aux := IsingModel.correlation_ofReal_eq_correlationComplex
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume k))
+    (⟨J, 0, w.re⟩ : IsingParams ℝ) (Ambient.liftFinset {x, z} hk)
+  simp only [Complex.ofReal_zero] at hb_aux
+  have hb_real : correlationComplex
+      (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume k))
+      (Ambient.liftFinset {x, z} hk) (J : ℂ) 0 ((w.re : ℝ) : ℂ) =
+      ((correlation
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume k))
+        (⟨J, 0, w.re⟩ : IsingParams ℝ)
+        (Ambient.liftFinset {x, z} hk) : ℝ) : ℂ) := hb_aux.symm
+  have hc_aux := IsingModel.correlation_ofReal_eq_correlationComplex
+    (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume (k + 1)))
+    (⟨J, 0, w.re⟩ : IsingParams ℝ)
+    (Ambient.liftFinset {x, z} (hk.trans (Λ.mono (Nat.le_succ k))))
+  simp only [Complex.ofReal_zero] at hc_aux
+  have hc_real : correlationComplex
+      (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume (k + 1)))
+      (Ambient.liftFinset {x, z}
+        (hk.trans (Λ.mono (Nat.le_succ k)))) (J : ℂ) 0 ((w.re : ℝ) : ℂ) =
+      ((correlation
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume (k + 1)))
+        (⟨J, 0, w.re⟩ : IsingParams ℝ)
+        (Ambient.liftFinset {x, z}
+          (hk.trans (Λ.mono (Nat.le_succ k)))) : ℝ) : ℂ) := hc_aux.symm
+  rw [Metric.mem_sphere] at hw
+  have h_w_β₀_norm_eq : ‖w - ((β₀ : ℝ) : ℂ)‖ = r := by
+    rw [← Complex.dist_eq]; exact hw
+  have h_w_wre_norm_le_r : ‖w - ((w.re : ℝ) : ℂ)‖ ≤ r := by
+    have h_im_abs : |w.im| ≤ ‖w - ((β₀ : ℝ) : ℂ)‖ := by
+      have h_sub_im : (w - ((β₀ : ℝ) : ℂ)).im = w.im := by simp
+      have := Complex.abs_im_le_norm (w - ((β₀ : ℝ) : ℂ))
+      rw [h_sub_im] at this; exact this
+    have h_im_abs_eq : ‖w - ((w.re : ℝ) : ℂ)‖ = |w.im| := by
+      have h_sub_w_wre : w - ((w.re : ℝ) : ℂ) = w.im • Complex.I :=
+        Complex.ext (by simp) (by simp)
+      rw [h_sub_w_wre]; simp
+    linarith [h_im_abs_eq, h_im_abs, h_w_β₀_norm_eq]
+  have h_re_abs : |w.re - β₀| ≤ r := by
+    have h_re_sub : (w - ((β₀ : ℝ) : ℂ)).re = w.re - β₀ := by simp
+    have := Complex.abs_re_le_norm (w - ((β₀ : ℝ) : ℂ))
+    rw [h_re_sub] at this; linarith
+  have h_real_mem : w.re ∈ Set.Icc (β₀ - r) (β₀ + r) := by
+    refine ⟨?_, ?_⟩
+    · linarith [abs_le.mp h_re_abs |>.1]
+    · linarith [abs_le.mp h_re_abs |>.2]
+  have h_ab := h_lip_k w hw
+  have h_dc_norm := h_lip_k1 w hw
+  have h_cd : ‖correlationComplex
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume (k + 1)))
+        (Ambient.liftFinset {x, z} (hk.trans (Λ.mono (Nat.le_succ k))))
+        (J : ℂ) 0 ((w.re : ℝ) : ℂ) -
+      correlationComplex
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume (k + 1)))
+        (Ambient.liftFinset {x, z} (hk.trans (Λ.mono (Nat.le_succ k))))
+        (J : ℂ) 0 w‖ ≤ C_k1 * ‖w - ((w.re : ℝ) : ℂ)‖ := by
+    have h_neg : (correlationComplex
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume (k + 1)))
+        (Ambient.liftFinset {x, z} (hk.trans (Λ.mono (Nat.le_succ k))))
+        (J : ℂ) 0 ((w.re : ℝ) : ℂ) -
+      correlationComplex
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume (k + 1)))
+        (Ambient.liftFinset {x, z} (hk.trans (Λ.mono (Nat.le_succ k))))
+        (J : ℂ) 0 w) = -(correlationComplex
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume (k + 1)))
+        (Ambient.liftFinset {x, z} (hk.trans (Λ.mono (Nat.le_succ k))))
+        (J : ℂ) 0 w -
+      correlationComplex
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume (k + 1)))
+        (Ambient.liftFinset {x, z} (hk.trans (Λ.mono (Nat.le_succ k))))
+        (J : ℂ) 0 ((w.re : ℝ) : ℂ)) := by ring
+    rw [h_neg, norm_neg]
+    exact h_dc_norm
+  have h_real_bound := h_real_inc w.re h_real_mem
+  set a := correlationComplex
+      (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume k))
+      (Ambient.liftFinset {x, z} hk) (J : ℂ) 0 w
+  set b := correlationComplex
+      (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume k))
+      (Ambient.liftFinset {x, z} hk) (J : ℂ) 0 ((w.re : ℝ) : ℂ)
+  set c := correlationComplex
+      (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume (k + 1)))
+      (Ambient.liftFinset {x, z} (hk.trans (Λ.mono (Nat.le_succ k))))
+      (J : ℂ) 0 ((w.re : ℝ) : ℂ)
+  set d_ := correlationComplex
+      (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume (k + 1)))
+      (Ambient.liftFinset {x, z} (hk.trans (Λ.mono (Nat.le_succ k))))
+      (J : ℂ) 0 w
+  have h_tri : ‖a - d_‖ ≤ ‖a - b‖ + ‖b - c‖ + ‖c - d_‖ := by
+    have h_decomp : a - d_ = (a - b) + ((b - c) + (c - d_)) := by ring
+    rw [h_decomp]
+    have h1 := norm_add_le (a - b) ((b - c) + (c - d_))
+    have h2 := norm_add_le (b - c) (c - d_)
+    linarith
+  have h_bc_eq : ‖b - c‖ = |correlation
+      (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume k))
+      (⟨J, 0, w.re⟩ : IsingParams ℝ)
+      (Ambient.liftFinset {x, z} hk) -
+      correlation
+      (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume (k + 1)))
+      (⟨J, 0, w.re⟩ : IsingParams ℝ)
+      (Ambient.liftFinset {x, z} (hk.trans (Λ.mono (Nat.le_succ k))))| := by
+    rw [show b - c = (((correlation
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume k))
+        (⟨J, 0, w.re⟩ : IsingParams ℝ)
+        (Ambient.liftFinset {x, z} hk) -
+      correlation
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume (k + 1)))
+        (⟨J, 0, w.re⟩ : IsingParams ℝ)
+        (Ambient.liftFinset {x, z}
+          (hk.trans (Λ.mono (Nat.le_succ k))))) : ℝ) : ℂ) from by
+      rw [hb_real, hc_real]; push_cast; ring]
+    rw [Complex.norm_real, Real.norm_eq_abs]
+  rw [h_bc_eq] at h_tri
+  have h_ab_le_r : ‖a - b‖ ≤ C_k * r :=
+    le_trans h_ab (mul_le_mul_of_nonneg_left h_w_wre_norm_le_r hC_k_nn)
+  have h_cd_le_r : ‖c - d_‖ ≤ C_k1 * r :=
+    le_trans h_cd (mul_le_mul_of_nonneg_left h_w_wre_norm_le_r hC_k1_nn)
+  nlinarith [h_tri, h_real_bound, h_ab_le_r, h_cd_le_r]
+
 end Ambient
 end IsingModel
