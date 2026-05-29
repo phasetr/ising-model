@@ -2457,5 +2457,120 @@ theorem lemma_17_5_2_capstone_of_CERouteIccPolyGeometricIncrement
     hα hαd hd hrho Λ J hJ_pos x z hxz hβ₁ hβ₁₂ hIcc M ratio hratio0 hratio1
     (hincr_of_CERouteIccPolyGeometricIncrement Λ J x z M ratio h) hdecay
 
+/-- **Poly-geometric Q-input bundle constructor (Cauchy mirror)** (Issue
+#3054). Mirror of `CERouteIccGeometricIncrement_of_Q_and_circle` (PR #3078)
+for the poly·geometric form. -/
+theorem CERouteIccPolyGeometricIncrement_of_Q_and_circle
+    {d : ℕ} (Λ : Exhaustion (Fin d → ℤ))
+    (J : ℝ) (x z : Fin d → ℤ) (M ratio : ℝ)
+    (hcircle : ∀ β₁ β₂ : ℝ,
+      Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
+        ∀ β ∈ Set.Icc β₁ β₂,
+          ∀ k : ℕ, (hk : ({x, z} : Finset (Fin d → ℤ)) ⊆ Λ.volume k) →
+            ∃ R > 0, ∃ B : ℝ,
+              B / R ≤ M * (((2 * k + 3 : ℕ) : ℝ) ^ d * ratio ^ k) ∧
+              (∀ w ∈ Metric.closedBall ((β : ℝ) : ℂ) R,
+                partitionFunctionComplex
+                    (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume k))
+                    (J : ℂ) 0 w ≠ 0) ∧
+              (∀ w ∈ Metric.closedBall ((β : ℝ) : ℂ) R,
+                partitionFunctionComplex
+                    (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume (k + 1)))
+                    (J : ℂ) 0 w ≠ 0) ∧
+              (∀ w ∈ Metric.sphere ((β : ℝ) : ℂ) R,
+                ‖correlationComplex
+                      (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                        (Λ.volume k))
+                      (Ambient.liftFinset {x, z} hk) (J : ℂ) 0 w -
+                    correlationComplex
+                      (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                        (Λ.volume (k + 1)))
+                      (Ambient.liftFinset {x, z}
+                        (hk.trans (Λ.mono (Nat.le_succ k))))
+                      (J : ℂ) 0 w‖ ≤ B)) :
+    CERouteIccPolyGeometricIncrement Λ J x z M ratio := by
+  intro β₁ β₂ hIcc β hβ k hk
+  obtain ⟨R, hR, B, hBR, hZk, hZk1, hBsphere⟩ := hcircle β₁ β₂ hIcc β hβ k hk
+  exact ⟨R, hR, B, hBR, hZk, hZk1, hBsphere⟩
+
+/-- **Poly-geometric auto-assembling Cauchy bundle** (Issue #3054). Mirror of
+`CERouteIccGeometricIncrement_of_trivial_Q_smallness_h_zero` (PR #3083) for
+the poly·geometric form. Auto-supplies ne-zero via trivial-Q bound. -/
+theorem CERouteIccPolyGeometricIncrement_of_trivial_Q_smallness_h_zero
+    {d : ℕ} (Λ : Exhaustion (Fin d → ℤ))
+    (J : ℝ) (x z : Fin d → ℤ) (M ratio : ℝ)
+    (hcircle : ∀ β₁ β₂ : ℝ,
+      Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
+        ∀ β ∈ Set.Icc β₁ β₂,
+          ∀ k : ℕ, (hk : ({x, z} : Finset (Fin d → ℤ)) ⊆ Λ.volume k) →
+            ∃ r > 0, ∃ B : ℝ,
+              B / r ≤ M * (((2 * k + 3 : ℕ) : ℝ) ^ d * ratio ^ k) ∧
+              r * (|J| *
+                (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                  (Λ.volume k)).edgeFinset.card) < Real.sqrt 2 ∧
+              r * (|J| *
+                (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                  (Λ.volume (k + 1))).edgeFinset.card) < Real.sqrt 2 ∧
+              (∀ w ∈ Metric.sphere ((β : ℝ) : ℂ) r,
+                ‖correlationComplex
+                      (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                        (Λ.volume k))
+                      (Ambient.liftFinset {x, z} hk) (J : ℂ) 0 w -
+                    correlationComplex
+                      (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                        (Λ.volume (k + 1)))
+                      (Ambient.liftFinset {x, z}
+                        (hk.trans (Λ.mono (Nat.le_succ k))))
+                      (J : ℂ) 0 w‖ ≤ B)) :
+    CERouteIccPolyGeometricIncrement Λ J x z M ratio := by
+  intro β₁ β₂ hIcc β hβ k hk
+  obtain ⟨r, hr, B, hBR, hr_small_k, hr_small_k1, hBsphere⟩ :=
+    hcircle β₁ β₂ hIcc β hβ k hk
+  refine ⟨r, hr, B, hBR, ?_, ?_, hBsphere⟩
+  · intro w hw
+    exact IsingModel.partitionFunctionComplex_ne_zero_on_closedBall_h_zero_at_real_beta
+      (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume k))
+      J β hr_small_k w hw
+  · intro w hw
+    exact IsingModel.partitionFunctionComplex_ne_zero_on_closedBall_h_zero_at_real_beta
+      (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume (k + 1)))
+      J β hr_small_k1 w hw
+
+/-- **Poly-geometric canonical-radius bundle constructor** (Issue #3054). User
+supplies only the sphere circle bound at the canonical pair-stage radius. -/
+theorem CERouteIccPolyGeometricIncrement_of_canonical_radius_circle
+    {d : ℕ} (Λ : Exhaustion (Fin d → ℤ))
+    (J : ℝ) (x z : Fin d → ℤ) (M ratio : ℝ)
+    (hcircle : ∀ β₁ β₂ : ℝ,
+      Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
+        ∀ β ∈ Set.Icc β₁ β₂,
+          ∀ k : ℕ, (hk : ({x, z} : Finset (Fin d → ℤ)) ⊆ Λ.volume k) →
+            ∃ B : ℝ,
+              B / canonicalTrivialQRadiusPair Λ J k ≤
+                M * (((2 * k + 3 : ℕ) : ℝ) ^ d * ratio ^ k) ∧
+              (∀ w ∈ Metric.sphere ((β : ℝ) : ℂ)
+                    (canonicalTrivialQRadiusPair Λ J k),
+                ‖correlationComplex
+                      (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                        (Λ.volume k))
+                      (Ambient.liftFinset {x, z} hk) (J : ℂ) 0 w -
+                    correlationComplex
+                      (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                        (Λ.volume (k + 1)))
+                      (Ambient.liftFinset {x, z}
+                        (hk.trans (Λ.mono (Nat.le_succ k))))
+                      (J : ℂ) 0 w‖ ≤ B)) :
+    CERouteIccPolyGeometricIncrement Λ J x z M ratio := by
+  refine CERouteIccPolyGeometricIncrement_of_trivial_Q_smallness_h_zero
+    Λ J x z M ratio ?_
+  intro β₁ β₂ hIcc β hβ k hk
+  obtain ⟨B, hBR, hBsphere⟩ := hcircle β₁ β₂ hIcc β hβ k hk
+  refine ⟨canonicalTrivialQRadiusPair Λ J k,
+    canonicalTrivialQRadiusPair_pos Λ J k, B, hBR,
+    canonicalTrivialQRadiusPair_smallness_k Λ J k,
+    canonicalTrivialQRadiusPair_smallness_k1 Λ J k, hBsphere⟩
+
 end Ambient
 end IsingModel
