@@ -707,5 +707,54 @@ theorem abs_correlation_inducedGraph_cubic_succ_sub_le_uniform_cf_max
     pow_le_pow_left₀ h_cf_nn h_cf_max _
   exact mul_le_mul_of_nonneg_left h_cf_pow_le_max_pow hpoly_nn
 
+/-- **Cubic abs uniform geometric high-temperature** (Issue #3054, Step A + Step C
+composition). Combines `abs_correlation_inducedGraph_cubic_succ_sub_le_uniform_cf_max`
+(#3122, Step C — uniformizing the per-β contraction factor via `cf_max`) with
+`cf_pow_natDiv_le_geometric` (#3119, Step A — floor → geometric conversion) to
+produce the fully-simplified bound
+
+    |c_k − c_{k+1}| ≤ (1/cf_max) · (2k+3)^d · ρ_R_max^{k+1−R}
+
+with explicit `ρ_R_max := cf_max^{1/(r₀+2)} ∈ (0, 1)`. β_re-independent
+(everything controlled by `cf_max`) and fully geometric in `k` (no nat-floor).
+This is the cleanest cubic real-axis abs increment expression compatible with
+the `R_inc_seq k` input slot of the poly-geometric CE-route bundle
+constructors (PRs #3099-#3105). -/
+theorem abs_correlation_inducedGraph_cubic_succ_sub_le_uniform_geometric_high_temp
+    (d : ℕ) (hd : 1 ≤ d) (r₀ : ℕ) (J : ℝ)
+    (cf_max : ℝ) (hcf_max_pos : 0 < cf_max) (hcf_max_lt_one : cf_max < 1)
+    {β_re : ℝ} (hβ_re_lt : β_re * J * (2 * d) ≤ 1)
+    (hf : Ferromagnetic (⟨J, 0, β_re⟩ : IsingParams ℝ))
+    (h_cf_max : contractionFactor d (cubicExhaustion d) (⟨J, 0, β_re⟩ : IsingParams ℝ) r₀ ≤ cf_max)
+    (k R : ℕ) (hRk : R + 1 ≤ k)
+    {r s : Fin d → ℤ} (hrs : r ≠ s) (hr : r ∈ cubicBox d R) (hs : s ∈ cubicBox d R)
+    (hcov_k : ({r, s} : Finset (Fin d → ℤ)) ⊆ (cubicExhaustion d).volume k) :
+    |correlation (inducedGraph (latticeGraph d) ((cubicExhaustion d).volume k))
+          (⟨J, 0, β_re⟩ : IsingParams ℝ) (liftFinset {r, s} hcov_k) -
+        correlation (inducedGraph (latticeGraph d) ((cubicExhaustion d).volume (k + 1)))
+          (⟨J, 0, β_re⟩ : IsingParams ℝ)
+          (liftFinset {r, s} (hcov_k.trans ((cubicExhaustion d).mono (Nat.le_succ k))))|
+      ≤ (1 / cf_max) * ((2 * k + 3 : ℕ) : ℝ) ^ d *
+          (cf_max ^ ((1 : ℝ) / ((r₀ + 2 : ℕ) : ℝ))) ^ (k + 1 - R) := by
+  -- Step 1: Step C bound — (2k+3)^d · cf_max^((k+1-R)/(r₀+2))
+  have hstep_c :=
+    abs_correlation_inducedGraph_cubic_succ_sub_le_uniform_cf_max d hd r₀ J cf_max hcf_max_lt_one
+      hβ_re_lt hf h_cf_max k R hRk hrs hr hs hcov_k
+  refine hstep_c.trans ?_
+  -- Step 2: Step A on cf_max — cf_max^((k+1-R)/(r₀+2)) ≤ (1/cf_max) · ρ_R_max^(k+1-R)
+  have hm_pos : 0 < r₀ + 2 := by omega
+  obtain ⟨_, _, hgeom⟩ :=
+    cf_pow_natDiv_le_geometric cf_max hcf_max_pos hcf_max_lt_one (r₀ + 2) hm_pos
+  have hcf_geom := hgeom (k + 1 - R)
+  -- Bound (2k+3)^d · cf_max^((k+1-R)/(r₀+2)) ≤ (2k+3)^d · (1/cf_max) · ρ_R_max^(k+1-R)
+  have hpoly_nn : (0 : ℝ) ≤ ((2 * k + 3 : ℕ) : ℝ) ^ d := pow_nonneg (by positivity) _
+  have hstep : ((2 * k + 3 : ℕ) : ℝ) ^ d * cf_max ^ ((k + 1 - R) / (r₀ + 2))
+      ≤ ((2 * k + 3 : ℕ) : ℝ) ^ d *
+          ((1 / cf_max) * (cf_max ^ ((1 : ℝ) / ((r₀ + 2 : ℕ) : ℝ))) ^ (k + 1 - R)) :=
+    mul_le_mul_of_nonneg_left hcf_geom hpoly_nn
+  refine hstep.trans ?_
+  ring_nf
+  exact le_refl _
+
 end Ambient
 end IsingModel
