@@ -13886,6 +13886,47 @@ correlation derivatives on the cubic boxes, the form on which
 \texttt{dist\_deriv\_correlation\_le\_of\_complex\_circle\_bound} operates.
 \end{theorem}
 
+\begin{theorem}[\texttt{IsingModel.Ambient.hasDerivAt\_correlationAlongExhaustion\_of\_hasDerivAt\_inducedGraph}
+(\texttt{HasDerivAt} transfer for the covered-stage \texttt{correlationAlongExhaustion}
+$\beta$-family, Issue \#3026)]
+Companion to \texttt{deriv\_correlationAlongExhaustion\_eq\_inducedGraph}: for a covered
+stage $A\subseteq\Lambda.\mathrm{volume}\,n$, if
+$\beta'\mapsto\langle\sigma^A\rangle_{\mathrm{inducedGraph}\,G\,(\Lambda.\mathrm{volume}\,n)}^{\langle J,h,\beta'\rangle}$
+has \texttt{HasDerivAt} at $\beta$ with derivative $d$, then so does
+$\beta'\mapsto\mathrm{correlationAlongExhaustion}\,G\,\Lambda\,\langle J,h,\beta'\rangle\,A\,n$
+with the same $d$. Folds the function-level identity through \texttt{HasDerivAt}. Lets
+per-stage \texttt{HasDerivAt}-based bounds on the induced graph transfer directly to bounds
+on the $\mathrm{correlationAlongExhaustion}$ $\beta$-family — the form the Lemma 17.5.2
+capstone consumes.
+\end{theorem}
+
+\begin{theorem}[\texttt{IsingModel.Ambient.correlationAlongExhaustion\_latticeGraph\_beta\_deriv\_le}
+(Lebowitz $\beta$-derivative bound on \texttt{correlationAlongExhaustion} at $\mathbb{Z}^d$;
+GJ \S17.5 Cor.~4.3.3, pp.~311--312; Issue \#2965 Phase C, real-axis route)]
+For an exhaustion $\Lambda$ of $\mathbb{Z}^d = \mathrm{Fin}\,d\to\mathbb{Z}$, a covered
+pair $\{r,s\}\subseteq\Lambda.\mathrm{volume}\,n$ with $r\ne s$ (taking
+$h_r:r\in\Lambda.\mathrm{volume}\,n$, $h_s:s\in\Lambda.\mathrm{volume}\,n$ and
+$h_{\mathrm{rs\_sub}}:\{r,s\}\subseteq\Lambda.\mathrm{volume}\,n$), $J\ge 0$ and $\beta>0$,
+there exists
+$d_{\mathrm{val}}\in\mathbb{R}$ with
+$\mathrm{HasDerivAt}\,(\beta'\mapsto\mathrm{correlationAlongExhaustion}\,(\mathrm{latticeGraph}\,d)\,\Lambda\,\langle J,0,\beta'\rangle\,\{r,s\}\,n)\,d_{\mathrm{val}}\,\beta$
+and
+\[
+  d_{\mathrm{val}} \le J\,\sum_{\langle u,v\rangle\in E(G_n)}
+       \bigl[c_n(r,u)\,c_n(s,v) + c_n(r,v)\,c_n(s,u)\bigr]
+     + J\cdot 4d,
+\]
+where $G_n=\mathrm{inducedGraph}\,(\mathrm{latticeGraph}\,d)\,(\Lambda.\mathrm{volume}\,n)$ and
+$c_n=\langle\sigma_\cdot\,\sigma_\cdot\rangle_{G_n}^{\langle J,0,\beta\rangle}$. Composes
+the per-stage induced-graph Lebowitz bound \texttt{inducedLatticeGraph\_beta\_deriv\_le}
+(Step 157) with the \texttt{HasDerivAt} transfer
+\texttt{hasDerivAt\_correlationAlongExhaustion\_of\_hasDerivAt\_inducedGraph} above, using
+\texttt{liftFinset\_pair} to rewrite
+$\mathrm{liftFinset}\,\{r,s\}\,h_{\mathrm{rs\_sub}}=\{\langle r,h_r\rangle,\langle s,h_s\rangle\}$.
+The per-stage real-axis input for Issue \#2965 Phase C: the alternative route to the Lemma
+17.5.2 $\beta$-derivative increment bound bypassing the CE / Cauchy decomposition entirely.
+\end{theorem}
+
 \begin{theorem}[\texttt{IsingModel.Ambient.dist\_deriv\_correlation\_le\_of\_complex\_circle\_bound}
 (derivative-increment bridge from a complex circle bound, Issue \#3026)]
 For two finite-volume Ising correlations on graphs $G_1,G_2$ at real parameters $J,h$ and a
