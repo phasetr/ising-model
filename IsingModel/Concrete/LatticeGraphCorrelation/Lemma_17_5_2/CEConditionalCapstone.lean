@@ -1837,5 +1837,79 @@ theorem canonicalTrivialQRadiusPair_lower_bound_volume_succ
       (trivialQRadius_inducedLatticeGraph_lower_bound d (Λ.volume k) J)
   exact le_min h_stage_k_lb h_stage_k1_lb
 
+/-- **Sequence-form uniform-C bundle constructor** (Issue #3054). Convenience
+specialisation of `CERouteIccGeometricIncrement_of_canonical_radius_R_inc_uniform_C`
+(PR #3092) where `R_inc` and `C` are sequences `ℕ → ℝ` depending only on
+the stage `k` (not on `β`). Closes the per-(β, k) existential by exhibiting
+`R_inc := R_inc_seq k` and `C := C_seq k`. -/
+theorem CERouteIccGeometricIncrement_of_canonical_radius_sequence
+    {d : ℕ} (Λ : Exhaustion (Fin d → ℤ))
+    (J : ℝ) (x z : Fin d → ℤ) (M ratio : ℝ)
+    (R_inc_seq C_seq : ℕ → ℝ)
+    (hC_seq_nn : ∀ k, 0 ≤ C_seq k)
+    (h_smallness : ∀ k,
+      (R_inc_seq k + 2 * C_seq k * canonicalTrivialQRadiusPair Λ J k)
+        / canonicalTrivialQRadiusPair Λ J k ≤ M * ratio ^ k)
+    (h_real_inc : ∀ β₁ β₂ : ℝ,
+      Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
+        ∀ β ∈ Set.Icc β₁ β₂,
+          ∀ k : ℕ, (hk : ({x, z} : Finset (Fin d → ℤ)) ⊆ Λ.volume k) →
+            ∀ β_re : ℝ, β_re ∈ Set.Icc
+                (β - canonicalTrivialQRadiusPair Λ J k)
+                (β + canonicalTrivialQRadiusPair Λ J k) →
+              |correlation
+                    (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume k))
+                    (⟨J, 0, β_re⟩ : IsingParams ℝ)
+                    (Ambient.liftFinset {x, z} hk) -
+                  correlation
+                    (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume (k + 1)))
+                    (⟨J, 0, β_re⟩ : IsingParams ℝ)
+                    (Ambient.liftFinset {x, z}
+                      (hk.trans (Λ.mono (Nat.le_succ k))))| ≤ R_inc_seq k)
+    (h_lip_k : ∀ β₁ β₂ : ℝ,
+      Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
+        ∀ β ∈ Set.Icc β₁ β₂,
+          ∀ k : ℕ, (hk : ({x, z} : Finset (Fin d → ℤ)) ⊆ Λ.volume k) →
+            ∀ b ∈ Metric.sphere ((β : ℝ) : ℂ)
+                (canonicalTrivialQRadiusPair Λ J k),
+              ‖correlationComplex
+                    (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume k))
+                    (Ambient.liftFinset {x, z} hk) (J : ℂ) 0 b -
+                  correlationComplex
+                    (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume k))
+                    (Ambient.liftFinset {x, z} hk) (J : ℂ) 0 ((b.re : ℝ) : ℂ)‖
+                ≤ C_seq k * ‖b - ((b.re : ℝ) : ℂ)‖)
+    (h_lip_k1 : ∀ β₁ β₂ : ℝ,
+      Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
+        ∀ β ∈ Set.Icc β₁ β₂,
+          ∀ k : ℕ, (hk : ({x, z} : Finset (Fin d → ℤ)) ⊆ Λ.volume k) →
+            ∀ b ∈ Metric.sphere ((β : ℝ) : ℂ)
+                (canonicalTrivialQRadiusPair Λ J k),
+              ‖correlationComplex
+                    (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume (k + 1)))
+                    (Ambient.liftFinset {x, z}
+                      (hk.trans (Λ.mono (Nat.le_succ k))))
+                    (J : ℂ) 0 b -
+                  correlationComplex
+                    (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume (k + 1)))
+                    (Ambient.liftFinset {x, z}
+                      (hk.trans (Λ.mono (Nat.le_succ k))))
+                    (J : ℂ) 0 ((b.re : ℝ) : ℂ)‖
+                ≤ C_seq k * ‖b - ((b.re : ℝ) : ℂ)‖) :
+    CERouteIccGeometricIncrement Λ J x z M ratio := by
+  refine CERouteIccGeometricIncrement_of_canonical_radius_R_inc_uniform_C
+    Λ J x z M ratio ?_
+  intro β₁ β₂ hIcc β hβ k hk
+  refine ⟨R_inc_seq k, C_seq k, hC_seq_nn k, h_smallness k,
+    h_real_inc β₁ β₂ hIcc β hβ k hk,
+    h_lip_k β₁ β₂ hIcc β hβ k hk,
+    h_lip_k1 β₁ β₂ hIcc β hβ k hk⟩
+
 end Ambient
 end IsingModel
