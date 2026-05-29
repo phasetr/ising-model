@@ -13963,7 +13963,11 @@ Implementation: from $\mathrm{MonotoneOn}\,(\mathrm{Ioi}\,0)$ (via existing
 \texttt{MonotoneOn.derivWithin\_nonneg} and \texttt{derivWithin\_of\_isOpen} (since
 $\mathrm{Ioi}\,0$ is open). The non-negativity holds for any observable $A$ (not only
 two-point pairs); the sandwich is for the pair case. Equivalent to
-$|\mathrm{deriv}\,\dots|\le\dots$ for ferromagnetic $h=0$ systems.
+$|\mathrm{deriv}\,\dots|\le\dots$ for ferromagnetic $h=0$ systems with strictly positive
+parameters. Precise hypotheses: $\beta$-direction assumes $0\le J,\ 0<\beta$;
+$J$-direction assumes $0<J,\ 0<\beta$ (since the proof bounds the derivative as the
+inner-point derivWithin on $\mathrm{Ioi}\,0$, needing the differentiation point to be
+in the open interior).
 \end{theorem}
 
 \begin{theorem}[\texttt{IsingModel.Ambient.correlationAlongExhaustion\_latticeGraph\_J\_deriv\_le\_susceptibilityInfinite\_sq}
