@@ -9714,6 +9714,13 @@ conditional on the user-supplied circle bound \(B\) on
 generalises PR \#3081 to a closedBall centred at any real \(\beta_0\); the
 smallness on \(\beta.\mathrm{im}\) is independent of \(\beta.\mathrm{re}\), so
 shifting the centre is free.
+\textbf{Canonical trivial-Q radius} (Issue \#3054):
+\texttt{trivialQRadius}\(\,G\,J:=\sqrt{2}/(|J||E|+1)\) is the canonical
+positive explicit radius always satisfying the trivial-Q smallness, with
+\texttt{trivialQRadius\_pos} / \texttt{trivialQRadius\_smallness} witnesses;
+\texttt{partitionFunctionComplex\_ne\_zero\_on\_trivialQRadius\_closedBall\_h\_zero\_\{at\_zero,at\_real\_beta\}}
+provide unconditional \(Z_{\mathbb{C}}\ne0\) on the canonical disc, centred at
+\(0\) or any real \(\beta_0\).
 \textbf{Auto-assembling Cauchy bundle constructor}:
 \texttt{CERouteIccGeometricIncrement\_of\_trivial\_Q\_smallness\_h\_zero} uses
 the general-\(\beta_0\) ne-zero to auto-supply the per-stage
