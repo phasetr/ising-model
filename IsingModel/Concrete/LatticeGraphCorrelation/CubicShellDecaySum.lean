@@ -456,5 +456,82 @@ theorem cubicBox_succ_of_latticeGraph_adj (d R : ℕ) {r y : Fin d → ℤ}
   · push_cast; linarith [hri.1, hbound.1]
   · push_cast; linarith [hri.2, hbound.2]
 
+/-- **Single-vertex separation from `R + 1 ≤ k`** (Issue #3054, Step B). For
+`r ∈ cubicBox d R` with `R + 1 ≤ k`, the lifted vertex `⟨r, _⟩` is not an
+endpoint of any straddle edge of stage `k+1`. Proof: any neighbour `b` of
+`r` in `latticeGraph d` lies in `cubicBox d (R+1) ⊆ cubicBox d k` (via
+`cubicBox_succ_of_latticeGraph_adj`), and `r ∈ cubicBox d R ⊆ cubicBox d k`,
+so both endpoints of any incident edge lie in `cubicBox d k` — contradicting
+`straddle_fresh_vertex` which requires at least one fresh endpoint. -/
+theorem not_sym2_mem_straddle_of_cubicBox_R_succ_le_k
+    (d k R : ℕ) (hRk : R + 1 ≤ k)
+    {r : Fin d → ℤ} (hr : r ∈ cubicBox d R) :
+    ∀ e ∈ (inducedGraph (latticeGraph d) (cubicBox d (k + 1))).edgeFinset.filter
+        (straddlePred ((cubicBox d k).subtype (· ∈ cubicBox d (k + 1)))),
+      ¬ Sym2.Mem
+        (⟨r, cubicBox_mono d (by omega : R ≤ k + 1) hr⟩ :
+          (↑(cubicBox d (k + 1)) : Type _)) e := by
+  intro e he
+  simp only [Finset.mem_filter] at he
+  obtain ⟨he_mem, hstr⟩ := he
+  -- Reduce to e = s(a, b)
+  induction e with
+  | h a b =>
+    -- he_mem : Sym2.mk (a, b) ∈ edgeFinset
+    rw [SimpleGraph.mem_edgeFinset, SimpleGraph.mem_edgeSet] at he_mem
+    -- he_mem : (inducedGraph (latticeGraph d) (cubicBox d (k+1))).Adj a b
+    -- means latticeGraph d).Adj a.val b.val
+    have hadj : (latticeGraph d).Adj a.val b.val := he_mem
+    -- hstr : straddlePred for s(a, b)
+    have hfresh := straddle_fresh_vertex hstr
+    -- hfresh : a.val ∉ cubicBox d k ∨ b.val ∉ cubicBox d k
+    intro hr_in
+    rw [Sym2.mem_iff'] at hr_in
+    -- hr_in : ⟨r, _⟩ = a ∨ ⟨r, _⟩ = b
+    -- r ∈ cubicBox d R ⊆ cubicBox d k via cubicBox_mono
+    have hr_in_k : r ∈ cubicBox d k := cubicBox_mono d (by omega : R ≤ k) hr
+    -- Either way, the OTHER endpoint is a neighbor of r.
+    rcases hr_in with hra | hrb
+    · -- a.val = r
+      have hav : a.val = r := by rw [← hra]
+      -- b.val adj r in latticeGraph; r ∈ box_R so b ∈ box_{R+1} ⊆ box_k
+      have hadj' : (latticeGraph d).Adj r b.val := by rw [← hav]; exact hadj
+      have hb_in : b.val ∈ cubicBox d (R + 1) :=
+        cubicBox_succ_of_latticeGraph_adj d R hr hadj'
+      have hb_in_k : b.val ∈ cubicBox d k :=
+        cubicBox_mono d hRk hb_in
+      -- Both a.val = r ∈ box_k and b.val ∈ box_k; contradicts hfresh.
+      rcases hfresh with ha_notk | hb_notk
+      · exact ha_notk (hav ▸ hr_in_k)
+      · exact hb_notk hb_in_k
+    · -- b.val = r (symmetric)
+      have hbv : b.val = r := by rw [← hrb]
+      have hadj' : (latticeGraph d).Adj a.val r := by rw [← hbv]; exact hadj
+      have hadj_sym : (latticeGraph d).Adj r a.val := (latticeGraph d).symm hadj'
+      have ha_in : a.val ∈ cubicBox d (R + 1) :=
+        cubicBox_succ_of_latticeGraph_adj d R hr hadj_sym
+      have ha_in_k : a.val ∈ cubicBox d k := cubicBox_mono d hRk ha_in
+      rcases hfresh with ha_notk | hb_notk
+      · exact ha_notk ha_in_k
+      · exact hb_notk (hbv ▸ hr_in_k)
+
+/-- **Pair separation from `R + 1 ≤ k`** (Issue #3054, Step B capstone). The
+exact `hsep` hypothesis shape required by the cubic per-stage increment bounds
+(`abs_correlation_inducedGraph_cubic_succ_sub_le_poly_pow_high_temp`). Combines
+two applications of `not_sym2_mem_straddle_of_cubicBox_R_succ_le_k`. -/
+theorem hsep_of_cubicBox_R_succ_le_k
+    (d k R : ℕ) (hRk : R + 1 ≤ k)
+    {r s : Fin d → ℤ} (hr : r ∈ cubicBox d R) (hs : s ∈ cubicBox d R) :
+    ∀ e ∈ (inducedGraph (latticeGraph d) (cubicBox d (k + 1))).edgeFinset.filter
+        (straddlePred ((cubicBox d k).subtype (· ∈ cubicBox d (k + 1)))),
+      ¬ Sym2.Mem
+        (⟨r, cubicBox_mono d (by omega : R ≤ k + 1) hr⟩ :
+          (↑(cubicBox d (k + 1)) : Type _)) e ∧
+      ¬ Sym2.Mem
+        (⟨s, cubicBox_mono d (by omega : R ≤ k + 1) hs⟩ :
+          (↑(cubicBox d (k + 1)) : Type _)) e := fun e he =>
+  ⟨not_sym2_mem_straddle_of_cubicBox_R_succ_le_k d k R hRk hr e he,
+   not_sym2_mem_straddle_of_cubicBox_R_succ_le_k d k R hRk hs e he⟩
+
 end Ambient
 end IsingModel
