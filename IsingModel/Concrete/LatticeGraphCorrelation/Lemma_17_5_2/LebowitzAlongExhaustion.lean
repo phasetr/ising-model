@@ -225,5 +225,144 @@ theorem correlationAlongExhaustion_latticeGraph_beta_deriv_le_susceptibilityAlon
   have hmul : J * ∑ e ∈ _, _ ≤ J * (_ * _) := mul_le_mul_of_nonneg_left hsusc hJ
   linarith [hleb, hmul]
 
+/-! ## J-direction parallel
+
+The J-direction analogues parallel the β-direction theorems above. The same
+Lebowitz cross-product sum bounds the J-derivative, with boundary term `β · 4d`
+instead of `J · 4d` (cf. `inducedLatticeGraph_J_deriv_le`, Step 218). -/
+
+/-- **J-direction Lebowitz bound on `correlationAlongExhaustion`** at the
+induced lattice subgraph of ℤ^d (Issue #2965 Phase C, real-axis Lebowitz route,
+J-direction parallel of `correlationAlongExhaustion_latticeGraph_beta_deriv_le`).
+
+Composes `inducedLatticeGraph_J_deriv_le` (Step 218, J-direction Lebowitz on
+the induced subgraph) with `hasDerivAt_correlationAlongExhaustion_J_of_hasDerivAt_inducedGraph`
+(J-direction `HasDerivAt` transfer) using `liftFinset_pair`. Yields, for
+`r ≠ s ∈ Λ.volume n` and `J ≥ 0`, `β > 0`:
+
+    ∂_J c_n ≤ β · ∑_{e ∈ E(G_n)} [c_n(r,u)·c_n(s,v) + c_n(r,v)·c_n(s,u)]
+            + β · 4d
+
+with `c_n := correlationAlongExhaustion (latticeGraph d) Λ ⟨J,0,β⟩ {r,s} n`. -/
+theorem correlationAlongExhaustion_latticeGraph_J_deriv_le
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β)
+    {r s : Fin d → ℤ} (hrs : r ≠ s) (n : ℕ)
+    (hr : r ∈ Λ.volume n) (hs : s ∈ Λ.volume n)
+    (hrs_sub : ({r, s} : Finset (Fin d → ℤ)) ⊆ Λ.volume n) :
+    ∃ dval : ℝ,
+      HasDerivAt
+        (fun J' => correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J', 0, β⟩ : IsingParams ℝ) {r, s} n) dval J ∧
+      dval ≤ β * ∑ e ∈ (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset,
+            Sym2.lift ⟨fun u v =>
+                IsingModel.correlation
+                  (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+                  (⟨J, 0, β⟩ : IsingParams ℝ)
+                  {(⟨r, hr⟩ : ↑(Λ.volume n)), u} *
+                IsingModel.correlation
+                  (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+                  (⟨J, 0, β⟩ : IsingParams ℝ)
+                  {(⟨s, hs⟩ : ↑(Λ.volume n)), v} +
+                IsingModel.correlation
+                  (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+                  (⟨J, 0, β⟩ : IsingParams ℝ)
+                  {(⟨r, hr⟩ : ↑(Λ.volume n)), v} *
+                IsingModel.correlation
+                  (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+                  (⟨J, 0, β⟩ : IsingParams ℝ)
+                  {(⟨s, hs⟩ : ↑(Λ.volume n)), u},
+              fun u v => by ring⟩ e
+          + β * (4 * ↑d) := by
+  classical
+  have hrs_sub_subtypes :
+      (⟨r, hr⟩ : ↑(Λ.volume n)) ≠ ⟨s, hs⟩ := fun heq =>
+    hrs (congrArg Subtype.val heq)
+  obtain ⟨dval, hd_ind, hbound⟩ :=
+    inducedLatticeGraph_J_deriv_le (Λ.volume n) J β hJ hβ
+      (⟨r, hr⟩ : ↑(Λ.volume n)) ⟨s, hs⟩ hrs_sub_subtypes
+  refine ⟨dval, ?_, hbound⟩
+  have h_lift :
+      Ambient.liftFinset ({r, s} : Finset (Fin d → ℤ)) hrs_sub
+        = ({(⟨r, hr⟩ : ↑(Λ.volume n)), ⟨s, hs⟩} : Finset ↑(Λ.volume n)) :=
+    Ambient.liftFinset_pair hrs_sub hr hs
+  have h_ind' : HasDerivAt
+      (fun J' => IsingModel.correlation
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+        (⟨J', 0, β⟩ : IsingParams ℝ)
+        (Ambient.liftFinset ({r, s} : Finset (Fin d → ℤ)) hrs_sub)) dval J := by
+    rw [show (fun J' => IsingModel.correlation
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+        (⟨J', 0, β⟩ : IsingParams ℝ)
+        (Ambient.liftFinset ({r, s} : Finset (Fin d → ℤ)) hrs_sub)) =
+      (fun J' => IsingModel.correlation
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+        (⟨J', 0, β⟩ : IsingParams ℝ)
+        ({(⟨r, hr⟩ : ↑(Λ.volume n)), ⟨s, hs⟩} : Finset ↑(Λ.volume n)))
+      from funext (fun J' => by rw [h_lift])]
+    exact hd_ind
+  exact hasDerivAt_correlationAlongExhaustion_J_of_hasDerivAt_inducedGraph
+    (IsingModel.latticeGraph d) Λ 0 β ({r, s} : Finset (Fin d → ℤ)) n hrs_sub h_ind'
+
+/-- **Closed-form `deriv`-version of `correlationAlongExhaustion_latticeGraph_J_deriv_le`**
+(Issue #2965 Phase C, J-direction parallel). Mirrors
+`correlationAlongExhaustion_latticeGraph_beta_deriv_eq_le`: the existential form's `dval`
+becomes `deriv (…) J` via `HasDerivAt.deriv`. -/
+theorem correlationAlongExhaustion_latticeGraph_J_deriv_eq_le
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β)
+    {r s : Fin d → ℤ} (hrs : r ≠ s) (n : ℕ)
+    (hr : r ∈ Λ.volume n) (hs : s ∈ Λ.volume n)
+    (hrs_sub : ({r, s} : Finset (Fin d → ℤ)) ⊆ Λ.volume n) :
+    deriv (fun J' => correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J', 0, β⟩ : IsingParams ℝ) {r, s} n) J
+      ≤ β * ∑ e ∈ (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset,
+            Sym2.lift ⟨fun u v =>
+                IsingModel.correlation
+                  (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+                  (⟨J, 0, β⟩ : IsingParams ℝ)
+                  {(⟨r, hr⟩ : ↑(Λ.volume n)), u} *
+                IsingModel.correlation
+                  (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+                  (⟨J, 0, β⟩ : IsingParams ℝ)
+                  {(⟨s, hs⟩ : ↑(Λ.volume n)), v} +
+                IsingModel.correlation
+                  (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+                  (⟨J, 0, β⟩ : IsingParams ℝ)
+                  {(⟨r, hr⟩ : ↑(Λ.volume n)), v} *
+                IsingModel.correlation
+                  (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+                  (⟨J, 0, β⟩ : IsingParams ℝ)
+                  {(⟨s, hs⟩ : ↑(Λ.volume n)), u},
+              fun u v => by ring⟩ e
+          + β * (4 * ↑d) := by
+  obtain ⟨dval, hdrv, hbound⟩ :=
+    correlationAlongExhaustion_latticeGraph_J_deriv_le Λ J β hJ hβ hrs n hr hs hrs_sub
+  rw [hdrv.deriv]
+  exact hbound
+
+/-- **Unconditional J-derivative bound by `β·χ_along² + β·4d`** (Issue #2965 Phase C,
+J-direction parallel of `…_beta_deriv_le_susceptibilityAlong_sq`). Composes the J-deriv
+form with Step 161. -/
+theorem correlationAlongExhaustion_latticeGraph_J_deriv_le_susceptibilityAlong_sq
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β)
+    {r s : Fin d → ℤ} (hrs : r ≠ s) (n : ℕ)
+    (hr : r ∈ Λ.volume n) (hs : s ∈ Λ.volume n)
+    (hrs_sub : ({r, s} : Finset (Fin d → ℤ)) ⊆ Λ.volume n) :
+    deriv (fun J' => correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J', 0, β⟩ : IsingParams ℝ) {r, s} n) J
+      ≤ β * (susceptibilityAlongExhaustion (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β⟩ : IsingParams ℝ) r n *
+            susceptibilityAlongExhaustion (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β⟩ : IsingParams ℝ) s n)
+        + β * (4 * ↑d) := by
+  have hleb := correlationAlongExhaustion_latticeGraph_J_deriv_eq_le
+    Λ J β hJ hβ hrs n hr hs hrs_sub
+  have hsusc := inducedLatticeGraph_leb_sum_le_susc_along Λ J β hJ hβ n
+    (⟨r, hr⟩ : ↑(Λ.volume n)) ⟨s, hs⟩
+  have hmul : β * ∑ e ∈ _, _ ≤ β * (_ * _) := mul_le_mul_of_nonneg_left hsusc hβ.le
+  linarith [hleb, hmul]
+
 end Ambient
 end IsingModel
