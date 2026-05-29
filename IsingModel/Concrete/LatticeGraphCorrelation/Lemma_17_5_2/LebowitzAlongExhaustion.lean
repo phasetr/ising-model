@@ -189,5 +189,41 @@ theorem correlationAlongExhaustion_latticeGraph_beta_deriv_le_susceptibilityInfi
   have hmul : J * ∑ e ∈ _, _ ≤ J * (_ * _) := mul_le_mul_of_nonneg_left hsusc hJ
   linarith [hleb, hmul]
 
+/-- **β-derivative of `correlationAlongExhaustion` bounded by `J·χ_along² + J·4d`** (GJ §17.5
+Cor. 4.3.3, pp. 311–312, + Step 161, Issue #2965 Phase C, real-axis Lebowitz route).
+
+Unconditional susceptibility-product β-derivative bound: drops the `BddAbove` hypotheses of
+`…_le_susceptibilityInfinite_sq` by using Step 161
+(`inducedLatticeGraph_leb_sum_le_susc_along`) — the per-stage Lebowitz cross sum is bounded
+by the *per-stage* susceptibility product, which is unconditionally well-defined:
+
+    ∂_β c_n ≤ J·χ_along_n(r)·χ_along_n(s) + J·4d
+
+(`c_n := correlationAlongExhaustion (latticeGraph d) Λ ⟨J,0,β⟩ {r,s} n`,
+`χ_along_n(x) := susceptibilityAlongExhaustion (latticeGraph d) Λ ⟨J,0,β⟩ x n`).
+
+Same hypotheses as the existential form, *without* any boundedness assumption on the
+susceptibility sequences. Composes `correlationAlongExhaustion_latticeGraph_beta_deriv_eq_le`
+with Step 161 (`inducedLatticeGraph_leb_sum_le_susc_along`). -/
+theorem correlationAlongExhaustion_latticeGraph_beta_deriv_le_susceptibilityAlong_sq
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β)
+    {r s : Fin d → ℤ} (hrs : r ≠ s) (n : ℕ)
+    (hr : r ∈ Λ.volume n) (hs : s ∈ Λ.volume n)
+    (hrs_sub : ({r, s} : Finset (Fin d → ℤ)) ⊆ Λ.volume n) :
+    deriv (fun β' => correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β'⟩ : IsingParams ℝ) {r, s} n) β
+      ≤ J * (susceptibilityAlongExhaustion (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β⟩ : IsingParams ℝ) r n *
+            susceptibilityAlongExhaustion (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β⟩ : IsingParams ℝ) s n)
+        + J * (4 * ↑d) := by
+  have hleb := correlationAlongExhaustion_latticeGraph_beta_deriv_eq_le
+    Λ J β hJ hβ hrs n hr hs hrs_sub
+  have hsusc := inducedLatticeGraph_leb_sum_le_susc_along Λ J β hJ hβ n
+    (⟨r, hr⟩ : ↑(Λ.volume n)) ⟨s, hs⟩
+  have hmul : J * ∑ e ∈ _, _ ≤ J * (_ * _) := mul_le_mul_of_nonneg_left hsusc hJ
+  linarith [hleb, hmul]
+
 end Ambient
 end IsingModel

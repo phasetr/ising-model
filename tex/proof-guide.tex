@@ -13944,6 +13944,25 @@ Obtained by \texttt{HasDerivAt.deriv} on the witness from the existential form, 
 downstream consumers use the bound without unpacking the existential.
 \end{theorem}
 
+\begin{theorem}[\texttt{IsingModel.Ambient.correlationAlongExhaustion\_latticeGraph\_beta\_deriv\_le\_susceptibilityAlong\_sq}
+($\beta$-derivative of $\mathrm{correlationAlongExhaustion}$ bounded by
+$J\cdot\chi_{\mathrm{along}}^2 + J\cdot 4d$; GJ \S17.5 Cor.~4.3.3, pp.~311--312, + Step 161;
+Issue \#2965 Phase C, real-axis Lebowitz route)]
+Unconditional susceptibility-product $\beta$-derivative bound: drops the \texttt{BddAbove}
+hypotheses of \texttt{\_le\_susceptibilityInfinite\_sq} by using Step 161
+(\texttt{inducedLatticeGraph\_leb\_sum\_le\_susc\_along}) — the per-stage Lebowitz cross sum
+is bounded by the \emph{per-stage} susceptibility product, which is unconditionally
+well-defined:
+\[
+  \mathrm{deriv}\,(\beta'\mapsto\mathrm{correlationAlongExhaustion}\,(\mathrm{latticeGraph}\,d)\,
+        \Lambda\,\langle J,0,\beta'\rangle\,\{r,s\}\,n)\,\beta
+    \le J\cdot\chi_{\mathrm{along},n}(r)\cdot\chi_{\mathrm{along},n}(s) + J\cdot 4d.
+\]
+Same hypotheses as the existential form, \emph{without} any boundedness assumption on the
+susceptibility sequences. Composes
+\texttt{correlationAlongExhaustion\_latticeGraph\_beta\_deriv\_eq\_le} with Step 161.
+\end{theorem}
+
 \begin{theorem}[\texttt{IsingModel.Ambient.correlationAlongExhaustion\_latticeGraph\_beta\_deriv\_le\_susceptibilityInfinite\_sq}
 ($\beta$-derivative of $\mathrm{correlationAlongExhaustion}$ bounded by
 $J\cdot\chi_\infty^2 + J\cdot 4d$; GJ \S17.5 Cor.~4.3.3, pp.~311--312, + Step 162;
