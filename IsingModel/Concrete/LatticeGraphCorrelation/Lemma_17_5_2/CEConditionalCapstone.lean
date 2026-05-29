@@ -32,6 +32,60 @@ The two volume-uniform CE inputs (1)-(2) remain open (complex cluster-expansion
 convergence, research-level); a centred circle bound on the correlation value
 increment (3) is the parallel open input from the Simon-Lieb hB side
 (Issue #3044).
+
+## Scope and structural limitation (IMPORTANT — read before using this file)
+
+The CE-route bundles defined here (`CERouteIccGeometricIncrement`,
+`CERouteIccPolyGeometricIncrement`, and the ~42 derived one-step wrappers) are
+designed as **structural bridges from volume-uniform complex circle bounds to
+summable derivative increments**. They are NOT a complete proof of Lemma 17.5.2
+on their own.
+
+**Why the per-fixed-volume convenience entry points (`_of_trivial_Q_smallness_h_zero`,
+`_of_canonical_radius_*`, `_of_R_inc_lipschitz`, `_of_R_inc_uniform_C`,
+`_of_sequence`, `_of_geometric`) do NOT close Lemma 17.5.2 at fixed volume:**
+
+The bundle smallness condition has the form
+
+  `B / r ≤ M · ratio^k`  (or `M · (2k+3)^d · ratio^k` for poly-geometric)
+
+After the standard triangle decomposition
+`B ≤ R_inc + (C_k + C_{k+1}) · r` (sphere bound from real-axis increment plus
+Lipschitz, `sphere_circle_bound_of_real_inc_and_lipschitz`), the smallness
+becomes
+
+  `R_inc / r + (C_k + C_{k+1}) ≤ M · ratio^k`.
+
+For the per-fixed-volume Cauchy entry (trivial-Q smallness at `h = 0`), the
+disc radius `r = canonicalTrivialQRadiusPair Λ J k = O(1/|Λ_k|)` shrinks with
+the volume. The Cauchy Lipschitz constant `C_k` from
+`correlationComplex_lipschitz_on_closedBall` is bounded below by a positive
+constant (volume-uniform Cauchy gives `C ~ M_real / z_min / R_outer ≥ const`),
+so `(C_k + C_{k+1})` does NOT decay to zero. But `M · ratio^k → 0` as
+`k → ∞` (`ratio < 1`). **The smallness is therefore mathematically
+unsatisfiable in this regime** — see the discussion in `.self-local/docs/SESSION-RESUME.md`
+and the codex review attached to PR #3125.
+
+**Where these bundles DO close Lemma 17.5.2:**
+
+The bundle smallness IS satisfiable when both of:
+* The disc radius `r` is **volume-uniform** (constant in `k`) — requires
+  volume-uniform `Z_ℂ ≠ 0` on a constant disc, which is the research-level
+  open problem (complex cluster-expansion convergence, Issue #3054).
+* The complex circle bound `B` is **volume-uniform geometric-decay** —
+  Issue #3044 (complex Simon-Lieb / hB provider).
+
+Once both are supplied, the bundle composes them into the final Lemma 17.5.2
+sandwich. **All current per-fixed-volume "convenience" entry points are
+structural composers, not capstones in the per-fixed-volume regime.**
+
+For users with a direct increment bound (e.g., supplied externally without
+going through the Cauchy decomposition), see
+`lemma_17_5_2_{upper_bound,capstone}_of_{geometric,poly_geometric}_increments_on_covered_stages`
+in `IncrementCapstone.lean` — these take `hincr` directly as input and bypass
+the CE-route bundle entirely. The CE-route here is one of several routes to
+producing `hincr`; it is the natural one when `hincr` is to be derived from
+complex analyticity + Cauchy estimate.
 -/
 
 namespace IsingModel
