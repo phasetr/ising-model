@@ -3538,5 +3538,83 @@ theorem lemma_17_5_2_capstone_of_geometric_poly_geometric
       h_real_inc h_lip_k h_lip_k1)
     hdecay
 
+/-- **Fully-concrete CE-route capstone (geometric form): replaces `hdecay` by
+`pseudoMass ≤ -log(β₂J·2d)`** (Issue #3054). Composes
+`CERouteIccGeometricIncrement` bundle with the fully-concrete
+`lemma_17_5_2_capstone_of_geometric_increments_on_covered_stages_and_pseudoMass_le_rate`
+(Issue #2931); both sides of the Lemma 17.5.2 sandwich are driven by concrete
+scalar inputs (geometric increment decay and pseudo-mass high-temperature rate
+bound). -/
+theorem lemma_17_5_2_capstone_of_CERouteIccGeometricIncrement_and_pseudoMass_le_rate
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    {rho : ℝ} (hrho : 0 < rho)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (hJ_pos : 0 < J)
+    (x z : Fin d → ℤ) (hxz : x ≠ z)
+    {β₁ β₂ : ℝ} (hβ₁ : 0 < β₁) (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (M ratio : ℝ) (hratio0 : 0 ≤ ratio) (hratio1 : ratio < 1)
+    (h : CERouteIccGeometricIncrement Λ J x z M ratio)
+    (hle :
+      pseudoMassFromParamsAtPair hα hrho d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) x z ≤
+        -Real.log (β₂ * J * ↑(2 * d))) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      Lemma_17_5_2_UpperBound hα hrho Λ J β₂ x z
+        (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho)) ∧
+      ENNReal.ofReal
+          (pseudoMassFromParamsAtPair hα hrho d Λ
+            (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
+        ≤ latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ∧
+      latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ≤
+        ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho) *
+          ENNReal.ofReal
+            (pseudoMassFromParamsAtPair hα hrho d Λ
+              (⟨J, 0, β₂⟩ : IsingParams ℝ) x z) :=
+  lemma_17_5_2_capstone_of_geometric_increments_on_covered_stages_and_pseudoMass_le_rate
+    hα hαd hd hrho Λ J hJ_pos x z hxz hβ₁ hβ₁₂ hIcc M ratio hratio0 hratio1
+    (hincr_of_CERouteIccGeometricIncrement Λ J x z M ratio h) hle
+
+/-- **Fully-concrete CE-route capstone (poly-geometric form): replaces `hdecay`
+by `pseudoMass ≤ -log(β₂J·2d)`** (Issue #3054). Poly-geometric analogue of
+the previous lemma, composing the `CERouteIccPolyGeometricIncrement` bundle
+with `lemma_17_5_2_capstone_of_poly_geometric_increments_on_covered_stages_and_pseudoMass_le_rate`
+(Issue #2931). -/
+theorem lemma_17_5_2_capstone_of_CERouteIccPolyGeometricIncrement_and_pseudoMass_le_rate
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    {rho : ℝ} (hrho : 0 < rho)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (hJ_pos : 0 < J)
+    (x z : Fin d → ℤ) (hxz : x ≠ z)
+    {β₁ β₂ : ℝ} (hβ₁ : 0 < β₁) (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (M ratio : ℝ) (hratio0 : 0 ≤ ratio) (hratio1 : ratio < 1)
+    (h : CERouteIccPolyGeometricIncrement Λ J x z M ratio)
+    (hle :
+      pseudoMassFromParamsAtPair hα hrho d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) x z ≤
+        -Real.log (β₂ * J * ↑(2 * d))) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      Lemma_17_5_2_UpperBound hα hrho Λ J β₂ x z
+        (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho)) ∧
+      ENNReal.ofReal
+          (pseudoMassFromParamsAtPair hα hrho d Λ
+            (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
+        ≤ latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ∧
+      latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ≤
+        ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho) *
+          ENNReal.ofReal
+            (pseudoMassFromParamsAtPair hα hrho d Λ
+              (⟨J, 0, β₂⟩ : IsingParams ℝ) x z) :=
+  lemma_17_5_2_capstone_of_poly_geometric_increments_on_covered_stages_and_pseudoMass_le_rate
+    hα hαd hd hrho Λ J hJ_pos x z hxz hβ₁ hβ₁₂ hIcc M ratio hratio0 hratio1
+    (hincr_of_CERouteIccPolyGeometricIncrement Λ J x z M ratio h) hle
+
 end Ambient
 end IsingModel
