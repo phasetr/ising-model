@@ -262,4 +262,64 @@ theorem partitionFunctionComplex_ne_zero_on_closedBall_h_zero_at_real_beta
     rw [hJE_zero]
     simp [hZpos]
 
+/-- **Explicit unconditional trivial-Q disc radius at `h = 0`** (Issue #3054).
+A canonical positive radius `√2 / (|J|·|E| + 1)` that always satisfies the
+trivial-Q smallness `r · (|J|·|E|) < √2`. The `+1` offset ensures
+strict inequality and handles the edge case `|J|·|E| = 0`. -/
+noncomputable def trivialQRadius
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J : ℝ) : ℝ :=
+  Real.sqrt 2 / (|J| * G.edgeFinset.card + 1)
+
+omit [DecidableEq ι] [Fintype ι] in
+/-- `trivialQRadius` is positive: `√2 / (|J|·|E| + 1) > 0`. -/
+lemma trivialQRadius_pos
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J : ℝ) :
+    0 < trivialQRadius G J := by
+  unfold trivialQRadius
+  have hsqrt2 : 0 < Real.sqrt 2 := Real.sqrt_pos.mpr (by norm_num)
+  have hdenom_pos : (0 : ℝ) < |J| * G.edgeFinset.card + 1 := by positivity
+  exact div_pos hsqrt2 hdenom_pos
+
+omit [DecidableEq ι] [Fintype ι] in
+/-- `trivialQRadius` satisfies the trivial-Q smallness condition:
+`trivialQRadius G J * (|J|·|E|) < √2`. -/
+lemma trivialQRadius_smallness
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J : ℝ) :
+    trivialQRadius G J * (|J| * G.edgeFinset.card) < Real.sqrt 2 := by
+  unfold trivialQRadius
+  have hsqrt2_pos : 0 < Real.sqrt 2 := Real.sqrt_pos.mpr (by norm_num)
+  have hdenom_pos : (0 : ℝ) < |J| * G.edgeFinset.card + 1 := by positivity
+  have hJE_nn : (0 : ℝ) ≤ |J| * G.edgeFinset.card := by positivity
+  -- (√2 / (|J|·|E| + 1)) * (|J|·|E|) = √2 · (|J|·|E|) / (|J|·|E| + 1)
+  -- < √2 · 1 = √2  since |J|·|E| < |J|·|E| + 1.
+  rw [div_mul_eq_mul_div]
+  rw [div_lt_iff₀ hdenom_pos]
+  have h_strict : (|J| * G.edgeFinset.card) < (|J| * G.edgeFinset.card + 1) := by linarith
+  calc Real.sqrt 2 * (|J| * G.edgeFinset.card)
+      ≤ Real.sqrt 2 * (|J| * G.edgeFinset.card) := le_refl _
+    _ < Real.sqrt 2 * (|J| * G.edgeFinset.card + 1) := by
+        exact mul_lt_mul_of_pos_left h_strict hsqrt2_pos
+
+/-- **Unconditional `Z_ℂ ≠ 0` on the canonical trivial-Q disc at `h = 0`**
+(Issue #3054). Specialisation of
+`partitionFunctionComplex_ne_zero_on_closedBall_h_zero_at_zero` to the
+explicit canonical radius `trivialQRadius G J`. -/
+theorem partitionFunctionComplex_ne_zero_on_trivialQRadius_closedBall_h_zero_at_zero
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J : ℝ) :
+    ∀ β ∈ Metric.closedBall (0 : ℂ) (trivialQRadius G J),
+      partitionFunctionComplex G (J : ℂ) 0 β ≠ 0 :=
+  partitionFunctionComplex_ne_zero_on_closedBall_h_zero_at_zero G J
+    (trivialQRadius_smallness G J)
+
+/-- **Unconditional `Z_ℂ ≠ 0` on the canonical trivial-Q disc centred at a real
+`β₀` at `h = 0`** (Issue #3054). Specialisation of
+`partitionFunctionComplex_ne_zero_on_closedBall_h_zero_at_real_beta` to the
+explicit canonical radius. -/
+theorem partitionFunctionComplex_ne_zero_on_trivialQRadius_closedBall_h_zero_at_real_beta
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J : ℝ) (β₀ : ℝ) :
+    ∀ β ∈ Metric.closedBall ((β₀ : ℝ) : ℂ) (trivialQRadius G J),
+      partitionFunctionComplex G (J : ℂ) 0 β ≠ 0 :=
+  partitionFunctionComplex_ne_zero_on_closedBall_h_zero_at_real_beta G J β₀
+    (trivialQRadius_smallness G J)
+
 end IsingModel
