@@ -106,5 +106,45 @@ theorem correlationAlongExhaustion_latticeGraph_beta_deriv_le
   exact hasDerivAt_correlationAlongExhaustion_of_hasDerivAt_inducedGraph
     (IsingModel.latticeGraph d) Λ J 0 ({r, s} : Finset (Fin d → ℤ)) n hrs_sub h_ind'
 
+/-- **Closed-form `deriv`-version of `correlationAlongExhaustion_latticeGraph_beta_deriv_le`**
+(Issue #2965 Phase C, real-axis Lebowitz route).
+
+Identical hypotheses to `correlationAlongExhaustion_latticeGraph_beta_deriv_le`, but the
+conclusion replaces the `∃ dval, HasDerivAt … dval β ∧ dval ≤ …` form with the closed-form
+`deriv (…) β ≤ …`. Obtained by `HasDerivAt.deriv` on the witness produced by the existential
+form, so downstream consumers can use the bound without unpacking the existential. -/
+theorem correlationAlongExhaustion_latticeGraph_beta_deriv_eq_le
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β)
+    {r s : Fin d → ℤ} (hrs : r ≠ s) (n : ℕ)
+    (hr : r ∈ Λ.volume n) (hs : s ∈ Λ.volume n)
+    (hrs_sub : ({r, s} : Finset (Fin d → ℤ)) ⊆ Λ.volume n) :
+    deriv (fun β' => correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β'⟩ : IsingParams ℝ) {r, s} n) β
+      ≤ J * ∑ e ∈ (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset,
+            Sym2.lift ⟨fun u v =>
+                IsingModel.correlation
+                  (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+                  (⟨J, 0, β⟩ : IsingParams ℝ)
+                  {(⟨r, hr⟩ : ↑(Λ.volume n)), u} *
+                IsingModel.correlation
+                  (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+                  (⟨J, 0, β⟩ : IsingParams ℝ)
+                  {(⟨s, hs⟩ : ↑(Λ.volume n)), v} +
+                IsingModel.correlation
+                  (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+                  (⟨J, 0, β⟩ : IsingParams ℝ)
+                  {(⟨r, hr⟩ : ↑(Λ.volume n)), v} *
+                IsingModel.correlation
+                  (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume n))
+                  (⟨J, 0, β⟩ : IsingParams ℝ)
+                  {(⟨s, hs⟩ : ↑(Λ.volume n)), u},
+              fun u v => by ring⟩ e
+          + J * (4 * ↑d) := by
+  obtain ⟨dval, hdrv, hbound⟩ :=
+    correlationAlongExhaustion_latticeGraph_beta_deriv_le Λ J β hJ hβ hrs n hr hs hrs_sub
+  rw [hdrv.deriv]
+  exact hbound
+
 end Ambient
 end IsingModel
