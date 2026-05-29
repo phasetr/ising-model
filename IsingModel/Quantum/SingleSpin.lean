@@ -37,8 +37,11 @@ This file defines the Pauli matrices and the spin-1/2 operators as concrete
   specialisation of Tasaki 2.1.1, derived algebraically from the products
   and the off-diagonal anticommutation).
 
-The spin-1/2 operator commutators `[S^(α), S^(β)] = i · ε_{αβγ} S^(γ)`
-(Tasaki 2.1.1) and `S² = (3/4) · I` are deferred to subsequent PRs.
+* The spin-1/2 operator commutators `[S^(α), S^(β)] = i · ε_{αβγ} S^(γ)`
+  (the S=1/2 specialisation of Tasaki 2.1.1) for the three cyclic pairs,
+  derived from the Pauli commutators via `S^(α) = σ^(α)/2`.
+* The squared spin sum `(S^(1))² + (S^(2))² + (S^(3))² = (3/4) · I`
+  (Tasaki p. 14 footnote 1: `S² = S(S+1) = 3/4` at `S = 1/2`).
 
 References:
 
@@ -160,5 +163,68 @@ theorem pauliZ_commutator_pauliX :
     exact eq_neg_of_add_eq_zero_right this
   rw [h_anti, sub_neg_eq_add, pauliZ_mul_pauliX, ← two_smul ℂ (Complex.I • pauliY),
     smul_smul]
+
+/-- Spin-1/2 operator commutator `[S^(1), S^(2)] = i · S^(3)` (Tasaki 2.1.1 at S=1/2).
+
+Derived from the Pauli commutator `[σ^(1), σ^(2)] = 2i · σ^(3)`
+(`pauliX_commutator_pauliY`) by `S^(α) = σ^(α)/2`. -/
+theorem spinOp1Half_x_commutator_y :
+    spinOp1Half_x * spinOp1Half_y - spinOp1Half_y * spinOp1Half_x =
+      Complex.I • spinOp1Half_z := by
+  have h := pauliX_commutator_pauliY
+  unfold spinOp1Half_x spinOp1Half_y spinOp1Half_z
+  rw [Matrix.smul_mul, Matrix.mul_smul, Matrix.smul_mul, Matrix.mul_smul,
+    smul_smul, smul_smul, ← smul_sub, h, smul_smul, smul_smul]
+  congr 1
+  ring
+
+/-- Spin-1/2 operator commutator `[S^(2), S^(3)] = i · S^(1)` (Tasaki 2.1.1 at S=1/2). -/
+theorem spinOp1Half_y_commutator_z :
+    spinOp1Half_y * spinOp1Half_z - spinOp1Half_z * spinOp1Half_y =
+      Complex.I • spinOp1Half_x := by
+  have h := pauliY_commutator_pauliZ
+  unfold spinOp1Half_y spinOp1Half_z spinOp1Half_x
+  rw [Matrix.smul_mul, Matrix.mul_smul, Matrix.smul_mul, Matrix.mul_smul,
+    smul_smul, smul_smul, ← smul_sub, h, smul_smul, smul_smul]
+  congr 1
+  ring
+
+/-- Spin-1/2 operator commutator `[S^(3), S^(1)] = i · S^(2)` (Tasaki 2.1.1 at S=1/2). -/
+theorem spinOp1Half_z_commutator_x :
+    spinOp1Half_z * spinOp1Half_x - spinOp1Half_x * spinOp1Half_z =
+      Complex.I • spinOp1Half_y := by
+  have h := pauliZ_commutator_pauliX
+  unfold spinOp1Half_z spinOp1Half_x spinOp1Half_y
+  rw [Matrix.smul_mul, Matrix.mul_smul, Matrix.smul_mul, Matrix.mul_smul,
+    smul_smul, smul_smul, ← smul_sub, h, smul_smul, smul_smul]
+  congr 1
+  ring
+
+/-- The squared spin operator at S = 1/2: `(S^(1))² + (S^(2))² + (S^(3))² = (3/4) · I`
+(Tasaki, p. 14, footnote 1: `S² = S(S+1) = 3/4` for `S = 1/2`).
+
+Each `(S^(α))² = (1/2 σ^(α))² = (1/4) (σ^(α))² = (1/4) I`. Sum = `3/4 · I`. -/
+theorem spinOp1Half_sq_sum :
+    spinOp1Half_x * spinOp1Half_x + spinOp1Half_y * spinOp1Half_y +
+        spinOp1Half_z * spinOp1Half_z =
+      ((3 : ℂ) / 4) • (1 : Matrix (Fin 2) (Fin 2) ℂ) := by
+  have hX : spinOp1Half_x * spinOp1Half_x =
+      ((1 : ℂ) / 4) • (1 : Matrix (Fin 2) (Fin 2) ℂ) := by
+    unfold spinOp1Half_x
+    rw [Matrix.smul_mul, Matrix.mul_smul, smul_smul, pauliX_sq]
+    congr 1; ring
+  have hY : spinOp1Half_y * spinOp1Half_y =
+      ((1 : ℂ) / 4) • (1 : Matrix (Fin 2) (Fin 2) ℂ) := by
+    unfold spinOp1Half_y
+    rw [Matrix.smul_mul, Matrix.mul_smul, smul_smul, pauliY_sq]
+    congr 1; ring
+  have hZ : spinOp1Half_z * spinOp1Half_z =
+      ((1 : ℂ) / 4) • (1 : Matrix (Fin 2) (Fin 2) ℂ) := by
+    unfold spinOp1Half_z
+    rw [Matrix.smul_mul, Matrix.mul_smul, smul_smul, pauliZ_sq]
+    congr 1; ring
+  rw [hX, hY, hZ, ← add_smul, ← add_smul]
+  congr 1
+  ring
 
 end IsingModel.Quantum
