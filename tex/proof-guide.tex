@@ -9778,6 +9778,12 @@ per \((\beta, k)\) without any structural witness construction.
 is the convenience specialisation where a single \(C\ge0\) bounds both
 stages' Lipschitz (\(C_k=C_{k+1}=C\)); the user supplies \((R_{\mathrm{inc}},C)\)
 instead of \((R_{\mathrm{inc}},C_k,C_{k+1})\).
+\textbf{One-step uniform-C Lemma 17.5.2 wrappers} (Issue \#3054):
+\texttt{lemma\_17\_5\_2\_upper\_bound\_of\_R\_inc\_uniform\_C} and
+\texttt{lemma\_17\_5\_2\_sandwich\_of\_R\_inc\_uniform\_C} compose this with
+the upper-bound/sandwich consumers, giving the simplest entry to Lemma 17.5.2
+endpoints — only per-\((\beta,k)\) \((R_{\mathrm{inc}},C)\) inputs (plus
+\texttt{hdecay} for sandwich).
 Both inputs remain open at the volume-uniform level (complex cluster-expansion
 convergence is research-level).
 \end{theorem}
