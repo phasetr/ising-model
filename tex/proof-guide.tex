@@ -9923,6 +9923,14 @@ replaces \(\mathrm{cf}(\beta_{re})\) by a uniform upper bound, giving
 \(w, b \in \overline{B(\beta_0, R)}\), given \(Z_{\mathbb{C}} \ne 0\) on the
 closed disc and an explicit deriv bound \(C\). Direct
 \(h_{\mathrm{lip}}\)-slot provider.
+\textbf{CE-route scope clarification + direct increment API}
+(refactor Direction 1+3 per codex strategic review, PRs \#3125--\#3126):
+the CE-route bundles are documented as structural bridges from per-\((\beta, k)\)
+complex circle bound to summable increment, not per-fixed-volume capstones.
+\texttt{CERouteIccDirect\{,Poly\}GeometricIncrement} and the
+\texttt{lemma\_17\_5\_2\_\{upper\_bound,capstone\}\_of\_CERouteIccDirect\{,Poly\}GeometricIncrement}
+pass-throughs to \texttt{IncrementCapstone.lean} provide the explicit
+direct-increment entry point for users not going through Cauchy.
 Both inputs remain open at the volume-uniform level (complex cluster-expansion
 convergence is research-level).
 \end{theorem}
