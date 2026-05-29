@@ -77,5 +77,29 @@ theorem hasDerivAt_correlationAlongExhaustion_of_hasDerivAt_inducedGraph
       correlationAlongExhaustion_eq_correlation_inducedGraph G Λ _ A n hcov
   rw [hfun]; exact h_ind
 
+/-- **`HasDerivAt` for the covered-stage exhaustion correlation in `J`** (Issue
+#3026, J-direction parallel). Companion to
+`hasDerivAt_correlationAlongExhaustion_of_hasDerivAt_inducedGraph`: if the
+J-family of the induced-graph correlation has a derivative at `J`, then the
+J-family of `correlationAlongExhaustion` has the *same* derivative there. The
+coverage condition is independent of `J`, so the function-level identity
+passes through `HasDerivAt`. -/
+theorem hasDerivAt_correlationAlongExhaustion_J_of_hasDerivAt_inducedGraph
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (h β : ℝ) (A : Finset V) (n : ℕ) (hcov : A ⊆ Λ.volume n)
+    {J dval : ℝ}
+    (h_ind : HasDerivAt
+        (fun J' => correlation (inducedGraph G (Λ.volume n))
+          (⟨J', h, β⟩ : IsingParams ℝ) (liftFinset A hcov)) dval J) :
+    HasDerivAt
+      (fun J' => correlationAlongExhaustion G Λ (⟨J', h, β⟩ : IsingParams ℝ) A n) dval J := by
+  have hfun : (fun J' => correlationAlongExhaustion G Λ (⟨J', h, β⟩ : IsingParams ℝ) A n)
+      = (fun J' => correlation (inducedGraph G (Λ.volume n))
+          (⟨J', h, β⟩ : IsingParams ℝ) (liftFinset A hcov)) :=
+    funext fun J' =>
+      correlationAlongExhaustion_eq_correlation_inducedGraph G Λ _ A n hcov
+  rw [hfun]; exact h_ind
+
 end Ambient
 end IsingModel

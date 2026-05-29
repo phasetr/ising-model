@@ -13944,6 +13944,28 @@ Obtained by \texttt{HasDerivAt.deriv} on the witness from the existential form, 
 downstream consumers use the bound without unpacking the existential.
 \end{theorem}
 
+\begin{theorem}[J-direction parallel: \texttt{hasDerivAt\_correlationAlongExhaustion\_J\_of\_hasDerivAt\_inducedGraph},
+\texttt{correlationAlongExhaustion\_latticeGraph\_J\_deriv\_le},
+\texttt{\_J\_deriv\_eq\_le}, \texttt{\_J\_deriv\_le\_susceptibilityAlong\_sq}
+(GJ \S17.5 Cor.~4.3.3, pp.~311--312; Issue \#2965 Phase C, J-direction)]
+Full J-direction analogue of the $\beta$-direction theorems above. The
+\texttt{HasDerivAt} transfer in $J$ (companion of the $\beta$ version, in
+\texttt{CorrelationAlongExhaustionDeriv.lean}); the per-stage J-derivative Lebowitz bound
+\[
+  d_{\mathrm{val}}
+    \le \beta\,\sum_{\langle u,v\rangle\in E(G_n)}
+        \bigl[c_n(r,u)\,c_n(s,v) + c_n(r,v)\,c_n(s,u)\bigr]
+      + \beta\cdot 4d,
+\]
+in existential form, then closed-form $\mathrm{deriv}\,(\dots)\,J\le\dots$; and the
+unconditional susceptibility-product bound
+$\mathrm{deriv}\,(\dots)\,J\le\beta\cdot\chi_{\mathrm{along},n}(r)\cdot\chi_{\mathrm{along},n}(s)+\beta\cdot 4d$.
+The boundary term is $\beta\cdot 4d$ instead of $J\cdot 4d$
+(cf.\ \texttt{inducedLatticeGraph\_J\_deriv\_le}, Step 218). Same composition pattern as the
+$\beta$-direction: Step 218 plus the J-direction transfer and \texttt{liftFinset\_pair},
+then \texttt{HasDerivAt.deriv} and Step 161.
+\end{theorem}
+
 \begin{theorem}[\texttt{IsingModel.Ambient.correlationAlongExhaustion\_latticeGraph\_beta\_deriv\_le\_susceptibilityAlong\_sq}
 ($\beta$-derivative of $\mathrm{correlationAlongExhaustion}$ bounded by
 $J\cdot\chi_{\mathrm{along}}^2 + J\cdot 4d$; GJ \S17.5 Cor.~4.3.3, pp.~311--312, + Step 161;
