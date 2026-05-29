@@ -271,5 +271,39 @@ theorem correlationAlongExhaustion_cubic_succ_sub_le_poly_pow (d : ℕ) (hd : 1 
     (cubicBox_mono d hRk hr) (cubicBox_mono d hRk hs) hsep).trans
     (derivBoundTight_cubic_shell_le_poly_pow d hd r₀ p hf hh hα k R hRk hr hs hsep)
 
+/-- **Abs form of cubic per-stage correlation increment** (Issue #3054). Combines
+`correlationAlongExhaustion_cubic_succ_sub_le_poly_pow` (the one-sided ≤ form)
+with the ferromagnetic monotonicity
+`correlationAlongExhaustion_latticeGraph_cubicExhaustion_monotone`
+(`c_k ≤ c_{k+1}` for ferromagnetic; here applied with `Λ.mono (Nat.le_succ k)`)
+to give the two-sided abs bound shape required by the `h_real_inc` slots of the
+poly-geometric CE-route bundle constructors (PRs #3099-#3105). -/
+theorem abs_correlationAlongExhaustion_cubic_succ_sub_le_poly_pow (d : ℕ) (hd : 1 ≤ d)
+    (r₀ : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p) (hh : p.h = 0)
+    (hα : contractionFactor d (cubicExhaustion d) p r₀ < 1)
+    (k R : ℕ) (hRk : R ≤ k)
+    {r s : Fin d → ℤ} (hrs : r ≠ s) (hr : r ∈ cubicBox d R) (hs : s ∈ cubicBox d R)
+    (hsep : ∀ e ∈ (inducedGraph (latticeGraph d) (cubicBox d (k + 1))).edgeFinset.filter
+        (straddlePred ((cubicBox d k).subtype (· ∈ cubicBox d (k + 1)))),
+      ¬ Sym2.Mem (⟨r, cubicBox_mono d (by omega) hr⟩ : (↑(cubicBox d (k + 1)) : Type _)) e ∧
+        ¬ Sym2.Mem (⟨s, cubicBox_mono d (by omega) hs⟩ :
+          (↑(cubicBox d (k + 1)) : Type _)) e) :
+    |correlationAlongExhaustion (latticeGraph d) (cubicExhaustion d) p {r, s} k
+        - correlationAlongExhaustion (latticeGraph d) (cubicExhaustion d) p {r, s} (k + 1)|
+      ≤ p.β * p.J * (2 * (d * (2 * (k + 1) + 1) ^ d) *
+          contractionFactor d (cubicExhaustion d) p r₀ ^ ((k + 1 - R) / (r₀ + 2))) := by
+  have hmono :=
+    correlationAlongExhaustion_monotone (latticeGraph d) (cubicExhaustion d) p hf {r, s}
+      (Nat.le_succ k)
+  have hub :=
+    correlationAlongExhaustion_cubic_succ_sub_le_poly_pow d hd r₀ p hf hh hα k R hRk hrs hr hs hsep
+  -- Since c_k ≤ c_{k+1}, c_k - c_{k+1} ≤ 0, so |c_k - c_{k+1}| = c_{k+1} - c_k.
+  have hsub_nn :
+      0 ≤ correlationAlongExhaustion (latticeGraph d) (cubicExhaustion d) p {r, s} (k + 1)
+          - correlationAlongExhaustion (latticeGraph d) (cubicExhaustion d) p {r, s} k :=
+    sub_nonneg.mpr hmono
+  rw [abs_sub_comm]
+  exact (abs_of_nonneg hsub_nn).trans_le hub
+
 end Ambient
 end IsingModel
