@@ -598,5 +598,67 @@ theorem hsep_of_cubicBox_R_succ_le_k
   ⟨not_sym2_mem_straddle_of_cubicBox_R_succ_le_k d k R hRk hr e he,
    not_sym2_mem_straddle_of_cubicBox_R_succ_le_k d k R hRk hs e he⟩
 
+/-- **Cubic abs in clean geometric high-temperature form** (Issue #3054, Step
+A+B composition). Combines `abs_correlation_inducedGraph_cubic_succ_sub_le_poly_pow_high_temp`
+(#3116), `hsep_of_cubicBox_R_succ_le_k` (#3118 — auto-discharges `hsep`), and
+`cf_pow_natDiv_le_geometric` (#3119 — floor → geometric) to produce the cubic
+real-axis abs increment bound in the clean form
+
+    |c_k − c_{k+1}| ≤ (1/cf) · (2k+3)^d · ρ_R^{k+1−R}
+
+with explicit `ρ_R := cf^{1/(r₀+2)} ∈ (0, 1)`. This is the direct
+poly·geometric shape compatible with the `R_inc_seq k := M · (2k+3)^d · ρ_R^k`
+input of `CERouteIccPolyGeometricIncrement_of_canonical_radius_sequence`
+(PR #3104, modulo a constant shift `ρ_R^{1−R}`). The cubic high-temperature
+hypothesis automatically discharges `hsep` via the threshold `R + 1 ≤ k`,
+removing the only combinatorial side-condition. -/
+theorem abs_correlation_inducedGraph_cubic_succ_sub_le_geometric_high_temp (d : ℕ) (hd : 1 ≤ d)
+    (r₀ : ℕ) (J β : ℝ)
+    (hβJ2d : β * J * (2 * d) ≤ 1)
+    (hf : Ferromagnetic (⟨J, 0, β⟩ : IsingParams ℝ))
+    (hcf_pos : 0 < contractionFactor d (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) r₀)
+    (hα : contractionFactor d (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) r₀ < 1)
+    (k R : ℕ) (hRk : R + 1 ≤ k)
+    {r s : Fin d → ℤ} (hrs : r ≠ s) (hr : r ∈ cubicBox d R) (hs : s ∈ cubicBox d R)
+    (hcov_k : ({r, s} : Finset (Fin d → ℤ)) ⊆ (cubicExhaustion d).volume k) :
+    |correlation (inducedGraph (latticeGraph d) ((cubicExhaustion d).volume k))
+          (⟨J, 0, β⟩ : IsingParams ℝ) (liftFinset {r, s} hcov_k) -
+        correlation (inducedGraph (latticeGraph d) ((cubicExhaustion d).volume (k + 1)))
+          (⟨J, 0, β⟩ : IsingParams ℝ)
+          (liftFinset {r, s} (hcov_k.trans ((cubicExhaustion d).mono (Nat.le_succ k))))|
+      ≤ (1 / contractionFactor d (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) r₀) *
+          (((2 * k + 3 : ℕ) : ℝ) ^ d *
+            (contractionFactor d (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) r₀ ^
+              ((1 : ℝ) / (r₀ + 2))) ^ (k + 1 - R)) := by
+  -- Step 1: apply the high-temp simplification + auto-discharged hsep.
+  have hsep := hsep_of_cubicBox_R_succ_le_k d k R hRk hr hs
+  have hbound :=
+    abs_correlation_inducedGraph_cubic_succ_sub_le_poly_pow_high_temp d hd r₀ J β hβJ2d hf hα
+      k R (by omega) hrs hr hs hsep hcov_k
+  -- Step 2: apply Step A (floor → geometric) to the cf^... factor.
+  -- cf_pow_natDiv_le_geometric gives cf^((k+1-R)/(r₀+2)) ≤ (1/cf) · ρ_R^(k+1-R)
+  have hm_pos : 0 < r₀ + 2 := by omega
+  obtain ⟨_, _, hgeom⟩ :=
+    cf_pow_natDiv_le_geometric
+      (contractionFactor d (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) r₀)
+      hcf_pos hα (r₀ + 2) hm_pos
+  have hcf_step := hgeom (k + 1 - R)
+  -- Combine: bound ≤ (2k+3)^d · cf^... ≤ (2k+3)^d · (1/cf) · ρ_R^(k+1-R)
+  refine hbound.trans ?_
+  have hpoly_nn : (0 : ℝ) ≤ ((2 * k + 3 : ℕ) : ℝ) ^ d := pow_nonneg (by positivity) _
+  have hstep : ((2 * k + 3 : ℕ) : ℝ) ^ d *
+        contractionFactor d (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) r₀ ^
+          ((k + 1 - R) / (r₀ + 2))
+      ≤ ((2 * k + 3 : ℕ) : ℝ) ^ d *
+          ((1 / contractionFactor d (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) r₀) *
+            (contractionFactor d (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) r₀ ^
+              ((1 : ℝ) / ((r₀ + 2 : ℕ) : ℝ))) ^ (k + 1 - R)) :=
+    mul_le_mul_of_nonneg_left hcf_step hpoly_nn
+  refine hstep.trans ?_
+  have hcast : ((r₀ + 2 : ℕ) : ℝ) = ((r₀ : ℝ) + 2) := by push_cast; ring
+  rw [hcast]
+  ring_nf
+  exact le_refl _
+
 end Ambient
 end IsingModel
