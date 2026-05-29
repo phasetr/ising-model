@@ -1543,5 +1543,73 @@ theorem lemma_17_5_2_sandwich_of_R_inc_lipschitz
       Λ J x z M ratio h_inputs)
     hdecay
 
+/-- **Uniform-C bundle constructor: single Lipschitz for both stages** (Issue
+#3054). Convenience specialisation of
+`CERouteIccGeometricIncrement_of_canonical_radius_R_inc_lipschitz` (PR #3090)
+where a single `C ≥ 0` bounds both stages' Lipschitz. User supplies
+`(R_inc, C)` (instead of `(R_inc, C_k, C_k1)`) with
+`(R_inc + 2·C·canonicalTrivialQRadiusPair) / canonicalTrivialQRadiusPair ≤ M·ratio^k`. -/
+theorem CERouteIccGeometricIncrement_of_canonical_radius_R_inc_uniform_C
+    {d : ℕ} (Λ : Exhaustion (Fin d → ℤ))
+    (J : ℝ) (x z : Fin d → ℤ) (M ratio : ℝ)
+    (h_inputs : ∀ β₁ β₂ : ℝ,
+      Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
+        ∀ β ∈ Set.Icc β₁ β₂,
+          ∀ k : ℕ, (hk : ({x, z} : Finset (Fin d → ℤ)) ⊆ Λ.volume k) →
+            ∃ R_inc C : ℝ,
+              0 ≤ C ∧
+              (R_inc + 2 * C * canonicalTrivialQRadiusPair Λ J k)
+                / canonicalTrivialQRadiusPair Λ J k ≤ M * ratio ^ k ∧
+              (∀ β_re : ℝ, β_re ∈ Set.Icc
+                  (β - canonicalTrivialQRadiusPair Λ J k)
+                  (β + canonicalTrivialQRadiusPair Λ J k) →
+                |correlation
+                      (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                        (Λ.volume k))
+                      (⟨J, 0, β_re⟩ : IsingParams ℝ)
+                      (Ambient.liftFinset {x, z} hk) -
+                    correlation
+                      (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                        (Λ.volume (k + 1)))
+                      (⟨J, 0, β_re⟩ : IsingParams ℝ)
+                      (Ambient.liftFinset {x, z}
+                        (hk.trans (Λ.mono (Nat.le_succ k))))| ≤ R_inc) ∧
+              (∀ b ∈ Metric.sphere ((β : ℝ) : ℂ)
+                  (canonicalTrivialQRadiusPair Λ J k),
+                ‖correlationComplex
+                      (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                        (Λ.volume k))
+                      (Ambient.liftFinset {x, z} hk) (J : ℂ) 0 b -
+                    correlationComplex
+                      (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                        (Λ.volume k))
+                      (Ambient.liftFinset {x, z} hk) (J : ℂ) 0 ((b.re : ℝ) : ℂ)‖
+                  ≤ C * ‖b - ((b.re : ℝ) : ℂ)‖) ∧
+              (∀ b ∈ Metric.sphere ((β : ℝ) : ℂ)
+                  (canonicalTrivialQRadiusPair Λ J k),
+                ‖correlationComplex
+                      (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                        (Λ.volume (k + 1)))
+                      (Ambient.liftFinset {x, z}
+                        (hk.trans (Λ.mono (Nat.le_succ k))))
+                      (J : ℂ) 0 b -
+                    correlationComplex
+                      (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                        (Λ.volume (k + 1)))
+                      (Ambient.liftFinset {x, z}
+                        (hk.trans (Λ.mono (Nat.le_succ k))))
+                      (J : ℂ) 0 ((b.re : ℝ) : ℂ)‖
+                  ≤ C * ‖b - ((b.re : ℝ) : ℂ)‖)) :
+    CERouteIccGeometricIncrement Λ J x z M ratio := by
+  refine CERouteIccGeometricIncrement_of_canonical_radius_R_inc_lipschitz
+    Λ J x z M ratio ?_
+  intro β₁ β₂ hIcc β hβ k hk
+  obtain ⟨R_inc, C, hC_nn, hBR, h_real_inc, h_lip_k, h_lip_k1⟩ :=
+    h_inputs β₁ β₂ hIcc β hβ k hk
+  refine ⟨R_inc, C, C, hC_nn, hC_nn, ?_, h_real_inc, h_lip_k, h_lip_k1⟩
+  have hsimp : C + C = 2 * C := by ring
+  rw [hsimp]
+  exact hBR
+
 end Ambient
 end IsingModel
