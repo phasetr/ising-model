@@ -13944,6 +13944,28 @@ Obtained by \texttt{HasDerivAt.deriv} on the witness from the existential form, 
 downstream consumers use the bound without unpacking the existential.
 \end{theorem}
 
+\begin{theorem}[\texttt{IsingModel.Ambient.correlationAlongExhaustion\_latticeGraph\_\{beta,J\}\_deriv\_nonneg}
+and \texttt{\_sandwich} (two-sided per-stage $\beta/J$-derivative sandwich; GJ \S17.5 GKS-II
+/ Cor.~4.3.3, pp.~311--312; Issue \#2965 Phase C, real-axis Lebowitz route, full sandwich)]
+Lower bound $0\le\mathrm{deriv}\,(\beta'\mapsto\mathrm{correlationAlongExhaustion}\dots)\,\beta$
+(resp.\ in $J$) for ferromagnetic $h=0$ systems via GKS-II / $\beta$-monotonicity
+(resp.\ $J$-monotonicity) of $\mathrm{correlationAlongExhaustion}$, combined with the
+unconditional upper bound \texttt{\_le\_susceptibilityAlong\_sq} to give a sandwich
+\[
+  0 \le \mathrm{deriv}\,(\beta'\mapsto\dots)\,\beta
+    \le J\cdot\chi_{\mathrm{along}}^2 + J\cdot 4d
+  \qquad\text{(resp.\ }
+  0\le \mathrm{deriv}\,(J'\mapsto\dots)\,J
+    \le\beta\cdot\chi_{\mathrm{along}}^2+\beta\cdot 4d\text{)}.
+\]
+Implementation: from $\mathrm{MonotoneOn}\,(\mathrm{Ioi}\,0)$ (via existing
+\texttt{correlationAlongExhaustion\_latticeGraph\_monotone\_\{beta,J\}}) plus
+\texttt{MonotoneOn.derivWithin\_nonneg} and \texttt{derivWithin\_of\_isOpen} (since
+$\mathrm{Ioi}\,0$ is open). The non-negativity holds for any observable $A$ (not only
+two-point pairs); the sandwich is for the pair case. Equivalent to
+$|\mathrm{deriv}\,\dots|\le\dots$ for ferromagnetic $h=0$ systems.
+\end{theorem}
+
 \begin{theorem}[\texttt{IsingModel.Ambient.correlationAlongExhaustion\_latticeGraph\_J\_deriv\_le\_susceptibilityInfinite\_sq}
 (J-derivative of $\mathrm{correlationAlongExhaustion}$ bounded by
 $\beta\cdot\chi_\infty^2 + \beta\cdot 4d$; GJ \S17.5 Cor.~4.3.3, pp.~311--312, + Step 162;

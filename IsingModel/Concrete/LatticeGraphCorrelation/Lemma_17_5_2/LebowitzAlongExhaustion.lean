@@ -1,5 +1,6 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassLebowitzDerivative
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.CorrelationAlongExhaustionDeriv
+import IsingModel.Concrete.LatticeGraphCorrelation.UniformMagBoundsCorrAlongExMonotone
 
 /-!
 # Lebowitz β-derivative bound on `correlationAlongExhaustion` at ℤ^d
@@ -403,6 +404,122 @@ theorem correlationAlongExhaustion_latticeGraph_J_deriv_le_susceptibilityInfinit
     (⟨r, hr⟩ : ↑(Λ.volume n)) ⟨s, hs⟩ hbdd_r hbdd_s
   have hmul : β * ∑ e ∈ _, _ ≤ β * (_ * _) := mul_le_mul_of_nonneg_left hsusc hβ.le
   linarith [hleb, hmul]
+
+/-! ## Per-stage β/J-derivative non-negativity (sandwich lower bound)
+
+In the ferromagnetic h=0 regime, the per-stage `correlationAlongExhaustion` is monotone
+non-decreasing in both `β` and `J` (`correlationAlongExhaustion_latticeGraph_monotone_{beta,J}`).
+Equivalently, its β- and J-derivatives are non-negative. Combined with the upper bounds
+above, this gives a **two-sided sandwich** on the per-stage derivative — the more useful
+form when only an upper bound on the *magnitude* `|deriv …|` is needed. -/
+
+/-- **β-derivative of `correlationAlongExhaustion` is non-negative** (GJ §17.5 GKS-II,
+Issue #2965 Phase C, real-axis Lebowitz route).
+
+In the ferromagnetic h=0 regime, the per-stage `correlationAlongExhaustion` is monotone
+non-decreasing in `β` (GKS-II / `correlationAlongExhaustion_latticeGraph_monotone_beta`).
+Hence `0 ≤ deriv (β' ↦ correlationAlongExhaustion …) β`. Used together with the upper
+bounds above to form a two-sided sandwich:
+
+    0 ≤ deriv (β' ↦ correlationAlongExhaustion …) β ≤ J·χ_along² + J·4d. -/
+theorem correlationAlongExhaustion_latticeGraph_beta_deriv_nonneg
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β)
+    (A : Finset (Fin d → ℤ)) (n : ℕ) :
+    0 ≤ deriv (fun β' => correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β'⟩ : IsingParams ℝ) A n) β := by
+  -- The function is monotone on Ioi 0; convert derivWithin to deriv since Ioi 0 is open.
+  have hmono : MonotoneOn
+      (fun β' => correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β'⟩ : IsingParams ℝ) A n) (Set.Ioi 0) :=
+    fun β₁ hβ₁ β₂ _ h₁₂ =>
+      Ambient.correlationAlongExhaustion_latticeGraph_monotone_beta d Λ hJ (le_refl 0)
+        A hβ₁ h₁₂ n
+  have hwithin : 0 ≤ derivWithin
+      (fun β' => correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β'⟩ : IsingParams ℝ) A n) (Set.Ioi 0) β :=
+    hmono.derivWithin_nonneg
+  rwa [derivWithin_of_isOpen isOpen_Ioi (Set.mem_Ioi.mpr hβ)] at hwithin
+
+/-- **J-derivative of `correlationAlongExhaustion` is non-negative** (GKS-II J-direction,
+Issue #2965 Phase C, J-direction parallel of `..._beta_deriv_nonneg`).
+
+In the ferromagnetic h=0 regime, the per-stage `correlationAlongExhaustion` is monotone
+non-decreasing in `J` (`correlationAlongExhaustion_latticeGraph_monotone_J`). Hence
+`0 ≤ deriv (J' ↦ correlationAlongExhaustion …) J`. -/
+theorem correlationAlongExhaustion_latticeGraph_J_deriv_nonneg
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J β : ℝ) (hJ : 0 < J) (hβ : 0 < β)
+    (A : Finset (Fin d → ℤ)) (n : ℕ) :
+    0 ≤ deriv (fun J' => correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J', 0, β⟩ : IsingParams ℝ) A n) J := by
+  have hmono : MonotoneOn
+      (fun J' => correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J', 0, β⟩ : IsingParams ℝ) A n) (Set.Ioi 0) :=
+    fun J₁ hJ₁ J₂ _ h₁₂ =>
+      Ambient.correlationAlongExhaustion_latticeGraph_monotone_J d Λ (le_refl 0) hβ
+        A hJ₁.le h₁₂ n
+  have hwithin : 0 ≤ derivWithin
+      (fun J' => correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J', 0, β⟩ : IsingParams ℝ) A n) (Set.Ioi 0) J :=
+    hmono.derivWithin_nonneg
+  rwa [derivWithin_of_isOpen isOpen_Ioi (Set.mem_Ioi.mpr hJ)] at hwithin
+
+/-- **Two-sided sandwich for the β-derivative of `correlationAlongExhaustion`** (Issue
+#2965 Phase C, real-axis Lebowitz route, full sandwich).
+
+Combines the GKS-II non-negativity (`..._beta_deriv_nonneg`) with the unconditional
+susceptibility-product upper bound (`..._beta_deriv_le_susceptibilityAlong_sq`):
+
+    0 ≤ deriv (β' ↦ correlationAlongExhaustion …) β
+      ≤ J · χ_along_n(r) · χ_along_n(s) + J · 4d.
+
+Equivalent to `|deriv (…) β| ≤ J·χ_along²+J·4d` in the ferromagnetic h=0 regime, exposing
+the per-stage derivative magnitude that downstream consumers typically need. -/
+theorem correlationAlongExhaustion_latticeGraph_beta_deriv_sandwich
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β)
+    {r s : Fin d → ℤ} (hrs : r ≠ s) (n : ℕ)
+    (hr : r ∈ Λ.volume n) (hs : s ∈ Λ.volume n)
+    (hrs_sub : ({r, s} : Finset (Fin d → ℤ)) ⊆ Λ.volume n) :
+    0 ≤ deriv (fun β' => correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β'⟩ : IsingParams ℝ) {r, s} n) β
+      ∧ deriv (fun β' => correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β'⟩ : IsingParams ℝ) {r, s} n) β
+        ≤ J * (susceptibilityAlongExhaustion (IsingModel.latticeGraph d) Λ
+                (⟨J, 0, β⟩ : IsingParams ℝ) r n *
+              susceptibilityAlongExhaustion (IsingModel.latticeGraph d) Λ
+                (⟨J, 0, β⟩ : IsingParams ℝ) s n)
+          + J * (4 * ↑d) :=
+  ⟨correlationAlongExhaustion_latticeGraph_beta_deriv_nonneg Λ J β hJ hβ
+     ({r, s} : Finset (Fin d → ℤ)) n,
+   correlationAlongExhaustion_latticeGraph_beta_deriv_le_susceptibilityAlong_sq
+     Λ J β hJ hβ hrs n hr hs hrs_sub⟩
+
+/-- **Two-sided sandwich for the J-derivative of `correlationAlongExhaustion`** (Issue
+#2965 Phase C, J-direction parallel of the β-direction sandwich).
+
+Combines the J-direction GKS-II non-negativity with the unconditional susceptibility-product
+upper bound. -/
+theorem correlationAlongExhaustion_latticeGraph_J_deriv_sandwich
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J β : ℝ) (hJ : 0 < J) (hβ : 0 < β)
+    {r s : Fin d → ℤ} (hrs : r ≠ s) (n : ℕ)
+    (hr : r ∈ Λ.volume n) (hs : s ∈ Λ.volume n)
+    (hrs_sub : ({r, s} : Finset (Fin d → ℤ)) ⊆ Λ.volume n) :
+    0 ≤ deriv (fun J' => correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J', 0, β⟩ : IsingParams ℝ) {r, s} n) J
+      ∧ deriv (fun J' => correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J', 0, β⟩ : IsingParams ℝ) {r, s} n) J
+        ≤ β * (susceptibilityAlongExhaustion (IsingModel.latticeGraph d) Λ
+                (⟨J, 0, β⟩ : IsingParams ℝ) r n *
+              susceptibilityAlongExhaustion (IsingModel.latticeGraph d) Λ
+                (⟨J, 0, β⟩ : IsingParams ℝ) s n)
+          + β * (4 * ↑d) :=
+  ⟨correlationAlongExhaustion_latticeGraph_J_deriv_nonneg Λ J β hJ hβ
+     ({r, s} : Finset (Fin d → ℤ)) n,
+   correlationAlongExhaustion_latticeGraph_J_deriv_le_susceptibilityAlong_sq
+     Λ J β hJ.le hβ hrs n hr hs hrs_sub⟩
 
 end Ambient
 end IsingModel
