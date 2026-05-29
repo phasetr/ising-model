@@ -492,4 +492,39 @@ theorem correlationComplex_norm_le_of_partition_norm_ge
   refine (correlationComplex_norm_le_ratio G A p β).trans ?_
   exact div_le_div_of_nonneg_left (partitionFunction_pos G _).le hzpos hZ
 
+/-- **Correlation Lipschitz on `closedBall` from `Z ≠ 0` + explicit deriv bound**
+(Issue #3054, Step D-light). Given:
+* `Z_ℂ ≠ 0` on the closed disc `closedBall β₀ R` (analyticity prerequisite);
+* an explicit deriv bound `C` such that `‖deriv corrC z‖ ≤ C` for every
+  `z ∈ closedBall β₀ R`,
+the complex correlation function `corrC(z) := correlationComplex G A J h z`
+is `C`-Lipschitz on the closed disc:
+`‖corrC w − corrC b‖ ≤ C · ‖w − b‖` for `w, b ∈ closedBall β₀ R`.
+
+Pure composition of `correlationComplex_analyticAt_beta` (analyticity at each
+point of the closed disc where `Z ≠ 0`), `convex_closedBall` (closed disc is
+convex), and `correlationComplex_norm_sub_le_of_norm_deriv_le` (mean value).
+
+The derivative bound `C` can be supplied via the Cauchy estimate
+`correlationComplex_norm_deriv_le_of_norm_le_on_sphere` (#3052) at a larger
+outer radius `R' > R`, with `M = sup ‖corrC‖` on `sphere β₀ R'` (the latter
+from `correlationComplex_norm_le_of_partition_norm_ge`); this composition is
+the Step D Cauchy Lipschitz constant package for the CE-route bundles. -/
+theorem correlationComplex_lipschitz_on_closedBall
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (A : Finset ι) (J h : ℂ) (β₀ : ℂ)
+    {R : ℝ}
+    (hZ : ∀ z ∈ Metric.closedBall β₀ R, partitionFunctionComplex G J h z ≠ 0)
+    {C : ℝ}
+    (hC : ∀ z ∈ Metric.closedBall β₀ R,
+      ‖deriv (fun z => correlationComplex G A J h z) z‖ ≤ C)
+    {w b : ℂ} (hw : w ∈ Metric.closedBall β₀ R) (hb : b ∈ Metric.closedBall β₀ R) :
+    ‖correlationComplex G A J h w - correlationComplex G A J h b‖ ≤ C * ‖w - b‖ := by
+  -- Closed ball is convex.
+  have hs_conv : Convex ℝ (Metric.closedBall β₀ R) := convex_closedBall _ _
+  -- Differentiability at each point of the closed ball follows from analyticity.
+  have hdiff : ∀ z ∈ Metric.closedBall β₀ R,
+      DifferentiableAt ℂ (fun z => correlationComplex G A J h z) z := fun z hz =>
+    (correlationComplex_analyticAt_beta G A J h z (hZ z hz)).differentiableAt
+  exact hs_conv.norm_image_sub_le_of_norm_deriv_le hdiff hC hb hw
+
 end IsingModel
