@@ -676,7 +676,6 @@ theorem abs_correlation_inducedGraph_cubic_succ_sub_le_uniform_cf_max
     (cf_max : ℝ) (hcf_max_lt_one : cf_max < 1)
     {β_re : ℝ} (hβ_re_lt : β_re * J * (2 * d) ≤ 1)
     (hf : Ferromagnetic (⟨J, 0, β_re⟩ : IsingParams ℝ))
-    (h_cf_pos : 0 < contractionFactor d (cubicExhaustion d) (⟨J, 0, β_re⟩ : IsingParams ℝ) r₀)
     (h_cf_max : contractionFactor d (cubicExhaustion d) (⟨J, 0, β_re⟩ : IsingParams ℝ) r₀ ≤ cf_max)
     (k R : ℕ) (hRk : R + 1 ≤ k)
     {r s : Fin d → ℤ} (hrs : r ≠ s) (hr : r ∈ cubicBox d R) (hs : s ∈ cubicBox d R)
@@ -699,7 +698,8 @@ theorem abs_correlation_inducedGraph_cubic_succ_sub_le_uniform_cf_max
   refine hbound.trans ?_
   have hpoly_nn : (0 : ℝ) ≤ ((2 * k + 3 : ℕ) : ℝ) ^ d := pow_nonneg (by positivity) _
   have h_cf_nn : (0 : ℝ) ≤ contractionFactor d (cubicExhaustion d)
-      (⟨J, 0, β_re⟩ : IsingParams ℝ) r₀ := h_cf_pos.le
+      (⟨J, 0, β_re⟩ : IsingParams ℝ) r₀ :=
+    contractionFactor_nonneg d (cubicExhaustion d) (⟨J, 0, β_re⟩ : IsingParams ℝ) hf r₀
   have h_cf_pow_le_max_pow :
       contractionFactor d (cubicExhaustion d) (⟨J, 0, β_re⟩ : IsingParams ℝ) r₀ ^
           ((k + 1 - R) / (r₀ + 2))
