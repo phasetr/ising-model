@@ -166,4 +166,25 @@ theorem spinOp1Half_z_site0_commute_z_site1 :
   unfold spinOp1Half_z_site0 spinOp1Half_z_site1 IdSpin1Half
   exact kronecker_one_commute _ _
 
+/-- **The spin-spin dot product** `S_0 · S_1 := ∑_α S^(α)_0 · S^(α)_1` for the
+two-site spin-1/2 system (Tasaki §2.2). This is the building block of the
+Heisenberg Hamiltonian (Tasaki 2.4 / 2.5). -/
+noncomputable def spinDotProduct1Half_01 :
+    Matrix (Fin 2 × Fin 2) (Fin 2 × Fin 2) ℂ :=
+  spinOp1Half_x_site0 * spinOp1Half_x_site1 +
+  spinOp1Half_y_site0 * spinOp1Half_y_site1 +
+  spinOp1Half_z_site0 * spinOp1Half_z_site1
+
+/-- **Symmetry of the spin-spin dot product** under site swap: `S_0 · S_1 = S_1 · S_0`
+(at the 2-site spin-1/2 case). Follows from cross-site commutativity. -/
+theorem spinDotProduct1Half_01_symm :
+    spinDotProduct1Half_01 =
+      spinOp1Half_x_site1 * spinOp1Half_x_site0 +
+      spinOp1Half_y_site1 * spinOp1Half_y_site0 +
+      spinOp1Half_z_site1 * spinOp1Half_z_site0 := by
+  unfold spinDotProduct1Half_01
+  rw [spinOp1Half_x_site0_commute_x_site1,
+      spinOp1Half_y_site0_commute_y_site1,
+      spinOp1Half_z_site0_commute_z_site1]
+
 end IsingModel.Quantum
