@@ -2,6 +2,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.CapstoneIncremen
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.IncrementCapstone
 import IsingModel.AmbientComplexAnalyticity.VolumeUniformHZ
 import IsingModel.ComplexAnalyticity.SecondMomentBounds
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
 # Lemma 17.5.2: conditional capstone via the CE route (centred at `β = 0`)
@@ -1765,6 +1766,76 @@ theorem lemma_17_5_2_sandwich_of_R_inc_uniform_C
     (CERouteIccGeometricIncrement_of_canonical_radius_R_inc_uniform_C
       Λ J x z M ratio h_inputs)
     hdecay
+
+/-- **Explicit `latticeGraph` lower bound for `trivialQRadius`** (Issue #3054).
+For the induced lattice graph `inducedGraph (latticeGraph d) Λ`,
+`trivialQRadius G J = √2 / (|J| · |E| + 1) ≥ √2 / (|J| · d · |Λ| + 1)` via
+`inducedLatticeGraph_card_edgeFinset_le` (`|E| ≤ d · |Λ|`). -/
+theorem trivialQRadius_inducedLatticeGraph_lower_bound
+    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J : ℝ) :
+    Real.sqrt 2 / (|J| * (d * Fintype.card (↑Λ : Type _)) + 1) ≤
+      IsingModel.trivialQRadius
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J := by
+  unfold IsingModel.trivialQRadius
+  have hsqrt2_pos : 0 < Real.sqrt 2 := Real.sqrt_pos.mpr (by norm_num)
+  have h_edge_le : ((Ambient.inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card
+      : ℝ) ≤ d * Fintype.card (↑Λ : Type _) :=
+    inducedLatticeGraph_card_edgeFinset_le d Λ
+  have hJ_abs_nn : (0 : ℝ) ≤ |J| := abs_nonneg J
+  have hJE_le : |J| * ((Ambient.inducedGraph (IsingModel.latticeGraph d)
+      Λ).edgeFinset.card : ℝ) ≤ |J| * (d * Fintype.card (↑Λ : Type _)) :=
+    mul_le_mul_of_nonneg_left h_edge_le hJ_abs_nn
+  have h_denom_le : |J| * ((Ambient.inducedGraph (IsingModel.latticeGraph d)
+      Λ).edgeFinset.card : ℝ) + 1 ≤
+      |J| * (d * Fintype.card (↑Λ : Type _)) + 1 := by linarith
+  have h_denom_rhs_pos :
+      (0 : ℝ) < |J| * ((Ambient.inducedGraph (IsingModel.latticeGraph d)
+          Λ).edgeFinset.card : ℝ) + 1 := by positivity
+  exact div_le_div_of_nonneg_left hsqrt2_pos.le h_denom_rhs_pos h_denom_le
+
+/-- **Per-stage canonical-radius lower bound from `|Λ_{k+1}|`** (Issue #3054).
+`canonicalTrivialQRadiusPair Λ J k ≥ √2 / (|J| · d · |Λ.volume (k+1)| + 1)`,
+using `inducedLatticeGraph_card_edgeFinset_le` and the exhaustion monotonicity
+`Λ.volume k ⊆ Λ.volume (k+1)` (so `|Λ.volume k| ≤ |Λ.volume (k+1)|`). -/
+theorem canonicalTrivialQRadiusPair_lower_bound_volume_succ
+    {d : ℕ} (Λ : Exhaustion (Fin d → ℤ)) (J : ℝ) (k : ℕ) :
+    Real.sqrt 2 / (|J| * (d * Fintype.card (↑(Λ.volume (k + 1)) : Type _)) + 1)
+      ≤ canonicalTrivialQRadiusPair Λ J k := by
+  unfold canonicalTrivialQRadiusPair
+  have h_stage_k1_lb := trivialQRadius_inducedLatticeGraph_lower_bound d
+    (Λ.volume (k + 1)) J
+  have h_stage_k_lb : Real.sqrt 2 /
+      (|J| * (d * Fintype.card (↑(Λ.volume (k + 1)) : Type _)) + 1) ≤
+      IsingModel.trivialQRadius
+        (Ambient.inducedGraph (IsingModel.latticeGraph d) (Λ.volume k)) J := by
+    have h_mono : Λ.volume k ⊆ Λ.volume (k + 1) := Λ.mono (Nat.le_succ k)
+    have h_card_le : Fintype.card (↑(Λ.volume k) : Type _) ≤
+        Fintype.card (↑(Λ.volume (k + 1)) : Type _) := by
+      simpa using Finset.card_le_card h_mono
+    have h_card_le_R : (Fintype.card (↑(Λ.volume k) : Type _) : ℝ) ≤
+        Fintype.card (↑(Λ.volume (k + 1)) : Type _) := by exact_mod_cast h_card_le
+    have hJ_nn : (0 : ℝ) ≤ |J| := abs_nonneg J
+    have hd_nn : (0 : ℝ) ≤ (d : ℝ) := Nat.cast_nonneg d
+    have h_inner_le : (d : ℝ) * Fintype.card (↑(Λ.volume k) : Type _) ≤
+        (d : ℝ) * Fintype.card (↑(Λ.volume (k + 1)) : Type _) :=
+      mul_le_mul_of_nonneg_left h_card_le_R hd_nn
+    have h_outer_le : |J| * ((d : ℝ) * Fintype.card (↑(Λ.volume k) : Type _)) ≤
+        |J| * ((d : ℝ) * Fintype.card (↑(Λ.volume (k + 1)) : Type _)) :=
+      mul_le_mul_of_nonneg_left h_inner_le hJ_nn
+    have h_denom_le : |J| * ((d : ℝ) * Fintype.card (↑(Λ.volume k) : Type _)) + 1 ≤
+        |J| * ((d : ℝ) * Fintype.card (↑(Λ.volume (k + 1)) : Type _)) + 1 := by
+      linarith
+    have h_sqrt2_pos : 0 < Real.sqrt 2 := Real.sqrt_pos.mpr (by norm_num)
+    have h_lhs_denom_pos : (0 : ℝ) <
+        |J| * ((d : ℝ) * Fintype.card (↑(Λ.volume k) : Type _)) + 1 := by positivity
+    have h_decrease : Real.sqrt 2 /
+        (|J| * ((d : ℝ) * Fintype.card (↑(Λ.volume (k + 1)) : Type _)) + 1) ≤
+        Real.sqrt 2 /
+        (|J| * ((d : ℝ) * Fintype.card (↑(Λ.volume k) : Type _)) + 1) :=
+      div_le_div_of_nonneg_left h_sqrt2_pos.le h_lhs_denom_pos h_denom_le
+    exact le_trans h_decrease
+      (trivialQRadius_inducedLatticeGraph_lower_bound d (Λ.volume k) J)
+  exact le_min h_stage_k_lb h_stage_k1_lb
 
 end Ambient
 end IsingModel
