@@ -146,5 +146,48 @@ theorem correlationAlongExhaustion_latticeGraph_beta_deriv_eq_le
   rw [hdrv.deriv]
   exact hbound
 
+/-- **β-derivative of `correlationAlongExhaustion` bounded by `J·χ_∞² + J·4d`** (GJ §17.5
+Cor. 4.3.3 + Step 162, Issue #2965 Phase C, real-axis Lebowitz route).
+
+Composes `correlationAlongExhaustion_latticeGraph_beta_deriv_eq_le` (deriv-form Lebowitz
+bound on `correlationAlongExhaustion`) with `inducedLatticeGraph_leb_sum_le_susceptibilityInfinite`
+(Step 162, the Lebowitz edge sum is bounded by the infinite-volume susceptibility product).
+Yields the closed-form bound
+
+    ∂_β c_n ≤ J·χ_∞(r)·χ_∞(s) + J·4d
+
+under the `BddAbove` hypotheses on the per-stage susceptibility sequences at `r` and `s`
+that Step 162 requires (these hold in particular in the high-temperature region where
+`χ_∞` is finite). The right-hand side is uniform in `n`, providing the per-stage
+real-axis input for the Phase C convergence-rate argument. -/
+theorem correlationAlongExhaustion_latticeGraph_beta_deriv_le_susceptibilityInfinite_sq
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β)
+    {r s : Fin d → ℤ} (hrs : r ≠ s) (n : ℕ)
+    (hr : r ∈ Λ.volume n) (hs : s ∈ Λ.volume n)
+    (hrs_sub : ({r, s} : Finset (Fin d → ℤ)) ⊆ Λ.volume n)
+    (hbdd_r : BddAbove (Set.range (fun m =>
+        susceptibilityAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) r m)))
+    (hbdd_s : BddAbove (Set.range (fun m =>
+        susceptibilityAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) s m))) :
+    deriv (fun β' => correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β'⟩ : IsingParams ℝ) {r, s} n) β
+      ≤ J * (susceptibilityInfinite (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β⟩ : IsingParams ℝ) r *
+            susceptibilityInfinite (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β⟩ : IsingParams ℝ) s)
+        + J * (4 * ↑d) := by
+  -- Bound the deriv by Lebowitz cross sum + J·4d
+  have hleb := correlationAlongExhaustion_latticeGraph_beta_deriv_eq_le
+    Λ J β hJ hβ hrs n hr hs hrs_sub
+  -- Bound the Lebowitz cross sum by χ_∞(r)·χ_∞(s) (Step 162)
+  have hsusc := inducedLatticeGraph_leb_sum_le_susceptibilityInfinite Λ J β hJ hβ n
+    (⟨r, hr⟩ : ↑(Λ.volume n)) ⟨s, hs⟩ hbdd_r hbdd_s
+  -- Chain: deriv ≤ J·(Lebowitz sum) + J·4d ≤ J·(χ_∞·χ_∞) + J·4d
+  have hmul : J * ∑ e ∈ _, _ ≤ J * (_ * _) := mul_le_mul_of_nonneg_left hsusc hJ
+  linarith [hleb, hmul]
+
 end Ambient
 end IsingModel
