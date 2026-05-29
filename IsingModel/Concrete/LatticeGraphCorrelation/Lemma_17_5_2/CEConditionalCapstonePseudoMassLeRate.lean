@@ -1,4 +1,5 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.CEConditionalCapstone
+import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.CEConditionalCapstonePolyGeometric
 
 /-!
 # Fully-concrete CE-route capstones via `pseudoMass ≤ -log(β₂J·2d)`
