@@ -9907,6 +9907,11 @@ increment bounds, given only \(r, s \in \mathrm{cubicBox}_R\) and \(R + 1 \le k\
 and \(m \ge 1\), \(\mathrm{cf}^{\lfloor n/m \rfloor} \le (1/\mathrm{cf}) \cdot \rho^n\)
 where \(\rho := \mathrm{cf}^{1/m}\), \(0 < \rho < 1\).
 Step A of the cubic CE-route plumbing.
+\textbf{Cubic abs in clean geometric high-temperature form} (Issue \#3054, A+B composition):
+\texttt{abs\_correlation\_inducedGraph\_cubic\_succ\_sub\_le\_geometric\_high\_temp}
+gives \(|c_k - c_{k+1}| \le (1/\mathrm{cf}) \cdot (2k+3)^d \cdot \rho_R^{k+1-R}\)
+with \(\rho_R := \mathrm{cf}^{1/(r_0+2)} \in (0, 1)\) --- direct poly\(\cdot\)geometric
+shape for the \(R_{\mathrm{inc\_seq}}\) input slot.
 Both inputs remain open at the volume-uniform level (complex cluster-expansion
 convergence is research-level).
 \end{theorem}
