@@ -9757,6 +9757,15 @@ prevents direct use of
 (PR \#3050) by manual triangle inequality + per-graph real-axis cast
 (\texttt{correlation\_ofReal\_eq\_correlationComplex} with
 \((0{:}\mathbb{R}){:}\mathbb{C}\to(0{:}\mathbb{C})\) simp normalisation).
+\textbf{Canonical-radius bundle from \(R_{\mathrm{inc}}\) + Lipschitz} (Issue
+\#3054):
+\texttt{CERouteIccGeometricIncrement\_of\_canonical\_radius\_R\_inc\_lipschitz}
+composes the sphere bridge with the canonical-radius bundle constructor; the
+user supplies only the Cauchy-route mathematical inputs
+\((R_{\mathrm{inc}},C_k,C_{k+1})\) with
+\((R_{\mathrm{inc}}+(C_k+C_{k+1})r)/r\le M\cdot\mathrm{ratio}^k\), real-axis
+increment bound, and per-stage Lipschitz — no smallness, no ne-zero, no
+sphere bound.
 Both inputs remain open at the volume-uniform level (complex cluster-expansion
 convergence is research-level).
 \end{theorem}
