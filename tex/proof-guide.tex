@@ -13944,6 +13944,24 @@ Obtained by \texttt{HasDerivAt.deriv} on the witness from the existential form, 
 downstream consumers use the bound without unpacking the existential.
 \end{theorem}
 
+\begin{theorem}[\texttt{IsingModel.Ambient.correlationAlongExhaustion\_latticeGraph\_beta\_deriv\_le\_susceptibilityInfinite\_sq}
+($\beta$-derivative of $\mathrm{correlationAlongExhaustion}$ bounded by
+$J\cdot\chi_\infty^2 + J\cdot 4d$; GJ \S17.5 Cor.~4.3.3 + Step 162; Issue \#2965 Phase C)]
+Composes the deriv-form Lebowitz bound
+\texttt{correlationAlongExhaustion\_latticeGraph\_beta\_deriv\_eq\_le} with Step 162's
+infinite-volume susceptibility product bound on the Lebowitz edge sum
+(\texttt{inducedLatticeGraph\_leb\_sum\_le\_susceptibilityInfinite}):
+\[
+  \mathrm{deriv}\,(\beta'\mapsto\mathrm{correlationAlongExhaustion}\,(\mathrm{latticeGraph}\,d)\,
+        \Lambda\,\langle J,0,\beta'\rangle\,\{r,s\}\,n)\,\beta
+    \le J\cdot\chi_\infty(r)\cdot\chi_\infty(s) + J\cdot 4d.
+\]
+The susceptibility product bound requires \texttt{BddAbove} of the per-stage susceptibility
+sequences at $r$ and $s$ (Step 162's standing hypotheses; in particular holds in the
+high-temperature region). The right-hand side is uniform in $n$ — the per-stage real-axis
+input for the Phase C convergence-rate argument.
+\end{theorem}
+
 \begin{theorem}[\texttt{IsingModel.Ambient.dist\_deriv\_correlation\_le\_of\_complex\_circle\_bound}
 (derivative-increment bridge from a complex circle bound, Issue \#3026)]
 For two finite-volume Ising correlations on graphs $G_1,G_2$ at real parameters $J,h$ and a
