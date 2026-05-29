@@ -2328,5 +2328,134 @@ theorem lemma_17_5_2_sandwich_of_geometric
       h_real_inc h_lip_k h_lip_k1)
     hdecay
 
+/-- **Poly-geometric CE-route increment bundle** (Issue #3054). Same shape as
+`CERouteIccGeometricIncrement` but with smallness
+`B / r ≤ M · (2k+3)^d · ratio^k` — matching the realistic boundary-prefactor
+form delivered by the cubic real-axis increment
+(`correlationAlongExhaustion_cubic_succ_sub_le_poly_pow`,
+`CubicShellDecaySum.lean`). Natural input to
+`lemma_17_5_2_{upper_bound,capstone}_of_poly_geometric_increments_on_covered_stages`
+in `IncrementCapstone.lean`. -/
+def CERouteIccPolyGeometricIncrement
+    {d : ℕ} (Λ : Exhaustion (Fin d → ℤ))
+    (J : ℝ) (x z : Fin d → ℤ) (M ratio : ℝ) : Prop :=
+  ∀ β₁ β₂ : ℝ,
+    Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
+      ∀ β ∈ Set.Icc β₁ β₂,
+        ∀ k : ℕ, (hk : ({x, z} : Finset (Fin d → ℤ)) ⊆ Λ.volume k) →
+          ∃ R > 0, ∃ B : ℝ,
+            B / R ≤ M * (((2 * k + 3 : ℕ) : ℝ) ^ d * ratio ^ k) ∧
+            (∀ w ∈ Metric.closedBall ((β : ℝ) : ℂ) R,
+              partitionFunctionComplex
+                  (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                    (Λ.volume k))
+                  (J : ℂ) 0 w ≠ 0) ∧
+            (∀ w ∈ Metric.closedBall ((β : ℝ) : ℂ) R,
+              partitionFunctionComplex
+                  (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                    (Λ.volume (k + 1)))
+                  (J : ℂ) 0 w ≠ 0) ∧
+            (∀ w ∈ Metric.sphere ((β : ℝ) : ℂ) R,
+              ‖correlationComplex
+                    (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume k))
+                    (Ambient.liftFinset {x, z} hk) (J : ℂ) 0 w -
+                  correlationComplex
+                    (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume (k + 1)))
+                    (Ambient.liftFinset {x, z}
+                      (hk.trans (Λ.mono (Nat.le_succ k))))
+                    (J : ℂ) 0 w‖ ≤ B)
+
+/-- **Poly-geometric hincr conversion** (Issue #3054). Mirror of
+`hincr_of_CERouteIccGeometricIncrement` for the poly·geometric form. -/
+theorem hincr_of_CERouteIccPolyGeometricIncrement
+    {d : ℕ} (Λ : Exhaustion (Fin d → ℤ))
+    (J : ℝ) (x z : Fin d → ℤ) (M ratio : ℝ)
+    (h : CERouteIccPolyGeometricIncrement Λ J x z M ratio) :
+    ∀ β₁ β₂ : ℝ,
+      Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
+        ∀ k : ℕ, ({x, z} : Finset (Fin d → ℤ)) ⊆ Λ.volume k →
+          ∀ β ∈ Set.Icc β₁ β₂,
+            dist
+              (deriv (fun β' : ℝ => Ambient.correlationAlongExhaustion
+                (IsingModel.latticeGraph d) Λ
+                (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} k) β)
+              (deriv (fun β' : ℝ => Ambient.correlationAlongExhaustion
+                (IsingModel.latticeGraph d) Λ
+                (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} (k + 1)) β)
+              ≤ M * (((2 * k + 3 : ℕ) : ℝ) ^ d * ratio ^ k) := by
+  intro β₁ β₂ hIcc k hk β hβ
+  obtain ⟨R, hR, B, hBR, hZk, hZk1, hBsphere⟩ := h β₁ β₂ hIcc β hβ k hk
+  have hdist : dist
+      (deriv (fun β' : ℝ => Ambient.correlationAlongExhaustion
+        (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} k) β)
+      (deriv (fun β' : ℝ => Ambient.correlationAlongExhaustion
+        (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} (k + 1)) β)
+      ≤ B / R :=
+    dist_deriv_correlationAlongExhaustion_le_of_complex_circle_bound
+      Λ J x z k (β := β) (R := R) (B := B) hR hk hZk hZk1 hBsphere
+  exact hdist.trans hBR
+
+/-- **End-to-end CE-route Lemma 17.5.2 upper bound from poly-geometric bundle**
+(Issue #3054). -/
+theorem lemma_17_5_2_upper_bound_of_CERouteIccPolyGeometricIncrement
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    {rho : ℝ} (hrho : 0 < rho)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (hJ_pos : 0 < J)
+    (x z : Fin d → ℤ) (hxz : x ≠ z)
+    {β₁ β₂ : ℝ} (hβ₁ : 0 < β₁) (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (M ratio : ℝ) (hratio0 : 0 ≤ ratio) (hratio1 : ratio < 1)
+    (h : CERouteIccPolyGeometricIncrement Λ J x z M ratio) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      Lemma_17_5_2_UpperBound hα hrho Λ J β₂ x z
+        (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho)) :=
+  lemma_17_5_2_upper_bound_of_poly_geometric_increments_on_covered_stages
+    hα hαd hd hrho Λ J hJ_pos x z hxz hβ₁ hβ₁₂ hIcc M ratio hratio0 hratio1
+    (hincr_of_CERouteIccPolyGeometricIncrement Λ J x z M ratio h)
+
+/-- **End-to-end CE-route Lemma 17.5.2 capstone from poly-geometric bundle + decay**
+(Issue #3054). -/
+theorem lemma_17_5_2_capstone_of_CERouteIccPolyGeometricIncrement
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    {rho : ℝ} (hrho : 0 < rho)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (hJ_pos : 0 < J)
+    (x z : Fin d → ℤ) (hxz : x ≠ z)
+    {β₁ β₂ : ℝ} (hβ₁ : 0 < β₁) (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (M ratio : ℝ) (hratio0 : 0 ≤ ratio) (hratio1 : ratio < 1)
+    (h : CERouteIccPolyGeometricIncrement Λ J x z M ratio)
+    (hdecay : HasExponentialDecay d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ)
+      (pseudoMassFromParamsAtPair hα hrho d Λ
+        (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      Lemma_17_5_2_UpperBound hα hrho Λ J β₂ x z
+        (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho)) ∧
+      ENNReal.ofReal
+          (pseudoMassFromParamsAtPair hα hrho d Λ
+            (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
+        ≤ latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ∧
+      latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ≤
+        ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho) *
+          ENNReal.ofReal
+            (pseudoMassFromParamsAtPair hα hrho d Λ
+              (⟨J, 0, β₂⟩ : IsingParams ℝ) x z) :=
+  lemma_17_5_2_capstone_of_poly_geometric_increments_on_covered_stages
+    hα hαd hd hrho Λ J hJ_pos x z hxz hβ₁ hβ₁₂ hIcc M ratio hratio0 hratio1
+    (hincr_of_CERouteIccPolyGeometricIncrement Λ J x z M ratio h) hdecay
+
 end Ambient
 end IsingModel
