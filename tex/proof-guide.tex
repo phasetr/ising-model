@@ -9897,6 +9897,11 @@ leaving the clean \((2k+3)^d \cdot \mathrm{cf}^{(k+1-R)/(r_0+2)}\) form.
 \texttt{cubicBox\_succ\_of\_latticeGraph\_adj} gives
 \(r \in \mathrm{cubicBox}_R \wedge \mathrm{adj}(r, y) \Rightarrow y \in \mathrm{cubicBox}_{R+1}\).
 Combinatorial building block for separation discharge.
+\textbf{Separation hypothesis discharge from \(R + 1 \le k\)} (Issue \#3054):
+\texttt{not\_sym2\_mem\_straddle\_of\_cubicBox\_R\_succ\_le\_k} and
+\texttt{hsep\_of\_cubicBox\_R\_succ\_le\_k} automatically discharge the
+\(\mathrm{hsep}\) separation hypothesis required by the cubic per-stage
+increment bounds, given only \(r, s \in \mathrm{cubicBox}_R\) and \(R + 1 \le k\).
 Both inputs remain open at the volume-uniform level (complex cluster-expansion
 convergence is research-level).
 \end{theorem}
