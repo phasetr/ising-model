@@ -364,5 +364,45 @@ theorem correlationAlongExhaustion_latticeGraph_J_deriv_le_susceptibilityAlong_s
   have hmul : β * ∑ e ∈ _, _ ≤ β * (_ * _) := mul_le_mul_of_nonneg_left hsusc hβ.le
   linarith [hleb, hmul]
 
+/-- **J-derivative of `correlationAlongExhaustion` bounded by `β·χ_∞² + β·4d`** (GJ §17.5
+Cor. 4.3.3, pp. 311–312, + Step 162, Issue #2965 Phase C, J-direction parallel of
+`…_beta_deriv_le_susceptibilityInfinite_sq`).
+
+Conditional susceptibility-infinite J-derivative bound: requires `BddAbove` of the per-stage
+susceptibility sequences at `r`, `s` (Step 162 hypothesis; holds in particular in the
+high-temperature region). Gives the infinite-volume susceptibility-product form
+
+    ∂_J c_n ≤ β · χ_∞(r) · χ_∞(s) + β · 4d
+
+(boundary term `β·4d`, matching the J-direction Lebowitz bound).
+
+Composes `correlationAlongExhaustion_latticeGraph_J_deriv_eq_le` with Step 162
+(`inducedLatticeGraph_leb_sum_le_susceptibilityInfinite`). -/
+theorem correlationAlongExhaustion_latticeGraph_J_deriv_le_susceptibilityInfinite_sq
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β)
+    {r s : Fin d → ℤ} (hrs : r ≠ s) (n : ℕ)
+    (hr : r ∈ Λ.volume n) (hs : s ∈ Λ.volume n)
+    (hrs_sub : ({r, s} : Finset (Fin d → ℤ)) ⊆ Λ.volume n)
+    (hbdd_r : BddAbove (Set.range (fun m =>
+        susceptibilityAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) r m)))
+    (hbdd_s : BddAbove (Set.range (fun m =>
+        susceptibilityAlongExhaustion (IsingModel.latticeGraph d) Λ
+          (⟨J, 0, β⟩ : IsingParams ℝ) s m))) :
+    deriv (fun J' => correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+        (⟨J', 0, β⟩ : IsingParams ℝ) {r, s} n) J
+      ≤ β * (susceptibilityInfinite (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β⟩ : IsingParams ℝ) r *
+            susceptibilityInfinite (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β⟩ : IsingParams ℝ) s)
+        + β * (4 * ↑d) := by
+  have hleb := correlationAlongExhaustion_latticeGraph_J_deriv_eq_le
+    Λ J β hJ hβ hrs n hr hs hrs_sub
+  have hsusc := inducedLatticeGraph_leb_sum_le_susceptibilityInfinite Λ J β hJ hβ n
+    (⟨r, hr⟩ : ↑(Λ.volume n)) ⟨s, hs⟩ hbdd_r hbdd_s
+  have hmul : β * ∑ e ∈ _, _ ≤ β * (_ * _) := mul_le_mul_of_nonneg_left hsusc hβ.le
+  linarith [hleb, hmul]
+
 end Ambient
 end IsingModel
