@@ -9917,6 +9917,12 @@ shape for the \(R_{\mathrm{inc\_seq}}\) input slot.
 replaces \(\mathrm{cf}(\beta_{re})\) by a uniform upper bound, giving
 \(R_{\mathrm{inc\_seq}}(k) := (2k+3)^d \cdot \mathrm{cf\_max}^{(k+1-R)/(r_0+2)}\)
 --- \(\beta_{re}\)-independent shape for the \(h_{\mathrm{real\_inc}}\) slot.
+\textbf{correlationComplex Lipschitz on closedBall} (Issue \#3054, Step D-light):
+\texttt{correlationComplex\_lipschitz\_on\_closedBall} gives
+\(\|c_{\mathbb{C}}(w) - c_{\mathbb{C}}(b)\| \le C \cdot \|w - b\|\) for
+\(w, b \in \overline{B(\beta_0, R)}\), given \(Z_{\mathbb{C}} \ne 0\) on the
+closed disc and an explicit deriv bound \(C\). Direct
+\(h_{\mathrm{lip}}\)-slot provider.
 Both inputs remain open at the volume-uniform level (complex cluster-expansion
 convergence is research-level).
 \end{theorem}
