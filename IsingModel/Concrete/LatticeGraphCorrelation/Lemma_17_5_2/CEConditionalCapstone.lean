@@ -2652,5 +2652,169 @@ theorem CERouteIccPolyGeometricIncrement_of_canonical_radius_R_inc_lipschitz
     β (canonicalTrivialQRadiusPair Λ J k) R_inc C_k C_k1
     h_real_inc h_lip_k h_lip_k1 hC_k_nn hC_k1_nn
 
+/-- **One-step Lemma 17.5.2 upper bound from R_inc + Lipschitz (poly-geometric form)**
+(Issue #3054). Direct composition of
+`CERouteIccPolyGeometricIncrement_of_canonical_radius_R_inc_lipschitz` (PR #3101)
+with `lemma_17_5_2_upper_bound_of_CERouteIccPolyGeometricIncrement` (PR #3099):
+delivers `Lemma_17_5_2_UpperBound` from per-(β, k) Cauchy-route mathematical
+inputs `(R_inc, C_k, C_k1)` for the poly·geometric prefactor form
+`(R_inc + (C_k+C_k1)·r) / r ≤ M·(2k+3)^d·ratio^k`. -/
+theorem lemma_17_5_2_upper_bound_of_R_inc_lipschitz_poly_geometric
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    {rho : ℝ} (hrho : 0 < rho)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (hJ_pos : 0 < J)
+    (x z : Fin d → ℤ) (hxz : x ≠ z)
+    {β₁ β₂ : ℝ} (hβ₁ : 0 < β₁) (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (M ratio : ℝ) (hratio0 : 0 ≤ ratio) (hratio1 : ratio < 1)
+    (h_inputs : ∀ β₁' β₂' : ℝ,
+      Set.Icc β₁' β₂' ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
+        ∀ β ∈ Set.Icc β₁' β₂',
+          ∀ k : ℕ, (hk : ({x, z} : Finset (Fin d → ℤ)) ⊆ Λ.volume k) →
+            ∃ R_inc C_k C_k1 : ℝ,
+              0 ≤ C_k ∧ 0 ≤ C_k1 ∧
+              (R_inc + (C_k + C_k1) * canonicalTrivialQRadiusPair Λ J k)
+                / canonicalTrivialQRadiusPair Λ J k ≤
+                  M * (((2 * k + 3 : ℕ) : ℝ) ^ d * ratio ^ k) ∧
+              (∀ β_re : ℝ, β_re ∈ Set.Icc
+                  (β - canonicalTrivialQRadiusPair Λ J k)
+                  (β + canonicalTrivialQRadiusPair Λ J k) →
+                |correlation
+                      (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                        (Λ.volume k))
+                      (⟨J, 0, β_re⟩ : IsingParams ℝ)
+                      (Ambient.liftFinset {x, z} hk) -
+                    correlation
+                      (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                        (Λ.volume (k + 1)))
+                      (⟨J, 0, β_re⟩ : IsingParams ℝ)
+                      (Ambient.liftFinset {x, z}
+                        (hk.trans (Λ.mono (Nat.le_succ k))))| ≤ R_inc) ∧
+              (∀ b ∈ Metric.sphere ((β : ℝ) : ℂ)
+                  (canonicalTrivialQRadiusPair Λ J k),
+                ‖correlationComplex
+                      (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                        (Λ.volume k))
+                      (Ambient.liftFinset {x, z} hk) (J : ℂ) 0 b -
+                    correlationComplex
+                      (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                        (Λ.volume k))
+                      (Ambient.liftFinset {x, z} hk) (J : ℂ) 0 ((b.re : ℝ) : ℂ)‖
+                  ≤ C_k * ‖b - ((b.re : ℝ) : ℂ)‖) ∧
+              (∀ b ∈ Metric.sphere ((β : ℝ) : ℂ)
+                  (canonicalTrivialQRadiusPair Λ J k),
+                ‖correlationComplex
+                      (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                        (Λ.volume (k + 1)))
+                      (Ambient.liftFinset {x, z}
+                        (hk.trans (Λ.mono (Nat.le_succ k))))
+                      (J : ℂ) 0 b -
+                    correlationComplex
+                      (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                        (Λ.volume (k + 1)))
+                      (Ambient.liftFinset {x, z}
+                        (hk.trans (Λ.mono (Nat.le_succ k))))
+                      (J : ℂ) 0 ((b.re : ℝ) : ℂ)‖
+                  ≤ C_k1 * ‖b - ((b.re : ℝ) : ℂ)‖)) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      Lemma_17_5_2_UpperBound hα hrho Λ J β₂ x z
+        (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho)) :=
+  lemma_17_5_2_upper_bound_of_CERouteIccPolyGeometricIncrement
+    hα hαd hd hrho Λ J hJ_pos x z hxz hβ₁ hβ₁₂ hIcc M ratio hratio0 hratio1
+    (CERouteIccPolyGeometricIncrement_of_canonical_radius_R_inc_lipschitz
+      Λ J x z M ratio h_inputs)
+
+/-- **One-step Lemma 17.5.2 capstone from R_inc + Lipschitz + decay (poly-geometric form)**
+(Issue #3054). Capstone (sandwich + upper-bound predicate) analogue of
+`lemma_17_5_2_upper_bound_of_R_inc_lipschitz_poly_geometric`, additionally
+consuming the validating endpoint pseudo-mass exponential-decay hypothesis. -/
+theorem lemma_17_5_2_capstone_of_R_inc_lipschitz_poly_geometric
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    {rho : ℝ} (hrho : 0 < rho)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (hJ_pos : 0 < J)
+    (x z : Fin d → ℤ) (hxz : x ≠ z)
+    {β₁ β₂ : ℝ} (hβ₁ : 0 < β₁) (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (M ratio : ℝ) (hratio0 : 0 ≤ ratio) (hratio1 : ratio < 1)
+    (h_inputs : ∀ β₁' β₂' : ℝ,
+      Set.Icc β₁' β₂' ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
+        ∀ β ∈ Set.Icc β₁' β₂',
+          ∀ k : ℕ, (hk : ({x, z} : Finset (Fin d → ℤ)) ⊆ Λ.volume k) →
+            ∃ R_inc C_k C_k1 : ℝ,
+              0 ≤ C_k ∧ 0 ≤ C_k1 ∧
+              (R_inc + (C_k + C_k1) * canonicalTrivialQRadiusPair Λ J k)
+                / canonicalTrivialQRadiusPair Λ J k ≤
+                  M * (((2 * k + 3 : ℕ) : ℝ) ^ d * ratio ^ k) ∧
+              (∀ β_re : ℝ, β_re ∈ Set.Icc
+                  (β - canonicalTrivialQRadiusPair Λ J k)
+                  (β + canonicalTrivialQRadiusPair Λ J k) →
+                |correlation
+                      (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                        (Λ.volume k))
+                      (⟨J, 0, β_re⟩ : IsingParams ℝ)
+                      (Ambient.liftFinset {x, z} hk) -
+                    correlation
+                      (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                        (Λ.volume (k + 1)))
+                      (⟨J, 0, β_re⟩ : IsingParams ℝ)
+                      (Ambient.liftFinset {x, z}
+                        (hk.trans (Λ.mono (Nat.le_succ k))))| ≤ R_inc) ∧
+              (∀ b ∈ Metric.sphere ((β : ℝ) : ℂ)
+                  (canonicalTrivialQRadiusPair Λ J k),
+                ‖correlationComplex
+                      (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                        (Λ.volume k))
+                      (Ambient.liftFinset {x, z} hk) (J : ℂ) 0 b -
+                    correlationComplex
+                      (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                        (Λ.volume k))
+                      (Ambient.liftFinset {x, z} hk) (J : ℂ) 0 ((b.re : ℝ) : ℂ)‖
+                  ≤ C_k * ‖b - ((b.re : ℝ) : ℂ)‖) ∧
+              (∀ b ∈ Metric.sphere ((β : ℝ) : ℂ)
+                  (canonicalTrivialQRadiusPair Λ J k),
+                ‖correlationComplex
+                      (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                        (Λ.volume (k + 1)))
+                      (Ambient.liftFinset {x, z}
+                        (hk.trans (Λ.mono (Nat.le_succ k))))
+                      (J : ℂ) 0 b -
+                    correlationComplex
+                      (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                        (Λ.volume (k + 1)))
+                      (Ambient.liftFinset {x, z}
+                        (hk.trans (Λ.mono (Nat.le_succ k))))
+                      (J : ℂ) 0 ((b.re : ℝ) : ℂ)‖
+                  ≤ C_k1 * ‖b - ((b.re : ℝ) : ℂ)‖))
+    (hdecay : HasExponentialDecay d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ)
+      (pseudoMassFromParamsAtPair hα hrho d Λ
+        (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      Lemma_17_5_2_UpperBound hα hrho Λ J β₂ x z
+        (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho)) ∧
+      ENNReal.ofReal
+          (pseudoMassFromParamsAtPair hα hrho d Λ
+            (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
+        ≤ latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ∧
+      latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ≤
+        ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho) *
+          ENNReal.ofReal
+            (pseudoMassFromParamsAtPair hα hrho d Λ
+              (⟨J, 0, β₂⟩ : IsingParams ℝ) x z) :=
+  lemma_17_5_2_capstone_of_CERouteIccPolyGeometricIncrement
+    hα hαd hd hrho Λ J hJ_pos x z hxz hβ₁ hβ₁₂ hIcc M ratio hratio0 hratio1
+    (CERouteIccPolyGeometricIncrement_of_canonical_radius_R_inc_lipschitz
+      Λ J x z M ratio h_inputs)
+    hdecay
+
 end Ambient
 end IsingModel
