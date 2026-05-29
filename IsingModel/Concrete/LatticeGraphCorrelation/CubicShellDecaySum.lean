@@ -660,5 +660,52 @@ theorem abs_correlation_inducedGraph_cubic_succ_sub_le_geometric_high_temp (d : 
   ring_nf
   exact le_refl _
 
+/-- **Cubic abs uniformized via `cf_max`** (Issue #3054, Step C). The
+high-temperature cubic abs increment bound (#3116) with the per-β contraction
+factor `cf(β)` replaced by an upper bound `cf_max < 1` valid over the
+high-temperature Icc. This is the shape required for the `h_real_inc` slot of
+the poly-geometric CE-route bundle constructors, where `R_inc_seq k` must be
+independent of β_re.
+
+Given a uniform upper bound `cf_max < 1` on `contractionFactor d (cubicExhaustion d)
+⟨J, 0, β_re⟩ r₀` over the relevant β_re range, the cubic abs increment is
+bounded by the β_re-independent sequence
+`R_inc_seq k := (2k+3)^d · cf_max^{(k+1-R)/(r₀+2)}`. -/
+theorem abs_correlation_inducedGraph_cubic_succ_sub_le_uniform_cf_max
+    (d : ℕ) (hd : 1 ≤ d) (r₀ : ℕ) (J : ℝ)
+    (cf_max : ℝ) (hcf_max_lt_one : cf_max < 1)
+    {β_re : ℝ} (hβ_re_lt : β_re * J * (2 * d) ≤ 1)
+    (hf : Ferromagnetic (⟨J, 0, β_re⟩ : IsingParams ℝ))
+    (h_cf_pos : 0 < contractionFactor d (cubicExhaustion d) (⟨J, 0, β_re⟩ : IsingParams ℝ) r₀)
+    (h_cf_max : contractionFactor d (cubicExhaustion d) (⟨J, 0, β_re⟩ : IsingParams ℝ) r₀ ≤ cf_max)
+    (k R : ℕ) (hRk : R + 1 ≤ k)
+    {r s : Fin d → ℤ} (hrs : r ≠ s) (hr : r ∈ cubicBox d R) (hs : s ∈ cubicBox d R)
+    (hcov_k : ({r, s} : Finset (Fin d → ℤ)) ⊆ (cubicExhaustion d).volume k) :
+    |correlation (inducedGraph (latticeGraph d) ((cubicExhaustion d).volume k))
+          (⟨J, 0, β_re⟩ : IsingParams ℝ) (liftFinset {r, s} hcov_k) -
+        correlation (inducedGraph (latticeGraph d) ((cubicExhaustion d).volume (k + 1)))
+          (⟨J, 0, β_re⟩ : IsingParams ℝ)
+          (liftFinset {r, s} (hcov_k.trans ((cubicExhaustion d).mono (Nat.le_succ k))))|
+      ≤ ((2 * k + 3 : ℕ) : ℝ) ^ d * cf_max ^ ((k + 1 - R) / (r₀ + 2)) := by
+  -- Derive the per-β_re bound first.
+  have h_cf_lt_one :
+      contractionFactor d (cubicExhaustion d) (⟨J, 0, β_re⟩ : IsingParams ℝ) r₀ < 1 :=
+    lt_of_le_of_lt h_cf_max hcf_max_lt_one
+  have hsep := hsep_of_cubicBox_R_succ_le_k d k R hRk hr hs
+  have hbound :=
+    abs_correlation_inducedGraph_cubic_succ_sub_le_poly_pow_high_temp d hd r₀ J β_re hβ_re_lt hf
+      h_cf_lt_one k R (by omega) hrs hr hs hsep hcov_k
+  -- Bound cf^((k+1-R)/(r₀+2)) ≤ cf_max^((k+1-R)/(r₀+2)) using x ≤ y, both in (0, 1) ⇒ x^p ≤ y^p.
+  refine hbound.trans ?_
+  have hpoly_nn : (0 : ℝ) ≤ ((2 * k + 3 : ℕ) : ℝ) ^ d := pow_nonneg (by positivity) _
+  have h_cf_nn : (0 : ℝ) ≤ contractionFactor d (cubicExhaustion d)
+      (⟨J, 0, β_re⟩ : IsingParams ℝ) r₀ := h_cf_pos.le
+  have h_cf_pow_le_max_pow :
+      contractionFactor d (cubicExhaustion d) (⟨J, 0, β_re⟩ : IsingParams ℝ) r₀ ^
+          ((k + 1 - R) / (r₀ + 2))
+        ≤ cf_max ^ ((k + 1 - R) / (r₀ + 2)) :=
+    pow_le_pow_left₀ h_cf_nn h_cf_max _
+  exact mul_le_mul_of_nonneg_left h_cf_pow_le_max_pow hpoly_nn
+
 end Ambient
 end IsingModel
