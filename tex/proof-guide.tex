@@ -9784,6 +9784,14 @@ instead of \((R_{\mathrm{inc}},C_k,C_{k+1})\).
 the upper-bound/sandwich consumers, giving the simplest entry to Lemma 17.5.2
 endpoints — only per-\((\beta,k)\) \((R_{\mathrm{inc}},C)\) inputs (plus
 \texttt{hdecay} for sandwich).
+\textbf{Explicit \texttt{latticeGraph} lower bound for the canonical radius}
+(Issue \#3054):
+\texttt{trivialQRadius\_inducedLatticeGraph\_lower\_bound} gives
+\(\texttt{trivialQRadius}\,G\,J\ge\sqrt{2}/(|J|\,d\,|\Lambda|+1)\) via
+\texttt{inducedLatticeGraph\_card\_edgeFinset\_le} (\(|E|\le d|\Lambda|\)).
+\texttt{canonicalTrivialQRadiusPair\_lower\_bound\_volume\_succ} gives the
+per-stage analogue
+\(\ge\sqrt{2}/(|J|\,d\,|\Lambda_{k+1}|+1)\) via exhaustion monotonicity.
 Both inputs remain open at the volume-uniform level (complex cluster-expansion
 convergence is research-level).
 \end{theorem}
