@@ -305,5 +305,51 @@ theorem abs_correlationAlongExhaustion_cubic_succ_sub_le_poly_pow (d : ℕ) (hd 
   rw [abs_sub_comm]
   exact (abs_of_nonneg hsub_nn).trans_le hub
 
+/-- **Cubic abs increment in direct correlation form** (Issue #3054). Rewrites
+`abs_correlationAlongExhaustion_cubic_succ_sub_le_poly_pow` in the direct
+`correlation (inducedGraph (latticeGraph d) (cubicBox d _)) ⟨J, 0, β⟩ (liftFinset {r, s} _)`
+form, matching exactly the shape required by the `h_real_inc` slots of the
+poly-geometric CE-route bundle constructors (PRs #3099-#3105). Uses
+`correlationAlongExhaustion_eq_correlation_inducedGraph` to unfold both stages. -/
+theorem abs_correlation_inducedGraph_cubic_succ_sub_le_poly_pow (d : ℕ) (hd : 1 ≤ d)
+    (r₀ : ℕ) (J β : ℝ)
+    (hf : Ferromagnetic (⟨J, 0, β⟩ : IsingParams ℝ))
+    (hα : contractionFactor d (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) r₀ < 1)
+    (k R : ℕ) (hRk : R ≤ k)
+    {r s : Fin d → ℤ} (hrs : r ≠ s) (hr : r ∈ cubicBox d R) (hs : s ∈ cubicBox d R)
+    (hsep : ∀ e ∈ (inducedGraph (latticeGraph d) (cubicBox d (k + 1))).edgeFinset.filter
+        (straddlePred ((cubicBox d k).subtype (· ∈ cubicBox d (k + 1)))),
+      ¬ Sym2.Mem (⟨r, cubicBox_mono d (by omega) hr⟩ : (↑(cubicBox d (k + 1)) : Type _)) e ∧
+        ¬ Sym2.Mem (⟨s, cubicBox_mono d (by omega) hs⟩ :
+          (↑(cubicBox d (k + 1)) : Type _)) e)
+    (hcov_k : ({r, s} : Finset (Fin d → ℤ)) ⊆ (cubicExhaustion d).volume k) :
+    |correlation (inducedGraph (latticeGraph d) ((cubicExhaustion d).volume k))
+          (⟨J, 0, β⟩ : IsingParams ℝ) (liftFinset {r, s} hcov_k) -
+        correlation (inducedGraph (latticeGraph d) ((cubicExhaustion d).volume (k + 1)))
+          (⟨J, 0, β⟩ : IsingParams ℝ)
+          (liftFinset {r, s} (hcov_k.trans ((cubicExhaustion d).mono (Nat.le_succ k))))|
+      ≤ β * J * (2 * (d * (2 * (k + 1) + 1) ^ d) *
+          contractionFactor d (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) r₀ ^
+            ((k + 1 - R) / (r₀ + 2))) := by
+  have heq_k :
+      correlationAlongExhaustion (latticeGraph d) (cubicExhaustion d)
+          (⟨J, 0, β⟩ : IsingParams ℝ) {r, s} k
+        = correlation (inducedGraph (latticeGraph d) ((cubicExhaustion d).volume k))
+          (⟨J, 0, β⟩ : IsingParams ℝ) (liftFinset {r, s} hcov_k) :=
+    correlationAlongExhaustion_of_subset (latticeGraph d)
+      (cubicExhaustion d) _ hcov_k
+  have heq_k1 :
+      correlationAlongExhaustion (latticeGraph d) (cubicExhaustion d)
+          (⟨J, 0, β⟩ : IsingParams ℝ) {r, s} (k + 1)
+        = correlation (inducedGraph (latticeGraph d) ((cubicExhaustion d).volume (k + 1)))
+          (⟨J, 0, β⟩ : IsingParams ℝ)
+          (liftFinset {r, s} (hcov_k.trans ((cubicExhaustion d).mono (Nat.le_succ k)))) :=
+    correlationAlongExhaustion_of_subset (latticeGraph d)
+      (cubicExhaustion d) _
+      (hcov_k.trans ((cubicExhaustion d).mono (Nat.le_succ k)))
+  rw [← heq_k, ← heq_k1]
+  exact abs_correlationAlongExhaustion_cubic_succ_sub_le_poly_pow d hd r₀
+    (⟨J, 0, β⟩ : IsingParams ℝ) hf rfl hα k R hRk hrs hr hs hsep
+
 end Ambient
 end IsingModel
