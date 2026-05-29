@@ -24,11 +24,21 @@ matrices (Tasaki 2.1.7, 2.1.8):
     σ^(1) = (0 1; 1 0),  σ^(2) = (0 -i; i 0),  σ^(3) = (1 0; 0 -1).
 
 This file defines the Pauli matrices and the spin-1/2 operators as concrete
-`Matrix (Fin 2) (Fin 2) ℂ`, and proves the three square identities
-`(σ^(α))² = I` for α = 1, 2, 3 (the diagonal `α = β` case of the full
-anticommutation relation `{σ^(α), σ^(β)} = 2 δ_{αβ} I`). Off-diagonal
-anticommutation and the commutation relations (Tasaki 2.1.1) are deferred
-to subsequent PRs.
+`Matrix (Fin 2) (Fin 2) ℂ`, and proves:
+
+* The three square identities `(σ^(α))² = I` for α = 1, 2, 3 (the diagonal
+  `α = β` case of the full anticommutation relation
+  `{σ^(α), σ^(β)} = 2 δ_{αβ} I`).
+* The off-diagonal anticommutation `σ^(α)σ^(β) + σ^(β)σ^(α) = 0` for α ≠ β
+  (three pairs).
+* The Pauli product identities `σ^(α)σ^(β) = i · σ^(γ)` for `(α, β, γ)`
+  cyclic permutations of `(1, 2, 3)`.
+* The Pauli commutators `[σ^(α), σ^(β)] = 2i · ε_{αβγ} σ^(γ)` (the S=1/2
+  specialisation of Tasaki 2.1.1, derived algebraically from the products
+  and the off-diagonal anticommutation).
+
+The spin-1/2 operator commutators `[S^(α), S^(β)] = i · ε_{αβγ} S^(γ)`
+(Tasaki 2.1.1) and `S² = (3/4) · I` are deferred to subsequent PRs.
 
 References:
 
