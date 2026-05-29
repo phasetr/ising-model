@@ -426,5 +426,35 @@ theorem abs_correlation_inducedGraph_cubic_succ_sub_le_poly_pow_high_temp (d : �
             contractionFactor d (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) r₀ ^
               ((k + 1 - R) / (r₀ + 2)) := one_mul _
 
+/-- **Adjacent vertex of `cubicBox R` lies in `cubicBox (R + 1)`** (Issue #3054,
+Step B sub-lemma). A `latticeGraph` neighbour differs in exactly one coordinate
+by ±1, so any neighbour of `r ∈ cubicBox d R` has all coordinates in `Icc (-R-1) (R+1)`,
+i.e., lies in `cubicBox d (R + 1)`. Key combinatorial building block for the
+separation hypothesis `hsep` of the cubic per-stage increment bound. -/
+theorem cubicBox_succ_of_latticeGraph_adj (d R : ℕ) {r y : Fin d → ℤ}
+    (hr : r ∈ cubicBox d R) (hadj : (latticeGraph d).Adj r y) :
+    y ∈ cubicBox d (R + 1) := by
+  rw [mem_cubicBox] at hr ⊢
+  -- hadj : ∑ i, |r i - y i| = 1
+  have hadj_sum : (∑ i : Fin d, |r i - y i|) = 1 := hadj
+  intro i
+  -- Bound |y i| by |r i| + |y i - r i| ≤ R + (sum of |y j - r j|) = R + 1
+  have hri := hr i
+  have hyi_le_sum : |y i - r i| ≤ ∑ j : Fin d, |y j - r j| := by
+    refine Finset.single_le_sum (f := fun j => |y j - r j|) ?_ (Finset.mem_univ i)
+    intro j _; exact abs_nonneg _
+  have hsum_eq : (∑ j : Fin d, |y j - r j|) = (∑ j : Fin d, |r j - y j|) := by
+    refine Finset.sum_congr rfl ?_
+    intro j _; rw [abs_sub_comm]
+  rw [hsum_eq, hadj_sum] at hyi_le_sum
+  -- |y i - r i| ≤ 1
+  have hbound : -1 ≤ y i - r i ∧ y i - r i ≤ 1 := by
+    constructor
+    · linarith [neg_abs_le (y i - r i)]
+    · linarith [le_abs_self (y i - r i)]
+  refine ⟨?_, ?_⟩
+  · push_cast; linarith [hri.1, hbound.1]
+  · push_cast; linarith [hri.2, hbound.2]
+
 end Ambient
 end IsingModel
