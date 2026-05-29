@@ -40,8 +40,10 @@ The CE-route bundles defined here (`CERouteIccGeometricIncrement`,
 **structural bridges from a per-`(β, k)` complex circle bound to a summable
 derivative increment** (consumed by `IncrementCapstone.lean`). The bundles
 are abstract: each entry point accepts user-supplied data (radius `r`, sphere
-bound `B`, ne-zero hypotheses, optionally `R_inc` / `C_k`) and verifies the
-smallness `B / r ≤ M · ratio^k`. The data themselves must come from elsewhere.
+bound `B`, ne-zero hypotheses, optionally `R_inc` / `C_k`) and verifies a
+smallness condition — `B / r ≤ M · ratio^k` for the geometric form, or
+`B / r ≤ M · (2k+3)^d · ratio^k` for the poly-geometric form. The data
+themselves must come from elsewhere.
 
 **Current limitation of the Cauchy-derived data:** If the per-stage Lipschitz
 constants `C_k`, `C_{k+1}` are supplied via `correlationComplex_lipschitz_on_closedBall`
