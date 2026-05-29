@@ -81,4 +81,89 @@ noncomputable def spinOp1Half_z_total :
     Matrix (Fin 2 × Fin 2) (Fin 2 × Fin 2) ℂ :=
   spinOp1Half_z_site0 + spinOp1Half_z_site1
 
+/-- **Generic cross-tensor commutativity**: `(A ⊗ I) · (I ⊗ B) = (I ⊗ B) · (A ⊗ I)`
+for any pair of square matrices `A`, `B` on the same dimension `Fin 2`.
+
+Both sides equal `A ⊗ B` via `Matrix.mul_kronecker_mul` plus `mul_one` /
+`one_mul`. This is the fundamental observation underlying the locality of
+quantum spin systems: operators acting on different tensor factors commute,
+regardless of which factor and which operators they involve. -/
+theorem kronecker_one_commute (A B : Matrix (Fin 2) (Fin 2) ℂ) :
+    Matrix.kronecker A (1 : Matrix (Fin 2) (Fin 2) ℂ) *
+        Matrix.kronecker (1 : Matrix (Fin 2) (Fin 2) ℂ) B =
+      Matrix.kronecker (1 : Matrix (Fin 2) (Fin 2) ℂ) B *
+        Matrix.kronecker A (1 : Matrix (Fin 2) (Fin 2) ℂ) := by
+  rw [show Matrix.kronecker A (1 : Matrix (Fin 2) (Fin 2) ℂ) *
+        Matrix.kronecker (1 : Matrix (Fin 2) (Fin 2) ℂ) B =
+        Matrix.kronecker (A * 1) (1 * B) from
+        (Matrix.mul_kronecker_mul _ _ _ _).symm]
+  rw [show Matrix.kronecker (1 : Matrix (Fin 2) (Fin 2) ℂ) B *
+        Matrix.kronecker A (1 : Matrix (Fin 2) (Fin 2) ℂ) =
+        Matrix.kronecker (1 * A) (B * 1) from
+        (Matrix.mul_kronecker_mul _ _ _ _).symm]
+  simp
+
+/-- **Cross-site spin operators commute** (XX pair): `[S^(1)_0, S^(1)_1] = 0`. -/
+theorem spinOp1Half_x_site0_commute_x_site1 :
+    spinOp1Half_x_site0 * spinOp1Half_x_site1 =
+      spinOp1Half_x_site1 * spinOp1Half_x_site0 := by
+  unfold spinOp1Half_x_site0 spinOp1Half_x_site1 IdSpin1Half
+  exact kronecker_one_commute _ _
+
+/-- Cross-site commutativity for `(α, β) = (1, 2)`: `[S^(1)_0, S^(2)_1] = 0`. -/
+theorem spinOp1Half_x_site0_commute_y_site1 :
+    spinOp1Half_x_site0 * spinOp1Half_y_site1 =
+      spinOp1Half_y_site1 * spinOp1Half_x_site0 := by
+  unfold spinOp1Half_x_site0 spinOp1Half_y_site1 IdSpin1Half
+  exact kronecker_one_commute _ _
+
+/-- Cross-site commutativity for `(α, β) = (1, 3)`: `[S^(1)_0, S^(3)_1] = 0`. -/
+theorem spinOp1Half_x_site0_commute_z_site1 :
+    spinOp1Half_x_site0 * spinOp1Half_z_site1 =
+      spinOp1Half_z_site1 * spinOp1Half_x_site0 := by
+  unfold spinOp1Half_x_site0 spinOp1Half_z_site1 IdSpin1Half
+  exact kronecker_one_commute _ _
+
+/-- Cross-site commutativity for `(α, β) = (2, 1)`: `[S^(2)_0, S^(1)_1] = 0`. -/
+theorem spinOp1Half_y_site0_commute_x_site1 :
+    spinOp1Half_y_site0 * spinOp1Half_x_site1 =
+      spinOp1Half_x_site1 * spinOp1Half_y_site0 := by
+  unfold spinOp1Half_y_site0 spinOp1Half_x_site1 IdSpin1Half
+  exact kronecker_one_commute _ _
+
+/-- Cross-site commutativity for `(α, β) = (2, 2)`: `[S^(2)_0, S^(2)_1] = 0`. -/
+theorem spinOp1Half_y_site0_commute_y_site1 :
+    spinOp1Half_y_site0 * spinOp1Half_y_site1 =
+      spinOp1Half_y_site1 * spinOp1Half_y_site0 := by
+  unfold spinOp1Half_y_site0 spinOp1Half_y_site1 IdSpin1Half
+  exact kronecker_one_commute _ _
+
+/-- Cross-site commutativity for `(α, β) = (2, 3)`: `[S^(2)_0, S^(3)_1] = 0`. -/
+theorem spinOp1Half_y_site0_commute_z_site1 :
+    spinOp1Half_y_site0 * spinOp1Half_z_site1 =
+      spinOp1Half_z_site1 * spinOp1Half_y_site0 := by
+  unfold spinOp1Half_y_site0 spinOp1Half_z_site1 IdSpin1Half
+  exact kronecker_one_commute _ _
+
+/-- Cross-site commutativity for `(α, β) = (3, 1)`: `[S^(3)_0, S^(1)_1] = 0`. -/
+theorem spinOp1Half_z_site0_commute_x_site1 :
+    spinOp1Half_z_site0 * spinOp1Half_x_site1 =
+      spinOp1Half_x_site1 * spinOp1Half_z_site0 := by
+  unfold spinOp1Half_z_site0 spinOp1Half_x_site1 IdSpin1Half
+  exact kronecker_one_commute _ _
+
+/-- Cross-site commutativity for `(α, β) = (3, 2)`: `[S^(3)_0, S^(2)_1] = 0`. -/
+theorem spinOp1Half_z_site0_commute_y_site1 :
+    spinOp1Half_z_site0 * spinOp1Half_y_site1 =
+      spinOp1Half_y_site1 * spinOp1Half_z_site0 := by
+  unfold spinOp1Half_z_site0 spinOp1Half_y_site1 IdSpin1Half
+  exact kronecker_one_commute _ _
+
+/-- Cross-site commutativity for `(α, β) = (3, 3)`: `[S^(3)_0, S^(3)_1] = 0`. -/
+theorem spinOp1Half_z_site0_commute_z_site1 :
+    spinOp1Half_z_site0 * spinOp1Half_z_site1 =
+      spinOp1Half_z_site1 * spinOp1Half_z_site0 := by
+  unfold spinOp1Half_z_site0 spinOp1Half_z_site1 IdSpin1Half
+  exact kronecker_one_commute _ _
+
 end IsingModel.Quantum
