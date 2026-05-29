@@ -13944,6 +13944,22 @@ Obtained by \texttt{HasDerivAt.deriv} on the witness from the existential form, 
 downstream consumers use the bound without unpacking the existential.
 \end{theorem}
 
+\begin{theorem}[\texttt{IsingModel.Ambient.correlationAlongExhaustion\_latticeGraph\_J\_deriv\_le\_susceptibilityInfinite\_sq}
+(J-derivative of $\mathrm{correlationAlongExhaustion}$ bounded by
+$\beta\cdot\chi_\infty^2 + \beta\cdot 4d$; GJ \S17.5 Cor.~4.3.3, pp.~311--312, + Step 162;
+Issue \#2965 Phase C, J-direction parallel of \texttt{\_beta\_deriv\_le\_susceptibilityInfinite\_sq})]
+Conditional susceptibility-infinite J-derivative bound: requires \texttt{BddAbove} of the
+per-stage susceptibility sequences at $r$, $s$ (holds in the high-temperature region):
+\[
+  \mathrm{deriv}\,(J'\mapsto\mathrm{correlationAlongExhaustion}\,(\mathrm{latticeGraph}\,d)\,
+        \Lambda\,\langle J',0,\beta\rangle\,\{r,s\}\,n)\,J
+    \le \beta\cdot\chi_\infty(r)\cdot\chi_\infty(s) + \beta\cdot 4d.
+\]
+Boundary term $\beta\cdot 4d$ matches the J-direction Lebowitz bound. Completes the
+$\beta/J\times\chi_{\mathrm{along}}/\chi_\infty$ matrix. Composes the J-direction deriv-form
+with Step 162.
+\end{theorem}
+
 \begin{theorem}[J-direction parallel: \texttt{hasDerivAt\_correlationAlongExhaustion\_J\_of\_hasDerivAt\_inducedGraph},
 \texttt{correlationAlongExhaustion\_latticeGraph\_J\_deriv\_le},
 \texttt{\_J\_deriv\_eq\_le}, \texttt{\_J\_deriv\_le\_susceptibilityAlong\_sq}
