@@ -9902,6 +9902,11 @@ Combinatorial building block for separation discharge.
 \texttt{hsep\_of\_cubicBox\_R\_succ\_le\_k} automatically discharge the
 \(\mathrm{hsep}\) separation hypothesis required by the cubic per-stage
 increment bounds, given only \(r, s \in \mathrm{cubicBox}_R\) and \(R + 1 \le k\).
+\textbf{Floor-power \(\to\) geometric bound} (Issue \#3054):
+\texttt{cf\_pow\_natDiv\_le\_geometric} gives, for \(0 < \mathrm{cf} < 1\)
+and \(m \ge 1\), \(\mathrm{cf}^{\lfloor n/m \rfloor} \le (1/\mathrm{cf}) \cdot \rho^n\)
+where \(\rho := \mathrm{cf}^{1/m}\), \(0 < \rho < 1\).
+Step A of the cubic CE-route plumbing.
 Both inputs remain open at the volume-uniform level (complex cluster-expansion
 convergence is research-level).
 \end{theorem}
