@@ -1315,5 +1315,77 @@ theorem sphere_circle_bound_of_real_inc_and_lipschitz
     le_trans h_cd (mul_le_mul_of_nonneg_left h_w_wre_norm_le_r hC_k1_nn)
   nlinarith [h_tri, h_real_bound, h_ab_le_r, h_cd_le_r]
 
+/-- **Canonical-radius bundle from real-axis value increment + Lipschitz**
+(Issue #3054). Composes `sphere_circle_bound_of_real_inc_and_lipschitz`
+(PR #3089) with `CERouteIccGeometricIncrement_of_canonical_radius_circle`
+(PR #3086). User supplies, per (β ∈ Icc, k covered), `(R_inc, C_k, C_k1)`
+satisfying
+`(R_inc + (C_k + C_k1) · canonicalTrivialQRadiusPair) / canonicalTrivialQRadiusPair ≤ M · ratio^k`,
+the real-axis value increment bound `R_inc` on `[β - r, β + r]`, and per-stage
+Lipschitz hypotheses. Produces the bundle directly — **no smallness witness,
+no ne-zero hypothesis, no sphere circle bound**; just the Cauchy-route
+mathematical inputs. -/
+theorem CERouteIccGeometricIncrement_of_canonical_radius_R_inc_lipschitz
+    {d : ℕ} (Λ : Exhaustion (Fin d → ℤ))
+    (J : ℝ) (x z : Fin d → ℤ) (M ratio : ℝ)
+    (h_inputs : ∀ β₁ β₂ : ℝ,
+      Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
+        ∀ β ∈ Set.Icc β₁ β₂,
+          ∀ k : ℕ, (hk : ({x, z} : Finset (Fin d → ℤ)) ⊆ Λ.volume k) →
+            ∃ R_inc C_k C_k1 : ℝ,
+              0 ≤ C_k ∧ 0 ≤ C_k1 ∧
+              (R_inc + (C_k + C_k1) * canonicalTrivialQRadiusPair Λ J k)
+                / canonicalTrivialQRadiusPair Λ J k ≤ M * ratio ^ k ∧
+              (∀ β_re : ℝ, β_re ∈ Set.Icc
+                  (β - canonicalTrivialQRadiusPair Λ J k)
+                  (β + canonicalTrivialQRadiusPair Λ J k) →
+                |correlation
+                      (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                        (Λ.volume k))
+                      (⟨J, 0, β_re⟩ : IsingParams ℝ)
+                      (Ambient.liftFinset {x, z} hk) -
+                    correlation
+                      (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                        (Λ.volume (k + 1)))
+                      (⟨J, 0, β_re⟩ : IsingParams ℝ)
+                      (Ambient.liftFinset {x, z}
+                        (hk.trans (Λ.mono (Nat.le_succ k))))| ≤ R_inc) ∧
+              (∀ b ∈ Metric.sphere ((β : ℝ) : ℂ)
+                  (canonicalTrivialQRadiusPair Λ J k),
+                ‖correlationComplex
+                      (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                        (Λ.volume k))
+                      (Ambient.liftFinset {x, z} hk) (J : ℂ) 0 b -
+                    correlationComplex
+                      (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                        (Λ.volume k))
+                      (Ambient.liftFinset {x, z} hk) (J : ℂ) 0 ((b.re : ℝ) : ℂ)‖
+                  ≤ C_k * ‖b - ((b.re : ℝ) : ℂ)‖) ∧
+              (∀ b ∈ Metric.sphere ((β : ℝ) : ℂ)
+                  (canonicalTrivialQRadiusPair Λ J k),
+                ‖correlationComplex
+                      (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                        (Λ.volume (k + 1)))
+                      (Ambient.liftFinset {x, z}
+                        (hk.trans (Λ.mono (Nat.le_succ k))))
+                      (J : ℂ) 0 b -
+                    correlationComplex
+                      (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                        (Λ.volume (k + 1)))
+                      (Ambient.liftFinset {x, z}
+                        (hk.trans (Λ.mono (Nat.le_succ k))))
+                      (J : ℂ) 0 ((b.re : ℝ) : ℂ)‖
+                  ≤ C_k1 * ‖b - ((b.re : ℝ) : ℂ)‖)) :
+    CERouteIccGeometricIncrement Λ J x z M ratio := by
+  refine CERouteIccGeometricIncrement_of_canonical_radius_circle
+    Λ J x z M ratio ?_
+  intro β₁ β₂ hIcc β hβ k hk
+  obtain ⟨R_inc, C_k, C_k1, hC_k_nn, hC_k1_nn, hBR, h_real_inc, h_lip_k, h_lip_k1⟩ :=
+    h_inputs β₁ β₂ hIcc β hβ k hk
+  refine ⟨R_inc + (C_k + C_k1) * canonicalTrivialQRadiusPair Λ J k, hBR, ?_⟩
+  exact sphere_circle_bound_of_real_inc_and_lipschitz Λ J x z k hk
+    β (canonicalTrivialQRadiusPair Λ J k) R_inc C_k C_k1
+    h_real_inc h_lip_k h_lip_k1 hC_k_nn hC_k1_nn
+
 end Ambient
 end IsingModel
