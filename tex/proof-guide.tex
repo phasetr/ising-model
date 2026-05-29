@@ -13927,6 +13927,23 @@ The per-stage real-axis input for Issue \#2965 Phase C: the alternative route to
 17.5.2 $\beta$-derivative increment bound bypassing the CE / Cauchy decomposition entirely.
 \end{theorem}
 
+\begin{theorem}[\texttt{IsingModel.Ambient.correlationAlongExhaustion\_latticeGraph\_beta\_deriv\_eq\_le}
+(closed-form $\mathrm{deriv}$-version of the Lebowitz $\beta$-derivative bound; GJ \S17.5
+Cor.~4.3.3, pp.~311--312; Issue \#2965 Phase C)]
+Same hypotheses as the existential form, but the conclusion replaces
+$\exists d_{\mathrm{val}},\ \mathrm{HasDerivAt}\,\dots\,d_{\mathrm{val}}\,\beta\wedge d_{\mathrm{val}}\le\dots$
+with the closed-form
+\[
+  \mathrm{deriv}\,(\beta'\mapsto\mathrm{correlationAlongExhaustion}\,(\mathrm{latticeGraph}\,d)\,
+        \Lambda\,\langle J,0,\beta'\rangle\,\{r,s\}\,n)\,\beta
+    \le J\,\sum_{\langle u,v\rangle\in E(G_n)}
+       \bigl[c_n(r,u)\,c_n(s,v) + c_n(r,v)\,c_n(s,u)\bigr]
+     + J\cdot 4d.
+\]
+Obtained by \texttt{HasDerivAt.deriv} on the witness from the existential form, letting
+downstream consumers use the bound without unpacking the existential.
+\end{theorem}
+
 \begin{theorem}[\texttt{IsingModel.Ambient.dist\_deriv\_correlation\_le\_of\_complex\_circle\_bound}
 (derivative-increment bridge from a complex circle bound, Issue \#3026)]
 For two finite-volume Ising correlations on graphs $G_1,G_2$ at real parameters $J,h$ and a
