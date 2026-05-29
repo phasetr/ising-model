@@ -9878,6 +9878,11 @@ per-\((\beta, k)\) \((r, B, \mathrm{smallness}, \mathrm{sphere bound})\).
 \textbf{Q-and-circle fully-concrete capstones} (Issue \#3054):
 \texttt{lemma\_17\_5\_2\_capstone\_of\_Q\_and\_circle\{,\_poly\_geometric\}\_and\_pseudoMass\_le\_rate}
 Cauchy Q-input entry: per-\((\beta, k)\) \((R, B, \mathrm{closedBall}~Z\neq 0~\mathrm{for}~k\&k+1, \mathrm{sphere bound})\).
+\textbf{Abs form of cubic real-axis increment} (Issue \#3054):
+\texttt{abs\_correlationAlongExhaustion\_cubic\_succ\_sub\_le\_poly\_pow}
+in \texttt{CubicShellDecaySum.lean} gives
+\(|c_k - c_{k+1}| \le \beta J \cdot 2d (2(k+1)+1)^d \cdot \mathrm{cf}^{(k+1-R)/(r_0+2)}\)
+via ferromagnetic monotonicity; natural input for \(h_{\mathrm{real\_inc}}\) slots.
 Both inputs remain open at the volume-uniform level (complex cluster-expansion
 convergence is research-level).
 \end{theorem}
