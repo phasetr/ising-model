@@ -549,7 +549,7 @@ theorem
     pseudoMass_pow_succ_lipschitz α hr hβ₁₂
       hh_diff hc_deriv hh_nonneg hg_eq hh_pos hc_pos hcomp'
 
-/-- **GJ §17.5 Theorem 17.5.1 proof骨子: `m⁻(σ, A)^(2α+1)` is Lipschitz continuous in σ
+/-- **GJ §17.5 Theorem 17.5.1 proof outline: `m⁻(σ, A)^(2α+1)` is Lipschitz continuous in σ
 A-uniformly** (GJ §17.5 pp. 311–312).
 
 Glimm–Jaffe proves Theorem 17.5.1 ("The mass `m(σ)` in (17.5.1) is continuous as a function
