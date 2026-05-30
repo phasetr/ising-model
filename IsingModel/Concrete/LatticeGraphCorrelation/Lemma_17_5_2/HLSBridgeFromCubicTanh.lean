@@ -841,5 +841,56 @@ theorem pseudoMassFromParamsAtPair_all_pair_simonLieb_smallReg_bound
   exact pseudoMassFromParamsAtPair_lower_bound_of_zero_anchored
     hα hr d hJ hβ h_zero_anchored
 
+/-! ## Step 119 plan Step 5.7o: active range from tanh-power lower bound -/
+
+/-- **All-pair active range from `0 < β·J`** (Step 119 plan Step 5.7o).
+
+Direct provider of the `active` field of `PseudoMassLatticeDistanceBridge`:
+given `0 < β·J` (strict positivity), `tanh(β·J) > 0`, so
+`tanh(β·J)^d(x,z) > 0` for every distinct pair `(x, z)`, and combined with
+the existing tanh-power lower bound `tanh(β·J)^d(0, r) ≤ twoPointFunction d r`
+(`PathLowerBound.twoPointFunction_ge_tanh_betaJ_pow_dist`) plus translation
+invariance and the universal upper bound
+`correlationInfinite_latticeGraph_le_one`, yields
+`correlationInfinite ∈ Ioo 0 2` for every distinct pair.
+
+Complements Step 5.7n (PR #3185)'s all-pair bound provider, completing the
+structural input set for building a concrete `PseudoMassLatticeDistanceBridge`
+value directly from concrete analytic inputs (without going through the
+vacuous `cubicTanhProfileBound` family). -/
+theorem correlationInfinite_pair_active_of_betaJ_pos
+    {d : ℕ} {J β : ℝ} (hβ : 0 < β) (hβJ_pos : 0 < β * J) :
+    ∀ x z : Fin d → ℤ, x ≠ z →
+      Ambient.correlationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {x, z}
+        ∈ Set.Ioo (0 : ℝ) 2 := by
+  have hJ : 0 ≤ J := by
+    have hJ_pos : 0 < J := (mul_pos_iff_of_pos_left hβ).mp hβJ_pos
+    exact hJ_pos.le
+  intro x z hxz
+  refine ⟨?_, ?_⟩
+  · -- Lower bound: 0 < tanh(β·J)^d(x,z) ≤ correlation
+    have hzx_ne : z - x ≠ 0 := sub_ne_zero.mpr (Ne.symm hxz)
+    have htanh_pos : 0 < Real.tanh (β * J) := by
+      rw [Real.tanh_eq_sinh_div_cosh]
+      exact div_pos (Real.sinh_pos_iff.mpr hβJ_pos) (Real.cosh_pos _)
+    have hpow_pos : 0 < Real.tanh (β * J) ^ IsingModel.latticeDistance d 0 (z - x) :=
+      pow_pos htanh_pos _
+    have h_tanh_le_two_pt :=
+      twoPointFunction_ge_tanh_betaJ_pow_dist (d := d) (J := J) (β := β)
+        hJ hβ hzx_ne
+    have htrans :
+        Ambient.correlationInfinite (IsingModel.latticeGraph d)
+            (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {x, z}
+          = twoPointFunction d (⟨J, 0, β⟩ : IsingParams ℝ) (z - x) := by
+      rw [correlationInfinite_pair_eq_displacement d hJ hβ x z]
+      exact twoPointFunction_apply d _ (z - x)
+    rw [htrans]
+    exact lt_of_lt_of_le hpow_pos h_tanh_le_two_pt
+  · -- Upper bound: correlation ≤ 1 < 2
+    have h_le_one := correlationInfinite_latticeGraph_le_one d
+      (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {x, z}
+    linarith
+
 end Ambient
 end IsingModel
