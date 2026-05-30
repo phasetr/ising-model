@@ -14118,6 +14118,32 @@ $1 + (M\cdot t)^\alpha \ge (M\cdot t)^\alpha$ and \texttt{one\_div\_le\_one\_div
 (resp.\ \texttt{div\_le\_div\_of\_nonneg\_left}) with \texttt{pow\_pos} positivity.
 \end{theorem}
 
+\begin{theorem}[\texttt{IsingModel.Ambient.PseudoMassLatticeDistanceBridge\_of\_cubicTanh\_family}
+(concrete bridge constructor from a \texttt{cubicTanhProfileBound} family;
+GJ \S17.5 pp.~311--312; Issue \#1645 Step 119 plan Step 5.7)]
+Given the ferromagnetic data $0 \le J$, $0 < \beta$, the high-temperature
+constraint $\beta\cdot J\cdot 2d < 1$, positivity inputs $0 < r$, $0 < M_{\inf}$,
+a uniform tanh-profile family providing
+\texttt{cubicTanhProfileBound} $\alpha\ d\ r\ \beta\ J\ w$ at every nonzero
+displacement $w$, and the zero-anchored pseudo-mass lower bound
+$M_{\inf}\cdot d(0, w) \le m^-(0, w)\cdot r$ for every nonzero $w$, the
+constructor produces the abstract bridge value
+\texttt{PseudoMassLatticeDistanceBridge} $h_\alpha\ h_r\ d\ J\ \beta$.
+Translation invariance is used to lift the anchored facts to arbitrary distinct
+pairs: \texttt{correlationInfinite\_latticeGraph\_pair\_eq\_twoPointFunction}
+gives the pair correlation form, and \texttt{latticeDistance\_translate\_eq}
+gives the lattice-distance form. The constructed bridge value can be fed
+directly into \texttt{tsum\_correlationInfinite\_pair\_product\_le\_HLS\_const}.
+The supporting wrappers
+\texttt{correlationInfinite\_pair\_eq\_displacement},
+\texttt{pseudoMassFromParamsAtPair\_eq\_displacement},
+\texttt{correlationInfinite\_pair\_mem\_Ioo\_zero\_two\_of\_cubicTanhProfileBound\_displacement},
+\texttt{latticeDistance\_pair\_eq\_displacement},
+\texttt{pseudoMassFromParamsAtPair\_lower\_bound\_of\_zero\_anchored}, and
+\texttt{correlationInfinite\_pair\_active\_of\_cubicTanhProfileBound\_family}
+expose each piece of the lift.
+\end{theorem}
+
 \begin{theorem}[\texttt{IsingModel.Ambient.PseudoMassLatticeDistanceBridge},
 \texttt{tsum\_correlationInfinite\_pair\_product\_le\_HLS\_const}
 (HLS correlation pair-product capstone with bridge abstraction;
