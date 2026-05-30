@@ -411,11 +411,11 @@ theorem correlationInfinite_lt_two_of_betaJ_pos_pair
 
 /-! ## Variant bundle: translation invariance properties -/
 
-/-- **Active range invariance under simultaneous translation of `(x, z)`**.
+/-- **Active range at any translated distinct pair `(x + v, z + v)`**.
 
-Translation invariance of the pair correlation: shifting both arguments
-by `v` preserves the active range membership. Direct consequence of
-`correlationInfinite_pair_eq_displacement`. -/
+Direct application of `correlationInfinite_pair_active_of_betaJ_pos`
+to the translated pair `(x + v, z + v)`. The translated pair is also
+distinct because addition by `v` is injective. -/
 theorem correlationInfinite_pair_active_translation_invariant_of_betaJ_pos
     {d : ℕ} {J β : ℝ} (hβ : 0 < β) (hβJ_pos : 0 < β * J)
     (v : Fin d → ℤ) :
@@ -432,10 +432,11 @@ theorem correlationInfinite_pair_active_translation_invariant_of_betaJ_pos
   exact correlationInfinite_pair_active_of_betaJ_pos hβ hβJ_pos
     (x + v) (z + v) hxv_ne
 
-/-- **`bridge.bound` invariance under simultaneous translation of `(x, z)`**.
+/-- **`bridge.bound` at the translated distinct pair `(x + v, z + v)`**.
 
-Translation invariance of the pseudo-mass bound: applying the all-pair
-bound at `(x + v, z + v)` is equivalent to applying it at `(x, z)`. -/
+Direct application of `all_pair_bound_of_simonLieb_smallReg_adjacent_provider`
+to the translated pair `(x + v, z + v)`. The translated pair is also
+distinct because addition by `v` is injective. -/
 theorem pseudoMassFromParamsAtPair_all_pair_bound_translation_invariant
     {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     (d : ℕ) {J β : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β) (hβJ_pos : 0 < β * J)
@@ -540,10 +541,11 @@ theorem bound_shape_displacement_eq
   rw [h_dist, h_pseudo]
   exact hbound
 
-/-- **Active range displacement identity**.
+/-- **Active range transfer from zero-anchor displacement**.
 
-For distinct `(x, z)`, active range at `(x, z)` is equivalent to active
-range at `(0, z - x)` via translation invariance of the pair correlation. -/
+One-way transfer: if active range holds at the zero-anchored displacement
+`(0, z - x)`, then it holds at `(x, z)` by translation invariance of the
+pair correlation (`correlationInfinite_pair_eq_displacement`). -/
 theorem active_displacement_eq
     {d : ℕ} {J β : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)
     (x z : Fin d → ℤ)
@@ -579,9 +581,9 @@ theorem bridge_bound_active_displacement_composite
   ⟨bound_shape_displacement_eq hα hr d hJ hβ x z hbound_zero,
    active_displacement_eq hJ hβ x z h_active_zero⟩
 
-/-- **Antipode form: HLS sum at `(v, -v)`**.
+/-- **Antipode form: HLS sum at the antipode anchor `(v, -v)`**.
 
-Specialization at the antipode pair anchor `(v, -v)` (= `(v, 0) + (-v, -v)`). -/
+Specialization at the antipode pair anchor `(v, -v)`. -/
 theorem tsum_correlationInfinite_pair_product_antipode_le_const_of_simonLieb
     {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     (d : ℕ) (hαd : d < 2 * α) {J β : ℝ}
