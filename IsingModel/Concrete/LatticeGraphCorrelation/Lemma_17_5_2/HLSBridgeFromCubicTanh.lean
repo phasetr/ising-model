@@ -802,8 +802,8 @@ to produce the all-pair shape
 `∀ x z, x ≠ z → M · d(x, z) ≤ pseudoMass · r`, matching the `bound` field
 signature of `PseudoMassLatticeDistanceBridge`.
 
-Hypotheses (uniform per `w ≠ 0` and per distinct pair, where active range
-inherits via translation invariance):
+Hypotheses (uniform per `w ≠ 0`; only `bound` is lifted to all pairs here —
+active range remains the zero-anchored input consumed by Step 5.7m):
 - `1 ≤ α`, `0 < r`, `0 ≤ J`, `0 < β` (pseudoMass / ferromagnetic).
 - `0 < β·J·(2d) ≤ 1` for Simon-Lieb.
 - `0 ≤ M`, `M ≤ simonLiebRate β J d / 2` for rate-domination.
