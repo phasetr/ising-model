@@ -14118,6 +14118,33 @@ $1 + (M\cdot t)^\alpha \ge (M\cdot t)^\alpha$ and \texttt{one\_div\_le\_one\_div
 (resp.\ \texttt{div\_le\_div\_of\_nonneg\_left}) with \texttt{pow\_pos} positivity.
 \end{theorem}
 
+\begin{theorem}[\texttt{IsingModel.one\_div\_one\_add\_M\_t\_pow\_le\_max\_mul\_one\_div\_one\_add\_t\_pow},
+\texttt{one\_div\_one\_add\_t\_pow\_le\_two\_pow\_mul\_one\_div\_one\_add\_pow\_pow},
+\texttt{one\_div\_one\_add\_M\_t\_pow\_le\_const\_mul\_one\_div\_one\_add\_pow\_pow}
+(HLS pointwise bridge $1/(1+(M\cdot t)^\alpha) \to 1/(1+t)^\alpha$;
+GJ \S17.5 p.~312; Issue \#1645 Step 119 plan Step 5.5c)]
+For $M > 0$, $t \ge 0$, $\alpha \in \mathbb{N}$:
+\[
+  \frac{1}{1 + (M\cdot t)^\alpha}
+    \le \max(1,\,(M^\alpha)^{-1})\cdot\frac{1}{1 + t^\alpha}
+    \le \max(1,\,(M^\alpha)^{-1})\cdot 2^\alpha\cdot\frac{1}{(1+t)^\alpha}.
+\]
+The $M$-bridge inequality follows by case analysis on $M^\alpha\ge 1$ (max $= 1$,
+$1 + t^\alpha \le 1 + M^\alpha t^\alpha$) vs $M^\alpha < 1$ (max $= (M^\alpha)^{-1}$,
+$(M^\alpha)^{-1}\cdot(1 + M^\alpha t^\alpha) = (M^\alpha)^{-1} + t^\alpha \ge 1 + t^\alpha$).
+The form bridge $1/(1+t^\alpha) \le 2^\alpha\cdot 1/(1+t)^\alpha$ follows by case
+analysis on $t \le 1$ ($(1+t)^\alpha \le 2^\alpha\le 2^\alpha(1+t^\alpha)$) vs
+$t > 1$ ($(1+t)^\alpha \le (2t)^\alpha = 2^\alpha t^\alpha \le 2^\alpha(1+t^\alpha)$).
+The composition isolates the prefactor
+$\max(1, (M^\alpha)^{-1})\cdot 2^\alpha = M^{-\alpha}\cdot 2^\alpha$ (whenever $M\le 1$;
+in particular the GJ p.~312 $m^{-\alpha}$ scaling) from the $(1+t)^{-\alpha}$ polynomial-decay
+body matching the existing infinite-sum infrastructure
+\texttt{tsum\_pow\_neg\_conv\_le\_const} (\texttt{IsingModel/PolyDecay.lean}; Step 130B,
+real $\alpha$ form). First pointwise step toward the HLS infinite-sum bound
+$\sum_z 1/((1+(m^-\cdot d(x,z))^\alpha)\cdot(1+(m^-\cdot d(y,z))^\alpha))
+  \le \mathrm{const}\cdot m^{-2\alpha}$.
+\end{theorem}
+
 \begin{theorem}[\texttt{IsingModel.Ambient.truncated4TwoPoint\_sum\_abs\_le\_card\_mul\_uniform\_of\_distinct}
 (finite-sum $|U_4|$ uniform bound; GJ \S17.5 p.~312; Issue \#1645 Step 119 plan Step 5.5b)]
 Under per-$u$ distinctness $\{0, r, s, u\}$ pairwise, per-$u$ active-pair membership
