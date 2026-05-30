@@ -14118,6 +14118,36 @@ $1 + (M\cdot t)^\alpha \ge (M\cdot t)^\alpha$ and \texttt{one\_div\_le\_one\_div
 (resp.\ \texttt{div\_le\_div\_of\_nonneg\_left}) with \texttt{pow\_pos} positivity.
 \end{theorem}
 
+\begin{theorem}[\texttt{IsingModel.Ambient.simonLiebRate} and
+\texttt{IsingModel.Ambient.correlationInfinite\_latticeGraph\_le\_exp\_neg\_simonLiebRate\_pow\_of\_dist\_gt}
+(Simon-Lieb exp-form correlation bound;
+GJ \S17.5 pp.~311--312; Issue \#1645 Step 119 plan Step 5.7g)]
+Define
+$\mathrm{simonLiebRate}(\beta, J, d) := -\log(\beta\cdot J\cdot(2d))$.
+In the strict high-temperature regime $0 < \beta\cdot J\cdot(2d) < 1$,
+$\mathrm{simonLiebRate} > 0$, giving genuine exponential decay.
+
+Under $0 \le \beta\cdot J$ and $0 < \beta\cdot J\cdot(2d)$, for every
+$n : \mathbb{N}$ and $i, j \in \mathbb{Z}^d$ with $n + 1 \le \mathrm{dist}(i, j)$:
+\[
+  \mathrm{correlationInfinite}\,\{i, j\}
+    \le e^{-\mathrm{simonLiebRate}\cdot n}.
+\]
+Direct consequence of
+\texttt{correlationInfinite\_latticeGraph\_le\_betaJ\_two\_d\_pow\_of\_dist\_gt}
+combined with the exp identity
+$(\beta\cdot J\cdot(2d))^n = e^{n\cdot\log(\beta\cdot J\cdot(2d))}
+= e^{-\mathrm{simonLiebRate}\cdot n}$
+(\texttt{betaJ\_two\_d\_pow\_eq\_exp\_neg\_simonLiebRate\_mul}).
+
+Note: the exponent is $n = \mathrm{dist} - 1$ from peeling, not
+$\mathrm{dist}$; converting to $\mathrm{correlation} \le e^{-(M\cdot\mathrm{dist})}$
+introduces a constant prefactor $e^{\mathrm{simonLiebRate}} = 1/(\beta\cdot J\cdot 2d)$,
+a known artifact of the Simon-Lieb peeling structure (the final
+near-neighbour step at distance 1 contributes the base factor 1 rather
+than $\beta\cdot J\cdot 2d$).
+\end{theorem}
+
 \begin{theorem}[\texttt{IsingModel.Ambient.pseudoMassFromParamsAtPair\_M\_dist\_zero\_le\_of\_corr\_le\_exp\_trichotomy}
 (\texttt{hbase} quantifier composer via trichotomy;
 GJ \S17.5 pp.~311--312; Issue \#1645 Step 119 plan Step 5.7f)]
