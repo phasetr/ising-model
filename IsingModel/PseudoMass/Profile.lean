@@ -120,6 +120,32 @@ theorem pseudoMassG_ge_exp_of_tr_le_one {α : ℕ} (hα : 1 ≤ α) {r t : ℝ}
   have := hα
   nlinarith
 
+/-- **`pseudoMassG α r t ≥ exp(-(t·r)) / (t·r)^α`** (for `t·r ≥ 1`, `t ≥ 0`,
+`r > 0`, `α ≥ 1`): in the large-t regime, denominator
+`1 + (t·r)^α ≤ 2·(t·r)^α` (since `(t·r)^α ≥ 1`), so quotient ≥
+`2·exp(-(t·r)) / (2·(t·r)^α) = exp(-(t·r))/(t·r)^α`.
+
+Step 119 plan Step 5.7c building block: paired with
+`pseudoMassG_ge_exp_of_tr_le_one`, gives a useful lower bound on
+`pseudoMassG` in both regimes for the HLS pseudo-mass-to-bridge.bound
+analytic step. Combined with `pseudoMass_ge_iff_pseudoMassG_ge` and
+the bound-reduction wrapper of #3173, this lets a cubic-path tanh decay
+input land directly in the bridge.bound shape. -/
+theorem pseudoMassG_ge_exp_div_pow_of_tr_ge_one (α : ℕ)
+    {r t : ℝ} (htr_ge : 1 ≤ t * r) :
+    Real.exp (-(t * r)) / (t * r) ^ α ≤ pseudoMassG α r t := by
+  unfold pseudoMassG
+  have htr_pos : 0 < t * r := lt_of_lt_of_le zero_lt_one htr_ge
+  have h_pow_pos : 0 < (t * r) ^ α := pow_pos htr_pos α
+  have h_pow_ge_one : 1 ≤ (t * r) ^ α := by
+    have : (1 : ℝ) ^ α ≤ (t * r) ^ α := pow_le_pow_left₀ zero_le_one htr_ge α
+    simpa using this
+  have h_denom_pos : 0 < 1 + (t * r) ^ α := by linarith
+  have h_denom_le : 1 + (t * r) ^ α ≤ 2 * (t * r) ^ α := by linarith
+  have h_exp_pos : 0 < Real.exp (-(t * r)) := Real.exp_pos _
+  rw [div_le_div_iff₀ h_pow_pos h_denom_pos]
+  nlinarith
+
 /-- **`pseudoMassG α r t ≤ 2·exp(-(t·r))`** (for `t ≥ 0`, `r > 0`):
 since the denominator `1 + (tr)^α ≥ 1`, the quotient is dominated
 by the numerator. -/
