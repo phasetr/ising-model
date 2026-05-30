@@ -14118,6 +14118,22 @@ $1 + (M\cdot t)^\alpha \ge (M\cdot t)^\alpha$ and \texttt{one\_div\_le\_one\_div
 (resp.\ \texttt{div\_le\_div\_of\_nonneg\_left}) with \texttt{pow\_pos} positivity.
 \end{theorem}
 
+\begin{theorem}[\texttt{IsingModel.Ambient.pseudoMassFromParamsAtPair\_ge\_of\_corr\_le\_pseudoMassG},
+\texttt{...\_M\_dist\_zero\_le\_of\_corr\_le\_pseudoMassG}
+(\texttt{bridge.bound} reduction from a \texttt{pseudoMassG} upper bound;
+GJ \S17.5 pp.~311--312; Issue \#1645 Step 119 plan Step 5.7b)]
+If the correlation $\langle\phi(x)\phi(z)\rangle$ lies in the active range
+$(0, 2)$ and is dominated by $\mathrm{pseudoMassG}_{\alpha,r}(t)$ for some
+$t \ge 0$, then $t \le \mathrm{pseudoMassFromParamsAtPair}(x, z)$. Specialising
+to $t = M \cdot d(0, w) / r$ for $M \ge 0$ at the zero-anchored displacement
+gives $M \cdot d(0, w) \le \mathrm{pseudoMassFromParamsAtPair}(0, w) \cdot r$,
+exactly matching the \texttt{hbase} input of
+\texttt{PseudoMassLatticeDistanceBridge\_of\_cubicTanh\_family}
+(\#3172). Atomic reduction obtained from
+\texttt{pseudoMass\_ge\_iff\_pseudoMassG\_ge} (\texttt{PseudoMass/Basic.lean})
+through \texttt{pseudoMassExt\_of\_mem}.
+\end{theorem}
+
 \begin{theorem}[\texttt{IsingModel.Ambient.PseudoMassLatticeDistanceBridge\_of\_cubicTanh\_family}
 (concrete bridge constructor from a \texttt{cubicTanhProfileBound} family;
 GJ \S17.5 pp.~311--312; Issue \#1645 Step 119 plan Step 5.7)]
