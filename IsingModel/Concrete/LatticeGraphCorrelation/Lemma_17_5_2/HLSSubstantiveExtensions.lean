@@ -148,8 +148,9 @@ theorem exists_tsum_correlationInfinite_pair_product_antipode_le_of_simonLieb_fe
 
 /-! ## Joint K extraction -/
 
-/-- **Existential positive K from the substantive HLS bound** (correlation form). -/
-theorem exists_K_pos_M_pos_substantive_hls_of_simonLieb_ferromagnetic
+/-- **Existential `K ≥ 0` and `M > 0` from the substantive HLS bound**
+(correlation form). -/
+theorem exists_K_nonneg_M_pos_substantive_hls_of_simonLieb_ferromagnetic
     {d : ℕ} {β J : ℝ}
     (hf : IsingModel.Ferromagnetic (⟨J, (0 : ℝ), β⟩ : IsingParams ℝ))
     (hβJd_pos : 0 < β * J * (2 * d)) (hβJd_lt : β * J * (2 * d) < 1) :
