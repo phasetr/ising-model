@@ -14067,6 +14067,25 @@ $\langle\phi(x)\phi(z)\rangle/A\to 2/(1+(m^-\cdot d(x,z))^\alpha)$ in the proof 
 needed by \texttt{gj\_theorem\_17\_5\_1\_pseudoMass\_pow\_succ\_lipschitz\_on\_Icc}.
 \end{theorem}
 
+\begin{theorem}[\texttt{IsingModel.Ambient.truncated4TwoPoint\_abs\_le\_pseudoMass\_majorant\_of\_distinct}
+($|U_4^\infty|$ bounded by pseudo-mass pair-product majorant; GJ \S4.3 Cor 4.3.3 + \S17.5 p.~312;
+Issue \#1645 Step 119 plan Step 5.3)]
+For ferromagnetic $\langle J, 0, \beta\rangle$ on $\mathbb{Z}^d$ with pairwise-distinct
+$\{0, r, s, u\}$ and all four pair correlations active in $(0, 2)$:
+\[
+  |U_4^\infty(0, r, s, u)|
+    \le \frac{2}{1+(m^-_{0s}\cdot r')^\alpha}\cdot\frac{2}{1+(m^-_{ru}\cdot r')^\alpha}
+      + \frac{2}{1+(m^-_{0u}\cdot r')^\alpha}\cdot\frac{2}{1+(m^-_{rs}\cdot r')^\alpha}.
+\]
+Direct composition of the Lebowitz IIIb absolute-value bound
+\texttt{truncated4TwoPoint\_abs\_le\_pair\_correlations\_of\_distinct} (Step 5; PR \#3152) with
+the single-pair $m^-$ majorant
+\texttt{correlationInfinite\_le\_two\_div\_one\_add\_pow\_pseudoMassFromParamsAtPair} (Step 5.1;
+PR \#3154) applied to each of the 4 pair correlations, followed by \texttt{mul\_le\_mul} for
+each cross product and \texttt{add\_le\_add} for the sum. The GJ p.~312 numerator bound in
+the form ready for the HLS sum over $z$.
+\end{theorem}
+
 \begin{theorem}[\texttt{IsingModel.Ambient.correlationInfinite\_pair\_product\_le\_four\_div\_one\_add\_pow\_pseudoMassFromParamsAtPair}
 ($m^-$ pair-product majorant; GJ \S17.5 p.~312; Issue \#1645 Step 119 plan Step 5.2)]
 For two active pairs $(x, z)$ and $(y, z)$,
