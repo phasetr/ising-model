@@ -76,9 +76,9 @@ theorem susceptibility_bound_lt_one_div
 ferromagnetic + high-temp**.
 
 For nonneg `χ_∞ ≤ M` and `0 ≤ M`, we have `χ_∞² ≤ M²`. The nonnegativity
-of `χ_∞` follows from the upper bound being nonneg combined with the
-implicit nonneg structure of `susceptibilityInfinite` as a sup of nonneg
-quantities. -/
+hypothesis `hχ_nn : 0 ≤ susceptibilityInfinite ...` is taken as an explicit
+argument; callers can supply it from the abstract `susceptibility_nonneg`
+infrastructure under the ferromagnetic predicate. -/
 theorem susceptibilityInfinite_squared_le_of_ferromagnetic_high_temp_bound
     {d : ℕ} {J β : ℝ}
     (hf : IsingModel.Ferromagnetic (⟨J, (0 : ℝ), β⟩ : IsingParams ℝ))
