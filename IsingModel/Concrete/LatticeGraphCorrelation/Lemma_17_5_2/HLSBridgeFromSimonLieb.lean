@@ -3,7 +3,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.HLSBridgeFromCub
 /-!
 # Bridge-to-HLS sum bundle: Simon-Lieb + adjacent + ferromagnetic chain
 
-Bundled GJ命題-size PR consolidating the structural chain from
+Bundled GJ-proposition-size PR consolidating the structural chain from
 Simon-Lieb / adjacent / ferromagnetic concrete analytic inputs to the HLS
 sum bound `tsum_correlationInfinite_pair_product_le_HLS_const` (#3171).
 
