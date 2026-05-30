@@ -703,7 +703,7 @@ theorem pseudoMassFromParamsAtPair_M_dist_zero_le_simonLieb_smallReg_combined
     {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
     {β J : ℝ} (hβJ : 0 ≤ β * J)
     (hβJd_pos : 0 < β * J * (2 * d)) (hβJd_le : β * J * (2 * d) ≤ 1)
-    {M : ℝ} (hM : 0 ≤ M) (hM_le_one : M ≤ 1)
+    {M : ℝ} (hM : 0 ≤ M)
     (hMrate : M ≤ simonLiebRate β J d / 2)
     {w : Fin d → ℤ} (hw_ne : w ≠ 0)
     (hsmall : M * (latticeDistance d 0 w : ℝ) ≤ 1)
@@ -726,11 +726,15 @@ theorem pseudoMassFromParamsAtPair_M_dist_zero_le_simonLieb_smallReg_combined
   · have h_adj_bound : Ambient.correlationInfinite (IsingModel.latticeGraph d)
             (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {0, w}
           ≤ Real.exp (-M) := h_adj_exp h_eq_one
+    have hdist_cast : (latticeDistance d 0 w : ℝ) = 1 := by
+      rw [h_eq_one]; norm_cast
+    have hM_le_one : M ≤ 1 := by
+      have := hsmall
+      rw [hdist_cast, mul_one] at this
+      exact this
     have h := pseudoMassFromParamsAtPair_zero_le_of_corr_le_exp_adjacent
       hα hr d (Ambient.cubicExhaustion d)
       (⟨J, 0, β⟩ : IsingParams ℝ) hM hM_le_one h_eq_one hcorr h_adj_bound
-    have hdist_cast : (latticeDistance d 0 w : ℝ) = 1 := by
-      rw [h_eq_one]; norm_cast
     rw [hdist_cast, mul_one]
     exact h
   · have h_ge_two : 2 ≤ latticeDistance d 0 w := by omega
