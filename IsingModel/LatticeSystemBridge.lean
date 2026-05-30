@@ -1,6 +1,7 @@
 import IsingModel.LatticeSystemBridge.Coupling
 import IsingModel.LatticeSystemBridge.Abstraction
 import IsingModel.LatticeSystemBridge.GibbsCompat
+import IsingModel.LatticeSystemBridge.CorrelationCompat
 
 /-!
 # Lattice-system integration bridge umbrella
