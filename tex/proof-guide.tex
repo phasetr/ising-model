@@ -14118,6 +14118,27 @@ $1 + (M\cdot t)^\alpha \ge (M\cdot t)^\alpha$ and \texttt{one\_div\_le\_one\_div
 (resp.\ \texttt{div\_le\_div\_of\_nonneg\_left}) with \texttt{pow\_pos} positivity.
 \end{theorem}
 
+\begin{theorem}[\texttt{IsingModel.Ambient.pseudoMassFromParamsAtPair\_M\_dist\_zero\_le\_simonLieb\_smallReg\_combined}
+(combined Simon-Lieb + adjacent \texttt{bridge.bound} composer for $\mathrm{dist} \ge 1$;
+GJ \S17.5 pp.~311--312; Issue \#1645 Step 119 plan Step 5.7l)]
+Per-$w$ composer dispatching by $\mathrm{dist}(0, w) = 1$ (adjacent) vs
+$\ge 2$. Adjacent applies Step 5.7k (\#3182). Non-adjacent applies
+Step 5.7j (\#3181, Simon-Lieb direct).
+
+Hypotheses:
+$1 \le \alpha$, $0 < r$;
+$0 \le \beta\cdot J$, $0 < \beta\cdot J\cdot(2d) \le 1$;
+$0 \le M$, $M \le \mathrm{simonLiebRate}(\beta, J, d)/2$;
+$w \ne 0$, $M \cdot d(0, w) \le 1$;
+active range $\mathrm{correlation}\,\{0, w\} \in (0, 2)$;
+adjacent input: $\mathrm{correlation}\,\{0, w\} \le e^{-M}$ whenever
+$\mathrm{dist}(0, w) = 1$.
+Conclusion: $M \cdot d(0, w) \le \mathrm{pseudoMass} \cdot r$.
+
+Completes the per-$w$ \texttt{bridge.bound} API for $\mathrm{dist} \ge 1$
+in the small-$M$ regime with explicit adjacent input.
+\end{theorem}
+
 \begin{theorem}[\texttt{IsingModel.Ambient.pseudoMassFromParamsAtPair\_zero\_le\_of\_corr\_le\_exp\_adjacent}
 (adjacent dist = 1 specialization of small-regime Step 5.7e;
 GJ \S17.5 pp.~311--312; Issue \#1645 Step 119 plan Step 5.7k)]
