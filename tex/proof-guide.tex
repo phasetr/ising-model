@@ -14101,6 +14101,22 @@ $1 + (M\cdot t)^\alpha \ge (M\cdot t)^\alpha$ and \texttt{one\_div\_le\_one\_div
 (resp.\ \texttt{div\_le\_div\_of\_nonneg\_left}) with \texttt{pow\_pos} positivity.
 \end{theorem}
 
+\begin{theorem}[\texttt{IsingModel.Ambient.truncated4TwoPoint\_abs\_le\_pseudoMass\_polynomial\_of\_distinct}
+($|U_4^\infty|$ bounded by pseudoMass polynomial decay form; GJ \S4.3 Cor 4.3.3 + \S17.5 p.~312;
+Issue \#1645 Step 119 plan Step 5.4 capstone)]
+Compose PR \#3156 (pseudoMass pair-product majorant) with PR \#3158 (pair-product polynomial
+decay bridge) twice via \texttt{add\_le\_add}. For ferromagnetic h=0 with pairwise-distinct
+$\{0, r, s, u\}$, all 4 pair correlations active in $(0, 2)$, and all 4 pseudo-masses
+strictly positive:
+\[
+  |U_4^\infty(0, r, s, u)|
+    \le \frac{2}{(m^-_{0s}\cdot r')^\alpha}\cdot\frac{2}{(m^-_{ru}\cdot r')^\alpha}
+      + \frac{2}{(m^-_{0u}\cdot r')^\alpha}\cdot\frac{2}{(m^-_{rs}\cdot r')^\alpha}.
+\]
+The polynomial-decay form ready for the discrete-HLS sum step
+(\texttt{tsum\_pow\_neg\_conv\_le\_const}, Step 130B) over $z$ in the GJ p.~312 derivation.
+\end{theorem}
+
 \begin{theorem}[\texttt{IsingModel.Ambient.truncated4TwoPoint\_abs\_le\_pseudoMass\_majorant\_of\_distinct}
 ($|U_4^\infty|$ bounded by pseudo-mass pair-product majorant; GJ \S4.3 Cor 4.3.3 + \S17.5 p.~312;
 Issue \#1645 Step 119 plan Step 5.3)]
