@@ -14118,6 +14118,27 @@ $1 + (M\cdot t)^\alpha \ge (M\cdot t)^\alpha$ and \texttt{one\_div\_le\_one\_div
 (resp.\ \texttt{div\_le\_div\_of\_nonneg\_left}) with \texttt{pow\_pos} positivity.
 \end{theorem}
 
+\begin{theorem}[\texttt{IsingModel.Ambient.pseudoMassFromParamsAtPair\_M\_dist\_zero\_le\_of\_corr\_le\_tanh\_exp\_trichotomy}
+(asymmetric tanh / exp \texttt{hbase} composer;
+GJ \S17.5 pp.~311--312; Issue \#1645 Step 119 plan Step 5.7i)]
+Asymmetric trichotomy composer taking the small-regime input
+$\mathrm{correlation}\,\{0,w\} \le \tanh(\beta\cdot J)^{d(0,w)}$ (the
+natural shape of cubic-path tanh decay) and the large-regime input
+$\mathrm{correlation}\,\{0,w\} \le e^{-(M\cdot d(0,w))} / (M\cdot d(0,w))^\alpha$,
+dispatching by case-split on $M\cdot d(0,w) \le 1$ vs $1 < M\cdot d(0,w)$.
+
+In the small regime applies Step 5.7e tanh-input variant
+(\texttt{...corr\_le\_tanh\_pow\_smallReg}, \#3176) which internally uses
+Step 5.7d (\#3175) to convert tanh form to exp form. In the large regime
+applies Step 5.7e large variant
+(\texttt{...corr\_le\_exp\_div\_pow\_largeReg}) directly.
+
+Companion to Step 5.7f's exp-only trichotomy composer (\#3177), exploiting
+the natural mismatch between tanh-typed small-regime cubic-path estimates
+and exp/polynomial-typed large-regime decay arising in GJ \S17.5 analytic
+derivations.
+\end{theorem}
+
 \begin{theorem}[\texttt{IsingModel.Ambient.correlationInfinite\_latticeGraph\_le\_exp\_neg\_half\_simonLiebRate\_dist\_of\_dist\_ge\_two}
 (Simon-Lieb dist $\ge 2$ exp-form with $\mathrm{simonLiebRate}/2$ rate;
 GJ \S17.5 pp.~311--312; Issue \#1645 Step 119 plan Step 5.7h)]
