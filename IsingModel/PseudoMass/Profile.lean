@@ -206,6 +206,38 @@ theorem two_div_one_add_pow_mul_two_div_one_add_pow_le_two_div_pow_mul_two_div_p
     div_nonneg (by norm_num) (pow_pos htx α).le
   exact mul_le_mul hx hy hy_nn hx_pow_nn
 
+/-- **Polynomial factorization** (Step 119 plan Step 5.4 bridge).
+
+For `M > 0`, `t > 0`, `α : ℕ`:
+
+    1 / (M·t)^α = (1 / M^α) · (1 / t^α)
+
+Direct application of `mul_pow` + division. Reveals the `M^(-α)` prefactor structure used in
+the GJ p. 312 HLS sum derivation: factoring out the pseudo-mass `m⁻` from the polynomial
+decay form. -/
+theorem one_div_mul_pow_eq_one_div_pow_mul_one_div_pow {α : ℕ} {M t : ℝ}
+    (hM : 0 < M) (ht : 0 < t) :
+    1 / (M * t) ^ α = 1 / M ^ α * (1 / t ^ α) := by
+  rw [mul_pow]
+  field_simp
+
+/-- **Polynomial pair-product factorization** (Step 119 plan Step 5.4 bridge).
+
+For `M > 0`, `tx > 0`, `ty > 0`, `α : ℕ`:
+
+    (1 / (M·tx)^α) · (1 / (M·ty)^α) = (1 / M^(2α)) · (1 / tx^α) · (1 / ty^α)
+
+Pair-product form. The `M^(-2α)` prefactor matches GJ p. 312's `m⁻^(-2α)` factor in the
+HLS sum bound, separating it from the per-site polynomial decay `t_x^(-α)·t_y^(-α)`. -/
+theorem one_div_mul_pow_mul_one_div_mul_pow_eq {α : ℕ} {M tx ty : ℝ}
+    (hM : 0 < M) (htx : 0 < tx) (hty : 0 < ty) :
+    1 / (M * tx) ^ α * (1 / (M * ty) ^ α)
+      = 1 / M ^ (2 * α) * (1 / tx ^ α * (1 / ty ^ α)) := by
+  rw [one_div_mul_pow_eq_one_div_pow_mul_one_div_pow hM htx,
+      one_div_mul_pow_eq_one_div_pow_mul_one_div_pow hM hty]
+  rw [show 2 * α = α + α from by ring, pow_add]
+  field_simp
+
 /-- `pseudoMassG` is at most 2 for `t ≥ 0` and `r > 0`.
 Corollary of `pseudoMassG_le_two_div_one_add_pow`. -/
 theorem pseudoMassG_le_two (α : ℕ) {r t : ℝ} (ht : 0 ≤ t) (hr : 0 < r) :
