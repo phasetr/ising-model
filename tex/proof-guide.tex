@@ -14118,6 +14118,28 @@ $1 + (M\cdot t)^\alpha \ge (M\cdot t)^\alpha$ and \texttt{one\_div\_le\_one\_div
 (resp.\ \texttt{div\_le\_div\_of\_nonneg\_left}) with \texttt{pow\_pos} positivity.
 \end{theorem}
 
+\begin{theorem}[\texttt{IsingModel.Ambient.correlationInfinite\_latticeGraph\_le\_exp\_neg\_half\_simonLiebRate\_dist\_of\_dist\_ge\_two}
+(Simon-Lieb dist $\ge 2$ exp-form with $\mathrm{simonLiebRate}/2$ rate;
+GJ \S17.5 pp.~311--312; Issue \#1645 Step 119 plan Step 5.7h)]
+Under $0 \le \beta\cdot J$, $0 < \beta\cdot J\cdot(2d)$,
+$\beta\cdot J\cdot(2d) \le 1$, and $2 \le \mathrm{dist}(i, j)$:
+\[
+  \mathrm{correlationInfinite}\,\{i, j\}
+    \le e^{-(\mathrm{simonLiebRate}/2)\cdot \mathrm{dist}(i, j)}.
+\]
+Proof: take $n := \mathrm{dist}(i, j) - 1$, apply
+\texttt{...le\_exp\_neg\_simonLiebRate\_pow\_of\_dist\_gt} (Step 5.7g) to
+get $\mathrm{correlation} \le e^{-\mathrm{simonLiebRate}\cdot n}$, then use
+$\mathrm{dist} - 1 \ge \mathrm{dist}/2$ (valid for $\mathrm{dist} \ge 2$)
+together with $\mathrm{simonLiebRate} \ge 0$ (from $\beta\cdot J\cdot(2d) \le 1$) to
+strengthen the exponent to $\mathrm{simonLiebRate}/2 \cdot \mathrm{dist}$.
+
+The $\mathrm{dist} = 1$ case is genuinely outside this composer's scope:
+Simon-Lieb gives only $\mathrm{correlation} \le 1$ at distance $1$, no
+exponential decay. Handling adjacent pairs requires a separate single-step
+input.
+\end{theorem}
+
 \begin{theorem}[\texttt{IsingModel.Ambient.simonLiebRate} and
 \texttt{IsingModel.Ambient.correlationInfinite\_latticeGraph\_le\_exp\_neg\_simonLiebRate\_pow\_of\_dist\_gt}
 (Simon-Lieb exp-form correlation bound;
