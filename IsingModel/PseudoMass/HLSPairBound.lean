@@ -209,4 +209,89 @@ theorem discrete_hls_pseudoMass_convolution_constant
   · intro M hM x y
     exact tsum_pseudoMass_pair_product_le_const_pow_M d hαd hM x y
 
+/-- **HLS pair tsum bound: `2/(1+...)·2/(1+...)` form** (Step 119 plan
+Step 5.5c, U_4-aligned variant).
+
+For `d : ℕ`, `α : ℕ` with `d < 2α`, `M > 0`, and `x y : Fin d → ℤ`:
+```
+∑_z 2/(1+(M·d(x,z))^α) · 2/(1+(M·d(y,z))^α)
+  ≤ 4 · (max(1, (M^α)⁻¹) · 2^α)² · ∑_z (1 + d(0, z))^(-(2α : ℝ)).
+```
+
+Scaled-by-4 variant of `tsum_pseudoMass_pair_product_le_const_pow_M` matching
+the `2/(1+(m⁻·r')^α) · 2/(1+(m⁻·r')^α)` form of Step 5.3's |U_4| pseudo-mass
+majorant (`truncated4TwoPoint_abs_le_pseudoMass_majorant_of_distinct`,
+PR #3156). The factor `2 · 2 = 4` becomes the scalar prefactor on the squared
+HLS constant.
+
+**Reference:** Glimm--Jaffe, *Quantum Physics*, 2nd ed., §17.5, p. 312. -/
+theorem tsum_two_div_pseudoMass_pair_product_le_const_pow_M
+    (d : ℕ) {α : ℕ} (hαd : d < 2 * α) {M : ℝ} (hM : 0 < M)
+    (x y : Fin d → ℤ) :
+    ∑' z : Fin d → ℤ,
+        2 / (1 + (M * (latticeDistance d x z : ℝ)) ^ α) *
+        (2 / (1 + (M * (latticeDistance d y z : ℝ)) ^ α)) ≤
+      4 * (max 1 (M ^ α)⁻¹ * (2 : ℝ) ^ α) ^ 2 *
+        ∑' z : Fin d → ℤ,
+          (1 + (latticeDistance d 0 z : ℝ)) ^ (-((2 : ℝ) * α)) := by
+  -- Factor `2/(1+t) · 2/(1+t) = 4 · 1/(1+t) · 1/(1+t)`.
+  have h_summand_eq : ∀ z : Fin d → ℤ,
+      2 / (1 + (M * (latticeDistance d x z : ℝ)) ^ α) *
+        (2 / (1 + (M * (latticeDistance d y z : ℝ)) ^ α)) =
+      4 *
+        (1 / (1 + (M * (latticeDistance d x z : ℝ)) ^ α) *
+          (1 / (1 + (M * (latticeDistance d y z : ℝ)) ^ α))) := fun z => by ring
+  have h_tsum_eq : ∑' z : Fin d → ℤ,
+      2 / (1 + (M * (latticeDistance d x z : ℝ)) ^ α) *
+        (2 / (1 + (M * (latticeDistance d y z : ℝ)) ^ α)) =
+      4 * ∑' z : Fin d → ℤ,
+        1 / (1 + (M * (latticeDistance d x z : ℝ)) ^ α) *
+        (1 / (1 + (M * (latticeDistance d y z : ℝ)) ^ α)) := by
+    rw [show (4 : ℝ) * (∑' z, _) = ∑' z, 4 * _ from (tsum_mul_left).symm]
+    exact tsum_congr h_summand_eq
+  rw [h_tsum_eq]
+  have h_base := tsum_pseudoMass_pair_product_le_const_pow_M d hαd hM x y
+  have h_factor_nn : (0 : ℝ) ≤ 4 := by norm_num
+  calc 4 * ∑' z : Fin d → ℤ,
+          1 / (1 + (M * (latticeDistance d x z : ℝ)) ^ α) *
+          (1 / (1 + (M * (latticeDistance d y z : ℝ)) ^ α))
+      ≤ 4 * ((max 1 (M ^ α)⁻¹ * (2 : ℝ) ^ α) ^ 2 *
+              ∑' z, (1 + (latticeDistance d 0 z : ℝ)) ^ (-((2 : ℝ) * α))) :=
+        mul_le_mul_of_nonneg_left h_base h_factor_nn
+    _ = 4 * (max 1 (M ^ α)⁻¹ * (2 : ℝ) ^ α) ^ 2 *
+          ∑' z, (1 + (latticeDistance d 0 z : ℝ)) ^ (-((2 : ℝ) * α)) := by ring
+
+/-- **Discrete HLS PseudoMass `2/(1+...)·2/(1+...)` convolution constant**
+(Step 119 plan Step 5.5c, U_4-aligned existential variant).
+
+For `d, α : ℕ` with `d < 2α`, there exists a positive constant `K` such that
+for all `M > 0` and `x, y : Fin d → ℤ`:
+```
+∑_z 2/(1+(M·d(x,z))^α) · 2/(1+(M·d(y,z))^α)
+  ≤ 4 · (max(1, (M^α)⁻¹) · 2^α)² · K.
+```
+
+Existential form of `tsum_two_div_pseudoMass_pair_product_le_const_pow_M`,
+paralleling `discrete_hls_pseudoMass_convolution_constant` but matching the
+`2/(1+...) · 2/(1+...)` form of Step 5.3's |U_4| pseudo-mass majorant.
+
+**Reference:** Glimm--Jaffe, *Quantum Physics*, 2nd ed., §17.5, p. 312. -/
+theorem discrete_hls_pseudoMass_two_pair_convolution_constant
+    (d α : ℕ) (hαd : d < 2 * α) :
+    ∃ K : ℝ, 0 < K ∧
+      ∀ {M : ℝ} (_ : 0 < M) (x y : Fin d → ℤ),
+        ∑' z : Fin d → ℤ,
+            2 / (1 + (M * (latticeDistance d x z : ℝ)) ^ α) *
+            (2 / (1 + (M * (latticeDistance d y z : ℝ)) ^ α)) ≤
+          4 * (max 1 (M ^ α)⁻¹ * (2 : ℝ) ^ α) ^ 2 * K := by
+  have hα_real : (d : ℝ) < 2 * (α : ℝ) := by exact_mod_cast hαd
+  refine ⟨∑' z : Fin d → ℤ,
+            (1 + (latticeDistance d 0 z : ℝ)) ^ (-((2 : ℝ) * α)), ?_, ?_⟩
+  · exact (summable_pow_neg_latticeDistance d hα_real).tsum_pos
+      (fun z => Real.rpow_nonneg (by positivity) _)
+      (0 : Fin d → ℤ)
+      (by simp [latticeDistance])
+  · intro M hM x y
+    exact tsum_two_div_pseudoMass_pair_product_le_const_pow_M d hαd hM x y
+
 end IsingModel
