@@ -14135,10 +14135,10 @@ $(M^\alpha)^{-1}\cdot(1 + M^\alpha t^\alpha) = (M^\alpha)^{-1} + t^\alpha \ge 1 
 The form bridge $1/(1+t^\alpha) \le 2^\alpha\cdot 1/(1+t)^\alpha$ follows by case
 analysis on $t \le 1$ ($(1+t)^\alpha \le 2^\alpha\le 2^\alpha(1+t^\alpha)$) vs
 $t > 1$ ($(1+t)^\alpha \le (2t)^\alpha = 2^\alpha t^\alpha \le 2^\alpha(1+t^\alpha)$).
-The composition isolates the prefactor
-$\max(1, (M^\alpha)^{-1})\cdot 2^\alpha = M^{-\alpha}\cdot 2^\alpha$ (whenever $M\le 1$;
-in particular the GJ p.~312 $m^{-\alpha}$ scaling) from the $(1+t)^{-\alpha}$ polynomial-decay
-body matching the existing infinite-sum infrastructure
+The composition prefactor $\max(1, (M^\alpha)^{-1})\cdot 2^\alpha$ collapses to
+$M^{-\alpha}\cdot 2^\alpha$ (the GJ p.~312 $m^{-\alpha}$ scaling) when $M\le 1$ and
+$\alpha\ge 1$, and to $2^\alpha$ when $M^\alpha\ge 1$. The $(1+t)^{-\alpha}$
+polynomial-decay body matches the existing infinite-sum infrastructure
 \texttt{tsum\_pow\_neg\_conv\_le\_const} (\texttt{IsingModel/PolyDecay.lean}; Step 130B,
 real $\alpha$ form). First pointwise step toward the HLS infinite-sum bound
 $\sum_z 1/((1+(m^-\cdot d(x,z))^\alpha)\cdot(1+(m^-\cdot d(y,z))^\alpha))

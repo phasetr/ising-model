@@ -246,15 +246,16 @@ For `M > 0`, `t ≥ 0`, `α : ℕ`:
     1 / (1 + (M·t)^α) ≤ max(1, (M^α)⁻¹) · (1 / (1 + t^α))
 
 Cases (after expanding `(M·t)^α = M^α·t^α`):
-- `M^α ≥ 1` (i.e. `M ≥ 1`): max = 1, and `1 + t^α ≤ 1 + M^α·t^α` because
-  `t^α ≤ M^α · t^α`.
-- `M^α < 1` (i.e. `M < 1`): max = `(M^α)⁻¹ ≥ 1`, and
+- `M^α ≥ 1` (e.g. `α = 0`, or `α ≥ 1 ∧ M ≥ 1`): max = 1, and
+  `1 + t^α ≤ 1 + M^α·t^α` because `t^α ≤ M^α · t^α`.
+- `M^α < 1` (necessarily `α ≥ 1 ∧ M < 1`): max = `(M^α)⁻¹ ≥ 1`, and
   `(M^α)⁻¹ · (1 + M^α·t^α) = (M^α)⁻¹ + t^α ≥ 1 + t^α`.
 
 Bridges the natural-α PseudoMass majorant form `1/(1+(M·t)^α)` to the natural-α
-form without the `M` factor, isolating `(M^α)⁻¹` (i.e. `M^(-α)`) as a prefactor.
-Combined with `one_div_one_add_t_pow_le_two_pow_mul_one_div_one_add_pow_pow`
-below, this gives the bridge to the `(1+t)^(-α)` form expected by
+form without the `M` factor; the prefactor `max(1, (M^α)⁻¹)` collapses to
+`(M^α)⁻¹ = M^(-α)` when `M ≤ 1` (and `α ≥ 1`) and to `1` when `M^α ≥ 1`. Combined
+with `one_div_one_add_t_pow_le_two_pow_mul_one_div_one_add_pow_pow` below, this
+gives the bridge to the `(1+t)^(-α)` form expected by
 `tsum_pow_neg_conv_le_const` (`IsingModel/PolyDecay.lean:207`). -/
 theorem one_div_one_add_M_t_pow_le_max_mul_one_div_one_add_t_pow
     {α : ℕ} {M t : ℝ} (hM : 0 < M) (ht : 0 ≤ t) :
@@ -354,15 +355,16 @@ For `M > 0`, `t ≥ 0`, `α : ℕ`:
     1 / (1 + (M·t)^α) ≤ max(1, (M^α)⁻¹) · 2^α · (1 / (1 + t)^α)
 
 Composition of `one_div_one_add_M_t_pow_le_max_mul_one_div_one_add_t_pow` (M-bridge,
-isolating `(M^α)⁻¹` = `M^(-α)` prefactor) and
+isolating `max(1, (M^α)⁻¹)` prefactor) and
 `one_div_one_add_t_pow_le_two_pow_mul_one_div_one_add_pow_pow` (form bridge to
 `(1+t)^(-α)`).
 
 This is the natural-α pointwise companion of the HLS infinite-sum bound
-`tsum_pow_neg_conv_le_const` (`IsingModel/PolyDecay.lean:207`, real-α): the
-constant prefactor `max(1, (M^α)⁻¹) · 2^α` carries the `M^(-α)` (i.e.,
-GJ p. 312's `m⁻^(-α)`) scaling, while the `(1+t)^(-α)` body matches the
-existing tsum's polynomial-decay form. -/
+`tsum_pow_neg_conv_le_const` (`IsingModel/PolyDecay.lean:207`, real-α). The
+constant prefactor `max(1, (M^α)⁻¹) · 2^α` collapses to
+`(M^α)⁻¹ · 2^α = M^(-α) · 2^α` (the GJ p. 312 `m⁻^(-α)` scaling) in the
+physically relevant `M ≤ 1` (and `α ≥ 1`) regime, and to `2^α` when `M^α ≥ 1`.
+The `(1+t)^(-α)` body matches the existing tsum's polynomial-decay form. -/
 theorem one_div_one_add_M_t_pow_le_const_mul_one_div_one_add_pow_pow
     {α : ℕ} {M t : ℝ} (hM : 0 < M) (ht : 0 ≤ t) :
     1 / (1 + (M * t) ^ α) ≤
