@@ -336,7 +336,7 @@ theorem pseudoMassFromParamsAtPair_M_dist_zero_le_of_corr_le_exp_div_pow_largeRe
   have hMd_nn : 0 ≤ M * (latticeDistance d 0 w : ℝ) := le_trans zero_le_one hlarge
   have hM : 0 ≤ M := by
     by_contra hMneg
-    push_neg at hMneg
+    push Not at hMneg
     have : M * (latticeDistance d 0 w : ℝ) ≤ 0 :=
       mul_nonpos_iff.mpr (Or.inr ⟨hMneg.le, hdist_nn⟩)
     linarith
@@ -465,7 +465,7 @@ theorem pseudoMassFromParamsAtPair_M_dist_zero_le_of_corr_le_exp_trichotomy
   · exact pseudoMassFromParamsAtPair_M_dist_zero_le_of_corr_le_exp_smallReg
       hα hr d Λ p hM w hsmall (h_corr_active w hw_ne)
       (h_corr_small w hw_ne hsmall)
-  · push_neg at hsmall
+  · push Not at hsmall
     have hlarge_le : 1 ≤ M * (latticeDistance d 0 w : ℝ) := hsmall.le
     exact pseudoMassFromParamsAtPair_M_dist_zero_le_of_corr_le_exp_div_pow_largeReg
       hα hr d Λ p w hlarge_le (h_corr_active w hw_ne)
@@ -565,7 +565,7 @@ theorem pseudoMassFromParamsAtPair_M_dist_zero_le_of_corr_le_tanh_exp_trichotomy
   · exact pseudoMassFromParamsAtPair_M_dist_zero_le_of_corr_le_tanh_pow_smallReg
       hα hr d Λ p hβJ hM hMrate w hsmall (h_corr_active w hw_ne)
       (h_corr_tanh_small w hw_ne hsmall)
-  · push_neg at hsmall
+  · push Not at hsmall
     have hlarge_le : 1 ≤ M * (latticeDistance d 0 w : ℝ) := hsmall.le
     exact pseudoMassFromParamsAtPair_M_dist_zero_le_of_corr_le_exp_div_pow_largeReg
       hα hr d Λ p w hlarge_le (h_corr_active w hw_ne)
