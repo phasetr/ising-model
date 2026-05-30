@@ -14118,6 +14118,39 @@ $1 + (M\cdot t)^\alpha \ge (M\cdot t)^\alpha$ and \texttt{one\_div\_le\_one\_div
 (resp.\ \texttt{div\_le\_div\_of\_nonneg\_left}) with \texttt{pow\_pos} positivity.
 \end{theorem}
 
+\begin{theorem}[\texttt{IsingModel.pseudoMassFromParamsAtPair\_M\_dist\_zero\_le\_of\_corr\_le\_*}
+(exp / tanh correlation-upper-bound composers for the zero-anchored
+\texttt{bridge.bound};
+GJ \S17.5 pp.~311--312; Issue \#1645 Step 119 plan Step 5.7e)]
+Let $\alpha \ge 1$, $r > 0$, $d : \mathbb{N}$, $\Lambda$ an exhaustion of
+$\mathbb{Z}^d$, $p$ Ising parameters, $0 \le M$, and $w \in \mathbb{Z}^d$
+with the correlation active range
+$\mathrm{correlationInfinite}\,\{0,w\} \in (0, 2)$. Three composers produce
+the zero-anchored shape $M \cdot d(0, w) \le
+\mathrm{pseudoMassFromParamsAtPair}\,0\,w \cdot r$:
+\begin{enumerate}
+  \item \texttt{...\_corr\_le\_exp\_smallReg}: under $M \cdot d(0,w) \le 1$
+    and $\mathrm{correlationInfinite}\,\{0,w\} \le e^{-(M \cdot d(0,w))}$,
+    chain $e^{-(t \cdot r)} \le \mathrm{pseudoMassG}_{\alpha, r}(t)$ (small
+    $t \cdot r$, with $t := M \cdot d(0, w)/r$) and \#3173.
+  \item \texttt{...\_corr\_le\_exp\_div\_pow\_largeReg}: under
+    $1 \le M \cdot d(0,w)$ and
+    $\mathrm{correlationInfinite}\,\{0,w\} \le e^{-(M \cdot d(0,w))} /
+    (M \cdot d(0,w))^\alpha$,
+    chain $e^{-(t \cdot r)} / (t \cdot r)^\alpha \le
+    \mathrm{pseudoMassG}_{\alpha, r}(t)$ (large $t \cdot r$, with
+    $t := M \cdot d(0, w)/r$) and \#3173.
+  \item \texttt{...\_corr\_le\_tanh\_pow\_smallReg}: under
+    $0 \le \beta \cdot J$, $M \le \mathrm{highTempExpRate}(\beta, J)$,
+    $M \cdot d(0, w) \le 1$, and
+    $\mathrm{correlationInfinite}\,\{0,w\} \le \tanh(\beta \cdot J)^{d(0,w)}$,
+    chain \#3175 (with $r := 1$, so $\tanh(\beta J)^k \le e^{-(M\cdot k)}$)
+    and the small-regime exp composer.
+\end{enumerate}
+Atomic composers for the $\mathtt{hbase}$ field of
+\texttt{PseudoMassLatticeDistanceBridge\_of\_cubicTanh\_family} (\#3172).
+\end{theorem}
+
 \begin{theorem}[\texttt{IsingModel.tanh\_pow\_le\_exp\_neg\_M\_dist\_r\_of\_M\_r\_le\_highTempExpRate}
 (cubic-path tanh decay to exp form bridge;
 GJ \S17.5 pp.~311--312; Issue \#1645 Step 119 plan Step 5.7d)]
