@@ -14118,6 +14118,26 @@ $1 + (M\cdot t)^\alpha \ge (M\cdot t)^\alpha$ and \texttt{one\_div\_le\_one\_div
 (resp.\ \texttt{div\_le\_div\_of\_nonneg\_left}) with \texttt{pow\_pos} positivity.
 \end{theorem}
 
+\begin{theorem}[\texttt{IsingModel.Ambient.correlationInfinite\_pair\_active\_of\_betaJ\_pos}
+(all-pair active range from $0 < \beta\cdot J$;
+GJ \S17.5 pp.~311--312; Issue \#1645 Step 119 plan Step 5.7o)]
+Under $0 \le J$, $0 < \beta$, $0 < \beta\cdot J$, for every distinct pair
+$(x, z)$:
+$\mathrm{correlationInfinite}\,\{x, z\} \in (0, 2)$.
+
+Proof: $0 < \tanh(\beta\cdot J)^{d(0, z - x)}$ (from $\tanh(\beta\cdot J) > 0$),
+the existing tanh-power lower bound
+\texttt{twoPointFunction\_ge\_tanh\_betaJ\_pow\_dist}, and translation
+invariance give the lower bound. The upper bound is
+$\mathrm{correlationInfinite} \le 1 < 2$.
+
+Complements Step 5.7n (\#3185)'s all-pair \texttt{bound} provider,
+completing the structural input set for building a concrete
+\texttt{PseudoMassLatticeDistanceBridge} value directly from Simon-Lieb
+$+$ adjacent analytic inputs (without going through the vacuous
+\texttt{cubicTanhProfileBound} family).
+\end{theorem}
+
 \begin{theorem}[\texttt{IsingModel.Ambient.pseudoMassFromParamsAtPair\_all\_pair\_simonLieb\_smallReg\_bound}
 (all-pair \texttt{bridge.bound} from Step 5.7m;
 GJ \S17.5 pp.~311--312; Issue \#1645 Step 119 plan Step 5.7n)]
