@@ -613,6 +613,55 @@ theorem gj_theorem_17_5_1_pseudoMass_pow_succ_lipschitz_on_Icc
   pseudoMassFromParamsAtPair_beta_pow_succ_lipschitz_on_Icc_of_corr_differentiableAt
     hα hr Λ J x z hβ₁₂ hc_diff hcorr hcomp
 
+/-- **GJ §17.5 m⁻ majorant for `correlationInfinite`** (GJ §17.5 p. 311).
+
+For any active pair `(x, z)` (i.e., `correlationInfinite {x, z} ∈ Ioo 0 2`), the
+two-point function is dominated by the rational `pseudoMassG`-majorant:
+
+    correlationInfinite ⟨J, 0, β⟩ {x, z} ≤ 2 / (1 + (m⁻ · r)^α)
+
+where `m⁻ = pseudoMassFromParamsAtPair hα hr d Λ ⟨J, 0, β⟩ x z` and `r > 0` is the
+fixed radius parameter of the pseudo-mass. Direct corollary of the defining identity
+`pseudoMassG α r m⁻ = correlationInfinite` (`pseudoMass_spec`) combined with the
+pointwise rational bound `pseudoMassG α r t ≤ 2 / (1 + (t·r)^α)`
+(`pseudoMassG_le_two_div_one_add_pow`) — i.e., dropping the `e^(-tr) ≤ 1` factor.
+
+This is the **pseudo-mass majorant** used in GJ p. 312 to substitute
+`⟨φ(x)φ(z)⟩ / A → 2/(1+(m⁻·d(x,z))^α)` in the proof of Theorem 17.5.1, the first
+step in deriving the HLS comparison form `|c'| ≤ K·c/m⁻^(2α)`. -/
+theorem correlationInfinite_le_two_div_one_add_pow_pseudoMassFromParamsAtPair
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) {d : ℕ}
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (J β : ℝ) (x z : Fin d → ℤ)
+    (hcorr : Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} ∈ Set.Ioo (0 : ℝ) 2) :
+    Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) {x, z}
+      ≤ 2 / (1 + (pseudoMassFromParamsAtPair hα hr d Λ
+                    (⟨J, 0, β⟩ : IsingParams ℝ) x z * r) ^ α) := by
+  -- Defining identity: pseudoMassG α r (pseudoMassFromParamsAtPair …) = correlationInfinite
+  set m : ℝ := pseudoMassFromParamsAtPair hα hr d Λ
+      (⟨J, 0, β⟩ : IsingParams ℝ) x z with hm_def
+  set c : ℝ := Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+      (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} with hc_def
+  -- Rewrite m via pseudoMassExt
+  -- (pseudoMassFromParamsAtPair = pseudoMassExt ∘ correlationInfinite by definition)
+  have hm_eq : m = pseudoMassExt hα hr c := rfl
+  -- On the active range, pseudoMassExt c = pseudoMass hα hr hcorr
+  have hm_pseudoMass : m = pseudoMass hα hr hcorr := by
+    rw [hm_eq, pseudoMassExt_of_mem hα hr hcorr]
+  -- Defining identity pseudoMassG α r (pseudoMass) = c
+  have hspec : pseudoMassG α r m = c := by
+    rw [hm_pseudoMass]; exact pseudoMass_spec hα hr hcorr
+  -- Non-negativity of m
+  have hm_nn : 0 ≤ m :=
+    pseudoMassFromParamsAtPair_nonneg hα hr d Λ (⟨J, 0, β⟩ : IsingParams ℝ) x z
+  -- Apply the pointwise rational bound
+  calc c = pseudoMassG α r m := hspec.symm
+    _ ≤ 2 / (1 + (m * r) ^ α) := pseudoMassG_le_two_div_one_add_pow α hm_nn hr
+
 end Ambient
 
 end IsingModel
