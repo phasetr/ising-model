@@ -14067,6 +14067,23 @@ $\langle\phi(x)\phi(z)\rangle/A\to 2/(1+(m^-\cdot d(x,z))^\alpha)$ in the proof 
 needed by \texttt{gj\_theorem\_17\_5\_1\_pseudoMass\_pow\_succ\_lipschitz\_on\_Icc}.
 \end{theorem}
 
+\begin{theorem}[\texttt{IsingModel.one\_div\_one\_add\_pow\_mul\_one\_div\_one\_add\_pow\_le\_one\_div\_pow\_mul\_one\_div\_pow},
+\texttt{two\_div\_one\_add\_pow\_mul\_two\_div\_one\_add\_pow\_le\_two\_div\_pow\_mul\_two\_div\_pow}
+(pair-product polynomial-decay bridge; GJ \S17.5 p.~312; Issue \#1645 Step 119 plan Step 5.4
+bridge)]
+For $M\cdot t_x > 0$, $M\cdot t_y > 0$ and $\alpha\in\mathbb{N}$:
+\[
+  \frac{1}{1+(M\cdot t_x)^\alpha}\cdot\frac{1}{1+(M\cdot t_y)^\alpha}
+    \le \frac{1}{(M\cdot t_x)^\alpha}\cdot\frac{1}{(M\cdot t_y)^\alpha}
+    = M^{-2\alpha}\cdot t_x^{-\alpha}\cdot t_y^{-\alpha},
+\]
+with a scaled-by-2 version. Direct product of two
+\texttt{one\_div\_one\_add\_pow\_le\_one\_div\_pow} applications via \texttt{mul\_le\_mul}.
+Pair-product form of the polynomial-decay bridge, ready for combining with the pseudo-mass
+pair-product majorant (PR \#3155) to produce $m^{-2\alpha}\cdot d_x^{-\alpha}\cdot d_y^{-\alpha}$
+form on which the discrete HLS convolution sum bound applies.
+\end{theorem}
+
 \begin{theorem}[\texttt{IsingModel.one\_div\_one\_add\_pow\_le\_one\_div\_pow},
 \texttt{two\_div\_one\_add\_pow\_le\_two\_div\_pow}
 (pointwise polynomial-decay bridge; GJ \S17.5 p.~312; Issue \#1645 Step 119 plan Step 5.4
