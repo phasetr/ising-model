@@ -196,4 +196,57 @@ correlation_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_alpha_dist_ferroma
     G J β α (mul_nonneg hβ.le hJ) hα i j
 
 
+/-! ## Step 119 plan Step 5.7d: `tanh^d ≤ exp(-(M·d·r))` bridge -/
+
+/-- **`tanh(β·J)^d ≤ exp(-(M·d·r))`** when `M·r ≤ highTempExpRate β J`,
+under `0 ≤ β·J` (Step 119 plan Step 5.7d).
+
+Direct calculation: when `tanh(β·J) > 0`,
+`tanh(β·J)^d = exp(d · log(tanh(β·J))) = exp(-(highTempExpRate β J) · d)`.
+Since `M·r ≤ highTempExpRate β J`, multiplying by the nonneg distance
+`d` gives `M·r·d ≤ highTempExpRate·d`, hence
+`-highTempExpRate·d ≤ -(M·r·d)`, hence
+`exp(-highTempExpRate·d) ≤ exp(-(M·r·d)) = exp(-(M·d·r))`.
+
+The zero-`tanh(β·J)` endpoint: `tanh(β·J)^d = 0 ≤ exp(...)`.
+
+This is the analytic bridge from cubic-path tanh decay
+`correlation ≤ tanh(β·J)^d` into `correlation ≤ exp(-(M·d·r))`, which
+combined with `pseudoMassG_ge_exp_of_tr_le_one` (small-`t·r` regime,
+`PseudoMass/Profile.lean`) and the bound reduction of #3173 lands the
+analytic input directly in the `bridge.bound` shape
+`M·d ≤ pseudoMass·r`. -/
+theorem tanh_pow_le_exp_neg_M_dist_r_of_M_r_le_highTempExpRate
+    {β J : ℝ} (hβJ : 0 ≤ β * J) {M r : ℝ}
+    (hMr : M * r ≤ highTempExpRate β J) (d : ℕ) :
+    Real.tanh (β * J) ^ d ≤ Real.exp (-(M * (d : ℝ) * r)) := by
+  have htanh_nn : 0 ≤ Real.tanh (β * J) := by
+    rw [Real.tanh_eq_sinh_div_cosh]
+    exact div_nonneg (Real.sinh_nonneg_iff.mpr hβJ) (Real.cosh_pos _).le
+  by_cases hzero : Real.tanh (β * J) = 0
+  · rw [hzero]
+    have hd : (0 : ℝ) ≤ Real.exp (-(M * (d : ℝ) * r)) := (Real.exp_pos _).le
+    rcases Nat.eq_zero_or_pos d with hd0 | hd_pos
+    · rw [hd0, pow_zero]
+      have h0 : 0 ≤ M * (0 : ℝ) * r := by
+        rw [mul_zero, zero_mul]
+      have : -(M * (0 : ℝ) * r) = 0 := by simp
+      rw [Nat.cast_zero] at *
+      simp [Real.exp_zero]
+    · rw [zero_pow (Nat.pos_iff_ne_zero.mp hd_pos)]
+      exact hd
+  · have htanh_pos : 0 < Real.tanh (β * J) :=
+      lt_of_le_of_ne htanh_nn (Ne.symm hzero)
+    have hpow_eq : Real.tanh (β * J) ^ d =
+        Real.exp (-(highTempExpRate β J) * (d : ℝ)) := by
+      rw [← Real.exp_log (pow_pos htanh_pos d), Real.log_pow]
+      unfold highTempExpRate
+      ring_nf
+    rw [hpow_eq]
+    apply Real.exp_le_exp.mpr
+    have hd_nn : (0 : ℝ) ≤ (d : ℝ) := by exact_mod_cast Nat.zero_le _
+    have hMr_d : M * r * (d : ℝ) ≤ highTempExpRate β J * (d : ℝ) :=
+      mul_le_mul_of_nonneg_right hMr hd_nn
+    nlinarith
+
 end IsingModel
