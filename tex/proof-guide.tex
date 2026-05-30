@@ -14118,6 +14118,24 @@ $1 + (M\cdot t)^\alpha \ge (M\cdot t)^\alpha$ and \texttt{one\_div\_le\_one\_div
 (resp.\ \texttt{div\_le\_div\_of\_nonneg\_left}) with \texttt{pow\_pos} positivity.
 \end{theorem}
 
+\begin{theorem}[\texttt{IsingModel.Ambient.pseudoMassFromParamsAtPair\_zero\_le\_of\_corr\_le\_exp\_adjacent}
+(adjacent dist = 1 specialization of small-regime Step 5.7e;
+GJ \S17.5 pp.~311--312; Issue \#1645 Step 119 plan Step 5.7k)]
+Specialization of Step 5.7e small-regime (\#3176) to $\mathrm{dist}(0, w) = 1$.
+With $M \le 1$, the small-regime constraint $M \cdot d(0, w) \le 1$ is
+automatic, and the bound shape collapses to $M \le \mathrm{pseudoMass} \cdot r$.
+
+Hypotheses: $1 \le \alpha$, $0 < r$, $0 \le M$, $M \le 1$,
+$\mathrm{dist}(0, w) = 1$, active range
+$\mathrm{correlation}\,\{0, w\} \in (0, 2)$, and the adjacent exp bound
+$\mathrm{correlation}\,\{0, w\} \le e^{-M}$. Conclusion:
+$M \le \mathrm{pseudoMass} \cdot r$.
+
+Complements Step 5.7j (\#3181)'s $\mathrm{dist} \ge 2$ Simon-Lieb composer,
+together covering the full $\mathrm{dist} \ge 1$ range in the small-$M$
+regime.
+\end{theorem}
+
 \begin{theorem}[\texttt{IsingModel.Ambient.pseudoMassFromParamsAtPair\_M\_dist\_zero\_le\_of\_simonLieb\_smallReg}
 (Simon-Lieb direct \texttt{bridge.bound} composer in small regime;
 GJ \S17.5 pp.~311--312; Issue \#1645 Step 119 plan Step 5.7j)]
