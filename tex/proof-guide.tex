@@ -14118,6 +14118,28 @@ $1 + (M\cdot t)^\alpha \ge (M\cdot t)^\alpha$ and \texttt{one\_div\_le\_one\_div
 (resp.\ \texttt{div\_le\_div\_of\_nonneg\_left}) with \texttt{pow\_pos} positivity.
 \end{theorem}
 
+\begin{theorem}[\texttt{IsingModel.tsum\_two\_div\_pseudoMass\_pair\_product\_le\_const\_pow\_M},
+\texttt{discrete\_hls\_pseudoMass\_two\_pair\_convolution\_constant}
+(HLS pair tsum $2/(1+\ldots)\cdot 2/(1+\ldots)$ variant for $U_4$ form;
+GJ \S17.5 p.~312; Issue \#1645 Step 119 plan Step 5.5c $U_4$-aligned)]
+For $d, \alpha \in \mathbb{N}$ with $d < 2\alpha$, $M > 0$, and
+$x, y : \mathbb{Z}^d$:
+\[
+  \sum_{z \in \mathbb{Z}^d}
+    \frac{2}{1+(M\cdot d(x,z))^\alpha}\cdot\frac{2}{1+(M\cdot d(y,z))^\alpha}
+  \le 4 \cdot \bigl(\max(1, (M^\alpha)^{-1})\cdot 2^\alpha\bigr)^2
+      \cdot \sum_{z \in \mathbb{Z}^d} (1 + d(0, z))^{-2\alpha},
+\]
+and an existential positive constant $K$ form. Scaled-by-4 variant of the
+basic $1/(1+\ldots)\cdot 1/(1+\ldots)$ form, matching the
+$2/(1+(m^-\cdot r')^\alpha)\cdot 2/(1+(m^-\cdot r')^\alpha)$ shape of
+Step~5.3's $|U_4|$ pseudo-mass majorant
+(\texttt{truncated4TwoPoint\_abs\_le\_pseudoMass\_majorant\_of\_distinct}, PR \#3156).
+The factor $2\cdot 2 = 4$ becomes the scalar prefactor on the squared HLS
+constant. Directly composable downstream with the GJ \S17.5 Lemma~17.5.2
+derivative-bound pipeline.
+\end{theorem}
+
 \begin{theorem}[\texttt{IsingModel.discrete\_hls\_pseudoMass\_convolution\_constant}
 (discrete HLS PseudoMass convolution constant; GJ \S17.5 p.~312;
 Issue \#1645 Step 119 plan Step 5.5c existential wrapper)]
