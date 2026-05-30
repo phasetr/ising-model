@@ -14118,6 +14118,22 @@ $1 + (M\cdot t)^\alpha \ge (M\cdot t)^\alpha$ and \texttt{one\_div\_le\_one\_div
 (resp.\ \texttt{div\_le\_div\_of\_nonneg\_left}) with \texttt{pow\_pos} positivity.
 \end{theorem}
 
+\begin{theorem}[\texttt{IsingModel.Ambient.PseudoMassLatticeDistanceBridge\_of\_bound\_active}
+(direct \texttt{PseudoMassLatticeDistanceBridge} constructor;
+GJ \S17.5 pp.~311--312; Issue \#1645 Step 119 plan Step 5.7p)]
+Direct convenience constructor of
+\texttt{PseudoMassLatticeDistanceBridge} taking:
+\begin{itemize}
+  \item $M_{\inf} : \mathbb{R}$ with $0 < M_{\inf}$;
+  \item $\mathrm{Ferromagnetic}\,\langle J, 0, \beta\rangle$;
+  \item all-pair \texttt{bound} (Step 5.7n, \#3185 shape);
+  \item all-pair \texttt{active} (Step 5.7o, \#3186 shape).
+\end{itemize}
+Bypasses the (vacuous) \texttt{cubicTanhProfileBound} family path of
+\texttt{PseudoMassLatticeDistanceBridge\_of\_cubicTanh\_family} (\#3172),
+matching the natural shape of Step 5.7n / Step 5.7o providers.
+\end{theorem}
+
 \begin{theorem}[\texttt{IsingModel.Ambient.correlationInfinite\_pair\_active\_of\_betaJ\_pos}
 (all-pair active range from $0 < \beta\cdot J$;
 GJ \S17.5 pp.~311--312; Issue \#1645 Step 119 plan Step 5.7o)]
