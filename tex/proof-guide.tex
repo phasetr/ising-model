@@ -14118,6 +14118,29 @@ $1 + (M\cdot t)^\alpha \ge (M\cdot t)^\alpha$ and \texttt{one\_div\_le\_one\_div
 (resp.\ \texttt{div\_le\_div\_of\_nonneg\_left}) with \texttt{pow\_pos} positivity.
 \end{theorem}
 
+\begin{theorem}[Lemma 17.5.2 bridge-to-HLS bundle: Simon-Lieb + adjacent + ferromagnetic chain;
+GJ \S17.5 pp.~311--312; Issue \#1645]
+Bundled GJ命題-size collection in file
+\texttt{HLSBridgeFromSimonLieb.lean} consolidating the Step 5.7d-p atomic
+composers (\#3175--\#3187):
+\begin{itemize}
+  \item \texttt{PseudoMassLatticeDistanceBridge\_of\_simonLieb\_smallReg\_adjacent}:
+    end-to-end \texttt{PseudoMassLatticeDistanceBridge} from Simon-Lieb
+    Lebowitz bound + adjacent exp input + ferromagnetic.
+  \item \texttt{tsum\_correlationInfinite\_pair\_product\_le\_const\_of\_simonLieb\_smallReg\_adjacent}:
+    HLS sum existential at arbitrary $(x_0, y_0)$.
+  \item \texttt{tsum\_correlationInfinite\_pair\_product\_zero\_anchor\_le\_const\_of\_simonLieb}:
+    HLS sum at the zero anchor.
+  \item \texttt{all\_pair\_bound\_of\_simonLieb\_smallReg\_adjacent\_provider},
+    \texttt{all\_pair\_active\_of\_betaJ\_pos\_provider}: standalone
+    field providers.
+  \item \texttt{PseudoMassLatticeDistanceBridge\_of\_simonLieb\_smallReg\_tanh\_adjacent}:
+    tanh-input adjacent variant using Step 5.7d's $\tanh^d \le e^{-(M\cdot d)}$.
+  \item \texttt{tsum\_correlationInfinite\_pair\_product\_le\_const\_of\_simonLieb\_tanh\_adjacent}:
+    HLS sum from the tanh-input variant.
+\end{itemize}
+\end{theorem}
+
 \begin{theorem}[\texttt{IsingModel.Ambient.PseudoMassLatticeDistanceBridge\_of\_bound\_active}
 (direct \texttt{PseudoMassLatticeDistanceBridge} constructor;
 GJ \S17.5 pp.~311--312; Issue \#1645 Step 119 plan Step 5.7p)]
