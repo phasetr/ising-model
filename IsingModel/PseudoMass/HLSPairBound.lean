@@ -172,4 +172,41 @@ theorem tsum_pseudoMass_pair_product_le_const_pow_M
           ∑' z, (1 + (latticeDistance d 0 z : ℝ)) ^ (-((2 : ℝ) * α)) :=
         mul_le_mul_of_nonneg_left h_existing hC_sq_nn
 
+/-- **Discrete HLS PseudoMass convolution constant** (Step 119 plan Step 5.5c
+existential constant form).
+
+For `d, α : ℕ` with `d < 2α`, there exists a positive constant `K` such that
+for all `M > 0` and `x, y : Fin d → ℤ`:
+```
+∑_z 1/(1+(M·d(x,z))^α) · 1/(1+(M·d(y,z))^α)
+  ≤ (max(1, (M^α)⁻¹) · 2^α)² · K.
+```
+
+This packages `tsum_pseudoMass_pair_product_le_const_pow_M` with the explicit
+positive witness `K = ∑_z (1 + d(0, z))^(-(2α : ℝ))`, paralleling the
+real-α `discrete_hls_convolution_constant` (`IsingModel/PolyDecay.lean:254`).
+Convenient interface for the GJ §17.5 Lemma 17.5.2 derivative-bound pipeline,
+since the geometric-decay structure of `K` is irrelevant for downstream
+algebra; only the existential positive bound matters.
+
+**Reference:** Glimm--Jaffe, *Quantum Physics*, 2nd ed., §17.5, p. 312. -/
+theorem discrete_hls_pseudoMass_convolution_constant
+    (d α : ℕ) (hαd : d < 2 * α) :
+    ∃ K : ℝ, 0 < K ∧
+      ∀ {M : ℝ} (_ : 0 < M) (x y : Fin d → ℤ),
+        ∑' z : Fin d → ℤ,
+            1 / (1 + (M * (latticeDistance d x z : ℝ)) ^ α) *
+            (1 / (1 + (M * (latticeDistance d y z : ℝ)) ^ α)) ≤
+          (max 1 (M ^ α)⁻¹ * (2 : ℝ) ^ α) ^ 2 * K := by
+  have hα_real : (d : ℝ) < 2 * (α : ℝ) := by exact_mod_cast hαd
+  refine ⟨∑' z : Fin d → ℤ,
+            (1 + (latticeDistance d 0 z : ℝ)) ^ (-((2 : ℝ) * α)), ?_, ?_⟩
+  · -- The corner sum is positive: nonzero at z = 0 (value 1).
+    exact (summable_pow_neg_latticeDistance d hα_real).tsum_pos
+      (fun z => Real.rpow_nonneg (by positivity) _)
+      (0 : Fin d → ℤ)
+      (by simp [latticeDistance])
+  · intro M hM x y
+    exact tsum_pseudoMass_pair_product_le_const_pow_M d hαd hM x y
+
 end IsingModel

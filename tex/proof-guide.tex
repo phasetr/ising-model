@@ -14118,6 +14118,24 @@ $1 + (M\cdot t)^\alpha \ge (M\cdot t)^\alpha$ and \texttt{one\_div\_le\_one\_div
 (resp.\ \texttt{div\_le\_div\_of\_nonneg\_left}) with \texttt{pow\_pos} positivity.
 \end{theorem}
 
+\begin{theorem}[\texttt{IsingModel.discrete\_hls\_pseudoMass\_convolution\_constant}
+(discrete HLS PseudoMass convolution constant; GJ \S17.5 p.~312;
+Issue \#1645 Step 119 plan Step 5.5c existential wrapper)]
+For $d, \alpha \in \mathbb{N}$ with $d < 2\alpha$, there exists $K \in \mathbb{R}$
+with $K > 0$ such that for all $M > 0$ and $x, y : \mathbb{Z}^d$:
+\[
+  \sum_{z \in \mathbb{Z}^d}
+    \frac{1}{1+(M\cdot d(x,z))^\alpha}\cdot\frac{1}{1+(M\cdot d(y,z))^\alpha}
+  \le \bigl(\max(1, (M^\alpha)^{-1})\cdot 2^\alpha\bigr)^2 \cdot K.
+\]
+Packages \texttt{tsum\_pseudoMass\_pair\_product\_le\_const\_pow\_M} with the
+explicit positive witness $K = \sum_z (1 + d(0, z))^{-2\alpha}$, paralleling
+the real-$\alpha$ \texttt{discrete\_hls\_convolution\_constant}
+(\texttt{IsingModel/PolyDecay.lean}). Convenient interface for downstream GJ
+\S17.5 Lemma~17.5.2 derivative-bound composition: only the existential positive
+bound matters; the corner-sum geometric structure of $K$ is irrelevant.
+\end{theorem}
+
 \begin{theorem}[\texttt{IsingModel.tsum\_pseudoMass\_pair\_product\_le\_const\_pow\_M}
 (HLS pair tsum bound for PseudoMass form; GJ \S17.5 p.~312;
 Issue \#1645 Step 119 plan Step 5.5c capstone)]
