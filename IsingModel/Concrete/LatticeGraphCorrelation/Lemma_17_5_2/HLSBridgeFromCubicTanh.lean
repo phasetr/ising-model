@@ -628,5 +628,51 @@ theorem pseudoMassFromParamsAtPair_M_dist_zero_le_of_simonLieb_smallReg
     hα hr d (Ambient.cubicExhaustion d)
     (⟨J, 0, β⟩ : IsingParams ℝ) hM w hsmall hcorr h_exp_upper
 
+/-! ## Step 119 plan Step 5.7k: adjacent dist = 1 specialization -/
+
+/-- **Adjacent (`dist = 1`) `bridge.bound` composer in the small-`M` regime**
+(Step 119 plan Step 5.7k).
+
+Specialization of `pseudoMassFromParamsAtPair_M_dist_zero_le_of_corr_le_exp_smallReg`
+(PR #3176) to `latticeDistance d 0 w = 1`. With `M ≤ 1`, the small-regime
+constraint `M · d(0, w) ≤ 1` is automatic, and the bound shape collapses to
+`M ≤ pseudoMass · r`.
+
+Hypotheses:
+- `1 ≤ α`, `0 < r` (pseudoMass parameters).
+- `0 ≤ M`, `M ≤ 1`.
+- `latticeDistance d 0 w = 1` (adjacent pair).
+- Active range `correlationInfinite ∈ Ioo 0 2`.
+- Adjacent exp bound `correlationInfinite ≤ exp(-M)`.
+
+Conclusion: `M ≤ pseudoMass · r`. Used to close the adjacent slot of a
+full `dist ≥ 1` `hbase` quantifier, complementing Step 5.7j (PR #3181)'s
+`dist ≥ 2` Simon-Lieb composer. -/
+theorem pseudoMassFromParamsAtPair_zero_le_of_corr_le_exp_adjacent
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) {M : ℝ} (hM : 0 ≤ M) (hM_le_one : M ≤ 1)
+    {w : Fin d → ℤ} (hdist : latticeDistance d 0 w = 1)
+    (hcorr : Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ p {0, w}
+              ∈ Set.Ioo (0 : ℝ) 2)
+    (h_exp_upper :
+      Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ p {0, w}
+        ≤ Real.exp (-M)) :
+    M ≤ pseudoMassFromParamsAtPair hα hr d Λ p 0 w * r := by
+  have hdist_cast : (latticeDistance d 0 w : ℝ) = 1 := by
+    rw [hdist]; norm_cast
+  have hsmall : M * (latticeDistance d 0 w : ℝ) ≤ 1 := by
+    rw [hdist_cast, mul_one]; exact hM_le_one
+  have h_exp_upper' :
+      Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ p {0, w}
+        ≤ Real.exp (-(M * (latticeDistance d 0 w : ℝ))) := by
+    rw [hdist_cast, mul_one]; exact h_exp_upper
+  have h := pseudoMassFromParamsAtPair_M_dist_zero_le_of_corr_le_exp_smallReg
+    hα hr d Λ p hM w hsmall hcorr h_exp_upper'
+  rw [hdist_cast, mul_one] at h
+  exact h
+
 end Ambient
 end IsingModel
