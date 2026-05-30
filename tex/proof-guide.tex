@@ -14118,6 +14118,30 @@ $1 + (M\cdot t)^\alpha \ge (M\cdot t)^\alpha$ and \texttt{one\_div\_le\_one\_div
 (resp.\ \texttt{div\_le\_div\_of\_nonneg\_left}) with \texttt{pow\_pos} positivity.
 \end{theorem}
 
+\begin{theorem}[\texttt{IsingModel.tanh\_pow\_le\_exp\_neg\_M\_dist\_r\_of\_M\_r\_le\_highTempExpRate}
+(cubic-path tanh decay to exp form bridge;
+GJ \S17.5 pp.~311--312; Issue \#1645 Step 119 plan Step 5.7d)]
+Under $0 \le \beta\cdot J$ and $M\cdot r \le \mathrm{highTempExpRate}(\beta, J)
+= -\log(\tanh(\beta\cdot J))$, for every $d \in \mathbb{N}$:
+\[
+  \tanh(\beta\cdot J)^d \le e^{-(M\cdot d\cdot r)}.
+\]
+Proof: when $\tanh(\beta\cdot J) > 0$,
+$\tanh(\beta\cdot J)^d = e^{d\cdot \log(\tanh(\beta\cdot J))}
+= e^{-(\mathrm{highTempExpRate})\cdot d}$,
+and the hypothesis gives $M\cdot r \cdot d \le \mathrm{highTempExpRate}\cdot d$, hence
+$-\mathrm{highTempExpRate}\cdot d \le -M\cdot r \cdot d$, so the exponential bound
+follows by monotonicity. The endpoint $\tanh(\beta\cdot J) = 0$ splits by $d$:
+for $d = 0$, $\tanh(\beta\cdot J)^0 = 1 = e^{0}$; for $d > 0$,
+$\tanh(\beta\cdot J)^d = 0 \le e^{-(M\cdot d\cdot r)}$. This is the analytic bridge
+from cubic-path tanh decay $\mathrm{correlation} \le \tanh(\beta\cdot J)^d$ into
+the form $\mathrm{correlation} \le e^{-(M\cdot d\cdot r)}$, combinable with
+\#3174's \texttt{pseudoMassG\_ge\_exp\_of\_tr\_le\_one}
+(small-$t\cdot r$) or \texttt{pseudoMassG\_ge\_exp\_div\_pow\_of\_tr\_ge\_one}
+(large-$t\cdot r$) and the bound reduction of \#3173 to land directly in the
+\texttt{bridge.bound} shape.
+\end{theorem}
+
 \begin{theorem}[\texttt{IsingModel.pseudoMassG\_ge\_exp\_div\_pow\_of\_tr\_ge\_one}
 (large-$t\cdot r$ pseudoMassG lower bound;
 GJ \S17.5 pp.~311--312; Issue \#1645 Step 119 plan Step 5.7c)]
