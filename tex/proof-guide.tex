@@ -14118,6 +14118,21 @@ $1 + (M\cdot t)^\alpha \ge (M\cdot t)^\alpha$ and \texttt{one\_div\_le\_one\_div
 (resp.\ \texttt{div\_le\_div\_of\_nonneg\_left}) with \texttt{pow\_pos} positivity.
 \end{theorem}
 
+\begin{theorem}[\texttt{IsingModel.Ambient.pseudoMassFromParamsAtPair\_all\_pair\_simonLieb\_smallReg\_bound}
+(all-pair \texttt{bridge.bound} from Step 5.7m;
+GJ \S17.5 pp.~311--312; Issue \#1645 Step 119 plan Step 5.7n)]
+Composes Step 5.7m (\#3184) with the existing
+\texttt{pseudoMassFromParamsAtPair\_lower\_bound\_of\_zero\_anchored} to
+produce the all-pair shape
+$\forall x \ne z, M \cdot d(x, z) \le \mathrm{pseudoMass} \cdot r$.
+Matches the \texttt{bound} field signature of
+\texttt{PseudoMassLatticeDistanceBridge}.
+
+This is the final structural step in the Step 5.7 plumbing chain from
+Simon-Lieb $+$ adjacent analytic inputs to the bridge's \texttt{bound}
+field for the small-$M$ regime.
+\end{theorem}
+
 \begin{theorem}[\texttt{IsingModel.Ambient.pseudoMassFromParamsAtPair\_zero\_anchored\_simonLieb\_smallReg\_uniform}
 (\texttt{hbase} quantifier composer from Step 5.7l;
 GJ \S17.5 pp.~311--312; Issue \#1645 Step 119 plan Step 5.7m)]
