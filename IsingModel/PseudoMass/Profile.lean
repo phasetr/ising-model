@@ -381,6 +381,62 @@ theorem one_div_one_add_M_t_pow_le_const_mul_one_div_one_add_pow_pow
         mul_le_mul_of_nonneg_left h2 h_max_pos.le
     _ = max 1 (M ^ α)⁻¹ * (2 : ℝ) ^ α * (1 / (1 + t) ^ α) := by ring
 
+/-- **Form bridge `1/(1+t)^α = (1+t)^(-(α : ℝ))`** (Step 119 plan Step 5.5c bridge).
+
+For `t ≥ 0`, `α : ℕ`:
+
+    1 / (1 + t)^α = (1 + t)^(-(α : ℝ))
+
+where the LHS uses the natural-α `HPow ℝ ℕ ℝ` instance and the RHS uses
+`Real.rpow`. Identity bridge to the real-α form expected by the existing
+infinite-sum infrastructure `tsum_pow_neg_conv_le_const`
+(`IsingModel/PolyDecay.lean:207`). -/
+theorem one_div_one_add_pow_eq_rpow_neg {α : ℕ} {t : ℝ} (ht : 0 ≤ t) :
+    1 / (1 + t) ^ α = (1 + t) ^ (-(α : ℝ)) := by
+  have h1t_nn : 0 ≤ 1 + t := by linarith
+  rw [Real.rpow_neg h1t_nn, Real.rpow_natCast, one_div]
+
+/-- **Pair pointwise HLS bridge** (Step 119 plan Step 5.5c, pair form).
+
+For `M > 0`, `tx, ty ≥ 0`, `α : ℕ`:
+
+    1/(1+(M·tx)^α) · 1/(1+(M·ty)^α)
+      ≤ (max(1, (M^α)⁻¹) · 2^α)² · (1/(1+tx)^α · 1/(1+ty)^α)
+
+Pair form of `one_div_one_add_M_t_pow_le_const_mul_one_div_one_add_pow_pow`,
+obtained by applying the scalar bridge to each factor and combining via
+`mul_le_mul`. The squared constant `C² = (max(1, (M^α)⁻¹) · 2^α)²` collapses
+to `M^(-2α) · 2^(2α)` (the GJ p. 312 `m⁻^(-2α)` scaling) when `M ≤ 1` and
+`α ≥ 1`. Ready for summation with the existing `tsum_pow_neg_conv_le_const`
+(via `one_div_one_add_pow_eq_rpow_neg`). -/
+theorem one_div_one_add_M_t_pow_pair_le_const_sq_mul_one_div_one_add_pow_pow
+    {α : ℕ} {M tx ty : ℝ} (hM : 0 < M) (htx : 0 ≤ tx) (hty : 0 ≤ ty) :
+    1 / (1 + (M * tx) ^ α) * (1 / (1 + (M * ty) ^ α)) ≤
+      (max 1 (M ^ α)⁻¹ * (2 : ℝ) ^ α) ^ 2 *
+        (1 / (1 + tx) ^ α * (1 / (1 + ty) ^ α)) := by
+  have h1 := one_div_one_add_M_t_pow_le_const_mul_one_div_one_add_pow_pow
+    (M := M) (t := tx) (α := α) hM htx
+  have h2 := one_div_one_add_M_t_pow_le_const_mul_one_div_one_add_pow_pow
+    (M := M) (t := ty) (α := α) hM hty
+  have h_max_pos : 0 < max 1 (M ^ α)⁻¹ :=
+    lt_of_lt_of_le zero_lt_one (le_max_left _ _)
+  have h_2pow_pos : (0 : ℝ) < (2 : ℝ) ^ α := pow_pos (by norm_num) α
+  have hC_pos : 0 < max 1 (M ^ α)⁻¹ * (2 : ℝ) ^ α := mul_pos h_max_pos h_2pow_pos
+  have hMty_inv_nn : 0 ≤ 1 / (1 + (M * ty) ^ α) := by
+    apply div_nonneg (by norm_num)
+    have : 0 ≤ (M * ty) ^ α := pow_nonneg (mul_nonneg hM.le hty) α
+    linarith
+  have h_rhs_factor_nn : 0 ≤ max 1 (M ^ α)⁻¹ * (2 : ℝ) ^ α * (1 / (1 + tx) ^ α) := by
+    apply mul_nonneg hC_pos.le
+    apply div_nonneg (by norm_num)
+    exact pow_nonneg (by linarith) α
+  calc 1 / (1 + (M * tx) ^ α) * (1 / (1 + (M * ty) ^ α))
+      ≤ (max 1 (M ^ α)⁻¹ * (2 : ℝ) ^ α * (1 / (1 + tx) ^ α)) *
+          (max 1 (M ^ α)⁻¹ * (2 : ℝ) ^ α * (1 / (1 + ty) ^ α)) := by
+        exact mul_le_mul h1 h2 hMty_inv_nn h_rhs_factor_nn
+    _ = (max 1 (M ^ α)⁻¹ * (2 : ℝ) ^ α) ^ 2 *
+          (1 / (1 + tx) ^ α * (1 / (1 + ty) ^ α)) := by ring
+
 /-- `pseudoMassG` is at most 2 for `t ≥ 0` and `r > 0`.
 Corollary of `pseudoMassG_le_two_div_one_add_pow`. -/
 theorem pseudoMassG_le_two (α : ℕ) {r t : ℝ} (ht : 0 ≤ t) (hr : 0 < r) :
