@@ -5,18 +5,19 @@ import IsingModel.Concrete.LatticeGraphCorrelation.UniformMagCorrelationTrivialH
 /-!
 # HLS correlation pair-product capstone for GJ §17.5 p. 312 derivative bound
 
-Step 119 plan Step 5.6: GJ §17.5 p. 312 で `|c'| ≤ K · c · m⁻^(-2α)` 導出に
-用いる `∑_z ⟨φ(x_0)φ(z)⟩ · ⟨φ(y_0)φ(z)⟩` HLS 形和を bound する capstone.
+Step 119 plan Step 5.6: capstone bounding the HLS-form sum
+`∑_z ⟨φ(x_0)φ(z)⟩ · ⟨φ(y_0)φ(z)⟩` used in GJ §17.5 p. 312 to derive
+`|c'| ≤ K · c · m⁻^(-2α)`.
 
-実装方針: pseudo-mass と lattice-distance を結ぶ下界 `M_inf · d(x,z) ≤ m⁻·r'`
-を `PseudoMassLatticeDistanceBridge` 構造体で抽象化し, それを用いて
-sum bound を導出. bridge の具体構成 (cubic-path / Simon-Lieb 由来)
-は別 PR の課題.
+Strategy: abstract the pseudo-mass-to-lattice-distance lower bound
+`M_inf · d(x,z) ≤ m⁻·r'` as a `PseudoMassLatticeDistanceBridge` structure, and
+use it to derive the sum bound. The bridge's own construction (from cubic-path
+exponential decay / Simon-Lieb) is the subject of a separate PR.
 
-`{x, x} = {x}` (Finset insert idempotent) であり, h = 0 ferromagnetic
-では cardinality 1 (odd) の correlation は Z₂ symmetry で 0 になるため,
-`z = x_0` や `z = y_0` の項は自動的に 0 となり, sum の定義域を
-`ℤ^d \ {x_0, y_0}` に制限する必要はない.
+The case `z = x_0` (or `z = y_0`) is handled automatically: `{x, x} = {x}`
+(Finset insert idempotent) is a singleton, so its h = 0 correlation vanishes
+by the odd-cardinality Z₂ symmetry, and the pair product is 0. There is no
+need to restrict the sum to `ℤ^d \ {x_0, y_0}`.
 
 **Reference:** Glimm--Jaffe, *Quantum Physics*, 2nd ed., §17.5, pp. 311-312.
 -/
@@ -26,43 +27,47 @@ namespace Ambient
 
 open Real
 
-/-- **pseudo-mass ↔ lattice-distance bridge 構造体** (Step 119 plan Step 5.6).
+/-- **Pseudo-mass to lattice-distance bridge structure** (Step 119 plan Step 5.6).
 
-GJ §17.5 p. 312 の HLS step で必要な「per-pair pseudo-mass の下界が lattice
-distance に比例する」事実を抽象化:
+Abstracts the per-pair pseudo-mass lower bound in terms of lattice distance,
+together with the ferromagnetic and active-range assumptions required for the
+GJ §17.5 p. 312 HLS step:
 
-- `M_inf > 0`: volume-independent な質量定数下界.
-- `hf`: 系が ferromagnetic (h = 0, J ≥ 0).
-- `bound`: 任意の異なる `x, z` で `M_inf · d(x,z) ≤ pseudoMassFromParamsAtPair · r'`.
-- `active`: 任意の異なる `x, z` で対応する correlation が active range `Ioo 0 2`.
+- `M_inf > 0`: volume-independent mass lower bound.
+- `hf`: the system is ferromagnetic (J ≥ 0, h = 0).
+- `bound`: for every distinct pair `x ≠ z`,
+  `M_inf · d(x,z) ≤ pseudoMassFromParamsAtPair · r'`.
+- `active`: for every distinct pair `x ≠ z`, the associated correlation lies
+  in the active range `Ioo 0 2`.
 
-この bridge を仮定として受ければ, capstone HLS sum bound が機械的に得られる.
-bridge 自体の具体構成は cubic-path exponential decay + pseudoMassG comparison
-の合成で別 PR の課題. -/
+Given such a bridge, the HLS sum bound follows mechanically. The bridge
+construction itself (cubic-path exponential decay + `pseudoMassG` comparison)
+is left to a subsequent PR. -/
 structure PseudoMassLatticeDistanceBridge
     {α : ℕ} (hα : 1 ≤ α) {r' : ℝ} (hr' : 0 < r')
     (d : ℕ) (J β : ℝ) where
-  /-- ボリューム独立な質量定数下界. -/
+  /-- Volume-independent mass lower bound. -/
   M_inf : ℝ
-  /-- 質量下界の正値性. -/
+  /-- Positivity of the mass lower bound. -/
   M_inf_pos : 0 < M_inf
-  /-- 系が ferromagnetic. -/
+  /-- The system is ferromagnetic at `h = 0`. -/
   hf : IsingModel.Ferromagnetic (⟨J, (0 : ℝ), β⟩ : IsingParams ℝ)
-  /-- per-pair pseudo-mass が `M_inf · d(x,z)` 以上であることを保証. -/
+  /-- Per-pair pseudo-mass dominates `M_inf · d(x,z)`. -/
   bound : ∀ x z : Fin d → ℤ, x ≠ z →
     M_inf * (latticeDistance d x z : ℝ) ≤
       pseudoMassFromParamsAtPair hα hr' d (Ambient.cubicExhaustion d)
         (⟨J, 0, β⟩ : IsingParams ℝ) x z * r'
-  /-- correlation が active range に入っていることを保証. -/
+  /-- Per-pair correlation lies in the active range. -/
   active : ∀ x z : Fin d → ℤ, x ≠ z →
     Ambient.correlationInfinite (IsingModel.latticeGraph d)
         (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {x, z}
       ∈ Set.Ioo (0 : ℝ) 2
 
-/-- **Singleton correlation at h = 0 vanishes** (helper, Step 5.6).
+/-- **Singleton-pair correlation vanishes at `h = 0`** (helper, Step 5.6).
 
-`{x, x} = {x}` (Finset insert idempotent) かつ `{x}` は cardinality 1 (odd),
-よって h = 0 の Z₂ symmetry で `correlationInfinite ⟨J, 0, β⟩ {x, x} = 0`. -/
+`{x, x} = {x}` (Finset insert idempotent) is a singleton of cardinality 1
+(odd), so the `h = 0` Z₂ symmetry gives
+`correlationInfinite ⟨J, 0, β⟩ {x, x} = 0`. -/
 private theorem correlationInfinite_pair_self_h_zero
     (d : ℕ) (J β : ℝ) (x : Fin d → ℤ) :
     Ambient.correlationInfinite (IsingModel.latticeGraph d)
@@ -75,11 +80,13 @@ private theorem correlationInfinite_pair_self_h_zero
 /-- **Pointwise comparison for the HLS correlation pair-product bound**
 (helper, Step 5.6).
 
-bridge を用いて per-`z` で `corr{x₀,z} · corr{y₀,z}` を
-`2/(1+(M·d(x₀,z))^α) · 2/(1+(M·d(y₀,z))^α)` で押さえる.
+Uses the bridge to dominate `corr{x₀,z} · corr{y₀,z}` pointwise by
+`2/(1+(M·d(x₀,z))^α) · 2/(1+(M·d(y₀,z))^α)`:
 
-- `z = x₀` または `z = y₀` の場合: 左辺は singleton correlation の積で 0.
-- それ以外: Step 5.1 (#3154) + `bridge.bound` + 単調性. -/
+- If `z = x₀` or `z = y₀`: the LHS is a product involving a singleton
+  correlation that vanishes by `correlationInfinite_pair_self_h_zero`.
+- Otherwise: combine Step 5.1 (#3154) with `bridge.bound` and the
+  monotonicity of `2/(1+(·)^α)`. -/
 private theorem correlationInfinite_pair_product_le_pseudoMass_pair
     {α : ℕ} (hα : 1 ≤ α) {r' : ℝ} (hr' : 0 < r')
     (d : ℕ) (J β : ℝ)
@@ -93,7 +100,7 @@ private theorem correlationInfinite_pair_product_le_pseudoMass_pair
         (2 / (1 + (bridge.M_inf * (latticeDistance d y₀ z : ℝ)) ^ α)) := by
   set M := bridge.M_inf with hM_def
   have hM_pos : 0 < M := bridge.M_inf_pos
-  -- RHS の各因子の正値性.
+  -- Positivity of the RHS factors.
   have hRHS_x_pos : 0 < 2 / (1 + (M * (latticeDistance d x₀ z : ℝ)) ^ α) := by
     apply div_pos (by norm_num)
     have hMt_nn : (0 : ℝ) ≤ M * (latticeDistance d x₀ z : ℝ) := by
@@ -108,7 +115,7 @@ private theorem correlationInfinite_pair_product_le_pseudoMass_pair
     linarith
   have hRHS_prod_pos : 0 < 2 / (1 + (M * (latticeDistance d x₀ z : ℝ)) ^ α) *
       (2 / (1 + (M * (latticeDistance d y₀ z : ℝ)) ^ α)) := mul_pos hRHS_x_pos hRHS_y_pos
-  -- z = x₀ の場合: 左辺は 0.
+  -- Case `z = x₀`: the LHS is 0.
   by_cases hzx : x₀ = z
   · subst hzx
     rw [correlationInfinite_pair_self_h_zero d J β x₀, zero_mul]
@@ -117,7 +124,7 @@ private theorem correlationInfinite_pair_product_le_pseudoMass_pair
   · subst hzy
     rw [correlationInfinite_pair_self_h_zero d J β y₀, mul_zero]
     exact hRHS_prod_pos.le
-  -- z ≠ x₀ ∧ z ≠ y₀: 通常の bound.
+  -- Case `z ∉ {x₀, y₀}`: the substantive bound.
   have h_x_active := bridge.active x₀ z hzx
   have h_y_active := bridge.active y₀ z hzy
   have h_x_step51 :=
@@ -126,11 +133,11 @@ private theorem correlationInfinite_pair_product_le_pseudoMass_pair
   have h_y_step51 :=
     correlationInfinite_le_two_div_one_add_pow_pseudoMassFromParamsAtPair
       hα hr' (Ambient.cubicExhaustion d) J β y₀ z h_y_active
-  -- bridge.bound: m⁻ · r' ≥ M · d.
+  -- `bridge.bound`: `m⁻ · r' ≥ M · d`.
   have h_x_bnd := bridge.bound x₀ z hzx
   have h_y_bnd := bridge.bound y₀ z hzy
-  -- 単調性: M·d ≤ m⁻·r' → (M·d)^α ≤ (m⁻·r')^α → 1+(M·d)^α ≤ 1+(m⁻·r')^α
-  --       → 2/(1+(m⁻·r')^α) ≤ 2/(1+(M·d)^α).
+  -- Monotonicity: `M·d ≤ m⁻·r'` implies
+  -- `2/(1+(m⁻·r')^α) ≤ 2/(1+(M·d)^α)`.
   set m_x := pseudoMassFromParamsAtPair hα hr' d (Ambient.cubicExhaustion d)
       (⟨J, 0, β⟩ : IsingParams ℝ) x₀ z with hm_x_def
   set m_y := pseudoMassFromParamsAtPair hα hr' d (Ambient.cubicExhaustion d)
@@ -159,7 +166,7 @@ private theorem correlationInfinite_pair_product_le_pseudoMass_pair
     · have hpow_le : (M * (latticeDistance d y₀ z : ℝ)) ^ α ≤ (m_y * r') ^ α :=
         pow_le_pow_left₀ hMdy_nn h_y_bnd α
       linarith
-  -- 非負性 (ferromagnetic) と Step 5.1 + 単調性で sandwich.
+  -- Sandwich via GKS-I nonnegativity + Step 5.1 + monotonicity.
   have h_x_nn : (0 : ℝ) ≤ Ambient.correlationInfinite (IsingModel.latticeGraph d)
       (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {x₀, z} :=
     Ambient.correlationInfinite_nonneg (IsingModel.latticeGraph d)
@@ -168,7 +175,7 @@ private theorem correlationInfinite_pair_product_le_pseudoMass_pair
       (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {y₀, z} :=
     Ambient.correlationInfinite_nonneg (IsingModel.latticeGraph d)
       (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) bridge.hf _
-  -- 連鎖.
+  -- Chain.
   calc Ambient.correlationInfinite (IsingModel.latticeGraph d)
           (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {x₀, z} *
       Ambient.correlationInfinite (IsingModel.latticeGraph d)
@@ -184,20 +191,30 @@ private theorem correlationInfinite_pair_product_le_pseudoMass_pair
 
 /-- **HLS correlation pair-product tsum capstone** (Step 119 plan Step 5.6).
 
-bridge を仮定として受け, GJ p. 312 の HLS 形 sum bound を導出:
+Given a `PseudoMassLatticeDistanceBridge`, derives the GJ §17.5 p. 312 HLS-form
+sum bound:
 ```
-∑_z ⟨φ(x_0)φ(z)⟩ · ⟨φ(y_0)φ(z)⟩ ≤ K
+∃ K > 0, ∑_z ⟨φ(x_0)φ(z)⟩ · ⟨φ(y_0)φ(z)⟩ ≤ K
 ```
-ここで `K > 0` は `M_inf`, `α`, `d` のみに依存する定数.
+where `K > 0` depends only on `M_inf`, `α`, and `d`. Hypotheses: `1 ≤ α`,
+`0 < r'`, `d < 2 * α`.
 
-証明骨格:
-1. `z = x_0` または `z = y_0` の場合: `{x_0, z}` が singleton となり,
-   h = 0 odd cardinality correlation は Z₂ symmetry で 0. 積は 0.
-2. それ以外: Step 5.1 (`correlationInfinite_le_two_div_one_add_pow_pseudoMassFromParamsAtPair`)
-   で各 correlation を `2/(1+(m⁻·r')^α)` で bound. `bridge.bound` で
-   `m⁻·r' ≥ M_inf·d`, よって `2/(1+(m⁻·r')^α) ≤ 2/(1+(M_inf·d)^α)`.
-3. pair-product を `discrete_hls_pseudoMass_two_pair_convolution_constant`
-   (#3170) で sum bound.
+Proof outline:
+
+1. At `z = x_0` (or `z = y_0`), `{x_0, z}` becomes the singleton `{x_0}`;
+   the h = 0 odd-cardinality Z₂ symmetry forces the correlation to vanish.
+   The pair product is 0.
+2. For `z ∉ {x_0, y_0}`, Step 5.1
+   (`correlationInfinite_le_two_div_one_add_pow_pseudoMassFromParamsAtPair`)
+   bounds each correlation by `2/(1+(m⁻·r')^α)`; `bridge.bound` gives
+   `m⁻·r' ≥ M_inf·d`, and monotonicity yields `2/(1+(m⁻·r')^α) ≤
+   2/(1+(M_inf·d)^α)`.
+3. The pair product is summed via
+   `discrete_hls_pseudoMass_two_pair_convolution_constant` (#3170).
+
+Summability of the LHS is established by comparison with an AM-GM bound
+reconstructed here, paralleling the proof of
+`tsum_pseudoMass_pair_product_le_const_pow_M`.
 
 **Reference:** Glimm--Jaffe, *Quantum Physics*, 2nd ed., §17.5, p. 312. -/
 theorem tsum_correlationInfinite_pair_product_le_HLS_const
@@ -214,7 +231,7 @@ theorem tsum_correlationInfinite_pair_product_le_HLS_const
       ≤ K := by
   set M := bridge.M_inf with hM_def
   have hM_pos : 0 < M := bridge.M_inf_pos
-  -- #3170 で comparison constant を取得.
+  -- Obtain the comparison constant from #3170.
   obtain ⟨K₀, hK₀_pos, hK₀_bound⟩ :=
     discrete_hls_pseudoMass_two_pair_convolution_constant d α hαd
   set C := max 1 (M ^ α)⁻¹ * (2 : ℝ) ^ α with hC_def
@@ -222,7 +239,7 @@ theorem tsum_correlationInfinite_pair_product_le_HLS_const
     mul_pos (lt_of_lt_of_le zero_lt_one (le_max_left _ _))
       (pow_pos (by norm_num) α)
   refine ⟨4 * C ^ 2 * K₀, by positivity, ?_⟩
-  -- f, g の定義.
+  -- Define LHS summand `f` and comparison summand `g`.
   set f : (Fin d → ℤ) → ℝ := fun z =>
       Ambient.correlationInfinite (IsingModel.latticeGraph d)
           (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {x₀, z} *
@@ -233,10 +250,10 @@ theorem tsum_correlationInfinite_pair_product_le_HLS_const
       2 / (1 + (M * (latticeDistance d x₀ z : ℝ)) ^ α) *
         (2 / (1 + (M * (latticeDistance d y₀ z : ℝ)) ^ α))
       with hg_def
-  -- pointwise: f z ≤ g z.
+  -- Pointwise comparison.
   have h_pointwise : ∀ z, f z ≤ g z := fun z =>
     correlationInfinite_pair_product_le_pseudoMass_pair hα hr' d J β bridge x₀ y₀ z
-  -- pointwise nonneg of f.
+  -- Pointwise nonnegativity of `f`.
   have hf_nn : ∀ z, 0 ≤ f z := fun z => by
     change 0 ≤
         Ambient.correlationInfinite (IsingModel.latticeGraph d)
@@ -248,15 +265,9 @@ theorem tsum_correlationInfinite_pair_product_le_HLS_const
         (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) bridge.hf _
     · exact Ambient.correlationInfinite_nonneg (IsingModel.latticeGraph d)
         (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) bridge.hf _
-  -- #3170 適用で g の sum を bound.
+  -- The sum of `g` is bounded via #3170.
   have h_g_sum_le : ∑' z, g z ≤ 4 * C ^ 2 * K₀ := hK₀_bound hM_pos x₀ y₀
-  -- g は summable: 上界 (4·C²·K₀) で bounded above and nonneg.
-  -- もっと簡明には: #3170 の中身 `tsum_two_div_pseudoMass_pair_product_le_const_pow_M`
-  -- が summability 構築を含む (Summable.of_nonneg_of_le 経由).
-  -- ここでは f を bound するために g の summability が要る.
-  -- 直接 f の summability + tsum_le を提示するためには g summable が必要.
-  -- HLSPairBound 側で g の summability が確立されている (tsum 計算内部で).
-  -- 簡略化: f z ≤ g z かつ g z ≥ 0 (positivity).
+  -- Pointwise nonnegativity of `g` (each factor is positive).
   have hg_nn : ∀ z, 0 ≤ g z := fun z => by
     have hMdx_nn : (0 : ℝ) ≤ M * (latticeDistance d x₀ z : ℝ) := by
       apply mul_nonneg hM_pos.le; exact_mod_cast Nat.zero_le _
@@ -267,40 +278,26 @@ theorem tsum_correlationInfinite_pair_product_le_HLS_const
     have h_y_pos : 0 < 2 / (1 + (M * (latticeDistance d y₀ z : ℝ)) ^ α) := by
       apply div_pos (by norm_num); have := pow_nonneg hMdy_nn α; linarith
     exact (mul_pos h_x_pos h_y_pos).le
-  -- g summable from existing HLS infrastructure.
-  -- We reconstruct it using AM-GM (same as PolyDecay).
+  -- Summability of `g`, reconstructed via AM-GM (parallel to PolyDecay).
   have hα_real : (d : ℝ) < 2 * (α : ℝ) := by exact_mod_cast hαd
   have h_g_summable : Summable g := by
-    -- g z = 4 · 1/(1+(M·d_x)^α) · 1/(1+(M·d_y)^α). Use tsum_pseudoMass... summability.
-    -- 既存 #3168 の証明内で g (1/...·1/...) の summability が証明されている.
-    -- 直接利用するため, h_g_sum_le を hg_nn と組み合わせれば良い.
-    -- しかし `tsum_le_tsum` には summability が要るので, 構築する.
-    -- Strategy: bound g z ≤ K_pointwise · ((1+d_x)^(-2α) + (1+d_y)^(-2α))/2 (AM-GM).
-    -- ここで K_pointwise = 4 · C^2 (定数).
-    -- (1+d_x)^(-2α) は summable.
-    -- これは結局, #3170 内部の summability 構築をやり直すことになる.
-    -- もっと簡明な path: g = 4 · h, where h is the base #3168 summand.
-    -- h summable は #3168 の証明内部で確立.
-    -- ここでは仕方なく再構築する.
-    -- Define h := 1/(1+(M·d_x)^α) · 1/(1+(M·d_y)^α).
+    -- `g = 4 · h`, where `h` is the base #3168 summand.
     set h : (Fin d → ℤ) → ℝ := fun z =>
         1 / (1 + (M * (latticeDistance d x₀ z : ℝ)) ^ α) *
           (1 / (1 + (M * (latticeDistance d y₀ z : ℝ)) ^ α))
         with hh_def
     have h_eq : g = fun z => 4 * h z := by
       funext z
-      show _ = 4 * _
+      change _ = 4 * _
       ring
     rw [h_eq]
-    -- Summable (4 · h) ↔ Summable h.
     apply Summable.mul_left 4
-    -- Now show Summable h. Use AM-GM bridge to (1+d)^(-2α).
-    -- Following the same pattern as in tsum_pseudoMass_pair_product_le_const_pow_M.
+    -- Real-α rpow companion of `h`.
     set h_rpow : (Fin d → ℤ) → ℝ := fun z =>
         (1 + (latticeDistance d x₀ z : ℝ)) ^ (-(α : ℝ)) *
           (1 + (latticeDistance d y₀ z : ℝ)) ^ (-(α : ℝ))
         with hh_rpow_def
-    -- h_rpow summable via AM-GM.
+    -- `h_rpow` summable via AM-GM.
     have h_avg_summable : Summable (fun z =>
         ((1 + (latticeDistance d x₀ z : ℝ)) ^ (-((2 : ℝ) * α)) +
          (1 + (latticeDistance d y₀ z : ℝ)) ^ (-((2 : ℝ) * α))) / 2) := by
@@ -328,9 +325,7 @@ theorem tsum_correlationInfinite_pair_product_le_HLS_const
       nlinarith [sq_nonneg (a - b), ha2, hb2]
     have h_rpow_summable : Summable h_rpow :=
       Summable.of_nonneg_of_le h_rpow_nn h_rpow_le_avg h_avg_summable
-    -- h z = ... ≤ C^2 · h_rpow z (from pair pointwise bridge + form bridge).
-    -- このため #3168 を per-z 適用. しかし bridges は z ごとに必要.
-    -- 直接 pointwise inequality を inline で構築.
+    -- Pointwise `h z ≤ C^2 · h_rpow z` via the pair-pointwise bridge + form bridge.
     have h_h_nn : ∀ z, 0 ≤ h z := fun z => by
       change 0 ≤ 1 / _ * (1 / _)
       have hMdx_nn : (0 : ℝ) ≤ M * (latticeDistance d x₀ z : ℝ) := by
@@ -370,10 +365,10 @@ theorem tsum_correlationInfinite_pair_product_le_HLS_const
     have h_Crpow_summable : Summable (fun z => C ^ 2 * h_rpow z) :=
       h_rpow_summable.mul_left _
     exact Summable.of_nonneg_of_le h_h_nn h_h_le h_Crpow_summable
-  -- f summable from comparison.
+  -- `f` summable by comparison with `g`.
   have h_f_summable : Summable f :=
     Summable.of_nonneg_of_le hf_nn h_pointwise h_g_summable
-  -- ∑ f ≤ ∑ g ≤ 4 · C² · K₀.
+  -- Final chain: `∑ f ≤ ∑ g ≤ 4·C²·K₀`.
   calc ∑' z, f z
       ≤ ∑' z, g z := h_f_summable.tsum_le_tsum h_pointwise h_g_summable
     _ ≤ 4 * C ^ 2 * K₀ := h_g_sum_le
