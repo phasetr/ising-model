@@ -14118,11 +14118,39 @@ $1 + (M\cdot t)^\alpha \ge (M\cdot t)^\alpha$ and \texttt{one\_div\_le\_one\_div
 (resp.\ \texttt{div\_le\_div\_of\_nonneg\_left}) with \texttt{pow\_pos} positivity.
 \end{theorem}
 
+\begin{theorem}[\texttt{IsingModel.tsum\_pseudoMass\_pair\_product\_le\_const\_pow\_M}
+(HLS pair tsum bound for PseudoMass form; GJ \S17.5 p.~312;
+Issue \#1645 Step 119 plan Step 5.5c capstone)]
+For $d, \alpha \in \mathbb{N}$ with $d < 2\alpha$, $M > 0$, and
+$x, y : \mathbb{Z}^d$:
+\[
+  \sum_{z \in \mathbb{Z}^d}
+    \frac{1}{1+(M\cdot d(x,z))^\alpha}\cdot\frac{1}{1+(M\cdot d(y,z))^\alpha}
+  \le \bigl(\max(1, (M^\alpha)^{-1})\cdot 2^\alpha\bigr)^2
+      \cdot \sum_{z \in \mathbb{Z}^d} (1 + d(0, z))^{-2\alpha}.
+\]
+Composition of the pair pointwise bridge
+\texttt{one\_div\_one\_add\_M\_t\_pow\_pair\_le\_const\_sq\_mul\_one\_div\_one\_add\_pow\_pow},
+the form bridge \texttt{one\_div\_one\_add\_pow\_eq\_rpow\_neg}
+($1/(1+t)^\alpha = (1+t)^{-(\alpha:\mathbb{R})}$ for $t \ge 0$, natural $\alpha$),
+and the existing real-$\alpha$ HLS pair-sum bound
+\texttt{tsum\_pow\_neg\_conv\_le\_const} (\texttt{IsingModel/PolyDecay.lean}).
+Summability of the natural-$\alpha$ LHS is obtained by comparison with the
+AM-GM bound $((1+d(x,z))^{-2\alpha}+(1+d(y,z))^{-2\alpha})/2$ (paralleling the
+existing PolyDecay proof). The squared prefactor
+$(\max(1, (M^\alpha)^{-1})\cdot 2^\alpha)^2$ collapses to $M^{-2\alpha}\cdot 4^\alpha$
+(the GJ p.~312 $m^{-2\alpha}$ scaling) when $M\le 1$ and $\alpha\ge 1$, and to
+$4^\alpha$ when $M^\alpha\ge 1$. This is the discrete HLS sum step in GJ
+p.~312's $|c'|\le K\cdot c/m^{-2\alpha}$ derivation.
+\end{theorem}
+
 \begin{theorem}[\texttt{IsingModel.one\_div\_one\_add\_M\_t\_pow\_le\_max\_mul\_one\_div\_one\_add\_t\_pow},
 \texttt{one\_div\_one\_add\_t\_pow\_le\_two\_pow\_mul\_one\_div\_one\_add\_pow\_pow},
-\texttt{one\_div\_one\_add\_M\_t\_pow\_le\_const\_mul\_one\_div\_one\_add\_pow\_pow}
-(HLS pointwise bridge $1/(1+(M\cdot t)^\alpha) \to 1/(1+t)^\alpha$;
-GJ \S17.5 p.~312; Issue \#1645 Step 119 plan Step 5.5c)]
+\texttt{one\_div\_one\_add\_M\_t\_pow\_le\_const\_mul\_one\_div\_one\_add\_pow\_pow},
+\texttt{one\_div\_one\_add\_pow\_eq\_rpow\_neg},
+\texttt{one\_div\_one\_add\_M\_t\_pow\_pair\_le\_const\_sq\_mul\_one\_div\_one\_add\_pow\_pow}
+(HLS pointwise bridges $1/(1+(M\cdot t)^\alpha) \to 1/(1+t)^\alpha$ and pair form;
+GJ \S17.5 p.~312; Issue \#1645 Step 119 plan Step 5.5c pointwise)]
 For $M > 0$, $t \ge 0$, $\alpha \in \mathbb{N}$:
 \[
   \frac{1}{1 + (M\cdot t)^\alpha}
