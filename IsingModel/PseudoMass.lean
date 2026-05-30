@@ -1,4 +1,5 @@
 import IsingModel.PseudoMass.FromParamsBounds
+import IsingModel.PseudoMass.HLSPairBound
 
 /-!
 # Pseudo-mass construction
