@@ -14046,6 +14046,27 @@ high-temperature region). The right-hand side is uniform in $n$ — the per-stag
 input for the Phase C convergence-rate argument.
 \end{theorem}
 
+\begin{theorem}[\texttt{IsingModel.Ambient.correlationInfinite\_le\_two\_div\_one\_add\_pow\_pseudoMassFromParamsAtPair}
+($m^-$ majorant for $\mathrm{correlationInfinite}$; GJ \S17.5 p.~311; Issue \#1645 Step 119
+plan Step 5.1)]
+For any active pair $(x, z)$ (i.e.\ $\mathrm{correlationInfinite}\,\{x, z\}\in(0, 2)$), the
+infinite-volume two-point function is dominated by the rational pseudo-mass majorant:
+\[
+  \mathrm{correlationInfinite}\,(\mathrm{latticeGraph}\,d)\,\Lambda\,\langle J,0,\beta\rangle\,
+      \{x, z\} \le \frac{2}{1 + (m^-\cdot r)^{\alpha}},
+\]
+where $m^- = \mathtt{pseudoMassFromParamsAtPair}\,h_\alpha\,h_r\,d\,\Lambda\,\langle J,0,\beta\rangle\,x\,z$
+and $r>0$ is the pseudo-mass radius parameter. Direct corollary of the defining identity
+$\mathtt{pseudoMassG}\,\alpha\,r\,m^- = \mathrm{correlationInfinite}$ (\texttt{pseudoMass\_spec})
+composed with the pointwise rational bound
+$\mathtt{pseudoMassG}\,\alpha\,r\,t \le 2/(1 + (t\cdot r)^{\alpha})$
+(\texttt{pseudoMassG\_le\_two\_div\_one\_add\_pow}, which drops the
+$e^{-tr}\le 1$ factor). The $m^-$ majorant used in GJ p.~312 to substitute
+$\langle\phi(x)\phi(z)\rangle/A\to 2/(1+(m^-\cdot d(x,z))^\alpha)$ in the proof of Theorem
+17.5.1; the first step toward the HLS comparison form $|c'|\le K\cdot c / m^{-2\alpha}$
+needed by \texttt{gj\_theorem\_17\_5\_1\_pseudoMass\_pow\_succ\_lipschitz\_on\_Icc}.
+\end{theorem}
+
 \begin{theorem}[\texttt{IsingModel.Ambient.dist\_deriv\_correlation\_le\_of\_complex\_circle\_bound}
 (derivative-increment bridge from a complex circle bound, Issue \#3026)]
 For two finite-volume Ising correlations on graphs $G_1,G_2$ at real parameters $J,h$ and a
