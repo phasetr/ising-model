@@ -23,7 +23,6 @@ def PseudoMassLatticeDistanceBridge_of_simonLieb_ferromagnetic
     {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     (d : ℕ) {J β : ℝ}
     (hf : IsingModel.Ferromagnetic (⟨J, (0 : ℝ), β⟩ : IsingParams ℝ))
-    (hβJ_pos : 0 < β * J)
     (hβJd_pos : 0 < β * J * (2 * d)) (hβJd_le : β * J * (2 * d) ≤ 1)
     {M : ℝ} (hM_pos : 0 < M)
     (hMrate : M ≤ simonLiebRate β J d / 2)
@@ -34,6 +33,12 @@ def PseudoMassLatticeDistanceBridge_of_simonLieb_ferromagnetic
           (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {0, w}
         ≤ Real.exp (-M)) :
     PseudoMassLatticeDistanceBridge hα hr d J β :=
+  have h2d_nn : (0 : ℝ) ≤ 2 * d := by positivity
+  have hβJ_pos : 0 < β * J := by
+    by_contra h
+    push_neg at h
+    have : β * J * (2 * d) ≤ 0 := mul_nonpos_of_nonpos_of_nonneg h h2d_nn
+    linarith
   PseudoMassLatticeDistanceBridge_of_simonLieb_smallReg_adjacent
     hα hr d hf.hJ hf.hβ hβJ_pos hβJd_pos hβJd_le hM_pos hMrate
     h_corr_small h_adj_exp
@@ -43,7 +48,6 @@ theorem tsum_correlationInfinite_pair_product_le_const_of_simonLieb_ferromagneti
     {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     (d : ℕ) (hαd : d < 2 * α) {J β : ℝ}
     (hf : IsingModel.Ferromagnetic (⟨J, (0 : ℝ), β⟩ : IsingParams ℝ))
-    (hβJ_pos : 0 < β * J)
     (hβJd_pos : 0 < β * J * (2 * d)) (hβJd_le : β * J * (2 * d) ≤ 1)
     {M : ℝ} (hM_pos : 0 < M)
     (hMrate : M ≤ simonLiebRate β J d / 2)
@@ -60,8 +64,14 @@ theorem tsum_correlationInfinite_pair_product_le_const_of_simonLieb_ferromagneti
             (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {x₀, z} *
         Ambient.correlationInfinite (IsingModel.latticeGraph d)
             (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {y₀, z}
-      ≤ K :=
-  tsum_correlationInfinite_pair_product_le_const_of_simonLieb_smallReg_adjacent
+      ≤ K := by
+  have h2d_nn : (0 : ℝ) ≤ 2 * d := by positivity
+  have hβJ_pos : 0 < β * J := by
+    by_contra h
+    push_neg at h
+    have : β * J * (2 * d) ≤ 0 := mul_nonpos_of_nonpos_of_nonneg h h2d_nn
+    linarith
+  exact tsum_correlationInfinite_pair_product_le_const_of_simonLieb_smallReg_adjacent
     hα hr d hαd hf.hJ hf.hβ hβJ_pos hβJd_pos hβJd_le hM_pos hMrate
     h_corr_small h_adj_exp x₀ y₀
 
@@ -119,7 +129,7 @@ theorem bridge_active_at_pair
 
 /-- **`β · J · (2d) ≤ 1` from `β · J ≤ 1/(2d)`** (helper).
 
-Convenience implication for the strict high-temperature constraint when
+Convenience implication for the upper high-temperature constraint when
 expressed as a per-coupling bound. -/
 theorem betaJ_two_d_le_one_of_betaJ_le_inv {β J : ℝ} {d : ℕ}
     (hd : 0 < d) (hbβJ : β * J ≤ 1 / (2 * d)) :
