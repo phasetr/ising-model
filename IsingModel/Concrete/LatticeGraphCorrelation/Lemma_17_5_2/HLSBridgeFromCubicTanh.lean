@@ -859,11 +859,14 @@ structural input set for building a concrete `PseudoMassLatticeDistanceBridge`
 value directly from concrete analytic inputs (without going through the
 vacuous `cubicTanhProfileBound` family). -/
 theorem correlationInfinite_pair_active_of_betaJ_pos
-    {d : ℕ} {J β : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β) (hβJ_pos : 0 < β * J) :
+    {d : ℕ} {J β : ℝ} (hβ : 0 < β) (hβJ_pos : 0 < β * J) :
     ∀ x z : Fin d → ℤ, x ≠ z →
       Ambient.correlationInfinite (IsingModel.latticeGraph d)
           (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {x, z}
         ∈ Set.Ioo (0 : ℝ) 2 := by
+  have hJ : 0 ≤ J := by
+    have hJ_pos : 0 < J := (mul_pos_iff_of_pos_left hβ).mp hβJ_pos
+    exact hJ_pos.le
   intro x z hxz
   refine ⟨?_, ?_⟩
   · -- Lower bound: 0 < tanh(β·J)^d(x,z) ≤ correlation
