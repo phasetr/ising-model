@@ -18,8 +18,6 @@ These wrappers take the `Ferromagnetic ⟨J, 0, β⟩` predicate directly.
 namespace IsingModel
 namespace Ambient
 
-open Real
-
 /-! ## Ferromagnetic-form Simon-Lieb aliases -/
 
 /-- **Simon-Lieb power decay from `Ferromagnetic ⟨J, 0, β⟩`**. -/
