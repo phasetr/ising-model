@@ -14118,6 +14118,24 @@ $1 + (M\cdot t)^\alpha \ge (M\cdot t)^\alpha$ and \texttt{one\_div\_le\_one\_div
 (resp.\ \texttt{div\_le\_div\_of\_nonneg\_left}) with \texttt{pow\_pos} positivity.
 \end{theorem}
 
+\begin{theorem}[\texttt{IsingModel.Ambient.pseudoMassFromParamsAtPair\_zero\_anchored\_simonLieb\_smallReg\_uniform}
+(\texttt{hbase} quantifier composer from Step 5.7l;
+GJ \S17.5 pp.~311--312; Issue \#1645 Step 119 plan Step 5.7m)]
+Lifts Step 5.7l (\#3183) per-$w$ composer to the universally-quantified
+$\forall w \ne 0, M \cdot d(0, w) \le \mathrm{pseudoMass} \cdot r$ shape.
+This is the zero-anchored input consumed by
+\texttt{pseudoMassFromParamsAtPair\_lower\_bound\_of\_zero\_anchored}
+(existing), which lifts to all distinct pairs.
+
+Uniform per-$w \ne 0$ hypotheses: active range, small-$t\cdot r$
+constraint $M \cdot d(0, w) \le 1$, and adjacent input
+$\mathrm{correlation}\,\{0, w\} \le e^{-M}$ at $\mathrm{dist}(0, w) = 1$.
+The small constraint is restrictive (forces $M = 0$ for unbounded $w$
+support), but the composer provides clean structural plumbing.
+
+Completes the per-$w$ to $\forall w \ne 0$ lift in the small-$M$ regime.
+\end{theorem}
+
 \begin{theorem}[\texttt{IsingModel.Ambient.pseudoMassFromParamsAtPair\_M\_dist\_zero\_le\_simonLieb\_smallReg\_combined}
 (combined Simon-Lieb + adjacent \texttt{bridge.bound} composer for $\mathrm{dist} \ge 1$;
 GJ \S17.5 pp.~311--312; Issue \#1645 Step 119 plan Step 5.7l)]
