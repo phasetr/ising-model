@@ -1,11 +1,11 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.HLSBridgeConvenience
 
 /-!
-# HLS bridge tanh + pseudoMassG-direct interface bundle
+# HLS bridge tanh-direct interface bundle
 
-GJ-proposition-unit bundle of tanh-direct and pseudoMassG-direct interface
-variants for the HLS bridge constructors. Builds on the tanh-input variant
-in HLSBridgeFromSimonLieb.lean (#3188) and the convenience layer (#3192).
+GJ-proposition-unit bundle of tanh-direct interface variants for the HLS
+bridge constructors. Builds on the tanh-input variant in
+HLSBridgeFromSimonLieb.lean (#3188) and the convenience layer (#3192).
 
 **Reference:** Glimm--Jaffe, *Quantum Physics*, 2nd ed., §17.5, pp. 311--312.
 -/
