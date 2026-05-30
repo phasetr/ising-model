@@ -662,6 +662,72 @@ theorem correlationInfinite_le_two_div_one_add_pow_pseudoMassFromParamsAtPair
   calc c = pseudoMassG α r m := hspec.symm
     _ ≤ 2 / (1 + (m * r) ^ α) := pseudoMassG_le_two_div_one_add_pow α hm_nn hr
 
+/-- **GJ §17.5 pair-product m⁻ majorant** (GJ §17.5 p. 312, Step 119 plan Step 5.2).
+
+For two active pairs `(x, z)` and `(y, z)` (both `correlationInfinite ∈ Ioo 0 2`),
+the product of the two-point functions is dominated by the product of pseudo-mass majorants:
+
+    ⟨σ_x σ_z⟩ · ⟨σ_y σ_z⟩
+      ≤ 4 / ((1 + (m⁻_xz · r)^α) · (1 + (m⁻_yz · r)^α))
+
+where `m⁻_xz = pseudoMassFromParamsAtPair ⟨J,0,β⟩ x z` and similarly for `m⁻_yz`.
+
+Direct corollary of `correlationInfinite_le_two_div_one_add_pow_pseudoMassFromParamsAtPair`
+applied twice via `mul_le_mul` (with non-negativity from GKS-I /
+`correlationInfinite_nonneg`).
+
+This is the pair-product form used in GJ p. 312 inside `∑_z ⟨φ(x₀)φ(z)⟩⟨φ(y₀)φ(z)⟩` —
+the Lebowitz IIIb cross-product term whose sum over `z` gives the HLS comparison
+form `|c'| ≤ K · c / m⁻^(2α)`. -/
+theorem correlationInfinite_pair_product_le_four_div_one_add_pow_pseudoMassFromParamsAtPair
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) {d : ℕ}
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (J β : ℝ) (x y z : Fin d → ℤ)
+    (hf : IsingModel.Ferromagnetic (⟨J, (0 : ℝ), β⟩ : IsingParams ℝ))
+    (hcxz : Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} ∈ Set.Ioo (0 : ℝ) 2)
+    (hcyz : Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) {y, z} ∈ Set.Ioo (0 : ℝ) 2) :
+    Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} *
+      Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) {y, z}
+      ≤ 2 / (1 + (pseudoMassFromParamsAtPair hα hr d Λ
+                    (⟨J, 0, β⟩ : IsingParams ℝ) x z * r) ^ α) *
+        (2 / (1 + (pseudoMassFromParamsAtPair hα hr d Λ
+                    (⟨J, 0, β⟩ : IsingParams ℝ) y z * r) ^ α)) := by
+  -- Two instances of the m⁻ majorant
+  have hxz := correlationInfinite_le_two_div_one_add_pow_pseudoMassFromParamsAtPair
+    hα hr Λ J β x z hcxz
+  have hyz := correlationInfinite_le_two_div_one_add_pow_pseudoMassFromParamsAtPair
+    hα hr Λ J β y z hcyz
+  -- Non-negativity of correlations (GKS-I)
+  have hxz_nn : 0 ≤ Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+      (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} :=
+    Ambient.correlationInfinite_nonneg (IsingModel.latticeGraph d) Λ
+      (⟨J, 0, β⟩ : IsingParams ℝ) hf {x, z}
+  have hyz_nn : 0 ≤ Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+      (⟨J, 0, β⟩ : IsingParams ℝ) {y, z} :=
+    Ambient.correlationInfinite_nonneg (IsingModel.latticeGraph d) Λ
+      (⟨J, 0, β⟩ : IsingParams ℝ) hf {y, z}
+  -- Right-hand side non-negativity
+  have hm_xz_nn : 0 ≤ pseudoMassFromParamsAtPair hα hr d Λ
+      (⟨J, 0, β⟩ : IsingParams ℝ) x z :=
+    pseudoMassFromParamsAtPair_nonneg hα hr d Λ (⟨J, 0, β⟩ : IsingParams ℝ) x z
+  have hRHS_xz_pos : 0 < 1 + (pseudoMassFromParamsAtPair hα hr d Λ
+      (⟨J, 0, β⟩ : IsingParams ℝ) x z * r) ^ α := by
+    have h : 0 ≤ (pseudoMassFromParamsAtPair hα hr d Λ
+      (⟨J, 0, β⟩ : IsingParams ℝ) x z * r) ^ α :=
+      pow_nonneg (mul_nonneg hm_xz_nn hr.le) α
+    linarith
+  have hRHS_xz_nn : 0 ≤ 2 / (1 + (pseudoMassFromParamsAtPair hα hr d Λ
+      (⟨J, 0, β⟩ : IsingParams ℝ) x z * r) ^ α) :=
+    div_nonneg (by norm_num) hRHS_xz_pos.le
+  -- Apply mul_le_mul
+  exact mul_le_mul hxz hyz hyz_nn hRHS_xz_nn
+
 end Ambient
 
 end IsingModel

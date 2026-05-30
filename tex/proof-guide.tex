@@ -14067,6 +14067,21 @@ $\langle\phi(x)\phi(z)\rangle/A\to 2/(1+(m^-\cdot d(x,z))^\alpha)$ in the proof 
 needed by \texttt{gj\_theorem\_17\_5\_1\_pseudoMass\_pow\_succ\_lipschitz\_on\_Icc}.
 \end{theorem}
 
+\begin{theorem}[\texttt{IsingModel.Ambient.correlationInfinite\_pair\_product\_le\_four\_div\_one\_add\_pow\_pseudoMassFromParamsAtPair}
+($m^-$ pair-product majorant; GJ \S17.5 p.~312; Issue \#1645 Step 119 plan Step 5.2)]
+For two active pairs $(x, z)$ and $(y, z)$,
+\[
+  \langle\sigma_x\sigma_z\rangle\cdot\langle\sigma_y\sigma_z\rangle
+    \le \frac{2}{1+(m^-_{xz}\cdot r)^\alpha}\cdot\frac{2}{1+(m^-_{yz}\cdot r)^\alpha}.
+\]
+Direct corollary of the single-pair $m^-$ majorant
+\texttt{correlationInfinite\_le\_two\_div\_one\_add\_pow\_pseudoMassFromParamsAtPair}
+applied twice via \texttt{mul\_le\_mul} with GKS-I non-negativity. The pair-product form
+used in GJ p.~312 inside $\sum_z\langle\phi(x_0)\phi(z)\rangle\langle\phi(y_0)\phi(z)\rangle$
+— the Lebowitz IIIb cross-product term whose sum gives the HLS comparison
+$|c'|\le K\cdot c/m^{-2\alpha}$.
+\end{theorem}
+
 \begin{theorem}[\texttt{IsingModel.Ambient.dist\_deriv\_correlation\_le\_of\_complex\_circle\_bound}
 (derivative-increment bridge from a complex circle bound, Issue \#3026)]
 For two finite-volume Ising correlations on graphs $G_1,G_2$ at real parameters $J,h$ and a
