@@ -133,6 +133,40 @@ theorem pseudoMassG_le_two_mul_exp (α : ℕ) {r t : ℝ} (ht : 0 ≤ t) (hr : 0
   rw [div_le_iff₀ h_denom_pos]
   nlinarith
 
+/-- **GJ §17.5 Theorem 17.5.1 bridge to polynomial decay** (Step 119 plan Step 5.4 bridge).
+
+For `M·t > 0` and `α : ℕ`, the rational pseudo-mass denominator can be bounded by the pure
+polynomial decay:
+
+    1 / (1 + (M·t)^α) ≤ 1 / (M·t)^α
+
+This is the pointwise bridge from the pseudo-mass majorant form `1/(1+(M·t)^α)` to the
+discrete-HLS polynomial-decay form `(M·t)^(-α) = M^(-α)·t^(-α)`. Proof: `1 + (M·t)^α ≥ (M·t)^α`
+(since 1 ≥ 0), and `one_div_le_one_div_of_le` with positivity of `(M·t)^α`. -/
+theorem one_div_one_add_pow_le_one_div_pow {α : ℕ} {Mt : ℝ} (hMt : 0 < Mt) :
+    1 / (1 + Mt ^ α) ≤ 1 / Mt ^ α := by
+  have h_pow_pos : 0 < Mt ^ α := pow_pos hMt α
+  have h_denom_pos : 0 < 1 + Mt ^ α := by linarith
+  have h_denom_ge : Mt ^ α ≤ 1 + Mt ^ α := by linarith
+  exact one_div_le_one_div_of_le h_pow_pos h_denom_ge
+
+/-- **`pseudoMassG`-form pointwise polynomial bridge** (Step 119 plan Step 5.4 bridge).
+
+For `t > 0`, `r > 0`, `α : ℕ` (so `t·r > 0`):
+
+    2 / (1 + (t·r)^α) ≤ 2 / (t·r)^α = 2 · (t·r)^(-α)
+
+Direct consequence of `one_div_one_add_pow_le_one_div_pow` scaled by 2. Couples the
+pseudoMass majorant form `2/(1+(t·r)^α)` (PR #3154's
+`_le_two_div_one_add_pow_pseudoMassFromParamsAtPair`) to the polynomial decay form
+`2·(t·r)^(-α)` directly usable in the HLS sum. -/
+theorem two_div_one_add_pow_le_two_div_pow {α : ℕ} {tr : ℝ} (htr : 0 < tr) :
+    2 / (1 + tr ^ α) ≤ 2 / tr ^ α := by
+  have h_pow_pos : 0 < tr ^ α := pow_pos htr α
+  have h_denom_pos : 0 < 1 + tr ^ α := by linarith
+  have h_denom_ge : tr ^ α ≤ 1 + tr ^ α := by linarith
+  exact div_le_div_of_nonneg_left (by norm_num) h_pow_pos h_denom_ge
+
 /-- `pseudoMassG` is at most 2 for `t ≥ 0` and `r > 0`.
 Corollary of `pseudoMassG_le_two_div_one_add_pow`. -/
 theorem pseudoMassG_le_two (α : ℕ) {r t : ℝ} (ht : 0 ≤ t) (hr : 0 < r) :
