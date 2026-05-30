@@ -36,7 +36,7 @@ def PseudoMassLatticeDistanceBridge_of_simonLieb_ferromagnetic
   have h2d_nn : (0 : ℝ) ≤ 2 * d := by positivity
   have hβJ_pos : 0 < β * J := by
     by_contra h
-    push_neg at h
+    push Not at h
     have : β * J * (2 * d) ≤ 0 := mul_nonpos_of_nonpos_of_nonneg h h2d_nn
     linarith
   PseudoMassLatticeDistanceBridge_of_simonLieb_smallReg_adjacent
@@ -68,7 +68,7 @@ theorem tsum_correlationInfinite_pair_product_le_const_of_simonLieb_ferromagneti
   have h2d_nn : (0 : ℝ) ≤ 2 * d := by positivity
   have hβJ_pos : 0 < β * J := by
     by_contra h
-    push_neg at h
+    push Not at h
     have : β * J * (2 * d) ≤ 0 := mul_nonpos_of_nonpos_of_nonneg h h2d_nn
     linarith
   exact tsum_correlationInfinite_pair_product_le_const_of_simonLieb_smallReg_adjacent
