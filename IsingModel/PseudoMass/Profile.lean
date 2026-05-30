@@ -238,6 +238,149 @@ theorem one_div_mul_pow_mul_one_div_mul_pow_eq {α : ℕ} {M tx ty : ℝ}
   rw [show 2 * α = α + α from by ring, pow_add]
   field_simp
 
+/-- **Pointwise bridge from `1/(1+(M·t)^α)` to `1/(1+t^α)`**
+(Step 119 plan Step 5.5c bridge).
+
+For `M > 0`, `t ≥ 0`, `α : ℕ`:
+
+    1 / (1 + (M·t)^α) ≤ max(1, (M^α)⁻¹) · (1 / (1 + t^α))
+
+Cases (after expanding `(M·t)^α = M^α·t^α`):
+- `M^α ≥ 1` (e.g. `α = 0`, or `α ≥ 1 ∧ M ≥ 1`): max = 1, and
+  `1 + t^α ≤ 1 + M^α·t^α` because `t^α ≤ M^α · t^α`.
+- `M^α < 1` (necessarily `α ≥ 1 ∧ M < 1`): max = `(M^α)⁻¹ ≥ 1`, and
+  `(M^α)⁻¹ · (1 + M^α·t^α) = (M^α)⁻¹ + t^α ≥ 1 + t^α`.
+
+Bridges the natural-α PseudoMass majorant form `1/(1+(M·t)^α)` to the natural-α
+form without the `M` factor; the prefactor `max(1, (M^α)⁻¹)` collapses to
+`(M^α)⁻¹ = M^(-α)` when `M ≤ 1` (and `α ≥ 1`) and to `1` when `M^α ≥ 1`. Combined
+with `one_div_one_add_t_pow_le_two_pow_mul_one_div_one_add_pow_pow` below, this
+gives the bridge to the `(1+t)^(-α)` form expected by
+`tsum_pow_neg_conv_le_const` (`IsingModel/PolyDecay.lean:207`). -/
+theorem one_div_one_add_M_t_pow_le_max_mul_one_div_one_add_t_pow
+    {α : ℕ} {M t : ℝ} (hM : 0 < M) (ht : 0 ≤ t) :
+    1 / (1 + (M * t) ^ α) ≤ max 1 (M ^ α)⁻¹ * (1 / (1 + t ^ α)) := by
+  have hMα_pos : 0 < M ^ α := pow_pos hM α
+  have ht_α_nn : 0 ≤ t ^ α := pow_nonneg ht α
+  have hMt_eq : (M * t) ^ α = M ^ α * t ^ α := mul_pow M t α
+  have hMt_α_nn : 0 ≤ (M * t) ^ α := pow_nonneg (mul_nonneg hM.le ht) α
+  have h_denom_left_pos : 0 < 1 + (M * t) ^ α := by linarith
+  have h_denom_right_pos : 0 < 1 + t ^ α := by linarith
+  have h_max_ge_one : (1 : ℝ) ≤ max 1 (M ^ α)⁻¹ := le_max_left _ _
+  have h_max_pos : 0 < max 1 (M ^ α)⁻¹ := lt_of_lt_of_le zero_lt_one h_max_ge_one
+  -- Key inequality: 1 + t^α ≤ max(1, (M^α)⁻¹) · (1 + M^α · t^α)
+  have h_key : 1 + t ^ α ≤ max 1 (M ^ α)⁻¹ * (1 + M ^ α * t ^ α) := by
+    by_cases hM_one : 1 ≤ M ^ α
+    · -- M^α ≥ 1: max = 1
+      have h_inv_le : (M ^ α)⁻¹ ≤ 1 := by
+        rw [inv_le_one_iff₀]
+        right; exact hM_one
+      have h_max_eq : max 1 (M ^ α)⁻¹ = 1 := max_eq_left h_inv_le
+      rw [h_max_eq, one_mul]
+      have h_t_le : t ^ α ≤ M ^ α * t ^ α := by
+        have : 1 * t ^ α ≤ M ^ α * t ^ α :=
+          mul_le_mul_of_nonneg_right hM_one ht_α_nn
+        linarith
+      linarith
+    · -- M^α < 1: max = (M^α)⁻¹
+      have hM_lt : M ^ α < 1 := not_le.mp hM_one
+      have h_inv_ge_one : (1 : ℝ) ≤ (M ^ α)⁻¹ :=
+        one_le_inv_iff₀.mpr ⟨hMα_pos, hM_lt.le⟩
+      have h_max_eq : max 1 (M ^ α)⁻¹ = (M ^ α)⁻¹ := max_eq_right h_inv_ge_one
+      rw [h_max_eq]
+      have h_expand : (M ^ α)⁻¹ * (1 + M ^ α * t ^ α) = (M ^ α)⁻¹ + t ^ α := by
+        rw [mul_add, mul_one, ← mul_assoc,
+            inv_mul_cancel₀ (ne_of_gt hMα_pos), one_mul]
+      rw [h_expand]
+      linarith
+  -- Convert to goal: divide by (1+(M·t)^α) · (1+t^α)
+  rw [mul_one_div, div_le_div_iff₀ h_denom_left_pos h_denom_right_pos]
+  rw [one_mul, hMt_eq]
+  exact h_key
+
+/-- **Pointwise bridge from `1/(1+t^α)` to `1/(1+t)^α`** (Step 119 plan Step 5.5c bridge).
+
+For `t ≥ 0`, `α : ℕ`:
+
+    1 / (1 + t^α) ≤ 2^α · (1 / (1 + t)^α)
+
+Equivalent to `(1+t)^α ≤ 2^α · (1+t^α)`, proved by case split:
+- If `t ≤ 1`: `1+t ≤ 2`, so `(1+t)^α ≤ 2^α ≤ 2^α · (1+t^α)`.
+- If `t > 1`: `1+t ≤ 2·t`, so `(1+t)^α ≤ (2t)^α = 2^α · t^α ≤ 2^α · (1+t^α)`.
+
+Bridges the natural-α form `1/(1+t^α)` to the `(1+t)^(-α)` form used by the
+discrete-HLS infinite sum `tsum_pow_neg_conv_le_const`. -/
+theorem one_div_one_add_t_pow_le_two_pow_mul_one_div_one_add_pow_pow
+    {α : ℕ} {t : ℝ} (ht : 0 ≤ t) :
+    1 / (1 + t ^ α) ≤ (2 : ℝ) ^ α * (1 / (1 + t) ^ α) := by
+  have h1t_pos : 0 < 1 + t := by linarith
+  have h1t_α_pos : 0 < (1 + t) ^ α := pow_pos h1t_pos α
+  have ht_α_nn : 0 ≤ t ^ α := pow_nonneg ht α
+  have h_denom_left_pos : 0 < 1 + t ^ α := by linarith
+  have h2_α_pos : (0 : ℝ) < 2 ^ α := pow_pos (by norm_num) α
+  -- Key inequality: (1+t)^α ≤ 2^α · (1 + t^α)
+  have h_key : (1 + t) ^ α ≤ (2 : ℝ) ^ α * (1 + t ^ α) := by
+    by_cases h_t1 : t ≤ 1
+    · -- 1+t ≤ 2
+      have h_le_2 : 1 + t ≤ 2 := by linarith
+      have h_pow_le : (1 + t) ^ α ≤ (2 : ℝ) ^ α :=
+        pow_le_pow_left₀ h1t_pos.le h_le_2 α
+      have h_one_le : (1 : ℝ) ≤ 1 + t ^ α := by linarith
+      calc (1 + t) ^ α
+          ≤ (2 : ℝ) ^ α := h_pow_le
+        _ = (2 : ℝ) ^ α * 1 := by ring
+        _ ≤ (2 : ℝ) ^ α * (1 + t ^ α) :=
+            mul_le_mul_of_nonneg_left h_one_le h2_α_pos.le
+    · -- 1+t ≤ 2·t
+      have h_t1' : 1 < t := not_le.mp h_t1
+      have h_le_2t : 1 + t ≤ 2 * t := by linarith
+      have h_pow_le : (1 + t) ^ α ≤ (2 * t) ^ α :=
+        pow_le_pow_left₀ h1t_pos.le h_le_2t α
+      have h_split : (2 * t : ℝ) ^ α = (2 : ℝ) ^ α * t ^ α := mul_pow 2 t α
+      have h_inner_le : t ^ α ≤ 1 + t ^ α := by linarith
+      calc (1 + t) ^ α
+          ≤ (2 * t : ℝ) ^ α := h_pow_le
+        _ = (2 : ℝ) ^ α * t ^ α := h_split
+        _ ≤ (2 : ℝ) ^ α * (1 + t ^ α) :=
+            mul_le_mul_of_nonneg_left h_inner_le h2_α_pos.le
+  -- Convert to goal
+  rw [mul_one_div, div_le_div_iff₀ h_denom_left_pos h1t_α_pos, one_mul]
+  exact h_key
+
+/-- **HLS pointwise bridge: `1/(1+(M·t)^α)` to `(1+t)^(-α)`**
+(Step 119 plan Step 5.5c, composition).
+
+For `M > 0`, `t ≥ 0`, `α : ℕ`:
+
+    1 / (1 + (M·t)^α) ≤ max(1, (M^α)⁻¹) · 2^α · (1 / (1 + t)^α)
+
+Composition of `one_div_one_add_M_t_pow_le_max_mul_one_div_one_add_t_pow` (M-bridge,
+isolating `max(1, (M^α)⁻¹)` prefactor) and
+`one_div_one_add_t_pow_le_two_pow_mul_one_div_one_add_pow_pow` (form bridge to
+`(1+t)^(-α)`).
+
+This is the natural-α pointwise companion of the HLS infinite-sum bound
+`tsum_pow_neg_conv_le_const` (`IsingModel/PolyDecay.lean:207`, real-α). The
+constant prefactor `max(1, (M^α)⁻¹) · 2^α` collapses to
+`(M^α)⁻¹ · 2^α = M^(-α) · 2^α` (the GJ p. 312 `m⁻^(-α)` scaling) in the
+physically relevant `M ≤ 1` (and `α ≥ 1`) regime, and to `2^α` when `M^α ≥ 1`.
+The `(1+t)^(-α)` body matches the existing tsum's polynomial-decay form. -/
+theorem one_div_one_add_M_t_pow_le_const_mul_one_div_one_add_pow_pow
+    {α : ℕ} {M t : ℝ} (hM : 0 < M) (ht : 0 ≤ t) :
+    1 / (1 + (M * t) ^ α) ≤
+      max 1 (M ^ α)⁻¹ * (2 : ℝ) ^ α * (1 / (1 + t) ^ α) := by
+  have h1 := one_div_one_add_M_t_pow_le_max_mul_one_div_one_add_t_pow
+    (M := M) (t := t) (α := α) hM ht
+  have h2 := one_div_one_add_t_pow_le_two_pow_mul_one_div_one_add_pow_pow
+    (t := t) (α := α) ht
+  have h_max_pos : 0 < max 1 (M ^ α)⁻¹ :=
+    lt_of_lt_of_le zero_lt_one (le_max_left _ _)
+  calc 1 / (1 + (M * t) ^ α)
+      ≤ max 1 (M ^ α)⁻¹ * (1 / (1 + t ^ α)) := h1
+    _ ≤ max 1 (M ^ α)⁻¹ * ((2 : ℝ) ^ α * (1 / (1 + t) ^ α)) :=
+        mul_le_mul_of_nonneg_left h2 h_max_pos.le
+    _ = max 1 (M ^ α)⁻¹ * (2 : ℝ) ^ α * (1 / (1 + t) ^ α) := by ring
+
 /-- `pseudoMassG` is at most 2 for `t ≥ 0` and `r > 0`.
 Corollary of `pseudoMassG_le_two_div_one_add_pow`. -/
 theorem pseudoMassG_le_two (α : ℕ) {r t : ℝ} (ht : 0 ≤ t) (hr : 0 < r) :
