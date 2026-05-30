@@ -674,5 +674,68 @@ theorem pseudoMassFromParamsAtPair_zero_le_of_corr_le_exp_adjacent
   rw [hdist_cast, mul_one] at h
   exact h
 
+/-! ## Step 119 plan Step 5.7l: combined hbase composer (Simon-Lieb + adjacent) -/
+
+/-- **Combined small-regime `bridge.bound` composer for `dist ≥ 1`**
+(Step 119 plan Step 5.7l).
+
+Per-`w` composer dispatching by `latticeDistance d 0 w = 1` (adjacent)
+vs `≥ 2`:
+- adjacent: Step 5.7k (PR #3182).
+- non-adjacent: Step 5.7j (PR #3181, Simon-Lieb direct).
+
+Hypotheses:
+- `1 ≤ α`, `0 < r` (pseudoMass parameters).
+- `0 ≤ β·J`, `0 < β·J·(2d)`, `β·J·(2d) ≤ 1` for Simon-Lieb.
+- `0 ≤ M`, `M ≤ 1`, `M ≤ simonLiebRate β J d / 2` for rate-domination.
+- `M · d(0, w) ≤ 1` (small-`t·r` regime).
+- Active range `correlation {0, w} ∈ Ioo 0 2`.
+- Per-pair `correlation`-upper-bound family:
+  - adjacent: `correlation {0, w} ≤ exp(-M)` at `dist = 1`.
+  - non-adjacent: implicit via Simon-Lieb #3179 / #3181.
+
+Conclusion: `M · d(0, w) ≤ pseudoMass · r`.
+
+This completes the per-`w` `bridge.bound` API for `dist ≥ 1` in the
+small-`M` regime, with Simon-Lieb supplying the non-adjacent exp form
+and a separately-provided adjacent input. -/
+theorem pseudoMassFromParamsAtPair_M_dist_zero_le_simonLieb_smallReg_combined
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    {β J : ℝ} (hβJ : 0 ≤ β * J)
+    (hβJd_pos : 0 < β * J * (2 * d)) (hβJd_le : β * J * (2 * d) ≤ 1)
+    {M : ℝ} (hM : 0 ≤ M) (hM_le_one : M ≤ 1)
+    (hMrate : M ≤ simonLiebRate β J d / 2)
+    {w : Fin d → ℤ} (hw_ne : w ≠ 0)
+    (hsmall : M * (latticeDistance d 0 w : ℝ) ≤ 1)
+    (hcorr : Ambient.correlationInfinite (IsingModel.latticeGraph d)
+                (Ambient.cubicExhaustion d)
+                (⟨J, 0, β⟩ : IsingParams ℝ) {0, w}
+              ∈ Set.Ioo (0 : ℝ) 2)
+    (h_adj_exp : latticeDistance d 0 w = 1 →
+      Ambient.correlationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {0, w}
+        ≤ Real.exp (-M)) :
+    M * (latticeDistance d 0 w : ℝ) ≤
+      pseudoMassFromParamsAtPair hα hr d (Ambient.cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) 0 w * r := by
+  have hdist_pos : 0 < latticeDistance d 0 w := by
+    apply Nat.pos_of_ne_zero
+    intro h_eq_zero
+    exact hw_ne ((IsingModel.latticeDistance_eq_zero_iff d 0 w).mp h_eq_zero).symm
+  by_cases h_eq_one : latticeDistance d 0 w = 1
+  · have h_adj_bound : Ambient.correlationInfinite (IsingModel.latticeGraph d)
+            (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {0, w}
+          ≤ Real.exp (-M) := h_adj_exp h_eq_one
+    have h := pseudoMassFromParamsAtPair_zero_le_of_corr_le_exp_adjacent
+      hα hr d (Ambient.cubicExhaustion d)
+      (⟨J, 0, β⟩ : IsingParams ℝ) hM hM_le_one h_eq_one hcorr h_adj_bound
+    have hdist_cast : (latticeDistance d 0 w : ℝ) = 1 := by
+      rw [h_eq_one]; norm_cast
+    rw [hdist_cast, mul_one]
+    exact h
+  · have h_ge_two : 2 ≤ latticeDistance d 0 w := by omega
+    exact pseudoMassFromParamsAtPair_M_dist_zero_le_of_simonLieb_smallReg
+      hα hr d hβJ hβJd_pos hβJd_le hM hMrate h_ge_two hsmall hcorr
+
 end Ambient
 end IsingModel
