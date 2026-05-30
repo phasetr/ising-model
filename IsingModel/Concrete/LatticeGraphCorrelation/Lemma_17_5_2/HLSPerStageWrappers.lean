@@ -136,13 +136,14 @@ theorem tsum_correlationInfinite_pair_product_nonneg_le_K_of_simonLieb
   exact correlationInfinite_pair_product_nonneg d (Ambient.cubicExhaustion d)
     (⟨J, 0, β⟩ : IsingParams ℝ) ⟨hJ, le_refl 0, hβ⟩ x₀ y₀ z
 
-/-- **Existential summability of `correlationInfinite` pair-product**.
+/-- **Existential positive K with `tsum ≤ K`** (alias for documentation
+completeness alongside `tsum_correlationInfinite_pair_product_nonneg_le_K_of_simonLieb`).
 
-For nonneg series, `∑' ≤ K` implies summability (since `tsum = 0` is also
-≤ K, but combined with nonneg pointwise plus the supremum reasoning we get
-genuine summability). Specifically the infinite-volume HLS bound provides
-an explicit positive `K` so that the partial sums are bounded by `K`. -/
-theorem correlationInfinite_pair_product_summable_of_simonLieb
+Identical statement to
+`tsum_correlationInfinite_pair_product_le_const_of_simonLieb_smallReg_adjacent`
+(#3188) — exposed under the per-stage wrappers file as the existential
+positive-`K` bound on the infinite-volume pair-product tsum. -/
+theorem tsum_correlationInfinite_pair_product_le_K_of_simonLieb_perstage_alias
     {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     (d : ℕ) (hαd : d < 2 * α) {J β : ℝ}
     (hJ : 0 ≤ J) (hβ : 0 < β) (hβJ_pos : 0 < β * J)
