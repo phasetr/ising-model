@@ -185,5 +185,66 @@ noncomputable def PseudoMassLatticeDistanceBridge_of_cubicTanh_family
   active := correlationInfinite_pair_active_of_cubicTanhProfileBound_family
     hr hJ hβ hlt hfamily
 
+/-- **`pseudoMassFromParamsAtPair` lower bound via a `pseudoMassG` upper bound on
+the correlation** (Step 119 plan Step 5.7b).
+
+If the correlation lies in the active range `Ioo 0 2` and is dominated by
+`pseudoMassG α r t` for some `t ≥ 0`, then by the implicit-definition iff
+`pseudoMass_ge_iff_pseudoMassG_ge` (`PseudoMass/Basic.lean`),
+`t ≤ pseudoMassFromParamsAtPair`. This is the atomic reduction from the
+analytic input `correlation ≤ pseudoMassG α r t` to the
+`bridge.bound`-shaped conclusion. -/
+theorem pseudoMassFromParamsAtPair_ge_of_corr_le_pseudoMassG
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (x z : Fin d → ℤ)
+    {t : ℝ} (ht : 0 ≤ t)
+    (hcorr : Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ p {x, z}
+              ∈ Set.Ioo (0 : ℝ) 2)
+    (hle : Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ p {x, z}
+              ≤ pseudoMassG α r t) :
+    t ≤ pseudoMassFromParamsAtPair hα hr d Λ p x z := by
+  unfold pseudoMassFromParamsAtPair
+  rw [pseudoMassExt_of_mem hα hr hcorr]
+  exact (pseudoMass_ge_iff_pseudoMassG_ge hα hr hcorr ht).mpr hle
+
+/-- **`bridge.bound`-shape reduction at the zero-anchored displacement**
+(Step 119 plan Step 5.7b).
+
+Given the active range and the analytic input `correlation ≤
+pseudoMassG α r (M · d(0, w) / r)`, conclude the zero-anchored
+`bridge.bound` shape `M · d(0, w) ≤ pseudoMassFromParamsAtPair 0 w · r`.
+Atomic building block for the `hbase` field of
+`PseudoMassLatticeDistanceBridge_of_cubicTanh_family`. -/
+theorem pseudoMassFromParamsAtPair_M_dist_zero_le_of_corr_le_pseudoMassG
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) {M : ℝ} (hM : 0 ≤ M) (w : Fin d → ℤ)
+    (hcorr : Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ p {0, w}
+              ∈ Set.Ioo (0 : ℝ) 2)
+    (hle : Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ p {0, w}
+              ≤ pseudoMassG α r (M * (latticeDistance d 0 w : ℝ) / r)) :
+    M * (latticeDistance d 0 w : ℝ) ≤
+      pseudoMassFromParamsAtPair hα hr d Λ p 0 w * r := by
+  set t : ℝ := M * (latticeDistance d 0 w : ℝ) / r with ht_def
+  have hdist_nn : (0 : ℝ) ≤ (latticeDistance d 0 w : ℝ) := by
+    exact_mod_cast Nat.zero_le _
+  have ht_nn : 0 ≤ t := by
+    apply div_nonneg
+    · exact mul_nonneg hM hdist_nn
+    · exact hr.le
+  have h_pm_ge : t ≤ pseudoMassFromParamsAtPair hα hr d Λ p 0 w :=
+    pseudoMassFromParamsAtPair_ge_of_corr_le_pseudoMassG
+      hα hr d Λ p 0 w ht_nn hcorr hle
+  have h_mul : t * r = M * (latticeDistance d 0 w : ℝ) := by
+    rw [ht_def, div_mul_cancel₀ _ (ne_of_gt hr)]
+  have h_step : t * r ≤ pseudoMassFromParamsAtPair hα hr d Λ p 0 w * r :=
+    mul_le_mul_of_nonneg_right h_pm_ge hr.le
+  linarith [h_step, h_mul.symm.le, h_mul.le]
+
 end Ambient
 end IsingModel
