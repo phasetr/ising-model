@@ -907,7 +907,7 @@ and producing a `PseudoMassLatticeDistanceBridge` value directly. This is
 the alternative constructor matching the natural shape of the Step 5.7n /
 Step 5.7o providers, bypassing the (vacuous) `cubicTanhProfileBound`
 family path. -/
-noncomputable def PseudoMassLatticeDistanceBridge_of_bound_active
+def PseudoMassLatticeDistanceBridge_of_bound_active
     {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     (d : ℕ) {J β : ℝ}
     {M_inf : ℝ} (M_inf_pos : 0 < M_inf)
