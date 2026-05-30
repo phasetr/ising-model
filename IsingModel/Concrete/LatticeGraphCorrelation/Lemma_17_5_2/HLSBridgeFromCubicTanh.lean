@@ -892,5 +892,40 @@ theorem correlationInfinite_pair_active_of_betaJ_pos
       (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {x, z}
     linarith
 
+/-! ## Step 119 plan Step 5.7p: direct PseudoMassLatticeDistanceBridge constructor -/
+
+/-- **Direct `PseudoMassLatticeDistanceBridge` constructor from bound + active
+providers** (Step 119 plan Step 5.7p).
+
+Convenience structural constructor taking:
+- `M_inf : ℝ`, `M_inf_pos : 0 < M_inf` (the rate);
+- `hf : Ferromagnetic ⟨J, 0, β⟩`;
+- `bound`: the all-pair shape from Step 5.7n (PR #3185);
+- `active`: the all-pair shape from Step 5.7o (PR #3186);
+
+and producing a `PseudoMassLatticeDistanceBridge` value directly. This is
+the alternative constructor matching the natural shape of the Step 5.7n /
+Step 5.7o providers, bypassing the (vacuous) `cubicTanhProfileBound`
+family path. -/
+def PseudoMassLatticeDistanceBridge_of_bound_active
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    (d : ℕ) {J β : ℝ}
+    {M_inf : ℝ} (M_inf_pos : 0 < M_inf)
+    (hf : IsingModel.Ferromagnetic (⟨J, (0 : ℝ), β⟩ : IsingParams ℝ))
+    (bound : ∀ x z : Fin d → ℤ, x ≠ z →
+      M_inf * (latticeDistance d x z : ℝ) ≤
+        pseudoMassFromParamsAtPair hα hr d (Ambient.cubicExhaustion d)
+          (⟨J, 0, β⟩ : IsingParams ℝ) x z * r)
+    (active : ∀ x z : Fin d → ℤ, x ≠ z →
+      Ambient.correlationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {x, z}
+        ∈ Set.Ioo (0 : ℝ) 2) :
+    PseudoMassLatticeDistanceBridge hα hr d J β where
+  M_inf := M_inf
+  M_inf_pos := M_inf_pos
+  hf := hf
+  bound := bound
+  active := active
+
 end Ambient
 end IsingModel
