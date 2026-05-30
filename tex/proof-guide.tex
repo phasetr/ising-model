@@ -14118,6 +14118,19 @@ $1 + (M\cdot t)^\alpha \ge (M\cdot t)^\alpha$ and \texttt{one\_div\_le\_one\_div
 (resp.\ \texttt{div\_le\_div\_of\_nonneg\_left}) with \texttt{pow\_pos} positivity.
 \end{theorem}
 
+\begin{theorem}[\texttt{IsingModel.Ambient.truncated4TwoPoint\_sum\_abs\_le\_card\_mul\_uniform\_of\_distinct}
+(finite-sum $|U_4|$ uniform bound; GJ \S17.5 p.~312; Issue \#1645 Step 119 plan Step 5.5b)]
+Given uniform $m_{\mathrm{inf}}$ lower bound on all relevant per-pair pseudo-masses across
+$u\in A$:
+\[
+  \sum_{u\in A} |U_4^\infty(0, r, s, u)|
+    \le |A|\cdot\frac{8}{r'^{2\alpha}\cdot m_{\mathrm{inf}}^{2\alpha}}.
+\]
+The single-term uniform bound (Step 5.5a) is $u$-independent, so the sum reduces to $|A|$
+times the constant. Preliminary volume-uniform sum bound; the finer HLS sum with per-$z$
+polynomial decay refines this (Step 5.5c).
+\end{theorem}
+
 \begin{theorem}[\texttt{IsingModel.Ambient.truncated4TwoPoint\_abs\_le\_pseudoMass\_uniform\_lower\_of\_distinct}
 ($|U_4^\infty|$ uniform $m^-_{\mathrm{inf}}$ bound; GJ \S4.3 Cor 4.3.3 + \S17.5 p.~312; Issue \#1645
 Step 119 plan Step 5.5a)]
