@@ -226,8 +226,10 @@ noncomputable def simonLiebRate (β J : ℝ) (d : ℕ) : ℝ :=
 /-- **`simonLiebRate` is nonneg in the high-temperature regime**
 (Step 119 plan Step 5.7g).
 
-If `0 ≤ β·J·(2d) ≤ 1`, then `simonLiebRate β J d ≥ 0`, with strict positivity
-when `β·J·(2d) < 1`. -/
+If `0 ≤ β·J·(2d) ≤ 1`, then `simonLiebRate β J d ≥ 0`. Strict positivity
+requires the strict bound `0 < β·J·(2d) < 1` (see `simonLiebRate_pos`); the
+endpoint `β·J·(2d) = 0` uses Lean's total `Real.log 0 = 0` and only yields
+`simonLiebRate = 0`. -/
 theorem simonLiebRate_nonneg {β J : ℝ} {d : ℕ}
     (hβJd_nn : 0 ≤ β * J * (2 * d)) (hβJd_le : β * J * (2 * d) ≤ 1) :
     0 ≤ simonLiebRate β J d := by
