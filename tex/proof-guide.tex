@@ -14067,6 +14067,23 @@ $\langle\phi(x)\phi(z)\rangle/A\to 2/(1+(m^-\cdot d(x,z))^\alpha)$ in the proof 
 needed by \texttt{gj\_theorem\_17\_5\_1\_pseudoMass\_pow\_succ\_lipschitz\_on\_Icc}.
 \end{theorem}
 
+\begin{theorem}[\texttt{IsingModel.one\_div\_one\_add\_pow\_le\_one\_div\_pow},
+\texttt{two\_div\_one\_add\_pow\_le\_two\_div\_pow}
+(pointwise polynomial-decay bridge; GJ \S17.5 p.~312; Issue \#1645 Step 119 plan Step 5.4
+bridge)]
+For $M\cdot t > 0$ (resp.\ $t\cdot r > 0$) and $\alpha \in \mathbb{N}$:
+\[
+  \frac{1}{1 + (M\cdot t)^\alpha} \le \frac{1}{(M\cdot t)^\alpha}
+  \qquad\text{(resp.\ }
+  \frac{2}{1 + (t\cdot r)^\alpha} \le \frac{2}{(t\cdot r)^\alpha}\text{)}.
+\]
+Pointwise bridge from the pseudo-mass majorant form $1/(1+(M\cdot t)^\alpha)$ (PR \#3154 etc.) to
+the polynomial-decay form $(M\cdot t)^{-\alpha} = M^{-\alpha}\cdot t^{-\alpha}$ usable in the
+discrete HLS sum. The first bridge lemma toward Step 5.4 (HLS sum bound). Proof:
+$1 + (M\cdot t)^\alpha \ge (M\cdot t)^\alpha$ and \texttt{one\_div\_le\_one\_div\_of\_le}
+(resp.\ \texttt{div\_le\_div\_of\_nonneg\_left}) with \texttt{pow\_pos} positivity.
+\end{theorem}
+
 \begin{theorem}[\texttt{IsingModel.Ambient.truncated4TwoPoint\_abs\_le\_pseudoMass\_majorant\_of\_distinct}
 ($|U_4^\infty|$ bounded by pseudo-mass pair-product majorant; GJ \S4.3 Cor 4.3.3 + \S17.5 p.~312;
 Issue \#1645 Step 119 plan Step 5.3)]
