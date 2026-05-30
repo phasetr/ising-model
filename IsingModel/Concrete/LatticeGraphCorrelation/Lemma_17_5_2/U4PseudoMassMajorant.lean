@@ -147,5 +147,64 @@ theorem truncated4TwoPoint_abs_le_pseudoMass_majorant_of_distinct
   -- Chain: |U_4| ≤ (pair-products) ≤ (pseudo-mass majorant products)
   exact h_u4.trans (add_le_add h_prodA h_prodB)
 
+/-- **GJ §17.5 Theorem 17.5.1 Step 5.4 capstone: `|U_4^∞|` bounded by polynomial decay form**
+(GJ §4.3 Cor 4.3.3 + §17.5 p. 312, Issue #1645 Step 119 plan Step 5.4 capstone).
+
+Compose PR #3156 (`truncated4TwoPoint_abs_le_pseudoMass_majorant_of_distinct`) with PR #3158
+(`two_div_one_add_pow_mul_two_div_one_add_pow_le_two_div_pow_mul_two_div_pow`) to bridge the
+pseudo-mass pair-product majorant form into the polynomial-decay convolution form. For
+ferromagnetic h=0 with pairwise-distinct `{0, r, s, u}`, all 4 pair correlations active, and
+the 4 corresponding pseudo-masses strictly positive (so each `m⁻·r' > 0`):
+
+    |U_4^∞(0, r, s, u)| ≤ 2/(m⁻_{0s}·r')^α · 2/(m⁻_{ru}·r')^α
+                        + 2/(m⁻_{0u}·r')^α · 2/(m⁻_{rs}·r')^α
+
+This is the **polynomial-decay form** ready for the discrete-HLS sum step
+(`tsum_pow_neg_conv_le_const`, Step 130B) over `z` in the GJ p. 312 derivation. -/
+theorem truncated4TwoPoint_abs_le_pseudoMass_polynomial_of_distinct
+    {α : ℕ} (hα : 1 ≤ α) {r' : ℝ} (hr' : 0 < r') (d : ℕ)
+    (J β : ℝ) (hf : IsingModel.Ferromagnetic (⟨J, (0 : ℝ), β⟩ : IsingParams ℝ))
+    {r s u : Fin d → ℤ}
+    (hr : (0 : Fin d → ℤ) ≠ r) (hs : (0 : Fin d → ℤ) ≠ s)
+    (hu : (0 : Fin d → ℤ) ≠ u)
+    (hrs : r ≠ s) (hru : r ≠ u) (hsu : s ≠ u)
+    (hc_0s : Ambient.correlationInfinite (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) {(0 : Fin d → ℤ), s} ∈ Set.Ioo (0 : ℝ) 2)
+    (hc_ru : Ambient.correlationInfinite (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) {r, u} ∈ Set.Ioo (0 : ℝ) 2)
+    (hc_0u : Ambient.correlationInfinite (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) {(0 : Fin d → ℤ), u} ∈ Set.Ioo (0 : ℝ) 2)
+    (hc_rs : Ambient.correlationInfinite (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) {r, s} ∈ Set.Ioo (0 : ℝ) 2)
+    (hm_0s_pos : 0 < pseudoMassFromParamsAtPair hα hr' d (Ambient.cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) (0 : Fin d → ℤ) s)
+    (hm_ru_pos : 0 < pseudoMassFromParamsAtPair hα hr' d (Ambient.cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) r u)
+    (hm_0u_pos : 0 < pseudoMassFromParamsAtPair hα hr' d (Ambient.cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) (0 : Fin d → ℤ) u)
+    (hm_rs_pos : 0 < pseudoMassFromParamsAtPair hα hr' d (Ambient.cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) r s) :
+    |truncated4TwoPoint d ⟨J, 0, β⟩ r s u| ≤
+      2 / (pseudoMassFromParamsAtPair hα hr' d (Ambient.cubicExhaustion d)
+              (⟨J, 0, β⟩ : IsingParams ℝ) (0 : Fin d → ℤ) s * r') ^ α *
+        (2 / (pseudoMassFromParamsAtPair hα hr' d (Ambient.cubicExhaustion d)
+              (⟨J, 0, β⟩ : IsingParams ℝ) r u * r') ^ α) +
+      2 / (pseudoMassFromParamsAtPair hα hr' d (Ambient.cubicExhaustion d)
+              (⟨J, 0, β⟩ : IsingParams ℝ) (0 : Fin d → ℤ) u * r') ^ α *
+        (2 / (pseudoMassFromParamsAtPair hα hr' d (Ambient.cubicExhaustion d)
+              (⟨J, 0, β⟩ : IsingParams ℝ) r s * r') ^ α) := by
+  -- Step 1: |U_4| ≤ pseudoMass pair-product majorant (PR #3156)
+  have h_u4_maj := truncated4TwoPoint_abs_le_pseudoMass_majorant_of_distinct
+    hα hr' d J β hf hr hs hu hrs hru hsu hc_0s hc_ru hc_0u hc_rs
+  -- Step 2: pseudoMass pair-product majorant ≤ polynomial decay form (PR #3158, applied twice)
+  have h_prodA := two_div_one_add_pow_mul_two_div_one_add_pow_le_two_div_pow_mul_two_div_pow
+    (α := α)
+    (mul_pos hm_0s_pos hr') (mul_pos hm_ru_pos hr')
+  have h_prodB := two_div_one_add_pow_mul_two_div_one_add_pow_le_two_div_pow_mul_two_div_pow
+    (α := α)
+    (mul_pos hm_0u_pos hr') (mul_pos hm_rs_pos hr')
+  -- Chain via add_le_add
+  exact h_u4_maj.trans (add_le_add h_prodA h_prodB)
+
 end Ambient
 end IsingModel
