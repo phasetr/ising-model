@@ -14118,6 +14118,40 @@ $1 + (M\cdot t)^\alpha \ge (M\cdot t)^\alpha$ and \texttt{one\_div\_le\_one\_div
 (resp.\ \texttt{div\_le\_div\_of\_nonneg\_left}) with \texttt{pow\_pos} positivity.
 \end{theorem}
 
+\begin{theorem}[\texttt{IsingModel.pseudoMassFromParamsAtPair\_M\_dist\_zero\_le\_of\_corr\_le\_exp\_trichotomy}
+(\texttt{hbase} quantifier composer via trichotomy;
+GJ \S17.5 pp.~311--312; Issue \#1645 Step 119 plan Step 5.7f)]
+Let $\alpha \ge 1$, $r > 0$, $d : \mathbb{N}$, $\Lambda$ an exhaustion of
+$\mathbb{Z}^d$, $p$ Ising parameters, and $0 \le M$. Assume the per-$w$
+active range
+$\mathrm{correlationInfinite}\,\{0,w\} \in (0, 2)$ for every $w \ne 0$,
+together with the two regime-specific analytic-input families:
+\begin{itemize}
+  \item small: for $w \ne 0$ with $M \cdot d(0, w) \le 1$,
+    $\mathrm{correlationInfinite}\,\{0,w\} \le e^{-(M \cdot d(0, w))}$;
+  \item large: for $w \ne 0$ with $1 \le M \cdot d(0, w)$,
+    $\mathrm{correlationInfinite}\,\{0,w\} \le
+    e^{-(M \cdot d(0, w))} / (M \cdot d(0, w))^\alpha$.
+\end{itemize}
+Then for every $w \ne 0$,
+$M \cdot d(0, w) \le \mathrm{pseudoMassFromParamsAtPair}\,0\,w \cdot r$.
+Proof: dispatch by case-split on $M \cdot d(0, w) \le 1$ vs $1 < M \cdot d(0, w)$,
+applying the corresponding Step 5.7e atomic composer per $w$.
+
+The unified-input variant
+\texttt{...\_corr\_le\_exp\_div\_max\_pow} takes the single bound
+$\mathrm{correlationInfinite}\,\{0,w\} \le
+e^{-(M \cdot d(0, w))} / \max(1, M \cdot d(0, w))^\alpha$,
+which automatically equals $e^{-(M \cdot d(0, w))}$ in the small regime
+($\max = 1$) and $e^{-(M \cdot d(0, w))} / (M \cdot d(0, w))^\alpha$ in the
+large regime ($\max = M \cdot d(0, w)$), removing the need for caller-side
+trichotomy.
+
+These composers complete the structural plumbing from analytic-input families
+to the $\mathtt{hbase}$ field of
+\texttt{PseudoMassLatticeDistanceBridge\_of\_cubicTanh\_family} (\#3172).
+\end{theorem}
+
 \begin{theorem}[\texttt{IsingModel.pseudoMassFromParamsAtPair\_M\_dist\_zero\_le\_of\_corr\_le\_*}
 (exp / tanh correlation-upper-bound composers for the zero-anchored
 \texttt{bridge.bound};
