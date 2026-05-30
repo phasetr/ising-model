@@ -13,7 +13,13 @@ Reference shape conventions (canonical / "preferred" entry points):
 - **`canonical_hls_sum`**: HLS sum existential at arbitrary anchor.
 - **`canonical_bound_provider`**: standalone bound provider.
 - **`canonical_active_provider`**: standalone active provider.
-- **`canonical_bridge_from_tanh_adjacent`**: tanh-input variant.
+- **`canonical_bridge_from_tanh_adjacent`**: tanh-adjacent input variant
+  of the end-to-end bridge constructor.
+- **`canonical_hls_sum_tanh`**: HLS sum existential from tanh-input.
+- **`canonical_K_pos_from_hls_sum`**: standalone positive `K` witness
+  extraction.
+- **`canonical_hls_sum_zero_anchor`**: HLS sum at the zero anchor
+  `(0, 0)`.
 
 These canonical aliases distill the most common usage patterns into a
 single fixed-name access surface, making downstream consumers stable
