@@ -374,7 +374,7 @@ Step 5.5b).
 
 Sum the uniform single-term bound (PR #3165, Step 5.5a) over a Finset of 4th vertices `u`,
 assuming the uniform-m_inf lower bound holds for ALL the relevant pseudo-mass instances
-across `u ∈ A`. The 4 source vertices `0, r, s` are fixed; `u` ranges over `A`.
+across `u ∈ A`. The 3 source vertices `0, r, s` are fixed; `u` ranges over `A`.
 
 For each `u ∈ A` with all 4 pseudo-mass lower bounds and active-pair hypotheses satisfied:
 
