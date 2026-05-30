@@ -416,5 +416,107 @@ theorem pseudoMassFromParamsAtPair_M_dist_zero_le_of_corr_le_tanh_pow_smallReg
   exact pseudoMassFromParamsAtPair_M_dist_zero_le_of_corr_le_exp_smallReg
     hα hr d Λ p hM w hsmall hcorr h_exp_upper
 
+/-! ## Step 119 plan Step 5.7f: `hbase` quantifier composers -/
+
+/-- **`hbase` quantifier composer via small/large trichotomy on `M · d(0, w)`**
+(Step 119 plan Step 5.7f).
+
+Given `0 ≤ M` and per-nonzero-`w` analytic-input families for both regimes of
+`M · d(0, w)`, the trichotomy dispatches each `w ≠ 0` to either the
+small-regime composer
+`pseudoMassFromParamsAtPair_M_dist_zero_le_of_corr_le_exp_smallReg` or the
+large-regime composer
+`pseudoMassFromParamsAtPair_M_dist_zero_le_of_corr_le_exp_div_pow_largeReg`,
+producing the universally-quantified shape required by the `hbase` field of
+`PseudoMassLatticeDistanceBridge_of_cubicTanh_family` (#3172).
+
+The two analytic-input families:
+- `h_corr_small`: for each `w ≠ 0` with `M · d(0, w) ≤ 1`,
+  `correlation {0, w} ≤ exp(-(M · d(0, w)))`.
+- `h_corr_large`: for each `w ≠ 0` with `1 ≤ M · d(0, w)`,
+  `correlation {0, w} ≤ exp(-(M · d(0, w))) / (M · d(0, w))^α`.
+
+The trichotomy is by `le_or_lt (M · d(0, w)) 1`: if `≤ 1`, apply the
+small-regime composer; otherwise `1 < M · d(0, w)` ⇒ `1 ≤ M · d(0, w)`, apply
+the large-regime composer. -/
+theorem pseudoMassFromParamsAtPair_M_dist_zero_le_of_corr_le_exp_trichotomy
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) {M : ℝ} (hM : 0 ≤ M)
+    (h_corr_active : ∀ w : Fin d → ℤ, w ≠ 0 →
+      Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ p {0, w}
+        ∈ Set.Ioo (0 : ℝ) 2)
+    (h_corr_small : ∀ w : Fin d → ℤ, w ≠ 0 →
+      M * (latticeDistance d 0 w : ℝ) ≤ 1 →
+      Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ p {0, w}
+        ≤ Real.exp (-(M * (latticeDistance d 0 w : ℝ))))
+    (h_corr_large : ∀ w : Fin d → ℤ, w ≠ 0 →
+      1 ≤ M * (latticeDistance d 0 w : ℝ) →
+      Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ p {0, w}
+        ≤ Real.exp (-(M * (latticeDistance d 0 w : ℝ))) /
+            (M * (latticeDistance d 0 w : ℝ)) ^ α) :
+    ∀ w : Fin d → ℤ, w ≠ 0 →
+      M * (latticeDistance d 0 w : ℝ) ≤
+        pseudoMassFromParamsAtPair hα hr d Λ p 0 w * r := by
+  intro w hw_ne
+  by_cases hsmall : M * (latticeDistance d 0 w : ℝ) ≤ 1
+  · exact pseudoMassFromParamsAtPair_M_dist_zero_le_of_corr_le_exp_smallReg
+      hα hr d Λ p hM w hsmall (h_corr_active w hw_ne)
+      (h_corr_small w hw_ne hsmall)
+  · push_neg at hsmall
+    have hlarge_le : 1 ≤ M * (latticeDistance d 0 w : ℝ) := hsmall.le
+    exact pseudoMassFromParamsAtPair_M_dist_zero_le_of_corr_le_exp_div_pow_largeReg
+      hα hr d Λ p w hlarge_le (h_corr_active w hw_ne)
+      (h_corr_large w hw_ne hlarge_le)
+
+/-- **`hbase` quantifier composer from a uniform `exp(-(M·d))/max(1, M·d)^α`
+correlation upper bound** (Step 119 plan Step 5.7f, unified-input variant).
+
+Convenience wrapper for
+`pseudoMassFromParamsAtPair_M_dist_zero_le_of_corr_le_exp_trichotomy` taking a
+single uniform correlation upper bound in the unified form
+`correlation {0, w} ≤ exp(-(M · d(0, w))) / max 1 (M · d(0, w))^α`,
+which is automatically both:
+- ≤ `exp(-(M · d(0, w)))` in the small regime (where `max 1 (M·d) = 1`,
+  hence the denominator is 1);
+- ≤ `exp(-(M · d(0, w))) / (M · d(0, w))^α` in the large regime (where
+  `max 1 (M·d) = M·d`).
+
+Useful when the caller has a single uniform-shape bound, e.g., a Simon-Lieb
+exponential decay augmented with polynomial correction. -/
+theorem pseudoMassFromParamsAtPair_M_dist_zero_le_of_corr_le_exp_div_max_pow
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) {M : ℝ} (hM : 0 ≤ M)
+    (h_corr_active : ∀ w : Fin d → ℤ, w ≠ 0 →
+      Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ p {0, w}
+        ∈ Set.Ioo (0 : ℝ) 2)
+    (h_corr_upper : ∀ w : Fin d → ℤ, w ≠ 0 →
+      Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ p {0, w}
+        ≤ Real.exp (-(M * (latticeDistance d 0 w : ℝ))) /
+            max 1 (M * (latticeDistance d 0 w : ℝ)) ^ α) :
+    ∀ w : Fin d → ℤ, w ≠ 0 →
+      M * (latticeDistance d 0 w : ℝ) ≤
+        pseudoMassFromParamsAtPair hα hr d Λ p 0 w * r := by
+  apply pseudoMassFromParamsAtPair_M_dist_zero_le_of_corr_le_exp_trichotomy
+    hα hr d Λ p hM h_corr_active
+  · intro w hw_ne hsmall
+    have hbound := h_corr_upper w hw_ne
+    have hmax_eq : max (1 : ℝ) (M * (latticeDistance d 0 w : ℝ)) = 1 :=
+      max_eq_left hsmall
+    rw [hmax_eq, one_pow, div_one] at hbound
+    exact hbound
+  · intro w hw_ne hlarge
+    have hbound := h_corr_upper w hw_ne
+    have hmax_eq : max (1 : ℝ) (M * (latticeDistance d 0 w : ℝ)) =
+        M * (latticeDistance d 0 w : ℝ) :=
+      max_eq_right hlarge
+    rw [hmax_eq] at hbound
+    exact hbound
+
 end Ambient
 end IsingModel
