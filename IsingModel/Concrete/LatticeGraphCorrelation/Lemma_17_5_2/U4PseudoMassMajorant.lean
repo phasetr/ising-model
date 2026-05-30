@@ -369,5 +369,67 @@ theorem truncated4TwoPoint_abs_le_pseudoMass_uniform_lower_of_distinct
     linarith [h_A, h_B, h_eq.le]
   exact h.trans h_sum_bound
 
+/-- **GJ §17.5 Theorem 17.5.1 finite-sum `∑_u |U_4|` uniform bound** (Step 119 plan
+Step 5.5b).
+
+Sum the uniform single-term bound (PR #3165, Step 5.5a) over a Finset of 4th vertices `u`,
+assuming the uniform-m_inf lower bound holds for ALL the relevant pseudo-mass instances
+across `u ∈ A`. The 3 source vertices `0, r, s` are fixed; `u` ranges over `A`.
+
+For each `u ∈ A` with all 4 pseudo-mass lower bounds and active-pair hypotheses satisfied:
+
+    ∑_{u ∈ A} |U_4^∞(0, r, s, u)| ≤ #A · 8 / (r'^(2α) · m_inf^(2α))
+
+The uniform single-term bound (`8 / (r'^(2α) · m_inf^(2α))`) is independent of `u`, so the
+sum is bounded by `#A` times that constant. This is the GJ p. 312 form's preliminary
+volume-uniform sum bound. The explicit HLS sum step with per-z polynomial decay
+(`tsum_pow_neg_conv_le_const` style refinement) is the subsequent finer step (Step 5.5c). -/
+theorem truncated4TwoPoint_sum_abs_le_card_mul_uniform_of_distinct
+    {α : ℕ} (hα : 1 ≤ α) {r' : ℝ} (hr' : 0 < r') (d : ℕ)
+    (J β : ℝ) (hf : IsingModel.Ferromagnetic (⟨J, (0 : ℝ), β⟩ : IsingParams ℝ))
+    {r s : Fin d → ℤ}
+    (hr : (0 : Fin d → ℤ) ≠ r) (hs : (0 : Fin d → ℤ) ≠ s) (hrs : r ≠ s)
+    (A : Finset (Fin d → ℤ))
+    (hu_ne : ∀ u ∈ A, (0 : Fin d → ℤ) ≠ u ∧ r ≠ u ∧ s ≠ u)
+    (hc_0s : Ambient.correlationInfinite (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) {(0 : Fin d → ℤ), s} ∈ Set.Ioo (0 : ℝ) 2)
+    (hc_rs : Ambient.correlationInfinite (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) {r, s} ∈ Set.Ioo (0 : ℝ) 2)
+    (hc_ru : ∀ u ∈ A,
+      Ambient.correlationInfinite (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) {r, u} ∈ Set.Ioo (0 : ℝ) 2)
+    (hc_0u : ∀ u ∈ A,
+      Ambient.correlationInfinite (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) {(0 : Fin d → ℤ), u} ∈ Set.Ioo (0 : ℝ) 2)
+    {m_inf : ℝ} (hm_inf_pos : 0 < m_inf)
+    (hm_0s_ge : m_inf ≤ pseudoMassFromParamsAtPair hα hr' d (Ambient.cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) (0 : Fin d → ℤ) s)
+    (hm_rs_ge : m_inf ≤ pseudoMassFromParamsAtPair hα hr' d (Ambient.cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) r s)
+    (hm_ru_ge : ∀ u ∈ A,
+      m_inf ≤ pseudoMassFromParamsAtPair hα hr' d (Ambient.cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) r u)
+    (hm_0u_ge : ∀ u ∈ A,
+      m_inf ≤ pseudoMassFromParamsAtPair hα hr' d (Ambient.cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) (0 : Fin d → ℤ) u) :
+    ∑ u ∈ A, |truncated4TwoPoint d ⟨J, 0, β⟩ r s u|
+      ≤ A.card • (8 / (r' ^ (2 * α) * m_inf ^ (2 * α))) := by
+  classical
+  -- Per-element bound: each summand ≤ constant
+  have h_summand : ∀ u ∈ A,
+      |truncated4TwoPoint d ⟨J, 0, β⟩ r s u| ≤ 8 / (r' ^ (2 * α) * m_inf ^ (2 * α)) := by
+    intro u hu
+    obtain ⟨h0u_ne, hru_ne, hsu_ne⟩ := hu_ne u hu
+    exact truncated4TwoPoint_abs_le_pseudoMass_uniform_lower_of_distinct
+      hα hr' d J β hf hr hs h0u_ne hrs hru_ne hsu_ne
+      hc_0s (hc_ru u hu) (hc_0u u hu) hc_rs
+      hm_inf_pos hm_0s_ge (hm_ru_ge u hu) (hm_0u_ge u hu) hm_rs_ge
+  -- Sum bound: ∑_{u ∈ A} bound = #A · bound
+  calc ∑ u ∈ A, |truncated4TwoPoint d ⟨J, 0, β⟩ r s u|
+      ≤ ∑ _u ∈ A, 8 / (r' ^ (2 * α) * m_inf ^ (2 * α)) :=
+        Finset.sum_le_sum h_summand
+    _ = A.card • (8 / (r' ^ (2 * α) * m_inf ^ (2 * α))) := by
+        rw [Finset.sum_const]
+
 end Ambient
 end IsingModel
