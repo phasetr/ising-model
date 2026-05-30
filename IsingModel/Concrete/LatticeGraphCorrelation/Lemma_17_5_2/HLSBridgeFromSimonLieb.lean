@@ -409,5 +409,203 @@ theorem correlationInfinite_lt_two_of_betaJ_pos_pair
       < 2 :=
   (correlationInfinite_pair_active_of_betaJ_pos hβ hβJ_pos x z hxz).2
 
+/-! ## Variant bundle: translation invariance properties -/
+
+/-- **Active range invariance under simultaneous translation of `(x, z)`**.
+
+Translation invariance of the pair correlation: shifting both arguments
+by `v` preserves the active range membership. Direct consequence of
+`correlationInfinite_pair_eq_displacement`. -/
+theorem correlationInfinite_pair_active_translation_invariant_of_betaJ_pos
+    {d : ℕ} {J β : ℝ} (hβ : 0 < β) (hβJ_pos : 0 < β * J)
+    (v : Fin d → ℤ) :
+    ∀ x z : Fin d → ℤ, x ≠ z →
+      Ambient.correlationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ)
+            {x + v, z + v}
+        ∈ Set.Ioo (0 : ℝ) 2 := by
+  intro x z hxz
+  have hxv_ne : x + v ≠ z + v := by
+    intro h; apply hxz
+    have := add_right_cancel h
+    exact this
+  exact correlationInfinite_pair_active_of_betaJ_pos hβ hβJ_pos
+    (x + v) (z + v) hxv_ne
+
+/-- **`bridge.bound` invariance under simultaneous translation of `(x, z)`**.
+
+Translation invariance of the pseudo-mass bound: applying the all-pair
+bound at `(x + v, z + v)` is equivalent to applying it at `(x, z)`. -/
+theorem pseudoMassFromParamsAtPair_all_pair_bound_translation_invariant
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    (d : ℕ) {J β : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β) (hβJ_pos : 0 < β * J)
+    (hβJd_pos : 0 < β * J * (2 * d)) (hβJd_le : β * J * (2 * d) ≤ 1)
+    {M : ℝ} (hM_pos : 0 < M)
+    (hMrate : M ≤ simonLiebRate β J d / 2)
+    (h_corr_small : ∀ w : Fin d → ℤ, w ≠ 0 →
+      M * (latticeDistance d 0 w : ℝ) ≤ 1)
+    (h_adj_exp : ∀ w : Fin d → ℤ, latticeDistance d 0 w = 1 →
+      Ambient.correlationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {0, w}
+        ≤ Real.exp (-M))
+    (v : Fin d → ℤ) :
+    ∀ x z : Fin d → ℤ, x ≠ z →
+      M * (latticeDistance d (x + v) (z + v) : ℝ) ≤
+        pseudoMassFromParamsAtPair hα hr d (Ambient.cubicExhaustion d)
+          (⟨J, 0, β⟩ : IsingParams ℝ) (x + v) (z + v) * r := by
+  intro x z hxz
+  have hxv_ne : x + v ≠ z + v := by
+    intro h; apply hxz; exact add_right_cancel h
+  exact all_pair_bound_of_simonLieb_smallReg_adjacent_provider
+    hα hr d hJ hβ hβJ_pos hβJd_pos hβJd_le hM_pos hMrate
+    h_corr_small h_adj_exp (x + v) (z + v) hxv_ne
+
+/-- **HLS sum bound at translated anchor `(x₀ + v, y₀ + v)`**.
+
+Direct application of the HLS sum existential at the translated anchor. -/
+theorem tsum_correlationInfinite_pair_product_translated_anchor_le_const_of_simonLieb
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    (d : ℕ) (hαd : d < 2 * α) {J β : ℝ}
+    (hJ : 0 ≤ J) (hβ : 0 < β) (hβJ_pos : 0 < β * J)
+    (hβJd_pos : 0 < β * J * (2 * d)) (hβJd_le : β * J * (2 * d) ≤ 1)
+    {M : ℝ} (hM_pos : 0 < M)
+    (hMrate : M ≤ simonLiebRate β J d / 2)
+    (h_corr_small : ∀ w : Fin d → ℤ, w ≠ 0 →
+      M * (latticeDistance d 0 w : ℝ) ≤ 1)
+    (h_adj_exp : ∀ w : Fin d → ℤ, latticeDistance d 0 w = 1 →
+      Ambient.correlationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {0, w}
+        ≤ Real.exp (-M))
+    (x₀ y₀ v : Fin d → ℤ) :
+    ∃ K : ℝ, 0 < K ∧
+      ∑' z : Fin d → ℤ,
+        Ambient.correlationInfinite (IsingModel.latticeGraph d)
+            (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ)
+              {x₀ + v, z} *
+        Ambient.correlationInfinite (IsingModel.latticeGraph d)
+            (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ)
+              {y₀ + v, z}
+      ≤ K :=
+  tsum_correlationInfinite_pair_product_le_const_of_simonLieb_smallReg_adjacent
+    hα hr d hαd hJ hβ hβJ_pos hβJd_pos hβJd_le hM_pos hMrate
+    h_corr_small h_adj_exp (x₀ + v) (y₀ + v)
+
+/-- **HLS sum bound at the displacement anchor `(0, v)`**.
+
+Specialization to the displacement-pair anchor `(0, v)`. -/
+theorem tsum_correlationInfinite_pair_product_zero_v_le_const_of_simonLieb
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    (d : ℕ) (hαd : d < 2 * α) {J β : ℝ}
+    (hJ : 0 ≤ J) (hβ : 0 < β) (hβJ_pos : 0 < β * J)
+    (hβJd_pos : 0 < β * J * (2 * d)) (hβJd_le : β * J * (2 * d) ≤ 1)
+    {M : ℝ} (hM_pos : 0 < M)
+    (hMrate : M ≤ simonLiebRate β J d / 2)
+    (h_corr_small : ∀ w : Fin d → ℤ, w ≠ 0 →
+      M * (latticeDistance d 0 w : ℝ) ≤ 1)
+    (h_adj_exp : ∀ w : Fin d → ℤ, latticeDistance d 0 w = 1 →
+      Ambient.correlationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {0, w}
+        ≤ Real.exp (-M))
+    (v : Fin d → ℤ) :
+    ∃ K : ℝ, 0 < K ∧
+      ∑' z : Fin d → ℤ,
+        Ambient.correlationInfinite (IsingModel.latticeGraph d)
+            (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {0, z} *
+        Ambient.correlationInfinite (IsingModel.latticeGraph d)
+            (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {v, z}
+      ≤ K :=
+  tsum_correlationInfinite_pair_product_le_const_of_simonLieb_smallReg_adjacent
+    hα hr d hαd hJ hβ hβJ_pos hβJd_pos hβJd_le hM_pos hMrate
+    h_corr_small h_adj_exp 0 v
+
+/-- **Lattice-distance displacement identity for the bound shape**.
+
+For distinct `(x, z)`, the bound `M · d(x, z) ≤ pseudoMass · r` rewrites
+as `M · d(0, z - x) ≤ pseudoMass · r` using
+`latticeDistance_pair_eq_displacement`. -/
+theorem bound_shape_displacement_eq
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    {J β : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)
+    {M : ℝ} (x z : Fin d → ℤ)
+    (hbound : M * (latticeDistance d 0 (z - x) : ℝ) ≤
+      pseudoMassFromParamsAtPair hα hr d (Ambient.cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) 0 (z - x) * r) :
+    M * (latticeDistance d x z : ℝ) ≤
+      pseudoMassFromParamsAtPair hα hr d (Ambient.cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) x z * r := by
+  have h_dist : (latticeDistance d x z : ℝ) =
+      (latticeDistance d 0 (z - x) : ℝ) := by
+    exact_mod_cast latticeDistance_pair_eq_displacement d x z
+  have h_pseudo := pseudoMassFromParamsAtPair_eq_displacement hα hr d hJ hβ x z
+  rw [h_dist, h_pseudo]
+  exact hbound
+
+/-- **Active range displacement identity**.
+
+For distinct `(x, z)`, active range at `(x, z)` is equivalent to active
+range at `(0, z - x)` via translation invariance of the pair correlation. -/
+theorem active_displacement_eq
+    {d : ℕ} {J β : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)
+    (x z : Fin d → ℤ)
+    (h_active_zero : Ambient.correlationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {0, z - x}
+        ∈ Set.Ioo (0 : ℝ) 2) :
+    Ambient.correlationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {x, z}
+      ∈ Set.Ioo (0 : ℝ) 2 := by
+  rw [correlationInfinite_pair_eq_displacement d hJ hβ x z]
+  exact h_active_zero
+
+/-- **Composite displacement form for bridge.bound**.
+
+Combining `bound_shape_displacement_eq` and `active_displacement_eq`
+factors per-pair `bridge.bound` through the zero-anchored displacement. -/
+theorem bridge_bound_active_displacement_composite
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    {J β : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)
+    {M : ℝ} (x z : Fin d → ℤ)
+    (hbound_zero : M * (latticeDistance d 0 (z - x) : ℝ) ≤
+      pseudoMassFromParamsAtPair hα hr d (Ambient.cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) 0 (z - x) * r)
+    (h_active_zero : Ambient.correlationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {0, z - x}
+        ∈ Set.Ioo (0 : ℝ) 2) :
+    (M * (latticeDistance d x z : ℝ) ≤
+        pseudoMassFromParamsAtPair hα hr d (Ambient.cubicExhaustion d)
+          (⟨J, 0, β⟩ : IsingParams ℝ) x z * r) ∧
+    Ambient.correlationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {x, z}
+      ∈ Set.Ioo (0 : ℝ) 2 :=
+  ⟨bound_shape_displacement_eq hα hr d hJ hβ x z hbound_zero,
+   active_displacement_eq hJ hβ x z h_active_zero⟩
+
+/-- **Antipode form: HLS sum at `(v, -v)`**.
+
+Specialization at the antipode pair anchor `(v, -v)` (= `(v, 0) + (-v, -v)`). -/
+theorem tsum_correlationInfinite_pair_product_antipode_le_const_of_simonLieb
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    (d : ℕ) (hαd : d < 2 * α) {J β : ℝ}
+    (hJ : 0 ≤ J) (hβ : 0 < β) (hβJ_pos : 0 < β * J)
+    (hβJd_pos : 0 < β * J * (2 * d)) (hβJd_le : β * J * (2 * d) ≤ 1)
+    {M : ℝ} (hM_pos : 0 < M)
+    (hMrate : M ≤ simonLiebRate β J d / 2)
+    (h_corr_small : ∀ w : Fin d → ℤ, w ≠ 0 →
+      M * (latticeDistance d 0 w : ℝ) ≤ 1)
+    (h_adj_exp : ∀ w : Fin d → ℤ, latticeDistance d 0 w = 1 →
+      Ambient.correlationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {0, w}
+        ≤ Real.exp (-M))
+    (v : Fin d → ℤ) :
+    ∃ K : ℝ, 0 < K ∧
+      ∑' z : Fin d → ℤ,
+        Ambient.correlationInfinite (IsingModel.latticeGraph d)
+            (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {v, z} *
+        Ambient.correlationInfinite (IsingModel.latticeGraph d)
+            (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {-v, z}
+      ≤ K :=
+  tsum_correlationInfinite_pair_product_le_const_of_simonLieb_smallReg_adjacent
+    hα hr d hαd hJ hβ hβJ_pos hβJd_pos hβJd_le hM_pos hMrate
+    h_corr_small h_adj_exp v (-v)
+
 end Ambient
 end IsingModel
