@@ -208,5 +208,84 @@ theorem correlationInfinite_latticeGraph_le_betaJ_two_d_pow_of_dist_gt
         ≤ β * J * (2 * d) * (β * J * (2 * d)) ^ m := h
       _ = (β * J * (2 * d)) ^ (m + 1) := by rw [pow_succ]; ring
 
+/-! ## Step 119 plan Step 5.7g: Simon-Lieb exp-form correlation bound -/
+
+/-- **`simonLiebRate`**: the explicit Simon-Lieb high-temperature exponential
+decay rate
+`simonLiebRate β J d = -log(β·J·(2d))`.
+
+In the high-temperature regime `0 < β·J·2d < 1`, `simonLiebRate > 0`,
+yielding genuine exponential decay. This is the rate matching the existing
+`correlationInfinite_latticeGraph_le_betaJ_two_d_pow_of_dist_gt` Simon-Lieb
+peeling output, and parallels `highTempExpRate β J = -log(tanh(β·J))`
+(`IsingModel/Conditioning/CorrelationRates/ExpRate.lean`) and the rate
+`-log(β·J·(2d))` used inside `cubicTanhProfileBound`. -/
+noncomputable def simonLiebRate (β J : ℝ) (d : ℕ) : ℝ :=
+  -Real.log (β * J * (2 * d))
+
+/-- **`simonLiebRate` is nonneg in the high-temperature regime**
+(Step 119 plan Step 5.7g).
+
+If `0 ≤ β·J·(2d) ≤ 1`, then `simonLiebRate β J d ≥ 0`. Strict positivity
+requires the strict bound `0 < β·J·(2d) < 1` (see `simonLiebRate_pos`); the
+endpoint `β·J·(2d) = 0` uses Lean's total `Real.log 0 = 0` and only yields
+`simonLiebRate = 0`. -/
+theorem simonLiebRate_nonneg {β J : ℝ} {d : ℕ}
+    (hβJd_nn : 0 ≤ β * J * (2 * d)) (hβJd_le : β * J * (2 * d) ≤ 1) :
+    0 ≤ simonLiebRate β J d := by
+  unfold simonLiebRate
+  exact neg_nonneg.mpr (Real.log_nonpos hβJd_nn hβJd_le)
+
+/-- **`simonLiebRate` is strictly positive in the strict high-temperature
+regime** (Step 119 plan Step 5.7g).
+
+If `0 < β·J·(2d) < 1`, then `simonLiebRate β J d > 0`. -/
+theorem simonLiebRate_pos {β J : ℝ} {d : ℕ}
+    (hβJd_pos : 0 < β * J * (2 * d)) (hβJd_lt : β * J * (2 * d) < 1) :
+    0 < simonLiebRate β J d := by
+  unfold simonLiebRate
+  exact neg_pos.mpr (Real.log_neg hβJd_pos hβJd_lt)
+
+/-- **`(β·J·2d)^n = exp(-(simonLiebRate · n))` in the strict high-temperature
+regime** (Step 119 plan Step 5.7g).
+
+Direct calculation: for `0 < β·J·(2d)`, `(β·J·2d)^n = exp(n·log(β·J·2d))
+= exp(-n·simonLiebRate)`. -/
+theorem betaJ_two_d_pow_eq_exp_neg_simonLiebRate_mul {β J : ℝ} {d : ℕ}
+    (hβJd_pos : 0 < β * J * (2 * d)) (n : ℕ) :
+    (β * J * (2 * d)) ^ n = Real.exp (-(simonLiebRate β J d) * (n : ℝ)) := by
+  unfold simonLiebRate
+  rw [← Real.exp_log (pow_pos hβJd_pos n), Real.log_pow]
+  ring_nf
+
+/-- **Simon-Lieb decay in exp form**: under strict high-temperature
+`0 < β·J·(2d)`, for `n + 1 ≤ latticeDistance d i j`,
+`correlationInfinite ≤ exp(-(simonLiebRate · n))`
+(Step 119 plan Step 5.7g).
+
+Direct combination of
+`correlationInfinite_latticeGraph_le_betaJ_two_d_pow_of_dist_gt` and the exp
+identity `betaJ_two_d_pow_eq_exp_neg_simonLiebRate_mul`. Provides the
+exp-form analytic correlation upper bound input shape consumed by the Step
+5.7e/f composers (PRs #3176, #3177), with rate `simonLiebRate β J d
+= -log(β·J·2d)`.
+
+Note: the exponent is `n = dist - 1` (the Simon-Lieb peeling output), not
+`dist`; converting to `correlation ≤ exp(-(M·dist))` for direct use with
+Step 5.7e introduces a constant prefactor `exp(simonLiebRate) = 1/(β·J·2d)`.
+This is a known artifact of the peeling structure (the final neighbour step
+at distance 1 contributes factor 1 rather than `β·J·2d`). -/
+theorem correlationInfinite_latticeGraph_le_exp_neg_simonLiebRate_pow_of_dist_gt
+    {d : ℕ} {β J : ℝ} (hβJ : 0 ≤ β * J) (hβJd_pos : 0 < β * J * (2 * d)) :
+    ∀ (n : ℕ) (i j : Fin d → ℤ), n + 1 ≤ latticeDistance d i j →
+      correlationInfinite (latticeGraph d) (cubicExhaustion d)
+          (⟨J, 0, β⟩ : IsingParams ℝ) {i, j}
+        ≤ Real.exp (-(simonLiebRate β J d) * (n : ℝ)) := by
+  intro n i j hdist
+  have hbase := correlationInfinite_latticeGraph_le_betaJ_two_d_pow_of_dist_gt
+    hβJ n i j hdist
+  rw [betaJ_two_d_pow_eq_exp_neg_simonLiebRate_mul hβJd_pos n] at hbase
+  exact hbase
+
 end Ambient
 end IsingModel
