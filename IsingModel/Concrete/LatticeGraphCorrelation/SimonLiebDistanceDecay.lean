@@ -287,5 +287,67 @@ theorem correlationInfinite_latticeGraph_le_exp_neg_simonLiebRate_pow_of_dist_gt
   rw [betaJ_two_d_pow_eq_exp_neg_simonLiebRate_mul hβJd_pos n] at hbase
   exact hbase
 
+/-! ## Step 119 plan Step 5.7h: dist ≥ 2 exp-form with M/2 rate -/
+
+set_option linter.style.longLine false in
+/-- **Simon-Lieb dist ≥ 2 exp-form bound with rate `simonLiebRate / 2`**
+(Step 119 plan Step 5.7h).
+
+For `dist ≥ 2`, the off-by-one `n = dist - 1` in Simon-Lieb peeling can be
+absorbed into the rate: monotonicity of `exp` gives
+`exp(-(M·(dist - 1))) ≤ exp(-(M/2·dist))` precisely because
+`dist - 1 ≥ dist/2` for `dist ≥ 2`. Combined with PR #3178's exp-form
+Simon-Lieb bound `correlationInfinite ≤ exp(-(simonLiebRate·n))` at
+`n := dist - 1`, this yields the cleaner shape
+`correlationInfinite ≤ exp(-(simonLiebRate/2 · dist))` directly usable with
+the Step 5.7e/f composers (PRs #3176, #3177).
+
+Hypotheses:
+- `0 ≤ β·J` for Simon-Lieb peeling.
+- `0 < β·J·(2d)` for the exp identity (positivity of base for `log`).
+- `β·J·(2d) ≤ 1` to ensure `simonLiebRate ≥ 0`; otherwise the monotonicity
+  step `exp(-(M·(dist - 1))) ≤ exp(-(M/2·dist))` reverses.
+- `2 ≤ latticeDistance d i j` for `dist - 1 ≥ dist/2`.
+
+The `dist = 1` case is excluded: Simon-Lieb gives only `correlation ≤ 1`
+there, so no exponential decay survives; handling adjacent pairs requires a
+separate single-step input. -/
+theorem correlationInfinite_latticeGraph_le_exp_neg_half_simonLiebRate_dist_of_dist_ge_two
+    {d : ℕ} {β J : ℝ} (hβJ : 0 ≤ β * J)
+    (hβJd_pos : 0 < β * J * (2 * d)) (hβJd_le : β * J * (2 * d) ≤ 1)
+    {i j : Fin d → ℤ} (hdist : 2 ≤ latticeDistance d i j) :
+    correlationInfinite (latticeGraph d) (cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) {i, j}
+      ≤ Real.exp (-(simonLiebRate β J d / 2) *
+          (latticeDistance d i j : ℝ)) := by
+  set n : ℕ := latticeDistance d i j - 1 with hn_def
+  have hn_pos : 1 ≤ n := by rw [hn_def]; omega
+  have hn_plus_one_le : n + 1 ≤ latticeDistance d i j := by rw [hn_def]; omega
+  have h_simonLieb :=
+    correlationInfinite_latticeGraph_le_exp_neg_simonLiebRate_pow_of_dist_gt
+      hβJ hβJd_pos n i j hn_plus_one_le
+  have hsL_nn : 0 ≤ simonLiebRate β J d :=
+    simonLiebRate_nonneg (le_of_lt hβJd_pos) hβJd_le
+  have hdist_ge_two_real : (2 : ℝ) ≤ (latticeDistance d i j : ℝ) := by
+    exact_mod_cast hdist
+  have hn_eq : (n : ℝ) = (latticeDistance d i j : ℝ) - 1 := by
+    rw [hn_def]
+    have : 1 ≤ latticeDistance d i j := by omega
+    rw [Nat.cast_sub this]
+    simp
+  have h_dist_pred_ge_half :
+      simonLiebRate β J d / 2 * (latticeDistance d i j : ℝ) ≤
+        simonLiebRate β J d * ((latticeDistance d i j : ℝ) - 1) := by
+    have : (latticeDistance d i j : ℝ) ≤ 2 * ((latticeDistance d i j : ℝ) - 1) := by
+      linarith
+    have := mul_le_mul_of_nonneg_left this hsL_nn
+    linarith
+  have h_exp_mono : Real.exp (-(simonLiebRate β J d) * (n : ℝ)) ≤
+      Real.exp (-(simonLiebRate β J d / 2) * (latticeDistance d i j : ℝ)) := by
+    apply Real.exp_le_exp.mpr
+    rw [hn_eq]
+    linarith
+  exact h_simonLieb.trans h_exp_mono
+
 end Ambient
 end IsingModel
