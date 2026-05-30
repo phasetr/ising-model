@@ -206,5 +206,71 @@ theorem truncated4TwoPoint_abs_le_pseudoMass_polynomial_of_distinct
   -- Chain via add_le_add
   exact h_u4_maj.trans (add_le_add h_prodA h_prodB)
 
+/-- **GJ §17.5 Theorem 17.5.1 |U_4| ≤ r'^{-2α}-factored form** (Step 119 plan Step 5.4
+intermediate factorization).
+
+Rewrite of `truncated4TwoPoint_abs_le_pseudoMass_polynomial_of_distinct` (PR #3159) using
+the `M^{-2α}` factorization (PR #3160). Each polynomial decay term
+`2/(m⁻·r')^α · 2/(m⁻·r')^α` becomes `4·r'^{-2α} · m⁻^{-α} · m⁻^{-α}`, exposing the
+common `r'^{-2α}` prefactor and the per-pseudoMass `m⁻^{-α}` decay separately. -/
+theorem truncated4TwoPoint_abs_le_pseudoMass_polynomial_factored_of_distinct
+    {α : ℕ} (hα : 1 ≤ α) {r' : ℝ} (hr' : 0 < r') (d : ℕ)
+    (J β : ℝ) (hf : IsingModel.Ferromagnetic (⟨J, (0 : ℝ), β⟩ : IsingParams ℝ))
+    {r s u : Fin d → ℤ}
+    (hr : (0 : Fin d → ℤ) ≠ r) (hs : (0 : Fin d → ℤ) ≠ s)
+    (hu : (0 : Fin d → ℤ) ≠ u)
+    (hrs : r ≠ s) (hru : r ≠ u) (hsu : s ≠ u)
+    (hc_0s : Ambient.correlationInfinite (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) {(0 : Fin d → ℤ), s} ∈ Set.Ioo (0 : ℝ) 2)
+    (hc_ru : Ambient.correlationInfinite (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) {r, u} ∈ Set.Ioo (0 : ℝ) 2)
+    (hc_0u : Ambient.correlationInfinite (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) {(0 : Fin d → ℤ), u} ∈ Set.Ioo (0 : ℝ) 2)
+    (hc_rs : Ambient.correlationInfinite (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) {r, s} ∈ Set.Ioo (0 : ℝ) 2)
+    (hm_0s_pos : 0 < pseudoMassFromParamsAtPair hα hr' d (Ambient.cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) (0 : Fin d → ℤ) s)
+    (hm_ru_pos : 0 < pseudoMassFromParamsAtPair hα hr' d (Ambient.cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) r u)
+    (hm_0u_pos : 0 < pseudoMassFromParamsAtPair hα hr' d (Ambient.cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) (0 : Fin d → ℤ) u)
+    (hm_rs_pos : 0 < pseudoMassFromParamsAtPair hα hr' d (Ambient.cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) r s) :
+    |truncated4TwoPoint d ⟨J, 0, β⟩ r s u| ≤
+      4 / r' ^ (2 * α) *
+        (1 / pseudoMassFromParamsAtPair hα hr' d (Ambient.cubicExhaustion d)
+              (⟨J, 0, β⟩ : IsingParams ℝ) (0 : Fin d → ℤ) s ^ α *
+         (1 / pseudoMassFromParamsAtPair hα hr' d (Ambient.cubicExhaustion d)
+              (⟨J, 0, β⟩ : IsingParams ℝ) r u ^ α)) +
+      4 / r' ^ (2 * α) *
+        (1 / pseudoMassFromParamsAtPair hα hr' d (Ambient.cubicExhaustion d)
+              (⟨J, 0, β⟩ : IsingParams ℝ) (0 : Fin d → ℤ) u ^ α *
+         (1 / pseudoMassFromParamsAtPair hα hr' d (Ambient.cubicExhaustion d)
+              (⟨J, 0, β⟩ : IsingParams ℝ) r s ^ α)) := by
+  -- Polynomial decay form from PR #3159
+  have h := truncated4TwoPoint_abs_le_pseudoMass_polynomial_of_distinct
+    hα hr' d J β hf hr hs hu hrs hru hsu
+    hc_0s hc_ru hc_0u hc_rs
+    hm_0s_pos hm_ru_pos hm_0u_pos hm_rs_pos
+  set m0s : ℝ := pseudoMassFromParamsAtPair hα hr' d (Ambient.cubicExhaustion d)
+      (⟨J, 0, β⟩ : IsingParams ℝ) (0 : Fin d → ℤ) s
+  set mru : ℝ := pseudoMassFromParamsAtPair hα hr' d (Ambient.cubicExhaustion d)
+      (⟨J, 0, β⟩ : IsingParams ℝ) r u
+  set m0u : ℝ := pseudoMassFromParamsAtPair hα hr' d (Ambient.cubicExhaustion d)
+      (⟨J, 0, β⟩ : IsingParams ℝ) (0 : Fin d → ℤ) u
+  set mrs : ℝ := pseudoMassFromParamsAtPair hα hr' d (Ambient.cubicExhaustion d)
+      (⟨J, 0, β⟩ : IsingParams ℝ) r s
+  -- Algebraic equality between PR #3159's RHS and this theorem's RHS
+  have h_alg : 2 / (m0s * r') ^ α * (2 / (mru * r') ^ α) +
+                2 / (m0u * r') ^ α * (2 / (mrs * r') ^ α)
+             = 4 / r' ^ (2 * α) * (1 / m0s ^ α * (1 / mru ^ α)) +
+                4 / r' ^ (2 * α) * (1 / m0u ^ α * (1 / mrs ^ α)) := by
+    have hr'_eq : r' ^ (2 * α) = r' ^ α * r' ^ α := by
+      rw [show 2 * α = α + α from by ring, pow_add]
+    rw [hr'_eq, mul_pow m0s r' α, mul_pow mru r' α, mul_pow m0u r' α, mul_pow mrs r' α]
+    field_simp; norm_num
+  rw [h_alg] at h
+  exact h
+
 end Ambient
 end IsingModel

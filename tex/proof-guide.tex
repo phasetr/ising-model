@@ -14118,6 +14118,21 @@ $1 + (M\cdot t)^\alpha \ge (M\cdot t)^\alpha$ and \texttt{one\_div\_le\_one\_div
 (resp.\ \texttt{div\_le\_div\_of\_nonneg\_left}) with \texttt{pow\_pos} positivity.
 \end{theorem}
 
+\begin{theorem}[\texttt{IsingModel.Ambient.truncated4TwoPoint\_abs\_le\_pseudoMass\_polynomial\_factored\_of\_distinct}
+($|U_4^\infty|$ factored polynomial form; GJ \S4.3 Cor 4.3.3 + \S17.5 p.~312; Issue \#1645
+Step 119 plan Step 5.4)]
+Algebraic rewrite of PR \#3159 using the $M^{-2\alpha}$ factorization (PR \#3160). For
+ferromagnetic h=0 with pairwise-distinct $\{0, r, s, u\}$, all 4 pair correlations active,
+all 4 pseudo-masses strictly positive:
+\[
+  |U_4^\infty(0, r, s, u)|
+    \le \frac{4}{r'^{2\alpha}}\cdot\frac{1}{m^-_{0s}{}^{\alpha}\,m^-_{ru}{}^{\alpha}}
+      + \frac{4}{r'^{2\alpha}}\cdot\frac{1}{m^-_{0u}{}^{\alpha}\,m^-_{rs}{}^{\alpha}}.
+\]
+Exposes the common $r'^{-2\alpha}$ prefactor and per-pseudoMass $m^{-\alpha}$ decay
+separately, the form GJ uses to extract the $m^{-2\alpha}$ prefactor in the HLS sum step.
+\end{theorem}
+
 \begin{theorem}[\texttt{IsingModel.Ambient.truncated4TwoPoint\_abs\_le\_pseudoMass\_polynomial\_of\_distinct}
 ($|U_4^\infty|$ bounded by pseudoMass polynomial decay form; GJ \S4.3 Cor 4.3.3 + \S17.5 p.~312;
 Issue \#1645 Step 119 plan Step 5.4 capstone)]
