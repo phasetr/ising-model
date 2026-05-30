@@ -8,8 +8,8 @@ GJ §17.5 Theorem 17.5.1 proof composition (Step 119 plan Step 5.3): the Lebowit
 absolute-value bound `|U_4^∞| ≤ pair products`
 (`truncated4TwoPoint_abs_le_pair_correlations_of_distinct`, PR #3152) composed with the
 single-pair pseudo-mass majorant
-(`correlationInfinite_pair_product_le_four_div_one_add_pow_pseudoMassFromParamsAtPair`,
-PR #3155) yields
+(`correlationInfinite_le_two_div_one_add_pow_pseudoMassFromParamsAtPair`, PR #3154)
+applied to each of the 4 pair correlations yields
 
     |U_4^∞(0, r, s, u)| ≤ pair-product `pseudoMassG`-majorant.
 
@@ -41,9 +41,10 @@ and `r' > 0` is the pseudo-mass radius parameter (denoted `r'` to avoid collisio
 the vertex `r`).
 
 Direct composition of `truncated4TwoPoint_abs_le_pair_correlations_of_distinct` (PR #3152)
-with `correlationInfinite_pair_product_le_four_div_one_add_pow_pseudoMassFromParamsAtPair`
-(PR #3155) applied to each of the two pair-product terms, then `add_le_add` with appropriate
-non-negativity. -/
+with the single-pair m⁻ majorant
+`correlationInfinite_le_two_div_one_add_pow_pseudoMassFromParamsAtPair` (PR #3154) applied
+to each of the 4 pair correlations, followed by `mul_le_mul` for each cross product and
+`add_le_add` for the sum with appropriate GKS-I non-negativity. -/
 theorem truncated4TwoPoint_abs_le_pseudoMass_majorant_of_distinct
     {α : ℕ} (hα : 1 ≤ α) {r' : ℝ} (hr' : 0 < r') (d : ℕ)
     (J β : ℝ) (hf : IsingModel.Ferromagnetic (⟨J, (0 : ℝ), β⟩ : IsingParams ℝ))
