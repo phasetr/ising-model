@@ -208,7 +208,8 @@ Since `M·r ≤ highTempExpRate β J`, multiplying by the nonneg distance
 `-highTempExpRate·d ≤ -(M·r·d)`, hence
 `exp(-highTempExpRate·d) ≤ exp(-(M·r·d)) = exp(-(M·d·r))`.
 
-The zero-`tanh(β·J)` endpoint: `tanh(β·J)^d = 0 ≤ exp(...)`.
+The zero-`tanh(β·J)` endpoint splits by `d`: for `d = 0` we have
+`tanh(β·J)^0 = 1 = exp(0)`; for `d > 0` we have `tanh(β·J)^d = 0 ≤ exp(...)`.
 
 This is the analytic bridge from cubic-path tanh decay
 `correlation ≤ tanh(β·J)^d` into `correlation ≤ exp(-(M·d·r))`, which

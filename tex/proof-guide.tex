@@ -14131,8 +14131,9 @@ $\tanh(\beta\cdot J)^d = e^{d\cdot \log(\tanh(\beta\cdot J))}
 = e^{-(\mathrm{highTempExpRate})\cdot d}$,
 and the hypothesis gives $M\cdot r \cdot d \le \mathrm{highTempExpRate}\cdot d$, hence
 $-\mathrm{highTempExpRate}\cdot d \le -M\cdot r \cdot d$, so the exponential bound
-follows by monotonicity. The endpoint $\tanh(\beta\cdot J) = 0$ uses Lean's
-total $\log 0 = 0$ and trivial $0 \le e^{...}$. This is the analytic bridge
+follows by monotonicity. The endpoint $\tanh(\beta\cdot J) = 0$ splits by $d$:
+for $d = 0$, $\tanh(\beta\cdot J)^0 = 1 = e^{0}$; for $d > 0$,
+$\tanh(\beta\cdot J)^d = 0 \le e^{-(M\cdot d\cdot r)}$. This is the analytic bridge
 from cubic-path tanh decay $\mathrm{correlation} \le \tanh(\beta\cdot J)^d$ into
 the form $\mathrm{correlation} \le e^{-(M\cdot d\cdot r)}$, combinable with
 \#3174's \texttt{pseudoMassG\_ge\_exp\_of\_tr\_le\_one}
