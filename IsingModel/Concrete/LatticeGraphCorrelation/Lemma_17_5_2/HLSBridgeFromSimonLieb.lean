@@ -248,5 +248,166 @@ theorem tsum_correlationInfinite_pair_product_le_const_of_simonLieb_tanh_adjacen
       h_corr_small h_adj_tanh)
     x₀ y₀
 
+/-! ## Variant bundle: per-pair / symmetric / mixed-anchor specializations -/
+
+/-- **HLS sum existential at the diagonal `(x₀, x₀)`**.
+
+Diagonal specialization of
+`tsum_correlationInfinite_pair_product_le_const_of_simonLieb_smallReg_adjacent`
+at `y₀ := x₀`, the most common shape for `χ_∞(x₀)^2`-type estimates. -/
+theorem tsum_correlationInfinite_pair_product_diagonal_le_const_of_simonLieb
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    (d : ℕ) (hαd : d < 2 * α) {J β : ℝ}
+    (hJ : 0 ≤ J) (hβ : 0 < β) (hβJ_pos : 0 < β * J)
+    (hβJd_pos : 0 < β * J * (2 * d)) (hβJd_le : β * J * (2 * d) ≤ 1)
+    {M : ℝ} (hM_pos : 0 < M)
+    (hMrate : M ≤ simonLiebRate β J d / 2)
+    (h_corr_small : ∀ w : Fin d → ℤ, w ≠ 0 →
+      M * (latticeDistance d 0 w : ℝ) ≤ 1)
+    (h_adj_exp : ∀ w : Fin d → ℤ, latticeDistance d 0 w = 1 →
+      Ambient.correlationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {0, w}
+        ≤ Real.exp (-M))
+    (x₀ : Fin d → ℤ) :
+    ∃ K : ℝ, 0 < K ∧
+      ∑' z : Fin d → ℤ,
+        Ambient.correlationInfinite (IsingModel.latticeGraph d)
+            (Ambient.cubicExhaustion d)
+            (⟨J, 0, β⟩ : IsingParams ℝ) {x₀, z} *
+        Ambient.correlationInfinite (IsingModel.latticeGraph d)
+            (Ambient.cubicExhaustion d)
+            (⟨J, 0, β⟩ : IsingParams ℝ) {x₀, z}
+      ≤ K :=
+  tsum_correlationInfinite_pair_product_le_const_of_simonLieb_smallReg_adjacent
+    hα hr d hαd hJ hβ hβJ_pos hβJd_pos hβJd_le hM_pos hMrate
+    h_corr_small h_adj_exp x₀ x₀
+
+/-- **HLS sum existential symmetric in `(x₀, y₀)` ↔ `(y₀, x₀)`**.
+
+Symmetric variant under the swap `x₀ ↔ y₀`. Direct consequence of the
+non-symmetric form combined with the commutativity of multiplication —
+the underlying constant is the same. -/
+theorem tsum_correlationInfinite_pair_product_swap_le_const_of_simonLieb
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    (d : ℕ) (hαd : d < 2 * α) {J β : ℝ}
+    (hJ : 0 ≤ J) (hβ : 0 < β) (hβJ_pos : 0 < β * J)
+    (hβJd_pos : 0 < β * J * (2 * d)) (hβJd_le : β * J * (2 * d) ≤ 1)
+    {M : ℝ} (hM_pos : 0 < M)
+    (hMrate : M ≤ simonLiebRate β J d / 2)
+    (h_corr_small : ∀ w : Fin d → ℤ, w ≠ 0 →
+      M * (latticeDistance d 0 w : ℝ) ≤ 1)
+    (h_adj_exp : ∀ w : Fin d → ℤ, latticeDistance d 0 w = 1 →
+      Ambient.correlationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {0, w}
+        ≤ Real.exp (-M))
+    (x₀ y₀ : Fin d → ℤ) :
+    ∃ K : ℝ, 0 < K ∧
+      ∑' z : Fin d → ℤ,
+        Ambient.correlationInfinite (IsingModel.latticeGraph d)
+            (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {y₀, z} *
+        Ambient.correlationInfinite (IsingModel.latticeGraph d)
+            (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {x₀, z}
+      ≤ K :=
+  tsum_correlationInfinite_pair_product_le_const_of_simonLieb_smallReg_adjacent
+    hα hr d hαd hJ hβ hβJ_pos hβJd_pos hβJd_le hM_pos hMrate
+    h_corr_small h_adj_exp y₀ x₀
+
+/-- **Ferromagnetic-unfolded form of `PseudoMassLatticeDistanceBridge`
+end-to-end constructor**.
+
+The `Ferromagnetic ⟨J, 0, β⟩` witness `⟨hJ, le_refl 0, hβ⟩` is unfolded
+to its explicit components, useful for callers that haven't already
+packaged the ferromagnetic predicate. -/
+def PseudoMassLatticeDistanceBridge_ferromagnetic_unfolded
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    (d : ℕ) {J β : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β) (hβJ_pos : 0 < β * J)
+    (hβJd_pos : 0 < β * J * (2 * d)) (hβJd_le : β * J * (2 * d) ≤ 1)
+    {M : ℝ} (hM_pos : 0 < M)
+    (hMrate : M ≤ simonLiebRate β J d / 2)
+    (h_corr_small : ∀ w : Fin d → ℤ, w ≠ 0 →
+      M * (latticeDistance d 0 w : ℝ) ≤ 1)
+    (h_adj_exp : ∀ w : Fin d → ℤ, latticeDistance d 0 w = 1 →
+      Ambient.correlationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {0, w}
+        ≤ Real.exp (-M)) :
+    PseudoMassLatticeDistanceBridge hα hr d J β :=
+  PseudoMassLatticeDistanceBridge_of_simonLieb_smallReg_adjacent
+    hα hr d hJ hβ hβJ_pos hβJd_pos hβJd_le hM_pos hMrate
+    h_corr_small h_adj_exp
+
+/-- **Constant K positivity from the existential HLS sum bound**.
+
+Exposes the positive K witness extracted from the existential, useful for
+downstream `K > 0`-dependent reasoning. -/
+theorem hls_const_pos_of_simonLieb
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    (d : ℕ) (hαd : d < 2 * α) {J β : ℝ}
+    (hJ : 0 ≤ J) (hβ : 0 < β) (hβJ_pos : 0 < β * J)
+    (hβJd_pos : 0 < β * J * (2 * d)) (hβJd_le : β * J * (2 * d) ≤ 1)
+    {M : ℝ} (hM_pos : 0 < M)
+    (hMrate : M ≤ simonLiebRate β J d / 2)
+    (h_corr_small : ∀ w : Fin d → ℤ, w ≠ 0 →
+      M * (latticeDistance d 0 w : ℝ) ≤ 1)
+    (h_adj_exp : ∀ w : Fin d → ℤ, latticeDistance d 0 w = 1 →
+      Ambient.correlationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {0, w}
+        ≤ Real.exp (-M))
+    (x₀ y₀ : Fin d → ℤ) :
+    ∃ K : ℝ, 0 < K :=
+  let ⟨K, hK_pos, _⟩ :=
+    tsum_correlationInfinite_pair_product_le_const_of_simonLieb_smallReg_adjacent
+      hα hr d hαd hJ hβ hβJ_pos hβJd_pos hβJd_le hM_pos hMrate
+      h_corr_small h_adj_exp x₀ y₀
+  ⟨K, hK_pos⟩
+
+/-- **Active range provider standalone form for the zero anchor**.
+
+Zero-anchored version of `all_pair_active_of_betaJ_pos_provider`. -/
+theorem zero_anchor_active_of_betaJ_pos
+    {d : ℕ} {J β : ℝ} (hβ : 0 < β) (hβJ_pos : 0 < β * J) :
+    ∀ w : Fin d → ℤ, w ≠ 0 →
+      Ambient.correlationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {0, w}
+        ∈ Set.Ioo (0 : ℝ) 2 := by
+  intro w hw_ne
+  exact correlationInfinite_pair_active_of_betaJ_pos hβ hβJ_pos 0 w
+    (fun h => hw_ne h.symm)
+
+/-- **Per-`w` non-vanishing of correlation from active range**.
+
+Lower bound `0 < correlationInfinite {0, w}` for `w ≠ 0` distilled from
+the active range. Useful when only the strict positivity is needed (not
+the full `Ioo 0 2` membership). -/
+theorem correlationInfinite_pos_of_betaJ_pos_zero_anchor
+    {d : ℕ} {J β : ℝ} (hβ : 0 < β) (hβJ_pos : 0 < β * J)
+    {w : Fin d → ℤ} (hw_ne : w ≠ 0) :
+    0 < Ambient.correlationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {0, w} :=
+  (zero_anchor_active_of_betaJ_pos hβ hβJ_pos w hw_ne).1
+
+/-- **Per-pair non-vanishing of correlation from active range**.
+
+Per-distinct-pair version of
+`correlationInfinite_pos_of_betaJ_pos_zero_anchor`. -/
+theorem correlationInfinite_pos_of_betaJ_pos_pair
+    {d : ℕ} {J β : ℝ} (hβ : 0 < β) (hβJ_pos : 0 < β * J)
+    {x z : Fin d → ℤ} (hxz : x ≠ z) :
+    0 < Ambient.correlationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} :=
+  (correlationInfinite_pair_active_of_betaJ_pos hβ hβJ_pos x z hxz).1
+
+/-- **Per-pair upper bound from active range**.
+
+Upper bound `correlationInfinite {x, z} < 2` distilled from the active
+range. (The sharper `≤ 1` follows from
+`correlationInfinite_latticeGraph_le_one`.) -/
+theorem correlationInfinite_lt_two_of_betaJ_pos_pair
+    {d : ℕ} {J β : ℝ} (hβ : 0 < β) (hβJ_pos : 0 < β * J)
+    {x z : Fin d → ℤ} (hxz : x ≠ z) :
+    Ambient.correlationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {x, z}
+      < 2 :=
+  (correlationInfinite_pair_active_of_betaJ_pos hβ hβJ_pos x z hxz).2
+
 end Ambient
 end IsingModel
