@@ -366,7 +366,7 @@ theorem truncated4TwoPoint_abs_le_pseudoMass_uniform_lower_of_distinct
         rw [show 2 * α = α + α from by ring, pow_add]
       rw [this]
       field_simp; ring
-    linarith [h_A, h_B, h_eq.symm.le]
+    linarith [h_A, h_B, h_eq.le]
   exact h.trans h_sum_bound
 
 end Ambient
