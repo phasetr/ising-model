@@ -14118,6 +14118,27 @@ $1 + (M\cdot t)^\alpha \ge (M\cdot t)^\alpha$ and \texttt{one\_div\_le\_one\_div
 (resp.\ \texttt{div\_le\_div\_of\_nonneg\_left}) with \texttt{pow\_pos} positivity.
 \end{theorem}
 
+\begin{theorem}[\texttt{IsingModel.pseudoMassG\_ge\_exp\_div\_pow\_of\_tr\_ge\_one}
+(large-$t\cdot r$ pseudoMassG lower bound;
+GJ \S17.5 pp.~311--312; Issue \#1645 Step 119 plan Step 5.7c)]
+For $\alpha \in \mathbb{N}$ and $t\cdot r \ge 1$:
+\[
+  \frac{e^{-(t\cdot r)}}{(t\cdot r)^\alpha} \le
+  \frac{2\,e^{-(t\cdot r)}}{1 + (t\cdot r)^\alpha}
+  = \mathrm{pseudoMassG}_{\alpha, r}(t).
+\]
+Direct from $(t\cdot r)^\alpha \ge 1$ so $1 + (t\cdot r)^\alpha \le 2\,(t\cdot r)^\alpha$,
+hence $2 / (1 + (t\cdot r)^\alpha) \ge 1 / (t\cdot r)^\alpha$. Paired with the
+small-$t\cdot r$ regime bound \texttt{pseudoMassG\_ge\_exp\_of\_tr\_le\_one}
+(\texttt{PseudoMass/Profile.lean}), this gives a useful explicit lower bound on
+\texttt{pseudoMassG} in both regimes. The large-$t\cdot r$ form is exactly what
+is needed to land a cubic-path tanh decay $c \le \tanh(\beta J)^d$ of the form
+$c \le e^{-M\cdot d\cdot r}/(M\cdot d)^\alpha$ into
+\texttt{pseudoMass\_ge\_iff\_pseudoMassG\_ge} (\texttt{PseudoMass/Basic.lean})
+reverse direction, yielding the \texttt{bridge.bound}-shape via the wrappers of
+\#3173.
+\end{theorem}
+
 \begin{theorem}[\texttt{IsingModel.Ambient.pseudoMassFromParamsAtPair\_ge\_of\_corr\_le\_pseudoMassG},
 \texttt{...\_M\_dist\_zero\_le\_of\_corr\_le\_pseudoMassG}
 (\texttt{bridge.bound} reduction from a \texttt{pseudoMassG} upper bound;
