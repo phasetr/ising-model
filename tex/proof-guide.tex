@@ -14118,6 +14118,29 @@ $1 + (M\cdot t)^\alpha \ge (M\cdot t)^\alpha$ and \texttt{one\_div\_le\_one\_div
 (resp.\ \texttt{div\_le\_div\_of\_nonneg\_left}) with \texttt{pow\_pos} positivity.
 \end{theorem}
 
+\begin{theorem}[\texttt{IsingModel.Ambient.pseudoMassFromParamsAtPair\_M\_dist\_zero\_le\_of\_simonLieb\_smallReg}
+(Simon-Lieb direct \texttt{bridge.bound} composer in small regime;
+GJ \S17.5 pp.~311--312; Issue \#1645 Step 119 plan Step 5.7j)]
+Direct per-$w$ atomic composer combining Step 5.7h (\#3179) and Step 5.7e
+small-regime (\#3176). Hypotheses:
+$1 \le \alpha$, $0 < r$;
+$0 \le \beta\cdot J$, $0 < \beta\cdot J\cdot(2d)$, $\beta\cdot J\cdot(2d) \le 1$;
+$0 \le M$, $M \le \mathrm{simonLiebRate}(\beta, J, d)/2$;
+$2 \le \mathrm{dist}(0, w)$ (excluding adjacent pairs);
+$M \cdot d(0, w) \le 1$ (small regime);
+$\mathrm{correlationInfinite}\,\{0, w\} \in (0, 2)$. Conclusion:
+$M \cdot d(0, w) \le \mathrm{pseudoMassFromParamsAtPair}\,0\,w \cdot r$.
+
+Proof: Step 5.7h gives $\mathrm{correlation} \le
+e^{-(\mathrm{simonLiebRate}/2 \cdot d(0,w))}$, then $M \le \mathrm{simonLiebRate}/2$
+and $d(0,w) \ge 0$ strengthen to $\mathrm{correlation} \le e^{-(M\cdot d(0,w))}$,
+which the small-regime composer
+(\texttt{...\_corr\_le\_exp\_smallReg}) consumes.
+
+The adjacent $\mathrm{dist} = 1$ case and the large-$M\cdot d$ regime
+require separate inputs and are left for future composers.
+\end{theorem}
+
 \begin{theorem}[\texttt{IsingModel.Ambient.pseudoMassFromParamsAtPair\_M\_dist\_zero\_le\_of\_corr\_le\_tanh\_exp\_trichotomy}
 (asymmetric tanh / exp \texttt{hbase} composer;
 GJ \S17.5 pp.~311--312; Issue \#1645 Step 119 plan Step 5.7i)]
