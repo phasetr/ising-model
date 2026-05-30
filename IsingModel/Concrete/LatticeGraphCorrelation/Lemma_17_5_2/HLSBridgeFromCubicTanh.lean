@@ -3,6 +3,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassTanhProfileCub
 import IsingModel.Concrete.LatticeGraphCorrelation.TwoPoint
 import IsingModel.PolyDecay
 import IsingModel.Conditioning.CorrelationRates.ExpRate
+import IsingModel.Concrete.LatticeGraphCorrelation.SimonLiebDistanceDecay
 
 /-!
 # PseudoMassLatticeDistanceBridge constructor from a cubicTanhProfileBound family
@@ -570,6 +571,62 @@ theorem pseudoMassFromParamsAtPair_M_dist_zero_le_of_corr_le_tanh_exp_trichotomy
     exact pseudoMassFromParamsAtPair_M_dist_zero_le_of_corr_le_exp_div_pow_largeReg
       hα hr d Λ p w hlarge_le (h_corr_active w hw_ne)
       (h_corr_exp_large w hw_ne hlarge_le)
+
+/-! ## Step 119 plan Step 5.7j: Simon-Lieb dist ≥ 2 direct bridge.bound -/
+
+/-- **Simon-Lieb dist ≥ 2 direct `bridge.bound` composer in the
+small-`M·d` regime** (Step 119 plan Step 5.7j).
+
+Combines Step 5.7h (PR #3179)'s `correlationInfinite ≤
+exp(-(simonLiebRate/2 · dist))` for `dist ≥ 2` with Step 5.7e small-regime
+(PR #3176) for `M · d(0,w) ≤ 1`, yielding the per-`w` zero-anchored
+`bridge.bound` shape `M · d(0, w) ≤ pseudoMass · r` directly from
+Simon-Lieb infrastructure.
+
+Hypotheses:
+- `1 ≤ α`, `0 < r` (pseudoMass parameters).
+- `0 ≤ β·J`, `0 < β·J·(2d)`, `β·J·(2d) ≤ 1` for the Simon-Lieb exp-form
+  bound from Step 5.7g/h.
+- `0 ≤ M` and `M ≤ simonLiebRate β J d / 2` for rate-domination.
+- `M · d(0, w) ≤ 1` for the small-`t·r` regime of pseudoMassG.
+- `2 ≤ latticeDistance d 0 w` to exclude the adjacent `dist = 1` case.
+- Active range `correlationInfinite ∈ Ioo 0 2` at `{0, w}`.
+
+The adjacent `dist = 1` and large-`M·d` regimes require separate inputs. -/
+theorem pseudoMassFromParamsAtPair_M_dist_zero_le_of_simonLieb_smallReg
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    {β J : ℝ} (hβJ : 0 ≤ β * J)
+    (hβJd_pos : 0 < β * J * (2 * d)) (hβJd_le : β * J * (2 * d) ≤ 1)
+    {M : ℝ} (hM : 0 ≤ M)
+    (hMrate : M ≤ simonLiebRate β J d / 2)
+    {w : Fin d → ℤ} (hdist : 2 ≤ latticeDistance d 0 w)
+    (hsmall : M * (latticeDistance d 0 w : ℝ) ≤ 1)
+    (hcorr : Ambient.correlationInfinite (IsingModel.latticeGraph d)
+                (Ambient.cubicExhaustion d)
+                (⟨J, 0, β⟩ : IsingParams ℝ) {0, w}
+              ∈ Set.Ioo (0 : ℝ) 2) :
+    M * (latticeDistance d 0 w : ℝ) ≤
+      pseudoMassFromParamsAtPair hα hr d (Ambient.cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) 0 w * r := by
+  have h_simonLieb :=
+    correlationInfinite_latticeGraph_le_exp_neg_half_simonLiebRate_dist_of_dist_ge_two
+      hβJ hβJd_pos hβJd_le hdist (i := 0) (j := w)
+  have hdist_nn : (0 : ℝ) ≤ (latticeDistance d 0 w : ℝ) := by
+    exact_mod_cast Nat.zero_le _
+  have h_exp_upper :
+      Ambient.correlationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {0, w}
+        ≤ Real.exp (-(M * (latticeDistance d 0 w : ℝ))) := by
+    refine h_simonLieb.trans ?_
+    apply Real.exp_le_exp.mpr
+    have hrate_mul : -(simonLiebRate β J d / 2) * (latticeDistance d 0 w : ℝ) ≤
+        -(M * (latticeDistance d 0 w : ℝ)) := by
+      have hmono : M ≤ simonLiebRate β J d / 2 := hMrate
+      nlinarith [hdist_nn, hmono]
+    exact hrate_mul
+  exact pseudoMassFromParamsAtPair_M_dist_zero_le_of_corr_le_exp_smallReg
+    hα hr d (Ambient.cubicExhaustion d)
+    (⟨J, 0, β⟩ : IsingParams ℝ) hM w hsmall hcorr h_exp_upper
 
 end Ambient
 end IsingModel
