@@ -167,6 +167,45 @@ theorem two_div_one_add_pow_le_two_div_pow {α : ℕ} {tr : ℝ} (htr : 0 < tr) 
   have h_denom_ge : tr ^ α ≤ 1 + tr ^ α := by linarith
   exact div_le_div_of_nonneg_left (by norm_num) h_pow_pos h_denom_ge
 
+/-- **Pair-product polynomial-decay bridge** (Step 119 plan Step 5.4 bridge).
+
+For `M·tx > 0`, `M·ty > 0`, `α : ℕ`:
+
+    1/(1+(M·tx)^α) · 1/(1+(M·ty)^α) ≤ 1/(M·tx)^α · 1/(M·ty)^α
+
+The pair-product form of `one_div_one_add_pow_le_one_div_pow`, used to bridge from the
+pseudo-mass pair-product majorant `2/(1+(m⁻·d_x)^α) · 2/(1+(m⁻·d_y)^α)` (PR #3155) to the
+polynomial-decay convolution `(m⁻·d_x)^(-α) · (m⁻·d_y)^(-α) = m⁻^(-2α) · d_x^(-α) · d_y^(-α)`
+on which the discrete HLS convolution sum bound applies. -/
+theorem one_div_one_add_pow_mul_one_div_one_add_pow_le_one_div_pow_mul_one_div_pow
+    {α : ℕ} {Mtx Mty : ℝ} (hMtx : 0 < Mtx) (hMty : 0 < Mty) :
+    1 / (1 + Mtx ^ α) * (1 / (1 + Mty ^ α)) ≤ 1 / Mtx ^ α * (1 / Mty ^ α) := by
+  have hx := one_div_one_add_pow_le_one_div_pow (α := α) hMtx
+  have hy := one_div_one_add_pow_le_one_div_pow (α := α) hMty
+  have hy_nn : 0 ≤ 1 / (1 + Mty ^ α) := by
+    have h_pow_pos : 0 < Mty ^ α := pow_pos hMty α
+    have h_denom_pos : 0 < 1 + Mty ^ α := by linarith
+    exact div_nonneg (by norm_num) h_denom_pos.le
+  have hx_pow_nn : 0 ≤ 1 / Mtx ^ α :=
+    div_nonneg (by norm_num) (pow_pos hMtx α).le
+  exact mul_le_mul hx hy hy_nn hx_pow_nn
+
+/-- **Scaled pair-product polynomial-decay bridge** (Step 119 plan Step 5.4 bridge):
+the `2/(...)·2/(...)` form of the previous lemma, matching the pseudo-mass pair-product
+majorant constants. -/
+theorem two_div_one_add_pow_mul_two_div_one_add_pow_le_two_div_pow_mul_two_div_pow
+    {α : ℕ} {tx ty : ℝ} (htx : 0 < tx) (hty : 0 < ty) :
+    2 / (1 + tx ^ α) * (2 / (1 + ty ^ α)) ≤ 2 / tx ^ α * (2 / ty ^ α) := by
+  have hx := two_div_one_add_pow_le_two_div_pow (α := α) htx
+  have hy := two_div_one_add_pow_le_two_div_pow (α := α) hty
+  have hy_nn : 0 ≤ 2 / (1 + ty ^ α) := by
+    have h_pow_pos : 0 < ty ^ α := pow_pos hty α
+    have h_denom_pos : 0 < 1 + ty ^ α := by linarith
+    exact div_nonneg (by norm_num) h_denom_pos.le
+  have hx_pow_nn : 0 ≤ 2 / tx ^ α :=
+    div_nonneg (by norm_num) (pow_pos htx α).le
+  exact mul_le_mul hx hy hy_nn hx_pow_nn
+
 /-- `pseudoMassG` is at most 2 for `t ≥ 0` and `r > 0`.
 Corollary of `pseudoMassG_le_two_div_one_add_pow`. -/
 theorem pseudoMassG_le_two (α : ℕ) {r t : ℝ} (ht : 0 ≤ t) (hr : 0 < r) :
