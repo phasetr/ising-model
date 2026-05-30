@@ -14118,6 +14118,35 @@ $1 + (M\cdot t)^\alpha \ge (M\cdot t)^\alpha$ and \texttt{one\_div\_le\_one\_div
 (resp.\ \texttt{div\_le\_div\_of\_nonneg\_left}) with \texttt{pow\_pos} positivity.
 \end{theorem}
 
+\begin{theorem}[\texttt{IsingModel.Ambient.PseudoMassLatticeDistanceBridge},
+\texttt{tsum\_correlationInfinite\_pair\_product\_le\_HLS\_const}
+(HLS correlation pair-product capstone with bridge abstraction;
+GJ \S17.5 p.~312; Issue \#1645 Step 119 plan Step 5.6)]
+The structure \texttt{PseudoMassLatticeDistanceBridge} abstracts the
+pseudo-mass to lattice-distance lower bound
+$M_{\inf}\cdot d(x,z) \le m^-(x,z)\cdot r'$ together with the ferromagnetic
+assumption and per-pair active-range membership. Under the hypotheses
+$1 \le \alpha$, $0 < r'$, $d < 2\alpha$, given any such bridge,
+for any $x_0, y_0 : \mathbb{Z}^d$:
+\[
+  \exists K > 0,\quad \sum_{z \in \mathbb{Z}^d}
+    \langle \phi(x_0)\phi(z)\rangle\cdot\langle \phi(y_0)\phi(z)\rangle
+  \le K,
+\]
+with $K = 4 \cdot (\max(1, (M_{\inf}^\alpha)^{-1})\cdot 2^\alpha)^2 \cdot K_{\mathrm{HLS}}$.
+Proof outline: at $z = x_0$ or $z = y_0$ the singleton correlation vanishes by
+$\{x, x\} = \{x\}$ and $h = 0$ $Z_2$ symmetry (odd cardinality). For
+$z \notin \{x_0, y_0\}$, Step~5.1
+(\texttt{correlationInfinite\_le\_two\_div\_one\_add\_pow\_pseudoMassFromParamsAtPair})
+gives $\langle\phi(x)\phi(z)\rangle \le 2/(1+(m^-\cdot r')^\alpha)$, then the
+bridge bound $m^-\cdot r' \ge M_{\inf}\cdot d$ combined with monotonicity yields
+$\le 2/(1+(M_{\inf}\cdot d)^\alpha)$. The pair-product sum is then bounded by
+the $U_4$-aligned existential constant
+\texttt{discrete\_hls\_pseudoMass\_two\_pair\_convolution\_constant}.
+The bridge's own construction (via cubic-path exponential decay and
+\texttt{pseudoMassG} comparison) is left for a subsequent PR.
+\end{theorem}
+
 \begin{theorem}[\texttt{IsingModel.tsum\_two\_div\_pseudoMass\_pair\_product\_le\_const\_pow\_M},
 \texttt{discrete\_hls\_pseudoMass\_two\_pair\_convolution\_constant}
 (HLS pair tsum $2/(1+\ldots)\cdot 2/(1+\ldots)$ variant for $U_4$ form;
