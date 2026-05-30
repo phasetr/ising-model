@@ -336,7 +336,7 @@ theorem pseudoMassFromParamsAtPair_M_dist_zero_le_of_corr_le_exp_div_pow_largeRe
   have hMd_nn : 0 ≤ M * (latticeDistance d 0 w : ℝ) := le_trans zero_le_one hlarge
   have hM : 0 ≤ M := by
     by_contra hMneg
-    push_neg at hMneg
+    push Not at hMneg
     have : M * (latticeDistance d 0 w : ℝ) ≤ 0 :=
       mul_nonpos_iff.mpr (Or.inr ⟨hMneg.le, hdist_nn⟩)
     linarith
@@ -465,7 +465,7 @@ theorem pseudoMassFromParamsAtPair_M_dist_zero_le_of_corr_le_exp_trichotomy
   · exact pseudoMassFromParamsAtPair_M_dist_zero_le_of_corr_le_exp_smallReg
       hα hr d Λ p hM w hsmall (h_corr_active w hw_ne)
       (h_corr_small w hw_ne hsmall)
-  · push_neg at hsmall
+  · push Not at hsmall
     have hlarge_le : 1 ≤ M * (latticeDistance d 0 w : ℝ) := hsmall.le
     exact pseudoMassFromParamsAtPair_M_dist_zero_le_of_corr_le_exp_div_pow_largeReg
       hα hr d Λ p w hlarge_le (h_corr_active w hw_ne)
@@ -517,6 +517,59 @@ theorem pseudoMassFromParamsAtPair_M_dist_zero_le_of_corr_le_exp_div_max_pow
       max_eq_right hlarge
     rw [hmax_eq] at hbound
     exact hbound
+
+/-! ## Step 119 plan Step 5.7i: tanh + exp/pow combined hbase composer -/
+
+/-- **`hbase` quantifier composer with asymmetric tanh / exp inputs**
+(Step 119 plan Step 5.7i).
+
+Takes the small-regime analytic input in `tanh(β·J)^d(0,w)` form (the natural
+output of cubic-path tanh decay infrastructure) and the large-regime input
+in `exp(-(M·d))/(M·d)^α` form, dispatching by case-split on
+`M · d(0,w) ≤ 1`.
+
+In the small regime, applies Step 5.7e tanh-input variant
+`pseudoMassFromParamsAtPair_M_dist_zero_le_of_corr_le_tanh_pow_smallReg`
+(PR #3176), which internally uses Step 5.7d (PR #3175) to convert tanh form
+to exp form. In the large regime, applies Step 5.7e large-input variant
+`pseudoMassFromParamsAtPair_M_dist_zero_le_of_corr_le_exp_div_pow_largeReg`
+directly.
+
+This asymmetric composer matches the natural shape of analytic inputs
+arising from GJ §17.5 derivations: tanh-typed small-regime cubic-path
+estimates combined with exp/polynomial-typed large-regime decay. -/
+theorem pseudoMassFromParamsAtPair_M_dist_zero_le_of_corr_le_tanh_exp_trichotomy
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) {β J : ℝ} (hβJ : 0 ≤ β * J)
+    {M : ℝ} (hM : 0 ≤ M) (hMrate : M ≤ highTempExpRate β J)
+    (h_corr_active : ∀ w : Fin d → ℤ, w ≠ 0 →
+      Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ p {0, w}
+        ∈ Set.Ioo (0 : ℝ) 2)
+    (h_corr_tanh_small : ∀ w : Fin d → ℤ, w ≠ 0 →
+      M * (latticeDistance d 0 w : ℝ) ≤ 1 →
+      Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ p {0, w}
+        ≤ Real.tanh (β * J) ^ IsingModel.latticeDistance d 0 w)
+    (h_corr_exp_large : ∀ w : Fin d → ℤ, w ≠ 0 →
+      1 ≤ M * (latticeDistance d 0 w : ℝ) →
+      Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ p {0, w}
+        ≤ Real.exp (-(M * (latticeDistance d 0 w : ℝ))) /
+            (M * (latticeDistance d 0 w : ℝ)) ^ α) :
+    ∀ w : Fin d → ℤ, w ≠ 0 →
+      M * (latticeDistance d 0 w : ℝ) ≤
+        pseudoMassFromParamsAtPair hα hr d Λ p 0 w * r := by
+  intro w hw_ne
+  by_cases hsmall : M * (latticeDistance d 0 w : ℝ) ≤ 1
+  · exact pseudoMassFromParamsAtPair_M_dist_zero_le_of_corr_le_tanh_pow_smallReg
+      hα hr d Λ p hβJ hM hMrate w hsmall (h_corr_active w hw_ne)
+      (h_corr_tanh_small w hw_ne hsmall)
+  · push Not at hsmall
+    have hlarge_le : 1 ≤ M * (latticeDistance d 0 w : ℝ) := hsmall.le
+    exact pseudoMassFromParamsAtPair_M_dist_zero_le_of_corr_le_exp_div_pow_largeReg
+      hα hr d Λ p w hlarge_le (h_corr_active w hw_ne)
+      (h_corr_exp_large w hw_ne hlarge_le)
 
 end Ambient
 end IsingModel
