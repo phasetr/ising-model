@@ -2,6 +2,7 @@ import IsingModel.PseudoMass.HLSCorrelationCapstone
 import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassTanhProfileCubicPair
 import IsingModel.Concrete.LatticeGraphCorrelation.TwoPoint
 import IsingModel.PolyDecay
+import IsingModel.Conditioning.CorrelationRates.ExpRate
 
 /-!
 # PseudoMassLatticeDistanceBridge constructor from a cubicTanhProfileBound family
@@ -245,6 +246,171 @@ theorem pseudoMassFromParamsAtPair_M_dist_zero_le_of_corr_le_pseudoMassG
   have h_step : t * r ≤ pseudoMassFromParamsAtPair hα hr d Λ p 0 w * r :=
     mul_le_mul_of_nonneg_right h_pm_ge hr.le
   linarith [h_step, h_mul.symm.le, h_mul.le]
+
+/-! ## Step 119 plan Step 5.7e: `exp / tanh` correlation-upper-bound composers -/
+
+/-- **`bridge.bound` from an `exp(-(M·d(0,w)))` correlation upper bound, small
+regime** (Step 119 plan Step 5.7e small-`t·r`).
+
+Given the active range and the analytic input
+`correlation {0, w} ≤ exp(-(M · d(0, w)))` together with the small-`t·r`
+constraint `M · d(0, w) ≤ 1` and `α ≥ 1`, conclude the zero-anchored
+`bridge.bound` shape `M · d(0, w) ≤ pseudoMassFromParamsAtPair 0 w · r`.
+
+Proof chain:
+1. `pseudoMassG_ge_exp_of_tr_le_one` (small-`t·r`, with `t := M · d(0,w) / r`,
+   `t · r = M · d(0,w) ≤ 1`) yields
+   `exp(-(M · d(0,w))) ≤ pseudoMassG α r (M · d(0,w) / r)`.
+2. Transitivity with the input gives
+   `correlation ≤ pseudoMassG α r (M · d(0,w) / r)`.
+3. `pseudoMassFromParamsAtPair_M_dist_zero_le_of_corr_le_pseudoMassG` (#3173)
+   produces the bridge-shape conclusion. -/
+theorem pseudoMassFromParamsAtPair_M_dist_zero_le_of_corr_le_exp_smallReg
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) {M : ℝ} (hM : 0 ≤ M) (w : Fin d → ℤ)
+    (hsmall : M * (latticeDistance d 0 w : ℝ) ≤ 1)
+    (hcorr : Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ p {0, w}
+              ∈ Set.Ioo (0 : ℝ) 2)
+    (h_exp_upper :
+      Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ p {0, w}
+        ≤ Real.exp (-(M * (latticeDistance d 0 w : ℝ)))) :
+    M * (latticeDistance d 0 w : ℝ) ≤
+      pseudoMassFromParamsAtPair hα hr d Λ p 0 w * r := by
+  set t : ℝ := M * (latticeDistance d 0 w : ℝ) / r with ht_def
+  have hdist_nn : (0 : ℝ) ≤ (latticeDistance d 0 w : ℝ) := by
+    exact_mod_cast Nat.zero_le _
+  have ht_nn : 0 ≤ t := by
+    apply div_nonneg
+    · exact mul_nonneg hM hdist_nn
+    · exact hr.le
+  have htr_eq : t * r = M * (latticeDistance d 0 w : ℝ) := by
+    rw [ht_def, div_mul_cancel₀ _ (ne_of_gt hr)]
+  have htr_le_one : t * r ≤ 1 := by rw [htr_eq]; exact hsmall
+  have hpm_ge_exp : Real.exp (-(t * r)) ≤ pseudoMassG α r t :=
+    pseudoMassG_ge_exp_of_tr_le_one hα ht_nn hr htr_le_one
+  have hcorr_le_pm : Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ p {0, w}
+      ≤ pseudoMassG α r t := by
+    have heq : Real.exp (-(t * r)) = Real.exp (-(M * (latticeDistance d 0 w : ℝ))) := by
+      rw [htr_eq]
+    rw [← heq] at h_exp_upper
+    exact h_exp_upper.trans hpm_ge_exp
+  exact pseudoMassFromParamsAtPair_M_dist_zero_le_of_corr_le_pseudoMassG
+    hα hr d Λ p hM w hcorr hcorr_le_pm
+
+/-- **`bridge.bound` from an `exp(-(M·d(0,w))) / (M·d(0,w))^α` correlation
+upper bound, large regime** (Step 119 plan Step 5.7e large-`t·r`).
+
+Given the active range and the analytic input
+`correlation {0, w} ≤ exp(-(M · d(0, w))) / (M · d(0, w))^α` together with the
+large-`t·r` constraint `1 ≤ M · d(0, w)` and `α ≥ 1`, conclude the zero-anchored
+`bridge.bound` shape `M · d(0, w) ≤ pseudoMassFromParamsAtPair 0 w · r`.
+
+Proof chain:
+1. `pseudoMassG_ge_exp_div_pow_of_tr_ge_one` (large-`t·r`, with
+   `t := M · d(0,w) / r`, `t · r = M · d(0,w) ≥ 1`) yields
+   `exp(-(M · d(0,w))) / (M · d(0,w))^α ≤ pseudoMassG α r (M · d(0,w) / r)`.
+2. Transitivity with the input gives
+   `correlation ≤ pseudoMassG α r (M · d(0,w) / r)`.
+3. `pseudoMassFromParamsAtPair_M_dist_zero_le_of_corr_le_pseudoMassG` (#3173)
+   produces the bridge-shape conclusion. -/
+theorem pseudoMassFromParamsAtPair_M_dist_zero_le_of_corr_le_exp_div_pow_largeReg
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) {M : ℝ} (hM : 0 ≤ M) (w : Fin d → ℤ)
+    (hlarge : 1 ≤ M * (latticeDistance d 0 w : ℝ))
+    (hcorr : Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ p {0, w}
+              ∈ Set.Ioo (0 : ℝ) 2)
+    (h_exp_upper :
+      Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ p {0, w}
+        ≤ Real.exp (-(M * (latticeDistance d 0 w : ℝ))) /
+            (M * (latticeDistance d 0 w : ℝ)) ^ α) :
+    M * (latticeDistance d 0 w : ℝ) ≤
+      pseudoMassFromParamsAtPair hα hr d Λ p 0 w * r := by
+  set t : ℝ := M * (latticeDistance d 0 w : ℝ) / r with ht_def
+  have hdist_nn : (0 : ℝ) ≤ (latticeDistance d 0 w : ℝ) := by
+    exact_mod_cast Nat.zero_le _
+  have ht_nn : 0 ≤ t := by
+    apply div_nonneg
+    · exact mul_nonneg hM hdist_nn
+    · exact hr.le
+  have htr_eq : t * r = M * (latticeDistance d 0 w : ℝ) := by
+    rw [ht_def, div_mul_cancel₀ _ (ne_of_gt hr)]
+  have htr_ge_one : 1 ≤ t * r := by rw [htr_eq]; exact hlarge
+  have hpm_ge_exp_div_pow :
+      Real.exp (-(t * r)) / (t * r) ^ α ≤ pseudoMassG α r t :=
+    pseudoMassG_ge_exp_div_pow_of_tr_ge_one α htr_ge_one
+  have hcorr_le_pm : Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ p {0, w}
+      ≤ pseudoMassG α r t := by
+    have heq : Real.exp (-(t * r)) / (t * r) ^ α =
+        Real.exp (-(M * (latticeDistance d 0 w : ℝ))) /
+          (M * (latticeDistance d 0 w : ℝ)) ^ α := by
+      rw [htr_eq]
+    rw [← heq] at h_exp_upper
+    exact h_exp_upper.trans hpm_ge_exp_div_pow
+  exact pseudoMassFromParamsAtPair_M_dist_zero_le_of_corr_le_pseudoMassG
+    hα hr d Λ p hM w hcorr hcorr_le_pm
+
+/-- **`bridge.bound` from a `tanh(βJ)^d(0,w)` correlation upper bound, small
+regime** (Step 119 plan Step 5.7e tanh-input small-`t·r`).
+
+Given:
+
+- `0 ≤ β·J` (ferromagnetic phase / nonneg coupling);
+- `M ≤ highTempExpRate β J = -log(tanh(β·J))`;
+- `0 ≤ M` and the small-distance constraint `M · d(0,w) ≤ 1`;
+- the active range for the correlation;
+- the cubic-path tanh-decay upper bound
+  `correlation {0, w} ≤ tanh(β·J)^(latticeDistance d 0 w)`,
+
+conclude the zero-anchored `bridge.bound` shape
+`M · d(0, w) ≤ pseudoMassFromParamsAtPair 0 w · r`.
+
+Proof chain:
+1. Step 5.7d `tanh_pow_le_exp_neg_M_dist_r_of_M_r_le_highTempExpRate`
+   with `r := 1` yields `tanh(β·J)^k ≤ exp(-(M · k))` for every `k : ℕ`
+   (using `M · 1 = M ≤ highTempExpRate β J`).
+2. Transitivity gives `correlation ≤ exp(-(M · d(0,w)))`.
+3. The small-regime composer
+   `pseudoMassFromParamsAtPair_M_dist_zero_le_of_corr_le_exp_smallReg`
+   produces the bridge-shape conclusion. -/
+theorem pseudoMassFromParamsAtPair_M_dist_zero_le_of_corr_le_tanh_pow_smallReg
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
+                      (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) {β J : ℝ} (hβJ : 0 ≤ β * J)
+    {M : ℝ} (hM : 0 ≤ M) (hMrate : M ≤ highTempExpRate β J)
+    (w : Fin d → ℤ)
+    (hsmall : M * (latticeDistance d 0 w : ℝ) ≤ 1)
+    (hcorr : Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ p {0, w}
+              ∈ Set.Ioo (0 : ℝ) 2)
+    (h_tanh_upper :
+      Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ p {0, w}
+        ≤ Real.tanh (β * J) ^ IsingModel.latticeDistance d 0 w) :
+    M * (latticeDistance d 0 w : ℝ) ≤
+      pseudoMassFromParamsAtPair hα hr d Λ p 0 w * r := by
+  have hMrate_one : M * (1 : ℝ) ≤ highTempExpRate β J := by
+    rw [mul_one]; exact hMrate
+  have h_tanh_le_exp :
+      Real.tanh (β * J) ^ IsingModel.latticeDistance d 0 w ≤
+        Real.exp (-(M * (IsingModel.latticeDistance d 0 w : ℝ) * 1)) :=
+    tanh_pow_le_exp_neg_M_dist_r_of_M_r_le_highTempExpRate hβJ hMrate_one _
+  have h_exp_upper :
+      Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ p {0, w}
+        ≤ Real.exp (-(M * (IsingModel.latticeDistance d 0 w : ℝ))) := by
+    have h := h_tanh_upper.trans h_tanh_le_exp
+    have heq : Real.exp (-(M * (IsingModel.latticeDistance d 0 w : ℝ) * 1)) =
+        Real.exp (-(M * (IsingModel.latticeDistance d 0 w : ℝ))) := by
+      rw [mul_one]
+    rw [heq] at h
+    exact h
+  exact pseudoMassFromParamsAtPair_M_dist_zero_le_of_corr_le_exp_smallReg
+    hα hr d Λ p hM w hsmall hcorr h_exp_upper
 
 end Ambient
 end IsingModel
