@@ -272,5 +272,102 @@ theorem truncated4TwoPoint_abs_le_pseudoMass_polynomial_factored_of_distinct
   rw [h_alg] at h
   exact h
 
+/-- **GJ §17.5 Theorem 17.5.1 |U_4| ≤ uniform-m⁻_inf bound** (Step 119 plan Step 5.5a).
+
+Given a uniform lower bound `m_inf > 0` on all 4 per-pair pseudo-masses
+(m⁻_{0s}, m⁻_{ru}, m⁻_{0u}, m⁻_{rs}), the factored polynomial form (PR #3161) consolidates
+to a uniform RHS in `m_inf` alone:
+
+    |U_4^∞(0, r, s, u)| ≤ 8 / (r'^(2α) · m_inf^(2α))
+
+This is the GJ p. 312 form ready for the HLS sum over `z` (Step 5.5 capstone): each
+per-pair `1/m⁻^α` factor is bounded by `1/m_inf^α` via monotonicity of `t ↦ 1/t^α` on
+positive reals, then the 2 same-shape terms sum to give the factor 8 (= 4 + 4).
+
+Mathematically: `m_inf ≤ m⁻_{0s}` and `m_inf > 0` give `m⁻_{0s}^α ≥ m_inf^α > 0`,
+hence `1/m⁻_{0s}^α ≤ 1/m_inf^α`. Similarly for the other 3 pseudo-masses. -/
+theorem truncated4TwoPoint_abs_le_pseudoMass_uniform_lower_of_distinct
+    {α : ℕ} (hα : 1 ≤ α) {r' : ℝ} (hr' : 0 < r') (d : ℕ)
+    (J β : ℝ) (hf : IsingModel.Ferromagnetic (⟨J, (0 : ℝ), β⟩ : IsingParams ℝ))
+    {r s u : Fin d → ℤ}
+    (hr : (0 : Fin d → ℤ) ≠ r) (hs : (0 : Fin d → ℤ) ≠ s)
+    (hu : (0 : Fin d → ℤ) ≠ u)
+    (hrs : r ≠ s) (hru : r ≠ u) (hsu : s ≠ u)
+    (hc_0s : Ambient.correlationInfinite (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) {(0 : Fin d → ℤ), s} ∈ Set.Ioo (0 : ℝ) 2)
+    (hc_ru : Ambient.correlationInfinite (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) {r, u} ∈ Set.Ioo (0 : ℝ) 2)
+    (hc_0u : Ambient.correlationInfinite (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) {(0 : Fin d → ℤ), u} ∈ Set.Ioo (0 : ℝ) 2)
+    (hc_rs : Ambient.correlationInfinite (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) {r, s} ∈ Set.Ioo (0 : ℝ) 2)
+    {m_inf : ℝ} (hm_inf_pos : 0 < m_inf)
+    (hm_0s_ge : m_inf ≤ pseudoMassFromParamsAtPair hα hr' d (Ambient.cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) (0 : Fin d → ℤ) s)
+    (hm_ru_ge : m_inf ≤ pseudoMassFromParamsAtPair hα hr' d (Ambient.cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) r u)
+    (hm_0u_ge : m_inf ≤ pseudoMassFromParamsAtPair hα hr' d (Ambient.cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) (0 : Fin d → ℤ) u)
+    (hm_rs_ge : m_inf ≤ pseudoMassFromParamsAtPair hα hr' d (Ambient.cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) r s) :
+    |truncated4TwoPoint d ⟨J, 0, β⟩ r s u| ≤ 8 / (r' ^ (2 * α) * m_inf ^ (2 * α)) := by
+  classical
+  -- Each pseudo-mass strictly positive (from m_inf > 0 and ≥ m_inf)
+  have hm_0s_pos := lt_of_lt_of_le hm_inf_pos hm_0s_ge
+  have hm_ru_pos := lt_of_lt_of_le hm_inf_pos hm_ru_ge
+  have hm_0u_pos := lt_of_lt_of_le hm_inf_pos hm_0u_ge
+  have hm_rs_pos := lt_of_lt_of_le hm_inf_pos hm_rs_ge
+  -- Factored polynomial form from PR #3161
+  have h := truncated4TwoPoint_abs_le_pseudoMass_polynomial_factored_of_distinct
+    hα hr' d J β hf hr hs hu hrs hru hsu
+    hc_0s hc_ru hc_0u hc_rs
+    hm_0s_pos hm_ru_pos hm_0u_pos hm_rs_pos
+  set m0s := pseudoMassFromParamsAtPair hα hr' d (Ambient.cubicExhaustion d)
+      (⟨J, 0, β⟩ : IsingParams ℝ) (0 : Fin d → ℤ) s with hm0s_def
+  set mru := pseudoMassFromParamsAtPair hα hr' d (Ambient.cubicExhaustion d)
+      (⟨J, 0, β⟩ : IsingParams ℝ) r u with hmru_def
+  set m0u := pseudoMassFromParamsAtPair hα hr' d (Ambient.cubicExhaustion d)
+      (⟨J, 0, β⟩ : IsingParams ℝ) (0 : Fin d → ℤ) u with hm0u_def
+  set mrs := pseudoMassFromParamsAtPair hα hr' d (Ambient.cubicExhaustion d)
+      (⟨J, 0, β⟩ : IsingParams ℝ) r s with hmrs_def
+  -- Monotonicity: m_inf ≤ m_pair → 1/m_pair^α ≤ 1/m_inf^α
+  have hm_inf_pow_pos : 0 < m_inf ^ α := pow_pos hm_inf_pos α
+  have h_le : ∀ {m : ℝ}, 0 < m → m_inf ≤ m → 1 / m ^ α ≤ 1 / m_inf ^ α := by
+    intro m hm_pos hm_ge
+    apply one_div_le_one_div_of_le hm_inf_pow_pos (pow_le_pow_left₀ hm_inf_pos.le hm_ge α)
+  have h_0s_le := h_le hm_0s_pos hm_0s_ge
+  have h_ru_le := h_le hm_ru_pos hm_ru_ge
+  have h_0u_le := h_le hm_0u_pos hm_0u_ge
+  have h_rs_le := h_le hm_rs_pos hm_rs_ge
+  -- Bound each summand by 4/(r'^(2α) · m_inf^(2α))
+  have hr'_pow_pos : 0 < r' ^ (2 * α) := pow_pos hr' (2 * α)
+  have hcoef_pos : 0 < 4 / r' ^ (2 * α) := by positivity
+  have h_summand : ∀ {ma mb : ℝ}, 0 < ma → 0 < mb → m_inf ≤ ma → m_inf ≤ mb →
+      4 / r' ^ (2 * α) * (1 / ma ^ α * (1 / mb ^ α))
+        ≤ 4 / r' ^ (2 * α) * (1 / m_inf ^ α * (1 / m_inf ^ α)) := by
+    intro ma mb hma_pos hmb_pos hma_ge hmb_ge
+    apply mul_le_mul_of_nonneg_left _ hcoef_pos.le
+    have hma_le := h_le hma_pos hma_ge
+    have hmb_le := h_le hmb_pos hmb_ge
+    have hm_inf_pow_inv_nn : 0 ≤ 1 / m_inf ^ α := by positivity
+    have hmb_pow_inv_nn : 0 ≤ 1 / mb ^ α := by positivity
+    exact mul_le_mul hma_le hmb_le hmb_pow_inv_nn hm_inf_pow_inv_nn
+  have h_A := h_summand hm_0s_pos hm_ru_pos hm_0s_ge hm_ru_ge
+  have h_B := h_summand hm_0u_pos hm_rs_pos hm_0u_ge hm_rs_ge
+  -- Sum gives 8/(r'^(2α) · m_inf^(2α))
+  have h_sum_bound :
+      4 / r' ^ (2 * α) * (1 / m0s ^ α * (1 / mru ^ α)) +
+      4 / r' ^ (2 * α) * (1 / m0u ^ α * (1 / mrs ^ α))
+      ≤ 8 / (r' ^ (2 * α) * m_inf ^ (2 * α)) := by
+    have h_eq : 4 / r' ^ (2 * α) * (1 / m_inf ^ α * (1 / m_inf ^ α)) +
+                  4 / r' ^ (2 * α) * (1 / m_inf ^ α * (1 / m_inf ^ α))
+                = 8 / (r' ^ (2 * α) * m_inf ^ (2 * α)) := by
+      have : m_inf ^ (2 * α) = m_inf ^ α * m_inf ^ α := by
+        rw [show 2 * α = α + α from by ring, pow_add]
+      rw [this]
+      field_simp; ring
+    linarith [h_A, h_B, h_eq.le]
+  exact h.trans h_sum_bound
+
 end Ambient
 end IsingModel

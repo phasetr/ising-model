@@ -14118,6 +14118,19 @@ $1 + (M\cdot t)^\alpha \ge (M\cdot t)^\alpha$ and \texttt{one\_div\_le\_one\_div
 (resp.\ \texttt{div\_le\_div\_of\_nonneg\_left}) with \texttt{pow\_pos} positivity.
 \end{theorem}
 
+\begin{theorem}[\texttt{IsingModel.Ambient.truncated4TwoPoint\_abs\_le\_pseudoMass\_uniform\_lower\_of\_distinct}
+($|U_4^\infty|$ uniform $m^-_{\mathrm{inf}}$ bound; GJ \S4.3 Cor 4.3.3 + \S17.5 p.~312; Issue \#1645
+Step 119 plan Step 5.5a)]
+Given a uniform positive lower bound $m_{\mathrm{inf}}$ on the 4 per-pair pseudo-masses
+$m^-_{0s}, m^-_{ru}, m^-_{0u}, m^-_{rs}$ with $0 < m_{\mathrm{inf}}$:
+\[
+  |U_4^\infty(0, r, s, u)| \le \frac{8}{r'^{2\alpha}\cdot m_{\mathrm{inf}}^{2\alpha}}.
+\]
+Each per-pair $1/m^{-\alpha}$ is bounded by $1/m_{\mathrm{inf}}^\alpha$ via
+\texttt{pow\_le\_pow\_left}$_0$ and \texttt{one\_div\_le\_one\_div\_of\_le}; the 2
+same-shape terms sum to give factor 8. The GJ p.~312 form ready for the HLS sum step.
+\end{theorem}
+
 \begin{theorem}[\texttt{IsingModel.Ambient.truncated4TwoPoint\_abs\_le\_pseudoMass\_polynomial\_factored\_of\_distinct}
 ($|U_4^\infty|$ factored polynomial form; GJ \S4.3 Cor 4.3.3 + \S17.5 p.~312; Issue \#1645
 Step 119 plan Step 5.4)]
