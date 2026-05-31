@@ -14129,6 +14129,11 @@ composers (\#3175--\#3187):
     Lebowitz bound + adjacent exp input + ferromagnetic.
   \item \texttt{tsum\_correlationInfinite\_pair\_product\_le\_const\_of\_simonLieb\_smallReg\_adjacent}:
     HLS sum existential at arbitrary $(x_0, y_0)$.
+  \item \texttt{PseudoMassLatticeDistanceBridge\_of\_simonLieb\_trichotomy\_adjacent}
+    and
+    \texttt{tsum\_correlationInfinite\_pair\_product\_le\_const\_of\_simonLieb\_trichotomy\_adjacent}:
+    full adjacent/small/large trichotomy constructors without the uniform
+    small-regime premise.
   \item \texttt{tsum\_correlationInfinite\_pair\_product\_zero\_anchor\_le\_const\_of\_simonLieb}:
     HLS sum at the zero anchor.
   \item \texttt{all\_pair\_bound\_of\_simonLieb\_smallReg\_adjacent\_provider},
@@ -14138,6 +14143,13 @@ composers (\#3175--\#3187):
     tanh-input adjacent variant using Step 5.7d's $\tanh^d \le e^{-(M\cdot d)}$.
   \item \texttt{tsum\_correlationInfinite\_pair\_product\_le\_const\_of\_simonLieb\_tanh\_adjacent}:
     HLS sum from the tanh-input variant.
+  \item \texttt{PseudoMassLatticeDistanceBridge\_of\_simonLieb\_trichotomy\_tanh\_adjacent}
+    and
+    \texttt{tsum\_correlationInfinite\_pair\_product\_le\_const\_of\_simonLieb\_trichotomy\_tanh\_adjacent}:
+    tanh-adjacent versions of the full trichotomy path.
+  \item The fixed-name \texttt{canonical\_*} bridge and HLS entry points now
+    route through the full trichotomy path; the old small-regime constructors
+    remain available as compatibility helpers.
 \end{itemize}
 \end{theorem}
 
@@ -14302,9 +14314,64 @@ $1 \le t$, with $t=M d(0,w)$.  The hypothesis
 $((\alpha:\mathbb{R})+1)M \le \mathrm{simonLiebRate}/2$ gives
 $\alpha M \le \mathrm{simonLiebRate}/2 - M$, so multiplying by the
 nonnegative distance absorbs the polynomial denominator into the exponential
-rate gap.  This is the first concrete replacement for the globally impossible
+rate gap.  This is the large-regime replacement for the globally impossible
 positive-$M$ small-regime assumption
-$\forall w,\; M d(0,w) \le 1$; the remaining near-field work is finite.
+$\forall w,\; M d(0,w) \le 1$; the next composer combines it with the existing
+small-regime and adjacent inputs.
+\end{theorem}
+
+\begin{theorem}[\texttt{IsingModel.Ambient.pseudoMassFromParamsAtPair\_M\_dist\_zero\_le\_simonLieb\_trichotomy\_combined},
+\texttt{IsingModel.Ambient.pseudoMassFromParamsAtPair\_zero\_anchored\_simonLieb\_trichotomy\_uniform},
+\texttt{IsingModel.Ambient.pseudoMassFromParamsAtPair\_all\_pair\_simonLieb\_trichotomy\_bound},
+\texttt{IsingModel.Ambient.PseudoMassLatticeDistanceBridge\_of\_simonLieb\_trichotomy\_adjacent}, and
+\texttt{IsingModel.Ambient.tsum\_correlationInfinite\_pair\_product\_le\_const\_of\_simonLieb\_trichotomy\_adjacent}
+(Simon--Lieb full trichotomy HLS bridge; GJ \S17.5 pp.~311--312; Issue
+\#1645 Step 119 plan Step 5.7j full-trichotomy extension)]
+For $0 < M$, $M \le 1$, and
+\[
+  ((\alpha:\mathbb{R})+1)M \le \mathrm{simonLiebRate}(\beta,J,d)/2,
+\]
+the Simon--Lieb HLS bridge no longer needs the uniform small-regime hypothesis
+$\forall w,\; M d(0,w) \le 1$.  For each nonzero displacement $w$, the proof
+splits into three cases:
+\[
+\begin{array}{ll}
+\mathrm{dist}(0,w)=1, & \text{use the adjacent input;}\\
+2\le \mathrm{dist}(0,w)\ \text{and}\ M d(0,w)\le 1,
+  & \text{use the Simon--Lieb small-regime composer;}\\
+2\le \mathrm{dist}(0,w)\ \text{and}\ 1\le M d(0,w),
+  & \text{use the large-regime rate-gap composer.}
+\end{array}
+\]
+The same case split is lifted first to the uniform zero-anchored bound, then by
+translation invariance to all pairs:
+\[
+  M d(x,z)
+    \le
+    \mathrm{pseudoMassFromParamsAtPair}\,x\,z \cdot r.
+\]
+Together with active range from $0<\beta J$, this constructs a
+\texttt{PseudoMassLatticeDistanceBridge} and feeds the abstract HLS capstone to
+obtain the pair-product sum bound
+\[
+  \exists K>0,\quad
+  \sum_z \langle \sigma_{x_0}\sigma_z\rangle_\infty
+         \langle \sigma_{y_0}\sigma_z\rangle_\infty
+    \le K.
+\]
+The consumer layer also provides the tanh-adjacent variants
+\texttt{PseudoMassLatticeDistanceBridge\_of\_simonLieb\_trichotomy\_tanh\_adjacent}
+and
+\texttt{tsum\_correlationInfinite\_pair\_product\_le\_const\_of\_simonLieb\_trichotomy\_tanh\_adjacent}.
+The canonical fixed-name entry points
+\texttt{canonical\_bridge\_from\_simonLieb\_adjacent},
+\texttt{canonical\_hls\_sum}, \texttt{canonical\_bound\_provider},
+\texttt{canonical\_bridge\_from\_tanh\_adjacent},
+\texttt{canonical\_hls\_sum\_tanh},
+\texttt{canonical\_K\_pos\_from\_hls\_sum}, and
+\texttt{canonical\_hls\_sum\_zero\_anchor} now route through this trichotomy
+path, preserving the old stable names while dropping the uniform
+small-regime premise.
 \end{theorem}
 
 \begin{theorem}[\texttt{IsingModel.Ambient.pseudoMassFromParamsAtPair\_M\_dist\_zero\_le\_of\_corr\_le\_tanh\_exp\_trichotomy}
@@ -14347,7 +14414,8 @@ strengthen the exponent to $\mathrm{simonLiebRate}/2 \cdot \mathrm{dist}$.
 The $\mathrm{dist} = 1$ case is genuinely outside this composer's scope:
 Simon-Lieb gives only $\mathrm{correlation} \le 1$ at distance $1$, no
 exponential decay. Handling adjacent pairs requires a separate single-step
-input.
+input, which the full trichotomy bridge above composes with this non-adjacent
+result.
 \end{theorem}
 
 \begin{theorem}[\texttt{IsingModel.Ambient.simonLiebRate} and
