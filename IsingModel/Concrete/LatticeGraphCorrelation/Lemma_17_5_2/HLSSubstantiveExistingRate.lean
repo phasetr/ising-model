@@ -1,4 +1,7 @@
-import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.HLSSubstantiveSimonLieb
+import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferSummability
+import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTemperature.ExpDecay
+import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassFoundation
+import IsingModel.Concrete.LatticeGraphCorrelation.TwoPointTruncatedInfiniteTrivialSlice
 
 /-!
 # Substantive HLS existing-rate bridge
