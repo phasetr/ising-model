@@ -23,8 +23,9 @@ theorem hls_exists_K
     (hf : IsingModel.Ferromagnetic (⟨J, (0 : ℝ), β⟩ : IsingParams ℝ))
     (hβJ : 0 < β * J)
     (hβJd_lt : β * J * ↑(2 * d) < 1) :
-    ∃ K : ℝ, 0 ≤ K :=
-  ⟨0, le_refl 0⟩
+    ∃ K : ℝ, 0 ≤ K := by
+  obtain ⟨K, _, hK_nn, _, _⟩ := hls_master_sum hd hf hβJ hβJd_lt
+  exact ⟨K, hK_nn⟩
 
 /-- **Project to `∃ M > 0`**: existential positive M only. -/
 theorem hls_exists_M_pos
@@ -52,7 +53,7 @@ theorem hls_exists_K_M_pair
     (hf : IsingModel.Ferromagnetic (⟨J, (0 : ℝ), β⟩ : IsingParams ℝ))
     (hβJ : 0 < β * J)
     (hβJd_lt : β * J * ↑(2 * d) < 1) :
-    ∃ K M : ℝ, True := by
+    ∃ (_ : ℝ), ∃ (_ : ℝ), True := by
   obtain ⟨K, M, _, _, _⟩ := hls_master_sum hd hf hβJ hβJd_lt
   exact ⟨K, M, trivial⟩
 

@@ -1,7 +1,9 @@
 import IsingModel.AmbientLattice.Defs.Regularity.Correlation
 
 /-!
-# Lambda-layer regularity split — hasDerivAt for free energy, partition function, and Boltzmann weight
+# Lambda-layer regularity split
+
+HasDerivAt wrappers for free energy, partition function, and Boltzmann weight.
 
 Part of the split Lambda-layer regularity wrappers (Issue #1850).
 -/
