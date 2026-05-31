@@ -17528,4 +17528,51 @@ File:
 Reference: Glimm--Jaffe, \emph{Quantum Physics} 2nd~ed. (1987),
 \S17.5 Lemma~17.5.2, pp.~311--312.
 
+\subsubsection*{Per-pair rate bound from a uniform $\mathrm{pseudoMassG}$ transfer
+bound}
+
+The pseudo-mass calculus already converts a profile-shaped correlation upper
+bound into a pseudo-mass lower bound: on the active window
+$\langle\sigma_x\sigma_z\rangle\in(0,2)$,
+\[
+  \langle\sigma_x\sigma_z\rangle\le \mathrm{pseudoMassG}\,\alpha\,r\,t
+  \quad(t\ge0)
+  \ \Longrightarrow\
+  t\le m^-(x,z,\sigma)
+\]
+($\mathtt{pseudoMassFromParamsAtPair\_ge\_of\_corr\_le\_pseudoMassG}$).  Taking
+$t=(a:\mathbb{R})/K$ gives the per-pair rate bound, hence (uniformly over active
+pairs, with a witness) the named upper bound.
+
+\begin{theorem}[\texttt{lemma\_17\_5\_2\_upper\_bound\_of\_uniform\_transfer\_pseudoMassG}]
+Let $\mathtt{Lemma\_17\_5\_2\_UniformTransferPseudoMassGBound}$ be
+\[
+  0<K\ \wedge\ \forall a,\
+  \mathrm{HasExponentialDecay}\,(\langle J,0,\beta\rangle)\,a
+  \Rightarrow
+  \forall\,(x,z)\ \text{active},\
+  \langle\sigma_x\sigma_z\rangle\le\mathrm{pseudoMassG}\,\alpha\,r\,((a:\mathbb{R})/K).
+\]
+At an active pair $(x,z)$ this implies the named
+$\mathtt{Lemma\_17\_5\_2\_UpperBound}$ at coefficient $\mathrm{ofReal}\,K$.
+\end{theorem}
+
+\noindent\textbf{Proof sketch}:
+For each admissible rate the uniform $\mathrm{pseudoMassG}$ bound yields
+$(a:\mathbb{R})/K\le m^-(x,z)$ at every active pair, which is exactly the
+per-active-pair rate bound; the reductions of the preceding subsections then
+close $\mathtt{Lemma\_17\_5\_2\_UpperBound}$.
+
+\noindent\textit{Status}: Reduction fully formalized (no \texttt{sorry}).  At
+$h=0$ the truncated and full two-point functions agree
+($\mathtt{truncated2Infinite\_h\_zero}$), so $\mathrm{HasExponentialDecay}$ is
+genuine correlation decay; the remaining open input is the prefactor-free uniform
+$\mathrm{pseudoMassG}$ pair bound (transfer-matrix step), not obtainable from the
+rate-dependent existential $\mathrm{HasExponentialDecay}$ constant alone
+(issue~\#3378).
+File:
+\texttt{Concrete/LatticeGraphCorrelation/Lemma\_17\_5\_2/PerActivePairRateFromUniformTransfer.lean}.
+Reference: Glimm--Jaffe, \emph{Quantum Physics} 2nd~ed. (1987),
+\S17.5 Lemma~17.5.2, pp.~311--312.
+
 \end{document}
