@@ -6,7 +6,7 @@ import IsingModel.Conditioning.CorrelationRates.ExpRate
 import IsingModel.Concrete.LatticeGraphCorrelation.SimonLiebDistanceDecay
 
 /-!
-# PseudoMassLatticeDistanceBridge constructor from a cubicTanhProfileBound family
+# Conditional PseudoMassLatticeDistanceBridge constructor from a cubicTanhProfileBound family
 
 Step 119 plan Step 5.7: concrete constructor for the abstract
 `PseudoMassLatticeDistanceBridge` structure introduced in
@@ -22,6 +22,14 @@ of the ℤ^d Ising model under the cubic exhaustion: pair correlations only
 depend on the displacement `z - x` via
 `correlationInfinite_latticeGraph_pair_eq_twoPointFunction`, and lattice
 distances on ℤ^d are translation invariant by `latticeDistance_translate_eq`.
+
+This family-based constructor is kept as a compatibility interface for callers
+that already have the all-displacement `cubicTanhProfileBound` family.  The
+no-go facts in `CubicPseudoMassTanhProfileNoGo` show that this family cannot be
+discharged in positive dimension with `0 < r`, `0 < β * J`, and
+`β * J * (2 * d) < 1`; for the family-free high-temperature shape, use the
+direct constructor together with the adjacent, bound, and active inputs packaged
+in `HLSBridgeFromSimonLieb`.
 
 The bridge constructor lives outside `IsingModel/PseudoMass/` to avoid an
 import cycle: `LatticeMassPseudoMassTransferTanhPowDistCubicPair` (consumed
@@ -135,7 +143,10 @@ theorem pseudoMassFromParamsAtPair_lower_bound_of_zero_anchored
 
 If a `cubicTanhProfileBound` holds at every nonzero displacement, then the
 pair correlation lies in the active range `Ioo 0 2` for every distinct pair
-`(x, z)`. -/
+`(x, z)`.  This is a conditional compatibility wrapper; in positive dimension,
+with `0 < r`, `0 < β * J`, and `β * J * (2 * d) < 1`,
+`CubicPseudoMassTanhProfileNoGo` shows that the all-displacement family itself
+is impossible. -/
 theorem correlationInfinite_pair_active_of_cubicTanhProfileBound_family
     {α d : ℕ} {r : ℝ} (hr : 0 < r)
     {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)
@@ -166,6 +177,10 @@ Given:
 we construct the abstract `PseudoMassLatticeDistanceBridge` value required by
 `tsum_correlationInfinite_pair_product_le_HLS_const`. The constructor itself
 is purely a packaging step: all substantive content lies in the family inputs.
+After `CubicPseudoMassTanhProfileNoGo`, this constructor should not be read as
+a route for producing an input-free positive-dimensional high-temperature
+bridge; use the direct Simon-Lieb trichotomy constructors for the corresponding
+adjacent/bound/active-provider shape.
 
 **Reference:** Glimm--Jaffe, *Quantum Physics*, 2nd ed., §17.5, pp. 311--312. -/
 noncomputable def PseudoMassLatticeDistanceBridge_of_cubicTanh_family
@@ -1088,7 +1103,7 @@ invariance and the universal upper bound
 Complements Step 5.7n (PR #3185)'s all-pair bound provider, completing the
 structural input set for building a concrete `PseudoMassLatticeDistanceBridge`
 value directly from concrete analytic inputs (without going through the
-vacuous `cubicTanhProfileBound` family). -/
+conditional `cubicTanhProfileBound` family). -/
 theorem correlationInfinite_pair_active_of_betaJ_pos
     {d : ℕ} {J β : ℝ} (hβ : 0 < β) (hβJ_pos : 0 < β * J) :
     ∀ x z : Fin d → ℤ, x ≠ z →
@@ -1136,7 +1151,7 @@ Convenience structural constructor taking:
 
 and producing a `PseudoMassLatticeDistanceBridge` value directly. This is
 the alternative constructor matching the natural shape of the Step 5.7n /
-Step 5.7o providers, bypassing the (vacuous) `cubicTanhProfileBound`
+Step 5.7o providers, bypassing the conditional `cubicTanhProfileBound`
 family path. -/
 def PseudoMassLatticeDistanceBridge_of_bound_active
     {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
