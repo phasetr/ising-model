@@ -628,6 +628,112 @@ theorem pseudoMassFromParamsAtPair_M_dist_zero_le_of_simonLieb_smallReg
     hα hr d (Ambient.cubicExhaustion d)
     (⟨J, 0, β⟩ : IsingParams ℝ) hM w hsmall hcorr h_exp_upper
 
+/-! ## Step 119 plan Step 5.7j-large: Simon-Lieb large-regime bridge.bound -/
+
+/-- **Polynomial absorption into an exponential rate gap**.
+
+If `1 ≤ t`, then the polynomial factor `t^α` is bounded by `exp(α * t)`.
+This is the elementary analytic estimate used to convert a stronger
+Simon-Lieb exponential rate into the large-regime
+`exp(-(M*d))/(M*d)^α` input expected by `pseudoMassG`. -/
+private theorem pow_le_exp_nat_mul_self_of_one_le
+    (α : ℕ) {t : ℝ} (ht : 1 ≤ t) :
+    t ^ α ≤ Real.exp ((α : ℝ) * t) := by
+  have ht_pos : 0 < t := zero_lt_one.trans_le ht
+  rw [← Real.exp_log (pow_pos ht_pos α)]
+  apply Real.exp_le_exp.mpr
+  rw [Real.log_pow]
+  have hlog_le_t : Real.log t ≤ t := by
+    have hlog_le_sub := Real.log_le_sub_one_of_pos ht_pos
+    linarith
+  exact mul_le_mul_of_nonneg_left hlog_le_t (by positivity)
+
+/-- **Large-regime Simon-Lieb exponential-to-polynomial input**.
+
+For `dist ≥ 2`, Simon-Lieb gives
+`correlation ≤ exp(-(simonLiebRate/2) * dist)`. If `M` is small enough that
+`((α:ℝ)+1) * M ≤ simonLiebRate/2`, then on the large regime
+`1 ≤ M * dist` the polynomial denominator `(M*dist)^α` is absorbed by the
+exponential rate gap, yielding the exact input shape consumed by
+`pseudoMassFromParamsAtPair_M_dist_zero_le_of_corr_le_exp_div_pow_largeReg`. -/
+theorem correlationInfinite_latticeGraph_le_exp_neg_M_dist_div_pow_of_simonLieb_largeReg
+    {α d : ℕ} {β J : ℝ} (hβJ : 0 ≤ β * J)
+    (hβJd_pos : 0 < β * J * (2 * d)) (hβJd_le : β * J * (2 * d) ≤ 1)
+    {M : ℝ} (hMrate : ((α : ℝ) + 1) * M ≤ simonLiebRate β J d / 2)
+    {w : Fin d → ℤ} (hdist : 2 ≤ latticeDistance d 0 w)
+    (hlarge : 1 ≤ M * (latticeDistance d 0 w : ℝ)) :
+    Ambient.correlationInfinite (IsingModel.latticeGraph d)
+        (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {0, w}
+      ≤ Real.exp (-(M * (latticeDistance d 0 w : ℝ))) /
+          (M * (latticeDistance d 0 w : ℝ)) ^ α := by
+  let R : ℝ := simonLiebRate β J d / 2
+  let D : ℝ := (latticeDistance d 0 w : ℝ)
+  let T : ℝ := M * D
+  have h_simonLieb :
+      Ambient.correlationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {0, w}
+        ≤ Real.exp (-(R * D)) := by
+    simpa [R, D] using
+      correlationInfinite_latticeGraph_le_exp_neg_half_simonLiebRate_dist_of_dist_ge_two
+        hβJ hβJd_pos hβJd_le hdist (i := 0) (j := w)
+  have hD_nn : 0 ≤ D := by
+    dsimp [D]
+    exact_mod_cast Nat.zero_le _
+  have hT_large : 1 ≤ T := by simpa [T, D] using hlarge
+  have hT_pos : 0 < T := zero_lt_one.trans_le hT_large
+  have hT_pow_pos : 0 < T ^ α := pow_pos hT_pos α
+  have hcoef : (α : ℝ) * M ≤ R - M := by
+    change (α : ℝ) * M ≤ simonLiebRate β J d / 2 - M
+    linarith
+  have hgap_arg : (α : ℝ) * T ≤ (R - M) * D := by
+    have hmul := mul_le_mul_of_nonneg_right hcoef hD_nn
+    nlinarith [hmul]
+  have hpoly_gap : T ^ α ≤ Real.exp ((R - M) * D) :=
+    (pow_le_exp_nat_mul_self_of_one_le α hT_large).trans
+      (Real.exp_le_exp.mpr hgap_arg)
+  have hmul_gap :
+      Real.exp (-(R * D)) * T ^ α ≤ Real.exp (-(M * D)) := by
+    calc
+      Real.exp (-(R * D)) * T ^ α
+          ≤ Real.exp (-(R * D)) * Real.exp ((R - M) * D) :=
+            mul_le_mul_of_nonneg_left hpoly_gap (Real.exp_nonneg _)
+      _ = Real.exp (-(M * D)) := by
+            rw [← Real.exp_add]
+            congr 1
+            ring
+  have h_exp_div :
+      Real.exp (-(R * D)) ≤ Real.exp (-(M * D)) / T ^ α := by
+    exact (le_div_iff₀ hT_pow_pos).mpr hmul_gap
+  exact h_simonLieb.trans (by simpa [T, D] using h_exp_div)
+
+/-- **Simon-Lieb dist ≥ 2 direct `bridge.bound` composer in the
+large-`M·d` regime**.
+
+This removes the earlier small-regime-only bottleneck for non-adjacent pairs:
+when `1 ≤ M · d(0,w)` and `M` is small enough relative to the Simon-Lieb rate,
+the polynomial denominator required by the large-regime `pseudoMassG` lower
+bound is absorbed by the exponential rate gap. -/
+theorem pseudoMassFromParamsAtPair_M_dist_zero_le_of_simonLieb_largeReg
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    {β J : ℝ} (hβJ : 0 ≤ β * J)
+    (hβJd_pos : 0 < β * J * (2 * d)) (hβJd_le : β * J * (2 * d) ≤ 1)
+    {M : ℝ} (hMrate : ((α : ℝ) + 1) * M ≤ simonLiebRate β J d / 2)
+    {w : Fin d → ℤ} (hdist : 2 ≤ latticeDistance d 0 w)
+    (hlarge : 1 ≤ M * (latticeDistance d 0 w : ℝ))
+    (hcorr : Ambient.correlationInfinite (IsingModel.latticeGraph d)
+                (Ambient.cubicExhaustion d)
+                (⟨J, 0, β⟩ : IsingParams ℝ) {0, w}
+              ∈ Set.Ioo (0 : ℝ) 2) :
+    M * (latticeDistance d 0 w : ℝ) ≤
+      pseudoMassFromParamsAtPair hα hr d (Ambient.cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) 0 w * r := by
+  have h_exp_large :=
+    correlationInfinite_latticeGraph_le_exp_neg_M_dist_div_pow_of_simonLieb_largeReg
+      (α := α) hβJ hβJd_pos hβJd_le hMrate hdist hlarge
+  exact pseudoMassFromParamsAtPair_M_dist_zero_le_of_corr_le_exp_div_pow_largeReg
+    hα hr d (Ambient.cubicExhaustion d)
+    (⟨J, 0, β⟩ : IsingParams ℝ) w hlarge hcorr h_exp_large
+
 /-! ## Step 119 plan Step 5.7k: adjacent dist = 1 specialization -/
 
 /-- **Adjacent (`dist = 1`) `bridge.bound` composer in the small-`M` regime**
