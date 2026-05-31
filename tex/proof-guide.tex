@@ -14669,8 +14669,11 @@ bridge bound $m^-\cdot r' \ge M_{\inf}\cdot d$ combined with monotonicity yields
 $\le 2/(1+(M_{\inf}\cdot d)^\alpha)$. The pair-product sum is then bounded by
 the $U_4$-aligned existential constant
 \texttt{discrete\_hls\_pseudoMass\_two\_pair\_convolution\_constant}.
-The bridge's own construction (via cubic-path exponential decay and
-\texttt{pseudoMassG} comparison) is left for a subsequent PR.
+The abstract bridge can be supplied by the conditional
+\texttt{PseudoMassLatticeDistanceBridge\_of\_cubicTanh\_family} when its family
+inputs are already available.  After the all-displacement tanh-profile no-go,
+the positive high-temperature route should instead use the direct Simon--Lieb
+trichotomy constructors.
 \end{theorem}
 
 \begin{theorem}[\texttt{IsingModel.tsum\_two\_div\_pseudoMass\_pair\_product\_le\_const\_pow\_M},
