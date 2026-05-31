@@ -14168,6 +14168,9 @@ composers (\#3175--\#3187):
     at $M_\ast$ rather than the scalar witnesses
     $0 < M$, $M \le 1$, and
     $((\alpha:\mathbb{R})+1)M \le \texttt{simonLiebRate}/2$.
+  \item \texttt{canonical\_K\_pos\_from\_hls\_sum\_selected\_rate}
+    extracts the positive HLS constant from the selected-rate HLS sum without
+    reintroducing those scalar witnesses.
   \item \texttt{simonLiebTanhTrichotomyBridgeRate} selects
     \[
       M_{\tanh} = \min(M_\ast,\texttt{highTempExpRate}\,\beta\,J).
@@ -14182,6 +14185,8 @@ composers (\#3175--\#3187):
     $M_{\tanh}$ for tanh-adjacent inputs, so callers no longer supply
     the extra tanh-to-exp witness
     $M \le \texttt{highTempExpRate}\,\beta\,J$.
+  \item \texttt{canonical\_K\_pos\_from\_hls\_sum\_tanh\_selected\_rate}
+    is the corresponding tanh-adjacent positive-constant extraction.
 \end{itemize}
 \end{theorem}
 
