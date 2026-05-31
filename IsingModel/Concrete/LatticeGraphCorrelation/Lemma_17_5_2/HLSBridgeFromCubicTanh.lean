@@ -947,6 +947,131 @@ theorem pseudoMassFromParamsAtPair_all_pair_simonLieb_smallReg_bound
   exact pseudoMassFromParamsAtPair_lower_bound_of_zero_anchored
     hα hr d hJ hβ h_zero_anchored
 
+/-! ## Step 119 plan Step 5.7j-large: full Simon-Lieb trichotomy composer -/
+
+/-- **Combined Simon-Lieb `bridge.bound` composer by adjacent/small/large cases**.
+
+For a single nonzero anchored displacement `w`, this removes the impossible
+uniform small-regime assumption by splitting into:
+
+- `dist(0,w) = 1`: use the adjacent input;
+- `2 ≤ dist(0,w)` and `M * dist(0,w) ≤ 1`: use the Simon-Lieb small-regime
+  composer;
+- `2 ≤ dist(0,w)` and `1 ≤ M * dist(0,w)`: use the Simon-Lieb large-regime
+  rate-gap composer.
+
+The rate condition `((α:ℝ)+1) * M ≤ simonLiebRate β J d / 2` is stronger than
+the small-regime domination `M ≤ simonLiebRate β J d / 2`, so it feeds both
+non-adjacent branches. -/
+theorem pseudoMassFromParamsAtPair_M_dist_zero_le_simonLieb_trichotomy_combined
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    {β J : ℝ} (hβJ : 0 ≤ β * J)
+    (hβJd_pos : 0 < β * J * (2 * d)) (hβJd_le : β * J * (2 * d) ≤ 1)
+    {M : ℝ} (hM_pos : 0 < M) (hM_le_one : M ≤ 1)
+    (hMrate : ((α : ℝ) + 1) * M ≤ simonLiebRate β J d / 2)
+    {w : Fin d → ℤ} (hw_ne : w ≠ 0)
+    (hcorr : Ambient.correlationInfinite (IsingModel.latticeGraph d)
+                (Ambient.cubicExhaustion d)
+                (⟨J, 0, β⟩ : IsingParams ℝ) {0, w}
+              ∈ Set.Ioo (0 : ℝ) 2)
+    (h_adj_exp : latticeDistance d 0 w = 1 →
+      Ambient.correlationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {0, w}
+        ≤ Real.exp (-M)) :
+    M * (latticeDistance d 0 w : ℝ) ≤
+      pseudoMassFromParamsAtPair hα hr d (Ambient.cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) 0 w * r := by
+  have hMrate_small : M ≤ simonLiebRate β J d / 2 := by
+    have hfactor : (1 : ℝ) ≤ (α : ℝ) + 1 := by
+      exact le_add_of_nonneg_left (Nat.cast_nonneg α)
+    have hM_le_scaled : M ≤ ((α : ℝ) + 1) * M := by
+      nlinarith [hfactor, hM_pos.le]
+    exact hM_le_scaled.trans hMrate
+  have hdist_pos : 0 < latticeDistance d 0 w := by
+    apply Nat.pos_of_ne_zero
+    intro h_eq_zero
+    exact hw_ne ((IsingModel.latticeDistance_eq_zero_iff d 0 w).mp h_eq_zero).symm
+  by_cases h_eq_one : latticeDistance d 0 w = 1
+  · have hdist_cast : (latticeDistance d 0 w : ℝ) = 1 := by
+      rw [h_eq_one]; norm_cast
+    have h := pseudoMassFromParamsAtPair_zero_le_of_corr_le_exp_adjacent
+      hα hr d (Ambient.cubicExhaustion d)
+      (⟨J, 0, β⟩ : IsingParams ℝ) hM_pos.le hM_le_one h_eq_one hcorr
+      (h_adj_exp h_eq_one)
+    rw [hdist_cast, mul_one]
+    exact h
+  · have h_ge_two : 2 ≤ latticeDistance d 0 w := by omega
+    by_cases hsmall : M * (latticeDistance d 0 w : ℝ) ≤ 1
+    · exact pseudoMassFromParamsAtPair_M_dist_zero_le_of_simonLieb_smallReg
+        hα hr d hβJ hβJd_pos hβJd_le hM_pos.le hMrate_small
+        h_ge_two hsmall hcorr
+    · have hlarge : 1 ≤ M * (latticeDistance d 0 w : ℝ) :=
+        (lt_of_not_ge hsmall).le
+      exact pseudoMassFromParamsAtPair_M_dist_zero_le_of_simonLieb_largeReg
+        hα hr d hβJ hβJd_pos hβJd_le hMrate h_ge_two hlarge hcorr
+
+/-- **Uniform zero-anchored bound from the full Simon-Lieb trichotomy**.
+
+This is the replacement for
+`pseudoMassFromParamsAtPair_zero_anchored_simonLieb_smallReg_uniform` when
+`M > 0`: it no longer assumes `∀ w ≠ 0, M * dist(0,w) ≤ 1`. -/
+theorem pseudoMassFromParamsAtPair_zero_anchored_simonLieb_trichotomy_uniform
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    {β J : ℝ} (hβJ : 0 ≤ β * J)
+    (hβJd_pos : 0 < β * J * (2 * d)) (hβJd_le : β * J * (2 * d) ≤ 1)
+    {M : ℝ} (hM_pos : 0 < M) (hM_le_one : M ≤ 1)
+    (hMrate : ((α : ℝ) + 1) * M ≤ simonLiebRate β J d / 2)
+    (h_corr_active : ∀ w : Fin d → ℤ, w ≠ 0 →
+      Ambient.correlationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d)
+          (⟨J, 0, β⟩ : IsingParams ℝ) {0, w}
+        ∈ Set.Ioo (0 : ℝ) 2)
+    (h_adj_exp : ∀ w : Fin d → ℤ, latticeDistance d 0 w = 1 →
+      Ambient.correlationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {0, w}
+        ≤ Real.exp (-M)) :
+    ∀ w : Fin d → ℤ, w ≠ 0 →
+      M * (latticeDistance d 0 w : ℝ) ≤
+        pseudoMassFromParamsAtPair hα hr d (Ambient.cubicExhaustion d)
+          (⟨J, 0, β⟩ : IsingParams ℝ) 0 w * r := by
+  intro w hw_ne
+  exact pseudoMassFromParamsAtPair_M_dist_zero_le_simonLieb_trichotomy_combined
+    hα hr d hβJ hβJd_pos hβJd_le hM_pos hM_le_one hMrate hw_ne
+    (h_corr_active w hw_ne) (h_adj_exp w)
+
+/-- **All-pair bound from the full Simon-Lieb trichotomy**.
+
+Composes the uniform zero-anchored trichotomy with the translation lift
+`pseudoMassFromParamsAtPair_lower_bound_of_zero_anchored`, producing the
+`PseudoMassLatticeDistanceBridge.bound` field without the globally impossible
+small-regime hypothesis. -/
+theorem pseudoMassFromParamsAtPair_all_pair_simonLieb_trichotomy_bound
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
+    {J β : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)
+    (hβJd_pos : 0 < β * J * (2 * d)) (hβJd_le : β * J * (2 * d) ≤ 1)
+    {M : ℝ} (hM_pos : 0 < M) (hM_le_one : M ≤ 1)
+    (hMrate : ((α : ℝ) + 1) * M ≤ simonLiebRate β J d / 2)
+    (h_corr_active : ∀ w : Fin d → ℤ, w ≠ 0 →
+      Ambient.correlationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d)
+          (⟨J, 0, β⟩ : IsingParams ℝ) {0, w}
+        ∈ Set.Ioo (0 : ℝ) 2)
+    (h_adj_exp : ∀ w : Fin d → ℤ, latticeDistance d 0 w = 1 →
+      Ambient.correlationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {0, w}
+        ≤ Real.exp (-M)) :
+    ∀ x z : Fin d → ℤ, x ≠ z →
+      M * (latticeDistance d x z : ℝ) ≤
+        pseudoMassFromParamsAtPair hα hr d (Ambient.cubicExhaustion d)
+          (⟨J, 0, β⟩ : IsingParams ℝ) x z * r := by
+  have hβJ : 0 ≤ β * J := mul_nonneg hβ.le hJ
+  have h_zero_anchored :=
+    pseudoMassFromParamsAtPair_zero_anchored_simonLieb_trichotomy_uniform
+      hα hr d hβJ hβJd_pos hβJd_le hM_pos hM_le_one hMrate
+      h_corr_active h_adj_exp
+  exact pseudoMassFromParamsAtPair_lower_bound_of_zero_anchored
+    hα hr d hJ hβ h_zero_anchored
+
 /-! ## Step 119 plan Step 5.7o: active range from tanh-power lower bound -/
 
 /-- **All-pair active range from `0 < β·J`** (Step 119 plan Step 5.7o).
