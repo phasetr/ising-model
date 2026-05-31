@@ -1128,6 +1128,40 @@ theorem canonical_K_pos_from_hls_sum
     hα hr d hαd hf hβJd_pos hβJd_le hM_pos hM_le_one hMrate h_adj_exp x₀ y₀
   ⟨K, hK_pos⟩
 
+/-- **Canonical positive K extraction using the selected Simon-Lieb
+trichotomy bridge rate**. -/
+theorem canonical_K_pos_from_hls_sum_selected_rate
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    (d : ℕ) (hαd : d < 2 * α) {J β : ℝ}
+    (hf : IsingModel.Ferromagnetic (⟨J, (0 : ℝ), β⟩ : IsingParams ℝ))
+    (hβJd_pos : 0 < β * J * (2 * d)) (hβJd_lt : β * J * (2 * d) < 1)
+    (h_adj_exp : ∀ w : Fin d → ℤ, latticeDistance d 0 w = 1 →
+      Ambient.correlationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {0, w}
+        ≤ Real.exp (-(simonLiebTrichotomyBridgeRate α β J d)))
+    (x₀ y₀ : Fin d → ℤ) :
+    ∃ K : ℝ, 0 < K :=
+  let ⟨K, hK_pos, _⟩ := canonical_hls_sum_selected_rate
+    hα hr d hαd hf hβJd_pos hβJd_lt h_adj_exp x₀ y₀
+  ⟨K, hK_pos⟩
+
+/-- **Canonical positive K extraction using the selected tanh-compatible
+Simon-Lieb trichotomy bridge rate**. -/
+theorem canonical_K_pos_from_hls_sum_tanh_selected_rate
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    (d : ℕ) (hαd : d < 2 * α) {J β : ℝ}
+    (hf : IsingModel.Ferromagnetic (⟨J, (0 : ℝ), β⟩ : IsingParams ℝ))
+    (hβJd_pos : 0 < β * J * (2 * d)) (hβJd_lt : β * J * (2 * d) < 1)
+    (h_adj_tanh : ∀ w : Fin d → ℤ, latticeDistance d 0 w = 1 →
+      Ambient.correlationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {0, w}
+        ≤ Real.tanh (β * J) ^ IsingModel.latticeDistance d 0 w)
+    (x₀ y₀ : Fin d → ℤ) :
+    ∃ K : ℝ, 0 < K :=
+  let ⟨K, hK_pos, _⟩ := canonical_hls_sum_tanh_selected_rate
+    hα hr d hαd hf hβJd_pos hβJd_lt h_adj_tanh x₀ y₀
+  ⟨K, hK_pos⟩
+
 /-- **Canonical zero-anchor HLS sum** (= full-trichotomy `canonical_hls_sum` at `(0, 0)`). -/
 theorem canonical_hls_sum_zero_anchor
     {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
