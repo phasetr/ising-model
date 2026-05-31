@@ -17632,4 +17632,47 @@ File:
 Reference: Glimm--Jaffe, \emph{Quantum Physics} 2nd~ed. (1987),
 \S17.5 Lemma~17.5.2, pp.~311--312.
 
+\subsection*{Lemma~17.5.2 -- full sandwich with a uniform upper constant (Done)}
+
+\subsubsection*{Mathematical content}
+
+Combining the lower side $m^-\le m$ (the pseudo-mass rate validates exponential
+decay, from the profile lower bound
+$\mathrm{pseudoMassG}\,\alpha\,r\,(-\log(\beta J\,2d))\le
+\langle\sigma_x\sigma_z\rangle$) with the uniform-$K$ upper closure gives the full
+Glimm--Jaffe Lemma~17.5.2 sandwich, for ferromagnetic pairs at
+$0<\beta J\,2d<1$:
+\[
+  \mathrm{ofReal}\,m^-(x,z)\ \le\ \mathrm{latticeMass}\ \le\
+  \mathrm{ofReal}\,K\cdot\mathrm{ofReal}\,m^-(x,z).
+\]
+
+\subsubsection*{Lean 4 formalization}
+
+\begin{theorem}[\texttt{lemma\_17\_5\_2\_high\_temp\_sandwich\_uniform\_transfer\_forall}]
+For $1\le\alpha$, $0<r$, $0<d$, $0<J$, $0<\beta$, $\beta J\,2d<1$ there is a single
+$K$ such that every active pair $(x,z)$ with
+$\mathrm{pseudoMassG}\,\alpha\,r\,(-\log(\beta J\,2d))\le\langle\sigma_x\sigma_z\rangle$
+satisfies
+$\mathrm{ofReal}\,m^-(x,z)\le\mathrm{latticeMass}\le\mathrm{ofReal}\,K\cdot
+\mathrm{ofReal}\,m^-(x,z)$.
+\end{theorem}
+
+\noindent\textbf{Proof sketch}:
+$\mathtt{HasExponentialDecay\_pseudoMassFromParamsAtPair\_of\_pseudoMassG\_le\_corr}$
+discharges the lower decay input; $\mathtt{exists\_uniform\_transfer\_pseudoMassG}$
+supplies one $K$ for all pairs and
+$\mathtt{lemma\_17\_5\_2\_upper\_bound\_of\_uniform\_transfer\_pseudoMassG}$ closes
+the upper side at that $K$; $\mathtt{lemma\_17\_5\_2\_sandwich\_of\_decay\_and\_upper}$
+assembles the two.
+
+\noindent\textit{Status}: Complete formalization (no \texttt{sorry}).  The constant
+is uniform in the pair (unlike the pair-dependent
+$\mathtt{lemma\_17\_5\_2\_cubic\_high\_temp\_sandwich\_capstone}$) but \emph{not
+sharp}.
+File:
+\texttt{Concrete/LatticeGraphCorrelation/Lemma\_17\_5\_2/UniformSandwich.lean}.
+Reference: Glimm--Jaffe, \emph{Quantum Physics} 2nd~ed. (1987),
+\S17.5 Lemma~17.5.2, pp.~311--312.
+
 \end{document}
