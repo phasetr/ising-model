@@ -17407,4 +17407,85 @@ Reference: Friedli--Velenik, \emph{Statistical Mechanics of Lattice Systems} (20
 \S4.2, Proposition~4.2.4, p.~58;
 Glimm--Jaffe 2nd~ed. (1987), \S17.6 pp.~348--351 (derivative formula).
 
+\subsection*{Lemma~17.5.2 Part B -- system pseudo-mass and transfer-matrix
+all-rate reduction (Partial)}
+
+\subsubsection*{Mathematical content}
+
+Glimm--Jaffe \S17.5 (2nd ed., pp.~311--312) prove the two-sided estimate
+\[
+  m^-(\sigma) \le m(\sigma) \le \mathrm{const}\cdot m^-(\sigma),
+\]
+where $m(\sigma)$ is the lattice mass (inverse correlation length) and
+$m^-(\sigma)$ is the \emph{system pseudo-mass}, defined as the lower envelope of
+the per-pair pseudo-masses $m^-(x,y,\sigma)$: the book chooses a minimizing pair
+$x_0\neq y_0$ with $m^-(x_0,y_0,\sigma)=m^-(\sigma)$.
+
+The upper bound $m(\sigma)\le\mathrm{const}\cdot m^-(\sigma)$ (\emph{Part B}) is
+derived from the \emph{transfer matrix}, which gives exponential decay of all
+correlations at a rate $e^{-m\cdot\mathrm{dist}}$ with
+$\mathrm{dist}\ge|x-y|/a_0$; thus
+$\langle\phi(x)\phi(y)\rangle\le A\,e^{-(m/a_0)|x-y|}$, and comparison with the
+defining identity of $m^-$ yields the bound.  This transfer-matrix step is
+\emph{distinct} from the Lipschitz-continuity argument used in the proof of
+Theorem~17.5.1 (continuity of $(m^-)^{2\alpha+1}$ in $\sigma$); the Lipschitz
+estimate alone does not bound the admissible exponential decay rates.
+
+\subsubsection*{Lean 4 formalization}
+
+This step introduces the system pseudo-mass and isolates the transfer-matrix
+content as a single named hypothesis.  The per-pair pseudo-mass
+$\mathtt{pseudoMassFromParamsAtPair}$ returns $0$ on inactive pairs (correlation
+outside $\mathrm{Ioo}\,0\,2$), so the lower envelope is taken over \emph{active}
+pairs only, preventing a trivial collapse of the infimum.
+
+\begin{definition}[\texttt{globalPseudoMass}]
+For active-pair value set
+$\mathtt{globalPseudoMassSet}=\{\,m^-(x,z,\sigma)\mid x\neq z,\
+\langle\sigma_x\sigma_z\rangle^\infty\in(0,2)\,\}$,
+\[
+  m^-(\sigma) \;=\; \mathtt{globalPseudoMass}
+  \;=\; \operatorname{sInf}\bigl(\mathtt{globalPseudoMassSet}\bigr),
+\]
+with the real-infimum convention $\operatorname{sInf}\emptyset=0$.
+\end{definition}
+
+\begin{theorem}[\texttt{globalPseudoMass\_le\_pseudoMassFromParamsAtPair\_of\_active}]
+For any active distinct pair $(x,z)$,
+$\mathtt{globalPseudoMass}\le\mathtt{pseudoMassFromParamsAtPair}\ \dots\ x\ z$.
+\end{theorem}
+
+\noindent\textbf{Proof sketch}:
+The value set is bounded below by $0$
+(\texttt{globalPseudoMassSet\_bddBelow}, via per-pair nonnegativity), and the
+active pair contributes its own pseudo-mass to the set, so $\operatorname{sInf}$
+is $\le$ that element by \texttt{csInf\_le}.
+
+\begin{theorem}[\texttt{lemma\_17\_5\_2\_upper\_bound\_of\_global\_all\_rate\_comparison}]
+Let $\mathtt{Lemma\_17\_5\_2\_GlobalAllRateComparison}$ be the predicate
+\[
+  \forall a:\mathbb{R}_{\ge0},\
+  \mathrm{HasExponentialDecay}\,(\langle J,0,\beta\rangle)\,a
+  \;\Rightarrow\;
+  (a:\overline{\mathbb{R}}_{\ge0})\le C\cdot\mathrm{ofReal}\,(\mathtt{globalPseudoMass}).
+\]
+Then for any active pair $(x,z)$ this predicate implies the named
+$\mathtt{Lemma\_17\_5\_2\_UpperBound}$ at coefficient $C$.
+\end{theorem}
+
+\noindent\textbf{Proof sketch}:
+The lower-envelope inequality and monotonicity of
+$\mathrm{ENNReal.ofReal}$ and of $C\cdot(-)$ (\texttt{gcongr}) transfer the
+global all-rate bound to the pair, and the existing $\operatorname{sSup}$
+assembly $\mathtt{lemma\_17\_5\_2\_upper\_bound\_of\_all\_decay\_rates\_le}$ closes
+the $\mathtt{latticeMass}$ upper-bound predicate.
+
+\noindent\textit{Status}: System pseudo-mass and the order-theoretic reduction
+are fully formalized (no \texttt{sorry}); the transfer-matrix comparison
+$\mathtt{Lemma\_17\_5\_2\_GlobalAllRateComparison}$ remains an explicit
+hypothesis (Part B analytic core, tracked by issue~\#3378).
+File: \texttt{Concrete/LatticeGraphCorrelation/Lemma\_17\_5\_2/GlobalPseudoMass.lean}.
+Reference: Glimm--Jaffe, \emph{Quantum Physics} 2nd~ed. (1987),
+\S17.5 Lemma~17.5.2, pp.~311--312.
+
 \end{document}
