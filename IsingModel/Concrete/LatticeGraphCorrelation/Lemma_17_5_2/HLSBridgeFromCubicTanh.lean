@@ -26,9 +26,9 @@ distances on ℤ^d are translation invariant by `latticeDistance_translate_eq`.
 This family-based constructor is kept as a compatibility interface for callers
 that already have the all-displacement `cubicTanhProfileBound` family.  The
 no-go facts in `CubicPseudoMassTanhProfileNoGo` show that this family cannot be
-discharged from the elementary positive high-temperature assumptions alone; the
-canonical forward route is the direct Simon-Lieb trichotomy bridge in
-`HLSBridgeFromSimonLieb`.
+discharged from the elementary positive high-temperature assumptions alone; for
+the family-free high-temperature shape, use the direct constructor together
+with the Simon-Lieb trichotomy bound/active providers in `HLSBridgeFromSimonLieb`.
 
 The bridge constructor lives outside `IsingModel/PseudoMass/` to avoid an
 import cycle: `LatticeMassPseudoMassTransferTanhPowDistCubicPair` (consumed
@@ -177,7 +177,8 @@ we construct the abstract `PseudoMassLatticeDistanceBridge` value required by
 is purely a packaging step: all substantive content lies in the family inputs.
 After `CubicPseudoMassTanhProfileNoGo`, this constructor should not be read as
 a route for producing an input-free high-temperature bridge; use the direct
-Simon-Lieb trichotomy constructors for that shape.
+Simon-Lieb trichotomy constructors for the corresponding bound/active-provider
+shape.
 
 **Reference:** Glimm--Jaffe, *Quantum Physics*, 2nd ed., §17.5, pp. 311--312. -/
 noncomputable def PseudoMassLatticeDistanceBridge_of_cubicTanh_family
