@@ -14268,8 +14268,43 @@ and $d(0,w) \ge 0$ strengthen to $\mathrm{correlation} \le e^{-(M\cdot d(0,w))}$
 which the small-regime composer
 (\texttt{...\_corr\_le\_exp\_smallReg}) consumes.
 
-The adjacent $\mathrm{dist} = 1$ case and the large-$M\cdot d$ regime
-require separate inputs and are left for future composers.
+The adjacent $\mathrm{dist} = 1$ case requires a separate input.  The
+large-$M\cdot d$ regime is handled by the next rate-gap absorption composer.
+\end{theorem}
+
+\begin{theorem}[\texttt{IsingModel.Ambient.correlationInfinite\_latticeGraph\_le\_exp\_neg\_M\_dist\_div\_pow\_of\_simonLieb\_largeReg}
+and
+\texttt{IsingModel.Ambient.pseudoMassFromParamsAtPair\_M\_dist\_zero\_le\_of\_simonLieb\_largeReg}
+(Simon-Lieb large-regime \texttt{bridge.bound} composer;
+GJ \S17.5 pp.~311--312; Issue \#1645 Step 119 plan Step 5.7j large-regime
+extension)]
+For $2 \le \mathrm{dist}(0,w)$, $1 \le M\cdot d(0,w)$, and
+\[
+  ((\alpha:\mathbb{R})+1)M \le \mathrm{simonLiebRate}(\beta,J,d)/2,
+\]
+the Simon--Lieb rate-halved estimate implies the large-regime analytic input
+\[
+  \mathrm{correlationInfinite}\,\{0,w\}
+    \le
+    \frac{e^{-M d(0,w)}}{(M d(0,w))^\alpha}.
+\]
+The corresponding pseudo-mass composer then feeds this input to
+\texttt{pseudoMassFromParamsAtPair\_M\_dist\_zero\_le\_of\_corr\_le\_exp\_div\_pow\_largeReg}
+and concludes
+\[
+  M d(0,w)
+    \le
+    \mathrm{pseudoMassFromParamsAtPair}\,0\,w \cdot r.
+\]
+
+The proof uses the elementary estimate $t^\alpha \le e^{\alpha t}$ for
+$1 \le t$, with $t=M d(0,w)$.  The hypothesis
+$((\alpha:\mathbb{R})+1)M \le \mathrm{simonLiebRate}/2$ gives
+$\alpha M \le \mathrm{simonLiebRate}/2 - M$, so multiplying by the
+nonnegative distance absorbs the polynomial denominator into the exponential
+rate gap.  This is the first concrete replacement for the globally impossible
+positive-$M$ small-regime assumption
+$\forall w,\; M d(0,w) \le 1$; the remaining near-field work is finite.
 \end{theorem}
 
 \begin{theorem}[\texttt{IsingModel.Ambient.pseudoMassFromParamsAtPair\_M\_dist\_zero\_le\_of\_corr\_le\_tanh\_exp\_trichotomy}
