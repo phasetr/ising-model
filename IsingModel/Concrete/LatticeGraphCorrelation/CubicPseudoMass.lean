@@ -2,6 +2,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassTanhProfile
 import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassProductSum
 import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassNamedRatePos
 import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassClusterSummabilitySummable
+import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassTanhProfileNoGo
 
 /-!
 # Cubic named-rate capstone wrappers
@@ -11,7 +12,8 @@ Basic names live in `CubicPseudoMassBasic`; tanh-profile bridges live in
 `CubicPseudoMassTanhProfile`; named-rate lattice-mass and interval bridges live
 in `CubicPseudoMassNamedRate`; cluster and summability wrappers live in
 `CubicPseudoMassClusterSummability`; product-sum wrappers live in
-`CubicPseudoMassProductSum`.
+`CubicPseudoMassProductSum`; and no-go facts for all-displacement
+`cubicTanhProfileBound` families live in `CubicPseudoMassTanhProfileNoGo`.
 -/
 
 namespace IsingModel
