@@ -1,5 +1,5 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.HLSSubstantiveCanonicalSummary
-import IsingModel.Inequalities.HighTemp.SusceptibilityFerromagneticAliases
+import IsingModel.Inequalities.HighTemp.Susceptibility
 
 /-!
 # Substantive HLS ↔ susceptibility bridge bundle
