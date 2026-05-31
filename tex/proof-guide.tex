@@ -17735,8 +17735,9 @@ lemma_17_5_2_high_temp_sandwich_uniform_transfer_forall
 \end{Verbatim}
 
 \noindent\textit{Status}: Complete formalization (no \texttt{sorry}).  The result
-still assumes the cubic tanh-profile family; proving that family from only
-\(\beta J\,2d<1\) is a separate high-temperature profile task.
+still assumes the cubic tanh-profile family as a conditional input; the no-go
+result below shows that the all-displacement family cannot be discharged from
+the elementary positive high-temperature assumptions alone.
 File:
 \begin{Verbatim}[breaklines=true]
 Concrete/LatticeGraphCorrelation/Lemma_17_5_2/UniformSandwichCubicTanh.lean
