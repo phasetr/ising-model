@@ -17488,4 +17488,44 @@ File: \texttt{Concrete/LatticeGraphCorrelation/Lemma\_17\_5\_2/GlobalPseudoMass.
 Reference: Glimm--Jaffe, \emph{Quantum Physics} 2nd~ed. (1987),
 \S17.5 Lemma~17.5.2, pp.~311--312.
 
+\subsubsection*{All-rate comparison from per-active-pair bounds}
+
+The system pseudo-mass $m^-(\sigma)=\operatorname{sInf}$ over an infinite active
+pair set, so a single pair only gives $m^-(\sigma)\le m^-(x,z,\sigma)$.  The
+reverse direction needed for the all-rate comparison requires the per-pair
+estimate to hold uniformly.
+
+\begin{theorem}[\texttt{lemma\_17\_5\_2\_global\_all\_rate\_comparison\_of\_per\_active\_pair\_rate\_pseudoMass\_lower\_bound}]
+Let $\mathtt{Lemma\_17\_5\_2\_PerActivePairRatePseudoMassLowerBound}$ be
+\[
+  0<K \ \wedge\ \forall a,\
+  \mathrm{HasExponentialDecay}\,(\langle J,0,\beta\rangle)\,a
+  \Rightarrow
+  \forall\,(x,z)\ \text{active},\ (a:\mathbb{R})/K\le m^-(x,z,\sigma).
+\]
+Given an active-pair witness, this implies
+$\mathtt{Lemma\_17\_5\_2\_GlobalAllRateComparison}$ at coefficient
+$\mathrm{ofReal}\,K$, hence (at that pair) the named
+$\mathtt{Lemma\_17\_5\_2\_UpperBound}$.
+\end{theorem}
+
+\noindent\textbf{Proof sketch}:
+The uniform per-pair bound and $\mathtt{le\_csInf}$ (with the active-pair witness
+supplying nonemptiness) give $(a:\mathbb{R})/K\le m^-(\sigma)$; an
+$\mathrm{ENNReal}$ transfer using only $0<K$ then yields
+$(a:\overline{\mathbb{R}}_{\ge0})\le\mathrm{ofReal}\,K\cdot\mathrm{ofReal}\,m^-(\sigma)$.
+The active-pair witness is essential: the empty-active degenerate slice
+($\beta=0$, every rate admissible, $m^-(\sigma)=0$) would otherwise falsify the
+statement.
+
+\noindent\textit{Status}: Order-theoretic reduction fully formalized (no
+\texttt{sorry}); the per-active-pair rate bound
+$\mathtt{Lemma\_17\_5\_2\_PerActivePairRatePseudoMassLowerBound}$ (the
+transfer-matrix exponential-decay step, not reducible to the Simon--Lieb
+selected-rate layer alone) remains the explicit analytic input (issue~\#3378).
+File:
+\texttt{Concrete/LatticeGraphCorrelation/Lemma\_17\_5\_2/GlobalAllRateComparisonFromPairs.lean}.
+Reference: Glimm--Jaffe, \emph{Quantum Physics} 2nd~ed. (1987),
+\S17.5 Lemma~17.5.2, pp.~311--312.
+
 \end{document}

@@ -44,6 +44,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.HLSSubstantiveCa
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.HLSLatticeMassBridge
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.HLSBridgeFromSimonLieb
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.GlobalPseudoMass
+import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.GlobalAllRateComparisonFromPairs
 
 /-!
 # GJ §17.5 Lemma 17.5.2 capstone
