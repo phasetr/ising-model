@@ -17735,13 +17735,51 @@ lemma_17_5_2_high_temp_sandwich_uniform_transfer_forall
 \end{Verbatim}
 
 \noindent\textit{Status}: Complete formalization (no \texttt{sorry}).  The result
-still assumes the cubic tanh-profile family; proving that family from only
-\(\beta J\,2d<1\) is a separate high-temperature profile task.
+still assumes the cubic tanh-profile family as a conditional input; the no-go
+result below shows that the all-displacement family cannot be discharged from
+the elementary positive high-temperature assumptions alone.
 File:
 \begin{Verbatim}[breaklines=true]
 Concrete/LatticeGraphCorrelation/Lemma_17_5_2/UniformSandwichCubicTanh.lean
 \end{Verbatim}
 Reference: Glimm--Jaffe, \emph{Quantum Physics} 2nd~ed. (1987),
 \S17.5 Lemma~17.5.2, pp.~311--312 and \S5.1, pp.~74--75.
+
+\subsection*{Step 526 -- all-displacement cubic tanh-profile no-go}
+
+The previous wrapper intentionally treats
+\[
+  \forall\,w\ne0,\quad
+  \mathtt{cubicTanhProfileBound}\,\alpha\,d\,r\,\beta\,J\,w
+\]
+as a conditional input.  In fact this family cannot be discharged from the
+elementary high-temperature assumptions alone.  The predicate requires
+\[
+  \mathtt{pseudoMassG}\,\alpha\,r\,(-\log(\beta J\,2d))
+  \le \tanh(\beta J)^{\operatorname{dist}(0,w)}
+\]
+at every nonzero displacement.  If \(0<\tanh(\beta J)<1\), the right-hand side
+tends to zero along any coordinate axis, while \(\mathtt{pseudoMassG}\) at a
+nonnegative rate and \(r>0\) is strictly positive.
+
+\begin{theorem}[All-displacement tanh-profile no-go]
+The Lean theorems are
+\begin{Verbatim}[breaklines=true]
+not_forall_cubicTanhProfileBound_of_tanh_pos_lt_one
+not_forall_cubicTanhProfileBound_of_betaJ_pos_high_temp
+\end{Verbatim}
+In positive dimension and \(0<r\), the all-nonzero
+\(\mathtt{cubicTanhProfileBound}\) family is impossible when
+\(0<\tanh(\beta J)<1\) and \(-\log(\beta J\,2d)\ge0\).  In particular it is
+impossible under \(0<\beta J\) and \(\beta J\,2d<1\).
+\end{theorem}
+
+\noindent\textit{Status}: Complete formalization (no \texttt{sorry}).  This
+clarifies that the all-pairs tanh-profile sandwich theorem is a conditional
+interface, not an input-free high-temperature capstone.
+File:
+\begin{Verbatim}[breaklines=true]
+Concrete/LatticeGraphCorrelation/CubicPseudoMassTanhProfileNoGo.lean
+\end{Verbatim}
 
 \end{document}
