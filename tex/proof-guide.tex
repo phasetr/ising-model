@@ -14150,6 +14150,24 @@ composers (\#3175--\#3187):
   \item The fixed-name \texttt{canonical\_*} bridge and HLS entry points now
     route through the full trichotomy path; the old small-regime constructors
     remain available as compatibility helpers.
+  \item \texttt{simonLiebTrichotomyBridgeRate} selects
+    \[
+      M_\ast = \min\left(1,
+        \frac{\texttt{simonLiebRate}\,\beta\,J\,d/2}{(\alpha:\mathbb{R})+1}
+      \right).
+    \]
+    In the strict high-temperature regime it proves
+    $0 < M_\ast$, $M_\ast \le 1$, and
+    $((\alpha:\mathbb{R})+1)M_\ast \le
+      \texttt{simonLiebRate}\,\beta\,J\,d/2$.
+  \item \texttt{canonical\_bridge\_from\_simonLieb\_selected\_rate\_adjacent},
+    \texttt{canonical\_hls\_sum\_selected\_rate},
+    \texttt{canonical\_bound\_provider\_selected\_rate}, and
+    \texttt{canonical\_hls\_sum\_zero\_anchor\_selected\_rate} use this
+    selected $M_\ast$, so callers only provide the adjacent correlation bound
+    at $M_\ast$ rather than the scalar witnesses
+    $0 < M$, $M \le 1$, and
+    $((\alpha:\mathbb{R})+1)M \le \texttt{simonLiebRate}/2$.
 \end{itemize}
 \end{theorem}
 
