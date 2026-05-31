@@ -605,5 +605,164 @@ theorem lemma_17_5_2_capstone_of_poly_geometric_increments_on_covered_stages_and
       hα hαd hd hrho Λ J hJ_pos x z hxz hβ₁ hβ₁₂ hIcc M ratio hratio0 hratio1
       hincr hdecay
 
+/-! ## Direct increment API -/
+
+/-- **Direct geometric-increment predicate**, parallel to
+`CERouteIccGeometricIncrement` (in `CEConditionalCapstone.lean`) but bypassing
+the Cauchy decomposition entirely. This is a named alias for the `hincr`
+shape expected by
+`lemma_17_5_2_{upper_bound,capstone}_of_geometric_increments_on_covered_stages`.
+Useful as a structurally explicit entry point when the user has a direct
+increment bound from any non-CE route. -/
+def CERouteIccDirectGeometricIncrement
+    {d : ℕ} (Λ : Exhaustion (Fin d → ℤ))
+    (J : ℝ) (x z : Fin d → ℤ) (M ratio : ℝ) : Prop :=
+  ∀ β₁ β₂ : ℝ, Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
+    ∀ k : ℕ, ({x, z} : Finset (Fin d → ℤ)) ⊆ Λ.volume k →
+      ∀ β ∈ Set.Icc β₁ β₂,
+        dist
+          (deriv (fun β' =>
+            Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} k) β)
+          (deriv (fun β' =>
+            Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} (k + 1)) β) ≤
+              M * ratio ^ k
+
+/-- **Direct poly-geometric-increment predicate**, parallel to
+`CERouteIccPolyGeometricIncrement` (in `CEConditionalCapstone.lean`) but
+bypassing the Cauchy decomposition. Named alias for the `hincr` shape
+expected by
+`lemma_17_5_2_{upper_bound,capstone}_of_poly_geometric_increments_on_covered_stages`. -/
+def CERouteIccDirectPolyGeometricIncrement
+    {d : ℕ} (Λ : Exhaustion (Fin d → ℤ))
+    (J : ℝ) (x z : Fin d → ℤ) (M ratio : ℝ) : Prop :=
+  ∀ β₁ β₂ : ℝ, Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))) →
+    ∀ k : ℕ, ({x, z} : Finset (Fin d → ℤ)) ⊆ Λ.volume k →
+      ∀ β ∈ Set.Icc β₁ β₂,
+        dist
+          (deriv (fun β' =>
+            Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} k) β)
+          (deriv (fun β' =>
+            Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
+              (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} (k + 1)) β) ≤
+              M * (((2 * k + 3 : ℕ) : ℝ) ^ d * ratio ^ k)
+
+/-- **End-to-end Lemma 17.5.2 upper bound from direct geometric increment**:
+direct pass-through of `CERouteIccDirectGeometricIncrement` to
+`lemma_17_5_2_upper_bound_of_geometric_increments_on_covered_stages`. -/
+theorem lemma_17_5_2_upper_bound_of_CERouteIccDirectGeometricIncrement
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    {rho : ℝ} (hrho : 0 < rho)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (hJ_pos : 0 < J)
+    (x z : Fin d → ℤ) (hxz : x ≠ z)
+    {β₁ β₂ : ℝ} (hβ₁ : 0 < β₁) (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (M ratio : ℝ) (hratio0 : 0 ≤ ratio) (hratio1 : ratio < 1)
+    (h : CERouteIccDirectGeometricIncrement Λ J x z M ratio) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      Lemma_17_5_2_UpperBound hα hrho Λ J β₂ x z
+        (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho)) :=
+  lemma_17_5_2_upper_bound_of_geometric_increments_on_covered_stages
+    hα hαd hd hrho Λ J hJ_pos x z hxz hβ₁ hβ₁₂ hIcc M ratio hratio0 hratio1 h
+
+/-- **End-to-end Lemma 17.5.2 capstone from direct geometric increment + decay**:
+direct pass-through of `CERouteIccDirectGeometricIncrement` and the validating
+endpoint pseudo-mass exponential-decay hypothesis to
+`lemma_17_5_2_capstone_of_geometric_increments_on_covered_stages`. -/
+theorem lemma_17_5_2_capstone_of_CERouteIccDirectGeometricIncrement
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    {rho : ℝ} (hrho : 0 < rho)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (hJ_pos : 0 < J)
+    (x z : Fin d → ℤ) (hxz : x ≠ z)
+    {β₁ β₂ : ℝ} (hβ₁ : 0 < β₁) (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (M ratio : ℝ) (hratio0 : 0 ≤ ratio) (hratio1 : ratio < 1)
+    (h : CERouteIccDirectGeometricIncrement Λ J x z M ratio)
+    (hdecay : HasExponentialDecay d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ)
+      (pseudoMassFromParamsAtPair hα hrho d Λ
+        (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      Lemma_17_5_2_UpperBound hα hrho Λ J β₂ x z
+        (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho)) ∧
+      ENNReal.ofReal
+          (pseudoMassFromParamsAtPair hα hrho d Λ
+            (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
+        ≤ latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ∧
+      latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ≤
+        ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho) *
+          ENNReal.ofReal
+            (pseudoMassFromParamsAtPair hα hrho d Λ
+              (⟨J, 0, β₂⟩ : IsingParams ℝ) x z) :=
+  lemma_17_5_2_capstone_of_geometric_increments_on_covered_stages
+    hα hαd hd hrho Λ J hJ_pos x z hxz hβ₁ hβ₁₂ hIcc M ratio hratio0 hratio1 h hdecay
+
+/-- **End-to-end Lemma 17.5.2 upper bound from direct poly-geometric increment**:
+pass-through to `lemma_17_5_2_upper_bound_of_poly_geometric_increments_on_covered_stages`. -/
+theorem lemma_17_5_2_upper_bound_of_CERouteIccDirectPolyGeometricIncrement
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    {rho : ℝ} (hrho : 0 < rho)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (hJ_pos : 0 < J)
+    (x z : Fin d → ℤ) (hxz : x ≠ z)
+    {β₁ β₂ : ℝ} (hβ₁ : 0 < β₁) (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (M ratio : ℝ) (hratio0 : 0 ≤ ratio) (hratio1 : ratio < 1)
+    (h : CERouteIccDirectPolyGeometricIncrement Λ J x z M ratio) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      Lemma_17_5_2_UpperBound hα hrho Λ J β₂ x z
+        (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho)) :=
+  lemma_17_5_2_upper_bound_of_poly_geometric_increments_on_covered_stages
+    hα hαd hd hrho Λ J hJ_pos x z hxz hβ₁ hβ₁₂ hIcc M ratio hratio0 hratio1 h
+
+/-- **End-to-end Lemma 17.5.2 capstone from direct poly-geometric increment + decay**:
+pass-through to `lemma_17_5_2_capstone_of_poly_geometric_increments_on_covered_stages`. -/
+theorem lemma_17_5_2_capstone_of_CERouteIccDirectPolyGeometricIncrement
+    {d α : ℕ} (hα : 1 ≤ α) (hαd : 2 * α > d) (hd : 1 ≤ d)
+    {rho : ℝ} (hrho : 0 < rho)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (hJ_pos : 0 < J)
+    (x z : Fin d → ℤ) (hxz : x ≠ z)
+    {β₁ β₂ : ℝ} (hβ₁ : 0 < β₁) (hβ₁₂ : β₁ ≤ β₂)
+    (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (M ratio : ℝ) (hratio0 : 0 ≤ ratio) (hratio1 : ratio < 1)
+    (h : CERouteIccDirectPolyGeometricIncrement Λ J x z M ratio)
+    (hdecay : HasExponentialDecay d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ)
+      (pseudoMassFromParamsAtPair hα hrho d Λ
+        (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)) :
+    ∃ K : ℝ, 0 < K ∧
+      (∀ x' y' : Fin d → ℤ,
+        ∑' w : Fin d → ℤ,
+            (1 + latticeDistance d x' w : ℝ) ^ (-(α : ℝ)) *
+            (1 + latticeDistance d y' w : ℝ) ^ (-(α : ℝ)) ≤ K) ∧
+      Lemma_17_5_2_UpperBound hα hrho Λ J β₂ x z
+        (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho)) ∧
+      ENNReal.ofReal
+          (pseudoMassFromParamsAtPair hα hrho d Λ
+            (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)
+        ≤ latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ∧
+      latticeMass d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ) ≤
+        ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho) *
+          ENNReal.ofReal
+            (pseudoMassFromParamsAtPair hα hrho d Λ
+              (⟨J, 0, β₂⟩ : IsingParams ℝ) x z) :=
+  lemma_17_5_2_capstone_of_poly_geometric_increments_on_covered_stages
+    hα hαd hd hrho Λ J hJ_pos x z hxz hβ₁ hβ₁₂ hIcc M ratio hratio0 hratio1 h hdecay
+
 end Ambient
 end IsingModel
