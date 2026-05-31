@@ -17675,4 +17675,73 @@ File:
 Reference: Glimm--Jaffe, \emph{Quantum Physics} 2nd~ed. (1987),
 \S17.5 Lemma~17.5.2, pp.~311--312.
 
+\subsection*{Lemma~17.5.2 -- uniform sandwich from cubic tanh profiles (Done)}
+
+\subsubsection*{Mathematical content}
+
+The preceding uniform sandwich requires the raw profile input
+\[
+  \mathrm{pseudoMassG}\,\alpha\,r\,(-\log(\beta J\,2d))
+    \le \langle\sigma_x\sigma_z\rangle_{\infty,\Lambda}.
+\]
+For a distinct pair $(x,z)$, set \(w=z-x\).  The named condition
+\(\mathtt{cubicTanhProfileBound}\,\alpha\,d\,r\,\beta\,J\,w\) gives
+\[
+  \mathrm{pseudoMassG}\,\alpha\,r\,(-\log(\beta J\,2d))
+    \le \tanh(\beta J)^{\operatorname{dist}(0,w)}.
+\]
+The already formalized path lower bound gives
+\[
+  \tanh(\beta J)^{\operatorname{dist}(0,w)}
+    \le \langle\sigma_0\sigma_w\rangle_{\infty,\mathrm{cubic}}.
+\]
+Translation invariance identifies this anchored cubic correlation with
+\(\langle\sigma_x\sigma_z\rangle_{\infty,\mathrm{cubic}}\), and
+exhaustion-independence transfers it to the target exhaustion \(\Lambda\).
+The same tanh-profile input supplies active-range membership
+\(\langle\sigma_x\sigma_z\rangle_{\infty,\Lambda}\in(0,2)\).
+
+\subsubsection*{Lean 4 formalization}
+
+\begin{theorem}[Uniform sandwich from cubic tanh profiles]
+The Lean theorem is
+\begin{Verbatim}[breaklines=true]
+lemma_17_5_2_high_temp_sandwich_uniform_transfer_forall_of_cubicTanhProfileBound
+\end{Verbatim}
+Assume \(1\le\alpha\), \(0<r\), \(0<d\), \(0<J\), \(0<\beta\), and
+\(\beta J\,2d<1\).  If
+\(\mathtt{cubicTanhProfileBound}\,\alpha\,d\,r\,\beta\,J\,w\) holds for every
+nonzero displacement \(w\), then there is a single \(K\) such that every
+distinct pair \((x,z)\) satisfies
+\[
+  \mathrm{ofReal}\,m^-(x,z)\le \mathrm{latticeMass}
+  \le \mathrm{ofReal}\,K\cdot\mathrm{ofReal}\,m^-(x,z).
+\]
+\end{theorem}
+
+\noindent\textbf{Proof sketch}:
+The bridge
+\begin{Verbatim}[breaklines=true]
+pseudoMassG_le_correlationInfinite_of_cubicTanhProfileBound_displacement
+\end{Verbatim}
+turns the displacement tanh-profile bound into the raw target-exhaustion
+profile inequality.  The companion theorem
+\begin{Verbatim}[breaklines=true]
+activePseudoMassPair_of_cubicTanhProfileBound_displacement
+\end{Verbatim}
+derives the active-pair input.  The proof then calls
+\begin{Verbatim}[breaklines=true]
+lemma_17_5_2_high_temp_sandwich_uniform_transfer_forall
+\end{Verbatim}
+
+\noindent\textit{Status}: Complete formalization (no \texttt{sorry}).  The result
+still assumes the cubic tanh-profile family; proving that family from only
+\(\beta J\,2d<1\) is a separate high-temperature profile task.
+File:
+\begin{Verbatim}[breaklines=true]
+Concrete/LatticeGraphCorrelation/Lemma_17_5_2/UniformSandwichCubicTanh.lean
+\end{Verbatim}
+Reference: Glimm--Jaffe, \emph{Quantum Physics} 2nd~ed. (1987),
+\S17.5 Lemma~17.5.2, pp.~311--312 and \S5.1, pp.~74--75.
+
 \end{document}
