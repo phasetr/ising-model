@@ -14201,9 +14201,12 @@ Direct convenience constructor of
   \item all-pair \texttt{bound} (Step 5.7n, \#3185 shape);
   \item all-pair \texttt{active} (Step 5.7o, \#3186 shape).
 \end{itemize}
-Bypasses the (vacuous) \texttt{cubicTanhProfileBound} family path of
+Bypasses the conditional \texttt{cubicTanhProfileBound} family path of
 \texttt{PseudoMassLatticeDistanceBridge\_of\_cubicTanh\_family} (\#3172),
-matching the natural shape of Step 5.7n / Step 5.7o providers.
+matching the natural shape of Step 5.7n / Step 5.7o providers.  After the
+all-displacement tanh-profile no-go, this direct bound+active constructor is
+the canonical bridge interface once the concrete bound and active providers are
+supplied.
 \end{theorem}
 
 \begin{theorem}[\texttt{IsingModel.Ambient.correlationInfinite\_pair\_active\_of\_betaJ\_pos}
@@ -14222,7 +14225,7 @@ $\mathrm{correlationInfinite} \le 1 < 2$.
 Complements Step 5.7n (\#3185)'s all-pair \texttt{bound} provider,
 completing the structural input set for building a concrete
 \texttt{PseudoMassLatticeDistanceBridge} value directly from Simon-Lieb
-$+$ adjacent analytic inputs (without going through the vacuous
+$+$ adjacent analytic inputs (without going through the conditional
 \texttt{cubicTanhProfileBound} family).
 \end{theorem}
 
@@ -14629,6 +14632,10 @@ pairs: \texttt{correlationInfinite\_latticeGraph\_pair\_eq\_twoPointFunction}
 gives the pair correlation form, and \texttt{latticeDistance\_translate\_eq}
 gives the lattice-distance form. The constructed bridge value can be fed
 directly into \texttt{tsum\_correlationInfinite\_pair\_product\_le\_HLS\_const}.
+This remains a conditional compatibility constructor: the no-go result above
+shows that the all-displacement \texttt{cubicTanhProfileBound} family cannot be
+obtained in positive dimension from only \(0<r\), \(0<\beta J\), and
+\(\beta J\,2d<1\).
 The supporting wrappers
 \texttt{correlationInfinite\_pair\_eq\_displacement},
 \texttt{pseudoMassFromParamsAtPair\_eq\_displacement},
@@ -14664,8 +14671,11 @@ bridge bound $m^-\cdot r' \ge M_{\inf}\cdot d$ combined with monotonicity yields
 $\le 2/(1+(M_{\inf}\cdot d)^\alpha)$. The pair-product sum is then bounded by
 the $U_4$-aligned existential constant
 \texttt{discrete\_hls\_pseudoMass\_two\_pair\_convolution\_constant}.
-The bridge's own construction (via cubic-path exponential decay and
-\texttt{pseudoMassG} comparison) is left for a subsequent PR.
+The abstract bridge can be supplied by the conditional
+\texttt{PseudoMassLatticeDistanceBridge\_of\_cubicTanh\_family} when its family
+inputs are already available.  After the all-displacement tanh-profile no-go,
+the positive high-temperature route should instead use the direct Simon--Lieb
+trichotomy constructors with their adjacent/bound/active inputs.
 \end{theorem}
 
 \begin{theorem}[\texttt{IsingModel.tsum\_two\_div\_pseudoMass\_pair\_product\_le\_const\_pow\_M},
@@ -17736,8 +17746,8 @@ lemma_17_5_2_high_temp_sandwich_uniform_transfer_forall
 
 \noindent\textit{Status}: Complete formalization (no \texttt{sorry}).  The result
 still assumes the cubic tanh-profile family as a conditional input; the no-go
-result below shows that the all-displacement family cannot be discharged from
-the elementary positive high-temperature assumptions alone.
+result below shows that the all-displacement family cannot be discharged in
+positive dimension from only \(0<r\), \(0<\beta J\), and \(\beta J\,2d<1\).
 File:
 \begin{Verbatim}[breaklines=true]
 Concrete/LatticeGraphCorrelation/Lemma_17_5_2/UniformSandwichCubicTanh.lean
@@ -17752,8 +17762,9 @@ The previous wrapper intentionally treats
   \forall\,w\ne0,\quad
   \mathtt{cubicTanhProfileBound}\,\alpha\,d\,r\,\beta\,J\,w
 \]
-as a conditional input.  In fact this family cannot be discharged from the
-elementary high-temperature assumptions alone.  The predicate requires
+as a conditional input.  In fact this family cannot be discharged in positive
+dimension from only \(0<r\), \(0<\beta J\), and \(\beta J\,2d<1\).  The
+predicate requires
 \[
   \mathtt{pseudoMassG}\,\alpha\,r\,(-\log(\beta J\,2d))
   \le \tanh(\beta J)^{\operatorname{dist}(0,w)}

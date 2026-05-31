@@ -32,6 +32,14 @@ This file provides:
 5. Canonical `canonical_*` entry points formerly housed in the retired
    `HLSBridgeSummary` wrapper module.
 
+After the all-displacement `cubicTanhProfileBound` no-go facts, these direct
+Simon-Lieb trichotomy constructors are the canonical family-free bridge route
+in the positive-dimensional regime where `0 < r`, `0 < β * J`, and
+`β * J * (2 * d) < 1` rule out the tanh-profile family.  They package the
+adjacent correlation input together with the concrete bound and active-range
+ingredients into `PseudoMassLatticeDistanceBridge` fields without assuming that
+conditional family interface.
+
 **Reference:** Glimm--Jaffe, *Quantum Physics*, 2nd ed., §17.5, pp. 311--312.
 -/
 
@@ -52,7 +60,7 @@ production of a `PseudoMassLatticeDistanceBridge` value.
 Hypotheses:
 - `1 ≤ α`, `0 < r` (pseudoMass parameters);
 - `0 ≤ J`, `0 < β`, `0 < β · J` (ferromagnetic with strict coupling);
-- `0 < β·J·(2d) ≤ 1` (strict high-temperature for Simon-Lieb);
+- `0 < β·J·(2d) ≤ 1` (Simon-Lieb nonnegative-rate regime);
 - `0 < M` with `M ≤ simonLiebRate β J d / 2` (rate-dominated);
 - `h_corr_small`: per-`w ≠ 0`, `M · d(0, w) ≤ 1`;
 - `h_adj_exp`: per-`w` with `dist(0, w) = 1`,
@@ -863,7 +871,13 @@ theorem simonLiebTanhTrichotomyBridgeRate_le_highTempExpRate
   dsimp [simonLiebTanhTrichotomyBridgeRate]
   exact min_le_right _ _
 
-/-- **Canonical bridge constructor** (exp-adjacent input form, full trichotomy). -/
+/-- **Canonical bridge constructor** (exp-adjacent input form, full trichotomy).
+
+This is the direct family-free route from Simon-Lieb trichotomy data plus the
+adjacent correlation input to `PseudoMassLatticeDistanceBridge`.  The active
+range is derived internally from the ferromagnetic data and `hβJd_pos`, so the
+constructor bypasses the conditional `cubicTanhProfileBound` family interface
+without taking a separate active-provider argument. -/
 def canonical_bridge_from_simonLieb_adjacent
     {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     (d : ℕ) {J β : ℝ}
