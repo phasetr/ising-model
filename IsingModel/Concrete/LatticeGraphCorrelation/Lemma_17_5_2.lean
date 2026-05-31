@@ -48,6 +48,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.GlobalAllRateCom
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.PerActivePairRateFromUniformTransfer
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.UniformTransferLargeK
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.UniformSandwich
+import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.UniformSandwichCubicTanh
 
 /-!
 # GJ §17.5 Lemma 17.5.2 capstone
