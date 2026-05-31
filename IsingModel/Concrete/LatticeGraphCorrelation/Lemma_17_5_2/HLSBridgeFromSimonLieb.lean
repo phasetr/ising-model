@@ -33,10 +33,12 @@ This file provides:
    `HLSBridgeSummary` wrapper module.
 
 After the all-displacement `cubicTanhProfileBound` no-go facts, these direct
-Simon-Lieb trichotomy constructors are the canonical family-free bridge route:
-they package the adjacent correlation input, concrete bound provider, and
-active provider into `PseudoMassLatticeDistanceBridge` fields without assuming
-the impossible tanh-profile family.
+Simon-Lieb trichotomy constructors are the canonical family-free bridge route
+in the positive-dimensional regime where `0 < r`, `0 < β * J`, and
+`β * J * (2 * d) < 1` rule out the tanh-profile family.  They package the
+adjacent correlation input together with the concrete bound and active-range
+ingredients into `PseudoMassLatticeDistanceBridge` fields without assuming that
+conditional family interface.
 
 **Reference:** Glimm--Jaffe, *Quantum Physics*, 2nd ed., §17.5, pp. 311--312.
 -/
@@ -872,9 +874,10 @@ theorem simonLiebTanhTrichotomyBridgeRate_le_highTempExpRate
 /-- **Canonical bridge constructor** (exp-adjacent input form, full trichotomy).
 
 This is the direct family-free route from Simon-Lieb trichotomy data plus the
-adjacent correlation and active-provider inputs to
-`PseudoMassLatticeDistanceBridge`, bypassing the conditional
-`cubicTanhProfileBound` family interface. -/
+adjacent correlation input to `PseudoMassLatticeDistanceBridge`.  The active
+range is derived internally from the ferromagnetic data and `hβJd_pos`, so the
+constructor bypasses the conditional `cubicTanhProfileBound` family interface
+without taking a separate active-provider argument. -/
 def canonical_bridge_from_simonLieb_adjacent
     {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     (d : ℕ) {J β : ℝ}
