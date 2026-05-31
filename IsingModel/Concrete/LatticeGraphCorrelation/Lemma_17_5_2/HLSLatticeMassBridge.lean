@@ -8,6 +8,11 @@ GJ-proposition-unit bundle bridging the substantive HLS chain to the
 `latticeMass > 0` positivity (`latticeMass_pos_of_high_temp_exhaustion`),
 with the final consolidated HLS summary and projections.
 
+The consolidated theorem names previously lived in the standalone
+`HLSConsolidatedSummary` module; that wrapper module was retired, while the
+public theorem names remain available here and through the top-level
+`Lemma_17_5_2` umbrella.
+
 **Reference:** Glimm-Jaffe §17.5 pp. 304-306, Lemma 17.5.2 pp. 311-312.
 -/
 
