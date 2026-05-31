@@ -39,7 +39,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.CEConditionalCap
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.CEConditionalCapstonePolyGeometric
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.CEConditionalCapstonePseudoMassLeRate
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.HLSLatticeMassBridge
-import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.HLSBridgeSummary
+import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.HLSBridgeFromSimonLieb
 
 /-!
 # GJ §17.5 Lemma 17.5.2 capstone
