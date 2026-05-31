@@ -10,7 +10,8 @@ This module is part of the split
 discharges the uniform `pseudoMassG` transfer bound
 `Lemma_17_5_2_UniformTransferPseudoMassGBound`, and hence closes the named
 `latticeMass` upper-bound side of GJ Lemma 17.5.2,
-`m(σ) ≤ const · m⁻(σ)`, for ferromagnetic high-temperature pairs.
+`m(σ) ≤ const · m⁻(σ)`, for ferromagnetic positive-temperature active
+pairs.
 
 ## Mechanism
 
@@ -20,7 +21,7 @@ uniform facts make this provable with a single `K` depending only on
 `α, r, d, J, β`:
 
 * every infinite-volume correlation is bounded by `1`
-  (`correlationInfinite_latticeGraph_le_one`), a uniform gap below `pseudoMassG`'s
+  (`correlationInfinite_le_one`), a uniform gap below `pseudoMassG`'s
   value `2` at `0`; and
 * every admissible decay rate is bounded by `-log(tanh(βJ))`
   (`HasExponentialDecay_rate_le_neg_log_tanh_betaJ`, transferred to an arbitrary
@@ -98,7 +99,7 @@ admissible decay rate is bounded by a real constant `A`, then
 `Lemma_17_5_2_UniformTransferPseudoMassGBound` holds for some `K`.
 
 The active-pair correlations are uniformly `≤ 1`
-(`correlationInfinite_latticeGraph_le_one`), which is `≤ pseudoMassG α r ((a : ℝ)/K)`
+(`correlationInfinite_le_one`), which is `≤ pseudoMassG α r ((a : ℝ)/K)`
 for the `K` from `exists_K_forall_pseudoMassG_ge_one_of_rate_bound`. -/
 theorem exists_uniform_transfer_pseudoMassG_of_rate_bound
     {α d : ℕ} (hα : 1 ≤ α) {r A : ℝ} (hr : 0 < r)
@@ -138,7 +139,7 @@ theorem neg_log_tanh_betaJ_nonneg {J β : ℝ} (hJ : 0 < J) (hβ : 0 < β) :
 
 /-- **Admissible decay rates are bounded by `-log(tanh(βJ))`** on an arbitrary
 exhaustion: transfer the validating decay to the cubic exhaustion, apply the
-high-temperature all-rate cap, and convert the `ENNReal` bound to reals. -/
+all-rate cap `-log(tanh(βJ))`, and convert the `ENNReal` bound to reals. -/
 theorem admissible_rate_le_neg_log_tanh
     {d : ℕ} (hd : 0 < d) (Λ : Ambient.Exhaustion (Fin d → ℤ))
     {J β : ℝ} (hJ : 0 < J) (hβ : 0 < β) {a : NNReal}
@@ -157,7 +158,7 @@ theorem admissible_rate_le_neg_log_tanh
     rwa [ENNReal.ofReal_coe_nnreal]
   exact (ENNReal.ofReal_le_ofReal_iff (neg_log_tanh_betaJ_nonneg hJ hβ)).mp hcoe
 
-/-- **Unconditional uniform `pseudoMassG` transfer bound at high temperature**:
+/-- **Unconditional uniform `pseudoMassG` transfer bound at positive temperature**:
 for `0 < d`, `0 < J`, `0 < β`, `1 ≤ α`, `0 < r`, some `K` validates
 `Lemma_17_5_2_UniformTransferPseudoMassGBound`.  The real rate bound
 `A = -log(tanh(βJ))` is supplied by `admissible_rate_le_neg_log_tanh`. -/
@@ -173,8 +174,8 @@ theorem exists_uniform_transfer_pseudoMassG
     hα hr Λ J β
     (fun _a ha => admissible_rate_le_neg_log_tanh hd Λ hJ hβ ha)
 
-/-- **GJ §17.5 Lemma 17.5.2 upper bound, closed unconditionally at high
-temperature**: for a ferromagnetic high-temperature active pair `(x, z)`, there is
+/-- **GJ §17.5 Lemma 17.5.2 upper bound, closed unconditionally at positive
+temperature**: for a ferromagnetic positive-temperature active pair `(x, z)`, there is
 a (uniform, non-sharp) constant `ofReal K` with
 `latticeMass ≤ ofReal K · ofReal m⁻(x, z)`, i.e. the named
 `Lemma_17_5_2_UpperBound`.
