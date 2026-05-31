@@ -17575,4 +17575,61 @@ File:
 Reference: Glimm--Jaffe, \emph{Quantum Physics} 2nd~ed. (1987),
 \S17.5 Lemma~17.5.2, pp.~311--312.
 
+\subsection*{Lemma~17.5.2 Part B -- closing the upper bound via large-$K$ uniform
+transfer (Done)}
+
+\subsubsection*{Mathematical content}
+
+The uniform $\mathrm{pseudoMassG}$ transfer bound, and hence the upper-bound side
+$m(\sigma)\le\mathrm{const}\cdot m^-(\sigma)$ of Lemma~17.5.2, is now closed for
+ferromagnetic high-temperature pairs ($0<d$, $0<J$, $0<\beta$, $1\le\alpha$,
+$0<r$).  Two uniform facts suffice, with a single constant $K$ depending only on
+$\alpha,r,d,J,\beta$:
+\begin{itemize}
+\item every infinite-volume correlation satisfies
+  $\langle\sigma_x\sigma_z\rangle\le 1$, a uniform gap below
+  $\mathrm{pseudoMassG}\,\alpha\,r\,0=2$; and
+\item every admissible decay rate $a$ satisfies $a\le -\log(\tanh(\beta J))$
+  (the high-temperature all-rate cap, transferred to an arbitrary exhaustion).
+\end{itemize}
+Since $\mathrm{pseudoMassG}\,\alpha\,r$ is continuous with value $2$ at $0$ and
+antitone, it stays $\ge 1$ on a neighbourhood $[0,\delta]$ of $0$; choosing $K$
+large enough that $(a:\mathbb{R})/K\le\delta$ for every admissible $a$ gives
+$\langle\sigma_x\sigma_z\rangle\le 1\le\mathrm{pseudoMassG}\,\alpha\,r\,((a:\mathbb{R})/K)$.
+
+\subsubsection*{Lean 4 formalization}
+
+\begin{theorem}[\texttt{lemma\_17\_5\_2\_upper\_bound\_uniform\_transfer}]
+For $1\le\alpha$, $0<r$, $0<d$, $0<J$, $0<\beta$ and a ferromagnetic
+high-temperature active pair $(x,z)$,
+\[
+  \exists K,\ \mathtt{Lemma\_17\_5\_2\_UpperBound}\ \dots\ x\ z\ (\mathrm{ofReal}\,K),
+  \quad\text{i.e.}\quad
+  \mathrm{latticeMass}\le\mathrm{ofReal}\,K\cdot\mathrm{ofReal}\,m^-(x,z).
+\]
+\end{theorem}
+
+\noindent\textbf{Proof sketch}:
+$\mathtt{exists\_pos\_forall\_pseudoMassG\_ge\_one\_near\_zero}$ gives $\delta$ with
+$\mathrm{pseudoMassG}\,\alpha\,r\,t\ge 1$ on $[0,\delta]$ (continuity at $0$,
+value $2$);
+$\mathtt{exists\_K\_forall\_pseudoMassG\_ge\_one\_of\_rate\_bound}$ picks
+$K=\max(1,A/\delta)$ for the rate cap $A$;
+$\mathtt{exists\_uniform\_transfer\_pseudoMassG\_of\_rate\_bound}$ uses
+$\langle\sigma_x\sigma_z\rangle\le 1$ to validate the uniform transfer bound;
+$\mathtt{admissible\_rate\_le\_neg\_log\_tanh}$ supplies $A=-\log(\tanh(\beta J))$
+on an arbitrary exhaustion; and the PR~\#3381 chain closes
+$\mathtt{Lemma\_17\_5\_2\_UpperBound}$.
+
+\noindent\textit{Status}: Complete formalization (no \texttt{sorry}).  The constant
+is uniform in the pair but \emph{not sharp}: this proves the qualitative
+Glimm--Jaffe statement $m\le\mathrm{const}\cdot m^-$ via the uniform pseudo-mass
+lower bound $m^-(x,z)\ge\mathrm{pseudoMassG}^{-1}(1)$ that
+$\langle\sigma_x\sigma_z\rangle\le 1$ yields, rather than the sharp transfer-matrix
+correlation length.
+File:
+\texttt{Concrete/LatticeGraphCorrelation/Lemma\_17\_5\_2/UniformTransferLargeK.lean}.
+Reference: Glimm--Jaffe, \emph{Quantum Physics} 2nd~ed. (1987),
+\S17.5 Lemma~17.5.2, pp.~311--312.
+
 \end{document}
