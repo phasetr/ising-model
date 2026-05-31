@@ -39,10 +39,12 @@ import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.CEConditionalCap
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.CEConditionalCapstoneGeometricConvenience
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.CEConditionalCapstonePolyGeometric
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.CEConditionalCapstonePseudoMassLeRate
-import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.HLSBridgeFromCubicTanh
+import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.HLSPerStageSubstantive
+import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.HLSBridgeSummary
 
 /-!
 # GJ §17.5 Lemma 17.5.2 capstone
 
-This compatibility module re-exports the split GJ Lemma 17.5.2 capstone layer.
+This compatibility module re-exports the split GJ Lemma 17.5.2 capstone layer,
+including the canonical HLS summary and bridge entry points.
 -/
