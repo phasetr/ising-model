@@ -1,4 +1,4 @@
-import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.HLSPerStageWrappers
+import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.HLSBridgeFromSimonLieb
 
 /-!
 # HLS bridge ferromagnetic-input and convenience aliases
