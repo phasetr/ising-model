@@ -32,6 +32,11 @@ This file provides:
 5. Canonical `canonical_*` entry points formerly housed in the retired
    `HLSBridgeSummary` wrapper module.
 
+After the all-displacement `cubicTanhProfileBound` no-go facts, these direct
+Simon-Lieb trichotomy constructors are the canonical bridge route: they provide
+the `PseudoMassLatticeDistanceBridge` fields from concrete bound and active
+providers without assuming the impossible tanh-profile family.
+
 **Reference:** Glimm--Jaffe, *Quantum Physics*, 2nd ed., §17.5, pp. 311--312.
 -/
 
@@ -863,7 +868,11 @@ theorem simonLiebTanhTrichotomyBridgeRate_le_highTempExpRate
   dsimp [simonLiebTanhTrichotomyBridgeRate]
   exact min_le_right _ _
 
-/-- **Canonical bridge constructor** (exp-adjacent input form, full trichotomy). -/
+/-- **Canonical bridge constructor** (exp-adjacent input form, full trichotomy).
+
+This is the direct post-no-go route from Simon-Lieb trichotomy data to
+`PseudoMassLatticeDistanceBridge`, bypassing the conditional
+`cubicTanhProfileBound` family interface. -/
 def canonical_bridge_from_simonLieb_adjacent
     {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     (d : ℕ) {J β : ℝ}

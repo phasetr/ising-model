@@ -14203,7 +14203,9 @@ Direct convenience constructor of
 \end{itemize}
 Bypasses the (vacuous) \texttt{cubicTanhProfileBound} family path of
 \texttt{PseudoMassLatticeDistanceBridge\_of\_cubicTanh\_family} (\#3172),
-matching the natural shape of Step 5.7n / Step 5.7o providers.
+matching the natural shape of Step 5.7n / Step 5.7o providers.  After the
+all-displacement tanh-profile no-go, this direct bound+active constructor is
+the canonical bridge interface for positive high-temperature inputs.
 \end{theorem}
 
 \begin{theorem}[\texttt{IsingModel.Ambient.correlationInfinite\_pair\_active\_of\_betaJ\_pos}
@@ -14629,6 +14631,9 @@ pairs: \texttt{correlationInfinite\_latticeGraph\_pair\_eq\_twoPointFunction}
 gives the pair correlation form, and \texttt{latticeDistance\_translate\_eq}
 gives the lattice-distance form. The constructed bridge value can be fed
 directly into \texttt{tsum\_correlationInfinite\_pair\_product\_le\_HLS\_const}.
+This remains a conditional compatibility constructor: the no-go result above
+shows that the all-displacement \texttt{cubicTanhProfileBound} family cannot be
+obtained from the elementary positive high-temperature assumptions alone.
 The supporting wrappers
 \texttt{correlationInfinite\_pair\_eq\_displacement},
 \texttt{pseudoMassFromParamsAtPair\_eq\_displacement},
