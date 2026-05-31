@@ -1,4 +1,4 @@
-import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.HLSBridgeTanhInterface
+import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.HLSBridgeFromSimonLieb
 
 /-!
 # HLS bridge summary API: canonical entry points
@@ -25,6 +25,10 @@ These canonical aliases distill the most common usage patterns into a
 single fixed-name access surface, making downstream consumers stable
 against internal renaming.
 
+Non-canonical ferromagnetic and tanh-interface wrapper names are intentionally
+not re-exported here; use the `canonical_*` entry points below or the
+substantive constructors in `HLSBridgeFromSimonLieb`.
+
 **Reference:** Glimm--Jaffe, *Quantum Physics*, 2nd ed., §17.5, pp. 311--312.
 -/
 
@@ -32,6 +36,17 @@ namespace IsingModel
 namespace Ambient
 
 open Real
+
+/-- Extracts `0 < β * J` from the strict high-temperature product
+`0 < β * J * (2d)`. -/
+private theorem betaJ_pos_of_betaJ_two_d_pos {β J : ℝ} {d : ℕ}
+    (hβJd_pos : 0 < β * J * (2 * d)) :
+    0 < β * J := by
+  have h2d_nn : (0 : ℝ) ≤ 2 * d := by positivity
+  by_contra h
+  push Not at h
+  have : β * J * (2 * d) ≤ 0 := mul_nonpos_of_nonpos_of_nonneg h h2d_nn
+  linarith
 
 /-! ## Canonical entry points -/
 
@@ -50,8 +65,10 @@ def canonical_bridge_from_simonLieb_adjacent
           (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {0, w}
         ≤ Real.exp (-M)) :
     PseudoMassLatticeDistanceBridge hα hr d J β :=
-  PseudoMassLatticeDistanceBridge_of_simonLieb_ferromagnetic
-    hα hr d hf hβJd_pos hβJd_le hM_pos hMrate h_corr_small h_adj_exp
+  have hβJ_pos := betaJ_pos_of_betaJ_two_d_pos (β := β) (J := J) (d := d) hβJd_pos
+  PseudoMassLatticeDistanceBridge_of_simonLieb_smallReg_adjacent
+    hα hr d hf.hJ hf.hβ hβJ_pos hβJd_pos hβJd_le hM_pos hMrate
+    h_corr_small h_adj_exp
 
 /-- **Canonical HLS sum existential** (exp-adjacent input form). -/
 theorem canonical_hls_sum
@@ -75,8 +92,10 @@ theorem canonical_hls_sum
         Ambient.correlationInfinite (IsingModel.latticeGraph d)
             (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {y₀, z}
       ≤ K :=
-  tsum_correlationInfinite_pair_product_le_const_of_simonLieb_ferromagnetic
-    hα hr d hαd hf hβJd_pos hβJd_le hM_pos hMrate h_corr_small h_adj_exp x₀ y₀
+  have hβJ_pos := betaJ_pos_of_betaJ_two_d_pos (β := β) (J := J) (d := d) hβJd_pos
+  tsum_correlationInfinite_pair_product_le_const_of_simonLieb_smallReg_adjacent
+    hα hr d hαd hf.hJ hf.hβ hβJ_pos hβJd_pos hβJd_le hM_pos hMrate
+    h_corr_small h_adj_exp x₀ y₀
 
 /-- **Canonical bound provider**. -/
 theorem canonical_bound_provider
@@ -107,7 +126,7 @@ theorem canonical_active_provider
       Ambient.correlationInfinite (IsingModel.latticeGraph d)
           (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {x, z}
         ∈ Set.Ioo (0 : ℝ) 2 :=
-  correlationInfinite_pair_active_of_ferromagnetic hf hβJ_pos
+  correlationInfinite_pair_active_of_betaJ_pos hf.hβ hβJ_pos
 
 /-- **Canonical bridge constructor** (tanh-adjacent input form). -/
 def canonical_bridge_from_tanh_adjacent
@@ -124,8 +143,9 @@ def canonical_bridge_from_tanh_adjacent
           (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {0, w}
         ≤ Real.tanh (β * J) ^ IsingModel.latticeDistance d 0 w) :
     PseudoMassLatticeDistanceBridge hα hr d J β :=
-  PseudoMassLatticeDistanceBridge_of_simonLieb_tanh_ferromagnetic
-    hα hr d hf hβJd_pos hβJd_le hM_pos hMrate_sl hMrate_htep
+  have hβJ_pos := betaJ_pos_of_betaJ_two_d_pos (β := β) (J := J) (d := d) hβJd_pos
+  PseudoMassLatticeDistanceBridge_of_simonLieb_smallReg_tanh_adjacent
+    hα hr d hf.hJ hf.hβ hβJ_pos hβJd_pos hβJd_le hM_pos hMrate_sl hMrate_htep
     h_corr_small h_adj_tanh
 
 /-- **Canonical HLS sum existential** (tanh-adjacent input form). -/
@@ -151,8 +171,9 @@ theorem canonical_hls_sum_tanh
         Ambient.correlationInfinite (IsingModel.latticeGraph d)
             (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {y₀, z}
       ≤ K :=
-  tsum_correlationInfinite_pair_product_le_const_of_simonLieb_tanh_ferromagnetic
-    hα hr d hαd hf hβJd_pos hβJd_le hM_pos hMrate_sl hMrate_htep
+  have hβJ_pos := betaJ_pos_of_betaJ_two_d_pos (β := β) (J := J) (d := d) hβJd_pos
+  tsum_correlationInfinite_pair_product_le_const_of_simonLieb_tanh_adjacent
+    hα hr d hαd hf.hJ hf.hβ hβJ_pos hβJd_pos hβJd_le hM_pos hMrate_sl hMrate_htep
     h_corr_small h_adj_tanh x₀ y₀
 
 /-- **Canonical positive K extraction** from the HLS sum bound. -/
