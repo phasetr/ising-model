@@ -34,8 +34,9 @@ This file provides:
 
 After the all-displacement `cubicTanhProfileBound` no-go facts, these direct
 Simon-Lieb trichotomy constructors are the canonical family-free bridge route:
-they provide the `PseudoMassLatticeDistanceBridge` fields from concrete bound
-and active providers without assuming the impossible tanh-profile family.
+they package the adjacent correlation input, concrete bound provider, and
+active provider into `PseudoMassLatticeDistanceBridge` fields without assuming
+the impossible tanh-profile family.
 
 **Reference:** Glimm--Jaffe, *Quantum Physics*, 2nd ed., §17.5, pp. 311--312.
 -/
@@ -57,7 +58,7 @@ production of a `PseudoMassLatticeDistanceBridge` value.
 Hypotheses:
 - `1 ≤ α`, `0 < r` (pseudoMass parameters);
 - `0 ≤ J`, `0 < β`, `0 < β · J` (ferromagnetic with strict coupling);
-- `0 < β·J·(2d) ≤ 1` (strict high-temperature for Simon-Lieb);
+- `0 < β·J·(2d) ≤ 1` (Simon-Lieb nonnegative-rate regime);
 - `0 < M` with `M ≤ simonLiebRate β J d / 2` (rate-dominated);
 - `h_corr_small`: per-`w ≠ 0`, `M · d(0, w) ≤ 1`;
 - `h_adj_exp`: per-`w` with `dist(0, w) = 1`,
@@ -870,9 +871,10 @@ theorem simonLiebTanhTrichotomyBridgeRate_le_highTempExpRate
 
 /-- **Canonical bridge constructor** (exp-adjacent input form, full trichotomy).
 
-This is the direct post-no-go route from Simon-Lieb trichotomy data plus the
-adjacent correlation input to `PseudoMassLatticeDistanceBridge`, bypassing the
-conditional `cubicTanhProfileBound` family interface. -/
+This is the direct family-free route from Simon-Lieb trichotomy data plus the
+adjacent correlation and active-provider inputs to
+`PseudoMassLatticeDistanceBridge`, bypassing the conditional
+`cubicTanhProfileBound` family interface. -/
 def canonical_bridge_from_simonLieb_adjacent
     {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     (d : ℕ) {J β : ℝ}
