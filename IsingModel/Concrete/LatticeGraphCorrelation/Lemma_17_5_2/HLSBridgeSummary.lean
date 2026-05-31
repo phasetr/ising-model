@@ -25,6 +25,10 @@ These canonical aliases distill the most common usage patterns into a
 single fixed-name access surface, making downstream consumers stable
 against internal renaming.
 
+Non-canonical ferromagnetic and tanh-interface wrapper names are intentionally
+not re-exported here; use the `canonical_*` entry points below or the
+substantive constructors in `HLSBridgeFromSimonLieb`.
+
 **Reference:** Glimm--Jaffe, *Quantum Physics*, 2nd ed., §17.5, pp. 311--312.
 -/
 
@@ -33,6 +37,8 @@ namespace Ambient
 
 open Real
 
+/-- Extracts `0 < β * J` from the strict high-temperature product
+`0 < β * J * (2d)`. -/
 private theorem betaJ_pos_of_betaJ_two_d_pos {β J : ℝ} {d : ℕ}
     (hβJd_pos : 0 < β * J * (2 * d)) :
     0 < β * J := by
