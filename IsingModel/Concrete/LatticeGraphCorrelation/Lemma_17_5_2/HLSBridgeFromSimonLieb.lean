@@ -799,6 +799,70 @@ theorem simonLiebTrichotomyBridgeRate_scaled_le_simonLiebRate_half
     rw [mul_div_cancel₀ _ hden_pos.ne']
   exact hmul.trans_eq hcancel
 
+/-- **Selected tanh-compatible Simon-Lieb trichotomy bridge rate**.
+
+This concrete rate is the selected Simon-Lieb trichotomy rate additionally
+truncated by `highTempExpRate β J`, so it can be used with the tanh-adjacent
+canonical path without a separate `M ≤ highTempExpRate β J` caller witness. -/
+noncomputable def simonLiebTanhTrichotomyBridgeRate (α : ℕ) (β J : ℝ) (d : ℕ) :
+    ℝ :=
+  min (simonLiebTrichotomyBridgeRate α β J d) (highTempExpRate β J)
+
+/-- **The selected tanh-compatible Simon-Lieb trichotomy bridge rate is
+positive** in the strict high-temperature regime. -/
+theorem simonLiebTanhTrichotomyBridgeRate_pos
+    {α d : ℕ} {β J : ℝ}
+    (hβJd_pos : 0 < β * J * (2 * d)) (hβJd_lt : β * J * (2 * d) < 1) :
+    0 < simonLiebTanhTrichotomyBridgeRate α β J d := by
+  have hSL_pos : 0 < simonLiebTrichotomyBridgeRate α β J d :=
+    simonLiebTrichotomyBridgeRate_pos hβJd_pos hβJd_lt
+  have hβJ_pos : 0 < β * J :=
+    betaJ_pos_of_betaJ_two_d_pos (β := β) (J := J) (d := d) hβJd_pos
+  have htanh_pos : 0 < Real.tanh (β * J) := by
+    rw [Real.tanh_eq_sinh_div_cosh]
+    exact div_pos (Real.sinh_pos_iff.mpr hβJ_pos) (Real.cosh_pos _)
+  have hhtep_pos : 0 < highTempExpRate β J := by
+    unfold highTempExpRate
+    exact neg_pos.mpr (Real.log_neg htanh_pos (Real.tanh_lt_one _))
+  dsimp [simonLiebTanhTrichotomyBridgeRate]
+  exact lt_min hSL_pos hhtep_pos
+
+/-- **The selected tanh-compatible Simon-Lieb trichotomy bridge rate is at
+most one**. -/
+theorem simonLiebTanhTrichotomyBridgeRate_le_one
+    (α : ℕ) (β J : ℝ) (d : ℕ) :
+    simonLiebTanhTrichotomyBridgeRate α β J d ≤ 1 := by
+  have hle :
+      simonLiebTanhTrichotomyBridgeRate α β J d ≤
+        simonLiebTrichotomyBridgeRate α β J d := by
+    dsimp [simonLiebTanhTrichotomyBridgeRate]
+    exact min_le_left _ _
+  exact hle.trans (simonLiebTrichotomyBridgeRate_le_one α β J d)
+
+/-- **The selected tanh-compatible Simon-Lieb trichotomy bridge rate satisfies
+the Simon-Lieb rate-gap condition** used by the full trichotomy bridge. -/
+theorem simonLiebTanhTrichotomyBridgeRate_scaled_le_simonLiebRate_half
+    (α : ℕ) (β J : ℝ) (d : ℕ) :
+    ((α : ℝ) + 1) * simonLiebTanhTrichotomyBridgeRate α β J d ≤
+      simonLiebRate β J d / 2 := by
+  have hden_nonneg : 0 ≤ (α : ℝ) + 1 := by positivity
+  have hle :
+      simonLiebTanhTrichotomyBridgeRate α β J d ≤
+        simonLiebTrichotomyBridgeRate α β J d := by
+    dsimp [simonLiebTanhTrichotomyBridgeRate]
+    exact min_le_left _ _
+  have hmul := mul_le_mul_of_nonneg_left hle hden_nonneg
+  exact hmul.trans
+    (simonLiebTrichotomyBridgeRate_scaled_le_simonLiebRate_half α β J d)
+
+/-- **The selected tanh-compatible Simon-Lieb trichotomy bridge rate is bounded
+by `highTempExpRate`**, enabling the tanh-to-exp conversion. -/
+theorem simonLiebTanhTrichotomyBridgeRate_le_highTempExpRate
+    (α : ℕ) (β J : ℝ) (d : ℕ) :
+    simonLiebTanhTrichotomyBridgeRate α β J d ≤ highTempExpRate β J := by
+  dsimp [simonLiebTanhTrichotomyBridgeRate]
+  exact min_le_right _ _
+
 /-- **Canonical bridge constructor** (exp-adjacent input form, full trichotomy). -/
 def canonical_bridge_from_simonLieb_adjacent
     {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
@@ -953,6 +1017,29 @@ def canonical_bridge_from_tanh_adjacent
     hα hr d hf.hJ hf.hβ hβJ_pos hβJd_pos hβJd_le hM_pos hM_le_one hMrate_sl
     hMrate_htep h_adj_tanh
 
+/-- **Canonical bridge constructor with the selected tanh-compatible
+Simon-Lieb trichotomy rate**.
+
+This removes the explicit caller obligations `0 < M`, `M ≤ 1`,
+`((α : ℝ) + 1) * M ≤ simonLiebRate / 2`, and
+`M ≤ highTempExpRate β J` from `canonical_bridge_from_tanh_adjacent`; the only
+remaining analytic input is the adjacent tanh-power correlation bound. -/
+noncomputable def canonical_bridge_from_tanh_selected_rate_adjacent
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ) {J β : ℝ}
+    (hf : IsingModel.Ferromagnetic (⟨J, (0 : ℝ), β⟩ : IsingParams ℝ))
+    (hβJd_pos : 0 < β * J * (2 * d)) (hβJd_lt : β * J * (2 * d) < 1)
+    (h_adj_tanh : ∀ w : Fin d → ℤ, latticeDistance d 0 w = 1 →
+      Ambient.correlationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {0, w}
+        ≤ Real.tanh (β * J) ^ IsingModel.latticeDistance d 0 w) :
+    PseudoMassLatticeDistanceBridge hα hr d J β :=
+  canonical_bridge_from_tanh_adjacent hα hr d hf hβJd_pos hβJd_lt.le
+    (simonLiebTanhTrichotomyBridgeRate_pos hβJd_pos hβJd_lt)
+    (simonLiebTanhTrichotomyBridgeRate_le_one α β J d)
+    (simonLiebTanhTrichotomyBridgeRate_scaled_le_simonLiebRate_half α β J d)
+    (simonLiebTanhTrichotomyBridgeRate_le_highTempExpRate α β J d)
+    h_adj_tanh
+
 /-- **Canonical HLS sum existential** (tanh-adjacent input form, full trichotomy). -/
 theorem canonical_hls_sum_tanh
     {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
@@ -978,6 +1065,50 @@ theorem canonical_hls_sum_tanh
   tsum_correlationInfinite_pair_product_le_const_of_simonLieb_trichotomy_tanh_adjacent
     hα hr d hαd hf.hJ hf.hβ hβJ_pos hβJd_pos hβJd_le hM_pos hM_le_one hMrate_sl
     hMrate_htep h_adj_tanh x₀ y₀
+
+/-- **Canonical HLS sum using the selected tanh-compatible Simon-Lieb
+trichotomy bridge rate**. -/
+theorem canonical_hls_sum_tanh_selected_rate
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    (d : ℕ) (hαd : d < 2 * α) {J β : ℝ}
+    (hf : IsingModel.Ferromagnetic (⟨J, (0 : ℝ), β⟩ : IsingParams ℝ))
+    (hβJd_pos : 0 < β * J * (2 * d)) (hβJd_lt : β * J * (2 * d) < 1)
+    (h_adj_tanh : ∀ w : Fin d → ℤ, latticeDistance d 0 w = 1 →
+      Ambient.correlationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {0, w}
+        ≤ Real.tanh (β * J) ^ IsingModel.latticeDistance d 0 w)
+    (x₀ y₀ : Fin d → ℤ) :
+    ∃ K : ℝ, 0 < K ∧
+      ∑' z : Fin d → ℤ,
+        Ambient.correlationInfinite (IsingModel.latticeGraph d)
+            (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {x₀, z} *
+        Ambient.correlationInfinite (IsingModel.latticeGraph d)
+            (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {y₀, z}
+      ≤ K :=
+  canonical_hls_sum_tanh hα hr d hαd hf hβJd_pos hβJd_lt.le
+    (simonLiebTanhTrichotomyBridgeRate_pos hβJd_pos hβJd_lt)
+    (simonLiebTanhTrichotomyBridgeRate_le_one α β J d)
+    (simonLiebTanhTrichotomyBridgeRate_scaled_le_simonLiebRate_half α β J d)
+    (simonLiebTanhTrichotomyBridgeRate_le_highTempExpRate α β J d)
+    h_adj_tanh x₀ y₀
+
+/-- **Canonical bound provider using the selected tanh-compatible Simon-Lieb
+trichotomy bridge rate**. -/
+theorem canonical_bound_provider_tanh_selected_rate
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ) {J β : ℝ}
+    (hf : IsingModel.Ferromagnetic (⟨J, (0 : ℝ), β⟩ : IsingParams ℝ))
+    (hβJd_pos : 0 < β * J * (2 * d)) (hβJd_lt : β * J * (2 * d) < 1)
+    (h_adj_tanh : ∀ w : Fin d → ℤ, latticeDistance d 0 w = 1 →
+      Ambient.correlationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {0, w}
+        ≤ Real.tanh (β * J) ^ IsingModel.latticeDistance d 0 w) :
+    ∀ x z : Fin d → ℤ, x ≠ z →
+      simonLiebTanhTrichotomyBridgeRate α β J d *
+          (latticeDistance d x z : ℝ) ≤
+        pseudoMassFromParamsAtPair hα hr d (Ambient.cubicExhaustion d)
+          (⟨J, 0, β⟩ : IsingParams ℝ) x z * r :=
+  (canonical_bridge_from_tanh_selected_rate_adjacent
+    hα hr d hf hβJd_pos hβJd_lt h_adj_tanh).bound
 
 /-- **Canonical positive K extraction** from the HLS sum bound. -/
 theorem canonical_K_pos_from_hls_sum
@@ -1039,6 +1170,27 @@ theorem canonical_hls_sum_zero_anchor_selected_rate
       ≤ K :=
   canonical_hls_sum_selected_rate hα hr d hαd hf hβJd_pos hβJd_lt
     h_adj_exp 0 0
+
+/-- **Canonical zero-anchor HLS sum using the selected tanh-compatible
+Simon-Lieb trichotomy bridge rate**. -/
+theorem canonical_hls_sum_zero_anchor_tanh_selected_rate
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    (d : ℕ) (hαd : d < 2 * α) {J β : ℝ}
+    (hf : IsingModel.Ferromagnetic (⟨J, (0 : ℝ), β⟩ : IsingParams ℝ))
+    (hβJd_pos : 0 < β * J * (2 * d)) (hβJd_lt : β * J * (2 * d) < 1)
+    (h_adj_tanh : ∀ w : Fin d → ℤ, latticeDistance d 0 w = 1 →
+      Ambient.correlationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {0, w}
+        ≤ Real.tanh (β * J) ^ IsingModel.latticeDistance d 0 w) :
+    ∃ K : ℝ, 0 < K ∧
+      ∑' z : Fin d → ℤ,
+        Ambient.correlationInfinite (IsingModel.latticeGraph d)
+            (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {0, z} *
+        Ambient.correlationInfinite (IsingModel.latticeGraph d)
+            (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {0, z}
+      ≤ K :=
+  canonical_hls_sum_tanh_selected_rate hα hr d hαd hf hβJd_pos hβJd_lt
+    h_adj_tanh 0 0
 
 end Ambient
 end IsingModel

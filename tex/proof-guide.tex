@@ -14168,6 +14168,20 @@ composers (\#3175--\#3187):
     at $M_\ast$ rather than the scalar witnesses
     $0 < M$, $M \le 1$, and
     $((\alpha:\mathbb{R})+1)M \le \texttt{simonLiebRate}/2$.
+  \item \texttt{simonLiebTanhTrichotomyBridgeRate} selects
+    \[
+      M_{\tanh} = \min(M_\ast,\texttt{highTempExpRate}\,\beta\,J).
+    \]
+    It keeps the same positivity, $M_{\tanh} \le 1$, and Simon-Lieb
+    rate-gap conclusions, and additionally proves
+    $M_{\tanh} \le \texttt{highTempExpRate}\,\beta\,J$.
+  \item \texttt{canonical\_bridge\_from\_tanh\_selected\_rate\_adjacent},
+    \texttt{canonical\_hls\_sum\_tanh\_selected\_rate},
+    \texttt{canonical\_bound\_provider\_tanh\_selected\_rate}, and
+    \texttt{canonical\_hls\_sum\_zero\_anchor\_tanh\_selected\_rate} use
+    $M_{\tanh}$ for tanh-adjacent inputs, so callers no longer supply
+    the extra tanh-to-exp witness
+    $M \le \texttt{highTempExpRate}\,\beta\,J$.
 \end{itemize}
 \end{theorem}
 
