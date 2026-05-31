@@ -751,6 +751,54 @@ private theorem betaJ_pos_of_betaJ_two_d_pos {β J : ℝ} {d : ℕ}
   have : β * J * (2 * d) ≤ 0 := mul_nonpos_of_nonpos_of_nonneg h h2d_nn
   linarith
 
+/-- **Selected Simon-Lieb trichotomy bridge rate**.
+
+This concrete rate is small enough to satisfy both scalar side conditions of
+the full adjacent/small/large Simon-Lieb bridge:
+`M ≤ 1` and `((α : ℝ) + 1) * M ≤ simonLiebRate β J d / 2`. -/
+noncomputable def simonLiebTrichotomyBridgeRate (α : ℕ) (β J : ℝ) (d : ℕ) :
+    ℝ :=
+  min 1 ((simonLiebRate β J d / 2) / ((α : ℝ) + 1))
+
+/-- **The selected Simon-Lieb trichotomy bridge rate is positive** in the
+strict high-temperature regime. -/
+theorem simonLiebTrichotomyBridgeRate_pos
+    {α d : ℕ} {β J : ℝ}
+    (hβJd_pos : 0 < β * J * (2 * d)) (hβJd_lt : β * J * (2 * d) < 1) :
+    0 < simonLiebTrichotomyBridgeRate α β J d := by
+  have hSL_pos : 0 < simonLiebRate β J d := simonLiebRate_pos hβJd_pos hβJd_lt
+  have hhalf_pos : 0 < simonLiebRate β J d / 2 := by linarith
+  have hden_pos : 0 < (α : ℝ) + 1 := by positivity
+  dsimp [simonLiebTrichotomyBridgeRate]
+  exact lt_min zero_lt_one (div_pos hhalf_pos hden_pos)
+
+/-- **The selected Simon-Lieb trichotomy bridge rate is at most one**. -/
+theorem simonLiebTrichotomyBridgeRate_le_one
+    (α : ℕ) (β J : ℝ) (d : ℕ) :
+    simonLiebTrichotomyBridgeRate α β J d ≤ 1 := by
+  dsimp [simonLiebTrichotomyBridgeRate]
+  exact min_le_left _ _
+
+/-- **The selected Simon-Lieb trichotomy bridge rate satisfies the rate-gap
+condition** used by the full trichotomy bridge. -/
+theorem simonLiebTrichotomyBridgeRate_scaled_le_simonLiebRate_half
+    (α : ℕ) (β J : ℝ) (d : ℕ) :
+    ((α : ℝ) + 1) * simonLiebTrichotomyBridgeRate α β J d ≤
+      simonLiebRate β J d / 2 := by
+  have hden_pos : 0 < (α : ℝ) + 1 := by positivity
+  have hle :
+      simonLiebTrichotomyBridgeRate α β J d ≤
+        (simonLiebRate β J d / 2) / ((α : ℝ) + 1) := by
+    dsimp [simonLiebTrichotomyBridgeRate]
+    exact min_le_right _ _
+  have hmul := mul_le_mul_of_nonneg_left hle hden_pos.le
+  have hcancel :
+      ((α : ℝ) + 1) *
+          ((simonLiebRate β J d / 2) / ((α : ℝ) + 1)) =
+        simonLiebRate β J d / 2 := by
+    rw [mul_div_cancel₀ _ hden_pos.ne']
+  exact hmul.trans_eq hcancel
+
 /-- **Canonical bridge constructor** (exp-adjacent input form, full trichotomy). -/
 def canonical_bridge_from_simonLieb_adjacent
     {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
@@ -767,6 +815,29 @@ def canonical_bridge_from_simonLieb_adjacent
   have hβJ_pos := betaJ_pos_of_betaJ_two_d_pos (β := β) (J := J) (d := d) hβJd_pos
   PseudoMassLatticeDistanceBridge_of_simonLieb_trichotomy_adjacent
     hα hr d hf.hJ hf.hβ hβJ_pos hβJd_pos hβJd_le hM_pos hM_le_one hMrate h_adj_exp
+
+/-- **Canonical bridge constructor with the selected Simon-Lieb trichotomy
+rate**.
+
+This removes the explicit caller obligations `0 < M`, `M ≤ 1`, and
+`((α : ℝ) + 1) * M ≤ simonLiebRate / 2` from
+`canonical_bridge_from_simonLieb_adjacent`; the only remaining analytic input
+is the adjacent correlation bound for the selected rate. -/
+noncomputable def canonical_bridge_from_simonLieb_selected_rate_adjacent
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    (d : ℕ) {J β : ℝ}
+    (hf : IsingModel.Ferromagnetic (⟨J, (0 : ℝ), β⟩ : IsingParams ℝ))
+    (hβJd_pos : 0 < β * J * (2 * d)) (hβJd_lt : β * J * (2 * d) < 1)
+    (h_adj_exp : ∀ w : Fin d → ℤ, latticeDistance d 0 w = 1 →
+      Ambient.correlationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {0, w}
+        ≤ Real.exp (-(simonLiebTrichotomyBridgeRate α β J d))) :
+    PseudoMassLatticeDistanceBridge hα hr d J β :=
+  canonical_bridge_from_simonLieb_adjacent hα hr d hf hβJd_pos hβJd_lt.le
+    (simonLiebTrichotomyBridgeRate_pos hβJd_pos hβJd_lt)
+    (simonLiebTrichotomyBridgeRate_le_one α β J d)
+    (simonLiebTrichotomyBridgeRate_scaled_le_simonLiebRate_half α β J d)
+    h_adj_exp
 
 /-- **Canonical HLS sum existential** (exp-adjacent input form, full trichotomy). -/
 theorem canonical_hls_sum
@@ -793,6 +864,31 @@ theorem canonical_hls_sum
     hα hr d hαd hf.hJ hf.hβ hβJ_pos hβJd_pos hβJd_le hM_pos hM_le_one hMrate
     h_adj_exp x₀ y₀
 
+/-- **Canonical HLS sum using the selected Simon-Lieb trichotomy bridge
+rate**. -/
+theorem canonical_hls_sum_selected_rate
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    (d : ℕ) (hαd : d < 2 * α) {J β : ℝ}
+    (hf : IsingModel.Ferromagnetic (⟨J, (0 : ℝ), β⟩ : IsingParams ℝ))
+    (hβJd_pos : 0 < β * J * (2 * d)) (hβJd_lt : β * J * (2 * d) < 1)
+    (h_adj_exp : ∀ w : Fin d → ℤ, latticeDistance d 0 w = 1 →
+      Ambient.correlationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {0, w}
+        ≤ Real.exp (-(simonLiebTrichotomyBridgeRate α β J d)))
+    (x₀ y₀ : Fin d → ℤ) :
+    ∃ K : ℝ, 0 < K ∧
+      ∑' z : Fin d → ℤ,
+        Ambient.correlationInfinite (IsingModel.latticeGraph d)
+            (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {x₀, z} *
+        Ambient.correlationInfinite (IsingModel.latticeGraph d)
+            (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {y₀, z}
+      ≤ K :=
+  canonical_hls_sum hα hr d hαd hf hβJd_pos hβJd_lt.le
+    (simonLiebTrichotomyBridgeRate_pos hβJd_pos hβJd_lt)
+    (simonLiebTrichotomyBridgeRate_le_one α β J d)
+    (simonLiebTrichotomyBridgeRate_scaled_le_simonLiebRate_half α β J d)
+    h_adj_exp x₀ y₀
+
 /-- **Canonical bound provider** (full trichotomy). -/
 theorem canonical_bound_provider
     {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ) {J β : ℝ}
@@ -810,6 +906,23 @@ theorem canonical_bound_provider
           (⟨J, 0, β⟩ : IsingParams ℝ) x z * r :=
   (canonical_bridge_from_simonLieb_adjacent hα hr d hf hβJd_pos hβJd_le
     hM_pos hM_le_one hMrate h_adj_exp).bound
+
+/-- **Canonical bound provider using the selected Simon-Lieb trichotomy bridge
+rate**. -/
+theorem canonical_bound_provider_selected_rate
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ) {J β : ℝ}
+    (hf : IsingModel.Ferromagnetic (⟨J, (0 : ℝ), β⟩ : IsingParams ℝ))
+    (hβJd_pos : 0 < β * J * (2 * d)) (hβJd_lt : β * J * (2 * d) < 1)
+    (h_adj_exp : ∀ w : Fin d → ℤ, latticeDistance d 0 w = 1 →
+      Ambient.correlationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {0, w}
+        ≤ Real.exp (-(simonLiebTrichotomyBridgeRate α β J d))) :
+    ∀ x z : Fin d → ℤ, x ≠ z →
+      simonLiebTrichotomyBridgeRate α β J d * (latticeDistance d x z : ℝ) ≤
+        pseudoMassFromParamsAtPair hα hr d (Ambient.cubicExhaustion d)
+          (⟨J, 0, β⟩ : IsingParams ℝ) x z * r :=
+  (canonical_bridge_from_simonLieb_selected_rate_adjacent
+    hα hr d hf hβJd_pos hβJd_lt h_adj_exp).bound
 
 /-- **Canonical active provider** (from `Ferromagnetic` + `0 < β·J`). -/
 theorem canonical_active_provider
@@ -905,6 +1018,27 @@ theorem canonical_hls_sum_zero_anchor
       ≤ K :=
   canonical_hls_sum hα hr d hαd hf hβJd_pos hβJd_le hM_pos hM_le_one
     hMrate h_adj_exp 0 0
+
+/-- **Canonical zero-anchor HLS sum using the selected Simon-Lieb trichotomy
+bridge rate**. -/
+theorem canonical_hls_sum_zero_anchor_selected_rate
+    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
+    (d : ℕ) (hαd : d < 2 * α) {J β : ℝ}
+    (hf : IsingModel.Ferromagnetic (⟨J, (0 : ℝ), β⟩ : IsingParams ℝ))
+    (hβJd_pos : 0 < β * J * (2 * d)) (hβJd_lt : β * J * (2 * d) < 1)
+    (h_adj_exp : ∀ w : Fin d → ℤ, latticeDistance d 0 w = 1 →
+      Ambient.correlationInfinite (IsingModel.latticeGraph d)
+          (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {0, w}
+        ≤ Real.exp (-(simonLiebTrichotomyBridgeRate α β J d))) :
+    ∃ K : ℝ, 0 < K ∧
+      ∑' z : Fin d → ℤ,
+        Ambient.correlationInfinite (IsingModel.latticeGraph d)
+            (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {0, z} *
+        Ambient.correlationInfinite (IsingModel.latticeGraph d)
+            (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {0, z}
+      ≤ K :=
+  canonical_hls_sum_selected_rate hα hr d hαd hf hβJd_pos hβJd_lt
+    h_adj_exp 0 0
 
 end Ambient
 end IsingModel
