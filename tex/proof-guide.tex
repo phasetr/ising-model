@@ -4814,10 +4814,21 @@ Ambient.freeEnergyComplexAlongExhaustion_branchConstNormBoundedRelCompact_patch_
 Ambient.freeEnergyComplexAlongExhaustion_branchLocallyBoundedRelCompact_patch
 Ambient.freeEnergyComplexAlongExhaustion_branchLocallyBoundedRelCompact_patch_of_isCompact
 \end{Verbatim}
-and the concrete \(\mathbb Z^d\) wrappers now live in the
-\texttt{NormBounded.lean}, \texttt{ConstNormBounded.lean}, and
-\texttt{LocallyBounded.lean} child modules, re-exported by the
-\texttt{BranchRelCompact.lean} umbrella path.
+and the concrete \(\mathbb Z^d\) norm-bounded wrappers now live in
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  RangeAscoliPatches/BranchRelCompact/NormBounded/Core.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  RangeAscoliPatches/BranchRelCompact/NormBounded/CompactTarget.lean
+\end{Verbatim}
+with the constant/local bounded wrappers still in
+\begin{Verbatim}[fontsize=\footnotesize]
+RangeAscoliPatches/BranchRelCompact/ConstNormBounded.lean
+RangeAscoliPatches/BranchRelCompact/LocallyBounded.lean
+\end{Verbatim}
+The norm-bounded wrappers are re-exported by
+\texttt{BranchRelCompact/NormBounded.lean}, and the full layer remains
+re-exported by the \texttt{BranchRelCompact.lean} umbrella path.
 
 This exposes the final relative-compactness input directly at the
 branch-family boundedness boundary used in Glimm--Jaffe's Vitali argument.  It
