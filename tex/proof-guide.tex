@@ -5123,7 +5123,14 @@ and the concrete \(\mathbb Z^d\) wrappers are
 freeEnergyComplexAlongExhaustion_branchDeviationViaLocalRelCompact_directRange_patch_latticeGraph
 freeEnergyComplexAlongExhaustion_branchDeviationViaLocalRelCompact_directRange_patch_isCompact_latticeGraph
 \end{Verbatim}
-in the \texttt{ViaLocal.lean} child module, re-exported by the umbrella module.
+in
+\begin{Verbatim}[fontsize=\scriptsize]
+RangeAscoliPatches/BranchDeviationDirectRange/ViaLocal/Core.lean
+RangeAscoliPatches/BranchDeviationDirectRange/ViaLocal/CompactTarget.lean
+\end{Verbatim}
+and are re-exported by the legacy
+\texttt{BranchDeviationDirectRange/ViaLocal.lean} module and the umbrella
+module.
 
 The named route is a composition result: the principal finite-volume
 free-energy bound and branch-deviation bound are combined by the triangle
