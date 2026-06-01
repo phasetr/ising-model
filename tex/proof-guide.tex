@@ -3654,11 +3654,18 @@ For two Lee--Yang balls the ambient theorem applies the PR \#2693 subsequence
 Vitali bridge on each ball, producing holomorphic local limits on both balls.
 The concrete \(\mathbb Z^d\) wrapper now lives in
 \begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/CompactOpenVitali/FiniteDiagonal.lean
+SubseqCompactOpen/CompactOpenVitali/FiniteDiagonal/TwoBall.lean
 \end{Verbatim}
 under \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex}, and is
 re-exported by the old
-\texttt{SubseqCompactOpen/CompactOpenVitali.lean} path.
+\begin{Verbatim}[fontsize=\footnotesize]
+SubseqCompactOpen/CompactOpenVitali/FiniteDiagonal.lean
+\end{Verbatim}
+and
+\begin{Verbatim}[fontsize=\footnotesize]
+SubseqCompactOpen/CompactOpenVitali.lean
+\end{Verbatim}
+paths.
 
 This is the two-ball base case for the finite diagonal extraction theorem.  By
 itself it does not prove Montel compactness, compatibility of the two limits on
@@ -3692,11 +3699,18 @@ many Lee--Yang balls the ambient theorem then applies the PR \#2693 subsequence
 Vitali bridge on every ball, producing holomorphic local limits for the whole
 finite family.  The concrete \(\mathbb Z^d\) wrapper now lives in
 \begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/CompactOpenVitali/FiniteDiagonal.lean
+SubseqCompactOpen/CompactOpenVitali/FiniteDiagonal/FinBall.lean
 \end{Verbatim}
 under \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex}, and is
 re-exported by the old
-\texttt{SubseqCompactOpen/CompactOpenVitali.lean} path.
+\begin{Verbatim}[fontsize=\footnotesize]
+SubseqCompactOpen/CompactOpenVitali/FiniteDiagonal.lean
+\end{Verbatim}
+and
+\begin{Verbatim}[fontsize=\footnotesize]
+SubseqCompactOpen/CompactOpenVitali.lean
+\end{Verbatim}
+paths.
 
 This result still assumes compact-open compactness for each branch family.  It
 does not prove Montel compactness, compatibility of arbitrary branch choices on
