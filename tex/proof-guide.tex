@@ -3556,8 +3556,23 @@ globalises this post-extraction handoff on \(\texttt{leeYangDomain}\).  If each
 Lee--Yang point has such a local subsequence branch family and all local
 families converge to the same \(f\), then \(f\) is holomorphic on the
 Lee--Yang domain and agrees with the real infinite-volume free energy at real
-Lee--Yang centres.  The corresponding \(\mathbb Z^d\) wrappers live in
-\texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+Lee--Yang centres.  The corresponding \(\mathbb Z^d\) ball wrappers now live in
+\begin{Verbatim}[fontsize=\footnotesize]
+SubseqCompactOpen/SubseqVitali/Ball.lean
+\end{Verbatim}
+and the local-cover wrappers now live in
+\begin{Verbatim}[fontsize=\footnotesize]
+SubseqCompactOpen/SubseqVitali/LocalCover.lean
+\end{Verbatim}
+under
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex
+\end{Verbatim}
+and are re-exported by the old
+\begin{Verbatim}[fontsize=\footnotesize]
+SubseqCompactOpen/SubseqVitali.lean
+\end{Verbatim}
+path.
 
 This theorem does not prove Montel extraction.  It records the exact
 post-extraction target consumed by the remaining normal-family construction.
