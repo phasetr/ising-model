@@ -4828,10 +4828,18 @@ freeEnergyComplexAlongExhaustion_branchLocallyBoundedRelCompact_directRange_patc
 in
 \begin{Verbatim}[fontsize=\footnotesize]
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  RangeAscoliPatches/BranchLocalDirectRange/LocallyBounded.lean
+  RangeAscoliPatches/BranchLocalDirectRange/
+    LocallyBounded/Core.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  RangeAscoliPatches/BranchLocalDirectRange/
+    LocallyBounded/CompactTarget.lean
 \end{Verbatim}
-and are re-exported through the legacy
-\texttt{RangeAscoliPatches/BranchLocalDirectRange.lean} path.  This is a
+and are re-exported through the legacy modules
+\begin{Verbatim}[fontsize=\footnotesize]
+RangeAscoliPatches/BranchLocalDirectRange/LocallyBounded.lean
+RangeAscoliPatches/BranchLocalDirectRange.lean
+\end{Verbatim}
+This is a
 composition bridge; branch local bounds, closedness, equicontinuity, and
 coherent overlap inputs remain explicit.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
