@@ -3600,8 +3600,13 @@ identifies the centre value with the real infinite-volume free energy:
 \[
   f(p.h)=\texttt{freeEnergyInfinite}\,G\,\Lambda\,p .
 \]
-The concrete \(\mathbb Z^d\) wrappers live in
-\texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+The concrete \(\mathbb Z^d\) wrappers now live in
+\begin{Verbatim}[fontsize=\footnotesize]
+SubseqCompactOpen/CompactOpenVitali/Ball.lean
+\end{Verbatim}
+under \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex}, and are
+re-exported by the old
+\texttt{SubseqCompactOpen/CompactOpenVitali.lean} path.
 
 This result still does not prove Montel compactness of the branch family, nor
 does it perform the diagonal extraction needed for a coherent local cover of
@@ -3632,8 +3637,13 @@ strictly increasing reindexing.  Thus a single strictly increasing
 
 For two Lee--Yang balls the ambient theorem applies the PR \#2693 subsequence
 Vitali bridge on each ball, producing holomorphic local limits on both balls.
-The concrete \(\mathbb Z^d\) wrapper is in
-\texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+The concrete \(\mathbb Z^d\) wrapper now lives in
+\begin{Verbatim}[fontsize=\footnotesize]
+SubseqCompactOpen/CompactOpenVitali/FiniteDiagonal.lean
+\end{Verbatim}
+under \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex}, and is
+re-exported by the old
+\texttt{SubseqCompactOpen/CompactOpenVitali.lean} path.
 
 This is the two-ball base case for the finite diagonal extraction theorem.  By
 itself it does not prove Montel compactness, compatibility of the two limits on
@@ -3665,8 +3675,13 @@ tendstoLocallyUniformlyOn_subseq_of_strictMono
 to preserve the head convergence under the final tail refinement.  For finitely
 many Lee--Yang balls the ambient theorem then applies the PR \#2693 subsequence
 Vitali bridge on every ball, producing holomorphic local limits for the whole
-finite family.  The concrete \(\mathbb Z^d\) wrapper is in
-\texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+finite family.  The concrete \(\mathbb Z^d\) wrapper now lives in
+\begin{Verbatim}[fontsize=\footnotesize]
+SubseqCompactOpen/CompactOpenVitali/FiniteDiagonal.lean
+\end{Verbatim}
+under \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex}, and is
+re-exported by the old
+\texttt{SubseqCompactOpen/CompactOpenVitali.lean} path.
 
 This result still assumes compact-open compactness for each branch family.  It
 does not prove Montel compactness, compatibility of arbitrary branch choices on
@@ -3700,8 +3715,13 @@ family of holomorphic local limits \(f_i\), and pairwise equalities
   B(h_i,r_i)\cap B(h_j,r_j)
 \]
 whenever the selected stage branches are eventually equal on the same
-overlaps.  The concrete \(\mathbb Z^d\) wrapper is in
-\texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+overlaps.  The concrete \(\mathbb Z^d\) wrapper now lives in
+\begin{Verbatim}[fontsize=\footnotesize]
+SubseqCompactOpen/CompactOpenVitali/Overlap.lean
+\end{Verbatim}
+under \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex}, and is
+re-exported by the old
+\texttt{SubseqCompactOpen/CompactOpenVitali.lean} path.
 
 This is an explicit-hypothesis compatibility handoff.  It does not construct
 coherent branch choices, prove that arbitrary local logarithm branches agree on
