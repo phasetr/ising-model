@@ -1,15 +1,16 @@
-import IsingModel.Concrete.LatticeGraphCorrelation.PerStageComplex.EventualClosedBallPatches.ClosedBallLocal.RelCompact.Core
-import IsingModel.AmbientComplexAnalyticity.BranchLocallyBoundedPatches.RelCompact
+import IsingModel.Concrete.LatticeGraphCorrelation.PerStageComplex.EventualClosedBallPatches.ClosedBallLocal.Direct.Core
 
 namespace IsingModel
 namespace Ambient
 
-/-- **ℤ^d positive-real compact target to closed-ball branch local-boundedness
-patch input**: positive real ferromagnetic parameters construct the closed-ball
-all-stage branch data, compactness extracts finite geometry, and branch local
-boundedness supplies the relative-compactness input. -/
+set_option linter.style.longLine false in
+/-- **ℤ^d positive-real compact target to direct closed-ball branch
+local-boundedness patch input**: positive real ferromagnetic parameters
+construct the closed-ball all-stage branch data, compactness extracts finite
+geometry, and branch local boundedness feeds the direct relative-compactness
+input. -/
 theorem
-freeEnergyComplexAlongExhaustion_posRealClosedBallBranchLocallyBounded_patch_isCompact_latticeGraph
+freeEnergyComplexAlongExhaustion_posRealClosedBallBranchLocallyBounded_direct_patch_isCompact_latticeGraph
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
     [∀ n, Fintype (Ambient.inducedGraph
         (IsingModel.latticeGraph d) (Λ.volume n)).edgeSet]
@@ -41,8 +42,15 @@ freeEnergyComplexAlongExhaustion_posRealClosedBallBranchLocallyBounded_patch_isC
               g (p.h : ℂ) =
                 ((Ambient.freeEnergyInfinite
                   (IsingModel.latticeGraph d) Λ p : ℝ) : ℂ) :=
-  Ambient.freeEnergyComplexAlongExhaustion_posRealClosedBallBranchLocallyBounded_patch_of_isCompact
-    (IsingModel.latticeGraph d) Λ p hBED hd hβ hJ hK hKsub hpK
+  by
+    rcases Ambient.exists_leeYangClosedBallPointwiseNormalisedAllStageBranchData_of_positive_real
+        (IsingModel.latticeGraph d) Λ hβ hJ with
+      ⟨closedData⟩
+    rcases
+        freeEnergyComplexAlongExhaustion_closedBallBranchLocallyBoundedRelCompact_direct_patch_isCompact_latticeGraph
+          d Λ p hBED hd hK hKsub hpK closedData with
+      ⟨geom, hgeom⟩
+    exact ⟨closedData, geom, hgeom⟩
 
 end Ambient
 

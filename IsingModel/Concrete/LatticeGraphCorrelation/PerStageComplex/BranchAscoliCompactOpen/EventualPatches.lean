@@ -1,4 +1,5 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.PerStageComplex.BranchAscoliCompactOpen.CompactCoverPatches
+import IsingModel.AmbientComplexAnalyticity.CoverPatches.Pointwise
 
 /-!
 # Branch Ascoli compact-open split — eventual-overlap and pointwise-norm compact-open patches
