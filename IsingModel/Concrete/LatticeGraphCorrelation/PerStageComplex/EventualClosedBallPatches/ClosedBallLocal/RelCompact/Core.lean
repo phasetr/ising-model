@@ -1,12 +1,14 @@
-import IsingModel.Concrete.LatticeGraphCorrelation.PerStageComplex.EventualClosedBallPatches.EventualClosedBallDeviation
+import IsingModel.Lattice
+import IsingModel.AmbientComplexAnalyticity.AscoliData.ClosedBallConversions.BranchLocal
+import IsingModel.AmbientComplexAnalyticity.CompactPatches.BranchRelCompact
 
 namespace IsingModel
 namespace Ambient
 
 /-- **ℤ^d closed-ball branch local boundedness to relatively compact patch**:
-branch-family local bounds combine with the closed-ball Lee-Yang principal
-free-energy bound to supply branch-deviation input, then feed the closed-ball
-relative-compactness bridge. -/
+closed-ball branch local bounds supply the underlying branch locally bounded
+relative-compactness input directly through the closed-ball-to-branch-local
+conversion. -/
 theorem
 freeEnergyComplexAlongExhaustion_closedBallBranchLocallyBoundedRelCompact_patch_latticeGraph
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
@@ -16,8 +18,8 @@ freeEnergyComplexAlongExhaustion_closedBallBranchLocallyBoundedRelCompact_patch_
     (p : IsingParams ℝ)
     (hBED : Ambient.BoundedEdgeDensity (IsingModel.latticeGraph d) Λ)
     (hd : Ambient.DisjointTowerHypotheses (IsingModel.latticeGraph d) Λ p)
-    (hβ : 0 < p.β)
-    (hJ : 0 < p.J)
+    (_hβ : 0 < p.β)
+    (_hJ : 0 < p.J)
     {K : Set ℂ}
     (closedData :
       Ambient.LeeYangClosedBallPointwiseNormalisedAllStageBranchData
@@ -37,8 +39,10 @@ freeEnergyComplexAlongExhaustion_closedBallBranchLocallyBoundedRelCompact_patch_
         DifferentiableOn ℂ g K ∧
         g (p.h : ℂ) =
           ((Ambient.freeEnergyInfinite (IsingModel.latticeGraph d) Λ p : ℝ) : ℂ) :=
-  Ambient.freeEnergyComplexAlongExhaustion_closedBallBranchLocallyBoundedRelCompact_patch
-    (IsingModel.latticeGraph d) Λ p hBED hd hβ hJ closedData geom closedBallLocal
+  Ambient.freeEnergyComplexAlongExhaustion_branchLocallyBoundedRelCompact_patch
+    (IsingModel.latticeGraph d) Λ p hBED hd closedData.data geom
+    (Ambient.LeeYangClosedBallBranchLocallyBoundedAscoliData.toBranchLocallyBoundedData
+      (IsingModel.latticeGraph d) Λ p K closedData geom closedBallLocal)
 
 set_option linter.style.longLine false in
 /-- **ℤ^d compact target to closed-ball branch local-boundedness patch input**:
@@ -78,8 +82,13 @@ freeEnergyComplexAlongExhaustion_closedBallBranchLocallyBoundedRelCompact_patch_
             g (p.h : ℂ) =
               ((Ambient.freeEnergyInfinite
                 (IsingModel.latticeGraph d) Λ p : ℝ) : ℂ) :=
-  Ambient.freeEnergyComplexAlongExhaustion_closedBallBranchLocallyBoundedRelCompact_patch_of_isCompact
-    (IsingModel.latticeGraph d) Λ p hBED hd hβ hJ hK hKsub hpK closedData
+  by
+    rcases Ambient.exists_pointwiseNormAllStageCompactRealFinGeometry_of_isCompact
+        (IsingModel.latticeGraph d) Λ p hK hKsub hpK closedData.data with
+      ⟨geom⟩
+    exact ⟨geom, fun closedBallLocal =>
+      freeEnergyComplexAlongExhaustion_closedBallBranchLocallyBoundedRelCompact_patch_latticeGraph
+        d Λ p hBED hd hβ hJ closedData geom closedBallLocal⟩
 
 end Ambient
 
