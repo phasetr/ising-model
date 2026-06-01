@@ -4012,7 +4012,11 @@ lemma with the PR \#2697 overlap handoff.  It produces the extracted local
 limits \(f_i\), a patched function \(g\) on the finite union of balls, local
 agreement \(g=f_i\) on each ball, and differentiability of \(g\) on that finite
 union.  The concrete \(\mathbb Z^d\) wrapper is in
-\texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+\begin{Verbatim}
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  BranchAscoliCompactOpen/EventualPatches/FiniteBallPatch.lean
+\end{Verbatim}
+and is re-exported through the legacy eventual-patches path.
 
 This is still a finite, explicit-hypothesis handoff.  It does not construct the
 coherent stage branches that supply overlap equality, prove Montel compactness,
@@ -6007,7 +6011,12 @@ The concrete \(\mathbb Z^d\) wrapper is
 \begin{Verbatim}
 freeEnergyComplexAlongExhaustion_realEventualOverlapBranchData_cOpenPatch_latticeGraph
 \end{Verbatim}
-in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+in
+\begin{Verbatim}
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  BranchAscoliCompactOpen/EventualPatches/RealEventualOverlap.lean
+\end{Verbatim}
+and is re-exported through the legacy eventual-patches path.
 
 This remains conditional and post-Montel.  It still assumes coherent
 eventual-overlap data, compact-open compactness of the selected branch-family
@@ -6041,7 +6050,12 @@ The concrete \(\mathbb Z^d\) wrapper is
 \begin{Verbatim}
 freeEnergyComplexAlongExhaustion_pointwiseNormEventualData_cOpenPatch_latticeGraph
 \end{Verbatim}
-in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+in
+\begin{Verbatim}
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  BranchAscoliCompactOpen/EventualPatches/PointwiseNorm.lean
+\end{Verbatim}
+and is re-exported through the legacy eventual-patches path.
 
 This remains conditional and post-Montel.  It packages a stronger coherent
 data shape, but does not construct coherent branches, prove compactness of
