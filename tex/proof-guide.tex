@@ -5673,7 +5673,12 @@ Concrete/LatticeGraphCorrelation/PerStageComplex/
   BranchAscoliCompactOpen/AscoliPatches/ConstNormBounded.lean
 \end{Verbatim}
 and is re-exported through the legacy AscoliPatches path; the compact-target
-cover wrapper lives in the downstream cover-patch wrapper layer.
+cover wrapper lives in
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  BranchAscoliCompactOpen/CoverPatches/ConstCompactTarget.lean
+\end{Verbatim}
+and is re-exported through the legacy CoverPatches path.
 
 This narrows the branch-family norm-bound input to ballwise uniform estimates.
 It still does not derive those estimates, closedness of the range pointwise
@@ -5710,7 +5715,14 @@ and the concrete \(\mathbb Z^d\) wrappers are
 freeEnergyComplexAlongExhaustion_allStageBranchLocallyBoundedAscoliData_patch_latticeGraph
 freeEnergyComplexAlongExhaustion_allStageBranchLocallyBoundedAscoli_patch_isCompact_latticeGraph
 \end{Verbatim}
-in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+in
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  BranchAscoliCompactOpen/CoverPatches/LocallyBounded.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  BranchAscoliCompactOpen/CoverPatches/LocallyBoundedCompactTarget.lean
+\end{Verbatim}
+and are re-exported through the legacy CoverPatches path.
 
 This narrows the branch-family norm-bound input to local boundedness witnesses
 on each selected ball.  It still does not prove those witnesses, closedness of
