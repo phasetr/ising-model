@@ -4898,11 +4898,12 @@ Ambient.freeEnergyComplexAlongExhaustion_branchDeviationRelCompact_patch
 Ambient.freeEnergyComplexAlongExhaustion_branchDeviationRelCompact_patch_of_isCompact
 \end{Verbatim}
 and the concrete \(\mathbb Z^d\) wrappers are
-\begin{Verbatim}[fontsize=\footnotesize]
+\begin{Verbatim}[fontsize=\scriptsize]
 freeEnergyComplexAlongExhaustion_branchDeviationRelCompact_patch_latticeGraph
 freeEnergyComplexAlongExhaustion_branchDeviationRelCompact_patch_isCompact_latticeGraph
 \end{Verbatim}
-in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+in the \texttt{RelCompact.lean} child module, re-exported by the umbrella
+module.
 
 This isolates the branch-choice deviation estimate needed to turn the existing
 Lee--Yang local bounded free-energy bounds into branch-family Montel input.
@@ -4926,19 +4927,20 @@ the endpoint first constructs the relatively compact range data directly, then
 applies the all-stage relatively compact range patch theorem.
 
 The concrete \(\mathbb Z^d\) wrappers are
-\begin{Verbatim}[fontsize=\footnotesize]
+\begin{Verbatim}[fontsize=\scriptsize]
 freeEnergyComplexAlongExhaustion_branchDeviationRelCompact_directRange_patch_latticeGraph
 freeEnergyComplexAlongExhaustion_branchDeviationRelCompact_directRange_patch_isCompact_latticeGraph
 \end{Verbatim}
-in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.  This is a
-composition bridge; branch-deviation bounds, closedness, equicontinuity, and
-coherent overlap inputs remain explicit.
+in the \texttt{DirectRange.lean} child module, re-exported by the umbrella
+module.  This is a composition bridge;
+branch-deviation bounds, closedness, equicontinuity, and coherent overlap inputs
+remain explicit.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
 \begin{theorem}[Branch-deviation named via-local direct range route; PR \#2767]
 The conversion
-\begin{Verbatim}[fontsize=\footnotesize]
+\begin{Verbatim}[fontsize=\scriptsize]
 Ambient.LeeYangPointwiseNormAllStageCompactRealBranchDeviationAscoliData.toRangeRelCompactData_viaLocal
 \end{Verbatim}
 names the ordinary all-stage route that first turns branch-deviation Ascoli
@@ -4949,16 +4951,16 @@ intermediate exposed at the same directRange boundary as the direct
 branch-deviation endpoint of PR \#2755.
 
 The ambient patch endpoints are
-\begin{Verbatim}[fontsize=\footnotesize]
+\begin{Verbatim}[fontsize=\scriptsize]
 Ambient.freeEnergyComplexAlongExhaustion_branchDeviationViaLocalRelCompact_directRange_patch
 Ambient.freeEnergyComplexAlongExhaustion_branchDeviationViaLocalRelCompact_directRange_patch_of_isCompact
 \end{Verbatim}
 and the concrete \(\mathbb Z^d\) wrappers are
-\begin{Verbatim}[fontsize=\footnotesize]
+\begin{Verbatim}[fontsize=\scriptsize]
 freeEnergyComplexAlongExhaustion_branchDeviationViaLocalRelCompact_directRange_patch_latticeGraph
 freeEnergyComplexAlongExhaustion_branchDeviationViaLocalRelCompact_directRange_patch_isCompact_latticeGraph
 \end{Verbatim}
-in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+in the \texttt{ViaLocal.lean} child module, re-exported by the umbrella module.
 
 The named route is a composition result: the principal finite-volume
 free-energy bound and branch-deviation bound are combined by the triangle
@@ -4982,7 +4984,7 @@ ferromagnetic parameters, extract the compact finite all-stage geometry, and
 delegate respectively to the ordinary branch-deviation relative-compactness,
 direct-range, and named via-local direct-range endpoints.  The concrete
 \(\mathbb Z^d\) wrappers are
-\begin{Verbatim}[fontsize=\footnotesize]
+\begin{Verbatim}[fontsize=\scriptsize]
 freeEnergyComplexAlongExhaustion_posRealBranchDeviationRelCompact_patch_isCompact_latticeGraph
 freeEnergyComplexAlongExhaustion_posRealBranchDeviation_directRange_patch_isCompact_latticeGraph
 freeEnergyComplexAlongExhaustion_posRealBranchDeviationViaLocal_directRange_patch_isCompact_latticeGraph
