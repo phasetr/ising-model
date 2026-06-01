@@ -4647,7 +4647,13 @@ The concrete \(\mathbb Z^d\) wrappers are
 freeEnergyComplexAlongExhaustion_branchLocallyBoundedRelCompact_directRange_patch_latticeGraph
 freeEnergyComplexAlongExhaustion_branchLocallyBoundedRelCompact_directRange_patch_isCompact_latticeGraph
 \end{Verbatim}
-in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.  This is a
+in
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  RangeAscoliPatches/BranchLocalDirectRange/LocallyBounded.lean
+\end{Verbatim}
+and are re-exported through the legacy
+\texttt{RangeAscoliPatches/BranchLocalDirectRange.lean} path.  This is a
 composition bridge; branch local bounds, closedness, equicontinuity, and
 coherent overlap inputs remain explicit.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
@@ -4678,8 +4684,14 @@ The concrete \(\mathbb Z^d\) wrappers are
 freeEnergyComplexAlongExhaustion_eventualOverlapBranchLocallyBoundedRelCompact_directRange_patch_latticeGraph
 freeEnergyComplexAlongExhaustion_eventualOverlapBranchLocallyBoundedRelCompact_directRange_patch_isCompact_latticeGraph
 \end{Verbatim}
-in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.  This
-removes the selected-overlap field from the branch-local Ascoli boundary once
+in
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  RangeAscoliPatches/BranchLocalDirectRange/EventualOverlap.lean
+\end{Verbatim}
+and are re-exported through the legacy
+\texttt{RangeAscoliPatches/BranchLocalDirectRange.lean} path.  This removes
+the selected-overlap field from the branch-local Ascoli boundary once
 pointwise-normalised eventual-overlap data is available.  It still does not
 construct that eventual-overlap data or prove the branch local bounds,
 closedness, equicontinuity, or restriction identities.
@@ -5069,8 +5081,16 @@ freeEnergyComplexAlongExhaustion_branchLocalViaDeviationRelCompact_directRange_p
 freeEnergyComplexAlongExhaustion_eventualOverlapBranchLocalViaDeviationRelCompact_directRange_patch_latticeGraph
 freeEnergyComplexAlongExhaustion_eventualOverlapBranchLocalViaDeviationRelCompact_directRange_patch_isCompact_latticeGraph
 \end{Verbatim}
-in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.  This
-records the non-closed-ball analogue of the PR \#2762 closed-ball
+in
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  RangeAscoliPatches/BranchLocalDirectRange/ViaDeviation.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  RangeAscoliPatches/BranchLocalDirectRange/EventualOverlapViaDeviation.lean
+\end{Verbatim}
+and are re-exported through the legacy
+\texttt{RangeAscoliPatches/BranchLocalDirectRange.lean} path.  This records
+the non-closed-ball analogue of the PR \#2762 closed-ball
 branch-local to branch-deviation route, with the principal free-energy bound
 kept as an explicit input rather than supplied automatically by closed-ball
 containment.  The all-stage endpoint keeps coherent overlap equality as an
