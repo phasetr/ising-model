@@ -5120,8 +5120,19 @@ The concrete \(\mathbb Z^d\) wrappers are
 freeEnergyComplexAlongExhaustion_branchDeviationRelCompact_directRange_patch_latticeGraph
 freeEnergyComplexAlongExhaustion_branchDeviationRelCompact_directRange_patch_isCompact_latticeGraph
 \end{Verbatim}
-in the \texttt{DirectRange.lean} child module, re-exported by the umbrella
-module.  This is a composition bridge;
+in the split child modules
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  RangeAscoliPatches/BranchDeviationDirectRange/DirectRange/Core.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  RangeAscoliPatches/BranchDeviationDirectRange/DirectRange/CompactTarget.lean
+\end{Verbatim}
+and re-exported by the legacy paths
+\begin{Verbatim}[fontsize=\footnotesize]
+RangeAscoliPatches/BranchDeviationDirectRange/DirectRange.lean
+RangeAscoliPatches/BranchDeviationDirectRange.lean
+\end{Verbatim}
+This is a composition bridge;
 branch-deviation bounds, closedness, equicontinuity, and coherent overlap inputs
 remain explicit.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
