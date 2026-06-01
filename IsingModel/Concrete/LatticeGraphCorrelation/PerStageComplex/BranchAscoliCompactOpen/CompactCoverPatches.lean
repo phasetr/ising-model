@@ -1,4 +1,5 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.PerStageComplex.BranchAscoliCompactOpen.RealCoverPatches
+import IsingModel.AmbientComplexAnalyticity.CoverPatches.LocalCover
 
 /-!
 # Branch Ascoli compact-open split — compact finite real-cover compact-open patches
