@@ -4652,9 +4652,10 @@ Ambient.freeEnergyComplexAlongExhaustion_branchConstNormBoundedRelCompact_patch_
 Ambient.freeEnergyComplexAlongExhaustion_branchLocallyBoundedRelCompact_patch
 Ambient.freeEnergyComplexAlongExhaustion_branchLocallyBoundedRelCompact_patch_of_isCompact
 \end{Verbatim}
-and the concrete \(\mathbb Z^d\) wrappers live in
-\texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean} with the
-corresponding \texttt{\_latticeGraph} names.
+and the concrete \(\mathbb Z^d\) wrappers now live in the
+\texttt{NormBounded.lean}, \texttt{ConstNormBounded.lean}, and
+\texttt{LocallyBounded.lean} child modules, re-exported by the
+\texttt{BranchRelCompact.lean} umbrella path.
 
 This exposes the final relative-compactness input directly at the
 branch-family boundedness boundary used in Glimm--Jaffe's Vitali argument.  It
