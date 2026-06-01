@@ -4722,10 +4722,17 @@ freeEnergyComplexAlongExhaustion_allStageRangeNormBoundedRelCompact_patch_isComp
 in
 \begin{Verbatim}[fontsize=\footnotesize]
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  RangeAscoliPatches/AllStageAscoli/RangeNormBounded.lean
+  RangeAscoliPatches/AllStageAscoli/RangeNormBounded/RelCompact.lean
 \end{Verbatim}
 and are re-exported through the legacy
-\texttt{RangeAscoliPatches/AllStageAscoli.lean} path.
+\begin{Verbatim}[fontsize=\footnotesize]
+RangeAscoliPatches/AllStageAscoli/RangeNormBounded.lean
+\end{Verbatim}
+and
+\begin{Verbatim}[fontsize=\footnotesize]
+RangeAscoliPatches/AllStageAscoli.lean
+\end{Verbatim}
+paths.
 
 This exposes the compact carrier produced by the range norm-bounded Ascoli
 layer in the relative-compactness shape used by Montel.  It still leaves
@@ -5799,10 +5806,17 @@ freeEnergyComplexAlongExhaustion_allStageRangeNormBoundedAscoliData_patch_isComp
 in
 \begin{Verbatim}[fontsize=\footnotesize]
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  RangeAscoliPatches/AllStageAscoli/RangeNormBounded.lean
+  RangeAscoliPatches/AllStageAscoli/RangeNormBounded/Ascoli.lean
 \end{Verbatim}
 and are re-exported through the legacy
-\texttt{RangeAscoliPatches/AllStageAscoli.lean} path.
+\begin{Verbatim}[fontsize=\footnotesize]
+RangeAscoliPatches/AllStageAscoli/RangeNormBounded.lean
+\end{Verbatim}
+and
+\begin{Verbatim}[fontsize=\footnotesize]
+RangeAscoliPatches/AllStageAscoli.lean
+\end{Verbatim}
+paths.
 
 This removes the separate carrier and membership bookkeeping from the
 norm-bounded Ascoli input.  It still does not derive closedness of the range
