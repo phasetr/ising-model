@@ -3766,7 +3766,17 @@ single function differentiable on the finite union of balls.  The concrete
 freeEnergyComplexAlongExhaustion_finiteSubseqBranchLimitFamily_compactOpen_latticeGraph
 freeEnergyComplexAlongExhaustion_finiteSubseqBranchLimitFamily_patch_latticeGraph
 \end{Verbatim}
-in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+The compact-open package wrapper now lives in
+\begin{Verbatim}[fontsize=\footnotesize]
+SubseqCompactOpen/FiniteSubseqCompactOpen/CompactOpen.lean
+\end{Verbatim}
+The patch wrapper now lives in
+\begin{Verbatim}[fontsize=\footnotesize]
+SubseqCompactOpen/FiniteSubseqCompactOpen/Patch.lean
+\end{Verbatim}
+under \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex}; both are
+re-exported by the old
+\texttt{SubseqCompactOpen/FiniteSubseqCompactOpen.lean} path.
 
 This is still a finite, explicit-hypothesis handoff.  It does not prove Montel
 compactness or construct a coherent \(\texttt{leeYangDomain}\)-cover; it only
@@ -3798,7 +3808,13 @@ The concrete \(\mathbb Z^d\) wrapper is
 \begin{Verbatim}
 freeEnergyComplexAlongExhaustion_finiteSubseqBranchLimitFamily_patch_real_latticeGraph
 \end{Verbatim}
-in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+It now lives in
+\begin{Verbatim}[fontsize=\footnotesize]
+SubseqCompactOpen/FiniteSubseqCompactOpen/Patch.lean
+\end{Verbatim}
+under \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex}, and is
+re-exported by the old
+\texttt{SubseqCompactOpen/FiniteSubseqCompactOpen.lean} path.
 
 This remains a finite, conditional handoff.  It identifies the real centre for
 a selected ball in a packaged finite family, but it does not construct Montel
@@ -4373,9 +4389,11 @@ freeEnergyComplexAlongExhaustion_pointwiseNormAllStageData_finCompactOpen_patch_
 \end{Verbatim}
 The package wrapper lives in
 \begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/FiniteSubseqCompactOpen.lean
+SubseqCompactOpen/FiniteSubseqCompactOpen/CompactOpen.lean
 \end{Verbatim}
-The patch wrapper now lives in
+and is re-exported by the old
+\texttt{SubseqCompactOpen/FiniteSubseqCompactOpen.lean} path.  The patch
+wrapper lives in
 \begin{Verbatim}[fontsize=\footnotesize]
 SubseqCompactOpen/FiniteCoverPatches/CompactOpen.lean
 \end{Verbatim}
