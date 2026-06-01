@@ -4545,10 +4545,21 @@ freeEnergyComplexAlongExhaustion_pointwiseNormAllStage_compactRealCOpen_patch_ge
 in
 \begin{Verbatim}[fontsize=\footnotesize]
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  SubseqCompactOpen/PointwiseAllStage/CompactGeometry.lean
+  SubseqCompactOpen/PointwiseAllStage/CompactGeometry/Geometry.lean
 \end{Verbatim}
-and are re-exported through the legacy
-\texttt{SubseqCompactOpen/PointwiseAllStage.lean} path.
+and
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  SubseqCompactOpen/PointwiseAllStage/CompactGeometry/Patch.lean
+\end{Verbatim}
+and are re-exported through the legacy paths
+\begin{Verbatim}[fontsize=\footnotesize]
+SubseqCompactOpen/PointwiseAllStage/CompactGeometry.lean
+\end{Verbatim}
+and
+\begin{Verbatim}[fontsize=\footnotesize]
+SubseqCompactOpen/PointwiseAllStage.lean
+\end{Verbatim}
 
 This closes the compact finite-subcover extraction layer for all-stage
 point-indexed data.  It still does not prove Montel compactness, locally
