@@ -5850,7 +5850,20 @@ exists_leeYangLocalBranchLimitFamily_of_branchData_latticeGraph
 exists_leeYangRealBranchLimitFamily_of_branchData_latticeGraph
 freeEnergyComplexAlongExhaustion_branchData_localCover_real_latticeGraph
 \end{Verbatim}
-in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+The first two branch-family wrappers now live in
+\begin{Verbatim}
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap/
+  RawBranchData.lean
+\end{Verbatim}
+and are re-exported by the old
+\begin{Verbatim}
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap.lean
+\end{Verbatim}
+path.  The real local-cover patch wrapper remains in
+\begin{Verbatim}
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
+\end{Verbatim}
+.
 
 This is still post-Montel.  It does not prove compactness, diagonal
 extraction, or coherent branch selection; it records the exact raw-data shape
@@ -5887,9 +5900,20 @@ Ambient.freeEnergyComplexAlongExhaustion_branchData_eventuallyEqOn_localCover_re
 then invokes the PR \#2715 raw-data endpoint and returns the same real-centred
 global patch conclusion.
 
-The concrete \(\mathbb Z^d\) wrappers are the corresponding
-\texttt{\_latticeGraph} theorems in
-\texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+The branch-family concrete \(\mathbb Z^d\) wrappers now live in
+\begin{Verbatim}
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap/
+  EventuallyEqOn.lean
+\end{Verbatim}
+and are re-exported by the old
+\begin{Verbatim}
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap.lean
+\end{Verbatim}
+path.  The real local-cover patch wrapper remains in
+\begin{Verbatim}
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
+\end{Verbatim}
+.
 
 This is still a conditional coherent-overlap handoff.  It does not construct
 the coherent branch choices, prove Montel compactness, or perform the
@@ -5925,9 +5949,20 @@ then invokes the PR \#2716 eventual-overlap endpoint and returns a global
 patch differentiable on \texttt{leeYangDomain}, together with the real-centre
 identification.
 
-The concrete \(\mathbb Z^d\) wrappers are the corresponding
-\texttt{\_latticeGraph} theorems in
-\texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+The branch-family concrete \(\mathbb Z^d\) wrappers now live in
+\begin{Verbatim}
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap/
+  StructuredFamily.lean
+\end{Verbatim}
+and are re-exported by the old
+\begin{Verbatim}
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap.lean
+\end{Verbatim}
+path.  The real local-cover patch wrapper remains in
+\begin{Verbatim}
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
+\end{Verbatim}
+.
 
 This is still a conditional post-Montel package.  It records the coherent
 data shape without constructing coherent branches, proving Montel compactness,
@@ -5953,7 +5988,16 @@ The concrete \(\mathbb Z^d\) wrapper is
 \begin{Verbatim}
 exists_leeYangLocalBranchLimitFamily_of_pointwiseNormEventualData_latticeGraph
 \end{Verbatim}
-in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+in
+\begin{Verbatim}
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap/
+  StructuredFamily.lean
+\end{Verbatim}
+and is re-exported by the old
+\begin{Verbatim}
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap.lean
+\end{Verbatim}
+path.
 
 This remains conditional and post-Montel.  It packages already supplied
 coherent eventual-overlap data, but does not construct coherent branches,
@@ -5980,7 +6024,16 @@ The concrete \(\mathbb Z^d\) wrappers are
 freeEnergyComplexAlongExhaustion_eventualOverlapBranchData_localCover_patch_latticeGraph
 freeEnergyComplexAlongExhaustion_pointwiseNormEventualData_localCover_patch_latticeGraph
 \end{Verbatim}
-in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+in
+\begin{Verbatim}
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap/
+  LocalCoverPatch.lean
+\end{Verbatim}
+and are re-exported by the old
+\begin{Verbatim}
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap.lean
+\end{Verbatim}
+path.
 
 This remains conditional and post-Montel.  It patches already supplied
 coherent eventual-overlap data, but does not construct coherent branches,
@@ -6006,11 +6059,20 @@ pointwise-normalised wrapper delegates through the underlying structured
 eventual-overlap package.
 
 The concrete \(\mathbb Z^d\) wrappers are
-\begin{Verbatim}
+\begin{Verbatim}[breaklines=true,breakanywhere=true]
 freeEnergyComplexAlongExhaustion_eventualOverlapBranchData_localCover_family_patch_latticeGraph
 freeEnergyComplexAlongExhaustion_pointwiseNormEventualData_localCover_family_patch_latticeGraph
 \end{Verbatim}
-in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+in
+\begin{Verbatim}
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap/
+  LocalCoverPatch.lean
+\end{Verbatim}
+and are re-exported by the old
+\begin{Verbatim}
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap.lean
+\end{Verbatim}
+path.
 
 This remains conditional and post-Montel.  It packages and patches already
 supplied coherent eventual-overlap data, but does not construct coherent
@@ -6037,7 +6099,16 @@ The concrete \(\mathbb Z^d\) wrapper is
 \begin{Verbatim}
 exists_leeYangRealBranchLimitFamily_of_pointwiseNormEventualData_latticeGraph
 \end{Verbatim}
-in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+in
+\begin{Verbatim}
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap/
+  StructuredFamily.lean
+\end{Verbatim}
+and is re-exported by the old
+\begin{Verbatim}
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap.lean
+\end{Verbatim}
+path.
 
 This remains conditional and post-Montel.  It packages already supplied
 coherent eventual-overlap data, but does not construct coherent branches,
