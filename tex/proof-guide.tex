@@ -4678,8 +4678,18 @@ and the concrete \(\mathbb Z^d\) wrappers are
 freeEnergyComplexAlongExhaustion_allStageRangeClosureCOpenData_patch_latticeGraph
 freeEnergyComplexAlongExhaustion_allStageRangeClosureCOpenData_patch_isCompact_latticeGraph
 \end{Verbatim}
-in the \texttt{RangeClosure.lean} child module, re-exported by the
-\texttt{RangeCompactOpen.lean} umbrella path.
+in the split child modules
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  RangeAscoliPatches/RangeCompactOpen/RangeClosure/Core.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  RangeAscoliPatches/RangeCompactOpen/RangeClosure/CompactTarget.lean
+\end{Verbatim}
+and re-exported by the legacy paths
+\begin{Verbatim}[fontsize=\footnotesize]
+RangeAscoliPatches/RangeCompactOpen/RangeClosure.lean
+RangeAscoliPatches/RangeCompactOpen.lean
+\end{Verbatim}
 
 This matches the relative-compactness form naturally expected from a Montel
 argument, but it still assumes compactness of the range closure and coherent
