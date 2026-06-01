@@ -3804,7 +3804,12 @@ The concrete \(\mathbb Z^d\) wrapper is
 \begin{Verbatim}
 freeEnergyComplexAlongExhaustion_finiteCompactOpenBranchLimitFamily_realPatch_latticeGraph
 \end{Verbatim}
-in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+in
+\begin{Verbatim}
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  BranchAscoliCompactOpen/RealCoverPatches/RealPatch.lean
+\end{Verbatim}
+and is re-exported through the legacy real-cover path.
 
 This remains a finite, explicit-hypothesis handoff.  It eliminates the
 separate manual step of first extracting a finite package and then applying
@@ -3866,8 +3871,15 @@ Ambient.freeEnergyComplexAlongExhaustion_finiteCoverBranchLimitFamily_compactOpe
 \end{Verbatim}
 then patch the finite Lee--Yang cover and, when one selected centre is the real
 field \(p.h\), identify the patched value with
-\(\texttt{freeEnergyInfinite}\).  The concrete \(\mathbb Z^d\) wrappers are
-re-exported through the legacy compact-cover path, and the compact-open
+\(\texttt{freeEnergyInfinite}\).  The concrete \(\mathbb Z^d\) compact-open
+package and patch wrappers are implemented in
+\begin{Verbatim}
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  BranchAscoliCompactOpen/RealCoverPatches/FiniteCover.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  BranchAscoliCompactOpen/RealCoverPatches/Patch.lean
+\end{Verbatim}
+and are re-exported through the legacy real-cover path.  The compact-open
 real-centre wrapper is implemented in
 \begin{Verbatim}
 Concrete/LatticeGraphCorrelation/PerStageComplex/
