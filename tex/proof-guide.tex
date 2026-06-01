@@ -5625,7 +5625,14 @@ and the concrete \(\mathbb Z^d\) wrappers are
 freeEnergyComplexAlongExhaustion_allStageBranchNormBoundedAscoliData_patch_latticeGraph
 freeEnergyComplexAlongExhaustion_allStageBranchNormBoundedAscoliData_patch_of_isCompact_latticeGraph
 \end{Verbatim}
-in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+in
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  BranchAscoliCompactOpen/AscoliPatches/NormBounded.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  BranchAscoliCompactOpen/AscoliPatches/CompactTarget.lean
+\end{Verbatim}
+and are re-exported through the legacy AscoliPatches path.
 
 This removes the need to state norm bounds directly on the continuous
 restrictions.  It still does not derive the branch-family norm bounds,
@@ -5660,7 +5667,13 @@ and the concrete \(\mathbb Z^d\) wrappers are
 freeEnergyComplexAlongExhaustion_allStageBranchConstNormBoundedAscoliData_patch_latticeGraph
 freeEnergyComplexAlongExhaustion_allStageBranchConstAscoli_patch_isCompact_latticeGraph
 \end{Verbatim}
-in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+The first lives in
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  BranchAscoliCompactOpen/AscoliPatches/ConstNormBounded.lean
+\end{Verbatim}
+and is re-exported through the legacy AscoliPatches path; the compact-target
+cover wrapper lives in the downstream cover-patch wrapper layer.
 
 This narrows the branch-family norm-bound input to ballwise uniform estimates.
 It still does not derive those estimates, closedness of the range pointwise
