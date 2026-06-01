@@ -5101,8 +5101,18 @@ and the concrete \(\mathbb Z^d\) wrappers are
 freeEnergyComplexAlongExhaustion_branchDeviationRelCompact_patch_latticeGraph
 freeEnergyComplexAlongExhaustion_branchDeviationRelCompact_patch_isCompact_latticeGraph
 \end{Verbatim}
-in the \texttt{RelCompact.lean} child module, re-exported by the umbrella
-module.
+in the split child modules
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  RangeAscoliPatches/BranchDeviationDirectRange/RelCompact/Core.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  RangeAscoliPatches/BranchDeviationDirectRange/RelCompact/CompactTarget.lean
+\end{Verbatim}
+and re-exported by the legacy paths
+\begin{Verbatim}[fontsize=\footnotesize]
+RangeAscoliPatches/BranchDeviationDirectRange/RelCompact.lean
+RangeAscoliPatches/BranchDeviationDirectRange.lean
+\end{Verbatim}
 
 This isolates the branch-choice deviation estimate needed to turn the existing
 Lee--Yang local bounded free-energy bounds into branch-family Montel input.
