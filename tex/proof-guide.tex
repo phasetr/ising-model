@@ -4724,8 +4724,18 @@ and the concrete \(\mathbb Z^d\) wrappers are
 freeEnergyComplexAlongExhaustion_allStageRangeRelCompactCOpen_patch_latticeGraph
 freeEnergyComplexAlongExhaustion_allStageRangeRelCompact_patch_isCompact_latticeGraph
 \end{Verbatim}
-in the \texttt{RelCompact.lean} child module, re-exported by the
-\texttt{RangeCompactOpen.lean} umbrella path.
+in the split child modules
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  RangeAscoliPatches/RangeCompactOpen/RelCompact/Core.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  RangeAscoliPatches/RangeCompactOpen/RelCompact/CompactTarget.lean
+\end{Verbatim}
+and re-exported by the legacy paths
+\begin{Verbatim}[fontsize=\footnotesize]
+RangeAscoliPatches/RangeCompactOpen/RelCompact.lean
+RangeAscoliPatches/RangeCompactOpen.lean
+\end{Verbatim}
 
 This is the standard relative-compactness input shape for the Montel layer:
 the compact carrier can be supplied by a later normal-family or Ascoli
