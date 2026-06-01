@@ -5886,10 +5886,13 @@ freeEnergyComplexAlongExhaustion_allStageNormBoundedAscoliData_patch_of_isCompac
 in
 \begin{Verbatim}[fontsize=\footnotesize]
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  RangeAscoliPatches/AllStageAscoli/NormBounded.lean
+  RangeAscoliPatches/AllStageAscoli/NormBounded/Core.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  RangeAscoliPatches/AllStageAscoli/NormBounded/CompactTarget.lean
 \end{Verbatim}
 and are re-exported through the legacy
-\texttt{RangeAscoliPatches/AllStageAscoli.lean} path.
+\texttt{RangeAscoliPatches/AllStageAscoli/NormBounded.lean} and
+\texttt{RangeAscoliPatches/AllStageAscoli.lean} paths.
 
 This removes the separately supplied compact pointwise target sets from the
 closed-product input.  It still does not derive the closedness, pointwise norm
