@@ -4828,14 +4828,18 @@ Concrete/LatticeGraphCorrelation/PerStageComplex/
 Concrete/LatticeGraphCorrelation/PerStageComplex/
   RangeAscoliPatches/BranchRelCompact/ConstNormBounded/CompactTarget.lean
 \end{Verbatim}
-with the locally bounded wrapper still in
+and the locally bounded wrappers now live in
 \begin{Verbatim}[fontsize=\footnotesize]
-RangeAscoliPatches/BranchRelCompact/LocallyBounded.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  RangeAscoliPatches/BranchRelCompact/LocallyBounded/Core.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  RangeAscoliPatches/BranchRelCompact/LocallyBounded/CompactTarget.lean
 \end{Verbatim}
 The wrapper layers are re-exported by
 \begin{Verbatim}[fontsize=\footnotesize]
 BranchRelCompact/NormBounded.lean
 BranchRelCompact/ConstNormBounded.lean
+BranchRelCompact/LocallyBounded.lean
 BranchRelCompact.lean
 \end{Verbatim}
 
