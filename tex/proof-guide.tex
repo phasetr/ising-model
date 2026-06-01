@@ -5790,10 +5790,13 @@ freeEnergyComplexAlongExhaustion_allStageAscoliData_patch_of_isCompact_latticeGr
 in
 \begin{Verbatim}[fontsize=\footnotesize]
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  RangeAscoliPatches/AllStageAscoli/Ascoli.lean
+  RangeAscoliPatches/AllStageAscoli/Ascoli/Core.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  RangeAscoliPatches/AllStageAscoli/Ascoli/CompactTarget.lean
 \end{Verbatim}
 and are re-exported through the legacy
-\texttt{RangeAscoliPatches/AllStageAscoli.lean} path.
+\texttt{RangeAscoliPatches/AllStageAscoli/Ascoli.lean} and
+\texttt{RangeAscoliPatches/AllStageAscoli.lean} paths.
 
 This narrows the remaining Montel input to compactness of the selected
 \(\texttt{ContinuousMap.toFun}\) images in the pointwise function-space
