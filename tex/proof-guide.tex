@@ -5371,17 +5371,18 @@ Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 
 \begin{theorem}[Positive-real closed-ball branch-deviation via-local wrapper; PR \#2769]
 The positive-real compact-target endpoint
-\begin{Verbatim}[fontsize=\footnotesize]
+\begin{Verbatim}[fontsize=\scriptsize]
 Ambient.freeEnergyComplexAlongExhaustion_posRealClosedBallDeviationViaLocal_directRange_patch_of_isCompact
 \end{Verbatim}
 constructs closed-ball all-stage branch data from positive real ferromagnetic
 parameters, extracts the compact finite all-stage geometry, and delegates to
 the PR \#2768 named via-local closed-ball branch-deviation direct-range
 endpoint.  The concrete \(\mathbb Z^d\) wrapper is
-\begin{Verbatim}[fontsize=\footnotesize]
+\begin{Verbatim}[fontsize=\scriptsize]
 freeEnergyComplexAlongExhaustion_posRealClosedBallDeviationViaLocal_directRange_patch_isCompact_latticeGraph
 \end{Verbatim}
-in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+in the \texttt{PosReal/ViaLocal.lean} child module, re-exported by the old
+\texttt{PosReal.lean} umbrella path.
 
 This is a positive-real wrapper for the named via-local route, not a new
 compactness step.  Closed-ball branch-deviation bounds, closedness,
@@ -5416,7 +5417,7 @@ Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 
 \begin{theorem}[Closed-ball branch-deviation direct range patch bridge; PR \#2756]
 The direct-range patch endpoints
-\begin{Verbatim}[fontsize=\footnotesize]
+\begin{Verbatim}[fontsize=\scriptsize]
 Ambient.freeEnergyComplexAlongExhaustion_closedBallBranchDeviationRelCompact_directRange_patch
 Ambient.freeEnergyComplexAlongExhaustion_closedBallBranchDeviationRelCompact_directRange_patch_of_isCompact
 Ambient.freeEnergyComplexAlongExhaustion_posRealClosedBallDeviation_directRange_patch_of_isCompact
@@ -5428,12 +5429,13 @@ the relatively compact range data through the PR \#2757 direct-route data
 alias, then applies the all-stage relatively compact range patch theorem.
 
 The concrete \(\mathbb Z^d\) wrappers are
-\begin{Verbatim}[fontsize=\footnotesize]
+\begin{Verbatim}[fontsize=\scriptsize]
 freeEnergyComplexAlongExhaustion_closedBallBranchDeviationRelCompact_directRange_patch_latticeGraph
 freeEnergyComplexAlongExhaustion_closedBallBranchDeviationRelCompact_directRange_patch_isCompact_latticeGraph
 freeEnergyComplexAlongExhaustion_posRealClosedBallDeviation_directRange_patch_isCompact_latticeGraph
 \end{Verbatim}
-in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.  This is a
+with the positive-real wrapper in the \texttt{PosReal/DirectRange.lean} child
+module, re-exported by the old \texttt{PosReal.lean} umbrella path.  This is a
 composition bridge; branch-deviation bounds, closedness, equicontinuity, and
 coherent overlap inputs remain explicit.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
