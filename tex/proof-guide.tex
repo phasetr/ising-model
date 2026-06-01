@@ -5288,10 +5288,18 @@ in
 Concrete/LatticeGraphCorrelation/PerStageComplex/
   RangeAscoliPatches/BranchLocalDirectRange/ViaDeviation.lean
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  RangeAscoliPatches/BranchLocalDirectRange/EventualOverlapViaDeviation.lean
+  RangeAscoliPatches/BranchLocalDirectRange/
+    EventualOverlapViaDeviation/Core.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  RangeAscoliPatches/BranchLocalDirectRange/
+    EventualOverlapViaDeviation/CompactTarget.lean
 \end{Verbatim}
-and are re-exported through the legacy
-\texttt{RangeAscoliPatches/BranchLocalDirectRange.lean} path.  This records
+and are re-exported through the legacy modules
+\begin{Verbatim}[fontsize=\footnotesize]
+RangeAscoliPatches/BranchLocalDirectRange/EventualOverlapViaDeviation.lean
+RangeAscoliPatches/BranchLocalDirectRange.lean
+\end{Verbatim}
+This records
 the non-closed-ball analogue of the PR \#2762 closed-ball
 branch-local to branch-deviation route, with the principal free-energy bound
 kept as an explicit input rather than supplied automatically by closed-ball
