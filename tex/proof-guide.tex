@@ -3460,8 +3460,8 @@ Uniqueness of limits identifies
   f(p.h)=\texttt{freeEnergyInfinite}\,G\,\Lambda\,p .
 \]
 The concrete $\mathbb Z^d$ wrappers live in
-\texttt{Branches/LocalCoverPatch.lean}
-and remain available through the \texttt{Branches.lean} umbrella.
+\texttt{Branches/LocalCoverPatch/Vitali.lean}
+and are re-exported by the old \texttt{Branches/LocalCoverPatch.lean} path.
 
 This result does not construct the coherent branch family or prove its local
 uniform convergence.  It records the exact local theorem that can consume that
@@ -3502,7 +3502,7 @@ $(p.h:\mathbb C)\in\texttt{leeYangDomain}$:
 It selects the local ball supplied by the cover at $p.h$ and reuses the
 PR \#2676 centre-identification theorem.  The non-real concrete $\mathbb Z^d$
 wrapper lives in
-\texttt{Branches/LocalCoverPatch.lean};
+\texttt{Branches/LocalCoverPatch/Vitali.lean};
 the real wrapper lives in
 \texttt{Branches/RealCompact/Vitali.lean}
 and is re-exported by the old
@@ -4073,8 +4073,8 @@ For a Lee--Yang open cover, the ambient theorem first applies the Vitali
 handoff on each cover member to obtain differentiable local limits, then
 applies the open-cover patching theorem.  If the cover contains
 \(\texttt{leeYangDomain}\), the resulting patched function is differentiable on
-\(\texttt{leeYangDomain}\).  The concrete \(\mathbb Z^d\) wrapper is in
-\texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+\(\texttt{leeYangDomain}\).  The concrete \(\mathbb Z^d\) wrapper is in the
+\texttt{OpenPatch.lean} child, re-exported by \texttt{LocalCoverPatch.lean}.
 
 This is still a conditional handoff.  It assumes the compatible local-cover
 limits explicitly, and does not prove coherent branch selection, Montel
@@ -4111,7 +4111,8 @@ centred at \(z\) itself.  The concrete \(\mathbb Z^d\) wrapper is
 \begin{Verbatim}
 freeEnergyComplexAlongExhaustion_branchFamily_localCover_patch_latticeGraph
 \end{Verbatim}
-in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+in \texttt{Branches/LocalCoverPatch/OpenPatch.lean}, re-exported by
+\texttt{Branches/LocalCoverPatch.lean}.
 
 This is still a conditional post-extraction handoff.  It packages the pointed
 Lee--Yang ball cover, but it does not prove coherent branch selection, Montel
@@ -4144,7 +4145,8 @@ limit on its own ball, and \(g\) is differentiable on
 \begin{Verbatim}
 freeEnergyComplexAlongExhaustion_branchLimitData_localCover_patch_latticeGraph
 \end{Verbatim}
-in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+in the \texttt{StructuredPatch.lean} child, re-exported by
+\texttt{LocalCoverPatch.lean}.
 
 This is still a conditional post-extraction handoff.  It makes the local-cover
 input easier to pass around, but it does not prove coherent branch selection,
@@ -4180,7 +4182,8 @@ The concrete \(\mathbb Z^d\) wrapper is
 \begin{Verbatim}
 freeEnergyComplexAlongExhaustion_branchLimitData_localCover_real_latticeGraph
 \end{Verbatim}
-in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+in the \texttt{StructuredPatch.lean} child, re-exported by
+\texttt{LocalCoverPatch.lean}.
 
 This is still a conditional post-extraction handoff: compatibility of the
 packaged local limits and the coherent local-cover extraction remain external
@@ -4220,7 +4223,8 @@ The concrete \(\mathbb Z^d\) wrappers are
 freeEnergyComplexAlongExhaustion_branchLimitFamily_localCover_patch_latticeGraph
 freeEnergyComplexAlongExhaustion_branchLimitFamily_localCover_real_latticeGraph
 \end{Verbatim}
-in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+in the \texttt{StructuredPatch.lean} child, re-exported by
+\texttt{LocalCoverPatch.lean}.
 
 This remains conditional and post-extraction.  The new structure removes the
 last loose compatibility argument from downstream APIs, but it does not prove
@@ -4261,7 +4265,8 @@ The concrete \(\mathbb Z^d\) wrapper is
 \begin{Verbatim}
 freeEnergyComplexAlongExhaustion_realBranchLimitFamily_localCover_real_latticeGraph
 \end{Verbatim}
-in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+in the \texttt{StructuredPatch.lean} child, re-exported by
+\texttt{LocalCoverPatch.lean}.
 
 This is still a conditional post-extraction handoff.  It does not prove
 Montel compactness or construct the family; it names the exact real-centred
