@@ -3866,8 +3866,14 @@ Ambient.freeEnergyComplexAlongExhaustion_finiteCoverBranchLimitFamily_compactOpe
 \end{Verbatim}
 then patch the finite Lee--Yang cover and, when one selected centre is the real
 field \(p.h\), identify the patched value with
-\(\texttt{freeEnergyInfinite}\).  The concrete \(\mathbb Z^d\) wrappers live in
-\texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}, including
+\(\texttt{freeEnergyInfinite}\).  The concrete \(\mathbb Z^d\) wrappers are
+re-exported through the legacy compact-cover path, and the compact-open
+real-centre wrapper is implemented in
+\begin{Verbatim}
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  BranchAscoliCompactOpen/CompactCoverPatches/FiniteCover.lean
+\end{Verbatim}
+including
 \begin{Verbatim}
 freeEnergyComplexAlongExhaustion_finiteCoverBranchLimitFamily_realPatch_latticeGraph
 \end{Verbatim}
@@ -3907,7 +3913,17 @@ real-centred finite-cover endpoint.  The concrete \(\mathbb Z^d\) wrappers are
 freeEnergyComplexAlongExhaustion_finiteRealCoverFamily_patch_latticeGraph
 freeEnergyComplexAlongExhaustion_finiteRealCoverFamily_compactOpen_patch_latticeGraph
 \end{Verbatim}
-in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+The first wrapper lives in
+\begin{Verbatim}
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  SubseqCompactOpen/FiniteCoverPatches.lean
+\end{Verbatim}
+and the compact-open wrapper lives in
+\begin{Verbatim}
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  BranchAscoliCompactOpen/CompactCoverPatches/RealCover.lean
+\end{Verbatim}
+and is re-exported through the legacy compact-cover path.
 
 This remains a finite, conditional endpoint.  It records the real-centred
 finite-cover shape expected from the later local-cover extraction, but it does
@@ -3944,7 +3960,17 @@ equality into the compact finite real-cover object.  The concrete
 freeEnergyComplexAlongExhaustion_compactFiniteRealCover_patch_latticeGraph
 freeEnergyComplexAlongExhaustion_compactFiniteRealCover_cOpenPatch_latticeGraph
 \end{Verbatim}
-in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+The first wrapper lives in
+\begin{Verbatim}
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  SubseqCompactOpen/FiniteCoverPatches.lean
+\end{Verbatim}
+and the compact-open wrapper lives in
+\begin{Verbatim}
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  BranchAscoliCompactOpen/CompactCoverPatches/CompactTarget.lean
+\end{Verbatim}
+and is re-exported through the legacy compact-cover path.
 
 This remains a finite, explicit-hypothesis handoff.  It does not prove Montel
 compactness, coherent branch choices, finite-subcover extraction from an
@@ -6161,7 +6187,12 @@ The concrete \(\mathbb Z^d\) wrapper is
 \begin{Verbatim}
 freeEnergyComplexAlongExhaustion_compactLocalCoverFinGeometry_cOpenPatch_latticeGraph
 \end{Verbatim}
-in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+in
+\begin{Verbatim}
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  BranchAscoliCompactOpen/CompactCoverPatches/LocalCover.lean
+\end{Verbatim}
+and is re-exported through the legacy compact-cover path.
 
 This is a packaging bridge from compact local-cover finite geometry to the
 compact finite real-cover compact-open patch theorem.  It does not prove
