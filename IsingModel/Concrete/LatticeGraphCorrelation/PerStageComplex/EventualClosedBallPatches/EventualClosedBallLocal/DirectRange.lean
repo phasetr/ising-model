@@ -1,4 +1,5 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.PerStageComplex.EventualClosedBallPatches.ClosedBallLocal
+import IsingModel.AmbientComplexAnalyticity.BranchLocallyBoundedPatches.CompactTarget
 
 namespace IsingModel
 namespace Ambient

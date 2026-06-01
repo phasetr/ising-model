@@ -1,4 +1,5 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.PerStageComplex.EventualClosedBallPatches
+import IsingModel.AmbientComplexAnalyticity.BranchLocallyBoundedPatches.ConstNormBounded
 
 /-!
 # Branch Ascoli compact-open split — branch norm-bounded Ascoli data patches
