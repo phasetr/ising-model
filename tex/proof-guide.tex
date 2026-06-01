@@ -4865,10 +4865,18 @@ freeEnergyComplexAlongExhaustion_eventualOverlapBranchLocallyBoundedRelCompact_d
 in
 \begin{Verbatim}[fontsize=\footnotesize]
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  RangeAscoliPatches/BranchLocalDirectRange/EventualOverlap.lean
+  RangeAscoliPatches/BranchLocalDirectRange/
+    EventualOverlap/Core.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  RangeAscoliPatches/BranchLocalDirectRange/
+    EventualOverlap/CompactTarget.lean
 \end{Verbatim}
-and are re-exported through the legacy
-\texttt{RangeAscoliPatches/BranchLocalDirectRange.lean} path.  This removes
+and are re-exported through the legacy modules
+\begin{Verbatim}[fontsize=\footnotesize]
+RangeAscoliPatches/BranchLocalDirectRange/EventualOverlap.lean
+RangeAscoliPatches/BranchLocalDirectRange.lean
+\end{Verbatim}
+This removes
 the selected-overlap field from the branch-local Ascoli boundary once
 pointwise-normalised eventual-overlap data is available.  It still does not
 construct that eventual-overlap data or prove the branch local bounds,
