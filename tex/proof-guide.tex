@@ -3862,7 +3862,13 @@ differentiable on that finite union.  The concrete \(\mathbb Z^d\) wrapper is
 \begin{Verbatim}
 freeEnergyComplexAlongExhaustion_finiteCompactOpenBranchLimitFamily_patch_latticeGraph
 \end{Verbatim}
-in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+It now lives in
+\begin{Verbatim}[fontsize=\footnotesize]
+SubseqCompactOpen/FiniteCoverPatches/CompactOpen.lean
+\end{Verbatim}
+under \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex}, and is
+re-exported by the old
+\texttt{SubseqCompactOpen/FiniteCoverPatches.lean} path.
 
 This remains a finite, explicit-hypothesis handoff.  It removes the separate
 manual step of first extracting a packaged finite family and then applying the
@@ -3954,9 +3960,11 @@ freeEnergyComplexAlongExhaustion_finiteRealCoverFamily_compactOpen_patch_lattice
 The first wrapper lives in
 \begin{Verbatim}
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  SubseqCompactOpen/FiniteCoverPatches.lean
+  SubseqCompactOpen/FiniteCoverPatches/Patch.lean
 \end{Verbatim}
-and the compact-open wrapper lives in
+and is re-exported by the old
+\texttt{SubseqCompactOpen/FiniteCoverPatches.lean} path.  The compact-open
+wrapper lives in
 \begin{Verbatim}
 Concrete/LatticeGraphCorrelation/PerStageComplex/
   BranchAscoliCompactOpen/CompactCoverPatches/RealCover.lean
@@ -4001,9 +4009,11 @@ freeEnergyComplexAlongExhaustion_compactFiniteRealCover_cOpenPatch_latticeGraph
 The first wrapper lives in
 \begin{Verbatim}
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  SubseqCompactOpen/FiniteCoverPatches.lean
+  SubseqCompactOpen/FiniteCoverPatches/Patch.lean
 \end{Verbatim}
-and the compact-open wrapper lives in
+and is re-exported by the old
+\texttt{SubseqCompactOpen/FiniteCoverPatches.lean} path.  The compact-open
+wrapper lives in
 \begin{Verbatim}
 Concrete/LatticeGraphCorrelation/PerStageComplex/
   BranchAscoliCompactOpen/CompactCoverPatches/CompactTarget.lean
@@ -4361,7 +4371,17 @@ The concrete \(\mathbb Z^d\) wrappers are
 freeEnergyComplexAlongExhaustion_pointwiseNormAllStageData_finCompactOpen_latticeGraph
 freeEnergyComplexAlongExhaustion_pointwiseNormAllStageData_finCompactOpen_patch_latticeGraph
 \end{Verbatim}
-in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+The package wrapper lives in
+\begin{Verbatim}[fontsize=\footnotesize]
+SubseqCompactOpen/FiniteSubseqCompactOpen.lean
+\end{Verbatim}
+The patch wrapper now lives in
+\begin{Verbatim}[fontsize=\footnotesize]
+SubseqCompactOpen/FiniteCoverPatches/CompactOpen.lean
+\end{Verbatim}
+under \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex}, and is
+re-exported by the old
+\texttt{SubseqCompactOpen/FiniteCoverPatches.lean} path.
 
 This bridge remains finite and conditional.  It assumes compact-open
 compactness of the selected continuous restrictions and explicit eventual
