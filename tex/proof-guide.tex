@@ -6381,7 +6381,16 @@ stage-uniform lower normalised-log estimate for positive polynomial witnesses
   \qquad(n\in\mathbb N,\ h\in K).
 \]
 The \(\mathbb Z^d\) wrapper is
-\texttt{exists\_norm\_freeEnergyComplexAlongExhaustion\_le\_poly\_lower\_ly\_latticeGraph}.
+\begin{Verbatim}[fontsize=\footnotesize]
+exists_norm_freeEnergyComplexAlongExhaustion_le_poly_lower_ly_latticeGraph
+\end{Verbatim}
+It lives in
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds/
+  PolynomialLower.lean
+\end{Verbatim}
+and is re-exported through the legacy
+\texttt{PerStageComplex/Bounds.lean} path.
 
 This theorem still does not prove the lower normalised-log estimate for the
 polynomial witnesses.  It packages the exact route from that remaining input
@@ -6406,7 +6415,16 @@ positive polynomial witnesses \(\epsilon_n(h)\) imply
   \qquad(n\in\mathbb N,\ h\in K).
 \]
 The \(\mathbb Z^d\) wrapper is
-\texttt{exists\_norm\_freeEnergyComplexAlongExhaustion\_le\_poly\_lower\_ly\_latticeGraph\_of\_isCompact}.
+\begin{Verbatim}[fontsize=\footnotesize]
+exists_norm_freeEnergyComplexAlongExhaustion_le_poly_lower_ly_latticeGraph_of_isCompact
+\end{Verbatim}
+It lives in
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds/
+  PolynomialLower.lean
+\end{Verbatim}
+and is re-exported through the legacy
+\texttt{PerStageComplex/Bounds.lean} path.
 
 The polynomial-witness lower normalised-log estimate remains an explicit
 hypothesis.  The wrapper only removes the bookkeeping real-part bound from the
@@ -6429,7 +6447,16 @@ closed ball satisfy a stage-uniform lower normalised-log estimate.  Since
 \]
 Restricting along \(B(h_0,\rho)\subseteq\overline B(h_0,\rho)\) yields the
 same estimate on the open ball.  The \(\mathbb Z^d\) wrapper is
-\texttt{exists\_norm\_freeEnergyComplexAlongExhaustion\_le\_poly\_lower\_ly\_latticeGraph\_on\_ball}.
+\begin{Verbatim}[fontsize=\footnotesize]
+exists_norm_freeEnergyComplexAlongExhaustion_le_poly_lower_ly_latticeGraph_on_ball
+\end{Verbatim}
+It lives in
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds/
+  PolynomialLower.lean
+\end{Verbatim}
+and is re-exported through the legacy
+\texttt{PerStageComplex/Bounds.lean} path.
 
 This is still conditional on the polynomial-witness lower normalised-log
 estimate.  It does not construct the Montel subsequence or coherent
@@ -6460,7 +6487,16 @@ chosen around \(h_0\), then for some \(\rho>0\) there is a constant \(C\) with
   \qquad(n\in\mathbb N,\ h\in B(h_0,\rho)).
 \]
 The \(\mathbb Z^d\) wrapper is
-\texttt{exists\_norm\_freeEnergyComplexAlongExhaustion\_le\_poly\_lower\_ly\_latticeGraph\_around}.
+\begin{Verbatim}[fontsize=\footnotesize]
+exists_norm_freeEnergyComplexAlongExhaustion_le_poly_lower_ly_latticeGraph_around
+\end{Verbatim}
+It lives in
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds/
+  PolynomialLower.lean
+\end{Verbatim}
+and is re-exported through the legacy
+\texttt{PerStageComplex/Bounds.lean} path.
 
 This remains conditional on the polynomial-witness lower normalised-log
 estimate.  The wrapper supplies the point-local bounded-family shape needed by
@@ -6537,7 +6573,12 @@ Ambient.exists_norm_freeEnergyComplexAlongExhaustion_le_leeYang_on_ball
 Ambient.exists_norm_freeEnergyComplexAlongExhaustion_le_leeYang_around
 \end{Verbatim}
 The corresponding \(\mathbb Z^d\) wrappers live in
-\texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds/
+  LeeYangLower.lean
+\end{Verbatim}
+and are re-exported through the legacy
+\texttt{PerStageComplex/Bounds.lean} path.
 
 This completes the lower normalised-log side of the Lee--Yang Vitali input.
 The remaining task for GJ \S 4.6 is the coherent locally-uniform branch-family
@@ -6569,7 +6610,13 @@ for all stages $n$ and all $h\in K$.  In Lean this packaged form is
 \]
 The concrete $\mathbb Z^d$ wrapper
 \texttt{norm\_partitionFunctionComplexAlongExhaustion\_le\_on\_isCompact\_stage\_latticeGraph}
-lives in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+lives in
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds/
+  PerStage.lean
+\end{Verbatim}
+and is re-exported through the legacy
+\texttt{PerStageComplex/Bounds.lean} path.
 
 This is a compact-field envelope for the partition functions themselves: it is
 uniform in $h\in K$, but the right-hand side still depends on $|\Lambda_n|$ and
@@ -6601,7 +6648,12 @@ the envelope of PR \#2678 to get the per-stage estimate
 \]
 Bounded edge density replaces the edge ratio by the single constant $c$.
 The concrete $\mathbb Z^d$ wrappers live in
-\texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds/
+  UpperLog.lean
+\end{Verbatim}
+and are re-exported through the legacy
+\texttt{PerStageComplex/Bounds.lean} path.
 
 This is not yet the absolute normalised-log bound used by PR \#2679 and
 PR \#2680: it supplies only an upper bound for
@@ -6628,7 +6680,12 @@ Lee--Yang gives
   \qquad(h\in K\subseteq\texttt{leeYangDomain})
 \]
 at every finite stage.  The concrete $\mathbb Z^d$ wrapper lives in
-\texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds/
+  PolynomialLower.lean
+\end{Verbatim}
+and is re-exported through the legacy
+\texttt{PerStageComplex/Bounds.lean} path.
 
 This is an upper normalised-log estimate only.  PR \#2692 supplies the matching
 compact Lee--Yang lower control needed to turn this into the absolute
@@ -6672,6 +6729,13 @@ The concrete $\mathbb Z^d$ wrappers are
 \texttt{exists\_abs\_log\_norm\_div\_card\_le\_lower\_ly\_latticeGraph}
 and
 \texttt{exists\_norm\_freeEnergyComplexAlongExhaustion\_le\_lower\_log\_ly\_latticeGraph}.
+They live in
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds/
+  PolynomialLower.lean
+\end{Verbatim}
+and are re-exported through the legacy
+\texttt{PerStageComplex/Bounds.lean} path.
 
 In this handoff theorem the lower normalised-log control is isolated as an
 explicit hypothesis; PR \#2692 supplies that hypothesis on compact Lee--Yang
@@ -6681,7 +6745,9 @@ sets via the root-product polynomial lower bound.  Reference: Glimm--Jaffe
 
 \begin{theorem}[Normalised log bound handoff; PR \#2679]
 The theorem
-\texttt{norm\_freeEnergyComplexAlongExhaustion\_le\_of\_abs\_log\_norm\_bound\_stage}
+\begin{Verbatim}[fontsize=\small, breaklines=true]
+norm_freeEnergyComplexAlongExhaustion_le_of_abs_log_norm_bound_stage
+\end{Verbatim}
 records the exact elementary step from normalised logarithmic control to a
 finite-stage complex free-energy bound.  If the stage $\Lambda_n$ is nonempty
 and
@@ -6707,7 +6773,12 @@ The setwise companion
 \texttt{norm\_freeEnergyComplexAlongExhaustion\_le\_of\_abs\_log\_norm\_bound\_on\_set}
 packages one constant $C$ for all stages and all fields in a set $K$.  The
 concrete $\mathbb Z^d$ wrappers live in
-\texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds/
+  UpperLog.lean
+\end{Verbatim}
+and are re-exported through the legacy
+\texttt{PerStageComplex/Bounds.lean} path.
 
 This is intentionally a conditional handoff.  It identifies the missing
 normal-family input after the compact $Z$ envelope of PR \#2678: one still
@@ -6737,7 +6808,13 @@ The proof composes PR \#2679 with the elementary consequence of nonemptiness
   \frac{\pi}{|\Lambda_n|}\le \pi ,
 \]
 using \texttt{Fintype.card\_pos} in Lean.  The concrete $\mathbb Z^d$ wrapper
-lives in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+lives in
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds/
+  UpperLog.lean
+\end{Verbatim}
+and is re-exported through the legacy
+\texttt{PerStageComplex/Bounds.lean} path.
 
 This theorem packages the exact locally bounded family shape that a later
 Montel/normal-family argument can consume.  It remains conditional on the
