@@ -3460,7 +3460,8 @@ Uniqueness of limits identifies
   f(p.h)=\texttt{freeEnergyInfinite}\,G\,\Lambda\,p .
 \]
 The concrete $\mathbb Z^d$ wrappers live in
-\texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+\texttt{Branches/LocalCoverPatch.lean}
+and remain available through the \texttt{Branches.lean} umbrella.
 
 This result does not construct the coherent branch family or prove its local
 uniform convergence.  It records the exact local theorem that can consume that
@@ -3499,8 +3500,13 @@ $(p.h:\mathbb C)\in\texttt{leeYangDomain}$:
   f(p.h)=\texttt{freeEnergyInfinite}\,G\,\Lambda\,p .
 \]
 It selects the local ball supplied by the cover at $p.h$ and reuses the
-PR \#2676 centre-identification theorem.  The concrete $\mathbb Z^d$ wrappers
-live in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+PR \#2676 centre-identification theorem.  The non-real concrete $\mathbb Z^d$
+wrapper lives in
+\texttt{Branches/LocalCoverPatch.lean};
+the real wrapper lives in
+\texttt{Branches/RealCompact/Vitali.lean}
+and is re-exported by the old
+\texttt{Branches/RealCompact.lean} path.
 
 This result still does not construct the coherent local cover or prove local
 uniform convergence; it records the global conditional handoff that such a
@@ -5859,9 +5865,14 @@ and are re-exported by the old
 \begin{Verbatim}
 Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap.lean
 \end{Verbatim}
-path.  The real local-cover patch wrapper remains in
+path.  The real local-cover patch wrapper now lives in
 \begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact/
+  RawPatch.lean
+\end{Verbatim}
+and is re-exported by the old
+\begin{Verbatim}
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact.lean
 \end{Verbatim}
 .
 
@@ -5909,9 +5920,14 @@ and are re-exported by the old
 \begin{Verbatim}
 Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap.lean
 \end{Verbatim}
-path.  The real local-cover patch wrapper remains in
+path.  The real local-cover patch wrapper now lives in
 \begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact/
+  RawPatch.lean
+\end{Verbatim}
+and is re-exported by the old
+\begin{Verbatim}
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact.lean
 \end{Verbatim}
 .
 
@@ -5958,9 +5974,14 @@ and are re-exported by the old
 \begin{Verbatim}
 Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap.lean
 \end{Verbatim}
-path.  The real local-cover patch wrapper remains in
+path.  The real local-cover patch wrapper now lives in
 \begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact/
+  StructuredPatch.lean
+\end{Verbatim}
+and is re-exported by the old
+\begin{Verbatim}
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact.lean
 \end{Verbatim}
 .
 
@@ -6134,7 +6155,16 @@ The concrete \(\mathbb Z^d\) wrapper is
 \begin{Verbatim}
 exists_compactLocalCoverFinGeometry_of_realEventualOverlapBranchData_latticeGraph
 \end{Verbatim}
-in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+in
+\begin{Verbatim}
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact/
+  CompactGeometry.lean
+\end{Verbatim}
+and is re-exported by the old
+\begin{Verbatim}
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact.lean
+\end{Verbatim}
+path.
 
 This remains conditional and post-Montel.  It extracts finite compact
 geometry from already supplied coherent eventual-overlap data; it does not
@@ -6161,7 +6191,16 @@ The concrete \(\mathbb Z^d\) wrapper is
 \begin{Verbatim}
 exists_compactLocalCoverFinGeometry_of_pointwiseNormEventualData_latticeGraph
 \end{Verbatim}
-in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+in
+\begin{Verbatim}
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact/
+  CompactGeometry.lean
+\end{Verbatim}
+and is re-exported by the old
+\begin{Verbatim}
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact.lean
+\end{Verbatim}
+path.
 
 This remains conditional and post-Montel.  It aligns the pointwise-normalised
 API with the compact-geometry endpoint, but does not construct coherent
@@ -6265,7 +6304,16 @@ The concrete \(\mathbb Z^d\) wrapper is
 \begin{Verbatim}
 freeEnergyComplexAlongExhaustion_pointwiseNormEventualData_localCover_real_latticeGraph
 \end{Verbatim}
-in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+in
+\begin{Verbatim}
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact/
+  StructuredPatch.lean
+\end{Verbatim}
+and is re-exported by the old
+\begin{Verbatim}
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact.lean
+\end{Verbatim}
+path.
 
 This remains conditional and post-Montel.  It narrows the local-cover endpoint
 for future pointwise-normalised extraction output, but does not construct
@@ -6298,7 +6346,16 @@ The concrete \(\mathbb Z^d\) wrappers are
 exists_finset_cover_of_isCompact_leeYangLocalBranchLimitFamily_latticeGraph
 exists_finset_cover_of_isCompact_leeYangRealBranchLimitFamily_latticeGraph
 \end{Verbatim}
-in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+in
+\begin{Verbatim}
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact/
+  CompactGeometry.lean
+\end{Verbatim}
+and are re-exported by the old
+\begin{Verbatim}
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact.lean
+\end{Verbatim}
+path.
 
 This is the compactness finite-subcover step for an already packaged local
 cover.  It does not prove Montel compactness, coherent branch choices,
@@ -6339,7 +6396,16 @@ concrete \(\mathbb Z^d\) wrapper is
 \begin{Verbatim}
 exists_compactLocalCoverFinGeometry_of_leeYangRealBranchLimitFamily_latticeGraph
 \end{Verbatim}
-in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+in
+\begin{Verbatim}
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact/
+  CompactGeometry.lean
+\end{Verbatim}
+and is re-exported by the old
+\begin{Verbatim}
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact.lean
+\end{Verbatim}
+path.
 
 This remains a geometry-only enumeration step.  It does not construct the
 finite subsequence branch-limit family needed by
