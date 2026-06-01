@@ -4596,10 +4596,22 @@ freeEnergyComplexAlongExhaustion_allStageCOpenData_patch_of_isCompact_latticeGra
 in
 \begin{Verbatim}[fontsize=\footnotesize]
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  SubseqCompactOpen/PointwiseAllStage/COpenData.lean
+  SubseqCompactOpen/PointwiseAllStage/COpenData/Patch.lean
+\end{Verbatim}
+and
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  SubseqCompactOpen/PointwiseAllStage/COpenData/CompactTarget.lean
 \end{Verbatim}
 and are re-exported through the legacy
-\texttt{SubseqCompactOpen/PointwiseAllStage.lean} path.
+\begin{Verbatim}[fontsize=\footnotesize]
+SubseqCompactOpen/PointwiseAllStage/COpenData.lean
+\end{Verbatim}
+and
+\begin{Verbatim}[fontsize=\footnotesize]
+SubseqCompactOpen/PointwiseAllStage.lean
+\end{Verbatim}
+paths.
 
 This packages the compact-target Montel/coherence output shape but still does
 not prove Montel compactness, locally uniform subsequential convergence, or
