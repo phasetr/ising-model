@@ -4822,10 +4822,12 @@ turn closed-ball branch-local boundedness into closed-ball branch-deviation
 data in the eventual-overlap setting.  The proof uses the closed-ball
 Lee--Yang principal free-energy bound and the triangle inequality, while the
 selected-overlap field remains supplied by
-\texttt{LeeYangClosedBallPointwiseNormalisedEventualOverlapBranchData}.
+\begin{Verbatim}[fontsize=\tiny]
+LeeYangClosedBallPointwiseNormalisedEventualOverlapBranchData
+\end{Verbatim}
 
 The patch endpoints
-\begin{Verbatim}[fontsize=\footnotesize]
+\begin{Verbatim}[fontsize=\tiny]
 Ambient.freeEnergyComplexAlongExhaustion_eventualOverlapClosedBallBranchLocalViaDeviationRelCompact_directRange_patch
 Ambient.freeEnergyComplexAlongExhaustion_eventualOverlapClosedBallBranchLocalViaDeviationRelCompact_directRange_patch_of_isCompact
 \end{Verbatim}
@@ -4833,15 +4835,22 @@ then reuse the PR \#2761 direct closed-ball branch-deviation relatively
 compact range route.
 
 The concrete \(\mathbb Z^d\) wrappers are
-\begin{Verbatim}[fontsize=\footnotesize]
+\begin{Verbatim}[fontsize=\tiny]
 freeEnergyComplexAlongExhaustion_eventualOverlapClosedBallBranchLocalViaDeviationRelCompact_directRange_patch_latticeGraph
 freeEnergyComplexAlongExhaustion_eventualOverlapClosedBallBranchLocalViaDeviationRelCompact_directRange_patch_isCompact_latticeGraph
 \end{Verbatim}
-in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.  This
-records the closed-ball analogue of the local-bound-to-deviation
-triangle-inequality route for the eventual-overlap boundary.  It still does
-not construct eventual-overlap data, prove closed-ball containment, or prove
-branch local bounds, closedness, equicontinuity, or restriction identities.
+in the following child modules under
+\texttt{Concrete/LatticeGraphCorrelation/PerStageComplex}:
+\begin{Verbatim}[fontsize=\tiny]
+EventualClosedBallPatches/EventualClosedBallDeviation/LocalViaDeviation/Core.lean
+EventualClosedBallPatches/EventualClosedBallDeviation/LocalViaDeviation/CompactTarget.lean
+\end{Verbatim}
+They are re-exported by the old \texttt{LocalViaDeviation.lean} umbrella in
+the same directory.  This records the closed-ball analogue of the
+local-bound-to-deviation triangle-inequality route for the eventual-overlap
+boundary.  It still does not construct eventual-overlap data, prove
+closed-ball containment, or prove branch local bounds, closedness,
+equicontinuity, or restriction identities.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
