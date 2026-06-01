@@ -3934,15 +3934,18 @@ Ambient.freeEnergyComplexAlongExhaustion_finiteCoverBranchLimitFamily_compactOpe
 \end{Verbatim}
 then patch the finite Lee--Yang cover and, when one selected centre is the real
 field \(p.h\), identify the patched value with
-\(\texttt{freeEnergyInfinite}\).  The concrete \(\mathbb Z^d\) compact-open
-package and patch wrappers are implemented in
+\(\texttt{freeEnergyInfinite}\).  The concrete \(\mathbb Z^d\) direct patch
+wrappers and compact-open package/patch wrappers are implemented in
 \begin{Verbatim}
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  SubseqCompactOpen/FiniteCoverPatches/Patch/FiniteCover.lean
 Concrete/LatticeGraphCorrelation/PerStageComplex/
   BranchAscoliCompactOpen/RealCoverPatches/FiniteCover.lean
 Concrete/LatticeGraphCorrelation/PerStageComplex/
   BranchAscoliCompactOpen/RealCoverPatches/Patch.lean
 \end{Verbatim}
-and are re-exported through the legacy real-cover path.  The compact-open
+and are re-exported through the legacy finite-cover patch and real-cover
+paths.  The compact-open
 real-centre wrapper is implemented in
 \begin{Verbatim}
 Concrete/LatticeGraphCorrelation/PerStageComplex/
@@ -3991,10 +3994,17 @@ freeEnergyComplexAlongExhaustion_finiteRealCoverFamily_compactOpen_patch_lattice
 The first wrapper lives in
 \begin{Verbatim}
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  SubseqCompactOpen/FiniteCoverPatches/Patch.lean
+  SubseqCompactOpen/FiniteCoverPatches/Patch/RealCover.lean
 \end{Verbatim}
 and is re-exported by the old
-\texttt{SubseqCompactOpen/FiniteCoverPatches.lean} path.  The compact-open
+\begin{Verbatim}
+SubseqCompactOpen/FiniteCoverPatches/Patch.lean
+\end{Verbatim}
+and
+\begin{Verbatim}
+SubseqCompactOpen/FiniteCoverPatches.lean
+\end{Verbatim}
+paths.  The compact-open
 wrapper lives in
 \begin{Verbatim}
 Concrete/LatticeGraphCorrelation/PerStageComplex/
@@ -4040,10 +4050,17 @@ freeEnergyComplexAlongExhaustion_compactFiniteRealCover_cOpenPatch_latticeGraph
 The first wrapper lives in
 \begin{Verbatim}
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  SubseqCompactOpen/FiniteCoverPatches/Patch.lean
+  SubseqCompactOpen/FiniteCoverPatches/Patch/CompactTarget.lean
 \end{Verbatim}
 and is re-exported by the old
-\texttt{SubseqCompactOpen/FiniteCoverPatches.lean} path.  The compact-open
+\begin{Verbatim}
+SubseqCompactOpen/FiniteCoverPatches/Patch.lean
+\end{Verbatim}
+and
+\begin{Verbatim}
+SubseqCompactOpen/FiniteCoverPatches.lean
+\end{Verbatim}
+paths.  The compact-open
 wrapper lives in
 \begin{Verbatim}
 Concrete/LatticeGraphCorrelation/PerStageComplex/
