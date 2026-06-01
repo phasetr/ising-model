@@ -4789,7 +4789,7 @@ supplies the ordinary closed-ball branch-deviation overlap field from the
 underlying pointwise-normalised eventual-overlap data.
 
 The direct-range patch endpoints
-\begin{Verbatim}[fontsize=\footnotesize]
+\begin{Verbatim}[fontsize=\tiny]
 Ambient.freeEnergyComplexAlongExhaustion_eventualOverlapClosedBallBranchDeviationRelCompact_directRange_patch
 Ambient.freeEnergyComplexAlongExhaustion_eventualOverlapClosedBallBranchDeviationRelCompact_directRange_patch_of_isCompact
 \end{Verbatim}
@@ -4797,11 +4797,13 @@ convert through the direct closed-ball branch-deviation relatively compact
 range route and invoke the all-stage relatively compact range patch theorem.
 
 The concrete \(\mathbb Z^d\) wrappers are
-\begin{Verbatim}[fontsize=\footnotesize]
+\begin{Verbatim}[fontsize=\tiny]
 freeEnergyComplexAlongExhaustion_eventualOverlapClosedBallBranchDeviationRelCompact_directRange_patch_latticeGraph
 freeEnergyComplexAlongExhaustion_eventualOverlapClosedBallBranchDeviationRelCompact_directRange_patch_isCompact_latticeGraph
 \end{Verbatim}
-in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.  This
+in the \texttt{DirectRange/Core.lean} and
+\texttt{DirectRange/CompactTarget.lean} child modules, re-exported by the old
+\texttt{DirectRange.lean} umbrella path.  This
 removes the selected-overlap field from the closed-ball branch-deviation Ascoli
 boundary once pointwise-normalised eventual-overlap data is available.  It
 still does not construct that eventual-overlap data, prove closed-ball
