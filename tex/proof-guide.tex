@@ -8303,8 +8303,9 @@ $N := \sum_\sigma \sigma_A\, e^{-\beta H(\sigma)}$ expands by the same edge
 decomposition $e^{\beta J \sigma_e} = \cosh(\beta J)\,(1 + \tanh(\beta J)\sigma_e)$,
 subset expansion $\prod_{e \in E}(1 + x_e) = \sum_{X \subseteq E} \prod_{e \in X} x_e$,
 and $\sigma \leftrightarrow X$ Fubini swap used for $Z$, but with the spin
-insertion $\sigma_A$ carried through the $\sigma$-sum
-(\texttt{numerator\_spinProduct\_high\_temp\_expansion\_subset\_form}):
+insertion $\sigma_A$ carried through the $\sigma$-sum (the
+$F = \sigma_A$ case of
+\texttt{numerator\_observable\_high\_temp\_expansion\_subset\_form}):
 \[
 N = (\cosh \beta J)^{|E|}
    \sum_{X \subseteq E} \tanh(\beta J)^{|X|}
@@ -8329,6 +8330,27 @@ along-exhaustion layer
 in \texttt{AmbientLattice/SpecialCases/HighTemperatureBoundsExpansionClosedCorrelation.lean})
 through \(\langle\sigma_A\rangle^\Lambda = \langle\sigma_A\rangle\) on the
 induced subgraph.
+
+\paragraph{Arbitrary-observable master form.} The same expansion holds for an
+arbitrary observable \(F : \mathrm{Config}~\iota \to \mathbb{R}\)
+(\texttt{gibbsExpectation\_high\_temp\_expansion\_general\_h\_subset\_form}):
+\[
+\langle F \rangle_p =
+  \frac{\sum_{X \subseteq E} \tanh(\beta J)^{|X|}
+        \sum_\sigma F(\sigma) (\prod_{e \in X} \sigma_e) e^{\beta h \sum_i \sigma_i}}
+       {\sum_{X \subseteq E} \tanh(\beta J)^{|X|}
+        \sum_\sigma (\prod_{e \in X} \sigma_e) e^{\beta h \sum_i \sigma_i}}.
+\]
+This is the canonical GJ~\S18.3 high-temperature representation of thermal
+averages; the proof is identical, carrying \(F(\sigma)\) through the
+\(\sigma\)-sum in the public numerator lemma
+\texttt{numerator\_observable\_high\_temp\_expansion\_subset\_form} (whose
+\(F = 1\) case is the partition-function subset form). The correlation theorem
+above is the one-line specialisation \(F = \sigma_A\), and the magnetization
+\(\langle\sigma_i\rangle\) is \(F = \sigma_{\{i\}}\). The along-exhaustion lift
+\texttt{gibbsExpectationAlongExhaustion\_high\_temp\_expansion\_general\_h\_subset\_form}
+(\texttt{AmbientLattice/GibbsExpectationHighTempExpansion.lean}) carries it to
+the infinite-volume exhaustion.
 
 \begin{theorem}[\texttt{partitionFunction\_high\_temp\_expansion\_h\_zero\_lower\_bound}]
 For \(0 \le \beta J\),
