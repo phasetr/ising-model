@@ -8392,6 +8392,28 @@ likewise the three-point Ursell function
 are finite-volume lattice Ising identities (no continuum limit) furnishing the
 general-\(h\) foundation for connected-correlation decay.
 
+\paragraph{General-\(h\) exponential decay of the connected 2-point function
+(GJ~\S18.7, pp.~319--322).} On \(\mathbb{Z}^d\), for a ferromagnetic field
+\(\langle J,h,\beta\rangle\) with \(h\ge 0\) and distinct sites \(i\neq j\), the
+\emph{connected} two-point function \(\langle\sigma_i;\sigma_j\rangle =
+\texttt{truncated2Infinite}\) decays (unlike the full two-point function, which
+tends to \(\langle\sigma_i\rangle\langle\sigma_j\rangle\neq 0\)):
+\[
+\langle\sigma_i;\sigma_j\rangle_{\langle J,h,\beta\rangle}
+  \le (\beta J\cdot 2d)^n,\qquad n+1\le d_{\mathbb{Z}^d}(i,j),
+\]
+with high-temperature exponential forms
+\(\le e^{-(-\log(\beta J\cdot 2d))\,n}\) and the half-rate full-distance form
+\(\le e^{-\tfrac12(-\log(\beta J\cdot 2d))\,d_{\mathbb{Z}^d}(i,j)}\) for
+\(d_{\mathbb{Z}^d}(i,j)\ge 2\). The proof composes three existing facts: GHS
+field-monotonicity (\texttt{truncated2Infinite\_antitoneOn\_h\_of\_ne}: the
+connected 2-point is antitone in \(h\) on \([0,\infty)\), so
+\(\le\) its \(h=0\) value), the \(h=0\) collapse
+\(\texttt{truncated2Infinite\_h\_zero}\) (\(=\langle\sigma_i\sigma_j\rangle_{h=0}\)
+since \(\langle\sigma_i\rangle=0\) by \(\mathbb{Z}_2\) symmetry), and the
+existing \(h=0\) Simon--Lieb decay of the full two-point function
+(\texttt{Truncated2GeneralFieldDecay.lean}). Lattice Ising, no continuum limit.
+
 \begin{theorem}[\texttt{partitionFunction\_high\_temp\_expansion\_h\_zero\_lower\_bound}]
 For \(0 \le \beta J\),
 \(Z(G; J, 0, \beta) \ge 2^{|\iota|} \cdot (\cosh(\beta J))^{|E|}.\)
