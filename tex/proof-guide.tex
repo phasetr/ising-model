@@ -4309,10 +4309,14 @@ freeEnergyComplexAlongExhaustion_branchLimitData_localCover_patch_latticeGraph
 \end{Verbatim}
 in the patch child
 \begin{Verbatim}
-StructuredPatch/Patch.lean
+StructuredPatch/Patch/Data.lean
 \end{Verbatim}
-and re-exported by \texttt{StructuredPatch.lean} and
-\texttt{LocalCoverPatch.lean}.
+and re-exported by the legacy chain
+\begin{Verbatim}
+StructuredPatch/Patch.lean
+StructuredPatch.lean
+LocalCoverPatch.lean
+\end{Verbatim}
 
 This is still a conditional post-extraction handoff.  It makes the local-cover
 input easier to pass around, but it does not prove coherent branch selection,
@@ -4399,11 +4403,12 @@ freeEnergyComplexAlongExhaustion_branchLimitFamily_localCover_real_latticeGraph
 \end{Verbatim}
 split between the children
 \begin{Verbatim}
-StructuredPatch/Patch.lean
+StructuredPatch/Patch/Family.lean
 StructuredPatch/Real/Family.lean
 \end{Verbatim}
 and re-exported by the legacy chain
 \begin{Verbatim}
+StructuredPatch/Patch.lean
 StructuredPatch/Real.lean
 StructuredPatch.lean
 LocalCoverPatch.lean
