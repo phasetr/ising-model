@@ -6207,11 +6207,12 @@ The wrapper
 Ambient.freeEnergyComplexAlongExhaustion_branchData_localCover_real
 \end{Verbatim}
 then composes this packaging with the PR \#2704 real-centred endpoint.  It
-returns a \texttt{LeeYangRealBranchLimitFamily} and a differentiable global
-patch on \texttt{leeYangDomain}; the patch agrees directly with each raw
-local limit \(f_{h_0}\) on \(B(h_0,r(h_0))\), agrees with the packaged
-local limits, and has value \texttt{freeEnergyInfinite} at \(p.h\).  The
-concrete \(\mathbb Z^d\) wrappers are
+returns a real-centred branch-limit family and a differentiable global patch
+on the Lee-Yang domain.  The patch agrees directly with each raw local limit
+\(f_{h_0}\) on \(B(h_0,r(h_0))\), agrees with the packaged local limits, and
+has value \texttt{freeEnergyInfinite} at \(p.h\).
+
+The concrete \(\mathbb Z^d\) wrappers are
 \begin{Verbatim}
 exists_leeYangLocalBranchLimitFamily_of_branchData_latticeGraph
 exists_leeYangRealBranchLimitFamily_of_branchData_latticeGraph
@@ -6220,10 +6221,14 @@ freeEnergyComplexAlongExhaustion_branchData_localCover_real_latticeGraph
 The first two branch-family wrappers now live in
 \begin{Verbatim}
 Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap/
-  RawBranchData.lean
+  RawBranchData/LocalFamily.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap/
+  RawBranchData/RealFamily.lean
 \end{Verbatim}
-and are re-exported by the old
+and are re-exported by the legacy chain
 \begin{Verbatim}
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap/
+  RawBranchData.lean
 Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap.lean
 \end{Verbatim}
 path.  The real local-cover patch wrapper now lives in
