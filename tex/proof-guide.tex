@@ -6818,16 +6818,21 @@ The concrete \(\mathbb Z^d\) wrappers are
 exists_finset_cover_of_isCompact_leeYangLocalBranchLimitFamily_latticeGraph
 exists_finset_cover_of_isCompact_leeYangRealBranchLimitFamily_latticeGraph
 \end{Verbatim}
-in
+split between the children
+\begin{Verbatim}
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact/
+  CompactGeometry/FinsetCover/LocalFamily.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact/
+  CompactGeometry/FinsetCover/RealFamily.lean
+\end{Verbatim}
+and are re-exported by the legacy chain
 \begin{Verbatim}
 Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact/
   CompactGeometry/FinsetCover.lean
-\end{Verbatim}
-and are re-exported by the old
-\begin{Verbatim}
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact/
+  CompactGeometry.lean
 Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact.lean
 \end{Verbatim}
-path.
 
 This is the compactness finite-subcover step for an already packaged local
 cover.  It does not prove Montel compactness, coherent branch choices,
