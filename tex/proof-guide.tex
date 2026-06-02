@@ -8352,6 +8352,27 @@ above is the one-line specialisation \(F = \sigma_A\), and the magnetization
 (\texttt{AmbientLattice/GibbsExpectationHighTempExpansion.lean}) carries it to
 the infinite-volume exhaustion.
 
+\paragraph{External-field response in subset form (GJ~\S17.6, pp.~348--351;
+\S18.3, pp.~378--386).}
+The GJ~\S17.6 fluctuation-response derivative
+\[
+\frac{\partial}{\partial h}\langle\sigma_A\rangle_h
+  = \beta\bigl(\langle\sigma_A M\rangle_h - \langle\sigma_A\rangle_h\langle M\rangle_h\bigr),
+  \qquad M(\sigma) = \textstyle\sum_i \sigma_i,
+\]
+combined with the master subset form, expresses the response coefficient
+entirely as ratios of subset sums over the common denominator
+\(D = \sum_{X\subseteq E}\tanh(\beta J)^{|X|}\sum_\sigma(\prod_{e\in X}\sigma_e)e^{\beta h\sum_i\sigma_i}\):
+each thermal average \(\langle\sigma_A M\rangle\), \(\langle\sigma_A\rangle\),
+\(\langle M\rangle\) is rewritten through
+\texttt{gibbsExpectation\_high\_temp\_expansion\_general\_h\_subset\_form}.
+This is \texttt{hasDerivAt\_correlation\_field\_high\_temp\_subset\_form}
+(\texttt{PhaseTransition/FieldResponseHighTemp.lean}); the magnetization
+specialisation \(A=\{i\}\),
+\texttt{hasDerivAt\_magnetization\_field\_high\_temp\_subset\_form}, gives the
+local field susceptibility \(\partial\langle\sigma_i\rangle/\partial h\), and
+connects the \S5.3/\S17.6 susceptibility machinery to the \S18.3 expansion.
+
 \begin{theorem}[\texttt{partitionFunction\_high\_temp\_expansion\_h\_zero\_lower\_bound}]
 For \(0 \le \beta J\),
 \(Z(G; J, 0, \beta) \ge 2^{|\iota|} \cdot (\cosh(\beta J))^{|E|}.\)
