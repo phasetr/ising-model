@@ -4296,10 +4296,14 @@ freeEnergyComplexAlongExhaustion_branchLimitData_localCover_real_latticeGraph
 \end{Verbatim}
 in the real-axis child
 \begin{Verbatim}
-StructuredPatch/Real.lean
+StructuredPatch/Real/Data.lean
 \end{Verbatim}
-and re-exported by \texttt{StructuredPatch.lean} and
-\texttt{LocalCoverPatch.lean}.
+and re-exported by the legacy chain
+\begin{Verbatim}
+StructuredPatch/Real.lean
+StructuredPatch.lean
+LocalCoverPatch.lean
+\end{Verbatim}
 
 This is still a conditional post-extraction handoff: compatibility of the
 packaged local limits and the coherent local-cover extraction remain external
@@ -4342,10 +4346,14 @@ freeEnergyComplexAlongExhaustion_branchLimitFamily_localCover_real_latticeGraph
 split between the children
 \begin{Verbatim}
 StructuredPatch/Patch.lean
-StructuredPatch/Real.lean
+StructuredPatch/Real/Family.lean
 \end{Verbatim}
-and re-exported by \texttt{StructuredPatch.lean} and
-\texttt{LocalCoverPatch.lean}.
+and re-exported by the legacy chain
+\begin{Verbatim}
+StructuredPatch/Real.lean
+StructuredPatch.lean
+LocalCoverPatch.lean
+\end{Verbatim}
 
 This remains conditional and post-extraction.  The new structure removes the
 last loose compatibility argument from downstream APIs, but it does not prove
@@ -4388,10 +4396,14 @@ freeEnergyComplexAlongExhaustion_realBranchLimitFamily_localCover_real_latticeGr
 \end{Verbatim}
 in the real-axis child
 \begin{Verbatim}
-StructuredPatch/Real.lean
+StructuredPatch/Real/RealFamily.lean
 \end{Verbatim}
-and re-exported by \texttt{StructuredPatch.lean} and
-\texttt{LocalCoverPatch.lean}.
+and re-exported by the legacy chain
+\begin{Verbatim}
+StructuredPatch/Real.lean
+StructuredPatch.lean
+LocalCoverPatch.lean
+\end{Verbatim}
 
 This is still a conditional post-extraction handoff.  It does not prove
 Montel compactness or construct the family; it names the exact real-centred
