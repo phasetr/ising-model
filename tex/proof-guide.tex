@@ -8284,6 +8284,52 @@ cancels the prefactor $2^{|\iota|} (\cosh \beta J)^{|E|}$.
 \texttt{correlation\LeanLambda\_latticeGraph\_high\_temp\_expansion\_h\_zero\_closed}
 in \texttt{Concrete/LatticeGraphCorrelation/HighTemperatureBounds.lean}).
 
+\begin{theorem}[\texttt{correlation\_high\_temp\_expansion\_general\_h\_subset\_form}; GJ~\S18.3/\S18.5]
+For any $A \subseteq \iota$, any finite simple graph $G = (\iota, E)$, and
+any Ising parameter $p = (J, h, \beta)$,
+\[
+\langle \sigma_A \rangle_p =
+  \frac{\sum_{X \subseteq E} \tanh(\beta J)^{|X|}
+        \sum_\sigma \sigma_A \bigl(\prod_{e \in X} \sigma_e\bigr)
+          e^{\beta h \sum_i \sigma_i}}
+       {\sum_{X \subseteq E} \tanh(\beta J)^{|X|}
+        \sum_\sigma \bigl(\prod_{e \in X} \sigma_e\bigr)
+          e^{\beta h \sum_i \sigma_i}}.
+\]
+\end{theorem}
+
+\textit{Proof.} The numerator
+$N := \sum_\sigma \sigma_A\, e^{-\beta H(\sigma)}$ expands by the same edge
+decomposition $e^{\beta J \sigma_e} = \cosh(\beta J)\,(1 + \tanh(\beta J)\sigma_e)$,
+subset expansion $\prod_{e \in E}(1 + x_e) = \sum_{X \subseteq E} \prod_{e \in X} x_e$,
+and $\sigma \leftrightarrow X$ Fubini swap used for $Z$, but with the spin
+insertion $\sigma_A$ carried through the $\sigma$-sum
+(\texttt{numerator\_spinProduct\_high\_temp\_expansion\_subset\_form}):
+\[
+N = (\cosh \beta J)^{|E|}
+   \sum_{X \subseteq E} \tanh(\beta J)^{|X|}
+   \sum_\sigma \sigma_A \Bigl(\prod_{e \in X} \sigma_e\Bigr) e^{\beta h \sum_i \sigma_i}.
+\]
+At general $h$ the field factor $e^{\beta h \sum_i \sigma_i}$ blocks the
+$\{\pm 1\}$ parity cancellation that, at $h = 0$, reduces the inner
+$\sigma$-sum to the even-subgraph boundary indicator $\partial X = A$.
+The matching denominator is
+\texttt{partitionFunction\_high\_temp\_expansion\_subset\_form}; dividing
+cancels the common prefactor $(\cosh \beta J)^{|E|}$ via
+\texttt{inv\_mul\_cancel}$_0$, using only $\cosh(\beta J) \neq 0$ (no
+nonvanishing hypothesis on the denominator). At $h = 0$ this specialises to
+FV~(3.46) above.
+\hfill$\square$
+
+\paragraph{Wrappers.} Lifted to the \(\Lambda\)-layer
+(\texttt{correlation\LeanLambda\_high\_temp\_expansion\_general\_h\_subset\_form}
+in \texttt{AmbientLattice/Defs/HighTempPartition/ClosedForms.lean}) and the
+along-exhaustion layer
+(\texttt{correlationAlongExhaustion\_high\_temp\_expansion\_general\_h\_subset\_form}
+in \texttt{AmbientLattice/SpecialCases/HighTemperatureBoundsExpansionClosedCorrelation.lean})
+through \(\langle\sigma_A\rangle^\Lambda = \langle\sigma_A\rangle\) on the
+induced subgraph.
+
 \begin{theorem}[\texttt{partitionFunction\_high\_temp\_expansion\_h\_zero\_lower\_bound}]
 For \(0 \le \beta J\),
 \(Z(G; J, 0, \beta) \ge 2^{|\iota|} \cdot (\cosh(\beta J))^{|E|}.\)

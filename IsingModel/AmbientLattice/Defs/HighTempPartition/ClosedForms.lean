@@ -189,6 +189,39 @@ theorem correlationΛ_high_temp_expansion_h_zero_closed
   exact IsingModel.correlation_high_temp_expansion_h_zero_closed
     (inducedGraph G Λ) J β A
 
+/-- **Λ-level general external-field high-temperature correlation expansion
+(GJ §18.3/§18.5)**: on the induced subgraph `inducedGraph G Λ` and any Ising
+parameter `p = (J, h, β)`,
+\[
+\langle \sigma_A \rangle^\Lambda_{p}
+  = \frac{\sum_{X \subseteq E_\Lambda} (\tanh\beta J)^{|X|}
+      \sum_\sigma \sigma_A (\prod_{e \in X} \sigma_e) \exp(\beta h \sum_i \sigma_i)}
+         {\sum_{X \subseteq E_\Lambda} (\tanh\beta J)^{|X|}
+      \sum_\sigma (\prod_{e \in X} \sigma_e) \exp(\beta h \sum_i \sigma_i)}.
+\]
+General external-field counterpart of
+`correlationΛ_high_temp_expansion_h_zero_closed`; direct lift of
+`IsingModel.correlation_high_temp_expansion_general_h_subset_form`
+through `correlationΛ = correlation (inducedGraph G Λ)`. -/
+theorem correlationΛ_high_temp_expansion_general_h_subset_form
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet]
+    (p : IsingParams ℝ) (A : Finset ↑Λ) :
+    correlationΛ G Λ p A
+      = (∑ X ∈ (inducedGraph G Λ).edgeFinset.powerset,
+          Real.tanh (p.β * p.J) ^ X.card *
+            ∑ σ : Config ↑Λ,
+              spinProduct A σ * (∏ e ∈ X, edgeSpin (K := ℝ) σ e) *
+              Real.exp (p.β * p.h * ∑ i : ↑Λ, Spin.sign ℝ (σ i))) /
+        (∑ X ∈ (inducedGraph G Λ).edgeFinset.powerset,
+          Real.tanh (p.β * p.J) ^ X.card *
+            ∑ σ : Config ↑Λ,
+              (∏ e ∈ X, edgeSpin (K := ℝ) σ e) *
+              Real.exp (p.β * p.h * ∑ i : ↑Λ, Spin.sign ℝ (σ i))) := by
+  rw [correlationΛ_apply]
+  exact IsingModel.correlation_high_temp_expansion_general_h_subset_form
+    (inducedGraph G Λ) p A
+
 
 end Ambient
 
