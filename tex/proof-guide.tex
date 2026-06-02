@@ -7191,10 +7191,14 @@ Bounded edge density replaces the edge ratio by the single constant $c$.
 The concrete $\mathbb Z^d$ wrappers live in
 \begin{Verbatim}[fontsize=\footnotesize]
 Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds/
-  UpperLog.lean
+  UpperLog/CompactUpper.lean
 \end{Verbatim}
-and are re-exported through the legacy
-\texttt{PerStageComplex/Bounds.lean} path.
+and are re-exported through the legacy paths
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds/
+  UpperLog.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds.lean
+\end{Verbatim}
 
 This is not yet the absolute normalised-log bound used by PR \#2679 and
 PR \#2680: it supplies only an upper bound for
@@ -7324,10 +7328,14 @@ packages one constant $C$ for all stages and all fields in a set $K$.  The
 concrete $\mathbb Z^d$ wrappers live in
 \begin{Verbatim}[fontsize=\footnotesize]
 Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds/
-  UpperLog.lean
+  UpperLog/AbsLogFreeEnergy.lean
 \end{Verbatim}
-and are re-exported through the legacy
-\texttt{PerStageComplex/Bounds.lean} path.
+and are re-exported through the legacy paths
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds/
+  UpperLog.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds.lean
+\end{Verbatim}
 
 This is intentionally a conditional handoff.  It identifies the missing
 normal-family input after the compact $Z$ envelope of PR \#2678: one still
@@ -7360,10 +7368,14 @@ using \texttt{Fintype.card\_pos} in Lean.  The concrete $\mathbb Z^d$ wrapper
 lives in
 \begin{Verbatim}[fontsize=\footnotesize]
 Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds/
-  UpperLog.lean
+  UpperLog/AbsLogFreeEnergy.lean
 \end{Verbatim}
-and is re-exported through the legacy
-\texttt{PerStageComplex/Bounds.lean} path.
+and is re-exported through the legacy paths
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds/
+  UpperLog.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds.lean
+\end{Verbatim}
 
 This theorem packages the exact locally bounded family shape that a later
 Montel/normal-family argument can consume.  It remains conditional on the
