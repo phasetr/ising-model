@@ -3672,8 +3672,11 @@ The concrete \(\mathbb Z^d\) wrapper now lives in
 \begin{Verbatim}[fontsize=\footnotesize]
 SubseqCompactOpen/CompactOpenVitali/FiniteDiagonal/TwoBall.lean
 \end{Verbatim}
-under \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex}, and is
-re-exported by the old
+under
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex
+\end{Verbatim}
+and is re-exported by the old
 \begin{Verbatim}[fontsize=\footnotesize]
 SubseqCompactOpen/CompactOpenVitali/FiniteDiagonal.lean
 \end{Verbatim}
@@ -3927,9 +3930,11 @@ It now lives in
 \begin{Verbatim}[fontsize=\footnotesize]
 SubseqCompactOpen/FiniteCoverPatches/CompactOpen.lean
 \end{Verbatim}
-under \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex}, and is
-re-exported by the old
-\texttt{SubseqCompactOpen/FiniteCoverPatches.lean} path.
+under the concrete per-stage complex directory, and is re-exported by the old
+\begin{Verbatim}[fontsize=\footnotesize]
+SubseqCompactOpen/FiniteCoverPatches.lean
+\end{Verbatim}
+path.
 
 This remains a finite, explicit-hypothesis handoff.  It removes the separate
 manual step of first extracting a packaged finite family and then applying the
@@ -4467,10 +4472,15 @@ Concrete/LatticeGraphCorrelation/PerStageComplex/
 Concrete/LatticeGraphCorrelation/PerStageComplex/
   Branches/StageLeeYang/Stage/Ball.lean
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  Branches/StageLeeYang/AllStages.lean
+  Branches/StageLeeYang/AllStages/Pointwise.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Branches/StageLeeYang/AllStages/Ball.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Branches/StageLeeYang/AllStages/Strong.lean
 \end{Verbatim}
 and re-exported through the legacy
 \begin{Verbatim}[fontsize=\footnotesize]
+Branches/StageLeeYang/AllStages.lean
 Branches/StageLeeYang.lean
 PerStageComplex/Branches.lean
 \end{Verbatim}
@@ -4516,8 +4526,11 @@ wrapper lives in
 \begin{Verbatim}[fontsize=\footnotesize]
 SubseqCompactOpen/FiniteCoverPatches/CompactOpen.lean
 \end{Verbatim}
-under \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex}, and is
-re-exported by the old
+under
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex
+\end{Verbatim}
+and is re-exported by the old
 \texttt{SubseqCompactOpen/FiniteCoverPatches.lean} path.
 
 This bridge remains finite and conditional.  It assumes compact-open
