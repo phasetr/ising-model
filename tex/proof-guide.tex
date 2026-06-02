@@ -4401,7 +4401,24 @@ each centre and stage.  The concrete \(\mathbb Z^d\) wrapper is
 \begin{Verbatim}
 exists_leeYangPointwiseNormalisedAllStageBranchData_of_positive_real_latticeGraph
 \end{Verbatim}
-in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+in
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Branches/StageLeeYang/BranchData.lean
+\end{Verbatim}
+with related stage and all-stage branch wrappers split into
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Branches/StageLeeYang/Stage.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Branches/StageLeeYang/AllStages.lean
+\end{Verbatim}
+and re-exported through the legacy
+\begin{Verbatim}[fontsize=\footnotesize]
+Branches/StageLeeYang.lean
+PerStageComplex/Branches.lean
+\end{Verbatim}
+paths.
 
 This is an unconditional pre-Montel package.  It still does not provide
 locally uniform subsequential limits, compactness of the branch families, or
