@@ -8416,6 +8416,20 @@ existing \(h=0\) Simon--Lieb decay of the full two-point function
 live in \texttt{Truncated2GeneralFieldDecay.lean}. Lattice Ising, no continuum
 limit.
 
+\paragraph{General-\(h\) cluster property (GJ~\S18.7).} For \(0<J\),
+\(0\le h\), \(0<\beta\) and \(\beta J\cdot 2d<1\) on \(\mathbb{Z}^d\), the
+connected two-point function clusters: \(j\mapsto\langle\sigma_i;\sigma_j\rangle
+\to 0\) along the cofinite filter (as \(d_{\mathbb{Z}^d}(i,j)\to\infty\)). The
+existing \(h=0\) exponential-decay witness
+(\texttt{hasExponentialDecay\_latticeGraph\_of\_betaJ\_two\_d\_lt\_one}) is
+lifted to general \(h\) by GHS field-monotonicity — the same constant and rate
+\(-\log(\beta J\cdot 2d)\) work since
+\(0\le\langle\sigma_i;\sigma_j\rangle_h\le\langle\sigma_i;\sigma_j\rangle_0\)
+for \(h\ge 0\) and \(i\neq j\) — and fed into the existing squeeze-based
+\texttt{clusterProperty\_latticeGraph\_of\_HasExponentialDecay}
+(\texttt{Truncated2GeneralFieldCluster.lean}). Lattice Ising, no continuum
+limit.
+
 \begin{theorem}[\texttt{partitionFunction\_high\_temp\_expansion\_h\_zero\_lower\_bound}]
 For \(0 \le \beta J\),
 \(Z(G; J, 0, \beta) \ge 2^{|\iota|} \cdot (\cosh(\beta J))^{|E|}.\)
