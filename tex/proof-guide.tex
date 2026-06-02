@@ -3972,10 +3972,11 @@ freeEnergyComplexAlongExhaustion_finiteCompactOpenBranchLimitFamily_patch_lattic
 \end{Verbatim}
 It now lives in
 \begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/FiniteCoverPatches/CompactOpen.lean
+SubseqCompactOpen/FiniteCoverPatches/CompactOpen/FiniteFamily.lean
 \end{Verbatim}
 under the concrete per-stage complex directory, and is re-exported by the old
 \begin{Verbatim}[fontsize=\footnotesize]
+SubseqCompactOpen/FiniteCoverPatches/CompactOpen.lean
 SubseqCompactOpen/FiniteCoverPatches.lean
 \end{Verbatim}
 path.
@@ -4579,14 +4580,18 @@ and is re-exported by the old
 \texttt{SubseqCompactOpen/FiniteSubseqCompactOpen.lean} path.  The patch
 wrapper lives in
 \begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/FiniteCoverPatches/CompactOpen.lean
+SubseqCompactOpen/FiniteCoverPatches/CompactOpen/Pointwise.lean
 \end{Verbatim}
 under
 \begin{Verbatim}[fontsize=\footnotesize]
 Concrete/LatticeGraphCorrelation/PerStageComplex
 \end{Verbatim}
 and is re-exported by the old
-\texttt{SubseqCompactOpen/FiniteCoverPatches.lean} path.
+\begin{Verbatim}[fontsize=\footnotesize]
+SubseqCompactOpen/FiniteCoverPatches/CompactOpen.lean
+SubseqCompactOpen/FiniteCoverPatches.lean
+\end{Verbatim}
+paths.
 
 This bridge remains finite and conditional.  It assumes compact-open
 compactness of the selected continuous restrictions and explicit eventual
