@@ -1,3 +1,4 @@
+import IsingModel.Conditioning.CorrelationClosed.GeneralField
 import IsingModel.Conditioning.CorrelationClosed.PairBound
 
 /-!

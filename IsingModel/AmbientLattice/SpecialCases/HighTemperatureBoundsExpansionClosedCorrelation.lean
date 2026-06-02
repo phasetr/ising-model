@@ -72,6 +72,37 @@ theorem correlationAlongExhaustion_high_temp_expansion_h_zero_closed
   exact correlationΛ_high_temp_expansion_h_zero_closed G (Λ.volume n) J β
     (liftFinset A hAn)
 
+/-- **Along-exhaustion general external-field high-temperature correlation
+expansion (GJ §18.3/§18.5)**: at every stage `n` with `A ⊆ Λ.volume n` and
+any Ising parameter `p = (J, h, β)`, the per-stage correlation admits the
+general-`h` subset ratio form whose inner σ-sums carry the field weight
+`exp(β h ∑_i σ_i)`. When `A ⊄ Λ.volume n`, the along-exhaustion correlation
+is `0` by definition.
+
+For the `A ⊆` case, lifts via `liftFinset` and applies
+`correlationΛ_high_temp_expansion_general_h_subset_form`. General
+external-field counterpart of
+`correlationAlongExhaustion_high_temp_expansion_h_zero_closed`. -/
+theorem correlationAlongExhaustion_high_temp_expansion_general_h_subset_form
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (A : Finset V) (n : ℕ) (hAn : A ⊆ Λ.volume n) :
+    correlationAlongExhaustion G Λ p A n =
+      (∑ X ∈ (inducedGraph G (Λ.volume n)).edgeFinset.powerset,
+        Real.tanh (p.β * p.J) ^ X.card *
+          ∑ σ : Config ↑(Λ.volume n),
+            spinProduct (liftFinset A hAn) σ * (∏ e ∈ X, edgeSpin (K := ℝ) σ e) *
+            Real.exp (p.β * p.h * ∑ i : ↑(Λ.volume n), Spin.sign ℝ (σ i))) /
+      (∑ X ∈ (inducedGraph G (Λ.volume n)).edgeFinset.powerset,
+        Real.tanh (p.β * p.J) ^ X.card *
+          ∑ σ : Config ↑(Λ.volume n),
+            (∏ e ∈ X, edgeSpin (K := ℝ) σ e) *
+            Real.exp (p.β * p.h * ∑ i : ↑(Λ.volume n), Spin.sign ℝ (σ i))) := by
+  unfold correlationAlongExhaustion
+  rw [dif_pos hAn]
+  exact correlationΛ_high_temp_expansion_general_h_subset_form G (Λ.volume n) p
+    (liftFinset A hAn)
+
 end Ambient
 
 end IsingModel
