@@ -3329,6 +3329,21 @@ The proof uses mathlib's pointwise consequence
 formalised real-axis convergence of
 \texttt{freeEnergyComplexAlongExhaustion}, and uniqueness of limits in
 the Hausdorff space $\mathbb C$.
+The concrete \(\mathbb Z^d\) non-real wrappers now live in
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Branches/VitaliBridge/Bridge/OpenSet.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Branches/VitaliBridge/Bridge/LeeYangDomain.lean
+\end{Verbatim}
+and the real-axis wrappers live in
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Branches/VitaliBridge/Real/Limit.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Branches/VitaliBridge/Real/Identified.lean
+\end{Verbatim}
+with the old Vitali bridge and branches import paths kept as re-exports.
 \end{theorem}
 
 \begin{theorem}[Per-stage Lee-Yang local branches for the Vitali input; PR \#2674]
