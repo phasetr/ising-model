@@ -3460,8 +3460,10 @@ Uniqueness of limits identifies
   f(p.h)=\texttt{freeEnergyInfinite}\,G\,\Lambda\,p .
 \]
 The concrete $\mathbb Z^d$ wrappers live in
-\texttt{Branches/LocalCoverPatch/Vitali.lean}
-and are re-exported by the old \texttt{Branches/LocalCoverPatch.lean} path.
+\texttt{Branches/LocalCoverPatch/Vitali/Ball.lean}
+and are re-exported by the old
+\texttt{Branches/LocalCoverPatch/Vitali.lean} and
+\texttt{Branches/LocalCoverPatch.lean} paths.
 
 This result does not construct the coherent branch family or prove its local
 uniform convergence.  It records the exact local theorem that can consume that
@@ -3491,7 +3493,9 @@ point and converts holomorphicity on the containing ball into
 within-domain differentiability.
 
 The real-centre theorem
-\texttt{freeEnergyComplexAlongExhaustion\_branchFamily\_vitali\_localCover\_real}
+\begin{Verbatim}[breaklines=true,breakanywhere=true]
+freeEnergyComplexAlongExhaustion_branchFamily_vitali_localCover_real
+\end{Verbatim}
 adds the Fekete identification at a real Lee--Yang point $p.h$, assuming
 \texttt{BoundedEdgeDensity} for $(G,\Lambda)$,
 \texttt{DisjointTowerHypotheses} for $(G,\Lambda,p)$, and
@@ -3502,11 +3506,23 @@ $(p.h:\mathbb C)\in\texttt{leeYangDomain}$:
 It selects the local ball supplied by the cover at $p.h$ and reuses the
 PR \#2676 centre-identification theorem.  The non-real concrete $\mathbb Z^d$
 wrapper lives in
-\texttt{Branches/LocalCoverPatch/Vitali.lean};
-the real wrapper lives in
-\texttt{Branches/RealCompact/Vitali.lean}
+\begin{Verbatim}[breaklines=true,breakanywhere=true]
+Branches/LocalCoverPatch/Vitali/LocalCover.lean
+\end{Verbatim}
+It is re-exported by the old
+\begin{Verbatim}[breaklines=true,breakanywhere=true]
+Branches/LocalCoverPatch/Vitali.lean
+Branches/LocalCoverPatch.lean
+\end{Verbatim}
+paths.  The real wrapper lives in
+\begin{Verbatim}[breaklines=true,breakanywhere=true]
+Branches/RealCompact/Vitali.lean
+\end{Verbatim}
 and is re-exported by the old
-\texttt{Branches/RealCompact.lean} path.
+\begin{Verbatim}[breaklines=true,breakanywhere=true]
+Branches/RealCompact.lean
+\end{Verbatim}
+path.
 
 This result still does not construct the coherent local cover or prove local
 uniform convergence; it records the global conditional handoff that such a
