@@ -6494,21 +6494,26 @@ The concrete \(\mathbb Z^d\) wrappers are
 freeEnergyComplexAlongExhaustion_eventualOverlapBranchData_localCover_patch_latticeGraph
 freeEnergyComplexAlongExhaustion_pointwiseNormEventualData_localCover_patch_latticeGraph
 \end{Verbatim}
-in
+split between the children
+\begin{Verbatim}
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap/
+  LocalCoverPatch/Patch/Structured.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap/
+  LocalCoverPatch/Patch/Pointwise.lean
+\end{Verbatim}
+and are re-exported by the legacy chain
 \begin{Verbatim}
 Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap/
   LocalCoverPatch/Patch.lean
 \end{Verbatim}
-and are re-exported by the old
 \begin{Verbatim}
 Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap/
   LocalCoverPatch.lean
 \end{Verbatim}
-and
 \begin{Verbatim}
 Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap.lean
 \end{Verbatim}
-path.
+paths.
 
 This remains conditional and post-Montel.  It patches already supplied
 coherent eventual-overlap data, but does not construct coherent branches,
