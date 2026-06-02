@@ -3860,15 +3860,18 @@ freeEnergyComplexAlongExhaustion_finiteSubseqBranchLimitFamily_patch_latticeGrap
 \end{Verbatim}
 The compact-open package wrapper now lives in
 \begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/FiniteSubseqCompactOpen/CompactOpen.lean
+SubseqCompactOpen/FiniteSubseqCompactOpen/CompactOpen/FiniteFamily.lean
 \end{Verbatim}
 The patch wrapper now lives in
 \begin{Verbatim}[fontsize=\footnotesize]
 SubseqCompactOpen/FiniteSubseqCompactOpen/Patch.lean
 \end{Verbatim}
 under \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex}; both are
-re-exported by the old
-\texttt{SubseqCompactOpen/FiniteSubseqCompactOpen.lean} path.
+re-exported by the old paths
+\begin{Verbatim}[fontsize=\footnotesize]
+SubseqCompactOpen/FiniteSubseqCompactOpen/CompactOpen.lean
+SubseqCompactOpen/FiniteSubseqCompactOpen.lean
+\end{Verbatim}
 
 This is still a finite, explicit-hypothesis handoff.  It does not prove Montel
 compactness or construct a coherent \(\texttt{leeYangDomain}\)-cover; it only
@@ -4574,11 +4577,14 @@ freeEnergyComplexAlongExhaustion_pointwiseNormAllStageData_finCompactOpen_patch_
 \end{Verbatim}
 The package wrapper lives in
 \begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/FiniteSubseqCompactOpen/CompactOpen.lean
+SubseqCompactOpen/FiniteSubseqCompactOpen/CompactOpen/Pointwise.lean
 \end{Verbatim}
-and is re-exported by the old
-\texttt{SubseqCompactOpen/FiniteSubseqCompactOpen.lean} path.  The patch
-wrapper lives in
+and is re-exported by the old paths
+\begin{Verbatim}[fontsize=\footnotesize]
+SubseqCompactOpen/FiniteSubseqCompactOpen/CompactOpen.lean
+SubseqCompactOpen/FiniteSubseqCompactOpen.lean
+\end{Verbatim}
+The patch wrapper lives in
 \begin{Verbatim}[fontsize=\footnotesize]
 SubseqCompactOpen/FiniteCoverPatches/CompactOpen/Pointwise.lean
 \end{Verbatim}
