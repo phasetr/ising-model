@@ -3673,11 +3673,15 @@ identifies the centre value with the real infinite-volume free energy:
 \]
 The concrete \(\mathbb Z^d\) wrappers now live in
 \begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/CompactOpenVitali/Ball.lean
+SubseqCompactOpen/CompactOpenVitali/Ball/Bridge.lean
+SubseqCompactOpen/CompactOpenVitali/Ball/Real.lean
 \end{Verbatim}
 under \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex}, and are
-re-exported by the old
-\texttt{SubseqCompactOpen/CompactOpenVitali.lean} path.
+re-exported by the old paths
+\begin{Verbatim}[fontsize=\footnotesize]
+SubseqCompactOpen/CompactOpenVitali/Ball.lean
+SubseqCompactOpen/CompactOpenVitali.lean
+\end{Verbatim}
 
 This result still does not prove Montel compactness of the branch family, nor
 does it perform the diagonal extraction needed for a coherent local cover of
