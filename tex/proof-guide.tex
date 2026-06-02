@@ -3368,10 +3368,19 @@ of the ball and
   \exp(|\Lambda_n|\,f(z))=Z_{\Lambda_n}(z).
 \]
 The all-stages form
-\texttt{freeEnergyComplexAlongExhaustion\_analyticOnNhd\_branch\_ball\_all\_stages}
+\begin{Verbatim}
+freeEnergyComplexAlongExhaustion_analyticOnNhd_branch_ball_all_stages
+\end{Verbatim}
 packages this for every nonempty stage.  The concrete $\mathbb Z^d$
 specializations are recorded in
-\texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Branches/StageLeeYang/Stage/Ball/Basic.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Branches/StageLeeYang/AllStages/Ball.lean
+\end{Verbatim}
+with the old ball, all-stage, stage-Lee--Yang, and branches import paths
+kept as re-exports.
 
 These are local branch inputs for the normal-family/Vitali part of
 GJ \S 4.6 Thm 4.6.2; they do not by themselves choose a coherent
@@ -3420,6 +3429,15 @@ with the principal \texttt{freeEnergyComplexAlongExhaustion} value at
 the centre.  This still does not prove coherent branch selection or
 locally uniform convergence; it fixes the normalised local input that a
 future normal-family/Vitali argument can consume.
+The concrete $\mathbb Z^d$ stage wrapper now lives in
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Branches/StageLeeYang/Stage/Ball/Strong.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Branches/StageLeeYang/AllStages/Strong.lean
+\end{Verbatim}
+with the old ball, all-stage, stage-Lee--Yang, and branches import paths
+kept as re-exports.
 
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
@@ -4479,7 +4497,9 @@ Concrete/LatticeGraphCorrelation/PerStageComplex/
 Concrete/LatticeGraphCorrelation/PerStageComplex/
   Branches/StageLeeYang/Stage/Point/Family.lean
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  Branches/StageLeeYang/Stage/Ball.lean
+  Branches/StageLeeYang/Stage/Ball/Basic.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Branches/StageLeeYang/Stage/Ball/Strong.lean
 Concrete/LatticeGraphCorrelation/PerStageComplex/
   Branches/StageLeeYang/AllStages/Pointwise.lean
 Concrete/LatticeGraphCorrelation/PerStageComplex/
@@ -4490,6 +4510,7 @@ Concrete/LatticeGraphCorrelation/PerStageComplex/
 and re-exported through the legacy
 \begin{Verbatim}[fontsize=\footnotesize]
 Branches/StageLeeYang/Stage/Point.lean
+Branches/StageLeeYang/Stage/Ball.lean
 Branches/StageLeeYang/AllStages.lean
 Branches/StageLeeYang.lean
 PerStageComplex/Branches.lean
