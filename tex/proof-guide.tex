@@ -8373,6 +8373,24 @@ specialisation \(A=\{i\}\),
 local field susceptibility \(\partial\langle\sigma_i\rangle/\partial h\), and
 connects the \S5.3/\S17.6 susceptibility machinery to the \S18.3 expansion.
 
+\paragraph{Connected correlations in subset form (GJ~\S18.5 / \S18.7).}
+Writing
+\(N[F] = \sum_{X\subseteq E}\tanh(\beta J)^{|X|}\sum_\sigma F(\sigma)(\prod_{e\in X}\sigma_e)e^{\beta h\sum_i\sigma_i}\)
+(\texttt{highTempSubsetNumerator}) and \(D = N[1]\)
+(\texttt{highTempSubsetDenominator}, \(= Z/\cosh(\beta J)^{|E|}\)), the master
+form reads \(\langle F\rangle_p = N[F]/D\). The connected (truncated)
+correlations — the objects whose decay the cluster expansion controls in
+GJ~\S18.7 — then take the general-\(h\) subset form
+\[
+\langle\sigma_i;\sigma_j\rangle_p
+  = \frac{N[\sigma_{\{i,j\}}]}{D} - \frac{N[\sigma_{\{i\}}]}{D}\frac{N[\sigma_{\{j\}}]}{D}
+\]
+(\texttt{truncated2\_high\_temp\_expansion\_general\_h\_subset\_form}), and
+likewise the three-point Ursell function
+(\texttt{truncated3\_high\_temp\_expansion\_general\_h\_subset\_form}). These
+are finite-volume lattice Ising identities (no continuum limit) furnishing the
+general-\(h\) foundation for connected-correlation decay.
+
 \begin{theorem}[\texttt{partitionFunction\_high\_temp\_expansion\_h\_zero\_lower\_bound}]
 For \(0 \le \beta J\),
 \(Z(G; J, 0, \beta) \ge 2^{|\iota|} \cdot (\cosh(\beta J))^{|E|}.\)
