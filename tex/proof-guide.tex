@@ -3864,12 +3864,13 @@ SubseqCompactOpen/FiniteSubseqCompactOpen/CompactOpen/FiniteFamily.lean
 \end{Verbatim}
 The patch wrapper now lives in
 \begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/FiniteSubseqCompactOpen/Patch.lean
+SubseqCompactOpen/FiniteSubseqCompactOpen/Patch/Family.lean
 \end{Verbatim}
 under \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex}; both are
 re-exported by the old paths
 \begin{Verbatim}[fontsize=\footnotesize]
 SubseqCompactOpen/FiniteSubseqCompactOpen/CompactOpen.lean
+SubseqCompactOpen/FiniteSubseqCompactOpen/Patch.lean
 SubseqCompactOpen/FiniteSubseqCompactOpen.lean
 \end{Verbatim}
 
@@ -3905,11 +3906,14 @@ freeEnergyComplexAlongExhaustion_finiteSubseqBranchLimitFamily_patch_real_lattic
 \end{Verbatim}
 It now lives in
 \begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/FiniteSubseqCompactOpen/Patch.lean
+SubseqCompactOpen/FiniteSubseqCompactOpen/Patch/Real.lean
 \end{Verbatim}
 under \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex}, and is
-re-exported by the old
-\texttt{SubseqCompactOpen/FiniteSubseqCompactOpen.lean} path.
+re-exported by the old paths
+\begin{Verbatim}[fontsize=\footnotesize]
+SubseqCompactOpen/FiniteSubseqCompactOpen/Patch.lean
+SubseqCompactOpen/FiniteSubseqCompactOpen.lean
+\end{Verbatim}
 
 This remains a finite, conditional handoff.  It identifies the real centre for
 a selected ball in a packaged finite family, but it does not construct Montel
