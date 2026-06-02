@@ -4182,7 +4182,8 @@ handoff on each cover member to obtain differentiable local limits, then
 applies the open-cover patching theorem.  If the cover contains
 \(\texttt{leeYangDomain}\), the resulting patched function is differentiable on
 \(\texttt{leeYangDomain}\).  The concrete \(\mathbb Z^d\) wrapper is in the
-\texttt{OpenPatch.lean} child, re-exported by \texttt{LocalCoverPatch.lean}.
+\texttt{OpenPatch/OpenCover.lean} child, re-exported by the legacy
+\texttt{OpenPatch.lean} and \texttt{LocalCoverPatch.lean} paths.
 
 This is still a conditional handoff.  It assumes the compatible local-cover
 limits explicitly, and does not prove coherent branch selection, Montel
@@ -4219,8 +4220,16 @@ centred at \(z\) itself.  The concrete \(\mathbb Z^d\) wrapper is
 \begin{Verbatim}
 freeEnergyComplexAlongExhaustion_branchFamily_localCover_patch_latticeGraph
 \end{Verbatim}
-in \texttt{Branches/LocalCoverPatch/OpenPatch.lean}, re-exported by
-\texttt{Branches/LocalCoverPatch.lean}.
+in
+\begin{Verbatim}
+Branches/LocalCoverPatch/OpenPatch/LocalCover.lean
+\end{Verbatim}
+and is re-exported by the legacy paths
+\begin{Verbatim}
+Branches/LocalCoverPatch/OpenPatch.lean
+Branches/LocalCoverPatch.lean
+\end{Verbatim}
+.
 
 This is still a conditional post-extraction handoff.  It packages the pointed
 Lee--Yang ball cover, but it does not prove coherent branch selection, Montel
