@@ -4237,7 +4237,11 @@ limit on its own ball, and \(g\) is differentiable on
 \begin{Verbatim}
 freeEnergyComplexAlongExhaustion_branchLimitData_localCover_patch_latticeGraph
 \end{Verbatim}
-in the \texttt{StructuredPatch.lean} child, re-exported by
+in the patch child
+\begin{Verbatim}
+StructuredPatch/Patch.lean
+\end{Verbatim}
+and re-exported by \texttt{StructuredPatch.lean} and
 \texttt{LocalCoverPatch.lean}.
 
 This is still a conditional post-extraction handoff.  It makes the local-cover
@@ -4274,7 +4278,11 @@ The concrete \(\mathbb Z^d\) wrapper is
 \begin{Verbatim}
 freeEnergyComplexAlongExhaustion_branchLimitData_localCover_real_latticeGraph
 \end{Verbatim}
-in the \texttt{StructuredPatch.lean} child, re-exported by
+in the real-axis child
+\begin{Verbatim}
+StructuredPatch/Real.lean
+\end{Verbatim}
+and re-exported by \texttt{StructuredPatch.lean} and
 \texttt{LocalCoverPatch.lean}.
 
 This is still a conditional post-extraction handoff: compatibility of the
@@ -4315,7 +4323,12 @@ The concrete \(\mathbb Z^d\) wrappers are
 freeEnergyComplexAlongExhaustion_branchLimitFamily_localCover_patch_latticeGraph
 freeEnergyComplexAlongExhaustion_branchLimitFamily_localCover_real_latticeGraph
 \end{Verbatim}
-in the \texttt{StructuredPatch.lean} child, re-exported by
+split between the children
+\begin{Verbatim}
+StructuredPatch/Patch.lean
+StructuredPatch/Real.lean
+\end{Verbatim}
+and re-exported by \texttt{StructuredPatch.lean} and
 \texttt{LocalCoverPatch.lean}.
 
 This remains conditional and post-extraction.  The new structure removes the
@@ -4357,7 +4370,11 @@ The concrete \(\mathbb Z^d\) wrapper is
 \begin{Verbatim}
 freeEnergyComplexAlongExhaustion_realBranchLimitFamily_localCover_real_latticeGraph
 \end{Verbatim}
-in the \texttt{StructuredPatch.lean} child, re-exported by
+in the real-axis child
+\begin{Verbatim}
+StructuredPatch/Real.lean
+\end{Verbatim}
+and re-exported by \texttt{StructuredPatch.lean} and
 \texttt{LocalCoverPatch.lean}.
 
 This is still a conditional post-extraction handoff.  It does not prove
