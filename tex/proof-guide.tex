@@ -7116,10 +7116,16 @@ Ambient.exists_norm_freeEnergyComplexAlongExhaustion_le_leeYang_around
 The corresponding \(\mathbb Z^d\) wrappers live in
 \begin{Verbatim}[fontsize=\footnotesize]
 Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds/
-  LeeYangLower.lean
+  LeeYangLower/LowerLog.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds/
+  LeeYangLower/LocalBounded.lean
 \end{Verbatim}
-and are re-exported through the legacy
-\texttt{PerStageComplex/Bounds.lean} path.
+and are re-exported through the legacy paths
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds/
+  LeeYangLower.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds.lean
+\end{Verbatim}
 
 This completes the lower normalised-log side of the Lee--Yang Vitali input.
 The remaining task for GJ \S 4.6 is the coherent locally-uniform branch-family
