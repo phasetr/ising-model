@@ -21,7 +21,7 @@ determinant, the Hadamard-basis eigenpairs
 
 with `λ₊ = eᵃ + e⁻ᵃ = 2 cosh a` and `λ₋ = eᵃ - e⁻ᵃ = 2 sinh a`, and the
 spectral ratio `λ₋ / λ₊ = tanh a` — the source of the correlation decay rate
-`-log tanh a` for the one-dimensional chain.
+`-log tanh a` for the ferromagnetic one-dimensional chain (`a = β J > 0`).
 
 ## References
 
@@ -145,7 +145,8 @@ theorem isingTransferMatrix1D_mulVec_hadamardBot (a : ℝ) :
 
 /-- **Spectral ratio**: `λ₋ / λ₊ = tanh a`. This ratio of the subdominant to the
 dominant transfer-matrix eigenvalue is the source of the correlation decay rate
-`-log tanh a` for the one-dimensional Ising chain (Glimm–Jaffe §17.5). -/
+`-log tanh a` for the ferromagnetic one-dimensional Ising chain (`a = β J > 0`;
+Glimm–Jaffe §17.5). -/
 theorem transferEigenvalue_ratio (a : ℝ) :
     transferEigenvalueBot a / transferEigenvalueTop a = Real.tanh a := by
   rw [transferEigenvalueTop_eq, transferEigenvalueBot_eq, Real.tanh_eq_sinh_div_cosh]
