@@ -242,4 +242,82 @@ theorem polymerFreeEnergy_le_sum_singlePolymer_contribution
   refine Finset.sum_congr rfl (fun P hP => ?_)
   exact (tsum_singlePolymer_ursell_eq_log (mem_allPolymers.mp hP) (ht P hP)).symm
 
+/-- **A single polymer forms a compatible (vertex-disjoint) family**: `{P}` is a
+compatible family whenever `P` is a polymer (the polymer condition holds and
+pairwise disjointness is vacuous on a singleton). -/
+theorem IsCompatiblePolymerFamilyVertexDisjoint.singleton
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {G : SimpleGraph ι} [Fintype G.edgeSet] {P : Finset (Sym2 ι)} (hP : IsPolymer G P) :
+    IsCompatiblePolymerFamilyVertexDisjoint G {P} := by
+  refine ⟨?_, ?_⟩
+  · intro Q hQ
+    rw [Finset.mem_singleton] at hQ
+    exact hQ ▸ hP
+  · rw [Finset.coe_singleton]
+    exact Set.pairwise_singleton P _
+
+/-- **Polymer family sum lower bound by the single polymers** (GJ §18.5): for
+`t ≥ 0`, `1 + ∑_P t^|P| ≤ ∑_Γ ∏_{P∈Γ} t^|P|`. The empty family contributes `1`
+and each single-polymer family `{P}` contributes `t^|P|`; these are compatible
+families (`IsCompatiblePolymerFamilyVertexDisjoint.empty` / `.singleton`), and the
+remaining families contribute non-negatively. -/
+theorem one_add_sum_le_vdPolymerFamilies_sum
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] {t : ℝ} (ht0 : 0 ≤ t) :
+    1 + ∑ P ∈ allPolymers G, t ^ P.card
+      ≤ ∑ Γ ∈ vdCompatiblePolymerFamilies G, ∏ P ∈ Γ, t ^ P.card := by
+  classical
+  have hsub : insert (∅ : Finset (Finset (Sym2 ι)))
+      ((allPolymers G).image (fun P => ({P} : Finset (Finset (Sym2 ι)))))
+      ⊆ vdCompatiblePolymerFamilies G := by
+    intro Γ hΓ
+    rw [Finset.mem_insert] at hΓ
+    rw [mem_vdCompatiblePolymerFamilies]
+    rcases hΓ with rfl | hΓ
+    · exact ⟨Finset.empty_subset _, IsCompatiblePolymerFamilyVertexDisjoint.empty G⟩
+    · rw [Finset.mem_image] at hΓ
+      obtain ⟨P, hP, rfl⟩ := hΓ
+      exact ⟨Finset.singleton_subset_iff.mpr hP,
+        IsCompatiblePolymerFamilyVertexDisjoint.singleton (mem_allPolymers.mp hP)⟩
+  have hnotmem : (∅ : Finset (Finset (Sym2 ι)))
+      ∉ (allPolymers G).image (fun P => ({P} : Finset (Finset (Sym2 ι)))) := by
+    rw [Finset.mem_image]
+    rintro ⟨P, _, hP⟩
+    exact absurd hP (Finset.singleton_ne_empty P)
+  have hinj : Set.InjOn (fun P => ({P} : Finset (Finset (Sym2 ι)))) (allPolymers G) :=
+    fun a _ b _ hab => by simpa using hab
+  have heval : ∑ Γ ∈ insert (∅ : Finset (Finset (Sym2 ι)))
+      ((allPolymers G).image (fun P => ({P} : Finset (Finset (Sym2 ι))))),
+      ∏ P ∈ Γ, t ^ P.card = 1 + ∑ P ∈ allPolymers G, t ^ P.card := by
+    rw [Finset.sum_insert hnotmem, Finset.sum_image hinj, Finset.prod_empty]
+    simp
+  rw [← heval]
+  exact Finset.sum_le_sum_of_subset_of_nonneg hsub
+    (fun Γ _ _ => Finset.prod_nonneg (fun P _ => pow_nonneg ht0 _))
+
+/-- **Polymer free energy lower bound** (GJ §18.5): for `t ≥ 0`,
+`log(1 + ∑_P t^|P|) ≤ polymerFreeEnergy G t`. Monotonicity of `log` applied to
+`one_add_sum_le_vdPolymerFamilies_sum`. -/
+theorem log_one_add_sum_le_polymerFreeEnergy
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] {t : ℝ} (ht0 : 0 ≤ t) :
+    Real.log (1 + ∑ P ∈ allPolymers G, t ^ P.card) ≤ polymerFreeEnergy G t := by
+  have hpos : (0 : ℝ) < 1 + ∑ P ∈ allPolymers G, t ^ P.card := by
+    have : (0 : ℝ) ≤ ∑ P ∈ allPolymers G, t ^ P.card :=
+      Finset.sum_nonneg (fun P _ => pow_nonneg ht0 _)
+    linarith
+  rw [polymerFreeEnergy, Real.log_le_log_iff hpos (vdPolymerFamilies_sum_pos_of_nonneg G ht0)]
+  exact one_add_sum_le_vdPolymerFamilies_sum G ht0
+
+/-- **Independent-polymer sandwich for the polymer free energy** (GJ §18.5):
+for `t ≥ 0`, `log(1 + ∑_P t^|P|) ≤ polymerFreeEnergy G t ≤ ∑_P log(1 + t^|P|)`.
+The free energy is bracketed by the two independent-polymer expressions
+(`log_one_add_sum_le_polymerFreeEnergy`, `polymerFreeEnergy_le_sum_log_one_add`). -/
+theorem polymerFreeEnergy_sandwich_independent
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] {t : ℝ} (ht0 : 0 ≤ t) :
+    Real.log (1 + ∑ P ∈ allPolymers G, t ^ P.card) ≤ polymerFreeEnergy G t
+      ∧ polymerFreeEnergy G t ≤ ∑ P ∈ allPolymers G, Real.log (1 + t ^ P.card) :=
+  ⟨log_one_add_sum_le_polymerFreeEnergy G ht0, polymerFreeEnergy_le_sum_log_one_add G ht0⟩
+
 end IsingModel
