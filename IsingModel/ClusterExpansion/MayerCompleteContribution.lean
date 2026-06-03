@@ -1,4 +1,5 @@
 import IsingModel.ClusterExpansion.MayerRootComponent
+import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 
 /-!
 # Mayer expansion contribution of a fully-incompatible cluster (GJ §18.4)
@@ -65,5 +66,63 @@ theorem mayerExpansionTerm_completeClusterSubsum_eq
   refine Finset.sum_congr rfl (fun ω hω => ?_)
   rw [Finset.mem_filter] at hω
   rw [ursellCoefficient_complete_eq hn hω.2]
+
+/-- **Cluster activity of a repeated single polymer**: the activity of the constant
+sequence `(P, …, P)` of length `m` equals `(t^|P|)^m`. -/
+theorem clusterSeqActivity_const
+    {ι : Type*} [Fintype ι] [DecidableEq ι] (t : ℝ) {m : ℕ} (P : Finset (Sym2 ι)) :
+    clusterSeqActivity t (fun _ : Fin m => P) = (t ^ P.card) ^ m := by
+  rw [clusterSeqActivity, Finset.prod_const, Finset.card_univ, Fintype.card_fin]
+
+/-- **Single-polymer cluster contribution equals `log(1 + activity)`** (GJ §18.4–§18.5):
+the classic cluster-expansion identity that a single polymer `P` contributes
+`log(1 + t^|P|)` to `log Ξ`. Summing the multiplicity-`m+1` repeated-polymer term
+`ϕ^T(P, …, P) · z = ((-1)^m/(m+1))·(t^|P|)^{m+1}` over `m` gives the logarithm power
+series: the repeated sequence is a complete (self-incompatible) cluster, so its
+Ursell coefficient is `(-1)^(m)/(m+1)` (`ursellCoefficient_complete_eq` via
+`PolymersIncompatible.self_of_isPolymer`), and `hasSum_pow_div_log_of_abs_lt_one`
+sums the resulting alternating series to `log(1 + t^|P|)` whenever `|t^|P|| < 1`.
+This is the log structure at the heart of why the cluster expansion exponentiates. -/
+theorem hasSum_singlePolymer_ursell_eq_log
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {G : SimpleGraph ι} [Fintype G.edgeSet] {P : Finset (Sym2 ι)} (hP : IsPolymer G P)
+    {t : ℝ} (ht : |t ^ P.card| < 1) :
+    HasSum (fun m : ℕ => ursellCoefficient (fun _ : Fin (m + 1) => P)
+        * clusterSeqActivity t (fun _ : Fin (m + 1) => P))
+      (Real.log (1 + t ^ P.card)) := by
+  have hterm : ∀ m : ℕ, ursellCoefficient (fun _ : Fin (m + 1) => P)
+        * clusterSeqActivity t (fun _ : Fin (m + 1) => P)
+      = -((-(t ^ P.card)) ^ (m + 1) / ((m : ℝ) + 1)) := by
+    intro m
+    rw [ursellCoefficient_complete_eq (Nat.le_add_left 1 m)
+        (fun i j _ => PolymersIncompatible.self_of_isPolymer hP),
+      clusterSeqActivity_const, Nat.add_sub_cancel]
+    have hexp : (-(t ^ P.card)) ^ (m + 1) = -((-1 : ℝ) ^ m * (t ^ P.card) ^ (m + 1)) := by
+      rw [neg_pow, pow_succ]; ring
+    rw [hexp]
+    push_cast
+    ring
+  have hbase : HasSum (fun m : ℕ => -((-(t ^ P.card)) ^ (m + 1) / ((m : ℝ) + 1)))
+      (Real.log (1 + t ^ P.card)) := by
+    have h := Real.hasSum_pow_div_log_of_abs_lt_one (x := -(t ^ P.card)) (by rwa [abs_neg])
+    rw [sub_neg_eq_add] at h
+    simpa using h.neg
+  have hfun : (fun m : ℕ => ursellCoefficient (fun _ : Fin (m + 1) => P)
+      * clusterSeqActivity t (fun _ : Fin (m + 1) => P))
+      = (fun m : ℕ => -((-(t ^ P.card)) ^ (m + 1) / ((m : ℝ) + 1))) := funext hterm
+  rw [hfun]
+  exact hbase
+
+/-- **Single-polymer cluster contribution (`tsum` form)**: the repeated-polymer
+Mayer sum evaluates to `log(1 + t^|P|)`. Direct `tsum` form of
+`hasSum_singlePolymer_ursell_eq_log`. -/
+theorem tsum_singlePolymer_ursell_eq_log
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {G : SimpleGraph ι} [Fintype G.edgeSet] {P : Finset (Sym2 ι)} (hP : IsPolymer G P)
+    {t : ℝ} (ht : |t ^ P.card| < 1) :
+    (∑' m : ℕ, ursellCoefficient (fun _ : Fin (m + 1) => P)
+        * clusterSeqActivity t (fun _ : Fin (m + 1) => P))
+      = Real.log (1 + t ^ P.card) :=
+  (hasSum_singlePolymer_ursell_eq_log hP ht).tsum_eq
 
 end IsingModel
