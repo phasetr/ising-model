@@ -29,8 +29,11 @@ namespace TransferMatrix
 
 open Finset SimpleGraph
 
-/-- **Edge enumeration of the cycle graph**: the edges of `cycleGraph (n+2)` are
-exactly the cyclic nearest-neighbour pairs `s(i, i+1)` for `i : Fin (n+2)`. -/
+/-- **Edge enumeration of the cycle graph**: the edge set of `cycleGraph (n+2)` is
+the image of the cyclic nearest-neighbour pairing `i ↦ s(i, i+1)` over
+`Fin (n+2)`.  (The pairing is injective — hence the edges are `n+2` *distinct*
+cyclic pairs — only for `n+2 ≥ 3`; at `n = 0` i.e. `N = 2` the two pairs collapse
+to the single edge `s(0,1)`, and the image is still correct.) -/
 theorem cycleGraph_edgeFinset_eq_image (n : ℕ) :
     (cycleGraph (n + 2)).edgeFinset
       = Finset.image (fun i : Fin (n + 2) => s(i, i + 1)) Finset.univ := by
