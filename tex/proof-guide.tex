@@ -1984,6 +1984,22 @@ $\sum_{\sigma : \mathrm{Fin}(m{+}1)\to\mathrm{Fin}\,2} \texttt{closedWalkWeight}
 evaluation $Z_N = \operatorname{Tr}(T^N) = \lambda_+^N + \lambda_-^N$ of the cyclic
 $N$-site zero-field Ising chain (Glimm--Jaffe~\S17.1).
 
+\paragraph{Two-point function via the transfer matrix (\S17.1, Issue~\#3511 PR~6).}
+The two-point function is
+$\langle\sigma_0\sigma_n\rangle_N = \operatorname{Tr}(S\,T^n S\,T^{N-n})/\operatorname{Tr}(T^N)$
+with the spin operator $S = \mathrm{diag}(1,-1)$ (\texttt{spinOperator}). The spin
+operator swaps the Hadamard eigenvectors, $S\,H = H\,P$ with $P$ the $2\times2$
+swap (\texttt{spinOperator\_mul\_hadamard}), hence $H^{-1}SH = P$ and
+$P\,D(a)^k P = \mathrm{diag}(\lambda_-^k, \lambda_+^k)$. This gives the two-point
+trace $\operatorname{Tr}(S\,T^n S\,T^m) = \lambda_-^n\lambda_+^m + \lambda_+^n\lambda_-^m$
+(\texttt{twoPointTrace}), so
+$\langle\sigma_0\sigma_n\rangle_N = (r^n + r^{N-n})/(1 + r^N)$ with $r = \lambda_-/\lambda_+ = \tanh a$
+(\texttt{twoPointCorrelation\_eq\_ratio}). For $a = \beta J > 0$ the subdominant
+ratio $r \in (0,1)$ makes the boundary terms vanish, giving the exact exponential
+decay $\langle\sigma_0\sigma_n\rangle_N \to (\tanh\beta J)^n$ as $N\to\infty$
+(\texttt{tendsto\_twoPointCorrelation}), with correlation length
+$\xi = -1/\log\tanh\beta J$ (Glimm--Jaffe~\S17.1).
+
 \paragraph{Finite $\ell^1$ balls and proper-map property.}
 PR~\#782 complements the metric definition with the proper-map
 companion to PR~\#779's cofinite cluster decay. First,
