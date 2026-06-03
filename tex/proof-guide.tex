@@ -2078,6 +2078,16 @@ $\operatorname{Tr}(D\,M^a D\,M^b) = \operatorname{Tr}(D\,M^b D\,M^a)$
 $\sum_\tau d(\tau_0)d(\tau_a)\,\texttt{closedWalkWeight}\,M\,\tau$ (gluing two open
 paths) is the next step (Glimm--Jaffe~\S17.1).
 
+\paragraph{Cyclic-to-open closed-walk conversion (\S17.1).}
+The technical key for the marked closed-walk identity, avoiding all cyclic
+$\mathrm{Fin}$-arithmetic, is
+$\texttt{closedWalkWeight}\,M\,\tau = \texttt{pathWeight}\,M\,(\mathrm{snoc}\,\tau\,(\tau\,0))$
+(\texttt{closedWalkWeight\_eq\_pathWeight\_snoc\_zero}): appending the first vertex
+turns the cyclic closed walk into an open path returning to its start, whose
+open-path weight is the cyclic weight. The marked summand
+$\texttt{markedClosedWalkWeight}\,M\,d\,\tau = d(\tau_0)d(\tau_a)\,\texttt{closedWalkWeight}\,M\,\tau$
+then has the open-path form \texttt{markedClosedWalkWeight\_eq} (Glimm--Jaffe~\S17.1).
+
 \paragraph{Finite $\ell^1$ balls and proper-map property.}
 PR~\#782 complements the metric definition with the proper-map
 companion to PR~\#779's cofinite cluster decay. First,
