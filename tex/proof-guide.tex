@@ -1889,6 +1889,25 @@ summability arguments (Simon--Lieb iteration) that this infrastructure
 is meant to support. No mathlib
 \texttt{PseudoMetricSpace} instance is registered at this stage.
 
+\paragraph{1D Ising transfer matrix (\S17.1, Issue~\#3511 PR~1).}
+The concrete instance of the Glimm--Jaffe~\S17.1 transfer-matrix method is the
+$2\times 2$ real matrix governing the one-dimensional Ising chain at zero
+external field. With the two spin values $s : \mathrm{Fin}\,2 \to \mathbb R$,
+$s_0 = +1$, $s_1 = -1$ (\texttt{spin1D}), the transfer matrix is
+\texttt{isingTransferMatrix1D}$(a)_{ij} = e^{a\,s_i s_j}$ with $a = \beta J$, i.e.
+$T(a) = \bigl(\begin{smallmatrix} e^a & e^{-a} \\ e^{-a} & e^a \end{smallmatrix}\bigr)$.
+It is symmetric (\texttt{isingTransferMatrix1D\_transpose}), entrywise positive
+(\texttt{isingTransferMatrix1D\_pos}), with trace $2e^a$
+(\texttt{trace\_isingTransferMatrix1D}) and determinant $e^{2a}-e^{-2a}$
+(\texttt{det\_isingTransferMatrix1D}). The Hadamard vectors $(1,1)$ and $(1,-1)$
+are eigenvectors (\texttt{isingTransferMatrix1D\_mulVec\_hadamardTop} /
+\texttt{...\_hadamardBot}) with eigenvalues
+$\lambda_+ = e^a + e^{-a} = 2\cosh a$ (\texttt{transferEigenvalueTop}) and
+$\lambda_- = e^a - e^{-a} = 2\sinh a$ (\texttt{transferEigenvalueBot}). The
+spectral ratio $\lambda_-/\lambda_+ = \tanh a$
+(\texttt{transferEigenvalue\_ratio}) is the source of the correlation decay rate
+$-\log\tanh a$ for the one-dimensional chain (Glimm--Jaffe~\S17.5).
+
 \paragraph{Finite $\ell^1$ balls and proper-map property.}
 PR~\#782 complements the metric definition with the proper-map
 companion to PR~\#779's cofinite cluster decay. First,
