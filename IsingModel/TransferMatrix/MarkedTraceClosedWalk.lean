@@ -199,6 +199,92 @@ theorem trace_diagonal_pow_diagonal_pow_eq_sum_glued (M : Matrix ι ι R) (d : �
     rw [if_neg (fun he => hi he.1.symm), mul_zero, zero_mul]
   · intro hni; exact absurd (Finset.mem_univ _) hni
 
+/-- Reconstruct the first open path from a closed walk: `σOf τ` is the first `a+1`
+vertices of `τ` (closing back at `τ a`). -/
+def σOf {a b : ℕ} (hb : 0 < b) (τ : Fin (a + b) → ι) : Fin (a + 1) → ι :=
+  Fin.snoc (fun k : Fin a => τ (Fin.castAdd b k)) (τ ⟨a, Nat.lt_add_of_pos_right hb⟩)
+
+/-- Reconstruct the second open path from a closed walk: `ρOf τ` is the next `b+1`
+vertices of `τ` (closing back at `τ 0`). -/
+def ρOf {a b : ℕ} [NeZero (a + b)] (τ : Fin (a + b) → ι) : Fin (b + 1) → ι :=
+  Fin.snoc (fun k : Fin b => τ (Fin.natAdd a k)) (τ 0)
+
+omit [Fintype ι] [DecidableEq ι] in
+/-- The marked glue of the reconstructed paths recovers the closed walk:
+`markedGlue (σOf τ) (ρOf τ) = τ` (`Fin.append_castAdd_natAdd`). -/
+theorem markedGlue_σOf_ρOf {a b : ℕ} [NeZero (a + b)] (hb : 0 < b) (τ : Fin (a + b) → ι) :
+    markedGlue (σOf hb τ) (ρOf τ) = τ := by
+  rw [markedGlue, σOf, ρOf, Fin.init_snoc, Fin.init_snoc, Fin.append_castAdd_natAdd]
+
+/-- **Marked closed-walk trace identity** (Glimm–Jaffe §17.1):
+`Tr(D·Mᵃ·D·Mᵇ) = ∑_{τ : Fin (a+b) → ι} d(τ 0)·d(τ a)·closedWalkWeight M τ`, a sum over
+closed walks of length `a+b` carrying the diagonal marks `d` at the two insertion
+sites `0` and `a`.  Obtained from the glued-pair form
+`trace_diagonal_pow_diagonal_pow_eq_sum_glued` by the bijection between closed walks
+`τ` and glued path pairs (`markedGlue`/`σOf`/`ρOf`), with the weight match supplied by
+`closedWalkWeight_markedGlue`. -/
+theorem trace_diagonal_pow_diagonal_pow_eq_sum_markedClosedWalk (M : Matrix ι ι R)
+    (d : ι → R) {a b : ℕ} [NeZero a] [NeZero (a + b)] (hb : 0 < b) :
+    (Matrix.diagonal d * M ^ a * Matrix.diagonal d * M ^ b).trace
+      = ∑ τ : Fin (a + b) → ι, markedClosedWalkWeight M d hb τ := by
+  haveI : NeZero b := ⟨by omega⟩
+  rw [trace_diagonal_pow_diagonal_pow_eq_sum_glued, ← Finset.sum_product',
+    ← Finset.sum_filter]
+  refine Finset.sum_bij'
+    (fun (p : (Fin (a + 1) → ι) × (Fin (b + 1) → ι)) _ => markedGlue p.1 p.2)
+    (fun τ _ => (σOf hb τ, ρOf τ)) ?_ ?_ ?_ ?_ ?_
+  · intro p _; exact Finset.mem_univ _
+  · intro τ _
+    have hnat0 : (Fin.natAdd a (0 : Fin b) : Fin (a + b)) = ⟨a, Nat.lt_add_of_pos_right hb⟩ := by
+      ext; simp
+    have hcast0 : (Fin.castAdd b (0 : Fin a) : Fin (a + b)) = 0 := by ext; simp
+    refine Finset.mem_filter.mpr ⟨Finset.mem_univ _, ?_, ?_⟩
+    · dsimp only
+      have hs : σOf hb τ (Fin.last a) = τ ⟨a, Nat.lt_add_of_pos_right hb⟩ := by
+        simp only [σOf, Fin.snoc_last]
+      have hr : ρOf τ 0 = τ ⟨a, Nat.lt_add_of_pos_right hb⟩ := by
+        simp only [ρOf, ← Fin.castSucc_zero, Fin.snoc_castSucc, hnat0]
+      rw [hs, hr]
+    · dsimp only
+      have hr : ρOf τ (Fin.last b) = τ 0 := by simp only [ρOf, Fin.snoc_last]
+      have hs : σOf hb τ 0 = τ 0 := by
+        simp only [σOf, ← Fin.castSucc_zero, Fin.snoc_castSucc, hcast0]
+      rw [hr, hs]
+  · intro p hp
+    dsimp only
+    obtain ⟨h1, h2⟩ := (Finset.mem_filter.mp hp).2
+    have hinitσ : (fun k : Fin a => markedGlue p.1 p.2 (Fin.castAdd b k)) = Fin.init p.1 := by
+      funext k; simp only [markedGlue, Fin.append_left, Fin.init_def]
+    have hinitρ : (fun k : Fin b => markedGlue p.1 p.2 (Fin.natAdd a k)) = Fin.init p.2 := by
+      funext k; simp only [markedGlue, Fin.append_right, Fin.init_def]
+    have hga : markedGlue p.1 p.2 ⟨a, Nat.lt_add_of_pos_right hb⟩ = p.2 0 := by
+      have : (⟨a, Nat.lt_add_of_pos_right hb⟩ : Fin (a + b)) = Fin.natAdd a (0 : Fin b) := by
+        ext; simp
+      rw [this]; simp only [markedGlue, Fin.append_right, Fin.init_def, Fin.castSucc_zero]
+    have hg0 : markedGlue p.1 p.2 0 = p.1 0 := by
+      have : (0 : Fin (a + b)) = Fin.castAdd b (0 : Fin a) := by ext; simp
+      rw [this]; simp only [markedGlue, Fin.append_left, Fin.init_def, Fin.castSucc_zero]
+    have hσ : σOf hb (markedGlue p.1 p.2) = p.1 := by
+      simp only [σOf, hga, hinitσ]
+      rw [← h1, Fin.snoc_init_self]
+    have hρ : ρOf (markedGlue p.1 p.2) = p.2 := by
+      simp only [ρOf, hg0, hinitρ]
+      rw [← h2, Fin.snoc_init_self]
+    exact Prod.ext hσ hρ
+  · intro τ _; exact markedGlue_σOf_ρOf hb τ
+  · intro p hp
+    dsimp only
+    obtain ⟨h1, h2⟩ := (Finset.mem_filter.mp hp).2
+    rw [markedClosedWalkWeight, closedWalkWeight_markedGlue M p.1 p.2 h1.symm h2]
+    have hm0 : markedGlue p.1 p.2 0 = p.1 0 := by
+      have : (0 : Fin (a + b)) = Fin.castAdd b (0 : Fin a) := by ext; simp
+      rw [this]; simp only [markedGlue, Fin.append_left, Fin.init_def, Fin.castSucc_zero]
+    have hma : markedGlue p.1 p.2 ⟨a, Nat.lt_add_of_pos_right hb⟩ = p.2 0 := by
+      have : (⟨a, Nat.lt_add_of_pos_right hb⟩ : Fin (a + b)) = Fin.natAdd a (0 : Fin b) := by
+        ext; simp
+      rw [this]; simp only [markedGlue, Fin.append_right, Fin.init_def, Fin.castSucc_zero]
+    rw [hm0, hma]; ring
+
 end TransferMatrix
 
 end IsingModel
