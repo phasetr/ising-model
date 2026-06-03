@@ -1928,6 +1928,25 @@ $H^{-1}H = \mathbb 1$), and $\det(T(a)^N) = (\lambda_+\lambda_-)^N$
 (\texttt{det\_isingTransferMatrix1D\_pow}) -- the transfer-matrix solution of the
 one-dimensional Ising chain (Glimm--Jaffe~\S17.1).
 
+\paragraph{1D free-energy density (\S17.1, Issue~\#3511 PR~3).}
+Building on $\operatorname{Tr}(T(a)^N) = \lambda_+^N + \lambda_-^N$, the per-site
+log-partition (dimensionless free-energy) density of the one-dimensional chain
+($a = \beta J > 0$) is
+$\lim_{N\to\infty} \tfrac1N \log \operatorname{Tr}(T(a)^N) = \log \lambda_+ = \log(2\cosh a)$
+(\texttt{tendsto\_log\_trace\_pow\_div\_nat}, \texttt{log\_transferEigenvalueTop\_eq}).
+The mechanism is the spectral gap $\lambda_- < \lambda_+$
+(\texttt{transferEigenvalueBot\_lt\_top}) with ratio
+$\lambda_-/\lambda_+ = \tanh a \in (0,1)$
+(\texttt{transferEigenvalue\_ratio\_pos}, \texttt{transferEigenvalue\_ratio\_lt\_one}):
+writing $\lambda_+^N + \lambda_-^N = \lambda_+^N (1 + \tanh^N a)$, the subdominant
+eigenvalue contributes the vanishing correction
+$\tfrac1N \log(1 + \tanh^N a) \to 0$ (since $\tanh^N a \to 0$,
+\texttt{tendsto\_transferEigenvalue\_ratio\_pow}), leaving the dominant
+$\log\lambda_+$ (\texttt{tendsto\_log\_eigenvalueSum\_div\_nat}).  Since
+$Z_N = \operatorname{Tr}(T(a)^N)$ for the cyclic chain, this is the transfer-matrix
+solution of the 1D Ising free energy $f = -\beta^{-1}\log(2\cosh\beta J)$
+(Glimm--Jaffe~\S17.1).
+
 \paragraph{Finite $\ell^1$ balls and proper-map property.}
 PR~\#782 complements the metric definition with the proper-map
 companion to PR~\#779's cofinite cluster decay. First,
