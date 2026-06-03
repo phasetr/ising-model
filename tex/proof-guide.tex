@@ -1930,7 +1930,8 @@ one-dimensional Ising chain (Glimm--Jaffe~\S17.1).
 
 \paragraph{1D free-energy density (\S17.1, Issue~\#3511 PR~3).}
 Building on $\operatorname{Tr}(T(a)^N) = \lambda_+^N + \lambda_-^N$, the per-site
-free-energy density of the one-dimensional chain ($a = \beta J > 0$) is
+log-partition (dimensionless free-energy) density of the one-dimensional chain
+($a = \beta J > 0$) is
 $\lim_{N\to\infty} \tfrac1N \log \operatorname{Tr}(T(a)^N) = \log \lambda_+ = \log(2\cosh a)$
 (\texttt{tendsto\_log\_trace\_pow\_div\_nat}, \texttt{log\_transferEigenvalueTop\_eq}).
 The mechanism is the spectral gap $\lambda_- < \lambda_+$

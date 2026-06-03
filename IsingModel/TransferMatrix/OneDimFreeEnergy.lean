@@ -8,13 +8,15 @@ import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
 
 Building on the trace formula `Tr(T(a)ᴺ) = λ₊ᴺ + λ₋ᴺ` of
 `IsingModel.TransferMatrix.trace_isingTransferMatrix1D_pow`, this file derives the
-per-site free-energy density of the one-dimensional Ising chain at zero field,
+per-site **log-partition (dimensionless free-energy) density** of the
+one-dimensional Ising chain at zero field,
 
   `lim_{N → ∞} (1/N)·log Tr(T(a)ᴺ) = log λ₊ = log(2·cosh a)`,   `a = β J > 0`.
 
 Since `Z_N = Tr(T(a)ᴺ)` is the partition function of the `N`-site cyclic Ising
 chain, this is the transfer-matrix computation of the 1D Ising free-energy
-density `f = -β⁻¹ log(2 cosh βJ)` (Glimm–Jaffe §17.1).  The mechanism is the
+density `f = -β⁻¹·lim_N (1/N)·log Z_N = -β⁻¹ log(2 cosh βJ)` (Glimm–Jaffe §17.1).
+The mechanism is the
 spectral gap `λ₋ < λ₊`: writing `λ₊ᴺ + λ₋ᴺ = λ₊ᴺ·(1 + (λ₋/λ₊)ᴺ)` with
 `λ₋/λ₊ = tanh a ∈ (0,1)`, the subdominant eigenvalue contributes a vanishing
 `(1/N)·log(1 + tanhᴺ a) → 0`, leaving the dominant eigenvalue `log λ₊`.
