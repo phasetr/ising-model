@@ -2066,6 +2066,18 @@ $-(\beta N)^{-1}\log Z_N \to -\beta^{-1}\log(2\cosh\beta J)$
 (\texttt{tendsto\_gibbs\_freeEnergy\_density}) -- the Gibbs (not merely
 transfer-trace) 1D Ising free-energy density (Glimm--Jaffe~\S17.1).
 
+\paragraph{Trace with diagonal insertions (\S17.1).}
+Toward the Gibbs two-point function $\langle\sigma_0\sigma_n\rangle = \operatorname{Tr}(S\,T^n S\,T^{N-n})/\operatorname{Tr}(T^N)$,
+the trace with two diagonal insertions $D = \mathrm{diagonal}\,d$ expands as
+$\operatorname{Tr}(D\,M^a D\,M^b) = \sum_{i,j} d_i\,d_j\,(M^a)_{ij}(M^b)_{ji}$
+(\texttt{trace\_diagonal\_pow\_diagonal\_pow\_expand}), with the single-insertion
+form $\operatorname{Tr}(D\,M^a) = \sum_i d_i (M^a)_{ii}$
+(\texttt{trace\_diagonal\_mul\_pow}) and the cyclic symmetry
+$\operatorname{Tr}(D\,M^a D\,M^b) = \operatorname{Tr}(D\,M^b D\,M^a)$
+(\texttt{trace\_diagonal\_pow\_diagonal\_pow\_comm}); the marked closed-walk form
+$\sum_\tau d(\tau_0)d(\tau_a)\,\texttt{closedWalkWeight}\,M\,\tau$ (gluing two open
+paths) is the next step (Glimm--Jaffe~\S17.1).
+
 \paragraph{Finite $\ell^1$ balls and proper-map property.}
 PR~\#782 complements the metric definition with the proper-map
 companion to PR~\#779's cofinite cluster decay. First,
