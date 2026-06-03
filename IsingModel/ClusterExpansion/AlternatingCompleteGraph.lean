@@ -201,6 +201,39 @@ theorem alternatingConnectedSubgraphSum_iso {V W : Type*} [Fintype V] [Decidable
   · intro S _
     rw [Finset.card_map]
 
+/-- **`c(K_V)` depends only on `|V|`**: for any finite `V`, the connected-spanning
+signed sum of the complete graph on `V` equals that of `K_{|V|}`. Iso-invariance
+applied to `K_V ≅ K_{Fin |V|}` (`SimpleGraph.Iso.completeGraph (Fintype.equivFin V)`).
+Gives `c_{|C|} = c(K_{|C|})` for the root-component recurrence (with `V := ↑C`). -/
+theorem alternatingConnectedSubgraphSum_completeGraph_card
+    {V : Type*} [Fintype V] [DecidableEq V] :
+    alternatingConnectedSubgraphSum (⊤ : SimpleGraph V)
+      = alternatingConnectedSubgraphSum (⊤ : SimpleGraph (Fin (Fintype.card V))) :=
+  alternatingConnectedSubgraphSum_iso (SimpleGraph.Iso.completeGraph (Fintype.equivFin V))
+
+/-- **`D(K_V)` depends only on `|V|`**: for any finite `V`, the all-subgraph signed
+sum of the complete graph on `V` equals that of `K_{|V|}`. Iso-invariance applied to
+`K_V ≅ K_{Fin |V|}`. Gives `D_{n-|C|} = D(K_{n-|C|})` for the recurrence. -/
+theorem allSignedSubgraphSum_completeGraph_card
+    {V : Type*} [Fintype V] [DecidableEq V] :
+    allSignedSubgraphSum (⊤ : SimpleGraph V)
+      = allSignedSubgraphSum (⊤ : SimpleGraph (Fin (Fintype.card V))) :=
+  allSignedSubgraphSum_iso (SimpleGraph.Iso.completeGraph (Fintype.equivFin V))
+
+/-- **Edges of `S` do not cross connected components**: in `fromEdgeSet ↑S`, the
+two endpoints of any edge `s(a,b) ∈ S` (with `a ≠ b`) lie in the same connected
+component. Direct from `SimpleGraph.connectedComponentMk_eq_of_adj`. The
+crossing-edge-free property underlying the root-component decomposition: the edges
+of `S` within the component `C` of vertex `0` and those outside `C` have no
+edge of `S` between them. -/
+theorem connectedComponentMk_eq_of_mem {V : Type*} {S : Finset (Sym2 V)} {a b : V}
+    (hab : s(a, b) ∈ S) (hne : a ≠ b) :
+    (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 V))).connectedComponentMk a
+      = (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 V))).connectedComponentMk b := by
+  apply SimpleGraph.ConnectedComponent.connectedComponentMk_eq_of_adj
+  rw [SimpleGraph.fromEdgeSet_adj]
+  exact ⟨Finset.mem_coe.mpr hab, hne⟩
+
 /-- **`D_n = 0` for `K_n`, `n ≥ 2`**: the signed all-subgraph sum over the
 complete graph vanishes once there is at least one edge (`s(0,1)`). The `D_m = 0`
 ingredient of the Mayer root-component recurrence. -/
