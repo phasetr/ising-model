@@ -153,6 +153,51 @@ theorem closedWalkWeight_succ (M : Matrix ι ι R) {m : ℕ} (τ : Fin (m + 1) �
       ext; rw [Fin.val_add_one, if_pos rfl]; rfl
     rw [hl]
 
+omit [Fintype ι] [DecidableEq ι] in
+/-- For a vertex sequence returning to its start (`σ 0 = σ (last (m+1))`), the
+open-path weight equals the cyclic closed-walk weight of its initial segment:
+`pathWeight M σ = closedWalkWeight M (init σ)`. -/
+theorem pathWeight_eq_closedWalkWeight_init (M : Matrix ι ι R) {m : ℕ}
+    (σ : Fin (m + 1 + 1) → ι) (h : σ 0 = σ (Fin.last (m + 1))) :
+    pathWeight M σ = closedWalkWeight M (Fin.init σ) := by
+  rw [closedWalkWeight_succ, ← pathWeight_snoc]
+  congr 1
+  have hinit0 : (Fin.init σ) 0 = σ 0 := by simp [Fin.init_def, Fin.castSucc_zero]
+  rw [hinit0, h]
+  exact (Fin.snoc_init_self σ).symm
+
+/-- **Cyclic closed-walk trace identity** (Glimm–Jaffe §17.1): `Tr(M^(m+1)) =
+∑_{τ : Fin (m+1) → ι} closedWalkWeight M τ`, the sum over closed walks of length
+`m+1` weighted by their cyclic edge products.  This is the purely cyclic form of
+`trace_pow_eq_sum`, obtained by the `init`/`snoc` bijection between vertex
+sequences returning to their start and closed walks; it expresses `Z_N = Tr(Tᴺ)`
+for the cyclic `N`-site chain (`N = m+1`). -/
+theorem trace_pow_eq_sum_cycle (M : Matrix ι ι R) (m : ℕ) :
+    (M ^ (m + 1)).trace = ∑ τ : Fin (m + 1) → ι, closedWalkWeight M τ := by
+  rw [trace_pow_eq_sum, ← Finset.sum_filter]
+  have hsnoc0 : ∀ τ : Fin (m + 1) → ι,
+      (Fin.snoc τ (τ 0) : Fin (m + 1 + 1) → ι) 0 = τ 0 := by
+    intro τ
+    have h00 : (0 : Fin (m + 1 + 1)) = Fin.castSucc (0 : Fin (m + 1)) := by
+      ext; simp
+    rw [h00, Fin.snoc_castSucc]
+  have hinit0 : ∀ σ : Fin (m + 1 + 1) → ι, (Fin.init σ) 0 = σ 0 := by
+    intro σ; simp [Fin.init_def, Fin.castSucc_zero]
+  refine Finset.sum_bij' (fun σ _ => Fin.init σ) (fun τ _ => Fin.snoc τ (τ 0))
+    (fun σ _ => Finset.mem_univ _) ?_ ?_ ?_ ?_
+  · intro τ _
+    refine Finset.mem_filter.mpr ⟨Finset.mem_univ _, ?_⟩
+    simp only
+    rw [hsnoc0 τ, Fin.snoc_last]
+  · intro σ hσ
+    simp only
+    have hP : σ 0 = σ (Fin.last (m + 1)) := (Finset.mem_filter.mp hσ).2
+    rw [hinit0 σ, hP]; exact Fin.snoc_init_self σ
+  · intro τ _; simp only; exact Fin.init_snoc _ _
+  · intro σ hσ
+    simp only
+    exact pathWeight_eq_closedWalkWeight_init M σ (Finset.mem_filter.mp hσ).2
+
 end TransferMatrix
 
 end IsingModel
