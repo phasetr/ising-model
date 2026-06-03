@@ -1947,6 +1947,27 @@ $Z_N = \operatorname{Tr}(T(a)^N)$ for the cyclic chain, this is the transfer-mat
 solution of the 1D Ising free energy $f = -\beta^{-1}\log(2\cosh\beta J)$
 (Glimm--Jaffe~\S17.1).
 
+\paragraph{Closed-walk trace identity (\S17.1, Issue~\#3511 PR~4).}
+The combinatorial core of $Z_N = \operatorname{Tr}(T^N)$, for an arbitrary finite
+matrix $M : \mathrm{Matrix}\,\iota\,\iota\,R$ over a commutative semiring (Mathlib
+has no such lemma, only the $0/1$ adjacency case). With the open-path weight
+$\texttt{pathWeight}\,M\,\sigma = \prod_{i : \mathrm{Fin}\,n} M(\sigma\,i_{\mathrm{cast}})(\sigma\,i_{\mathrm{succ}})$
+and the append rule
+$\texttt{pathWeight}(M, \mathrm{snoc}\,\sigma\,x) = \texttt{pathWeight}(M,\sigma)\cdot M(\sigma(\mathrm{last}\,n))\,x$
+(\texttt{pathWeight\_snoc}), the entry formula
+$(M^n)_{ab} = \sum_{\sigma : \mathrm{Fin}(n{+}1)\to\iota} [\sigma_0 = a \wedge \sigma_{\mathrm{last}} = b]\,\texttt{pathWeight}\,M\,\sigma$
+(\texttt{pow\_apply\_eq\_sum}) is proved by induction, peeling the last edge via
+$\texttt{Fin.snocEquiv}$. Specialising to the diagonal and summing gives the
+\emph{closed-walk trace identity}
+$\operatorname{Tr}(M^n) = \sum_{\sigma : \mathrm{Fin}(n{+}1)\to\iota} [\sigma_0 = \sigma_{\mathrm{last}}]\,\texttt{pathWeight}\,M\,\sigma$
+(\texttt{trace\_pow\_eq\_sum}), a weighted sum over vertex sequences returning to
+their start. The cyclic form
+$\texttt{closedWalkWeight}\,M\,\sigma = \prod_{i} M(\sigma\,i)(\sigma(i{+}1))$
+(cyclic in $\mathrm{Fin}\,n$) factors as
+$\texttt{closedWalkWeight}\,\tau = \texttt{pathWeight}\,\tau \cdot M(\tau(\mathrm{last}))(\tau\,0)$
+(\texttt{closedWalkWeight\_succ}), underlying the cyclic 1D Ising
+$Z_N = \operatorname{Tr}(T^N)$ (Glimm--Jaffe~\S17.1).
+
 \paragraph{Finite $\ell^1$ balls and proper-map property.}
 PR~\#782 complements the metric definition with the proper-map
 companion to PR~\#779's cofinite cluster decay. First,
