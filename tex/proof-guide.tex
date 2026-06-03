@@ -8516,8 +8516,15 @@ $c_n = (-1)^{n-1}(n-1)!$. The $D_n$ foundation
 \texttt{Finset.sum\_powerset\_neg\_one\_pow\_card\_of\_nonempty},
 \texttt{\_eq\_one\_of\_edgeFinset\_empty}, and the complete-graph specialisations
 $D_{n \ge 2} = 0$, $D_{n \le 1} = 1$) is established in
-\texttt{AlternatingCompleteGraph.lean} (Part of \#1499); the root-component
-bijection and closed form follow.
+\texttt{AlternatingCompleteGraph.lean} (Part of \#1499). The
+\emph{iso-invariance} of $c$ and $D$
+(\texttt{alternatingConnectedSubgraphSum\_iso},
+\texttt{allSignedSubgraphSum\_iso}: for $\varphi : G \simeq_g H$ the relabelling
+$S \mapsto S.\mathrm{map}(\mathrm{Sym2.map}\,\varphi)$ is a cardinality- and
+connectivity-preserving bijection on edge-subsets, via
+\texttt{SimpleGraph.Iso.connected\_iff}) supplies the
+$c_{|C|} = c(K_{|C|})$, $D_{n-|C|} = D(K_{n-|C|})$ ingredients through
+$K_n|_C \cong K_{|C|}$. The root-component bijection and closed form follow.
 
 \paragraph{Polymer free energy bounds and characterisations
 (PRs~\#1517--\#1566).} A coordinated set of sharpenings was added
