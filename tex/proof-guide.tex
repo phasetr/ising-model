@@ -2055,6 +2055,17 @@ strictly positive and finite for $\beta J > 0$ (\texttt{isingSusceptibility1D\_p
 diverging only as $\beta J \to \infty$ -- the 1D Ising chain has no
 finite-temperature phase transition (Glimm--Jaffe~\S17.1).
 
+\paragraph{Gibbs free-energy density (\S17.1).}
+Combining the eigenvalue free-energy limit with the Gibbs $Z_N = \lambda_+^N + \lambda_-^N$
+identity gives the free-energy density of the project's \emph{Gibbs} partition
+function on the cyclic chain:
+$\tfrac1N \log \texttt{partitionFunction}(\texttt{cycleGraph}\,N)\langle J,0,\beta\rangle \to \log(2\cosh\beta J)$
+(\texttt{tendsto\_log\_partitionFunction\_cycleGraph\_div\_nat}, over $N = n{+}3$),
+and the physical Helmholtz density
+$-(\beta N)^{-1}\log Z_N \to -\beta^{-1}\log(2\cosh\beta J)$
+(\texttt{tendsto\_gibbs\_freeEnergy\_density}) -- the Gibbs (not merely
+transfer-trace) 1D Ising free-energy density (Glimm--Jaffe~\S17.1).
+
 \paragraph{Finite $\ell^1$ balls and proper-map property.}
 PR~\#782 complements the metric definition with the proper-map
 companion to PR~\#779's cofinite cluster decay. First,
