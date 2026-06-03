@@ -1877,7 +1877,12 @@ rate conversion itself (\texttt{ChebyshevRateBridge.lean}) is
 \texttt{le\_exp\_neg\_rate\_latticeDistance\_of\_le\_exp\_neg\_latticeDistanceInf}
 (a bound $c \le A e^{-m\lvert x-y\rvert_\infty}$ transfers to $c \le A
 e^{-(m/d)\lvert x-y\rvert_1}$), exactly the step turning transfer-matrix decay
-into the $e^{-m\cdot\mathrm{dist}}$ bound of Glimm--Jaffe~\S17.5. The
+into the $e^{-m\cdot\mathrm{dist}}$ bound of Glimm--Jaffe~\S17.5. The bridge to
+the project's $\ell^1$ machinery is \texttt{HasExponentialDecay\_of\_latticeDistanceInf\_bound}:
+a hyperplane-separation decay $\lvert S^T_2(i,j)\rvert \le A e^{-m\lvert i-j\rvert_\infty}$
+($i \ne j$) implies $\mathrm{HasExponentialDecay}\,d\,\Lambda\,p\,(m/d)$, feeding a
+future transfer-matrix decay estimate into the $\mathrm{latticeMass}$ development
+without the spectral operator. The
 range is kept in $\mathbb N$ rather than in $\mathbb R$ to avoid
 $\mathbb N$/$\mathbb Z$/$\mathbb R$ cast bookkeeping in the downstream
 summability arguments (Simon--Lieb iteration) that this infrastructure
