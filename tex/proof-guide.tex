@@ -2044,6 +2044,17 @@ $\langle\sigma_0\sigma_n\rangle_N \to e^{-m n}$
 (\texttt{tendsto\_twoPointCorrelation\_exp\_neg\_mass}) -- exponential decay at the
 inverse correlation length (Glimm--Jaffe~\S17.1, \S17.5).
 
+\paragraph{Susceptibility (\S17.1).}
+Summing the two-point decay rate over separations gives the magnetic
+susceptibility. With $r = \tanh\beta J \in [0,1)$ the geometric series
+$\sum_n r^n = (1-r)^{-1}$ converges (\texttt{summable\_tanh\_pow},
+\texttt{tsum\_tanh\_pow}), and the two-sided lattice sum gives
+$\chi = (1+\tanh\beta J)/(1-\tanh\beta J) = 2\sum_n r^n - 1$
+(\texttt{isingSusceptibility1D}, \texttt{isingSusceptibility1D\_eq\_two\_tsum\_sub\_one}),
+strictly positive and finite for $\beta J > 0$ (\texttt{isingSusceptibility1D\_pos}),
+diverging only as $\beta J \to \infty$ -- the 1D Ising chain has no
+finite-temperature phase transition (Glimm--Jaffe~\S17.1).
+
 \paragraph{Finite $\ell^1$ balls and proper-map property.}
 PR~\#782 complements the metric definition with the proper-map
 companion to PR~\#779's cofinite cluster decay. First,
