@@ -28,6 +28,79 @@ noncomputable def alternatingConnectedSubgraphSum
     (G : SimpleGraph V) [DecidableRel G.Adj] : ℝ :=
   ∑ S ∈ connectedSpanningEdgeSubsets G, (-1 : ℝ) ^ S.card
 
+/-! ### All-subgraph signed sum `D_n` (root-component recurrence foundation)
+
+The Mayer Phase B identity `alternatingConnectedSubgraphSum K_n =
+(-1)^(n-1)·(n-1)!` is proved by the root-component recurrence: classifying every
+spanning edge-subset by the connected component of vertex `0` gives
+`D_n = ∑_{C ∋ 0} c_{|C|} · D_{n-|C|}`, where `c_m = alternatingConnectedSubgraphSum`
+and `D_m = allSignedSubgraphSum` is the signed sum over *all* (not necessarily
+connected) spanning edge-subsets. Since `D_m = 0` for `m ≥ 2` and `D_0 = D_1 = 1`,
+the recurrence collapses to `c_n + (n-1)·c_{n-1} = 0`. This section establishes
+the `D_n` values; the recurrence and closed form follow in later work (#1499). -/
+
+/-- **Alternating all-subgraph sum** `D(G)`: `Σ_{S ⊆ E(G)} (-1)^|S|`, the signed
+sum over *all* spanning edge-subsets (not necessarily connected). Plays the role
+of `D_n` in the root-component recurrence for the complete-graph connected sum. -/
+noncomputable def allSignedSubgraphSum
+    {V : Type*} [Fintype V] [DecidableEq V]
+    (G : SimpleGraph V) [DecidableRel G.Adj] : ℝ :=
+  ∑ S ∈ G.edgeFinset.powerset, (-1 : ℝ) ^ S.card
+
+/-- **`D(G) = 0` when `G` has an edge**: if `G.edgeFinset` is nonempty then the
+signed all-subgraph sum vanishes. Direct real-cast of
+`Finset.sum_powerset_neg_one_pow_card_of_nonempty`. -/
+theorem allSignedSubgraphSum_eq_zero_of_edgeFinset_nonempty
+    {V : Type*} [Fintype V] [DecidableEq V]
+    (G : SimpleGraph V) [DecidableRel G.Adj]
+    (h : G.edgeFinset.Nonempty) :
+    allSignedSubgraphSum G = 0 := by
+  unfold allSignedSubgraphSum
+  have hℤ : (∑ S ∈ G.edgeFinset.powerset, (-1 : ℤ) ^ S.card) = 0 :=
+    Finset.sum_powerset_neg_one_pow_card_of_nonempty h
+  have hcast : (∑ S ∈ G.edgeFinset.powerset, (-1 : ℝ) ^ S.card)
+      = (((∑ S ∈ G.edgeFinset.powerset, (-1 : ℤ) ^ S.card) : ℤ) : ℝ) := by
+    push_cast
+    rfl
+  rw [hcast, hℤ, Int.cast_zero]
+
+/-- **`D(G) = 1` when `G` is edgeless**: if `G.edgeFinset = ∅` then the only
+spanning edge-subset is `∅`, contributing `(-1)^0 = 1`. -/
+theorem allSignedSubgraphSum_eq_one_of_edgeFinset_empty
+    {V : Type*} [Fintype V] [DecidableEq V]
+    (G : SimpleGraph V) [DecidableRel G.Adj]
+    (h : G.edgeFinset = ∅) :
+    allSignedSubgraphSum G = 1 := by
+  unfold allSignedSubgraphSum
+  rw [h]
+  simp
+
+/-- **`D_n = 0` for `K_n`, `n ≥ 2`**: the signed all-subgraph sum over the
+complete graph vanishes once there is at least one edge (`s(0,1)`). The `D_m = 0`
+ingredient of the Mayer root-component recurrence. -/
+theorem allSignedSubgraphSum_completeGraph_eq_zero_of_two_le
+    {n : ℕ} (hn : 2 ≤ n) :
+    allSignedSubgraphSum (⊤ : SimpleGraph (Fin n)) = 0 := by
+  apply allSignedSubgraphSum_eq_zero_of_edgeFinset_nonempty
+  refine ⟨s(⟨0, by omega⟩, ⟨1, by omega⟩), ?_⟩
+  rw [SimpleGraph.mem_edgeFinset, SimpleGraph.mem_edgeSet, SimpleGraph.top_adj]
+  exact Fin.ne_of_val_ne Nat.zero_ne_one
+
+/-- **`D(G) = 1` for an edgeless complete graph on a `Subsingleton`**: `K_n` with
+`n ≤ 1` (here via `Subsingleton (Fin n)`) has no edges, so `D = 1`. Covers the
+`n = 0` and `n = 1` boundary values of the recurrence uniformly. -/
+theorem allSignedSubgraphSum_completeGraph_eq_one_of_subsingleton
+    {n : ℕ} [Subsingleton (Fin n)] :
+    allSignedSubgraphSum (⊤ : SimpleGraph (Fin n)) = 1 := by
+  apply allSignedSubgraphSum_eq_one_of_edgeFinset_empty
+  rw [Finset.eq_empty_iff_forall_notMem]
+  intro e he
+  rw [SimpleGraph.mem_edgeFinset] at he
+  revert he
+  refine Sym2.ind (fun a b hab => ?_) e
+  rw [SimpleGraph.mem_edgeSet, SimpleGraph.top_adj] at hab
+  exact hab (Subsingleton.elim a b)
+
 /-- **`K_0` alternating sum = 0** (Mayer Phase B base case): for the
 empty graph on `Fin 0`, no SimpleGraph is `Connected` (Connected
 requires `Nonempty V`), so `connectedSpanningEdgeSubsets = ∅` and
