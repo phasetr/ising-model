@@ -1968,6 +1968,22 @@ $\texttt{closedWalkWeight}\,\tau = \texttt{pathWeight}\,\tau \cdot M(\tau(\mathr
 (\texttt{closedWalkWeight\_succ}), underlying the cyclic 1D Ising
 $Z_N = \operatorname{Tr}(T^N)$ (Glimm--Jaffe~\S17.1).
 
+\paragraph{Cyclic trace identity and 1D evaluation (\S17.1, Issue~\#3511 PR~5).}
+Reindexing the open-return form by the \texttt{init}/\texttt{snoc} bijection
+($\texttt{Finset.sum\_bij'}$) between vertex sequences with $\sigma_0 = \sigma_{\mathrm{last}}$
+and closed walks (using $\texttt{pathWeight\_eq\_closedWalkWeight\_init}$,
+$\texttt{pathWeight}\,M\,\sigma = \texttt{closedWalkWeight}\,M\,(\mathrm{init}\,\sigma)$
+when $\sigma_0 = \sigma_{\mathrm{last}}$) yields the purely cyclic identity
+$\operatorname{Tr}(M^{m+1}) = \sum_{\tau : \mathrm{Fin}(m{+}1)\to\iota} \texttt{closedWalkWeight}\,M\,\tau$
+(\texttt{trace\_pow\_eq\_sum\_cycle}). Specialising to the 1D Ising transfer
+matrix $T(a)$ over the spin space $\mathrm{Fin}\,2$ and combining with the
+spectral trace $\operatorname{Tr}(T(a)^{m+1}) = \lambda_+^{m+1} + \lambda_-^{m+1}$
+gives the cyclic partition function as eigenvalue powers,
+$\sum_{\sigma : \mathrm{Fin}(m{+}1)\to\mathrm{Fin}\,2} \texttt{closedWalkWeight}\,T(a)\,\sigma = \lambda_+^{m+1} + \lambda_-^{m+1}$
+(\texttt{sum\_closedWalkWeight\_isingTransferMatrix1D}), i.e.\ the transfer-matrix
+evaluation $Z_N = \operatorname{Tr}(T^N) = \lambda_+^N + \lambda_-^N$ of the cyclic
+$N$-site zero-field Ising chain (Glimm--Jaffe~\S17.1).
+
 \paragraph{Finite $\ell^1$ balls and proper-map property.}
 PR~\#782 complements the metric definition with the proper-map
 companion to PR~\#779's cofinite cluster decay. First,
