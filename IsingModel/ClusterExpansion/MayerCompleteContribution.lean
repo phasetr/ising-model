@@ -191,4 +191,55 @@ theorem singlePolymer_log_le_neg_log
     Real.log_nonpos (by nlinarith) (by nlinarith)
   linarith
 
+/-- **Polymer family sum is bounded by the product over single polymers**
+(GJ §18.5, convergence): for `t ≥ 0`, `∑_Γ ∏_{P∈Γ} t^|P| ≤ ∏_P (1 + t^|P|)`. The
+compatible families form a subset of *all* subsets of `allPolymers G`, and the
+product expansion `Finset.prod_one_add` rewrites the full subset sum as the
+product; the dropped (incompatible) families contribute non-negatively. The
+"independent-polymer" upper bound, sharper than the `|E|`-based sandwich. -/
+theorem vdPolymerFamilies_sum_le_prod_one_add
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] {t : ℝ} (ht0 : 0 ≤ t) :
+    (∑ Γ ∈ vdCompatiblePolymerFamilies G, ∏ P ∈ Γ, t ^ P.card)
+      ≤ ∏ P ∈ allPolymers G, (1 + t ^ P.card) := by
+  rw [Finset.prod_one_add]
+  apply Finset.sum_le_sum_of_subset_of_nonneg
+  · intro Γ hΓ
+    rw [Finset.mem_powerset]
+    exact (mem_vdCompatiblePolymerFamilies.mp hΓ).1
+  · intro Γ _ _
+    exact Finset.prod_nonneg (fun P _ => pow_nonneg ht0 _)
+
+/-- **Polymer free energy is bounded by the sum of single-polymer logs** (GJ §18.5):
+for `t ≥ 0`, `polymerFreeEnergy G t ≤ ∑_P log(1 + t^|P|)`. Monotonicity of `log`
+applied to `vdPolymerFamilies_sum_le_prod_one_add`, with `Real.log_prod` turning the
+product into the sum. The free energy is bounded by the independent-polymer
+contributions. -/
+theorem polymerFreeEnergy_le_sum_log_one_add
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] {t : ℝ} (ht0 : 0 ≤ t) :
+    polymerFreeEnergy G t ≤ ∑ P ∈ allPolymers G, Real.log (1 + t ^ P.card) := by
+  have hpos : ∀ P : Finset (Sym2 ι), (0 : ℝ) < 1 + t ^ P.card :=
+    fun P => by have := pow_nonneg ht0 P.card; linarith
+  rw [polymerFreeEnergy, ← Real.log_prod (fun P _ => (hpos P).ne'),
+    Real.log_le_log_iff (vdPolymerFamilies_sum_pos_of_nonneg G ht0)
+      (Finset.prod_pos (fun P _ => hpos P))]
+  exact vdPolymerFamilies_sum_le_prod_one_add G ht0
+
+/-- **Polymer free energy is bounded by the single-polymer cluster contributions**
+(GJ §18.5): in the convergence regime `t^|P| < 1` for every polymer,
+`polymerFreeEnergy G t ≤ ∑_P (∑'_m ϕ^T(P,…,P)·z)`, i.e. the free energy is dominated
+by the sum of independent single-polymer Mayer contributions
+(`tsum_singlePolymer_ursell_eq_log`, each `= log(1+t^|P|)`). -/
+theorem polymerFreeEnergy_le_sum_singlePolymer_contribution
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] {t : ℝ} (ht0 : 0 ≤ t)
+    (ht : ∀ P ∈ allPolymers G, |t ^ P.card| < 1) :
+    polymerFreeEnergy G t
+      ≤ ∑ P ∈ allPolymers G, ∑' m : ℕ, ursellCoefficient (fun _ : Fin (m + 1) => P)
+          * clusterSeqActivity t (fun _ : Fin (m + 1) => P) := by
+  refine (polymerFreeEnergy_le_sum_log_one_add G ht0).trans (le_of_eq ?_)
+  refine Finset.sum_congr rfl (fun P hP => ?_)
+  exact (tsum_singlePolymer_ursell_eq_log (mem_allPolymers.mp hP) (ht P hP)).symm
+
 end IsingModel
