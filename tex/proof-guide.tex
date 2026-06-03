@@ -1860,6 +1860,14 @@ decay $e^{-m\cdot\mathrm{dist}}$. With \texttt{latticeDistanceInf\_self},
 ($\lvert x-y\rvert_1 \le d\,\lvert x-y\rvert_\infty$), this records the geometric
 input $\mathrm{dist} \ge \lvert x-y\rvert/a_0$ with $a_0 = d$ that converts
 hyperplane-separation decay into $\ell^1$-distance decay at rate $m/d$. The
+rate conversion itself (\texttt{ChebyshevRateBridge.lean}) is
+\texttt{rate\_div\_card\_mul\_latticeDistance\_le} ($\tfrac{m}{d}\lvert x-y\rvert_1
+\le m\lvert x-y\rvert_\infty$ for $m\ge 0$), \texttt{exp\_neg\_rate\_latticeDistanceInf\_le}
+($e^{-m\lvert x-y\rvert_\infty} \le e^{-(m/d)\lvert x-y\rvert_1}$), and
+\texttt{le\_exp\_neg\_rate\_latticeDistance\_of\_le\_exp\_neg\_latticeDistanceInf}
+(a bound $c \le A e^{-m\lvert x-y\rvert_\infty}$ transfers to $c \le A
+e^{-(m/d)\lvert x-y\rvert_1}$), exactly the step turning transfer-matrix decay
+into the $e^{-m\cdot\mathrm{dist}}$ bound of Glimm--Jaffe~\S17.5. The
 range is kept in $\mathbb N$ rather than in $\mathbb R$ to avoid
 $\mathbb N$/$\mathbb Z$/$\mathbb R$ cast bookkeeping in the downstream
 summability arguments (Simon--Lieb iteration) that this infrastructure
