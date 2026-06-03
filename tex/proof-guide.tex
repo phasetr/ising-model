@@ -2190,6 +2190,30 @@ and \texttt{tendsto\_correlation\_cycleGraph\_exp\_neg\_mass} writes the same li
 the pure exponential $e^{-m n}$ at the inverse correlation length
 $m = \texttt{correlationMass}\,\beta J = -\log\tanh\beta J$ (Glimm--Jaffe~\S17.1).
 
+\paragraph{Exact open 1D chain two-point function (\S17.1).}
+Toward the infinite-volume 1D two-point function, the first step is the exact
+finite-volume two-point function of the \emph{open} chain $\texttt{pathGraph}\,(n{+}1)$.
+Mathlib provides only the adjacency $\texttt{pathGraph\_adj}$, so we enumerate the
+$n$ edges as the consecutive pairs $s(i.\mathrm{castSucc}, i.\mathrm{succ})$
+($i:\mathrm{Fin}\,n$): $\texttt{pathGraph\_edgeFinset\_eq\_image}$,
+$\texttt{card\_pathGraph\_edgeFinset} = n$.  Applying the FV~(3.46) high-temperature
+closed form $\texttt{correlation\_high\_temp\_expansion\_h\_zero\_closed}$, the open
+path is a \emph{tree}, so the two filtered subgraph sums collapse: the even-degree
+denominator is the single empty subgraph ($\texttt{even\_subgraph\_eq\_empty}$, sum
+$1$) and the $\{0,n\}$-odd-boundary numerator is the single full edge set
+($\texttt{endpoint\_subgraph\_eq\_edgeFinset}$, sum $\tanh^n$).  Both are proved by an
+index-set degree formula ($\texttt{deg\_eq\_of\_subset}$: the degree of vertex $k$
+splits into the left ($i = k$) and right ($i = k-1$) index contributions) and a
+minimal-index counterexample argument.  Hence
+\[
+  \texttt{correlation}\,(\texttt{pathGraph}\,(n{+}1))\,\langle J,0,\beta\rangle\,
+    \{0,\,\mathrm{last}\} \;=\; (\tanh\beta J)^n
+\]
+($\texttt{correlation\_pathGraph\_eq\_tanh\_pow}$).  Unlike the cyclic chain there is
+\emph{no boundary correction}, making this the clean finite-volume input to the
+infinite-volume limit $\texttt{twoPointFunction}\,1 = (\tanh\beta J)^{\mathrm{dist}}$
+(Glimm--Jaffe~\S17.1).
+
 \paragraph{Finite $\ell^1$ balls and proper-map property.}
 PR~\#782 complements the metric definition with the proper-map
 companion to PR~\#779's cofinite cluster decay. First,
