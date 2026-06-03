@@ -113,6 +113,30 @@ theorem induce_fromEdgeSet_inside_eq {V : Type*} [Fintype V] [DecidableEq V]
     rw [Finset.mk_mem_sym2_iff]
     exact ⟨x.2, y.2⟩
 
+/-- **Reachability stays inside the root component when no edge crosses it**: if
+every edge of `S` lies entirely inside `C` or entirely outside `C` (no crossing
+edge, `hcross`) and the root `r ∈ C`, then any vertex `v` reachable from `r` in
+`fromEdgeSet ↑S` lies in `C`. The backward half of the fiber characterisation
+(`component of r = C`): with no crossing edge, a walk from `r` can never leave
+`C`. Proved by `Relation.ReflTransGen` induction on the reachability witness via
+`reachable_iff_reflTransGen`; each step's edge is inside `C` (so the new endpoint
+stays in `C`) or inside `Cᶜ` (impossible, as the previous endpoint is in `C`). -/
+theorem reachable_stays_in_of_no_cross {V : Type*} [Fintype V] [DecidableEq V]
+    {S : Finset (Sym2 V)} {C : Finset V} {r : V} (hr : r ∈ C)
+    (hcross : ∀ e ∈ S, e ∈ C.sym2 ∨ e ∈ Cᶜ.sym2) {v : V}
+    (h : (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 V))).Reachable r v) : v ∈ C := by
+  rw [SimpleGraph.reachable_iff_reflTransGen] at h
+  induction h with
+  | refl => exact hr
+  | @tail b c _ hadj ih =>
+    rw [SimpleGraph.fromEdgeSet_adj] at hadj
+    obtain ⟨hmem, _⟩ := hadj
+    rcases hcross _ (Finset.mem_coe.mp hmem) with hin | hout
+    · rw [Finset.mk_mem_sym2_iff] at hin
+      exact hin.2
+    · rw [Finset.mk_mem_sym2_iff, Finset.mem_compl, Finset.mem_compl] at hout
+      exact absurd ih hout.1
+
 /-- **Inside edges form a connected spanning subgraph on the root component**
 (Mayer Phase B crux): for an edge-subset `S`, the within-component edges
 `S_in = S ∩ C.sym2` (with `C = rootComponentFinset S r`) induce a *connected*
@@ -128,5 +152,200 @@ theorem induce_fromEdgeSet_inside_connected {V : Type*} [Fintype V] [DecidableEq
   rw [induce_fromEdgeSet_inside_eq, coe_rootComponentFinset]
   exact SimpleGraph.ConnectedComponent.connected_toSimpleGraph
     ((SimpleGraph.fromEdgeSet (↑S : Set (Sym2 V))).connectedComponentMk r)
+
+/-- **Fiber characterisation of the root component**: `rootComponentFinset S r = C`
+iff (i) the root `r ∈ C`, (ii) no edge of `S` crosses `C` (every edge lies in
+`C.sym2` or in `Cᶜ.sym2`), and (iii) the within-`C` edges `S ∩ C.sym2` induce a
+connected graph on `C`. This exactly describes the fibre of the
+root-component map over a fixed vertex set `C` (with `r ∈ C`): the spanning
+edge-subsets whose component of `r` equals `C`. Forward direction packages
+`self_mem_rootComponentFinset`, `mem_rootComponentFinset_iff_of_mem_edge`, and the
+crux `induce_fromEdgeSet_inside_connected`; backward direction uses
+`reachable_stays_in_of_no_cross` (component stays inside `C`) and maps the inside
+connectivity into ambient reachability (`Reachable.map` along the subtype
+inclusion, then monotonicity to all of `S`). -/
+theorem rootComponentFinset_eq_iff {V : Type*} [Fintype V] [DecidableEq V]
+    {S : Finset (Sym2 V)} {C : Finset V} {r : V} :
+    rootComponentFinset S r = C ↔
+      r ∈ C
+        ∧ (∀ e ∈ S, e ∈ C.sym2 ∨ e ∈ Cᶜ.sym2)
+        ∧ ((SimpleGraph.fromEdgeSet
+              (↑(S.filter (· ∈ C.sym2)) : Set (Sym2 V))).induce (↑C : Set V)).Connected := by
+  constructor
+  · intro hC
+    refine ⟨hC ▸ self_mem_rootComponentFinset S r, ?_, hC ▸ induce_fromEdgeSet_inside_connected S r⟩
+    intro e he
+    revert he
+    refine Sym2.ind (fun a b he => ?_) e
+    have hiff : a ∈ C ↔ b ∈ C := by
+      by_cases hab : a = b
+      · subst hab; exact Iff.rfl
+      · rw [← hC, mem_rootComponentFinset_iff_of_mem_edge he hab]
+    by_cases ha : a ∈ C
+    · left
+      rw [Finset.mk_mem_sym2_iff]
+      exact ⟨ha, hiff.mp ha⟩
+    · right
+      rw [Finset.mk_mem_sym2_iff]
+      exact ⟨Finset.mem_compl.mpr ha, Finset.mem_compl.mpr (fun hb => ha (hiff.mpr hb))⟩
+  · rintro ⟨hr, hcross, hconn⟩
+    ext v
+    rw [mem_rootComponentFinset, SimpleGraph.ConnectedComponent.eq]
+    constructor
+    · intro hreach
+      exact reachable_stays_in_of_no_cross hr hcross hreach.symm
+    · intro hv
+      have hsub : (S.filter (· ∈ C.sym2) : Finset (Sym2 V)) ⊆ S := Finset.filter_subset _ _
+      have hle : SimpleGraph.fromEdgeSet (↑(S.filter (· ∈ C.sym2)) : Set (Sym2 V))
+          ≤ SimpleGraph.fromEdgeSet (↑S : Set (Sym2 V)) :=
+        SimpleGraph.fromEdgeSet_mono (by exact_mod_cast hsub)
+      have h := (hconn.preconnected ⟨r, hr⟩ ⟨v, hv⟩).map
+        ({ toFun := Subtype.val, map_rel' := fun {_ _} h => h } :
+          (SimpleGraph.fromEdgeSet
+              (↑(S.filter (· ∈ C.sym2)) : Set (Sym2 V))).induce (↑C : Set V)
+            →g SimpleGraph.fromEdgeSet (↑(S.filter (· ∈ C.sym2)) : Set (Sym2 V)))
+      simp only [RelHom.coeFn_mk] at h
+      exact ((h.mono hle).symm)
+
+/-- **`C.sym2` and `Cᶜ.sym2` are disjoint**: no `Sym2` lies in both, since an
+edge inside `C` has both endpoints in `C` while one inside `Cᶜ` has both outside.
+The vertex-level partition `C ⊔ Cᶜ` makes the inside/outside edge split a genuine
+partition of any crossing-free edge-subset. -/
+theorem mem_sym2_and_compl_sym2_false {V : Type*} [Fintype V] [DecidableEq V]
+    {C : Finset V} {e : Sym2 V} (h1 : e ∈ C.sym2) (h2 : e ∈ Cᶜ.sym2) : False := by
+  revert h1 h2
+  refine Sym2.ind (fun a b h1 h2 => ?_) e
+  rw [Finset.mk_mem_sym2_iff] at h1
+  rw [Finset.mk_mem_sym2_iff, Finset.mem_compl, Finset.mem_compl] at h2
+  exact h2.1 h1.1
+
+open Classical in
+/-- **Inside connected-spanning edge-subsets** of `G` over a vertex set `C`: the
+subsets `A ⊆ E(G)` whose edges all lie in `C.sym2` and whose `fromEdgeSet`
+restricted to `C` is connected. The ambient analogue (living in `Sym2 V`) of the
+connected-spanning edge-subsets of the complete graph on `C`; it is the inside
+factor of the root-component fibre split. -/
+noncomputable def insideConnectedEdgeSubsets {V : Type*} [Fintype V] [DecidableEq V]
+    (G : SimpleGraph V) [DecidableRel G.Adj] (C : Finset V) : Finset (Finset (Sym2 V)) :=
+  G.edgeFinset.powerset.filter (fun A => A ⊆ C.sym2
+    ∧ ((SimpleGraph.fromEdgeSet (↑A : Set (Sym2 V))).induce (↑C : Set V)).Connected)
+
+open Classical in
+/-- **Outside edge-subsets** of `G` over a vertex set `C`: the subsets `B ⊆ E(G)`
+whose edges all lie in `Cᶜ.sym2` (entirely outside `C`). The ambient analogue of
+all spanning edge-subsets of the complete graph on `Cᶜ`; the outside factor of the
+root-component fibre split. -/
+noncomputable def outsideEdgeSubsets {V : Type*} [Fintype V] [DecidableEq V]
+    (G : SimpleGraph V) [DecidableRel G.Adj] (C : Finset V) : Finset (Finset (Sym2 V)) :=
+  G.edgeFinset.powerset.filter (fun B => B ⊆ Cᶜ.sym2)
+
+/-- **Membership in `insideConnectedEdgeSubsets`**. -/
+theorem mem_insideConnectedEdgeSubsets {V : Type*} [Fintype V] [DecidableEq V]
+    {G : SimpleGraph V} [DecidableRel G.Adj] {C : Finset V} {A : Finset (Sym2 V)} :
+    A ∈ insideConnectedEdgeSubsets G C ↔ A ⊆ G.edgeFinset ∧ A ⊆ C.sym2
+      ∧ ((SimpleGraph.fromEdgeSet (↑A : Set (Sym2 V))).induce (↑C : Set V)).Connected := by
+  classical
+  rw [insideConnectedEdgeSubsets, Finset.mem_filter, Finset.mem_powerset]
+
+/-- **Membership in `outsideEdgeSubsets`**. -/
+theorem mem_outsideEdgeSubsets {V : Type*} [Fintype V] [DecidableEq V]
+    {G : SimpleGraph V} [DecidableRel G.Adj] {C : Finset V} {B : Finset (Sym2 V)} :
+    B ∈ outsideEdgeSubsets G C ↔ B ⊆ G.edgeFinset ∧ B ⊆ Cᶜ.sym2 := by
+  classical
+  rw [outsideEdgeSubsets, Finset.mem_filter, Finset.mem_powerset]
+
+/-- **Root-component fibre signed sum factorises as a product** (Mayer Phase B
+lemma 6): for a fixed vertex set `C` containing the root `r`, the signed sum
+`∑ (-1)^|S|` over edge-subsets `S ⊆ E(G)` whose root component equals `C` factors
+as the product of the inside connected-spanning signed sum (over `C`) and the
+outside signed sum (over `Cᶜ`). Proved by the crossing-free bijection
+`S ↦ (S ∩ C.sym2, S ∩ Cᶜ.sym2)` with inverse `(A, B) ↦ A ∪ B`
+(`Finset.sum_bij'`): the fibre characterisation `rootComponentFinset_eq_iff`
+supplies both membership directions, disjointness `mem_sym2_and_compl_sym2_false`
+makes the split a partition, and `rootComponent_edge_card_split` gives
+`|S| = |A| + |B|`, so `(-1)^|S| = (-1)^|A|·(-1)^|B|`. The ambient core of the
+recurrence `D_n = ∑_{C ∋ 0} c_{|C|} D_{n-|C|}`. -/
+theorem fiber_signed_sum_eq_product {V : Type*} [Fintype V] [DecidableEq V]
+    (G : SimpleGraph V) [DecidableRel G.Adj] {C : Finset V} {r : V} (hrC : r ∈ C) :
+    ∑ S ∈ G.edgeFinset.powerset.filter (fun S => rootComponentFinset S r = C),
+        (-1 : ℝ) ^ S.card
+      = (∑ A ∈ insideConnectedEdgeSubsets G C, (-1 : ℝ) ^ A.card)
+        * (∑ B ∈ outsideEdgeSubsets G C, (-1 : ℝ) ^ B.card) := by
+  classical
+  rw [Finset.sum_mul_sum, ← Finset.sum_product']
+  refine Finset.sum_bij'
+    (fun S _ => (S.filter (· ∈ C.sym2), S.filter (· ∈ Cᶜ.sym2)))
+    (fun p _ => p.1 ∪ p.2) ?_ ?_ ?_ ?_ ?_
+  · -- i maps the fibre into inside ×ˢ outside
+    intro S hS
+    rw [Finset.mem_filter, Finset.mem_powerset] at hS
+    obtain ⟨hSsub, hSroot⟩ := hS
+    obtain ⟨_, _, hconn⟩ := rootComponentFinset_eq_iff.mp hSroot
+    rw [Finset.mem_product]
+    refine ⟨mem_insideConnectedEdgeSubsets.mpr ⟨?_, ?_, hconn⟩,
+      mem_outsideEdgeSubsets.mpr ⟨?_, ?_⟩⟩
+    · exact (Finset.filter_subset _ _).trans hSsub
+    · intro e he; exact (Finset.mem_filter.mp he).2
+    · exact (Finset.filter_subset _ _).trans hSsub
+    · intro e he; exact (Finset.mem_filter.mp he).2
+  · -- j maps inside ×ˢ outside into the fibre
+    intro p hp
+    rw [Finset.mem_product] at hp
+    obtain ⟨hA, hB⟩ := hp
+    obtain ⟨hAsub, hAC, hAconn⟩ := mem_insideConnectedEdgeSubsets.mp hA
+    obtain ⟨hBsub, hBC⟩ := mem_outsideEdgeSubsets.mp hB
+    have hfilter : (p.1 ∪ p.2).filter (· ∈ C.sym2) = p.1 := by
+      rw [Finset.filter_union, Finset.filter_true_of_mem (fun e he => hAC he),
+        Finset.filter_false_of_mem (fun e he h => mem_sym2_and_compl_sym2_false h (hBC he)),
+        Finset.union_empty]
+    rw [Finset.mem_filter, Finset.mem_powerset]
+    refine ⟨Finset.union_subset hAsub hBsub, rootComponentFinset_eq_iff.mpr ⟨hrC, ?_, ?_⟩⟩
+    · intro e he
+      rcases Finset.mem_union.mp he with h | h
+      · exact Or.inl (hAC h)
+      · exact Or.inr (hBC h)
+    · rw [hfilter]; exact hAconn
+  · -- left inverse: (S ∩ C.sym2) ∪ (S ∩ Cᶜ.sym2) = S
+    intro S hS
+    rw [Finset.mem_filter, Finset.mem_powerset] at hS
+    obtain ⟨_, hcross, _⟩ := rootComponentFinset_eq_iff.mp hS.2
+    ext e
+    simp only [Finset.mem_union, Finset.mem_filter]
+    constructor
+    · rintro (⟨h, _⟩ | ⟨h, _⟩) <;> exact h
+    · intro he
+      rcases hcross e he with h | h
+      · exact Or.inl ⟨he, h⟩
+      · exact Or.inr ⟨he, h⟩
+  · -- right inverse: i (A ∪ B) = (A, B)
+    intro p hp
+    rw [Finset.mem_product] at hp
+    obtain ⟨hA, hB⟩ := hp
+    obtain ⟨_, hAC, _⟩ := mem_insideConnectedEdgeSubsets.mp hA
+    obtain ⟨_, hBC⟩ := mem_outsideEdgeSubsets.mp hB
+    have h1 : (p.1 ∪ p.2).filter (· ∈ C.sym2) = p.1 := by
+      rw [Finset.filter_union, Finset.filter_true_of_mem (fun e he => hAC he),
+        Finset.filter_false_of_mem (fun e he h => mem_sym2_and_compl_sym2_false h (hBC he)),
+        Finset.union_empty]
+    have h2 : (p.1 ∪ p.2).filter (· ∈ Cᶜ.sym2) = p.2 := by
+      rw [Finset.filter_union,
+        Finset.filter_false_of_mem (fun e he h => mem_sym2_and_compl_sym2_false (hAC he) h),
+        Finset.filter_true_of_mem (fun e he => hBC he), Finset.empty_union]
+    exact Prod.ext h1 h2
+  · -- value: (-1)^|S| = (-1)^|S∩C.sym2| * (-1)^|S∩Cᶜ.sym2|
+    intro S hS
+    rw [Finset.mem_filter, Finset.mem_powerset] at hS
+    obtain ⟨hSsub, hSroot⟩ := hS
+    have hnondiag : ∀ e ∈ S, ¬ e.IsDiag := by
+      intro e he
+      have hes : e ∈ G.edgeSet := SimpleGraph.mem_edgeFinset.mp (hSsub he)
+      revert hes
+      refine Sym2.ind (fun a b hes => ?_) e
+      rw [SimpleGraph.mem_edgeSet] at hes
+      rw [Sym2.mk_isDiag_iff]
+      exact G.ne_of_adj hes
+    have hcard := rootComponent_edge_card_split S r hnondiag
+    rw [hSroot] at hcard
+    rw [← hcard, pow_add]
 
 end IsingModel
