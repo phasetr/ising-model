@@ -46,6 +46,15 @@ theorem closedWalkWeight_eq_pathWeight_snoc_zero (M : Matrix ι ι R) {m : ℕ}
     Fin.init_snoc]
 
 omit [Fintype ι] [DecidableEq ι] in
+/-- `NeZero`-indexed form of `closedWalkWeight_eq_pathWeight_snoc_zero`: for any
+`τ : Fin n → ι` with `NeZero n`, `closedWalkWeight M τ = pathWeight M (Fin.snoc τ (τ 0))`. -/
+theorem closedWalkWeight_eq_pathWeight_snoc_zero' (M : Matrix ι ι R) {n : ℕ} [NeZero n]
+    (τ : Fin n → ι) :
+    closedWalkWeight M τ = pathWeight M (Fin.snoc τ (τ 0)) := by
+  obtain ⟨m, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (NeZero.ne n)
+  exact closedWalkWeight_eq_pathWeight_snoc_zero M τ
+
+omit [Fintype ι] [DecidableEq ι] in
 /-- **Path weight of a head-to-tail glue**: gluing the open path `σ : Fin (a+1) → ι`
 to `ρ : Fin (b+1) → ι` at a shared vertex (`ρ 0 = σ (last a)`) by appending the
 interior `Fin.init σ` to `ρ` multiplies their path weights:
@@ -95,6 +104,30 @@ theorem markedGlue_apply_a {a b : ℕ} (σ : Fin (a + 1) → ι) (ρ : Fin (b + 
     markedGlue σ ρ ⟨a, ha⟩ = ρ 0 := by
   have ha' : (⟨a, ha⟩ : Fin (a + (b + 1))) = Fin.natAdd a (0 : Fin (b + 1)) := by ext; simp
   rw [markedGlue, ha', Fin.append_right, Fin.init_def]; simp
+
+omit [Fintype ι] [DecidableEq ι] in
+/-- **Closed-walk weight of the marked glue**: under the gluing conditions
+`ρ 0 = σ (last a)` and `ρ (last b) = σ 0`, the cyclic closed-walk weight of the glued
+closed walk factors as `closedWalkWeight M (markedGlue σ ρ) = pathWeight M σ · pathWeight M ρ`.
+Proved by converting to the open-path weight (`closedWalkWeight_eq_pathWeight_snoc_zero'`),
+recognising `Fin.snoc (markedGlue σ ρ) (σ 0) = Fin.append (init σ) ρ` (via `append_snoc`
+and `ρ (last b) = σ 0`), and applying `pathWeight_append`. -/
+theorem closedWalkWeight_markedGlue (M : Matrix ι ι R) {a b : ℕ} [NeZero a] [NeZero b]
+    (σ : Fin (a + 1) → ι) (ρ : Fin (b + 1) → ι)
+    (h1 : ρ 0 = σ (Fin.last a)) (h2 : ρ (Fin.last b) = σ 0) :
+    closedWalkWeight M (markedGlue σ ρ) = pathWeight M σ * pathWeight M ρ := by
+  haveI : NeZero (a + b) := ⟨by have := NeZero.ne a; omega⟩
+  have hmark : (markedGlue σ ρ) 0 = σ 0 := by
+    have h0 : (0 : Fin (a + b)) = Fin.castAdd b (0 : Fin a) := by ext; simp
+    rw [markedGlue, h0, Fin.append_left, Fin.init_def]; simp
+  rw [closedWalkWeight_eq_pathWeight_snoc_zero' M (markedGlue σ ρ), hmark]
+  have hsnoc : Fin.snoc (markedGlue σ ρ) (σ 0) = Fin.append (Fin.init σ) ρ := by
+    rw [markedGlue]
+    conv_rhs => rw [← Fin.snoc_init_self ρ]
+    rw [Fin.append_snoc]
+    congr 1
+    exact h2.symm
+  rw [hsnoc, pathWeight_append M σ ρ h1]
 
 /-- The **marked closed-walk weight**: a closed walk `τ : Fin (a+b) → ι` weighted by
 its cyclic edge product `closedWalkWeight M τ` together with the two diagonal marks
