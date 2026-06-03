@@ -19,7 +19,9 @@ relabelling the lattice endpoints `{0, r}` map to interior path vertices.
 
 ## References
 
-* Glimm–Jaffe, *Quantum Physics*, 2nd ed., §17.1.
+* Glimm–Jaffe, *Quantum Physics*, 2nd ed., §17.1, pp. 304–306.
+* Friedli–Velenik, *Statistical Mechanics of Lattice Systems*, §3.7.3, eq. (3.46),
+  p. 117 (the high-temperature even-subgraph expansion used in the proof).
 -/
 
 namespace IsingModel
