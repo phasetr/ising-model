@@ -40,3 +40,4 @@ import IsingModel.TransferMatrix.OneDimTwoPoint
 import IsingModel.TransferMatrix.CycleGraphLink
 import IsingModel.TransferMatrix.CycleGraphZ
 import IsingModel.TransferMatrix.OneDimCorrelationLength
+import IsingModel.TransferMatrix.OneDimSusceptibility
