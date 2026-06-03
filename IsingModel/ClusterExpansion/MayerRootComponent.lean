@@ -514,9 +514,10 @@ theorem induce_fromEdgeSet_map_subtype {V : Type*}
   · rintro ⟨hmem, hne⟩
     refine ⟨⟨s(a, b), hmem, by rw [Sym2.map_mk]⟩, fun h => hne (Subtype.ext h)⟩
 
-/-- **Inside edges lie in the range of the subtype embedding**: every edge of an
-inside subset `A` (both endpoints in `C`, non-diagonal) is `e z` for some
-`z : Sym2 ↑C`, where `e` is the subtype `sym2`-embedding. -/
+/-- **Inside edges lie in the range of the subtype embedding**: for `A ⊆ C.sym2`
+(every edge has both endpoints in `C`), each edge of `A` is `e z` for some
+`z : Sym2 ↑C`, where `e` is the subtype `sym2`-embedding. (No non-diagonal
+hypothesis is needed; the statement holds for diagonal pairs as well.) -/
 theorem inside_mem_range_sym2Map {V : Type*}
     {C : Finset V} {A : Finset (Sym2 V)} (hAC : A ⊆ C.sym2) :
     ∀ x ∈ A, ∃ z : Sym2 (C : Finset V),
