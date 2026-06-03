@@ -1909,6 +1909,25 @@ spectral ratio $\lambda_-/\lambda_+ = \tanh a$
 $-\log\tanh a$ for the ferromagnetic one-dimensional chain ($a = \beta J > 0$;
 Glimm--Jaffe~\S17.5).
 
+\paragraph{Diagonalization and matrix powers (\S17.1, Issue~\#3511 PR~2).}
+The Hadamard matrix $H = \bigl(\begin{smallmatrix} 1 & 1 \\ 1 & -1 \end{smallmatrix}\bigr)$
+(\texttt{hadamardMatrix}) satisfies $H^2 = 2\,\mathbb 1$
+(\texttt{hadamardMatrix\_mul\_self}), $\det H = -2$
+(\texttt{hadamardMatrix\_det}), $H^{-1} = \tfrac12 H$
+(\texttt{hadamardMatrix\_inv}). With $D(a) = \mathrm{diag}(\lambda_+, \lambda_-)$
+(\texttt{transferDiagonal}), the inverse-free Hadamard intertwining
+$T(a)\,H = H\,D(a)$ (\texttt{isingTransferMatrix1D\_mul\_hadamard}) powers by
+induction to $T(a)^N H = H\,D(a)^N$
+(\texttt{isingTransferMatrix1D\_pow\_mul\_hadamard}), i.e.\ the diagonalization
+$T(a)^N = H\,D(a)^N H^{-1}$ (\texttt{isingTransferMatrix1D\_pow\_eq\_conj}) with
+$D(a)^N = \mathrm{diag}(\lambda_+^N, \lambda_-^N)$
+(\texttt{transferDiagonal\_pow}). The trace is the cyclic-chain partition
+function $Z_N = \operatorname{Tr}(T(a)^N) = \lambda_+^N + \lambda_-^N$
+(\texttt{trace\_isingTransferMatrix1D\_pow}, via \texttt{trace\_mul\_comm} and
+$H^{-1}H = \mathbb 1$), and $\det(T(a)^N) = (\lambda_+\lambda_-)^N$
+(\texttt{det\_isingTransferMatrix1D\_pow}) -- the transfer-matrix solution of the
+one-dimensional Ising chain (Glimm--Jaffe~\S17.1).
+
 \paragraph{Finite $\ell^1$ balls and proper-map property.}
 PR~\#782 complements the metric definition with the proper-map
 companion to PR~\#779's cofinite cluster decay. First,
