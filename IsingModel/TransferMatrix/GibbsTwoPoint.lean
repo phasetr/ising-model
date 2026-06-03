@@ -21,6 +21,10 @@ This is the bridge that turns the abstract transfer-matrix two-point analysis
 (`twoPointCorrelation_eq`, `tendsto_twoPointCorrelation`) into a statement about
 the project's Gibbs correlation `⟨σ₀σₙ⟩` (Glimm–Jaffe §17.1).
 
+This is the standard cyclic transfer-matrix computation of the 1D Ising two-point
+function, providing the Gibbs reading of the mass and exponential-decay discussion
+of Glimm–Jaffe §17.1.
+
 ## References
 
 * Glimm–Jaffe, *Quantum Physics*, 2nd ed., §17.1.

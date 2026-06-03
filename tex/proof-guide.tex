@@ -2134,6 +2134,9 @@ $\sum_{\tau : \mathrm{Fin}(n{+}m)\to\mathrm{Fin}\,2} \texttt{markedClosedWalkWei
 the bridge toward the Gibbs two-point function (Glimm--Jaffe~\S17.1).
 
 \paragraph{Gibbs two-point function as the transfer-matrix ratio (\S17.1).}
+This is the standard cyclic transfer-matrix computation of the 1D Ising
+two-point function, providing the Gibbs reading of the mass and exponential-decay
+discussion of Glimm--Jaffe~\S17.1.
 The previous paragraphs supply the transfer-matrix numerator
 $\operatorname{Tr}(S\,T^n S\,T^m)$ in closed-walk form; it remains to identify the
 project's \emph{Gibbs} correlation
@@ -2161,7 +2164,7 @@ partition function $\lambda_+^N + \lambda_-^N$ and matching
 \[
   \texttt{correlation}\,(\texttt{cycleGraph}\,N)\,\langle J,0,\beta\rangle\,\{0,n\}
   \;=\; \texttt{twoPointCorrelation}\,(\beta J)\,n\,N
-  \qquad (0 < n < N)
+  \qquad (N = k+3 \ge 3,\ 0 < n < N)
 \]
 (\texttt{correlation\_cycleGraph\_eq\_twoPointCorrelation}).  This turns the abstract
 transfer-matrix two-point analysis -- in particular the exact geometric decay
