@@ -2113,6 +2113,17 @@ $\operatorname{Tr}(D\,M^a D\,M^b) = \sum_{\sigma,\rho} [\sigma_{\mathrm{last}}=\
 \texttt{closedWalkWeight\_markedGlue} this is the marked closed-walk trace identity
 up to the path-pair bijection (Glimm--Jaffe~\S17.1).
 
+\paragraph{Marked closed-walk trace identity (\S17.1).}
+The reconstruction maps $\texttt{σOf}\,\tau = \mathrm{snoc}\,(\tau\circ\mathrm{castAdd}\,b)\,(\tau\,a)$,
+$\texttt{ρOf}\,\tau = \mathrm{snoc}\,(\tau\circ\mathrm{natAdd}\,a)\,(\tau\,0)$ satisfy
+$\texttt{markedGlue}\,(\texttt{σOf}\,\tau)\,(\texttt{ρOf}\,\tau) = \tau$
+(\texttt{markedGlue\_σOf\_ρOf}, via $\texttt{Fin.append\_castAdd\_natAdd}$). The
+$\texttt{Finset.sum\_bij'}$ bijection between closed walks and glued path pairs then
+yields the marked closed-walk trace identity
+$\operatorname{Tr}(D\,M^a D\,M^b) = \sum_{\tau : \mathrm{Fin}(a{+}b)\to\iota} d(\tau_0)\,d(\tau_a)\,\texttt{closedWalkWeight}\,M\,\tau$
+(\texttt{trace\_diagonal\_pow\_diagonal\_pow\_eq\_sum\_markedClosedWalk}) -- the
+combinatorial core of the Gibbs two-point function (Glimm--Jaffe~\S17.1).
+
 \paragraph{Finite $\ell^1$ balls and proper-map property.}
 PR~\#782 complements the metric definition with the proper-map
 companion to PR~\#779's cofinite cluster decay. First,
