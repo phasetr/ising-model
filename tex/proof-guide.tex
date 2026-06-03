@@ -2239,6 +2239,32 @@ giving
 ($\texttt{correlation\_pathGraph\_pair\_eq\_tanh\_pow}$) -- the exact geometric decay in
 the path distance between the two sites (Glimm--Jaffe~\S17.1).
 
+\paragraph{Infinite-volume 1D two-point function (\S17.1, capstone).}
+The capstone of the infinite-volume 1D programme identifies the project's
+infinite-volume Gibbs two-point function with the exact geometric decay,
+\[
+  \texttt{twoPointFunction}\,1\,\langle J,0,\beta\rangle\,r
+    \;=\; (\tanh\beta J)^{\mathrm{latticeDistance}\,1\,0\,r}
+  \qquad (r \ne 0,\ 0 \le J,\ 0 < \beta),
+\]
+the project's most-important long-term goal realised in one dimension.  The induced
+subgraph of $\texttt{latticeGraph}\,1$ on the centred box $[-N,N]$ is an open chain:
+the relabelling $k \mapsto k-N$ gives an equivalence
+$\texttt{boxEquiv} : \mathrm{Fin}\,(2N{+}1) \simeq \mathord{\uparrow}(\texttt{cubicBox}\,1\,N)$
+with the graph-map equality
+$(\texttt{pathGraph}\,(2N{+}1))\mathbin{.}\mathrm{map}\,\texttt{boxEquiv}
+   = \texttt{inducedGraph}\,(\texttt{latticeGraph}\,1)\,(\texttt{cubicBox}\,1\,N)$
+($\texttt{pathGraph\_map\_boxEquiv}$; adjacency on both sides reduces to
+$\lvert u_0 - v_0\rvert = 1$).  By $\texttt{correlation\_map\_equiv}$ the finite-volume
+$\texttt{correlationAlongExhaustion}$ at stage $N \ge \lvert r_0\rvert$ equals the
+open-chain pair two-point $(\tanh\beta J)^{\lvert r\rvert}$ (the lattice pair $\{0,r\}$
+lifting to the $\texttt{boxEquiv}$-image of the path pair $\{N, r_0{+}N\}$).  The
+sequence is eventually constant in $N$, so the thermodynamic-limit supremum collapses
+to it ($\texttt{twoPointFunction\_one\_eq\_tanh\_pow}$, via
+$\texttt{correlationAlongExhaustion\_tendsto\_ciSup}$ and $\texttt{tendsto\_nhds\_unique}$).
+This is the first genuinely infinite-volume Gibbs correlation result in the project
+(Glimm--Jaffe~\S17.1).
+
 \paragraph{Finite $\ell^1$ balls and proper-map property.}
 PR~\#782 complements the metric definition with the proper-map
 companion to PR~\#779's cofinite cluster decay. First,
