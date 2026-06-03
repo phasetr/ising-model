@@ -169,7 +169,8 @@ theorem tsum_abs_singlePolymer_ursell
   (hasSum_abs_singlePolymer_ursell hP ht0 ht).tsum_eq
 
 /-- **Summability of the single-polymer Mayer series**: the repeated-polymer terms
-are summable (indeed absolutely summable) for `|t^|P|| < 1`. -/
+are summable for `|t^|P|| < 1` (from the `HasSum` to `log(1 + t^|P|)`; absolute
+summability for `0 ≤ t` is `hasSum_abs_singlePolymer_ursell`). -/
 theorem summable_singlePolymer_ursell
     {ι : Type*} [Fintype ι] [DecidableEq ι]
     {G : SimpleGraph ι} [Fintype G.edgeSet] {P : Finset (Sym2 ι)} (hP : IsPolymer G P)
