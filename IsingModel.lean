@@ -49,3 +49,4 @@ import IsingModel.TransferMatrix.GibbsTwoPoint
 import IsingModel.TransferMatrix.GibbsTwoPointDecay
 import IsingModel.TransferMatrix.PathGraphEdges
 import IsingModel.TransferMatrix.PathGraphTwoPoint
+import IsingModel.TransferMatrix.PathGraphPairTwoPoint

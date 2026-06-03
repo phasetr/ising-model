@@ -2216,6 +2216,29 @@ $0$, $\mathrm{last}$ distinct).  Unlike the cyclic chain there is
 infinite-volume limit $\texttt{twoPointFunction}\,1 = (\tanh\beta J)^{\mathrm{dist}}$
 (Glimm--Jaffe~\S17.1).
 
+\paragraph{General-pair open 1D chain two-point function (\S17.1).}
+Generalising the endpoint result to an arbitrary distinct pair $\{a,b\}$ of
+$\texttt{pathGraph}\,(m{+}1)$ vertices is needed for the infinite-volume lift, since
+under the box$\cong$path relabelling the lattice endpoints $\{0,r\}$ map to interior
+path vertices.  Define the segment index set
+$\texttt{segmentIdx}\,m\,a\,b = \{\, i : \mathrm{Fin}\,m \mid a \le i < b \,\}$ (the
+edges connecting $a$ to $b$), with $\texttt{card\_segmentIdx} = b - a$.  The key
+combinatorial fact $\texttt{idx\_eq\_segmentIdx}$ is that an edge subset $X$ with odd
+degree exactly at $\{a,b\}$ ($a < b$, even elsewhere) has index set the segment; it is
+proved by the discrete-derivative parity recurrence
+$\deg(\text{vertex }k) = [\,\text{edge }(k{-}1)\in S\,] + [\,\text{edge }k\in S\,]$ via
+strong induction on $k$ (the boundary $\{a,b\}$ flips force exactly the segment).
+With the segment-parity check $\texttt{segment\_parity}$ (degree $1$ at the endpoints,
+$2$ inside, $0$ outside), the FV~(3.46) closed form collapses to the single segment
+subgraph of cardinality $b-a$ in the numerator and $\{\emptyset\}$ in the denominator,
+giving
+\[
+  \texttt{correlation}\,(\texttt{pathGraph}\,(m{+}1))\,\langle J,0,\beta\rangle\,
+    \{a,b\} \;=\; (\tanh\beta J)^{\lvert a - b\rvert} \qquad (a \ne b)
+\]
+($\texttt{correlation\_pathGraph\_pair\_eq\_tanh\_pow}$) -- the exact geometric decay in
+the path distance between the two sites (Glimm--Jaffe~\S17.1).
+
 \paragraph{Finite $\ell^1$ balls and proper-map property.}
 PR~\#782 complements the metric definition with the proper-map
 companion to PR~\#779's cofinite cluster decay. First,
