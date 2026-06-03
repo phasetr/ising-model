@@ -2018,6 +2018,21 @@ $Z_N = \sum_\sigma \prod_{i} e^{\beta J\,\sigma_i\sigma_{i+1}}$
 (\texttt{partitionFunction\_cycleGraph\_eq\_sum\_prod}) -- the transfer-matrix
 shape (Glimm--Jaffe~\S17.1).
 
+\paragraph{Gibbs partition function $Z_N = \lambda_+^N + \lambda_-^N$ (\S17.1, Issue~\#3511 PR~8, capstone).}
+Via the spin$\leftrightarrow\mathrm{Fin}\,2$ encoding $\texttt{spinEquivFin2}$
+($\mathrm{up}\mapsto 0$, $\mathrm{down}\mapsto 1$), under which
+$\texttt{spin1D}(\mathrm{encode}\,s) = \mathrm{sign}(s)$ and the Boltzmann edge
+factor becomes a transfer-matrix entry
+$T(\beta J)(\mathrm{encode}\,s)(\mathrm{encode}\,t) = e^{\beta J\,\mathrm{sign}(s)\mathrm{sign}(t)}$,
+the per-configuration site product is a closed-walk weight of the encoded
+configuration (\texttt{prod\_exp\_edgeSpin\_eq\_closedWalkWeight}). Reindexing the
+configuration sum along $(\mathrm{Fin}\,N \to \mathrm{Spin}) \simeq (\mathrm{Fin}\,N \to \mathrm{Fin}\,2)$
+and applying $\texttt{sum\_closedWalkWeight\_isingTransferMatrix1D}$ gives the
+classic transfer-matrix evaluation of the Gibbs partition function,
+$\texttt{partitionFunction}(\texttt{cycleGraph}\,N)\,\langle J,0,\beta\rangle = \lambda_+^N + \lambda_-^N = (2\cosh\beta J)^N + (2\sinh\beta J)^N$
+(\texttt{partitionFunction\_cycleGraph\_eq\_eigenvaluePow}), completing the
+transfer-matrix evaluation of $Z_N$ (Glimm--Jaffe~\S17.1).
+
 \paragraph{Finite $\ell^1$ balls and proper-map property.}
 PR~\#782 complements the metric definition with the proper-map
 companion to PR~\#779's cofinite cluster decay. First,
