@@ -42,3 +42,4 @@ import IsingModel.TransferMatrix.CycleGraphZ
 import IsingModel.TransferMatrix.OneDimCorrelationLength
 import IsingModel.TransferMatrix.OneDimSusceptibility
 import IsingModel.TransferMatrix.OneDimGibbsFreeEnergy
+import IsingModel.TransferMatrix.MarkedTrace
