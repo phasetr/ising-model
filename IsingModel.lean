@@ -44,3 +44,4 @@ import IsingModel.TransferMatrix.OneDimSusceptibility
 import IsingModel.TransferMatrix.OneDimGibbsFreeEnergy
 import IsingModel.TransferMatrix.MarkedTrace
 import IsingModel.TransferMatrix.MarkedTraceClosedWalk
+import IsingModel.TransferMatrix.MarkedTrace1D
