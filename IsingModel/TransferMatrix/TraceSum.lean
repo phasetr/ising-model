@@ -23,8 +23,9 @@ obtained by induction peeling the last edge with `Fin.snoc`, then specialised to
 diagonal (`b = a`) and summed.  The genuinely cyclic weight
 `closedWalkWeight M σ = ∏_{i : Fin n} M (σ i) (σ (i+1))` (cyclic `i+1` in `Fin n`) is
 given with its factorization `closedWalkWeight_succ` into `pathWeight` times the
-wrap-around edge; the reindexing of `trace_pow_eq_sum` into this purely cyclic
-`∑_{σ : Fin N → ι} closedWalkWeight M σ` form is left for a subsequent step.
+wrap-around edge, and `trace_pow_eq_sum` is reindexed into the purely cyclic form
+`Tr(M^(m+1)) = ∑_{σ : Fin (m+1) → ι} closedWalkWeight M σ` (`trace_pow_eq_sum_cycle`)
+via the `init`/`snoc` bijection.
 
 ## References
 
