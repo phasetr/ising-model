@@ -1855,7 +1855,10 @@ companion Chebyshev ($\ell^\infty$) distance \texttt{latticeDistanceInf} $=
 \max_i \lvert x_i - y_i\rvert$ is the lattice \emph{hyperplane separation} of
 Glimm--Jaffe~\S17.5 (p.~312), in which the transfer matrix yields exponential
 decay $e^{-m\cdot\mathrm{dist}}$. With \texttt{latticeDistanceInf\_self},
-\texttt{latticeDistanceInf\_comm}, \texttt{latticeDistanceInf\_le\_latticeDistance}
+\texttt{latticeDistanceInf\_comm}, \texttt{latticeDistanceInf\_eq\_zero\_iff},
+\texttt{latticeDistanceInf\_triangle}, and \texttt{latticeDistanceInf\_pos\_of\_ne}
+(the $\ell^\infty$ pseudo-metric structure), together with
+\texttt{latticeDistanceInf\_le\_latticeDistance}
 ($\ell^\infty \le \ell^1$), and \texttt{latticeDistance\_le\_card\_mul\_latticeDistanceInf}
 ($\lvert x-y\rvert_1 \le d\,\lvert x-y\rvert_\infty$), this records the geometric
 input $\mathrm{dist} \ge \lvert x-y\rvert/a_0$ with $a_0 = d$ that converts
