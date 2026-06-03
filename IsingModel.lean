@@ -39,3 +39,4 @@ import IsingModel.TransferMatrix.TraceSum1D
 import IsingModel.TransferMatrix.OneDimTwoPoint
 import IsingModel.TransferMatrix.CycleGraphLink
 import IsingModel.TransferMatrix.CycleGraphZ
+import IsingModel.TransferMatrix.OneDimCorrelationLength

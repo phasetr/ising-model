@@ -2033,6 +2033,17 @@ $\texttt{partitionFunction}(\texttt{cycleGraph}\,N)\,\langle J,0,\beta\rangle = 
 (\texttt{partitionFunction\_cycleGraph\_eq\_eigenvaluePow}), completing the
 transfer-matrix evaluation of $Z_N$ (Glimm--Jaffe~\S17.1).
 
+\paragraph{Correlation length and mass (\S17.1, \S17.5).}
+Writing the two-point decay $\langle\sigma_0\sigma_n\rangle_N \to (\tanh\beta J)^n$
+as a pure exponential identifies the mass $m = -\log\tanh\beta J$
+(\texttt{correlationMass}, the inverse correlation length, the \S17.5 mass) and
+correlation length $\xi = 1/m$ (\texttt{correlationLength}), with $m, \xi > 0$ for
+$a = \beta J > 0$ (\texttt{correlationMass\_pos}, \texttt{correlationLength\_pos}).
+Then $(\tanh\beta J)^n = e^{-m n}$ (\texttt{tanh\_pow\_eq\_exp\_neg\_mass}) gives
+$\langle\sigma_0\sigma_n\rangle_N \to e^{-m n}$
+(\texttt{tendsto\_twoPointCorrelation\_exp\_neg\_mass}) -- exponential decay at the
+inverse correlation length (Glimm--Jaffe~\S17.1, \S17.5).
+
 \paragraph{Finite $\ell^1$ balls and proper-map property.}
 PR~\#782 complements the metric definition with the proper-map
 companion to PR~\#779's cofinite cluster decay. First,
