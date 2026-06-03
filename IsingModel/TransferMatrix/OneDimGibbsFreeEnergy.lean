@@ -45,8 +45,9 @@ theorem tendsto_log_partitionFunction_cycleGraph_div_nat {J β : ℝ} (hβJ : 0 
   ring_nf
 
 /-- **Physical Gibbs free-energy density of the cyclic 1D Ising chain**
-(Glimm–Jaffe §17.1): for `β > 0`, the per-site Helmholtz free energy
-`f_N = -(βN)⁻¹·log Z_N` converges to `f = -β⁻¹·log(2cosh βJ)` as `N → ∞`.  This is
+(Glimm–Jaffe §17.1): the per-site Helmholtz free energy
+`f_N = -(βN)⁻¹·log Z_N` converges to `f = -β⁻¹·log(2cosh βJ)` as `N → ∞` (under the
+hypothesis `β·J > 0`; the Helmholtz reading is physical for `β > 0`).  This is
 `-(1/β)` times the log-partition density limit (an algebraic scaling, valid for
 any `β`). -/
 theorem tendsto_gibbs_freeEnergy_density {J β : ℝ} (hβJ : 0 < β * J) :
