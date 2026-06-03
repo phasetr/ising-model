@@ -2133,6 +2133,41 @@ $\sum_{\tau : \mathrm{Fin}(n{+}m)\to\mathrm{Fin}\,2} \texttt{markedClosedWalkWei
 (\texttt{sum\_markedClosedWalkWeight\_isingTransferMatrix1D}, $= \operatorname{Tr}(S\,T^n S\,T^m)$),
 the bridge toward the Gibbs two-point function (Glimm--Jaffe~\S17.1).
 
+\paragraph{Gibbs two-point function as the transfer-matrix ratio (\S17.1).}
+The previous paragraphs supply the transfer-matrix numerator
+$\operatorname{Tr}(S\,T^n S\,T^m)$ in closed-walk form; it remains to identify the
+project's \emph{Gibbs} correlation
+$\langle\sigma_0\sigma_n\rangle = \texttt{correlation}\,(\texttt{cycleGraph}\,N)\,\langle J,0,\beta\rangle\,\{0,n\}$
+of the two endpoint spins with the transfer-matrix two-point ratio
+$\texttt{twoPointCorrelation}\,(\beta J)\,n\,N
+= \operatorname{Tr}(S\,T^n S\,T^{N-n})/\operatorname{Tr}(T^N)$.
+Using the same spin$\leftrightarrow\mathrm{Fin}\,2$ encoding that evaluates the
+partition function (\texttt{partitionFunction\_cycleGraph\_eq\_eigenvaluePow}), the
+Gibbs two-point numerator becomes the site-marked closed-walk sum,
+\[
+  \sum_\sigma \texttt{spinProduct}\,\{0,n\}\,\sigma\,\cdot\,
+    \texttt{boltzmannWeight}\,(\texttt{cycleGraph}\,N)\,\langle J,0,\beta\rangle\,\sigma
+  \;=\; \sum_{\tau:\mathrm{Fin}\,N\to\mathrm{Fin}\,2}
+    \texttt{spin1D}(\tau_0)\,\texttt{spin1D}(\tau_n)\,\texttt{closedWalkWeight}\,T(\beta J)\,\tau,
+\]
+the two spin insertions $\sigma_0\sigma_n$ turning into the marks
+$\texttt{spin1D}(\tau_0)\,\texttt{spin1D}(\tau_n)$
+(\texttt{twoPointNumerator\_cycleGraph\_eq\_sum\_siteMarked}).  Unfolding the marked
+closed-walk weight, this site-marked sum evaluates (for $N = n+m$, $0<n$, $0<m$) to
+$\lambda_-^n\lambda_+^m + \lambda_+^n\lambda_-^m$
+(\texttt{sum\_siteMarkedClosedWalkWeight\_isingTransferMatrix1D}).  Dividing by the
+partition function $\lambda_+^N + \lambda_-^N$ and matching
+\texttt{twoPointCorrelation\_eq} gives the headline identity
+\[
+  \texttt{correlation}\,(\texttt{cycleGraph}\,N)\,\langle J,0,\beta\rangle\,\{0,n\}
+  \;=\; \texttt{twoPointCorrelation}\,(\beta J)\,n\,N
+  \qquad (0 < n < N)
+\]
+(\texttt{correlation\_cycleGraph\_eq\_twoPointCorrelation}).  This turns the abstract
+transfer-matrix two-point analysis -- in particular the exact geometric decay
+$\langle\sigma_0\sigma_n\rangle \to (\tanh\beta J)^n$ -- into a statement about the
+project's Gibbs correlation $\langle\sigma_0\sigma_n\rangle$ (Glimm--Jaffe~\S17.1).
+
 \paragraph{Finite $\ell^1$ balls and proper-map property.}
 PR~\#782 complements the metric definition with the proper-map
 companion to PR~\#779's cofinite cluster decay. First,
