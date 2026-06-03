@@ -65,12 +65,15 @@ def boxEquiv (N : ℕ) : Fin (2 * N + 1) ≃ ↑(Ambient.cubicBox 1 N) where
     have := (Ambient.mem_cubicBox.mp x.2) 0
     omega
 
+/-- The cubic exhaustion's volume at stage `N` is the box `cubicBox d N`. -/
 @[simp] theorem cubicExhaustion_volume (d N : ℕ) :
     (Ambient.cubicExhaustion d).volume N = Ambient.cubicBox d N := rfl
 
+/-- The underlying lattice point of `boxEquiv N k` is the constant function `k - N`. -/
 @[simp] theorem boxEquiv_apply_val (N : ℕ) (k : Fin (2 * N + 1)) :
     ((boxEquiv N k).val : Fin 1 → ℤ) = fun _ => (k : ℤ) - N := rfl
 
+/-- The path index of `boxEquiv⁻¹ u` is `(u₀ + N).toNat`. -/
 @[simp] theorem boxEquiv_symm_val (N : ℕ) (u : ↑(Ambient.cubicBox 1 N)) :
     (((boxEquiv N).symm u : Fin (2 * N + 1)) : ℕ) = (u.val 0 + N).toNat := rfl
 
@@ -114,10 +117,12 @@ private def shiftIdx (N : ℕ) (r : Fin 1 → ℤ) (h : (r 0).natAbs ≤ N) :
     Fin (2 * N + 1) := ⟨(r 0 + N).toNat, by
   omega⟩
 
+/-- `boxEquiv` sends the centre index `N` to the lattice point `0`. -/
 private theorem boxEquiv_centreIdx (N : ℕ) :
     (boxEquiv N (centreIdx N)).val = (0 : Fin 1 → ℤ) := by
   funext i; simp only [boxEquiv_apply_val, centreIdx, Pi.zero_apply]; ring
 
+/-- `boxEquiv` sends the shift index `r₀ + N` to the lattice point `r`. -/
 private theorem boxEquiv_shiftIdx (N : ℕ) (r : Fin 1 → ℤ) (h : (r 0).natAbs ≤ N) :
     (boxEquiv N (shiftIdx N r h)).val = r := by
   funext i
