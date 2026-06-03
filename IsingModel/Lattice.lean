@@ -120,6 +120,41 @@ lemma latticeDistanceInf_comm (d : ℕ) (x y : Fin d → ℤ) :
   refine Finset.sup_congr rfl (fun i _ => ?_)
   rw [show x i - y i = -(y i - x i) by ring, Int.natAbs_neg]
 
+/-- The Chebyshev distance vanishes exactly between equal points. -/
+lemma latticeDistanceInf_eq_zero_iff (d : ℕ) (x y : Fin d → ℤ) :
+    latticeDistanceInf d x y = 0 ↔ x = y := by
+  constructor
+  · intro h
+    funext i
+    have hle : (x i - y i).natAbs ≤ latticeDistanceInf d x y :=
+      Finset.le_sup (f := fun j => (x j - y j).natAbs) (Finset.mem_univ i)
+    rw [h, Nat.le_zero, Int.natAbs_eq_zero, sub_eq_zero] at hle
+    exact hle
+  · intro h
+    rw [h]
+    exact latticeDistanceInf_self d y
+
+/-- Triangle inequality for the Chebyshev (ℓ∞) distance. -/
+lemma latticeDistanceInf_triangle (d : ℕ) (x y z : Fin d → ℤ) :
+    latticeDistanceInf d x z ≤
+      latticeDistanceInf d x y + latticeDistanceInf d y z := by
+  unfold latticeDistanceInf
+  apply Finset.sup_le
+  intro i _
+  calc (x i - z i).natAbs
+      = ((x i - y i) + (y i - z i)).natAbs := by rw [sub_add_sub_cancel]
+    _ ≤ (x i - y i).natAbs + (y i - z i).natAbs := Int.natAbs_add_le _ _
+    _ ≤ Finset.univ.sup (fun j => (x j - y j).natAbs)
+          + Finset.univ.sup (fun j => (y j - z j).natAbs) :=
+        Nat.add_le_add
+          (Finset.le_sup (f := fun j => (x j - y j).natAbs) (Finset.mem_univ i))
+          (Finset.le_sup (f := fun j => (y j - z j).natAbs) (Finset.mem_univ i))
+
+/-- The Chebyshev distance between distinct points is strictly positive. -/
+lemma latticeDistanceInf_pos_of_ne (d : ℕ) {x y : Fin d → ℤ} (hxy : x ≠ y) :
+    0 < latticeDistanceInf d x y :=
+  Nat.pos_of_ne_zero (fun h => hxy ((latticeDistanceInf_eq_zero_iff d x y).mp h))
+
 /-- **The Chebyshev (ℓ∞) distance is bounded by the ℓ¹ distance** (`max ≤ sum`):
 each coordinate difference is at most the total. -/
 lemma latticeDistanceInf_le_latticeDistance (d : ℕ) (x y : Fin d → ℤ) :
