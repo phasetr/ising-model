@@ -2124,6 +2124,15 @@ $\operatorname{Tr}(D\,M^a D\,M^b) = \sum_{\tau : \mathrm{Fin}(a{+}b)\to\iota} d(
 (\texttt{trace\_diagonal\_pow\_diagonal\_pow\_eq\_sum\_markedClosedWalk}) -- the
 combinatorial core of the Gibbs two-point function (Glimm--Jaffe~\S17.1).
 
+\paragraph{1D marked closed-walk sum (\S17.1).}
+Specialising to the 1D Ising transfer matrix $T(a)$ with marks
+$\texttt{spin1D} = (1,-1)$ (so the marking matrix is $S = \mathrm{diagonal}\,\texttt{spin1D}$,
+\texttt{spinOperator\_eq\_diagonal\_spin1D}) and combining with \texttt{twoPointTrace},
+the closed-walk form of the two-point numerator is
+$\sum_{\tau : \mathrm{Fin}(n{+}m)\to\mathrm{Fin}\,2} \texttt{markedClosedWalkWeight}\,T(a)\,\texttt{spin1D}\,\tau = \lambda_-^n\lambda_+^m + \lambda_+^n\lambda_-^m$
+(\texttt{sum\_markedClosedWalkWeight\_isingTransferMatrix1D}, $= \operatorname{Tr}(S\,T^n S\,T^m)$),
+the bridge toward the Gibbs two-point function (Glimm--Jaffe~\S17.1).
+
 \paragraph{Finite $\ell^1$ balls and proper-map property.}
 PR~\#782 complements the metric definition with the proper-map
 companion to PR~\#779's cofinite cluster decay. First,
