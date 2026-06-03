@@ -7,19 +7,24 @@ import Mathlib.Data.Fin.Tuple.Basic
 
 The transfer-matrix method of Glimm–Jaffe §17.1 expresses the partition function
 of the cyclic `N`-site chain as a matrix trace, `Z_N = Tr(Tᴺ)`.  The combinatorial
-core, valid for any finite matrix `M : Matrix ι ι R` over a commutative semiring,
-is the **closed-walk trace identity**
+core, valid for any finite matrix `M : Matrix ι ι R` over a commutative semiring, is
+the **closed-walk trace identity**, proved here in the open-path return-to-start form
 
-  `Tr(Mᴺ) = ∑_{σ : Fin N → ι} ∏_{i : Fin N} M (σ i) (σ (i + 1))`   (`i + 1` cyclic),
+  `Tr(Mⁿ) = ∑_{σ : Fin (n+1) → ι, σ 0 = σ (last n)} pathWeight M σ`   (`trace_pow_eq_sum`),
 
-a sum over closed walks of length `N` weighted by their edge products.  Mathlib
-has no such lemma (only `adjMatrix_pow_apply_eq_card_walk` for `0/1` matrices), so
-it is proved here from the open-path entry formula
+where `pathWeight M σ = ∏_{i : Fin n} M (σ i.castSucc) (σ i.succ)` is the product of
+edge weights along the path `σ`.  Mathlib has no such lemma (only
+`adjMatrix_pow_apply_eq_card_walk` for `0/1` matrices), so it is proved from the
+open-path entry formula
 
-  `(Mⁿ) a b = ∑_{σ : Fin (n+1) → ι, σ 0 = a, σ last = b} ∏_{i : Fin n} M (σ iᵢ) (σ iᵢ₊₁)`,
+  `(Mⁿ) a b = ∑_{σ : Fin (n+1) → ι, σ 0 = a, σ last = b} pathWeight M σ`   (`pow_apply_eq_sum`),
 
-obtained by induction peeling the last edge with `Fin.snoc`, then specialised to
-the diagonal (`b = a`) and summed, gluing the open path into a cyclic walk.
+obtained by induction peeling the last edge with `Fin.snoc`, then specialised to the
+diagonal (`b = a`) and summed.  The genuinely cyclic weight
+`closedWalkWeight M σ = ∏_{i : Fin n} M (σ i) (σ (i+1))` (cyclic `i+1` in `Fin n`) is
+given with its factorization `closedWalkWeight_succ` into `pathWeight` times the
+wrap-around edge; the reindexing of `trace_pow_eq_sum` into this purely cyclic
+`∑_{σ : Fin N → ι} closedWalkWeight M σ` form is left for a subsequent step.
 
 ## References
 
