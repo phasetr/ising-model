@@ -348,4 +348,78 @@ theorem fiber_signed_sum_eq_product {V : Type*} [Fintype V] [DecidableEq V]
     rw [hSroot] at hcard
     rw [← hcard, pow_add]
 
+/-- **Real-valued alternating powerset sum dichotomy**: `∑_{B ⊆ X} (-1)^|B|`
+equals `1` if `X = ∅` and `0` otherwise. Real-cast of
+`Finset.sum_powerset_neg_one_pow_card`. The signed sum over any full powerset is
+determined entirely by whether the base set is empty — used to evaluate the
+outside factor `D(K_{Cᶜ})` of the Mayer root-component recurrence. -/
+theorem real_signed_sum_powerset {α : Type*} [DecidableEq α] (X : Finset α) :
+    ∑ B ∈ X.powerset, (-1 : ℝ) ^ B.card = if X = ∅ then 1 else 0 := by
+  have h := @Finset.sum_powerset_neg_one_pow_card α _ X
+  have hcast : (∑ B ∈ X.powerset, (-1 : ℝ) ^ B.card)
+      = (((∑ B ∈ X.powerset, (-1 : ℤ) ^ B.card) : ℤ) : ℝ) := by
+    push_cast; rfl
+  rw [hcast, h]
+  split <;> simp
+
+/-- **`D(G)` dichotomy**: the signed all-subgraph sum is `1` if `G` is edgeless
+and `0` otherwise. Restates `allSignedSubgraphSum` via `real_signed_sum_powerset`;
+unifies `allSignedSubgraphSum_eq_one_of_edgeFinset_empty` and
+`_eq_zero_of_edgeFinset_nonempty`. The outside factor of the root-component
+recurrence is evaluated through this dichotomy. -/
+theorem allSignedSubgraphSum_eq_ite {V : Type*} [Fintype V] [DecidableEq V]
+    (G : SimpleGraph V) [DecidableRel G.Adj] :
+    allSignedSubgraphSum G = if G.edgeFinset = ∅ then 1 else 0 := by
+  unfold allSignedSubgraphSum
+  exact real_signed_sum_powerset G.edgeFinset
+
+/-- **All-subgraph signed sum as a fibrewise product sum** (Mayer Phase B lemma
+7): the signed sum `D(G) = ∑_{S ⊆ E(G)} (-1)^|S|` over *all* spanning edge-subsets
+equals the sum over vertex sets `C` containing the root `r` of the per-fibre
+product `insideΣ(C) · outsideΣ(C)`. Obtained from `Finset.sum_fiberwise_of_maps_to`
+applied to the root-component map `S ↦ rootComponentFinset S r` (which always
+contains `r`, `self_mem_rootComponentFinset`), with each fibre evaluated by
+`fiber_signed_sum_eq_product`. The ambient form of the root-component recurrence
+`D_n = ∑_{C ∋ 0} c_{|C|} D_{n-|C|}` (GJ §18.4); the remaining step is the reindex
+`insideΣ(C) = c(K_C)`, `outsideΣ(C) = D(K_{Cᶜ})`. -/
+theorem allSignedSubgraphSum_eq_sum_fiber_product {V : Type*} [Fintype V] [DecidableEq V]
+    (G : SimpleGraph V) [DecidableRel G.Adj] (r : V) :
+    allSignedSubgraphSum G
+      = ∑ C ∈ Finset.univ.powerset.filter (fun C : Finset V => r ∈ C),
+          (∑ A ∈ insideConnectedEdgeSubsets G C, (-1 : ℝ) ^ A.card)
+            * (∑ B ∈ outsideEdgeSubsets G C, (-1 : ℝ) ^ B.card) := by
+  classical
+  have hmaps : ∀ S ∈ G.edgeFinset.powerset,
+      rootComponentFinset S r ∈ Finset.univ.powerset.filter (fun C : Finset V => r ∈ C) := by
+    intro S _
+    rw [Finset.mem_filter, Finset.mem_powerset]
+    exact ⟨Finset.subset_univ _, self_mem_rootComponentFinset S r⟩
+  unfold allSignedSubgraphSum
+  rw [← Finset.sum_fiberwise_of_maps_to hmaps (fun S => (-1 : ℝ) ^ S.card)]
+  refine Finset.sum_congr rfl (fun C hC => ?_)
+  rw [Finset.mem_filter] at hC
+  exact fiber_signed_sum_eq_product G hC.2
+
+/-- **Outside factor is a plain powerset**: the outside edge-subsets of `G` over
+`C` are exactly the subsets of `G.edgeFinset ∩ Cᶜ.sym2` (the edges of `G` lying
+entirely outside `C`). No connectivity constraint — the outside factor of the
+root-component split carries no spanning condition. -/
+theorem outsideEdgeSubsets_eq_powerset {V : Type*} [Fintype V] [DecidableEq V]
+    (G : SimpleGraph V) [DecidableRel G.Adj] (C : Finset V) :
+    outsideEdgeSubsets G C = (G.edgeFinset ∩ Cᶜ.sym2).powerset := by
+  classical
+  ext B
+  rw [mem_outsideEdgeSubsets, Finset.mem_powerset, Finset.subset_inter_iff]
+
+/-- **Outside factor signed sum dichotomy**: the outside signed sum is `1` if `G`
+has no edge entirely outside `C` (i.e. `G.edgeFinset ∩ Cᶜ.sym2 = ∅`) and `0`
+otherwise. Combines `outsideEdgeSubsets_eq_powerset` with
+`real_signed_sum_powerset`; this evaluates the outside factor `D(K_{Cᶜ})` of the
+root-component recurrence directly in ambient terms. -/
+theorem outsideEdgeSubsets_signed_sum_eq_ite {V : Type*} [Fintype V] [DecidableEq V]
+    (G : SimpleGraph V) [DecidableRel G.Adj] (C : Finset V) :
+    ∑ B ∈ outsideEdgeSubsets G C, (-1 : ℝ) ^ B.card
+      = if G.edgeFinset ∩ Cᶜ.sym2 = ∅ then 1 else 0 := by
+  rw [outsideEdgeSubsets_eq_powerset, real_signed_sum_powerset]
+
 end IsingModel
