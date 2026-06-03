@@ -37,3 +37,4 @@ import IsingModel.TransferMatrix.OneDimFreeEnergy
 import IsingModel.TransferMatrix.TraceSum
 import IsingModel.TransferMatrix.TraceSum1D
 import IsingModel.TransferMatrix.OneDimTwoPoint
+import IsingModel.TransferMatrix.CycleGraphLink
