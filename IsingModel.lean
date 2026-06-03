@@ -47,3 +47,4 @@ import IsingModel.TransferMatrix.MarkedTraceClosedWalk
 import IsingModel.TransferMatrix.MarkedTrace1D
 import IsingModel.TransferMatrix.GibbsTwoPoint
 import IsingModel.TransferMatrix.GibbsTwoPointDecay
+import IsingModel.TransferMatrix.PathGraphEdges
