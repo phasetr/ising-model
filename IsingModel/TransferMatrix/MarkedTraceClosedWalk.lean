@@ -149,6 +149,56 @@ theorem markedClosedWalkWeight_eq (M : Matrix ι ι R) (d : ι → R) {a m : ℕ
           * pathWeight M (Fin.snoc τ (τ 0)) := by
   rw [markedClosedWalkWeight, closedWalkWeight_eq_pathWeight_snoc_zero]
 
+omit [DecidableEq ι] in
+/-- Reorder four nested `Finset.univ` sums, moving the last two indices to the
+front: `∑_i ∑_j ∑_σ ∑_ρ F = ∑_σ ∑_ρ ∑_i ∑_j F`. -/
+theorem sum_reorder_4 {κ μ : Type*} [Fintype κ] [Fintype μ]
+    (F : ι → ι → κ → μ → R) :
+    (∑ i, ∑ j, ∑ σ, ∑ ρ, F i j σ ρ) = ∑ σ, ∑ ρ, ∑ i, ∑ j, F i j σ ρ :=
+  calc (∑ i, ∑ j, ∑ σ, ∑ ρ, F i j σ ρ)
+      = ∑ i, ∑ σ, ∑ j, ∑ ρ, F i j σ ρ :=
+        Finset.sum_congr rfl fun _ _ => Finset.sum_comm
+    _ = ∑ σ, ∑ i, ∑ j, ∑ ρ, F i j σ ρ := Finset.sum_comm
+    _ = ∑ σ, ∑ i, ∑ ρ, ∑ j, F i j σ ρ :=
+        Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => Finset.sum_comm
+    _ = ∑ σ, ∑ ρ, ∑ i, ∑ j, F i j σ ρ :=
+        Finset.sum_congr rfl fun _ _ => Finset.sum_comm
+
+/-- **Marked trace as a sum over glued path pairs** (open form): `Tr(D·Mᵃ·D·Mᵇ)`
+equals the sum over pairs of open paths gluing head-to-tail
+(`σ (last a) = ρ 0`, `ρ (last b) = σ 0`), weighted by the two diagonal marks
+`d (σ 0)·d (ρ 0)` and the path weights. -/
+theorem trace_diagonal_pow_diagonal_pow_eq_sum_glued (M : Matrix ι ι R) (d : ι → R)
+    (a b : ℕ) :
+    (Matrix.diagonal d * M ^ a * Matrix.diagonal d * M ^ b).trace
+      = ∑ σ : Fin (a + 1) → ι, ∑ ρ : Fin (b + 1) → ι,
+          if σ (Fin.last a) = ρ 0 ∧ ρ (Fin.last b) = σ 0 then
+            d (σ 0) * d (ρ 0) * pathWeight M σ * pathWeight M ρ else 0 := by
+  rw [trace_diagonal_pow_diagonal_pow_expand]
+  simp_rw [pow_apply_eq_sum M a, pow_apply_eq_sum M b, Finset.mul_sum, Finset.sum_mul]
+  rw [sum_reorder_4 (κ := Fin (b + 1) → ι) (μ := Fin (a + 1) → ι)
+    (F := fun i j ρ σ =>
+      d i * d j * (if σ 0 = i ∧ σ (Fin.last a) = j then pathWeight M σ else 0) *
+        if ρ 0 = j ∧ ρ (Fin.last b) = i then pathWeight M ρ else 0)]
+  rw [Finset.sum_comm]
+  refine Finset.sum_congr rfl (fun σ _ => Finset.sum_congr rfl (fun ρ _ => ?_))
+  rw [Finset.sum_eq_single (σ 0)]
+  · rw [Finset.sum_eq_single (σ (Fin.last a))]
+    · by_cases h : σ (Fin.last a) = ρ 0 ∧ ρ (Fin.last b) = σ 0
+      · obtain ⟨h1, h2⟩ := h
+        rw [if_pos ⟨rfl, rfl⟩, if_pos ⟨h1.symm, h2⟩, if_pos ⟨h1, h2⟩, ← h1]
+      · rw [if_neg h]
+        rcases not_and_or.mp h with hc | hc
+        · rw [if_pos ⟨rfl, rfl⟩, if_neg (fun he => hc he.1.symm), mul_zero]
+        · rw [if_pos ⟨rfl, rfl⟩, if_neg (fun he => hc he.2), mul_zero]
+    · intro j _ hj
+      rw [if_neg (fun he => hj he.2.symm), mul_zero, zero_mul]
+    · intro hni; exact absurd (Finset.mem_univ _) hni
+  · intro i _ hi
+    refine Finset.sum_eq_zero (fun j _ => ?_)
+    rw [if_neg (fun he => hi he.1.symm), mul_zero, zero_mul]
+  · intro hni; exact absurd (Finset.mem_univ _) hni
+
 end TransferMatrix
 
 end IsingModel
