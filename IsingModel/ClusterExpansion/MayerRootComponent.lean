@@ -422,4 +422,62 @@ theorem outsideEdgeSubsets_signed_sum_eq_ite {V : Type*} [Fintype V] [DecidableE
       = if G.edgeFinset ∩ Cᶜ.sym2 = ∅ then 1 else 0 := by
   rw [outsideEdgeSubsets_eq_powerset, real_signed_sum_powerset]
 
+/-- **No edge lies inside `Cᶜ` iff `Cᶜ` is a (sub)singleton**: for the complete
+graph, `edgeFinset ∩ Cᶜ.sym2 = ∅` exactly when `Cᶜ.card ≤ 1`. An edge with both
+endpoints in `Cᶜ` requires two distinct vertices in `Cᶜ`
+(`Finset.one_lt_card_iff` / `Finset.card_le_one`). Evaluates the outside factor of
+the root-component recurrence by the cardinality of the complement. -/
+theorem completeGraph_edgeFinset_inter_compl_sym2_empty_iff {V : Type*} [Fintype V] [DecidableEq V]
+    (C : Finset V) :
+    (⊤ : SimpleGraph V).edgeFinset ∩ Cᶜ.sym2 = ∅ ↔ Cᶜ.card ≤ 1 := by
+  classical
+  rw [Finset.eq_empty_iff_forall_notMem]
+  constructor
+  · intro h
+    by_contra hc
+    rw [not_le, Finset.one_lt_card_iff] at hc
+    obtain ⟨a, b, ha, hb, hab⟩ := hc
+    refine h s(a, b) (Finset.mem_inter.mpr ⟨?_, Finset.mk_mem_sym2_iff.mpr ⟨ha, hb⟩⟩)
+    rw [SimpleGraph.mem_edgeFinset, SimpleGraph.mem_edgeSet, SimpleGraph.top_adj]
+    exact hab
+  · intro h e he
+    rw [Finset.mem_inter] at he
+    revert he
+    refine Sym2.ind (fun a b => ?_) e
+    rintro ⟨h1, h2⟩
+    rw [SimpleGraph.mem_edgeFinset, SimpleGraph.mem_edgeSet, SimpleGraph.top_adj] at h1
+    rw [Finset.mk_mem_sym2_iff] at h2
+    exact h1 (Finset.card_le_one.mp h a h2.1 b h2.2)
+
+/-- **All-subgraph signed sum of a subtype complete graph by cardinality**: for
+the complete graph on the subtype `↑(C : Finset V)`, `D(K_C) = 1` if `C.card ≤ 1`
+and `0` otherwise. Routes `allSignedSubgraphSum_completeGraph_card` through `Fin`
+and the boundary lemmas `allSignedSubgraphSum_completeGraph_eq_one_of_subsingleton`
+/ `_eq_zero_of_two_le`. -/
+theorem allSignedSubgraphSum_completeGraph_subtype_eq_ite {V : Type*} [DecidableEq V]
+    (C : Finset V) :
+    allSignedSubgraphSum (⊤ : SimpleGraph (C : Finset V)) = if C.card ≤ 1 then 1 else 0 := by
+  classical
+  rw [allSignedSubgraphSum_completeGraph_card]
+  have hcard : Fintype.card (C : Finset V) = C.card := Fintype.card_coe C
+  by_cases h : C.card ≤ 1
+  · haveI : Subsingleton (Fin (Fintype.card (C : Finset V))) :=
+      Fintype.card_le_one_iff_subsingleton.mp (by rw [Fintype.card_fin, hcard]; exact h)
+    rw [allSignedSubgraphSum_completeGraph_eq_one_of_subsingleton, if_pos h]
+  · rw [allSignedSubgraphSum_completeGraph_eq_zero_of_two_le (by rw [hcard]; omega), if_neg h]
+
+/-- **Outside factor reindex** (Mayer Phase B, outside half of lemma 8): the
+outside signed sum of the complete graph on `V` over `C` equals the all-subgraph
+signed sum of the complete graph on the subtype `↑Cᶜ`, i.e. `outsideΣ(C) =
+D(K_{Cᶜ})`. Both sides reduce to `if Cᶜ.card ≤ 1 then 1 else 0` — the outside
+factor via `outsideEdgeSubsets_signed_sum_eq_ite` +
+`completeGraph_edgeFinset_inter_compl_sym2_empty_iff`, and `D(K_{Cᶜ})` via
+`allSignedSubgraphSum_completeGraph_subtype_eq_ite`. -/
+theorem outsideEdgeSubsets_completeGraph_signed_sum {V : Type*} [Fintype V] [DecidableEq V]
+    (C : Finset V) :
+    ∑ B ∈ outsideEdgeSubsets (⊤ : SimpleGraph V) C, (-1 : ℝ) ^ B.card
+      = allSignedSubgraphSum (⊤ : SimpleGraph (Cᶜ : Finset V)) := by
+  rw [outsideEdgeSubsets_signed_sum_eq_ite, allSignedSubgraphSum_completeGraph_subtype_eq_ite]
+  exact if_congr (completeGraph_edgeFinset_inter_compl_sym2_empty_iff C) rfl rfl
+
 end IsingModel
