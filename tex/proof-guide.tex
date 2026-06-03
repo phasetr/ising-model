@@ -2208,8 +2208,10 @@ minimal-index counterexample argument.  Hence
 \[
   \texttt{correlation}\,(\texttt{pathGraph}\,(n{+}1))\,\langle J,0,\beta\rangle\,
     \{0,\,\mathrm{last}\} \;=\; (\tanh\beta J)^n
+  \qquad (0 < n)
 \]
-($\texttt{correlation\_pathGraph\_eq\_tanh\_pow}$).  Unlike the cyclic chain there is
+($\texttt{correlation\_pathGraph\_eq\_tanh\_pow}$; $0 < n$ keeps the endpoints
+$0$, $\mathrm{last}$ distinct).  Unlike the cyclic chain there is
 \emph{no boundary correction}, making this the clean finite-volume input to the
 infinite-volume limit $\texttt{twoPointFunction}\,1 = (\tanh\beta J)^{\mathrm{dist}}$
 (Glimm--Jaffe~\S17.1).
