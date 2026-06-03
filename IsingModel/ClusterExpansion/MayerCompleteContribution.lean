@@ -320,4 +320,54 @@ theorem polymerFreeEnergy_sandwich_independent
       ∧ polymerFreeEnergy G t ≤ ∑ P ∈ allPolymers G, Real.log (1 + t ^ P.card) :=
   ⟨log_one_add_sum_le_polymerFreeEnergy G ht0, polymerFreeEnergy_le_sum_log_one_add G ht0⟩
 
+/-- **Ising free energy independent-polymer sandwich** (GJ §18.5): substituting the
+polymer-free-energy sandwich into the polymer decomposition of the Ising free
+energy (`freeEnergy_eq_polymerFreeEnergy`) brackets the physical free energy by
+the independent-polymer expressions at activity `tanh(β·J)`. For `0 ≤ β·J` and a
+non-empty vertex set,
+`log 2 + (|E|/|ι|)·log cosh(β·J) + log(1 + ∑_P tanh(β·J)^|P|)/|ι| ≤ freeEnergy
+≤ … + (∑_P log(1 + tanh(β·J)^|P|))/|ι|`. -/
+theorem freeEnergy_sandwich_independent_polymer
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J β : ℝ) (hβJ : 0 ≤ β * J)
+    (hne : 0 < Fintype.card ι) :
+    Real.log 2 + (G.edgeFinset.card : ℝ) / Fintype.card ι * Real.log (Real.cosh (β * J))
+          + Real.log (1 + ∑ P ∈ allPolymers G, Real.tanh (β * J) ^ P.card)
+            / Fintype.card ι
+        ≤ freeEnergy G ⟨J, 0, β⟩
+      ∧ freeEnergy G ⟨J, 0, β⟩
+        ≤ Real.log 2 + (G.edgeFinset.card : ℝ) / Fintype.card ι * Real.log (Real.cosh (β * J))
+          + (∑ P ∈ allPolymers G, Real.log (1 + Real.tanh (β * J) ^ P.card))
+            / Fintype.card ι := by
+  have ht0 : 0 ≤ Real.tanh (β * J) := by
+    rw [Real.tanh_eq_sinh_div_cosh]
+    exact div_nonneg (Real.sinh_nonneg_iff.mpr hβJ) (Real.cosh_pos _).le
+  have hcard : (0 : ℝ) < Fintype.card ι := by exact_mod_cast hne
+  obtain ⟨hlo, hhi⟩ := polymerFreeEnergy_sandwich_independent G ht0
+  rw [freeEnergy_eq_polymerFreeEnergy G J β hβJ hne]
+  refine ⟨?_, ?_⟩ <;> gcongr
+
+/-- **Ising free energy explicit upper bound** (GJ §18.5): a coarser but explicit
+upper bound `freeEnergy ≤ log 2 + (|E|/|ι|)·log cosh(β·J) + (∑_P tanh(β·J)^|P|)/|ι|`,
+using `log(1 + x) ≤ x` on the independent-polymer sandwich. -/
+theorem freeEnergy_le_log_two_plus_sum_tanh_pow
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (J β : ℝ) (hβJ : 0 ≤ β * J)
+    (hne : 0 < Fintype.card ι) :
+    freeEnergy G ⟨J, 0, β⟩
+      ≤ Real.log 2 + (G.edgeFinset.card : ℝ) / Fintype.card ι * Real.log (Real.cosh (β * J))
+        + (∑ P ∈ allPolymers G, Real.tanh (β * J) ^ P.card) / Fintype.card ι := by
+  have ht0 : 0 ≤ Real.tanh (β * J) := by
+    rw [Real.tanh_eq_sinh_div_cosh]
+    exact div_nonneg (Real.sinh_nonneg_iff.mpr hβJ) (Real.cosh_pos _).le
+  have hcard : (0 : ℝ) < Fintype.card ι := by exact_mod_cast hne
+  refine (freeEnergy_sandwich_independent_polymer G J β hβJ hne).2.trans ?_
+  have hsum : (∑ P ∈ allPolymers G, Real.log (1 + Real.tanh (β * J) ^ P.card))
+      ≤ ∑ P ∈ allPolymers G, Real.tanh (β * J) ^ P.card := by
+    refine Finset.sum_le_sum (fun P _ => ?_)
+    have := Real.log_le_sub_one_of_pos (show (0 : ℝ) < 1 + Real.tanh (β * J) ^ P.card by
+      have := pow_nonneg ht0 P.card; linarith)
+    linarith
+  gcongr
+
 end IsingModel
