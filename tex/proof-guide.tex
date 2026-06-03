@@ -1985,8 +1985,9 @@ evaluation $Z_N = \operatorname{Tr}(T^N) = \lambda_+^N + \lambda_-^N$ of the cyc
 $N$-site zero-field Ising chain (Glimm--Jaffe~\S17.1).
 
 \paragraph{Two-point function via the transfer matrix (\S17.1, Issue~\#3511 PR~6).}
-The two-point function is
-$\langle\sigma_0\sigma_n\rangle_N = \operatorname{Tr}(S\,T^n S\,T^{N-n})/\operatorname{Tr}(T^N)$
+The transfer-matrix expression for the two-point function is
+$\operatorname{Tr}(S\,T^n S\,T^{N-n})/\operatorname{Tr}(T^N)$ (its identification with the
+Gibbs $\langle\sigma_0\sigma_n\rangle$ via the cyclic config sum is a later step)
 with the spin operator $S = \mathrm{diag}(1,-1)$ (\texttt{spinOperator}). The spin
 operator swaps the Hadamard eigenvectors, $S\,H = H\,P$ with $P$ the $2\times2$
 swap (\texttt{spinOperator\_mul\_hadamard}), hence $H^{-1}SH = P$ and

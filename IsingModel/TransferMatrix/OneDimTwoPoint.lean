@@ -4,9 +4,11 @@ import IsingModel.TransferMatrix.OneDimFreeEnergy
 /-!
 # Two-point function of the 1D Ising chain via the transfer matrix (GJ §17.1)
 
-The transfer-matrix two-point function of the one-dimensional Ising chain is
-`⟨σ₀σₙ⟩_N = Tr(S·Tⁿ·S·T^{N-n}) / Tr(Tᴺ)`, where `S = diag(1, -1)` is the spin
-operator and `T = isingTransferMatrix1D a` (`a = β J`).  The spin operator swaps
+The transfer-matrix expression for the two-point function of the one-dimensional
+Ising chain is `Tr(S·Tⁿ·S·T^{N-n}) / Tr(Tᴺ)`, where `S = diag(1, -1)` is the spin
+operator and `T = isingTransferMatrix1D a` (`a = β J`).  (Its identification with
+the Gibbs correlation `⟨σ₀σₙ⟩` via the cyclic config sum is a subsequent step; here
+we compute the transfer-matrix ratio itself.)  The spin operator swaps
 the two Hadamard eigenvectors of `T` (`S·H = H·P` with `P` the `2×2` swap), so
 
   `Tr(S·Tⁿ·S·T^{m}) = λ₋ⁿ·λ₊ᵐ + λ₊ⁿ·λ₋ᵐ`   (`m = N - n`),
@@ -108,8 +110,10 @@ theorem twoPointTrace (a : ℝ) (n m : ℕ) :
     Matrix.diagonal_apply_eq]
   simp
 
-/-- The 1D Ising **two-point correlation** at finite volume `N`, defined via the
-transfer matrix as `Tr(S·Tⁿ·S·T^{N-n}) / Tr(Tᴺ)`. -/
+/-- The **transfer-matrix two-point ratio** at finite volume `N`,
+`Tr(S·Tⁿ·S·T^{N-n}) / Tr(Tᴺ)`.  This is the transfer-matrix expression for the
+1D Ising correlation `⟨σ₀σₙ⟩`; the identification with the Gibbs correlation via
+the cyclic config sum is left for a subsequent step. -/
 noncomputable def twoPointCorrelation (a : ℝ) (n N : ℕ) : ℝ :=
   (spinOperator * isingTransferMatrix1D a ^ n * spinOperator
       * isingTransferMatrix1D a ^ (N - n)).trace
