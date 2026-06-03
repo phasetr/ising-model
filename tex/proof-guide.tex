@@ -1922,8 +1922,8 @@ induction to $T(a)^N H = H\,D(a)^N$
 $T(a)^N = H\,D(a)^N H^{-1}$ (\texttt{isingTransferMatrix1D\_pow\_eq\_conj}) with
 $D(a)^N = \mathrm{diag}(\lambda_+^N, \lambda_-^N)$
 (\texttt{transferDiagonal\_pow}). The trace is the cyclic-chain partition
-function $Z_N = \operatorname{Tr}(T(a)^N) = \lambda_+^N + \lambda_-^N$
-(\texttt{trace\_isingTransferMatrix1D\_pow}, via \texttt{trace\_mul\_comm} and
+function (for physical $N \ge 1$) $Z_N = \operatorname{Tr}(T(a)^N) = \lambda_+^N + \lambda_-^N$
+(\texttt{trace\_isingTransferMatrix1D\_pow}, a pure algebraic identity for all $N$, via \texttt{trace\_mul\_comm} and
 $H^{-1}H = \mathbb 1$), and $\det(T(a)^N) = (\lambda_+\lambda_-)^N$
 (\texttt{det\_isingTransferMatrix1D\_pow}) -- the transfer-matrix solution of the
 one-dimensional Ising chain (Glimm--Jaffe~\S17.1).

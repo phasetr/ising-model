@@ -123,8 +123,10 @@ theorem transferDiagonal_pow (a : ℝ) (N : ℕ) :
   fin_cases i <;> simp [Pi.pow_apply]
 
 /-- **Trace of the power = cyclic-chain partition function** (Glimm–Jaffe §17.1):
-`Tr(T(a)ᴺ) = λ₊ᴺ + λ₋ᴺ`.  This is the partition function `Z_N` of the `N`-site
-cyclic Ising chain at zero field, written via the transfer matrix.  Derived from
+`Tr(T(a)ᴺ) = λ₊ᴺ + λ₋ᴺ`.  For physical `N ≥ 1` this is the partition function
+`Z_N` of the `N`-site cyclic Ising chain at zero field, written via the transfer
+matrix (the identity is a pure algebraic fact valid for all `N : ℕ`, with `N = 0`
+giving `Tr(I) = 2`).  Derived from
 the diagonalization `T(a)ᴺ = H·D(a)ᴺ·H⁻¹` by cycling `H⁻¹` past the trace
 (`trace_mul_comm`, `H⁻¹·H = 1`) and reading off the diagonal of `D(a)ᴺ`. -/
 theorem trace_isingTransferMatrix1D_pow (a : ℝ) (N : ℕ) :
