@@ -8502,9 +8502,22 @@ were computed by \texttt{decide} (with
 \end{itemize}
 The general formula
 $\mathrm{alternatingConnectedSubgraphSum}(K_n) = (-1)^{n-1}(n-1)!$
-and any case with $n \ge 9$ require chromatic-polynomial /
-matrix-tree-theorem machinery not yet in Mathlib, and remain
-deferred (Phase~B blocker).
+is being established by the \emph{root-component recurrence}, which avoids the
+chromatic-polynomial / matrix-tree machinery absent from Mathlib. Classifying
+every spanning edge-subset by the connected component of vertex $0$ gives
+$D_n = \sum_{C \ni 0} c_{|C|}\, D_{n-|C|}$, where
+$c_m = \mathrm{alternatingConnectedSubgraphSum}(K_m)$ and
+$D_m = \mathrm{allSignedSubgraphSum}(K_m) := \sum_{S \subseteq E(K_m)} (-1)^{|S|}$
+is the signed sum over \emph{all} (not necessarily connected) spanning
+edge-subsets. Since $D_m = 0$ for $m \ge 2$ and $D_0 = D_1 = 1$, the recurrence
+collapses to $c_n + (n-1)\,c_{n-1} = 0$, whence
+$c_n = (-1)^{n-1}(n-1)!$. The $D_n$ foundation
+(\texttt{allSignedSubgraphSum\_eq\_zero\_of\_edgeFinset\_nonempty} via
+\texttt{Finset.sum\_powerset\_neg\_one\_pow\_card\_of\_nonempty},
+\texttt{\_eq\_one\_of\_edgeFinset\_empty}, and the complete-graph specialisations
+$D_{n \ge 2} = 0$, $D_{n \le 1} = 1$) is established in
+\texttt{AlternatingCompleteGraph.lean} (Part of \#1499); the root-component
+bijection and closed form follow.
 
 \paragraph{Polymer free energy bounds and characterisations
 (PRs~\#1517--\#1566).} A coordinated set of sharpenings was added
