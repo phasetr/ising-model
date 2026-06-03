@@ -2088,6 +2088,17 @@ open-path weight is the cyclic weight. The marked summand
 $\texttt{markedClosedWalkWeight}\,M\,d\,\tau = d(\tau_0)d(\tau_a)\,\texttt{closedWalkWeight}\,M\,\tau$
 then has the open-path form \texttt{markedClosedWalkWeight\_eq} (Glimm--Jaffe~\S17.1).
 
+\paragraph{Path gluing (\S17.1).}
+Gluing two open paths $\sigma : \mathrm{Fin}(a{+}1)\to\iota$,
+$\rho : \mathrm{Fin}(b{+}1)\to\iota$ at a shared vertex ($\rho_0 = \sigma_{\mathrm{last}}$)
+by appending the interior of $\sigma$ to $\rho$ multiplies their path weights,
+$\texttt{pathWeight}\,M\,(\mathrm{append}\,(\mathrm{init}\,\sigma)\,\rho) = \texttt{pathWeight}\,M\,\sigma \cdot \texttt{pathWeight}\,M\,\rho$
+(\texttt{pathWeight\_append}, by induction on $b$ peeling $\rho$ via
+$\texttt{Fin.append\_snoc}$). The marked glue
+$\texttt{markedGlue}\,\sigma\,\rho = \mathrm{append}\,(\mathrm{init}\,\sigma)\,(\mathrm{init}\,\rho)$
+is the closed walk with marks $\texttt{markedGlue}\,\sigma\,\rho\,0 = \sigma_0$ and at
+site $a$ equal to $\rho_0$ (Glimm--Jaffe~\S17.1).
+
 \paragraph{Finite $\ell^1$ balls and proper-map property.}
 PR~\#782 complements the metric definition with the proper-map
 companion to PR~\#779's cofinite cluster decay. First,
