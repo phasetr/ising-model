@@ -480,4 +480,166 @@ theorem outsideEdgeSubsets_completeGraph_signed_sum {V : Type*} [Fintype V] [Dec
   rw [outsideEdgeSubsets_signed_sum_eq_ite, allSignedSubgraphSum_completeGraph_subtype_eq_ite]
   exact if_congr (completeGraph_edgeFinset_inter_compl_sym2_empty_iff C) rfl rfl
 
+/-- **Reindexed inside edges induce the subtype graph**: for `T : Finset (Sym2 ↑C)`,
+mapping `T` into `Sym2 V` by the subtype `sym2`-embedding and inducing back on `C`
+recovers `fromEdgeSet ↑T` on `↑C`. The graph equality transferring connectivity
+between the ambient inside factor and the subtype complete-graph connected-spanning
+sum (inside half of the Mayer reindex). Proved by `ext`: an inside edge
+`s(↑a, ↑b)` of `T.map e` corresponds to the edge `s(a, b)` of `T` (the embedding is
+injective), and `↑a ≠ ↑b ↔ a ≠ b`. -/
+theorem induce_fromEdgeSet_map_subtype {V : Type*}
+    (C : Finset V) (T : Finset (Sym2 (C : Finset V))) :
+    (SimpleGraph.fromEdgeSet
+        (↑(T.map (Function.Embedding.subtype (· ∈ C)).sym2Map) : Set (Sym2 V))).induce
+        (↑C : Set V)
+      = SimpleGraph.fromEdgeSet (↑T : Set (Sym2 (C : Finset V))) := by
+  ext a b
+  simp only [SimpleGraph.comap_adj, Function.Embedding.coe_subtype,
+    SimpleGraph.fromEdgeSet_adj, Finset.mem_coe, Finset.mem_map,
+    Function.Embedding.sym2Map_apply, ne_eq]
+  constructor
+  · rintro ⟨⟨z, hz, hzeq⟩, hne⟩
+    refine ⟨?_, fun h => hne (by rw [h])⟩
+    revert hz hzeq
+    refine Sym2.ind (fun p q hz hzeq => ?_) z
+    rw [Sym2.map_mk] at hzeq
+    rw [Sym2.eq_iff] at hzeq
+    rcases hzeq with ⟨hp, hq⟩ | ⟨hp, hq⟩
+    · have : p = a := Subtype.ext hp
+      have : q = b := Subtype.ext hq
+      subst_vars; exact hz
+    · have : p = b := Subtype.ext hp
+      have : q = a := Subtype.ext hq
+      subst_vars; rw [Sym2.eq_swap]; exact hz
+  · rintro ⟨hmem, hne⟩
+    refine ⟨⟨s(a, b), hmem, by rw [Sym2.map_mk]⟩, fun h => hne (Subtype.ext h)⟩
+
+/-- **Inside edges lie in the range of the subtype embedding**: every edge of an
+inside subset `A` (both endpoints in `C`, non-diagonal) is `e z` for some
+`z : Sym2 ↑C`, where `e` is the subtype `sym2`-embedding. -/
+theorem inside_mem_range_sym2Map {V : Type*}
+    {C : Finset V} {A : Finset (Sym2 V)} (hAC : A ⊆ C.sym2) :
+    ∀ x ∈ A, ∃ z : Sym2 (C : Finset V),
+      (Function.Embedding.subtype (· ∈ C)).sym2Map z = x := by
+  intro x hx
+  revert hx
+  refine Sym2.ind (fun p q hx => ?_) x
+  have hpq := hAC hx
+  rw [Finset.mk_mem_sym2_iff] at hpq
+  exact ⟨s(⟨p, hpq.1⟩, ⟨q, hpq.2⟩), by
+    rw [Function.Embedding.sym2Map_apply, Function.Embedding.coe_subtype, Sym2.map_mk]⟩
+
+/-- **Preimage-then-map roundtrip for inside subsets**: for an inside subset
+`A ⊆ C.sym2`, pulling `A` back along the subtype embedding and pushing forward
+recovers `A` (since every edge of `A` is in the range of the embedding,
+`inside_mem_range_sym2Map`). -/
+theorem inside_preimage_map_eq {V : Type*}
+    {C : Finset V} {A : Finset (Sym2 V)} (hAC : A ⊆ C.sym2) :
+    (A.preimage (Function.Embedding.subtype (· ∈ C)).sym2Map
+        (Function.Embedding.injective _).injOn).map
+        (Function.Embedding.subtype (· ∈ C)).sym2Map = A := by
+  ext x
+  simp only [Finset.mem_map, Finset.mem_preimage]
+  constructor
+  · rintro ⟨z, hz, rfl⟩; exact hz
+  · intro hx
+    obtain ⟨z, hz⟩ := inside_mem_range_sym2Map hAC x hx
+    exact ⟨z, hz ▸ hx, hz⟩
+
+/-- **Inside factor reindex** (Mayer Phase B, inside half of lemma 8): the inside
+connected-spanning signed sum of the complete graph on `V` over `C` equals the
+connected-spanning signed sum of the complete graph on the subtype `↑C`, i.e.
+`insideΣ(C) = c(K_C)`. Proved by the connectivity-preserving bijection
+`T ↦ T.map e` / `A ↦ A.preimage e` (`Finset.sum_bij'`, `e` the subtype
+`sym2`-embedding): connectivity transfers through the graph equality
+`induce_fromEdgeSet_map_subtype`, membership through `inside_mem_range_sym2Map`,
+and the roundtrips through `Finset.preimage_map` / `inside_preimage_map_eq`. -/
+theorem insideConnectedEdgeSubsets_completeGraph_signed_sum {V : Type*} [Fintype V] [DecidableEq V]
+    (C : Finset V) :
+    ∑ A ∈ insideConnectedEdgeSubsets (⊤ : SimpleGraph V) C, (-1 : ℝ) ^ A.card
+      = alternatingConnectedSubgraphSum (⊤ : SimpleGraph (C : Finset V)) := by
+  classical
+  unfold alternatingConnectedSubgraphSum
+  refine Finset.sum_bij'
+    (fun A _ => A.preimage (Function.Embedding.subtype (· ∈ C)).sym2Map
+        (Function.Embedding.injective _).injOn)
+    (fun T _ => T.map (Function.Embedding.subtype (· ∈ C)).sym2Map) ?_ ?_ ?_ ?_ ?_
+  · -- i maps inside into connectedSpanning (⊤ : ↑C)
+    intro A hA
+    rw [mem_insideConnectedEdgeSubsets] at hA
+    obtain ⟨hAedge, hAC, hAconn⟩ := hA
+    rw [mem_connectedSpanningEdgeSubsets]
+    refine ⟨?_, ?_⟩
+    · intro z hz
+      rw [Finset.mem_preimage] at hz
+      revert hz
+      refine Sym2.ind (fun p q => ?_) z
+      intro hz
+      rw [Function.Embedding.sym2Map_apply, Function.Embedding.coe_subtype, Sym2.map_mk] at hz
+      have hedge := hAedge hz
+      rw [SimpleGraph.mem_edgeFinset, SimpleGraph.mem_edgeSet, SimpleGraph.top_adj] at hedge
+      rw [SimpleGraph.mem_edgeFinset, SimpleGraph.mem_edgeSet, SimpleGraph.top_adj]
+      exact fun h => hedge (by rw [h])
+    · rw [← induce_fromEdgeSet_map_subtype C, inside_preimage_map_eq hAC]
+      exact hAconn
+  · -- j maps connectedSpanning (⊤ : ↑C) into inside
+    intro T hT
+    rw [mem_connectedSpanningEdgeSubsets] at hT
+    rw [mem_insideConnectedEdgeSubsets]
+    refine ⟨?_, ?_, ?_⟩
+    · intro x hx
+      rw [Finset.mem_map] at hx
+      obtain ⟨z, hz, rfl⟩ := hx
+      revert hz
+      refine Sym2.ind (fun p q hz => ?_) z
+      have hedge := hT.1 hz
+      rw [SimpleGraph.mem_edgeFinset, SimpleGraph.mem_edgeSet, SimpleGraph.top_adj] at hedge
+      rw [Function.Embedding.sym2Map_apply, Function.Embedding.coe_subtype, Sym2.map_mk,
+        SimpleGraph.mem_edgeFinset, SimpleGraph.mem_edgeSet, SimpleGraph.top_adj]
+      exact fun h => hedge (Subtype.ext h)
+    · intro x hx
+      rw [Finset.mem_map] at hx
+      obtain ⟨z, hz, rfl⟩ := hx
+      revert hz
+      refine Sym2.ind (fun p q _ => ?_) z
+      rw [Function.Embedding.sym2Map_apply, Function.Embedding.coe_subtype, Sym2.map_mk,
+        Finset.mk_mem_sym2_iff]
+      exact ⟨p.2, q.2⟩
+    · rw [induce_fromEdgeSet_map_subtype]
+      exact hT.2
+  · -- left inverse: (A.preimage e).map e = A
+    intro A hA
+    rw [mem_insideConnectedEdgeSubsets] at hA
+    exact inside_preimage_map_eq hA.2.1
+  · -- right inverse: (T.map e).preimage e = T
+    intro T _
+    exact Finset.preimage_map _ _
+  · -- value: (-1)^|A| = (-1)^|A.preimage e|
+    intro A hA
+    rw [mem_insideConnectedEdgeSubsets] at hA
+    rw [← Finset.card_map (Function.Embedding.subtype (· ∈ C)).sym2Map,
+      inside_preimage_map_eq hA.2.1]
+
+/-- **Root-component recurrence for the complete graph** (Mayer Phase B): the
+signed all-subgraph sum of `K_n` decomposes over the root component `C ∋ r` as
+`D_n = ∑_{C ∋ r} c(K_C) · D(K_{Cᶜ})`, i.e.
+`D_n = ∑_{C ∋ 0} c_{|C|} D_{n-|C|}` once `c`, `D` are seen to depend only on the
+cardinalities. Assembles the fibrewise decomposition
+`allSignedSubgraphSum_eq_sum_fiber_product` (lemma 7) with the inside and outside
+reindexes (`insideConnectedEdgeSubsets_completeGraph_signed_sum`,
+`outsideEdgeSubsets_completeGraph_signed_sum`). The combinatorial core of the
+Mayer identity `alternatingConnectedSubgraphSum K_n = (-1)^(n-1)(n-1)!` (GJ §18.4);
+the remaining step is the collapse `D_m = 0` (`m ≥ 2`), `D_0 = D_1 = 1` to
+`c_n + (n-1)c_{n-1} = 0`. -/
+theorem allSignedSubgraphSum_completeGraph_root_recurrence {V : Type*} [Fintype V] [DecidableEq V]
+    (r : V) :
+    allSignedSubgraphSum (⊤ : SimpleGraph V)
+      = ∑ C ∈ Finset.univ.powerset.filter (fun C : Finset V => r ∈ C),
+          alternatingConnectedSubgraphSum (⊤ : SimpleGraph (C : Finset V))
+            * allSignedSubgraphSum (⊤ : SimpleGraph (Cᶜ : Finset V)) := by
+  rw [allSignedSubgraphSum_eq_sum_fiber_product (⊤ : SimpleGraph V) r]
+  refine Finset.sum_congr rfl (fun C _ => ?_)
+  rw [insideConnectedEdgeSubsets_completeGraph_signed_sum,
+    outsideEdgeSubsets_completeGraph_signed_sum]
+
 end IsingModel
