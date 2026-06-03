@@ -1,4 +1,5 @@
 import IsingModel.GibbsMeasure
+import Mathlib.Combinatorics.SimpleGraph.Metric
 
 /-!
 # Lattice graphs on ℤ^d
@@ -195,6 +196,104 @@ lemma latticeGraph_adj_iff_latticeDistance_eq_one
     exact Int.abs_eq_natAbs (x i - y i)
   rw [hcast]
   exact_mod_cast Iff.rfl
+
+/-- **One-step reduction toward `y`**: if the ℓ¹ distance from `x` to `y` is
+`n+1`, there is a lattice-adjacent point `x'` (one coordinate moved one unit
+toward `y`) with ℓ¹ distance `n` to `y`. The inductive step for constructing a
+geodesic walk in `latticeGraph d`. -/
+lemma latticeDistance_exists_adj_step (d : ℕ) {x y : Fin d → ℤ} {n : ℕ}
+    (h : latticeDistance d x y = n + 1) :
+    ∃ x', (latticeGraph d).Adj x x' ∧ latticeDistance d x' y = n := by
+  have hne : x ≠ y := fun he => by rw [he, latticeDistance_self] at h; omega
+  obtain ⟨i, hi⟩ := Function.ne_iff.mp hne
+  set v : ℤ := x i + (if x i < y i then 1 else -1) with hvdef
+  have hstep : (v - y i).natAbs + 1 = (x i - y i).natAbs := by
+    rcases lt_trichotomy (x i) (y i) with hlt | heq | hgt
+    · rw [hvdef, if_pos hlt]; omega
+    · exact absurd heq hi
+    · rw [hvdef, if_neg (not_lt.mpr hgt.le)]; omega
+  refine ⟨Function.update x i v, ?_, ?_⟩
+  · rw [latticeGraph_adj_iff_latticeDistance_eq_one]
+    unfold latticeDistance
+    rw [Finset.sum_eq_single i]
+    · rw [Function.update_self]
+      omega
+    · intro j _ hj
+      rw [Function.update_of_ne hj]
+      simp
+    · intro hcon; exact absurd (Finset.mem_univ i) hcon
+  · have hL : latticeDistance d (Function.update x i v) y
+        = (v - y i).natAbs + ∑ j ∈ Finset.univ.erase i, (x j - y j).natAbs := by
+      unfold latticeDistance
+      rw [← Finset.add_sum_erase _ _ (Finset.mem_univ i), Function.update_self]
+      congr 1
+      apply Finset.sum_congr rfl
+      intro j hj
+      rw [Function.update_of_ne (Finset.ne_of_mem_erase hj)]
+    have hR : latticeDistance d x y
+        = (x i - y i).natAbs + ∑ j ∈ Finset.univ.erase i, (x j - y j).natAbs := by
+      unfold latticeDistance
+      rw [← Finset.add_sum_erase _ _ (Finset.mem_univ i)]
+    rw [hL]
+    rw [hR] at h
+    omega
+
+/-- **A geodesic walk exists**: between any two points there is a walk in
+`latticeGraph d` whose length equals the ℓ¹ distance. By induction on the
+distance, prepending one coordinate step (`latticeDistance_exists_adj_step`). -/
+lemma latticeGraph_exists_walk_length (d : ℕ) (x y : Fin d → ℤ) :
+    ∃ w : (latticeGraph d).Walk x y, w.length = latticeDistance d x y := by
+  suffices h : ∀ n x, latticeDistance d x y = n →
+      ∃ w : (latticeGraph d).Walk x y, w.length = n by
+    obtain ⟨w, hw⟩ := h (latticeDistance d x y) x rfl
+    exact ⟨w, hw⟩
+  intro n
+  induction n with
+  | zero =>
+    intro x hx
+    rw [latticeDistance_eq_zero_iff] at hx
+    subst hx
+    exact ⟨SimpleGraph.Walk.nil, rfl⟩
+  | succ m ih =>
+    intro x hx
+    obtain ⟨x', hadj, hd'⟩ := latticeDistance_exists_adj_step d hx
+    obtain ⟨w', hw'⟩ := ih x' hd'
+    exact ⟨SimpleGraph.Walk.cons hadj w', by rw [SimpleGraph.Walk.length_cons, hw']⟩
+
+/-- **The lattice graph is connected.** -/
+lemma latticeGraph_connected (d : ℕ) : (latticeGraph d).Connected where
+  preconnected x y := (latticeGraph_exists_walk_length d x y).elim (fun w _ => w.reachable)
+  nonempty := ⟨fun _ => 0⟩
+
+/-- **The ℓ¹ distance is a lower bound on any walk length**: every walk in
+`latticeGraph d` from `x` to `y` has length at least `latticeDistance d x y`
+(each edge changes the ℓ¹ distance by one, via the triangle inequality). -/
+lemma latticeDistance_le_walk_length (d : ℕ) {x y : Fin d → ℤ}
+    (w : (latticeGraph d).Walk x y) : latticeDistance d x y ≤ w.length := by
+  induction w with
+  | nil => simp
+  | @cons x z y hadj w' ih =>
+    rw [latticeGraph_adj_iff_latticeDistance_eq_one] at hadj
+    rw [SimpleGraph.Walk.length_cons]
+    calc latticeDistance d x y
+        ≤ latticeDistance d x z + latticeDistance d z y := latticeDistance_triangle d x z y
+      _ = 1 + latticeDistance d z y := by rw [hadj]
+      _ ≤ 1 + w'.length := by omega
+      _ = w'.length + 1 := by omega
+
+/-- **Graph distance in `latticeGraph d` equals the ℓ¹ distance**: the
+shortest-path metric of the lattice graph coincides with `latticeDistance`. The
+geodesic walk (`latticeGraph_exists_walk_length`) gives `≤`, and the
+walk-length lower bound (`latticeDistance_le_walk_length`) gives `≥`. -/
+lemma latticeGraph_dist_eq_latticeDistance (d : ℕ) (x y : Fin d → ℤ) :
+    (latticeGraph d).dist x y = latticeDistance d x y := by
+  apply le_antisymm
+  · obtain ⟨w, hw⟩ := latticeGraph_exists_walk_length d x y
+    calc (latticeGraph d).dist x y ≤ w.length := SimpleGraph.dist_le w
+      _ = latticeDistance d x y := hw
+  · obtain ⟨p, hp⟩ := ((latticeGraph_connected d).preconnected x y).exists_walk_length_eq_dist
+    calc latticeDistance d x y ≤ p.length := latticeDistance_le_walk_length d p
+      _ = (latticeGraph d).dist x y := hp
 
 /-- **Finite ℓ¹ balls**: the set of points at `latticeDistance` at
 most `N` from a fixed basepoint is finite. Follows from the
