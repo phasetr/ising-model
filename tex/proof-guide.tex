@@ -2171,6 +2171,25 @@ transfer-matrix two-point analysis -- in particular the exact geometric decay
 $\langle\sigma_0\sigma_n\rangle \to (\tanh\beta J)^n$ -- into a statement about the
 project's Gibbs correlation $\langle\sigma_0\sigma_n\rangle$ (Glimm--Jaffe~\S17.1).
 
+\paragraph{Gibbs-form exponential decay (\S17.1).}
+Composing the bridge with the transfer-matrix limits gives the exact decay of the
+1D Ising correlation directly for the project's Gibbs \texttt{correlation}.  The
+closed forms \texttt{correlation\_cycleGraph\_eq\_eigenvaluePow}
+($= (\lambda_-^n\lambda_+^{N-n}+\lambda_+^n\lambda_-^{N-n})/(\lambda_+^N+\lambda_-^N)$)
+and \texttt{correlation\_cycleGraph\_eq\_ratio}
+($= (r^n+r^{N-n})/(1+r^N)$, $r = \tanh\beta J$) restate
+\texttt{twoPointCorrelation\_eq} / \texttt{twoPointCorrelation\_eq\_ratio} in Gibbs
+terms.  Parametrising the volume as $N = n+k+3$ (so the sites $0$, $n$ stay valid as
+$k\to\infty$ with the endpoint distance $n$ fixed), the headline
+\texttt{tendsto\_correlation\_cycleGraph} gives, for $\beta J > 0$ and $0 < n$,
+\[
+  \texttt{correlation}\,(\texttt{cycleGraph}\,(n{+}k{+}3))\,\langle J,0,\beta\rangle\,\{0,n\}
+  \;\xrightarrow[k\to\infty]{}\; (\tanh\beta J)^n,
+\]
+and \texttt{tendsto\_correlation\_cycleGraph\_exp\_neg\_mass} writes the same limit as
+the pure exponential $e^{-m n}$ at the inverse correlation length
+$m = \texttt{correlationMass}\,\beta J = -\log\tanh\beta J$ (Glimm--Jaffe~\S17.1).
+
 \paragraph{Finite $\ell^1$ balls and proper-map property.}
 PR~\#782 complements the metric definition with the proper-map
 companion to PR~\#779's cofinite cluster decay. First,
