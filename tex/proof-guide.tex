@@ -2098,6 +2098,11 @@ $\texttt{Fin.append\_snoc}$). The marked glue
 $\texttt{markedGlue}\,\sigma\,\rho = \mathrm{append}\,(\mathrm{init}\,\sigma)\,(\mathrm{init}\,\rho)$
 is the closed walk with marks $\texttt{markedGlue}\,\sigma\,\rho\,0 = \sigma_0$ and at
 site $a$ equal to $\rho_0$ (Glimm--Jaffe~\S17.1).
+Under the gluing conditions $\rho_0 = \sigma_{\mathrm{last}}$ and
+$\rho_{\mathrm{last}} = \sigma_0$, its cyclic closed-walk weight factors as
+$\texttt{closedWalkWeight}\,M\,(\texttt{markedGlue}\,\sigma\,\rho) = \texttt{pathWeight}\,M\,\sigma \cdot \texttt{pathWeight}\,M\,\rho$
+(\texttt{closedWalkWeight\_markedGlue}), via the open-path conversion and
+$\texttt{pathWeight\_append}$.
 
 \paragraph{Finite $\ell^1$ balls and proper-map property.}
 PR~\#782 complements the metric definition with the proper-map
