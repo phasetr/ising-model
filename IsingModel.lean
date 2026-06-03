@@ -34,3 +34,4 @@ import IsingModel.ClusterExpansion
 import IsingModel.TransferMatrix.OneDim
 import IsingModel.TransferMatrix.OneDimPower
 import IsingModel.TransferMatrix.OneDimFreeEnergy
+import IsingModel.TransferMatrix.TraceSum
