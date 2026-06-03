@@ -1851,6 +1851,15 @@ and \texttt{latticeGraph\_adj\_iff\_latticeDistance\_eq\_one} ties the
 new metric to the pre-existing adjacency relation
 $\sum_i \lvert x_i - y_i\rvert = 1$ via the identity
 $\lvert n \rvert = (\lvert n \rvert_{\mathbb N} : \mathbb Z)$. The
+companion Chebyshev ($\ell^\infty$) distance \texttt{latticeDistanceInf} $=
+\max_i \lvert x_i - y_i\rvert$ is the lattice \emph{hyperplane separation} of
+Glimm--Jaffe~\S17.5 (p.~312), in which the transfer matrix yields exponential
+decay $e^{-m\cdot\mathrm{dist}}$. With \texttt{latticeDistanceInf\_self},
+\texttt{latticeDistanceInf\_comm}, \texttt{latticeDistanceInf\_le\_latticeDistance}
+($\ell^\infty \le \ell^1$), and \texttt{latticeDistance\_le\_card\_mul\_latticeDistanceInf}
+($\lvert x-y\rvert_1 \le d\,\lvert x-y\rvert_\infty$), this records the geometric
+input $\mathrm{dist} \ge \lvert x-y\rvert/a_0$ with $a_0 = d$ that converts
+hyperplane-separation decay into $\ell^1$-distance decay at rate $m/d$. The
 range is kept in $\mathbb N$ rather than in $\mathbb R$ to avoid
 $\mathbb N$/$\mathbb Z$/$\mathbb R$ cast bookkeeping in the downstream
 summability arguments (Simon--Lieb iteration) that this infrastructure
