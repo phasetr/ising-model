@@ -2104,6 +2104,15 @@ $\texttt{closedWalkWeight}\,M\,(\texttt{markedGlue}\,\sigma\,\rho) = \texttt{pat
 (\texttt{closedWalkWeight\_markedGlue}), via the open-path conversion and
 $\texttt{pathWeight\_append}$.
 
+\paragraph{Marked trace as a sum over glued pairs (\S17.1).}
+Reordering four nested sums (\texttt{sum\_reorder\_4}, a \texttt{calc} chain of
+$\texttt{Finset.sum\_comm}$) and collapsing the endpoint sums, the trace with two
+diagonal insertions becomes a sum over glued open-path pairs:
+$\operatorname{Tr}(D\,M^a D\,M^b) = \sum_{\sigma,\rho} [\sigma_{\mathrm{last}}=\rho_0 \wedge \rho_{\mathrm{last}}=\sigma_0]\, d(\sigma_0)d(\rho_0)\,\texttt{pathWeight}\,M\,\sigma\cdot\texttt{pathWeight}\,M\,\rho$
+(\texttt{trace\_diagonal\_pow\_diagonal\_pow\_eq\_sum\_glued}). With
+\texttt{closedWalkWeight\_markedGlue} this is the marked closed-walk trace identity
+up to the path-pair bijection (Glimm--Jaffe~\S17.1).
+
 \paragraph{Finite $\ell^1$ balls and proper-map property.}
 PR~\#782 complements the metric definition with the proper-map
 companion to PR~\#779's cofinite cluster decay. First,
