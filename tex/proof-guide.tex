@@ -1850,7 +1850,14 @@ The basic lemmas \texttt{latticeDistance\_self},
 and \texttt{latticeGraph\_adj\_iff\_latticeDistance\_eq\_one} ties the
 new metric to the pre-existing adjacency relation
 $\sum_i \lvert x_i - y_i\rvert = 1$ via the identity
-$\lvert n \rvert = (\lvert n \rvert_{\mathbb N} : \mathbb Z)$. The
+$\lvert n \rvert = (\lvert n \rvert_{\mathbb N} : \mathbb Z)$.
+The shortest-path metric agrees with this $\ell^1$ distance:
+\texttt{latticeGraph\_dist\_eq\_latticeDistance} ($(\mathrm{latticeGraph}\,d).\mathrm{dist}\,x\,y
+= \mathrm{latticeDistance}\,d\,x\,y$), using \texttt{latticeGraph\_connected},
+the inductive geodesic step \texttt{latticeDistance\_exists\_adj\_step} (move one
+coordinate toward $y$, reducing the distance by one), the geodesic walk
+\texttt{latticeGraph\_exists\_walk\_length} (length $=$ distance, giving $\le$),
+and the walk-length lower bound \texttt{latticeDistance\_le\_walk\_length} (giving $\ge$). The
 companion Chebyshev ($\ell^\infty$) distance \texttt{latticeDistanceInf} $=
 \max_i \lvert x_i - y_i\rvert$ is the lattice \emph{hyperplane separation} of
 Glimm--Jaffe~\S17.5 (p.~312), in which the transfer matrix yields exponential
