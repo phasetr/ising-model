@@ -42,7 +42,7 @@ theorem tsum_tanh_pow {a : ℝ} (ha : 0 < a) :
 
 /-- The **magnetic susceptibility** of the 1D Ising chain,
 `χ = (1 + tanh βJ) / (1 - tanh βJ)`, the two-sided lattice sum of the two-point
-function. -/
+function `∑_{x ∈ ℤ} ⟨σ₀σ_x⟩` (the field-derivative susceptibility is `β·χ`). -/
 noncomputable def isingSusceptibility1D (a : ℝ) : ℝ :=
   (1 + Real.tanh a) / (1 - Real.tanh a)
 
