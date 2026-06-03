@@ -2001,6 +2001,23 @@ decay $\langle\sigma_0\sigma_n\rangle_N \to (\tanh\beta J)^n$ as $N\to\infty$
 (\texttt{tendsto\_twoPointCorrelation}), with correlation length
 $\xi = -1/\log\tanh\beta J$ (Glimm--Jaffe~\S17.1).
 
+\paragraph{Cycle-graph edge enumeration and partition function (\S17.1, Issue~\#3511 PR~7).}
+To bridge the project's graph-based Ising partition function on the cyclic chain
+to the transfer-matrix's linear site product, the edges of the cycle graph are
+enumerated (Mathlib provides only the adjacency):
+$(\texttt{cycleGraph}(n{+}2)).\texttt{edgeFinset} = \{\,s(i, i{+}1) : i \in \mathrm{Fin}(n{+}2)\,\}$
+(\texttt{cycleGraph\_edgeFinset\_eq\_image}, via $\texttt{Sym2.ind}$ and
+$\texttt{cycleGraph\_adj}$). With the injectivity of $i \mapsto s(i, i{+}1)$ on
+$\mathrm{Fin}(n{+}3)$ (\texttt{cyclePair\_injective}) this gives the product
+reindexing $\prod_{e} f(e) = \prod_{i} f(s(i,i{+}1))$
+(\texttt{prod\_cycleGraph\_edgeFinset}) and the edge count $n{+}3$
+(\texttt{card\_cycleGraph\_edgeFinset}). Combined with the $h=0$ Boltzmann edge
+product (\texttt{boltzmannWeight\_eq\_prod\_exp\_of\_h\_zero}), the partition
+function of the cyclic $N$-site chain ($N = n{+}3$) becomes a linear site product
+$Z_N = \sum_\sigma \prod_{i} e^{\beta J\,\sigma_i\sigma_{i+1}}$
+(\texttt{partitionFunction\_cycleGraph\_eq\_sum\_prod}) -- the transfer-matrix
+shape (Glimm--Jaffe~\S17.1).
+
 \paragraph{Finite $\ell^1$ balls and proper-map property.}
 PR~\#782 complements the metric definition with the proper-map
 companion to PR~\#779's cofinite cluster decay. First,
