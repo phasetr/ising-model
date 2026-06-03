@@ -99,6 +99,52 @@ lemma latticeDistance_triangle (d : ℕ) (x y z : Fin d → ℤ) :
     _ ≤ (x i - y i).natAbs + (y i - z i).natAbs :=
         Int.natAbs_add_le _ _
 
+/-- **Lattice Chebyshev (ℓ∞) distance** on `ℤ^d`: the maximum coordinate
+difference `max_i |x_i − y_i|`. This is the lattice "hyperplane separation"
+distance of Glimm–Jaffe §17.5 (p. 312), in which the transfer matrix gives
+exponential decay `e^{−m·dist}` of correlations. -/
+def latticeDistanceInf (d : ℕ) (x y : Fin d → ℤ) : ℕ :=
+  Finset.univ.sup (fun i => (x i - y i).natAbs)
+
+/-- A point is at Chebyshev distance zero from itself. -/
+@[simp] lemma latticeDistanceInf_self (d : ℕ) (x : Fin d → ℤ) :
+    latticeDistanceInf d x x = 0 := by
+  unfold latticeDistanceInf
+  simp only [sub_self, Int.natAbs_zero]
+  exact Nat.le_zero.mp (Finset.sup_le fun _ _ => le_rfl)
+
+/-- The Chebyshev distance is symmetric. -/
+lemma latticeDistanceInf_comm (d : ℕ) (x y : Fin d → ℤ) :
+    latticeDistanceInf d x y = latticeDistanceInf d y x := by
+  unfold latticeDistanceInf
+  refine Finset.sup_congr rfl (fun i _ => ?_)
+  rw [show x i - y i = -(y i - x i) by ring, Int.natAbs_neg]
+
+/-- **The Chebyshev (ℓ∞) distance is bounded by the ℓ¹ distance** (`max ≤ sum`):
+each coordinate difference is at most the total. -/
+lemma latticeDistanceInf_le_latticeDistance (d : ℕ) (x y : Fin d → ℤ) :
+    latticeDistanceInf d x y ≤ latticeDistance d x y := by
+  unfold latticeDistanceInf latticeDistance
+  apply Finset.sup_le
+  intro i _
+  exact Finset.single_le_sum (f := fun j => (x j - y j).natAbs)
+    (fun j _ => Nat.zero_le _) (Finset.mem_univ i)
+
+/-- **The ℓ¹ distance is bounded by `d` times the Chebyshev distance**
+(`sum ≤ card · max`): the geometric input `dist ≥ |x−y|/a₀` of Glimm–Jaffe §17.5
+with `a₀ = d`. On ℤ^d the hyperplane separation is the ℓ∞ distance, and
+`|x−y|₁ ≤ d·|x−y|_∞`, so the transfer-matrix decay `e^{−m·dist}` in the hyperplane
+separation implies decay at rate `m/d` in the ℓ¹ distance. -/
+lemma latticeDistance_le_card_mul_latticeDistanceInf (d : ℕ) (x y : Fin d → ℤ) :
+    latticeDistance d x y ≤ d * latticeDistanceInf d x y := by
+  unfold latticeDistance latticeDistanceInf
+  calc ∑ i : Fin d, (x i - y i).natAbs
+      ≤ ∑ _i : Fin d, Finset.univ.sup (fun j => (x j - y j).natAbs) :=
+        Finset.sum_le_sum
+          (fun i _ => Finset.le_sup (f := fun j => (x j - y j).natAbs) (Finset.mem_univ i))
+    _ = d * Finset.univ.sup (fun j => (x j - y j).natAbs) := by
+        rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, smul_eq_mul]
+
 /-- Adjacency in `latticeGraph d` is exactly `latticeDistance = 1`. -/
 lemma latticeGraph_adj_iff_latticeDistance_eq_one
     (d : ℕ) (x y : Fin d → ℤ) :
