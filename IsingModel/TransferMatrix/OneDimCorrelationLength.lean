@@ -3,8 +3,9 @@ import IsingModel.TransferMatrix.OneDimTwoPoint
 /-!
 # Correlation length and mass of the 1D Ising chain (GJ §17.1, §17.5)
 
-The two-point function of the one-dimensional Ising chain decays as
-`⟨σ₀σₙ⟩_N → (tanh βJ)ⁿ` (`tendsto_twoPointCorrelation`, #3517).  Writing this as a
+The transfer-matrix two-point ratio of the one-dimensional Ising chain decays as
+`twoPointCorrelation a n N → (tanh βJ)ⁿ` (`tendsto_twoPointCorrelation`, #3517; its
+identification with the Gibbs `⟨σ₀σₙ⟩` is a separate step).  Writing this as a
 pure exponential identifies the **mass** `m = -log tanh βJ` (the inverse
 correlation length, the §17.5 mass for the 1D chain) and the **correlation
 length** `ξ = 1/m`:
