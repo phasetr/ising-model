@@ -1215,6 +1215,28 @@ screening does not apply directly to the translation squeeze, but this general
 screening does.  Reference: Friedli--Velenik (Cambridge, 2017), \S3.4
 Theorem~3.17, pp.~100--104.
 
+\subsection{Translated observable and the interlacing antitone sandwich
+(\texttt{Concrete/LatticeGraphCorrelation/PlusStateTranslationInvariance.lean})}
+
+The translation $\tau_a$ of a monotone observable is
+\texttt{LocalMonotoneObservable.vadd}~$a$ (support $a + S$, observable pulled back
+through \texttt{configVaddEquiv}, monotonicity preserved), with support inside
+$\texttt{cubicBox}\,d\,(N + \texttt{latticeRadius}\,a)$.  Writing
+\texttt{translatedInner}~$a\,n\,M$ for the sites of the common ambient
+$\texttt{cubicBox}\,d\,M$ whose value lies in $a + \texttt{cubicBox}\,d\,n$, the
+cubic interlacing transfers to the inner regions,
+\[
+  \texttt{plusBoxInterior}\,d\,(n-R)\,M \subseteq \texttt{translatedInner}\,a\,n\,M
+    \subseteq \texttt{plusBoxInterior}\,d\,(n+R)\,M
+  \qquad(R = \texttt{latticeRadius}\,a),
+\]
+so the volume monotonicity \texttt{gibbsExpectationBC\_plus\_volume\_antitone} gives
+the antitone sandwich \texttt{gibbsExpectationBC\_translatedInner\_sandwich}:
+$E^{+}_{n+R} \le E^{+}_{a + n} \le E^{+}_{n-R}$ on the common ambient.  Recentering
+the middle term (covariance) and passing to the limit along the cubic exhaustion
+(the next step of Issue~3581) yields $\mu^{+}(\tau_a\varphi) = \mu^{+}(\varphi)$.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.4 Theorem~3.17, pp.~100--104.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
