@@ -17,7 +17,8 @@ converges along the cubic exhaustion.
   existence of its infinite-volume `+` expectation.
 
 Reference: Friedli–Velenik, *Statistical Mechanics of Lattice Systems* (2017),
-Lemma 3.22, §6.
+§3.4 Theorem 3.17 (the `+` infinite-volume state) and §3.6 Lemma 3.22
+(volume monotonicity via FKG).
 -/
 
 namespace IsingModel
