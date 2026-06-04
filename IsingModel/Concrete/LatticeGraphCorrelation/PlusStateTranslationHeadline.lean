@@ -15,7 +15,7 @@ squeeze.
   observable.
 
 Reference: Friedli–Velenik, *Statistical Mechanics of Lattice Systems*
-(Cambridge, 2017), §3.4 Theorem 3.17, pp. 100–104.
+(Cambridge, 2017), §3.4 Theorem 3.17 (statement p. 95, proof pp. 102–103).
 -/
 
 namespace IsingModel
