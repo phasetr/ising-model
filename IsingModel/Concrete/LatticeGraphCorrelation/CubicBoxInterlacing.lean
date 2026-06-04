@@ -17,8 +17,9 @@ Together with the `+` boundary translation covariance
 limit of the `±`-state functional be shown translation-invariant (a squeeze, not a
 pointwise identity).
 
-Reference: Friedli–Velenik, *Statistical Mechanics of Lattice Systems* (2017),
-§3.4 (translation invariance of the infinite-volume states).
+Reference: Friedli–Velenik, *Statistical Mechanics of Lattice Systems*
+(Cambridge, 2017), §3.4 Theorem 3.17 (the translation-invariant infinite-volume
+`±` Gibbs states), pp. 100–104.
 -/
 
 universe u v
