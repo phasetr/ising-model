@@ -1053,12 +1053,14 @@ $+$ local expectations are antitone
 Since any local observable is a difference of monotone ones, this is the building
 block of the full $+$-state functional.
 
-\subsection{The full $+$-state functional
+\subsection{The cubic-exhaustion $+$-state functional
 (\texttt{Concrete/LatticeGraphCorrelation/LocalObservableState.lean})}
 
 The monotone limit extends to \emph{all} local observables, yielding the
-$+$-state functional and its linearity, normalisation, and positivity
-(FV~Theorem~3.17).  A \texttt{LocalObservable}~$d$ is an arbitrary real function
+cubic-exhaustion $+$-state functional and its \emph{same-support} linearity,
+normalisation, and positivity (a step towards the FV~Theorem~3.17 $+$ state;
+sequence independence, translation invariance, the $-$ state, and cross-support
+union linearity remain follow-up).  A \texttt{LocalObservable}~$d$ is an arbitrary real function
 $\varphi : \texttt{Config}\,S \to \mathbb R$ on a finite support (no
 monotonicity).  The key elementary fact is the \emph{monotone-difference
 decomposition}, playing the role of FV~Lemma~3.19: writing
@@ -1084,8 +1086,8 @@ $\langle\varphi\rangle = \langle\varphi_+\rangle - \langle\varphi_-\rangle$
 the difference of the two monotone limits
 (\texttt{plusStateExpectation}), the screened box expectations converge to it
 (\texttt{tendsto\_plusStateExpectation}), and uniqueness of limits propagates the
-finite-volume algebra: the functional is linear
-(\texttt{plusStateExpectation\_add}, \texttt{\_const\_mul}), normalised
+finite-volume algebra: the functional is linear (on a fixed support,
+\texttt{plusStateExpectation\_add}, \texttt{\_const\_mul}), normalised
 ($\langle c\rangle = c$, \texttt{\_const}), positive
 ($\varphi \ge 0 \Rightarrow \langle\varphi\rangle \ge 0$, \texttt{\_nonneg}),
 monotone (\texttt{\_mono}), and agrees with the monotone-observable limit on

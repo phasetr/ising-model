@@ -3,17 +3,19 @@ import IsingModel.Concrete.LatticeGraphCorrelation.LocalObservableLimit
 /-!
 # The full `+`-state functional on local observables on ℤ^d (Issue #3565)
 
-Extends the infinite-volume `+` expectation from *monotone* local observables
-(`tendsto_plusBoxLocalObservable_infiniteVolume`) to **all** local observables,
-yielding the `+`-state functional and its linearity / normalisation / positivity
-(Friedli–Velenik Theorem 3.17, via the monotone-difference decomposition that
-plays the role of Lemma 3.19).
+Extends the cubic-box screened infinite-volume `+` expectation from *monotone*
+local observables (`tendsto_plusBoxLocalObservable_infiniteVolume`) to **all**
+local observables, yielding the cubic-exhaustion `+`-state functional and its
+*same-support* linearity / normalisation / positivity (a step towards the
+Friedli–Velenik Theorem 3.17 `+` state; the monotone-difference decomposition here
+plays the elementary role of Lemma 3.19).  Sequence independence, translation
+invariance, the `−` state, and cross-support (union) linearity are follow-up.
 
-The key elementary fact (`exists_monotone_sub_monotone`): on the finite Boolean
-lattice `Config ↑S`, every real function `φ` is a difference of two monotone
-functions, `φ = (K·rank + φ) - K·rank`, where `rank σ` counts the up-spins and
-`K = 2·max|φ|`.  Adding the large monotone `K·rank` dominates the variation of
-`φ` across any single covering step, so `K·rank + φ` is monotone.
+The key elementary fact (`LocalObservable.phi_eq_upper_sub_lower`): on the finite
+Boolean lattice `Config ↑S`, every real function `φ` is a difference of two
+monotone functions, `φ = (K·rank + φ) - K·rank`, where `rank σ` counts the
+up-spins and `K = 2·max|φ|`.  Adding the large monotone `K·rank` dominates the
+variation of `φ` across any single covering step, so `K·rank + φ` is monotone.
 
 * `LocalObservable` — a real function of the spins on a finite support (no
   monotonicity required).
@@ -206,10 +208,10 @@ theorem plusBoxObsExpectation_mono {d : ℕ} (n m : ℕ) (J h β : ℝ)
 
 /-! ## The infinite-volume `+`-state functional -/
 
-/-- **The infinite-volume `+` expectation of an arbitrary local observable** (the
-`+`-state functional, FV Theorem 3.17): the difference of the two monotone limits
-from the monotone-difference decomposition.  The screened box expectations converge
-to it (`tendsto_plusStateExpectation`). -/
+/-- **The cubic-exhaustion `+` expectation of an arbitrary local observable** (the
+`+`-state functional along the cubic screening, towards FV Theorem 3.17): the
+difference of the two monotone limits from the monotone-difference decomposition.
+The screened box expectations converge to it (`tendsto_plusStateExpectation`). -/
 noncomputable def plusStateExpectation {d N : ℕ} (J h β : ℝ) (O : LocalObservable d)
     (hS : O.S ⊆ cubicBox d N) : ℝ :=
   (⨅ k, plusBoxLocalExpectation (N + k) (N + k + 1) J h β O.upper
@@ -241,8 +243,8 @@ theorem tendsto_plusStateExpectation {d N : ℕ} {J h β : ℝ}
   rw [heq]
   exact hup.sub hlo
 
-/-- **Additivity of the `+`-state functional** (same support, FV Thm 3.17): the
-`+` state is linear. -/
+/-- **Additivity of the `+`-state functional** (same support): the cubic-exhaustion
+`+`-state functional is linear (a step towards the FV Thm 3.17 `+` state). -/
 theorem plusStateExpectation_add {d N : ℕ} {J h β : ℝ} (hβ : 0 ≤ β) (hJ : 0 ≤ J)
     {S : Finset (Fin d → ℤ)} (φ₁ φ₂ : Config (↑S : Type _) → ℝ) (hS : S ⊆ cubicBox d N) :
     plusStateExpectation J h β (⟨S, fun σ => φ₁ σ + φ₂ σ⟩ : LocalObservable d) hS
