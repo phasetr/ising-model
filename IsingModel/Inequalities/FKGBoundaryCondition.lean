@@ -1,4 +1,5 @@
 import IsingModel.Inequalities.FKGInhomogeneous
+import IsingModel.Inequalities.WeightedExpectation
 
 /-!
 # FKG inequality with arbitrary boundary conditions (FV Thm 3.21, full form)
@@ -168,12 +169,8 @@ theorem gibbsExpectationBC_const (G : SimpleGraph ι) [Fintype G.edgeSet]
     (β : ℝ) (J : Sym2 ι → ℝ) (h : ℝ) (Λ : Finset ι) (η : Config ι) (c : ℝ) :
     gibbsExpectationBC G β J h Λ η (fun _ => c) = c := by
   unfold gibbsExpectationBC
-  have hZ : partitionFunctionBC G β J h Λ η ≠ 0 := partitionFunctionBC_ne_zero G β J h Λ η
-  rw [← Finset.mul_sum]
-  rw [show (∑ σ : Config ι, boltzmannWeightBC G β J h Λ η σ)
-        = partitionFunctionBC G β J h Λ η from rfl]
-  rw [← mul_assoc, mul_comm (partitionFunctionBC G β J h Λ η)⁻¹ c, mul_assoc,
-    inv_mul_cancel₀ hZ, mul_one]
+  exact weightedExpectation_const (partitionFunctionBC G β J h Λ η)
+    (boltzmannWeightBC G β J h Λ η) rfl (partitionFunctionBC_ne_zero G β J h Λ η) c
 
 /-- **Additivity of the Gibbs expectation**: `⟨F + H⟩ = ⟨F⟩ + ⟨H⟩`. -/
 theorem gibbsExpectationBC_add (G : SimpleGraph ι) [Fintype G.edgeSet]
@@ -181,12 +178,8 @@ theorem gibbsExpectationBC_add (G : SimpleGraph ι) [Fintype G.edgeSet]
     gibbsExpectationBC G β J h Λ η (F + H)
       = gibbsExpectationBC G β J h Λ η F + gibbsExpectationBC G β J h Λ η H := by
   unfold gibbsExpectationBC
-  rw [← mul_add, ← Finset.sum_add_distrib]
-  congr 1
-  apply Finset.sum_congr rfl
-  intro σ _
-  simp only [Pi.add_apply]
-  ring
+  exact weightedExpectation_add (partitionFunctionBC G β J h Λ η)
+    (boltzmannWeightBC G β J h Λ η) F H
 
 /-- **Scalar homogeneity of the Gibbs expectation**: `⟨c · F⟩ = c · ⟨F⟩`. -/
 theorem gibbsExpectationBC_const_mul (G : SimpleGraph ι) [Fintype G.edgeSet]
@@ -194,13 +187,8 @@ theorem gibbsExpectationBC_const_mul (G : SimpleGraph ι) [Fintype G.edgeSet]
     gibbsExpectationBC G β J h Λ η (fun σ => c * F σ)
       = c * gibbsExpectationBC G β J h Λ η F := by
   unfold gibbsExpectationBC
-  rw [show (∑ σ : Config ι, (c * F σ) * boltzmannWeightBC G β J h Λ η σ)
-        = c * ∑ σ : Config ι, F σ * boltzmannWeightBC G β J h Λ η σ from by
-    rw [Finset.mul_sum]
-    apply Finset.sum_congr rfl
-    intro σ _
-    ring]
-  ring
+  exact weightedExpectation_const_mul (partitionFunctionBC G β J h Λ η)
+    (boltzmannWeightBC G β J h Λ η) c F
 
 /-! ## FKG inequality with boundary conditions -/
 
