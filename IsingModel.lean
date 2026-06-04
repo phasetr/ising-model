@@ -17,6 +17,7 @@ import IsingModel.Inequalities.WalkSum
 import IsingModel.Inequalities.SimonLiebIterate
 import IsingModel.Inequalities.SimonLiebIterateHighTemp
 import IsingModel.Inequalities.SimonLiebIterateDecay
+import IsingModel.Inequalities.WalkSumRepresentation
 import IsingModel.Concrete.LatticeGraphCorrelation.SimonLiebDecayLatticeGraph
 import IsingModel.Concrete.LatticeGraphCorrelation.SimonLiebDecayLatticeDistance
 import IsingModel.Inequalities.HighTemp
