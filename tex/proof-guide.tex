@@ -918,6 +918,25 @@ exponential factor to a constant depending only on the complement-site count and
 the extra-edge count --- the constant that cancels in the normalised $+$
 boundary-condition expectation (the screening).
 
+\subsection{Cubic-box screening conditions
+(\texttt{Concrete/LatticeGraphCorrelation/CubicBoxScreening.lean})}
+
+The frozen-$+$ ingredients turning the generic weight factoring into the cubic-box
+screening. \texttt{boltzmannWeightJ\_uniform\_eq}: at a uniform coupling
+$\texttt{fun \_} \Rightarrow J$, the inhomogeneous Boltzmann weight equals the
+ordinary one, $w_J^{(\texttt{fun \_}\Rightarrow J)} = w_{\langle J,h,\beta\rangle}$,
+bridging the boundary-condition framework
+($w^{\mathrm{BC}} = \mathbf{1}_{\mathrm{agrees}} \cdot w_J$) to the
+uniform-coupling factoring lemmas.
+\texttt{cubicBox\_extra\_edge\_endpoints\_not\_mem\_inner}: for $n+1 \le m$, both
+endpoints of an extra edge (in the induced graph on $\texttt{cubicBox}\,d\,(m+1)$
+but not in the extension graph over $\texttt{cubicBox}\,d\,m$) lie outside
+$\texttt{cubicBox}\,d\,n$ --- by \texttt{Sym2.ind} case analysis, an endpoint lies
+in the shell, and \texttt{cubicBox\_shell\_adj\_not\_mem\_inner} then places both
+outside $\texttt{cubicBox}\,d\,n$. Hence on a $+$-off-$\texttt{box}\,n$
+configuration every extra edge has $\mathrm{edgeSpin} = 1$ --- the $\texttt{hextra}$
+input to the screening.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
