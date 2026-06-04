@@ -630,6 +630,44 @@ uses the Gibbs-expectation linearity lemmas \texttt{gibbsExpectation\_const}
 \texttt{gibbsExpectation\_const\_mul} ($\langle cF \rangle = c\langle F \rangle$),
 all proved in the same file. \hfill$\square$
 
+\subsection{FKG with inhomogeneous per-edge couplings
+(\texttt{Inequalities/FKGInhomogeneous.lean})}
+
+Friedli--Velenik Theorem~3.21 is stated for a \emph{collection of nonnegative
+couplings} $J = (J_{ij})$ (one per edge) and an \emph{arbitrary} field $h$, not
+just the uniform scalar coupling \texttt{IsingParams.J}. We build the
+inhomogeneous Gibbs stack
+\[
+  H_J(\sigma) = -\sum_{e \in E} J(e)\, s(\sigma_i) s(\sigma_j)
+                - h \sum_i s(\sigma_i),
+  \qquad w_J(\sigma) = e^{-\beta H_J(\sigma)},
+\]
+with \texttt{interactionEnergyJ}, \texttt{hamiltonianJ}, \texttt{boltzmannWeightJ},
+\texttt{partitionFunctionJ}, and \texttt{gibbsExpectationJ} (with linearity
+lemmas).
+
+\begin{theorem}[\texttt{boltzmannWeightJ\_log\_supermodular}]
+For $\beta \ge 0$ and every coupling $J(e) \ge 0$ (the field $h$ may have any
+sign, its term being modular),
+$w_J(\sigma) w_J(\sigma') \le w_J(\sigma \vee \sigma') w_J(\sigma \wedge \sigma')$.
+\end{theorem}
+
+\noindent The proof is the uniform-coupling argument with the single $J$ replaced
+by the per-edge weights: each edge term is supermodular
+(\texttt{spin\_edge\_supermodularJ}, 16-case check), and the nonnegative weights
+$J(e)$ preserve the inequality under summation, while the field term is modular.
+
+\begin{theorem}[\texttt{fkg\_isingJ\_of\_monotone}, FV Thm 3.21 free boundary]
+For nonnegative per-edge couplings $J(e) \ge 0$, $\beta \ge 0$, arbitrary field
+$h$, and arbitrary monotone nondecreasing $f, g$,
+$\langle f \rangle \langle g \rangle \le \langle fg \rangle$.
+\end{theorem}
+
+\noindent Proved from \texttt{fkg\_isingJ} (the nonnegative-observable case, via
+Mathlib's \texttt{fkg} applied to $w_J$) by the same covariance shift-invariance
+as \texttt{fkg\_ising\_of\_monotone}. This matches FV~3.21 exactly for the
+free-boundary case; arbitrary boundary conditions remain follow-up (Issue~3558).
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
