@@ -767,6 +767,29 @@ $\langle \varphi \rangle^{\eta}_\Lambda \le \langle \varphi
 \rangle^{\eta'}_\Lambda$.
 \end{theorem}
 
+\subsection{Extremal $\pm$ states and magnetization ordering
+(\texttt{Inequalities/MonotonicityExtremal.lean})}
+
+The boundary-condition monotonicity is sharpest at the two extremal
+configurations $\texttt{plusConfig}$ (all spins up, maximal) and
+$\texttt{minusConfig}$ (all spins down, minimal): every configuration satisfies
+$\texttt{minusConfig} \le \sigma \le \texttt{plusConfig}$. Hence, for any boundary
+condition $\eta$ and any monotone $\varphi$,
+\[
+  \langle \varphi \rangle^{-}_\Lambda \le \langle \varphi \rangle^{\eta}_\Lambda
+  \le \langle \varphi \rangle^{+}_\Lambda
+  \qquad (\texttt{gibbsExpectationBC\_extremal\_sandwich}),
+\]
+so the $\pm$ boundary conditions bracket all boundary conditions: at this finite
+volume the $+$ boundary condition gives the largest expectation of every monotone
+observable (the foundation for the extremal infinite-volume $\pm$ states,
+constructed as thermodynamic limits). As a concrete application, the single-spin observable
+$\sigma \mapsto s(\sigma_i)$ is monotone (\texttt{singleSpinObs\_monotone}), so the
+local magnetization is squeezed:
+$\langle \sigma_i \rangle^{-}_\Lambda \le \langle \sigma_i \rangle^{\eta}_\Lambda
+\le \langle \sigma_i \rangle^{+}_\Lambda$
+(\texttt{magnetizationBC\_extremal\_sandwich}).
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
