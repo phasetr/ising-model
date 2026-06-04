@@ -1022,6 +1022,37 @@ project's central long-term goal, the thermodynamic limit / extremal $+$ state.
 Extending the limit to all local observables (the full state functional) is
 follow-up.
 
+\subsection{Infinite-volume $+$ expectation of a monotone local observable
+(\texttt{Concrete/LatticeGraphCorrelation/LocalObservableLimit.lean})}
+
+The single-spin limit generalises verbatim to an arbitrary \emph{monotone local
+observable}, giving the standard $+$-state API. A
+\texttt{LocalMonotoneObservable}~$d$ bundles a finite support
+$S : \texttt{Finset}\,(\texttt{Fin}\,d \to \mathbb Z)$, a function
+$\varphi : \texttt{Config}\,S \to \mathbb R$, and a proof that $\varphi$ is
+monotone in the spin order. Its lift to a containing box,
+$\texttt{lift}\,h_S = \varphi \circ \texttt{restrictConfig}\,h_S$, is again
+monotone (\texttt{lift\_monotone}, via \texttt{restrictConfig\_monotone}), and
+depends only on the inner configuration (\texttt{restrictConfig\_trans}), so the
+ambient screening applies unchanged
+(\texttt{plusBoxLocalExpectation\_screening\_succ}). Being a monotone function on
+the \emph{finite} configuration space $\texttt{Config}\,S$, $\varphi$ attains a
+minimum, which bounds the screened expectations from below
+(\texttt{plusBoxLocalExpectation\_ge}) --- the bounded-below input replacing
+$[-1,1]$. Hence for $S \subseteq \texttt{cubicBox}\,d\,N$ the screened
+$+$ local expectations are antitone
+(\texttt{plusBoxLocalExpectation\_infiniteVolume\_antitone}) and converge
+(\texttt{tendsto\_plusBoxLocalObservable\_infiniteVolume}, via
+\texttt{tendsto\_atTop\_ciInf}):
+\[
+  \texttt{plusBoxLocalExpectation}\,(N+k)\,(N+k+1)\,\dots\,O
+    \;\longrightarrow\;
+  \inf_{k} \texttt{plusBoxLocalExpectation}\,(N+k)\,(N+k+1)\,\dots\,O
+  \qquad (k \to \infty).
+\]
+Since any local observable is a difference of monotone ones, this is the building
+block of the full $+$-state functional.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
