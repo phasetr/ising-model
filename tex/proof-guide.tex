@@ -1153,6 +1153,27 @@ additivity gives the cross-support union linearity
   \texttt{minusStateExpectation\_union\_add}).
 \]
 
+\subsection{Boundary-condition translation covariance
+(\texttt{Concrete/LatticeGraphCorrelation/PlusStateTranslation.lean})}
+
+The first step towards translation invariance of the cubic-exhaustion
+$\pm$-state functional (Issue~3581) is the boundary-condition analogue of
+\texttt{correlationΛ\_vaddFinset\_eq}.  On a translation-invariant graph with
+uniform coupling and constant field, the boundary-condition Gibbs expectation is
+covariant under the lattice translation $\tau = \texttt{configVaddEquiv}\,t\,\Omega$:
+\[
+  \langle F \circ \tau^{-1}\rangle^{\tau\eta}_{\tau\Lambda}
+    = \langle F\rangle^{\eta}_{\Lambda}
+  \qquad(\texttt{gibbsExpectationBC\_vaddFinset\_eq}),
+\]
+built from the all-$+$ configuration's translation invariance
+(\texttt{plusConfig\_configVaddEquiv}), the boundary-agreement transport
+(\texttt{agreesOff\_map\_configVaddEquiv\_iff}), and the uniform-Hamiltonian
+invariance \texttt{hamiltonian\_configVaddEquiv\_symm}, reindexing the conditioned
+configuration sum via \texttt{configVaddEquiv}.  The geometric squeeze relating the
+centered cubic boxes to their translates (and hence the translation invariance of
+the limit) is the next step of Issue~3581.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
