@@ -817,6 +817,22 @@ $\langle \varphi \cdot \mathbf{1}_A \rangle \ge \langle \varphi \rangle
 \langle \mathbf{1}_A \rangle$ then yields the claim after cancelling
 $\langle \mathbf{1}_A \rangle^{+}_{\Lambda_2} > 0$.
 
+\subsection{$+$ boundary expectation on a cubic box
+(\texttt{Concrete/LatticeGraphCorrelation/CubicBoxPlusState.lean})}
+
+The first step toward the infinite-volume $+$ Gibbs state on $\mathbb{Z}^d$
+(Issue~3565): \texttt{plusBoxExpectation}~$d\,n\,m\,J\,h\,\beta\,\varphi$ is the
+expectation of $\varphi$ under the Ising measure on the box
+$\texttt{cubicBox}\,d\,m$ with the annulus
+$\texttt{cubicBox}\,d\,m \setminus \texttt{cubicBox}\,d\,n$ frozen to $+$ --- i.e.
+\texttt{gibbsExpectationBC} over the induced cubic-lattice graph with inner region
+\texttt{plusBoxInterior}~$d\,n\,m$ and boundary configuration \texttt{plusConfig}.
+Within a fixed ambient box $m$, growing the inner region makes the $+$ expectation
+of a monotone observable decrease
+(\texttt{plusBoxExpectation\_antitone\_interior}), the cubic-box instance of
+FV~Lemma~3.22. Lifting this to a genuine thermodynamic limit (growing $m$ as well)
+is the subject of the later PRs of Issue~3565.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
