@@ -1193,6 +1193,28 @@ interlacing with a generalized-ambient screening and a monotone squeeze (the nex
 step of Issue~3581) will yield the translation invariance of the cubic-box limit.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.4 Theorem~3.17, pp.~100--104.
 
+\subsection{General-ambient $+$ boundary screening
+(\texttt{AmbientLattice/Monotonicity/PlusScreening.lean})}
+
+The cubic-box $+$ screening generalises to an arbitrary ambient pair
+$\Lambda_1 \subseteq \Lambda_2$ with an inner region $I$ whose extra-edge shell is
+separated from $I$ (hypothesis \texttt{hsep}).  Under that hypothesis, the $+$
+boundary expectation of an observable depending only on the inner configuration is
+\emph{independent of the ambient}:
+\[
+  \langle\varphi\rangle^{+}_{I,\,\Lambda_2}
+    = \langle\varphi'\rangle^{+}_{I,\,\Lambda_1}
+  \qquad(\texttt{gibbsExpectationBC\_extendGraph\_screening}),
+\]
+proved by the per-configuration weight factoring
+\texttt{boltzmannWeightBC\_extendGraph\_pointwise} (the frozen-$+$ shell factors out
+as \texttt{plusShellConst}, via
+\texttt{boltzmannWeight\_inducedGraph\_restrict\_factor\_const}) and the shell-sum
+collapse.  Since a translated cubic box is not itself a cubic box, the cubic
+screening does not apply directly to the translation squeeze, but this general
+screening does.  Reference: Friedli--Velenik (Cambridge, 2017), \S3.4
+Theorem~3.17, pp.~100--104.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
