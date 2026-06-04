@@ -49,6 +49,7 @@ import IsingModel.AmbientLattice.Monotonicity.PlusScreening
 import IsingModel.Concrete.LatticeGraphCorrelation.PlusStateTranslationInvariance
 import IsingModel.Concrete.LatticeGraphCorrelation.PlusStateTranslationCapstone
 import IsingModel.Concrete.LatticeGraphCorrelation.PlusStateTranslationFinal
+import IsingModel.Concrete.LatticeGraphCorrelation.PlusStateTranslationHeadline
 import IsingModel.Inequalities.HighTemp
 import IsingModel.BetaDerivative
 import IsingModel.FieldDerivative

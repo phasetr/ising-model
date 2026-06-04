@@ -1272,6 +1272,27 @@ screening and the limit squeeze (the next step of Issue~3581) then complete the
 translation invariance.  Reference: Friedli--Velenik (Cambridge, 2017), \S3.4
 Theorem~3.17, pp.~100--104.
 
+\subsection{Translation invariance of the cubic-exhaustion $+$-state functional
+(\texttt{Concrete/LatticeGraphCorrelation/PlusStateTranslationHeadline.lean})}
+
+The culmination of the translation-invariance arc: the cubic-exhaustion $+$-state
+functional is invariant under lattice translations on a monotone observable,
+\[
+  \mu^{+}(\tau_a\varphi) = \mu^{+}(\varphi)
+  \qquad(\texttt{plusStateExpectation\_vadd\_monotone}).
+\]
+Writing $R = \texttt{latticeRadius}\,a$ and $n = N + 2R + k$, the per-stage squeeze
+\texttt{plusBoxLocal\_vadd\_squeeze} brackets the translated $+$ local expectation
+$E^{+}_{n}$ (recentered, on a monotone observable) between the cubic local
+expectations of the translated observable at inner indices $n+R$ and $n-R$ (the
+interlacing antitone sandwich, the recentered middle term, and the multi-step
+ambient independence \texttt{plusBoxLocalExpectation\_screening\_eq}).  Both shifted
+subsequences and the middle sequence converge to their respective $+$-state limits
+(\texttt{tendsto\_plusBoxLocalObservable\_infiniteVolume} composed with the index
+shift), so \texttt{le\_of\_tendsto\_of\_tendsto'} and \texttt{le\_antisymm} give the
+equality.  Reference: Friedli--Velenik (Cambridge, 2017), \S3.4 Theorem~3.17,
+pp.~100--104.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
