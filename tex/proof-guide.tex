@@ -1977,6 +1977,30 @@ $\tfrac1N \log\mathrm{Tr}\,T(a,b)^N \to \log\lambda_+$
 free-energy density of the 1D Ising chain in a field. Issue~\#3538 PR~2; next:
 magnetization $m(h)$ and susceptibility $\partial_h m$.
 
+\paragraph{Field magnetization (\S17.1, Issue~\#3538 PR~3).}
+The magnetization of the 1D Ising chain in a field is the field-derivative of the
+free-energy density $\log\lambda_+$:
+\[
+  m(h) = \partial_b \log\lambda_+(a,b)
+       = \frac{\sinh b}{\sqrt{\sinh^2 b + e^{-4a}}}
+  \qquad (\texttt{fieldMagnetization}).
+\]
+The closed form rests on the discriminant factorisation $\sqrt{D} =
+e^a\sqrt{\sinh^2 b + e^{-4a}}$ (\texttt{sqrt\_fieldTransferDiscriminant}, from
+$D = e^{2a}(\sinh^2 b + e^{-4a})$ and $\sqrt{e^{2a}} = e^a$). Differentiating
+$D$ (\texttt{hasDerivAt\_fieldTransferDiscriminant}, $\partial_b D =
+e^{2a}\cdot 2\sinh b\cosh b$), then $\sqrt{D}$
+(\texttt{HasDerivAt.sqrt}), $e^a\cosh b$ (\texttt{Real.hasDerivAt\_cosh}), and
+$\log\lambda_+$ (\texttt{HasDerivAt.log}), the logarithmic derivative
+$(\partial_b\lambda_+)/\lambda_+$ collapses to $\sinh b/\sqrt{\sinh^2 b +
+e^{-4a}}$ (\texttt{hasDerivAt\_log\_fieldTransferEigenvalueTop}). The
+magnetization vanishes at zero field, $m(a,0) = 0$
+(\texttt{fieldMagnetization\_zero}) --- no spontaneous magnetization in one
+dimension --- and is strictly sub-saturated, $|m| < 1$
+(\texttt{abs\_fieldMagnetization\_lt\_one}), since $\sqrt{\sinh^2 b + e^{-4a}} >
+|\sinh b|$ (the field gap $e^{-4a} > 0$). Issue~\#3538 PR~3; next: susceptibility
+$\partial_h m$.
+
 \paragraph{Diagonalization and matrix powers (\S17.1, Issue~\#3511 PR~2).}
 The Hadamard matrix $H = \bigl(\begin{smallmatrix} 1 & 1 \\ 1 & -1 \end{smallmatrix}\bigr)$
 (\texttt{hadamardMatrix}) satisfies $H^2 = 2\,\mathbb 1$
