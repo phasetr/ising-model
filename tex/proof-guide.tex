@@ -1252,6 +1252,26 @@ relating the translated ambient back to the cubic exhaustion, and the limit
 squeeze, complete the translation invariance (the next step of Issue~3581).
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.4 Theorem~3.17, pp.~100--104.
 
+\subsection{Screening the translated ambient back to the cubic exhaustion
+(\texttt{Concrete/LatticeGraphCorrelation/PlusStateTranslationFinal.lean})}
+
+The recentered middle term lives on the translated ambient
+$\texttt{vaddFinset}\,(-a)\,(\texttt{cubicBox}\,d\,M)$.  The general-ambient
+screening brings it back onto the cubic exhaustion.  The shell-separation
+hypothesis \texttt{hsep\_translated} holds because a $\texttt{cubicBox}\,d\,n$
+site's neighbours lie in $\texttt{cubicBox}\,d\,(n+1)$
+(\texttt{cubicBox\_adj\_mem\_succ}), so no extra edge touches the centered inner
+region.  Hence
+$\langle O.\texttt{lift}\rangle^{+}_{\texttt{innerOf}\ldots,\;\text{translated}}
+  = \texttt{plusBoxLocalExpectation}\,n\,(n+1)\,O$
+(\texttt{gibbsExpectationBC\_innerOf\_translated\_eq\_plusBoxLocal}), and composing
+with the recentering covariance gives the translated sandwich middle term as a
+cubic local expectation
+(\texttt{gibbsExpectationBC\_translatedInner\_vadd\_eq\_plusBoxLocal}).  The bounds
+screening and the limit squeeze (the next step of Issue~3581) then complete the
+translation invariance.  Reference: Friedli--Velenik (Cambridge, 2017), \S3.4
+Theorem~3.17, pp.~100--104.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
