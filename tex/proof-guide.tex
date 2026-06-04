@@ -1093,6 +1093,44 @@ finite-volume algebra: the functional is linear (on a fixed support,
 monotone (\texttt{\_mono}), and agrees with the monotone-observable limit on
 monotone observables (\texttt{\_of\_monotone}).
 
+\subsection{The $-$ state and the $\pm$ extremal ordering
+(\texttt{Inequalities/BoundaryFlip.lean},
+\texttt{Concrete/LatticeGraphCorrelation/MinusStateExtremal.lean})}
+
+The global spin-flip involution $\sigma \mapsto \sigma.\texttt{flip}$ maps the $-$
+boundary state to the $+$ boundary state with the field reflected $h \mapsto -h$.
+At the level of the inhomogeneous boundary-condition Gibbs expectation this is the
+\emph{flip bridge}
+\[
+  \langle F\rangle^{-}_{\Lambda}(h)
+    = \langle F\circ\texttt{flip}\rangle^{+}_{\Lambda}(-h)
+  \qquad(\texttt{gibbsExpectationBC\_minus\_eq\_plus\_neg\_h\_flip}),
+\]
+proved from $H_G(\sigma; J, -h) = H_G(\sigma.\texttt{flip}; J, h)$
+(\texttt{hamiltonianJ\_neg\_h\_flip}: the $J$-term is flip-invariant, the field
+term reflects), the boundary-condition exchange
+\texttt{agreesOff\_minusConfig\_flip\_iff} ($\sigma$ agrees with $-$ off $\Lambda$
+iff $\sigma.\texttt{flip}$ agrees with $+$), the per-configuration weight identity
+\texttt{boltzmannWeightBC\_minus\_eq\_plus\_neg\_h\_flip}, and the
+\texttt{flipEquiv} reindexing of the configuration sum (numerator and partition
+function).
+
+Hence the $-$-state functional is obtained for free:
+$\texttt{minusStateExpectation}\,J\,h\,\beta\,O
+   := \texttt{plusStateExpectation}\,J\,(-h)\,\beta\,O.\texttt{flipObs}$, where
+$O.\texttt{flipObs} = \sigma \mapsto \varphi(\sigma.\texttt{flip})$, inheriting
+convergence (\texttt{tendsto\_minusStateExpectation}) and the same-support
+linearity / normalisation / positivity (\texttt{minusStateExpectation\_\{add,
+const\_mul, const, nonneg\}}).  Finally, for a monotone observable and
+$\beta, J \ge 0$, the flip bridge turns the finite-volume boundary monotonicity
+$\langle\varphi\rangle^{-}_{\Lambda} \le \langle\varphi\rangle^{+}_{\Lambda}$
+(\texttt{gibbsExpectationBC\_minus\_le}) into the $\pm$ extremal ordering
+\[
+  \mu^{-}(\varphi) \le \mu^{+}(\varphi)
+  \qquad(\texttt{minusStateExpectation\_le\_plusStateExpectation}),
+\]
+passing to the limit through the two convergent box-expectation sequences.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
