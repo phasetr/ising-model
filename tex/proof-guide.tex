@@ -19498,4 +19498,29 @@ transfer kernel (later PRs) yields the random-walk bound
 $\langle\sigma_i\sigma_j\rangle \le \sum_{\text{walks } i \to j}(\beta J)^{\text{length}}$.
 File: \texttt{Inequalities/SimonLiebKernel.lean}. Issue~\#3543 PR~1.
 
+\paragraph{Walk-weight and fixed-length walk-sum framework (Issue~\#3543 PR~2).}
+The walk-side companion of the transfer kernel. Define the geometric weight
+$\texttt{walkWeight}\,z\,w = z^{w.\mathrm{length}}$ and the walk sum
+\[
+  \texttt{walkSum}\,G\,z\,i\,j\,n
+    = \sum_{w : \text{length-}n\text{ walk } i \to j} z^{w.\mathrm{length}}
+  \qquad (z = \beta J).
+\]
+Every length-$n$ walk has weight $z^n$, so
+$\texttt{walkSum} = z^n \cdot \#\{\text{length-}n\text{ walks}\}
+  = z^n \cdot (A^n)_{ij}$ (\texttt{walkSum\_eq\_pow\_mul\_card},
+\texttt{walkSum\_eq\_pow\_mul\_adjMatrix\_pow}, via
+\texttt{adjMatrix\_pow\_apply\_eq\_card\_walk}), nonnegative for $z \ge 0$, and
+$\texttt{walkSum}\,z\,i\,j\,0 = [i = j]$ (\texttt{walkSum\_zero}). The headline is
+the \emph{neighbour recurrence}
+\[
+  \texttt{walkSum}\,z\,i\,j\,(n+1)
+    = z \cdot \sum_{u \in \mathcal N(i)} \texttt{walkSum}\,z\,u\,j\,n
+  \qquad (\texttt{walkSum\_succ}),
+\]
+from the adjacency-matrix step $(A \cdot A^n)_{ij} = \sum_{u \sim i}(A^n)_{uj}$
+(\texttt{adjMatrix\_mul\_apply}). This mirrors the one-step Simon-Lieb transfer
+kernel; iterating the kernel against this recurrence (next PR) yields the
+random-walk bound. File: \texttt{Inequalities/WalkSum.lean}. Issue~\#3543 PR~2.
+
 \end{document}
