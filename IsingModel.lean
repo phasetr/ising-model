@@ -35,6 +35,7 @@ import IsingModel.TransferMatrix.OneDim
 import IsingModel.TransferMatrix.OneDimField
 import IsingModel.TransferMatrix.OneDimFieldPower
 import IsingModel.TransferMatrix.OneDimFieldMagnetization
+import IsingModel.TransferMatrix.OneDimFieldSusceptibility
 import IsingModel.TransferMatrix.OneDimPower
 import IsingModel.TransferMatrix.OneDimFreeEnergy
 import IsingModel.TransferMatrix.TraceSum
