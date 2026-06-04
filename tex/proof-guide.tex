@@ -1134,6 +1134,25 @@ passing to the limit through the two convergent box-expectation sequences (here
 along the cubic exhaustion; the sequence-independent FV~Theorem~3.17 limit is
 follow-up).
 
+\subsection{Cross-support union linearity
+(\texttt{Concrete/LatticeGraphCorrelation/LocalObservableUnion.lean})}
+
+The same-support linearity extends to observables on \emph{different} supports.
+\texttt{LocalObservable.extend}~$h_{SS'}$ enlarges the support $S \subseteq S'$ by
+ignoring the new coordinates ($\varphi \circ \texttt{restrictConfig}$); the box
+expectation is unchanged by restriction transitivity
+(\texttt{plusBoxObsExpectation\_extend\_eq}, definitionally), hence so is the
+$\pm$-state functional (\texttt{plusStateExpectation\_extend\_eq},
+\texttt{minusStateExpectation\_extend\_eq}, via uniqueness of limits).  Lifting
+$\varphi_1$ on $S_1$ and $\varphi_2$ on $S_2$ to the common support
+$S_1 \cup S_2 \subseteq \texttt{cubicBox}\,d\,N$ and applying same-support
+additivity gives the cross-support union linearity
+\[
+  \mu^{\pm}(\varphi_1 + \varphi_2) = \mu^{\pm}(\varphi_1) + \mu^{\pm}(\varphi_2)
+  \qquad(\texttt{plusStateExpectation\_union\_add},
+  \texttt{minusStateExpectation\_union\_add}).
+\]
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
