@@ -12,6 +12,7 @@ import IsingModel.AmbientLattice
 import IsingModel.AmbientLatticeSum
 import IsingModel.RandomCurrent
 import IsingModel.Inequalities.SimonLieb
+import IsingModel.Inequalities.SimonLiebKernel
 import IsingModel.Inequalities.HighTemp
 import IsingModel.BetaDerivative
 import IsingModel.FieldDerivative
