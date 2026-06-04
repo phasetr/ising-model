@@ -1053,6 +1053,46 @@ $+$ local expectations are antitone
 Since any local observable is a difference of monotone ones, this is the building
 block of the full $+$-state functional.
 
+\subsection{The cubic-exhaustion $+$-state functional
+(\texttt{Concrete/LatticeGraphCorrelation/LocalObservableState.lean})}
+
+The monotone limit extends to \emph{all} local observables, yielding the
+cubic-exhaustion $+$-state functional and its \emph{same-support} linearity,
+normalisation, and positivity (a step towards the FV~Theorem~3.17 $+$ state;
+sequence independence, translation invariance, the $-$ state, and cross-support
+union linearity remain follow-up).  A \texttt{LocalObservable}~$d$ is an arbitrary real function
+$\varphi : \texttt{Config}\,S \to \mathbb R$ on a finite support (no
+monotonicity).  The key elementary fact is the \emph{monotone-difference
+decomposition}, playing the role of FV~Lemma~3.19: writing
+$\texttt{rank}\,\sigma = \#\{i \in S : \sigma_i = +\}$ (monotone,
+\texttt{configUpRank\_mono}, strictly increasing along covering steps,
+\texttt{configUpRank\_lt\_of\_lt}) and $K = 2\max_\sigma |\varphi(\sigma)|$, the
+function
+\[
+  \varphi = \underbrace{(K\cdot\texttt{rank} + \varphi)}_{=:~\varphi_+}
+            - \underbrace{(K\cdot\texttt{rank})}_{=:~\varphi_-}
+\]
+is a difference of two \emph{monotone} functions: across any single covering step
+$\texttt{rank}$ increases by at least $1$, and $K$ dominates the variation
+$|\varphi(\sigma') - \varphi(\sigma)| \le 2\max|\varphi| = K$, so $\varphi_+$ is
+nondecreasing (\texttt{LocalObservable.upper}/\texttt{lower},
+\texttt{phi\_eq\_upper\_sub\_lower}).
+
+The $+$ box expectation of an arbitrary observable
+(\texttt{plusBoxObsExpectation}) is linear in $\varphi$ (from
+\texttt{gibbsExpectationBC\_add}/\texttt{const\_mul}/\texttt{const}) and splits as
+$\langle\varphi\rangle = \langle\varphi_+\rangle - \langle\varphi_-\rangle$
+(\texttt{plusBoxObsExpectation\_eq\_sub}).  Defining the $+$-state functional as
+the difference of the two monotone limits
+(\texttt{plusStateExpectation}), the screened box expectations converge to it
+(\texttt{tendsto\_plusStateExpectation}), and uniqueness of limits propagates the
+finite-volume algebra: the functional is linear (on a fixed support,
+\texttt{plusStateExpectation\_add}, \texttt{\_const\_mul}), normalised
+($\langle c\rangle = c$, \texttt{\_const}), positive
+($\varphi \ge 0 \Rightarrow \langle\varphi\rangle \ge 0$, \texttt{\_nonneg}),
+monotone (\texttt{\_mono}), and agrees with the monotone-observable limit on
+monotone observables (\texttt{\_of\_monotone}).
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
