@@ -14,7 +14,7 @@ endpoint.  Iterating this `n` times produces the **iterated Simon-Lieb kernel**
 
 the `n`-step transfer applied to the kernel, with the diagonal value `K(j, j) = 1`
 absorbed at the target `j` (a walk reaching `j` stops, contributing the
-`⟨σ_∅⟩ = 1` factor).  The key estimate is the monotone bound
+`⟨σ_∅⟩ = 1` factor).  The key estimate is the uniform upper bound
 
   `K(j, i) ≤ simonLiebIterate p j n i`   for all `n, i`,
 
