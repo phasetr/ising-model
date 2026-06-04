@@ -13,8 +13,11 @@ For every boundary condition `η` and every monotone observable `φ`,
 
   `⟨φ⟩^{−}_Λ ≤ ⟨φ⟩^{η}_Λ ≤ ⟨φ⟩^{+}_Λ`,
 
-so the `±` states bracket all boundary conditions.  This is the foundation of the
-extremal Gibbs states (the `+` state is the maximal infinite-volume state).
+so the `±` boundary conditions bracket all boundary conditions: at this finite
+volume the `+` boundary condition gives the largest expectation of every monotone
+observable, and the `−` the smallest.  This finite-volume bracketing is the
+foundation for the extremal infinite-volume `±` Gibbs states (constructed as the
+thermodynamic limits of these boundary conditions).
 
 As a concrete application, the single-spin observable `σ ↦ s(σ_i)` is monotone, so
 the **local magnetization is squeezed by the extremal states**:
