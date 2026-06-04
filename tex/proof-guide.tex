@@ -738,6 +738,35 @@ $\langle \varphi \rangle_h \le \langle \varphi \rangle_{h'}$.
 measures; the general case follows by the constant shift (the inequality is
 invariant under $\varphi \mapsto \varphi - c$).
 
+\subsection{Boundary-condition monotonicity via Holley
+(\texttt{Inequalities/MonotonicityBoundary.lean})}
+
+Raising the boundary condition raises the Gibbs expectation of every monotone
+observable:
+\[
+  \eta \le \eta' \;\Longrightarrow\; \langle \varphi \rangle^{\eta}_\Lambda
+  \le \langle \varphi \rangle^{\eta'}_\Lambda
+  \qquad (\varphi \text{ nondecreasing}).
+\]
+This is the cornerstone of the theory of extremal ($\pm$) Gibbs states and the
+infinite-volume limit: the maximal ($+$) boundary condition yields the maximal
+state. It is proved via \texttt{holley} on the conditioned boundary-condition
+weights. The crucial point is the order-aware conditioning closure: if $a$ agrees
+with $\eta$ off $\Lambda$ and $b$ with $\eta'$, then (since $\eta \le \eta'$)
+$a \wedge b$ agrees with $\eta$ (as $\eta \wedge \eta' = \eta$) and $a \vee b$
+agrees with $\eta'$ (as $\eta \vee \eta' = \eta'$); hence the domination
+condition
+$w^{\eta}(a)\, w^{\eta'}(b) \le w^{\eta}(a \wedge b)\, w^{\eta'}(a \vee b)$
+(\texttt{boltzmannWeightBC\_cross\_supermodular}) reduces to
+\texttt{boltzmannWeightJ\_log\_supermodular} on the agreeing case and is $0 \le$
+nonnegative otherwise.
+
+\begin{theorem}[\texttt{gibbsExpectationBC\_boundary\_mono}]
+For $\beta, J \ge 0$, $\eta \le \eta'$, and any monotone nondecreasing $\varphi$,
+$\langle \varphi \rangle^{\eta}_\Lambda \le \langle \varphi
+\rangle^{\eta'}_\Lambda$.
+\end{theorem}
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
