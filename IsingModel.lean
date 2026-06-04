@@ -40,6 +40,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.CubicBoxScreeningCapstone
 import IsingModel.Concrete.LatticeGraphCorrelation.CubicBoxScreeningLimit
 import IsingModel.Concrete.LatticeGraphCorrelation.InfiniteVolumePlusState
 import IsingModel.Concrete.LatticeGraphCorrelation.LocalObservableLimit
+import IsingModel.Concrete.LatticeGraphCorrelation.LocalObservableState
 import IsingModel.Inequalities.HighTemp
 import IsingModel.BetaDerivative
 import IsingModel.FieldDerivative
