@@ -900,6 +900,24 @@ On the cubic box the extra edges all touch the frozen $+$ shell (\S above), so t
 extra-edge interaction is a constant that cancels in the normalised expectation
 --- the screening.
 
+\subsection{Boltzmann-weight factoring of an induced graph
+(\texttt{AmbientLattice/Monotonicity/InducedWeightFactor.lean})}
+
+Exponentiating the energy split gives
+(\texttt{boltzmannWeight\_inducedGraph\_restrict\_factor})
+\[
+  w_{\texttt{induce}\,\Lambda_2}(\sigma)
+    = w_{\texttt{induce}\,\Lambda_1}(\mathrm{restrict}\,\sigma)
+      \cdot \exp\!\big(-\beta\,(\text{complement field} + \text{extra-edge
+      interaction})\big).
+\]
+When the complement sites are all $\mathrm{up}$ and the extra edges all have
+$\mathrm{edgeSpin} = 1$ (the frozen $+$ case),
+\texttt{boltzmannWeight\_inducedGraph\_restrict\_factor\_const} collapses the
+exponential factor to a constant depending only on the complement-site count and
+the extra-edge count --- the constant that cancels in the normalised $+$
+boundary-condition expectation (the screening).
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
