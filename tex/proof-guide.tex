@@ -1909,6 +1909,43 @@ spectral ratio $\lambda_-/\lambda_+ = \tanh a$
 $-\log\tanh a$ for the ferromagnetic one-dimensional chain ($a = \beta J > 0$;
 Glimm--Jaffe~\S17.5).
 
+\paragraph{Transfer matrix with external field (\S17.1, Issue~\#3538 PR~1).}
+The zero-field matrix extends to a general external field $h \ne 0$. Writing
+$a = \beta J$, $b = \beta h$, the symmetric transfer matrix is
+\texttt{isingTransferMatrix1DField}$(a,b)_{ij} =
+\exp(a\,s_i s_j + \tfrac{b}{2}(s_i + s_j))$, explicitly
+\[
+  T(a,b) = \begin{pmatrix} e^{a+b} & e^{-a} \\ e^{-a} & e^{a-b} \end{pmatrix},
+\]
+symmetric (\texttt{isingTransferMatrix1DField\_transpose}), entrywise positive
+(\texttt{isingTransferMatrix1DField\_pos}), with trace $2e^a\cosh b$
+(\texttt{trace\_isingTransferMatrix1DField}) and determinant $e^{2a} - e^{-2a}$
+(\texttt{det\_isingTransferMatrix1DField}). Unlike the zero-field case the
+eigenvectors are no longer the fixed Hadamard pair, so the spectral data is
+organised through the characteristic polynomial. With discriminant
+$D(a,b) = e^{2a}\sinh^2 b + e^{-2a} > 0$
+(\texttt{fieldTransferDiscriminant}, \texttt{fieldTransferDiscriminant\_pos}) the
+eigenvalues are
+\[
+  \lambda_\pm = e^a\cosh b \pm \sqrt{D}
+  \qquad (\texttt{fieldTransferEigenvalueTop} / \texttt{Bot}),
+\]
+satisfying Vieta's relations $\lambda_+ + \lambda_- = \mathrm{tr}\,T = 2e^a\cosh b$
+(\texttt{fieldTransferEigenvalueTop\_add\_bot}) and $\lambda_+\lambda_- = \det T
+= e^{2a} - e^{-2a}$ (\texttt{fieldTransferEigenvalueTop\_mul\_bot}, using
+$\sqrt{D}^2 = D$ and $\cosh^2 b = \sinh^2 b + 1$), hence the characteristic
+equation $\lambda_\pm^2 = (\mathrm{tr}\,T)\,\lambda_\pm - \det T$
+(\texttt{fieldTransferEigenvalue\{Top,Bot\}\_sq}). The eigenvalues are ordered
+$\lambda_- < \lambda_+$ (\texttt{fieldTransferEigenvalueBot\_lt\_top}) and
+positive, $0 < \lambda_+$ always and $0 < \lambda_-$ for $a > 0$
+(\texttt{fieldTransferEigenvalueTop\_pos},
+\texttt{fieldTransferEigenvalueBot\_pos}). At $b = 0$ the matrix and eigenvalues
+reduce to the zero-field objects (\texttt{isingTransferMatrix1DField\_zero},
+\texttt{fieldTransferEigenvalue\{Top,Bot\}\_zero}). Foundational PR of the
+general external-field 1D programme (Issue~\#3538); the partition function
+$Z_N = \lambda_+^N + \lambda_-^N$, free energy, magnetization $m(h)$, and
+susceptibility $\partial_h m$ follow in later PRs.
+
 \paragraph{Diagonalization and matrix powers (\S17.1, Issue~\#3511 PR~2).}
 The Hadamard matrix $H = \bigl(\begin{smallmatrix} 1 & 1 \\ 1 & -1 \end{smallmatrix}\bigr)$
 (\texttt{hadamardMatrix}) satisfies $H^2 = 2\,\mathbb 1$
