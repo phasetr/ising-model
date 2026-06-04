@@ -19596,4 +19596,20 @@ which tends to $0$ with the distance in the high-temperature regime $\beta J
 correlation decay. File: \texttt{Inequalities/SimonLiebIterateDecay.lean}.
 Issue~\#3543 PR~5.
 
+\paragraph{$\mathbb Z^d$ wrapper of the Simon-Lieb decay (Issue~\#3543 PR~6).}
+On the cubic lattice $\texttt{latticeGraph}\,d$ every induced-subgraph vertex has
+degree $\le 2d$ (\texttt{inducedLatticeGraph\_degree\_le}), so the
+high-temperature parameter is $\beta J \cdot 2d$ and
+\[
+  \langle\sigma_i\sigma_j\rangle
+    \le (\beta J \cdot 2d)^{\mathrm{dist}(i,j)-1}
+  \quad (\texttt{correlation\_inducedLatticeGraph\_le\_pow\_dist}),
+\]
+for reachable distinct sites $i,j$ of the induced subgraph on $\Lambda$
+($0 < \mathrm{dist}(i,j)$), decaying exponentially in the induced-graph distance
+in the high-temperature regime $\beta J \cdot 2d < 1$. The $\mathbb Z^d$ concrete
+reading of the random-walk (Simon-Lieb) high-temperature correlation decay.
+File: \texttt{Concrete/LatticeGraphCorrelation/SimonLiebDecayLatticeGraph.lean}.
+Issue~\#3543 PR~6.
+
 \end{document}
