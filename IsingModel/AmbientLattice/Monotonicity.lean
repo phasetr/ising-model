@@ -1,4 +1,5 @@
 import IsingModel.AmbientLattice.Monotonicity.Volume
+import IsingModel.AmbientLattice.Monotonicity.InducedEnergySplit
 
 /-!
 # Monotonicity for the ambient lattice Ising model
