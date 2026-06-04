@@ -790,6 +790,33 @@ $\langle \sigma_i \rangle^{-}_\Lambda \le \langle \sigma_i \rangle^{\eta}_\Lambd
 \le \langle \sigma_i \rangle^{+}_\Lambda$
 (\texttt{magnetizationBC\_extremal\_sandwich}).
 
+\subsection{Volume monotonicity of the $+$ state
+(\texttt{Inequalities/VolumeMonotonicity.lean})}
+
+The $+$ boundary expectation of a monotone observable \emph{decreases as the
+volume grows}:
+\[
+  \Lambda_1 \subseteq \Lambda_2 \;\Longrightarrow\;
+  \langle \varphi \rangle^{+}_{\Lambda_2} \le \langle \varphi
+  \rangle^{+}_{\Lambda_1}
+  \qquad (\texttt{gibbsExpectationBC\_plus\_volume\_antitone}).
+\]
+With the dual $-$ bound this exhibits the $\pm$ states as monotone limits over an
+exhaustion --- the construction of the extremal infinite-volume Gibbs states. The
+proof uses the conditioning structure: the $\Lambda_1$ $+$ state is the
+$\Lambda_2$ $+$ state conditioned on the shell $\Lambda_2 \setminus \Lambda_1$
+being all $+$ (\texttt{agreesOff\_plus\_iff\_shell}). The shell event is an
+up-set, so its indicator $\mathbf{1}_A$ is monotone
+(\texttt{upShellIndicator\_monotone}); the weight identity
+$w^{+}_{\Lambda_1} = \mathbf{1}_A \cdot w^{+}_{\Lambda_2}$
+(\texttt{boltzmannWeightBC\_plus\_eq\_shell\_mul}) gives
+$\langle \varphi \cdot \mathbf{1}_A \rangle^{+}_{\Lambda_2}
+= \langle \varphi \rangle^{+}_{\Lambda_1} \cdot
+\langle \mathbf{1}_A \rangle^{+}_{\Lambda_2}$, and the FKG inequality
+$\langle \varphi \cdot \mathbf{1}_A \rangle \ge \langle \varphi \rangle
+\langle \mathbf{1}_A \rangle$ then yields the claim after cancelling
+$\langle \mathbf{1}_A \rangle^{+}_{\Lambda_2} > 0$.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
