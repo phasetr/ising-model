@@ -1946,6 +1946,37 @@ general external-field 1D programme (Issue~\#3538); the partition function
 $Z_N = \lambda_+^N + \lambda_-^N$, free energy, magnetization $m(h)$, and
 susceptibility $\partial_h m$ follow in later PRs.
 
+\paragraph{Field partition function and free energy (\S17.1, Issue~\#3538 PR~2).}
+With no Hadamard eigenbasis available for $h \ne 0$, the cyclic-chain partition
+function $Z_N = \mathrm{Tr}\,T(a,b)^N$ is computed through the Cayley--Hamilton
+recurrence. From \texttt{Matrix.aeval\_self\_charpoly} and
+\texttt{Matrix.charpoly\_fin\_two} one gets
+$T^2 = (\mathrm{tr}\,T)\,T - (\det T)\,\mathbb 1$
+(\texttt{isingTransferMatrix1DField\_sq}), hence the matrix recurrence
+$T^{N+2} = \mathrm{tr}\cdot T^{N+1} - \det\cdot T^N$
+(\texttt{isingTransferMatrix1DField\_pow\_succ\_succ}) and, by linearity of the
+trace, $s_{N+2} = \mathrm{tr}\cdot s_{N+1} - \det\cdot s_N$ with $s_N =
+\mathrm{Tr}\,T^N$
+(\texttt{trace\_isingTransferMatrix1DField\_pow\_succ\_succ}). The eigenvalue
+powers $\lambda_\pm^N$ obey the same recurrence (the characteristic equation
+$\lambda_\pm^2 = \mathrm{tr}\,\lambda_\pm - \det$) with the same initial data
+$s_0 = 2 = \lambda_+^0 + \lambda_-^0$, $s_1 = \mathrm{tr} = \lambda_+ +
+\lambda_-$, so two-step induction (\texttt{Nat.twoStepInduction}) gives
+\[
+  \mathrm{Tr}\,T(a,b)^N = \lambda_+^N + \lambda_-^N
+  \qquad (\texttt{trace\_isingTransferMatrix1DField\_pow}).
+\]
+For $a = \beta J > 0$ the subdominant ratio $\lambda_-/\lambda_+ \in [0,1)$
+(\texttt{fieldTransferEigenvalue\_ratio\_\{nonneg,lt\_one\}}) gives
+$(\lambda_-/\lambda_+)^N \to 0$
+(\texttt{tendsto\_fieldTransferEigenvalue\_ratio\_pow}) and the free-energy
+density $\tfrac1N \log(\lambda_+^N + \lambda_-^N) \to \log\lambda_+$
+(\texttt{tendsto\_log\_fieldEigenvalueSum\_div\_nat}), hence
+$\tfrac1N \log\mathrm{Tr}\,T(a,b)^N \to \log\lambda_+$
+(\texttt{tendsto\_log\_trace\_isingTransferMatrix1DField\_pow\_div\_nat}) --- the
+free-energy density of the 1D Ising chain in a field. Issue~\#3538 PR~2; next:
+magnetization $m(h)$ and susceptibility $\partial_h m$.
+
 \paragraph{Diagonalization and matrix powers (\S17.1, Issue~\#3511 PR~2).}
 The Hadamard matrix $H = \bigl(\begin{smallmatrix} 1 & 1 \\ 1 & -1 \end{smallmatrix}\bigr)$
 (\texttt{hadamardMatrix}) satisfies $H^2 = 2\,\mathbb 1$
