@@ -863,6 +863,20 @@ cubic-box instance of FV~Lemma~3.22). The remaining ingredient --- the
 nearest-neighbour screening lemma (ambient-box independence) --- is the next PR of
 Issue~3565.
 
+\subsection{Cubic-box adjacency geometry
+(\texttt{Concrete/CubicBoxAdjacencyGeometry.lean})}
+
+The geometric facts underlying the screening of the $+$ box state.
+\texttt{latticeGraph\_adj\_abs\_le\_one}: adjacent sites differ by at most $1$ in
+each coordinate. \texttt{cubicBox\_adj\_mem\_succ}: a neighbour of a
+$\texttt{cubicBox}\,d\,n$ site lies in $\texttt{cubicBox}\,d\,(n+1)$, so the inner
+free region reaches only one box further out (shielded from the outer shell).
+\texttt{cubicBox\_shell\_adj\_not\_mem\_inner}: for $n+1 \le m$, a shell site of
+$\texttt{cubicBox}\,d\,(m+1) \setminus \texttt{cubicBox}\,d\,m$ and any of its
+neighbours lie outside $\texttt{cubicBox}\,d\,n$, so every shell-touching
+interaction is between frozen $+$ spins --- the geometric input to the
+constant-factor cancellation in the screening proof.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
