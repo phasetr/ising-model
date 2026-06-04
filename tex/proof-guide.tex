@@ -668,6 +668,42 @@ Mathlib's \texttt{fkg} applied to $w_J$) by the same covariance shift-invariance
 as \texttt{fkg\_ising\_of\_monotone}. This matches FV~3.21 exactly for the
 free-boundary case; arbitrary boundary conditions remain follow-up (Issue~3558).
 
+\subsection{FKG with arbitrary boundary conditions
+(\texttt{Inequalities/FKGBoundaryCondition.lean})}
+
+Friedli--Velenik Theorem~3.21 allows an \emph{arbitrary boundary condition}: the
+spins outside the finite volume $\Lambda$ are frozen to a fixed external
+configuration $\eta$. We obtain the boundary-condition Gibbs measure from the
+inhomogeneous Boltzmann weight by \emph{conditioning} on configurations agreeing
+with $\eta$ off $\Lambda$ --- no new Hamiltonian is needed, since the boundary
+interactions are already present in $w_J$. Writing
+$\mathrm{agreesOff}\;\Lambda\;\eta\;\sigma := (\forall i \notin \Lambda,\;
+\sigma_i = \eta_i)$, the conditioned weight is
+\[
+  w^{\eta}_\Lambda(\sigma)
+    = \mathbf{1}_{\{\sigma : \mathrm{agreesOff}\;\Lambda\;\eta\;\sigma\}}(\sigma)
+      \cdot w_J(\sigma).
+\]
+The crucial point is that $\{\sigma : \mathrm{agreesOff}\;\Lambda\;\eta\;\sigma\}$
+is a \emph{sublattice}: if $\sigma, \sigma'$ agree with $\eta$ off $\Lambda$ then so
+do $\sigma \vee \sigma'$ and $\sigma \wedge \sigma'$ (off $\Lambda$ both equal
+$\eta_i$, so the join/meet stay $\eta_i$; \texttt{agreesOff\_sup} /
+\texttt{agreesOff\_inf}). Hence the indicator of that sublattice times the
+log-supermodular weight is again log-supermodular
+(\texttt{boltzmannWeightBC\_log\_supermodular}).
+
+\begin{theorem}[\texttt{fkg\_isingBC\_of\_monotone}, FV Thm 3.21 full form]
+For nonnegative per-edge couplings $J(e) \ge 0$, $\beta \ge 0$, arbitrary field
+$h$, an arbitrary boundary condition $\eta$ outside $\Lambda$, and arbitrary
+monotone nondecreasing $f, g$,
+$\langle f \rangle^{\eta}_\Lambda \langle g \rangle^{\eta}_\Lambda
+  \le \langle fg \rangle^{\eta}_\Lambda$.
+\end{theorem}
+
+\noindent Proved exactly as the free-boundary case (Mathlib \texttt{fkg} on the
+conditioned weight, then the covariance shift). Together with the inhomogeneous
+case this realizes the complete FV~3.21 statement.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
