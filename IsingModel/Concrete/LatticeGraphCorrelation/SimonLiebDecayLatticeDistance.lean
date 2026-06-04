@@ -50,7 +50,8 @@ distinct sites `i, j` (`0 < dist i j`),
 
 `⟨σ_i σ_j⟩ ≤ (β J · 2d)^{latticeDistance(i, j) − 1}`,
 
-exponential decay in the ℓ¹ lattice distance.  Refines
+which is genuine exponential decay in the ℓ¹ lattice distance when `β J · 2d < 1`
+(at `β J · 2d = 1` the bound holds but is constant).  Refines
 `correlation_inducedLatticeGraph_le_pow_dist` using `latticeDistance ≤ dist` and
 the monotonicity of `a^·` for `0 ≤ a ≤ 1`. -/
 theorem correlation_inducedLatticeGraph_le_pow_latticeDistance (d : ℕ)
