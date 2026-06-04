@@ -46,6 +46,7 @@ import IsingModel.TranslationInvariance
 import IsingModel.Concrete.IntLattice
 import IsingModel.Concrete.CubicExhaustion
 import IsingModel.Concrete.CubicBoxConnectivity
+import IsingModel.Concrete.CubicBoxAdjacencyGeometry
 import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.Concrete.LatticeGraphFreeEnergy
 import IsingModel.Concrete.LatticeGraphCorrelation
