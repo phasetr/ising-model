@@ -21,6 +21,7 @@ import IsingModel.Inequalities.WalkSumRepresentation
 import IsingModel.Inequalities.WalkSumTsum
 import IsingModel.Concrete.LatticeGraphCorrelation.SimonLiebDecayLatticeGraph
 import IsingModel.Concrete.LatticeGraphCorrelation.SimonLiebDecayLatticeDistance
+import IsingModel.Concrete.LatticeGraphCorrelation.SimonLiebDecayInfiniteVolume
 import IsingModel.Concrete.LatticeGraphCorrelation.WalkSumTsumLatticeGraph
 import IsingModel.Inequalities.HighTemp
 import IsingModel.BetaDerivative
