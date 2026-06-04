@@ -28,7 +28,8 @@ infinite-volume cluster property.
 
 ## References
 
-* Glimm–Jaffe, *Quantum Physics*, 2nd ed., §17.1, §17.5, pp. 304–306.
+* Glimm–Jaffe, *Quantum Physics*, 2nd ed., §17.1 pp. 304–306 (1D transfer-matrix
+  mass / correlation length); §17.5 pp. 311–312 (lattice mass, Lemma 17.5.2).
 -/
 
 namespace IsingModel
