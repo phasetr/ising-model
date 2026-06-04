@@ -1,5 +1,6 @@
 import IsingModel.Inequalities.FKG
 import IsingModel.Inequalities.FKGGeneral
+import IsingModel.Inequalities.WeightedExpectation
 
 /-!
 # FKG inequality with inhomogeneous per-edge couplings (FV Thm 3.21, free boundary)
@@ -152,11 +153,8 @@ theorem gibbsExpectationJ_const (G : SimpleGraph ι) [Fintype G.edgeSet]
     (β : ℝ) (J : Sym2 ι → ℝ) (h : ℝ) (c : ℝ) :
     gibbsExpectationJ G β J h (fun _ => c) = c := by
   unfold gibbsExpectationJ
-  have hZ : partitionFunctionJ G β J h ≠ 0 := partitionFunctionJ_ne_zero G β J h
-  rw [← Finset.mul_sum]
-  rw [show (∑ σ : Config ι, boltzmannWeightJ G β J h σ) = partitionFunctionJ G β J h from rfl]
-  rw [← mul_assoc, mul_comm (partitionFunctionJ G β J h)⁻¹ c, mul_assoc,
-    inv_mul_cancel₀ hZ, mul_one]
+  exact weightedExpectation_const (partitionFunctionJ G β J h) (boltzmannWeightJ G β J h) rfl
+    (partitionFunctionJ_ne_zero G β J h) c
 
 /-- **Additivity of the Gibbs expectation**: `⟨F + H⟩ = ⟨F⟩ + ⟨H⟩`. -/
 theorem gibbsExpectationJ_add (G : SimpleGraph ι) [Fintype G.edgeSet]
@@ -164,25 +162,14 @@ theorem gibbsExpectationJ_add (G : SimpleGraph ι) [Fintype G.edgeSet]
     gibbsExpectationJ G β J h (F + H)
       = gibbsExpectationJ G β J h F + gibbsExpectationJ G β J h H := by
   unfold gibbsExpectationJ
-  rw [← mul_add, ← Finset.sum_add_distrib]
-  congr 1
-  apply Finset.sum_congr rfl
-  intro σ _
-  simp only [Pi.add_apply]
-  ring
+  exact weightedExpectation_add (partitionFunctionJ G β J h) (boltzmannWeightJ G β J h) F H
 
 /-- **Scalar homogeneity of the Gibbs expectation**: `⟨c · F⟩ = c · ⟨F⟩`. -/
 theorem gibbsExpectationJ_const_mul (G : SimpleGraph ι) [Fintype G.edgeSet]
     (β : ℝ) (J : Sym2 ι → ℝ) (h : ℝ) (c : ℝ) (F : Config ι → ℝ) :
     gibbsExpectationJ G β J h (fun σ => c * F σ) = c * gibbsExpectationJ G β J h F := by
   unfold gibbsExpectationJ
-  rw [show (∑ σ : Config ι, (c * F σ) * boltzmannWeightJ G β J h σ)
-        = c * ∑ σ : Config ι, F σ * boltzmannWeightJ G β J h σ from by
-    rw [Finset.mul_sum]
-    apply Finset.sum_congr rfl
-    intro σ _
-    ring]
-  ring
+  exact weightedExpectation_const_mul (partitionFunctionJ G β J h) (boltzmannWeightJ G β J h) c F
 
 /-! ## FKG inequality with inhomogeneous couplings -/
 

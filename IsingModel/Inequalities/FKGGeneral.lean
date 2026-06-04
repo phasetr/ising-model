@@ -1,4 +1,5 @@
 import IsingModel.Inequalities.FKG
+import IsingModel.Inequalities.WeightedExpectation
 
 /-!
 # General FKG inequality for arbitrary monotone observables (FV Thm 3.21)
@@ -40,11 +41,8 @@ theorem gibbsExpectation_const (G : SimpleGraph ι) [Fintype G.edgeSet]
     (p : IsingParams ℝ) (c : ℝ) :
     gibbsExpectation G p (fun _ => c) = c := by
   unfold gibbsExpectation
-  have hZ : partitionFunction G p ≠ 0 := partitionFunction_ne_zero G p
-  rw [← Finset.mul_sum]
-  rw [show (∑ σ : Config ι, boltzmannWeight G p σ) = partitionFunction G p from rfl]
-  rw [← mul_assoc, mul_comm (partitionFunction G p)⁻¹ c, mul_assoc,
-    inv_mul_cancel₀ hZ, mul_one]
+  exact weightedExpectation_const (partitionFunction G p) (boltzmannWeight G p) rfl
+    (partitionFunction_ne_zero G p) c
 
 /-- **Additivity of the Gibbs expectation**: `⟨F + H⟩ = ⟨F⟩ + ⟨H⟩`.
 Distribute `Z⁻¹` over the split sum `∑_σ (F + H)(σ) w(σ) = ∑ F w + ∑ H w`. -/
@@ -53,25 +51,14 @@ theorem gibbsExpectation_add (G : SimpleGraph ι) [Fintype G.edgeSet]
     gibbsExpectation G p (F + H)
       = gibbsExpectation G p F + gibbsExpectation G p H := by
   unfold gibbsExpectation
-  rw [← mul_add, ← Finset.sum_add_distrib]
-  congr 1
-  apply Finset.sum_congr rfl
-  intro σ _
-  simp only [Pi.add_apply]
-  ring
+  exact weightedExpectation_add (partitionFunction G p) (boltzmannWeight G p) F H
 
 /-- **Scalar homogeneity of the Gibbs expectation**: `⟨c · F⟩ = c · ⟨F⟩`. -/
 theorem gibbsExpectation_const_mul (G : SimpleGraph ι) [Fintype G.edgeSet]
     (p : IsingParams ℝ) (c : ℝ) (F : Config ι → ℝ) :
     gibbsExpectation G p (fun σ => c * F σ) = c * gibbsExpectation G p F := by
   unfold gibbsExpectation
-  rw [show (∑ σ : Config ι, (c * F σ) * boltzmannWeight G p σ)
-        = c * ∑ σ : Config ι, F σ * boltzmannWeight G p σ from by
-    rw [Finset.mul_sum]
-    apply Finset.sum_congr rfl
-    intro σ _
-    ring]
-  ring
+  exact weightedExpectation_const_mul (partitionFunction G p) (boltzmannWeight G p) c F
 
 /-! ## General FKG inequality -/
 
