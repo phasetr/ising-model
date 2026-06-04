@@ -8,6 +8,7 @@ import IsingModel.Inequalities.NonnegCorrelations
 import IsingModel.Inequalities.GKS
 import IsingModel.Inequalities.FKG
 import IsingModel.Inequalities.FKGGeneral
+import IsingModel.Inequalities.FKGInhomogeneous
 import IsingModel.Asano
 import IsingModel.AmbientLattice
 import IsingModel.AmbientLatticeSum
