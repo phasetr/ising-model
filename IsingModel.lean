@@ -18,6 +18,7 @@ import IsingModel.Inequalities.SimonLiebIterate
 import IsingModel.Inequalities.SimonLiebIterateHighTemp
 import IsingModel.Inequalities.SimonLiebIterateDecay
 import IsingModel.Concrete.LatticeGraphCorrelation.SimonLiebDecayLatticeGraph
+import IsingModel.Concrete.LatticeGraphCorrelation.SimonLiebDecayLatticeDistance
 import IsingModel.Inequalities.HighTemp
 import IsingModel.BetaDerivative
 import IsingModel.FieldDerivative

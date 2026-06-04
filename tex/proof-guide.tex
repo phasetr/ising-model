@@ -19612,4 +19612,25 @@ reading of the random-walk (Simon-Lieb) high-temperature correlation decay.
 File: \texttt{Concrete/LatticeGraphCorrelation/SimonLiebDecayLatticeGraph.lean}.
 Issue~\#3543 PR~6.
 
+\paragraph{$\ell^1$ lattice-distance form of the decay (Issue~\#3543 PR~7).}
+The induced-graph-distance decay refines to the physical $\ell^1$ lattice
+distance. A minimal induced-graph walk maps (via the inclusion
+$\uparrow\!\Lambda \hookrightarrow \mathbb Z^d$,
+\texttt{SimpleGraph.Embedding.induce}) to a $\texttt{latticeGraph}\,d$ walk of the
+same length, so $\mathrm{latticeDistance}\,i\,j \le \mathrm{dist}\,i\,j$
+(\texttt{latticeDistance\_le\_inducedGraph\_dist}), the ambient lattice-graph
+distance being the $\ell^1$ distance (\texttt{latticeGraph\_dist\_eq\_latticeDistance}).
+In the high-temperature regime $\beta J \cdot 2d \le 1$ the base $\le 1$ makes the
+geometric bound monotone (\texttt{pow\_le\_pow\_of\_le\_one}), giving
+\[
+  \langle\sigma_i\sigma_j\rangle
+    \le (\beta J \cdot 2d)^{\mathrm{latticeDistance}(i,j)-1}
+  \quad (\texttt{correlation\_inducedLatticeGraph\_le\_pow\_latticeDistance}),
+\]
+for reachable distinct sites, exponential decay in the $\ell^1$ lattice distance
+--- the physically natural reading of the random-walk (Simon-Lieb) high-temperature
+correlation decay. File:
+\texttt{Concrete/LatticeGraphCorrelation/SimonLiebDecayLatticeDistance.lean}.
+Issue~\#3543 PR~7.
+
 \end{document}
