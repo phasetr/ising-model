@@ -19658,4 +19658,23 @@ This is the actual walk-sum representation of the correlation, distinct from the
 bare exponential decay. File: \texttt{Inequalities/WalkSumRepresentation.lean}.
 Issue~\#3543 PR~8.
 
+\paragraph{Infinite walk-sum (random-walk) upper representation (Issue~\#3543 PR~9).}
+In the high-temperature regime $\beta J \cdot D < 1$ the finite-horizon bound
+passes to the limit. The number of length-$n$ walks is $\le D^n$, so
+$\texttt{walkSum}\,z\,i\,j\,n \le (z\cdot D)^n$
+(\texttt{walkSum\_le\_pow\_degree\_bound}), whence the positive-length walk sum is
+summable for $z \cdot D < 1$ (\texttt{summable\_walkSum\_of\_lt\_one}, geometric
+domination). Passing $\langle\sigma_i\sigma_j\rangle \le \sum_{k=1}^{n}
+\texttt{walkSum}\,k + (\beta J\cdot D)^n$ to the limit (\texttt{ge\_of\_tendsto'};
+the geometric remainder $\to 0$, the partial sums $\to$ the tsum) gives
+\[
+  \langle\sigma_i\sigma_j\rangle
+    \le \sum_{k\ge 1}^{\infty} \texttt{walkSum}\,(\beta J)\,i\,j\,k
+  \quad (\texttt{correlation\_inducedGraph\_le\_tsum\_walkSum}),
+\]
+the discrete random-walk (FFS Ch~12) upper bound on the Ising two-point function.
+This completes the random-walk representation arc (kernel $\to$ walk-sum $\to$
+iterate $\to$ decay $\to$ walk-sum representation $\to$ infinite sum). File:
+\texttt{Inequalities/WalkSumTsum.lean}. Issue~\#3543 PR~9.
+
 \end{document}
