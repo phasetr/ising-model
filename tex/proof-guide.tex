@@ -19633,4 +19633,29 @@ correlation decay. File:
 \texttt{Concrete/LatticeGraphCorrelation/SimonLiebDecayLatticeDistance.lean}.
 Issue~\#3543 PR~7.
 
+\paragraph{Walk-sum representation of the two-point function (Issue~\#3543 PR~8).}
+The genuine FFS Ch~12 walk-sum bound, finally using the walk-sum framework. The
+diagonal $K(j,j)=1$ is exactly the length-$0$ walk $\texttt{walkSum}\,0\,j\,j = 1$
+($\texttt{simonLiebIterate\_self}$), and the one-step transfer matches
+$\texttt{walkSum\_succ}$, so by induction (uniform in $i$)
+\[
+  \texttt{simonLiebIterate}\,\langle J,0,\beta\rangle\,j\,n\,i
+    \le \sum_{k=0}^{n} \texttt{walkSum}\,(\beta J)\,i\,j\,k + (\beta J\cdot D)^n
+  \quad (\texttt{simonLiebIterate\_le\_sum\_walkSum\_add\_pow}),
+\]
+swapping and folding the neighbour double sum into the shifted walk sum via
+\texttt{Finset.sum\_comm} and \texttt{Finset.sum\_range\_succ'}, the not-yet-absorbed
+branches giving the geometric remainder $(\beta J D)^n$. For distinct $i \ne j$ the
+length-$0$ walk vanishes, giving the finite-horizon walk-sum bound
+\[
+  \langle\sigma_i\sigma_j\rangle
+    \le \sum_{k=1}^{n} \texttt{walkSum}\,(\beta J)\,i\,j\,k + (\beta J\cdot D)^n
+  \quad (\texttt{correlation\_inducedGraph\_le\_sum\_walkSum\_add\_pow}),
+\]
+the finite-horizon form of the random-walk representation
+$\langle\sigma_i\sigma_j\rangle \le \sum_{k\ge 1}\texttt{walkSum}\,(\beta J)\,i\,j\,k$.
+This is the actual walk-sum representation of the correlation, distinct from the
+bare exponential decay. File: \texttt{Inequalities/WalkSumRepresentation.lean}.
+Issue~\#3543 PR~8.
+
 \end{document}
