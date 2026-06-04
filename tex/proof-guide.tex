@@ -19571,4 +19571,29 @@ $\langle\sigma_i\sigma_j\rangle \le 1$ for $i \ne j$
 with \texttt{correlation\_inducedGraph\_le\_simonLiebIterate}. File:
 \texttt{Inequalities/SimonLiebIterateHighTemp.lean}. Issue~\#3543 PR~4.
 
+\paragraph{Exponential decay via Simon-Lieb iteration (Issue~\#3543 PR~5).}
+The iterated kernel yields exponential decay in the graph distance. If the target
+$j$ is more than $n$ steps from $i$ ($n < \mathrm{dist}(i,j)$), the $n$-step
+transfer never reaches the absorbing diagonal $K(j,j)=1$, so
+\[
+  \texttt{simonLiebIterate}\,\langle J,0,\beta\rangle\,j\,n\,i
+    \le (\beta J \cdot D)^n
+  \quad (\texttt{simonLiebIterate\_le\_pow\_of\_lt\_dist}),
+\]
+by induction on $n$: base $0 < \mathrm{dist}(i,j)$ (kernel $K(j,i)\le 1$); step
+$\mathrm{dist}(i,j) > n+1$ forces $i \ne j$, and every neighbour $u \sim i$ still
+has $\mathrm{dist}(u,j) > n$ (the edge moves the distance by at most one,
+\texttt{Adj.diff\_dist\_adj}), so the induction hypothesis bounds each branch by
+$(\beta J D)^n$; summing over $\le D$ neighbours times $\beta J$ gives $(\beta J
+D)^{n+1}$. Specialising $n = \mathrm{dist}(i,j)-1$ for reachable distinct $i,j$
+gives the exponential decay
+\[
+  \langle\sigma_i\sigma_j\rangle \le (\beta J \cdot D)^{\mathrm{dist}(i,j)-1}
+  \quad (\texttt{correlation\_inducedGraph\_le\_pow\_dist}),
+\]
+which tends to $0$ with the distance in the high-temperature regime $\beta J
+\cdot D < 1$ --- the random-walk (Simon-Lieb) derivation of high-temperature
+correlation decay. File: \texttt{Inequalities/SimonLiebIterateDecay.lean}.
+Issue~\#3543 PR~5.
+
 \end{document}
