@@ -1237,6 +1237,21 @@ the middle term (covariance) and passing to the limit along the cubic exhaustion
 (the next step of Issue~3581) yields $\mu^{+}(\tau_a\varphi) = \mu^{+}(\varphi)$.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.4 Theorem~3.17, pp.~100--104.
 
+\subsection{Recentering covariance for the translation squeeze
+(\texttt{Concrete/LatticeGraphCorrelation/PlusStateTranslationCapstone.lean})}
+
+The recentering step identifies the sandwich middle term with a cubic expectation
+of the original observable.  Applying the boundary-condition covariance with
+$t = -a$ keeps the centered cubic box as the original volume $\Omega$ and sends the
+\emph{translated} box to the $\texttt{vaddFinset}\,t\,\Omega$ side, so no
+ambient-equality transport is needed
+(\texttt{gibbsExpectationBC\_translatedInner\_recenter}), built from the inner-region
+pullback \texttt{translatedInner\_map\_vaddSubtypeEquiv} and the observable
+recentering \texttt{vadd\_lift\_comp\_configVaddEquiv\_symm}.  The general screening
+relating the translated ambient back to the cubic exhaustion, and the limit
+squeeze, complete the translation invariance (the next step of Issue~3581).
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.4 Theorem~3.17, pp.~100--104.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
