@@ -600,6 +600,36 @@ $\langle fg \rangle \geq \langle f \rangle \langle g \rangle$.
   unnormalized sums to \texttt{gibbsExpectation} form.
 \end{enumerate}
 
+\subsection{General FKG for arbitrary monotone observables
+(\texttt{Inequalities/FKGGeneral.lean})}
+
+The theorem \texttt{fkg\_ising} above, inheriting the interface of Mathlib's
+\texttt{fkg}, additionally requires the observables to be \emph{nonnegative}
+($0 \le f$, $0 \le g$). The genuine Friedli--Velenik Theorem~3.21 holds for
+\emph{any} monotone nondecreasing $f, g$ of arbitrary sign. We remove the
+nonnegativity hypothesis by covariance shift-invariance.
+
+\begin{theorem}[\texttt{fkg\_ising\_of\_monotone}]
+For ferromagnetic parameters and \emph{arbitrary} monotone nondecreasing
+$f, g : \mathrm{Config}\;\iota \to \mathbb{R}$,
+$\langle f \rangle \langle g \rangle \le \langle fg \rangle$.
+\end{theorem}
+
+\noindent\textbf{Proof.} The Gibbs covariance
+$\mathrm{Cov}(f, g) = \langle fg \rangle - \langle f \rangle\langle g \rangle$
+is invariant under adding constants to $f$ and $g$: by linearity of
+$\langle \cdot \rangle$ and the normalisation $\langle 1 \rangle = 1$, the
+constant terms cancel. Since $\mathrm{Config}\;\iota$ is finite (and nonempty),
+each monotone observable attains a minimum; subtracting it gives nonnegative
+monotone observables $f' = f - \min f \ge 0$ and $g' = g - \min g \ge 0$ with
+$\mathrm{Cov}(f', g') = \mathrm{Cov}(f, g)$. Applying \texttt{fkg\_ising} to
+$f', g'$ yields $\mathrm{Cov}(f, g) = \mathrm{Cov}(f', g') \ge 0$. The argument
+uses the Gibbs-expectation linearity lemmas \texttt{gibbsExpectation\_const}
+($\langle c \rangle = c$), \texttt{gibbsExpectation\_add}
+($\langle F + H \rangle = \langle F \rangle + \langle H \rangle$), and
+\texttt{gibbsExpectation\_const\_mul} ($\langle cF \rangle = c\langle F \rangle$),
+all proved in the same file. \hfill$\square$
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
