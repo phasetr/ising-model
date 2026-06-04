@@ -877,6 +877,29 @@ neighbours lie outside $\texttt{cubicBox}\,d\,n$, so every shell-touching
 interaction is between frozen $+$ spins --- the geometric input to the
 constant-factor cancellation in the screening proof.
 
+\subsection{Induced-graph energy split over the extension graph
+(\texttt{AmbientLattice/Monotonicity/InducedEnergySplit.lean})}
+
+The energy-level heart of the $+$-state screening, reusing the extension-graph
+factoring of \texttt{EdgeSiteSums.lean}. The interaction energy on
+$\texttt{inducedGraph}\,G\,\Lambda_2$ equals that on
+$\texttt{extendGraphFromΛ₁}\,G\,\Lambda_1\,\Lambda_2$ plus the $-J$-weighted
+edge-spin sum over the \emph{extra edges}
+$(\texttt{inducedGraph}\,G\,\Lambda_2).\mathrm{edgeFinset} \setminus
+(\texttt{extendGraphFromΛ₁}\,G\,\Lambda_1\,\Lambda_2).\mathrm{edgeFinset}$
+(\texttt{interactionEnergy\_inducedGraph\_extendGraph\_split}, via
+\texttt{edgeFinset\_mono} and \texttt{Finset.sum\_sdiff}). Composing the full
+Hamiltonian split with \texttt{hamiltonian\_extendGraph\_factor} gives
+(\texttt{hamiltonian\_inducedGraph\_restrict\_add})
+\[
+  H_{\texttt{induce}\,\Lambda_2}(\sigma)
+    = H_{\texttt{induce}\,\Lambda_1}(\mathrm{restrict}\,\sigma)
+      + (\text{complement field}) + (\text{extra-edge interaction}).
+\]
+On the cubic box the extra edges all touch the frozen $+$ shell (\S above), so the
+extra-edge interaction is a constant that cancels in the normalised expectation
+--- the screening.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
