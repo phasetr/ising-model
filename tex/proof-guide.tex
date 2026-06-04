@@ -19551,4 +19551,24 @@ mechanism of the random-walk representation; a later PR connects the iterated
 bound to the walk sum and the high-temperature exponential decay. File:
 \texttt{Inequalities/SimonLiebIterate.lean}. Issue~\#3543 PR~3.
 
+\paragraph{High-temperature uniform bound on the iterate (Issue~\#3543 PR~4).}
+In the high-temperature regime $\beta J \cdot D \le 1$ ($D$ a vertex-degree
+bound) the iterated Simon-Lieb kernel stays uniformly bounded:
+\[
+  \texttt{simonLiebIterate}\,\langle J,0,\beta\rangle\,j\,n\,i \le 1
+  \qquad \forall\, n, i
+  \quad (\texttt{simonLiebIterate\_le\_one}),
+\]
+by induction on $n$: the base is $K(j,i) \le 1$; for $i=j$ the value is $1$; for
+$i \ne j$ the one-step transfer is $\beta J \sum_{u \sim i}(\cdots) \le \beta J
+\cdot D \cdot 1 \le 1$ using the induction hypothesis, $\beta J \ge 0$, the degree
+bound, and $\beta J \cdot D \le 1$. This is the boundedness input for the
+random-walk representation: the iterated upper bound for
+$\langle\sigma_i\sigma_j\rangle$ does not blow up as the number of transfer steps
+grows (the prerequisite for the first-passage walk-sum limit). The corollary
+$\langle\sigma_i\sigma_j\rangle \le 1$ for $i \ne j$
+(\texttt{correlation\_inducedGraph\_le\_one\_of\_high\_temp}) follows by composing
+with \texttt{correlation\_inducedGraph\_le\_simonLiebIterate}. File:
+\texttt{Inequalities/SimonLiebIterateHighTemp.lean}. Issue~\#3543 PR~4.
+
 \end{document}
