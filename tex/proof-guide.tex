@@ -2289,6 +2289,50 @@ correlation length, $\texttt{twoPointFunction}\,1\,\langle J,0,\beta\rangle\,r
 ($\texttt{twoPointFunction\_one\_eq\_exp\_neg\_mass}$, for $r \ne 0$)
 (Glimm--Jaffe~\S17.1).
 
+\paragraph{Sharp 1D lattice mass and cluster property (Glimm--Jaffe~\S17.1,~\S17.5).}
+The exact two-point identity pins down the abstract \S17.5 \emph{lattice mass}
+$\mathrm{latticeMass}\,1\,(\mathrm{cubicExhaustion}\,1)\,\langle J,0,\beta\rangle$
+--- the $\mathrm{ENNReal}$ supremum of admissible exponential-decay rates of the
+truncated two-point function --- exactly.  At zero external field the spontaneous
+magnetization vanishes
+($\texttt{magnetizationInfinite\_latticeGraph\_zero\_at\_h\_zero}$), so the
+truncated (Ursell) two-point function coincides with the full two-point function
+($\texttt{truncated2Infinite\_one\_zero\_eq\_twoPointFunction}$); by translation
+invariance the truncated function at any distinct pair $i \ne j$ equals the exact
+geometric value
+\[
+  \texttt{truncated2Infinite}\,(\mathrm{latticeGraph}\,1)\,
+    (\mathrm{cubicExhaustion}\,1)\,\langle J,0,\beta\rangle\,i\,j
+  \;=\; (\tanh\beta J)^{\mathrm{dist}(i,j)}
+  \;=\; e^{-m\,\mathrm{dist}(i,j)}
+\]
+($\texttt{truncated2Infinite\_one\_eq\_tanh\_pow}$,
+$\texttt{truncated2Infinite\_one\_eq\_exp\_neg\_mass}$; helper
+$\texttt{latticeDistance\_zero\_sub}$, $\mathrm{dist}(i,j) =
+\mathrm{latticeDistance}\,1\,0\,(j-i)$).  With constant $C = 1$ this is
+exponential decay at the mass rate $m$
+($\texttt{HasExponentialDecay\_one\_correlationMass}$), so $\mathrm{ofReal}\,m \le
+\mathrm{latticeMass}$
+($\texttt{latticeMass\_one\_ge\_correlationMass}$).  Conversely no rate $\alpha >
+m$ can work: the \emph{exact} value $e^{-m n}$ at distance $n$ forces
+$e^{(\alpha-m)n} \le C$ for all $n$, impossible since $e^{(\alpha-m)n}\to\infty$
+($\texttt{le\_correlationMass\_of\_HasExponentialDecay}$), giving
+$\mathrm{latticeMass} \le \mathrm{ofReal}\,m$
+($\texttt{latticeMass\_one\_le\_correlationMass}$).  Hence the \emph{sharp}
+equality
+\[
+  \mathrm{latticeMass}\,1\,(\mathrm{cubicExhaustion}\,1)\,\langle J,0,\beta\rangle
+  \;=\; \mathrm{ENNReal.ofReal}\,(\texttt{correlationMass}\,(\beta J))
+  \qquad (J \ge 0,\ \beta > 0,\ \beta J > 0)
+\]
+($\texttt{latticeMass\_one\_eq\_correlationMass}$; correlation-length reading
+$\texttt{latticeMass\_one\_eq\_ofReal\_inv\_correlationLength}$).  Positivity of
+$m$ yields the infinite-volume cluster property: the truncated two-point function
+tends to $0$ along the cofinite filter
+($\texttt{clusterProperty\_one}$), and so does the full two-point function
+($\texttt{twoPointFunction\_one\_tendsto\_cofinite\_zero}$).  This closes the 1D
+\S17.5 mass picture end-to-end (Issue~\#3511).
+
 \paragraph{Finite $\ell^1$ balls and proper-map property.}
 PR~\#782 complements the metric definition with the proper-map
 companion to PR~\#779's cofinite cluster decay. First,

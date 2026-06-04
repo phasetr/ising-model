@@ -52,3 +52,4 @@ import IsingModel.TransferMatrix.PathGraphTwoPoint
 import IsingModel.TransferMatrix.PathGraphPairTwoPoint
 import IsingModel.TransferMatrix.InfiniteVolumeOneD
 import IsingModel.TransferMatrix.InfiniteVolumeOneDSusceptibility
+import IsingModel.TransferMatrix.InfiniteVolumeOneDMass
