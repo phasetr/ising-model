@@ -19705,4 +19705,25 @@ hypotheses of the finite-volume correlation-decay bounds at every cubic-exhausti
 stage, so infinite-volume lifts need not re-prove per-stage reachability. File:
 \texttt{Concrete/CubicBoxConnectivity.lean}.
 
+\paragraph{Infinite-volume Simon-Lieb exponential decay on $\mathbb Z^d$ (random-walk route).}
+The finite-volume random-walk decay bound is \emph{uniform in the volume}: the
+rate and exponent depend only on $i,j$, not on the exhaustion stage. Hence the
+thermodynamic limit inherits it:
+\[
+  \langle\sigma_i\sigma_j\rangle_\infty
+    \le (\beta J \cdot 2d)^{\mathrm{latticeDistance}(i,j)-1}
+  \quad (\texttt{correlationInfinite\_latticeGraph\_le\_pow\_latticeDistance}),
+\]
+for distinct $i \ne j$ in the high-temperature regime $\beta J \cdot 2d < 1$. Each
+stage $\texttt{correlationAlongExhaustion}\ldots n$ is bounded by the same
+constant --- stages containing $\{i,j\}$ via the finite bound (reachability from
+the cubic box connectivity \texttt{inducedGraph\_cubicBox\_dist\_pos}), stages not
+containing $\{i,j\}$ contributing $0$ --- so $\texttt{correlationInfinite} =
+\bigsqcup_n \texttt{correlationAlongExhaustion}$ is bounded by
+\texttt{ciSup\_le}. This is the random-walk (FFS Ch~12) derivation of
+infinite-volume high-temperature correlation decay (explicit $\beta J\cdot 2d$
+rate), a contribution to the project's central long-term goal, the infinite-volume
+limit. File:
+\texttt{Concrete/LatticeGraphCorrelation/SimonLiebDecayInfiniteVolume.lean}.
+
 \end{document}
