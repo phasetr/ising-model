@@ -833,6 +833,21 @@ of a monotone observable decrease
 FV~Lemma~3.22. Lifting this to a genuine thermodynamic limit (growing $m$ as well)
 is the subject of the later PRs of Issue~3565.
 
+\subsection{Bounded BC observables and the single-site $+$ box spin
+(\texttt{Concrete/LatticeGraphCorrelation/CubicBoxPlusStateBounds.lean})}
+
+Two generic reusable bounds: the boundary-condition expectation of a bounded
+observable is bounded by the pointwise bound (it is a nonnegative-weight average),
+\texttt{gibbsExpectationBC\_le\_of\_forall\_le} and
+\texttt{gibbsExpectationBC\_ge\_of\_forall\_ge}. The single-site $+$ box spin
+\texttt{plusBoxSpin}~$d\,n\,m\,J\,h\,\beta\,x$ (the $+$ boundary expectation of
+$s(\sigma_x)$) then lies in $[-1, 1]$ (\texttt{plusBoxSpin\_mem\_Icc}, the
+bounded-below input for the eventual monotone-convergence limit) and is antitone in
+the inner region (\texttt{plusBoxSpin\_antitone\_interior}, the single-site
+cubic-box instance of FV~Lemma~3.22). The remaining ingredient --- the
+nearest-neighbour screening lemma (ambient-box independence) --- is the next PR of
+Issue~3565.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
