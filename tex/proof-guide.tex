@@ -19691,4 +19691,18 @@ bound on the Ising two-point function. File:
 \texttt{Concrete/LatticeGraphCorrelation/WalkSumTsumLatticeGraph.lean}.
 Issue~\#3543 PR~10.
 
+\paragraph{Cubic box induced-graph connectivity (infinite-volume infrastructure).}
+The induced subgraph of $\texttt{latticeGraph}\,d$ on a centred box
+$\texttt{cubicBox}\,d\,n = [-n,n]^d$ is connected: a single distance-reducing
+lattice step that moves one differing coordinate one unit towards the target stays
+between the endpoints, hence inside the box
+(\texttt{cubicBox\_exists\_adj\_step}), and induction on the $\ell^1$ distance
+gives reachability of any two box sites
+(\texttt{inducedGraph\_cubicBox\_reachable}); distinct sites are therefore at
+positive induced-graph distance (\texttt{inducedGraph\_cubicBox\_dist\_pos}). This
+is a reusable abstraction that discharges the reachability ($0 < \mathrm{dist}$)
+hypotheses of the finite-volume correlation-decay bounds at every cubic-exhaustion
+stage, so infinite-volume lifts need not re-prove per-stage reachability. File:
+\texttt{Concrete/CubicBoxConnectivity.lean}.
+
 \end{document}
