@@ -704,6 +704,40 @@ $\langle f \rangle^{\eta}_\Lambda \langle g \rangle^{\eta}_\Lambda
 conditioned weight, then the covariance shift). Together with the inhomogeneous
 case this realizes the complete FV~3.21 statement.
 
+\subsection{Field monotonicity via Holley's inequality
+(\texttt{Inequalities/MonotonicityField.lean})}
+
+Increasing the external field $h$ increases the Gibbs expectation of every
+monotone observable:
+\[
+  h \le h' \;\Longrightarrow\; \langle \varphi \rangle_h \le \langle \varphi
+  \rangle_{h'}
+  \qquad (\varphi \text{ nondecreasing}).
+\]
+This is foundational for the stochastic ordering of Ising measures, the $\pm$
+extremal states, and the infinite-volume limit. It is proved via Mathlib's
+\texttt{holley} inequality. The two normalised Boltzmann weights at fields
+$h \le h'$ satisfy the Holley domination condition
+(\texttt{boltzmannWeight\_field\_cross\_supermodular})
+\[
+  w_h(a)\, w_{h'}(b) \le w_h(a \wedge b)\, w_{h'}(a \vee b),
+\]
+whose interaction part is the edge log-supermodularity (weight $\beta J \ge 0$)
+and whose field part is the per-site inequality
+$h\, s(a) + h'\, s(b) \le h\, s(a \wedge b) + h'\, s(a \vee b)$
+(\texttt{field\_site\_mono}, valid for $h \le h'$, weight $\beta \ge 0$; the only
+nontrivial case gives $(h'-h)(s(a)-s(b)) \ge 0$).
+
+\begin{theorem}[\texttt{gibbsExpectation\_field\_mono}]
+For a ferromagnetic Ising model ($\beta, J \ge 0$), $h \le h'$, and any monotone
+nondecreasing $\varphi$,
+$\langle \varphi \rangle_h \le \langle \varphi \rangle_{h'}$.
+\end{theorem}
+
+\noindent The nonnegative case is \texttt{holley} applied to the normalised
+measures; the general case follows by the constant shift (the inequality is
+invariant under $\varphi \mapsto \varphi - c$).
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
