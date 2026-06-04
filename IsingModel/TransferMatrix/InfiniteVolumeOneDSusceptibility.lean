@@ -6,7 +6,8 @@ import IsingModel.TransferMatrix.OneDimCorrelationLength
 # Infinite-volume 1D Ising susceptibility and mass form (GJ §17.1)
 
 Two infinite-volume 1D physical observables, consuming the two-point capstone
-`twoPointFunction 1 ⟨J,0,β⟩ r = (tanh βJ)^(latticeDistance 1 0 r)` (#3535):
+`twoPointFunction 1 ⟨J,0,β⟩ r = (tanh βJ)^(latticeDistance 1 0 r)` (#3535, `r ≠ 0`,
+ferromagnetic `0 ≤ J`, `0 < β`):
 
 * **Susceptibility**: the bilateral lattice sum of the two-point function equals the
   closed-form susceptibility,
@@ -70,7 +71,9 @@ the two-point function over all separations equals the closed-form susceptibilit
 `∑_{r : Fin 1 → ℤ} (tanh βJ)^(latticeDistance 1 0 r) = isingSusceptibility1D (βJ)
   = (1 + tanh βJ)/(1 − tanh βJ)`, for `βJ > 0`.  The summand equals the two-point
 function `twoPointFunction 1 ⟨J,0,β⟩ r` for `r ≠ 0` (#3535) and `1 = ⟨σ₀²⟩` at the
-diagonal `r = 0`. -/
+diagonal `r = 0`.  (The pure `tsum` identity needs only `βJ > 0`; the physical
+reading of the summand as the two-point function additionally uses the ferromagnetic
+hypotheses `0 ≤ J`, `0 < β` of `twoPointFunction_one_eq_tanh_pow`.) -/
 theorem tsum_tanh_pow_latticeDistance_eq_susceptibility {J β : ℝ} (hβJ : 0 < β * J) :
     ∑' r : Fin 1 → ℤ, Real.tanh (β * J) ^ latticeDistance 1 0 r
       = isingSusceptibility1D (β * J) := by
