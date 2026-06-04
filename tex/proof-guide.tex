@@ -999,6 +999,29 @@ the ambient box size. The remaining steps (induction to full ambient independenc
 and the $n \to \infty$ monotone-convergence limit) complete the infinite-volume $+$
 state.
 
+\subsection{Infinite-volume $+$ expectation of a single spin on $\mathbb Z^d$
+(\texttt{Concrete/LatticeGraphCorrelation/InfiniteVolumePlusState.lean})}
+
+The culmination of the cubic-box $+$-state programme: the infinite-volume $+$
+boundary expectation of a single spin exists as the monotone limit along the cubic
+exhaustion. For a fixed site $x \in \texttt{cubicBox}\,d\,N$, the screened
+single-site $+$ box spins
+$k \mapsto \texttt{plusBoxSpin}\,d\,(N+k)\,(N+k+1)\,\dots\,x$ (free inner box
+$\texttt{cubicBox}\,d\,(N+k)$, immediate $+$ boundary layer) are \emph{antitone}
+(\texttt{plusBoxSpin\_infiniteVolume\_antitone}: FV~Lemma~3.22
+$+$ the ambient screening) and bounded in $[-1, 1]$, so they converge
+(\texttt{tendsto\_plusBoxSpin\_infiniteVolume}, via \texttt{tendsto\_atTop\_ciInf}):
+\[
+  \texttt{plusBoxSpin}\,d\,(N+k)\,(N+k+1)\,\dots\,x
+    \;\longrightarrow\;
+  \inf_{k} \texttt{plusBoxSpin}\,d\,(N+k)\,(N+k+1)\,\dots\,x
+  \qquad (k \to \infty),
+\]
+the infinite-volume $+$ expectation of $\sigma_x$ --- a contribution to the
+project's central long-term goal, the thermodynamic limit / extremal $+$ state.
+Extending the limit to all local observables (the full state functional) is
+follow-up.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
