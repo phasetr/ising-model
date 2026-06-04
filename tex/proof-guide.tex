@@ -19726,4 +19726,30 @@ rate), a contribution to the project's central long-term goal, the infinite-volu
 limit. File:
 \texttt{Concrete/LatticeGraphCorrelation/SimonLiebDecayInfiniteVolume.lean}.
 
+\paragraph{Infinite-volume random-walk (walk-sum) upper representation on $\mathbb Z^d$.}
+Beyond the \emph{decay} bound above, the random-walk \emph{structure} itself
+survives the thermodynamic limit. Let $\texttt{walkTsumAlongCubic}\,d\,z\,i\,j\,n$
+denote the box-confined positive-length walk sum $\sum_{k\ge 1}\texttt{walkSum}\,z\,i\,j\,k$
+over walks inside the exhaustion box $(\texttt{cubicExhaustion}\,d).\mathrm{volume}\,n$
+(and $0$ before the box contains $\{i,j\}$). Each stage walk sum is dominated,
+uniformly in $n$, by the geometric series $\sum_{k\ge 1}(\beta J\cdot 2d)^k$: the
+number of length-$k$ walks from $i$ is at most $(2d)^k$
+(\texttt{walkSum\_le\_pow\_degree\_bound}, degree $\le 2d$), both series are
+summable, and \texttt{Summable.tsum\_le\_tsum} gives
+$\texttt{walkTsumAlongCubic\_le\_tsum\_geom}$. Consequently the family
+$\{\texttt{walkTsumAlongCubic}\,d\,(\beta J)\,i\,j\,n\}_n$ is bounded above, and
+since each $\texttt{correlationAlongExhaustion}\,n$ is bounded by its own
+box-confined walk sum
+($\texttt{correlation\_inducedLatticeGraph\_le\_tsum\_walkSum}$ when the box
+contains the pair, $0$ otherwise),
+\[
+  \langle\sigma_i\sigma_j\rangle_\infty
+    \le \bigsqcup_n \texttt{walkTsumAlongCubic}\,(\beta J)\,i\,j\,n
+  \quad (\texttt{correlationInfinite\_latticeGraph\_le\_iSup\_tsum\_walkSum}),
+\]
+for distinct $i \ne j$ in the high-temperature regime $\beta J\cdot 2d < 1$, via
+\texttt{le\_ciSup} and \texttt{ciSup\_le}. The two-point function in the infinite
+volume is thus exhibited as a supremum of box-confined random-walk sums. File:
+\texttt{Concrete/LatticeGraphCorrelation/WalkSumTsumInfiniteVolume.lean}.
+
 \end{document}
