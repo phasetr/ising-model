@@ -37,6 +37,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.CubicBoxPlusStateBounds
 import IsingModel.Concrete.LatticeGraphCorrelation.CubicBoxScreening
 import IsingModel.Concrete.LatticeGraphCorrelation.CubicBoxScreeningDecomp
 import IsingModel.Concrete.LatticeGraphCorrelation.CubicBoxScreeningCapstone
+import IsingModel.Concrete.LatticeGraphCorrelation.CubicBoxScreeningLimit
 import IsingModel.Inequalities.HighTemp
 import IsingModel.BetaDerivative
 import IsingModel.FieldDerivative
