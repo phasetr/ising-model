@@ -19523,4 +19523,33 @@ from the adjacency-matrix step $(A \cdot A^n)_{ij} = \sum_{u \sim i}(A^n)_{uj}$
 kernel; iterating the kernel against this recurrence (next PR) yields the
 random-walk bound. File: \texttt{Inequalities/WalkSum.lean}. Issue~\#3543 PR~2.
 
+\paragraph{Iterated Simon-Lieb transfer kernel (Issue~\#3543 PR~3).}
+Iterating the one-step neighbour-vertex kernel $n$ times produces
+\[
+  \texttt{simonLiebIterate}\,p\,j\,0\,i = K(j,i), \qquad
+  \texttt{simonLiebIterate}\,p\,j\,(n{+}1)\,i =
+    \begin{cases} 1 & i = j \\
+      \beta J \sum_{u \sim i} \texttt{simonLiebIterate}\,p\,j\,n\,u & i \ne j,
+    \end{cases}
+\]
+the $n$-step transfer applied to the kernel, with the diagonal value $K(j,j)=1$
+absorbed at the target $j$ (a walk reaching $j$ stops, contributing the
+$\langle\sigma_\emptyset\rangle = 1$ factor). The key estimate is the monotone
+bound
+\[
+  K(j,i) \le \texttt{simonLiebIterate}\,\langle J,0,\beta\rangle\,j\,n\,i
+  \qquad \forall\, n, i
+  \quad (\texttt{simonLiebKernel\_le\_simonLiebIterate}),
+\]
+by induction on $n$ (generalising $i$): base reflexivity; for $i=j$ both sides are
+$1$; for $i \ne j$ the one-step kernel $\langle\sigma_i\sigma_j\rangle \le \beta J
+\sum_{u \sim i} K(j,u)$ combines with the induction hypothesis via $\beta J \ge 0$
+and \texttt{Finset.sum\_le\_sum}. For distinct $i \ne j$ this reads
+$\langle\sigma_i\sigma_j\rangle \le \texttt{simonLiebIterate}\,\langle
+J,0,\beta\rangle\,j\,n\,i$
+(\texttt{correlation\_inducedGraph\_le\_simonLiebIterate}). This is the iteration
+mechanism of the random-walk representation; a later PR connects the iterated
+bound to the walk sum and the high-temperature exponential decay. File:
+\texttt{Inequalities/SimonLiebIterate.lean}. Issue~\#3543 PR~3.
+
 \end{document}
