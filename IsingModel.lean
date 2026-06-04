@@ -13,6 +13,7 @@ import IsingModel.Inequalities.FKGBoundaryCondition
 import IsingModel.Inequalities.MonotonicityField
 import IsingModel.Inequalities.MonotonicityBoundary
 import IsingModel.Inequalities.MonotonicityExtremal
+import IsingModel.Inequalities.VolumeMonotonicity
 import IsingModel.Asano
 import IsingModel.AmbientLattice
 import IsingModel.AmbientLatticeSum
