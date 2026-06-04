@@ -14,6 +14,7 @@ import IsingModel.RandomCurrent
 import IsingModel.Inequalities.SimonLieb
 import IsingModel.Inequalities.SimonLiebKernel
 import IsingModel.Inequalities.WalkSum
+import IsingModel.Inequalities.SimonLiebIterate
 import IsingModel.Inequalities.HighTemp
 import IsingModel.BetaDerivative
 import IsingModel.FieldDerivative
