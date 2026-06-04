@@ -954,6 +954,28 @@ lemmas). This is the $+$-shell indicator collapse that makes the $+$ box partiti
 function and numerator factor over the box-$m$ ones times a shell constant (the
 final assembly of the screening).
 
+\subsection{Cubic-box screening: pointwise $+$ weight factoring
+(\texttt{Concrete/LatticeGraphCorrelation/CubicBoxScreeningCapstone.lean})}
+
+The per-configuration heart of the screening.
+\texttt{edgeSpin\_eq\_one\_of\_agreesOff\_extra}: for $\sigma$ agreeing with $+$ off
+$\texttt{cubicBox}\,d\,n$, every extra edge has $\mathrm{edgeSpin} = 1$ (both
+endpoints outside $\texttt{cubicBox}\,d\,n$ by \S above). \texttt{cubicBoxShellConst}
+is the shell constant
+$\exp(-\beta\,(-h\cdot\#\mathrm{compl} - J\cdot\#\mathrm{extra}))$. Then
+\texttt{boltzmannWeightBC\_cubicBox\_succ\_pointwise}: under
+\texttt{configEquivSubtypeProd},
+\[
+  w^{+}_{\texttt{box}\,(m+1)}\big((\mathrm{equiv})^{-1}(\sigma_1,\sigma_2)\big)
+    = w^{+}_{\texttt{box}\,m}(\sigma_1) \cdot
+      \begin{cases} \mathrm{shellConst} & \sigma_2 \equiv +\\ 0 & \text{else}
+      \end{cases}
+\]
+(agreeing case: \texttt{boltzmannWeight\_inducedGraph\_restrict\_factor\_const} $+$
+the BC$\leftrightarrow$uniform bridge $+$ the agrees-decomposition; non-agreeing
+case $= 0$ via the boundary indicator). This factors the $+$ box partition function
+and numerator over the box-$m$ ones (final $Z/N$ assembly next).
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
