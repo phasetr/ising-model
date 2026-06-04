@@ -45,6 +45,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.MinusStateExtremal
 import IsingModel.Concrete.LatticeGraphCorrelation.LocalObservableUnion
 import IsingModel.Concrete.LatticeGraphCorrelation.PlusStateTranslation
 import IsingModel.Concrete.LatticeGraphCorrelation.CubicBoxInterlacing
+import IsingModel.AmbientLattice.Monotonicity.PlusScreening
 import IsingModel.Inequalities.HighTemp
 import IsingModel.BetaDerivative
 import IsingModel.FieldDerivative
