@@ -1,7 +1,7 @@
 import IsingModel.Inequalities.MonotonicityExtremal
 
 /-!
-# Spin-flip bridge between the `−` and `+` boundary states (FV Theorem 3.17)
+# Spin-flip bridge between the `−` and `+` boundary states (global spin-flip symmetry)
 
 The global spin-flip involution `σ ↦ σ.flip` (`Config.flip`) maps the `−` boundary
 state to the `+` boundary state with the magnetic field reflected `h ↦ −h`.  This
@@ -21,7 +21,8 @@ The chain (inhomogeneous couplings `J`, arbitrary field `h`):
   expectation bridges: `⟨F⟩^−_Λ(h) = ⟨F ∘ flip⟩^+_Λ(−h)`.
 
 Reference: Friedli–Velenik, *Statistical Mechanics of Lattice Systems* (2017),
-§3.4 Theorem 3.17 and the global spin-flip symmetry.
+the global spin-flip symmetry of the Ising model (used in §3.4 / Lemma 3.23 for
+the `±` boundary states).
 -/
 
 namespace IsingModel
@@ -103,7 +104,7 @@ theorem partitionFunctionBC_minus_eq_plus_neg_h_flip (G : SimpleGraph ι) [Finty
     (fun σ => boltzmannWeightBC G β J (-h) Λ (plusConfig ι) σ)]
   exact Finset.sum_congr rfl fun σ _ => boltzmannWeightBC_minus_eq_plus_neg_h_flip G β J h Λ σ
 
-/-- **`−`/`+` expectation bridge** (the global spin-flip symmetry, FV Thm 3.17):
+/-- **`−`/`+` expectation bridge** (the global spin-flip symmetry):
 the `−` boundary expectation of `F` at field `h` equals the `+` boundary
 expectation of `F ∘ flip` at field `−h`,
 `⟨F⟩^−_Λ(h) = ⟨F ∘ flip⟩^+_Λ(−h)`. -/

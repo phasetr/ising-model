@@ -1093,7 +1093,7 @@ finite-volume algebra: the functional is linear (on a fixed support,
 monotone (\texttt{\_mono}), and agrees with the monotone-observable limit on
 monotone observables (\texttt{\_of\_monotone}).
 
-\subsection{The $-$ state and the $\pm$ extremal ordering
+\subsection{The $-$ state and the $\pm$ extremal ordering (FV~Lemma~3.23)
 (\texttt{Inequalities/BoundaryFlip.lean},
 \texttt{Concrete/LatticeGraphCorrelation/MinusStateExtremal.lean})}
 
@@ -1125,11 +1125,14 @@ const\_mul, const, nonneg\}}).  Finally, for a monotone observable and
 $\beta, J \ge 0$, the flip bridge turns the finite-volume boundary monotonicity
 $\langle\varphi\rangle^{-}_{\Lambda} \le \langle\varphi\rangle^{+}_{\Lambda}$
 (\texttt{gibbsExpectationBC\_minus\_le}) into the $\pm$ extremal ordering
+(FV~Lemma~3.23)
 \[
   \mu^{-}(\varphi) \le \mu^{+}(\varphi)
   \qquad(\texttt{minusStateExpectation\_le\_plusStateExpectation}),
 \]
-passing to the limit through the two convergent box-expectation sequences.
+passing to the limit through the two convergent box-expectation sequences (here
+along the cubic exhaustion; the sequence-independent FV~Theorem~3.17 limit is
+follow-up).
 
 \section{Asano Contraction (\texttt{Asano.lean})}
 

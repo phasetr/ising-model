@@ -2,12 +2,14 @@ import IsingModel.Concrete.LatticeGraphCorrelation.LocalObservableState
 import IsingModel.Inequalities.BoundaryFlip
 
 /-!
-# The `−`-state functional and the `±` extremal ordering on ℤ^d (FV Theorem 3.17)
+# The `−`-state functional and the `±` extremal ordering on ℤ^d (FV Lemma 3.23)
 
-Obtains the `−` boundary state of a local observable from the `+`-state functional
-(`LocalObservableState.lean`) via the global spin-flip symmetry `σ ↦ σ.flip` with
-the field reflected `h ↦ −h` (`gibbsExpectationBC_minus_eq_plus_neg_h_flip`), and
-proves the `±` extremal ordering `μ⁻(φ) ≤ μ⁺(φ)` for monotone observables.
+Obtains the cubic-exhaustion `−` boundary state of a local observable from the
+`+`-state functional (`LocalObservableState.lean`) via the global spin-flip
+symmetry `σ ↦ σ.flip` with the field reflected `h ↦ −h`
+(`gibbsExpectationBC_minus_eq_plus_neg_h_flip`), and proves the `±` extremal
+ordering `μ⁻(φ) ≤ μ⁺(φ)` for monotone observables (FV Lemma 3.23, the `−`/`+`
+domination; the `±` states themselves are part of FV Theorem 3.17).
 
 * `LocalObservable.flipObs` — the flipped observable `σ ↦ φ(σ.flip)`.
 * `minusStateExpectation` — the cubic-exhaustion `−`-state functional, defined as
@@ -20,7 +22,9 @@ proves the `±` extremal ordering `μ⁻(φ) ≤ μ⁺(φ)` for monotone observa
   extremal ordering for monotone observables.
 
 Reference: Friedli–Velenik, *Statistical Mechanics of Lattice Systems* (2017),
-§3.4 Theorem 3.17 (the extremal `±` states).
+§3.4 Lemma 3.23 (the `−`/`+` domination `μ⁻ ≤ μ⁺`) and Theorem 3.17 (the extremal
+`±` states; the full sequence-independent / translation-invariant limit is
+follow-up — here the limit is along the cubic exhaustion).
 -/
 
 namespace IsingModel
@@ -98,8 +102,8 @@ theorem plusBoxObsExpectation_flipObs_neg_h_le {d : ℕ} (n m : ℕ) {J h β : �
   exact gibbsExpectationBC_minus_le _ hβ (fun _ => hJ) _ (plusConfig _)
     (fun σ => O.φ (restrictConfig hS σ)) (hmono.comp (restrictConfig_monotone hS))
 
-/-- **The `±` extremal ordering** (FV Theorem 3.17): for a monotone observable and
-`β, J ≥ 0`, the infinite-volume `−`-state expectation is at most the `+`-state
+/-- **The `±` extremal ordering** (FV Lemma 3.23): for a monotone observable and
+`β, J ≥ 0`, the cubic-exhaustion `−`-state expectation is at most the `+`-state
 expectation, `μ⁻(φ) ≤ μ⁺(φ)`.  Both are limits of the finite-volume box
 expectations, ordered at each stage. -/
 theorem minusStateExpectation_le_plusStateExpectation {d N : ℕ} {J h β : ℝ}
