@@ -32,6 +32,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.SimonLiebDecayInfiniteVolume
 import IsingModel.Concrete.LatticeGraphCorrelation.WalkSumTsumLatticeGraph
 import IsingModel.Concrete.LatticeGraphCorrelation.WalkSumTsumInfiniteVolume
 import IsingModel.Concrete.LatticeGraphCorrelation.CubicBoxPlusState
+import IsingModel.Concrete.LatticeGraphCorrelation.CubicBoxPlusStateBounds
 import IsingModel.Inequalities.HighTemp
 import IsingModel.BetaDerivative
 import IsingModel.FieldDerivative
