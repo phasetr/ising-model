@@ -42,6 +42,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.InfiniteVolumePlusState
 import IsingModel.Concrete.LatticeGraphCorrelation.LocalObservableLimit
 import IsingModel.Concrete.LatticeGraphCorrelation.LocalObservableState
 import IsingModel.Concrete.LatticeGraphCorrelation.MinusStateExtremal
+import IsingModel.Concrete.LatticeGraphCorrelation.LocalObservableUnion
 import IsingModel.Inequalities.HighTemp
 import IsingModel.BetaDerivative
 import IsingModel.FieldDerivative
