@@ -2,11 +2,14 @@ import IsingModel.Concrete.LatticeGraphCorrelation.CubicBoxScreeningLimit
 import Mathlib.Topology.Order.MonotoneConvergence
 
 /-!
-# The infinite-volume `+` state on ℤ^d (Issue #3565)
+# Infinite-volume `+` expectation of a single spin on ℤ^d (Issue #3565)
 
 The culmination of the cubic-box `+`-state programme: the **infinite-volume `+`
 boundary expectation of a single spin exists** as the monotone (decreasing) limit
-of the finite-volume `+` box spins along the cubic exhaustion.
+of the finite-volume `+` box spins along the cubic exhaustion.  (This constructs
+the limiting expectation of `σ_x`; extending it to all local observables — and
+verifying the linearity / positivity / normalisation of a genuine Gibbs state — is
+follow-up.)
 
 For a fixed site `x ∈ cubicBox d N`, the screened single-site `+` box spins
 `k ↦ plusBoxSpin d (N+k) (N+k+1) … x` (free inner box `cubicBox d (N+k)`, immediate
