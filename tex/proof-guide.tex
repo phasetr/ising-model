@@ -976,6 +976,29 @@ the BC$\leftrightarrow$uniform bridge $+$ the agrees-decomposition; non-agreeing
 case $= 0$ via the boundary indicator). This factors the $+$ box partition function
 and numerator over the box-$m$ ones (final $Z/N$ assembly next).
 
+\subsection{Cubic-box screening: single-step ambient independence
+(\texttt{Concrete/LatticeGraphCorrelation/CubicBoxScreeningLimit.lean})}
+
+The $+$ box state is independent of the ambient box size (nearest-neighbour
+screening). \texttt{bcSum\_cubicBox\_succ\_factor}: for an observable depending only
+on the inner configuration, the boundary-condition sum over
+$\texttt{cubicBox}\,d\,(m+1)$ factors as the box-$m$ sum times the shell constant
+(reindex by \texttt{configEquivSubtypeProd} $+$ the pointwise factoring $+$ the
+shell collapse \texttt{sum\_shell\_ite\_eq}). Hence
+$Z^{+}_{m+1} = Z^{+}_m \cdot \mathrm{shellConst}$
+(\texttt{partitionFunctionBC\_cubicBox\_succ}) and the shell constant cancels in the
+normalised ratio (\texttt{gibbsExpectationBC\_cubicBox\_succ}). In particular
+(\texttt{plusBoxSpin\_screening\_succ})
+\[
+  \texttt{plusBoxSpin}\,d\,n\,(m+1)\,\dots\,x
+    = \texttt{plusBoxSpin}\,d\,n\,m\,\dots\,x
+  \qquad (n+1 \le m,\ x \in \texttt{cubicBox}\,d\,m):
+\]
+the single-site $+$ box spin depends only on the immediate $+$ boundary layer, not
+the ambient box size. The remaining steps (induction to full ambient independence
+and the $n \to \infty$ monotone-convergence limit) complete the infinite-volume $+$
+state.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
