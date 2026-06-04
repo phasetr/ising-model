@@ -2265,6 +2265,30 @@ $\texttt{correlationAlongExhaustion\_tendsto\_ciSup}$ and $\texttt{tendsto\_nhds
 This is the first genuinely infinite-volume Gibbs correlation result in the project
 (Glimm--Jaffe~\S17.1).
 
+\paragraph{Infinite-volume 1D susceptibility and mass form (\S17.1).}
+Two infinite-volume observables follow from the two-point capstone
+$\texttt{twoPointFunction}\,1\,r = (\tanh\beta J)^{\lvert r\rvert}$.  The
+\emph{susceptibility} is the bilateral lattice sum of the two-point function: using
+the equivalence $(\mathrm{Fin}\,1 \to \mathbb Z) \simeq \mathbb Z$
+($\texttt{Equiv.funUnique}$) and the split $\mathbb Z = \mathbb N \sqcup \mathbb N$
+($\texttt{HasSum.int\_rec}$: the non-negative branch contributes
+$\sum_k (\tanh\beta J)^k$ and the negative branch
+$\sum_k (\tanh\beta J)^{k+1}$),
+\[
+  \sum_{r : \mathrm{Fin}\,1 \to \mathbb Z}
+    (\tanh\beta J)^{\mathrm{latticeDistance}\,1\,0\,r}
+  \;=\; \texttt{isingSusceptibility1D}\,(\beta J)
+  \;=\; \frac{1+\tanh\beta J}{1-\tanh\beta J}
+\]
+($\texttt{tsum\_tanh\_pow\_latticeDistance\_eq\_susceptibility}$), the $r = 0$
+diagonal contributing $(\tanh\beta J)^0 = 1 = \langle\sigma_0^2\rangle$.  The
+\emph{mass form} writes the two-point function as a pure exponential at the inverse
+correlation length, $\texttt{twoPointFunction}\,1\,\langle J,0,\beta\rangle\,r
+   = e^{-m\lvert r\rvert}$ with $m = \texttt{correlationMass}\,(\beta J)
+   = -\log\tanh\beta J$
+($\texttt{twoPointFunction\_one\_eq\_exp\_neg\_mass}$, for $r \ne 0$)
+(Glimm--Jaffe~\S17.1).
+
 \paragraph{Finite $\ell^1$ balls and proper-map property.}
 PR~\#782 complements the metric definition with the proper-map
 companion to PR~\#779's cofinite cluster decay. First,
