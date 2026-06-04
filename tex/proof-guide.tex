@@ -2001,6 +2001,25 @@ dimension --- and is strictly sub-saturated, $|m| < 1$
 |\sinh b|$ (the field gap $e^{-4a} > 0$). Issue~\#3538 PR~3; next: susceptibility
 $\partial_h m$.
 
+\paragraph{Field susceptibility (\S17.1, Issue~\#3538 PR~4).}
+Differentiating the magnetization once more gives the susceptibility
+\[
+  \chi = \partial_b m
+       = \frac{\cosh b\,e^{-4a}}{(\sinh^2 b + e^{-4a})^{3/2}}
+  \qquad (\texttt{fieldSusceptibility}),
+\]
+strictly positive (\texttt{fieldSusceptibility\_pos}). By the quotient rule
+(\texttt{HasDerivAt.div}) on $m = \sinh b/\sqrt{X}$ with $X = \sinh^2 b +
+e^{-4a}$, using $(\sqrt{X})^2 = X$ and $X - \sinh^2 b = e^{-4a}$, the derivative
+collapses to the closed form (\texttt{hasDerivAt\_fieldMagnetization}). The
+physical susceptibility is $\partial_h m = \beta\,\chi$
+(\texttt{hasDerivAt\_fieldMagnetization\_field}, chain rule through $b = \beta h$),
+and at zero field $\chi(a,0) = e^{2a}$ (\texttt{fieldSusceptibility\_zero}), so
+$\partial_h m|_0 = \beta e^{2a}$ --- the gap-enhanced zero-field susceptibility of
+the 1D chain. This completes the exact solution of the 1D Ising chain in a field:
+matrix $\to$ eigenvalues $\to$ partition function $\to$ free energy $\to$
+magnetization $\to$ susceptibility (Issue~\#3538).
+
 \paragraph{Diagonalization and matrix powers (\S17.1, Issue~\#3511 PR~2).}
 The Hadamard matrix $H = \bigl(\begin{smallmatrix} 1 & 1 \\ 1 & -1 \end{smallmatrix}\bigr)$
 (\texttt{hadamardMatrix}) satisfies $H^2 = 2\,\mathbb 1$
