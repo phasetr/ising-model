@@ -10,6 +10,7 @@ import IsingModel.Inequalities.FKG
 import IsingModel.Inequalities.FKGGeneral
 import IsingModel.Inequalities.FKGInhomogeneous
 import IsingModel.Inequalities.FKGBoundaryCondition
+import IsingModel.Inequalities.MonotonicityField
 import IsingModel.Asano
 import IsingModel.AmbientLattice
 import IsingModel.AmbientLatticeSum
