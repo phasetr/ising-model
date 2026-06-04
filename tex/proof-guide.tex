@@ -19677,4 +19677,18 @@ This completes the random-walk representation arc (kernel $\to$ walk-sum $\to$
 iterate $\to$ decay $\to$ walk-sum representation $\to$ infinite sum). File:
 \texttt{Inequalities/WalkSumTsum.lean}. Issue~\#3543 PR~9.
 
+\paragraph{$\mathbb Z^d$ infinite walk-sum representation (Issue~\#3543 PR~10).}
+On the cubic lattice $\texttt{latticeGraph}\,d$ (induced degree $\le 2d$) the
+abstract infinite walk-sum bound specialises: in the high-temperature regime
+$\beta J \cdot 2d < 1$, for distinct sites $i \ne j$,
+\[
+  \langle\sigma_i\sigma_j\rangle
+    \le \sum_{k\ge 1}^{\infty} \texttt{walkSum}\,(\beta J)\,i\,j\,k
+  \quad (\texttt{correlation\_inducedLatticeGraph\_le\_tsum\_walkSum}),
+\]
+the $\mathbb Z^d$ concrete form of the discrete random-walk (FFS Ch~12) upper
+bound on the Ising two-point function. File:
+\texttt{Concrete/LatticeGraphCorrelation/WalkSumTsumLatticeGraph.lean}.
+Issue~\#3543 PR~10.
+
 \end{document}
