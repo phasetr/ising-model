@@ -19465,4 +19465,37 @@ File:
 Concrete/LatticeGraphCorrelation/CubicPseudoMassTanhProfileNoGo.lean
 \end{Verbatim}
 
+\section{Random-walk representation (FFS Ch 12 / GJ \S18)}
+
+\paragraph{Neighbour-vertex Simon-Lieb transfer kernel (Issue~\#3543 PR~1).}
+The Simon-Lieb edge-peeling inequality
+$\langle\sigma_i\sigma_j\rangle \le \beta J \sum_{e \ni i}
+  \langle\sigma^{\{i,j\}\,\triangle\,\partial e}\rangle$ is recast as a one-step
+transfer over \emph{neighbour vertices}, the foundation of the random-walk
+representation of the two-point function. Define the kernel
+\[
+  K(j,u) = \begin{cases} 1 & u = j \\ \langle\sigma_u\sigma_j\rangle & u \ne j
+  \end{cases}
+  \qquad (\texttt{simonLiebKernel}),
+\]
+where the $u=j$ value $1 = \langle\sigma_\emptyset\rangle$ collects the
+diagonal-edge contribution $\{i,j\}\triangle\{i,j\} = \emptyset$. Its basic
+properties (\texttt{simonLiebKernel\_\{self,of\_ne,nonneg,le\_one\}}) follow from
+GKS-I and $|\langle\sigma_A\rangle| \le 1$. For an edge $e$ incident to $i$ with
+other endpoint $u = \texttt{Sym2.Mem.other}$, the per-edge identity
+$\langle\sigma^{\{i,j\}\triangle\,\mathrm{toFinset}\,e}\rangle = K(j,u)$
+(\texttt{correlation\_symmDiff\_eq\_simonLiebKernel}) uses
+$\{i,j\}\triangle\{i,u\} = \{u,j\}$ for $u \ne j$. Reindexing the incident-edge
+sum to a neighbour sum via \texttt{Finset.sum\_bij'} and \texttt{Sym2.other\_spec}
+gives the headline one-step inequality
+\[
+  \langle\sigma_i\sigma_j\rangle
+    \le \beta J \sum_{u \in \mathcal N(i)} K(j,u)
+  \qquad (\texttt{correlation\_inducedGraph\_simon\_lieb\_neighbor}),
+\]
+for ferromagnetic $\langle J,0,\beta\rangle$ and $i \ne j$. Iterating this
+transfer kernel (later PRs) yields the random-walk bound
+$\langle\sigma_i\sigma_j\rangle \le \sum_{\text{walks } i \to j}(\beta J)^{\text{length}}$.
+File: \texttt{Inequalities/SimonLiebKernel.lean}. Issue~\#3543 PR~1.
+
 \end{document}
