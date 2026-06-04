@@ -937,6 +937,23 @@ outside $\texttt{cubicBox}\,d\,n$. Hence on a $+$-off-$\texttt{box}\,n$
 configuration every extra edge has $\mathrm{edgeSpin} = 1$ --- the $\texttt{hextra}$
 input to the screening.
 
+\subsection{Configuration-split decomposition for the cubic-box screening
+(\texttt{Concrete/LatticeGraphCorrelation/CubicBoxScreeningDecomp.lean})}
+
+The configuration-side ingredients. \texttt{restrictConfig\_plusConfig}:
+restricting the all-$+$ configuration is all-$+$. \texttt{mem\_plusBoxInterior}:
+$j \in \texttt{plusBoxInterior}\,d\,n\,m \iff (j : \mathbb Z^d) \in
+\texttt{cubicBox}\,d\,n$. \texttt{agreesOff\_plus\_configEquiv\_iff}: under the
+configuration split $\texttt{configEquivSubtypeProd}\,(\texttt{cubicBox}\,d\,m
+\subseteq \texttt{cubicBox}\,d\,(m+1))$, a recombined configuration
+$(\mathrm{equiv})^{-1}(\sigma_1, \sigma_2)$ agrees with $+$ off
+$\texttt{cubicBox}\,d\,n$ iff $\sigma_1$ agrees with $+$ off
+$\texttt{cubicBox}\,d\,n$ \emph{and} $\sigma_2$ is all-$+$ on the shell (case
+analysis on $i.\mathrm{val} \in \texttt{cubicBox}\,d\,m$, via the equiv component
+lemmas). This is the $+$-shell indicator collapse that makes the $+$ box partition
+function and numerator factor over the box-$m$ ones times a shell constant (the
+final assembly of the screening).
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
