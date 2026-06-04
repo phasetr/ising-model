@@ -11,6 +11,7 @@ import IsingModel.Inequalities.FKGGeneral
 import IsingModel.Inequalities.FKGInhomogeneous
 import IsingModel.Inequalities.FKGBoundaryCondition
 import IsingModel.Inequalities.MonotonicityField
+import IsingModel.Inequalities.MonotonicityBoundary
 import IsingModel.Asano
 import IsingModel.AmbientLattice
 import IsingModel.AmbientLatticeSum
