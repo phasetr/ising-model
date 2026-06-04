@@ -600,6 +600,21 @@ $\langle fg \rangle \geq \langle f \rangle \langle g \rangle$.
   unnormalized sums to \texttt{gibbsExpectation} form.
 \end{enumerate}
 
+\subsection{Generic weighted-expectation linearity
+(\texttt{Inequalities/WeightedExpectation.lean})}
+
+Every Gibbs expectation in the FKG/Holley development has the shape
+$\langle F \rangle = Z^{-1} \sum_\sigma F(\sigma)\, w(\sigma)$ for a partition
+value $Z = \sum_\sigma w(\sigma)$ and a weight $w$ (the Boltzmann weight, the
+inhomogeneous Boltzmann weight, or the boundary-condition Boltzmann weight). The
+constant / additivity / scalar linearity of such a normalised weighted average is
+purely algebraic and is proved once, generic in $w$ and $Z$, as
+\texttt{weightedExpectation\_const} ($Z^{-1}\sum c\,w = c$),
+\texttt{weightedExpectation\_add}, and \texttt{weightedExpectation\_const\_mul}.
+The nine \texttt{gibbsExpectation\_*} / \texttt{gibbsExpectationJ\_*} /
+\texttt{gibbsExpectationBC\_*} wrappers delegate to these helpers (single source of
+truth).
+
 \subsection{General FKG for arbitrary monotone observables
 (\texttt{Inequalities/FKGGeneral.lean})}
 
