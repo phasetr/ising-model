@@ -101,10 +101,6 @@ theorem trace_isingTransferMatrix1DField_pow (a b : ℝ) (N : ℕ) :
       rw [pow_add, fieldTransferEigenvalueBot_sq]; ring
     rw [htop, hbot]; ring
 
-/-- The dominant eigenvalue is strictly positive. -/
-theorem fieldTransferEigenvalueTop_pos' (a b : ℝ) : 0 < fieldTransferEigenvalueTop a b :=
-  fieldTransferEigenvalueTop_pos a b
-
 /-- For `a = β J > 0` the subdominant-to-dominant ratio is in `[0,1)`:
 `0 ≤ λ₋/λ₊ < 1` (since `0 < λ₋ < λ₊`). -/
 theorem fieldTransferEigenvalue_ratio_nonneg {a : ℝ} (ha : 0 < a) (b : ℝ) :
