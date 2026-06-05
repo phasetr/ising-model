@@ -1675,6 +1675,21 @@ clustering bound $\langle\sigma_i\rangle^+_\Lambda\,\langle\sigma_j\rangle^+_\La
 ($\texttt{gibbsExpectationBC\_plus\_two\_point\_ge\_product}$).  Reference:
 Friedli--Velenik (Cambridge, 2017), \S3.7; Theorem~3.49 (GKS).
 
+\subsection{Infinite-volume $+$ two-point function
+(\texttt{Concrete/LatticeGraphCorrelation/PlusTwoPoint.lean})}
+
+The cubic-exhaustion $+$-state two-point function $\mu^+(\sigma_i\sigma_j)$ is the
+$\texttt{plusStateExpectation}$ of the two-spin product observable $\texttt{twoSpinObs}$
+(support $\{i,j\}$, $\varphi = s(\sigma_i)s(\sigma_j)$).  The finite-volume bridge
+$\texttt{plusBoxObsExpectation\_twoSpin\_eq}$ identifies its $+$ box expectation with the
+$+$ boundary spin-product correlation $\langle\sigma_{\langle i\rangle}\sigma_{\langle
+j\rangle}\rangle$ on the cubic ambient (via $\texttt{Spin.sign} = {\uparrow}\texttt{toSign}$,
+$\texttt{Finset.prod\_pair}$ for $i\ne j$, and $\texttt{restrictConfig}$), and the
+screened box expectations converge to $\mu^+(\sigma_i\sigma_j)$
+($\texttt{tendsto\_plusTwoPoint}$).  This is the foundation for the clustering bound
+$m^{*2} \le \mu^+(\sigma_0\sigma_x)$ towards the high-temperature $m^*=0$.  Reference:
+Friedli--Velenik (Cambridge, 2017), \S3.7.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
