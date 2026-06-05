@@ -1328,6 +1328,17 @@ translation commutes with the flip (\texttt{flipObs\_vadd\_phi\_eq}).  Reference
 Friedli--Velenik (Cambridge, 2017), \S3.4 Theorem~3.17 (statement p.~95, proof
 pp.~102--103).
 
+\subsection{General shell separation and ambient independence
+(\texttt{Concrete/LatticeGraphCorrelation/PlusStateExhaustion.lean})}
+
+Towards exhaustion independence: the shell-separation hypothesis of the general
+screening holds whenever every inner-region site has all its lattice neighbours in
+the smaller ambient (\texttt{hsep\_of\_neighbors\_subset}, generalising the
+cubic-specific \texttt{hsep\_translated}).  Hence the $+$ boundary expectation of an
+observable depending only on the inner configuration is ambient-independent
+(\texttt{gibbsExpectationBC\_screening\_of\_neighbors}).  Reference: Friedli--Velenik
+(Cambridge, 2017), \S3.4 Theorem~3.17 (statement p.~95, proof pp.~102--103).
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
