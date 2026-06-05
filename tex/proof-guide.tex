@@ -1646,6 +1646,22 @@ $\texttt{tendsto\_nhds\_unique}$).  The $-$ state inherits this
 ($\texttt{minusStateExpectation\_congr\_N}$, the $(-h,\texttt{flipObs})$
 specialisation).  Reference: Friedli--Velenik (Cambridge, 2017), \S3.4 Theorem~3.17.
 
+\subsection{Site-independence of the $+$ magnetization
+(\texttt{Concrete/LatticeGraphCorrelation/MagnetizationSiteIndependence.lean})}
+
+The order parameter is translation-invariant: $m^+(a +_v x) = m^+(x)$
+($\texttt{plusMagnetization\_vadd}$).  The translated single-spin observable equals the
+single-spin observable at the translated site
+($\texttt{singleSpinObs\_vadd\_eq}$: support $\texttt{vaddFinset}\,a\,\{x\} = \{a +_v
+x\}$ and the pulled-back spin value matches, via
+$\texttt{configVaddEquiv\_symm\_apply}$ and $\texttt{vaddSubtypeEquiv\_apply\_coe}$,
+using the dependent-support extensionality $\texttt{LocalObservable.ext\_of\_support\_eq}$).
+Applying the translation invariance of the $+$-state functional
+($\texttt{plusStateExpectation\_vadd}$) and bridging the observable/witnessing-box
+mismatch with $\texttt{plusStateExpectation\_congr\_obs}$ (built on
+$\texttt{plusStateExpectation\_congr\_N}$) gives the site-independence.  Reference:
+Friedli--Velenik (Cambridge, 2017), \S3.6.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
