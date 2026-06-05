@@ -1631,6 +1631,21 @@ the $\beta$/$J$-monotonicity programme (Issue~\#3605: boundary GKS-I/II $\to$ $J
 $\beta$-monotonicity $\to$ $m^+$/$m^*$).  Reference: Friedli--Velenik (Cambridge, 2017),
 \S3.6; Glimm--Jaffe Prop.~4.2.1.
 
+\subsection{Box-independence of the $\pm$-state functional
+(\texttt{Concrete/LatticeGraphCorrelation/PlusStateCongrN.lean})}
+
+The $\pm$-state functional does not depend on the witnessing box $N$ of the support
+hypothesis (well-definedness).  Equal box radii give equal box expectations
+($\texttt{plusBoxObsExpectation\_index\_congr}$, proof-irrelevant supports), and any two
+witnesses $hS_1 : O.S \subseteq \texttt{cubicBox}\,d\,N_1$,
+$hS_2 : O.S \subseteq \texttt{cubicBox}\,d\,N_2$ give the same value
+($\texttt{plusStateExpectation\_congr\_N}$): both equal the limit of the screened box
+expectations, which are shifts of the same sequence
+($\texttt{tendsto\_plusStateExpectation}$, $\texttt{tendsto\_add\_atTop\_nat}$,
+$\texttt{tendsto\_nhds\_unique}$).  The $-$ state inherits this
+($\texttt{minusStateExpectation\_congr\_N}$, the $(-h,\texttt{flipObs})$
+specialisation).  Reference: Friedli--Velenik (Cambridge, 2017), \S3.4 Theorem~3.17.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
