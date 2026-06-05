@@ -1807,6 +1807,33 @@ complement sum is at most the full even sum
 ratio-by-1 of FV (3.48).  Dividing by $Z^+_\Lambda$ leaves only the component sum.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.3, eqs. (3.47)--(3.48), pp. 117--118.
 
+\subsection{Distance bound for edge-connected edge sets
+(\texttt{EdgeSetDistance.lean})}
+
+\par\noindent\textbf{Role:} The graph-theoretic input to FV (3.49): a connected component
+reaching a far vertex must have many edges.  For an edge-connected edge set
+$X : \texttt{Finset}\,(\texttt{Sym2}\,\iota)$ with $X \subseteq G.\texttt{edgeFinset}$ and
+vertices $u, v$ each incident to an edge of $X$,
+\[
+  G.\mathrm{dist}\,u\,v \;\le\; |X|
+\]
+($\texttt{dist\_le\_card\_of\_edgeConnected}$).
+
+\textbf{Argument:} The edge-adjacency chains (\texttt{ReflTransGen (edgeAdjacentIn X)})
+defining edge-connectedness lift to reachability in $\texttt{fromEdgeSet}\,\uparrow\!X$
+($\texttt{reachable\_fromEdgeSet\_of\_reflTransGen}$, by induction on the chain, each
+shared-vertex step giving an adjacency).  A shortest path between reachable endpoints is a
+trail, so its edges are distinct and lie in $X$; hence its length --- and therefore the
+distance --- is at most $|X|$ ($\texttt{fromEdgeSet\_dist\_le\_card}$, via
+$\texttt{IsTrail}$ edge-nodup and $\texttt{Walk.bypass}$).  Transferring to the supergraph
+$G$ uses $\texttt{fromEdgeSet}\,\uparrow\!X \le G$ and
+$\texttt{Reachable.dist\_anti}$.  Specialised to the origin's component, when $X$ has an
+edge at $z$ the vertex-component $\texttt{componentOfZero}\,X\,z$ is a single edge-component
+($\texttt{componentOfZero\_eq\_edgeComponent}$), hence edge-connected, giving
+$G.\mathrm{dist}\,z\,v \le |\texttt{componentOfZero}\,X\,z|$
+($\texttt{dist\_le\_card\_componentOfZero}$).  Reference: Friedli--Velenik (Cambridge, 2017),
+\S3.7.3, eq. (3.49), p. 118.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
