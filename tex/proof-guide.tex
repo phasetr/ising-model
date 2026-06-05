@@ -1662,6 +1662,19 @@ mismatch with $\texttt{plusStateExpectation\_congr\_obs}$ (built on
 $\texttt{plusStateExpectation\_congr\_N}$) gives the site-independence.  Reference:
 Friedli--Velenik (Cambridge, 2017), \S3.6.
 
+\subsection{Two-point clustering bounds for the $+$ boundary state
+(\texttt{Inequalities/GKSBoundaryConditionTwoPoint.lean})}
+
+Finite-volume GKS consequences for two-point functions, towards the high-temperature
+vanishing of the spontaneous magnetization.  With $\{i\} \mathbin{\triangle} \{j\} =
+\{i,j\}$ for $i \ne j$ ($\texttt{symmDiff\_pair}$), GKS-I gives non-negativity of the
+pair correlation $\langle\sigma_i\sigma_j\rangle^+_\Lambda \ge 0$
+($\texttt{gibbsExpectationBC\_plus\_spinProduct\_pair\_nonneg}$) and GKS-II gives the
+clustering bound $\langle\sigma_i\rangle^+_\Lambda\,\langle\sigma_j\rangle^+_\Lambda \le
+\langle\sigma_i\sigma_j\rangle^+_\Lambda$
+($\texttt{gibbsExpectationBC\_plus\_two\_point\_ge\_product}$).  Reference:
+Friedli--Velenik (Cambridge, 2017), \S3.7; Theorem~3.49 (GKS).
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
