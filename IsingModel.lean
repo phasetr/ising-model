@@ -67,6 +67,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.SpontaneousMagnetization
 import IsingModel.Concrete.LatticeGraphCorrelation.MagnetizationSign
 import IsingModel.Inequalities.GKSBoundaryCondition
 import IsingModel.Inequalities.GKSBoundaryConditionII
+import IsingModel.Inequalities.MonotonicityJBoundaryCondition
 import IsingModel.Inequalities.HighTemp
 import IsingModel.BetaDerivative
 import IsingModel.FieldDerivative
