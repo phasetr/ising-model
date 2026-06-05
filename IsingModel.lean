@@ -63,6 +63,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.PlusRegionObsExhaustion
 import IsingModel.Concrete.LatticeGraphCorrelation.InfiniteVolumeMagnetization
 import IsingModel.Concrete.LatticeGraphCorrelation.MagnetizationFlipSymmetry
 import IsingModel.Concrete.LatticeGraphCorrelation.MagnetizationFieldMonotone
+import IsingModel.Concrete.LatticeGraphCorrelation.SpontaneousMagnetization
 import IsingModel.Inequalities.HighTemp
 import IsingModel.BetaDerivative
 import IsingModel.FieldDerivative
