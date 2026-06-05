@@ -91,12 +91,13 @@ theorem exists_dist_le_card_componentOfZero [Finite ι] (G : SimpleGraph ι) [Fi
     {X : Finset (Sym2 ι)} (hXG : X ⊆ G.edgeFinset) {z : ι} {e₀ : Sym2 ι}
     (he₀ : e₀ ∈ X) (hz : z ∈ e₀)
     (hzodd : Odd (((componentOfZero X z).filter (z ∈ ·)).card)) :
-    ∃ j, j ≠ z ∧ G.dist z j ≤ (componentOfZero X z).card := by
+    ∃ j, j ≠ z ∧ Odd (((componentOfZero X z).filter (j ∈ ·)).card)
+      ∧ G.dist z j ≤ (componentOfZero X z).card := by
   classical
   have hCG : componentOfZero X z ⊆ G.edgeFinset := (componentOfZero_subset X z).trans hXG
   obtain ⟨j, hjz, hjodd⟩ := exists_ne_odd_filter_card G (componentOfZero X z) hCG hzodd
   obtain ⟨ev, hev⟩ := Finset.card_pos.mp hjodd.pos
   rw [Finset.mem_filter] at hev
-  exact ⟨j, hjz, dist_le_card_componentOfZero G hXG he₀ hz hev.1 hev.2⟩
+  exact ⟨j, hjz, hjodd, dist_le_card_componentOfZero G hXG he₀ hz hev.1 hev.2⟩
 
 end IsingModel
