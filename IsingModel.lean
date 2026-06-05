@@ -97,6 +97,7 @@ import IsingModel.PseudoMass
 import IsingModel.LatticeExpSum
 import IsingModel.ComplexAnalyticity
 import IsingModel.Peierls.ConnectedDroplet
+import IsingModel.Peierls.ConnectedDropletBound
 import IsingModel.PeierlsInfinite
 import IsingModel.TranslationInvariance
 import IsingModel.Concrete.IntLattice
