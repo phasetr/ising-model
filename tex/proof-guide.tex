@@ -1834,6 +1834,27 @@ $G.\mathrm{dist}\,z\,v \le |\texttt{componentOfZero}\,X\,z|$
 ($\texttt{dist\_le\_card\_componentOfZero}$).  Reference: Friedli--Velenik (Cambridge, 2017),
 \S3.7.3, eq. (3.49), p. 118.
 
+\subsection{Handshake parity and the second odd-degree vertex
+(\texttt{EdgeSetHandshake.lean})}
+
+\par\noindent\textbf{Role:} The handshake lemma for edge subsets and its parity
+consequence, the FV §3.7.3 mechanism that a contour from the origin reaches a second
+odd-degree vertex (the boundary).  The handshake identity is
+\[
+  \sum_v (X.\texttt{filter}\,(v\in\cdot)).\texttt{card} \;=\; 2\,|X|
+\]
+($\texttt{sum\_filter\_card\_eq\_two\_mul\_card}$, for $X \subseteq G.\texttt{edgeFinset}$),
+whence the set of odd-degree vertices has even cardinality
+($\texttt{even\_card\_odd\_filter\_card}$, via
+$\texttt{Finset.even\_sum\_iff\_even\_card\_odd}$).  Therefore odd degree at $z$ forces a
+\emph{second} odd-degree vertex $j \ne z$ ($\texttt{exists\_ne\_odd\_filter\_card}$: the
+odd-degree set is even and contains $z$, so is not the singleton $\{z\}$).  Combined with
+the distance bound, if the origin's component has odd degree at $z$ then there is a
+$j \ne z$ with $G.\mathrm{dist}\,z\,j \le |\texttt{componentOfZero}\,X\,z|$
+($\texttt{exists\_dist\_le\_card\_componentOfZero}$); in the cubic-box $+$ setup that second
+site is a boundary site at distance $\ge n$, forcing $|C| \ge n$.  Reference:
+Friedli--Velenik (Cambridge, 2017), \S3.7.3, eqs. (3.48)--(3.49), pp. 117--118.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
