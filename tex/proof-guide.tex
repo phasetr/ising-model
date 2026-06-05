@@ -1965,6 +1965,26 @@ $\texttt{isEdgeConnected\_insert}$ keeps the prefix connected, so the induction 
 $|X \setminus P|$) closes.  Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.3,
 Lemma 3.38, p. 117.
 
+\subsection{Counting injection $\#\{C : |C|=\ell\} \le (2d)^{2\ell}$
+(\texttt{EdgeWalkCounting.lean})}
+
+\par\noindent\textbf{Role:} The FV (3.49) counting bound, the last input to the
+high-temperature $m^*(\beta)=0$.  Each connected edge set $C \ni z$ of size $\ell$ is sent,
+via its FV-Lemma-3.38 closed walk transported into the ambient graph $G$
+(by $\texttt{Walk.transfer}$, $\texttt{exists\_closed\_walk\_in\_supergraph}$), to a closed
+walk of length $2\ell$ from $z$.  The map is injective --- $C$ is exactly the walk's edge
+set --- so ($\texttt{card\_connected\_edge\_sets\_le}$, via
+$\texttt{Finset.card\_le\_card\_of\_injOn}$)
+\[
+  \#\{C \text{ connected}, \ni z, |C|=\ell, C \subseteq G.\texttt{edgeFinset}\}
+  \;\le\; \#\{\text{closed walks of length } 2\ell \text{ from } z\}.
+\]
+On the induced cubic-lattice box graph, the closed walks are at most
+$\texttt{walksFromCount}\,z\,(2\ell) \le (2d)^{2\ell}$
+($\texttt{card\_connected\_edge\_sets\_inducedLatticeGraph\_le}$, via
+$\texttt{Finset.single\_le\_sum}$), the $(2d)^{2\ell}$ bound of FV (3.49).  Reference:
+Friedli--Velenik (Cambridge, 2017), \S3.7.3, eq. (3.49), p. 118.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
