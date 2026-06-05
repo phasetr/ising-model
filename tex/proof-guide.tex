@@ -2026,6 +2026,28 @@ ratio (3.46)--(3.47), the component bound (3.48), and the Eulerian-counting / ge
 estimate (3.49) with Lemma 3.38.  Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.3,
 pp. 116--118.
 
+\subsection{Connected-droplet refinement of the Peierls bound
+(\texttt{Peierls/ConnectedDroplet.lean})}
+
+\par\noindent\textbf{Role:} The low-temperature half (FV \S3.7.2, $m^*(\beta)>0$) sharpens
+the Peierls contour sum by restricting it to \emph{connected} spin droplets, the foundation
+of the volume-independent contour counting.  Writing
+$\texttt{ReachableWithin}\,G\,T\,x\,y$ for reachability via a $G$-walk staying inside $T$,
+the droplet $\texttt{downComponent}\,G\,\sigma\,i$ is the connected component of $i$ in the
+down-spins.  The key contour fact ($\texttt{cutEdges\_downComponent\_subset\_phaseBoundary}$)
+is that for $\sigma_i = -1$ every cut edge of the droplet lies in the phase boundary
+$\partial\sigma$ --- a cut edge joins a droplet down-spin to a non-droplet vertex, which must
+then be an up-spin.  The droplet is connected through $i$ by symmetry of
+$\texttt{ReachableWithin}$ ($\texttt{isConnectedDroplet\_downComponent}$), giving the
+connected refinement
+\[
+  \mathbf 1_{\sigma_i=-1} \;\le\;
+  \sum_{\substack{S \ni i \\ S\ \mathrm{connected}}} \mathbf 1_{\mathrm{cut}(S)\subseteq\partial\sigma}
+\]
+($\texttt{indicator\_spin\_down\_le\_connected\_contour\_sum}$).  This restriction makes the
+boundary map $S \mapsto \mathrm{cut}(S)$ tractable for the volume-independent count.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
