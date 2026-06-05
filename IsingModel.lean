@@ -55,6 +55,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.PlusStateTranslationGeneralHe
 import IsingModel.Concrete.LatticeGraphCorrelation.MinusStateTranslation
 import IsingModel.Concrete.LatticeGraphCorrelation.PlusStateExhaustion
 import IsingModel.Concrete.LatticeGraphCorrelation.PlusStateAmbientCubic
+import IsingModel.Concrete.LatticeGraphCorrelation.PlusStateAmbientIndep
 import IsingModel.Inequalities.HighTemp
 import IsingModel.BetaDerivative
 import IsingModel.FieldDerivative
