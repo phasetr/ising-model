@@ -68,6 +68,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.MagnetizationSign
 import IsingModel.Concrete.LatticeGraphCorrelation.MagnetizationBetaMonotone
 import IsingModel.Concrete.LatticeGraphCorrelation.PlusStateCongrN
 import IsingModel.Concrete.LatticeGraphCorrelation.MagnetizationSiteIndependence
+import IsingModel.Concrete.LatticeGraphCorrelation.PlusTwoPoint
 import IsingModel.Inequalities.GKSBoundaryCondition
 import IsingModel.Inequalities.GKSBoundaryConditionII
 import IsingModel.Inequalities.MonotonicityJBoundaryCondition
