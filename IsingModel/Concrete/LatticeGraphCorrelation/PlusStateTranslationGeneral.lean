@@ -1,20 +1,22 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.PlusStateTranslationHeadline
 
 /-!
-# Translation invariance for all local observables (Issue #3581)
+# Translation-invariance infrastructure for general local observables (Issue #3581)
 
-Extends the monotone-observable translation invariance
-(`plusStateExpectation_vadd_monotone`) to **all** local observables, via the
-monotone-difference decomposition: `LocalObservable.vadd`'s upper/lower parts agree
-with the translates of `O`'s upper/lower parts (the up-spin count and the
-monotone bound are translation-invariant), so the `+`-state functional of the
-translate equals that of `O`.
+The compatibility lemmas needed to extend the monotone-observable translation
+invariance (`plusStateExpectation_vadd_monotone`) to **all** local observables via
+the monotone-difference decomposition: the up-spin count and the monotone bound are
+translation-invariant, so `LocalObservable.vadd`'s upper/lower parts agree with the
+translates of `O`'s upper/lower parts.  The final assembly
+(`plusStateExpectation_vadd`) is a short follow-up built on these.
 
 * `configUpRank_configVaddEquiv_symm` — the up-spin count is translation-invariant.
 * `LocalObservable.vadd` / `monoBound_vadd` — the translated observable and its
   translation-invariant monotone bound.
-* `plusStateExpectation_vadd` — translation invariance for an arbitrary local
-  observable.
+* `vadd_upper_phi_eq` / `vadd_lower_phi_eq` — the upper/lower parts commute with
+  translation.
+* `plusStateExpectation_congr_phi` — the `+`-state respects observable-function
+  equality.
 
 Reference: Friedli–Velenik, *Statistical Mechanics of Lattice Systems*
 (Cambridge, 2017), §3.4 Theorem 3.17 (statement p. 95, proof pp. 102–103).
