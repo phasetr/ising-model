@@ -1855,6 +1855,24 @@ $j \ne z$ with $G.\mathrm{dist}\,z\,j \le |\texttt{componentOfZero}\,X\,z|$
 site is a boundary site at distance $\ge n$, forcing $|C| \ge n$.  Reference:
 Friedli--Velenik (Cambridge, 2017), \S3.7.3, eqs. (3.48)--(3.49), pp. 117--118.
 
+\subsection{Subtype-to-ambient distance transfer
+(\texttt{InduceDistanceTransfer.lean})}
+
+\par\noindent\textbf{Role:} Converts an induced-box distance into the lattice $\ell^1$
+distance, the geometric transfer needed for FV (3.49).  A walk in an induced subgraph
+$G.\texttt{induce}\,s$ maps to a walk in $G$ of the same length (via the inclusion
+homomorphism $\texttt{induceValHom} : G.\texttt{induce}\,s \to_g G$ and
+$\texttt{Walk.length\_map}$), so the ambient distance is at most the induced one,
+$G.\mathrm{dist}\,a\,b \le (G.\texttt{induce}\,s).\mathrm{dist}\,a\,b$
+($\texttt{dist\_val\_le\_induce\_dist}$, for reachable $a, b$).  Specialised to the lattice
+graph, $\texttt{latticeDistance}\,d\,a\,b \le (\texttt{inducedGraph}\,(\texttt{latticeGraph}\,d)\,\Lambda).\mathrm{dist}\,a\,b$
+($\texttt{latticeDistance\_le\_induce\_dist}$).  Composing with the handshake partner
+gives $\texttt{latticeDistance}\,d\,z\,j \le |\texttt{componentOfZero}\,X\,z|$ for the
+second odd-degree vertex $j$
+($\texttt{latticeDistance\_le\_card\_componentOfZero}$): the origin's component, reaching a
+far lattice site, must have many edges --- the FV (3.49) $|C| \ge n$ geometry.  Reference:
+Friedli--Velenik (Cambridge, 2017), \S3.7.3, eq. (3.49), p. 118.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).

@@ -80,6 +80,7 @@ import IsingModel.Conditioning.PlusOnePointRepresentation
 import IsingModel.Conditioning.PlusOnePointConnectedBound
 import IsingModel.Conditioning.EdgeSetDistance
 import IsingModel.Conditioning.EdgeSetHandshake
+import IsingModel.Conditioning.InduceDistanceTransfer
 import IsingModel.Inequalities.HighTemp
 import IsingModel.BetaDerivative
 import IsingModel.FieldDerivative
