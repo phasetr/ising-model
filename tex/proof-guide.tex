@@ -2068,6 +2068,26 @@ filter is narrowed to connected droplets.  This is the bound made volume-indepen
 countable by the connected restriction.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, Lemma 3.37, pp. 109--116.
 
+\subsection*{The boundary determines a connected droplet
+  (\texttt{Peierls/DropletInjective.lean})}
+
+\par\noindent\textbf{Role:} To count connected droplets volume-independently, we first observe
+that a connected droplet is recoverable from its edge boundary.  Membership in the cut is
+$s(a,b)\in\mathrm{cut}(S) \iff G.\mathrm{Adj}\,a\,b \wedge (a\in S \leftrightarrow b\notin S)$
+($\texttt{mem\_cutEdges\_iff}$); consequently a non-cut edge incident to $S$ cannot leave $S$
+($\texttt{mem\_of\_adj\_not\_mem\_cutEdges}$).  Hence if $S$ is a connected droplet with
+$i\in S$ and $\mathrm{cut}(S)=\mathrm{cut}(T)$ with $i\in T$, a within-$S$ walk from $i$ crosses
+no boundary edge and stays inside $T$, giving $S\subseteq T$
+($\texttt{isConnectedDroplet\_subset\_of\_cutEdges\_eq}$).  Antisymmetry yields
+$\texttt{connectedDroplet\_eq\_of\_cutEdges\_eq}$, so the boundary map
+$S\mapsto\mathrm{cut}(S)$ is \emph{injective} on connected droplets containing $i$
+($\texttt{cutEdges\_injOn\_connectedDroplet}$).  Therefore the number of connected droplets
+$S\ni i$ equals the number of edge sets $\mathrm{cut}(S)$
+($\texttt{card\_connectedDroplet\_eq\_card\_cutEdges\_image}$), reducing the volume-independent
+contour count to an edge-set count (to be closed by the dual-lattice walk-counting
+$\texttt{card\_connected\_edge\_sets\_inducedLatticeGraph\_le}$).
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
