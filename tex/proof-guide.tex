@@ -1890,6 +1890,25 @@ $n + 1 \le \texttt{latticeDistance}\,d\,0\,j \le |C|$, the last step by the latt
 bound for the component ($\texttt{latticeDistance\_le\_card\_componentOfZero}$).  Reference:
 Friedli--Velenik (Cambridge, 2017), \S3.7.3, eq. (3.49), p. 118.
 
+\subsection{Degree bound on the walk count
+(\texttt{WalkCountDegreeBound.lean})}
+
+\par\noindent\textbf{Role:} The counting input to FV (3.49) --- the number of walks of a
+given length is degree-bounded, the source of the $(2d)^{2\ell}$ factor.  Writing
+$\texttt{walksFromCount}\,G\,u\,k = \sum_v |\texttt{finsetWalkLength}\,k\,u\,v|$ for the
+number of length-$k$ walks starting at $u$,
+\[
+  \texttt{walksFromCount}\,u\,k \;\le\; \Delta^k
+\]
+for a uniform degree bound $\Delta$ ($\texttt{walksFromCount\_le\_pow}$).  The proof is by
+induction on $k$: each length-$(k{+}1)$ walk is a first edge to a neighbour followed by a
+length-$k$ walk, so the count multiplies by at most the degree
+($\texttt{Finset.card\_biUnion\_le}$ and $\texttt{card\_neighborSet\_eq\_degree}$).
+Specialised to the induced cubic-lattice box graph (degree $\le 2d$),
+$\texttt{walksFromCount}\,(\texttt{inducedGraph}\,(\texttt{latticeGraph}\,d)\,\Lambda)\,u\,k \le (2d)^k$
+($\texttt{walksFromCount\_inducedLatticeGraph\_le}$), the $(2d)^{2\ell}$ factor of FV (3.49).
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.3, eq. (3.49), p. 118.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
