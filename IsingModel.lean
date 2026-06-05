@@ -60,6 +60,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.PlusRegionExpectation
 import IsingModel.Concrete.LatticeGraphCorrelation.PlusRegionCubicConvergence
 import IsingModel.Concrete.LatticeGraphCorrelation.PlusRegionExhaustion
 import IsingModel.Concrete.LatticeGraphCorrelation.PlusRegionObsExhaustion
+import IsingModel.Concrete.LatticeGraphCorrelation.InfiniteVolumeMagnetization
 import IsingModel.Inequalities.HighTemp
 import IsingModel.BetaDerivative
 import IsingModel.FieldDerivative
