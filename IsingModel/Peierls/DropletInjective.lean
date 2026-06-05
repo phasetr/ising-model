@@ -20,7 +20,7 @@ walk-counting machinery (`card_connected_edge_sets_inducedLatticeGraph_le`,
 * `mem_of_adj_not_mem_cutEdges` — a non-cut edge stays inside `S`.
 * `isConnectedDroplet_subset_of_cutEdges_eq` — equal boundaries ⟹ one droplet ⊆ the other.
 * `cutEdges_injOn_connectedDroplet` — `S ↦ cutEdges G S` is injective on connected droplets ∋ i.
-* `card_connectedDroplet_le_card_cutEdges_image` — droplet count ≤ boundary-image count.
+* `card_connectedDroplet_eq_card_cutEdges_image` — droplet count ≤ boundary-image count.
 
 References: Friedli–Velenik, *Statistical Mechanics of Lattice Systems*
 (Cambridge, 2017), §3.7.2, pp. 109–116.
@@ -112,7 +112,7 @@ open Classical in
 /-- **Connected droplets are counted by their boundaries**: the number of connected droplets
 `S ∋ i` equals the number of edge sets arising as `cutEdges G S`. Reduces the contour count to
 an edge-set count. -/
-theorem card_connectedDroplet_le_card_cutEdges_image (G : SimpleGraph ι) [DecidableRel G.Adj]
+theorem card_connectedDroplet_eq_card_cutEdges_image (G : SimpleGraph ι) [DecidableRel G.Adj]
     [Fintype G.edgeSet] (i : ι) :
     (Finset.univ.filter (fun S : Finset ι => i ∈ S ∧ IsConnectedDroplet G S)).card =
     ((Finset.univ.filter (fun S : Finset ι => i ∈ S ∧ IsConnectedDroplet G S)).image
