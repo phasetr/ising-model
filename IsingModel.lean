@@ -87,6 +87,7 @@ import IsingModel.Conditioning.GeometricTail
 import IsingModel.Conditioning.CountGeometricCapstone
 import IsingModel.Conditioning.EdgeWalkExistence
 import IsingModel.Conditioning.EdgeWalkCounting
+import IsingModel.Conditioning.CubicBoxMagnetizationDecay
 import IsingModel.Inequalities.HighTemp
 import IsingModel.BetaDerivative
 import IsingModel.FieldDerivative

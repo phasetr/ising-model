@@ -1985,6 +1985,27 @@ $\texttt{walksFromCount}\,z\,(2\ell) \le (2d)^{2\ell}$
 $\texttt{Finset.single\_le\_sum}$), the $(2d)^{2\ell}$ bound of FV (3.49).  Reference:
 Friedli--Velenik (Cambridge, 2017), \S3.7.3, eq. (3.49), p. 118.
 
+\subsection{High-temperature box magnetization decay
+(\texttt{CubicBoxMagnetizationDecay.lean})}
+
+\par\noindent\textbf{Role:} The FV (3.49) capstone bound.  In the cubic box $B(m)$ with $+$
+boundary on the inner box $B(n)$,
+\[
+  \langle\sigma_0\rangle^+ \;\le\; \frac{(4d^2\tanh\beta J)^n}{1 - 4d^2\tanh\beta J}
+\]
+for $0 < d$, $0 < \tanh\beta J$ and $4d^2\tanh\beta J < 1$
+($\texttt{gibbsExpectationBC\_box\_singleSpin\_le}$).  The proof composes the component
+bound $\langle\sigma_0\rangle^+ \le \sum_C (\tanh\beta J)^{|C|}$ (3.48), the size lower
+bound $|C| \ge n$ ($\texttt{card\_componentOfZero\_ge\_of\_E0}$), the counting bound
+$\#\{C : |C|=\ell\} \le (2d)^{2\ell} = (4d^2)^\ell$
+($\texttt{card\_connected\_edge\_sets\_inducedLatticeGraph\_le}$ --- each origin component
+being connected, contained in the box edges, and containing the origin via its odd-degree
+$z$-edge), and the geometric capstone
+($\texttt{sum\_pow\_le\_geometric\_tail\_of\_count}$ with $M=4d^2$, $q=\tanh\beta J$).  This
+is the exponential decay of $\langle\sigma_0\rangle^+_{B(n)}$ as $n\to\infty$, the heart of
+FV's high-temperature $m^*(\beta)=0$.  Reference: Friedli--Velenik (Cambridge, 2017),
+\S3.7.3, eq. (3.49), p. 118.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
