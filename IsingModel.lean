@@ -81,6 +81,7 @@ import IsingModel.Conditioning.PlusOnePointConnectedBound
 import IsingModel.Conditioning.EdgeSetDistance
 import IsingModel.Conditioning.EdgeSetHandshake
 import IsingModel.Conditioning.InduceDistanceTransfer
+import IsingModel.Conditioning.CubicBoxComponentSize
 import IsingModel.Inequalities.HighTemp
 import IsingModel.BetaDerivative
 import IsingModel.FieldDerivative
