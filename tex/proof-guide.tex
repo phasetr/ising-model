@@ -1873,6 +1873,23 @@ second odd-degree vertex $j$
 far lattice site, must have many edges --- the FV (3.49) $|C| \ge n$ geometry.  Reference:
 Friedli--Velenik (Cambridge, 2017), \S3.7.3, eq. (3.49), p. 118.
 
+\subsection{The origin component reaches the boundary, $|C| \ge n$
+(\texttt{CubicBoxComponentSize.lean})}
+
+\par\noindent\textbf{Role:} The FV (3.49) geometric estimate: in the cubic box $B(m)$ with
+$+$ boundary on the inner box $B(n)$, an $E^{+;0}$ subgraph's origin component satisfies
+$n \le |\texttt{componentOfZero}\,X\,z|$ ($\texttt{card\_componentOfZero\_ge\_of\_E0}$).
+
+\textbf{Argument:} A site outside $\texttt{cubicBox}\,d\,n$ is at lattice distance $\ge n+1$
+from the origin, since some coordinate has absolute value $\ge n+1$
+($\texttt{latticeDistance\_origin\_ge\_of\_not\_mem\_cubicBox}$).  By the handshake parity,
+the origin's component has a second odd-degree vertex $j$; the component inherits even
+parity off the origin on the interior ($\texttt{even\_filter\_card\_componentOfZero}$), so
+$j$ cannot lie in the interior --- its site is outside $B(n)$.  Hence
+$n + 1 \le \texttt{latticeDistance}\,d\,0\,j \le |C|$, the last step by the lattice distance
+bound for the component ($\texttt{latticeDistance\_le\_card\_componentOfZero}$).  Reference:
+Friedli--Velenik (Cambridge, 2017), \S3.7.3, eq. (3.49), p. 118.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
