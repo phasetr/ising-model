@@ -1306,6 +1306,18 @@ reduces the general-observable translation invariance to the monotone case
 (\texttt{plusStateExpectation\_vadd\_monotone}).  Reference: Friedli--Velenik
 (Cambridge, 2017), \S3.4 Theorem~3.17 (statement p.~95, proof pp.~102--103).
 
+\subsection{Translation invariance for all local observables
+(\texttt{Concrete/LatticeGraphCorrelation/PlusStateTranslationGeneralHeadline.lean})}
+
+The final assembly: the cubic-exhaustion $+$-state functional is invariant under
+lattice translations on \emph{any} local observable, $\mu^{+}(\tau_a\varphi) =
+\mu^{+}(\varphi)$ (\texttt{plusStateExpectation\_vadd}).  Through the
+monotone-difference decomposition (\texttt{plusStateExpectation\_eq\_upper\_sub\_lower})
+and the fact that translation commutes with the upper/lower parts, the general case
+reduces to the monotone case \texttt{plusStateExpectation\_vadd\_monotone}.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.4 Theorem~3.17 (statement
+p.~95, proof pp.~102--103).
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
