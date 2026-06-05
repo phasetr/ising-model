@@ -1909,6 +1909,21 @@ $\texttt{walksFromCount}\,(\texttt{inducedGraph}\,(\texttt{latticeGraph}\,d)\,\L
 ($\texttt{walksFromCount\_inducedLatticeGraph\_le}$), the $(2d)^{2\ell}$ factor of FV (3.49).
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.3, eq. (3.49), p. 118.
 
+\subsection{Geometric series tail and exponential decay
+(\texttt{GeometricTail.lean})}
+
+\par\noindent\textbf{Role:} The analytic input to the FV (3.49) decay
+$\langle\sigma_0\rangle^+_{B(n)} \le \sum_{\ell\ge n}(4d^2\tanh\beta J)^\ell \le e^{-cn}$.
+For $0 \le q < 1$ the geometric tail is
+\[
+  \sum_{\ell}' q^{n+\ell} \;=\; q^n (1-q)^{-1}
+\]
+($\texttt{tsum\_geometric\_tail}$, via $\texttt{tsum\_mul\_left}$ and
+$\texttt{tsum\_geometric\_of\_lt\_one}$), which tends to $0$ as $n\to\infty$
+($\texttt{tendsto\_geometric\_tail}$).  Writing $q^n = \exp(n\log q)$
+($\texttt{pow\_eq\_exp\_mul\_log}$) exhibits the $e^{-cn}$ form with $c = -\log q > 0$ for
+$0 < q < 1$.  Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.3, eq. (3.49), p. 118.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
