@@ -1390,6 +1390,29 @@ $\texttt{plusBoxLocalExpectation}\,n\,(n+1)$ on $A = \texttt{cubicBox}\,d\,n$
 cubic-exhaustion $+$ state.  Reference: Friedli--Velenik (Cambridge, 2017), \S3.4
 Theorem~3.17 (statement p.~95, proof pp.~102--103).
 
+\subsection{Cubic-radius convergence of the region $+$ expectation
+(\texttt{Concrete/LatticeGraphCorrelation/PlusRegionCubicConvergence.lean})}
+
+The region $+$ expectation $\texttt{plusRegionExpectation}\,(\texttt{cubicBox}\,d\,r)$
+of a monotone observable converges, as the radius $r \to \infty$, to the
+cubic-exhaustion $+$ state $\texttt{plusStateExpectation}$.  This is the
+radius-reindexed form of the monotone-convergence limit
+$\texttt{tendsto\_plusBoxLocalObservable\_infiniteVolume}$.  It is antitone in the
+cubic radius (FV Lemma~3.22, \texttt{plusRegionExpectation\_cubicBox\_antitone}).  The
+convergence is packaged as a \emph{total} sequence
+$\texttt{regionCubicValue}\,r = \texttt{plusRegionExpectation}\,(\texttt{cubicBox}\,d\,(\max N\,r))$
+(the $\max N\,r$ keeps the support hypothesis $O.S \subseteq \texttt{cubicBox}\,d\,(\max
+N\,r)$ available for every $r$; \texttt{regionCubicValue\_eq} gives its value for
+$N \le r$), ready to be composed with the inner/outer radii of a general exhaustion.
+The $N+k$-indexed convergence
+(\texttt{tendsto\_plusRegionExpectation\_cubicBox}) follows from
+\texttt{plusRegionExpectation\_cubicBox\_eq} and the monotone limit; the
+radius-reindexed convergence (\texttt{tendsto\_regionCubicValue}) follows by the
+reindexing $r \mapsto r - N$ (\texttt{tendsto\_sub\_atTop\_nat}), cofinal at infinity,
+with the equal-radius congruence
+\texttt{plusRegionExpectation\_cubicBox\_index\_congr}.  Reference: Friedli--Velenik
+(Cambridge, 2017), \S3.4 Theorem~3.17 (statement p.~95, proof pp.~102--103).
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
