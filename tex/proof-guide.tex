@@ -1489,6 +1489,29 @@ $m^-(\beta,0) = -m^+(\beta,0)$
 Friedli--Velenik (Cambridge, 2017), \S3.6 (the $\pm$ magnetizations and spin-flip
 symmetry).
 
+\subsection{Field monotonicity of the magnetization
+(\texttt{Concrete/LatticeGraphCorrelation/MagnetizationFieldMonotone.lean})}
+
+Increasing the field increases the magnetization (Holley's inequality, FV
+Theorem~3.50).  The unconditioned field monotonicity
+($\texttt{gibbsExpectation\_field\_mono}$) is lifted to the boundary-condition Gibbs
+expectation: the $\eta$-boundary Boltzmann weights are field-cross-supermodular
+($\texttt{boltzmannWeightBC\_field\_cross\_supermodular}$ --- when both configurations
+agree with $\eta$ off $\Lambda$ the boundary-agreement sublattice closure
+$\texttt{agreesOff\_inf}$ / $\texttt{agreesOff\_sup}$ reduces it to
+$\texttt{boltzmannWeight\_field\_cross\_supermodular}$, and otherwise the left side
+vanishes), so Holley gives
+$\langle\varphi\rangle^\eta_h \le \langle\varphi\rangle^\eta_{h'}$ for monotone
+$\varphi$ ($\texttt{gibbsExpectationBC\_field\_mono\_of\_nonneg}$,
+$\texttt{gibbsExpectationBC\_field\_mono}$ via subtracting the finite minimum).
+Passing to the limit, $m^+(\beta,\cdot)$ is nondecreasing in the field
+($\texttt{plusMagnetization\_mono\_h}$, by
+$\texttt{le\_of\_tendsto\_of\_tendsto'}$ on the finite-volume box magnetizations), and
+$m^-(\beta,\cdot)$ likewise through the flip symmetry
+($\texttt{minusMagnetization\_mono\_h}$).  Reference: Friedli--Velenik (Cambridge,
+2017), \S3.6 (magnetization, monotonicity in the field; Holley's inequality,
+Theorem~3.50).
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
