@@ -1690,6 +1690,31 @@ screened box expectations converge to $\mu^+(\sigma_i\sigma_j)$
 $m^{*2} \le \mu^+(\sigma_0\sigma_x)$ towards the high-temperature $m^*=0$.  Reference:
 Friedli--Velenik (Cambridge, 2017), \S3.7.
 
+\subsection{The clustering bound $m^{*2} \le \mu^+(\sigma_0\sigma_x)$
+(\texttt{SpontaneousMagnetizationTwoPoint.lean})}
+
+\par\noindent\textbf{Role:} Bounds the squared $+$-state spontaneous magnetization by
+the infinite-volume $+$ two-point function: $m^*(\beta)^2 \le \mu^+(\sigma_0\sigma_x)$ for
+$x \ne 0$, $0<\beta$, $0\le J$
+($\texttt{plusStateSpontaneousMagnetization\_sq\_le\_plusTwoPoint}$).  This is the
+GKS-II clustering bound taken to the infinite-volume limit, a key step towards the
+high-temperature $m^*=0$.
+
+\textbf{Argument:} The finite-box clustering
+$\langle\sigma_i\rangle^+_{\mathrm{box}}\,\langle\sigma_j\rangle^+_{\mathrm{box}} \le
+\langle\sigma_i\sigma_j\rangle^+_{\mathrm{box}}$ for $i\ne j$
+($\texttt{plusBoxObsExpectation\_two\_point\_clustering}$) follows from the single- and
+two-spin finite-volume bridges plus the boundary-condition GKS-II inequality
+$\texttt{gibbsExpectationBC\_plus\_two\_point\_ge\_product}$.  To pass to the limit, all
+three box sequences are aligned at the common radius $M := \texttt{latticeRadius}\,0 +
+\texttt{latticeRadius}\,x$, with $\texttt{tendsto\_plusMagnetization\_atRadius}$ providing
+the single-spin convergence $\langle\sigma_x\rangle^+_{\mathrm{box}(M)} \to m^+(x)$ at the
+shifted radius (box-independence of the limit, via
+$\texttt{plusStateExpectation\_congr\_N}$).  Then $\texttt{le\_of\_tendsto\_of\_tendsto'}$
+gives $m^+(0)\,m^+(x) \le \mu^+(\sigma_0\sigma_x)$, and site-independence $m^+(x) = m^+(0)
+= m^*$ ($\texttt{plusMagnetization\_vadd}$) turns the left side into $m^{*2}$.  Reference:
+Friedli--Velenik (Cambridge, 2017), \S3.7.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
