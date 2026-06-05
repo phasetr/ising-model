@@ -1581,6 +1581,22 @@ $\mathrm{pin}_\Lambda(t)$).  Mirrors the free-state $\texttt{gks\_second}$ and t
 scaled-state $\texttt{scaledCorrelation\_gks\_second}$.  Reference: Friedli--Velenik
 (Cambridge, 2017), \S3.6, Theorem~3.49 (GKS-II, pp.~127--128).
 
+\subsection{Coupling monotonicity of the $+$ boundary correlation
+(\texttt{Inequalities/MonotonicityJBoundaryCondition.lean})}
+
+$\langle\sigma^B\rangle^+_\Lambda$ is monotone increasing in the uniform coupling $J$
+(boundary analogue of $\texttt{correlation\_monotone\_J}$, Glimm--Jaffe Prop.~4.2.1).
+The $+$-state covariance bound for an HNC factor $f$
+($\texttt{cov\_hnc\_boltzmannBC\_nonneg}$) follows from the Walsh/Fourier expansion of
+$f$ and the boundary GKS-II inequality $\texttt{gibbsExpectationBC\_plus\_gks\_second}$
+(a mirror of $\texttt{cov\_hnc\_boltzmann\_nonneg}$).  The reweighting factor
+$R(\sigma) = \exp(\beta(J_2-J_1)\sum\mathrm{edgeSpin})$ satisfies
+$w^+_{J_2} = R\cdot w^+_{J_1}$ ($\texttt{boltzmannWeightBC\_plus\_reweight}$, via the
+boundary indicator and $\texttt{boltzmannWeightJ\_uniform\_eq}$) and is HNC, giving the
+$J$-reweighting inequality ($\texttt{gibbsExpectationBC\_plus\_reweighting\_nonneg}$)
+and hence the monotonicity ($\texttt{gibbsExpectationBC\_plus\_monotone\_J}$).
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.6; Glimm--Jaffe Prop.~4.2.1.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
