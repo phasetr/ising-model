@@ -1558,6 +1558,29 @@ $\langle\sigma^A\rangle^+_\Lambda \ge 0$
 ($\texttt{gibbsExpectationBC\_plus\_spinProduct\_nonneg}$).  Reference:
 Friedli--Velenik (Cambridge, 2017), \S3.6, Theorem~3.49 (GKS-I, pp.~127--128).
 
+\subsection{GKS-II for the $+$ boundary-condition state
+(\texttt{Inequalities/GKSBoundaryConditionII.lean})}
+
+The second Griffiths inequality for the $+$ boundary state,
+$\langle\sigma^A\rangle^+_\Lambda\,\langle\sigma^B\rangle^+_\Lambda \le
+\langle\sigma^{A\triangle B}\rangle^+_\Lambda$
+($\texttt{gibbsExpectationBC\_plus\_gks\_second}$), by the duplicate-variable argument
+applied to the pinned weight $w^+ = w\cdot\mathrm{pin}$.  The change of variables
+$\omega' = \varphi_t\omega$ ($(\varphi_t\omega)_i = \omega_i\cdot t_i$) \emph{collapses
+the pinning}, $\mathrm{pin}_\Lambda(\omega)\,\mathrm{pin}_\Lambda(\varphi_t\omega) =
+\mathrm{pin}_\Lambda(\omega)\,\mathrm{pin}_\Lambda(t)$
+($\texttt{bcPin\_duplicate\_eq}$, from
+$(\tfrac12+\tfrac12 a)(\tfrac12+\tfrac12 ab) = (\tfrac12+\tfrac12 a)(\tfrac12+\tfrac12
+b)$ since $a^2=1$), so the doubled $+$ weight is
+$w^+(\omega)\,w^+(\varphi_t\omega) =
+\texttt{bcModExp}(t,\omega)\,\mathrm{pin}_\Lambda(\omega)\,\mathrm{pin}_\Lambda(t)$
+($\texttt{boltzmannWeightBC\_plus\_duplicate\_eq}$), which has non-negative
+correlations in $\omega$ ($\texttt{bcModifiedWeight\_nonneg\_corr}$: the exp-product is
+HNC, times the $\mathrm{pin}_\Lambda(\omega)$ product, times the non-negative constant
+$\mathrm{pin}_\Lambda(t)$).  Mirrors the free-state $\texttt{gks\_second}$ and the
+scaled-state $\texttt{scaledCorrelation\_gks\_second}$.  Reference: Friedli--Velenik
+(Cambridge, 2017), \S3.6, Theorem~3.49 (GKS-II, pp.~127--128).
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
