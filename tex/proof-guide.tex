@@ -2048,6 +2048,26 @@ connected refinement
 boundary map $S \mapsto \mathrm{cut}(S)$ tractable for the volume-independent count.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Connected-droplet \texorpdfstring{$+$}{+}-boundary Peierls bound
+  (\texttt{Peierls/ConnectedDropletBound.lean})}
+
+\par\noindent\textbf{Role:} Feeding the connected-droplet indicator through the flip
+involution gives the connected refinement of $\texttt{spontaneous\_magnetization\_plus}$:
+\[
+  \langle \mathbf 1_{\sigma_i=-1}\rangle^{+}_{B} \;\le\;
+  \sum_{\substack{S \ni i,\ S\cap B = \emptyset \\ S\ \mathrm{connected}}}
+    e^{-2\beta J\,|\mathrm{cut}(S)|}
+\]
+($\texttt{spontaneous\_magnetization\_plus\_connected}$).  The witnessing droplet
+$\texttt{downComponent}\,G\,\sigma\,i$ is disjoint from the boundary $B$ because it lies in
+the down-spins, while the $+$-boundary forces $B$ to up-spins.  The per-droplet Peierls
+ratio bound ($\texttt{boltzmannWeight\_flipSet\_ratio}$, with the flip $\texttt{Config.flipSet}\,S$
+preserving the $+$-boundary when $S\cap B=\emptyset$ and injective via
+$\texttt{Config.flipSet\_injective}$) is identical to the unrestricted version; only the index
+filter is narrowed to connected droplets.  This is the bound made volume-independently
+countable by the connected restriction.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, Lemma 3.37, pp. 109--116.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
