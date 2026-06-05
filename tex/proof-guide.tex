@@ -1413,6 +1413,30 @@ with the equal-radius congruence
 \texttt{plusRegionExpectation\_cubicBox\_index\_congr}.  Reference: Friedli--Velenik
 (Cambridge, 2017), \S3.4 Theorem~3.17 (statement p.~95, proof pp.~102--103).
 
+\subsection{Exhaustion independence of the $+$ state (FV Theorem 3.17)
+(\texttt{Concrete/LatticeGraphCorrelation/PlusRegionExhaustion.lean})}
+
+The headline of the exhaustion-independence programme: for \emph{any} exhaustion
+$\Lambda$ of $\mathbb{Z}^d$ ($d \ge 1$) and a monotone local observable $O$, the region
+$+$ expectations $\texttt{plusRegionExpectation}\,(\Lambda.\texttt{volume}\,(N_0+k))$
+converge to the cubic-exhaustion $+$ state $\texttt{plusStateExpectation}$ as
+$k \to \infty$ (\texttt{tendsto\_plusRegionExpectation\_exhaustion}) --- the
+finite-volume $+$ measures $\mu^+_{\Lambda_k}$ converge to the \emph{same}
+infinite-volume $+$ state regardless of the exhaustion.  The proof is a \emph{squeeze}:
+each volume is sandwiched between two cubic boxes
+$\texttt{cubicBox}\,d\,(\texttt{innerRadius}\,k) \subseteq \Lambda.\texttt{volume}\,k
+\subseteq \texttt{cubicBox}\,d\,(\texttt{outerRadius}\,k)$, both radii tending to
+$\infty$ (\texttt{exhaustionInnerRadius\_tendsto},
+\texttt{exhaustionOuterRadius\_tendsto}); region antitonicity (FV Lemma~3.22) turns the
+inclusions into inequalities, and both cubic bounds converge to
+$\texttt{plusStateExpectation}$ (\texttt{tendsto\_regionCubicValue}), closing the
+squeeze by \texttt{tendsto\_of\_tendsto\_of\_tendsto\_of\_le\_of\_le'}.  The strict
+monotonicity of cubic boxes ($\texttt{cubicBox}\,d\,a \subseteq \texttt{cubicBox}\,d\,b
+\iff a \le b$, \texttt{cubicBox\_subset\_iff\_le}, for $d \ge 1$ via a
+$\texttt{Pi.single}$ separating vertex) underlies the outer-radius divergence.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.4 Theorem~3.17 (statement p.~95,
+proof pp.~102--103).
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
