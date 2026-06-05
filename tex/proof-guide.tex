@@ -1778,6 +1778,35 @@ $\texttt{gibbsExpectationBC\_plus\_singleSpin\_h\_zero\_ratio}$).  The denominat
 positive ($\texttt{evenSubgraphSum\_pos}$, from $Z^+_\Lambda > 0$).  Reference:
 Friedli--Velenik (Cambridge, 2017), \S3.7.3, eqs. (3.46)--(3.47), pp. 116--117.
 
+\subsection{The connected-component bound $\langle\sigma_i\rangle^+_\Lambda \le
+\sum_C (\tanh\beta J)^{|C|}$ (\texttt{PlusOnePointConnectedBound.lean})}
+
+\par\noindent\textbf{Role:} Decomposes the $E^{+;0}$ numerator by the connected component
+of the origin and bounds the one-point ratio, giving FV (3.48)
+\[
+  \langle\sigma_i\rangle^+_\Lambda \;\le\; \sum_{C} (\tanh\beta J)^{|C|},
+\]
+the sum over the connected components $C$ of the origin arising from the $E^{+;0}$
+subgraphs (for $i \in \Lambda$, $0 \le \tanh\beta J$).
+
+\textbf{Ingredients:} The component $\texttt{componentOfZero}\,X\,z$ is the union of the
+edge-components ($\texttt{edgeComponent}$, from the cluster-expansion development) of the
+$X$-edges incident to $z$.  It is closed under shared vertices
+($\texttt{componentOfZero\_absorbs\_incident}$), so it shares no vertex with its complement
+$X \setminus \texttt{componentOfZero}\,X\,i$; consequently (FV (3.47),
+$\texttt{sdiff\_componentOfZero\_even\_on}$) the complement is even on $\Lambda$ --- the
+odd parity at $i$ is entirely absorbed by the origin's component, leaving the rest even.
+
+\textbf{Argument:} Fibre the numerator $\sum_{X \in E^{+;0}}(\tanh\beta J)^{|X|}$ over the
+map $X \mapsto \texttt{componentOfZero}\,X\,i$ ($\texttt{Finset.sum\_fiberwise\_of\_maps\_to}$).
+On each fibre $(\tanh\beta J)^{|X|} = (\tanh\beta J)^{|C|}(\tanh\beta J)^{|X \setminus C|}$
+(card additivity over the disjoint union $C \sqcup (X \setminus C)$), and the complement map
+$X \mapsto X \setminus C$ is injective into the even-on-$\Lambda$ subgraphs, so the fibre's
+complement sum is at most the full even sum
+($\texttt{Finset.sum\_le\_sum\_of\_subset\_of\_nonneg}$, using $0 \le \tanh\beta J$) --- the
+ratio-by-1 of FV (3.48).  Dividing by $Z^+_\Lambda$ leaves only the component sum.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.3, eqs. (3.47)--(3.48), pp. 117--118.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
