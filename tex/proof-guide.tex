@@ -1339,6 +1339,17 @@ observable depending only on the inner configuration is ambient-independent
 (\texttt{gibbsExpectationBC\_screening\_of\_neighbors}).  Reference: Friedli--Velenik
 (Cambridge, 2017), \S3.4 Theorem~3.17 (statement p.~95, proof pp.~102--103).
 
+\subsection{Ambient independence of the cubic $+$ local expectation
+(\texttt{Concrete/LatticeGraphCorrelation/PlusStateAmbientCubic.lean})}
+
+A step towards exhaustion independence: the cubic $+$ local expectation
+$\texttt{plusBoxLocalExpectation}\,n\,(n+1)\,O$ is realised on \emph{any} ambient
+$\Omega \supseteq \texttt{cubicBox}\,d\,(n+1)$
+(\texttt{plusBoxLocalExpectation\_eq\_on\_ambient}), by the general ambient
+independence since a $\texttt{cubicBox}\,d\,n$ site's neighbours lie in
+$\texttt{cubicBox}\,d\,(n{+}1)$.  Reference: Friedli--Velenik (Cambridge, 2017), \S3.4
+Theorem~3.17 (statement p.~95, proof pp.~102--103).
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
