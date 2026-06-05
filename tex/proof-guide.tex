@@ -2088,6 +2088,23 @@ contour count to an edge-set count (to be closed by the dual-lattice walk-counti
 $\texttt{card\_connected\_edge\_sets\_inducedLatticeGraph\_le}$).
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Crossing parity of the cut (\texttt{Peierls/CutCrossingParity.lean})}
+
+\par\noindent\textbf{Role:} The Peierls surrounding-contour extraction rests on a discrete
+Jordan/winding-parity fact.  Writing $\texttt{cutCrossings}\,G\,S\,w$ for the number of cut
+edges of $S$ that a walk $w$ traverses (with multiplicity), one has
+\[
+  \mathrm{Even}\bigl(\texttt{cutCrossings}\,G\,S\,w\bigr) \iff (u\in S \leftrightarrow v\in S)
+\]
+($\texttt{even\_cutCrossings\_iff}$, by induction on $w$: each edge flips the parity iff it is a
+cut edge, i.e. iff it changes side).  Consequently a walk from inside $S$ to outside $S$ crosses
+the cut an \emph{odd} number of times ($\texttt{odd\_cutCrossings\_of\_mem\_not\_mem}$), so it
+traverses at least one cut edge ($\texttt{exists\_mem\_edges\_mem\_cutEdges}$) and the cut is
+nonempty whenever $S$ separates two reachable vertices
+($\texttt{cutEdges\_nonempty\_of\_reachable\_not\_mem}$).  A closed walk around the origin thus
+crosses the boundary an odd number of times exactly when the origin is enclosed.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
