@@ -1456,6 +1456,23 @@ $\texttt{minusStateExpectation}$
 (\texttt{tendsto\_minusRegionObsExpectation\_exhaustion}).  Reference: Friedli--Velenik
 (Cambridge, 2017), \S3.4 Theorem~3.17 (statement p.~95, proof pp.~102--103).
 
+\subsection{Infinite-volume magnetization $m^\pm(\beta,h)$
+(\texttt{Concrete/LatticeGraphCorrelation/InfiniteVolumeMagnetization.lean})}
+
+The order parameter of the Ising phase transition is the single-spin expectation
+$m^\pm(\beta,h) = \mu^\pm(\sigma_x)$ in the cubic-exhaustion $\pm$ state.  The single
+spin is a monotone observable ($\texttt{singleSpinMonoObs}\,x$, support $\{x\}$,
+$\varphi = s(\sigma_x)$), so $\texttt{plusMagnetization}$ and
+$\texttt{minusMagnetization}$ inherit from the $\pm$-state machinery: the finite-volume
+$\pm$ box magnetizations converge to $m^\pm$ (\texttt{tendsto\_plusMagnetization},
+\texttt{tendsto\_minusMagnetization}); the bounds $m^\pm \in [-1,1]$
+(\texttt{plusMagnetization\_le\_one}, \texttt{neg\_one\_le\_plusMagnetization}, and the
+$-$ analogues via the flip form) follow from monotonicity and normalisation of the
+state functional; and the extremal ordering $m^- \le m^+$
+(\texttt{minusMagnetization\_le\_plusMagnetization}) is FV Lemma~3.23 / Theorem~3.17.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.4 (Theorem~3.17), \S3.6
+(magnetization, phase transition).
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
