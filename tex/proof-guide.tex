@@ -2006,6 +2006,26 @@ is the exponential decay of $\langle\sigma_0\rangle^+_{B(n)}$ as $n\to\infty$, t
 FV's high-temperature $m^*(\beta)=0$.  Reference: Friedli--Velenik (Cambridge, 2017),
 \S3.7.3, eq. (3.49), p. 118.
 
+\subsection{High-temperature $m^*(\beta)=0$ --- FV \S3.7.3 complete
+(\texttt{HighTempZeroMagnetization.lean})}
+
+\par\noindent\textbf{Role:} The high-temperature half of the phase transition.  For
+$0<d$, $0<\beta$, $0<J$ and $4d^2\tanh\beta J < 1$, the $+$-state spontaneous magnetization
+vanishes,
+\[
+  m^*(\beta) = 0
+\]
+($\texttt{plusStateSpontaneousMagnetization\_eq\_zero\_of\_high\_temp}$).  The screened box
+magnetizations converge to $m^*$ ($\texttt{tendsto\_plusMagnetization}$), and each is
+bounded by $(4d^2\tanh\beta J)^n/(1-4d^2\tanh\beta J) \to 0$
+($\texttt{gibbsExpectationBC\_box\_singleSpin\_le}$ via the bridge
+$\texttt{plusBoxObsExpectation\_singleSpin\_eq}$, and $\texttt{tendsto\_geometric\_tail}$),
+so $m^* \le 0$; with $m^* \ge 0$ this gives $m^*=0$.  This completes the entire FV \S3.7.3
+high-temperature argument: the random-graph representation (3.41)--(3.45), the one-point
+ratio (3.46)--(3.47), the component bound (3.48), and the Eulerian-counting / geometric
+estimate (3.49) with Lemma 3.38.  Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.3,
+pp. 116--118.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
