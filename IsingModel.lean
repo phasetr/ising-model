@@ -78,6 +78,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.SpontaneousMagnetizationTwoPo
 import IsingModel.Conditioning.PlusHighTempRepresentation
 import IsingModel.Conditioning.PlusOnePointRepresentation
 import IsingModel.Conditioning.PlusOnePointConnectedBound
+import IsingModel.Conditioning.EdgeSetDistance
 import IsingModel.Inequalities.HighTemp
 import IsingModel.BetaDerivative
 import IsingModel.FieldDerivative
