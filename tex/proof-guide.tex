@@ -1529,6 +1529,19 @@ magnetization, distinct from the existing GKS-route
 $\texttt{Ambient.spontaneousMagnetization}$.  Reference: Friedli--Velenik (Cambridge,
 2017), \S3.6 (spontaneous magnetization, the order parameter).
 
+\subsection{Sign of the magnetization
+(\texttt{Concrete/LatticeGraphCorrelation/MagnetizationSign.lean})}
+
+The sign of the magnetization follows from field monotonicity and zero-field
+non-negativity.  At zero field $0 \le m^+(\beta,0)$ at every site
+($\texttt{plusMagnetization\_zero\_field\_nonneg}$, the general-site form of the
+spontaneous non-negativity).  Hence for $h \ge 0$ the $+$ magnetization is
+non-negative ($\texttt{plusMagnetization\_nonneg\_of\_field\_nonneg}$, dominating its
+zero-field value), and by the spin-flip symmetry, for $h \le 0$ the $-$ magnetization
+is non-positive ($\texttt{minusMagnetization\_nonpos\_of\_field\_nonpos}$,
+$m^-(\beta,h) = -m^+(\beta,-h)$ with $-h \ge 0$).  Reference: Friedli--Velenik
+(Cambridge, 2017), \S3.6 (magnetization, sign and the order parameter).
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
