@@ -1365,6 +1365,31 @@ for the directed-infimum formulation of the $+$ state: different finite free reg
 are compared by routing each through its own ambient.  Reference: Friedli--Velenik
 (Cambridge, 2017), \S3.4 Theorem~3.17 (statement p.~95, proof pp.~102--103).
 
+\subsection{Region $+$ expectation and its nearest-neighbour closure
+(\texttt{Concrete/LatticeGraphCorrelation/PlusRegionExpectation.lean})}
+
+For a finite region $A \subseteq \mathbb{Z}^d$ we model the FV finite-volume $+$
+measure $\mu^+_A$ --- the Ising measure in $A$ with the configuration \emph{outside}
+$A$ frozen to $+1$ --- as a \texttt{gibbsExpectationBC} on the \emph{nearest-neighbour
+closure} $\texttt{nnClosure}\,d\,A = A \cup \partial A$, with free region $A$ and the
+boundary layer $\partial A$ frozen $+$ (\texttt{plusRegionExpectation}).  The closure
+satisfies $A \subseteq \texttt{nnClosure}\,d\,A$ (\texttt{subset\_nnClosure}), every
+neighbour of an $A$-site lies in it (\texttt{nnClosure\_neighbors\_subset}), it is
+monotone in $A$ (\texttt{nnClosure\_mono}), and
+$\texttt{nnClosure}\,d\,(\texttt{cubicBox}\,d\,n) \subseteq \texttt{cubicBox}\,d\,(n+1)$
+(\texttt{nnClosure\_cubicBox\_subset\_succ}).  The region $+$ expectation is
+ambient-independent: it is realised on \emph{any} ambient
+$\Omega \supseteq \texttt{nnClosure}\,d\,A$
+(\texttt{plusRegionExpectation\_eq\_on\_ambient}, via
+\texttt{gibbsExpectationBC\_screening\_of\_neighbors}); antitone in the region (FV
+Lemma~3.22: growing $A$ pushes the $+$ boundary away and decreases the monotone
+expectation, compared on the common ambient $\texttt{nnClosure}\,d\,A'$,
+\texttt{plusRegionExpectation\_antitone}); and agrees with the cubic
+$\texttt{plusBoxLocalExpectation}\,n\,(n+1)$ on $A = \texttt{cubicBox}\,d\,n$
+(\texttt{plusRegionExpectation\_cubicBox\_eq}), connecting the region functional to the
+cubic-exhaustion $+$ state.  Reference: Friedli--Velenik (Cambridge, 2017), \S3.4
+Theorem~3.17 (statement p.~95, proof pp.~102--103).
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
