@@ -1597,6 +1597,22 @@ $J$-reweighting inequality ($\texttt{gibbsExpectationBC\_plus\_reweighting\_nonn
 and hence the monotonicity ($\texttt{gibbsExpectationBC\_plus\_monotone\_J}$).
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.6; Glimm--Jaffe Prop.~4.2.1.
 
+\subsection{$\beta$-monotonicity of the $+$ boundary single-spin correlation
+(\texttt{Inequalities/MonotonicityBetaBoundaryCondition.lean})}
+
+$\langle\sigma_x\rangle^+_\Lambda$ is monotone increasing in the inverse temperature
+$\beta$.  The rescaling identity $\langle F\rangle^+_{(J,h,\beta)} =
+\langle F\rangle^+_{(\beta J,\beta h,1)}$
+($\texttt{gibbsExpectationBC\_beta\_rescale}$, the inverse temperature factoring into
+the couplings while the boundary indicator is unchanged) reduces $\beta$-monotonicity
+to the $J$-monotonicity ($\texttt{gibbsExpectationBC\_plus\_monotone\_J}$) and the
+$h$-monotonicity ($\texttt{gibbsExpectationBC\_field\_mono}$): increasing $\beta$ from
+$\beta_1$ to $\beta_2$ moves $(\beta_1 J,\beta_1 h)$ to $(\beta_2 J,\beta_2 h)$ with
+both components non-decreasing, giving
+$\texttt{gibbsExpectationBC\_plus\_monotone\_beta\_singleton}$ (the single spin is
+monotone, $\texttt{spinProduct\_singleton\_monotone}$).  Reference: Friedli--Velenik
+(Cambridge, 2017), \S3.6; Glimm--Jaffe Prop.~4.2.1.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
