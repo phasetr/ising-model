@@ -74,6 +74,7 @@ import IsingModel.Inequalities.GKSBoundaryConditionII
 import IsingModel.Inequalities.MonotonicityJBoundaryCondition
 import IsingModel.Inequalities.MonotonicityBetaBoundaryCondition
 import IsingModel.Inequalities.GKSBoundaryConditionTwoPoint
+import IsingModel.Concrete.LatticeGraphCorrelation.SpontaneousMagnetizationTwoPoint
 import IsingModel.Inequalities.HighTemp
 import IsingModel.BetaDerivative
 import IsingModel.FieldDerivative
