@@ -1924,6 +1924,25 @@ $\texttt{tsum\_geometric\_of\_lt\_one}$), which tends to $0$ as $n\to\infty$
 ($\texttt{pow\_eq\_exp\_mul\_log}$) exhibits the $e^{-cn}$ form with $c = -\log q > 0$ for
 $0 < q < 1$.  Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.3, eq. (3.49), p. 118.
 
+\subsection{Geometric domination of a counted sum
+(\texttt{CountGeometricCapstone.lean})}
+
+\par\noindent\textbf{Role:} The analytic capstone of FV (3.49).  For a finite family $S$
+with a size function $g \ge n$ and member-count $\#\{C : g(C)=\ell\} \le M^\ell$,
+\[
+  \sum_{C\in S} q^{g(C)} \;\le\; \frac{(Mq)^n}{1-Mq} \qquad (0 < Mq < 1)
+\]
+($\texttt{sum\_pow\_le\_geometric\_tail\_of\_count}$).  The proof groups $S$ by size
+($\texttt{Finset.sum\_fiberwise\_of\_maps\_to}$), bounds each size class
+$\#\cdot q^\ell \le M^\ell q^\ell = (Mq)^\ell$, factors out $(Mq)^n$ (every size $\ge n$),
+and dominates the reindexed $\sum_\ell (Mq)^{\ell-n}$ by the geometric series
+$\sum_k' (Mq)^k = (1-Mq)^{-1}$ ($\texttt{Summable.sum\_le\_tsum}$).  With $S$ the origin
+components, $g = |\cdot|$, $M = (2d)^2$, $q = \tanh\beta J$, this gives
+$\langle\sigma_0\rangle^+_{B(n)} \le (4d^2\tanh\beta J)^n/(1-4d^2\tanh\beta J) \to 0$,
+reducing the high-temperature $m^*(\beta)=0$ to the counting bound
+$\#\{C : |C|=\ell\} \le (2d)^{2\ell}$ (FV Lemma 3.38).  Reference: Friedli--Velenik
+(Cambridge, 2017), \S3.7.3, eq. (3.49), p. 118.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
