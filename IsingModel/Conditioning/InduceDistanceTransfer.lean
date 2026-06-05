@@ -91,4 +91,3 @@ theorem latticeDistance_le_card_componentOfZero {d : ℕ} {Λ : Finset (Fin d �
     _ ≤ (componentOfZero X z).card := _hdist
 
 end IsingModel
-
