@@ -50,6 +50,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.PlusStateTranslationInvarianc
 import IsingModel.Concrete.LatticeGraphCorrelation.PlusStateTranslationCapstone
 import IsingModel.Concrete.LatticeGraphCorrelation.PlusStateTranslationFinal
 import IsingModel.Concrete.LatticeGraphCorrelation.PlusStateTranslationHeadline
+import IsingModel.Concrete.LatticeGraphCorrelation.PlusStateTranslationGeneral
 import IsingModel.Inequalities.HighTemp
 import IsingModel.BetaDerivative
 import IsingModel.FieldDerivative
