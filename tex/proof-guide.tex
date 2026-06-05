@@ -1473,6 +1473,22 @@ state functional; and the extremal ordering $m^- \le m^+$
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.4 (Theorem~3.17), \S3.6
 (magnetization, phase transition).
 
+\subsection{Spin-flip symmetry of the magnetization
+(\texttt{Concrete/LatticeGraphCorrelation/MagnetizationFlipSymmetry.lean})}
+
+The global spin-flip $\sigma \mapsto \sigma.\texttt{flip}$ (with $h \mapsto -h$)
+exchanges the $\pm$ states and negates the single spin
+($\texttt{singleSpinMonoObs\_phi\_flip}$, from $\texttt{Spin.sign\_flip}$), giving the
+magnetization symmetry $m^-(\beta,h) = -m^+(\beta,-h)$
+(\texttt{minusMagnetization\_eq\_neg\_plusMagnetization\_neg\_h} and its reverse) via
+the $-$-state-as-flipped-$+$-state definition together with
+\texttt{plusStateExpectation\_congr\_phi} and
+\texttt{plusStateExpectation\_const\_mul}.  At zero field this gives the antisymmetry
+$m^-(\beta,0) = -m^+(\beta,0)$
+(\texttt{minusMagnetization\_zero\_eq\_neg\_plusMagnetization\_zero}).  Reference:
+Friedli--Velenik (Cambridge, 2017), \S3.6 (the $\pm$ magnetizations and spin-flip
+symmetry).
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
