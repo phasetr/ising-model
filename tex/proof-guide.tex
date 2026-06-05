@@ -1437,6 +1437,25 @@ $\texttt{Pi.single}$ separating vertex) underlies the outer-radius divergence.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.4 Theorem~3.17 (statement p.~95,
 proof pp.~102--103).
 
+\subsection{Exhaustion independence for general observables and the $-$ state
+(\texttt{Concrete/LatticeGraphCorrelation/PlusRegionObsExhaustion.lean})}
+
+The monotone-observable headline extends to \emph{all} local observables and to the
+$-$ state, completing FV Theorem~3.17 ($d \ge 1$).  The region $+$ expectation of a
+general observable is the difference of those of its upper/lower monotone parts
+($\texttt{plusRegionObsExpectation} = \texttt{plusRegionExpectation}\,O.\texttt{upper}
+- \texttt{plusRegionExpectation}\,O.\texttt{lower}$,
+\texttt{plusRegionObsExpectation\_eq\_sub}), so for any exhaustion $\Lambda$ it
+converges to $\texttt{plusStateExpectation}$
+(\texttt{tendsto\_plusRegionObsExpectation\_exhaustion}, the difference of the two
+monotone headlines via \texttt{plusStateExpectation\_eq\_upper\_sub\_lower}).  The
+$-$ state is the $(-h, \texttt{flipObs})$ specialisation: the global spin-flip bridge
+gives $\texttt{minusStateExpectation} = \texttt{plusStateExpectation}$ at
+$(-h, \texttt{flipObs})$, so $\texttt{minusRegionObsExpectation}$ converges to
+$\texttt{minusStateExpectation}$
+(\texttt{tendsto\_minusRegionObsExpectation\_exhaustion}).  Reference: Friedli--Velenik
+(Cambridge, 2017), \S3.4 Theorem~3.17 (statement p.~95, proof pp.~102--103).
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
