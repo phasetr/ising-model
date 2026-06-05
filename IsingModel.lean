@@ -85,6 +85,7 @@ import IsingModel.Conditioning.CubicBoxComponentSize
 import IsingModel.Conditioning.WalkCountDegreeBound
 import IsingModel.Conditioning.GeometricTail
 import IsingModel.Conditioning.CountGeometricCapstone
+import IsingModel.Conditioning.EdgeWalkExistence
 import IsingModel.Inequalities.HighTemp
 import IsingModel.BetaDerivative
 import IsingModel.FieldDerivative
