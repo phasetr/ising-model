@@ -1613,6 +1613,24 @@ $\texttt{gibbsExpectationBC\_plus\_monotone\_beta\_singleton}$ (the single spin 
 monotone, $\texttt{spinProduct\_singleton\_monotone}$).  Reference: Friedli--Velenik
 (Cambridge, 2017), \S3.6; Glimm--Jaffe Prop.~4.2.1.
 
+\subsection{$\beta$-monotonicity of the infinite-volume magnetization
+(\texttt{Concrete/LatticeGraphCorrelation/MagnetizationBetaMonotone.lean})}
+
+The order parameter grows with the inverse temperature: $m^+(\beta,h)$ and $m^*(\beta)$
+are monotone increasing in $\beta$.  The finite-volume single-spin box expectation
+equals a $+$ boundary spin correlation $\langle\sigma_{\langle x\rangle}\rangle$ on the
+cubic ambient ($\texttt{plusBoxObsExpectation\_singleSpin\_eq}$, via
+$\texttt{Spin.sign} = \texttt{spinProduct}\,\{x\}$ and $\texttt{restrictConfig}$), so it
+inherits the boundary $\beta$-monotonicity
+($\texttt{plusBoxObsExpectation\_singleSpin\_mono\_beta}$).  Passing to the limit,
+$m^+(\beta,h)$ is nondecreasing in $\beta$
+($\texttt{plusMagnetization\_mono\_beta}$, for $J,h\ge 0$ and $0<\beta_1\le\beta_2$, by
+$\texttt{le\_of\_tendsto\_of\_tendsto'}$), and hence so is the spontaneous magnetization
+$m^*(\beta)$ ($\texttt{plusStateSpontaneousMagnetization\_mono\_beta}$).  This completes
+the $\beta$/$J$-monotonicity programme (Issue~\#3605: boundary GKS-I/II $\to$ $J$- $\to$
+$\beta$-monotonicity $\to$ $m^+$/$m^*$).  Reference: Friedli--Velenik (Cambridge, 2017),
+\S3.6; Glimm--Jaffe Prop.~4.2.1.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
