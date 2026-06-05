@@ -1512,6 +1512,23 @@ $m^-(\beta,\cdot)$ likewise through the flip symmetry
 2017), \S3.6 (magnetization, monotonicity in the field; Holley's inequality,
 Theorem~3.50).
 
+\subsection{Spontaneous magnetization $m^*(\beta)$
+(\texttt{Concrete/LatticeGraphCorrelation/SpontaneousMagnetization.lean})}
+
+The order parameter of the Ising phase transition is the zero-field $+$ magnetization
+at the origin, $m^*(\beta) = m^+(\beta,0)$
+($\texttt{plusStateSpontaneousMagnetization}$).  Its key property is non-negativity
+$0 \le m^*(\beta)$ ($\texttt{plusStateSpontaneousMagnetization\_nonneg}$): the
+zero-field antisymmetry $m^-(\beta,0) = -m^+(\beta,0)$ and the extremal ordering
+$m^- \le m^+$ give $-m^+(\beta,0) \le m^+(\beta,0)$, hence $0 \le m^+(\beta,0)$.  It is
+bounded above by $1$ ($\texttt{plusStateSpontaneousMagnetization\_le\_one}$), and the
+$-$ order parameter is its negative
+($\texttt{minusStateSpontaneousMagnetization\_eq\_neg}$,
+$-m^*(\beta) \le 0 \le m^*(\beta)$).  This is the $+$-state-route spontaneous
+magnetization, distinct from the existing GKS-route
+$\texttt{Ambient.spontaneousMagnetization}$.  Reference: Friedli--Velenik (Cambridge,
+2017), \S3.6 (spontaneous magnetization, the order parameter).
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
