@@ -1943,6 +1943,28 @@ reducing the high-temperature $m^*(\beta)=0$ to the counting bound
 $\#\{C : |C|=\ell\} \le (2d)^{2\ell}$ (FV Lemma 3.38).  Reference: Friedli--Velenik
 (Cambridge, 2017), \S3.7.3, eq. (3.49), p. 118.
 
+\subsection{FV Lemma 3.38: closed walk crossing each edge twice
+(\texttt{EdgeWalkExistence.lean})}
+
+\par\noindent\textbf{Role:} The Eulerian-type construction underlying the counting
+injection.  A connected edge set $X$ (non-diagonal edges) admits a closed walk from any
+incident vertex $z$ with $w.\texttt{edges.toFinset} = X$ and $w.\texttt{length} = 2|X|$
+($\texttt{exists\_closed\_walk\_of\_edgeConnected}$).
+
+\textbf{Argument:} Grow a connected prefix $P$ from a single $z$-edge, one incident edge at
+a time.  The connectivity frontier ($\texttt{exists\_boundary\_edge}$: across any proper
+nonempty $P \subsetneq X$, edge-connectedness yields an edge of $X \setminus P$ incident to
+$P$ --- proved by walking the $\texttt{ReflTransGen}$ chain and locating where it leaves
+$P$) supplies the next edge $e$, sharing a vertex $v$ with $P$.  Since $v$ lies on a
+$P$-edge it is in the current walk's support
+($\texttt{Walk.mem\_support\_of\_mem\_edges}$); splice the detour $v \to w \to v$ (the new
+edge $e = s(v,w)$ traversed twice) at the first visit to $v$, using
+$\texttt{Walk.takeUntil}$, $\texttt{dropUntil}$ and $\texttt{take\_spec}$.  The edge set
+gains exactly $\{e\}$ and the length gains exactly $2$, and
+$\texttt{isEdgeConnected\_insert}$ keeps the prefix connected, so the induction (on
+$|X \setminus P|$) closes.  Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.3,
+Lemma 3.38, p. 117.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
