@@ -1715,6 +1715,40 @@ gives $m^+(0)\,m^+(x) \le \mu^+(\sigma_0\sigma_x)$, and site-independence $m^+(x
 = m^*$ ($\texttt{plusMagnetization\_vadd}$) turns the left side into $m^{*2}$.  Reference:
 Friedli--Velenik (Cambridge, 2017), \S3.7.
 
+\subsection{The $+$-boundary high-temperature representation of $Z^+_\Lambda$
+(\texttt{PlusHighTempRepresentation.lean})}
+
+\par\noindent\textbf{Role:} Establishes the boundary-condition analogue of the
+free-state high-temperature (random-graph) representation, towards the high-temperature
+vanishing $m^*(\beta) = 0$.  The headline is FV (3.45) for the $+$ state:
+\[
+  Z^+_\Lambda \;=\; 2^{|\Lambda|}\,(\cosh\beta J)^{|E|}
+    \sum_{\substack{X \subseteq E \\ I(v,X)\ \mathrm{even}\ \forall v \in \Lambda}}
+      (\tanh\beta J)^{|X|}
+\]
+($\texttt{partitionFunctionBC\_plus\_h\_zero\_closed}$), the sum running over subgraphs
+$X$ with even degree at every \emph{interior} vertex $v \in \Lambda$.
+
+\textbf{Ingredients:} The per-configuration product form
+$e^{-\beta H} = (\cosh\beta J)^{|E|}\prod_e(1 + \tanh(\beta J)\sigma_i\sigma_j)$ (FV (3.42),
+$\texttt{boltzmannWeight\_h\_zero\_prod}$) and the observation that the $+$-boundary weight
+is the agreement-indicator of the ordinary Boltzmann weight
+($\texttt{boltzmannWeightBC\_plus\_eq\_indicator}$).  The new ingredient relative to the
+free state is the \textbf{pinned-boundary parity collapse} (FV (3.44)):
+\[
+  \sum_{\sigma\,:\,\mathrm{agreesOff}\,\Lambda\,(+)}
+    \prod_{v} (\sigma_v)^{k_v}
+  \;=\; \begin{cases} 2^{|\Lambda|} & \text{if } k_v \text{ even } \forall v \in \Lambda,\\
+    0 & \text{otherwise,}\end{cases}
+\]
+($\texttt{sum\_indicator\_agreesOff\_plus\_prod\_pow}$).  Since the $+$ state sums only over
+configurations agreeing with the all-$+$ boundary off $\Lambda$, the per-vertex parity
+argument runs over the interior vertices only (the exterior factors are pinned to $+1$ and
+contribute $1$).  The proof writes the boundary restriction as a per-vertex pinning factor,
+applies the full configuration-space Fubini ($\texttt{Fintype.prod\_sum}$), and evaluates
+the single-spin sums.  Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.3,
+eqs. (3.41)--(3.45), pp. 116--117.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
