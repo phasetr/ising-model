@@ -1749,6 +1749,35 @@ applies the full configuration-space Fubini ($\texttt{Fintype.prod\_sum}$), and 
 the single-spin sums.  Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.3,
 eqs. (3.41)--(3.45), pp. 116--117.
 
+\subsection{The $+$-boundary one-point function ratio
+(\texttt{PlusOnePointRepresentation.lean})}
+
+\par\noindent\textbf{Role:} The high-temperature representation of the $+$-boundary
+spin-product expectation $\langle\sigma_A\rangle^+_\Lambda$ (FV (3.46)).  The numerator
+carries an extra spin-product factor $\sigma^A = \prod_{i\in A}\sigma_i$, which is folded
+into the edge-product vertex powers,
+$\sigma^A\,\prod_{e\in X}\sigma_i\sigma_j = \prod_v (\sigma_v)^{[v\in A] + \deg_X(v)}$
+($\texttt{spinProduct\_mul\_prod\_edgeSpin\_eq\_prod\_pow}$), so the same pinned-boundary
+parity collapse applies with the \emph{$A$-shifted} exponent.  The numerator
+representation ($\texttt{numeratorBC\_plus\_spinProduct\_h\_zero\_closed}$) is
+\[
+  \sum_\sigma \sigma^A\,w^+_\Lambda(\sigma)
+  \;=\; 2^{|\Lambda|}(\cosh\beta J)^{|E|}
+    \sum_{\substack{X \subseteq E \\ [v\in A]+\deg_X(v)\ \mathrm{even}\ \forall v\in\Lambda}}
+      (\tanh\beta J)^{|X|},
+\]
+the parity being even off $A$ and odd on $A\cap\Lambda$ (the set $E^{+;0}$ of FV (3.46) for
+a singleton).  Dividing by $Z^+_\Lambda$, the common prefactor cancels, giving the ratio
+\[
+  \langle\sigma_A\rangle^+_\Lambda
+  \;=\; \frac{\sum_{X\,:\,A\text{-shifted even}} (\tanh\beta J)^{|X|}}
+             {\sum_{X\,:\,\mathrm{even}} (\tanh\beta J)^{|X|}}
+\]
+($\texttt{gibbsExpectationBC\_plus\_spinProduct\_h\_zero\_ratio}$; singleton form
+$\texttt{gibbsExpectationBC\_plus\_singleSpin\_h\_zero\_ratio}$).  The denominator is
+positive ($\texttt{evenSubgraphSum\_pos}$, from $Z^+_\Lambda > 0$).  Reference:
+Friedli--Velenik (Cambridge, 2017), \S3.7.3, eqs. (3.46)--(3.47), pp. 116--117.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
