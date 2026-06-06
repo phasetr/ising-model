@@ -2592,6 +2592,21 @@ $\texttt{isCoboundedUnder\_ge\_of\_eventually\_le}$.  The abstract step taking t
 bound to the infinite-volume liminf.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{The infinite-volume Peierls magnetization bound (\texttt{Peierls/PeierlsLiminf.lean})}
+
+\par\noindent\textbf{Role:} Under per-stage neighbour-closure, dual-support, and \emph{single-orbit}
+($\texttt{hone}$) hypotheses for the boxes $\Lambda.\texttt{volume}\,n$ of an exhaustion, the genuine
+$+$-state magnetization $\texttt{plusGibbsExpectationLiminf}(\sigma_i)$ satisfies $1 -
+\mu^+(\sigma_i) \le 2\cdot 32 q / (1 - 32 q)$ ($\texttt{peierls\_plusGibbsLiminf\_le}$).  Each stage
+gives $1 - \mu^+_n(\sigma_i) = 2\mu^+_n(\downarrow) \le 64 q/(1-32q)$ ($\texttt{peierls\_plusGibbs\_le}$
+and $\texttt{plusGibbsExpectation\_sign\_eq}$) and $\mu^+_n(\sigma_i) \le 1$; $\texttt{one\_sub\_%
+liminf\_le}$ pushes this to the liminf.  This \emph{replaces the volume-dependent count of}
+$\texttt{prop\_5\_4\_2\_plusGibbsExpectationLiminf\_bound}$ \emph{with the volume-independent contour
+count}.  As $\beta \to \infty$ the bound vanishes, so $\mu^+(\sigma_i) \to 1$ --- the spontaneous
+magnetization is positive, $m^*(\beta) > 0$, the Peierls phase transition.  The single-orbit
+(discrete Jordan) input enters only through the per-stage $\texttt{hone}$.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, (3.49), pp. 109--116.
+
 \subsection*{Counting by anchor cover (\texttt{Peierls/ContourCountCover.lean})}
 
 \par\noindent\textbf{Role:} The combinatorial core of the contour count.  If every element of a
