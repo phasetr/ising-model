@@ -2248,6 +2248,19 @@ $|\texttt{dartDualCut}\,F| = |\texttt{BoundaryDart}\,F|$ ($\texttt{dartDualCut\_
 $r$ fed into the volume-independent contour count.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{The dual-cut support box and its subtype lift (\texttt{Peierls/DualSupport.lean})}
+
+\par\noindent\textbf{Role:} The contour count $\texttt{card\_connected\_edge\_sets\_inducedLattice%
+Graph\_le}$ lives over a finite \emph{subtype} $\uparrow\!\Lambda$, so the ambient dual cut is
+restricted to the finite support box $\texttt{dualSupport}\,F$ collecting every dart's tail and head
+($\texttt{tail\_mem\_dualSupport}$, $\texttt{head\_mem\_dualSupport}$).  The lifted cut
+$\texttt{dualCutSub}\,F \subseteq \mathrm{Sym}_2\,\uparrow\!(\texttt{dualSupport}\,F)$ lies in the
+induced lattice graph's edge finset ($\texttt{dualCutSub\_subset\_edgeFinset}$, via
+$\texttt{SimpleGraph.induce\_adj}$ and $\texttt{BoundaryDart.tail\_adj\_head}$), and the lift is
+injective (factoring through $\mathrm{Sym}_2.\texttt{map}\,\texttt{Subtype.val}$), so
+$|\texttt{dualCutSub}\,F| = |\texttt{BoundaryDart}\,F|$ ($\texttt{dualCutSub\_card}$).
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{The cut determines the region (\texttt{Peierls/CutDeterminesRegion.lean})}
 
 \par\noindent\textbf{Role:} In a preconnected graph, a vertex set $F$ avoiding a fixed ground
