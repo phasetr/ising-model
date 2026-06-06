@@ -2158,6 +2158,24 @@ connected-droplet injectivity (only $g\notin F$ and preconnectedness, no connect
 and is the key to counting filled-region contours.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Directed coordinate edges and the 2D dual correspondence
+  (\texttt{Peierls/GridEdge2.lean})}
+
+\par\noindent\textbf{Role:} The 2D Peierls contour $\mathrm{cut}(F)$ is connected not in the
+primal graph but in the \emph{dual} lattice (edges sharing a unit square / face), which is again
+$\texttt{latticeGraph}\,2$ on the faces.  To avoid the $\mathrm{Sym}_2$ quotient in the geometry,
+a lattice edge is represented by a directed coordinate edge $\texttt{GridEdge2}$ (a $\texttt{base}$
+and an $\texttt{axis}$, standing for the edge $\texttt{base}\to\texttt{base}+e_{\texttt{axis}}$,
+with $\texttt{unitVec2}\,k := \texttt{Pi.single}\,k\,1$).  Each undirected lattice edge has a
+unique such representative: $\texttt{toSym2}$ lands in $(\texttt{latticeGraph}\,2).\mathrm{edgeSet}$
+($\texttt{toSym2\_isLatticeEdge}$, via $\texttt{latticeGraph\_adj\_add\_unitVec2}$) and is injective
+($\texttt{toSym2\_injective}$, since two unit vectors never sum to zero).  The \emph{dual edge}
+$\texttt{GridEdge2.dual}$ joins the two unit squares the primal edge separates, running along the
+perpendicular axis ($\texttt{dual\_axis}$) and again a lattice edge
+($\texttt{dual\_toSym2\_isLatticeEdge}$).  This is the entry point for transporting the primal cut
+to a connected dual edge set, where the existing walk-counting applies.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).

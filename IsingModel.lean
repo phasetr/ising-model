@@ -103,6 +103,7 @@ import IsingModel.Peierls.CutCrossingParity
 import IsingModel.Peierls.FilledRegion
 import IsingModel.Peierls.FilledRegionIdempotent
 import IsingModel.Peierls.CutDeterminesRegion
+import IsingModel.Peierls.GridEdge2
 import IsingModel.PeierlsInfinite
 import IsingModel.TranslationInvariance
 import IsingModel.Concrete.IntLattice
