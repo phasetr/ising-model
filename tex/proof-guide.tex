@@ -2272,6 +2272,18 @@ highest-priority valid turn, and $\texttt{nextDart\_tail}$ shows it starts at th
 the traversal advances continuously — the basis for closing the contour into a cycle.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Finiteness of boundary darts (\texttt{Peierls/DartFinite.lean})}
+
+\par\noindent\textbf{Role:} For a fixed finite region $F$ there are only finitely many boundary
+darts.  The left site is the tail plus a direction-dependent offset, $\texttt{leftSite}\,t\,\delta
+= t + \texttt{leftSite}\,0\,\delta$ ($\texttt{leftSite\_eq}$), so it determines the tail
+($\texttt{leftSite\_tail\_injective}$).  Hence $\texttt{BoundaryDart}\,F$ injects into
+$\uparrow\!F \times \texttt{Dir2}$ and is a $\texttt{Fintype}$
+($\texttt{instFintypeBoundaryDart}$).  Finiteness forces the $\texttt{nextDart}$ traversal to be
+eventually periodic, closing the dart orbit into a cycle — the basis for the contour's
+connectedness.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
