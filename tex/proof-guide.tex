@@ -2189,6 +2189,20 @@ $\mathrm{Sym}_2$ lattice edges) thus transports faithfully to a set of $\texttt{
 dualized for the contour count.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{The dual edge map (\texttt{Peierls/DualCut.lean})}
+
+\par\noindent\textbf{Role:} A finset $B$ of $\texttt{latticeGraph}\,2$ edges (the primal cut,
+lifted to the ambient lattice) is transported to its dual.  The dual map is injective
+($\texttt{GridEdge2.dual\_injective}$, using that $\texttt{otherAxis}$ is an involution), and with
+the partial inverse $\texttt{toGrid}$ of $\texttt{toSym2}$ on lattice edges
+($\texttt{toGrid\_toSym2}$) one sets $\texttt{dualEdge}\,e := (\texttt{toGrid}\,e).\texttt{dual}.
+\texttt{toSym2}$, injective on lattice edges ($\texttt{dualEdge\_injOn}$) and again a lattice edge
+($\texttt{dualEdge\_mem\_edgeSet}$).  Hence $\texttt{dualEdges}\,B := B.\mathrm{image}\,
+\texttt{dualEdge}$ preserves cardinality, $|\texttt{dualEdges}\,B| = |B| = r$
+($\texttt{dualEdges\_card}$): the dual cut has the same size $r$ as the primal cut, and its
+face-lattice connectivity (deferred) then bounds the contour count.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
