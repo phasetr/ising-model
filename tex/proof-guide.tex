@@ -2197,6 +2197,18 @@ discrete Jordan single-curve theorem $\texttt{boundaryDart\_single\_orbit\_of\_c
 together with the connectivity of $F$ it forces the boundary darts into a single orbit.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{The same-orbit equivalence (\texttt{Peierls/SameOrbit.lean})}
+
+\par\noindent\textbf{Role:} Two boundary darts are in the same orbit when one is reached from the
+other by iterating $\texttt{nextDart}$: $\texttt{SameOrbit}\,d\,e := \exists n,\ \texttt{nextDart}^{[n]}
+\,d = e$.  Since $\texttt{nextDart}$ is a bijection of the finite dart type (every dart periodic),
+this is an equivalence relation: reflexive ($n=0$), transitive (iterate-add), and symmetric (via
+$\texttt{nextDart\_periodic}$, $\texttt{iterate\_mul}$ and $\texttt{iterate\_fixed}$).  With the
+left/right site accessors $\texttt{BoundaryDart.left}/\texttt{right}$ this is the scaffolding for the
+discrete Jordan single-curve theorem, which will place all darts of a connected, filled region in
+one orbit.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{The cut determines the region (\texttt{Peierls/CutDeterminesRegion.lean})}
 
 \par\noindent\textbf{Role:} In a preconnected graph, a vertex set $F$ avoiding a fixed ground
