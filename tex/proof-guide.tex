@@ -2390,6 +2390,18 @@ injective}$), which $\texttt{eq\_of\_cutEdges\_eq}$ (the winding-parity argument
 regions.  This is the final link of the contour injectivity chain.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Contour injectivity: a droplet is determined by its dual cut
+  (\texttt{Peierls/ContourInjective.lean})}
+
+\par\noindent\textbf{Role:} Assembling the three links --- $\texttt{dualCutInBox}\,{=}\Rightarrow
+\texttt{dartPrimalCut}\,{=}$, the box bridge $\texttt{dartPrimalCut}\,{=}\,\texttt{liftBoxCut}$
+under neighbour-closure, and $\texttt{liftBoxCut}$ injectivity --- a neighbour-closed
+($\texttt{NeighbourClosed}$), ground-avoiding box droplet in a preconnected box graph is uniquely
+determined by its common-box dual cut ($\texttt{box\_droplet\_eq\_of\_dualCutInBox\_eq}$, via
+$\texttt{box\_droplet\_eq\_of\_dartPrimalCut\_eq}$).  This is the injectivity input of the contour
+count capstone $\texttt{card\_droplets\_le\_of\_cut\_connected}$.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{The cut determines the region (\texttt{Peierls/CutDeterminesRegion.lean})}
 
 \par\noindent\textbf{Role:} In a preconnected graph, a vertex set $F$ avoiding a fixed ground
