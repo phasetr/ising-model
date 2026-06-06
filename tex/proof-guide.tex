@@ -2489,6 +2489,17 @@ droplet $F \ni i$ has an anchor $\texttt{ray0}\,i\,k$ on its common-box dual cut
 pinning each droplet to one of the $r$ fixed ray anchors $z_0, \dots, z_{r-1}$.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{The ray anchor set (\texttt{Peierls/RayAnchorSet.lean})}
+
+\par\noindent\textbf{Role:} The fixed set $\texttt{rayAnchorSet}\,\Lambda_d\,i\,r$ of dual-box
+vertices equal to $\texttt{ray0}\,i\,k$ for some $k < r$.  It has at most $r$ elements
+($\texttt{rayAnchorSet\_card\_le}$, its image under $\texttt{Subtype.val}$ lies in
+$(\texttt{range}\,r).\texttt{image}\,(\texttt{ray0}\,i)$), and every box droplet $F \ni i$ with
+$|\texttt{dualCutInBox}| = r$ has an anchor in it ($\texttt{rayAnchorSet\_cover}$, from
+$\texttt{exists\_ray\_anchor\_lt\_card}$).  This supplies the anchor set $Z$, the cover, and
+$|Z| \le r$ of $\texttt{contour\_count\_le}$, yielding $r \cdot 16^r$.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Counting by anchor cover (\texttt{Peierls/ContourCountCover.lean})}
 
 \par\noindent\textbf{Role:} The combinatorial core of the contour count.  If every element of a

@@ -130,6 +130,7 @@ import IsingModel.Peierls.RayAnchorDart
 import IsingModel.Peierls.RayAnchorBox
 import IsingModel.Peierls.RayExitBound
 import IsingModel.Peierls.RayAnchorBound
+import IsingModel.Peierls.RayAnchorSet
 import IsingModel.Peierls.ContourCountCover
 import IsingModel.Peierls.ContourCountAssembly
 import IsingModel.Peierls.CutDeterminesRegion
