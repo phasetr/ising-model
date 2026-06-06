@@ -2407,6 +2407,24 @@ $\texttt{dir.vec} \neq 0$ ($\texttt{right\_nextDart\_ne\_right\_of\_straight}$).
 complement-side rotation needed for the ``vary in-site'' contact step.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Right-fan prefix rotation and completeness
+  (\texttt{Peierls/SingleOrbitRightFanPrefix.lean})}
+
+\par\noindent\textbf{Role:} Dual to \texttt{SingleOrbitFanPrefix}/\texttt{SingleOrbitFanComplete}.  A
+\emph{right-fan prefix} of length $n$ at $d$ is a run of $n$ consecutive $\texttt{nextDart}$ steps
+each taking the right turn ($\texttt{BoundaryDart.RightFanPrefix}$, with the structure lemmas
+$\texttt{rightFanPrefix\_zero}$/$\texttt{\_of\_le}$/$\texttt{\_succ}$).  Each step keeps the right site
+fixed, so the prefix rotates the dart around it: $\texttt{right\_eq\_iterate\_of\_rightFanPrefix}$
+(right site unchanged), $\texttt{dir\_eq\_iterate\_of\_rightFanPrefix}$
+($(\texttt{nextDart}^{[n]} d).\texttt{dir} = \texttt{turnRight}^{[n]} d.\texttt{dir}$ via
+$\texttt{dir\_nextDart\_of\_turnRight}$), and $\texttt{left\_eq\_iterate\_of\_rightFanPrefix}$ (the
+resulting left site $d.\texttt{right} + (\texttt{turnLeft}\,(\texttt{turnRight}^{[n]}
+d.\texttt{dir})).\texttt{vec}$).  The rotation pins the endpoint
+($\texttt{eq\_iterate\_of\_rightFanPrefix\_of\_dir\_eq}$,
+$\texttt{sameOrbit\_of\_rightFanPrefix\_dir\_eq}$).  This is the complement-side counterpart of the
+left-fan rotation, needed for the ``vary in-site'' contact step.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Cardinality of the dual cut (\texttt{Peierls/DartDualCutCard.lean})}
 
 \par\noindent\textbf{Role:} The dual-edge map $d \mapsto s(d.\texttt{tail}, d.\texttt{head})$ is
