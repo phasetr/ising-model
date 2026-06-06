@@ -2453,6 +2453,17 @@ $k+1$ darts are distinct (different tail $x$-coordinate), so $k+1 \le |\texttt{B
 z_r$, making the contour count \emph{volume-independent}.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Counting by anchor cover (\texttt{Peierls/ContourCountCover.lean})}
+
+\par\noindent\textbf{Role:} The combinatorial core of the contour count.  If every element of a
+finite family $D$ satisfies $P\,a\,z$ for \emph{some} anchor $z \in Z$, and each anchor class
+$\{a \in D \mid P\,a\,z\}$ has at most $M$ elements, then $|D| \le |Z| \cdot M$
+($\texttt{card\_le\_of\_anchor\_cover}$, via $\texttt{Finset.biUnion}$ cover, $\texttt{card\_%
+biUnion\_le}$, and the constant sum).  With the $r$ ray anchors $z_0, \dots, z_{r-1}$ (first-exit
+bound $k < r$) and per-anchor count $M = 16^r$, this gives the volume-independent contour bound
+$r \cdot 16^r \le 32^r$.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{The cut determines the region (\texttt{Peierls/CutDeterminesRegion.lean})}
 
 \par\noindent\textbf{Role:} In a preconnected graph, a vertex set $F$ avoiding a fixed ground
