@@ -2255,6 +2255,23 @@ give same-orbit darts ($\texttt{sameOrbit\_of\_left\_right\_eq}$, the reflexive 
 target $\texttt{sameOrbit\_of\_left\_right\_reachable}$).
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Site evolution under \texttt{nextDart}
+  (\texttt{Peierls/SingleOrbitSlide.lean})}
+
+\par\noindent\textbf{Role:} The concrete geometric increments the planned boundary slide relies on:
+how a boundary dart's two sites $(d.\texttt{left}, d.\texttt{right})$ change under one
+$\texttt{nextDart}$ step, case by case on the turn taken.  A left turn keeps the left site fixed
+($\texttt{left\_nextDart\_of\_turnLeft}$, pivot about the left), with the right site moving to the
+head's straight left site ($\texttt{right\_nextDart\_of\_turnLeft}$).  Dually a right turn keeps the
+right site fixed ($\texttt{right\_nextDart\_of\_turnRight}$, pivot about the right), with the left
+site at the head's straight right site ($\texttt{left\_nextDart\_of\_turnRight}$).  A straight step
+puts both sites at the head ($\texttt{left/right\_nextDart\_of\_straight}$).  The capstone
+$\texttt{nextDart\_site\_step}$ records the complete site-increment trichotomy: one step keeps the
+left site fixed, keeps the right site fixed, or advances both to the head.  Each identity is a
+direct consequence of the four site identities of \texttt{NextDart.lean} together with
+$\texttt{nextDart\_eq\_\{turnLeft,straight,turnRight\}}$.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Cardinality of the dual cut (\texttt{Peierls/DartDualCutCard.lean})}
 
 \par\noindent\textbf{Role:} The dual-edge map $d \mapsto s(d.\texttt{tail}, d.\texttt{head})$ is
