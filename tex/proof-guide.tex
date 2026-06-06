@@ -2235,6 +2235,25 @@ available, the whole dual cut is a single edge-connected contour, the form consu
 volume-independent count.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Boundary darts have faithful site coordinates
+  (\texttt{Peierls/SingleOrbitBase.lean})}
+
+\par\noindent\textbf{Role:} The base case of the boundary-slide argument toward the single-orbit
+(discrete Jordan single-curve) property.  The slide tracks a boundary dart by its two sites
+$(d.\texttt{left}, d.\texttt{right})$, so the argument is well defined only if these coordinates are
+faithful.  $\texttt{BoundaryDart.left\_sub\_right}$ records the geometry
+$d.\texttt{left} - d.\texttt{right} = (\texttt{turnLeft}\,d.\texttt{dir}).\texttt{vec}$ (the right
+site is one step back along the left normal).  Hence equal sites force equal directions
+($\texttt{dir\_eq\_of\_left\_right}$, since the left normal is determined by $\texttt{left} -
+\texttt{right}$ and $\texttt{turnLeft}$, $\texttt{vec}$ are injective) and then equal tails (via
+$\texttt{leftSite\_injective\_tail}$), giving $\texttt{ext\_of\_left\_right}$: a dart is determined by
+its two sites.  Equivalently the site-pair embedding $d \mapsto (d.\texttt{left}, d.\texttt{right})$
+is injective ($\texttt{siteMap\_injective}$).  The two sites are distinct
+($\texttt{left\_ne\_right}$, as $\texttt{left} \in F$ and $\texttt{right} \notin F$), and equal sites
+give same-orbit darts ($\texttt{sameOrbit\_of\_left\_right\_eq}$, the reflexive base case of the
+target $\texttt{sameOrbit\_of\_left\_right\_reachable}$).
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Cardinality of the dual cut (\texttt{Peierls/DartDualCutCard.lean})}
 
 \par\noindent\textbf{Role:} The dual-edge map $d \mapsto s(d.\texttt{tail}, d.\texttt{head})$ is
