@@ -2524,6 +2524,17 @@ geometric tail estimate $\texttt{sum\_pow\_le\_geometric\_tail\_of\_count}$, the
 contour count to the low-temperature sum $\sum_r 32^r e^{-2\beta J r} \to 0$.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, (3.49), pp. 109--116.
 
+\subsection*{The Peierls low-temperature droplet sum (\texttt{Peierls/PeierlsSum.lean})}
+
+\par\noindent\textbf{Role:} Feeding the $32^\ell$ contour count
+($\texttt{peierls\_contour\_count\_pow}$) into the geometric tail estimate
+$\texttt{sum\_pow\_le\_geometric\_tail\_of\_count}$, the droplet sum $\sum_S e^{-2\beta J\,
+|\mathrm{cut}\,S|}$ is at most $(32 q)^n / (1 - 32 q)$ with $q = e^{-2\beta J}$, whenever $32 q < 1$
+(low temperature) and $n$ lower-bounds the cut sizes ($e^{-2\beta J r} = (e^{-2\beta J})^r$ via
+$\texttt{Real.exp\_nat\_mul}$, $\texttt{peierls\_sum\_le}$).  As $\beta \to \infty$ this tail
+vanishes ($n \ge 1$), giving $m^*(\beta) > 0$.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, (3.49), pp. 109--116.
+
 \subsection*{Counting by anchor cover (\texttt{Peierls/ContourCountCover.lean})}
 
 \par\noindent\textbf{Role:} The combinatorial core of the contour count.  If every element of a
