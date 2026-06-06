@@ -2143,6 +2143,20 @@ $\texttt{IsFilled}\,G\,g\,F := (\texttt{filledRegion}\,G\,F\,g = F)$ every filli
 ($\texttt{ground\_not\_mem\_of\_isFilled}$).
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{The filled region is connected (\texttt{Peierls/FilledRegionConnected.lean})}
+
+\par\noindent\textbf{Role:} Filling the holes of a connected droplet keeps it connected.  A walk
+from outside $S$ to inside $S$ has a first crossing edge $a\to b$ ($a\notin S$, $b\in S$), with $a$
+reached while staying outside $S$ ($\texttt{exists\_first\_entry}$).  A vertex reached from $x\in F$
+avoiding $S$ is again in $F$ — it lies in $x$'s hole, never the outside, else $x$ itself would be
+outside ($\texttt{mem\_filled\_of\_reachableWithin\_compl}$), so such walks stay in $F$
+($\texttt{reachableWithin\_filled\_of\_reachableWithin\_compl}$).  Hence in a preconnected graph
+the filled region of a nonempty connected droplet (with $g\notin S$) is a connected droplet
+($\texttt{isConnectedDroplet\_filledRegion}$): every hole vertex reaches $S$ through its first-entry
+edge, and $S$ is connected.  This is the hypothesis needed to count the filled boundary as a single
+edge-connected contour.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{The cut determines the region (\texttt{Peierls/CutDeterminesRegion.lean})}
 
 \par\noindent\textbf{Role:} In a preconnected graph, a vertex set $F$ avoiding a fixed ground
