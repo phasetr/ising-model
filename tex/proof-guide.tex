@@ -2300,6 +2300,18 @@ inputs (injectivity, connectivity, anchor) isolated as hypotheses; the single-an
 over $r+1$ ray anchors downstream.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, (3.49), pp. 109--116.
 
+\subsection*{The dual edge determines the primal cut edge (\texttt{Peierls/DualToPrimal.lean})}
+
+\par\noindent\textbf{Role:} A boundary dart crosses one primal cut edge $\texttt{primalCutEdge}
+\,t\,\delta = s(\texttt{leftSite}, \texttt{rightSite})$.  This primal edge depends only on the
+dart's \emph{dual} edge $s(t, t+\delta.\texttt{vec})$, independent of orientation: the reverse dart
+swaps the left and right sites ($\texttt{rightSite\_reverse}$ complements $\texttt{leftSite\_%
+reverse}$), but the unordered primal edge is unchanged ($\texttt{Sym2.eq\_swap}$).  Hence equal dual
+edges give equal primal cut edges ($\texttt{primalCutEdge\_congr\_of\_dualEdge\_eq}$) --- the
+well-definedness bridge from dual-cut equality to primal-cut equality used in the contour
+injectivity (with $\texttt{isFilled\_eq\_of\_cutEdges\_eq}$).
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{The cut determines the region (\texttt{Peierls/CutDeterminesRegion.lean})}
 
 \par\noindent\textbf{Role:} In a preconnected graph, a vertex set $F$ avoiding a fixed ground
