@@ -2284,6 +2284,18 @@ eventually periodic, closing the dart orbit into a cycle — the basis for the c
 connectedness.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{The reverse local step (\texttt{Peierls/DartStepReverse.lean})}
+
+\par\noindent\textbf{Role:} The traversal is locally reversible.  Since the left-turn left site
+equals the incoming left site (in $F$), the left turn is valid iff its right site lies outside $F$
+($\texttt{validAt\_turnLeft\_iff}$); dually the right turn is valid iff its left site lies in $F$
+($\texttt{validAt\_turnRight\_iff}$).  Hence if neither the right turn nor going straight is valid,
+the \emph{left} turn must be ($\texttt{left\_valid\_of\_not\_right\_not\_straight}$) — the mirror of
+$\texttt{right\_valid\_of\_not\_left\_not\_straight}$, via the same four site identities.  Together
+they show every continuation at the head is governed by the priority rule, the basis for the orbit
+being a cycle.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
