@@ -2231,6 +2231,19 @@ number of $F$-membership changes (= cut sides) is even
 ($\texttt{square\_split\_count\_eq}$, the dart-pairing form).
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Directions and 90° rotation (\texttt{Peierls/Dir2.lean})}
+
+\par\noindent\textbf{Role:} The boundary-dart traversal walks the dual contour, turning $90^\circ$
+at each step ("keep the wall on the left").  With $\texttt{rot90}\,v := (-v_1, v_0)$, a direction
+$\texttt{Dir2} := \mathrm{Fin}\,4$ ranges over the four axis directions $\pm e_0, \pm e_1$, with
+$\texttt{turnLeft}\,d := d+1$ and $\texttt{turnRight}\,d := d+3$.  These satisfy the turn algebra
+($\texttt{turnLeft\_turnRight}$, $\texttt{turnRight\_turnLeft}$, $\texttt{turnLeft\_four}$, and
+injectivity), and act on vectors by rotation: $(\texttt{turnLeft}\,d).\texttt{vec} = \texttt{rot90}
+\,d.\texttt{vec}$ ($\texttt{vec\_turnLeft}$), with two left turns negating
+($\texttt{vec\_turnLeft\_turnLeft}$).  This is the direction algebra underlying the boundary-dart
+rule.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
