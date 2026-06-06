@@ -2375,6 +2375,22 @@ $F$-component of left sites -- the $F$-side necessary condition for the single-o
 a \emph{single} orbit additionally needs the complementary planar input via contact-pair chains.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Contact pairs as a type
+  (\texttt{Peierls/SingleOrbitContactPair.lean})}
+
+\par\noindent\textbf{Role:} The dart $\leftrightarrow$ contact-pair correspondence of
+\texttt{SingleOrbitContact} packaged as a type.  $\texttt{ContactPair}\,F$ is the type of ordered
+adjacent pairs $(\texttt{inSite} \in F, \texttt{outSite} \notin F)$.  $\texttt{ContactPair.toDart}$
+(via $\texttt{exists\_boundaryDart\_of\_contact}$) realises a contact pair as a boundary dart with the
+prescribed sites ($\texttt{toDart\_left}$, $\texttt{toDart\_right}$), and
+$\texttt{BoundaryDart.toContactPair}$ takes a dart to its contact pair.  The round trips
+$\texttt{toContactPair\_toDart}$ and $\texttt{toDart\_toContactPair}$ make the correspondence a
+bijection (a dart is determined by its sites, $\texttt{ext\_of\_left\_right}$).  Working with contact
+pairs -- rather than right sites -- is the route to the complement side of the single-orbit property:
+the elementary contact steps that vary only the in- or out-site avoid the left-turn gap that breaks
+the naive orbit-step complement invariant.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Cardinality of the dual cut (\texttt{Peierls/DartDualCutCard.lean})}
 
 \par\noindent\textbf{Role:} The dual-edge map $d \mapsto s(d.\texttt{tail}, d.\texttt{head})$ is

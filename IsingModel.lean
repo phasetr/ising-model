@@ -123,6 +123,7 @@ import IsingModel.Peierls.DartPrimalCutCard
 import IsingModel.Peierls.SingleOrbitBase
 import IsingModel.Peierls.SingleOrbitSlide
 import IsingModel.Peierls.SingleOrbitContact
+import IsingModel.Peierls.SingleOrbitContactPair
 import IsingModel.Peierls.SingleOrbitFan
 import IsingModel.Peierls.SingleOrbitFanPrefix
 import IsingModel.Peierls.SingleOrbitFanComplete
