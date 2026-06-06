@@ -119,6 +119,7 @@ import IsingModel.Peierls.DartBijective
 import IsingModel.Peierls.DartOrbit
 import IsingModel.Peierls.DartOrbitWalk
 import IsingModel.Peierls.ClosedWalkCount
+import IsingModel.Peierls.LowTempTail
 import IsingModel.PeierlsInfinite
 import IsingModel.TranslationInvariance
 import IsingModel.Concrete.IntLattice

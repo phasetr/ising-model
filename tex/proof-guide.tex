@@ -2372,6 +2372,17 @@ engine for the Peierls contour bound: a dart orbit of length $k$ is a closed wal
 contours of a given length near a fixed vertex is geometric in the length.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{The low-temperature Peierls tail vanishes (\texttt{Peierls/LowTempTail.lean})}
+
+\par\noindent\textbf{Role:} The contour bound gives $\mu^{+}(\sigma_0 = -1) \le \sum_{r\ge 1} C^r
+e^{-2\beta J r} = q/(1-q)$ with $q(\beta) = C\,e^{-2\beta J}$.  As $\beta\to\infty$ (with $J>0$)
+the rate vanishes, $C\,e^{-2\beta J}\to 0$ ($\texttt{lowTempRate\_tendsto\_zero}$), hence
+$q/(1-q)\to 0$ ($\texttt{peierls\_low\_temp\_tail\_tendsto\_zero}$).  This is the analytic input to
+the low-temperature spontaneous magnetisation $m^*(\beta)>0$: the opposite-spin probability is
+squeezed to $0$.  (The high-temperature counterpart took the $n\to\infty$ box limit; here the limit
+is $\beta\to\infty$.)
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
