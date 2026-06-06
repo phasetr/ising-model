@@ -128,6 +128,7 @@ import IsingModel.Peierls.RayAnchorDart
 import IsingModel.Peierls.RayAnchorBox
 import IsingModel.Peierls.RayExitBound
 import IsingModel.Peierls.ContourCountCover
+import IsingModel.Peierls.ContourCountAssembly
 import IsingModel.Peierls.CutDeterminesRegion
 import IsingModel.Peierls.GridEdge2
 import IsingModel.Peierls.GridEdge2Cut
