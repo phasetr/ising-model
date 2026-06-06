@@ -2370,6 +2370,18 @@ reverse orientation puts $F$ on both sides.  Therefore $|\texttt{dartPrimalCut}\
 count share the common size $r$, matching $|\texttt{dualCutInBox}|$ to $|\mathrm{cut}\,(G,S)|$.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{The dual-cut size equals the box cut size
+  (\texttt{Peierls/DualCutCardBridge.lean})}
+
+\par\noindent\textbf{Role:} For a neighbour-closed box droplet $S$, $|\texttt{dualCutInBox}| =
+|\mathrm{cut}\,(G,S)|$ ($\texttt{dualCutInBox\_card\_eq\_cutEdges}$), by chaining
+$|\texttt{dualCutInBox}| = |\texttt{BoundaryDart}| = |\texttt{dartPrimalCut}| = |\texttt{liftBoxCut}|
+= |\mathrm{cut}\,(G,S)|$ (via $\texttt{dualCutInBox\_card}$, $\texttt{dartPrimalCut\_card}$, the box
+bridge $\texttt{dartPrimalCut\_image\_val\_eq\_liftBoxCut}$, and $\texttt{liftBoxCut\_card}$).  So
+the dual-cut size $r$ fed into the contour count coincides with the Peierls bound's
+$|\mathrm{cut}\,(G,S)|$.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Membership in the lifted box cut (\texttt{Peierls/LiftBoxCutChar.lean})}
 
 \par\noindent\textbf{Role:} An ambient edge lies in $\texttt{liftBoxCut}\,\Lambda\,F$ iff it is the
