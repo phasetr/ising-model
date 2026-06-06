@@ -116,6 +116,7 @@ import IsingModel.Peierls.DartStepReverse
 import IsingModel.Peierls.PrevDart
 import IsingModel.Peierls.DartBijection
 import IsingModel.Peierls.DartBijective
+import IsingModel.Peierls.DartOrbit
 import IsingModel.PeierlsInfinite
 import IsingModel.TranslationInvariance
 import IsingModel.Concrete.IntLattice

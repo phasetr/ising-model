@@ -2336,6 +2336,18 @@ every dart lies on a closed orbit, the combinatorial discrete Jordan curve givin
 cycle, the basis for the volume-independent contour count.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{The dart orbit is a dual-lattice cycle (\texttt{Peierls/DartOrbit.lean})}
+
+\par\noindent\textbf{Role:} Each traversal step moves along a unit dual edge.  A step in any
+direction is a lattice adjacency ($\texttt{latticeGraph\_adj\_dirVec}$: $t$ and $t+\delta.
+\texttt{vec}$ are adjacent in $\texttt{latticeGraph}\,2$), so a dart's tail and head are adjacent
+($\texttt{BoundaryDart.tail\_adj\_head}$).  Since $\texttt{nextDart}$ is a bijection of the finite
+dart type, every dart returns to itself under iteration ($\texttt{nextDart\_periodic}$, by
+pigeonhole and injectivity of the iterate).  The orbit is thus a closed walk in
+$\texttt{latticeGraph}\,2$, which the degree-based walk count bounds — the route to the
+volume-independent contour count.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
