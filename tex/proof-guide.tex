@@ -2442,6 +2442,22 @@ once $\texttt{ReflTransGen ContactStep}$ holds for a connected filled region, al
 share one orbit.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Contact moves: fans plus the slide
+  (\texttt{Peierls/SingleOrbitContactMove.lean})}
+
+\par\noindent\textbf{Role:} The two fan contact steps do not suffice to connect the contact graph (a
+``domino'' region has fan moves only along its sides); the missing move is the \emph{slide} --
+advancing one boundary step ($\texttt{nextDart}$), which translates the contact pair.  A
+$\texttt{ContactMove}$ is a $\texttt{ContactStep}$ or $c' = c.\texttt{toDart.nextDart.toContactPair}$
+(constructors $\texttt{ContactMove.of\_contactStep}$/$\texttt{of\_nextDart}$).  Crucially every
+$\texttt{nextDart}$ step is itself a contact move ($\texttt{ContactMove.of\_nextDart}$), so following
+the boundary is a contact-move chain.  Each move sends the realizing darts into one orbit
+($\texttt{sameOrbit\_of\_contactMove}$, the slide case via $\texttt{sameOrbit\_nextDart}$), so any
+chain does ($\texttt{sameOrbit\_of\_contactMove\_chain}$,
+$\texttt{sameOrbit\_of\_dart\_contactMove\_chain}$).  Together with the remaining planar connectivity
+of the contact graph this gives the single-orbit property.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Cardinality of the dual cut (\texttt{Peierls/DartDualCutCard.lean})}
 
 \par\noindent\textbf{Role:} The dual-edge map $d \mapsto s(d.\texttt{tail}, d.\texttt{head})$ is
