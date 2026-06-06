@@ -2324,6 +2324,18 @@ inverse of $\texttt{nextDart}$, hence — by finiteness — $\texttt{nextDart}$ 
 orbits are cycles.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{\texttt{nextDart} is a bijection (\texttt{Peierls/DartBijective.lean})}
+
+\par\noindent\textbf{Role:} Every dart $e$ is the $\texttt{nextDart}$ of its predecessor
+($\texttt{nextDart\_surjective}$): constructing the predecessor by the reverse priority (the three
+cases of $\texttt{validAt\_prev\_candidates\_iff}$), the forward step — via the
+$\texttt{nextDart\_eq\_*}$ reductions, $\texttt{rightSite\_turnLeft}$ and $e$'s own validity —
+returns exactly $e$.  A surjective endofunction of the finite type $\texttt{BoundaryDart}\,F$ is
+bijective ($\texttt{nextDart\_bijective}$), so $\texttt{nextDart}$ is a permutation of the darts:
+every dart lies on a closed orbit, the combinatorial discrete Jordan curve giving the contour
+cycle, the basis for the volume-independent contour count.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
