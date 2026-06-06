@@ -107,6 +107,7 @@ import IsingModel.Peierls.GridEdge2
 import IsingModel.Peierls.GridEdge2Cut
 import IsingModel.Peierls.DualCut
 import IsingModel.Peierls.LiftBoxCut
+import IsingModel.Peierls.ContourEven
 import IsingModel.PeierlsInfinite
 import IsingModel.TranslationInvariance
 import IsingModel.Concrete.IntLattice
