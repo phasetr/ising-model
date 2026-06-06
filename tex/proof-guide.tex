@@ -2203,6 +2203,20 @@ the partial inverse $\texttt{toGrid}$ of $\texttt{toSym2}$ on lattice edges
 face-lattice connectivity (deferred) then bounds the contour count.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Lifting the box cut to the ambient lattice (\texttt{Peierls/LiftBoxCut.lean})}
+
+\par\noindent\textbf{Role:} The Peierls cut $\texttt{cutEdges}\,(\texttt{inducedGraph}\,
+(\texttt{latticeGraph}\,2)\,\Lambda)\,F$ of a region $F$ in the box $\Lambda$ lives in
+$\mathrm{Sym}_2\,\uparrow\!\Lambda$ (the box subtype), while the dual machinery is on the ambient
+$\mathrm{Sym}_2\,(\mathrm{Fin}\,2 \to \mathbb{Z})$.  $\texttt{liftBoxCut}\,\Lambda\,F$ lifts each
+box cut edge to an ambient lattice edge via $\mathrm{Sym}_2.\mathrm{map}\,\mathrm{Subtype.val}$;
+each lifted edge is a lattice edge ($\texttt{liftBoxCut\_subset\_lattice}$) and the lift preserves
+cardinality ($\texttt{liftBoxCut\_card}$, the inclusion being injective), so
+$|\texttt{dualEdges}\,(\texttt{liftBoxCut}\,\Lambda\,F)| = |\texttt{cutEdges}\,F| = r$
+($\texttt{dualEdges\_liftBoxCut\_card}$).  This resolves the box-subtype/ambient-lattice
+impedance mismatch for the dual contour.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
