@@ -2550,6 +2550,19 @@ subset of a preconnected graph).  As $\beta \to \infty$ this vanishes --- the fi
 $m^*(\beta) > 0$.  The single-orbit (discrete Jordan) input enters only through $\texttt{hone}$.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, (3.49), pp. 109--116.
 
+\subsection*{The down-spin probability vanishes at low temperature
+  (\texttt{Peierls/PeierlsTendsto.lean})}
+
+\par\noindent\textbf{Role:} The $+$-expectation of a nonnegative observable is $\ge 0$
+($\texttt{plusGibbsExpectation\_nonneg}$, from $(Z^+)^{-1} \ge 0$ and $\texttt{boltzmannWeight} > 0$).
+Hence for a fixed box $\Lambda$ (with the neighbour-closed / dual-support / single-orbit droplet
+hypotheses), $\mu^+_\Lambda(\sigma_i = -1) \to 0$ as $\beta \to \infty$
+($\texttt{peierls\_plusGibbs\_tendsto\_zero}$), by squeezing the finite-volume Peierls bound
+$\texttt{peierls\_plusGibbs\_le}$ between $0$ and the vanishing geometric tail
+$\texttt{peierls\_low\_temp\_tail\_tendsto\_zero}$ (with $C = 32$).  The analytic core of
+$m^*(\beta) > 0$; the single-orbit input enters only through $\texttt{hone}$.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, (3.49), pp. 109--116.
+
 \subsection*{Counting by anchor cover (\texttt{Peierls/ContourCountCover.lean})}
 
 \par\noindent\textbf{Role:} The combinatorial core of the contour count.  If every element of a
