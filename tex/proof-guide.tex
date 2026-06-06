@@ -2346,6 +2346,17 @@ from the offset $b - a$ by inverting the $\texttt{leftSite}$/$\texttt{rightSite}
 cases).  This is the surjective ($\supseteq$) half of the dart--cut bijection.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{The primal cut is the lattice cut (\texttt{Peierls/DartCutChar.lean})}
+
+\par\noindent\textbf{Role:} Combining the two halves of the dart--cut correspondence, an edge lies
+in $\texttt{dartPrimalCut}\,F$ exactly when it joins an $F$-vertex to a non-$F$-vertex
+($\texttt{mem\_dartPrimalCut\_iff}$): the $\subseteq$ direction reads off each dart's
+$\texttt{left\_mem}$/$\texttt{right\_not\_mem}$ (its endpoints are adjacent,
+$\texttt{leftSite\_adj\_rightSite}$, differing by the unit vector $(\texttt{turnLeft}\,
+\texttt{dir}).\texttt{vec}$); the $\supseteq$ direction is $\texttt{exists\_dart\_of\_cut}$.  Thus
+$\texttt{dartPrimalCut}\,F$ \emph{is} the lattice cut of $F$.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{The cut determines the region (\texttt{Peierls/CutDeterminesRegion.lean})}
 
 \par\noindent\textbf{Role:} In a preconnected graph, a vertex set $F$ avoiding a fixed ground
