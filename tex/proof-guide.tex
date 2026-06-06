@@ -2514,6 +2514,16 @@ $\texttt{rayAnchorSet\_card\_le}$ bounds the count.  The single-orbit (discrete 
 only through the $\texttt{hone}$ hypothesis.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, (3.49), pp. 109--116.
 
+\subsection*{The contour count as a power bound (\texttt{Peierls/PeierlsContourCountPow.lean})}
+
+\par\noindent\textbf{Role:} Absorbing the polynomial factor $\ell \le 2^\ell$ into $\ell \cdot
+16^\ell \le 32^\ell$, the number of size-$\ell$ droplets is at most $(32 : \mathbb{R})^\ell$ (given
+$\texttt{hone}$, $\texttt{peierls\_contour\_count\_pow}$).  This is exactly the
+$\texttt{hcount} : \forall \ell,\ \#\{C : g\,C = \ell\} \le M^\ell$ hypothesis (with $M = 32$) of the
+geometric tail estimate $\texttt{sum\_pow\_le\_geometric\_tail\_of\_count}$, the bridge from the
+contour count to the low-temperature sum $\sum_r 32^r e^{-2\beta J r} \to 0$.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, (3.49), pp. 109--116.
+
 \subsection*{Counting by anchor cover (\texttt{Peierls/ContourCountCover.lean})}
 
 \par\noindent\textbf{Role:} The combinatorial core of the contour count.  If every element of a
