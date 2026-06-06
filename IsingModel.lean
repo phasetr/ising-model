@@ -111,6 +111,7 @@ import IsingModel.Peierls.OrbitDualEdges
 import IsingModel.Peierls.DualCutConnected
 import IsingModel.Peierls.DartDualCutCard
 import IsingModel.Peierls.DualSupport
+import IsingModel.Peierls.DualCutSubConnected
 import IsingModel.Peierls.CutDeterminesRegion
 import IsingModel.Peierls.GridEdge2
 import IsingModel.Peierls.GridEdge2Cut
