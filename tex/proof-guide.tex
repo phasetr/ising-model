@@ -2289,6 +2289,17 @@ properties to the common box: edge-finset membership
 ($\texttt{dualCutInBox\_isEdgeConnected\_of\_single\_orbit}$).
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{The contour count capstone (\texttt{Peierls/ContourCount.lean})}
+
+\par\noindent\textbf{Role:} FV (3.49) specialized to the droplet family.  If a family $D$ of
+droplets maps \emph{injectively} to connected size-$r$ edge cuts inside the induced lattice graph
+over a box $\Lambda_d$, each through a fixed anchor vertex $z$, then $\#D \le (2\cdot 2)^{2r}$
+($\texttt{card\_droplets\_le\_of\_cut\_connected}$).  This is the direct consequence of the
+walk-counting bound $\texttt{card\_connected\_edge\_sets\_inducedLatticeGraph\_le}$, the geometric
+inputs (injectivity, connectivity, anchor) isolated as hypotheses; the single-anchor form is summed
+over $r+1$ ray anchors downstream.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, (3.49), pp. 109--116.
+
 \subsection*{The cut determines the region (\texttt{Peierls/CutDeterminesRegion.lean})}
 
 \par\noindent\textbf{Role:} In a preconnected graph, a vertex set $F$ avoiding a fixed ground
