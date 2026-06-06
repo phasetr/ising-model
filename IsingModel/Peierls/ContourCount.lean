@@ -24,8 +24,8 @@ open Finset
 connected size-`r` edge cuts (in the induced lattice graph over `Λd`, each through the anchor `z`)
 has at most `(2·2)^{2r}` members. -/
 theorem card_droplets_le_of_cut_connected {Λd : Finset (Fin 2 → ℤ)} (z : ↑Λd) (r : ℕ)
-    (D : Finset (Finset (Fin 2 → ℤ)))
-    (cut : Finset (Fin 2 → ℤ) → Finset (Sym2 ↑Λd))
+    {α : Type*} (D : Finset α)
+    (cut : α → Finset (Sym2 ↑Λd))
     (hinj : Set.InjOn cut D)
     (hsub : ∀ F ∈ D, cut F ⊆ (Ambient.inducedGraph (latticeGraph 2) Λd).edgeFinset)
     (hconn : ∀ F ∈ D, IsEdgeConnected (cut F))
