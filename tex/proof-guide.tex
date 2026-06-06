@@ -2607,6 +2607,17 @@ magnetization is positive, $m^*(\beta) > 0$, the Peierls phase transition.  The 
 (discrete Jordan) input enters only through the per-stage $\texttt{hone}$.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, (3.49), pp. 109--116.
 
+\subsection*{Positivity of the spontaneous magnetization
+  (\texttt{Peierls/PeierlsMagnetizationPos.lean})}
+
+\par\noindent\textbf{Role:} When the low-temperature tail $2\cdot 32 q / (1 - 32 q) < 1$ (large
+$\beta$), the infinite-volume bound $1 - \mu^+(\sigma_i) \le 2\cdot 32 q / (1 - 32 q)$
+($\texttt{peierls\_plusGibbsLiminf\_le}$) forces $0 < \mu^+(\sigma_i)$
+($\texttt{peierls\_plusGibbsLiminf\_pos}$).  This is the \emph{Peierls phase transition}: spontaneous
+magnetization $m^*(\beta) > 0$ at low temperature ($\beta_c < \infty$), modulo the per-stage
+single-orbit input $\texttt{hone}$.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, (3.49), pp. 109--116.
+
 \subsection*{Counting by anchor cover (\texttt{Peierls/ContourCountCover.lean})}
 
 \par\noindent\textbf{Role:} The combinatorial core of the contour count.  If every element of a
