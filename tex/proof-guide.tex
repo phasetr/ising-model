@@ -2244,6 +2244,20 @@ injectivity), and act on vectors by rotation: $(\texttt{turnLeft}\,d).\texttt{ve
 rule.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Oriented boundary darts (\texttt{Peierls/BoundaryDart.lean})}
+
+\par\noindent\textbf{Role:} A boundary dart sits at a dual vertex $\texttt{tail}$, moves in
+direction $\texttt{dir}$ (to $\texttt{tail}+\texttt{dir.vec}$), keeping $F$ on its \emph{left}.
+The primal lattice points immediately left and right of the motion are $\texttt{leftSite}$ and
+$\texttt{rightSite} = \texttt{leftSite} - (\texttt{turnLeft}\,\texttt{dir}).\texttt{vec}$; the
+dart is \emph{valid} ($\texttt{ValidAt}$) when $\texttt{leftSite}\in F$ and $\texttt{rightSite}
+\notin F$, and a $\texttt{BoundaryDart}\,F$ bundles $\texttt{tail}$, $\texttt{dir}$ with these
+proofs (head $:= \texttt{tail}+\texttt{dir.vec}$).  The two sites are nearest neighbours
+($\texttt{leftSite\_rightSite\_adjacent}$), so the crossed primal edge $\texttt{primalCutEdge}
+:= s(\texttt{leftSite}, \texttt{rightSite})$ is a genuine cut edge for a valid dart
+($\texttt{validAt\_edgeCrosses}$, $\texttt{edgeCrosses}\,F = \texttt{true}$).
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
