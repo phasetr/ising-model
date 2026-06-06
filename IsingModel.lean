@@ -123,6 +123,7 @@ import IsingModel.Peierls.LiftBoxCutChar
 import IsingModel.Peierls.BoxBridge
 import IsingModel.Peierls.LiftBoxCutInjective
 import IsingModel.Peierls.ContourInjective
+import IsingModel.Peierls.RayExit
 import IsingModel.Peierls.CutDeterminesRegion
 import IsingModel.Peierls.GridEdge2
 import IsingModel.Peierls.GridEdge2Cut
