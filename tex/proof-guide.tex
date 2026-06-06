@@ -2381,6 +2381,15 @@ chain $\texttt{dualCutInBox}\,{=}\Rightarrow\texttt{dartPrimalCut}\,{=}\Rightarr
 \,{=}\Rightarrow\mathrm{cut}\,{=}\Rightarrow F\,{=}$.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{The lifted box cut is injective (\texttt{Peierls/LiftBoxCutInjective.lean})}
+
+\par\noindent\textbf{Role:} In a preconnected box graph, $\texttt{liftBoxCut}\,\Lambda$ is injective
+on $\{F \mid g \notin F\}$ ($\texttt{liftBoxCut\_injOn}$): equal lifted cuts give equal box cuts
+($\mathrm{Sym}_2.\texttt{map}\,\texttt{Subtype.val}$ injective via $\texttt{Finset.image\_%
+injective}$), which $\texttt{eq\_of\_cutEdges\_eq}$ (the winding-parity argument) turns into equal
+regions.  This is the final link of the contour injectivity chain.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{The cut determines the region (\texttt{Peierls/CutDeterminesRegion.lean})}
 
 \par\noindent\textbf{Role:} In a preconnected graph, a vertex set $F$ avoiding a fixed ground
