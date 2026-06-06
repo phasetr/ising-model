@@ -2143,6 +2143,21 @@ $\texttt{IsFilled}\,G\,g\,F := (\texttt{filledRegion}\,G\,F\,g = F)$ every filli
 ($\texttt{ground\_not\_mem\_of\_isFilled}$).
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{The cut determines the region (\texttt{Peierls/CutDeterminesRegion.lean})}
+
+\par\noindent\textbf{Role:} In a preconnected graph, a vertex set $F$ avoiding a fixed ground
+vertex $g$ is completely determined by its edge cut.  Reading a walk $w:g\to v$, the winding
+parity gives $v\in F \iff \mathrm{Odd}(\texttt{cutCrossings}\,G\,F\,w)$
+($\texttt{mem\_iff\_odd\_cutCrossings}$, from $\texttt{even\_cutCrossings\_iff}$ with $g\notin
+F$).  The crossing count depends only on $\mathrm{cut}(F)$ ($\texttt{cutCrossings\_congr}$), so if
+$g\notin F_1,F_2$ and $\mathrm{cut}(F_1)=\mathrm{cut}(F_2)$ then every vertex has the same
+membership in both, hence $F_1=F_2$ ($\texttt{eq\_of\_cutEdges\_eq}$).  Thus $\mathrm{cut}$ is
+injective on sets avoiding $g$ ($\texttt{cutEdges\_injOn\_not\_mem\_ground}$), in particular on
+filled regions ($\texttt{isFilled\_eq\_of\_cutEdges\_eq}$).  This is stronger than the
+connected-droplet injectivity (only $g\notin F$ and preconnectedness, no connectedness of $F$),
+and is the key to counting filled-region contours.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
