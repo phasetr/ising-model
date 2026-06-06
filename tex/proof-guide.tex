@@ -2340,6 +2340,26 @@ $\texttt{leftFanPrefix\_succ}$ (extend by one valid left turn).  This is the fan
 completeness feeding $\texttt{sameOrbit\_of\_left\_right\_reachable}$.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Left site stays $F$-reachable across one step
+  (\texttt{Peierls/SingleOrbitReach.lean})}
+
+\par\noindent\textbf{Role:} As $\texttt{nextDart}$ advances, the left site stays inside $F$ and
+reachable within $F$, regardless of the turn taken.  The combined
+$\texttt{reachableWithin\_left\_nextDart}$ gives
+$\texttt{ReachableWithin}\,(\texttt{latticeGraph}\,2)\,F\,d.\texttt{left}\,d.\texttt{nextDart.left}$;
+by induction every dart on the forward orbit has its left site in the single $F$-component of
+$d.\texttt{left}$ -- the $F$-side half of the orbit component invariant feeding
+$\texttt{sameOrbit\_of\_left\_right\_reachable}$.  Per case: a left turn keeps the left site fixed
+(reflexive), a straight step advances it by one $F$-edge, and a right turn moves it by two $F$-edges
+through the head sites.  The right-turn case uses $\texttt{leftSite\_head\_mem\_of\_not\_turnLeft}$
+and $\texttt{rightSite\_head\_mem\_of\_not\_turnLeft\_not\_straight}$ (the head sites are forced into
+$F$, extracted from the validity propagation of
+$\texttt{right\_valid\_of\_not\_left\_not\_straight}$) together with
+$\texttt{adj\_leftSite\_rightSite}$ (the two sites are lattice-adjacent).  The complement-side
+counterpart is \emph{not} uniformly local (a left turn lacks a forced complement bridge) and is
+handled separately via contact-pair chains.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Cardinality of the dual cut (\texttt{Peierls/DartDualCutCard.lean})}
 
 \par\noindent\textbf{Role:} The dual-edge map $d \mapsto s(d.\texttt{tail}, d.\texttt{head})$ is
