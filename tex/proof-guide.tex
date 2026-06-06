@@ -2324,6 +2324,18 @@ chain $\texttt{dartDualCut}\,{=}\Rightarrow\texttt{dartPrimalCut}\,{=}\Rightarro
 \Rightarrow F\,{=}$.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Common-box dual cut determines the primal cut
+  (\texttt{Peierls/DualCutInBoxInjective.lean})}
+
+\par\noindent\textbf{Role:} Mapping the common-box dual cut $\texttt{dualCutInBox}$ back down by
+$\mathrm{Sym}_2.\texttt{map}\,\texttt{Subtype.val}$ recovers $\texttt{dartDualCut}\,F$
+($\texttt{dualCutInBox\_image\_map\_val}$; the two subtype maps compose to the support inclusion's
+coercion via $\mathrm{Sym}_2.\texttt{map\_map}$).  Hence equal common-box dual cuts over the same
+box force equal ambient dual cuts ($\texttt{dartDualCut\_eq\_of\_dualCutInBox\_eq}$), and therefore
+equal primal cuts ($\texttt{dartPrimalCut\_eq\_of\_dualCutInBox\_eq}$) --- the upper half of the
+contour injectivity chain.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{The cut determines the region (\texttt{Peierls/CutDeterminesRegion.lean})}
 
 \par\noindent\textbf{Role:} In a preconnected graph, a vertex set $F$ avoiding a fixed ground
