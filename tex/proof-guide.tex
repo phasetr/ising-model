@@ -2217,6 +2217,20 @@ $|\texttt{dualEdges}\,(\texttt{liftBoxCut}\,\Lambda\,F)| = |\texttt{cutEdges}\,F
 impedance mismatch for the dual contour.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{The Peierls contour is Eulerian (\texttt{Peierls/ContourEven.lean})}
+
+\par\noindent\textbf{Role:} Each unit square (plaquette / dual vertex) of the 2D lattice has an
+\emph{even} number of its four sides in the cut of $F$; in the dual lattice every face has even
+degree in the dual contour.  This Eulerian property makes the boundary darts pair up, the local
+foundation of the contour's connectedness (the discrete Jordan argument).  The proof is the
+elementary parity fact that a cyclic binary sequence changes value an even number of times
+($\texttt{cyclic4\_xor\_even}$): going around the four corners $c, c+e_0, c+e_0+e_1, c+e_1$, the
+number of $F$-membership changes (= cut sides) is even
+($\texttt{square\_split\_count\_even}$), and being at most $4$
+($\texttt{square\_split\_count\_le\_four}$) it equals $0$, $2$, or $4$
+($\texttt{square\_split\_count\_eq}$, the dart-pairing form).
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
