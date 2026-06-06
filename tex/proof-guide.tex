@@ -2296,6 +2296,21 @@ they show every continuation at the head is governed by the priority rule, the b
 being a cycle.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{The predecessor dart (\texttt{Peierls/PrevDart.lean})}
+
+\par\noindent\textbf{Role:} Every dart has a unique predecessor.  Two further site identities
+($\texttt{rightSite\_turnRight\_turnRight}$ and
+$\texttt{rightSite\_turnRight\_eq\_leftSite\_turnLeft\_turnLeft}$) together with
+$\texttt{validAt\_prev\_iff}$ (predecessor validity at $p$ reduces to head-sites at $p$) give
+$\texttt{validAt\_prev\_candidates\_iff}$: each of the three candidate predecessor directions
+($\texttt{turnRight}\,e.\texttt{dir}$, $e.\texttt{dir}$, $\texttt{turnLeft}\,e.\texttt{dir}$, all
+ending at $e.\texttt{tail}$) is valid iff a single membership of the two points to the left of
+$e.\texttt{tail}$ holds, the other site being fixed by $e$'s own validity.  Hence
+$\texttt{BoundaryDart.prevDart}$ is a clean reverse-priority case split, and with
+$\texttt{nextDart}\,(\texttt{prevDart}\,e) = e$ and finiteness, $\texttt{nextDart}$ is a bijection,
+so the dart orbits are pure cycles.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).

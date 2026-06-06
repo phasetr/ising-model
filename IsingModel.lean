@@ -113,6 +113,7 @@ import IsingModel.Peierls.BoundaryDart
 import IsingModel.Peierls.NextDart
 import IsingModel.Peierls.DartFinite
 import IsingModel.Peierls.DartStepReverse
+import IsingModel.Peierls.PrevDart
 import IsingModel.PeierlsInfinite
 import IsingModel.TranslationInvariance
 import IsingModel.Concrete.IntLattice
