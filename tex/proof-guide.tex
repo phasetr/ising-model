@@ -2425,6 +2425,20 @@ $\exists k,\ \exists e \in \texttt{dartDualCut}\,F,\ \texttt{ray0}\,i\,k \in e$)
 anchor (ambient form), pinning the dual contour to the fixed sequence $\texttt{ray0}\,i\,k$.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{The ray anchor in the common box (\texttt{Peierls/RayAnchorBox.lean})}
+
+\par\noindent\textbf{Role:} Lifting the ambient ray anchor to the count-ready common-box dual cut.
+The $+e_0$ exit dart has \emph{head} exactly the exit point $a$
+($\texttt{exists\_e0\_exit\_anchor\_dart\_head}$).  Hence for a finite box droplet $F \ni i$ with
+$\texttt{dualSupport}\,F \subseteq \Lambda_d$, there is $k$ with $\texttt{ray0}\,i\,k \in \Lambda_d$
+and an edge of $\texttt{dualCutInBox}$ containing the subtype anchor vertex $\langle\texttt{ray0}\,
+i\,k, \cdot\rangle$ ($\texttt{exists\_ray\_anchor\_dualCutInBox}$).  The anchor vertex lies in the box
+automatically (it is a dart head, hence in $\texttt{dualSupport}\,F \subseteq \Lambda_d$), equals
+$\texttt{supportIncl}\,(\texttt{dartHeadSub}\,d)$, and sits on the dart's lifted dual edge.  This is
+the count-ready anchor $\exists e \in \mathrm{cut},\ z \in e$ for
+$\texttt{card\_droplets\_le\_of\_cut\_connected}$.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{The cut determines the region (\texttt{Peierls/CutDeterminesRegion.lean})}
 
 \par\noindent\textbf{Role:} In a preconnected graph, a vertex set $F$ avoiding a fixed ground
