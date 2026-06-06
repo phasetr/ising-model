@@ -2464,6 +2464,18 @@ bound $k < r$) and per-anchor count $M = 16^r$, this gives the volume-independen
 $r \cdot 16^r \le 32^r$.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{The contour count assembly (\texttt{Peierls/ContourCountAssembly.lean})}
+
+\par\noindent\textbf{Role:} Combining the per-anchor count
+$\texttt{card\_droplets\_le\_of\_cut\_connected}$ ($\le (2d)^{2r}$ per fixed anchor) with the
+anchor-cover principle $\texttt{card\_le\_of\_anchor\_cover}$ (over the $r$ ray anchors $Z$), a
+droplet family $D$ mapping injectively to connected size-$r$ edge cuts (each through some anchor in
+$Z$) has $|D| \le |Z| \cdot (2\cdot 2)^{2r}$ ($\texttt{contour\_count\_le}$).  The geometric inputs
+(injectivity, connectivity, per-anchor membership, anchor set $Z$) are isolated as hypotheses; the
+single-orbit Jordan input enters only via $\texttt{IsEdgeConnected}\,(\texttt{cut}\,S)$.  With
+$|Z| = r$ this is the volume-independent bound $r \cdot 16^r \le 32^r$.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, (3.49), pp. 109--116.
+
 \subsection*{The cut determines the region (\texttt{Peierls/CutDeterminesRegion.lean})}
 
 \par\noindent\textbf{Role:} In a preconnected graph, a vertex set $F$ avoiding a fixed ground
