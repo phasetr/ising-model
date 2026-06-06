@@ -2425,6 +2425,23 @@ $\texttt{sameOrbit\_of\_rightFanPrefix\_dir\_eq}$).  This is the complement-side
 left-fan rotation, needed for the ``vary in-site'' contact step.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Contact steps and the orbit push-down
+  (\texttt{Peierls/SingleOrbitContactStep.lean})}
+
+\par\noindent\textbf{Role:} $\texttt{ContactStep}\,c\,c'$ is a proof-carrying edge between contact
+pairs, independent of the orbit dynamics: either the in-site is fixed and the realizing darts are
+related by a \textbf{left-fan} prefix, or the out-site is fixed and they are related by a
+\textbf{right-fan} prefix (constructors $\texttt{ContactStep.of\_leftFan}$/$\texttt{of\_rightFan}$).
+By the fan completeness lemmas ($\texttt{sameOrbit\_of\_leftFanPrefix\_dir\_eq}$,
+$\texttt{sameOrbit\_of\_rightFanPrefix\_dir\_eq}$) each step sends the two realizing darts into one
+orbit ($\texttt{sameOrbit\_of\_contactStep}$), so a finite chain does too
+($\texttt{sameOrbit\_of\_contactStep\_chain}$), and at the level of darts
+($\texttt{sameOrbit\_of\_dart\_contactStep\_chain}$, via the round trip).  This is the bridge that
+will push the orbit-free planar connectivity of contact pairs down to the single-orbit property:
+once $\texttt{ReflTransGen ContactStep}$ holds for a connected filled region, all boundary darts
+share one orbit.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Cardinality of the dual cut (\texttt{Peierls/DartDualCutCard.lean})}
 
 \par\noindent\textbf{Role:} The dual-edge map $d \mapsto s(d.\texttt{tail}, d.\texttt{head})$ is
