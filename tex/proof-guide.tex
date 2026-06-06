@@ -2357,6 +2357,16 @@ $\texttt{leftSite\_adj\_rightSite}$, differing by the unit vector $(\texttt{turn
 $\texttt{dartPrimalCut}\,F$ \emph{is} the lattice cut of $F$.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Membership in the lifted box cut (\texttt{Peierls/LiftBoxCutChar.lean})}
+
+\par\noindent\textbf{Role:} An ambient edge lies in $\texttt{liftBoxCut}\,\Lambda\,F$ iff it is the
+subtype lift $s(\uparrow\!a, \uparrow\!b)$ of a box edge with $a \in F$, $b \notin F$
+($\texttt{mem\_liftBoxCut\_iff}$; the $\texttt{edgeCrosses}$ xor selects the orientation via
+$\mathrm{Sym}_2.\texttt{eq\_swap}$, and box adjacency unfolds through
+$\texttt{SimpleGraph.induce\_adj}$).  This oriented form mirrors $\texttt{mem\_dartPrimalCut\_iff}$,
+so the two can be matched in the dart--cut box bridge.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{The cut determines the region (\texttt{Peierls/CutDeterminesRegion.lean})}
 
 \par\noindent\textbf{Role:} In a preconnected graph, a vertex set $F$ avoiding a fixed ground
