@@ -137,6 +137,7 @@ import IsingModel.Peierls.PeierlsContourCount
 import IsingModel.Peierls.PeierlsContourCountPow
 import IsingModel.Peierls.PeierlsSum
 import IsingModel.Peierls.PeierlsPlusGibbs
+import IsingModel.Peierls.PeierlsTendsto
 import IsingModel.Peierls.CutDeterminesRegion
 import IsingModel.Peierls.GridEdge2
 import IsingModel.Peierls.GridEdge2Cut
