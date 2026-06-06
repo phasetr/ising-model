@@ -2289,6 +2289,24 @@ $\texttt{sameOrbit\_nextDart}$, $\texttt{sameOrbit\_iterate}$ record that a dart
 its forward iterates.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Fan boundary detection (\texttt{Peierls/SingleOrbitFan.lean})}
+
+\par\noindent\textbf{Role:} The \emph{fan} around a left site $p \in F$ is the set of boundary darts
+with left site $p$.  A left turn keeps the left site fixed ($\texttt{left\_nextDart\_of\_turnLeft}$),
+so iterating left turns rotates the dart around $p$; this file proves the \emph{boundary} of the fan.
+$\texttt{left\_nextDart\_eq\_left\_iff\_turnLeft}$: a $\texttt{nextDart}$ step keeps the left site
+fixed iff it takes the left turn.  The converse (the new content,
+$\texttt{left\_nextDart\_ne\_left\_of\_not\_turnLeft}$) holds because a straight step shifts the left
+site by $\texttt{dir.vec} \neq 0$ ($\texttt{Dir2.vec\_ne\_zero}$) and a right turn shifts it by
+$\texttt{dir.vec} - (\texttt{turnLeft dir}).\texttt{vec} \neq 0$
+($\texttt{Dir2.vec\_ne\_turnLeft\_vec}$, from $\texttt{vec\_injective}$ and
+$\texttt{turnLeft\_ne\_self}$), using the translation-equivariance
+$\texttt{leftSite\_add}$/$\texttt{rightSite\_add}$ ($\texttt{leftSite}\,(t + v)\,\delta =
+\texttt{leftSite}\,t\,\delta + v$).  $\texttt{dir\_nextDart\_of\_turnLeft}$ records that a left turn
+rotates the direction left.  These are the local building blocks (per a focused design pass) of the
+fan rotation feeding $\texttt{sameOrbit\_of\_left\_right\_reachable}$.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Cardinality of the dual cut (\texttt{Peierls/DartDualCutCard.lean})}
 
 \par\noindent\textbf{Role:} The dual-edge map $d \mapsto s(d.\texttt{tail}, d.\texttt{head})$ is
