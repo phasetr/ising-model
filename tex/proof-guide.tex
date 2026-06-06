@@ -2324,6 +2324,22 @@ $\texttt{sameOrbit\_iterate}$ and $\texttt{sameOrbit\_of\_left\_right\_eq}$).  T
 rotation feeding $\texttt{sameOrbit\_of\_left\_right\_reachable}$.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Left-fan prefix completeness
+  (\texttt{Peierls/SingleOrbitFanComplete.lean})}
+
+\par\noindent\textbf{Role:} The forward left-fan rotation is pinned down by the rotation it
+performs.  $\texttt{eq\_iterate\_of\_leftFanPrefix\_of\_dir\_eq}$: if $e$ sits at the same left site
+as $d$ ($e.\texttt{left} = d.\texttt{left}$) with direction $d.\texttt{dir}$ rotated left $k$ times
+($e.\texttt{dir} = \texttt{turnLeft}^{[k]} d.\texttt{dir}$) and the first $k$ steps from $d$ are all
+left turns ($\texttt{LeftFanPrefix}\,d\,k$), then $\texttt{nextDart}^{[k]} d = e$ exactly -- both
+sites then agree (by $\texttt{left\_eq\_iterate}$ and $\texttt{right\_eq\_iterate}$) and a dart is
+determined by its sites ($\texttt{ext\_of\_left\_right}$).  Hence such $d$ and $e$ lie in one orbit
+($\texttt{sameOrbit\_of\_leftFanPrefix\_dir\_eq}$).  The prefix order is given by
+$\texttt{leftFanPrefix\_zero}$ (vacuous), $\texttt{leftFanPrefix\_of\_le}$ (restriction), and
+$\texttt{leftFanPrefix\_succ}$ (extend by one valid left turn).  This is the fan-rotation
+completeness feeding $\texttt{sameOrbit\_of\_left\_right\_reachable}$.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Cardinality of the dual cut (\texttt{Peierls/DartDualCutCard.lean})}
 
 \par\noindent\textbf{Role:} The dual-edge map $d \mapsto s(d.\texttt{tail}, d.\texttt{head})$ is
