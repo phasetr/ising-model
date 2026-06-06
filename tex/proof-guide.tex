@@ -2274,6 +2274,21 @@ $\texttt{ReflTransGen}$ induction.  Since the lift's image is exactly $\texttt{d
 $\texttt{card\_connected\_edge\_sets\_le}$ consumes.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{The dual cut over a common box (\texttt{Peierls/DualCutInBox.lean})}
+
+\par\noindent\textbf{Role:} The contour count ranges over a \emph{fixed} box $\Lambda_d$, so the
+per-region support box must be promoted into a common box $\Lambda_d \supseteq \texttt{dualSupport}
+\,F$.  Forward edge-connectivity transfers under any injective $\mathrm{Sym}_2.\texttt{map}\,f$
+($\texttt{isEdgeConnected\_image\_map}$): a shared vertex and a reachability chain
+both map forward.  Mapping $\texttt{dualCutSub}\,F$ along the injective inclusion
+$\uparrow\!(\texttt{dualSupport}\,F) \hookrightarrow \uparrow\!\Lambda_d$
+($\texttt{supportIncl}$) gives $\texttt{dualCutInBox}$, which carries the three count-ready
+properties to the common box: edge-finset membership
+($\texttt{dualCutInBox\_subset\_edgeFinset}$), cardinality $|\texttt{BoundaryDart}\,F|$
+($\texttt{dualCutInBox\_card}$), and edge-connectivity given one orbit
+($\texttt{dualCutInBox\_isEdgeConnected\_of\_single\_orbit}$).
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{The cut determines the region (\texttt{Peierls/CutDeterminesRegion.lean})}
 
 \par\noindent\textbf{Role:} In a preconnected graph, a vertex set $F$ avoiding a fixed ground
