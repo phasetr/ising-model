@@ -2176,6 +2176,19 @@ perpendicular axis ($\texttt{dual\_axis}$) and again a lattice edge
 to a connected dual edge set, where the existing walk-counting applies.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Coordinate-edge bijection (\texttt{Peierls/GridEdge2Cut.lean})}
+
+\par\noindent\textbf{Role:} The representation is also surjective onto the lattice edges.  The
+adjacency $\sum_i |x_i - y_i| = 1$ forces the endpoints to differ by a single unit vector
+($\texttt{exists\_axis\_of\_adj}$: $y = x \pm e_k$), so every lattice edge is
+$\texttt{GridEdge2.toSym2}$ of some directed coordinate edge
+($\texttt{exists\_gridEdge2\_toSym2\_eq}$).  With $\texttt{toSym2\_injective}$ this yields the
+bijection $\texttt{gridEdge2Equiv} : \texttt{GridEdge2} \simeq (\texttt{latticeGraph}\,2).
+\mathrm{edgeSet}$ ($\texttt{gridEdge2\_toEdgeSet\_bijective}$).  The primal cut (a set of
+$\mathrm{Sym}_2$ lattice edges) thus transports faithfully to a set of $\texttt{GridEdge2}$, to be
+dualized for the contour count.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).

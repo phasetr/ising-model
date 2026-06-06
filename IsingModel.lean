@@ -104,6 +104,7 @@ import IsingModel.Peierls.FilledRegion
 import IsingModel.Peierls.FilledRegionIdempotent
 import IsingModel.Peierls.CutDeterminesRegion
 import IsingModel.Peierls.GridEdge2
+import IsingModel.Peierls.GridEdge2Cut
 import IsingModel.PeierlsInfinite
 import IsingModel.TranslationInvariance
 import IsingModel.Concrete.IntLattice
