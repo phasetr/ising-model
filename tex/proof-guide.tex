@@ -2402,6 +2402,18 @@ $\texttt{box\_droplet\_eq\_of\_dartPrimalCut\_eq}$).  This is the injectivity in
 count capstone $\texttt{card\_droplets\_le\_of\_cut\_connected}$.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{The axis ray exits a finite region (\texttt{Peierls/RayExit.lean})}
+
+\par\noindent\textbf{Role:} The Peierls anchor walks along the $+e_0$ ray $\texttt{ray0}\,i\,k =
+i + k\,e_0$ ($\texttt{ray0\_succ}$, $\texttt{ray0\_apply\_zero}$, $\texttt{ray0\_injective}$,
+$\texttt{ray0\_adj\_succ}$).  A finite region $F \ni i$ has a \emph{first exit}
+($\texttt{exists\_first\_exit}$): an index $k$ with $\texttt{ray0}\,i\,k \in F$ and
+$\texttt{ray0}\,i\,(k{+}1) \notin F$ (the ray cannot stay in the finite $F$; take $\texttt{Nat.find}$
+of the first non-membership).  The exit edge $\{\texttt{ray0}\,i\,k, \texttt{ray0}\,i\,(k{+}1)\}$ is
+a cut edge, the basis of the anchor pinning the contour to the fixed sequence $z_k =
+\texttt{ray0}\,i\,k$.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{The cut determines the region (\texttt{Peierls/CutDeterminesRegion.lean})}
 
 \par\noindent\textbf{Role:} In a preconnected graph, a vertex set $F$ avoiding a fixed ground
