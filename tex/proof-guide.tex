@@ -2439,6 +2439,20 @@ the count-ready anchor $\exists e \in \mathrm{cut},\ z \in e$ for
 $\texttt{card\_droplets\_le\_of\_cut\_connected}$.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{The ray first-exit distance is bounded by the cut size
+  (\texttt{Peierls/RayExitBound.lean})}
+
+\par\noindent\textbf{Role:} The $+e_0$-ray first-exit distance $k$ satisfies $k <
+|\texttt{dartDualCut}\,F|$, \emph{without} contour connectivity
+($\texttt{firstExit\_lt\_dartDualCut\_card}$).  At the first exit all $\texttt{ray0}\,i\,0, \dots,
+\texttt{ray0}\,i\,k$ lie in $F$ ($\texttt{exists\_first\_exit\_below}$); from each $\texttt{ray0}\,i
+\,t$ a $+e_1$ ray exits $F$ ($\texttt{exists\_first\_exit\_ray1}$), giving a boundary dart
+($\texttt{exists\_e1\_exit\_dart}$, $\texttt{tail} = q$) with tail $x$-coordinate $i_0 + t$.  These
+$k+1$ darts are distinct (different tail $x$-coordinate), so $k+1 \le |\texttt{BoundaryDart}\,F| =
+|\texttt{dartDualCut}\,F|$.  This bounds the Peierls ray anchors to the fixed sequence $z_0, \dots,
+z_r$, making the contour count \emph{volume-independent}.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{The cut determines the region (\texttt{Peierls/CutDeterminesRegion.lean})}
 
 \par\noindent\textbf{Role:} In a preconnected graph, a vertex set $F$ avoiding a fixed ground
