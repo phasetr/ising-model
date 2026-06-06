@@ -2312,6 +2312,18 @@ well-definedness bridge from dual-cut equality to primal-cut equality used in th
 injectivity (with $\texttt{isFilled\_eq\_of\_cutEdges\_eq}$).
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{The dual cut determines the primal cut (\texttt{Peierls/DartPrimalCut.lean})}
+
+\par\noindent\textbf{Role:} The \emph{primal cut} $\texttt{dartPrimalCut}\,F$ collects every
+boundary dart's primal cut edge.  A dual-cut inclusion induces a primal-cut inclusion
+($\texttt{dartPrimalCut\_subset\_of\_dartDualCut\_subset}$): each primal edge's dart has a dual edge
+in the larger dual cut, matched by some dart there, whose primal edge coincides by
+$\texttt{primalCutEdge\_congr\_of\_dualEdge\_eq}$.  Hence equal dual cuts give equal primal cuts
+($\texttt{dartPrimalCut\_eq\_of\_dartDualCut\_eq}$), the middle link of the contour injectivity
+chain $\texttt{dartDualCut}\,{=}\Rightarrow\texttt{dartPrimalCut}\,{=}\Rightarrow\mathrm{cut}\,{=}
+\Rightarrow F\,{=}$.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{The cut determines the region (\texttt{Peierls/CutDeterminesRegion.lean})}
 
 \par\noindent\textbf{Role:} In a preconnected graph, a vertex set $F$ avoiding a fixed ground
