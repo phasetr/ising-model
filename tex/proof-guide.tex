@@ -2360,6 +2360,21 @@ counterpart is \emph{not} uniformly local (a left turn lacks a forced complement
 handled separately via contact-pair chains.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{The orbit's left sites lie in one $F$-component
+  (\texttt{Peierls/SingleOrbitOrbitReach.lean})}
+
+\par\noindent\textbf{Role:} Iterating the per-step $F$-reachability of \texttt{SingleOrbitReach}.
+$\texttt{reachableWithin\_left\_iterate}$ shows the left site of any forward iterate of $d$ is
+reachable within $F$ from $d.\texttt{left}$ (induction plus transitivity), so any dart $e$ in $d$'s
+orbit has $e.\texttt{left}$ reachable within $F$ from $d.\texttt{left}$
+($\texttt{reachableWithin\_left\_of\_sameOrbit}$ and its symmetric form), as does every $e$ in the
+orbit finset ($\texttt{reachableWithin\_left\_of\_mem\_dartOrbit}$).  Contrapositively, two darts
+with left sites in different $F$-components lie in different orbits
+($\texttt{not\_sameOrbit\_of\_not\_reachableWithin\_left}$).  This confines each orbit to one
+$F$-component of left sites -- the $F$-side necessary condition for the single-orbit property; forcing
+a \emph{single} orbit additionally needs the complementary planar input via contact-pair chains.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Cardinality of the dual cut (\texttt{Peierls/DartDualCutCard.lean})}
 
 \par\noindent\textbf{Role:} The dual-edge map $d \mapsto s(d.\texttt{tail}, d.\texttt{head})$ is
