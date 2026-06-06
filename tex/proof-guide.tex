@@ -2209,6 +2209,18 @@ discrete Jordan single-curve theorem, which will place all darts of a connected,
 one orbit.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{A dart orbit's dual edges are edge-connected (\texttt{Peierls/OrbitDualEdges.lean})}
+
+\par\noindent\textbf{Role:} The dual edges $s(e.\texttt{tail}, e.\texttt{head})$ of the darts in
+one $\texttt{nextDart}$-orbit form an edge-connected set.  Consecutive darts $e$, $\texttt{nextDart}
+\,e$ have dual edges sharing the pivot vertex $e.\texttt{head} = (\texttt{nextDart}\,e).
+\texttt{tail}$, so the dual edge of $\texttt{nextDart}^{[k]}\,d$ is edge-adjacency-reachable from the
+anchor $s(d.\texttt{tail}, d.\texttt{head})$ ($\texttt{orbit\_iterate\_dualEdge\_reachable}$), giving
+$\texttt{orbitDualEdges\_isEdgeConnected}$.  This is one half of the contour count: once the discrete
+Jordan single-curve theorem places all boundary darts of a connected filled region in one orbit,
+the whole dual cut is this single edge-connected contour.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{The cut determines the region (\texttt{Peierls/CutDeterminesRegion.lean})}
 
 \par\noindent\textbf{Role:} In a preconnected graph, a vertex set $F$ avoiding a fixed ground
