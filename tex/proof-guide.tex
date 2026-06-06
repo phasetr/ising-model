@@ -2478,6 +2478,17 @@ $k+1$ darts are distinct (different tail $x$-coordinate), so $k+1 \le |\texttt{B
 z_r$, making the contour count \emph{volume-independent}.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{The bounded ray anchor (\texttt{Peierls/RayAnchorBound.lean})}
+
+\par\noindent\textbf{Role:} Combining the ray anchor
+($\texttt{exists\_ray\_anchor\_dualCutInBox}$) with the first-exit distance bound
+($\texttt{firstExit\_lt\_dartDualCut\_card}$) at a \emph{single} first-exit index $k$, a finite box
+droplet $F \ni i$ has an anchor $\texttt{ray0}\,i\,k$ on its common-box dual cut with $k <
+|\texttt{dualCutInBox}|$ (using $|\texttt{dualCutInBox}| = |\texttt{dartDualCut}|$)
+($\texttt{exists\_ray\_anchor\_lt\_card}$).  This is the input to the contour count's anchor-cover,
+pinning each droplet to one of the $r$ fixed ray anchors $z_0, \dots, z_{r-1}$.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Counting by anchor cover (\texttt{Peierls/ContourCountCover.lean})}
 
 \par\noindent\textbf{Role:} The combinatorial core of the contour count.  If every element of a
