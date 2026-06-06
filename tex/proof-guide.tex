@@ -2174,6 +2174,18 @@ down-droplet, giving $\mathrm{Disjoint}\,F\,B$.  Restricting to filled droplets 
 a \emph{single} edge-connected curve, the form needed for the volume-independent count.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, Lemma 3.37, pp. 109--116.
 
+\subsection*{A walk's edges are edge-connected (\texttt{Peierls/WalkEdgesConnected.lean})}
+
+\par\noindent\textbf{Role:} The edge set of any walk is edge-connected.  The start vertex of a
+nonempty walk lies in one of its edges ($\texttt{start\_mem\_some\_edge}$), so by induction each
+$\texttt{cons}$ edge touches the rest of the walk at the shared vertex and
+$\texttt{isEdgeConnected\_insert}$ applies; the empty case is vacuous
+($\texttt{walk\_edges\_isEdgeConnected}$).  For the Peierls contour this says the dual edges
+traversed by a dart orbit ($d.\texttt{tail}\to d.\texttt{head}\to\cdots$, the
+$\texttt{orbitClosedWalk}$) form a single edge-connected contour — the input to the
+volume-independent count via $\texttt{card\_connected\_edge\_sets\_inducedLatticeGraph\_le}$.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{The cut determines the region (\texttt{Peierls/CutDeterminesRegion.lean})}
 
 \par\noindent\textbf{Role:} In a preconnected graph, a vertex set $F$ avoiding a fixed ground
