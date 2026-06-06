@@ -10,8 +10,8 @@ direction algebra: a `Dir2` is one of the four axis directions `±e₀, ±e₁`,
 
 * `rot90` — the 90° rotation `(x, y) ↦ (-y, x)`.
 * `Dir2`, `Dir2.vec`, `Dir2.turnLeft`, `Dir2.turnRight` — the four directions and turns.
-* `vec_turnLeft`, `vec_turnRight` — turns act on vectors by `rot90` / its inverse.
-* `turnLeft_turnRight`, `turnRight_turnLeft`, `turnLeft_turnLeft_turnLeft_turnLeft` — turn algebra.
+* `vec_turnLeft` — a left turn acts on the vector by `rot90`; `vec_turnLeft_turnLeft` negates it.
+* `turnLeft_turnRight`, `turnRight_turnLeft`, `turnLeft_four` — turn algebra.
 
 References: Friedli–Velenik, *Statistical Mechanics of Lattice Systems*
 (Cambridge, 2017), §3.7.2, pp. 109–116.
