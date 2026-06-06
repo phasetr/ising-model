@@ -2361,6 +2361,17 @@ closed walks (by the degree count $\texttt{walksFromCount\_le\_pow}$) is the fin
 input to the contour count.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Counting closed walks in the box (\texttt{Peierls/ClosedWalkCount.lean})}
+
+\par\noindent\textbf{Role:} The number of closed walks of length $k$ from a vertex $v$ in the
+induced box graph $\texttt{inducedGraph}\,(\texttt{latticeGraph}\,d)\,\Lambda$ is at most $(2d)^k$
+($\texttt{closedWalkCount\_le}$): closed walks are among all walks from $v$, whose total
+$\texttt{walksFromCount}$ is $\le (2d)^k$ by $\texttt{walksFromCount\_inducedLatticeGraph\_le}$, and
+$\texttt{finsetWalkLength}\,k\,v\,v$ is a single term of the endpoint sum.  This is the counting
+engine for the Peierls contour bound: a dart orbit of length $k$ is a closed walk, so the number of
+contours of a given length near a fixed vertex is geometric in the length.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
