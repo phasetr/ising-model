@@ -2414,6 +2414,17 @@ a cut edge, the basis of the anchor pinning the contour to the fixed sequence $z
 \texttt{ray0}\,i\,k$.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{The ray-exit anchor dart (\texttt{Peierls/RayAnchorDart.lean})}
+
+\par\noindent\textbf{Role:} At a $+e_0$ exit point $a$ ($a \in F$, $a + e_0 \notin F$), the dart
+$\texttt{tail} = a - e_1$, $\texttt{dir} = e_1$ crosses $\{a, a+e_0\}$ and has \emph{head} $= a$, so
+its dual edge $s(a-e_1, a)$ contains $a$ ($\texttt{exists\_e0\_exit\_anchor\_dart}$, via
+$\mathrm{Sym}_2.\texttt{mem\_mk\_right}$).  Composing with $\texttt{exists\_first\_exit}$, the dual
+cut of a finite $F \ni i$ passes through some ray point ($\texttt{exists\_ray\_anchor\_dartDualCut}$:
+$\exists k,\ \exists e \in \texttt{dartDualCut}\,F,\ \texttt{ray0}\,i\,k \in e$) --- the Peierls
+anchor (ambient form), pinning the dual contour to the fixed sequence $\texttt{ray0}\,i\,k$.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{The cut determines the region (\texttt{Peierls/CutDeterminesRegion.lean})}
 
 \par\noindent\textbf{Role:} In a preconnected graph, a vertex set $F$ avoiding a fixed ground
