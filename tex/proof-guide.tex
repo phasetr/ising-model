@@ -2311,6 +2311,19 @@ $\texttt{nextDart}\,(\texttt{prevDart}\,e) = e$ and finiteness, $\texttt{nextDar
 so the dart orbits are pure cycles.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Computing \texttt{nextDart} from validity (\texttt{Peierls/DartBijection.lean})}
+
+\par\noindent\textbf{Role:} To evaluate the traversal once the candidate validities are known.
+With the site identity $\texttt{rightSite}\,t\,(\texttt{turnLeft}\,\delta) = \texttt{leftSite}\,t\,
+\delta$ ($\texttt{rightSite\_turnLeft}$) and dart extensionality ($\texttt{BoundaryDart.ext'}$,
+darts agree when tail and direction agree), the reductions
+$\texttt{nextDart\_eq\_turnLeft}$, $\texttt{nextDart\_eq\_straight}$,
+$\texttt{nextDart\_eq\_turnRight}$ express $\texttt{nextDart}$ as the first valid continuation (via
+$\texttt{dif\_pos}/\texttt{dif\_neg}$).  These feed the proof that $\texttt{prevDart}$ is a right
+inverse of $\texttt{nextDart}$, hence — by finiteness — $\texttt{nextDart}$ is a bijection and the
+orbits are cycles.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
