@@ -2583,6 +2583,15 @@ $\mu^+(\sigma_i) \le 1$ ($\texttt{plusGibbsExpectation\_sign\_le\_one}$, since $
 coboundedness needed to push the per-stage Peierls bound to the infinite-volume liminf.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Pushing a pointwise bound through the liminf (\texttt{Peierls/LiminfBound.lean})}
+
+\par\noindent\textbf{Role:} If $1 - a_n \le M$ and $a_n \le 1$ for all $n$, then $1 - \liminf a \le
+M$ ($\texttt{one\_sub\_liminf\_le}$): the lower bound $1 - M \le a_n$ lifts to $1 - M \le \liminf a$
+via $\texttt{Filter.le\_liminf\_of\_le}$, with $a_n \le 1$ supplying the coboundedness
+$\texttt{isCoboundedUnder\_ge\_of\_eventually\_le}$.  The abstract step taking the per-stage Peierls
+bound to the infinite-volume liminf.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Counting by anchor cover (\texttt{Peierls/ContourCountCover.lean})}
 
 \par\noindent\textbf{Role:} The combinatorial core of the contour count.  If every element of a
