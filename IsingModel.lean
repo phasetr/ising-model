@@ -112,6 +112,7 @@ import IsingModel.Peierls.Dir2
 import IsingModel.Peierls.BoundaryDart
 import IsingModel.Peierls.NextDart
 import IsingModel.Peierls.DartFinite
+import IsingModel.Peierls.DartStepReverse
 import IsingModel.PeierlsInfinite
 import IsingModel.TranslationInvariance
 import IsingModel.Concrete.IntLattice
