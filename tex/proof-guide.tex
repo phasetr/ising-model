@@ -2101,8 +2101,9 @@ cut edge, i.e. iff it changes side).  Consequently a walk from inside $S$ to out
 the cut an \emph{odd} number of times ($\texttt{odd\_cutCrossings\_of\_mem\_not\_mem}$), so it
 traverses at least one cut edge ($\texttt{exists\_mem\_edges\_mem\_cutEdges}$) and the cut is
 nonempty whenever $S$ separates two reachable vertices
-($\texttt{cutEdges\_nonempty\_of\_reachable\_not\_mem}$).  A closed walk around the origin thus
-crosses the boundary an odd number of times exactly when the origin is enclosed.
+($\texttt{cutEdges\_nonempty\_of\_reachable\_not\_mem}$).  A walk from the enclosed origin out to
+a far vertex \emph{outside} the droplet thus crosses the boundary an odd number of times and must
+traverse a cut edge, detecting that the origin is enclosed.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \section{Asano Contraction (\texttt{Asano.lean})}

@@ -5,8 +5,9 @@ import IsingModel.Peierls.DropletInjective
 
 A walk crosses the edge cut `cutEdges G S` an even number of times iff its two endpoints lie on
 the same side of `S`. This discrete Jordan / winding-parity fact is the combinatorial heart of
-the Peierls "surrounding contour" extraction: a closed walk around the origin crosses the
-boundary an odd number of times exactly when the origin is enclosed.
+the Peierls "surrounding contour" extraction: a walk from the enclosed origin out to a far
+vertex *outside* the droplet crosses the boundary an odd number of times, so it must traverse a
+cut edge — detecting that the origin is enclosed.
 
 * `cutCrossings` — the number of cut edges a walk traverses (with multiplicity).
 * `even_cutCrossings_iff` — `Even (#crossings of w) ↔ (u ∈ S ↔ v ∈ S)`.
