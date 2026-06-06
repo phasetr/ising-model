@@ -2500,6 +2500,20 @@ $\texttt{exists\_ray\_anchor\_lt\_card}$).  This supplies the anchor set $Z$, th
 $|Z| \le r$ of $\texttt{contour\_count\_le}$, yielding $r \cdot 16^r$.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{The Peierls contour count (\texttt{Peierls/PeierlsContourCount.lean})}
+
+\par\noindent\textbf{Role:} Assembling all the supply lemmas, the number of neighbour-closed,
+ground-avoiding, \emph{single-orbit} box droplets $S \ni i$ with box edge cut of size $r$ is at most
+$r \cdot (2\cdot 2)^{2r} \le 32^r$, volume-independently ($\texttt{peierls\_contour\_count}$).  The
+dual cut function $\texttt{cut}\,S = \texttt{dualCutInBox}$ (via $\texttt{dif}$) is injective
+($\texttt{box\_droplet\_eq\_of\_dualCutInBox\_eq}$), edge-connected
+($\texttt{dualCutInBox\_isEdgeConnected\_of\_single\_orbit}$, from $\texttt{hone}$), of size $r$
+($\texttt{dualCutInBox\_card\_eq\_cutEdges}$), and anchored in $\texttt{rayAnchorSet}$
+($\texttt{rayAnchorSet\_cover}$); feeding these to $\texttt{contour\_count\_le}$ and
+$\texttt{rayAnchorSet\_card\_le}$ bounds the count.  The single-orbit (discrete Jordan) input enters
+only through the $\texttt{hone}$ hypothesis.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, (3.49), pp. 109--116.
+
 \subsection*{Counting by anchor cover (\texttt{Peierls/ContourCountCover.lean})}
 
 \par\noindent\textbf{Role:} The combinatorial core of the contour count.  If every element of a
