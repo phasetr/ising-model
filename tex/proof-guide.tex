@@ -2336,6 +2336,16 @@ equal primal cuts ($\texttt{dartPrimalCut\_eq\_of\_dualCutInBox\_eq}$) --- the u
 contour injectivity chain.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Every cut edge is crossed by a boundary dart (\texttt{Peierls/DartOfCut.lean})}
+
+\par\noindent\textbf{Role:} The reverse of $\texttt{primalCutEdge}$.  A 2D lattice neighbour is one
+of the four axis shifts $\pm e_0, \pm e_1$ ($\texttt{latticeGraph2\_adj\_cases}$, from $\sum_i
+|a_i-b_i| = 1$).  Hence given $a \in F$, $b \notin F$ adjacent, some boundary dart of $F$ has primal
+cut edge $s(a, b)$ ($\texttt{exists\_dart\_of\_cut}$): the dart's direction and tail are recovered
+from the offset $b - a$ by inverting the $\texttt{leftSite}$/$\texttt{rightSite}$ formulas (four
+cases).  This is the surjective ($\supseteq$) half of the dart--cut bijection.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{The cut determines the region (\texttt{Peierls/CutDeterminesRegion.lean})}
 
 \par\noindent\textbf{Role:} In a preconnected graph, a vertex set $F$ avoiding a fixed ground
