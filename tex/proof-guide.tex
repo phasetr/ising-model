@@ -2272,6 +2272,23 @@ direct consequence of the four site identities of \texttt{NextDart.lean} togethe
 $\texttt{nextDart\_eq\_\{turnLeft,straight,turnRight\}}$.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Boundary darts and contact pairs
+  (\texttt{Peierls/SingleOrbitContact.lean})}
+
+\par\noindent\textbf{Role:} A \emph{contact pair} of $F$ is an ordered adjacent pair $(a, b)$ with
+$a \in F$ and $b \notin F$.  The boundary darts of $F$ correspond exactly to its contact pairs --
+the bridge the planned boundary slide (which moves along contact pairs) needs between the in/out-site
+geometry and the orbit dynamics.  Forward: every dart presents a contact pair via
+$(d.\texttt{left}, d.\texttt{right})$, whose sites are lattice-adjacent
+($\texttt{BoundaryDart.adj\_left\_right}$, from $\texttt{leftSite\_rightSite\_adjacent}$).  Backward:
+every contact pair is realised by a boundary dart with $d.\texttt{left} = a$, $d.\texttt{right} = b$
+($\texttt{exists\_boundaryDart\_of\_contact}$, strengthening $\texttt{exists\_dart\_of\_cut}$ by using
+membership to orient the unordered cut edge $s(a, b)$).  Combined with the faithfulness of
+\texttt{SingleOrbitBase}, this is a bijection of darts with contact pairs.  The trivial wrappers
+$\texttt{sameOrbit\_nextDart}$, $\texttt{sameOrbit\_iterate}$ record that a dart shares its orbit with
+its forward iterates.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Cardinality of the dual cut (\texttt{Peierls/DartDualCutCard.lean})}
 
 \par\noindent\textbf{Role:} The dual-edge map $d \mapsto s(d.\texttt{tail}, d.\texttt{head})$ is
