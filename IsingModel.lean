@@ -100,6 +100,7 @@ import IsingModel.Peierls.ConnectedDroplet
 import IsingModel.Peierls.ConnectedDropletBound
 import IsingModel.Peierls.DropletInjective
 import IsingModel.Peierls.CutCrossingParity
+import IsingModel.Peierls.FilledRegion
 import IsingModel.PeierlsInfinite
 import IsingModel.TranslationInvariance
 import IsingModel.Concrete.IntLattice
