@@ -2221,6 +2221,20 @@ Jordan single-curve theorem places all boundary darts of a connected filled regi
 the whole dual cut is this single edge-connected contour.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{The whole dual cut is edge-connected, given one orbit
+  (\texttt{Peierls/DualCutConnected.lean})}
+
+\par\noindent\textbf{Role:} The dual cut $\texttt{dartDualCut}\,F$ collects every boundary dart's
+dual edge $s(d.\texttt{tail}, d.\texttt{head})$.  If all darts share one orbit ($\texttt{hone}$),
+then $\texttt{dartOrbit}\,d = \mathrm{univ}$, so $\texttt{dartDualCut}\,F = \texttt{orbitDualEdges}
+\,d$ ($\texttt{dartDualCut\_eq\_orbitDualEdges}$) and the whole dual cut is edge-connected
+($\texttt{dartDualCut\_isEdgeConnected\_of\_single\_orbit}$, empty case vacuous).  This isolates the
+hard planar input (single orbit) as a hypothesis: once
+$\texttt{boundaryDart\_single\_orbit\_of\_connected\_filled}$ (the discrete Jordan crux) is
+available, the whole dual cut is a single edge-connected contour, the form consumed by the
+volume-independent count.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{The cut determines the region (\texttt{Peierls/CutDeterminesRegion.lean})}
 
 \par\noindent\textbf{Role:} In a preconnected graph, a vertex set $F$ avoiding a fixed ground
