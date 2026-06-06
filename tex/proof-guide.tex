@@ -2348,6 +2348,19 @@ $\texttt{latticeGraph}\,2$, which the degree-based walk count bounds — the rou
 volume-independent contour count.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{The orbit as an explicit closed walk (\texttt{Peierls/DartOrbitWalk.lean})}
+
+\par\noindent\textbf{Role:} The sequence of dart tails is realised as an honest
+$\texttt{SimpleGraph.Walk}$ in $\texttt{latticeGraph}\,2$.  $\texttt{orbitWalk}\,d\,n$ walks along
+the tails of the first $n$ darts of the forward orbit (built by $\texttt{Walk.concat}$ and
+$\texttt{Walk.copy}$ over $\texttt{tail\_adj\_head}$ and $\texttt{nextDart\_tail}$), of length $n$
+($\texttt{orbitWalk\_length}$).  Over a full period ($\texttt{nextDart}^{[n]}\,d = d$, from
+$\texttt{nextDart\_periodic}$), $\texttt{orbitClosedWalk}$ is a closed walk $d.\texttt{tail}\to
+d.\texttt{tail}$ of length $n$ ($\texttt{orbitClosedWalk\_length}$).  Bounding the number of such
+closed walks (by the degree count $\texttt{walksFromCount\_le\_pow}$) is the final combinatorial
+input to the contour count.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
