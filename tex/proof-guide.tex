@@ -2574,6 +2574,15 @@ converts the Peierls down-spin bound into a lower bound on the magnetization ($1
 $m^*(\beta) > 0$.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Monotonicity of the $+$-Gibbs expectation (\texttt{Peierls/PlusGibbsMono.lean})}
+
+\par\noindent\textbf{Role:} $F_1 \le F_2$ pointwise implies $\mu^+(F_1) \le \mu^+(F_2)$
+($\texttt{plusGibbsExpectation\_mono}$; positive weights and partition function).  In particular
+$\mu^+(\sigma_i) \le 1$ ($\texttt{plusGibbsExpectation\_sign\_le\_one}$, since $\texttt{Spin.sign}
+\,\mathbb{R}\,(\sigma_i) \le 1$ pointwise and $\mu^+(1) = 1$).  This upper bound supplies the
+coboundedness needed to push the per-stage Peierls bound to the infinite-volume liminf.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Counting by anchor cover (\texttt{Peierls/ContourCountCover.lean})}
 
 \par\noindent\textbf{Role:} The combinatorial core of the contour count.  If every element of a
