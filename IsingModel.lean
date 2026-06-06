@@ -120,6 +120,7 @@ import IsingModel.Peierls.DualCutInBoxInjective
 import IsingModel.Peierls.DartOfCut
 import IsingModel.Peierls.DartCutChar
 import IsingModel.Peierls.DartPrimalCutCard
+import IsingModel.Peierls.SingleOrbitBase
 import IsingModel.Peierls.LiftBoxCutChar
 import IsingModel.Peierls.BoxBridge
 import IsingModel.Peierls.LiftBoxCutInjective
