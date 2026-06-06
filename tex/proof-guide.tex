@@ -2563,6 +2563,17 @@ $\texttt{peierls\_low\_temp\_tail\_tendsto\_zero}$ (with $C = 32$).  The analyti
 $m^*(\beta) > 0$; the single-orbit input enters only through $\texttt{hone}$.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, (3.49), pp. 109--116.
 
+\subsection*{Magnetization versus down-spin probability (\texttt{Peierls/PlusGibbsSign.lean})}
+
+\par\noindent\textbf{Role:} The $+$-expectation of the constant $1$ is $1$
+($\texttt{plusGibbsExpectation\_one}$, normalization $(Z^+)^{-1} Z^+ = 1$).  Since $\texttt{Spin.sign}
+\,\mathbb{R}\,(\sigma_i) = 1 - 2\,[\sigma_i = -1]$ pointwise ($+1$ up, $-1$ down), by linearity
+$\mu^+(\sigma_i) = 1 - 2\,\mu^+(\sigma_i = -1)$ ($\texttt{plusGibbsExpectation\_sign\_eq}$).  This
+converts the Peierls down-spin bound into a lower bound on the magnetization ($1 - \mu^+(\sigma_i) =
+2\,\mu^+(\sigma_i = -1)$), the link from $\texttt{PeierlsInfinite}$'s liminf structure to
+$m^*(\beta) > 0$.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Counting by anchor cover (\texttt{Peierls/ContourCountCover.lean})}
 
 \par\noindent\textbf{Role:} The combinatorial core of the contour count.  If every element of a
