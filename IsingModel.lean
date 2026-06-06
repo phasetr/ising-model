@@ -105,6 +105,7 @@ import IsingModel.Peierls.FilledRegionIdempotent
 import IsingModel.Peierls.FilledRegionConnected
 import IsingModel.Peierls.FilledConnectedBound
 import IsingModel.Peierls.WalkEdgesConnected
+import IsingModel.Peierls.ComplConnected
 import IsingModel.Peierls.CutDeterminesRegion
 import IsingModel.Peierls.GridEdge2
 import IsingModel.Peierls.GridEdge2Cut

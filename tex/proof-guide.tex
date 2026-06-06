@@ -2186,6 +2186,17 @@ $\texttt{orbitClosedWalk}$) form a single edge-connected contour — the input t
 volume-independent count via $\texttt{card\_connected\_edge\_sets\_inducedLatticeGraph\_le}$.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{The complement of a filled region is connected (\texttt{Peierls/ComplConnected.lean})}
+
+\par\noindent\textbf{Role:} A filled region has $\mathrm{univ}\setminus F = \texttt{outside\-Component}
+\,G\,F\,g$, a single complementary component.  Hence any two vertices outside $F$ are reachable from
+one another within $\mathrm{univ}\setminus F$ (both lie in the outside component, connected through
+$g$; $\texttt{reachableWithin\_compl\_of\_isFilled}$), so $\mathrm{univ}\setminus F$ is a connected
+droplet ($\texttt{isConnectedDroplet\_compl\_of\_isFilled}$).  This is the first input to the
+discrete Jordan single-curve theorem $\texttt{boundaryDart\_single\_orbit\_of\_connected\_filled}$:
+together with the connectivity of $F$ it forces the boundary darts into a single orbit.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{The cut determines the region (\texttt{Peierls/CutDeterminesRegion.lean})}
 
 \par\noindent\textbf{Role:} In a preconnected graph, a vertex set $F$ avoiding a fixed ground
