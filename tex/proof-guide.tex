@@ -2367,6 +2367,20 @@ $\texttt{SimpleGraph.induce\_adj}$).  This oriented form mirrors $\texttt{mem\_d
 so the two can be matched in the dart--cut box bridge.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{The ambient primal cut is the lifted box cut (\texttt{Peierls/BoxBridge.lean})}
+
+\par\noindent\textbf{Role:} For a box droplet $F : \texttt{Finset}\,\uparrow\!\Lambda$ that is
+\emph{neighbour-closed} (every lattice neighbour of an $F$-vertex lies in $\Lambda$, automatic when
+$F$ is separated from the box boundary), $\texttt{dartPrimalCut}\,(F.\texttt{image}\,
+\texttt{Subtype.val}) = \texttt{liftBoxCut}\,\Lambda\,F$
+($\texttt{dartPrimalCut\_image\_val\_eq\_liftBoxCut}$).  The inclusion $\texttt{liftBoxCut}
+\subseteq \texttt{dartPrimalCut}$ needs no hypothesis; the reverse uses neighbour-closure so the
+non-$F$ endpoint is itself a box vertex.  This bridges the ambient dual-cut/dart machinery to the
+box parity injectivity $\texttt{isFilled\_eq\_of\_cutEdges\_eq}$, completing the contour injectivity
+chain $\texttt{dualCutInBox}\,{=}\Rightarrow\texttt{dartPrimalCut}\,{=}\Rightarrow\texttt{liftBoxCut}
+\,{=}\Rightarrow\mathrm{cut}\,{=}\Rightarrow F\,{=}$.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{The cut determines the region (\texttt{Peierls/CutDeterminesRegion.lean})}
 
 \par\noindent\textbf{Role:} In a preconnected graph, a vertex set $F$ avoiding a fixed ground
