@@ -7,9 +7,11 @@ import IsingModel.Peierls.DartPrimalCutCard
 A boundary dart is recovered from its left and right sites: the difference `left - right =
 (turnLeft dir).vec` fixes the direction, and the left site then fixes the tail. Thus the map
 `d ↦ (d.left, d.right)` is injective, and two darts with the same sites are equal — hence in the
-same orbit. This is the base case of the boundary-slide argument toward the single-orbit (discrete
-Jordan single-curve) property: the slide tracks a dart by its two sites, so faithful site
-coordinates are what make the inductive step well defined.
+same orbit. This is a local base lemma for the planned boundary-slide argument toward the
+single-orbit (discrete Jordan single-curve) property: the slide tracks a dart by its two sites, so
+faithful site coordinates are what would make its inductive step well defined. (The nontrivial
+slide/reachability content is not part of this file; here we prove only that equal sites give equal
+darts, hence `SameOrbit.refl`.)
 
 * `BoundaryDart.left_sub_right` — `d.left - d.right = (turnLeft d.dir).vec`.
 * `BoundaryDart.dir_eq_of_left_right` — equal sites give equal directions.

@@ -2238,8 +2238,9 @@ Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 \subsection*{Boundary darts have faithful site coordinates
   (\texttt{Peierls/SingleOrbitBase.lean})}
 
-\par\noindent\textbf{Role:} The base case of the boundary-slide argument toward the single-orbit
-(discrete Jordan single-curve) property.  The slide tracks a boundary dart by its two sites
+\par\noindent\textbf{Role:} A local base lemma for the planned boundary-slide argument toward the
+single-orbit (discrete Jordan single-curve) property; the nontrivial slide/reachability content is
+not part of this file.  The slide would track a boundary dart by its two sites
 $(d.\texttt{left}, d.\texttt{right})$, so the argument is well defined only if these coordinates are
 faithful.  $\texttt{BoundaryDart.left\_sub\_right}$ records the geometry
 $d.\texttt{left} - d.\texttt{right} = (\texttt{turnLeft}\,d.\texttt{dir}).\texttt{vec}$ (the right
