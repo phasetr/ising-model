@@ -2106,6 +2106,25 @@ a far vertex \emph{outside} the droplet thus crosses the boundary an odd number 
 traverse a cut edge, detecting that the origin is enclosed.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Hole-filled droplet region (\texttt{Peierls/FilledRegion.lean})}
+
+\par\noindent\textbf{Role:} A connected droplet $S$ may have holes, making $\mathrm{cut}(S)$ a
+disconnected union of inner and outer boundaries; counting contours volume-independently wants a
+single connected contour.  Fixing a ground vertex $g\notin S$ (the outside anchor), the outside
+component $\texttt{outsideComponent}\,G\,S\,g$ is the set of vertices reachable from $g$ without
+entering $S$, and the filled region $\texttt{filledRegion}\,G\,S\,g := \mathrm{univ}\setminus
+\texttt{outsideComponent}$ is $S$ together with all holes.  One has $S\subseteq F$
+($\texttt{subset\_filledRegion}$), $g\notin F$ ($\texttt{ground\_not\_mem\_filledRegion}$), and
+$i\in F$ ($\texttt{self\_mem\_filledRegion}$).  Crucially, holes are not adjacent to the outside,
+so every boundary edge of $F$ has its $F$-side in $S$
+($\texttt{mem\_droplet\_of\_mem\_filledRegion\_adj\_outside}$); filling therefore only removes
+inner-boundary edges, and for $S=\texttt{downComponent}$ the filled boundary remains broken
+bonds, $\mathrm{cut}(F)\subseteq\partial\sigma$
+($\texttt{cutEdges\_filledRegion\_downComponent\_subset\_phaseBoundary}$).  Since the complement
+of $F$ is the single connected outside component, $\mathrm{cut}(F)$ is a single contour
+(the $d=2$ edge-connectivity geometry is deferred).
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
