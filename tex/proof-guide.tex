@@ -2258,6 +2258,20 @@ proofs (head $:= \texttt{tail}+\texttt{dir.vec}$).  The two sites are nearest ne
 ($\texttt{validAt\_edgeCrosses}$, $\texttt{edgeCrosses}\,F = \texttt{true}$).
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{The boundary-dart turning rule (\texttt{Peierls/NextDart.lean})}
+
+\par\noindent\textbf{Role:} At the head of a dart the contour continues by turning \emph{left},
+going \emph{straight}, or turning \emph{right}, in that priority.  The crux
+$\texttt{right\_valid\_of\_not\_left\_not\_straight}$ — if neither the left turn nor going straight
+is valid, the right turn must be — is the local discrete-Jordan step that lets the traversal
+continue without dead-ends.  It is proved by four site identities (each by $\texttt{fin\_cases}$ on
+the direction): the incoming dart's left/right sites coincide with the candidate next sites, so
+the incoming validity $\texttt{leftSite}\in F$, $\texttt{rightSite}\notin F$ propagates through
+left $\to$ straight $\to$ right.  The next dart $\texttt{BoundaryDart.nextDart}$ takes the
+highest-priority valid turn, and $\texttt{nextDart\_tail}$ shows it starts at the current head, so
+the traversal advances continuously — the basis for closing the contour into a cycle.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
