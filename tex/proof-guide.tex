@@ -2127,6 +2127,22 @@ graph (both sides may be connected with a disconnected cut) and needs the $d=2$ 
 geometry, deferred.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Idempotence of hole-filling (\texttt{Peierls/FilledRegionIdempotent.lean})}
+
+\par\noindent\textbf{Role:} Hole-filling is idempotent, so $\texttt{filledRegion}$ is a
+projection onto the \emph{filled regions} (those equal to their own filling), the index set of
+the single-contour Peierls sum.  The outside component is unchanged by filling
+($\texttt{outsideComponent\_filledRegion\_eq}$): a walk from $g$ avoiding $S$ stays inside the
+outside component (its vertices are themselves in the outside, never in a hole), so it also
+avoids $F=\texttt{filledRegion}\,G\,S\,g$, while conversely filling only enlarges the avoided set
+(using $\texttt{reachableWithin\_mono}$).  Hence
+$\texttt{filledRegion}(\texttt{filledRegion}\,S)=\texttt{filledRegion}\,S$
+($\texttt{filledRegion\_idempotent}$), and writing
+$\texttt{IsFilled}\,G\,g\,F := (\texttt{filledRegion}\,G\,F\,g = F)$ every filling satisfies it
+($\texttt{isFilled\_filledRegion}$) with $g\notin F$
+($\texttt{ground\_not\_mem\_of\_isFilled}$).
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
