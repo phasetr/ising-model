@@ -23,7 +23,7 @@ open Finset
 /-- **The contour count assembly**: a droplet family `D` mapping injectively to connected size-`r`
 edge cuts (each through one of the anchors in `Z`) has at most `|Z| · (2·2)^{2r}` members. -/
 theorem contour_count_le {Λd : Finset (Fin 2 → ℤ)} (r : ℕ)
-    (D : Finset (Finset (Fin 2 → ℤ))) (cut : Finset (Fin 2 → ℤ) → Finset (Sym2 ↑Λd))
+    {α : Type*} (D : Finset α) (cut : α → Finset (Sym2 ↑Λd))
     (Z : Finset ↑Λd)
     (hinj : Set.InjOn cut D)
     (hsub : ∀ S ∈ D, cut S ⊆ (Ambient.inducedGraph (latticeGraph 2) Λd).edgeFinset)
