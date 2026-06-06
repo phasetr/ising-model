@@ -2120,9 +2120,11 @@ so every boundary edge of $F$ has its $F$-side in $S$
 ($\texttt{mem\_droplet\_of\_mem\_filledRegion\_adj\_outside}$); filling therefore only removes
 inner-boundary edges, and for $S=\texttt{downComponent}$ the filled boundary remains broken
 bonds, $\mathrm{cut}(F)\subseteq\partial\sigma$
-($\texttt{cutEdges\_filledRegion\_downComponent\_subset\_phaseBoundary}$).  Since the complement
-of $F$ is the single connected outside component, $\mathrm{cut}(F)$ is a single contour
-(the $d=2$ edge-connectivity geometry is deferred).
+($\texttt{cutEdges\_filledRegion\_downComponent\_subset\_phaseBoundary}$).  The complement of $F$
+is the single connected outside component, removing the inner boundaries; reducing
+$\mathrm{cut}(F)$ to a single edge-connected contour is \emph{not} automatic for an abstract
+graph (both sides may be connected with a disconnected cut) and needs the $d=2$ dual/planar
+geometry, deferred.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \section{Asano Contraction (\texttt{Asano.lean})}

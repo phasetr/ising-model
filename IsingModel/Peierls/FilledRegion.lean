@@ -3,17 +3,19 @@ import IsingModel.Peierls.DropletInjective
 /-!
 # Hole-filled droplet region (FV §3.7.2)
 
-To count Peierls contours volume-independently one needs the droplet boundary to be a *single*
-connected contour. A connected droplet `S` can have holes (its complement can be disconnected:
-an outer "outside" component plus interior holes), and then `cutEdges G S` is disconnected
-(inner + outer boundary). Filling the holes fixes this.
+To count Peierls contours volume-independently one wants the droplet boundary to reduce to a
+single outer contour. A connected droplet `S` can have holes (its complement can be
+disconnected: an outer "outside" component plus interior holes), and then `cutEdges G S` carries
+both inner and outer boundary. Filling the holes removes the inner boundaries, leaving the
+complement a single connected "outside" component.
 
 Fix a *ground* vertex `g ∉ S` (the anchor of the unbounded "outside", e.g. a `+`-boundary
 vertex). The **outside component** `outsideComponent G S g` is the set of vertices reachable
 from `g` without entering `S`; the **filled region** `filledRegion G S g` is its complement,
 i.e. `S` together with all holes. Filling only *removes* boundary edges, so when `S` is the
-down-spin component the filled region still has `cutEdges ⊆ phaseBoundary`, while its complement
-(the outside) is connected.
+down-spin component the filled region still has `cutEdges ⊆ phaseBoundary`, and its complement
+(the outside) is connected. (Edge-connectivity of `cutEdges F` as a single contour is *not*
+automatic for an abstract graph — that requires the `d = 2` dual/planar geometry, deferred.)
 
 * `outsideComponent`, `filledRegion` — the constructions.
 * `subset_filledRegion`, `ground_not_mem_filledRegion` — `S ⊆ F` and `g ∉ F`.
