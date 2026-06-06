@@ -2261,6 +2261,19 @@ injective (factoring through $\mathrm{Sym}_2.\texttt{map}\,\texttt{Subtype.val}$
 $|\texttt{dualCutSub}\,F| = |\texttt{BoundaryDart}\,F|$ ($\texttt{dualCutSub\_card}$).
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Edge-connectivity of the subtype-lifted dual cut
+  (\texttt{Peierls/DualCutSubConnected.lean})}
+
+\par\noindent\textbf{Role:} Edge-connectivity transfers across the injective subtype lift
+$\mathrm{Sym}_2.\texttt{map}\,\texttt{Subtype.val}$: if the image of $Y$ is edge-connected, so is
+$Y$ ($\texttt{isEdgeConnected\_of\_image\_map\_subtype}$).  A shared ambient vertex of two lifted
+edges is a coercion, hence pulls back into $\uparrow\!\Lambda$, and a reachability chain lifts by
+$\texttt{ReflTransGen}$ induction.  Since the lift's image is exactly $\texttt{dartDualCut}\,F$
+($\texttt{dualCutSub\_image\_map\_val}$), the subtype dual cut is edge-connected given one orbit
+($\texttt{dualCutSub\_isEdgeConnected\_of\_single\_orbit}$), the form
+$\texttt{card\_connected\_edge\_sets\_le}$ consumes.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{The cut determines the region (\texttt{Peierls/CutDeterminesRegion.lean})}
 
 \par\noindent\textbf{Role:} In a preconnected graph, a vertex set $F$ avoiding a fixed ground
