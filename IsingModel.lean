@@ -117,6 +117,7 @@ import IsingModel.Peierls.ContourCount
 import IsingModel.Peierls.DualToPrimal
 import IsingModel.Peierls.DartPrimalCut
 import IsingModel.Peierls.DualCutInBoxInjective
+import IsingModel.Peierls.DartOfCut
 import IsingModel.Peierls.CutDeterminesRegion
 import IsingModel.Peierls.GridEdge2
 import IsingModel.Peierls.GridEdge2Cut
