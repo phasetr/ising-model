@@ -2235,6 +2235,19 @@ available, the whole dual cut is a single edge-connected contour, the form consu
 volume-independent count.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Cardinality of the dual cut (\texttt{Peierls/DartDualCutCard.lean})}
+
+\par\noindent\textbf{Role:} The dual-edge map $d \mapsto s(d.\texttt{tail}, d.\texttt{head})$ is
+\emph{injective} on $\texttt{BoundaryDart}\,F$ ($\texttt{dartDualEdge\_injective}$): if two darts
+share a dual edge with the same orientation they are equal ($\texttt{BoundaryDart.ext'}$); the
+reverse orientation forces $d.\texttt{dir}.\texttt{vec} = -e.\texttt{dir}.\texttt{vec}$, whence
+$d.\texttt{dir} = e.\texttt{dir} + 2$ ($\texttt{Dir2.vec\_add\_two}$, $\texttt{Dir2.vec\_injective}$)
+and the reverse left site equals the original right site ($\texttt{leftSite\_reverse}$),
+contradicting $\texttt{left\_mem}$ versus $\texttt{right\_not\_mem}$.  Hence
+$|\texttt{dartDualCut}\,F| = |\texttt{BoundaryDart}\,F|$ ($\texttt{dartDualCut\_card}$), the size
+$r$ fed into the volume-independent contour count.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{The cut determines the region (\texttt{Peierls/CutDeterminesRegion.lean})}
 
 \par\noindent\textbf{Role:} In a preconnected graph, a vertex set $F$ avoiding a fixed ground
