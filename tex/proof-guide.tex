@@ -2535,6 +2535,21 @@ $\texttt{Real.exp\_nat\_mul}$, $\texttt{peierls\_sum\_le}$).  As $\beta \to \inf
 vanishes ($n \ge 1$), giving $m^*(\beta) > 0$.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, (3.49), pp. 109--116.
 
+\subsection*{The finite-volume Peierls bound on the down-spin probability
+  (\texttt{Peierls/PeierlsPlusGibbs.lean})}
+
+\par\noindent\textbf{Role:} Combining the filled-connected Peierls bound
+($\texttt{spontaneous\_magnetization\_plus\_filled\_connected}$) with the geometric tail estimate
+$\texttt{peierls\_sum\_le}$, the $+$-state probability that $\sigma_i = -1$ is at most
+$32 q / (1 - 32 q)$ ($q = e^{-2\beta J}$, low temperature $32 q < 1$,
+$\texttt{peierls\_plusGibbs\_le}$), provided every filled connected droplet is neighbour-closed
+($\texttt{hne}$), has dual support in $\Lambda_d$ ($\texttt{hdual}$), and is a single boundary-dart
+orbit ($\texttt{hone}$).  The cut-size lower bound $n = 1$ comes from
+$\texttt{cutEdges\_nonempty\_of\_connected}$ (a droplet $S \ni i$, $g \notin S$ is a proper nonempty
+subset of a preconnected graph).  As $\beta \to \infty$ this vanishes --- the finite-volume input to
+$m^*(\beta) > 0$.  The single-orbit (discrete Jordan) input enters only through $\texttt{hone}$.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, (3.49), pp. 109--116.
+
 \subsection*{Counting by anchor cover (\texttt{Peierls/ContourCountCover.lean})}
 
 \par\noindent\textbf{Role:} The combinatorial core of the contour count.  If every element of a
