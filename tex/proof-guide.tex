@@ -2391,6 +2391,22 @@ the elementary contact steps that vary only the in- or out-site avoid the left-t
 the naive orbit-step complement invariant.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Right-fan boundary detection
+  (\texttt{Peierls/SingleOrbitRightFan.lean})}
+
+\par\noindent\textbf{Role:} Dual to the left fan (\texttt{SingleOrbitFan}): the \emph{right fan}
+around a fixed right site $q \notin F$ is the set of boundary darts with right site $q$.  A right turn
+keeps the right site fixed ($\texttt{right\_nextDart\_of\_turnRight}$), so iterating right turns
+rotates the dart around $q$; this file proves the \emph{boundary} of that fan.
+$\texttt{right\_nextDart\_eq\_right\_iff\_turnRight}$: a $\texttt{nextDart}$ step keeps the right site
+fixed iff it takes the right turn.  The converse holds because a left turn moves the right site by the
+nonzero diagonal $\texttt{dir.vec} + (\texttt{turnLeft dir}).\texttt{vec}$
+($\texttt{Dir2.vec\_add\_turnLeft\_vec\_ne\_zero}$,
+$\texttt{right\_nextDart\_ne\_right\_of\_turnLeft}$) and a straight step moves it by
+$\texttt{dir.vec} \neq 0$ ($\texttt{right\_nextDart\_ne\_right\_of\_straight}$).  This is the
+complement-side rotation needed for the ``vary in-site'' contact step.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Cardinality of the dual cut (\texttt{Peierls/DartDualCutCard.lean})}
 
 \par\noindent\textbf{Role:} The dual-edge map $d \mapsto s(d.\texttt{tail}, d.\texttt{head})$ is
