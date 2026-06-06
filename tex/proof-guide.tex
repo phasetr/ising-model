@@ -2357,6 +2357,19 @@ $\texttt{leftSite\_adj\_rightSite}$, differing by the unit vector $(\texttt{turn
 $\texttt{dartPrimalCut}\,F$ \emph{is} the lattice cut of $F$.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Cardinality of the primal cut (\texttt{Peierls/DartPrimalCutCard.lean})}
+
+\par\noindent\textbf{Role:} The left site is the tail shifted by a direction constant
+($\texttt{leftSite\_eq\_tail\_add}$: $\texttt{leftSite}\,t\,\texttt{dir} = t +
+\texttt{leftSite}\,0\,\texttt{dir}$), so $\texttt{leftSite}\,\cdot\,\texttt{dir}$ is injective in the
+tail.  Hence the primal-cut-edge map $d \mapsto \texttt{primalCutEdge}\,d.\texttt{tail}\,
+d.\texttt{dir}$ is \emph{injective} ($\texttt{dartPrimalEdge\_injective}$): same orientation
+determines the dart ($\texttt{Dir2.turnLeft}$/$\texttt{Dir2.vec}$ injective, tail injectivity),
+reverse orientation puts $F$ on both sides.  Therefore $|\texttt{dartPrimalCut}\,F| =
+|\texttt{BoundaryDart}\,F|$ ($\texttt{dartPrimalCut\_card}$): the primal cut, dual cut, and dart
+count share the common size $r$, matching $|\texttt{dualCutInBox}|$ to $|\mathrm{cut}\,(G,S)|$.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Membership in the lifted box cut (\texttt{Peierls/LiftBoxCutChar.lean})}
 
 \par\noindent\textbf{Role:} An ambient edge lies in $\texttt{liftBoxCut}\,\Lambda\,F$ iff it is the
