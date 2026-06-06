@@ -124,6 +124,7 @@ import IsingModel.Peierls.SingleOrbitBase
 import IsingModel.Peierls.SingleOrbitSlide
 import IsingModel.Peierls.SingleOrbitContact
 import IsingModel.Peierls.SingleOrbitFan
+import IsingModel.Peierls.SingleOrbitFanPrefix
 import IsingModel.Peierls.LiftBoxCutChar
 import IsingModel.Peierls.BoxBridge
 import IsingModel.Peierls.LiftBoxCutInjective
