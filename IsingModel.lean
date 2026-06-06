@@ -103,6 +103,7 @@ import IsingModel.Peierls.CutCrossingParity
 import IsingModel.Peierls.FilledRegion
 import IsingModel.Peierls.FilledRegionIdempotent
 import IsingModel.Peierls.FilledRegionConnected
+import IsingModel.Peierls.FilledConnectedBound
 import IsingModel.Peierls.CutDeterminesRegion
 import IsingModel.Peierls.GridEdge2
 import IsingModel.Peierls.GridEdge2Cut

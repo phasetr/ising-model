@@ -2157,6 +2157,23 @@ edge, and $S$ is connected.  This is the hypothesis needed to count the filled b
 edge-connected contour.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{The filled-connected Peierls bound (\texttt{Peierls/FilledConnectedBound.lean})}
+
+\par\noindent\textbf{Role:} Restricting the $+$-boundary Peierls bound to \emph{connected, filled}
+droplets:
+\[
+  \langle \mathbf 1_{\sigma_i=-1}\rangle^{+}_{B} \;\le\;
+  \sum_{\substack{S\ni i,\ S\cap B=\emptyset \\ S\ \mathrm{connected},\ S\ \mathrm{filled}}}
+    e^{-2\beta J\,|\mathrm{cut}(S)|}
+\]
+($\texttt{spontaneous\_magnetization\_plus\_filled\_connected}$).  The witness is the \emph{filled}
+down-spin component $\texttt{filledRegion}\,(\texttt{downComponent}\,\sigma\,i)\,g$, connected and
+filled, with boundary in $\partial\sigma$.  The ground vertex $g$ lies on the connected boundary
+$B$; for a $+$-configuration $B$ is all up-spins, so $B\subseteq\mathrm{outside}$ of the
+down-droplet, giving $\mathrm{Disjoint}\,F\,B$.  Restricting to filled droplets makes each contour
+a \emph{single} edge-connected curve, the form needed for the volume-independent count.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, Lemma 3.37, pp. 109--116.
+
 \subsection*{The cut determines the region (\texttt{Peierls/CutDeterminesRegion.lean})}
 
 \par\noindent\textbf{Role:} In a preconnected graph, a vertex set $F$ avoiding a fixed ground
