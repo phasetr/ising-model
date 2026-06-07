@@ -163,6 +163,7 @@ import IsingModel.Peierls.DualCutCardBridge
 import IsingModel.Peierls.RayExit
 import IsingModel.Peierls.RayAnchorDart
 import IsingModel.Peierls.RayAnchorBox
+import IsingModel.Peierls.RayExitAnchorDart
 import IsingModel.Peierls.RayExitBound
 import IsingModel.Peierls.RayAnchorBound
 import IsingModel.Peierls.RayAnchorSet
