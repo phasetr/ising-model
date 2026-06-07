@@ -128,6 +128,7 @@ import IsingModel.Peierls.SingleOrbitContactStep
 import IsingModel.Peierls.SingleOrbitContactMove
 import IsingModel.Peierls.SingleOrbitContactGen
 import IsingModel.Peierls.SingleOrbitContactEquiv
+import IsingModel.Peierls.SingleOrbitContactSymm
 import IsingModel.Peierls.SingleOrbitFan
 import IsingModel.Peierls.SingleOrbitRightFan
 import IsingModel.Peierls.SingleOrbitRightFanPrefix
