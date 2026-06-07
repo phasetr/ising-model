@@ -2812,6 +2812,19 @@ $\texttt{nextDart}$ routes the contour through each face, toward the discrete-Jo
 argument.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{A crossed edge carries a boundary dart
+  (\texttt{Peierls/SingleOrbitDartEdge.lean})}
+
+\par\noindent\textbf{Role:} $\texttt{edgeCrosses}\,F\,s(a,b)$ holds exactly when one of $a, b$ lies in
+$F$ and the other does not (xor of the endpoint memberships).
+$\texttt{exists\_dart\_of\_edgeCrosses}$: either way the adjacent crossed pair is the primal cut edge
+of some boundary dart (orienting it with $F$ on the left), packaging $\texttt{exists\_dart\_of\_cut}$
+in the symmetric $\texttt{edgeCrosses}$ form via a case split on which endpoint lies in $F$
+($\texttt{Sym2.eq\_swap}$ for the reversed orientation).  This is the bridge from the contour's cut
+sides (counted by $\texttt{squareSplitCount}$) to the boundary darts whose orbits the single-orbit
+argument tracks.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Cardinality of the dual cut (\texttt{Peierls/DartDualCutCard.lean})}
 
 \par\noindent\textbf{Role:} The dual-edge map $d \mapsto s(d.\texttt{tail}, d.\texttt{head})$ is
