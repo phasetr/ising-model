@@ -2693,6 +2693,20 @@ these three inputs from connectedness and filledness of $F$ -- the orbit/contact
 otherwise complete.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Same-in-site contact pairs across an arc
+  (\texttt{Peierls/SingleOrbitSameInSite.lean})}
+
+\par\noindent\textbf{Role:} The same-vertex wedge connectivity at the contact-graph level.
+$\texttt{reflTransGen\_contactMove\_same\_inSite\_arc}$: if $c$, $c'$ share an in-site,
+$c'.\texttt{toDart.dir} = \texttt{turnLeft}^{[n]} c.\texttt{toDart.dir}$, and the arc out-sites
+$c.\texttt{inSite} + (\texttt{turnLeft}^{[i]} c.\texttt{toDart.dir}).\texttt{vec}$ for $i < n$ lie
+outside $F$, then $c$ and $c'$ are joined by contact moves (via
+$\texttt{sameOrbit\_of\_same\_left\_arc}$, $\texttt{reflTransGen\_contactMove\_of\_sameOrbit}$, and
+the dart $\leftrightarrow$ contact-pair round trip).  This is the building block of the
+$\texttt{hsame}$ input of $\texttt{boundaryDart\_single\_orbit\_of\_geometric\_inputs}$; the global
+argument supplies the arc condition so that any two contact pairs at a vertex are connected.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Cardinality of the dual cut (\texttt{Peierls/DartDualCutCard.lean})}
 
 \par\noindent\textbf{Role:} The dual-edge map $d \mapsto s(d.\texttt{tail}, d.\texttt{head})$ is

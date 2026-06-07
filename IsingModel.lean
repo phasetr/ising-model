@@ -139,6 +139,7 @@ import IsingModel.Peierls.SingleOrbitTransport
 import IsingModel.Peierls.SingleOrbitWedge
 import IsingModel.Peierls.SingleOrbitWedgeReach
 import IsingModel.Peierls.SingleOrbitSameLeftArc
+import IsingModel.Peierls.SingleOrbitSameInSite
 import IsingModel.Peierls.SingleOrbitAdvance
 import IsingModel.Peierls.SingleOrbitAdvanceMem
 import IsingModel.Peierls.SingleOrbitAdvanceConn
