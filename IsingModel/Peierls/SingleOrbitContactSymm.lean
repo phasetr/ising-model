@@ -18,8 +18,6 @@ References: Friedli–Velenik, *Statistical Mechanics of Lattice Systems*
 
 namespace IsingModel
 
-open Finset
-
 variable {F : Finset (Fin 2 → ℤ)}
 
 /-- **Contact-move connectivity is symmetric**: if `c` reaches `c'` by contact moves, then `c'`
