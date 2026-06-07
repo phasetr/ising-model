@@ -2458,6 +2458,21 @@ $\texttt{sameOrbit\_of\_dart\_contactMove\_chain}$).  Together with the remainin
 of the contact graph this gives the single-orbit property.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Local generators of contact-move connectivity
+  (\texttt{Peierls/SingleOrbitContactGen.lean})}
+
+\par\noindent\textbf{Role:} The elementary $\texttt{ContactMove}$s packaged as
+$\texttt{ReflTransGen ContactMove}$ facts -- the local generators a global planar-connectivity
+argument will chain.  A left-fan rotation about a fixed in-site
+($\texttt{reflTransGen\_contactMove\_of\_same\_inSite\_leftFanPrefix}$), a right-fan rotation about a
+fixed out-site ($\texttt{reflTransGen\_contactMove\_of\_same\_outSite\_rightFanPrefix}$), one boundary
+slide ($\texttt{reflTransGen\_contactMove\_nextDart}$), and a whole forward orbit as one contact-move
+chain ($\texttt{reflTransGen\_contactMove\_iterate}$, by induction on the slide).  These hold
+unconditionally; assembling them into full connectivity for a connected filled region is the
+remaining planar step -- only there do $F$-connectivity and filledness enter, to cross between
+exposed wedges.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Cardinality of the dual cut (\texttt{Peierls/DartDualCutCard.lean})}
 
 \par\noindent\textbf{Role:} The dual-edge map $d \mapsto s(d.\texttt{tail}, d.\texttt{head})$ is
