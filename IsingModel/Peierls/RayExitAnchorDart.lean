@@ -14,7 +14,7 @@ This does not prove the anchoring or one-edge shadow obligations. It only suppli
 boundary dart chosen from each site by a ray-exit construction.
 
 * `rayExitIndex` — the first `+e₀` exit index chosen from `a ∈ F`.
-* `rayExitAnchorDart` — the boundary dart whose head is the first-exit site.
+* `rayExitAnchorDart` — the concrete boundary dart whose head is the first-exit site.
 * `rayExitAnchorDartMap` — the subtype-indexed map from sites of `F` to boundary darts.
 
 References: Friedli–Velenik, *Statistical Mechanics of Lattice Systems*
@@ -50,16 +50,39 @@ theorem rayExitIndex_succ_not_mem (a : Fin 2 → ℤ) (ha : a ∈ F) :
 /-- The boundary dart obtained at the chosen `+e₀` ray exit from `a ∈ F`. -/
 noncomputable def rayExitAnchorDart (F : Finset (Fin 2 → ℤ)) (a : Fin 2 → ℤ)
     (ha : a ∈ F) : BoundaryDart F :=
-  (exists_e0_exit_anchor_dart_head (rayExitIndex_mem (F := F) a ha) (by
+  e0ExitAnchorDart (rayExitIndex_mem (F := F) a ha) (by
     rw [← ray0_succ]
-    exact rayExitIndex_succ_not_mem (F := F) a ha)).choose
+    exact rayExitIndex_succ_not_mem (F := F) a ha)
+
+/-- The ray-exit anchor dart starts one `e₁` step below the chosen first-exit site. -/
+@[simp] theorem rayExitAnchorDart_tail (a : Fin 2 → ℤ) (ha : a ∈ F) :
+    (rayExitAnchorDart F a ha).tail = ray0 a (rayExitIndex F a ha) - unitVec2 1 :=
+  e0ExitAnchorDart_tail (rayExitIndex_mem (F := F) a ha) (by
+    rw [← ray0_succ]
+    exact rayExitIndex_succ_not_mem (F := F) a ha)
+
+/-- The ray-exit anchor dart points in direction `e₁`. -/
+@[simp] theorem rayExitAnchorDart_dir (a : Fin 2 → ℤ) (ha : a ∈ F) :
+    (rayExitAnchorDart F a ha).dir = 1 :=
+  e0ExitAnchorDart_dir (rayExitIndex_mem (F := F) a ha) (by
+    rw [← ray0_succ]
+    exact rayExitIndex_succ_not_mem (F := F) a ha)
 
 /-- The ray-exit anchor dart has head equal to the chosen first-exit site. -/
+@[simp]
 theorem rayExitAnchorDart_head (a : Fin 2 → ℤ) (ha : a ∈ F) :
     (rayExitAnchorDart F a ha).head = ray0 a (rayExitIndex F a ha) :=
-  (exists_e0_exit_anchor_dart_head (rayExitIndex_mem (F := F) a ha) (by
+  e0ExitAnchorDart_head (rayExitIndex_mem (F := F) a ha) (by
     rw [← ray0_succ]
-    exact rayExitIndex_succ_not_mem (F := F) a ha)).choose_spec
+    exact rayExitIndex_succ_not_mem (F := F) a ha)
+
+/-- The chosen first-exit site lies on the ray-exit anchor dart's dual edge. -/
+theorem rayExitAnchorDart_anchor_mem (a : Fin 2 → ℤ) (ha : a ∈ F) :
+    ray0 a (rayExitIndex F a ha) ∈
+      s((rayExitAnchorDart F a ha).tail, (rayExitAnchorDart F a ha).head) :=
+  e0ExitAnchorDart_anchor_mem (rayExitIndex_mem (F := F) a ha) (by
+    rw [← ray0_succ]
+    exact rayExitIndex_succ_not_mem (F := F) a ha)
 
 /-- The ray-exit anchor dart's dual edge lies in the whole dart dual cut. -/
 theorem rayExitAnchorDart_dualEdge_mem (a : Fin 2 → ℤ) (ha : a ∈ F) :
@@ -77,8 +100,25 @@ noncomputable def rayExitAnchorDartMap (F : Finset (Fin 2 → ℤ)) :
   rfl
 
 /-- The anchor map's dart has head equal to the chosen first-exit site from the input site. -/
+@[simp]
 theorem rayExitAnchorDartMap_head (x : {x : Fin 2 → ℤ // x ∈ F}) :
     (rayExitAnchorDartMap F x).head = ray0 x.1 (rayExitIndex F x.1 x.2) :=
   rayExitAnchorDart_head x.1 x.2
+
+/-- The anchor map's dart starts one `e₁` step below the chosen first-exit site. -/
+@[simp] theorem rayExitAnchorDartMap_tail (x : {x : Fin 2 → ℤ // x ∈ F}) :
+    (rayExitAnchorDartMap F x).tail = ray0 x.1 (rayExitIndex F x.1 x.2) - unitVec2 1 :=
+  rayExitAnchorDart_tail x.1 x.2
+
+/-- The anchor map's dart points in direction `e₁`. -/
+@[simp] theorem rayExitAnchorDartMap_dir (x : {x : Fin 2 → ℤ // x ∈ F}) :
+    (rayExitAnchorDartMap F x).dir = 1 :=
+  rayExitAnchorDart_dir x.1 x.2
+
+/-- The chosen first-exit site lies on the anchor map's dual edge. -/
+theorem rayExitAnchorDartMap_anchor_mem (x : {x : Fin 2 → ℤ // x ∈ F}) :
+    ray0 x.1 (rayExitIndex F x.1 x.2) ∈
+      s((rayExitAnchorDartMap F x).tail, (rayExitAnchorDartMap F x).head) :=
+  rayExitAnchorDart_anchor_mem x.1 x.2
 
 end IsingModel
