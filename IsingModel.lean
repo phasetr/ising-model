@@ -166,6 +166,7 @@ import IsingModel.Peierls.RayAnchorBox
 import IsingModel.Peierls.RayExitAnchorDart
 import IsingModel.Peierls.RayExitAnchorPrefix
 import IsingModel.Peierls.RayExitAnchorStep
+import IsingModel.Peierls.RayExitAnchorAdjacency
 import IsingModel.Peierls.RayExitAnchoredRoute
 import IsingModel.Peierls.RayExitShadowRoute
 import IsingModel.Peierls.RayExitBound
