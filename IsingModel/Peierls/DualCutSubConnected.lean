@@ -1,5 +1,6 @@
 import IsingModel.Peierls.DualSupport
 import IsingModel.Peierls.DualCutConnected
+import IsingModel.Peierls.DartReachableFPath
 
 /-!
 # Edge-connectivity of the subtype-lifted dual cut (FV §3.7.2)
@@ -12,7 +13,10 @@ support box, so it pulls back to a shared subtype vertex.
 
 * `isEdgeConnected_of_image_map_subtype` — the general transfer lemma.
 * `dualCutSub_image_map_val` — the lift's image is the ambient dual cut.
-* `dualCutSub_isEdgeConnected_of_single_orbit` — the subtype cut is edge-connected given one orbit.
+* `dualCutSub_isEdgeConnected_of_single_orbit` — the subtype cut is edge-connected given one
+  orbit.
+* `dualCutSub_isEdgeConnected_of_anchored` — the subtype cut is edge-connected from anchored
+  `DartReachable` data.
 
 References: Friedli–Velenik, *Statistical Mechanics of Lattice Systems*
 (Cambridge, 2017), §3.7.2, pp. 109–116.
@@ -75,5 +79,17 @@ theorem dualCutSub_isEdgeConnected_of_single_orbit
   apply isEdgeConnected_of_image_map_subtype
   rw [dualCutSub_image_map_val]
   exact dartDualCut_isEdgeConnected_of_single_orbit hone
+
+/-- **The subtype-lifted dual cut is edge-connected from anchored dart reachability data**. -/
+theorem dualCutSub_isEdgeConnected_of_anchored
+    (φ : {x : Fin 2 → ℤ // x ∈ F} → BoundaryDart F)
+    (hanchor : ∀ d : BoundaryDart F, DartReachable F d (φ ⟨d.left, d.left_mem⟩))
+    (hstep : ∀ a b : {x : Fin 2 → ℤ // x ∈ F}, (latticeGraph 2).Adj a.1 b.1 →
+      DartReachable F (φ a) (φ b))
+    (hconn : ∀ a ∈ F, ∀ b ∈ F, ReachableWithin (latticeGraph 2) F a b) :
+    IsEdgeConnected (dualCutSub F) := by
+  apply isEdgeConnected_of_image_map_subtype
+  rw [dualCutSub_image_map_val]
+  exact dartDualCut_isEdgeConnected_of_anchored φ hanchor hstep hconn
 
 end IsingModel
