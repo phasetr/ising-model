@@ -2798,6 +2798,20 @@ single-orbit property, the next step toward the discrete-Jordan argument (the co
 having been confirmed to relocate, not remove, the discrete Jordan crux).
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{The face-degree trichotomy of the contour
+  (\texttt{Peierls/SingleOrbitFaceDeg.lean})}
+
+\par\noindent\textbf{Role:} Completing the characterisation of the three contour face types by
+$\texttt{squareSplitCount}$ ($0$/$2$/$4$).  $\texttt{squareSplitCount\_eq\_zero\_iff}$: an
+\emph{empty} face has all four corners on the same side of $F$;
+$\texttt{squareSplitCount\_eq\_four\_iff}$: a \emph{crossing} face has strictly alternating corners;
+with $\texttt{squareSplitCount\_eq\_two\_iff}$ (degree-two, ordinary) these decide each face's type
+from the four corner memberships (boolean facts $\texttt{cyclic4\_xor\_count\_eq\_zero\_iff}$ and
+$\texttt{\_four\_iff}$, by $\texttt{decide}$).  This is the case basis for analysing how
+$\texttt{nextDart}$ routes the contour through each face, toward the discrete-Jordan single-orbit
+argument.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Cardinality of the dual cut (\texttt{Peierls/DartDualCutCard.lean})}
 
 \par\noindent\textbf{Role:} The dual-edge map $d \mapsto s(d.\texttt{tail}, d.\texttt{head})$ is
