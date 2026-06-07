@@ -2524,6 +2524,19 @@ reflexivity and transitivity from $\texttt{ReflTransGen}$).  This lets the globa
 argument route in either direction.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Straight-slide transport and fan reach
+  (\texttt{Peierls/SingleOrbitTransport.lean})}
+
+\par\noindent\textbf{Role:} Two free transport facts the global connectivity argument uses.
+$\texttt{sameOrbit\_of\_straight\_slide}$: when $\texttt{nextDart}$ goes straight at $d$ (left turn
+invalid, straight valid) and $d'$ carries the straight head sites, $d$ and $d'$ are in the same orbit
+(the new dart is determined by its sites).  $\texttt{exists\_orbit\_dart\_at\_left\_with\_dir}$: a
+left-fan prefix from $d$ reaching direction $\delta$ produces an orbit dart at the same left site
+with direction $\delta$.  Both are immediate from the existing orbit/fan lemmas; the only genuinely
+new ingredient still missing for full connectivity is the existence of a left-fan prefix reaching the
+exit direction of the exposed wedge.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Cardinality of the dual cut (\texttt{Peierls/DartDualCutCard.lean})}
 
 \par\noindent\textbf{Role:} The dual-edge map $d \mapsto s(d.\texttt{tail}, d.\texttt{head})$ is
