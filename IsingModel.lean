@@ -144,6 +144,7 @@ import IsingModel.Peierls.SingleOrbitSameLeftArc
 import IsingModel.Peierls.SingleOrbitSameInSite
 import IsingModel.Peierls.SingleOrbitAdvance
 import IsingModel.Peierls.SingleOrbitAdvanceMem
+import IsingModel.Peierls.SingleOrbitDichotomy
 import IsingModel.Peierls.SingleOrbitAdvanceConn
 import IsingModel.Peierls.SingleOrbitFan
 import IsingModel.Peierls.SingleOrbitRightFan
