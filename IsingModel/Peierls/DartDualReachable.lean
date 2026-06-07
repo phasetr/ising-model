@@ -11,6 +11,8 @@ reachability:
 
 > `dartDualCut_isEdgeConnected_of_dartReachable` — if every pair of boundary darts is reachable,
 > the whole dual cut is edge-connected.
+> `dartReachable_of_isEdgeConnected` — the converse, extracting pairwise dart reachability from
+> whole-cut edge-connectedness.
 
 This separates the target consumed at `PeierlsContourCount.lean` from the strictly stronger
 single-orbit (discrete-Jordan) hypothesis `hone`: the remaining geometric obligation becomes "any
@@ -27,6 +29,7 @@ argument for a connected, filled region. Crucially the bridge is the weak shared
 * `dartReachable_nextDart` — a dart and its `nextDart` successor are reachable.
 * `dartReachable_of_sameOrbit` — same-orbit darts are reachable (comparison wrapper).
 * `dartDualCut_isEdgeConnected_of_dartReachable` — pairwise reachability ⟹ edge-connected.
+* `dartReachable_of_isEdgeConnected` — edge-connected ⟹ pairwise reachability.
 
 References: Friedli–Velenik, *Statistical Mechanics of Lattice Systems*
 (Cambridge, 2017), §3.7.2, pp. 109–116.
@@ -98,5 +101,12 @@ theorem dartDualCut_isEdgeConnected_of_dartReachable
   obtain ⟨d, _, rfl⟩ := he₁
   obtain ⟨e, _, rfl⟩ := he₂
   exact h d e
+
+/-- **An edge-connected dual cut gives pairwise dart reachability**. This is the converse of
+`dartDualCut_isEdgeConnected_of_dartReachable` at the dart level. -/
+theorem dartReachable_of_isEdgeConnected (h : IsEdgeConnected (dartDualCut F))
+    (d e : BoundaryDart F) : DartReachable F d e :=
+  h s(d.tail, d.head) (dartDualEdge_mem_dartDualCut d)
+    s(e.tail, e.head) (dartDualEdge_mem_dartDualCut e)
 
 end IsingModel
