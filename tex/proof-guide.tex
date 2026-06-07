@@ -2879,6 +2879,23 @@ finite graph decomposes into edge-disjoint cycles -- the combinatorial heart of 
 $\texttt{nextDart}$ orbits as the cycles of the contour in the discrete-Jordan argument.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Cut directions are boundary darts
+  (\texttt{Peierls/SingleOrbitCutDirDart.lean})}
+
+This identifies the Eulerian degree $\texttt{cutDirs}\,F\,c$ with actual boundary darts.
+$\texttt{mem\_cutDirs\_iff}$: a direction $\texttt{dir} \in \texttt{cutDirs}\,F\,c$ iff the dart
+$(c, \texttt{dir})$ is valid ($\texttt{ValidAt}\,F\,c\,\texttt{dir}$, with $F$ on its left) \emph{or}
+its reverse $(c + \texttt{dir}.\texttt{vec},\ \texttt{dir} + 2)$ is (with $F$ on its right), via
+$\texttt{edgeCrosses\_primalCutEdge\_iff}$.  The corollaries
+$\texttt{mem\_cutDirs\_of\_validAt}$ / $\texttt{mem\_cutDirs\_of\_validAt\_reverse}$ (either
+orientation lands in $\texttt{cutDirs}$), $\texttt{not\_mem\_cutDirs\_iff}$ (non-membership is the
+absence of an incident dart either way), $\texttt{dir\_mem\_cutDirs\_tail}$ (a
+$\texttt{BoundaryDart}\,F$'s direction is a cut direction at its tail), and
+$\texttt{cutDirs\_eq\_empty\_iff}$ / $\texttt{card\_cut\_dirs\_eq\_zero\_iff}$ (zero degree is no
+incident boundary dart) turn the even-degree count into a count of the contour darts passing through
+$c$, the link from the Eulerian property to the $\texttt{nextDart}$ orbits.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Cardinality of the dual cut (\texttt{Peierls/DartDualCutCard.lean})}
 
 \par\noindent\textbf{Role:} The dual-edge map $d \mapsto s(d.\texttt{tail}, d.\texttt{head})$ is
