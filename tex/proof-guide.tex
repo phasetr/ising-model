@@ -3331,6 +3331,28 @@ interface is to avoid overclaiming a direct shared vertex in the vertical cases,
 first-exit anchor edges may require a longer dual-cut chain.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Equal-index vertical ray-exit steps}
+
+\par\noindent\textbf{Role:} The file
+\texttt{Peierls/RayExitAnchorVerticalEqual.lean} closes the safe part of the vertical input left
+by the adjacency route.  The coordinate lemma
+\(\texttt{ray0\_add\_unitVec2\_one}\) says that shifting the start of a \(+e_0\) ray by \(+e_1\)
+shifts every ray point by \(+e_1\).  Hence, if \(b=a+e_1\) and the two ray-exit indices agree,
+the anchor edge for \(a\) has endpoints \(\texttt{ray0}\,a\,k-e_1\) and
+\(\texttt{ray0}\,a\,k\), while the anchor edge for \(b\) has endpoints
+\(\texttt{ray0}\,a\,k\) and \(\texttt{ray0}\,a\,k+e_1\).  The two edges therefore share the lower
+exit point.  This is formalized by
+\(\texttt{rayExitAnchorDartMap\_add\_e1\_shared\_of\_index\_eq}\).
+
+The remaining predicate \(\texttt{RayExitVerticalStrictStep}\,F\) asks only for upward
+\(+e_1\) pairs whose first-exit indices are unequal.  The wrapper
+\(\texttt{rayExitVerticalStep\_of\_strictStep}\) recovers the earlier
+\(\texttt{RayExitVerticalStep}\): equal-index upward cases use the shared vertex, and downward
+cases are handled by applying the upward statement in the reverse order and using symmetry of
+\(\texttt{DartReachable}\).  The ambient, subtype, common-box, and contour-count wrappers expose
+the stricter input while still leaving the genuinely unequal-index vertical geometry open.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{The ray-exit anchored route
   (\texttt{Peierls/RayExitAnchoredRoute.lean})}
 
