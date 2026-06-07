@@ -2851,6 +2851,21 @@ is realised by the reversed dart based at the neighbour) -- the degree-two face 
 cut directions, not two darts based at $c$.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{The face degree counts incident cut directions
+  (\texttt{Peierls/SingleOrbitFaceCard.lean})}
+
+\par\noindent\textbf{Role:} $\texttt{squareSplitCount\_eq\_card\_cut\_dirs}$:
+$\texttt{squareSplitCount}\,F\,c$ equals the number of directions $\texttt{dir}$ whose cut edge
+$\texttt{primalCutEdge}\,c\,\texttt{dir}$ at the dual vertex $c$ is crossed by $F$.  The four
+$\texttt{primalCutEdge}\,c\,\texttt{dir}$ are exactly the four sides of the unit square at $c$ (via
+$\texttt{leftSite\_eq\_cases}$/$\texttt{rightSite\_eq\_cases}$ and four $\texttt{Sym2.eq\_swap}$s), so
+the cut-side count is the dual-cut degree at $c$ (proof: $\texttt{card\_filter}$ with
+$\texttt{sum\_congr}$ converting the filter's Prop-$\texttt{ite}$ to a Bool-$\texttt{ite}$,
+$\texttt{Fin.sum\_univ\_four}$, then matching).  This identifies the contour's local even degree
+($\texttt{square\_split\_count\_even}$) as a graph degree -- the bridge to the cycle structure of the
+$\texttt{nextDart}$ orbits in the discrete-Jordan argument.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Cardinality of the dual cut (\texttt{Peierls/DartDualCutCard.lean})}
 
 \par\noindent\textbf{Role:} The dual-edge map $d \mapsto s(d.\texttt{tail}, d.\texttt{head})$ is
