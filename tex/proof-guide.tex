@@ -3304,6 +3304,17 @@ same-ray cases; the vertical/frontier shadow cases and the $\texttt{hanchor}$ re
 remain separate.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Ray-exit adjacency shadow case reduction
+  (\texttt{Peierls/RayExitAnchorAdjacency.lean})}
+
+\par\noindent\textbf{Role:} This file packages the two-dimensional nearest-neighbour case split
+around the horizontal ray-exit shadow lemmas.  For adjacent sites $x,y \in F$,
+$\texttt{rayExitAnchorDartMap\_adj\_shared\_or\_vertical}$ proves that either the two ray-exit
+anchor edges already share a dual vertex, or $y$ is one of the vertical shifts $x \pm e_1$.
+The horizontal $x \pm e_0$ branches are discharged by the one-step results above.  The vertical
+and frontier shadow cases, and the $\texttt{hanchor}$ reachability input, remain separate.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{The ray-exit anchored route
   (\texttt{Peierls/RayExitAnchoredRoute.lean})}
 
