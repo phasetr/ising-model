@@ -4,9 +4,10 @@ import IsingModel.Peierls.DualCutInBox
 /-!
 # The ray-exit anchor in the common box (FV §3.7.2)
 
-Lifting the ambient ray anchor to the count-ready common-box dual cut: for a finite box-droplet
-`F ∋ i`, some edge of `dualCutInBox` contains the subtype anchor vertex `⟨ray0 i k, _⟩`. The anchor
-vertex automatically lies in the box, since it is the head of a boundary dart, hence in
+Lifting the ambient ray anchor to the count-ready common-box dual cut: for a finite
+box-droplet `F ∋ i`, some edge of `dualCutInBox` contains the subtype anchor vertex
+`⟨ray0 i k, _⟩`. The anchor vertex automatically lies in the box, since it is the head
+of a boundary dart, hence in
 `dualSupport F ⊆ Λd`.
 
 * `exists_e0_exit_anchor_dart_head` — the `+e₀` exit dart has head exactly the exit point.
@@ -24,21 +25,15 @@ open Finset
 theorem exists_e0_exit_anchor_dart_head {F : Finset (Fin 2 → ℤ)} {a : Fin 2 → ℤ}
     (ha : a ∈ F) (hb : a + unitVec2 0 ∉ F) :
     ∃ d : BoundaryDart F, d.head = a := by
-  have hL : leftSite (a - unitVec2 1) 1 = a := by
-    funext j; fin_cases j <;> simp [leftSite, unitVec2, Pi.sub_apply]
-  have hR : rightSite (a - unitVec2 1) 1 = a + unitVec2 0 := by
-    funext j; fin_cases j <;> simp [rightSite, leftSite, Dir2.turnLeft, Dir2.vec, unitVec2,
-      Pi.add_apply, Pi.sub_apply]
-  refine ⟨⟨a - unitVec2 1, 1, by rw [hL]; exact ha, by rw [hR]; exact hb⟩, ?_⟩
-  change (a - unitVec2 1) + Dir2.vec 1 = a
-  funext j; fin_cases j <;> simp [Dir2.vec, unitVec2, Pi.add_apply, Pi.sub_apply]
+  exact ⟨e0ExitAnchorDart ha hb, e0ExitAnchorDart_head ha hb⟩
 
 /-- **The common-box dual cut passes through a ray anchor**: for a finite box droplet `F ∋ i` with
 `dualSupport F ⊆ Λd`, there is a step count `k`, with `ray0 i k ∈ Λd`, and an edge of
 `dualCutInBox` containing the subtype anchor vertex `⟨ray0 i k, _⟩`. -/
 theorem exists_ray_anchor_dualCutInBox {Λd F : Finset (Fin 2 → ℤ)} {i : Fin 2 → ℤ}
     (hi : i ∈ F) (hsub : dualSupport F ⊆ Λd) :
-    ∃ k, ∃ hz : ray0 i k ∈ Λd, ∃ e ∈ dualCutInBox hsub, (⟨ray0 i k, hz⟩ : ↑Λd) ∈ e := by
+    ∃ k, ∃ hz : ray0 i k ∈ Λd, ∃ e ∈ dualCutInBox hsub,
+      (⟨ray0 i k, hz⟩ : ↑Λd) ∈ e := by
   classical
   obtain ⟨k, hk1, hk2⟩ := exists_first_exit hi
   rw [ray0_succ] at hk2
