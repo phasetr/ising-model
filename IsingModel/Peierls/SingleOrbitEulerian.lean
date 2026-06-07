@@ -24,7 +24,7 @@ namespace IsingModel
 open Finset
 
 /-- The set of directions whose cut edge at `c` is crossed by `F`. -/
-private def cutDirs (F : Finset (Fin 2 → ℤ)) (c : Fin 2 → ℤ) : Finset Dir2 :=
+def cutDirs (F : Finset (Fin 2 → ℤ)) (c : Fin 2 → ℤ) : Finset Dir2 :=
   (Finset.univ : Finset Dir2).filter (fun dir => edgeCrosses F (primalCutEdge c dir) = true)
 
 /-- **Even cut-degree at every dual vertex** (the Eulerian property): the number of incident cut
