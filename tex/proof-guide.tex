@@ -2770,6 +2770,21 @@ $\texttt{exists\_first\_turnLeft\_mem}$ this turns ``$a$ has an $F$-neighbour'' 
 cleared-arc-and-stop data of the wedge advance.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Orbit successor dichotomy at a first hit
+  (\texttt{Peierls/SingleOrbitDichotomy.lean})}
+
+\par\noindent\textbf{Role:} After the left fan stops at the first rotation landing in $F$, the next
+$\texttt{nextDart}$ step is a contact move, and its left site is fixed by one membership test on the
+straight out-site $r = \texttt{rightSite}\,(\texttt{nextDart}^{[n]} d).\texttt{head}\,(\texttt{turnLeft}^{[n]}
+d.\texttt{dir})$.  $\texttt{firstHit\_nextDart\_inSite\_dichotomy}$: if $r \notin F$ the orbit slides
+straight to the $F$-neighbour $d.\texttt{left} + (\texttt{turnLeft}^{[n]} d.\texttt{dir}).\texttt{vec}$;
+if $r \in F$ it turns right (a concave corner) with successor left site $r$.  This makes the orbit's
+actual successor explicit but does \emph{not} discharge the single-orbit crux: since contact-move
+connectivity equals same-orbit ($\texttt{reflTransGen\_contactMove\_iff\_sameOrbit}$), ``the orbit
+visits every boundary contact pair of a filled connected component'' \emph{is} the discrete-Jordan
+single-curve property, which the contact-pair bookkeeping relocates but does not remove.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Cardinality of the dual cut (\texttt{Peierls/DartDualCutCard.lean})}
 
 \par\noindent\textbf{Role:} The dual-edge map $d \mapsto s(d.\texttt{tail}, d.\texttt{head})$ is
