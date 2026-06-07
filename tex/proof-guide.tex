@@ -2732,6 +2732,19 @@ within-image-connected set in the ambient graph.  With $G = \texttt{latticeGraph
 the $F$-connectivity $\texttt{hreach}$ input for $F = S.\texttt{image Subtype.val}$.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{The left turn is a 4-cycle on directions
+  (\texttt{Peierls/SingleOrbitDirCycle.lean})}
+
+\par\noindent\textbf{Role:} $\texttt{Dir2}$ is $\texttt{Fin}\,4$ and $\texttt{turnLeft}$ is
+$\cdot + 1$, a 4-cycle.  $\texttt{Dir2.exists\_turnLeft\_iterate\_lt\_four}$: for any
+$\texttt{dir}\,\delta$, there is $k < 4$ with $\texttt{turnLeft}^{[k]}\,\texttt{dir} = \delta$ (by
+$\texttt{fin\_cases}$ enumeration over the 16 direction pairs).  This is the rotational backbone of
+the wedge argument: a left fan can be aimed at any of the four lattice directions in at most three
+steps.  Per a focused codex design review, the discrete-Jordan single-orbit input is most tractably
+completed via the contact-pair route (no planar/Euler infrastructure, which Mathlib lacks); this is
+one of its $\texttt{Dir2}$-enumeration ingredients.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Cardinality of the dual cut (\texttt{Peierls/DartDualCutCard.lean})}
 
 \par\noindent\textbf{Role:} The dual-edge map $d \mapsto s(d.\texttt{tail}, d.\texttt{head})$ is
