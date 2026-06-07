@@ -13,9 +13,10 @@ the genuine geometric obligations explicit:
 
 * `hanchor` — every boundary dart reaches the ray-exit anchor of its left site.
 * `hstep` — adjacent sites of `F` have reachable ray-exit anchors.
+* `hconn` — ordinary within-`F` connectivity, used to chain those local steps.
 
-The wrappers here make those obligations the only remaining inputs for dart-dual-cut, subtype,
-common-box, and Peierls contour-count connectivity.
+The wrappers here make those inputs explicit for dart-dual-cut, subtype, common-box, and Peierls
+contour-count connectivity.
 
 References: Friedli–Velenik, *Statistical Mechanics of Lattice Systems*
 (Cambridge, 2017), §3.7.2, pp. 109–116.

@@ -3278,9 +3278,9 @@ $\texttt{dualCutSub\_isEdgeConnected\_of\_rayExitAnchored}$, and
 $\texttt{dualCutInBox\_isEdgeConnected\_of\_rayExitAnchored}$ carry the specialization through the
 ambient, subtype, and common-box dual cuts.  The contour-count wrapper
 $\texttt{peierls\_contour\_count\_rayExit\_anchored}$ fixes each droplet's anchor map to
-$\texttt{rayExitAnchorDartMap}$ while keeping the two real geometric obligations explicit: every
-boundary dart must reach the ray-exit anchor of its left site, and adjacent sites of $F$ must have
-reachable ray-exit anchors.
+$\texttt{rayExitAnchorDartMap}$ while keeping the remaining inputs explicit: every boundary dart
+must reach the ray-exit anchor of its left site, adjacent sites of $F$ must have reachable ray-exit
+anchors, and ordinary within-$F$ connectivity chains those local steps.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{The ray first-exit distance is bounded by the cut size
