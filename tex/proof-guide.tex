@@ -2896,6 +2896,26 @@ incident boundary dart) turn the even-degree count into a count of the contour d
 $c$, the link from the Eulerian property to the $\texttt{nextDart}$ orbits.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{The degree-two pairing of the contour
+  (\texttt{Peierls/SingleOrbitDegTwoPairing.lean})}
+
+At a \textbf{degree-two} dual vertex the contour passes through without branching (one dart in, one out), and a local pairing glues
+the boundary darts into cycles.  $\texttt{dir\_add\_two\_mem\_cutDirs\_head}$: the incoming dart
+$d$'s reverse $d.\texttt{dir} + 2$ is a cut direction at $d.\texttt{head}$ (the reversed dart
+$(d.\texttt{head} + (d.\texttt{dir}+2).\texttt{vec},\ (d.\texttt{dir}+2)+2)$ is $d$ itself, hence
+valid).  $\texttt{nextDart\_dir\_cases}$: the successor turns left, goes straight, or turns right
+($d.\texttt{dir}+1,\ d.\texttt{dir},\ d.\texttt{dir}+3$); $\texttt{nextDart\_dir\_mem\_cutDirs\_head}$:
+its direction is a cut direction at $d.\texttt{head}$ (its tail);
+$\texttt{nextDart\_dir\_ne\_dir\_add\_two}$: it never reverses the incoming dart, since
+$d.\texttt{dir}+2$ is none of those three.  Therefore
+$\texttt{cutDirs\_head\_eq\_of\_squareSplitCount\_eq\_two}$: when
+$\texttt{squareSplitCount}\,F\,d.\texttt{head} = 2$ the cut set is exactly the pair
+$\{d.\texttt{dir}+2,\ d.\texttt{nextDart}.\texttt{dir}\}$ (two distinct cut directions in a
+degree-two set), so the incoming and outgoing darts share an orbit
+($\texttt{BoundaryDart.sameOrbit\_nextDart}$: $d.\texttt{SameOrbit}\,d.\texttt{nextDart}$).  This is
+the degree-two case of the discrete-Jordan cycle structure.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Cardinality of the dual cut (\texttt{Peierls/DartDualCutCard.lean})}
 
 \par\noindent\textbf{Role:} The dual-edge map $d \mapsto s(d.\texttt{tail}, d.\texttt{head})$ is
