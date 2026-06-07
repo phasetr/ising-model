@@ -181,6 +181,7 @@ import IsingModel.Peierls.ContourEven
 import IsingModel.Peierls.Dir2
 import IsingModel.Peierls.SingleOrbitDirCycle
 import IsingModel.Peierls.SingleOrbitFirstHit
+import IsingModel.Peierls.SingleOrbitHitAdjacent
 import IsingModel.Peierls.BoundaryDart
 import IsingModel.Peierls.NextDart
 import IsingModel.Peierls.DartFinite
