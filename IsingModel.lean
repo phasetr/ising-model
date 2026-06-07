@@ -134,6 +134,7 @@ import IsingModel.Peierls.SingleOrbitWedge
 import IsingModel.Peierls.SingleOrbitWedgeReach
 import IsingModel.Peierls.SingleOrbitSameLeftArc
 import IsingModel.Peierls.SingleOrbitAdvance
+import IsingModel.Peierls.SingleOrbitAdvanceMem
 import IsingModel.Peierls.SingleOrbitFan
 import IsingModel.Peierls.SingleOrbitRightFan
 import IsingModel.Peierls.SingleOrbitRightFanPrefix
