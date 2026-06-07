@@ -1,4 +1,5 @@
 import IsingModel.Peierls.RayAnchorBox
+import IsingModel.Peierls.RayExitBound
 import IsingModel.Peierls.DualCutEdgeAdjacency
 
 /-!
@@ -29,17 +30,22 @@ variable {F : Finset (Fin 2 → ℤ)}
 /-- The chosen `+e₀` first-exit index from a site `a ∈ F`. -/
 noncomputable def rayExitIndex (F : Finset (Fin 2 → ℤ)) (a : Fin 2 → ℤ)
     (ha : a ∈ F) : ℕ :=
-  (exists_first_exit ha).choose
+  (exists_first_exit_below ha).choose
 
-/-- The chosen ray-exit point is still in `F`. -/
+/-- Every ray point up to the chosen first-exit index stays in `F`. -/
+theorem rayExitIndex_below (a : Fin 2 → ℤ) (ha : a ∈ F) :
+    ∀ t, t ≤ rayExitIndex F a ha → ray0 a t ∈ F :=
+  (exists_first_exit_below ha).choose_spec.1
+
+/-- The chosen first-exit point is still in `F`. -/
 theorem rayExitIndex_mem (a : Fin 2 → ℤ) (ha : a ∈ F) :
     ray0 a (rayExitIndex F a ha) ∈ F :=
-  (exists_first_exit ha).choose_spec.1
+  rayExitIndex_below a ha _ le_rfl
 
 /-- The successor of the chosen ray-exit point lies outside `F`. -/
 theorem rayExitIndex_succ_not_mem (a : Fin 2 → ℤ) (ha : a ∈ F) :
     ray0 a (rayExitIndex F a ha + 1) ∉ F :=
-  (exists_first_exit ha).choose_spec.2
+  (exists_first_exit_below ha).choose_spec.2
 
 /-- The boundary dart obtained at the chosen `+e₀` ray exit from `a ∈ F`. -/
 noncomputable def rayExitAnchorDart (F : Finset (Fin 2 → ℤ)) (a : Fin 2 → ℤ)

@@ -3254,8 +3254,9 @@ Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
   (\texttt{Peierls/RayExitAnchorDart.lean})}
 
 \par\noindent\textbf{Role:} For every site $a \in F$, the chosen $+e_0$ first-exit index
-$\texttt{rayExitIndex}\,F\,a\,h_a$ satisfies
-$\texttt{ray0}\,a\,(\texttt{rayExitIndex}\,F\,a\,h_a) \in F$ and its successor lies outside $F$
+$\texttt{rayExitIndex}\,F\,a\,h_a$ keeps every earlier ray point in $F$
+($\texttt{rayExitIndex\_below}$); in particular
+$\texttt{ray0}\,a\,(\texttt{rayExitIndex}\,F\,a\,h_a) \in F$, while its successor lies outside $F$
 ($\texttt{rayExitIndex\_mem}$ and $\texttt{rayExitIndex\_succ\_not\_mem}$).  The corresponding
 boundary dart $\texttt{rayExitAnchorDart}\,F\,a\,h_a$ has head equal to that chosen exit site
 ($\texttt{rayExitAnchorDart\_head}$), and its dual edge lies in $\texttt{dartDualCut}\,F$
