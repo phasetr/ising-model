@@ -2679,6 +2679,20 @@ the basepoint vertex ($\texttt{reflTransGen\_contactMove\_of\_inSite\_reachable}
 the basepoint wedge.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Single orbit from the geometric inputs
+  (\texttt{Peierls/SingleOrbitGeometric.lean})}
+
+\par\noindent\textbf{Role:} The full reduction capstone.
+$\texttt{boundaryDart\_single\_orbit\_of\_geometric\_inputs}$: the single-orbit $\texttt{hone}$ input
+of the Peierls bound follows from exactly three geometric inputs about $F$ with a basepoint contact
+pair $c_0$ -- a per-edge advance ($\texttt{hstep}$), same-vertex wedge connectivity
+($\texttt{hsame}$), and $F$-reachability of every in-site to $c_0.\texttt{inSite}$
+($\texttt{hreach}$).  It composes $\texttt{reflTransGen\_contactMove\_to\_basepoint}$ with
+$\texttt{boundaryDart\_single\_orbit\_of\_contactPair\_basepoint}$.  The remaining work is supplying
+these three inputs from connectedness and filledness of $F$ -- the orbit/contact machinery is
+otherwise complete.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Cardinality of the dual cut (\texttt{Peierls/DartDualCutCard.lean})}
 
 \par\noindent\textbf{Role:} The dual-edge map $d \mapsto s(d.\texttt{tail}, d.\texttt{head})$ is
