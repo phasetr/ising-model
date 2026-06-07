@@ -3494,6 +3494,30 @@ thread this narrower input to the count consumer.  The argument is local to the 
 between the two first-exit indices; it does not assume global ray monotonicity after first exit.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Frontier entries for non-strip strict ray-exit gaps
+  (\texttt{Peierls/RayExitAnchorVerticalStrictBridgeNonStrip.lean})}
+
+\par\noindent\textbf{Role:} The file
+\texttt{Peierls/RayExitAnchorVerticalStrictBridgeNonStrip.lean} prepares the remaining
+non-strip genuine-gap case.  If the lower-exits-first gap is not a straight strip, then some
+lower ray point in the finite interval between the two first-exit indices belongs to \(F\);
+\(\texttt{exists\_ltGap\_nonStrip\_mem}\) extracts such a point.  The upper-exits-first case is
+handled by \(\texttt{exists\_gtGap\_nonStrip\_mem}\).  The indices
+\(\texttt{rayExitVerticalStrictLtFirstFrontierIndex}\) and
+\(\texttt{rayExitVerticalStrictGtFirstFrontierIndex}\) choose the first such re-entry point by
+\(\texttt{Nat.find}\).
+
+The first re-entry index is strictly after the first outside successor, since that successor is
+outside \(F\) by the first-exit property.  Minimality then shows that the predecessor ray point is
+outside \(F\).  Thus the horizontal primal edge between
+\(\texttt{ray0}\,i\,(n-1)\notin F\) and \(\texttt{ray0}\,i\,n\in F\) is a cut edge.  The generic
+dart \(\texttt{ray0ReentryDart}\) crosses this edge with direction \(-e_1\), and the specialized
+darts \(\texttt{rayExitVerticalStrictLtFrontierDart}\) and
+\(\texttt{rayExitVerticalStrictGtFrontierDart}\) provide the canonical entry darts for the next
+\(\texttt{nextDart}\) frontier-chain step.  This remains a finite-interval statement and does not
+assume ray monotonicity after first exit.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{The ray-exit anchored route
   (\texttt{Peierls/RayExitAnchoredRoute.lean})}
 
