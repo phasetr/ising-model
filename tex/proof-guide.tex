@@ -2485,6 +2485,19 @@ $\texttt{rightFanPrefix\_one}$.  These are the elementary generators a fan rotat
 step) is built from when the global connectivity argument constructs prefixes from local validity.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Elementary single-turn steps
+  (\texttt{Peierls/SingleOrbitTurnStep.lean})}
+
+\par\noindent\textbf{Role:} The $k = 1$ specialisations of the fan completeness and contact-move
+generators: a single valid turn between darts sharing a site.  At the dart level, two darts with the
+same left site whose directions differ by one valid left turn are in the same orbit
+($\texttt{sameOrbit\_of\_left\_turn\_step}$), dually for the right turn
+($\texttt{sameOrbit\_of\_right\_turn\_step}$).  At the contact-pair level these are one-edge
+$\texttt{ReflTransGen ContactMove}$ facts ($\texttt{reflTransGen\_contactMove\_left\_turn}$,
+$\texttt{\_right\_turn}$).  These are the atomic wedge rotations the global connectivity argument
+applies step by step.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Cardinality of the dual cut (\texttt{Peierls/DartDualCutCard.lean})}
 
 \par\noindent\textbf{Role:} The dual-edge map $d \mapsto s(d.\texttt{tail}, d.\texttt{head})$ is
