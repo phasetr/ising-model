@@ -3250,6 +3250,22 @@ the count-ready anchor $\exists e \in \mathrm{cut},\ z \in e$ for
 $\texttt{card\_droplets\_le\_of\_cut\_connected}$.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Ray-exit anchor darts as a site-indexed map
+  (\texttt{Peierls/RayExitAnchorDart.lean})}
+
+\par\noindent\textbf{Role:} For every site $a \in F$, the chosen $+e_0$ first-exit index
+$\texttt{rayExitIndex}\,F\,a\,h_a$ satisfies
+$\texttt{ray0}\,a\,(\texttt{rayExitIndex}\,F\,a\,h_a) \in F$ and its successor lies outside $F$
+($\texttt{rayExitIndex\_mem}$ and $\texttt{rayExitIndex\_succ\_not\_mem}$).  The corresponding
+boundary dart $\texttt{rayExitAnchorDart}\,F\,a\,h_a$ has head equal to that chosen exit site
+($\texttt{rayExitAnchorDart\_head}$), and its dual edge lies in $\texttt{dartDualCut}\,F$
+($\texttt{rayExitAnchorDart\_dualEdge\_mem}$).  The map
+$\texttt{rayExitAnchorDartMap}\,F : \{x // x \in F\} \to \texttt{BoundaryDart}\,F$ packages these
+choices in exactly the subtype-indexed shape needed for the later anchored $\texttt{DartReachable}$
+data.  This file only supplies the canonical ray-exit anchor map; the anchoring and one-edge shadow
+obligations remain separate geometric inputs.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{The ray first-exit distance is bounded by the cut size
   (\texttt{Peierls/RayExitBound.lean})}
 
