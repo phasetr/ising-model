@@ -2551,6 +2551,20 @@ reduces the wedge-existence question to a purely local membership condition on t
 $d.\texttt{left}$.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Left-fan reach through a complement arc
+  (\texttt{Peierls/SingleOrbitWedgeReach.lean})}
+
+\par\noindent\textbf{Role:} Using the validity criterion
+$\texttt{leftFan\_next\_turnLeft\_valid\_iff}$, a left-fan prefix exists for as long as the successive
+out-sites stay outside $F$.  $\texttt{leftFanPrefix\_of\_outSites\_not\_mem}$: if each out-site
+$d.\texttt{left} + (\texttt{turnLeft}^{[i]} d.\texttt{dir}).\texttt{vec}$ for $i < n$ lies outside
+$F$, then $d.\texttt{LeftFanPrefix}\,n$ (induction, each step's validity from the membership).
+Consequently $\texttt{exists\_orbit\_dart\_left\_rotated\_of\_outSites}$: $d$'s orbit contains a dart
+at the same left site with direction $\texttt{turnLeft}^{[n]} d.\texttt{dir}$.  This is the (purely
+local) wedge-existence: rotating left through an exposed complement arc reaches every direction in the
+arc, with no global filledness hypothesis -- the global argument later supplies the arc condition.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Cardinality of the dual cut (\texttt{Peierls/DartDualCutCard.lean})}
 
 \par\noindent\textbf{Role:} The dual-edge map $d \mapsto s(d.\texttt{tail}, d.\texttt{head})$ is
