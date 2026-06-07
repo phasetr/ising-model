@@ -2512,6 +2512,18 @@ as the single-orbit property -- the planar connectivity is the whole remaining c
 further orbit bookkeeping.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Contact-move connectivity is symmetric
+  (\texttt{Peierls/SingleOrbitContactSymm.lean})}
+
+\par\noindent\textbf{Role:} Although a single $\texttt{ContactMove}$ is directed (a fan prefix or a
+forward slide), the connectivity $\texttt{ReflTransGen ContactMove}$ is symmetric: via
+$\texttt{reflTransGen\_contactMove\_iff\_sameOrbit}$ it agrees with the same-orbit relation, which is
+symmetric.  Hence $\texttt{reflTransGen\_contactMove\_symm}$ (symmetry) and
+$\texttt{reflTransGen\_contactMove\_equivalence}$ (an equivalence relation on contact pairs, with
+reflexivity and transitivity from $\texttt{ReflTransGen}$).  This lets the global planar-connectivity
+argument route in either direction.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Cardinality of the dual cut (\texttt{Peierls/DartDualCutCard.lean})}
 
 \par\noindent\textbf{Role:} The dual-edge map $d \mapsto s(d.\texttt{tail}, d.\texttt{head})$ is
