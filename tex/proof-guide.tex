@@ -3469,6 +3469,31 @@ narrower input to the same count consumer, either from explicit within-\(F\) con
 exit; it only proves the endpoint-adjacent case.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Straight strip chains for strict vertical ray-exit gaps
+  (\texttt{Peierls/RayExitAnchorVerticalStrictBridgeStrip.lean})}
+
+\par\noindent\textbf{Role:} The file
+\texttt{Peierls/RayExitAnchorVerticalStrictBridgeStrip.lean} closes the next concrete subcase of
+the genuine-gap bridge input.  In the lower-exits-first case, if every lower ray point between the
+two first-exit indices is outside \(F\), the horizontal darts
+\(\texttt{rayExitVerticalStrictLtStripDart}\) form a finite strip from the lower endpoint bridge to
+the upper ray-exit anchor.  Consecutive strip darts share the intermediate lower ray point, and the
+terminal strip dart shares the upper anchor tail.  This gives
+\(\texttt{dartReachable\_ltBridgeDart\_rayExitAnchorDartMap\_of\_strip}\).
+
+The upper-exits-first case is the reversed analogue: if every upper ray point in the interval is
+outside \(F\), the darts \(\texttt{rayExitVerticalStrictGtStripDart}\) form a finite chain from the
+lower ray-exit anchor down to the upper endpoint bridge, giving
+\(\texttt{dartReachable\_rayExitAnchorDartMap\_gtBridgeDart\_of\_strip}\).
+
+The new input \(\texttt{RayExitVerticalStrictBridgeNonStripGapChainStep}\) therefore only covers
+genuine gaps which are not straight strips.  The wrappers
+\(\texttt{peierls\_contour\_count\_rayExit\_verticalStrictBridgeNonStripGapChain}\) and
+\(\texttt{peierls\_contour\_count\_rayExit\_verticalStrictBridgeNonStripGapChain\_connected}\)
+thread this narrower input to the count consumer.  The argument is local to the finite interval
+between the two first-exit indices; it does not assume global ray monotonicity after first exit.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{The ray-exit anchored route
   (\texttt{Peierls/RayExitAnchoredRoute.lean})}
 
