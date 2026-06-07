@@ -2785,6 +2785,19 @@ visits every boundary contact pair of a filled connected component'' \emph{is} t
 single-curve property, which the contact-pair bookkeeping relocates but does not remove.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Degree-two faces of the contour
+  (\texttt{Peierls/SingleOrbitDegTwo.lean})}
+
+\par\noindent\textbf{Role:} A characterisation of the $\texttt{squareSplitCount} = 2$ faces -- the
+``ordinary'' faces of the Peierls contour where the curve passes through once (vs empty faces, count
+$0$, and crossing faces, count $4$).  $\texttt{cyclic4\_xor\_count\_eq\_two\_iff}$: four cyclic
+membership bits have two sign changes iff they are neither all equal (empty) nor strictly alternating
+(crossing), by $\texttt{decide}$.  $\texttt{squareSplitCount\_eq\_two\_iff}$ transports this to the
+unit square at $c$.  This isolates the crossing faces (count $4$) as the only obstruction to the
+single-orbit property, the next step toward the discrete-Jordan argument (the contact-pair route
+having been confirmed to relocate, not remove, the discrete Jordan crux).
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Cardinality of the dual cut (\texttt{Peierls/DartDualCutCard.lean})}
 
 \par\noindent\textbf{Role:} The dual-edge map $d \mapsto s(d.\texttt{tail}, d.\texttt{head})$ is
