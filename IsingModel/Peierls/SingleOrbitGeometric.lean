@@ -12,6 +12,12 @@ three geometric inputs about a region `F` with a basepoint contact pair `c₀` �
 (`boundaryDart_single_orbit_of_contactPair_basepoint`). The remaining work is supplying these three
 inputs from connectedness and filledness of `F` — the orbit/contact machinery is otherwise complete.
 
+**Caveat (design):** the `hsame` input here (joining *all* contact pairs sharing an in-site) is too
+strong to discharge directly — at a pinch vertex of a filled region it is circular with the
+single-orbit conclusion. This is a valid conditional reduction; the sound discharge keeps the global
+invariant at the contact-pair/wedge level (controlled advances + same-arc connectivity), not the
+vertex level.
+
 * `boundaryDart_single_orbit_of_geometric_inputs` — `hone` from the three geometric inputs.
 
 References: Friedli–Velenik, *Statistical Mechanics of Lattice Systems*
