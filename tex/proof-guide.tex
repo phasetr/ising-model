@@ -2666,6 +2666,19 @@ within-$F$ path).  This is the chaining half of the basepoint connectivity; supp
 advance (from the wedge construction) and the same-vertex wedge then closes the global argument.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Basepoint connectivity from the geometric inputs
+  (\texttt{Peierls/SingleOrbitToBasepoint.lean})}
+
+\par\noindent\textbf{Role:} Assembling the $F$-path chaining into basepoint connectivity, isolating
+the three geometric inputs the global filled-region argument must supply.
+$\texttt{reflTransGen\_contactMove\_to\_basepoint}$: given a per-edge advance $\texttt{hstep}$,
+same-vertex wedge connectivity $\texttt{hsame}$ (joining contact pairs sharing an in-site), and
+$F$-reachability $\texttt{hreach}$ of every in-site to $c_0.\texttt{inSite}$ (from connectedness of
+$F$), every contact pair reaches the fixed basepoint $c_0$ by contact moves: walk the in-site back to
+the basepoint vertex ($\texttt{reflTransGen\_contactMove\_of\_inSite\_reachable}$), then rotate within
+the basepoint wedge.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Cardinality of the dual cut (\texttt{Peierls/DartDualCutCard.lean})}
 
 \par\noindent\textbf{Role:} The dual-edge map $d \mapsto s(d.\texttt{tail}, d.\texttt{head})$ is
