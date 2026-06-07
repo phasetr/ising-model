@@ -2606,6 +2606,18 @@ derived from these memberships via $\texttt{leftFan\_next\_turnLeft\_valid\_iff}
 $\texttt{leftSite\_add}$.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Single orbit from contact-pair connectivity
+  (\texttt{Peierls/SingleOrbitFromConnected.lean})}
+
+\par\noindent\textbf{Role:} The capstone reduction.
+$\texttt{boundaryDart\_single\_orbit\_of\_contactPair\_connected}$: if every two contact pairs of $F$
+are joined by a chain of contact moves ($\forall c\,c',\ \texttt{ReflTransGen ContactMove}\,c\,c'$),
+then every two boundary darts are in the same orbit -- the $\texttt{hone}$ input of the Peierls bound.
+The single-orbit property is now reduced to the orbit-free planar connectivity of the contact graph,
+the only remaining content, via the dart-level push-down
+$\texttt{sameOrbit\_of\_dart\_contactMove\_chain}$.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Cardinality of the dual cut (\texttt{Peierls/DartDualCutCard.lean})}
 
 \par\noindent\textbf{Role:} The dual-edge map $d \mapsto s(d.\texttt{tail}, d.\texttt{head})$ is
