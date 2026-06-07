@@ -3591,6 +3591,24 @@ This remains an interface reduction.  The concrete geometric proof of those turn
 and the separate same-left-site anchor reachability input, remain open.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Concrete lower strip turn step for non-strip ray-exit chains
+  (\texttt{Peierls/RayExitAnchorVerticalStrictBridgeNonStripTurnStep.lean})}
+
+\par\noindent\textbf{Role:} The file
+\texttt{Peierls/RayExitAnchorVerticalStrictBridgeNonStripTurnStep.lean} starts to discharge the
+turn-chain input by proving a concrete local step along the lower horizontal strip.  The lemma
+\(\texttt{validAt\_ltStripDart\_straight\_succ}\) shows that the straight candidate after a lower
+\(+e_0\) strip dart is valid when the next upper ray point is still in \(F\) and the next lower ray
+point is outside \(F\).  The lemma
+\(\texttt{not\_validAt\_ltStripDart\_turnLeft\_succ}\) shows that the left-turn candidate is
+blocked because its right site is that same upper ray point in \(F\).
+
+Together these facts give
+\(\texttt{nextDartTurnStep\_ltStripDart\_succ}\): consecutive lower strip darts are connected by a
+certified straight \(\texttt{nextDart}\) step.  This is a concrete local turn certificate for the
+non-strip frontier-chain route and does not assume monotonicity of the ray after its first exit.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{The ray-exit anchored route
   (\texttt{Peierls/RayExitAnchoredRoute.lean})}
 
