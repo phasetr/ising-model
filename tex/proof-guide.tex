@@ -3296,8 +3296,12 @@ dual cut function $\texttt{cut}\,S = \texttt{dualCutInBox}$ (via $\texttt{dif}$)
 ($\texttt{dualCutInBox\_isEdgeConnected\_of\_single\_orbit}$, from $\texttt{hone}$), of size $r$
 ($\texttt{dualCutInBox\_card\_eq\_cutEdges}$), and anchored in $\texttt{rayAnchorSet}$
 ($\texttt{rayAnchorSet\_cover}$); feeding these to $\texttt{contour\_count\_le}$ and
-$\texttt{rayAnchorSet\_card\_le}$ bounds the count.  The single-orbit (discrete Jordan) input enters
-only through the $\texttt{hone}$ hypothesis.
+$\texttt{rayAnchorSet\_card\_le}$ bounds the count.  The variant
+$\texttt{peierls\_contour\_count\_anchored}$ replaces the single-orbit connectivity supply by
+per-droplet anchored $\texttt{DartReachable}$ data and
+$\texttt{dualCutInBox\_isEdgeConnected\_of\_anchored}$, giving the count-consumer form for the direct
+edge-connectedness route.  The single-orbit (discrete Jordan) input enters only through the
+connectivity supply.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, (3.49), pp. 109--116.
 
 \subsection*{The contour count as a power bound (\texttt{Peierls/PeierlsContourCountPow.lean})}
