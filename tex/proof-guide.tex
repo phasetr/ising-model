@@ -3273,6 +3273,23 @@ $\texttt{hshadow}$ input.  This file only supplies the canonical ray-exit anchor
 and one-edge shadow obligations remain separate geometric inputs.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Ray-exit anchor stability along ray prefixes
+  (\texttt{Peierls/RayExitAnchorPrefix.lean})}
+
+\par\noindent\textbf{Role:} Along a fixed $+e_0$ ray before its chosen first exit, later prefix
+sites see the same exit edge.  The ray identity $\texttt{ray0\_add}$ reindexes a ray whose origin
+has already been shifted along the same ray.  The uniqueness lemmas
+$\texttt{first\_exit\_below\_unique}$ and $\texttt{rayExitIndex\_eq\_of\_first\_exit}$ make the
+strengthened first-exit specification rigid, so $\texttt{rayExitIndex\_shift}$ subtracts the prefix
+offset and $\texttt{ray0\_rayExitIndex\_shift}$ identifies the shifted and original exit sites.
+Consequently $\texttt{rayExitAnchorDart\_shift}$ and
+$\texttt{rayExitAnchorDartMap\_prefix\_eq}$ show that prefix sites choose the same ray-exit anchor
+dart, while $\texttt{rayExitAnchorDart\_prefix\_shared}$ and
+$\texttt{rayExitAnchorDartMap\_prefix\_shared}$ package the same fact as a shared-dual-vertex input
+for later $\texttt{hshadow}$ assembly.  This is only ray-prefix stability; the full adjacent-site
+shadow condition and the $\texttt{hanchor}$ reachability input remain separate geometric tasks.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{The ray-exit anchored route
   (\texttt{Peierls/RayExitAnchoredRoute.lean})}
 
