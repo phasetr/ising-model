@@ -2916,6 +2916,29 @@ degree-two set), so the incoming and outgoing darts share an orbit
 the degree-two case of the discrete-Jordan cycle structure.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{The degree-four crossing of the contour
+  (\texttt{Peierls/SingleOrbitDegFourPairing.lean})}
+
+At a \textbf{degree-four} dual vertex all four sides are cut
+($\texttt{cutDirs\_eq\_univ\_of\_squareSplitCount\_eq\_four}$) and the four corner sites strictly
+alternate across $F$ (a checkerboard crossing).  Under the left-hand rule the contour
+\textbf{rounds the corner}, the convention that keeps it from crossing itself.
+$\texttt{validAt\_head\_turnLeft\_iff}$: the left turn at the head is valid iff the straight-ahead
+left site is outside $F$ (its left site is the incoming left site, always in $F$, and its right site
+is that straight left site, via $\texttt{leftSite\_head\_turnLeft}$ and
+$\texttt{rightSite\_head\_turnLeft\_eq\_leftSite\_head}$).
+$\texttt{validAt\_head\_turnLeft\_of\_squareSplitCount\_eq\_four}$: at a crossing the left turn is
+valid -- the checkerboard alternation ($\texttt{squareSplitCount\_eq\_four\_iff}$) together with the
+incoming dart's validity forces the straight left site out of $F$ (by $\texttt{fin\_cases}$ on the
+direction).  $\texttt{nextDart\_dir\_eq\_turnLeft\_of\_squareSplitCount\_eq\_four}$: hence
+$\texttt{nextDart}$ takes the left turn; $\texttt{nextDart\_pairs\_squareSplitCount\_four}$ bundles
+the local pairing ($d.\texttt{SameOrbit}\,d.\texttt{nextDart}$,
+$d.\texttt{nextDart}.\texttt{tail} = d.\texttt{head}$,
+$d.\texttt{nextDart}.\texttt{dir} = d.\texttt{dir}.\texttt{turnLeft}$).  With the degree-two pairing
+this completes the local case analysis for the cycle structure of the $\texttt{nextDart}$ orbits.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, Figure 3.11, p.~111 (corner-rounding rule);
+pp.~109--116.
+
 \subsection*{Cardinality of the dual cut (\texttt{Peierls/DartDualCutCard.lean})}
 
 \par\noindent\textbf{Role:} The dual-edge map $d \mapsto s(d.\texttt{tail}, d.\texttt{head})$ is
