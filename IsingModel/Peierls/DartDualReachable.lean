@@ -6,15 +6,15 @@ import IsingModel.Peierls.DualCutEdgeAdjacency
 The edge-connectedness of `dartDualCut F` is exactly the statement that any two boundary darts'
 dual edges are joined by a chain of shared-vertex (`edgeAdjacentIn`) steps. This file packages that
 reachability as a relation `DartReachable` on `BoundaryDart F` and records its closure properties,
-then proves the **reduction** that turns whole-cut edge-connectedness into pairwise dart
+then proves the **interface reduction** that turns whole-cut edge-connectedness into pairwise dart
 reachability:
 
 > `dartDualCut_isEdgeConnected_of_dartReachable` — if every pair of boundary darts is reachable,
 > the whole dual cut is edge-connected.
 
-This genuinely lowers the target consumed at `PeierlsContourCount.lean`: instead of the strictly
-stronger single-orbit (discrete-Jordan) hypothesis `hone`, the remaining obligation becomes "any two
-boundary darts are reachable in the dual cut", the form supplied by the F-path / shared-vertex
+This separates the target consumed at `PeierlsContourCount.lean` from the strictly stronger
+single-orbit (discrete-Jordan) hypothesis `hone`: the remaining geometric obligation becomes "any
+two boundary darts are reachable in the dual cut", the form intended for the F-path / shared-vertex
 argument for a connected, filled region. Crucially the bridge is the weak shared-vertex relation
 `edgeAdjacentIn` (via `edgeAdjacentIn_dartDualCut_of_shared`), **not** `SameOrbit`/`ContactMove`
 (which would collapse back to single-orbitness); `SameOrbit` enters only as the convenience wrapper
@@ -25,7 +25,7 @@ argument for a connected, filled region. Crucially the bridge is the weak shared
 * `dartReachable_of_shared` — darts sharing a dual vertex are reachable.
 * `dartReachable_trans_shared` — extend a reachability by a shared-vertex step.
 * `dartReachable_nextDart` — a dart and its `nextDart` successor are reachable.
-* `dartReachable_of_sameOrbit` — same-orbit darts are reachable (convenience wrapper).
+* `dartReachable_of_sameOrbit` — same-orbit darts are reachable (comparison wrapper).
 * `dartDualCut_isEdgeConnected_of_dartReachable` — pairwise reachability ⟹ edge-connected.
 
 References: Friedli–Velenik, *Statistical Mechanics of Lattice Systems*
@@ -79,16 +79,16 @@ theorem dartReachable_trans_shared {d e f : BoundaryDart F} {v : Fin 2 → ℤ}
 theorem dartReachable_nextDart (d : BoundaryDart F) : DartReachable F d d.nextDart :=
   Relation.ReflTransGen.single (edgeAdjacentIn_dartDualCut_nextDart d)
 
-/-- **Same-orbit darts are reachable** (convenience wrapper over
-`reachable_dartDualCut_of_sameOrbit`). Note `SameOrbit` is *not* the bridge of the unconditional
-route — it is recovered here from the weaker shared-vertex chaining. -/
+/-- **Same-orbit darts are reachable** (comparison wrapper over
+`reachable_dartDualCut_of_sameOrbit`). Note `SameOrbit` is *not* the intended bridge of the
+unconditional route; the direct route must provide `DartReachable` by shared-vertex chains. -/
 theorem dartReachable_of_sameOrbit {d e : BoundaryDart F} (he : d.SameOrbit e) :
     DartReachable F d e :=
   reachable_dartDualCut_of_sameOrbit he
 
-/-- **Pairwise dart reachability gives an edge-connected dual cut**. This is the reduction that
-replaces the single-orbit hypothesis consumed at `PeierlsContourCount.lean`: it suffices to show
-any two boundary darts are reachable in `dartDualCut F`. -/
+/-- **Pairwise dart reachability gives an edge-connected dual cut**. This is the interface reduction
+needed to replace the single-orbit hypothesis consumed at `PeierlsContourCount.lean`: it suffices to
+show any two boundary darts are reachable in `dartDualCut F`. -/
 theorem dartDualCut_isEdgeConnected_of_dartReachable
     (h : ∀ d e : BoundaryDart F, DartReachable F d e) :
     IsEdgeConnected (dartDualCut F) := by
