@@ -130,6 +130,7 @@ import IsingModel.Peierls.SingleOrbitFromConnected
 import IsingModel.Peierls.SingleOrbitContactGen
 import IsingModel.Peierls.SingleOrbitContactEquiv
 import IsingModel.Peierls.SingleOrbitContactSymm
+import IsingModel.Peierls.SingleOrbitBasepoint
 import IsingModel.Peierls.SingleOrbitTransport
 import IsingModel.Peierls.SingleOrbitWedge
 import IsingModel.Peierls.SingleOrbitWedgeReach
