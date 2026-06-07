@@ -2866,6 +2866,19 @@ $\texttt{Fin.sum\_univ\_four}$, then matching).  This identifies the contour's l
 $\texttt{nextDart}$ orbits in the discrete-Jordan argument.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{The Eulerian property of the dual cut
+  (\texttt{Peierls/SingleOrbitEulerian.lean})}
+
+\par\noindent\textbf{Role:} Transporting the contour's local even/$0$-$2$-$4$ degree facts
+(\texttt{ContourEven}) through $\texttt{squareSplitCount\_eq\_card\_cut\_dirs}$ gives the
+\textbf{Eulerian property} of the dual cut at the graph level: at every dual vertex $c$ the number
+$\texttt{cutDirs}\,F\,c$ of incident cut directions is even ($\texttt{card\_cut\_dirs\_even}$), at most
+four ($\texttt{card\_cut\_dirs\_le\_four}$), and in fact $0$, $2$, or $4$
+($\texttt{card\_cut\_dirs\_eq}$).  Even degree everywhere is exactly the hypothesis under which a
+finite graph decomposes into edge-disjoint cycles -- the combinatorial heart of identifying the
+$\texttt{nextDart}$ orbits as the cycles of the contour in the discrete-Jordan argument.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Cardinality of the dual cut (\texttt{Peierls/DartDualCutCard.lean})}
 
 \par\noindent\textbf{Role:} The dual-edge map $d \mapsto s(d.\texttt{tail}, d.\texttt{head})$ is
