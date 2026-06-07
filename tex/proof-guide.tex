@@ -3353,6 +3353,30 @@ cases are handled by applying the upward statement in the reverse order and usin
 the stricter input while still leaving the genuinely unequal-index vertical geometry open.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Connected-droplet strict ray-exit route}
+
+\par\noindent\textbf{Role:} The file
+\texttt{Peierls/RayExitAnchorVerticalStrictConnected.lean} removes one purely structural input from
+the strict ray-exit route in the Peierls count setting.  The strict wrappers of the previous file
+still require ordinary connectivity inside
+\(F = S.\mathrm{image}\,\texttt{Subtype.val}\).  But for a box droplet
+\(S : \texttt{Finset}\,\Lambda\), the Peierls hypotheses already include connectedness of \(S\) in
+the induced box graph.  The lemma
+\(\texttt{rayExit\_image\_conn\_of\_isConnectedDroplet}\) is the specialization of
+\(\texttt{reachableWithin\_image\_of\_isConnectedDroplet}\) to \(\texttt{latticeGraph}\,2\), turning
+that box connectedness into the required within-image reachability.
+
+The connected wrappers thread this supplied connectivity through the ray-exit route:
+\begin{Verbatim}
+dartReachable_of_rayExitVerticalStrict_connected
+dualCutInBox_isEdgeConnected_of_rayExitVerticalStrict_connected
+peierls_contour_count_rayExit_verticalStrict_connected
+\end{Verbatim}
+The remaining explicit geometric inputs are still
+\(\texttt{hanchor}\) and \(\texttt{RayExitVerticalStrictStep}\); the strict unequal-index vertical
+chain and the same-left-site anchor reachability are not proved here.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{The ray-exit anchored route
   (\texttt{Peierls/RayExitAnchoredRoute.lean})}
 
