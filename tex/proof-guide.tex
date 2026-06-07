@@ -3397,6 +3397,28 @@ The proof obligations remain explicit: this file does not prove either ordered f
 does not prove the same-left-site anchor reachability \(\texttt{hanchor}\).
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Endpoint bridge darts for strict vertical ray-exit cases}
+
+\par\noindent\textbf{Role:} The file
+\texttt{Peierls/RayExitAnchorVerticalStrictBridge.lean} proves the first boundary dart forced at
+the near endpoint of each ordered strict vertical case.  If \(b=a+e_1\) and the lower ray exits
+first, then \(\texttt{rayExitVerticalStrictLtBridgeDart}\) is the horizontal \(+e_0\) boundary dart
+at the lower first-exit point: its left site is the upper successor, still in \(F\), and its right
+site is the lower successor, outside \(F\).  The lemma
+\(\texttt{dartReachable\_rayExitAnchorDartMap\_ltBridgeDart}\) connects the lower ray-exit anchor
+to this bridge by a shared dual vertex.
+
+If the upper ray exits first, \(\texttt{rayExitVerticalStrictGtBridgeDart}\) is the horizontal
+\(-e_0\) boundary dart below the upper first-exit point: its left site is the lower successor,
+still in \(F\), and its right site is the upper successor, outside \(F\).  The lemma
+\(\texttt{dartReachable\_rayExitAnchorDartMap\_gtBridgeDart}\) connects the upper ray-exit anchor
+to this bridge by a shared dual vertex.
+
+These lemmas are endpoint bridges only.  A finite set may re-enter a ray after the first exit, so
+the file deliberately does not assert that the whole vertical strip between the two exit indices is
+a straight boundary chain.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{The ray-exit anchored route
   (\texttt{Peierls/RayExitAnchoredRoute.lean})}
 
