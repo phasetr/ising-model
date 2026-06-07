@@ -2719,6 +2719,19 @@ connectivity of $F$ -- the form in which the connectedness of the spin droplet e
 per-edge advance and same-vertex inputs (the wedge/filled geometry) then remain.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Transferring connectivity from a box droplet to its image
+  (\texttt{Peierls/SingleOrbitConnTransfer.lean})}
+
+\par\noindent\textbf{Role:} The within-$F$ connectivity input supplied from the box.
+$\texttt{reachableWithin\_image\_val}$: a within-$S$ path in $\texttt{Ambient.inducedGraph}\,G\,\Lambda$
+maps under $\texttt{Subtype.val}$ to a within-$S.\texttt{image Subtype.val}$ path in $G$
+($\texttt{ReflTransGen}$ induction, the induce adjacency being $G.\texttt{Adj}$ on values and
+membership transferring via $\texttt{Finset.mem\_image\_of\_mem}$).  Hence
+$\texttt{reachableWithin\_image\_of\_isConnectedDroplet}$: a connected droplet $S$ in the box yields a
+within-image-connected set in the ambient graph.  With $G = \texttt{latticeGraph}\,2$ this is exactly
+the $F$-connectivity $\texttt{hreach}$ input for $F = S.\texttt{image Subtype.val}$.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Cardinality of the dual cut (\texttt{Peierls/DartDualCutCard.lean})}
 
 \par\noindent\textbf{Role:} The dual-edge map $d \mapsto s(d.\texttt{tail}, d.\texttt{head})$ is
