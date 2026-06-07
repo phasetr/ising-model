@@ -2590,6 +2590,22 @@ exposed edge, then slide across it -- the per-edge transport step of the global 
 argument.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Membership form of the orbit advance
+  (\texttt{Peierls/SingleOrbitAdvanceMem.lean})}
+
+\par\noindent\textbf{Role:} The per-edge transport $\texttt{sameOrbit\_iterate\_succ\_left}$ restated
+purely in terms of $F$-membership of the local sites -- the form the global filled-region argument
+supplies.  $\texttt{sameOrbit\_advance\_of\_membership}$: if the out-sites
+$d.\texttt{left} + (\texttt{turnLeft}^{[i]} d.\texttt{dir}).\texttt{vec}$ for $i < n$ lie outside $F$
+(fan rotates), the $n$-th rotated step $d.\texttt{left} + (\texttt{turnLeft}^{[n]}
+d.\texttt{dir}).\texttt{vec}$ lies inside $F$ (halts the fan and gives the straight $F$-side), and the
+straight out-site $\texttt{rightSite}\,(\texttt{nextDart}^{[n]} d).\texttt{head}\,(\texttt{turnLeft}^{[n]}
+d.\texttt{dir})$ lies outside $F$, then $d$'s orbit reaches a dart at the adjacent $F$-vertex
+$d.\texttt{left} + (\texttt{turnLeft}^{[n]} d.\texttt{dir}).\texttt{vec}$.  The validity conditions are
+derived from these memberships via $\texttt{leftFan\_next\_turnLeft\_valid\_iff}$ and
+$\texttt{leftSite\_add}$.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Cardinality of the dual cut (\texttt{Peierls/DartDualCutCard.lean})}
 
 \par\noindent\textbf{Role:} The dual-edge map $d \mapsto s(d.\texttt{tail}, d.\texttt{head})$ is
