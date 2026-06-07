@@ -177,6 +177,7 @@ import IsingModel.Peierls.RayExitAnchorVerticalStrictBridgeGap
 import IsingModel.Peierls.RayExitAnchorVerticalStrictBridgeStrip
 import IsingModel.Peierls.RayExitAnchorVerticalStrictBridgeNonStrip
 import IsingModel.Peierls.RayExitAnchorVerticalStrictBridgeNonStripFrontier
+import IsingModel.Peierls.RayExitAnchorVerticalStrictBridgeNonStripNextDart
 import IsingModel.Peierls.RayExitAnchoredRoute
 import IsingModel.Peierls.RayExitShadowRoute
 import IsingModel.Peierls.RayExitBound
