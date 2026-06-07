@@ -2758,6 +2758,18 @@ $F$-vertex the orbit slides to -- producing the arc-and-stop data for
 $\texttt{sameOrbit\_advance\_of\_membership}$ from pure membership.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{An $F$-neighbour is hit by a rotation
+  (\texttt{Peierls/SingleOrbitHitAdjacent.lean})}
+
+\par\noindent\textbf{Role:} The precondition of $\texttt{exists\_first\_turnLeft\_mem}$ is met
+whenever $a$ has an $F$-neighbour.  $\texttt{exists\_turnLeft\_hit\_of\_adjacent\_mem}$: if $a'$ is an
+$F$-vertex adjacent to $a$, then some left rotation $a + (\texttt{turnLeft}^{[k]}
+\texttt{dir}).\texttt{vec}$ ($k < 4$) lands in $F$ ($a' = a + \delta.\texttt{vec}$ for one of the four
+directions, reached by $\texttt{Dir2.exists\_turnLeft\_iterate\_lt\_four}$).  Combined with
+$\texttt{exists\_first\_turnLeft\_mem}$ this turns ``$a$ has an $F$-neighbour'' into the
+cleared-arc-and-stop data of the wedge advance.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Cardinality of the dual cut (\texttt{Peierls/DartDualCutCard.lean})}
 
 \par\noindent\textbf{Role:} The dual-edge map $d \mapsto s(d.\texttt{tail}, d.\texttt{head})$ is
