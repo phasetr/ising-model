@@ -2981,6 +2981,40 @@ obligation is to show that any two boundary darts of a connected, filled region 
 F-path / shared-vertex argument rather than by discrete-Jordan single-orbitness.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{F-path induction for dual-cut dart reachability
+(\texttt{Peierls/DartReachableFPath.lean})}
+
+\par\noindent\textbf{Role:} A path-induction interface that turns reachability \emph{inside} the
+region $F$ into $\texttt{DartReachable}$, the shape the F-path / shared-vertex shadow argument
+produces.  The geometric core is \emph{not} proved here; it is isolated as explicit local
+obligations.  The relation $\texttt{ReachableWithinSubtype}$ reindexes $\texttt{ReachableWithin}$
+on the subtype $\{x // x \in F\}$, so anchors are required only for sites of $F$.  Fix an anchor map
+$\varphi : \{x // x \in F\} \to \texttt{BoundaryDart}\,F$.
+\begin{itemize}
+  \item $\texttt{dartReachable\_of\_reachableWithinSubtype}$ and
+    $\texttt{dartReachable\_of\_reachableWithin}$: given a per-edge step
+    $\texttt{hstep} : \forall a\,b,\ G.\texttt{Adj}\,a.1\,b.1 \to
+    \texttt{DartReachable}\,F\,(\varphi\,a)\,(\varphi\,b)$, a within-$F$ walk $a \rightsquigarrow b$
+    ($\texttt{ReachableWithin}\,G\,F$) lifts to $\texttt{DartReachable}\,F\,(\varphi\,a)\,
+    (\varphi\,b)$ by $\texttt{ReflTransGen}$ induction folding through $\texttt{DartReachable.trans}$.
+  \item $\texttt{dartReachable\_of\_reachableWithin\_shadow}$: the same with the per-edge step given
+    as a shared dual vertex $\exists v,\ v \in s((\varphi\,a).\texttt{tail}, (\varphi\,a).
+    \texttt{head}) \wedge v \in s((\varphi\,b).\texttt{tail}, (\varphi\,b).\texttt{head})$,
+    discharged through $\texttt{dartReachable\_of\_shared}$ (the ``shadow'' form).
+  \item $\texttt{dartReachable\_of\_anchored}$: adding $\texttt{hanchor} : \forall d,\
+    \texttt{DartReachable}\,F\,d\,(\varphi\,\langle d.\texttt{left}, d.\texttt{left\_mem}
+    \rangle)$ and $F$-connectivity gives pairwise reachability of \emph{all} boundary darts via
+    $d \rightsquigarrow \varphi(d.\texttt{left}) \rightsquigarrow \varphi(e.\texttt{left})
+    \rightsquigarrow e$.
+  \item $\texttt{dartDualCut\_isEdgeConnected\_of\_anchored}$: composing with
+    $\texttt{dartDualCut\_isEdgeConnected\_of\_dartReachable}$ yields
+    $\texttt{IsEdgeConnected}\,(\texttt{dartDualCut}\,F)$ from $(\varphi, \texttt{hanchor},
+    \texttt{hstep})$ plus $F$-connectivity.
+\end{itemize}
+Remaining open: the construction of $\varphi$, $\texttt{hanchor}$, $\texttt{hstep}$ (the
+degree-$0/2/4$ local crossing analysis).
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Cardinality of the dual cut (\texttt{Peierls/DartDualCutCard.lean})}
 
 \par\noindent\textbf{Role:} The dual-edge map $d \mapsto s(d.\texttt{tail}, d.\texttt{head})$ is
