@@ -3290,6 +3290,20 @@ for later $\texttt{hshadow}$ assembly.  This is only ray-prefix stability; the f
 shadow condition and the $\texttt{hanchor}$ reachability input remain separate geometric tasks.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Horizontal ray-exit anchor shadow steps
+  (\texttt{Peierls/RayExitAnchorStep.lean})}
+
+\par\noindent\textbf{Role:} This file repackages ray-prefix stability as the one-step horizontal
+part of the later $\texttt{hshadow}$ input.  The identity $\texttt{ray0\_one}$ rewrites one ray
+step as $x + e_0$.  A small lower-bound lemma for the first exit index then shows that this first
+step is before the chosen exit whenever it remains in $F$.  Consequently the file provides
+shared-dual-vertex witnesses for $x$ with $\texttt{ray0}\,x\,1$, for the forward horizontal step
+$x \mapsto x+e_0$, and, by coordinate cancellation, for the backward horizontal step
+$x \mapsto x-e_0$.  These lemmas cover only the horizontal
+same-ray cases; the vertical/frontier shadow cases and the $\texttt{hanchor}$ reachability input
+remain separate.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{The ray-exit anchored route
   (\texttt{Peierls/RayExitAnchoredRoute.lean})}
 
