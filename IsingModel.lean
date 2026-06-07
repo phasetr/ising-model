@@ -183,6 +183,7 @@ import IsingModel.Peierls.SingleOrbitDegTwo
 import IsingModel.Peierls.SingleOrbitFaceDeg
 import IsingModel.Peierls.SingleOrbitDartEdge
 import IsingModel.Peierls.SingleOrbitFaceDart
+import IsingModel.Peierls.SingleOrbitEdgeValid
 import IsingModel.Peierls.Dir2
 import IsingModel.Peierls.SingleOrbitDirCycle
 import IsingModel.Peierls.SingleOrbitFirstHit
