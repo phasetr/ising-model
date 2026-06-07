@@ -11,6 +11,15 @@ same-vertex wedge connectivity, and connectivity of `F`
 droplet enters. Only the per-edge advance and same-vertex inputs (the wedge/filled geometry) then
 remain.
 
+**Caveat (design):** the `hsame` argument as stated here — connecting *all* contact pairs sharing an
+in-site — is too strong to discharge directly: at a pinch vertex of a filled region the complement
+splits into two arcs whose darts lie in different local wedges, joined only by traversing the whole
+boundary (i.e. by the very single-orbit property being proved). The sound route keeps the global
+invariant at the *contact-pair/wedge* level (controlled advances plus same-arc connectivity, as in
+`reflTransGen_contactMove_same_inSite_arc` and `reflTransGen_contactMove_advance`) rather than at
+the vertex level; this statement is a valid conditional reduction but should not be used as the
+final entry point.
+
 * `reachable_inSite_of_connected` — `F`-connectivity gives the `hreach` input.
 * `boundaryDart_single_orbit_of_connected_inputs` — `hone` from advance, wedge, `F`-connectivity.
 

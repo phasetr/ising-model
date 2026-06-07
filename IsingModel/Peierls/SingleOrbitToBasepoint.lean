@@ -10,6 +10,11 @@ in-site to the basepoint's (`hreach`, from connectedness of `F`). Under these, e
 reaches the fixed basepoint by contact moves (`reflTransGen_contactMove_to_basepoint`) — walk the
 in-site back to the basepoint vertex (chaining), then rotate within the basepoint wedge.
 
+**Caveat (design):** the `hsame` argument (joining *all* contact pairs at a shared in-site) is too
+strong to discharge — at a pinch vertex of a filled region it is circular with single-orbit. This is
+a valid conditional reduction; the sound discharge keeps the global invariant at the
+contact-pair/wedge level (controlled advances + same-arc connectivity), not the vertex level.
+
 * `reflTransGen_contactMove_to_basepoint` — basepoint connectivity from the three geometric inputs.
 
 References: Friedli–Velenik, *Statistical Mechanics of Lattice Systems*
