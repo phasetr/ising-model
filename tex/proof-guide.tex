@@ -2537,6 +2537,20 @@ new ingredient still missing for full connectivity is the existence of a left-fa
 exit direction of the exposed wedge.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{The left-fan validity criterion
+  (\texttt{Peierls/SingleOrbitWedge.lean})}
+
+\par\noindent\textbf{Role:} The local condition controlling how far a left fan turns.
+$\texttt{leftFan\_next\_turnLeft\_valid\_iff}$: after a left-fan prefix of length $n$, the next left
+turn is valid iff $d.\texttt{left} + (\texttt{turnLeft}^{[n]} d.\texttt{dir}).\texttt{vec} \notin F$,
+the lattice point one step from the fixed left site in the current rotated direction.  The $F$-side
+conjunct of validity is automatic (the left site is the fixed $F$-vertex $d.\texttt{left}$, via
+$\texttt{leftSite\_head\_turnLeft}$ and $\texttt{d.left\_mem}$), so only the out-side membership
+matters ($\texttt{rightSite\_head\_turnLeft\_eq\_leftSite\_head}$ and $\texttt{leftSite\_add}$).  This
+reduces the wedge-existence question to a purely local membership condition on the neighbours of
+$d.\texttt{left}$.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Cardinality of the dual cut (\texttt{Peierls/DartDualCutCard.lean})}
 
 \par\noindent\textbf{Role:} The dual-edge map $d \mapsto s(d.\texttt{tail}, d.\texttt{head})$ is
