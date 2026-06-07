@@ -2959,6 +2959,27 @@ $\texttt{edgeAdjacentIn\_mono}$.  $\texttt{edgeAdjacentIn\_dartDualCut\_nextDart
 successor share the pivot vertex $d.\texttt{head} = d.\texttt{nextDart}.\texttt{tail}$.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Reachability of boundary darts inside the dual cut
+  (\texttt{Peierls/DartDualReachable.lean})}
+
+Packages the per-pair content of edge-connectedness as a relation and proves the reduction that
+replaces the single-orbit hypothesis $\texttt{hone}$.  $\texttt{DartReachable}\,F\,d\,e$ holds when
+the dual edges $s(d.\texttt{tail}, d.\texttt{head})$ and $s(e.\texttt{tail}, e.\texttt{head})$ are
+joined by a chain of shared-vertex steps $\texttt{edgeAdjacentIn}\,(\texttt{dartDualCut}\,F)$; it is
+an equivalence ($\texttt{DartReachable.refl}$, $\texttt{DartReachable.symm}$ from
+$\texttt{reflTransGen\_edgeAdjacentIn\_symmetric}$, $\texttt{DartReachable.trans}$).
+$\texttt{dartReachable\_of\_shared}$: darts sharing a dual vertex are reachable in one step (the
+cross-orbit link).  $\texttt{dartReachable\_trans\_shared}$: extend a reachability by a shared-vertex
+step (the F-path chaining primitive).  $\texttt{dartReachable\_nextDart}$: a dart and its
+$\texttt{nextDart}$ successor are reachable.  $\texttt{dartReachable\_of\_sameOrbit}$: same-orbit
+darts are reachable -- a convenience wrapper recovering $\texttt{SameOrbit}$ from the weaker
+shared-vertex chaining, so it is \emph{not} the bridge of the unconditional route.
+\textbf{Reduction:} $\texttt{dartDualCut\_isEdgeConnected\_of\_dartReachable}$ proves that pairwise
+dart reachability implies $\texttt{IsEdgeConnected}\,(\texttt{dartDualCut}\,F)$; it now suffices that
+any two boundary darts of a connected, filled region are reachable, supplied by the F-path /
+shared-vertex argument rather than discrete-Jordan single-orbitness.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Cardinality of the dual cut (\texttt{Peierls/DartDualCutCard.lean})}
 
 \par\noindent\textbf{Role:} The dual-edge map $d \mapsto s(d.\texttt{tail}, d.\texttt{head})$ is

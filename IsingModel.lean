@@ -189,6 +189,7 @@ import IsingModel.Peierls.SingleOrbitCutDirDart
 import IsingModel.Peierls.SingleOrbitDegTwoPairing
 import IsingModel.Peierls.SingleOrbitDegFourPairing
 import IsingModel.Peierls.DualCutEdgeAdjacency
+import IsingModel.Peierls.DartDualReachable
 import IsingModel.Peierls.SingleOrbitEdgeValid
 import IsingModel.Peierls.Dir2
 import IsingModel.Peierls.SingleOrbitDirCycle
