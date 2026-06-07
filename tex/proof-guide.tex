@@ -3377,6 +3377,26 @@ The remaining explicit geometric inputs are still
 chain and the same-left-site anchor reachability are not proved here.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Ordered strict ray-exit cases}
+
+\par\noindent\textbf{Role:} The file
+\texttt{Peierls/RayExitAnchorVerticalStrictOrdered.lean} splits the remaining strict vertical
+ray-exit input by first-exit-index order.  The previous
+\(\texttt{RayExitVerticalStrictStep}\) handles upward \(+e_1\) pairs with unequal indices in one
+block.  The ordered interface names the two later geometric cases separately:
+\begin{Verbatim}
+RayExitVerticalStrictLtStep
+RayExitVerticalStrictGtStep
+\end{Verbatim}
+The lemma \(\texttt{rayExitVerticalStrictStep\_of\_orderedStep}\) recovers the previous strict
+input by trichotomy for natural numbers.
+
+The ordered wrappers thread this refinement through the same strict route, including the connected
+count consumer \(\texttt{peierls\_contour\_count\_rayExit\_verticalStrictOrdered\_connected}\).
+The proof obligations remain explicit: this file does not prove either ordered frontier chain and
+does not prove the same-left-site anchor reachability \(\texttt{hanchor}\).
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{The ray-exit anchored route
   (\texttt{Peierls/RayExitAnchoredRoute.lean})}
 
