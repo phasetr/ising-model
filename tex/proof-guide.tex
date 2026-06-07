@@ -2643,6 +2643,17 @@ $\forall c,\ \texttt{ReflTransGen ContactMove}\,c\,c_0$ -- ``every boundary cont
 fixed one'', the form the $F$-path argument establishes.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Single orbit from basepoint connectivity
+  (\texttt{Peierls/SingleOrbitFromBasepoint.lean})}
+
+\par\noindent\textbf{Role:} Composing the basepoint reduction with the connectivity capstone.
+$\texttt{boundaryDart\_single\_orbit\_of\_contactPair\_basepoint}$: if every contact pair of $F$
+reaches one fixed basepoint $c_0$ by contact moves, then every two boundary darts are in the same
+orbit (the $\texttt{hone}$ input).  This is the cleanest entry point for the remaining global
+argument: supplying $\forall c,\ \texttt{ReflTransGen ContactMove}\,c\,c_0$ (a boundary walk back to a
+fixed contact pair) yields $\texttt{hone}$ directly.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Cardinality of the dual cut (\texttt{Peierls/DartDualCutCard.lean})}
 
 \par\noindent\textbf{Role:} The dual-edge map $d \mapsto s(d.\texttt{tail}, d.\texttt{head})$ is
