@@ -18,7 +18,7 @@ that keeps the contour from crossing itself, the degree-four case of the discret
 * `nextDart_pairs_squareSplitCount_four` — the degree-four local pairing bundle.
 
 References: Friedli–Velenik, *Statistical Mechanics of Lattice Systems*
-(Cambridge, 2017), §3.7.2, pp. 109–116.
+(Cambridge, 2017), §3.7.2, Figure 3.11, p. 111 (corner-rounding rule); pp. 109–116.
 -/
 
 namespace IsingModel
