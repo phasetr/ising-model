@@ -2473,6 +2473,18 @@ remaining planar step -- only there do $F$-connectivity and filledness enter, to
 exposed wedges.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{One-step fan validity (\texttt{Peierls/SingleOrbitFanOne.lean})}
+
+\par\noindent\textbf{Role:} The base case of fan-prefix construction: a length-one fan prefix is
+exactly a single valid turn.  $\texttt{leftFanPrefix\_one\_iff}$ gives
+$d.\texttt{LeftFanPrefix}\,1 \iff \texttt{ValidAt}\,F\,d.\texttt{head}\,d.\texttt{dir.turnLeft}$ (a
+valid left turn), and $\texttt{rightFanPrefix\_one\_iff}$ gives
+$d.\texttt{RightFanPrefix}\,1 \iff (\lnot\texttt{ValidAt turnLeft} \land \lnot\texttt{ValidAt
+straight})$ (a right turn), with the $\texttt{mpr}$ constructors $\texttt{leftFanPrefix\_one}$,
+$\texttt{rightFanPrefix\_one}$.  These are the elementary generators a fan rotation (hence a contact
+step) is built from when the global connectivity argument constructs prefixes from local validity.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Cardinality of the dual cut (\texttt{Peierls/DartDualCutCard.lean})}
 
 \par\noindent\textbf{Role:} The dual-edge map $d \mapsto s(d.\texttt{tail}, d.\texttt{head})$ is
