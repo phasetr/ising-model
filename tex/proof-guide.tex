@@ -2618,6 +2618,19 @@ the only remaining content, via the dart-level push-down
 $\texttt{sameOrbit\_of\_dart\_contactMove\_chain}$.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Contact-move advance to an adjacent vertex
+  (\texttt{Peierls/SingleOrbitAdvanceConn.lean})}
+
+\par\noindent\textbf{Role:} The membership-driven orbit advance lifted to contact-move connectivity.
+$\texttt{reflTransGen\_contactMove\_advance}$: under the three local membership conditions of
+$\texttt{sameOrbit\_advance\_of\_membership}$, the contact pair of $d$ is contact-move connected
+($\texttt{ReflTransGen ContactMove}$) to the contact pair of $\texttt{nextDart}^{[n+1]} d$, whose
+in-site is the adjacent $F$-vertex $d.\texttt{left} + (\texttt{turnLeft}^{[n]}
+d.\texttt{dir}).\texttt{vec}$ (via $\texttt{reflTransGen\_contactMove\_of\_sameOrbit}$).  This is the
+per-edge step the global $F$-path connectivity argument chains, now stated entirely at the
+contact-graph level.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Cardinality of the dual cut (\texttt{Peierls/DartDualCutCard.lean})}
 
 \par\noindent\textbf{Role:} The dual-edge map $d \mapsto s(d.\texttt{tail}, d.\texttt{head})$ is
