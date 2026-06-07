@@ -3444,6 +3444,31 @@ frontier geometry, and continues to obtain ordinary within-image connectivity fr
 post-bridge frontier chains.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Gap-reduced bridge-chain inputs for strict vertical ray-exit cases}
+
+\par\noindent\textbf{Role:} The file
+\texttt{Peierls/RayExitAnchorVerticalStrictBridgeGap.lean} removes the adjacent-index subcase from
+the remaining bridge-chain input.  If the lower ray exits first and the upper first-exit index is
+exactly one more than the lower first-exit index, then the lower endpoint bridge dart shares its
+head with the upper ray-exit anchor.  Thus
+\(\texttt{dartReachable\_ltBridgeDart\_rayExitAnchorDartMap\_of\_succ}\) closes that
+post-bridge chain by a single shared-vertex step.
+
+The upper-exits-first adjacent-index case is symmetric:
+\(\texttt{dartReachable\_rayExitAnchorDartMap\_gtBridgeDart\_of\_succ}\) connects the lower
+ray-exit anchor to the upper endpoint bridge dart when the lower first-exit index is exactly one
+more than the upper first-exit index.
+
+The new input
+\(\texttt{RayExitVerticalStrictBridgeGapChainStep}\) therefore only covers genuine gaps, where the
+first-exit indices differ by at least two.  The count wrappers
+\(\texttt{peierls\_contour\_count\_rayExit\_verticalStrictBridgeGapChain}\) and
+\(\texttt{peierls\_contour\_count\_rayExit\_verticalStrictBridgeGapChain\_connected}\) thread this
+narrower input to the same count consumer, either from explicit within-\(F\) connectivity or from
+\(\texttt{IsConnectedDroplet}\).  This still does not assume that a ray remains outside after first
+exit; it only proves the endpoint-adjacent case.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{The ray-exit anchored route
   (\texttt{Peierls/RayExitAnchoredRoute.lean})}
 
