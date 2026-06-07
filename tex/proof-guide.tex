@@ -2825,6 +2825,18 @@ sides (counted by $\texttt{squareSplitCount}$) to the boundary darts whose orbit
 argument tracks.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Dart site coordinates at a dual vertex
+  (\texttt{Peierls/SingleOrbitFaceDart.lean})}
+
+\par\noindent\textbf{Role:} Explicit values of $\texttt{leftSite}$ and $\texttt{rightSite}$ for a
+dart based at the dual vertex $c$ as the four directions rotate.  $\texttt{leftSite\_eq\_cases}$ (by
+$\texttt{rfl}$, the definition) and $\texttt{rightSite\_eq\_cases}$ (by $\texttt{fin\_cases}$ and the
+left-normal step) exhibit the four $\texttt{primalCutEdge}\,c\,\texttt{dir}$ as exactly the four sides
+of the unit square at $c$ (bottom, right, top, left in $\texttt{dir} = -e_1, e_0, e_1, -e_0$ order).
+This is the geometric input relating the contour's face degree ($\texttt{squareSplitCount}$) to the
+dual-cut degree at $c$ in the discrete-Jordan argument.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Cardinality of the dual cut (\texttt{Peierls/DartDualCutCard.lean})}
 
 \par\noindent\textbf{Role:} The dual-edge map $d \mapsto s(d.\texttt{tail}, d.\texttt{head})$ is
