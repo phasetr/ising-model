@@ -186,6 +186,7 @@ import IsingModel.Peierls.SingleOrbitFaceDart
 import IsingModel.Peierls.SingleOrbitFaceCard
 import IsingModel.Peierls.SingleOrbitEulerian
 import IsingModel.Peierls.SingleOrbitCutDirDart
+import IsingModel.Peierls.SingleOrbitDegTwoPairing
 import IsingModel.Peierls.SingleOrbitEdgeValid
 import IsingModel.Peierls.Dir2
 import IsingModel.Peierls.SingleOrbitDirCycle
