@@ -2837,6 +2837,20 @@ This is the geometric input relating the contour's face degree ($\texttt{squareS
 dual-cut degree at $c$ in the discrete-Jordan argument.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{A crossed cut edge is a valid dart, one orientation
+  (\texttt{Peierls/SingleOrbitEdgeValid.lean})}
+
+\par\noindent\textbf{Role:} $\texttt{edgeCrosses}\,F\,(\texttt{primalCutEdge}\,c\,\texttt{dir})$ says
+the cut edge crossed by $\texttt{dir}$ at the dual vertex $c$ separates $F$.
+$\texttt{edgeCrosses\_primalCutEdge\_iff}$: by the dart reversal identities
+($\texttt{leftSite\_reverse}$, $\texttt{rightSite\_reverse}$), this holds exactly when either the dart
+$(c, \texttt{dir})$ is valid ($F$ on its left) or the opposite dart $(c + \texttt{dir.vec},
+\texttt{dir} + 2)$ is ($F$ on the other side), by a 4-way membership split.  This is the orientation
+correction for counting incident cut directions as boundary darts (a cut edge with $F$ on the right
+is realised by the reversed dart based at the neighbour) -- the degree-two face being two incident
+cut directions, not two darts based at $c$.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Cardinality of the dual cut (\texttt{Peierls/DartDualCutCard.lean})}
 
 \par\noindent\textbf{Role:} The dual-edge map $d \mapsto s(d.\texttt{tail}, d.\texttt{head})$ is
