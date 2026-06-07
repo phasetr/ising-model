@@ -2939,6 +2939,26 @@ this completes the local case analysis for the cycle structure of the $\texttt{n
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, Figure 3.11, p.~111 (corner-rounding rule);
 pp.~109--116.
 
+\subsection*{Edge-adjacency inside the whole dual cut
+  (\texttt{Peierls/DualCutEdgeAdjacency.lean})}
+
+Foundation for proving the dual cut $\texttt{dartDualCut}\,F$ of a connected filled region is
+edge-connected \emph{directly}, without the strictly stronger single-orbit (discrete-Jordan)
+hypothesis.  \textbf{Decoupling observation:} at a degree-four crossing the four incident cut edges
+share the crossing vertex, so they are pairwise edge-adjacent \emph{across distinct
+$\texttt{nextDart}$-orbits} -- edge-connectivity sits strictly below single-orbitness.  A strategic
+audit shows the single-orbit input $\texttt{hone}$ is consumed at exactly one site
+($\texttt{PeierlsContourCount.lean}$, supplying $\texttt{IsEdgeConnected}$), so the whole conditional
+$m^*>0$ reduces to $\texttt{IsEdgeConnected}\,(\texttt{dualCut})$.
+$\texttt{dartDualEdge\_mem\_dartDualCut}$: a boundary dart's dual edge lies in the dual cut.
+$\texttt{edgeAdjacentIn\_dartDualCut\_of\_shared}$: two cut edges sharing a vertex are edge-adjacent
+(the cross-orbit link).  $\texttt{orbitDualEdges\_subset\_dartDualCut}$: one orbit's dual edges sit
+inside the dual cut.  $\texttt{reachable\_dartDualCut\_of\_sameOrbit}$: same-orbit darts' edges are
+reachable in the whole dual cut, lifting the within-orbit reachability along the subset via
+$\texttt{edgeAdjacentIn\_mono}$.  $\texttt{edgeAdjacentIn\_dartDualCut\_nextDart}$: a dart and its
+successor share the pivot vertex $d.\texttt{head} = d.\texttt{nextDart}.\texttt{tail}$.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Cardinality of the dual cut (\texttt{Peierls/DartDualCutCard.lean})}
 
 \par\noindent\textbf{Role:} The dual-edge map $d \mapsto s(d.\texttt{tail}, d.\texttt{head})$ is
