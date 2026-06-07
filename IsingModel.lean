@@ -165,6 +165,7 @@ import IsingModel.Peierls.RayAnchorDart
 import IsingModel.Peierls.RayAnchorBox
 import IsingModel.Peierls.RayExitAnchorDart
 import IsingModel.Peierls.RayExitAnchoredRoute
+import IsingModel.Peierls.RayExitShadowRoute
 import IsingModel.Peierls.RayExitBound
 import IsingModel.Peierls.RayAnchorBound
 import IsingModel.Peierls.RayAnchorSet
