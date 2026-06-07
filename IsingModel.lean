@@ -170,6 +170,7 @@ import IsingModel.Peierls.RayExitAnchorAdjacency
 import IsingModel.Peierls.RayExitAnchorAdjacencyRoute
 import IsingModel.Peierls.RayExitAnchorVerticalEqual
 import IsingModel.Peierls.RayExitAnchorVerticalStrictConnected
+import IsingModel.Peierls.RayExitAnchorVerticalStrictOrdered
 import IsingModel.Peierls.RayExitAnchoredRoute
 import IsingModel.Peierls.RayExitShadowRoute
 import IsingModel.Peierls.RayExitBound
