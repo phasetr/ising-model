@@ -2498,6 +2498,20 @@ $\texttt{\_right\_turn}$).  These are the atomic wedge rotations the global conn
 applies step by step.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Contact-move connectivity equals same-orbit
+  (\texttt{Peierls/SingleOrbitContactEquiv.lean})}
+
+\par\noindent\textbf{Role:} The dart-level contact-move connectivity is \emph{exactly} the orbit
+relation.  $\texttt{reflTransGen\_contactMove\_of\_sameOrbit}$ shows same orbit gives a contact-move
+chain (the forward-orbit slide chain $\texttt{reflTransGen\_contactMove\_iterate}$); together with the
+push-down $\texttt{sameOrbit\_of\_dart\_contactMove\_chain}$ this gives
+$\texttt{reflTransGen\_contactMove\_iff\_sameOrbit}$: $\texttt{ReflTransGen ContactMove}$ on the
+contact pairs of two darts is equivalent to those darts being in the same orbit.  Hence proving that
+all contact pairs of a connected filled region are contact-move connected is \emph{the same problem}
+as the single-orbit property -- the planar connectivity is the whole remaining content, with no
+further orbit bookkeeping.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Cardinality of the dual cut (\texttt{Peierls/DartDualCutCard.lean})}
 
 \par\noindent\textbf{Role:} The dual-edge map $d \mapsto s(d.\texttt{tail}, d.\texttt{head})$ is
