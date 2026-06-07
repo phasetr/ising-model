@@ -2981,6 +2981,41 @@ obligation is to show that any two boundary darts of a connected, filled region 
 F-path / shared-vertex argument rather than by discrete-Jordan single-orbitness.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{F-path induction for dual-cut dart reachability
+(\texttt{Peierls/DartReachableFPath.lean})}
+
+\par\noindent\textbf{Role:} A path-induction interface that turns reachability \emph{inside} the
+region $F$ into $\texttt{DartReachable}$, the shape the F-path / shared-vertex shadow argument
+produces.  The geometric core is \emph{not} proved here; it is isolated as explicit geometric
+obligations.  The relation $\texttt{ReachableWithinSubtype}$ reindexes
+$\texttt{ReachableWithin}$ on the subtype $\{x // x \in F\}$, so anchors are required only for
+sites of $F$.  Fix an anchor map $\varphi : \{x // x \in F\} \to \texttt{BoundaryDart}\,F$.
+\begin{itemize}
+  \item $\texttt{dartReachable\_of\_reachableWithinSubtype}$ and
+    $\texttt{dartReachable\_of\_reachableWithin}$: given a per-edge step
+    $\texttt{hstep} : \forall a\,b,\ G.\texttt{Adj}\,a.1\,b.1 \to
+    \texttt{DartReachable}\,F\,(\varphi\,a)\,(\varphi\,b)$, a within-$F$ walk $a \rightsquigarrow b$
+    ($\texttt{ReachableWithin}\,G\,F$) lifts to $\texttt{DartReachable}\,F\,(\varphi\,a)\,
+    (\varphi\,b)$ by $\texttt{ReflTransGen}$ induction folding through $\texttt{DartReachable.trans}$.
+  \item $\texttt{dartReachable\_of\_reachableWithin\_shadow}$: the same with the per-edge step given
+    as a shared dual vertex $\exists v,\ v \in s((\varphi\,a).\texttt{tail}, (\varphi\,a).
+    \texttt{head}) \wedge v \in s((\varphi\,b).\texttt{tail}, (\varphi\,b).\texttt{head})$,
+    discharged through $\texttt{dartReachable\_of\_shared}$ (the ``shadow'' form).
+  \item $\texttt{dartReachable\_of\_anchored}$: adding $\texttt{hanchor} : \forall d,\
+    \texttt{DartReachable}\,F\,d\,(\varphi\,\langle d.\texttt{left}, d.\texttt{left\_mem}
+    \rangle)$ and $F$-connectivity gives pairwise reachability of \emph{all} boundary darts via
+    $d \rightsquigarrow \varphi(d.\texttt{left}) \rightsquigarrow \varphi(e.\texttt{left})
+    \rightsquigarrow e$.
+  \item $\texttt{dartDualCut\_isEdgeConnected\_of\_anchored}$: composing with
+    $\texttt{dartDualCut\_isEdgeConnected\_of\_dartReachable}$ yields
+    $\texttt{IsEdgeConnected}\,(\texttt{dartDualCut}\,F)$ from $(\varphi, \texttt{hanchor},
+    \texttt{hstep})$ plus $F$-connectivity.
+\end{itemize}
+Remaining open: the construction of $\varphi$, $\texttt{hstep}$, and $\texttt{hanchor}$.  The
+one-edge shadow step is local, while $\texttt{hanchor}$ is a same-left-site reachability input that
+may require nontrivial wedge/arc geometry beyond a single local degree case.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Cardinality of the dual cut (\texttt{Peierls/DartDualCutCard.lean})}
 
 \par\noindent\textbf{Role:} The dual-edge map $d \mapsto s(d.\texttt{tail}, d.\texttt{head})$ is
@@ -3017,7 +3052,9 @@ edges is a coercion, hence pulls back into $\uparrow\!\Lambda$, and a reachabili
 $\texttt{ReflTransGen}$ induction.  Since the lift's image is exactly $\texttt{dartDualCut}\,F$
 ($\texttt{dualCutSub\_image\_map\_val}$), the subtype dual cut is edge-connected given one orbit
 ($\texttt{dualCutSub\_isEdgeConnected\_of\_single\_orbit}$), the form
-$\texttt{card\_connected\_edge\_sets\_le}$ consumes.
+$\texttt{card\_connected\_edge\_sets\_le}$ consumes.  The same transfer is also provided for the
+anchored dart-reachability route
+($\texttt{dualCutSub\_isEdgeConnected\_of\_anchored}$).
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{The dual cut over a common box (\texttt{Peierls/DualCutInBox.lean})}
@@ -3032,7 +3069,10 @@ $\uparrow\!(\texttt{dualSupport}\,F) \hookrightarrow \uparrow\!\Lambda_d$
 properties to the common box: edge-finset membership
 ($\texttt{dualCutInBox\_subset\_edgeFinset}$), cardinality $|\texttt{BoundaryDart}\,F|$
 ($\texttt{dualCutInBox\_card}$), and edge-connectivity given one orbit
-($\texttt{dualCutInBox\_isEdgeConnected\_of\_single\_orbit}$).
+($\texttt{dualCutInBox\_isEdgeConnected\_of\_single\_orbit}$).  The wrapper
+$\texttt{dualCutInBox\_isEdgeConnected\_of\_anchored}$ gives the same common-box target from the
+anchored $\texttt{DartReachable}$ data, matching the connectivity form consumed by the Peierls
+contour count.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{The contour count capstone (\texttt{Peierls/ContourCount.lean})}

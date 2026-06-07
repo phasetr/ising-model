@@ -5,14 +5,16 @@ import IsingModel.Peierls.DualCutSubConnected
 
 The contour count `card_connected_edge_sets_inducedLatticeGraph_le` ranges over a **fixed** box
 `Λd`, so the per-region support box `dualSupport F` must be promoted into a common box `Λd ⊇
-dualSupport F`. We map `dualCutSub F` along the subtype inclusion `↑(dualSupport F) ↪ ↑Λd` and
-carry over its three count-ready properties: edge-finset membership, cardinality, and (given one
-orbit) edge-connectivity.
+dualSupport F`. We map `dualCutSub F` along the subtype inclusion `↑(dualSupport F) ↪ ↑Λd`
+and carry over its three count-ready properties: edge-finset membership, cardinality, and
+(given one orbit) edge-connectivity.
 
 * `isEdgeConnected_image_map` — forward connectivity transfer.
 * `dualCutInBox` — the dual cut placed in the common box.
 * `dualCutInBox_subset_edgeFinset`, `dualCutInBox_card`,
   `dualCutInBox_isEdgeConnected_of_single_orbit`.
+* `dualCutInBox_isEdgeConnected_of_anchored` — the common-box connectivity wrapper for the
+  anchored `DartReachable` route.
 
 References: Friedli–Velenik, *Statistical Mechanics of Lattice Systems*
 (Cambridge, 2017), §3.7.2, pp. 109–116.
@@ -95,5 +97,16 @@ theorem dualCutInBox_isEdgeConnected_of_single_orbit (hsub : dualSupport F ⊆ �
     (hone : ∀ d e : BoundaryDart F, d.SameOrbit e) :
     IsEdgeConnected (dualCutInBox hsub) :=
   isEdgeConnected_image_map (dualCutSub_isEdgeConnected_of_single_orbit hone)
+
+/-- **The common-box dual cut is edge-connected from anchored dart reachability data**. -/
+theorem dualCutInBox_isEdgeConnected_of_anchored (hsub : dualSupport F ⊆ Λd)
+    (φ : {x : Fin 2 → ℤ // x ∈ F} → BoundaryDart F)
+    (hanchor : ∀ d : BoundaryDart F, DartReachable F d (φ ⟨d.left, d.left_mem⟩))
+    (hstep : ∀ a b : {x : Fin 2 → ℤ // x ∈ F}, (latticeGraph 2).Adj a.1 b.1 →
+      DartReachable F (φ a) (φ b))
+    (hconn : ∀ a ∈ F, ∀ b ∈ F, ReachableWithin (latticeGraph 2) F a b) :
+    IsEdgeConnected (dualCutInBox hsub) :=
+  isEdgeConnected_image_map
+    (dualCutSub_isEdgeConnected_of_anchored φ hanchor hstep hconn)
 
 end IsingModel
