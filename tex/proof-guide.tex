@@ -2578,6 +2578,18 @@ $\texttt{BoundaryDart.ext\_of\_left\_dir}$ records that a dart is determined by 
 direction.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Orbit advance to an adjacent vertex
+  (\texttt{Peierls/SingleOrbitAdvance.lean})}
+
+\par\noindent\textbf{Role:} Combining a left-fan rotation with one straight slide.
+$\texttt{sameOrbit\_iterate\_succ\_left}$: if the first $n$ steps from $d$ are left turns and the
+$n$-th iterate then goes straight, the $(n+1)$-th iterate is in $d$'s orbit and its left site is the
+adjacent $F$-vertex $d.\texttt{left} + (\texttt{turnLeft}^{[n]} d.\texttt{dir}).\texttt{vec}$.  This is
+how the boundary orbit moves from one $F$-vertex to a neighbour: rotate to point along the chosen
+exposed edge, then slide across it -- the per-edge transport step of the global connectivity
+argument.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Cardinality of the dual cut (\texttt{Peierls/DartDualCutCard.lean})}
 
 \par\noindent\textbf{Role:} The dual-edge map $d \mapsto s(d.\texttt{tail}, d.\texttt{head})$ is
