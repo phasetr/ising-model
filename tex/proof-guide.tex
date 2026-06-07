@@ -3518,6 +3518,28 @@ darts \(\texttt{rayExitVerticalStrictLtFrontierDart}\) and
 assume ray monotonicity after first exit.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Frontier-split inputs for non-strip strict ray-exit gaps
+  (\texttt{Peierls/RayExitAnchorVerticalStrictBridgeNonStripFrontier.lean})}
+
+\par\noindent\textbf{Role:} The file
+\texttt{Peierls/RayExitAnchorVerticalStrictBridgeNonStripFrontier.lean} refines the remaining
+non-strip bridge-gap input by factoring it through the first re-entry darts constructed above.
+The lower-exits-first input \(\texttt{RayExitVerticalStrictLtBridgeFrontierChain}\) asks for a
+chain from the endpoint bridge dart to
+\(\texttt{rayExitVerticalStrictLtFrontierDart}\), followed by a chain from that frontier dart to
+the upper ray-exit anchor.  The upper-exits-first input
+\(\texttt{RayExitVerticalStrictGtBridgeFrontierChain}\) is oriented as in the existing upper
+route: the lower ray-exit anchor reaches \(\texttt{rayExitVerticalStrictGtFrontierDart}\), and
+that frontier dart reaches the upper endpoint bridge dart.
+
+The theorem
+\(\texttt{rayExitVerticalStrictBridgeNonStripGapChainStep\_of\_frontierChainStep}\) recovers the
+previous non-strip input by transitivity through the explicit frontier dart.  The accompanying
+route and count wrappers thread this frontier-split data to the connected-droplet Peierls count
+consumer.  This is still an interface reduction for the later \(\texttt{nextDart}\) local-turn
+proof; it does not assume ray monotonicity after first exit.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{The ray-exit anchored route
   (\texttt{Peierls/RayExitAnchoredRoute.lean})}
 
