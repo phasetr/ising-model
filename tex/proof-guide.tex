@@ -2565,6 +2565,19 @@ local) wedge-existence: rotating left through an exposed complement arc reaches 
 arc, with no global filledness hypothesis -- the global argument later supplies the arc condition.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Same-site darts across a complement arc
+  (\texttt{Peierls/SingleOrbitSameLeftArc.lean})}
+
+\par\noindent\textbf{Role:} The wedge reach turned into a same-orbit statement.
+$\texttt{sameOrbit\_of\_same\_left\_arc}$: if $d$, $d'$ have the same left site,
+$d'.\texttt{dir} = \texttt{turnLeft}^{[n]} d.\texttt{dir}$, and the arc out-sites
+$d.\texttt{left} + (\texttt{turnLeft}^{[i]} d.\texttt{dir}).\texttt{vec}$ for $i < n$ all lie outside
+$F$, then $d$ and $d'$ are in the same orbit.  This is the same-vertex connectivity: all boundary
+darts exposed in one complement wedge at a fixed $F$-vertex lie in one orbit.  The auxiliary
+$\texttt{BoundaryDart.ext\_of\_left\_dir}$ records that a dart is determined by its left site and
+direction.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Cardinality of the dual cut (\texttt{Peierls/DartDualCutCard.lean})}
 
 \par\noindent\textbf{Role:} The dual-edge map $d \mapsto s(d.\texttt{tail}, d.\texttt{head})$ is
