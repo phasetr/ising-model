@@ -126,6 +126,7 @@ import IsingModel.Peierls.SingleOrbitContact
 import IsingModel.Peierls.SingleOrbitContactPair
 import IsingModel.Peierls.SingleOrbitContactStep
 import IsingModel.Peierls.SingleOrbitContactMove
+import IsingModel.Peierls.SingleOrbitInSitePath
 import IsingModel.Peierls.SingleOrbitFromConnected
 import IsingModel.Peierls.SingleOrbitFromBasepoint
 import IsingModel.Peierls.SingleOrbitContactGen

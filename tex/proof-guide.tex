@@ -2654,6 +2654,18 @@ argument: supplying $\forall c,\ \texttt{ReflTransGen ContactMove}\,c\,c_0$ (a b
 fixed contact pair) yields $\texttt{hone}$ directly.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Chaining the per-edge advance along an $F$-path
+  (\texttt{Peierls/SingleOrbitInSitePath.lean})}
+
+\par\noindent\textbf{Role:} The $F$-path induction at the contact-graph level.
+$\texttt{reflTransGen\_contactMove\_of\_inSite\_reachable}$: given a per-edge advance (for any contact
+pair $c$ and any $F$-neighbour $a'$ of $c.\texttt{inSite}$, a contact pair $c'$ at $a'$ connected to
+$c$ by contact moves), from any contact pair $c$ one reaches a connected contact pair at any in-site
+$a'$ reachable within $F$ from $c.\texttt{inSite}$ ($\texttt{ReflTransGen}$ induction over the
+within-$F$ path).  This is the chaining half of the basepoint connectivity; supplying the per-edge
+advance (from the wedge construction) and the same-vertex wedge then closes the global argument.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Cardinality of the dual cut (\texttt{Peierls/DartDualCutCard.lean})}
 
 \par\noindent\textbf{Role:} The dual-edge map $d \mapsto s(d.\texttt{tail}, d.\texttt{head})$ is
