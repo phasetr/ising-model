@@ -3540,6 +3540,31 @@ consumer.  This is still an interface reduction for the later \(\texttt{nextDart
 proof; it does not assume ray monotonicity after first exit.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{NextDart inputs for non-strip strict ray-exit frontier chains
+  (\texttt{Peierls/RayExitAnchorVerticalStrictBridgeNonStripNextDart.lean})}
+
+\par\noindent\textbf{Role:} The file
+\texttt{Peierls/RayExitAnchorVerticalStrictBridgeNonStripNextDart.lean} gives the frontier-split
+input a direct traversal form.  The generic lemma
+\(\texttt{dartReachable\_nextDart\_iterate}\) proves that a boundary dart reaches each forward
+\(\texttt{nextDart}\) iterate in the \(\texttt{DartReachable}\) relation, and
+\(\texttt{dartReachable\_of\_nextDart\_iterate\_eq}\) turns a forward-iterate equality into the
+corresponding reachability statement.  This avoids routing the argument through
+\(\texttt{SameOrbit}\) or \(\texttt{ContactMove}\).
+
+The lower input
+\(\texttt{RayExitVerticalStrictLtBridgeFrontierNextDartChain}\) asks for two forward iterate
+witnesses: from the lower endpoint bridge to
+\(\texttt{rayExitVerticalStrictLtFrontierDart}\), and from that frontier dart to the upper
+ray-exit anchor.  The upper input
+\(\texttt{RayExitVerticalStrictGtBridgeFrontierNextDartChain}\) asks for the analogous witnesses
+from the lower ray-exit anchor to \(\texttt{rayExitVerticalStrictGtFrontierDart}\), and from that
+frontier dart to the upper endpoint bridge.  The recovery theorem
+\(\texttt{rayExitVerticalStrictBridgeFrontierChainStep\_of\_nextDartChainStep}\) and the route/count
+wrappers thread this stricter input to the connected-droplet count consumer.  The local turn proof
+for these iterates remains the next geometric task.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{The ray-exit anchored route
   (\texttt{Peierls/RayExitAnchoredRoute.lean})}
 
