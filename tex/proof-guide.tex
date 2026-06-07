@@ -2707,6 +2707,18 @@ $\texttt{hsame}$ input of $\texttt{boundaryDart\_single\_orbit\_of\_geometric\_i
 argument supplies the arc condition so that any two contact pairs at a vertex are connected.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Single orbit from connected-$F$ inputs
+  (\texttt{Peierls/SingleOrbitConnectedInputs.lean})}
+
+\par\noindent\textbf{Role:} The $\texttt{hreach}$ input is exactly within-$F$ connectivity, since
+every contact-pair in-site lies in $F$.  $\texttt{reachable\_inSite\_of\_connected}$ supplies the
+$\texttt{hreach}$ input from $F$-connectivity, and
+$\texttt{boundaryDart\_single\_orbit\_of\_connected\_inputs}$ then gives $\texttt{hone}$ from a
+per-edge advance $\texttt{hstep}$, same-vertex wedge connectivity $\texttt{hsame}$, and within-$F$
+connectivity of $F$ -- the form in which the connectedness of the spin droplet enters.  Only the
+per-edge advance and same-vertex inputs (the wedge/filled geometry) then remain.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Cardinality of the dual cut (\texttt{Peierls/DartDualCutCard.lean})}
 
 \par\noindent\textbf{Role:} The dual-edge map $d \mapsto s(d.\texttt{tail}, d.\texttt{head})$ is
