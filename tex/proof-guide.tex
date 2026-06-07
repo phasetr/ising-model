@@ -3565,6 +3565,32 @@ wrappers thread this stricter input to the connected-droplet count consumer.  Th
 for these iterates remains the next geometric task.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Turn-certificate inputs for non-strip strict ray-exit frontier chains
+  (\texttt{Peierls/RayExitAnchorVerticalStrictBridgeNonStripTurn.lean})}
+
+\par\noindent\textbf{Role:} The file
+\texttt{Peierls/RayExitAnchorVerticalStrictBridgeNonStripTurn.lean} refines the NextDart input
+by naming the local left/straight/right turn data that compute each step of the frontier
+traversal.  The generic certificate \(\texttt{NextDartTurnStep}\) records one application of the
+boundary-dart turning rule, and \(\texttt{NextDartTurnChain}\) records a finite chain of such
+certificates.  The bridge theorem
+\(\texttt{exists\_nextDart\_iterate\_eq\_of\_turnChain}\) recovers an explicit forward
+\(\texttt{nextDart}\) iterate witness from the chain, and
+\(\texttt{dartReachable\_of\_turnChain}\) gives the corresponding dual-cut reachability.
+
+The lower and upper non-strip inputs are strengthened to
+\(\texttt{RayExitVerticalStrictLtBridgeFrontierTurnChain}\) and
+\(\texttt{RayExitVerticalStrictGtBridgeFrontierTurnChain}\).  These assumptions supply local turn
+chains for the four frontier legs: lower bridge to lower frontier, lower frontier to the upper
+ray-exit anchor, lower ray-exit anchor to upper frontier, and upper frontier to upper bridge.
+Recovery wrappers convert the turn-chain input back to the NextDart input, so the common-box and
+connected-droplet count route ends at
+\(\texttt{peierls\_contour\_count\_rayExit\_verticalStrictBridgeFrontierTurnChain\_connected}\).
+
+This remains an interface reduction.  The concrete geometric proof of those turn certificates,
+and the separate same-left-site anchor reachability input, remain open.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{The ray-exit anchored route
   (\texttt{Peierls/RayExitAnchoredRoute.lean})}
 
