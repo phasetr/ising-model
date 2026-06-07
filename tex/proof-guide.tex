@@ -2631,6 +2631,18 @@ per-edge step the global $F$-path connectivity argument chains, now stated entir
 contact-graph level.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Reduction of connectivity to a basepoint
+  (\texttt{Peierls/SingleOrbitBasepoint.lean})}
+
+\par\noindent\textbf{Role:} A standard connectivity reduction using the symmetry of contact-move
+connectivity.  $\texttt{reflTransGen\_contactMove\_of\_basepoint}$: if every contact pair reaches one
+fixed basepoint $c_0$ by contact moves, then any two contact pairs are connected (via
+$c \to c_0 \to c'$, using $\texttt{reflTransGen\_contactMove\_symm}$).  This turns the global
+$\texttt{hconn}$ goal ($\forall c\,c',\ \texttt{ReflTransGen ContactMove}\,c\,c'$) into the simpler
+$\forall c,\ \texttt{ReflTransGen ContactMove}\,c\,c_0$ -- ``every boundary contact pair reaches a
+fixed one'', the form the $F$-path argument establishes.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Cardinality of the dual cut (\texttt{Peierls/DartDualCutCard.lean})}
 
 \par\noindent\textbf{Role:} The dual-edge map $d \mapsto s(d.\texttt{tail}, d.\texttt{head})$ is
