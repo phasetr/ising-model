@@ -2745,6 +2745,19 @@ completed via the contact-pair route (no planar/Euler infrastructure, which Math
 one of its $\texttt{Dir2}$-enumeration ingredients.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{First exposed direction hitting $F$
+  (\texttt{Peierls/SingleOrbitFirstHit.lean})}
+
+\par\noindent\textbf{Role:} Rotating left, $a + (\texttt{turnLeft}^{[k]} \texttt{dir}).\texttt{vec}$
+sweeps the four neighbours of $a$.  $\texttt{exists\_first\_turnLeft\_mem}$: if some rotation
+($k < 4$) lands inside $F$, there is a \emph{first} index $n < 4$ whose rotated point lies in $F$
+while every earlier rotation lands outside $F$ ($\texttt{Nat.find}$ with
+$\texttt{Nat.find\_min}$/$\texttt{find\_spec}$/$\texttt{find\_le}$).  The intermediate ``outside'' run
+is exactly the cleared complement arc the wedge advance needs, and the landing point is the adjacent
+$F$-vertex the orbit slides to -- producing the arc-and-stop data for
+$\texttt{sameOrbit\_advance\_of\_membership}$ from pure membership.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Cardinality of the dual cut (\texttt{Peierls/DartDualCutCard.lean})}
 
 \par\noindent\textbf{Role:} The dual-edge map $d \mapsto s(d.\texttt{tail}, d.\texttt{head})$ is
