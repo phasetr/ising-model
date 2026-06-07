@@ -3315,6 +3315,22 @@ The horizontal $x \pm e_0$ branches are discharged by the one-step results above
 and frontier shadow cases, and the $\texttt{hanchor}$ reachability input, remain separate.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Ray-exit adjacency route with vertical obligations}
+
+\par\noindent\textbf{Role:} The file
+\texttt{Peierls/RayExitAnchorAdjacencyRoute.lean} consumes the adjacency case reduction at the
+route level.
+The predicate $\texttt{RayExitVerticalStep}\,F$ names the remaining oriented vertical transport
+input: for $y = x \pm e_1$, the ray-exit anchors of $x$ and $y$ are connected by
+$\texttt{DartReachable}$.  The main adjacency lemma closes an arbitrary adjacent-site step by using
+the horizontal shared-vertex lemmas in the $x \pm e_0$ branches and the vertical input in the
+remaining branches.  The resulting ambient, subtype, common-box, and contour-count wrappers carry
+this narrowed input through the anchored route, keeping $\texttt{hanchor}$,
+$\texttt{RayExitVerticalStep}$, and ordinary within-$F$ connectivity explicit.  The point of this
+interface is to avoid overclaiming a direct shared vertex in the vertical cases, where the two
+first-exit anchor edges may require a longer dual-cut chain.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{The ray-exit anchored route
   (\texttt{Peierls/RayExitAnchoredRoute.lean})}
 
