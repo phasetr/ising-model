@@ -3283,6 +3283,21 @@ must reach the ray-exit anchor of its left site, adjacent sites of $F$ must have
 anchors, and ordinary within-$F$ connectivity chains those local steps.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{The ray-exit shadow route
+  (\texttt{Peierls/RayExitShadowRoute.lean})}
+
+\par\noindent\textbf{Role:} This file narrows the per-edge input of the ray-exit anchored route.
+Instead of asking directly for $\texttt{DartReachable}$ between the anchors of adjacent sites, it
+asks for a shared dual vertex of the two ray-exit anchor edges.  The lemma
+$\texttt{dartReachable\_of\_rayExitShadow}$ turns that shadow into pairwise dart reachability using
+$\texttt{dartReachable\_of\_shared}$; the corresponding ambient, subtype, and common-box wrappers
+are $\texttt{dartDualCut\_isEdgeConnected\_of\_rayExitShadow}$,
+$\texttt{dualCutSub\_isEdgeConnected\_of\_rayExitShadow}$, and
+$\texttt{dualCutInBox\_isEdgeConnected\_of\_rayExitShadow}$.  The contour-count wrapper
+$\texttt{peierls\_contour\_count\_rayExit\_shadow}$ keeps $\texttt{hanchor}$,
+$\texttt{hshadow}$, and ordinary within-$F$ connectivity explicit.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{The ray first-exit distance is bounded by the cut size
   (\texttt{Peierls/RayExitBound.lean})}
 
