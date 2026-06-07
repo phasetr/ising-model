@@ -7,8 +7,9 @@ import IsingModel.Peierls.DartDualCutCard
 /-!
 # The degree-two pairing of the contour (FV §3.7.2)
 
-At a **degree-two** dual vertex (`squareSplitCount F c = 2`) the contour passes straight through: of
-the two incident cut directions one is the reverse `d.dir + 2` of the incoming dart `d` (the edge
+At a **degree-two** dual vertex (`squareSplitCount F c = 2`) the contour passes through without
+branching: of the two incident cut directions one is the reverse `d.dir + 2` of the incoming dart
+`d` (the edge
 back to `d.tail`) and the other is the direction `d.nextDart.dir` of the outgoing dart, so
 `cutDirs F d.head = {d.dir + 2, d.nextDart.dir}` (`cutDirs_head_eq_of_squareSplitCount_eq_two`). The
 incoming and outgoing darts therefore share a `nextDart` orbit
