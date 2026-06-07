@@ -3419,6 +3419,31 @@ the file deliberately does not assert that the whole vertical strip between the 
 a straight boundary chain.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Bridge-chain inputs for strict vertical ray-exit cases}
+
+\par\noindent\textbf{Role:} The file
+\texttt{Peierls/RayExitAnchorVerticalStrictBridgeChain.lean} consumes the endpoint bridge darts
+and restates the remaining ordered strict vertical obligations as post-bridge chain inputs.  In the
+lower-exits-first case, \(\texttt{RayExitVerticalStrictLtBridgeChain}\) asks for reachability from
+the lower-first bridge dart to the upper ray-exit anchor.  The endpoint lemma supplies the preceding
+step from the lower ray-exit anchor to that bridge, so transitivity recovers
+\(\texttt{RayExitVerticalStrictLtStep}\).
+
+In the upper-exits-first case, \(\texttt{RayExitVerticalStrictGtBridgeChain}\) asks for reachability
+from the lower ray-exit anchor to the upper-first bridge dart.  The endpoint lemma supplies
+reachability from the upper ray-exit anchor to that bridge; after symmetry, transitivity recovers
+\(\texttt{RayExitVerticalStrictGtStep}\).  The combined theorem
+\(\texttt{rayExitVerticalStrictOrderedStep\_of\_bridgeChainStep}\) then supplies the ordered strict
+input consumed by the existing ray-exit route.
+
+The connected count wrapper
+\(\texttt{peierls\_contour\_count\_rayExit\_verticalStrictBridgeChain\_connected}\) keeps the
+same-left-site anchor reachability explicit, uses the bridge-chain input for the remaining vertical
+frontier geometry, and continues to obtain ordinary within-image connectivity from
+\(\texttt{IsConnectedDroplet}\).  This is still an interface reduction; it does not prove the
+post-bridge frontier chains.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{The ray-exit anchored route
   (\texttt{Peierls/RayExitAnchoredRoute.lean})}
 
