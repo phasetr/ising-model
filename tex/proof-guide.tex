@@ -3645,9 +3645,16 @@ split legs from the local turn-chain assumptions: the shape lemma
 dart's left site with the packaged first lower frontier site, so the existing anchoring input
 \(\texttt{hanchor}\) gives a \(\texttt{DartReachable}\) step to that site's ray-exit anchor.  The
 \(\texttt{LtSiteAnchor}\) route/count wrappers therefore leave only the frontier-site anchor to
-upper anchor turn chain as lower local input.  This is still an interface reduction: it does not
-prove the lower frontier-site-to-upper-anchor geometry, reduce the upper-exits-first side, or
-assume post-exit ray monotonicity.
+upper anchor turn chain as lower local input.  The upper-prefix site
+\(\texttt{rayExitVerticalStrictLtFrontierUpperSite}\) is the point on the upper ray at the same
+frontier index.  It lies before the upper first exit, and
+\(\texttt{rayExitAnchorDartMap\_ltFrontierUpperSite\_eq}\) identifies its ray-exit anchor with
+the original upper site's anchor by ray-prefix stability.  Thus
+\(\texttt{RayExitVerticalStrictLtFrontierUpperSiteAnchorTurnChain}\) and the
+\(\texttt{LtUpperSiteAnchor}\) route/count wrappers split the remaining lower local input through
+this upper-prefix site.  This is still an interface reduction: it does not prove the lower
+frontier-site-to-upper-prefix-anchor geometry, reduce the upper-exits-first side, or assume
+post-exit ray monotonicity.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{The ray-exit anchored route
