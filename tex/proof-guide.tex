@@ -3652,9 +3652,14 @@ frontier index.  It lies before the upper first exit, and
 the original upper site's anchor by ray-prefix stability.  Thus
 \(\texttt{RayExitVerticalStrictLtFrontierUpperSiteAnchorTurnChain}\) and the
 \(\texttt{LtUpperSiteAnchor}\) route/count wrappers split the remaining lower local input through
-this upper-prefix site.  This is still an interface reduction: it does not prove the lower
-frontier-site-to-upper-prefix-anchor geometry, reduce the upper-exits-first side, or assume
-post-exit ray monotonicity.
+this upper-prefix site.  The next reachable split weakens that final lower leg to
+\(\texttt{DartReachable}\), which is the form consumed by the edge-connected route.  If the
+frontier site and upper-prefix site have equal ray-exit indices, the existing equal-index vertical
+straight-step certificate proves the upward anchor pair is a local straight turn, and the
+shared-vertex lemma closes the reachable leg; the strict-reachable input only covers the
+unequal-index subcase for those two intermediate sites.  This is still an interface reduction: it
+does not prove the lower frontier-site-to-upper-prefix-anchor geometry in the unequal-index
+subcase, reduce the upper-exits-first side, or assume post-exit ray monotonicity.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{The ray-exit anchored route
