@@ -3673,9 +3673,13 @@ lower input starts only at non-strip residual gaps.  The residual-bridge refinem
 remaining local residual input from the two endpoint anchors to the corresponding local bridge leg:
 the lower-first case uses the automatic lower anchor-to-bridge shared-vertex step, while the
 upper-first case uses the reverse of the automatic upper anchor-to-bridge step.  This is still an
-interface reduction: it does not prove the lower frontier-site-to-upper-prefix-anchor geometry in
-the non-strip residual-gap subcases, reduce the upper-exits-first side, or assume post-exit ray
-monotonicity.
+interface reduction.  The residual-frontier refinement then splits that local residual bridge leg
+through the first residual re-entry frontier dart of the local frontier-site/upper-prefix-site
+pair: the lower-first residual bridge-to-frontier leg is the concrete turn-chain certificate
+already proved for lower non-strip gaps, while the post-frontier lower leg and both upper-first
+frontier legs remain explicit inputs.  It still does not prove the lower
+frontier-site-to-upper-prefix-anchor geometry in the non-strip residual-gap subcases, reduce the
+upper-exits-first side, or assume post-exit ray monotonicity.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{The ray-exit anchored route
