@@ -12,6 +12,7 @@ consecutive lower ray successors are outside `F` while the corresponding upper s
 inside `F`, the left turn is blocked by an `F` site on its right and the straight move is valid.
 The one-step certificate is also lifted to a finite lower strip turn chain.
 The endpoint bridge dart is identified with the first strip dart as a trivial chain.
+The terminal strip dart turns right into the first lower re-entry frontier dart.
 
 References: Friedli–Velenik, *Statistical Mechanics of Lattice Systems*
 (Cambridge, 2017), §3.7.2, pp. 109–116.
@@ -144,5 +145,118 @@ theorem nextDartTurnChain_ltStripDart_iterate
         (nextDartTurnStep_ltStripDart_succ a b hup (n + m)
           hupperPrev (hstrip (n + m + 1) (by omega) (by omega))
           hupper (hstrip (n + (m + 1) + 1) (by omega) (by omega)))
+
+/-! ## Lower strip terminal frontier step -/
+
+/-- At the last lower strip dart before first re-entry, the left-turn candidate is invalid:
+its right site is an upper ray point still in `F`. -/
+theorem not_validAt_ltStripDart_turnLeft_frontier
+    (a b : {x : Fin 2 → ℤ // x ∈ F}) (hup : b.1 = a.1 + unitVec2 1)
+    (n : ℕ)
+    (hgap : rayExitIndex F a.1 a.2 + 1 < rayExitIndex F b.1 b.2)
+    (hnon : ¬ RayExitVerticalStrictLtGapStrip F a b)
+    (hn : n + 2 = rayExitVerticalStrictLtFirstFrontierIndex a b hgap hnon) :
+    ¬ ValidAt F (ray0 a.1 (n + 1)) (Dir2.turnLeft 0) := by
+  intro hvalid
+  have hupper₂ : n + 2 ≤ rayExitIndex F b.1 b.2 := by
+    have hub := rayExitVerticalStrictLtFirstFrontierIndex_upper_bound a b hgap hnon
+    omega
+  have hR : rightSite (ray0 a.1 (n + 1)) (Dir2.turnLeft 0) = ray0 b.1 (n + 2) := by
+    funext j
+    fin_cases j <;>
+      simp [hup, rightSite, leftSite, Dir2.turnLeft, Dir2.vec, ray0, unitVec2,
+        Pi.add_apply, Pi.sub_apply]; omega
+  have hmem : rightSite (ray0 a.1 (n + 1)) (Dir2.turnLeft 0) ∈ F := by
+    rw [hR]
+    exact rayExitIndex_below b.1 b.2 (n + 2) hupper₂
+  exact hvalid.2 hmem
+
+/-- At the last lower strip dart before first re-entry, the straight candidate is invalid:
+its right site is the first lower re-entry point in `F`. -/
+theorem not_validAt_ltStripDart_straight_frontier
+    (a b : {x : Fin 2 → ℤ // x ∈ F})
+    (n : ℕ)
+    (hgap : rayExitIndex F a.1 a.2 + 1 < rayExitIndex F b.1 b.2)
+    (hnon : ¬ RayExitVerticalStrictLtGapStrip F a b)
+    (hn : n + 2 = rayExitVerticalStrictLtFirstFrontierIndex a b hgap hnon) :
+    ¬ ValidAt F (ray0 a.1 (n + 1)) 0 := by
+  intro hvalid
+  have hR : rightSite (ray0 a.1 (n + 1)) 0 = ray0 a.1 (n + 2) := by
+    funext j
+    fin_cases j <;>
+      simp [rightSite, leftSite, Dir2.turnLeft, Dir2.vec, ray0, unitVec2, Pi.add_apply,
+        Pi.sub_apply]; omega
+  have hmem : rightSite (ray0 a.1 (n + 1)) 0 ∈ F := by
+    rw [hR]
+    have hfront := rayExitVerticalStrictLtFirstFrontierIndex_mem a b hgap hnon
+    rwa [← hn] at hfront
+  exact hvalid.2 hmem
+
+/-- At the last lower strip dart before first re-entry, the right-turn candidate is valid:
+its left site is the first lower re-entry point and its right site is the predecessor outside
+`F`. -/
+theorem validAt_ltStripDart_turnRight_frontier
+    (a b : {x : Fin 2 → ℤ // x ∈ F})
+    (n : ℕ)
+    (hgap : rayExitIndex F a.1 a.2 + 1 < rayExitIndex F b.1 b.2)
+    (hnon : ¬ RayExitVerticalStrictLtGapStrip F a b)
+    (hn : n + 2 = rayExitVerticalStrictLtFirstFrontierIndex a b hgap hnon)
+    (hlower : ray0 a.1 (n + 1) ∉ F) :
+    ValidAt F (ray0 a.1 (n + 1)) (Dir2.turnRight 0) := by
+  constructor
+  · have hL : leftSite (ray0 a.1 (n + 1)) (Dir2.turnRight 0) = ray0 a.1 (n + 2) := by
+      funext j
+      fin_cases j <;>
+        simp [leftSite, Dir2.turnRight, ray0, unitVec2, Pi.add_apply]; omega
+    rw [hL]
+    have hfront := rayExitVerticalStrictLtFirstFrontierIndex_mem a b hgap hnon
+    rwa [← hn] at hfront
+  · have hR : rightSite (ray0 a.1 (n + 1)) (Dir2.turnRight 0) = ray0 a.1 (n + 1) := by
+      funext j
+      fin_cases j <;>
+        simp [rightSite, leftSite, Dir2.turnLeft, Dir2.turnRight, Dir2.vec, ray0,
+          unitVec2, Pi.add_apply, Pi.sub_apply]
+    rw [hR]
+    exact hlower
+
+/-- The last lower strip dart before first re-entry turns right into the lower frontier dart. -/
+theorem nextDartTurnStep_ltStripDart_frontier
+    (a b : {x : Fin 2 → ℤ // x ∈ F}) (hup : b.1 = a.1 + unitVec2 1)
+    (n : ℕ)
+    (hupper : n + 1 ≤ rayExitIndex F b.1 b.2)
+    (hlower : ray0 a.1 (n + 1) ∉ F)
+    (hgap : rayExitIndex F a.1 a.2 + 1 < rayExitIndex F b.1 b.2)
+    (hnon : ¬ RayExitVerticalStrictLtGapStrip F a b)
+    (hn : n + 2 = rayExitVerticalStrictLtFirstFrontierIndex a b hgap hnon) :
+    NextDartTurnStep
+      (rayExitVerticalStrictLtStripDart a b hup n hupper hlower)
+      (rayExitVerticalStrictLtFrontierDart a b hgap hnon) := by
+  let d := rayExitVerticalStrictLtStripDart a b hup n hupper hlower
+  have hL : ¬ ValidAt F d.head d.dir.turnLeft := by
+    rw [rayExitVerticalStrictLtStripDart_head, rayExitVerticalStrictLtStripDart_dir]
+    exact not_validAt_ltStripDart_turnLeft_frontier a b hup n hgap hnon hn
+  have hS : ¬ ValidAt F d.head d.dir := by
+    rw [rayExitVerticalStrictLtStripDart_head, rayExitVerticalStrictLtStripDart_dir]
+    exact not_validAt_ltStripDart_straight_frontier a b n hgap hnon hn
+  refine nextDartTurnStep_of_eq (NextDartTurnStep.turnRight (d := d) hL hS) ?_
+  exact BoundaryDart.ext'
+    (by
+      change d.head = (rayExitVerticalStrictLtFrontierDart a b hgap hnon).tail
+      dsimp [d]
+      rw [rayExitVerticalStrictLtStripDart_head]
+      unfold rayExitVerticalStrictLtFrontierDart
+      rw [ray0ReentryDart_tail]
+      have hpos : 0 < rayExitVerticalStrictLtFirstFrontierIndex a b hgap hnon := by
+        have hstrict := rayExitVerticalStrictLtFirstFrontierIndex_strict_lower_bound a b hgap hnon
+        omega
+      rw [ray0_sub_unitVec2_zero_of_pos a.1 hpos]
+      congr 1
+      omega)
+    (by
+      change d.dir.turnRight = (rayExitVerticalStrictLtFrontierDart a b hgap hnon).dir
+      dsimp [d]
+      unfold rayExitVerticalStrictLtFrontierDart
+      rw [ray0ReentryDart_dir]
+      rfl)
 
 end IsingModel

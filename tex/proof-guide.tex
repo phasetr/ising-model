@@ -3611,7 +3611,13 @@ certified straight \(\texttt{nextDart}\) step.  This is a concrete local turn ce
 non-strip frontier-chain route and does not assume monotonicity of the ray after its first exit.
 The lemma \(\texttt{nextDartTurnChain\_ltStripDart\_iterate}\) lifts these one-step certificates to
 a finite lower strip \(\texttt{NextDartTurnChain}\), matching the turn-chain interface introduced
-above.
+above.  The terminal step before the first lower re-entry is a right turn:
+\(\texttt{not\_validAt\_ltStripDart\_turnLeft\_frontier}\) and
+\(\texttt{not\_validAt\_ltStripDart\_straight\_frontier}\) show that the left-turn and straight
+candidates are blocked by \(F\)-sites, while
+\(\texttt{validAt\_ltStripDart\_turnRight\_frontier}\) supplies the valid right-turn candidate.
+Thus \(\texttt{nextDartTurnStep\_ltStripDart\_frontier}\) connects the last lower strip dart to
+the first lower re-entry frontier dart.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{The ray-exit anchored route
