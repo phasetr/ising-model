@@ -3596,7 +3596,9 @@ Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \par\noindent\textbf{Role:} The file
 \texttt{Peierls/RayExitAnchorVerticalStrictBridgeNonStripTurnStep.lean} starts to discharge the
-turn-chain input by proving a concrete local step along the lower horizontal strip.  The lemma
+turn-chain input by proving concrete local steps along the lower horizontal strip.  The lemma
+\(\texttt{nextDartTurnChain\_ltBridgeDart\_ltStripDart\_base}\) identifies the lower endpoint
+bridge dart with the first lower strip dart as a trivial turn chain.  The lemma
 \(\texttt{validAt\_ltStripDart\_straight\_succ}\) shows that the straight candidate after a lower
 \(+e_0\) strip dart is valid when the next upper ray point is still in \(F\) and the next lower ray
 point is outside \(F\).  The lemma
