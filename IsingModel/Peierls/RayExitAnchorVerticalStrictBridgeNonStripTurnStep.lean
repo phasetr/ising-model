@@ -48,6 +48,66 @@ theorem nextDartTurnChain_trans {d e f : BoundaryDart F}
   | snoc hchain hstep ih =>
       exact NextDartTurnChain.snoc ih hstep
 
+/-! ## Ray-exit anchor straight steps -/
+
+/-- Equal-index upward ray-exit anchors are connected by a certified straight turn step. -/
+theorem nextDartTurnStep_rayExitAnchorDartMap_add_e1_of_index_eq
+    (x y : {x : Fin 2 → ℤ // x ∈ F}) (hup : y.1 = x.1 + unitVec2 1)
+    (hidx : rayExitIndex F y.1 y.2 = rayExitIndex F x.1 x.2) :
+    NextDartTurnStep (rayExitAnchorDartMap F x) (rayExitAnchorDartMap F y) := by
+  let d := rayExitAnchorDartMap F x
+  have hL : ¬ ValidAt F d.head d.dir.turnLeft := by
+    intro hvalid
+    have hR :
+        rightSite (ray0 x.1 (rayExitIndex F x.1 x.2)) (Dir2.turnLeft 1) =
+          ray0 y.1 (rayExitIndex F y.1 y.2) := by
+      rw [hidx]
+      funext j
+      fin_cases j <;>
+        simp [hup, rightSite, leftSite, Dir2.turnLeft, Dir2.vec, ray0, unitVec2,
+          Pi.add_apply, Pi.sub_apply]
+    have hmem : rightSite d.head d.dir.turnLeft ∈ F := by
+      rw [rayExitAnchorDartMap_head, rayExitAnchorDartMap_dir, hR]
+      exact rayExitIndex_mem y.1 y.2
+    exact hvalid.2 hmem
+  have hS : ValidAt F d.head d.dir := by
+    constructor
+    · have hleft :
+          leftSite (ray0 x.1 (rayExitIndex F x.1 x.2)) 1 =
+            ray0 y.1 (rayExitIndex F y.1 y.2) := by
+        rw [hidx]
+        funext j
+        fin_cases j <;>
+          simp [hup, leftSite, ray0, unitVec2, Pi.add_apply]
+      rw [rayExitAnchorDartMap_head, rayExitAnchorDartMap_dir, hleft]
+      exact rayExitIndex_mem y.1 y.2
+    · have hright :
+          rightSite (ray0 x.1 (rayExitIndex F x.1 x.2)) 1 =
+            ray0 y.1 (rayExitIndex F y.1 y.2 + 1) := by
+        rw [hidx]
+        funext j
+        fin_cases j
+        · simp [hup, rightSite, leftSite, Dir2.turnLeft, Dir2.vec, ray0, unitVec2,
+            Pi.add_apply, Pi.sub_apply]
+          omega
+        · simp [hup, rightSite, leftSite, Dir2.turnLeft, Dir2.vec, ray0, unitVec2,
+            Pi.add_apply, Pi.sub_apply]
+      rw [rayExitAnchorDartMap_head, rayExitAnchorDartMap_dir, hright]
+      exact rayExitIndex_succ_not_mem y.1 y.2
+  refine nextDartTurnStep_of_eq (NextDartTurnStep.straight (d := d) hL hS) ?_
+  exact BoundaryDart.ext'
+    (by
+      change d.head = (rayExitAnchorDartMap F y).tail
+      dsimp [d]
+      rw [rayExitAnchorDart_head, rayExitAnchorDart_tail, hidx]
+      funext j
+      fin_cases j <;>
+        simp [hup, ray0, unitVec2, Pi.add_apply, Pi.sub_apply])
+    (by
+      change d.dir = (rayExitAnchorDartMap F y).dir
+      dsimp [d]
+      rw [rayExitAnchorDart_dir, rayExitAnchorDart_dir])
+
 /-! ## Lower strip straight steps -/
 
 /-- The lower endpoint bridge dart is the first lower strip dart, as a trivial turn chain. -/
@@ -480,6 +540,63 @@ theorem rayExitVerticalStrictLtFrontierSiteAnchorTurnChain_of_upperSiteAnchorTur
   exact nextDartTurnChain_of_eq (hupper a b hup hlt hgap hnon)
     (rayExitAnchorDartMap_ltFrontierUpperSite_eq a b hgap hnon)
 
+/-! ## Lower frontier-site to upper-prefix anchor reachability -/
+
+/-- A weaker split form of the frontier-site-anchor input: it only asks for `DartReachable` from
+the lower frontier site's ray-exit anchor to the upper-prefix site's ray-exit anchor.  This is the
+form consumed by the edge-connected route. -/
+def RayExitVerticalStrictLtFrontierUpperSiteAnchorReachable
+    (F : Finset (Fin 2 → ℤ)) : Prop :=
+  ∀ a b : {x : Fin 2 → ℤ // x ∈ F},
+    (hup : b.1 = a.1 + unitVec2 1) →
+      (hlt : rayExitIndex F a.1 a.2 < rayExitIndex F b.1 b.2) →
+        (hgap : rayExitIndex F a.1 a.2 + 1 < rayExitIndex F b.1 b.2) →
+          (hnon : ¬ RayExitVerticalStrictLtGapStrip F a b) →
+            DartReachable F
+              (rayExitAnchorDartMap F (rayExitVerticalStrictLtFrontierSite a b hgap hnon))
+              (rayExitAnchorDartMap F
+                (rayExitVerticalStrictLtFrontierUpperSite a b hgap hnon))
+
+/-- The remaining strict subcase of the lower frontier-site to upper-prefix anchor leg: if the
+frontier site and upper-prefix site have unequal ray-exit indices, their anchors must be reachable.
+The equal-index subcase is closed by shared-vertex geometry. -/
+def RayExitVerticalStrictLtFrontierUpperSiteAnchorStrictReachable
+    (F : Finset (Fin 2 → ℤ)) : Prop :=
+  ∀ a b : {x : Fin 2 → ℤ // x ∈ F},
+    (hup : b.1 = a.1 + unitVec2 1) →
+      (hlt : rayExitIndex F a.1 a.2 < rayExitIndex F b.1 b.2) →
+        (hgap : rayExitIndex F a.1 a.2 + 1 < rayExitIndex F b.1 b.2) →
+          (hnon : ¬ RayExitVerticalStrictLtGapStrip F a b) →
+            rayExitIndex F
+                (rayExitVerticalStrictLtFrontierSite a b hgap hnon).1
+                (rayExitVerticalStrictLtFrontierSite a b hgap hnon).2 ≠
+              rayExitIndex F
+                (rayExitVerticalStrictLtFrontierUpperSite a b hgap hnon).1
+                (rayExitVerticalStrictLtFrontierUpperSite a b hgap hnon).2 →
+              DartReachable F
+                (rayExitAnchorDartMap F
+                  (rayExitVerticalStrictLtFrontierSite a b hgap hnon))
+                (rayExitAnchorDartMap F
+                  (rayExitVerticalStrictLtFrontierUpperSite a b hgap hnon))
+
+/-- Strict lower frontier-site-to-upper-prefix data recover the reachable form: if the two
+intermediate sites have equal ray-exit indices, their anchor darts share a dual vertex. -/
+theorem rayExitVerticalStrictLtFrontierUpperSiteAnchorReachable_of_strictReachable
+    (hstrict : RayExitVerticalStrictLtFrontierUpperSiteAnchorStrictReachable F) :
+    RayExitVerticalStrictLtFrontierUpperSiteAnchorReachable F := by
+  intro a b hup hlt hgap hnon
+  let c := rayExitVerticalStrictLtFrontierSite a b hgap hnon
+  let u := rayExitVerticalStrictLtFrontierUpperSite a b hgap hnon
+  by_cases hidx : rayExitIndex F c.1 c.2 = rayExitIndex F u.1 u.2
+  · have hupCU : u.1 = c.1 + unitVec2 1 := by
+      dsimp [c, u]
+      exact rayExitVerticalStrictLtFrontierUpperSite_eq_frontierSite_add_e1
+        a b hup hgap hnon
+    obtain ⟨_, hvc, hvu⟩ :=
+      rayExitAnchorDartMap_add_e1_shared_of_index_eq c u hupCU hidx.symm
+    exact dartReachable_of_shared hvc hvu
+  · exact hstrict a b hup hlt hgap hnon hidx
+
 /-- The existing ray-exit anchoring input sends the lower frontier dart to the ray-exit anchor of
 the packaged first lower re-entry site. -/
 theorem dartReachable_rayExitVerticalStrictLtFrontierDart_frontierSiteAnchor
@@ -513,6 +630,22 @@ theorem rayExitVerticalStrictLtBridgeFrontierChain_of_frontierSiteAnchorTurnChai
     (dartReachable_rayExitVerticalStrictLtFrontierDart_frontierSiteAnchor hanchor
       a b hgap hnon).trans
       (dartReachable_of_turnChain (hsite a b hup hlt hgap hnon))⟩
+
+/-- The lower `DartReachable` frontier-split input follows from the automatic lower
+bridge-to-frontier turn chain, the existing anchoring input at the frontier dart, and a reachable
+frontier-site-anchor to upper-prefix-site-anchor leg. -/
+theorem rayExitVerticalStrictLtBridgeFrontierChain_of_upperSiteAnchorReachable
+    (hanchor : ∀ d : BoundaryDart F,
+      DartReachable F d (rayExitAnchorDartMap F ⟨d.left, d.left_mem⟩))
+    (hreach : RayExitVerticalStrictLtFrontierUpperSiteAnchorReachable F) :
+    RayExitVerticalStrictLtBridgeFrontierChain F := by
+  intro a b hup hlt hgap hnon
+  have hleg := hreach a b hup hlt hgap hnon
+  rw [rayExitAnchorDartMap_ltFrontierUpperSite_eq a b hgap hnon] at hleg
+  exact ⟨dartReachable_of_turnChain
+      (nextDartTurnChain_ltBridgeDart_ltFrontierDart a b hup hlt hgap hnon),
+    (dartReachable_rayExitVerticalStrictLtFrontierDart_frontierSiteAnchor hanchor
+      a b hgap hnon).trans hleg⟩
 
 /-- Lower frontier-anchor data recover the full lower turn-chain input, because the lower
 bridge-to-frontier leg is now automatic. -/
@@ -552,6 +685,21 @@ at the first lower frontier index.  The upper-exits-first input is unchanged. -/
 def RayExitVerticalStrictBridgeFrontierLtUpperSiteAnchorTurnChainStep
     (F : Finset (Fin 2 → ℤ)) : Prop :=
   RayExitVerticalStrictLtFrontierUpperSiteAnchorTurnChain F ∧
+    RayExitVerticalStrictGtBridgeFrontierTurnChain F
+
+/-- Full non-strip data with the remaining lower site-anchor leg required only as
+`DartReachable` through the upper-prefix site.  The upper-exits-first input is unchanged. -/
+def RayExitVerticalStrictBridgeFrontierLtUpperSiteAnchorReachableStep
+    (F : Finset (Fin 2 → ℤ)) : Prop :=
+  RayExitVerticalStrictLtFrontierUpperSiteAnchorReachable F ∧
+    RayExitVerticalStrictGtBridgeFrontierTurnChain F
+
+/-- Full non-strip data with only the unequal-index lower frontier-site to upper-prefix-site
+anchor leg left as a `DartReachable` input.  Equal indices are automatic by shared vertices, and
+the upper-exits-first input is unchanged. -/
+def RayExitVerticalStrictBridgeFrontierLtUpperSiteAnchorStrictReachableStep
+    (F : Finset (Fin 2 → ℤ)) : Prop :=
+  RayExitVerticalStrictLtFrontierUpperSiteAnchorStrictReachable F ∧
     RayExitVerticalStrictGtBridgeFrontierTurnChain F
 
 /-- Lower-reduced data recover the existing full turn-chain input. -/
@@ -602,6 +750,36 @@ theorem rayExitVerticalStrictBridgeFrontierChainStep_of_ltUpperSiteAnchorTurnCha
   rayExitVerticalStrictBridgeFrontierChainStep_of_ltSiteAnchorTurnChainStep hanchor
     (rayExitVerticalStrictBridgeFrontierLtSiteAnchorTurnChainStep_of_ltUpperSiteAnchor hupper)
 
+/-- Strict lower frontier-site-to-upper-prefix reachable data recover the reachable-step input. -/
+theorem
+    rayExitVerticalStrictBridgeFrontierLtUpperSiteAnchorReachableStep_of_strictReachable
+    (hstrict : RayExitVerticalStrictBridgeFrontierLtUpperSiteAnchorStrictReachableStep F) :
+    RayExitVerticalStrictBridgeFrontierLtUpperSiteAnchorReachableStep F :=
+  ⟨rayExitVerticalStrictLtFrontierUpperSiteAnchorReachable_of_strictReachable hstrict.1,
+    hstrict.2⟩
+
+/-- Lower upper-prefix reachable data recover the `DartReachable` frontier-split input once the
+existing anchoring input is supplied. -/
+theorem rayExitVerticalStrictBridgeFrontierChainStep_of_ltUpperSiteAnchorReachableStep
+    (hanchor : ∀ d : BoundaryDart F,
+      DartReachable F d (rayExitAnchorDartMap F ⟨d.left, d.left_mem⟩))
+    (hreach : RayExitVerticalStrictBridgeFrontierLtUpperSiteAnchorReachableStep F) :
+    RayExitVerticalStrictBridgeFrontierChainStep F :=
+  ⟨rayExitVerticalStrictLtBridgeFrontierChain_of_upperSiteAnchorReachable hanchor hreach.1,
+    rayExitVerticalStrictGtBridgeFrontierChain_of_nextDartChain
+      (rayExitVerticalStrictGtBridgeFrontierNextDartChain_of_turnChain hreach.2)⟩
+
+/-- Strict lower upper-prefix reachable data recover the `DartReachable` frontier-split input once
+the existing anchoring input is supplied. -/
+theorem rayExitVerticalStrictBridgeFrontierChainStep_of_ltUpperSiteAnchorStrictReachable
+    (hanchor : ∀ d : BoundaryDart F,
+      DartReachable F d (rayExitAnchorDartMap F ⟨d.left, d.left_mem⟩))
+    (hstrict : RayExitVerticalStrictBridgeFrontierLtUpperSiteAnchorStrictReachableStep F) :
+    RayExitVerticalStrictBridgeFrontierChainStep F :=
+  rayExitVerticalStrictBridgeFrontierChainStep_of_ltUpperSiteAnchorReachableStep hanchor
+    (rayExitVerticalStrictBridgeFrontierLtUpperSiteAnchorReachableStep_of_strictReachable
+      hstrict)
+
 /-- Pairwise dart reachability from lower-reduced turn-chain non-strip data and within-`F`
 connectivity. -/
 theorem dartReachable_of_rayExitVerticalStrictBridgeFrontierLtReducedTurnChain
@@ -648,6 +826,32 @@ theorem dartReachable_of_rayExitVerticalStrictBridgeFrontierLtUpperSiteAnchorTur
     (d e : BoundaryDart F) : DartReachable F d e :=
   dartReachable_of_rayExitVerticalStrictBridgeFrontierLtSiteAnchorTurnChain hanchor
     (rayExitVerticalStrictBridgeFrontierLtSiteAnchorTurnChainStep_of_ltUpperSiteAnchor hupper)
+    hconn d e
+
+/-- Pairwise dart reachability from lower upper-prefix reachable data and within-`F`
+connectivity. -/
+theorem dartReachable_of_rayExitVerticalStrictBridgeFrontierLtUpperSiteAnchorReachable
+    (hanchor : ∀ d : BoundaryDart F,
+      DartReachable F d (rayExitAnchorDartMap F ⟨d.left, d.left_mem⟩))
+    (hreach : RayExitVerticalStrictBridgeFrontierLtUpperSiteAnchorReachableStep F)
+    (hconn : ∀ a ∈ F, ∀ b ∈ F, ReachableWithin (latticeGraph 2) F a b)
+    (d e : BoundaryDart F) : DartReachable F d e :=
+  dartReachable_of_rayExitVerticalStrictBridgeFrontierChain hanchor
+    (rayExitVerticalStrictBridgeFrontierChainStep_of_ltUpperSiteAnchorReachableStep
+      hanchor hreach)
+    hconn d e
+
+/-- Pairwise dart reachability from lower upper-prefix strict reachable data and within-`F`
+connectivity. -/
+theorem dartReachable_of_rayExitVerticalStrictBridgeFrontierLtUpperSiteAnchorStrictReachable
+    (hanchor : ∀ d : BoundaryDart F,
+      DartReachable F d (rayExitAnchorDartMap F ⟨d.left, d.left_mem⟩))
+    (hstrict : RayExitVerticalStrictBridgeFrontierLtUpperSiteAnchorStrictReachableStep F)
+    (hconn : ∀ a ∈ F, ∀ b ∈ F, ReachableWithin (latticeGraph 2) F a b)
+    (d e : BoundaryDart F) : DartReachable F d e :=
+  dartReachable_of_rayExitVerticalStrictBridgeFrontierLtUpperSiteAnchorReachable hanchor
+    (rayExitVerticalStrictBridgeFrontierLtUpperSiteAnchorReachableStep_of_strictReachable
+      hstrict)
     hconn d e
 
 /-- The common-box dual cut is edge-connected from lower-reduced turn-chain non-strip data. -/
@@ -699,6 +903,33 @@ theorem dualCutInBox_isEdgeConnected_of_rayExitVerticalStrictBridgeFrontierLtUpp
     IsEdgeConnected (dualCutInBox hsub) :=
   dualCutInBox_isEdgeConnected_of_rayExitVerticalStrictBridgeFrontierLtSiteAnchor hsub hanchor
     (rayExitVerticalStrictBridgeFrontierLtSiteAnchorTurnChainStep_of_ltUpperSiteAnchor hupper)
+    hconn
+
+/-- The common-box dual cut is edge-connected from lower upper-prefix reachable data. -/
+theorem dualCutInBox_isEdgeConnected_of_rayExitVerticalStrictBridgeFrontierLtUpperSiteReachable
+    (hsub : dualSupport F ⊆ Λd)
+    (hanchor : ∀ d : BoundaryDart F,
+      DartReachable F d (rayExitAnchorDartMap F ⟨d.left, d.left_mem⟩))
+    (hreach : RayExitVerticalStrictBridgeFrontierLtUpperSiteAnchorReachableStep F)
+    (hconn : ∀ a ∈ F, ∀ b ∈ F, ReachableWithin (latticeGraph 2) F a b) :
+    IsEdgeConnected (dualCutInBox hsub) :=
+  dualCutInBox_isEdgeConnected_of_rayExitVerticalStrictBridgeFrontierChain hsub hanchor
+    (rayExitVerticalStrictBridgeFrontierChainStep_of_ltUpperSiteAnchorReachableStep
+      hanchor hreach)
+    hconn
+
+/-- The common-box dual cut is edge-connected from lower upper-prefix strict reachable data. -/
+theorem dualCutInBox_isEdgeConnected_of_rayExitVerticalStrictBridgeFrontierLtUpperSiteStrict
+    (hsub : dualSupport F ⊆ Λd)
+    (hanchor : ∀ d : BoundaryDart F,
+      DartReachable F d (rayExitAnchorDartMap F ⟨d.left, d.left_mem⟩))
+    (hstrict : RayExitVerticalStrictBridgeFrontierLtUpperSiteAnchorStrictReachableStep F)
+    (hconn : ∀ a ∈ F, ∀ b ∈ F, ReachableWithin (latticeGraph 2) F a b) :
+    IsEdgeConnected (dualCutInBox hsub) :=
+  dualCutInBox_isEdgeConnected_of_rayExitVerticalStrictBridgeFrontierLtUpperSiteReachable
+    hsub hanchor
+    (rayExitVerticalStrictBridgeFrontierLtUpperSiteAnchorReachableStep_of_strictReachable
+      hstrict)
     hconn
 
 /-- Pairwise dart reachability from lower-reduced turn-chain non-strip data and connectedness of
@@ -763,6 +994,40 @@ theorem dartReachable_of_rayExitVerticalStrictBridgeFrontierLtUpperSiteAnchor_co
     DartReachable (S.image Subtype.val) d e :=
   dartReachable_of_rayExitVerticalStrictBridgeFrontierLtSiteAnchor_connected hanchor
     (rayExitVerticalStrictBridgeFrontierLtSiteAnchorTurnChainStep_of_ltUpperSiteAnchor hupper)
+    hconn d e
+
+/-- Pairwise dart reachability from lower upper-prefix reachable data and connectedness of the
+underlying box droplet. -/
+theorem dartReachable_of_rayExitVerticalStrictBridgeFrontierLtUpperSiteReachable_connected
+    {S : Finset ↑Λ}
+    (hanchor : ∀ d : BoundaryDart (S.image Subtype.val),
+      DartReachable (S.image Subtype.val) d
+        (rayExitAnchorDartMap (S.image Subtype.val) ⟨d.left, d.left_mem⟩))
+    (hreach : RayExitVerticalStrictBridgeFrontierLtUpperSiteAnchorReachableStep
+      (S.image Subtype.val))
+    (hconn : IsConnectedDroplet (Ambient.inducedGraph (latticeGraph 2) Λ) S)
+    (d e : BoundaryDart (S.image Subtype.val)) :
+    DartReachable (S.image Subtype.val) d e :=
+  dartReachable_of_rayExitVerticalStrictBridgeFrontierChain_connected hanchor
+    (rayExitVerticalStrictBridgeFrontierChainStep_of_ltUpperSiteAnchorReachableStep
+      hanchor hreach)
+    hconn d e
+
+/-- Pairwise dart reachability from lower upper-prefix strict reachable data and connectedness of
+the underlying box droplet. -/
+theorem dartReachable_of_rayExitVerticalStrictBridgeFrontierLtUpperSiteStrict_connected
+    {S : Finset ↑Λ}
+    (hanchor : ∀ d : BoundaryDart (S.image Subtype.val),
+      DartReachable (S.image Subtype.val) d
+        (rayExitAnchorDartMap (S.image Subtype.val) ⟨d.left, d.left_mem⟩))
+    (hstrict : RayExitVerticalStrictBridgeFrontierLtUpperSiteAnchorStrictReachableStep
+      (S.image Subtype.val))
+    (hconn : IsConnectedDroplet (Ambient.inducedGraph (latticeGraph 2) Λ) S)
+    (d e : BoundaryDart (S.image Subtype.val)) :
+    DartReachable (S.image Subtype.val) d e :=
+  dartReachable_of_rayExitVerticalStrictBridgeFrontierLtUpperSiteReachable_connected hanchor
+    (rayExitVerticalStrictBridgeFrontierLtUpperSiteAnchorReachableStep_of_strictReachable
+      hstrict)
     hconn d e
 
 /-- The common-box dual cut is edge-connected from lower-reduced turn-chain non-strip data and
@@ -830,6 +1095,42 @@ theorem dualCutInBox_isEdgeConnected_of_rayExitVerticalStrictBridgeFrontierLtUpp
   dualCutInBox_isEdgeConnected_of_rayExitVerticalStrictBridgeFrontierLtSiteAnchor_connected
     hsub hanchor
     (rayExitVerticalStrictBridgeFrontierLtSiteAnchorTurnChainStep_of_ltUpperSiteAnchor hupper)
+    hconn
+
+/-- The common-box dual cut is edge-connected from lower upper-prefix reachable data and
+connectedness of the underlying box droplet. -/
+theorem dualCutInBox_isEdgeConnected_of_rayExitVerticalStrictBridgeFrontierLtUpperReach_connected
+    {S : Finset ↑Λ}
+    (hsub : dualSupport (S.image Subtype.val) ⊆ Λd)
+    (hanchor : ∀ d : BoundaryDart (S.image Subtype.val),
+      DartReachable (S.image Subtype.val) d
+        (rayExitAnchorDartMap (S.image Subtype.val) ⟨d.left, d.left_mem⟩))
+    (hreach : RayExitVerticalStrictBridgeFrontierLtUpperSiteAnchorReachableStep
+      (S.image Subtype.val))
+    (hconn : IsConnectedDroplet (Ambient.inducedGraph (latticeGraph 2) Λ) S) :
+    IsEdgeConnected (dualCutInBox hsub) :=
+  dualCutInBox_isEdgeConnected_of_rayExitVerticalStrictBridgeFrontierChain_connected
+    hsub hanchor
+    (rayExitVerticalStrictBridgeFrontierChainStep_of_ltUpperSiteAnchorReachableStep
+      hanchor hreach)
+    hconn
+
+/-- The common-box dual cut is edge-connected from lower upper-prefix strict reachable data and
+connectedness of the underlying box droplet. -/
+theorem dualCutInBox_isEdgeConnected_of_rayExitVerticalStrictBridgeFrontierLtUpperStrict_connected
+    {S : Finset ↑Λ}
+    (hsub : dualSupport (S.image Subtype.val) ⊆ Λd)
+    (hanchor : ∀ d : BoundaryDart (S.image Subtype.val),
+      DartReachable (S.image Subtype.val) d
+        (rayExitAnchorDartMap (S.image Subtype.val) ⟨d.left, d.left_mem⟩))
+    (hstrict : RayExitVerticalStrictBridgeFrontierLtUpperSiteAnchorStrictReachableStep
+      (S.image Subtype.val))
+    (hconn : IsConnectedDroplet (Ambient.inducedGraph (latticeGraph 2) Λ) S) :
+    IsEdgeConnected (dualCutInBox hsub) :=
+  dualCutInBox_isEdgeConnected_of_rayExitVerticalStrictBridgeFrontierLtUpperReach_connected
+    hsub hanchor
+    (rayExitVerticalStrictBridgeFrontierLtUpperSiteAnchorReachableStep_of_strictReachable
+      hstrict)
     hconn
 
 /-- **The Peierls contour count from lower-reduced turn-chain non-strip strict ray-exit data and
@@ -943,6 +1244,64 @@ theorem peierls_contour_count_rayExit_verticalStrictBridgeFrontierLtUpperSiteAnc
     (fun S hS =>
       ⟨(hdata S hS).1,
         rayExitVerticalStrictBridgeFrontierLtSiteAnchorTurnChainStep_of_ltUpperSiteAnchor
+          (hdata S hS).2.1,
+        (hdata S hS).2.2⟩)
+    hr
+
+/-- **The Peierls contour count from lower upper-prefix reachable non-strip strict ray-exit data
+and connected droplets**: the lower site-anchor leg is only required as `DartReachable` through
+the upper-prefix site. -/
+theorem peierls_contour_count_rayExit_verticalStrictBridgeFrontierLtUpperReach_connected
+    {i : Fin 2 → ℤ} {g : ↑Λ} {r : ℕ}
+    (hpre : (Ambient.inducedGraph (latticeGraph 2) Λ).Preconnected)
+    (D : Finset (Finset ↑Λ))
+    (hdual : ∀ S ∈ D, dualSupport (S.image Subtype.val) ⊆ Λd)
+    (hi : ∀ S ∈ D, i ∈ S.image Subtype.val)
+    (hne : ∀ S ∈ D, NeighbourClosed Λ S)
+    (hg : ∀ S ∈ D, g ∉ S)
+    (hdata : ∀ S (_ : S ∈ D),
+      (∀ d : BoundaryDart (S.image Subtype.val),
+        DartReachable (S.image Subtype.val) d
+          (rayExitAnchorDartMap (S.image Subtype.val) ⟨d.left, d.left_mem⟩)) ∧
+      RayExitVerticalStrictBridgeFrontierLtUpperSiteAnchorReachableStep
+        (S.image Subtype.val) ∧
+      IsConnectedDroplet (Ambient.inducedGraph (latticeGraph 2) Λ) S)
+    (hr : ∀ S ∈ D, (cutEdges (Ambient.inducedGraph (latticeGraph 2) Λ) S).card = r) :
+    D.card ≤ r * (2 * 2) ^ (2 * r) :=
+  peierls_contour_count_rayExit_verticalStrictBridgeFrontierChain_connected
+    hpre D hdual hi hne hg
+    (fun S hS =>
+      ⟨(hdata S hS).1,
+        rayExitVerticalStrictBridgeFrontierChainStep_of_ltUpperSiteAnchorReachableStep
+          (hdata S hS).1 (hdata S hS).2.1,
+        (hdata S hS).2.2⟩)
+    hr
+
+/-- **The Peierls contour count from lower upper-prefix strict reachable non-strip strict ray-exit
+data and connected droplets**: equal ray-exit indices of the frontier and upper-prefix sites are
+automatic by shared vertices; only the unequal-index subcase remains as lower local input. -/
+theorem peierls_contour_count_rayExit_verticalStrictBridgeFrontierLtUpperStrict_connected
+    {i : Fin 2 → ℤ} {g : ↑Λ} {r : ℕ}
+    (hpre : (Ambient.inducedGraph (latticeGraph 2) Λ).Preconnected)
+    (D : Finset (Finset ↑Λ))
+    (hdual : ∀ S ∈ D, dualSupport (S.image Subtype.val) ⊆ Λd)
+    (hi : ∀ S ∈ D, i ∈ S.image Subtype.val)
+    (hne : ∀ S ∈ D, NeighbourClosed Λ S)
+    (hg : ∀ S ∈ D, g ∉ S)
+    (hdata : ∀ S (_ : S ∈ D),
+      (∀ d : BoundaryDart (S.image Subtype.val),
+        DartReachable (S.image Subtype.val) d
+          (rayExitAnchorDartMap (S.image Subtype.val) ⟨d.left, d.left_mem⟩)) ∧
+      RayExitVerticalStrictBridgeFrontierLtUpperSiteAnchorStrictReachableStep
+        (S.image Subtype.val) ∧
+      IsConnectedDroplet (Ambient.inducedGraph (latticeGraph 2) Λ) S)
+    (hr : ∀ S ∈ D, (cutEdges (Ambient.inducedGraph (latticeGraph 2) Λ) S).card = r) :
+    D.card ≤ r * (2 * 2) ^ (2 * r) :=
+  peierls_contour_count_rayExit_verticalStrictBridgeFrontierLtUpperReach_connected
+    hpre D hdual hi hne hg
+    (fun S hS =>
+      ⟨(hdata S hS).1,
+        rayExitVerticalStrictBridgeFrontierLtUpperSiteAnchorReachableStep_of_strictReachable
           (hdata S hS).2.1,
         (hdata S hS).2.2⟩)
     hr
