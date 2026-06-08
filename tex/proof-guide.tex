@@ -3638,9 +3638,16 @@ turn-chain input before reusing the previous Peierls count route.  The further s
 frontier-anchor leg through the ray-exit anchor of the first lower frontier site, packaged by
 \(\texttt{rayExitVerticalStrictLtFrontierSite}\).  Its recovery theorem and the
 \(\texttt{LtAnchorSplit}\) route/count wrappers compose the two split legs and then reuse the
-lower-reduced route.  This is still an interface reduction: it does not prove the lower
-frontier-to-upper-anchor geometry, reduce the upper-exits-first side, or assume post-exit ray
-monotonicity.
+lower-reduced route.  The next site-anchor input
+\(\texttt{RayExitVerticalStrictLtFrontierSiteAnchorTurnChain}\) removes the first of those two
+split legs from the local turn-chain assumptions: the shape lemma
+\(\texttt{rayExitVerticalStrictLtFrontierDart\_left\_frontierSite}\) identifies the frontier
+dart's left site with the packaged first lower frontier site, so the existing anchoring input
+\(\texttt{hanchor}\) gives a \(\texttt{DartReachable}\) step to that site's ray-exit anchor.  The
+\(\texttt{LtSiteAnchor}\) route/count wrappers therefore leave only the frontier-site anchor to
+upper anchor turn chain as lower local input.  This is still an interface reduction: it does not
+prove the lower frontier-site-to-upper-anchor geometry, reduce the upper-exits-first side, or
+assume post-exit ray monotonicity.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{The ray-exit anchored route
