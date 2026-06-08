@@ -343,6 +343,42 @@ def RayExitVerticalStrictLtFrontierAnchorTurnChain (F : Finset (Fin 2 → ℤ)) 
               (rayExitVerticalStrictLtFrontierDart a b hgap hnon)
               (rayExitAnchorDartMap F b)
 
+/-! ## Lower frontier-anchor split input -/
+
+/-- The first lower re-entry site, packaged as a site of `F`. -/
+noncomputable def rayExitVerticalStrictLtFrontierSite
+    (a b : {x : Fin 2 → ℤ // x ∈ F})
+    (hgap : rayExitIndex F a.1 a.2 + 1 < rayExitIndex F b.1 b.2)
+    (hnon : ¬ RayExitVerticalStrictLtGapStrip F a b) : {x : Fin 2 → ℤ // x ∈ F} :=
+  ⟨ray0 a.1 (rayExitVerticalStrictLtFirstFrontierIndex a b hgap hnon),
+    rayExitVerticalStrictLtFirstFrontierIndex_mem a b hgap hnon⟩
+
+/-- A split form of the lower frontier-anchor input: first reach the ray-exit anchor of the
+frontier site itself, then reach the upper site's ray-exit anchor. -/
+def RayExitVerticalStrictLtFrontierAnchorSplitTurnChain
+    (F : Finset (Fin 2 → ℤ)) : Prop :=
+  ∀ a b : {x : Fin 2 → ℤ // x ∈ F},
+    (hup : b.1 = a.1 + unitVec2 1) →
+      (hlt : rayExitIndex F a.1 a.2 < rayExitIndex F b.1 b.2) →
+        (hgap : rayExitIndex F a.1 a.2 + 1 < rayExitIndex F b.1 b.2) →
+          (hnon : ¬ RayExitVerticalStrictLtGapStrip F a b) →
+            NextDartTurnChain
+                (rayExitVerticalStrictLtFrontierDart a b hgap hnon)
+                (rayExitAnchorDartMap F
+                  (rayExitVerticalStrictLtFrontierSite a b hgap hnon)) ∧
+            NextDartTurnChain
+                (rayExitAnchorDartMap F
+                  (rayExitVerticalStrictLtFrontierSite a b hgap hnon))
+                (rayExitAnchorDartMap F b)
+
+/-- Split lower frontier-anchor data recover the one-piece lower frontier-anchor input. -/
+theorem rayExitVerticalStrictLtFrontierAnchorTurnChain_of_splitTurnChain
+    (hsplit : RayExitVerticalStrictLtFrontierAnchorSplitTurnChain F) :
+    RayExitVerticalStrictLtFrontierAnchorTurnChain F := by
+  intro a b hup hlt hgap hnon
+  exact nextDartTurnChain_trans (hsplit a b hup hlt hgap hnon).1
+    (hsplit a b hup hlt hgap hnon).2
+
 /-- Lower frontier-anchor data recover the full lower turn-chain input, because the lower
 bridge-to-frontier leg is now automatic. -/
 theorem rayExitVerticalStrictLtBridgeFrontierTurnChain_of_frontierAnchorTurnChain
@@ -361,12 +397,32 @@ def RayExitVerticalStrictBridgeFrontierLtReducedTurnChainStep
   RayExitVerticalStrictLtFrontierAnchorTurnChain F ∧
     RayExitVerticalStrictGtBridgeFrontierTurnChain F
 
+/-- Full non-strip turn-chain data with the lower frontier-anchor leg split through the
+frontier site's own ray-exit anchor.  The upper-exits-first input is unchanged. -/
+def RayExitVerticalStrictBridgeFrontierLtAnchorSplitTurnChainStep
+    (F : Finset (Fin 2 → ℤ)) : Prop :=
+  RayExitVerticalStrictLtFrontierAnchorSplitTurnChain F ∧
+    RayExitVerticalStrictGtBridgeFrontierTurnChain F
+
 /-- Lower-reduced data recover the existing full turn-chain input. -/
 theorem rayExitVerticalStrictBridgeFrontierTurnChainStep_of_ltReducedTurnChainStep
     (hreduced : RayExitVerticalStrictBridgeFrontierLtReducedTurnChainStep F) :
     RayExitVerticalStrictBridgeFrontierTurnChainStep F :=
   ⟨rayExitVerticalStrictLtBridgeFrontierTurnChain_of_frontierAnchorTurnChain hreduced.1,
     hreduced.2⟩
+
+/-- Lower frontier-anchor split data recover the lower-reduced turn-chain input. -/
+theorem rayExitVerticalStrictBridgeFrontierLtReducedTurnChainStep_of_ltAnchorSplit
+    (hsplit : RayExitVerticalStrictBridgeFrontierLtAnchorSplitTurnChainStep F) :
+    RayExitVerticalStrictBridgeFrontierLtReducedTurnChainStep F :=
+  ⟨rayExitVerticalStrictLtFrontierAnchorTurnChain_of_splitTurnChain hsplit.1, hsplit.2⟩
+
+/-- Lower frontier-anchor split data recover the existing full turn-chain input. -/
+theorem rayExitVerticalStrictBridgeFrontierTurnChainStep_of_ltAnchorSplit
+    (hsplit : RayExitVerticalStrictBridgeFrontierLtAnchorSplitTurnChainStep F) :
+    RayExitVerticalStrictBridgeFrontierTurnChainStep F :=
+  rayExitVerticalStrictBridgeFrontierTurnChainStep_of_ltReducedTurnChainStep
+    (rayExitVerticalStrictBridgeFrontierLtReducedTurnChainStep_of_ltAnchorSplit hsplit)
 
 /-- Pairwise dart reachability from lower-reduced turn-chain non-strip data and within-`F`
 connectivity. -/
@@ -380,6 +436,18 @@ theorem dartReachable_of_rayExitVerticalStrictBridgeFrontierLtReducedTurnChain
     (rayExitVerticalStrictBridgeFrontierTurnChainStep_of_ltReducedTurnChainStep hreduced)
     hconn d e
 
+/-- Pairwise dart reachability from lower frontier-anchor split data and within-`F`
+connectivity. -/
+theorem dartReachable_of_rayExitVerticalStrictBridgeFrontierLtAnchorSplitTurnChain
+    (hanchor : ∀ d : BoundaryDart F,
+      DartReachable F d (rayExitAnchorDartMap F ⟨d.left, d.left_mem⟩))
+    (hsplit : RayExitVerticalStrictBridgeFrontierLtAnchorSplitTurnChainStep F)
+    (hconn : ∀ a ∈ F, ∀ b ∈ F, ReachableWithin (latticeGraph 2) F a b)
+    (d e : BoundaryDart F) : DartReachable F d e :=
+  dartReachable_of_rayExitVerticalStrictBridgeFrontierLtReducedTurnChain hanchor
+    (rayExitVerticalStrictBridgeFrontierLtReducedTurnChainStep_of_ltAnchorSplit hsplit)
+    hconn d e
+
 /-- The common-box dual cut is edge-connected from lower-reduced turn-chain non-strip data. -/
 theorem dualCutInBox_isEdgeConnected_of_rayExitVerticalStrictBridgeFrontierLtReducedTurnChain
     (hsub : dualSupport F ⊆ Λd)
@@ -391,6 +459,19 @@ theorem dualCutInBox_isEdgeConnected_of_rayExitVerticalStrictBridgeFrontierLtRed
   dualCutInBox_isEdgeConnected_of_rayExitVerticalStrictBridgeFrontierTurnChain hsub
     hanchor
     (rayExitVerticalStrictBridgeFrontierTurnChainStep_of_ltReducedTurnChainStep hreduced)
+    hconn
+
+/-- The common-box dual cut is edge-connected from lower frontier-anchor split data. -/
+theorem dualCutInBox_isEdgeConnected_of_rayExitVerticalStrictBridgeFrontierLtAnchorSplit
+    (hsub : dualSupport F ⊆ Λd)
+    (hanchor : ∀ d : BoundaryDart F,
+      DartReachable F d (rayExitAnchorDartMap F ⟨d.left, d.left_mem⟩))
+    (hsplit : RayExitVerticalStrictBridgeFrontierLtAnchorSplitTurnChainStep F)
+    (hconn : ∀ a ∈ F, ∀ b ∈ F, ReachableWithin (latticeGraph 2) F a b) :
+    IsEdgeConnected (dualCutInBox hsub) :=
+  dualCutInBox_isEdgeConnected_of_rayExitVerticalStrictBridgeFrontierLtReducedTurnChain
+    hsub hanchor
+    (rayExitVerticalStrictBridgeFrontierLtReducedTurnChainStep_of_ltAnchorSplit hsplit)
     hconn
 
 /-- Pairwise dart reachability from lower-reduced turn-chain non-strip data and connectedness of
@@ -409,6 +490,22 @@ theorem dartReachable_of_rayExitVerticalStrictBridgeFrontierLtReducedTurnChain_c
     (rayExitVerticalStrictBridgeFrontierTurnChainStep_of_ltReducedTurnChainStep hreduced)
     hconn d e
 
+/-- Pairwise dart reachability from lower frontier-anchor split data and connectedness of the
+underlying box droplet. -/
+theorem dartReachable_of_rayExitVerticalStrictBridgeFrontierLtAnchorSplit_connected
+    {S : Finset ↑Λ}
+    (hanchor : ∀ d : BoundaryDart (S.image Subtype.val),
+      DartReachable (S.image Subtype.val) d
+        (rayExitAnchorDartMap (S.image Subtype.val) ⟨d.left, d.left_mem⟩))
+    (hsplit : RayExitVerticalStrictBridgeFrontierLtAnchorSplitTurnChainStep
+      (S.image Subtype.val))
+    (hconn : IsConnectedDroplet (Ambient.inducedGraph (latticeGraph 2) Λ) S)
+    (d e : BoundaryDart (S.image Subtype.val)) :
+    DartReachable (S.image Subtype.val) d e :=
+  dartReachable_of_rayExitVerticalStrictBridgeFrontierLtReducedTurnChain_connected hanchor
+    (rayExitVerticalStrictBridgeFrontierLtReducedTurnChainStep_of_ltAnchorSplit hsplit)
+    hconn d e
+
 /-- The common-box dual cut is edge-connected from lower-reduced turn-chain non-strip data and
 connectedness of the underlying box droplet. -/
 theorem dualCutInBox_isEdgeConnected_of_rayExitVerticalStrictBridgeFrontierLtReduced_connected
@@ -424,6 +521,23 @@ theorem dualCutInBox_isEdgeConnected_of_rayExitVerticalStrictBridgeFrontierLtRed
   dualCutInBox_isEdgeConnected_of_rayExitVerticalStrictBridgeFrontierTurnChain_connected hsub
     hanchor
     (rayExitVerticalStrictBridgeFrontierTurnChainStep_of_ltReducedTurnChainStep hreduced)
+    hconn
+
+/-- The common-box dual cut is edge-connected from lower frontier-anchor split data and
+connectedness of the underlying box droplet. -/
+theorem dualCutInBox_isEdgeConnected_of_rayExitVerticalStrictBridgeFrontierLtAnchorSplit_connected
+    {S : Finset ↑Λ}
+    (hsub : dualSupport (S.image Subtype.val) ⊆ Λd)
+    (hanchor : ∀ d : BoundaryDart (S.image Subtype.val),
+      DartReachable (S.image Subtype.val) d
+        (rayExitAnchorDartMap (S.image Subtype.val) ⟨d.left, d.left_mem⟩))
+    (hsplit : RayExitVerticalStrictBridgeFrontierLtAnchorSplitTurnChainStep
+      (S.image Subtype.val))
+    (hconn : IsConnectedDroplet (Ambient.inducedGraph (latticeGraph 2) Λ) S) :
+    IsEdgeConnected (dualCutInBox hsub) :=
+  dualCutInBox_isEdgeConnected_of_rayExitVerticalStrictBridgeFrontierLtReduced_connected
+    hsub hanchor
+    (rayExitVerticalStrictBridgeFrontierLtReducedTurnChainStep_of_ltAnchorSplit hsplit)
     hconn
 
 /-- **The Peierls contour count from lower-reduced turn-chain non-strip strict ray-exit data and
@@ -449,6 +563,34 @@ theorem peierls_contour_count_rayExit_verticalStrictBridgeFrontierLtReducedTurnC
     (fun S hS =>
       ⟨(hdata S hS).1,
         rayExitVerticalStrictBridgeFrontierTurnChainStep_of_ltReducedTurnChainStep
+          (hdata S hS).2.1,
+        (hdata S hS).2.2⟩)
+    hr
+
+/-- **The Peierls contour count from lower frontier-anchor split non-strip strict ray-exit data and
+connected droplets**: the lower bridge-to-frontier leg is automatic and the remaining lower
+frontier-anchor leg is split through the frontier site's ray-exit anchor. -/
+theorem peierls_contour_count_rayExit_verticalStrictBridgeFrontierLtAnchorSplit_connected
+    {i : Fin 2 → ℤ} {g : ↑Λ} {r : ℕ}
+    (hpre : (Ambient.inducedGraph (latticeGraph 2) Λ).Preconnected)
+    (D : Finset (Finset ↑Λ))
+    (hdual : ∀ S ∈ D, dualSupport (S.image Subtype.val) ⊆ Λd)
+    (hi : ∀ S ∈ D, i ∈ S.image Subtype.val)
+    (hne : ∀ S ∈ D, NeighbourClosed Λ S)
+    (hg : ∀ S ∈ D, g ∉ S)
+    (hdata : ∀ S (_ : S ∈ D),
+      (∀ d : BoundaryDart (S.image Subtype.val),
+        DartReachable (S.image Subtype.val) d
+          (rayExitAnchorDartMap (S.image Subtype.val) ⟨d.left, d.left_mem⟩)) ∧
+      RayExitVerticalStrictBridgeFrontierLtAnchorSplitTurnChainStep (S.image Subtype.val) ∧
+      IsConnectedDroplet (Ambient.inducedGraph (latticeGraph 2) Λ) S)
+    (hr : ∀ S ∈ D, (cutEdges (Ambient.inducedGraph (latticeGraph 2) Λ) S).card = r) :
+    D.card ≤ r * (2 * 2) ^ (2 * r) :=
+  peierls_contour_count_rayExit_verticalStrictBridgeFrontierLtReducedTurnChain_connected
+    hpre D hdual hi hne hg
+    (fun S hS =>
+      ⟨(hdata S hS).1,
+        rayExitVerticalStrictBridgeFrontierLtReducedTurnChainStep_of_ltAnchorSplit
           (hdata S hS).2.1,
         (hdata S hS).2.2⟩)
     hr

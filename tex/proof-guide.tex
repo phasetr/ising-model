@@ -3633,7 +3633,14 @@ the full lower turn-chain input from that smaller assumption.  The wrapper
 full non-strip input with only the lower side reduced: the lower component is the smaller
 frontier-anchor assumption, while the upper-exits-first component remains the existing
 turn-chain input.  The corresponding route and contour-count wrappers simply recover the old
-turn-chain input before reusing the previous Peierls count route.
+turn-chain input before reusing the previous Peierls count route.  The further split input
+\(\texttt{RayExitVerticalStrictLtFrontierAnchorSplitTurnChain}\) factors the remaining lower
+frontier-anchor leg through the ray-exit anchor of the first lower frontier site, packaged by
+\(\texttt{rayExitVerticalStrictLtFrontierSite}\).  Its recovery theorem and the
+\(\texttt{LtAnchorSplit}\) route/count wrappers compose the two split legs and then reuse the
+lower-reduced route.  This is still an interface reduction: it does not prove the lower
+frontier-to-upper-anchor geometry, reduce the upper-exits-first side, or assume post-exit ray
+monotonicity.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{The ray-exit anchored route
