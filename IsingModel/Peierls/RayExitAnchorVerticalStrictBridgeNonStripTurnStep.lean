@@ -11,6 +11,7 @@ The first step is the straight continuation along a lower-exits-first horizontal
 consecutive lower ray successors are outside `F` while the corresponding upper successor remains
 inside `F`, the left turn is blocked by an `F` site on its right and the straight move is valid.
 The one-step certificate is also lifted to a finite lower strip turn chain.
+The endpoint bridge dart is identified with the first strip dart as a trivial chain.
 
 References: Friedli–Velenik, *Statistical Mechanics of Lattice Systems*
 (Cambridge, 2017), §3.7.2, pp. 109–116.
@@ -31,6 +32,24 @@ theorem nextDartTurnStep_of_eq {d e f : BoundaryDart F}
   exact hstep
 
 /-! ## Lower strip straight steps -/
+
+/-- The lower endpoint bridge dart is the first lower strip dart, as a trivial turn chain. -/
+theorem nextDartTurnChain_ltBridgeDart_ltStripDart_base
+    (a b : {x : Fin 2 → ℤ // x ∈ F}) (hup : b.1 = a.1 + unitVec2 1)
+    (hlt : rayExitIndex F a.1 a.2 < rayExitIndex F b.1 b.2)
+    (hupper : rayExitIndex F a.1 a.2 + 1 ≤ rayExitIndex F b.1 b.2)
+    (hlower : ray0 a.1 (rayExitIndex F a.1 a.2 + 1) ∉ F) :
+    NextDartTurnChain
+      (rayExitVerticalStrictLtBridgeDart a b hup hlt)
+      (rayExitVerticalStrictLtStripDart a b hup (rayExitIndex F a.1 a.2) hupper hlower) := by
+  have heq :
+      rayExitVerticalStrictLtBridgeDart a b hup hlt =
+        rayExitVerticalStrictLtStripDart a b hup (rayExitIndex F a.1 a.2) hupper hlower :=
+    BoundaryDart.ext'
+      (by rw [rayExitVerticalStrictLtBridgeDart_tail, rayExitVerticalStrictLtStripDart_tail])
+      (by rw [rayExitVerticalStrictLtBridgeDart_dir, rayExitVerticalStrictLtStripDart_dir])
+  rw [heq]
+  exact NextDartTurnChain.refl _
 
 /-- The straight candidate after a lower `+e₀` strip dart is valid when the next upper ray point
 is still in `F` and the next lower ray point is outside `F`. -/
