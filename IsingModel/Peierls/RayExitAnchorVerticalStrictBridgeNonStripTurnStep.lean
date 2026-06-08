@@ -329,4 +329,27 @@ theorem nextDartTurnChain_ltBridgeDart_ltFrontierDart
     (nextDartTurnStep_ltStripDart_frontier a b hup (k + m) hupperLast hlastNotMem
       hgap hnon (by simpa [j] using hm))
 
+/-! ## Lower frontier remaining input -/
+
+/-- Remaining lower-exits-first turn-chain data after the lower bridge-to-frontier leg has been
+discharged: only the first lower frontier dart to the upper ray-exit anchor remains. -/
+def RayExitVerticalStrictLtFrontierAnchorTurnChain (F : Finset (Fin 2 → ℤ)) : Prop :=
+  ∀ a b : {x : Fin 2 → ℤ // x ∈ F},
+    (hup : b.1 = a.1 + unitVec2 1) →
+      (hlt : rayExitIndex F a.1 a.2 < rayExitIndex F b.1 b.2) →
+        (hgap : rayExitIndex F a.1 a.2 + 1 < rayExitIndex F b.1 b.2) →
+          (hnon : ¬ RayExitVerticalStrictLtGapStrip F a b) →
+            NextDartTurnChain
+              (rayExitVerticalStrictLtFrontierDart a b hgap hnon)
+              (rayExitAnchorDartMap F b)
+
+/-- Lower frontier-anchor data recover the full lower turn-chain input, because the lower
+bridge-to-frontier leg is now automatic. -/
+theorem rayExitVerticalStrictLtBridgeFrontierTurnChain_of_frontierAnchorTurnChain
+    (hfrontier : RayExitVerticalStrictLtFrontierAnchorTurnChain F) :
+    RayExitVerticalStrictLtBridgeFrontierTurnChain F := by
+  intro a b hup hlt hgap hnon
+  exact ⟨nextDartTurnChain_ltBridgeDart_ltFrontierDart a b hup hlt hgap hnon,
+    hfrontier a b hup hlt hgap hnon⟩
+
 end IsingModel

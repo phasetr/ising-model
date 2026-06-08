@@ -3624,7 +3624,11 @@ the first lower re-entry frontier dart.  The generic chain helpers
 \(\texttt{nextDartTurnChain\_trans}\) transport and compose turn chains, and
 \(\texttt{nextDartTurnChain\_ltBridgeDart\_ltFrontierDart}\) combines the lower bridge base, the
 finite lower strip chain, and the terminal right turn into a single certified chain from the lower
-endpoint bridge dart to the first lower frontier dart.
+endpoint bridge dart to the first lower frontier dart.  Consequently
+\(\texttt{RayExitVerticalStrictLtFrontierAnchorTurnChain}\) names only the remaining lower leg from
+the first lower frontier dart to the upper ray-exit anchor, and
+\(\texttt{rayExitVerticalStrictLtBridgeFrontierTurnChain\_of\_frontierAnchorTurnChain}\) recovers
+the full lower turn-chain input from that smaller assumption.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{The ray-exit anchored route
