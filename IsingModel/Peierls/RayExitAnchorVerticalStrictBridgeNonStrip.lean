@@ -244,6 +244,18 @@ noncomputable def ray0ReentryDart (i : Fin 2 → ℤ) (n : ℕ) (hnpos : 0 < n)
     (ray0ReentryDart i n hnpos hmem hprev).dir = 3 :=
   rfl
 
+/-- A re-entry dart ends at the predecessor dual vertex below the ray. -/
+@[simp] theorem ray0ReentryDart_head (i : Fin 2 → ℤ) (n : ℕ) (hnpos : 0 < n)
+    (hmem : ray0 i n ∈ F) (hprev : ray0 i (n - 1) ∉ F) :
+    (ray0ReentryDart i n hnpos hmem hprev).head =
+      ray0 i n - unitVec2 0 - unitVec2 1 := by
+  rw [BoundaryDart.head, ray0ReentryDart_tail, ray0ReentryDart_dir]
+  funext j
+  fin_cases j
+  · simp [Dir2.vec, unitVec2, Pi.add_apply, Pi.sub_apply]
+  · simp [Dir2.vec, unitVec2, Pi.add_apply, Pi.sub_apply]
+    omega
+
 /-- A re-entry dart has the re-entering ray point on its left. -/
 theorem ray0ReentryDart_left
     (i : Fin 2 → ℤ) (n : ℕ) (hnpos : 0 < n)
@@ -289,6 +301,66 @@ noncomputable def rayExitVerticalStrictGtFrontierDart
       omega)
     (rayExitVerticalStrictGtFirstFrontierIndex_mem a b hgap hnon)
     (rayExitVerticalStrictGtFirstFrontierIndex_pred_not_mem a b hgap hnon)
+
+/-- The lower frontier dart starts at the predecessor lower-ray dual vertex. -/
+@[simp] theorem rayExitVerticalStrictLtFrontierDart_tail
+    (a b : {x : Fin 2 → ℤ // x ∈ F})
+    (hgap : rayExitIndex F a.1 a.2 + 1 < rayExitIndex F b.1 b.2)
+    (hnon : ¬ RayExitVerticalStrictLtGapStrip F a b) :
+    (rayExitVerticalStrictLtFrontierDart a b hgap hnon).tail =
+      ray0 a.1 (rayExitVerticalStrictLtFirstFrontierIndex a b hgap hnon) - unitVec2 0 := by
+  unfold rayExitVerticalStrictLtFrontierDart
+  rw [ray0ReentryDart_tail]
+
+/-- The lower frontier dart points in direction `-e₁`. -/
+@[simp] theorem rayExitVerticalStrictLtFrontierDart_dir
+    (a b : {x : Fin 2 → ℤ // x ∈ F})
+    (hgap : rayExitIndex F a.1 a.2 + 1 < rayExitIndex F b.1 b.2)
+    (hnon : ¬ RayExitVerticalStrictLtGapStrip F a b) :
+    (rayExitVerticalStrictLtFrontierDart a b hgap hnon).dir = 3 := by
+  unfold rayExitVerticalStrictLtFrontierDart
+  rw [ray0ReentryDart_dir]
+
+/-- The lower frontier dart ends below the predecessor lower-ray dual vertex. -/
+@[simp] theorem rayExitVerticalStrictLtFrontierDart_head
+    (a b : {x : Fin 2 → ℤ // x ∈ F})
+    (hgap : rayExitIndex F a.1 a.2 + 1 < rayExitIndex F b.1 b.2)
+    (hnon : ¬ RayExitVerticalStrictLtGapStrip F a b) :
+    (rayExitVerticalStrictLtFrontierDart a b hgap hnon).head =
+      ray0 a.1 (rayExitVerticalStrictLtFirstFrontierIndex a b hgap hnon) -
+        unitVec2 0 - unitVec2 1 := by
+  unfold rayExitVerticalStrictLtFrontierDart
+  rw [ray0ReentryDart_head]
+
+/-- The upper frontier dart starts at the predecessor upper-ray dual vertex. -/
+@[simp] theorem rayExitVerticalStrictGtFrontierDart_tail
+    (a b : {x : Fin 2 → ℤ // x ∈ F})
+    (hgap : rayExitIndex F b.1 b.2 + 1 < rayExitIndex F a.1 a.2)
+    (hnon : ¬ RayExitVerticalStrictGtGapStrip F a b) :
+    (rayExitVerticalStrictGtFrontierDart a b hgap hnon).tail =
+      ray0 b.1 (rayExitVerticalStrictGtFirstFrontierIndex a b hgap hnon) - unitVec2 0 := by
+  unfold rayExitVerticalStrictGtFrontierDart
+  rw [ray0ReentryDart_tail]
+
+/-- The upper frontier dart points in direction `-e₁`. -/
+@[simp] theorem rayExitVerticalStrictGtFrontierDart_dir
+    (a b : {x : Fin 2 → ℤ // x ∈ F})
+    (hgap : rayExitIndex F b.1 b.2 + 1 < rayExitIndex F a.1 a.2)
+    (hnon : ¬ RayExitVerticalStrictGtGapStrip F a b) :
+    (rayExitVerticalStrictGtFrontierDart a b hgap hnon).dir = 3 := by
+  unfold rayExitVerticalStrictGtFrontierDart
+  rw [ray0ReentryDart_dir]
+
+/-- The upper frontier dart ends below the predecessor upper-ray dual vertex. -/
+@[simp] theorem rayExitVerticalStrictGtFrontierDart_head
+    (a b : {x : Fin 2 → ℤ // x ∈ F})
+    (hgap : rayExitIndex F b.1 b.2 + 1 < rayExitIndex F a.1 a.2)
+    (hnon : ¬ RayExitVerticalStrictGtGapStrip F a b) :
+    (rayExitVerticalStrictGtFrontierDart a b hgap hnon).head =
+      ray0 b.1 (rayExitVerticalStrictGtFirstFrontierIndex a b hgap hnon) -
+        unitVec2 0 - unitVec2 1 := by
+  unfold rayExitVerticalStrictGtFrontierDart
+  rw [ray0ReentryDart_head]
 
 /-- The lower frontier dart has the first lower-ray re-entry point on its left. -/
 theorem rayExitVerticalStrictLtFrontierDart_left
