@@ -3701,6 +3701,9 @@ post-frontier lower local residual leg and the upper-first residual frontier leg
 The residual-site refinement then uses the existing anchoring input to consume the lower
 local residual frontier-dart-to-frontier-site-anchor leg, so the remaining lower local
 residual input starts at the ray-exit anchor of the local residual frontier site.
+The residual-frontier-upper refinement then introduces the local residual upper-prefix
+site for this remaining local residual pair and uses ray-prefix stability to identify
+its anchor with the original local residual upper anchor.
 It still does not prove the post-frontier local residual geometry, reduce the
 upper-exits-first side, or assume post-exit ray monotonicity.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
