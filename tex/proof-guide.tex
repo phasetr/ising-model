@@ -3666,9 +3666,12 @@ removes the adjacent residual comparisons: in the lower-first residual case it c
 frontier anchor to the lower bridge dart with the adjacent lower-first bridge-to-upper-anchor
 shared-vertex step, and in the upper-first residual case it composes the adjacent lower-anchor to
 upper-first-bridge step with the reverse of the upper anchor to upper-first bridge step.  Thus the
-remaining residual input starts only at genuine residual gaps.  This is still an interface
-reduction: it does not prove the lower frontier-site-to-upper-prefix-anchor geometry in the
-genuine-gap subcases, reduce the upper-exits-first side, or assume post-exit ray monotonicity.
+remaining residual input starts only at genuine residual gaps.  The residual-non-strip refinement
+then removes the straight residual strip cases by reusing the existing finite lower-first and
+upper-first strip-chain lemmas for the local frontier-site/upper-prefix-site pair.  The remaining
+lower input starts only at non-strip residual gaps.  This is still an interface reduction: it does
+not prove the lower frontier-site-to-upper-prefix-anchor geometry in the non-strip residual-gap
+subcases, reduce the upper-exits-first side, or assume post-exit ray monotonicity.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{The ray-exit anchored route
