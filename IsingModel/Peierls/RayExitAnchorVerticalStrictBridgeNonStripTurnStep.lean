@@ -32,6 +32,22 @@ theorem nextDartTurnStep_of_eq {d e f : BoundaryDart F}
   rw [← hef]
   exact hstep
 
+/-- A turn-certificate chain may be transported across equality of its target dart. -/
+theorem nextDartTurnChain_of_eq {d e f : BoundaryDart F}
+    (hchain : NextDartTurnChain d e) (hef : e = f) : NextDartTurnChain d f := by
+  rw [← hef]
+  exact hchain
+
+/-- Turn-certificate chains compose by transitivity. -/
+theorem nextDartTurnChain_trans {d e f : BoundaryDart F}
+    (hde : NextDartTurnChain d e) (hef : NextDartTurnChain e f) :
+    NextDartTurnChain d f := by
+  induction hef with
+  | refl =>
+      exact hde
+  | snoc hchain hstep ih =>
+      exact NextDartTurnChain.snoc ih hstep
+
 /-! ## Lower strip straight steps -/
 
 /-- The lower endpoint bridge dart is the first lower strip dart, as a trivial turn chain. -/
@@ -258,5 +274,59 @@ theorem nextDartTurnStep_ltStripDart_frontier
       unfold rayExitVerticalStrictLtFrontierDart
       rw [ray0ReentryDart_dir]
       rfl)
+
+/-- The lower endpoint bridge dart reaches the first lower frontier dart by combining the
+bridge base link, the finite lower strip chain, and the terminal right turn. -/
+theorem nextDartTurnChain_ltBridgeDart_ltFrontierDart
+    (a b : {x : Fin 2 → ℤ // x ∈ F}) (hup : b.1 = a.1 + unitVec2 1)
+    (hlt : rayExitIndex F a.1 a.2 < rayExitIndex F b.1 b.2)
+    (hgap : rayExitIndex F a.1 a.2 + 1 < rayExitIndex F b.1 b.2)
+    (hnon : ¬ RayExitVerticalStrictLtGapStrip F a b) :
+    NextDartTurnChain
+      (rayExitVerticalStrictLtBridgeDart a b hup hlt)
+      (rayExitVerticalStrictLtFrontierDart a b hgap hnon) := by
+  let k := rayExitIndex F a.1 a.2
+  let j := rayExitVerticalStrictLtFirstFrontierIndex a b hgap hnon
+  let m := j - k - 2
+  have hstrict : k + 1 < j := by
+    dsimp [k, j]
+    exact rayExitVerticalStrictLtFirstFrontierIndex_strict_lower_bound a b hgap hnon
+  have hupperJ : j ≤ rayExitIndex F b.1 b.2 := by
+    dsimp [j]
+    exact rayExitVerticalStrictLtFirstFrontierIndex_upper_bound a b hgap hnon
+  have hm : k + m + 2 = j := by
+    dsimp [m]
+    omega
+  have hstrip : ∀ t, k + 1 ≤ t → t ≤ k + m + 1 → ray0 a.1 t ∉ F := by
+    intro t ht0 ht1
+    have ht0' : rayExitIndex F a.1 a.2 + 1 ≤ t := by
+      simpa [k] using ht0
+    have htlt : t < j := by omega
+    exact rayExitVerticalStrictLtFirstFrontierIndex_min a b hgap hnon ht0' (by
+      simpa [j] using htlt)
+  have hbaseRaw := nextDartTurnChain_ltBridgeDart_ltStripDart_base a b hup hlt
+    (by omega) (rayExitIndex_succ_not_mem a.1 a.2)
+  have hbase :
+      NextDartTurnChain
+        (rayExitVerticalStrictLtBridgeDart a b hup hlt)
+        (rayExitVerticalStrictLtStripDart a b hup k
+          (by omega) (hstrip (k + 1) (by omega) (by omega))) := by
+    refine nextDartTurnChain_of_eq hbaseRaw ?_
+    exact BoundaryDart.ext'
+      (by simp [k])
+      (by simp)
+  have hupperLast : k + m + 1 ≤ rayExitIndex F b.1 b.2 := by omega
+  have hlastNotMem : ray0 a.1 (k + m + 1) ∉ F :=
+    hstrip (k + m + 1) (by omega) (by omega)
+  have hiter :
+      NextDartTurnChain
+        (rayExitVerticalStrictLtStripDart a b hup k
+          (by omega) (hstrip (k + 1) (by omega) (by omega)))
+        (rayExitVerticalStrictLtStripDart a b hup (k + m) hupperLast hlastNotMem) :=
+    nextDartTurnChain_ltStripDart_iterate a b hup k m hupperLast hstrip
+  have hprefix := nextDartTurnChain_trans hbase hiter
+  exact NextDartTurnChain.snoc hprefix
+    (nextDartTurnStep_ltStripDart_frontier a b hup (k + m) hupperLast hlastNotMem
+      hgap hnon (by simpa [j] using hm))
 
 end IsingModel
