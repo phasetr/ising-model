@@ -10,6 +10,7 @@ concrete local geometry for those certificates.
 The first step is the straight continuation along a lower-exits-first horizontal strip: when two
 consecutive lower ray successors are outside `F` while the corresponding upper successor remains
 inside `F`, the left turn is blocked by an `F` site on its right and the straight move is valid.
+The one-step certificate is also lifted to a finite lower strip turn chain.
 
 References: Friedli–Velenik, *Statistical Mechanics of Lattice Systems*
 (Cambridge, 2017), §3.7.2, pp. 109–116.
@@ -99,5 +100,30 @@ theorem nextDartTurnStep_ltStripDart_succ
     (by
       change d.dir = (rayExitVerticalStrictLtStripDart a b hup (n + 1) hupper₂ hlower₂).dir
       dsimp [d])
+
+/-- A finite lower strip of horizontal darts is a certified local turn chain. -/
+theorem nextDartTurnChain_ltStripDart_iterate
+    (a b : {x : Fin 2 → ℤ // x ∈ F}) (hup : b.1 = a.1 + unitVec2 1)
+    (n m : ℕ)
+    (hupper : n + m + 1 ≤ rayExitIndex F b.1 b.2)
+    (hstrip : ∀ t, n + 1 ≤ t → t ≤ n + m + 1 → ray0 a.1 t ∉ F) :
+    NextDartTurnChain
+      (rayExitVerticalStrictLtStripDart a b hup n
+        (by omega) (hstrip (n + 1) (by omega) (by omega)))
+      (rayExitVerticalStrictLtStripDart a b hup (n + m)
+        hupper (hstrip (n + m + 1) (by omega) (by omega))) := by
+  induction m with
+  | zero =>
+      exact NextDartTurnChain.refl _
+  | succ m ih =>
+      have hupperPrev : n + m + 1 ≤ rayExitIndex F b.1 b.2 := by omega
+      have hstripPrev : ∀ t, n + 1 ≤ t → t ≤ n + m + 1 → ray0 a.1 t ∉ F := by
+        intro t ht0 ht1
+        exact hstrip t ht0 (by omega)
+      have hchain := ih hupperPrev hstripPrev
+      exact NextDartTurnChain.snoc hchain
+        (nextDartTurnStep_ltStripDart_succ a b hup (n + m)
+          hupperPrev (hstrip (n + m + 1) (by omega) (by omega))
+          hupper (hstrip (n + (m + 1) + 1) (by omega) (by omega)))
 
 end IsingModel
