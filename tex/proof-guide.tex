@@ -3657,9 +3657,11 @@ this upper-prefix site.  The next reachable split weakens that final lower leg t
 frontier site and upper-prefix site have equal ray-exit indices, the existing equal-index vertical
 straight-step certificate proves the upward anchor pair is a local straight turn, and the
 shared-vertex lemma closes the reachable leg; the strict-reachable input only covers the
-unequal-index subcase for those two intermediate sites.  This is still an interface reduction: it
-does not prove the lower frontier-site-to-upper-prefix-anchor geometry in the unequal-index
-subcase, reduce the upper-exits-first side, or assume post-exit ray monotonicity.
+unequal-index subcase for those two intermediate sites.  The ordered split then separates that
+remaining strict subcase according to which intermediate site's ray-exit index is smaller, exposing
+two local-order obligations for later geometry.  This is still an interface reduction: it does not
+prove the lower frontier-site-to-upper-prefix-anchor geometry in either unequal-index order,
+reduce the upper-exits-first side, or assume post-exit ray monotonicity.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{The ray-exit anchored route
