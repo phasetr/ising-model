@@ -3628,7 +3628,12 @@ endpoint bridge dart to the first lower frontier dart.  Consequently
 \(\texttt{RayExitVerticalStrictLtFrontierAnchorTurnChain}\) names only the remaining lower leg from
 the first lower frontier dart to the upper ray-exit anchor, and
 \(\texttt{rayExitVerticalStrictLtBridgeFrontierTurnChain\_of\_frontierAnchorTurnChain}\) recovers
-the full lower turn-chain input from that smaller assumption.
+the full lower turn-chain input from that smaller assumption.  The wrapper
+\(\texttt{RayExitVerticalStrictBridgeFrontierLtReducedTurnChainStep}\) packages the resulting
+full non-strip input with only the lower side reduced: the lower component is the smaller
+frontier-anchor assumption, while the upper-exits-first component remains the existing
+turn-chain input.  The corresponding route and contour-count wrappers simply recover the old
+turn-chain input before reusing the previous Peierls count route.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{The ray-exit anchored route
