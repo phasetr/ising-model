@@ -3514,8 +3514,10 @@ outside \(F\).  Thus the horizontal primal edge between
 dart \(\texttt{ray0ReentryDart}\) crosses this edge with direction \(-e_1\), and the specialized
 darts \(\texttt{rayExitVerticalStrictLtFrontierDart}\) and
 \(\texttt{rayExitVerticalStrictGtFrontierDart}\) provide the canonical entry darts for the next
-\(\texttt{nextDart}\) frontier-chain step.  This remains a finite-interval statement and does not
-assume ray monotonicity after first exit.
+\(\texttt{nextDart}\) frontier-chain step.  The file also exposes tail, direction, and head
+shape lemmas for \(\texttt{ray0ReentryDart}\) and for the lower and upper specialized frontier
+darts, complementing the existing left-site and right-site descriptions.  This remains a
+finite-interval statement and does not assume ray monotonicity after first exit.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{Frontier-split inputs for non-strip strict ray-exit gaps
