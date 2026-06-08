@@ -3619,7 +3619,12 @@ above.  The terminal step before the first lower re-entry is a right turn:
 candidates are blocked by \(F\)-sites, while
 \(\texttt{validAt\_ltStripDart\_turnRight\_frontier}\) supplies the valid right-turn candidate.
 Thus \(\texttt{nextDartTurnStep\_ltStripDart\_frontier}\) connects the last lower strip dart to
-the first lower re-entry frontier dart.
+the first lower re-entry frontier dart.  The generic chain helpers
+\(\texttt{nextDartTurnChain\_of\_eq}\) and
+\(\texttt{nextDartTurnChain\_trans}\) transport and compose turn chains, and
+\(\texttt{nextDartTurnChain\_ltBridgeDart\_ltFrontierDart}\) combines the lower bridge base, the
+finite lower strip chain, and the terminal right turn into a single certified chain from the lower
+endpoint bridge dart to the first lower frontier dart.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{The ray-exit anchored route
