@@ -10004,6 +10004,222 @@ RayExitVerticalStrictLtFUSARUSResUpperResidualNSFrUpperResidualNSFrUpperResNSFrS
       F ∧
     RayExitVerticalStrictLtFrontierUpperSiteAnchorResidualGtNonStripFrontierReachable F
 
+/-- Bridge form of the non-strip genuine-gap residual-index ordered strict frontier-upper-site
+endpoint upper-prefix-site form, parameterized by the endpoint residual frontier-site comparison,
+straight-strip predicate, and remaining bridge leg. -/
+def
+RayExitVerticalStrictLtFUSARLtUSResUpperResidualLtNSFrUpperResidualLtNSFrUpperResLtNSFrSRLNSUpQJC
+    (F : Finset (Fin 2 → ℤ)) (cmp : ℕ → ℕ → Prop)
+    (strip : {x : Fin 2 → ℤ // x ∈ F} → {x : Fin 2 → ℤ // x ∈ F} → Prop)
+    (bridge : {x : Fin 2 → ℤ // x ∈ F} → {x : Fin 2 → ℤ // x ∈ F} → Prop) :
+    Prop :=
+  ∀ a b : {x : Fin 2 → ℤ // x ∈ F},
+    (hup : b.1 = a.1 + unitVec2 1) →
+      (hlt : rayExitIndex F a.1 a.2 < rayExitIndex F b.1 b.2) →
+        (hgap : rayExitIndex F a.1 a.2 + 1 < rayExitIndex F b.1 b.2) →
+          (hnon : ¬ RayExitVerticalStrictLtGapStrip F a b) →
+            (hresGap :
+              rayExitIndex F
+                    (rayExitVerticalStrictLtFrontierSite a b hgap hnon).1
+                    (rayExitVerticalStrictLtFrontierSite a b hgap hnon).2 + 1 <
+                rayExitIndex F b.1 b.2 -
+                  rayExitVerticalStrictLtFirstFrontierIndex a b hgap hnon) →
+              (hnonRes : ¬ RayExitVerticalStrictLtGapStrip F
+                (rayExitVerticalStrictLtFrontierSite a b hgap hnon)
+                (rayExitVerticalStrictLtFrontierUpperSite a b hgap hnon)) →
+                let c := rayExitVerticalStrictLtFrontierSite a b hgap hnon
+                let u := rayExitVerticalStrictLtFrontierUpperSite a b hgap hnon
+                (hgapCU : rayExitIndex F c.1 c.2 + 1 < rayExitIndex F u.1 u.2) →
+                  let p := rayExitVerticalStrictLtFrontierSite c u hgapCU hnonRes
+                  let q :=
+                    rayExitVerticalStrictLtFrontierUpperSite c u hgapCU hnonRes
+                  (hgapPQ : rayExitIndex F p.1 p.2 + 1 < rayExitIndex F q.1 q.2) →
+                    (hnonPQ : ¬ RayExitVerticalStrictLtGapStrip F p q) →
+                      (hresGapPQ :
+                        rayExitIndex F
+                              (rayExitVerticalStrictLtFrontierSite p q hgapPQ hnonPQ).1
+                              (rayExitVerticalStrictLtFrontierSite p q hgapPQ hnonPQ).2 + 1 <
+                          rayExitIndex F q.1 q.2 -
+                            rayExitVerticalStrictLtFirstFrontierIndex p q hgapPQ hnonPQ) →
+                        (hnonRS : ¬ RayExitVerticalStrictLtGapStrip F
+                          (rayExitVerticalStrictLtFrontierSite p q hgapPQ hnonPQ)
+                          (rayExitVerticalStrictLtFrontierUpperSite p q hgapPQ hnonPQ)) →
+                          let r := rayExitVerticalStrictLtFrontierSite p q hgapPQ hnonPQ
+                          let s := rayExitVerticalStrictLtFrontierUpperSite p q hgapPQ hnonPQ
+                          (hgapRS : rayExitIndex F r.1 r.2 + 1 < rayExitIndex F s.1 s.2) →
+                            (hresGapRS :
+                              rayExitIndex F
+                                    (rayExitVerticalStrictLtFrontierSite r s hgapRS hnonRS).1
+                                    (rayExitVerticalStrictLtFrontierSite r s hgapRS hnonRS).2
+                                  + 1 <
+                                rayExitIndex F s.1 s.2 -
+                                  rayExitVerticalStrictLtFirstFrontierIndex r s hgapRS
+                                    hnonRS) →
+                              (hnonTV : ¬ RayExitVerticalStrictLtGapStrip F
+                                (rayExitVerticalStrictLtFrontierSite r s hgapRS hnonRS)
+                                (rayExitVerticalStrictLtFrontierUpperSite r s hgapRS hnonRS)) →
+                                let t := rayExitVerticalStrictLtFrontierSite r s hgapRS hnonRS
+                                let v :=
+                                  rayExitVerticalStrictLtFrontierUpperSite r s hgapRS hnonRS
+                                (hgapTV : rayExitIndex F t.1 t.2 + 1 <
+                                  rayExitIndex F v.1 v.2) →
+                                  (hresGapTV :
+                                    rayExitIndex F
+                                          (rayExitVerticalStrictLtFrontierSite t v hgapTV
+                                            hnonTV).1
+                                          (rayExitVerticalStrictLtFrontierSite t v hgapTV
+                                            hnonTV).2 + 1 <
+                                      rayExitIndex F v.1 v.2 -
+                                        rayExitVerticalStrictLtFirstFrontierIndex t v hgapTV
+                                          hnonTV) →
+                                    (hnonXY : ¬ RayExitVerticalStrictLtGapStrip F
+                                      (rayExitVerticalStrictLtFrontierSite t v hgapTV hnonTV)
+                                      (rayExitVerticalStrictLtFrontierUpperSite t v hgapTV
+                                        hnonTV)) →
+                                      let x :=
+                                        rayExitVerticalStrictLtFrontierSite t v hgapTV hnonTV
+                                      let y :=
+                                        rayExitVerticalStrictLtFrontierUpperSite t v hgapTV
+                                          hnonTV
+                                      (hgapXY : rayExitIndex F x.1 x.2 + 1 <
+                                        rayExitIndex F y.1 y.2) →
+                                        let z :=
+                                          rayExitVerticalStrictLtFrontierSite x y hgapXY hnonXY
+                                        let w :=
+                                          rayExitVerticalStrictLtFrontierUpperSite x y hgapXY
+                                            hnonXY
+                                        (hgapZW : rayExitIndex F z.1 z.2 + 1 <
+                                          rayExitIndex F w.1 w.2) →
+                                          (hnonZW : ¬ RayExitVerticalStrictLtGapStrip F z w) →
+                                            let m :=
+                                              rayExitVerticalStrictLtFrontierSite z w hgapZW
+                                                hnonZW
+                                            let n :=
+                                              rayExitVerticalStrictLtFrontierUpperSite z w
+                                                hgapZW hnonZW
+                                            (hresGapMN : rayExitIndex F m.1 m.2 + 1 <
+                                              rayExitIndex F w.1 w.2 -
+                                                rayExitVerticalStrictLtFirstFrontierIndex z w
+                                                  hgapZW hnonZW) →
+                                              (hnonMN :
+                                                ¬ RayExitVerticalStrictLtGapStrip F m n) →
+                                                (hgapMN :
+                                                  rayExitIndex F m.1 m.2 + 1 <
+                                                    rayExitIndex F n.1 n.2) →
+                                                  let o :=
+                                                    rayExitVerticalStrictLtFrontierSite m n
+                                                      hgapMN hnonMN
+                                                  let rr :=
+                                                    rayExitVerticalStrictLtFrontierUpperSite m n
+                                                      hgapMN hnonMN
+                                                  (hidx :
+                                                    cmp (rayExitIndex F o.1 o.2)
+                                                      (rayExitIndex F n.1 n.2 -
+                                                        rayExitVerticalStrictLtFirstFrontierIndex
+                                                          m n hgapMN hnonMN)) →
+                                                    (hnonOR : ¬ strip o rr) →
+                                                      bridge o rr
+
+/-- Bridge form of the non-strip genuine-gap residual-index ordered strict frontier-upper-site
+endpoint upper-prefix-site form where the endpoint residual frontier site is below the residual
+upper ray length. -/
+def
+RayExitVerticalStrictLtFUSARLtUSResUpperResidualLtNSFrUpperResidualLtNSFrUpperResLtNSFrSRLNSUpQJL
+    (F : Finset (Fin 2 → ℤ)) : Prop :=
+  RayExitVerticalStrictLtFUSARLtUSResUpperResidualLtNSFrUpperResidualLtNSFrUpperResLtNSFrSRLNSUpQJC
+    F (fun i j => i + 1 < j) (RayExitVerticalStrictLtGapStrip F)
+    (fun o r =>
+      ∀ (hupOR : r.1 = o.1 + unitVec2 1),
+        (hltOR : rayExitIndex F o.1 o.2 < rayExitIndex F r.1 r.2) →
+          DartReachable F (rayExitVerticalStrictLtBridgeDart o r hupOR hltOR)
+            (rayExitAnchorDartMap F r))
+
+/-- Bridge form of the non-strip genuine-gap residual-index ordered strict frontier-upper-site
+endpoint upper-prefix-site form where the residual upper ray length is below the endpoint
+residual frontier site. -/
+def
+RayExitVerticalStrictLtFUSARLtUSResUpperResidualLtNSFrUpperResidualLtNSFrUpperResLtNSFrSRLNSUpQJG
+    (F : Finset (Fin 2 → ℤ)) : Prop :=
+  RayExitVerticalStrictLtFUSARLtUSResUpperResidualLtNSFrUpperResidualLtNSFrUpperResLtNSFrSRLNSUpQJC
+    F (fun i j => j + 1 < i) (RayExitVerticalStrictGtGapStrip F)
+    (fun o r =>
+      ∀ (hupOR : r.1 = o.1 + unitVec2 1),
+        (hgtOR : rayExitIndex F r.1 r.2 < rayExitIndex F o.1 o.2) →
+          DartReachable F (rayExitAnchorDartMap F o)
+            (rayExitVerticalStrictGtBridgeDart o r hupOR hgtOR))
+
+/-- Bridge non-strip genuine-gap residual-index ordered strict frontier-upper-site endpoint
+upper-prefix-site data for the local residual frontier-upper upper-prefix-site lower data. -/
+def
+RayExitVerticalStrictLtFUSARLtUSResUpperResidualLtNSFrUpperResidualLtNSFrUpperResLtNSFrSRLNSUpQJ
+    (F : Finset (Fin 2 → ℤ)) : Prop :=
+  (RayExitVerticalStrictLtFUSARLtUSResUpperResidualLtNSFrUpperResidualLtNSFrUpperResLtNSFrSRLNSUpQJL
+      F ∧
+  RayExitVerticalStrictLtFUSARLtUSResUpperResidualLtNSFrUpperResidualLtNSFrUpperResLtNSFrSRLNSUpQJG
+      F) ∧
+  RayExitVerticalStrictLtFUSARLtUSResUpperResidualLtNSFrUpperResidualLtNSFrUpperResLtNSFrSRLNSUpQFrG
+    F
+
+/-- Bridge non-strip genuine-gap residual-index ordered strict frontier-upper-site endpoint
+upper-prefix-site data for the local residual frontier-upper upper-prefix-site lower data. -/
+def
+RayExitVerticalStrictLtFUSARLtUSResUpperResidualLtNSFrUpperResidualLtNSFrUpperResLtNSFrSRNSUpQJ
+    (F : Finset (Fin 2 → ℤ)) : Prop :=
+  RayExitVerticalStrictLtFUSARLtUSResUpperResidualLtNSFrUpperResidualLtNSFrUpperResLtNSFrSRLNSUpQJ
+      F ∧
+    RayExitVerticalStrictLtFUSARLtUSResUpperResidualLtNSFrUpperResidualLtNSFrUpperResLtNSFrSRGNSFr
+      F
+
+/-- Bridge non-strip genuine-gap residual-index ordered strict frontier-upper-site endpoint
+upper-prefix-site data for the local residual frontier-upper upper-prefix-site lower data. -/
+def
+RayExitVerticalStrictLtFUSARLtUSResUpperResidualLtNSFrUpperResidualLtNSFrUpperResNSFrSRNSUpQJ
+    (F : Finset (Fin 2 → ℤ)) : Prop :=
+  RayExitVerticalStrictLtFUSARLtUSResUpperResidualLtNSFrUpperResidualLtNSFrUpperResLtNSFrSRNSUpQJ
+      F ∧
+    RayExitVerticalStrictLtFUSARLtUSResUpperResidualLtNSFrUpperResidualLtNSFrUpperResGtNSFrReachable
+      F
+
+/-- Bridge non-strip genuine-gap residual-index ordered strict frontier-upper-site endpoint
+upper-prefix-site data for the local residual frontier-upper upper-prefix-site lower data. -/
+def
+RayExitVerticalStrictLtFUSARLtUSResUpperResidualLtNSFrUpperResidualNSFrUpperResNSFrSRNSUpQJ
+    (F : Finset (Fin 2 → ℤ)) : Prop :=
+  RayExitVerticalStrictLtFUSARLtUSResUpperResidualLtNSFrUpperResidualLtNSFrUpperResNSFrSRNSUpQJ
+      F ∧
+    RayExitVerticalStrictLtFUSARLtUSResUpperResidualLtNSFrUpperResidualGtNSFrReachable
+      F
+
+/-- Bridge non-strip genuine-gap residual-index ordered strict frontier-upper-site endpoint
+upper-prefix-site data for the local residual frontier-upper upper-prefix-site data. -/
+def
+RayExitVerticalStrictLtFUSARLtUSResUpperResidualNSFrUpperResidualNSFrUpperResNSFrSRNSUpQJ
+    (F : Finset (Fin 2 → ℤ)) : Prop :=
+  RayExitVerticalStrictLtFUSARLtUSResUpperResidualLtNSFrUpperResidualNSFrUpperResNSFrSRNSUpQJ
+      F ∧
+    RayExitVerticalStrictLtFrontierUpperSiteAnchorResidualLtUpperSiteResUpperResidualGtNSFrReachable
+      F
+
+/-- Bridge non-strip genuine-gap residual-index ordered strict frontier-upper-site endpoint
+upper-prefix-site data for the local residual frontier-upper upper-prefix-site data for the
+residual upper-prefix-site residual leg. -/
+def
+RayExitVerticalStrictLtFUSARLtUSResUpperResidualNSFrUpperResidualNSFrUpperResNSFrFullSRNSUpQJ
+    (F : Finset (Fin 2 → ℤ)) : Prop :=
+  RayExitVerticalStrictLtFUSARLtUSResUpperResidualNSFrUpperResidualNSFrUpperResNSFrSRNSUpQJ
+      F ∧
+    RayExitVerticalStrictLtFrontierUpperSiteAnchorResidualLtUpperSiteResidualGtFrontierReachable
+      F
+
+/-- Bridge non-strip genuine-gap residual-index ordered strict frontier-upper-site endpoint
+upper-prefix-site data together with the explicit upper-first residual frontier legs. -/
+def
+RayExitVerticalStrictLtFUSARUSResUpperResidualNSFrUpperResidualNSFrUpperResNSFrSRNSUpQJ
+    (F : Finset (Fin 2 → ℤ)) : Prop :=
+  RayExitVerticalStrictLtFUSARLtUSResUpperResidualNSFrUpperResidualNSFrUpperResNSFrFullSRNSUpQJ
+      F ∧
+    RayExitVerticalStrictLtFrontierUpperSiteAnchorResidualGtNonStripFrontierReachable F
+
 
 /-- Gap-reduced residual-index data recover the increasing upper-prefix-site residual-index
 input because the adjacent local residual-index case is automatic. -/
@@ -15944,6 +16160,236 @@ RayExitVerticalStrictLtFUSARUSResUpperResidualNSFrUpperResidualNSFrUpperResNSFrS
       hnonStrip.1,
     hnonStrip.2⟩
 
+/-- Bridge non-strip genuine-gap residual-index ordered strict frontier-upper-site endpoint
+upper-prefix-site data recover the non-strip endpoint residual frontier-upper-site lower data
+because endpoint residual anchor-to/from-bridge steps are automatic. -/
+theorem
+    rayExitVerticalStrictLtFUSARLtUSResUpperLtNSFrUpperResidualLtNSFrUpperResLtNSFrSRLNSUpQI_of_qj
+    (hbridge :
+RayExitVerticalStrictLtFUSARLtUSResUpperResidualLtNSFrUpperResidualLtNSFrUpperResLtNSFrSRLNSUpQJ
+        F) :
+RayExitVerticalStrictLtFUSARLtUSResUpperResidualLtNSFrUpperResidualLtNSFrUpperResLtNSFrSRLNSUpQI
+      F := by
+  constructor
+  · constructor
+    · intro a b hup hlt hgap hnon hresGap hnonRes
+      let c := rayExitVerticalStrictLtFrontierSite a b hgap hnon
+      let u := rayExitVerticalStrictLtFrontierUpperSite a b hgap hnon
+      dsimp
+      intro hgapCU hgapPQ hnonPQ hresGapPQ hnonRS hgapRS hresGapRS hnonTV hgapTV
+        hresGapTV hnonXY hgapXY hgapZW hnonZW hresGapMN hnonMN hgapMN hidx hnonOR
+      let p := rayExitVerticalStrictLtFrontierSite c u hgapCU hnonRes
+      let q := rayExitVerticalStrictLtFrontierUpperSite c u hgapCU hnonRes
+      let r := rayExitVerticalStrictLtFrontierSite p q hgapPQ hnonPQ
+      let s := rayExitVerticalStrictLtFrontierUpperSite p q hgapPQ hnonPQ
+      let t := rayExitVerticalStrictLtFrontierSite r s hgapRS hnonRS
+      let v := rayExitVerticalStrictLtFrontierUpperSite r s hgapRS hnonRS
+      let x := rayExitVerticalStrictLtFrontierSite t v hgapTV hnonTV
+      let y := rayExitVerticalStrictLtFrontierUpperSite t v hgapTV hnonTV
+      let z := rayExitVerticalStrictLtFrontierSite x y hgapXY hnonXY
+      let w := rayExitVerticalStrictLtFrontierUpperSite x y hgapXY hnonXY
+      let m := rayExitVerticalStrictLtFrontierSite z w hgapZW hnonZW
+      let n := rayExitVerticalStrictLtFrontierUpperSite z w hgapZW hnonZW
+      let o := rayExitVerticalStrictLtFrontierSite m n hgapMN hnonMN
+      let rr := rayExitVerticalStrictLtFrontierUpperSite m n hgapMN hnonMN
+      have hupCU : u.1 = c.1 + unitVec2 1 := by
+        dsimp [c, u]
+        exact rayExitVerticalStrictLtFrontierUpperSite_eq_frontierSite_add_e1
+          a b hup hgap hnon
+      have hupPQ : q.1 = p.1 + unitVec2 1 := by
+        dsimp [p, q]
+        exact rayExitVerticalStrictLtFrontierUpperSite_eq_frontierSite_add_e1
+          c u hupCU hgapCU hnonRes
+      have hupRS : s.1 = r.1 + unitVec2 1 := by
+        dsimp [r, s]
+        exact rayExitVerticalStrictLtFrontierUpperSite_eq_frontierSite_add_e1
+          p q hupPQ hgapPQ hnonPQ
+      have hupTV : v.1 = t.1 + unitVec2 1 := by
+        dsimp [t, v]
+        exact rayExitVerticalStrictLtFrontierUpperSite_eq_frontierSite_add_e1
+          r s hupRS hgapRS hnonRS
+      have hupXY : y.1 = x.1 + unitVec2 1 := by
+        dsimp [x, y]
+        exact rayExitVerticalStrictLtFrontierUpperSite_eq_frontierSite_add_e1
+          t v hupTV hgapTV hnonTV
+      have hupZW : w.1 = z.1 + unitVec2 1 := by
+        dsimp [z, w]
+        exact rayExitVerticalStrictLtFrontierUpperSite_eq_frontierSite_add_e1
+          x y hupXY hgapXY hnonXY
+      have hupMN : n.1 = m.1 + unitVec2 1 := by
+        dsimp [m, n]
+        exact rayExitVerticalStrictLtFrontierUpperSite_eq_frontierSite_add_e1
+          z w hupZW hgapZW hnonZW
+      have hupOR : rr.1 = o.1 + unitVec2 1 := by
+        dsimp [o, rr]
+        exact rayExitVerticalStrictLtFrontierUpperSite_eq_frontierSite_add_e1
+          m n hupMN hgapMN hnonMN
+      have hidxRR :
+          rayExitIndex F rr.1 rr.2 =
+            rayExitIndex F n.1 n.2 -
+              rayExitVerticalStrictLtFirstFrontierIndex m n hgapMN hnonMN := by
+        simpa [rr] using rayExitIndex_ltFrontierUpperSite_eq m n hgapMN hnonMN
+      have hltOR : rayExitIndex F o.1 o.2 < rayExitIndex F rr.1 rr.2 := by
+        rw [hidxRR]
+        exact Nat.lt_of_succ_lt (by simpa [o] using hidx)
+      exact (dartReachable_rayExitAnchorDartMap_ltBridgeDart o rr hupOR hltOR).trans
+        (hbridge.1.1 a b hup hlt hgap hnon hresGap hnonRes hgapCU hgapPQ hnonPQ
+          hresGapPQ hnonRS hgapRS hresGapRS hnonTV hgapTV hresGapTV hnonXY hgapXY
+          hgapZW hnonZW hresGapMN hnonMN hgapMN hidx hnonOR hupOR hltOR)
+    · intro a b hup hlt hgap hnon hresGap hnonRes
+      let c := rayExitVerticalStrictLtFrontierSite a b hgap hnon
+      let u := rayExitVerticalStrictLtFrontierUpperSite a b hgap hnon
+      dsimp
+      intro hgapCU hgapPQ hnonPQ hresGapPQ hnonRS hgapRS hresGapRS hnonTV hgapTV
+        hresGapTV hnonXY hgapXY hgapZW hnonZW hresGapMN hnonMN hgapMN hidx hnonOR
+      let p := rayExitVerticalStrictLtFrontierSite c u hgapCU hnonRes
+      let q := rayExitVerticalStrictLtFrontierUpperSite c u hgapCU hnonRes
+      let r := rayExitVerticalStrictLtFrontierSite p q hgapPQ hnonPQ
+      let s := rayExitVerticalStrictLtFrontierUpperSite p q hgapPQ hnonPQ
+      let t := rayExitVerticalStrictLtFrontierSite r s hgapRS hnonRS
+      let v := rayExitVerticalStrictLtFrontierUpperSite r s hgapRS hnonRS
+      let x := rayExitVerticalStrictLtFrontierSite t v hgapTV hnonTV
+      let y := rayExitVerticalStrictLtFrontierUpperSite t v hgapTV hnonTV
+      let z := rayExitVerticalStrictLtFrontierSite x y hgapXY hnonXY
+      let w := rayExitVerticalStrictLtFrontierUpperSite x y hgapXY hnonXY
+      let m := rayExitVerticalStrictLtFrontierSite z w hgapZW hnonZW
+      let n := rayExitVerticalStrictLtFrontierUpperSite z w hgapZW hnonZW
+      let o := rayExitVerticalStrictLtFrontierSite m n hgapMN hnonMN
+      let rr := rayExitVerticalStrictLtFrontierUpperSite m n hgapMN hnonMN
+      have hupCU : u.1 = c.1 + unitVec2 1 := by
+        dsimp [c, u]
+        exact rayExitVerticalStrictLtFrontierUpperSite_eq_frontierSite_add_e1
+          a b hup hgap hnon
+      have hupPQ : q.1 = p.1 + unitVec2 1 := by
+        dsimp [p, q]
+        exact rayExitVerticalStrictLtFrontierUpperSite_eq_frontierSite_add_e1
+          c u hupCU hgapCU hnonRes
+      have hupRS : s.1 = r.1 + unitVec2 1 := by
+        dsimp [r, s]
+        exact rayExitVerticalStrictLtFrontierUpperSite_eq_frontierSite_add_e1
+          p q hupPQ hgapPQ hnonPQ
+      have hupTV : v.1 = t.1 + unitVec2 1 := by
+        dsimp [t, v]
+        exact rayExitVerticalStrictLtFrontierUpperSite_eq_frontierSite_add_e1
+          r s hupRS hgapRS hnonRS
+      have hupXY : y.1 = x.1 + unitVec2 1 := by
+        dsimp [x, y]
+        exact rayExitVerticalStrictLtFrontierUpperSite_eq_frontierSite_add_e1
+          t v hupTV hgapTV hnonTV
+      have hupZW : w.1 = z.1 + unitVec2 1 := by
+        dsimp [z, w]
+        exact rayExitVerticalStrictLtFrontierUpperSite_eq_frontierSite_add_e1
+          x y hupXY hgapXY hnonXY
+      have hupMN : n.1 = m.1 + unitVec2 1 := by
+        dsimp [m, n]
+        exact rayExitVerticalStrictLtFrontierUpperSite_eq_frontierSite_add_e1
+          z w hupZW hgapZW hnonZW
+      have hupOR : rr.1 = o.1 + unitVec2 1 := by
+        dsimp [o, rr]
+        exact rayExitVerticalStrictLtFrontierUpperSite_eq_frontierSite_add_e1
+          m n hupMN hgapMN hnonMN
+      have hidxRR :
+          rayExitIndex F rr.1 rr.2 =
+            rayExitIndex F n.1 n.2 -
+              rayExitVerticalStrictLtFirstFrontierIndex m n hgapMN hnonMN := by
+        simpa [rr] using rayExitIndex_ltFrontierUpperSite_eq m n hgapMN hnonMN
+      have hgtOR : rayExitIndex F rr.1 rr.2 < rayExitIndex F o.1 o.2 := by
+        rw [hidxRR]
+        exact Nat.lt_of_succ_lt (by simpa [o] using hidx)
+      exact
+        (hbridge.1.2 a b hup hlt hgap hnon hresGap hnonRes hgapCU hgapPQ hnonPQ
+          hresGapPQ hnonRS hgapRS hresGapRS hnonTV hgapTV hresGapTV hnonXY hgapXY
+          hgapZW hnonZW hresGapMN hnonMN hgapMN hidx hnonOR hupOR hgtOR).trans
+          (dartReachable_rayExitAnchorDartMap_gtBridgeDart o rr hupOR hgtOR).symm
+  · exact hbridge.2
+
+/-- Bridge non-strip genuine-gap residual-index ordered strict frontier-upper-site endpoint
+upper-prefix-site data recover the non-strip endpoint residual frontier-upper-site lower data. -/
+theorem
+    rayExitVerticalStrictLtFUSARLtUSResUpperLtNSFrUpperResidualLtNSFrUpperResLtNSFrSRNSUpQI_of_qj
+    (hbridge :
+RayExitVerticalStrictLtFUSARLtUSResUpperResidualLtNSFrUpperResidualLtNSFrUpperResLtNSFrSRNSUpQJ
+        F) :
+RayExitVerticalStrictLtFUSARLtUSResUpperResidualLtNSFrUpperResidualLtNSFrUpperResLtNSFrSRNSUpQI
+      F :=
+  ⟨
+    rayExitVerticalStrictLtFUSARLtUSResUpperLtNSFrUpperResidualLtNSFrUpperResLtNSFrSRLNSUpQI_of_qj
+      hbridge.1,
+    hbridge.2⟩
+
+/-- Bridge non-strip genuine-gap residual-index ordered strict frontier-upper-site endpoint
+upper-prefix-site data recover the non-strip endpoint residual frontier-upper-site lower data. -/
+theorem
+    rayExitVerticalStrictLtFUSARLtUSResUpperLtNSFrUpperResidualLtNSFrUpperResNSFrSRNSUpQI_of_qj
+    (hbridge :
+RayExitVerticalStrictLtFUSARLtUSResUpperResidualLtNSFrUpperResidualLtNSFrUpperResNSFrSRNSUpQJ
+        F) :
+RayExitVerticalStrictLtFUSARLtUSResUpperResidualLtNSFrUpperResidualLtNSFrUpperResNSFrSRNSUpQI
+      F :=
+  ⟨
+    rayExitVerticalStrictLtFUSARLtUSResUpperLtNSFrUpperResidualLtNSFrUpperResLtNSFrSRNSUpQI_of_qj
+      hbridge.1,
+    hbridge.2⟩
+
+/-- Bridge non-strip genuine-gap residual-index ordered strict frontier-upper-site endpoint
+upper-prefix-site data recover the combined non-strip endpoint residual frontier-upper-site
+lower data. -/
+theorem
+    rayExitVerticalStrictLtFUSARLtUSResUpperLtNSFrUpperResidualNSFrUpperResNSFrSRNSUpQI_of_qj
+    (hbridge :
+RayExitVerticalStrictLtFUSARLtUSResUpperResidualLtNSFrUpperResidualNSFrUpperResNSFrSRNSUpQJ
+        F) :
+RayExitVerticalStrictLtFUSARLtUSResUpperResidualLtNSFrUpperResidualNSFrUpperResNSFrSRNSUpQI
+      F :=
+  ⟨
+    rayExitVerticalStrictLtFUSARLtUSResUpperLtNSFrUpperResidualLtNSFrUpperResNSFrSRNSUpQI_of_qj
+      hbridge.1,
+    hbridge.2⟩
+
+/-- Bridge non-strip genuine-gap residual-index ordered strict frontier-upper-site endpoint
+upper-prefix-site data recover the combined non-strip endpoint residual frontier-upper-site
+data. -/
+theorem
+    rayExitVerticalStrictLtFUSARLtUSResUpperNSFrUpperResidualNSFrUpperResNSFrSRNSUpQI_of_qj
+    (hbridge :
+RayExitVerticalStrictLtFUSARLtUSResUpperResidualNSFrUpperResidualNSFrUpperResNSFrSRNSUpQJ
+        F) :
+RayExitVerticalStrictLtFUSARLtUSResUpperResidualNSFrUpperResidualNSFrUpperResNSFrSRNSUpQI
+      F :=
+  ⟨
+    rayExitVerticalStrictLtFUSARLtUSResUpperLtNSFrUpperResidualNSFrUpperResNSFrSRNSUpQI_of_qj
+      hbridge.1,
+    hbridge.2⟩
+
+/-- Bridge non-strip genuine-gap residual-index ordered strict frontier-upper-site endpoint
+upper-prefix-site data recover the full non-strip endpoint residual frontier-upper-site data. -/
+theorem
+    rayExitVerticalStrictLtFUSARLtUSResUpperNSFrUpperResidualNSFrUpperResNSFrFullSRNSUpQI_of_qj
+    (hbridge :
+RayExitVerticalStrictLtFUSARLtUSResUpperResidualNSFrUpperResidualNSFrUpperResNSFrFullSRNSUpQJ
+        F) :
+RayExitVerticalStrictLtFUSARLtUSResUpperResidualNSFrUpperResidualNSFrUpperResNSFrFullSRNSUpQI
+      F :=
+  ⟨
+    rayExitVerticalStrictLtFUSARLtUSResUpperNSFrUpperResidualNSFrUpperResNSFrSRNSUpQI_of_qj
+      hbridge.1,
+    hbridge.2⟩
+
+/-- Bridge non-strip genuine-gap residual-index ordered strict frontier-upper-site endpoint
+upper-prefix-site data recover the non-strip endpoint residual frontier-upper-site data, leaving
+the upper-first residual frontier legs unchanged. -/
+theorem
+    rayExitVerticalStrictLtFUSARUSResUpperNSFrUpperResidualNSFrUpperResNSFrSRNSUpQI_of_qj
+    (hbridge :
+RayExitVerticalStrictLtFUSARUSResUpperResidualNSFrUpperResidualNSFrUpperResNSFrSRNSUpQJ
+        F) :
+RayExitVerticalStrictLtFUSARUSResUpperResidualNSFrUpperResidualNSFrUpperResNSFrSRNSUpQI
+      F :=
+  ⟨
+    rayExitVerticalStrictLtFUSARLtUSResUpperNSFrUpperResidualNSFrUpperResNSFrFullSRNSUpQI_of_qj
+      hbridge.1,
+    hbridge.2⟩
+
 /-- Frontier data recover the increasing residual bridge input because the lower local residual
 bridge-to-frontier step is automatic. -/
 theorem
@@ -19039,6 +19485,15 @@ RayExitVerticalStrictBridgeFrontierLtUpperSiteAnchorResidualUpperSiteResUpperUpp
       F ∧
     RayExitVerticalStrictGtBridgeFrontierTurnChain F
 
+/-- Full non-strip data with the endpoint residual frontier-upper-site input moved to bridge data.
+The upper-exits-first input is unchanged. -/
+def
+RayExitVerticalStrictBridgeFrontierLtUpperSiteAnchorResidualUpperSiteResUpperUpperFUpperSiteUpQJStep
+    (F : Finset (Fin 2 → ℤ)) : Prop :=
+  RayExitVerticalStrictLtFUSARUSResUpperResidualNSFrUpperResidualNSFrUpperResNSFrSRNSUpQJ
+      F ∧
+    RayExitVerticalStrictGtBridgeFrontierTurnChain F
+
 /-- Lower-reduced data recover the existing full turn-chain input. -/
 theorem rayExitVerticalStrictBridgeFrontierTurnChainStep_of_ltReducedTurnChainStep
     (hreduced : RayExitVerticalStrictBridgeFrontierLtReducedTurnChainStep F) :
@@ -20435,6 +20890,71 @@ RayExitVerticalStrictBridgeFrontierLtUpperSiteAnchorResidualUpperSiteResUpperUpp
     hanchor
     (rayExitVerticalStrictBridgeFrontierLtUpperResUpperUpperFUpperSiteUpQHStep_of_qi
       hnonStrip)
+
+/-- Bridge non-strip genuine-gap residual-index ordered strict frontier-upper-site endpoint
+upper-prefix-site data recover the non-strip endpoint residual frontier-upper-site step input. -/
+theorem rayExitVerticalStrictBridgeFrontierLtUpperResUpperUpperFUpperSiteUpQIStep_of_qj
+    (hbridge :
+RayExitVerticalStrictBridgeFrontierLtUpperSiteAnchorResidualUpperSiteResUpperUpperFUpperSiteUpQJStep
+        F) :
+RayExitVerticalStrictBridgeFrontierLtUpperSiteAnchorResidualUpperSiteResUpperUpperFUpperSiteUpQIStep
+      F :=
+  ⟨
+    rayExitVerticalStrictLtFUSARUSResUpperNSFrUpperResidualNSFrUpperResNSFrSRNSUpQI_of_qj
+      hbridge.1,
+    hbridge.2⟩
+
+/-- Bridge non-strip genuine-gap residual-index ordered strict frontier-upper-site endpoint
+upper-prefix-site data recover the genuine-gap step input. -/
+theorem rayExitVerticalStrictBridgeFrontierLtUpperResUpperUpperFUpperSiteUpQHStep_of_qj
+    (hbridge :
+RayExitVerticalStrictBridgeFrontierLtUpperSiteAnchorResidualUpperSiteResUpperUpperFUpperSiteUpQJStep
+        F) :
+RayExitVerticalStrictBridgeFrontierLtUpperSiteAnchorResidualUpperSiteResUpperUpperFUpperSiteUpQHStep
+      F :=
+  rayExitVerticalStrictBridgeFrontierLtUpperResUpperUpperFUpperSiteUpQHStep_of_qi
+    (rayExitVerticalStrictBridgeFrontierLtUpperResUpperUpperFUpperSiteUpQIStep_of_qj
+      hbridge)
+
+/-- Bridge non-strip genuine-gap residual-index ordered strict frontier-upper-site endpoint
+upper-prefix-site data recover the residual-index ordered step input. -/
+theorem rayExitVerticalStrictBridgeFrontierLtUpperResUpperUpperFUpperSiteUpQRStep_of_qj
+    (hbridge :
+RayExitVerticalStrictBridgeFrontierLtUpperSiteAnchorResidualUpperSiteResUpperUpperFUpperSiteUpQJStep
+        F) :
+RayExitVerticalStrictBridgeFrontierLtUpperSiteAnchorResidualUpperSiteResUpperUpperFUpperSiteUpQRStep
+      F :=
+  rayExitVerticalStrictBridgeFrontierLtUpperResUpperUpperFUpperSiteUpQRStep_of_qi
+    (rayExitVerticalStrictBridgeFrontierLtUpperResUpperUpperFUpperSiteUpQIStep_of_qj
+      hbridge)
+
+/-- Bridge non-strip genuine-gap residual-index ordered strict frontier-upper-site endpoint
+upper-prefix-site data recover the ordered strict frontier-upper-site endpoint upper-prefix-site
+step input. -/
+theorem rayExitVerticalStrictBridgeFrontierLtUpperResUpperUpperFUpperSiteUpQOStep_of_qj
+    (hbridge :
+RayExitVerticalStrictBridgeFrontierLtUpperSiteAnchorResidualUpperSiteResUpperUpperFUpperSiteUpQJStep
+        F) :
+RayExitVerticalStrictBridgeFrontierLtUpperSiteAnchorResidualUpperSiteResUpperUpperFUpperSiteUpQOStep
+      F :=
+  rayExitVerticalStrictBridgeFrontierLtUpperResUpperUpperFUpperSiteUpQOStep_of_qi
+    (rayExitVerticalStrictBridgeFrontierLtUpperResUpperUpperFUpperSiteUpQIStep_of_qj
+      hbridge)
+
+/-- Bridge non-strip genuine-gap residual-index ordered strict frontier-upper-site endpoint
+upper-prefix-site data recover the older non-strip endpoint upper-prefix-site step input. -/
+theorem rayExitVerticalStrictBridgeFrontierLtUpperResUpperUpperFUpperSiteUpQNStep_of_qj
+    (hanchor : ∀ d : BoundaryDart F,
+      DartReachable F d (rayExitAnchorDartMap F ⟨d.left, d.left_mem⟩))
+    (hbridge :
+RayExitVerticalStrictBridgeFrontierLtUpperSiteAnchorResidualUpperSiteResUpperUpperFUpperSiteUpQJStep
+        F) :
+RayExitVerticalStrictBridgeFrontierLtUpperSiteAnchorResidualUpperSiteResUpperUpperFUpperSiteUpQNStep
+      F :=
+  rayExitVerticalStrictBridgeFrontierLtUpperResUpperUpperFUpperSiteUpQNStep_of_qi
+    hanchor
+    (rayExitVerticalStrictBridgeFrontierLtUpperResUpperUpperFUpperSiteUpQIStep_of_qj
+      hbridge)
 
 /-- Frontier residual-index residual frontier-upper data recover the non-strip step input. -/
 theorem rayExitVerticalStrictBridgeFrontierLtUpperResUpperNonStripStep_of_frontier
@@ -22132,6 +22652,23 @@ RayExitVerticalStrictBridgeFrontierLtUpperSiteAnchorResidualUpperSiteResUpperUpp
       hnonStrip)
     hconn d e
 
+/-- Pairwise dart reachability from bridge non-strip genuine-gap residual-index ordered strict
+frontier-upper-site endpoint upper-prefix-site data and within-`F` connectivity. -/
+theorem
+    dartReachable_of_rayExitVerticalStrictBridgeFrontierLtUpperResUpperUpperFrontierUpperSiteUpQJ
+    (hanchor : ∀ d : BoundaryDart F,
+      DartReachable F d (rayExitAnchorDartMap F ⟨d.left, d.left_mem⟩))
+    (hbridge :
+RayExitVerticalStrictBridgeFrontierLtUpperSiteAnchorResidualUpperSiteResUpperUpperFUpperSiteUpQJStep
+        F)
+    (hconn : ∀ a ∈ F, ∀ b ∈ F, ReachableWithin (latticeGraph 2) F a b)
+    (d e : BoundaryDart F) : DartReachable F d e :=
+  dartReachable_of_rayExitVerticalStrictBridgeFrontierLtUpperResUpperUpperFrontierUpperSiteUpQI
+    hanchor
+    (rayExitVerticalStrictBridgeFrontierLtUpperResUpperUpperFUpperSiteUpQIStep_of_qj
+      hbridge)
+    hconn d e
+
 /-- The common-box dual cut is edge-connected from lower-reduced turn-chain non-strip data. -/
 theorem dualCutInBox_isEdgeConnected_of_rayExitVerticalStrictBridgeFrontierLtReducedTurnChain
     (hsub : dualSupport F ⊆ Λd)
@@ -23382,6 +23919,24 @@ RayExitVerticalStrictBridgeFrontierLtUpperSiteAnchorResidualUpperSiteResUpperUpp
     hsub hanchor
     (rayExitVerticalStrictBridgeFrontierLtUpperResUpperUpperFUpperSiteUpQHStep_of_qi
       hnonStrip)
+    hconn
+
+/-- The common-box dual cut is edge-connected from bridge non-strip genuine-gap residual-index
+ordered strict frontier-upper-site endpoint upper-prefix-site data. -/
+theorem
+dualCutInBox_isEdgeConnected_of_rayExitVerticalStrictBridgeFrontierLtUpperResUpperUFUpperSiteUpQJ
+    (hsub : dualSupport F ⊆ Λd)
+    (hanchor : ∀ d : BoundaryDart F,
+      DartReachable F d (rayExitAnchorDartMap F ⟨d.left, d.left_mem⟩))
+    (hbridge :
+RayExitVerticalStrictBridgeFrontierLtUpperSiteAnchorResidualUpperSiteResUpperUpperFUpperSiteUpQJStep
+        F)
+    (hconn : ∀ a ∈ F, ∀ b ∈ F, ReachableWithin (latticeGraph 2) F a b) :
+    IsEdgeConnected (dualCutInBox hsub) :=
+  dualCutInBox_isEdgeConnected_of_rayExitVerticalStrictBridgeFrontierLtUpperResUpperUFUpperSiteUpQI
+    hsub hanchor
+    (rayExitVerticalStrictBridgeFrontierLtUpperResUpperUpperFUpperSiteUpQIStep_of_qj
+      hbridge)
     hconn
 
 /-- Pairwise dart reachability from lower-reduced turn-chain non-strip data and connectedness of
@@ -25808,6 +26363,46 @@ RayExitVerticalStrictBridgeFrontierLtUpperSiteAnchorResidualUpperSiteResUpperUpp
 dualCutInBox_isEdgeConnected_of_rayExitVerticalStrictBridgeFrontierLtUpperResUpperUFUSUpQI_connected
     hsub hanchor hnonStrip hconn
 
+/-- The common-box dual cut is edge-connected from bridge non-strip genuine-gap residual-index
+ordered strict frontier-upper-site endpoint upper-prefix-site data and connectedness of the
+underlying box droplet. -/
+theorem
+dualCutInBox_isEdgeConnected_of_rayExitVerticalStrictBridgeFrontierLtUpperResUpperUFUSUpQJ_connected
+    {S : Finset ↑Λ}
+    (hsub : dualSupport (S.image Subtype.val) ⊆ Λd)
+    (hanchor : ∀ d : BoundaryDart (S.image Subtype.val),
+      DartReachable (S.image Subtype.val) d
+        (rayExitAnchorDartMap (S.image Subtype.val) ⟨d.left, d.left_mem⟩))
+    (hbridge :
+RayExitVerticalStrictBridgeFrontierLtUpperSiteAnchorResidualUpperSiteResUpperUpperFUpperSiteUpQJStep
+        (S.image Subtype.val))
+    (hconn : IsConnectedDroplet (Ambient.inducedGraph (latticeGraph 2) Λ) S) :
+    IsEdgeConnected (dualCutInBox hsub) := by
+  exact
+dualCutInBox_isEdgeConnected_of_rayExitVerticalStrictBridgeFrontierLtUpperResUpperUFUSUpQI_connected
+    hsub hanchor
+    (rayExitVerticalStrictBridgeFrontierLtUpperResUpperUpperFUpperSiteUpQIStep_of_qj
+      hbridge)
+    hconn
+
+/-- Search-friendly alias for the connected common-box bridge non-strip genuine-gap
+residual-index ordered strict frontier-upper-site endpoint upper-prefix-site wrapper. -/
+theorem
+dualCutInBox_isEdgeConnected_of_rayExitVerticalStrictBridgeFrontierLtUpperUFUpperSiteUpQJ_connected
+    {S : Finset ↑Λ}
+    (hsub : dualSupport (S.image Subtype.val) ⊆ Λd)
+    (hanchor : ∀ d : BoundaryDart (S.image Subtype.val),
+      DartReachable (S.image Subtype.val) d
+        (rayExitAnchorDartMap (S.image Subtype.val) ⟨d.left, d.left_mem⟩))
+    (hbridge :
+RayExitVerticalStrictBridgeFrontierLtUpperSiteAnchorResidualUpperSiteResUpperUpperFUpperSiteUpQJStep
+        (S.image Subtype.val))
+    (hconn : IsConnectedDroplet (Ambient.inducedGraph (latticeGraph 2) Λ) S) :
+    IsEdgeConnected (dualCutInBox hsub) := by
+  exact
+dualCutInBox_isEdgeConnected_of_rayExitVerticalStrictBridgeFrontierLtUpperResUpperUFUSUpQJ_connected
+    hsub hanchor hbridge hconn
+
 /-- **The Peierls contour count from lower-reduced turn-chain non-strip strict ray-exit data and
 connected droplets**: the lower bridge-to-frontier leg is automatic. -/
 theorem peierls_contour_count_rayExit_verticalStrictBridgeFrontierLtReducedTurnChain_connected
@@ -28036,6 +28631,36 @@ RayExitVerticalStrictBridgeFrontierLtUpperSiteAnchorResidualUpperSiteResUpperUpp
     (fun S hS =>
       ⟨(hdata S hS).1,
         rayExitVerticalStrictBridgeFrontierLtUpperResUpperUpperFUpperSiteUpQHStep_of_qi
+          (hdata S hS).2.1,
+        (hdata S hS).2.2⟩)
+    hr
+
+/-- **The Peierls contour count from bridge non-strip genuine-gap residual-index ordered strict
+frontier-upper-site endpoint upper-prefix-site data and connected droplets**: endpoint residual
+anchor-to/from-bridge steps are automatic. -/
+theorem
+peierls_contour_count_rayExit_verticalStrictBridgeFrontierLtUpperResUpperUFUpperSiteUpQJ_connected
+    {i : Fin 2 → ℤ} {g : ↑Λ} {r : ℕ}
+    (hpre : (Ambient.inducedGraph (latticeGraph 2) Λ).Preconnected)
+    (D : Finset (Finset ↑Λ))
+    (hdual : ∀ S ∈ D, dualSupport (S.image Subtype.val) ⊆ Λd)
+    (hi : ∀ S ∈ D, i ∈ S.image Subtype.val)
+    (hne : ∀ S ∈ D, NeighbourClosed Λ S)
+    (hg : ∀ S ∈ D, g ∉ S)
+    (hdata : ∀ S (_ : S ∈ D),
+      (∀ d : BoundaryDart (S.image Subtype.val),
+        DartReachable (S.image Subtype.val) d
+          (rayExitAnchorDartMap (S.image Subtype.val) ⟨d.left, d.left_mem⟩)) ∧
+RayExitVerticalStrictBridgeFrontierLtUpperSiteAnchorResidualUpperSiteResUpperUpperFUpperSiteUpQJStep
+        (S.image Subtype.val) ∧
+      IsConnectedDroplet (Ambient.inducedGraph (latticeGraph 2) Λ) S)
+    (hr : ∀ S ∈ D, (cutEdges (Ambient.inducedGraph (latticeGraph 2) Λ) S).card = r) :
+    D.card ≤ r * (2 * 2) ^ (2 * r) :=
+  peierls_contour_count_rayExit_verticalStrictBridgeFrontierLtUpperResUpperUFUpperSiteUpQI_connected
+    hpre D hdual hi hne hg
+    (fun S hS =>
+      ⟨(hdata S hS).1,
+        rayExitVerticalStrictBridgeFrontierLtUpperResUpperUpperFUpperSiteUpQIStep_of_qj
           (hdata S hS).2.1,
         (hdata S hS).2.2⟩)
     hr
