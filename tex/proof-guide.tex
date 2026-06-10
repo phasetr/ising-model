@@ -4463,6 +4463,44 @@ squeezed to $0$.  (The high-temperature counterpart took the $n\to\infty$ box li
 is $\beta\to\infty$.)
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Edge-connectivity of the dual cut from the planar bond lemma
+(\texttt{Peierls/PlanarBondReduction.lean})}
+
+\par\noindent\textbf{Role:} The convergent re-foundation of the contour edge-connectivity crux,
+replacing the non-converging \texttt{rayExitAnchorDartMap} first-exit anchor route.  The first-exit
+index of a rightward ray is discontinuous across a vertical step, so the anchor transport
+obligations \texttt{hstep}/\texttt{hanchor} disguise the global discrete-Jordan separation fact as
+an infinite regress of local case-splits.  The correct factoring isolates the single genuine
+obligation as the \emph{planar bond hypothesis}
+\[
+  \texttt{PlanarBondHypothesis}\,F \;:\;
+  \forall d\,e,\;
+  \texttt{ReachableWithin}\,(\texttt{latticeGraph}\,2)\,F\;d.\mathrm{left}\;e.\mathrm{left}
+  \;\to\;
+  \texttt{ReachableOutside}\,F\;d.\mathrm{right}\;e.\mathrm{right}
+  \;\to\;
+  \texttt{DartReachable}\,F\;d\;e,
+\]
+i.e.\ two boundary darts whose inside endpoints are connected inside $F$ and whose outside endpoints
+are connected in the complement of $F$ have edge-connected dual edges.  Here
+$\texttt{ReachableOutside}\,F$ is the reflexive-transitive closure of complement-adjacency
+($a\sim b$ with $a,b\notin F$); it carries no \texttt{Fintype} requirement, since the lattice
+complement $\mathbb{Z}^2\setminus F$ is infinite (so $\texttt{univ}\setminus F$ is not a
+\texttt{Finset}).  Given the bond hypothesis, \texttt{dartReachable\_of\_bond} feeds it the inside
+$F$-connectivity and the outside complement-connectivity to obtain pairwise dart reachability, and
+\texttt{dartDualCut\_isEdgeConnected\_of\_bond} /
+\texttt{dualCutSub\_isEdgeConnected\_of\_bond} /
+\texttt{dualCutInBox\_isEdgeConnected\_of\_bond} give whole-cut, subtype, and common-box
+edge-connectivity via the already-proved \texttt{dartDualCut\_isEdgeConnected\_of\_dartReachable} and
+the subtype/image bridges.  Both connectivity premises are already available for filled connected
+droplets (\texttt{isConnectedDroplet\_filledRegion} and
+\texttt{reachableWithin\_compl\_of\_isFilled}).  The contour count consumes this through
+\texttt{peierls\_contour\_count\_of\_bond} (parallel to \texttt{peierls\_contour\_count\_anchored},
+with the single-orbit \texttt{hone} input replaced by per-droplet bond and connectivity data).
+\textbf{Status: Partial} --- the bond lemma itself is the single remaining open obligation (the
+genuine discrete-Jordan separation content).
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \section{Asano Contraction (\texttt{Asano.lean})}
 
 \par\noindent\textbf{Prerequisites:} None (self-contained complex analysis).
