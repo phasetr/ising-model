@@ -113,6 +113,7 @@ import IsingModel.Peierls.DartDualCutCard
 import IsingModel.Peierls.DualSupport
 import IsingModel.Peierls.DualCutSubConnected
 import IsingModel.Peierls.DualCutInBox
+import IsingModel.Peierls.PlanarBondReduction
 import IsingModel.Peierls.ContourCount
 import IsingModel.Peierls.DualToPrimal
 import IsingModel.Peierls.DartPrimalCut
