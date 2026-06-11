@@ -7623,6 +7623,38 @@ Glimm--Jaffe, \emph{Quantum Physics}, 2nd ed., \S 4.6, Proposition 4.6.1,
 p.~68.
 \end{theorem}
 
+\begin{theorem}[GJ \S 4.6 Theorem 4.6.2: analyticity of the infinite-volume
+free energy; PR \#3905]
+For positive real ferromagnetic parameters ($0 < \beta$, $0 < J$) with bounded
+edge density and a field-uniform real-axis convergence input (supplied either
+by the disjoint-tower Fekete theorem or, on $\mathbb Z^d$ with the cubic
+exhaustion, by the tiling--liminf Proposition 4.6.1), there is a single
+function $g$ analytic on the Lee--Yang cone $\{|\mathrm{Im}\,h| <
+\mathrm{Re}\,h\}$ with $g(x) = f_\infty(\beta, J, x)$ for every real $x > 0$
+(\texttt{freeEnergyComplex\_infiniteVolume\_analyticOnNhd\_leeYangDomain},
+fully instantiated $\mathbb Z^d$ form
+\texttt{\_latticeGraph\_cubic} assuming only $0 < \beta$, $0 < J$).
+Proof structure: (i) \emph{exact real-axis agreement}
+(\texttt{globalBranchStage\_real\_eq}): along the real segment from the
+anchor, $\operatorname{Im} g_m$ is continuous, $(2\pi/N_m)\mathbb Z$-valued
+(the exponential identity with positive real $Z$ forces $\sin = 0$,
+$\cos > 0$), and vanishes at the anchor, hence vanishes identically by the
+intermediate value theorem against the half-multiple
+(\texttt{eq\_zero\_of\_continuousOn\_int\_multiples}); injectivity of the
+real exponential then gives $g_m(x) = F_m(x)$. (ii) The subsequential
+compact-target patch is identified with $f_\infty$ at every positive real
+field of its open neighbourhood (real Fekete convergence along the
+subsequence; the disjoint-tower input of the patch chain is generalised to a
+bare convergence hypothesis). (iii) \emph{Globalisation}
+(\texttt{exists\_convex\_tube\_patch}): the patch over the segment from the
+anchor restricts to a convex open thickening tube around the segment; any
+two tubes meet in a convex open set containing a real interval accumulating
+at the anchor, where both patches equal $f_\infty$, so the identity theorem
+for analytic functions glues all patches into one global $g$. Reference:
+Glimm--Jaffe, \emph{Quantum Physics}, 2nd ed., \S 4.6, Theorem 4.6.2,
+pp.~68--70.
+\end{theorem}
+
 \begin{theorem}[Toward GJ \S 4.6 Thm 4.6.2: the unconditional subsequential
 compact-target patch; PR \#3904]
 For positive real ferromagnetic parameters ($0 < \beta$, $0 < J$) with bounded
