@@ -1,4 +1,5 @@
 import IsingModel.AmbientComplexAnalyticity.Vitali.Subsequence
+import IsingModel.AmbientComplexAnalyticity.Vitali.BranchUniformBounds
 
 /-!
 # Ambient Complex Analyticity Vitali
