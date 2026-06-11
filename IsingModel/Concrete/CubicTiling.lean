@@ -59,6 +59,89 @@ theorem mem_cubicTile {d r : ℕ} {k x : Fin d → ℤ} :
       simp only [cubicTileCenter, vadd_eq_add, Pi.add_apply]
       ring
 
+/-- **The tile index is determined by any of its points**: two indices whose tiles share a
+coordinate value within radius `r` of both centres agree (the spacing `2r+1` exceeds `2r`). -/
+private theorem tile_index_eq_of_close {r a b c : ℤ} (hr : 0 ≤ r)
+    (h1 : |c - (2 * r + 1) * a| ≤ r) (h2 : |c - (2 * r + 1) * b| ≤ r) : a = b := by
+  rcases abs_le.mp h1 with ⟨h1l, h1r⟩
+  rcases abs_le.mp h2 with ⟨h2l, h2r⟩
+  by_contra hne
+  rcases lt_or_gt_of_ne hne with h | h
+  · have hs : (1 : ℤ) ≤ b - a := by omega
+    have : (2 * r + 1) * 1 ≤ (2 * r + 1) * (b - a) :=
+      mul_le_mul_of_nonneg_left hs (by positivity)
+    nlinarith
+  · have hs : (1 : ℤ) ≤ a - b := by omega
+    have : (2 * r + 1) * 1 ≤ (2 * r + 1) * (a - b) :=
+      mul_le_mul_of_nonneg_left hs (by positivity)
+    nlinarith
+
+/-- **Distinct indices give disjoint tiles.** -/
+theorem cubicTile_disjoint {d r : ℕ} {k k' : Fin d → ℤ} (hkk : k ≠ k') :
+    Disjoint (cubicTile d r k) (cubicTile d r k') := by
+  rw [Finset.disjoint_left]
+  intro x hx hx'
+  refine hkk (funext fun i => ?_)
+  exact tile_index_eq_of_close (by positivity)
+    ((mem_cubicTile.mp hx) i) ((mem_cubicTile.mp hx') i)
+
+/-- **The tiles indexed by `cubicBox d M` tile the cube of radius `(2r+1)M + r` exactly**: every
+point decomposes uniquely as `(2r+1)·k + b` with `|kᵢ| ≤ M` and `|bᵢ| ≤ r` (Euclidean division
+of `xᵢ + r` by `2r+1`). -/
+theorem biUnion_cubicTile (d r M : ℕ) :
+    (cubicBox d M).biUnion (cubicTile d r) = cubicBox d ((2 * r + 1) * M + r) := by
+  have hspos : (0 : ℤ) < 2 * (r : ℤ) + 1 := by positivity
+  ext x
+  rw [Finset.mem_biUnion]
+  constructor
+  · rintro ⟨k, hk, hx⟩
+    rw [mem_cubicBox]
+    intro i
+    have hki := (mem_cubicBox.mp hk) i
+    have hxi := abs_le.mp ((mem_cubicTile.mp hx) i)
+    have hkup : (2 * (r : ℤ) + 1) * k i ≤ (2 * (r : ℤ) + 1) * M :=
+      mul_le_mul_of_nonneg_left hki.2 (by positivity)
+    have hklo : -((2 * (r : ℤ) + 1) * M) ≤ (2 * (r : ℤ) + 1) * k i := by
+      have := mul_le_mul_of_nonneg_left hki.1 (le_of_lt hspos)
+      nlinarith
+    constructor
+    · push_cast
+      nlinarith [hxi.1]
+    · push_cast
+      nlinarith [hxi.2]
+  · intro hx
+    refine ⟨fun i => (x i + r) / (2 * (r : ℤ) + 1), ?_, ?_⟩
+    · rw [mem_cubicBox]
+      intro i
+      have hxi := (mem_cubicBox.mp hx) i
+      have hde := Int.mul_ediv_add_emod (x i + r) (2 * (r : ℤ) + 1)
+      have hm0 : 0 ≤ (x i + r) % (2 * (r : ℤ) + 1) :=
+        Int.emod_nonneg _ (by positivity)
+      have hms : (x i + r) % (2 * (r : ℤ) + 1) < 2 * (r : ℤ) + 1 :=
+        Int.emod_lt_of_pos _ hspos
+      push_cast at hxi
+      constructor
+      · -- `-(M) ≤ k i` from `(2r+1)·k i ≥ -(2r+1)M - (2r)` hence `> -(2r+1)(M+1)`
+        by_contra hlt
+        push Not at hlt
+        have hk1 : (x i + r) / (2 * (r : ℤ) + 1) ≤ -(M : ℤ) - 1 := by omega
+        have := mul_le_mul_of_nonneg_left hk1 (le_of_lt hspos)
+        nlinarith
+      · by_contra hlt
+        push Not at hlt
+        have hk1 : (M : ℤ) + 1 ≤ (x i + r) / (2 * (r : ℤ) + 1) := by omega
+        have := mul_le_mul_of_nonneg_left hk1 (le_of_lt hspos)
+        nlinarith
+    · rw [mem_cubicTile]
+      intro i
+      have hde := Int.mul_ediv_add_emod (x i + r) (2 * (r : ℤ) + 1)
+      have hm0 : 0 ≤ (x i + r) % (2 * (r : ℤ) + 1) :=
+        Int.emod_nonneg _ (by positivity)
+      have hms : (x i + r) % (2 * (r : ℤ) + 1) < 2 * (r : ℤ) + 1 :=
+        Int.emod_lt_of_pos _ hspos
+      rw [abs_le]
+      constructor <;> nlinarith
+
 end Ambient
 
 end IsingModel
