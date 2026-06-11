@@ -7623,6 +7623,47 @@ Glimm--Jaffe, \emph{Quantum Physics}, 2nd ed., \S 4.6, Proposition 4.6.1,
 p.~68.
 \end{theorem}
 
+\begin{theorem}[Toward GJ \S 4.3 Theorem 4.3.1: fourfold duplicate-variable
+infrastructure; PR \#3907]
+On the sixteen-point fourfold single-site Ising space
+$(\xi, \chi, \xi', \chi') \in \{\pm1\}^4$, the Hadamard variables
+$u_1 = \xi{+}\chi{+}\xi'{+}\chi'$, $u_2 = \xi{+}\chi{-}\xi'{-}\chi'$,
+$u_3 = \xi{-}\chi{+}\xi'{-}\chi'$, $u_4 = -\xi{+}\chi{+}\xi'{-}\chi'$
+($u_4$ is the \emph{negative} of GJ's $2\delta$ from (4.3.2); the sign is
+flipped so that the generic sign patterns form the even subgroup — with the
+original sign the all-odd moment is negative for the discrete Ising
+single-site measure, and the theorem is stated for the sign-flipped
+variables; the downstream corollaries use the brackets $q' \pm q$, which
+match this orientation) have non-negative joint moments
+(\texttt{siteMoment\_nonneg}) — the Ising replacement of Glimm--Jaffe's
+$\varphi^4$ single-site computation (4.3.6): the sixteen points split into
+eight aligned points $u = \pm 4 e_r$, contributing $(1 + (-1)^e)$ pair sums
+against non-negative bases, and eight generic points $u = 2s$ with
+$s_1s_2s_3s_4 = +1$, whose character sum factorises as
+$\tfrac12\bigl(\prod_i (1 + (-1)^{e_i}) + \prod_i (1 - (-1)^{e_i})\bigr)$ —
+manifestly non-negative with no parity case analysis. The fourfold system
+(four independent copies with product weight) has $Z_4 = Z^4$ and the
+factorisation $\langle F(\xi)G(\chi)H(\xi')K(\chi')\rangle_4 = \langle
+F\rangle\langle G\rangle\langle H\rangle\langle K\rangle$
+(\texttt{quadExpectation\_factor}); the site-indexed Hadamard variables and
+their \texttt{Finset} products are the objects of Theorem 4.3.1, toward
+discharging the \texttt{lebowitz\_four}/\texttt{lebowitz\_third}/%
+\texttt{lebowitz\_inductive} axioms (Issue \#3906). \textbf{Theorem 4.3.1
+(Ising form) is proven} (\texttt{theorem\_4\_3\_1}): per edge the Hadamard
+orthogonality (4.3.5) gives $\xi_i\xi_j + \chi_i\chi_j + \xi'_i\xi'_j +
+\chi'_i\chi'_j = \tfrac14\sum_r u_r(i)u_r(j)$ and the field term is
+$h\,u_1(i)$, so the fourfold weight is $\exp$ of a ferromagnetic sum of
+joint $u$-monomials (\texttt{quadWeight\_eq\_exp}); the exponential-of-sum
+closure (\texttt{hasNonnegUMoments\_exp\_sum\_mul}, built on the series
+closure \texttt{HasNonnegUMoments.mul\_exp} — the $\cosh/\sinh$ closed form
+of the GKS route does not apply to the multi-valued Hadamard variables)
+reduces all joint moments to the single-site positivity, and dividing by
+$Z^4 > 0$ yields $0 \le \langle u_1^A u_2^B u_3^C u_4^D\rangle_4$ for
+ferromagnetic parameters. Reference:
+Glimm--Jaffe, \emph{Quantum Physics}, 2nd ed., \S 4.3, Theorem 4.3.1,
+pp.~59--61; J.~L. Lebowitz, Comm.\ Math.\ Phys.\ 35 (1974).
+\end{theorem}
+
 \begin{theorem}[GJ \S 4.6 Theorem 4.6.2: analyticity of the infinite-volume
 free energy; PR \#3905]
 For positive real ferromagnetic parameters ($0 < \beta$, $0 < J$) with bounded
