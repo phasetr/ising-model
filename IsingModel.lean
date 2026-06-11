@@ -231,6 +231,7 @@ import IsingModel.PeierlsInfinite
 import IsingModel.TranslationInvariance
 import IsingModel.Concrete.IntLattice
 import IsingModel.Concrete.CubicExhaustion
+import IsingModel.Concrete.CubicTiling
 import IsingModel.Concrete.CubicBoxConnectivity
 import IsingModel.Concrete.CubicBoxAdjacencyGeometry
 import IsingModel.Concrete.LatticeGraphBED
