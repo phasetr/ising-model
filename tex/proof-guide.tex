@@ -7623,6 +7623,42 @@ Glimm--Jaffe, \emph{Quantum Physics}, 2nd ed., \S 4.6, Proposition 4.6.1,
 p.~68.
 \end{theorem}
 
+\begin{theorem}[GJ \S 4.6 Thm 4.6.2, compact-target form — unconditional;
+PR \#3904]
+For positive real ferromagnetic parameters ($0 < \beta$, $0 < J$) with bounded
+edge density and the disjoint-tower hypotheses, and any compact
+$K \subseteq \{|\mathrm{Im}\,h| < \mathrm{Re}\,h\}$ containing the physical
+field $h$, there exists $g$ holomorphic on $K$ with $g(h) = f_\infty(\beta,
+J, h)$ — \emph{no analytic side hypotheses remain}
+(\texttt{freeEnergyComplexAlongExhaustion\_posReal\_globalBranch\_holomorphicExtension\_of\_isCompact},
+with the $\mathbb Z^d$ wrapper \texttt{\_isCompact\_latticeGraph}).
+Construction: (i) any branch with the exponential identity has derivative
+$Z'/(NZ)$ (\texttt{deriv\_eq\_globalLogDerivStage\_of\_exp\_eq}; the
+non-vanishing of $Z$ is automatic from the identity); (ii) $Z'/(NZ)$ is
+bounded stage-uniformly on compacts by quarter-ball Schwarz estimates over
+the existing half-ball Borel--Carath\'eodory branch bounds with a finite
+subcover
+(\texttt{exists\_uniform\_norm\_globalLogDerivStage\_on\_isCompact}); (iii)
+hence the global branch is bounded stage-uniformly on compacts via the
+segment-integral estimate over the compact segment tube
+(\texttt{exists\_uniform\_norm\_globalBranchStage\_on\_isCompact}); (iv) the
+all-centre principal normalisation threaded through the existing
+compact-open diagonal extraction is never consumed by the extraction itself,
+so unnormalised twins (\texttt{compactOpen\_vitali\_fin\_ball\_unnormalised},
+\texttt{\_overlap}, \texttt{\_patch} — fully generic in the analytic family)
+drop it; (v) covering $K$ by the halved global-branch balls (one centred at
+$h$), the closure-carrier compactness and derived equicontinuity supply the
+compact-open carriers, overlap is trivial (every centre selects the same
+global function), and the diagonal extraction patches to a holomorphic $g$
+on $K$; (vi) the identification $g(h) = f_\infty$ follows at the real centre
+from the anchored normalisation $g_m(h) = F_m(h)$ and the established
+real-centre subsequence identification. Remaining toward the full GJ
+statement: identification along the real axis (not only at the single
+physical field) and globalisation to one function on the whole Lee--Yang
+domain. Reference: Glimm--Jaffe, \emph{Quantum Physics}, 2nd ed., \S 4.6,
+Theorem 4.6.2, pp.~68--70.
+\end{theorem}
+
 \begin{theorem}[Toward GJ \S 4.6 Thm 4.6.2: the global branch on the convex
 Lee--Yang cone; PR \#3903]
 The eventual-overlap input of the overlap-only endpoint is satisfiable by a
