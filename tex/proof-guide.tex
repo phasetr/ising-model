@@ -7582,6 +7582,47 @@ existing disjoint-union super-additivity, upper bound, and divergence
 infrastructure, the targeted exhaustion class is covered.
 \end{theorem}
 
+\begin{theorem}[Glimm--Jaffe \S 4.6 Prop 4.6.1, \emph{unconditional} on the
+cubic exhaustion of $\mathbb Z^d$; PR \#3898,
+\texttt{freeEnergyAlongExhaustion\_latticeGraph\_cubicExhaustion\_tendsto}]
+For ferromagnetic parameters $p$ and every $d$, the free-energy density along
+the cubic boxes $B_n = [-n,n]^d \cap \mathbb Z^d$ converges, with no
+super-additivity, cardinality-additivity, or translation-tower hypotheses:
+\[
+  \texttt{Tendsto}\,
+    (\texttt{freeEnergyAlongExhaustion}\,(\texttt{latticeGraph}\,d)\,
+      (\texttt{cubicExhaustion}\,d)\,p)\, \texttt{atTop}\,
+    (\mathcal N(\texttt{freeEnergyInfinite})).
+\]
+Proof (tiling--liminf; \texttt{Concrete/CubicTiling.lean},
+\texttt{Concrete/CubicFreeEnergy.lean}). Fix a radius $r$ and set
+$s = 2r+1$. The translates of $B_r$ centred at $s k$, $k \in B_M$, are
+pairwise disjoint (\texttt{cubicTile\_disjoint}; the spacing exceeds the
+diameter) and tile $B_{sM+r}$ exactly (\texttt{biUnion\_cubicTile};
+Euclidean division of $x_i + r$ by $s$). Family super-additivity of
+$\log Z$ over disjoint families
+(\texttt{log\_partitionFunction\(\Lambda\)\_latticeGraph\_biUnion\_super\_additive},
+Finset induction over the binary disjoint-union estimate) and translation
+invariance give $(2M+1)^d \log Z_{B_r} \le \log Z_{B_{sM+r}}$
+(\texttt{log\_partitionFunction\(\Lambda\)\_cubicBox\_tiling\_le}). With the
+inner radius $R_N = s\lfloor (N-r)/s\rfloor + r \le N$ (within $2r$ of $N$)
+and the monotonicity of $\log Z$ along nested cubes, the exact cardinality
+factorisation $(2M+1)^d (2r+1)^d = (2R_N+1)^d$ yields
+$\frac{|B_{R_N}|}{|B_N|}\, f_r \le f_N$
+(\texttt{ratio\_mul\_freeEnergy\(\Lambda\)\_cubicBox\_le}). The volume
+ratio tends to $1$
+(\texttt{tendsto\_cubicBox\_innerRadius\_card\_ratio}; the side ratio is
+squeezed between $1 - 4r/(2N+1)$ and $1$), so every stage value satisfies
+$f_r \le \liminf_N f_N$
+(\texttt{freeEnergy\(\Lambda\)\_cubicBox\_le\_liminf}). Taking the
+$\limsup$ over $r$ gives $\limsup \le \liminf$; with the uniform upper
+bound (bounded edge density) and ferromagnetic non-negativity,
+\texttt{tendsto\_of\_le\_liminf\_of\_limsup\_le} concludes, the limit
+being $\texttt{freeEnergyInfinite} = \limsup$ by definition. Reference:
+Glimm--Jaffe, \emph{Quantum Physics}, 2nd ed., \S 4.6, Proposition 4.6.1,
+p.~68.
+\end{theorem}
+
 \begin{theorem}[Support toward GJ \S 4.6 Thm 4.6.2: finite-volume complex $Z$ analyticity; PR \#193]
 Preliminary support for GJ Theorem 4.6.2: after extending the finite-volume
 partition function $Z_G(J, h, \beta)$ to $(J, h, \beta) \in \mathbb C^3$, it

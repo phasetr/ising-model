@@ -341,6 +341,7 @@ Named specializations at `A = {i}`:
 |---|---|---|---|
 | `freeEnergy_monotone_{J,h,beta,subgraph}` | monotonicity | `FreeEnergy.lean` | Finite / Discretized Λ↑ |
 | `freeEnergy_convergent_subgraph` (Prop 4.6.1) | `f_{Gₙ}` converges | `FreeEnergy.lean` | Discretized Λ↑ |
+| `Ambient.freeEnergyAlongExhaustion_latticeGraph_cubicExhaustion_tendsto` (**Prop 4.6.1, unconditional on ℤ^d**) | `Tendsto (freeEnergyAlongExhaustion (latticeGraph d) (cubicExhaustion d) p) atTop (𝓝 freeEnergyInfinite)` for ferromagnetic `p` — no superadditivity or tower hypotheses. Tiling–liminf route: `cubicTile` translates of `cubicBox d r` tile `cubicBox d ((2r+1)M+r)` exactly (`biUnion_cubicTile`, `cubicTile_disjoint`), family super-additivity (`log_partitionFunctionΛ_latticeGraph_biUnion_super_additive`) + translation invariance give `(|B_inner|/|B_N|)·f_r ≤ f_N` (`ratio_mul_freeEnergyΛ_cubicBox_le`), the ratio tends to `1` (`tendsto_cubicBox_innerRadius_card_ratio`), so every stage bounds the `liminf` (`freeEnergyΛ_cubicBox_le_liminf`) and `limsup ≤ liminf`. | `Concrete/CubicTiling.lean`, `Concrete/CubicFreeEnergy.lean` | **ℤ^d cubic exhaustion, unconditional**. GJ §4.6 Prop 4.6.1, p. 68 |
 | `freeEnergyH_analyticOn` (Thm 4.6.2, real) | `f(h)` real-analytic for `h > 0` | `FreeEnergy.lean` | Finite |
 | `freeEnergyJ_analyticOn` | `f(J)` real-analytic for `J > 0` | `FreeEnergy.lean` | Finite |
 | `partitionFunctionH_analyticAt` | `Z(h)` real-analytic | `FreeEnergy.lean` | Finite |
@@ -1736,7 +1737,13 @@ inventory (2026-04-17).
 The following GJ Ising infinite-volume discussions are **not yet
 formalized**, per the full inventory above:
 
-1. **Prop 4.6.1 (free energy convergence) Fekete completion**:
+1. **Prop 4.6.1 (free energy convergence) Fekete completion** —
+   **DONE (PR #3898)**: the unconditional cubic-exhaustion convergence
+   `Ambient.freeEnergyAlongExhaustion_latticeGraph_cubicExhaustion_tendsto`
+   (`Concrete/CubicFreeEnergy.lean`) closes this item via the
+   tiling–liminf route, with no user-supplied superadditivity or
+   translation-tower inputs. The earlier conditional entry points
+   remain available:
    Fekete-style convergence of `freeEnergyAlongExhaustion` is now
    available through three API entry points (all in
    `AmbientLatticeSum.lean`):
