@@ -181,7 +181,7 @@ theorem exists_finset_cover_of_isCompact_allStageBranchData_real
   rcases Set.mem_iUnion₂.mp (ht hzK) with ⟨h₀, h₀_mem, hz_ball⟩
   exact Set.mem_iUnion₂.mpr ⟨h₀, Finset.mem_insert_of_mem h₀_mem, hz_ball⟩
 
-/-- **Unconditional subsequential compact-target patch toward GJ Theorem 4.6.2**: for
+/-- **Subsequential compact-target patch from a real-axis convergence input**: for
 positive real ferromagnetic parameters with bounded edge density and disjoint-tower
 hypotheses, and a compact `K ⊆ leeYangDomain` containing the physical field, there are an
 open `U` with `K ⊆ U ⊆ leeYangDomain`, a strictly monotone stage subsequence `σ`, and a
@@ -196,13 +196,15 @@ identifies the value at the real centre through the anchored normalisation `g(p.
 Toward the full Theorem 4.6.2 statement there remain the real-axis identification and the
 domain-wide globalisation (which also upgrade the subsequence to the full sequence by
 uniqueness of limits). -/
-theorem freeEnergyComplexAlongExhaustion_posReal_globalBranch_holomorphicExtension_of_isCompact
+theorem freeEnergyComplexAlongExhaustion_posReal_globalBranch_holomorphicExtension_of_tendsto
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
     [∀ n, Nonempty (↑(Λ.volume n) : Type _)]
     (p : IsingParams ℝ)
     (hBED : BoundedEdgeDensity G Λ)
-    (hd : DisjointTowerHypotheses G Λ p)
+    (hreal : Filter.Tendsto
+      (fun n => freeEnergyComplexAlongExhaustion G Λ (p.J : ℂ) (p.h : ℂ) (p.β : ℂ) n)
+      Filter.atTop (nhds ((freeEnergyInfinite G Λ p : ℝ) : ℂ)))
     (hβ : 0 < p.β) (hJ : 0 < p.J)
     {K : Set ℂ}
     (hK : IsCompact K)
@@ -340,9 +342,26 @@ theorem freeEnergyComplexAlongExhaustion_posReal_globalBranch_holomorphicExtensi
       (Metric.ball (p.h : ℂ) (data.radius (center i₀))) := by
     have := (hlocal i₀).1
     rwa [hcenter] at this
-  have hid :=
-    freeEnergyComplexAlongExhaustion_subseq_branchFamily_vitali_ball_identified_at_center
-      G Λ p hBED hd hr₀ hσ hbranch₀ hconv₀
+  have hid : DifferentiableOn ℂ (f i₀) (Metric.ball (p.h : ℂ) (data.radius (center i₀)))
+      ∧ f i₀ (p.h : ℂ) = ((freeEnergyInfinite G Λ p : ℝ) : ℂ) := by
+    have hdiff := freeEnergyComplexAlongExhaustion_subseq_branchFamily_vitali_bridge_ball
+      G Λ (p.J : ℂ) (p.β : ℂ) hbranch₀ hconv₀
+    have hcent : (p.h : ℂ) ∈ Metric.ball (p.h : ℂ) (data.radius (center i₀)) :=
+      Metric.mem_ball_self hr₀
+    have hpoint := hconv₀.tendsto_at hcent
+    have hbranch_eq :
+        (fun m => data.branchFamily (center i₀) (σ m) (p.h : ℂ))
+          = fun m => freeEnergyComplexAlongExhaustion G Λ
+              (p.J : ℂ) (p.h : ℂ) (p.β : ℂ) (σ m) := by
+      funext m
+      exact (hbranch₀ m).2.2
+    rw [hbranch_eq] at hpoint
+    have hreal_subseq : Filter.Tendsto
+        (fun m => freeEnergyComplexAlongExhaustion G Λ
+          (p.J : ℂ) (p.h : ℂ) (p.β : ℂ) (σ m))
+        Filter.atTop (nhds ((freeEnergyInfinite G Λ p : ℝ) : ℂ)) := by
+      simpa [Function.comp_def] using hreal.comp hσ.tendsto_atTop
+    exact ⟨hdiff, tendsto_nhds_unique hpoint hreal_subseq⟩
   refine ⟨⋃ i : Fin n,
       Metric.ball ((center i : {h : ℂ // h ∈ IsingModel.leeYangDomain}) : ℂ)
         (data.radius (center i)),
@@ -368,6 +387,35 @@ theorem freeEnergyComplexAlongExhaustion_posReal_globalBranch_holomorphicExtensi
       exact Metric.mem_ball_self hr₀
     rw [hg_eq i₀ hmem₀]
     exact hid.2
+
+/-- **Unconditional subsequential compact-target patch toward GJ Theorem 4.6.2** (disjoint
+tower form): the real-axis convergence input of the tendsto core is supplied by the
+disjoint-tower Fekete theorem. -/
+theorem freeEnergyComplexAlongExhaustion_posReal_globalBranch_holomorphicExtension_of_isCompact
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    [∀ n, Nonempty (↑(Λ.volume n) : Type _)]
+    (p : IsingParams ℝ)
+    (hBED : BoundedEdgeDensity G Λ)
+    (hd : DisjointTowerHypotheses G Λ p)
+    (hβ : 0 < p.β) (hJ : 0 < p.J)
+    {K : Set ℂ}
+    (hK : IsCompact K)
+    (hKsub : K ⊆ IsingModel.leeYangDomain)
+    (hpK : (p.h : ℂ) ∈ K) :
+    ∃ U : Set ℂ, IsOpen U ∧ K ⊆ U ∧ U ⊆ IsingModel.leeYangDomain ∧
+      ∃ σ : ℕ → ℕ, StrictMono σ ∧
+        ∃ g : ℂ → ℂ,
+          DifferentiableOn ℂ g U ∧
+          (∀ z ∈ U, Filter.Tendsto
+            (fun m => globalBranchStage G Λ (p.J : ℂ) (p.β : ℂ) (p.h : ℂ) (σ m) z)
+            Filter.atTop (nhds (g z))) ∧
+          g (p.h : ℂ) = ((freeEnergyInfinite G Λ p : ℝ) : ℂ) :=
+  freeEnergyComplexAlongExhaustion_posReal_globalBranch_holomorphicExtension_of_tendsto
+    G Λ p hBED
+    (freeEnergyComplexAlongExhaustion_tendsto_at_real_of_disjointTowerHypotheses
+      G Λ p hBED hd)
+    hβ hJ hK hKsub hpK
 
 end Ambient
 

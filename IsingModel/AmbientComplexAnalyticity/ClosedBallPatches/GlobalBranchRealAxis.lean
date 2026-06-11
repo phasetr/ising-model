@@ -279,14 +279,15 @@ the infinite-volume free energy at *every* positive real field in the open neigh
 the subsequenced global branches there are exactly the principal finite-volume free energies
 (`globalBranchStage_real_eq`), which converge by the real Fekete theorem. -/
 theorem
-    freeEnergyComplexAlongExhaustion_posReal_globalBranch_holomorphicExtension_realAxis_of_isCompact
+    freeEnergyComplexAlongExhaustion_posReal_globalBranch_holomorphicExtension_realAxis_of_tendsto
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
     [∀ n, Nonempty (↑(Λ.volume n) : Type _)]
     (p : IsingParams ℝ)
     (hBED : BoundedEdgeDensity G Λ)
-    (hd : DisjointTowerHypotheses G Λ p)
-    (hd' : ∀ x : ℝ, 0 < x → DisjointTowerHypotheses G Λ ⟨p.J, x, p.β⟩)
+    (hreal' : ∀ x : ℝ, 0 < x → Filter.Tendsto
+      (fun n => freeEnergyAlongExhaustion G Λ ⟨p.J, x, p.β⟩ n)
+      Filter.atTop (nhds (freeEnergyInfinite G Λ ⟨p.J, x, p.β⟩)))
     (hβ : 0 < p.β) (hJ : 0 < p.J)
     {K : Set ℂ}
     (hK : IsCompact K)
@@ -301,15 +302,25 @@ theorem
             Filter.atTop (nhds (g z))) ∧
           ∀ x : ℝ, 0 < x → (x : ℂ) ∈ U →
             g (x : ℂ) = ((freeEnergyInfinite G Λ ⟨p.J, x, p.β⟩ : ℝ) : ℂ) := by
-  obtain ⟨U, hUo, hKU, hUdom, σ, hσ, g, hgd, hgconv, _hgval⟩ :=
-    freeEnergyComplexAlongExhaustion_posReal_globalBranch_holomorphicExtension_of_isCompact
-      G Λ p hBED hd hβ hJ hK hKsub hpK
-  refine ⟨U, hUo, hKU, hUdom, σ, hσ, g, hgd, hgconv, ?_⟩
-  intro x hx hxU
   have hph : 0 < p.h := by
     have hmem := hKsub hpK
     have : |((p.h : ℂ)).im| < ((p.h : ℂ)).re := hmem
     simpa using this
+  have hp_eta : p = ⟨p.J, p.h, p.β⟩ := rfl
+  have hrealp : Filter.Tendsto
+      (fun n => freeEnergyComplexAlongExhaustion G Λ (p.J : ℂ) (p.h : ℂ) (p.β : ℂ) n)
+      Filter.atTop (nhds ((freeEnergyInfinite G Λ p : ℝ) : ℂ)) := by
+    have hcast : ∀ n, freeEnergyComplexAlongExhaustion G Λ (p.J : ℂ) (p.h : ℂ) (p.β : ℂ) n
+        = ((freeEnergyAlongExhaustion G Λ p n : ℝ) : ℂ) := fun n =>
+      freeEnergyComplexAlongExhaustion_at_real_eq_ofReal G Λ p n
+    have := (Complex.continuous_ofReal.tendsto _).comp (hp_eta ▸ hreal' p.h hph)
+    refine Filter.Tendsto.congr (fun n => (hcast n).symm) ?_
+    simpa [Function.comp_def] using this
+  obtain ⟨U, hUo, hKU, hUdom, σ, hσ, g, hgd, hgconv, _hgval⟩ :=
+    freeEnergyComplexAlongExhaustion_posReal_globalBranch_holomorphicExtension_of_tendsto
+      G Λ p hBED hrealp hβ hJ hK hKsub hpK
+  refine ⟨U, hUo, hKU, hUdom, σ, hσ, g, hgd, hgconv, ?_⟩
+  intro x hx hxU
   have hconv := hgconv (x : ℂ) hxU
   have hseq : ∀ m, globalBranchStage G Λ (p.J : ℂ) (p.β : ℂ) (p.h : ℂ) (σ m) (x : ℂ)
       = ((freeEnergyAlongExhaustion G Λ ⟨p.J, x, p.β⟩ (σ m) : ℝ) : ℂ) := by
@@ -319,8 +330,7 @@ theorem
   have hreal : Filter.Tendsto
       (fun m => freeEnergyAlongExhaustion G Λ ⟨p.J, x, p.β⟩ (σ m))
       Filter.atTop (nhds (freeEnergyInfinite G Λ ⟨p.J, x, p.β⟩)) :=
-    (freeEnergyAlongExhaustion_tendsto_of_disjointTowerHypotheses G Λ _ hBED
-      (hd' x hx)).comp hσ.tendsto_atTop
+    (hreal' x hx).comp hσ.tendsto_atTop
   have hcast : Filter.Tendsto
       (fun m => ((freeEnergyAlongExhaustion G Λ ⟨p.J, x, p.β⟩ (σ m) : ℝ) : ℂ))
       Filter.atTop (nhds ((freeEnergyInfinite G Λ ⟨p.J, x, p.β⟩ : ℝ) : ℂ)) :=
@@ -330,6 +340,36 @@ theorem
       Filter.atTop (nhds (g (x : ℂ))) := by
     refine Filter.Tendsto.congr (fun m => hseq m) hconv
   exact tendsto_nhds_unique hconv' hcast
+
+/-- **Real-axis-identified compact patch (disjoint tower form)**: the field-uniform real
+convergence input is supplied by the disjoint-tower Fekete theorem. -/
+theorem
+    freeEnergyComplexAlongExhaustion_posReal_globalBranch_holomorphicExtension_realAxis_of_isCompact
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    [∀ n, Nonempty (↑(Λ.volume n) : Type _)]
+    (p : IsingParams ℝ)
+    (hBED : BoundedEdgeDensity G Λ)
+    (hd' : ∀ x : ℝ, 0 < x → DisjointTowerHypotheses G Λ ⟨p.J, x, p.β⟩)
+    (hβ : 0 < p.β) (hJ : 0 < p.J)
+    {K : Set ℂ}
+    (hK : IsCompact K)
+    (hKsub : K ⊆ IsingModel.leeYangDomain)
+    (hpK : (p.h : ℂ) ∈ K) :
+    ∃ U : Set ℂ, IsOpen U ∧ K ⊆ U ∧ U ⊆ IsingModel.leeYangDomain ∧
+      ∃ σ : ℕ → ℕ, StrictMono σ ∧
+        ∃ g : ℂ → ℂ,
+          DifferentiableOn ℂ g U ∧
+          (∀ z ∈ U, Filter.Tendsto
+            (fun m => globalBranchStage G Λ (p.J : ℂ) (p.β : ℂ) (p.h : ℂ) (σ m) z)
+            Filter.atTop (nhds (g z))) ∧
+          ∀ x : ℝ, 0 < x → (x : ℂ) ∈ U →
+            g (x : ℂ) = ((freeEnergyInfinite G Λ ⟨p.J, x, p.β⟩ : ℝ) : ℂ) :=
+  freeEnergyComplexAlongExhaustion_posReal_globalBranch_holomorphicExtension_realAxis_of_tendsto
+    G Λ p hBED
+    (fun x hx => freeEnergyAlongExhaustion_tendsto_of_disjointTowerHypotheses G Λ _ hBED
+      (hd' x hx))
+    hβ hJ hK hKsub hpK
 
 end Ambient
 
