@@ -271,3 +271,4 @@ import IsingModel.TransferMatrix.InfiniteVolumeOneDSusceptibility
 import IsingModel.TransferMatrix.InfiniteVolumeOneDMass
 
 import IsingModel.AmbientComplexAnalyticity.AscoliData.Constructors.AnalyticSideConditions
+import IsingModel.AmbientComplexAnalyticity.Basic.BranchBounds
