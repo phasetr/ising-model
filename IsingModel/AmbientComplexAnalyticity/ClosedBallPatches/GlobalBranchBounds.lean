@@ -201,6 +201,64 @@ theorem exists_uniform_norm_globalBranchStage_at
         intervalIntegral.norm_integral_le_of_norm_le_const hbound
     _ = ‖h₀ - b‖ * C := by simp
 
+/-- **Stage-uniform bound for the global branch on compacts**: the segment tube over a
+compact target is compact and stays in the convex domain, so the anchor bound plus the
+segment-integral estimate is uniform over the target. -/
+theorem exists_uniform_norm_globalBranchStage_on_isCompact
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    [∀ n, Nonempty (↑(Λ.volume n) : Type _)]
+    (hBED : BoundedEdgeDensity G Λ) {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J)
+    {b : ℂ} (hb : b ∈ IsingModel.leeYangDomain)
+    {T : Set ℂ} (hT : IsCompact T) (hTsub : T ⊆ IsingModel.leeYangDomain) :
+    ∃ B : ℝ, 0 ≤ B ∧ ∀ m, ∀ z ∈ T,
+      ‖globalBranchStage G Λ (J : ℂ) (β : ℂ) b m z‖ ≤ B := by
+  classical
+  obtain ⟨A, hA⟩ := exists_norm_freeEnergyComplexAlongExhaustion_le_leeYang_of_isCompact
+    G Λ hBED hβ hJ isCompact_singleton (Set.singleton_subset_iff.mpr hb)
+  -- the compact segment tube over the target
+  set S : Set ℂ := (fun q : ℝ × ℂ => b + (q.1 : ℂ) * (q.2 - b)) ''
+    (Set.Icc (0 : ℝ) 1 ×ˢ T) with hS
+  have hScomp : IsCompact S := by
+    rw [hS]
+    exact (isCompact_Icc.prod hT).image (by fun_prop)
+  have hSsub : S ⊆ IsingModel.leeYangDomain := by
+    rw [hS]
+    rintro x ⟨⟨t, z⟩, ⟨ht, hz⟩, rfl⟩
+    exact IsingModel.segmentPoint_mem IsingModel.convex_leeYangDomain hb (hTsub hz) ht
+  obtain ⟨C, hC0, hC⟩ :=
+    exists_uniform_norm_globalLogDerivStage_on_isCompact G Λ hBED hβ hJ hScomp hSsub
+  -- the displacement is bounded on the compact target
+  obtain ⟨R₀, hR₀⟩ := hT.exists_bound_of_continuousOn
+    ((continuous_id.sub continuous_const).continuousOn (s := T))
+  set R : ℝ := max R₀ 0 with hRdef
+  have hR : ∀ z ∈ T, ‖z - b‖ ≤ R := fun z hz =>
+    le_trans (hR₀ z hz) (le_max_left _ _)
+  have hR0 : 0 ≤ R := le_max_right _ _
+  refine ⟨(A + Real.pi) + R * C, ?_, ?_⟩
+  · have hA0 : 0 ≤ A + Real.pi :=
+      le_trans (norm_nonneg _) (hA 0 b (Set.mem_singleton b))
+    positivity
+  intro m z hz
+  rw [globalBranchStage]
+  refine le_trans (norm_add_le _ _) (add_le_add (hA m b (Set.mem_singleton b)) ?_)
+  rw [segmentPrimitive]
+  have hbound : ∀ t ∈ Set.uIoc (0 : ℝ) 1,
+      ‖(z - b) * globalLogDerivStage G Λ (J : ℂ) (β : ℂ) m (b + (t : ℂ) * (z - b))‖
+        ≤ R * C := by
+    intro t ht
+    rw [Set.uIoc_of_le zero_le_one] at ht
+    have hmem : b + (t : ℂ) * (z - b) ∈ S := by
+      rw [hS]
+      exact ⟨(t, z), ⟨⟨le_of_lt ht.1, ht.2⟩, hz⟩, rfl⟩
+    rw [norm_mul]
+    exact mul_le_mul (hR z hz) (hC m _ hmem) (norm_nonneg _) hR0
+  calc ‖∫ t in (0 : ℝ)..1,
+        (z - b) * globalLogDerivStage G Λ (J : ℂ) (β : ℂ) m (b + (t : ℂ) * (z - b))‖
+      ≤ R * C * |1 - 0| :=
+        intervalIntegral.norm_integral_le_of_norm_le_const hbound
+    _ = R * C := by simp
+
 end Ambient
 
 end IsingModel
