@@ -7623,6 +7623,38 @@ Glimm--Jaffe, \emph{Quantum Physics}, 2nd ed., \S 4.6, Proposition 4.6.1,
 p.~68.
 \end{theorem}
 
+\begin{theorem}[Toward GJ \S 4.6 Thm 4.6.2: the overlap-only positive-real
+endpoint; PR \#3902]
+Composing the supplied Ascoli inputs reduces the conditional Vitali pipeline for
+GJ Theorem 4.6.2 to a single analytic hypothesis. Define \emph{eventual branch
+overlap} (\texttt{LeeYangAllStageBranchData.OverlapEventually}): for every pair
+of Lee--Yang centres $h_0, h_1$ the selected stage branches eventually agree on
+$B(h_0, r(h_0)) \cap B(h_1, r(h_1))$. Halving the radii preserves the predicate
+(\texttt{OverlapEventually.half}; the halved intersection is contained in the
+original one). For positive real ferromagnetic parameters and a compact target
+$K$ inside the Lee--Yang domain containing the physical field: construct the
+closed-ball all-stage branch data, pass to its half-radius restriction (the
+exposed witness), and extract the finite cover geometry by compactness. The
+stage-uniform Borel--Carath\'eodory bound of PR \#3900 lands exactly on the full
+selected balls of the halved data (the halved radius is definitionally $r/2$
+with unchanged branch family), so the closedness-free closure-carrier
+constructor of PR \#3901 (equicontinuity derived per PR \#3899) produces the
+relative-compactness data from the bound and the (halved) overlap alone
+(\texttt{RangeRelCompactCOpenData.ofHalfUniformBoundOverlap}). The established
+relative-compactness patch then yields the cover limit family and a function
+$g$ holomorphic on $K$ with $g(h) = f_\infty$
+(\texttt{freeEnergyComplexAlongExhaustion\_closedBallUniformBoundOverlap\_patch},
+\texttt{\_of\_isCompact}). Headline:
+\texttt{freeEnergyComplexAlongExhaustion\_posRealUniformBoundOverlap\_patch\_of\_isCompact}
+exposes $\exists\, \text{data}, \exists\, \text{geometry}$ such that
+\emph{eventual overlap alone} implies the patch conclusion, and the consumer
+corollary
+\texttt{freeEnergyComplexAlongExhaustion\_posRealOverlap\_holomorphicExtension\_of\_isCompact}
+returns the holomorphic extension with the infinite-volume free-energy value at
+the physical field. Reference: Glimm--Jaffe, \emph{Quantum Physics}, 2nd ed.,
+\S 4.6, Theorem 4.6.2, pp.~68--70.
+\end{theorem}
+
 \begin{theorem}[Toward GJ \S 4.6 Thm 4.6.2: closure-carrier Arzel\`a--Ascoli
 handoffs; PR \#3901]
 The range-image closedness input of the Ascoli data is unnecessary on the closure-carrier
