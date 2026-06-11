@@ -7623,6 +7623,32 @@ Glimm--Jaffe, \emph{Quantum Physics}, 2nd ed., \S 4.6, Proposition 4.6.1,
 p.~68.
 \end{theorem}
 
+\begin{theorem}[Toward GJ \S 4.3 Theorem 4.3.1: fourfold duplicate-variable
+infrastructure; PR \#3907]
+On the sixteen-point fourfold single-site Ising space
+$(\xi, \chi, \xi', \chi') \in \{\pm1\}^4$, the Hadamard variables
+$u_1 = \xi{+}\chi{+}\xi'{+}\chi'$, $u_2 = \xi{+}\chi{-}\xi'{-}\chi'$,
+$u_3 = \xi{-}\chi{+}\xi'{-}\chi'$, $u_4 = -\xi{+}\chi{+}\xi'{-}\chi'$
+(the sign of $u_4$ fixed so that the generic sign patterns form the even
+subgroup) have non-negative joint moments
+(\texttt{siteMoment\_nonneg}) — the Ising replacement of Glimm--Jaffe's
+$\varphi^4$ single-site computation (4.3.6): the sixteen points split into
+eight aligned points $u = \pm 4 e_r$, contributing $(1 + (-1)^e)$ pair sums
+against non-negative bases, and eight generic points $u = 2s$ with
+$s_1s_2s_3s_4 = +1$, whose character sum factorises as
+$\tfrac12\bigl(\prod_i (1 + (-1)^{e_i}) + \prod_i (1 - (-1)^{e_i})\bigr)$ —
+manifestly non-negative with no parity case analysis. The fourfold system
+(four independent copies with product weight) has $Z_4 = Z^4$ and the
+factorisation $\langle F(\xi)G(\chi)H(\xi')K(\chi')\rangle_4 = \langle
+F\rangle\langle G\rangle\langle H\rangle\langle K\rangle$
+(\texttt{quadExpectation\_factor}); the site-indexed Hadamard variables and
+their \texttt{Finset} products are the objects of Theorem 4.3.1, toward
+discharging the \texttt{lebowitz\_four}/\texttt{lebowitz\_third}/%
+\texttt{lebowitz\_inductive} axioms (Issue \#3906). Reference:
+Glimm--Jaffe, \emph{Quantum Physics}, 2nd ed., \S 4.3, Theorem 4.3.1,
+pp.~59--61; J.~L. Lebowitz, Comm.\ Math.\ Phys.\ 35 (1974).
+\end{theorem}
+
 \begin{theorem}[GJ \S 4.6 Theorem 4.6.2: analyticity of the infinite-volume
 free energy; PR \#3905]
 For positive real ferromagnetic parameters ($0 < \beta$, $0 < J$) with bounded
