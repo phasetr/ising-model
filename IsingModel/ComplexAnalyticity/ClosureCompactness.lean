@@ -47,4 +47,60 @@ theorem isCompact_closure_toFun_image_complex_of_norm_le
     (fun f hf x => by
       simpa [Metric.mem_closedBall, dist_eq_norm] using hnorm f hf x)
 
+/-- **The pointwise image of an equicontinuous family of continuous maps is equicontinuous as a
+set**: re-index along representatives. -/
+theorem set_equicontinuous_toFun_image
+    {X : Type*} [TopologicalSpace X] {S : Set C(X, ℂ)}
+    (hSeq : Equicontinuous ((↑) : S → X → ℂ)) :
+    (ContinuousMap.toFun '' S).Equicontinuous := by
+  classical
+  have hcomp := hSeq.comp
+    (fun a : ContinuousMap.toFun '' S => (⟨a.2.choose, a.2.choose_spec.1⟩ : S))
+  have heq : (((↑) : S → X → ℂ) ∘
+      fun a : ContinuousMap.toFun '' S => (⟨a.2.choose, a.2.choose_spec.1⟩ : S))
+      = ((↑) : ContinuousMap.toFun '' S → X → ℂ) := by
+    funext a
+    simp only [Function.comp_apply]
+    exact a.2.choose_spec.2
+  rwa [heq] at hcomp
+
+/-- **Members of the closure of the pointwise image are continuous**: the closure is
+equicontinuous, and members of an equicontinuous set are continuous. -/
+theorem continuous_of_mem_closure_toFun_image
+    {X : Type*} [TopologicalSpace X] {S : Set C(X, ℂ)}
+    (hSeq : Equicontinuous ((↑) : S → X → ℂ))
+    {g : X → ℂ} (hg : g ∈ closure (ContinuousMap.toFun '' S)) :
+    Continuous g :=
+  (set_equicontinuous_toFun_image hSeq).closure.continuous ⟨g, hg⟩
+
+/-- **The closure carrier projects exactly onto the closure**: the pointwise image of
+`toFun ⁻¹' closure (toFun '' S)` is `closure (toFun '' S)` — surjectivity holds because every
+member of the closure is continuous and lifts to a `ContinuousMap`. -/
+theorem toFun_image_preimage_closure_eq
+    {X : Type*} [TopologicalSpace X] {S : Set C(X, ℂ)}
+    (hSeq : Equicontinuous ((↑) : S → X → ℂ)) :
+    ContinuousMap.toFun '' (ContinuousMap.toFun ⁻¹' closure (ContinuousMap.toFun '' S))
+      = closure (ContinuousMap.toFun '' S) := by
+  apply Set.Subset.antisymm
+  · exact Set.image_preimage_subset _ _
+  · intro g hg
+    exact ⟨⟨g, continuous_of_mem_closure_toFun_image hSeq hg⟩, hg, rfl⟩
+
+/-- **Compact-open compactness of the closure carrier** (no closedness input): with pointwise
+norm bounds and equicontinuity, the set of continuous maps whose underlying function lies in
+the closure of the pointwise image is compact in the compact-open topology. -/
+theorem isCompact_closureCarrier_compactOpen_complex_of_norm_le_equicontinuous
+    {X : Type*} [TopologicalSpace X] {S : Set C(X, ℂ)} (R : X → ℝ)
+    (hnorm : ∀ f ∈ S, ∀ x, ‖f x‖ ≤ R x)
+    (hSeq : Equicontinuous ((↑) : S → X → ℂ)) :
+    IsCompact (ContinuousMap.toFun ⁻¹' closure (ContinuousMap.toFun '' S) : Set C(X, ℂ)) := by
+  refine ArzelaAscoli.isCompact_of_equicontinuous _ ?_ ?_
+  · rw [toFun_image_preimage_closure_eq hSeq]
+    exact isCompact_closure_toFun_image_complex_of_norm_le R hnorm
+  · have hcl := (set_equicontinuous_toFun_image hSeq).closure
+    have hcomp := hcl.comp
+      (fun f : (ContinuousMap.toFun ⁻¹' closure (ContinuousMap.toFun '' S) : Set C(X, ℂ)) =>
+        (⟨(f : C(X, ℂ)), f.2⟩ : closure (ContinuousMap.toFun '' S)))
+    exact hcomp
+
 end IsingModel
