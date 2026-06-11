@@ -23,6 +23,8 @@ namespace IsingModel
 
 namespace Lebowitz
 
+open scoped Nat
+
 variable {ι : Type*} [DecidableEq ι] [Fintype ι]
 
 /-- The fourfold configuration space as site-indexed single-site quadruples. -/
@@ -97,6 +99,90 @@ theorem HasNonnegUMoments.mul_uMonomial {f : QuadConfig ι → ℝ}
     rw [← mul_assoc, uMonomial_mul]
   simp_rw [hsummand]
   exact hf (k + k') (l + l') (m + m') (n + n')
+
+omit [DecidableEq ι] in
+/-- Powers of u-monomials scale the exponents. -/
+theorem uMonomial_pow (k l m n : ι → ℕ) (v : QuadConfig ι) (j : ℕ) :
+    uMonomial k l m n v ^ j = uMonomial (j • k) (j • l) (j • m) (j • n) v := by
+  unfold uMonomial
+  rw [← Finset.prod_pow]
+  refine Finset.prod_congr rfl fun i _ => ?_
+  simp only [Pi.smul_apply, smul_eq_mul]
+  rw [mul_pow, mul_pow, mul_pow, ← pow_mul, ← pow_mul, ← pow_mul, ← pow_mul]
+  ring_nf
+
+/-- Interchange of a finite sum with a `tsum` of summable series (with the summability of
+the partial sums). -/
+theorem sum_tsum_swap {γ : Type*} (s : Finset γ) (f : γ → ℕ → ℝ)
+    (hf : ∀ c ∈ s, Summable (f c)) :
+    Summable (fun j => ∑ c ∈ s, f c j) ∧
+      ∑ c ∈ s, ∑' j, f c j = ∑' j, ∑ c ∈ s, f c j := by
+  classical
+  induction s using Finset.induction with
+  | empty => exact ⟨by simp [summable_zero], by simp⟩
+  | @insert x s' hx ih =>
+    have hsum' : ∀ c ∈ s', Summable (f c) := fun c hc =>
+      hf c (Finset.mem_insert_of_mem hc)
+    obtain ⟨ihs, ihe⟩ := ih hsum'
+    have hx_summ := hf x (Finset.mem_insert_self x s')
+    constructor
+    · have : (fun j => ∑ c ∈ insert x s', f c j)
+          = fun j => f x j + ∑ c ∈ s', f c j := by
+        funext j
+        rw [Finset.sum_insert hx]
+      rw [this]
+      exact hx_summ.add ihs
+    · rw [Finset.sum_insert hx, ihe, ← Summable.tsum_add hx_summ ihs]
+      refine tsum_congr fun j => ?_
+      rw [Finset.sum_insert hx]
+
+/-- **Exponential closure of the u-moment invariant**: multiplying by
+`exp(K · uMonomial)` with `K ≥ 0` preserves non-negative u-moments — the per-term reduction
+of GJ's ferromagnetic expansion of the fourfold weight. -/
+theorem HasNonnegUMoments.mul_exp {f : QuadConfig ι → ℝ}
+    (hf : HasNonnegUMoments f) {K : ℝ} (hK : 0 ≤ K) (k₀ l₀ m₀ n₀ : ι → ℕ) :
+    HasNonnegUMoments fun v => Real.exp (K * uMonomial k₀ l₀ m₀ n₀ v) * f v := by
+  intro k l m n
+  have hexp : ∀ v : QuadConfig ι,
+      Real.exp (K * uMonomial k₀ l₀ m₀ n₀ v)
+        = ∑' j : ℕ, (K * uMonomial k₀ l₀ m₀ n₀ v) ^ j / (j ! : ℝ) := by
+    intro v
+    rw [Real.exp_eq_exp_ℝ, NormedSpace.exp_eq_tsum_div]
+  have hsummand : ∀ v : QuadConfig ι,
+      uMonomial k l m n v * (Real.exp (K * uMonomial k₀ l₀ m₀ n₀ v) * f v)
+        = ∑' j : ℕ, K ^ j / (j ! : ℝ) *
+            (uMonomial (k + j • k₀) (l + j • l₀) (m + j • m₀) (n + j • n₀) v * f v) := by
+    intro v
+    rw [hexp v, ← tsum_mul_right, ← tsum_mul_left]
+    refine tsum_congr fun j => ?_
+    rw [mul_pow, uMonomial_pow]
+    have hre : uMonomial k l m n v *
+        (K ^ j * uMonomial (j • k₀) (j • l₀) (j • m₀) (j • n₀) v / (j ! : ℝ) * f v)
+        = K ^ j / (j ! : ℝ) *
+          (uMonomial k l m n v * uMonomial (j • k₀) (j • l₀) (j • m₀) (j • n₀) v * f v) := by
+      ring
+    rw [hre, uMonomial_mul]
+  simp_rw [hsummand]
+  have hsummable : ∀ v ∈ (Finset.univ : Finset (QuadConfig ι)),
+      Summable fun j : ℕ => K ^ j / (j ! : ℝ) *
+        (uMonomial (k + j • k₀) (l + j • l₀) (m + j • m₀) (n + j • n₀) v * f v) := by
+    intro v _
+    have hsumm : Summable fun j : ℕ =>
+        (K * uMonomial k₀ l₀ m₀ n₀ v) ^ j / (j ! : ℝ) :=
+      Real.summable_pow_div_factorial _
+    have heq : (fun j : ℕ => K ^ j / (j ! : ℝ) *
+        (uMonomial (k + j • k₀) (l + j • l₀) (m + j • m₀) (n + j • n₀) v * f v))
+        = fun j : ℕ => uMonomial k l m n v *
+            ((K * uMonomial k₀ l₀ m₀ n₀ v) ^ j / (j ! : ℝ)) * f v := by
+      funext j
+      rw [mul_pow, uMonomial_pow, ← uMonomial_mul]
+      ring
+    rw [heq]
+    exact (hsumm.mul_left _).mul_right _
+  rw [(sum_tsum_swap Finset.univ _ hsummable).2]
+  refine tsum_nonneg fun j => ?_
+  rw [← Finset.mul_sum]
+  exact mul_nonneg (by positivity) (hf _ _ _ _)
 
 end Lebowitz
 
