@@ -7623,6 +7623,27 @@ Glimm--Jaffe, \emph{Quantum Physics}, 2nd ed., \S 4.6, Proposition 4.6.1,
 p.~68.
 \end{theorem}
 
+\begin{theorem}[GJ \S 4.3 Corollary 4.3.2: the Lebowitz $t/q$ inequalities;
+PR \#3908]
+For ferromagnetic Ising parameters, with the unnormalised doubled variables
+$t_i = \xi_i + \chi_i$, $q_i = \xi_i - \chi_i$ (GJ's $\sqrt2$ factors are
+positive scalars), the three once-subtracted inequalities hold:
+$0 \le \langle t^A t^B\rangle - \langle t^A\rangle\langle t^B\rangle$,
+$0 \le \langle q^A q^B\rangle - \langle q^A\rangle\langle q^B\rangle$,
+$0 \le \langle t^A\rangle\langle q^B\rangle - \langle t^A q^B\rangle$
+(\texttt{cor\_4\_3\_2\_tt}/\texttt{\_qq}/\texttt{\_tq}). Each difference
+lifts through the pair factorisation $\langle F(\xi,\chi)G(\xi',\chi')
+\rangle_4 = \langle F\rangle_2\langle G\rangle_2$ to a fourfold expectation
+of an all-plus factor times a once-subtracted bracket; the inverse rotation
+$t = (u_1+u_2)/2$, $q = (u_3-u_4)/2$, $q' = (u_3+u_4)/2$ (matching the
+even-subgroup $u_4$ orientation) and the \texttt{Finset.prod\_add} subset
+expansions give the double sum with coefficients $2^{-|A|-|B|}(1 -
+(-1)^{|B\setminus T|}) \ge 0$ — GJ's ferromagnicity of the brackets — and
+the exponent-level Theorem 4.3.1 makes every term non-negative. Reference:
+Glimm--Jaffe, \emph{Quantum Physics}, 2nd ed., \S 4.3, Corollary 4.3.2,
+p.~60.
+\end{theorem}
+
 \begin{theorem}[Toward GJ \S 4.3 Theorem 4.3.1: fourfold duplicate-variable
 infrastructure; PR \#3907]
 On the sixteen-point fourfold single-site Ising space
