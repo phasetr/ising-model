@@ -1,5 +1,6 @@
 import IsingModel.Concrete.CubicTiling
 import IsingModel.Concrete.LatticeGraphCorrelation.PartitionFreeEnergySuperadditivity
+import IsingModel.Concrete.LatticeGraphCorrelation.TranslationShiftsVaddFinset
 import IsingModel.AmbientLatticeSumGeFerromagnetic
 
 /-!
@@ -52,6 +53,28 @@ theorem log_partitionFunctionΛ_latticeGraph_biUnion_super_additive
           exact add_le_add le_rfl hih
       _ ≤ Real.log (partitionFunctionΛ (latticeGraph d) (B a ∪ I.biUnion B) p) :=
           log_partitionFunctionΛ_latticeGraph_disjUnion_super_additive d hd p hf
+
+/-- **Tiling lower bound for `log Z` on cubes** (ferromagnetic): the cube of radius
+`(2r+1)M + r` contains `(2M+1)^d` disjoint translates of the radius-`r` cube, so
+`(2M+1)^d · log Z_{B_r} ≤ log Z_{B_{(2r+1)M+r}}`. -/
+theorem log_partitionFunctionΛ_cubicBox_tiling_le (d r M : ℕ) (p : IsingParams ℝ)
+    (hf : Ferromagnetic p) :
+    ((2 * M + 1 : ℕ) ^ d : ℝ)
+        * Real.log (partitionFunctionΛ (latticeGraph d) (cubicBox d r) p)
+      ≤ Real.log (partitionFunctionΛ (latticeGraph d)
+          (cubicBox d ((2 * r + 1) * M + r)) p) := by
+  have hsum := log_partitionFunctionΛ_latticeGraph_biUnion_super_additive
+    (cubicBox d M) (cubicTile d r)
+    (fun i _ j _ hij => cubicTile_disjoint hij) p hf
+  have hterm : ∀ k ∈ cubicBox d M,
+      Real.log (partitionFunctionΛ (latticeGraph d) (cubicTile d r k) p)
+        = Real.log (partitionFunctionΛ (latticeGraph d) (cubicBox d r) p) := by
+    intro k _
+    exact log_partitionFunctionΛ_latticeGraph_vaddFinset_eq d (cubicTileCenter r k)
+      (cubicBox d r) p
+  rw [Finset.sum_congr rfl hterm, Finset.sum_const, card_cubicBox, nsmul_eq_mul] at hsum
+  rw [partitionFunctionΛ_latticeGraph_congr_finset d (biUnion_cubicTile d r M) p] at hsum
+  exact_mod_cast hsum
 
 end Ambient
 
