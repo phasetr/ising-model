@@ -125,6 +125,82 @@ theorem norm_branchFamily_sub_freeEnergy_le_on_half (G : SimpleGraph V) (Λ : Ex
         add_le_add (norm_branchFamily_le_on_half G Λ data h₀ hA0 hA m hz)
           (hA m z hzball)
 
+/-- **Half-radius restriction of all-stage branch data**: halving every selected radius keeps
+all fields by restriction. -/
+noncomputable def LeeYangAllStageBranchData.half {G : SimpleGraph V} {Λ : Exhaustion V}
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet] {J β : ℂ}
+    (data : LeeYangAllStageBranchData G Λ J β) :
+    LeeYangAllStageBranchData G Λ J β where
+  radius h₀ := data.radius h₀ / 2
+  radius_pos h₀ := by have := data.radius_pos h₀; linarith
+  ball_subset h₀ :=
+    (Metric.ball_subset_ball (by have := data.radius_pos h₀; linarith)).trans
+      (data.ball_subset h₀)
+  branchFamily := data.branchFamily
+  branch_spec h₀ n :=
+    ⟨(data.branch_spec h₀ n).1.mono
+        (Metric.ball_subset_ball (by have := data.radius_pos h₀; linarith)),
+      fun z hz => (data.branch_spec h₀ n).2 z
+        (Metric.ball_subset_ball (by have := data.radius_pos h₀; linarith) hz)⟩
+
+/-- **Half-radius restriction of pointwise-normalised data**: the branch family is unchanged,
+so the centre normalisation persists. -/
+noncomputable def LeeYangPointwiseNormalisedAllStageBranchData.half {G : SimpleGraph V}
+    {Λ : Exhaustion V} [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet] {J β : ℂ}
+    (data : LeeYangPointwiseNormalisedAllStageBranchData G Λ J β) :
+    LeeYangPointwiseNormalisedAllStageBranchData G Λ J β where
+  branchData := data.branchData.half
+  centre_normalized := data.centre_normalized
+
+/-- **Half-radius restriction of closed-ball data**: the halved closed balls remain inside the
+domain. -/
+noncomputable def LeeYangClosedBallPointwiseNormalisedAllStageBranchData.half
+    {G : SimpleGraph V} {Λ : Exhaustion V}
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet] {J β : ℂ}
+    (closedData : LeeYangClosedBallPointwiseNormalisedAllStageBranchData G Λ J β) :
+    LeeYangClosedBallPointwiseNormalisedAllStageBranchData G Λ J β where
+  data := closedData.data.half
+  closedBall_subset h₀ :=
+    (Metric.closedBall_subset_closedBall
+        (by have := closedData.data.branchData.radius_pos h₀; change _ / 2 ≤ _; linarith)).trans
+      (closedData.closedBall_subset h₀)
+
+/-- **Unconditional stage-uniform branch bound on the halved data's balls**: the free-energy
+norm bound on the original closed ball (unconditional for positive real ferromagnetic
+parameters) feeds the Borel–Carathéodory half-radius estimate, giving a bound on the *full*
+selected ball of the halved data. -/
+theorem exists_uniform_branchFamily_bound_half (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    [∀ n, Nonempty (↑(Λ.volume n) : Type _)]
+    (hBED : BoundedEdgeDensity G Λ) {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J)
+    (closedData : LeeYangClosedBallPointwiseNormalisedAllStageBranchData
+      G Λ (J : ℂ) (β : ℂ))
+    (h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain}) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ m, ∀ z ∈ Metric.ball (h₀ : ℂ)
+        (closedData.data.branchData.radius h₀ / 2),
+      ‖closedData.data.branchData.branchFamily h₀ m z‖ ≤ C
+      ∧ ‖closedData.data.branchData.branchFamily h₀ m z
+          - freeEnergyComplexAlongExhaustion G Λ (J : ℂ) z (β : ℂ) m‖ ≤ 2 * C := by
+  obtain ⟨C₀, hC₀⟩ := exists_norm_freeEnergyComplexAlongExhaustion_le_leeYang_of_isCompact
+    G Λ hBED hβ hJ (isCompact_closedBall (h₀ : ℂ) (closedData.data.branchData.radius h₀))
+    (closedData.closedBall_subset h₀)
+  set A : ℝ := max (C₀ + Real.pi) 0 with hAdef
+  have hA0 : 0 ≤ A := le_max_right _ _
+  have hA : ∀ m, ∀ z ∈ Metric.ball (h₀ : ℂ) (closedData.data.branchData.radius h₀),
+      ‖freeEnergyComplexAlongExhaustion G Λ (J : ℂ) z (β : ℂ) m‖ ≤ A := by
+    intro m z hz
+    exact le_trans (hC₀ m z (Metric.ball_subset_closedBall hz)) (le_max_left _ _)
+  refine ⟨2 * (A + 1) + 3 * A, by linarith, ?_⟩
+  intro m z hz
+  have hzc : z ∈ Metric.closedBall (h₀ : ℂ)
+      (closedData.data.branchData.radius h₀ / 2) := Metric.ball_subset_closedBall hz
+  refine ⟨norm_branchFamily_le_on_half G Λ closedData.data h₀ hA0 hA m hzc, ?_⟩
+  have hdev := norm_branchFamily_sub_freeEnergy_le_on_half G Λ closedData.data h₀ hA0 hA m hzc
+  calc ‖closedData.data.branchData.branchFamily h₀ m z
+        - freeEnergyComplexAlongExhaustion G Λ (J : ℂ) z (β : ℂ) m‖
+      ≤ (2 * (A + 1) + 3 * A) + A := hdev
+    _ ≤ 2 * (2 * (A + 1) + 3 * A) := by linarith
+
 end Ambient
 
 end IsingModel
