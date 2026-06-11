@@ -1,6 +1,7 @@
 import Mathlib.Analysis.Complex.Schwarz
 import Mathlib.Analysis.Calculus.MeanValue
 import Mathlib.Analysis.Analytic.Basic
+import Mathlib.Topology.MetricSpace.Equicontinuity
 
 /-!
 # Equicontinuity of uniformly bounded analytic families (GJ §4.6 Thm 4.6.2)
@@ -59,5 +60,49 @@ theorem norm_sub_le_of_analyticOnNhd_of_bounded {f : ℂ → ℂ} {c : ℂ} {R C
     rw [mem_ball] at hξ
     linarith [hξ.le]
   exact norm_deriv_le_of_analyticOnNhd_of_bounded hf hb (by positivity) hξsub
+
+/-- **Pointwise equicontinuity of a uniformly bounded analytic family on a ball**: the uniform
+local Lipschitz estimate gives equicontinuity at every interior point, with no boundary-uniform
+control. Stated on the subtype ball, matching the Ascoli-data range carriers. -/
+theorem equicontinuous_restrict_of_analyticOnNhd_of_bounded {ι : Type*} {F : ι → ℂ → ℂ}
+    {c : ℂ} {R C : ℝ} (hC : 0 ≤ C)
+    (hf : ∀ i, AnalyticOnNhd ℂ (F i) (ball c R))
+    (hb : ∀ i, ∀ z ∈ ball c R, ‖F i z‖ ≤ C) :
+    Equicontinuous (fun i (z : ball c R) => F i (z : ℂ)) := by
+  intro x₀
+  rw [Metric.equicontinuousAt_iff]
+  intro ε hε
+  obtain ⟨z₀, hz₀⟩ := x₀
+  set ρ : ℝ := R - dist z₀ c with hρdef
+  have hz₀' : dist z₀ c < R := mem_ball.mp hz₀
+  have hρ : 0 < ρ := by rw [hρdef]; linarith
+  have hsubρ : ball z₀ ρ ⊆ ball c R := by
+    intro w hw
+    rw [mem_ball] at hw ⊢
+    calc dist w c ≤ dist w z₀ + dist z₀ c := dist_triangle _ _ _
+      _ < ρ + dist z₀ c := by linarith
+      _ = R := by rw [hρdef]; ring
+  set M : ℝ := 2 * C / (ρ / 2) with hMdef
+  have hM0 : 0 ≤ M := by positivity
+  refine ⟨min (ρ / 2) (ε / (M + 1)), by positivity, ?_⟩
+  intro x hx i
+  have hd : dist (x : ℂ) z₀ < min (ρ / 2) (ε / (M + 1)) := by
+    rw [Subtype.dist_eq] at hx
+    exact hx
+  have hxball : (x : ℂ) ∈ ball z₀ (ρ / 2) :=
+    mem_ball.mpr (lt_of_lt_of_le hd (min_le_left _ _))
+  have hz₀ball : z₀ ∈ ball z₀ (ρ / 2) := mem_ball_self (by positivity)
+  have hlip := norm_sub_le_of_analyticOnNhd_of_bounded (hf i) (hb i) hρ hsubρ
+    hxball hz₀ball
+  rw [dist_eq_norm]
+  calc ‖F i z₀ - F i (x : ℂ)‖ ≤ M * ‖z₀ - (x : ℂ)‖ := hlip
+    _ ≤ M * (ε / (M + 1)) := by
+        refine mul_le_mul_of_nonneg_left ?_ hM0
+        rw [← dist_eq_norm, dist_comm]
+        exact le_of_lt (lt_of_lt_of_le hd (min_le_right _ _))
+    _ < ε := by
+        rw [mul_div_assoc']
+        rw [div_lt_iff₀ (by positivity : (0 : ℝ) < M + 1)]
+        nlinarith
 
 end IsingModel
