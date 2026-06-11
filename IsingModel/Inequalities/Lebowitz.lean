@@ -1,5 +1,7 @@
 import IsingModel.Inequalities.Lebowitz.FourfoldSite
 import IsingModel.Inequalities.Lebowitz.FourfoldSystem
+import IsingModel.Inequalities.Lebowitz.UMomentExpansion
+import IsingModel.Inequalities.Lebowitz.Theorem431
 
 /-!
 # Lebowitz duplicate-variable inequalities (GJ §4.3)

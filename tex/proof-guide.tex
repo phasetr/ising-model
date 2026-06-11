@@ -7644,7 +7644,18 @@ F\rangle\langle G\rangle\langle H\rangle\langle K\rangle$
 (\texttt{quadExpectation\_factor}); the site-indexed Hadamard variables and
 their \texttt{Finset} products are the objects of Theorem 4.3.1, toward
 discharging the \texttt{lebowitz\_four}/\texttt{lebowitz\_third}/%
-\texttt{lebowitz\_inductive} axioms (Issue \#3906). Reference:
+\texttt{lebowitz\_inductive} axioms (Issue \#3906). \textbf{Theorem 4.3.1
+(Ising form) is proven} (\texttt{theorem\_4\_3\_1}): per edge the Hadamard
+orthogonality (4.3.5) gives $\xi_i\xi_j + \chi_i\chi_j + \xi'_i\xi'_j +
+\chi'_i\chi'_j = \tfrac14\sum_r u_r(i)u_r(j)$ and the field term is
+$h\,u_1(i)$, so the fourfold weight is $\exp$ of a ferromagnetic sum of
+joint $u$-monomials (\texttt{quadWeight\_eq\_exp}); the exponential-of-sum
+closure (\texttt{hasNonnegUMoments\_exp\_sum\_mul}, built on the series
+closure \texttt{HasNonnegUMoments.mul\_exp} — the $\cosh/\sinh$ closed form
+of the GKS route does not apply to the multi-valued Hadamard variables)
+reduces all joint moments to the single-site positivity, and dividing by
+$Z^4 > 0$ yields $0 \le \langle u_1^A u_2^B u_3^C u_4^D\rangle_4$ for
+ferromagnetic parameters. Reference:
 Glimm--Jaffe, \emph{Quantum Physics}, 2nd ed., \S 4.3, Theorem 4.3.1,
 pp.~59--61; J.~L. Lebowitz, Comm.\ Math.\ Phys.\ 35 (1974).
 \end{theorem}
