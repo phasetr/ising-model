@@ -6,6 +6,7 @@ import IsingModel.SumGraph
 import IsingModel.SumModel
 import IsingModel.Inequalities.NonnegCorrelations
 import IsingModel.Inequalities.GKS
+import IsingModel.Inequalities.Lebowitz
 import IsingModel.Inequalities.FKG
 import IsingModel.Inequalities.WeightedExpectation
 import IsingModel.Inequalities.FKGGeneral
