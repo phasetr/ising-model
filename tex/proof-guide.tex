@@ -7623,6 +7623,29 @@ Glimm--Jaffe, \emph{Quantum Physics}, 2nd ed., \S 4.6, Proposition 4.6.1,
 p.~68.
 \end{theorem}
 
+\begin{theorem}[Toward GJ \S 4.6 Thm 4.6.2: stage-uniform branch and deviation
+bounds on half-radius balls via Borel--Carath\'eodory; PR \#3900]
+Let $f_m$ be the centre-normalised stage branches on a selected Lee--Yang ball $B(c,r)$ with
+$\overline B(c,r)$ inside the Lee--Yang domain, and let $A$ be the unconditional compact
+free-energy bound on $\overline B(c,r)$
+(\texttt{exists\_norm\_freeEnergyComplexAlongExhaustion\_le\_leeYang\_of\_isCompact}).
+The exponential identity gives $\operatorname{Re} f_m = \log\|Z_m\|/N_m
+= \operatorname{Re} F_m$ (\texttt{re\_eq\_log\_norm\_div\_of\_exp\_eq},
+\texttt{re\_freeEnergyComplexAlongExhaustion\_eq}), hence
+$\operatorname{Re} f_m \le A$ on $B(c,r)$. The centred Borel--Carath\'eodory estimate
+(\texttt{norm\_le\_of\_re\_le\_on\_half}, from mathlib's
+\texttt{Complex.borelCaratheodory}) yields, on $\overline B(c, r/2)$,
+$\|f_m\| \le 2(A+1) + 3A =: C$ stage-uniformly (the centre value is $F_m(c)$, of norm
+$\le A$), and the triangle inequality bounds the deviation
+$\|f_m - F_m\| \le C + A \le 2C$. Halving the selected radii
+(\texttt{LeeYangAllStageBranchData.half} and variants) exposes these bounds on the *full*
+selected balls of the halved data, so for positive real ferromagnetic parameters
+\texttt{exists\_uniform\_branchFamily\_bound\_half} supplies, unconditionally, the
+\texttt{hbound}/\texttt{hdev} inputs of the PR \#3899 Ascoli constructor.
+Reference: Glimm--Jaffe, \emph{Quantum Physics}, 2nd ed., \S 4.6, Theorem 4.6.2,
+pp.~68--70.
+\end{theorem}
+
 \begin{theorem}[Toward GJ \S 4.6 Thm 4.6.2: Ascoli side conditions for the
 closed-ball branch-deviation data from a stage-uniform bound; PR \#3899]
 Let the stage branches $f_m$ of a Lee--Yang all-stage branch family be analytic on a selected
