@@ -1,6 +1,11 @@
 import IsingModel.Concrete.CubicTiling
 import IsingModel.Concrete.LatticeGraphCorrelation.PartitionFreeEnergySuperadditivity
+import IsingModel.Concrete.LatticeGraphCorrelation.PartitionFreeEnergySuperadditivityDisjointUnion
+import IsingModel.Concrete.LatticeGraphCorrelation.PartitionFreeEnergySuperadditivityFE
 import IsingModel.Concrete.LatticeGraphCorrelation.TranslationShiftsVaddFinset
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
+import IsingModel.AmbientLattice.SpecialCases.FreeEnergy
+import IsingModel.AmbientLatticeSumFreeEnergy
 import IsingModel.AmbientLatticeSumGeFerromagnetic
 
 /-!
@@ -143,6 +148,128 @@ theorem tendsto_cubicBox_innerRadius_card_ratio (d r : ℕ) :
   rw [card_cubicBox, card_cubicBox]
   push_cast
   rw [div_pow]
+
+/-- **Cubes are nonempty**: the origin belongs to every `cubicBox`. -/
+theorem cubicBox_nonempty (d n : ℕ) : (cubicBox d n).Nonempty := by
+  refine ⟨0, ?_⟩
+  rw [mem_cubicBox]
+  intro i
+  simp
+
+/-- **`log Z` is monotone along nested cubes** (ferromagnetic): enlarge by the disjoint
+difference. -/
+theorem log_partitionFunctionΛ_cubicBox_mono (d : ℕ) {m n : ℕ} (h : m ≤ n)
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    Real.log (partitionFunctionΛ (latticeGraph d) (cubicBox d m) p)
+      ≤ Real.log (partitionFunctionΛ (latticeGraph d) (cubicBox d n) p) := by
+  classical
+  have hsub : cubicBox d m ⊆ cubicBox d n := cubicBox_mono d h
+  calc Real.log (partitionFunctionΛ (latticeGraph d) (cubicBox d m) p)
+      ≤ Real.log (partitionFunctionΛ (latticeGraph d)
+          (cubicBox d m ∪ (cubicBox d n \ cubicBox d m)) p) :=
+        log_partitionFunctionΛ_latticeGraph_le_of_disjoint_union d
+          Finset.disjoint_sdiff p hf
+    _ = Real.log (partitionFunctionΛ (latticeGraph d) (cubicBox d n) p) := by
+        rw [partitionFunctionΛ_latticeGraph_congr_finset d
+          (Finset.union_sdiff_of_subset hsub) p]
+
+/-- **Stage lower bound by the tiling ratio**: for `r ≤ N`,
+`(|B_{innerRadius}|/|B_N|) · f_r ≤ f_N`. -/
+theorem ratio_mul_freeEnergyΛ_cubicBox_le (d r : ℕ) (p : IsingParams ℝ)
+    (hf : Ferromagnetic p) {N : ℕ} (hrN : r ≤ N) :
+    ((cubicBox d (innerRadius r N)).card : ℝ) / ((cubicBox d N).card : ℝ)
+        * freeEnergyΛ (latticeGraph d) (cubicBox d r) p
+      ≤ freeEnergyΛ (latticeGraph d) (cubicBox d N) p := by
+  have hcardpos : (0 : ℝ) < ((cubicBox d N).card : ℝ) := by
+    rw [card_cubicBox]; positivity
+  rw [div_mul_eq_mul_div, div_le_iff₀ hcardpos]
+  have hfr := card_mul_freeEnergyΛ_latticeGraph_eq_log_partitionFunctionΛ_of_nonempty d
+    (cubicBox_nonempty d r) p
+  have hfN := card_mul_freeEnergyΛ_latticeGraph_eq_log_partitionFunctionΛ_of_nonempty d
+    (cubicBox_nonempty d N) p
+  have hcards : ((cubicBox d (innerRadius r N)).card : ℝ)
+      = ((2 * ((N - r) / (2 * r + 1)) + 1 : ℕ) ^ d : ℝ) * ((cubicBox d r).card : ℝ) := by
+    rw [card_cubicBox, card_cubicBox]
+    push_cast
+    rw [← mul_pow]
+    congr 1
+    unfold innerRadius
+    push_cast
+    ring
+  calc ((cubicBox d (innerRadius r N)).card : ℝ)
+        * freeEnergyΛ (latticeGraph d) (cubicBox d r) p
+      = ((2 * ((N - r) / (2 * r + 1)) + 1 : ℕ) ^ d : ℝ)
+          * (((cubicBox d r).card : ℝ)
+            * freeEnergyΛ (latticeGraph d) (cubicBox d r) p) := by
+        rw [hcards]; ring
+    _ = ((2 * ((N - r) / (2 * r + 1)) + 1 : ℕ) ^ d : ℝ)
+          * Real.log (partitionFunctionΛ (latticeGraph d) (cubicBox d r) p) := by
+        rw [hfr]
+    _ ≤ Real.log (partitionFunctionΛ (latticeGraph d)
+          (cubicBox d (innerRadius r N)) p) :=
+        log_partitionFunctionΛ_cubicBox_tiling_le d r ((N - r) / (2 * r + 1)) p hf
+    _ ≤ Real.log (partitionFunctionΛ (latticeGraph d) (cubicBox d N) p) :=
+        log_partitionFunctionΛ_cubicBox_mono d (innerRadius_le hrN) p hf
+    _ = freeEnergyΛ (latticeGraph d) (cubicBox d N) p * ((cubicBox d N).card : ℝ) := by
+        rw [← hfN]; ring
+
+/-- **Every stage value bounds the `liminf` from below**: the tiling ratio tends to `1`, so the
+stage bound survives the limit. -/
+theorem freeEnergyΛ_cubicBox_le_liminf (d r : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    freeEnergyΛ (latticeGraph d) (cubicBox d r) p
+      ≤ Filter.liminf
+          (freeEnergyAlongExhaustion (latticeGraph d) (cubicExhaustion d) p)
+          Filter.atTop := by
+  have hratio := (tendsto_cubicBox_innerRadius_card_ratio d r).mul_const
+    (freeEnergyΛ (latticeGraph d) (cubicBox d r) p)
+  rw [one_mul] at hratio
+  have hev : ∀ᶠ N in Filter.atTop,
+      ((cubicBox d (innerRadius r N)).card : ℝ) / ((cubicBox d N).card : ℝ)
+          * freeEnergyΛ (latticeGraph d) (cubicBox d r) p
+        ≤ freeEnergyAlongExhaustion (latticeGraph d) (cubicExhaustion d) p N := by
+    filter_upwards [Filter.eventually_ge_atTop r] with N hN
+    exact ratio_mul_freeEnergyΛ_cubicBox_le d r p hf hN
+  have hbdd : Filter.IsBoundedUnder (· ≤ ·) Filter.atTop
+      (freeEnergyAlongExhaustion (latticeGraph d) (cubicExhaustion d) p) := by
+    obtain ⟨c, hc⟩ := BddAbove_freeEnergyAlongExhaustion_range (latticeGraph d)
+      (cubicExhaustion d) p (boundedEdgeDensity_latticeGraph_cubicExhaustion d)
+    exact ⟨c, Filter.eventually_map.mpr
+      (Filter.Eventually.of_forall (fun n => hc (Set.mem_range_self n)))⟩
+  calc freeEnergyΛ (latticeGraph d) (cubicBox d r) p
+      = Filter.liminf (fun N : ℕ =>
+          ((cubicBox d (innerRadius r N)).card : ℝ) / ((cubicBox d N).card : ℝ)
+            * freeEnergyΛ (latticeGraph d) (cubicBox d r) p) Filter.atTop :=
+        hratio.liminf_eq.symm
+    _ ≤ _ := Filter.liminf_le_liminf hev hratio.isBoundedUnder_ge hbdd.isCoboundedUnder_ge
+
+/-- **GJ Proposition 4.6.1 on the cubic exhaustion** (unconditional, ferromagnetic): the
+free-energy density along the cubic boxes of `ℤ^d` converges to the infinite-volume free
+energy. Every stage bounds the `liminf` from below (tiling), hence
+`limsup ≤ liminf`, and `freeEnergyInfinite` is the `limsup` by definition. -/
+theorem freeEnergyAlongExhaustion_latticeGraph_cubicExhaustion_tendsto (d : ℕ)
+    (p : IsingParams ℝ) (hf : Ferromagnetic p) :
+    Filter.Tendsto (freeEnergyAlongExhaustion (latticeGraph d) (cubicExhaustion d) p)
+      Filter.atTop
+      (nhds (freeEnergyInfinite (latticeGraph d) (cubicExhaustion d) p)) := by
+  have hbddA : Filter.IsBoundedUnder (· ≤ ·) Filter.atTop
+      (freeEnergyAlongExhaustion (latticeGraph d) (cubicExhaustion d) p) := by
+    obtain ⟨c, hc⟩ := BddAbove_freeEnergyAlongExhaustion_range (latticeGraph d)
+      (cubicExhaustion d) p (boundedEdgeDensity_latticeGraph_cubicExhaustion d)
+    exact ⟨c, Filter.eventually_map.mpr
+      (Filter.Eventually.of_forall (fun n => hc (Set.mem_range_self n)))⟩
+  have hbddB : Filter.IsBoundedUnder (· ≥ ·) Filter.atTop
+      (freeEnergyAlongExhaustion (latticeGraph d) (cubicExhaustion d) p) :=
+    ⟨0, Filter.eventually_map.mpr (Filter.Eventually.of_forall (fun n =>
+      freeEnergyAlongExhaustion_nonneg_of_ferromagnetic (latticeGraph d)
+        (cubicExhaustion d) p hf (cubicBox_nonempty d n)))⟩
+  have hkey : Filter.limsup
+      (freeEnergyAlongExhaustion (latticeGraph d) (cubicExhaustion d) p) Filter.atTop
+      ≤ Filter.liminf
+          (freeEnergyAlongExhaustion (latticeGraph d) (cubicExhaustion d) p)
+          Filter.atTop := by
+    apply Filter.limsup_le_of_le hbddB.isCoboundedUnder_le
+    exact Filter.Eventually.of_forall (fun r => freeEnergyΛ_cubicBox_le_liminf d r p hf)
+  exact tendsto_of_le_liminf_of_limsup_le hkey le_rfl hbddA hbddB
 
 end Ambient
 
