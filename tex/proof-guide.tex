@@ -7623,6 +7623,34 @@ Glimm--Jaffe, \emph{Quantum Physics}, 2nd ed., \S 4.6, Proposition 4.6.1,
 p.~68.
 \end{theorem}
 
+\begin{theorem}[Toward GJ \S 4.6 Thm 4.6.2: the global branch on the convex
+Lee--Yang cone; PR \#3903]
+The eventual-overlap input of the overlap-only endpoint is satisfiable by a
+\emph{global} per-stage branch. First, a segment-primitive lemma with no
+Goursat-type input: on a convex open $U \subseteq \mathbb C$ with $b \in U$,
+for $f$ differentiable on $U$ with continuous derivative, the primitive
+$g(z) = \int_0^1 (z-b) f(b + t(z-b))\,dt$ (\texttt{segmentPrimitive})
+satisfies $g' = f$ on $U$ (\texttt{hasDerivAt\_segmentPrimitive}): the
+$z$-derivative of the integrand equals
+$\frac{d}{dt}[t\,f(b+t(z-b))]$, so differentiation under the integral sign
+(dominated on a compact tube around the segment, mathlib's
+\texttt{hasDerivAt\_integral\_of\_dominated\_loc\_of\_deriv\_le}) followed by
+the fundamental theorem of calculus yields $f(z)$; mathlib lacks
+triangle-Goursat/simply-connected primitives, and this route avoids them.
+Applied to the Lee--Yang cone $\{|\mathrm{Im}\,h| < \mathrm{Re}\,h\}$
+(convex) with $f = Z_m'/(N_m Z_m)$ (holomorphic there by Lee--Yang
+non-vanishing, \texttt{globalLogDerivStage}), the anchored primitive
+$g_m = F_m(b) + \int$ (\texttt{globalBranchStage}) is holomorphic on the
+whole cone with $g_m(b) = F_m(b)$ and $\exp(N_m g_m) = Z_m$
+(\texttt{exp\_card\_mul\_globalBranchStage}: the ratio $\exp(N_m g_m)/Z_m$
+has zero derivative, is constant on the convex domain, and equals $1$ at $b$
+by the principal-logarithm identity). Choosing this single function as the
+selected branch at every Lee--Yang centre produces all-stage branch data
+satisfying the eventual-overlap predicate trivially
+(\texttt{exists\_globalLeeYangAllStageBranchData}). Reference: Glimm--Jaffe,
+\emph{Quantum Physics}, 2nd ed., \S 4.6, Theorem 4.6.2, pp.~68--70.
+\end{theorem}
+
 \begin{theorem}[Toward GJ \S 4.6 Thm 4.6.2: the overlap-only positive-real
 endpoint; PR \#3902]
 Composing the supplied Ascoli inputs reduces the conditional Vitali pipeline for
