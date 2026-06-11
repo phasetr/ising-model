@@ -13,7 +13,8 @@ points (`u = 2s` with sign patterns forming the subgroup `{s : s₁s₂s₃s₄ 
 character sum factorises as
 `½·(∏(1+(−1)^{eᵢ}) + ∏(1−(−1)^{eᵢ}))` — manifestly non-negative.
 
-* `signQuad` etc. — the four Hadamard variables on the quadruple site space.
+* `s₁`–`s₄`, `u₁`–`u₄` — the copy signs and the four Hadamard variables on the quadruple
+  site space.
 * `siteMoment` — the joint moment `∑_v u₁^k u₂^l u₃^m u₄^n`.
 * `siteMoment_eq` — the closed sixteen-term form.
 * `siteMoment_nonneg` — **the Ising (4.3.6)**: all joint moments are non-negative.
@@ -50,10 +51,14 @@ noncomputable def u₁ (v : SiteQuad) : ℝ := s₁ v + s₂ v + s₃ v + s₄ v
 noncomputable def u₂ (v : SiteQuad) : ℝ := s₁ v + s₂ v - s₃ v - s₄ v
 /-- Third Hadamard variable: `u₃ = ξ − χ + ξ' − χ'` (GJ's `2γ`). -/
 noncomputable def u₃ (v : SiteQuad) : ℝ := s₁ v - s₂ v + s₃ v - s₄ v
-/-- Fourth Hadamard variable: `u₄ = −ξ + χ + ξ' − χ'` (GJ's `2δ`; the sign convention is
-fixed so that the eight generic sign patterns form the **even** subgroup
-`{s : s₁s₂s₃s₄ = +1}` — with the opposite sign the patterns are odd and the moment
-positivity fails, e.g. for exponents `(1,1,1,1)`). -/
+/-- Fourth Hadamard variable: `u₄ = −ξ + χ + ξ' − χ'`. This is the **negative** of GJ's
+`2δ = ξ − χ − ξ' + χ'` from (4.3.2): the sign is flipped so that the eight generic sign
+patterns form the **even** subgroup `{s : s₁s₂s₃s₄ = +1}`, which is what makes the joint
+moments non-negative for the discrete Ising single-site measure (with GJ's original sign the
+patterns are odd and e.g. the `(1,1,1,1)` moment is negative — consistent with the known
+negativity of the all-odd discrete case noted in `GHS/GHSInequality.lean`). Theorem 4.3.1 as
+formalised is the statement for these sign-flipped variables; downstream corollaries use the
+brackets `q' ± q`, which match this orientation. -/
 noncomputable def u₄ (v : SiteQuad) : ℝ := -s₁ v + s₂ v + s₃ v - s₄ v
 
 /-- **Single-site joint moment** of the four Hadamard variables. -/

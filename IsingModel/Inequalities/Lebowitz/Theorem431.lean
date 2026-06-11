@@ -11,8 +11,8 @@ gives `ξᵢξⱼ + χᵢχⱼ + ξ'ᵢξ'ⱼ + χ'ᵢχ'ⱼ = ¼ ∑_r u_r(i)u_
 
 * `uMonomial_single` / `uMonomial_pair` — u-monomials with one- and two-site exponents.
 * `uProd_eq_uMonomial` — `Finset` products as joint u-monomials.
-* `quadEdgeSum_eq` — the per-edge Hadamard orthogonality identity (4.3.5).
-* `quadWeight_eq_prod_exp` — the ferromagnetic factorisation of the fourfold weight.
+* `uEdge` / `quadWeight_eq_exp` — the per-edge Hadamard quantities and the ferromagnetic
+  exponent identity (4.3.5).
 * `hasNonnegUMoments_quadWeight` — the invariant holds for the fourfold weight.
 * `theorem_4_3_1` — **GJ Theorem 4.3.1 (Ising form)**.
 
@@ -133,12 +133,13 @@ noncomputable def uEdge (r : Fin 4) (e : Sym2 ι) (v : QuadConfig ι) : ℝ :=
 /-- **Exponential-of-sum closure (existential witnesses)**: multiplying an HNU function by
 `exp(∑ₜ gₜ)` preserves non-negative u-moments when every `gₜ` is a non-negative multiple of a
 joint u-monomial. -/
-theorem hasNonnegUMoments_exp_sum_mul {T : Type*} [DecidableEq T] (s : Finset T)
+theorem hasNonnegUMoments_exp_sum_mul {T : Type*} (s : Finset T)
     (g : T → QuadConfig ι → ℝ)
     (hg : ∀ t ∈ s, ∃ (K : ℝ) (k₀ l₀ m₀ n₀ : ι → ℕ), 0 ≤ K ∧
       ∀ v, g t v = K * uMonomial k₀ l₀ m₀ n₀ v)
     {f : QuadConfig ι → ℝ} (hf : HasNonnegUMoments f) :
     HasNonnegUMoments fun v => Real.exp (∑ t ∈ s, g t v) * f v := by
+  classical
   induction s using Finset.induction with
   | empty => simpa using hf
   | @insert x s' hx ih =>
@@ -208,10 +209,12 @@ theorem quadWeight_eq_exp (G : SimpleGraph ι) [Fintype G.edgeSet]
   rw [hsplit, hsplit']
   ring
 
+omit [DecidableEq ι] in
 /-- Every per-edge Hadamard product is a joint u-monomial (distinct endpoints). -/
 theorem uEdge_eq_uMonomial {i j : ι} (hij : i ≠ j) (r : Fin 4) :
     ∃ k₀ l₀ m₀ n₀ : ι → ℕ, ∀ v : QuadConfig ι,
       uEdge r s(i, j) v = uMonomial k₀ l₀ m₀ n₀ v := by
+  classical
   fin_cases r
   · exact ⟨_, _, _, _, fun v => (uMonomial_pair₁ hij v).symm⟩
   · exact ⟨_, _, _, _, fun v => (uMonomial_pair₂ hij v).symm⟩
@@ -241,8 +244,8 @@ theorem hasNonnegUMoments_quadWeight (G : SimpleGraph ι) [Fintype G.edgeSet]
   · -- edge terms are non-negative multiples of pair u-monomials
     rintro ⟨e, r⟩ her
     have he : e ∈ G.edgeFinset := (Finset.mem_product.mp her).1
-    show ∃ (K : ℝ) (k₀ l₀ m₀ n₀ : ι → ℕ), 0 ≤ K ∧
-      ∀ v, p.β * p.J / 4 * uEdge r e v = K * uMonomial k₀ l₀ m₀ n₀ v
+    suffices h : ∃ (K : ℝ) (k₀ l₀ m₀ n₀ : ι → ℕ), 0 ≤ K ∧
+        ∀ v, p.β * p.J / 4 * uEdge r e v = K * uMonomial k₀ l₀ m₀ n₀ v from h
     induction e using Sym2.ind with
     | _ i j =>
       have hadj : G.Adj i j := by
