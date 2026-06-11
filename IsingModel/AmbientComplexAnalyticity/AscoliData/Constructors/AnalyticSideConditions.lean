@@ -202,6 +202,41 @@ noncomputable def
     branchRestricted_apply G Λ closedData.data.branchData (geom.center i) m z hz
   overlap_eventually := hover
 
+/-- **Branch norm-bounded Ascoli data from a stage-uniform bound**: the norm-bounded variant of
+`ofUniformBound` — the same three derivable fields, with the pointwise `bound` taken to be the
+stage-uniform constant on each selected ball. -/
+noncomputable def
+    LeeYangPointwiseNormAllStageCompactRealBranchNormBoundedAscoliData.ofUniformBound
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (K : Set ℂ)
+    (data : LeeYangPointwiseNormalisedAllStageBranchData G Λ (p.J : ℂ) (p.β : ℂ))
+    (geom : LeeYangPointwiseNormAllStageCompactRealFinGeometry G Λ p K data)
+    (hclosed : ∀ i : Fin geom.n, IsClosed (ContinuousMap.toFun ''
+      Set.range (branchRestricted G Λ data.branchData (geom.center i))))
+    (hbound : ∀ i : Fin geom.n, ∃ C : ℝ, 0 ≤ C ∧ ∀ m, ∀ z ∈ Metric.ball
+        ((geom.center i : ℂ)) (data.branchData.radius (geom.center i)),
+        ‖data.branchData.branchFamily (geom.center i) m z‖ ≤ C)
+    (hover : ∀ i j : Fin geom.n, ∀ᶠ m in Filter.atTop,
+      Set.EqOn
+        (data.branchData.branchFamily (geom.center i) m)
+        (data.branchData.branchFamily (geom.center j) m)
+        (Metric.ball ((geom.center i : ℂ)) (data.branchData.radius (geom.center i))
+          ∩ Metric.ball ((geom.center j : ℂ))
+            (data.branchData.radius (geom.center j)))) :
+    LeeYangPointwiseNormAllStageCompactRealBranchNormBoundedAscoliData
+      G Λ p K data geom where
+  restricted i := branchRestricted G Λ data.branchData (geom.center i)
+  bound i := fun _ => (hbound i).choose
+  toFun_image_closed := hclosed
+  branch_norm_le i m z hz := (hbound i).choose_spec.2 m z hz
+  equicontinuous i :=
+    equicontinuous_branchRestricted_range G Λ data.branchData (geom.center i)
+      (hbound i).choose_spec.1 (hbound i).choose_spec.2
+  restrict_eq i m z hz :=
+    branchRestricted_apply G Λ data.branchData (geom.center i) m z hz
+  overlap_eventually := hover
+
 end Ambient
 
 end IsingModel
