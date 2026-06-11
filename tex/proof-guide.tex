@@ -7623,13 +7623,16 @@ Glimm--Jaffe, \emph{Quantum Physics}, 2nd ed., \S 4.6, Proposition 4.6.1,
 p.~68.
 \end{theorem}
 
-\begin{theorem}[GJ \S 4.6 Thm 4.6.2, compact-target form — unconditional;
-PR \#3904]
+\begin{theorem}[Toward GJ \S 4.6 Thm 4.6.2: the unconditional subsequential
+compact-target patch; PR \#3904]
 For positive real ferromagnetic parameters ($0 < \beta$, $0 < J$) with bounded
 edge density and the disjoint-tower hypotheses, and any compact
 $K \subseteq \{|\mathrm{Im}\,h| < \mathrm{Re}\,h\}$ containing the physical
-field $h$, there exists $g$ holomorphic on $K$ with $g(h) = f_\infty(\beta,
-J, h)$ — \emph{no analytic side hypotheses remain}
+field $h$, there exist an open $U$ with $K \subseteq U$ inside the cone, a
+strictly monotone stage subsequence $\sigma$, and $g$ holomorphic on $U$ which
+is the pointwise limit on $U$ of the subsequenced global branch logarithms
+$g_{\sigma(m)}$ (locally uniformly on each cover ball) with
+$g(h) = f_\infty(\beta, J, h)$ — \emph{no analytic side hypotheses remain}
 (\texttt{freeEnergyComplexAlongExhaustion\_posReal\_globalBranch\_holomorphicExtension\_of\_isCompact},
 with the $\mathbb Z^d$ wrapper \texttt{\_isCompact\_latticeGraph}).
 Construction: (i) any branch with the exponential identity has derivative
@@ -7654,8 +7657,9 @@ on $K$; (vi) the identification $g(h) = f_\infty$ follows at the real centre
 from the anchored normalisation $g_m(h) = F_m(h)$ and the established
 real-centre subsequence identification. Remaining toward the full GJ
 statement: identification along the real axis (not only at the single
-physical field) and globalisation to one function on the whole Lee--Yang
-domain. Reference: Glimm--Jaffe, \emph{Quantum Physics}, 2nd ed., \S 4.6,
+physical field), globalisation to one function on the whole Lee--Yang
+domain, and the full-sequence upgrade (a consequence of the previous two by
+uniqueness of limits). Reference: Glimm--Jaffe, \emph{Quantum Physics}, 2nd ed., \S 4.6,
 Theorem 4.6.2, pp.~68--70.
 \end{theorem}
 

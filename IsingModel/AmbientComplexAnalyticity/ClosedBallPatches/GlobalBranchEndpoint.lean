@@ -20,9 +20,10 @@ Theorem 4.6.2 for positive real ferromagnetic parameters.
   target with one ball centred at the real field.
 * `freeEnergyComplexAlongExhaustion_posReal_globalBranch_holomorphicExtension_of_isCompact` —
   headline: positive real ferromagnetic parameters, bounded edge density, disjoint-tower
-  hypotheses, and a compact Lee-Yang target containing the physical field produce a function
-  holomorphic on the target whose value at the physical field is the infinite-volume free
-  energy. **No analytic side hypotheses remain.**
+  hypotheses, and a compact Lee-Yang target containing the physical field produce an open
+  neighbourhood of the target, a stage subsequence, and a function holomorphic there which is
+  the pointwise limit of the subsequenced global branch logarithms and whose value at the
+  physical field is the infinite-volume free energy. **No analytic side hypotheses remain.**
 
 References: Glimm–Jaffe, *Quantum Physics*, 2nd ed. (Springer, 1987), §4.6,
 Theorem 4.6.2, pp. 68–70.
@@ -180,16 +181,21 @@ theorem exists_finset_cover_of_isCompact_allStageBranchData_real
   rcases Set.mem_iUnion₂.mp (ht hzK) with ⟨h₀, h₀_mem, hz_ball⟩
   exact Set.mem_iUnion₂.mpr ⟨h₀, Finset.mem_insert_of_mem h₀_mem, hz_ball⟩
 
-set_option maxHeartbeats 800000 in
-/-- **GJ Theorem 4.6.2, compact-target form (unconditional)**: for positive real
-ferromagnetic parameters with bounded edge density and disjoint-tower hypotheses, and a
-compact `K ⊆ leeYangDomain` containing the physical field, there is a function holomorphic on
-`K` whose value at the physical field is the infinite-volume free energy. The proof covers
-`K` by the halved global-branch balls, manufactures the compact-open carriers from the
-closure-carrier compactness (stage-uniform global-branch bounds plus derived equicontinuity),
-extracts a diagonal subsequence with patched holomorphic limit by the unnormalised chain
-(overlap is trivial — every centre selects the same global function), and identifies the
-value at the real centre through the anchored normalisation `g(p.h) = F(p.h)`. -/
+/-- **Unconditional subsequential compact-target patch toward GJ Theorem 4.6.2**: for
+positive real ferromagnetic parameters with bounded edge density and disjoint-tower
+hypotheses, and a compact `K ⊆ leeYangDomain` containing the physical field, there are an
+open `U` with `K ⊆ U ⊆ leeYangDomain`, a strictly monotone stage subsequence `σ`, and a
+function `g` holomorphic on `U` which is the pointwise limit on `U` of the subsequenced
+global branch logarithms (locally uniformly on each cover ball) and whose value at the
+physical field is the infinite-volume free energy — with no analytic side hypotheses. The
+proof covers `K` by the halved global-branch balls, manufactures the compact-open carriers
+from the closure-carrier compactness (stage-uniform global-branch bounds plus derived
+equicontinuity), extracts a diagonal subsequence with patched holomorphic limit by the
+unnormalised chain (overlap is trivial — every centre selects the same global function), and
+identifies the value at the real centre through the anchored normalisation `g(p.h) = F(p.h)`.
+Toward the full Theorem 4.6.2 statement there remain the real-axis identification and the
+domain-wide globalisation (which also upgrade the subsequence to the full sequence by
+uniqueness of limits). -/
 theorem freeEnergyComplexAlongExhaustion_posReal_globalBranch_holomorphicExtension_of_isCompact
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
@@ -202,9 +208,14 @@ theorem freeEnergyComplexAlongExhaustion_posReal_globalBranch_holomorphicExtensi
     (hK : IsCompact K)
     (hKsub : K ⊆ IsingModel.leeYangDomain)
     (hpK : (p.h : ℂ) ∈ K) :
-    ∃ g : ℂ → ℂ,
-      DifferentiableOn ℂ g K ∧
-      g (p.h : ℂ) = ((freeEnergyInfinite G Λ p : ℝ) : ℂ) := by
+    ∃ U : Set ℂ, IsOpen U ∧ K ⊆ U ∧ U ⊆ IsingModel.leeYangDomain ∧
+      ∃ σ : ℕ → ℕ, StrictMono σ ∧
+        ∃ g : ℂ → ℂ,
+          DifferentiableOn ℂ g U ∧
+          (∀ z ∈ U, Filter.Tendsto
+            (fun m => globalBranchStage G Λ (p.J : ℂ) (p.β : ℂ) (p.h : ℂ) (σ m) z)
+            Filter.atTop (nhds (g z))) ∧
+          g (p.h : ℂ) = ((freeEnergyInfinite G Λ p : ℝ) : ℂ) := by
   classical
   have hb : (p.h : ℂ) ∈ IsingModel.leeYangDomain := hKsub hpK
   obtain ⟨data₀, hdataEq, _hover⟩ :=
@@ -332,14 +343,31 @@ theorem freeEnergyComplexAlongExhaustion_posReal_globalBranch_holomorphicExtensi
   have hid :=
     freeEnergyComplexAlongExhaustion_subseq_branchFamily_vitali_ball_identified_at_center
       G Λ p hBED hd hr₀ hσ hbranch₀ hconv₀
-  refine ⟨g, hg_diff.mono hKcover, ?_⟩
-  have hmem₀ : (p.h : ℂ) ∈ Metric.ball
-      ((center i₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain}) : ℂ)
-      (data.radius (center i₀)) := by
-    rw [hcenter]
-    exact Metric.mem_ball_self hr₀
-  rw [hg_eq i₀ hmem₀]
-  exact hid.2
+  refine ⟨⋃ i : Fin n,
+      Metric.ball ((center i : {h : ℂ // h ∈ IsingModel.leeYangDomain}) : ℂ)
+        (data.radius (center i)),
+    isOpen_iUnion fun _ => Metric.isOpen_ball, hKcover, ?_, σ, hσ, g, hg_diff, ?_, ?_⟩
+  · -- the cover stays inside the Lee-Yang domain
+    refine Set.iUnion_subset fun i => ?_
+    exact data.ball_subset (center i)
+  · -- pointwise convergence of the subsequenced global branches to the patch
+    intro z hz
+    rcases Set.mem_iUnion.mp hz with ⟨i, hzi⟩
+    have hpt := ((hlocal i).1).tendsto_at hzi
+    rw [hg_eq i hzi]
+    have hrw : (fun m => data.branchFamily (center i) (σ m) z)
+        = fun m => globalBranchStage G Λ (p.J : ℂ) (p.β : ℂ) (p.h : ℂ) (σ m) z := by
+      funext m
+      rw [hdataEq' (center i) (σ m)]
+    rwa [hrw] at hpt
+  · -- the value at the real centre
+    have hmem₀ : (p.h : ℂ) ∈ Metric.ball
+        ((center i₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain}) : ℂ)
+        (data.radius (center i₀)) := by
+      rw [hcenter]
+      exact Metric.mem_ball_self hr₀
+    rw [hg_eq i₀ hmem₀]
+    exact hid.2
 
 end Ambient
 
