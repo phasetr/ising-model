@@ -1,5 +1,7 @@
 import IsingModel.AmbientComplexAnalyticity.CoverPatches
 import IsingModel.AmbientComplexAnalyticity.ClosedBallPatches.GlobalBranchEndpoint
+import IsingModel.AmbientComplexAnalyticity.ClosedBallPatches.GlobalBranchRealAxis
+import IsingModel.AmbientComplexAnalyticity.ClosedBallPatches.GlobalBranchGlobalisation
 import IsingModel.AmbientComplexAnalyticity.HighTempExpansion
 import IsingModel.AmbientComplexAnalyticity.VolumeUniformHZ
 
