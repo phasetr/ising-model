@@ -1,4 +1,5 @@
 import IsingModel.AmbientComplexAnalyticity.AscoliData.ClosedBallConversions
+import IsingModel.AmbientComplexAnalyticity.AscoliData.ClosureConversions
 
 /-!
 # Ambient complex analyticity Ascoli data
