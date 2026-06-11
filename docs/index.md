@@ -312,7 +312,8 @@ specifies which of the three above apply.
 | **Exhaustion-independence** | `correlationInfinite G Λ = correlationInfinite G Λ'` | `AmbientLattice.lean` | Genuine ∞-vol |
 | **Lee–Yang circle theorem** (§4.5) | Ising partition polynomial nonvanishing on polydisk | `LeeYang.lean` | Finite |
 | **Lee–Yang (graph form)** | Z ≠ 0 on polydisk for ferromagnetic graph | `FreeEnergy.lean` | Finite |
-| **φ⁴ Lebowitz** (Cor 4.3.2) | `lebowitz_third/four/inductive` | `Inequalities/GHS.lean` | Finite, axiom |
+| **Cor 4.3.2 (Lebowitz t/q inequalities, Ising)** | `cor_4_3_2_tt`/`_qq`/`_tq` — proven without axioms | `Inequalities/Lebowitz/Cor432.lean` | Finite (PR #3908) |
+| **GHS-corollary axiom wrappers** | `lebowitz_third/four/inductive` (discharge in progress — Issue #3906) | `Inequalities/GHS.lean` | Finite, axiom |
 | **Cor 4.3.3** | `U₄ ≤ 0` for `h = 0` | `Inequalities/GHS.lean` / `AmbientLattice.lean` | Finite + genuine ∞-vol (`truncated4Infinite_nonpos_h_zero`) |
 | **GHS** (Cor 4.3.4) | `⟨σᵢ;σⱼ;σₖ⟩ ≤ 0` | `Inequalities/GHS.lean` / `AmbientLattice.lean` | Finite + genuine ∞-vol (`truncated3Infinite_nonpos`) |
 | **Cor 4.3.5** | inductive `n`-point bound (`h = 0`) | `Inequalities/GHS.lean` | Finite |
