@@ -272,3 +272,4 @@ import IsingModel.TransferMatrix.InfiniteVolumeOneDMass
 
 import IsingModel.AmbientComplexAnalyticity.AscoliData.Constructors.AnalyticSideConditions
 import IsingModel.AmbientComplexAnalyticity.Basic.BranchBounds
+import IsingModel.AmbientComplexAnalyticity.Vitali.BranchUniformBounds
