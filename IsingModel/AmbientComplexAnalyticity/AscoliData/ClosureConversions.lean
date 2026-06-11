@@ -1,5 +1,6 @@
 import IsingModel.ComplexAnalyticity.ClosureCompactness
 import IsingModel.AmbientComplexAnalyticity.AscoliData.Structures.BranchLocallyBounded
+import IsingModel.AmbientComplexAnalyticity.AscoliData.Constructors.AnalyticSideConditions
 
 /-!
 # Closure-carrier conversions — relative compactness without closedness (GJ §4.6 Thm 4.6.2)
@@ -91,6 +92,46 @@ noncomputable def
   LeeYangPointwiseNormAllStageCompactRealRangeRelCompactCOpenData.ofClosureCarrier
     G Λ p K closedData.data geom ascoli.restricted ascoli.restrict_eq hbound
     ascoli.equicontinuous ascoli.overlap_eventually
+
+/-- **True closedness-free entry point**: relative-compactness data directly from closed-ball
+branch data, a stage-uniform norm bound, and overlap coherence — the restrictions, the
+restriction identity, and the equicontinuity are derived (`branchRestricted`,
+`equicontinuous_branchRestricted_range`), and the carrier is the compact closure carrier. No
+Ascoli structure (hence no `toFun_image_closed` field) is consumed or constructed. -/
+noncomputable def
+    LeeYangPointwiseNormAllStageCompactRealRangeRelCompactCOpenData.ofClosedBallUniformBound
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (K : Set ℂ)
+    (closedData : LeeYangClosedBallPointwiseNormalisedAllStageBranchData
+      G Λ (p.J : ℂ) (p.β : ℂ))
+    (geom : LeeYangPointwiseNormAllStageCompactRealFinGeometry G Λ p K closedData.data)
+    (hbound : ∀ i : Fin geom.n, ∃ C : ℝ, 0 ≤ C ∧ ∀ m, ∀ z ∈ Metric.ball
+        ((geom.center i : ℂ)) (closedData.data.branchData.radius (geom.center i)),
+        ‖closedData.data.branchData.branchFamily (geom.center i) m z‖ ≤ C)
+    (hover : ∀ i j : Fin geom.n, ∀ᶠ m in Filter.atTop,
+      Set.EqOn
+        (closedData.data.branchData.branchFamily (geom.center i) m)
+        (closedData.data.branchData.branchFamily (geom.center j) m)
+        (Metric.ball ((geom.center i : ℂ))
+            (closedData.data.branchData.radius (geom.center i))
+          ∩ Metric.ball ((geom.center j : ℂ))
+            (closedData.data.branchData.radius (geom.center j)))) :
+    LeeYangPointwiseNormAllStageCompactRealRangeRelCompactCOpenData
+      G Λ p K closedData.data geom :=
+  LeeYangPointwiseNormAllStageCompactRealRangeRelCompactCOpenData.ofClosureCarrier
+    G Λ p K closedData.data geom
+    (fun i => branchRestricted G Λ closedData.data.branchData (geom.center i))
+    (fun i m z hz =>
+      branchRestricted_apply G Λ closedData.data.branchData (geom.center i) m z hz)
+    (fun i => by
+      obtain ⟨C, _hC0, hCb⟩ := hbound i
+      exact ⟨C, fun m x => hCb m x x.2⟩)
+    (fun i => by
+      obtain ⟨C, hC0, hCb⟩ := hbound i
+      exact equicontinuous_branchRestricted_range G Λ closedData.data.branchData
+        (geom.center i) hC0 hCb)
+    hover
 
 end Ambient
 
