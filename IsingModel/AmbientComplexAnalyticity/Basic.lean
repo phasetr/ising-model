@@ -1,4 +1,5 @@
 import IsingModel.AmbientComplexAnalyticity.Basic.LeeYangBounds
+import IsingModel.AmbientComplexAnalyticity.Basic.BranchBounds
 
 /-!
 # Complex partition function / free energy along an exhaustion
