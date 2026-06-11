@@ -1791,8 +1791,10 @@ formalized**, per the full inventory above:
    `correlationAlongExhaustion_convergent` in
    `AmbientLattice.lean`, and is now covered by the §4.2 Thm 4.2.3
    row in the progress table.)*
-2. **Thm 4.6.2 (full form)**: complex analyticity of the
-   infinite-volume free energy via Vitali convergence.
+2. *(Resolved, PR #3905.)* **Thm 4.6.2 (full form)** — complex
+   analyticity of the infinite-volume free energy — is now formalized:
+   `Ambient.freeEnergyComplex_infiniteVolume_analyticOnNhd_leeYangDomain`
+   (+ the fully instantiated ℤ^d cubic form), see the §4.6 rows above.
 3. **Prop 5.4.2 genuine `+`-BC infinite-volume version**:
    `0 ≤ 1 − ⟨σᵢ⟩₊∞ ≤ exp(-cβ)` in the genuine `+`
    boundary-condition infinite-volume measure. The per-stage
