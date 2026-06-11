@@ -1739,6 +1739,7 @@ formalized**, per the full inventory above:
 
 1. **Prop 4.6.1 (free energy convergence) Fekete completion** —
    **DONE (PR #3898)**: the unconditional cubic-exhaustion convergence
+   (for ferromagnetic `p`)
    `Ambient.freeEnergyAlongExhaustion_latticeGraph_cubicExhaustion_tendsto`
    (`Concrete/CubicFreeEnergy.lean`) closes this item via the
    tiling–liminf route, with no user-supplied superadditivity or
