@@ -2,6 +2,7 @@ import Mathlib.Analysis.Complex.Schwarz
 import Mathlib.Analysis.Calculus.MeanValue
 import Mathlib.Analysis.Analytic.Basic
 import Mathlib.Topology.MetricSpace.Equicontinuity
+import IsingModel.AmbientComplexAnalyticity.AscoliData.Structures.BranchLocallyBounded
 
 /-!
 # Equicontinuity of uniformly bounded analytic families (GJ §4.6 Thm 4.6.2)
@@ -104,5 +105,103 @@ theorem equicontinuous_restrict_of_analyticOnNhd_of_bounded {ι : Type*} {F : ι
         rw [mul_div_assoc']
         rw [div_lt_iff₀ (by positivity : (0 : ℝ) < M + 1)]
         nlinarith
+
+/-- **Equicontinuity transfers to the range carrier**: the coercion family indexed by the range
+of a map into continuous maps is a re-indexing of the underlying family. -/
+theorem equicontinuous_range_coe {X : Type*} [TopologicalSpace X] {ι : Type*}
+    (Φ : ι → C(X, ℂ)) (h : Equicontinuous (fun i => (Φ i : X → ℂ))) :
+    Equicontinuous ((↑) : Set.range Φ → X → ℂ) := by
+  classical
+  have hcomp := h.comp (fun g : Set.range Φ => g.2.choose)
+  have heq : ((fun i => (Φ i : X → ℂ)) ∘ (fun g : Set.range Φ => g.2.choose))
+      = ((↑) : Set.range Φ → X → ℂ) := by
+    funext g
+    simp only [Function.comp_apply]
+    rw [g.2.choose_spec]
+  rwa [heq] at hcomp
+
+namespace Ambient
+
+variable {V : Type*} [DecidableEq V]
+
+/-- **Canonical continuous restriction of a stage branch** to its selected Lee–Yang ball: the
+branch is analytic on the ball (`branch_spec`), hence continuous, and the subtype restriction
+is a `ContinuousMap`. -/
+noncomputable def branchRestricted (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet] {J β : ℂ}
+    (data : LeeYangAllStageBranchData G Λ J β)
+    (h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain}) (m : ℕ) :
+    C(Metric.ball (h₀ : ℂ) (data.radius h₀), ℂ) :=
+  ⟨(Metric.ball (h₀ : ℂ) (data.radius h₀)).restrict (data.branchFamily h₀ m),
+    ((data.branch_spec h₀ m).1.continuousOn).restrict⟩
+
+/-- The canonical restriction agrees with the branch family. -/
+theorem branchRestricted_apply (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet] {J β : ℂ}
+    (data : LeeYangAllStageBranchData G Λ J β)
+    (h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain}) (m : ℕ) (z : ℂ)
+    (hz : z ∈ Metric.ball (h₀ : ℂ) (data.radius h₀)) :
+    data.branchFamily h₀ m z = branchRestricted G Λ data h₀ m ⟨z, hz⟩ := rfl
+
+/-- **The canonical restrictions of a stage-uniformly bounded branch family are equicontinuous
+as a range carrier**: the Schwarz/Lipschitz estimates apply to the underlying analytic family,
+and equicontinuity transfers to the range. -/
+theorem equicontinuous_branchRestricted_range (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet] {J β : ℂ}
+    (data : LeeYangAllStageBranchData G Λ J β)
+    (h₀ : {h : ℂ // h ∈ IsingModel.leeYangDomain}) {C : ℝ} (hC : 0 ≤ C)
+    (hb : ∀ m, ∀ z ∈ Metric.ball (h₀ : ℂ) (data.radius h₀),
+      ‖data.branchFamily h₀ m z‖ ≤ C) :
+    Equicontinuous ((↑) : Set.range (branchRestricted G Λ data h₀) →
+      Metric.ball (h₀ : ℂ) (data.radius h₀) → ℂ) := by
+  refine equicontinuous_range_coe _ ?_
+  exact equicontinuous_restrict_of_analyticOnNhd_of_bounded hC
+    (fun m => (data.branch_spec h₀ m).1) hb
+
+/-- **Closed-ball branch-deviation Ascoli data from a stage-uniform bound**: reduces the six
+fields of `LeeYangPointwiseNormAllStageCompactRealClosedBallBranchDeviationAscoliData` to four
+inputs — range-image closedness, the stage-uniform norm bound, the branch-deviation bound, and
+eventual overlap coherence. The continuous restrictions, the restriction identity, and the
+equicontinuity are derived from the branch analyticity and the Schwarz/Lipschitz estimates. -/
+noncomputable def
+    LeeYangPointwiseNormAllStageCompactRealClosedBallBranchDeviationAscoliData.ofUniformBound
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (K : Set ℂ)
+    (closedData : LeeYangClosedBallPointwiseNormalisedAllStageBranchData
+      G Λ (p.J : ℂ) (p.β : ℂ))
+    (geom : LeeYangPointwiseNormAllStageCompactRealFinGeometry G Λ p K closedData.data)
+    (hclosed : ∀ i : Fin geom.n, IsClosed (ContinuousMap.toFun ''
+      Set.range (branchRestricted G Λ closedData.data.branchData (geom.center i))))
+    (hbound : ∀ i : Fin geom.n, ∃ C : ℝ, 0 ≤ C ∧ ∀ m, ∀ z ∈ Metric.ball
+        ((geom.center i : ℂ)) (closedData.data.branchData.radius (geom.center i)),
+        ‖closedData.data.branchData.branchFamily (geom.center i) m z‖ ≤ C)
+    (hdev : ∀ i : Fin geom.n, ∃ D : ℝ, ∀ m z
+      (_hz : z ∈ Metric.ball ((geom.center i : ℂ))
+        (closedData.data.branchData.radius (geom.center i))),
+      ‖closedData.data.branchData.branchFamily (geom.center i) m z
+          - freeEnergyComplexAlongExhaustion G Λ (p.J : ℂ) z (p.β : ℂ) m‖ ≤ D)
+    (hover : ∀ i j : Fin geom.n, ∀ᶠ m in Filter.atTop,
+      Set.EqOn
+        (closedData.data.branchData.branchFamily (geom.center i) m)
+        (closedData.data.branchData.branchFamily (geom.center j) m)
+        (Metric.ball ((geom.center i : ℂ))
+            (closedData.data.branchData.radius (geom.center i))
+          ∩ Metric.ball ((geom.center j : ℂ))
+            (closedData.data.branchData.radius (geom.center j)))) :
+    LeeYangPointwiseNormAllStageCompactRealClosedBallBranchDeviationAscoliData
+      G Λ p K closedData geom where
+  restricted i := branchRestricted G Λ closedData.data.branchData (geom.center i)
+  toFun_image_closed := hclosed
+  branch_deviation_bound := hdev
+  equicontinuous i := by
+    obtain ⟨C, hC0, hCb⟩ := hbound i
+    exact equicontinuous_branchRestricted_range G Λ closedData.data.branchData
+      (geom.center i) hC0 hCb
+  restrict_eq i m z hz :=
+    branchRestricted_apply G Λ closedData.data.branchData (geom.center i) m z hz
+  overlap_eventually := hover
+
+end Ambient
 
 end IsingModel
