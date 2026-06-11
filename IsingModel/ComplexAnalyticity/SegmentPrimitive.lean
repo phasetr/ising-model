@@ -29,7 +29,7 @@ open Metric Set MeasureTheory intervalIntegral
 `b` to `z`, parametrised over `[0, 1]`. On a convex open set containing `b` and `z` this is a
 primitive of `f` (`hasDerivAt_segmentPrimitive`). -/
 noncomputable def segmentPrimitive (f : ℂ → ℂ) (b z : ℂ) : ℂ :=
-  ∫ t in (0:ℝ)..1, (z - b) * f (b + t * (z - b))
+  ∫ t in (0 : ℝ)..1, (z - b) * f (b + t * (z - b))
 
 /-- **Base value of the segment primitive**: at the base point the integrand vanishes. -/
 theorem segmentPrimitive_base (f : ℂ → ℂ) (b : ℂ) : segmentPrimitive f b b = 0 := by
@@ -38,7 +38,7 @@ theorem segmentPrimitive_base (f : ℂ → ℂ) (b : ℂ) : segmentPrimitive f b
 /-- **Segment points stay inside a convex set**: for `b, w` in a convex set, every point
 `b + t·(w - b)` with `t ∈ [0, 1]` lies in the set. -/
 theorem segmentPoint_mem {U : Set ℂ} (hU : Convex ℝ U) {b w : ℂ} (hb : b ∈ U) (hw : w ∈ U)
-    {t : ℝ} (ht : t ∈ Set.Icc (0:ℝ) 1) :
+    {t : ℝ} (ht : t ∈ Set.Icc (0 : ℝ) 1) :
     b + (t : ℂ) * (w - b) ∈ U := by
   have hrw : b + (t : ℂ) * (w - b) = (1 - t) • b + t • w := by
     rw [Complex.real_smul, Complex.real_smul]
@@ -62,11 +62,11 @@ theorem hasDerivAt_segmentPrimitive {U : Set ℂ} (hU : Convex ℝ U) (hUo : IsO
   -- a closed ball around `z` inside `U`
   obtain ⟨ε, hε, hball⟩ := nhds_basis_closedBall.mem_iff.mp (hUo.mem_nhds hz)
   -- segment points for parameters in the closed ball
-  have hseg : ∀ w ∈ closedBall z ε, ∀ t ∈ Set.Icc (0:ℝ) 1, b + (t : ℂ) * (w - b) ∈ U :=
+  have hseg : ∀ w ∈ closedBall z ε, ∀ t ∈ Set.Icc (0 : ℝ) 1, b + (t : ℂ) * (w - b) ∈ U :=
     fun w hw t ht => segmentPoint_mem hU hb (hball hw) ht
   -- the compact tube of all such segment points
   set T : Set ℂ :=
-    (fun p : ℝ × ℂ => b + (p.1 : ℂ) * (p.2 - b)) '' (Set.Icc (0:ℝ) 1 ×ˢ closedBall z ε)
+    (fun p : ℝ × ℂ => b + (p.1 : ℂ) * (p.2 - b)) '' (Set.Icc (0 : ℝ) 1 ×ˢ closedBall z ε)
     with hT
   have hTcomp : IsCompact T := by
     rw [hT]
@@ -75,7 +75,7 @@ theorem hasDerivAt_segmentPrimitive {U : Set ℂ} (hU : Convex ℝ U) (hUo : IsO
     rw [hT]
     rintro x ⟨⟨t, w⟩, ⟨ht, hw⟩, rfl⟩
     exact hseg w hw t ht
-  have hmemT : ∀ w ∈ closedBall z ε, ∀ t ∈ Set.Icc (0:ℝ) 1,
+  have hmemT : ∀ w ∈ closedBall z ε, ∀ t ∈ Set.Icc (0 : ℝ) 1,
       b + (t : ℂ) * (w - b) ∈ T := by
     intro w hw t ht
     rw [hT]
@@ -90,12 +90,12 @@ theorem hasDerivAt_segmentPrimitive {U : Set ℂ} (hU : Convex ℝ U) (hUo : IsO
   -- continuity of the path-composed maps in `t` on `[0, 1]`
   have hpathcont : ∀ w : ℂ, Continuous fun t : ℝ => b + (t : ℂ) * (w - b) := by
     intro w; fun_prop
-  have hFcont : ∀ w ∈ closedBall z ε, ContinuousOn (F w) (Set.Icc (0:ℝ) 1) := by
+  have hFcont : ∀ w ∈ closedBall z ε, ContinuousOn (F w) (Set.Icc (0 : ℝ) 1) := by
     intro w hw
     rw [hF]
     exact continuousOn_const.mul
       (hfc.comp (hpathcont w).continuousOn fun t ht => hseg w hw t ht)
-  have hF'cont : ∀ w ∈ closedBall z ε, ContinuousOn (F' w) (Set.Icc (0:ℝ) 1) := by
+  have hF'cont : ∀ w ∈ closedBall z ε, ContinuousOn (F' w) (Set.Icc (0 : ℝ) 1) := by
     intro w hw
     rw [hF']
     refine ContinuousOn.add
@@ -103,7 +103,7 @@ theorem hasDerivAt_segmentPrimitive {U : Set ℂ} (hU : Convex ℝ U) (hUo : IsO
     exact (Complex.continuous_ofReal.continuousOn.mul continuousOn_const).mul
       (hf'c.comp (hpathcont w).continuousOn fun t ht => hseg w hw t ht)
   have hzball : z ∈ closedBall z ε := mem_closedBall_self (le_of_lt hε)
-  have hIoc_subset : Set.uIoc (0:ℝ) 1 ⊆ Set.Icc (0:ℝ) 1 := by
+  have hIoc_subset : Set.uIoc (0 : ℝ) 1 ⊆ Set.Icc (0 : ℝ) 1 := by
     rw [Set.uIoc_of_le zero_le_one]
     exact Set.Ioc_subset_Icc_self
   -- dominated differentiation under the integral sign
@@ -119,7 +119,7 @@ theorem hasDerivAt_segmentPrimitive {U : Set ℂ} (hU : Convex ℝ U) (hUo : IsO
     (((hFcont z hzball).mono (by rw [Set.uIcc_of_le zero_le_one])).intervalIntegrable)
     (((hF'cont z hzball).mono hIoc_subset).aestronglyMeasurable measurableSet_uIoc)
     (Filter.Eventually.of_forall fun t ht w hw => by
-      have htI : t ∈ Set.Icc (0:ℝ) 1 := hIoc_subset ht
+      have htI : t ∈ Set.Icc (0 : ℝ) 1 := hIoc_subset ht
       have hp : b + (t : ℂ) * (w - b) ∈ T := hmemT w hw t htI
       have h1 : ‖f (b + (t : ℂ) * (w - b))‖ ≤ C := hC _ hp
       have h2 : ‖f' (b + (t : ℂ) * (w - b))‖ ≤ C' := hC' _ hp
@@ -151,7 +151,7 @@ theorem hasDerivAt_segmentPrimitive {U : Set ℂ} (hU : Convex ℝ U) (hUo : IsO
         _ = C + (‖z - b‖ + ε) * C' := by ring)
     (intervalIntegrable_const)
     (Filter.Eventually.of_forall fun t ht w hw => by
-      have htI : t ∈ Set.Icc (0:ℝ) 1 := hIoc_subset ht
+      have htI : t ∈ Set.Icc (0 : ℝ) 1 := hIoc_subset ht
       have hp : b + (t : ℂ) * (w - b) ∈ U := hseg w hw t htI
       -- the affine path in `w` and its derivative
       have hpath : HasDerivAt (fun w : ℂ => b + (t : ℂ) * (w - b)) (t : ℂ) w := by
@@ -165,7 +165,7 @@ theorem hasDerivAt_segmentPrimitive {U : Set ℂ} (hU : Convex ℝ U) (hUo : IsO
       simp only [id_eq]
       ring)
   -- evaluate the parametric-derivative integral by FTC
-  have hψ : ∀ t ∈ Set.uIcc (0:ℝ) 1,
+  have hψ : ∀ t ∈ Set.uIcc (0 : ℝ) 1,
       HasDerivAt (fun t : ℝ => (t : ℂ) * f (b + (t : ℂ) * (z - b))) (F' z t) t := by
     intro t ht
     rw [Set.uIcc_of_le zero_le_one] at ht
@@ -182,7 +182,7 @@ theorem hasDerivAt_segmentPrimitive {U : Set ℂ} (hU : Convex ℝ U) (hUo : IsO
     convert hreal using 1
     simp only [id_eq]
     ring
-  have hFTC : (∫ t in (0:ℝ)..1, F' z t) = f z := by
+  have hFTC : (∫ t in (0 : ℝ)..1, F' z t) = f z := by
     rw [intervalIntegral.integral_eq_sub_of_hasDerivAt hψ
       (((hF'cont z hzball).mono (by rw [Set.uIcc_of_le zero_le_one])).intervalIntegrable)]
     simp
