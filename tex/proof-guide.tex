@@ -7623,6 +7623,25 @@ Glimm--Jaffe, \emph{Quantum Physics}, 2nd ed., \S 4.6, Proposition 4.6.1,
 p.~68.
 \end{theorem}
 
+\begin{theorem}[Toward GJ \S 4.6 Thm 4.6.2: closure-carrier Arzel\`a--Ascoli
+handoffs; PR \#3901]
+The range-image closedness input of the Ascoli data is unnecessary on the closure-carrier
+route: for $S \subseteq C(X, \mathbb C)$ with pointwise norm bounds, the closure
+$\overline{\iota(S)}$ of the pointwise image is closed by definition and lies in the compact
+product of closed balls (\texttt{closure\_minimal} against the compact-hence-closed product),
+hence is compact
+(\texttt{isCompact\_closure\_toFun\_image\_complex\_of\_norm\_le}). If $S$ is
+equicontinuous, so is the closure (\texttt{Set.Equicontinuous.closure}), and its members are
+continuous; therefore the carrier $\iota^{-1}(\overline{\iota(S)})$ projects exactly onto the
+closure and is compact in the compact-open topology
+(\texttt{isCompact\_closureCarrier\_compactOpen\_complex\_of\_norm\_le\_equicontinuous},
+via mathlib's Arzel\`a--Ascoli). The relative-compactness data of the Vitali pipeline is then
+built without the closedness field
+(\texttt{RangeRelCompactCOpenData.ofClosureCarrier}, with the closed-ball branch-deviation
+wrapper consuming the PR \#3899 fields except closedness). Reference: Glimm--Jaffe,
+\emph{Quantum Physics}, 2nd ed., \S 4.6, Theorem 4.6.2, pp.~68--70.
+\end{theorem}
+
 \begin{theorem}[Toward GJ \S 4.6 Thm 4.6.2: stage-uniform branch and deviation
 bounds on half-radius balls via Borel--Carath\'eodory; PR \#3900]
 Let $f_m$ be the centre-normalised stage branches on a selected Lee--Yang ball $B(c,r)$ with
