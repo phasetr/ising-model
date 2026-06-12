@@ -162,6 +162,104 @@ theorem doubleExpectation_tProd_mul_qProd (G : SimpleGraph ι) [Fintype G.edgeSe
   refine Finset.sum_congr rfl fun T _ => ?_
   rw [doubleExpectation_const_mul, doubleExpectation_spin_term]
 
+omit [Fintype ι] in
+/-- Powerset of a pair, summed: `∑_{S ⊆ {a,b}} f S = f ∅ + f {a} + f {b} + f {a,b}`. -/
+theorem sum_powerset_pair {a b : ι} (hab : a ≠ b) (f : Finset ι → ℝ) :
+    ∑ S ∈ ({a, b} : Finset ι).powerset, f S = f ∅ + f {a} + f {b} + f {a, b} := by
+  rw [show ({a, b} : Finset ι) = insert a {b} from rfl,
+    Finset.sum_powerset_insert (by simp [hab]),
+    show ({b} : Finset ι) = insert b ∅ from rfl,
+    Finset.sum_powerset_insert (by simp),
+    Finset.sum_powerset_insert (by simp)]
+  simp only [Finset.powerset_empty, Finset.sum_singleton]
+  have h1 : insert a (∅ : Finset ι) = {a} := rfl
+  have h2 : insert b (∅ : Finset ι) = {b} := rfl
+  have h3 : insert a ({b} : Finset ι) = {a, b} := rfl
+  rw [h1, h2, h3]
+  ring
+
+omit [Fintype ι] in
+/-- Removing one element of a pair leaves the other. -/
+theorem pair_sdiff_left {a b : ι} (hab : a ≠ b) :
+    ({a, b} : Finset ι) \ {a} = {b} := by
+  ext x
+  simp only [Finset.mem_sdiff, Finset.mem_insert, Finset.mem_singleton]
+  constructor
+  · rintro ⟨hx | hx, hxa⟩
+    · exact absurd hx hxa
+    · exact hx
+  · rintro rfl
+    exact ⟨Or.inr rfl, fun h => hab h.symm⟩
+
+omit [Fintype ι] in
+/-- Removing the other element of a pair leaves the first. -/
+theorem pair_sdiff_right {a b : ι} (hab : a ≠ b) :
+    ({a, b} : Finset ι) \ {b} = {a} := by
+  ext x
+  simp only [Finset.mem_sdiff, Finset.mem_insert, Finset.mem_singleton]
+  constructor
+  · rintro ⟨hx | hx, hxb⟩
+    · exact hx
+    · exact absurd hx hxb
+  · rintro rfl
+    exact ⟨Or.inl rfl, fun h => hab h⟩
+
+/-- **The zero-field four-point Lebowitz inequality** (equivalent to `U₄ ≤ 0`):
+`⟨σ_iσ_jσ_kσ_l⟩ ≤ ⟨σ_iσ_j⟩⟨σ_kσ_l⟩ + ⟨σ_iσ_k⟩⟨σ_jσ_l⟩ + ⟨σ_iσ_l⟩⟨σ_jσ_k⟩` for ferromagnetic
+parameters at `h = 0`. This is the corrected replacement of the former `lebowitz_four`
+axiom: the axiom's stated form specialised at `h = 0` to the false bound
+`U₄ ≤ −2⟨σ_iσ_j⟩⟨σ_kσ_l⟩` (counterexample: two disjoint strongly coupled edges with
+vanishing cross-correlations). The proof applies `cor_4_3_2_tq` with `A = {i,j}`,
+`B = {k,l}`, evaluates the powerset formulas over the two pairs, and kills the odd
+correlations by the zero-field spin-flip symmetry. -/
+theorem lebowitz_four_zero_field (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (J β : ℝ) (hf : Ferromagnetic ⟨J, (0 : ℝ), β⟩) (i j k l : ι)
+    (hij : i ≠ j) (hik : i ≠ k) (hil : i ≠ l)
+    (hjk : j ≠ k) (hjl : j ≠ l) (hkl : k ≠ l) :
+    correlation G ⟨J, 0, β⟩ {i, j, k, l}
+      ≤ correlation G ⟨J, 0, β⟩ {i, j} * correlation G ⟨J, 0, β⟩ {k, l}
+        + correlation G ⟨J, 0, β⟩ {i, k} * correlation G ⟨J, 0, β⟩ {j, l}
+        + correlation G ⟨J, 0, β⟩ {i, l} * correlation G ⟨J, 0, β⟩ {j, k} := by
+  have htq := cor_4_3_2_tq G ⟨J, 0, β⟩ hf {i, j} {k, l}
+  rw [doubleExpectation_tProd, doubleExpectation_qProd,
+    doubleExpectation_tProd_mul_qProd G _ {i, j} {k, l}
+      (by simp [Finset.disjoint_left, hik, hil, hjk, hjl])] at htq
+  simp only [sum_powerset_pair hij, sum_powerset_pair hkl] at htq
+  -- normalise the set expressions
+  simp only [Finset.sdiff_empty, Finset.sdiff_self, pair_sdiff_left hij,
+    pair_sdiff_right hij, pair_sdiff_left hkl, pair_sdiff_right hkl,
+    Finset.empty_union, Finset.union_empty, Finset.singleton_union,
+    Finset.insert_union, Finset.card_empty, Finset.card_singleton] at htq
+  -- cardinality of the pair
+  have hcard_kl : ({k, l} : Finset ι).card = 2 := by
+    rw [Finset.card_insert_of_notMem (by simp [hkl]), Finset.card_singleton]
+  rw [hcard_kl] at htq
+  norm_num at htq
+  -- zero-field odd correlations vanish
+  have hv_i : correlation G ⟨J, 0, β⟩ {i} = 0 :=
+    correlation_odd_vanish G J β {i} ⟨0, by simp⟩
+  have hv_j : correlation G ⟨J, 0, β⟩ {j} = 0 :=
+    correlation_odd_vanish G J β {j} ⟨0, by simp⟩
+  have hv_k : correlation G ⟨J, 0, β⟩ {k} = 0 :=
+    correlation_odd_vanish G J β {k} ⟨0, by simp⟩
+  have hv_l : correlation G ⟨J, 0, β⟩ {l} = 0 :=
+    correlation_odd_vanish G J β {l} ⟨0, by simp⟩
+  have hv_ijk : correlation G ⟨J, 0, β⟩ {i, j, k} = 0 :=
+    correlation_odd_vanish G J β {i, j, k} ⟨1, by
+      simp [Finset.card_insert_of_notMem, hij, hik, hjk]⟩
+  have hv_ijl : correlation G ⟨J, 0, β⟩ {i, j, l} = 0 :=
+    correlation_odd_vanish G J β {i, j, l} ⟨1, by
+      simp [Finset.card_insert_of_notMem, hij, hil, hjl]⟩
+  have hv_ikl : correlation G ⟨J, 0, β⟩ {i, k, l} = 0 :=
+    correlation_odd_vanish G J β {i, k, l} ⟨1, by
+      simp [Finset.card_insert_of_notMem, hik, hil, hkl]⟩
+  have hv_jkl : correlation G ⟨J, 0, β⟩ {j, k, l} = 0 :=
+    correlation_odd_vanish G J β {j, k, l} ⟨1, by
+      simp [Finset.card_insert_of_notMem, hjk, hjl, hkl]⟩
+  rw [hv_i, hv_j, hv_k, hv_l, hv_ijk, hv_ijl, hv_ikl, hv_jkl] at htq
+  -- the surviving terms give the inequality
+  nlinarith [htq]
+
 end Lebowitz
 
 end IsingModel
