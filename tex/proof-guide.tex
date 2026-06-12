@@ -5472,9 +5472,9 @@ on the non-integrable branch $\int_\delta G = 0$; either way the inner
 integral is non-negative, and four iterations of \texttt{integral\_nonneg}
 give the all-odd result (\texttt{phi4\_integral4\_nonneg\_all\_odd}).
 The headline \texttt{phi4\_single\_site\_nonneg} dispatches the three parity
-cases unconditionally, and the axiom is deleted.
-Formalizing this requires the interchange of finite symmetrization sums with
-nested Bochner integrals.
+cases unconditionally, and the axiom is deleted. No interchange of
+symmetrization sums with nested Bochner integrals is needed: the only
+combining happens inside the single innermost $\delta$-integral.
 
 \section{Pure and mixed phases (\texttt{PhaseTransition.lean})}
 

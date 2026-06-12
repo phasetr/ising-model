@@ -13,10 +13,12 @@ The φ⁴ correlation inequalities from Glimm–Jaffe §4.3, pp. 59–62.
 * `sum_sq_identity`, `inner_product_identity` — orthogonality identities
 * `integral_odd_eq_zero` (in Measure.lean) — odd function integral vanishes
 
-## Main results (axiom, to be proved)
+## Main results (single-site non-negativity, now proven)
 
-* `phi4_single_site_nonneg` — single-site non-negativity:
-  `∫ α^k β^l γ^m δ^n exp(-Q) dαdβdγdδ ≥ 0` where Q is even + ferromagnetic
+* `phi4_single_site_nonneg` (in `Phi4AllOdd.lean`) — single-site
+  non-negativity `∫ α^k β^l γ^m δ^n exp(-Q + c·αβγδ) ≥ 0` for `Q` even in
+  each variable and `c ≥ 0`, proven unconditionally by the four-fold sign
+  symmetrisation (formerly an axiom)
 
 ## References
 
