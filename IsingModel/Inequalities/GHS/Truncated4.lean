@@ -20,10 +20,10 @@ correlation function is non-positive:
   U₄(i,j,k,l) = ⟨σ_iσ_jσ_kσ_l⟩ - ⟨σ_iσ_j⟩⟨σ_kσ_l⟩
                  - ⟨σ_iσ_k⟩⟨σ_jσ_l⟩ - ⟨σ_iσ_l⟩⟨σ_jσ_k⟩ ≤ 0.
 
-This requires the Lebowitz inequality for 4-point functions (the general
-Cor. 4.3.2), which goes beyond our 3-site `lebowitz_third` axiom.
-We axiomatize the 4-site Lebowitz inequality as the Ising translation of
-`⟨t_{ij}q_{kl}⟩ ≤ ⟨t_{ij}⟩⟨q_{kl}⟩` in the doubled system. -/
+This follows from the proven zero-field four-point Lebowitz inequality
+`Lebowitz.lebowitz_four_zero_field` (the Ising translation of
+`⟨t_{ij}q_{kl}⟩ ≤ ⟨t_{ij}⟩⟨q_{kl}⟩` in the doubled system, PR #3909);
+the former `lebowitz_four` axiom was deleted as false (see below). -/
 
 /-- The truncated (connected) 4-point function for distinct sites:
 `U₄(i,j,k,l) = ⟨σ_iσ_jσ_kσ_l⟩ - ⟨σ_iσ_j⟩⟨σ_kσ_l⟩

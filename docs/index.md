@@ -1093,7 +1093,7 @@ ambient framework:
 
 ## Axioms
 
-All four axioms are in `Inequalities/GHS.lean` and `ContinuousSpin/Phi4.lean`.
+The remaining axioms are in `Inequalities/GHS.lean` and `ContinuousSpin/Phi4.lean` (`lebowitz_four` was deleted in PR #3909 — it was false as stated).
 They are mathematically proved (and documented) but formalization requires
 heavy measure theory setup:
 
@@ -1101,7 +1101,7 @@ heavy measure theory setup:
   integral (`ContinuousSpin/Phi4.lean`)
 - `lebowitz_third`: 3-site Lebowitz inequality for continuous `φ⁴`,
   transferred to Ising via the `λ → ∞` limit
-- `lebowitz_four`: 4-site version, same route
+- ~~`lebowitz_four`~~: **deleted in PR #3909** — false as stated (its `h = 0` specialisation `U₄ ≤ −2⟨σᵢσⱼ⟩⟨σₖσₗ⟩` is refuted by two disjoint strongly coupled edges); replaced by the proven `Lebowitz.lebowitz_four_zero_field`
 - `lebowitz_inductive`: inductive form of Cor 4.3.2
 
 ## Glimm–Jaffe coverage inventory
@@ -1128,7 +1128,7 @@ inventory (2026-04-17).
 | §4.2 | Prop 4.2.4 (h-monotonicity) | **Done (finite + infinite)** | Three parameters: `correlationInfinite_monotone_{J,h,beta}` |
 | §4.3 | Thm 4.3.1 (φ⁴) | **Done (Ising form proven without axioms, PR #3907 `Lebowitz.theorem_4_3_1`; φ⁴ single-site axiom variant retained for the continuous-spin statement; corollary-axiom discharge continues — Issue #3906)** | `phi4_single_site_nonneg` |
 | §4.3 | Cor 4.3.2 (Lebowitz) | **Done (proven for Ising without axioms, PR #3908 `cor_4_3_2_tt`/`_qq`/`_tq`; the GHS corollary axioms discharge continues — Issue #3906)** | 3 axioms |
-| §4.3 | Cor 4.3.3 (`U₄ ≤ 0` at h=0) | **Done (finite + infinite; axiom-free since PR #3909)** | Finite: `cor_4_3_3` (axioms); Infinite: `truncated4Infinite_nonpos_h_zero` |
+| §4.3 | Cor 4.3.3 (`U₄ ≤ 0` at h=0) | **Done (finite + infinite; axiom-free since PR #3909)** | Finite: `cor_4_3_3` (axiom-free via `lebowitz_four_zero_field`); Infinite: `truncated4Infinite_nonpos_h_zero` |
 | §4.3 | Cor 4.3.4 (GHS, `U₃ ≤ 0`) | **Done (finite + infinite)** | Finite: `ghs_inequality` (axioms); Infinite: `truncated3Infinite_nonpos`, `_h_zero_of_distinct` |
 | §4.3 | Cor 4.3.5 (inductive n-point at h=0) | **Done (finite + infinite)** | Finite: `cor_4_3_5_h0` (axioms); Infinite: `correlationInfinite_cor_4_3_5_h0` |
 | §4.4 | FKG inequality (spinProduct case + along-exhaustion) | **Done (finite + infinite + per-stage along-exhaustion)** | Finite: `fkg_ising`; ∞-vol spinProduct: `correlationInfinite_fkg_spinProduct` (≡ GKS-II). Per-stage FKG along an exhaustion: `Ambient.gibbsExpectationAlongExhaustion` + `Ambient.fkg_ising_along_exhaustion` (`IsingModel/AmbientFKG.lean`) for per-stage nonneg monotone families `F n, G n : Config (↑Λₙ) → ℝ`; ℤ^d wrapper `fkg_ising_along_exhaustion_latticeGraph`. (PR #633.) A canonical ∞-vol Gibbs measure for general monotone observables remains follow-up. |

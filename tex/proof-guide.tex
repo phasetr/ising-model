@@ -5252,32 +5252,35 @@ The truncated (connected) 4-point function:
 \]
 \end{definition}
 
-\begin{theorem}[\texttt{lebowitz\_four}; axiom]
-For ferromagnetic parameters with $h \ge 0$ and four distinct sites $i,j,k,l$:
-\begin{multline*}
-  \langle\sigma_i\sigma_j\sigma_k\sigma_l\rangle
-  + \langle\sigma_i\sigma_j\rangle\langle\sigma_k\sigma_l\rangle \\
-  \le \langle\sigma_i\sigma_k\rangle\langle\sigma_j\sigma_l\rangle
-  + \langle\sigma_i\sigma_l\rangle\langle\sigma_j\sigma_k\rangle
-  + \langle\sigma_i\sigma_k\sigma_l\rangle\langle\sigma_j\rangle
-  + \langle\sigma_j\sigma_k\sigma_l\rangle\langle\sigma_i\rangle.
-\end{multline*}
-\end{theorem}
+\begin{remark}[The former \texttt{lebowitz\_four} axiom was false; deleted
+in PR \#3909]
+The repository formerly axiomatised, for $h \ge 0$,
+$\langle\sigma_{ijkl}\rangle + \langle\sigma_{ij}\rangle\langle\sigma_{kl}\rangle
+\le \langle\sigma_{ik}\rangle\langle\sigma_{jl}\rangle
++ \langle\sigma_{il}\rangle\langle\sigma_{jk}\rangle
++ \langle\sigma_{ikl}\rangle\langle\sigma_j\rangle
++ \langle\sigma_{jkl}\rangle\langle\sigma_i\rangle$. At $h = 0$ the
+odd-cardinality correlations vanish, so this asserts
+$U_4 \le -2\langle\sigma_{ij}\rangle\langle\sigma_{kl}\rangle$, which is
+false: for two disjoint strongly coupled edges $ij$ and $kl$ the cross
+correlations vanish and $\langle\sigma_{ijkl}\rangle =
+\langle\sigma_{ij}\rangle\langle\sigma_{kl}\rangle > 0$. The axiom was
+deleted; the corrected zero-field inequality below is proved from the
+duplicate-variable machinery (\texttt{lebowitz\_four\_zero\_field}).
+\end{remark}
 
-\begin{theorem}[\texttt{cor\_4\_3\_3}; proved]
+\begin{theorem}[\texttt{cor\_4\_3\_3}; proved, axiom-free]
 For $h = 0$ and four distinct sites, $U_4(i,j,k,l) \le 0$.
 \end{theorem}
 
 \begin{proof}
-From \texttt{lebowitz\_four}, with $h = 0$ the odd-cardinality correlations
-vanish: $\langle\sigma_i\rangle = \langle\sigma_j\rangle = 0$ and
-$\langle\sigma_{ikl}\rangle = \langle\sigma_{jkl}\rangle = 0$.
-The Lebowitz bound reduces to
-$\langle\sigma_{ijkl}\rangle + \langle\sigma_{ij}\rangle\langle\sigma_{kl}\rangle
-\le \langle\sigma_{ik}\rangle\langle\sigma_{jl}\rangle
-  + \langle\sigma_{il}\rangle\langle\sigma_{jk}\rangle$.
-Since $\langle\sigma_{ij}\rangle, \langle\sigma_{kl}\rangle \ge 0$ by GKS-I,
-this gives $U_4 \le -2\langle\sigma_{ij}\rangle\langle\sigma_{kl}\rangle \le 0$.
+By \texttt{lebowitz\_four\_zero\_field} (PR \#3909, proved from Corollary
+4.3.2's $tq$ inequality),
+$\langle\sigma_{ijkl}\rangle
+\le \langle\sigma_{ij}\rangle\langle\sigma_{kl}\rangle
+  + \langle\sigma_{ik}\rangle\langle\sigma_{jl}\rangle
+  + \langle\sigma_{il}\rangle\langle\sigma_{jk}\rangle$,
+which is exactly $U_4 \le 0$ after the $h = 0$ odd-correlation vanishing.
 \end{proof}
 
 \subsection[Cor.~4.3.5: n-point inductive bound]{Cor.~4.3.5: $n$-point inductive bound}
