@@ -1,4 +1,5 @@
 import IsingModel.Inequalities.GHS.GHSInequality
+import IsingModel.Inequalities.Lebowitz.LebowitzFour
 
 /-!
 # GHS inequality split — Cor 4.3.3 truncated 4-point function nonpositivity
@@ -19,10 +20,10 @@ correlation function is non-positive:
   U₄(i,j,k,l) = ⟨σ_iσ_jσ_kσ_l⟩ - ⟨σ_iσ_j⟩⟨σ_kσ_l⟩
                  - ⟨σ_iσ_k⟩⟨σ_jσ_l⟩ - ⟨σ_iσ_l⟩⟨σ_jσ_k⟩ ≤ 0.
 
-This requires the Lebowitz inequality for 4-point functions (the general
-Cor. 4.3.2), which goes beyond our 3-site `lebowitz_third` axiom.
-We axiomatize the 4-site Lebowitz inequality as the Ising translation of
-`⟨t_{ij}q_{kl}⟩ ≤ ⟨t_{ij}⟩⟨q_{kl}⟩` in the doubled system. -/
+This follows from the proven zero-field four-point Lebowitz inequality
+`Lebowitz.lebowitz_four_zero_field` (the Ising translation of
+`⟨t_{ij}q_{kl}⟩ ≤ ⟨t_{ij}⟩⟨q_{kl}⟩` in the doubled system, PR #3909);
+the former `lebowitz_four` axiom was deleted as false (see below). -/
 
 /-- The truncated (connected) 4-point function for distinct sites:
 `U₄(i,j,k,l) = ⟨σ_iσ_jσ_kσ_l⟩ - ⟨σ_iσ_j⟩⟨σ_kσ_l⟩
@@ -126,24 +127,13 @@ theorem truncated4_J_zero_of_pairwise_distinct
   rw [hcard_ijkl, hcard_ij, hcard_kl, hcard_ik, hcard_jl, hcard_il, hcard_jk]
   ring
 
-/-- **Lebowitz 4-site inequality** (Glimm–Jaffe, Cor. 4.3.2 for |A|=|B|=2).
-For ferromagnetic Ising with `h ≥ 0` and four distinct sites,
-`⟨σ_iσ_jσ_kσ_l⟩ + ⟨σ_iσ_j⟩⟨σ_kσ_l⟩
-  ≤ ⟨σ_iσ_k⟩⟨σ_jσ_l⟩ + ⟨σ_iσ_l⟩⟨σ_jσ_k⟩
-    + ⟨σ_iσ_kσ_l⟩⟨σ_j⟩ + ⟨σ_jσ_kσ_l⟩⟨σ_i⟩`.
-
-This is the Ising translation of `⟨t_At_Bq_Cq_D⟩ ≤ ⟨t_At_B⟩⟨q_Cq_D⟩`
-from Cor. 4.3.2 applied with A = {i,j}, B = {k,l}. Proved via φ⁴
-approximation, same route as `lebowitz_third`. -/
-axiom lebowitz_four (G : SimpleGraph ι) [Fintype G.edgeSet]
-    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i j k l : ι)
-    (hij : i ≠ j) (hik : i ≠ k) (hil : i ≠ l)
-    (hjk : j ≠ k) (hjl : j ≠ l) (hkl : k ≠ l) :
-    correlation G p {i, j, k, l} + correlation G p {i, j} * correlation G p {k, l} ≤
-    correlation G p {i, k} * correlation G p {j, l} +
-    correlation G p {i, l} * correlation G p {j, k} +
-    correlation G p {i, k, l} * correlation G p {j} +
-    correlation G p {j, k, l} * correlation G p {i}
+/- The former `lebowitz_four` axiom was **deleted** (Issue #3906, PR #3909): its stated
+general-field form specialised at `h = 0` to the false bound
+`U₄ ≤ −2⟨σ_iσ_j⟩⟨σ_kσ_l⟩` (counterexample: two disjoint strongly coupled edges with
+vanishing cross-correlations). The corrected zero-field four-point Lebowitz inequality is
+`Lebowitz.lebowitz_four_zero_field` in `Inequalities/Lebowitz/LebowitzFour.lean`, proven
+from the duplicate-variable Corollary 4.3.2 (`cor_4_3_2_tq`); it is what `cor_4_3_3` below
+actually needs. -/
 
 /-- **Cor. 4.3.3** (Glimm–Jaffe, §4.3, p. 61).
 For `h = 0` and four distinct sites, the truncated 4-point function
@@ -157,28 +147,9 @@ theorem cor_4_3_3 (G : SimpleGraph ι) [Fintype G.edgeSet]
     (hij : i ≠ j) (hik : i ≠ k) (hil : i ≠ l)
     (hjk : j ≠ k) (hjl : j ≠ l) (hkl : k ≠ l) :
     truncated4 G ⟨J, 0, β⟩ i j k l ≤ 0 := by
-  have hleb := lebowitz_four G ⟨J, 0, β⟩ hf i j k l hij hik hil hjk hjl hkl
-  -- For h = 0: odd-cardinality correlations vanish.
-  -- ⟨σ_i⟩ = 0, ⟨σ_{ijk}⟩ = 0 by spin-flip symmetry.
-  -- This is a consequence of hamiltonian_flip_eq: H(flip σ) = H(σ) when h = 0,
-  -- combined with spinProduct_flip: σ^A(flip) = (-1)^|A| σ^A,
-  -- giving ⟨σ^A⟩ = (-1)^|A| ⟨σ^A⟩, so ⟨σ^A⟩ = 0 when |A| is odd.
-  -- For now we use correlation_flip_odd which states this directly.
-  -- TODO: prove correlation = 0 for odd |A| when h = 0 from spin-flip symmetry
-  have hcorr1 : correlation G ⟨J, 0, β⟩ {i} = 0 :=
-    correlation_odd_vanish G J β {i} ⟨0, by simp⟩
-  have hcorr3a : correlation G ⟨J, 0, β⟩ {i, k, l} = 0 :=
-    correlation_odd_vanish G J β {i, k, l} ⟨1, by simp [Finset.card_insert_of_notMem,
-      Finset.card_insert_of_notMem, hik, hil, hkl]⟩
-  have hcorr3b : correlation G ⟨J, 0, β⟩ {j, k, l} = 0 :=
-    correlation_odd_vanish G J β {j, k, l} ⟨1, by simp [Finset.card_insert_of_notMem,
-      Finset.card_insert_of_notMem, hjk, hjl, hkl]⟩
-  -- Even-cardinality correlations are non-negative by GKS-I.
-  have h_ij := gks_first G ⟨J, 0, β⟩ hf {i, j}
-  have h_kl := gks_first G ⟨J, 0, β⟩ hf {k, l}
+  have hleb := Lebowitz.lebowitz_four_zero_field G J β hf i j k l hij hik hil hjk hjl hkl
   unfold truncated4
-  simp only [hcorr1, hcorr3a, hcorr3b, mul_zero, zero_mul, add_zero] at hleb ⊢
-  nlinarith [mul_nonneg h_ij h_kl]
+  linarith
 
 
 end IsingModel
