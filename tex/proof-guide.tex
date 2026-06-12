@@ -5427,6 +5427,24 @@ mixed parity (pairwise sign cancellation). The remaining steps --- the
 measure-theoretic averaging under an integrability hypothesis and the
 pointwise non-negativity of the symmetrised integrand --- follow in later
 PRs of Issue \#3913.
+
+\paragraph{Unconditional iterated-integral reflection (PR \#3915,
+\texttt{ContinuousSpin/Phi4Reflection.lean}).}
+Writing the single-site integrand as
+\texttt{phi4Integrand}$\,Q\,c\,k\,l\,m\,n = \alpha^k\beta^l\gamma^m\delta^n
+e^{-Q+c\alpha\beta\gamma\delta}$, each multiplier reflection
+$x \mapsto \mathrm{boolSign}(b)\cdot x$ preserves the integral
+(\texttt{integral\_comp\_boolSign\_mul}), so the four-fold iterated integral
+is invariant under every sign pattern, the flip being applied at each
+nesting level (\texttt{integral4\_comp\_boolSign\_mul}; no integrability
+hypothesis). Since $Q$ is even in each variable, the reflected integrand is
+$\mathrm{boolSign}^{k,l,m,n}\cdot \alpha^k\beta^l\gamma^m\delta^n
+e^{-Q+c\sigma\alpha\beta\gamma\delta}$ with $\sigma = \prod \mathrm{boolSign}(b_i)$
+(\texttt{phi4Integrand\_boolSign\_mul}), giving
+\texttt{phi4\_integral4\_eq\_reflected}: the four-fold $\varphi^4$ integral
+equals the integral of the sign-transformed integrand for each of the
+sixteen patterns. The averaging over patterns (which needs integrability)
+and the pointwise non-negativity follow in the next PRs.
 Formalizing this requires the interchange of finite symmetrization sums with
 nested Bochner integrals.
 
