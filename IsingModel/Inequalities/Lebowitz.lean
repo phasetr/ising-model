@@ -6,6 +6,7 @@ import IsingModel.Inequalities.Lebowitz.DoubleSystem
 import IsingModel.Inequalities.Lebowitz.Cor432
 import IsingModel.Inequalities.Lebowitz.LebowitzFour
 import IsingModel.Inequalities.Lebowitz.Cor434
+import IsingModel.Inequalities.Lebowitz.Cor435
 
 /-!
 # Lebowitz duplicate-variable inequalities (GJ §4.3)

@@ -5155,10 +5155,12 @@ $u_4$) and proves the GHS inequality $u_3 \le 0$, Cor.~4.3.3
 ($U_4 \le 0$ for $h=0$), and Cor.~4.3.5 (inductive bound).
 Also contains \texttt{correlation\_odd\_vanish} ($h=0$, odd $|A|$).
 
-\textbf{What to look for:} \texttt{lebowitz\_inductive} is the only
-remaining axiom in the file (\texttt{lebowitz\_four} and
-\texttt{lebowitz\_third} were deleted in PRs \#3909/\#3910 --- both were
-false as stated; see the remarks below). Everything else is proved. The spin-flip symmetry proof
+\textbf{What to look for:} the Lebowitz axiom family is fully discharged
+(Issue \#3906): \texttt{lebowitz\_four} and \texttt{lebowitz\_third} were
+deleted in PRs \#3909/\#3910 --- both were false as stated (see the
+remarks below) --- and \texttt{lebowitz\_inductive} (true as stated) was
+replaced by the proven \texttt{Lebowitz.lebowitz\_inductive\_bound} in
+PR \#3911. Everything is proved. The spin-flip symmetry proof
 (\texttt{correlation\_odd\_vanish}) uses a bijection argument:
 pair $\sigma$ with $\mathrm{flip}(\sigma)$ to show $S = -S$.
 
@@ -5297,7 +5299,8 @@ which is exactly $U_4 \le 0$ after the $h = 0$ odd-correlation vanishing.
 
 \subsection[Cor.~4.3.5: n-point inductive bound]{Cor.~4.3.5: $n$-point inductive bound}
 
-\begin{theorem}[\texttt{lebowitz\_inductive}; axiom]
+\begin{theorem}[\texttt{Lebowitz.lebowitz\_inductive\_bound}; proved,
+general $h \ge 0$; PR \#3911]
 For ferromagnetic $h \ge 0$, a set $S$ of sites, and two sites $j, k \notin S$
 with $j \ne k$:
 \[
@@ -5308,9 +5311,29 @@ with $j \ne k$:
 \]
 \end{theorem}
 
-This follows from the general Lebowitz inequality (Cor.~4.3.2 in
-Glimm--Jaffe) applied with $A = S$, $B = \{j,k\}$, and dropping
-non-positive terms.  Iterating gives Cor.~4.3.5: the $n$-point function
+\begin{proof}
+Apply \texttt{cor\_4\_3\_2\_tq} with $A = S$, $B = \{j,k\}$ and expand by
+the powerset formulas (write $X' := S\setminus X$, $c_X :=
+\langle\sigma^X\rangle$):
+\[
+  \sum_{X \subseteq S}\bigl[c_{X}c_{X'\cup\{j,k\}}
+    - c_{X\cup\{j\}}c_{X'\cup\{k\}} - c_{X\cup\{k\}}c_{X'\cup\{j\}}
+    + c_{X\cup\{j,k\}}c_{X'}\bigr]
+  \le \Bigl[\sum_X c_Xc_{X'}\Bigr]\,2(c_{jk} - c_jc_k).
+\]
+Drop the odd right-hand part $-2c_jc_k\sum_X c_Xc_{X'} \le 0$ (GKS-I);
+identify the first and last left-hand sums and the two middle sums by the
+reflection $X \mapsto S\setminus X$ (\texttt{sum\_powerset\_reflect});
+split off the $X = S$ terms and cancel the remaining even terms pairwise by
+per-term GKS-II ($c_Xc_{jk} \le c_{X\cup\{j,k\}}$, multiplied by
+$c_{X'} \ge 0$). What remains is exactly the claimed bound. This was the
+statement of the former \texttt{lebowitz\_inductive} axiom (true as
+stated, unlike \texttt{lebowitz\_four}/\texttt{lebowitz\_third}); the
+axiom is deleted and \texttt{cor\_4\_3\_5\_h0} rewired. Reference:
+Glimm--Jaffe, 2nd ed., \S4.3 Cor.~4.3.5, p.~62.
+\end{proof}
+
+Iterating gives Cor.~4.3.5: the $n$-point function
 is bounded by $(n-1)!$ times the sum over partial matchings of products
 of 2-point and 1-point correlations.
 
