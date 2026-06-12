@@ -5445,6 +5445,22 @@ e^{-Q+c\sigma\alpha\beta\gamma\delta}$ with $\sigma = \prod \mathrm{boolSign}(b_
 equals the integral of the sign-transformed integrand for each of the
 sixteen patterns. The averaging over patterns (which needs integrability)
 and the pointwise non-negativity follow in the next PRs.
+
+\paragraph{Unconditional parity cases (PR \#3916,
+\texttt{ContinuousSpin/Phi4Averaging.lean}).}
+Two of the three parity cases of the single-site positivity need no
+integrability. When $k,l,m,n$ are all even, the integrand
+$\alpha^k\beta^l\gamma^m\delta^n e^{-Q+c\alpha\beta\gamma\delta}$ is pointwise
+non-negative (even powers and a positive exponential), so the four-fold
+integral is non-negative (\texttt{phi4\_integral4\_nonneg\_all\_even}). When
+the parities are mixed, reflecting one even-exponent and one odd-exponent
+variable (a two-flip sign pattern) fixes the cross term ($\sigma = +1$) but
+flips the monomial sign character ($= -1$), so by
+\texttt{phi4\_integral4\_eq\_reflected} the integral equals its own negative
+and therefore vanishes (\texttt{phi4\_integral4\_eq\_zero\_mixed}, via the
+negation-by-reflection helper \texttt{phi4\_integral4\_eq\_zero\_of\_neg\_pattern}).
+Only the all-odd case (which produces $\sinh$ and carries an integrability
+hypothesis) and the junk-value fallback remain.
 Formalizing this requires the interchange of finite symmetrization sums with
 nested Bochner integrals.
 
