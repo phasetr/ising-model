@@ -196,11 +196,16 @@ Contour counting gives the Peierls bound.
     (negative coupling = ferromagnetic).
   \item \textbf{Boltzmann weight.} $w(\sigma) = \exp(-\beta H(\sigma))$
     (\texttt{boltzmannWeight}).
-  \item \textbf{Axioms.} Four axioms from $\varphi^4$ measure theory
-    are used: \texttt{phi4\_single\_\allowbreak site\_nonneg},
-    \texttt{lebowitz\_\allowbreak third/\allowbreak four/\allowbreak inductive}.
-    These have complete mathematical proofs but require measure-theoretic
-    infrastructure not yet available in Lean/Mathlib.
+  \item \textbf{Axioms.} \emph{None.} The formalization carries \textbf{no
+    declared axioms} (modulo Mathlib). The former $\varphi^4$ axiom
+    \texttt{phi4\_single\_\allowbreak site\_nonneg} is now a proven theorem; the
+    Lebowitz/GHS axioms \texttt{lebowitz\_\allowbreak third/\allowbreak four}
+    were found \emph{false as stated} and replaced by corrected theorems
+    (\texttt{lebowitz\_inductive} discharged); and the three §17.8 axioms behind
+    $\eta\le1$ (\texttt{ball\_boundary\_tight\_infinite},
+    \texttt{shellSup\_contraction},
+    \texttt{polynomialDecay\_contraction\_factor\_tendsto}) are now all proven
+    theorems.
   \item \textbf{Edge representation.} Edges are \texttt{Sym2 $\iota$}
     (unordered pairs). The edge spin product
     \texttt{edgeSpin $\sigma$ $e$} $= s(\sigma_i) \cdot s(\sigma_j)$
