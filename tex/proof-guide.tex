@@ -5388,9 +5388,9 @@ The formalization includes:
 \item Odd-function integral vanishing (\texttt{integral\_odd\_eq\_zero}).
 \end{itemize}
 
-\paragraph{Axiom.}
-One measure-theoretic property is stated as axiom (mathematically
-proved but not formalized in Lean due to the heavy measure theory assembly):
+\paragraph{Axiom (discharge in progress, Issue \#3913).}
+One measure-theoretic property remains stated as an axiom; its
+integrability-free core is now formalised (PR \#3914, see below):
 \begin{itemize}
 \item \texttt{phi4\_single\_\allowbreak site\_nonneg}: non-negativity of the
   symmetrized 4D integral: for $Q$ even and $c \ge 0$,
@@ -5408,6 +5408,25 @@ for all-odd $(k,l,m,n)$ the integrand is
 $\alpha^{k-1}\beta^{l-1}\gamma^{m-1}\delta^{n-1} \cdot
 (\alpha\beta\gamma\delta \cdot \sinh(c\alpha\beta\gamma\delta)) \cdot e^{-Q} \ge 0$
 by \texttt{mul\_sinh\_nonneg}.
+
+\paragraph{Integrability-free symmetrisation core (PR \#3914,
+\texttt{ContinuousSpin/Phi4Symmetrization.lean}).}
+The reflection $x \mapsto -x$ is measure-preserving on
+$(\mathbb{R}, \mathrm{vol})$, so $\int f(-x) = \int f$ unconditionally
+(\texttt{integral\_comp\_neg\_real}; both sides take the junk value $0$
+together on non-integrable $f$). The four sign flips $T_s$ are products of
+such reflections, and since $Q$ is even in each variable the integrand
+transforms by the sign character $s_1^k s_2^l s_3^m s_4^n$ and the factor
+$e^{c\sigma\alpha\beta\gamma\delta}$ with $\sigma = s_1s_2s_3s_4$.
+Averaging over the sixteen patterns
+(\texttt{sign\_average\_all\_even}/\texttt{\_all\_odd}/\texttt{\_mixed},
+assembled as \texttt{sign\_average\_trichotomy}) collapses the sign sum to
+$16\cosh(c\,\alpha\beta\gamma\delta)$ when all of $k,l,m,n$ are even,
+$16\sinh(c\,\alpha\beta\gamma\delta)$ when all are odd, and $0$ for every
+mixed parity (pairwise sign cancellation). The remaining steps --- the
+measure-theoretic averaging under an integrability hypothesis and the
+pointwise non-negativity of the symmetrised integrand --- follow in later
+PRs of Issue \#3913.
 Formalizing this requires the interchange of finite symmetrization sums with
 nested Bochner integrals.
 
