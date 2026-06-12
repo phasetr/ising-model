@@ -9,7 +9,7 @@ The multi-site continuous vector-spin framework underlying GJ Theorem 4.7.1
 (p. 70): two-component spins `ξ : ι → ℝ × ℝ` on a finite graph, with the
 `SO(2)`-invariant single-spin potential `P(ξᵢ) = A·(ξᵢ·ξᵢ)² + σ·(ξᵢ·ξᵢ)`, the
 ferromagnetic Hamiltonian `H = −∑ J·ξᵢ·ξⱼ − ∑ h·ξᵢ`, and the Gibbs weight
-`exp(−H − ∑ᵢ P(ξᵢ))` integrated against the flat Lebesgue measure on
+`exp(−β·H − ∑ᵢ P(ξᵢ))` integrated against the flat Lebesgue measure on
 `(ℝ × ℝ)^ι`. The `t/q` correlations are `⟨∏_{i∈A} tᵢ · ∏_{j∈B} qⱼ⟩`.
 
 This file establishes the definitions and their basic positivity /
