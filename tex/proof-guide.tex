@@ -14728,7 +14728,7 @@ hypothesis.  Moreover the fully explicit prefactor-free geometric decay
 \(\langle\sigma_i\sigma_j\rangle^\infty\le H^{\lfloor\mathrm{dist}(i,j)/(r+2)\rfloor}\)
 with base \(H=\beta J\cdot2\,(d\,(2(r+1)+1)^d)<1\) holds with no contraction
 factor in the statement and no polynomial-decay hypothesis (the ball-boundary
-shell-contraction axiom \texttt{shellSup\_contraction} is still used)
+shell-contraction machinery \texttt{shellSup\_contraction} (now a proven theorem) is still used)
 (\texttt{correlationInfinite\_latticeGraph\_le\_explicit\_pow\_dist}), via
 \(\text{cf}\le H\) and base monotonicity.  Consequently, under \(0<\beta J\) and
 \(H<1\), the susceptibility is finite unconditionally
@@ -24268,5 +24268,50 @@ every straddling adjacent pair is confined to $\texttt{cubicBox}\,d\,(r+1)$
 With the ambient summand non-negative, \texttt{Finset.sum\_le\_sum\_of\_subset\_of\_nonneg}
 closes the inclusion. Reference: Glimm--Jaffe, 2nd ed., §17.8,
 (17.8.4)--(17.8.5), pp.~316--318.
+
+\section{Shell supremum contraction (GJ \S17.8)}
+
+The second of the three §17.8 axioms, \texttt{shellSup\_contraction}, is now a
+\emph{theorem} (\texttt{TheoremEtaLe1/Contraction.lean}), built directly on the
+discharged \texttt{ball\_boundary\_tight\_infinite}. For a ferromagnetic Ising
+model at $h=0$ on $\texttt{latticeGraph}\,d$, with $1\le r$ and $r+1<n$,
+\[
+  \sup_{|y|\ge n} \langle\sigma_0\sigma_y\rangle_\infty
+  \;\le\; \texttt{contractionFactor}\,d\,\Lambda\,p\,r \cdot
+    \sup_{|y|\ge n-r-1} \langle\sigma_0\sigma_y\rangle_\infty ,
+\]
+where $\texttt{contractionFactor}\,d\,\Lambda\,p\,r = \beta J\sum_{(k,l)\in\partial B_r}
+(\langle\sigma_0\sigma_k\rangle_\infty + \langle\sigma_0\sigma_l\rangle_\infty)$.
+
+\paragraph{Proof.}
+\texttt{ciSup\_le} reduces to a per-shell-point bound. For each $y$ with
+$|y|\ge n$ (hence $r+1<|y|$, so \texttt{ball\_boundary\_tight\_infinite} applies),
+\[
+  \langle\sigma_0\sigma_y\rangle_\infty \le \beta J\sum_{(k,l)\in\partial B_r}
+    \bigl[\langle\sigma_0\sigma_k\rangle_\infty\langle\sigma_l\sigma_y\rangle_\infty
+      + \langle\sigma_0\sigma_l\rangle_\infty\langle\sigma_k\sigma_y\rangle_\infty\bigr].
+\]
+Translation invariance
+(\texttt{correlationInfinite\_latticeGraph\_vaddFinset\_of\_translationInvariant},
+shift $t=-w$) gives $\langle\sigma_w\sigma_y\rangle_\infty =
+\langle\sigma_0\sigma_{y-w}\rangle_\infty$, and the triangle inequality with the
+boundary-endpoint bound $|w|\le r+1$ (\texttt{latticeBallBoundaryEdges\_dist\_le})
+yields $|y-w| \ge |y|-(r+1)\ge n-r-1$, so each far factor is at most the
+$(n-r-1)$-shell supremum $S$. Summing, $\langle\sigma_0\sigma_y\rangle_\infty \le
+\bigl(\beta J\sum (\langle\sigma_0\sigma_k\rangle_\infty +
+\langle\sigma_0\sigma_l\rangle_\infty)\bigr)\,S = \texttt{contractionFactor}\cdot S$
+(\texttt{shell\_nonempty} supplies the nonempty index for the suprema).
+
+The corrected hypothesis $1\le r$ (inherited from
+\texttt{ball\_boundary\_tight\_infinite}, false at $r=0$) is threaded through the
+downstream consumers: \texttt{shellSup\_iterated\_bound}, the spatial-decay bounds
+\texttt{$\cdots$\_le\_contractionFactor\_pow\_dist(\_pair)}, the
+high-temperature mass-gap family (\texttt{HighTempMassGap.lean}), the η≤1 theorem
+(\texttt{MainTheorem.lean}, which now picks the contraction radius
+$R := \max(R_0,1)$), and the cubic-shell decay-sum chain
+(\texttt{CubicShellDecaySum}, \texttt{CubicUrsellShellSum},
+\texttt{ShellCovarianceShellSum}). Only \texttt{polynomialDecay\_contraction\_factor\_tendsto}
+remains a declared axiom in §17.8. Reference: Glimm--Jaffe, 2nd ed., §17.8,
+proof of Theorem 17.8.1, p.~317.
 
 \end{document}

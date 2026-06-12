@@ -34,7 +34,7 @@ Composes the spatial decay
 `correlationInfinite_latticeGraph_le_contractionFactor_pow_dist_pair`
 (`g{x,w} ≤ cf^{dist/(r₀+2)}`, valid since `x ≠ w` as `x ∈ box_k` but `w ∉ box_k`)
 with the fresh-vertex distance growth `cf_pow_fresh_le`. -/
-theorem correlationInfinite_fresh_le (d : ℕ) (hd : 1 ≤ d) (r₀ : ℕ) (J β : ℝ)
+theorem correlationInfinite_fresh_le (d : ℕ) (hd : 1 ≤ d) (r₀ : ℕ) (hr₀ : 1 ≤ r₀) (J β : ℝ)
     (hJ : 0 ≤ J) (hβ : 0 < β)
     (hα : contractionFactor d (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) r₀ < 1)
     (k R : ℕ) (hRk : R ≤ k) {x w : Fin d → ℤ} (hx : x ∈ cubicBox d R)
@@ -46,7 +46,7 @@ theorem correlationInfinite_fresh_le (d : ℕ) (hd : 1 ≤ d) (r₀ : ℕ) (J β
   have hf : Ferromagnetic (⟨J, 0, β⟩ : IsingParams ℝ) := ⟨hJ, le_refl 0, hβ⟩
   have hxw : x ≠ w := by
     intro h; subst h; exact hw2 (cubicBox_mono d hRk hx)
-  exact (correlationInfinite_latticeGraph_le_contractionFactor_pow_dist_pair d hd r₀
+  exact (correlationInfinite_latticeGraph_le_contractionFactor_pow_dist_pair d hd r₀ hr₀
     (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) hf rfl hα hxw).trans
     (cf_pow_fresh_le (⟨J, 0, β⟩ : IsingParams ℝ) hf hα hx hRk hw1 hw2)
 
@@ -60,7 +60,7 @@ endpoint (`straddle_fresh_vertex`) carries the geometric decay
 (`correlationInfinite_fresh_le`), the partner factor being `≤ 1`. Mirrors
 `derivBoundTight_cubic_shell_le_card_pow`; this is the Part B (shell) contribution
 to the per-stage β-derivative increment. -/
-theorem ursell_shell_sum_le_card_pow (d : ℕ) (hd : 1 ≤ d) (r₀ : ℕ) (J β : ℝ)
+theorem ursell_shell_sum_le_card_pow (d : ℕ) (hd : 1 ≤ d) (r₀ : ℕ) (hr₀ : 1 ≤ r₀) (J β : ℝ)
     (hJ : 0 ≤ J) (hβ : 0 < β)
     (hα : contractionFactor d (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) r₀ < 1)
     (k R : ℕ) (hRk : R ≤ k) {x z : Fin d → ℤ} (hxz : x ≠ z)
@@ -123,8 +123,8 @@ theorem ursell_shell_sum_le_card_pow (d : ℕ) (hd : 1 ≤ d) (r₀ : ℕ) (J β
       ⟨hJ, le_refl 0, hβ⟩ r₀) m
   rcases straddle_fresh_vertex hstr with hfu | hfv
   · -- `u` is the fresh vertex
-    have gxu := correlationInfinite_fresh_le d hd r₀ J β hJ hβ hα k R hRk hx u.property hfu
-    have gzu := correlationInfinite_fresh_le d hd r₀ J β hJ hβ hα k R hRk hz u.property hfu
+    have gxu := correlationInfinite_fresh_le d hd r₀ hr₀ J β hJ hβ hα k R hRk hx u.property hfu
+    have gzu := correlationInfinite_fresh_le d hd r₀ hr₀ J β hJ hβ hα k R hRk hz u.property hfu
     calc correlationInfinite (latticeGraph d) (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ)
               {x, u.val} *
             correlationInfinite (latticeGraph d) (cubicExhaustion d)
@@ -141,8 +141,8 @@ theorem ursell_shell_sum_le_card_pow (d : ℕ) (hd : 1 ≤ d) (r₀ : ℕ) (J β
               (correlationInfinite_nonneg _ _ _ ⟨hJ, le_refl 0, hβ⟩ _) zero_le_one)
       _ = 2 * cf ^ ((k + 1 - R) / (r₀ + 2)) := by ring
   · -- `v` is the fresh vertex
-    have gxv := correlationInfinite_fresh_le d hd r₀ J β hJ hβ hα k R hRk hx v.property hfv
-    have gzv := correlationInfinite_fresh_le d hd r₀ J β hJ hβ hα k R hRk hz v.property hfv
+    have gxv := correlationInfinite_fresh_le d hd r₀ hr₀ J β hJ hβ hα k R hRk hx v.property hfv
+    have gzv := correlationInfinite_fresh_le d hd r₀ hr₀ J β hJ hβ hα k R hRk hz v.property hfv
     calc correlationInfinite (latticeGraph d) (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ)
               {x, u.val} *
             correlationInfinite (latticeGraph d) (cubicExhaustion d)
