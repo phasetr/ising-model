@@ -39,7 +39,10 @@ def boolSign (b : Bool) : ℝ := if b then 1 else -1
 `boolSign b` for odd `e`. -/
 def boolSignPow (b : Bool) (e : ℕ) : ℝ := boolSign b ^ e
 
+/-- The sign of `true` is `+1`. -/
 @[simp] theorem boolSign_true : boolSign true = 1 := rfl
+
+/-- The sign of `false` is `−1`. -/
 @[simp] theorem boolSign_false : boolSign false = -1 := rfl
 
 /-- A bool sign squares to one. -/
