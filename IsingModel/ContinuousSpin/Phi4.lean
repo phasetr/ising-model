@@ -13,10 +13,12 @@ The φ⁴ correlation inequalities from Glimm–Jaffe §4.3, pp. 59–62.
 * `sum_sq_identity`, `inner_product_identity` — orthogonality identities
 * `integral_odd_eq_zero` (in Measure.lean) — odd function integral vanishes
 
-## Main results (axiom, to be proved)
+## Main results (single-site non-negativity, now proven)
 
-* `phi4_single_site_nonneg` — single-site non-negativity:
-  `∫ α^k β^l γ^m δ^n exp(-Q) dαdβdγdδ ≥ 0` where Q is even + ferromagnetic
+* `phi4_single_site_nonneg` (in `Phi4AllOdd.lean`) — single-site
+  non-negativity `∫ α^k β^l γ^m δ^n exp(-Q + c·αβγδ) ≥ 0` for `Q` even in
+  each variable and `c ≥ 0`, proven unconditionally by the four-fold sign
+  symmetrisation (formerly an axiom)
 
 ## References
 
@@ -134,29 +136,18 @@ private theorem integral_nonneg_of_nonneg_ae (f : ℝ → ℝ)
     0 ≤ ∫ x, f x ∂volume :=
   integral_nonneg hf
 
-/-- **Single-site non-negativity** (core of Theorem 4.3.1, Glimm–Jaffe p. 59):
-For Q even in each variable and c ≥ 0, the monomial integral is non-negative.
+/-! ## Single-site non-negativity (now proven, formerly an axiom)
 
-Proof (not formalized): 4-fold symmetrization via (α,β,γ,δ) → (±α,±β,±γ,±δ).
-After averaging over 16 sign patterns:
-- MIXED parity → coefficient vanishes → integral = 0
-- ALL EVEN → integrand × cosh(cαβγδ) ≥ 0  (cosh ≥ 0)
-- ALL ODD → integrand × sinh(cαβγδ) ≥ 0  (by `mul_sinh_nonneg`)
-
-Building blocks proved: `mul_sinh_nonneg`, `Real.cosh_nonneg`,
-`integral_odd_eq_zero`, `quartic_identity`. -/
-axiom phi4_single_site_nonneg
-    (Q : ℝ → ℝ → ℝ → ℝ → ℝ)
-    (hQ_even_α : ∀ α β γ δ, Q (-α) β γ δ = Q α β γ δ)
-    (hQ_even_β : ∀ α β γ δ, Q α (-β) γ δ = Q α β γ δ)
-    (hQ_even_γ : ∀ α β γ δ, Q α β (-γ) δ = Q α β γ δ)
-    (hQ_even_δ : ∀ α β γ δ, Q α β γ (-δ) = Q α β γ δ)
-    (c : ℝ) (hc : 0 ≤ c)
-    (k l m n : ℕ) :
-    0 ≤ ∫ α, ∫ β, ∫ γ, ∫ δ,
-      α ^ k * β ^ l * γ ^ m * δ ^ n *
-      Real.exp (-Q α β γ δ + c * (α * β * γ * δ))
-      ∂volume ∂volume ∂volume ∂volume
+The single-site non-negativity at the core of Theorem 4.3.1 — for `Q` even in
+each variable and `c ≥ 0`,
+`0 ≤ ∫∫∫∫ α^k β^l γ^m δ^n exp(-Q + c·αβγδ)` — was formerly stated as the
+axiom `phi4_single_site_nonneg`. It is now **proven unconditionally** by the
+four-fold sign symmetrisation in `ContinuousSpin/Phi4AllOdd.lean`
+(`phi4_single_site_nonneg`), via the building blocks `mul_sinh_nonneg`,
+`Real.cosh_nonneg`, `integral_odd_eq_zero`, and `quartic_identity` here.
+The proof splits by joint parity: all-even (pointwise non-negative), mixed
+parity (vanishes by an even/odd reflection pair), and all-odd (inner-`δ`
+`sinh` non-negativity) — no integrability hypothesis is needed. -/
 
 /-! ## Corollary 4.3.2: Lebowitz inequality
 
