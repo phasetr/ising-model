@@ -5252,32 +5252,35 @@ The truncated (connected) 4-point function:
 \]
 \end{definition}
 
-\begin{theorem}[\texttt{lebowitz\_four}; axiom]
-For ferromagnetic parameters with $h \ge 0$ and four distinct sites $i,j,k,l$:
-\begin{multline*}
-  \langle\sigma_i\sigma_j\sigma_k\sigma_l\rangle
-  + \langle\sigma_i\sigma_j\rangle\langle\sigma_k\sigma_l\rangle \\
-  \le \langle\sigma_i\sigma_k\rangle\langle\sigma_j\sigma_l\rangle
-  + \langle\sigma_i\sigma_l\rangle\langle\sigma_j\sigma_k\rangle
-  + \langle\sigma_i\sigma_k\sigma_l\rangle\langle\sigma_j\rangle
-  + \langle\sigma_j\sigma_k\sigma_l\rangle\langle\sigma_i\rangle.
-\end{multline*}
-\end{theorem}
+\begin{remark}[The former \texttt{lebowitz\_four} axiom was false; deleted
+in PR \#3909]
+The repository formerly axiomatised, for $h \ge 0$,
+$\langle\sigma_{ijkl}\rangle + \langle\sigma_{ij}\rangle\langle\sigma_{kl}\rangle
+\le \langle\sigma_{ik}\rangle\langle\sigma_{jl}\rangle
++ \langle\sigma_{il}\rangle\langle\sigma_{jk}\rangle
++ \langle\sigma_{ikl}\rangle\langle\sigma_j\rangle
++ \langle\sigma_{jkl}\rangle\langle\sigma_i\rangle$. At $h = 0$ the
+odd-cardinality correlations vanish, so this asserts
+$U_4 \le -2\langle\sigma_{ij}\rangle\langle\sigma_{kl}\rangle$, which is
+false: for two disjoint strongly coupled edges $ij$ and $kl$ the cross
+correlations vanish and $\langle\sigma_{ijkl}\rangle =
+\langle\sigma_{ij}\rangle\langle\sigma_{kl}\rangle > 0$. The axiom was
+deleted; the corrected zero-field inequality below is proved from the
+duplicate-variable machinery (\texttt{lebowitz\_four\_zero\_field}).
+\end{remark}
 
-\begin{theorem}[\texttt{cor\_4\_3\_3}; proved]
+\begin{theorem}[\texttt{cor\_4\_3\_3}; proved, axiom-free]
 For $h = 0$ and four distinct sites, $U_4(i,j,k,l) \le 0$.
 \end{theorem}
 
 \begin{proof}
-From \texttt{lebowitz\_four}, with $h = 0$ the odd-cardinality correlations
-vanish: $\langle\sigma_i\rangle = \langle\sigma_j\rangle = 0$ and
-$\langle\sigma_{ikl}\rangle = \langle\sigma_{jkl}\rangle = 0$.
-The Lebowitz bound reduces to
-$\langle\sigma_{ijkl}\rangle + \langle\sigma_{ij}\rangle\langle\sigma_{kl}\rangle
-\le \langle\sigma_{ik}\rangle\langle\sigma_{jl}\rangle
-  + \langle\sigma_{il}\rangle\langle\sigma_{jk}\rangle$.
-Since $\langle\sigma_{ij}\rangle, \langle\sigma_{kl}\rangle \ge 0$ by GKS-I,
-this gives $U_4 \le -2\langle\sigma_{ij}\rangle\langle\sigma_{kl}\rangle \le 0$.
+By \texttt{lebowitz\_four\_zero\_field} (PR \#3909, proved from Corollary
+4.3.2's $tq$ inequality),
+$\langle\sigma_{ijkl}\rangle
+\le \langle\sigma_{ij}\rangle\langle\sigma_{kl}\rangle
+  + \langle\sigma_{ik}\rangle\langle\sigma_{jl}\rangle
+  + \langle\sigma_{il}\rangle\langle\sigma_{jk}\rangle$,
+which is exactly $U_4 \le 0$ after the $h = 0$ odd-correlation vanishing.
 \end{proof}
 
 \subsection[Cor.~4.3.5: n-point inductive bound]{Cor.~4.3.5: $n$-point inductive bound}
@@ -7621,6 +7624,33 @@ bound (bounded edge density) and ferromagnetic non-negativity,
 being $\texttt{freeEnergyInfinite} = \limsup$ by definition. Reference:
 Glimm--Jaffe, \emph{Quantum Physics}, 2nd ed., \S 4.6, Proposition 4.6.1,
 p.~68.
+\end{theorem}
+
+\begin{theorem}[GJ \S 4.3: the zero-field four-point Lebowitz inequality and
+the deletion of the \texttt{lebowitz\_four} axiom; PR \#3909]
+For ferromagnetic parameters at $h = 0$ and four distinct sites,
+$\langle\sigma_i\sigma_j\sigma_k\sigma_l\rangle \le
+\langle\sigma_i\sigma_j\rangle\langle\sigma_k\sigma_l\rangle +
+\langle\sigma_i\sigma_k\rangle\langle\sigma_j\sigma_l\rangle +
+\langle\sigma_i\sigma_l\rangle\langle\sigma_j\sigma_k\rangle$
+(equivalently $U_4 \le 0$;
+\texttt{lebowitz\_four\_zero\_field}). Proof: the binomial expansions of
+the doubled $t/q$ products give the powerset formulas
+$\langle t^A\rangle_2 = \sum_{S \subseteq A} c_S c_{A\setminus S}$,
+$\langle q^B\rangle_2 = \sum_T (-1)^{|B\setminus T|} c_T c_{B\setminus T}$,
+and $\langle t^A q^B\rangle_2 = \sum_S \sum_T (-1)^{|B\setminus T|}
+c_{S\cup T}\, c_{(A\setminus S)\cup(B\setminus T)}$ (disjoint merges);
+applying \texttt{cor\_4\_3\_2\_tq} with $A = \{i,j\}$, $B = \{k,l\}$,
+evaluating over the two pairs, and killing the odd correlations by the
+zero-field spin-flip symmetry yields the inequality. \textbf{The
+formalisation exposed that the former \texttt{lebowitz\_four} axiom was
+false as stated}: its $h = 0$ specialisation asserts $U_4 \le
+-2\langle\sigma_i\sigma_j\rangle\langle\sigma_k\sigma_l\rangle$, refuted by
+two disjoint strongly coupled edges with vanishing cross-correlations. The
+axiom is deleted; its only consumer (\texttt{cor\_4\_3\_3}) follows from
+the corrected inequality directly. Reference: Glimm--Jaffe, \emph{Quantum
+Physics}, 2nd ed., \S 4.3, Corollaries 4.3.2--4.3.3, pp.~60--61; J.~L.
+Lebowitz, Comm.\ Math.\ Phys.\ 35 (1974).
 \end{theorem}
 
 \begin{theorem}[GJ \S 4.3 Corollary 4.3.2: the Lebowitz $t/q$ inequalities;
