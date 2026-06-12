@@ -12,8 +12,8 @@ The explicit ball-boundary distance decay
 the named `HasExponentialDecay` predicate with an explicit *positive* rate, in
 the strong high-temperature regime `H := βJ · 2 · (d · (2(r+1)+1)^d) < 1` with
 `β, J > 0` — that is, a positive mass gap holds unconditionally (no
-polynomial-decay hypothesis; the underlying ball-boundary shell-contraction axiom
-`shellSup_contraction` is still used).
+polynomial-decay hypothesis; the underlying ball-boundary shell-contraction machinery
+`shellSup_contraction` (now a proven theorem) is still used).
 
 References:
 
@@ -34,9 +34,9 @@ At `h = 0` the Ursell two-point function equals the correlation
 (`correlationInfinite_latticeGraph_le_explicit_pow_dist`) bounds by
 `H^{⌊dist/(r+2)⌋} ≤ (1/H)·exp(-(-log H/(r+2))·dist)`; the witness constant is
 `C = 1/H`.  No polynomial-decay hypothesis is assumed (the ball-boundary
-shell-contraction axiom is still used).  Part of Issue #2931, Phase 3a. -/
+shell-contraction machinery is still used).  Part of Issue #2931, Phase 3a. -/
 theorem hasExponentialDecay_latticeGraph_of_high_temp
-    (d : ℕ) (hd : 1 ≤ d) (r : ℕ) (Λ : Exhaustion (Fin d → ℤ))
+    (d : ℕ) (hd : 1 ≤ d) (r : ℕ) (hr : 1 ≤ r) (Λ : Exhaustion (Fin d → ℤ))
     {J β : ℝ} (hJ_pos : 0 < J) (hβ_pos : 0 < β)
     (hht : β * J * (2 * ((d : ℝ) * (((2 * (r + 1) + 1) ^ d : ℕ) : ℝ))) < 1) :
     HasExponentialDecay d Λ (⟨J, 0, β⟩ : IsingParams ℝ)
@@ -59,7 +59,7 @@ theorem hasExponentialDecay_latticeGraph_of_high_temp
     (⟨J, 0, β⟩ : IsingParams ℝ) hf {i, j}
   rw [abs_of_nonneg hcorr_nn]
   have hdecay :=
-    correlationInfinite_latticeGraph_le_explicit_pow_dist d hd r Λ
+    correlationInfinite_latticeGraph_le_explicit_pow_dist d hd r hr Λ
       (⟨J, 0, β⟩ : IsingParams ℝ) hf rfl hht hij
   set n := IsingModel.latticeDistance d i j with hn
   have hq_real : ((n / (r + 2) : ℕ) : ℝ) ≥ (n : ℝ) / (r + 2 : ℝ) - 1 := by
@@ -115,7 +115,7 @@ to the supremum definition of `latticeMass` (the central quantity of Lemma 17.5.
 via `latticeMass_ge_of_HasExponentialDecay`, with no polynomial-decay hypothesis.
 Part of Issue #2931, Phase 3a. -/
 theorem latticeMass_ge_explicit_of_high_temp
-    (d : ℕ) (hd : 1 ≤ d) (r : ℕ) (Λ : Exhaustion (Fin d → ℤ))
+    (d : ℕ) (hd : 1 ≤ d) (r : ℕ) (hr : 1 ≤ r) (Λ : Exhaustion (Fin d → ℤ))
     {J β : ℝ} (hJ_pos : 0 < J) (hβ_pos : 0 < β)
     (hht : β * J * (2 * ((d : ℝ) * (((2 * (r + 1) + 1) ^ d : ℕ) : ℝ))) < 1) :
     ENNReal.ofReal
@@ -124,7 +124,7 @@ theorem latticeMass_ge_explicit_of_high_temp
       ≤ latticeMass d Λ (⟨J, 0, β⟩ : IsingParams ℝ) :=
   latticeMass_ge_of_HasExponentialDecay
     (highTemp_rate_pos d hd r hJ_pos hβ_pos hht).le
-    (hasExponentialDecay_latticeGraph_of_high_temp d hd r Λ hJ_pos hβ_pos hht)
+    (hasExponentialDecay_latticeGraph_of_high_temp d hd r hr Λ hJ_pos hβ_pos hht)
 
 /-- **Positive lattice mass at strong high temperature, unconditionally**: for
 `β, J > 0` and `H := βJ · 2 · (d · (2(r+1)+1)^d) < 1`,
@@ -132,13 +132,13 @@ theorem latticeMass_ge_explicit_of_high_temp
 `latticeMass_pos_of_HasExponentialDecay` (no polynomial-decay hypothesis).  Part
 of Issue #2931, Phase 3a. -/
 theorem latticeMass_pos_of_high_temp_mass_gap
-    (d : ℕ) (hd : 1 ≤ d) (r : ℕ) (Λ : Exhaustion (Fin d → ℤ))
+    (d : ℕ) (hd : 1 ≤ d) (r : ℕ) (hr : 1 ≤ r) (Λ : Exhaustion (Fin d → ℤ))
     {J β : ℝ} (hJ_pos : 0 < J) (hβ_pos : 0 < β)
     (hht : β * J * (2 * ((d : ℝ) * (((2 * (r + 1) + 1) ^ d : ℕ) : ℝ))) < 1) :
     0 < latticeMass d Λ (⟨J, 0, β⟩ : IsingParams ℝ) :=
   latticeMass_pos_of_HasExponentialDecay
     (highTemp_rate_pos d hd r hJ_pos hβ_pos hht)
-    (hasExponentialDecay_latticeGraph_of_high_temp d hd r Λ hJ_pos hβ_pos hht)
+    (hasExponentialDecay_latticeGraph_of_high_temp d hd r hr Λ hJ_pos hβ_pos hht)
 
 /-- **Unconditional high-temperature convolution summability of the two-point
 function**: for `β, J > 0` and `H := βJ · 2 · (d · (2(r+1)+1)^d) < 1`, the
@@ -152,7 +152,7 @@ convolution summability `summable_truncated2Infinite_prod_of_hasExponentialDecay
 boundary-sum summability ingredient for the finite-volume → infinite-volume
 convergence-rate coupling (Issue #2965, Phase B). -/
 theorem summable_truncated2Infinite_prod_of_high_temp
-    (d : ℕ) (hd : 1 ≤ d) (r : ℕ) {J β : ℝ} (hJ_pos : 0 < J) (hβ_pos : 0 < β)
+    (d : ℕ) (hd : 1 ≤ d) (r : ℕ) (hr : 1 ≤ r) {J β : ℝ} (hJ_pos : 0 < J) (hβ_pos : 0 < β)
     (hht : β * J * (2 * ((d : ℝ) * (((2 * (r + 1) + 1) ^ d : ℕ) : ℝ))) < 1)
     (x y : Fin d → ℤ) :
     Summable (fun z : Fin d → ℤ =>
@@ -162,7 +162,7 @@ theorem summable_truncated2Infinite_prod_of_high_temp
           (⟨J, 0, β⟩ : IsingParams ℝ) y z) :=
   summable_truncated2Infinite_prod_of_hasExponentialDecay hJ_pos.le hβ_pos
     (highTemp_rate_pos d hd r hJ_pos hβ_pos hht)
-    (hasExponentialDecay_latticeGraph_of_high_temp d hd r (cubicExhaustion d)
+    (hasExponentialDecay_latticeGraph_of_high_temp d hd r hr (cubicExhaustion d)
       hJ_pos hβ_pos hht)
     x y
 
@@ -178,7 +178,7 @@ itself decays exponentially in `dist(x,y)`, with no polynomial-decay hypothesis.
 The constant `C = (C'+1)^2 · 2·∑_z exp(-(rate/2)·dist(0,z))` absorbs the finite
 single-site exponential sum.  Part of Issue #2965, Phase B. -/
 theorem tsum_truncated2Infinite_prod_decay_of_high_temp
-    (d : ℕ) (hd : 1 ≤ d) (r : ℕ) {J β : ℝ} (hJ_pos : 0 < J) (hβ_pos : 0 < β)
+    (d : ℕ) (hd : 1 ≤ d) (r : ℕ) (hr : 1 ≤ r) {J β : ℝ} (hJ_pos : 0 < J) (hβ_pos : 0 < β)
     (hht : β * J * (2 * ((d : ℝ) * (((2 * (r + 1) + 1) ^ d : ℕ) : ℝ))) < 1) :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ x y : Fin d → ℤ,
       (∑' z : Fin d → ℤ,
@@ -193,7 +193,7 @@ theorem tsum_truncated2Infinite_prod_decay_of_high_temp
     (r + 2 : ℝ) with hrate
   have hrate_pos : 0 < rate := highTemp_rate_pos d hd r hJ_pos hβ_pos hht
   obtain ⟨C', hC', hbound⟩ :=
-    hasExponentialDecay_latticeGraph_of_high_temp d hd r (cubicExhaustion d)
+    hasExponentialDecay_latticeGraph_of_high_temp d hd r hr (cubicExhaustion d)
       hJ_pos hβ_pos hht
   refine ⟨(C' + 1) ^ 2 *
       (2 * ∑' z : Fin d → ℤ, Real.exp (-(rate / 2) * (IsingModel.latticeDistance d 0 z : ℝ))),
@@ -217,7 +217,7 @@ estimate (uniform over the choice of separating surface `S`) needed for the
 finite-volume → infinite-volume convergence-rate coupling (Issue #2965, Phase
 A/B). -/
 theorem truncated2Infinite_prod_finset_sum_decay_of_high_temp
-    (d : ℕ) (hd : 1 ≤ d) (r : ℕ) {J β : ℝ} (hJ_pos : 0 < J) (hβ_pos : 0 < β)
+    (d : ℕ) (hd : 1 ≤ d) (r : ℕ) (hr : 1 ≤ r) {J β : ℝ} (hJ_pos : 0 < J) (hβ_pos : 0 < β)
     (hht : β * J * (2 * ((d : ℝ) * (((2 * (r + 1) + 1) ^ d : ℕ) : ℝ))) < 1) :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ (x y : Fin d → ℤ) (S : Finset (Fin d → ℤ)),
       (∑ b ∈ S,
@@ -229,10 +229,10 @@ theorem truncated2Infinite_prod_finset_sum_decay_of_high_temp
             (-Real.log (β * J * (2 * ((d : ℝ) * (((2 * (r + 1) + 1) ^ d : ℕ) : ℝ)))) /
               (r + 2 : ℝ)) / 2) * (IsingModel.latticeDistance d x y : ℝ) / 2) := by
   obtain ⟨C, hC, hdecay⟩ :=
-    tsum_truncated2Infinite_prod_decay_of_high_temp d hd r hJ_pos hβ_pos hht
+    tsum_truncated2Infinite_prod_decay_of_high_temp d hd r hr hJ_pos hβ_pos hht
   have hf : Ferromagnetic (⟨J, 0, β⟩ : IsingParams ℝ) := ⟨hJ_pos.le, le_refl 0, hβ_pos⟩
   refine ⟨C, hC, fun x y S => ?_⟩
-  have hsum := summable_truncated2Infinite_prod_of_high_temp d hd r hJ_pos hβ_pos hht x y
+  have hsum := summable_truncated2Infinite_prod_of_high_temp d hd r hr hJ_pos hβ_pos hht x y
   have hpartial :
       (∑ b ∈ S,
           truncated2Infinite (IsingModel.latticeGraph d) (cubicExhaustion d)
@@ -260,7 +260,7 @@ two-point truncated function over the cubic exhaustion decays exponentially with
 
 Uses only the iterated naive Simon–Lieb peeling bound
 `correlationInfinite_latticeGraph_le_betaJ_two_d_pow_of_dist_gt`
-(`⟨σ_iσ_j⟩^∞ ≤ (βJ·2d)^{dist−1}`) — no ball-boundary shell-contraction axiom — together
+(`⟨σ_iσ_j⟩^∞ ≤ (βJ·2d)^{dist−1}`) — no ball-boundary shell-contraction machinery — together
 with `truncated2Infinite_h_zero` (at `h=0` the truncated function is the bare correlation)
 and `correlationInfinite_nonneg`. Rewriting `(βJ·2d)^{dist−1} = (1/βJ·2d)·exp(log(βJ·2d)·dist)`
 gives the constant `C = 1/(βJ·2d)` and rate `−log(βJ·2d)`. This is a cleaner, weaker
@@ -344,7 +344,7 @@ The iterated naive Simon–Lieb decay
 (`⟨σ_0σ_y⟩^∞ ≤ (βJ·2d)^{dist−1}` for `y ≠ 0`) is dominated by the summable majorant
 `(βJ·2d)^{⌊dist/2⌋}` (`summable_pow_div_latticeDistance d 0`), using
 `⌊dist/2⌋ ≤ dist − 1` for `dist ≥ 1` and `βJ·2d ≤ 1`; the `y = 0` term is `≤ 1 = (βJ·2d)^0`.
-No ball-boundary shell-contraction axiom and no `(2(r+1)+1)^d` boundary factor. -/
+No ball-boundary shell-contraction machinery and no `(2(r+1)+1)^d` boundary factor. -/
 theorem correlationInfinite_latticeGraph_susceptibility_summable_betaJ_two_d
     (d : ℕ) (hd : 1 ≤ d) {J β : ℝ} (hJ_pos : 0 < J) (hβ_pos : 0 < β)
     (hht : β * J * (2 * d) < 1) :
@@ -412,7 +412,8 @@ radius `R` with `⟨σ_iσ_j⟩^∞ ≤ ε` whenever `dist(i,j) ≥ R`.
 Since `0 ≤ βJ·2d < 1`, `exists_pow_lt_of_lt_one` provides `K` with `(βJ·2d)^K < ε`;
 taking `R = K + 1`, any pair with `dist ≥ R` has `dist − 1 ≥ K` and `i ≠ j`, so the
 iterated peeling bound `correlationInfinite_latticeGraph_le_betaJ_two_d_pow_of_dist_gt`
-gives `⟨σ_iσ_j⟩^∞ ≤ (βJ·2d)^{dist−1} ≤ (βJ·2d)^K < ε`. No shell-contraction axiom. -/
+gives `⟨σ_iσ_j⟩^∞ ≤ (βJ·2d)^{dist−1} ≤ (βJ·2d)^K < ε`.
+No shell-contraction machinery. -/
 theorem correlationInfinite_latticeGraph_uniform_decay_of_betaJ_two_d_lt_one
     (d : ℕ) (hd : 1 ≤ d) {J β : ℝ} (hJ_pos : 0 < J) (hβ_pos : 0 < β)
     (hht : β * J * (2 * d) < 1) :
@@ -440,7 +441,8 @@ have `⟨σ_0σ_y⟩^∞ ≥ ε`.
 From the axiom-free uniform decay
 `correlationInfinite_latticeGraph_uniform_decay_of_betaJ_two_d_lt_one`, the set
 `{y | ⟨σ_0σ_y⟩^∞ ≥ ε}` is contained in the finite lattice ball
-`{y | dist(0,y) < R}` (`latticeDistance_le_finite`). No shell-contraction axiom. -/
+`{y | dist(0,y) < R}` (`latticeDistance_le_finite`).
+No shell-contraction machinery. -/
 theorem correlationInfinite_latticeGraph_tendsto_cofinite_zero_of_betaJ_two_d_lt_one
     (d : ℕ) (hd : 1 ≤ d) {J β : ℝ} (hJ_pos : 0 < J) (hβ_pos : 0 < β)
     (hht : β * J * (2 * d) < 1) :
@@ -476,7 +478,7 @@ Composes the axiom-free exponential decay
 `hasExponentialDecay_latticeGraph_of_betaJ_two_d_lt_one` (which supplies both the positive
 rate and the `HasExponentialDecay` predicate) with the generic
 `summable_truncated2Infinite_prod_of_hasExponentialDecay`. No ball-boundary
-shell-contraction axiom and no `(2(r+1)+1)^d` boundary factor. -/
+shell-contraction machinery and no `(2(r+1)+1)^d` boundary factor. -/
 theorem summable_truncated2Infinite_prod_of_betaJ_two_d_lt_one
     (d : ℕ) (hd : 1 ≤ d) {J β : ℝ} (hJ_pos : 0 < J) (hβ_pos : 0 < β)
     (hht : β * J * (2 * d) < 1) (x y : Fin d → ℤ) :
@@ -500,7 +502,7 @@ where `rate = −log(βJ·2d) > 0`. The boundary convolution itself decays expon
 Composes the axiom-free exponential decay
 `hasExponentialDecay_latticeGraph_of_betaJ_two_d_lt_one` with the GJ §17.5 Step 127
 quantitative convolution bound `tsum_truncated2Infinite_prod_le`. No ball-boundary
-shell-contraction axiom and no `(2(r+1)+1)^d` boundary factor. -/
+shell-contraction machinery and no `(2(r+1)+1)^d` boundary factor. -/
 theorem tsum_truncated2Infinite_prod_decay_of_betaJ_two_d_lt_one
     (d : ℕ) (hd : 1 ≤ d) {J β : ℝ} (hJ_pos : 0 < J) (hβ_pos : 0 < β)
     (hht : β * J * (2 * d) < 1) :
@@ -535,7 +537,7 @@ bounded by the full `tsum` (`Summable.sum_le_tsum`, summability by
 `summable_truncated2Infinite_prod_of_betaJ_two_d_lt_one`), which decays by
 `tsum_truncated2Infinite_prod_decay_of_betaJ_two_d_lt_one`. This is the boundary-sum
 estimate (uniform over the separating surface `S`) for the finite→infinite-volume
-convergence-rate coupling (Issue #2965, Phase A/B), with no shell-contraction axiom. -/
+convergence-rate coupling (Issue #2965, Phase A/B), with no shell-contraction machinery. -/
 theorem truncated2Infinite_prod_finset_sum_decay_of_betaJ_two_d_lt_one
     (d : ℕ) (hd : 1 ≤ d) {J β : ℝ} (hJ_pos : 0 < J) (hβ_pos : 0 < β)
     (hht : β * J * (2 * d) < 1) :

@@ -125,8 +125,12 @@ theorem correlationInfinite_polynomial_implies_exponential
   -- Step 1: Extract contraction radius R with α_R < 1/2.
   have hcf_tendsto := polynomialDecay_contraction_factor_tendsto d hd Λ p hf hh hpoly
   rw [Metric.tendsto_atTop] at hcf_tendsto
-  obtain ⟨R, hR⟩ := hcf_tendsto (1 / 2) (by norm_num)
-  have hR_val : |contractionFactor d Λ p R - 0| < 1 / 2 := hR R le_rfl
+  obtain ⟨R₀, hR⟩ := hcf_tendsto (1 / 2) (by norm_num)
+  -- Take `R := max R₀ 1` so that `1 ≤ R` (needed for `shellSup_iterated_bound`,
+  -- whose underlying `ball_boundary_tight_infinite` is false at `r = 0`).
+  set R := max R₀ 1 with hRdef
+  have hRge1 : 1 ≤ R := le_max_right _ _
+  have hR_val : |contractionFactor d Λ p R - 0| < 1 / 2 := hR R (le_max_left _ _)
   simp only [sub_zero] at hR_val
   have hα_lt_half : contractionFactor d Λ p R < 1 / 2 := lt_of_abs_lt hR_val
   have hα_lt_one : contractionFactor d Λ p R < 1 := lt_trans hα_lt_half (by norm_num)
@@ -181,7 +185,7 @@ theorem correlationInfinite_polynomial_implies_exponential
       have hcorr_zero : correlationInfinite (IsingModel.latticeGraph d) Λ p
           {(0 : Fin d → ℤ), j - i} = 0 := by
         -- shellSup_iterated_bound with k=1, n ≥ R+2 gives iSup ≤ α^1 = 0.
-        have h_iter := shellSup_iterated_bound d hd R Λ p hf hh hα_lt_one 1 n
+        have h_iter := shellSup_iterated_bound d hd R hRge1 Λ p hf hh hα_lt_one 1 n
           (by omega : 1 * (R + 2) ≤ n)
         -- After `set α := contractionFactor d Λ p R`, h_iter uses α.
         have hαpow : α ^ 1 = 0 := by simp [← hα_zero]
@@ -253,7 +257,7 @@ theorem correlationInfinite_polynomial_implies_exponential
     have hshell_le : correlationInfinite (IsingModel.latticeGraph d) Λ p
         {(0 : Fin d → ℤ), j - i} ≤ α ^ k := by
       rw [hα_def]
-      have h_iter := shellSup_iterated_bound d hd R Λ p hf hh hα_lt_one k n hk_le
+      have h_iter := shellSup_iterated_bound d hd R hRge1 Λ p hf hh hα_lt_one k n hk_le
       apply le_trans _ h_iter
       -- corr∞{0, j-i} is a term in the iSup at shell level n.
       apply le_ciSup_of_le (shellSup_bddAbove d n Λ p)
