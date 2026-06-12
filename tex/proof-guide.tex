@@ -5523,6 +5523,19 @@ and all building blocks are continuous in the configuration, hence measurable.
 The single-spin and multi-site integrability, and the three inequalities of
 Theorem 4.7.1, follow in subsequent PRs.
 
+\paragraph{Single-spin integrability (\texttt{ContinuousSpin/TwoComponentIntegrable.lean}).}
+For $A > 0$, $\sigma \ge 0$ the $SO(2)$-invariant single-spin density
+$e^{-A(t^2+q^2)^2 - \sigma(t^2+q^2)}$ is integrable over $\mathbb{R}^2$
+(\texttt{integrable\_singleSpinDensity}). In polar coordinates
+(\texttt{lintegral\_comp\_polarCoord\_symm}, with
+$|\,\texttt{polarCoord.symm}(r,\theta)|^2 = r^2$) and Tonelli
+(\texttt{Measure.prod\_restrict}) the $\mathbb{R}^2$ Lebesgue integral factors
+as $\operatorname{vol}(-\pi,\pi)\cdot\int_0^\infty r\,e^{-A r^4 - \sigma r^2}\,dr$,
+and the radial integrand is integrable on $(0,\infty)$
+(\texttt{integrableOn\_radial\_single\_spin}), dominated by the Mathlib
+super-Gaussian $r\,e^{-A r^4}$ since $e^{-\sigma r^2} \le 1$. The quartic term
+$A > 0$ is what forces integrability.
+
 \section{Pure and mixed phases (\texttt{PhaseTransition.lean})}
 
 Formalization of Glimm--Jaffe, \S5.1 (pp.~72--74).
