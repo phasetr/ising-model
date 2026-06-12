@@ -24210,4 +24210,60 @@ for distinct $i \ne j$ in the high-temperature regime $\beta J\cdot 2d < 1$, via
 volume is thus exhibited as a supremum of box-confined random-walk sums. File:
 \texttt{Concrete/LatticeGraphCorrelation/WalkSumTsumInfiniteVolume.lean}.
 
+\section{Infinite-volume tight ball-boundary inequality (GJ \S17.8)}
+
+The §17.8 polynomial-to-exponential decay layer rested on three declared axioms.
+The first, \texttt{ball\_boundary\_tight\_infinite}, is now a \emph{theorem}
+(\texttt{TheoremEtaLe1/BallBoundaryInfinite.lean}), obtained as the
+infinite-volume limit of the finite-stage tight ball-boundary Simon--Lieb
+inequality \texttt{ball\_boundary\_simon\_lieb\_tight} (itself axiom-free since
+\texttt{cor\_4\_3\_3\_scaled} was proved). For a ferromagnetic Ising model at
+$h=0$ on $\texttt{latticeGraph}\,d$, with $1\le r$ and a point $x$ satisfying
+$r+1 < \texttt{latticeDistance}\,d\,0\,x$,
+\[
+  \langle\sigma_0\sigma_x\rangle_\infty
+  \le \beta J \sum_{(k,l)\in\partial B_r}
+    \bigl[\langle\sigma_0\sigma_k\rangle_\infty\langle\sigma_l\sigma_x\rangle_\infty
+      + \langle\sigma_0\sigma_l\rangle_\infty\langle\sigma_k\sigma_x\rangle_\infty\bigr].
+\]
+
+\paragraph{Correctness finding (hypothesis correction).}
+The originally declared axiom asserted this for \emph{every} $r$ and every $x$
+with $r < \texttt{latticeDistance}\,d\,0\,x$. The formalization shows this is
+false. For $r=0$ the boundary edges run from the origin to its nearest
+neighbours, so the origin lies on \emph{every} boundary edge; moreover the
+right-hand lift hits the Finset $\{0,0\}$, which collapses to the singleton
+$\{0\}$, giving $\langle\sigma_0\rangle = 0$ at $h=0$ instead of the intended
+$\langle\sigma_0^2\rangle = 1$, and the bound then fails at high temperature.
+For $\texttt{latticeDistance}\,d\,0\,x = r+1$ the sink $x$ sits on the outer
+boundary shell, hence on a boundary edge, again breaking the finite-stage
+separation hypothesis $0,x\notin e$. The proved theorem therefore carries the
+corrected hypotheses $1\le r$ and $r+1 < \texttt{latticeDistance}\,d\,0\,x$,
+which are exactly the regime consumed downstream by
+\texttt{shellSup\_contraction} (where the shell point has distance $\ge r+2$).
+This mirrors the false \texttt{lebowitz\_four}/\texttt{lebowitz\_third} axioms
+detected earlier in the §4.3 layer.
+
+\paragraph{Proof.}
+\texttt{ciSup\_le} reduces to a per-stage bound. At each exhaustion stage $n$
+with $\{0,x\}\subseteq\Lambda_n$, apply \texttt{ball\_boundary\_simon\_lieb\_tight}
+to the induced graph with $E_0$ the straddling cut edges of the inside ball
+$C=\{v : \texttt{latticeDistance}\,d\,0\,v\le r\}$; the disconnection
+$\texttt{scaledCorrelation}\;0 = 0$ comes from
+\texttt{scaledCorrelation\_at\_zero\_of\_sep} (every cut edge of the stage lies
+in $E_0$, so no edge crosses $C$ outside $E_0$), and the separation
+$0,x\notin e$ holds because $1\le r$ keeps $0$ off the cut and
+$r+1<\texttt{dist}\,x$ keeps $x$ off it (adjacency forces a boundary endpoint to
+distance $\le r+1$). Each finite-volume correlation is bounded by its
+infinite-volume value via
+\texttt{correlationAlongExhaustion\_le\_correlationInfinite}, and the subtype
+cut-edge sum reindexes into the ambient $\texttt{latticeBallBoundaryEdges}\,d\,r$
+sum: the map $\texttt{Sym2.map Subtype.val}$ is injective, and the image of the
+stage-$n$ cut edges is contained in $\texttt{latticeBallBoundaryEdges}$ because
+every straddling adjacent pair is confined to $\texttt{cubicBox}\,d\,(r+1)$
+(\texttt{latticeBallBoundary\_confine}, \texttt{mem\_latticeBallBoundaryEdges}).
+With the ambient summand non-negative, \texttt{Finset.sum\_le\_sum\_of\_subset\_of\_nonneg}
+closes the inclusion. Reference: Glimm--Jaffe, 2nd ed., §17.8,
+(17.8.4)--(17.8.5), pp.~316--318.
+
 \end{document}
