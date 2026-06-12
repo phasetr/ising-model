@@ -24310,8 +24310,50 @@ high-temperature mass-gap family (\texttt{HighTempMassGap.lean}), the η≤1 the
 (\texttt{MainTheorem.lean}, which now picks the contraction radius
 $R := \max(R_0,1)$), and the cubic-shell decay-sum chain
 (\texttt{CubicShellDecaySum}, \texttt{CubicUrsellShellSum},
-\texttt{ShellCovarianceShellSum}). Only \texttt{polynomialDecay\_contraction\_factor\_tendsto}
-remains a declared axiom in §17.8. Reference: Glimm--Jaffe, 2nd ed., §17.8,
-proof of Theorem 17.8.1, p.~317.
+\texttt{ShellCovarianceShellSum}). After this, only
+\texttt{polynomialDecay\_contraction\_factor\_tendsto} remained, discharged next.
+Reference: Glimm--Jaffe, 2nd ed., §17.8, proof of Theorem 17.8.1, p.~317.
+
+\section{Contraction factor tends to zero (GJ \S17.8) --- last axiom discharged}
+
+The third and final §17.8 axiom, \texttt{polynomialDecay\_contraction\_factor\_tendsto},
+is now a \emph{theorem} (\texttt{TheoremEtaLe1/Contraction.lean}). Under
+\texttt{HasPolynomialDecay}\,$d\,\Lambda\,p$ (i.e.
+$\langle\sigma_0\sigma_x\rangle_\infty\cdot|x|^{d-1}\to 0$ along the cofinite
+filter), the contraction factor tends to zero,
+$\texttt{contractionFactor}\,d\,\Lambda\,p\,r \to 0$ as $r\to\infty$. With this,
+\textbf{GJ §17.8 Theorem 17.8.1 ($\eta \le 1$) is unconditional}, and the entire
+project is free of declared axioms (modulo Mathlib).
+
+\paragraph{Surface cardinality.}
+The crux is that the boundary has only $O(r^{d-1})$ edges, a \emph{surface} count.
+The ℓ¹-sphere bound \texttt{latticeSphere\_card\_le} (\texttt{LatticeSphereCard.lean})
+gives $|\{x\in\mathbb{Z}^d : \sum_i|x_i| = r\}| \le 2\,(2r+1)^{d-1}$ via the
+two-to-one projection $x \mapsto (\operatorname{sign} x_d,\ \texttt{Fin.init}\,x)$
+into $\texttt{Bool}\times\texttt{cubicBox}\,(d{-}1)\,r$ (the last coordinate is
+determined up to sign by the first $d-1$, whose ℓ¹ norm is $\le r$). Then
+\texttt{latticeBallBoundaryEdges\_card\_le\_sphere} gives
+$|\partial B_r| \le 2d\cdot|\texttt{latticeSphere}\,d\,r|$, mapping each boundary
+edge to its inside (distance-$r$) endpoint, with at most $2d$ edges per vertex
+(\texttt{latticeGraph\_degree\_le}).
+
+\paragraph{Proof.}
+Fix $\varepsilon>0$ and set $C := \beta J\cdot 8d\cdot 3^{d-1} + 1$,
+$\delta := \varepsilon/C$. Polynomial decay (read through
+\texttt{Metric.tendsto\_nhds} and \texttt{Filter.eventually\_cofinite}) makes the
+bad set $\{x : \delta \le \langle\sigma_0\sigma_x\rangle_\infty\cdot|x|^{d-1}\}$
+\emph{finite}, hence of bounded distance $\le D$; so for every vertex $v$ with
+$|v| > D$, $\langle\sigma_0\sigma_v\rangle_\infty\cdot|v|^{d-1} \le \delta$. Each
+boundary edge of $\partial B_r$ (for $r \ge D+1$) has both endpoints at distance
+in $\{r, r+1\}\subseteq(D,\infty)$, so each summand is
+$\le 2\delta/r^{d-1}$. Summing over the $\le 4d\,(2r+1)^{d-1}$ edges and using
+$(2r+1)^{d-1} \le 3^{d-1} r^{d-1}$ (for $r\ge1$),
+\[
+  \texttt{contractionFactor}\,d\,\Lambda\,p\,r
+  \;\le\; \beta J\cdot 4d\,(2r+1)^{d-1}\cdot \frac{2\delta}{r^{d-1}}
+  \;\le\; \beta J\cdot 8d\cdot 3^{d-1}\cdot \delta
+  \;=\; (C-1)\,\delta \;<\; \varepsilon .
+\]
+Reference: Glimm--Jaffe, 2nd ed., §17.8, pp.~316--318.
 
 \end{document}

@@ -101,4 +101,36 @@ theorem latticeSphere_card_le (m r : ℕ) :
     -- reconstruct via `Fin.snoc (Fin.init ·) (· (last))`
     rw [← Fin.snoc_init_self x, ← Fin.snoc_init_self y, hinit, hlast]
 
+/-- The ℓ¹-sphere of radius `r` in `ℤ^d` as a `Finset` (points at exact distance
+`r` from the origin). -/
+noncomputable def latticeSphere (d r : ℕ) : Finset (Fin d → ℤ) :=
+  (cubicBox d r).filter (fun x => IsingModel.latticeDistance d 0 x = r)
+
+/-- Membership in `latticeSphere`: `x ∈ latticeSphere d r ↔ latticeDistance d 0 x = r`
+(the cube containment is automatic from `dist = r`). -/
+theorem mem_latticeSphere {d r : ℕ} {x : Fin d → ℤ} :
+    x ∈ latticeSphere d r ↔ IsingModel.latticeDistance d 0 x = r := by
+  rw [latticeSphere, Finset.mem_filter]
+  refine ⟨fun h => h.2, fun h => ⟨?_, h⟩⟩
+  rw [mem_cubicBox]
+  intro i
+  have hcoord : (x i).natAbs ≤ IsingModel.latticeDistance d 0 x := by
+    unfold IsingModel.latticeDistance
+    have heq : ((0 : Fin d → ℤ) i - x i).natAbs = (x i).natAbs := by
+      simp only [Pi.zero_apply, zero_sub, Int.natAbs_neg]
+    rw [← heq]
+    exact Finset.single_le_sum (f := fun j => ((0 : Fin d → ℤ) j - x j).natAbs)
+      (fun j _ => Nat.zero_le _) (Finset.mem_univ i)
+  have hle : (x i).natAbs ≤ r := h ▸ hcoord
+  have habs : |x i| ≤ (r : ℤ) := by rw [Int.abs_eq_natAbs]; exact_mod_cast hle
+  rw [abs_le] at habs
+  exact habs
+
+/-- **ℓ¹-sphere surface cardinality bound (general `d ≥ 1`)**:
+`|latticeSphere d r| ≤ 2·(2r+1)^{d-1}`. -/
+theorem latticeSphere_card_le' (d r : ℕ) (hd : 1 ≤ d) :
+    (latticeSphere d r).card ≤ 2 * (2 * r + 1) ^ (d - 1) := by
+  obtain ⟨m, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (by omega : d ≠ 0)
+  simpa only [latticeSphere, Nat.add_sub_cancel] using latticeSphere_card_le m r
+
 end IsingModel.Ambient
