@@ -1,4 +1,5 @@
 import IsingModel.BallBoundarySimonLieb.WeakBound
+import IsingModel.Inequalities.Lebowitz.ScaledLebowitz
 
 /-!
 # Ball-boundary Simon-Lieb tight bound wrappers
@@ -60,7 +61,7 @@ theorem scaledCorrelation_odd_vanish (G : SimpleGraph ι) [Fintype G.edgeSet]
     exact Finset.sum_congr rfl (fun σ _ => hflip σ)
   linarith [hreindex.trans hsum2]
 
-/-- **Cor. 4.3.3 for the scaled model** (new independent axiom).
+/-- **Cor. 4.3.3 for the scaled model** (proven; formerly an axiom).
 
 For ferromagnetic `p` with `h = 0`, `s ≥ 0`, and four distinct sites `r, a, k, l`:
 `scaledCorrelation G E₀ p s (symmDiff {r,a} {k,l}) ≤`
@@ -68,16 +69,17 @@ For ferromagnetic `p` with `h = 0`, `s ≥ 0`, and four distinct sites `r, a, k,
 `+ scaledCorrelation G E₀ p s {r,k} · scaledCorrelation G E₀ p s {a,l}`
 `+ scaledCorrelation G E₀ p s {r,l} · scaledCorrelation G E₀ p s {a,k}`
 
-This is a **new independent axiom** for models with non-uniform couplings
-(`J_e = sJ` for `e ∈ E₀`, `J_e = J` for `e ∉ E₀`). It is mathematically valid via
-the φ⁴ approximation argument (same structure as `lebowitz_four` + Cor. 4.3.3 in GHS.lean):
-(1) `lebowitz_four_scaled` (a 4-site Lebowitz axiom for the scaled model);
-(2) At `h = 0`, 1-point and 3-point scaled correlations vanish (`scaledCorrelation_odd_vanish`);
-(3) The symmDiff form follows from `{r,a} ∩ {k,l} = ∅`.
-The current repo's `lebowitz_four` covers only uniform couplings and does not directly apply.
-
-References: Glimm–Jaffe §4.3 Cor. 4.3.3 (p. 61); cf. `cor_4_3_3` and `lebowitz_four` in GHS.lean. -/
-axiom cor_4_3_3_scaled (G : SimpleGraph ι) [Fintype G.edgeSet]
+Proof: the abstract-weight duplicate-variable layer. The scaled fourfold
+weight has non-negative u-moments
+(`Lebowitz.hasNonnegUMoments_wQuadWeight_scaled` — the per-edge coefficients
+`β·s·J/4` on `E₀` and `β·J/4` elsewhere are all non-negative for `s ≥ 0`),
+so the generic `tq` comparison inequality (`Lebowitz.wCor_4_3_2_tq`) applies
+at `A = {r,a}`, `B = {k,l}`; the powerset formulas evaluate over the two
+pairs and the zero-field odd scaled correlations vanish
+(`scaledCorrelation_odd_vanish`). This was formerly a *new independent
+axiom*; it is now a theorem (GJ §4.3 Cor 4.3.3 for non-uniform couplings,
+p. 61). -/
+theorem cor_4_3_3_scaled (G : SimpleGraph ι) [Fintype G.edgeSet]
     (E₀ : Finset (Sym2 ι)) (hE₀_sub : E₀ ⊆ G.edgeFinset)
     (p : IsingParams ℝ) (hf : Ferromagnetic p) (hh : p.h = 0)
     (s : ℝ) (hs : 0 ≤ s) (r a k l : ι)
@@ -86,7 +88,70 @@ axiom cor_4_3_3_scaled (G : SimpleGraph ι) [Fintype G.edgeSet]
     scaledCorrelation G E₀ p s (symmDiff {r, a} {k, l}) ≤
     scaledCorrelation G E₀ p s {r, a} * scaledCorrelation G E₀ p s {k, l} +
     scaledCorrelation G E₀ p s {r, k} * scaledCorrelation G E₀ p s {a, l} +
-    scaledCorrelation G E₀ p s {r, l} * scaledCorrelation G E₀ p s {a, k}
+    scaledCorrelation G E₀ p s {r, l} * scaledCorrelation G E₀ p s {a, k} := by
+  have hw : ∀ σ : Config ι, 0 < scaledBoltzmannWeight G E₀ p s σ :=
+    scaledBoltzmannWeight_pos G E₀ p s
+  have hmom :=
+    Lebowitz.hasNonnegUMoments_wQuadWeight_scaled G E₀ hE₀_sub p hf s hs
+  have htq := Lebowitz.wCor_4_3_2_tq _ hw hmom {r, a} {k, l}
+  rw [Lebowitz.wDoubleExpectation_tProd _ hw,
+    Lebowitz.wDoubleExpectation_qProd _ hw,
+    Lebowitz.wDoubleExpectation_tProd_mul_qProd _ hw {r, a} {k, l}
+      (by simp [Finset.disjoint_left, hrk, hrl, hak, hal])] at htq
+  simp only [Lebowitz.sum_powerset_pair hra,
+    Lebowitz.sum_powerset_pair hkl] at htq
+  have hbridge : ∀ X : Finset ι,
+      Lebowitz.wCorrelation (scaledBoltzmannWeight G E₀ p s) X
+        = scaledCorrelation G E₀ p s X := fun X => rfl
+  simp only [hbridge] at htq
+  have hempty : scaledCorrelation G E₀ p s ∅ = 1 := by
+    unfold scaledCorrelation scaledGibbsExpectation
+    rw [show ∑ σ : Config ι,
+        spinProduct ∅ σ * scaledBoltzmannWeight G E₀ p s σ
+        = scaledPartitionFunction G E₀ p s from by
+      unfold scaledPartitionFunction
+      exact Finset.sum_congr rfl fun σ _ => by rw [spinProduct_empty, one_mul]]
+    field_simp [(scaledPartitionFunction_pos G E₀ p s).ne']
+  simp only [Finset.sdiff_empty, Finset.sdiff_self,
+    Lebowitz.pair_sdiff_left hra, Lebowitz.pair_sdiff_right hra,
+    Lebowitz.pair_sdiff_left hkl, Lebowitz.pair_sdiff_right hkl,
+    Finset.empty_union, Finset.union_empty, Finset.singleton_union,
+    Finset.insert_union, Finset.card_empty, Finset.card_singleton,
+    hempty] at htq
+  have hcard_kl : ({k, l} : Finset ι).card = 2 := by
+    rw [Finset.card_insert_of_notMem (by simp [hkl]), Finset.card_singleton]
+  rw [hcard_kl] at htq
+  norm_num at htq
+  have hv_r : scaledCorrelation G E₀ p s {r} = 0 :=
+    scaledCorrelation_odd_vanish G E₀ p hh s {r} ⟨0, by simp⟩
+  have hv_a : scaledCorrelation G E₀ p s {a} = 0 :=
+    scaledCorrelation_odd_vanish G E₀ p hh s {a} ⟨0, by simp⟩
+  have hv_k : scaledCorrelation G E₀ p s {k} = 0 :=
+    scaledCorrelation_odd_vanish G E₀ p hh s {k} ⟨0, by simp⟩
+  have hv_l : scaledCorrelation G E₀ p s {l} = 0 :=
+    scaledCorrelation_odd_vanish G E₀ p hh s {l} ⟨0, by simp⟩
+  have hv_rak : scaledCorrelation G E₀ p s {r, a, k} = 0 :=
+    scaledCorrelation_odd_vanish G E₀ p hh s {r, a, k} ⟨1, by
+      simp [Finset.card_insert_of_notMem, hra, hrk, hak]⟩
+  have hv_ral : scaledCorrelation G E₀ p s {r, a, l} = 0 :=
+    scaledCorrelation_odd_vanish G E₀ p hh s {r, a, l} ⟨1, by
+      simp [Finset.card_insert_of_notMem, hra, hrl, hal]⟩
+  have hv_rkl : scaledCorrelation G E₀ p s {r, k, l} = 0 :=
+    scaledCorrelation_odd_vanish G E₀ p hh s {r, k, l} ⟨1, by
+      simp [Finset.card_insert_of_notMem, hrk, hrl, hkl]⟩
+  have hv_akl : scaledCorrelation G E₀ p s {a, k, l} = 0 :=
+    scaledCorrelation_odd_vanish G E₀ p hh s {a, k, l} ⟨1, by
+      simp [Finset.card_insert_of_notMem, hak, hal, hkl]⟩
+  rw [hv_r, hv_a, hv_k, hv_l, hv_rak, hv_ral, hv_rkl, hv_akl] at htq
+  have hd : Disjoint ({r, a} : Finset ι) {k, l} := by
+    simp [Finset.disjoint_left, hrk, hrl, hak, hal]
+  have hsd : symmDiff ({r, a} : Finset ι) {k, l} = {r, a, k, l} := by
+    rw [hd.symmDiff_eq_sup]
+    change ({r, a} : Finset ι) ∪ {k, l} = {r, a, k, l}
+    rw [show ({r, a} : Finset ι) = insert r {a} from rfl,
+      Finset.insert_union, Finset.singleton_union]
+  rw [hsd]
+  nlinarith [htq]
 
 /-- **Tight Lebowitz bound for the scaled model** (disjoint case, h=0):
 `⟨σ^{AΔe}⟩_s − ⟨σ^A⟩_s·⟨σ^e⟩_s ≤ ⟨σ_r σ_k⟩_s·⟨σ_a σ_l⟩_s + ⟨σ_r σ_l⟩_s·⟨σ_a σ_k⟩_s`
