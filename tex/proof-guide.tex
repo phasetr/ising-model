@@ -5155,9 +5155,10 @@ $u_4$) and proves the GHS inequality $u_3 \le 0$, Cor.~4.3.3
 ($U_4 \le 0$ for $h=0$), and Cor.~4.3.5 (inductive bound).
 Also contains \texttt{correlation\_odd\_vanish} ($h=0$, odd $|A|$).
 
-\textbf{What to look for:} The Lebowitz axioms
-(\texttt{lebowitz\_third/four/inductive}) are the only axioms in the
-file. Everything else is proved. The spin-flip symmetry proof
+\textbf{What to look for:} \texttt{lebowitz\_inductive} is the only
+remaining axiom in the file (\texttt{lebowitz\_four} and
+\texttt{lebowitz\_third} were deleted in PRs \#3909/\#3910 --- both were
+false as stated; see the remarks below). Everything else is proved. The spin-flip symmetry proof
 (\texttt{correlation\_odd\_vanish}) uses a bijection argument:
 pair $\sigma$ with $\mathrm{flip}(\sigma)$ to show $S = -S$.
 
@@ -5182,40 +5183,51 @@ $u_2(i,j) \ge 0$ for ferromagnetic parameters. Proved via GKS-II
 for $i \ne j$ and GKS-I $+$ $|\langle\sigma_i\rangle| \le 1$ for $i = j$.
 \end{theorem}
 
-\begin{theorem}[\texttt{lebowitz\_third}; axiom]
-For ferromagnetic parameters with $h \ge 0$ and distinct $i, j, k$:
+\begin{remark}[The former \texttt{lebowitz\_third} axiom was false; deleted
+in PR \#3910]
+The repository formerly axiomatised, for ferromagnetic $h \ge 0$ and
+distinct $i, j, k$:
+$\langle\sigma_i\sigma_j\sigma_k\rangle +
+\langle\sigma_i\rangle\langle\sigma_j\sigma_k\rangle \le
+\langle\sigma_i\sigma_j\rangle\langle\sigma_k\rangle +
+\langle\sigma_i\sigma_k\rangle\langle\sigma_j\rangle$. This is false:
+decoupling site $i$ ($J_{i\cdot} = 0$) with $h > 0$, correlations
+factorise and the claim forces $\langle\sigma_j\sigma_k\rangle \le
+\langle\sigma_j\rangle\langle\sigma_k\rangle$, contradicting strict GKS-II
+for a strongly coupled edge $jk$. (Equivalently the axiom asserted
+$u_3 + 2\langle\sigma_i\rangle\,u_2(j,k) \le 0$, strictly stronger than
+GHS.) It was the second false axiom caught by the formalisation, after
+\texttt{lebowitz\_four} (PR \#3909).
+\end{remark}
+
+\begin{theorem}[\texttt{Lebowitz.cor\_4\_3\_4}; proved, general $h \ge 0$]
+For ferromagnetic parameters and distinct $i, j, k$:
 \[
-  \langle\sigma_i\sigma_j\sigma_k\rangle + \langle\sigma_i\rangle\langle\sigma_j\sigma_k\rangle
-  \le \langle\sigma_i\sigma_j\rangle\langle\sigma_k\rangle + \langle\sigma_i\sigma_k\rangle\langle\sigma_j\rangle.
+  \langle\sigma_i\sigma_j\sigma_k\rangle
+  - \langle\sigma_i\sigma_j\rangle\langle\sigma_k\rangle
+  - \langle\sigma_i\sigma_k\rangle\langle\sigma_j\rangle
+  + \langle\sigma_i\rangle\langle\sigma_j\sigma_k\rangle
+  \le 2\langle\sigma_i\rangle\bigl(\langle\sigma_j\sigma_k\rangle
+    - \langle\sigma_j\rangle\langle\sigma_k\rangle\bigr).
 \]
+Proof: \texttt{cor\_4\_3\_2\_tq} with $A = \{i\}$, $B = \{j,k\}$ ---
+GJ's $2^{3/2}\langle t_iq_jq_k\rangle \le
+2^{3/2}\langle t_i\rangle\langle q_jq_k\rangle$, p.~61 --- via the powerset
+formulas $\langle t_i\rangle_2 = 2c_i$, $\langle q_jq_k\rangle_2 =
+2(c_{jk} - c_jc_k)$, $\langle t_iq_jq_k\rangle_2 = 2(c_{ijk} - c_{ij}c_k -
+c_{ik}c_j + c_ic_{jk})$. Reference: Glimm--Jaffe, 2nd ed., \S4.3
+Corollary 4.3.4, p.~61.
 \end{theorem}
 
-The Lebowitz third inequality is proved for continuous $\varphi^4$ spins
-via \texttt{phi4\_single\_site\_nonneg} (Theorem~4.3.1 in Glimm--Jaffe),
-then transferred to Ising spins by the approximation
-$d\mu = e^{-\lambda(\xi^2-1)^2}\,d\xi \to \frac{1}{2}(\delta_{+1}+\delta_{-1})$
-as $\lambda \to \infty$.
-
-\textbf{Note:} The per-site factorization in Ellis \S V.3 (Lemma~V.3.2)
-does \emph{not} hold for discrete Ising spins---the all-odd parity case
-gives $\sum \alpha\beta\gamma\delta\, e^{2h\alpha} = -8\cosh(2h) < 0$.
-The continuous-spin route is essential.
-
-\begin{theorem}[\texttt{ghs\_inequality}; proved from \texttt{lebowitz\_third}]
+\begin{theorem}[\texttt{ghs\_inequality}; proved, axiom-free]
 For ferromagnetic parameters with $h \ge 0$ and distinct $i, j, k$:
 $u_3(i,j,k) \le 0$.
 \end{theorem}
 
 \begin{proof}
-Substituting the Lebowitz bound into the definition of $u_3$:
-\[
-  u_3(i,j,k) \le -2\langle\sigma_i\rangle \cdot u_2(j,k) \le 0,
-\]
-where the last step uses GKS-I ($\langle\sigma_i\rangle \ge 0$) and
-\texttt{truncated2\_nonneg} ($u_2(j,k) \ge 0$).
-In Lean, \texttt{nlinarith} closes the goal from
-\texttt{lebowitz\_third}, \texttt{gks\_first}, and
-\texttt{truncated2\_nonneg}.
+\texttt{Lebowitz.cor\_4\_3\_4} \emph{is} $u_3 \le 0$ after moving the
+right side over; \texttt{linarith} closes the goal. No GKS-I or
+\texttt{truncated2\_nonneg} input is needed.
 \end{proof}
 
 \subsection{Spin-flip symmetry and odd correlations}
