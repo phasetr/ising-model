@@ -5507,6 +5507,22 @@ The $t/q$ vector duplicate framework and the three inequalities (4.7.5)--(4.7.7)
 of Theorem 4.7.1, together with Corollary 4.7.2, follow in subsequent PRs.
 Reference: Glimm--Jaffe, 2nd ed., \S4.7, pp.~70--71; [Ruelle, 1969].
 
+\paragraph{Multi-site framework (\texttt{ContinuousSpin/TwoComponentSystem.lean}).}
+The foundational layer of the two-component multi-site Gibbs system:
+vector configurations $\xi : \iota \to \mathbb{R}\times\mathbb{R}$, the
+single-spin potential summed over sites
+(\texttt{vectorPotentialSum}), the ferromagnetic Hamiltonian
+$H = -J\sum_e \xi_i\cdot\xi_j - h^1\sum t_i - h^2\sum q_i$
+(\texttt{vectorHamiltonian}), the positive Gibbs weight
+$e^{-\beta H - \sum_i P(\xi_i)}$ (\texttt{vectorWeight}, with
+\texttt{vectorWeight\_pos}), the partition function and expectation as
+Lebesgue integrals over $(\mathbb{R}\times\mathbb{R})^\iota$
+(\texttt{vectorPartition}, \texttt{vectorExpectation}), and the $t/q$
+correlations $\langle t^A q^B\rangle$ (\texttt{vectorCorrelation}). The weight
+and all building blocks are continuous in the configuration, hence measurable.
+The single-spin and multi-site integrability, and the three inequalities of
+Theorem 4.7.1, follow in subsequent PRs.
+
 \section{Pure and mixed phases (\texttt{PhaseTransition.lean})}
 
 Formalization of Glimm--Jaffe, \S5.1 (pp.~72--74).
