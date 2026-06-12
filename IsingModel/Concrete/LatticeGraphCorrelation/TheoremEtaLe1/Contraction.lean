@@ -1,4 +1,7 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.TheoremEtaLe1.BallDefs
+import IsingModel.Concrete.LatticeGraphCorrelation.TheoremEtaLe1.BallBoundaryInfinite
+import IsingModel.Concrete.LatticeGraphCorrelation.TranslationVadd
+import IsingModel.TranslationInvariance.Truncated
 import IsingModel.LatticeExpSum
 
 /-!
@@ -156,26 +159,69 @@ axiom polynomialDecay_contraction_factor_tendsto (d : ℕ) (hd : 1 ≤ d)
     (hpoly : HasPolynomialDecay d Λ p) :
     Filter.Tendsto (contractionFactor d Λ p) Filter.atTop (nhds 0)
 
-/-! ## Phase 6: Shell-supremum contraction (axiom) -/
+/-! ## Phase 6: Shell-supremum contraction -/
 
-/-- **Shell supremum contraction** (axiom, key inductive step of GJ §17.8):
+/-- **Nonemptiness of a distance shell**: for `1 ≤ d` and `1 ≤ m` the shell
+`{y : Fin d → ℤ // m ≤ latticeDistance d 0 y ∧ y ≠ 0}` is nonempty (the point with
+first coordinate `m`). -/
+private theorem shell_nonempty {d : ℕ} (hd : 1 ≤ d) {m : ℕ} (hm : 1 ≤ m) :
+    Nonempty {y : Fin d → ℤ // m ≤ IsingModel.latticeDistance d 0 y ∧ y ≠ 0} := by
+  let y₀ : Fin d → ℤ := fun i => if i = (⟨0, by omega⟩ : Fin d) then (m : ℤ) else 0
+  refine ⟨⟨y₀, ?_, ?_⟩⟩
+  · unfold IsingModel.latticeDistance y₀
+    simp only [Pi.zero_apply, zero_sub, Int.natAbs_neg]
+    let f : Fin d → ℕ := fun i => (if i = (⟨0, by omega⟩ : Fin d) then (m : ℤ) else 0).natAbs
+    have hle : f (⟨0, by omega⟩ : Fin d) ≤ ∑ i : Fin d, f i :=
+      Finset.single_le_sum (fun i _ => Nat.zero_le _) (Finset.mem_univ _)
+    have hf0 : f (⟨0, by omega⟩ : Fin d) = m := by
+      simp [f]
+    calc m = f (⟨0, by omega⟩ : Fin d) := hf0.symm
+      _ ≤ ∑ i : Fin d, f i := hle
+  · intro h
+    have := congrFun h (⟨0, by omega⟩ : Fin d)
+    simp only [y₀, if_pos rfl, Pi.zero_apply] at this
+    omega
 
-For `n > r + 1`, the supremum of `corr∞{0, y}` over the shell `{y : |y| ≥ n}` satisfies:
+/-- **Boundary-edge endpoints are within distance `r + 1`**: every endpoint of a
+ball-boundary edge has `latticeDistance d 0 · ≤ r + 1` (the inside endpoint is at
+distance `≤ r`, the outside one at exactly `r + 1`). -/
+theorem latticeBallBoundaryEdges_dist_le {d r : ℕ} {k l : Fin d → ℤ}
+    (h : s(k, l) ∈ latticeBallBoundaryEdges d r) :
+    IsingModel.latticeDistance d 0 k ≤ r + 1 ∧ IsingModel.latticeDistance d 0 l ≤ r + 1 := by
+  obtain ⟨hadj, hstr⟩ := mem_latticeBallBoundaryEdges.mp h
+  have hlk : IsingModel.latticeDistance d l k = 1 :=
+    (latticeGraph_adj_iff_latticeDistance_eq_one d l k).mp hadj.symm
+  have hkl : IsingModel.latticeDistance d k l = 1 :=
+    (latticeGraph_adj_iff_latticeDistance_eq_one d k l).mp hadj
+  have h1 := IsingModel.latticeDistance_triangle d 0 l k
+  have h2 := IsingModel.latticeDistance_triangle d 0 k l
+  by_cases hA : IsingModel.latticeDistance d 0 k ≤ r
+  · exact ⟨by omega, by omega⟩
+  · have hB : IsingModel.latticeDistance d 0 l ≤ r := by
+      by_contra hB
+      exact hstr (propext ⟨fun h => absurd h hA, fun h => absurd h hB⟩)
+    exact ⟨by omega, by omega⟩
 
-  `⨆ {|y| ≥ n} corr∞{0, y} ≤ contractionFactor d Λ p r * ⨆ {|y| ≥ n - r - 1} corr∞{0, y}`
+set_option maxHeartbeats 1600000 in
+-- The proof per shell point applies the ball-boundary inequality, translation
+-- invariance, and a triangle-inequality shell bound, then aggregates over the
+-- boundary-edge sum; the combined elaboration exceeds the default heartbeat limit.
+/-- **Shell supremum contraction** (key inductive step of GJ §17.8, p. 317;
+formerly an axiom): for `1 ≤ r` and `n > r + 1`,
 
-**Proof sketch (deferred)**: For each `y` with `|y| ≥ n > r`, apply
-`ball_boundary_tight_infinite` to get:
-  `corr∞{0, y} ≤ β * J * Σ_{(k,l)∈Γ_r} [corr∞{0,k} * corr∞{l,y} + corr∞{0,l} * corr∞{k,y}]`
-By translation invariance (`correlationInfinite_vaddFinset_of_translationInvariant`
-with translation `t = -l`), `corr∞{l, y} = corr∞{0, y - l}`. Boundary edges satisfy
-`|k|, |l| ≤ r + 1`, so `|y - l| ≥ |y| - r - 1 ≥ n - r - 1`. Thus
-  `corr∞{0, y} ≤ contractionFactor * (⨆ {|z| ≥ n-r-1} corr∞{0, z})`
-Taking the `iSup` over `y` gives the claimed inequality.
+`⨆ {|y| ≥ n} corr∞{0, y} ≤ contractionFactor d Λ p r * ⨆ {|y| ≥ n - r - 1} corr∞{0, y}`.
 
-Reference: Glimm–Jaffe §17.8 proof of Thm 17.8.1, p. 317. -/
-axiom shellSup_contraction (d : ℕ) (hd : 1 ≤ d)
-    (r : ℕ)
+For each `y` with `|y| ≥ n`, `ball_boundary_tight_infinite` gives
+`corr∞{0,y} ≤ βJ·∑_{(k,l)∈∂B_r}[corr∞{0,k}·corr∞{l,y} + corr∞{0,l}·corr∞{k,y}]`;
+translation invariance turns `corr∞{l,y}` into `corr∞{0,y−l}` with
+`|y−l| ≥ |y| − (r+1) ≥ n − r − 1` (boundary endpoints have distance `≤ r+1`), so
+each `corr∞{l,y}, corr∞{k,y}` is `≤` the `(n−r−1)`-shell supremum `S`, whence
+`corr∞{0,y} ≤ (βJ·∑(corr∞{0,k}+corr∞{0,l}))·S = contractionFactor · S`.
+
+The hypothesis `1 ≤ r` (new relative to the former axiom) is required because
+`ball_boundary_tight_infinite` is false at `r = 0`. -/
+theorem shellSup_contraction (d : ℕ) (hd : 1 ≤ d)
+    (r : ℕ) (hr : 1 ≤ r)
     (Λ : Exhaustion (Fin d → ℤ))
     (p : IsingParams ℝ) (hf : Ferromagnetic p) (hh : p.h = 0)
     (n : ℕ) (hn : r + 1 < n) :
@@ -183,7 +229,100 @@ axiom shellSup_contraction (d : ℕ) (hd : 1 ≤ d)
         correlationInfinite (IsingModel.latticeGraph d) Λ p {(0 : Fin d → ℤ), y.val}
       ≤ contractionFactor d Λ p r *
         ⨆ (y : {y : Fin d → ℤ // (n - r - 1) ≤ IsingModel.latticeDistance d 0 y ∧ y ≠ 0}),
-            correlationInfinite (IsingModel.latticeGraph d) Λ p {(0 : Fin d → ℤ), y.val}
+            correlationInfinite (IsingModel.latticeGraph d) Λ p {(0 : Fin d → ℤ), y.val} := by
+  classical
+  have hβJ : 0 ≤ p.β * p.J := mul_nonneg hf.hβ.le hf.hJ
+  -- The (n-r-1)-shell supremum `S`.
+  set S := ⨆ (z : {z : Fin d → ℤ // (n - r - 1) ≤ IsingModel.latticeDistance d 0 z ∧ z ≠ 0}),
+      correlationInfinite (IsingModel.latticeGraph d) Λ p {(0 : Fin d → ℤ), z.val} with hSdef
+  have hSbdd : BddAbove (Set.range
+      (fun z : {z : Fin d → ℤ // (n - r - 1) ≤ IsingModel.latticeDistance d 0 z ∧ z ≠ 0} =>
+        correlationInfinite (IsingModel.latticeGraph d) Λ p {(0 : Fin d → ℤ), z.val})) := by
+    refine ⟨1, ?_⟩
+    rintro x ⟨z, rfl⟩
+    exact correlationInfinite_le_one (IsingModel.latticeGraph d) Λ p _
+  -- `S ≥ 0`.
+  haveI hSne : Nonempty {z : Fin d → ℤ // (n - r - 1) ≤ IsingModel.latticeDistance d 0 z ∧ z ≠ 0} :=
+    shell_nonempty hd (by omega)
+  have hSnonneg : 0 ≤ S := by
+    rw [hSdef]
+    exact le_ciSup_of_le hSbdd (Classical.arbitrary _)
+      (correlationInfinite_nonneg (IsingModel.latticeGraph d) Λ p hf _)
+  haveI hLne : Nonempty {y : Fin d → ℤ // n ≤ IsingModel.latticeDistance d 0 y ∧ y ≠ 0} :=
+    shell_nonempty hd (by omega)
+  apply ciSup_le
+  rintro ⟨y, hyn, hy0⟩
+  -- Per shell point `y`: apply the ball-boundary inequality.
+  have hx : r + 1 < IsingModel.latticeDistance d 0 y := by omega
+  have hbb := ball_boundary_tight_infinite d hd r hr Λ p hf hh y hx
+  -- Bound each boundary endpoint's far correlation by `S`.
+  have hfar : ∀ {w : Fin d → ℤ}, IsingModel.latticeDistance d 0 w ≤ r + 1 →
+      correlationInfinite (IsingModel.latticeGraph d) Λ p {w, y} ≤ S := by
+    intro w hw
+    -- corr∞{w, y} = corr∞{0, y - w} by translation invariance.
+    have hvadd : correlationInfinite (IsingModel.latticeGraph d) Λ p
+        (vaddFinset (-w) ({w, y} : Finset (Fin d → ℤ)))
+        = correlationInfinite (IsingModel.latticeGraph d) Λ p ({w, y} : Finset (Fin d → ℤ)) :=
+      correlationInfinite_latticeGraph_vaddFinset_of_translationInvariant d Λ (-w) p hf {w, y}
+    rw [vaddFinset_pair] at hvadd
+    simp only [vadd_eq_add, neg_add_cancel, neg_add_eq_sub] at hvadd
+    -- hvadd : corr∞{0, y - w} = corr∞{w, y}
+    rw [← hvadd]
+    -- distance of `y - w` to the origin.
+    have hd_eq : IsingModel.latticeDistance d 0 (y - w) = IsingModel.latticeDistance d w y := by
+      unfold IsingModel.latticeDistance
+      refine Finset.sum_congr rfl (fun i _ => ?_)
+      simp only [Pi.sub_apply, Pi.zero_apply, zero_sub, Int.natAbs_neg]
+      rw [show w i - y i = -(y i - w i) from by ring, Int.natAbs_neg]
+    have htri := IsingModel.latticeDistance_triangle d 0 w y
+    have hdist_yw : n - r - 1 ≤ IsingModel.latticeDistance d 0 (y - w) := by
+      rw [hd_eq]; omega
+    have hne_yw : y - w ≠ 0 := by
+      intro h
+      rw [h] at hdist_yw
+      simp only [IsingModel.latticeDistance_self] at hdist_yw
+      omega
+    rw [hSdef]
+    exact le_ciSup_of_le hSbdd ⟨y - w, hdist_yw, hne_yw⟩ le_rfl
+  -- Aggregate over the boundary-edge sum.
+  refine le_trans hbb ?_
+  have hsum : (∑ e ∈ latticeBallBoundaryEdges d r,
+      Sym2.lift ⟨fun k l =>
+        correlationInfinite (IsingModel.latticeGraph d) Λ p {(0 : Fin d → ℤ), k}
+          * correlationInfinite (IsingModel.latticeGraph d) Λ p {l, y}
+        + correlationInfinite (IsingModel.latticeGraph d) Λ p {(0 : Fin d → ℤ), l}
+          * correlationInfinite (IsingModel.latticeGraph d) Λ p {k, y},
+      fun k l => by ring⟩ e)
+      ≤ (∑ e ∈ latticeBallBoundaryEdges d r,
+          Sym2.lift ⟨fun k l =>
+            correlationInfinite (IsingModel.latticeGraph d) Λ p {(0 : Fin d → ℤ), k}
+              + correlationInfinite (IsingModel.latticeGraph d) Λ p {(0 : Fin d → ℤ), l},
+          fun k l => by ring⟩ e) * S := by
+    rw [Finset.sum_mul]
+    refine Finset.sum_le_sum (fun e he => ?_)
+    obtain ⟨⟨k, l⟩, rfl⟩ := Quot.exists_rep e
+    simp only [Sym2.lift_mk]
+    obtain ⟨hdk, hdl⟩ := latticeBallBoundaryEdges_dist_le he
+    have hly : correlationInfinite (IsingModel.latticeGraph d) Λ p {l, y} ≤ S := hfar hdl
+    have hky : correlationInfinite (IsingModel.latticeGraph d) Λ p {k, y} ≤ S := hfar hdk
+    have h0k : 0 ≤ correlationInfinite (IsingModel.latticeGraph d) Λ p {(0 : Fin d → ℤ), k} :=
+      correlationInfinite_nonneg (IsingModel.latticeGraph d) Λ p hf _
+    have h0l : 0 ≤ correlationInfinite (IsingModel.latticeGraph d) Λ p {(0 : Fin d → ℤ), l} :=
+      correlationInfinite_nonneg (IsingModel.latticeGraph d) Λ p hf _
+    nlinarith [mul_le_mul_of_nonneg_left hly h0k, mul_le_mul_of_nonneg_left hky h0l]
+  calc p.β * p.J * (∑ e ∈ latticeBallBoundaryEdges d r,
+          Sym2.lift ⟨fun k l =>
+            correlationInfinite (IsingModel.latticeGraph d) Λ p {(0 : Fin d → ℤ), k}
+              * correlationInfinite (IsingModel.latticeGraph d) Λ p {l, y}
+            + correlationInfinite (IsingModel.latticeGraph d) Λ p {(0 : Fin d → ℤ), l}
+              * correlationInfinite (IsingModel.latticeGraph d) Λ p {k, y},
+          fun k l => by ring⟩ e)
+      ≤ p.β * p.J * ((∑ e ∈ latticeBallBoundaryEdges d r,
+          Sym2.lift ⟨fun k l =>
+            correlationInfinite (IsingModel.latticeGraph d) Λ p {(0 : Fin d → ℤ), k}
+              + correlationInfinite (IsingModel.latticeGraph d) Λ p {(0 : Fin d → ℤ), l},
+          fun k l => by ring⟩ e) * S) := mul_le_mul_of_nonneg_left hsum hβJ
+    _ = contractionFactor d Λ p r * S := by rw [contractionFactor]; ring
 
 /-! ## Phase 7: Iterated contraction bound (axiom) -/
 
@@ -203,7 +342,7 @@ For all `k : ℕ` and all `n ≥ k * s`:
   Thus `sup(n) ≤ α * α^k = α^(k+1)`.
 
 Reference: Glimm–Jaffe §17.8 proof of Thm 17.8.1, p. 317. -/
-theorem shellSup_iterated_bound (d : ℕ) (hd : 1 ≤ d) (r : ℕ)
+theorem shellSup_iterated_bound (d : ℕ) (hd : 1 ≤ d) (r : ℕ) (hr : 1 ≤ r)
     (Λ : Exhaustion (Fin d → ℤ))
     (p : IsingParams ℝ) (hf : Ferromagnetic p) (hh : p.h = 0)
     (_hα : contractionFactor d Λ p r < 1)
@@ -255,7 +394,7 @@ theorem shellSup_iterated_bound (d : ℕ) (hd : 1 ≤ d) (r : ℕ)
         ≤ contractionFactor d Λ p r *
           ⨆ (y : {y : Fin d → ℤ // (n - r - 1) ≤ IsingModel.latticeDistance d 0 y ∧ y ≠ 0}),
               correlationInfinite (IsingModel.latticeGraph d) Λ p {(0 : Fin d → ℤ), y.val} :=
-              shellSup_contraction d hd r Λ p hf hh n hn_gt
+              shellSup_contraction d hd r hr Λ p hf hh n hn_gt
       _ ≤ contractionFactor d Λ p r * (contractionFactor d Λ p r) ^ k :=
           mul_le_mul_of_nonneg_left (ih (n - r - 1) hstep) (contractionFactor_nonneg d Λ p hf r)
       _ = (contractionFactor d Λ p r) ^ (k + 1) := by rw [pow_succ]; ring
@@ -271,7 +410,7 @@ which `shellSup_iterated_bound` controls by `(contractionFactor)^{dist/(r+2)}`.
 This is the prefactor-free spatial exponential decay in the form used by the
 finite-volume convergence-rate program (Issue #2931, Phase 3a/3b′). -/
 theorem correlationInfinite_latticeGraph_le_contractionFactor_pow_dist
-    (d : ℕ) (hd : 1 ≤ d) (r : ℕ)
+    (d : ℕ) (hd : 1 ≤ d) (r : ℕ) (hr : 1 ≤ r)
     (Λ : Exhaustion (Fin d → ℤ))
     (p : IsingParams ℝ) (hf : Ferromagnetic p) (hh : p.h = 0)
     (hα : contractionFactor d Λ p r < 1) {y : Fin d → ℤ} (hy : y ≠ 0) :
@@ -280,7 +419,7 @@ theorem correlationInfinite_latticeGraph_le_contractionFactor_pow_dist
   set k := IsingModel.latticeDistance d 0 y / (r + 2) with hk
   have hkr : k * (r + 2) ≤ IsingModel.latticeDistance d 0 y := Nat.div_mul_le_self _ _
   have hbound :=
-    shellSup_iterated_bound d hd r Λ p hf hh hα k (IsingModel.latticeDistance d 0 y) hkr
+    shellSup_iterated_bound d hd r hr Λ p hf hh hα k (IsingModel.latticeDistance d 0 y) hkr
   have hbdd :
       BddAbove (Set.range (fun z : {z : Fin d → ℤ //
           IsingModel.latticeDistance d 0 y ≤ IsingModel.latticeDistance d 0 z ∧ z ≠ 0} =>
@@ -310,7 +449,7 @@ translation invariant, `dist(i,j) = dist(0, j-i)`; the anchored bound
 `y = j - i ≠ 0`.  This is the per-pair prefactor-free spatial decay used by the
 finite-volume convergence-rate program (Issue #2931, Phase 3a/3b′). -/
 theorem correlationInfinite_latticeGraph_le_contractionFactor_pow_dist_pair
-    (d : ℕ) (hd : 1 ≤ d) (r : ℕ)
+    (d : ℕ) (hd : 1 ≤ d) (r : ℕ) (hr : 1 ≤ r)
     (Λ : Exhaustion (Fin d → ℤ))
     (p : IsingParams ℝ) (hf : Ferromagnetic p) (hh : p.h = 0)
     (hα : contractionFactor d Λ p r < 1) {i j : Fin d → ℤ} (hij : i ≠ j) :
@@ -337,7 +476,7 @@ theorem correlationInfinite_latticeGraph_le_contractionFactor_pow_dist_pair
     rw [h, add_zero] at hji; exact hji.symm)
   rw [htrans, hdist]
   exact correlationInfinite_latticeGraph_le_contractionFactor_pow_dist
-    d hd r Λ p hf hh hα hjmi_ne
+    d hd r hr Λ p hf hh hα hjmi_ne
 
 /-- **Uniform clustering at large distance**: when the contraction factor is
 `< 1`, the infinite-volume pair correlation is uniformly small at large lattice
@@ -351,7 +490,7 @@ gives `⟨σ_iσ_j⟩^∞ ≤ (contractionFactor)^{dist/(r+2)} ≤ (contractionF
 This is the uniform clustering property of the infinite-volume measure
 (Issue #2931, Phase 3a). -/
 theorem correlationInfinite_latticeGraph_uniform_decay_of_contractionFactor_lt_one
-    (d : ℕ) (hd : 1 ≤ d) (r : ℕ)
+    (d : ℕ) (hd : 1 ≤ d) (r : ℕ) (hr : 1 ≤ r)
     (Λ : Exhaustion (Fin d → ℤ))
     (p : IsingParams ℝ) (hf : Ferromagnetic p) (hh : p.h = 0)
     (hα : contractionFactor d Λ p r < 1) :
@@ -369,7 +508,7 @@ theorem correlationInfinite_latticeGraph_uniform_decay_of_contractionFactor_lt_o
     omega
   · have hbound :=
       correlationInfinite_latticeGraph_le_contractionFactor_pow_dist_pair
-        d hd r Λ p hf hh hα hij
+        d hd r hr Λ p hf hh hα hij
     have hexp : m ≤ IsingModel.latticeDistance d i j / (r + 2) := by
       have hge : (m + 1) ≤ IsingModel.latticeDistance d i j / (r + 2) := by
         rw [Nat.le_div_iff_mul_le (by omega : 0 < r + 2)]
@@ -395,7 +534,7 @@ lattice ball `{y : dist(0,y) ≤ R}` (by
 the finiteness of lattice balls `latticeDistance_le_finite`), hence finite, so
 the values are eventually below `ε`.  Part of Issue #2931. -/
 theorem correlationInfinite_latticeGraph_tendsto_cofinite_zero
-    (d : ℕ) (hd : 1 ≤ d) (r : ℕ)
+    (d : ℕ) (hd : 1 ≤ d) (r : ℕ) (hr : 1 ≤ r)
     (Λ : Exhaustion (Fin d → ℤ))
     (p : IsingParams ℝ) (hf : Ferromagnetic p) (hh : p.h = 0)
     (hα : contractionFactor d Λ p r < 1) :
@@ -406,7 +545,7 @@ theorem correlationInfinite_latticeGraph_tendsto_cofinite_zero
   intro ε hε
   obtain ⟨R, hR⟩ :=
     correlationInfinite_latticeGraph_uniform_decay_of_contractionFactor_lt_one
-      d hd r Λ p hf hh hα (ε / 2) (by linarith)
+      d hd r hr Λ p hf hh hα (ε / 2) (by linarith)
   rw [Filter.eventually_cofinite]
   refine Set.Finite.subset (IsingModel.latticeDistance_le_finite d 0 R) ?_
   intro y hy
@@ -432,7 +571,7 @@ is dominated by `(1/contractionFactor)·exp(-m·dist(0,y))` with
 exponential kernel is summable over the lattice by `summable_exp_neg_dist`; the
 comparison test concludes.  Part of Issue #2931. -/
 theorem correlationInfinite_latticeGraph_susceptibility_summable
-    (d : ℕ) (hd : 1 ≤ d) (r : ℕ)
+    (d : ℕ) (hd : 1 ≤ d) (r : ℕ) (hr : 1 ≤ r)
     (Λ : Exhaustion (Fin d → ℤ))
     (p : IsingParams ℝ) (hf : Ferromagnetic p) (hh : p.h = 0)
     (hcf_pos : 0 < contractionFactor d Λ p r) (hα : contractionFactor d Λ p r < 1) :
@@ -464,7 +603,7 @@ theorem correlationInfinite_latticeGraph_susceptibility_summable
     simp only [Nat.cast_zero, mul_zero, Real.exp_zero, mul_one]
     linarith
   · have hbound :=
-      correlationInfinite_latticeGraph_le_contractionFactor_pow_dist d hd r Λ p hf hh hα hy
+      correlationInfinite_latticeGraph_le_contractionFactor_pow_dist d hd r hr Λ p hf hh hα hy
     -- `cf^q ≤ (1/cf)·exp(-m·dist)` with `q = dist/(r+2)`.
     set n := IsingModel.latticeDistance d 0 y with hndef
     have hq_real : ((n / (r + 2) : ℕ) : ℝ) ≥ (n : ℝ) / (r + 2 : ℝ) - 1 := by
@@ -503,7 +642,7 @@ correlation kernel `y ↦ ⟨σ_xσ_y⟩^∞` is summable over `ℤ^d` for every
 `⟨σ_xσ_y⟩^∞ = ⟨σ_0σ_{y-x}⟩^∞` and summability is invariant under the
 reindexing `y ↦ y - x`.  Part of Issue #2931. -/
 theorem correlationInfinite_latticeGraph_susceptibility_summable_basepoint
-    (d : ℕ) (hd : 1 ≤ d) (r : ℕ)
+    (d : ℕ) (hd : 1 ≤ d) (r : ℕ) (hr : 1 ≤ r)
     (Λ : Exhaustion (Fin d → ℤ))
     (p : IsingParams ℝ) (hf : Ferromagnetic p) (hh : p.h = 0)
     (hcf_pos : 0 < contractionFactor d Λ p r) (hα : contractionFactor d Λ p r < 1)
@@ -511,7 +650,7 @@ theorem correlationInfinite_latticeGraph_susceptibility_summable_basepoint
     Summable
       (fun y => correlationInfinite (IsingModel.latticeGraph d) Λ p {x, y}) := by
   have hbase :=
-    correlationInfinite_latticeGraph_susceptibility_summable d hd r Λ p hf hh hcf_pos hα
+    correlationInfinite_latticeGraph_susceptibility_summable d hd r hr Λ p hf hh hcf_pos hα
   have heq :
       (fun y => correlationInfinite (IsingModel.latticeGraph d) Λ p {x, y})
         = (fun y =>
@@ -533,7 +672,7 @@ uniformly small at large distance — for every `ε > 0` there is `R` with
 hypothesis (the contraction factor is `< 1` by
 `contractionFactor_lt_one_of_high_temp`).  Part of Issue #2931, Phase 3a. -/
 theorem correlationInfinite_latticeGraph_uniform_decay_of_high_temp
-    (d : ℕ) (hd : 1 ≤ d) (r : ℕ)
+    (d : ℕ) (hd : 1 ≤ d) (r : ℕ) (hr : 1 ≤ r)
     (Λ : Exhaustion (Fin d → ℤ))
     (p : IsingParams ℝ) (hf : Ferromagnetic p) (hh : p.h = 0)
     (hht : p.β * p.J * (2 * ((d : ℝ) * (((2 * (r + 1) + 1) ^ d : ℕ) : ℝ))) < 1) :
@@ -541,14 +680,14 @@ theorem correlationInfinite_latticeGraph_uniform_decay_of_high_temp
       R ≤ IsingModel.latticeDistance d i j →
         correlationInfinite (IsingModel.latticeGraph d) Λ p {i, j} ≤ ε :=
   correlationInfinite_latticeGraph_uniform_decay_of_contractionFactor_lt_one
-    d hd r Λ p hf hh (contractionFactor_lt_one_of_high_temp d Λ p hf r hht)
+    d hd r hr Λ p hf hh (contractionFactor_lt_one_of_high_temp d Λ p hf r hht)
 
 /-- **Unconditional strong-high-temperature clustering (cofinite form)**: in the
 explicit regime `βJ · 2 · (d · (2(r+1)+1)^d) < 1`, the correlation kernel
 `y ↦ ⟨σ_0σ_y⟩^∞` tends to `0` along the cofinite filter, with no polynomial-decay
 hypothesis.  Part of Issue #2931, Phase 3a. -/
 theorem correlationInfinite_latticeGraph_tendsto_cofinite_zero_of_high_temp
-    (d : ℕ) (hd : 1 ≤ d) (r : ℕ)
+    (d : ℕ) (hd : 1 ≤ d) (r : ℕ) (hr : 1 ≤ r)
     (Λ : Exhaustion (Fin d → ℤ))
     (p : IsingParams ℝ) (hf : Ferromagnetic p) (hh : p.h = 0)
     (hht : p.β * p.J * (2 * ((d : ℝ) * (((2 * (r + 1) + 1) ^ d : ℕ) : ℝ))) < 1) :
@@ -556,7 +695,7 @@ theorem correlationInfinite_latticeGraph_tendsto_cofinite_zero_of_high_temp
       (fun y => correlationInfinite (IsingModel.latticeGraph d) Λ p {(0 : Fin d → ℤ), y})
       Filter.cofinite (nhds 0) :=
   correlationInfinite_latticeGraph_tendsto_cofinite_zero
-    d hd r Λ p hf hh (contractionFactor_lt_one_of_high_temp d Λ p hf r hht)
+    d hd r hr Λ p hf hh (contractionFactor_lt_one_of_high_temp d Λ p hf r hht)
 
 /-- **Fully explicit unconditional high-temperature distance decay**: in the
 regime `H := βJ · 2 · (d · (2(r+1)+1)^d) < 1`, every distinct pair satisfies
@@ -571,7 +710,7 @@ and is `< 1` (`contractionFactor_lt_one_of_high_temp`), so the per-pair bound
 with base monotonicity `cf^q ≤ H^q` (`pow_le_pow_left₀`).  Part of Issue #2931,
 Phase 3a. -/
 theorem correlationInfinite_latticeGraph_le_explicit_pow_dist
-    (d : ℕ) (hd : 1 ≤ d) (r : ℕ)
+    (d : ℕ) (hd : 1 ≤ d) (r : ℕ) (hr : 1 ≤ r)
     (Λ : Exhaustion (Fin d → ℤ))
     (p : IsingParams ℝ) (hf : Ferromagnetic p) (hh : p.h = 0)
     (hht : p.β * p.J * (2 * ((d : ℝ) * (((2 * (r + 1) + 1) ^ d : ℕ) : ℝ))) < 1)
@@ -583,7 +722,7 @@ theorem correlationInfinite_latticeGraph_le_explicit_pow_dist
     contractionFactor_lt_one_of_high_temp d Λ p hf r hht
   have hbound :=
     correlationInfinite_latticeGraph_le_contractionFactor_pow_dist_pair
-      d hd r Λ p hf hh hcf_lt hij
+      d hd r hr Λ p hf hh hcf_lt hij
   have hmono :
       (contractionFactor d Λ p r) ^ (IsingModel.latticeDistance d i j / (r + 2))
         ≤ (p.β * p.J * (2 * ((d : ℝ) * (((2 * (r + 1) + 1) ^ d : ℕ) : ℝ))))
@@ -643,7 +782,7 @@ The explicit decay `correlationInfinite_latticeGraph_le_explicit_pow_dist`
 dominates the kernel by `H^{dist(0,y)/(r+2)}` with `0 < H < 1`, which is summable
 by `summable_pow_div_latticeDistance`.  Part of Issue #2931, Phase 3a. -/
 theorem correlationInfinite_latticeGraph_susceptibility_summable_high_temp
-    (d : ℕ) (hd : 1 ≤ d) (r : ℕ)
+    (d : ℕ) (hd : 1 ≤ d) (r : ℕ) (hr : 1 ≤ r)
     (Λ : Exhaustion (Fin d → ℤ))
     (p : IsingParams ℝ) (hf : Ferromagnetic p) (hh : p.h = 0)
     (hβJ_pos : 0 < p.β * p.J)
@@ -667,7 +806,7 @@ theorem correlationInfinite_latticeGraph_susceptibility_summable_high_temp
       correlationInfinite_le_one (IsingModel.latticeGraph d) Λ p _
     rw [IsingModel.latticeDistance_self]
     simpa using hone
-  · exact correlationInfinite_latticeGraph_le_explicit_pow_dist d hd r Λ p hf hh hht
+  · exact correlationInfinite_latticeGraph_le_explicit_pow_dist d hd r hr Λ p hf hh hht
       (Ne.symm hy)
 
 /-- **Unconditional finite susceptibility from any basepoint at high
@@ -677,7 +816,7 @@ temperature**: by translation invariance, the correlation kernel
 basepoint-independent, with no polynomial-decay hypothesis.  Part of Issue #2931,
 Phase 3a. -/
 theorem correlationInfinite_latticeGraph_susceptibility_summable_high_temp_basepoint
-    (d : ℕ) (hd : 1 ≤ d) (r : ℕ)
+    (d : ℕ) (hd : 1 ≤ d) (r : ℕ) (hr : 1 ≤ r)
     (Λ : Exhaustion (Fin d → ℤ))
     (p : IsingParams ℝ) (hf : Ferromagnetic p) (hh : p.h = 0)
     (hβJ_pos : 0 < p.β * p.J)
@@ -687,7 +826,7 @@ theorem correlationInfinite_latticeGraph_susceptibility_summable_high_temp_basep
       (fun y => correlationInfinite (IsingModel.latticeGraph d) Λ p {x, y}) := by
   have hbase :=
     correlationInfinite_latticeGraph_susceptibility_summable_high_temp
-      d hd r Λ p hf hh hβJ_pos hht
+      d hd r hr Λ p hf hh hβJ_pos hht
   have heq :
       (fun y => correlationInfinite (IsingModel.latticeGraph d) Λ p {x, y})
         = (fun y =>
