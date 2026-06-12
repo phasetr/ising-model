@@ -131,38 +131,16 @@ def HasPolynomialDecay (d : ℕ) (Λ : Exhaustion (Fin d → ℤ))
         * (IsingModel.latticeDistance d 0 x.val : ℝ) ^ (d - 1))
     Filter.cofinite (nhds 0)
 
-/-! ## Phase 4: Infinite-volume ball-boundary inequality (axiom) -/
+/-! ## Phase 4: Infinite-volume ball-boundary inequality
 
-/-- **Infinite-volume tight ball-boundary Simon–Lieb inequality** (axiom, GJ §17.8 pp. 316–318):
-
-For a ferromagnetic Ising model at `h = 0` on `latticeGraph d`, with `E₀ =
-latticeBallBoundaryEdges d r` and a point `x : Fin d → ℤ` with
-`latticeDistance d 0 x > r`, the infinite-volume two-point correlation satisfies:
-
-  `correlationInfinite (latticeGraph d) Λ p {0, x} ≤`
-  `  p.β * p.J * ∑ e ∈ E₀, Sym2.lift ⟨fun k l =>`
-  `    correlationInfinite ... {0, k} * correlationInfinite ... {l, x}`
-  `    + correlationInfinite ... {0, l} * correlationInfinite ... {k, x}, ...⟩ e`
-
-**Proof sketch (deferred)**: Apply `ball_boundary_simon_lieb_tight` at each finite
-volume stage (using `scaledCorrelation_at_zero_of_sep` for the disconnection
-hypothesis at `x` outside `B_{r+1}`), then take the limit using
-`correlationAlongExhaustion_le_correlationInfinite`.
-
-Reference: Glimm–Jaffe §17.8 eq. (17.8.4)–(17.8.5), pp. 316–318. -/
-axiom ball_boundary_tight_infinite (d : ℕ) (hd : 1 ≤ d)
-    (r : ℕ)
-    (Λ : Exhaustion (Fin d → ℤ))
-    (p : IsingParams ℝ) (hf : Ferromagnetic p) (hh : p.h = 0)
-    (x : Fin d → ℤ) (hx : r < IsingModel.latticeDistance d 0 x) :
-    correlationInfinite (IsingModel.latticeGraph d) Λ p {(0 : Fin d → ℤ), x}
-      ≤ p.β * p.J * ∑ e ∈ latticeBallBoundaryEdges d r,
-          Sym2.lift ⟨fun k l =>
-            correlationInfinite (IsingModel.latticeGraph d) Λ p {(0 : Fin d → ℤ), k}
-              * correlationInfinite (IsingModel.latticeGraph d) Λ p {l, x}
-            + correlationInfinite (IsingModel.latticeGraph d) Λ p {(0 : Fin d → ℤ), l}
-              * correlationInfinite (IsingModel.latticeGraph d) Λ p {k, x},
-          fun k l => by ring⟩ e
+The infinite-volume tight ball-boundary Simon–Lieb inequality
+`ball_boundary_tight_infinite` (formerly a declared axiom here) is now a
+**theorem**, proved in `TheoremEtaLe1.BallBoundaryInfinite` as the
+infinite-volume limit of `ball_boundary_simon_lieb_tight`. The formalization
+revealed that the original axiom statement was false for `r = 0` and for
+`latticeDistance d 0 x = r + 1`; the proved theorem carries the corrected
+hypotheses `1 ≤ r` and `r + 1 < latticeDistance d 0 x` (exactly what the
+downstream `shellSup_contraction` uses). See that file for details. -/
 
 
 end Ambient
