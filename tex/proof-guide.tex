@@ -5536,6 +5536,38 @@ and the radial integrand is integrable on $(0,\infty)$
 super-Gaussian $r\,e^{-A r^4}$ since $e^{-\sigma r^2} \le 1$. The quartic term
 $A > 0$ is what forces integrability.
 
+\paragraph{Multi-site weight integrability and partition positivity
+(\texttt{ContinuousSpin/TwoComponentMultiIntegrable.lean}).}
+For $A > 0$ the multi-site Gibbs weight
+$\texttt{vectorWeight} = e^{-\beta H - \sum_i P(\xi_i)}$ is integrable over
+$(\mathbb{R}^2)^\iota$ (\texttt{integrable\_vectorWeight}), so the partition
+function is well defined. The proof is a \emph{uniform arithmetic--geometric-mean
+estimate} (\texttt{exists\_vectorWeight\_exponent\_bound}): the exponent is
+bounded, with configuration-independent constants $K, b$, by
+\[
+  -\beta H(\xi) - \sum_i P(\xi_i)
+  \;\le\; K + \sum_i \bigl(b\,|\xi_i|^2 - A\,|\xi_i|^4\bigr).
+\]
+The ferromagnetic interaction is absorbed through
+$|\xi_i\cdot\xi_j| \le \tfrac12(|\xi_i|^2 + |\xi_j|^2) \le \sum_k |\xi_k|^2$
+(\texttt{abs\_vEdgeDot\_le\_sum\_normSq}), and the external field through
+$|t_i| \le \tfrac12(1 + |\xi_i|^2)$ (\texttt{abs\_vSpinT\_le}); summing over the
+$\#E$ edges and the $n = |\iota|$ sites gives the per-site quadratic coefficient
+$b = |\beta J|\cdot\#E + \tfrac12(|\beta h^1| + |\beta h^2|) - \sigma$ and the
+constant $K = \tfrac{n}{2}(|\beta h^1| + |\beta h^2|)$. Hence
+$\texttt{vectorWeight} \le e^K \prod_i e^{b|\xi_i|^2 - A|\xi_i|^4}$, a product of
+integrable modified single-spin densities (\texttt{integrable\_modSpinDensity};
+its radial integrand is integrable on $(0,\infty)$ by completing the square
+$b r^2 - A r^4 \le \tfrac{b^2}{2A} - \tfrac{A}{2} r^4$ and dominating by the
+super-Gaussian $r\,e^{-(A/2) r^4}$, \texttt{integrableOn\_radial\_quad\_quartic}).
+\texttt{Integrable.fintype\_prod} makes the product integrable and
+\texttt{Integrable.mono'} transfers integrability to \texttt{vectorWeight}.
+Since the weight is continuous, integrable, non-negative and strictly positive,
+the partition function is strictly positive
+(\texttt{vectorPartition\_pos}, via
+\texttt{integral\_pos\_of\_integrable\_nonneg\_nonzero}), so the Gibbs
+expectation $\langle\cdot\rangle$ of Theorem 4.7.1 is well defined.
+
 \section{Pure and mixed phases (\texttt{PhaseTransition.lean})}
 
 Formalization of Glimm--Jaffe, \S5.1 (pp.~72--74).
