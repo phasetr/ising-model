@@ -1108,7 +1108,7 @@ Four axioms are currently declared (none in `Inequalities/GHS/` since
 PR #3911; `cor_4_3_3_scaled` was proven in PR #3912):
 
 - `phi4_single_site_nonneg`: non-negativity of the symmetrized 4D
-  integral (`ContinuousSpin/Phi4.lean`; measure-theoretic assembly). **Discharge in progress (Issue #3913)**: the integrability-free sign-symmetrisation core (the sixteen-pattern sign-character trichotomy, `ContinuousSpin/Phi4Symmetrization.lean`, PR #3914) the unconditional iterated-integral sign reflection (`ContinuousSpin/Phi4Reflection.lean`, PR #3915), and the unconditional all-even and mixed-parity non-negativity cases (`ContinuousSpin/Phi4Averaging.lean`, PR #3916) are proven
+  integral (`ContinuousSpin/Phi4.lean`; measure-theoretic assembly). **Discharge in progress (Issue #3913)**: the integrability-free sign-symmetrisation core (the sixteen-pattern sign-character trichotomy, `ContinuousSpin/Phi4Symmetrization.lean`, PR #3914), the unconditional iterated-integral sign reflection (`ContinuousSpin/Phi4Reflection.lean`, PR #3915), and the unconditional all-even and mixed-parity non-negativity cases (`ContinuousSpin/Phi4Averaging.lean`, PR #3916) are proven
 - `ball_boundary_tight_infinite`
   (`Concrete/LatticeGraphCorrelation/TheoremEtaLe1/BallDefs.lean`)
 - `polynomialDecay_contraction_factor_tendsto`, `shellSup_contraction`
