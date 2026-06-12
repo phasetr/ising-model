@@ -5573,6 +5573,25 @@ the partition function is strictly positive
 \texttt{integral\_pos\_of\_integrable\_nonneg\_nonzero}), so the Gibbs
 expectation $\langle\cdot\rangle$ of Theorem 4.7.1 is well defined.
 
+\paragraph{Single-site moment positivity (Griffiths-I core)
+(\texttt{ContinuousSpin/TwoComponentGriffiths.lean}).}
+The first inequality of Theorem 4.7.1, $\langle t^A q^B\rangle \ge 0$, rests on the
+single-site moment positivity
+$0 \le \int_{\mathbb{R}^2} t^a q^b\, e^{-A(t^2+q^2)^2 - \sigma(t^2+q^2)}$
+(\texttt{singleSpinMoment\_nonneg}, $A>0$). If $a$ (or $b$) is odd the integral
+vanishes by the reflection $t\mapsto -t$ (resp. $q\mapsto -q$): the density is even
+in each coordinate, so via Fubini (\texttt{integral\_prod}) the inner integral is
+the integral of an odd function, $0$ by \texttt{integral\_comp\_neg\_real}. If both
+are even the integrand is non-negative (\texttt{integral\_nonneg}). The
+monomial-weighted density is integrable
+(\texttt{integrable\_pow\_mul\_singleSpinDensity}): in polar coordinates its norm is
+$\le r^{a+b+1} e^{-A r^4 - \sigma r^2}$ (as $|\cos\theta|,|\sin\theta|\le1$), whose
+radial integral is finite by \texttt{integrableOn\_pow\_quad\_quartic} (complete the
+square $b r^2 - A r^4 \le \tfrac{b^2}{2A}-\tfrac{A}{2}r^4$ and dominate by the
+super-Gaussian $r^n e^{-(A/2)r^4}$). The continuous-spin Griffiths/Ginibre
+development of the three inequalities of Theorem 4.7.1 continues from this
+single-site core. Reference: Glimm--Jaffe, 2nd ed., \S4.7, Theorem 4.7.1, p.~70.
+
 \section{Pure and mixed phases (\texttt{PhaseTransition.lean})}
 
 Formalization of Glimm--Jaffe, \S5.1 (pp.~72--74).
