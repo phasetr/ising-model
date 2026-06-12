@@ -24238,9 +24238,12 @@ $\langle\sigma_0^2\rangle = 1$, and the bound then fails at high temperature.
 For $\texttt{latticeDistance}\,d\,0\,x = r+1$ the sink $x$ sits on the outer
 boundary shell, hence on a boundary edge, again breaking the finite-stage
 separation hypothesis $0,x\notin e$. The proved theorem therefore carries the
-corrected hypotheses $1\le r$ and $r+1 < \texttt{latticeDistance}\,d\,0\,x$,
-which are exactly the regime consumed downstream by
-\texttt{shellSup\_contraction} (where the shell point has distance $\ge r+2$).
+corrected hypotheses $1\le r$ and $r+1 < \texttt{latticeDistance}\,d\,0\,x$. The
+distance condition is supplied downstream by \texttt{shellSup\_contraction}
+(whose shell point has distance $\ge r+2$); the radius condition $1\le r$ is
+genuinely new and must be threaded into \texttt{shellSup\_contraction} when it is
+itself discharged (its $r=0$ instance is false for the same Finset-collapse
+reason).
 This mirrors the false \texttt{lebowitz\_four}/\texttt{lebowitz\_third} axioms
 detected earlier in the §4.3 layer.
 

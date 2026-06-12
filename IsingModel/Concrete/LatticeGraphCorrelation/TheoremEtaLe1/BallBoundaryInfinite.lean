@@ -24,10 +24,14 @@ The original axiom was stated for every `r` and every `x` with
 * **`latticeDistance d 0 x = r + 1`**: the endpoint `x` sits on the outer
   boundary shell, hence lies on a boundary edge, again breaking the separation.
 
-The honest, provable statement (and the one the downstream consumer
-`shellSup_contraction` actually uses, where `latticeDistance ≥ r + 2`) requires
-`1 ≤ r` and `r + 1 < latticeDistance d 0 x`. Both hypotheses are exactly what is
-needed for the source `0` and the sink `x` to avoid every boundary edge.
+The honest, provable statement requires `1 ≤ r` and
+`r + 1 < latticeDistance d 0 x`: these are exactly what is needed for the source
+`0` and the sink `x` to avoid every boundary edge. The distance hypothesis
+`r + 1 < latticeDistance` is already supplied by the downstream
+`shellSup_contraction` (whose shell points have `latticeDistance ≥ n ≥ r + 2`);
+the radius hypothesis `1 ≤ r` is genuinely new and must be threaded into
+`shellSup_contraction` when it is itself discharged (its `r = 0` instance is
+false for the same Finset-collapse reason).
 
 ## Strategy
 
@@ -143,8 +147,9 @@ set_option maxHeartbeats 1600000 in
 
 This discharges the former `ball_boundary_tight_infinite` axiom; see the
 hypothesis-correctness discussion in the module docstring (`1 ≤ r` and
-`r + 1 < latticeDistance` are required and are exactly what the downstream
-`shellSup_contraction` uses).
+`r + 1 < latticeDistance` are both required; the distance condition is supplied
+by the downstream `shellSup_contraction`, while `1 ≤ r` must additionally be
+threaded into it).
 
 Proof: `ciSup_le` reduces to per-stage bounds. At each stage with
 `{0, x} ⊆ Λ.volume n`, `ball_boundary_simon_lieb_tight` applies to the induced
