@@ -5476,6 +5476,37 @@ cases unconditionally, and the axiom is deleted. No interchange of
 symmetrization sums with nested Bochner integrals is needed: the only
 combining happens inside the single innermost $\delta$-integral.
 
+\section{Two-component spins (\texttt{ContinuousSpin/TwoComponent.lean})}
+
+Glimm--Jaffe, \S4.7, Theorem 4.7.1 (p.~70) generalises the correlation
+inequalities to two-component (planar rotator) vector spins
+$\xi_i = (t_i, q_i) \in \mathbb{R}^2$ with the $SO(2)$-invariant single-spin
+potential $P(\xi) = A(t^2+q^2)^2 + \sigma(t^2+q^2)$, $A \ge 0 \le \sigma$.
+
+\begin{theorem}[\texttt{twoCompPotential\_double\_eq}, PR \#3919]
+Doubling the potential across a duplicate spin and writing it in the
+(4.3.2) rotation $(\alpha,\beta,\gamma,\delta)$ of $(t,q,t',q')$ (with the
+$\delta$ slot taken as \texttt{twoCompDelta} $= -\,\texttt{phi4Delta}$, fixing
+the sign of the cross term),
+\[
+  P(t,q) + P(t',q') = \texttt{twoCompEvenPart}(A,\sigma;\alpha,\beta,\gamma,\delta)
+    - 4A\,\alpha\beta\gamma\delta,
+\]
+where \texttt{twoCompEvenPart} is even in each rotated variable
+(\texttt{twoCompEvenPart\_even\_alpha}/\texttt{\_beta}/\texttt{\_gamma}/\texttt{\_delta}).
+\end{theorem}
+
+This is exactly the $Q$ even, $c = 4A \ge 0$ form of
+\texttt{phi4\_single\_site\_nonneg}, so the single-site positivity at the core
+of Theorem 4.7.1, \texttt{twoComp\_single\_site\_nonneg}, follows immediately:
+\[
+  0 \le \int\!\!\int\!\!\int\!\!\int \alpha^k\beta^l\gamma^m\delta^n\,
+    e^{-\texttt{twoCompEvenPart} + 4A\,\alpha\beta\gamma\delta} .
+\]
+The $t/q$ vector duplicate framework and the three inequalities (4.7.5)--(4.7.7)
+of Theorem 4.7.1, together with Corollary 4.7.2, follow in subsequent PRs.
+Reference: Glimm--Jaffe, 2nd ed., \S4.7, pp.~70--71; [Ruelle, 1969].
+
 \section{Pure and mixed phases (\texttt{PhaseTransition.lean})}
 
 Formalization of Glimm--Jaffe, \S5.1 (pp.~72--74).
