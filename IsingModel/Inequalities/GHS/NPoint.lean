@@ -1,4 +1,5 @@
 import IsingModel.Inequalities.GHS.Truncated4
+import IsingModel.Inequalities.Lebowitz.Cor435
 
 /-!
 # GHS inequality split — Cor 4.3.5 n-point bounds and J-continuity/differentiability
@@ -24,36 +25,19 @@ For ferromagnetic Ising with `h ≥ 0`, the key inductive step
 
 `⟨σ_{S ∪ {j,k}}⟩ ≤ ⟨σ_S⟩⟨σ_jσ_k⟩ + ∑_{T ⊆ S} ⟨σ_{T ∪ {j}}⟩⟨σ_{(S\T) ∪ {k}}⟩`
 
-This is derived from the general Lebowitz inequality (Cor. 4.3.2) applied
-with `A = S`, `B = {j, k}`, and dropping non-positive terms (odd `|B₂|`
-terms and nontrivial `A`-partition terms with even `|B₂|`).
+This is `Lebowitz.lebowitz_inductive_bound` (`Inequalities/Lebowitz/Cor435.lean`),
+proven from `cor_4_3_2_tq` at `A = S`, `B = {j,k}` by dropping the odd
+right-hand part (GKS-I), cancelling the non-trivial even terms pairwise by
+GKS-II, and moving the q-odd terms right after the reflection `X ↦ S \ X`.
+It replaces the former `lebowitz_inductive` axiom (which, unlike
+`lebowitz_four` and `lebowitz_third`, was true as stated).
 
 Iterating this bound gives Cor. 4.3.5:
 `⟨σ_{i₁}⋯σ_{iₙ}⟩ ≤ (n-1)! ∑ₘ ∏ (2-point and 1-point correlations)`
 where `m` runs over all partial matchings of `{i₁,…,iₙ}`.
 
 References:
-* Glimm–Jaffe, *Quantum Physics*, §4.3, Cor. 4.3.5, p. 62
-* Proof: induction on `n` using Cor. 4.3.2 (general Lebowitz) -/
-
-/-- **Inductive Lebowitz bound** (Glimm–Jaffe, §4.3, key step for Cor. 4.3.5).
-For ferromagnetic Ising with `h ≥ 0`, a set `S` of sites, and two sites
-`j, k ∉ S` with `j ≠ k`:
-
-`⟨σ_{S ∪ {j,k}}⟩ ≤ ⟨σ_S⟩⟨σ_jσ_k⟩ + ∑_{T ⊆ S} ⟨σ_{T ∪ {j}}⟩⟨σ_{(S\T) ∪ {k}}⟩`.
-
-Proved via the general Lebowitz inequality (Cor. 4.3.2) for continuous φ⁴
-spins, then transferred to Ising by the approximation
-`dμ = exp(-λ(ξ²-1)²) dξ → ½(δ₊₁ + δ₋₁)` as `λ → ∞`.
-
-The sum over `T ∈ S.powerset` includes `T = ∅` and `T = S`. -/
-axiom lebowitz_inductive (G : SimpleGraph ι) [Fintype G.edgeSet]
-    (p : IsingParams ℝ) (hf : Ferromagnetic p)
-    (S : Finset ι) (j k : ι) (hj : j ∉ S) (hk : k ∉ S) (hjk : j ≠ k) :
-    correlation G p (insert j (insert k S)) ≤
-    correlation G p S * correlation G p {j, k} +
-    ∑ T ∈ S.powerset,
-      correlation G p (insert j T) * correlation G p (insert k (S \ T))
+* Glimm–Jaffe, *Quantum Physics*, §4.3, Cor. 4.3.5, p. 62 -/
 
 /-- **Cor. 4.3.5** (Glimm–Jaffe, §4.3, p. 62): for `h = 0` and `n + 2`
 distinct sites, the `(n+2)`-point function is bounded by sums of products of
@@ -70,7 +54,7 @@ theorem cor_4_3_5_h0 (G : SimpleGraph ι) [Fintype G.edgeSet]
     ∑ T ∈ S.powerset,
       correlation G ⟨J, 0, β⟩ (insert j T) *
         correlation G ⟨J, 0, β⟩ (insert k (S \ T)) :=
-  lebowitz_inductive G ⟨J, 0, β⟩ hf S j k hj hk hjk
+  Lebowitz.lebowitz_inductive_bound G ⟨J, 0, β⟩ hf S j k hj hk hjk
 
 /-- **Ursell 3-point antisymmetry under `h → -h`** (pairwise distinct):
 `truncated3 G ⟨J, -h, β⟩ i j k = -truncated3 G ⟨J, h, β⟩ i j k`.
