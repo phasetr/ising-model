@@ -43,8 +43,8 @@ fresh endpoint carries the geometric decay (`straddle_fresh_vertex`,
 `correlationInfinite_fresh_le`), the partner factor `≤ 1`. Mirrors
 `ursell_shell_sum_le_card_pow`; this is the shell contribution to the per-stage
 β-derivative increment bound. -/
-theorem scaledCovariance_shell_sum_le_card_pow (d : ℕ) (hd : 1 ≤ d) (r₀ : ℕ) (J β : ℝ)
-    (hJ : 0 ≤ J) (hβ : 0 < β)
+theorem scaledCovariance_shell_sum_le_card_pow (d : ℕ) (hd : 1 ≤ d) (r₀ : ℕ) (hr₀ : 1 ≤ r₀)
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β)
     (hα : contractionFactor d (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) r₀ < 1)
     (k R : ℕ) (hRk : R ≤ k) {x z : Fin d → ℤ} (hxz : x ≠ z)
     (hx : x ∈ cubicBox d R) (hz : z ∈ cubicBox d R)
@@ -108,8 +108,8 @@ theorem scaledCovariance_shell_sum_le_card_pow (d : ℕ) (hd : 1 ≤ d) (r₀ : 
     hE₀_nd hE₀_sub ⟨x, hxk1⟩ ⟨z, hzk1⟩ u v hxzlift hxu hxv hzu hzv huv).trans ?_
   rcases straddle_fresh_vertex hstr with hfu | hfv
   · -- `u` is the fresh vertex
-    have gxu := correlationInfinite_fresh_le d hd r₀ J β hJ hβ hα k R hRk hx u.property hfu
-    have gzu := correlationInfinite_fresh_le d hd r₀ J β hJ hβ hα k R hRk hz u.property hfu
+    have gxu := correlationInfinite_fresh_le d hd r₀ hr₀ J β hJ hβ hα k R hRk hx u.property hfu
+    have gzu := correlationInfinite_fresh_le d hd r₀ hr₀ J β hJ hβ hα k R hRk hz u.property hfu
     calc correlationInfinite (latticeGraph d) (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ)
               {x, u.val} *
             correlationInfinite (latticeGraph d) (cubicExhaustion d)
@@ -126,8 +126,8 @@ theorem scaledCovariance_shell_sum_le_card_pow (d : ℕ) (hd : 1 ≤ d) (r₀ : 
               (correlationInfinite_nonneg _ _ _ ⟨hJ, le_refl 0, hβ⟩ _) zero_le_one)
       _ = 2 * cf ^ ((k + 1 - R) / (r₀ + 2)) := by ring
   · -- `v` is the fresh vertex
-    have gxv := correlationInfinite_fresh_le d hd r₀ J β hJ hβ hα k R hRk hx v.property hfv
-    have gzv := correlationInfinite_fresh_le d hd r₀ J β hJ hβ hα k R hRk hz v.property hfv
+    have gxv := correlationInfinite_fresh_le d hd r₀ hr₀ J β hJ hβ hα k R hRk hx v.property hfv
+    have gzv := correlationInfinite_fresh_le d hd r₀ hr₀ J β hJ hβ hα k R hRk hz v.property hfv
     calc correlationInfinite (latticeGraph d) (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ)
               {x, u.val} *
             correlationInfinite (latticeGraph d) (cubicExhaustion d)

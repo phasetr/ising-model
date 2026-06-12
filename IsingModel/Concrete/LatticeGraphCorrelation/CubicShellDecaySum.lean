@@ -38,7 +38,7 @@ cf^{d(r,b)/(r₀+2)}·cf^{d(s,a)/(r₀+2)}]`. Chains
 `correlationInfinite_latticeGraph_le_contractionFactor_pow_dist_pair` applied
 termwise (the distinctness `r ≠ a.val` etc. follows from `r, s` being on no
 `E₀`-edge). The cross-product-only structure ensures every factor decays. -/
-theorem derivBoundTight_inducedGraph_cubic_le_decay_sum (d : ℕ) (hd : 1 ≤ d) (r₀ : ℕ)
+theorem derivBoundTight_inducedGraph_cubic_le_decay_sum (d : ℕ) (hd : 1 ≤ d) (r₀ : ℕ) (hr₀ : 1 ≤ r₀)
     (p : IsingParams ℝ) (hf : Ferromagnetic p) (hh : p.h = 0)
     (hα : contractionFactor d (cubicExhaustion d) p r₀ < 1)
     (n : ℕ) (E₀ : Finset (Sym2 (↑(cubicBox d n) : Type _)))
@@ -69,13 +69,13 @@ theorem derivBoundTight_inducedGraph_cubic_le_decay_sum (d : ℕ) (hd : 1 ≤ d)
   have hs_b : s ≠ b.val := fun h => hsmem (Sym2.mem_iff.mpr (Or.inr (Subtype.ext h)))
   have hcf_nonneg : 0 ≤ contractionFactor d (cubicExhaustion d) p r₀ :=
     contractionFactor_nonneg d (cubicExhaustion d) p hf r₀
-  have dra := correlationInfinite_latticeGraph_le_contractionFactor_pow_dist_pair d hd r₀
+  have dra := correlationInfinite_latticeGraph_le_contractionFactor_pow_dist_pair d hd r₀ hr₀
     (cubicExhaustion d) p hf hh hα hr_a
-  have drb := correlationInfinite_latticeGraph_le_contractionFactor_pow_dist_pair d hd r₀
+  have drb := correlationInfinite_latticeGraph_le_contractionFactor_pow_dist_pair d hd r₀ hr₀
     (cubicExhaustion d) p hf hh hα hr_b
-  have dsa := correlationInfinite_latticeGraph_le_contractionFactor_pow_dist_pair d hd r₀
+  have dsa := correlationInfinite_latticeGraph_le_contractionFactor_pow_dist_pair d hd r₀ hr₀
     (cubicExhaustion d) p hf hh hα hs_a
-  have dsb := correlationInfinite_latticeGraph_le_contractionFactor_pow_dist_pair d hd r₀
+  have dsb := correlationInfinite_latticeGraph_le_contractionFactor_pow_dist_pair d hd r₀ hr₀
     (cubicExhaustion d) p hf hh hα hs_b
   refine add_le_add
     (mul_le_mul dra dsb (correlationInfinite_nonneg _ _ _ hf _) (pow_nonneg hcf_nonneg _))
@@ -120,7 +120,7 @@ fresh-vertex distance growth `cf_pow_fresh_le`: each straddle edge has a fresh
 endpoint (`straddle_fresh_vertex`) whose decay factor carries the geometric
 `cf^{(k+1−R)/(r₀+2)}`, the other factor being `≤ 1`. With the shell cardinality
 polynomial in `k` and `cf < 1`, this gives a summable per-stage increment. -/
-theorem derivBoundTight_cubic_shell_le_card_pow (d : ℕ) (hd : 1 ≤ d) (r₀ : ℕ)
+theorem derivBoundTight_cubic_shell_le_card_pow (d : ℕ) (hd : 1 ≤ d) (r₀ : ℕ) (hr₀ : 1 ≤ r₀)
     (p : IsingParams ℝ) (hf : Ferromagnetic p) (hh : p.h = 0)
     (hα : contractionFactor d (cubicExhaustion d) p r₀ < 1)
     (k R : ℕ) (hRk : R ≤ k)
@@ -142,7 +142,7 @@ theorem derivBoundTight_cubic_shell_le_card_pow (d : ℕ) (hd : 1 ≤ d) (r₀ :
   have hcf_nonneg : 0 ≤ cf := contractionFactor_nonneg d (cubicExhaustion d) p hf r₀
   have hcf_le_one : cf ≤ 1 := le_of_lt hα
   have hRk1 : R ≤ k + 1 := by omega
-  refine (derivBoundTight_inducedGraph_cubic_le_decay_sum d hd r₀ p hf hh hα (k + 1) _
+  refine (derivBoundTight_inducedGraph_cubic_le_decay_sum d hd r₀ hr₀ p hf hh hα (k + 1) _
     (cubicBox_mono d hRk1 hr) (cubicBox_mono d hRk1 hs) hsep).trans ?_
   apply mul_le_mul_of_nonneg_left _ (mul_nonneg hf.hβ.le hf.hJ)
   apply Finset.sum_le_card_nsmul
@@ -210,7 +210,7 @@ tight per-stage correlation increment
 `correlationAlongExhaustion_cubic_succ_sub_le_poly_pow`) now that the outer
 induced-lattice-graph edge-set instance is the shared canonical one. -/
 theorem derivBoundTight_cubic_shell_le_poly_pow (d : ℕ) (hd : 1 ≤ d)
-    (r₀ : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p) (hh : p.h = 0)
+    (r₀ : ℕ) (hr₀ : 1 ≤ r₀) (p : IsingParams ℝ) (hf : Ferromagnetic p) (hh : p.h = 0)
     (hα : contractionFactor d (cubicExhaustion d) p r₀ < 1)
     (k R : ℕ) (hRk : R ≤ k)
     {r s : Fin d → ℤ} (hr : r ∈ cubicBox d R) (hs : s ∈ cubicBox d R)
@@ -225,7 +225,7 @@ theorem derivBoundTight_cubic_shell_le_poly_pow (d : ℕ) (hd : 1 ≤ d)
         ⟨r, cubicBox_mono d (by omega) hr⟩ ⟨s, cubicBox_mono d (by omega) hs⟩
       ≤ p.β * p.J * (2 * (d * (2 * (k + 1) + 1) ^ d) *
           contractionFactor d (cubicExhaustion d) p r₀ ^ ((k + 1 - R) / (r₀ + 2))) := by
-  have h2 := derivBoundTight_cubic_shell_le_card_pow d hd r₀ p hf hh hα k R hRk hr hs hsep
+  have h2 := derivBoundTight_cubic_shell_le_card_pow d hd r₀ hr₀ p hf hh hα k R hRk hr hs hsep
   have hcard := cubic_shell_card_le d k
   have hpow_nonneg : 0 ≤ 2 * contractionFactor d (cubicExhaustion d) p r₀ ^
       ((k + 1 - R) / (r₀ + 2)) :=
@@ -254,7 +254,7 @@ outer induced-lattice-graph edge-set instance is the shared canonical one; see t
 lowered-priority `Fintype edgeSet` fallback instances in `CubicPerStageIncrement`
 and `CubicShellInfiniteVolumeBound`.) -/
 theorem correlationAlongExhaustion_cubic_succ_sub_le_poly_pow (d : ℕ) (hd : 1 ≤ d)
-    (r₀ : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p) (hh : p.h = 0)
+    (r₀ : ℕ) (hr₀ : 1 ≤ r₀) (p : IsingParams ℝ) (hf : Ferromagnetic p) (hh : p.h = 0)
     (hα : contractionFactor d (cubicExhaustion d) p r₀ < 1)
     (k R : ℕ) (hRk : R ≤ k)
     {r s : Fin d → ℤ} (hrs : r ≠ s) (hr : r ∈ cubicBox d R) (hs : s ∈ cubicBox d R)
@@ -269,7 +269,7 @@ theorem correlationAlongExhaustion_cubic_succ_sub_le_poly_pow (d : ℕ) (hd : 1 
           contractionFactor d (cubicExhaustion d) p r₀ ^ ((k + 1 - R) / (r₀ + 2))) :=
   (correlationAlongExhaustion_cubic_succ_sub_le_derivBoundTight d p hf hh hrs k
     (cubicBox_mono d hRk hr) (cubicBox_mono d hRk hs) hsep).trans
-    (derivBoundTight_cubic_shell_le_poly_pow d hd r₀ p hf hh hα k R hRk hr hs hsep)
+    (derivBoundTight_cubic_shell_le_poly_pow d hd r₀ hr₀ p hf hh hα k R hRk hr hs hsep)
 
 /-- **Abs form of cubic per-stage correlation increment** (Issue #3054). Combines
 `correlationAlongExhaustion_cubic_succ_sub_le_poly_pow` (the one-sided ≤ form)
@@ -279,7 +279,7 @@ with the ferromagnetic monotonicity
 to give the two-sided abs bound shape required by the `h_real_inc` slots of the
 poly-geometric CE-route bundle constructors (PRs #3099-#3105). -/
 theorem abs_correlationAlongExhaustion_cubic_succ_sub_le_poly_pow (d : ℕ) (hd : 1 ≤ d)
-    (r₀ : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p) (hh : p.h = 0)
+    (r₀ : ℕ) (hr₀ : 1 ≤ r₀) (p : IsingParams ℝ) (hf : Ferromagnetic p) (hh : p.h = 0)
     (hα : contractionFactor d (cubicExhaustion d) p r₀ < 1)
     (k R : ℕ) (hRk : R ≤ k)
     {r s : Fin d → ℤ} (hrs : r ≠ s) (hr : r ∈ cubicBox d R) (hs : s ∈ cubicBox d R)
@@ -296,7 +296,8 @@ theorem abs_correlationAlongExhaustion_cubic_succ_sub_le_poly_pow (d : ℕ) (hd 
     correlationAlongExhaustion_monotone (latticeGraph d) (cubicExhaustion d) p hf {r, s}
       (Nat.le_succ k)
   have hub :=
-    correlationAlongExhaustion_cubic_succ_sub_le_poly_pow d hd r₀ p hf hh hα k R hRk hrs hr hs hsep
+    correlationAlongExhaustion_cubic_succ_sub_le_poly_pow d hd r₀ hr₀ p hf hh hα k R hRk hrs hr hs
+      hsep
   -- Since c_k ≤ c_{k+1}, c_k - c_{k+1} ≤ 0, so |c_k - c_{k+1}| = c_{k+1} - c_k.
   have hsub_nn :
       0 ≤ correlationAlongExhaustion (latticeGraph d) (cubicExhaustion d) p {r, s} (k + 1)
@@ -312,7 +313,7 @@ form, matching exactly the shape required by the `h_real_inc` slots of the
 poly-geometric CE-route bundle constructors (PRs #3099-#3105). Uses
 `correlationAlongExhaustion_eq_correlation_inducedGraph` to unfold both stages. -/
 theorem abs_correlation_inducedGraph_cubic_succ_sub_le_poly_pow (d : ℕ) (hd : 1 ≤ d)
-    (r₀ : ℕ) (J β : ℝ)
+    (r₀ : ℕ) (hr₀ : 1 ≤ r₀) (J β : ℝ)
     (hf : Ferromagnetic (⟨J, 0, β⟩ : IsingParams ℝ))
     (hα : contractionFactor d (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) r₀ < 1)
     (k R : ℕ) (hRk : R ≤ k)
@@ -348,7 +349,7 @@ theorem abs_correlation_inducedGraph_cubic_succ_sub_le_poly_pow (d : ℕ) (hd : 
       (cubicExhaustion d) _
       (hcov_k.trans ((cubicExhaustion d).mono (Nat.le_succ k)))
   rw [← heq_k, ← heq_k1]
-  exact abs_correlationAlongExhaustion_cubic_succ_sub_le_poly_pow d hd r₀
+  exact abs_correlationAlongExhaustion_cubic_succ_sub_le_poly_pow d hd r₀ hr₀
     (⟨J, 0, β⟩ : IsingParams ℝ) hf rfl hα k R hRk hrs hr hs hsep
 
 /-- **High-temperature simplification of the cubic abs increment** (Issue #3054).
@@ -360,7 +361,7 @@ the `R_inc_seq k := (2k+3)^d · ratio^k` shape required by the poly-geometric
 CE-route bundle constructors (PRs #3099-#3105). Positivity of the right-hand
 side uses `contractionFactor_nonneg`. -/
 theorem abs_correlation_inducedGraph_cubic_succ_sub_le_poly_pow_high_temp (d : ℕ) (hd : 1 ≤ d)
-    (r₀ : ℕ) (J β : ℝ)
+    (r₀ : ℕ) (hr₀ : 1 ≤ r₀) (J β : ℝ)
     (hβJ2d : β * J * (2 * d) ≤ 1)
     (hf : Ferromagnetic (⟨J, 0, β⟩ : IsingParams ℝ))
     (hα : contractionFactor d (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) r₀ < 1)
@@ -381,7 +382,8 @@ theorem abs_correlation_inducedGraph_cubic_succ_sub_le_poly_pow_high_temp (d : �
         contractionFactor d (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) r₀ ^
           ((k + 1 - R) / (r₀ + 2)) := by
   have hbound :=
-    abs_correlation_inducedGraph_cubic_succ_sub_le_poly_pow d hd r₀ J β hf hα k R hRk hrs hr hs hsep
+    abs_correlation_inducedGraph_cubic_succ_sub_le_poly_pow d hd r₀ hr₀ J β hf hα k R hRk hrs hr hs
+      hsep
       hcov_k
   have hcf_nn :
       (0 : ℝ) ≤ contractionFactor d (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) r₀ :=
@@ -613,7 +615,7 @@ input of `CERouteIccPolyGeometricIncrement_of_canonical_radius_sequence`
 hypothesis automatically discharges `hsep` via the threshold `R + 1 ≤ k`,
 removing the only combinatorial side-condition. -/
 theorem abs_correlation_inducedGraph_cubic_succ_sub_le_geometric_high_temp (d : ℕ) (hd : 1 ≤ d)
-    (r₀ : ℕ) (J β : ℝ)
+    (r₀ : ℕ) (hr₀ : 1 ≤ r₀) (J β : ℝ)
     (hβJ2d : β * J * (2 * d) ≤ 1)
     (hf : Ferromagnetic (⟨J, 0, β⟩ : IsingParams ℝ))
     (hcf_pos : 0 < contractionFactor d (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) r₀)
@@ -633,7 +635,7 @@ theorem abs_correlation_inducedGraph_cubic_succ_sub_le_geometric_high_temp (d : 
   -- Step 1: apply the high-temp simplification + auto-discharged hsep.
   have hsep := hsep_of_cubicBox_R_succ_le_k d k R hRk hr hs
   have hbound :=
-    abs_correlation_inducedGraph_cubic_succ_sub_le_poly_pow_high_temp d hd r₀ J β hβJ2d hf hα
+    abs_correlation_inducedGraph_cubic_succ_sub_le_poly_pow_high_temp d hd r₀ hr₀ J β hβJ2d hf hα
       k R (by omega) hrs hr hs hsep hcov_k
   -- Step 2: apply Step A (floor → geometric) to the cf^... factor.
   -- cf_pow_natDiv_le_geometric gives cf^((k+1-R)/(r₀+2)) ≤ (1/cf) · ρ_R^(k+1-R)
@@ -672,7 +674,7 @@ Given a uniform upper bound `cf_max < 1` on `contractionFactor d (cubicExhaustio
 bounded by the β_re-independent sequence
 `R_inc_seq k := (2k+3)^d · cf_max^{(k+1-R)/(r₀+2)}`. -/
 theorem abs_correlation_inducedGraph_cubic_succ_sub_le_uniform_cf_max
-    (d : ℕ) (hd : 1 ≤ d) (r₀ : ℕ) (J : ℝ)
+    (d : ℕ) (hd : 1 ≤ d) (r₀ : ℕ) (hr₀ : 1 ≤ r₀) (J : ℝ)
     (cf_max : ℝ) (hcf_max_lt_one : cf_max < 1)
     {β_re : ℝ} (hβ_re_lt : β_re * J * (2 * d) ≤ 1)
     (hf : Ferromagnetic (⟨J, 0, β_re⟩ : IsingParams ℝ))
@@ -692,7 +694,7 @@ theorem abs_correlation_inducedGraph_cubic_succ_sub_le_uniform_cf_max
     lt_of_le_of_lt h_cf_max hcf_max_lt_one
   have hsep := hsep_of_cubicBox_R_succ_le_k d k R hRk hr hs
   have hbound :=
-    abs_correlation_inducedGraph_cubic_succ_sub_le_poly_pow_high_temp d hd r₀ J β_re hβ_re_lt hf
+    abs_correlation_inducedGraph_cubic_succ_sub_le_poly_pow_high_temp d hd r₀ hr₀ J β_re hβ_re_lt hf
       h_cf_lt_one k R (by omega) hrs hr hs hsep hcov_k
   -- Bound cf^((k+1-R)/(r₀+2)) ≤ cf_max^((k+1-R)/(r₀+2)) using x ≤ y, both in (0, 1) ⇒ x^p ≤ y^p.
   refine hbound.trans ?_
@@ -721,7 +723,7 @@ This is the cleanest cubic real-axis abs increment expression compatible with
 the `R_inc_seq k` input slot of the poly-geometric CE-route bundle
 constructors (PRs #3099-#3105). -/
 theorem abs_correlation_inducedGraph_cubic_succ_sub_le_uniform_geometric_high_temp
-    (d : ℕ) (hd : 1 ≤ d) (r₀ : ℕ) (J : ℝ)
+    (d : ℕ) (hd : 1 ≤ d) (r₀ : ℕ) (hr₀ : 1 ≤ r₀) (J : ℝ)
     (cf_max : ℝ) (hcf_max_pos : 0 < cf_max) (hcf_max_lt_one : cf_max < 1)
     {β_re : ℝ} (hβ_re_lt : β_re * J * (2 * d) ≤ 1)
     (hf : Ferromagnetic (⟨J, 0, β_re⟩ : IsingParams ℝ))
@@ -738,7 +740,8 @@ theorem abs_correlation_inducedGraph_cubic_succ_sub_le_uniform_geometric_high_te
           (cf_max ^ ((1 : ℝ) / ((r₀ + 2 : ℕ) : ℝ))) ^ (k + 1 - R) := by
   -- Step 1: Step C bound — (2k+3)^d · cf_max^((k+1-R)/(r₀+2))
   have hstep_c :=
-    abs_correlation_inducedGraph_cubic_succ_sub_le_uniform_cf_max d hd r₀ J cf_max hcf_max_lt_one
+    abs_correlation_inducedGraph_cubic_succ_sub_le_uniform_cf_max d hd r₀ hr₀ J cf_max
+      hcf_max_lt_one
       hβ_re_lt hf h_cf_max k R hRk hrs hr hs hcov_k
   refine hstep_c.trans ?_
   -- Step 2: Step A on cf_max — cf_max^((k+1-R)/(r₀+2)) ≤ (1/cf_max) · ρ_R_max^(k+1-R)
