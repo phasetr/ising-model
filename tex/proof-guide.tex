@@ -5388,9 +5388,11 @@ The formalization includes:
 \item Odd-function integral vanishing (\texttt{integral\_odd\_eq\_zero}).
 \end{itemize}
 
-\paragraph{Axiom (discharge in progress, Issue \#3913).}
-One measure-theoretic property remains stated as an axiom; its
-integrability-free core is now formalised (PR \#3914, see below):
+\paragraph{Now proven (Issue \#3913 complete, PR \#3917).}
+This single-site positivity was formerly an axiom; it is now
+\textbf{proven unconditionally} (no integrability hypothesis) by the
+four-fold sign symmetrisation, in \texttt{ContinuousSpin/Phi4AllOdd.lean}.
+The statement:
 \begin{itemize}
 \item \texttt{phi4\_single\_\allowbreak site\_nonneg}: non-negativity of the
   symmetrized 4D integral: for $Q$ even and $c \ge 0$,
@@ -5459,8 +5461,18 @@ flips the monomial sign character ($= -1$), so by
 \texttt{phi4\_integral4\_eq\_reflected} the integral equals its own negative
 and therefore vanishes (\texttt{phi4\_integral4\_eq\_zero\_mixed}, via the
 negation-by-reflection helper \texttt{phi4\_integral4\_eq\_zero\_of\_neg\_pattern}).
-Only the all-odd case (which produces $\sinh$ and carries an integrability
-hypothesis) and the junk-value fallback remain.
+The all-odd case is handled at the \emph{innermost} $\delta$-integral, where
+the integrability dichotomy is local and no Fubini is needed: the
+$\delta$-reflection gives $\int_\delta G = -\int_\delta G''$ (with $G''$ the
+$c \mapsto -c$ integrand), so on the integrable branch
+$2\int_\delta G = \int_\delta (G - G'')
+= \int_\delta 2\,(\text{even powers})\,e^{-Q}\,(\alpha\beta\gamma\delta)
+\sinh(c\,\alpha\beta\gamma\delta) \ge 0$ by \texttt{mul\_sinh\_nonneg}, and
+on the non-integrable branch $\int_\delta G = 0$; either way the inner
+integral is non-negative, and four iterations of \texttt{integral\_nonneg}
+give the all-odd result (\texttt{phi4\_integral4\_nonneg\_all\_odd}).
+The headline \texttt{phi4\_single\_site\_nonneg} dispatches the three parity
+cases unconditionally, and the axiom is deleted.
 Formalizing this requires the interchange of finite symmetrization sums with
 nested Bochner integrals.
 
