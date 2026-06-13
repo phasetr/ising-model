@@ -110,4 +110,34 @@ theorem KPAdmissible.activity_sum_le_weight
   calc |z Q| = |z Q| * 1 := (mul_one _).symm
     _ ≤ |z Q| * Real.exp (a Q) := by gcongr
 
+/-- **Order-2 cluster contribution bound** (KP, GJ §18.4): the order-2 part of
+the cluster sum anchored at `P` — `∑_{Q ≁ P} |ϕ^T(![P,Q])| · |z P|·|z Q|` — is
+bounded by `½ · |z P| · a P`.  Each connected `2`-cluster `{P, Q}` (with `P ≁ Q`)
+has `ϕ^T = -1/2` (`ursellCoefficient_pair_incompatible`), so the sum factors as
+`½·|z P|·∑_{Q ≁ P} |z Q|`, then `KPAdmissible.activity_sum_le_weight` bounds the
+inner sum by `a P`.  A concrete instance of the per-polymer cluster-sum bound
+that drives Kotecký–Preiss convergence (here at fixed order `n = 2`). -/
+theorem KPAdmissible.order_two_cluster_bound
+    {G : SimpleGraph ι} [Fintype G.edgeSet] {z a : Finset (Sym2 ι) → ℝ}
+    (h : KPAdmissible G z a) {P : Finset (Sym2 ι)} (hP : P ∈ allPolymers G) :
+    ∑ Q ∈ (allPolymers G).filter (fun Q => PolymersIncompatible P Q),
+        |ursellCoefficient ![P, Q]| * (|z P| * |z Q|)
+      ≤ (1 / 2) * (|z P| * a P) := by
+  have hcongr : ∀ Q ∈ (allPolymers G).filter (fun Q => PolymersIncompatible P Q),
+      |ursellCoefficient ![P, Q]| * (|z P| * |z Q|)
+        = (1 / 2) * |z P| * |z Q| := by
+    intro Q hQ
+    have hPQ : PolymersIncompatible P Q := (Finset.mem_filter.mp hQ).2
+    have hu : ursellCoefficient ![P, Q] = -1 / 2 :=
+      ursellCoefficient_pair_incompatible (by simpa using hPQ)
+    rw [hu]
+    have habs : |(-1 / 2 : ℝ)| = 1 / 2 := by norm_num
+    rw [habs]; ring
+  rw [Finset.sum_congr rfl hcongr, ← Finset.mul_sum]
+  calc (1 / 2 * |z P|)
+        * ∑ Q ∈ (allPolymers G).filter (fun Q => PolymersIncompatible P Q), |z Q|
+      ≤ (1 / 2 * |z P|) * a P :=
+        mul_le_mul_of_nonneg_left (h.activity_sum_le_weight hP) (by positivity)
+    _ = (1 / 2) * (|z P| * a P) := by ring
+
 end IsingModel
