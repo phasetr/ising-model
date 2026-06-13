@@ -13955,6 +13955,30 @@ series $\sum_m \phi^T(P,\dots,P)\,(t^{|P|})^m = \log(1+t^{|P|})$ then recovers t
 independent free energy, the cluster-expansion verification of the exactly-solvable
 case. Reference: Glimm–Jaffe, 2nd ed., \S18.4--\S18.5, pp.~378--386.
 
+\paragraph{The Mayer expansion converges to the free energy (non-interacting case,
+\S18.5).} Assembling the previous two paragraphs gives the cluster-expansion
+capstone $\log\Xi = \sum_n$ (cluster terms) for the exactly-solvable case
+(\texttt{MayerCore/IndependentCapstone.lean}). For pairwise vertex-disjoint
+polymers, $0 \le t$, and $t^{|P|} < 1$ for every polymer $P$:
+\[
+  \mathrm{HasSum}\;\bigl(n \mapsto \mathrm{mayerExpansionTerm}\,G\,n\,t\bigr)\;
+    \bigl(\mathrm{polymerFreeEnergy}\,G\,t\bigr)
+\]
+(\texttt{hasSum\_mayerExpansionTerm\_of\_pairwise\_disjoint}), and hence
+$\mathrm{polymerFreeEnergy}\,G\,t = \sum'_n \mathrm{mayerExpansionTerm}\,G\,n\,t$
+(\texttt{polymerFreeEnergy\_eq\_tsum\_mayerExpansionTerm\_of\_pairwise\_disjoint}).
+The proof rewrites $\mathrm{polymerFreeEnergy}$ as $\sum_P \log(1+t^{|P|})$ (the
+independent free energy), collapses each Mayer term to its diagonal
+$\mathrm{mayerExpansionTerm}\,G\,n\,t = \sum_P \phi^T(P,\dots,P)\,(t^{|P|})^n$,
+sums the single-polymer multiplicity series per polymer
+($\sum_m \phi^T(P,\dots,P)\,(t^{|P|})^m = \log(1+t^{|P|})$ via
+\texttt{hasSum\_singlePolymer\_ursell\_eq\_log} and the index shift
+\texttt{hasSum\_nat\_add\_iff}, the $n=0$ term vanishing), and combines over the
+finitely many polymers (\texttt{hasSum\_sum}). This is the first proof in the
+project that the Mayer/cluster expansion sums to the free energy beyond the trivial
+cases; the general interacting case requires the Kotecky–Preiss convergence
+estimate. Reference: Glimm–Jaffe, 2nd ed., \S18.4--\S18.5, pp.~378--386.
+
 \paragraph{Polymer free energy bounds and characterisations
 (PRs~\#1517--\#1566).} A coordinated set of sharpenings was added
 in this batch:
