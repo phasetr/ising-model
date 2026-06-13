@@ -5610,6 +5610,40 @@ function $e^{C}\,\|t^a q^b\,\texttt{singleSpinDensity}\,A\,(\sigma-d)\|$ is
 integrable (\texttt{integrable\_pow\_mul\_singleSpinDensity} with shifted
 $\sigma$). Reference: Glimm--Jaffe, 2nd ed., \S4.7, Theorem 4.7.1, pp.~70--71.
 
+\paragraph{First Griffiths inequality (\texttt{vectorCorrelation\_nonneg}).}
+For $A>0$, ferromagnetic $\beta,J\ge0$ and a non-negative external field
+$h^1,h^2\ge0$, every monomial correlation of the two-component Gibbs measure is
+non-negative,
+\[
+0\le\Big\langle \textstyle\prod_{i\in A} t_i\,\prod_{j\in B} q_j\Big\rangle
+\qquad(\text{GJ Theorem 4.7.1, first inequality}).
+\]
+The Gibbs weight factorises as
+$\exp(\beta J\sum_e \xi_i\!\cdot\!\xi_j)\cdot\prod_i \texttt{siteWeight}_i$
+(\texttt{vectorWeight\_eq\_exp\_mul\_siteWeightProd}), with
+$\texttt{siteWeight}\,A\,\sigma\,c_1\,c_2\,\xi
+= e^{c_1 t + c_2 q}\,e^{-A|\xi|^4-\sigma|\xi|^2}$ and $c_1=\beta h^1$,
+$c_2=\beta h^2$. Replacing the interaction exponential by its truncation
+$\texttt{expTrunc}\,N(\beta J\,S)$ turns the integrand into $\texttt{spinEval}\,p$
+for a polynomial $p\in\texttt{MvPolynomial}\,(\iota\oplus\iota)\,\mathbb{R}$ with
+\emph{non-negative coefficients} (\texttt{NonnegCoeffs}). Ferromagnetism keeps
+every coefficient non-negative, and closure under sum/product/power is just
+\texttt{coeff\_add}/\texttt{coeff\_mul} non-negativity --- this is what discharges
+the otherwise painful multinomial expansion of $(\sum_e \xi_i\!\cdot\!\xi_j)^k$:
+the polynomial ring structure does the bookkeeping. The integral of a
+non-negative-coefficient polynomial against the product weight factorises
+(\texttt{eval\_eq'}, \texttt{Fintype.prod\_sum\_type},
+\texttt{integral\_fintype\_prod\_volume\_eq\_prod}) into a non-negative
+combination of products of single-site field moments
+\texttt{singleSpinMoment\_field\_nonneg}, hence $\ge0$
+(\texttt{spinEval\_integral\_nonneg}). Dominated convergence
+(\texttt{tendsto\_integral\_of\_dominated\_convergence}) passes to the limit
+$N\to\infty$, the uniform dominator (\texttt{norm\_truncIntegrand\_le\_dom})
+coming from $|\texttt{expTrunc}\,N(\beta J\,S)|\le \exp(|\beta J|\cdot\#E\cdot
+\sum_i|\xi_i|^2)$ (AM-GM on the inner products), which raises the per-site
+quadratic coefficient $\sigma\mapsto\sigma-cc$. Reference: Glimm--Jaffe, 2nd
+ed., \S4.7, Theorem 4.7.1, pp.~70--71.
+
 \section{Pure and mixed phases (\texttt{PhaseTransition.lean})}
 
 Formalization of Glimm--Jaffe, \S5.1 (pp.~72--74).
