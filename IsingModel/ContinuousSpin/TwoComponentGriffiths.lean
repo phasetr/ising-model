@@ -1,5 +1,7 @@
 import IsingModel.ContinuousSpin.TwoComponentIntegrable
 import IsingModel.ContinuousSpin.Phi4Symmetrization
+import Mathlib.Analysis.SpecialFunctions.Exponential
+import Mathlib.MeasureTheory.Integral.DominatedConvergence
 
 /-!
 # Two-component single-site moment positivity (GJ §4.7, Griffiths-I core)
@@ -197,5 +199,169 @@ theorem singleSpinMoment_nonneg {A σ : ℝ} (hA : 0 < A) (a b : ℕ) :
             simp_rw [hflip]
         _ = -(∫ t : ℝ, ∫ q : ℝ, t ^ a * q ^ b * singleSpinDensity A σ (t, q)) := integral_neg _
     linarith [key]
+
+/-! ## Single-site moments with an external field (Griffiths-I with `h ≥ 0`) -/
+
+/-- The truncated exponential `∑_{k<N} x^k/k!` (partial sum of the exp series). -/
+noncomputable def expTrunc (N : ℕ) (x : ℝ) : ℝ := ∑ k ∈ Finset.range N, x ^ k / k.factorial
+
+/-- The truncated exponential is continuous (a polynomial). -/
+theorem continuous_expTrunc (N : ℕ) : Continuous (expTrunc N) := by
+  unfold expTrunc; fun_prop
+
+/-- The truncated exponentials converge to `exp`. -/
+theorem tendsto_expTrunc (x : ℝ) :
+    Filter.Tendsto (fun N => expTrunc N x) Filter.atTop (nhds (Real.exp x)) := by
+  have h : HasSum (fun n : ℕ => x ^ n / n.factorial) (Real.exp x) := by
+    rw [Real.exp_eq_exp_ℝ]; exact NormedSpace.expSeries_div_hasSum_exp x
+  exact h.tendsto_sum_nat
+
+/-- The truncated exponential is bounded in absolute value by `exp |x|`. -/
+theorem abs_expTrunc_le_exp_abs (N : ℕ) (x : ℝ) : |expTrunc N x| ≤ Real.exp |x| := by
+  have hsum : HasSum (fun n : ℕ => |x| ^ n / n.factorial) (Real.exp |x|) := by
+    rw [Real.exp_eq_exp_ℝ]; exact NormedSpace.expSeries_div_hasSum_exp |x|
+  calc |expTrunc N x| ≤ ∑ k ∈ Finset.range N, |x ^ k / k.factorial| :=
+        Finset.abs_sum_le_sum_abs _ _
+    _ = ∑ k ∈ Finset.range N, |x| ^ k / k.factorial := by
+        refine Finset.sum_congr rfl (fun k _ => ?_)
+        rw [abs_div, abs_pow, abs_of_nonneg (by positivity : (0:ℝ) ≤ (k.factorial : ℝ))]
+    _ ≤ Real.exp |x| := sum_le_hasSum (Finset.range N) (fun k _ => by positivity) hsum
+
+/-- **Single-site moment positivity with an external field** (GJ §4.7 Griffiths-I,
+`c₁, c₂ ≥ 0`): for `A > 0`,
+`0 ≤ ∫_{ℝ²} tᵃqᵇ·exp(c₁t + c₂q)·exp(−A(t²+q²)² − σ(t²+q²))`. Expanding the field
+exponentials by `expTrunc` gives finite sums of non-negative-coefficient moments,
+each `≥ 0` by `singleSpinMoment_nonneg`; dominated convergence (with the linear
+field absorbed into the quadratic via `|t| ≤ (1+t²)/2`) passes to the limit. -/
+theorem singleSpinMoment_field_nonneg {A σ c₁ c₂ : ℝ} (hA : 0 < A)
+    (hc₁ : 0 ≤ c₁) (hc₂ : 0 ≤ c₂) (a b : ℕ) :
+    0 ≤ ∫ ξ : ℝ × ℝ, ξ.1 ^ a * ξ.2 ^ b * Real.exp (c₁ * ξ.1 + c₂ * ξ.2)
+      * singleSpinDensity A σ ξ := by
+  classical
+  set F : ℕ → ℝ × ℝ → ℝ := fun N ξ =>
+    ξ.1 ^ a * ξ.2 ^ b * expTrunc N (c₁ * ξ.1) * expTrunc N (c₂ * ξ.2)
+      * singleSpinDensity A σ ξ with hF
+  -- Each truncated integral is non-negative (finite expansion into single-site moments).
+  have hFnn : ∀ N : ℕ, 0 ≤ ∫ ξ, F N ξ := by
+    intro N
+    have hFeq : ∀ ξ : ℝ × ℝ, F N ξ
+        = ∑ m ∈ Finset.range N, ∑ l ∈ Finset.range N,
+            (c₁ ^ m / m.factorial * (c₂ ^ l / l.factorial)) *
+              (ξ.1 ^ (a + m) * ξ.2 ^ (b + l) * singleSpinDensity A σ ξ) := by
+      intro ξ
+      have hrw : F N ξ
+          = (ξ.1 ^ a * ξ.2 ^ b * singleSpinDensity A σ ξ) *
+              ((∑ m ∈ Finset.range N, (c₁ * ξ.1) ^ m / m.factorial) *
+               (∑ l ∈ Finset.range N, (c₂ * ξ.2) ^ l / l.factorial)) := by
+        simp only [hF, expTrunc]; ring
+      rw [hrw, Finset.sum_mul_sum, Finset.mul_sum]
+      refine Finset.sum_congr rfl (fun m _ => ?_)
+      rw [Finset.mul_sum]
+      refine Finset.sum_congr rfl (fun l _ => ?_)
+      rw [mul_pow, mul_pow, pow_add, pow_add]; ring
+    have hint : ∀ m l : ℕ, Integrable (fun ξ : ℝ × ℝ =>
+        (c₁ ^ m / m.factorial * (c₂ ^ l / l.factorial)) *
+          (ξ.1 ^ (a + m) * ξ.2 ^ (b + l) * singleSpinDensity A σ ξ)) :=
+      fun m l => (integrable_pow_mul_singleSpinDensity hA (a + m) (b + l)).const_mul _
+    calc (∫ ξ, F N ξ)
+        = ∑ m ∈ Finset.range N, ∑ l ∈ Finset.range N,
+            (c₁ ^ m / m.factorial * (c₂ ^ l / l.factorial)) *
+              ∫ ξ : ℝ × ℝ, ξ.1 ^ (a + m) * ξ.2 ^ (b + l) * singleSpinDensity A σ ξ := by
+          simp_rw [hFeq]
+          rw [integral_finset_sum _ (fun m _ => integrable_finset_sum _ (fun l _ => hint m l))]
+          refine Finset.sum_congr rfl (fun m _ => ?_)
+          rw [integral_finset_sum _ (fun l _ => hint m l)]
+          exact Finset.sum_congr rfl (fun l _ => integral_const_mul _ _)
+      _ ≥ 0 := by
+          refine Finset.sum_nonneg (fun m _ => Finset.sum_nonneg (fun l _ => ?_))
+          exact mul_nonneg (by positivity) (singleSpinMoment_nonneg hA _ _)
+  -- Dominated convergence to the field integrand.
+  set d : ℝ := max |c₁| |c₂| / 2 with hd
+  have hbnd_int : Integrable (fun ξ : ℝ × ℝ =>
+      Real.exp ((|c₁| + |c₂|) / 2) *
+        ‖ξ.1 ^ a * ξ.2 ^ b * singleSpinDensity A (σ - d) ξ‖) :=
+    ((integrable_pow_mul_singleSpinDensity (A := A) (σ := σ - d) hA a b).norm).const_mul _
+  have hlim : Filter.Tendsto (fun N => ∫ ξ, F N ξ) Filter.atTop
+      (nhds (∫ ξ : ℝ × ℝ, ξ.1 ^ a * ξ.2 ^ b * Real.exp (c₁ * ξ.1) * Real.exp (c₂ * ξ.2)
+        * singleSpinDensity A σ ξ)) := by
+    refine tendsto_integral_of_dominated_convergence
+      (fun ξ => Real.exp ((|c₁| + |c₂|) / 2) *
+        ‖ξ.1 ^ a * ξ.2 ^ b * singleSpinDensity A (σ - d) ξ‖)
+      (fun N => ?_) hbnd_int (fun N => ?_) ?_
+    · have hc : Continuous (F N) := by
+        simp only [hF]
+        exact ((((continuous_fst.pow a).mul (continuous_snd.pow b)).mul
+          ((continuous_expTrunc N).comp (continuous_const.mul continuous_fst))).mul
+          ((continuous_expTrunc N).comp (continuous_const.mul continuous_snd))).mul
+            (continuous_singleSpinDensity A σ)
+      exact hc.aestronglyMeasurable
+    · refine Filter.Eventually.of_forall (fun ξ => ?_)
+      simp only []
+      have hdens : (0:ℝ) < singleSpinDensity A σ ξ := Real.exp_pos _
+      have hdensd : (0:ℝ) < singleSpinDensity A (σ - d) ξ := Real.exp_pos _
+      have hnormF : ‖F N ξ‖
+          = |ξ.1| ^ a * |ξ.2| ^ b * |expTrunc N (c₁ * ξ.1)| * |expTrunc N (c₂ * ξ.2)|
+            * singleSpinDensity A σ ξ := by
+        simp only [hF, Real.norm_eq_abs, abs_mul, abs_pow, abs_of_pos hdens]
+      rw [hnormF, Real.norm_eq_abs, abs_mul, abs_mul, abs_pow, abs_pow,
+        abs_of_pos hdensd]
+      have hexple : |expTrunc N (c₁ * ξ.1)| * |expTrunc N (c₂ * ξ.2)|
+          ≤ Real.exp ((|c₁| + |c₂|) / 2) * Real.exp (d * (ξ.1 ^ 2 + ξ.2 ^ 2)) := by
+        have h1 : |expTrunc N (c₁ * ξ.1)| ≤ Real.exp |c₁ * ξ.1| := abs_expTrunc_le_exp_abs _ _
+        have h2 : |expTrunc N (c₂ * ξ.2)| ≤ Real.exp |c₂ * ξ.2| := abs_expTrunc_le_exp_abs _ _
+        have hle : |c₁ * ξ.1| + |c₂ * ξ.2|
+            ≤ (|c₁| + |c₂|) / 2 + d * (ξ.1 ^ 2 + ξ.2 ^ 2) := by
+          rw [abs_mul, abs_mul]
+          have ht : |ξ.1| ≤ (1 + ξ.1 ^ 2) / 2 := by
+            nlinarith [sq_nonneg (|ξ.1| - 1), sq_abs ξ.1, abs_nonneg ξ.1]
+          have hq : |ξ.2| ≤ (1 + ξ.2 ^ 2) / 2 := by
+            nlinarith [sq_nonneg (|ξ.2| - 1), sq_abs ξ.2, abs_nonneg ξ.2]
+          have hd1 : |c₁| ≤ 2 * d := by rw [hd]; have := le_max_left |c₁| |c₂|; linarith
+          have hd2 : |c₂| ≤ 2 * d := by rw [hd]; have := le_max_right |c₁| |c₂|; linarith
+          nlinarith [abs_nonneg c₁, abs_nonneg c₂, abs_nonneg ξ.1, abs_nonneg ξ.2,
+            mul_le_mul_of_nonneg_left ht (abs_nonneg c₁),
+            mul_le_mul_of_nonneg_left hq (abs_nonneg c₂), sq_nonneg ξ.1, sq_nonneg ξ.2]
+        calc |expTrunc N (c₁ * ξ.1)| * |expTrunc N (c₂ * ξ.2)|
+            ≤ Real.exp |c₁ * ξ.1| * Real.exp |c₂ * ξ.2| :=
+              mul_le_mul h1 h2 (abs_nonneg _) (Real.exp_pos _).le
+          _ = Real.exp (|c₁ * ξ.1| + |c₂ * ξ.2|) := (Real.exp_add _ _).symm
+          _ ≤ Real.exp ((|c₁| + |c₂|) / 2 + d * (ξ.1 ^ 2 + ξ.2 ^ 2)) := Real.exp_le_exp.mpr hle
+          _ = Real.exp ((|c₁| + |c₂|) / 2) * Real.exp (d * (ξ.1 ^ 2 + ξ.2 ^ 2)) := Real.exp_add _ _
+      have hdens_eq : singleSpinDensity A (σ - d) ξ
+          = Real.exp (d * (ξ.1 ^ 2 + ξ.2 ^ 2)) * singleSpinDensity A σ ξ := by
+        simp only [singleSpinDensity, ← Real.exp_add]; congr 1; ring
+      rw [hdens_eq]
+      calc |ξ.1| ^ a * |ξ.2| ^ b * |expTrunc N (c₁ * ξ.1)| * |expTrunc N (c₂ * ξ.2)|
+              * singleSpinDensity A σ ξ
+          = (|ξ.1| ^ a * |ξ.2| ^ b * singleSpinDensity A σ ξ)
+              * (|expTrunc N (c₁ * ξ.1)| * |expTrunc N (c₂ * ξ.2)|) := by ring
+        _ ≤ (|ξ.1| ^ a * |ξ.2| ^ b * singleSpinDensity A σ ξ)
+              * (Real.exp ((|c₁| + |c₂|) / 2) * Real.exp (d * (ξ.1 ^ 2 + ξ.2 ^ 2))) :=
+            mul_le_mul_of_nonneg_left hexple (by positivity)
+        _ = Real.exp ((|c₁| + |c₂|) / 2)
+              * (|ξ.1| ^ a * |ξ.2| ^ b * (Real.exp (d * (ξ.1 ^ 2 + ξ.2 ^ 2))
+                * singleSpinDensity A σ ξ)) := by ring
+    · refine Filter.Eventually.of_forall (fun ξ => ?_)
+      have htarget : ξ.1 ^ a * ξ.2 ^ b * Real.exp (c₁ * ξ.1) * Real.exp (c₂ * ξ.2)
+          * singleSpinDensity A σ ξ
+          = (ξ.1 ^ a * ξ.2 ^ b * singleSpinDensity A σ ξ)
+            * (Real.exp (c₁ * ξ.1) * Real.exp (c₂ * ξ.2)) := by ring
+      rw [htarget]
+      have hFξ : (fun N => F N ξ)
+          = fun N => (ξ.1 ^ a * ξ.2 ^ b * singleSpinDensity A σ ξ)
+            * (expTrunc N (c₁ * ξ.1) * expTrunc N (c₂ * ξ.2)) := by
+        funext N; simp only [hF]; ring
+      rw [hFξ]
+      exact tendsto_const_nhds.mul ((tendsto_expTrunc _).mul (tendsto_expTrunc _))
+  -- Conclude: limit of non-negatives is non-negative; rewrite the field exponential.
+  have hgoal : (∫ ξ : ℝ × ℝ, ξ.1 ^ a * ξ.2 ^ b * Real.exp (c₁ * ξ.1 + c₂ * ξ.2)
+      * singleSpinDensity A σ ξ)
+      = ∫ ξ : ℝ × ℝ, ξ.1 ^ a * ξ.2 ^ b * Real.exp (c₁ * ξ.1) * Real.exp (c₂ * ξ.2)
+        * singleSpinDensity A σ ξ := by
+    refine integral_congr_ae (Filter.Eventually.of_forall (fun ξ => ?_))
+    simp only []
+    rw [Real.exp_add]; ring
+  rw [hgoal]
+  exact ge_of_tendsto' hlim hFnn
 
 end IsingModel.ContinuousSpin
