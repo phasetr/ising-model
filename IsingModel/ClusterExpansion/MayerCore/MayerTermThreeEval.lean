@@ -53,4 +53,34 @@ theorem mayerExpansionTerm_three_eq
   simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons,
     Matrix.cons_val_two, Matrix.tail_cons]
 
+/-- **Explicit Mayer truncation through order 3** (GJ §18.4): the partial sum
+`mayerPartialSum G 3 t` in fully explicit polymer-sum form — the total polymer
+activity `∑_P t^|P|`, the `n = 2` incompatible-pair contribution
+`-½·∑_{(P,Q) incompatible} t^|P| t^|Q|`, and the `n = 3` triple contribution
+with each Ursell coefficient evaluated by incompatibility pattern.  Composes the
+canonical `mayerPartialSum_two` (`PolymerFreeEnergy.lean`) with the evaluated
+third term `mayerExpansionTerm_three_eq`. -/
+theorem mayerPartialSum_three_eq
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (t : ℝ) :
+    mayerPartialSum G 3 t =
+      ((∑ P ∈ allPolymers G, t ^ P.card) +
+        (-1 / 2 : ℝ) *
+          ∑ pq ∈ ((allPolymers G) ×ˢ (allPolymers G)).filter
+              (fun pq => PolymersIncompatible pq.1 pq.2),
+            (t ^ pq.1.card * t ^ pq.2.card))
+      + ∑ pqr ∈ (allPolymers G) ×ˢ ((allPolymers G) ×ˢ (allPolymers G)),
+          (if PolymersIncompatible pqr.1 pqr.2.1 then
+            (if PolymersIncompatible pqr.1 pqr.2.2 then
+              (if PolymersIncompatible pqr.2.1 pqr.2.2 then 1 / 3 else 1 / 6)
+            else
+              (if PolymersIncompatible pqr.2.1 pqr.2.2 then 1 / 6 else 0))
+          else
+            (if PolymersIncompatible pqr.1 pqr.2.2 then
+              (if PolymersIncompatible pqr.2.1 pqr.2.2 then 1 / 6 else 0)
+            else
+              (if PolymersIncompatible pqr.2.1 pqr.2.2 then 0 else 0)))
+            * (t ^ pqr.1.card * t ^ pqr.2.1.card * t ^ pqr.2.2.card) := by
+  rw [mayerPartialSum_three, mayerPartialSum_two, ← mayerExpansionTerm_three,
+    mayerExpansionTerm_three_eq]
+
 end IsingModel
