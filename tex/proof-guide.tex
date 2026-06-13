@@ -13979,6 +13979,23 @@ project that the Mayer/cluster expansion sums to the free energy beyond the triv
 cases; the general interacting case requires the Kotecky–Preiss convergence
 estimate. Reference: Glimm–Jaffe, 2nd ed., \S18.4--\S18.5, pp.~378--386.
 
+\paragraph{Ising free energy as a Mayer expansion (non-interacting case, \S18.5).}
+The physical payoff (\texttt{MayerCore/IndependentFreeEnergyMayer.lean}): combining
+the polymer decomposition \texttt{freeEnergy\_eq\_polymerFreeEnergy} with the
+non-interacting capstone gives the Ising free energy directly as a convergent
+cluster expansion. For pairwise vertex-disjoint polymers, $0 \le \beta J$, and
+$0 < |\iota|$,
+\[
+  \mathrm{freeEnergy}\,G\,\langle J,0,\beta\rangle
+    = \log 2 + \tfrac{|E|}{|\iota|}\log\cosh(\beta J)
+      + \tfrac{1}{|\iota|}\sum'_n \mathrm{mayerExpansionTerm}\,G\,n\,(\tanh(\beta J))
+\]
+(\texttt{freeEnergy\_eq\_tsum\_mayer\_of\_pairwise\_disjoint}, with the ferromagnetic
+form $0 \le J$, $0 < \beta$). The convergence condition $\tanh(\beta J)^{|P|} < 1$ is
+automatic (\texttt{tanh\_pow\_lt\_one\_of\_mem\_allPolymers}): polymers are non-empty
+($|P| \ge 1$) and $\tanh(\beta J) < 1$. Reference: Glimm–Jaffe, 2nd ed.,
+\S18.4--\S18.5, pp.~378--386.
+
 \paragraph{Polymer free energy bounds and characterisations
 (PRs~\#1517--\#1566).} A coordinated set of sharpenings was added
 in this batch:
