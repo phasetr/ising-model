@@ -13996,6 +13996,19 @@ automatic (\texttt{tanh\_pow\_lt\_one\_of\_mem\_allPolymers}): polymers are non-
 ($|P| \ge 1$) and $\tanh(\beta J) < 1$. Reference: Glimm–Jaffe, 2nd ed.,
 \S18.4--\S18.5, pp.~378--386.
 
+\paragraph{Three-vertex alternating-sum classification (\S18.4).} The
+$\mathrm{alternatingConnectedSubgraphSum}$ of every graph on $\mathrm{Fin}\,3$
+(\texttt{AlternatingFinThree.lean}): the three path values
+\texttt{alternatingConnectedSubgraphSum\_fin\_three\_path\_\{01\_12,01\_02,02\_12\}}
+($= 1$, since the only connected spanning subset of a $2$-edge graph on three
+vertices is the full pair, $(-1)^2 = 1$, by \texttt{decide} on
+$\mathrm{connectedSpanningEdgeSubsets}$) complete the classification alongside the
+triangle (\texttt{alternatingConnectedSubgraphSum\_K3} $= 2$) and the disconnected
+cases ($= 0$). These are the $n = 3$ Mayer/Ursell numerators: $\phi^T = 1/3! = 1/6$
+for a path-shaped incompatibility cluster, $1/3$ for the fully-incompatible
+triangle (\texttt{ursellCoefficient\_complete\_eq}). Reference: Glimm–Jaffe, 2nd
+ed., \S18.4, pp.~378--386.
+
 \paragraph{Polymer free energy bounds and characterisations
 (PRs~\#1517--\#1566).} A coordinated set of sharpenings was added
 in this batch:
