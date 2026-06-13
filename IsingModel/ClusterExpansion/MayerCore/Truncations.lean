@@ -1,15 +1,15 @@
-import IsingModel.ClusterExpansion.MayerCore.Terms
+import IsingModel.ClusterExpansion.MayerCore.PolymerBounds
 
 /-!
 # Mayer expansion truncation structure (GJ §18.4)
 
 Structural results for the Mayer-expansion partial sums and the explicit
 low-order Mayer terms, building on `mayerExpansionTerm` / `mayerPartialSum`
-(`Terms.lean`).  These advance the §18.4 Mayer expansion
+(`Terms.lean`) and the truncation recurrence `mayerPartialSum_succ`
+(`PolymerBounds.lean`).  These advance the §18.4 Mayer expansion
 `log Ξ = ∑_{n ≥ 0} mayerExpansionTerm G n t` (the general-`t` capstone is
 the Mayer–Montroll exponential formula, deferred) by isolating the
-truncation recurrence, the explicit `n = 3` term as a triple sum, and the
-closed forms of the `N = 2` and `N = 3` partial sums.
+explicit `n = 3` term as a triple sum and the `N = 3` partial sum.
 
 ## References
 
@@ -21,17 +21,6 @@ namespace IsingModel
 open Finset
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
-
-/-- **Mayer partial-sum truncation recurrence**: the partial sum through
-cluster size `N + 1` adds the `(N + 1)`-st Mayer term to the partial sum
-through `N`, `mayerPartialSum G (N+1) t = mayerPartialSum G N t
-+ mayerExpansionTerm G (N+1) t`. -/
-theorem mayerPartialSum_succ
-    (G : SimpleGraph ι) [Fintype G.edgeSet] (N : ℕ) (t : ℝ) :
-    mayerPartialSum G (N + 1) t
-      = mayerPartialSum G N t + mayerExpansionTerm G (N + 1) t := by
-  unfold mayerPartialSum
-  rw [Finset.sum_range_succ]
 
 /-- **Mayer expansion `n = 3` term as a triple sum**: reindexing the
 `piFinset (Fin 3 → allPolymers G)` sum to a sum over ordered triples
@@ -76,20 +65,6 @@ theorem mayerExpansionTerm_three
       funext i; fin_cases i <;> rfl
     rw [clusterSeqActivity, Fin.prod_univ_three]
     rw [← hω3]
-
-/-- **Mayer partial sum at `N = 2`**: the truncation through cluster size
-`2` is the total polymer activity plus the `n = 2` pair contribution,
-`mayerPartialSum G 2 t = (∑_{P} t^|P|)
-+ ∑_{(P,Q)} (if incompatible then −1/2 else 0)·t^|P|·t^|Q|`. -/
-theorem mayerPartialSum_two
-    (G : SimpleGraph ι) [Fintype G.edgeSet] (t : ℝ) :
-    mayerPartialSum G 2 t =
-      (∑ P ∈ allPolymers G, t ^ P.card)
-        + ∑ pq ∈ (allPolymers G) ×ˢ (allPolymers G),
-            (if PolymersIncompatible pq.1 pq.2 then (-1/2 : ℝ) else 0) *
-              (t ^ pq.1.card * t ^ pq.2.card) := by
-  rw [show (2 : ℕ) = 1 + 1 from rfl, mayerPartialSum_succ, mayerPartialSum_one,
-    mayerExpansionTerm_two]
 
 /-- **Mayer partial sum at `N = 3`**: the truncation through cluster size
 `3` adds the `n = 3` triple sum to the `N = 2` partial sum. -/

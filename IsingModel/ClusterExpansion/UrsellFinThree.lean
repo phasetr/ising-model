@@ -202,4 +202,46 @@ theorem ursellCoefficient_fin_three_edge_12 (ω : Fin 3 → Finset (Sym2 ι))
   refine ursellCoefficient_eq_zero_of_disconnected ω (fun hconn => ?_)
   exact absurd (e.connected_iff.mp hconn) (by decide)
 
+/-- **Unified n = 3 Ursell-coefficient classification**: the value of `ϕ^T(ω)`
+for any `ω : Fin 3 → polymers`, as a function of the three pair-incompatibility
+flags.  All eight incompatibility patterns are dispatched to the per-pattern
+lemmas (`ursellCoefficient_fin_three_triangle` `= 1/3`, the three
+`ursellCoefficient_fin_three_path_*` `= 1/6`, and the four zero cases
+`ursellCoefficient_fin_three_{no_edge,edge_01,edge_02,edge_12}` `= 0`). -/
+theorem ursellCoefficient_fin_three_eq (ω : Fin 3 → Finset (Sym2 ι)) :
+    ursellCoefficient ω =
+      (if PolymersIncompatible (ω 0) (ω 1) then
+        (if PolymersIncompatible (ω 0) (ω 2) then
+          (if PolymersIncompatible (ω 1) (ω 2) then 1 / 3 else 1 / 6)
+        else
+          (if PolymersIncompatible (ω 1) (ω 2) then 1 / 6 else 0))
+      else
+        (if PolymersIncompatible (ω 0) (ω 2) then
+          (if PolymersIncompatible (ω 1) (ω 2) then 1 / 6 else 0)
+        else
+          (if PolymersIncompatible (ω 1) (ω 2) then 0 else 0))) := by
+  by_cases h01 : PolymersIncompatible (ω 0) (ω 1)
+  · by_cases h02 : PolymersIncompatible (ω 0) (ω 2)
+    · by_cases h12 : PolymersIncompatible (ω 1) (ω 2)
+      · simp only [h01, h02, h12, if_true]
+        exact ursellCoefficient_fin_three_triangle ω h01 h02 h12
+      · simp only [h01, h02, h12, if_true, if_false]
+        exact ursellCoefficient_fin_three_path_01_02 ω h01 h02 h12
+    · by_cases h12 : PolymersIncompatible (ω 1) (ω 2)
+      · simp only [h01, h02, h12, if_true, if_false]
+        exact ursellCoefficient_fin_three_path_01_12 ω h01 h12 h02
+      · simp only [h01, h02, h12, if_true, if_false]
+        exact ursellCoefficient_fin_three_edge_01 ω h01 h02 h12
+  · by_cases h02 : PolymersIncompatible (ω 0) (ω 2)
+    · by_cases h12 : PolymersIncompatible (ω 1) (ω 2)
+      · simp only [h01, h02, h12, if_true, if_false]
+        exact ursellCoefficient_fin_three_path_02_12 ω h02 h12 h01
+      · simp only [h01, h02, h12, if_true, if_false]
+        exact ursellCoefficient_fin_three_edge_02 ω h02 h01 h12
+    · by_cases h12 : PolymersIncompatible (ω 1) (ω 2)
+      · simp only [h01, h02, h12, if_true, if_false]
+        exact ursellCoefficient_fin_three_edge_12 ω h12 h01 h02
+      · simp only [h01, h02, h12, if_false]
+        exact ursellCoefficient_fin_three_no_edge ω h01 h02 h12
+
 end IsingModel
