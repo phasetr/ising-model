@@ -5701,6 +5701,24 @@ $\texttt{rotSiteDensity}\,A\,(\sigma-d)\,p
 engine (with field) for the second/third inequalities. Reference: Glimm--Jaffe,
 2nd ed., \S4.7, Theorem 4.7.1, pp.~70--71.
 
+\paragraph{The doubled-rotated cone.} The multi-site analogue of the first
+inequality's cone, for the \emph{doubled rotated} measure: a configuration
+$\mathrm{cfg}:\iota\to(\mathrm{Fin}\,4\to\mathbb{R})$ assigns the four rotated
+coordinates per site, with per-site weight
+$\texttt{siteWeight4}\,A\,\sigma\,c_\alpha\,c_\gamma\,q
+= e^{c_\alpha q_0+c_\gamma q_2}\,\texttt{rotSiteDensity}\,A\,\sigma\,q$, and
+polynomials over $\iota\times\mathrm{Fin}\,4$ with non-negative coefficients
+(\texttt{NNCoeffs}). The integral of a non-negative-coefficient polynomial against
+the product weight factorises (\texttt{eval\_eq'},
+\texttt{Fintype.prod\_prod\_type},
+\texttt{integral\_fintype\_prod\_volume\_eq\_prod}) into single-site field moments
+\texttt{twoComp\_single\_site\_field\_prod\_nonneg}, hence
+$0\le\int_{(\iota\to\mathrm{Fin}\,4\to\mathbb{R})}\texttt{dSpinEval}\,p\cdot
+\prod_i\texttt{siteWeight4}\,(\mathrm{cfg}\,i)$
+(\texttt{dSpinEval\_integral\_nonneg}). This is the cone consumed (after
+interaction truncation and the duplicate-variable rotation) by the second/third
+inequalities. Reference: Glimm--Jaffe, 2nd ed., \S4.7, Theorem 4.7.1, pp.~70--71.
+
 \section{Pure and mixed phases (\texttt{PhaseTransition.lean})}
 
 Formalization of Glimm--Jaffe, \S5.1 (pp.~72--74).
