@@ -5666,6 +5666,26 @@ part (\texttt{integrable\_monomial\_mul\_field\_rotSiteDensity}), by
 \texttt{Integrable.fintype\_prod} over the four coordinates. Reference:
 Glimm--Jaffe, 2nd ed., \S4.7, Theorem 4.7.1, pp.~70--71.
 
+\paragraph{Product-form single-site moment.} The iterated single-site positivity
+\texttt{twoComp\_single\_site\_nonneg} ($0\le\int\!\int\!\int\!\int
+\alpha^k\beta^l\gamma^m\delta^n e^{-\texttt{twoCompEvenPart}+4A\alpha\beta\gamma
+\delta}$) is recast over the product space $(\mathrm{Fin}\,4\to\mathbb{R})$. A
+reusable one-coordinate peeling
+$\int_{(\mathrm{Fin}(n{+}1)\to\mathbb{R})} F = \int_x\int_r F(\mathrm{cons}\,x\,r)$
+(\texttt{integral\_pi\_cons}, via the measure-preserving head split
+$(\mathrm{Fin}(n{+}1)\to\mathbb{R})\simeq\mathbb{R}\times(\mathrm{Fin}\,n\to
+\mathbb{R})$) together with a.e.\ integrability of the tail
+(\texttt{ae\_integrable\_cons}) gives the four-fold expansion
+\texttt{integral\_fin4} (the innermost $\mathrm{Fin}\,0$ integral collapsing
+against the probability measure). Hence
+$0\le\int_{(\mathrm{Fin}\,4\to\mathbb{R})}(\prod_j p_j^{e_j})\,
+\texttt{rotSiteDensity}\,A\,\sigma\,p$
+(\texttt{twoComp\_single\_site\_prod\_nonneg}), and with extra $0/2$-powers
+(\texttt{twoComp\_single\_site\_prod\_extra\_nonneg}, via the exponent-raising
+identity \texttt{prod\_pow\_raise}). These are the per-site moments consumed by
+the four-variable multi-site cone of the second/third inequalities. Reference:
+Glimm--Jaffe, 2nd ed., \S4.7, Theorem 4.7.1, pp.~70--71.
+
 \section{Pure and mixed phases (\texttt{PhaseTransition.lean})}
 
 Formalization of Glimm--Jaffe, \S5.1 (pp.~72--74).
