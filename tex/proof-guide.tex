@@ -14061,6 +14061,23 @@ value $1/3$ matches the fully-incompatible triangle Ursell value, the
 non-interacting counterpart of \texttt{ursellCoefficient\_fin\_three\_*}.
 Reference: Glimm–Jaffe, 2nd ed., \S18.4--18.5, pp.~378--386.
 
+\paragraph{Unified $n = 3$ classification and the third Mayer term (\S18.4).}
+The eight per-pattern lemmas above are packaged into a single statement
+\texttt{ursellCoefficient\_fin\_three\_eq} (\texttt{UrsellFinThree.lean}):
+$\phi^T(\omega)$ as a nested \texttt{if} on the three pair-incompatibility
+flags ($1/3$ for the triangle, $1/6$ for a path, $0$ otherwise), proved by case
+analysis dispatching to the per-pattern lemmas. Rewriting each
+$\phi^T(![P,Q,R])$ in the ordered-triple form \texttt{mayerExpansionTerm\_three}
+then gives the closed form of the third — and first \emph{interacting} — Mayer
+term, \texttt{mayerExpansionTerm\_three\_eq}
+(\texttt{MayerCore/MayerTermThreeEval.lean}):
+\[
+  \mathrm{mayerExpansionTerm}\,G\,3\,t
+    = \sum_{(P,Q,R)} v(P,Q,R)\,t^{|P|}t^{|Q|}t^{|R|},
+\]
+where $v(P,Q,R)$ is the incompatibility-pattern value ($1/3$, $1/6$, or $0$).
+Reference: Glimm–Jaffe, 2nd ed., \S18.4, pp.~378--386.
+
 \paragraph{Polymer free energy bounds and characterisations
 (PRs~\#1517--\#1566).} A coordinated set of sharpenings was added
 in this batch:
