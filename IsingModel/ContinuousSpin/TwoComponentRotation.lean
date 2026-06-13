@@ -6,12 +6,15 @@ import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
 /-!
 # The (4.3.2) rotation is measure-preserving (GJ Theorem 4.7.1)
 
-The per-site rotation `(t, q, t', q') ↦ (α, β, γ, δ) = ((t+t')/√2, (q+q')/√2,
-(t−t')/√2, (q−q')/√2)` of Glimm–Jaffe (4.3.2) is an orthogonal linear map of
-`ℝ⁴ = (Fin 4 → ℝ)` (its matrix satisfies `M·Mᵀ = 1`, hence `det² = 1`), so it is
-measure-preserving.  Applying it at every site gives the measure-preserving change
-of variables on the doubled configuration space `(ι → Fin 4 → ℝ)` used by the
-duplicate-variable proof of the second/third inequalities (4.7.6)–(4.7.8).
+The per-site rotation `(t, q, t', q') ↦ (α, β, γ, δ)` of Glimm–Jaffe (4.3.2) — in
+the project's convention (`phi4Alpha`, `phi4Beta`, `phi4Gamma`, `twoCompDelta`),
+`α = (t+q+t'+q')/2`, `β = (t+q−t'−q')/2`, `γ = (t−q+t'−q')/2`,
+`δ = −(t−q−t'+q')/2` — is an orthogonal linear map of `ℝ⁴ = (Fin 4 → ℝ)` (all
+entries `±1/2`, with orthonormal rows), so it is measure-preserving.  Applied at
+every site it gives the measure-preserving change of variables on the doubled
+configuration space `(ι → Fin 4 → ℝ)` used by the duplicate-variable proof of the
+second/third inequalities (4.7.6)–(4.7.8); this is the rotation entering
+`twoCompPotential_double_eq`.
 
 ## References
 
@@ -22,22 +25,20 @@ namespace IsingModel.ContinuousSpin
 
 open MeasureTheory Matrix
 
-/-- The (4.3.2) rotation matrix on `ℝ⁴` (coordinates `t, q, t', q'`):
-`α = (t+t')/√2`, `β = (q+q')/√2`, `γ = (t−t')/√2`, `δ = (q−q')/√2`. -/
+/-- The (4.3.2) rotation matrix on `ℝ⁴` (coordinates `t, q, t', q'`), with output
+rows `(α, β, γ, δ) = (phi4Alpha, phi4Beta, phi4Gamma, twoCompDelta)`.  Every entry
+is `±1/2`. -/
 noncomputable def rotMatrix : Matrix (Fin 4) (Fin 4) ℝ :=
-  Matrix.of ![![1 / Real.sqrt 2, 0, 1 / Real.sqrt 2, 0],
-    ![0, 1 / Real.sqrt 2, 0, 1 / Real.sqrt 2],
-    ![1 / Real.sqrt 2, 0, -(1 / Real.sqrt 2), 0],
-    ![0, 1 / Real.sqrt 2, 0, -(1 / Real.sqrt 2)]]
+  Matrix.of ![![1 / 2, 1 / 2, 1 / 2, 1 / 2],
+    ![1 / 2, 1 / 2, -(1 / 2), -(1 / 2)],
+    ![1 / 2, -(1 / 2), 1 / 2, -(1 / 2)],
+    ![-(1 / 2), 1 / 2, 1 / 2, -(1 / 2)]]
 
 /-- The rotation matrix is orthogonal: `M·Mᵀ = 1`. -/
 theorem rotMatrix_mul_transpose : rotMatrix * rotMatrixᵀ = 1 := by
-  have h2 : Real.sqrt 2 * Real.sqrt 2 = 2 := Real.mul_self_sqrt (by norm_num)
-  have key : (Real.sqrt 2)⁻¹ * (Real.sqrt 2)⁻¹ = 1 / 2 := by rw [← mul_inv, h2]; norm_num
   ext i j
   fin_cases i <;> fin_cases j <;>
-    simp [rotMatrix, Matrix.mul_apply, Matrix.transpose_apply, Fin.sum_univ_four,
-      key, neg_mul, mul_neg] <;> norm_num
+    simp [rotMatrix, Matrix.mul_apply, Matrix.transpose_apply, Fin.sum_univ_four] <;> norm_num
 
 /-- The determinant of the rotation matrix squares to `1`. -/
 theorem rotMatrix_det_sq : rotMatrix.det ^ 2 = 1 := by
