@@ -5644,6 +5644,28 @@ coming from $|\texttt{expTrunc}\,N(\beta J\,S)|\le \exp(|\beta J|\cdot\#E\cdot
 quadratic coefficient $\sigma\mapsto\sigma-cc$. Reference: Glimm--Jaffe, 2nd
 ed., \S4.7, Theorem 4.7.1, pp.~70--71.
 
+\paragraph{Integrability foundations for the second/third inequalities.}
+The duplicate-variable proof of (4.7.6)--(4.7.8) works in the rotated variables
+$(\alpha,\beta,\gamma,\delta)$, where the doubled single-site density is
+$\texttt{rotSiteDensity}\,A\,\sigma\,p
+= e^{-\texttt{twoCompEvenPart}\,A\,\sigma\,\alpha\beta\gamma\delta
++ 4A\alpha\beta\gamma\delta}$. The required integrability rests on
+\texttt{integrable\_pow\_mul\_exp\_quad\_quartic}: $x^a e^{bx^2-Ax^4}$ is
+integrable over all of $\mathbb{R}$ for $A>0$ (the quartic dominates; proved by
+splitting $\mathbb{R}=(-\infty,0]\cup(0,\infty)$ and reflecting the negative half
+onto $(0,\infty)$). The exponent obeys the AM-GM bound
+\texttt{rotExponent\_le}:
+$-\texttt{twoCompEvenPart}+4A\alpha\beta\gamma\delta
+\le \sum_j(-\sigma p_j^2-\tfrac{A}{2}p_j^4)$, the sole positive cross term
+$4A\alpha\beta\gamma\delta\le 2A(\alpha^2\beta^2+\gamma^2\delta^2)$ being absorbed
+by $-3A(\alpha^2\beta^2+\gamma^2\delta^2)$. Hence the monomial-weighted density is
+integrable over $(\,\mathbb{R}^{\mathrm{Fin}\,4})$
+(\texttt{integrable\_monomial\_mul\_rotSiteDensity}), and likewise with an
+external field $e^{c_\alpha\alpha+c_\gamma\gamma}$ absorbed into the quadratic
+part (\texttt{integrable\_monomial\_mul\_field\_rotSiteDensity}), by
+\texttt{Integrable.fintype\_prod} over the four coordinates. Reference:
+Glimm--Jaffe, 2nd ed., \S4.7, Theorem 4.7.1, pp.~70--71.
+
 \section{Pure and mixed phases (\texttt{PhaseTransition.lean})}
 
 Formalization of Glimm--Jaffe, \S5.1 (pp.~72--74).
