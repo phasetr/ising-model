@@ -84,4 +84,51 @@ theorem abs_ursellCoefficient_complete_le_cayley_div
         exact_mod_cast factorial_pred_le_pow_sub_two hn
     _ = (n : ℝ) ^ (n - 2) := by push_cast; ring
 
+/-- **General triangle bound on the alternating sum**: the connected-spanning
+alternating sum is bounded in absolute value by the number of connected spanning
+edge-subsets, `|alternatingConnectedSubgraphSum G| ≤ |connectedSpanningEdgeSubsets G|`
+(each summand `(-1)^{|S|}` has absolute value `1`).  The crude (no-cancellation)
+predecessor of the Penrose tree-graph bound, valid for every finite graph. -/
+theorem abs_alternatingConnectedSubgraphSum_le_card
+    {V : Type*} [Fintype V] [DecidableEq V]
+    (G : SimpleGraph V) [DecidableRel G.Adj] :
+    |alternatingConnectedSubgraphSum G|
+      ≤ ((connectedSpanningEdgeSubsets G).card : ℝ) := by
+  unfold alternatingConnectedSubgraphSum
+  calc |∑ S ∈ connectedSpanningEdgeSubsets G, (-1 : ℝ) ^ S.card|
+      ≤ ∑ S ∈ connectedSpanningEdgeSubsets G, |(-1 : ℝ) ^ S.card| :=
+        Finset.abs_sum_le_sum_abs _ _
+    _ = ∑ _S ∈ connectedSpanningEdgeSubsets G, (1 : ℝ) := by
+        refine Finset.sum_congr rfl (fun S _ => ?_)
+        rw [abs_pow, abs_neg, abs_one, one_pow]
+    _ = ((connectedSpanningEdgeSubsets G).card : ℝ) := by
+        rw [Finset.sum_const, nsmul_eq_mul, mul_one]
+
+/-- **Ursell-coefficient tree-graph reduction**: any bound `B` on the
+connected-spanning alternating sum of the incompatibility graph yields the
+bound `|ϕ^T(ω)| ≤ B / n!` on the Ursell coefficient, since
+`ϕ^T(ω) = (alternating sum)/n!`
+(`ursellCoefficient_eq_alternatingConnectedSubgraphSum_div`).  This isolates the
+hard input — the (general-graph) Penrose tree-graph bound on the alternating sum
+— from the elementary `/n!` step, the form in which Kotecký–Preiss convergence
+consumes the tree-graph inequality. -/
+theorem abs_ursellCoefficient_le_of_abs_alternatingConnectedSubgraphSum_le
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {n : ℕ} (ω : Fin n → Finset (Sym2 ι)) {B : ℝ}
+    (hB : |alternatingConnectedSubgraphSum (polymerSeqIncompatibilityGraph ω)| ≤ B) :
+    |ursellCoefficient ω| ≤ B / (n.factorial : ℝ) := by
+  rw [ursellCoefficient_eq_alternatingConnectedSubgraphSum_div, abs_div, Nat.abs_cast]
+  gcongr
+
+/-- **Tree-graph reduction, ℕ-bound form**: a natural-number bound `B` on the
+absolute alternating sum gives `|ϕ^T(ω)| ≤ B / n!`.  Convenience wrapper of
+`abs_ursellCoefficient_le_of_abs_alternatingConnectedSubgraphSum_le` for the
+`ℕ`-valued tree-graph counts (Cayley `n^{n-2}`, number of spanning trees). -/
+theorem abs_ursellCoefficient_le_of_abs_alternatingConnectedSubgraphSum_le_nat
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {n : ℕ} (ω : Fin n → Finset (Sym2 ι)) {B : ℕ}
+    (hB : |alternatingConnectedSubgraphSum (polymerSeqIncompatibilityGraph ω)| ≤ (B : ℝ)) :
+    |ursellCoefficient ω| ≤ (B : ℝ) / (n.factorial : ℝ) :=
+  abs_ursellCoefficient_le_of_abs_alternatingConnectedSubgraphSum_le ω hB
+
 end IsingModel
