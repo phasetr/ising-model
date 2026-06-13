@@ -1,5 +1,6 @@
 import IsingModel.ClusterExpansion.MayerCore.Terms
 import IsingModel.ClusterExpansion.Incompatibility
+import IsingModel.ClusterExpansion.UrsellFinThree
 
 /-!
 # The Kotecký–Preiss criterion (GJ §18.4–18.5)
@@ -139,5 +140,60 @@ theorem KPAdmissible.order_two_cluster_bound
       ≤ (1 / 2 * |z P|) * a P :=
         mul_le_mul_of_nonneg_left (h.activity_sum_le_weight hP) (by positivity)
     _ = (1 / 2) * (|z P| * a P) := by ring
+
+/-- **Order-3 triangle cluster contribution bound** (KP, GJ §18.4): the
+order-3, fully-incompatible ("triangle") part of the cluster sum anchored at `P`
+is bounded by `⅓ · |z P| · (a P)²`.  Each such 3-cluster `{P, Q, R}` with all
+three pairs incompatible has `ϕ^T = 1/3` (`ursellCoefficient_fin_three_triangle`);
+dropping the `Q ≁ R` constraint enlarges the index set to the product
+`{Q ≁ P} × {R ≁ P}`, and `KPAdmissible.activity_sum_le_weight` bounds each factor
+`∑_{Q ≁ P} |z Q|` by `a P`.  A second concrete instance (order 3, triangle case)
+of the per-polymer cluster-sum bound underlying Kotecký–Preiss convergence. -/
+theorem KPAdmissible.order_three_triangle_cluster_bound
+    {G : SimpleGraph ι} [Fintype G.edgeSet] {z a : Finset (Sym2 ι) → ℝ}
+    (h : KPAdmissible G z a) {P : Finset (Sym2 ι)} (hP : P ∈ allPolymers G) :
+    ∑ Q ∈ (allPolymers G).filter (fun Q => PolymersIncompatible P Q),
+        ∑ R ∈ ((allPolymers G).filter (fun Q => PolymersIncompatible P Q)).filter
+            (fun R => PolymersIncompatible Q R),
+          |ursellCoefficient ![P, Q, R]| * (|z P| * |z Q| * |z R|)
+      ≤ (1 / 3) * (|z P| * a P ^ 2) := by
+  set A := (allPolymers G).filter (fun Q => PolymersIncompatible P Q) with hA
+  have hzP : (0 : ℝ) ≤ |z P| := abs_nonneg _
+  have haP : (0 : ℝ) ≤ a P := h.weight_nonneg hP
+  calc ∑ Q ∈ A, ∑ R ∈ A.filter (fun R => PolymersIncompatible Q R),
+          |ursellCoefficient ![P, Q, R]| * (|z P| * |z Q| * |z R|)
+      = ∑ Q ∈ A, ∑ R ∈ A.filter (fun R => PolymersIncompatible Q R),
+          (1 / 3) * (|z P| * |z Q| * |z R|) := by
+        refine Finset.sum_congr rfl (fun Q hQ => Finset.sum_congr rfl (fun R hR => ?_))
+        have hPQ : PolymersIncompatible P Q := (Finset.mem_filter.mp hQ).2
+        have hRA : R ∈ A := (Finset.mem_filter.mp hR).1
+        have hPR : PolymersIncompatible P R := (Finset.mem_filter.mp hRA).2
+        have hQR : PolymersIncompatible Q R := (Finset.mem_filter.mp hR).2
+        have hu : ursellCoefficient ![P, Q, R] = 1 / 3 :=
+          ursellCoefficient_fin_three_triangle ![P, Q, R]
+            (by simpa using hPQ) (by simpa using hPR) (by simpa using hQR)
+        rw [hu]
+        rw [show |(1 / 3 : ℝ)| = 1 / 3 from by norm_num]
+    _ ≤ ∑ Q ∈ A, ∑ R ∈ A, (1 / 3) * (|z P| * |z Q| * |z R|) := by
+        refine Finset.sum_le_sum (fun Q _ => ?_)
+        refine Finset.sum_le_sum_of_subset_of_nonneg (Finset.filter_subset _ _) ?_
+        intro R _ _; positivity
+    _ = ∑ Q ∈ A, (1 / 3 * (|z P| * |z Q|)) * ∑ R ∈ A, |z R| := by
+        refine Finset.sum_congr rfl (fun Q _ => ?_)
+        rw [Finset.mul_sum]
+        refine Finset.sum_congr rfl (fun R _ => ?_)
+        ring
+    _ ≤ ∑ Q ∈ A, (1 / 3 * (|z P| * |z Q|)) * a P := by
+        refine Finset.sum_le_sum (fun Q _ => ?_)
+        exact mul_le_mul_of_nonneg_left (h.activity_sum_le_weight hP) (by positivity)
+    _ = (1 / 3 * |z P| * a P) * ∑ Q ∈ A, |z Q| := by
+        rw [Finset.mul_sum]
+        refine Finset.sum_congr rfl (fun Q _ => ?_)
+        ring
+    _ ≤ (1 / 3 * |z P| * a P) * a P := by
+        refine mul_le_mul_of_nonneg_left (h.activity_sum_le_weight hP) ?_
+        have : (0 : ℝ) ≤ 1 / 3 * |z P| := by positivity
+        exact mul_nonneg this haP
+    _ = (1 / 3) * (|z P| * a P ^ 2) := by ring
 
 end IsingModel
