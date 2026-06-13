@@ -14085,6 +14085,26 @@ truncation through order $3$, \texttt{mayerPartialSum\_three\_eq}:
 \]
 Reference: Glimm–Jaffe, 2nd ed., \S18.4, pp.~378--386.
 
+\paragraph{Penrose tree-graph bound for the complete graph (\S18.4--18.5).}
+Toward the convergence of the general interacting cluster expansion (Issue
+\#3954), the Penrose tree-graph inequality bounds the Ursell numerator by the
+number of spanning trees of the incompatibility graph,
+$\bigl|\sum_{S\ \text{connected spanning}} (-1)^{|S|}\bigr| \le \#\{\text{spanning trees}\}$.
+The file \texttt{ClusterExpansion/TreeGraphBound.lean} establishes it for the
+\emph{complete graph} $K_n$ — the worst case, attained by a fully-incompatible
+cluster. There the alternating sum is exactly $(-1)^{n-1}(n-1)!$
+(\texttt{alternatingConnectedSubgraphSum\_completeGraph\_closed\_form}) and the
+number of spanning trees is Cayley's count $n^{n-2}$, so the bound is the
+elementary inequality $(n-1)! \le n^{n-2}$
+(\texttt{factorial\_pred\_le\_pow\_sub\_two}, via the subtraction-free
+$(m+1)! \le (m+2)^m$). This yields
+\texttt{abs\_alternatingConnectedSubgraphSum\_completeGraph\_le\_cayley}
+($|\,\mathrm{alternatingConnectedSubgraphSum}\,K_n| \le n^{n-2}$) and the Ursell
+form \texttt{abs\_ursellCoefficient\_complete\_le\_cayley\_div}
+($|\phi^T(\omega)| \le n^{n-2}/n!$ for a fully-incompatible cluster). The
+general-graph Penrose partition scheme remains for a later PR of \#3954.
+Reference: Glimm–Jaffe, 2nd ed., \S18.4--18.5, pp.~378--386; O. Penrose (1967).
+
 \paragraph{Polymer free energy bounds and characterisations
 (PRs~\#1517--\#1566).} A coordinated set of sharpenings was added
 in this batch:
