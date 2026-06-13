@@ -13916,6 +13916,27 @@ contribution) and \texttt{mayerPartialSum\_three}; and
 for $n \ge 1$). These isolate the truncation bookkeeping for the general-$t$
 capstone (the Mayer–Montroll exponential formula, deferred).
 
+\paragraph{Independent (non-interacting) polymer free energy (\S18.5).} When the
+polymers of $G$ are pairwise vertex-disjoint (no two distinct polymers share a
+vertex, $(\mathrm{allPolymers}\,G).\mathrm{Pairwise}\,\mathrm{IsPolymerVertexDisjoint}$),
+the polymer gas is non-interacting and the cluster expansion is exactly solvable
+(\texttt{MayerCore/IndependentPolymer.lean}). Every subset of polymers is a
+vertex-disjoint compatible family
+(\texttt{vdCompatiblePolymerFamilies\_eq\_powerset\_of\_pairwise\_disjoint}), so the
+partition function factorises,
+$\sum_\Gamma \prod_{P\in\Gamma} t^{|P|} = \prod_P (1 + t^{|P|})$
+(\texttt{vdPolymerFamilies\_sum\_eq\_prod\_of\_pairwise\_disjoint}, via
+\texttt{Finset.prod\_one\_add}); the polymer free energy is the single-polymer log
+sum $\mathrm{polymerFreeEnergy}\,G\,t = \sum_P \log(1+t^{|P|})$ for $t \ge 0$
+(\texttt{polymerFreeEnergy\_eq\_sum\_log\_of\_pairwise\_disjoint}, via
+\texttt{Real.log\_prod}); and substituting into the polymer decomposition gives the
+Ising free energy closed form
+$f = \log 2 + \frac{|E|}{|\iota|}\log\cosh(\beta J)
++ \frac{1}{|\iota|}\sum_P \log(1+\tanh(\beta J)^{|P|})$
+(\texttt{freeEnergy\_eq\_sum\_log\_of\_pairwise\_disjoint}, for $0 \le \beta J$,
+$|\iota| > 0$). The general interacting case requires the full Mayer–Montroll
+expansion. Reference: Glimm–Jaffe, 2nd ed., \S18.4--\S18.5, pp.~378--386.
+
 \paragraph{Polymer free energy bounds and characterisations
 (PRs~\#1517--\#1566).} A coordinated set of sharpenings was added
 in this batch:
