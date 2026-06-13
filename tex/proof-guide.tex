@@ -14103,6 +14103,16 @@ $(m+1)! \le (m+2)^m$). This yields
 form \texttt{abs\_ursellCoefficient\_complete\_le\_cayley\_div}
 ($|\phi^T(\omega)| \le n^{n-2}/n!$ for a fully-incompatible cluster). The
 general-graph Penrose partition scheme remains for a later PR of \#3954.
+The same file also provides the \emph{reduction layer}: the crude
+no-cancellation bound
+\texttt{abs\_alternatingConnectedSubgraphSum\_le\_card}
+($|\,\mathrm{alternatingConnectedSubgraphSum}\,G| \le
+|\mathrm{connectedSpanningEdgeSubsets}\,G|$, valid for every finite graph) and
+the Ursell-coefficient reductions
+\texttt{abs\_ursellCoefficient\_le\_of\_abs\_alternatingConnectedSubgraphSum\_le}
+(and its \texttt{\_nat} form), turning any bound $B$ on the alternating sum into
+$|\phi^T(\omega)| \le B/n!$ — isolating the hard Penrose input from the
+elementary $/n!$ step in the form Kotecký–Preiss consumes.
 Reference: Glimm–Jaffe, 2nd ed., \S18.4--18.5, pp.~378--386; O. Penrose (1967).
 
 \paragraph{Polymer free energy bounds and characterisations
