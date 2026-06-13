@@ -5592,6 +5592,24 @@ super-Gaussian $r^n e^{-(A/2)r^4}$). The continuous-spin Griffiths/Ginibre
 development of the three inequalities of Theorem 4.7.1 continues from this
 single-site core. Reference: Glimm--Jaffe, 2nd ed., \S4.7, Theorem 4.7.1, p.~70.
 
+\paragraph{Single-site moments with an external field (Griffiths-I, $h\ge0$).}
+The field-dependent version $0 \le \int_{\mathbb{R}^2} t^a q^b\, e^{c_1 t + c_2 q}\,
+e^{-A(t^2+q^2)^2-\sigma(t^2+q^2)}$ ($A>0$, $c_1,c_2\ge0$,
+\texttt{singleSpinMoment\_field\_nonneg}) is proved by \emph{truncation and
+dominated convergence}, the template reused for the multi-site interaction
+expansion. Replacing each field exponential by its partial sum
+$\texttt{expTrunc}\,N\,x = \sum_{k<N} x^k/k!$ (\texttt{tendsto\_expTrunc},
+$|\texttt{expTrunc}\,N\,x|\le e^{|x|}$), the truncated integral expands
+(\texttt{Finset.sum\_mul\_sum}) into a finite sum
+$\sum_{m,l<N} \tfrac{c_1^m c_2^l}{m!\,l!}\int t^{a+m}q^{b+l} e^{-P}$ of
+non-negative-coefficient single-site moments (each $\ge0$ by
+\texttt{singleSpinMoment\_nonneg}), hence $\ge0$. Dominated convergence
+(\texttt{tendsto\_integral\_of\_dominated\_convergence}) passes to the limit, the
+linear field absorbed into the quadratic via $|t|\le(1+t^2)/2$, so the dominating
+function $e^{C}\,\|t^a q^b\,\texttt{singleSpinDensity}\,A\,(\sigma-d)\|$ is
+integrable (\texttt{integrable\_pow\_mul\_singleSpinDensity} with shifted
+$\sigma$). Reference: Glimm--Jaffe, 2nd ed., \S4.7, Theorem 4.7.1, pp.~70--71.
+
 \section{Pure and mixed phases (\texttt{PhaseTransition.lean})}
 
 Formalization of Glimm--Jaffe, \S5.1 (pp.~72--74).
