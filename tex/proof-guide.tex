@@ -13937,6 +13937,24 @@ $f = \log 2 + \frac{|E|}{|\iota|}\log\cosh(\beta J)
 $|\iota| > 0$). The general interacting case requires the full Mayer–Montroll
 expansion. Reference: Glimm–Jaffe, 2nd ed., \S18.4--\S18.5, pp.~378--386.
 
+\paragraph{Mixed-cluster vanishing for non-interacting polymers (\S18.4--\S18.5).}
+On the cluster-expansion side, a non-interacting gas makes the $n$-th Mayer term
+collapse to the diagonal (\texttt{MayerCore/IndependentVanishing.lean}). The crux
+\texttt{ursellCoefficient\_eq\_zero\_of\_pairwise\_compatible\_not\_constant}: if every
+two distinct values of a sequence $\omega$ are compatible and $\omega$ is not
+constant, then the index-side incompatibility graph is disconnected --- adjacency in
+$\mathrm{polymerSeqIncompatibilityGraph}\,\omega$ forces equal values
+(reachability preserves $\omega$, by \texttt{ReflTransGen} induction), so two indices
+with different values lie in different components --- and hence $\phi^T(\omega) = 0$
+(\texttt{ursellCoefficient\_eq\_zero\_of\_disconnected}). Therefore
+\texttt{mayerExpansionTerm\_eq\_sum\_diagonal\_of\_pairwise\_compatible}:
+$\mathrm{mayerExpansionTerm}\,G\,n\,t = \sum_P \phi^T(P,\dots,P)\,(t^{|P|})^n$ for
+$n \ge 1$ (the non-constant sequences vanish; the constant sequences reindex to
+$\mathrm{allPolymers}\,G$). Summed over the multiplicity $n$, the single-polymer
+series $\sum_m \phi^T(P,\dots,P)\,(t^{|P|})^m = \log(1+t^{|P|})$ then recovers the
+independent free energy, the cluster-expansion verification of the exactly-solvable
+case. Reference: Glimm–Jaffe, 2nd ed., \S18.4--\S18.5, pp.~378--386.
+
 \paragraph{Polymer free energy bounds and characterisations
 (PRs~\#1517--\#1566).} A coordinated set of sharpenings was added
 in this batch:
