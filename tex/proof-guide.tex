@@ -5754,6 +5754,17 @@ the AM-GM/shift bounds) passes to the limit. This is the doubled-rotated
 non-negativity consumed by the duplicate-variable argument. Reference:
 Glimm--Jaffe, 2nd ed., \S4.7, Theorem 4.7.1, pp.~70--71.
 
+\paragraph{General monomial integrability.} The GKS-II doubling identity needs the
+integrability of a general monomial $\texttt{genMonomial}\,a\,b\,\xi=\prod_i
+t_i^{a_i}q_i^{b_i}$ against the two-component Gibbs weight
+(\texttt{integrable\_genMonomial\_mul\_vectorWeight}). The proof mirrors
+\texttt{integrable\_vectorWeight}: the uniform AM-GM bound dominates
+\texttt{vectorWeight} by $e^K\prod_i\texttt{modSpinDensity}\,c\,A\,(\xi_i)$, and
+the extra monomial is absorbed into a product of integrable monomial-weighted
+modified single-spin densities (\texttt{integrable\_abs\_pow\_mul\_modSpinDensity},
+via $\texttt{modSpinDensity}\,c\,A=\texttt{singleSpinDensity}\,A\,(-c)$). Reference:
+Glimm--Jaffe, 2nd ed., \S4.7, Theorem 4.7.1, pp.~70--71.
+
 \section{Pure and mixed phases (\texttt{PhaseTransition.lean})}
 
 Formalization of Glimm--Jaffe, \S5.1 (pp.~72--74).
