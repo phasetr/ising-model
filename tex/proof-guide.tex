@@ -5779,35 +5779,70 @@ positivity of (4.7.6)--(4.7.7). The doubled-integral non-negativity is supplied,
 via the duplicate-variable rotation, by the doubled-rotated cone. Reference:
 Glimm--Jaffe, 2nd ed., \S4.7, Theorem 4.7.1, pp.~70--71.
 
-\paragraph{The (4.3.2) rotation is measure-preserving.} The per-site rotation
-$(t,q,t',q')\mapsto(\alpha,\beta,\gamma,\delta)$ — in the project convention
-$(\texttt{phi4Alpha},\texttt{phi4Beta},\texttt{phi4Gamma},\texttt{twoCompDelta})$,
-the $\pm1/2$-entry Hadamard rotation $\alpha=(t+q+t'+q')/2$, $\beta=(t+q-t'-q')/2$,
-$\gamma=(t-q+t'-q')/2$, $\delta=-(t-q-t'+q')/2$ entering
-\texttt{twoCompPotential\_double\_eq} — is an orthogonal linear map of
-$\mathbb{R}^4=(\mathrm{Fin}\,4\to\mathbb{R})$: its matrix \texttt{rotMatrix}
-satisfies $M M^{\mathsf T}=1$ (\texttt{rotMatrix\_mul\_transpose}, orthonormal rows),
-so $\det^2=1$ and $|\det|=1$. Through \texttt{LinearMap.det\_toLin'} and
-\texttt{Measure.map\_linearMap\_addHaar\_eq\_smul\_addHaar} (scaling factor
-$|\det^{-1}|=1$), the linear map $\texttt{rotLin}=\texttt{Matrix.toLin'}\,
-\texttt{rotMatrix}$ is measure-preserving (\texttt{measurePreserving\_rotLin});
-applied site-wise via \texttt{volume\_preserving\_pi} it gives the
-measure-preserving change of variables on the doubled configuration space
-$(\iota\to\mathrm{Fin}\,4\to\mathbb{R})$ (\texttt{measurePreserving\_rotLinPi}).
-This is the linchpin connecting the doubled Gibbs integral to the doubled-rotated
-cone. Reference: Glimm--Jaffe, 2nd ed., \S4.3, (4.3.2), p.~59; \S4.7, pp.~70--71.
+\paragraph{The \S4.7 block $\sqrt2$-rotation (4.3.2) is measure-preserving.} The
+\S4.7 duplicate-variable rotation is the \emph{block} $\sqrt2$-rotation given by
+the formulas (4.3.2) applied to the pair $(t,q)$ and its duplicate $(t',q')$:
+$\alpha=(t+t')/\sqrt2$, $\beta=(t-t')/\sqrt2$, $\gamma=(q+q')/\sqrt2$,
+$\delta=(q'-q)/\sqrt2$, mixing the two copies coordinate by coordinate (the
+$t$-pair into $(\alpha,\beta)$, the $q$-pair into $(\gamma,\delta)$). This is the
+rotation for which the doubled field is $\sqrt2\,(h^1\alpha+h^2\gamma)$ --- so the
+doubled field constants $\sqrt2\beta h^1,\sqrt2\beta h^2\ge0$ for $\beta,h^1,h^2\ge0$
+--- and for which the difference observables expand with non-negative coefficients,
+as the duplicate-variable proof of (4.7.6)--(4.7.8) requires. (It is \emph{not} the
+Hadamard rotation $\texttt{phi4Alpha},\dots$ of \S4.3 used in
+\texttt{twoCompPotential\_double\_eq}, which mixes all four coordinates and realises
+the scalar $\varphi^4$ doubled potential.) All entries of \texttt{rotMatrix} are
+$0$ or $\pm\sqrt2/2$ (\texttt{sqrt2\_half\_mul\_self}: $\tfrac{\sqrt2}{2}\cdot
+\tfrac{\sqrt2}{2}=\tfrac12$), with orthonormal rows, so $M M^{\mathsf T}=1$
+(\texttt{rotMatrix\_mul\_transpose}), $\det^2=1$, $|\det|=1$. Through
+\texttt{LinearMap.det\_toLin'} and
+\texttt{Measure.map\_linearMap\_addHaar\_eq\_smul\_addHaar} ($|\det^{-1}|=1$), the
+linear map $\texttt{rotLin}=\texttt{Matrix.toLin'}\,\texttt{rotMatrix}$ is
+measure-preserving (\texttt{measurePreserving\_rotLin}); applied site-wise via
+\texttt{volume\_preserving\_pi} on $(\iota\to\mathrm{Fin}\,4\to\mathbb{R})$
+(\texttt{measurePreserving\_rotLinPi}). This is the linchpin connecting the doubled
+Gibbs integral to the doubled-rotated cone. Reference: Glimm--Jaffe, 2nd ed.,
+\S4.3, (4.3.2), p.~59; \S4.7, pp.~70--71.
 
-\paragraph{Rotation algebra (4.3.5).} The single-site coordinate vector
-$\texttt{dCoord}\,\xi\,\xi'\,i=![t_i,q_i,t_i',q_i']$, rotated by \texttt{rotLin},
-yields $(\alpha,\beta,\gamma,\delta)=(\texttt{phi4Alpha},\texttt{phi4Beta},
-\texttt{phi4Gamma},\texttt{twoCompDelta})$ (\texttt{rotLin\_dCoord}). The
-doubled-interaction identity (4.3.5)
+\paragraph{Rotation algebra (4.3.5) and the doubled potential.} The block
+coordinates $\texttt{bAlpha}\,t\,t'=(t+t')/\sqrt2$, $\texttt{bBeta}\,t\,t'=(t-t')/
+\sqrt2$, $\texttt{bGamma}\,q\,q'=(q+q')/\sqrt2$, $\texttt{bDelta}\,q\,q'=(q'-q)/
+\sqrt2$; the single-site coordinate vector $\texttt{dCoord}\,\xi\,\xi'\,i=
+![t_i,q_i,t_i',q_i']$, rotated by \texttt{rotLin}, yields
+$(\alpha,\beta,\gamma,\delta)=(\texttt{bAlpha},\texttt{bBeta},\texttt{bGamma},
+\texttt{bDelta})$ (\texttt{rotLin\_dCoord}). The doubled-interaction identity (4.3.5)
 $t_it_j+q_iq_j+t_i't_j'+q_i'q_j'=\alpha_i\alpha_j+\beta_i\beta_j+\gamma_i\gamma_j
-+\delta_i\delta_j$ (\texttt{doubled\_dot\_eq\_rot}) shows the doubled ferromagnetic
-interaction is ferromagnetic in the rotated coordinates --- the algebraic core
-(together with \texttt{twoCompPotential\_double\_eq}) of the weight identity for
-the duplicate-variable change of variables. Reference: Glimm--Jaffe, 2nd ed.,
++\delta_i\delta_j$ (\texttt{doubled\_dot\_eq\_rot}, via \texttt{linear\_combination}
+on $\tfrac{\sqrt2}{2}\cdot\tfrac{\sqrt2}{2}=\tfrac12$) shows the doubled
+ferromagnetic interaction stays ferromagnetic in the rotated coordinates. The
+doubled-potential identity $P(t,q)+P(t',q')=\texttt{twoCompEvenPart}\,
+\alpha\,\beta\,\gamma\,\delta-4A\,\alpha\beta\gamma\delta$
+(\texttt{twoCompPotential\_double\_block}, the block analogue of
+\texttt{twoCompPotential\_double\_eq} with the \emph{same} even part
+\texttt{twoCompEvenPart} matching \texttt{rotSiteDensity}) shows the doubled
+potential is even plus ferromagnetic. Reference: Glimm--Jaffe, 2nd ed.,
 \S4.3, (4.3.2), (4.3.5); \S4.7, pp.~70--71.
+
+\paragraph{The doubled Gibbs weight factorises through the block rotation.}
+Writing $\mathrm{cfg}\,i=\texttt{rotLin}(\texttt{dCoord}\,\xi\,\xi'\,i)$ for the
+block rotation of the doubled configuration $(\xi,\xi')$, the product of the two
+single-copy Gibbs weights is the doubled-rotated weight
+\[
+  W(\xi)\,W(\xi')=\exp\!\Big(\beta J\textstyle\sum_e \texttt{edgeDot4}\,\mathrm{cfg}\,e\Big)
+    \cdot\prod_i \texttt{siteWeight4}\,A\,\sigma\,(\sqrt2\beta h^1)\,(\sqrt2\beta h^2)\,(\mathrm{cfg}\,i)
+\]
+(\texttt{vectorWeight\_mul\_eq\_rot}). This combines the per-edge interaction
+identity $\sum_e(\xi\cdot\xi+\xi'\cdot\xi')=\sum_e\texttt{edgeDot4}\,\mathrm{cfg}$
+(\texttt{doubled\_vEdgeDot\_eq\_edgeDot4}, the $\mathrm{Sym2}$-lift of (4.3.5)), the
+field identity $\beta h^1(t_i+t_i')+\beta h^2(q_i+q_i')=\sqrt2\beta h^1\alpha_i
++\sqrt2\beta h^2\gamma_i$ (\texttt{sqrt2\_mul\_sqrt2\_half}: $\sqrt2\cdot\sqrt2/2=1$),
+and the potential identity \texttt{twoCompPotential\_double\_block}, assembled per
+site by \texttt{doubled\_site\_exponent} and combined through \texttt{Real.exp\_add}
+/ \texttt{Real.exp\_sum}. The doubled field constants $\sqrt2\beta h^1,\sqrt2\beta
+h^2\ge0$ are exactly the non-negative field hypotheses of
+\texttt{dRotInteraction\_nonneg}. This is the weight side of the duplicate-variable
+change of variables for (4.7.6)--(4.7.8). Reference: Glimm--Jaffe, 2nd ed., \S4.7,
+Theorem 4.7.1, pp.~70--71.
 
 \section{Pure and mixed phases (\texttt{PhaseTransition.lean})}
 
