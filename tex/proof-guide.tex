@@ -5779,6 +5779,20 @@ positivity of (4.7.6)--(4.7.7). The doubled-integral non-negativity is supplied,
 via the duplicate-variable rotation, by the doubled-rotated cone. Reference:
 Glimm--Jaffe, 2nd ed., \S4.7, Theorem 4.7.1, pp.~70--71.
 
+\paragraph{The (4.3.2) rotation is measure-preserving.} The per-site rotation
+$(t,q,t',q')\mapsto((t+t')/\sqrt2,(q+q')/\sqrt2,(t-t')/\sqrt2,(q-q')/\sqrt2)$ is an
+orthogonal linear map of $\mathbb{R}^4=(\mathrm{Fin}\,4\to\mathbb{R})$: its matrix
+\texttt{rotMatrix} satisfies $M M^{\mathsf T}=1$ (\texttt{rotMatrix\_mul\_transpose}),
+so $\det^2=1$ and $|\det|=1$. Through \texttt{LinearMap.det\_toLin'} and
+\texttt{Measure.map\_linearMap\_addHaar\_eq\_smul\_addHaar} (scaling factor
+$|\det^{-1}|=1$), the linear map $\texttt{rotLin}=\texttt{Matrix.toLin'}\,
+\texttt{rotMatrix}$ is measure-preserving (\texttt{measurePreserving\_rotLin});
+applied site-wise via \texttt{volume\_preserving\_pi} it gives the
+measure-preserving change of variables on the doubled configuration space
+$(\iota\to\mathrm{Fin}\,4\to\mathbb{R})$ (\texttt{measurePreserving\_rotLinPi}).
+This is the linchpin connecting the doubled Gibbs integral to the doubled-rotated
+cone. Reference: Glimm--Jaffe, 2nd ed., \S4.3, (4.3.2), p.~59; \S4.7, pp.~70--71.
+
 \section{Pure and mixed phases (\texttt{PhaseTransition.lean})}
 
 Formalization of Glimm--Jaffe, \S5.1 (pp.~72--74).
