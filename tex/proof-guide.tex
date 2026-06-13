@@ -5686,6 +5686,21 @@ identity \texttt{prod\_pow\_raise}). These are the per-site moments consumed by
 the four-variable multi-site cone of the second/third inequalities. Reference:
 Glimm--Jaffe, 2nd ed., \S4.7, Theorem 4.7.1, pp.~70--71.
 
+\paragraph{Single-site moment with field.} The field-dependent version
+$0\le\int_{(\mathrm{Fin}\,4\to\mathbb{R})}(\prod_j p_j^{e_j})\,
+e^{c_\alpha p_0+c_\gamma p_2}\,\texttt{rotSiteDensity}\,A\,\sigma\,p$ for
+$c_\alpha,c_\gamma\ge0$ (\texttt{twoComp\_single\_site\_field\_prod\_nonneg}) is
+proved exactly as the two-component field moment: truncate the field exponentials,
+expand each truncation into a finite non-negative combination of
+\texttt{twoComp\_single\_site\_prod\_extra\_nonneg} moments, and pass to the limit
+by dominated convergence. The linear field is absorbed into the quadratic part via
+$|t|\le(1+t^2)/2$, so the dominator raises $\sigma\mapsto\sigma-d$
+(\texttt{rotSiteDensity\_shift}:
+$\texttt{rotSiteDensity}\,A\,(\sigma-d)\,p
+= e^{d\sum_j p_j^2}\,\texttt{rotSiteDensity}\,A\,\sigma\,p$). This is the per-site
+engine (with field) for the second/third inequalities. Reference: Glimm--Jaffe,
+2nd ed., \S4.7, Theorem 4.7.1, pp.~70--71.
+
 \section{Pure and mixed phases (\texttt{PhaseTransition.lean})}
 
 Formalization of Glimm--Jaffe, \S5.1 (pp.~72--74).
