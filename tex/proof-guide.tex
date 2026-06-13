@@ -14115,6 +14115,22 @@ $|\phi^T(\omega)| \le B/n!$ — isolating the hard Penrose input from the
 elementary $/n!$ step in the form Kotecký–Preiss consumes.
 Reference: Glimm–Jaffe, 2nd ed., \S18.4--18.5, pp.~378--386; O. Penrose (1967).
 
+\paragraph{The Kotecký–Preiss criterion (\S18.4--18.5).}
+The standard sufficient condition for absolute convergence of the cluster
+expansion (\texttt{ClusterExpansion/KoteckyPreiss.lean}, Issue \#3954): a
+non-negative weight $a$ on polymers is \emph{KP-admissible} for an activity $z$
+if $\sum_{Q \nsim P} |z\,Q|\,e^{a Q} \le a\,P$ for every polymer $P$
+(\texttt{KPAdmissible}, the sum over polymers incompatible with $P$, including
+$P$ itself). Its elementary structural consequences are proved:
+\texttt{KPAdmissible.weight\_nonneg} ($0 \le a\,P$, as $a\,P$ dominates a sum of
+non-negative terms) and \texttt{KPAdmissible.activity\_le\_weight}
+($|z\,P| \le a\,P$, since a nonempty polymer is self-incompatible — so
+$|z\,P|\,e^{a P}$ is one of the summands — and $1 \le e^{a P}$). The full
+convergence theorem (the per-polymer cluster-sum bound
+$\sum_{\Gamma \ni P} |\phi^T(\Gamma)| \prod|z| \le a\,P$, which consumes the
+tree-graph inequality) remains for a later PR of \#3954. Reference: Glimm–Jaffe,
+2nd ed., \S18.4--18.5; Kotecký–Preiss, Comm. Math. Phys. 103 (1986).
+
 \paragraph{Polymer free energy bounds and characterisations
 (PRs~\#1517--\#1566).} A coordinated set of sharpenings was added
 in this batch:
