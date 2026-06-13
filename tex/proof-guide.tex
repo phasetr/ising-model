@@ -5734,6 +5734,26 @@ and the density shift \texttt{siteWeight4\_shift}
 \texttt{siteWeight4}\,A\,\sigma$) prepare the dominated-convergence dominator.
 Reference: Glimm--Jaffe, 2nd ed., \S4.7, Theorem 4.7.1, pp.~70--71.
 
+\paragraph{The interaction expectation.} For a non-negative-coefficient
+observable $\texttt{obs}$, ferromagnetic $\beta J\ge0$ and non-negative field
+$c_\alpha,c_\gamma\ge0$,
+\[
+0\le\int_{(\iota\to\mathrm{Fin}\,4\to\mathbb{R})}\texttt{dSpinEval}\,\texttt{obs}\,
+\mathrm{cfg}\cdot e^{\beta J\sum_e\texttt{edgeDot4}\,\mathrm{cfg}\,e}\cdot
+\prod_i\texttt{siteWeight4}\,A\,\sigma\,c_\alpha\,c_\gamma\,(\mathrm{cfg}\,i)
+\quad(\texttt{dRotInteraction\_nonneg}).
+\]
+The interaction exponential is truncated to the non-negative-coefficient
+\texttt{truncPoly4}, whose integral is $\ge0$ by
+\texttt{dSpinEval\_integral\_nonneg}; dominated convergence with the uniform
+dominator $\texttt{dSpinEval}\,\texttt{obs}\,|\mathrm{cfg}|\cdot\prod_i
+\texttt{siteWeight4}\,A\,(\sigma-cc)$ (using
+$|\texttt{dSpinEval}\,\texttt{obs}\,\mathrm{cfg}|\le
+\texttt{dSpinEval}\,\texttt{obs}\,|\mathrm{cfg}|$ for non-negative coefficients and
+the AM-GM/shift bounds) passes to the limit. This is the doubled-rotated
+non-negativity consumed by the duplicate-variable argument. Reference:
+Glimm--Jaffe, 2nd ed., \S4.7, Theorem 4.7.1, pp.~70--71.
+
 \section{Pure and mixed phases (\texttt{PhaseTransition.lean})}
 
 Formalization of Glimm--Jaffe, \S5.1 (pp.~72--74).
