@@ -5719,6 +5719,21 @@ $0\le\int_{(\iota\to\mathrm{Fin}\,4\to\mathbb{R})}\texttt{dSpinEval}\,p\cdot
 interaction truncation and the duplicate-variable rotation) by the second/third
 inequalities. Reference: Glimm--Jaffe, 2nd ed., \S4.7, Theorem 4.7.1, pp.~70--71.
 
+\paragraph{Interaction truncation.} The ferromagnetic interaction
+$\sum_e(\alpha_i\alpha_j+\beta_i\beta_j+\gamma_i\gamma_j+\delta_i\delta_j)$ is a
+polynomial \texttt{interactionPoly4} over $\iota\times\mathrm{Fin}\,4$ with
+non-negative coefficients. The truncating polynomial
+$\texttt{truncPoly4}=\texttt{obs}\cdot\sum_{k<N}C((\beta J)^k/k!)\,
+\texttt{interactionPoly4}^k$ has $\texttt{dSpinEval}=\texttt{dSpinEval}\,
+\texttt{obs}\cdot\texttt{expTrunc}\,N(\beta J\sum_e\texttt{edgeDot4})$ and keeps
+non-negative coefficients for $\beta,J\ge0$ and a non-negative observable
+(\texttt{truncPoly4\_nncoeffs}). The AM-GM bound \texttt{abs\_edgeDot4\_le\_sum}
+($|\texttt{edgeDot4}\,\mathrm{cfg}\,e|\le\sum_i\texttt{normSq4}\,(\mathrm{cfg}\,i)$)
+and the density shift \texttt{siteWeight4\_shift}
+($\texttt{siteWeight4}\,A\,(\sigma-cc)=e^{cc\cdot\texttt{normSq4}}\,
+\texttt{siteWeight4}\,A\,\sigma$) prepare the dominated-convergence dominator.
+Reference: Glimm--Jaffe, 2nd ed., \S4.7, Theorem 4.7.1, pp.~70--71.
+
 \section{Pure and mixed phases (\texttt{PhaseTransition.lean})}
 
 Formalization of Glimm--Jaffe, \S5.1 (pp.~72--74).
