@@ -14023,6 +14023,30 @@ disconnected case (\texttt{ursellCoefficient\_eq\_zero\_of\_disconnected}, $\phi
 this completes the $n = 3$ Ursell-coefficient classification. Reference:
 Glimm–Jaffe, 2nd ed., \S18.4, pp.~378--386.
 
+\paragraph{Closed form of the Mayer term for a non-interacting gas (\S18.5).}
+For a non-interacting polymer gas (distinct polymers pairwise compatible, i.e.
+vertex-disjoint) the $n$-th Mayer term has an explicit closed form
+(\texttt{MayerCore/IndependentMayerTerm.lean}). A constant sequence
+$(P,\dots,P)$ of a nonempty polymer is \emph{fully} incompatible, since $P$ is
+self-incompatible (\texttt{PolymersIncompatible.self\_of\_isPolymer}), so its
+Ursell coefficient is the classic single-cluster value
+$\phi^T(P,\dots,P) = (-1)^{n-1}/n$
+(\texttt{ursellCoefficient\_const\_eq\_of\_isPolymer}, from
+\texttt{ursellCoefficient\_complete\_eq}). Combining this with the diagonal
+collapse (\texttt{mayerExpansionTerm\_eq\_sum\_diagonal\_of\_pairwise\_compatible})
+and factoring the constant out of the sum gives, for $n \ge 1$,
+\[
+  \mathrm{mayerExpansionTerm}\,G\,n\,t
+    = \frac{(-1)^{n-1}}{n}\sum_{P} \bigl(t^{|P|}\bigr)^n
+\]
+(\texttt{mayerExpansionTerm\_eq\_of\_pairwise\_disjoint}). The specialisations
+\texttt{mayerExpansionTerm\_\{one,two,three\}\_eq\_of\_pairwise\_disjoint}
+give the first Mayer coefficients $\sum_P t^{|P|}$,
+$-\tfrac12\sum_P (t^{|P|})^2$, $\tfrac13\sum_P (t^{|P|})^3$; the $n = 3$
+value $1/3$ matches the fully-incompatible triangle Ursell value, the
+non-interacting counterpart of \texttt{ursellCoefficient\_fin\_three\_*}.
+Reference: Glimm–Jaffe, 2nd ed., \S18.4--18.5, pp.~378--386.
+
 \paragraph{Polymer free energy bounds and characterisations
 (PRs~\#1517--\#1566).} A coordinated set of sharpenings was added
 in this batch:
