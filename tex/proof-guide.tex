@@ -5765,6 +5765,20 @@ modified single-spin densities (\texttt{integrable\_abs\_pow\_mul\_modSpinDensit
 via $\texttt{modSpinDensity}\,c\,A=\texttt{singleSpinDensity}\,A\,(-c)$). Reference:
 Glimm--Jaffe, 2nd ed., \S4.7, Theorem 4.7.1, pp.~70--71.
 
+\paragraph{The GKS-II doubling identity.} The Ginibre duplicate-variable
+reduction (\texttt{doubling\_identity}): for a weight $W$ and observables $F,G$,
+\[
+\Big(\!\int W\Big)\Big(\!\int FGW\Big)-\Big(\!\int FW\Big)\Big(\!\int GW\Big)
+= \tfrac12\!\int\!\!\int (F(\xi)-F(\xi'))(G(\xi)-G(\xi'))\,W(\xi)\,W(\xi'),
+\]
+proved by expanding the doubled integrand into four product pieces and separating
+each via \texttt{integral\_prod\_mul}. Hence if the doubled integral is
+non-negative then $\langle F\rangle\langle G\rangle\le\langle FG\rangle$
+(\texttt{vectorExpectation\_mul\_le\_of\_doubled\_nonneg}), the truncated-pair
+positivity of (4.7.6)--(4.7.7). The doubled-integral non-negativity is supplied,
+via the duplicate-variable rotation, by the doubled-rotated cone. Reference:
+Glimm--Jaffe, 2nd ed., \S4.7, Theorem 4.7.1, pp.~70--71.
+
 \section{Pure and mixed phases (\texttt{PhaseTransition.lean})}
 
 Formalization of Glimm--Jaffe, \S5.1 (pp.~72--74).
