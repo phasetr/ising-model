@@ -5797,6 +5797,18 @@ $(\iota\to\mathrm{Fin}\,4\to\mathbb{R})$ (\texttt{measurePreserving\_rotLinPi}).
 This is the linchpin connecting the doubled Gibbs integral to the doubled-rotated
 cone. Reference: Glimm--Jaffe, 2nd ed., \S4.3, (4.3.2), p.~59; \S4.7, pp.~70--71.
 
+\paragraph{Rotation algebra (4.3.5).} The single-site coordinate vector
+$\texttt{dCoord}\,\xi\,\xi'\,i=![t_i,q_i,t_i',q_i']$, rotated by \texttt{rotLin},
+yields $(\alpha,\beta,\gamma,\delta)=(\texttt{phi4Alpha},\texttt{phi4Beta},
+\texttt{phi4Gamma},\texttt{twoCompDelta})$ (\texttt{rotLin\_dCoord}). The
+doubled-interaction identity (4.3.5)
+$t_it_j+q_iq_j+t_i't_j'+q_i'q_j'=\alpha_i\alpha_j+\beta_i\beta_j+\gamma_i\gamma_j
++\delta_i\delta_j$ (\texttt{doubled\_dot\_eq\_rot}) shows the doubled ferromagnetic
+interaction is ferromagnetic in the rotated coordinates --- the algebraic core
+(together with \texttt{twoCompPotential\_double\_eq}) of the weight identity for
+the duplicate-variable change of variables. Reference: Glimm--Jaffe, 2nd ed.,
+\S4.3, (4.3.2), (4.3.5); \S4.7, pp.~70--71.
+
 \section{Pure and mixed phases (\texttt{PhaseTransition.lean})}
 
 Formalization of Glimm--Jaffe, \S5.1 (pp.~72--74).
