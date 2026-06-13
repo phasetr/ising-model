@@ -94,13 +94,12 @@ theorem edgeDot4Poly_nncoeffs (e : Sym2 ι) : NNCoeffs (edgeDot4Poly e) := by
 non-negative observable). -/
 theorem truncPoly4_nncoeffs (G : SimpleGraph ι) [Fintype G.edgeSet]
     {obs : MvPolynomial (ι × Fin 4) ℝ} (hobs : NNCoeffs obs) {J β : ℝ}
-    (hβ : 0 ≤ β) (hJ : 0 ≤ J) (N : ℕ) : NNCoeffs (truncPoly4 G obs J β N) := by
+    (hβJ : 0 ≤ β * J) (N : ℕ) : NNCoeffs (truncPoly4 G obs J β N) := by
   have hinter : NNCoeffs (interactionPoly4 G) :=
     NNCoeffs.sum fun e _ => edgeDot4Poly_nncoeffs e
   rw [truncPoly4]
   refine hobs.mul (NNCoeffs.sum fun k _ => ?_)
-  exact (NNCoeffs.C (div_nonneg (pow_nonneg (mul_nonneg hβ hJ) k) (by positivity))).mul
-    (hinter.pow k)
+  exact (NNCoeffs.C (div_nonneg (pow_nonneg hβJ k) (by positivity))).mul (hinter.pow k)
 
 /-! ## The dominated-convergence headline -/
 
