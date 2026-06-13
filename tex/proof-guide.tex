@@ -5844,6 +5844,32 @@ h^2\ge0$ are exactly the non-negative field hypotheses of
 change of variables for (4.7.6)--(4.7.8). Reference: Glimm--Jaffe, 2nd ed., \S4.7,
 Theorem 4.7.1, pp.~70--71.
 
+\paragraph{The duplicate-variable change of variables and the doubled-integral
+engine.} The combined map $(\xi,\xi')\mapsto(i\mapsto\texttt{rotLin}(\texttt{dCoord}
+\,\xi\,\xi'\,i))$, sending the doubled configuration to its block-rotated form, is
+packaged as a measurable equivalence $\texttt{combinedEquiv}:(\texttt{VectorConfig}
+\,\iota\times\texttt{VectorConfig}\,\iota)\simeq_{\mathrm m}(\iota\to\mathrm{Fin}\,4
+\to\mathbb{R})$ and is measure-preserving (\texttt{measurePreserving\_combinedEquiv}).
+It is assembled from the per-site reshuffle $\texttt{siteEquiv}$
+(via \texttt{finTwoArrow}, \texttt{sumPiEquivProdPi}, \texttt{piCongrLeft}\,\texttt{finSumFinEquiv},
+with underlying function $\texttt{siteEquiv}\,((t,q),(t',q'))=![t,q,t',q']$), the per-site
+rotation \texttt{rotEquiv} (\texttt{rotLin} packaged as a \texttt{MeasurableEquiv} via
+\texttt{Matrix.toLinearEquiv'}, with underlying function \texttt{rotLin}),
+\texttt{arrowProdEquivProdArrow}, and \texttt{volume\_preserving\_pi}.
+The capstone \texttt{doubled\_integral\_nonneg}: if
+$(F(\xi)-F(\xi'))\,(G(\xi)-G(\xi')) = \texttt{dSpinEval}\,\mathrm{obs}\,(\texttt{rotLin}
+\circ\texttt{dCoord})$ for a non-negative-coefficient $\mathrm{obs}$, then
+\[
+  0 \le \int\!\!\int (F(\xi)-F(\xi'))\,(G(\xi)-G(\xi'))\,W(\xi)\,W(\xi'),
+\]
+proved by the change of variables
+(\texttt{measurePreserving\_combinedEquiv.integral\_comp'}), the weight factorization
+(\texttt{vectorWeight\_mul\_eq\_rot}), and the doubled-rotated cone non-negativity
+(\texttt{dRotInteraction\_nonneg}). This is the engine of the second/third
+inequalities; combined with the GKS-II doubling consequence it yields the headlines
+(4.7.6)--(4.7.8) once the difference-observable non-negative-coefficient expansion is
+supplied. Reference: Glimm--Jaffe, 2nd ed., \S4.7, Theorem 4.7.1, pp.~70--71.
+
 \section{Pure and mixed phases (\texttt{PhaseTransition.lean})}
 
 Formalization of Glimm--Jaffe, \S5.1 (pp.~72--74).
