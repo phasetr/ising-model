@@ -5870,6 +5870,34 @@ inequalities; combined with the GKS-II doubling consequence it yields the headli
 (4.7.6)--(4.7.8) once the difference-observable non-negative-coefficient expansion is
 supplied. Reference: Glimm--Jaffe, 2nd ed., \S4.7, Theorem 4.7.1, pp.~70--71.
 
+\paragraph{The second/third inequalities (4.7.6)--(4.7.8) and Corollary 4.7.2.} In the
+block rotation the single-copy spins are recovered by $t_i=(\alpha_i+\beta_i)/\sqrt2$,
+$t_i'=(\alpha_i-\beta_i)/\sqrt2$, $q_i=(\gamma_i-\delta_i)/\sqrt2$,
+$q_i'=(\gamma_i+\delta_i)/\sqrt2$ (\texttt{vSpinT\_eq\_rot}, \dots). Hence the difference
+of a $t$- (resp.\ $q$-) monomial across the duplicate is $(\sqrt2/2)^{|A|}$ times the
+difference $\texttt{plusProd}-\texttt{minusProd}$ of the $\pm$ products of the rotated
+coordinates on slots $0,1$ (resp.\ $2,3$) (\texttt{tMon\_diff}, \texttt{qMon\_diff}).
+The crucial combinatorial fact is that $\texttt{plusProd}-\texttt{minusProd}=
+\prod_i(X_{i,s}+X_{i,t})-\prod_i(X_{i,s}-X_{i,t})$ has \emph{non-negative coefficients}
+--- proved by mutual induction with the even sum
+(\texttt{nncoeffs\_evenSum\_oddDiff}), since
+$\prod(a+b)-\prod(a-b)=2\sum_{|S|\text{ odd}}\prod_{S}b\prod_{A\setminus S}a$. Therefore
+the product of two such differences is $\texttt{dSpinEval}$ of a
+non-negative-coefficient polynomial, and \texttt{doubled\_integral\_nonneg} gives the
+doubled-integral positivity. Combined with the GKS-II doubling consequence
+\texttt{vectorExpectation\_mul\_le\_of\_doubled\_nonneg} this yields
+\[
+  \langle t^A\rangle\langle t^B\rangle\le\langle t^A t^B\rangle\ (4.7.6),\quad
+  \langle q^A\rangle\langle q^B\rangle\le\langle q^A q^B\rangle\ (4.7.7),\quad
+  \langle t^A q^B\rangle\le\langle t^A\rangle\langle q^B\rangle\ (4.7.8),
+\]
+(\texttt{vectorExpectation\_t\_mul\_le}, \texttt{\_q\_mul\_le}, \texttt{\_t\_mul\_q\_le};
+the last via the $-q^B$ reflection and \texttt{vectorExpectation\_neg}). Integrability of
+the monomials against the Gibbs weight is supplied through the \texttt{genMonomial} bridge.
+The pairwise specializations $A=\{i\}$, $B=\{j\}$ give Corollary 4.7.2
+(\texttt{vectorExpectation\_\{t,q,t\_q\}\_pair\_le}). This completes Theorem 4.7.1.
+Reference: Glimm--Jaffe, 2nd ed., \S4.7, Theorem 4.7.1, Cor 4.7.2, pp.~70--71.
+
 \section{Pure and mixed phases (\texttt{PhaseTransition.lean})}
 
 Formalization of Glimm--Jaffe, \S5.1 (pp.~72--74).
