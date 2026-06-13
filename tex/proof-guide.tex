@@ -14076,6 +14076,13 @@ term, \texttt{mayerExpansionTerm\_three\_eq}
     = \sum_{(P,Q,R)} v(P,Q,R)\,t^{|P|}t^{|Q|}t^{|R|},
 \]
 where $v(P,Q,R)$ is the incompatibility-pattern value ($1/3$, $1/6$, or $0$).
+Composing with the canonical $N = 2$ truncation gives the fully explicit Mayer
+truncation through order $3$, \texttt{mayerPartialSum\_three\_eq}:
+\[
+  \mathrm{mayerPartialSum}\,G\,3\,t
+    = \Bigl(\sum_P t^{|P|} - \tfrac12 \!\!\sum_{(P,Q)\ \text{incomp.}}\!\! t^{|P|}t^{|Q|}\Bigr)
+      + \sum_{(P,Q,R)} v(P,Q,R)\,t^{|P|}t^{|Q|}t^{|R|}.
+\]
 Reference: Glimm–Jaffe, 2nd ed., \S18.4, pp.~378--386.
 
 \paragraph{Polymer free energy bounds and characterisations
