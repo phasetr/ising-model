@@ -14134,7 +14134,16 @@ the activity: if $a$ works for $z$ and $|z'| \le |z|$ pointwise on polymers then
 $a$ works for $z'$, used to verify KP for the Ising activity via a majorant) and
 \texttt{KPAdmissible.activity\_sum\_le\_weight} (the bare incompatible-activity
 sum bound $\sum_{Q \nsim P} |z\,Q| \le a\,P$, dropping the $e^{a Q} \ge 1$
-factors). Reference: Glimm–Jaffe, 2nd ed., \S18.4--18.5; Kotecký–Preiss,
+factors). The first concrete instance of the per-polymer cluster-sum bound is
+also proved, \texttt{KPAdmissible.order\_two\_cluster\_bound}: the order-$2$
+contribution $\sum_{Q \nsim P} |\phi^T(![P,Q])|\,|z\,P||z\,Q| \le
+\tfrac12\,|z\,P|\,a\,P$, since each connected $2$-cluster $\{P,Q\}$ has
+$\phi^T = -1/2$ (\texttt{ursellCoefficient\_pair\_incompatible}), so the sum
+factors as $\tfrac12|z\,P|\sum_{Q\nsim P}|z\,Q|$ and
+\texttt{activity\_sum\_le\_weight} bounds the inner sum by $a\,P$. The full
+all-orders convergence theorem (the per-polymer cluster-sum bound by induction,
+consuming the tree-graph inequality) remains for a later PR of \#3954.
+Reference: Glimm–Jaffe, 2nd ed., \S18.4--18.5; Kotecký–Preiss,
 Comm. Math. Phys. 103 (1986).
 
 \paragraph{Polymer free energy bounds and characterisations
