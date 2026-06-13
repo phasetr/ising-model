@@ -79,4 +79,35 @@ theorem KPAdmissible.activity_le_weight
     nlinarith [abs_nonneg (z P)]
   exact le_trans hself (le_trans hterm (h P hP))
 
+/-- **KP admissibility is monotone in the activity**: if `a` is KP-admissible
+for `z` and `|z' Q| ≤ |z Q|` for every polymer `Q`, then `a` is KP-admissible
+for `z'` too.  Lets one verify the criterion for a concrete activity by
+dominating it with a simpler one.  (Used to deduce KP for the Ising activity
+`tanh(βJ)^{|P|}` from a clean majorant.) -/
+theorem KPAdmissible.mono_activity
+    {G : SimpleGraph ι} [Fintype G.edgeSet] {z z' a : Finset (Sym2 ι) → ℝ}
+    (h : KPAdmissible G z a)
+    (hz : ∀ Q ∈ allPolymers G, |z' Q| ≤ |z Q|) :
+    KPAdmissible G z' a := by
+  intro P hP
+  refine le_trans (Finset.sum_le_sum (fun Q hQ => ?_)) (h P hP)
+  have hQmem : Q ∈ allPolymers G := (Finset.mem_filter.mp hQ).1
+  exact mul_le_mul_of_nonneg_right (hz Q hQmem) (Real.exp_nonneg _)
+
+/-- **KP bounds the bare activity sum**: if `a` is KP-admissible then, dropping
+the exponential factors `exp(a Q) ≥ 1`, the bare incompatible-activity sum is
+still bounded, `∑_{Q ≁ P} |z Q| ≤ a P`.  The summable form most directly used in
+convergence estimates. -/
+theorem KPAdmissible.activity_sum_le_weight
+    {G : SimpleGraph ι} [Fintype G.edgeSet] {z a : Finset (Sym2 ι) → ℝ}
+    (h : KPAdmissible G z a) {P : Finset (Sym2 ι)} (hP : P ∈ allPolymers G) :
+    ∑ Q ∈ (allPolymers G).filter (fun Q => PolymersIncompatible P Q), |z Q| ≤ a P := by
+  refine le_trans (Finset.sum_le_sum (fun Q hQ => ?_)) (h P hP)
+  have hQmem : Q ∈ allPolymers G := (Finset.mem_filter.mp hQ).1
+  have h1 : (1 : ℝ) ≤ Real.exp (a Q) := by
+    calc (1 : ℝ) = Real.exp 0 := (Real.exp_zero).symm
+      _ ≤ Real.exp (a Q) := Real.exp_le_exp.mpr (h.weight_nonneg hQmem)
+  calc |z Q| = |z Q| * 1 := (mul_one _).symm
+    _ ≤ |z Q| * Real.exp (a Q) := by gcongr
+
 end IsingModel

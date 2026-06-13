@@ -14128,8 +14128,14 @@ non-negative terms) and \texttt{KPAdmissible.activity\_le\_weight}
 $|z\,P|\,e^{a P}$ is one of the summands — and $1 \le e^{a P}$). The full
 convergence theorem (the per-polymer cluster-sum bound
 $\sum_{\Gamma \ni P} |\phi^T(\Gamma)| \prod|z| \le a\,P$, which consumes the
-tree-graph inequality) remains for a later PR of \#3954. Reference: Glimm–Jaffe,
-2nd ed., \S18.4--18.5; Kotecký–Preiss, Comm. Math. Phys. 103 (1986).
+tree-graph inequality) remains for a later PR of \#3954. The structural API is
+also provided: \texttt{KPAdmissible.mono\_activity} (admissibility is monotone in
+the activity: if $a$ works for $z$ and $|z'| \le |z|$ pointwise on polymers then
+$a$ works for $z'$, used to verify KP for the Ising activity via a majorant) and
+\texttt{KPAdmissible.activity\_sum\_le\_weight} (the bare incompatible-activity
+sum bound $\sum_{Q \nsim P} |z\,Q| \le a\,P$, dropping the $e^{a Q} \ge 1$
+factors). Reference: Glimm–Jaffe, 2nd ed., \S18.4--18.5; Kotecký–Preiss,
+Comm. Math. Phys. 103 (1986).
 
 \paragraph{Polymer free energy bounds and characterisations
 (PRs~\#1517--\#1566).} A coordinated set of sharpenings was added
