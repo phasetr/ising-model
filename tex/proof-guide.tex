@@ -14020,7 +14020,21 @@ $\mathrm{polymerSeqIncompatibilityGraph}\,\omega \simeq_g \mathrm{fromEdgeSet}\,
 \texttt{ursellCoefficient\_eq\_alternatingConnectedSubgraphSum\_div}). Together with
 the triangle case (\texttt{ursellCoefficient\_complete\_eq}, $\phi^T = 1/3$) and the
 disconnected case (\texttt{ursellCoefficient\_eq\_zero\_of\_disconnected}, $\phi^T = 0$)
-this completes the $n = 3$ Ursell-coefficient classification. Reference:
+this completes the $n = 3$ Ursell-coefficient classification. The remaining
+patterns are packaged as per-$\omega$ lemmas in the same file:
+\texttt{ursellCoefficient\_fin\_three\_triangle} (all three pairs incompatible:
+the complete graph $K_3$, $\phi^T = 1/3$ via
+\texttt{ursellCoefficient\_complete\_eq}),
+\texttt{ursellCoefficient\_fin\_three\_no\_edge} (all pairs compatible: the
+edgeless graph, $\phi^T = 0$), and
+\texttt{ursellCoefficient\_fin\_three\_edge\_\{01,02,12\}} (exactly one
+incompatible pair: a single edge with one isolated vertex, $\phi^T = 0$). The
+four zero cases use the identity isomorphism to
+$\mathrm{fromEdgeSet}\,\{\emptyset \text{ or a single edge}\}$ followed by
+\texttt{SimpleGraph.Iso.connected\_iff} and \texttt{decide}-disconnectedness,
+then \texttt{ursellCoefficient\_eq\_zero\_of\_disconnected}. Together with the
+path lemmas these eight lemmas give the complete explicit $n = 3$
+Ursell-coefficient classification by incompatibility pattern. Reference:
 Glimm–Jaffe, 2nd ed., \S18.4, pp.~378--386.
 
 \paragraph{Closed form of the Mayer term for a non-interacting gas (\S18.5).}
