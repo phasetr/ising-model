@@ -54,6 +54,41 @@ theorem alternatingConnectedSubgraphSum_eq_zero_of_not_connected
     exact (hS_conn.preconnected u v).mono h_le
   rw [h_empty, Finset.sum_empty]
 
+/-- **The connected-spanning alternating sum of any graph on one vertex is `1`**
+(generic): on `Fin 1` there are no edges (`Subsingleton`), so the only connected
+spanning edge-subset is `∅`, contributing `(-1)^0 = 1`.  The `n = 1` base value of
+the cluster expansion. -/
+theorem alternatingConnectedSubgraphSum_fin_one
+    (G : SimpleGraph (Fin 1)) [DecidableRel G.Adj] :
+    alternatingConnectedSubgraphSum G = 1 := by
+  classical
+  unfold alternatingConnectedSubgraphSum
+  have h_emptyG : G.edgeFinset = ∅ := by
+    rw [Finset.eq_empty_iff_forall_notMem]
+    intro e he
+    rw [SimpleGraph.mem_edgeFinset] at he
+    induction e using Sym2.ind with
+    | h a b =>
+      have hab : G.Adj a b := he
+      exact (G.ne_of_adj hab) (Subsingleton.elim a b)
+  have h_set : connectedSpanningEdgeSubsets G = {∅} := by
+    apply Finset.ext
+    intro S
+    rw [mem_connectedSpanningEdgeSubsets, Finset.mem_singleton]
+    constructor
+    · rintro ⟨hS_sub, _⟩
+      rw [h_emptyG, Finset.subset_empty] at hS_sub
+      exact hS_sub
+    · intro hS_eq
+      refine ⟨?_, ?_⟩
+      · rw [hS_eq, h_emptyG]
+      · rw [hS_eq]
+        refine { preconnected := ?_, nonempty := ⟨0⟩ }
+        intro u v
+        have huv : u = v := Subsingleton.elim u v
+        exact huv ▸ SimpleGraph.Reachable.refl u
+  rw [h_set, Finset.sum_singleton, Finset.card_empty, pow_zero]
+
 variable {P : Type*}
 
 /-- **Sequence incompatibility graph**: the graph on `Fin n` with `i ~ j` iff
@@ -81,6 +116,12 @@ theorem clusterActivity_nonneg {z : P → ℝ} (hz : ∀ p, 0 ≤ z p) {n : ℕ}
     (ω : Fin n → P) : 0 ≤ clusterActivity z ω :=
   Finset.prod_nonneg (fun i _ => hz (ω i))
 
+/-- **Cluster activity of a singleton sequence** equals the single activity:
+`clusterActivity z (fun _ : Fin 1 => p) = z p`. -/
+theorem clusterActivity_singleton (z : P → ℝ) (p : P) :
+    clusterActivity z (fun _ : Fin 1 => p) = z p := by
+  rw [clusterActivity, Fin.prod_univ_one]
+
 variable {Incompat : P → P → Prop} [DecidableRel Incompat]
 
 /-- **Ursell coefficient vanishes on disconnected sequences**: if the
@@ -90,5 +131,13 @@ theorem ursellCoeff_eq_zero_of_not_connected {n : ℕ} (ω : Fin n → P)
     (h : ¬ (seqGraph Incompat ω).Connected) :
     ursellCoeff Incompat ω = 0 := by
   rw [ursellCoeff, alternatingConnectedSubgraphSum_eq_zero_of_not_connected _ h, zero_div]
+
+/-- **Ursell coefficient of a singleton sequence is `1`**: every single polymer
+contributes `ϕ^T = 1` to the cluster expansion (`n = 1` base case), since its
+incompatibility graph on `Fin 1` has connected-spanning alternating sum `1` and
+`1! = 1`. -/
+theorem ursellCoeff_singleton (ω : Fin 1 → P) : ursellCoeff Incompat ω = 1 := by
+  rw [ursellCoeff, alternatingConnectedSubgraphSum_fin_one]
+  simp
 
 end IsingModel.AbstractPolymer
