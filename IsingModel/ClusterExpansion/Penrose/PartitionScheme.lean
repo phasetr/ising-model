@@ -53,7 +53,7 @@ each edge is sorted into an ordered pair (`Sym2.sortEquiv`) and compared
 lexicographically.  Provided as a `def` (not a global instance) to avoid an orphan
 instance on the mathlib type `Sym2 V`; callers install it locally with `letI`. -/
 @[reducible]
-noncomputable def sym2LexLinearOrder (V : Type*) [LinearOrder V] : LinearOrder (Sym2 V) :=
+def sym2LexLinearOrder (V : Type*) [LinearOrder V] : LinearOrder (Sym2 V) :=
   LinearOrder.lift'
     (fun e : Sym2 V => (toLex (Sym2.sortEquiv e : { p : V × V // p.1 ≤ p.2 }).val : V ×ₗ V))
     (fun _ _ hab => Sym2.sortEquiv.injective (Subtype.ext (toLex.injective hab)))
