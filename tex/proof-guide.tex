@@ -14101,11 +14101,19 @@ $g \le e^{a}$, $\sum_{q \nsim p} |z\,q|\,g\,q \le a\,p$, the step absorbing the
 per-polymer cluster sum at $q$ into $a\,p$),
 \texttt{KPAdmissible.activity\_sum\_le} ($\sum_{q \nsim p} |z\,q| \le a\,p$), and
 \texttt{KPAdmissible.activity\_weight\_sum\_le}
-($\sum_{q \nsim p} |z\,q|\,a\,q \le a\,p$, exp-absorption). This is the
-foundation for the abstract all-order KP convergence theorem (the per-polymer
-cluster-sum bound), with the Ising adapter to follow once the theorem is proven.
-Reference: Glimm–Jaffe, 2nd ed., \S18.4--18.5; Kotecký–Preiss,
-Comm. Math. Phys. 103 (1986).
+($\sum_{q \nsim p} |z\,q|\,a\,q \le a\,p$, exp-absorption). The cluster/Ursell
+layer (\texttt{AbstractPolymer/Cluster.lean}) provides \texttt{seqGraph} (the
+incompatibility graph on $\mathrm{Fin}\,n$ of a length-$n$ sequence, via
+\texttt{SimpleGraph.fromRel}), $\texttt{ursellCoeff}\,\mathrm{Incompat}\,\omega =
+\mathrm{alternatingConnectedSubgraphSum}(\texttt{seqGraph}\,\mathrm{Incompat}\,\omega)/n!$
+(reusing the generic alternating connected-spanning sum), and
+$\texttt{clusterActivity}\,z\,\omega = \prod_i z(\omega_i)$; with the generic
+\texttt{alternatingConnectedSubgraphSum\_eq\_zero\_of\_not\_connected} yielding
+\texttt{ursellCoeff\_eq\_zero\_of\_not\_connected} (the cluster sum ranges over
+connected sequences) and \texttt{clusterActivity\_nonneg}. This is the foundation
+for the abstract all-order KP convergence theorem (the per-polymer cluster-sum
+bound), with the Ising adapter to follow once the theorem is proven. Reference:
+Glimm–Jaffe, 2nd ed., \S18.4--18.5; Kotecký–Preiss, Comm. Math. Phys. 103 (1986).
 
 \paragraph{Polymer free energy bounds and characterisations
 (PRs~\#1517--\#1566).} A coordinated set of sharpenings was added
