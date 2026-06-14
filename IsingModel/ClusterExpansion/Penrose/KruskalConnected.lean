@@ -9,10 +9,11 @@ edges that join previously-unjoined endpoints, so it **preserves reachability**:
 `(fromEdgeSet ↑(treeOf S)).Reachable a b ↔ (fromEdgeSet ↑S).Reachable a b`.  Hence
 `treeOf S` is connected whenever `S` is.
 
-The core is a strong induction over the edge order: every edge of `S` has
-`treeOf S`-reachable endpoints, because a dropped edge `e` (with `reachableLT S e`)
-has its endpoints joined by strictly-smaller edges of `S`, each of which —
-inductively — has `treeOf S`-reachable endpoints.
+The core is a strong induction over the edge order (the well-founded order pulled
+back from `V ×ₗ V` along `edgeKey`): every edge of `S` has `treeOf S`-reachable
+endpoints, because a dropped edge `e` (with `reachableLT S e`) has its endpoints
+joined by strictly-smaller edges of `S`, each of which — inductively — has
+`treeOf S`-reachable endpoints.
 
 Acyclicity, the `|V| - 1` edge count, and the headline
 `treeOf_mem_spanningTreeEdgeSubsets` follow in a later PR.
@@ -28,24 +29,14 @@ open Finset SimpleGraph
 
 variable {V : Type*} [LinearOrder V]
 
-/-- **The edge order as a scoped instance**: install `sym2LexLinearOrder` as a
-`scoped` `LinearOrder (Sym2 V)` so the strict order `<` on edges (and the
-finiteness-derived `WellFoundedLT`) is available throughout this namespace without
-an orphan global instance. -/
-scoped instance instSym2LinearOrder : LinearOrder (Sym2 V) := sym2LexLinearOrder V
-
 /-- **Strict lower edge-prefix** `edgesLT X e`: the edges of `X` strictly below `e`
-in the edge order.  Carries its own decidability (`classical`) so it can appear in
-statements without an exposed `DecidablePred`. -/
-noncomputable def edgesLT (X : Finset (Sym2 V)) (e : Sym2 V) : Finset (Sym2 V) := by
-  classical
-  exact X.filter (fun f => f < e)
+in the edge order (`edgeKey f < edgeKey e`). -/
+def edgesLT (X : Finset (Sym2 V)) (e : Sym2 V) : Finset (Sym2 V) :=
+  X.filter (fun f => edgeKey f < edgeKey e)
 
-omit [LinearOrder V] in
-/-- **Membership in `edgesLT`**: `f ∈ edgesLT X e` iff `f ∈ X` and `f < e`. -/
+/-- **Membership in `edgesLT`**: `f ∈ edgesLT X e` iff `f ∈ X` and `edgeKey f < edgeKey e`. -/
 theorem mem_edgesLT {X : Finset (Sym2 V)} {e f : Sym2 V} :
-    f ∈ edgesLT X e ↔ f ∈ X ∧ f < e := by
-  classical
+    f ∈ edgesLT X e ↔ f ∈ X ∧ edgeKey f < edgeKey e := by
   simp only [edgesLT, Finset.mem_filter]
 
 /-- **Unfolding `reachableLT` on an explicit edge**: `reachableLT X s(a, b)` holds iff
@@ -53,7 +44,6 @@ the endpoints `a, b` are reachable within the graph spanned by `edgesLT X s(a, b
 theorem reachableLT_iff_edgesLT (X : Finset (Sym2 V)) (a b : V) :
     reachableLT X s(a, b) ↔
       (fromEdgeSet (↑(edgesLT X s(a, b)) : Set (Sym2 V))).Reachable a b := by
-  classical
   simp only [reachableLT, liftSym2Prop, Sym2.lift_mk, edgesLT]
 
 omit [LinearOrder V] in
@@ -73,6 +63,13 @@ theorem reachable_mono_of_edges_reachable {S T : Finset (Sym2 V)}
 
 variable [Finite V]
 
+/-- **The edge order is well-founded**: the strict edge order `edgeKey f < edgeKey e`
+is well-founded, being pulled back along `edgeKey` from the finite linear order
+`V ×ₗ V`. -/
+theorem wellFounded_edgeKey_lt :
+    WellFounded (fun f e : Sym2 V => edgeKey f < edgeKey e) :=
+  InvImage.wf edgeKey wellFounded_lt
+
 /-- **Every edge of `S` has `treeOf S`-reachable endpoints** (the Kruskal key lemma):
 by strong induction over the edge order.  A kept edge gives a direct adjacency; a
 dropped edge `e` (with `reachableLT S e`) has its endpoints joined by strictly-smaller
@@ -83,22 +80,24 @@ theorem reachable_endpoints_of_mem_treeOf {S : Finset (Sym2 V)} :
   have key : ∀ e : Sym2 V, ∀ a b, e = s(a, b) → s(a, b) ∈ S →
       (fromEdgeSet (↑(treeOf S) : Set (Sym2 V))).Reachable a b := by
     intro e
-    induction e using WellFoundedLT.induction with
-    | _ e IH =>
-      intro a b hab hmem
-      subst hab
-      by_cases hdiag : a = b
-      · subst hdiag; exact Reachable.refl _
-      by_cases hlt : reachableLT S s(a, b)
-      · rw [reachableLT_iff_edgesLT] at hlt
-        refine reachable_mono_of_edges_reachable (T := treeOf S) ?_ hlt
-        intro x y hxy
-        rw [mem_edgesLT] at hxy
-        exact IH s(x, y) hxy.2 x y rfl hxy.1
-      · have hmemTree : s(a, b) ∈ treeOf S := mem_treeOf.mpr ⟨hmem, hlt⟩
-        refine Adj.reachable ?_
-        rw [fromEdgeSet_adj]
-        exact ⟨Finset.mem_coe.mpr hmemTree, hdiag⟩
+    refine WellFounded.induction
+      (C := fun e => ∀ a b, e = s(a, b) → s(a, b) ∈ S →
+        (fromEdgeSet (↑(treeOf S) : Set (Sym2 V))).Reachable a b)
+      wellFounded_edgeKey_lt e ?_
+    intro e IH a b hab hmem
+    subst hab
+    by_cases hdiag : a = b
+    · subst hdiag; exact Reachable.refl _
+    by_cases hlt : reachableLT S s(a, b)
+    · rw [reachableLT_iff_edgesLT] at hlt
+      refine reachable_mono_of_edges_reachable (T := treeOf S) ?_ hlt
+      intro x y hxy
+      rw [mem_edgesLT] at hxy
+      exact IH s(x, y) hxy.2 x y rfl hxy.1
+    · have hmemTree : s(a, b) ∈ treeOf S := mem_treeOf.mpr ⟨hmem, hlt⟩
+      refine Adj.reachable ?_
+      rw [fromEdgeSet_adj]
+      exact ⟨Finset.mem_coe.mpr hmemTree, hdiag⟩
   intro a b hmem
   exact key s(a, b) a b rfl hmem
 

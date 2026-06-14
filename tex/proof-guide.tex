@@ -24925,13 +24925,17 @@ on this foundation.
 \paragraph{The partition scheme: \texttt{treeOf} and \texttt{addable}
 (\texttt{ClusterExpansion/Penrose/PartitionScheme.lean}).}
 The genuine combinatorial core is constructed by the edge-order Kruskal /
-reachability rule, with no hypothesis structures. Fix a linear order on the edges
-$\mathtt{Sym2}\,V$ induced from $[\texttt{LinearOrder}\ V]$ by sorting each edge into
-an ordered pair ($\texttt{Sym2.sortEquiv}$) and comparing lexicographically
-($\texttt{sym2LexLinearOrder}$, via $\texttt{LinearOrder.lift'}$). For an edge-subset
-$X$ and edge $e$, $\texttt{reachableLT}\,X\,e$ tests whether the endpoints of $e$ are
-already joined inside $\texttt{fromEdgeSet}$ of the edges of $X$ strictly below $e$
-(a symmetric vertex relation descended to $\mathtt{Sym2}\,V$ by $\texttt{liftSym2Prop}$).
+reachability rule, with no hypothesis structures. Edges are totally ordered by an
+explicit key $\texttt{edgeKey}\,e := \texttt{toLex}\,(\texttt{Sym2.sortEquiv}\,e)$
+into the lexicographic pairs $V \times_\ell V$ (injective, $\texttt{edgeKey\_injective}$):
+edges $f$ are compared by $\texttt{edgeKey}\,f < \texttt{edgeKey}\,e$. An explicit key
+is necessary because mathlib's ambient \texttt{SetLike} order on $\mathtt{Sym2}\,V$ is
+only \emph{partial} (distinct non-diagonal graph edges are never comparable, which would make
+the Kruskal ``strictly smaller'' test vacuous). For an edge-subset $X$ and edge $e$,
+$\texttt{reachableLT}\,X\,e$ tests whether the endpoints of $e$ are already joined
+inside $\texttt{fromEdgeSet}$ of the edges $f$ of $X$ with
+$\texttt{edgeKey}\,f < \texttt{edgeKey}\,e$ (a symmetric vertex relation descended to
+$\mathtt{Sym2}\,V$ by $\texttt{liftSym2Prop}$).
 Then
 \[
   \texttt{treeOf}\,S := S.\texttt{filter}\,(\lnot\,\texttt{reachableLT}\,S\,\cdot)
@@ -24955,23 +24959,43 @@ follow in later PRs.
 
 \paragraph{Kruskal connectivity
 (\texttt{ClusterExpansion/Penrose/KruskalConnected.lean}).}
-The Kruskal forest preserves reachability. With the scoped edge order, write
-$\texttt{edgesLT}\,X\,e$ for the edges of $X$ strictly below $e$, so
-$\texttt{reachableLT}\,X\,s(a,b)$ unfolds to reachability of $a,b$ inside
-$\texttt{fromEdgeSet}\,(\texttt{edgesLT}\,X\,s(a,b))$
+The Kruskal forest preserves reachability. Write $\texttt{edgesLT}\,X\,e$ for the edges
+$f$ of $X$ with $\texttt{edgeKey}\,f < \texttt{edgeKey}\,e$, so $\texttt{reachableLT}\,X\,s(a,b)$
+unfolds to reachability of $a,b$ inside $\texttt{fromEdgeSet}\,(\texttt{edgesLT}\,X\,s(a,b))$
 ($\texttt{reachableLT\_iff\_edgesLT}$). A transport lemma
 $\texttt{reachable\_mono\_of\_edges\_reachable}$ (if every edge of $S$ has
 $T$-reachable endpoints then $S$-reachability descends to $T$, by
 $\texttt{reachable\_iff\_reflTransGen}$ and $\texttt{ReflTransGen}$ induction) feeds
 the Kruskal key lemma $\texttt{reachable\_endpoints\_of\_mem\_treeOf}$: every edge
 of $S$ has $\texttt{treeOf}\,S$-reachable endpoints, by strong induction over the
-edge order ($\texttt{WellFoundedLT.induction}$) --- a kept edge yields an adjacency,
-a dropped edge $e$ has its endpoints joined by strictly-smaller $S$-edges, each
-$\texttt{treeOf}$-reachable by the induction hypothesis. Hence the global
-reachability equivalence ($\texttt{reachable\_treeOf\_iff\_reachable}$), the
-connectivity $\texttt{connected\_treeOf\_of\_connected}$, and the bookkeeping helper
+$\texttt{edgeKey}$-pullback well-founded edge order ($\texttt{WellFounded.induction}$)
+--- a kept edge yields an adjacency, a dropped edge $e$ has its endpoints joined by
+strictly-smaller $S$-edges, each $\texttt{treeOf}$-reachable by the induction
+hypothesis. Hence the global reachability equivalence
+($\texttt{reachable\_treeOf\_iff\_reachable}$), the connectivity
+$\texttt{connected\_treeOf\_of\_connected}$, and the bookkeeping helper
 $(\texttt{fromEdgeSet}\,(\texttt{treeOf}\,S)).\texttt{edgeFinset} = \texttt{treeOf}\,S$
-($\texttt{edgeFinset\_fromEdgeSet\_treeOf}$). Acyclicity, the $|V|-1$ edge count,
-and the headline $\texttt{treeOf\_mem\_spanningTreeEdgeSubsets}$ follow in a later PR.
+($\texttt{edgeFinset\_fromEdgeSet\_treeOf}$).
+
+\paragraph{Kruskal acyclicity and the spanning-tree headline
+(\texttt{ClusterExpansion/Penrose/KruskalAcyclic.lean}).}
+$\texttt{treeOf}\,S$ is acyclic by the \emph{cycle-max argument}. Any cycle $c$ in
+$\texttt{fromEdgeSet}\,(\texttt{treeOf}\,S)$ has a nonempty edge finset
+($\texttt{cycle\_edgeFinset\_nonempty}$); localising $c$ to
+$\texttt{fromEdgeSet}\,c.\texttt{edges.toFinset}$ and applying
+$\texttt{adj\_and\_reachable\_delete\_edges\_iff\_exists\_cycle}$ shows the endpoints of
+any cycle edge are reachable via the remaining cycle edges
+($\texttt{reachable\_from\_cycle\_edgeFinset\_erase}$). For a maximum-$\texttt{edgeKey}$
+cycle edge $M$, the remaining edges all have smaller key, hence lie in
+$\texttt{edgesLT}\,S\,M$ ($\texttt{cycle\_edge\_erase\_subset\_edgesLT}$), giving
+$\texttt{reachableLT}\,S\,M$ --- contradicting $M \in \texttt{treeOf}\,S$
+($\texttt{isAcyclic\_fromEdgeSet\_treeOf}$). Being connected and acyclic,
+$\texttt{treeOf}\,S$ is a tree, so
+$|\texttt{treeOf}\,S| = |V|-1$ ($\texttt{treeOf\_card\_eq\_card\_vertices\_sub\_one}$ via
+$\texttt{IsTree.card\_edgeFinset}$) and the headline follows:
+$S \in \texttt{connectedSpanningEdgeSubsets}\,G \Rightarrow
+\texttt{treeOf}\,S \in \texttt{spanningTreeEdgeSubsets}\,G$
+($\texttt{treeOf\_mem\_spanningTreeEdgeSubsets}$). The remaining steps (the interval
+property and the Kotecký--Preiss tree-sum induction) build on this.
 
 \end{document}
