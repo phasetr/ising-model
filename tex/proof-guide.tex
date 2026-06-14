@@ -25115,4 +25115,29 @@ convergent majorant of the cluster expansion (Mayer radius $1/e$); the remaining
 are the Mayer-term reduction $\texttt{Summable}\,(\texttt{mayerExpansionTerm}\,G\,\cdot)$
 (Kotecký--Preiss) and the identity $\log\Xi = \sum_n$ cluster.
 
+\paragraph{Absolute convergence of the Mayer expansion
+(\texttt{ClusterExpansion/MayerCore/UrsellMajorant.lean}).}
+The spanning-tree majorant closes the cluster-expansion absolute convergence.  For an
+activity $t$ with $e \cdot A < 1$, where $A := \sum_{P \in \texttt{allPolymers}\,G} |t|^{|P|}$,
+\[
+  \texttt{Summable}\,\bigl(n \mapsto \texttt{mayerExpansionTerm}\,G\,n\,t\bigr)
+\]
+($\texttt{summable\_mayerExpansionTerm\_of\_exp\_one\_mul\_activity\_lt\_one}$, with the usable
+form $\texttt{summable\_mayerExpansionTerm\_of\_card\_mul\_lt}$ requiring $|t| \le 1$ and
+$e \cdot |\texttt{allPolymers}\,G| \cdot |t| < 1$).  The bound chain is: the Ursell coefficient
+is uniformly bounded,
+$|\phi^T(\omega)| \le \texttt{numSpanningTrees}\,(\top : \texttt{SimpleGraph}\,(\texttt{Fin}\,n))/n!$;
+the total absolute activity over $n$-tuples factorises,
+\[
+  \sum_{\omega \in \texttt{piFinset}(\texttt{allPolymers}\,G)} |z(t,\omega)|
+    = \Bigl(\sum_{P} |t|^{|P|}\Bigr)^n
+\]
+($\texttt{sum\_clusterSeqActivity\_abs\_piFinset}$, by $\texttt{Finset.sum\_prod\_piFinset}$); hence
+$|\texttt{mayerExpansionTerm}\,G\,n\,t|
+  \le \texttt{numSpanningTrees}\,(\top\,\texttt{Fin}\,n)/n! \cdot A^n$
+($\texttt{mayerExpansionTerm\_abs\_le\_tree\_activity\_pow}$), which is exactly the spanning-tree
+majorant at $R = A$.  This is the cluster-expansion absolute convergence $\sum_n$ for general
+interacting polymers; the remaining M2 steps are $\log\Xi = \sum_n \texttt{mayerExpansionTerm}$
+(Kotecký--Preiss) and the high-temperature Ising specialisation $t = \tanh(\beta J)$.
+
 \end{document}
