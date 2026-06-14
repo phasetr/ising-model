@@ -14197,7 +14197,25 @@ $\texttt{clusterSumLE}/\texttt{treeSumLE}\,\mathrm{Incompat}\,z\,1\,p \le a\,p$
 (\texttt{clusterSumLE\_one\_le\_weight}, \texttt{treeSumLE\_one\_le\_weight}),
 using $\texttt{KPAdmissible.activity\_le\_weight}$ ($|z\,p| \le a\,p$). The
 inductive step (the labeled-tree generating-function argument) completes the
-theorem. Reference: O.~Penrose, in \emph{Statistical Mechanics} (1967);
+theorem.
+
+Finally, the \textbf{convergence step} is packaged
+(\texttt{AbstractPolymer/ClusterSumConvergence.lean}). Since
+$N \mapsto \texttt{clusterSumLE}\,\mathrm{Incompat}\,z\,N\,p$ is non-negative and
+monotone (\texttt{clusterSumLE\_monotone}), once it is bounded above — the
+all-order bound — it converges to its supremum
+$\texttt{rootedClusterSum}\,\mathrm{Incompat}\,z\,p
+:= \bigsqcup_N \texttt{clusterSumLE}\,\mathrm{Incompat}\,z\,N\,p$
+(\texttt{tendsto\_clusterSumLE\_atTop}, via \texttt{tendsto\_atTop\_ciSup}), and
+that supremum inherits any uniform truncation bound
+(\texttt{rootedClusterSum\_le}, \texttt{rootedClusterSum\_nonneg}). In particular,
+for a KP-admissible weight $a$, if
+$\texttt{clusterSumLE}\,\mathrm{Incompat}\,z\,N\,p \le a\,p$ for every $N$ then
+$\texttt{rootedClusterSum}\,\mathrm{Incompat}\,z\,p \le a\,p$
+(\texttt{rootedClusterSum\_le\_weight}). This reduces the entire remaining
+convergence theorem to the single analytic input (the all-order bound), leaving
+only the labeled-tree induction and the partition-scheme construction.
+Reference: O.~Penrose, in \emph{Statistical Mechanics} (1967);
 Glimm–Jaffe, 2nd ed., \S18.4--18.5; Kotecký–Preiss, Comm. Math. Phys. 103 (1986).
 
 \paragraph{Polymer free energy bounds and characterisations
