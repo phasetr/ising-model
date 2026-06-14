@@ -25066,8 +25066,8 @@ $n^{n-2}$ is \emph{not} needed: the weaker unconditional bound
 ($\texttt{numSpanningTrees\_top\_fin\_le\_pow\_pred}$, with the $\texttt{Fin}\,(n{+}1)$ form
 $\texttt{numSpanningTrees\_top\_fin\_succ\_le\_pow}$: $\le (n{+}1)^n$) already yields the
 finite radius of convergence $1/e$ for the Mayer series, since
-$\sum_n n^{n-1}/n!\cdot R^n$ converges for $R < 1/e$ (the ratio
-$(1+1/n)^{n-1}\,R \to e\,R$). The bound is proved by a \emph{parent-function injection}
+$\sum_n n^{n-1}/n!\cdot R^n$ converges absolutely for $|R| < 1/e$ (the ratio
+$(1+1/n)^{n-1}\,|R| \to e\,|R|$). The bound is proved by a \emph{parent-function injection}
 that avoids Pr\"ufer/Cayley entirely. Root the tree at the vertex $0$. Each non-root
 vertex $v$ has a unique \emph{parent} $\texttt{treeParent}\,(v)$: the unique neighbour
 with $\texttt{dist}\,(0,v) = \texttt{dist}\,(0,\texttt{treeParent}\,(v)) + 1$
