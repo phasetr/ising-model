@@ -14155,8 +14155,32 @@ $\texttt{alternatingConnectedSubgraphSum\_eq\_tree\_sum}$ (the collapse), and th
 headline $\texttt{abs\_alternatingConnectedSubgraphSum\_le\_card\_spanningTrees}$.
 Constructing an actual scheme is the remaining combinatorial milestone, mirroring
 the project's convention of pushing a hard infrastructural input into a single
-documented obligation. Reference: O.~Penrose, in \emph{Statistical Mechanics}
-(1967); Glimm–Jaffe, 2nd ed., \S18.4--18.5; Kotecký–Preiss, Comm. Math. Phys. 103 (1986).
+documented obligation.
+
+The tree-graph inequality is then lifted to the cluster sum
+(\texttt{AbstractPolymer/UrsellTreeBound.lean}). For a polymer sequence $\omega$,
+a partition scheme for $\texttt{seqGraph}\,\omega$ gives
+$|\texttt{ursellCoeff}\,\omega| \le
+\#\{\text{spanning trees of }\texttt{seqGraph}\,\omega\}/n!$
+(\texttt{ursellCoeff\_abs\_le\_card\_spanningTrees\_div\_factorial}). Assuming a
+\emph{family} of schemes — one per polymer-sequence incompatibility graph,
+packaged as $\texttt{UrsellTreeBound}\,\mathrm{Incompat}$ — the truncated rooted
+cluster sum is dominated termwise by the pure tree-count majorant
+\[
+  \texttt{treeSumLE}\,\mathrm{Incompat}\,z\,N\,p
+  = \sum_{n < N} \sum_{\omega \in \texttt{rootedClusters}\,n\,p}
+    \frac{\#\{\text{spanning trees of }\texttt{seqGraph}\,\omega\}}{(n+1)!}\,
+    |\texttt{clusterActivity}\,z\,\omega|,
+\]
+i.e.\ $\texttt{clusterSumLE}\,\mathrm{Incompat}\,z\,N\,p \le
+\texttt{treeSumLE}\,\mathrm{Incompat}\,z\,N\,p$
+(\texttt{clusterSumLE\_le\_treeSumLE}, with \texttt{treeSumLE\_nonneg} and
+\texttt{treeSumLE\_mono}). This reduces the analytic cluster-sum bound to a bound
+on $\texttt{treeSumLE}$ — the object of the remaining labeled-tree
+generating-function induction (FV §5.7) that closes the all-order theorem via
+$\texttt{KPAdmissible.weighted\_le}$. Reference: O.~Penrose, in
+\emph{Statistical Mechanics} (1967); Glimm–Jaffe, 2nd ed., \S18.4--18.5;
+Kotecký–Preiss, Comm. Math. Phys. 103 (1986).
 
 \paragraph{Polymer free energy bounds and characterisations
 (PRs~\#1517--\#1566).} A coordinated set of sharpenings was added
