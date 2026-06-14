@@ -14183,6 +14183,22 @@ convergence theorem (the per-polymer cluster-sum bound by induction, consuming
 the tree-graph inequality) remains for a later PR of \#3954. Reference:
 Glimm–Jaffe, 2nd ed., \S18.4--18.5; Kotecký–Preiss, Comm. Math. Phys. 103 (1986).
 
+\paragraph{General-$n$ complete-cluster bounds (\S18.4).}
+The fully-incompatible ("complete") part of the $n$-th Mayer term is bounded at
+every order (\texttt{MayerCompleteContribution.lean}, Issue \#3954). First,
+$\sum_{\omega} \prod_i t^{|\omega_i|} = (\sum_P t^{|P|})^n$
+(\texttt{sum\_clusterSeqActivity\_piFinset\_eq\_pow}, by
+\texttt{Finset.sum\_prod\_piFinset}). From the closed form
+$((-1)^{n-1}/n)\sum \mathrm{clusterSeqActivity}$ with $|(-1)^{n-1}/n| = 1/n$:
+\texttt{abs\_mayerExpansionTerm\_completeClusterSubsum\_le}
+($|\cdot| \le \tfrac1n \sum |\mathrm{clusterSeqActivity}|$), its $t \ge 0$ form
+\texttt{\_le\_of\_nonneg} ($\le \tfrac1n \sum \mathrm{clusterSeqActivity}$), and
+the clean closed bound
+\texttt{abs\_mayerExpansionTerm\_completeClusterSubsum\_le\_pow}
+($|\cdot| \le \tfrac1n (\sum_P t^{|P|})^n$ for $t \ge 0$), the dominant
+fully-incompatible contribution at every order. Reference: Glimm–Jaffe, 2nd ed.,
+\S18.4, pp.~378--386.
+
 \paragraph{Polymer free energy bounds and characterisations
 (PRs~\#1517--\#1566).} A coordinated set of sharpenings was added
 in this batch:
