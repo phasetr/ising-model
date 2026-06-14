@@ -14124,8 +14124,39 @@ $\texttt{clusterSumLE}\,\mathrm{Incompat}\,z\,N\,p = \sum_{n < N}
 connected length-$(n+1)$ sequences anchored at $p$, $\omega_0 = p$), records the
 order structure for the bounded-monotone convergence argument
 (\texttt{clusterSumLE\_nonneg}, \texttt{clusterSumLE\_mono} in $N$); the
-all-order theorem will bound it by $a\,p$ uniformly in $N$. Reference:
-Glimm–Jaffe, 2nd ed., \S18.4--18.5; Kotecký–Preiss, Comm. Math. Phys. 103 (1986).
+all-order theorem will bound it by $a\,p$ uniformly in $N$.
+
+The all-order bound rests on the \emph{Penrose tree-graph inequality}: for a
+finite connected graph $G$ on vertex set $V$,
+\[
+  \Bigl|\sum_{\substack{S \subseteq E(G)\\ (V,S)\ \mathrm{connected}}} (-1)^{|S|}\Bigr|
+  \;\le\; \#\{\text{spanning trees of } G\},
+\]
+i.e.\ $|\texttt{alternatingConnectedSubgraphSum}\,G| \le
+(\texttt{spanningTreeEdgeSubsets}\,G).\mathrm{card}$
+(\texttt{AbstractPolymer/TreeGraphInequality.lean}). Without it the signed sum,
+which has enormous cancellation, is uncontrollable (the trivial bound
+$2^{|E|}$ makes the cluster sum diverge). Penrose's proof is a \emph{partition
+scheme}: a vertex ordering assigns to each spanning tree $T$ a set
+$\texttt{addable}\,T$ of edges so that the Boolean intervals
+$[T, T \cup \texttt{addable}\,T]$ partition the connected spanning edge-subsets;
+over such an interval the alternating sum $\sum_{B \subseteq \texttt{addable}\,T}
+(-1)^{|T|+|B|}$ collapses to $(-1)^{|T|}\mathbf{1}[\texttt{addable}\,T = \emptyset]$
+(\texttt{real\_sum\_powerset\_neg\_one\_pow\_card}), so only spanning trees with
+no addable edge survive and the absolute value is bounded by the number of
+spanning trees. This file performs the \emph{reduction}: the hard combinatorial
+content is isolated as the single hypothesis
+$\texttt{PenrosePartitionScheme}\,G$ (fields \texttt{treeOf}, \texttt{addable},
+and the partition property $\texttt{treeOf}\,S = T \iff T \subseteq S \subseteq
+T \cup \texttt{addable}\,T$), and the entire Boolean-interval sign-cancellation
+argument is proven generally:
+$\texttt{fiber\_eq\_image}$ (each fiber is a powerset-image interval),
+$\texttt{alternatingConnectedSubgraphSum\_eq\_tree\_sum}$ (the collapse), and the
+headline $\texttt{abs\_alternatingConnectedSubgraphSum\_le\_card\_spanningTrees}$.
+Constructing an actual scheme is the remaining combinatorial milestone, mirroring
+the project's convention of pushing a hard infrastructural input into a single
+documented obligation. Reference: O.~Penrose, in \emph{Statistical Mechanics}
+(1967); Glimm–Jaffe, 2nd ed., \S18.4--18.5; Kotecký–Preiss, Comm. Math. Phys. 103 (1986).
 
 \paragraph{Polymer free energy bounds and characterisations
 (PRs~\#1517--\#1566).} A coordinated set of sharpenings was added
