@@ -14202,8 +14202,15 @@ size: \texttt{summable\_abs\_completeClusterSubsum} (magnitudes summable, by
 comparison with the geometric series $(\sum_P t^{|P|})^{n+1}$) and
 \texttt{summable\_completeClusterSubsum} (the subsums themselves, via
 \texttt{summable\_abs\_iff}) — the total fully-incompatible contribution to the
-cluster expansion converges in the explicit radius $\sum_P t^{|P|} < 1$.
-Reference: Glimm–Jaffe, 2nd ed., \S18.4--18.5, pp.~378--386.
+cluster expansion converges in the explicit radius $\sum_P t^{|P|} < 1$. The
+high-temperature Ising specialisation
+(\texttt{abs\_mayerExpansionTerm\_completeClusterSubsum\_le\_pow\_tanh},
+\texttt{summable\_abs\_completeClusterSubsum\_tanh},
+\texttt{summable\_completeClusterSubsum\_tanh}) substitutes the physical activity
+$t = \tanh(\beta J)$ (for $0 \le \beta J$, via \texttt{real\_tanh\_nonneg}): the
+dominant part of the Ising high-temperature cluster expansion converges whenever
+$\sum_P \tanh(\beta J)^{|P|} < 1$. Reference: Glimm–Jaffe, 2nd ed.,
+\S18.4--18.5, pp.~378--386.
 
 \paragraph{Polymer free energy bounds and characterisations
 (PRs~\#1517--\#1566).} A coordinated set of sharpenings was added

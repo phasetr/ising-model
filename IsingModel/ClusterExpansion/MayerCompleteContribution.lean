@@ -1,4 +1,5 @@
 import IsingModel.ClusterExpansion.MayerRootComponent
+import IsingModel.ClusterExpansion.MayerCore.ZeroBounds
 import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 
 /-!
@@ -483,5 +484,44 @@ theorem summable_completeClusterSubsum
         (fun ω => ∀ i j, i ≠ j → PolymersIncompatible (ω i) (ω j)),
         ursellCoefficient ω * clusterSeqActivity t ω) :=
   summable_abs_iff.mp (summable_abs_completeClusterSubsum G ht hS)
+
+/-- **High-temperature Ising complete-cluster bound** (GJ §18.4–18.5): the Ising
+specialisation of `abs_mayerExpansionTerm_completeClusterSubsum_le_pow` at the
+physical activity `t = tanh(βJ)` (for `0 ≤ βJ`).  The fully-incompatible part of
+the `n`-th cluster term is bounded by `(1/n)·(∑_P tanh(βJ)^|P|)^n`. -/
+theorem abs_mayerExpansionTerm_completeClusterSubsum_le_pow_tanh
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] {n : ℕ} (hn : 1 ≤ n) {β J : ℝ}
+    (hβJ : 0 ≤ β * J) :
+    |∑ ω ∈ (Fintype.piFinset (fun _ : Fin n => allPolymers G)).filter
+        (fun ω => ∀ i j, i ≠ j → PolymersIncompatible (ω i) (ω j)),
+        ursellCoefficient ω * clusterSeqActivity (Real.tanh (β * J)) ω|
+      ≤ (1 / (n : ℝ)) * (∑ P ∈ allPolymers G, Real.tanh (β * J) ^ P.card) ^ n :=
+  abs_mayerExpansionTerm_completeClusterSubsum_le_pow G hn (real_tanh_nonneg hβJ)
+
+/-- **High-temperature Ising complete-cluster summability (absolute)** (GJ
+§18.5): the Ising specialisation of `summable_abs_completeClusterSubsum` at the
+physical activity `tanh(βJ)`, valid when `∑_P tanh(βJ)^|P| < 1`. -/
+theorem summable_abs_completeClusterSubsum_tanh
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] {β J : ℝ} (hβJ : 0 ≤ β * J)
+    (hS : (∑ P ∈ allPolymers G, Real.tanh (β * J) ^ P.card) < 1) :
+    Summable (fun n => |∑ ω ∈ (Fintype.piFinset (fun _ : Fin n => allPolymers G)).filter
+        (fun ω => ∀ i j, i ≠ j → PolymersIncompatible (ω i) (ω j)),
+        ursellCoefficient ω * clusterSeqActivity (Real.tanh (β * J)) ω|) :=
+  summable_abs_completeClusterSubsum G (real_tanh_nonneg hβJ) hS
+
+/-- **High-temperature Ising complete-cluster summability** (GJ §18.5): for
+`0 ≤ βJ` and `∑_P tanh(βJ)^|P| < 1`, the fully-incompatible cluster contributions
+to the Ising high-temperature expansion are summable — the dominant part of the
+Ising cluster expansion converges in this explicit high-temperature regime. -/
+theorem summable_completeClusterSubsum_tanh
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] {β J : ℝ} (hβJ : 0 ≤ β * J)
+    (hS : (∑ P ∈ allPolymers G, Real.tanh (β * J) ^ P.card) < 1) :
+    Summable (fun n => ∑ ω ∈ (Fintype.piFinset (fun _ : Fin n => allPolymers G)).filter
+        (fun ω => ∀ i j, i ≠ j → PolymersIncompatible (ω i) (ω j)),
+        ursellCoefficient ω * clusterSeqActivity (Real.tanh (β * J)) ω) :=
+  summable_completeClusterSubsum G (real_tanh_nonneg hβJ) hS
 
 end IsingModel
