@@ -7,7 +7,9 @@ import Mathlib.Algebra.Order.BigOperators.Group.Finset
 A clean, Ising-independent abstraction for the cluster expansion of a finite
 polymer gas (Issue #3954), replacing the earlier Ising-edge-set-coupled
 scaffolding.  A *polymer model* is a finite type `P` of polymers with a
-symmetric decidable *incompatibility* relation and a real *activity* `z`.
+decidable *incompatibility* relation and a real *activity* `z`.  (Symmetry of
+the relation, used by the convergence theorem, is taken as an explicit
+hypothesis where needed rather than bundled here.)
 
 The **Kotecký–Preiss criterion** `KPAdmissible` — a weight `a : P → ℝ` with
 `∑_{q ≁ p} |z q|·exp(a q) ≤ a p` for every polymer `p` — is the standard
