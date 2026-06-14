@@ -24937,7 +24937,7 @@ Then
   \texttt{treeOf}\,S := S.\texttt{filter}\,(\lnot\,\texttt{reachableLT}\,S\,\cdot)
 \]
 is the Kruskal minimum spanning forest of $S$ --- keep an edge iff its endpoints are
-not yet joined by the strictly-smaller kept edges --- and
+not yet joined by the strictly-smaller edges of $S$ --- and
 \[
   \texttt{addable}\,G\,T := G.\texttt{edgeFinset}.\texttt{filter}\,
     (\cdot\notin T \wedge \texttt{reachableLT}\,T\,\cdot)
