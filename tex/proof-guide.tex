@@ -14196,8 +14196,14 @@ $((-1)^{n-1}/n)\sum \mathrm{clusterSeqActivity}$ with $|(-1)^{n-1}/n| = 1/n$:
 the clean closed bound
 \texttt{abs\_mayerExpansionTerm\_completeClusterSubsum\_le\_pow}
 ($|\cdot| \le \tfrac1n (\sum_P t^{|P|})^n$ for $t \ge 0$), the dominant
-fully-incompatible contribution at every order. Reference: Glimm–Jaffe, 2nd ed.,
-\S18.4, pp.~378--386.
+fully-incompatible contribution at every order. Finally, for $0 \le t$ and
+$\sum_P t^{|P|} < 1$, these contributions are \emph{summable} in the cluster
+size: \texttt{summable\_abs\_completeClusterSubsum} (magnitudes summable, by
+comparison with the geometric series $(\sum_P t^{|P|})^{n+1}$) and
+\texttt{summable\_completeClusterSubsum} (the subsums themselves, via
+\texttt{summable\_abs\_iff}) — the total fully-incompatible contribution to the
+cluster expansion converges in the explicit radius $\sum_P t^{|P|} < 1$.
+Reference: Glimm–Jaffe, 2nd ed., \S18.4--18.5, pp.~378--386.
 
 \paragraph{Polymer free energy bounds and characterisations
 (PRs~\#1517--\#1566).} A coordinated set of sharpenings was added

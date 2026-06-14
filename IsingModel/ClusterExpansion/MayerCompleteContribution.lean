@@ -443,4 +443,45 @@ theorem abs_mayerExpansionTerm_completeClusterSubsum_le_pow
   · exact le_refl _
   · exact clusterSeqActivity_nonneg ht ω
 
+/-- **Summability (absolute) of the complete-cluster contributions** (GJ §18.5):
+for `0 ≤ t` and total activity `∑_P t^|P| < 1`, the magnitudes of the
+fully-incompatible Mayer subsums are summable in the cluster size `n`.  Comparison
+with the geometric series: `|complete subsum_{n+1}| ≤ (∑_P t^|P|)^{n+1}` (from
+`abs_mayerExpansionTerm_completeClusterSubsum_le_pow` with `1/(n+1) ≤ 1`), and the
+geometric series in `S = ∑_P t^|P| < 1` is summable. -/
+theorem summable_abs_completeClusterSubsum
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] {t : ℝ} (ht : 0 ≤ t)
+    (hS : (∑ P ∈ allPolymers G, t ^ P.card) < 1) :
+    Summable (fun n => |∑ ω ∈ (Fintype.piFinset (fun _ : Fin n => allPolymers G)).filter
+        (fun ω => ∀ i j, i ≠ j → PolymersIncompatible (ω i) (ω j)),
+        ursellCoefficient ω * clusterSeqActivity t ω|) := by
+  set S := ∑ P ∈ allPolymers G, t ^ P.card with hSdef
+  have hS0 : 0 ≤ S := Finset.sum_nonneg (fun P _ => pow_nonneg ht _)
+  have hmaj : Summable (fun n : ℕ => S ^ (n + 1)) :=
+    (summable_nat_add_iff 1).mpr (summable_geometric_of_lt_one hS0 hS)
+  rw [← summable_nat_add_iff 1]
+  refine Summable.of_nonneg_of_le (fun n => abs_nonneg _) (fun n => ?_) hmaj
+  refine le_trans (abs_mayerExpansionTerm_completeClusterSubsum_le_pow G (by omega) ht) ?_
+  rw [← hSdef]
+  have hpow : (0 : ℝ) ≤ S ^ (n + 1) := pow_nonneg hS0 _
+  have hle1 : (1 : ℝ) / ((n + 1 : ℕ) : ℝ) ≤ 1 := by
+    rw [div_le_one (by positivity)]
+    push_cast; linarith [Nat.cast_nonneg (α := ℝ) n]
+  calc (1 / ((n + 1 : ℕ) : ℝ)) * S ^ (n + 1)
+      ≤ 1 * S ^ (n + 1) := mul_le_mul_of_nonneg_right hle1 hpow
+    _ = S ^ (n + 1) := one_mul _
+
+/-- **Summability of the complete-cluster contributions** (GJ §18.5): the
+fully-incompatible Mayer subsums themselves are summable in `n` (for `0 ≤ t`,
+`∑_P t^|P| < 1`), since absolute summability implies summability over `ℝ`. -/
+theorem summable_completeClusterSubsum
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] {t : ℝ} (ht : 0 ≤ t)
+    (hS : (∑ P ∈ allPolymers G, t ^ P.card) < 1) :
+    Summable (fun n => ∑ ω ∈ (Fintype.piFinset (fun _ : Fin n => allPolymers G)).filter
+        (fun ω => ∀ i j, i ≠ j → PolymersIncompatible (ω i) (ω j)),
+        ursellCoefficient ω * clusterSeqActivity t ω) :=
+  summable_abs_iff.mp (summable_abs_completeClusterSubsum G ht hS)
+
 end IsingModel
