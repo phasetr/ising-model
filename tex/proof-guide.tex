@@ -14244,9 +14244,13 @@ combinatorial input. Monotonicity (\texttt{spanningTreeEdgeSubsets\_mono},
 \mathrm{numSpanningTrees}\,G \le \mathrm{numSpanningTrees}\,H$, and
 \texttt{numSpanningTrees\_le\_complete}:
 $\mathrm{numSpanningTrees}\,G \le \mathrm{numSpanningTrees}\,(\top)$) reduces the
-general spanning-tree bound to the complete-graph (Cayley) case. Reference:
-Glimm–Jaffe, 2nd ed., \S18.4--18.5, pp.~378--386; O. Penrose (1967);
-A. Cayley (1889).
+general spanning-tree bound to the complete-graph (Cayley) case. Cayley's
+formula is verified for small $n$ by \texttt{decide}
+(\texttt{numSpanningTrees\_top\_fin\_\{one,two,three\}} $= 1, 1, 3 = n^{n-2}$; the
+general formula needs the Prüfer correspondence, not yet in Mathlib), and
+\texttt{numSpanningTrees\_le\_three} (every $3$-vertex graph has $\le 3$ spanning
+trees) follows by monotonicity. Reference: Glimm–Jaffe, 2nd ed., \S18.4--18.5,
+pp.~378--386; O. Penrose (1967); A. Cayley (1889).
 
 \paragraph{Polymer free energy bounds and characterisations
 (PRs~\#1517--\#1566).} A coordinated set of sharpenings was added
