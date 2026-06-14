@@ -93,4 +93,35 @@ theorem KPAdmissible.mono_activity (h : KPAdmissible Incompat z a)
   refine le_trans (Finset.sum_le_sum (fun q _ => ?_)) (h p)
   exact mul_le_mul_of_nonneg_right (hz q) (Real.exp_nonneg _)
 
+/-- **Master KP weighting lemma** (the key inductive step of Kotecký–Preiss):
+for *any* per-polymer weighting `g` dominated by `exp ∘ a` on the incompatible
+neighbours of `p`, the `g`-weighted activity sum is bounded by `a p`,
+`∑_{q ≁ p} |z q| · g q ≤ a p`.  Immediate from the KP criterion
+(`∑ |z q|·exp(a q) ≤ a p`) by `|z q|·g q ≤ |z q|·exp(a q)`.  The all-order
+convergence induction instantiates `g q` with the per-polymer cluster sum at `q`
+(shown `≤ exp(a q)` inductively), absorbing the sub-cluster contributions into
+`a p`. -/
+theorem KPAdmissible.weighted_le (h : KPAdmissible Incompat z a) (p : P)
+    {g : P → ℝ} (hg : ∀ q ∈ incompatNbhd Incompat p, g q ≤ Real.exp (a q)) :
+    ∑ q ∈ incompatNbhd Incompat p, |z q| * g q ≤ a p := by
+  refine le_trans (Finset.sum_le_sum (fun q hq => ?_)) (h p)
+  exact mul_le_mul_of_nonneg_left (hg q hq) (abs_nonneg _)
+
+/-- **Bare incompatible-activity sum bound** (KP): `∑_{q ≁ p} |z q| ≤ a p` — the
+`g = 1` specialisation of `weighted_le` (using `1 ≤ exp(a q)` from `0 ≤ a q`). -/
+theorem KPAdmissible.activity_sum_le (h : KPAdmissible Incompat z a) (p : P) :
+    ∑ q ∈ incompatNbhd Incompat p, |z q| ≤ a p := by
+  have hle : ∀ q ∈ incompatNbhd Incompat p, (1 : ℝ) ≤ Real.exp (a q) := by
+    intro q _
+    rw [← Real.exp_zero]; exact Real.exp_le_exp.mpr (h.weight_nonneg q)
+  simpa using h.weighted_le p hle
+
+/-- **Weight-tilted incompatible-activity sum bound** (KP, exp-absorption):
+`∑_{q ≁ p} |z q| · a q ≤ a p` — the `g = a` specialisation of `weighted_le`
+(using `a q ≤ exp(a q)`).  The mechanism by which the induction absorbs a
+sub-cluster's weight into the exponential. -/
+theorem KPAdmissible.activity_weight_sum_le (h : KPAdmissible Incompat z a) (p : P) :
+    ∑ q ∈ incompatNbhd Incompat p, |z q| * a q ≤ a p :=
+  h.weighted_le p (fun q _ => le_trans (by linarith) (Real.add_one_le_exp (a q)))
+
 end IsingModel.AbstractPolymer
