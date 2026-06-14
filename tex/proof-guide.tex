@@ -24930,8 +24930,8 @@ explicit key $\texttt{edgeKey}\,e := \texttt{toLex}\,(\texttt{Sym2.sortEquiv}\,e
 into the lexicographic pairs $V \times_\ell V$ (injective, $\texttt{edgeKey\_injective}$):
 edges $f$ are compared by $\texttt{edgeKey}\,f < \texttt{edgeKey}\,e$. An explicit key
 is necessary because mathlib's ambient \texttt{SetLike} order on $\mathtt{Sym2}\,V$ is
-only \emph{partial} (distinct edges are never comparable, which would make the Kruskal
-``strictly smaller'' test vacuous). For an edge-subset $X$ and edge $e$,
+only \emph{partial} (distinct non-diagonal graph edges are never comparable, which would make
+the Kruskal ``strictly smaller'' test vacuous). For an edge-subset $X$ and edge $e$,
 $\texttt{reachableLT}\,X\,e$ tests whether the endpoints of $e$ are already joined
 inside $\texttt{fromEdgeSet}$ of the edges $f$ of $X$ with
 $\texttt{edgeKey}\,f < \texttt{edgeKey}\,e$ (a symmetric vertex relation descended to

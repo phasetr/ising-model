@@ -16,5 +16,5 @@ convergence (Issue #3954).  Child modules:
 * `SpanningTree` — spanning-tree edge-subsets and their count.
 * `PartitionScheme` — the Kruskal `treeOf` retraction and `addable` edges.
 * `KruskalConnected` — `treeOf` preserves reachability, hence connectivity.
-* `KruskalAcyclic` — `treeOf` is acyclic; `treeOf S` is a spanning tree.
+* `KruskalAcyclic` — `treeOf` is acyclic; for connected spanning `S`, `treeOf S` is a spanning tree.
 -/
