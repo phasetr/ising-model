@@ -14110,7 +14110,11 @@ incompatibility graph on $\mathrm{Fin}\,n$ of a length-$n$ sequence, via
 $\texttt{clusterActivity}\,z\,\omega = \prod_i z(\omega_i)$; with the generic
 \texttt{alternatingConnectedSubgraphSum\_eq\_zero\_of\_not\_connected} yielding
 \texttt{ursellCoeff\_eq\_zero\_of\_not\_connected} (the cluster sum ranges over
-connected sequences) and \texttt{clusterActivity\_nonneg}. This is the foundation
+connected sequences) and \texttt{clusterActivity\_nonneg}. The $n = 1$ base case
+is provided by \texttt{alternatingConnectedSubgraphSum\_fin\_one} (generic: any
+one-vertex graph has connected-spanning alternating sum $1$),
+\texttt{ursellCoeff\_singleton} ($\phi^T = 1$ for a single polymer), and
+\texttt{clusterActivity\_singleton} ($= z\,p$). This is the foundation
 for the abstract all-order KP convergence theorem (the per-polymer cluster-sum
 bound), with the Ising adapter to follow once the theorem is proven. Reference:
 Glimm–Jaffe, 2nd ed., \S18.4--18.5; Kotecký–Preiss, Comm. Math. Phys. 103 (1986).
