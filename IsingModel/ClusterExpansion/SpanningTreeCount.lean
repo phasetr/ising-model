@@ -99,4 +99,34 @@ theorem numSpanningTrees_le_complete (G : SimpleGraph V) [DecidableRel G.Adj] :
     numSpanningTrees G ≤ numSpanningTrees (⊤ : SimpleGraph V) :=
   numSpanningTrees_mono le_top
 
+/-! ### Cayley's formula for small vertex counts (`numSpanningTrees K_n = n^{n-2}`)
+
+The general Cayley formula `numSpanningTrees (⊤) = |V|^{|V|-2}` is not yet in
+Mathlib (it needs the Prüfer correspondence); verified here by `decide` for
+`n ≤ 3`, seeding the general statement.  Together with `numSpanningTrees_mono`
+these give `numSpanningTrees G ≤ |V|^{|V|-2}` for every graph on `≤ 3` vertices. -/
+
+/-- **Cayley `n = 1`**: the complete graph on one vertex has one spanning tree
+(`= 1^{1-2} = 1`). -/
+theorem numSpanningTrees_top_fin_one :
+    numSpanningTrees (⊤ : SimpleGraph (Fin 1)) = 1 := by decide
+
+/-- **Cayley `n = 2`**: `K_2` has one spanning tree (`= 2^{2-2} = 1`). -/
+theorem numSpanningTrees_top_fin_two :
+    numSpanningTrees (⊤ : SimpleGraph (Fin 2)) = 1 := by decide
+
+/-- **Cayley `n = 3`**: `K_3` has three spanning trees — the three two-edge
+paths (`= 3^{3-2} = 3`). -/
+theorem numSpanningTrees_top_fin_three :
+    numSpanningTrees (⊤ : SimpleGraph (Fin 3)) = 3 := by decide
+
+/-- **Three-vertex spanning-tree bound**: every graph on three vertices has at
+most `3` spanning trees (`= numSpanningTrees K_3`, Cayley `3^{3-2}`), via
+monotonicity. -/
+theorem numSpanningTrees_le_three (G : SimpleGraph (Fin 3)) [DecidableRel G.Adj] :
+    numSpanningTrees G ≤ 3 :=
+  calc numSpanningTrees G
+      ≤ numSpanningTrees (⊤ : SimpleGraph (Fin 3)) := numSpanningTrees_le_complete G
+    _ = 3 := numSpanningTrees_top_fin_three
+
 end IsingModel
