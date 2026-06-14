@@ -370,4 +370,77 @@ theorem freeEnergy_le_log_two_plus_sum_tanh_pow
     linarith
   gcongr
 
+/-- **Total cluster-activity over `piFinset` is a power** (GJ §18.4): summing the
+cluster activity over *all* length-`n` polymer sequences factorises,
+`∑_{ω} ∏_i t^|ω_i| = (∑_P t^|P|)^n`, by `Finset.prod_univ_sum` (the product over
+the `n` coordinates of the per-coordinate activity sum). -/
+theorem sum_clusterSeqActivity_piFinset_eq_pow
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (n : ℕ) (t : ℝ) :
+    ∑ ω ∈ Fintype.piFinset (fun _ : Fin n => allPolymers G), clusterSeqActivity t ω
+      = (∑ P ∈ allPolymers G, t ^ P.card) ^ n := by
+  classical
+  unfold clusterSeqActivity
+  rw [Finset.sum_prod_piFinset (allPolymers G) (fun (_ : Fin n) P => t ^ P.card)]
+  rw [Finset.prod_const, Finset.card_univ, Fintype.card_fin]
+
+/-- **Absolute bound on the complete-cluster Mayer subsum** (GJ §18.4): the
+fully-incompatible part of the `n`-th Mayer term has absolute value at most
+`(1/n) · ∑ |clusterSeqActivity|`.  From the closed form
+`mayerExpansionTerm_completeClusterSubsum_eq` (the subsum is
+`((-1)^{n-1}/n)·∑ clusterSeqActivity`) with `|(-1)^{n-1}/n| = 1/n` and the
+triangle inequality on the activity sum. -/
+theorem abs_mayerExpansionTerm_completeClusterSubsum_le
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] {n : ℕ} (hn : 1 ≤ n) (t : ℝ) :
+    |∑ ω ∈ (Fintype.piFinset (fun _ : Fin n => allPolymers G)).filter
+        (fun ω => ∀ i j, i ≠ j → PolymersIncompatible (ω i) (ω j)),
+        ursellCoefficient ω * clusterSeqActivity t ω|
+      ≤ (1 / (n : ℝ)) * ∑ ω ∈ (Fintype.piFinset (fun _ : Fin n => allPolymers G)).filter
+          (fun ω => ∀ i j, i ≠ j → PolymersIncompatible (ω i) (ω j)),
+          |clusterSeqActivity t ω| := by
+  rw [mayerExpansionTerm_completeClusterSubsum_eq G hn t, abs_mul]
+  have habs : |((-1 : ℝ) ^ (n - 1) / (n : ℝ))| = 1 / (n : ℝ) := by
+    rw [abs_div, abs_pow, abs_neg, abs_one, one_pow, Nat.abs_cast]
+  rw [habs]
+  gcongr
+  exact Finset.abs_sum_le_sum_abs _ _
+
+/-- **Complete-cluster Mayer subsum bound for non-negative activity** (GJ §18.4):
+for `0 ≤ t` the activity factors are non-negative, so the bound simplifies to
+`(1/n) · ∑ clusterSeqActivity` (absolute values dropped). -/
+theorem abs_mayerExpansionTerm_completeClusterSubsum_le_of_nonneg
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] {n : ℕ} (hn : 1 ≤ n) {t : ℝ} (ht : 0 ≤ t) :
+    |∑ ω ∈ (Fintype.piFinset (fun _ : Fin n => allPolymers G)).filter
+        (fun ω => ∀ i j, i ≠ j → PolymersIncompatible (ω i) (ω j)),
+        ursellCoefficient ω * clusterSeqActivity t ω|
+      ≤ (1 / (n : ℝ)) * ∑ ω ∈ (Fintype.piFinset (fun _ : Fin n => allPolymers G)).filter
+          (fun ω => ∀ i j, i ≠ j → PolymersIncompatible (ω i) (ω j)),
+          clusterSeqActivity t ω := by
+  refine le_trans (abs_mayerExpansionTerm_completeClusterSubsum_le G hn t) ?_
+  gcongr with ω _
+  exact (abs_of_nonneg (clusterSeqActivity_nonneg ht ω)).le
+
+/-- **Closed-form bound on the complete-cluster Mayer subsum** (GJ §18.4): for
+`0 ≤ t`, the fully-incompatible part of the `n`-th Mayer term is bounded by
+`(1/n)·(∑_P t^|P|)^n`.  The complete filter is enlarged to the full `piFinset`
+(non-negative terms) and the total activity sum is the power
+`sum_clusterSeqActivity_piFinset_eq_pow` — a clean closed bound on the dominant
+(fully-incompatible) cluster contribution at every order. -/
+theorem abs_mayerExpansionTerm_completeClusterSubsum_le_pow
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] {n : ℕ} (hn : 1 ≤ n) {t : ℝ} (ht : 0 ≤ t) :
+    |∑ ω ∈ (Fintype.piFinset (fun _ : Fin n => allPolymers G)).filter
+        (fun ω => ∀ i j, i ≠ j → PolymersIncompatible (ω i) (ω j)),
+        ursellCoefficient ω * clusterSeqActivity t ω|
+      ≤ (1 / (n : ℝ)) * (∑ P ∈ allPolymers G, t ^ P.card) ^ n := by
+  refine le_trans (abs_mayerExpansionTerm_completeClusterSubsum_le_of_nonneg G hn ht) ?_
+  gcongr
+  rw [← sum_clusterSeqActivity_piFinset_eq_pow G n t, Finset.sum_filter]
+  refine Finset.sum_le_sum (fun ω _ => ?_)
+  split_ifs with hp
+  · exact le_refl _
+  · exact clusterSeqActivity_nonneg ht ω
+
 end IsingModel
