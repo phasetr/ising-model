@@ -25017,8 +25017,23 @@ $\texttt{treeOf}\,S = T \leftrightarrow T \subseteq S \wedge S \subseteq T \cup 
 ($\texttt{treeOf\_eq\_iff\_subset\_union\_addable}$) and the fiber identity
 $\{S \in \texttt{connectedSpanningEdgeSubsets}\,G \mid \texttt{treeOf}\,S = T\}
 = \texttt{booleanInterval}\,T\,(T \cup \texttt{addable}\,G\,T)$
-($\texttt{treeOf\_fiber\_eq\_booleanInterval}$). The Boolean-interval collapse to
-$|\texttt{alternatingConnectedSubgraphSum}\,G| \le \texttt{numSpanningTrees}\,G$ (and then the
-Kotecký--Preiss tree-sum induction) build on this.
+($\texttt{treeOf\_fiber\_eq\_booleanInterval}$).
+
+\paragraph{The Penrose tree-graph inequality
+(\texttt{ClusterExpansion/Penrose/TreeGraphBound.lean}).}
+Summing the alternating connected-subgraph sum fiberwise over $\texttt{treeOf}$
+($\texttt{Finset.sum\_fiberwise\_of\_maps\_to}$, with $\texttt{treeOf}$ mapping connected
+spanning edge-subsets into spanning trees) and rewriting each fiber as a Boolean interval,
+each interval contributes $0$ when its addable part is nonempty
+($(T \cup \texttt{addable}\,G\,T) \setminus T = \texttt{addable}\,G\,T$ via
+$\texttt{addable\_disjoint}$) and $\pm 1$ when it is empty
+($\texttt{abs\_sum\_booleanInterval\_addable\_le\_one}$). Hence the unconditional
+\emph{Penrose tree-graph inequality}
+\[
+  |\texttt{alternatingConnectedSubgraphSum}\,G| \;\le\; \texttt{numSpanningTrees}\,G
+\]
+($\texttt{abs\_alternatingConnectedSubgraphSum\_le\_numSpanningTrees}$), completing the
+from-scratch partition-scheme route. The Kotecký--Preiss tree-sum induction (absolute
+convergence of the cluster expansion) builds on this bound.
 
 \end{document}
