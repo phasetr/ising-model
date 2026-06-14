@@ -14178,9 +14178,27 @@ i.e.\ $\texttt{clusterSumLE}\,\mathrm{Incompat}\,z\,N\,p \le
 \texttt{treeSumLE\_mono}). This reduces the analytic cluster-sum bound to a bound
 on $\texttt{treeSumLE}$ — the object of the remaining labeled-tree
 generating-function induction (FV §5.7) that closes the all-order theorem via
-$\texttt{KPAdmissible.weighted\_le}$. Reference: O.~Penrose, in
-\emph{Statistical Mechanics} (1967); Glimm–Jaffe, 2nd ed., \S18.4--18.5;
-Kotecký–Preiss, Comm. Math. Phys. 103 (1986).
+$\texttt{KPAdmissible.weighted\_le}$.
+
+The \textbf{base case} $N = 1$ of that truncation induction is established
+completely (\texttt{AbstractPolymer/ClusterSumBase.lean}). On $\mathrm{Fin}\,1$
+every graph is edgeless, so the empty edge-set is the unique connected spanning
+edge-subset and the unique spanning tree
+(\texttt{connectedSpanningEdgeSubsets\_fin\_one},
+\texttt{spanningTreeEdgeSubsets\_fin\_one}); and the only size-one cluster rooted
+at $p$ is the constant sequence
+($\texttt{rootedClusters}\,\mathrm{Incompat}\,0\,p = \{\,\lambda\_.\,p\,\}$,
+\texttt{rootedClusters\_zero}). Hence
+$\texttt{clusterSumLE}\,\mathrm{Incompat}\,z\,1\,p =
+\texttt{treeSumLE}\,\mathrm{Incompat}\,z\,1\,p = |z\,p|$
+(\texttt{clusterSumLE\_one}, \texttt{treeSumLE\_one}), and for a KP-admissible
+weight $a$ with self-incompatible polymers,
+$\texttt{clusterSumLE}/\texttt{treeSumLE}\,\mathrm{Incompat}\,z\,1\,p \le a\,p$
+(\texttt{clusterSumLE\_one\_le\_weight}, \texttt{treeSumLE\_one\_le\_weight}),
+using $\texttt{KPAdmissible.activity\_le\_weight}$ ($|z\,p| \le a\,p$). The
+inductive step (the labeled-tree generating-function argument) completes the
+theorem. Reference: O.~Penrose, in \emph{Statistical Mechanics} (1967);
+Glimm–Jaffe, 2nd ed., \S18.4--18.5; Kotecký–Preiss, Comm. Math. Phys. 103 (1986).
 
 \paragraph{Polymer free energy bounds and characterisations
 (PRs~\#1517--\#1566).} A coordinated set of sharpenings was added
