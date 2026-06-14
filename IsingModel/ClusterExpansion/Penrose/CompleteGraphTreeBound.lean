@@ -25,9 +25,10 @@ injection of the spanning trees into `Fin n → Fin (n + 1)`, whence
 `numSpanningTrees (⊤ : SimpleGraph (Fin (n + 1))) ≤ (n + 1) ^ n`.
 
 ## References
-- Glimm–Jaffe, *Quantum Physics*, 2nd ed., §18.4, pp. 378–386.
+- Glimm–Jaffe, *Quantum Physics*, 2nd ed., §18.4 ("Convergence: The Main Ideas",
+  p. 332) – §18.5 (p. 335).
 - A. Cayley (1889), "A theorem on trees".
-- Friedli–Velenik, *Statistical Mechanics of Lattice Systems*, §5.7.
+- Friedli–Velenik, *Statistical Mechanics of Lattice Systems* (2017), §5.7.
 -/
 
 namespace IsingModel.Penrose
