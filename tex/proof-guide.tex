@@ -14116,7 +14116,15 @@ one-vertex graph has connected-spanning alternating sum $1$),
 \texttt{ursellCoeff\_singleton} ($\phi^T = 1$ for a single polymer), and
 \texttt{clusterActivity\_singleton} ($= z\,p$). This is the foundation
 for the abstract all-order KP convergence theorem (the per-polymer cluster-sum
-bound), with the Ising adapter to follow once the theorem is proven. Reference:
+bound), with the Ising adapter to follow once the theorem is proven. The
+truncated rooted cluster sum (\texttt{AbstractPolymer/ClusterSum.lean}),
+$\texttt{clusterSumLE}\,\mathrm{Incompat}\,z\,N\,p = \sum_{n < N}
+\sum_{\omega \in \texttt{rootedClusters}\,n\,p}
+|\texttt{ursellCoeff}\,\omega|\,|\texttt{clusterActivity}\,z\,\omega|$ (over
+connected length-$(n+1)$ sequences anchored at $p$, $\omega_0 = p$), records the
+order structure for the bounded-monotone convergence argument
+(\texttt{clusterSumLE\_nonneg}, \texttt{clusterSumLE\_mono} in $N$); the
+all-order theorem will bound it by $a\,p$ uniformly in $N$. Reference:
 Glimm–Jaffe, 2nd ed., \S18.4--18.5; Kotecký–Preiss, Comm. Math. Phys. 103 (1986).
 
 \paragraph{Polymer free energy bounds and characterisations
