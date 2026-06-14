@@ -14085,26 +14085,6 @@ truncation through order $3$, \texttt{mayerPartialSum\_three\_eq}:
 \]
 Reference: Glimm–Jaffe, 2nd ed., \S18.4, pp.~378--386.
 
-\paragraph{The Kotecký–Preiss criterion (\S18.4--18.5, restart).}
-The convergence criterion for the polymer cluster expansion
-(\texttt{ClusterExpansion/KoteckyPreiss.lean}, Issue \#3954). For a finite
-polymer type $P$ with decidable incompatibility relation $\mathrm{Incompat}$ and
-real activity $z$, a weight $a : P \to \mathbb{R}$ is \emph{Kotecký–Preiss
-admissible} (\texttt{KPAdmissible}) when
-$\sum_{q \sim p} |z\,q|\,e^{a q} \le a\,p$ for every $p$, the sum over the
-incompatibility neighbourhood \texttt{incompatNbhd}. Its unconditional structural
-consequences are proved: \texttt{KPAdmissible.weight\_nonneg} ($0 \le a\,p$);
-the master inequality \texttt{KPAdmissible.weighted\_le} (for any
-$g \le e^{a}$ pointwise, $\sum_{q \sim p} |z\,q|\,g\,q \le a\,p$ — the step
-absorbing a per-polymer quantity bounded by $e^{a}$ into $a\,p$);
-\texttt{KPAdmissible.activity\_le\_weight} ($|z\,p| \le a\,p$ under
-self-incompatibility); \texttt{KPAdmissible.mono\_activity};
-\texttt{KPAdmissible.activity\_sum\_le} ($g = 1$); and
-\texttt{KPAdmissible.activity\_weight\_sum\_le} ($g = a$). These are the algebraic
-ingredients of the all-order convergence argument, proved without auxiliary
-hypotheses. Reference: Glimm–Jaffe, 2nd ed., \S18.4--18.5; Friedli–Velenik,
-\S5.7; Kotecký–Preiss, Comm. Math. Phys. 103 (1986).
-
 \paragraph{Polymer free energy bounds and characterisations
 (PRs~\#1517--\#1566).} A coordinated set of sharpenings was added
 in this batch:
