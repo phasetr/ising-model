@@ -48,30 +48,31 @@ def liftSym2Prop (P : V → V → Prop) (hsym : ∀ a b, P a b ↔ P b a) : Sym2
 theorem liftSym2Prop_mk (P : V → V → Prop) (hsym : ∀ a b, P a b ↔ P b a) (a b : V) :
     liftSym2Prop P hsym s(a, b) = P a b := rfl
 
-/-- **The lexicographic linear order on edges** `Sym2 V` induced from `[LinearOrder V]`:
-each edge is sorted into an ordered pair (`Sym2.sortEquiv`) and compared
-lexicographically.  Provided as a `def` (not a global instance) to avoid an orphan
-instance on the mathlib type `Sym2 V`; callers install it locally with `letI`. -/
-@[reducible]
-def sym2LexLinearOrder (V : Type*) [LinearOrder V] : LinearOrder (Sym2 V) :=
-  LinearOrder.lift'
-    (fun e : Sym2 V => (toLex (Sym2.sortEquiv e : { p : V × V // p.1 ≤ p.2 }).val : V ×ₗ V))
-    (fun _ _ hab => Sym2.sortEquiv.injective (Subtype.ext (toLex.injective hab)))
+/-- **Edge key**: a strict-*total*-order key for edges, injecting `Sym2 V` into the
+lexicographically-ordered pairs `V ×ₗ V` (each edge's endpoints sorted by `≤`).  Edges
+are compared via `edgeKey f < edgeKey e`.  This is essential because the ambient
+`SetLike` order on `Sym2 V` (mathlib's `instPartialOrder`) is only *partial* — two
+distinct edges are never comparable under it — which would make the Kruskal "strictly
+smaller" test vacuous; `edgeKey` supplies a genuine total order. -/
+def edgeKey [LinearOrder V] (e : Sym2 V) : V ×ₗ V :=
+  toLex (Sym2.sortEquiv e : { p : V × V // p.1 ≤ p.2 }).val
+
+/-- **`edgeKey` is injective**: distinct edges have distinct keys. -/
+theorem edgeKey_injective [LinearOrder V] : Function.Injective (edgeKey (V := V)) :=
+  fun _ _ hab => Sym2.sortEquiv.injective (Subtype.ext (toLex.injective hab))
 
 /-- **Strict-prefix reachability of an edge's endpoints**: for an edge-subset `X` and
 an edge `e`, `reachableLT X e` holds iff the endpoints of `e` are joined within the
-graph spanned by the edges of `X` strictly below `e` (in the `sym2LexLinearOrder`).
-This is the Kruskal "already-connected" test: `e` is redundant in `X` iff
-`reachableLT X e`.  Symmetric in the endpoints, so it descends to `Sym2 V`. -/
-noncomputable def reachableLT [LinearOrder V] (X : Finset (Sym2 V)) (e : Sym2 V) : Prop := by
-  classical
-  letI : LinearOrder (Sym2 V) := sym2LexLinearOrder V
-  exact
-    liftSym2Prop
-      (fun a b =>
-        (SimpleGraph.fromEdgeSet (↑(X.filter (fun f : Sym2 V => f < e)) : Set (Sym2 V))).Reachable
-          a b)
-      (fun _ _ => ⟨fun h => h.symm, fun h => h.symm⟩) e
+graph spanned by the edges `f` of `X` strictly below `e` in the edge order
+(`edgeKey f < edgeKey e`).  This is the Kruskal "already-connected" test: `e` is
+redundant in `X` iff `reachableLT X e`.  Symmetric in the endpoints, so it descends
+to `Sym2 V`. -/
+def reachableLT [LinearOrder V] (X : Finset (Sym2 V)) (e : Sym2 V) : Prop :=
+  liftSym2Prop
+    (fun a b =>
+      (SimpleGraph.fromEdgeSet
+        (↑(X.filter (fun f => edgeKey f < edgeKey e)) : Set (Sym2 V))).Reachable a b)
+    (fun _ _ => ⟨fun h => h.symm, fun h => h.symm⟩) e
 
 /-- **Kruskal spanning forest** `treeOf S` of an edge-subset `S`: keep the edges of
 `S` whose endpoints are not already joined by the strictly-smaller kept edges. -/
