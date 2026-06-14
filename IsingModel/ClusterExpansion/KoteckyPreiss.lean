@@ -207,18 +207,37 @@ theorem abs_ursellCoefficient_fin_three_le_third
     Matrix.cons_val_two, Matrix.tail_cons]
   split_ifs <;> norm_num
 
+/-- **Master KP weighting lemma**: for *any* per-polymer weighting `g`
+dominated by `exp ∘ a` on the incompatible polymers, the `g`-weighted activity
+sum is bounded by `a P`, `∑_{Q ≁ P} |z Q| · g Q ≤ a P`.  Immediate from the KP
+criterion (`∑ |z Q|·exp(a Q) ≤ a P`) by `|z Q|·g Q ≤ |z Q|·exp(a Q)`.  This is
+the exact form consumed by the Kotecký–Preiss induction: with `g Q` the
+per-polymer cluster sum at `Q` (which the induction shows is `≤ exp(a Q)`), it
+absorbs the sub-cluster contributions into `a P`.  Specialises to
+`activity_sum_le_weight` (`g = 1`) and `activity_weight_sum_le_weight`
+(`g = a`). -/
+theorem KPAdmissible.weighted_activity_sum_le_weight
+    {G : SimpleGraph ι} [Fintype G.edgeSet] {z a : Finset (Sym2 ι) → ℝ}
+    (h : KPAdmissible G z a) {P : Finset (Sym2 ι)} (hP : P ∈ allPolymers G)
+    {g : Finset (Sym2 ι) → ℝ}
+    (hg : ∀ Q ∈ (allPolymers G).filter (fun Q => PolymersIncompatible P Q),
+      g Q ≤ Real.exp (a Q)) :
+    ∑ Q ∈ (allPolymers G).filter (fun Q => PolymersIncompatible P Q), |z Q| * g Q ≤ a P := by
+  refine le_trans (Finset.sum_le_sum (fun Q hQ => ?_)) (h P hP)
+  exact mul_le_mul_of_nonneg_left (hg Q hQ) (abs_nonneg _)
+
 /-- **Exp-absorbing inductive lemma** (KP): the `a`-weighted incompatible-activity
 sum is still bounded by the weight, `∑_{Q ≁ P} |z Q| · a Q ≤ a P`.  Since
 `a Q ≤ exp(a Q)` (`Real.add_one_le_exp`), each term `|z Q|·a Q ≤ |z Q|·exp(a Q)`,
-and the KP criterion bounds that sum by `a P`.  This is the mechanism by which the
-Kotecký–Preiss induction absorbs a sub-cluster's weight into the exponential. -/
+and the KP criterion bounds that sum by `a P`.  The `g = a` specialisation of
+`weighted_activity_sum_le_weight`; the mechanism by which the Kotecký–Preiss
+induction absorbs a sub-cluster's weight into the exponential. -/
 theorem KPAdmissible.activity_weight_sum_le_weight
     {G : SimpleGraph ι} [Fintype G.edgeSet] {z a : Finset (Sym2 ι) → ℝ}
     (h : KPAdmissible G z a) {P : Finset (Sym2 ι)} (hP : P ∈ allPolymers G) :
-    ∑ Q ∈ (allPolymers G).filter (fun Q => PolymersIncompatible P Q), |z Q| * a Q ≤ a P := by
-  refine le_trans (Finset.sum_le_sum (fun Q _ => ?_)) (h P hP)
-  have hle : a Q ≤ Real.exp (a Q) := le_trans (by linarith) (Real.add_one_le_exp (a Q))
-  exact mul_le_mul_of_nonneg_left hle (abs_nonneg _)
+    ∑ Q ∈ (allPolymers G).filter (fun Q => PolymersIncompatible P Q), |z Q| * a Q ≤ a P :=
+  h.weighted_activity_sum_le_weight hP
+    (fun Q _ => le_trans (by linarith) (Real.add_one_le_exp (a Q)))
 
 /-- **Order-3 endpoint-path cluster contribution bound** (KP, GJ §18.4): the
 order-3 contribution from clusters `{P, Q, R}` with `P ≁ Q` and `Q ≁ R` (a path
