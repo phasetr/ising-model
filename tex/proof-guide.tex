@@ -24922,4 +24922,35 @@ scheme assigning each connected spanning subgraph its spanning tree with the
 addable-edge interval property, then the Kotecký--Preiss tree-sum induction) build
 on this foundation.
 
+\paragraph{The partition scheme: \texttt{treeOf} and \texttt{addable}
+(\texttt{ClusterExpansion/Penrose/PartitionScheme.lean}).}
+The genuine combinatorial core is constructed by the edge-order Kruskal /
+reachability rule, with no hypothesis structures. Fix a linear order on the edges
+$\mathtt{Sym2}\,V$ induced from $[\texttt{LinearOrder}\ V]$ by sorting each edge into
+an ordered pair ($\texttt{Sym2.sortEquiv}$) and comparing lexicographically
+($\texttt{sym2LexLinearOrder}$, via $\texttt{LinearOrder.lift'}$). For an edge-subset
+$X$ and edge $e$, $\texttt{reachableLT}\,X\,e$ tests whether the endpoints of $e$ are
+already joined inside $\texttt{fromEdgeSet}$ of the edges of $X$ strictly below $e$
+(a symmetric vertex relation descended to $\mathtt{Sym2}\,V$ by $\texttt{liftSym2Prop}$).
+Then
+\[
+  \texttt{treeOf}\,S := S.\texttt{filter}\,(\lnot\,\texttt{reachableLT}\,S\,\cdot)
+\]
+is the Kruskal minimum spanning forest of $S$ --- keep an edge iff its endpoints are
+not yet joined by the strictly-smaller edges of $S$ --- and
+\[
+  \texttt{addable}\,G\,T := G.\texttt{edgeFinset}.\texttt{filter}\,
+    (\cdot\notin T \wedge \texttt{reachableLT}\,T\,\cdot)
+\]
+collects the non-$T$ edges of $G$ that are the maximum edge of the fundamental cycle
+they form with $T$, i.e.\ the edges freely addable to a spanning tree $T$ inside its
+Boolean interval. This PR proves the structural lemmas $\texttt{treeOf}\,S\subseteq S$
+($\texttt{treeOf\_subset}$), $\texttt{treeOf}\,S\subseteq G.\texttt{edgeFinset}$,
+$\texttt{addable}\,G\,T\subseteq G.\texttt{edgeFinset}$, and
+$\texttt{Disjoint}\,T\,(\texttt{addable}\,G\,T)$, together with the membership
+characterisations. The Kruskal correctness ($\texttt{treeOf}\,S$ is a spanning tree)
+and the interval-partition property
+$\texttt{treeOf}\,S = T \leftrightarrow T\subseteq S\subseteq T\cup\texttt{addable}\,G\,T$
+follow in later PRs.
+
 \end{document}
