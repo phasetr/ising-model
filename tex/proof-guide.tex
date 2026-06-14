@@ -14229,8 +14229,18 @@ tree-graph majorant $\sum_n (n^{n-2}/n!)S^n$, by comparison). Combined with
 \texttt{summable\_mayerExpansionTerm\_of\_ursell\_le} ($M_n = n^{n-2}/n!$), the
 \emph{only} input now missing for full cluster-expansion convergence (radius
 $\sum_P t^{|P|} < 1/e$) is the tree-graph (Penrose) Ursell bound
-$|\phi^T(\omega)| \le n^{n-2}/n!$ itself. Reference: Glimm–Jaffe, 2nd ed.,
-\S18.4--18.5, pp.~378--386.
+$|\phi^T(\omega)| \le n^{n-2}/n!$ itself. The spanning-tree count infrastructure
+for that bound is set up in \texttt{ClusterExpansion/SpanningTreeCount.lean}:
+\texttt{spanningTreeEdgeSubsets}\,$G$ (connected spanning edge-subsets with
+$|V|-1$ edges) and \texttt{numSpanningTrees}\,$G$, with membership,
+subset-of-connected-spanning, and the bounds
+\texttt{numSpanningTrees\_le\_connectedSpanningEdgeSubsets\_card} and
+\texttt{numSpanningTrees\_le\_two\_pow}
+($\mathrm{numSpanningTrees}\,G \le 2^{|E|}$). The Penrose inequality
+$|\mathrm{alternatingConnectedSubgraphSum}\,G| \le \mathrm{numSpanningTrees}\,G$
+(and Cayley $\mathrm{numSpanningTrees}\,K_n = n^{n-2}$) is the remaining hard
+combinatorial input. Reference: Glimm–Jaffe, 2nd ed., \S18.4--18.5,
+pp.~378--386; O. Penrose (1967); A. Cayley (1889).
 
 \paragraph{Polymer free energy bounds and characterisations
 (PRs~\#1517--\#1566).} A coordinated set of sharpenings was added
