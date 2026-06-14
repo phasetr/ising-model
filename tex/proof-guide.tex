@@ -24953,4 +24953,25 @@ and the interval-partition property
 $\texttt{treeOf}\,S = T \leftrightarrow T\subseteq S\subseteq T\cup\texttt{addable}\,G\,T$
 follow in later PRs.
 
+\paragraph{Kruskal connectivity
+(\texttt{ClusterExpansion/Penrose/KruskalConnected.lean}).}
+The Kruskal forest preserves reachability. With the scoped edge order, write
+$\texttt{edgesLT}\,X\,e$ for the edges of $X$ strictly below $e$, so
+$\texttt{reachableLT}\,X\,s(a,b)$ unfolds to reachability of $a,b$ inside
+$\texttt{fromEdgeSet}\,(\texttt{edgesLT}\,X\,s(a,b))$
+($\texttt{reachableLT\_iff\_edgesLT}$). A transport lemma
+$\texttt{reachable\_mono\_of\_edges\_reachable}$ (if every edge of $S$ has
+$T$-reachable endpoints then $S$-reachability descends to $T$, by
+$\texttt{reachable\_iff\_reflTransGen}$ and $\texttt{ReflTransGen}$ induction) feeds
+the Kruskal key lemma $\texttt{reachable\_endpoints\_of\_mem\_treeOf}$: every edge
+of $S$ has $\texttt{treeOf}\,S$-reachable endpoints, by strong induction over the
+edge order ($\texttt{WellFoundedLT.induction}$) --- a kept edge yields an adjacency,
+a dropped edge $e$ has its endpoints joined by strictly-smaller $S$-edges, each
+$\texttt{treeOf}$-reachable by the induction hypothesis. Hence the global
+reachability equivalence ($\texttt{reachable\_treeOf\_iff\_reachable}$), the
+connectivity $\texttt{connected\_treeOf\_of\_connected}$, and the bookkeeping helper
+$(\texttt{fromEdgeSet}\,(\texttt{treeOf}\,S)).\texttt{edgeFinset} = \texttt{treeOf}\,S$
+($\texttt{edgeFinset\_fromEdgeSet\_treeOf}$). Acyclicity, the $|V|-1$ edge count,
+and the headline $\texttt{treeOf\_mem\_spanningTreeEdgeSubsets}$ follow in a later PR.
+
 \end{document}
