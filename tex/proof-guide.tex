@@ -24872,4 +24872,54 @@ $(2r+1)^{d-1} \le 3^{d-1} r^{d-1}$ (for $r\ge1$),
 \]
 Reference: Glimm--Jaffe, 2nd ed., §17.8, pp.~316--318.
 
+\section{Penrose tree-graph inequality (GJ \S18.4--18.5, Issue \#3954)}
+
+The general interacting cluster-expansion convergence (Glimm--Jaffe~\cite{glimm-jaffe}, \S18.4--18.5,
+pp.~378--386; Friedli--Velenik~\cite{friedli-velenik}, \S5.7) reduces, via the
+majorant summability already in place, to the single unconditional combinatorial
+input --- the \emph{Penrose tree-graph (Ursell) inequality}
+\[
+  \bigl|\,\texttt{alternatingConnectedSubgraphSum}\,G\,\bigr|
+    \;\le\; \texttt{numSpanningTrees}\,G ,
+\]
+where the left side is $\sum_{S\ \text{connected spanning}} (-1)^{|S|}$ and the
+right side counts the spanning trees of $G$. The earlier development reduced this
+to an unproven hypothesis structure \texttt{PenrosePartitionScheme} and was deleted;
+the present route commits \emph{only unconditionally-true} statements.
+
+\paragraph{Boolean-interval cancellation
+(\texttt{ClusterExpansion/Penrose/BooleanInterval.lean}).}
+Penrose's argument partitions the connected spanning edge-subsets of $G$ into
+Boolean intervals $[\mathit{lo},\mathit{hi}] = \{S \mid \mathit{lo}\subseteq S\subseteq \mathit{hi}\}$,
+one per spanning tree $\mathit{lo}$ with \emph{addable} part $\mathit{hi}\setminus\mathit{lo}$.
+Parametrising $S = \mathit{lo}\cup U$ with $U\subseteq \mathit{hi}\setminus\mathit{lo}$
+(\texttt{booleanInterval\_eq\_image\_powerset\_sdiff}, injective since $\mathit{lo}$ and
+$U$ are disjoint) and splitting $|\mathit{lo}\cup U| = |\mathit{lo}| + |U|$ gives the
+factorisation
+\[
+  \sum_{\mathit{lo}\subseteq S\subseteq \mathit{hi}} (-1)^{|S|}
+    \;=\; (-1)^{|\mathit{lo}|}\sum_{U\subseteq \mathit{hi}\setminus\mathit{lo}} (-1)^{|U|}
+\]
+(\texttt{sum\_booleanInterval\_neg\_one\_pow\_card\_int}/\texttt{\_real}). By
+$\sum_{U\subseteq X}(-1)^{|U|} = \mathbf 1[X=\varnothing]$
+(\texttt{Finset.sum\_powerset\_neg\_one\_pow\_card}) the interval sum
+\emph{vanishes} when $\mathit{hi}\setminus\mathit{lo}\ne\varnothing$
+(\texttt{\_of\_sdiff\_nonempty}) and equals the survivor $(-1)^{|\mathit{lo}|}$ when
+$\mathit{hi}=\mathit{lo}$ (\texttt{\_of\_eq}), in both $\mathbb Z$ and $\mathbb R$.
+This is the sign-cancellation at the heart of the Penrose collapse: only the
+trees with no addable edge survive, each contributing $\pm1$.
+
+\paragraph{Spanning-tree edge-subsets
+(\texttt{ClusterExpansion/Penrose/SpanningTree.lean}).}
+$\texttt{spanningTreeEdgeSubsets}\,G$ records the spanning trees of $G$ as the
+connected spanning edge-subsets with exactly $|V|-1$ edges, counted by
+$\texttt{numSpanningTrees}\,G$. The unit supplies the membership characterisation,
+the inclusion into the connected spanning subsets and into the edge powerset,
+the crude bounds $\texttt{numSpanningTrees}\,G \le |\texttt{connectedSpanningEdgeSubsets}\,G|
+\le 2^{|E(G)|}$, and monotonicity of $\texttt{numSpanningTrees}$ in the graph order
+(\texttt{numSpanningTrees\_mono}). The remaining steps (a from-scratch partition
+scheme assigning each connected spanning subgraph its spanning tree with the
+addable-edge interval property, then the Kotecký--Preiss tree-sum induction) build
+on this foundation.
+
 \end{document}
