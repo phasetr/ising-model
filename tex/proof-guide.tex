@@ -14172,7 +14172,13 @@ criterion), and \texttt{KPAdmissible.order\_three\_endpoint\_path\_cluster\_boun
 ($P \nsim R$, $R \nsim Q$) completes the order-3 coverage: every connected
 3-cluster shape anchored at $P$ (triangle, $P$-central path, and both
 $P$-endpoint paths) now has its contribution bounded by
-$\tfrac13|z\,P|(a\,P)^2$ or $\tfrac13|z\,P|\,a\,P$. The full all-orders
+$\tfrac13|z\,P|(a\,P)^2$ or $\tfrac13|z\,P|\,a\,P$. The inductive weighting is unified by
+\texttt{KPAdmissible.weighted\_activity\_sum\_le\_weight}: for any per-polymer
+weighting $g$ with $g\,Q \le e^{a Q}$ on the incompatible polymers,
+$\sum_{Q \nsim P} |z\,Q|\,g\,Q \le a\,P$ — the exact form the KP induction
+consumes (take $g\,Q$ the per-polymer cluster sum at $Q$, shown $\le e^{a Q}$ by
+the induction); it specialises to \texttt{activity\_sum\_le\_weight} ($g = 1$)
+and \texttt{activity\_weight\_sum\_le\_weight} ($g = a$). The full all-orders
 convergence theorem (the per-polymer cluster-sum bound by induction, consuming
 the tree-graph inequality) remains for a later PR of \#3954. Reference:
 Glimm–Jaffe, 2nd ed., \S18.4--18.5; Kotecký–Preiss, Comm. Math. Phys. 103 (1986).
