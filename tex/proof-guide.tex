@@ -14167,10 +14167,15 @@ criterion), and \texttt{KPAdmissible.order\_three\_endpoint\_path\_cluster\_boun
 |\phi^T(![P,Q,R])|\,|z\,P||z\,Q||z\,R| \le \tfrac13\,|z\,P|\,a\,P$ —
 \emph{linear} in $a\,P$: the inner $R \nsim Q$ sum is absorbed at $Q$ by
 \texttt{activity\_sum\_le\_weight}, and the resulting $a$-weighted outer sum by
-\texttt{activity\_weight\_sum\_le\_weight}). The full all-orders convergence
-theorem (the per-polymer cluster-sum bound by induction, consuming the
-tree-graph inequality) remains for a later PR of \#3954. Reference: Glimm–Jaffe,
-2nd ed., \S18.4--18.5; Kotecký–Preiss, Comm. Math. Phys. 103 (1986).
+\texttt{activity\_weight\_sum\_le\_weight}). The mirror orientation
+\texttt{KPAdmissible.order\_three\_endpoint\_path\_cluster\_bound'}
+($P \nsim R$, $R \nsim Q$) completes the order-3 coverage: every connected
+3-cluster shape anchored at $P$ (triangle, $P$-central path, and both
+$P$-endpoint paths) now has its contribution bounded by
+$\tfrac13|z\,P|(a\,P)^2$ or $\tfrac13|z\,P|\,a\,P$. The full all-orders
+convergence theorem (the per-polymer cluster-sum bound by induction, consuming
+the tree-graph inequality) remains for a later PR of \#3954. Reference:
+Glimm–Jaffe, 2nd ed., \S18.4--18.5; Kotecký–Preiss, Comm. Math. Phys. 103 (1986).
 
 \paragraph{Polymer free energy bounds and characterisations
 (PRs~\#1517--\#1566).} A coordinated set of sharpenings was added
