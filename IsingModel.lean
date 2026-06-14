@@ -248,6 +248,7 @@ import IsingModel.ClusterExpansion
 import IsingModel.ClusterExpansion.Penrose
 import IsingModel.ClusterExpansion.UrsellTreeBound
 import IsingModel.ClusterExpansion.MayerCore.UrsellMajorant
+import IsingModel.ClusterExpansion.MayerCore.MayerTanhConvergence
 import IsingModel.TransferMatrix.OneDim
 import IsingModel.TransferMatrix.OneDimField
 import IsingModel.TransferMatrix.OneDimFieldPower

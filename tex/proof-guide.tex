@@ -25140,4 +25140,19 @@ majorant at $R = A$.  This is the cluster-expansion absolute convergence $\sum_n
 interacting polymers; the remaining M2 steps are $\log\Xi = \sum_n \texttt{mayerExpansionTerm}$
 (Kotecký--Preiss) and the high-temperature Ising specialisation $t = \tanh(\beta J)$.
 
+\paragraph{High-temperature convergence of the Ising cluster expansion
+(\texttt{ClusterExpansion/MayerCore/MayerTanhConvergence.lean}).}
+Specialising the absolute convergence to the Ising activity $t = \tanh(\beta J)$:
+$\texttt{summable\_mayerExpansionTerm\_tanh}$ gives
+$\texttt{Summable}\,\bigl(n \mapsto \texttt{mayerExpansionTerm}\,G\,n\,(\tanh(\beta J))\bigr)$
+whenever $e \cdot |\texttt{allPolymers}\,G| \cdot |\tanh(\beta J)| < 1$ (using $|\tanh| < 1$), with
+the ferromagnetic form $\texttt{summable\_mayerExpansionTerm\_tanh\_ferro}$ ($0 \le \beta J$,
+$e \cdot |\texttt{allPolymers}\,G| \cdot \tanh(\beta J) < 1$) and the activity-sum form
+$\texttt{\_of\_activity}$; the ferromagnetic activity bound
+$\texttt{tanh\_activity\_sum\_le\_card\_mul\_tanh}$ reads
+$\sum_{P} \tanh(\beta J)^{|P|} \le |\texttt{allPolymers}\,G| \cdot \tanh(\beta J)$.  Since $\tanh$
+is continuous with $\tanh 0 = 0$, the criterion holds at high temperature ($\beta J$ near $0$):
+the Ising cluster expansion \emph{converges absolutely at high temperature}.  The remaining step
+is the Mayer--Montroll identity $\log\Xi = \sum_n \texttt{mayerExpansionTerm}$ (Issue~\#1499 Phase C).
+
 \end{document}
