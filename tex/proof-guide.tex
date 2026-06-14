@@ -25088,4 +25088,31 @@ $\texttt{numSpanningTrees}\,(\top : \texttt{SimpleGraph}\,(\texttt{Fin}\,(n{+}1)
 $\texttt{Fintype.card\_le\_of\_injective}$ and $\texttt{Fintype.card\_fun}$. This is the
 combinatorial heart of milestone~M2 of Issue~\#3954.
 
+\paragraph{Summable Mayer majorant
+(\texttt{ClusterExpansion/Penrose/SpanningTreeSummable.lean}).}
+The spanning-tree count bound feeds the summable majorant for the Mayer/Ursell
+series.  For $R$ with $e\,|R| < 1$ (equivalently $|R| < 1/e$),
+\[
+  \sum_{n} \frac{\texttt{numSpanningTrees}\,(\top : \texttt{SimpleGraph}\,(\texttt{Fin}\,n))}{n!}\,R^n
+\]
+converges absolutely
+($\texttt{summable\_completeGraph\_numSpanningTrees\_div\_factorial\_mul\_pow}$, with the
+absolute form \texttt{\_abs\_pow}).  By the count bound
+$\texttt{numSpanningTrees}\,(\top : \texttt{SimpleGraph}\,(\texttt{Fin}\,n)) \le n^{n-1}$
+this majorises into the pure-power series
+$\sum_n n^{n-1}/n!\cdot R^n$
+($\texttt{summable\_nat\_pow\_pred\_div\_factorial\_mul\_pow}$), whose convergence is the
+\emph{ratio test} $\texttt{summable\_of\_ratio\_norm\_eventually\_le}$: the eventual ratio is
+\[
+  \frac{a_{n+1}}{a_n} = \Bigl(1 + \tfrac1n\Bigr)^{n-1} |R| \;\le\; e\,|R| < 1 ,
+\]
+where the elementary bound $\bigl(1 + \tfrac1n\bigr)^{n-1} \le e$
+($\texttt{one\_add\_inv\_natCast\_pow\_pred\_le\_exp}$, from $1 + x \le e^x$ at $x = 1/n$ raised
+to the $(n-1)$-th power, so that $e^{(n-1)/n} \le e$ --- no limit
+$(1+\tfrac1n)^n \to e$ is needed) gives the post-cancellation inequality
+$(n+1)^{n-1} \le e\,n^{n-1}$ ($\texttt{succ\_pow\_pred\_le\_exp\_mul\_pow\_pred}$).  This is the
+convergent majorant of the cluster expansion (Mayer radius $1/e$); the remaining M2 steps
+are the Mayer-term reduction $\texttt{Summable}\,(\texttt{mayerExpansionTerm}\,G\,\cdot)$
+(Kotecký--Preiss) and the identity $\log\Xi = \sum_n$ cluster.
+
 \end{document}
