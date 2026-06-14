@@ -14085,6 +14085,21 @@ truncation through order $3$, \texttt{mayerPartialSum\_three\_eq}:
 \]
 Reference: Glimm–Jaffe, 2nd ed., \S18.4, pp.~378--386.
 
+\paragraph{Abstract polymer model and the Kotecký–Preiss criterion (\S18.4--18.5).}
+A clean, Ising-independent abstraction for the cluster expansion
+(\texttt{AbstractPolymer/Basic.lean}, Issue \#3954), replacing the earlier
+edge-set-coupled scaffolding. A polymer model is a finite type $P$ with a
+decidable incompatibility relation and a real activity $z$; the
+Kotecký–Preiss criterion \texttt{KPAdmissible} requires
+$\sum_{q \nsim p} |z\,q|\,e^{a q} \le a\,p$ for every polymer $p$. Its
+structural consequences are proved: \texttt{KPAdmissible.weight\_nonneg}
+($0 \le a\,p$), \texttt{KPAdmissible.activity\_le\_weight} ($|z\,p| \le a\,p$
+under self-incompatibility), and \texttt{KPAdmissible.mono\_activity} (monotone
+in the activity). This is the foundation for the abstract all-order KP
+convergence theorem (the per-polymer cluster-sum bound), with the Ising adapter
+to follow once the theorem is proven. Reference: Glimm–Jaffe, 2nd ed.,
+\S18.4--18.5; Kotecký–Preiss, Comm. Math. Phys. 103 (1986).
+
 \paragraph{Polymer free energy bounds and characterisations
 (PRs~\#1517--\#1566).} A coordinated set of sharpenings was added
 in this batch:
