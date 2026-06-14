@@ -260,6 +260,50 @@ theorem KPAdmissible.order_three_endpoint_path_cluster_bound
         exact mul_le_mul_of_nonneg_left (h.activity_weight_sum_le_weight hP) (by positivity)
     _ = (1 / 3) * (|z P| * a P) := by ring
 
+/-- **Order-3 endpoint-path cluster contribution bound, mirror orientation**
+(KP, GJ §18.4): the order-3 contribution from clusters `{P, Q, R}` with `P ≁ R`
+and `R ≁ Q` (the `P`-endpoint path through `R`) is bounded by `⅓ · |z P| · a P`.
+The mirror of `order_three_endpoint_path_cluster_bound` (roles of `Q` and `R`
+swapped): the inner `Q ≁ R` sum is absorbed at `R` and the resulting
+`a`-weighted outer `R ≁ P` sum by `activity_weight_sum_le_weight`.  Together with
+the `P`-central and first endpoint bounds this covers every connected 3-cluster
+shape anchored at `P`. -/
+theorem KPAdmissible.order_three_endpoint_path_cluster_bound'
+    {G : SimpleGraph ι} [Fintype G.edgeSet] {z a : Finset (Sym2 ι) → ℝ}
+    (h : KPAdmissible G z a) {P : Finset (Sym2 ι)} (hP : P ∈ allPolymers G) :
+    ∑ R ∈ (allPolymers G).filter (fun R => PolymersIncompatible P R),
+        ∑ Q ∈ (allPolymers G).filter (fun Q => PolymersIncompatible R Q),
+          |ursellCoefficient ![P, Q, R]| * (|z P| * |z Q| * |z R|)
+      ≤ (1 / 3) * (|z P| * a P) := by
+  set A := (allPolymers G).filter (fun R => PolymersIncompatible P R) with hA
+  calc ∑ R ∈ A, ∑ Q ∈ (allPolymers G).filter (fun Q => PolymersIncompatible R Q),
+          |ursellCoefficient ![P, Q, R]| * (|z P| * |z Q| * |z R|)
+      ≤ ∑ R ∈ A, ∑ Q ∈ (allPolymers G).filter (fun Q => PolymersIncompatible R Q),
+          (1 / 3) * (|z P| * |z R| * |z Q|) := by
+        refine Finset.sum_le_sum (fun R _ => Finset.sum_le_sum (fun Q _ => ?_))
+        calc |ursellCoefficient ![P, Q, R]| * (|z P| * |z Q| * |z R|)
+            ≤ (1 / 3) * (|z P| * |z Q| * |z R|) :=
+              mul_le_mul_of_nonneg_right
+                (abs_ursellCoefficient_fin_three_le_third P Q R) (by positivity)
+          _ = (1 / 3) * (|z P| * |z R| * |z Q|) := by ring
+    _ = ∑ R ∈ A, (1 / 3 * (|z P| * |z R|))
+          * ∑ Q ∈ (allPolymers G).filter (fun Q => PolymersIncompatible R Q), |z Q| := by
+        refine Finset.sum_congr rfl (fun R _ => ?_)
+        rw [Finset.mul_sum]
+        refine Finset.sum_congr rfl (fun Q _ => ?_)
+        ring
+    _ ≤ ∑ R ∈ A, (1 / 3 * (|z P| * |z R|)) * a R := by
+        refine Finset.sum_le_sum (fun R hR => ?_)
+        have hRmem : R ∈ allPolymers G := (Finset.mem_filter.mp hR).1
+        exact mul_le_mul_of_nonneg_left (h.activity_sum_le_weight hRmem) (by positivity)
+    _ = (1 / 3 * |z P|) * ∑ R ∈ A, |z R| * a R := by
+        rw [Finset.mul_sum]
+        refine Finset.sum_congr rfl (fun R _ => ?_)
+        ring
+    _ ≤ (1 / 3 * |z P|) * a P := by
+        exact mul_le_mul_of_nonneg_left (h.activity_weight_sum_le_weight hP) (by positivity)
+    _ = (1 / 3) * (|z P| * a P) := by ring
+
 /-- **`n = 3` Ursell bound for a `P`-central cluster**: if `P` is incompatible
 with both `Q` and `R`, then `|ϕ^T(![P,Q,R])| ≤ 1/3`, irrespective of the `Q`–`R`
 relation.  By the unified classification `ursellCoefficient_fin_three_eq`: with
