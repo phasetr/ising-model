@@ -524,4 +524,56 @@ theorem summable_completeClusterSubsum_tanh
         ursellCoefficient ω * clusterSeqActivity (Real.tanh (β * J)) ω) :=
   summable_completeClusterSubsum G (real_tanh_nonneg hβJ) hS
 
+/-- **Mayer expansion convergence reduced to an Ursell-coefficient bound** (GJ
+§18.5): if the Ursell coefficients satisfy a per-order bound `|ϕ^T(ω)| ≤ M n`
+(uniformly over length-`n` sequences) and the majorant series `∑_n M n·(∑_P t^|P|)^n`
+is summable, then the full Mayer expansion `∑_n mayerExpansionTerm G n t` is
+summable (for `0 ≤ t`).  Proof: `|mayerExpansionTerm G n t| ≤ ∑_ω |ϕ^T(ω)|·z(ω) ≤
+M n·∑_ω z(ω) = M n·(∑_P t^|P|)^n` (triangle inequality, the per-order bound, and
+`sum_clusterSeqActivity_piFinset_eq_pow`), then comparison.  This isolates the
+sole remaining hard input of Kotecký–Preiss convergence — the tree-graph/Penrose
+bound supplying `M n = n^{n-2}/n!` — from the analytic comparison step. -/
+theorem summable_mayerExpansionTerm_of_ursell_le
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] {t : ℝ} (ht : 0 ≤ t)
+    {M : ℕ → ℝ}
+    (hM : ∀ n, ∀ ω ∈ Fintype.piFinset (fun _ : Fin n => allPolymers G),
+      |ursellCoefficient ω| ≤ M n)
+    (hsum : Summable (fun n => M n * (∑ P ∈ allPolymers G, t ^ P.card) ^ n)) :
+    Summable (fun n => mayerExpansionTerm G n t) := by
+  have hbound : ∀ n, |mayerExpansionTerm G n t|
+      ≤ M n * (∑ P ∈ allPolymers G, t ^ P.card) ^ n := by
+    intro n
+    unfold mayerExpansionTerm
+    calc |∑ ω ∈ Fintype.piFinset (fun _ : Fin n => allPolymers G),
+            ursellCoefficient ω * clusterSeqActivity t ω|
+        ≤ ∑ ω ∈ Fintype.piFinset (fun _ : Fin n => allPolymers G),
+            |ursellCoefficient ω * clusterSeqActivity t ω| := Finset.abs_sum_le_sum_abs _ _
+      _ ≤ ∑ ω ∈ Fintype.piFinset (fun _ : Fin n => allPolymers G),
+            M n * clusterSeqActivity t ω := by
+            refine Finset.sum_le_sum (fun ω hω => ?_)
+            rw [abs_mul, abs_of_nonneg (clusterSeqActivity_nonneg ht ω)]
+            exact mul_le_mul_of_nonneg_right (hM n ω hω) (clusterSeqActivity_nonneg ht ω)
+      _ = M n * ∑ ω ∈ Fintype.piFinset (fun _ : Fin n => allPolymers G),
+            clusterSeqActivity t ω := by rw [← Finset.mul_sum]
+      _ = M n * (∑ P ∈ allPolymers G, t ^ P.card) ^ n := by
+            rw [sum_clusterSeqActivity_piFinset_eq_pow]
+  exact summable_abs_iff.mp
+    (Summable.of_nonneg_of_le (fun n => abs_nonneg _) hbound hsum)
+
+/-- **Mayer expansion convergence reduced to an Ursell bound — Ising form** (GJ
+§18.5): the `t = tanh(βJ)` specialisation of
+`summable_mayerExpansionTerm_of_ursell_le`, for `0 ≤ βJ`.  Given a per-order
+Ursell bound and summability of `∑_n M n·(∑_P tanh(βJ)^|P|)^n`, the Ising
+high-temperature Mayer expansion converges. -/
+theorem summable_mayerExpansionTerm_of_ursell_le_tanh
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] {β J : ℝ} (hβJ : 0 ≤ β * J)
+    {M : ℕ → ℝ}
+    (hM : ∀ n, ∀ ω ∈ Fintype.piFinset (fun _ : Fin n => allPolymers G),
+      |ursellCoefficient ω| ≤ M n)
+    (hsum : Summable (fun n => M n * (∑ P ∈ allPolymers G, Real.tanh (β * J) ^ P.card) ^ n)) :
+    Summable (fun n => mayerExpansionTerm G n (Real.tanh (β * J))) :=
+  summable_mayerExpansionTerm_of_ursell_le G (real_tanh_nonneg hβJ) hM hsum
+
 end IsingModel

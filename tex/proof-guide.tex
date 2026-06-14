@@ -14209,8 +14209,17 @@ high-temperature Ising specialisation
 \texttt{summable\_completeClusterSubsum\_tanh}) substitutes the physical activity
 $t = \tanh(\beta J)$ (for $0 \le \beta J$, via \texttt{real\_tanh\_nonneg}): the
 dominant part of the Ising high-temperature cluster expansion converges whenever
-$\sum_P \tanh(\beta J)^{|P|} < 1$. Reference: Glimm–Jaffe, 2nd ed.,
-\S18.4--18.5, pp.~378--386.
+$\sum_P \tanh(\beta J)^{|P|} < 1$. Finally,
+\texttt{summable\_mayerExpansionTerm\_of\_ursell\_le} reduces the \emph{full}
+Mayer convergence to a single Ursell bound: if $|\phi^T(\omega)| \le M_n$ per
+order and $\sum_n M_n (\sum_P t^{|P|})^n$ is summable, then
+$\sum_n \mathrm{mayerExpansionTerm}\,G\,n\,t$ is summable (for $0 \le t$), via
+$|\mathrm{mayerExpansionTerm}\,n| \le M_n (\sum_P t^{|P|})^n$ and comparison; the
+$t = \tanh(\beta J)$ form is
+\texttt{summable\_mayerExpansionTerm\_of\_ursell\_le\_tanh}. This isolates the
+sole remaining hard input — the tree-graph/Penrose bound supplying
+$M_n = n^{n-2}/n!$ — from the analytic comparison. Reference: Glimm–Jaffe, 2nd
+ed., \S18.4--18.5, pp.~378--386.
 
 \paragraph{Polymer free energy bounds and characterisations
 (PRs~\#1517--\#1566).} A coordinated set of sharpenings was added
