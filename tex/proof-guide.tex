@@ -14148,11 +14148,19 @@ $\sum_{Q \nsim P}\sum_{R \nsim P,\,R \nsim Q}
 each triangle cluster has $\phi^T = 1/3$
 (\texttt{ursellCoefficient\_fin\_three\_triangle}) and dropping the $R \nsim Q$
 constraint enlarges the index set to the product $\{Q \nsim P\}\times\{R \nsim P\}$,
-so \texttt{activity\_sum\_le\_weight} bounds each factor by $a\,P$. The full
-all-orders convergence theorem (the per-polymer cluster-sum bound by induction,
-consuming the tree-graph inequality) remains for a later PR of \#3954.
-Reference: Glimm–Jaffe, 2nd ed., \S18.4--18.5; Kotecký–Preiss,
-Comm. Math. Phys. 103 (1986).
+so \texttt{activity\_sum\_le\_weight} bounds each factor by $a\,P$. This is
+generalised by
+\texttt{abs\_ursellCoefficient\_fin\_three\_le\_third\_of\_P\_central}
+($|\phi^T(![P,Q,R])| \le 1/3$ whenever $P \nsim Q$ and $P \nsim R$, via the
+unified classification \texttt{ursellCoefficient\_fin\_three\_eq}) and
+\texttt{KPAdmissible.order\_three\_P\_central\_cluster\_bound}, the full
+product-domain $P$-central order-3 bound
+$\sum_{Q \nsim P}\sum_{R \nsim P}
+|\phi^T(![P,Q,R])|\,|z\,P||z\,Q||z\,R| \le \tfrac13\,|z\,P|\,(a\,P)^2$, covering
+triangles and $P$-centred paths together. The full all-orders convergence
+theorem (the per-polymer cluster-sum bound by induction, consuming the
+tree-graph inequality) remains for a later PR of \#3954. Reference: Glimm–Jaffe,
+2nd ed., \S18.4--18.5; Kotecký–Preiss, Comm. Math. Phys. 103 (1986).
 
 \paragraph{Polymer free energy bounds and characterisations
 (PRs~\#1517--\#1566).} A coordinated set of sharpenings was added
