@@ -5,6 +5,7 @@ import IsingModel.ClusterExpansion.Penrose.KruskalConnected
 import IsingModel.ClusterExpansion.Penrose.KruskalAcyclic
 import IsingModel.ClusterExpansion.Penrose.IntervalPartition
 import IsingModel.ClusterExpansion.Penrose.TreeGraphBound
+import IsingModel.ClusterExpansion.Penrose.CompleteGraphTreeBound
 
 /-!
 # Penrose tree-graph inequality (GJ §18.4-18.5) — umbrella
@@ -22,4 +23,6 @@ convergence (Issue #3954).  Child modules:
 * `IntervalPartition` — the `treeOf` fiber over a spanning tree is its Boolean interval.
 * `TreeGraphBound` — the Penrose inequality
   `|alternatingConnectedSubgraphSum G| ≤ numSpanningTrees G`.
+* `CompleteGraphTreeBound` — the complete-graph spanning-tree count bound
+  `numSpanningTrees (⊤ : SimpleGraph (Fin n)) ≤ n ^ (n - 1)` (summable majorant for M2).
 -/

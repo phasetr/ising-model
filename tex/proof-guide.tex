@@ -24875,7 +24875,7 @@ Reference: Glimm--Jaffe, 2nd ed., §17.8, pp.~316--318.
 \section{Penrose tree-graph inequality (GJ \S18.4--18.5, Issue \#3954)}
 
 A key remaining combinatorial input for general interacting cluster-expansion
-convergence (Glimm--Jaffe~\cite{glimm-jaffe}, \S18.4--18.5, pp.~378--386;
+convergence (Glimm--Jaffe~\cite{glimm-jaffe}, \S18.4--18.5, pp.~332--340;
 Friedli--Velenik~\cite{friedli-velenik}, \S5.7), feeding the majorant summability
 already in place, is the \emph{Penrose tree-graph (Ursell) inequality}
 \[
@@ -25052,5 +25052,40 @@ form via $\texttt{Penrose.numSpanningTrees\_mono}$ with $\texttt{le\_top}$) --- 
 replacement of the trivial $2^{|E|}/n!$ bound and the entry point of the
 Kotecký--Preiss / tree-sum convergence (combined with a summable spanning-tree-count
 majorant: Cayley $n^{n-2}$ or the tree-sum induction).
+
+\paragraph{Complete-graph spanning-tree count bound
+(\texttt{ClusterExpansion/Penrose/CompleteGraphTreeBound.lean}).}
+The summable majorant for the cluster-expansion convergence requires a bound on
+$\texttt{numSpanningTrees}\,(\top : \texttt{SimpleGraph}\,(\texttt{Fin}\,n))$, the
+number of spanning trees of the complete graph $K_n$. The exact Cayley value
+$n^{n-2}$ is \emph{not} needed: the weaker unconditional bound
+\[
+  \texttt{numSpanningTrees}\,(\top : \texttt{SimpleGraph}\,(\texttt{Fin}\,n))
+    \;\le\; n^{\,n-1}
+\]
+($\texttt{numSpanningTrees\_top\_fin\_le\_pow\_pred}$, with the $\texttt{Fin}\,(n{+}1)$ form
+$\texttt{numSpanningTrees\_top\_fin\_succ\_le\_pow}$: $\le (n{+}1)^n$) already yields the
+finite radius of convergence $1/e$ for the Mayer series, since
+$\sum_n n^{n-1}/n!\cdot R^n$ converges for $R < 1/e$ (the ratio
+$(1+1/n)^{n-1}\,R \to e\,R$). The bound is proved by a \emph{parent-function injection}
+that avoids Pr\"ufer/Cayley entirely. Root the tree at the vertex $0$. Each non-root
+vertex $v$ has a unique \emph{parent} $\texttt{treeParent}\,(v)$: the unique neighbour
+with $\texttt{dist}\,(0,v) = \texttt{dist}\,(0,\texttt{treeParent}\,(v)) + 1$
+(existence $\texttt{exists\_parent\_adj\_dist\_of\_isTree}$ via the second vertex of a
+shortest walk $v \to 0$; uniqueness
+$\texttt{parent\_adj\_dist\_unique\_of\_isTree}$ via the uniqueness of paths in a tree,
+$\texttt{IsTree.existsUnique\_path}$). The parent code
+$\texttt{completeGraphTreeParentCode} : \texttt{Fin}\,n \to \texttt{Fin}\,(n{+}1)$ sends
+$\texttt{Fin.succ}\,i \mapsto \texttt{treeParent}\,(\texttt{Fin.succ}\,i)$. The crux is the
+edge-set recovery $\texttt{completeGraphTree\_edges\_eq\_parentCode\_image}$: the edge set of
+the tree equals the image $\{\,s(\texttt{Fin.succ}\,i, \texttt{treeParent}\,(\texttt{Fin.succ}\,i))\,\}$,
+because for any tree edge $s(a,b)$ the endpoint farther from the root (by
+$\texttt{IsTree.dist\_eq\_dist\_add\_one\_of\_adj}$) has the other as its unique parent.
+Hence the parent code is injective on spanning trees
+($\texttt{completeGraphTreeParentCode\_injective}$), and
+$\texttt{numSpanningTrees}\,(\top : \texttt{SimpleGraph}\,(\texttt{Fin}\,(n{+}1)))
+  \le |\texttt{Fin}\,n \to \texttt{Fin}\,(n{+}1)| = (n{+}1)^n$ by
+$\texttt{Fintype.card\_le\_of\_injective}$ and $\texttt{Fintype.card\_fun}$. This is the
+combinatorial heart of milestone~M2 of Issue~\#3954.
 
 \end{document}
