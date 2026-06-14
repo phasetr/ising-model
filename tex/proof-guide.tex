@@ -24995,7 +24995,30 @@ $|\texttt{treeOf}\,S| = |V|-1$ ($\texttt{treeOf\_card\_eq\_card\_vertices\_sub\_
 $\texttt{IsTree.card\_edgeFinset}$) and the headline follows:
 $S \in \texttt{connectedSpanningEdgeSubsets}\,G \Rightarrow
 \texttt{treeOf}\,S \in \texttt{spanningTreeEdgeSubsets}\,G$
-($\texttt{treeOf\_mem\_spanningTreeEdgeSubsets}$). The remaining steps (the interval
-property and the Kotecký--Preiss tree-sum induction) build on this.
+($\texttt{treeOf\_mem\_spanningTreeEdgeSubsets}$).
+
+\paragraph{Interval-partition property
+(\texttt{ClusterExpansion/Penrose/IntervalPartition.lean}).}
+The $\texttt{treeOf}$ retraction partitions the connected spanning edge-subsets into
+Boolean intervals. The new ingredient is a \emph{prefix} reachability equivalence
+$\texttt{reachableLT}\,(\texttt{treeOf}\,S)\,e \leftrightarrow \texttt{reachableLT}\,S\,e$
+--- the $< e$ edges of $S$ and of $\texttt{treeOf}\,S$ span the same components, by strong
+induction over the $\texttt{edgeKey}$ order
+($\texttt{reachable\_edgesLT\_treeOf\_of\_mem\_edgesLT}$,
+$\texttt{reachable\_edgesLT\_treeOf\_iff}$, $\texttt{reachableLT\_treeOf\_iff}$), refining the
+global equivalence. With $\texttt{isTree\_fromEdgeSet\_of\_mem\_spanningTreeEdgeSubsets}$ and
+$\texttt{not\_reachableLT\_of\_mem\_spanningTreeEdgeSubsets}$ (a tree edge is a bridge, hence
+not $\texttt{reachableLT}$ via its smaller edges) one proves both directions: forward
+$\texttt{subset\_union\_addable\_of\_treeOf\_eq}$ (a dropped edge is addable, through the prefix
+equivalence) and converse $\texttt{treeOf\_eq\_of\_subset\_union\_addable}$ (addable edges are
+dropped, tree edges kept via $\texttt{not\_reachableLT\_of\_interval\_tree\_edge}$). Hence the
+interval property
+$\texttt{treeOf}\,S = T \leftrightarrow T \subseteq S \wedge S \subseteq T \cup \texttt{addable}\,G\,T$
+($\texttt{treeOf\_eq\_iff\_subset\_union\_addable}$) and the fiber identity
+$\{S \in \texttt{connectedSpanningEdgeSubsets}\,G \mid \texttt{treeOf}\,S = T\}
+= \texttt{booleanInterval}\,T\,(T \cup \texttt{addable}\,G\,T)$
+($\texttt{treeOf\_fiber\_eq\_booleanInterval}$). The Boolean-interval collapse to
+$|\texttt{alternatingConnectedSubgraphSum}\,G| \le \texttt{numSpanningTrees}\,G$ (and then the
+Kotecký--Preiss tree-sum induction) build on this.
 
 \end{document}

@@ -52,8 +52,8 @@ theorem liftSym2Prop_mk (P : V → V → Prop) (hsym : ∀ a b, P a b ↔ P b a)
 lexicographically-ordered pairs `V ×ₗ V` (each edge's endpoints sorted by `≤`).  Edges
 are compared via `edgeKey f < edgeKey e`.  This is essential because the ambient
 `SetLike` order on `Sym2 V` (mathlib's `instPartialOrder`) is only *partial* — two
-distinct non-diagonal graph edges are never comparable under it — which would make the Kruskal "strictly
-smaller" test vacuous; `edgeKey` supplies a genuine total order. -/
+distinct non-diagonal graph edges are never comparable under it — which would make the
+Kruskal "strictly smaller" test vacuous; `edgeKey` supplies a genuine total order. -/
 def edgeKey [LinearOrder V] (e : Sym2 V) : V ×ₗ V :=
   toLex (Sym2.sortEquiv e : { p : V × V // p.1 ≤ p.2 }).val
 
