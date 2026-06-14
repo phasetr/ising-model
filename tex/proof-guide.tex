@@ -25033,7 +25033,24 @@ $\texttt{addable\_disjoint}$) and $\pm 1$ when it is empty
   |\texttt{alternatingConnectedSubgraphSum}\,G| \;\le\; \texttt{numSpanningTrees}\,G
 \]
 ($\texttt{abs\_alternatingConnectedSubgraphSum\_le\_numSpanningTrees}$), completing the
-from-scratch partition-scheme route. The Kotecký--Preiss tree-sum induction (absolute
-convergence of the cluster expansion) builds on this bound.
+from-scratch partition-scheme route.
+
+\paragraph{Ursell tree bound
+(\texttt{ClusterExpansion/UrsellTreeBound.lean}).}
+Applying the Penrose inequality to the incompatibility graph
+$\texttt{polymerSeqIncompatibilityGraph}\,\omega$ and using
+$\texttt{ursellCoefficient}\,\omega
+= \texttt{alternatingConnectedSubgraphSum}\,(\dots)/n!$ gives the sharp Ursell bound
+\[
+  |\phi^T(\omega)| \;\le\;
+  \frac{\texttt{numSpanningTrees}\,(\texttt{polymerSeqIncompatibilityGraph}\,\omega)}{n!}
+  \;\le\;
+  \frac{\texttt{numSpanningTrees}\,(\top : \texttt{SimpleGraph}\,(\texttt{Fin}\,n))}{n!}
+\]
+($\texttt{ursellCoefficient\_abs\_le\_numSpanningTrees\_div\_factorial}$ and its uniform
+form via $\texttt{Penrose.numSpanningTrees\_mono}$ with $\texttt{le\_top}$) --- the sharp
+replacement of the trivial $2^{|E|}/n!$ bound and the entry point of the
+Kotecký--Preiss / tree-sum convergence (combined with a summable spanning-tree-count
+majorant: Cayley $n^{n-2}$ or the tree-sum induction).
 
 \end{document}
