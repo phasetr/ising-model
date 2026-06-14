@@ -14218,8 +14218,19 @@ $|\mathrm{mayerExpansionTerm}\,n| \le M_n (\sum_P t^{|P|})^n$ and comparison; th
 $t = \tanh(\beta J)$ form is
 \texttt{summable\_mayerExpansionTerm\_of\_ursell\_le\_tanh}. This isolates the
 sole remaining hard input — the tree-graph/Penrose bound supplying
-$M_n = n^{n-2}/n!$ — from the analytic comparison. Reference: Glimm–Jaffe, 2nd
-ed., \S18.4--18.5, pp.~378--386.
+$M_n = n^{n-2}/n!$ — from the analytic comparison. The analytic half is
+discharged in \texttt{ClusterExpansion/TreeFunctionSummable.lean}:
+\texttt{one\_add\_inv\_pow\_le\_exp\_one} ($(1+1/n)^n \le e$),
+\texttt{summable\_nat\_pow\_self\_mul\_geometric\_div\_factorial}
+($\sum_n (n^n/n!)S^n$ summable for $eS < 1$, by the ratio test with ratio
+$(1+1/n)^n S \le eS$), and
+\texttt{summable\_nat\_pow\_self\_sub\_two\_mul\_geometric\_div\_factorial} (the
+tree-graph majorant $\sum_n (n^{n-2}/n!)S^n$, by comparison). Combined with
+\texttt{summable\_mayerExpansionTerm\_of\_ursell\_le} ($M_n = n^{n-2}/n!$), the
+\emph{only} input now missing for full cluster-expansion convergence (radius
+$\sum_P t^{|P|} < 1/e$) is the tree-graph (Penrose) Ursell bound
+$|\phi^T(\omega)| \le n^{n-2}/n!$ itself. Reference: Glimm–Jaffe, 2nd ed.,
+\S18.4--18.5, pp.~378--386.
 
 \paragraph{Polymer free energy bounds and characterisations
 (PRs~\#1517--\#1566).} A coordinated set of sharpenings was added
