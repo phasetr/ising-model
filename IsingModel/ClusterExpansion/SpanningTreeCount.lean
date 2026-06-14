@@ -74,4 +74,29 @@ theorem numSpanningTrees_le_two_pow :
     _ ≤ (G.edgeFinset.powerset).card := Finset.card_le_card h1
     _ = 2 ^ G.edgeFinset.card := Finset.card_powerset _
 
+/-- **Monotonicity of spanning-tree edge-subsets**: a spanning tree of `G` is a
+spanning tree of any supergraph `H ≥ G` (its edges lie in `H.edgeFinset` and the
+spanning subgraph is unchanged).  More edges, more spanning trees. -/
+theorem spanningTreeEdgeSubsets_mono {G H : SimpleGraph V}
+    [DecidableRel G.Adj] [DecidableRel H.Adj] (h : G ≤ H) :
+    spanningTreeEdgeSubsets G ⊆ spanningTreeEdgeSubsets H := by
+  intro S hS
+  rw [mem_spanningTreeEdgeSubsets] at hS ⊢
+  exact ⟨⟨hS.1.1.trans (SimpleGraph.edgeFinset_mono h), hS.1.2⟩, hS.2⟩
+
+/-- **Monotonicity of the spanning-tree count**: `G ≤ H → numSpanningTrees G ≤
+numSpanningTrees H`. -/
+theorem numSpanningTrees_mono {G H : SimpleGraph V}
+    [DecidableRel G.Adj] [DecidableRel H.Adj] (h : G ≤ H) :
+    numSpanningTrees G ≤ numSpanningTrees H :=
+  Finset.card_le_card (spanningTreeEdgeSubsets_mono h)
+
+/-- **Spanning trees are bounded by the complete graph's** (GJ §18.4): every
+finite graph has at most as many spanning trees as the complete graph on the same
+vertex set.  Reduces the general Penrose/Cayley bound to the complete graph
+(`numSpanningTrees (⊤) = |V|^{|V|-2}`, Cayley). -/
+theorem numSpanningTrees_le_complete (G : SimpleGraph V) [DecidableRel G.Adj] :
+    numSpanningTrees G ≤ numSpanningTrees (⊤ : SimpleGraph V) :=
+  numSpanningTrees_mono le_top
+
 end IsingModel
