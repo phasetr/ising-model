@@ -196,6 +196,70 @@ theorem KPAdmissible.order_three_triangle_cluster_bound
         exact mul_nonneg this haP
     _ = (1 / 3) * (|z P| * a P ^ 2) := by ring
 
+/-- **Unconditional `n = 3` Ursell bound**: `|ϕ^T(![P,Q,R])| ≤ 1/3` for any three
+polymers.  By the unified classification `ursellCoefficient_fin_three_eq` the
+value is always `0`, `1/6`, or `1/3`. -/
+theorem abs_ursellCoefficient_fin_three_le_third
+    (P Q R : Finset (Sym2 ι)) :
+    |ursellCoefficient ![P, Q, R]| ≤ 1 / 3 := by
+  rw [ursellCoefficient_fin_three_eq ![P, Q, R]]
+  simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons,
+    Matrix.cons_val_two, Matrix.tail_cons]
+  split_ifs <;> norm_num
+
+/-- **Exp-absorbing inductive lemma** (KP): the `a`-weighted incompatible-activity
+sum is still bounded by the weight, `∑_{Q ≁ P} |z Q| · a Q ≤ a P`.  Since
+`a Q ≤ exp(a Q)` (`Real.add_one_le_exp`), each term `|z Q|·a Q ≤ |z Q|·exp(a Q)`,
+and the KP criterion bounds that sum by `a P`.  This is the mechanism by which the
+Kotecký–Preiss induction absorbs a sub-cluster's weight into the exponential. -/
+theorem KPAdmissible.activity_weight_sum_le_weight
+    {G : SimpleGraph ι} [Fintype G.edgeSet] {z a : Finset (Sym2 ι) → ℝ}
+    (h : KPAdmissible G z a) {P : Finset (Sym2 ι)} (hP : P ∈ allPolymers G) :
+    ∑ Q ∈ (allPolymers G).filter (fun Q => PolymersIncompatible P Q), |z Q| * a Q ≤ a P := by
+  refine le_trans (Finset.sum_le_sum (fun Q _ => ?_)) (h P hP)
+  have hle : a Q ≤ Real.exp (a Q) := le_trans (by linarith) (Real.add_one_le_exp (a Q))
+  exact mul_le_mul_of_nonneg_left hle (abs_nonneg _)
+
+/-- **Order-3 endpoint-path cluster contribution bound** (KP, GJ §18.4): the
+order-3 contribution from clusters `{P, Q, R}` with `P ≁ Q` and `Q ≁ R` (a path
+with `P` at an endpoint, plus triangles) is bounded by `⅓ · |z P| · a P` —
+*linearly* in `a P`, because the inner sum over `R ≁ Q` is absorbed at `Q` (by
+`activity_sum_le_weight`) and the resulting `a`-weighted outer sum over `Q ≁ P`
+is absorbed by `activity_weight_sum_le_weight`.  Demonstrates the exponential
+weight-absorption that powers the Kotecký–Preiss induction. -/
+theorem KPAdmissible.order_three_endpoint_path_cluster_bound
+    {G : SimpleGraph ι} [Fintype G.edgeSet] {z a : Finset (Sym2 ι) → ℝ}
+    (h : KPAdmissible G z a) {P : Finset (Sym2 ι)} (hP : P ∈ allPolymers G) :
+    ∑ Q ∈ (allPolymers G).filter (fun Q => PolymersIncompatible P Q),
+        ∑ R ∈ (allPolymers G).filter (fun R => PolymersIncompatible Q R),
+          |ursellCoefficient ![P, Q, R]| * (|z P| * |z Q| * |z R|)
+      ≤ (1 / 3) * (|z P| * a P) := by
+  set A := (allPolymers G).filter (fun Q => PolymersIncompatible P Q) with hA
+  calc ∑ Q ∈ A, ∑ R ∈ (allPolymers G).filter (fun R => PolymersIncompatible Q R),
+          |ursellCoefficient ![P, Q, R]| * (|z P| * |z Q| * |z R|)
+      ≤ ∑ Q ∈ A, ∑ R ∈ (allPolymers G).filter (fun R => PolymersIncompatible Q R),
+          (1 / 3) * (|z P| * |z Q| * |z R|) := by
+        refine Finset.sum_le_sum (fun Q _ => Finset.sum_le_sum (fun R _ => ?_))
+        exact mul_le_mul_of_nonneg_right
+          (abs_ursellCoefficient_fin_three_le_third P Q R) (by positivity)
+    _ = ∑ Q ∈ A, (1 / 3 * (|z P| * |z Q|))
+          * ∑ R ∈ (allPolymers G).filter (fun R => PolymersIncompatible Q R), |z R| := by
+        refine Finset.sum_congr rfl (fun Q _ => ?_)
+        rw [Finset.mul_sum]
+        refine Finset.sum_congr rfl (fun R _ => ?_)
+        ring
+    _ ≤ ∑ Q ∈ A, (1 / 3 * (|z P| * |z Q|)) * a Q := by
+        refine Finset.sum_le_sum (fun Q hQ => ?_)
+        have hQmem : Q ∈ allPolymers G := (Finset.mem_filter.mp hQ).1
+        exact mul_le_mul_of_nonneg_left (h.activity_sum_le_weight hQmem) (by positivity)
+    _ = (1 / 3 * |z P|) * ∑ Q ∈ A, |z Q| * a Q := by
+        rw [Finset.mul_sum]
+        refine Finset.sum_congr rfl (fun Q _ => ?_)
+        ring
+    _ ≤ (1 / 3 * |z P|) * a P := by
+        exact mul_le_mul_of_nonneg_left (h.activity_weight_sum_le_weight hP) (by positivity)
+    _ = (1 / 3) * (|z P| * a P) := by ring
+
 /-- **`n = 3` Ursell bound for a `P`-central cluster**: if `P` is incompatible
 with both `Q` and `R`, then `|ϕ^T(![P,Q,R])| ≤ 1/3`, irrespective of the `Q`–`R`
 relation.  By the unified classification `ursellCoefficient_fin_three_eq`: with

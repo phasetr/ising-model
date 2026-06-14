@@ -14157,7 +14157,17 @@ unified classification \texttt{ursellCoefficient\_fin\_three\_eq}) and
 product-domain $P$-central order-3 bound
 $\sum_{Q \nsim P}\sum_{R \nsim P}
 |\phi^T(![P,Q,R])|\,|z\,P||z\,Q||z\,R| \le \tfrac13\,|z\,P|\,(a\,P)^2$, covering
-triangles and $P$-centred paths together. The full all-orders convergence
+triangles and $P$-centred paths together. The exponential weight-absorption that powers the KP induction is captured by
+\texttt{abs\_ursellCoefficient\_fin\_three\_le\_third} (unconditional
+$|\phi^T(![P,Q,R])| \le 1/3$),
+\texttt{KPAdmissible.activity\_weight\_sum\_le\_weight} (the $a$-weighted bound
+$\sum_{Q \nsim P} |z\,Q|\,a\,Q \le a\,P$, via $a\,Q \le e^{a Q}$ and the KP
+criterion), and \texttt{KPAdmissible.order\_three\_endpoint\_path\_cluster\_bound}
+($\sum_{Q \nsim P}\sum_{R \nsim Q}
+|\phi^T(![P,Q,R])|\,|z\,P||z\,Q||z\,R| \le \tfrac13\,|z\,P|\,a\,P$ —
+\emph{linear} in $a\,P$: the inner $R \nsim Q$ sum is absorbed at $Q$ by
+\texttt{activity\_sum\_le\_weight}, and the resulting $a$-weighted outer sum by
+\texttt{activity\_weight\_sum\_le\_weight}). The full all-orders convergence
 theorem (the per-polymer cluster-sum bound by induction, consuming the
 tree-graph inequality) remains for a later PR of \#3954. Reference: Glimm–Jaffe,
 2nd ed., \S18.4--18.5; Kotecký–Preiss, Comm. Math. Phys. 103 (1986).
