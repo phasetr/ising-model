@@ -636,4 +636,37 @@ theorem invProper {r m : ℕ} {G : SimpleGraph ι} [Fintype G.edgeSet]
     (hΩ ((e i).val.1)).2 (Finset.mem_coe.mpr hmi) (Finset.mem_coe.mpr hmj') hne
   exact (PolymersIncompatible.iff_not_isPolymerVertexDisjoint.mp hadj.2) hvd
 
+/-- **Colour-class fibre cardinality is `r!`**: for a family-tuple `Ω` of vertex-disjoint
+compatible families with total polymer count `r`, the pairs `(ω, c)` consisting of a polymer
+sequence and a proper colouring whose colour classes are exactly `Ω` number `r!` — they
+biject with the orderings `Fin r ≃ labelledPolymers Ω`. -/
+theorem card_proper_colorClass_fiber {r m : ℕ} (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {Ω : Fin m → Finset (Finset (Sym2 ι))}
+    (hΩ : ∀ a, Ω a ∈ vdCompatiblePolymerFamilies G)
+    (hr : r = (labelledPolymers Ω).card) :
+    Fintype.card {p : (Fin r → Finset (Sym2 ι)) × (Fin r → Fin m) //
+        (∀ i, p.1 i ∈ allPolymers G) ∧
+        IsProperColoring (polymerSeqIncompatibilityGraph p.1) m p.2 ∧
+        (∀ a, colorClass p.1 p.2 a = Ω a)} = r.factorial := by
+  classical
+  have hsub : ∀ a, Ω a ⊆ allPolymers G := fun a => (mem_vdCompatiblePolymerFamilies.mp (hΩ a)).1
+  have hvd : ∀ a, IsCompatiblePolymerFamilyVertexDisjoint G (Ω a) :=
+    fun a => (mem_vdCompatiblePolymerFamilies.mp (hΩ a)).2
+  have E : {p : (Fin r → Finset (Sym2 ι)) × (Fin r → Fin m) //
+        (∀ i, p.1 i ∈ allPolymers G) ∧
+        IsProperColoring (polymerSeqIncompatibilityGraph p.1) m p.2 ∧
+        (∀ a, colorClass p.1 p.2 a = Ω a)} ≃ (Fin r ≃ ↥(labelledPolymers Ω)) :=
+    { toFun := fun q => Equiv.ofBijective (seqColoringForward q.2.2.2)
+        ⟨seqColoringForward_injective G q.2.1 q.2.2.1 q.2.2.2,
+          seqColoringForward_surjective q.2.2.2⟩
+      invFun := fun e => ⟨(fun i => (e i).val.2, fun i => (e i).val.1),
+        fun i => hsub _ (mem_labelledPolymers.mp (e i).property), invProper hvd e, invColorClass e⟩
+      left_inv := fun q => by apply Subtype.ext; rfl
+      right_inv := fun e => by
+        apply Equiv.ext; intro i; apply Subtype.ext; rfl }
+  rw [Fintype.card_congr E]
+  have hcard : Fintype.card (Fin r) = Fintype.card ↥(labelledPolymers Ω) := by
+    rw [Fintype.card_fin, Fintype.card_coe, ← hr]
+  rw [Fintype.card_equiv (Fintype.equivOfCardEq hcard), Fintype.card_fin]
+
 end IsingModel
