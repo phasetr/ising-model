@@ -62,6 +62,12 @@ i.e. (for an incompatibility graph) compatible polymer families. -/
 def IsProperColoring {r : ℕ} (H : SimpleGraph (Fin r)) (k : ℕ) (c : Fin r → Fin k) : Prop :=
   ∀ i j : Fin r, H.Adj i j → c i ≠ c j
 
+/-- **Decidability of properness** (finite domain): used to form the real-valued proper
+indicator in the edge inclusion–exclusion expansion. -/
+instance {r : ℕ} (H : SimpleGraph (Fin r)) [DecidableRel H.Adj] (k : ℕ) (c : Fin r → Fin k) :
+    Decidable (IsProperColoring H k c) := by
+  unfold IsProperColoring; infer_instance
+
 /-- **Proper surjective colorings**: the finite set of colourings `Fin r → Fin k`
 that are proper for `H` and use every colour.  Surjectivity records that all `k`
 families are nonempty; properness that each colour class is a compatible family. -/
@@ -150,5 +156,58 @@ theorem colorClass_mem_vdCompatiblePolymerFamilies
     rw [polymerSeqIncompatibilityGraph_adj] at hnotadj
     have hcompat : ¬ PolymersIncompatible (ω i) (ω j) := fun hinc => hnotadj ⟨hij, hinc⟩
     rwa [PolymersIncompatible.iff_not_isPolymerVertexDisjoint, not_not] at hcompat
+
+/-! ### Edge inclusion–exclusion for proper colourings
+
+The Mayer–Montroll proper-colouring weighted count is expanded edge-by-edge: the proper
+indicator of a colouring `c` is the signed sum over subsets of its *bad edges* (the
+`H`-edges joining equal-coloured endpoints).  Summing over `c` and swapping the order of
+summation reduces the colour count to a surjection count on connected components, which the
+`surjective_logWeight_eq_connected_indicator` identity collapses. -/
+
+/-- **Bad edges of a colouring**: the `H`-edges whose two endpoints receive the same
+colour under `c`.  A colouring is proper exactly when this set is empty. -/
+noncomputable def badColorEdges {r k : ℕ} (H : SimpleGraph (Fin r)) [DecidableRel H.Adj]
+    (c : Fin r → Fin k) : Finset (Sym2 (Fin r)) := by
+  classical
+  exact H.edgeFinset.filter
+    (fun e => Sym2.lift ⟨fun a b => c a = c b, fun a b => by simp [eq_comm]⟩ e)
+
+/-- **Properness via bad edges**: `c` is a proper colouring of `H` iff it has no bad edge. -/
+theorem isProperColoring_iff_badColorEdges_eq_empty {r k : ℕ} (H : SimpleGraph (Fin r))
+    [DecidableRel H.Adj] (c : Fin r → Fin k) :
+    IsProperColoring H k c ↔ badColorEdges H c = ∅ := by
+  classical
+  rw [badColorEdges, Finset.filter_eq_empty_iff]
+  constructor
+  · intro hproper e he
+    induction e using Sym2.ind with
+    | _ a b =>
+      rw [SimpleGraph.mem_edgeFinset, SimpleGraph.mem_edgeSet] at he
+      simpa using hproper a b he
+  · intro h i j hadj
+    have he : s(i, j) ∈ H.edgeFinset := by
+      rw [SimpleGraph.mem_edgeFinset, SimpleGraph.mem_edgeSet]; exact hadj
+    simpa using h he
+
+/-- **Proper indicator as a signed bad-edge sum**: the real-valued proper indicator of `c`
+equals `∑_{S ⊆ badColorEdges} (-1)^|S|` (Boolean inclusion–exclusion: the powerset signed
+sum is `1` when the bad-edge set is empty and `0` otherwise). -/
+theorem proper_indicator_eq_signed_bad_edges {r k : ℕ} (H : SimpleGraph (Fin r))
+    [DecidableRel H.Adj] (c : Fin r → Fin k) :
+    (if IsProperColoring H k c then (1 : ℝ) else 0) =
+      ∑ S ∈ (badColorEdges H c).powerset, (-1 : ℝ) ^ S.card := by
+  classical
+  by_cases hp : IsProperColoring H k c
+  · rw [if_pos hp, (isProperColoring_iff_badColorEdges_eq_empty H c).mp hp]
+    simp
+  · rw [if_neg hp]
+    have hne : (badColorEdges H c).Nonempty := by
+      rw [Finset.nonempty_iff_ne_empty]
+      exact fun h => hp ((isProperColoring_iff_badColorEdges_eq_empty H c).mpr h)
+    rw [show (∑ S ∈ (badColorEdges H c).powerset, (-1 : ℝ) ^ S.card)
+        = ((∑ S ∈ (badColorEdges H c).powerset, (-1 : ℤ) ^ S.card : ℤ) : ℝ) from by
+          push_cast; rfl,
+      Finset.sum_powerset_neg_one_pow_card_of_nonempty hne, Int.cast_zero]
 
 end IsingModel
