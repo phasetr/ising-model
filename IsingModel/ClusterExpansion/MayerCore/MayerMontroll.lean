@@ -1105,4 +1105,50 @@ theorem colorDegreeTerm_zero_right {ι : Type*} [Fintype ι] [DecidableEq ι] (G
     [Fintype G.edgeSet] (t : ℝ) (r : ℕ) : colorDegreeTerm G t r 0 = 0 := by
   rw [colorDegreeTerm, Nat.cast_zero, div_zero, zero_mul]
 
+/-- **Row absolute sum bound**: `∑'_k |colorDegreeTerm G t r k| ≤ (r^r/r!)·A^r`.  Each row is
+finitely supported (`colorDegreeTerm = 0` for `k > r` and `k = 0`), so the tsum reduces to the
+finite `Icc 1 r` sum bounded by `sum_abs_colorDegreeTerm_le`. -/
+theorem tsum_abs_colorDegreeTerm_le {ι : Type*} [Fintype ι] [DecidableEq ι] (G : SimpleGraph ι)
+    [Fintype G.edgeSet] (t : ℝ) (r : ℕ) :
+    ∑' k, |colorDegreeTerm G t r k| ≤
+      ((r : ℝ) ^ r / (r.factorial : ℝ)) * (∑ P ∈ allPolymers G, |t| ^ P.card) ^ r := by
+  classical
+  rw [tsum_eq_sum (s := Finset.range (r + 1)) (fun k hk => by
+    rw [Finset.mem_range, not_lt] at hk
+    rw [colorDegreeTerm_eq_zero_of_lt G t (by omega : r < k), abs_zero])]
+  rcases Nat.eq_zero_or_pos r with hr0 | hr1
+  · subst hr0
+    simp [colorDegreeTerm_zero_right]
+  · rw [show Finset.range (r + 1) = insert 0 (Finset.Icc 1 r) from by
+        ext k; simp only [Finset.mem_range, Finset.mem_insert, Finset.mem_Icc]; omega,
+      Finset.sum_insert (by simp), colorDegreeTerm_zero_right, abs_zero, zero_add]
+    exact sum_abs_colorDegreeTerm_le G t r hr1
+
+/-- **Double summability of the colour-degree term**: `(r,k) ↦ colorDegreeTerm G t r k` is
+summable over `ℕ × ℕ` whenever `e·A < 1` (`A = ∑_{P} |t|^|P|`).  Via `summable_abs_iff` and
+`summable_prod_of_nonneg`: each row is finitely supported, and the row absolute sums are
+majorised by the summable `(r^r/r!)·A^r`.  Enables the capstone `tsum_comm`. -/
+theorem summable_uncurry_colorDegreeTerm {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (t : ℝ)
+    (hact : Real.exp 1 * (∑ P ∈ allPolymers G, |t| ^ P.card) < 1) :
+    Summable (fun p : ℕ × ℕ => colorDegreeTerm G t p.1 p.2) := by
+  classical
+  have hsumnn : (0 : ℝ) ≤ ∑ P ∈ allPolymers G, |t| ^ P.card :=
+    Finset.sum_nonneg (fun P _ => by positivity)
+  have hAabs : Real.exp 1 * |∑ P ∈ allPolymers G, |t| ^ P.card| < 1 := by
+    rwa [abs_of_nonneg hsumnn]
+  rw [← summable_abs_iff, summable_prod_of_nonneg (fun p => abs_nonneg _)]
+  refine ⟨fun r => ?_, ?_⟩
+  · refine summable_of_ne_finset_zero (s := Finset.range (r + 1)) (fun k hk => ?_)
+    rw [Finset.mem_range, not_lt] at hk
+    rw [colorDegreeTerm_eq_zero_of_lt G t (by omega : r < k), abs_zero]
+  · refine Summable.of_nonneg_of_le (fun r => tsum_nonneg (fun k => abs_nonneg _))
+      (fun r => tsum_abs_colorDegreeTerm_le G t r) ?_
+    have hpow : ∀ r : ℕ, ((r : ℝ) ^ r / (r.factorial : ℝ)) *
+        (∑ P ∈ allPolymers G, |t| ^ P.card) ^ r =
+        ((r : ℝ) ^ r / (r.factorial : ℝ)) * |∑ P ∈ allPolymers G, |t| ^ P.card| ^ r := by
+      intro r; rw [abs_of_nonneg hsumnn]
+    simp_rw [hpow]
+    exact summable_pow_self_div_factorial_mul_abs_pow _ hAabs
+
 end IsingModel
