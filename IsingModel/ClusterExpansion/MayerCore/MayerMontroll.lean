@@ -283,4 +283,24 @@ noncomputable def colorings_constant_on_components_equiv {r k : ℕ}
     induction comp using SimpleGraph.ConnectedComponent.ind with
     | _ v => simp only [SimpleGraph.ConnectedComponent.lift_mk]
 
+/-- **Connectivity = single component**: `fromEdgeSet ↑S` is connected iff its component set
+is a singleton (`Fintype.card … = 1`).  This identifies the surviving terms of the surjective
+log-weight collapse (`#components = 1`) with the connected (spanning) edge subsets. -/
+theorem connected_iff_card_connectedComponent_eq_one {r : ℕ}
+    (S : Finset (Sym2 (Fin r))) :
+    (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 (Fin r)))).Connected ↔
+      Fintype.card (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 (Fin r)))).ConnectedComponent = 1 := by
+  set G := SimpleGraph.fromEdgeSet (↑S : Set (Sym2 (Fin r))) with hG
+  rw [SimpleGraph.connected_iff_exists_forall_reachable, Fintype.card_eq_one_iff]
+  constructor
+  · rintro ⟨v, hv⟩
+    refine ⟨G.connectedComponentMk v, fun y => ?_⟩
+    induction y using SimpleGraph.ConnectedComponent.ind with
+    | _ w => exact (SimpleGraph.ConnectedComponent.sound (hv w)).symm
+  · rintro ⟨c₀, hc₀⟩
+    induction c₀ using SimpleGraph.ConnectedComponent.ind with
+    | _ v =>
+      exact ⟨v, fun w =>
+        SimpleGraph.ConnectedComponent.exact (hc₀ (G.connectedComponentMk w)).symm⟩
+
 end IsingModel
