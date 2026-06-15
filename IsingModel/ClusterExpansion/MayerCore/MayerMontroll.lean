@@ -1,5 +1,6 @@
 import IsingModel.ClusterExpansion.MayerCore.LogTaylor
 import IsingModel.ClusterExpansion.MayerCore.UrsellMajorant
+import IsingModel.ClusterExpansion.MayerCore.SurjectiveLogWeight
 
 /-!
 # Mayer–Montroll identity `log Ξ = ∑ₙ mayerExpansionTerm` (GJ §18.4, Issue #1499 Phase C)
