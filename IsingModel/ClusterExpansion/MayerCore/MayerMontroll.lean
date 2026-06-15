@@ -694,4 +694,31 @@ theorem fiber_sum_clusterSeqActivity {r m : ℕ} (G : SimpleGraph ι) [Fintype G
   rw [Finset.sum_congr rfl (fun q _ => hconst q), Finset.sum_const, Finset.card_univ,
     card_proper_colorClass_fiber G hΩ hr, nsmul_eq_mul]
 
+open Classical in
+/-- **Fibre activity sum as a `Finset`-filter sum**: the product-subtype fibre sum
+`fiber_sum_clusterSeqActivity` rewritten as a sum over the `Finset` of `(ω, c)` (a product of
+a polymer sequence and a colouring) satisfying the fibre predicate.  Bridges the subtype sum
+to the `Finset`-filter form consumed by the fibrewise regrouping (`Finset.sum_subtype`). -/
+theorem fiber_filter_sum {r m : ℕ} (G : SimpleGraph ι) [Fintype G.edgeSet] (t : ℝ)
+    {Ω : Fin m → Finset (Finset (Sym2 ι))}
+    (hΩ : ∀ a, Ω a ∈ vdCompatiblePolymerFamilies G)
+    (hr : r = (labelledPolymers Ω).card) :
+    ∑ p ∈ (Finset.univ : Finset ((Fin r → Finset (Sym2 ι)) × (Fin r → Fin m))).filter
+        (fun p => (∀ i, p.1 i ∈ allPolymers G) ∧
+          IsProperColoring (polymerSeqIncompatibilityGraph p.1) m p.2 ∧
+          (∀ a, colorClass p.1 p.2 a = Ω a)), clusterSeqActivity t p.1 =
+      (r.factorial : ℝ) * ∏ a : Fin m, ∏ P ∈ Ω a, t ^ P.card := by
+  classical
+  rw [Finset.sum_subtype (Finset.univ.filter
+        (fun p : (Fin r → Finset (Sym2 ι)) × (Fin r → Fin m) =>
+          (∀ i, p.1 i ∈ allPolymers G) ∧
+            IsProperColoring (polymerSeqIncompatibilityGraph p.1) m p.2 ∧
+            (∀ a, colorClass p.1 p.2 a = Ω a)))
+      (p := fun p => (∀ i, p.1 i ∈ allPolymers G) ∧
+        IsProperColoring (polymerSeqIncompatibilityGraph p.1) m p.2 ∧
+        (∀ a, colorClass p.1 p.2 a = Ω a))
+      (fun x => by simp only [Finset.mem_filter, Finset.mem_univ, true_and])
+      (fun p => clusterSeqActivity t p.1)]
+  exact fiber_sum_clusterSeqActivity G t hΩ hr
+
 end IsingModel
