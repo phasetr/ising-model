@@ -1151,4 +1151,98 @@ theorem summable_uncurry_colorDegreeTerm {ι : Type*} [Fintype ι] [DecidableEq 
     simp_rw [hpow]
     exact summable_pow_self_div_factorial_mul_abs_pow _ hAabs
 
+/-- **`colorDegreeTerm` vanishes when `m·|allPolymers G| < r`**: no surjective `m`-colouring of a
+graph on `Fin r` whose incompatibility structure comes from `r` polymers can use more than
+`m·|allPolymers G|` labels, so for `m·N < r` every colour count is `0`
+(`properSurjectiveColorings_empty_of_card_lt` per `ω`).  Provides the eventual vanishing in `r`
+that turns the finite log-Taylor colouring sum into a `tsum`. -/
+theorem colorDegreeTerm_eq_zero_of_card_lt {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (t : ℝ) {r m : ℕ}
+    (hr : m * (allPolymers G).card < r) : colorDegreeTerm G t r m = 0 := by
+  classical
+  rw [colorDegreeTerm]
+  refine mul_eq_zero.mpr (Or.inr (Finset.sum_eq_zero (fun ω hω => ?_)))
+  have hω' : ∀ i, ω i ∈ allPolymers G := fun i => Fintype.mem_piFinset.mp hω i
+  rw [properSurjectiveColorings_empty_of_card_lt G hω' hr, Finset.card_empty,
+    Nat.cast_zero, zero_div, zero_mul]
+
+/-- **Mayer term as the `tsum` of its colour-degree row**: `mayerExpansionTerm G r t =
+∑'_k colorDegreeTerm G t r k`.  The colour-degree row is finitely supported (`Icc 1 r`), so the
+`tsum` collapses to the finite double sum of `mayerExpansionTerm_eq_double_sum`. -/
+theorem mayerExpansionTerm_eq_tsum_colorDegreeTerm {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (r : ℕ) (t : ℝ) :
+    mayerExpansionTerm G r t = ∑' k, colorDegreeTerm G t r k := by
+  classical
+  rw [mayerExpansionTerm_eq_double_sum,
+    tsum_eq_sum (s := Finset.Icc 1 r) (fun k hk => by
+      rw [Finset.mem_Icc, not_and_or, not_le, not_le, Nat.lt_one_iff] at hk
+      rcases hk with hk0 | hkr
+      · rw [hk0, colorDegreeTerm_zero_right]
+      · exact colorDegreeTerm_eq_zero_of_lt G t hkr)]
+  rfl
+
+/-- **Log-Taylor term as the `tsum` of its colour-degree column**: the `n`-th log-Taylor term equals
+`∑'_r colorDegreeTerm G t r (n+1)`.  The colour-degree column is finitely supported
+(`r ≤ (n+1)·|allPolymers G|`, by `colorDegreeTerm_eq_zero_of_card_lt`), so the `tsum` collapses to
+the finite range sum of `logTaylor_term_eq_coloring`. -/
+theorem logTaylorTerm_eq_tsum_colorDegreeTerm {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (t : ℝ) (n : ℕ) :
+    (-1 : ℝ) ^ n *
+        (∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅, ∏ P ∈ Γ, t ^ P.card) ^ (n + 1) /
+        (n + 1) =
+      ∑' r, colorDegreeTerm G t r (n + 1) := by
+  classical
+  rw [logTaylor_term_eq_coloring,
+    tsum_eq_sum (s := Finset.range ((n + 1) * (allPolymers G).card + 1)) (fun r hr => by
+      rw [Finset.mem_range, not_lt] at hr
+      exact colorDegreeTerm_eq_zero_of_card_lt G t
+        (by omega : (n + 1) * (allPolymers G).card < r))]
+  refine Finset.sum_congr rfl (fun r _ => ?_)
+  rw [colorDegreeTerm, Nat.add_sub_cancel]
+  push_cast
+  ring
+
+/-- **Mayer–Montroll identity (general `t`)**: in the convergence regime, the polymer free energy
+equals the sum of the Mayer expansion terms,
+`polymerFreeEnergy G t = ∑'_n mayerExpansionTerm G n t` (GJ §18.4).
+
+Proof (Fubini swap of the colour-degree double sum).  The analytic side
+`polymerFreeEnergy_hasSum_via_log` gives `polymerFreeEnergy = ∑'_n logTaylorTerm n`, and each
+`logTaylorTerm n = ∑'_r colorDegreeTerm G t r (n+1)` (column), while
+`mayerExpansionTerm G r t = ∑'_k colorDegreeTerm G t r k` (row).  Double-summability
+(`summable_uncurry_colorDegreeTerm`, valid for `e·A < 1`) licenses `tsum_comm`; the `k = 0` column
+vanishes, giving the `n ↔ n+1` shift between the log-Taylor and Mayer indexings.
+
+The two hypotheses are the genuine analytic convergence conditions: `h_abs` (`|ε(t)| < 1`) for the
+`log(1+ε)` series, and `hact` (`e·A < 1`, `A = ∑_P |t|^|P|`) for the double-sum Fubini swap; both
+hold in the Kotecký–Preiss / high-temperature regime. -/
+theorem mayer_identity_general_t {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] {t : ℝ}
+    (h_abs : |∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅, ∏ P ∈ Γ, t ^ P.card| < 1)
+    (hact : Real.exp 1 * (∑ P ∈ allPolymers G, |t| ^ P.card) < 1) :
+    polymerFreeEnergy G t = ∑' n, mayerExpansionTerm G n t := by
+  classical
+  have hsum : Summable (Function.uncurry fun r k => colorDegreeTerm G t r k) :=
+    summable_uncurry_colorDegreeTerm G t hact
+  have hlog := polymerFreeEnergy_hasSum_via_log G h_abs
+  have hg : Summable (fun k => ∑' r, colorDegreeTerm G t r k) := hsum.prod_symm.prod
+  have hg0 : (∑' r, colorDegreeTerm G t r 0) = 0 := by
+    simp_rw [colorDegreeTerm_zero_right]; exact tsum_zero
+  -- shift the `k`-index: the `k = 0` colour column vanishes, so the log-Taylor `n`-sum
+  -- (indexed by `n+1`) equals the full `k`-sum.
+  have hshift : ∑' n, ∑' r, colorDegreeTerm G t r (n + 1) =
+      ∑' k, ∑' r, colorDegreeTerm G t r k := by
+    rw [hg.tsum_eq_zero_add]; simp only [hg0, zero_add]
+  -- Fubini swap of the colour-degree double sum (licensed by double-summability).
+  have hcomm : ∑' k, ∑' r, colorDegreeTerm G t r k =
+      ∑' r, ∑' k, colorDegreeTerm G t r k := hsum.tsum_comm
+  calc polymerFreeEnergy G t
+      = ∑' n, ∑' r, colorDegreeTerm G t r (n + 1) := by
+        rw [← hlog.tsum_eq]
+        exact tsum_congr (fun n => logTaylorTerm_eq_tsum_colorDegreeTerm G t n)
+    _ = ∑' k, ∑' r, colorDegreeTerm G t r k := hshift
+    _ = ∑' r, ∑' k, colorDegreeTerm G t r k := hcomm
+    _ = ∑' r, mayerExpansionTerm G r t :=
+        tsum_congr (fun r => (mayerExpansionTerm_eq_tsum_colorDegreeTerm G r t).symm)
+
 end IsingModel
