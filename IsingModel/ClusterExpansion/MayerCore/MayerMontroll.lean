@@ -669,4 +669,29 @@ theorem card_proper_colorClass_fiber {r m : ℕ} (G : SimpleGraph ι) [Fintype G
     rw [Fintype.card_fin, Fintype.card_coe, ← hr]
   rw [Fintype.card_equiv (Fintype.equivOfCardEq hcard), Fintype.card_fin]
 
+/-- **Fibre activity sum is `r! · W(Ω)`**: summing the sequence activity over all `(ω, c)`
+whose colour classes are `Ω` gives `r!` copies of the family weight `W(Ω) = ∏_a ∏_{P∈Ω a} t^|P|`
+(each fibre element has the same activity by `clusterSeqActivity_eq_prod_colorClass`, and there
+are `r!` of them by `card_proper_colorClass_fiber`). -/
+theorem fiber_sum_clusterSeqActivity {r m : ℕ} (G : SimpleGraph ι) [Fintype G.edgeSet] (t : ℝ)
+    {Ω : Fin m → Finset (Finset (Sym2 ι))}
+    (hΩ : ∀ a, Ω a ∈ vdCompatiblePolymerFamilies G)
+    (hr : r = (labelledPolymers Ω).card) :
+    ∑ q : {p : (Fin r → Finset (Sym2 ι)) × (Fin r → Fin m) //
+        (∀ i, p.1 i ∈ allPolymers G) ∧
+        IsProperColoring (polymerSeqIncompatibilityGraph p.1) m p.2 ∧
+        (∀ a, colorClass p.1 p.2 a = Ω a)}, clusterSeqActivity t q.1.1 =
+      (r.factorial : ℝ) * ∏ a : Fin m, ∏ P ∈ Ω a, t ^ P.card := by
+  classical
+  have hconst : ∀ q : {p : (Fin r → Finset (Sym2 ι)) × (Fin r → Fin m) //
+        (∀ i, p.1 i ∈ allPolymers G) ∧
+        IsProperColoring (polymerSeqIncompatibilityGraph p.1) m p.2 ∧
+        (∀ a, colorClass p.1 p.2 a = Ω a)},
+      clusterSeqActivity t q.1.1 = ∏ a : Fin m, ∏ P ∈ Ω a, t ^ P.card := by
+    intro q
+    rw [clusterSeqActivity_eq_prod_colorClass G t q.2.1 q.2.2.1]
+    exact Finset.prod_congr rfl (fun a _ => by rw [q.2.2.2 a])
+  rw [Finset.sum_congr rfl (fun q _ => hconst q), Finset.sum_const, Finset.card_univ,
+    card_proper_colorClass_fiber G hΩ hr, nsmul_eq_mul]
+
 end IsingModel
