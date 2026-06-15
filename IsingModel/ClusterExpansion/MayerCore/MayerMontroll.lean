@@ -721,4 +721,43 @@ theorem fiber_filter_sum {r m : ℕ} (G : SimpleGraph ι) [Fintype G.edgeSet] (t
       (fun p => clusterSeqActivity t p.1)]
   exact fiber_sum_clusterSeqActivity G t hΩ hr
 
+open Classical in
+/-- **Colour-count sum as a product-`Finset` sum**: the activity weighted by the
+proper-surjective-colouring count over polymer sequences equals the activity summed over the
+`Finset` of `(ω, c)` pairs with `ω` valued in `allPolymers` and `c` a proper surjective
+colouring.  Expand the count as `∑_c 1` and reindex the `(ω, c)` double sum as a product. -/
+theorem seq_count_eq_product_sum {r m : ℕ} (G : SimpleGraph ι) [Fintype G.edgeSet] (t : ℝ) :
+    ∑ ω ∈ Fintype.piFinset (fun _ : Fin r => allPolymers G),
+        ((properSurjectiveColorings (polymerSeqIncompatibilityGraph ω) m).card : ℝ) *
+          clusterSeqActivity t ω =
+      ∑ p ∈ (Finset.univ : Finset ((Fin r → Finset (Sym2 ι)) × (Fin r → Fin m))).filter
+          (fun p => (∀ i, p.1 i ∈ allPolymers G) ∧
+            IsProperColoring (polymerSeqIncompatibilityGraph p.1) m p.2 ∧
+            Function.Surjective p.2), clusterSeqActivity t p.1 := by
+  classical
+  have hps : ∀ ω : Fin r → Finset (Sym2 ι),
+      properSurjectiveColorings (polymerSeqIncompatibilityGraph ω) m =
+      Finset.univ.filter (fun c : Fin r → Fin m =>
+        IsProperColoring (polymerSeqIncompatibilityGraph ω) m c ∧ Function.Surjective c) := by
+    intro ω
+    ext c
+    simp only [mem_properSurjectiveColorings, Finset.mem_filter, Finset.mem_univ, true_and]
+  have hcount : ∀ ω : Fin r → Finset (Sym2 ι),
+      ((properSurjectiveColorings (polymerSeqIncompatibilityGraph ω) m).card : ℝ) *
+        clusterSeqActivity t ω =
+      ∑ _c ∈ properSurjectiveColorings (polymerSeqIncompatibilityGraph ω) m,
+        clusterSeqActivity t ω := by
+    intro ω
+    rw [Finset.sum_const, nsmul_eq_mul]
+  simp_rw [hcount, hps]
+  refine (Finset.sum_finset_product
+    (Finset.univ.filter (fun p : (Fin r → Finset (Sym2 ι)) × (Fin r → Fin m) =>
+      (∀ i, p.1 i ∈ allPolymers G) ∧
+        IsProperColoring (polymerSeqIncompatibilityGraph p.1) m p.2 ∧ Function.Surjective p.2))
+    (Fintype.piFinset (fun _ : Fin r => allPolymers G))
+    (fun ω => Finset.univ.filter (fun c : Fin r → Fin m =>
+      IsProperColoring (polymerSeqIncompatibilityGraph ω) m c ∧ Function.Surjective c))
+    (fun p => ?_) (f := fun p => clusterSeqActivity t p.1)).symm
+  simp only [Finset.mem_filter, Finset.mem_univ, true_and, Fintype.mem_piFinset]
+
 end IsingModel
