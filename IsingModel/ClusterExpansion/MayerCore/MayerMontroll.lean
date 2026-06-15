@@ -303,4 +303,19 @@ theorem connected_iff_card_connectedComponent_eq_one {r : ℕ}
       exact ⟨v, fun w =>
         SimpleGraph.ConnectedComponent.exact (hc₀ (G.connectedComponentMk w)).symm⟩
 
+open Classical in
+/-- **Constant-on-`T` surjective colour count = component surjection count**: the number of
+surjective colourings `Fin r → Fin k` constant on every edge of `T` equals
+`surjCount (#components of fromEdgeSet ↑T) k`.  Combines
+`colorings_constant_on_components_equiv` with `card_surjective_eq_surjCount`; this is the
+inner colour count attached to an edge subset `T` in the Mayer–Montroll edge expansion. -/
+theorem card_constantOnEdgeSet_surjective {r k : ℕ} (T : Finset (Sym2 (Fin r))) :
+    (Finset.univ.filter
+        (fun c : Fin r → Fin k => ConstantOnEdgeSet T c ∧ Function.Surjective c)).card =
+      surjCount (Fintype.card
+        (SimpleGraph.fromEdgeSet (↑T : Set (Sym2 (Fin r)))).ConnectedComponent) k := by
+  classical
+  rw [← Fintype.card_subtype, Fintype.card_congr (colorings_constant_on_components_equiv T),
+    Fintype.card_subtype, card_surjective_eq_surjCount]
+
 end IsingModel
