@@ -336,4 +336,54 @@ theorem subset_badColorEdges_iff_constantOnEdgeSet {r k : ℕ} (H : SimpleGraph 
     rw [badColorEdges, Finset.mem_filter]
     exact ⟨hT he, hconst e he⟩
 
+open Classical in
+/-- **Edge expansion of the proper surjective colour count**: expanding the proper indicator
+edge-by-edge and swapping the order of summation,
+`#properSurjectiveColorings H k = ∑_{T ⊆ E(H)} (-1)^|T| · #{c surjective, constant on T}`. -/
+theorem properSurjectiveColorings_card_eq_sum_edges {r k : ℕ} (H : SimpleGraph (Fin r))
+    [DecidableRel H.Adj] :
+    ((properSurjectiveColorings H k).card : ℝ) =
+      ∑ T ∈ H.edgeFinset.powerset, (-1 : ℝ) ^ T.card *
+        ((Finset.univ.filter
+          (fun c : Fin r → Fin k => ConstantOnEdgeSet T c ∧ Function.Surjective c)).card : ℝ) := by
+  classical
+  -- card = ∑ over surjective colourings of the proper indicator
+  have h1 : ((properSurjectiveColorings H k).card : ℝ) =
+      ∑ c ∈ Finset.univ.filter (fun c : Fin r → Fin k => Function.Surjective c),
+        (if IsProperColoring H k c then (1 : ℝ) else 0) := by
+    rw [properSurjectiveColorings]
+    have hreorder : (Finset.univ.filter
+          (fun c : Fin r → Fin k => IsProperColoring H k c ∧ Function.Surjective c)) =
+        (Finset.univ.filter (fun c : Fin r → Fin k => Function.Surjective c)).filter
+          (fun c => IsProperColoring H k c) := by
+      rw [Finset.filter_filter]
+      exact Finset.filter_congr (fun c _ => and_comm)
+    rw [hreorder, Finset.card_filter, Nat.cast_sum]
+    exact Finset.sum_congr rfl (fun c _ => by by_cases hp : IsProperColoring H k c <;> simp [hp])
+  rw [h1]
+  simp_rw [proper_indicator_eq_signed_bad_edges]
+  -- rewrite each inner powerset sum over E(H).powerset with an indicator
+  have h2 : ∀ c : Fin r → Fin k,
+      (∑ T ∈ (badColorEdges H c).powerset, (-1 : ℝ) ^ T.card) =
+        ∑ T ∈ H.edgeFinset.powerset, (if T ⊆ badColorEdges H c then (-1 : ℝ) ^ T.card else 0) := by
+    intro c
+    rw [← Finset.sum_filter]
+    refine Finset.sum_congr ?_ (fun _ _ => rfl)
+    ext T
+    simp only [Finset.mem_powerset, Finset.mem_filter]
+    exact ⟨fun hT => ⟨hT.trans (Finset.filter_subset _ _), hT⟩, fun h => h.2⟩
+  simp_rw [h2]
+  rw [Finset.sum_comm]
+  refine Finset.sum_congr rfl (fun T hT => ?_)
+  rw [Finset.mem_powerset] at hT
+  have hcard : (Finset.univ.filter (fun c : Fin r → Fin k => Function.Surjective c)).filter
+        (fun c => T ⊆ badColorEdges H c) =
+      Finset.univ.filter
+        (fun c : Fin r → Fin k => ConstantOnEdgeSet T c ∧ Function.Surjective c) := by
+    rw [Finset.filter_filter]
+    exact Finset.filter_congr (fun c _ => by
+      rw [subset_badColorEdges_iff_constantOnEdgeSet H c hT]; exact and_comm)
+  rw [Finset.sum_ite, Finset.sum_const_zero, add_zero, Finset.sum_const, nsmul_eq_mul, hcard,
+    mul_comm]
+
 end IsingModel
