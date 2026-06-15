@@ -13914,7 +13914,41 @@ contribution) and \texttt{mayerPartialSum\_three}; and
 \texttt{mayerExpansionTerm\_eq\_zero\_of\_no\_polymers}
 ($\mathrm{allPolymers}\,G = \varnothing \Rightarrow \mathrm{mayerExpansionTerm}\,G\,n\,t = 0$
 for $n \ge 1$). These isolate the truncation bookkeeping for the general-$t$
-capstone (the Mayer–Montroll exponential formula, deferred).
+capstone (the Mayer–Montroll exponential formula, now established; see the
+colour-degree paragraph below).
+
+\paragraph{Mayer–Montroll identity via the colour-degree double sum (\S18.4, Issue~\#1499).}
+The general-$t$ Mayer–Montroll identity
+$\mathrm{polymerFreeEnergy}\,G\,t = \sum'_n \mathrm{mayerExpansionTerm}\,G\,n\,t$
+(\texttt{MayerCore/MayerMontroll.lean}, \texttt{mayer\_identity\_general\_t}) is proved in the
+convergence regime by Fubini on a single double-indexed family, the \emph{colour-degree term}
+$C(r,k) := \mathrm{colorDegreeTerm}\,G\,t\,r\,k
+= \frac{(-1)^{k-1}}{k}\sum_{\omega \in \mathrm{allPolymers}\,G^{\,r}}
+\frac{\#\mathrm{properSurjectiveColorings}(G(\omega),k)}{r!}\,z(\omega)$,
+where $G(\omega)$ is the polymer-sequence incompatibility graph and $z(\omega)$ the cluster
+activity. Summing $C(r,k)$ along its row recovers the $r$-th Mayer term
+(\texttt{mayerExpansionTerm\_eq\_tsum\_colorDegreeTerm}, the row being finitely supported on
+$1 \le k \le r$ via \texttt{mayerExpansionTerm\_eq\_double\_sum}), while summing along its
+column recovers the $n$-th log-Taylor term of $\log(1+\varepsilon(t))$
+(\texttt{logTaylorTerm\_eq\_tsum\_colorDegreeTerm}, with $k = n+1$, the column finitely supported
+on $r \le (n{+}1)\,|\mathrm{allPolymers}\,G|$ via \texttt{colorDegreeTerm\_eq\_zero\_of\_card\_lt}).
+The colouring crux \texttt{mayerMontroll\_coloring\_identity} (proper-surjective alternating colour
+count $=$ connected-spanning alternating sum) and the $r!$ colour-class fibre count
+\texttt{card\_proper\_colorClass\_fiber} supply these two collapses. Absolute double-summability
+\texttt{summable\_uncurry\_colorDegreeTerm} holds for $e\,A < 1$
+($A := \sum_{P} |t|^{|P|}$): each row sums in absolute value to at most $\frac{r^r}{r!}A^r$
+(\texttt{tsum\_abs\_colorDegreeTerm\_le}, from $\#\mathrm{colourings} \le k^r$ and
+$\sum_\omega |z(\omega)| = A^r$), and $\sum_r \frac{r^r}{r!}A^r$ converges by the ratio test
+(\texttt{summable\_pow\_self\_div\_factorial\_mul\_abs\_pow}, using $(1+1/r)^r \le e$). The analytic
+side $\mathrm{polymerFreeEnergy}\,G\,t = \sum'_n (\text{log-Taylor term})$ is
+\texttt{polymerFreeEnergy\_hasSum\_via\_log} (valid for $|\varepsilon(t)| < 1$); shifting away the
+vanishing $k=0$ column (\texttt{Summable.tsum\_eq\_zero\_add}) and swapping summation order
+(\texttt{Summable.tsum\_comm}) reassembles the rows into $\sum'_r \mathrm{mayerExpansionTerm}$.
+Both convergence hypotheses hold near $t = 0$, giving the unconditional eventual form
+\texttt{mayer\_identity\_general\_t\_eventually} ($\forall^f t \in \mathrm{nhds}\,0$): $\varepsilon(t)
+\to 0$ and $A(t) \to 0$ (every polymer is nonempty, so $A(0) = 0$ by \texttt{IsPolymer.nonempty}).
+This completes the cluster identity $\log\Xi = \sum_n (\text{Mayer term})$ for general interacting
+polymers in the convergence regime. Reference: Glimm–Jaffe, 2nd ed., \S18.4, pp.~378--386.
 
 \paragraph{Independent (non-interacting) polymer free energy (\S18.5).} When the
 polymers of $G$ are pairwise vertex-disjoint (no two distinct polymers share a
