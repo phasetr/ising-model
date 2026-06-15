@@ -243,4 +243,44 @@ theorem constantOnEdgeSet_iff_constant_on_components {r k : ℕ}
         rw [SimpleGraph.fromEdgeSet_adj]
         exact ⟨Finset.mem_coe.mpr he, hab⟩
 
+/-- **Constant-on-components colourings = colourings of the component set**: surjective
+colourings of `Fin r` constant on every edge of `S` correspond bijectively to surjective
+colourings of the connected-component set of `fromEdgeSet ↑S` (descend through the quotient
+`connectedComponentMk`).  This turns the inner colour count of the edge inclusion–exclusion
+into a surjection count on the component set, ready for
+`surjective_logWeight_eq_connected_indicator`. -/
+noncomputable def colorings_constant_on_components_equiv {r k : ℕ}
+    (S : Finset (Sym2 (Fin r))) :
+    {c : Fin r → Fin k // ConstantOnEdgeSet S c ∧ Function.Surjective c} ≃
+      {d : (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 (Fin r)))).ConnectedComponent → Fin k //
+        Function.Surjective d} where
+  toFun c :=
+    ⟨SimpleGraph.ConnectedComponent.lift c.1
+        (fun v w p _ =>
+          ((constantOnEdgeSet_iff_constant_on_components S c.1).mp c.2.1) v w ⟨p⟩),
+      by
+        intro a
+        obtain ⟨v, hv⟩ := c.2.2 a
+        exact ⟨_, SimpleGraph.ConnectedComponent.lift_mk.trans hv⟩⟩
+  invFun d :=
+    ⟨fun v => d.1 ((SimpleGraph.fromEdgeSet (↑S : Set (Sym2 (Fin r)))).connectedComponentMk v),
+      by
+        refine ⟨?_, ?_⟩
+        · rw [constantOnEdgeSet_iff_constant_on_components]
+          intro i j hreach
+          exact congrArg d.1 (SimpleGraph.ConnectedComponent.sound hreach)
+        · intro a
+          obtain ⟨comp, hcomp⟩ := d.2 a
+          induction comp using SimpleGraph.ConnectedComponent.ind with
+          | _ v => exact ⟨v, hcomp⟩⟩
+  left_inv c := by
+    apply Subtype.ext
+    funext v
+    simp only [SimpleGraph.ConnectedComponent.lift_mk]
+  right_inv d := by
+    apply Subtype.ext
+    funext comp
+    induction comp using SimpleGraph.ConnectedComponent.ind with
+    | _ v => simp only [SimpleGraph.ConnectedComponent.lift_mk]
+
 end IsingModel
