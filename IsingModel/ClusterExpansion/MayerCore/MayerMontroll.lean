@@ -431,4 +431,18 @@ theorem mayerMontroll_coloring_identity {r : ℕ} (H : SimpleGraph (Fin r)) [Dec
   · rw [if_neg hconn,
       if_neg (fun h => hconn ((connected_iff_card_connectedComponent_eq_one T).mpr h)), mul_zero]
 
+/-- **Ursell coefficient as a colouring sum**: combining the definition
+`ϕ^T(ω) = alternatingConnectedSubgraphSum (G(ω)) / n!` with the Mayer–Montroll colouring
+identity, the Ursell coefficient of a length-`n` polymer sequence is the alternating
+proper-surjective-colouring count of its incompatibility graph, normalised by `n!`.  This is
+the bridge from the colouring identity to `mayerExpansionTerm`. -/
+theorem ursellCoefficient_eq_coloring_sum {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {n : ℕ} (ω : Fin n → Finset (Sym2 ι)) :
+    ursellCoefficient ω =
+      (∑ k ∈ Finset.Icc 1 n, ((-1 : ℝ) ^ (k - 1) / (k : ℝ)) *
+        ((properSurjectiveColorings (polymerSeqIncompatibilityGraph ω) k).card : ℝ)) /
+        (n.factorial : ℝ) := by
+  rw [ursellCoefficient_eq_alternatingConnectedSubgraphSum_div,
+    mayerMontroll_coloring_identity (polymerSeqIncompatibilityGraph ω)]
+
 end IsingModel
