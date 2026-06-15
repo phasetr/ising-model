@@ -119,4 +119,35 @@ theorem colorClass_nonempty {r : ℕ} {ω : Fin r → Finset (Sym2 ι)} {k : ℕ
   obtain ⟨i, hi⟩ := hc a
   exact ⟨ω i, mem_colorClass.mpr ⟨i, hi, rfl⟩⟩
 
+/-- **Colour classes of a proper surjective colouring are nonempty vertex-disjoint
+compatible polymer families**: for a polymer sequence `ω` valued in `allPolymers G`
+and a proper colouring of its incompatibility graph, each colour class lies in
+`(vdCompatiblePolymerFamilies G).erase ∅`.  Properness forces same-colour polymers
+to be compatible (vertex-disjoint); surjectivity forces the class nonempty. -/
+theorem colorClass_mem_vdCompatiblePolymerFamilies
+    (G : SimpleGraph ι) [Fintype G.edgeSet] {r : ℕ} {ω : Fin r → Finset (Sym2 ι)}
+    (hω : ∀ i, ω i ∈ allPolymers G) {k : ℕ} {c : Fin r → Fin k}
+    (hproper : IsProperColoring (polymerSeqIncompatibilityGraph ω) k c)
+    (hsurj : Function.Surjective c) (a : Fin k) :
+    colorClass ω c a ∈ (vdCompatiblePolymerFamilies G).erase ∅ := by
+  rw [Finset.mem_erase]
+  refine ⟨(colorClass_nonempty hsurj a).ne_empty, ?_⟩
+  rw [mem_vdCompatiblePolymerFamilies]
+  refine ⟨?_, ?_, ?_⟩
+  · intro Q hQ
+    obtain ⟨i, _, rfl⟩ := mem_colorClass.mp hQ
+    exact hω i
+  · intro P hP
+    obtain ⟨i, _, rfl⟩ := mem_colorClass.mp hP
+    exact mem_allPolymers.mp (hω i)
+  · intro P hP Q hQ hPQ
+    obtain ⟨i, hi, rfl⟩ := mem_colorClass.mp (Finset.mem_coe.mp hP)
+    obtain ⟨j, hj, rfl⟩ := mem_colorClass.mp (Finset.mem_coe.mp hQ)
+    have hij : i ≠ j := fun h => hPQ (by rw [h])
+    have hnotadj : ¬ (polymerSeqIncompatibilityGraph ω).Adj i j := fun hadj =>
+      hproper i j hadj (hi.trans hj.symm)
+    rw [polymerSeqIncompatibilityGraph_adj] at hnotadj
+    have hcompat : ¬ PolymersIncompatible (ω i) (ω j) := fun hinc => hnotadj ⟨hij, hinc⟩
+    rwa [PolymersIncompatible.iff_not_isPolymerVertexDisjoint, not_not] at hcompat
+
 end IsingModel
