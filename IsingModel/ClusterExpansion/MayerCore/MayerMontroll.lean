@@ -1245,4 +1245,41 @@ theorem mayer_identity_general_t {ι : Type*} [Fintype ι] [DecidableEq ι]
     _ = ∑' r, mayerExpansionTerm G r t :=
         tsum_congr (fun r => (mayerExpansionTerm_eq_tsum_colorDegreeTerm G r t).symm)
 
+/-- **Mayer–Montroll identity, eventual form near `t = 0`**: for `t` in some neighbourhood of `0`,
+`polymerFreeEnergy G t = ∑'_n mayerExpansionTerm G n t` (GJ §18.4).
+
+Both convergence hypotheses of `mayer_identity_general_t` hold near `0`: `|ε(t)| < 1` since
+`ε(t) → 0` (`vdPolymerFamilies_sum_minus_one_tendsto_zero`), and `e·A(t) < 1` since
+`A(t) = ∑_P |t|^|P| → 0` (every polymer is nonempty, so `A(0) = 0` and `A` is continuous). -/
+theorem mayer_identity_general_t_eventually {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] :
+    ∀ᶠ t : ℝ in nhds 0,
+      polymerFreeEnergy G t = ∑' n, mayerExpansionTerm G n t := by
+  classical
+  -- `|ε(t)| < 1` eventually.
+  have h_abs_tendsto : Filter.Tendsto (fun t : ℝ =>
+      |∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅, ∏ P ∈ Γ, t ^ P.card|)
+      (nhds 0) (nhds 0) := by
+    simpa using (continuous_abs.tendsto 0).comp
+      (vdPolymerFamilies_sum_minus_one_tendsto_zero G)
+  have h_abs_ev : ∀ᶠ t : ℝ in nhds 0,
+      |∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅, ∏ P ∈ Γ, t ^ P.card| < 1 :=
+    h_abs_tendsto.eventually_lt_const zero_lt_one
+  -- `e·A(t) < 1` eventually, where `A(t) = ∑_P |t|^|P|`.
+  have hcont : Continuous
+      (fun t : ℝ => Real.exp 1 * ∑ P ∈ allPolymers G, |t| ^ P.card) :=
+    continuous_const.mul (continuous_finset_sum _ (fun P _ => continuous_abs.pow P.card))
+  have hA0 : Real.exp 1 * ∑ P ∈ allPolymers G, |(0 : ℝ)| ^ P.card = 0 :=
+    mul_eq_zero.mpr (Or.inr (Finset.sum_eq_zero (fun P hP => by
+      rw [abs_zero, zero_pow (Finset.card_ne_zero.mpr (mem_allPolymers.mp hP).nonempty)])))
+  have hA : Filter.Tendsto
+      (fun t : ℝ => Real.exp 1 * ∑ P ∈ allPolymers G, |t| ^ P.card) (nhds 0) (nhds 0) := by
+    have h := hcont.tendsto 0
+    rwa [hA0] at h
+  have hact_ev : ∀ᶠ t : ℝ in nhds 0,
+      Real.exp 1 * (∑ P ∈ allPolymers G, |t| ^ P.card) < 1 :=
+    hA.eventually_lt_const zero_lt_one
+  exact (h_abs_ev.and hact_ev).mono
+    (fun t ht => mayer_identity_general_t G ht.1 ht.2)
+
 end IsingModel
