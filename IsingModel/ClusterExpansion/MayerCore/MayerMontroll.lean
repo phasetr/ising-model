@@ -386,4 +386,49 @@ theorem properSurjectiveColorings_card_eq_sum_edges {r k : ℕ} (H : SimpleGraph
   rw [Finset.sum_ite, Finset.sum_const_zero, add_zero, Finset.sum_const, nsmul_eq_mul, hcard,
     mul_comm]
 
+/-- **Surjective log-weight over an extended range**: for `m ≤ N`, the alternating
+`surjCount m`-weighted sum over `Icc 1 N` still collapses to `[m = 1]`, the extra terms
+`k > m` vanishing since `surjCount m k = 0`. -/
+theorem surjLogWeight_sum_Icc_of_le {m N : ℕ} (hmN : m ≤ N) :
+    ∑ k ∈ Finset.Icc 1 N, ((-1 : ℝ) ^ (k - 1) / (k : ℝ)) * (surjCount m k : ℝ) =
+      if m = 1 then 1 else 0 := by
+  rw [← surjLogWeight_eq m]
+  refine (Finset.sum_subset (fun k hk => ?_) (fun k hkN hkm => ?_)).symm
+  · rw [Finset.mem_Icc] at hk ⊢; omega
+  · rw [Finset.mem_Icc] at hkN hkm
+    rw [surjCount_eq_zero_of_lt (by omega), Nat.cast_zero, mul_zero]
+
+/-- **Mayer–Montroll colouring identity** (GJ §18.4): for any finite graph `H` on `Fin r`,
+the alternating proper-surjective-colouring weighted sum equals the alternating
+connected-spanning-subgraph sum,
+`∑_{k=1}^r (-1)^(k-1)/k · #properSurjectiveColorings H k = alternatingConnectedSubgraphSum H`.
+This is the combinatorial heart of the cluster-expansion identity: the edge inclusion–exclusion
+collapses to exactly the connected (single-component) edge subsets via the surjective
+log-weight identity. -/
+theorem mayerMontroll_coloring_identity {r : ℕ} (H : SimpleGraph (Fin r)) [DecidableRel H.Adj] :
+    ∑ k ∈ Finset.Icc 1 r, ((-1 : ℝ) ^ (k - 1) / (k : ℝ)) *
+        ((properSurjectiveColorings H k).card : ℝ) =
+      alternatingConnectedSubgraphSum H := by
+  classical
+  simp_rw [properSurjectiveColorings_card_eq_sum_edges H, Finset.mul_sum]
+  rw [Finset.sum_comm, alternatingConnectedSubgraphSum, connectedSpanningEdgeSubsets,
+    Finset.sum_filter]
+  refine Finset.sum_congr rfl (fun T hT => ?_)
+  rw [Finset.mem_powerset] at hT
+  -- every component count `surjCount (#ConnComp T) k`, factor `(-1)^|T|`, collapse via log-weight
+  simp_rw [card_constantOnEdgeSet_surjective T,
+    mul_left_comm ((-1 : ℝ) ^ (_ - 1) / _) ((-1 : ℝ) ^ T.card)]
+  rw [← Finset.mul_sum]
+  have hle : Fintype.card (SimpleGraph.fromEdgeSet (↑T : Set (Sym2 (Fin r)))).ConnectedComponent
+      ≤ r := by
+    have : Fintype.card (SimpleGraph.fromEdgeSet (↑T : Set (Sym2 (Fin r)))).ConnectedComponent
+        ≤ Fintype.card (Fin r) :=
+      Fintype.card_le_of_surjective _ Quot.mk_surjective
+    simpa using this
+  rw [surjLogWeight_sum_Icc_of_le hle]
+  by_cases hconn : (SimpleGraph.fromEdgeSet (↑T : Set (Sym2 (Fin r)))).Connected
+  · rw [if_pos hconn, if_pos ((connected_iff_card_connectedComponent_eq_one T).mp hconn), mul_one]
+  · rw [if_neg hconn,
+      if_neg (fun h => hconn ((connected_iff_card_connectedComponent_eq_one T).mpr h)), mul_zero]
+
 end IsingModel
