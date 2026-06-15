@@ -460,4 +460,59 @@ theorem mayerExpansionTerm_eq_coloring_form {ι : Type*} [Fintype ι] [Decidable
   unfold mayerExpansionTerm
   exact Finset.sum_congr rfl (fun ω _ => by rw [ursellCoefficient_eq_coloring_sum])
 
+/-- **A nonempty polymer is not vertex-disjoint from itself**: its support contains the
+endpoints of any of its edges, so `Disjoint (support P) (support P)` forces `P` empty. -/
+theorem not_isPolymerVertexDisjoint_self_of_nonempty {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {P : Finset (Sym2 ι)} (hP : P.Nonempty) : ¬ IsPolymerVertexDisjoint P P := by
+  intro h
+  rw [IsPolymerVertexDisjoint, Finset.disjoint_self_iff_empty] at h
+  obtain ⟨e, he⟩ := hP
+  induction e using Sym2.ind with
+  | _ a b =>
+    have ha : a ∈ polymerSupport P :=
+      mem_polymerSupport.mpr ⟨s(a, b), he, Sym2.mem_iff.mpr (Or.inl rfl)⟩
+    rw [h] at ha
+    exact Finset.notMem_empty a ha
+
+/-- **A polymer sequence is injective on each colour class**: if `ω` is valued in
+`allPolymers G` and `c` is a proper colouring of its incompatibility graph, then two
+equal-coloured indices with equal polymers coincide.  (Same-colour indices are non-adjacent,
+hence vertex-disjoint; a polymer is not vertex-disjoint from itself.) -/
+theorem seq_injective_on_colorClass {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] {r : ℕ} {ω : Fin r → Finset (Sym2 ι)}
+    (hω : ∀ i, ω i ∈ allPolymers G) {m : ℕ} {c : Fin r → Fin m}
+    (hproper : IsProperColoring (polymerSeqIncompatibilityGraph ω) m c)
+    {i j : Fin r} (hc : c i = c j) (hωij : ω i = ω j) : i = j := by
+  by_contra hij
+  have hnotadj : ¬ (polymerSeqIncompatibilityGraph ω).Adj i j := fun hadj => hproper i j hadj hc
+  rw [polymerSeqIncompatibilityGraph_adj] at hnotadj
+  have hvd : IsPolymerVertexDisjoint (ω i) (ω j) := by
+    by_contra hinc
+    exact hnotadj ⟨hij, (PolymersIncompatible.iff_not_isPolymerVertexDisjoint).mpr hinc⟩
+  rw [hωij] at hvd
+  exact not_isPolymerVertexDisjoint_self_of_nonempty (mem_allPolymers.mp (hω j)).nonempty hvd
+
+/-- **Activity factor as a product over colour classes**: for a polymer sequence `ω` valued
+in `allPolymers G` and a proper colouring `c` of its incompatibility graph, the sequence
+activity equals the product over colour classes of the family weights,
+`clusterSeqActivity t ω = ∏_a ∏_{P ∈ colorClass ω c a} t^|P|`.  Grouping the sequence indices
+by colour and using injectivity of `ω` on each class (no polymer repeats within a class). -/
+theorem clusterSeqActivity_eq_prod_colorClass {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (t : ℝ) {r : ℕ} {ω : Fin r → Finset (Sym2 ι)}
+    (hω : ∀ i, ω i ∈ allPolymers G) {m : ℕ} {c : Fin r → Fin m}
+    (hproper : IsProperColoring (polymerSeqIncompatibilityGraph ω) m c) :
+    clusterSeqActivity t ω = ∏ a : Fin m, ∏ P ∈ colorClass ω c a, t ^ P.card := by
+  classical
+  rw [clusterSeqActivity,
+    ← Finset.prod_fiberwise_of_maps_to (s := Finset.univ) (t := Finset.univ) (g := c)
+      (f := fun i => t ^ (ω i).card) (fun i _ => Finset.mem_univ (c i))]
+  refine Finset.prod_congr rfl (fun a _ => ?_)
+  have hinj : ∀ i ∈ Finset.univ.filter (fun i => c i = a),
+      ∀ j ∈ Finset.univ.filter (fun i => c i = a), ω i = ω j → i = j := by
+    intro i hi j hj hij
+    rw [Finset.mem_filter] at hi hj
+    exact seq_injective_on_colorClass G hω hproper (hi.2.trans hj.2.symm) hij
+  have hcc : colorClass ω c a = (Finset.univ.filter (fun i => c i = a)).image ω := rfl
+  rw [hcc, Finset.prod_image hinj]
+
 end IsingModel
