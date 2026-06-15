@@ -802,4 +802,37 @@ theorem seq_count_eq_fiberwise {r m : ℕ} (G : SimpleGraph ι) [Fintype G.edgeS
     obtain ⟨i, hci, _⟩ := mem_colorClass.mp hPmem
     exact ⟨i, hci⟩
 
+open Classical in
+/-- **Inner fibre sum evaluated**: for a family-tuple `Ω` of nonempty vertex-disjoint
+compatible families, the activity over the `(ω, c)` fibre with colour classes `Ω` is
+`r!·∏_a∏_{P∈Ω a} t^|P|` when the total polymer count of `Ω` is `r`, and `0` otherwise (the
+fibre is empty, as any such `(ω, c)` would force `(labelledPolymers Ω).card = r`). -/
+theorem fiber_filter_sum_eval {r m : ℕ} (G : SimpleGraph ι) [Fintype G.edgeSet] (t : ℝ)
+    {Ω : Fin m → Finset (Finset (Sym2 ι))}
+    (hΩ : ∀ a, Ω a ∈ (vdCompatiblePolymerFamilies G).erase ∅) :
+    ∑ p ∈ (Finset.univ : Finset ((Fin r → Finset (Sym2 ι)) × (Fin r → Fin m))).filter
+        (fun p => (∀ i, p.1 i ∈ allPolymers G) ∧
+          IsProperColoring (polymerSeqIncompatibilityGraph p.1) m p.2 ∧
+          (∀ a, colorClass p.1 p.2 a = Ω a)), clusterSeqActivity t p.1 =
+      if (labelledPolymers Ω).card = r then
+        (r.factorial : ℝ) * ∏ a : Fin m, ∏ P ∈ Ω a, t ^ P.card else 0 := by
+  classical
+  have hΩ' : ∀ a, Ω a ∈ vdCompatiblePolymerFamilies G :=
+    fun a => (Finset.mem_erase.mp (hΩ a)).2
+  by_cases hcard : (labelledPolymers Ω).card = r
+  · rw [if_pos hcard]
+    exact fiber_filter_sum G t hΩ' hcard.symm
+  · rw [if_neg hcard]
+    refine Finset.sum_eq_zero (fun p hp => ?_)
+    exfalso
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hp
+    obtain ⟨hap, hpr, hcol⟩ := hp
+    apply hcard
+    have e : Fin r ≃ ↥(labelledPolymers Ω) :=
+      Equiv.ofBijective (seqColoringForward hcol)
+        ⟨seqColoringForward_injective G hap hpr hcol, seqColoringForward_surjective hcol⟩
+    have hc := Fintype.card_congr e
+    rw [Fintype.card_fin, Fintype.card_coe] at hc
+    exact hc.symm
+
 end IsingModel
