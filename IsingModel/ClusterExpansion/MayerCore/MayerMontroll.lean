@@ -580,4 +580,60 @@ theorem seqColoringForward_surjective {r m : ℕ} {Ω : Fin m → Finset (Finset
   obtain ⟨i, hci, hωi⟩ := mem_colorClass.mp hmem.2
   exact ⟨i, by simp only [seqColoringForward, hci, hωi]⟩
 
+omit [Fintype ι] [DecidableEq ι] in
+/-- **Membership in `labelledPolymers`**: `x ∈ labelledPolymers Ω ↔ x.2 ∈ Ω x.1`. -/
+theorem mem_labelledPolymers {m : ℕ} {Ω : Fin m → Finset (Finset (Sym2 ι))}
+    {x : (_ : Fin m) × Finset (Sym2 ι)} :
+    x ∈ labelledPolymers Ω ↔ x.2 ∈ Ω x.1 := by
+  unfold labelledPolymers
+  rw [Finset.mem_sigma]
+  simp only [Finset.mem_univ, true_and]
+
+omit [Fintype ι] in
+/-- **Inverse colour classes**: for a bijection `e : Fin r ≃ labelledPolymers Ω`, the colour
+classes of the sequence/colouring it induces (`ω i = (e i).2`, `c i = (e i).1`) are exactly
+`Ω`. -/
+theorem invColorClass {r m : ℕ} {Ω : Fin m → Finset (Finset (Sym2 ι))}
+    (e : Fin r ≃ ↥(labelledPolymers Ω)) (a : Fin m) :
+    colorClass (fun i => (e i).val.2) (fun i => (e i).val.1) a = Ω a := by
+  ext P
+  rw [mem_colorClass]
+  constructor
+  · rintro ⟨i, hci, hPi⟩
+    have hmem := mem_labelledPolymers.mp (e i).property
+    rw [← hPi, ← hci]
+    exact hmem
+  · intro hP
+    have hmem : (⟨a, P⟩ : (_ : Fin m) × Finset (Sym2 ι)) ∈ labelledPolymers Ω :=
+      mem_labelledPolymers.mpr hP
+    refine ⟨e.symm ⟨⟨a, P⟩, hmem⟩, ?_, ?_⟩
+    · rw [Equiv.apply_symm_apply]
+    · rw [Equiv.apply_symm_apply]
+
+/-- **Inverse colouring is proper**: the colouring induced by a bijection
+`e : Fin r ≃ labelledPolymers Ω` is proper for the incompatibility graph, since two
+equal-coloured indices give distinct polymers of the same vertex-disjoint colour class. -/
+theorem invProper {r m : ℕ} {G : SimpleGraph ι} [Fintype G.edgeSet]
+    {Ω : Fin m → Finset (Finset (Sym2 ι))}
+    (hΩ : ∀ a, IsCompatiblePolymerFamilyVertexDisjoint G (Ω a))
+    (e : Fin r ≃ ↥(labelledPolymers Ω)) :
+    IsProperColoring (polymerSeqIncompatibilityGraph (fun i => (e i).val.2)) m
+      (fun i => (e i).val.1) := by
+  intro i j hadj hc
+  rw [polymerSeqIncompatibilityGraph_adj] at hadj
+  dsimp only at hc
+  have hne : (e i).val.2 ≠ (e j).val.2 := by
+    intro hP
+    apply hadj.1
+    apply e.injective
+    apply Subtype.ext
+    apply Sigma.ext hc
+    rw [heq_eq_eq]; exact hP
+  have hmi := mem_labelledPolymers.mp (e i).property
+  have hmj := mem_labelledPolymers.mp (e j).property
+  have hmj' : (e j).val.2 ∈ Ω ((e i).val.1) := by rw [hc]; exact hmj
+  have hvd : IsPolymerVertexDisjoint (e i).val.2 (e j).val.2 :=
+    (hΩ ((e i).val.1)).2 (Finset.mem_coe.mpr hmi) (Finset.mem_coe.mpr hmj') hne
+  exact (PolymersIncompatible.iff_not_isPolymerVertexDisjoint.mp hadj.2) hvd
+
 end IsingModel
