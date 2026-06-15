@@ -1013,4 +1013,28 @@ theorem abs_colorDegreeTerm_le {ι : Type*} [Fintype ι] [DecidableEq ι] (G : S
     _ = ((k : ℝ) ^ (r - 1) / (r.factorial : ℝ)) * (∑ P ∈ allPolymers G, |t| ^ P.card) ^ r := by
         rw [← mul_assoc, ← mul_div_assoc, hkr]
 
+/-- **Colour-degree row bound**: `∑_{k=1}^r |C(r,k)| ≤ (r^r/r!)·A^r`, the per-row majorant
+of the capstone double sum, summing `abs_colorDegreeTerm_le` over `k ∈ Icc 1 r` (each
+`k^(r-1) ≤ r^(r-1)`, and `Icc 1 r` has `r` elements so `r·r^(r-1) = r^r`). -/
+theorem sum_abs_colorDegreeTerm_le {ι : Type*} [Fintype ι] [DecidableEq ι] (G : SimpleGraph ι)
+    [Fintype G.edgeSet] (t : ℝ) (r : ℕ) (hr : 1 ≤ r) :
+    ∑ k ∈ Finset.Icc 1 r, |((-1 : ℝ) ^ (k - 1) / (k : ℝ)) *
+        ∑ ω ∈ Fintype.piFinset (fun _ : Fin r => allPolymers G),
+          ((properSurjectiveColorings (polymerSeqIncompatibilityGraph ω) k).card : ℝ) /
+            (r.factorial : ℝ) * clusterSeqActivity t ω| ≤
+      ((r : ℝ) ^ r / (r.factorial : ℝ)) * (∑ P ∈ allPolymers G, |t| ^ P.card) ^ r := by
+  calc ∑ k ∈ Finset.Icc 1 r, |((-1 : ℝ) ^ (k - 1) / (k : ℝ)) * _|
+      ≤ ∑ k ∈ Finset.Icc 1 r,
+          ((r : ℝ) ^ (r - 1) / (r.factorial : ℝ)) * (∑ P ∈ allPolymers G, |t| ^ P.card) ^ r := by
+        refine Finset.sum_le_sum (fun k hk => ?_)
+        rw [Finset.mem_Icc] at hk
+        refine (abs_colorDegreeTerm_le G t r k hk.1 hr).trans ?_
+        gcongr
+        exact_mod_cast hk.2
+    _ = ((r : ℝ) ^ r / (r.factorial : ℝ)) * (∑ P ∈ allPolymers G, |t| ^ P.card) ^ r := by
+        rw [Finset.sum_const, Nat.card_Icc, Nat.add_sub_cancel, nsmul_eq_mul]
+        have hrr : (r : ℝ) * (r : ℝ) ^ (r - 1) = (r : ℝ) ^ r := by
+          rw [← pow_succ', Nat.sub_add_cancel hr]
+        rw [← mul_assoc, ← mul_div_assoc, hrr]
+
 end IsingModel
