@@ -895,4 +895,36 @@ theorem vdFamilyTuple_sum_eq_seq_coloring_sum {m : ℕ} (G : SimpleGraph ι) [Fi
   rw [Finset.sum_eq_single_of_mem ((labelledPolymers Ω).card) (Finset.mem_range.mpr hlt)
       (fun r _ hr => if_neg (fun h => hr h.symm)), if_pos rfl]
 
+/-- **No proper surjective colouring of an over-long sequence**: for `ω` valued in
+`allPolymers G`, if the sequence length `r` exceeds `m·|allPolymers G|` then there is no
+proper surjective `m`-colouring of its incompatibility graph (the `m` colour classes each lie
+in `allPolymers`, of total size `r ≤ m·|allPolymers|`). -/
+theorem properSurjectiveColorings_empty_of_card_lt {r m : ℕ} (G : SimpleGraph ι)
+    [Fintype G.edgeSet] {ω : Fin r → Finset (Sym2 ι)} (hω : ∀ i, ω i ∈ allPolymers G)
+    (hr : m * (allPolymers G).card < r) :
+    properSurjectiveColorings (polymerSeqIncompatibilityGraph ω) m = ∅ := by
+  classical
+  rw [Finset.eq_empty_iff_forall_notMem]
+  intro c hc
+  obtain ⟨hproper, hsurj⟩ := (mem_properSurjectiveColorings _).mp hc
+  have e : Fin r ≃ ↥(labelledPolymers (colorClass ω c)) :=
+    Equiv.ofBijective (seqColoringForward (fun a => rfl))
+      ⟨seqColoringForward_injective G hω hproper (fun a => rfl),
+        seqColoringForward_surjective (fun a => rfl)⟩
+  have hcard : r = ∑ a : Fin m, (colorClass ω c a).card := by
+    have hc := Fintype.card_congr e
+    rw [Fintype.card_fin, Fintype.card_coe, card_labelledPolymers] at hc
+    exact hc
+  have hsub : ∀ a, colorClass ω c a ⊆ allPolymers G := by
+    intro a P hP
+    obtain ⟨i, _, rfl⟩ := mem_colorClass.mp hP
+    exact hω i
+  have hle : (∑ a : Fin m, (colorClass ω c a).card) ≤ m * (allPolymers G).card := by
+    calc ∑ a : Fin m, (colorClass ω c a).card
+        ≤ ∑ _a : Fin m, (allPolymers G).card :=
+          Finset.sum_le_sum (fun a _ => Finset.card_le_card (hsub a))
+      _ = m * (allPolymers G).card := by
+          rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, smul_eq_mul]
+  omega
+
 end IsingModel
