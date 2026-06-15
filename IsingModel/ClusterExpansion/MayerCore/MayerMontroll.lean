@@ -445,4 +445,19 @@ theorem ursellCoefficient_eq_coloring_sum {ι : Type*} [Fintype ι] [DecidableEq
   rw [ursellCoefficient_eq_alternatingConnectedSubgraphSum_div,
     mayerMontroll_coloring_identity (polymerSeqIncompatibilityGraph ω)]
 
+/-- **Mayer expansion term in colouring form**: substituting `ursellCoefficient_eq_coloring_sum`
+into the definition of `mayerExpansionTerm`, the `r`-th Mayer term is the activity-weighted
+sum over polymer sequences of the alternating proper-surjective-colouring count of the
+incompatibility graph, normalised by `r!`.  This is the entry point of the `tsum`-side
+regrouping connecting the Mayer expansion to the log-Taylor family-tuple sum. -/
+theorem mayerExpansionTerm_eq_coloring_form {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (r : ℕ) (t : ℝ) :
+    mayerExpansionTerm G r t =
+      ∑ ω ∈ Fintype.piFinset (fun _ : Fin r => allPolymers G),
+        (∑ k ∈ Finset.Icc 1 r, ((-1 : ℝ) ^ (k - 1) / (k : ℝ)) *
+            ((properSurjectiveColorings (polymerSeqIncompatibilityGraph ω) k).card : ℝ)) /
+          (r.factorial : ℝ) * clusterSeqActivity t ω := by
+  unfold mayerExpansionTerm
+  exact Finset.sum_congr rfl (fun ω _ => by rw [ursellCoefficient_eq_coloring_sum])
+
 end IsingModel
