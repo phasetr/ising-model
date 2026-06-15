@@ -962,4 +962,15 @@ theorem logTaylor_term_eq_coloring {ι : Type*} [Fintype ι] [DecidableEq ι]
   rw [logTaylor_eps_term_eq_sum_vdFamilyTuples, ← Finset.mul_sum,
     vdFamilyTuple_sum_eq_seq_coloring_sum, Finset.mul_sum]
 
+/-- **Proper surjective colourings are bounded by all colourings**: at most `k^r` proper
+surjective `k`-colourings of a graph on `Fin r` (they are a subset of all functions
+`Fin r → Fin k`).  Used for the double-summability majorant in the capstone. -/
+theorem card_properSurjectiveColorings_le {r : ℕ} (H : SimpleGraph (Fin r)) [DecidableRel H.Adj]
+    (k : ℕ) : (properSurjectiveColorings H k).card ≤ k ^ r := by
+  classical
+  calc (properSurjectiveColorings H k).card
+      ≤ (Finset.univ : Finset (Fin r → Fin k)).card :=
+        Finset.card_le_card (Finset.filter_subset _ _)
+    _ = k ^ r := by rw [Finset.card_univ, Fintype.card_fun, Fintype.card_fin, Fintype.card_fin]
+
 end IsingModel
