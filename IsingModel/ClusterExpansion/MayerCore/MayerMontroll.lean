@@ -515,4 +515,37 @@ theorem clusterSeqActivity_eq_prod_colorClass {ι : Type*} [Fintype ι] [Decidab
   have hcc : colorClass ω c a = (Finset.univ.filter (fun i => c i = a)).image ω := rfl
   rw [hcc, Finset.prod_image hinj]
 
+/-! ### The `r!`-to-one colour-class fibre
+
+A family-tuple `Ω : Fin m → families` is recovered as the colour classes of `r!` distinct
+pairs `(ω, c)`: a polymer sequence `ω : Fin r → polymers` and a colouring `c : Fin r → Fin m`
+satisfy `colorClass ω c = Ω` iff `i ↦ ⟨c i, ω i⟩` is a bijection `Fin r ≃ labelledPolymers Ω`,
+the labelled-polymer set `Σ a, Ω a` (whose cardinality is the total polymer count `r`). -/
+
+/-- **Labelled polymers of a family-tuple**: the dependent sum `Σ a : Fin m, Ω a` collecting
+each polymer of each colour class tagged with its colour.  Its cardinality is the total
+polymer count `∑_a |Ω a|`. -/
+noncomputable def labelledPolymers {m : ℕ} (Ω : Fin m → Finset (Finset (Sym2 ι))) :
+    Finset ((_ : Fin m) × Finset (Sym2 ι)) :=
+  Finset.univ.sigma Ω
+
+omit [Fintype ι] [DecidableEq ι] in
+/-- **Cardinality of the labelled-polymer set**: `#(labelledPolymers Ω) = ∑_a |Ω a|`. -/
+theorem card_labelledPolymers {m : ℕ} (Ω : Fin m → Finset (Finset (Sym2 ι))) :
+    (labelledPolymers Ω).card = ∑ a : Fin m, (Ω a).card := by
+  rw [labelledPolymers, Finset.card_sigma]
+
+omit [Fintype ι] in
+/-- **Forward map well-definedness**: when the colour classes of `(ω, c)` are exactly `Ω`, the
+labelled pair `⟨c i, ω i⟩` lies in `labelledPolymers Ω`.  This is the value map of the fibre
+bijection `(ω, c) ↦ (i ↦ ⟨c i, ω i⟩) : Fin r → labelledPolymers Ω`. -/
+theorem labelledPair_mem_labelledPolymers {r m : ℕ} {ω : Fin r → Finset (Sym2 ι)}
+    {c : Fin r → Fin m} {Ω : Fin m → Finset (Finset (Sym2 ι))}
+    (hcolor : ∀ a, colorClass ω c a = Ω a) (i : Fin r) :
+    (⟨c i, ω i⟩ : (_ : Fin m) × Finset (Sym2 ι)) ∈ labelledPolymers Ω := by
+  rw [labelledPolymers, Finset.mem_sigma]
+  refine ⟨Finset.mem_univ _, ?_⟩
+  rw [← hcolor (c i)]
+  exact mem_colorClass.mpr ⟨i, rfl, rfl⟩
+
 end IsingModel
