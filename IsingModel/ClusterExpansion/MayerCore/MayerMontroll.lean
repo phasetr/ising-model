@@ -47,4 +47,49 @@ theorem logTaylor_eps_term_eq_sum_vdFamilyTuples
   refine Finset.sum_congr rfl (fun Ω _ => ?_)
   ring
 
+/-! ### Proper surjective colorings of a finite graph
+
+The Mayer–Montroll regrouping reorganises a tuple of nonempty vertex-disjoint
+compatible polymer families (the log-Taylor side) into a polymer *sequence*
+`ω : Fin r → allPolymers G` together with a **proper surjective coloring** of the
+sequence's incompatibility graph: the colour classes are exactly the families.
+We build the coloring universe locally (avoiding mathlib's `Coloring` API). -/
+
+/-- **Proper coloring predicate**: `c : Fin r → Fin k` is proper for `H` when
+adjacent vertices get distinct colours.  Colour classes are then independent sets,
+i.e. (for an incompatibility graph) compatible polymer families. -/
+def IsProperColoring {r : ℕ} (H : SimpleGraph (Fin r)) (k : ℕ) (c : Fin r → Fin k) : Prop :=
+  ∀ i j : Fin r, H.Adj i j → c i ≠ c j
+
+/-- **Proper surjective colorings**: the finite set of colourings `Fin r → Fin k`
+that are proper for `H` and use every colour.  Surjectivity records that all `k`
+families are nonempty; properness that each colour class is a compatible family. -/
+noncomputable def properSurjectiveColorings {r : ℕ} (H : SimpleGraph (Fin r))
+    [DecidableRel H.Adj] (k : ℕ) : Finset (Fin r → Fin k) := by
+  classical
+  exact Finset.univ.filter (fun c => IsProperColoring H k c ∧ Function.Surjective c)
+
+/-- **Membership in `properSurjectiveColorings`**. -/
+theorem mem_properSurjectiveColorings {r : ℕ} (H : SimpleGraph (Fin r))
+    [DecidableRel H.Adj] {k : ℕ} {c : Fin r → Fin k} :
+    c ∈ properSurjectiveColorings H k ↔ IsProperColoring H k c ∧ Function.Surjective c := by
+  classical
+  rw [properSurjectiveColorings, Finset.mem_filter]
+  exact ⟨fun h => h.2, fun h => ⟨Finset.mem_univ _, h⟩⟩
+
+/-- **No surjective colouring with more colours than vertices**:
+`properSurjectiveColorings H k = ∅` when `r < k`, since a surjection
+`Fin r → Fin k` forces `k ≤ r`. -/
+theorem properSurjectiveColorings_eq_empty_of_card_lt {r : ℕ} (H : SimpleGraph (Fin r))
+    [DecidableRel H.Adj] {k : ℕ} (h : r < k) :
+    properSurjectiveColorings H k = ∅ := by
+  classical
+  rw [Finset.eq_empty_iff_forall_notMem]
+  intro c hc
+  have hsurj := (mem_properSurjectiveColorings H).mp hc |>.2
+  have hle : k ≤ r := by
+    have := Fintype.card_le_of_surjective c hsurj
+    simpa using this
+  omega
+
 end IsingModel
