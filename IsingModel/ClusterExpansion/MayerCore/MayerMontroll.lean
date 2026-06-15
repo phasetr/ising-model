@@ -945,4 +945,21 @@ theorem mayerExpansionTerm_eq_double_sum {ι : Type*} [Fintype ι] [DecidableEq 
   rw [Finset.mul_sum]
   exact Finset.sum_congr rfl (fun ω _ => by ring)
 
+/-- **Log-Taylor term as a colouring sum**: combining the log-Taylor expansion
+(`logTaylor_eps_term_eq_sum_vdFamilyTuples`, family-tuple form) with the per-`m` identity
+(`vdFamilyTuple_sum_eq_seq_coloring_sum`, `m = n+1`), the `n`-th log-Taylor term equals the
+`m=n+1` colouring contribution summed over sequence lengths `r ≤ (n+1)·|allPolymers G|`. -/
+theorem logTaylor_term_eq_coloring {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (t : ℝ) (n : ℕ) :
+    (-1 : ℝ) ^ n *
+        (∑ Γ ∈ (vdCompatiblePolymerFamilies G).erase ∅, ∏ P ∈ Γ, t ^ P.card) ^ (n + 1) /
+        (n + 1) =
+      ∑ r ∈ Finset.range ((n + 1) * (allPolymers G).card + 1),
+        ((-1 : ℝ) ^ n / (n + 1)) *
+          ∑ ω ∈ Fintype.piFinset (fun _ : Fin r => allPolymers G),
+            ((properSurjectiveColorings (polymerSeqIncompatibilityGraph ω) (n + 1)).card : ℝ) /
+              (r.factorial : ℝ) * clusterSeqActivity t ω := by
+  rw [logTaylor_eps_term_eq_sum_vdFamilyTuples, ← Finset.mul_sum,
+    vdFamilyTuple_sum_eq_seq_coloring_sum, Finset.mul_sum]
+
 end IsingModel
