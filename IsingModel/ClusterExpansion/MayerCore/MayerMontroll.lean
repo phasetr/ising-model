@@ -927,4 +927,22 @@ theorem properSurjectiveColorings_empty_of_card_lt {r m : ℕ} (G : SimpleGraph 
           rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, smul_eq_mul]
   omega
 
+/-- **Mayer term as a colour-degree double sum**: distributing the colour-degree sum out of the
+sequence sum, the `r`-th Mayer term is
+`∑_{k=1}^r (-1)^(k-1)/k · ∑_ω #properSurjectiveColorings(G(ω),k)/r! · clusterSeqActivity`.
+The inner sum is the per-`(r,k)` colouring contribution feeding the capstone Fubini swap. -/
+theorem mayerExpansionTerm_eq_double_sum {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (r : ℕ) (t : ℝ) :
+    mayerExpansionTerm G r t =
+      ∑ k ∈ Finset.Icc 1 r, ((-1 : ℝ) ^ (k - 1) / (k : ℝ)) *
+        ∑ ω ∈ Fintype.piFinset (fun _ : Fin r => allPolymers G),
+          ((properSurjectiveColorings (polymerSeqIncompatibilityGraph ω) k).card : ℝ) /
+            (r.factorial : ℝ) * clusterSeqActivity t ω := by
+  rw [mayerExpansionTerm_eq_coloring_form]
+  simp_rw [Finset.sum_div, Finset.sum_mul]
+  rw [Finset.sum_comm]
+  refine Finset.sum_congr rfl (fun k _ => ?_)
+  rw [Finset.mul_sum]
+  exact Finset.sum_congr rfl (fun ω _ => by ring)
+
 end IsingModel
