@@ -1037,4 +1037,48 @@ theorem sum_abs_colorDegreeTerm_le {ι : Type*} [Fintype ι] [DecidableEq ι] (G
           rw [← pow_succ', Nat.sub_add_cancel hr]
         rw [← mul_assoc, ← mul_div_assoc, hrr]
 
+/-- **Summable self-power factorial majorant**: `∑_r (r^r/r!)·|A|^r` converges for `e·|A| < 1`
+(ratio test: the ratio `(1+1/(r+1))^(r+1)·|A| → e·|A| < 1`, bounded via `Real.add_one_le_exp`).
+The row-majorant series for the capstone double-summability. -/
+theorem summable_pow_self_div_factorial_mul_abs_pow (A : ℝ) (hA : Real.exp 1 * |A| < 1) :
+    Summable fun r : ℕ => ((r : ℝ) ^ r / (r.factorial : ℝ)) * |A| ^ r := by
+  refine summable_of_ratio_norm_eventually_le hA ?_
+  filter_upwards [Filter.eventually_ge_atTop 1] with n hn
+  obtain ⟨m, rfl⟩ : ∃ m, n = m + 1 := ⟨n - 1, by omega⟩
+  have hnnA : (0 : ℝ) ≤ ((↑(m + 1) : ℝ) ^ (m + 1) / ((m + 1).factorial : ℝ)) * |A| ^ (m + 1) := by
+    positivity
+  have hnnB : (0 : ℝ) ≤
+      ((↑(m + 1 + 1) : ℝ) ^ (m + 1 + 1) / ((m + 1 + 1).factorial : ℝ)) * |A| ^ (m + 1 + 1) := by
+    positivity
+  rw [Real.norm_of_nonneg hnnB, Real.norm_of_nonneg hnnA]
+  have hratio : (↑(m + 1 + 1) : ℝ) / (↑(m + 1) : ℝ) = 1 + 1 / (↑(m + 1) : ℝ) := by
+    push_cast; field_simp
+  have hle : (1 + 1 / (↑(m + 1) : ℝ)) ^ (m + 1) ≤ Real.exp 1 := by
+    calc (1 + 1 / (↑(m + 1) : ℝ)) ^ (m + 1)
+        ≤ (Real.exp (1 / (↑(m + 1) : ℝ))) ^ (m + 1) := by
+          gcongr
+          rw [add_comm]
+          exact Real.add_one_le_exp _
+      _ = Real.exp 1 := by rw [← Real.exp_nat_mul]; congr 1; field_simp
+  have hkey : (↑(m + 1 + 1) : ℝ) ^ (m + 1) ≤ Real.exp 1 * (↑(m + 1) : ℝ) ^ (m + 1) := by
+    have h := mul_le_mul_of_nonneg_right hle
+      (by positivity : (0 : ℝ) ≤ (↑(m + 1) : ℝ) ^ (m + 1))
+    rwa [← mul_pow,
+      show (1 + 1 / (↑(m + 1) : ℝ)) * (↑(m + 1) : ℝ) = (↑(m + 1 + 1) : ℝ) from by
+        push_cast; field_simp] at h
+  have e_fac : ((m + 1 + 1).factorial : ℝ) = (↑(m + 1 + 1) : ℝ) * ((m + 1).factorial : ℝ) := by
+    rw [Nat.factorial_succ (m + 1), Nat.cast_mul]
+  have e_pow : (↑(m + 1 + 1) : ℝ) ^ (m + 1 + 1) =
+      (↑(m + 1 + 1) : ℝ) * (↑(m + 1 + 1) : ℝ) ^ (m + 1) := by rw [pow_succ]; ring
+  have e_R : |A| ^ (m + 1 + 1) = |A| ^ (m + 1) * |A| := by rw [pow_succ]
+  rw [e_fac, e_pow, e_R, mul_div_mul_left _ _ (by positivity : (↑(m + 1 + 1) : ℝ) ≠ 0)]
+  calc (↑(m + 1 + 1) : ℝ) ^ (m + 1) / ((m + 1).factorial : ℝ) * (|A| ^ (m + 1) * |A|)
+      = (↑(m + 1 + 1) : ℝ) ^ (m + 1) *
+          (|A| ^ (m + 1) * |A| / ((m + 1).factorial : ℝ)) := by ring
+    _ ≤ (Real.exp 1 * (↑(m + 1) : ℝ) ^ (m + 1)) *
+          (|A| ^ (m + 1) * |A| / ((m + 1).factorial : ℝ)) :=
+        mul_le_mul_of_nonneg_right hkey (by positivity)
+    _ = Real.exp 1 * |A| *
+          ((↑(m + 1) : ℝ) ^ (m + 1) / ((m + 1).factorial : ℝ) * |A| ^ (m + 1)) := by ring
+
 end IsingModel
