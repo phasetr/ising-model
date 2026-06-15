@@ -92,4 +92,31 @@ theorem properSurjectiveColorings_eq_empty_of_card_lt {r : ℕ} (H : SimpleGraph
     simpa using this
   omega
 
+/-- **Colour class**: for a polymer sequence `ω : Fin r → polymers` and a colouring
+`c : Fin r → Fin k`, the colour class of `a : Fin k` is the family of polymers
+`{ω i : c i = a}`.  For a proper colouring of the incompatibility graph this is a
+vertex-disjoint compatible polymer family. -/
+noncomputable def colorClass {r : ℕ} (ω : Fin r → Finset (Sym2 ι)) {k : ℕ}
+    (c : Fin r → Fin k) (a : Fin k) : Finset (Finset (Sym2 ι)) := by
+  classical
+  exact (Finset.univ.filter (fun i => c i = a)).image ω
+
+omit [Fintype ι] in
+/-- **Membership in a colour class**: `Q ∈ colorClass ω c a` iff `Q = ω i` for some
+index `i` coloured `a`. -/
+theorem mem_colorClass {r : ℕ} {ω : Fin r → Finset (Sym2 ι)} {k : ℕ}
+    {c : Fin r → Fin k} {a : Fin k} {Q : Finset (Sym2 ι)} :
+    Q ∈ colorClass ω c a ↔ ∃ i : Fin r, c i = a ∧ ω i = Q := by
+  classical
+  simp only [colorClass, Finset.mem_image, Finset.mem_filter, Finset.mem_univ, true_and]
+
+omit [Fintype ι] in
+/-- **Colour classes of a surjective colouring are nonempty**: every colour is used,
+so its class contains a polymer. -/
+theorem colorClass_nonempty {r : ℕ} {ω : Fin r → Finset (Sym2 ι)} {k : ℕ}
+    {c : Fin r → Fin k} (hc : Function.Surjective c) (a : Fin k) :
+    (colorClass ω c a).Nonempty := by
+  obtain ⟨i, hi⟩ := hc a
+  exact ⟨ω i, mem_colorClass.mpr ⟨i, hi, rfl⟩⟩
+
 end IsingModel
