@@ -1081,4 +1081,28 @@ theorem summable_pow_self_div_factorial_mul_abs_pow (A : ℝ) (hA : Real.exp 1 *
     _ = Real.exp 1 * |A| *
           ((↑(m + 1) : ℝ) ^ (m + 1) / ((m + 1).factorial : ℝ) * |A| ^ (m + 1)) := by ring
 
+/-- **Colour-degree term** `C(r,k)`: the `(r,k)` contribution of the Mayer expansion,
+`(-1)^(k-1)/k · ∑_ω #properSurjectiveColorings(G(ω),k)/r! · clusterSeqActivity`.  Summing over
+`k ∈ Icc 1 r` gives `mayerExpansionTerm G r t`; over `r ≤ k·N` gives the `k`-th log-Taylor term. -/
+noncomputable def colorDegreeTerm {ι : Type*} [Fintype ι] [DecidableEq ι] (G : SimpleGraph ι)
+    [Fintype G.edgeSet] (t : ℝ) (r k : ℕ) : ℝ :=
+  ((-1 : ℝ) ^ (k - 1) / (k : ℝ)) *
+    ∑ ω ∈ Fintype.piFinset (fun _ : Fin r => allPolymers G),
+      ((properSurjectiveColorings (polymerSeqIncompatibilityGraph ω) k).card : ℝ) /
+        (r.factorial : ℝ) * clusterSeqActivity t ω
+
+/-- **`colorDegreeTerm` vanishes for `k > r`**: no surjective `k`-colouring of `Fin r` when
+`r < k`, so every colour count is `0`. -/
+theorem colorDegreeTerm_eq_zero_of_lt {ι : Type*} [Fintype ι] [DecidableEq ι] (G : SimpleGraph ι)
+    [Fintype G.edgeSet] (t : ℝ) {r k : ℕ} (hrk : r < k) : colorDegreeTerm G t r k = 0 := by
+  rw [colorDegreeTerm]
+  refine mul_eq_zero.mpr (Or.inr (Finset.sum_eq_zero (fun ω _ => ?_)))
+  rw [properSurjectiveColorings_eq_empty_of_card_lt _ hrk, Finset.card_empty, Nat.cast_zero,
+    zero_div, zero_mul]
+
+/-- **`colorDegreeTerm` vanishes at `k = 0`**: the `1/k` factor is `1/0 = 0`. -/
+theorem colorDegreeTerm_zero_right {ι : Type*} [Fintype ι] [DecidableEq ι] (G : SimpleGraph ι)
+    [Fintype G.edgeSet] (t : ℝ) (r : ℕ) : colorDegreeTerm G t r 0 = 0 := by
+  rw [colorDegreeTerm, Nat.cast_zero, div_zero, zero_mul]
+
 end IsingModel
