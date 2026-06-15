@@ -973,4 +973,44 @@ theorem card_properSurjectiveColorings_le {r : ℕ} (H : SimpleGraph (Fin r)) [D
         Finset.card_le_card (Finset.filter_subset _ _)
     _ = k ^ r := by rw [Finset.card_univ, Fintype.card_fun, Fintype.card_fin, Fintype.card_fin]
 
+/-- **Per-`(r,k)` colour-degree term bound**: the absolute value of the `(r,k)` colour-degree
+contribution is bounded by `(k^(r-1)/r!)·A^r`, where `A = ∑_{P∈allPolymers G} |t|^|P|`.  Combines
+`card_properSurjectiveColorings_le` (`#colourings ≤ k^r`) and `sum_clusterSeqActivity_abs_piFinset`
+(`∑_ω |activity| = A^r`).  The brick of the capstone double-summability majorant. -/
+theorem abs_colorDegreeTerm_le {ι : Type*} [Fintype ι] [DecidableEq ι] (G : SimpleGraph ι)
+    [Fintype G.edgeSet] (t : ℝ) (r k : ℕ) (hk : 1 ≤ k) (hr : 1 ≤ r) :
+    |((-1 : ℝ) ^ (k - 1) / (k : ℝ)) *
+        ∑ ω ∈ Fintype.piFinset (fun _ : Fin r => allPolymers G),
+          ((properSurjectiveColorings (polymerSeqIncompatibilityGraph ω) k).card : ℝ) /
+            (r.factorial : ℝ) * clusterSeqActivity t ω| ≤
+      ((k : ℝ) ^ (r - 1) / (r.factorial : ℝ)) * (∑ P ∈ allPolymers G, |t| ^ P.card) ^ r := by
+  classical
+  have hkpos : (0 : ℝ) < (k : ℝ) := by exact_mod_cast hk
+  rw [abs_mul, abs_div, abs_pow, abs_neg, abs_one, one_pow, abs_of_pos hkpos, one_div]
+  have hsum : |∑ ω ∈ Fintype.piFinset (fun _ : Fin r => allPolymers G),
+        ((properSurjectiveColorings (polymerSeqIncompatibilityGraph ω) k).card : ℝ) /
+          (r.factorial : ℝ) * clusterSeqActivity t ω| ≤
+      ((k : ℝ) ^ r / (r.factorial : ℝ)) * (∑ P ∈ allPolymers G, |t| ^ P.card) ^ r := by
+    calc |∑ ω ∈ _, _| ≤ ∑ ω ∈ Fintype.piFinset (fun _ : Fin r => allPolymers G),
+            |((properSurjectiveColorings (polymerSeqIncompatibilityGraph ω) k).card : ℝ) /
+              (r.factorial : ℝ) * clusterSeqActivity t ω| := Finset.abs_sum_le_sum_abs _ _
+      _ ≤ ∑ ω ∈ Fintype.piFinset (fun _ : Fin r => allPolymers G),
+            ((k : ℝ) ^ r / (r.factorial : ℝ)) * |clusterSeqActivity t ω| := by
+          refine Finset.sum_le_sum (fun ω _ => ?_)
+          rw [abs_mul, abs_div, Nat.abs_cast, Nat.abs_cast]
+          gcongr
+          exact_mod_cast card_properSurjectiveColorings_le (polymerSeqIncompatibilityGraph ω) k
+      _ = ((k : ℝ) ^ r / (r.factorial : ℝ)) * (∑ P ∈ allPolymers G, |t| ^ P.card) ^ r := by
+          rw [← Finset.mul_sum, sum_clusterSeqActivity_abs_piFinset]
+  have hkr : (k : ℝ)⁻¹ * (k : ℝ) ^ r = (k : ℝ) ^ (r - 1) := by
+    have h1 : (k : ℝ) ^ r = (k : ℝ) * (k : ℝ) ^ (r - 1) := by
+      rw [← pow_succ', Nat.sub_add_cancel hr]
+    rw [h1, ← mul_assoc, inv_mul_cancel₀ (ne_of_gt hkpos), one_mul]
+  calc (k : ℝ)⁻¹ * |∑ ω ∈ _, _|
+      ≤ (k : ℝ)⁻¹ *
+          (((k : ℝ) ^ r / (r.factorial : ℝ)) * (∑ P ∈ allPolymers G, |t| ^ P.card) ^ r) := by
+        gcongr
+    _ = ((k : ℝ) ^ (r - 1) / (r.factorial : ℝ)) * (∑ P ∈ allPolymers G, |t| ^ P.card) ^ r := by
+        rw [← mul_assoc, ← mul_div_assoc, hkr]
+
 end IsingModel
