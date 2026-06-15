@@ -548,4 +548,36 @@ theorem labelledPair_mem_labelledPolymers {r m : ℕ} {ω : Fin r → Finset (Sy
   rw [← hcolor (c i)]
   exact mem_colorClass.mpr ⟨i, rfl, rfl⟩
 
+/-- **Forward map of the fibre bijection**: `(ω, c)` with colour classes `Ω` is sent to the
+function `i ↦ ⟨c i, ω i⟩ : Fin r → labelledPolymers Ω`. -/
+noncomputable def seqColoringForward {r m : ℕ} {Ω : Fin m → Finset (Finset (Sym2 ι))}
+    {ω : Fin r → Finset (Sym2 ι)} {c : Fin r → Fin m}
+    (hcolor : ∀ a, colorClass ω c a = Ω a) : Fin r → ↥(labelledPolymers Ω) :=
+  fun i => ⟨⟨c i, ω i⟩, labelledPair_mem_labelledPolymers hcolor i⟩
+
+/-- **Forward map is injective** (proper colouring): distinct indices give distinct labelled
+polymers, since `ω` is injective on each colour class. -/
+theorem seqColoringForward_injective {r m : ℕ} (G : SimpleGraph ι) [Fintype G.edgeSet]
+    {Ω : Fin m → Finset (Finset (Sym2 ι))} {ω : Fin r → Finset (Sym2 ι)} {c : Fin r → Fin m}
+    (hω : ∀ i, ω i ∈ allPolymers G)
+    (hproper : IsProperColoring (polymerSeqIncompatibilityGraph ω) m c)
+    (hcolor : ∀ a, colorClass ω c a = Ω a) :
+    Function.Injective (seqColoringForward hcolor) := by
+  intro i j hij
+  simp only [seqColoringForward, Subtype.mk.injEq, Sigma.mk.injEq, heq_eq_eq] at hij
+  exact seq_injective_on_colorClass G hω hproper hij.1 hij.2
+
+omit [Fintype ι] in
+/-- **Forward map is surjective**: every labelled polymer `⟨a, P⟩` (with `P ∈ Ω a`) is hit,
+since `colorClass ω c a = Ω a` means `P = ω i` for some `i` coloured `a`. -/
+theorem seqColoringForward_surjective {r m : ℕ} {Ω : Fin m → Finset (Finset (Sym2 ι))}
+    {ω : Fin r → Finset (Sym2 ι)} {c : Fin r → Fin m}
+    (hcolor : ∀ a, colorClass ω c a = Ω a) :
+    Function.Surjective (seqColoringForward hcolor) := by
+  rintro ⟨⟨a, P⟩, hmem⟩
+  rw [labelledPolymers, Finset.mem_sigma] at hmem
+  rw [← hcolor a] at hmem
+  obtain ⟨i, hci, hωi⟩ := mem_colorClass.mp hmem.2
+  exact ⟨i, by simp only [seqColoringForward, hci, hωi]⟩
+
 end IsingModel
