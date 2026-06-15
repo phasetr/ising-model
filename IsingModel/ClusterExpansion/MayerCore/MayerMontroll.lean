@@ -210,4 +210,37 @@ theorem proper_indicator_eq_signed_bad_edges {r k : ℕ} (H : SimpleGraph (Fin r
           push_cast; rfl,
       Finset.sum_powerset_neg_one_pow_card_of_nonempty hne, Int.cast_zero]
 
+/-- **Constant on an edge set**: `c` assigns equal colours to the two endpoints of every
+edge in `S`.  For the bad-edge inclusion–exclusion this is the constraint defining the inner
+colour count attached to a chosen edge subset `S`. -/
+def ConstantOnEdgeSet {r k : ℕ} (S : Finset (Sym2 (Fin r))) (c : Fin r → Fin k) : Prop :=
+  ∀ e ∈ S, Sym2.lift ⟨fun a b => c a = c b, fun a b => by simp [eq_comm]⟩ e
+
+/-- **Constant on edges = constant on components**: `c` is constant along every edge of `S`
+iff it is constant on every connected component of the graph `fromEdgeSet ↑S` (i.e. constant
+on every `Reachable` pair).  Edge-constancy propagates along walks; conversely each edge is a
+single reachable step. -/
+theorem constantOnEdgeSet_iff_constant_on_components {r k : ℕ}
+    (S : Finset (Sym2 (Fin r))) (c : Fin r → Fin k) :
+    ConstantOnEdgeSet S c ↔
+      ∀ i j, (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 (Fin r)))).Reachable i j → c i = c j := by
+  constructor
+  · intro hconst i j hreach
+    rw [SimpleGraph.reachable_iff_reflTransGen] at hreach
+    induction hreach with
+    | refl => rfl
+    | tail hib hstep ih =>
+      rw [SimpleGraph.fromEdgeSet_adj] at hstep
+      refine ih.trans ?_
+      simpa using hconst _ (Finset.mem_coe.mp hstep.1)
+  · intro h e he
+    induction e using Sym2.ind with
+    | _ a b =>
+      simp only [Sym2.lift_mk]
+      by_cases hab : a = b
+      · rw [hab]
+      · refine h a b (SimpleGraph.Adj.reachable ?_)
+        rw [SimpleGraph.fromEdgeSet_adj]
+        exact ⟨Finset.mem_coe.mpr he, hab⟩
+
 end IsingModel
