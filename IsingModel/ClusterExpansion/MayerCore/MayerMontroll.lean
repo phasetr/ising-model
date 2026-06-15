@@ -318,4 +318,22 @@ theorem card_constantOnEdgeSet_surjective {r k : ℕ} (T : Finset (Sym2 (Fin r))
   rw [← Fintype.card_subtype, Fintype.card_congr (colorings_constant_on_components_equiv T),
     Fintype.card_subtype, card_surjective_eq_surjCount]
 
+/-- **Bad-edge subsets are constant-on-`T` constraints**: for `T ⊆ H.edgeFinset`, `T` is a
+subset of `c`'s bad edges iff `c` is constant on every edge of `T`.  This rewrites the inner
+`∑_{T ⊆ badColorEdges c}` of the proper indicator as a constraint on a fixed edge subset `T`,
+the form consumed by the edge-expansion sum swap. -/
+theorem subset_badColorEdges_iff_constantOnEdgeSet {r k : ℕ} (H : SimpleGraph (Fin r))
+    [DecidableRel H.Adj] (c : Fin r → Fin k) {T : Finset (Sym2 (Fin r))}
+    (hT : T ⊆ H.edgeFinset) :
+    T ⊆ badColorEdges H c ↔ ConstantOnEdgeSet T c := by
+  classical
+  constructor
+  · intro hsub e he
+    have hmem := hsub he
+    rw [badColorEdges, Finset.mem_filter] at hmem
+    exact hmem.2
+  · intro hconst e he
+    rw [badColorEdges, Finset.mem_filter]
+    exact ⟨hT he, hconst e he⟩
+
 end IsingModel
