@@ -6511,6 +6511,39 @@ lattice hyperplane identification, thermodynamic limit, or exponential-decay
 estimate. Those are the later hyperplane and spectral steps of Issue~\#3511.
 Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306.
 
+\paragraph{Finite cyclic layer Gibbs representation (\S17.1, Issue~\#3511).}
+The Gibbs-sum side of the same finite layer abstraction is recorded in
+\texttt{TransferMatrix/LayerGibbs.lean}. For a positive-length periodic stack
+$c:\mathrm{Fin}\,N\to\Omega$,
+\[
+  \texttt{layerCyclicGibbsWeight}\;u\;k\;c
+    = \prod_i u(c_{i+1})\,k(c_i,c_{i+1}),
+\]
+and \texttt{layerCyclicPartition} sums this weight over all such stacks. The
+partition theorem
+\texttt{layerCyclicPartition\_eq\_trace} identifies the Gibbs partition sum
+with \texttt{layerTransferPartitionTrace} by reducing $N$ to $m+1$ and applying
+the trace identity above. Positivity lemmas
+\texttt{layerCyclicGibbsWeight\_pos} and
+\texttt{layerCyclicPartition\_pos} package the strictly positive finite-volume
+case.
+
+For two insertions, \texttt{layerMarkedCyclicGibbsWeight} inserts the observable
+$f$ at the sites $0$ and $a$ of a cycle of length $a+b$ with $0<b$, and
+\texttt{layerTwoPointNumerator} sums the marked weights. The trace bridge
+\[
+  \texttt{layerTwoPoint}\;u\;k\;f
+   = \frac{\operatorname{Tr}(D_fT^aD_fT^b)}{\operatorname{Tr}(T^{a+b})}
+\]
+is \texttt{layerTwoPoint\_eq\_trace\_ratio}. The entry points
+\texttt{LayerState}\,S, \texttt{layerSpinAt}, and
+\texttt{layerSpinTwoPoint\_eq\_trace\_ratio} specialise this abstract observable
+to a spin at a fixed transverse site of a finite hyperplane layer. This is still
+only the finite abstract hyperplane bridge: concrete $\mathbb{Z}^d$ box edge
+factorisation, Perron--Frobenius theory, thermodynamic limits, and exponential
+decay are intentionally left to later Issue~\#3511 steps. Reference:
+Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306.
+
 \paragraph{Diagonalization and matrix powers (\S17.1, Issue~\#3511 PR~2).}
 The Hadamard matrix $H = \bigl(\begin{smallmatrix} 1 & 1 \\ 1 & -1 \end{smallmatrix}\bigr)$
 (\texttt{hadamardMatrix}) satisfies $H^2 = 2\,\mathbb 1$
