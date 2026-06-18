@@ -7191,6 +7191,45 @@ thermodynamic limits, and the final hyperplane decay estimate remain later
 work.  Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5,
 pp.~311--312.
 
+\paragraph{Cubic layer-cardinality small-ratio bridge (\S17.1, Issue~\#3511).}
+For the concrete cubic transverse layer
+\[
+  \texttt{CubicLayerSite}\,d\,R = \uparrow(\texttt{cubicBox}\,d\,R),
+\]
+the cubic-box cardinality theorem gives
+\[
+  |\texttt{CubicLayerSite}\,d\,R| = (2R+1)^d
+  \qquad(\texttt{cubicLayerSite\_card}).
+\]
+Together with the layer-state identity this rewrites the sufficient prefactor
+smallness hypothesis as
+\[
+  \theta < \bigl(2^{(2R+1)^d}-1\bigr)^{-1},
+\]
+formalized by
+\[
+  \begin{gathered}
+  \texttt{finiteSpectralPartitionPrefactor}\\
+  \texttt{\_small\_of\_cubicLayerSite\_card}.
+  \end{gathered}
+\]
+The concrete cubic weights are positive by the exponential form
+(\texttt{cubicLayerInternalWeight\_pos} and
+\texttt{cubicLayerTransitionWeight\_pos}), and the identity transition pairs
+give a symmetric transition kernel
+(\texttt{cubicLayerTransitionWeight\_symm}).  The wrappers
+\begin{center}
+{\scriptsize\texttt{cubicLayerBalancedMinGapCertificate\_orthogonal\_layerCardSmall}}\\[2pt]
+{\scriptsize\texttt{cubicLayerBalancedMinGapCertificate\_hermitian\_layerCardSmall}}
+\end{center}
+feed the resulting cubic threshold into the existing max-index spin-certificate
+route.  This is still only a cubic cardinality-threshold bridge: it does not
+prove that the physical cubic-layer canonical subdominant ratio satisfies this
+bound, and it does not replace this inverse-cardinality bound by \(\theta<1\)
+for multi-site layers.  Open-slab geometry, thermodynamic limits, and the final
+hyperplane decay estimate remain later work.  Reference: Glimm--Jaffe, 2nd ed.,
+\S17.1, pp.~304--306 and \S17.5, pp.~311--312.
+
 \paragraph{Diagonalization and matrix powers (\S17.1, Issue~\#3511 PR~2).}
 The Hadamard matrix $H = \bigl(\begin{smallmatrix} 1 & 1 \\ 1 & -1 \end{smallmatrix}\bigr)$
 (\texttt{hadamardMatrix}) satisfies $H^2 = 2\,\mathbb 1$
