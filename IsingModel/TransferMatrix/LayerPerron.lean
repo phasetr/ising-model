@@ -91,6 +91,82 @@ theorem exists_positive_vector_abs_bound_attained [Finite Ω] [Nonempty Ω]
     exact (div_le_iff₀ (hv j)).mp (hmax j (Finset.mem_univ j))
   · exact (div_mul_cancel₀ |w i| (hv i).ne').symm
 
+omit [Fintype Ω] [DecidableEq Ω] in
+/-- A finite vector is bounded above by a scalar multiple of a positive vector,
+with the optimal relative scale attained at some coordinate. -/
+theorem exists_positive_vector_upper_bound_attained [Finite Ω] [Nonempty Ω]
+    {v w : Ω → ℝ} (hv : VectorPositive v) :
+    ∃ C : ℝ, (∀ i, w i ≤ C * v i) ∧ ∃ i, w i = C * v i := by
+  classical
+  letI := Fintype.ofFinite Ω
+  obtain ⟨i, _hi, hmax⟩ :=
+    Finset.exists_max_image (Finset.univ : Finset Ω) (fun j => w j / v j)
+      Finset.univ_nonempty
+  refine ⟨w i / v i, ?_, ⟨i, ?_⟩⟩
+  · intro j
+    exact (div_le_iff₀ (hv j)).mp (hmax j (Finset.mem_univ j))
+  · exact (div_mul_cancel₀ (w i) (hv i).ne').symm
+
+omit [DecidableEq Ω] in
+/-- For an entrywise positive matrix, a strictly positive right eigenvector
+spans the whole eigenspace for its eigenvalue. -/
+theorem eigenvector_smul_of_entrywisePositive_positive_eigenpair [Nonempty Ω]
+    {M : Matrix Ω Ω ℝ} (hM : MatrixEntrywisePositive M)
+    {lam : ℝ} {v : Ω → ℝ} (hv : StrictPositiveRightEigenpair M lam v)
+    {w : Ω → ℝ} (hw_eig : M.mulVec w = lam • w) :
+    ∃ C : ℝ, w = C • v := by
+  rcases exists_positive_vector_upper_bound_attained (v := v) (w := w) hv.1 with
+    ⟨C, hbound, ⟨i0, hatt⟩⟩
+  let z : Ω → ℝ := fun i => C * v i - w i
+  have hz_nonneg : ∀ i, 0 ≤ z i := by
+    intro i
+    dsimp [z]
+    linarith [hbound i]
+  have hz_i0 : z i0 = 0 := by
+    dsimp [z]
+    linarith [hatt]
+  have hz_eig : M.mulVec z = lam • z := by
+    ext i
+    have hv_i := congr_fun hv.2 i
+    have hw_i := congr_fun hw_eig i
+    simp only [Matrix.mulVec, dotProduct, Pi.smul_apply, smul_eq_mul] at hv_i hw_i ⊢
+    calc
+      ∑ j, M i j * (C * v j - w j)
+          = C * (∑ j, M i j * v j) - ∑ j, M i j * w j := by
+            rw [Finset.mul_sum, ← Finset.sum_sub_distrib]
+            apply Finset.sum_congr rfl
+            intro j _hj
+            ring
+      _ = lam * (C * v i - w i) := by
+            rw [hv_i, hw_i]
+            ring
+  have hsum_zero : ∑ j, M i0 j * z j = 0 := by
+    have h := congr_fun hz_eig i0
+    simp only [Matrix.mulVec, dotProduct, Pi.smul_apply, smul_eq_mul] at h
+    rw [hz_i0] at h
+    simpa using h
+  have hz_zero : ∀ j, z j = 0 := by
+    intro j
+    have hterm_nonneg : ∀ k, 0 ≤ M i0 k * z k := by
+      intro k
+      exact mul_nonneg (hM i0 k).le (hz_nonneg k)
+    have hterm_le_zero : M i0 j * z j ≤ 0 := by
+      calc
+        M i0 j * z j ≤ ∑ k, M i0 k * z k :=
+          Finset.single_le_sum (fun k _hk => hterm_nonneg k) (Finset.mem_univ j)
+        _ = 0 := hsum_zero
+    have hterm_zero : M i0 j * z j = 0 :=
+      le_antisymm hterm_le_zero (hterm_nonneg j)
+    rcases mul_eq_zero.mp hterm_zero with hMzero | hz
+    · exact False.elim ((hM i0 j).ne' hMzero)
+    · exact hz
+  refine ⟨C, ?_⟩
+  ext i
+  have hz := hz_zero i
+  dsimp [z] at hz
+  simp [Pi.smul_apply, smul_eq_mul]
+  linarith
+
 omit [DecidableEq Ω] in
 /-- If an entrywise positive real matrix has a strictly positive right
 eigenpair, then any real right eigenvalue is bounded in absolute value by that
@@ -145,6 +221,59 @@ theorem abs_eigenvalue_le_of_entrywisePositive_positive_eigenpair [Nonempty Ω]
       _ = lam * (C * v i) := hsum_eval
   exact le_of_mul_le_mul_right hmain hCv_pos
 
+omit [DecidableEq Ω] in
+/-- For an entrywise positive matrix, any real eigenvalue different from the
+positive eigenpair's eigenvalue is strictly smaller in absolute value. -/
+theorem abs_eigenvalue_lt_of_entrywisePositive_positive_eigenpair [Nonempty Ω]
+    {M : Matrix Ω Ω ℝ} (hM : MatrixEntrywisePositive M)
+    {lam : ℝ} {v : Ω → ℝ} (hv : StrictPositiveRightEigenpair M lam v)
+    {mu : ℝ} {w : Ω → ℝ} (hw_ne : w ≠ 0)
+    (hw_eig : M.mulVec w = mu • w) (hmu_ne : mu ≠ lam) :
+    |mu| < lam := by
+  have hle : |mu| ≤ lam :=
+    abs_eigenvalue_le_of_entrywisePositive_positive_eigenpair hM hv hw_ne hw_eig
+  by_contra hnot
+  have habs : |mu| = lam := le_antisymm hle (le_of_not_gt hnot)
+  have hM2 : MatrixEntrywisePositive (M * M) :=
+    matrixEntrywisePositive_mul hM hM
+  have hv2 : StrictPositiveRightEigenpair (M * M) (lam * lam) v := by
+    refine ⟨hv.1, ?_⟩
+    rw [← Matrix.mulVec_mulVec, hv.2, Matrix.mulVec_smul, hv.2]
+    ext i
+    simp [Pi.smul_apply, smul_eq_mul, mul_assoc]
+  have hsq : mu * mu = lam * lam := by
+    have hsqp : |mu| ^ 2 = lam ^ 2 := by rw [habs]
+    have hsqp' : mu ^ 2 = lam ^ 2 := by simpa [sq_abs] using hsqp
+    nlinarith
+  have hw2 : (M * M).mulVec w = (lam * lam) • w := by
+    rw [← Matrix.mulVec_mulVec, hw_eig, Matrix.mulVec_smul, hw_eig]
+    ext i
+    simp only [Pi.smul_apply, smul_eq_mul]
+    calc
+      mu * (mu * w i) = (mu * mu) * w i := by ring
+      _ = (lam * lam) * w i := by rw [hsq]
+      _ = lam * lam * w i := by ring
+  rcases eigenvector_smul_of_entrywisePositive_positive_eigenpair hM2 hv2 hw2 with
+    ⟨c, hc⟩
+  have hw_lam : M.mulVec w = lam • w := by
+    rw [hc, Matrix.mulVec_smul, hv.2]
+    ext i
+    simp only [Pi.smul_apply, smul_eq_mul]
+    ring
+  have hsame : mu = lam := by
+    have hvec : mu • w = lam • w := by
+      rw [← hw_eig, hw_lam]
+    obtain ⟨i, hi⟩ : ∃ i, w i ≠ 0 := by
+      by_contra h
+      apply hw_ne
+      ext i
+      by_contra hwi
+      exact h ⟨i, hwi⟩
+    have hi_eq := congr_fun hvec i
+    simp only [Pi.smul_apply, smul_eq_mul] at hi_eq
+    exact mul_right_cancel₀ hi hi_eq
+  exact hmu_ne hsame
+
 namespace RealOrthogonalSpectralData
 
 /-- A column of explicit orthogonal spectral data is nonzero. -/
@@ -167,6 +296,29 @@ theorem changeOfBasis_column_ne_zero {M : Matrix Ω Ω ℝ}
   rw [hleft, hright] at h
   norm_num at h
 
+/-- Distinct columns of explicit orthogonal spectral data are not scalar
+multiples of each other. -/
+theorem changeOfBasis_columns_not_smul {M : Matrix Ω Ω ℝ}
+    (E : RealOrthogonalSpectralData M) {i j : Ω} (hij : i ≠ j) (c : ℝ) :
+    (fun x => E.changeOfBasis x i) ≠ c • (fun x => E.changeOfBasis x j) := by
+  intro hsmul
+  have hleft :
+      (E.changeOfBasisᵀ.mulVec (fun x => E.changeOfBasis x i)) i = 1 := by
+    have h := congr_fun (congr_fun E.orthogonal_left i) i
+    simpa [Matrix.mul_apply, Matrix.mulVec, dotProduct, Matrix.one_apply,
+      Pi.single_apply] using h
+  have hright :
+      (E.changeOfBasisᵀ.mulVec (fun x => E.changeOfBasis x j)) i = 0 := by
+    have h := congr_fun (congr_fun E.orthogonal_left i) j
+    simpa [Matrix.mul_apply, Matrix.mulVec, dotProduct, Matrix.one_apply,
+      Pi.single_apply, hij] using h
+  have hmul :
+      E.changeOfBasisᵀ.mulVec (fun x => E.changeOfBasis x i)
+        = c • (E.changeOfBasisᵀ.mulVec (fun x => E.changeOfBasis x j)) := by
+    rw [hsmul, Matrix.mulVec_smul]
+  have h := congr_fun hmul i
+  simp [hleft, hright] at h
+
 /-- A positive spectral-data column of an entrywise positive matrix has a
 positive eigenvalue. -/
 theorem eigenvalue_pos_of_positive_column [Nonempty Ω]
@@ -188,6 +340,72 @@ theorem eigenvalue_abs_le_of_positive_column [Nonempty Ω]
     ⟨hpos, E.mulVec_changeOfBasis_column top⟩
     (E.changeOfBasis_column_ne_zero i)
     (E.mulVec_changeOfBasis_column i)
+
+/-- A positive spectral-data column of an entrywise positive matrix spans the
+corresponding eigenspace. -/
+theorem eigenspace_simple_of_positive_column [Nonempty Ω]
+    {M : Matrix Ω Ω ℝ} (E : RealOrthogonalSpectralData M)
+    (hM : MatrixEntrywisePositive M) (top : Ω)
+    (hpos : VectorPositive (fun x => E.changeOfBasis x top))
+    (w : Ω → ℝ)
+    (hw_eig : M.mulVec w = E.eigenvalue top • w) :
+    ∃ c : ℝ, w = c • (fun x => E.changeOfBasis x top) :=
+  eigenvector_smul_of_entrywisePositive_positive_eigenpair hM
+    ⟨hpos, E.mulVec_changeOfBasis_column top⟩ hw_eig
+
+/-- A non-top spectral-data column has eigenvalue strictly smaller in absolute
+value than a positive top column's eigenvalue. -/
+theorem eigenvalue_abs_lt_of_positive_column [Nonempty Ω]
+    {M : Matrix Ω Ω ℝ} (E : RealOrthogonalSpectralData M)
+    (hM : MatrixEntrywisePositive M) (top i : Ω) (hi : i ≠ top)
+    (hpos : VectorPositive (fun x => E.changeOfBasis x top)) :
+    |E.eigenvalue i| < E.eigenvalue top := by
+  have hne : E.eigenvalue i ≠ E.eigenvalue top := by
+    intro heq
+    have hi_eig :
+        M.mulVec (fun x => E.changeOfBasis x i)
+          = E.eigenvalue top • (fun x => E.changeOfBasis x i) := by
+      simpa [heq] using E.mulVec_changeOfBasis_column i
+    rcases E.eigenspace_simple_of_positive_column hM top hpos
+        (fun x => E.changeOfBasis x i) hi_eig with
+      ⟨c, hc⟩
+    exact E.changeOfBasis_columns_not_smul hi c hc
+  exact abs_eigenvalue_lt_of_entrywisePositive_positive_eigenpair hM
+    ⟨hpos, E.mulVec_changeOfBasis_column top⟩
+    (E.changeOfBasis_column_ne_zero i)
+    (E.mulVec_changeOfBasis_column i) hne
+
+/-- A positive spectral-data top column gives some strict finite subdominant
+ratio for all non-top spectral-data eigenvalues.  This is only an existence
+statement for the finite maximum; certificate constructors still require the
+quantitative prefactor condition separately. -/
+theorem exists_subdominant_abs_ratio_of_positive_column [Nonempty Ω]
+    {M : Matrix Ω Ω ℝ} (E : RealOrthogonalSpectralData M)
+    (hM : MatrixEntrywisePositive M) (top : Ω)
+    (hpos : VectorPositive (fun x => E.changeOfBasis x top)) :
+    ∃ theta : ℝ, 0 ≤ theta ∧ theta < 1 ∧
+      ∀ i, i ≠ top → |E.eigenvalue i| ≤ theta * E.eigenvalue top := by
+  let rest : Finset Ω := Finset.univ.erase top
+  have htop_pos : 0 < E.eigenvalue top :=
+    E.eigenvalue_pos_of_positive_column hM top hpos
+  by_cases hrest : rest = ∅
+  · refine ⟨0, le_rfl, zero_lt_one, ?_⟩
+    intro i hi
+    have himem : i ∈ rest := by
+      exact Finset.mem_erase.mpr ⟨hi, Finset.mem_univ i⟩
+    rw [hrest] at himem
+    simp at himem
+  · obtain ⟨i0, hi0, hmax⟩ :=
+      Finset.exists_max_image rest (fun i => |E.eigenvalue i| / E.eigenvalue top)
+        (Finset.nonempty_iff_ne_empty.mpr hrest)
+    refine ⟨|E.eigenvalue i0| / E.eigenvalue top, ?_, ?_, ?_⟩
+    · exact div_nonneg (abs_nonneg _) htop_pos.le
+    · have hi0_ne : i0 ≠ top := (Finset.mem_erase.mp hi0).1
+      have hlt := E.eigenvalue_abs_lt_of_positive_column hM top i0 hi0_ne hpos
+      exact (div_lt_one htop_pos).mpr hlt
+    · intro i hi
+      have himem : i ∈ rest := Finset.mem_erase.mpr ⟨hi, Finset.mem_univ i⟩
+      exact (div_le_iff₀ htop_pos).mp (hmax i himem)
 
 end RealOrthogonalSpectralData
 
@@ -292,6 +510,70 @@ theorem layerSymmetricTransfer_eigenvalue_abs_le_of_positive_column
     (layerSymmetricTransferOrthogonalSpectralData u k hk_symm)
     (layerSymmetricTransferMatrix_entrywisePositive u k hu hk_pos)
     top i hpos
+
+/-- For a balanced positive layer transfer matrix, a positive Hermitian spectral
+column spans its eigenspace. -/
+theorem layerSymmetricTransfer_positive_column_eigenspace_simple
+    {S : Type*} [Fintype S] [DecidableEq S]
+    (u : LayerState S → ℝ) (k : LayerState S → LayerState S → ℝ)
+    (hu : ∀ ω, 0 < u ω) (hk_pos : ∀ ω η, 0 < k ω η)
+    (hk_symm : ∀ ω η, k ω η = k η ω)
+    (top : LayerState S)
+    (hpos : VectorPositive
+      (fun ω =>
+        (layerSymmetricTransferOrthogonalSpectralData u k hk_symm).changeOfBasis ω top))
+    (w : LayerState S → ℝ)
+    (hw_eig : (layerSymmetricTransferMatrix u k).mulVec w =
+      (layerSymmetricTransferOrthogonalSpectralData u k hk_symm).eigenvalue top • w) :
+    ∃ c : ℝ,
+      w = c •
+        (fun ω =>
+          (layerSymmetricTransferOrthogonalSpectralData u k hk_symm).changeOfBasis ω top) :=
+  RealOrthogonalSpectralData.eigenspace_simple_of_positive_column
+    (layerSymmetricTransferOrthogonalSpectralData u k hk_symm)
+    (layerSymmetricTransferMatrix_entrywisePositive u k hu hk_pos)
+    top hpos w hw_eig
+
+/-- For a balanced positive layer transfer matrix, every non-top Hermitian
+spectral-data eigenvalue is strictly smaller in absolute value than the
+positive top column's eigenvalue. -/
+theorem layerSymmetricTransfer_eigenvalue_abs_lt_of_positive_column
+    {S : Type*} [Fintype S] [DecidableEq S]
+    (u : LayerState S → ℝ) (k : LayerState S → LayerState S → ℝ)
+    (hu : ∀ ω, 0 < u ω) (hk_pos : ∀ ω η, 0 < k ω η)
+    (hk_symm : ∀ ω η, k ω η = k η ω)
+    (top i : LayerState S) (hi : i ≠ top)
+    (hpos : VectorPositive
+      (fun ω =>
+        (layerSymmetricTransferOrthogonalSpectralData u k hk_symm).changeOfBasis ω top)) :
+    |(layerSymmetricTransferOrthogonalSpectralData u k hk_symm).eigenvalue i|
+      < (layerSymmetricTransferOrthogonalSpectralData u k hk_symm).eigenvalue top :=
+  RealOrthogonalSpectralData.eigenvalue_abs_lt_of_positive_column
+    (layerSymmetricTransferOrthogonalSpectralData u k hk_symm)
+    (layerSymmetricTransferMatrix_entrywisePositive u k hu hk_pos)
+    top i hi hpos
+
+/-- For a balanced positive layer transfer matrix, a positive Hermitian spectral
+top column gives some strict finite subdominant ratio for all non-top spectral
+data eigenvalues. -/
+theorem layerSymmetricTransfer_exists_subdominant_abs_ratio_of_positive_column
+    {S : Type*} [Fintype S] [DecidableEq S]
+    (u : LayerState S → ℝ) (k : LayerState S → LayerState S → ℝ)
+    (hu : ∀ ω, 0 < u ω) (hk_pos : ∀ ω η, 0 < k ω η)
+    (hk_symm : ∀ ω η, k ω η = k η ω)
+    (top : LayerState S)
+    (hpos : VectorPositive
+      (fun ω =>
+        (layerSymmetricTransferOrthogonalSpectralData u k hk_symm).changeOfBasis ω top)) :
+    ∃ theta : ℝ, 0 ≤ theta ∧ theta < 1 ∧
+      ∀ i, i ≠ top →
+        |(layerSymmetricTransferOrthogonalSpectralData u k hk_symm).eigenvalue i|
+          ≤ theta *
+            (layerSymmetricTransferOrthogonalSpectralData u k hk_symm).eigenvalue top :=
+  RealOrthogonalSpectralData.exists_subdominant_abs_ratio_of_positive_column
+    (layerSymmetricTransferOrthogonalSpectralData u k hk_symm)
+    (layerSymmetricTransferMatrix_entrywisePositive u k hu hk_pos)
+    top hpos
 
 /-- Orthogonal spectral-data constructor with the transfer scale fixed to the
 positive top spectral column's eigenvalue.  This removes the separate
@@ -482,6 +764,132 @@ noncomputable def
     (layerSymmetricTransferOrthogonalSpectralData u k hk) top theta
     theta_nonneg theta_lt_one partitionPrefactor_small subdominant_abs_le
     dominant_column_pos dominant_eigenspace_simple
+
+/-- Spin-observable constructor using a positive dominant column.  The
+one-dimensional dominant eigenspace is derived from positivity of the balanced
+transfer matrix, so callers do not need to supply it separately. -/
+noncomputable def
+    layerBalancedMinSpectralGapCertificate_of_orthogonalDominantBounds_positiveColumnFlipSpin
+    {S : Type*} [Fintype S] [DecidableEq S]
+    (u : LayerState S → ℝ) (k : LayerState S → LayerState S → ℝ) (x : S)
+    (hu : ∀ ω, 0 < u ω) (hk_pos : ∀ ω η, 0 < k ω η)
+    (hu_flip : ∀ ω, u (layerStateFlipEquiv S ω) = u ω)
+    (hk_flip : ∀ ω η,
+      k (layerStateFlipEquiv S ω) (layerStateFlipEquiv S η) = k ω η)
+    (E : RealOrthogonalSpectralData (layerSymmetricTransferMatrix u k))
+    (top : LayerState S) (scale theta : ℝ)
+    (scale_pos : 0 < scale)
+    (theta_nonneg : 0 ≤ theta)
+    (theta_lt_one : theta < 1)
+    (partitionPrefactor_small :
+      (((Fintype.card (LayerState S) - 1 : ℕ) : ℝ) * theta) < 1)
+    (dominant_eigenvalue : E.eigenvalue top = scale)
+    (subdominant_abs_le : ∀ i, i ≠ top → |E.eigenvalue i| ≤ theta * scale)
+    (dominant_column_pos : VectorPositive (fun ω => E.changeOfBasis ω top)) :
+    LayerBalancedMinSpectralGapCertificate u k (layerSpinAt x) := by
+  letI : Nonempty (LayerState S) := ⟨top⟩
+  exact
+    layerBalancedMinSpectralGapCertificate_of_orthogonalDominantBounds_positiveSimpleFlipSpin
+      u k x hu_flip hk_flip E top scale theta scale_pos theta_nonneg theta_lt_one
+      partitionPrefactor_small dominant_eigenvalue subdominant_abs_le dominant_column_pos
+      (fun w hw =>
+        E.eigenspace_simple_of_positive_column
+          (layerSymmetricTransferMatrix_entrywisePositive u k hu hk_pos)
+          top dominant_column_pos w hw)
+
+/-- Spin-observable constructor with the transfer scale fixed to the positive
+top spectral column's eigenvalue.  The simple-eigenspace input is derived from
+the positive column. -/
+noncomputable def
+    layerBalancedMinSpectralGapCertificate_of_orthogonalSubdominantBounds_positiveColumnFlipSpin
+    {S : Type*} [Fintype S] [DecidableEq S]
+    (u : LayerState S → ℝ) (k : LayerState S → LayerState S → ℝ) (x : S)
+    (hu : ∀ ω, 0 < u ω) (hk_pos : ∀ ω η, 0 < k ω η)
+    (hu_flip : ∀ ω, u (layerStateFlipEquiv S ω) = u ω)
+    (hk_flip : ∀ ω η,
+      k (layerStateFlipEquiv S ω) (layerStateFlipEquiv S η) = k ω η)
+    (E : RealOrthogonalSpectralData (layerSymmetricTransferMatrix u k))
+    (top : LayerState S) (theta : ℝ)
+    (theta_nonneg : 0 ≤ theta)
+    (theta_lt_one : theta < 1)
+    (partitionPrefactor_small :
+      (((Fintype.card (LayerState S) - 1 : ℕ) : ℝ) * theta) < 1)
+    (subdominant_abs_le : ∀ i, i ≠ top → |E.eigenvalue i| ≤ theta * E.eigenvalue top)
+    (dominant_column_pos : VectorPositive (fun ω => E.changeOfBasis ω top)) :
+    LayerBalancedMinSpectralGapCertificate u k (layerSpinAt x) := by
+  letI : Nonempty (LayerState S) := ⟨top⟩
+  exact
+    layerBalancedMinSpectralGapCertificate_of_orthogonalDominantBounds_positiveColumnFlipSpin
+      u k x hu hk_pos hu_flip hk_flip E top (E.eigenvalue top) theta
+      (E.eigenvalue_pos_of_positive_column
+        (layerSymmetricTransferMatrix_entrywisePositive u k hu hk_pos) top
+        dominant_column_pos)
+      theta_nonneg theta_lt_one partitionPrefactor_small rfl subdominant_abs_le
+      dominant_column_pos
+
+/-- Hermitian spin-observable constructor using a positive dominant column.
+The one-dimensional dominant eigenspace is derived from positivity. -/
+noncomputable def
+    layerBalancedMinSpectralGapCertificate_of_layerHermitianDominantBounds_positiveColumnFlipSpin
+    {S : Type*} [Fintype S] [DecidableEq S]
+    (u : LayerState S → ℝ) (k : LayerState S → LayerState S → ℝ) (x : S)
+    (hu : ∀ ω, 0 < u ω) (hk_pos : ∀ ω η, 0 < k ω η)
+    (hk : ∀ a b, k a b = k b a)
+    (hu_flip : ∀ ω, u (layerStateFlipEquiv S ω) = u ω)
+    (hk_flip : ∀ ω η,
+      k (layerStateFlipEquiv S ω) (layerStateFlipEquiv S η) = k ω η)
+    (top : LayerState S) (scale theta : ℝ)
+    (scale_pos : 0 < scale)
+    (theta_nonneg : 0 ≤ theta)
+    (theta_lt_one : theta < 1)
+    (partitionPrefactor_small :
+      (((Fintype.card (LayerState S) - 1 : ℕ) : ℝ) * theta) < 1)
+    (dominant_eigenvalue :
+      (layerSymmetricTransferOrthogonalSpectralData u k hk).eigenvalue top = scale)
+    (subdominant_abs_le : ∀ i, i ≠ top →
+      |(layerSymmetricTransferOrthogonalSpectralData u k hk).eigenvalue i|
+        ≤ theta * scale)
+    (dominant_column_pos :
+      VectorPositive
+        (fun ω =>
+          (layerSymmetricTransferOrthogonalSpectralData u k hk).changeOfBasis ω top)) :
+    LayerBalancedMinSpectralGapCertificate u k (layerSpinAt x) :=
+  layerBalancedMinSpectralGapCertificate_of_orthogonalDominantBounds_positiveColumnFlipSpin
+    u k x hu hk_pos hu_flip hk_flip
+    (layerSymmetricTransferOrthogonalSpectralData u k hk) top scale theta
+    scale_pos theta_nonneg theta_lt_one partitionPrefactor_small
+    dominant_eigenvalue subdominant_abs_le dominant_column_pos
+
+/-- Hermitian spin-observable constructor with the transfer scale fixed to the
+positive top spectral column's eigenvalue.  The simple-eigenspace input is
+derived from the positive column. -/
+noncomputable def
+    layerBalancedMinSpectralGapCertificate_of_layerHermitianSubdominantBounds_positiveColumnFlipSpin
+    {S : Type*} [Fintype S] [DecidableEq S]
+    (u : LayerState S → ℝ) (k : LayerState S → LayerState S → ℝ) (x : S)
+    (hu : ∀ ω, 0 < u ω) (hk_pos : ∀ ω η, 0 < k ω η)
+    (hk : ∀ a b, k a b = k b a)
+    (hu_flip : ∀ ω, u (layerStateFlipEquiv S ω) = u ω)
+    (hk_flip : ∀ ω η,
+      k (layerStateFlipEquiv S ω) (layerStateFlipEquiv S η) = k ω η)
+    (top : LayerState S) (theta : ℝ)
+    (theta_nonneg : 0 ≤ theta)
+    (theta_lt_one : theta < 1)
+    (partitionPrefactor_small :
+      (((Fintype.card (LayerState S) - 1 : ℕ) : ℝ) * theta) < 1)
+    (subdominant_abs_le : ∀ i, i ≠ top →
+      |(layerSymmetricTransferOrthogonalSpectralData u k hk).eigenvalue i|
+        ≤ theta * (layerSymmetricTransferOrthogonalSpectralData u k hk).eigenvalue top)
+    (dominant_column_pos :
+      VectorPositive
+        (fun ω =>
+          (layerSymmetricTransferOrthogonalSpectralData u k hk).changeOfBasis ω top)) :
+    LayerBalancedMinSpectralGapCertificate u k (layerSpinAt x) :=
+  layerBalancedMinSpectralGapCertificate_of_orthogonalSubdominantBounds_positiveColumnFlipSpin
+    u k x hu hk_pos hu_flip hk_flip
+    (layerSymmetricTransferOrthogonalSpectralData u k hk) top theta
+    theta_nonneg theta_lt_one partitionPrefactor_small subdominant_abs_le
+    dominant_column_pos
 
 end TransferMatrix
 
