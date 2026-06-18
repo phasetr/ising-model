@@ -7285,6 +7285,57 @@ open-slab geometry, thermodynamic limits, or the final hyperplane decay
 estimate.  Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5,
 pp.~311--312.
 
+\paragraph{Infinite-temperature layer spectral-window bridge (\S17.1, Issue~\#3511).}
+At the infinite-temperature slice \(p.\beta=0\), the physical layer weights
+\[
+  u(\omega)=\texttt{layerInternalWeight}\,H\,p\,\omega,\qquad
+  k(\omega,\eta)=\texttt{layerTransitionWeight}\,P\,p\,\omega\,\eta
+\]
+are identically \(1\).  This is formalized by
+\[
+  \texttt{layerInternalWeight\_beta\_zero},\qquad
+  \texttt{layerTransitionWeight\_beta\_zero},
+\]
+and the balanced matrix becomes the all-ones matrix
+\[
+  S_{\omega,\eta}=\sqrt{u(\omega)}\,k(\omega,\eta)\,\sqrt{u(\eta)}=1
+  \qquad
+  (\texttt{layerSymmetricTransferMatrix\_beta\_zero}).
+\]
+The new module
+\[
+  \texttt{TransferMatrix/LayerInfiniteTemperatureSpectralWindow.lean}
+\]
+first proves the finite all-ones matrix facts.  Multiplication by the all-ones
+matrix sends \(v\) to the constant vector with value \(\sum_j v_j\)
+(\texttt{allOnesMatrix\_mulVec}).  Hence any nonzero eigenvalue equals the
+cardinality of the index type
+(\texttt{allOnesMatrix\_eigenvalue\_eq\_card\_of\_ne\_zero}); every spectral-data
+eigenvalue is either \(|\Omega|\) or \(0\).  Since the existing positive
+max-index route makes the maximal eigenvalue positive, the maximal all-ones
+eigenvalue is \(|\Omega|\), and every non-maximal spectral-data eigenvalue is
+\(0\):
+\[
+  |\lambda_i| \le 0\cdot\lambda_{\max}\qquad(i\ne\max)
+  \qquad
+  (\texttt{subdominant\_abs\_le\_zero\_allOnes}).
+\]
+The inverse-cardinality threshold is strictly positive for every nonempty
+transverse layer, so the explicit spectral-window bridge can be applied with
+\(\theta=0\).  The wrappers
+\begin{center}
+{\scriptsize\texttt{layerBalancedMinGapCert\_orthogonal\_beta\_zero\_spectralWindow}}\\[2pt]
+{\scriptsize\texttt{layerBalancedMinGapCert\_hermitian\_beta\_zero\_spectralWindow}}\\[2pt]
+{\scriptsize\texttt{cubicLayerBalancedMinGapCertificate\_orthogonal\_beta\_zero\_spectralWindow}}\\[2pt]
+{\scriptsize\texttt{cubicLayerBalancedMinGapCertificate\_hermitian\_beta\_zero\_spectralWindow}}
+\end{center}
+package this as finite-layer and cubic-layer spin certificates at \(p.\beta=0\).
+This is only the infinite-temperature slice: it does not prove a
+high-temperature neighborhood, a Walsh diagonalization, arbitrary multi-site
+\(\theta<1\) sufficiency, open slabs, thermodynamic limits, or the final
+hyperplane decay estimate.  Reference: Glimm--Jaffe, 2nd ed., \S17.1,
+pp.~304--306 and \S17.5, pp.~311--312.
+
 \paragraph{Diagonalization and matrix powers (\S17.1, Issue~\#3511 PR~2).}
 The Hadamard matrix $H = \bigl(\begin{smallmatrix} 1 & 1 \\ 1 & -1 \end{smallmatrix}\bigr)$
 (\texttt{hadamardMatrix}) satisfies $H^2 = 2\,\mathbb 1$
