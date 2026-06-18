@@ -270,6 +270,7 @@ import IsingModel.TransferMatrix.MarkedTrace1D
 import IsingModel.TransferMatrix.GibbsTwoPoint
 import IsingModel.TransferMatrix.GibbsTwoPointDecay
 import IsingModel.TransferMatrix.LayerTransfer
+import IsingModel.TransferMatrix.LayerGibbs
 import IsingModel.TransferMatrix.PathGraphEdges
 import IsingModel.TransferMatrix.PathGraphTwoPoint
 import IsingModel.TransferMatrix.PathGraphPairTwoPoint
