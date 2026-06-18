@@ -7707,11 +7707,26 @@ The theorem
   \texttt{layerOpenTwoPointMatrixProductNumerator\_eq\_matrixPower}
 \]
 proves this expansion by repeated use of \texttt{Matrix.mul\_apply}, the
-definition of a diagonal matrix, and finite-sum commutation.  This is only the
-finite matrix-algebra step.  The equality between this matrix expression and the
-existing open path numerator
-\(\texttt{layerOpenTransferTwoPointNumerator}\) still requires a path-splitting
-and reindexing lemma.  Consequently no spectral-basis formula, no new
+definition of a diagonal matrix, and finite-sum commutation.  The module then
+expands the four-endpoint matrix-power sum one step further.  The auxiliary
+\(\texttt{openMarkedPathTripleNumerator}\) is the sum over three open paths
+\(\sigma,\tau,\rho\), constrained by
+\(\sigma_{left}=\tau_0\) and \(\tau_{sep}=\rho_0\), with weight
+\[
+  w(\sigma_0)d(\sigma_{left})d(\tau_{sep})\,
+  \texttt{pathWeight}\,T\,\sigma\,
+  \texttt{pathWeight}\,T\,\tau\,
+  \texttt{pathWeight}\,T\,\rho .
+\]
+The theorem
+\[
+  \texttt{openMarkedMatrixPowerSum\_eq\_pathTripleNumerator}
+\]
+proves, using \texttt{pow\_apply\_eq\_sum} and finite-sum reordering, that the
+four-endpoint matrix-power sum is exactly this three-path expansion.  This is
+still not the final single-path reindexing.  The equality with the existing open
+path numerator \(\texttt{layerOpenTransferTwoPointNumerator}\) requires the
+remaining path-gluing lemma.  Consequently no spectral-basis formula, no new
 Perron--Frobenius input, and no stronger open-boundary certificate is claimed
 here.  Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5,
 pp.~311--312.
