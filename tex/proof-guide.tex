@@ -7632,6 +7632,52 @@ an interacting cubic-layer spectral window, thermodynamic-limit decay, or the
 final hyperplane decay estimate.  Reference: Glimm--Jaffe, 2nd ed., \S17.1,
 pp.~304--306 and \S17.5, pp.~311--312.
 
+\paragraph{Open-boundary matrix-power denominator bridge (\S17.1, Issue~\#3511).}
+The module
+\[
+  \texttt{TransferMatrix/LayerOpenSpectral.lean}
+\]
+adds the first spectral-facing bridge for the finite open slab.  The open
+partition is rewritten as the boundary-vector matrix-power sum
+\[
+  \texttt{layerOpenMatrixPartition}\,u\,k\,n
+  =
+  \sum_{a,b\in\Omega}
+    u(a)\,\bigl(T^n\bigr)_{a,b},
+  \qquad T=\texttt{layerTransferMatrix}\,u\,k .
+\]
+The identity
+\[
+  \texttt{layerOpenTransferPartition\_eq\_matrixPartition}
+\]
+is proved from the existing open-path expansion
+\(\texttt{pow\_apply\_eq\_sum}\): expand \((T^n)_{a,b}\) as a sum over paths with
+fixed endpoints, multiply by \(u(a)\), sum over \(a,b\), and collapse the endpoint
+indicator functions to recover
+\[
+  \sum_{c:\mathrm{Fin}(n+1)\to\Omega}
+    u(c_0)\,\texttt{pathWeight}\,T\,c.
+\]
+The Gibbs-side corollary is
+\[
+  \texttt{layerOpenPartition\_eq\_matrixPartition}.
+\]
+The constructors
+\[
+  \texttt{layerOpenMinSpectralGapCertificate\_of\_transferBounds},\qquad
+  \texttt{layerOpenMinSpectralGapCertificate\_of\_matrixPartitionBounds}
+\]
+package explicit finite open bounds into
+\(\texttt{LayerOpenMinSpectralGapCertificate}\).  The second constructor lets the
+denominator lower bound be proved in boundary-vector matrix-power form, while the
+marked two-insertion numerator remains the open-path numerator input of the
+existing certificate.  Thus this is a denominator bridge toward open-boundary
+spectral estimates, not yet the full marked numerator spectral-basis formula.
+It does not prove an interacting cubic-layer spectral window, Perron--Frobenius
+existence, thermodynamic-limit decay, or the final hyperplane decay estimate.
+Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5,
+pp.~311--312.
+
 \paragraph{Diagonalization and matrix powers (\S17.1, Issue~\#3511 PR~2).}
 The Hadamard matrix $H = \bigl(\begin{smallmatrix} 1 & 1 \\ 1 & -1 \end{smallmatrix}\bigr)$
 (\texttt{hadamardMatrix}) satisfies $H^2 = 2\,\mathbb 1$
