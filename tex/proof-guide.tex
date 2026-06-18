@@ -6544,6 +6544,34 @@ factorisation, Perron--Frobenius theory, thermodynamic limits, and exponential
 decay are intentionally left to later Issue~\#3511 steps. Reference:
 Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306.
 
+\paragraph{Finite cyclic layer cylinders (\S17.1, Issue~\#3511).}
+\texttt{TransferMatrix/LayerCylinder.lean} adds the concrete finite stack side
+of the preceding abstraction. The cylinder site type is
+\[
+  \texttt{LayerCylinderSite}\;N\;S = \mathrm{Fin}\,N \times S,
+\]
+and \texttt{layerCylinderConfigEquiv} reindexes an ordinary spin configuration
+on this product as a cyclic family of layer states
+$\mathrm{Fin}\,N\to\texttt{LayerState}\,S$. The Ising-facing weights
+\texttt{layerInternalWeight} and \texttt{layerTransitionWeight} package,
+respectively, the transverse graph contribution plus field term inside one
+layer, and the finite adjacent-layer pair contribution.
+
+The concrete stack partition sum \texttt{layerCylinderPartition} is reindexed to
+the abstract Gibbs layer sum by
+\texttt{layerCylinderPartition\_eq\_layerCyclicPartition}, and hence to the
+transfer trace by \texttt{layerCylinderPartition\_eq\_trace}. The specialisations
+\texttt{isingLayerCylinderPartition\_eq\_layerCyclicPartition} and
+\texttt{isingLayerCylinderPartition\_eq\_trace} apply this to the Ising internal
+and transition weights. The same reindexing is available for same-transverse-site
+two-point numerators:
+\texttt{layerCylinderSpinTwoPointNumerator\_eq\_layerTwoPointNumerator} gives
+\texttt{layerCylinderSpinTwoPoint\_eq\_layerSpinTwoPoint} and the trace-ratio
+form \texttt{layerCylinderSpinTwoPoint\_eq\_trace\_ratio}. This remains a finite
+periodic cylinder bridge; open-boundary boxes, Perron--Frobenius theory,
+thermodynamic limits, and exponential decay are still later Issue~\#3511 steps.
+Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306.
+
 \paragraph{Diagonalization and matrix powers (\S17.1, Issue~\#3511 PR~2).}
 The Hadamard matrix $H = \bigl(\begin{smallmatrix} 1 & 1 \\ 1 & -1 \end{smallmatrix}\bigr)$
 (\texttt{hadamardMatrix}) satisfies $H^2 = 2\,\mathbb 1$
