@@ -95,6 +95,78 @@ theorem layerOpenPartition_eq_matrixPartition
     layerOpenPartition u k n = layerOpenMatrixPartition u k n := by
   rw [layerOpenPartition_eq_transfer, layerOpenTransferPartition_eq_matrixPartition]
 
+/-! ## Marked numerator matrix-power form -/
+
+/-- The finite open marked numerator as the boundary-vector matrix product
+`u^T T^left D_f T^sep D_f T^right 1`, before expanding the matrix products into
+endpoint sums. -/
+noncomputable def layerOpenTwoPointMatrixProductNumerator
+    (u : Ω → ℝ) (k : Ω → Ω → ℝ) (f : Ω → ℝ)
+    (left sep right : ℕ) : ℝ :=
+  let M := layerTransferMatrix u k
+  ∑ a : Ω, ∑ b : Ω,
+    u a * (M ^ left * Matrix.diagonal f * M ^ sep * Matrix.diagonal f * M ^ right) a b
+
+/-- The finite open marked numerator matrix-power expression expanded as a
+four-endpoint sum.  This is the finite-sum form of
+`u^T T^left D_f T^sep D_f T^right 1`, with
+`T = layerTransferMatrix u k`. -/
+noncomputable def layerOpenTwoPointMatrixPowerNumerator
+    (u : Ω → ℝ) (k : Ω → Ω → ℝ) (f : Ω → ℝ)
+    (left sep right : ℕ) : ℝ :=
+  let M := layerTransferMatrix u k
+  ∑ a : Ω, ∑ x : Ω, ∑ y : Ω, ∑ b : Ω,
+    u a * f x * f y * (M ^ left) a x * (M ^ sep) x y * (M ^ right) y b
+
+/-- The boundary-vector matrix product for the open marked numerator expands to
+the four-endpoint matrix-power sum.  This is only the finite matrix algebra
+step; it does not identify the expression with the existing open path
+numerator or with a spectral-basis expansion. -/
+theorem layerOpenTwoPointMatrixProductNumerator_eq_matrixPower
+    (u : Ω → ℝ) (k : Ω → Ω → ℝ) (f : Ω → ℝ)
+    (left sep right : ℕ) :
+    layerOpenTwoPointMatrixProductNumerator u k f left sep right =
+      layerOpenTwoPointMatrixPowerNumerator u k f left sep right := by
+  unfold layerOpenTwoPointMatrixProductNumerator layerOpenTwoPointMatrixPowerNumerator
+  simp only
+  simp only [Matrix.mul_apply, Matrix.diagonal_apply, mul_ite, mul_zero, Finset.sum_ite_eq',
+    Finset.mem_univ, ↓reduceIte, Finset.sum_mul, Finset.mul_sum]
+  apply Finset.sum_congr rfl
+  intro a _
+  calc
+    ∑ b, ∑ y, ∑ x,
+        u a * ((layerTransferMatrix u k ^ left) a x * f x *
+          (layerTransferMatrix u k ^ sep) x y * f y *
+          (layerTransferMatrix u k ^ right) y b)
+        = ∑ y, ∑ b, ∑ x,
+            u a * ((layerTransferMatrix u k ^ left) a x * f x *
+              (layerTransferMatrix u k ^ sep) x y * f y *
+              (layerTransferMatrix u k ^ right) y b) := by
+          rw [Finset.sum_comm]
+    _ = ∑ y, ∑ x, ∑ b,
+            u a * ((layerTransferMatrix u k ^ left) a x * f x *
+              (layerTransferMatrix u k ^ sep) x y * f y *
+              (layerTransferMatrix u k ^ right) y b) := by
+          apply Finset.sum_congr rfl
+          intro y _
+          rw [Finset.sum_comm]
+    _ = ∑ x, ∑ y, ∑ b,
+            u a * ((layerTransferMatrix u k ^ left) a x * f x *
+              (layerTransferMatrix u k ^ sep) x y * f y *
+              (layerTransferMatrix u k ^ right) y b) := by
+          rw [Finset.sum_comm]
+    _ = ∑ x, ∑ y, ∑ b,
+            u a * f x * f y * (layerTransferMatrix u k ^ left) a x *
+              (layerTransferMatrix u k ^ sep) x y *
+              (layerTransferMatrix u k ^ right) y b := by
+          apply Finset.sum_congr rfl
+          intro x _
+          apply Finset.sum_congr rfl
+          intro y _
+          apply Finset.sum_congr rfl
+          intro b _
+          ring
+
 /-! ## Certificate constructors -/
 
 /-- Constructor for an open min-gap certificate from explicit open transfer

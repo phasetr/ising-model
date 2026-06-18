@@ -7678,6 +7678,44 @@ existence, thermodynamic-limit decay, or the final hyperplane decay estimate.
 Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5,
 pp.~311--312.
 
+\paragraph{Open-boundary marked matrix-product expansion (\S17.1, Issue~\#3511).}
+The same module also records the finite matrix-algebra target for the marked
+open two-point numerator.  With \(T=\texttt{layerTransferMatrix}\,u\,k\) and
+\(D_f=\operatorname{diag}(f)\), define
+\[
+  \texttt{layerOpenTwoPointMatrixProductNumerator}
+  =
+  \sum_{a,b\in\Omega}
+    u(a)\,\bigl(T^{left}D_fT^{sep}D_fT^{right}\bigr)_{a,b}.
+\]
+Equivalently, this is the boundary-vector product
+\[
+  u^T T^{left}D_fT^{sep}D_fT^{right}{\bf 1}.
+\]
+The expanded finite endpoint form is
+\[
+  \texttt{layerOpenTwoPointMatrixPowerNumerator}
+  =
+  \sum_{a,x,y,b\in\Omega}
+    u(a) f(x) f(y)
+    \bigl(T^{left}\bigr)_{a,x}
+    \bigl(T^{sep}\bigr)_{x,y}
+    \bigl(T^{right}\bigr)_{y,b}.
+\]
+The theorem
+\[
+  \texttt{layerOpenTwoPointMatrixProductNumerator\_eq\_matrixPower}
+\]
+proves this expansion by repeated use of \texttt{Matrix.mul\_apply}, the
+definition of a diagonal matrix, and finite-sum commutation.  This is only the
+finite matrix-algebra step.  The equality between this matrix expression and the
+existing open path numerator
+\(\texttt{layerOpenTransferTwoPointNumerator}\) still requires a path-splitting
+and reindexing lemma.  Consequently no spectral-basis formula, no new
+Perron--Frobenius input, and no stronger open-boundary certificate is claimed
+here.  Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5,
+pp.~311--312.
+
 \paragraph{Diagonalization and matrix powers (\S17.1, Issue~\#3511 PR~2).}
 The Hadamard matrix $H = \bigl(\begin{smallmatrix} 1 & 1 \\ 1 & -1 \end{smallmatrix}\bigr)$
 (\texttt{hadamardMatrix}) satisfies $H^2 = 2\,\mathbb 1$
