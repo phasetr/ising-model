@@ -7841,6 +7841,41 @@ Perron--Frobenius input, an interacting cubic-layer spectral window,
 thermodynamic-limit decay, or the final hyperplane decay estimate.  Reference:
 Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5, pp.~311--312.
 
+\paragraph{Finite open-boundary spectral-decay consumer (\S17.1, Issue~\#3511).}
+The module \texttt{LayerOpenSpectralDecay} consumes the finite open
+boundary-vector spectral numerator constructor as project-level open-slab
+correlation bounds.  The wrapper
+\[
+  \begin{gathered}
+  \texttt{layerOpenMinSpectralGapCertificate\_of\_}\\
+  \texttt{layerOrthogonalBoundaryDominantBounds}
+  \end{gathered}
+\]
+specializes the open spectral certificate constructor to physical layer weights,
+using strict positivity of exponentials for the open boundary weight
+positivity input.  The theorem
+\[
+  \begin{gathered}
+  \texttt{correlation\_layerOpenSlabGraph\_same\_transverse\_abs\_le\_of\_}\\
+  \texttt{orthogonalBoundaryDominantBounds}
+  \end{gathered}
+\]
+then feeds the certificate into the existing open-slab graph consumer, giving
+the same-transverse-site bound with the boundary-marked spectral prefactor
+divided by the supplied partition prefactor and decay rate
+\(\texttt{theta}^{sep}\).  The cubic specialization
+\[
+  \begin{gathered}
+  \texttt{correlation\_cubicLayerOpenSlabGraph\_same\_transverse\_abs\_le\_of\_}\\
+  \texttt{orthogonalBoundaryDominantBounds}
+  \end{gathered}
+\]
+exposes the same finite conditional estimate for cubic transverse boxes.  The
+open matrix-partition denominator lower bound, eigenvalue scale bounds,
+subdominant bound, and central-channel cancellation remain explicit hypotheses;
+this does not prove Perron--Frobenius input, an interacting cubic-layer spectral
+window, thermodynamic-limit decay, or the final hyperplane decay estimate.
+
 \paragraph{Diagonalization and matrix powers (\S17.1, Issue~\#3511 PR~2).}
 The Hadamard matrix $H = \bigl(\begin{smallmatrix} 1 & 1 \\ 1 & -1 \end{smallmatrix}\bigr)$
 (\texttt{hadamardMatrix}) satisfies $H^2 = 2\,\mathbb 1$
