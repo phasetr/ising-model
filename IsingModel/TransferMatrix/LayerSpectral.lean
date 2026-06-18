@@ -349,6 +349,57 @@ theorem layerSymmetricTransferMatrix_isHermitian
   simp [Matrix.conjTranspose, layerSymmetricTransferMatrix, hk b a]
   ring
 
+omit [Fintype Ω] [DecidableEq Ω] in
+/-- The balanced transfer matrix is invariant under simultaneous relabelling by
+an equivalence that preserves the layer and transition weights. -/
+theorem layerSymmetricTransferMatrix_equiv_equiv
+    (u : Ω → ℝ) (k : Ω → Ω → ℝ) (τ : Ω ≃ Ω)
+    (huτ : ∀ a, u (τ a) = u a)
+    (hkτ : ∀ a b, k (τ a) (τ b) = k a b) (a b : Ω) :
+    layerSymmetricTransferMatrix u k (τ a) (τ b)
+      = layerSymmetricTransferMatrix u k a b := by
+  simp [layerSymmetricTransferMatrix, huτ, hkτ]
+
+/-- The balanced layer transfer matrix is invariant under simultaneous global
+spin flip when the layer and transition weights are. -/
+theorem layerSymmetricTransferMatrix_flip_flip
+    {S : Type*} (u : LayerState S → ℝ) (k : LayerState S → LayerState S → ℝ)
+    (hu_flip : ∀ ω, u (layerStateFlipEquiv S ω) = u ω)
+    (hk_flip : ∀ ω η,
+      k (layerStateFlipEquiv S ω) (layerStateFlipEquiv S η) = k ω η)
+    (ω η : LayerState S) :
+    layerSymmetricTransferMatrix u k (layerStateFlipEquiv S ω) (layerStateFlipEquiv S η)
+      = layerSymmetricTransferMatrix u k ω η :=
+  layerSymmetricTransferMatrix_equiv_equiv u k (layerStateFlipEquiv S)
+    hu_flip hk_flip ω η
+
+omit [DecidableEq Ω] in
+/-- The balanced transfer matrix commutes with the vector-level action induced
+by a weight-preserving equivalence. -/
+theorem layerSymmetricTransferMatrix_mulVec_comp_equiv
+    (u : Ω → ℝ) (k : Ω → Ω → ℝ) (τ : Ω ≃ Ω)
+    (huτ : ∀ a, u (τ a) = u a)
+    (hkτ : ∀ a b, k (τ a) (τ b) = k a b)
+    (v : Ω → ℝ) :
+    (layerSymmetricTransferMatrix u k).mulVec (v ∘ τ)
+      = (layerSymmetricTransferMatrix u k).mulVec v ∘ τ := by
+  ext a
+  change (∑ b : Ω, layerSymmetricTransferMatrix u k a b * (v ∘ τ) b)
+      = ∑ b : Ω, layerSymmetricTransferMatrix u k (τ a) b * v b
+  dsimp [Function.comp]
+  have hsum :
+      (∑ b : Ω, layerSymmetricTransferMatrix u k (τ a) (τ b) * v (τ b))
+        = ∑ b : Ω, layerSymmetricTransferMatrix u k (τ a) b * v b := by
+    exact Equiv.sum_comp τ
+      (fun b => layerSymmetricTransferMatrix u k (τ a) b * v b)
+  calc
+    (∑ b : Ω, layerSymmetricTransferMatrix u k a b * v (τ b))
+        = ∑ b : Ω, layerSymmetricTransferMatrix u k (τ a) (τ b) * v (τ b) := by
+          apply Finset.sum_congr rfl
+          intro b _
+          rw [layerSymmetricTransferMatrix_equiv_equiv u k τ huτ hkτ a b]
+    _ = ∑ b : Ω, layerSymmetricTransferMatrix u k (τ a) b * v b := hsum
+
 /-! ## Finite Hermitian spectral bridge -/
 
 /-- The finite-cardinality partition prefactor obtained from a crude dominant
@@ -418,6 +469,17 @@ noncomputable def markedMatrix {M : Matrix Ω Ω ℝ}
     (E : RealOrthogonalSpectralData M) (f : Ω → ℝ) : Matrix Ω Ω ℝ :=
   E.changeOfBasisᵀ * Matrix.diagonal f * E.changeOfBasis
 
+/-- Entrywise expansion of the marked matrix `Qᵀ diag(f) Q`. -/
+theorem markedMatrix_apply {M : Matrix Ω Ω ℝ}
+    (E : RealOrthogonalSpectralData M) (f : Ω → ℝ) (i j : Ω) :
+    E.markedMatrix f i j =
+      ∑ x, E.changeOfBasis x i * f x * E.changeOfBasis x j := by
+  rw [markedMatrix, Matrix.mul_apply]
+  apply Finset.sum_congr rfl
+  intro x _
+  rw [Matrix.mul_diagonal]
+  simp [mul_assoc]
+
 /-- The finite absolute coefficient prefactor in the spectral marked-trace
 bound. -/
 noncomputable def markedSpectralPrefactor {M : Matrix Ω Ω ℝ}
@@ -456,6 +518,42 @@ theorem markedMatrix_comm {M : Matrix Ω Ω ℝ}
     E.markedMatrix f i j = E.markedMatrix f j i := by
   have h := congr_fun (congr_fun (E.markedMatrix_transpose f) i) j
   simpa using h.symm
+
+/-- An odd observable has zero dominant marked diagonal against an even spectral
+column. -/
+theorem markedMatrix_diagonal_zero_of_equiv_odd_even {M : Matrix Ω Ω ℝ}
+    (E : RealOrthogonalSpectralData M) (f : Ω → ℝ) (top : Ω) (τ : Ω ≃ Ω)
+    (hf_odd : ∀ x, f (τ x) = -f x)
+    (hvec_even : ∀ x, E.changeOfBasis (τ x) top = E.changeOfBasis x top) :
+    E.markedMatrix f top top = 0 := by
+  rw [E.markedMatrix_apply f top top]
+  let term : Ω → ℝ :=
+    fun x => E.changeOfBasis x top * f x * E.changeOfBasis x top
+  change (∑ x : Ω, term x) = 0
+  have hflip : ∀ x : Ω, term (τ x) = -term x := by
+    intro x
+    simp [term, hf_odd, hvec_even]
+  have hsum_flip : (∑ x : Ω, term (τ x)) = ∑ x : Ω, term x :=
+    Equiv.sum_comp τ term
+  have hself_neg : (∑ x : Ω, term x) = -∑ x : Ω, term x := by
+    calc
+      (∑ x : Ω, term x) = ∑ x : Ω, term (τ x) := hsum_flip.symm
+      _ = ∑ x : Ω, -term x := by simp_rw [hflip]
+      _ = -∑ x : Ω, term x := by rw [Finset.sum_neg_distrib]
+  linarith
+
+/-- The fixed-site layer spin observable has zero dominant marked diagonal
+against a flip-even spectral column. -/
+theorem markedMatrix_layerSpinAt_diagonal_zero_of_flip_even
+    {S : Type*} [Fintype S] [DecidableEq S]
+    {M : Matrix (LayerState S) (LayerState S) ℝ}
+    (E : RealOrthogonalSpectralData M) (x : S) (top : LayerState S)
+    (hvec_even : ∀ ω : LayerState S,
+      E.changeOfBasis (layerStateFlipEquiv S ω) top = E.changeOfBasis ω top) :
+    E.markedMatrix (layerSpinAt x) top top = 0 :=
+  E.markedMatrix_diagonal_zero_of_equiv_odd_even
+    (layerSpinAt x) top (layerStateFlipEquiv S)
+    (fun ω => layerSpinAt_flip x ω) hvec_even
 
 /-- Powers of a matrix with explicit orthogonal diagonalization. -/
 theorem pow_eq {M : Matrix Ω Ω ℝ}
@@ -1363,6 +1461,32 @@ noncomputable def layerBalancedMinSpectralGapCertificate_of_orthogonalDominantBo
           subdominant_abs_le)
         subdominant_abs_le dominant_markedDiagonal_zero)
 
+/-- Spin-observable constructor for a balanced min-separation spectral-gap
+certificate from explicit orthogonal spectral data.  It replaces the
+dominant-diagonal marked-channel cancellation hypothesis by flip-evenness of
+the chosen dominant spectral column. -/
+noncomputable def
+    layerBalancedMinSpectralGapCertificate_of_orthogonalDominantBounds_flipEvenSpin
+    {S : Type*} [Fintype S] [DecidableEq S]
+    (u : LayerState S → ℝ) (k : LayerState S → LayerState S → ℝ) (x : S)
+    (E : RealOrthogonalSpectralData (layerSymmetricTransferMatrix u k))
+    (top : LayerState S) (scale theta : ℝ)
+    (scale_pos : 0 < scale)
+    (theta_nonneg : 0 ≤ theta)
+    (theta_lt_one : theta < 1)
+    (partitionPrefactor_small :
+      (((Fintype.card (LayerState S) - 1 : ℕ) : ℝ) * theta) < 1)
+    (dominant_eigenvalue : E.eigenvalue top = scale)
+    (subdominant_abs_le : ∀ i, i ≠ top → |E.eigenvalue i| ≤ theta * scale)
+    (dominant_vector_flip_even : ∀ ω : LayerState S,
+      E.changeOfBasis (layerStateFlipEquiv S ω) top = E.changeOfBasis ω top) :
+    LayerBalancedMinSpectralGapCertificate u k (layerSpinAt x) :=
+  layerBalancedMinSpectralGapCertificate_of_orthogonalDominantBounds
+    u k (layerSpinAt x) E top scale theta scale_pos theta_nonneg theta_lt_one
+    partitionPrefactor_small dominant_eigenvalue subdominant_abs_le
+    (E.markedMatrix_layerSpinAt_diagonal_zero_of_flip_even x top
+      dominant_vector_flip_even)
+
 /-- Constructor for a balanced min-separation spectral-gap certificate using
 the Hermitian spectral theorem data attached to the balanced transfer matrix. -/
 noncomputable def layerBalancedMinSpectralGapCertificate_of_layerHermitianDominantBounds
@@ -1386,6 +1510,37 @@ noncomputable def layerBalancedMinSpectralGapCertificate_of_layerHermitianDomina
     (layerSymmetricTransferOrthogonalSpectralData u k hk) top scale theta
     scale_pos theta_nonneg theta_lt_one partitionPrefactor_small
     dominant_eigenvalue subdominant_abs_le dominant_markedDiagonal_zero
+
+/-- Spin-observable constructor for a balanced min-separation spectral-gap
+certificate using the Hermitian spectral theorem data attached to the balanced
+transfer matrix.  The marked-channel cancellation is supplied by flip-evenness
+of the chosen dominant spectral column. -/
+noncomputable def
+    layerBalancedMinSpectralGapCertificate_of_layerHermitianDominantBounds_flipEvenSpin
+    {S : Type*} [Fintype S] [DecidableEq S]
+    (u : LayerState S → ℝ) (k : LayerState S → LayerState S → ℝ) (x : S)
+    (hk : ∀ a b, k a b = k b a)
+    (top : LayerState S) (scale theta : ℝ)
+    (scale_pos : 0 < scale)
+    (theta_nonneg : 0 ≤ theta)
+    (theta_lt_one : theta < 1)
+    (partitionPrefactor_small :
+      (((Fintype.card (LayerState S) - 1 : ℕ) : ℝ) * theta) < 1)
+    (dominant_eigenvalue :
+      (layerSymmetricTransferOrthogonalSpectralData u k hk).eigenvalue top = scale)
+    (subdominant_abs_le : ∀ i, i ≠ top →
+      |(layerSymmetricTransferOrthogonalSpectralData u k hk).eigenvalue i|
+        ≤ theta * scale)
+    (dominant_vector_flip_even : ∀ ω : LayerState S,
+      (layerSymmetricTransferOrthogonalSpectralData u k hk).changeOfBasis
+          (layerStateFlipEquiv S ω) top =
+        (layerSymmetricTransferOrthogonalSpectralData u k hk).changeOfBasis
+          ω top) :
+    LayerBalancedMinSpectralGapCertificate u k (layerSpinAt x) :=
+  layerBalancedMinSpectralGapCertificate_of_orthogonalDominantBounds_flipEvenSpin
+    u k x (layerSymmetricTransferOrthogonalSpectralData u k hk) top scale theta
+    scale_pos theta_nonneg theta_lt_one partitionPrefactor_small
+    dominant_eigenvalue subdominant_abs_le dominant_vector_flip_even
 
 /-- Constructor for an ordinary spectral-gap certificate from explicit balanced
 trace bounds, transported across the diagonal similarity. -/

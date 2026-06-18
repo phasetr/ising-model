@@ -150,9 +150,28 @@ theorem layerTwoPoint_eq_trace_ratio
 /-- A finite hyperplane layer state is a spin configuration on its cross-section. -/
 abbrev LayerState (S : Type*) := Config S
 
+/-- The global spin flip as an equivalence of finite layer states. -/
+def layerStateFlipEquiv (S : Type*) : LayerState S ≃ LayerState S where
+  toFun := Config.flip
+  invFun := Config.flip
+  left_inv := Config.flip_flip
+  right_inv := Config.flip_flip
+
+/-- Evaluation of the global layer-state spin flip equivalence. -/
+@[simp]
+theorem layerStateFlipEquiv_apply {S : Type*} (ω : LayerState S) :
+    layerStateFlipEquiv S ω = Config.flip ω :=
+  rfl
+
 /-- The spin observable at a fixed transverse site inside one layer. -/
 def layerSpinAt {S : Type*} (x : S) (ω : LayerState S) : ℝ :=
   Spin.sign ℝ (ω x)
+
+/-- The fixed-site layer spin observable is odd under global spin flip. -/
+@[simp]
+theorem layerSpinAt_flip {S : Type*} (x : S) (ω : LayerState S) :
+    layerSpinAt x (layerStateFlipEquiv S ω) = -layerSpinAt x ω := by
+  simp [layerSpinAt, Config.flip]
 
 /-- The finite cyclic layer two-point function for the spin at a fixed transverse
 site of each layer. -/
