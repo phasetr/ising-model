@@ -7750,6 +7750,39 @@ open-boundary certificate, thermodynamic-limit decay, or the final hyperplane
 decay estimate.  Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and
 \S17.5, pp.~311--312.
 
+\paragraph{Open-boundary marked numerator bound constructors (\S17.1, Issue~\#3511).}
+The matrix/path identities from the preceding paragraph are also exposed as
+certificate constructors.  The declarations
+\[
+  \begin{gathered}
+  \texttt{layerOpenMinSpectralGapCertificate\_of\_}\\
+  \texttt{matrixPartition\_matrixPowerNumeratorBounds},\\[2pt]
+  \texttt{layerOpenMinSpectralGapCertificate\_of\_}\\
+  \texttt{matrixPartition\_matrixProductNumeratorBounds}
+  \end{gathered}
+\]
+consume the same denominator lower bound in
+\(\texttt{layerOpenMatrixPartition}\) form, together with a marked numerator
+estimate in either four-endpoint matrix-power form or boundary-vector
+matrix-product form.  Both constructors call
+\[
+  \texttt{layerOpenMinSpectralGapCertificate\_of\_matrixPartitionBounds}
+\]
+for the denominator and rewrite the marked numerator goal through
+\[
+  \begin{gathered}
+  \texttt{layerOpenTwoPointMatrixPowerNumerator\_eq\_}\\
+  \texttt{transferTwoPointNumerator},\\[2pt]
+  \texttt{layerOpenTwoPointMatrixProductNumerator\_eq\_}\\
+  \texttt{transferTwoPointNumerator}.
+  \end{gathered}
+\]
+This is finite constructor glue from matrix estimates to the existing open
+min-gap certificate.  It does not prove a marked spectral-basis formula,
+Perron--Frobenius input, an interacting cubic-layer spectral window,
+thermodynamic-limit decay, or the final hyperplane decay estimate.  Reference:
+Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5, pp.~311--312.
+
 \paragraph{Diagonalization and matrix powers (\S17.1, Issue~\#3511 PR~2).}
 The Hadamard matrix $H = \bigl(\begin{smallmatrix} 1 & 1 \\ 1 & -1 \end{smallmatrix}\bigr)$
 (\texttt{hadamardMatrix}) satisfies $H^2 = 2\,\mathbb 1$
