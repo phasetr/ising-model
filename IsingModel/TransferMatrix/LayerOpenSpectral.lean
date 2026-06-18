@@ -99,8 +99,8 @@ theorem layerOpenPartition_eq_matrixPartition
 
 /-- Reorder seven nested `Finset.univ` sums, moving the last three indices to the
 front. -/
-theorem sum_reorder_7 {A B C D E F G R : Type*} [Fintype A] [Fintype B] [Fintype C]
-    [Fintype D] [Fintype E] [Fintype F] [Fintype G] [AddCommMonoid R]
+private theorem sum_reorder_7 {A B C D E F G R : Type*} [Fintype A] [Fintype B]
+    [Fintype C] [Fintype D] [Fintype E] [Fintype F] [Fintype G] [AddCommMonoid R]
     (H : A → B → C → D → E → F → G → R) :
     (∑ a, ∑ b, ∑ c, ∑ d, ∑ e, ∑ f, ∑ g, H a b c d e f g)
       = ∑ g, ∑ f, ∑ e, ∑ a, ∑ b, ∑ c, ∑ d, H a b c d e f g := by
