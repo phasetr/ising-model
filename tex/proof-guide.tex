@@ -7336,6 +7336,58 @@ high-temperature neighborhood, a Walsh diagonalization, arbitrary multi-site
 hyperplane decay estimate.  Reference: Glimm--Jaffe, 2nd ed., \S17.1,
 pp.~304--306 and \S17.5, pp.~311--312.
 
+\paragraph{One-site layer spectral-window bridge (\S17.1, Issue~\#3511).}
+The module
+\[
+  \texttt{TransferMatrix/OneSiteLayerSpectralWindow.lean}
+\]
+records the first positive-temperature physical layer spectral window beyond
+the beta-zero slice.  For the one-site transverse layer \(S=\texttt{PUnit}\),
+zero field, no internal edges, and identity longitudinal transition pairs, the
+internal weight is trivial and the adjacent-layer weight is the usual
+one-dimensional Ising transfer-matrix entry:
+\[
+  k(\omega,\eta)
+    = T(p.\beta p.J)_{\omega,\eta}
+\]
+This is the lemma
+\begin{center}
+{\scriptsize\texttt{layerTransitionWeight\_punit\_identity\_eq\_isingTransferMatrix1D}}.
+\end{center}
+Consequently the balanced layer transfer matrix is the reindexed
+one-dimensional transfer matrix
+\[
+  \texttt{layerSymmetricTransferMatrix\_punit\_eq\_reindex\_isingTransferMatrix1D}.
+\]
+The normalized Hadamard basis is packaged as
+\(\texttt{isingTransferMatrix1DOrthogonalSpectralData}\), with top eigenvalue
+\(\lambda_+(a)\) and lower eigenvalue \(\lambda_-(a)\).  The identity
+\[
+  \lambda_-(a)=\tanh(a)\,\lambda_+(a)
+  \qquad
+  (\texttt{transferEigenvalueBot\_eq\_tanh\_mul\_top})
+\]
+gives the explicit one-site spectral window
+\[
+  |\lambda_i|\le \tanh(p.\beta p.J)\,\lambda_+(p.\beta p.J)
+  \qquad(i\ne\text{top}),
+\]
+formalized as \(\texttt{oneSiteLayerSpectralWindow\_tanh}\).  The top Hadamard
+column is flip-even, so the balanced min-gap certificate constructor applies
+with
+\[
+  \theta=\tanh(p.\beta p.J)
+\]
+whenever \(0<p.\beta p.J\):
+\[
+  \texttt{oneSiteLayerBalancedMinGapCertificate\_tanh}.
+\]
+This is deliberately only a one-site bridge: it does not prove a multi-site
+high-temperature estimate, does not make \(\theta<1\) sufficient for larger
+layer state spaces, and does not prove open-slab geometry, thermodynamic
+limits, or the final hyperplane decay estimate.  Reference: Glimm--Jaffe,
+2nd ed., \S17.1, pp.~304--306 and \S17.5, pp.~311--312.
+
 \paragraph{Diagonalization and matrix powers (\S17.1, Issue~\#3511 PR~2).}
 The Hadamard matrix $H = \bigl(\begin{smallmatrix} 1 & 1 \\ 1 & -1 \end{smallmatrix}\bigr)$
 (\texttt{hadamardMatrix}) satisfies $H^2 = 2\,\mathbb 1$
