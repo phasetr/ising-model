@@ -631,6 +631,91 @@ theorem exists_subdominant_abs_ratio_of_signedPositiveColumn [Nonempty Ω]
       have himem : i ∈ rest := Finset.mem_erase.mpr ⟨hi, Finset.mem_univ i⟩
       exact (div_le_iff₀ htop_pos).mp (hmax i himem)
 
+/-- The maximal spectral-data column has a positive eigenvalue for an
+entrywise positive matrix. -/
+theorem eigenvalue_pos_maxEigenIndex [Nonempty Ω]
+    {M : Matrix Ω Ω ℝ} (E : RealOrthogonalSpectralData M)
+    (hM : MatrixEntrywisePositive M) :
+    0 < E.eigenvalue E.maxEigenIndex :=
+  E.eigenvalue_pos_of_signedPositiveColumn hM E.maxEigenIndex
+    (E.signedPositiveColumn_maxEigenIndex hM)
+
+/-- The eigenvalue at the maximal signed-positive column bounds all
+spectral-data eigenvalues in absolute value. -/
+theorem eigenvalue_abs_le_maxEigenIndex [Nonempty Ω]
+    {M : Matrix Ω Ω ℝ} (E : RealOrthogonalSpectralData M)
+    (hM : MatrixEntrywisePositive M) (i : Ω) :
+    |E.eigenvalue i| ≤ E.eigenvalue E.maxEigenIndex :=
+  E.eigenvalue_abs_le_of_signedPositiveColumn hM E.maxEigenIndex i
+    (E.signedPositiveColumn_maxEigenIndex hM)
+
+/-- The maximal signed-positive column spans its eigenspace. -/
+theorem eigenspace_simple_maxEigenIndex [Nonempty Ω]
+    {M : Matrix Ω Ω ℝ} (E : RealOrthogonalSpectralData M)
+    (hM : MatrixEntrywisePositive M) {w : Ω → ℝ}
+    (hw_eig : M.mulVec w = E.eigenvalue E.maxEigenIndex • w) :
+    ∃ c : ℝ, w = c • (fun x => E.changeOfBasis x E.maxEigenIndex) :=
+  E.eigenspace_simple_of_signedPositiveColumn hM E.maxEigenIndex
+    (E.signedPositiveColumn_maxEigenIndex hM) hw_eig
+
+/-- Every non-maximal spectral-data column has strictly smaller absolute
+eigenvalue than the maximal signed-positive column. -/
+theorem eigenvalue_abs_lt_maxEigenIndex [Nonempty Ω]
+    {M : Matrix Ω Ω ℝ} (E : RealOrthogonalSpectralData M)
+    (hM : MatrixEntrywisePositive M) (i : Ω) (hi : i ≠ E.maxEigenIndex) :
+    |E.eigenvalue i| < E.eigenvalue E.maxEigenIndex :=
+  E.eigenvalue_abs_lt_of_signedPositiveColumn hM E.maxEigenIndex i hi
+    (E.signedPositiveColumn_maxEigenIndex hM)
+
+/-- A canonical finite subdominant ratio attached to the maximal signed-positive
+spectral-data column.  The quantitative certificate prefactor smallness
+condition remains a separate hypothesis. -/
+noncomputable def subdominantRatio_maxEigenIndex [Nonempty Ω]
+    {M : Matrix Ω Ω ℝ} (E : RealOrthogonalSpectralData M)
+    (hM : MatrixEntrywisePositive M) : ℝ :=
+  Classical.choose
+    (E.exists_subdominant_abs_ratio_of_signedPositiveColumn hM E.maxEigenIndex
+      (E.signedPositiveColumn_maxEigenIndex hM))
+
+/-- Specification of the canonical finite subdominant ratio at
+`maxEigenIndex`. -/
+theorem subdominantRatio_maxEigenIndex_spec [Nonempty Ω]
+    {M : Matrix Ω Ω ℝ} (E : RealOrthogonalSpectralData M)
+    (hM : MatrixEntrywisePositive M) :
+    0 ≤ E.subdominantRatio_maxEigenIndex hM ∧
+      E.subdominantRatio_maxEigenIndex hM < 1 ∧
+      ∀ i, i ≠ E.maxEigenIndex →
+        |E.eigenvalue i| ≤
+          E.subdominantRatio_maxEigenIndex hM * E.eigenvalue E.maxEigenIndex :=
+  Classical.choose_spec
+    (E.exists_subdominant_abs_ratio_of_signedPositiveColumn hM E.maxEigenIndex
+      (E.signedPositiveColumn_maxEigenIndex hM))
+
+/-- Nonnegativity of the canonical finite subdominant ratio at
+`maxEigenIndex`. -/
+theorem subdominantRatio_maxEigenIndex_nonneg [Nonempty Ω]
+    {M : Matrix Ω Ω ℝ} (E : RealOrthogonalSpectralData M)
+    (hM : MatrixEntrywisePositive M) :
+    0 ≤ E.subdominantRatio_maxEigenIndex hM :=
+  (E.subdominantRatio_maxEigenIndex_spec hM).1
+
+/-- The canonical finite subdominant ratio at `maxEigenIndex` is strictly
+smaller than one. -/
+theorem subdominantRatio_maxEigenIndex_lt_one [Nonempty Ω]
+    {M : Matrix Ω Ω ℝ} (E : RealOrthogonalSpectralData M)
+    (hM : MatrixEntrywisePositive M) :
+    E.subdominantRatio_maxEigenIndex hM < 1 :=
+  (E.subdominantRatio_maxEigenIndex_spec hM).2.1
+
+/-- The canonical finite subdominant ratio bounds every non-maximal spectral
+eigenvalue in absolute value. -/
+theorem eigenvalue_abs_le_subdominantRatio_maxEigenIndex [Nonempty Ω]
+    {M : Matrix Ω Ω ℝ} (E : RealOrthogonalSpectralData M)
+    (hM : MatrixEntrywisePositive M) (i : Ω) (hi : i ≠ E.maxEigenIndex) :
+    |E.eigenvalue i| ≤
+      E.subdominantRatio_maxEigenIndex hM * E.eigenvalue E.maxEigenIndex :=
+  (E.subdominantRatio_maxEigenIndex_spec hM).2.2 i hi
+
 end RealOrthogonalSpectralData
 
 /-! ## Layer wrappers for signed-positive columns -/
@@ -647,6 +732,19 @@ noncomputable def layerSymmetricTransfer_signedPositiveColumn_maxEigenIndex
   letI : Nonempty (LayerState S) := ⟨default⟩
   let E := layerSymmetricTransferOrthogonalSpectralData u k hk_symm
   exact E.signedPositiveColumn_maxEigenIndex
+    (layerSymmetricTransferMatrix_entrywisePositive u k hu hk_pos)
+
+/-- The canonical finite subdominant ratio attached to the maximal
+signed-positive column of the Hermitian spectral data for the balanced layer
+transfer matrix. -/
+noncomputable def layerSymmetricTransfer_subdominantRatio_maxEigenIndex
+    {S : Type*} [Fintype S] [DecidableEq S]
+    (u : LayerState S → ℝ) (k : LayerState S → LayerState S → ℝ)
+    (hu : ∀ ω, 0 < u ω) (hk_pos : ∀ ω η, 0 < k ω η)
+    (hk_symm : ∀ ω η, k ω η = k η ω) : ℝ := by
+  letI : Nonempty (LayerState S) := ⟨default⟩
+  let E := layerSymmetricTransferOrthogonalSpectralData u k hk_symm
+  exact E.subdominantRatio_maxEigenIndex
     (layerSymmetricTransferMatrix_entrywisePositive u k hu hk_pos)
 
 /-- A signed-positive balanced-layer spectral column bounds every spectral-data
@@ -804,6 +902,111 @@ layerBalancedMinSpectralGapCertificate_of_orthogonalSubdominantBounds_signedPosi
         dominant_column_signed_pos)
       theta_nonneg theta_lt_one partitionPrefactor_small rfl subdominant_abs_le
       dominant_column_signed_pos
+
+/-! ## Maximal-column certificate constructors -/
+
+/-- Orthogonal spectral-data constructor with the transfer scale and
+subdominant ratio fixed by the maximal signed-positive spectral column.
+
+The finite prefactor condition
+`((Fintype.card Ω - 1) * theta) < 1` remains an explicit quantitative input. -/
+noncomputable def layerBalancedMinSpectralGapCertificate_of_orthogonalMaxEigenIndex
+    [Nonempty Ω]
+    (u : Ω → ℝ) (k : Ω → Ω → ℝ) (f : Ω → ℝ)
+    (hu : ∀ a, 0 < u a) (hk_pos : ∀ a b, 0 < k a b)
+    (E : RealOrthogonalSpectralData (layerSymmetricTransferMatrix u k))
+    (partitionPrefactor_small :
+      (((Fintype.card Ω - 1 : ℕ) : ℝ) *
+        E.subdominantRatio_maxEigenIndex
+          (layerSymmetricTransferMatrix_entrywisePositive u k hu hk_pos)) < 1)
+    (dominant_markedDiagonal_zero :
+      E.markedMatrix f E.maxEigenIndex E.maxEigenIndex = 0) :
+    LayerBalancedMinSpectralGapCertificate u k f := by
+  let hM := layerSymmetricTransferMatrix_entrywisePositive u k hu hk_pos
+  exact layerBalancedMinSpectralGapCertificate_of_orthogonalDominantBounds
+    u k f E E.maxEigenIndex (E.eigenvalue E.maxEigenIndex)
+    (E.subdominantRatio_maxEigenIndex hM)
+    (E.eigenvalue_pos_maxEigenIndex hM)
+    (E.subdominantRatio_maxEigenIndex_nonneg hM)
+    (E.subdominantRatio_maxEigenIndex_lt_one hM)
+    partitionPrefactor_small rfl
+    (E.eigenvalue_abs_le_subdominantRatio_maxEigenIndex hM)
+    dominant_markedDiagonal_zero
+
+/-- Hermitian spectral-data constructor with the transfer scale and
+subdominant ratio fixed by the maximal signed-positive spectral column. -/
+noncomputable def layerBalancedMinSpectralGapCertificate_of_layerHermitianMaxEigenIndex
+    [Nonempty Ω]
+    (u : Ω → ℝ) (k : Ω → Ω → ℝ) (f : Ω → ℝ)
+    (hu : ∀ a, 0 < u a) (hk_pos : ∀ a b, 0 < k a b)
+    (hk : ∀ a b, k a b = k b a)
+    (partitionPrefactor_small :
+      (((Fintype.card Ω - 1 : ℕ) : ℝ) *
+        (layerSymmetricTransferOrthogonalSpectralData u k hk).subdominantRatio_maxEigenIndex
+          (layerSymmetricTransferMatrix_entrywisePositive u k hu hk_pos)) < 1)
+    (dominant_markedDiagonal_zero :
+      (layerSymmetricTransferOrthogonalSpectralData u k hk).markedMatrix f
+        (layerSymmetricTransferOrthogonalSpectralData u k hk).maxEigenIndex
+        (layerSymmetricTransferOrthogonalSpectralData u k hk).maxEigenIndex = 0) :
+    LayerBalancedMinSpectralGapCertificate u k f :=
+  layerBalancedMinSpectralGapCertificate_of_orthogonalMaxEigenIndex u k f hu hk_pos
+    (layerSymmetricTransferOrthogonalSpectralData u k hk)
+    partitionPrefactor_small dominant_markedDiagonal_zero
+
+/-- Spin-observable constructor using the maximal signed-positive spectral
+column.  The signed-positive column gives flip-even dominant-channel
+cancellation before entering the min-separation certificate route. -/
+noncomputable def
+    layerBalancedMinSpectralGapCertificate_of_orthogonalMaxEigenIndexFlipSpin
+    {S : Type*} [Fintype S] [DecidableEq S]
+    (u : LayerState S → ℝ) (k : LayerState S → LayerState S → ℝ) (x : S)
+    (hu : ∀ ω, 0 < u ω) (hk_pos : ∀ ω η, 0 < k ω η)
+    (hu_flip : ∀ ω, u (layerStateFlipEquiv S ω) = u ω)
+    (hk_flip : ∀ ω η,
+      k (layerStateFlipEquiv S ω) (layerStateFlipEquiv S η) = k ω η)
+    (E : RealOrthogonalSpectralData (layerSymmetricTransferMatrix u k))
+    (partitionPrefactor_small :
+      (((Fintype.card (LayerState S) - 1 : ℕ) : ℝ) *
+        E.subdominantRatio_maxEigenIndex
+          (layerSymmetricTransferMatrix_entrywisePositive u k hu hk_pos)) < 1) :
+    LayerBalancedMinSpectralGapCertificate u k (layerSpinAt x) := by
+  letI : Nonempty (LayerState S) := ⟨default⟩
+  let hM := layerSymmetricTransferMatrix_entrywisePositive u k hu hk_pos
+  exact
+    layerBalancedMinSpectralGapCertificate_of_orthogonalDominantBounds_signedPositiveColumnFlipSpin
+      u k x hu hk_pos hu_flip hk_flip E E.maxEigenIndex
+      (E.eigenvalue E.maxEigenIndex)
+      (E.subdominantRatio_maxEigenIndex hM)
+      (E.eigenvalue_pos_maxEigenIndex hM)
+      (E.subdominantRatio_maxEigenIndex_nonneg hM)
+      (E.subdominantRatio_maxEigenIndex_lt_one hM)
+      partitionPrefactor_small rfl
+      (E.eigenvalue_abs_le_subdominantRatio_maxEigenIndex hM)
+      (E.signedPositiveColumn_maxEigenIndex hM)
+
+/-- Hermitian spin-observable constructor using the maximal signed-positive
+spectral column of the balanced layer transfer matrix. -/
+noncomputable def
+    layerBalancedMinSpectralGapCertificate_of_layerHermitianMaxEigenIndexFlipSpin
+    {S : Type*} [Fintype S] [DecidableEq S]
+    (u : LayerState S → ℝ) (k : LayerState S → LayerState S → ℝ) (x : S)
+    (hu : ∀ ω, 0 < u ω) (hk_pos : ∀ ω η, 0 < k ω η)
+    (hk : ∀ ω η, k ω η = k η ω)
+    (hu_flip : ∀ ω, u (layerStateFlipEquiv S ω) = u ω)
+    (hk_flip : ∀ ω η,
+      k (layerStateFlipEquiv S ω) (layerStateFlipEquiv S η) = k ω η)
+    (partitionPrefactor_small :
+      (((Fintype.card (LayerState S) - 1 : ℕ) : ℝ) *
+        layerSymmetricTransfer_subdominantRatio_maxEigenIndex u k hu hk_pos hk) < 1) :
+    LayerBalancedMinSpectralGapCertificate u k (layerSpinAt x) := by
+  letI : Nonempty (LayerState S) := ⟨default⟩
+  let E := layerSymmetricTransferOrthogonalSpectralData u k hk
+  exact
+    layerBalancedMinSpectralGapCertificate_of_orthogonalMaxEigenIndexFlipSpin
+      u k x hu hk_pos hu_flip hk_flip E
+      (by
+        simpa [layerSymmetricTransfer_subdominantRatio_maxEigenIndex, E] using
+          partitionPrefactor_small)
 
 end TransferMatrix
 
