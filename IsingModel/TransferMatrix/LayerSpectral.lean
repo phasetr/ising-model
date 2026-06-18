@@ -520,11 +520,49 @@ theorem markedMatrix_apply {M : Matrix Ω Ω ℝ}
   rw [Matrix.mul_diagonal]
   simp [mul_assoc]
 
+/-- Boundary-vector coordinates in the orthogonal spectral basis. -/
+noncomputable def boundaryCoordinates {M : Matrix Ω Ω ℝ}
+    (E : RealOrthogonalSpectralData M) (v : Ω → ℝ) : Ω → ℝ :=
+  fun i => ∑ x, v x * E.changeOfBasis x i
+
+/-- The finite boundary-vector marked product
+`vLᵀ M^left diag(f) M^sep diag(f) M^right vR`. -/
+noncomputable def boundaryMarkedProduct
+    (M : Matrix Ω Ω ℝ) (vL f vR : Ω → ℝ)
+    (left sep right : ℕ) : ℝ :=
+  ∑ a, ∑ b,
+    vL a * (M ^ left * Matrix.diagonal f * M ^ sep *
+      Matrix.diagonal f * M ^ right) a b * vR b
+
+/-- The boundary-vector marked product as a dot product. -/
+theorem boundaryMarkedProduct_eq_dotProduct
+    (M : Matrix Ω Ω ℝ) (vL f vR : Ω → ℝ)
+    (left sep right : ℕ) :
+    boundaryMarkedProduct M vL f vR left sep right =
+      vL ⬝ᵥ ((M ^ left * Matrix.diagonal f * M ^ sep *
+        Matrix.diagonal f * M ^ right) *ᵥ vR) := by
+  unfold boundaryMarkedProduct
+  simp only [dotProduct, mulVec]
+  apply Finset.sum_congr rfl
+  intro a _
+  rw [Finset.mul_sum]
+  apply Finset.sum_congr rfl
+  intro b _
+  ring
+
 /-- The finite absolute coefficient prefactor in the spectral marked-trace
 bound. -/
 noncomputable def markedSpectralPrefactor {M : Matrix Ω Ω ℝ}
     (E : RealOrthogonalSpectralData M) (f : Ω → ℝ) : ℝ :=
   ∑ i, ∑ j, |E.markedMatrix f i j * E.markedMatrix f j i|
+
+/-- The finite absolute coefficient prefactor for an open boundary-vector marked
+spectral product. -/
+noncomputable def boundaryMarkedSpectralPrefactor {M : Matrix Ω Ω ℝ}
+    (E : RealOrthogonalSpectralData M) (f vL vR : Ω → ℝ) : ℝ :=
+  ∑ i, ∑ j, ∑ l,
+    |E.boundaryCoordinates vL i * E.markedMatrix f i j *
+      E.markedMatrix f j l * E.boundaryCoordinates vR l|
 
 /-- The marked spectral prefactor is nonnegative. -/
 theorem markedSpectralPrefactor_nonneg {M : Matrix Ω Ω ℝ}
@@ -532,6 +570,14 @@ theorem markedSpectralPrefactor_nonneg {M : Matrix Ω Ω ℝ}
     0 ≤ E.markedSpectralPrefactor f := by
   exact Finset.sum_nonneg fun i _ =>
     Finset.sum_nonneg fun j _ => abs_nonneg _
+
+/-- The open boundary-vector marked spectral prefactor is nonnegative. -/
+theorem boundaryMarkedSpectralPrefactor_nonneg {M : Matrix Ω Ω ℝ}
+    (E : RealOrthogonalSpectralData M) (f vL vR : Ω → ℝ) :
+    0 ≤ E.boundaryMarkedSpectralPrefactor f vL vR := by
+  exact Finset.sum_nonneg fun i _ =>
+    Finset.sum_nonneg fun j _ =>
+      Finset.sum_nonneg fun l _ => abs_nonneg _
 
 /-- The marked matrix `Qᵀ diag(f) Q` is symmetric for real orthogonal spectral
 coordinates. -/
@@ -631,6 +677,115 @@ theorem trace_marked_diagonal_pow_eq_sum
   intro j _
   rw [Matrix.mul_diagonal]
   ring
+
+/-- Boundary-vector product of two marked insertions in a fixed diagonal
+spectral basis. -/
+theorem boundary_marked_diagonal_pow_eq_sum
+    (G : Matrix Ω Ω ℝ) (lam vL vR : Ω → ℝ)
+    (left sep right : ℕ) :
+    (∑ a, ∑ b,
+      vL a * (Matrix.diagonal (fun i => lam i ^ left) * G *
+        Matrix.diagonal (fun i => lam i ^ sep) * G *
+        Matrix.diagonal (fun i => lam i ^ right)) a b * vR b)
+      = ∑ i, ∑ j, ∑ l,
+          vL i * lam i ^ left * G i j * lam j ^ sep *
+          G j l * lam l ^ right * vR l := by
+  apply Finset.sum_congr rfl
+  intro i _
+  calc
+    ∑ b,
+        vL i * (Matrix.diagonal (fun i => lam i ^ left) * G *
+          Matrix.diagonal (fun i => lam i ^ sep) * G *
+          Matrix.diagonal (fun i => lam i ^ right)) i b * vR b
+        = ∑ l, ∑ j,
+            vL i * lam i ^ left * G i j * lam j ^ sep *
+            G j l * lam l ^ right * vR l := by
+          apply Finset.sum_congr rfl
+          intro l _
+          rw [Matrix.mul_diagonal]
+          rw [Matrix.mul_apply]
+          rw [Finset.sum_mul]
+          rw [Finset.mul_sum]
+          rw [Finset.sum_mul]
+          apply Finset.sum_congr rfl
+          intro j _
+          rw [Matrix.mul_diagonal]
+          rw [Matrix.diagonal_mul]
+          ring
+    _ = ∑ j, ∑ l,
+            vL i * lam i ^ left * G i j * lam j ^ sep *
+            G j l * lam l ^ right * vR l := by
+          rw [Finset.sum_comm]
+
+/-- A finite boundary-vector marked product written in explicit orthogonal
+spectral coordinates. -/
+theorem boundaryMarkedProduct_eq_spectralSum {M : Matrix Ω Ω ℝ}
+    (E : RealOrthogonalSpectralData M) (vL f vR : Ω → ℝ)
+    (left sep right : ℕ) :
+    boundaryMarkedProduct M vL f vR left sep right =
+      ∑ i, ∑ j, ∑ l,
+        E.boundaryCoordinates vL i * E.eigenvalue i ^ left *
+        E.markedMatrix f i j * E.eigenvalue j ^ sep *
+        E.markedMatrix f j l * E.eigenvalue l ^ right *
+        E.boundaryCoordinates vR l := by
+  let Dleft : Matrix Ω Ω ℝ := Matrix.diagonal fun i => E.eigenvalue i ^ left
+  let Dsep : Matrix Ω Ω ℝ := Matrix.diagonal fun i => E.eigenvalue i ^ sep
+  let Dright : Matrix Ω Ω ℝ := Matrix.diagonal fun i => E.eigenvalue i ^ right
+  let G : Matrix Ω Ω ℝ := E.markedMatrix f
+  let B : Matrix Ω Ω ℝ := Dleft * G * Dsep * G * Dright
+  have hmat :
+      M ^ left * Matrix.diagonal f * M ^ sep * Matrix.diagonal f * M ^ right =
+        E.changeOfBasis * B * E.changeOfBasisᵀ := by
+    dsimp [B, Dleft, Dsep, Dright, G]
+    rw [E.pow_eq left, E.pow_eq sep, E.pow_eq right]
+    unfold markedMatrix
+    noncomm_ring [E.orthogonal_left]
+  rw [boundaryMarkedProduct_eq_dotProduct]
+  rw [hmat]
+  rw [dotProduct_mulVec]
+  rw [← vecMul_vecMul vL (E.changeOfBasis * B) E.changeOfBasisᵀ]
+  rw [← vecMul_vecMul vL E.changeOfBasis B]
+  rw [← dotProduct_mulVec]
+  have hleft :
+      vL ᵥ* E.changeOfBasis = E.boundaryCoordinates vL := by
+    ext i
+    simp [vecMul, dotProduct, boundaryCoordinates]
+  have hright :
+      E.changeOfBasisᵀ *ᵥ vR = E.boundaryCoordinates vR := by
+    ext i
+    simp only [mulVec, dotProduct, Matrix.transpose_apply, boundaryCoordinates]
+    apply Finset.sum_congr rfl
+    intro x _
+    ring
+  rw [hleft, hright]
+  dsimp [B, Dleft, Dsep, Dright, G]
+  rw [← boundary_marked_diagonal_pow_eq_sum (E.markedMatrix f) E.eigenvalue
+    (E.boundaryCoordinates vL) (E.boundaryCoordinates vR) left sep right]
+  simp only [dotProduct, vecMul]
+  calc
+    ∑ x,
+        (∑ x_1,
+          E.boundaryCoordinates vL x_1 *
+            ((Matrix.diagonal (fun i => E.eigenvalue i ^ left) * E.markedMatrix f *
+              Matrix.diagonal (fun i => E.eigenvalue i ^ sep) * E.markedMatrix f *
+              Matrix.diagonal (fun i => E.eigenvalue i ^ right)) x_1 x)) *
+          E.boundaryCoordinates vR x
+        = ∑ x, ∑ x_1,
+            E.boundaryCoordinates vL x_1 *
+              ((Matrix.diagonal (fun i => E.eigenvalue i ^ left) * E.markedMatrix f *
+                Matrix.diagonal (fun i => E.eigenvalue i ^ sep) * E.markedMatrix f *
+                Matrix.diagonal (fun i => E.eigenvalue i ^ right)) x_1 x) *
+              E.boundaryCoordinates vR x := by
+          apply Finset.sum_congr rfl
+          intro x _
+          rw [Finset.sum_mul]
+    _ = ∑ x_1, ∑ x,
+            E.boundaryCoordinates vL x_1 *
+              ((Matrix.diagonal (fun i => E.eigenvalue i ^ left) * E.markedMatrix f *
+                Matrix.diagonal (fun i => E.eigenvalue i ^ sep) * E.markedMatrix f *
+                Matrix.diagonal (fun i => E.eigenvalue i ^ right)) x_1 x) *
+              E.boundaryCoordinates vR x := by
+          rw [Finset.sum_comm]
 
 /-- The balanced marked trace written in explicit orthogonal spectral data. -/
 theorem marked_trace_eq_sum {M : Matrix Ω Ω ℝ}
@@ -963,6 +1118,135 @@ theorem marked_sum_abs_le_spectralPrefactor_min {M : Matrix Ω Ω ℝ}
         Finset.sum_le_sum fun j _ => hterm i j
     _ = E.markedSpectralPrefactor f * scale ^ (a + b) * theta ^ min a b := by
       simp [markedSpectralPrefactor, coeff, Finset.sum_mul, mul_assoc]
+
+/-- A top-supported pair of boundary vectors and a zero dominant marked diagonal
+give the central-channel cancellation needed for open boundary-vector marked
+products. -/
+theorem boundaryMarkedCentral_zero_of_topBoundary {M : Matrix Ω Ω ℝ}
+    (E : RealOrthogonalSpectralData M) (f vL vR : Ω → ℝ) (top : Ω)
+    (hL : ∀ i, i ≠ top → E.boundaryCoordinates vL i = 0)
+    (hR : ∀ i, i ≠ top → E.boundaryCoordinates vR i = 0)
+    (hG : E.markedMatrix f top top = 0) :
+    ∀ i l,
+      E.boundaryCoordinates vL i * E.markedMatrix f i top *
+        E.markedMatrix f top l * E.boundaryCoordinates vR l = 0 := by
+  intro i l
+  by_cases hi : i = top
+  · subst i
+    by_cases hl : l = top
+    · subst l
+      simp [hG]
+    · simp [hR l hl]
+  · simp [hL i hi]
+
+/-- Spectral dominance and central-channel cancellation give an open
+boundary-vector marked numerator bound in the separation exponent. -/
+theorem boundaryMarkedSpectralSum_abs_le_spectralPrefactor {M : Matrix Ω Ω ℝ}
+    (E : RealOrthogonalSpectralData M) (f vL vR : Ω → ℝ)
+    (top : Ω) (scale theta : ℝ)
+    (scale_pos : 0 < scale)
+    (theta_nonneg : 0 ≤ theta)
+    (eigenvalue_abs_le_scale : ∀ i, |E.eigenvalue i| ≤ scale)
+    (subdominant_abs_le : ∀ i, i ≠ top → |E.eigenvalue i| ≤ theta * scale)
+    (central_dominant_channel_zero : ∀ i l,
+      E.boundaryCoordinates vL i * E.markedMatrix f i top *
+        E.markedMatrix f top l * E.boundaryCoordinates vR l = 0)
+    (left sep right : ℕ) :
+    |∑ i, ∑ j, ∑ l,
+        E.boundaryCoordinates vL i * E.eigenvalue i ^ left *
+        E.markedMatrix f i j * E.eigenvalue j ^ sep *
+        E.markedMatrix f j l * E.eigenvalue l ^ right *
+        E.boundaryCoordinates vR l|
+      ≤ E.boundaryMarkedSpectralPrefactor f vL vR *
+          scale ^ (left + sep + right) * theta ^ sep := by
+  let coeff : Ω → Ω → Ω → ℝ :=
+    fun i j l =>
+      E.boundaryCoordinates vL i * E.markedMatrix f i j *
+        E.markedMatrix f j l * E.boundaryCoordinates vR l
+  let term : Ω → Ω → Ω → ℝ :=
+    fun i j l =>
+      coeff i j l * E.eigenvalue i ^ left * E.eigenvalue j ^ sep *
+        E.eigenvalue l ^ right
+  have hscale_nonneg : 0 ≤ scale := scale_pos.le
+  have htheta_scale_nonneg : 0 ≤ theta * scale :=
+    mul_nonneg theta_nonneg hscale_nonneg
+  have hsum :
+      |∑ i, ∑ j, ∑ l, term i j l| ≤ ∑ i, ∑ j, ∑ l, |term i j l| := by
+    calc
+      |∑ i, ∑ j, ∑ l, term i j l|
+          ≤ ∑ i, |∑ j, ∑ l, term i j l| :=
+            Finset.abs_sum_le_sum_abs (fun i => ∑ j, ∑ l, term i j l) Finset.univ
+      _ ≤ ∑ i, ∑ j, |∑ l, term i j l| := by
+            exact Finset.sum_le_sum fun i _ =>
+              Finset.abs_sum_le_sum_abs (fun j => ∑ l, term i j l) Finset.univ
+      _ ≤ ∑ i, ∑ j, ∑ l, |term i j l| := by
+            exact Finset.sum_le_sum fun i _ =>
+              Finset.sum_le_sum fun j _ =>
+                Finset.abs_sum_le_sum_abs (fun l => term i j l) Finset.univ
+  have hterm : ∀ i j l, |term i j l| ≤
+      |coeff i j l| * (scale ^ (left + sep + right) * theta ^ sep) := by
+    intro i j l
+    by_cases hj : j = top
+    · subst j
+      have hcoeff : coeff i top l = 0 := central_dominant_channel_zero i l
+      simp [term, hcoeff]
+    · have hipow : |E.eigenvalue i| ^ left ≤ scale ^ left :=
+        pow_le_pow_left₀ (abs_nonneg _) (eigenvalue_abs_le_scale i) left
+      have hjpow : |E.eigenvalue j| ^ sep ≤ (theta * scale) ^ sep :=
+        pow_le_pow_left₀ (abs_nonneg _) (subdominant_abs_le j hj) sep
+      have hlpow : |E.eigenvalue l| ^ right ≤ scale ^ right :=
+        pow_le_pow_left₀ (abs_nonneg _) (eigenvalue_abs_le_scale l) right
+      have hpow_mul :
+          |E.eigenvalue i| ^ left * |E.eigenvalue j| ^ sep *
+              |E.eigenvalue l| ^ right
+            ≤ scale ^ left * (theta * scale) ^ sep * scale ^ right := by
+        exact mul_le_mul
+          (mul_le_mul hipow hjpow (pow_nonneg (abs_nonneg _) sep)
+            (pow_nonneg hscale_nonneg left))
+          hlpow (pow_nonneg (abs_nonneg _) right)
+          (mul_nonneg (pow_nonneg hscale_nonneg left)
+            (pow_nonneg htheta_scale_nonneg sep))
+      have hpow_eq :
+          scale ^ left * (theta * scale) ^ sep * scale ^ right =
+            scale ^ (left + sep + right) * theta ^ sep := by
+        rw [mul_pow, pow_add, pow_add]
+        ring
+      calc
+        |term i j l|
+            = |coeff i j l| *
+                (|E.eigenvalue i| ^ left * |E.eigenvalue j| ^ sep *
+                  |E.eigenvalue l| ^ right) := by
+              simp [term, abs_mul, abs_pow, mul_assoc]
+        _ ≤ |coeff i j l| *
+              (scale ^ left * (theta * scale) ^ sep * scale ^ right) :=
+                mul_le_mul_of_nonneg_left hpow_mul (abs_nonneg _)
+        _ = |coeff i j l| * (scale ^ (left + sep + right) * theta ^ sep) := by
+              rw [hpow_eq]
+  calc
+    |∑ i, ∑ j, ∑ l,
+        E.boundaryCoordinates vL i * E.eigenvalue i ^ left *
+        E.markedMatrix f i j * E.eigenvalue j ^ sep *
+        E.markedMatrix f j l * E.eigenvalue l ^ right *
+        E.boundaryCoordinates vR l|
+        = |∑ i, ∑ j, ∑ l, term i j l| := by
+            congr 1
+            apply Finset.sum_congr rfl
+            intro i _
+            apply Finset.sum_congr rfl
+            intro j _
+            apply Finset.sum_congr rfl
+            intro l _
+            simp [term, coeff]
+            ring
+    _ ≤ ∑ i, ∑ j, ∑ l, |term i j l| := hsum
+    _ ≤ ∑ i, ∑ j, ∑ l,
+          |coeff i j l| * (scale ^ (left + sep + right) * theta ^ sep) := by
+            exact Finset.sum_le_sum fun i _ =>
+              Finset.sum_le_sum fun j _ =>
+                Finset.sum_le_sum fun l _ => hterm i j l
+    _ = E.boundaryMarkedSpectralPrefactor f vL vR *
+          scale ^ (left + sep + right) * theta ^ sep := by
+            simp [boundaryMarkedSpectralPrefactor, coeff, Finset.sum_mul, mul_assoc]
 
 end RealOrthogonalSpectralData
 
