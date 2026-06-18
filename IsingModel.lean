@@ -275,6 +275,7 @@ import IsingModel.TransferMatrix.LayerCylinder
 import IsingModel.TransferMatrix.LayerCylinderGraph
 import IsingModel.TransferMatrix.CubicLayerCylinder
 import IsingModel.TransferMatrix.LayerSpectral
+import IsingModel.TransferMatrix.LayerPerron
 import IsingModel.TransferMatrix.PathGraphEdges
 import IsingModel.TransferMatrix.PathGraphTwoPoint
 import IsingModel.TransferMatrix.PathGraphPairTwoPoint
