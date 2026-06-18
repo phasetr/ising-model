@@ -896,6 +896,58 @@ def layerOpenMinSpectralGapCertificate_of_matrixPartitionBounds
   rw [layerOpenTransferPartition_eq_matrixPartition]
   exact partition_lower_matrix
 
+/-- Constructor for an open min-gap certificate whose denominator estimate is
+proved in boundary-vector matrix-power form and whose marked numerator estimate
+is proved in the expanded four-endpoint matrix-power form. -/
+def layerOpenMinSpectralGapCertificate_of_matrixPartition_matrixPowerNumeratorBounds
+    (u : Ω → ℝ) (k : Ω → Ω → ℝ) (f : Ω → ℝ)
+    (scale theta prefactor partitionPrefactor : ℝ)
+    (scale_pos : 0 < scale)
+    (theta_nonneg : 0 ≤ theta)
+    (theta_lt_one : theta < 1)
+    (prefactor_nonneg : 0 ≤ prefactor)
+    (partitionPrefactor_pos : 0 < partitionPrefactor)
+    (partition_lower_matrix : ∀ {n : ℕ},
+      partitionPrefactor * scale ^ n ≤ layerOpenMatrixPartition u k n)
+    (marked_abs_le_matrixPower : ∀ left sep right : ℕ,
+      |layerOpenTwoPointMatrixPowerNumerator u k f left sep right| ≤
+        prefactor * scale ^ (left + sep + right) * theta ^ sep) :
+    LayerOpenMinSpectralGapCertificate u k f := by
+  refine
+    layerOpenMinSpectralGapCertificate_of_matrixPartitionBounds u k f scale theta
+      prefactor partitionPrefactor scale_pos theta_nonneg theta_lt_one
+      prefactor_nonneg partitionPrefactor_pos partition_lower_matrix ?_
+  intro left sep right
+  rw [← layerOpenTwoPointMatrixPowerNumerator_eq_transferTwoPointNumerator
+    u k f left sep right]
+  exact marked_abs_le_matrixPower left sep right
+
+/-- Constructor for an open min-gap certificate whose denominator estimate is
+proved in boundary-vector matrix-power form and whose marked numerator estimate
+is proved in boundary-vector matrix-product form. -/
+def layerOpenMinSpectralGapCertificate_of_matrixPartition_matrixProductNumeratorBounds
+    (u : Ω → ℝ) (k : Ω → Ω → ℝ) (f : Ω → ℝ)
+    (scale theta prefactor partitionPrefactor : ℝ)
+    (scale_pos : 0 < scale)
+    (theta_nonneg : 0 ≤ theta)
+    (theta_lt_one : theta < 1)
+    (prefactor_nonneg : 0 ≤ prefactor)
+    (partitionPrefactor_pos : 0 < partitionPrefactor)
+    (partition_lower_matrix : ∀ {n : ℕ},
+      partitionPrefactor * scale ^ n ≤ layerOpenMatrixPartition u k n)
+    (marked_abs_le_matrixProduct : ∀ left sep right : ℕ,
+      |layerOpenTwoPointMatrixProductNumerator u k f left sep right| ≤
+        prefactor * scale ^ (left + sep + right) * theta ^ sep) :
+    LayerOpenMinSpectralGapCertificate u k f := by
+  refine
+    layerOpenMinSpectralGapCertificate_of_matrixPartitionBounds u k f scale theta
+      prefactor partitionPrefactor scale_pos theta_nonneg theta_lt_one
+      prefactor_nonneg partitionPrefactor_pos partition_lower_matrix ?_
+  intro left sep right
+  rw [← layerOpenTwoPointMatrixProductNumerator_eq_transferTwoPointNumerator
+    u k f left sep right]
+  exact marked_abs_le_matrixProduct left sep right
+
 end TransferMatrix
 
 end IsingModel
