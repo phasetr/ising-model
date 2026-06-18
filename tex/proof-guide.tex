@@ -6917,6 +6917,47 @@ positive column, a strict subdominant gap, open-slab geometry, thermodynamic
 limits, or final hyperplane exponential decay.  Reference: Glimm--Jaffe, 2nd
 ed., \S17.1, pp.~304--306 and \S17.5, pp.~311--312.
 
+\paragraph{Positive-column eigenspace simplicity and strict subdominant ratio (\S17.1, Issue~\#3511).}
+The next finite positive-matrix step derives the simple-eigenspace input from
+the positive column itself.  Given an entrywise positive matrix \(M\), a
+strictly positive eigenpair \(Mv=\lambda v\), and another vector
+\(Mw=\lambda w\), choose
+\[
+  C=\max_i \frac{w_i}{v_i},\qquad z=Cv-w .
+\]
+Then \(z_i\ge 0\) for all \(i\), and \(z_{i_0}=0\) at an attaining coordinate.
+Since \(Mz=\lambda z\),
+\[
+  0=(Mz)_{i_0}=\sum_j M_{i_0j}z_j .
+\]
+Each summand is nonnegative and every \(M_{i_0j}\) is strictly positive, so
+all \(z_j\) vanish.  Thus \(w=Cv\).  This is formalised as
+{\scriptsize\texttt{eigenvector\_smul\_of\_entrywisePositive\_positive\_eigenpair}}.
+
+The strict comparison uses this one-dimensionality argument for \(M^2\).  If
+\(Mw=\mu w\), \(w\ne0\), and equality held in the weak bound
+\(|\mu|\le\lambda\), then \(w\) would be an eigenvector of \(M^2\) with
+eigenvalue \(\lambda^2\).  Since \(v\) is a positive eigenvector of \(M^2\),
+the preceding argument forces \(w\) to be a scalar multiple of \(v\), hence
+\(\mu=\lambda\).  Therefore every different real eigenvalue satisfies
+\(|\mu|<\lambda\).
+
+For explicit orthogonal spectral data, distinct columns are not scalar
+multiples.  A positive top column therefore spans its eigenspace, every
+non-top column has strictly smaller absolute eigenvalue, and finiteness gives
+some \(\theta<1\) with
+\[
+  |\lambda_i|\le \theta\,\lambda_\ast \qquad (i\ne\ast).
+\]
+The layer wrappers expose these facts for the balanced Hermitian transfer
+matrix, and the new positive-column spin-observable certificate constructors
+derive the simple-eigenspace input from positivity.  The quantitative
+certificate condition \(((|\Omega|-1)\theta)<1\) remains an explicit input, and
+this still does not prove Perron--Frobenius existence of the positive column,
+open-slab geometry, thermodynamic limits, or final hyperplane exponential
+decay.  Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5,
+pp.~311--312.
+
 \paragraph{Diagonalization and matrix powers (\S17.1, Issue~\#3511 PR~2).}
 The Hadamard matrix $H = \bigl(\begin{smallmatrix} 1 & 1 \\ 1 & -1 \end{smallmatrix}\bigr)$
 (\texttt{hadamardMatrix}) satisfies $H^2 = 2\,\mathbb 1$
