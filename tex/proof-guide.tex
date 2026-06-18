@@ -6572,7 +6572,7 @@ periodic cylinder bridge; open-boundary boxes, Perron--Frobenius theory,
 thermodynamic limits, and exponential decay are still later Issue~\#3511 steps.
 Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306.
 
-\paragraph{Finite layer-cylinder graph edge decomposition (\S17.1, Issue~\#3511).}
+\paragraph{Finite layer-cylinder graph and stack-weight bridge (\S17.1, Issue~\#3511).}
 \texttt{TransferMatrix/LayerCylinderGraph.lean} adds the project-level graph
 side of the finite periodic layer cylinder. For a transverse graph $H$ and a
 finite set of directed transverse pairs $E$, the internal edge finset copies
@@ -6591,14 +6591,24 @@ The project-level Gibbs API is then expanded over this edge decomposition:
 \texttt{boltzmannWeight\_layerCylinderGraph\_eq\_edge\_field\_prod} gives the
 Boltzmann weight as an edge-factor product times the site-field product, and
 \texttt{partitionFunction\_layerCylinderGraph\_eq\_sum\_edge\_field\_prod}
-gives the corresponding partition-function sum. The auxiliary product forms
-\texttt{layerInternalWeight\_eq\_edge\_field\_prod} and
-\texttt{layerTransitionWeight\_eq\_prod\_exp} prepare the later identification
-with the stack weight. This is still a finite periodic-cylinder graph bridge:
-the full \texttt{layerCylinderStackWeight} equality, open slab/box geometry,
-Perron--Frobenius theory, thermodynamic limits, and exponential decay remain
-later Issue~\#3511 steps. Reference: Glimm--Jaffe, 2nd ed., \S17.1,
-pp.~304--306.
+gives the corresponding partition-function sum. For $3\le N$, the transition
+edge parametrisation is injective as an unordered edge family; this excludes the
+$N=2$ collapse where opposite periodic transition edges become the same
+\texttt{Sym2} edge. The product split lemmas for internal edges, transition
+edges, and one-body fields then give
+\texttt{layerCylinderEdgeFieldProd\_eq\_layerCylinderStackWeight}.
+
+The resulting finite bridge identifies the project-level graph API with the
+concrete cyclic layer stack:
+\texttt{boltzmannWeight\_layerCylinderGraph\_eq\_layerCylinderStackWeight} and
+\texttt{partitionFunction\_layerCylinderGraph\_eq\_isingLayerCylinderPartition}.
+For two insertions at the same transverse site, it also gives
+\texttt{correlation\_layerCylinderGraph\_same\_transverse\_eq\_layerCylinderSpinTwoPoint}
+and the trace-ratio corollary
+\texttt{correlation\_layerCylinderGraph\_same\_transverse\_eq\_trace\_ratio}.
+Open slab/box geometry, Perron--Frobenius theory, thermodynamic limits, and
+exponential decay remain later Issue~\#3511 steps. Reference: Glimm--Jaffe,
+2nd ed., \S17.1, pp.~304--306.
 
 \paragraph{Diagonalization and matrix powers (\S17.1, Issue~\#3511 PR~2).}
 The Hadamard matrix $H = \bigl(\begin{smallmatrix} 1 & 1 \\ 1 & -1 \end{smallmatrix}\bigr)$

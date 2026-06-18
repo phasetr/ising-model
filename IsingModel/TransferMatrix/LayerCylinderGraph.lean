@@ -55,6 +55,20 @@ def layerCylinderLayerEmbedding (N : ℕ) (i : Fin N) :
     intro x y h
     exact Prod.ext_iff.mp h |>.2
 
+/-- Symmetric pairs copied into different cylinder layers remain different. -/
+theorem layerCylinderLayerEmbedding_sym2Map_ne_of_ne
+    {N : ℕ} {i j : Fin N} (hij : i ≠ j) (e f : Sym2 S) :
+    (layerCylinderLayerEmbedding (S := S) N i).sym2Map e ≠
+      (layerCylinderLayerEmbedding (S := S) N j).sym2Map f := by
+  refine e.ind (fun x y => ?_)
+  refine f.ind (fun u v => ?_)
+  intro h
+  simp only [Function.Embedding.sym2Map_apply, Sym2.map_mk,
+    layerCylinderLayerEmbedding, Sym2.eq_iff, Prod.ext_iff] at h
+  rcases h with h | h
+  · exact hij h.1.1
+  · exact hij h.1.1
+
 /-- The internal edges of all layers, obtained by copying `H.edgeFinset` into
 each longitudinal slice. -/
 noncomputable def layerCylinderInternalEdgeFinset
@@ -115,6 +129,15 @@ theorem fin_add_two_ne_self {N : ℕ} [NeZero N] (hN : 3 ≤ N) (i : Fin N) :
   have hv := congr_arg Fin.val h2
   simp [Fin.val_add, Nat.mod_eq_of_lt (by omega : 2 < N)] at hv
 
+/-- Reindex a product over a nonempty cyclic `Fin N` by the forward shift. -/
+theorem fin_prod_univ_eq_prod_add_one {N : ℕ} [NeZero N]
+    {M : Type*} [CommMonoid M] (f : Fin N → M) :
+    (∏ i : Fin N, f i) = ∏ i : Fin N, f (i + 1) := by
+  simpa [add_assoc] using
+    Fintype.prod_equiv (Equiv.addRight (-(1 : Fin N)))
+      (fun i : Fin N => f i) (fun i : Fin N => f (i + 1))
+      (fun i => by simp [add_assoc])
+
 /-- `fromEdgeSet` has exactly the supplied finite edge set when the supplied
 set contains no diagonal unordered pairs. -/
 theorem edgeFinset_fromEdgeSet_eq_of_forall_not_isDiag
@@ -152,6 +175,33 @@ theorem layerCylinderTransitionEdge_not_isDiag
     ¬ (layerCylinderTransitionEdge (S := S) N i xy).IsDiag := by
   rw [layerCylinderTransitionEdge, Sym2.mk_isDiag_iff, Prod.ext_iff]
   exact fun h => fin_add_one_ne_self hN i h.1.symm
+
+/-- For a cyclic direction of length at least three, the directed transition
+edge parametrisation has no duplicate unordered edges. -/
+theorem layerCylinderTransitionEdge_injective_of_three_le
+    {N : ℕ} [NeZero N] (hN : 3 ≤ N) :
+    Function.Injective
+      (fun ixy : Fin N × (S × S) =>
+        layerCylinderTransitionEdge (S := S) N ixy.1 ixy.2) := by
+  intro a b h
+  rcases a with ⟨i, x, y⟩
+  rcases b with ⟨j, u, v⟩
+  simp only [layerCylinderTransitionEdge, Sym2.eq_iff] at h
+  rcases h with h | h
+  · rcases h with ⟨hleft, hright⟩
+    have hij : i = j := (Prod.ext_iff.mp hleft).1
+    have hxu : x = u := (Prod.ext_iff.mp hleft).2
+    have hyv : y = v := (Prod.ext_iff.mp hright).2
+    subst hij
+    subst hxu
+    subst hyv
+    rfl
+  · rcases h with ⟨hleft, hright⟩
+    have hij : i = j + 1 := (Prod.ext_iff.mp hleft).1
+    have hji : i + 1 = j := (Prod.ext_iff.mp hright).1
+    have hcycle : i + 1 + 1 = i := by
+      rw [hji, hij]
+    exact (fin_add_two_ne_self hN i hcycle).elim
 
 /-- Every edge in the transition edge finset is non-diagonal when the cyclic
 direction has at least two sites. -/
@@ -265,6 +315,293 @@ theorem layerTransitionWeight_eq_prod_exp
           (Spin.sign ℝ (ω xy.1) * Spin.sign ℝ (η xy.2))) := by
   unfold layerTransitionWeight
   rw [Finset.mul_sum, Real.exp_sum]
+
+/-! ## Stack-weight bridge -/
+
+/-- The spin product on an explicit transition edge is the product of the two
+endpoint spins in the adjacent layers. -/
+theorem edgeSpin_layerCylinderTransitionEdge
+    (p : IsingParams ℝ) {N : ℕ} [NeZero N]
+    (σ : Config (LayerCylinderSite N S)) (i : Fin N) (xy : S × S) :
+    Real.exp (p.β * p.J *
+      edgeSpin (K := ℝ) σ (layerCylinderTransitionEdge (S := S) N i xy)) =
+      Real.exp (p.β * p.J *
+        (Spin.sign ℝ (σ (i, xy.1)) * Spin.sign ℝ (σ (i + 1, xy.2)))) := by
+  simp [layerCylinderTransitionEdge, edgeSpin]
+
+/-- For length at least three, the transition-edge Boltzmann factors are
+exactly the indexed adjacent-layer transition factors. -/
+theorem layerCylinderTransitionEdgeFinset_prod_exp
+    [DecidableEq S] (E : Finset (S × S)) (p : IsingParams ℝ)
+    {N : ℕ} [NeZero N] (hN : 3 ≤ N)
+    (σ : Config (LayerCylinderSite N S)) :
+    (∏ e ∈ layerCylinderTransitionEdgeFinset (S := S) E N,
+      Real.exp (p.β * p.J * edgeSpin (K := ℝ) σ e)) =
+      ∏ i : Fin N, ∏ xy ∈ E,
+        Real.exp (p.β * p.J *
+          (Spin.sign ℝ (σ (i, xy.1)) * Spin.sign ℝ (σ (i + 1, xy.2)))) := by
+  classical
+  unfold layerCylinderTransitionEdgeFinset
+  rw [Finset.prod_image]
+  · change (∏ x ∈ (Finset.univ : Finset (Fin N)) ×ˢ E,
+        Real.exp (p.β * p.J * edgeSpin (K := ℝ) σ
+          (layerCylinderTransitionEdge (S := S) N x.1 x.2))) = _
+    rw [Finset.prod_product]
+    refine Finset.prod_congr rfl ?_
+    intro i _
+    refine Finset.prod_congr rfl ?_
+    intro xy _
+    exact edgeSpin_layerCylinderTransitionEdge (S := S) p σ i xy
+  · exact (layerCylinderTransitionEdge_injective_of_three_le (S := S) hN).injOn
+
+/-- Internal layer edges and adjacent-layer transition edges are disjoint when
+the cyclic direction has at least two layers. -/
+theorem layerCylinderInternal_transition_disjoint
+    [DecidableEq S] (H : SimpleGraph S) [Fintype H.edgeSet] (E : Finset (S × S))
+    {N : ℕ} [NeZero N] (hN : 2 ≤ N) :
+    Disjoint (layerCylinderInternalEdgeFinset (S := S) H N)
+      (layerCylinderTransitionEdgeFinset (S := S) E N) := by
+  classical
+  rw [Finset.disjoint_iff_ne]
+  intro a ha b hb hab
+  rw [layerCylinderInternalEdgeFinset, Finset.mem_biUnion] at ha
+  rcases ha with ⟨i, _hi, ha⟩
+  rcases Finset.mem_map.mp ha with ⟨e, _he, rfl⟩
+  rw [layerCylinderTransitionEdgeFinset, Finset.mem_image] at hb
+  rcases hb with ⟨ixy, _hb, rfl⟩
+  rcases ixy with ⟨j, xy⟩
+  revert hab
+  refine e.ind (fun x y hab => ?_)
+  simp only [Function.Embedding.sym2Map_apply, Sym2.map_mk,
+    layerCylinderLayerEmbedding, layerCylinderTransitionEdge, Sym2.eq_iff,
+    Prod.ext_iff] at hab
+  rcases hab with hab | hab
+  · have hi_left : i = j := by
+      simpa [layerCylinderLayerEmbedding] using hab.1.1
+    have hi_right : i = j + 1 := by
+      simpa [layerCylinderLayerEmbedding] using hab.2.1
+    have hji : j + 1 = j := by
+      calc
+        j + 1 = i := hi_right.symm
+        _ = j := hi_left
+    exact fin_add_one_ne_self hN j hji
+  · have hi_left : i = j + 1 := by
+      simpa [layerCylinderLayerEmbedding] using hab.1.1
+    have hi_right : i = j := by
+      simpa [layerCylinderLayerEmbedding] using hab.2.1
+    have hji : j + 1 = j := by
+      calc
+        j + 1 = i := hi_left.symm
+        _ = j := hi_right
+    exact fin_add_one_ne_self hN j hji
+
+/-- The spin product on an internal copied transverse edge is the transverse
+edge spin product in that layer. -/
+theorem edgeSpin_layerCylinderLayerEmbedding_sym2Map
+    {N : ℕ} (σ : Config (LayerCylinderSite N S)) (i : Fin N) (e : Sym2 S) :
+    edgeSpin (K := ℝ) σ
+        ((layerCylinderLayerEmbedding (S := S) N i).sym2Map e) =
+      edgeSpin (K := ℝ) ((layerCylinderConfigEquiv (S := S) N σ) i) e := by
+  rw [edgeSpin_map_equiv_sym2Map]
+  rfl
+
+/-- The internal-edge Boltzmann factors split as a product over layers and
+transverse graph edges. -/
+theorem layerCylinderInternalEdgeFinset_prod_exp
+    [DecidableEq S] (H : SimpleGraph S) [Fintype H.edgeSet]
+    (p : IsingParams ℝ) (N : ℕ)
+    (σ : Config (LayerCylinderSite N S)) :
+    (∏ e ∈ layerCylinderInternalEdgeFinset (S := S) H N,
+      Real.exp (p.β * p.J * edgeSpin (K := ℝ) σ e)) =
+      ∏ i : Fin N, ∏ e ∈ H.edgeFinset,
+        Real.exp (p.β * p.J *
+          edgeSpin (K := ℝ) ((layerCylinderConfigEquiv (S := S) N σ) i) e) := by
+  classical
+  unfold layerCylinderInternalEdgeFinset
+  rw [Finset.prod_biUnion]
+  · refine Finset.prod_congr rfl ?_
+    intro i _
+    rw [Finset.prod_map]
+    refine Finset.prod_congr rfl ?_
+    intro e _
+    rw [edgeSpin_layerCylinderLayerEmbedding_sym2Map]
+  · intro i _ j _ hij
+    change Disjoint
+      (H.edgeFinset.map (layerCylinderLayerEmbedding (S := S) N i).sym2Map)
+      (H.edgeFinset.map (layerCylinderLayerEmbedding (S := S) N j).sym2Map)
+    rw [Finset.disjoint_iff_ne]
+    intro a ha b hb hab
+    rcases Finset.mem_map.mp ha with ⟨e, _he, rfl⟩
+    rcases Finset.mem_map.mp hb with ⟨f, _hf, rfl⟩
+    exact layerCylinderLayerEmbedding_sym2Map_ne_of_ne (S := S) hij e f hab
+
+/-- The one-body field factors over all cylinder sites split layer by layer. -/
+theorem layerCylinderSite_prod_field_exp
+    [Fintype S] (p : IsingParams ℝ) (N : ℕ)
+    (σ : Config (LayerCylinderSite N S)) :
+    (∏ ix : LayerCylinderSite N S,
+      Real.exp (p.β * p.h * Spin.sign ℝ (σ ix))) =
+      ∏ i : Fin N, ∏ x : S,
+        Real.exp (p.β * p.h *
+          Spin.sign ℝ (((layerCylinderConfigEquiv (S := S) N σ) i) x)) := by
+  rw [Fintype.prod_prod_type]
+  rfl
+
+/-- The concrete layer-cylinder stack weight expanded as a product over cyclic
+layers, with each layer factor split into internal-edge, field, and transition
+products. -/
+theorem layerCylinderStackWeight_eq_indexed_edge_field_prod
+    [Fintype S] (H : SimpleGraph S) [Fintype H.edgeSet] (E : Finset (S × S))
+    (p : IsingParams ℝ) {N : ℕ} [NeZero N]
+    (σ : Config (LayerCylinderSite N S)) :
+    layerCylinderStackWeight
+        (layerInternalWeight H p) (layerTransitionWeight E p) σ =
+      ∏ i : Fin N,
+        ((∏ e ∈ H.edgeFinset,
+            Real.exp (p.β * p.J *
+              edgeSpin (K := ℝ) ((layerCylinderConfigEquiv (S := S) N σ) (i + 1)) e)) *
+          (∏ x : S,
+            Real.exp (p.β * p.h *
+              Spin.sign ℝ (((layerCylinderConfigEquiv (S := S) N σ) (i + 1)) x))) *
+          (∏ xy ∈ E,
+            Real.exp (p.β * p.J *
+              (Spin.sign ℝ (((layerCylinderConfigEquiv (S := S) N σ) i) xy.1) *
+                Spin.sign ℝ (((layerCylinderConfigEquiv (S := S) N σ) (i + 1)) xy.2))))) := by
+  unfold layerCylinderStackWeight layerCyclicGibbsWeight
+  simp_rw [layerInternalWeight_eq_edge_field_prod,
+    layerTransitionWeight_eq_prod_exp]
+
+/-- The explicit cylinder edge/field Boltzmann product is the concrete
+layer-cylinder stack weight.  The hypothesis `3 ≤ N` rules out duplicate
+unordered transition edges from the two periodic directions. -/
+theorem layerCylinderEdgeFieldProd_eq_layerCylinderStackWeight
+    [DecidableEq S] [Fintype S]
+    (H : SimpleGraph S) [Fintype H.edgeSet] (E : Finset (S × S))
+    (p : IsingParams ℝ) {N : ℕ} [NeZero N] (hN : 3 ≤ N)
+    (σ : Config (LayerCylinderSite N S)) :
+    ((∏ e ∈ layerCylinderEdgeFinset (S := S) H E N,
+        Real.exp (p.β * p.J * edgeSpin (K := ℝ) σ e)) *
+      (∏ ix : LayerCylinderSite N S,
+        Real.exp (p.β * p.h * Spin.sign ℝ (σ ix)))) =
+      layerCylinderStackWeight
+        (layerInternalWeight H p) (layerTransitionWeight E p) σ := by
+  classical
+  have hN2 : 2 ≤ N := by omega
+  rw [layerCylinderStackWeight_eq_indexed_edge_field_prod]
+  rw [layerCylinderEdgeFinset,
+    Finset.prod_union (layerCylinderInternal_transition_disjoint (S := S) H E hN2)]
+  rw [layerCylinderInternalEdgeFinset_prod_exp,
+    layerCylinderTransitionEdgeFinset_prod_exp (S := S) E p hN,
+    layerCylinderSite_prod_field_exp]
+  rw [fin_prod_univ_eq_prod_add_one
+    (fun i : Fin N =>
+      ∏ e ∈ H.edgeFinset,
+        Real.exp (p.β * p.J *
+          edgeSpin (K := ℝ) ((layerCylinderConfigEquiv (S := S) N σ) i) e))]
+  rw [fin_prod_univ_eq_prod_add_one
+    (fun i : Fin N =>
+      ∏ x : S,
+        Real.exp (p.β * p.h *
+          Spin.sign ℝ (((layerCylinderConfigEquiv (S := S) N σ) i) x)))]
+  rw [← Finset.prod_mul_distrib, ← Finset.prod_mul_distrib]
+  refine Finset.prod_congr rfl ?_
+  intro i _
+  simp [layerCylinderConfigEquiv_apply]
+  ring_nf
+
+/-- The project-level Boltzmann weight of the explicit finite cylinder graph is
+the concrete layer-cylinder stack weight. -/
+theorem boltzmannWeight_layerCylinderGraph_eq_layerCylinderStackWeight
+    [DecidableEq S] [Fintype S]
+    (H : SimpleGraph S) [Fintype H.edgeSet] (E : Finset (S × S))
+    (p : IsingParams ℝ) {N : ℕ} [NeZero N] (hN : 3 ≤ N)
+    (σ : Config (LayerCylinderSite N S)) :
+    boltzmannWeight (layerCylinderGraph (S := S) H E N) p σ =
+      layerCylinderStackWeight
+        (layerInternalWeight H p) (layerTransitionWeight E p) σ := by
+  have hN2 : 2 ≤ N := by omega
+  rw [boltzmannWeight_layerCylinderGraph_eq_edge_field_prod (S := S) H E p hN2 σ]
+  exact layerCylinderEdgeFieldProd_eq_layerCylinderStackWeight (S := S) H E p hN σ
+
+/-- The project-level partition function of the explicit finite cylinder graph
+is the concrete Ising layer-cylinder partition function. -/
+theorem partitionFunction_layerCylinderGraph_eq_isingLayerCylinderPartition
+    [DecidableEq S] [Fintype S]
+    (H : SimpleGraph S) [Fintype H.edgeSet] (E : Finset (S × S))
+    (p : IsingParams ℝ) {N : ℕ} [NeZero N] (hN : 3 ≤ N) :
+    partitionFunction (layerCylinderGraph (S := S) H E N) p =
+      isingLayerCylinderPartition H E p N := by
+  unfold partitionFunction isingLayerCylinderPartition layerCylinderPartition
+  refine Finset.sum_congr rfl ?_
+  intro σ _
+  exact boltzmannWeight_layerCylinderGraph_eq_layerCylinderStackWeight
+    (S := S) H E p hN σ
+
+/-- The project-level same-transverse-site two-point correlation on the finite
+layer-cylinder graph is the concrete layer-cylinder spin two-point function. -/
+theorem correlation_layerCylinderGraph_same_transverse_eq_layerCylinderSpinTwoPoint
+    [DecidableEq S] [Fintype S]
+    (H : SimpleGraph S) [Fintype H.edgeSet] (E : Finset (S × S))
+    (p : IsingParams ℝ) (x : S) {a b : ℕ} [NeZero a] (hb : 0 < b)
+    (hN : 3 ≤ a + b) :
+    correlation (layerCylinderGraph (S := S) H E (a + b)) p
+        ({Prod.mk (0 : Fin (a + b)) x,
+          Prod.mk ⟨a, Nat.lt_add_of_pos_right hb⟩ x} :
+            Finset (LayerCylinderSite (a + b) S)) =
+      layerCylinderSpinTwoPoint
+        (layerInternalWeight H p) (layerTransitionWeight E p) x
+        (a := a) (b := b) hb := by
+  haveI : NeZero (a + b) := ⟨by omega⟩
+  let y : Fin (a + b) := ⟨a, Nat.lt_add_of_pos_right hb⟩
+  have hsite :
+      (Prod.mk (0 : Fin (a + b)) x : LayerCylinderSite (a + b) S) ≠
+        Prod.mk y x := by
+    intro h
+    have hv := congr_arg (fun ix : LayerCylinderSite (a + b) S => ix.1.val) h
+    simp [y] at hv
+    exact (NeZero.ne a) hv.symm
+  unfold correlation gibbsExpectation
+  rw [partitionFunction_layerCylinderGraph_eq_isingLayerCylinderPartition
+    (S := S) H E p hN]
+  unfold isingLayerCylinderPartition
+  have hsum :
+      (∑ σ : Config (LayerCylinderSite (a + b) S),
+          spinProduct
+              ({Prod.mk (0 : Fin (a + b)) x, Prod.mk y x} :
+                Finset (LayerCylinderSite (a + b) S)) σ *
+            boltzmannWeight (layerCylinderGraph (S := S) H E (a + b)) p σ)
+        =
+        ∑ σ : Config (LayerCylinderSite (a + b) S),
+          Spin.sign ℝ (σ (0, x)) * Spin.sign ℝ (σ (y, x)) *
+            layerCylinderStackWeight
+              (layerInternalWeight H p) (layerTransitionWeight E p) σ := by
+    refine Finset.sum_congr rfl ?_
+    intro σ _
+    rw [boltzmannWeight_layerCylinderGraph_eq_layerCylinderStackWeight
+      (S := S) H E p hN σ]
+    simp [spinProduct, Spin.sign, hsite, y, mul_assoc]
+  rw [hsum]
+  dsimp [layerCylinderSpinTwoPoint, layerCylinderSpinTwoPointNumerator, y]
+  ring
+
+/-- Trace-ratio form of the project-level same-transverse-site two-point
+correlation on the explicit finite layer-cylinder graph. -/
+theorem correlation_layerCylinderGraph_same_transverse_eq_trace_ratio
+    [DecidableEq S] [Fintype S]
+    (H : SimpleGraph S) [Fintype H.edgeSet] (E : Finset (S × S))
+    (p : IsingParams ℝ) (x : S) {a b : ℕ} [NeZero a] (hb : 0 < b)
+    (hN : 3 ≤ a + b) :
+    correlation (layerCylinderGraph (S := S) H E (a + b)) p
+        ({Prod.mk (0 : Fin (a + b)) x,
+          Prod.mk ⟨a, Nat.lt_add_of_pos_right hb⟩ x} :
+            Finset (LayerCylinderSite (a + b) S)) =
+      layerTransferCorrelation_matrixElement
+          (layerInternalWeight H p) (layerTransitionWeight E p) (layerSpinAt x) a b
+        / layerTransferPartitionTrace
+          (layerInternalWeight H p) (layerTransitionWeight E p) (a + b) := by
+  rw [correlation_layerCylinderGraph_same_transverse_eq_layerCylinderSpinTwoPoint
+    (S := S) H E p x hb hN,
+    layerCylinderSpinTwoPoint_eq_trace_ratio]
 
 end TransferMatrix
 
