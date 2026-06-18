@@ -6830,16 +6830,17 @@ specialisation is \texttt{layerSymmetricTransferMatrix\_flip\_flip}.  The
 matrix-vector form
 {\scriptsize\texttt{layerSymmetricTransferMatrix\_mulVec\_comp\_equiv}}
 is the corresponding commutation statement for later spectral-column
-arguments.  For explicit orthogonal spectral data, the entry expansion
+arguments.  For explicit orthogonal spectral data, write the transported marked
+insertion as \(\mathsf{m}=Q^T D_f Q\).  The entry expansion
 \texttt{RealOrthogonalSpectralData.markedMatrix\_apply} gives
 \[
-  G_{ij}=\sum_x Q_{xi} f(x) Q_{xj}.
+  \mathsf{m}_{ij}=\sum_x Q_{xi} f(x) Q_{xj}.
 \]
 If \(f\) is odd under an involutive equivalence \(\tau\) and the dominant
 column \(Q_{\cdot\ast}\) is even under \(\tau\), reindexing this finite sum by
 \(\tau\) changes its sign and therefore
 \[
-  G_{\ast\ast}=0.
+  \mathsf{m}_{\ast\ast}=0.
 \]
 This is formalised by
 {\scriptsize\texttt{RealOrthogonalSpectralData.markedMatrix\_diagonal\_zero\_of\_equiv\_odd\_even}};
@@ -6849,7 +6850,7 @@ The constructors
 {\scriptsize\texttt{layerBalancedMinSpectralGapCertificate\_of\_orthogonalDominantBounds\_flipEvenSpin}}
 and
 {\scriptsize\texttt{layerBalancedMinSpectralGapCertificate\_of\_layerHermitianDominantBounds\_flipEvenSpin}}
-therefore replace the explicit \(G_{\ast\ast}=0\) hypothesis of the finite
+therefore replace the explicit \(\mathsf{m}_{\ast\ast}=0\) hypothesis of the finite
 min-separation certificate by the flip-even dominant-column hypothesis for
 spin observables.
 
