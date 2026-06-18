@@ -6859,6 +6859,33 @@ flip-even; it also does not prove open-slab geometry, thermodynamic limits, or
 final hyperplane exponential decay.  Reference: Glimm--Jaffe, 2nd ed.,
 \S17.1, pp.~304--306 and \S17.5, pp.~311--312.
 
+\paragraph{Positive/simple dominant-column flip-even bridge (\S17.1, Issue~\#3511).}
+The new \texttt{LayerPerron} module adds the finite linear-algebra bridge used
+after a Perron--Frobenius argument has supplied a positive dominant eigenvector
+and a one-dimensional dominant eigenspace.  The spectral-data column lemma first
+records that each column of explicit orthogonal spectral data is a right
+eigenvector with the corresponding spectral-data eigenvalue.  The scalar
+normalisation lemma then shows that if a strictly positive vector \(v\)
+satisfies \(v\circ\tau=c\,v\) for an involutive equivalence \(\tau\), then
+applying the identity twice gives \(c^2=1\), and positivity forces \(c=1\).
+Hence \(v\circ\tau=v\).
+
+The main flip-even lemma applies this to a finite matrix \(M\) commuting with
+\(\tau\).  If \(Mv=\lambda v\), \(v>0\), and every \(\lambda\)-eigenvector is a
+scalar multiple of \(v\), then \(v\circ\tau\) is again a \(\lambda\)-eigenvector,
+so simplicity gives \(v\circ\tau=c\,v\), and the positivity lemma gives
+\(v\circ\tau=v\).  The layer wrapper uses the already proved balanced-transfer
+commutation under global layer flip.
+
+The new spin-observable constructors therefore replace the direct
+dominant-column flip-even hypothesis in the min-separation route by
+positive-column and simple-eigenspace inputs.  This is still finite and
+conditional: it does not prove
+Perron--Frobenius existence, spectral-radius maximality, strict spectral gap,
+open-slab geometry, thermodynamic limits, or final hyperplane exponential
+decay.  Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5,
+pp.~311--312.
+
 \paragraph{Diagonalization and matrix powers (\S17.1, Issue~\#3511 PR~2).}
 The Hadamard matrix $H = \bigl(\begin{smallmatrix} 1 & 1 \\ 1 & -1 \end{smallmatrix}\bigr)$
 (\texttt{hadamardMatrix}) satisfies $H^2 = 2\,\mathbb 1$
