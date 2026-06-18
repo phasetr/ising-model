@@ -7496,21 +7496,27 @@ The Lean development follows these four steps directly: the unnormalized
 character eigenvector lemma, the normalized Walsh-column eigenvector lemma, the
 matrix column-product lemma, and the final diagonalization theorem.
 
-The spectral-data wrappers now use this diagonalization directly.  Besides
-positivity of \(p.\beta p.J\) and the finite-cardinality threshold, the balanced
-min-gap certificate remains conditional on the non-top estimate
+The spectral-data wrappers now use this diagonalization directly.  The non-top
+estimate is also proved in the finite free-layer case.  If a Walsh index is not
+the top channel, then its down-spin set \(A\) is nonempty.  For \(a\ge0\),
+\(\lambda_-(a)=\tanh(a)\lambda_+(a)\), hence
 \[
-  |\lambda_A(a)|\le \tanh(a)\lambda_+(a)^{|S|}
+  |\lambda_A(a)|
+    = \tanh(a)^{|A|}\lambda_+(a)^{|S|}.
 \]
-for \(A\ne\varnothing\).  Once this estimate is supplied, the certificate
-follows under the honest finite-cardinality threshold
+Since \(0\le \tanh(a)\le 1\) and \(|A|\ge1\), this gives
+\[
+  |\lambda_A(a)|\le \tanh(a)\lambda_+(a)^{|S|}.
+\]
+The final wrapper therefore supplies the balanced min-gap certificate under
+the honest finite-cardinality threshold
 \[
   \tanh(p.\beta p.J)<(2^{|S|}-1)^{-1}.
 \]
-The arbitrary finite Walsh subdominant estimate remains a follow-up proof
-obligation.  This does not prove the interacting cubic-layer spectral window,
-\(\theta<1\) sufficiency for larger state spaces, open-slab geometry,
-thermodynamic limits, or the final hyperplane decay estimate.
+This remains a free-layer statement only: it does not prove the interacting
+cubic-layer spectral window, \(\theta<1\) sufficiency for larger state spaces,
+open-slab geometry, thermodynamic limits, or the final hyperplane decay
+estimate.
 Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5,
 pp.~311--312.
 
