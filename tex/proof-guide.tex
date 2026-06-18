@@ -7462,20 +7462,55 @@ identified with this product matrix.  The Walsh eigenvalue vocabulary is
 \]
 with the top channel \(A=\varnothing\) giving \(\lambda_+(a)^{|S|}\).
 
-This PR stops at the reusable Walsh basis and physical free-layer bridge.  It
-also provides conditional spectral-data and balanced min-gap certificate
-wrappers: once the explicit Walsh diagonalization and the non-top estimate
+The file now proves the arbitrary finite free-layer Walsh diagonalization.  The
+identity
+\[
+  \prod_{x\in A}\sigma_x(\eta)
+    = \prod_{x\in S}
+      \begin{cases}
+        \sigma_x(\eta), & x\in A,\\
+        1, & x\notin A
+      \end{cases}
+\]
+rewrites Walsh characters over all sites, and the finite product-sum identity
+factors the layer-state sum into one-site sums.  The one-site rows satisfy
+\[
+  \sum_t T(a)_{s,t}=\lambda_+(a),
+  \qquad
+  \sum_t T(a)_{s,t}\sigma(t)=\lambda_-(a)\sigma(s).
+\]
+Therefore each unnormalized character, and hence each normalized Walsh column,
+is a right eigenvector:
+\[
+  T_S(a)Q_{\cdot,A}=\lambda_A(a)Q_{\cdot,A}.
+\]
+Columnwise this is
+\[
+  T_S(a)Q = Q\operatorname{diag}(\lambda),
+\]
+and orthogonality gives the diagonalization
+\[
+  T_S(a)=Q\operatorname{diag}(\lambda)Q^T.
+\]
+The Lean development follows these four steps directly: the unnormalized
+character eigenvector lemma, the normalized Walsh-column eigenvector lemma, the
+matrix column-product lemma, and the final diagonalization theorem.
+
+The spectral-data wrappers now use this diagonalization directly.  Besides
+positivity of \(p.\beta p.J\) and the finite-cardinality threshold, the balanced
+min-gap certificate remains conditional on the non-top estimate
 \[
   |\lambda_A(a)|\le \tanh(a)\lambda_+(a)^{|S|}
 \]
-are supplied, the certificate follows under the honest threshold
+for \(A\ne\varnothing\).  Once this estimate is supplied, the certificate
+follows under the honest finite-cardinality threshold
 \[
   \tanh(p.\beta p.J)<(2^{|S|}-1)^{-1}.
 \]
-The full arbitrary finite Walsh diagonalization and subdominant estimate remain
-follow-up proof obligations.  This does not prove the interacting cubic-layer
-spectral window, \(\theta<1\) sufficiency for larger state spaces, open-slab
-geometry, thermodynamic limits, or the final hyperplane decay estimate.
+The arbitrary finite Walsh subdominant estimate remains a follow-up proof
+obligation.  This does not prove the interacting cubic-layer spectral window,
+\(\theta<1\) sufficiency for larger state spaces, open-slab geometry,
+thermodynamic limits, or the final hyperplane decay estimate.
 Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5,
 pp.~311--312.
 
