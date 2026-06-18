@@ -6958,6 +6958,30 @@ open-slab geometry, thermodynamic limits, or final hyperplane exponential
 decay.  Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5,
 pp.~311--312.
 
+\paragraph{Signed-positive spectral-column interface (\S17.1, Issue~\#3511).}
+Orthogonal spectral columns are only canonical up to sign.  The new
+\texttt{LayerPerronExistence} module therefore records the finite
+Perron-facing output as a signed-positive column: a sign \(s\) with
+\(s^2=1\) such that the oriented column \(s q_\ast\) is strictly positive.
+Once this orientation is supplied, the existing positive-column arguments
+apply without changing the underlying spectral data.  In Lean this is packaged
+as \texttt{RealOrthogonalSpectralData.SignedPositiveColumn}.  The accompanying
+signed-positive wrappers give eigenvalue positivity, absolute-radius control,
+eigenspace simplicity, strict subdominant comparison, and a finite
+subdominant-ratio parameter \(\theta<1\).
+
+The layer-level wrappers expose the same radius, simplicity, strict-ratio, and
+finite-\(\theta\) conclusions for the balanced transfer matrix.  The
+signed-positive spin constructors first orient the dominant spectral column,
+derive the flip-even cancellation from the positive simple eigenvector
+argument, and then feed the existing min-separation certificate constructor.
+This is still a conditional bridge: it records the sign-invariant output shape
+needed from the finite Perron--Frobenius theorem, but it does not yet prove
+that the maximal Hermitian spectral column has such an orientation, nor does it
+discharge the quantitative prefactor condition, open-slab geometry,
+thermodynamic limits, or final hyperplane exponential decay.  Reference:
+Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5, pp.~311--312.
+
 \paragraph{Diagonalization and matrix powers (\S17.1, Issue~\#3511 PR~2).}
 The Hadamard matrix $H = \bigl(\begin{smallmatrix} 1 & 1 \\ 1 & -1 \end{smallmatrix}\bigr)$
 (\texttt{hadamardMatrix}) satisfies $H^2 = 2\,\mathbb 1$
