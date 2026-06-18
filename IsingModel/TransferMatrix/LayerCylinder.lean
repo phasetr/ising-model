@@ -84,6 +84,23 @@ noncomputable def layerTransitionWeight (E : Finset (S × S)) (p : IsingParams �
   Real.exp
     (p.β * p.J * ∑ xy ∈ E, Spin.sign ℝ (ω xy.1) * Spin.sign ℝ (η xy.2))
 
+omit [DecidableEq S] in
+/-- The one-layer weight is invariant under global spin flip at zero external
+field. -/
+theorem layerInternalWeight_flip_of_h_zero (H : SimpleGraph S) [Fintype H.edgeSet]
+    (p : IsingParams ℝ) (hp : p.h = 0) (ω : LayerState S) :
+    layerInternalWeight H p (layerStateFlipEquiv S ω) = layerInternalWeight H p ω := by
+  simp [layerInternalWeight, hp, edgeSpin_flip]
+
+omit [Fintype S] [DecidableEq S] in
+/-- The adjacent-layer transition weight is invariant under simultaneous global
+spin flip of both neighbouring layers. -/
+theorem layerTransitionWeight_flip_flip (E : Finset (S × S)) (p : IsingParams ℝ)
+    (ω η : LayerState S) :
+    layerTransitionWeight E p (layerStateFlipEquiv S ω) (layerStateFlipEquiv S η)
+      = layerTransitionWeight E p ω η := by
+  simp [layerTransitionWeight, Config.flip]
+
 /-- The cyclic layer-cylinder Gibbs weight of a concrete stack configuration. -/
 noncomputable def layerCylinderStackWeight
     (u : LayerState S → ℝ) (k : LayerState S → LayerState S → ℝ)
