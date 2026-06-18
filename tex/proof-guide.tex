@@ -7568,6 +7568,70 @@ geometry, thermodynamic limits, or the final hyperplane decay estimate.
 Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5,
 pp.~311--312.
 
+\paragraph{Finite open layer-slab transfer bridge (\S17.1, Issue~\#3511).}
+The modules
+\[
+  \texttt{TransferMatrix/LayerOpenSlab.lean},
+  \qquad
+  \texttt{TransferMatrix/LayerOpenSlabGraph.lean}
+\]
+add the free-boundary analogue of the finite layer-cylinder bridge.  An open
+stack with \(n+1\) layers has no wrap-around edge.  Its weight is the left
+endpoint layer weight times the open path weight of the same transfer matrix
+\[
+  T(a,b)=u(b)k(a,b):
+  \qquad
+  \texttt{layerOpenStackWeight}\,u\,k\,c
+    = u(c_0)\,\texttt{pathWeight}\,T\,c.
+\]
+The partition and marked numerator are recorded both as Gibbs sums and as
+open-path transfer sums:
+\[
+  \texttt{layerOpenPartition\_eq\_transfer},\qquad
+  \texttt{layerOpenTwoPointNumerator\_eq\_transfer}.
+\]
+The conditional certificate
+\[
+  \texttt{LayerOpenMinSpectralGapCertificate}
+\]
+packages a lower bound on the open partition and a two-insertion numerator
+estimate with buffers on both sides of the marked separation.  Its consumer
+\[
+  \texttt{layerOpenTwoPoint\_abs\_le\_of\_openMinSpectralGapCertificate}
+\]
+gives the normalized open two-point bound
+\[
+  |G_{\mathrm{open}}|
+    \le
+    \frac{\texttt{prefactor}}{\texttt{partitionPrefactor}}\,
+      \theta^{\mathrm{sep}} .
+\]
+The project-level graph bridge defines
+\[
+  \texttt{LayerOpenSlabSite},\qquad
+  \texttt{layerOpenSlabGraph},
+\]
+copies the transverse graph into each layer, and adds transition edges only
+from layer \(i\) to \(i+1\).  The explicit edge and field products match the
+open stack weight:
+\[
+  \texttt{boltzmannWeight\_layerOpenSlabGraph\_eq\_layerOpenStackWeight}.
+\]
+Consequently the project-level partition function and same-transverse-site
+correlation are identified with the open layer sums, and the finite certificate
+gives
+\[
+  \texttt{correlation\_layerOpenSlabGraph\_same\_transverse\_abs\_le\_of\_openMinSpectralGapCertificate}
+\]
+with the cubic specialization
+\[
+  \texttt{correlation\_cubicLayerOpenSlabGraph\_same\_transverse\_abs\_le\_of\_openCert}.
+\]
+This remains a finite, conditional free-boundary statement.  It does not prove
+an interacting cubic-layer spectral window, thermodynamic-limit decay, or the
+final hyperplane decay estimate.  Reference: Glimm--Jaffe, 2nd ed., \S17.1,
+pp.~304--306 and \S17.5, pp.~311--312.
+
 \paragraph{Diagonalization and matrix powers (\S17.1, Issue~\#3511 PR~2).}
 The Hadamard matrix $H = \bigl(\begin{smallmatrix} 1 & 1 \\ 1 & -1 \end{smallmatrix}\bigr)$
 (\texttt{hadamardMatrix}) satisfies $H^2 = 2\,\mathbb 1$
