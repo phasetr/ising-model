@@ -287,6 +287,7 @@ import IsingModel.TransferMatrix.FreeLayerWalshSpectralWindow
 import IsingModel.TransferMatrix.LayerCylinderSpectralDecay
 import IsingModel.TransferMatrix.LayerOpenSlab
 import IsingModel.TransferMatrix.LayerOpenSpectral
+import IsingModel.TransferMatrix.LayerOpenSpectralDenominator
 import IsingModel.TransferMatrix.LayerOpenSlabGraph
 import IsingModel.TransferMatrix.LayerOpenSpectralDecay
 import IsingModel.TransferMatrix.PathGraphEdges
