@@ -416,6 +416,176 @@ theorem layerSpinTwoPoint_abs_le_of_spectralGapCertificate
       ≤ (h.prefactor / h.partitionPrefactor) * h.theta ^ a := by
   exact layerTwoPoint_abs_le_of_spectralGapCertificate h hb
 
+/-! ## Balanced spectral-gap certificates -/
+
+/-- A finite spectral-gap certificate stated on the balanced layer transfer
+matrix.
+
+This is the form expected from later symmetric spectral input for
+`layerSymmetricTransferMatrix u k`.  The certificate is finite and algebraic:
+it records bounds on the balanced partition trace and balanced marked trace,
+but does not assert a Perron--Frobenius theorem or construct the bounds. -/
+structure LayerBalancedSpectralGapCertificate
+    (u : Ω → ℝ) (k : Ω → Ω → ℝ) (f : Ω → ℝ) where
+  /-- The positive dominant transfer scale. -/
+  scale : ℝ
+  /-- The nonnegative subdominant ratio. -/
+  theta : ℝ
+  /-- The numerator prefactor. -/
+  prefactor : ℝ
+  /-- The denominator prefactor in the partition lower bound. -/
+  partitionPrefactor : ℝ
+  /-- Positivity of the dominant transfer scale. -/
+  scale_pos : 0 < scale
+  /-- Nonnegativity of the subdominant ratio. -/
+  theta_nonneg : 0 ≤ theta
+  /-- Strict spectral-gap ratio bound. -/
+  theta_lt_one : theta < 1
+  /-- Nonnegativity of the numerator prefactor. -/
+  prefactor_nonneg : 0 ≤ prefactor
+  /-- Positivity of the partition prefactor. -/
+  partitionPrefactor_pos : 0 < partitionPrefactor
+  /-- Lower bound on the balanced cyclic partition trace. -/
+  partition_lower : ∀ {N : ℕ}, 0 < N →
+    partitionPrefactor * scale ^ N ≤ layerSymmetricTransferPartitionTrace u k N
+  /-- Exponential upper bound on the balanced marked two-insertion trace. -/
+  marked_abs_le : ∀ {a b : ℕ}, 0 < a → 0 < b →
+    |layerSymmetricTransferCorrelationTrace u k f a b|
+      ≤ prefactor * scale ^ (a + b) * theta ^ a
+
+/-- Transport a balanced trace certificate to the ordinary transfer-matrix
+certificate using the diagonal similarity `T = D⁻¹ S D`. -/
+def LayerBalancedSpectralGapCertificate.toLayerSpectralGapCertificate
+    {u : Ω → ℝ} {k : Ω → Ω → ℝ} {f : Ω → ℝ}
+    (h : LayerBalancedSpectralGapCertificate u k f)
+    (hu : ∀ a, 0 < u a) :
+    LayerSpectralGapCertificate u k f := by
+  refine
+    { scale := h.scale
+      theta := h.theta
+      prefactor := h.prefactor
+      partitionPrefactor := h.partitionPrefactor
+      scale_pos := h.scale_pos
+      theta_nonneg := h.theta_nonneg
+      theta_lt_one := h.theta_lt_one
+      prefactor_nonneg := h.prefactor_nonneg
+      partitionPrefactor_pos := h.partitionPrefactor_pos
+      partition_lower := ?_
+      marked_abs_le := ?_ }
+  · intro N hN
+    rw [layerTransferPartitionTrace_eq_layerSymmetricTransferPartitionTrace u k hu]
+    exact h.partition_lower hN
+  · intro a b ha hb
+    rw [layerTransferCorrelation_matrixElement_eq_layerSymmetricTransferCorrelationTrace
+      u k f hu]
+    exact h.marked_abs_le ha hb
+
+/-- Constructor for an ordinary spectral-gap certificate from explicit
+transfer-trace bounds. -/
+def layerSpectralGapCertificate_of_traceBounds
+    (u : Ω → ℝ) (k : Ω → Ω → ℝ) (f : Ω → ℝ)
+    (scale theta prefactor partitionPrefactor : ℝ)
+    (scale_pos : 0 < scale)
+    (theta_nonneg : 0 ≤ theta)
+    (theta_lt_one : theta < 1)
+    (prefactor_nonneg : 0 ≤ prefactor)
+    (partitionPrefactor_pos : 0 < partitionPrefactor)
+    (partition_lower : ∀ {N : ℕ}, 0 < N →
+      partitionPrefactor * scale ^ N ≤ layerTransferPartitionTrace u k N)
+    (marked_abs_le : ∀ {a b : ℕ}, 0 < a → 0 < b →
+      |layerTransferCorrelation_matrixElement u k f a b|
+        ≤ prefactor * scale ^ (a + b) * theta ^ a) :
+    LayerSpectralGapCertificate u k f where
+  scale := scale
+  theta := theta
+  prefactor := prefactor
+  partitionPrefactor := partitionPrefactor
+  scale_pos := scale_pos
+  theta_nonneg := theta_nonneg
+  theta_lt_one := theta_lt_one
+  prefactor_nonneg := prefactor_nonneg
+  partitionPrefactor_pos := partitionPrefactor_pos
+  partition_lower := partition_lower
+  marked_abs_le := marked_abs_le
+
+/-- Constructor for a balanced spectral-gap certificate from explicit balanced
+trace bounds. -/
+def layerBalancedSpectralGapCertificate_of_traceBounds
+    (u : Ω → ℝ) (k : Ω → Ω → ℝ) (f : Ω → ℝ)
+    (scale theta prefactor partitionPrefactor : ℝ)
+    (scale_pos : 0 < scale)
+    (theta_nonneg : 0 ≤ theta)
+    (theta_lt_one : theta < 1)
+    (prefactor_nonneg : 0 ≤ prefactor)
+    (partitionPrefactor_pos : 0 < partitionPrefactor)
+    (partition_lower : ∀ {N : ℕ}, 0 < N →
+      partitionPrefactor * scale ^ N ≤ layerSymmetricTransferPartitionTrace u k N)
+    (marked_abs_le : ∀ {a b : ℕ}, 0 < a → 0 < b →
+      |layerSymmetricTransferCorrelationTrace u k f a b|
+        ≤ prefactor * scale ^ (a + b) * theta ^ a) :
+    LayerBalancedSpectralGapCertificate u k f where
+  scale := scale
+  theta := theta
+  prefactor := prefactor
+  partitionPrefactor := partitionPrefactor
+  scale_pos := scale_pos
+  theta_nonneg := theta_nonneg
+  theta_lt_one := theta_lt_one
+  prefactor_nonneg := prefactor_nonneg
+  partitionPrefactor_pos := partitionPrefactor_pos
+  partition_lower := partition_lower
+  marked_abs_le := marked_abs_le
+
+/-- Constructor for an ordinary spectral-gap certificate from explicit balanced
+trace bounds, transported across the diagonal similarity. -/
+def layerSpectralGapCertificate_of_balancedTraceBounds
+    (u : Ω → ℝ) (k : Ω → Ω → ℝ) (f : Ω → ℝ)
+    (hu : ∀ a, 0 < u a)
+    (scale theta prefactor partitionPrefactor : ℝ)
+    (scale_pos : 0 < scale)
+    (theta_nonneg : 0 ≤ theta)
+    (theta_lt_one : theta < 1)
+    (prefactor_nonneg : 0 ≤ prefactor)
+    (partitionPrefactor_pos : 0 < partitionPrefactor)
+    (partition_lower : ∀ {N : ℕ}, 0 < N →
+      partitionPrefactor * scale ^ N ≤ layerSymmetricTransferPartitionTrace u k N)
+    (marked_abs_le : ∀ {a b : ℕ}, 0 < a → 0 < b →
+      |layerSymmetricTransferCorrelationTrace u k f a b|
+        ≤ prefactor * scale ^ (a + b) * theta ^ a) :
+    LayerSpectralGapCertificate u k f :=
+  (layerBalancedSpectralGapCertificate_of_traceBounds u k f scale theta prefactor
+    partitionPrefactor scale_pos theta_nonneg theta_lt_one prefactor_nonneg
+    partitionPrefactor_pos partition_lower marked_abs_le).toLayerSpectralGapCertificate hu
+
+/-- A balanced finite spectral-gap certificate gives exponential decay of the
+normalised cyclic layer two-point trace ratio. -/
+theorem layerTwoPoint_abs_le_of_balancedSpectralGapCertificate
+    {u : Ω → ℝ} {k : Ω → Ω → ℝ} {f : Ω → ℝ}
+    (hu : ∀ a, 0 < u a)
+    (h : LayerBalancedSpectralGapCertificate u k f)
+    {a b : ℕ} [NeZero a] (hb : 0 < b) :
+    |layerTwoPoint u k f (a := a) (b := b) hb|
+      ≤ (h.prefactor / h.partitionPrefactor) * h.theta ^ a :=
+  by
+    simpa using
+      (layerTwoPoint_abs_le_of_spectralGapCertificate
+        (h.toLayerSpectralGapCertificate hu) hb)
+
+/-- Spin-observable wrapper for the balanced spectral-gap certificate bound. -/
+theorem layerSpinTwoPoint_abs_le_of_balancedSpectralGapCertificate
+    {S : Type*} [Fintype S] [DecidableEq S]
+    (u : LayerState S → ℝ) (k : LayerState S → LayerState S → ℝ)
+    (x : S)
+    (hu : ∀ a, 0 < u a)
+    (h : LayerBalancedSpectralGapCertificate u k (layerSpinAt x))
+    {a b : ℕ} [NeZero a] (hb : 0 < b) :
+    |layerSpinTwoPoint u k x (a := a) (b := b) hb|
+      ≤ (h.prefactor / h.partitionPrefactor) * h.theta ^ a :=
+  by
+    simpa using
+      (layerSpinTwoPoint_abs_le_of_spectralGapCertificate u k x
+        (h.toLayerSpectralGapCertificate hu) hb)
+
 end TransferMatrix
 
 end IsingModel
